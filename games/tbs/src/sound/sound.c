@@ -122,7 +122,7 @@ void AudioTest_RunParameterController(void)
 
     row = 0;
     preset = 2;
-    /* FAKEMATCH: the one-pass block keeps the state-address load after preset setup and the state store before timer setup. */
+    /* FAKEMATCH: the one-pass block keeps the state-address load after preset setup and the state store before timer setup. Plain store: differ 8 or more in nine statement orders. */
     do {
         IwramHi_Data1 = 0;
     } while (0);

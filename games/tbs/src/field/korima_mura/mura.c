@@ -1624,15 +1624,12 @@ s32 KorimaMura_TriggerRegionScript(struct FieldActor *actor)
 			&& actor->z.fixed < 0x1150000)
 			goto hit;
 	}
-	return 0;
+	goto done;
 hit:
 	Engine_AudioPlayCue(106);
-	/* FAKEMATCH: the do/while loads the script address before the actor. */
-	do
-	{
-		Engine_ObjectSetScript(actor, KorimaMura_RegionScript);
-	} while (0);
+	Engine_ObjectSetScript(actor, KorimaMura_RegionScript);
 	KorimaMura_PendingPose = 1;
+done:
 	return 0;
 }
 

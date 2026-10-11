@@ -326,7 +326,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 	s32 six00;
 
 #if !EDITION_INTERNATIONAL
-	/* FAKEMATCH: needed to match: one coin-label selector preserves its saved register; separate arguments shorten the Japanese callback by twelve bytes. */
+	/* FAKEMATCH: needed to match: one coin-label selector preserves its saved register; separate arguments shorten the Japanese callback by twelve bytes. Measured again: differ 72 in tbs-ja. */
 	s32 msg;
 #endif
 

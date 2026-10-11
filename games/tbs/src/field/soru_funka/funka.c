@@ -1691,16 +1691,15 @@ void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b)
 {
 	Ent_02002c1c *p;
 
-	/* FAKEMATCH: the view-centre import is passed the tile x it ignores, as the game passes it. */
-	p = (Ent_02002c1c *)((s32 (*)())Engine_EventGetViewCenter)(a);
+	p = (Ent_02002c1c *)Engine_EventGetViewCenter();
 	b = b << 16;
 	a = a << 16;
 	Engine_CameraMoveTo(a, -1, b, 1);
 	Engine_ColorBufferApplyTarget(0, 0);
 	Engine_ColorBufferInterpolate(20);
 	Engine_TaskWait(40);
-	p->unk10 = b;
 	p->unk8 = a;
+	p->unk10 = b;
 	p->unk38 = 0x80000000;
 	p->unk40 = 0x80000000;
 	p->unk24 = 0;

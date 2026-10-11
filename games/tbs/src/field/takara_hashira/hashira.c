@@ -1036,13 +1036,12 @@ void TakaraHashira_UpdatePillarActors(void)
 				SceneActor_WaitHeightBelowLimit((struct FieldActor *)actor, 0);
 				Engine_AudioPlayCue(189);
 				actor->y = 0;
-				/* FAKEMATCH: the byte view keeps these flag updates out of the record's alias set; field stores reallocate the loop (score 2573). */
-				*(u8 *)&actor->priority_flags &= 254;
+				actor->priority_flags &= 254;
 				StagedActor_StepDownUntilClamp(id);
 				actor->x = 0;
 				actor->y = 0;
 				actor->z = 0;
-				*(u8 *)&actor->priority_flags |= 1;
+				actor->priority_flags |= 1;
 			}
 			else
 			{

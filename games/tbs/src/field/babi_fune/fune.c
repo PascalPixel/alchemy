@@ -40,7 +40,6 @@
 #include "field_scene.h"
 #include "objcmd.h"
 
-#define PALETTE ((volatile u16 *)0x05000000)
 
 s32 Math_DivideUnsigned();
 
@@ -67,13 +66,12 @@ u8 *BabiFune_GetPlacements(void)
 void PlayWorkspaceCueAndClearPaletteZero(void)
 {
 	Engine_EventRequestExit(gEventWork->touched_trigger);
-	/* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+	/* FAKEMATCH: removing this one-pass block changes instruction scheduling: the zero is loaded before the register address (without the block differ 2; a plain PLTT_BACKDROP = 0 loads the halfword zero from the literal pool, differ 10). */
 	do
 	{
-		u16					   color = PALETTE == 0;
-		register volatile u16 *palette = PALETTE;
+		u16 color = 0;
 
-		palette[color] = color;
+		PLTT_BACKDROP = color;
 	} while (0);
 }
 

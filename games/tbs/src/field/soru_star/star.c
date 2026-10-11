@@ -625,7 +625,7 @@ void FieldScene_RunElementalStarDemand(void)
 	{
 		u8 *flags = &Object_GetById(12)->priority_flags;
 
-		/* FAKEMATCH: the bit held in the loop counter first keeps the 1 in r5 ahead of the actor 8 call's arguments; a plain |= loads it after. */
+		/* FAKEMATCH: the bit held in the loop counter first keeps the 1 in r5 ahead of the actor 8 call's arguments; a plain |= loads it after. Plain |=: differ 31, one instruction shorter. */
 		i = ACTOR_PRIORITY_AUTOMATIC;
 		i |= *flags;
 		*flags = i;

@@ -70,18 +70,9 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 
-static inline s32 GomaSuiro_Scene(void)
-{
-	/* FAKEMATCH: this wrapper only moves the compiler's constant label count. SceneEffect_RunActorBurst
-       loads its second 0x50000 argument separately (189 instructions for 188) when the address of
-       SceneEffect_RotateRecord gets label .LC20 or .LC21, and copies r0 at .LC19 and at .LC22 to .LC33 (measured);
-       with the three scene tests written directly it gets .LC21. */
-	return gGameState.scene;
-}
-
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
-	if (GomaSuiro_Scene() == (s32)&SceneId_GomaSuiro2)
+	if (gGameState.scene == (s32)&SceneId_GomaSuiro2)
 	{
 		return gGomaSuiroEntrances2;
 	}
@@ -100,7 +91,7 @@ const u32 *Scene_GetExits(void)
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
-	if (GomaSuiro_Scene() == (s32)&SceneId_GomaSuiro2)
+	if (gGameState.scene == (s32)&SceneId_GomaSuiro2)
 	{
 		return gGomaSuiroPlacements2;
 	}
@@ -128,7 +119,7 @@ void FieldScene_RunActor8AtCell24Sequence(void)
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-	if (GomaSuiro_Scene() == (s32)&SceneId_GomaSuiro2)
+	if (gGameState.scene == (s32)&SceneId_GomaSuiro2)
 	{
 		return gGomaSuiroEvents2;
 	}

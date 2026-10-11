@@ -676,7 +676,6 @@ s32 LinkLobby_RunConnectionSequence(void)
 
 	failed = 0;
 	window = 0;
-	/* FAKEMATCH: this initialization order resolves the scheduler's tied moves. */
 	work = gEventWork;
 	cnt = 0;
 	if (Engine_GameFlagIsSet(0x173))
@@ -840,7 +839,6 @@ s32 LinkLobby_RunBattleApplication(void)
 				Engine_GameFlagClear(0x172);
 				Engine_GameFlagClear(0x16c);
 				Engine_GameFlagSet(0x202);
-				/* FAKEMATCH: Select the shared-tail message before its answer store. */
 				line = msg + 7;
 				gGameState.link_tallies[3] = answer;
 				goto message;
@@ -1354,10 +1352,8 @@ s32 LinkLobby_RunRoundResult(void)
 
 				Engine_GameFlagClear(0x173);
 				GameFlag_SetByte(0x3f8, -1);
-				/* FAKEMATCH: one scalar holds the row address, then its score. */
-				score = (u32)&state->link_tallies[3];
-				UiText_DrawQuantity(*(u16 *)score, 5);
-				score = *(u16 *)score;
+				UiText_DrawQuantity(state->link_tallies[3], 5);
+				score = state->link_tallies[3];
 				if (state->link_tallies[2] < score)
 				{
 					state->link_tallies[2] = score;

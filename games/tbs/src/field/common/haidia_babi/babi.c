@@ -395,7 +395,7 @@ void FieldScene_RunComplexActorSequence(void)
 	s32					  ground;
 
 	control = (struct EventWork **)Ram_EventWork;
-	/* FAKEMATCH: needed to match: stage the root reads before consuming the event record. */
+	/* FAKEMATCH: needed to match: stage the root reads before consuming the event record. Read in place: differ 12 (map work first) or 14 (view centre first). */
 	{
 		struct EventWork *event = *control;
 
@@ -598,7 +598,7 @@ void FieldScene_RunPaletteRampSequence(void)
 	Engine_MapCopyCellsTo(65, 53, 88, 24, 2, 2);
 	DisplayBlend_EnableRunScript();
 	SetBlendTarget(0x3f42);
-	/* FAKEMATCH: needed to match: keep the initial value/port publication boundary. */
+	/* FAKEMATCH: needed to match: keep the initial value/port publication boundary. SetBlendAlpha(0x100c) alone: differ 10. */
 	do
 	{
 		s32 value = 0x100c;
@@ -1067,8 +1067,7 @@ void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
 				sprite->flags = 0;
 				Resource_ResetEntry(sprite->vram_block);
 				sprite->vram_block = work->vram_block;
-				/* FAKEMATCH: needed to match: byte access avoids a dead byte zero and preserves the motion/spin zero and address registers. */
-				*(u8 *)&part->display_flags |= 1;
+				sprite->unknown_1d_0 = 1;
 				sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
 				sprite->full_color = 0;
 				sprite->shape = 1;

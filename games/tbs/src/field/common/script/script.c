@@ -5287,32 +5287,12 @@ void Tilemap_ConvertBuffer(void)
 	u32		  size;
 
 	size = 0x8000;
-	/* FAKEMATCH: needed to match: the do-while block keeps the allocation next to the copy that uses it */
-	do
-	{
-		saved = (u8 *)Runtime_BumpAllocateAlternatePool(size);
-		Iwram_CopyWords(saved, Ram_MapCellBuffer, size);
-	} while (0);
+	saved = (u8 *)Runtime_BumpAllocateAlternatePool(size);
+	Iwram_CopyWords(saved, Ram_MapCellBuffer, size);
 	RamCode_Load(routine, Tile_ConvertMap, Tile_ConvertMapCodeSize);
 	routine((gMapCellBuffer + 0x8000), Ram_MapCellBuffer, saved);
 	MemFree(routine);
 	MemFree(saved);
-}
-
-static __inline__ void CopyCell(u32 *map, u8 *base, u32 rowmod, u32 colmod)
-{
-	/* FAKEMATCH: needed to match: helper scope gives each cell its own table-pointer lifetime. */
-	u32 *tiles;
-	u8	*dest;
-	u32	 index = (*map << 20) >> 19;
-
-	tiles = (u32 *)Ram_MapBlocks;
-	tiles += index;
-	dest = base + (rowmod + colmod) * 2;
-	*(u32 *)dest = *tiles;
-	tiles = (u32 *)(Ram_MapBlocks + 4);
-	tiles += index;
-	*(u32 *)(dest + 64) = *tiles;
 }
 
 static __inline__ void CopyBlock(u32 *map, u8 *base, u32 rowmod, u32 colmod, u32 parity)
@@ -5556,9 +5536,19 @@ void Map_RenderMetatileRow(u32 a0, s32 a1, s32 a2)
 	for (counter = 0; counter <= 15; counter++)
 	{
 		u32 *map = (u32 *)Ram_MapCellBuffer;
+		u32 *tiles;
+		u8	*cell;
+		u32	 index;
 
 		map += row + col;
-		CopyCell(map, dest, rowmod, colmod);
+		index = (*map << 20) >> 19;
+		tiles = (u32 *)Ram_MapBlocks;
+		tiles += index;
+		cell = dest + (rowmod + colmod) * 2;
+		*(u32 *)cell = *tiles;
+		tiles = (u32 *)(Ram_MapBlocks + 4);
+		tiles += index;
+		*(u32 *)(cell + 64) = *tiles;
 		col = (col + 1) & 0x7F;
 		colmod = (colmod + 2) & 30;
 	}
@@ -5755,7 +5745,7 @@ struct TilePos
 
 void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y, u32 dst_x, u32 dst_y, u32 width, u32 height)
 {
-	/* FAKEMATCH: needed to match: temporary sharing preserves register allocation and scheduling without changing the frame or instructions. */
+	/* FAKEMATCH: needed to match: temporary sharing preserves register allocation and scheduling without changing the frame or instructions. Measured 2026-10-11, before the volatile casts on the two word copies were dropped as unneeded: i = 0 after the offset differs 59, at the top of the body 32; a fresh bytes = cell * 8 is hoisted by loop.c, 158; the scale before the first destination, 4; address expressions without scr and blk, 113-153. A plain body differs 214. */
 	u32							   *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
 	u32							   *dst = (u32 *)Ram_MapCellBuffer + (dst_y * 128 + dst_x);
 	register struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
@@ -5793,31 +5783,6 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y, u32 dst_x, u32 dst_y, u32
 			dst[0] = cell | tmp3;
 			tmp6 = tmp12;
 			dst++;
-			/* FAKEMATCH: cell and i are ordinary locals; three measured forms
-             * replace the r5 pin on cell and the asm barrier on its scale.
-             * 1. i = 0 here, not after the offset: i's live length (54 -> 60
-             *    insns, 22 refs) drops its global-allocation priority below
-             *    cell's (15 refs over 30), so cell takes r5 and i r6 as the
-             *    native does (i = 0 after the offset: differ 59; at the top of
-             *    the body: 32).
-             * 2. The scale goes into the x-loop scratch tmp11 inside the layer
-             *    loop: tmp11's first reference is outside that loop, so loop.c
-             *    (reg_in_basic_block_p under maybe_never) leaves the shift in
-             *    the conditional block; a fresh `u32 bytes = cell * 8` is
-             *    invariant and hoisted before the window tests (differ 158).
-             * 3. The scale comes after the first destination: cell's r5 is
-             *    still live when reload materializes 0x6002800 for the folded
-             *    add, so reload picks r2 (scale first: r5, differ 4).
-             * The scr/blk variables and the dest = (u8 *)scr / tiles = (u8 *)blk
-             * copies keep the layer loop at 31 real insns, above loop.c's
-             * threshold of 30, so the four address constants and the 0x800
-             * step stay in the loop (plain expressions: 29 insns, hoisted,
-             * differ 113-153).
-             * 4. The two word copies read and write through volatile casts: the
-             *    VRAM store is hardware, and the volatile load from the block
-             *    buffer keeps its add apart from the load (a non-volatile load
-             *    combines into ldr [r, r]); these four volatiles replaced two pins
-             *    and two barriers and raised the volatile count (2026-10-11). */
 			i = 0;
 			tmp15 = y & 15;
 			tmp3 = tmp15;
@@ -5845,7 +5810,7 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y, u32 dst_x, u32 dst_y, u32
 					blk = (u32)Ram_MapBlocks;
 					tiles = (u8 *)blk;
 					tiles += tmp11;
-					*(volatile u32 *)dest = *(volatile u32 *)tiles;
+					*(u32 *)dest = *(u32 *)tiles;
 
 					blk = (u32)Ram_MapBlocks + 4;
 					tiles = (u8 *)blk;
@@ -5853,7 +5818,7 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y, u32 dst_x, u32 dst_y, u32
 					scr = 0x06002840;
 					dest = (u8 *)scr;
 					dest += offset;
-					*(volatile u32 *)dest = *(volatile u32 *)tiles;
+					*(u32 *)dest = *(u32 *)tiles;
 					break;
 				}
 				offset += 0x800;
@@ -6102,7 +6067,7 @@ void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 
 //--------------------------------------------------------------------------
 void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y)
 {
-	/* FAKEMATCH: needed to match: word/index temporaries preserve register allocation; the plain body allocates differently and uses a 40-byte frame. */
+	/* FAKEMATCH: needed to match: word/index temporaries preserve register allocation; the plain body allocates differently and uses a 40-byte frame. Measured 2026-10-11, before the volatile casts on the two word copies were dropped as unneeded: i = 0 after pos = view differs 38; the scale into n, 52; the scale before the first destination, 54. A plain body differs 204. */
 	s32					   y;
 	u32					  *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
 	u32					  *dst = &((u32 *)Ram_MapCellBuffer)[dst_y * 128 + dst_x];
@@ -6147,30 +6112,6 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 				tmp12 = x & 15;
 				tmp6 = tmp12;
 				dst += 1;
-				/* FAKEMATCH: the r3 pin on the scaled cell and the consumed-base
-				 * barrier are replaced by three measured forms.
-				 * 1. i = 0 here, before the offset: i's live length (58 -> 60
-				 *    insns, 22 refs) drops its global-allocation priority below
-				 *    cell's (15 refs over 30), so cell keeps r5 and i r6 (i = 0
-				 *    after pos = view: differ 38, cell in r6).
-				 * 2. The scale goes into the x-loop scratch tmp13 inside the layer
-				 *    loop: its first reference is outside that loop, so loop.c
-				 *    (reg_in_basic_block_p under maybe_never) leaves the shift in
-				 *    the conditional block instead of hoisting the invariant
-				 *    before the window tests; being block-local and untied, it
-				 *    takes r3 like the pinned form (scale into n: differ 52).
-				 * 3. The scale comes after the first destination: cell's r5 is
-				 *    still live when reload materializes 0x6002800 for the folded
-				 *    add, so reload picks r2 instead of its round-robin r5 (scale
-				 *    first: differ 54).
-				 * The scr/blk variables and the dest = (u8 *)scr / tiles = (u8 *)blk
-				 * copies keep the layer loop above loop.c's threshold of 30 real
-				 * insns, so the four address constants stay in the loop.
-				 * 4. The two word copies read and write through volatile casts: the
-				 *    VRAM store is hardware, and the volatile load from the block
-				 *    buffer keeps its add apart from the load (a non-volatile load
-				 *    combines into ldr [r, r]); these four volatiles replaced two pins
-				 *    and two barriers and raised the volatile count (2026-10-11). */
 				i = 0;
 				tmp3 = y & 15;
 				tmp13 = tmp3 << 5;
@@ -6197,7 +6138,7 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 						blk = (u32)Ram_MapBlocks;
 						tiles = (u8 *)blk;
 						tiles += tmp13;
-						*(volatile u32 *)dest = *(volatile u32 *)tiles;
+						*(u32 *)dest = *(u32 *)tiles;
 
 						blk = (u32)Ram_MapBlocks + 4;
 						tiles = (u8 *)blk;
@@ -6205,7 +6146,7 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 						scr = 0x06002840;
 						dest = (u8 *)scr;
 						dest += offset;
-						*(volatile u32 *)dest = *(volatile u32 *)tiles;
+						*(u32 *)dest = *(u32 *)tiles;
 						break;
 					}
 					n = 0x800; // つぎのレイヤーの BG マップ
@@ -8336,21 +8277,17 @@ void Ui_SetGridColumnPriority(s32 slot, s32 value)
 
 void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
 {
-	s32						  index;
-	s32						  count;
-	s32						  offset;
-	struct AnimationMetadata *metadata;
-	struct AnimationEntry	 *entry;
-	struct AnimationObject	 *object;
+	s32						count;
+	struct AnimationObject *object;
 
 	object = gSpriteObjects;
 	count = 0;
-	/* FAKEMATCH: needed to match: the precomputed slot lane keeps the offset addition outside the loop; typed indexing moves it inside. */
-	offset = (3 & slot) * sizeof(void *) + (u32) & ((struct AnimationObject *)0)->entries;
-	index = 0;
 	do
 	{
-		entry = *(struct AnimationEntry **)((u8 *)object + offset);
+		struct AnimationEntry	 *entry = object->entries[slot & 3];
+		struct AnimationMetadata *metadata;
+		s32						  index = 0;
+
 		if (entry->scripts != 0)
 		{
 			metadata = Resource_GetMetadataRecordFar(entry->anim_id);

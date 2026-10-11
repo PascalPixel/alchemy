@@ -595,51 +595,29 @@ void Menu_ReleaseEntryObjects(void)
 
 void Menu_UpdateEntryObjectTransforms(void)
 {
-	/* FAKEMATCH: signed sprite-byte writes and the byte cursor preserve loop registers and write order. */
-	u8	*p;
-	s32	 pos[2];
-	s32	 trans[4];
-	s32 *pp;
-	s32 *tp;
-	s16 *hp;
-	s32	 i;
-	s32	 cnt;
+	struct PsynergyMenuState *menu = gMenuWork;
+	s32						  pos[2];
+	s32						  trans[4];
+	s32						  i;
+	s32						  cnt;
 
-	p = (u8 *)gMenuWork;
 	cnt = (u16)Party_CountActiveOwnersFar();
-	i = 0;
-	if (i < cnt)
+	for (i = 0; i < cnt; i++)
 	{
-		pp = pos;
-		tp = trans;
-		hp = (s16 *)(p + 308);
-		p += 276;
-		do
-		{
-			void *obj;
-			s32	  top;
+		struct AnimationObject *obj = menu->tab_objects[i];
+		s32						top = 0x01e20000 - ((s16)menu->row_positions[i] << 16);
 
-			top = 0x01e20000 - (hp[8] << 16);
-			obj = *(void **)p;
-			if (obj != 0)
-			{
-				*((s8 *)obj + 9) &= -13;
-				pos[0] = *(s32 *)(p + 64);
-				pp[1] = *(s32 *)(p + 64);
-				tp[1] = top;
-				tp[0] = hp[0] << 16;
-				/* FAKEMATCH: needed to match: a one-pass block keeps the transform stores in order */
-				do
-				{
-					tp[2] = (hp[8] << 16) + top;
-				} while (0);
-				tp[3] = 0;
-				Object_ApplyProjectedPlacementFar(obj, tp, pp, 0x4000);
-			}
-			i++;
-			hp++;
-			p += 4;
-		} while (i < cnt);
+		if (obj != 0)
+		{
+			obj->part[0].priority = 0;
+			pos[0] = menu->owner_scale[i];
+			pos[1] = menu->owner_scale[i];
+			trans[0] = (s16)menu->tab_x[i] << 16;
+			trans[1] = top;
+			trans[2] = ((s16)menu->row_positions[i] << 16) + top;
+			trans[3] = 0;
+			Object_ApplyProjectedPlacementFar(obj, trans, pos, 0x4000);
+		}
 	}
 }
 
@@ -9027,7 +9005,6 @@ s32 DjinnMenu_ShowHelp(void)
 	s32					  win_b;
 	s32					  win_a;
 	struct DjinnMenuWork *menu;
-	void				**slot_cells;
 	struct UiRenderWork	 *work;
 	s32					  result;
 	s32					  previous;
@@ -9038,10 +9015,8 @@ s32 DjinnMenu_ShowHelp(void)
 	s32					  cnt;
 	s32					  list_message;
 
-	/* FAKEMATCH: needed to match: the menu/render heap-cell slice avoids four bytes and changed literal order from separate named cells. */
-	slot_cells = (void **)&gMenuWork;
-	menu = slot_cells[0];
-	work = slot_cells[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU];
+	menu = WORK_SLOT(HEAP_SLOT_MENU);
+	work = WORK_SLOT(HEAP_SLOT_WINDOW);
 	result = 0;
 	previous = 0;
 	selection = 0;

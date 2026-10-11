@@ -279,7 +279,6 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
 	s32 next_frame;
 	s32 p10;
 	s32 p10b;
-	/* FAKEMATCH: x precedes z to break their equal allocation priority. */
 	s32				   p9;
 	s32				   p11;
 	s32				   p9b;

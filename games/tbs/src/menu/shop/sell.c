@@ -2105,7 +2105,7 @@ s32 EventTable_CopyRowHeader(s32 row_no, s16 *output)
 		src = Shop_StockTable[row_no];
 		do
 		{
-			/* FAKEMATCH: only the copy read is volatile, so its lifetime stays separate from the signed sentinel read. */
+			/* FAKEMATCH: only the copy read is volatile, so its lifetime stays separate from the signed sentinel read. Without volatile: differ 41; indexed and while forms: 34 to 54. */
 			*dst = *(volatile s16 *)src;
 			count++;
 			src++;
@@ -2570,11 +2570,6 @@ void BattleFx_UpdateRadialMotion(struct EffectSlot *effect)
 	}
 }
 
-union PositionWord
-{
-	s32 w;
-	s16 h[2];
-};
 
 enum InnMessageId
 {
@@ -2625,8 +2620,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
 	callback_flags = 0xc80;
 	Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callback_flags);
 
-	/* FAKEMATCH: the x store goes through a union with a halfword view so it may alias the member_z load, which keeps the reference schedule. */
-	((union PositionWord *)&position.x)->w = shop->party_member_x[member] << 16;
+	position.x = shop->party_member_x[member] << 16;
 	position.z = (shop->party_member_y[member] << 16) + 0xfff40000;
 
 	i = 0;

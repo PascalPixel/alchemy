@@ -1682,10 +1682,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 		palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteA);
 		break;
 	}
-	{
-		/* FAKEMATCH: needed to match: called through a pointer, the routine's address loads before the palette's */
-		Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-	}
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 
 	// 粒：x は角度、z は半径 (1/16 ドット単位)、i フレーム待ってから昇る
 	for (i = 0; i != 128; i++)
@@ -1806,7 +1803,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 //--------------------------------------------------------------------------
 void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect)
 {
-	/* FAKEMATCH: needed to match: never read: the native frame keeps 12 unused bytes at sp+44..55, exactly this struct */
+	/* FAKEMATCH: needed to match: never read: the native frame keeps 12 unused bytes at sp+44..55, exactly this struct 2026-10-11: without it only the frame shrinks (differ 4). */
 	struct EffectPosition	 position;
 	struct BattleEffectWork *work;
 	void					*canvas;
@@ -1840,9 +1837,6 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 	u8							*start_x;
 	s32							 cx;
 	s32							 cy;
-	s32							 cell_size;
-	u8							*cells;
-	u32							 cell_fill;
 
 	work = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
 	size = 0x4000;
@@ -1903,10 +1897,6 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 	draw.hikaku = cache[HEAP_SLOT_BLITTER_ALTERNATE];
 
 	// 片：中心 (32, 60) から外へ、距離の 1/4 の速さで飛ぶ
-	/* FAKEMATCH: needed to match: the copy and fill operands set here, before the piece loop, so CSE does not share them and the pair reloads both as the native does */
-	cell_size = 0x7800;
-	cells = Ram_MapCellBuffer;
-	cell_fill = 0x01010101;
 	start_y = BattlePieceStartY;
 	start_x = BattlePieceStartX;
 	r = 0;
@@ -1927,8 +1917,8 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 	}
 
 	// VRAM 0x06008000 の絵を写してから色 1 で埋め、パレット 6〜13 を白にする
-	Iwram_CopyWords(cells, (void *)0x06008000, cell_size);
-	Iwram_FillWords(cells, cell_size, cell_fill);
+	Iwram_CopyWords(Ram_MapCellBuffer, (void *)0x06008000, 0x7800);
+	Iwram_FillWords(Ram_MapCellBuffer, 0x7800, 0x01010101);
 	view->busy = 1;
 	work->saved_bg1_x = gBgScroll[1].x;
 	work->saved_bg1_y = gBgScroll[1].y;
@@ -2472,7 +2462,6 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
 	if (mode == 0)
 	{
 		void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
-		/* FAKEMATCH: needed to match: the copier address is set before the costly 0x05000000 operand, as the reference loads it */
 		Iwram_CopyWords((void *)0x05000000, palette, 128);
 	}
 	work->transfer_mode = 2;
@@ -2554,7 +2543,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
 	register s32 frame __asm__("r9");
 	s32			 i;
 
-	/* FAKEMATCH: needed to match: size and step first hold the slot table and blend register addresses, sharing their registers */
+	/* FAKEMATCH: needed to match: size and step first hold the slot table and blend register addresses, sharing their registers 2026-10-11: plain slot reads and REG_BLDALPHA differ 56; the reads alone 40, the register alone 50. */
 	size = (s32)&Ram_WorkSlot[40];
 	canvas = *(void **)size;
 	work = *(struct BattleEffectWork **)(size - 4);
@@ -3968,7 +3957,7 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
 		GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
 	work->transfer_mode = 2;
-	/* FAKEMATCH: needed to match: reading the second blitter through the slot pointer's own variable keeps it in that register between the two transfer stores */
+	/* FAKEMATCH: needed to match: reading the second blitter through the slot pointer's own variable keeps it in that register between the two transfer stores 2026-10-11: a plain read of the second slot after the two stores differs 4 (ldr r5 falls behind movs r3, #50); before or between them 10 to 14. */
 	state += 188; // gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE]
 	state = *(u8 **)state;
 	work->transfer_value = 50; // 転送のたびに半分へ減らして残像にする
@@ -4470,7 +4459,7 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
 
 							shot->y = 0;
 							shot->variant = 1;
-							/* FAKEMATCH: needed to match: native loads the table address before the row (r0, r1) */
+							/* FAKEMATCH: needed to match: native loads the table address before the row (r0, r1) 2026-10-11: SevenMode_Records[mode * 2] in the test differs 135, as a conditional expression too. */
 							row = mode * 2;
 							if (records[row] == 0)
 								count = 4;
@@ -4567,7 +4556,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
 	void					*cells;
 	DrawRectangleFn			 rectangle[2];
 	struct MotionObject		*member_object;
-	/* FAKEMATCH: needed to match: the second position is never used: it gives the frame its native 76 bytes */
+	/* FAKEMATCH: needed to match: the second position is never used: it gives the frame its native 76 bytes 2026-10-11: a single position shrinks only the frame (differ 4). */
 	struct EffectPosition pos[2];
 	s32					  curve[2];
 	s32					  draw_enabled;
@@ -7250,7 +7239,6 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
 	if (work->effect->variant != 2)
 	{
 		void *palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteB);
-		/* FAKEMATCH: needed to match: calling through a local copy of the routine's address loads that address before the palette address is shifted into place */
 		Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 	}
 
@@ -7651,7 +7639,6 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 	REG_BLDALPHA = 0x1010;
 	Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1, 1);
 	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-	/* FAKEMATCH: needed to match: forwarded through Call3, each palette copy loads its routine before it shifts the destination, as the reference does */
 	if (work->effect->variant == 0)
 		Iwram_CopyWords(
 			(s32)BG_PLTT, (s32)Resource_GetTableEntry((s32)&ResourceId_RedPaletteB), 128);
@@ -7944,7 +7931,6 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
 		Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work->sheet, 1, 0);
 		palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
 	}
-	/* FAKEMATCH: needed to match: forwarded through Call3, the palette copy loads its routine before it shifts the destination, as the reference does */
 	Iwram_CopyWords((s32)BG_PLTT, (s32)palette, 128);
 	if (mode == 4)
 		Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
@@ -10362,7 +10348,6 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
 	{
 		palette = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
 	}
-	/* FAKEMATCH: needed to match: forwarded through Call3, the palette copy loads its routine before it shifts the destination, as the reference does */
 	Iwram_CopyWords((s32)BG_PLTT, (s32)palette, 128);
 
 	// ジンの絵 (等倍なら 40x40、横 2 倍なら 20x40 の小さい絵)
@@ -10724,7 +10709,6 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 	Resource_LoadAndDecompress(
 		(s32)&ResourceId_ParticleSpritesD, work->sheet + SERIES_B_FLARES, 0, 0);
 	Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet + SERIES_B_BURST, 1, 1);
-	/* FAKEMATCH: needed to match: forwarded through Call3, each palette copy loads its routine before it shifts the destination, as the reference does */
 	if (mode == 3 || mode == 5)
 	{
 		Resource_LoadAndDecompress(
@@ -11432,7 +11416,6 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 
 	// 背景のキャラ (VRAM 0x06008000 から 0x8000 バイト) を写し、
 	// x 32〜71・y 96〜111 の帯を sheet の先頭へ切り出す
-	/* FAKEMATCH: needed to match: forwarded through Call3, the copy loads the buffer address straight into r0, so the loop below loads its own after the call */
 	Iwram_CopyWords((s32)Ram_MapCellBuffer, 0x06008000, 0x8000);
 	for (row = 0; row != 16; row++)
 	{
@@ -12875,7 +12858,7 @@ void BattleFx_RunOrbitingSparks(void)
 		x_offset = 0;
 	else
 		x_offset = -112;
-	/* FAKEMATCH: needed to match: a one-pass loop is a sched2 barrier, so the seed counter is set before its pointer */
+	/* FAKEMATCH: needed to match: a one-pass loop is a sched2 barrier, so the seed counter is set before its pointer 2026-10-11: without it differ 2 (movs r4, #0 falls behind the particle offset); i = 0 ahead of the store differs 170. */
 	do
 	{
 		REG_BG2X = x_offset << 8;
@@ -12917,7 +12900,7 @@ void BattleFx_RunOrbitingSparks(void)
 				rec[1] = member_object->y;
 				rec[2] = member_object->z;
 				EffectPosition_ApplyBaseAndYOffset(rec, &center);
-				/* FAKEMATCH: needed to match: sched2 barrier, so this store precedes the spark counter as in the reference */
+				/* FAKEMATCH: needed to match: sched2 barrier, so this store precedes the spark counter as in the reference 2026-10-11: without it differ 2 (movs r4, #0 moves ahead of the store). */
 				do
 				{
 					center.x += x_offset;
@@ -13127,7 +13110,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
 	draw[0] = cache[2];
-	/* FAKEMATCH: needed to match: the one-pass block keeps the table address after the second read */
+	/* FAKEMATCH: needed to match: the one-pass block keeps the table address after the second read 2026-10-11: without the block differ 2 (mov r2, sp moves ahead of the first store). */
 	do
 	{
 		draw[1] = cache[3];
@@ -13492,7 +13475,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
 		GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_NURI);
 	second_slot = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
-	/* FAKEMATCH: needed to match: the columns draw through a second pointer to the pair, whose address the frame keeps in a stack slot */
+	/* FAKEMATCH: needed to match: the columns draw through a second pointer to the pair, whose address the frame keeps in a stack slot 2026-10-11: rectangle[side] at the columns differs 22 (the address slot of the pair moves from sp+28 to sp+16). */
 	draw = rectangle;
 	draw[1] = second_slot;
 
@@ -13632,7 +13615,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 						// 4・8 フレーム目に、空きの土けむりをひとつ根もとに出す
 						if ((frame == react_frame) || (frame == (start + 8)))
 						{
-							/* FAKEMATCH: needed to match: the scan reuses length as its puff pointer */
+							/* FAKEMATCH: needed to match: the scan reuses length as its puff pointer 2026-10-11: a block pointer of its own differs 48 (r5 and r6 swap); the puff pointer of the function 271. */
 							length = (u32)gMapCellBuffer;
 							n = 0;
 							while (n != 512)
@@ -14165,7 +14148,6 @@ void BattleFx_PrepareCanvasEffect(
 	s32						 resource;
 	s32						 frame;
 	s32						 i;
-	s32						 size;
 
 	heap_cache = (void **)gBattleFxWork;
 	cursor = heap_cache;
@@ -14174,8 +14156,6 @@ void BattleFx_PrepareCanvasEffect(
 	sheet = heap_cache[2];
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0);
-	/* FAKEMATCH: needed to match: the canvas size sits in a local set here, well ahead of the two clears that use it */
-	size = 0x4000;
 	work->fade_frames = 24;
 	work->fade_step = 0;
 	if (kind > 3)
@@ -14395,8 +14375,8 @@ void BattleFx_PrepareCanvasEffect(
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
 	Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-	Iwram_ClearWords((void *)0x06004000, size);
-	Iwram_ClearWords(canvas, size);
+	Iwram_ClearWords((void *)0x06004000, 0x4000);
+	Iwram_ClearWords(canvas, 0x4000);
 	REG_BLDALPHA = 0x1010;
 }
 
@@ -14826,7 +14806,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 								 * before the hit test, preserving the native sign
 								 * result and duplicated side check. Both updates
 								 * disappear; removing both guards loses three
-								 * English instructions and changes 77 rows. */
+								 * English instructions and changes 77 rows. 2026-10-11: one test after an if/else that sets hit differs 65. */
 								if (tgt)
 								{
 									hit ^= x;
@@ -15189,7 +15169,7 @@ void BattleFx_RunParticleFieldVariant3(s32 effect)
 //--------------------------------------------------------------------------
 void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect, s32 variant)
 {
-	/* FAKEMATCH: needed to match: the blitter/camera declarations and independent store order preserve spill slots and loop preheader order */
+	/* FAKEMATCH: needed to match: the blitter/camera declarations and independent store order preserve spill slots and loop preheader order 2026-10-11: the camera read is the plain slot now; Ram_MapCellBuffer at the two uses of cells differs 2 (its load moves ahead of lsls r3 at the packing call). */
 	void					**heap;
 	void					**cursor;
 	struct BattleEffectWork	 *work;
@@ -15216,9 +15196,7 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect, s32 v
 	cursor = heap;
 	work = *cursor++;
 	canvas = *cursor;
-	camera =
-		*(struct BattleCamera **)((u8 *)heap
-								  - (HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_CAMERA) * sizeof(void *));
+	camera = heap[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
 	sheet = heap[2];
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0);
@@ -15666,12 +15644,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal)
 	u8 *res = Resource_GetTableEntry(id);
 
 	if (copy_pal != 0)
-	{
-		/* FAKEMATCH: the routine is called through a local pointer to its fixed entry; a plain call matches The Broken Seal through its IWRAM call layer but not The Lost Age, whose header calls the entry directly (all six of its editions differ). */
-		s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
-
-		copy((void *)0x05000000, res, 128);
-	}
+		Iwram_CopyWords((void *)0x05000000, res, 128);
 	if (skip_pal != 0)
 		res += 128;
 	Resource_DecodeType01(res, dst);
@@ -18347,8 +18320,6 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	struct FixedPointPosition *motion;
 	s32						   kind_from_two;
 	s32						   kind_from_four;
-	/* FAKEMATCH: needed to match: declaration order preserves the two temporary stack slots */
-	s32						   origin_x;
 	struct FixedPointPosition *position;
 	struct MotionObject		  *caster_actor;
 	struct EffectStep		  *particle;
@@ -18386,7 +18357,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	LoadResource(&ResourceId_ParticleSpritesA, sprites, 0, 0);
 	LoadResource(&ResourceId_FireStreakSheet, work, 1, 0);
 	LoadResource(&ResourceId_YellowOrbSheet, Ram_MapCellBuffer, 1, 0);
-	/* FAKEMATCH: needed to match: local dimensions preserve the packing argument order */
+	/* FAKEMATCH: needed to match: local dimensions preserve the packing argument order 2026-10-11: literal 40 and 288 differ 4 (movs r2, #40 and the buffer load move ahead of lsls r3). */
 	{
 		s32 width = 40;
 		s32 height = 288;
@@ -18497,7 +18468,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 		work->transfer_value = 50;
 	}
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-	/* FAKEMATCH: needed to match: retain each output pointer while preparing its call */
+	/* FAKEMATCH: needed to match: retain each output pointer while preparing its call 2026-10-11: the pointers set in statements before the calls differ 38, after the calls 142. */
 	EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], target_screen = &target_pos);
 	EffectPosition_ApplyStepAndYOffset(work->effect->actor, caster_screen = &caster_pos);
 	BattleFx_FetchRectangleBlitters(work->effect->side, draw_pair = blitters);
@@ -18599,7 +18570,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 		WaitFrames(1);
 		frame++;
 	} while (frame != 32);
-	/* FAKEMATCH: needed to match: restart the pointer's lifetime after gathering so the projection above uses the stack position directly */
+	/* FAKEMATCH: needed to match: restart the pointer's lifetime after gathering so the projection above uses the stack position directly 2026-10-11: direct djinn_pos stores above, with this as the only assignment, differ 114, as does removing it. */
 	position = &djinn_pos;
 
 	//------------------------------------------------------------------
@@ -18730,17 +18701,14 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 			{
 				particle->velocity_x = ((Random16() & 255) - 127) << 12;
 				particle->velocity_y = ((Random16() & 255) - 64) << 10;
+				particle->velocity_z = ((Random16() & 255) - 127) << 12;
 			}
 			else
 			{
 				particle->velocity_x = ((Random16() & 255) - 127) << 12;
 				particle->velocity_y = ((Random16() & 255) - 64) << 12;
-			}
-			/* FAKEMATCH: needed to match: keep the final velocity store ahead of the lifetime calculation */
-			do
-			{
 				particle->velocity_z = ((Random16() & 255) - 127) << 12;
-			} while (0);
+			}
 			particle->variant = i / 2 + 32;
 		}
 	}
@@ -19083,6 +19051,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 				s32			   column_x;
 				s32			   column_y;
 				s32			   top;
+				s32			   origin_x;
+
 				origin_x = target_screen->x / 2;
 				fall = frame * 32 - 232;
 				scroll = frame * 16 - 48;
@@ -19444,7 +19414,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 			s32 image_y;
 			if (frame <= 5)
 			{
-				/* FAKEMATCH: needed to match: calculate each center before the shared centered draw */
+				/* FAKEMATCH: needed to match: calculate each center before the shared centered draw 2026-10-11: target_screen->x / 2 in each arm differs 147; with offset set first 129; hoisted out of the arms 146. */
 				if (work->effect->side == 0)
 				{
 					image_x = target_screen->x;
@@ -20114,10 +20084,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 
 	// BG の文字ブロック 1 を消して終わる
 	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
-	{
-		/* FAKEMATCH: needed to match: the routine's address is loaded before the size, as a call through a local makes it */
-		Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
-	}
+	Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
 }
@@ -22197,7 +22164,6 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 	struct EffectStep			  *p;
 	DrawRectangle				   blit;
 	volatile u16				  *ime;
-	void						  *colors;
 
 	cache = &((void **)gBattleFxWork)[1];
 	ime = (u16 *)0x04000208;
@@ -22233,8 +22199,6 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 	zoom = 0x80000;
 	near = 0xffff;
 	far = 0;
-	/* FAKEMATCH: needed to match: the palette address set with the initial values spans the ramp loop, so reload rematerialises 0x05000000 at the copy */
-	colors = (void *)0x05000000;
 	Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work, 1, 1);
 	Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageB, work->sheet + 0x600, 0, 0);
 	Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x95c, 1, 0);
@@ -22258,7 +22222,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 		}
 	}
 
-	Iwram_CopyWords(colors, Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet), 128);
+	Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet), 128);
 
 	for (i = 0; i != 128; i++)
 	{
@@ -22289,7 +22253,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 
 	for (frame = 0; frame != 160 && (frame <= 4 || !(gKeysRepeat & (KEY_A | KEY_B))); frame++)
 	{
-		/* FAKEMATCH: needed to match: the frame > 143 block calls through a pointer to the slot table (base kept at sp+56) */
+		/* FAKEMATCH: needed to match: the frame > 143 block calls through a pointer to the slot table (base kept at sp+56) 2026-10-11: set once before the frame loop differs 22 (the preheader reload registers rotate); as a local of the frame > 143 block 579; the slot table named at the uses 581. */
 		slots = (DrawRectangle *)gWorkSlot;
 		if (frame == 143)
 		{
@@ -24765,7 +24729,7 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 #undef MARK
 #undef PATCH
 
-	/* FAKEMATCH: needed to match: one-pass blocks keep each writing step together and in list order while allowing scheduling within each step */
+	/* FAKEMATCH: needed to match: one-pass blocks keep each writing step together and in list order while allowing scheduling within each step 2026-10-11: COPY_FROM, COPY_TWICE and PUT_BRANCH match without their blocks; without, PUT differs 38, COPY 12 and PATCH 2. */
 #define PUT(word)        \
 	do                   \
 	{                    \
@@ -24778,27 +24742,20 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 		dst += (n);                                           \
 		src += (n);                                           \
 	} while (0)
-#define COPY_FROM(from, n)                                     \
-	do                                                         \
-	{                                                          \
-		Dma_Set(from, dst, DMA_COPY_WORDS(n), DMA3_REGISTERS); \
-		dst += (n);                                            \
-	} while (0)
+#define COPY_FROM(from, n)                                 \
+	Dma_Set(from, dst, DMA_COPY_WORDS(n), DMA3_REGISTERS); \
+	dst += (n)
 #define COPY_TWICE(from, n)                                    \
-	do                                                         \
 	{                                                          \
 		const u32 *part = (from);                              \
 		Dma_Set(part, dst, DMA_COPY_WORDS(n), DMA3_REGISTERS); \
 		dst += (n);                                            \
 		Dma_Set(part, dst, DMA_COPY_WORDS(n), DMA3_REGISTERS); \
 		dst += (n);                                            \
-	} while (0)
-#define PUT_BRANCH(target)                         \
-	do                                             \
-	{                                              \
-		*dst = *src++ + BRANCH_FIELD(dst, target); \
-		dst++;                                     \
-	} while (0)
+	}
+#define PUT_BRANCH(target)                     \
+	*dst = *src++ + BRANCH_FIELD(dst, target); \
+	dst++
 #define MARK(site) site = dst
 #define PATCH(site)                         \
 	do                                      \

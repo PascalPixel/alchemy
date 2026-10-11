@@ -3303,7 +3303,7 @@ void SceneEffect_SpawnParticlesBesideActor(void)
 	effect->linked_object = center;
 	effect->update = VinasuChojo_UpdateOrbitingEffect;
 	effect->speed = Engine_MathSin((drift & 0xfffff) >> 4) * 24 >> 16;
-	/* FAKEMATCH: the flag byte is stored through a byte pointer, which may alias the priority read after it; as a plain field store the read's address is set up one instruction earlier. */
+	/* FAKEMATCH: the flag byte is stored through a byte pointer, which may alias the priority read after it; as a plain field store the read's address is set up one instruction earlier. Field store: differ 2; it matches when center->sprite is read through union FieldObject. */
 	(&sprite->flags)[0] = 0;
 	sprite->priority = center->sprite->priority;
 }

@@ -1608,16 +1608,17 @@ void ShianJiin_AskIfCurious(void)
 		Actor_ShowEmote(8, 0x102, 60);
 		Engine_EventSetMessage((s32)MsgShianCanReadMindsKnowCurious);
 		Event_OpenMessage(8, 0);
-		/* FAKEMATCH: needed to match: repeating through this label preserves the question's block order. */
-	ask_again:
-		if (Engine_EventChooseYesNo(0, 0) == 1)
+		do
 		{
+			if (Engine_EventChooseYesNo(0, 0) != 1)
+			{
+				break;
+			}
 			Engine_EventWait(10);
 			Actor_ShowEmote(8, 0x102, 60);
 			Engine_EventSetMessage((s32)MsgShianDontTryHard);
 			Event_OpenMessage(8, 0);
-			goto ask_again;
-		}
+		} while (1);
 	}
 	Engine_EventSetMessage((s32)MsgShianMonstersWaitInHidingWould);
 	Engine_EventWait(10);

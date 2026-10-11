@@ -302,11 +302,7 @@ L_02000626:;
 	Engine_TaskAddCallback(KorimaMagari_CaptureShakeScroll, 0xc80);
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, State_UpdateScrollRegistersWithPreset);
-	/* FAKEMATCH: the do/while (0) wrap keeps the flag and the counter address in r6 and r5. */
-	do
-	{
-		Engine_AudioPlayCue(231);
-	} while (0);
+	Engine_AudioPlayCue(231);
 	KorimaMagari_ShakeChance = 0;
 	do
 	{
@@ -397,13 +393,9 @@ s32 KorimaMagari_SetupBoard(void)
 {
 	struct FieldActor *actor;
 
-	/* FAKEMATCH: the one-pass loop keeps the third cell store ahead of the shared zero. */
-	do
-	{
-		gKorimaMagariReturned = (u16 *)gSceneState;
-		(*(u16 **)&gKorimaMagariLayout) = (u16 *)gSceneState + 1;
-		(*(u16 **)&gKorimaMagariRecords) = (u16 *)gSceneState + 2;
-	} while (0);
+	gKorimaMagariReturned = (u16 *)gSceneState;
+	(*(u16 **)&gKorimaMagariLayout) = (u16 *)gSceneState + 1;
+	gKorimaMagariRecords = (s16 *)gSceneState + 2;
 	Engine_MapCopyCells(32, 0, 64, 32, 0, 64);
 	Engine_MapCopyCellAttributes(0, 0, 32, 32, 0, 64);
 	Engine_MapCopyCellAttributes(32, 0, 32, 32, 0, 32);

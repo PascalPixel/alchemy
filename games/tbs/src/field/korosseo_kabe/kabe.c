@@ -1218,8 +1218,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 speaker)
 		((s32 (*)())Korosseo_FadeInCompetitor)(ACTOR_PARTY_LEADER, 632, z);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 		Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, z);
-		/* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-		Value3(Engine_ActorFaceDirection, ACTOR_PARTY_LEADER, 0xc000, 20);
+		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 20);
 		battle_owner_69();
 		Camera_SetSpeed(0x4000, 0x800);
 		Camera_MoveTo(0x2180000, -1, 0xa00000, 1);

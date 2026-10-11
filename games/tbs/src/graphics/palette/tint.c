@@ -657,18 +657,15 @@ void Graphics_InterpolatePaletteBuffers(s16 *src, s16 *dst, s16 *step, s32 frame
 	s32 n;
 	s32 from;
 	s32 to;
-	s32 (*divide)(s32, s32);
 
 	if (frames > 0)
 	{
-		/* FAKEMATCH: the routine is called through a local pointer to its fixed entry; a plain call matches The Broken Seal through its IWRAM call layer but not The Lost Age, whose header calls the entry directly (all six of its editions differ). */
-		divide = Iwram_SignedDivideEntry;
 		n = 3 * 512 - 1;
 		do
 		{
 			from = *src;
 			to = *dst;
-			*step = divide(to - from, frames);
+			*step = Iwram_SignedDivide(to - from, frames);
 			n--;
 			src++;
 			dst++;
@@ -679,9 +676,7 @@ void Graphics_InterpolatePaletteBuffers(s16 *src, s16 *dst, s16 *step, s32 frame
 
 void TitlePalette_UpdateFade(void)
 {
-	/* FAKEMATCH: needed to match: the byte-slot read avoids an extra add #128. */
-	struct TitlePaletteWork *work =
-		*(struct TitlePaletteWork **)((u8 *)gWorkSlot + 32 * sizeof(void *));
+	struct TitlePaletteWork *work = gPaletteBufferWork;
 	u16 *delta = work->delta;
 	u16 *current;
 	u16 *packed;

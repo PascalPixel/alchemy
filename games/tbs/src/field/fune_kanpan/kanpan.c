@@ -1507,7 +1507,7 @@ void FieldScene_RunShipDeckEventScript(void)
 		Engine_TaskWait(1);
 	} while (Object_GetById(24)->timer == 0);
 	FuneKanpan_OpenFirstDoor();
-	/* FAKEMATCH: the do/while sets r0 = 21 first, straight after the call. */
+	/* FAKEMATCH: the do/while sets r0 = 21 first, straight after the call. Plain call: differ 2; Engine_ActorWalkTo directly: differ 4. */
 	do
 	{
 		Actor_WalkTo(21, 196, 612);
@@ -1924,7 +1924,7 @@ void FieldScene_ConfigureThreeActors(void)
 	Actor_SetPosition(21, 0xb80000, 0x2780000);
 	record = Object_GetById(21);
 	record->facing = 0xb000;
-	/* FAKEMATCH: needed to match: the work pointer is read as a word, which may alias the facing stores, so they stay ahead of its load. */
+	/* FAKEMATCH: needed to match: the work pointer is read as a word, which may alias the facing stores, so they stay ahead of its load. gEventWork->start_transition: differ 2. */
 	*(s32 *)(*(s32 *)&gEventWork + 0x1c0) = 0x202;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();

@@ -203,7 +203,7 @@ void BiribinoNiwa_RunGardenEvent(void)
 		Actor_WalkToAndWait(11, 0x148, 246);
 		/* FAKEMATCH: called without its prototype, the actor id loads after the two zeros. */
 		((s32 (*)())Engine_ActorSetPosition)(11, 0, 0);
-		/* FAKEMATCH: the do/while keeps this call after the argument setup of the previous one. */
+		/* FAKEMATCH: the do/while keeps this call after the argument setup of the previous one. Plain call or GameFlag_Set: differ 2. */
 		do
 		{
 			Engine_GameFlagSet(0x84a);

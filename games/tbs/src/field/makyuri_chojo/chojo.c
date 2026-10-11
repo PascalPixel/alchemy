@@ -1780,7 +1780,7 @@ void MakyuriChojo_FlickerActorEight(void)
 	spark->source = lamp;
 	spark->update = SceneEffect_UpdateArcPosition;
 	spark->swing = (Engine_MathSin((height & 0xfffff) >> 4) * 24) >> 16;
-	/* FAKEMATCH: the byte view keeps this store ahead of the lamp's reload; the field store lets the reload schedule first (score 210). */
+	/* FAKEMATCH: the byte view keeps this store ahead of the lamp's reload; the field store lets the reload schedule first (score 210). Field store: differ 2. */
 	*(u8 *)&sprite->flags = 0;
 	sprite->priority = lamp->sprite->priority;
 }

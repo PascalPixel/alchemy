@@ -1638,15 +1638,13 @@ void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode)
 void FieldScene_RunLargeStagingSequence(void)
 {
 	u32 i;
-	/* FAKEMATCH: rec's dead zero initializer and the k, none2 and facing temporaries preserve register allocation throughout the scene. */
+	/* FAKEMATCH: rec's dead zero initializer and the none2 temporary preserve register allocation throughout the scene. Without the initializer 170 instructions differ; a plain 0 for none2 is born two instructions later, outranks the callback address and exchanges r9 and r10 with it (14 differ). */
 	s32				   rec = 0;
 	struct FieldActor *rec3;
 	struct FieldActor *rec8;
 	u8				  *record;
 	s32				   none2;
 	s32				   msg;
-	s32				   k;
-	s32				   facing;
 
 	rec3 = Object_GetById(ACTOR_PARTY_LEADER);
 	rec8 = Object_GetById(14);
@@ -1661,22 +1659,21 @@ void FieldScene_RunLargeStagingSequence(void)
 	Map_CopyCellsTo(0, 103, 82, 42, 1, 1);
 	rec = Object_GetById(11);
 	((struct FieldActor *)rec)->motion_flags = 0;
-	k = 0x1840000;
+	((struct FieldActor *)rec)->x.fixed = 0x1840000;
 	((struct FieldActor *)rec)->y.fixed = 0xa00000;
 	((struct FieldActor *)rec)->z.fixed = 0x3480000;
-	((struct FieldActor *)rec)->x.fixed = k;
 	Engine_ActorSetSpriteFlags(rec, 0);
 	rec = Object_GetById(12);
 	((struct FieldActor *)rec)->motion_flags = 0;
 	((struct FieldActor *)rec)->y.fixed = 0xa00000;
 	((struct FieldActor *)rec)->z.fixed = 0x34c0000;
-	((struct FieldActor *)rec)->x.fixed = k;
+	((struct FieldActor *)rec)->x.fixed = 0x1840000;
 	Engine_ActorSetSpriteFlags(rec, 0);
 	rec = Object_GetById(13);
 	((struct FieldActor *)rec)->motion_flags = 0;
 	((struct FieldActor *)rec)->z.fixed = 0x3500000;
 	((struct FieldActor *)rec)->y.fixed = 0xa00000;
-	((struct FieldActor *)rec)->x.fixed = k;
+	((struct FieldActor *)rec)->x.fixed = 0x1840000;
 	Engine_ActorSetSpriteFlags(rec, 0);
 	record = Object_GetById(11);
 	Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
@@ -1790,8 +1787,7 @@ void FieldScene_RunLargeStagingSequence(void)
 	rec8->x.fixed = 0x1ac0000;
 	rec8->y.fixed = 0xd00000;
 	rec8->z.fixed = 0x2480000;
-	facing = 0x8000;
-	rec8->facing = facing;
+	rec8->facing = 0x8000;
 	rec8->update = (void (*)(union FieldObject *))Effect_ConfigureSpawnedParticle;
 	Engine_EventWait(4);
 	Actor_SetSpeed(14, 0x20000, 0x20000);
@@ -1851,7 +1847,7 @@ void FieldScene_RunLargeStagingSequence(void)
 	Engine_ActorRunRepeatedMotion(GERALD, 2);
 	Engine_EventWait(10);
 	Actor_FaceDirection(JASMINE, FACING_EAST, 0);
-	Actor_FaceDirection(GERALD, facing, 40);
+	Actor_FaceDirection(GERALD, 0x8000, 40);
 	Event_ShowTwoMessagesAndWait(1, 1, 2, 25, 2, 5, 10, 14, 4, 14, none2);
 	Engine_EventWait(40);
 	Actor_SetAttachedEffect(JASMINE, 0x102);
@@ -2402,10 +2398,6 @@ void Scene_RepairTheHouse(void)
 		rec->scale_y += 0x1999;
 		Engine_EventWait(1);
 	}
-#if EDITION_INTERNATIONAL
-	/* FAKEMATCH: needed to match: only the international repair sets none again here, which decides whether none or the 0xfe mask takes r5. */
-	none = 0;
-#endif
 	Engine_EventWait(60);
 	Engine_ActorRunRepeatedMotion(GERALD, 2);
 	Actor_FaceDirection(GERALD, 0x5000, 30);
@@ -2583,7 +2575,7 @@ void Scene_RepairTheHouse(void)
 	scene->motion_flags = 3;
 	scene->y.fixed = 0xa00000;
 	scene->target_y = 0x80000000;
-	scene->velocity_y = none;
+	scene->velocity_y = 0;
 #else
 	Object_GetById(ACTOR_PARTY_LEADER)->motion_flags = 3;
 #endif

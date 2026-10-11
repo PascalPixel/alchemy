@@ -1,3 +1,4 @@
+#define OWN_UiText_DrawCharacterAtOffsetFar
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

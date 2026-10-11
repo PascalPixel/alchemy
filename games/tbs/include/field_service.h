@@ -2,6 +2,7 @@
 #define FIELD_SERVICE_H
 
 #include "field_event.h"
+#include "farcall.h"
 
 static inline void Actor_EnableActionCallback(s32 actor, const u8 *table)
 {
@@ -263,8 +264,6 @@ static inline void FieldObject_SetTargetAndCallback(s32 object, s32 target, cons
 {
 	Object_SetTargetAndCallback(object, target, actions);
 }
-
-struct FieldActor *Object_CreateFar();
 
 void Vector_AddPolarOffset();
 

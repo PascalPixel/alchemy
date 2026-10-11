@@ -5,6 +5,7 @@
 
 #include "types.h"
 #include "edition.h"
+#include "farcall.h"
 
 struct ItemDefinition;
 struct RenderInput;
@@ -27,16 +28,11 @@ extern u8			   TestRooms_Placements[];
 void				   BattleMap_ApplyEntranceView(void);
 void				   Debug_RunPaletteEditor(void);
 void				   DebugBattle_ViewMessages(void);
-s32					   Djinn_AddToOwnerFar(s32 owner, s32 element, s32 djinn);
 void				   Engine_DebugClearWindow(struct RenderInput *window);
 void				   Engine_DebugDrawItemDetails(struct RenderInput *window, s32 item);
 u8					  *Engine_DebugGetAbility(s32 ability);
 struct ItemDefinition *Engine_DebugGetItem(s32 item);
 void				   Engine_DebugRedrawWindow(struct RenderInput *window);
-void				   GameState_InitDefaultsFar(void);
 s32					   Object_GetTriggerTileAheadOfCurrent(void);
-void				   Party_AdvanceOwnerCountToTargetFar(s32 owner, s32 level);
-void				   Ui_AdjustValueWithoutLimitFar(s32, u16 *);
-void				   UiWork_DrainPendingFar(s32);
 
 #endif

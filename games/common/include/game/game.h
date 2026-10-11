@@ -16,6 +16,9 @@
 #if GAME_TLA
 #include "btltype.h"
 #endif
+#if !GAME_TLA
+#include "farcall.h"
+#endif
 
 struct ItemDefinition;
 struct SummonDefinition;
@@ -54,22 +57,14 @@ s32 BattleEffect_ApplyToTargets(s32 effect_id, s32 source_id, s32 target_id, s32
 s32	 Curve_LookupScaledValue(s32 input, s32 halve);
 s32	 Djinn_CheckTurnBalance(s32 from, s32 to);
 void Djinn_CountTurns(u8 *counts);
-s32	 Djinn_TransferFar(s32 owner, s32 element, s32 index, s32 target);
 s32	 DjinnMenu_RunScreen(void);
 s32	 DjinnMenu_SelectDjinn(s32 mode);
-#ifndef OWN_Game_ResetForNewGameFar
-void Game_ResetForNewGameFar(s32 mode);
-#endif
 void GameFlag_ClearBit(s32 flag);
 void GameState_InitDefaults(void);
 void Inventory_AddAndEquip(s32 owner, s32 target);
-#ifndef OWN_Inventory_DiscardFar
-s32 Inventory_DiscardFar(s32 owner, s32 slot);
-#endif
 s32	 Item_ClassifyUseAbility(s32 owner, s32 item);
 void Item_PlayUseAnimation(u32 item);
 s32	 Menu_GetModuloOfSum(s32 arg0, s32 arg1);
-s32	 Menu_RunConfirmSelectionFar(s32 value, s32 x, s32 y, s32 z);
 s32	 Menu_SetFirstObjectRowCoordinates(s32 arg0);
 s32	 Object_CallSpawnRoutineAtOrigin(s32 value);
 void Object_WaitUntilChildValueDiffers(s32 object_id, s32 value);
@@ -87,9 +82,6 @@ u32 Party_GetAverageLevel(void);
 #ifndef OWN_Party_LookupCharacterValueByFlag32
 s32 Party_LookupCharacterValueByFlag32(u32 index);
 #endif
-s32	 Shop_GetSelectionState(s32 owner, s32 slot);
-s32	 Shop_PickUnitItemFar(s32 *owner, s32 *slot);
-void UiText_DecodeMessageFar(s32 message, u16 *buffer, s32 length);
 s32	 DjinnMenu_ShowOwnerStatus(void);
 #endif
 

@@ -3,6 +3,10 @@
 
 #include "types.h"
 #include "layout_guard.h"
+#include "edition.h"
+#if !GAME_TLA
+#include "farcall.h"
+#endif
 
 struct RenderInput
 {
@@ -67,8 +71,10 @@ LAYOUT_OFFSET_GUARD(RenderOutputList_Tail, struct RenderOutputList, tail_link, 4
 struct RenderOutput *RenderOutput_Create(
 	s32 no, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
 
+#if GAME_TLA
 struct RenderOutput *RenderOutput_CreateFar(
 	s32 resource, s32 flags, struct RenderInput *window, s32 x, s32 y);
+#endif
 
 LAYOUT_OFFSET_GUARD(RenderOutput_AnimStep, struct RenderOutput, anim_step, 0x0c);
 

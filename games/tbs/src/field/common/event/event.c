@@ -1,3 +1,4 @@
+#define OWN_UnitGetFar
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

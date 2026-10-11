@@ -4,6 +4,7 @@
 #include "item.h"
 #include "owner_state.h"
 #include "party_state.h"
+#include "farcall.h"
 
 s32					   Inventory_GetQuantity(s32 owner, s32 slot);
 s32					   Inventory_Count(s32 owner);
@@ -24,7 +25,6 @@ s32 Inventory_CheckDiscard(s32 owner, s32 slot);
 s32 PartyInventory_Remove(s32 item);
 s32 PartyInventory_Discard(s32 item);
 s32 Inventory_Break(s32 owner, s32 slot);
-s32 Inventory_BreakFar(s32 owner, s32 slot);
 s32 Inventory_Repair(s32 owner, s32 slot);
 s32 Inventory_CountItem(s32 owner, s32 item);
 s32 PartyInventory_CountItem(s32 item);

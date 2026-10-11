@@ -5,6 +5,9 @@
 
 #include "types.h"
 #include "edition.h"
+#if !GAME_TLA
+#include "farcall.h"
+#endif
 
 extern u8 CharacterMenu_CursorWidths[];
 extern u8 Menu_ListOrderDefault[];
@@ -23,7 +26,9 @@ void	  Menu_AppendResourceEntry(s32 no);
 void	  Menu_EndResourceSelection(void);
 void	  Resource_ResetPendingTransfer(void);
 s32		  Shop_CanServe(s32 entry_no, s32 kind);
+#if GAME_TLA
 void	  UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
+#endif
 
 #if !GAME_TLA
 struct AnimationObject;
@@ -137,29 +142,15 @@ extern const u8	 WorkspaceOptions_SliderTiles[];
 #ifndef OWN_Ability_GetData
 struct BtlAct *Ability_GetData(s32 action_id);
 #endif
-s32	 Ability_LoadGlyphFar(s32, s32, s32 *, s32 *, s32);
 s32	 AbilityMenu_BuildAvailableList(void);
 void AffineEffect_UpdateFrame(void);
-void AnimationObjects_SetActiveTimerStepsFar(struct AnimationObject *object, s32 arg);
 s32	 Audio_PlayCueReturnOne(s32 cue);
 void AudioCommand_WaitForStateByteClear(void);
-void BattleFx_ClearOwnedSlotFar(struct EffectSlot *effect);
-void BattleFx_ClearRandomParticlesFar(void);
-#ifndef OWN_BattleFx_GetResourceIdFar
-s32 BattleFx_GetResourceIdFar(u16);
-#endif
-s32	 BattleFx_HasMatchingEvent5Far(u8 effect);
-s32	 BattleFx_HasReachedTargetFar(struct EffectSlot *);
-s32	 BattleFx_HasTriggerFar(s32 item);
 void BattleFx_UpdateRadialMotion(struct EffectSlot *effect);
 void BattleUnit_ResetStateByMode(s32 id, s32 mode);
 s32	 CharacterMenu_UpdateSelectionIcons(const u8 *enabled);
 void Clear_UpdateBlend(void);
 void Debug_SelectAbilityPair(void);
-#ifndef OWN_Djinn_DeactivateFar
-u32 Djinn_DeactivateFar(s32 owner, s32 index, s32 bit);
-#endif
-s32 Djinn_IsActiveFar(s32 unit_id, s32 element, s32 index);
 #ifndef OWN_Djinn_ListOwnerEntries
 s32 Djinn_ListOwnerEntries(u16 *out, s32 owner, s32 element);
 #endif
@@ -171,16 +162,11 @@ s32 DjinnMenu_DrawStatPreview(
 #ifndef OWN_DjinnMenu_ShowCurrentList
 s32 DjinnMenu_ShowCurrentList(void);
 #endif
-void EffectSlot_InitializeFar(struct EffectSlot *effect, s32 mode, s32 x, s32 z);
-void EffectSlot_SetObjectModeFar(struct EffectSlot *effect, s32 value);
-void EffectSlot_SetPositionFar(struct EffectSlot *, s32, s32);
-void EffectSlot_UpdateFar(s32);
 void EventTable_ApplyRowAbilities(s32 row_no);
 s32	 EventTable_CopyRowHeader(s32 row_no, s16 *output);
 s32	 EventTable_GetRowLimit(void);
 s32	 EventTable_GetRowType(s32 index);
 void Graphics_AdjustPaletteBank(s32 arg0);
-void Graphics_ExpandVramTilesByColorTableFar(void *);
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void);
 #ifndef OWN_Inn_CheckIn
 s32 Inn_CheckIn(s32 mode, s32 object_id);
@@ -188,27 +174,11 @@ s32 Inn_CheckIn(s32 mode, s32 object_id);
 void Inn_Cleanup(void);
 void Inn_PlaySleep(s32 room_price);
 s32	 Inn_RoomPrice(s32 mode);
-s32	 Inventory_CheckDiscardFar(s32, s32);
-s32	 Inventory_CountFar(s32 unit_id);
-#ifndef OWN_Inventory_EquipFar
-s32 Inventory_EquipFar(s32 owner, s32 slot);
-#endif
-#ifndef OWN_Inventory_FindEquippedFar
-s32 Inventory_FindEquippedFar(s32 owner, s32 type);
-#endif
-void Inventory_RepairFar(s32 unit_id, s32 slot);
 #ifndef OWN_InventoryMenu_ShowModalMessage
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y);
 #endif
 s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode);
-#ifndef OWN_Item_AdjustCounterFar
-s32 Item_AdjustCounterFar(s32 item_id, s32 delta);
-#endif
 s32 Item_FindSlot(s32 unit_id, s32 item_id);
-s32 Item_GetEquipmentGroupFar(s32 item);
-#ifndef OWN_Item_IsCompatibleWithOwnerFar
-s32 Item_IsCompatibleWithOwnerFar(s32 owner_id, s32 item_id);
-#endif
 void ItemMenu_ApplyFlags(const u8 *flags);
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
 s32	 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state);
@@ -216,9 +186,6 @@ void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items);
 s32	 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1, struct MenuResult *state);
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags);
 void ItemMenu_ResetCategory(void);
-#ifndef OWN_Link_DrawShiftedTilePairFar
-void Link_DrawShiftedTilePairFar(s32 offset);
-#endif
 s32 LinkLobby_ExchangePartyRecords(void);
 s32 LinkLobby_PartyContains(s32 id);
 s32 LinkLobby_PeerSlotMatches(s32 slot);
@@ -255,28 +222,22 @@ void Menu_InitializeSelectedWorkspace(void);
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base);
 void Menu_LoadSelectedResource(void);
 void Menu_LoadSelectionNodeResource(struct SelectionScreen *state, u32 index);
-s32	 Menu_OpenActionFlow(void);
 s32	 Menu_OpenBackdropScreen(void);
-s32	 Menu_OpenConfirmPromptFar(void);
 #ifndef OWN_Menu_OpenSelectionWindow
 void Menu_OpenSelectionWindow(s32 mode, u32 count);
 #endif
 void Menu_PlaceEntryObjectsInGrid(s32 origin_x, s32 origin_y, s32 phase);
 void Menu_ReleaseEntryObjects(void);
-void Menu_ReleaseEntryObjectsFar(void);
 void Menu_ReloadNodeResource(struct SelectionScreen *state, u32 index);
 void Menu_ResetTwoResourceEntries(void);
 s32	 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action);
 s32	 Menu_RunConfirmSelection(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-s32	 Menu_RunConfirmSelectionAtFar(s32, s32, s32);
 s32	 Menu_RunResourceSelectionLoop(s32 initial);
 void Menu_RunSelectedWorkspaceEntry(void);
 s16	 Menu_RunSelection(void);
 s32	 Menu_RunWorkspaceOptions(void);
 s32	 Menu_RunWorkspaceSelectionLoop(void);
 void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward);
-s32	 Menu_SelectEntry11To14Far(s32 choice);
-s32	 Menu_SelectEntry19To1cFar(s32 prev);
 s32	 Menu_SelectEntry20To21(s32 arg0);
 s32	 Menu_SelectResource(s32 start, s32 goal);
 s32	 Menu_SelectTopEntry(s32 sel);
@@ -295,18 +256,11 @@ void Menu_UpdateSecondObjectRowPositions(void);
 u32	 Menu_WaitForSelectionInput(u32 mode);
 void MenuSelection_DrawFrame(void);
 void MenuSelection_DrawSideMarker(struct SelectionScreen *state, s32 index);
-s32	 Object_GetTriggerTileAheadOfCurrentFar(void);
 #ifndef OWN_ObjectPlacement_CreateGroup
 void ObjectPlacement_CreateGroup(
 	struct RenderInput *origin, s32 x, s32 y, struct PlacementDescriptor *descriptor);
 #endif
 void OptionMenu_InitializeWork(void);
-u32	 Owner_GetLevelThresholdFar(s32 owner_id, s32 level);
-s32	 Owner_GetResistanceValueFar(s32 unit, s32 element);
-#ifndef OWN_Owner_RecalculateStatsFar
-void UnitCalcFar(s32 owner);
-#endif
-void Owner_RefreshClassActionsFar(s32 owner);
 #ifndef OWN_OwnerAction_DiffSlots
 s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b, u16 *out,
 	s32 *first_count, s32 *second_count);
@@ -315,12 +269,6 @@ void Palette_CopyObjectBankToBackground14(void);
 void Palette_LightenBankHighlight(s32 bank);
 s32	 PaletteFar_Entry00(s32 mode);
 void PaletteFar_Entry20(s32 mode);
-void Party_AdjustCounterCappedAt28Far(s32 value);
-#ifndef OWN_Party_AdjustSixDigitCounterBFar
-s32 Party_AdjustSixDigitCounterBFar(s32 amount);
-#endif
-s32 Party_RemapCharacterIdByFlagsFar(u16 value);
-s32 Party_RemapCharacterIdIfEnabledFar(s8 kind, s8 variant);
 #ifndef OWN_PartyTalkMenu_Choose
 s32 PartyTalkMenu_Choose(void);
 #endif
@@ -339,14 +287,8 @@ s32	 PsynergyMenu_RunList(s32 pane);
 s32	 PsynergyMenu_SelectAction(void);
 s32	 PsynergyMenu_SelectOwner(void);
 s32	 PsynergyMenu_SelectTarget(s32 mode);
-#ifndef OWN_RenderOutput_CreateFromResourceFar
-struct RenderOutput *RenderOutput_CreateFromResourceFar(
-	s32 mode, s32 resource, struct RenderInput *input, s32 x, s32 y);
-#endif
-void RenderOutput_PrepareForRedrawFar(s32 window);
 void Resource_LoadPairedBlocksIfAvailable(void);
 void Resource_ResetOwnerEntries(void);
-s32	 RunAssetSelectionScreenFar(void);
 void Runtime_ScheduleCallbackAndReleaseBlock20A(void);
 void Runtime_ScheduleCallbackAndReleaseBlock20B(void);
 s32	 Sanctum_RunPartyService(void);
@@ -363,7 +305,6 @@ void				 Shop_DrawSelMsg(s32 target, s32 selection);
 #ifndef OWN_Shop_FillSelector
 void Shop_FillSelector(s32 count, s32 selector, u8 *base);
 #endif
-void Shop_FillSelectorFar(s32 value, s32 column, void *tiles);
 void Shop_HiliteUnit(s32 enabled, s32 selected);
 void Shop_InitEffect(void);
 void Shop_InitializeCursorWork(void);
@@ -383,27 +324,11 @@ s32	 Shop_ServicePrice(s32 entry_no, s32 kind);
 #ifndef OWN_Shop_SetCursor
 void Shop_SetCursor(struct ShopCursor *cursor, s32 target_x, s32 target_y, s8 kind);
 #endif
-#ifndef OWN_Shop_SetCursorFar
-void Shop_SetCursorFar(struct ShopCursor *cursor, s32 target_x, s32 target_y, s8 kind);
-#endif
 void Shop_StepCursor(void);
-#ifndef OWN_ShopCursor_AdvanceFar
-void ShopCursor_AdvanceFar(struct ShopCursor *cursor);
-#endif
-#ifndef OWN_ShopCursor_SetPositionImmediateFar
-void ShopCursor_SetPositionImmediateFar(struct ShopCursor *cursor, s32 x, s32 y);
-#endif
-#ifndef OWN_SideObject_CreateFar
-struct RenderOutput *SideObject_CreateFar(
-	s32 object_kind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5);
-#endif
 #ifndef OWN_StatusMenu_DrawCharacterSummary
 void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st);
 #endif
 s32 UiIcon_LoadResourceIntoSlot(s32 resource_id, s32 slot);
-#ifndef OWN_UiIcon_PrepareObjectFar
-void UiIcon_PrepareObjectFar(struct RenderOutput *object);
-#endif
 s32	 UiMenu_CreateCursor(void *source);
 void UiMenu_PositionCursor(s32 x_offset, s32 y_offset);
 void UiMenu_SlideCursor(s32 x, s32 y);
@@ -413,30 +338,10 @@ s32	 UiMessage_ShowChoice(s32 arg0);
 s32	 UiMessage_ShowChoiceVariant(s32 arg0);
 void UiMessage_ShowResolvedAndRestoreState(s32 arg0);
 void UiMessage_ShowResolvedAndWait(s32 value);
-void UiText_CopyMessageStringFar(s32 message_id, void *buffer, s32 length);
 void UiText_DrawAt(s32, s32, s32, s32);
-#ifndef OWN_UiText_DrawStringInWindowFar
-void UiText_DrawStringInWindowFar(u8 *text, s32 arg1, u32 x, u32 y);
-#endif
-#ifndef OWN_UiText_GetResourceDimensionsFar
-s32 UiText_GetResourceDimensionsFar(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
-#endif
-void UiText_RenderWideStringAtOffsetFar(
-	void *buffer, struct UiWindow *destination, s32 offset, s32 terminator);
 void UiWindow_Clear(s32 window);
-#ifndef OWN_UiWindow_ClearInteriorTilesFar
-void UiWindow_ClearInteriorTilesFar(
-	const struct RenderInput *window, u32 left, u32 top, u32 right, u32 bottom);
-#endif
 void UiWindow_Commit(s32 window);
-#ifndef OWN_UiWindow_CreateWithSideObjectFar
-s32 UiWindow_CreateWithSideObjectFar(s32 arg0, s32 arg1, s32 x, s32 y);
-#endif
-void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
-void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
-void UiWindow_MarkVisibleTileAttributesFar(void);
 void UiWindow_OpenMode1AndWaitFrame(void);
-void UiWork_SetAltFlagAndClearTableFar(s32 value);
 #endif
 
 #if GAME_TLA

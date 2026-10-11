@@ -5,6 +5,9 @@
 
 #include "types.h"
 #include "edition.h"
+#if !GAME_TLA
+#include "farcall.h"
+#endif
 
 struct UiWindow;
 
@@ -33,11 +36,13 @@ void			   Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32
 #ifndef OWN_BattleLayout_HighlightPartyPanels
 s32 BattleLayout_HighlightPartyPanels(u16 *ids);
 #endif
-s32	 BattleParty_ListActorIdsFar(s32 side, s32 group);
 void PaletteGlow_UpdateSine(void);
 void Render_ResetTransformState(void);
 s32	 Ui_ClearVramBlock(void);
+#if GAME_TLA
+s32	 BattleParty_ListActorIdsFar(s32 side, s32 group);
 void Ui_LoadCharacterEntryForSlotFar(s32 a, s32 b, s32 c);
+#endif
 void Ui_PrepareTransferFromTableEntry(u32 index);
 s32	 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 void UiText_DrawNumberRightAlignedFar(s32 number, s32 layer, s32 x, s32 y);
@@ -190,12 +195,7 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames
 #ifndef OWN_BattleFx_PlayUnitElementEffect
 void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant);
 #endif
-void BattleFx_RunGatheringBurstFar(struct EffectLaunch *launch);
-void BattleFx_ScheduleCallbacksAndReleaseBlocksFar(void);
 void BattlePalette_UpdateBlend(void);
-s32	 BattleParty_PrepareActiveOwnersFar(s32);
-s32	 BattlePlacement_CountValidEntriesFar(s32, u8 *);
-void BattlePresentation_PrepareSceneFar(s32 kind);
 void Blend_SetBrightenTarget0(s32 duration);
 void Blend_SetBrightenTarget16(s32 duration);
 void Blend_SetDarkenTarget0(s32 duration);
@@ -245,7 +245,6 @@ void Graphics_ClearBg1ControlBit2(void);
 void Graphics_ClearCharacterBlockAndPalette(s32 alternate);
 void Graphics_RestoreTransferWork(void);
 s32	 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count);
-void Graphics_ScaleRgb555ClampedFar(void *, void *, s32, s32);
 #ifndef OWN_Graphics_TransformSmallPalette
 void Graphics_TransformSmallPalette(s32 index, s32 transform);
 #endif
@@ -260,7 +259,6 @@ s32	 Menu_DrawAtWindowOffset(void *win, s32 arg1, s32 arg2, s32 arg3, s32 arg4, 
 #ifndef OWN_MenuSelection_BuildEntries
 void MenuSelection_BuildEntries(void);
 #endif
-s32	 Object_GetScreenPositionFar(s32 object, s32 *out);
 void ObjectGroup_TickMemberTimers(void);
 void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta);
 u16	 Palette_ScaleTintChannels(struct WorkspaceWork *work, s32 scale_r, s32 scale_g, s32 scale_b);
@@ -286,7 +284,6 @@ void Resource_DecompressHalfwords(const void *source, void *destination);
 s32	 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index);
 s32	 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1);
 s32	 Resource_LoadKind26EntryToBuffer(s32 resource, s32 index);
-void Runtime_RemapBytesByTableFar(void *, s32);
 void SceneTransform_ApplyPitch(s32 angle);
 #ifndef OWN_SceneTransform_ApplyPosition
 void SceneTransform_ApplyPosition(const s32 *position);
@@ -298,9 +295,6 @@ void SceneTransform_ApplyScale(const s32 *scale);
 void SceneTransform_ApplyYaw(s32 angle);
 void Scheduler_ScheduleCallbackA(void);
 void Scheduler_ScheduleCallbackAAfterFrames(void);
-#ifndef OWN_ShopCursor_MoveTowardTargetFar
-void ShopCursor_MoveTowardTargetFar(struct ShopCursor *cursor);
-#endif
 s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir);
 #ifndef OWN_Text_FormatHex
 void Text_FormatHex(u32 value, u32 count, u8 *output);
@@ -358,7 +352,6 @@ void UiText_DrawWorkValueWithLabel(s32 work);
 s32 UiText_GetResourceDimensions(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
 #endif
 void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile);
-s32	 UiText_OpenEntryMessageFar(s32 window, s32 message);
 #ifndef OWN_UiText_RenderWideStringAtOffset
 void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, s32 y);
 #endif
@@ -372,7 +365,6 @@ void UiWindow_CreateWithLayoutBounds(s32 flags);
 #ifndef OWN_UiWindow_DrawThreeTileColumn
 int UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 #endif
-void UiWindow_FillFromSceneFar(u16 *lines);
 #ifndef OWN_UiWindow_FillTilemapRect
 void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width, s32 height);
 #endif
@@ -380,7 +372,6 @@ void UiWindow_InitializeWork(s32 unused);
 #ifndef OWN_UiWindow_MapTextCanvasTiles
 void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 full_width);
 #endif
-void UiWindow_SetPaletteBitRectFar(s32, s32, s32, s32, s32);
 void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette);
 void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position);
 s32	 UiWindow_UpdateOrCreate(s32 *handle, s32 first, s32 second, s32 third, s32 fourth, s32 flags);

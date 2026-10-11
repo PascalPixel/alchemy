@@ -3,6 +3,10 @@
 
 #include "types.h"
 #include "mem.h"
+#include "edition.h"
+#if !GAME_TLA
+#include "farcall.h"
+#endif
 
 void	   WaitFrames(s32 frames);
 void	   System_WaitForFrameInterrupt(void);
@@ -61,8 +65,10 @@ s32				   Animation_LookupValueByKey(s32 key);
 #ifndef OWN_CountRemainingErasedFlashBytes
 s32 CountRemainingErasedFlashBytes(u8 *ptr);
 #endif
+#if GAME_TLA
 s32	 Map_DisableUpdateCallbackFar(void);
 s32	 Map_EnableUpdateCallbackFar(void);
+#endif
 s32	 RunFlashEraseVerifier(u8 *, u8 *);
 void Runtime_WriteDebugTextTiles(const u8 *src);
 #ifndef OWN_StartFlashTimer
@@ -142,28 +148,21 @@ void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no);
 #endif
 struct AnimationEntry *AnimationObject_Allocate(s32 id);
 void				   AnimationObjects_SetActiveTimerSteps(struct AnimationObject *group, s32 val);
-void				   Audio_InitializeRuntimeDefaultsFar(void);
 void				   Bg0_ClearTilemap(void);
-void				   Camera_ConfigureSceneFar(s32 offset);
 s32					   FixedSqrt(s32 value);
 void				   IwramHalt(void);
 s32					   Link_CreateCountdownLabelWindow(void);
 void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s32 reuse);
-void MusicPlayer_StepVolumeAndPitchTowardTargetsFar(void);
 void ObjectSystem_Configure(s32 mode);
 void PaletteDma_LoadBlock(void);
 u8	*Resource_DecompressLz(const u8 *source, u8 *destination);
 struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
-s32					  Resource_GetTableEntryFar(void);
 void				  Resource_InitializeTable(void);
 s32					  Resource_LoadByMode(s32 mode, s32 value);
 void				  Resource_LoadWorkHeader(void);
 void				  Resource_ScheduleOwnerReset(void);
 void				  Resource_ScheduleOwnerResetDelayed(void);
 s32					  ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
-#ifndef OWN_Runtime_GetBuildStampTimeFar
-u32 Runtime_GetBuildStampTimeFar(void);
-#endif
 #ifndef OWN_Runtime_GetLowTableAddress
 s32 Runtime_GetLowTableAddress(void);
 #endif
@@ -176,7 +175,6 @@ s32 Runtime_GetRemainingIwram(void);
 #ifndef OWN_RuntimeDispatch_NoOpHook
 void RuntimeDispatch_NoOpHook(void);
 #endif
-void  SaveState_CaptureObjectTableFar(void);
 void  SerialRuntime_Initialize(void);
 void  SoundDriver_EnterMixer(void);
 void  System_VBlankHandler(void);

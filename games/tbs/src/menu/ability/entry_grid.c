@@ -1,3 +1,4 @@
+#define OWN_Resource_LoadByModeIntoSlotFar
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

@@ -2,9 +2,15 @@
 #define ALCHEMY_SCENE_H
 
 #include "types.h"
+#include "edition.h"
+#if !GAME_TLA
+#include "farcall.h"
+#endif
 
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance);
+#if GAME_TLA
 s32 Scene_GetAreaNameIndexFar(s32 scene, s32 entrance);
+#endif
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 

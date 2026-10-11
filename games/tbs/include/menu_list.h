@@ -9,6 +9,7 @@
 #include "window.h"
 #include "layout_guard.h"
 #include "keystate.h"
+#include "farcall.h"
 
 enum
 {
@@ -119,8 +120,6 @@ extern const u8			Menu_AnimatedCursorTiles[];
 void WaitFrames(s32 frames);
 void Runtime_SetMainState19(void);
 void RenderOutput_RedrawSavedRect(struct UiWindow *window);
-void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
-void RenderOutput_ClearListFar(struct UiWindow *window);
 s32	 UiText_CopyMessageString(s32 message, u16 *buffer, u32 count);
 void UiText_RenderWideStringAtOffset(u16 *buffer, struct UiWindow *window, s32 x, s32 y);
 void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 tile, s32 x, s32 y, u32 layer);
@@ -128,8 +127,5 @@ void UiWork_SetParamNibble(s32 param);
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 value);
 s32	 Ui_FillVramBlockPattern(void);
 void Vram_CopyTile(u32 source_tile, u32 destination_tile);
-#ifndef OWN_AudioCommand_PlayFar
-void AudioCommand_PlayFar(s32 cue);
-#endif
 
 #endif

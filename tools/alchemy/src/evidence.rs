@@ -101,6 +101,32 @@ fn assembly_digest(root: &Path, path: &Path) -> Option<String> {
     collect(root, path, &mut Vec::new()).map(|body| format!("{:x}", Sha256::digest(body.as_bytes())))
 }
 
+/// Whether an assembly source builds its entries with a veneer macro, in the
+/// file itself or in a file it includes: a far-call bank (NAME.S) reads its
+/// entries from its list and the macro that emits each one from beside it.
+/// The spelling only nominates the object; its placed bytes decide the credit.
+pub(crate) fn builds_veneers(root: &Path, path: &Path) -> bool {
+    fn collect(root: &Path, path: &Path, active: &mut Vec<std::path::PathBuf>) -> bool {
+        let Ok(path) = std::fs::canonicalize(root.join(path)) else { return false };
+        let Ok(games) = std::fs::canonicalize(root.join("games")) else { return false };
+        if !path.starts_with(games) || active.contains(&path) { return false; }
+        let Ok(text) = std::fs::read_to_string(&path) else { return false };
+        active.push(path.clone());
+        let found = text.lines().any(|line| {
+            let line = line.trim_start();
+            if matches!(line.split_whitespace().next(), Some("overlay_veneer" | "IwramEntry")) { return true; }
+            let Some(include) = line.strip_prefix(".include").or_else(|| line.strip_prefix("#include")) else { return false };
+            let Some(name) = include.trim().strip_prefix('"').and_then(|rest| rest.split('"').next()) else { return false };
+            let beside = path.parent().map(|folder| folder.join(name));
+            let child = if root.join(name).is_file() { root.join(name) } else { beside.unwrap_or_else(|| root.join(name)) };
+            collect(root, &child, active)
+        });
+        active.pop();
+        found
+    }
+    collect(root, path, &mut Vec::new())
+}
+
 /// The exact statement, helper definition or macro following each claim.
 /// Strings and comments are tokenized, so their braces/semicolons cannot
 /// enlarge the scope of a review and hide an unrelated statement.
@@ -180,7 +206,7 @@ pub(crate) fn entry(args: &[String]) -> std::process::ExitCode {
                 .skip_while(|line| !line.starts_with("@ C2:"))
                 .filter_map(|line| line.strip_prefix("@ C2:").or_else(|| line.strip_prefix('@')))
                 .map(str::trim).filter(|line| !line.is_empty()).collect::<Vec<_>>().join(" ");
-            let veneers = text.lines().any(|line| matches!(line.split_whitespace().next(), Some("overlay_veneer" | "IwramEntry")));
+            let veneers = builds_veneers(root, entry.path());
             if !veneers {
                 if let Some(hash) = assembly_digest(root, entry.path()) {
                     if !proof.is_empty() { rows.insert(("assembly", hash), proof); }
@@ -237,5 +263,27 @@ mod tests {
         assert_ne!(assembly_digest(dir.path(), Path::new("games/a.s")).unwrap(), first);
         std::fs::write(dir.path().join("games/b.s"), ".include \"games/a.s\"\n").unwrap();
         assert!(assembly_digest(dir.path(), Path::new("games/a.s")).is_none());
+    }
+
+    #[test]
+    fn a_bank_builds_veneers_through_the_files_it_includes() {
+        let dir = tempfile::tempdir().unwrap();
+        let bank = dir.path().join("games/src/far_call");
+        std::fs::create_dir_all(&bank).unwrap();
+        std::fs::create_dir_all(dir.path().join("games/include/farcall")).unwrap();
+        std::fs::write(bank.join("MENU.S"), "#include \"stub.inc\"\nTable:\n#include \"../../include/farcall/menu.h\"\n").unwrap();
+        std::fs::write(dir.path().join("games/include/farcall/menu.h"), "FAR_CALL(RunFar, Run, void, (void))\nFAR_SLOT(Draw)\n").unwrap();
+        // The list names no veneer macro: the stubs come from the macro file.
+        std::fs::write(bank.join("stub.inc"), "#define FAR_SLOT(target) far_slot target\n").unwrap();
+        assert!(!builds_veneers(dir.path(), Path::new("games/src/far_call/MENU.S")));
+        std::fs::write(bank.join("stub.inc"), "\t.macro far_slot target\n\toverlay_veneer \\target\n\t.endm\n").unwrap();
+        assert!(builds_veneers(dir.path(), Path::new("games/src/far_call/MENU.S")));
+        std::fs::write(bank.join("plain.s"), "\toverlay_veneer Target\n").unwrap();
+        assert!(builds_veneers(dir.path(), Path::new("games/src/far_call/plain.s")));
+        // Ordinary assembly, a file that includes itself and a file outside games/ build none.
+        std::fs::write(bank.join("code.s"), "\tbx lr @ overlay_veneer\n.include \"games/src/far_call/code.s\"\n").unwrap();
+        assert!(!builds_veneers(dir.path(), Path::new("games/src/far_call/code.s")));
+        std::fs::write(dir.path().join("outside.s"), "\toverlay_veneer Target\n").unwrap();
+        assert!(!builds_veneers(dir.path(), Path::new("outside.s")));
     }
 }

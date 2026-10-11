@@ -11,6 +11,9 @@
 #include "field_scene.h"
 #include "menu_list.h"
 #endif
+#if !GAME_TLA
+#include "farcall.h"
+#endif
 
 struct DispatchObject;
 struct EffectPosition;
@@ -22,9 +25,7 @@ extern u8		 Map_TileDissolveOrder[];
 extern const u32 ObjectDispatch_DefaultScript[];
 extern u8		 Render_DecodeFrameCodeSize[];
 extern u8		 Runtime_ByteRemapTable[];
-void			 BattleMotion_ProjectPositionFar(s32, struct EffectPosition *);
 s32				 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
-s32				 Equipment_HasValueFar(s32 group, s32 entry);
 s32				 Event_ValidatePackedId(u32 packed_id);
 void			 Map_RenderAnimatedTileFrame(u8 *object, u32 position);
 void			 Object_AttachWorkTargetToObject(s32 id, s32 flag);
@@ -36,8 +37,12 @@ void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *object, u32 value
 void ObjectSystem_UpdateCamera(void);
 void ObjectSystem_UpdateCameraFixed(void);
 s32	 ObjectTable_FindLastActiveId(void);
+#if GAME_TLA
+void			 BattleMotion_ProjectPositionFar(s32, struct EffectPosition *);
+s32				 Equipment_HasValueFar(s32 group, s32 entry);
 s32	 Party_ShowJoinedMessageFar(s32 event_id, s32 value);
 s32	 Party_ShowPairJoinedMessageFar(s32 first, s32 second);
+#endif
 s32	 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
 
 #if !GAME_TLA
@@ -1382,17 +1387,13 @@ void							   BabiChika_UpdateTrackedActor(void);
 void							   BabiFune_CyclePalette(void);
 void							   BabiFune_UpdateDriftingObject(u8 *obj);
 void							   BabiFune_UpdateWaves(void);
-s32								   Battle_RunEncounterFar(s32 entrance);
 void							   BattleFx_ConfigureLinkedObject(s32 id, s32 flags);
 void							   BattleFx_ResetCounters(void);
 void							   BattleFx_RunVisibilityTransition(void);
 s32								   BattleFx_SumCounters(void);
 void BattleFx_UpdateParticleLinearMotion(struct BurstParticle *particle);
-s32	 BattleMotion_GetSlotPaletteFar(s32);
-s32	 BattlePlacement_UpdateTimedEntriesFar(void);
 void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect);
 void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect);
-void BattlePres_SetupTransitionAtPairMidpointFar(s32 actor, s32 target, s32 mode);
 void BiribinoMura_RestoreRaisedEntrance(void);
 void BiribinoMura_RestoreVillageActors(void);
 void BiribinoMura_UpdateCornerSpawn(void);
@@ -1402,7 +1403,6 @@ void Camera_ApplyPhasedDelta(void);
 #ifndef OWN_Camera_ApplyShake
 void Camera_ApplyShake(s32 random_mask, u32 shake_range);
 #endif
-s32	 CheckMapPositionCellOccupiedFar(const s32 *position);
 void ConfigureAndPlaceActorFourteen(void);
 void DialogueLayout_ConfigureGroupOne(void);
 void DialogueLayout_ConfigureGroupThree(void);
@@ -1526,7 +1526,6 @@ void FourObjectMotion_InitializeBottomRow(void);
 s32				   FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative);
 void			   FourObjectMotion_UpdateAllPositions(void);
 void			   FourObjectMotion_UpdateBottomRow(void);
-s32				   GetMapCellCollisionFar(s32 layer, s32 x, s32 z);
 void			   FuneHeya_AdvanceWalkerAfterRise(u8 *o);
 void			   FuneHeya_AnnounceDeparture(void);
 void			   FuneHeya_AnnounceTurn(void);
@@ -1561,9 +1560,6 @@ void			   FuneKanpan_SetupVisibleLeaderDeparture(void);
 #ifndef OWN_GameFlag_IsSet
 s32 GameFlag_IsSet(s32 flag);
 #endif
-#ifndef OWN_GetMotionRecordFar
-void *GetMotionRecordFar(struct MotionObject *object, s32 record_index);
-#endif
 void GomaHashira_DriveActor13Idle(void);
 void HaidiaArashi_RunRiverSearch(void);
 void HaidiaArashi_UpdatePulsingGlow(void);
@@ -1590,7 +1586,6 @@ s32	 KuupuappuHeya_IsActorNearPoint(s32 x, s32 z, s32 id);
 s32	 KuupuappuHeya_IsRecordNearPoint(s32 x, s32 y, s32 id);
 void KuupuappuHeya_StartActorStops(void);
 void KuupuappuHeya_UpdateActorStops(void);
-s32	 Localization_LookupEntryIdFar(u32 speaker);
 void Makyuri_ClearPalette(void);
 #ifndef OWN_Makyuri_SpawnLightObjects
 void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st);
@@ -1649,8 +1644,6 @@ void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *object, s3
 #ifndef OWN_ObjectDispatch_RegisterChildMetadata
 void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object, s32 value);
 #endif
-void ObjectDispatch_RegisterChildMetadataFar(struct DispatchObject *object, s32 value);
-void ObjectDispatch_WaitForValue16Far(struct ObjectRuntime *);
 void ObjectEffect_BeginContextEffect25(void);
 void ObjectEffect_BeginContextEffect26(void);
 void ObjectEffect_EndContextEffect(s32 arg0);
@@ -1694,14 +1687,11 @@ s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor);
 #endif
 void				 RamakanSabaku_RaiseQuarterTriggers(void);
 void				 RamakanSabaku_RunSandstorm(void);
-u32					 Random16Far(void);
 void				 Resource3ba_NoOpCallback(void);
-void				 ResourceMetadata_ClearRecordFar(void *record);
 s32					 ResourceTable_CountFreeBlocks(void);
 void				 RunActorsEightAndNineMapEvent(void);
 void				 RunScene59Sequence(void);
 void				 RunSceneSelectionChain(void);
-void				*Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 s32					 Runtime_ComputeFixedPointDistance(s32 *first_position, s32 *second_position);
 #ifndef OWN_Scene_FadeColorFromWhite
 s32 Scene_FadeColorFromWhite(void);
@@ -1849,7 +1839,6 @@ s32	 StoryActor_ApplyMapRotation(struct FieldActor *actor);
 void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor);
 #endif
 void StoryScene_StartTransition(void);
-s32	 Summon_IsEntrySecondaryFlaggedFar(s32 index);
 void TakaraAshiba_InitializeScene1(void);
 void TakaraAshiba_InitializeScene2(void);
 void TakaraAshiba_InitializeScene3(void);
@@ -1879,8 +1868,6 @@ void ToretoHeya_UpdateSwirlObject(struct Swirl *obj);
 void ToretoPalette_CaptureBank(void);
 void Transform_UpdateVertices(void);
 s32	 TryPushBlockingSceneActor(struct S_02000474 *actor, struct V *requested);
-s32	 UiText_GetResourceDimensionsAltFar(s32 message, s32 *x, s32 *y, u32 *width, u32 *height);
-void UiWork_FinalizeAndReleaseBlock16Far(void);
 s32	 UpdateActorProximity(u8 *actor);
 s32	 UpdateFacingFromResolvedObject(struct FacingObject *object);
 void VinasuChojo_StepSpriteRotation(struct FieldActor *actor);

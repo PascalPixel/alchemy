@@ -11337,8 +11337,7 @@ void Ui_ApplyTableOffsetToPair(struct UiBobPairOutput *obj)
 {
     s32 value;
 
-    /* FAKEMATCH: needed to match: the tick is read again for the second object (a volatile read; a plain one is reused). */
-    value = obj->source + Ui_PairBobOffsets[(*(volatile u32 *)&gFrameTick >> 2) & 7];
+    value = obj->source + Ui_PairBobOffsets[(*(u32 *)&gFrameTick >> 2) & 7];
     obj->destination = value;
     obj = obj->next;
     value = obj->source + Ui_PairBobOffsets[(*(volatile u32 *)&gFrameTick >> 2) & 7];

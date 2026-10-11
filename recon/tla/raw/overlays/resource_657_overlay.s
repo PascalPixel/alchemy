@@ -1,3 +1,16 @@
+	.set OVERLAY_657_EUROPEAN, 0
+	.ifdef TLA_EDITION_DE
+	.set OVERLAY_657_EUROPEAN, 1
+	.endif
+	.ifdef TLA_EDITION_ES
+	.set OVERLAY_657_EUROPEAN, 1
+	.endif
+	.ifdef TLA_EDITION_FR
+	.set OVERLAY_657_EUROPEAN, 1
+	.endif
+	.ifdef TLA_EDITION_IT
+	.set OVERLAY_657_EUROPEAN, 1
+	.endif
 .syntax unified
 	.thumb
 	.section .text.x0200804c,"ax",%progbits
@@ -821,6 +834,14 @@ Func_020006e4:
 	negs r2, r2
 	lsls r3, r3, #7
 	bl Func_020020b4
+	.if OVERLAY_657_EUROPEAN
+	movs r1, #16
+	negs r1, r1
+	movs r3, #128
+	adds r2, r1, #0
+	movs r0, #5
+	lsls r3, r3, #6
+	.else
 	movs r1, #16
 	movs r2, #16
 	movs r3, #128
@@ -828,6 +849,7 @@ Func_020006e4:
 	negs r1, r1
 	negs r2, r2
 	lsls r3, r3, #6
+	.endif
 	bl Func_020020b4
 	movs r1, #24
 	movs r3, #240
@@ -1206,6 +1228,7 @@ Func_020006e4:
 	movs r0, #6
 	bl ObjectMotion_ResetAndSetPosition
 	b .L_02008b28
+	.balign 4, 0
 .L_02008b10:
 	.4byte MsgHoldOnTo
 .L_02008b14:

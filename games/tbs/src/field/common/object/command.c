@@ -622,30 +622,10 @@ s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj)
             obj->y = y;
             obj->z = z;
         } else {
-            {
-                s32 t = x - obj->x;
-
-                if (t < 0) {
-                    /* FAKEMATCH: the rounding constant in r2 outside reload keeps reload's rotation as the native has it. */
-                    register s32 k asm("r2") = 0xffff;
-                    /* FAKEMATCH: conditional cancelling updates end CSE
-                     * before the add, keeping the literal in native r2.
-                     * The block disappears from all 224 instructions;
-                     * without it, 66 rows differ in the English build. */
-                    if (y) {
-                        k ^= 1;
-                        k ^= 1;
-                    }
-                    /* FAKEMATCH: cancelling uses in the rounding branch
-                     * rank y above bounds in global allocation, preserving
-                     * native r5. They disappear from all 224 instructions;
-                     * without them, 130 rows differ in the English build. */
-                    y ^= 1;
-                    y ^= 1;
-                    t += k;
-                }
-                dx = t >> 16;
-            }
+            // XZ 平面の距離: dy は Object_SetMoveTarget と同じ形で求めるが距離には使わない
+            dx = (x - obj->x) / 0x10000;
+            /* FAKEMATCH: dead code: this dy is overwritten below and the compiler drops it, but its references rank y above the bounds in global allocation, keeping y in r5 as native; without it 114 rows differ in the English build (y in r9). The form is the sibling Object_SetMoveTarget's three-axis delta. */
+            dy = (y - obj->y) / 0x10000;
             dz = (z - obj->z) / 0x10000;
             dist = Iwram_Sqrt(dx * dx + dz * dz) << 16;
             dx = x - obj->x;

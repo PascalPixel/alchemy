@@ -72,7 +72,6 @@ s32 Inventory_DiscardFar(s32 owner, s32 slot);
 s32	 Item_ClassifyUseAbility(s32 owner, s32 item);
 void Item_PlayUseAnimation(u32 item);
 s32	 Menu_GetModuloOfSum(s32 arg0, s32 arg1);
-s32	 Menu_RunConfirmSelectionFar(s32 value, s32 x, s32 y, s32 z);
 s32	 Menu_SetFirstObjectRowCoordinates(s32 arg0);
 s32	 Object_CallSpawnRoutineAtOrigin(s32 value);
 void Object_WaitUntilChildValueDiffers(s32 object_id, s32 value);
@@ -91,7 +90,6 @@ u32 Party_GetAverageLevel(void);
 s32 Party_LookupCharacterValueByFlag32(u32 index);
 #endif
 s32	 Shop_GetSelectionState(s32 owner, s32 slot);
-void UiText_DecodeMessageFar(s32 message, u16 *buffer, s32 length);
 s32	 DjinnMenu_ShowOwnerStatus(void);
 #endif
 

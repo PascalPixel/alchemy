@@ -22,15 +22,18 @@ struct EffectLaunch;
 struct EffectPosition;
 struct FieldActor;
 struct FxObject;
+struct MenuSprite;
 struct MotionObject;
 struct ObjectRuntime;
 struct Output_08097f80;
+struct RenderInput;
 struct RenderOutput;
 struct ResourceObject;
 struct ResourceObjectWork;
 struct ScriptObjectEntry;
 struct ShopCursor;
 struct TransitionActorList;
+struct UiWindow;
 
 #define FAR_CALL(name, target, type, params) type name params;
 #define FAR_ENTRY(name, target)
@@ -38,6 +41,7 @@ struct TransitionActorList;
 
 #include "farcall/runtime.h"
 #include "farcall/field.h"
+#include "farcall/window.h"
 #include "farcall/menu.h"
 #include "farcall/shop.h"
 #include "farcall/battle.h"

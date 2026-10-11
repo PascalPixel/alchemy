@@ -25,9 +25,6 @@ extern u8		 Map_TileDissolveOrder[];
 extern const u32 ObjectDispatch_DefaultScript[];
 extern u8		 Render_DecodeFrameCodeSize[];
 extern u8		 Runtime_ByteRemapTable[];
-#if GAME_TLA
-void			 BattleMotion_ProjectPositionFar(s32, struct EffectPosition *);
-#endif
 s32				 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
 s32				 Equipment_HasValueFar(s32 group, s32 entry);
 s32				 Event_ValidatePackedId(u32 packed_id);
@@ -41,8 +38,11 @@ void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *object, u32 value
 void ObjectSystem_UpdateCamera(void);
 void ObjectSystem_UpdateCameraFixed(void);
 s32	 ObjectTable_FindLastActiveId(void);
+#if GAME_TLA
+void			 BattleMotion_ProjectPositionFar(s32, struct EffectPosition *);
 s32	 Party_ShowJoinedMessageFar(s32 event_id, s32 value);
 s32	 Party_ShowPairJoinedMessageFar(s32 first, s32 second);
+#endif
 s32	 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
 
 #if !GAME_TLA
@@ -1586,7 +1586,6 @@ s32	 KuupuappuHeya_IsActorNearPoint(s32 x, s32 z, s32 id);
 s32	 KuupuappuHeya_IsRecordNearPoint(s32 x, s32 y, s32 id);
 void KuupuappuHeya_StartActorStops(void);
 void KuupuappuHeya_UpdateActorStops(void);
-s32	 Localization_LookupEntryIdFar(u32 speaker);
 void Makyuri_ClearPalette(void);
 #ifndef OWN_Makyuri_SpawnLightObjects
 void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st);
@@ -1869,8 +1868,6 @@ void ToretoHeya_UpdateSwirlObject(struct Swirl *obj);
 void ToretoPalette_CaptureBank(void);
 void Transform_UpdateVertices(void);
 s32	 TryPushBlockingSceneActor(struct S_02000474 *actor, struct V *requested);
-s32	 UiText_GetResourceDimensionsAltFar(s32 message, s32 *x, s32 *y, u32 *width, u32 *height);
-void UiWork_FinalizeAndReleaseBlock16Far(void);
 s32	 UpdateActorProximity(u8 *actor);
 s32	 UpdateFacingFromResolvedObject(struct FacingObject *object);
 void VinasuChojo_StepSpriteRotation(struct FieldActor *actor);

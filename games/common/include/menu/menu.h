@@ -26,7 +26,9 @@ void	  Menu_AppendResourceEntry(s32 no);
 void	  Menu_EndResourceSelection(void);
 void	  Resource_ResetPendingTransfer(void);
 s32		  Shop_CanServe(s32 entry_no, s32 kind);
+#if GAME_TLA
 void	  UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
+#endif
 
 #if !GAME_TLA
 struct AnimationObject;
@@ -140,7 +142,6 @@ extern const u8	 WorkspaceOptions_SliderTiles[];
 #ifndef OWN_Ability_GetData
 struct BtlAct *Ability_GetData(s32 action_id);
 #endif
-s32	 Ability_LoadGlyphFar(s32, s32, s32 *, s32 *, s32);
 s32	 AbilityMenu_BuildAvailableList(void);
 void AffineEffect_UpdateFrame(void);
 s32	 Audio_PlayCueReturnOne(s32 cue);
@@ -182,7 +183,6 @@ s32	 EventTable_CopyRowHeader(s32 row_no, s16 *output);
 s32	 EventTable_GetRowLimit(void);
 s32	 EventTable_GetRowType(s32 index);
 void Graphics_AdjustPaletteBank(s32 arg0);
-void Graphics_ExpandVramTilesByColorTableFar(void *);
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void);
 #ifndef OWN_Inn_CheckIn
 s32 Inn_CheckIn(s32 mode, s32 object_id);
@@ -218,9 +218,6 @@ void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items);
 s32	 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1, struct MenuResult *state);
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags);
 void ItemMenu_ResetCategory(void);
-#ifndef OWN_Link_DrawShiftedTilePairFar
-void Link_DrawShiftedTilePairFar(s32 offset);
-#endif
 s32 LinkLobby_ExchangePartyRecords(void);
 s32 LinkLobby_PartyContains(s32 id);
 s32 LinkLobby_PeerSlotMatches(s32 slot);
@@ -267,15 +264,12 @@ void Menu_ReloadNodeResource(struct SelectionScreen *state, u32 index);
 void Menu_ResetTwoResourceEntries(void);
 s32	 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action);
 s32	 Menu_RunConfirmSelection(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-s32	 Menu_RunConfirmSelectionAtFar(s32, s32, s32);
 s32	 Menu_RunResourceSelectionLoop(s32 initial);
 void Menu_RunSelectedWorkspaceEntry(void);
 s16	 Menu_RunSelection(void);
 s32	 Menu_RunWorkspaceOptions(void);
 s32	 Menu_RunWorkspaceSelectionLoop(void);
 void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward);
-s32	 Menu_SelectEntry11To14Far(s32 choice);
-s32	 Menu_SelectEntry19To1cFar(s32 prev);
 s32	 Menu_SelectEntry20To21(s32 arg0);
 s32	 Menu_SelectResource(s32 start, s32 goal);
 s32	 Menu_SelectTopEntry(s32 sel);
@@ -338,11 +332,6 @@ s32	 PsynergyMenu_RunList(s32 pane);
 s32	 PsynergyMenu_SelectAction(void);
 s32	 PsynergyMenu_SelectOwner(void);
 s32	 PsynergyMenu_SelectTarget(s32 mode);
-#ifndef OWN_RenderOutput_CreateFromResourceFar
-struct RenderOutput *RenderOutput_CreateFromResourceFar(
-	s32 mode, s32 resource, struct RenderInput *input, s32 x, s32 y);
-#endif
-void RenderOutput_PrepareForRedrawFar(s32 window);
 void Resource_LoadPairedBlocksIfAvailable(void);
 void Resource_ResetOwnerEntries(void);
 void Runtime_ScheduleCallbackAndReleaseBlock20A(void);
@@ -381,10 +370,6 @@ s32	 Shop_ServicePrice(s32 entry_no, s32 kind);
 void Shop_SetCursor(struct ShopCursor *cursor, s32 target_x, s32 target_y, s8 kind);
 #endif
 void Shop_StepCursor(void);
-#ifndef OWN_SideObject_CreateFar
-struct RenderOutput *SideObject_CreateFar(
-	s32 object_kind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5);
-#endif
 #ifndef OWN_StatusMenu_DrawCharacterSummary
 void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st);
 #endif
@@ -398,30 +383,10 @@ s32	 UiMessage_ShowChoice(s32 arg0);
 s32	 UiMessage_ShowChoiceVariant(s32 arg0);
 void UiMessage_ShowResolvedAndRestoreState(s32 arg0);
 void UiMessage_ShowResolvedAndWait(s32 value);
-void UiText_CopyMessageStringFar(s32 message_id, void *buffer, s32 length);
 void UiText_DrawAt(s32, s32, s32, s32);
-#ifndef OWN_UiText_DrawStringInWindowFar
-void UiText_DrawStringInWindowFar(u8 *text, s32 arg1, u32 x, u32 y);
-#endif
-#ifndef OWN_UiText_GetResourceDimensionsFar
-s32 UiText_GetResourceDimensionsFar(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
-#endif
-void UiText_RenderWideStringAtOffsetFar(
-	void *buffer, struct UiWindow *destination, s32 offset, s32 terminator);
 void UiWindow_Clear(s32 window);
-#ifndef OWN_UiWindow_ClearInteriorTilesFar
-void UiWindow_ClearInteriorTilesFar(
-	const struct RenderInput *window, u32 left, u32 top, u32 right, u32 bottom);
-#endif
 void UiWindow_Commit(s32 window);
-#ifndef OWN_UiWindow_CreateWithSideObjectFar
-s32 UiWindow_CreateWithSideObjectFar(s32 arg0, s32 arg1, s32 x, s32 y);
-#endif
-void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
-void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
-void UiWindow_MarkVisibleTileAttributesFar(void);
 void UiWindow_OpenMode1AndWaitFrame(void);
-void UiWork_SetAltFlagAndClearTableFar(s32 value);
 #endif
 
 #if GAME_TLA

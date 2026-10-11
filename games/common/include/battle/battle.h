@@ -63,19 +63,17 @@ s32	 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, 
 void BattleUnit_ResetGuardLevels(void);
 void Camera_InitDefaultTransform(void);
 void EffectSlot_UpdateMotion(struct EffectSlot *effect);
-#ifndef OWN_ObjectDispatch_ApplyValueToChildrenFar
+void Owner_UpdateRatioPairFar(struct BtlUnit *, s32);
+void RunBattleEffect05(void);
+s32	 Summon_IsEntryFlagged(s32 index);
 #if GAME_TLA
 void BattlePres_SetActorModesFar(u16 *, s32);
 void Map_RenderAllAnimatedTileFramesFar(void **, s32);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void ObjectDispatch_ApplyValueToChildrenFar(struct DispatchObject *object, s32 value);
-#endif
-#endif
-void Owner_UpdateRatioPairFar(struct BtlUnit *, s32);
-void RunBattleEffect05(void);
-s32	 Summon_IsEntryFlagged(s32 index);
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_FinalizeSharedSlotFar(void);
+#endif
 void UpdateRisingParticleBurst(void *object);
 
 #if !GAME_TLA
@@ -445,7 +443,6 @@ void Animation_ApplyChildPalette(struct MotionObject *obj, s32 palette);
 #endif
 void Battle_AwardSpoils(void);
 s32	 Battle_ClearSerialTransferPayload(void);
-s32	 Battle_CollectPartyCommandsFar(void *entries, u16 *excluded_units, s32 excluded_count);
 #ifndef OWN_Battle_DispatchInputEvent
 s32 Battle_DispatchInputEvent(s32 event);
 #endif
@@ -799,7 +796,6 @@ void Camera_WorldToScreen(struct EffectVector *position);
 void CheckObjectMapTile(void);
 s32	 Djinn_AddToLeastLoadedOwnerFar(s32, void *);
 s32	 Djinn_GetDefinitionHeaderFar(s32 element, s32 index);
-void Djinn_ShowJoinedMessageFar(s32, s32, void *);
 #ifndef OWN_EffectRuntime_LookupByTableEntry
 s32 EffectRuntime_LookupByTableEntry(u32 index);
 #endif
@@ -841,10 +837,6 @@ s32	 Item_GetEquippedElementFar(s32 unit_id);
 void ItemIcon_LoadTilesFar(s32 item);
 void Map_UpdateWorldMapMarkers(void);
 void MapEvent_RunTileTriggerSequence(void);
-void Menu_RunSelectionFar(void);
-void Menu_RunSelectionWithCursorObjectFar(void);
-void Menu_RunTopSelectionFar(void);
-void Menu_RunWorkspaceResultLoopFar(s32 mode);
 #ifndef OWN_Motion_SetTargetPositionFromMagnitudeAngle
 void Motion_SetTargetPositionFromMagnitudeAngle(
 	struct ObjectRuntime *object, s32 magnitude, s32 angle);
@@ -867,9 +859,6 @@ struct EnemyDefinition *Owner_GetRecordFar(s32 class_id);
 s32						Owner_GetValueIfLevelThresholdReachedFar(s32 unit_id, s16 *gains);
 void					Palette_DarkenSceneStep(void);
 void					Palette_StepTowardResource(s32 resource_id);
-#ifndef OWN_PaletteGlow_UpdateFar
-void PaletteGlow_UpdateFar(s32 phase, s32 brightness);
-#endif
 s32 Party_ComputeEligibleMemberAverage(s32 record_id);
 s32 Party_GetAverageLevelFar(void);
 s32 Party_RemapCharacterIdByFlags(s32 arg0);
@@ -880,7 +869,6 @@ void Party_ResolveTablePair(void);
 s32	 PartyInventory_AddFar(s32 item);
 void ResetSceneTransitionEffect(void);
 s32	 Resource_FindFreeSlot(s32 key);
-u16	 Resource_LoadFixedBlockBIntoFreeSlotFar(void);
 void RunBattleEffect03(void);
 void RunBattleEffect07(void);
 void RunBattleEffect08(void);
@@ -902,15 +890,6 @@ u32 *Trade_AddOfferFar(u32 kind, u32 first, u32 second);
 #endif
 s32	 Trade_CanOfferDjinnFar(s32 unit_id, s32 element, s32 index);
 void Ui_FillBank15PaletteGrey(void);
-s32	 Ui_GetTableWordZeroFar(s32 index);
-void UiText_MeasureResourceEntriesFar(s32 message, s32 *width, s32 *height);
-void UiText_PrepareMessageWorkFar(s32 message);
-void UiTimedNotice_CloseIfActiveFar(void);
-void UiTimedNotice_CreateFar(s32 scene);
-void UiWindow_CreateWithLayoutBoundsFar(s32 value);
-void UiWork_InitializeFar(s32 mode);
-void UiWork_ResetFreeChannelFar(void);
-void UiWork_SetBusyFlagsFar(s32);
 #endif
 
 #if GAME_TLA

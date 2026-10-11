@@ -1,3 +1,5 @@
+#define OWN_UiText_DrawCharacterAtOffsetFar
+#define OWN_UiWindow_CreateFar
 //--------------------------------------------------------------------------
 // colorfx.c
 // スロット：パレットの色処理とキャンバスの転送・線描き

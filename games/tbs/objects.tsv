@@ -161,7 +161,7 @@ main	rom_main_01	games/tbs/src/graphics/tile/griddata	.rodata
 main	rom_main_01	games/tbs/src/field/common/object/objscrpt	.rodata
 main	rom_main_01	games/tbs/src/field/common/script/operand	.rodata
 main	rom_main_01	games/tbs/src/field/common/map/layered	.rodata
-main	rom_main_02	games/tbs/src/system/far_call/window
+main	rom_main_02	games/tbs/src/system/far_call/WINDOW
 main	rom_main_02	games/tbs/src/graphics/text/decode_symbol
 main	rom_main_02	games/tbs/src/graphics/text/lookup_symbol
 main	rom_main_02	games/tbs/src/graphics/text/moji	.text

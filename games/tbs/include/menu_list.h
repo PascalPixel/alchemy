@@ -120,8 +120,6 @@ extern const u8			Menu_AnimatedCursorTiles[];
 void WaitFrames(s32 frames);
 void Runtime_SetMainState19(void);
 void RenderOutput_RedrawSavedRect(struct UiWindow *window);
-void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
-void RenderOutput_ClearListFar(struct UiWindow *window);
 s32	 UiText_CopyMessageString(s32 message, u16 *buffer, u32 count);
 void UiText_RenderWideStringAtOffset(u16 *buffer, struct UiWindow *window, s32 x, s32 y);
 void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 tile, s32 x, s32 y, u32 layer);

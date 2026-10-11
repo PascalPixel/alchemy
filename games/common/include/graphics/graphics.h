@@ -36,13 +36,13 @@ void			   Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32
 #ifndef OWN_BattleLayout_HighlightPartyPanels
 s32 BattleLayout_HighlightPartyPanels(u16 *ids);
 #endif
-#if GAME_TLA
-s32	 BattleParty_ListActorIdsFar(s32 side, s32 group);
-#endif
 void PaletteGlow_UpdateSine(void);
 void Render_ResetTransformState(void);
 s32	 Ui_ClearVramBlock(void);
+#if GAME_TLA
+s32	 BattleParty_ListActorIdsFar(s32 side, s32 group);
 void Ui_LoadCharacterEntryForSlotFar(s32 a, s32 b, s32 c);
+#endif
 void Ui_PrepareTransferFromTableEntry(u32 index);
 s32	 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 void UiText_DrawNumberRightAlignedFar(s32 number, s32 layer, s32 x, s32 y);
@@ -353,7 +353,6 @@ void UiText_DrawWorkValueWithLabel(s32 work);
 s32 UiText_GetResourceDimensions(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
 #endif
 void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile);
-s32	 UiText_OpenEntryMessageFar(s32 window, s32 message);
 #ifndef OWN_UiText_RenderWideStringAtOffset
 void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, s32 y);
 #endif
@@ -367,7 +366,6 @@ void UiWindow_CreateWithLayoutBounds(s32 flags);
 #ifndef OWN_UiWindow_DrawThreeTileColumn
 int UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 #endif
-void UiWindow_FillFromSceneFar(u16 *lines);
 #ifndef OWN_UiWindow_FillTilemapRect
 void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width, s32 height);
 #endif
@@ -375,7 +373,6 @@ void UiWindow_InitializeWork(s32 unused);
 #ifndef OWN_UiWindow_MapTextCanvasTiles
 void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 full_width);
 #endif
-void UiWindow_SetPaletteBitRectFar(s32, s32, s32, s32, s32);
 void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette);
 void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position);
 s32	 UiWindow_UpdateOrCreate(s32 *handle, s32 first, s32 second, s32 third, s32 fourth, s32 flags);

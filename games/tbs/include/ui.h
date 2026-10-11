@@ -4,6 +4,7 @@
 #include "types.h"
 #include "tbs_edition.h"
 #include "layout_guard.h"
+#include "farcall.h"
 
 struct UiWork
 {
@@ -48,9 +49,5 @@ extern const u8 OwnerStatus_NvString[];
 extern const u8 OwnerStatus_KpString[];
 extern const u8 OwnerStatus_PvString[];
 #endif
-
-s32	 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
-s32	 UiWork_IsCompleteFar(void);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 
 #endif

@@ -5,6 +5,7 @@
 
 #include "types.h"
 #include "edition.h"
+#include "farcall.h"
 
 struct ItemDefinition;
 struct RenderInput;
@@ -36,7 +37,5 @@ void				   Engine_DebugRedrawWindow(struct RenderInput *window);
 void				   GameState_InitDefaultsFar(void);
 s32					   Object_GetTriggerTileAheadOfCurrent(void);
 void				   Party_AdvanceOwnerCountToTargetFar(s32 owner, s32 level);
-void				   Ui_AdjustValueWithoutLimitFar(s32, u16 *);
-void				   UiWork_DrainPendingFar(s32);
 
 #endif

@@ -6,6 +6,7 @@
 #include "menu_result.h"
 #include "render_input.h"
 #include "text/msg_ids.h"
+#include "farcall.h"
 
 struct AnimationObject;
 
@@ -170,6 +171,5 @@ s32	 ItemMenu_PageResult(struct MenuResult *result, s32 index);
 s32	 ItemMenu_DrawNamePage(s32 window, s32 unused, const struct MenuResult *state);
 s32	 InventoryMenu_ItemNamePageReturnTrue(void);
 void ItemMenu_DrawCategory(s32 window, s32 owner, s32 mode);
-s32	 Resource_LoadByModeIntoSlotFar(s32 style, s32 item, s32 target, s32 flags);
 
 #endif

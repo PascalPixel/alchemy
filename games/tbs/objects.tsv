@@ -227,8 +227,8 @@ main	rom_main_02	games/common/src/battle/classify_entry_kind	.text
 main	rom_main_02	games/tbs/src/menu/resmenu	.text
 main	rom_main_02	games/common/src/menu/menu	.text
 main	rom_main_02	games/tbs/src/menu/rows	.text
-main	rom_main_02	games/common/src/menu/run_selection_with_cursor_object	.text
-main	rom_main_02	games/common/src/graphics/text/format_hex	.text
+main	rom_main_02	games/tbs/src/menu/run_selection_with_cursor_object	.text
+main	rom_main_02	games/tbs/src/graphics/text/format_hex	.text
 main	rom_main_02	games/tbs/src/menu/flaggrid	.text
 main	rom_main_02	games/tbs/src/menu/slider	.rodata
 main	rom_main_02	games/tbs/src/graphics/ui/marks	.rodata

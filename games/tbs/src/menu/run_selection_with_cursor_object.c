@@ -17,8 +17,12 @@
 #include "window.h"
 #include "uiflow.h"
 
-void UiTextResource_Initialize(struct Object_0801c0dc *obj, s32 *slot);
-void UiTextResource_SetPosition(struct Obj *obj, s32 arg1, s32 arg2);
+struct TextObject {
+    u8 storage[12];
+};
+
+void UiTextResource_Initialize(struct TextObject *object, s32 *resource);
+void UiTextResource_SetPosition(struct TextObject *object, s32 x, s32 y);
 
 //--------------------------------------------------------------------------
 // 1 ページ 16x16 のフラグを表示し、閉じるまで入力を受ける
@@ -26,7 +30,7 @@ void UiTextResource_SetPosition(struct Obj *obj, s32 arg1, s32 arg2);
 //--------------------------------------------------------------------------
 s32 Menu_RunSelectionWithCursorObject(void)
 {
-	u8	obj[12]; // カーソルのオブジェクト
+	struct TextObject obj; // カーソルのオブジェクト
 	s32 cur[2];	 // カーソルの列・行
 	s32 res;
 	s32 page;
@@ -39,7 +43,7 @@ s32 Menu_RunSelectionWithCursorObject(void)
 	cur[1] = win;
 	win = UiWindow_Create(1, 0, 28, 20, 2);
 	Menu_DrawFlagBitTable(win, page);
-	UiTextResource_Initialize(obj, &res);
+	UiTextResource_Initialize(&obj, &res);
 	for (;;)
 	{
 		WaitFrames(1);
@@ -48,7 +52,7 @@ s32 Menu_RunSelectionWithCursorObject(void)
 			break; // 閉じる
 		if (ret == 1)
 			Menu_DrawFlagBitTable(win, page); // フラグかページが変わった
-		UiTextResource_SetPosition(obj, cur[0] * 8 + 58, cur[1] * 8 + 20);
+		UiTextResource_SetPosition(&obj, cur[0] * 8 + 58, cur[1] * 8 + 20);
 	}
 	UiTextResource_Release(res);
 	UiWork_Finalize(win, 2);

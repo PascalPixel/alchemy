@@ -3222,6 +3222,37 @@ Func_02001400:
 	mov r10, r6
 	mov r11, r7
 	pop {r5, r6, r7, pc}
+	.section .text.x020099d4,"ax",%progbits
+	.global Func_020019d4
+	.thumb_func
+Func_020019d4:
+	push {r5, r6, lr}
+	ldr r6, .L_02009a08
+	adds r5, r0, #0
+	ldr r0, [r6]
+	movs r3, #1
+	ands r3, r0
+	cmp r3, #0
+	beq .L_020099f4
+	movs r1, #6
+	lsrs r0, r0, #1
+	bl __umodsi3
+	adds r1, r0, #0
+	adds r0, r5, #0
+	bl Animation_ApplyChildValues
+.L_020099f4:
+	ldr r3, [r6]
+	movs r2, #15
+	ands r3, r2
+	cmp r3, #0
+	bne .L_02009a04
+	adds r0, r5, #0
+	bl Func_02001ad0
+.L_02009a04:
+	pop {r5, r6, pc}
+	.2byte 0x0000
+.L_02009a08:
+	.4byte gFrameCount
 	.section .text.x02009a34,"ax",%progbits
 	.global Func_02001a34
 	.thumb_func

@@ -29,7 +29,7 @@ void GameFlag_ClearBit(s32 flag);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
 void Object_SetPartAttribute(struct FieldActor *object, s32 value);
 void Object_SetWideSprite(s32 actor, s32 value);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Scheduler_RemoveCallbackFar(void (*callback)(void));
 void Field_DispatchTypeHandler(s32 type);
 
@@ -68,14 +68,11 @@ void Func_020041b8(s32 skip);
 void Func_020041c8(s32 cue);
 s32 Func_020041e0(struct FieldActor *object);
 
-#define SCENE_TASK_ADD_LATE(callback, priority) \
-    do { \
-        s32 priority_; \
-        priority_ = (priority); \
-        /* FAKEMATCH: a barrier keeps the callback load after the priority. */ \
-        __asm__ volatile("" : : "r"(priority_)); \
-        Scheduler_AddOrUpdateCallback((callback), priority_); \
-    } while (0)
+static inline void Scene_TaskAdd(void (*callback)(void), s32 priority)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Scheduler_AddOrUpdateCallback(callback, priority);
+}
 
 static inline void Scene_Call4178(s32 a, s32 b, s32 c)
 {

@@ -3,7 +3,7 @@
 void Func_02002ca0(void)
 {
     Func_02004190(136, 1);
-    Scheduler_AddOrUpdateCallback(Func_02002c6c, 0x480);
+    Scene_TaskAdd(Func_02002c6c, 0x480);
     Func_02004198(21, -1);
     Func_020041b0();
     Field_DispatchTypeHandler(1);

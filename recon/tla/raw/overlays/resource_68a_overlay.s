@@ -1,5 +1,18 @@
 .syntax unified
 	.thumb
+	.section .text.x02008080,"ax",%progbits
+	.global Func_02000080
+	.thumb_func
+Func_02000080:
+	push {lr}
+	bl Object_GetById
+	ldr r2, [r0, #80]
+	movs r3, #0
+	str r3, [r0, #108]
+	adds r0, #100
+	strh r3, [r0]
+	strh r3, [r2, #18]
+	pop {pc}
 	.section .text.x02008110,"ax",%progbits
 	.balign 4
 	.global Func_02000110

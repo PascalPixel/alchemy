@@ -28,6 +28,8 @@ SECTIONS
         "*/resource_64c_overlay.o"(.text.x02009364)
         "*/resource_64c_overlay.o"(.text.x02009400)
         "*/games/tla/src/field/overlay_64c/cycle.o"(.text)
+        "*/resource_64c_overlay.o"(.text.x020099d4)
+        "*/games/tla/src/field/overlay_64c/cycle_b.o"(.text)
         "*/resource_64c_overlay.o"(.text.x02009a34)
         "*/resource_64c_overlay.o"(.text.x02009a80)
         "*/resource_64c_overlay.o"(.text.x02009ad0)

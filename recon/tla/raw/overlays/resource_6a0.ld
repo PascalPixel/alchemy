@@ -30,6 +30,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_6a0/set_value.o"(.text)
         "*/resource_6a0_overlay.o"(.text.x02009168)
         "*/games/tla/src/field/overlay_6a0/lightset.o"(.text)
+        "*/resource_6a0_overlay.o"(.text.x020092a8)
         "*/resource_6a0_overlay.o"(.text.x020092fc)
         "*/games/tla/src/field/overlay_6a0/distance.o"(.text)
         "*/resource_6a0_overlay.o"(.text.x02009514)

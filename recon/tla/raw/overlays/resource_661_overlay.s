@@ -3698,6 +3698,24 @@ Func_02002180:
 	.4byte gPartyState
 .L_0200a1d0:
 	.4byte gInput
+	.section .text.x0200a1f0,"ax",%progbits
+	.global Func_020021f0
+	.thumb_func
+Func_020021f0:
+	push {lr}
+	ldr r2, [r0, #56]
+	movs r3, #128
+	lsls r3, r3, #24
+	cmp r2, r3
+	bne .L_0200a204
+	ldr r3, [r0, #64]
+	movs r0, #1
+	cmp r3, r2
+	beq .L_0200a206
+.L_0200a204:
+	movs r0, #0
+.L_0200a206:
+	pop {pc}
 	.section .text.x0200a208,"ax",%progbits
 	.global Func_02002208
 	.thumb_func

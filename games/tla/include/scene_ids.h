@@ -82,5 +82,20 @@ extern char SceneId_Ov6afRoom2;
 extern char SceneId_Ov6afRoom3;
 extern char SceneId_Ov6afRoom4;
 extern char SceneId_Ov6afRoom5;
+extern char SceneId_Kibonbo1;
+extern char SceneId_Kibonbo2;
+extern char SceneId_Kibonbo3;
+extern char SceneId_Kibonbo4;
+extern char SceneId_Kibonbo5;
+extern char SceneId_Kibonbo6;
+extern char SceneId_Shaman5;
+extern char SceneId_Shaman6;
+extern char SceneId_Ov656Room1;
+extern char SceneId_Ov656Room2;
+extern char SceneId_Ov677Room1;
+extern char SceneId_Ov677Room2;
+extern char SceneId_Ov672Room1;
+extern char SceneId_Ov672Room2;
+extern char SceneId_Ov672Room3;
 
 #endif

@@ -6,6 +6,7 @@ extern char SceneId_DeriHeya1;
 extern char SceneId_DeriHeya2;
 extern char SceneId_Ov687Room1;
 extern char SceneId_Ov687Room2;
+extern char SceneId_Ov659Room2;
 extern char SceneId_Ov66bRoom1;
 extern char SceneId_Ov66bRoom2;
 extern char SceneId_Kabe1;

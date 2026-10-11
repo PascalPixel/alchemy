@@ -11,6 +11,9 @@
 @ registers already consumed, has no writeback and is within the compiler's
 @ load-multiple patterns.
 .syntax unified
+@ The game copies this routine into RAM: in the ROM it is read-only data.
+	.section .rodata,"a",%progbits
+	.balign 4
 	.arm
 	.global RelocatedQ16DotProduct
 RelocatedQ16DotProduct:

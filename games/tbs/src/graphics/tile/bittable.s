@@ -1,4 +1,5 @@
-	.section .data,"aw",%progbits
+@ A table of the handwritten routine beside it: it lives in the routine's text.
+	.text
 	.balign 4
 @ IWRAM の写しで実行時に埋まる分岐先
 	.space 32, 0

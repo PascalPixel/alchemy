@@ -18,6 +18,9 @@ pub static AGBCC_SOURCES: &[&str] = &[
 
 pub static AGBCC_FLASH_SOURCES: &[&str] = &[
     "games/common/src/system/save/flash.c",
+    "games/common/src/system/save/sst.c",
+    "games/common/src/system/save/atmel.c",
+    "games/common/src/system/save/program_flash_sector.c",
 ];
 
 /// Both games' ARM C uses stock GCC 2.95.2 with one option set for the class.

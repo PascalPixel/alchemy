@@ -1134,6 +1134,9 @@ void DisplayScroll_BuildAndSwapHBlankPage(void)
     work->page ^= 1;
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../../../graphics/display/scroll_initialize_hblank_dma.c"
+
 void DisplayScroll_DisarmHBlankDma(void)
 {
     volatile u16 *dma0;

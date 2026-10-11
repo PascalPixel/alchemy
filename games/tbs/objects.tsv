@@ -59,6 +59,9 @@ main	rom_main_00	games/tbs/src/system/link/link	.text
 main	rom_main_00	games/tbs/src/system/cpu_set
 main	rom_main_00	games/tbs/src/system/sound_vsync_on
 main	rom_main_00	games/common/src/system/save/flash	.text
+main	rom_main_00	games/common/src/system/save/sst	.text
+main	rom_main_00	games/common/src/system/save/program_flash_sector	.text
+main	rom_main_00	games/common/src/system/save/atmel	.text
 main	rom_main_00	libgcc.a:_call_via_rX	.text
 main	rom_main_00	games/tbs/src/system/runtime_irq_table	.rodata.irq_head .rodata.irq_middle .text.irq_halt .rodata.irq_tail
 main	rom_main_00	games/tbs/src/system/scheduler/mathtbl	.rodata
@@ -72,13 +75,16 @@ main	rom_main_00	games/tbs/src/menu/objrows	.rodata
 main	rom_main_00	games/common/src/system/save/flashtab	.rodata
 main	rom_main_00	games/common/src/system/save/flash	.rodata
 main	rom_main_00	games/common/src/system/save/flashsst	.rodata
+main	rom_main_00	games/common/src/system/save/sst	.rodata
 main	rom_main_00	games/common/src/system/save/flashmx	.rodata
+main	rom_main_00	games/common/src/system/save/program_flash_sector	.rodata
 main	rom_main_00	games/common/src/system/save/flashat	.rodata
+main	rom_main_00	games/common/src/system/save/atmel	.rodata
 main	rom_main_01	games/tbs/src/system/far_call/FIELD
-main	rom_main_01	games/tbs/src/system/resource/colconv	.rodata
-main	rom_main_01	games/tbs/src/field/common/remap	.rodata
+main	rom_main_01	games/tbs/src/system/resource/colconv	.text
+main	rom_main_01	games/tbs/src/field/common/remap	.text
 main	rom_main_01	games/tbs/src/graphics/render/decode
-main	rom_main_01	games/tbs/src/graphics/render/decode_data
+main	rom_main_01	games/tbs/src/graphics/render/decode_data	.text
 main	rom_main_01	games/tbs/src/graphics/tile/draw_map
 main	rom_main_01	games/tbs/src/graphics/tile/vertices	.text .padding
 main	rom_main_01	games/tbs/src/graphics/tile/convert_map
@@ -108,12 +114,12 @@ main	rom_main_02	games/tbs/src/graphics/text/decode_symbol
 main	rom_main_02	games/tbs/src/graphics/text/lookup_symbol
 main	rom_main_02	games/tbs/src/graphics/text/moji	.text
 main	rom_main_02	games/tbs/src/graphics/tile/decompress_4bpp
-main	rom_main_02	games/tbs/src/graphics/tile/decompress_4bpp_nibbles
+main	rom_main_02	games/tbs/src/graphics/tile/decompress_4bpp_nibbles	.text
 main	rom_main_02	games/tbs/src/graphics/tile/decompress_4bpp_loop
 main	rom_main_02	games/tbs/src/graphics/tile/expand_masked
-main	rom_main_02	games/tbs/src/graphics/tile/expand_masked_masks
+main	rom_main_02	games/tbs/src/graphics/tile/expand_masked_masks	.text
 main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque
-main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque_masks
+main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque_masks	.text
 main	rom_main_02	games/tbs/src/graphics/window/measure	.text
 main	rom_main_02	games/tbs/src/graphics/glyph/glyph	.text
 main	rom_main_02	games/tbs/src/graphics/text/render	.text
@@ -160,10 +166,8 @@ main	rom_main_04	games/tbs/src/battle/effect/descript	.text
 main	rom_main_04	games/tbs/src/field/common/effect/slots	.text
 main	rom_main_04	games/tbs/src/field/common/object/motion	.text
 main	rom_main_04	games/tbs/src/field/common/object/target	.text
-main	rom_main_04	games/tbs/src/graphics/display/scroll_initialize_hblank_dma	.text
 main	rom_main_04	games/tbs/src/battle/effect/radpart	.text
 main	rom_main_04	games/tbs/src/battle/effect/slots	.text
-main	rom_main_04	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 main	rom_main_04	games/tbs/src/battle/effect/arcspark	.rodata
 main	rom_main_04	games/tbs/src/battle/effect/locrule	.rodata
 main	rom_main_04	games/tbs/src/battle/effect/zonedata	.rodata
@@ -186,9 +190,9 @@ main	rom_main_06	games/tbs/src/menu/shop/shopspr	.rodata
 main	rom_main_06	games/tbs/src/menu/shop/shopdata	.rodata
 main	rom_main_07	games/tbs/src/system/far_call/BATTLE
 main	rom_main_07	games/tbs/src/graphics/tile/decode
-main	rom_main_07	games/tbs/src/graphics/tile/decpool	.rodata
+main	rom_main_07	games/tbs/src/graphics/tile/decpool	.text
 main	rom_main_07	games/tbs/src/graphics/tile/bit_dispatch
-main	rom_main_07	games/tbs/src/graphics/tile/bittable	.data
+main	rom_main_07	games/tbs/src/graphics/tile/bittable	.text
 main	rom_main_07	games/tbs/src/graphics/tile/bit_commands
 main	rom_main_07	games/tbs/src/battle/motion/motion	.text
 main	rom_main_07	games/tbs/src/battle/tgtexec	.text
@@ -217,14 +221,14 @@ main	rom_main_08	games/tbs/src/battle/effect/koukabit	.rodata
 main	rom_main_09	games/tbs/src/system/far_call/SCROLL
 main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_sekiwa
 main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai
-main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_link
+main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_link	.text
 main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_dispatch
-main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_tables
+main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_tables	.text
 main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_commands
 main	rom_main_09	games/tbs/src/graphics/tile/slides	.text
 main	rom_main_09	games/tbs/src/graphics/tile/slides	.rodata
 main	rom_main_09	games/tbs/src/graphics/tile/slides	.data
-main	rom_main_09	games/tbs/src/graphics/display/staffrol	.rodata
+main	rom_main_09	games/tbs/src/graphics/display/staffrol	.data
 main	rom_main_10	games/tbs/src/system/far_call/PALETTE
 main	rom_main_10	games/tbs/src/graphics/palette/tint	.text
 main	rom_main_10	games/tbs/src/graphics/title/prompt	.rodata
@@ -828,12 +832,11 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 380	text	games/tbs/src/field/soru_star/entry	.text
 380	text	games/tbs/src/field/soru_star/objects	.text
 380	text	games/tbs/src/field/common/effect/move	.text
-380	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+380	text	games/tbs/src/field/common/effect/spawnov	.text
 380	text	games/tbs/src/field/soru_star/star	.text
 380	text	games/tbs/src/field/soru_star/ring_setup	.text
 380	text	games/tbs/src/field/soru_star/import	.text
 380	text	games/tbs/src/field/soru_star/data	.data
-380	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 381	text	games/tbs/src/field/soru_funka/entry	.text
 381	text	games/tbs/src/field/soru_funka/funka	.text
 381	text	games/tbs/src/field/soru_star/ring_setup	.text
@@ -843,13 +846,12 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 382	text	games/tbs/src/field/kuupuappu_mura/entry	.text
 382	text	games/tbs/src/field/kuupuappu_mura/object	.text
 382	text	games/tbs/src/field/common/effect/move	.text
-382	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+382	text	games/tbs/src/field/common/effect/spawnov	.text
 382	text	games/tbs/src/field/kuupuappu_mura/mura	.text
 382	text	games/tbs/src/field/kuupuappu_mura/scene_cells	.text
 382	text	games/tbs/src/field/kuupuappu_mura/import	.text
 382	text	libgcc.a:_call_via_rX	.text
 382	text	games/tbs/src/field/kuupuappu_mura/data	.data
-382	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 383	text	games/tbs/src/field/kuupuappu_heya/entry	.text
 383	text	games/tbs/src/field/kuupuappu_heya/heya	.text
 383	text	games/tbs/src/field/kuupuappu_heya/import	.text
@@ -862,12 +864,11 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 385	text	games/tbs/src/field/kuupuappu_mura_sai/entry	.text
 385	text	games/tbs/src/field/kuupuappu_mura_sai/sai	.text
 385	text	games/tbs/src/field/common/effect/move	.text
-385	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+385	text	games/tbs/src/field/common/effect/spawnov	.text
 385	text	games/tbs/src/field/kuupuappu_mura/scene_cells	.text
 385	text	games/tbs/src/field/kuupuappu_mura_sai/import	.text
 385	text	libgcc.a:_call_via_rX	.text
 385	text	games/tbs/src/field/kuupuappu_mura_sai/data	.data
-385	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 386	text	games/tbs/src/field/kuupuappu_heya_sai/entry	.text
 386	text	games/tbs/src/field/kuupuappu_heya_sai/placement	.text
 386	text	games/tbs/src/field/kuupuappu_heya_sai/import	.text
@@ -875,11 +876,10 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 387	text	games/tbs/src/field/goma_iriguchi/entry	.text
 387	text	games/tbs/src/field/goma_iriguchi/effobj	.text
 387	text	games/tbs/src/field/common/effect/move	.text
-387	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+387	text	games/tbs/src/field/common/effect/spawnov	.text
 387	text	games/tbs/src/field/goma_iriguchi/iriguchi	.text
 387	text	games/tbs/src/field/goma_iriguchi/import	.text
 387	text	games/tbs/src/field/goma_iriguchi/data	.data
-387	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 388	text	games/tbs/src/field/goma_ike/entry	.text
 388	text	games/tbs/src/field/goma_ike/gate_placement	.text
 388	text	games/tbs/src/field/goma_ike/import	.text
@@ -894,11 +894,11 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 38a	text	games/tbs/src/field/goma_suiro/entry	.text
 38a	text	games/tbs/src/field/goma_suiro/objects	.text
 38a	text	games/tbs/src/field/common/effect/move	.text
-38a	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+38a	text	games/tbs/src/field/common/effect/spawnov	.text
 38a	text	games/tbs/src/field/goma_suiro/suiro	.text
+38a	text	games/tbs/src/field/goma_suiro/burst	.text
 38a	text	games/tbs/src/field/goma_suiro/import	.text
 38a	text	games/tbs/src/field/goma_suiro/data	.data
-38a	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 38b	text	games/tbs/src/field/biribino_mura/entry	.text
 38b	text	games/tbs/src/field/biribino_mura/mura	.text
 38b	text	games/tbs/src/field/biribino_mura/import	.text
@@ -940,8 +940,9 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 391	bss	games/tbs/src/field/korima_hashi/branching_formation	.bss
 392	text	games/tbs/src/field/korima_hiroba/entry	.text
 392	text	games/tbs/src/field/common/object/staged_actor	.text
-392	text	games/tbs/src/field/korima_hiroba/hiroba	.text
+392	text	games/tbs/src/field/korima_hiroba/staged_particle	.text
 392	text	games/tbs/src/field/common/korima/palette	.text
+392	text	games/tbs/src/field/korima_hiroba/orbit	.text
 392	text	games/tbs/src/field/korima_hiroba/import	.text
 392	text	libgcc.a:_call_via_rX	.text
 392	text	games/tbs/src/field/korima_hiroba/data	.data
@@ -971,11 +972,10 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 396	text	games/tbs/src/field/toreto_heya/entry	.text
 396	text	games/tbs/src/field/toreto_heya/heya	.text
 396	text	games/tbs/src/field/common/effect/move	.text
-396	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+396	text	games/tbs/src/field/common/effect/spawnov	.text
 396	text	games/tbs/src/field/toreto_heya/import	.text
 396	text	games/tbs/src/field/toreto_heya/data	.data
 396	bss	resource_396_overlay	.bss
-396	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 397	text	games/tbs/src/field/toreto_eda/entry	.text
 397	text	games/tbs/src/field/toreto_eda/eda	.text
 397	text	games/tbs/src/field/toreto_eda/import	.text
@@ -998,7 +998,7 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 39b	text	games/tbs/src/field/makyuri_iriguchi/entry	.text
 39b	text	games/tbs/src/field/makyuri_iriguchi/effect_record	.text
 39b	text	games/tbs/src/field/common/effect/move	.text
-39b	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+39b	text	games/tbs/src/field/common/effect/spawnov	.text
 39b	text	games/tbs/src/field/common/object/staged_actor	.text
 39b	text	games/tbs/src/field/makyuri_iriguchi/leader_sparks	.text
 39b	text	games/tbs/src/field/common/makyuri/palette_cycle	.text
@@ -1009,11 +1009,10 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 39b	text	games/tbs/src/field/makyuri_iriguchi/import	.text
 39b	text	libgcc.a:_call_via_rX	.text
 39b	text	games/tbs/src/field/makyuri_iriguchi/data	.data
-39b	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 39c	text	games/tbs/src/field/makyuri_heya/entry	.text
 39c	text	games/tbs/src/field/makyuri_heya/effect_record	.text
 39c	text	games/tbs/src/field/common/effect/move	.text
-39c	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+39c	text	games/tbs/src/field/common/effect/spawnov	.text
 39c	text	games/tbs/src/field/common/object/staged_actor	.text
 39c	text	games/tbs/src/field/makyuri_heya/pair_burst	.text
 39c	text	games/tbs/src/field/common/makyuri/palette_cycle	.text
@@ -1025,48 +1024,42 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 39c	text	games/tbs/src/field/makyuri_heya/import	.text
 39c	text	libgcc.a:_call_via_rX	.text
 39c	text	games/tbs/src/field/makyuri_heya/data	.data
-39c	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 39d	text	games/tbs/src/field/makyuri_chojo/entry	.text
 39d	text	games/tbs/src/field/makyuri_chojo/chojo	.text
 39d	text	games/tbs/src/field/common/effect/move	.text
-39d	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+39d	text	games/tbs/src/field/common/effect/spawnov	.text
 39d	text	games/tbs/src/field/makyuri_chojo/import	.text
 39d	text	libgcc.a:_call_via_rX	.text
 39d	text	games/tbs/src/field/makyuri_chojo/data	.data
-39d	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 39e	text	games/tbs/src/field/common/shian_jiin/entry	.text
 39e	text	games/tbs/src/field/common/shian_jiin/jiin	.text
 39e	text	games/tbs/src/field/common/effect/move	.text
-39e	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+39e	text	games/tbs/src/field/common/effect/spawnov	.text
 39e	text	games/tbs/src/field/common/shian_jiin/import	.text
 39e	text	games/tbs/src/field/common/shian_jiin/data	.data
-39e	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 39f	text	games/tbs/src/field/mogoru_mori/entry	.text
 39f	text	games/tbs/src/field/common/object/staged_actor	.text
 39f	text	games/tbs/src/field/mogoru_mori/spawned	.text
 39f	text	games/tbs/src/field/common/effect/move	.text
-39f	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+39f	text	games/tbs/src/field/common/effect/spawnov	.text
 39f	text	games/tbs/src/field/mogoru_mori/mori	.text
 39f	text	games/tbs/src/field/mogoru_mori/import	.text
 39f	text	libgcc.a:_call_via_rX	.text
 39f	text	games/tbs/src/field/mogoru_mori/data	.data
-39f	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 3a0	text	games/tbs/src/field/shian_mura/entry	.text
 3a0	text	games/tbs/src/field/shian_mura/mura	.text
 3a0	text	games/tbs/src/field/common/effect/move	.text
-3a0	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+3a0	text	games/tbs/src/field/common/effect/spawnov	.text
 3a0	text	games/tbs/src/field/shian_mura/scene	.text
 3a0	text	games/tbs/src/field/shian_mura/import	.text
 3a0	text	libgcc.a:_call_via_rX	.text
 3a0	text	games/tbs/src/field/shian_mura/data	.data
-3a0	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 3a1	text	games/tbs/src/field/shian_heya/entry	.text
 3a1	text	games/tbs/src/field/shian_heya/heya	.text
 3a1	text	games/tbs/src/field/common/effect/move	.text
-3a1	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+3a1	text	games/tbs/src/field/common/effect/spawnov	.text
 3a1	text	games/tbs/src/field/shian_heya/import	.text
 3a1	text	games/tbs/src/field/shian_heya/data	.data
-3a1	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 3a2	text	games/tbs/src/field/common/yama_rama/entry	.text
 3a2	text	games/tbs/src/field/common/yama_rama/rama	.text
 3a2	text	games/tbs/src/field/common/yama_rama/import	.text
@@ -1083,7 +1076,7 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3a5	text	games/tbs/src/field/ramakan_sabaku/entry	.text
 3a5	text	games/tbs/src/field/ramakan_sabaku/sabaku	.text
 3a5	text	games/tbs/src/field/common/effect/move	.text
-3a5	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+3a5	text	games/tbs/src/field/common/effect/spawnov	.text
 3a5	text	games/tbs/src/field/ramakan_sabaku/setup	.text
 3a5	text	games/tbs/src/field/ramakan_sabaku/import	.text
 3a5	text	libgcc.a:_call_via_rX	.text
@@ -1091,17 +1084,15 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3a5	text	games/tbs/src/graphics/ramakan/sand	.rodata
 3a5	text	games/tbs/src/field/ramakan_sabaku/data2	.data
 3a5	bss	resource_3a5_overlay	.bss
-3a5	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 3a6	text	games/tbs/src/field/haidia_dou/entry	.text
 3a6	text	games/tbs/src/field/haidia_dou/objects	.text
 3a6	text	games/tbs/src/field/common/effect/move	.text
-3a6	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+3a6	text	games/tbs/src/field/common/effect/spawnov	.text
 3a6	text	games/tbs/src/field/common/object/staged_actor	.text
 3a6	text	games/tbs/src/field/haidia_dou/dou	.text
 3a6	text	games/tbs/src/field/haidia_dou/import	.text
 3a6	text	libgcc.a:_call_via_rX	.text
 3a6	text	games/tbs/src/field/haidia_dou/data	.data
-3a6	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 3a7	text	games/tbs/src/field/kuupuappu_dou/entry	.text
 3a7	text	games/tbs/src/field/kuupuappu_dou/dou	.text
 3a7	text	games/tbs/src/field/kuupuappu_dou/import	.text
@@ -1130,12 +1121,11 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3ab	text	games/tbs/src/field/runpa_mura/entry	.text
 3ab	text	games/tbs/src/field/runpa_mura/effect	.text
 3ab	text	games/tbs/src/field/common/effect/move	.text
-3ab	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+3ab	text	games/tbs/src/field/common/effect/spawnov	.text
 3ab	text	games/tbs/src/field/runpa_mura/mura	.text
 3ab	text	games/tbs/src/field/runpa_mura/import	.text
 3ab	text	games/tbs/src/field/runpa_mura/effect	.rodata
 3ab	text	games/tbs/src/field/runpa_mura/village	.rodata
-3ab	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 3ac	text	games/tbs/src/field/common/runpa_suhara/entry	.text
 3ac	text	games/tbs/src/field/common/runpa_suhara/suhara	.text
 3ac	text	games/tbs/src/field/common/runpa_suhara/import	.text
@@ -1168,16 +1158,15 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3b2	text	games/tbs/src/field/common/object/staged_actor	.text
 3b2	text	games/tbs/src/field/takara_shima/effowner	.text
 3b2	text	games/tbs/src/field/common/effect/move	.text
-3b2	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+3b2	text	games/tbs/src/field/common/effect/spawnov	.text
 3b2	text	games/tbs/src/field/takara_shima/shima	.text
 3b2	text	games/tbs/src/field/takara_shima/import	.text
 3b2	text	libgcc.a:_call_via_rX	.text
 3b2	text	games/tbs/src/field/takara_shima/data	.data
-3b2	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 3b3	text	games/tbs/src/field/takara_hashira/entry	.text
 3b3	text	games/tbs/src/field/takara_hashira/hashira	.text
 3b3	text	games/tbs/src/field/common/effect/move	.text
-3b3	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+3b3	text	games/tbs/src/field/common/effect/spawnov	.text
 3b3	text	games/tbs/src/field/common/object/staged_actor	.text
 3b3	text	games/tbs/src/field/common/map/panel	.text
 3b3	text	games/tbs/src/field/takara_hashira/pillar	.text
@@ -1185,11 +1174,11 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3b3	text	libgcc.a:_call_via_rX	.text
 3b3	text	games/tbs/src/field/takara_hashira/data	.data
 3b3	bss	resource_3b3_overlay	.bss
-3b3	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 3b4	text	games/tbs/src/field/takara_ashiba/entry	.text
 3b4	text	games/tbs/src/field/common/object/staged_actor	.text
 3b4	text	games/tbs/src/field/takara_ashiba/ashiba	.text
 3b4	text	games/tbs/src/field/common/korosseo/item_icon	.text
+3b4	text	games/tbs/src/field/takara_ashiba/setup	.text
 3b4	text	games/tbs/src/field/takara_ashiba/import	.text
 3b4	text	libgcc.a:_call_via_rX	.text
 3b4	text	games/tbs/src/field/takara_ashiba/data	.data
@@ -1273,12 +1262,11 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3be	text	games/tbs/src/field/karagoru_dou/entry	.text
 3be	text	games/tbs/src/field/karagoru_dou/dou	.text
 3be	text	games/tbs/src/field/common/effect/move	.text
-3be	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+3be	text	games/tbs/src/field/common/effect/spawnov	.text
 3be	text	games/tbs/src/field/common/object/staged_actor	.text
 3be	text	games/tbs/src/field/karagoru_dou/import	.text
 3be	text	libgcc.a:_call_via_rX	.text
 3be	text	games/tbs/src/field/karagoru_dou/data	.data
-3be	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 3bf	text	games/tbs/src/field/runpa_jo/entry	.text
 3bf	text	games/tbs/src/field/common/object/staged_actor	.text
 3bf	text	games/tbs/src/field/runpa_jo/runpa_jo	.text
@@ -1296,12 +1284,11 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3c0	text	games/tbs/src/field/suhara_sabaku/entry	.text
 3c0	text	games/tbs/src/field/suhara_sabaku/selected_presentation	.text
 3c0	text	games/tbs/src/field/common/effect/move	.text
-3c0	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+3c0	text	games/tbs/src/field/common/effect/spawnov	.text
 3c0	text	games/tbs/src/field/suhara_sabaku/sabaku	.text
 3c0	text	games/tbs/src/field/suhara_sabaku/import	.text
 3c0	text	games/tbs/src/field/suhara_sabaku/data	.data
 3c0	bss	resource_3c0_overlay	.bss
-3c0	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 3c1	text	games/tbs/src/field/suhara_mura/entry	.text
 3c1	text	games/tbs/src/field/suhara_mura/mura	.text
 3c1	text	games/tbs/src/field/suhara_mura/import	.text
@@ -1318,20 +1305,18 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3c4	text	games/tbs/src/field/common/object/staged_actor	.text
 3c4	text	games/tbs/src/field/babi_chika/chika	.text
 3c4	text	games/tbs/src/field/common/effect/move	.text
-3c4	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+3c4	text	games/tbs/src/field/common/effect/spawnov	.text
 3c4	text	games/tbs/src/field/babi_chika/import	.text
 3c4	text	libgcc.a:_call_via_rX	.text
 3c4	text	games/tbs/src/field/babi_chika/data	.data
-3c4	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 3c5	text	games/tbs/src/field/babi_iriguchi/entry	.text
 3c5	text	games/tbs/src/field/common/object/staged_actor	.text
 3c5	text	games/tbs/src/field/babi_iriguchi/iriguchi	.text
 3c5	text	games/tbs/src/field/common/effect/move	.text
-3c5	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+3c5	text	games/tbs/src/field/common/effect/spawnov	.text
 3c5	text	games/tbs/src/field/babi_iriguchi/import	.text
 3c5	text	libgcc.a:_call_via_rX	.text
 3c5	text	games/tbs/src/field/babi_iriguchi/data	.data
-3c5	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 3c6	text	games/tbs/src/field/raribero_machi/entry	.text
 3c6	text	games/tbs/src/field/raribero_machi/machi	.text
 3c6	text	games/tbs/src/field/raribero_machi/import	.text
@@ -1343,24 +1328,23 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3c8	text	games/tbs/src/field/vinasu_heya/entry	.text
 3c8	text	games/tbs/src/field/vinasu_heya/heya	.text
 3c8	text	games/tbs/src/field/common/effect/move	.text
-3c8	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+3c8	text	games/tbs/src/field/common/effect/spawnov	.text
 3c8	text	games/tbs/src/field/vinasu_heya/import	.text
 3c8	text	libgcc.a:_call_via_rX	.text
 3c8	text	games/tbs/src/field/vinasu_heya/data	.data
-3c8	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 3c9	text	games/tbs/src/field/vinasu_chojo/entry	.text
 3c9	text	games/tbs/src/field/vinasu_chojo/objects	.text
 3c9	text	games/tbs/src/field/common/effect/move	.text
-3c9	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
+3c9	text	games/tbs/src/field/common/effect/spawnov	.text
 3c9	text	games/tbs/src/field/vinasu_chojo/chojo	.text
 3c9	text	games/tbs/src/field/vinasu_chojo/import	.text
 3c9	text	libgcc.a:_call_via_rX	.text
 3c9	text	games/tbs/src/field/vinasu_chojo/data	.data
 3c9	bss	resource_3c9_overlay	.bss
-3c9	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 3ca	text	games/tbs/src/field/babi_fune/entry	.text
 3ca	text	games/tbs/src/field/babi_fune/fune	.text
 3ca	text	games/tbs/src/graphics/display/scroll_initialize_hblank_dma	.text
+3ca	text	games/tbs/src/field/babi_fune/stop_dma	.text
 3ca	text	games/tbs/src/field/babi_fune/import	.text
 3ca	text	games/tbs/src/field/babi_fune/data	.data
 3ca	bss	resource_3ca_overlay	.bss

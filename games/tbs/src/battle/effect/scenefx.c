@@ -6632,7 +6632,7 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
 		else if (frame <= 11)
 			draw[0](canvas, gMapCellBuffer, 0, 0, 120, 120);
 		else if (frame <= 15)
-			draw[0](canvas, gMapCellBuffer + 0x3840, 0, 0, 120, 120);
+			draw[0](canvas, (u8 *)gMapCellBuffer + 0x3840, 0, 0, 120, 120);
 		if (frame >= 16 && frame <= 19)
 			Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f); // キャンバス全体を 0x3f 番で塗る
 		if (frame == 18)

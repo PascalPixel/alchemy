@@ -1,5 +1,5 @@
 	.include "games/common/include/game/ed_asm.h"
-	.section .rodata
+	.text
 	.arm
 	.global Rom_Start
 Rom_Start:

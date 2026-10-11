@@ -22,12 +22,6 @@
 #include "field_service.h"
 #include "text/msg_ids.h"
 #include "callback_scheduler.h"
-#include "scroll.h"
-#include "resource.h"
-#include "mem.h"
-#include "vram_block.h"
-
-void BabiFune_ScheduleFade(void);
 
 #define PALETTE ((volatile u16 *)0x05000000)
 
@@ -243,6 +237,7 @@ void Motion_LaunchFromFocusedObject();
 s32	 UiText_OpenMessageAtObject();
 void Object_RefreshSelectorById();
 void MusicCommand_SetPitchAndUpdateFrequency();
+void BabiFune_ScheduleFade();
 void Event_SetDestination();
 
 s32 BabiFune_StoreLeaderHeight(void)
@@ -559,6 +554,8 @@ struct ScrollWork
 	s32 amplitude[2];
 };
 
+extern struct ScrollWork *gHBlankScrollWork;
+
 static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base)
 {
 	return (u16)(Iwram_MulQ16(BabiFune_WaveSine[(angle >> 16) & 0xff], amplitude) / 256) + base;
@@ -830,86 +827,4 @@ void DisplayScroll_BuildAndSwapHBlankPage(void)
 	}
 	work->phase++;
 	work->page ^= 1;
-}
-
-void SceneEffect_LoadTablesAndStopDma0(void)
-{
-	volatile u16 *reg;
-
-	Engine_TaskRemoveCallback(DisplayScroll_ArmHBlankDma);
-	Engine_TaskRemoveCallback(DisplayScroll_BuildAndSwapHBlankPage);
-	reg = REG_DMA0;
-	reg[5] = 0xC5FF & reg[5];
-	reg[5] = 0x7FFF & reg[5];
-	reg[5];
-}
-
-struct Half
-{
-	u16 v;
-};
-
-struct FadeSprite
-{
-	u32 unused;
-	u32 attributes;
-	u32 tile;
-};
-
-extern struct FadeSprite BabiFune_FadeSprites[24];
-
-void BabiFune_StepFade(void)
-{
-	u32 *entry;
-	u32	 tile;
-	s32	 step;
-	s32	 x;
-	u32	 i;
-
-	tile = gVramBlockCache[BabiFune_FadeSlot].offset >> 5;
-	entry = (u32 *)BabiFune_FadeSprites;
-	if (BabiFune_FadeStep != 0)
-		BabiFune_FadeStep--;
-	for (i = 0; i < 8; i++)
-	{
-		s32 left;
-
-		step = BabiFune_FadeStep;
-		left = -step / 2;
-		*entry++ = 0;
-		*entry++ = (left & 0xff) | (i << 21) | 0x80004000;
-		*entry++ = tile;
-	}
-	x = (step / 2 + 136) & 0xff;
-	for (i = 0; i < 8; i++)
-	{
-		*entry++ = 0;
-		*entry++ = (i << 21) | x | 0x80004000;
-		*entry++ = tile;
-	}
-	i = 0;
-	x = (BabiFune_FadeStep / 2 + 152) & 0xff;
-	for (; i < 8; i++)
-	{
-		*entry++ = 0;
-		*entry++ = (i << 21) | x | 0x80004000;
-		*entry++ = tile;
-	}
-	for (i = 0; i < 24; i++)
-		Runtime_PushSlotEntry(&BabiFune_FadeSprites[i], 255);
-}
-
-void BabiFune_ScheduleFade(void)
-{
-	u8			*buf;
-	volatile u32 fill;
-
-	buf = (u8 *)Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 0x100);
-	BabiFune_FadeSlot = Resource_FindFreeEntry();
-	fill = 0x11111111;
-	Dma_Set((const void *)&fill, buf, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x40, REG_DMA3);
-	Engine_VramLoad(BabiFune_FadeSlot, 0x100, (s32)buf);
-
-	BabiFune_FadeStep = 0x30;
-	Scheduler_AddOrUpdateCallback((s32)(BabiFune_StepFade), 0xc80);
 }

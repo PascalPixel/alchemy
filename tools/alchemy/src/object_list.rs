@@ -285,11 +285,44 @@ pub(crate) fn overlay_fragments(
     ])
 }
 
+/// The input sections a plain place takes from each of its objects, one
+/// pass after another: code, read-only data, data.
+const PLAIN_PASSES: [&str; 3] = [".text .padding", ".rodata", ".data .overlays"];
+
+/// A plain place is a ROM place of the main image whose rows all name a
+/// whole object and no sections: an ordered list of objects, as a makefile
+/// has them, linked as `*(.text) *(.rodata) *(.data)` would link them.
+fn plain(image: &str, place: &str, rows: &[Row]) -> bool {
+    let mut own = rows.iter().filter(|row| row.image == image && row.place == place).peekable();
+    image == MAIN && place.starts_with("rom_") && own.peek().is_some() && own.all(|row| row.sections == DEFAULT_SECTIONS && row.built())
+}
+
 /// One edition's linker fragments for an image: each place the list gives
-/// the image, in the list's order, with the statements of the rows the
-/// edition links, one per line. A place no row of this edition is in still
-/// has its fragment, empty, for the script's INCLUDE to read.
+/// the image, in the list's order. A plain place links every object's code
+/// in the list's order, then every object's read-only data in that order,
+/// then its data; any other place has the statements of its rows, one per
+/// line. A place no row of this edition is in still has its fragment,
+/// empty, for the script's INCLUDE to read.
 pub(crate) fn render(rows: &[Row], image: &str, language: &str) -> Vec<(String, String)> {
+    render_rows(rows, image, language)
+        .into_iter()
+        .map(|(place, fragment)| {
+            if !plain(image, &place, rows) {
+                return (place, fragment);
+            }
+            let mut passes = String::new();
+            for sections in PLAIN_PASSES {
+                for row in rows.iter().filter(|row| row.place == place && row.links(image, language)) {
+                    passes += &format!("    {}\n", statement(&row.object, sections));
+                }
+            }
+            (place, passes)
+        })
+        .collect()
+}
+
+/// The rows as they are written: each place with one statement per row.
+pub(crate) fn render_rows(rows: &[Row], image: &str, language: &str) -> Vec<(String, String)> {
     let mut fragments: Vec<(String, String)> = Vec::new();
     for row in rows.iter().filter(|row| row.image == image) {
         let at = match fragments.iter().position(|(place, _)| *place == row.place) {
@@ -357,7 +390,7 @@ pub(crate) fn images(rows: &[Row]) -> Vec<String> {
 /// tools that edit object lines: each place as a section of that name, a
 /// statement per line.
 pub(crate) fn view(rows: &[Row], image: &str, language: &str) -> String {
-    render(rows, image, language)
+    render_rows(rows, image, language)
         .into_iter()
         .map(|(place, fragment)| format!("{place} :\n{{\n{fragment}}}\n"))
         .collect()

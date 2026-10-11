@@ -1,5 +1,6 @@
 .syntax unified
-	.section .data,"aw",%progbits
+@ A table of the handwritten routine beside it: it lives in the routine's text.
+	.text
 	.arm
 .L_dispatch_runtime:
 	.space 32, 0

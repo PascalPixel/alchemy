@@ -1,5 +1,6 @@
 .syntax unified
-	.section .data,"aw",%progbits
+@ A table of the handwritten routine beside it: it lives in the routine's text.
+	.text
 	.arm
 	.4byte 0x00000000
 	.4byte 0

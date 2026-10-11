@@ -1,5 +1,6 @@
 .syntax unified
-	.section .rodata,"a",%progbits
+@ A table of the handwritten routine beside it: it lives in the routine's text.
+	.text
 	.arm
 .L_bias:
 	.4byte 0x80808080

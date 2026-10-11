@@ -1,4 +1,5 @@
-	.section .rodata
+@ A table of the handwritten routine beside it: it lives in the routine's text.
+	.text
 	.global ResourceSlot_ConversionTables
 ResourceSlot_ConversionTables:
 	.incbin "system/resource/colconv0.table"

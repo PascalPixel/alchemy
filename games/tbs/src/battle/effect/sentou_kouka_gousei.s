@@ -1,7 +1,9 @@
 @ C2: r11/fp holds a row counter (rsb fp, ip, #16; mov lr, fp), not a frame.
 @ The preceding entries also share unsaved r5/r9 state with the main body.
 .syntax unified
-.text
+@ The game copies these routines into RAM: in the ROM they are read-only data.
+	.section .rodata,"a",%progbits
+	.balign 4
 	.arm
 	.global SentouKouka_YomiGyaku
 	.global SentouKouka_YomiJun

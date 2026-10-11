@@ -25,6 +25,7 @@ use std::path::{Path, PathBuf};
 const USAGE: &str = "usage: alchemy unit candidates [--build EDITION] [--out-dir DIR]
        alchemy unit flatten (IMAGE:UNIT | --objects PATH.c,PATH.c...) [--build EDITION]
                             [--name NAME.c] [--static] [--dry-run]
+       alchemy unit flatten --all --force [--build EDITION]
 candidates writes DIR/units-EDITION-merges.tsv (default out/reports): each run
 of today's C files the analysis joins, with the units it covers, the
 evidence at its two edges and its weakest join. An edge is forced (another
@@ -42,7 +43,11 @@ the compiler routing tables, follow; the old files and local
 headers only they include are removed. Every edition that links the
 objects is compiled and compared first, from today's builds; --dry-run
 stops there. --static also makes functions no other file names static,
-kept only when the bytes stay identical. Build every edition first.";
+kept only when the bytes stay identical. Build every edition first.
+--all --force is an experiment, never a landing: every proposed unit's C files
+become one file whatever divides them today (a weak edge, the COMMON/game
+divide, link order, editions that link only some), applied even when the
+bytes change; each line of its output names what was refused or forced.";
 
 struct Options {
     build: String,
@@ -52,16 +57,20 @@ struct Options {
     name: Option<String>,
     dry_run: bool,
     make_static: bool,
+    force: bool,
+    all: bool,
 }
 
 fn parse(arguments: &[String]) -> Result<Options, String> {
-    let mut options = Options { build: "tbs-en".into(), out_dir: PathBuf::from("out/reports"), unit: None, objects: None, name: None, dry_run: false, make_static: false };
+    let mut options = Options { build: "tbs-en".into(), out_dir: PathBuf::from("out/reports"), unit: None, objects: None, name: None, dry_run: false, make_static: false, force: false, all: false };
     let mut i = 0;
     while i < arguments.len() {
         let flag = arguments[i].as_str();
         match flag {
             "--dry-run" => options.dry_run = true,
             "--static" => options.make_static = true,
+            "--force" => options.force = true,
+            "--all" => options.all = true,
             "--build" | "--out-dir" | "--objects" | "--name" => {
                 let value = arguments.get(i + 1).ok_or_else(|| format!("{flag} needs a value\n{USAGE}"))?.clone();
                 match flag {
@@ -302,14 +311,14 @@ fn linker_scripts(root: &Path) -> Result<Vec<PathBuf>, String> {
 
 /// Each game's object list that names some of `objects`, with its text once
 /// `merged` takes their place in every image and edition.
-fn rewritten_lists(root: &Path, objects: &[String], merged: &str) -> Result<Vec<(PathBuf, String)>, String> {
+fn rewritten_lists(root: &Path, objects: &[String], merged: &str, force: bool) -> Result<Vec<(PathBuf, String)>, String> {
     let mut found = Vec::new();
     for game in crate::targets::TARGET_IDS.chunks(6) {
         let target = crate::targets::target_for(game[0]);
         let (Some(path), Some(before)) = (target.object_list(), crate::object_list::read(root, target)?) else {
             continue;
         };
-        let rows = rewritten_rows(&before, objects, merged).map_err(|e| format!("{}: {e}", path.display()))?;
+        let rows = rewritten_rows(&before, objects, merged, force).map_err(|e| format!("{}: {e}", path.display()))?;
         if rows != before {
             found.push((path, crate::object_list::format(&rows)));
         }
@@ -317,12 +326,13 @@ fn rewritten_lists(root: &Path, objects: &[String], merged: &str) -> Result<Vec<
     Ok(found)
 }
 
-fn rewritten_rows(before: &[crate::object_list::Row], objects: &[String], merged: &str) -> Result<Vec<crate::object_list::Row>, String> {
+fn rewritten_rows(before: &[crate::object_list::Row], objects: &[String], merged: &str, force: bool) -> Result<Vec<crate::object_list::Row>, String> {
     let mut rows = before.to_vec();
     for image in crate::object_list::images(before) {
         for language in crate::object_list::LANGUAGES {
             let view = crate::object_list::view(&rows, &image, language);
-            if let Some(new) = super::ldscript::rewrite(&view, objects, merged).map_err(|e| format!("{image} {language}: {e}"))? {
+            let new = if force { super::ldscript::rewrite_forced(&view, objects, merged) } else { super::ldscript::rewrite(&view, objects, merged).map_err(|e| format!("{image} {language}: {e}"))? };
+            if let Some(new) = new {
                 crate::object_list::apply(&mut rows, &image, language, &new)?;
             }
         }
@@ -534,20 +544,44 @@ struct Plan {
     headers: BTreeSet<String>,
 }
 
-fn plan(root: &Path, objects: &[String], judged: &[super::Judged], target: DecompTarget, name: Option<&str>, views: u8) -> Result<Plan, String> {
+fn plan(root: &Path, objects: &[String], judged: &[super::Judged], target: DecompTarget, name: Option<&str>, views: u8, force: bool) -> Result<Plan, String> {
     let sources: Vec<String> = objects.iter().map(|o| source_path(root, o).ok_or_else(|| format!("{o} has no C source"))).collect::<Result<_, _>>()?;
     let families: BTreeSet<String> = sources.iter().map(|s| format!("{:?}", family(root, target, s))).collect();
     if families.len() > 1 {
         return Err(format!("the sources compile with different compilers ({})", families.into_iter().collect::<Vec<_>>().join(", ")));
     }
     let common: BTreeSet<bool> = sources.iter().map(|s| s.starts_with("games/common/")).collect();
-    if common.len() > 1 {
+    if common.len() > 1 && !force {
         return Err("COMMON and game-only sources never share a file".into());
     }
-    let destination = destination(root, objects, judged, name)?;
+    let mut forced_notes: Vec<String> = Vec::new();
+    // A forced merge across the COMMON divide is the game's own file.
+    let own = sources.iter().find(|s| !s.starts_with("games/common/")).cloned();
+    let destination = match destination(root, objects, judged, name) {
+        Ok(found) => match (&own, common.len() > 1 && found.starts_with("games/common/")) {
+            (Some(own), true) => {
+                let game = own.split('/').nth(1).unwrap_or("tbs");
+                let moved = found.replacen("games/common/", &format!("games/{game}/"), 1);
+                if root.join(&moved).exists() && !sources.contains(&moved) {
+                    forced_notes.push(format!("forced: {moved} already exists, so the merged file takes {own}"));
+                    own.clone()
+                } else {
+                    forced_notes.push(format!("forced: COMMON and game-only sources share {moved}"));
+                    moved
+                }
+            }
+            _ => found,
+        },
+        Err(e) if force => {
+            let fallback = own.clone().unwrap_or_else(|| sources[0].clone());
+            forced_notes.push(format!("forced: {e}; the merged file takes {fallback}"));
+            fallback
+        }
+        Err(e) => return Err(e),
+    };
     let group: BTreeSet<String> = sources.iter().cloned().collect();
     let mut expanded = BTreeSet::new();
-    let mut inputs = Vec::new();
+    let mut inputs: Vec<Source> = Vec::new();
     for s in &sources {
         let text = expand_local(root, s, &read(&root.join(s))?, &group, &mut expanded, 0)?;
         let own = if views > 0 {
@@ -560,17 +594,35 @@ fn plan(root: &Path, objects: &[String], judged: &[super::Judged], target: Decom
     }
     // Local includes left as includes must still resolve from the new folder.
     let dest_dir = Path::new(&destination).parent().unwrap_or(Path::new("")).to_path_buf();
-    for input in &inputs {
-        let dir = Path::new(&input.path).parent().unwrap_or(Path::new(""));
+    for input in inputs.iter_mut() {
+        let dir = Path::new(&input.path).parent().unwrap_or(Path::new("")).to_path_buf();
         if dir == dest_dir {
             continue;
         }
-        for line in input.text.lines() {
+        let mut out = String::new();
+        let mut changed = false;
+        for line in input.text.split_inclusive('\n') {
             if let Some(name) = line.trim().strip_prefix("#include").map(str::trim).and_then(|r| r.strip_prefix('"')).and_then(|r| r.split('"').next()) {
-                if root.join(dir).join(name).is_file() && !root.join(&dest_dir).join(name).is_file() {
-                    return Err(format!("{}: its local header {name} is shared with files outside the unit and would not resolve from {}", input.path, dest_dir.display()));
+                if root.join(&dir).join(name).is_file() && !root.join(&dest_dir).join(name).is_file() {
+                    if !force {
+                        return Err(format!("{}: its local header {name} is shared with files outside the unit and would not resolve from {}", input.path, dest_dir.display()));
+                    }
+                    // Forced: the header stays where it is and is named from the new folder.
+                    let header = dir.join(name);
+                    let (from, to): (Vec<_>, Vec<_>) = (dest_dir.components().collect(), header.components().collect());
+                    let shared = from.iter().zip(&to).take_while(|(a, b)| a == b).count();
+                    let mut parts: Vec<String> = vec!["..".to_string(); from.len() - shared];
+                    parts.extend(to[shared..].iter().map(|c| c.as_os_str().to_string_lossy().into_owned()));
+                    out.push_str(&format!("#include \"{}\"\n", parts.join("/")));
+                    forced_notes.push(format!("forced: {} names its local header {name} from {}", input.path, dest_dir.display()));
+                    changed = true;
+                    continue;
                 }
             }
+            out.push_str(line);
+        }
+        if changed {
+            input.text = out;
         }
     }
     // What the merged include set declares.
@@ -583,11 +635,13 @@ fn plan(root: &Path, objects: &[String], judged: &[super::Judged], target: Decom
         .join("\n");
     let headers = crate::adopt_into::header_names(root, target, &root.join(&destination), &format!("{include_text}\n"))?;
     let merged = cmerge::merge(&inputs, &headers, &cmerge::Options { views: views > 0, unprototyped: views > 1 }).map_err(|e| format!("cannot merge:\n  {}", e.join("\n  ")))?;
-    Ok(Plan { objects: objects.to_vec(), sources, destination, text: merged.text, notes: merged.notes, headers: expanded })
+    let mut notes = merged.notes;
+    notes.extend(forced_notes);
+    Ok(Plan { objects: objects.to_vec(), sources, destination, text: merged.text, notes, headers: expanded })
 }
 
-fn plan_views(root: &Path, objects: &[String], judged: &[super::Judged], target: DecompTarget, name: Option<&str>, level: u8) -> Result<Plan, String> {
-    plan(root, objects, judged, target, name, level)
+fn plan_views(root: &Path, objects: &[String], judged: &[super::Judged], target: DecompTarget, name: Option<&str>, level: u8, force: bool) -> Result<Plan, String> {
+    plan(root, objects, judged, target, name, level, force)
 }
 
 /// Compile the merged text for every edition that links the objects and
@@ -605,7 +659,7 @@ fn verify(root: &Path, plan: &Plan, text: &str, cache: &mut BTreeMap<String, (De
         })
         .collect();
     let objects: Vec<&str> = plan.objects.iter().map(String::as_str).collect();
-    for edition in editions(&plan.sources[0]) {
+    for edition in editions(&plan.destination) {
         if !cache.contains_key(&edition) {
             let target = decomp_target(Some(&edition))?;
             let build = Build { root: root.to_path_buf(), dir: root.join(target.output_dir), name: edition.clone(), compiler: target.compiler };
@@ -687,10 +741,68 @@ fn flatten(options: &Options) -> Result<(), String> {
     crate::compiler::routing::prefer_installed_binutils();
     let root = crate::compiler::routing::root().to_path_buf();
     let (target, judged) = judged(&root, &options.build)?;
-    let groups = group(&root, options, &judged, target)?;
+    let groups = if options.all { all_groups(&root, &judged, target) } else { group(&root, options, &judged, target)? };
     let mut cache = BTreeMap::new();
     for objects in groups {
-        let mut plan = plan(&root, &objects, &judged, target, options.name.as_deref(), 0)?;
+        match flatten_one(&root, options, &judged, target, &objects, &mut cache) {
+            Ok(()) => {}
+            Err(e) if options.force => println!("REFUSED\t{}\t{}", objects.join(","), e.replace('\n', " | ")),
+            Err(e) => return Err(e),
+        }
+    }
+    Ok(())
+}
+
+/// Every proposed unit's C objects as one group, whatever divides them
+/// today: units that share a file join, and a group splits only where two
+/// compilers build it. An experiment's grouping (--all with --force).
+fn all_groups(root: &Path, judged: &[super::Judged], target: DecompTarget) -> Vec<Vec<String>> {
+    let mut groups: Vec<Vec<String>> = Vec::new();
+    for j in judged {
+        for unit in &j.units {
+            let mut objects: Vec<String> = Vec::new();
+            for f in &j.loaded.image.functions[unit.first..=unit.last] {
+                if matches!(f.lang, Lang::C | Lang::Library) && f.object.starts_with("games/") && source_path(root, &f.object).is_some() && !objects.contains(&f.object) {
+                    objects.push(f.object.clone());
+                }
+            }
+            let (joined, rest): (Vec<Vec<String>>, Vec<Vec<String>>) = groups.drain(..).partition(|g| g.iter().any(|o| objects.contains(o)));
+            groups = rest;
+            if !joined.is_empty() {
+                println!("NOTE\tshared\t{}\ta file is shared with an earlier unit, so they become one file: {}", j.loaded.image.name, objects.join(","));
+            }
+            let mut merged: Vec<String> = joined.into_iter().flatten().collect();
+            for o in objects {
+                if !merged.contains(&o) {
+                    merged.push(o);
+                }
+            }
+            if !merged.is_empty() {
+                groups.push(merged);
+            }
+        }
+    }
+    let mut out = Vec::new();
+    for g in groups {
+        let mut by: Vec<(String, Vec<String>)> = Vec::new();
+        for o in g {
+            let key = format!("{:?}", family(root, target, &source_path(root, &o).unwrap_or_default()));
+            match by.iter_mut().find(|(k, _)| *k == key) {
+                Some((_, v)) => v.push(o),
+                None => by.push((key, vec![o])),
+            }
+        }
+        if by.len() > 1 {
+            println!("NOTE\tcompilers\ta unit spans {} compilers and stays that many files: {}", by.len(), by.iter().map(|(k, v)| format!("{k}: {}", v.join(","))).collect::<Vec<_>>().join(" / "));
+        }
+        out.extend(by.into_iter().map(|(_, v)| v).filter(|v| v.len() >= 2));
+    }
+    out
+}
+
+fn flatten_one(root: &Path, options: &Options, judged: &[super::Judged], target: DecompTarget, objects: &[String], cache: &mut BTreeMap<String, (DecompTarget, Vec<Loaded>)>) -> Result<(), String> {
+    {
+        let mut plan = plan(&root, &objects, &judged, target, options.name.as_deref(), 0, options.force)?;
         println!("{} files -> {}", plan.sources.len(), plan.destination);
         for s in &plan.sources {
             println!("  {s}");
@@ -705,56 +817,87 @@ fn flatten(options: &Options) -> Result<(), String> {
         let scripts = linker_scripts(&root)?;
         let merged_object = plan.destination.trim_end_matches(".c").to_string();
         let stems: Vec<String> = plan.objects.iter().map(|o| stem(o).to_string()).collect();
+        // A forced merge into one game's file leaves the other game's scripts alone.
+        let one_game = options.force && !plan.destination.starts_with("games/common/");
         let mut rewritten = Vec::new();
         for script in &scripts {
+            let relative = script.strip_prefix(root).unwrap_or(script).to_string_lossy().into_owned();
+            if one_game && relative.split('/').nth(1) != plan.destination.split('/').nth(1) {
+                continue;
+            }
             let text = read(script)?;
-            match super::ldscript::rewrite(&text, &stems, &merged_object) {
-                Ok(Some(new)) => rewritten.push((script.clone(), new)),
-                Ok(None) => {}
-                Err(e) => return Err(format!("{}: {e}", script.strip_prefix(&root).unwrap_or(script).display())),
+            let new = if options.force { super::ldscript::rewrite_forced(&text, &stems, &merged_object) } else { super::ldscript::rewrite(&text, &stems, &merged_object).map_err(|e| format!("{relative}: {e}"))? };
+            if let Some(new) = new {
+                rewritten.push((script.clone(), new));
             }
         }
         // A game with an object list names its objects there: the same
         // rewrite, over each image's rows as each edition links them.
-        for (list, text) in rewritten_lists(&root, &stems, &merged_object)? {
+        for (list, text) in rewritten_lists(root, &stems, &merged_object, options.force)? {
             rewritten.push((root.join(list), text));
         }
         // Plainly first; failing that, each file keeps its own shapes as casts.
-        let lines = match verify(&root, &plan, &plan.text, &mut cache) {
+        let mut forced = false;
+        let lines = match verify(root, &plan, &plan.text, cache) {
             Ok(lines) => lines,
             Err(first) => {
                 let mut found = None;
-                let mut reasons = vec![first];
+                let mut tried: Vec<(Option<Plan>, String)> = vec![(None, first)];
                 for level in [1, 2] {
-                    let second = plan_views(&root, &objects, &judged, target, options.name.as_deref(), level)?;
-                    match verify(&root, &second, &second.text, &mut cache) {
-                        Ok(lines) => {
-                            found = Some((second, lines));
-                            break;
-                        }
-                        Err(again) => reasons.push(again),
+                    match plan_views(root, objects, judged, target, options.name.as_deref(), level, options.force) {
+                        Ok(second) => match verify(root, &second, &second.text, cache) {
+                            Ok(lines) => {
+                                found = Some((second, lines));
+                                break;
+                            }
+                            Err(again) => tried.push((Some(second), again)),
+                        },
+                        Err(e) if options.force => tried.push((None, e)),
+                        Err(e) => return Err(e),
                     }
                 }
-                let Some((second, lines)) = found else {
-                    return Err(format!("{}\nwith each file's own prototyped shapes as casts, {}\nwith all its own shapes as casts, {}", reasons[0], reasons[1], reasons[2]));
-                };
-                println!("  kept by casts:");
-                for n in second.notes.iter().filter(|n| n.contains("as a cast")) {
-                    println!("    {n}");
+                match found {
+                    Some((second, lines)) => {
+                        println!("  kept by casts:");
+                        for n in second.notes.iter().filter(|n| n.contains("as a cast")) {
+                            println!("    {n}");
+                        }
+                        plan = second;
+                        lines
+                    }
+                    None => {
+                        if !options.force {
+                            let reasons: Vec<&str> = tried.iter().map(|(_, r)| r.as_str()).collect();
+                            return Err(format!("{}\nwith each file's own prototyped shapes as casts, {}\nwith all its own shapes as casts, {}", reasons[0], reasons.get(1).unwrap_or(&""), reasons.get(2).unwrap_or(&"")));
+                        }
+                        // The plain merge, unless only a view with casts compiles.
+                        let compiles = |reason: &str| reason.lines().skip(1).all(|l| l.trim().split('\t').nth(2) == Some("differ"));
+                        let mut chosen = 0;
+                        if !compiles(&tried[0].1) {
+                            if let Some(k) = (1..tried.len()).find(|k| tried[*k].0.is_some() && compiles(&tried[*k].1)) {
+                                chosen = k;
+                            }
+                        }
+                        let (other, reason) = tried.swap_remove(chosen);
+                        if let Some(other) = other {
+                            plan = other;
+                        }
+                        forced = true;
+                        println!("FORCED\t{}\t{}\t{}", plan.destination, if chosen == 0 { "plain" } else { "casts" }, reason.replace('\n', " | "));
+                        Vec::new()
+                    }
                 }
-                plan = second;
-                lines
             }
         };
         let mut text = plan.text.clone();
         for l in &lines {
             println!("  {l}");
         }
-        if options.make_static {
+        if options.make_static && !forced {
             let private = private_functions(&root, &plan, &text);
             if !private.is_empty() {
                 let candidate = with_static(&text, &private);
-                match verify(&root, &plan, &candidate, &mut cache) {
+                match verify(root, &plan, &candidate, cache) {
                     Ok(_) => {
                         println!("  static: {}", private.join(", "));
                         text = candidate;
@@ -768,25 +911,46 @@ fn flatten(options: &Options) -> Result<(), String> {
             fs::create_dir_all(&out).map_err(|e| e.to_string())?;
             let path = out.join(Path::new(&plan.destination).file_name().unwrap_or_default());
             fs::write(&path, &text).map_err(|e| format!("{}: {e}", path.display()))?;
-            println!("  dry run: {} ({} linker scripts and object lists would change)", path.strip_prefix(&root).unwrap_or(&path).display(), rewritten.len());
-            continue;
+            println!("  dry run: {} ({} linker scripts and object lists would change)", path.strip_prefix(root).unwrap_or(&path).display(), rewritten.len());
+            return Ok(());
         }
-        apply(&root, &plan, &text, &rewritten)?;
-        println!("  applied: {} linker scripts and object lists", rewritten.len());
+        apply(root, &plan, &text, &rewritten, options.force)?;
+        println!("{}\t{}\t{} files, {} linker scripts and object lists", if forced { "APPLIED-FORCED" } else { "APPLIED-IDENTICAL" }, plan.destination, plan.sources.len(), rewritten.len());
     }
     Ok(())
 }
 
-fn apply(root: &Path, plan: &Plan, text: &str, scripts: &[(PathBuf, String)]) -> Result<(), String> {
+fn apply(root: &Path, plan: &Plan, text: &str, scripts: &[(PathBuf, String)], force: bool) -> Result<(), String> {
     for (path, new) in scripts {
         fs::write(path, new).map_err(|e| format!("{}: {e}", path.display()))?;
     }
     let mut gone: Vec<String> = plan.sources.iter().filter(|s| **s != plan.destination).cloned().collect();
-    gone.extend(plan.headers.iter().cloned());
+    let mut kept = false;
+    if force {
+        // A source another game's script still links stays for that game.
+        let mut named = String::new();
+        for script in linker_scripts(root)? {
+            named.push_str(&read(&script)?);
+        }
+        gone.retain(|s| {
+            let still = named.contains(&format!("{}.o\"", s.trim_end_matches(".c")));
+            if still {
+                kept = true;
+                println!("  kept for the other game: {s}");
+            }
+            !still
+        });
+    }
+    if !kept {
+        gone.extend(plan.headers.iter().cloned());
+    }
     for g in &gone {
         fs::remove_file(root.join(g)).map_err(|e| format!("{g}: {e}"))?;
     }
     let destination = root.join(&plan.destination);
+    if let Some(parent) = destination.parent() {
+        fs::create_dir_all(parent).map_err(|e| format!("{}: {e}", parent.display()))?;
+    }
     fs::write(&destination, text).map_err(|e| format!("{}: {e}", destination.display()))?;
     routing(root, &plan.sources, &plan.destination)?;
     Ok(())
@@ -838,7 +1002,7 @@ mod tests {
              3ad\ttext\tgames/g/b\t.text\n",
         );
         let objects = ["games/g/a".to_owned(), "games/g/b".to_owned()];
-        let rows = rewritten_rows(&before, &objects, "games/g/m").unwrap();
+        let rows = rewritten_rows(&before, &objects, "games/g/m", false).unwrap();
         assert_eq!(
             rows,
             list(
@@ -849,10 +1013,10 @@ mod tests {
                  3ad\ttext\tgames/g/m\t.text\n"
             )
         );
-        assert_eq!(rewritten_rows(&before, &["games/g/q".to_owned()], "games/g/m").unwrap(), before);
+        assert_eq!(rewritten_rows(&before, &["games/g/q".to_owned()], "games/g/m", false).unwrap(), before);
         // An edition that links one of the objects and not the other is refused.
         let partial = list("main\trom_start\tgames/g/a\t.text\nmain\trom_start\tgames/g/b\t.text\tja\n");
-        assert!(rewritten_rows(&partial, &objects, "games/g/m").unwrap_err().contains("main en"));
+        assert!(rewritten_rows(&partial, &objects, "games/g/m", false).unwrap_err().contains("main en"));
     }
 
     #[test]

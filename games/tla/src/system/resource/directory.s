@@ -418,11 +418,11 @@ Resource_DirectoryTable:
 	resource , BattleFx_StagedParticlePath
 	resource , BattleFx_DualStreamPath
 	resource , Field_PerspectiveDataA
-	resource DefaultMapCells, Resource_Data198
+	resource DefaultMapCells, Field_DefaultMapCells
 	resource , Resource_Data199
 	resource , WorldMap_PaletteA
-	resource , Resource_Data19B
-	resource , Resource_Data19C
+	resource , Field_DefaultMapAnimation
+	resource , Field_DefaultMetatileAttributes
 	resource , WorldMap_TilesA1
 	resource , WorldMap_TilesA2
 	resource , WorldMap_TilesA3

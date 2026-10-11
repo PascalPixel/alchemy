@@ -5716,12 +5716,9 @@ Resource_Data021:
 	.incbin "baserom.gba", 0x006a6c50, 0x0000186c
 	.section .rom.006a99e3, "ax"
 	.incbin "baserom.gba", 0x006a99e3, 0x00000001
-	.global Resource_Data023
-Resource_Data023:
-	.incbin "baserom.gba", 0x006a99e4, 0x0000761c
-	.global Resource_Data024
-Resource_Data024:
-	.incbin "baserom.gba", 0x006b1000, 0x0001bf8c
+	.section .rom.006b0fff, "ax"
+	.incbin "baserom.gba", 0x006b0fff, 0x00000001
+	.section .rom.006ccf8c, "ax"
 	.global Resource_Data025
 Resource_Data025:
 	.incbin "baserom.gba", 0x006ccf8c, 0x000002b4
@@ -6287,21 +6284,14 @@ Resource_Data181:
 	.incbin "baserom.gba", 0x008f00c5, 0x00000003
 	.section .rom.008f116d, "ax"
 	.incbin "baserom.gba", 0x008f116d, 0x00000003
-	.section .rom.00932bd4, "ax"
-	.global Resource_Data198
-Resource_Data198:
-	.incbin "baserom.gba", 0x00932bd4, 0x000093c4
-	.global Resource_Data199
-Resource_Data199:
-	.incbin "baserom.gba", 0x0093bf98, 0x00000028
+	.section .rom.0093bf95, "ax"
+	.incbin "baserom.gba", 0x0093bf95, 0x00000003
 	.section .rom.0093c1ad, "ax"
 	.incbin "baserom.gba", 0x0093c1ad, 0x00000003
-	.global Resource_Data19B
-Resource_Data19B:
-	.incbin "baserom.gba", 0x0093c1b0, 0x00000154
-	.global Resource_Data19C
-Resource_Data19C:
-	.incbin "baserom.gba", 0x0093c304, 0x000004b8
+	.section .rom.0093c301, "ax"
+	.incbin "baserom.gba", 0x0093c301, 0x00000003
+	.section .rom.0093c7b9, "ax"
+	.incbin "baserom.gba", 0x0093c7b9, 0x00000003
 	.section .rom.0093df26, "ax"
 	.incbin "baserom.gba", 0x0093df26, 0x00000002
 	.section .rom.0093f45d, "ax"

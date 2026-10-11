@@ -1737,7 +1737,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
 	s32						 size;
 	s32						 step;
 
-	/* FAKEMATCH: the frame counter is pinned to r9, as the reference keeps it. */
+	/* FAKEMATCH: the frame counter is pinned to r9, as the reference keeps it. 2026-10-11: as a plain local its priority (20 refs/232 insns) ties size and outranks step (13/240), so it takes sl and step r9 (differ 30, one register swap); the reference needs step ranked above the counter, which no plain shape gives (for/while/u32, declaration order, a bound variable, early init, argument use, 19k permuter candidates). */
 	register s32 frame __asm__("r9");
 	s32			 i;
 

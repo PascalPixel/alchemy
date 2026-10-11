@@ -2284,8 +2284,8 @@ s32 Scene_RunEntrySetup(void)
             {
                 s32 zero = 0;
 
-                /* FAKEMATCH: volatile empty asm barrier on the zero: movs r3, #0 stays before the register address load as native; as a plain empty asm the address load goes first (1 of 1689 rows differ); arm_reorg counts it as 4 bytes, so with no asm here the pools move (81 rows differ) */
-                asm volatile("" : "+l"(zero));
+                /* FAKEMATCH: the one-pass block's loop notes keep movs r3, #0 before the register address load and the store before the next call's argument (sched2 barriers); the empty asm's in/out operand gives the zero four refs so local-alloc allocates it r3 ahead of the address (differ 6 without it, registers swapped). Plain forms measured 2026-10-11: REG_BLDCNT = 0 differ 95 (halfword constant from the pool); an s32 or u16 zero, an inline helper, Io_Set16 or a function-top zero differ 6; pointer-first forms differ 4; Io_Write16 differ 6. */
+                asm("" : "+l"(zero));
                 /* FAKEMATCH: needed to match: this CSE block keeps the blend
                  * store before the next call setup, at the same size and frame. */
                 do {

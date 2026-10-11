@@ -244,7 +244,7 @@ void Menu_StepLeft(struct SelectionScreen *state)
         } else {
             node = state->head;
             i = 64;
-            { register s32 z asm("r0") = 0; /* FAKEMATCH: the zero goes through r0 */
+            { register s32 z asm("r0") = 0; /* FAKEMATCH: the zero goes through r0. 2026-10-11: CSE follows the beq into this block and reuses the known-zero OR register for a plain store (differ 28); only a loop-end note before the else label stops it, and a fresh zero then takes r3 (differ 4); r0 needs the zero live across the first loop, which no instruction-free second use gives (a second store after the loop: differ 13). */
             state->records[1].kind = z; }
             while (node->next != NULL) {
                 node->target_x = node->x + i;

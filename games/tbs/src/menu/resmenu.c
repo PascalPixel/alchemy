@@ -452,7 +452,7 @@ psynergy_menu:
                 slot->oam.word.attr23 = 0;
                 slot->oam.f.x = win->x * 8 + 8;
                 slot->oam.f.y = win->y * 8 + 4;
-                /* FAKEMATCH: instruction order only (pool placement): arm_reorg counts this empty asm as a 4-byte insn, so the pool goes in after mov r1, r10 as native, whose constant 40 acts as a range-60 (zero_extendhisi2) pool load (differ 14). */
+                /* FAKEMATCH: instruction order only (pool placement): arm_reorg counts this empty asm as a 4-byte insn, so the pool goes in after mov r1, r10 as native, whose constant 40 acts as a range-60 (zero_extendhisi2) pool load (differ 14). 2026-10-11: arm_reorg runs before shorten_branches and counts the empty asm at its 4-byte default length while it emits nothing; the halfword constant fix needs that much more estimated length after it, and no C statement or single pattern-length change (strh, str, orr, and tested over all 413 English objects) supplies it. */
                 __asm__ volatile ("");
                 slot->oam.f.tile = Resource_LoadIndexedEntryToBuffer(param, handle);
                 state->entryActive[1] = 1;
@@ -537,7 +537,7 @@ djinn_menu:
                 state->entries[0].oam.f.x = 56;
                 slot->oam.word.attr01 = 0x40000400;
                 slot->oam.word.attr23 = 0;
-                /* FAKEMATCH: instruction order only (pool placement, schedule): counted as 4 bytes, the empty asm puts the pool after mov r2, r9 as native (constant 56) and keeps ok = 1 - (j != 4) among the slot stores (differ 12). */
+                /* FAKEMATCH: instruction order only (pool placement, schedule): counted as 4 bytes, the empty asm puts the pool after mov r2, r9 as native (constant 56) and keeps ok = 1 - (j != 4) among the slot stores (differ 12). 2026-10-11: arm_reorg runs before shorten_branches and counts the empty asm at its 4-byte default length while it emits nothing; the halfword constant fix needs that much more estimated length after it, and no C statement or single pattern-length change (strh, str, orr, and tested over all 413 English objects) supplies it. */
                 __asm__ volatile ("");
                 slot->oam.f.x = win->x * 8 + 8;
                 slot->oam.f.y = win->y * 8 + 4;
@@ -733,7 +733,7 @@ item_menu:
                 state->entries[0].oam.f.x = 48;
                 slot->oam.word.attr01 = 0x40000400;
                 slot->oam.word.attr23 = 0;
-                /* FAKEMATCH: instruction order only (pool placement): counted as 4 bytes, the empty asm puts the pool after ldr r1, [sp, #72] as native (constant 48) (differ 10). */
+                /* FAKEMATCH: instruction order only (pool placement): counted as 4 bytes, the empty asm puts the pool after ldr r1, [sp, #72] as native (constant 48) (differ 10). 2026-10-11: arm_reorg runs before shorten_branches and counts the empty asm at its 4-byte default length while it emits nothing; the halfword constant fix needs that much more estimated length after it, and no C statement or single pattern-length change (strh, str, orr, and tested over all 413 English objects) supplies it. */
                 __asm__ volatile ("");
                 slot->oam.f.x = win->x * 8 + 8;
                 slot->oam.f.y = win->y * 8 + 4;

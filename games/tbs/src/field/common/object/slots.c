@@ -118,7 +118,7 @@ void FourObjectMotion_UpdateBottomRow(void)
              * initializer and an inline sign/limit helper all differ 81 in
              * EN (119 native, 118 built), changing the outer high-register
              * allocation as well as this read. */
-            /* FAKEMATCH: the row's second read lives in r2, as the native allocates it. */
+            /* FAKEMATCH: the row's second read lives in r2, as the native allocates it. 2026-10-11: plain locals take r3 (local-alloc's first free register, REG_ALLOC_ORDER 3,2,1,0), which costs limit its r3 preference and reshuffles the high registers (differ 81); reading py before request[3] = 0 puts it in r2 but emits the ldrsh before the zero store (differ 4 in all six editions). */
             register s32 py asm("r2");
 
             ((struct FieldSprite *)obj)->priority = 0;

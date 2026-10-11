@@ -711,7 +711,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
     struct UiWindow *infoWin;
 #else
-    /* FAKEMATCH: register choice only: as an ordinary local the info window is spilled and the frame shrinks to 320 bytes (differ 492); the native keeps it in r9. */
+    /* FAKEMATCH: register choice only: as an ordinary local the info window is spilled and the frame shrinks to 320 bytes (differ 492); the native keeps it in r9. 2026-10-11: its live length is doubled by update_equiv_regs (the first set carries a constant REG_EQUAL), giving priority 2104 against &pos 2171 and the hoisted bit-field zero 2142; one duplicated no-effect block reaches 2143 against 2149 (differ 202), two push &pos below the zero (differ 449), and an initializer without the note sends it to r10 as in ES/IT (differ 96). */
     register struct UiWindow *infoWin asm("r9");
 #endif
     s32 cursor;

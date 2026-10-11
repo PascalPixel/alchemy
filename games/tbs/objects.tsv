@@ -137,9 +137,6 @@ main	rom_main_02	games/tbs/src/graphics/text/windows	.text
 main	rom_main_02	games/common/src/graphics/text/get_wide_string_width	.text
 main	rom_main_02	games/tbs/src/graphics/window/measure	.text
 main	rom_main_02	games/common/src/graphics/window/adjust_value_without_limit	.text
-main	rom_main_02	games/tbs/src/graphics/text/text	.text
-main	rom_main_02	games/tbs/src/system/memory/clear_word_if_set	.text
-main	rom_main_02	games/tbs/src/graphics/window/uiwork	.text
 main	rom_main_02	games/tbs/src/graphics/text/symbol	.text
 main	rom_main_02	games/tbs/src/graphics/glyph/glyph	.text
 main	rom_main_02	games/common/src/menu/get_node_at_count	.text

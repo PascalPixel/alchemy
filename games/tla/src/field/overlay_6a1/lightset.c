@@ -38,25 +38,3 @@ void Func_02000338(s32 mode)
         Dma_Set(Data_02002ad4, (void *)0x05000184, 0x84000002, REG_DMA3);
     }
 }
-
-void Func_020003bc(s32 id)
-{
-    struct FieldActor *object;
-    s32 height;
-
-    object = Object_GetById(id);
-    object->motion_flags = 4;
-    height = object->terrain_height;
-    asm volatile("" : "+l"(height)); /* FAKEMATCH: ⚓️ loads the ground height before it clears the word */
-    WORD_AT(object, 68) = 0;
-    object->y = height + 0x200000;
-    {
-        u8 *flags = &object->priority_flags;
-        s32 bit = 128; /* FAKEMATCH: ⚓️ builds the bit in the register it ORs into */
-
-        *flags = bit | *flags;
-    }
-    height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
-    Func_020021e0(object->x, object->z, 0, (height >> 19) + 6);
-    Func_020022c0(object->x, object->z, 0, 128);
-}

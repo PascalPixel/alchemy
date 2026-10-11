@@ -1,3 +1,4 @@
+/* differ 0 with its tagged FAKEMATCH asm barrier; back on the listing because the device ratchet (tla asm-barrier, baseline 197) may not rise. Re-adopt when a barrier-free form is found or the baseline is raised by decision. */
 #include "local.h"
 
 void Func_02000ed0(void)
@@ -9,15 +10,4 @@ void Func_02000ed0(void)
     /* FAKEMATCH: the native builds the priority before loading the callback. */
     __asm__ volatile("" : "+r"(priority));
     Scheduler_AddOrUpdateCallback(Func_02000e90, priority);
-}
-
-void Func_02000ef0(void)
-{
-    Func_02002190(Data_0200226c);
-}
-
-void Func_02000f00(void)
-{
-    Object_GetById(gPartyState.current_owner)->priority_flags |= 2;
-    Func_02002190(Data_0200226c);
 }

@@ -1,3 +1,4 @@
+/* differ 0 with its tagged FAKEMATCH asm barrier; back on the listing because the device ratchet (tla asm-barrier, baseline 197) may not rise. Re-adopt when a barrier-free form is found or the baseline is raised by decision. */
 #include "local.h"
 
 void Func_02000cfc(void)

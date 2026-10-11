@@ -175,6 +175,48 @@ Func_02000404:
 	.4byte Data_02002cec
 .L_020084bc:
 	.4byte 0x05000184
+	.section .text.x02008544,"ax",%progbits
+	.global Func_02000544
+	.thumb_func
+Func_02000544:
+	push {r5, lr}
+	bl Object_GetById
+	adds r5, r0, #0
+	adds r1, r5, #0
+	adds r1, #85
+	movs r3, #4
+	strb r3, [r1]
+	movs r2, #0
+	ldr r3, [r5, #20]
+	str r2, [r5, #68]
+	movs r2, #128
+	lsls r2, r2, #14
+	adds r3, r3, r2
+	str r3, [r5, #12]
+	subs r1, #50
+	ldrb r2, [r1]
+	movs r3, #128
+	orrs r3, r2
+	strb r3, [r1]
+	adds r3, r5, #0
+	adds r3, #34
+	ldr r1, [r5, #8]
+	ldr r2, [r5, #16]
+	ldrb r0, [r3]
+	bl Map_GetTerrainHeight
+	adds r3, r0, #0
+	asrs r3, r3, #19
+	ldr r0, [r5, #8]
+	ldr r1, [r5, #16]
+	adds r3, #6
+	movs r2, #0
+	bl Func_02002368
+	ldr r0, [r5, #8]
+	ldr r1, [r5, #16]
+	movs r2, #0
+	movs r3, #128
+	bl Func_02002460
+	pop {r5, pc}
 	.section .text.x02008598,"ax",%progbits
 	.global Func_02000598
 	.thumb_func
@@ -2171,6 +2213,35 @@ Func_02001388:
 	.4byte 0xc000a000
 .L_02009540:
 	.4byte Data_02002e32
+	.section .text.x020096cc,"ax",%progbits
+	.balign 4
+	.global Func_020016cc
+	.thumb_func
+Func_020016cc:
+	push {r5, lr}
+	adds r5, r1, #0
+	bl Object_GetById
+	adds r4, r0, #0
+	cmp r4, #0
+	beq .L_020096f2
+	adds r3, r4, #0
+	adds r3, #100
+	strh r5, [r3]
+	ldr r1, .L_020096f4
+	ldr r0, .L_020096f8
+	ldrh r2, [r1]
+	movs r5, #0
+	ldrsh r3, [r1, r5]
+	adds r2, #1
+	lsls r3, r3, #2
+	str r4, [r0, r3]
+	strh r2, [r1]
+.L_020096f2:
+	pop {r5, pc}
+.L_020096f4:
+	.4byte Data_02002d2e
+.L_020096f8:
+	.4byte Data_02002d30
 	.section .text.x0200974e,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02009786,"ax",%progbits

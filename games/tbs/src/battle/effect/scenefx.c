@@ -67,12 +67,6 @@ void	   BattleActor_CommitPlacementFar(void);
 #define FLASHES ((struct EffectStep *)Ram_MapCellBuffer)
 #define EMBERS (&FLASHES[128])
 
-static __inline__ void CopyWords(void *destination, const void *source, s32 size)
-{
-	/* FAKEMATCH: needed to match: called directly, the constant arguments are loaded before the routine's address and the size's lsls lands ahead of it */
-	Iwram_CopyWords(destination, source, size);
-}
-
 void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mode)
 {
 	volatile u32			 fill;
@@ -186,7 +180,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 		Iwram_CopyWords(colors, Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
 	fill = 0x01010101;
 	Dma_Set((void *)&fill, Ram_MapCellBuffer, 0x85002000, REG_DMA3);
-	CopyWords((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
+	Iwram_CopyWords((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
 	WaitFrames(1);
 	*(volatile u16 *)0x04000050 = 0;
 	*(volatile u16 *)0x04000020 = 0x100;
@@ -210,7 +204,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 
 		((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
 	}
-	CopyWords((void *)0x06004000, canvas, 0x4000);
+	Iwram_CopyWords((void *)0x06004000, canvas, 0x4000);
 	gProjection.center_y = 240;
 	BattleFx_SelectLivingTargets(work->effect);
 	work->bg2x = 0;

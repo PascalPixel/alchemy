@@ -173,7 +173,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
 		palette = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
 	}
 	/* FAKEMATCH: needed to match: forwarded through Call3, the palette copy loads its routine before it shifts the destination, as the reference does */
-	Call3((void (*)())Iwram_CopyWords, (s32)BG_PLTT, (s32)palette, 128);
+	Iwram_CopyWords((s32)BG_PLTT, (s32)palette, 128);
 
 	// ジンの絵 (等倍なら 40x40、横 2 倍なら 20x40 の小さい絵)
 	if (narrow == 0)

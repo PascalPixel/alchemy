@@ -26,18 +26,6 @@
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 
-static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32 size)
-{
-    /* FAKEMATCH: direct calls change saved-pointer allocation and argument scheduling during menu setup. */
-    return copy(dst, src, size);
-}
-
-static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
-{
-    /* FAKEMATCH: a direct call loads the fill value before the routine, reversing their pool words. */
-    return fill(dst, size, value);
-}
-
 #if EDITION_INTERNATIONAL
 #define SAVED_TILE_BYTES 0x2000
 #else
@@ -62,9 +50,9 @@ s32 ActionMenu_Open(void)
     state->page = 0;
     state->party_count = Party_ListActiveOwnersFar(state->owner_ids);
     Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
-    CopyWords(Iwram_CopyWords, palette, (void *)0x05000000, 64);
+    Iwram_CopyWords(palette, (void *)0x05000000, 64);
 #if !EDITION_INTERNATIONAL
-    CopyWords(Iwram_CopyWords, tiles, (void *)0x06004000, SAVED_TILE_BYTES);
+    Iwram_CopyWords(tiles, (void *)0x06004000, SAVED_TILE_BYTES);
 #endif
     Palette_LightenBankHighlight(14);
     Dma_Set((void *)0x05000200, (void *)0x05000000, 0x80000010, REG_DMA3);
@@ -72,8 +60,8 @@ s32 ActionMenu_Open(void)
     Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, REG_DMA3);
     Dma_Set((void *)0x050001e8, (void *)0x0500003c, 0x80000001, REG_DMA3);
 #if EDITION_INTERNATIONAL
-    CopyWords(Iwram_CopyWords, tiles, (void *)0x06004000, SAVED_TILE_BYTES);
-    FillWords(Iwram_FillWords, (void *)0x06004000, SAVED_TILE_BYTES, 0x33333333);
+    Iwram_CopyWords(tiles, (void *)0x06004000, SAVED_TILE_BYTES);
+    Iwram_FillWords((void *)0x06004000, SAVED_TILE_BYTES, 0x33333333);
     UiWork_SetAltFlagAndClearTableFar(1);
 #endif
     state->selector_window = (struct UiWindow *)UiWindow_CreateFar(13, 0, 17, 5, 2);
@@ -102,8 +90,8 @@ s32 ActionMenu_Open(void)
     UiWork_SetAltFlagAndClearTableFar(0);
     WaitFrames(1);
 #endif
-    CopyWords(Iwram_CopyWords, (void *)0x05000000, palette, 64);
-    CopyWords(Iwram_CopyWords, (void *)0x06004000, tiles, SAVED_TILE_BYTES);
+    Iwram_CopyWords((void *)0x05000000, palette, 64);
+    Iwram_CopyWords((void *)0x06004000, tiles, SAVED_TILE_BYTES);
     MemFree(tiles);
     MemFree(palette);
     ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->menu_busy = 1;

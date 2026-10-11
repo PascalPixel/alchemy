@@ -847,9 +847,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 	}
 	{
 		/* FAKEMATCH: needed to match: called through a pointer, the routine's address loads before the palette's */
-		s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
-
-		copy((void *)BG_PLTT, palette, 128);
+		Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 	}
 
 	// 粒：x は角度、z は半径 (1/16 ドット単位)、i フレーム待ってから昇る
@@ -1406,9 +1404,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
 		break;
 	}
 	{
-		s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
-
-		copy((void *)0x05000000, palette, 128);
+		Iwram_CopyWords((void *)0x05000000, palette, 128);
 	}
 
 	for (i = 0; i != 128; i++)
@@ -1600,9 +1596,7 @@ void BattleFx_ScheduleCallbacksAndReleaseBlocks(void)
 	Scheduler_RemoveCallback(BattlePresentation_DrawStreaks);
 	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
 	{
-		s32 (*transfer)(void *, s32) = Iwram_ClearWords;
-
-		transfer((void *)0x06004000, 0x4000);
+		Iwram_ClearWords((void *)0x06004000, 0x4000);
 	}
 	Scheduler_RemoveCallback(Palette_StepFadeTransfer);
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
@@ -1656,9 +1650,7 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
 	{
 		void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
 		/* FAKEMATCH: needed to match: the copier address is set before the costly 0x05000000 operand, as the reference loads it */
-		s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
-
-		copy((void *)0x05000000, palette, 128);
+		Iwram_CopyWords((void *)0x05000000, palette, 128);
 	}
 	work->transfer_mode = 2;
 	work->transfer_value = 75;
@@ -1733,18 +1725,6 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
 	((void (*)(void *, s32, void *, s32))ColorBuffer_BackupAndDarken)
 #define ColorBuffer_BackupAndBrighten \
 	((void (*)(void *, s32, void *, s32))ColorBuffer_BackupAndBrighten)
-
-static __inline__ void CopyWords(void *destination, const void *source, s32 size)
-{
-	/* FAKEMATCH: needed to match: a direct call changes BattlePresentation_ProcessPendingGraphicsTransfer from push {r5, r6, lr} to push {r5, r6, r7, lr} */
-	Iwram_CopyWords(destination, source, size);
-}
-
-static __inline__ void FillWords(void *destination, s32 size, s32 value)
-{
-	/* FAKEMATCH: needed to match: a direct call changes BattlePresentation_ProcessPendingGraphicsTransfer from mov r0, r5 to lsl r1, r1, #7 */
-	Iwram_FillWords(destination, size, value);
-}
 
 void AudioCommand_PlayFar(s32 cue);
 
@@ -1900,11 +1880,11 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void)
 		switch (work->transfer_mode)
 		{
 		case 0:
-			CopyWords((void *)0x06004000, source, 0x4000);
+			Iwram_CopyWords((void *)0x06004000, source, 0x4000);
 			break;
 		case 1:
-			CopyWords((void *)0x06004000, source, 0x4000);
-			FillWords(source, 0x4000, work->transfer_value);
+			Iwram_CopyWords((void *)0x06004000, source, 0x4000);
+			Iwram_FillWords(source, 0x4000, work->transfer_value);
 			break;
 		case 2:
 			if (work->transfer_value == 50)
@@ -1952,11 +1932,11 @@ void BattleFx_FlushPendingGraphicsTransfer(void)
 	switch (transfer_mode)
 	{
 	case 0:
-		CopyWords((void *)0x06008000, source, 0x7800);
+		Iwram_CopyWords((void *)0x06008000, source, 0x7800);
 		break;
 	case 1:
-		CopyWords((void *)0x06008000, source, 0x7800);
-		FillWords(source, 0x7800, work->transfer_value);
+		Iwram_CopyWords((void *)0x06008000, source, 0x7800);
+		Iwram_FillWords(source, 0x7800, work->transfer_value);
 		break;
 	case 2:
 		if (work->transfer_value == 50)
@@ -2069,12 +2049,6 @@ void ObjectGroup_TickMemberTimers(void)
 
 typedef s32 (*ClearWordsFn)(void *destination, s32 size);
 
-static __inline__ void ClearWords(ClearWordsFn clear, void *destination, s32 size)
-{
-	/* FAKEMATCH: needed to match: direct calls share the size in r5 and move the routine to r6, changing the canvas tails */
-	clear(destination, size);
-}
-
 void AudioCommand_PlayFar(s32);
 
 //--------------------------------------------------------------------------
@@ -2145,8 +2119,8 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
 		}
 	}
 
-	ClearWords(Iwram_ClearWords, canvas, 0x4000);
-	ClearWords(Iwram_ClearWords, BG_CHAR_BLOCK(1), 0x4000);
+	Iwram_ClearWords(canvas, 0x4000);
+	Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
 	work->shake_frames = 0;
 	work->saved_bg1_x = gBgScroll[1].x;
 	work->saved_bg1_y = gBgScroll[1].y;
@@ -2217,8 +2191,8 @@ void BattleFx_OpenCanvasLayer(s32 bg_control)
 		}
 	}
 
-	ClearWords(Iwram_ClearWords, canvas, 0x4000);
-	ClearWords(Iwram_ClearWords, BG_CHAR_BLOCK(1), 0x4000);
+	Iwram_ClearWords(canvas, 0x4000);
+	Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
 	WaitFrames(1);
 }
 
@@ -2311,18 +2285,6 @@ void BattleFx_SetTransitionFlagAndDisplay(void)
 typedef s32 (*ClearFn)(void *dst, s32 size);
 typedef s32 (*FillFn)(void *dst, s32 size, u32 value);
 
-static __inline__ void ClearWords_2(ClearFn clear, void *dst, s32 size)
-{
-	/* FAKEMATCH: needed to match: direct calls share the 0x4000 size in r5 and move the clear routine to r6 */
-	clear(dst, size);
-}
-
-static __inline__ void FillWords_2(FillFn fill, void *dst, s32 size, s32 value)
-{
-	/* FAKEMATCH: needed to match: a direct call loads the destination before the routine and reverses their pool words */
-	fill(dst, size, value);
-}
-
 struct BattleScreen
 {
 	u8	unknown_000[0x648];
@@ -2349,8 +2311,8 @@ void BattleFx_SetupCanvasTileMap(void)
 	BattlePresentation_ConfigurePaletteFadeFar(2, screen->palette_fade, 0);
 	gBgScroll[1].y = 32;
 	layer->offset = 0;
-	ClearWords_2(Iwram_ClearWords, (void *)0x06003fc0, 64);
-	FillWords_2(Iwram_FillWords, (void *)0x0600f900, 0x200, -1);
+	Iwram_ClearWords((void *)0x06003fc0, 64);
+	Iwram_FillWords((void *)0x0600f900, 0x200, -1);
 	off = 0;
 	for (row = 0; row != 16; row++)
 	{
@@ -2372,7 +2334,7 @@ void BattleFx_SetupCanvasTileMap(void)
 	REG_WININ = 0x3537;
 	REG_WINOUT = 0x3f21;
 	REG_BLDALPHA = 0x100e;
-	ClearWords_2(Iwram_ClearWords, canvas, 0x4000);
-	ClearWords_2(Iwram_ClearWords, BG_CHAR_BLOCK(1), 0x4000);
+	Iwram_ClearWords(canvas, 0x4000);
+	Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
 	WaitFrames(1);
 }

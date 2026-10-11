@@ -60,12 +60,10 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source)
     matrix = &gObjAffineMatrices[index];
     coefficient = matrix->coefficients;
     if ((x_scale == y_scale || -x_scale == y_scale) && angle == 0) {
-        s32 (*divide)(s32, s32);
         s32 reciprocal;
         s32 x_reciprocal;
 
-        divide = Iwram_SignedDivide;
-        reciprocal = divide(0x10000, y_scale);
+        reciprocal = Iwram_SignedDivide(0x10000, y_scale);
         x_reciprocal = reciprocal;
         if (-x_scale == y_scale)
             x_reciprocal = -reciprocal;

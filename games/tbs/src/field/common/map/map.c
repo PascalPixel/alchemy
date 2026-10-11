@@ -24,12 +24,6 @@ extern u8 gMapCellBuffer[];
 
 typedef void (*ConvertFn)(void *dst, const void *src, const void *saved);
 
-static __inline__ void CopyWords(void *dst, const void *src, s32 size)
-{
-    /* FAKEMATCH: needed to match: a direct call changes Tilemap_ConvertBuffer from mov r6, r8 to mov r6, sl (52/56 assembly lines). */
-    Iwram_CopyWords(dst, src, size);
-}
-
 void Graphics_RenumberFillerEntries(void)
 {
     u32 *p = (u32 *)gMapCellBuffer;
@@ -62,7 +56,7 @@ void Tilemap_ConvertBuffer(void)
     /* FAKEMATCH: needed to match: the do-while block keeps the allocation next to the copy that uses it */
     do {
         saved = (u8 *)Runtime_BumpAllocateAlternatePool(size);
-        CopyWords(saved, Ram_MapCellBuffer, size);
+        Iwram_CopyWords(saved, Ram_MapCellBuffer, size);
     } while (0);
     RamCode_Load(routine, Tile_ConvertMap, Tile_ConvertMapCodeSize);
     routine((gMapCellBuffer + 0x8000), Ram_MapCellBuffer, saved);
@@ -267,13 +261,14 @@ s32 Map_LoadLayeredScene(s32 index)
             backdrop = *(s16 *)BG_PLTT;
             Resource_DecodeType01(Resource_GetTableEntry(entry->resources[1] + (u32)&ResourceId_Map001), buf);
             *(s16 *)buf = backdrop;
-            Iwram_CopyWords((void *)BG_PLTT, buf, 0x1c0);
+            /* FAKEMATCH: needed to match: these four copies call the fixed entry itself; through Iwram_CopyWords the scene header and the work move from r5 and r8 to r8 and sl (237 of 357 instructions differ), with or without the function's other devices. */
+            Iwram_CopyWordsEntry((void *)BG_PLTT, buf, 0x1c0);
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[2] + (u32)&ResourceId_Map001), buf);
-            Iwram_CopyWords(BG_CHAR_BLOCK(1), buf, 0x4000);
+            Iwram_CopyWordsEntry(BG_CHAR_BLOCK(1), buf, 0x4000);
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[3] + (u32)&ResourceId_Map001), buf);
-            Iwram_CopyWords(BG_CHAR_BLOCK(2), buf, 0x4000);
+            Iwram_CopyWordsEntry(BG_CHAR_BLOCK(2), buf, 0x4000);
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[4] + (u32)&ResourceId_Map001), buf);
-            Iwram_CopyWords(BG_CHAR_BLOCK(3), buf, 0x4000);
+            Iwram_CopyWordsEntry(BG_CHAR_BLOCK(3), buf, 0x4000);
             Resource_DecodeType2(Resource_GetTableEntry(entry->resources[5] + (u32)&ResourceId_Map001), gMapLayerData);
             MemFree(buf);
         }

@@ -281,9 +281,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
 	{
 		/* FAKEMATCH: needed to match: the routine's address is loaded before the size, as a call through a local makes it */
-		s32 (*clear)(void *, s32) = Iwram_ClearWords;
-
-		clear(BG_CHAR_BLOCK(1), 0x4000);
+		Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
 	}
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);

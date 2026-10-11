@@ -54,18 +54,6 @@ static __inline__ void PackRows(void *src, void *dest, s32 width, s32 height)
 	Graphics_PackTileRows(src, dest, width, height);
 }
 
-static __inline__ void ClearWords(void *dest, u32 size)
-{
-	/* FAKEMATCH: needed to match: inline scope makes each clearing call reload its byte count */
-	Iwram_ClearWords(dest, size);
-}
-
-static __inline__ void FillWords(void *dest, u32 size, u32 value)
-{
-	/* FAKEMATCH: needed to match: inline scope reloads the fill routine before its arguments */
-	Iwram_FillWords(dest, size, value);
-}
-
 static __inline__ void DrawImage(
 	void *canvas, const void *pixels, s32 x, s32 y, s32 width, s32 height, RectangleBlit *draw)
 {
@@ -431,8 +419,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 		REG_BG2X = (64 - target_screen->x) << 8;
 		work->transfer_mode = 1; // 毎フレーム 0 で消す
 		work->transfer_value = 0;
-		ClearWords(BG_CHAR_BLOCK(1), 0x4000);
-		ClearWords(canvas, 0x4000);
+		Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+		Iwram_ClearWords(canvas, 0x4000);
 		REG_BLDCNT = 0;
 	}
 	if (kind == 31)
@@ -450,8 +438,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	// 15・17・24・26 は、キャンバスを片付けて別の演出へ引き継ぐ
 	if (kind == 15 || kind == 17 || kind == 24 || kind == 26)
 	{
-		ClearWords(BG_CHAR_BLOCK(1), 0x4000);
-		ClearWords(canvas, 0x4000);
+		Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+		Iwram_ClearWords(canvas, 0x4000);
 		work->effect->prelude = 0;
 		Scheduler_RemoveCallback(Palette_StepFadeTransfer);
 		Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
@@ -482,8 +470,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	// 35 は、キャンバスを片付けて BattleFx_RunSparkGroups へ引き継ぐ
 	if (kind == 35)
 	{
-		ClearWords(BG_CHAR_BLOCK(1), 0x4000);
-		ClearWords(canvas, 0x4000);
+		Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+		Iwram_ClearWords(canvas, 0x4000);
 		work->effect->prelude = 0;
 		Scheduler_RemoveCallback(Palette_StepFadeTransfer);
 		Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
@@ -1019,7 +1007,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 					image_y + CastingImpact_ImageY[1], 99, 69);
 				if (frame == 4 || frame == 5)
 				{
-					FillWords(canvas, 0x4000, 0x3f3f3f3f);
+					Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
 				}
 				if (frame == 6 || frame == 7)
 				{
@@ -1073,7 +1061,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 			}
 			if (frame == 4 || frame == 5)
 			{
-				FillWords(canvas, 0x4000, 0x3f3f3f3f);
+				Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
 			}
 			if (frame <= 3)
 			{
@@ -1361,8 +1349,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	}
 	if (kind == 21)
 	{
-		ClearWords(BG_CHAR_BLOCK(1), 0x4000);
-		ClearWords(canvas, 0x4000);
+		Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+		Iwram_ClearWords(canvas, 0x4000);
 		work->effect->prelude = 0;
 		Scheduler_RemoveCallback(Palette_StepFadeTransfer);
 		Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);

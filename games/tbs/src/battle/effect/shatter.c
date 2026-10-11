@@ -669,12 +669,6 @@ struct BlitterPair
 #define PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0xc58))
 #define SLOT(n) (((DrawRectangle *)gWorkSlot)[n])
 
-static __inline__ s32 DivQ16(s32 divisor, s32 value)
-{
-	/* FAKEMATCH: needed to match: a direct call keeps 0x1fe0000 in r5 for the camera call */
-	return Iwram_RatioMulQ14(divisor, value);
-}
-
 void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 {
 	u8						 ramp[32];
@@ -807,7 +801,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 			work->transfer_mode = 2;
 			work->transfer_value = 75;
 		}
-		Camera_StoreSceneParameters(0x1fe0000, DivQ16(0x1fe0000, 0xc000), 0x7fff0000);
+		Camera_StoreSceneParameters(0x1fe0000, Iwram_RatioMulQ14(0x1fe0000, 0xc000), 0x7fff0000);
 		Render_ResetTransformState();
 		if (frame > 128)
 		{

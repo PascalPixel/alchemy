@@ -30,11 +30,6 @@ extern void UiWork_InitFreeList(void);
 #if !EDITION_INTERNATIONAL
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 
-static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
-{
-    /* FAKEMATCH: needed to match: in Japanese, a direct call loads the fill value before the routine and reverses pool order. */
-    return fill(dst, size, value);
-}
 #endif
 
 void UiWork_InitializeWithResourceCounters(void)
@@ -58,7 +53,7 @@ void UiWork_InitializeWithResourceCounters(void)
     fill = 0xf000f000;
     Dma_Set((const void *)&fill, work, 0x85000140, REG_DMA3);
 #else
-    FillWords(Iwram_FillWords, work, 0x500, 0xf000f000);
+    Iwram_FillWords(work, 0x500, 0xf000f000);
 #endif
     UiWork_InitFreeList();
     UiWork_SetTwoEntriesTo999();
@@ -98,7 +93,7 @@ void UiWork_Initialize(s32 kind)
     fill = 0xf000f000;
     Dma_Set(&fill, work, 0x85000140, REG_DMA3);
 #else
-    FillWords(Iwram_FillWords, work, 0x500, 0xf000f000);
+    Iwram_FillWords(work, 0x500, 0xf000f000);
 #endif
     UiWork_InitFreeList();
     Scheduler_AddOrUpdateCallback(UiWork_UploadDirtyBlocks, 0x480);
@@ -221,13 +216,9 @@ void UiWork_DrawByAttributes(struct UiWindow *window)
     if (8 & flags) {
         if (0x20 & flags) {
             UiWindow_DrawFrame(x, y, width, height);
-            fill = Iwram_FillWords;
-            dst = (void *)0x06002500;
-            fill(dst, 0xF00, 0x44444444);
+            Iwram_FillWords((void *)0x06002500, 0xF00, 0x44444444);
         } else {
-            fill = Iwram_FillWords;
-            dst = (void *)0x06002500;
-            fill(dst, 0xF00, 0);
+            Iwram_FillWords((void *)0x06002500, 0xF00, 0);
         }
         UiWindow_MapTextCanvasTiles(x, y, width, height, 0);
     } else {
@@ -544,16 +535,12 @@ reset_x:
 
 s32 Ui_ClearVramBlock(void)
 {
-    s32 (*fill)(void *, s32, u32) = Iwram_FillWords;
-
-    return fill((void *)0x06002500, 0xF00, 0);
+    return Iwram_FillWords((void *)0x06002500, 0xF00, 0);
 }
 
 s32 Ui_FillVramBlockPattern(void)
 {
-    s32 (*fill)(void *, s32, u32) = Iwram_FillWords;
-
-    return fill((void *)0x06002500, 0xF00, 0x44444444);
+    return Iwram_FillWords((void *)0x06002500, 0xF00, 0x44444444);
 }
 
 void UiWork_ResetFreeChannel(void)

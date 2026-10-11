@@ -660,9 +660,8 @@ s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj)
                 obj->z = z;
             } else {
                 if (dist > step) {
-                    div = Iwram_RatioMulQ14;
-                    dx = Iwram_MulQ16(div(dist, dx), step);
-                    dz = Iwram_MulQ16(div(dist, dz), step);
+                    dx = Iwram_MulQ16(Iwram_RatioMulQ14(dist, dx), step);
+                    dz = Iwram_MulQ16(Iwram_RatioMulQ14(dist, dz), step);
                 }
                 obj->x += dx;
                 obj->z += dz;

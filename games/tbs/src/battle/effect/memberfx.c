@@ -357,12 +357,6 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 
-static __inline__ void PalCopy(WordCopy copy, void *dst, const void *src, s32 size)
-{
-	/* FAKEMATCH: needed to match: the inlined copy shares the routine address and rebuilds the palette address at each call */
-	copy(dst, src, size);
-}
-
 struct BlitterPair
 {
 	DrawRectangle upper;
@@ -395,11 +389,11 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0);
 	palette = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
-	PalCopy(Iwram_CopyWords, (void *)BG_PLTT, palette, 128);
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 	palette += 128;
 	Resource_DecodeType01(palette, work);
 	palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
-	PalCopy(Iwram_CopyWords, (void *)BG_PLTT, palette, 128);
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
 	draw.upper = heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
@@ -830,12 +824,6 @@ void BattleFx_RunFortyEightFrameMode2(struct BattleEffectArgument *effect)
 	BattleFx_RunFortyEightFrameEffect(effect, 2);
 }
 
-static __inline__ void CopyPalette(WordCopy copy, void *dst, const void *src, s32 size)
-{
-	/* FAKEMATCH: needed to match: the inlined copy shares the routine address and rebuilds the palette address at each call */
-	copy(dst, src, size);
-}
-
 //--------------------------------------------------------------------------
 // 最初の対象の足元に、左右対称の壁 (EarthWall の絵) を立てる
 // mode : 0 等倍、32 フレーム小さく揺らす
@@ -864,15 +852,15 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
 
 	// 絵は EarthWall、パレットは MarsDjinn (mode 2 は Fireball) で上書きする
 	palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);
-	CopyPalette(Iwram_CopyWords, (void *)0x05000000, palette, 128);
+	Iwram_CopyWords((void *)0x05000000, palette, 128);
 	palette += 128;
 	Resource_DecodeType01(palette, work);
 	palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
-	CopyPalette(Iwram_CopyWords, (void *)0x05000000, palette, 128);
+	Iwram_CopyWords((void *)0x05000000, palette, 128);
 	if (mode == 2)
 	{
 		palette = Resource_GetTableEntry((s32)&ResourceId_FireballSheet);
-		CopyPalette(Iwram_CopyWords, (void *)0x05000000, palette, 128);
+		Iwram_CopyWords((void *)0x05000000, palette, 128);
 	}
 
 	// キャンバスの x = 64 が対象の位置にくるよう BG2 をずらす
@@ -1027,18 +1015,18 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
 		BattleFx_PrepareCanvasEffect(
 			effect, mode, work->effect->side ^ work->effect->prelude, 0, &djinn_x, &djinn_y);
 	palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);
-	PalCopy(Iwram_CopyWords, (void *)BG_PLTT, palette, 128);
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 	palette += 128;
 	Resource_DecodeType01(palette, work);
 	palette = Resource_GetTableEntry((s32)&ResourceId_CrescentMoonSheet);
-	PalCopy(Iwram_CopyWords, (void *)BG_PLTT, palette, 128);
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 	palette += 128;
 	Resource_DecodeType01(palette, work->sheet + PIC_MOTE);
 	if (mode == 0)
 		palette = Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet);
 	else
 		palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet);
-	PalCopy(Iwram_CopyWords, (void *)BG_PLTT, palette, 128);
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 	palette += 128;
 	Resource_DecodeType01(palette, work->sheet + PIC_DJINN);
 

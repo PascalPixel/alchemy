@@ -707,9 +707,7 @@ s32 Math_IntegerSqrt(s32 value)
 
 s32 FixedSqrt(s32 value)
 {
-    s32 (*root)(s32) = Iwram_Sqrt;
-
-    return root(value) << 8;
+    return Iwram_Sqrt(value) << 8;
 }
 
 s32 Runtime_GetLowTableAddress(void)

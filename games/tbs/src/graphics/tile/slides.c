@@ -1186,12 +1186,6 @@ void DisplayScroll_InitObjectTable(void)
         DisplayScroll_DrawLine(DisplayScroll_LineTable[0], i * 24, 1);
 }
 
-static __inline__ void DisplayScroll_CopyWords(void *destination, void *source, s32 size)
-{
-    /* FAKEMATCH: needed to match: a direct call keeps the size in r5 for the fill that follows and puts the row total in r6; through this the size is built in r2. */
-    Iwram_CopyWords(destination, source, size);
-}
-
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
 {
     u8 *buf = (u8 *)Runtime_BumpAllocateAlternatePool(0x900);
@@ -1218,7 +1212,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
         Iwram_FillWords(buf, 0x900, 0);
         GameFlag_SetBitFar(0x200);
     } else {
-        DisplayScroll_CopyWords(buf, buf + 0x800, 0x100);
+        Iwram_CopyWords(buf, buf + 0x800, 0x100);
         Iwram_FillWords(buf + 0x100, 0x800, 0);
     }
 

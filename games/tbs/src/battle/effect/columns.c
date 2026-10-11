@@ -503,7 +503,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 	// 背景のキャラ (VRAM 0x06008000 から 0x8000 バイト) を写し、
 	// x 32〜71・y 96〜111 の帯を sheet の先頭へ切り出す
 	/* FAKEMATCH: needed to match: forwarded through Call3, the copy loads the buffer address straight into r0, so the loop below loads its own after the call */
-	Call3((void (*)())Iwram_CopyWords, (s32)Ram_MapCellBuffer, 0x06008000, 0x8000);
+	Iwram_CopyWords((s32)Ram_MapCellBuffer, 0x06008000, 0x8000);
 	for (row = 0; row != 16; row++)
 	{
 		y = row + 96;
@@ -1501,12 +1501,6 @@ typedef struct Spark
 #define SHEET (work->sheet + 0xC56)
 #define SPARKS ((Spark *)work->particles)
 
-static __inline__ void CopyPalette(CopyWords copy, void *destination, const void *source, s32 size)
-{
-	/* FAKEMATCH: needed to match: a direct call shifts the palette destination before loading the routine */
-	copy(destination, source, size);
-}
-
 void BattleFx_ArmBg2AffineHBlankDma(void)
 {
 	struct BattleEffectWork *work = *(void **)gBattleFxWork;
@@ -1635,7 +1629,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
 				id = (s32)&ResourceId_MarsDjinnSheet;
 				break;
 			}
-			CopyPalette(Iwram_CopyWords, (void *)0x05000000, Resource_GetTableEntry(id), 128);
+			Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(id), 128);
 		}
 	}
 

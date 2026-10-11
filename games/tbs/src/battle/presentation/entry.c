@@ -31,12 +31,6 @@
 #include "project.h"
 #include "transform.h"
 
-static __inline__ void FillWords(void *dst, s32 size, s32 value)
-{
-	/* FAKEMATCH: needed to match: a direct call changes BattlePresentation_BuildTilemap from push {r5, r6, lr} to push {r5, r6, r7, lr} */
-	Iwram_FillWords(dst, size, value);
-}
-
 extern void *gWorkSlot[64];
 
 extern u8 gDisp[];
@@ -46,9 +40,9 @@ void BattlePresentation_BuildTilemap(s32 *destination)
 	s32 entry;
 	u32 index;
 
-	FillWords(destination, 0x100, -1);
+	Iwram_FillWords(destination, 0x100, -1);
 	destination += 0x40;
-	FillWords(destination, 0x80, 0x03ff03ff);
+	Iwram_FillWords(destination, 0x80, 0x03ff03ff);
 	entry = (0x0201 << 16) | 0x0200;
 	destination += 0x20;
 	index = 0;
@@ -58,7 +52,7 @@ void BattlePresentation_BuildTilemap(s32 *destination)
 		*destination++ = entry;
 		entry += 0x00020002;
 	} while (index <= 239);
-	FillWords(destination, 0x280, 0x03ff03ff);
+	Iwram_FillWords(destination, 0x280, 0x03ff03ff);
 }
 
 void BattlePres_UpdateHBlankScroll(void)
@@ -536,12 +530,6 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level)
 #define Camera_StoreSceneParameters ((void (*)(s32, u32, s32))Camera_StoreSceneParameters)
 #define SceneTransform_ApplyPosition ((void (*)(s32 *))SceneTransform_ApplyPosition)
 
-static __inline__ s32 DivQ16(s32 divisor, s32 value)
-{
-	/* FAKEMATCH: needed to match: a direct call finishes the value shift before the divisor load */
-	return Iwram_RatioMulQ14(divisor, value);
-}
-
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
 {
 	struct BattleBackgroundView *view = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
@@ -572,7 +560,7 @@ void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
 	if (view->mode != 2)
 		return;
 	line = work->lines[work->page ^ 1];
-	ratio = DivQ16(scale, 0x10000);
+	ratio = Iwram_RatioMulQ14(scale, 0x10000);
 	step = ratio >> 8;
 	affine = &work->affine;
 	affine->pa = step;
@@ -584,7 +572,7 @@ void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
 	affine->x = ((x + 0x7fff) >> 8) + ox + horizon;
 	y = ((y + 0x7fff) >> 8) + oy - 0x1000;
 	affine->y = y;
-	count = (DivQ16((s16)step, 0x4000 - y) >> 16) + 1;
+	count = (Iwram_RatioMulQ14((s16)step, 0x4000 - y) >> 16) + 1;
 	i = 0;
 	if (!GameFlag_TestFar(0x16b))
 	{
@@ -627,8 +615,7 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
 	source_bounds[1] = 0;
 	source_bounds[2] = 0;
 
-	blend = Iwram_RatioMulQ14;
-	result = blend(span, alpha);
+	result = Iwram_RatioMulQ14(span, alpha);
 	Camera_StoreSceneParameters(span, result, span * 2);
 	Render_ResetTransformState();
 	SceneTransform_ApplyPosition(pos);
@@ -648,7 +635,7 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
 		(120 - measured_bounds[1]) << 8, scale);
 	half = scale * 0xff;
 	width = half * 2;
-	result = blend(width, alpha);
+	result = Iwram_RatioMulQ14(width, alpha);
 	Camera_StoreSceneParameters(width, result, half * 4);
 }
 
@@ -684,8 +671,7 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom)
 	source_bounds[1] = 0;
 	source_bounds[2] = 0;
 
-	blend = Iwram_RatioMulQ14;
-	result = blend(span, alpha);
+	result = Iwram_RatioMulQ14(span, alpha);
 	Camera_StoreSceneParameters(span, result, span * 2);
 	Render_ResetTransformState();
 	SceneTransform_ApplyPosition(pos);
@@ -705,7 +691,7 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom)
 		(120 - measured_bounds[1]) << 8, scale);
 	half = scale * 0xff;
 	width = half * 2;
-	result = blend(width, alpha);
+	result = Iwram_RatioMulQ14(width, alpha);
 	Camera_StoreSceneParameters(width, result, half * 4);
 }
 

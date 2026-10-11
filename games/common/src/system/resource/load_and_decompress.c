@@ -16,7 +16,8 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal)
 
 	if (copy_pal != 0)
 	{
-		s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+		/* FAKEMATCH: the routine is called through a local pointer to its fixed entry; a plain call matches The Broken Seal through its IWRAM call layer but not The Lost Age, whose header calls the entry directly (all six of its editions differ). */
+		s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
 		copy((void *)0x05000000, res, 128);
 	}

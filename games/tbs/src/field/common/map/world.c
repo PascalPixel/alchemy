@@ -151,14 +151,6 @@ s32 Map_CheckObjectStep(struct ObjectRuntime *object, struct FieldPosition *posi
 
 extern u8 gDecodeBuffer[];
 
-typedef void (*TransformFn)(const s32 *source, s32 *destination);
-
-static __inline__ void Transform(const s32 *source, s32 *destination, TransformFn routine)
-{
-    /* FAKEMATCH: needed to match: a direct call holds the output vector in r9 instead of rematerializing sp+16. */
-    routine(source, destination);
-}
-
 s32 CheckMapPositionCellOccupied(struct WorldPosition *position)
 {
     s32 x;
@@ -333,7 +325,7 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position, struct MapScanline *r
     ground[0] = position[0];
     ground[1] = zero;
     ground[2] = position[2];
-    Transform(ground, viewed, Iwram_TransformVector);
+    Iwram_TransformVector(ground, viewed);
     view = viewed;
     horizon = view[1] - Iwram_MulQ16(view[2], depth);
     focus = -gProjection.focal;

@@ -39,12 +39,6 @@ void AudioCommand_PlayFar(s32 cue);
 
 #define gBattleFxWork ((u8 **)&gBattleFxWork)
 
-static __inline__ void FillWords(void *dst, s32 size, s32 value)
-{
-	/* FAKEMATCH: needed to match: a direct call changes BattlePres_ProcessPendingTileTransfer from mov r0, r4 to lsl r1, r1, #8 */
-	Iwram_FillWords(dst, size, value);
-}
-
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
 //--------------------------------------------------------------------------
@@ -123,7 +117,7 @@ void BattlePres_ProcessPendingTileTransfer(void)
 		{
 		case 1: // 送ったあと transfer_value で塗りつぶす
 			Dma_Set(buf, (void *)0x06003500, DMA_ENABLE32 | DMA_32BIT | 0x2000, REG_DMA3);
-			FillWords(buf, 0x8000, work->transfer_value);
+			Iwram_FillWords(buf, 0x8000, work->transfer_value);
 			break;
 		case 2: // 残像：0 以外の色番号を 1/2 または 3/4 に落とす
 			if (work->transfer_value == 50)

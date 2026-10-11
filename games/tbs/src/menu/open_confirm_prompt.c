@@ -40,17 +40,6 @@ void Event_ClearInvalidPackedValuesFar(void);
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 
-static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32 size)
-{
-    /* FAKEMATCH: direct calls move the saved tile size from r9 to fp in the European editions. */
-    return copy(dst, src, size);
-}
-
-static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
-{
-    /* FAKEMATCH: a direct fill call changes the preceding copy's fp call register and adds moves. */
-    return fill(dst, size, value);
-}
 #endif
 
 s32 Menu_OpenConfirmPrompt(void)
@@ -75,8 +64,8 @@ s32 Menu_OpenConfirmPrompt(void)
     Link_DrawShiftedTilePairFar(0x06002500);
 #if defined(PROMPT_SAVES_TILES)
     Scheduler_EnableOverlayCallbacksWithFlags();
-    CopyWords(Iwram_CopyWords, saved, PROMPT_TILES, PROMPT_TILES_SIZE);
-    FillWords(Iwram_FillWords, PROMPT_TILES, PROMPT_TILES_SIZE, 0x33333333);
+    Iwram_CopyWords(saved, PROMPT_TILES, PROMPT_TILES_SIZE);
+    Iwram_FillWords(PROMPT_TILES, PROMPT_TILES_SIZE, 0x33333333);
     UiWork_SetAltFlagAndClearTableFar(1);
 #endif
     Menu_CancelSoundReset();
@@ -99,7 +88,7 @@ s32 Menu_OpenConfirmPrompt(void)
 #if defined(PROMPT_SAVES_TILES)
     UiWindow_MarkVisibleTileAttributesFar();
     UiWork_SetAltFlagAndClearTableFar(0);
-    CopyWords(Iwram_CopyWords, PROMPT_TILES, saved, PROMPT_TILES_SIZE);
+    Iwram_CopyWords(PROMPT_TILES, saved, PROMPT_TILES_SIZE);
     ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->menu_busy = 0;
     MemFree(saved);
     WaitFrames(1);

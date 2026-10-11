@@ -18,18 +18,6 @@
 #include "text_render_runtime.h"
 
 
-static __inline__ void ClearWords(void *dest, s32 size)
-{
-    /* FAKEMATCH: needed to match: through this wrapper the pen table's address is reloaded into r0 in each colour arm; a direct call keeps it in r10 (44 differ). */
-    Iwram_ClearWords(dest, size);
-}
-
-static __inline__ void FillWords(void *dest, s32 size, u32 value)
-{
-    /* FAKEMATCH: needed to match: through this wrapper both arms load the canvas before the routine and the fill value; a direct call loads the fill value first (8 differ). */
-    Iwram_FillWords(dest, size, value);
-}
-
 s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
 {
     /* FAKEMATCH: needed to match: an unread 32-byte reserve, the native frame's extra bytes (the frame is 36 bytes without it). */
@@ -53,15 +41,15 @@ s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x)
     canvas = MemAlloc(0x800);
     glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
     attr = work->level << 12;
-    ClearWords(pens, 16);
+    Iwram_ClearWords(pens, 16);
     if (attr == 0xF000) {
         pens[1] = UiText_ColourPens[work->colour & 15];
         pens[3] = 3;
-        FillWords(canvas, 0x800, 0x04040404);
+        Iwram_FillWords(canvas, 0x800, 0x04040404);
     } else {
         pens[1] = (u8)work->colour & 15;
         pens[3] = 1;
-        FillWords(canvas, 0x800, 0x0E0E0E0E);
+        Iwram_FillWords(canvas, 0x800, 0x0E0E0E0E);
     }
     if (script != 0) {
         for (;;) {

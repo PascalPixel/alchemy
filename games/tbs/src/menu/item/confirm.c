@@ -130,12 +130,6 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
 
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 
-static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32 size)
-{
-    /* FAKEMATCH: a direct call loads the size before the copy routine and the two blocks, where the reference loads it last. */
-    return copy(dst, src, size);
-}
-
 s32 ItemMenu_ConfirmEquip(s32 unused)
 {
     s32 sel = 0;
@@ -151,7 +145,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused)
     owner = menu->pane_owner[1];
     ItemMenu_DrawEquipPreview(owner, item, 0, owner);
     saved = MemAlloc(BATTLE_UNIT_SIZE);
-    CopyWords((WordCopyFn)Iwram_CopyWords, saved, state, BATTLE_UNIT_SIZE);
+    Iwram_CopyWords(saved, state, BATTLE_UNIT_SIZE);
     win = (s32)menu->message_window;
     if ((u32)(Inventory_EquipFar(menu->pane_owner[1], menu->selected_slots[1]) + 2) <= 1) {
         sel = 1;
@@ -211,7 +205,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused)
     if (GameFlag_TestFar(0x150))
         sel = 1;
     if (sel == 1)
-        CopyWords((WordCopyFn)Iwram_CopyWords, state, saved, BATTLE_UNIT_SIZE);
+        Iwram_CopyWords(state, saved, BATTLE_UNIT_SIZE);
     MemFree(saved);
     UnitCalcFar(menu->pane_owner[1]);
     Owner_RefreshClassActionsFar(menu->pane_owner[1]);

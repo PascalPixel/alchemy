@@ -233,12 +233,6 @@ s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries)
 	}
 }
 
-static __inline__ void CopyWords(void *destination, const void *source, s32 size)
-{
-	/* FAKEMATCH: needed to match: a direct call changes BattleQueue_SortByPriority from mov r7, r1 to sub sp, sp, #20 */
-	Iwram_CopyWords(destination, source, size);
-}
-
 s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries)
 {
 	u16				unit_ids[14];
@@ -356,9 +350,9 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count)
 			{
 				struct BattleActionRecord temporary;
 
-				CopyWords(&temporary, &entries[j], sizeof(struct BattleActionRecord));
-				CopyWords(&entries[j], &entries[j - 1], sizeof(struct BattleActionRecord));
-				CopyWords(&entries[j - 1], &temporary, sizeof(struct BattleActionRecord));
+				Iwram_CopyWords(&temporary, &entries[j], sizeof(struct BattleActionRecord));
+				Iwram_CopyWords(&entries[j], &entries[j - 1], sizeof(struct BattleActionRecord));
+				Iwram_CopyWords(&entries[j - 1], &temporary, sizeof(struct BattleActionRecord));
 				swapped++;
 			}
 		}

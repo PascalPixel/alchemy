@@ -60,15 +60,13 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames
     s32 index;
     s32 first;
     s32 second;
-    s32 (*divide)(s32, s32);
 
     if (frames > 0) {
-        divide = Iwram_SignedDivide;
         index = 0x53F;
         do {
             first = *source;
             second = *target;
-            *step = divide(second - first, frames);
+            *step = Iwram_SignedDivide(second - first, frames);
             index--;
             source++;
             target++;
@@ -97,9 +95,7 @@ void BattlePalette_UpdateBlend(void)
             *sum++ += *add++;
         }
     } else {
-        CopyWordsFn copy = Iwram_CopyWords;
-
-        copy(work->current, work->target, sizeof(work->current));
+        Iwram_CopyWords(work->current, work->target, sizeof(work->current));
         work->duration = 0;
     }
 

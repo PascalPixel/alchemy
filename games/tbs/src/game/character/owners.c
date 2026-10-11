@@ -50,12 +50,6 @@ u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2]);
 
 typedef s32 (*ClearWordsFn)(void *destination, s32 size);
 
-static __inline__ void ClearWords(ClearWordsFn clear, void *destination, s32 size)
-{
-    /* FAKEMATCH: a direct call puts the size in its register before the routine's address; the ROM loads the address between the two halves of the size. */
-    clear(destination, size);
-}
-
 s32 BtlUnitSet(s32 unit_id, s32 enemy_id, s32 suffix)
 {
     struct BtlUnit *unit;
@@ -74,7 +68,7 @@ s32 BtlUnitSet(s32 unit_id, s32 enemy_id, s32 suffix)
     if (index > 242)
         return 0;
     unit = UnitGet(unit_id);
-    ClearWords(Iwram_ClearWords, unit, BATTLE_UNIT_SIZE);
+    Iwram_ClearWords(unit, BATTLE_UNIT_SIZE);
     if (index > 164)
         index = 0;
     enemy = &Enemy_Definitions[index];

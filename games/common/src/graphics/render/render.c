@@ -349,7 +349,8 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
 	dy = target[1] - eye[1];
 	dz = target[2] - eye[2];
 	t = Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
-	divide = Iwram_UnsignedDivide;
+	/* FAKEMATCH: the routine is called through a local pointer to its fixed entry; a plain call matches The Broken Seal through its IWRAM call layer but not The Lost Age, whose header calls the entry directly (all six of its editions differ). */
+	divide = Iwram_UnsignedDivideEntry;
 	scale = divide(num, t) >> 15;
 	scale = -scale;
 	/* FAKEMATCH: the normalization keeps its CSE block; without it, the third

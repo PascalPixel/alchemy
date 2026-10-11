@@ -81,12 +81,6 @@ extern u16 SevenMode_ShardOffsets[];
 typedef s32 (*WordCopy)(void *, const void *, s32);
 void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
 
-static __inline__ void CopyPalette(WordCopy copy, void *destination, const void *source, s32 size)
-{
-	/* FAKEMATCH: needed to match: the inlined copy shares the routine address and rebuilds the palette address at each call */
-	copy(destination, source, size);
-}
-
 void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
 {
 	struct EffectPosition	 position;
@@ -113,11 +107,11 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
 	BattleFx_BeginCanvasLayer(1);
 	REG_BLDALPHA = 0x1010;
 	palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
-	CopyPalette(Iwram_CopyWords, (void *)BG_PLTT, palette, 128);
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 	palette += 128;
 	Resource_DecodeType01(palette, work);
 	palette = Resource_GetTableEntry((s32)&ResourceId_SmokeSheet);
-	CopyPalette(Iwram_CopyWords, (void *)BG_PLTT, palette, 128);
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 	palette += 128;
 	Resource_DecodeType01(palette, work->sheet + 0x3e80);
 	if (mode == 0)
@@ -333,12 +327,6 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
 }
 
 extern u8 gMapCellBuffer[];
-
-static __inline__ void CopyWords(WordCopy copy, void *destination, const void *source, s32 size)
-{
-	/* FAKEMATCH: needed to match: a direct call loads the destination and source before the routine, changing pool order */
-	copy(destination, source, size);
-}
 
 #define PIXEL_BUFFER Ram_MapCellBuffer
 
@@ -595,7 +583,7 @@ void Graphics_ConvertBackgroundToBlueRamp(void)
 	delays = *(u8 **)&gWorkSlot[41];
 	end = 0;
 	speed = 16;
-	CopyWords(Iwram_CopyWords, PIXEL_BUFFER, (void *)0x06008000, 0x7800);
+	Iwram_CopyWords(PIXEL_BUFFER, (void *)0x06008000, 0x7800);
 	delay_mask = 63;
 	p = delays;
 	do
@@ -657,7 +645,7 @@ void Graphics_ConvertBackgroundToBlueRamp(void)
 		PIXEL_BUFFER[i] += 64;
 		i++;
 	} while (i != 0x7800);
-	CopyWords(Iwram_CopyWords, (void *)0x06008000, PIXEL_BUFFER, 0x7800);
+	Iwram_CopyWords((void *)0x06008000, PIXEL_BUFFER, 0x7800);
 	WaitFrames(1);
 }
 
@@ -1889,12 +1877,6 @@ void AudioCommand_PlayFar(s32 value);
 #define HI(v) (((s16 *)&(v))[1])						// 16.16 固定小数の整数部
 #define GRAINS ((struct EffectStep *)Ram_MapCellBuffer) // 昇る粒 (最大 512)
 
-static __inline__ void CopyPalette_2(WordCopy copy, void *dst, const void *src, s32 size)
-{
-	/* FAKEMATCH: needed to match: the inlined copy shares the routine address and rebuilds the palette address at each call */
-	copy(dst, src, size);
-}
-
 struct BlitterPair
 {
 	DrawRectangle hikaku; // 比較合成
@@ -1945,7 +1927,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 
 	// 閃光は FlashBurst、筋は EmberStreak (sheet + 0x3000) の絵
 	palette = Resource_GetTableEntry((s32)&ResourceId_FlashBurstSheet);
-	CopyPalette_2(Iwram_CopyWords, (void *)0x05000000, palette, 128);
+	Iwram_CopyWords((void *)0x05000000, palette, 128);
 	palette += 128;
 	Resource_DecodeType01(palette, work);
 	palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
@@ -1953,7 +1935,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 	Resource_DecodeType01(palette, work->sheet + 0x3000);
 	Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), sheet);
 	if (mode == 1)
-		CopyPalette_2(Iwram_CopyWords, (void *)0x05000000,
+		Iwram_CopyWords((void *)0x05000000,
 			Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
 	work->transfer_mode = 2;
 	work->transfer_value = 75; // 転送のたびに 3/4 へ減らして残像にする
@@ -3045,8 +3027,7 @@ void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 
 		index++;
 	} while (index != 64);
 
-	copy = Iwram_CopyWords;
-	CopyPalette(copy, (void *)0x05000002, palette, sizeof(palette));
+	Iwram_CopyWords((void *)0x05000002, palette, sizeof(palette));
 }
 
 //--------------------------------------------------------------------------
@@ -3098,9 +3079,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
 	{
 		void *palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteB);
 		/* FAKEMATCH: needed to match: calling through a local copy of the routine's address loads that address before the palette address is shifted into place */
-		WordCopy copy = Iwram_CopyWords;
-
-		copy((void *)BG_PLTT, palette, 128);
+		Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 	}
 
 	// 火花をすべて止める
@@ -3316,12 +3295,12 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
 	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
 	if (kind == 1)
 	{
-		CopyPalette(Iwram_CopyWords, (void *)0x05000000,
+		Iwram_CopyWords((void *)0x05000000,
 			Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
 	}
 	else if (kind == 2)
 	{
-		CopyPalette(Iwram_CopyWords, (void *)0x05000000,
+		Iwram_CopyWords((void *)0x05000000,
 			Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
 	}
 	sparks = (struct EffectStep *)gMapCellBuffer;
@@ -3375,8 +3354,9 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
 			else
 				camera->scroll -= 256;
 		}
+		/* FAKEMATCH: needed to match: this fill calls the fixed entry itself; through Iwram_FillWords a spilled invariant ahead of the frame loop is built in r2 where the ROM uses r1 (3 of 776 instructions differ). */
 		if (work->effect->variant == 3 && frame == 4)
-			Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+			Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
 		if (kind == 1 || kind == 2)
 		{
 			if (frame == 2)
@@ -3515,10 +3495,10 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 	/* FAKEMATCH: needed to match: forwarded through Call3, each palette copy loads its routine before it shifts the destination, as the reference does */
 	if (work->effect->variant == 0)
-		Call3((void (*)())Iwram_CopyWords, (s32)BG_PLTT,
+		Iwram_CopyWords((s32)BG_PLTT,
 			(s32)Resource_GetTableEntry((s32)&ResourceId_RedPaletteB), 128);
 	else if (work->effect->variant == 2)
-		Call3((void (*)())Iwram_CopyWords, (s32)BG_PLTT,
+		Iwram_CopyWords((s32)BG_PLTT,
 			(s32)Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
 	BattleEffect_LoadWork(46, 7, 7, 3, 2);
 	draw[0] = (DrawRectangle)gWorkSlot[46];

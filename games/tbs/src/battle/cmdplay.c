@@ -423,8 +423,10 @@ void BattleEvent_Playback(void)
 	// キャラのタイルを消す
 	void ClrRecTiles(struct AnimationObject * rec, s32 value)
 	{
-		Iwram_ClearWords(
-			(void *)(OBJ_VRAM + gVramBlockCache[rec->slot].offset), rec->width * rec->height);
+		/* FAKEMATCH: needed to match: the address held in a local is added before the size is multiplied; written inside the Iwram_ClearWords call the multiply comes first (5 instructions reordered). */
+		u8 *tiles = (u8 *)OBJ_VRAM + gVramBlockCache[rec->slot].offset;
+
+		Iwram_ClearWords(tiles, rec->width * rec->height);
 	}
 
 	if (work->events.phase == BATTLE_PLAYBACK_IDLE)

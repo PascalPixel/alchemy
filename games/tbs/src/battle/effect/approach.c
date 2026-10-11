@@ -146,8 +146,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 		{
 			const void *pal = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
 			{
-				s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
-				copy((void *)BG_PLTT, pal, 128);
+				Iwram_CopyWords((void *)BG_PLTT, pal, 128);
 			}
 		}
 		Resource_LoadAndDecompress((s32)&ResourceId_WindStreakSheet, work->sheet + 0x2000, 1, 0);
@@ -155,8 +154,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 		{
 			const void *pal = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
 			{
-				s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
-				copy((void *)BG_PLTT, pal, 128);
+				Iwram_CopyWords((void *)BG_PLTT, pal, 128);
 			}
 		}
 		work->transfer_mode = 2;

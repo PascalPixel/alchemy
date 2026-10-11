@@ -31,18 +31,6 @@
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 
-static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32 size)
-{
-    /* FAKEMATCH: direct calls add r9, sl and fp saves and change the backdrop stack layout. */
-    return copy(dst, src, size);
-}
-
-static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
-{
-    /* FAKEMATCH: a direct call loads the fill value before constructing the size. */
-    return fill(dst, size, value);
-}
-
 #define ACTION_MASK 0x3fff
 #define FLAG_FIRST 0x8000
 #define FLAG_SECOND 0x4000
@@ -56,12 +44,12 @@ s32 Menu_OpenBackdropScreen(void)
 
     UiWindow_UpdateOrCreate(&work->list_window, 0, 5, 30, 15, 2);
     WaitFrames(1);
-    CopyWords(Iwram_CopyWords, backdrop->tiles, BG_CHAR_BLOCK(1), 0x2000);
-    CopyWords(Iwram_CopyWords, backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
-    FillWords(Iwram_FillWords, BG_CHAR_BLOCK(1), 0x2000, 0x33333333);
-    FillWords(Iwram_FillWords, (void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
+    Iwram_CopyWords(backdrop->tiles, BG_CHAR_BLOCK(1), 0x2000);
+    Iwram_CopyWords(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
+    Iwram_FillWords(BG_CHAR_BLOCK(1), 0x2000, 0x33333333);
+    Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
     Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) + 0x1000);
-    CopyWords(Iwram_CopyWords, BG_CHAR_BLOCK(1) + FRAME_TILE * TILE_SIZE_4BPP,
+    Iwram_CopyWords(BG_CHAR_BLOCK(1) + FRAME_TILE * TILE_SIZE_4BPP,
               Menu_BackdropFrameTile, TILE_SIZE_4BPP);
     Dma_Set(Runtime_GetLowTableAddress(), (void *)&BG_PLTT_COLOR(5, 0), 0x80000010, REG_DMA3);
     BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);

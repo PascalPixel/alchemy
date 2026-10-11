@@ -33,17 +33,6 @@ struct AssetSelectionResult {
 typedef s32 (*CopyFn)(void *dst, const void *src, s32 size);
 typedef s32 (*FillFn)(void *dst, s32 size, u32 value);
 
-static __inline__ s32 CopyWords(CopyFn copy, void *dst, const void *src, s32 size)
-{
-    /* FAKEMATCH: the wrapper keeps the copier's address in a register for both copies and the tile address in the pool; called directly the tile address takes the register instead. */
-    return copy(dst, src, size);
-}
-
-static __inline__ s32 FillWords(FillFn fill, void *dst, s32 size, u32 value)
-{
-    /* FAKEMATCH: as CopyWords; the direct call loads the tile address once. */
-    return fill(dst, size, value);
-}
 #endif
 
 s32 Party_ListActiveOwnersFar(void *session);
@@ -61,7 +50,6 @@ s32 RunAssetSelectionScreen(void)
     s32 result;
 #if EDITION_INTERNATIONAL
     s32 size;
-    CopyFn copy;
 #endif
     void **process;
     void **cache;
@@ -84,9 +72,8 @@ s32 RunAssetSelectionScreen(void)
     screen->message_window = (struct UiWindow *)UiWindow_CreateFar(13, 0, 17, 3, 2);
 #if EDITION_INTERNATIONAL
     Scheduler_EnableOverlayCallbacksWithFlags();
-    copy = Iwram_CopyWords;
-    CopyWords(copy, backup, (void *)0x06004000, size);
-    FillWords(Iwram_FillWords, (void *)0x06004000, size, 0x33333333);
+    Iwram_CopyWords(backup, (void *)0x06004000, size);
+    Iwram_FillWords((void *)0x06004000, size, 0x33333333);
     UiWork_SetAltFlagAndClearTableFar(1);
 #endif
     Menu_CancelSoundReset();
@@ -109,7 +96,7 @@ s32 RunAssetSelectionScreen(void)
 #if EDITION_INTERNATIONAL
     UiWindow_MarkVisibleTileAttributesFar();
     UiWork_SetAltFlagAndClearTableFar(0);
-    CopyWords(copy, (void *)0x06004000, backup, size);
+    Iwram_CopyWords((void *)0x06004000, backup, size);
     ((struct UiRenderWork *)*process)->menu_busy = 0;
     MemFree(backup);
     WaitFrames(1);

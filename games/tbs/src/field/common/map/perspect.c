@@ -199,8 +199,7 @@ s32 Map_InitializePerspectiveScene(void)
     vector.x = 0;
     vector.y = 0;
     vector.z = far_plane;
-    /* FAKEMATCH: needed to match: Iwram_TransformVector's void call loads camera into r1 after the routine; the value-returning cast keeps r1 first. */
-    ((s32 (*)(struct FixedPointPosition *, struct BattleCamera *))Iwram_TransformVector)(&vector, camera);
+    Iwram_TransformVector((const s32 *)&vector, (s32 *)camera);
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(camera->eye, position);
     RamCode_LoadSlot(46, Transform_UpdateVertices, &Transform_UpdateVerticesSize);

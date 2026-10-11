@@ -102,8 +102,7 @@ void BattleFx_ScheduleRatioTransition(s32 zoom, s32 frames)
 	if (((struct EventWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT, 0xccc))->mode != 3)
 		return;
 	{
-		s32 (*ratio)(s32, s32) = Iwram_RatioMulQ14;
-		inv = ratio(zoom, 0x10000); // 1 / zoom
+		inv = Iwram_RatioMulQ14(zoom, 0x10000); // 1 / zoom
 	}
 	work->previous_zoom = work->zoom;
 	work->zoom = inv;

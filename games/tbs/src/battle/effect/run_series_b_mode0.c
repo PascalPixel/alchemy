@@ -142,10 +142,10 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 		Resource_LoadAndDecompress(
 			(s32)&ResourceId_VioletStreakSheet, work->sheet + SERIES_B_PICTURE, 1, 1);
 		if (mode == 3)
-			Call3((void (*)())Iwram_CopyWords, (s32)BG_PLTT,
+			Iwram_CopyWords((s32)BG_PLTT,
 				(s32)Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet), 128);
 		else
-			Call3((void (*)())Iwram_CopyWords, (s32)BG_PLTT,
+			Iwram_CopyWords((s32)BG_PLTT,
 				(s32)Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
 	}
 	else if (mode == 4)
@@ -171,7 +171,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 			palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
 		else
 			palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
-		Call3((void (*)())Iwram_CopyWords, (s32)BG_PLTT, (s32)palette, 128);
+		Iwram_CopyWords((s32)BG_PLTT, (s32)palette, 128);
 	}
 	if (mode == 3)
 		Resource_LoadAndDecompress(

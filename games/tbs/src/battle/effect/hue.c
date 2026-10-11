@@ -132,9 +132,7 @@ s32 BattleFx_HueChannelRamp(s32 angle, s32 low, s32 high)
 		product = Iwram_MulQ16(high, (240 << 16) - angle);
 	}
 	{
-		s32 (*divide)(s32, s32) = Iwram_RatioMulQ14;
-
-		return divide(60 << 16, product);
+		return Iwram_RatioMulQ14(60 << 16, product);
 	}
 out:
 	return low;

@@ -61,6 +61,7 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 origin_x, s32 origin_
 
 extern u8 IwramCopyWords[];
 
+s32	 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
 void Event_ClearInvalidPackedValuesFar(void);
 s32	 GameFlag_ClearBitFar(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
@@ -5983,7 +5984,6 @@ void StatusMenu_ShowOwnerProgressMessage(
     s32 message_variant,
     s32 preserve_variant)
 {
-	void UiWork_PushValueSlotFar(s32 quantity, s32 style);
     struct CharacterMenuState *menu = gMenuWork;
     void *buffer;
 
@@ -6018,7 +6018,6 @@ void StatusMenu_ShowOwnerProgressMessage(
 void UiText_DrawNumberInWindowFar(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 
 #undef UiWindow_ClearInteriorTilesFar
-#undef UiWindow_ClearInteriorTilesFar
 #define UiWindow_ClearInteriorTilesFar ((void (*)(void*,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
 #define UiText_DrawStringInWindowFar ((void (*)(const void*,void*,s32,s32))UiText_DrawStringInWindowFar)
 #define UiText_DrawNumberInWindowFar ((void (*)(s32,s32,void*,s32,s32))UiText_DrawNumberInWindowFar)
@@ -6028,7 +6027,6 @@ void WaitFrames(s32 frames);
 
 void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit, s32 mode)
 {
-	void UiText_DrawStringAtOffsetFar(const void *text, void *window, s32 x, s32 y);
     struct CharacterMenuState *state = gMenuWork;
     struct BtlUnit *status;
     s32 row;
@@ -6120,8 +6118,6 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit, s32 mod
 }
 
 #if EDITION_INTERNATIONAL
-#include "types.h"
-
 void Runtime_RunBusyWaitDelay(void)
 {
     s32 count = 0xff;
@@ -6139,9 +6135,7 @@ spin:
 #undef UiWindow_ClearInteriorTilesFar
 
 #undef UiWindow_ClearInteriorTilesFar
-#undef UiWindow_ClearInteriorTilesFar
 #define UiWindow_ClearInteriorTilesFar ((void (*)(s32,s32,s32,s32,s32))UiWindow_ClearInteriorTilesFar)
-#undef UiText_DrawStringInWindowFar
 #undef UiText_DrawStringInWindowFar
 #define UiText_DrawStringInWindowFar ((void (*)(const void*,s32,s32,s32))UiText_DrawStringInWindowFar)
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
@@ -6156,7 +6150,6 @@ void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 
 
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
 {
-	void UiText_DrawStringAtOffsetFar(const void *text, void *window, s32 x, s32 y);
     struct InventoryMenuState *menu;
     struct BtlUnit *unit;
 
@@ -6438,7 +6431,6 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 struct BtlAct * BtlActGet(s32 action_id);
 #undef UiText_DrawStringInWindowFar
-#undef UiText_DrawStringInWindowFar
 #define UiText_DrawStringInWindowFar ((void (*)(u8*,s32,s32,s32))UiText_DrawStringInWindowFar)
 
 #define Menu_LvString (*(u8 *)&Menu_LvString)
@@ -6449,7 +6441,6 @@ void UiText_DrawNumberAtOffsetFar(s32, s32, s32, s32, s32);
 s32 PsynergyMenu_DrawListPage(
     s32 window, s32 unused, const struct MenuResult *res)
 {
-	void UiText_DrawStringAtOffsetFar(const void *, void *, s32, s32);
     struct PsynergyMenuState *menu = gMenuWork;
     struct BtlUnit *owner;
     u32 first;
@@ -6762,7 +6753,6 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state)
 
 s32 Shop_DrawItemPage(s32 window, s32 unused, struct MenuResult *state)
 {
-	void UiText_DrawStringAtOffsetFar(const void *text, void *window, s32 x, s32 y);
     struct InventoryMenuState *menu = gMenuWork;
     struct BtlUnit *unit;
     u16 *item;
@@ -6806,7 +6796,6 @@ s32 Shop_DrawItemPage(s32 window, s32 unused, struct MenuResult *state)
     return 1;
 }
 
-#undef RenderOutput_ClearListFar
 #undef RenderOutput_ClearListFar
 #define RenderOutput_ClearListFar ((void (*)(void *))RenderOutput_ClearListFar)
 
@@ -7274,7 +7263,6 @@ void Item_UseNoOpCallback(void)
 void UnitCalcFar(s32 unit_id);
 
 #undef RenderOutput_ClearListFar
-#undef RenderOutput_ClearListFar
 #define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
 
 #define Link_DrawShiftedTilePairFar ((void (*)(void*))Link_DrawShiftedTilePairFar)
@@ -7362,7 +7350,6 @@ s32 BattleEffect_ApplyToTargets(
     s32 target_id,
     s32 fixed_scale)
 {
-	void UiWork_PushValueSlotFar(s32, s32);
     struct BtlAct *effect;
     struct InventoryMenuState *runtime;
     struct BtlUnit *target;
@@ -8105,7 +8092,6 @@ void Graphics_AdjustPaletteBank(s32 d)
 #define FLAG_SECOND 0x4000
 
 #undef FIELD_AT_OFFSET
-#undef FIELD_AT_OFFSET
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 Menu_OpenBackdropScreen(void)
@@ -8322,7 +8308,6 @@ void UiWindow_ApplyRectAtObjectOrigin(void *obj, s32 x, s32 y, s32 width, s32 he
 
 s32 DjinnMenu_ShowHelp(void)
 {
-	void UiWork_FinalizeFar(s32 window, s32 mode);
     s32 win_b;
     s32 win_a;
     struct DjinnMenuWork *menu;
@@ -8457,7 +8442,6 @@ void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 window, s32 x, s32 
 #define UiWindow_SetTilemapEntryFar ((void (*)(s32 window, s32 tile, s32 x, s32 y, s32 palette))UiWindow_SetTilemapEntryFar)
 #undef UiWindow_DrawDividerLineFar
 #define UiWindow_DrawDividerLineFar ((void (*)(s32 window, s32 x0, s32 y0, s32 x1, s32 y1))UiWindow_DrawDividerLineFar)
-void Djinn_ActivateFar(s32 owner, s32 element, s32 index);
 
 #define DJINN_OWNER(v) (((v) & 0xf00) >> 8)
 #define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
@@ -8468,7 +8452,6 @@ void Djinn_ActivateFar(s32 owner, s32 element, s32 index);
 #define CURSOR_WIDTH 5
 #endif
 #undef Djinn_DeactivateFar
-#define Djinn_ActivateFar ((s32 (*)(s32, s32, s32))Djinn_ActivateFar)
 s32 Trade_RemoveOfferFar(s32 owner, s32 element, s32 number);
 #define UiWindow_ApplyRectAtObjectOrigin ((void (*)(s32 window, s32 x, s32 y, s32 width, s32 height, s32 kind))UiWindow_ApplyRectAtObjectOrigin)
 s32 Djinn_MarkBalancedEntries(s8 *balanced, s32 self);
@@ -8480,7 +8463,6 @@ u32 __umodsi3(u32, u32);
 s32 DjinnMenu_SelectDjinn(s32 mode)
 {
 	struct UiWindow *UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, u32 flags);
-	void UiWork_FinalizeFar(struct UiWindow *work, s32 mode);
     s8 buf[8];
     u8 balanced[16];
     struct DjinnMenuWork *state = gMenuWork;
@@ -8665,7 +8647,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             }
             if (!(buf[x] & 1))
                 Menu_DrawAtWindowOffset(state->list_window, x * 7 + 1, y + 2, CURSOR_WIDTH, 1, 14);
-            gWindowWork->dirty = 1;
+            ((struct UiWork *)gWindowWork[0])->dirty = 1;
         }
         if (buf[x] & 1)
             UiMenu_PositionCursor(x * 56 - 8, 52);
@@ -9068,7 +9050,6 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     state->selection[mode] = x + y * 10;
     return result;
 }
-#undef Djinn_ActivateFar
 
 s32 Djinn_ListOwnerEntries(u16 *out, s32 owner, s32 element)
 {
@@ -9355,7 +9336,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
             UiWork_SetParamNibbleFar(15);
             UiWindow_DrawDividerLineFar(window, 0, 11, 13, 11);
         }
-        gWindowWork->dirty = 1;
+        ((struct UiWork *)gWindowWork[0])->dirty = 1;
     }
 
     if (page == 0)
@@ -9582,7 +9563,6 @@ void Menu_EnableAllItemObjects(void)
     }
 }
 
-#undef Djinn_ActivateFar
 #undef Djinn_DeactivateFar
 #undef OwnerAction_DiffSlots
 #undef RenderOutput_ClearListFar
@@ -9608,7 +9588,6 @@ extern u8 MsgDjinnCompareConfirm[];
 extern u8 MsgDjinnTutorialClassPsynergy[];
 extern u8 MsgDjinnTutorialSetChanges[];
 s32 UiWork_IsCompleteFar(void);
-// FourObjectMotion_SetSlotPhase は宣言なしで呼ぶ (C89 の暗黙の int): その呼び出しは r1 を r0 より先に設定する
 s32 Trig_Sin(s32);
 
 s32 OwnerAction_RunCompareLoop(u32 mode)
@@ -10077,8 +10056,9 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         WaitFrames(1);
     }
 
-    FourObjectMotion_SetSlotPhase(0, 0);
-    FourObjectMotion_SetSlotPhase(1, 0);
+    /* FAKEMATCH: called without a prototype (C89 implicit int), which sets r1 before r0; with the prototype the two moves swap (differ 4) */
+    ((s32 (*)())FourObjectMotion_SetSlotPhase)(0, 0);
+    ((s32 (*)())FourObjectMotion_SetSlotPhase)(1, 0);
     Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
 
     ((struct UiRenderWork *)gWindowWork[0])->menu_busy = 1;

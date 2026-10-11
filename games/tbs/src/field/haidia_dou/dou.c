@@ -58,7 +58,7 @@ void Engine_ActorSetAnimation(s32 actor, s32 mode);
 void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
 void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
 
-void Object_CommitPosition(Obj *);
+void Object_CommitPosition(void *);
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 s32 ArcTan2(s32 dz, s32 dx);
 void HaidiaDou_SinkPillarColumn27();
@@ -109,6 +109,11 @@ void *OverlayObject_CreateConfiguredB(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     }
     return NULL;
 }
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
+#include "../common/object/staged_actor.c"
 
 void SceneState_SetValues8_3_4(void)
 {

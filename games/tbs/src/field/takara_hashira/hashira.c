@@ -145,36 +145,15 @@ void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 kind)
     return NULL;
 }
 
-void Map_DrawCellPanel(s32 x, s32 y, s32 width, s32 height, s32 plane, s32 destX, s32 destY)
-{
-    u32 *cell = (u32 *)Ram_MapCellBuffer + (y * 128 + x);
-    s32 row;
-    s32 col;
-    s32 end;
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
+#include "../common/object/staged_actor.c"
 
-    for (row = destY; row < destY + height; row++) {
-        col = destX;
-        if (col < destX + width) do {
-            u16 tile = 0xfff & *cell++;
-            u16 offset = tile * 8;
-            s32 index = (plane * 16 + (row & 15)) * 32 + (col & 15);
-            u32 *src;
-            u32 *dst;
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/map/panel.c"
 
-            dst = (u32 *)BG_SCREEN_BLOCK(5) + index;
-            src = (u32 *)(Ram_MapBlocks + offset);
-            *dst = *src;
-            src = (u32 *)(Ram_MapBlocks + 4 + offset);
-            dst = (u32 *)(BG_SCREEN_BLOCK(5) + 64) + index;
-            *dst = *src;
-
-        /* FAKEMATCH: needed to match: end is a forced temporary for the bound's evaluation order. */
-        } while (end = destX + width, ++col < end);
-        cell += 128 - width;
-    }
-}
-
-struct MapCell_3 {
+struct MapCellFields {
     u32 tile : 12;
     u32 layer : 2;
     u8 kind : 2;
@@ -182,18 +161,8 @@ struct MapCell_3 {
     u8 event;
 };
 
-struct MapLayer_3 {
-    struct MapCell_3 *cells;
-    u8 pad04[44];
-};
-
-struct MapState_3 {
-    u8 pad000[0x130];
-    struct MapLayer_3 layers[1];
-};
 s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no);
 
-extern struct StagedActorFootprint StagedActor_FootprintBounds[];
 
 void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
 {
@@ -264,27 +233,27 @@ check:
     probe->position_x = actor->x.value;
     probe->position_y = actor->y;
     probe->position_z = actor->z.value;
-    a = StagedActor_FootprintBounds[probe->footprint_index].z0;
+    a = StagedActor_FootprintBounds[probe->footprint_index * 4 + 1];
     if (a < 0) {
         a = -a;
     }
-    b = StagedActor_FootprintBounds[probe->footprint_index].z1;
+    b = StagedActor_FootprintBounds[probe->footprint_index * 4 + 3];
     if (b < 0) {
         b = -b;
     }
     *depth = (a + b) >> 4;
-    a = StagedActor_FootprintBounds[probe->footprint_index].x0;
+    a = StagedActor_FootprintBounds[probe->footprint_index * 4];
     if (a < 0) {
         a = -a;
     }
-    b = StagedActor_FootprintBounds[probe->footprint_index].x1;
+    b = StagedActor_FootprintBounds[probe->footprint_index * 4 + 2];
     if (b < 0) {
         b = -b;
     }
     *width = (a + b) >> 4;
-    probe->position_x += StagedActor_FootprintBounds[probe->footprint_index].x0 << 16;
+    probe->position_x += StagedActor_FootprintBounds[probe->footprint_index * 4] << 16;
     {
-        s32 step = StagedActor_FootprintBounds[probe->footprint_index].z0 << 16;
+        s32 step = StagedActor_FootprintBounds[probe->footprint_index * 4 + 1] << 16;
 
         a = probe->position_z;
         a += step;
@@ -353,7 +322,7 @@ s32 SceneActor_ApplyPlacementQuery(u8 *no)
 
 void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst)
 {
-    struct MapState_3 *map = gMapWork[0];
+    struct MapState *map = gMapWork[0];
 
     if (map != 0) {
         u32 *cell = (u32 *)map->layers[layer].cells;
@@ -371,16 +340,16 @@ void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst)
 
 #define OverlayObject_PrepareObject ((s32 (*)(s32,s32,s32,s32))OverlayObject_PrepareObject)
 
-extern s32 StagedActor_DirectionSteps[];
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
-void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell_3 *src)
+void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *source)
 {
-    struct MapState_3 *map = gMapWork[0];
+    struct MapCellFields *src = (struct MapCellFields *)source;
+    struct MapState *map = gMapWork[0];
 
     if (map != 0) {
-        struct MapCell_3 *cell = map->layers[layer].cells;
+        struct MapCellFields *cell = (struct MapCellFields *)map->layers[layer].cells;
 
         cell += x + (y << 7);
 
@@ -533,7 +502,7 @@ s32 FieldScene_RunScene3b3SequenceD(void)
     Vector_AddPolarOffset(0x100000, mode, p);
 #else
     mode = leader->facing >> 12;
-    step = StagedActor_DirectionSteps[mode];
+    step = DIRECTION_STEP(mode);
     p[0] = leader->x.fixed + (step & 0xffff0000);
     p[1] = leader->y.fixed;
     step <<= 16;
@@ -551,7 +520,7 @@ s32 FieldScene_RunScene3b3SequenceD(void)
     p[2] = (leader->z.fixed & -0x100000) + 0x80000;
     Vector_AddPolarOffset(0x200000, mode, p);
 #else
-    step = StagedActor_DirectionSteps[mode];
+    step = DIRECTION_STEP(mode);
     p[0] = leader->x.fixed + ((step & 0xffff0000) * 2);
     p[1] = leader->y.fixed;
     step <<= 17;
@@ -680,9 +649,8 @@ void SceneState_ApplyPlacementResult(void)
 
 void TakaraHashira_JitterBackgroundScroll(void)
 {
-	extern u32 gBgScroll[];
     u32 line = REG_VCOUNT;
-    u32 *src = &gBgScroll[1];
+    u32 *src = &((u32 *)gBgScroll)[1];
     volatile u32 *reg = (volatile u32 *)0x04000014;
 
     if (line == 227 || line <= 46) {
@@ -696,7 +664,7 @@ void TakaraHashira_JitterBackgroundScroll(void)
     *reg = *src;
 }
 
-#define TakaraHashira_ReadMapCell ((void (*)(s32,s32,s32,struct MapCell_3*))TakaraHashira_ReadMapCell)
+#define TakaraHashira_ReadMapCell ((void (*)(s32,s32,s32,struct MapCellFields*))TakaraHashira_ReadMapCell)
 #define OverlayObject_WaitUntilSettledAndReset ((void (*)(struct FieldActor*))OverlayObject_WaitUntilSettledAndReset)
 
 #define SPRITE_OF(actor) ((struct FieldSprite *)*(s32 *)((u8 *)(actor) + 0x50))
@@ -705,7 +673,7 @@ struct PillarSlot {
     s32 x;
     s32 y;
     s32 z;
-    struct MapCell_3 cell;
+    struct MapCellFields cell;
     s32 flag;
 };
 
@@ -720,12 +688,11 @@ static __inline__ void Dma_Wait(volatile u32 *dma)
 
 void CopyAndOffsetCoordinatePreset(void)
 {
-	extern u32 gBgScroll[];
     u32 *destination;
     const u32 *source;
     u16 *coordinates;
 
-    source = (const u32 *)&gBgScroll[1];
+    source = (const u32 *)&((u32 *)gBgScroll)[1];
     destination = (u32 *)TakaraHashira_ShakenScroll;
     *destination++ = *source++;
     *destination++ = *source++;
@@ -971,6 +938,9 @@ struct PillarActor {
     u8 motion_flags;
 };
 
+/* FAKEMATCH: the calls below read the collision code as a full word; the header returns u8. */
+#define GetMapCellCollisionWord ((s32 (*)(s32, s32, s32))GetMapCellCollision)
+
 void TakaraHashira_UpdatePillarActors(void)
 {
     u32 id;
@@ -979,7 +949,7 @@ void TakaraHashira_UpdatePillarActors(void)
     u32 i;
     u32 k;
     struct PillarActor *other;
-    struct MapCell_3 cell;
+    struct MapCellFields cell;
 
     for (id = 8; id <= 11; id++) {
         actor = (struct PillarActor *)Object_GetById(id);
@@ -996,17 +966,17 @@ void TakaraHashira_UpdatePillarActors(void)
         }
         flags = &actor->motion_flags;
         TakaraHashira_SetCellAttributes(0, TakaraHashira_PillarSlots[i].x, TakaraHashira_PillarSlots[i].z,
-                                        &TakaraHashira_PillarSlots[i].cell);
+                                        (struct MapCell *)&TakaraHashira_PillarSlots[i].cell);
         TakaraHashira_SetCellAttributes(2, TakaraHashira_PillarSlots[i].x, TakaraHashira_PillarSlots[i].z,
-                                        &TakaraHashira_PillarSlots[i].cell);
+                                        (struct MapCell *)&TakaraHashira_PillarSlots[i].cell);
         if (*flags & 1) {
-            if (GetMapCellCollision(2, actor->x, actor->z) == 50) {
+            if (GetMapCellCollisionWord(2, actor->x, actor->z) == 50) {
                 Engine_AudioPlayCue(189);
                 /* FAKEMATCH: the byte view keeps these flag updates out of the record's alias set; field stores reallocate the loop (score 2573). */
                 *(u8 *)&actor->priority_flags &= 254;
                 TakaraHashira_LowerActorToLedge(id, 1);
                 *(u8 *)&actor->priority_flags |= 1;
-            } else if (GetMapCellCollision(2, actor->x, actor->z) == 51) {
+            } else if (GetMapCellCollisionWord(2, actor->x, actor->z) == 51) {
                 SceneActor_WaitHeightBelowLimit((struct FieldActor *)actor, 0);
                 Engine_AudioPlayCue(189);
                 actor->y = 0;
@@ -1025,9 +995,9 @@ void TakaraHashira_UpdatePillarActors(void)
         TakaraHashira_ReadMapCell(0, actor->x >> 20, actor->z >> 20, &TakaraHashira_PillarSlots[i].cell);
         if (actor->y >= 0) {
             TakaraHashira_ReadMapCell(0, 27, (actor->y >> 20) + 6, &cell);
-            TakaraHashira_SetCellAttributes(0, actor->x >> 20, actor->z >> 20, &cell);
+            TakaraHashira_SetCellAttributes(0, actor->x >> 20, actor->z >> 20, (struct MapCell *)&cell);
             cell.kind = TakaraHashira_PillarSlots[i].cell.kind;
-            TakaraHashira_SetCellAttributes(2, actor->x >> 20, actor->z >> 20, &cell);
+            TakaraHashira_SetCellAttributes(2, actor->x >> 20, actor->z >> 20, (struct MapCell *)&cell);
         }
         TakaraHashira_PillarSlots[i].x = actor->x >> 20;
         TakaraHashira_PillarSlots[i].y = actor->y >> 20;

@@ -56,9 +56,9 @@ struct Struct288c {
     s32 field10;
 };
 
-s32 KorimaHashi_TriggerPending __attribute__((section(".bss")));
-s32 KorimaHashi_PartyFlag __attribute__((section(".bss")));
-s32 KorimaHashi_SparkleSound __attribute__((section(".bss")));
+extern s32 KorimaHashi_TriggerPending;
+extern s32 KorimaHashi_PartyFlag;
+extern s32 KorimaHashi_SparkleSound;
 
 void Engine_TaskWait(s32 frames);
 void Engine_EventWait(s32 frames);
@@ -1151,6 +1151,12 @@ hit:
     KorimaHashi_TriggerPending = 1;
     return 0;
 }
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "falling_effect.c"
+s32 KorimaHashi_TriggerPending __attribute__((section(".bss")));
+s32 KorimaHashi_PartyFlag __attribute__((section(".bss")));
+s32 KorimaHashi_SparkleSound __attribute__((section(".bss")));
 
 void KorimaHashi_AlternateBridgePostHeights(void)
 {

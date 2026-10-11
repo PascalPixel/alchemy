@@ -17,7 +17,6 @@
 #include "heap_state.h"
 
 
-s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 #include "keystate.h"
 
 struct PushState {

@@ -158,6 +158,9 @@ u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
     return (u16)packed;
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korima/palette.c"
+
 s32 SceneEffect_UpdateOrbitingParticle(struct Particle_02000c4c *record)
 {
     u16 *sprite = record->sprite;

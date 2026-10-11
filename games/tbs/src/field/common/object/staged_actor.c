@@ -26,7 +26,7 @@ extern s32 StagedActor_FootprintBounds[];
 
 extern void Engine_TaskWait(s32);
 extern void Object_CommitPosition(void *);
-extern s32 Object_CheckMovementCollision(void *, s32 *);
+extern s32 Object_CheckMovementCollision(void *, void *);
 extern void Engine_EventWait(s32);
 extern void Engine_ActorSetDestinationOffset(s32, s32, s32);
 extern void Engine_ActorWaitForMove(s32);

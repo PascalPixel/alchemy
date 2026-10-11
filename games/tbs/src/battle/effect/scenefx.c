@@ -45,16 +45,15 @@
 #include "fixed_point_position.h"
 #include "irq.h"
 
-void BattleFx_PrepareCanvasEffect ( struct BattleEffectArgument * effect , s32 kind , s32 side , s32 anchor , s32 * out_x , s32 * out_y ) ;
+void BattleFx_PrepareCanvasEffect(
+	struct BattleEffectArgument *effect, s32 kind, s32 side, s32 anchor, s32 *out_x, s32 *out_y);
 void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind);
 void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant);
 void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride);
 
-#define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
 
-#define gBattleFxWork (*(struct BattleEffectWork **)&gBattleFxWork)
 
-extern u8 gMapCellBuffer[];
+extern struct EffectStep gMapCellBuffer[];
 
 void BattlePres_ConfigureEffectDisplay(void)
 {
@@ -72,7 +71,7 @@ void BattlePres_ConfigureEffectDisplay(void)
 
 void BattleFx_AdvanceScrollOnInterval(void)
 {
-	struct BattleEffectWork *work = gBattleFxWork;
+	struct BattleEffectWork *work = *(struct BattleEffectWork **)gBattleFxWork;
 	u32						*counter = (u32 *)&work->scroll_timer;
 
 	(*counter)++;
@@ -89,7 +88,7 @@ void Camera_AdvanceBg2Reference(void)
 	s32						 count;
 	struct BattleEffectWork *work;
 
-	work = gBattleFxWork;
+	work = *(struct BattleEffectWork **)gBattleFxWork;
 	count = work->scroll_timer + 1;
 	work->scroll_timer = count;
 	if (count == work->scroll_interval)
@@ -126,7 +125,7 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
 	s32						 i;
 	s32						 k;
 
-	heap_cache = (void **)&gBattleFxWork;
+	heap_cache = (void **)gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -325,7 +324,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
 	s32						 i;
 	s32						 k;
 
-	heap_cache = (void **)&gBattleFxWork;
+	heap_cache = (void **)gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -500,7 +499,6 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
 
 //--------------------------------------------------------------------------
 
-#undef gBattleFxWork
 
 #define CLIP (GOUSEI_CLIP_X | GOUSEI_CLIP_Y) // 上下左右ではみ出しを切る
 
@@ -1344,12 +1342,10 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 // バトル演出：逆さに跳ぶふたりと閃光、剣の雨、柱とらせんの粒、割れて飛ぶ絵
 //--------------------------------------------------------------------------
 
-#undef Camera_ApplyShake
 
-void Audio_PlayCue(s32 cue);
 
 void ObjectDispatch_InitFromTable6Far(struct MotionObject *object);
-void ObjectDispatch_ApplyArgumentToChildrenFar(struct MotionObject *object, s32 mode);
+void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
 
 //--------------------------------------------------------------------------
 // 使い手を最初の対象との間の 9/10 の位置に置き、ふたりで跳んで逆さになる
@@ -1642,7 +1638,7 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect)
 
 #define FLECKS ((struct EffectStep *)Ram_MapCellBuffer) // らせんの粒 (128 個)
 
-struct BlitterPair_3
+struct AddCompareBlitters
 {
 	DrawRectangle kasan;  // 加算合成
 	DrawRectangle hikaku; // 比較合成
@@ -1660,7 +1656,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 	s32						 point[3];
 	struct BattleEffectWork *work;
 	void					*canvas;
-	struct BlitterPair_3		 draw;
+	struct AddCompareBlitters		 draw;
 	u8						*sheet;
 	struct BattleCamera		*camera;
 	s32						 frame;
@@ -2187,7 +2183,6 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-#undef Camera_ApplyShake
 
 struct Streak
 {
@@ -2209,18 +2204,13 @@ struct StreakPoint
 
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
 
-struct BlitterPair_2
-{
-	DrawRectangle upper;
-	DrawRectangle lower;
-};
 
 void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
 {
 	struct EffectPosition	 ground;
 	struct BattleEffectWork *work;
 	void					*canvas;
-	struct BlitterPair_2	 draw;
+	struct BlitterPair	 draw;
 	u8						*sheet;
 	void					*palette;
 	s32						 frame;
@@ -2568,15 +2558,7 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
 	BattleFx_EndCanvasLayer();
 }
 
-#define ColorBuffer_BackupAndHalve ((void (*)(void *, void *, s32))ColorBuffer_BackupAndHalve)
-#define ColorBuffer_BackupAndScaleThreeQuarters \
-	((void (*)(void *, void *, s32))ColorBuffer_BackupAndScaleThreeQuarters)
-#define ColorBuffer_BackupAndDarken \
-	((void (*)(void *, s32, void *, s32))ColorBuffer_BackupAndDarken)
-#define ColorBuffer_BackupAndBrighten \
-	((void (*)(void *, s32, void *, s32))ColorBuffer_BackupAndBrighten)
 
-void AudioCommand_PlayFar(s32 cue);
 
 void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
 {
@@ -2806,13 +2788,12 @@ void BattleFx_FlushPendingGraphicsTransfer(void)
 	work->transfer_pending = 0;
 }
 
-#define gBattleFxWork (*(struct BattleEffectWork **)&gBattleFxWork)
 
 #define FADE_STEP 1092
 
 void Graphics_ApplyWindowBlendRegisters(void)
 {
-	struct BattleEffectWork *work = gBattleFxWork;
+	struct BattleEffectWork *work = *(struct BattleEffectWork **)gBattleFxWork;
 
 	REG_WIN0H = work->win0h;
 	REG_WIN0V = work->win0v;
@@ -2827,7 +2808,7 @@ void Graphics_ApplyWindowBlendRegisters(void)
 
 void Display_ApplyBg2Reference(void)
 {
-	struct BattleEffectWork *work = gBattleFxWork;
+	struct BattleEffectWork *work = *(struct BattleEffectWork **)gBattleFxWork;
 
 	REG_BG2X = work->bg2x;
 	REG_BG2Y = work->bg2y;
@@ -2850,7 +2831,7 @@ void Palette_StepFadeTransfer(void)
 
 void BattleFx_ClearActorTimers(void)
 {
-	Iwram_ClearWords(gBattleFxWork->actor_timers, sizeof(gBattleFxWork->actor_timers));
+	Iwram_ClearWords((*(struct BattleEffectWork **)gBattleFxWork)->actor_timers, sizeof((*(struct BattleEffectWork **)gBattleFxWork)->actor_timers));
 }
 
 void ObjectGroup_TickMemberTimers(void)
@@ -2858,7 +2839,7 @@ void ObjectGroup_TickMemberTimers(void)
 	struct BattleEffectWork *work;
 	s32						 i;
 
-	work = gBattleFxWork;
+	work = *(struct BattleEffectWork **)gBattleFxWork;
 	i = 0;
 	do
 	{
@@ -2890,12 +2871,9 @@ void ObjectGroup_TickMemberTimers(void)
 //   0x1541 : BG0・BG2・OBJ
 //--------------------------------------------------------------------------
 
-#define BattlePresentation_SetPaletteLevelFar \
-	((void (*)(u16, s32))BattlePresentation_SetPaletteLevelFar)
 
 typedef s32 (*ClearWordsFn)(void *destination, s32 size);
 
-void AudioCommand_PlayFar(s32);
 
 //--------------------------------------------------------------------------
 // キャンバス面を開く（背景パレットをフェードさせ、BG2 をキャンバスにする）
@@ -3125,8 +3103,6 @@ void BattleFx_SetTransitionFlagAndDisplay(void)
 	WaitFrames(1);
 }
 
-#define BattlePresentation_ConfigurePaletteFadeFar \
-	((void (*)(s32, s32, s32))BattlePresentation_ConfigurePaletteFadeFar)
 
 typedef s32 (*ClearFn)(void *dst, s32 size);
 typedef s32 (*FillFn)(void *dst, s32 size, u32 value);
@@ -3193,7 +3169,6 @@ void BattleFx_SetupCanvasTileMap(void)
 
 //--------------------------------------------------------------------------
 
-#undef gBattleFxWork
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
@@ -3293,10 +3268,6 @@ void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
 		}
 	}
 }
-#define Object_SetMoveTargetFar \
-	((void (*)(struct MotionObject *, s32, s32, s32))Object_SetMoveTargetFar)
-#define SceneTransform_ApplyPosition ((void (*)(s32 *))SceneTransform_ApplyPosition)
-#define Battle_GetObjectTableValueFar ((u32 (*)(s32))Battle_GetObjectTableValueFar)
 
 //--------------------------------------------------------------------------
 // 炎になって落ちる跳躍
@@ -4095,8 +4066,6 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
 #define PIC_MOTE 0x2710	 // 粒 (CrescentMoonSheet、24×24)
 #define PIC_DJINN 0x65c0 // ジン (40×40)
 
-void BattleFx_PrepareCanvasEffect(
-	struct BattleEffectArgument *effect, s32 kind, s32 side, s32 anchor, s32 *out_x, s32 *out_y);
 
 //--------------------------------------------------------------------------
 // mode 0 : ヴィーナスのジン
@@ -4322,8 +4291,6 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
 	BattleFx_EndCanvasLayer();
 }
 
-#undef Battle_GetObjectTableValueFar
-#undef SceneTransform_ApplyPosition
 
 void BattleFx_RunSevenModeMode4(struct BattleEffectArgument *effect)
 {
@@ -4803,19 +4770,19 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
 				}
 				if ((frame - 94) <= 1U)
 				{
-					rectangle[work->effect->side](canvas, gMapCellBuffer + 0x2d80,
+					rectangle[work->effect->side](canvas, (u8 *)gMapCellBuffer + 0x2d80,
 						CounterReveal_PanelX[idx_a * 7 + 4],
 						CounterReveal_PanelY[idx_b * 7 + 4] + screen_y, 128, 59);
 				}
 				if ((frame - 96) <= 1U)
 				{
-					rectangle[work->effect->side](canvas, gMapCellBuffer + 0x4b00,
+					rectangle[work->effect->side](canvas, (u8 *)gMapCellBuffer + 0x4b00,
 						CounterReveal_PanelX[idx_a * 7 + 5],
 						CounterReveal_PanelY[idx_b * 7 + 5] + screen_y, 122, 29);
 				}
 				if ((frame - 98) <= 1U)
 				{
-					rectangle[work->effect->side](canvas, gMapCellBuffer + 0x58d2,
+					rectangle[work->effect->side](canvas, (u8 *)gMapCellBuffer + 0x58d2,
 						CounterReveal_PanelX[idx_a * 7 + 6],
 						CounterReveal_PanelY[idx_b * 7 + 6] + screen_y, 76, 25);
 				}
@@ -4935,10 +4902,7 @@ void Graphics_ConvertBackgroundToBlueRamp(void)
 	WaitFrames(1);
 }
 
-#define SceneTransform_ApplyScale ((void (*)(struct Vector3 *))SceneTransform_ApplyScale)
 
-void BattleFx_PrepareCanvasEffect(
-	struct BattleEffectArgument *effect, s32 a, s32 b, s32 c, s32 *x, s32 *y);
 
 void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
 {
@@ -5219,9 +5183,6 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
 	BattleFx_EndCanvasLayer();
 }
 
-#define SceneTransform_ApplyPosition ((void (*)(void *))SceneTransform_ApplyPosition)
-#define ObjectDispatch_ApplyValueToChildrenFar \
-	((void (*)(struct MotionObject *, s32))ObjectDispatch_ApplyValueToChildrenFar)
 
 void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
 {
@@ -5801,7 +5762,9 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 			s32 angle;
 
 			BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
-			BattlePresentation_ConfigurePaletteFadeFar(1, (s32)&ResourceId_VioletSkyBackdrop, 8);
+			/* FAKEMATCH: the value goes in whole here; the prototype (u16 value) would narrow it first */
+			((void (*)(s32, s32, s32))BattlePresentation_ConfigurePaletteFadeFar)(
+				1, (s32)&ResourceId_VioletSkyBackdrop, 8);
 			BattleFx_SelectLivingTargets(runtime->effect);
 			BattleFx_SpawnObjects(9, 376, 2);
 
@@ -6126,11 +6089,8 @@ void BattleFx_RenderAnimationMode0(s32 effect)
 // バトル演出：粒を下から昇らせる演出と、粒を噴き上げて 3 本の柱を流す演出
 //--------------------------------------------------------------------------
 
-#undef Camera_ApplyShake
 
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *state, s32 flags);
-#define AnimationObjects_SelectAnimationFar \
-	((void (*)(void *, s32))AnimationObjects_SelectAnimationFar)
 
 struct Point2D
 {
@@ -6139,10 +6099,9 @@ struct Point2D
 };
 
 struct BattleEffectTargetArgument;
-void AudioCommand_PlayFar(s32 value);
 #define GRAINS ((struct EffectStep *)Ram_MapCellBuffer) // 昇る粒 (最大 512)
 
-struct BlitterPair_4
+struct CompareAddBlitters
 {
 	DrawRectangle hikaku; // 比較合成
 	DrawRectangle kasan;  // 加算合成
@@ -6167,7 +6126,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 	void					*canvas;
 	struct BattleCamera		*camera;
 	struct BattleEffectWork *work;
-	struct BlitterPair_4		 draw;
+	struct CompareAddBlitters		 draw;
 	s32						 frame;
 	u8						*sheet;
 	struct Point2D			 focus;
@@ -6819,7 +6778,6 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
 	BattleFx_EndCanvasLayer();
 }
 
-#undef Camera_ApplyShake
 
 #define WORK_FIELD(work, offset) (*(s32 *)((u8 *)(work) + (offset)))
 
@@ -7088,7 +7046,6 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect)
 // バトル演出：降ってきて砕ける結晶
 //--------------------------------------------------------------------------
 
-#undef Camera_ApplyShake
 
 //--------------------------------------------------------------------------
 // 結晶が降ってきて地面で砕ける
@@ -7489,7 +7446,6 @@ void BattleFx_RunTwoModeBMode1(s32 effect)
 	BattleFx_RunSparkGroups(effect, 1);
 }
 
-#undef Camera_ApplyShake
 
 void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
 {
@@ -7711,7 +7667,6 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
 	BattleFx_EndCanvasLayer();
 }
 
-#undef Camera_ApplyShake
 
 void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 {
@@ -7913,8 +7868,6 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 
 //--------------------------------------------------------------------------
 
-#undef AnimationObjects_SelectAnimationFar
-#undef SceneTransform_ApplyPosition
 
 //--------------------------------------------------------------------------
 // 演出ごとの入口。粒子の型（色と数）を BattleFx_RenderMode に渡す
@@ -7965,7 +7918,6 @@ void BattleFx_RenderMode6(struct BattleEffectArgument *effect)
 	BattleFx_RenderMode(effect, 6);
 }
 
-#define SceneTransform_ApplyPosition ((void (*)(s32 *))SceneTransform_ApplyPosition)
 
 #define CONVERGES(mode) ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6 || (mode) == 7)
 #define DECAYS(mode) ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6)
@@ -8223,7 +8175,6 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
 	BattleFx_EndCanvasLayer();
 }
 
-#define gBattleFxWork ((void *(*)) & gBattleFxWork)
 
 void BattleFx_RunBouncingSheep(void *object)
 {
@@ -8242,7 +8193,7 @@ void BattleFx_RunBouncingSheep(void *object)
 	s32				   member;
 
 	sheep = (struct EffectStep *)Ram_MapCellBuffer;
-	heap_cache = gBattleFxWork;
+	heap_cache = (void **)gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -8416,7 +8367,6 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
 	BattleFx_EndCanvasLayer();
 }
 
-#undef gBattleFxWork
 
 void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
 {
@@ -8646,15 +8596,12 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
 	BattleFx_EndCanvasLayer();
 }
 
-#undef gBattleFxWork
 
-#undef gBattleFxWork
-#define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
 
 void Camera_ApplyPhasedDelta(void)
 {
-    struct BattleEffectWork *work = gBattleFxWork;
-    struct BattleCamera *camera = *(struct BattleCamera **)((u8 *)&gBattleFxWork - 108);
+    struct BattleEffectWork *work = *(struct BattleEffectWork **)gBattleFxWork;
+    struct BattleCamera *camera = *(struct BattleCamera **)((u8 *)gBattleFxWork - 108);
     s32 *phase = &work->camera_phase;
 
     if (*phase == 1) {
@@ -8697,15 +8644,7 @@ void BattleFx_RunNoEffectFrames(s32 cnt)
 // バトル演出：演出の振り分け・走査線ごとのウインドウ端・生きている対象
 //--------------------------------------------------------------------------
 
-#undef gBattleFxWork
 
-#define BattleEffect_RunCirclingFallingScene ((void (*)(s32 *))BattleEffect_RunCirclingFallingScene)
-#define BattleEffect_RunEmberColumns ((void (*)(s32 *))BattleEffect_RunEmberColumns)
-#define BattleFx_RunObjectRow ((void (*)(s32 *))BattleFx_RunObjectRow)
-#define BattleEffect_RunStagedParticles ((void (*)(s32 *))BattleEffect_RunStagedParticles)
-#define BattleFx_InitializeMode6 ((void (*)(s32 *))BattleFx_InitializeMode6)
-#define BattleFx_InitializeMode10 ((void (*)(s32 *))BattleFx_InitializeMode10)
-#define BattleFx_InitializeMode12 ((void (*)(s32 *))BattleFx_InitializeMode12)
 
 typedef void (*Callback)(s32 *);
 extern Callback BattleFx_ModeHandlers[];
@@ -8842,7 +8781,7 @@ void BattleFx_BuildWindowEdgeTable(void)
 		channel[5] &= 0x7fff;
 		(void)channel[5];
 		// HBlank ごと・リピート・転送先リロードで 1 ハーフワード
-		Dma_Set(gMapCellBuffer + 0x82, (void *)&REG_WIN0H, 0xa2600001, (volatile u32 *)channel);
+		Dma_Set((u8 *)gMapCellBuffer + 0x82, (void *)&REG_WIN0H, 0xa2600001, (volatile u32 *)channel);
 	}
 }
 
@@ -8879,7 +8818,6 @@ void BattleFx_SelectLivingTargets(struct BattleEffectArgument *arg)
 	BattleActor_SpawnObjectsForListFar(list, 0);
 }
 
-void WaitFrames(s32 frames);
 
 void BattleEffect_SetupBlendedDisplay(void)
 {
@@ -8889,7 +8827,7 @@ void BattleEffect_SetupBlendedDisplay(void)
 	volatile u32	zero;
 
 	REG_DISPCNT = 1;
-	gBgScroll[3] = 32;
+	gBgScroll[1].y = 32;
 	BattleBackground_LoadFar(1, battle->background, 24);
 	zero = 0;
 	Dma_Set((const void *)&zero, buffer, 0x85001000, REG_DMA3);
@@ -8902,10 +8840,7 @@ void BattleEffect_SetupBlendedDisplay(void)
 	gProjection.center_y = 120;
 }
 
-#define GetMotionRecordFar ((void *(*)(void *, s32))GetMotionRecordFar)
 
-#undef gBattleFxWork
-#define gBattleFxWork (*(struct BattleEffectWork **)&gBattleFxWork)
 
 void ObjectGroup_UpdateMembers(
 	s32 set_id, s32 object_value, s32 group_value, s32 state_slot, s32 state_value)
@@ -8916,7 +8851,7 @@ void ObjectGroup_UpdateMembers(
 	s32						 group_index;
 
 	set = GetBattleObjectSlotFar(set_id);
-	state = gBattleFxWork;
+	state = *(struct BattleEffectWork **)gBattleFxWork;
 	group_index = 0;
 
 	while ((group = GetMotionRecordFar(set->object, group_index)) != NULL)
@@ -8973,9 +8908,6 @@ void BattleFx_InitTilemapAndFlushQueue(void)
 // 戦闘エフェクト：いばらのつる、岩と氷塊、氷の破片
 //--------------------------------------------------------------------------
 
-#undef BattleFx_InitializeMode10
-#undef GetMotionRecordFar
-#undef gBattleFxWork
 
 //--------------------------------------------------------------------------
 // いばらのつる : とげを飛ばし、つるを伸ばして対象を持ち上げ、
@@ -9499,8 +9431,6 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 // 岩と氷塊
 //--------------------------------------------------------------------------
 
-#define AnimationObjects_SelectAnimationFar \
-	((s32 (*)(void *, s32))AnimationObjects_SelectAnimationFar)
 
 typedef struct Scale
 {
@@ -9526,7 +9456,7 @@ struct Mode10Work
 };
 
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
-#define TRAILS ((struct EffectStep *)(gMapCellBuffer + 0xe00)) // PARTICLES[128] から
+#define TRAILS ((struct EffectStep *)((u8 *)gMapCellBuffer + 0xe00)) // PARTICLES[128] から
 
 //--------------------------------------------------------------------------
 // 岩と氷塊 : 窓を開いて岩を崩し、大きな氷塊を落としてしぶきを散らしたあと、
@@ -10350,14 +10280,11 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
 
 //--------------------------------------------------------------------------
 
-#undef gBattleFxWork
 
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer) // 光の粒 (対象ごとに 64)
 
 #define JIN_OFS 0x1000 // sheet の中のジンの絵
 
-void BattleFx_PrepareCanvasEffect(
-	struct BattleEffectArgument *effect, s32 kind, s32 side, s32 narrow, s32 *x, s32 *y);
 
 //--------------------------------------------------------------------------
 // mode ごとの入口
@@ -11127,8 +11054,6 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 	BattleFx_EndCanvasLayer();
 }
 
-#undef AnimationObjects_SelectAnimationFar
-#undef BattleEffect_RunStagedParticles
 #undef TRAILS
 
 void BattleFx_RunPaletteRampMode0(struct BattleEffectArgument *effect)
@@ -12494,11 +12419,10 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
 	BattleFx_EndCanvasLayer();
 }
 
-#define gBattleFxWork (*(struct BattleEffectWork **)&gBattleFxWork)
 
 void BattleFx_SpawnObjects(s32 entry_count, s32 kind, u32 variant)
 {
-	struct BattleEffectWork *work = gBattleFxWork;
+	struct BattleEffectWork *work = *(struct BattleEffectWork **)gBattleFxWork;
 	s32						 entry_index = 0;
 
 	if (entry_count == 0)
@@ -12524,13 +12448,8 @@ void BattleFx_RunNoEffect(void)
 {
 }
 
-#undef Camera_ApplyShake
 #undef SPARKS
-#undef SceneTransform_ApplyPosition
-#undef gBattleFxWork
 
-#define EffectPosition_ApplyAnimationAndYOffset \
-	((void (*)(s32, s32 *))EffectPosition_ApplyAnimationAndYOffset)
 
 typedef s32 (*CopyWords)(void *, const void *, s32);
 typedef struct BattleEffectArgument Efx;
@@ -12548,7 +12467,6 @@ typedef struct Spark
 
 #define WORK_EFX ((Efx *)work->effect)
 #define SHEET (work->sheet + 0xC56)
-#undef SPARKS
 #define SPARKS ((Spark *)work->particles)
 
 void BattleFx_ArmBg2AffineHBlankDma(void)
@@ -13206,7 +13124,6 @@ void BattleFx_RunTargetBursts(void *object)
 	BattleFx_EndCanvasLayer();
 }
 
-#define gTransitionWork (*(struct BattleBackgroundView **)&gTransitionWork)
 
 extern const Scale StagedParticles_UnitScale;
 
@@ -13543,7 +13460,6 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
 // バトル演出：地面から次々に伸びるつる・柱・とげと土けむり
 //--------------------------------------------------------------------------
 
-#undef Camera_ApplyShake
 
 // 伸びる 1 本（struct EffectStep に重ねて使う）
 struct DualColumn
@@ -13651,7 +13567,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 	duration = DualTable_ColumnCounts[work->effect->variant] * 4 + 56;
 
 	// 土けむりをすべて空きにする
-	age = gMapCellBuffer + 0x18;
+	age = (u8 *)gMapCellBuffer + 0x18;
 	i = 0;
 	do
 	{
@@ -14139,7 +14055,6 @@ void BattleFx_RaisePillars(struct BattleEffectArgument *effect)
 
 #undef SPARKS
 
-#undef SPARKS
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer) // 対象ひとりに 128 個
 // 光ごとに作りなおす 2 つめの描画関数
 #define BLIT_ALT \
@@ -14296,8 +14211,6 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
 	BattleFx_EndCanvasLayer();
 }
-
-#undef SceneTransform_ApplyPosition
 
 void BattleFx_PrepareCanvasEffect(
 	struct BattleEffectArgument *effect, s32 kind, s32 side, s32 anchor, s32 *out_x, s32 *out_y)
@@ -14563,15 +14476,8 @@ void BattleFx_PrepareCanvasEffect(
 
 //--------------------------------------------------------------------------
 
-#undef BattleFx_InitializeMode12
-#undef ObjectDispatch_ApplyValueToChildrenFar
-#undef Object_SetMoveTargetFar
 #undef PARTICLES
-#undef SceneTransform_ApplyPosition
-#undef SceneTransform_ApplyScale
 
-#define ObjectDispatch_ApplyValueToChildrenFar \
-	((s32 (*)(s32, s32))ObjectDispatch_ApplyValueToChildrenFar)
 
 #define ARG(e) ((struct BattleEffectArgument *)(e))
 
@@ -14665,9 +14571,7 @@ void BattleFx_RunMode9WithAction(void *effect)
 // バトル効果：対象へ飛ぶ弾の一斉射撃と、キャラの移動
 //--------------------------------------------------------------------------
 
-void ObjectDispatch_InitFromTable6Far(struct MotionObject *);
 
-extern u8  gBattleFxWork[];
 extern u16 ParticleStreams_CellOffsets[];
 
 // mode ごとの表
@@ -14685,8 +14589,6 @@ extern u16 Volley_PelletOffsets[];
 #define PTCL ((struct EffectStep *)Ram_MapCellBuffer)
 #define PTCL_MAX 1024
 
-void BattleFx_PrepareCanvasEffect(
-	struct BattleEffectArgument *effect, s32 kind, s32 side, s32 mode, s32 *x, s32 *y);
 
 //--------------------------------------------------------------------------
 // 使う者から対象へ弾を飛ばし、当たったら光と火花を出す
@@ -15327,7 +15229,6 @@ void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride)
 
 #define TSUBU_MAX 64	// 粒の数
 #define RING_SIZE 0x3c0 // 輪の一枚 (20x48)
-#define Graphics_PackTileRows ((void (*)(void *source, void *destination, s32 width, s32 rows))Graphics_PackTileRows)
 
 //--------------------------------------------------------------------------
 // 四種の入口
@@ -15382,7 +15283,7 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect, s32 v
 
 	// ワーク、キャンバス、カメラ
 	cells = Ram_MapCellBuffer;
-	heap = (void **)&gBattleFxWork;
+	heap = (void **)gBattleFxWork;
 	cursor = heap;
 	work = *cursor++;
 	canvas = *cursor;
@@ -15411,7 +15312,8 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect, s32 v
 	// 絵と色
 	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 	Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1, 0);
-	Graphics_PackTileRows(work, cells, 40, 288);
+	/* FAKEMATCH: called with four arguments (width, rows); the function takes three */
+	((void (*)(void *, void *, s32, s32))Graphics_PackTileRows)(work, cells, 40, 288);
 	Resource_LoadAndDecompress((s32)&ResourceId_BlueBurstSheet, work->sheet, 1, 1);
 	switch (variant)
 	{
@@ -15508,7 +15410,6 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect, s32 v
 	BattleFx_EndCanvasLayer();
 }
 
-#undef Graphics_PackTileRows
 
 //--------------------------------------------------------------------------
 // transpose_copy.c
@@ -15849,8 +15750,6 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal)
 	Resource_DecodeType01(res, dst);
 }
 
-#define EffectPosition_ApplyAlternateStepAndYOffset \
-	((void (*)(s16, s32 *))EffectPosition_ApplyAlternateStepAndYOffset)
 
 void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
 {
@@ -16405,7 +16304,6 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
 	BattleFx_EndCanvasLayer();
 }
 
-#undef Camera_ApplyShake
 
 void Camera_ApplyShake(s32 random_mask, u32 shake_range)
 {
@@ -16422,7 +16320,7 @@ void Camera_ApplyShake(s32 random_mask, u32 shake_range)
 	struct BgScroll			*disp_p;
 	struct Projection		*center_p;
 
-	work = gBattleFxWork;
+	work = *(struct BattleEffectWork **)gBattleFxWork;
 	remaining_frames = &work->shake_frames;
 	if (*remaining_frames > 0)
 	{
@@ -16450,8 +16348,6 @@ void Camera_ApplyShake(s32 random_mask, u32 shake_range)
 	center_p->center_y = 0x78;
 }
 
-#undef gBattleFxWork
-#define gWorkSlot (*(u8(*)[]) & gWorkSlot)
 
 extern s16 Mode12_Points[][2];
 extern u8  Mode12_Animations[];
@@ -16490,7 +16386,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 	DrawRectangle	  *cache;
 	s32				   rings = 0x2710;
 
-	slots = (void **)(gWorkSlot + 44 * 4);
+	slots = &gWorkSlot[44];
 	ctrl = slots[0];
 	work = slots[-5];
 	dst = slots[-4];
@@ -17159,7 +17055,6 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
 	BattleFx_EndCanvasLayer();
 }
 
-#undef gWorkSlot
 
 //--------------------------------------------------------------------------
 
@@ -17231,8 +17126,6 @@ void EffectStep_RunAnimationMode3Or4Or5(struct EffectStep *step)
 
 //--------------------------------------------------------------------------
 
-#undef gBattleFxWork
-#undef gWorkSlot
 
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
 
@@ -17842,19 +17735,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 	BattleFx_EndCanvasLayer();
 }
 
-#undef BattleEffect_RunCirclingFallingScene
-#undef BattleFx_InitializeMode6
-#undef BattleFx_RunObjectRow
-#undef BattlePresentation_ConfigurePaletteFadeFar
-#undef BattlePresentation_SetPaletteLevelFar
-#undef Camera_ApplyShake
-#undef EffectPosition_ApplyAlternateStepAndYOffset
-#undef EffectPosition_ApplyAnimationAndYOffset
-#undef GetMotionRecordFar
-#undef Graphics_PackTileRows
-#undef ObjectDispatch_ApplyValueToChildrenFar
 #undef PARTICLES
-#undef gTransitionWork
 
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity)
 {
@@ -18421,7 +18302,8 @@ static __inline__ void LoadResource(const void *id, void *dest, s32 skip, s32 co
 static __inline__ void PackRows(void *src, void *dest, s32 width, s32 height)
 {
 	/* FAKEMATCH: needed to match: keep packing arguments within their own inline scope */
-	Graphics_PackTileRows(src, dest, width, height);
+	/* FAKEMATCH: called without a prototype and with four arguments; the function takes three */
+	((void (*)())Graphics_PackTileRows)(src, dest, width, height);
 }
 
 static __inline__ void DrawImage(
@@ -18461,7 +18343,6 @@ static __inline__ void DrawCroppedImage(
 //--------------------------------------------------------------------------
 void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 {
-	void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
 	void					 **slots;
 	void					 **slot;
 	s32						   alive;
@@ -19892,7 +19773,6 @@ void ObjectGroup_StoreObjectAndRunStep7(s32 a0, s32 a1, s32 a2)
 
 void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
 {
-	void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 	void				   **heap_cache;
 	void				   **cursor;
 	struct BattleEffectWork *work;
@@ -20043,21 +19923,9 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
 //--------------------------------------------------------------------------
 // 並べかた
 //--------------------------------------------------------------------------
-struct Scale_2
-{
-	s32 x; // 0x10000 で等倍
-	s32 y;
-};
-struct Placement_2
-{
-	s32 x; // 16.16 ドット
-	s32 y;
-	s32 z;
-	s32 w;
-};
 
-extern const struct Scale_2 Formation_NormalScale; // 等倍
-extern const struct Scale_2 Formation_SmallScale;	 // 1.25 倍
+extern const struct Scale Formation_NormalScale; // 等倍
+extern const struct Scale Formation_SmallScale;	 // 1.25 倍
 
 //--------------------------------------------------------------------------
 // work->objects を formation の形に並べる
@@ -20068,12 +19936,12 @@ extern const struct Scale_2 Formation_SmallScale;	 // 1.25 倍
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 {
 	struct BattleEffectWork *work = *(void **)gBattleFxWork;
-	struct Scale_2			 normal = Formation_NormalScale;
-	struct Scale_2			 big = Formation_SmallScale;
-	struct Placement_2		 pos;
+	struct Scale			 normal = Formation_NormalScale;
+	struct Scale			 big = Formation_SmallScale;
+	struct Placement		 pos;
 	s32						 i;
 
-	pos.w = 0;
+	pos.unknown_0c = 0;
 	pos.y = 255 << 16;
 	switch (formation)
 	{
@@ -20339,7 +20207,7 @@ void BattleFx_InitializeMode1(struct BattleEffectArgument *efx)
 	BattleEffect_RunParticleStreams(efx, 1);
 }
 
-extern const struct Scale_2 CirclingScene_UnitScale;
+extern const struct Scale CirclingScene_UnitScale;
 
 extern s16 ParticleStreams_OrbitPoints[][3];
 extern s16 ParticleStreams_DropPoints[][2];
@@ -20405,7 +20273,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 	struct EffectPosition  spot;
 	struct EffectPosition *pos;
 	struct EffectPosition  point;
-	struct Scale_2		   scale;
+	struct Scale		   scale;
 	s32					   frame;
 	s32					   i;
 
@@ -20778,7 +20646,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 		s32					 size = (frame + 0x1d0) << 8;
 		struct BattleCamera *camera = gCameraWork;
 		s32					 elapsed = frame - 16;
-		struct Scale_2		 scale;
+		struct Scale		 scale;
 		s32					 x;
 		s32					 y;
 		s32					 grow;
@@ -20919,14 +20787,14 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
 {
 	s32						 position[4];
 	DrawRectangle			 draw[2];
-	struct Scale_2			 scale;
+	struct Scale			 scale;
 	void				   **cache;
 	void					*canvas;
 	struct BattleEffectWork *work;
 	s32						 frame;
 	u8						*sheet;
-	struct Scale_2			 base;
-	struct Scale_2			 orb;
+	struct Scale			 base;
+	struct Scale			 orb;
 	s32						 i;
 	s32						 k;
 
@@ -21616,7 +21484,6 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
 //--------------------------------------------------------------------------
 void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 {
-	void ObjectDispatch_ApplyArgumentToChildrenFar(void *object, s32 mode);
 	void				   **heap_cache;
 	void				   **cursor;
 	struct BattleEffectWork *work;
@@ -21890,7 +21757,6 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 }
 
 #define DUST ((struct EffectStep *)Ram_MapCellBuffer)
-#undef SPARK
 #undef SPARK
 #define SPARK ((struct EffectStep *)(Ram_MapCellBuffer + 684 * sizeof(struct EffectStep)))
 
@@ -22285,14 +22151,13 @@ struct ShockwaveWork
 	u8 ramp[8][770];
 };
 
-extern const struct Scale_2 ShockwaveScene_UnitScale;
+extern const struct Scale ShockwaveScene_UnitScale;
 extern const u8			  ShockwaveScene_BurstHeights[];
 extern const u16		  ShockwaveScene_BurstCells[];
 extern u16				  ShockwaveScene_ShardCells[];
 extern u8				  ShockwaveScene_ShardWidths[];
 extern u8				  ShockwaveScene_ShardHeights[];
 
-#undef SPARKS
 #undef SPARKS
 #define SPARKS (&DUST[128])
 
@@ -22341,8 +22206,8 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 	s32							   place[4];
 	volatile u32				   fill;
 	s32							   place2[4];
-	struct Scale_2				   pair;
-	struct Scale_2				   scale;
+	struct Scale				   pair;
+	struct Scale				   scale;
 	void						  *canvas;
 	struct BattleEffectWork		  *work;
 	struct BattlePresentationWork *ctrl;
@@ -23736,7 +23601,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 	BattleFx_EndCanvasLayer();
 }
 
-extern const struct Scale_2 BattleFx6_UnitScale;
+extern const struct Scale BattleFx6_UnitScale;
 
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
@@ -23778,7 +23643,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
 	struct EffectStep		*q3;
 	struct EffectStep		*q4;
 	DrawRectangle			 blit[2];
-	struct Scale_2			 scale;
+	struct Scale			 scale;
 	s32						 ground = 112;
 
 	cache = (u32 *)&((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_CANVAS];

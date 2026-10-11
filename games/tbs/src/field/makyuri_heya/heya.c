@@ -25,8 +25,6 @@
 #include "object_runtime.h"
 #include "animspr.h"
 #include "map.h"
-#include "../makyuri_iriguchi/pillar.c"
-#include "../common/makyuri/makyuri.c"
 
 void FieldScene_RunOpeningAuxiliarySequence();
 void FieldScene_RunSupplementalSequenceOne();
@@ -214,6 +212,11 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
     return NULL;
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
+#include "../common/object/staged_actor.c"
+
 void SceneState_ApplyPair12And21(void)
 {
     BattleFx_SetPhaseRequest(12, 21);
@@ -262,6 +265,9 @@ s32 MakyuriHeya_TrailSparks(struct FieldActor *actor)
                                        &options);
     return 0;
 }
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/makyuri/palette_cycle.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -440,7 +446,7 @@ void MakyuriHeya_RunPushedBlockScene(void)
     switch ((u32)probe.word[1]) {
     case 9:
         if (probe.word[4] >> 20 == 8) {
-            SceneActor_MoveAndRedraw(probe);
+            ((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
             Engine_EventWait(20);
             Map_CopyCellsTo(119, 9, 109, 11, 1, 1);
             SceneEffect_SpawnRandomizedBurst(0x2d60000, 0, 0xb40000, 0x8000);
@@ -451,13 +457,13 @@ void MakyuriHeya_RunPushedBlockScene(void)
             Map_CopyCellsTo(117, 9, 104, 7, one, one);
             Map_CopyCellsTo(119, 8, 109, 11, one, one);
             Map_CopyCellsTo(118, 8, 104, 13, one, one);
-            SceneActor_MoveAndRedraw(probe);
+            ((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
             GameFlag_Clear(0x310);
         }
         break;
     case 10:
         if (probe.word[4] >> 20 == 12) {
-            SceneActor_MoveAndRedraw(probe);
+            ((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
             Engine_EventWait(10);
             if (GameFlag_IsSet(0x310)) {
                 Map_CopyCellsTo(118, 9, 104, 13, 1, 1);
@@ -472,17 +478,17 @@ void MakyuriHeya_RunPushedBlockScene(void)
                 Map_CopyCellsTo(119, 9, 109, 11, one, one);
                 Map_CopyCellsTo(118, 8, 104, 13, one, one);
             }
-            SceneActor_MoveAndRedraw(probe);
+            ((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
             GameFlag_Clear(0x311);
         }
         break;
     case 11:
         x = probe.word[2];
         if (x >> 20 == 40) {
-            SceneActor_MoveAndRedraw(probe);
+            ((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
             GameFlag_Set(0x312);
         } else {
-            SceneActor_MoveAndRedraw(probe);
+            ((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
             GameFlag_Clear(0x312);
         }
         break;
@@ -775,7 +781,7 @@ void MakyuriHeya_RunSequenceE(void)
         if (kind == 8) {
             shape = ev.f2;
             if ((shape >> 20) == 11) {
-                SceneActor_MoveAndRedraw(ev);
+                ((void (*)(SceneEvent))SceneActor_MoveAndRedraw)(ev);
                 Engine_EventWait(30);
                 Engine_AudioPlayCue(211);
                 SceneEffect_SpawnParticleRowsAndDrawTiles();
@@ -797,12 +803,12 @@ void MakyuriHeya_RunSequenceE(void)
                 Map_CopyCellsTo(71, 59, 81, 49, 1, 1);
                 Map_CopyCellsTo(71, 59, 82, 49, 1, 1);
                 Map_CopyCellsTo(78, 58, 83, 49, 1, 1);
-                SceneActor_MoveAndRedraw(ev);
+                ((void (*)(SceneEvent))SceneActor_MoveAndRedraw)(ev);
                 GameFlag_Clear(0x302);
             }
         } else if (kind == 10) {
             if ((ev.t0 >> 20) == 40) {
-                SceneActor_MoveAndRedraw(ev);
+                ((void (*)(SceneEvent))SceneActor_MoveAndRedraw)(ev);
                 if (GameFlag_IsSet(0x307) == 0) {
                     Camera_SetSpeed(0x18000, 0x3000);
                     Camera_MoveTo(0x2ca0000, -1, 0x2500000, 1);
@@ -816,7 +822,7 @@ void MakyuriHeya_RunSequenceE(void)
                 GameFlag_Set(0x306);
             } else if ((ev.t0 >> 20) == 42) {
                 ev.t1 = (s32)MakyuriHeya_RunSequenceF;
-                SceneActor_MoveAndRedraw(ev);
+                ((void (*)(SceneEvent))SceneActor_MoveAndRedraw)(ev);
                 MakyuriHeya_RunSequenceG(5);
                 GameFlag_Clear(0x306);
             }
@@ -968,7 +974,6 @@ void BattleFx_StartFadeOverlay(s32 value);
 void BattleFx_SetQueuedSoundAndPlay(s32 sound);
 void DisplayBlend_EnableRunScript(void);
 void UiText_ShowCenteredMessage(s32 message, s32 a1, s32 a2);
-void FieldScene_RedrawActorFootprint(s32 actor);
 
 void Event_PrepareObjectAndApplyValue();
 s32 Djinn_AddToOwner();
@@ -1086,7 +1091,7 @@ void MakyuriHeya_RunColumnProbeScene(void)
         goto end;
     switch (probe.word[1]) {
     case 10:
-        SceneActor_MoveAndRedraw(probe);
+        ((void (*)(struct ColumnProbe))SceneActor_MoveAndRedraw)(probe);
         if (probe.word[4] >> 20 == 38)
             Engine_GameFlagSet(0x318);
         else
@@ -1094,7 +1099,7 @@ void MakyuriHeya_RunColumnProbeScene(void)
         break;
     case 11:
         start = Object_GetById(11)->x.fixed >> 20;
-        SceneActor_MoveAndRedraw(probe);
+        ((void (*)(struct ColumnProbe))SceneActor_MoveAndRedraw)(probe);
         column = probe.word[2] >> 20;
         if (column == 47) {
             Engine_GameFlagSet(0x319);
@@ -2631,75 +2636,8 @@ void SceneState_SetRecordTableValue(s32 key, s32 value)
 
 #undef Makyuri_SpawnLightObjects
 
-struct MakyuriLights {
-    s32 lit;
-    s32 region;
-    s32 pad08[3];
-    struct FieldActor *lower;
-    struct FieldActor *upper;
-};
-
-void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
-{
-    struct ObjectRuntime *actor;
-    struct FieldActor *obj;
-    struct FieldSprite *anim;
-    struct MapCell *cell;
-    s32 z;
-    s32 flag;
-    volatile u32 cleared;
-
-    *(struct MakyuriLights **)Runtime_AllocateBlock(35, sizeof(st)) = st;
-    flag = Engine_GameFlagIsSet(0x109);
-    if (flag == 0) {
-        cleared = flag;
-        Dma_Set((const void *)&cleared, st, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 7, REG_DMA3);
-        st->region = region;
-        return;
-    }
-    actor = Engine_ActorLookup(gGameState.selected_actor);
-    z = actor->z;
-    cell = (struct MapCell *)Ram_MapCellBuffer + ((z / 0x100000) << 7) + actor->x / 0x100000;
-    if (st->lit != 0 && st->lower != 0) {
-        obj = Engine_ObjectCreate(26, actor->x, actor->y + 0x180000, z);
-        if (obj == 0)
-            goto upper;
-        obj->terrain_height = actor->terrain_height;
-        anim = obj->sprite;
-        Engine_ObjectSetScript(obj, Makyuri_PillarScript);
-        obj->linked_object = (struct FieldActor *)actor;
-        obj->motion_flags = 4;
-        obj->y.fixed += -0x8000;
-        if (anim != 0) {
-            AnimationObjects_SelectAnimation(anim, 6 - st->lit);
-            anim->flags = 0;
-            anim->priority = 1;
-        }
-        st->lower = obj;
-    } else {
-        st->lower = 0;
-    }
-upper:
-    if (cell->collision_code == region && st->upper != 0) {
-        obj = Engine_ObjectCreate(26, actor->x, actor->y, actor->z);
-        if (obj == 0)
-            return;
-        obj->terrain_height = actor->terrain_height;
-        anim = obj->sprite;
-        Engine_ObjectSetScript(obj, Makyuri_RampScript);
-        obj->motion_flags = 0;
-        obj->timer = 0;
-        obj->priority_flags = 2;
-        obj->speed = 0x40000;
-        if (anim != 0) {
-            AnimationObjects_SelectAnimation(anim, 6);
-            anim->flags = 0;
-        }
-        st->upper = obj;
-    } else {
-        st->upper = 0;
-    }
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/makyuri/lights.c"
 
 void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 {
@@ -2777,6 +2715,7 @@ s32 OverlayObject_StepScaleUpSixteenFrames(struct FieldActor *o)
 extern const s32 Makyuri_ScaleCounterScript[];
 
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../makyuri_iriguchi/pillar.c"
 
 void SceneState_ClearCurrentRecordAndReleaseTarget(void)
 {
@@ -2800,6 +2739,7 @@ void SceneState_ClearCurrentRecordAndReleaseTarget(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/makyuri/makyuri.c"
 
 void OverlayObject_ReleasePublishedAttachmentB(void)
 {

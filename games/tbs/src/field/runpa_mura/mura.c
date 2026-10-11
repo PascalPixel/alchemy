@@ -51,6 +51,10 @@ struct FieldEffect *Effect_Create(s32 x, s32 y, s32 z, s32 type)
     return NULL;
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
+
 const s32 gShortEffectScript[] = {
     SCRIPT_WAIT(1),
     SCRIPT_REPEAT(22, 0),
@@ -78,7 +82,7 @@ const s32 gLongEffectScript[] = {
     SCRIPT_DELETE,
 };
 
-const s32 *const gEffectScripts[] = {
+const s32 *gEffectScripts[] = {
     gShortEffectScript,
     gMediumEffectScript,
     gLongEffectScript,

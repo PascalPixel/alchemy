@@ -191,6 +191,10 @@ struct FieldActor *SpawnMode15Effect(s32 x, s32 y, s32 z, s32 kind)
     return 0;
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
+
 struct Owner {
     u8 unk0[9];
     u8 unk9_0 : 2;

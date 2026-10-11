@@ -161,6 +161,10 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
     return NULL;
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
+
 void Object_SetActionCallbackAndRefreshById();
 void ObjectMotion_WaitForAnimationChange();
 

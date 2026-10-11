@@ -75,14 +75,12 @@
 #include "fieldcoo.h"
 #include "scroll.h"
 #include "fxblend.h"
-#include "../../graphics/display/scroll_initialize_hblank_dma.c"
 #include "fx_scene.h"
 #include "effect_slot.h"
 #include "object_efx.h"
 #include "menu_list.h"
 #include "field_effect.h"
 #include "fixed_point_position.h"
-#include "../../field/common/effect/spawn.c"
 
 struct ActionDescriptor *BattleAction_FindDescriptor(s32 id);
 s32	 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result);
@@ -90,7 +88,7 @@ void BattleFx_FinishAction(void);
 u8 BattleFx_GetFlags(void);
 struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item);
 void Djinn_ResolvePendingEvent(s32 capture);
-void Event_SetMessageId(s16 value);
+void Event_SetMessageId(s32 value);
 s32 FieldEffect_UpdateGridPlacement(void);
 void Motion_SetVarCbAndRefresh(u32 object_id, s32 variant);
 void ObjectMotion_CommitCurrentPositionAndActivate(u32 object_id);
@@ -1712,7 +1710,6 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
     }
 }
 
-#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void BattleParty_ApplyDrain(s32 amount)
 {
@@ -2011,7 +2008,7 @@ s32 Field_RunScene(s32 entrance)
 		}
 		if (gGameState.pending_djinn_event != 0)
 		{
-			Djinn_ResolvePendingEvent(gGameState.pending_djinn_event, 1);
+			((void (*)())Djinn_ResolvePendingEvent)(gGameState.pending_djinn_event, 1) /* FAKEMATCH: called with a second argument the function does not take */;
 			gGameState.pending_djinn_event = 0;
 		}
 		if (gGameState.pending_item != 0)
@@ -2178,7 +2175,7 @@ s32 Field_RunScene(s32 entrance)
 				AudioCommand_PlayFar(111);
 				Battle_SetObjectFlag5bWhenMode3();
 				GameFlag_SetBitFar(0x106);
-				if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0 && (gKeysHeld & KEY_SELECT) != 0)
+				if (*(volatile u8 *)&gDebugMode != 0 && (gKeysHeld & KEY_B) != 0 && (gKeysHeld & KEY_SELECT) != 0)
 				{
 					Menu_RunSelectionWithCursorObjectFar();
 				}
@@ -2232,11 +2229,11 @@ s32 Field_RunScene(s32 entrance)
 				Battle_InitializeRenderObject();
 				Battle_SetObjectFlag5bWhenMode3();
 				GameFlag_SetBitFar(0x106);
-				if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0)
+				if (*(volatile u8 *)&gDebugMode != 0 && (gKeysHeld & KEY_B) != 0)
 				{
 					Menu_RunSelectionFar();
 				}
-				else if (gDebugMode != 0 && (gKeysHeld & KEY_L) != 0)
+				else if (*(volatile u8 *)&gDebugMode != 0 && (gKeysHeld & KEY_L) != 0)
 				{
 					Debug_RunPaletteEditor();
 				}
@@ -2297,7 +2294,7 @@ s32 Field_RunScene(s32 entrance)
 		{
 			WaitFrames(1);
 			actor = work->actors[gGameState.selected_actor];
-			if (gDebugMode == 0 || GameFlag_TestFar(0x163) == 0)
+			if (*(volatile u8 *)&gDebugMode == 0 || GameFlag_TestFar(0x163) == 0)
 				Field_ProcessStep(
 					actor->terrain_id, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 		} while (BattleFx_SumCounters() == 0);
@@ -2896,7 +2893,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
 			}
 			if (ev->result >= 0x10000)
 			{
-				s32 no = BattleFx_GetFlags(id);
+				s32 no = ((s32 (*)(s32))BattleFx_GetFlags)(id) /* FAKEMATCH: called with an argument and an s32 result */;
 				u32 rnd = Random16();
 				s32 mes = (s32)MsgPonderEllipsis + no * 2 + (rnd * 2 >> 16);
 				Battle_Reset();
@@ -4168,7 +4165,7 @@ s32 EffectRuntime_FindSlotByObject(s32 id)
     s32 found;
     struct EffectRuntimeSlot *slot;
 
-    slot = gEventWork->slots;
+    slot = ((struct EffectRuntime *)gEventWork)->slots;
     found = -1;
     index = 0;
     if (slot->active == id) {
@@ -4199,7 +4196,7 @@ void EffectRuntime_SetMode5AndPlayCue(s32 id)
 
     slot = EffectRuntime_FindSlotByObject(id);
     if (slot != -1) {
-        slot_data = &gEventWork->slots[slot];
+        slot_data = &((struct EffectRuntime *)gEventWork)->slots[slot];
         object = slot_data->object;
         if (object != NULL)
             ObjectDispatch_ApplyArgumentToChildrenFar(object, 5);
@@ -4216,7 +4213,7 @@ void EffectRuntime_SetMode7AndLaunch(s32 id)
 
     slot = EffectRuntime_FindSlotByObject(id);
     if (slot != -1) {
-        slot_data = &gEventWork->slots[slot];
+        slot_data = &((struct EffectRuntime *)gEventWork)->slots[slot];
         object = slot_data->object;
         WaitFrames(0x12);
         if (object != NULL)
@@ -4237,7 +4234,7 @@ void EffectRuntime_SetMode4AndPlayCue(s32 id)
 
     slot = EffectRuntime_FindSlotByObject(id);
     if (slot != -1) {
-        slot_data = &gEventWork->slots[slot];
+        slot_data = &((struct EffectRuntime *)gEventWork)->slots[slot];
         object = slot_data->object;
         if (object != NULL)
             ObjectDispatch_ApplyArgumentToChildrenFar(object, 4);
@@ -4254,7 +4251,7 @@ void EffectRuntime_SetMode2(s32 id)
 
     slot = EffectRuntime_FindSlotByObject(id);
     if (slot != -1) {
-        slot_data = &gEventWork->slots[slot];
+        slot_data = &((struct EffectRuntime *)gEventWork)->slots[slot];
         object = slot_data->object;
         if (object != NULL)
             ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
@@ -4268,7 +4265,7 @@ struct ObjectRuntime *EffectRuntime_GetCurrentObject(s32 id)
 
     if (slot == -1)
         return NULL;
-    slot_data = &gEventWork->slots[slot];
+    slot_data = &((struct EffectRuntime *)gEventWork)->slots[slot];
     return slot_data->object;
 }
 
@@ -4280,7 +4277,7 @@ void EffectRuntime_ClearCurrentFlags(s32 id)
 
     slot = EffectRuntime_FindSlotByObject(id);
     if (slot != -1) {
-        slot_data = &gEventWork->slots[slot];
+        slot_data = &((struct EffectRuntime *)gEventWork)->slots[slot];
         object = slot_data->object;
         if (object != NULL)
             object->animation_kind = 0;
@@ -4300,7 +4297,7 @@ void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 y)
     object_x = x;
     slot = EffectRuntime_FindSlotByObject(id);
     if (slot != -1) {
-        slot_data = &gEventWork->slots[slot];
+        slot_data = &((struct EffectRuntime *)gEventWork)->slots[slot];
         object = slot_data->object;
         if (object != NULL) {
             if (object_x == -1)
@@ -4316,7 +4313,6 @@ void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 y)
     }
 }
 
-#undef FIELD_AT_OFFSET
 
 void ObjectMotion_SetActionVariant(s32 object_id, s32 priority);
 s32 ObjectTable_ReadActiveValue(s32 key);
@@ -6418,7 +6414,7 @@ struct BattleEffectEntry *BattleFx_FindDefinition(u32 id)
 
 s32 BattleFx_GetAnimationValue(void)
 {
-	struct BattleRenderObject *object = ObjectTable_Get();
+	struct BattleRenderObject *object = ((void *(*)())ObjectTable_Get)(); /* FAKEMATCH: called without the index argument */
 
 	if (object->kind != 1 || object->animation == NULL || object->animation->value_28 == NULL)
 	{
@@ -6636,7 +6632,7 @@ s32 Party_CheckMemberValueTotal(s32 id)
     s32 sum = 0;
     s32 i;
 
-    count = Party_CountActiveOwnersFar(id);
+    count = ((s32 (*)(s32))Party_CountActiveOwnersFar)(id); /* FAKEMATCH: called with an argument the function does not take */
     for (i = 0; i < count; i++)
         sum += Inventory_CountItemFar(gGameState.active_owners[i], id);
 
@@ -7010,7 +7006,7 @@ void BattleFx_SetPhaseRequest(s32 flag, s32 no)
 
 		BattleFx_LookupResult((u8 *)obj + 8); // 位置
 	}
-	BattleFx_SelectBattleCue(0, 0);
+	((s32 (*)())BattleFx_SelectBattleCue)(0, 0); /* FAKEMATCH: called as an undeclared function (int result, no prototype) */
 }
 
 void Party_SetFields1ceAnd1d0(u16 first, u16 second)
@@ -7834,7 +7830,7 @@ void ObjectVisual_ReservedNoOp(void)
 {
 }
 
-void Event_SetMessageId(s16 value)
+void Event_SetMessageId(s32 value)
 {
     ((struct EventRuntime *)gEventWork)->message = value;
 }
@@ -8390,7 +8386,7 @@ void Object_PlaceCurrentWithinCameraBounds(s32 arg0, s32 arg1)
 {
     struct ObjectRuntime *obj;
 
-    obj = ObjectTable_Get();
+    obj = ObjectTable_Get(arg0);
     Runtime_AllocateBlock(0x1B, 0xCCC);
     if (obj != NULL) {
         Motion_CamBounds(obj->x, -1, obj->z, arg1);
@@ -8545,7 +8541,7 @@ s32 BattleFx_CopyLinkedObjectPosition(void *self)
 		obj->x.fixed = link->x.fixed;
 		obj->y.fixed =
 			link->y.fixed
-			+ ((s8)Resource_GetMetadataRecordFar(*BattleAction_FindDescriptor(*(s16 *)&obj->work))
+			+ ((s8)Resource_GetMetadataRecordFar((s16)BattleAction_FindDescriptor(*(s16 *)&obj->work)->sprite)
 					->box_x
 				<< 16)
 			+ (8 << 16);
@@ -9357,6 +9353,7 @@ void DisplayScroll_BuildAndSwapHBlankPage(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../../graphics/display/scroll_initialize_hblank_dma.c"
 
 void DisplayScroll_DisarmHBlankDma(void)
 {
@@ -9889,10 +9886,10 @@ void BattleFx_StartTwelveFrameBlend(void)
     buffers = gPaletteBufferWork;
     zero = 0;
     Dma_Set((const void *)&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x7e2, REG_DMA3);
-    BattleFx_BuildBuffer(0x10003, buffers, work, 1);
-    BattleFx_BuildBuffer(0x10005, buffers, work->to, 1);
+    ((s32 (*)())BattleFx_BuildBuffer)(0x10003, buffers, work, 1); /* FAKEMATCH: called as an undeclared function (int result, no prototype) */
+    ((s32 (*)())BattleFx_BuildBuffer)(0x10005, buffers, work->to, 1); /* FAKEMATCH: called as an undeclared function (int result, no prototype) */
     BattleFx_InterpolateBuffers(work->to, work->from, work->delta, 12);
-    BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
+    ((s32 (*)())BattleFx_BuildBuffer)((s32)work, 0, buffers->target, 1); /* FAKEMATCH: called as an undeclared function (int result, no prototype) */
     work->timer = 600;
     work->enabled = 1;
     Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateStormFlash), 0xc80);
@@ -9930,11 +9927,11 @@ void BattleFx_StartBufferBlend(s32 from, s32 to)
     buffers = gPaletteBufferWork;
     zero = 0;
     Dma_Set((const void *)&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x7e2, REG_DMA3);
-    BattleFx_BuildBuffer(from, buffers, work, 1);
+    ((s32 (*)())BattleFx_BuildBuffer)(from, buffers, work, 1); /* FAKEMATCH: called as an undeclared function (int result, no prototype) */
     target = work->to;
-    BattleFx_BuildBuffer(to, buffers, target, 1);
+    ((s32 (*)())BattleFx_BuildBuffer)(to, buffers, target, 1); /* FAKEMATCH: called as an undeclared function (int result, no prototype) */
     BattleFx_InterpolateBuffers(target, work->from, work->delta, 12);
-    BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
+    ((s32 (*)())BattleFx_BuildBuffer)((s32)work, 0, buffers->target, 1); /* FAKEMATCH: called as an undeclared function (int result, no prototype) */
     work->timer = 120;
     work->enabled = 0;
     Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateStormFlash), 0xc80);
@@ -10509,7 +10506,6 @@ void BattleFx_FinishHeavyImpact(s32 jin_id)
 	BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 
-#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 struct EffectOwner
 {
@@ -10586,7 +10582,7 @@ struct LinkedCaptureObject
 void BattleFx_SetObjectAlternatingWords(u8 *object)
 {
 	u32 *table = BattleFx_PulseScales;
-	u32	 index = (gFrameTick >> 2) & 1;
+	u32	 index = ((u32)gFrameTick >> 2) & 1;
 	u32	 value = index[table];
 	((struct MotionObject *)object)->scale_x = value;
 	((struct MotionObject *)object)->scale_y = value;
@@ -11261,7 +11257,6 @@ void BattleFx_RunMercuryDjinnCapture(s32 id)
 //--------------------------------------------------------------------------
 
 #undef BattleFx_ApplyColorToTargetBuffer
-#undef FIELD_AT_OFFSET
 
 void				  BattleFx_ApplyColorToSourceBuffer(s32 value, s32 mode);
 
@@ -12304,9 +12299,6 @@ void RunSceneTransitionEffect(s32 x, s32 y)
 // フィールド効果：ラインごとの波と色の変化、対象から使い手へ流れる粒
 //--------------------------------------------------------------------------
 
-#undef FIELD_AT_OFFSET
-#undef FIELD_AT_OFFSET
-#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 struct WaveFxSprite
 {
@@ -12366,7 +12358,7 @@ void BattleFx_FinishSceneAndReleaseHeapBlock(void)
 	work = *(void **)((u32)&gBattleBgFxWork);
 	Ui_SetBank15PaletteAndClearRenderMode();
 	Scheduler_RemoveCallback(BattleFx_UpdateWaveScene);
-	Animation_ApplyChildPalette(Object_GetById(FIELD_AT_OFFSET(work, u16, 0x290)), 1); // source_id
+	Animation_ApplyChildPalette(Object_GetById(FIELD_AT_OFFSET(work, u16 *, 0x290)), 1); // source_id
 	BattleFx_PrepareBufferInterpolation();
 	Runtime_ReleaseHeapBlock(22);
 }
@@ -12417,11 +12409,11 @@ void BattleFx_UpdateWaveScene(void)
 		{
 			// メタデータの box_x を高さに使い、そこから 2 ドット下
 			from.x = src->x;
-			meta = Resource_GetMetadataRecordFar(*BattleAction_FindDescriptor(work->source_id));
+			meta = Resource_GetMetadataRecordFar((s16)BattleAction_FindDescriptor(work->source_id)->sprite);
 			from.y = src->y + ((s8)meta->box_x << 16) - (2 << 16);
 			from.z = src->z;
 			to.x = dst->x;
-			meta = Resource_GetMetadataRecordFar(*BattleAction_FindDescriptor(work->target_id));
+			meta = Resource_GetMetadataRecordFar((s16)BattleAction_FindDescriptor(work->target_id)->sprite);
 			to.y = dst->y + ((s8)meta->box_x << 16) - (2 << 16);
 			to.z = dst->z;
 			obj = Object_CreateFar(281, to.x, to.y, to.z);
@@ -15396,6 +15388,8 @@ struct OrbitEffect
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../../field/common/effect/spawn.c"
+
 //--------------------------------------------------------------------------
 // 粒子の毎フレーム処理
 // 速度で進み、x と z の速度を少しずつ落とし、拡大率と回転を変える
@@ -15870,7 +15864,7 @@ void BattleFx_ResumeObject(s32 id)
 //--------------------------------------------------------------------------
 s32 BattleFx_FilterObjectIdByFlags(s32 id)
 {
-	if (BattleFx_GetFlags() == 0xff)
+	if (((s32 (*)())BattleFx_GetFlags)() == 0xff) /* FAKEMATCH: the result is read as s32 */
 		return -1;
 	return id;
 }

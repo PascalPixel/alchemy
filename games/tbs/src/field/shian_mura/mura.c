@@ -90,6 +90,10 @@ void *SceneEffect_SpawnSecondary(s32 x, s32 y, s32 z, s32 kind)
     return NULL;
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
+
 #define FLAG_SHIAN_WATER_SPILLED 0x200
 
 struct SceneState { u8 unk_00[14]; s16 field_0e; };

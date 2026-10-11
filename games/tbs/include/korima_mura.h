@@ -5,7 +5,7 @@
 
 extern s32 gFallingEffectOffset;
 extern s32 gFallingEffectWidth;
-extern s32 gFallingEffectState;
+extern u32 gFallingEffectState;
 
 extern s32 KorimaMura_PendingPose;
 extern s32 KorimaMura_LayoutFlag;

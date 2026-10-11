@@ -24,9 +24,7 @@
 #include "io_reg.h"
 #include "field_event.h"
 #include "text/msg_ids.h"
-#include "../common/makyuri/lights.c"
 #include "iwram_call.h"
-#include "../common/makyuri/makyuri.c"
 
 void SceneActor_RunActorZeroHandledMotion(int page);
 
@@ -146,6 +144,11 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
     return NULL;
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
+#include "../common/object/staged_actor.c"
+
 s32 MakyuriIriguchi_TrailSparks(struct FieldActor *a0)
 {
     s32 value;
@@ -185,6 +188,9 @@ s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object)
     }
     return 0;
 }
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/makyuri/palette_cycle.c"
 
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 void BattleFx_SetWeightedResult(s32 value, s32 weight);
@@ -663,6 +669,7 @@ void MakyuriIriguchi_RunDoorScene(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/makyuri/lights.c"
 
 void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 {
@@ -734,197 +741,7 @@ s32 OverlayObject_AdvanceScaleCounter(struct FieldActor *o)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 
-struct FollowDetail {
-    u8 unknown_00[5];
-    u8 shade;
-};
-
-struct FollowSprite {
-    u8 unknown_00[37];
-    u8 visible;
-    u8 unknown_26[2];
-    struct FollowDetail *detail;
-};
-
-struct SpawnPoint {
-    u8 unknown_00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 value;
-};
-
-struct EventSpawns {
-    u8 unknown_00[20];
-    struct SpawnPoint *points[1];
-};
-
-struct Sprite39b {
-    u8 pad[9];
-    u8 lo : 2;
-    u8 layer : 2;
-    u8 hi : 4;
-};
-
-struct Work {
-    u8 pad[20];
-    u8 *actors[1];
-};
-
-struct Obj {
-    u8 pad00[12];
-    s32 y;
-    u8 pad10[69];
-    u8 f85;
-    u8 pad56[18];
-    u8 *owner;
-};
-
-struct PillarState {
-    s32 step;
-    u8 pad04[8];
-    s32 x;
-    s32 z;
-    u8 *pillar;
-};
-
-s32 Makyuri_FollowLeader(struct FieldActor *actor)
-{
-    struct FieldActor *leader;
-    struct FollowSprite *sprite;
-    s32 tz;
-    s32 tx;
-    s32 dx;
-    s32 dz;
-    s32 dist;
-    s32 step;
-
-    actor->speed = 0x20000;
-    leader = actor->linked_object;
-    actor->acceleration = 0x10000;
-    tx = leader->x.fixed;
-    tz = leader->z.fixed;
-    actor->target_x = ACTOR_NO_TARGET;
-    actor->target_y = ACTOR_NO_TARGET;
-    actor->target_z = ACTOR_NO_TARGET;
-    dx = (tx - actor->x.fixed) / 0x10000;
-    dz = (tz - actor->z.fixed) / 0x10000;
-    dist = (u16)Iwram_Sqrt(dx * dx + dz * dz);
-    dx = tx - actor->x.fixed;
-    dz = tz - actor->z.fixed;
-    dist <<= 16;
-    if (dist < 0x400000)
-        dist = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
-    step = dist / 8;
-    if (step > actor->speed)
-        step = actor->speed;
-    if (dist < 0x4000) {
-        actor->x.fixed = tx;
-        actor->z.fixed = tz;
-    } else {
-        if (dist > step) {
-            dx = Iwram_MulQ16(Iwram_RatioMulQ14(dist, dx), step);
-            dz = Iwram_MulQ16(Iwram_RatioMulQ14(dist, dz), step);
-        }
-        actor->x.fixed += dx;
-        actor->z.fixed += dz;
-    }
-    sprite = (struct FollowSprite *)actor->sprite;
-    sprite->detail->shade = ((gFrameCount >> 1) & 1) * 7;
-    sprite->visible = 1;
-    return 1;
-}
-
-void MakyuriHeya_SpawnSparkPair(void)
-{
-    struct SpawnPoint *point;
-    struct FieldActor *spark;
-    struct FieldSprite *sprite;
-
-    point = (*(struct EventSpawns **)&gEventWork)->points[gGameState.selected_actor];
-    spark = Engine_ObjectCreate(26, point->x, point->y, point->z);
-    if (spark != NULL) {
-        spark->terrain_height = point->value;
-        sprite = spark->sprite;
-        Engine_ObjectSetScript(spark, MakyuriHeya_SparkScript);
-        spark->motion_flags = 0;
-        spark->timer = 0;
-        spark->linked_object = (struct FieldActor *)point;
-        if (sprite != NULL) {
-            AnimationObjects_SelectAnimation(sprite, 2);
-            sprite->flags = 0;
-            sprite->priority = 1;
-        }
-    }
-    spark = Engine_ObjectCreate(26, point->x, point->y, point->z);
-    if (spark != NULL) {
-        spark->terrain_height = point->value;
-        sprite = spark->sprite;
-        Engine_ObjectSetScript(spark, MakyuriHeya_SparkScript);
-        spark->motion_flags = 0;
-        spark->timer = 0;
-        spark->linked_object = (struct FieldActor *)point;
-        spark->priority_flags = 2;
-        if (sprite != NULL) {
-            AnimationObjects_SelectAnimation(sprite, 1);
-            sprite->flags = 0;
-        }
-    }
-    Engine_AudioPlayCue(130);
-}
-
-void MakyuriIriguchi_RaisePillar(void)
-{
-    struct PillarState *state;
-    u8 *leader;
-    u8 *pillar;
-    u8 *obj;
-    struct Sprite39b *spr;
-    s32 step;
-
-    /* FAKEMATCH: the event work pointer is read as globals - 8, so the pool holds the scene pointer's address and the base is derived from it. */
-    {
-        u8 **globals = &((struct WorkPointers *)&gEventWork)->scene;
-
-        state = *(struct PillarState **)globals[0];
-        leader = (*(struct Work **)(globals - 8))->actors[gGameState.selected_actor];
-    }
-    if ((u32)state->step > 2)
-        return;
-    Engine_EventBegin();
-    pillar = state->pillar;
-    if (pillar == 0) {
-        obj = Engine_ObjectCreate(26, *(s32 *)(leader + 8), *(s32 *)(leader + 12) + 0x180000, *(s32 *)(leader + 16));
-        if (obj != 0) {
-            spr = *(struct Sprite39b **)(obj + 80);
-            *(s32 *)(obj + 20) = *(s32 *)(leader + 20);
-            Engine_ObjectSetScript(obj, Makyuri_PillarScript);
-            ((struct Obj *)obj)->owner = leader;
-            ((struct Obj *)obj)->f85 = 4;
-            ((struct Obj *)obj)->y += -0x8000;
-            if (spr != 0) {
-                ((u8 *)spr)[38] = 0;
-                spr->layer = 1;
-            }
-            obj[84] = 0;
-            state->pillar = obj;
-            pillar = obj;
-        } else {
-            pillar = state->pillar;
-        }
-    }
-    for (step = state->step; step <= 2; step++) {
-        MakyuriHeya_SpawnSparkPair();
-        Engine_TaskWait(30);
-        pillar[84] = 1;
-        Object_SetMode(pillar, 5 - step);
-    }
-    state->step = 3;
-    state->x = (*(s32 *)(pillar + 8) & -0x100000) + 0x80000;
-    state->z = (*(s32 *)(pillar + 16) & -0x100000) + 0x80000;
-    Engine_GameFlagSet(0x161);
-    Engine_EventEnd();
-}
+#include "pillar.c"
 
 void SceneState_ClearCurrentRecordAndReleaseTarget(void)
 {
@@ -948,6 +765,7 @@ void SceneState_ClearCurrentRecordAndReleaseTarget(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/makyuri/makyuri.c"
 
 void OverlayObject_ReleasePublishedAttachment(void)
 {

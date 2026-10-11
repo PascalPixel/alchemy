@@ -24,9 +24,6 @@ void SceneData_InitRecordTable(u8 *o);
 
 #define NULL ((void *)0)
 
-s32 KorimaMura_PendingPose __attribute__((section(".bss")));
-s32 KorimaMura_LayoutFlag __attribute__((section(".bss")));
-s32 KorimaMura_EffectActive __attribute__((section(".bss")));
 
 struct Obj {
     s32 f00, f04, f08, f0c, f10, f14, f18, f1c;
@@ -1506,6 +1503,12 @@ hit:
     KorimaMura_PendingPose = 1;
     return 0;
 }
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../korima_hashi/falling_effect.c"
+s32 KorimaMura_PendingPose __attribute__((section(".bss")));
+s32 KorimaMura_LayoutFlag __attribute__((section(".bss")));
+s32 KorimaMura_EffectActive __attribute__((section(".bss")));
 
 void FieldScene_RunPairedStepA();
 void FieldScene_RunPairedStepB();

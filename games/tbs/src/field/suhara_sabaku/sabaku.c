@@ -149,6 +149,10 @@ void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     return NULL;
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
+
 // 戦闘開始の種類 (battle/party/party.c と同じ)
 
 void BattleFx_SetWeightedResult(s32 actor, s32 mode);

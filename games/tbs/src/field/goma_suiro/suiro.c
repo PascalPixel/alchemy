@@ -1,5 +1,3 @@
-#define NULL ((void *)0)
-#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #include "fieldobj.h"
 #include "types.h"
 #include "configured_effect_spawn.h"
@@ -28,27 +26,6 @@ typedef struct {
     u8 pad_to_record[80];
     EffectRecord_020004c4 *record;
 } EffectWork_020004c4;
-
-void Engine_TaskWait(s32 frames);
-
-void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(void *object);
-
-union MotionWork {
-    struct {
-        u32 unk_00[2];
-        s32 x, y, z;
-        u32 unk_14;
-        s32 accum_x, accum_y;
-        u32 unk_20[4];
-        s32 rate_x, rate_y;
-        u32 unk_38[3];
-        s32 velocity_x, velocity_y, velocity_z;
-        u16 *record;
-        u8 unk_54[16];
-        u16 angle_step;
-    } fields;
-    u8 bytes[102];
-};
 
 void SceneEffect_SetRecordMode(struct FieldActor *work, s32 mode)
 {
@@ -91,9 +68,22 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
     return NULL;
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
+
+static inline s32 GomaSuiro_Scene(void)
+{
+    /* FAKEMATCH: this wrapper only moves the compiler's constant label count. SceneEffect_RunActorBurst
+       loads its second 0x50000 argument separately (189 instructions for 188) when the address of
+       SceneEffect_RotateRecord gets label .LC20 or .LC21, and copies r0 at .LC19 and at .LC22 to .LC33 (measured);
+       with the three scene tests written directly it gets .LC21. */
+    return gGameState.scene;
+}
+
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
-    if (gGameState.scene == (s32)&SceneId_GomaSuiro2) {
+    if (GomaSuiro_Scene() == (s32)&SceneId_GomaSuiro2) {
         return gGomaSuiroEntrances2;
     }
     return gGomaSuiroEntrancesOther;
@@ -111,7 +101,7 @@ const u32 *Scene_GetExits(void)
 
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
-    if (gGameState.scene == (s32)&SceneId_GomaSuiro2) {
+    if (GomaSuiro_Scene() == (s32)&SceneId_GomaSuiro2) {
         return gGomaSuiroPlacements2;
     }
     return gGomaSuiroPlacementsOther;
@@ -137,7 +127,7 @@ void FieldScene_RunActor8AtCell24Sequence(void)
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
-    if (gGameState.scene == (s32)&SceneId_GomaSuiro2) {
+    if (GomaSuiro_Scene() == (s32)&SceneId_GomaSuiro2) {
         return gGomaSuiroEvents2;
     }
     return gGomaSuiroEventsOther;
@@ -209,10 +199,7 @@ union SceneActor {
 };
 struct Vector { s32 x, y, z; };
 
-void Engine_ActorWaitForMove(s32);
-void Engine_AudioPlayCue(s32);
 void Effect_Spawn();
-void Engine_ActorSetAnimation(s32, s32);
 
 void SceneEffect_RunActorBurst(s32 no)
 {

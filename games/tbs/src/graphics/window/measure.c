@@ -2344,7 +2344,6 @@ extern u8 Text_DecodeSymbolCodeSize[];
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || \
     defined(TBS_EDITION_IT)
-extern char MsgItemPluralName;
 #if defined(TBS_EDITION_FR)
 extern s8 UiText_ItemPronoun[];
 #else
@@ -2595,7 +2594,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 #else
                         if (no == 2 || (no == 3 && plural != 0) || no == 4)
 #endif
-                            UiText_DecodeMessage(tmp + (s32)&MsgItemPluralName, name, 24);
+                            UiText_DecodeMessage(tmp + (s32)MsgItemPluralName, name, 24);
                         else
                             UiText_DecodeMessage(tmp + (s32)&MsgItemName, name, 24);
 #else
@@ -4952,15 +4951,13 @@ s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 slot)
     Runtime_ReleaseHeapBlock(0x11);
     return 1;
 }
-extern u8 PairSource1[] __asm__("RenderResource_PairSourceTable");
-extern u8 PairSource2[] __asm__("RenderResource_PairSourceTable");
-extern u8 PairSource3[] __asm__("RenderResource_PairSourceTable");
+/* FAKEMATCH: three more names of the one table keep each case's own literal slot; one name folds the switch to a single load. */
+extern const u8 *RenderResource_PairSourceTable[], *PairSource1[] __asm__("RenderResource_PairSourceTable"), *PairSource2[] __asm__("RenderResource_PairSourceTable"), *PairSource3[] __asm__("RenderResource_PairSourceTable");
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *, s32);
 
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot)
 {
-	extern u8 RenderResource_PairSourceTable[];
     void *source;
     switch (value) {
     case 1:
@@ -5273,7 +5270,6 @@ s32 GameFlag_TestFar(s32 flag);
 
 #define Menu_CursorObjectTiles ((u8 (*))&Menu_CursorObjectTiles)
 
-void RenderOutput_PrepareForRedraw(struct UiWindow *);
 
 struct Work;
 void WaitFrames(s32);
@@ -8900,10 +8896,11 @@ void PtyStDraw(s32 flags)
         UiWindow_SetTilemapEntry((struct UiWindow *)window, 0x5002, 2, row, 0);
         UiWindow_SetTilemapEntry((struct UiWindow *)window, 0x5003, 0, row + 1, 0);
         UiWindow_SetTilemapEntry((struct UiWindow *)window, 0x5004, 2, row + 1, 0);
-        UiWindow_PutGlyph(window, djinn[0] + '0', 1, row);
-        UiWindow_PutGlyph(window, djinn[1] + '0', 3, row);
-        UiWindow_PutGlyph(window, djinn[2] + '0', 1, row + 1);
-        UiWindow_PutGlyph(window, djinn[3] + '0', 3, row + 1);
+        /* FAKEMATCH: needed to match: these four calls pass no mode argument (an unprototyped call of the five-argument function). */
+        ((s32 (*)())UiWindow_PutGlyph)(window, djinn[0] + '0', 1, row);
+        ((s32 (*)())UiWindow_PutGlyph)(window, djinn[1] + '0', 3, row);
+        ((s32 (*)())UiWindow_PutGlyph)(window, djinn[2] + '0', 1, row + 1);
+        ((s32 (*)())UiWindow_PutGlyph)(window, djinn[3] + '0', 3, row + 1);
     }
     work->menu_busy = 0;
 }
@@ -9419,7 +9416,7 @@ void PaletteGlow_UpdateSine(void)
 	s32			  s;
 	s32			  i;
 
-	tick = (s32 *)gFrameTick;
+	tick = (s32 *)&gFrameTick;
 	pal = (volatile u16 *)0x050001D0; // BG パレット 14 の色 8
 	i = 0;
 	do
@@ -9733,7 +9730,7 @@ void StatusMenu_DrawCharacterSummary(s32 win, u8 *rec)
 
 	if (win != 0)
 	{
-		RenderOutput_PrepareForRedraw();
+		((void (*)(void))RenderOutput_PrepareForRedraw)(); /* FAKEMATCH: needed to match: called without the window argument. */
 		UiWindow_DrawDividerLine(win, 0, 4, 13, 4);
 		UiText_DrawStringAtOffset(rec + 16, win, 0, 0);
 		y = 0;
@@ -10517,6 +10514,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
     Ui_LoadWindowGraphics();
     window = (struct RenderInput *)UiWindow_Create(3, 6, 24, 9, 2);
     label = (struct RenderInput *)UiWindow_Create(8, 3, NAME_LABEL_WIDTH, 3, 2);
+    UiWindow_CreateWithSideObject(Localization_LookupEntryId(entry), 0, 3, 1);
     UiWindow_CopyTilemapRegion(window, NameEntry_KeyboardTilemap);
 #if NAME_KEY_LABELS
     UiText_DrawStringInWindow(NameEntry_DeleteKeyLabel, window, 144, 32);
@@ -10754,6 +10752,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
     Ui_LoadWindowGraphics();
     window = (struct RenderInput *)UiWindow_Create(3, 6, 24, 13, 2);
     label = (struct RenderInput *)UiWindow_Create(8, 3, 8, 3, 2);
+    UiWindow_CreateWithSideObject(Localization_LookupEntryId(entry), 0, 3, 1);
     UiWindow_CopyTilemapRegion(window, NameEntry_KeyboardTilemap);
     UiWindow_DrawDividerLine(window, 18, 0, 18, 12);
     ((struct UiRenderWork *)work)->dirty = text_dirty;
@@ -11139,7 +11138,7 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
 
         text = UiText_BuildRenderEntriesMode1(element + (s32)MsgVenusDjinnJoined);
 
-        UiText_QueueRenderEntries(window, text, 36, 2, zero);
+        ((struct UiChannelSlot *(*)())UiText_QueueRenderEntries)(window, text, 36, 2, zero); /* FAKEMATCH: needed to match: called without the flags argument. */
 
         AudioCommand_PlayFar(81);
 
@@ -11187,7 +11186,7 @@ void Party_ShowJoinedMessage(s32 member)
         work->result[0] = 0;
         work->result[1] = 0;
         UiWork_PushValueSlot(member, 1);
-        UiText_QueueRenderEntries(window, UiText_BuildRenderEntriesMode1((s32)MsgJoinedParty), 36, 2, 0);
+        ((struct UiChannelSlot *(*)())UiText_QueueRenderEntries)(window, UiText_BuildRenderEntriesMode1((s32)MsgJoinedParty), 36, 2, 0); /* FAKEMATCH: needed to match: called without the flags argument. */
         AudioCommand_PlayFar(81);
         do {
             Runtime_PushSlotEntry(entry, 250);
@@ -11241,7 +11240,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
         UiWork_PushValueSlot(first, 1);
         UiWork_PushValueSlot(second, 1);
 
-        UiText_QueueRenderEntries(window, UiText_BuildRenderEntriesMode1((s32)MsgPairJoinedParty), 68, 2, zero);
+        ((struct UiChannelSlot *(*)())UiText_QueueRenderEntries)(window, UiText_BuildRenderEntriesMode1((s32)MsgPairJoinedParty), 68, 2, zero); /* FAKEMATCH: needed to match: called without the flags argument. */
 
         AudioCommand_PlayFar(81);
 
@@ -11284,7 +11283,6 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner);
 
 void RenderResource_LoadPair(s32 group_index, s32 resource_index)
 {
-	extern const u8 *RenderResource_PairSourceTable[];
     void *staging_buffer = (void *)Runtime_AllocateBlock(14, 0x400);
     const u8 *resource = RenderResource_PairSourceTable[group_index];
 
@@ -11351,10 +11349,11 @@ void Ui_ApplyTableOffsetToPair(struct UiBobPairOutput *obj)
 {
     s32 value;
 
-    value = obj->source + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
+    /* FAKEMATCH: needed to match: the tick is read again for the second object (a volatile read; a plain one is reused). */
+    value = obj->source + Ui_PairBobOffsets[(*(volatile u32 *)&gFrameTick >> 2) & 7];
     obj->destination = value;
     obj = obj->next;
-    value = obj->source + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
+    value = obj->source + Ui_PairBobOffsets[(*(volatile u32 *)&gFrameTick >> 2) & 7];
     obj->destination = value;
 }
 
@@ -11654,7 +11653,6 @@ void Ui_RunCopiedRoutine(GlyphTransfer *work)
 
 #define UiText_DrawStringAtOffset ((void (*)(u8 *, s32, s32, s32))UiText_DrawStringAtOffset)
 
-void UiText_DrawStringInWindow(u8 *s, s32 arg1, u32 arg2, u32 arg3);
 
 //--------------------------------------------------------------------------
 // 左上に 6x4 のウィンドウを開いて見出しを書き、そのハンドルを返す
@@ -11798,7 +11796,6 @@ struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y)
 #define MADO_X 23
 #endif
 
-void RenderOutput_PrepareForRedraw(struct UiWindow *work);
 s32 BattlePresentation_WaitForPromptAtFar(s32 x, s32 y);
 
 s32 Ui_RunSelectionScreen(s32 mode)
@@ -12249,6 +12246,9 @@ struct BattleUnitRecord {
 };
 void UiWork_SetParamNibble(s32 nibble);
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value);
+/* FAKEMATCH: instruction order only: the preview calls UiText_RenderWideStringInWindow as returning a value; called as void, four calls load the text argument after the column (differ 10 in English, 12 in Japanese). */
+#define UiText_RenderWideStringInWindow ((s32 (*)(s16 *, void *, s32, s32))UiText_RenderWideStringInWindow)
+
 s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid, const struct OwnerActionSlot *newGrid, u16 *out, s32 *gained, s32 *lost);
 
 struct RenderInput *DjinnMenu_ShowChangePreview(
@@ -12520,6 +12520,8 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
     MemFree(buf);
     return win;
 }
+
+#undef UiText_RenderWideStringInWindow
 
 #if EDITION_INTERNATIONAL
 #define OWNER_STATUS_TEXT_MAX 0x80
@@ -13730,7 +13732,6 @@ enum
 #define SUMMON_END 32 // 召喚リストの終わり
 
 
-void UiWindow_PutGlyph(struct UiWindow *, u32, u32, u32, s32);
 s32	 Trade_ListFlaggedEntriesFar(u8 *ids);
 struct ItemDefinition *Item_GetDirectFar(s32 item);
 
@@ -17166,7 +17167,6 @@ void Menu_DrawModeIndicator(void)
 
 s32 Menu_SelectResourceLayout(s32 mode)
 {
-	void UiText_DrawResource(s32, struct UiWindow *, s32, s32);
     struct ResourceMenuWork *work;
     struct UiWindow *window;
     s32 msg;
@@ -17209,7 +17209,7 @@ s32 Menu_SelectResourceLayout(s32 mode)
         msg = (s32)MsgPasswordSelection;
         upper = &work->upper_window;
         *upper = window;
-        UiText_DrawResource(msg, window, 0, 4);
+        UiText_DrawResource(msg, (s32)window, 0, 4);
 #if EDITION_INTERNATIONAL
 #if defined(TBS_EDITION_DE)
         window = UiWindow_Create(1, 4, 28, 12, 2);
@@ -17217,16 +17217,16 @@ s32 Menu_SelectResourceLayout(s32 mode)
         window = UiWindow_Create(3, 4, 25, 12, 2);
 #endif
         work->lower_window = window;
-        UiText_DrawResource(msg + 1, window, 8, 0);
-        UiText_DrawResource(msg + 2, work->lower_window, 8, 11);
+        UiText_DrawResource(msg + 1, (s32)window, 8, 0);
+        UiText_DrawResource(msg + 2, (s32)work->lower_window, 8, 11);
         msg += 3;
-        UiText_DrawResource(msg, work->lower_window, 8, 22);
+        UiText_DrawResource(msg, (s32)work->lower_window, 8, 22);
 #else
         window = UiWindow_Create(5, 4, 21, 12, 2);
         work->lower_window = window;
-        UiText_DrawResource(msg + 1, window, 0, 4);
+        UiText_DrawResource(msg + 1, (s32)window, 0, 4);
         msg += 2;
-        UiText_DrawResource(msg, work->lower_window, 0, 16);
+        UiText_DrawResource(msg, (s32)work->lower_window, 0, 16);
 #endif
     } else {
         Scheduler_AddOrUpdateCallback(Menu_DrawModeIndicator, 0xc76);
@@ -17243,9 +17243,9 @@ s32 Menu_SelectResourceLayout(s32 mode)
         upper = &work->upper_window;
         *upper = window;
 #if EDITION_INTERNATIONAL
-        UiText_DrawResource((s32)MsgTransferMethod, window, 2, 4);
+        UiText_DrawResource((s32)MsgTransferMethod, (s32)window, 2, 4);
 #else
-        UiText_DrawResource((s32)MsgTransferMethod, window, 0, 4);
+        UiText_DrawResource((s32)MsgTransferMethod, (s32)window, 0, 4);
 #endif
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
         work->lower_window = UiWindow_Create(1, 5, 28, 7, 2);
@@ -17420,7 +17420,6 @@ s32 Menu_SelectEntry20To21(s32 sel)
 void Event_SetDestinationFar(s16 primary, s16 secondary);
 void UiText_DrawNumber(s32 n, s32 digits, s32 work, s32 x, s32 y);
 void UiText_DrawString(u8 *str, s32 work, s32 x, s32 y);
-void UiText_DrawResource(s32 no, s32 work, s32 x, s32 y);
 
 struct TextObject {
     u8 storage[12];
@@ -17623,15 +17622,14 @@ void Text_FormatHex(u32 value, u32 count, u8 *out)
 
 void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
 {
-	void UiText_DrawStringInWindow(const void *text, void *window, s32 x, s32 y);
     s32 row;
     s32 y;
     s32 flag;
     char label[5];
     char bits[17];
 
-    RenderOutput_PrepareForRedraw();
-    UiText_DrawStringInWindow((s32)Menu_HexDigitsString, window, 48, 0);
+    ((void (*)(void))RenderOutput_PrepareForRedraw)(); /* FAKEMATCH: needed to match: called without the window argument. */
+    UiText_DrawStringInWindow((u8 *)Menu_HexDigitsString, window, 48, 0);
 
     flag = start_flag << 8;
     for (row = 0; row != 16; row++) {
@@ -17643,8 +17641,8 @@ void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
             label[i] = 0;
         }
         Text_FormatHex(flag, 3, (s32)label);
-        UiText_DrawStringInWindow((s32)label, window, 0, y);
-        UiText_DrawStringInWindow((s32)Menu_ColonString, window, 32, y);
+        UiText_DrawStringInWindow((u8 *)label, window, 0, y);
+        UiText_DrawStringInWindow((u8 *)Menu_ColonString, window, 32, y);
 
         for (i = 0; i < 16; i++) {
             s32 val = GameFlag_TestFar(flag);
@@ -17652,7 +17650,7 @@ void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
             flag++;
         }
         bits[i] = 0;
-        UiText_DrawStringInWindow((s32)bits, window, 48, y);
+        UiText_DrawStringInWindow((u8 *)bits, window, 48, y);
     }
 }
 
@@ -17753,7 +17751,6 @@ struct DebugMenuState {
 
 s32 DebugMenu_BrowseIcons(void)
 {
-	void UiText_DrawStringInWindow(const void *, void *, s32, s32);
     s32 redraw;
     s32 tile;
     s32 page;

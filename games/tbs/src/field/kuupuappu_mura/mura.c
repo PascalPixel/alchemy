@@ -22,8 +22,6 @@
 
 void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
-#define NULL ((void *)0)
-
 void SceneEffect_SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
     work->sprite->priority = mode;
@@ -66,7 +64,10 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
     return NULL;
 }
 
-#undef NULL
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
+
 
 union DriftingObject {
     struct FieldActor actor;
@@ -622,28 +623,7 @@ void FieldScene_SetupScene10At120_144(void)
 { Engine_AudioPlayCue(158); Engine_MapAnimateCells(KuupuappuMura_Scene10Cells, 38, 6); SceneActor_PlaceAndSetSceneDelay(120, 144, 10); }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-
-void ActorDraw_SetupActorSceneCells(void)
-{
-    struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
-    struct FieldSprite *sprite = actor->sprite;
-
-    Engine_AudioPlayCue(188);
-    Engine_MapCopyCells(42, 33, 34, 16, 2, 2);
-    Engine_MapCopyCells(42, 35, 36, 16, 2, 2);
-    Engine_EventWait(4);
-    Engine_MapCopyCells(40, 33, 34, 16, 2, 2);
-    Engine_MapCopyCells(40, 35, 36, 16, 2, 2);
-    Engine_EventWait(4);
-    {
-        s32 dest_x = 3;
-        s32 dest_y = 16;
-        Engine_MapCopyCellAttributes(33, 21, 2, 2, dest_x, dest_y);
-    }
-    actor->priority_flags &= ~1;
-    sprite->priority = 3;
-    SceneActor_PlaceAndSetSceneDelay(64, 272, 11);
-}
+#include "scene_cells.c"
 
 void ActorPresentation_SetupActorZeroForSceneTwelveAt72_160(void)
 {

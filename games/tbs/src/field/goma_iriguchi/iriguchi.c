@@ -57,6 +57,10 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
 #include "create_configured_overlay_object_body.inc"
 }
 
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
+
 struct EffectRecord {
     u8 pad[9];
     u8 flags_lo : 2;
@@ -75,7 +79,6 @@ void BattleFx_SetupObjectPair();
 void Field_DispatchTypeHandler();
 void EventObject_Initialize();
 void EffectRuntime_StopCurrentObject();
-void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);
 
 struct Actor {
     u8 pad00[8];

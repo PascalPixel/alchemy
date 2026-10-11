@@ -43,7 +43,6 @@ enum {
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(void *object);
 
 union MotionWork {
     struct {
@@ -132,6 +131,10 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
     }
     return NULL;
 }
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawnov.c"
 
 extern struct EventWork *gEventWork;
 void BattlePres_RunActionThenWaitIfModeZero();
@@ -1231,7 +1234,6 @@ void SoruStar_SetupElementalRings();
 s32 PartyInventory_FindOwner(s32 item);
 s32 Inventory_Find(s32 owner, s32 item);
 void Inventory_AddItem(s32 owner, s32 item);
-void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);
 
 struct Actor {
     u8 pad[8];

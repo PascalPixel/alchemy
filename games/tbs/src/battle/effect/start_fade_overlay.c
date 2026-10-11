@@ -60,14 +60,12 @@ struct FadeView
 	s16 camera[4];
 };
 
-extern struct FadeWork *gActorEffectWork;
-#define FADE_VIEW (*(struct FadeView **)((u8 *)&gActorEffectWork - 112))
+#include "heap_state.h"
 
 void Object_EffectSpawnCallback(void)
 {
-	struct FadeWork *work = gActorEffectWork;
-	/* FAKEMATCH: needed to match: the map work pointer is read 112 bytes below the effect work pointer, sharing one pool address */
-	s16				 *camera = FADE_VIEW->camera;
+	struct FadeWork *work = WORK_SLOT(36);
+	s16				 *camera = ((struct FadeView *)WORK_SLOT(8))->camera;
 	s32				  camera_x = camera[1];
 	s32				  camera_z = camera[3];
 	struct FadeMark	 *mark = work->marks;

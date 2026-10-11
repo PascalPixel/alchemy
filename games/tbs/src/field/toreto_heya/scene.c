@@ -17,6 +17,7 @@
 #include "field_service.h"
 #include "io_reg.h"
 #include "text/msg_ids.h"
+#include "heap_state.h"
 
 #define Object_ReplaceResourceEntry ((s32 (*)(struct FieldSprite*,s32))Object_ReplaceResourceEntry)
 
@@ -507,10 +508,8 @@ void SceneState_ApplyRectsByFlag844(s32 flag)
 
 s32 ToretoHeya_EnterRoom(void)
 {
-    /* FAKEMATCH: the map work and the event work are read as cells of one pointer array based at gMapWork (the event work is its twentieth), which keeps one pool address for both. */
     struct FieldActor *lamp;
     struct FieldActor *actor;
-    u8 **globals;
     u8 *work;
     s32 *camera;
     s32 entrance;
@@ -537,8 +536,7 @@ s32 ToretoHeya_EnterRoom(void)
     }
     if (GameFlag_IsSet(0x109))
         ToretoHeya_ApplyFlaggedMapPatches();
-    globals = (u8 **)gMapWork;
-    work = globals[0];
+    work = WORK_SLOT(8);
     camera = (s32 *)(work + 260);
     camera[2] += Iwram_MulQ16(*(s32 *)(work + 236) + 0xa00000, 0x1999);
     camera[3] += Iwram_MulQ16(*(s32 *)(work + 240) + 0x880000, 0x1999);
@@ -550,7 +548,7 @@ s32 ToretoHeya_EnterRoom(void)
     Engine_GameFlagSet(0x213);
     Engine_TaskWait(1);
     SceneState_ApplyRectsByFlag844(0);
-    *(s32 *)(globals[19] + 0x1c0) = 0x202;
+    ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->start_transition = 0x202;
     entrance = gGameState.entrance;
     leader = gGameState.selected_actor;
     actor = Object_GetById(leader);
@@ -589,7 +587,6 @@ void ToretoPalette_CaptureBank(void)
 
 void ToretoPalette_ApplyTint(void)
 {
-    /* FAKEMATCH: reading the event work and the palette work through the engine's table of work pointers keeps one address base for both cells, where their own names would each take a pool word. */
     u16 *src;
     u16 *dst;
     u32 i;
@@ -602,8 +599,8 @@ void ToretoPalette_ApplyTint(void)
     u32 color;
     u8 *event;
 
-    event = ((u8 **)&gEventWork)[0];
-    src = (u16 *)((u8 **)&gEventWork)[5];
+    event = WORK_SLOT(HEAP_SLOT_EVENT);
+    src = WORK_SLOT(32);
     if (*(s16 *)(event + 0x17e) != 0)
         return;
     if ((gFrameCount & 31) != 0)

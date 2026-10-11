@@ -15,3 +15,12 @@ Bios_SoundBiasOff:
 
 	.section .padding,"a",%progbits
 	.balign 4
+@ C2: svc 25 is a BIOS software interrupt.
+.syntax unified
+	.thumb
+	.global Bios_SoundBiasOn
+	.thumb_func
+Bios_SoundBiasOn:
+	movs	r0, #1
+	svc	25
+	bx	lr

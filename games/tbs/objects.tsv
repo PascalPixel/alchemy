@@ -3,56 +3,23 @@ main	ewram	games/tbs/src/system/ram/ewram	.sym_ewram
 main	rom_start	games/tbs/src/system/rom_head
 main	rom_start	games/tbs/src/system/far_call/RUNTIME
 main	rom_start	games/tbs/src/system/entry
-main	rom_start	games/tbs/src/sound/driver/resampler_kernels
-main	rom_start	games/tbs/src/sound/driver/resampler_kernels_pad
-main	rom_start	games/tbs/src/sound/driver/resampler_kernels_1
-main	rom_start	games/tbs/src/sound/driver/resampler_kernels_pad_1
-main	rom_start	games/tbs/src/sound/driver/resampler_kernels_2
-main	rom_start	games/tbs/src/sound/driver/resampler_kernels_pad_2
 main	rom_start	games/tbs/src/sound/driver/channel_update_entry
 main	iwram_runtime	games/tbs/src/system/runtime
 main	iwram_runtime	games/tbs/src/system/runtime_irq_table
 main	iwram_runtime	games/tbs/src/system/runtime_mul_q16_ip
-main	iwram_runtime	games/tbs/src/system/runtime_mul_q16
-main	iwram_runtime	games/tbs/src/system/runtime_ratio_q14
-main	iwram_runtime	games/tbs/src/system/runtime_math
-main	iwram_runtime	games/tbs/src/system/runtime_sqrt
-main	iwram_runtime	games/tbs/src/system/runtime_expand
-main	iwram_runtime	games/tbs/src/system/runtime_transform
-main	iwram_runtime	games/tbs/src/system/runtime_matrix
-main	iwram_runtime	games/tbs/src/system/runtime_divide
-main	iwram_runtime	games/tbs/src/system/runtime_decompress
 main	iwram_runtime	games/tbs/src/system/runtime_mix
 main	iwram_runtime	games/tbs/src/system/runtime_mix_state
 main	iwram_runtime	games/tbs/src/system/runtime_mix_interpolate
-main	iwram_runtime	games/tbs/src/system/runtime_mix_save
-main	iwram_runtime	games/tbs/src/system/runtime_mix_channel
 main	iwram_runtime	games/tbs/src/system/runtime_mix_mask
 main	iwram_runtime	games/tbs/src/system/runtime_mix_render
-main	iwram_runtime	games/tbs/src/system/runtime_mix_workspace
-main	iwram_runtime	games/tbs/src/system/runtime_copy_words
 main	iwram	games/tbs/src/system/ram/iwram	.sym_iwram
 main	rom_main_00	games/tbs/src/system/resource/decode_byte_lz
-main	rom_main_00	games/tbs/src/graphics/render/build_oam_list
-main	rom_main_00	games/tbs/src/graphics/palette/color_backup_kernels
-main	rom_main_00	games/tbs/src/graphics/palette/color_darken
-main	rom_main_00	games/tbs/src/graphics/palette/color_kernels
-main	rom_main_00	games/tbs/src/graphics/palette/color_darken_partial
-main	rom_main_00	games/tbs/src/graphics/palette/color_brighten_partial
-main	rom_main_00	games/tbs/src/system/resource/decode_halfword_lz
 main	rom_main_00	games/tbs/src/system/iwram_entry	.text
 main	rom_main_00	games/tbs/src/lib/trig
-main	rom_main_00	games/tbs/src/lib/sine_table
 main	rom_main_00	games/tbs/src/system/resource/decode_01
-main	rom_main_00	games/tbs/src/system/resource/decode_2
-main	rom_main_00	games/tbs/src/system/resource/decode_2_nibbles
-main	rom_main_00	games/tbs/src/system/resource/decode_2_loop
-main	rom_main_00	games/tbs/src/system/resource/execute_transfer
-main	rom_main_00	games/tbs/src/system/resource/patch_thumb_branch
 main	rom_main_00	games/tbs/src/system/heapfree	.text .text.* .rodata .data .padding
 main	rom_main_00	games/tbs/src/system/scheduler/callback	.text
 main	rom_main_00	games/tbs/src/system/cpu_set
-main	rom_main_00	games/tbs/src/system/sound_vsync_on
 main	rom_main_00	games/common/src/system/save/flash	.text
 main	rom_main_00	games/common/src/system/save/sst	.text
 main	rom_main_00	games/common/src/system/save/program_flash_sector	.text
@@ -82,7 +49,6 @@ main	rom_main_01	games/tbs/src/graphics/render/decode_data	.text
 main	rom_main_01	games/tbs/src/graphics/tile/draw_map
 main	rom_main_01	games/tbs/src/graphics/tile/vertices	.text .padding
 main	rom_main_01	games/tbs/src/graphics/tile/convert_map
-main	rom_main_01	games/tbs/src/graphics/tile/copy_strided
 main	rom_main_01	games/tbs/src/field/common/object/update	.text
 main	rom_main_01	games/tbs/src/system/updfar	.text
 main	rom_main_01	games/tbs/src/field/common/script/script	.text
@@ -101,12 +67,10 @@ main	rom_main_01	games/tbs/src/field/common/map/layered	.rodata
 main	rom_main_01	games/tbs/src/graphics/tile/vertices	.data
 main	rom_main_02	games/tbs/src/system/far_call/WINDOW
 main	rom_main_02	games/tbs/src/graphics/text/decode_symbol
-main	rom_main_02	games/tbs/src/graphics/text/lookup_symbol
 main	rom_main_02	games/tbs/src/graphics/text/moji	.text
 main	rom_main_02	games/tbs/src/graphics/tile/decompress_4bpp
 main	rom_main_02	games/tbs/src/graphics/tile/decompress_4bpp_nibbles	.text
 main	rom_main_02	games/tbs/src/graphics/tile/decompress_4bpp_loop
-main	rom_main_02	games/tbs/src/graphics/tile/expand_masked
 main	rom_main_02	games/tbs/src/graphics/tile/expand_masked_masks	.text
 main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque
 main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque_masks	.text
@@ -184,7 +148,6 @@ main	rom_main_08	games/tbs/src/battle/effect/sentou_kouka_gousei_iro
 main	rom_main_08	games/tbs/src/battle/effect/koukabit	.rodata
 main	rom_main_09	games/tbs/src/system/far_call/SCROLL
 main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_sekiwa
-main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai
 main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_link	.text
 main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_dispatch
 main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_tables	.text
@@ -207,24 +170,11 @@ main	rom_main_12	games/tbs/src/battle/effect/colorfx	.rodata
 main	rom_main_13	games/tbs/src/system/far_call/SOUND
 main	rom_main_13	games/tbs/src/sound/sound	.text
 main	rom_main_13	games/tbs/src/sound/driver/umul_high	.text .padding
-main	rom_main_13	games/tbs/src/sound/driver/mixer_entry	.text .padding
 main	rom_main_13	games/tbs/src/sound/driver/umul_high	.rodata
-main	rom_main_13	games/tbs/src/sound/driver/mixer_entry	.rodata
 main	rom_main_13	games/tbs/src/sound/driver/umul_high	.data
-main	rom_main_13	games/tbs/src/sound/driver/mixer_entry	.data
 main	iwram_mixer	games/tbs/src/sound/driver/mixer
 main	iwram_high	games/tbs/src/system/ram/iwram_hi	.sym_iwram_high
 main	rom_tail_00	games/tbs/src/sound/driver/clear_buffer
-main	rom_tail_00	games/tbs/src/sound/driver/clear_chain
-main	rom_tail_00	games/tbs/src/sound/driver/sequence_commands
-main	rom_tail_00	games/tbs/src/sound/driver/update
-main	rom_tail_00	games/tbs/src/sound/driver/track_stop
-main	rom_tail_00	games/tbs/src/sound/driver/calculate_stereo_volume
-main	rom_tail_00	games/tbs/src/sound/driver/handle_note
-main	rom_tail_00	games/tbs/src/sound/driver/release_key
-main	rom_tail_00	games/tbs/src/sound/driver/clear_modulation
-main	rom_tail_00	games/tbs/src/sound/driver/command_byte_reader
-main	rom_tail_00	games/tbs/src/sound/driver/command_byte_setters
 main	rom_tail_00	games/common/src/sound/sound	.text
 main	rom_tail_00	games/tbs/src/system/sound_get_jump_list
 main	rom_tail_00	games/tbs/src/sound/engine	.text

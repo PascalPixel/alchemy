@@ -210,10 +210,8 @@ void Title_RevealSpriteRow(void)
 	y = 128;
 	for (; row <= 3; row++)
 	{
-		i = 0;
-	localized_sprite:
+		for (i = 0; i <= 29; i++)
 		{
-			/* FAKEMATCH: the explicit inner boundary keeps the record writer independent of the sprite pointer; a nested for loop adds a saved register and twelve bytes. */
 			*w++ = 0;
 			*w++ = (i * 8 << 16) | y | 0x2400;
 			*w++ = tile;
@@ -227,8 +225,6 @@ void Title_RevealSpriteRow(void)
 			p++;
 			tile += 2;
 		}
-		if (++i <= 29)
-			goto localized_sprite;
 		y += 8;
 	}
 #else

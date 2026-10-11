@@ -50,9 +50,9 @@ struct ActorWheel
 	s16 phase;
 	s16 ticks;
 	s16 unknown_04;
-	s16 angle;
-	s16 speed;
-	s16 travel;
+	u16 angle;
+	u16 speed;
+	u16 travel;
 };
 
 #define ArutamiraDou_Wheel ((struct ActorWheel *)ArutamiraDou_ClearTarget)
@@ -66,16 +66,6 @@ struct RockPuzzle
 #define ArutamiraDou_RockPuzzle ((struct RockPuzzle *)&gSceneState[1])
 
 u16 gArutamiraActorWheelWork[6] __attribute__((nocommon, aligned(4)));
-
-union GameStateRows
-{
-	u8			 bytes[512][2];
-	s16			 halves[512][1];
-	volatile u16 snapshot[512][1];
-	s32			 words[256];
-};
-
-#define gGameStateRows (*(union GameStateRows *)&gGameState)
 
 struct Obj
 {
@@ -275,21 +265,13 @@ void SceneEffect_SetupBlendByFlag201(void)
 
 void ArutamiraDou_ApplyRoomVisuals(void)
 {
-	/* FAKEMATCH: the volatile view keeps two distinct scene reads; this initialized narrow record keeps the snapshot unsigned until its later signed comparison, without an extra halfword-to-word register copy. */
-	struct
-	{
-		u32 value : 16;
-	} map = {0};
-
-	map.value = gGameStateRows.snapshot[224][0];
-
-	if (gGameStateRows.halves[224][0] == (s32)&SceneId_ArutamiraDou1)
+	if (gGameState.scene == (s32)&SceneId_ArutamiraDou1)
 	{
 		s32 alpha = 0x1000;
 
 		REG_BLDALPHA = alpha;
 	}
-	if ((s16)map.value == (s32)&SceneId_ArutamiraDou6)
+	if (gGameState.scene == (s32)&SceneId_ArutamiraDou6)
 	{
 		Engine_ActorSetChildValue(16, 1);
 		Engine_ActorSetChildValue(17, 4);
@@ -496,54 +478,45 @@ void SceneActor_PlaceFiveActorsInRow(u8 *p)
 
 void ArutamiraDou_SpinActorWheel(void)
 {
-	/* FAKEMATCH: forced temporaries; the block-local zero and state, the reloaded work pointers and the stored-sum temporaries keep the game's register and pool order, which the plain statements do not. */
-	u16 *p = ArutamiraDou_ClearTarget;
-	s32	 flag = 1;
-	s32	 state = *(s16 *)p;
+	struct ActorWheel *wheel = ArutamiraDou_Wheel;
+	s32				   flag = 1;
+	s32				   state = wheel->phase;
 
 	if (state == 0)
 	{
-		s32 t = p[4] + 16;
-		p[4] = t;
-		if ((u16)t > 0xbff)
+		wheel->speed += 16;
+		if (wheel->speed > 0xbff)
 		{
-			p[0] = p[0] + 1;
-			p[1] = state;
+			wheel->phase++;
+			wheel->ticks = 0;
 		}
 	}
 	else if (state == 1)
 	{
-		if ((s16)p[1] == 30)
+		if (wheel->ticks == 30)
 		{
-			p[0] = p[0] + 1;
+			wheel->phase++;
 		}
 	}
 	else if (state == 2)
 	{
-		s32 t = p[4] + 0xfff8;
-		p[4] = t;
-		if ((u16)t <= 0x2ff)
+		wheel->speed -= 8;
+		if (wheel->speed <= 0x2ff)
 		{
-			p[0] = p[0] + 1;
+			wheel->phase++;
 		}
 	}
 	else if (state == 3)
 	{
 		s32 v = ((s8 *)gSceneState)[2];
 		s32 r = Math_Divide(v << 16, 5);
-		if ((unsigned int)(((p[3] - r) << 16) + 0xc2ff0000) <= 0x5fe0000)
+		if ((unsigned int)(((wheel->angle - r) << 16) + 0xc2ff0000) <= 0x5fe0000)
 		{
-			struct FieldActor *o;
-			s32				   nv = r + 0x4000;
-			p[3] = nv;
-			{
-				s32 z = 0;
-				s32 k = 0x63;
-				p[0] = k;
-				p[4] = z;
-			}
-			o = Object_GetById(v + 11);
-			o->update = (void (*)(union FieldObject *))ArutamiraDou_UpdateScalePulse;
+			wheel->angle = r + 0x4000;
+			wheel->phase = 0x63;
+			wheel->speed = 0;
+			Object_GetById(v + 11)->update =
+				(void (*)(union FieldObject *))ArutamiraDou_UpdateScalePulse;
 		}
 	}
 	else if (state == 0x63)
@@ -552,25 +525,16 @@ void ArutamiraDou_SpinActorWheel(void)
 	}
 	if (flag != 0)
 	{
-		u16 *q2;
-		ArutamiraDou_ClearTarget[3] += ArutamiraDou_ClearTarget[4];
-		SceneActor_PlaceFiveActorsInRow(ArutamiraDou_ClearTarget[3]);
-		q2 = ArutamiraDou_ClearTarget;
+		ArutamiraDou_Wheel->angle += ArutamiraDou_Wheel->speed;
+		SceneActor_PlaceFiveActorsInRow(ArutamiraDou_Wheel->angle);
+		ArutamiraDou_Wheel->travel += ArutamiraDou_Wheel->speed;
+		if (ArutamiraDou_Wheel->travel > 0x3000)
 		{
-			s32 t2 = q2[5] + q2[4];
-			q2[5] = t2;
-			if ((u16)t2 > 0x3000)
-			{
-				s32 z2 = 0;
-				q2[5] = z2;
-				Engine_AudioPlayCue(0x87);
-			}
+			ArutamiraDou_Wheel->travel = 0;
+			Engine_AudioPlayCue(0x87);
 		}
 	}
-	{
-		u16 *q = ArutamiraDou_ClearTarget;
-		q[1]++;
-	}
+	ArutamiraDou_Wheel->ticks++;
 }
 
 void ArutamiraDou_TurnRock(s32 action)

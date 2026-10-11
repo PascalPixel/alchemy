@@ -995,11 +995,9 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
 	}
 	for (id = entry->sprite; (s16)id != -1 && slot <= 65; entry++, id = entry->sprite)
 	{
-		/* FAKEMATCH: needed to match: the second row-id read prevents sharing the shifted id between the test and body. */
-		id = entry->sprite;
-		if ((s16)id <= 7)
-			index = (s16)id;
-		else if ((s16)id <= 0x2705)
+		if (entry->sprite <= 7)
+			index = entry->sprite;
+		else if (entry->sprite <= 0x2705)
 			index = slot++;
 		condition = entry->condition;
 		if (!GameFlag_IsConditionActive(condition))
@@ -1618,7 +1616,7 @@ void UpdateMapRegionAtPosition(s32 position_x, s32 position_y, s32 position_z)
 
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
 {
-	/* FAKEMATCH: needed to match: the StepOwner read prefix preserves the party-load order and the 44-byte frame. */
+	/* FAKEMATCH: needed to match: the StepOwner read prefix preserves the party-load order and the 44-byte frame. Plain struct BtlUnit differs by 2: its alias set ties the doku store to the active-owner read. */
 	struct FieldStepWork *work = WORK_SLOT(HEAP_SLOT_EVENT);
 	struct MapState		 *map = WORK_SLOT(8);
 	s32					  selected = gGameState.selected_actor;
@@ -1992,9 +1990,7 @@ s32 Field_RunScene(s32 entrance)
 	BattleFx_ResetCounters();
 	work->view = (s32)gOverlayArea.events();
 	BattleMap_ApplyEntranceView();
-	gOverlayArea.placements();
-	/* FAKEMATCH: needed to match: the call leaves out the function's table argument */
-	((void (*)(void))ObjectTable_ResetForObject)();
+	ObjectTable_ResetForObject((struct ScenePlacement *)gOverlayArea.placements());
 	if (GameFlag_TestFar(0x109) != 0)
 		ObjectTable_Restore();
 	if (gGameState.pending_djinn_event != 0)
@@ -4430,8 +4426,6 @@ void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 y)
 void Ui_PrepareTransferForItemFar(s32 item);
 void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
 
-typedef struct MapEventEntry *(*EventListFn)(s32);
-
 struct ParticlePosition
 {
 	s32 x;
@@ -4550,12 +4544,6 @@ struct MapEventEntry
 	s16 id;
 	s16 flag;
 	s32 position;
-};
-
-struct FieldMapState
-{
-	u8	unknown_00[36];
-	s32 events;
 };
 
 extern struct DisplayTransitionState *gDisplayTransition;
@@ -5003,8 +4991,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
 			}
 			else if (z - actor_z > 5)
 				continue;
-			/* FAKEMATCH: the map's event list function is called through _call_via_r0 as a typed function */
-			entry = ((EventListFn)_call_via_r0)(((struct FieldMapState *)&gOverlayArea)->events);
+			entry = (struct MapEventEntry *)gOverlayArea.events();
 			if (entry->flags == -1)
 				continue;
 			do
@@ -5578,15 +5565,12 @@ extern volatile u32 gFrameCount;
 
 void DisplayTransition_Start(s32 mode, s32 frames)
 {
-	void						  **work;
 	struct DisplayTransitionWindow *display;
 	s32								value;
 	s32								kind;
 
-	/* FAKEMATCH: needed to match: the map-work word prefix preserves address order. */
 	kind = (mode >> 8) & 0xff;
-	work = Ram_MapWork;
-	display = *(struct DisplayTransitionWindow **)work;
+	display = gMapWork[0];
 	value = mode & 0xff;
 	switch (kind)
 	{
@@ -5638,7 +5622,7 @@ void DisplayTransition_Start(s32 mode, s32 frames)
 	{
 		struct DisplayTransitionState *state;
 
-		display = (struct DisplayTransitionWindow *)*work;
+		display = gMapWork[0];
 		state = DisplayTransition_AllocateAndClearState();
 		display->first_line = 80;
 		display->second_line = 80;
@@ -6019,10 +6003,8 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames
 
 void BattlePalette_UpdateBlend(void)
 {
-	/* FAKEMATCH: needed to match: the packed bank is selected by its byte offset from the work; direct packed-bank selection swaps the queue and IME registers. */
 	struct BattleEffectBuffers *work = gPaletteBufferWork;
 	u16						   *add = work->delta;
-	u8						   *base;
 	s32							i;
 
 	if (GameFlag_TestFar(0x152) != 0)
@@ -6063,12 +6045,12 @@ void BattlePalette_UpdateBlend(void)
 	}
 
 	work->page ^= 1;
-	base = (u8 *)work + work->page * sizeof(work->packed[0]);
 	{
-		u32 bg = (u32)(base + 0x2300);
-		IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, bg, 0x84000070);
+		u16 *packed = work->packed[work->page];
+
+		IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)packed, 0x84000070);
+		IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(packed + 0xe0), 0x84000070);
 	}
-	IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(base + 0x24c0), 0x84000070);
 }
 
 //--------------------------------------------------------------------------
@@ -6772,8 +6754,7 @@ void Event_SetSceneEvents(s32 value)
 
 void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value)
 {
-	/* FAKEMATCH: UnitGetFar is called with no argument set up; r0 still holds event_id */
-	((s32 (*)(void))UnitGetFar)();
+	UnitGetFar(event_id);
 	Party_AddActiveOwnerFar(event_id);
 	if (value != 0)
 	{
@@ -6859,7 +6840,7 @@ s32 Party_CheckMemberValueTotal(s32 id)
 	s32 sum = 0;
 	s32 i;
 
-	count = ((s32 (*)(s32))Party_CountActiveOwnersFar)(id); /* FAKEMATCH: called with an argument the function does not take */
+	count = Party_CountActiveOwnersFar();
 	for (i = 0; i < count; i++)
 		sum += Inventory_CountItemFar(gGameState.active_owners[i], id);
 
@@ -8456,8 +8437,7 @@ s32 BattleEventRuntime_ProcessAction(s32 object_id, s32 action_id)
 	struct EventRuntime *runtime;
 	struct GameState	*save;
 
-	/* FAKEMATCH: called with a second argument the function does not take */
-	((struct UiWindow * (*)(s32, s32)) UiText_OpenMessageAtObject)(object_id, action_id);
+	UiText_OpenMessageAtObject(object_id);
 	save = &gGameState;
 	result = Inventory_PromptAndSetObjectMode(save->selected_actor, 0);
 	if (result == 0)
@@ -10047,7 +10027,6 @@ struct DustWork
 
 void FieldMotes_Update(void)
 {
-	/* FAKEMATCH: needed to match: an unsigned-long frame read keeps size and flip stores together. */
 	struct SparkleWork	 *work = WORK_SLOT(29);
 	struct MapScrollWork *map = WORK_SLOT(8);
 	u32					  spawned = 0;
@@ -10093,7 +10072,7 @@ void FieldMotes_Update(void)
 				{
 					mote->tile = work->tile_base;
 				}
-				if ((*(unsigned long *)&gFrameCount >> 3) & 1)
+				if ((gFrameCount >> 3) & 1)
 					mote->tile += 4;
 				mote->x = x;
 				mote->y = y - (mote->delay >> 2);
@@ -10180,7 +10159,7 @@ void FieldMotes_Start(void)
 
 void FieldEffect_UpdateSparkles(void)
 {
-	/* FAKEMATCH: needed to match: an unsigned-long frame read keeps size and flip stores together. */
+	/* FAKEMATCH: needed to match: an unsigned-long frame read keeps size and flip stores together. The plain volatile read differs by 3: it splits the two bit-field stores. */
 	struct SparkleWork	 *work;
 	u32					  spawned;
 	u32					  i;
@@ -10408,23 +10387,8 @@ void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj)
 	struct ObjectRuntime *tgt = obj->linked_object;
 
 	obj->x += (tgt->x - obj->x) / 2;
-	/* FAKEMATCH: separate CSE blocks retain each axis's own-position load and
-	   destructive add. Direct updates reverse the y/z loads under TLA's flags;
-	   unscoped temporaries change four add/store registers in TBS. */
-	do
-	{
-		s32 position = obj->y;
-
-		position += (tgt->y - position) / 2;
-		obj->y = position;
-	} while (0);
-	do
-	{
-		s32 position = obj->z;
-
-		position += (tgt->z - position) / 2;
-		obj->z = position;
-	} while (0);
+	obj->y += (tgt->y - obj->y) / 2;
+	obj->z += (tgt->z - obj->z) / 2;
 }
 
 //--------------------------------------------------------------------------
@@ -10885,57 +10849,48 @@ void BattleFx_FinishHeavyImpact(s32 jin_id)
 	s32					  cnt;
 
 	jin = (struct MotionObject *)Object_GetById(jin_id);
-	/* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling */
-	do
-	{
-		if (jin == NULL)
-			return;
-		BattleFx_InitializeSlots();
-		scene = gEffectWork;
-		Shop_RestoreSceneTilesFar(0x20118c);
-		AudioCommand_PlayFar(173);
-		Motion_SetVarCbAndRefresh(jin_id, 1);
-	} while (0);
+	if (jin == NULL)
+		return;
+	BattleFx_InitializeSlots();
+	scene = gEffectWork;
+	Shop_RestoreSceneTilesFar(0x20118c);
+	AudioCommand_PlayFar(173);
+	Motion_SetVarCbAndRefresh(jin_id, 1);
 	AudioCommand_PlayFar(174);
 	Motion_SetVarCbAndRefresh(jin_id, 1);
-	/* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling */
+	AudioCommand_PlayFar(175);
+	Motion_SetVarCbAndRefresh(jin_id, 1);
+	WaitFrames(20);
+
+	// 回転してから高く跳ねる
+	AudioCommand_PlayFar(140);
+	jin->update = BattleFx_AdvanceSpinAngle;
+	WaitFrames(40);
+	AudioCommand_PlayFar(153);
+	ObjectMotion_Launch(jin_id, 12, 22);
+
+	// ジンの画面位置から光の粒を 24 個出す
+	pos.x = jin->x;
+	pos.y = jin->y;
+	pos.z = jin->z;
+	Camera_WorldToScreen(&pos);
+	ObjectDispatch_ReleaseFar(jin);
+	AudioCommand_PlayFar(164);
+	slot = scene->slots;
+	cnt = 23;
 	do
 	{
-		AudioCommand_PlayFar(175);
-		Motion_SetVarCbAndRefresh(jin_id, 1);
-		WaitFrames(20);
-
-		// 回転してから高く跳ねる
-		AudioCommand_PlayFar(140);
-		jin->update = BattleFx_AdvanceSpinAngle;
-		WaitFrames(40);
-		AudioCommand_PlayFar(153);
-		ObjectMotion_Launch(jin_id, 12, 22);
-
-		// ジンの画面位置から光の粒を 24 個出す
-		pos.x = jin->x;
-		pos.y = jin->y;
-		pos.z = jin->z;
-		Camera_WorldToScreen(&pos);
-		ObjectDispatch_ReleaseFar(jin);
-		AudioCommand_PlayFar(164);
-		slot = scene->slots;
-		cnt = 23;
-		do
-		{
-			EffectSlot_Initialize(slot, 284, pos.x, pos.z);
-			EffectSlot_SetCallback(
-				slot, BattleFx_RunAngledApproachPhases); // 回ってから操作キャラへ
-			EffectSlot_SetObjectMode(slot, 7);
-			ObjectGroup_SetChildValueUnlessFifteenFar(slot->object, (u32)(Random16() * 7) >> 16);
-			scale = (u32)Random16() / 3 + 0x10000; // 1.0〜1.33 倍
-			slot->scale_y = scale;
-			slot->scale_x = scale;
-			cnt--;
-			WaitFrames(1);
-			slot++;
-		} while (cnt >= 0);
-	} while (0);
+		EffectSlot_Initialize(slot, 284, pos.x, pos.z);
+		EffectSlot_SetCallback(slot, BattleFx_RunAngledApproachPhases); // 回ってから操作キャラへ
+		EffectSlot_SetObjectMode(slot, 7);
+		ObjectGroup_SetChildValueUnlessFifteenFar(slot->object, (u32)(Random16() * 7) >> 16);
+		scale = (u32)Random16() / 3 + 0x10000; // 1.0〜1.33 倍
+		slot->scale_y = scale;
+		slot->scale_x = scale;
+		cnt--;
+		WaitFrames(1);
+		slot++;
+	} while (cnt >= 0);
 
 	// 操作キャラを 0x4000 (90°) の向きへ回し、動作 28 にする
 	WaitFrames(60);
@@ -12951,26 +12906,13 @@ void BattleFx_ComputeHueChannels(s32 hue, s32 *r, s32 *g, s32 *b)
 //--------------------------------------------------------------------------
 s32 BattleFx_HueChannelRamp(s32 angle, s32 low, s32 high)
 {
-	s32 product;
-
 	angle = Fixed_Remainder(angle, 360 << 16);
 	if (angle < 60 << 16)
-	{
-		product = Iwram_MulQ16(high, angle);
-	}
-	else
-	{
-		if (angle >= 60 << 16 && angle < 180 << 16)
-			return high;
-		/* FAKEMATCH: needed to match: the goto places the low return after the divide */
-		if (!(angle >= 180 << 16 && angle < 240 << 16))
-			goto out;
-		product = Iwram_MulQ16(high, (240 << 16) - angle);
-	}
-	{
-		return Iwram_RatioMulQ14(60 << 16, product);
-	}
-out:
+		return Iwram_RatioMulQ14(60 << 16, Iwram_MulQ16(high, angle));
+	if (angle >= 60 << 16 && angle < 180 << 16)
+		return high;
+	if (angle >= 180 << 16 && angle < 240 << 16)
+		return Iwram_RatioMulQ14(60 << 16, Iwram_MulQ16(high, (240 << 16) - angle));
 	return low;
 }
 
@@ -13527,7 +13469,7 @@ void BattleFx_SnapScaleToFull(struct MotionObject *obj)
 			obj->scale_x = next;
 			obj->scale_y = next;
 		}
-		((void (*)())Script_WaitForEventTimeoutFar)(); /* FAKEMATCH: called with no object; passing one loads r0 */
+		Script_WaitForEventTimeoutFar(obj);
 	}
 }
 
@@ -17478,7 +17420,7 @@ markers:
 
 void Map_ShowWorldMap(s32 picture)
 {
-	/* FAKEMATCH: needed to match: one-pass loops order display-control setup and the spilled layer load. */
+	/* FAKEMATCH: needed to match: one-pass loops order display-control setup and the spilled layer load. The layer load now matches as a plain statement. */
 	struct MapState			*map = WORK_SLOT(8);
 	struct EventWork		*field = Runtime_AllocateBlock(27, 0xccc);
 	struct ObjectSystemWork *menu = WORK_SLOT(HEAP_SLOT_MENU_CONTROL);
@@ -17541,11 +17483,7 @@ void Map_ShowWorldMap(s32 picture)
 	}
 	Map_LoadAreaGraphicsFar();
 	IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, (u16)blend, 0x20000);
-	/* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling. */
-	do
-	{
-		layer = map->anim;
-	} while (0);
+	layer = map->anim;
 	for (i = 0; i < 16; i++)
 	{
 		layer->paused = saved_flags[i];

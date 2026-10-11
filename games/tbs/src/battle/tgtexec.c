@@ -1694,10 +1694,6 @@ s32 EnmChk(s32 summon)
 s32 SummonSlot_RegisterActorSprites(s32 unit)
 {
 	s32 pass;
-	/* FAKEMATCH: the loop's actor copy and the cancelling updates below keep
-	 * sprite_value in r7 and pass in r4 without operand asm; deleting both
-	 * exchanges those registers (114 instructions, 18 differing rows). */
-	struct BtlUnit *sprite_actor;
 	struct BtlWork *table = BtlWk;
 	struct BtlUnit *actor = UnitGetFar(unit);
 	s32				single_slot = Summon_IsEntryFlagged(actor->class_id);
@@ -1713,12 +1709,11 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
 	result.halves[1] = 0;
 	sprite_value = Summon_GetEntryValue(actor->class_id);
 	pass = result.value;
-	sprite_actor = actor;
 	do
 	{
 		s32 slot;
 
-		if (sprite_actor->class_index != 0)
+		if (actor->class_index != 0)
 			continue;
 
 		for (slot = 0; slot <= 5; slot++)
@@ -1735,7 +1730,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
 			break;
 
 		{
-			s32 flag = Summon_GetEntryFlag1Field(sprite_actor->class_id);
+			s32 flag = Summon_GetEntryFlag1Field(actor->class_id);
 			s32 buffer_addr = (slot << 14) + (s32)Ram_ActorSpriteSlots;
 
 			if (ResourceSlot_LoadFar(slot, (u32 *)buffer_addr, sprite_value + pass, flag) == 0)
@@ -6131,12 +6126,7 @@ loop:
 	offset = gBattleDisplayWork->offset;
 	QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
 	QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
-	/* FAKEMATCH: needed to match: the one-pass loop keeps the BLDALPHA address load after the value */
-	do
-	{
-		u16 blend = 16;
-		REG_BLDALPHA = blend;
-	} while (0);
+	Io_Write16(16, &REG_BLDALPHA);
 	*(u32 *)&spr->attr0 = 0xa400;
 	*(u32 *)&spr->attr2 = 0;
 	tile = Resource_GetBuffer(slot, pat) & 0x3ff;
@@ -6184,12 +6174,7 @@ s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y)
 	{
 		QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
 		QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
-		/* FAKEMATCH: needed to match: the one-pass loop keeps the BLDALPHA address load after the value */
-		do
-		{
-			u16 blend = 16;
-			REG_BLDALPHA = blend;
-		} while (0);
+		Io_Write16(16, &REG_BLDALPHA);
 		((s32 *)spr)[1] = MENU_SPRITE_SIZE_16;
 		((s32 *)spr)[2] = 0;
 		spr->tile = Resource_GetBuffer(slot, pat);
@@ -9859,7 +9844,6 @@ void Graphics_BuildSequentialTileTable(s32 *dst)
 {
 	s32 v;
 	s32 n;
-	s32 (*fill)(void *, s32, u32);
 
 	// 4 バイトずつ書くので 1 回に 4 つ進める
 	v = 0x03020100;
@@ -9880,9 +9864,7 @@ void Graphics_BuildSequentialTileTable(s32 *dst)
 		v += 0x04040404;
 	} while (n >= 0 && n <= 55);
 
-	/* FAKEMATCH: the routine is called through a local pointer to its fixed entry; a plain call matches The Broken Seal through its IWRAM call layer but not The Lost Age, whose header calls the entry directly (all six of its editions differ). */
-	fill = Iwram_FillWordsEntry;
-	fill(dst, 544, -1);
+	Iwram_FillWords(dst, 544, -1);
 }
 
 void BattlePresentation_BuildTilemap(s32 *destination)
@@ -9909,7 +9891,6 @@ void BattlePres_UpdateHBlankScroll(void)
 {
 	struct BattleAffineHdma *records;
 	u16						*record;
-	s32						 control;
 
 	if (((struct BattleBackgroundView *)*(
 			 void **)((u8 *)gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND * sizeof(void *)))
@@ -9918,12 +9899,7 @@ void BattlePres_UpdateHBlankScroll(void)
 	{
 		records = *(struct BattleAffineHdma **)&gWorkSlot[10];
 		record = records->lines[records->page];
-		control = record[0];
-		/* FAKEMATCH: needed to match: the do-while keeps the BG2CNT address load after the record read */
-		do
-		{
-			REG_BG2CNT = control;
-		} while (0);
+		Io_Write16(record[0], &REG_BG2CNT);
 		Dma_Set(record + 1, (void *)0x0400000c, 0xa2600001, &REG_DMA0SAD);
 		Dma_Set(&records->affine, (void *)0x04000020, 0x84000004, REG_DMA3);
 	}
@@ -10195,11 +10171,6 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 	Runtime_ReleaseHeapBlock(42);
 }
 
-struct Half
-{
-	u16 v;
-};
-
 void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
 {
 	struct BtlWork *screen = BtlWk;
@@ -10238,8 +10209,6 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
 
 void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
 {
-	/* FAKEMATCH: needed to match: a one-halfword struct mask held across the fade loop */
-
 	struct BattleBackgroundView *transition = (struct BattleBackgroundView *)gTransitionWork;
 
 	if (transition->mode == 0)
@@ -10265,14 +10234,12 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
 		u16		   *source = BtlWk->palette;
 		u16		   *destination = (u16 *)0x050000c0;
 		s32			i;
-		struct Half mask;
 
-		mask.v = 0x1f;
 		for (i = 0; i != 128; i++)
 		{
 			s32 red = source[i] & 31;
-			s32 green = (source[i] >> 5) & mask.v;
-			s32 blue = (source[i] >> 10) & mask.v;
+			s32 green = (source[i] >> 5) & 31;
+			s32 blue = (source[i] >> 10) & 31;
 
 			if (red > fade)
 			{
@@ -10756,7 +10723,6 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
 	struct BtlWork *battle = BtlWk;
 	u32				count;
 	u32				i;
-	volatile u16   *blend_y;
 
 	if (mode == 0)
 	{
@@ -10768,20 +10734,10 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
 	}
 	if (battle != 0 && mode != 0)
 	{
-		u32 zero = 0;
-		u32 sixteen;
-
 		battle->highlight_mode = mode;
-		battle->highlight_step = zero;
-		blend_y = &REG_BLDY;
-		*blend_y = zero;
-		sixteen = 16;
-
-		/* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling */
-		do
-		{
-			blend_y[-1] = sixteen;
-		} while (0);
+		battle->highlight_step = 0;
+		REG_BLDY = 0;
+		Io_Write16(16, &REG_BLDALPHA);
 
 		count = BattleParty_ListActorIds(3, (u16 *)active_actors);
 		for (i = 0; i < count; i++)
@@ -10937,12 +10893,9 @@ u32 Graphics_UploadVramBlock(void)
 		if (*active != 0)
 		{
 			*active = 0;
-			/* FAKEMATCH: the void routine is called as returning u32: this function returns whatever it leaves in r0. */
-			return ((u32 (*)(void *, void *, u32))ColorBuffer_BackupAndScaleThreeQuarters)(
-				source, (void *)0x06004000, 0x4000);
+			ColorBuffer_BackupAndScaleThreeQuarters(source, (void *)0x06004000, 0x4000);
 		}
 	}
-	return (u32)source;
 }
 
 s32 BattleFx_InitializeStarField(s32 mode)

@@ -269,7 +269,7 @@ void Tile_BuildMetatiles(u16 *dst, u16 *src)
 	s32 found;
 	s32 v;
 
-	for (row = 0; row < 20;)
+	for (row = 0; row < 20; row++)
 	{
 		d = 0;
 		a = d;
@@ -359,24 +359,9 @@ void Tile_BuildMetatiles(u16 *dst, u16 *src)
 		*dst++ = v;
 		dst++;
 		src += 2;
-		/* FAKEMATCH: this one-pass block and early row increment keep the
-		 * source advance and row copy between their native stores
-		 * (pure C differ 6 -> 2). */
-		do
-		{
-			*dst++ = v;
-			row++;
-		} while (0);
-		/* FAKEMATCH: the one-pass break lets CSE reuse row < 20 before
-		 * scheduling, keeping its comparison before the seventh store
-		 * (differ 2 -> 0). */
-		do
-		{
-			dst++;
-			*dst++ = v;
-			if (row < 20)
-				break;
-		} while (0);
+		*dst++ = v;
+		dst++;
+		*dst++ = v;
 		dst++;
 		*dst++ = v;
 		v = f + (d << 8);

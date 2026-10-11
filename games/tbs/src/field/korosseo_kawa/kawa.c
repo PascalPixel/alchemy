@@ -847,8 +847,7 @@ void KorosseoKawa_RunStageIntro(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(scene);
 	}
 	else
 	{
@@ -916,8 +915,7 @@ void Korosseo_RunPipeworksIntro(s32 a0)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(a0);
 	}
 	else
 	{
@@ -995,8 +993,7 @@ void Korosseo_RunBrokenBridgeIntro(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(scene);
 	}
 	else
 	{
@@ -1044,8 +1041,7 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(scene);
 		return;
 	}
 	Engine_EventBegin();

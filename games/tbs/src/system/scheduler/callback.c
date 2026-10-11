@@ -2384,7 +2384,6 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
 	s32	   ez;
 	s32	   t;
 	u32	   num = 0x80000000; // 逆数を求めるときの被除数 2^31
-	u32 (*divide)(u32 dividend, u32 divisor);
 
 	// 内積のルーチンをスタックに写して、そこで呼ぶ
 	dot = (Dot3Fn)code;
@@ -2395,9 +2394,7 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
 	dy = target[1] - eye[1];
 	dz = target[2] - eye[2];
 	t = Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
-	/* FAKEMATCH: the routine is called through a local pointer to its fixed entry; a plain call matches The Broken Seal through its IWRAM call layer but not The Lost Age, whose header calls the entry directly (all six of its editions differ). */
-	divide = Iwram_UnsignedDivideEntry;
-	scale = divide(num, t) >> 15;
+	scale = Iwram_UnsignedDivide(num, t) >> 15;
 	scale = -scale;
 	/* FAKEMATCH: the normalization keeps its CSE block; without it, the third
 	 * product spills before the negated axis (four reordered instructions). */
@@ -2405,16 +2402,15 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
 	{
 		dx = Iwram_MulQ16(dx, scale);
 		dy = Iwram_MulQ16(dy, scale);
-		t = Iwram_MulQ16(dz, scale);
+		dz = Iwram_MulQ16(dz, scale);
 		uz = -dx;
-		dz = t;
 	} while (0);
 
 	// 横の軸 u = (dz, 0, -dx) を長さ 1 に
 	t = Iwram_MulQ16(dy, dy);
 	scale = 0x10000;
 	if (scale - t > 0)
-		scale = divide(num, FixedSqrt(scale - t)) << 1;
+		scale = Iwram_UnsignedDivide(num, FixedSqrt(scale - t)) << 1;
 	ux = Iwram_MulQ16(dz, scale);
 	uz = Iwram_MulQ16(uz, scale);
 
@@ -2422,7 +2418,7 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
 	vx = Iwram_MulQ16(dy, uz);
 	vy = Iwram_MulQ16(dz, ux) - Iwram_MulQ16(dx, uz);
 	vz = -Iwram_MulQ16(dy, ux);
-	scale = divide(num, FixedSqrt(dot(vx, vx, vy, vy, vz, vz))) << 1;
+	scale = Iwram_UnsignedDivide(num, FixedSqrt(dot(vx, vx, vy, vy, vz, vz))) << 1;
 	vx = Iwram_MulQ16(vx, scale);
 	vy = Iwram_MulQ16(vy, scale);
 	vz = Iwram_MulQ16(vz, scale);
@@ -3457,34 +3453,19 @@ transfer_complete:
 
 s32 SerialRuntime_BeginTransferB(void *destination)
 {
-	volatile s32			   *active;
-	struct SerialTransferState *state;
+	struct SerialTransferState *state = &gSerialTransfer;
 	u32							saved_interrupt_master;
-	s32							busy;
-	s32							value;
 
-	/* FAKEMATCH: sharing the integer address carrier with the result keeps the destination in r0 through the busy check. A separate result is hoisted into r0 and makes the function save another register. */
-	value = (s32)destination;
-	state = &gSerialTransfer;
-	active = &gSerialReceiveDest;
-	busy = *active;
-	if (busy == 0)
-		goto begin_transfer;
-	value = -1;
-	goto transfer_complete;
-
-begin_transfer:
+	if (gSerialReceiveDest != 0)
+		return -1;
 	IRQ_LOCK(saved_interrupt_master);
 	state->status = 0x81;
-	gSerialReceiveDest = value;
+	gSerialReceiveDest = (s32)destination;
 	gSerialReceivedSize = 0;
 	state->active = 1;
 	gSerialBlockSequence = 0;
 	IRQ_UNLOCK(saved_interrupt_master);
-	value = 0;
-
-transfer_complete:
-	return value;
+	return 0;
 }
 
 void SerialRuntime_WaitForTransferA(void)

@@ -429,7 +429,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
 	s32					 angle;
 	s32					 flag;
 
-	/* FAKEMATCH: the do/while and the held values keep the blend constants in registers ahead of their address loads, as in MAKYURI_HEYA. */
+	/* FAKEMATCH: the do/while and the held values keep the blend constants in registers ahead of their address loads, as in MAKYURI_HEYA. Plain stores: differ 76; without the do/while alone: differ 4. */
 	do
 	{
 		s32 blend = 0x3f40;

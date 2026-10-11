@@ -737,7 +737,7 @@ void FieldScene_RunElderAidEvent(void)
 		Camera_MoveTo(0xcd0000, -1, 0x30a0000, 1);
 		Engine_ActorEnableActionCallback(22, (s32)HaidiaIe_Actor22Actions);
 		Object_RefreshSelectorById(22);
-		/* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
+		/* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. Direct call: differ 30 (r5 and r6 swap). */
 		Value3(SceneActor_SetPairZeroAndValue, 22, 0x2000, 60);
 		Engine_ActorRunRepeatedMotion(19, 2);
 		Event_SayThenWait(19, 10);

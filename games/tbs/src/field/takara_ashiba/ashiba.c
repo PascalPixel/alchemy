@@ -1317,7 +1317,7 @@ void TakaraAshiba_InitializeScene2(void)
 	FieldScheduler_AddOrUpdateCallback((s32)SceneState_TriggerColumnTen, 0xc80);
 	Engine_TaskAddCallback((s32)TakaraAshiba_RaiseTriggerOnStand, 0xc80);
 	{
-		/* FAKEMATCH: each blend value is loaded before its register address. */
+		/* FAKEMATCH: each blend value is loaded before its register address. Plain stores: differ 20; inline setters like HAIDIA_BABI's SetBlendTarget and SetBlendAlpha match. */
 		u16 value;
 
 		value = 0x3f42;

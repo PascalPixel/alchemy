@@ -1541,8 +1541,7 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(scene);
 		return;
 	}
 	Engine_EventBegin();
@@ -1616,8 +1615,7 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(scene);
 		return;
 	}
 	Engine_EventBegin();
@@ -1677,8 +1675,7 @@ void KorosseoMaruta_RunStageIntro(s32 scene)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(scene);
 	}
 	else
 	{
@@ -1747,8 +1744,7 @@ void FieldScene_RunFourStepActorMotion(s32 event)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(event);
 	}
 	else
 	{
@@ -1767,8 +1763,7 @@ void FieldScene_RunFourStepActorMotion(s32 event)
 			((s32 (*)())Korosseo_FadeInCompetitor)(0, 0x330, 200);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 			Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x348, 200);
-			/* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-			Value3(Engine_ActorFaceDirection, 0, 0xc000, 20);
+			Engine_ActorFaceDirection(0, 0xc000, 20);
 			battle_owner_69();
 			Camera_MoveTo(-1, -1, -1, 0);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -1846,8 +1841,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 event)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(event);
 	}
 	else
 	{
@@ -1913,8 +1907,7 @@ void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(actor);
 		return;
 	}
 

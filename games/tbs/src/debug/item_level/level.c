@@ -440,7 +440,7 @@ s32 FieldScene_RunEntrySetup(void)
 #if !EDITION_INTERNATIONAL
 void ItemLevel_RunMotionTest(void)
 {
-	/* FAKEMATCH: Call3 places the actor argument before the coordinate shifts; the ordinary direct call schedules it after both shifts. */
+	/* FAKEMATCH: Call3 places the actor argument before the coordinate shifts; the ordinary direct call schedules it after both shifts. Direct call or Actor_SetPosition: differ 2. */
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(10, 2);
 	Engine_ActorSetAnimation(11, 4);
@@ -454,7 +454,7 @@ void ItemLevel_RunMotionTest(void)
 void FieldScene_DrawThreeCaptionWindow(void)
 {
 	struct RenderInput *window;
-	/* FAKEMATCH: an unread 32-byte text buffer, the native frame's 32 extra bytes. */
+	/* FAKEMATCH: an unread 32-byte text buffer, the native frame's 32 extra bytes. Without it: differ 4 (sp moves 4 for 36). */
 	u8 text[32];
 
 	window = (struct RenderInput *)UiWindow_Create(0, 13, 30, 6, 2);

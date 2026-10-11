@@ -594,7 +594,6 @@ s32 TorebiIzumi_RunSpringGame(void)
 	s32				  coins;
 	s32				  tickets;
 	struct UiWindow	 *window;
-	struct GameState *prize_state;
 	s32				  result;
 	s32				  sum;
 	s32				  i;
@@ -824,24 +823,19 @@ play:
 			i = 14;
 		}
 		TorebiIzumi_RevealPrize(((struct { s32 prize[1]; } *)Data_02001fd0)->prize[i]);
-		/* FAKEMATCH: preserving this pointer copy retains message in r9
-         * and state in fp without the prompt's asm.
-         * Without the copy, those registers swap (280 instructions,
-         * 22 differing rows in the international editions). */
-		prize_state = state;
 
 #if EDITION_INTERNATIONAL
 		/* FAKEMATCH: the pointer pair keeps the native prize-weight base
          * recomputation in r0 after the call. Without it, the earlier
          * roulette base survives in r5 (280 -> 278 instructions, 42 rows
          * differ in the international editions). */
-		prize_state++;
-		prize_state--;
+		state++;
+		state--;
 		{
 
 			/* FAKEMATCH: keeps the slot in r1 and state + 1 in r0. 2026-10-11: plain forms share state + 1 with the roulette's peeled first iteration through GCSE PRE (struct field 42/96, s8 pointer 57/107, direct global 38/100 rows in EN/JA); the ++/-- pair breaks the sharing, but then global allocation gives the later-defined pointer r1 before the slot (differ 10) or, pointer first, sched2 keeps adds r0, #1 ahead of adds r1, r6, r3 by RTL order (differ 2). */
 			register s32 slot asm("r1") = i + 284;
-			s8			*w = (s8 *)prize_state + 1;
+			s8			*w = (s8 *)state + 1;
 
 			if (w[slot] > 1)
 			{

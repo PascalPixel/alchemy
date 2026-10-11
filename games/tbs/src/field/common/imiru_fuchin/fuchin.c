@@ -1312,7 +1312,7 @@ void FieldScene_RunScene39aSequenceA(void)
 void ImiruFuchin_ApplyEntrySetup(void)
 {
 	struct FieldActor *actor;
-	/* FAKEMATCH: needed to match: the shared zero/address-word lifetime avoids swapping registers and adding a heap-cell add. */
+	/* FAKEMATCH: needed to match: the shared zero/address-word lifetime avoids swapping registers and adding a heap-cell add. Literal zeros and the slot read in place: differ 51. */
 	s32 value;
 
 	ImiruFuchin_ApplyRoomLayout();
@@ -1514,7 +1514,7 @@ void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 veloc
 	struct FieldEffect *obj;
 	struct FieldSprite *spr;
 	const s32		   *script;
-	/* FAKEMATCH: needed to match: copying three scripts keeps the 12-byte frame and prevents an early scale-script load. */
+	/* FAKEMATCH: needed to match: copying three scripts keeps the 12-byte frame and prevents an early scale-script load. Reading gEffectScripts in place: differ 107. */
 	struct CaveEffectScripts scripts = *(const struct CaveEffectScripts *)gEffectScripts;
 
 	obj = (struct FieldEffect *)Engine_ObjectCreate(222, x, y, z);

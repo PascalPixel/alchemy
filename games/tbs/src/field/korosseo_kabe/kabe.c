@@ -1076,8 +1076,7 @@ void KorosseoKabe_RunStageIntro(s32 speaker)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(speaker);
 	}
 	else
 	{
@@ -1133,8 +1132,7 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(a0);
 	}
 	else
 	{
@@ -1186,8 +1184,7 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(a0);
 	}
 	else
 	{
@@ -1251,8 +1248,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 speaker)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(speaker);
 		return;
 	}
 	Engine_EventBegin();
@@ -1273,8 +1269,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 speaker)
 		((s32 (*)())Korosseo_FadeInCompetitor)(ACTOR_PARTY_LEADER, 632, z);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 		Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, z);
-		/* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-		Value3(Engine_ActorFaceDirection, ACTOR_PARTY_LEADER, 0xc000, 20);
+		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 20);
 		battle_owner_69();
 		Camera_SetSpeed(0x4000, 0x800);
 		Camera_MoveTo(0x2180000, -1, 0xa00000, 1);
@@ -1354,8 +1349,7 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
 
 	if (gGameState.entrance == 2)
 	{
-		/* FAKEMATCH: called without the speaker argument the function takes; r0 is left as it is. */
-		((void (*)(void))Korosseo_FinishSoloRound)();
+		Korosseo_FinishSoloRound(speaker);
 		return;
 	}
 	Engine_EventBegin();

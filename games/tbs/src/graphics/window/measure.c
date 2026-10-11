@@ -14462,13 +14462,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 				s32 k;
 				u32 selected;
 				UiWork_ClearValueNameTables();
-				/* FAKEMATCH: restores a CSE1 block end the bytes prove (k = redraw survives as the native ldr r1, [sp, #28]): an empty one-pass block, without which CSE1 deletes the second redraw = 0 below as a no-op and folds k to 0 (29 rows) */
-				do
-				{
-				} while (0);
 				is_used = 0;
-				/* FAKEMATCH: restores redraw set in the search block, which the surviving copy proves gcse saw: cprop leaves k = redraw alone only when its source is set earlier in its block, and cse2 deletes this store as a no-op (29 rows without) */
-				redraw = 0;
 				/* FAKEMATCH: this one-pass loop retains the native redraw
                  * reload after the selected-entry load. A plain assignment
                  * folds k to zero (1201 -> 1200 instructions, 27 rows differ);
@@ -16350,6 +16344,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 			efx.scale_y = 176;
 		}
 		efx.angle = 0;
+#if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_IT)
 		/* FAKEMATCH: register choice (spill slots) only: seventeen dead
            stores, two insns each until flow deletes them. GCSE sizes its
            expression table from the insn count (n / 2 | 1 buckets) and
@@ -16358,9 +16353,10 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
            1451 and the table 725 buckets, so tbl, entries, ids and
            cursor * 2 take sp+36, 32, 28 and 24 before &efx (20) and
            selSlot (16) as in the native frame (1417 and 709 buckets
-           without them: every remaining row is a spill slot's offset;
-           ES and IT use two additional copies below to restore the slot
-           order after their value-preserving null initializer). */
+           without them: every remaining row is a spill slot's offset).
+           2026-10-11: ES and IT match without any of these stores (and
+           without the two more they had), so only the other four editions
+           compile them. */
 		efx.angle = 0;
 		efx.angle = 0;
 		efx.angle = 0;
@@ -16376,11 +16372,6 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 		efx.angle = 0;
 		efx.angle = 0;
 		efx.angle = 0;
-		efx.angle = 0;
-		efx.angle = 0;
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-		/* FAKEMATCH: these two additional dead stores are needed to match
-         * the native spill slots; without them ES differs 136 instructions. */
 		efx.angle = 0;
 		efx.angle = 0;
 #endif
@@ -17358,13 +17349,6 @@ handshake_done:
 			handle = BattleParty_ListActorIdsFar(sel, block);
 			WaitFrames(1);
 			Ui_RunOwnerStatusScreen(block, handle, *(u16 *)block);
-			/* FAKEMATCH: instruction order only: the one-pass block's loop
-               notes keep MemFree's argument out of the call's schedule, so
-               *block is loaded before block is copied to r0, as native
-               (differ 2). */
-			do
-			{
-			} while (0);
 			MemFree(block);
 			continue;
 		}

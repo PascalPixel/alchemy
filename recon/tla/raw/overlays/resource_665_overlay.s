@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
 	.section .text.x02008398,"ax",%progbits
+	.balign 4
 	.global Func_02000398
 	.thumb_func
 Func_02000398:
@@ -107,6 +108,7 @@ Func_02000398:
 .L_02008478:
 	.4byte MsgScene665No70
 	.section .text.x0200866c,"ax",%progbits
+	.balign 4
 	.global Func_0200066c
 	.thumb_func
 Func_0200066c:
@@ -561,6 +563,7 @@ Func_02000a18:
 .L_02008a94:
 	.4byte 0x05000116
 	.section .text.x02008aa0,"ax",%progbits
+	.balign 4
 	.global Func_02000aa0
 	.thumb_func
 Func_02000aa0:

@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
 	.section .text.x02008100,"ax",%progbits
+	.balign 4
 	.global Func_02000100
 	.thumb_func
 Func_02000100:
@@ -69,6 +70,7 @@ Func_02000100:
 	pop {r5, r6, r7, pc}
 	.endif
 	.section .text.x02008164,"ax",%progbits
+	.balign 4
 	.global Func_02000164
 	.thumb_func
 Func_02000164:
@@ -300,6 +302,7 @@ Func_02000164:
 	pop {r5, r6, pc}
 	.endif
 	.section .text.x02008474,"ax",%progbits
+	.balign 4
 	.global Func_02000474
 	.thumb_func
 Func_02000474:
@@ -567,6 +570,7 @@ Func_02000630:
 	str r3, [r4, #4]
 	pop {r5, pc}
 	.section .text.x020086ec,"ax",%progbits
+	.balign 4
 	.global Func_020006ec
 	.thumb_func
 Func_020006ec:
@@ -982,6 +986,7 @@ Func_020006ec:
 .L_02008a64:
 	.4byte 0x000000b0
 	.section .text.x02008ab4,"ax",%progbits
+	.balign 4
 	.global Func_02000ab4
 	.thumb_func
 Func_02000ab4:

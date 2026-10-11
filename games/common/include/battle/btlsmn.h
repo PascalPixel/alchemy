@@ -8,14 +8,16 @@
 struct BattleSpriteDefinition
 {
 	u16 animation;
-	u8	sprite_flags;
-	u8	layout_flags;
+	u8	sprite_bit0 : 1;
+	u8	sprite_bits1 : 4;
+	u8	sprite_bits5 : 3;
+	u8	layout_bit0 : 1;
+	u8	layout_bits1 : 4;
+	u8	layout_kind : 3;
 	u8	unknown_04[4];
 };
 
 LAYOUT_SIZE_GUARD(BattleSpriteDefinition_Size, struct BattleSpriteDefinition, 8);
-LAYOUT_OFFSET_GUARD(
-	BattleSpriteDefinition_LayoutFlags, struct BattleSpriteDefinition, layout_flags, 3);
 extern struct BattleSpriteDefinition Summon_EntryTable[];
 
 struct SummonDefinition

@@ -580,8 +580,6 @@ Object_SetMoveTarget:
 	.incbin "baserom.gba", 0x00024ec6, 0x00000002
 	.section .rom.00024fde, "ax"
 	.incbin "baserom.gba", 0x00024fde, 0x00000002
-	.section .rom.000250f2, "ax"
-	.incbin "baserom.gba", 0x000250f2, 0x00000042
 	.section .rom.00025160, "ax"
 	.incbin "baserom.gba", 0x00025160, 0x000009f8
 	.section .rom.00025bb4, "ax"

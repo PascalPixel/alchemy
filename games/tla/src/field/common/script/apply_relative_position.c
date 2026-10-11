@@ -71,3 +71,27 @@ s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object)
     object->script_cursor += 4;
     return 1;
 }
+
+u16 ArcTan2(s32, s32);
+
+s32 Script_StoreAngleToLinkedObject(struct ScriptObjectRuntime *object)
+{
+    struct ScriptObjectRuntime *target;
+
+    target = object->linked_object;
+    object->script_value = ArcTan2(
+        (s32)((u32)target->z - (u32)object->z),
+        (s32)((u32)target->x - (u32)object->x));
+    object->script_cursor++;
+    return 1;
+}
+
+s32 Script_ApplyLinkedObjectPosition(struct ScriptObjectRuntime *object)
+{
+    struct ScriptObjectRuntime *target;
+
+    target = object->linked_object;
+    Object_SetMoveTarget(object, target->x, target->y, target->z);
+    object->script_cursor++;
+    return 1;
+}

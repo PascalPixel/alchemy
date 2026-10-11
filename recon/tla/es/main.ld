@@ -255,7 +255,6 @@
     "*/games/tla/src/field/common/script/overlap.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00024fde)
     "*/games/tla/src/field/common/script/apply_relative_position.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.000250f2)
     "*/games/tla/src/field/common/script/offset.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00025160)
     "*/games/tla/src/field/common/script/operands.o"(.text)

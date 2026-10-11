@@ -1,41 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x02008624,"ax",%progbits
-	.global Func_02000624
-	.thumb_func
-Func_02000624:
-	push {lr}
-	sub sp, #12
-	movs r3, #2
-	movs r2, #10
-	movs r1, #0
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	str r1, [sp, #8]
-	movs r2, #5
-	movs r3, #4
-	movs r0, #34
-	movs r1, #26
-	bl Func_02000ecc
-	ldr r0, .L_0200864c
-	movs r1, #6
-	bl Func_02000eb4
-	add sp, #12
-	pop {pc}
-.L_0200864c:
-	.4byte 0x00000142
-	.section .text.x02008650,"ax",%progbits
-	.global Func_02000650
-	.thumb_func
-Func_02000650:
-	push {lr}
-	ldr r0, .L_0200865c
-	movs r1, #8
-	bl Func_02000eb4
-	pop {pc}
-.L_0200865c:
-	.4byte 0x00000142
 	.section .text.x0200879c,"ax",%progbits
+	.balign 4
 	.global Func_0200079c
 	.thumb_func
 Func_0200079c:
@@ -625,14 +591,6 @@ Func_02000c4c:
 	.4byte ResourceTableEntries
 .L_02008d48:
 	.4byte 0x80004000
-	.section .text.x02008d4c,"ax",%progbits
-	.global Func_02000d4c
-	.thumb_func
-Func_02000d4c:
-	adds r0, #98
-	movs r3, #1
-	strb r3, [r0]
-	bx lr
 	.section .rodata.x02008f44,"a",%progbits
 	.global Data_02000f44
 Data_02000f44:

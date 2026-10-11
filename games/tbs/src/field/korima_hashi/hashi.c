@@ -60,7 +60,6 @@ s32 KorimaHashi_TriggerPending __attribute__((section(".bss")));
 s32 KorimaHashi_PartyFlag __attribute__((section(".bss")));
 s32 KorimaHashi_SparkleSound __attribute__((section(".bss")));
 
-
 void Engine_TaskWait(s32 frames);
 void Engine_EventWait(s32 frames);
 void Engine_ActorWaitForMove(s32 actor);
@@ -192,7 +191,6 @@ void SceneActor_PassSubjectOffsetPosition(void)
 
 const struct SceneEvent *Scene_GetEvents(void) { return KorimaHashi_Events; }
 
-
 s32 Scene_Initialize(void)
 {
     s32 record;
@@ -229,7 +227,6 @@ void SceneActor_SetPairZeroAndValue(s32 actor, s32 facing, s32 frames);
 void Event_SayThenWait(s32 speaker, s32 frames);
 void Object_SetActionCallbackAndRefreshById(s32 id, const u8 *callback);
 void Audio_PlayCueFromEventWork(void);
-
 
 void FieldScene_RunBranchingFormationPresentation(void)
 {
@@ -1153,4 +1150,46 @@ hit:
     ((s32 (*)())Engine_ObjectSetScript)((s32)arg0, (s32)KorimaHashi_TriggerScript);
     KorimaHashi_TriggerPending = 1;
     return 0;
+}
+
+void KorimaHashi_AlternateBridgePostHeights(void)
+{
+    struct FieldActor *p;
+
+    p = (void *)Object_GetById(13);
+    if (p != 0) {
+        p->motion_flags = 0;
+        if ((gFrameCount & 1) == 0) {
+            p->y.fixed = 0;
+        } else {
+            p->y.fixed = 0x1f40000;
+        }
+    }
+    p = (void *)Object_GetById(14);
+    if (p != 0) {
+        p->motion_flags = 0;
+        if ((gFrameCount & 1) != 0) {
+            p->y.fixed = 0;
+        } else {
+            p->y.fixed = 0x1f40000;
+        }
+    }
+    p = (void *)Object_GetById(15);
+    if (p != 0) {
+        p->motion_flags = 0;
+        if ((gFrameCount & 1) == 0) {
+            p->y.fixed = 0;
+        } else {
+            p->y.fixed = 0x1f40000;
+        }
+    }
+    p = (void *)Object_GetById(16);
+    if (p != 0) {
+        p->motion_flags = 0;
+        if ((gFrameCount & 1) != 0) {
+            p->y.fixed = 0;
+        } else {
+            p->y.fixed = 0x1f40000;
+        }
+    }
 }

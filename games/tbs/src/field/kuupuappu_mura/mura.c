@@ -1,3 +1,7 @@
+#include "fieldobj.h"
+#include "types.h"
+#include "field_event.h"
+#include "field_scene.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -7,9 +11,6 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
-#include "field_event.h"
-#include "field_scene.h"
 #include "tbs_edition.h"
 #include "btlpty.h"
 #include "text/msg_ids.h"
@@ -19,6 +20,54 @@
 #include "inventory.h"
 #include "b5_context.h"
 
+void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+
+#define NULL ((void *)0)
+
+void SceneEffect_SetEffectRecordMode(struct FieldActor *work, s32 mode)
+{
+    work->sprite->priority = mode;
+}
+
+void *OverlayObject_PrepareSceneObject(s32 first, s32 second, s32 third, s32 fourth)
+{
+    struct FieldActor *obj;
+    struct FieldSprite *rec;
+
+    obj = Engine_ObjectCreate(fourth, first, second, third);
+    if (obj != NULL) {
+        rec = obj->sprite;
+        rec->priority = 0;
+        obj->motion_flags = 0;
+        obj->collision_flags = 8;
+        Engine_ActorSetSpriteFlags(obj, 0);
+        ObjectGroup_SetChildValue(obj, 0xE);
+        Engine_ObjectSetBlendMode(obj, 1);
+        return obj;
+    }
+    return NULL;
+}
+
+void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+{
+    struct FieldActor *result = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
+
+    if (result != NULL) {
+        struct FieldSprite *object = result->sprite;
+
+        object->priority = 1;
+        result->motion_flags = 0;
+        result->collision_flags = 8;
+        Engine_ActorSetSpriteFlags(result, 0);
+        ObjectGroup_SetChildValue(result, 15);
+        result->priority_flags = (result->priority_flags & 0xfe) | 2;
+        return result;
+    }
+    return NULL;
+}
+
+#undef NULL
+
 union DriftingObject {
     struct FieldActor actor;
     struct OverlayEffectMotion motion;
@@ -26,7 +75,6 @@ union DriftingObject {
 
 void Djinn_Transfer(s32 owner, s32 element, s32 index, s32 target);
 void Party_RemoveOwnerRestored(s32 owner);
-void OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 kind);
 void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value);
 s32 ArcTan2(s32 x, s32 y);
 
@@ -574,7 +622,28 @@ void FieldScene_SetupScene10At120_144(void)
 { Engine_AudioPlayCue(158); Engine_MapAnimateCells(KuupuappuMura_Scene10Cells, 38, 6); SceneActor_PlaceAndSetSceneDelay(120, 144, 10); }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "scene_cells.c"
+
+void ActorDraw_SetupActorSceneCells(void)
+{
+    struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
+    struct FieldSprite *sprite = actor->sprite;
+
+    Engine_AudioPlayCue(188);
+    Engine_MapCopyCells(42, 33, 34, 16, 2, 2);
+    Engine_MapCopyCells(42, 35, 36, 16, 2, 2);
+    Engine_EventWait(4);
+    Engine_MapCopyCells(40, 33, 34, 16, 2, 2);
+    Engine_MapCopyCells(40, 35, 36, 16, 2, 2);
+    Engine_EventWait(4);
+    {
+        s32 dest_x = 3;
+        s32 dest_y = 16;
+        Engine_MapCopyCellAttributes(33, 21, 2, 2, dest_x, dest_y);
+    }
+    actor->priority_flags &= ~1;
+    sprite->priority = 3;
+    SceneActor_PlaceAndSetSceneDelay(64, 272, 11);
+}
 
 void ActorPresentation_SetupActorZeroForSceneTwelveAt72_160(void)
 {

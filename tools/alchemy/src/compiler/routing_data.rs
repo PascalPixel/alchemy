@@ -4,7 +4,6 @@ pub static AGBCC_SOURCES: &[&str] = &[
     "games/tbs/src/sound/engine.c",
     "games/common/src/sound/engine.c",
     "games/common/src/sound/music_track_dispatch_stream_command.c",
-    "games/tbs/src/sound/tail.c",
     "games/tla/src/sound/tail.c",
     "games/tla/src/sound/music_track_read_voice_target.c",
     "games/tla/src/sound/music_track_set_voice_decay.c",

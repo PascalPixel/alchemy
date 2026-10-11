@@ -59,10 +59,11 @@ struct Options {
     make_static: bool,
     force: bool,
     all: bool,
+    hard: bool,
 }
 
 fn parse(arguments: &[String]) -> Result<Options, String> {
-    let mut options = Options { build: "tbs-en".into(), out_dir: PathBuf::from("out/reports"), unit: None, objects: None, name: None, dry_run: false, make_static: false, force: false, all: false };
+    let mut options = Options { build: "tbs-en".into(), out_dir: PathBuf::from("out/reports"), unit: None, objects: None, name: None, dry_run: false, make_static: false, force: false, all: false, hard: false };
     let mut i = 0;
     while i < arguments.len() {
         let flag = arguments[i].as_str();
@@ -71,6 +72,10 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
             "--static" => options.make_static = true,
             "--force" => options.force = true,
             "--all" => options.all = true,
+            "--hard" => {
+                options.all = true;
+                options.hard = true;
+            }
             "--build" | "--out-dir" | "--objects" | "--name" => {
                 let value = arguments.get(i + 1).ok_or_else(|| format!("{flag} needs a value\n{USAGE}"))?.clone();
                 match flag {
@@ -742,7 +747,7 @@ fn flatten(options: &Options) -> Result<(), String> {
     crate::compiler::routing::prefer_installed_binutils();
     let root = crate::compiler::routing::root().to_path_buf();
     let (target, judged) = judged(&root, &options.build)?;
-    let groups = if options.all { all_groups(&root, &judged, target) } else { group(&root, options, &judged, target)? };
+    let groups = if options.all { all_groups(&root, &judged, target, options.hard) } else { group(&root, options, &judged, target)? };
     let mut cache = BTreeMap::new();
     for objects in groups {
         match flatten_one(&root, options, &judged, target, &objects, &mut cache) {
@@ -757,14 +762,33 @@ fn flatten(options: &Options) -> Result<(), String> {
 /// Every proposed unit's C objects as one group, whatever divides them
 /// today: units that share a file join, and a group splits only where two
 /// compilers build it. An experiment's grouping (--all with --force).
-fn all_groups(root: &Path, judged: &[super::Judged], target: DecompTarget) -> Vec<Vec<String>> {
+fn all_groups(root: &Path, judged: &[super::Judged], target: DecompTarget, hard: bool) -> Vec<Vec<String>> {
     let mut every: Vec<Vec<String>> = Vec::new();
     for j in judged {
         let mut groups: Vec<Vec<String>> = Vec::new();
-        for unit in &j.units {
+        // With --hard a unit ends only where the bytes prove an edge: every
+        // scored boundary inside such a run is ignored.
+        let runs: Vec<(usize, usize)> = if hard {
+            let count = j.loaded.image.functions.len();
+            let mut runs = Vec::new();
+            let mut first = 0;
+            for gap in &j.gaps {
+                if matches!(gap.verdict, super::model::Verdict::ForcedBoundary | super::model::Verdict::Conflict) {
+                    runs.push((first, gap.index));
+                    first = gap.index + 1;
+                }
+            }
+            if first < count {
+                runs.push((first, count - 1));
+            }
+            runs
+        } else {
+            j.units.iter().map(|u| (u.first, u.last)).collect()
+        };
+        for (run_first, run_last) in runs {
             let mut objects: Vec<String> = Vec::new();
-            for f in &j.loaded.image.functions[unit.first..=unit.last] {
-                if matches!(f.lang, Lang::C | Lang::Library) && f.object.starts_with("games/") && source_path(root, &f.object).is_some() && !objects.contains(&f.object) {
+            for f in &j.loaded.image.functions[run_first..=run_last] {
+                if matches!(f.lang, Lang::C | Lang::Library) && f.object.starts_with("games/") && !(hard && f.object.contains("/system/save/")) && source_path(root, &f.object).is_some() && !objects.contains(&f.object) {
                     objects.push(f.object.clone());
                 }
             }

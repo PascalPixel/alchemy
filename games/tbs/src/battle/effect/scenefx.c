@@ -1,5 +1,4 @@
 #include "battle.h"
-#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -9,40 +8,17853 @@
 #include "sound.h"
 #include "system.h"
 #include "mem.h"
-#include "effect_step.h"
-#include "iwram_call.h"
+#include "canvas.h"
+#include "map_scroll.h"
+#include "heap_state.h"
+#include "menu_list.h"
 #include "types.h"
+#include "io_write_queue.h"
+#include "io_reg.h"
+#include "scene.h"
 #include "global_cells.h"
+#include "dma.h"
 #include "resource_ids.h"
-#include "resource.h"
 #include "battle_efx.h"
+#include "fixed_math.h"
+#include "callback_scheduler.h"
+#include "effect_step.h"
 #include "battle_effect_work.h"
 #include "btldisp.h"
-#include "battle_unit.h"
-#include "btlsys.h"
-#include "btlwork.h"
-#include "callback_scheduler.h"
-#include "motobj.h"
-#include "animspr.h"
 #include "ram_buffer.h"
-#include "map_scroll.h"
-#include "io_reg.h"
-#include "menu_list.h"
-#include "transform.h"
-#include "canvas.h"
-#include "fixed_math.h"
-#include "fixed_point_position.h"
-#include "heap_state.h"
-#include "dma.h"
-#include "io_write_queue.h"
-#include "field_event.h"
-#include "scene.h"
-#include "project.h"
-#include "irq.h"
+#include "resource.h"
 #include "b5_context.h"
+#include "motobj.h"
+#include "iwram_call.h"
+#include "transform.h"
+#include "btlwork.h"
+#include "project.h"
+#include "field_event.h"
+#include "keystate.h"
+#include "btltype.h"
+#include "sound_ids.h"
+#include "call.h"
+#include "btlsys.h"
+#include "battle_session.h"
+#include "animspr.h"
+#include "battle_unit.h"
+#include "fixed_point_position.h"
+#include "irq.h"
 
-void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
-s32  BattleFx_RunSparkGroups(void *, s32);
+void BattleFx_PrepareCanvasEffect ( struct BattleEffectArgument * effect , s32 kind , s32 side , s32 anchor , s32 * out_x , s32 * out_y ) ;
+void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind);
+void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant);
+void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride);
+
+#define Camera_ApplyShake ((void (*)(s32, s32))Camera_ApplyShake)
+
+#define gBattleFxWork (*(struct BattleEffectWork **)&gBattleFxWork)
+
+extern u8 gMapCellBuffer[];
+
+void BattlePres_ConfigureEffectDisplay(void)
+{
+	REG_BLDCNT = 0;
+	REG_BLDALPHA = 0x100e;
+	REG_WIN0H = 0x00f0;
+	REG_WIN0V = 0x1088;
+	REG_WIN1H = 0x00f0;
+	REG_WIN1V = 0x1088;
+	REG_WININ = 0x3537;
+	REG_WINOUT = 0x3f21;
+	IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
+	WaitFrames(1);
+}
+
+void BattleFx_AdvanceScrollOnInterval(void)
+{
+	struct BattleEffectWork *work = gBattleFxWork;
+	u32						*counter = (u32 *)&work->scroll_timer;
+
+	(*counter)++;
+	if (*counter == work->scroll_interval)
+	{
+		gBgScroll[1].x += work->scroll_step_x;
+		gBgScroll[1].y += work->scroll_step_y;
+		*counter = 0;
+	}
+}
+
+void Camera_AdvanceBg2Reference(void)
+{
+	s32						 count;
+	struct BattleEffectWork *work;
+
+	work = gBattleFxWork;
+	count = work->scroll_timer + 1;
+	work->scroll_timer = count;
+	if (count == work->scroll_interval)
+	{
+		REG_BG2X = work->bg2x;
+		REG_BG2Y = work->bg2y;
+		work->bg2x += work->scroll_step_x;
+		work->bg2y += work->scroll_step_y;
+		work->scroll_timer = 0;
+	}
+}
+
+void BattleFx_ArmWin0HBlankDma(void)
+{
+	volatile u16 *channel = REG_DMA0;
+	channel[5] &= 0xc5ff;
+	channel[5] &= 0x7fff;
+	(void)channel[5];
+	Dma_Set((void *)gMapCellBuffer, (void *)0x04000040, 0xa2600001, (volatile u32 *)channel);
+}
+
+void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
+{
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	u8						*graphics;
+	DrawRectangle			 draw[2];
+	struct EffectStep		*shard;
+	struct EffectStep		*puff;
+	u16						*line;
+	s32						 i;
+	s32						 k;
+
+	heap_cache = (void **)&gBattleFxWork;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	graphics = heap_cache[2];
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0x2001);
+	REG_BG2PA = 0x100;
+	Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, graphics, 0, 0);
+	BattlePres_ConfigureEffectDisplay();
+	REG_BLDCNT = 0x3f44;
+	REG_WININ = 0x3337;
+
+	{
+		s32 y;
+		s32 slant;
+
+		for (i = 0, y = -128, slant = -16; i != 32; y -= 64, i++, slant -= 8)
+		{
+			s32 x;
+
+			shard = &work->particles[i];
+			x = (Random16() & 63) + (Random16() & 7) + 24;
+			if (work->effect->side == 1)
+				x = x + slant + 24;
+			else
+				x = x - slant + 80;
+			shard->y = y;
+			shard->x = x << 3;
+			shard->variant = -1;
+		}
+	}
+	for (i = 0; i != 32; i++)
+		work->particles[32 + i].variant = -1;
+
+	if (work->effect->side == 0)
+	{
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 2, 2);
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 2, 3);
+	}
+	else
+	{
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 6, 2);
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 6, 3);
+	}
+	draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+	draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
+
+	if (work->effect->side == 0)
+	{
+		line = (u16 *)gMapCellBuffer;
+		for (i = 0; i != 160; i++)
+		{
+			if (i >= 8 && i <= 103)
+				line[i] = (0xf0 - i) | ((0x70 - i) << 8);
+			else if (i <= 135)
+				line[i] = 0x888;
+			else
+				line[i] = 0x100;
+		}
+	}
+	else
+	{
+		line = (u16 *)gMapCellBuffer;
+		for (i = 0; i != 160; i++)
+		{
+			if (i >= 8 && i <= 95)
+				line[i] = (i - 8 + 160) | ((i + 0x18) << 8);
+			else if (i <= 135)
+				line[i] = 0x78f8;
+			else
+				line[i] = 0x100;
+		}
+	}
+
+	Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma, 0x480);
+	work->transfer_mode = 2;
+	if (work->effect->variant == 1)
+		work->transfer_value = 75;
+	else
+		work->transfer_value = 50;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	for (frame = 0; frame != FallingShards_Counts[work->effect->variant * 2 + 1]; frame++)
+	{
+		if (frame == FallingShards_Counts[work->effect->variant * 2 + 1] - 16)
+			BattleEventRuntime_BeginPhaseFar(132);
+		for (i = 0; i != FallingShards_Counts[work->effect->variant * 2]; i++)
+		{
+			shard = &work->particles[i];
+			if (shard->variant == -1)
+			{
+				s32 x = shard->x / 8;
+				s32 y = shard->y / 8;
+
+				draw[work->effect->variant == 2 ? 1 : 0](canvas, work, x, y, 32, 32);
+				if (shard->y <= 0x27f)
+				{
+					if (work->effect->side == 0)
+						shard->x -= 64;
+					else
+						shard->x += 64;
+					shard->y += 64;
+				}
+				else
+				{
+					if ((i & 3) == 0)
+						AudioCommand_PlayFar(115);
+					work->shake_frames = 2;
+					shard->variant = 0;
+					for (k = 0; k != work->effect->count; k++)
+						ObjectGroup_UpdateMembers(work->effect->actors[k], 9, 5, k, 8);
+				}
+			}
+			if (shard->variant != -1)
+			{
+				s32 x = shard->x / 8;
+				s32 y = shard->y / 8;
+
+				if (shard->variant >= 1 && shard->variant <= 14)
+				{
+					draw[work->effect->variant == 2 ? 1 : 0](
+						canvas, work->sheet + 0x400 + ((shard->variant / 3) << 10), x, y, 32, 32);
+				}
+				if (shard->variant >= 9 && shard->variant <= 11)
+				{
+					for (k = 0; k != 32; k++)
+					{
+						puff = &work->particles[32 + k];
+						if (puff->variant == -1)
+						{
+							puff->variant = 18;
+							puff->x = (((Random16() & 31) + shard->x / 8) << 3) + 8;
+							puff->y = ((Random16() & 15) + shard->y / 8 - 15) << 3;
+							break;
+						}
+					}
+				}
+				if (shard->variant <= 14)
+					shard->variant++;
+			}
+		}
+		for (i = 0; i != 32; i++)
+		{
+			puff = &work->particles[32 + i];
+			if (puff->variant != -1)
+			{
+				if (puff->variant <= 17)
+				{
+					s32 image = puff->variant / 2;
+					s32 x = puff->x / 8 - (BattleFx_PuffSizes[image] >> 1);
+					s32 y = puff->y / 8 - (BattleFx_PuffSizes[image] >> 1);
+
+					draw[work->effect->variant == 2 ? 1 : 0](canvas,
+						graphics + BattleFx_PuffCells[image], x, y, BattleFx_PuffSizes[image],
+						BattleFx_PuffSizes[image]);
+				}
+				if (puff->variant > -1)
+					puff->variant--;
+			}
+		}
+		ObjectGroup_TickMemberTimers();
+		Camera_ApplyShake(4, 4);
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Scheduler_RemoveCallback(BattleFx_ArmWin0HBlankDma);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+	BattlePres_ConfigureEffectDisplay();
+}
+
+struct BoltSparkBuffer
+{
+	u16				  lines[160];
+	struct EffectStep sparks[512];
+};
+
+#define gBoltSparks ((struct BoltSparkBuffer *)Ram_MapCellBuffer)
+
+void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
+{
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	DrawRectangle			 draw_spark;
+	DrawRectangle			 draw_bolt;
+	struct EffectStep		*bolt;
+	struct EffectStep		*spark;
+	u16						*line;
+	s32						 i;
+	s32						 k;
+
+	heap_cache = (void **)&gBattleFxWork;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0x2001);
+	REG_BG2PA = 0x100;
+	Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet, work->sheet + 0x604, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0, 0);
+	BattlePres_ConfigureEffectDisplay();
+	REG_BLDCNT = 0x3f44;
+	REG_WININ = 0x3337;
+
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 2, 2);
+	draw_bolt = heap_cache[7];
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 2, 3);
+	draw_spark = heap_cache[8];
+
+	for (i = 0; i != 512; i++)
+		gBoltSparks->sparks[i].variant = -1;
+
+	for (i = 0; i != 64; i++)
+	{
+		s32 x;
+		s32 y;
+
+		bolt = &work->particles[i];
+		x = Random16() & 63;
+		y = -(i * FallingBolts_Counts[work->effect->variant * 4 + 2] + 16);
+		if (work->effect->side == 1)
+			x = x + y / 2 - 48;
+		else
+			x = x - y / 2 + 72;
+		bolt->x = x << 3;
+		bolt->y = y << 3;
+		bolt->variant = -1;
+	}
+
+	if (work->effect->side == 0)
+	{
+		line = (u16 *)gMapCellBuffer;
+		for (i = 0; i != 160; i++)
+		{
+			if (i >= 8 && i <= 103)
+				line[i] = ((0x34 - i / 2) << 8) | (0xb4 - i / 2);
+			else if (i <= 135)
+				line[i] = 0x80;
+			else
+				line[i] = 0x100;
+		}
+	}
+	else
+	{
+		line = (u16 *)gMapCellBuffer;
+		for (i = 0; i != 160; i++)
+		{
+			if (i >= 8 && i <= 103)
+				line[i] = ((i / 2 + 60) << 8) | (i / 2 + 188);
+			else if (i <= 135)
+				line[i] = 0x70f0;
+			else
+				line[i] = 0x100;
+		}
+	}
+
+	Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma, 0x480);
+	if (work->effect->variant == 0)
+	{
+		work->transfer_mode = 1;
+		work->transfer_value = 0;
+	}
+	else if (work->effect->variant == 1)
+	{
+		work->transfer_mode = 2;
+		work->transfer_value = 50;
+	}
+	else
+	{
+		work->transfer_mode = 2;
+		work->transfer_value = 75;
+	}
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	for (frame = 0; frame != FallingBolts_Counts[work->effect->variant * 4 + 3]; frame++)
+	{
+		if (frame == FallingBolts_Counts[work->effect->variant * 4 + 3] - 64)
+			BattleEventRuntime_BeginPhaseFar(132);
+		for (i = 0; i != FallingBolts_Counts[work->effect->variant * 4]; i++)
+		{
+			s32 x;
+			s32 y;
+
+			bolt = &work->particles[i];
+			x = bolt->x / 8;
+			y = bolt->y / 8;
+			if (bolt->variant == -1)
+			{
+				draw_bolt(canvas, work->sheet + 0x604, x, y, 24, 24);
+				if (bolt->y <= 0x27f)
+				{
+					if (work->effect->side == 0)
+						bolt->x -= 32;
+					else
+						bolt->x += 32;
+					bolt->y += 64;
+				}
+				else
+				{
+					bolt->variant = 0;
+					for (k = 0; k != FallingBolts_Counts[work->effect->variant * 4 + 1]; k++)
+					{
+						spark = &gBoltSparks
+									 ->sparks[i * FallingBolts_Counts[work->effect->variant * 4 + 1]
+											  + k];
+						spark->x = (x + 12) << 16;
+						spark->y = y << 16;
+						spark->velocity_x = ((Random16() & 255) - 128) << 9;
+						if (work->effect->variant == 2)
+							spark->velocity_y = ((Random16() & 0x1ff) - 0x180) << 10;
+						else
+							spark->velocity_y = ((Random16() & 255) - 255) << 10;
+						spark->variant = (Random16() & 15) + 16;
+					}
+					if ((i & 3) == 0)
+						AudioCommand_PlayFar(132);
+					for (k = 0; k != work->effect->count; k++)
+						ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 2);
+				}
+			}
+			else
+			{
+				if (bolt->variant >= 0 && bolt->variant <= 3)
+					draw_bolt(canvas, work->sheet + 0x844, x, y, 24, 24);
+				else if (bolt->variant <= 7)
+					draw_bolt(canvas, work->sheet + 0xa84, x - 9, y - 9, 42, 42);
+				if (bolt->variant <= 14)
+					bolt->variant++;
+			}
+		}
+		for (i = 0; i != 512; i++)
+		{
+			spark = &gBoltSparks->sparks[i];
+			if (spark->variant != -1)
+			{
+				s32 size = spark->variant + 1;
+
+				if (size > 6)
+					size = 6;
+				draw_spark(canvas, work->sheet + BattleFx6_FlareCells[size - 1],
+					((s16 *)&spark->x)[1] - size, ((s16 *)&spark->y)[1] - size, size * 2, size * 2);
+				EffectStep_AdvanceWithGravity2D(spark, 60, 0x2000);
+				spark->variant--;
+			}
+		}
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattleFx_ArmWin0HBlankDma);
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+	BattlePres_ConfigureEffectDisplay();
+}
+
+//--------------------------------------------------------------------------
+
+// run_five_mode_mode0.c
+
+// バトル演出：使う者から対象ごとに 3 本の筋を飛ばして当てる (色の違う五種)
+
+//--------------------------------------------------------------------------
+
+#undef gBattleFxWork
+
+#define CLIP (GOUSEI_CLIP_X | GOUSEI_CLIP_Y) // 上下左右ではみ出しを切る
+
+// FiveMode_Records は mode ごとに 4 バイト
+#define REC(mode, n) FiveMode_Records[(mode) * 4 + (n)]
+#define REC_ANIME 0	 // 0 でなければ筋の絵を 3 枚で回す
+#define REC_HIT 1	 // 0 でなければ当たりの音とパレット
+#define REC_MOTION 2 // 当たったときののけぞり (-1 ならなし)
+#define REC_FURUE 3	 // 0 でなければ当たった対象を震わせる
+
+#define SUJI_MAX 3 // 対象ひとりあたりの筋の数
+
+//--------------------------------------------------------------------------
+// mode ごとの入口 (色)
+//--------------------------------------------------------------------------
+void BattleFx_RunFiveModeMode0(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunFiveMode(effect, 0);
+}
+
+void BattleFx_RunFiveModeMode1(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunFiveMode(effect, 1);
+}
+
+void BattleFx_RunFiveModeMode2(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunFiveMode(effect, 2);
+}
+
+void BattleFx_RunFiveModeMode4(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunFiveMode(effect, 4);
+}
+
+void BattleFx_RunFiveModeMode3(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunFiveMode(effect, 3);
+}
+
+void BattleFx_RunFiveModeMode1B(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunFiveMode(effect, 1);
+}
+
+//--------------------------------------------------------------------------
+// 使う者の 20 ドット上から、対象ごとに 6 フレームおきに 3 本の筋を出し、
+// 24 フレームで対象へ届かせる。対象は 32 フレームおきに順に始まる
+// 筋の絵は 20x40 で、上半分を上下に反転して 20x80 に描く
+// mode : 色 (BG パレットの元の絵 0〜4) と FiveMode_Records の行
+//--------------------------------------------------------------------------
+void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
+{
+	struct EffectPosition	 position;
+	void				   **slots;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 k;
+	DrawRectangle			 draw_lower;
+	DrawRectangle			 draw_upper;
+	struct BattleCamera		*camera;
+	struct MotionObject		*source;
+	struct MotionObject		*target;
+	s32						 resource;
+	s32						 frame;
+	s32						 j;
+	s32						 streaks = SUJI_MAX;
+	s32						 lift = 20 << 16;
+
+	slots = (void **)gBattleFxWork;
+	cursor = slots;
+	work = *cursor++;
+	canvas = *cursor;
+	camera = slots[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(1);
+
+	// 上半分は上下を反転して描く。向こう側なら左右も反転する
+	if (work->effect->side == 0)
+	{
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | GOUSEI_FLIP_Y, GOUSEI_HIKAKU);
+		draw_upper = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, GOUSEI_HIKAKU);
+		draw_lower = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+	}
+	else
+	{
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | GOUSEI_FLIP, GOUSEI_HIKAKU);
+		draw_upper = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+		BattleEffect_LoadWork(
+			HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+		draw_lower = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+	}
+
+	// 筋の絵と、mode で選ぶ色
+	Resource_LoadAndDecompress((s32)&ResourceId_FiveModeImage, work->sheet, 0, 0);
+	switch (mode)
+	{
+	case 0:
+		resource = (s32)&ResourceId_EmberStreakSheet;
+		break;
+	case 1:
+		resource = (s32)&ResourceId_LimePalette;
+		break;
+	case 2:
+		resource = (s32)&ResourceId_VioletPaletteD;
+		break;
+	case 3:
+		resource = (s32)&ResourceId_RedPaletteB;
+		break;
+	case 4:
+	default:
+		resource = (s32)&ResourceId_CyanPalette;
+		break;
+	}
+	Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
+	work->transfer_mode = 2;   // 転送のたびに半分へ減らして残像にする
+	work->transfer_value = 50; // 1/2
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	source = GetBattleObjectSlotFar(work->effect->actor)->object;
+	{
+		s32 total = streaks * work->effect->count * 6 + 48;
+
+		// 筋は使う者の 20 ドット上から、24 フレームで対象の 20 ドット上へ
+		for (k = 0; k != work->effect->count; k++)
+		{
+			target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
+			for (j = 0; j != streaks; j++)
+			{
+				struct EffectStep *streak = &work->particles[k * streaks + j];
+
+				streak->x = source->x;
+				streak->y = source->y + lift;
+				streak->z = source->z;
+				streak->velocity_x = (target->x - streak->x) / 24;
+				streak->velocity_y = (target->y + lift - streak->y) / 24;
+				streak->velocity_z = (target->z - streak->z) / 24;
+				streak->variant = 0; // 出てからのフレーム数
+			}
+		}
+
+		for (frame = 0; frame != total; frame++)
+		{
+			s32 *row = work->bg2_x;
+
+			// 160 ライン分の BG2X を sin で揺らす
+			for (k = 0; k != 160; k++)
+				*row++ = (0x80000 - Trig_Sin((frame + k) << 12) * 2) >> 10;
+			// 終わりの 16 フレームで半透明を薄くする
+			if (frame > total - 16)
+				REG_BLDALPHA = (total - frame) | 0x1000;
+			Render_ResetTransformState();
+			Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+			for (k = 0; k != work->effect->count; k++)
+			{
+				if (frame >= k * 32)
+				{
+					for (j = 0; j != streaks; j++)
+					{
+						if (frame >= k * 32 + j * 6)
+						{
+							struct EffectStep *streak = &work->particles[k * streaks + j];
+							s32				   step;
+
+							// 絵は 8 フレームごとに次へ (6 枚目で止まる)
+							EffectPosition_ApplyBaseAndYOffset((s32 *)streak, &position);
+							position.x >>= 1;
+							step = streak->variant / 8;
+							if (step > 5)
+								step = 5;
+							if (REC(mode, REC_ANIME))
+							{
+								u8 *cell = &work->sheet[step * 800 + frame / 2 % 3 * 4800];
+
+								draw_upper(canvas, cell, position.x - 10, position.y - 40, 20, 40);
+								draw_lower(canvas, cell, position.x - 10, position.y, 20, 40);
+							}
+							else
+							{
+								u8 *cell = &work->sheet[step * 800 + 2 * 4800];
+
+								draw_upper(canvas, cell, position.x - 10, position.y - 40, 20, 40);
+								draw_lower(canvas, cell, position.x - 10, position.y, 20, 40);
+							}
+							EffectStep_AdvanceWithGravity3D(streak, 64, 0);
+							streak->variant++;
+						}
+					}
+
+					// 当たりの 6 フレーム後から 32 フレームのあいだ、対象を左右に震わせる
+					if (REC(mode, REC_FURUE) && frame >= k * 32 + 30 && frame < k * 32 + 62)
+					{
+						struct MotionObject *struck =
+							GetBattleObjectSlotFar(work->effect->actors[k])->object;
+
+						struck->x += FiveMode_Tremble[(frame - k * 32 - 30) % 8] << 16;
+						if (struck->x > 0)
+							struck->x += 0x8000;
+						else
+							struck->x -= 0x8000;
+						ObjectGroup_UpdateMembers(work->effect->actors[k], -1, 5, -1, 0);
+					}
+
+					// 当たり：音を鳴らし、パレット 7 にして 8 フレーム後に戻す (2 回)
+					if (REC(mode, REC_HIT))
+					{
+						if (frame == k * 32 + 24)
+						{
+							AudioCommand_PlayFar(133);
+							if (k == 0)
+								BattleEventRuntime_BeginPhaseFar(-1); // 最初の当たりで結果へ進む
+							ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 8);
+						}
+						if (frame == k * 32 + 40)
+							ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 8);
+					}
+					if (REC(mode, REC_MOTION) != -1 && frame == k * 32 + 24)
+					{
+						work->shake_frames = 4;
+						BattleMotion_ApplyVariantMotionFar(
+							work->effect->actors[k], REC(mode, REC_MOTION));
+					}
+				}
+			}
+			Camera_ApplyShake(8, 8);
+			ObjectGroup_TickMemberTimers();
+			work->transfer_pending = 1;
+			WaitFrames(1);
+		}
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+#define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
+
+void BattleFx_RunParticlePoolMode1(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunParticlePool(effect, 1);
+}
+
+void BattleFx_RunParticlePoolMode0(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunParticlePool(effect, 0);
+}
+
+struct BlitterPair
+{
+	DrawRectangle upper;
+	DrawRectangle lower;
+};
+
+void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
+{
+	s32						 point[3];
+	struct EffectPosition	 position;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	struct BlitterPair		 draw;
+	struct BattleCamera		*camera;
+	u8						*sheet;
+	struct MotionObject		*source;
+	struct EffectStep		*mote;
+	s32						 resource;
+	s32						 frame;
+	s32						 i;
+
+	work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+	canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+	camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+	sheet = *(gWorkSlot + HEAP_SLOT_BATTLE_SHEET);
+	work->effect = effect;
+	if (mode == 0)
+		BattleFx_BeginCanvasLayer(0);
+	else
+		BattleFx_BeginCanvasLayer(1);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+	draw.upper =
+		(BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 11, 2);
+	draw.lower = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)
+					 ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	if (mode == 0)
+		resource = (s32)&ResourceId_OrangePaletteA;
+	else
+		resource = (s32)&ResourceId_EarthWallSheet;
+	Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(resource), 128);
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	source = GetBattleObjectSlotFar(work->effect->actor)->object;
+	for (i = 0; i != 256; i++)
+	{
+		s32 speed;
+		s32 angle;
+
+		mote = &gMotes[i];
+
+		speed = 0x3ff;
+		speed &= Random16();
+		angle = Random16() & 0xffff;
+		mote->x = source->x;
+		mote->y = source->y + 0x50000;
+		mote->z = source->z;
+		mote->velocity_x = Trig_Sin(angle) * (speed + 32) >> 8;
+		mote->velocity_y = ((Random16() & 255) - 32) << 9;
+		mote->velocity_z = -(Trig_Cos(angle) * (speed + 32) << 1) >> 8;
+		mote->variant = (Random16() & 31) + 48;
+		if (mode == 0)
+		{
+			mote->velocity_x /= 2;
+			mote->velocity_z /= 2;
+		}
+	}
+
+	for (frame = 0; frame != 128; frame++)
+	{
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+		for (i = 0; i != 128; i++)
+		{
+			mote = &gMotes[i];
+			if (frame >= i / 32 * 8 && mote->variant >= 0)
+			{
+				s32 size;
+
+				point[0] = mote->x + Trig_Sin((i * 4 + mote->variant) << 10) * 16;
+				point[1] = mote->y;
+				point[2] = mote->z;
+				EffectPosition_ApplyBaseAndYOffset(point, &position);
+				position.x >>= 1;
+				if (position.depth <= 313)
+					position.depth = 314;
+				if (position.depth > 634)
+					position.depth = 634;
+				size = 6 - (position.depth - 314) / 64;
+				draw.upper(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+					position.x - size / 2, position.y - size, size, size * 2);
+				EffectStep_AdvanceWithGravity3D(mote, 62, 0x400);
+				if (mode == 1)
+				{
+					if (source->x < 0)
+						mote->velocity_x += 0x2000;
+					else
+						mote->velocity_x -= 0x2000;
+				}
+				mote->variant--;
+			}
+		}
+		if (mode == 1)
+		{
+			for (i = 0; i != work->effect->count; i++)
+			{
+				if (frame == i * 8 + 48)
+				{
+					BattleEventRuntime_BeginPhaseFar(-1);
+					ObjectGroup_UpdateMembers(work->effect->actors[i], 7, 5, i, 8);
+				}
+			}
+		}
+		else
+		{
+			for (i = 0; i != work->effect->count; i++)
+			{
+				if (frame == i * 8 + 48)
+				{
+					AudioCommand_PlayFar(126);
+					BattleEventRuntime_BeginPhaseFar(-1);
+					ObjectGroup_UpdateMembers(work->effect->actors[i], 7, -1, i, 8);
+				}
+			}
+		}
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+#define gBlitters ((DrawRectangle *)gWorkSlot)
+#define gSparks ((struct EffectStep *)(Ram_MapCellBuffer + 0x3800))
+#define HI(v) (((s16 *)&(v))[1])
+
+void BattleFx_RunTwelveModeMode6(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunTwelveMode(effect, 6);
+}
+
+void BattleFx_RunTwelveModeMode3(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunTwelveMode(effect, 3);
+}
+
+void BattleFx_RunTwelveModeMode1(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunTwelveMode(effect, 1);
+}
+
+void BattleFx_RunTwelveModeMode10(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunTwelveMode(effect, 0xA);
+}
+
+void BattleFx_RunTwelveModeMode5(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunTwelveMode(effect, 5);
+}
+
+void BattleFx_RunTwelveModeMode9(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunTwelveMode(effect, 9);
+}
+
+void BattleFx_RunTwelveModeMode4(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunTwelveMode(effect, 4);
+}
+
+void BattleFx_RunTwelveModeMode0(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunTwelveMode(effect, 0);
+}
+
+void BattleFx_RunTwelveModeMode8(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunTwelveMode(effect, 8);
+}
+
+void BattleFx_RunTwelveModeMode7(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunTwelveMode(effect, 7);
+}
+
+void BattleFx_RunTwelveModeMode2(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunTwelveMode(effect, 2);
+}
+
+void BattleFx_RunTwelveModeMode11(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunTwelveMode(effect, 0xB);
+}
+
+void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
+{
+	struct EffectPosition	 ground;
+	struct EffectPosition	 target_position;
+	struct EffectPosition	 alternate;
+	struct EffectPosition	 position;
+	DrawRectangle			 draw[2];
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	s32						 k;
+	u8						*sheet;
+	struct BattleCamera		*camera;
+	struct MotionObject		*target;
+	struct MotionObject		*source;
+	s32						 resource;
+	s32						 i;
+	s32						 wisp_sheet = 0x3200;
+	DrawRectangle			*lower = &gBlitters[47];
+
+	heap_cache = (void **)gBattleFxWork;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	sheet = heap_cache[2];
+	camera = heap_cache[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
+	work->effect = effect;
+	if (mode == 8)
+		BattleFx_BeginCanvasLayer(0);
+	else
+		BattleFx_BeginCanvasLayer(1);
+	REG_BLDALPHA = 0x1010;
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
+	if (TwelveMode_Records[mode * 7] == 0)
+		Resource_LoadAndDecompress((s32)&ResourceId_BeamSequenceImage, work->sheet + 0xc80, 0, 0);
+	else
+		Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage, work->sheet + 0xc80, 0, 0);
+	switch (TwelveMode_Records[mode * 7 + 3])
+	{
+	case 0:
+		resource = (s32)&ResourceId_BlueBeamSheet;
+		break;
+	case 1:
+		resource = (s32)&ResourceId_LimePalette;
+		break;
+	case 2:
+		resource = (s32)&ResourceId_PinkPalette;
+		break;
+	case 3:
+		resource = (s32)&ResourceId_EmberStreakSheet;
+		break;
+	case 4:
+		resource = (s32)&ResourceId_MarsDjinnSheet;
+		break;
+	case 5:
+	default:
+		resource = (s32)&ResourceId_LightningBoltSheet;
+		break;
+	}
+	Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(resource), 128);
+	Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet + 0x3200, 1, 0);
+
+	for (k = 0; k != 1; k++)
+	{
+		target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
+		for (i = 0; i != 64; i++)
+		{
+			struct EffectStep *step = &work->particles[i];
+
+			EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[k], &ground);
+			step->x = (ground.x / 2) << 16;
+			step->y = 0x500000;
+			step->z = 0;
+			step->velocity_x = ((Random16() & 255) - 128) << 9;
+			step->velocity_y = ((Random16() & 255) - 128) << 9;
+			step->velocity_z = 0;
+			step->variant = -1;
+		}
+		for (i = 0; i != 128; i++)
+		{
+			struct EffectStep *step = &gMotes[k * 128 + i];
+
+			step->x = target->x;
+			step->y = 0x140000;
+			step->z = target->z;
+			step->velocity_x = ((Random16() & 255) - 128) << 11;
+			step->velocity_y = ((Random16() & 255) - 128) << 11;
+			step->velocity_z = ((Random16() & 255) - 128) << 11;
+			step->variant = -1;
+		}
+		for (i = 0; i != 512; i++)
+		{
+			gSparks[i].x = target->x;
+			gSparks[i].y = 0x140000;
+			gSparks[i].z = target->z;
+			if (TwelveMode_Records[mode * 7] == 1)
+			{
+				gSparks[i].velocity_x = ((Random16() & 255) - 128) << 11;
+				gSparks[i].velocity_y = ((Random16() & 255) - 128) << 11;
+				gSparks[i].velocity_z = ((Random16() & 255) - 128) << 11;
+			}
+			else
+			{
+				if (TwelveMode_Records[mode * 7 + 2] & 16)
+				{
+					gSparks[i].velocity_x = (Random16() & 0x1ff) << 11;
+					gSparks[i].velocity_y = ((Random16() & 0x1ff) - 256) << 11;
+					gSparks[i].velocity_z = ((Random16() & 0x1ff) - 256) << 11;
+				}
+				else
+				{
+					gSparks[i].velocity_x = (Random16() & 255) << 11;
+					gSparks[i].velocity_y = ((Random16() & 255) - 128) << 11;
+					gSparks[i].velocity_z = ((Random16() & 255) - 128) << 11;
+				}
+				if (gSparks[i].x > 0)
+					gSparks[i].velocity_x = -gSparks[i].velocity_x;
+			}
+			gSparks[i].variant = -1;
+		}
+	}
+
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &target_position);
+	EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &alternate);
+	target_position.y += (alternate.y - target_position.y) / 2;
+
+	for (frame = 0; frame != TwelveMode_Records[mode * 7 + 6]; frame++)
+	{
+		s32 span = TwelveMode_Records[mode * 7 + 1] * TwelveMode_Records[mode * 7 + 4];
+		s32 length = span * 4;
+		s32 glint = 0;
+
+		if (TwelveMode_Records[mode * 7] == 0)
+		{
+			if (frame < span * 6)
+			{
+				s32 picture = frame / TwelveMode_Records[mode * 7 + 4] % 6;
+
+				if (work->effect->side == 1)
+				{
+					BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 2);
+					gBlitters[46](canvas, work->sheet + TwelveMode_StrikeOffsets[picture],
+						target_position.x / 2 - (TwelveMode_StrikeReach[picture] / 2)
+							- TwelveMode_StrikeWidths[picture] + 8,
+						target_position.y - (TwelveMode_StrikeHeights[picture] / 2),
+						TwelveMode_StrikeWidths[picture], TwelveMode_StrikeHeights[picture]);
+				}
+				else
+				{
+					BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+					gBlitters[46](canvas, work->sheet + TwelveMode_StrikeOffsets[picture],
+						target_position.x / 2 + (TwelveMode_StrikeReach[picture] / 2) - 8,
+						target_position.y - (TwelveMode_StrikeHeights[picture] / 2),
+						TwelveMode_StrikeWidths[picture], TwelveMode_StrikeHeights[picture]);
+				}
+				Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+				if (frame % (TwelveMode_Records[mode * 7 + 4] * 6)
+					== TwelveMode_Records[mode * 7 + 4] * 4)
+				{
+					if (mode == 8)
+					{
+						BattleEventRuntime_BeginPhaseFar(134);
+					}
+					else
+					{
+						AudioCommand_PlayFar(133);
+						BattleEventRuntime_BeginPhaseFar(133);
+					}
+					if (TwelveMode_Records[mode * 7 + 2] & 16)
+					{
+						work->shake_frames = 8;
+						ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 12);
+						BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
+						for (i = 0; i != 512; i++)
+							gSparks[i].variant = (Random16() & 15) + 15;
+					}
+					else
+					{
+						work->shake_frames = 4;
+						ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 8);
+						for (i = 0; i != 32; i++)
+						{
+							struct EffectStep *step =
+								&gSparks[frame / (TwelveMode_Records[mode * 7 + 4] * 6) * 32 + i];
+
+							step->variant = (Random16() & 15) + 7;
+						}
+					}
+					for (i = 0; i != 8; i++)
+					{
+						struct EffectStep *step =
+							&work->particles[frame / (TwelveMode_Records[mode * 7 + 4] * 6) * 16
+											 + i];
+
+						step->variant = 0;
+					}
+				}
+			}
+			if (frame >= 12 && frame <= 31)
+				glint = 1;
+		}
+		else if (frame < length + 4)
+		{
+			s32 stage;
+
+			if (frame < length)
+			{
+				s32 picture = frame / TwelveMode_Records[mode * 7 + 4];
+
+				while (picture > 4)
+					picture -= 4;
+				stage = TwelveMode_ColumnStages[picture];
+			}
+			else
+			{
+				stage = 3;
+			}
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, TwelveMode_Records[mode * 7 + 5]);
+			gBlitters[46](
+				canvas, work->sheet + stage * 864 + 0xc80, target_position.x / 2 - 18, 56, 18, 48);
+			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, TwelveMode_Records[mode * 7 + 5]);
+			gBlitters[46](
+				canvas, work->sheet + stage * 864 + 0xc80, target_position.x / 2, 56, 18, 48);
+			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+			if (frame % (TwelveMode_Records[mode * 7 + 4] * 4)
+				== TwelveMode_Records[mode * 7 + 4] * 3)
+			{
+				ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 8);
+				work->shake_frames = 4;
+				if (frame
+					> (TwelveMode_Records[mode * 7 + 1] * 4 - 4) * TwelveMode_Records[mode * 7 + 4])
+					BattleEventRuntime_BeginPhaseFar(133);
+				else
+					AudioCommand_PlayFar(133);
+				for (i = 0; i != 64; i++)
+				{
+					struct EffectStep *step =
+						&gSparks[frame / (TwelveMode_Records[mode * 7 + 4] * 6) * 64 + i];
+
+					step->variant = (Random16() & 15) + 7;
+				}
+				for (i = 0; i != 8; i++)
+				{
+					struct EffectStep *step =
+						&work->particles[frame / (TwelveMode_Records[mode * 7 + 4] * 6) * 16 + i];
+
+					step->variant = 0;
+				}
+				for (i = 0; i != 16; i++)
+					gMotes[frame / (TwelveMode_Records[mode * 7 + 4] * 6) * 16 + i].variant = 0;
+			}
+			if (stage == 3)
+				glint = 1;
+		}
+
+		if ((TwelveMode_Records[mode * 7 + 2] & 4) && glint)
+		{
+			for (i = 0; i != 3; i++)
+			{
+				s32 image = frame & 3;
+				s32 angle = Random16() & 0xffff;
+				s32 range = 31;
+				s32 radius = Random16() & range;
+				s32 x;
+				s32 y;
+
+				x = target_position.x / 2 + (Trig_Sin(angle) * (radius + 4) >> 17)
+					- (BattleFx_GlintCellWidths[image] / 2);
+				y = target_position.y - (Trig_Cos(angle) * (radius + 4) >> 17)
+					- (BattleFx_GlintCellHeights[image] / 2);
+				BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+					TwelveMode_GlintDrawFlags[Random16() & 3] | 3, 3);
+				(*lower)(canvas, work->sheet + BattleFx_GlintCellOffsets[image], x, y,
+					BattleFx_GlintCellWidths[image], BattleFx_GlintCellHeights[image]);
+				Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+			}
+		}
+
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+		draw[0] = gBlitters[46];
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
+		draw[1] = *lower;
+		for (k = 0; k != 1; k++)
+		{
+			source = GetBattleObjectSlotFar(work->effect->actor)->object;
+			if (TwelveMode_Records[mode * 7 + 2] & 1)
+			{
+				for (i = 0; i != 64; i++)
+				{
+					struct EffectStep *step = &work->particles[i];
+
+					if (step->variant >= 0 && step->variant <= 23)
+					{
+						s32 picture = step->variant / 4;
+
+						draw[i & 1](canvas, work->sheet + picture * 1152 + wisp_sheet,
+							HI(step->x) - 12, HI(step->y) - 24, 24, 48);
+						EffectStep_AdvanceWithGravity2D(step, 62, -0x400);
+						step->variant++;
+					}
+				}
+			}
+			if (TwelveMode_Records[mode * 7 + 2] & 2)
+			{
+				s32 size = 3;
+
+				if (mode == 11)
+					size = 8;
+				if (frame == 55)
+					ObjectGroup_UpdateMembers(work->effect->actor, 7, -1, -1, 0);
+				if (frame == 90)
+					ObjectGroup_UpdateMembers(work->effect->actor, 0, -1, -1, 0);
+				for (i = 0; i != 64; i++)
+				{
+					struct EffectStep *step = &gMotes[i];
+
+					if (step->variant >= 0)
+					{
+						EffectPosition_ApplyBaseAndYOffset((s32 *)step, &position);
+						position.x >>= 1;
+						draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+							position.x - ((u32)size >> 1), position.y - size, size, size * 2);
+						EffectStep_AdvanceWithGravity3D(step, 60, 0);
+						step->variant++;
+						if (step->variant > 10)
+						{
+							s32 dx = (source->x - step->x) >> 8;
+							s32 dy = (source->y - step->y + 0x140000) >> 8;
+							s32 dz = (source->z - step->z) >> 8;
+
+							step->velocity_x += dx;
+							step->velocity_y += dy;
+							step->velocity_z += dz;
+							if ((dx >= -0xfff && dx <= 0xfff) && (dz >= -0xfff && dz <= 0xfff))
+								step->variant = -1;
+						}
+					}
+				}
+			}
+			if (TwelveMode_Records[mode * 7 + 2] & 8)
+			{
+				for (i = 0; i != 128; i++)
+				{
+					struct EffectStep *step = &gSparks[i];
+					s32				   size = step->variant;
+
+					if (size >= 0)
+					{
+						EffectPosition_ApplyBaseAndYOffset((s32 *)step, &position);
+						position.x >>= 1;
+						EffectStep_AdvanceWithGravity3D(step, 60, 0);
+						size >>= 3;
+						size++;
+						draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+							position.x - size / 2, position.y - size, size, size * 2);
+						step->variant--;
+					}
+				}
+			}
+		}
+		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+		if (TwelveMode_Records[mode * 7 + 2] & 16)
+			Camera_ApplyShake(8, 8);
+		else
+			Camera_ApplyShake(2, 4);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// flipping_burst.c
+// バトル演出：逆さに跳ぶふたりと閃光、剣の雨、柱とらせんの粒、割れて飛ぶ絵
+//--------------------------------------------------------------------------
+
+#undef Camera_ApplyShake
+
+void Audio_PlayCue(s32 cue);
+
+void ObjectDispatch_InitFromTable6Far(struct MotionObject *object);
+void ObjectDispatch_ApplyArgumentToChildrenFar(struct MotionObject *object, s32 mode);
+
+//--------------------------------------------------------------------------
+// 使い手を最初の対象との間の 9/10 の位置に置き、ふたりで跳んで逆さになる
+// 54 フレーム目に対象の色を変えてふたりを跳ね返らせ、閃光を輪に広げながら昇らせる
+//--------------------------------------------------------------------------
+void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
+{
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	/* FAKEMATCH: needed to match: an unused second blitter word fills the frame's 8-byte draw slot */
+	DrawRectangleFn		  draw[2];
+	struct BtlObj		 *first;
+	struct BtlObj		 *second;
+	struct MotionObject	 *user;
+	struct MotionObject	 *target;
+	s32					  x;
+	s32					  z;
+	s32					  user_height;
+	s32					  target_height;
+	s32					  point[3];
+	struct EffectPosition screen;
+	s32					  frame;
+	s32					  percent;
+
+	heap_cache = (void **)gBattleFxWork;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1, 1);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+	work->transfer_mode = 2;
+	work->transfer_value = 75; // 転送のたびに 3/4 へ減らして残像にする
+	draw[0] = heap_cache[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	first = GetBattleObjectSlotFar(work->effect->actor);
+	second = GetBattleObjectSlotFar(work->effect->actors[0]);
+	user = first->object;
+	target = second->object;
+	percent = 90;
+	x = user->x + percent * (target->x - user->x) / 100;
+	z = user->z + percent * (target->z - user->z) / 100;
+	user_height = Battle_GetObjectTableValueFar(work->effect->actor);
+	target_height = Battle_GetObjectTableValueFar(work->effect->actors[0]);
+	ObjectDispatch_InitFromTable6Far(user);
+	Object_SetMoveTargetFar(user, x, 0, z);
+	ObjectDispatch_ApplyArgumentToChildrenFar(user, 2);
+	user->snap_to_target = 1;
+	user->auto_face_motion = 1;
+	user->acceleration = 2 << 16;
+	user->speed_limit = 8 << 16;
+	WaitFrames(20);
+	for (frame = 0; frame != 96; frame++)
+	{
+		struct BattleCamera *camera;
+
+		camera = gCameraWork;
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+
+		// 0：ふたりで跳ぶ、11：逆さにして体の高さだけ持ち上げる
+		if (frame == 0)
+		{
+			target->velocity_y = 15 << 16;
+			target->vertical_motion_strength = 0x91eb;
+			user->velocity_y = 15 << 16;
+			user->vertical_motion_strength = 0x91eb;
+		}
+		if (frame == 11)
+		{
+			target->scale_y = -target->scale_y;
+			user->scale_y = -user->scale_y;
+			user->y += user_height;
+			target->y += target_height;
+		}
+
+		// 54：対象の色を変え、ふたりを跳ね返らせる
+		if (frame == 54)
+		{
+			ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 10);
+			target->velocity_y = 8 << 16;
+			target->vertical_motion_strength = 0xab85;
+			user->velocity_y = 5 << 16;
+			user->vertical_motion_strength = 0x7851;
+			user->acceleration = 1 << 16;
+			user->speed_limit = 2 << 16;
+			user->auto_face_motion = 0;
+			ObjectDispatch_InitFromTable6Far(user);
+			Object_SetMoveTargetFar(user, 0, 0, user->z);
+		}
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+		point[0] = user->x;
+		point[1] = user->y;
+		point[2] = user->z;
+		EffectPosition_ApplyBaseAndYOffset(point, &screen);
+		screen.x >>= 1;
+
+		// 54〜55：大きな閃光、56〜67：16 個の閃光が半径を広げながら昇る
+		if (frame == 54 || frame == 55)
+			draw[0](canvas, work, screen.x - 16, screen.y - 16, 32, 64);
+		if (frame >= 56 && frame <= 67)
+		{
+			s32 i;
+
+			for (i = 0; i != 16; i++)
+			{
+				s32 angle;
+				s32 rx;
+				s32 ry;
+
+				angle = i << 12; // 22.5° ずつ
+				rx = screen.x + ((Trig_Sin(angle) * (frame - 46)) >> 16);
+				ry = ((Trig_Cos(angle) * (frame - 46)) >> 16) - frame + 100;
+				draw[0](canvas, work->sheet + (((frame - 56) / 2) << 11), rx - 16, ry, 32, 64);
+			}
+		}
+
+		// 64：向きと高さを元に戻す
+		if (frame == 64)
+		{
+			target->scale_y = -target->scale_y;
+			user->scale_y = -user->scale_y;
+			user->y -= user_height;
+			target->y -= target_height;
+			ObjectDispatch_ApplyArgumentToChildrenFar(user, 0);
+		}
+		if (frame == 54)
+			BattleEventRuntime_BeginPhaseFar(134);
+		if (frame == 0)
+		{
+			AudioCommand_PlayFar(136);
+			work->shake_frames = 6;
+		}
+		if (frame == 53)
+			work->shake_frames = 6;
+		Camera_ApplyShake(16, 16);
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// 剣の雨：16 本の剣が 4 フレームおきに降り、中央 (x = 64) へ寄りながら落ちて刺さる
+// 刺さった剣は下 4 ドットを描かない。画面は 16 フレームで現れ、104 から消える
+//--------------------------------------------------------------------------
+void BattleFx_RunBladeRain(struct BattleEffectArgument *effect)
+{
+	struct EffectPosition	 pos;
+	DrawRectangle			 draw[2];
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	DrawRectangle			*blit;
+	struct EffectStep		*blade;
+	s32						 frame;
+	s32						 i;
+
+	heap_cache = (void **)gBattleFxWork;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(1);
+	REG_BG2PA = 0x100; // 等倍
+	REG_BLDALPHA = 0x1000;
+
+	// [0] そのまま、[1] 左右反転 (どちらも 0 以外の画素だけ描く)
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_NURI);
+	draw[0] = (DrawRectangle)heap_cache[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+		GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_NURI);
+	draw[1] = (DrawRectangle)heap_cache[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+	blit = draw;
+	Resource_LoadAndDecompress((s32)&ResourceId_SwordSlashSheet, work->sheet, 1, 1);
+	work->transfer_mode = 1; // 転送のたびにキャンバスを 0 で消す
+	work->transfer_value = 0;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &pos);
+	REG_BG2X = (64 - pos.x) << 8;
+
+	// 剣：x 16〜111、中央から遠いほど横の速さ (2 ドット単位) を大きくする
+	for (i = 0; i != 64; i++)
+	{
+		s32 column;
+
+		blade = &work->particles[i];
+		column = Random16() % 96 + 16;
+		blade->x = column;
+		blade->y = (24 - i / 4) << 16;
+		if (column <= 43)
+			blade->velocity_x = 3;
+		else if (column <= 51)
+			blade->velocity_x = 2;
+		else if (column <= 59)
+			blade->velocity_x = 1;
+		else if (column <= 67)
+			blade->velocity_x = 0;
+		else if (column <= 75)
+			blade->velocity_x = -1;
+		else if (column <= 83)
+			blade->velocity_x = -2;
+		else
+			blade->velocity_x = -3;
+		blade->velocity_x <<= 17;
+		blade->velocity_y = 8 << 16;
+		blade->x <<= 16;
+	}
+	AudioCommand_PlayFar(212);
+	for (frame = 0; frame != 120; frame++)
+	{
+		if (frame <= 16)
+		{
+			REG_BLDALPHA = frame | 0x1000;
+			if (frame == 16)
+				REG_BLDCNT = 0;
+		}
+		if (frame > 103)
+		{
+			REG_BLDALPHA = (120 - frame) | 0x1000;
+			if (frame == 104)
+				REG_BLDCNT = 0x3f44;
+		}
+
+		// 絵は横の速さで選び、左へ進む剣は左右反転して描く
+		for (i = 15; i != -1; i--)
+		{
+			s32			 drift;
+			s32			 speed;
+			s32			 cell;
+
+			blade = &work->particles[i];
+			drift = blade->velocity_x;
+			speed = drift;
+			if (drift < 0)
+				speed = -drift;
+			cell = speed >> 17;
+			if (frame < i * 4 + 25)
+			{
+				u32 wide;
+				u32 high;
+
+				blit[(u32)drift >> 31](canvas, work->sheet + BladeRain_CellSourceOffsets[cell],
+					(blade->x >> 16) - ((wide = BladeRain_CellWidths[cell]) >> 1),
+					(blade->y >> 16) - ((high = BladeRain_CellHeights[cell]) >> 1), wide, high);
+				if (frame >= i * 4 + 16)
+				{
+					blade->x += blade->velocity_x;
+					blade->y += blade->velocity_y;
+				}
+			}
+			else
+			{
+				u32 wide;
+				u32 high;
+
+				blit[(u32)drift >> 31](canvas, work->sheet + BladeRain_CellSourceOffsets[cell],
+					(blade->x >> 16) - ((wide = BladeRain_CellWidths[cell]) >> 1),
+					(blade->y >> 16) - ((high = BladeRain_CellHeights[cell]) >> 1), wide,
+					high - 4);
+			}
+		}
+
+		// 24〜84 フレームの 4 フレームごとに対象のパレットを 2 フレーム 7 番に替えて
+		// アニメ 5 にし、画面を揺らし、8 フレームごとに音を鳴らす
+		if (frame >= 23 && frame <= 87 && (frame & 3) == 0)
+		{
+			ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 2);
+			work->shake_frames = 1;
+			if ((frame & 7) == 0)
+				AudioCommand_PlayFar(133);
+		}
+		Camera_ApplyShake(8, 8);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+#define FLECKS ((struct EffectStep *)Ram_MapCellBuffer) // らせんの粒 (128 個)
+
+struct BlitterPair_3
+{
+	DrawRectangle kasan;  // 加算合成
+	DrawRectangle hikaku; // 比較合成
+};
+
+//--------------------------------------------------------------------------
+// 使い手の足元に左右対称の柱 (IceTile の絵) を立て、周りにらせんを描いて昇る粒を出す
+// effect->kind	   : パレット (0 YellowPaletteA、1 IceTile、2 RedPaletteA、他 VioletPaletteA)
+// effect->variant : 1 足して 1〜4 に収め、粒の大きさにする
+//--------------------------------------------------------------------------
+void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
+{
+	struct EffectPosition	 ground;
+	struct EffectPosition	 pos;
+	s32						 point[3];
+	struct BattleEffectWork *work;
+	void					*canvas;
+	struct BlitterPair_3		 draw;
+	u8						*sheet;
+	struct BattleCamera		*camera;
+	s32						 frame;
+	void					*palette;
+	s32						 i;
+
+	work =
+		(struct BattleEffectWork *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
+	canvas = (void *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
+	sheet = (u8 *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x60e);
+	camera = gCameraWork;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	work->fade_frames = 24;
+	work->fade_step = 0;
+	REG_BLDALPHA = 0x100c;
+	REG_BG2PA = 0x100; // 等倍
+	Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work->sheet, 1, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
+	switch (work->effect->kind)
+	{
+	case 0:
+		palette = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteA);
+		break;
+	case 1:
+		palette = Resource_GetTableEntry((s32)&ResourceId_IceTileSheet);
+		break;
+	case 2:
+		palette = Resource_GetTableEntry((s32)&ResourceId_RedPaletteA);
+		break;
+	default:
+		palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteA);
+		break;
+	}
+	{
+		/* FAKEMATCH: needed to match: called through a pointer, the routine's address loads before the palette's */
+		Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+	}
+
+	// 粒：x は角度、z は半径 (1/16 ドット単位)、i フレーム待ってから昇る
+	for (i = 0; i != 128; i++)
+	{
+		FLECKS[i].y = 0;
+		FLECKS[i].x = Random16() & 0xffff;
+		FLECKS[i].z = (Random16() & 0x1ff) + i * 2;
+		FLECKS[i].variant = -i;
+	}
+	/* FAKEMATCH: the cancelling pointer updates retain work's allocation
+	 * priority without operand asm. Without them, work and the cell index
+	 * exchange r9/r11 and two spill slots swap (420 instructions, 50 rows).
+	 * The adjacent scheduling asm is unnecessary with these updates. */
+	work++;
+	work--;
+	work->transfer_mode = 2;
+	work->transfer_value = 75; // 転送のたびに 3/4 へ減らして残像にする
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_KASAN);
+	draw.kasan = gWorkSlot[HEAP_SLOT_BLITTER];
+	work->effect->variant++;
+	if (work->effect->variant <= 0)
+		work->effect->variant = 1;
+	if (work->effect->variant > 4)
+		work->effect->variant = 4;
+	AudioCommand_PlayFar(212);
+
+	for (frame = 0; frame != 56; frame++)
+	{
+		EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actor, &ground);
+		REG_BG2X = (64 - ground.x) << 8;
+		if (frame > 49)
+			REG_BLDALPHA = (112 - frame * 2) | 0x1000;
+		if (frame == 16)
+			ObjectGroup_UpdateMembers(work->effect->actors[0], 7, -1, 0, 20);
+
+		// 柱：左半分 (x = 47) と左右反転した右半分 (x = 64) を比較合成で描く
+		// 柱の絵 (17×64) は 2 フレームごとに 4 枚、光 (24×43) は 4 フレームごとに 3 枚
+		if (frame <= 55)
+		{
+			s32 n;
+			u8 *glow;
+
+			i = frame / 2;
+			n = i % 4;
+			BattleEffect_LoadWork(
+				HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+			draw.hikaku = ((DrawRectangle *)Ram_WorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
+			draw.hikaku(canvas, work->sheet + n * 1088, 47, ground.y - 64, 17, 64);
+			n = frame / 4 % 3;
+			glow = work->sheet + n * 1032 + 0x1100;
+			draw.hikaku(canvas, glow, 40, ground.y - 36, 24, 43);
+			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+				GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+			draw.hikaku = ((DrawRectangle *)Ram_WorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
+			n = i % 4;
+			draw.hikaku(canvas, work->sheet + n * 1088, 64, ground.y - 64, 17, 64);
+			draw.hikaku(canvas, glow, 64, ground.y - 36, 24, 43);
+			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+		}
+		GetBattleObjectSlotFar(work->effect->actor);
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+
+		// 粒 (最初の 32 個)：1 フレームに 0x400 回り、5 ドット昇り、半径を 4 ドット広げる
+		for (i = 0; i != 32; i++)
+		{
+			struct EffectStep *fleck = &FLECKS[i];
+
+			if (fleck->variant >= 0)
+			{
+				s32 size;
+
+				point[0] = fleck->z * Trig_Sin(fleck->x) >> 4;
+				point[2] = -(fleck->z * Trig_Cos(fleck->x) >> 4);
+				point[1] = fleck->y;
+				fleck->x += 0x400;
+				fleck->y += 5 << 16;
+				fleck->z += 64;
+				EffectPosition_ApplyBaseAndYOffset(point, &pos);
+				pos.x /= 2;
+				size = (i & 1) + work->effect->variant;
+				draw.kasan(canvas, sheet + BattleFx6_FlareCells[size - 1], pos.x - size,
+					pos.y - size, size * 2, size * 2);
+			}
+			fleck->variant++;
+		}
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	BattleFx_EndCanvasLayer();
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
+	/* FAKEMATCH: cancelling frame updates preserve the allocation lifetimes
+	 * without the two trailing asm statements. Deleting both swaps the
+	 * ground and camera-position pointers at sp+8/sp+12 (420 instructions,
+	 * 18 differing rows); one dead increment leaves the same swap. */
+	frame ^= 1;
+	frame ^= 1;
+}
+
+// 割れて飛ぶ 33 片：始まりの位置、大きさ、絵の位置
+extern u8  BattlePieceStartX[];
+extern u8  BattlePieceStartY[];
+extern u8  BattlePieceWidth[];
+extern u8  BattlePieceHeight[];
+extern u16 BattlePieceOffset[];
+
+// 256×120 の 8bpp タイル並び (横 32 タイル) の点 (x, y) に色 2 を置く
+#define PLOT(x, y) \
+	(*(Ram_MapCellBuffer + ((x) & 7) + (x) / 8 * 64 + ((y) & 7) * 8 + (y) / 8 * 2048) = 2)
+
+//--------------------------------------------------------------------------
+// 中心 (96, 60) から灰色の円が 1 フレームに半径 32 ずつ広がり、
+// TileAnimationMask の絵を 33 片に割って飛ばしながら、パレット 6〜13 を
+// 白から戦闘背景の色へ戻す。51 フレームからは閃光 32 個が昇る
+//--------------------------------------------------------------------------
+void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect)
+{
+	/* FAKEMATCH: needed to match: never read: the native frame keeps 12 unused bytes at sp+44..55, exactly this struct */
+	struct EffectPosition		 position;
+	struct BattleEffectWork		*work;
+	void						*canvas;
+	s32							 frame;
+	struct
+	{
+		DrawRectangle nuri;
+		DrawRectangle hikaku;
+	} draw;
+	struct BtlWork				*battle;
+	struct BattleBackgroundView *view;
+	void					   **slots;
+	void					   **cache;
+	s32							 rmax;
+	struct EffectStep			*piece;
+	s32							 r;
+	s32							 i;
+	s32							 px;
+	s32							 j;
+	s32							 k;
+	s32							 d;
+	s32							 py;
+	s32							 x1;
+	s32							 size;
+	s32							 left;
+	s32							 left2;
+	s32							 y1;
+	s32							 x2;
+	s32							 y2;
+	u8							*start_y;
+	u8							*start_x;
+	s32							 cx;
+	s32							 cy;
+	s32							 cell_size;
+	u8							*cells;
+	u32							 cell_fill;
+
+	work = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
+	size = 0x4000;
+	canvas = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, size);
+	Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x302);
+	slots = gWorkSlot + HEAP_SLOT_BATTLE;
+	battle = slots[0];
+	view = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
+	work->effect = effect;
+
+	// BG2 を 128×128 のキャンバスにする (BattleFx_BeginCanvasLayer と同じ設定)
+	BattleFx_ClearActorTimers();
+	view->second_mode = 1;
+	gBgScroll[1].y = 32;
+	BattlePresentation_ConfigurePaletteFadeFar(1, battle->background, 0);
+	REG_BG2CNT = 0x784;
+	BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
+	view->second_mode = 0;
+	REG_BG2X = 0;
+	REG_BG2Y = 0xfffff000;
+	REG_BG2PA = 0x80;
+	REG_BG2PB = 0;
+	REG_BG2PC = 0;
+	REG_BG2PD = 0x100;
+	REG_WIN0H = 0xf0;
+	REG_WIN0V = 0x1088;
+	REG_WIN1H = 0xf0;
+	REG_WIN1V = 0x1088;
+	REG_WININ = 0x3537;
+	REG_WINOUT = 0x3f21;
+
+	i = 0;
+	for (k = 0; k != 16; k++)
+	{
+		for (j = 0; j != 8; j++, i += 2)
+		{
+			s16 entry;
+
+			entry = ((k * 16 + j * 2 + 1) << 8) | ((k * 8 + j) * 2);
+			*(volatile s16 *)(0x06003800 + i) = entry;
+		}
+	}
+
+	Iwram_ClearWords(canvas, size);
+	Iwram_ClearWords((void *)0x06004000, size);
+	IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
+	REG_BLDALPHA = 0x1010;
+	REG_BLDCNT = 0;
+	Resource_LoadAndDecompress((s32)&ResourceId_TileAnimationMask, work, 1, 1);
+	work->transfer_mode = 1; // 転送のたびにキャンバスを 0 で消す
+	work->transfer_value = 0;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_NURI);
+	cache = gWorkSlot;
+	draw.nuri = cache[HEAP_SLOT_BLITTER];
+	BattleEffect_LoadWork(
+		HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+	draw.hikaku = cache[HEAP_SLOT_BLITTER_ALTERNATE];
+
+	// 片：中心 (32, 60) から外へ、距離の 1/4 の速さで飛ぶ
+	/* FAKEMATCH: needed to match: the copy and fill operands set here, before the piece loop, so CSE does not share them and the pair reloads both as the native does */
+	cell_size = 0x7800;
+	cells = Ram_MapCellBuffer;
+	cell_fill = 0x01010101;
+	start_y = BattlePieceStartY;
+	start_x = BattlePieceStartX;
+	r = 0;
+	piece = work->particles;
+	for (i = 0; i != 33; i++)
+	{
+		s32 x, y, vx, vy;
+
+		x = *start_x++ << 16;
+		y = *start_y++ << 16;
+		piece->x = x;
+		piece->y = y;
+		vx = (x - 0x200000) >> 2;
+		vy = (y - 0x3c0000) >> 2;
+		piece->velocity_x = vx;
+		piece->velocity_y = vy;
+		piece++;
+	}
+
+	// VRAM 0x06008000 の絵を写してから色 1 で埋め、パレット 6〜13 を白にする
+	Iwram_CopyWords(cells, (void *)0x06008000, cell_size);
+	Iwram_FillWords(cells, cell_size, cell_fill);
+	view->busy = 1;
+	work->saved_bg1_x = gBgScroll[1].x;
+	work->saved_bg1_y = gBgScroll[1].y;
+	gBgScroll[1].x = 0;
+	IO_WRITE_QUEUE_PUSH(0x0400000a, 0x1f81, 0x20000);
+	Iwram_FillWords((void *)0x050000c0, 0x100, 0x7fff7fff);
+	AudioCommand_PlayFar(212);
+	ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 3, 0, 30);
+
+	for (frame = 0; frame != 128; frame++)
+	{
+		if (frame == 2)
+			AudioCommand_PlayFar(212);
+		if (frame == 3)
+			AudioCommand_PlayFar(212);
+		if (frame == 28)
+			ObjectGroup_UpdateMembers(work->effect->actors[0], -1, 3, -1, 0);
+		if (frame == 32)
+			AudioCommand_PlayFar(149);
+		/* FAKEMATCH: keep the frame-5 cue and background restore in separate CSE blocks; a combined block loads the saved-bg offset before reloading work. */
+		if (frame == 5)
+			AudioCommand_PlayFar(145);
+		if (frame == 5)
+		{
+			gBgScroll[1].x = work->saved_bg1_x;
+			BattleBackground_LoadFar(1, battle->background, -1);
+		}
+
+		// 8 フレームから、パレット 6〜13 の各色を 1 段ずつ戦闘背景の色へ近づける
+		if (frame > 7)
+		{
+			u16 *pal;
+
+			pal = (u16 *)0x050000c0;
+			for (i = 0; i != 128; i++)
+			{
+				s32 red = *pal & 0x1f;
+				s32 green = (*pal >> 5) & 0x1f;
+				s32 blue = (*pal >> 10) & 0x1f;
+				s32 goal_red = battle->palette[i] & 0x1f;
+				s32 goal_green = (battle->palette[i] >> 5) & 0x1f;
+				s32 goal_blue = (battle->palette[i] >> 10) & 0x1f;
+
+				if (red < goal_red)
+					red++;
+				else if (red > goal_red)
+					red--;
+				if (green < goal_green)
+					green++;
+				else if (green > goal_green)
+					green--;
+				if (blue < goal_blue)
+					blue++;
+				else if (blue > goal_blue)
+					blue--;
+				*pal++ = (blue << 10) | (green << 5) | red;
+			}
+		}
+
+		if (frame == 4)
+			Iwram_FillWords((void *)0x06008000, 0x7800, 0x02020202);
+
+		// 0〜3 フレーム：円を半径 32 ずつ広げ、色 2 の灰色を明るくしていく
+		if (frame <= 3)
+		{
+			s32 v;
+
+			v = frame * 4 + 8;
+			rmax = frame * 32;
+			BG_PLTT[2] = (v << 10) | (v << 5) | v;
+			cx = 96;
+			cy = 60;
+			for (; r != rmax; r++)
+			{
+				// 中点円の描き方で、8 分の 1 ずつ対称に点を置く
+				px = r;
+				py = 0;
+				d = r;
+				while (px >= py)
+				{
+					x2 = px + cx;
+					x1 = cx - px;
+					left = x1;
+					y1 = cy - py;
+					y2 = py + cy;
+					if (y1 < 0)
+						y1 = 0;
+					if (y2 > 119)
+						y2 = 119;
+					if (x1 < 0)
+						x1 = 0;
+					if (x2 > 255)
+						x2 = 255;
+					PLOT(x2, y2);
+					PLOT(x2, y1);
+					PLOT(x1, y2);
+					PLOT(x1, y1);
+					x1 = left + 1;
+					x2 = px + 97;
+					if (x1 < 0)
+						x1 = 0;
+					if (x2 > 255)
+						x2 = 255;
+					PLOT(x2, y2);
+					PLOT(x2, y1);
+					PLOT(x1, y2);
+					PLOT(x1, y1);
+
+					x2 = py + cx;
+					x1 = cx - py;
+					left2 = x1;
+					y2 = px + cy;
+					y1 = cy - px;
+					if (x1 < 0)
+						x1 = 0;
+					if (x2 > 255)
+						x2 = 255;
+					if (y1 < 0)
+						y1 = 0;
+					if (y2 > 119)
+						y2 = 119;
+					PLOT(x2, y2);
+					PLOT(x2, y1);
+					PLOT(x1, y2);
+					PLOT(x1, y1);
+					x1 = left2 + 1;
+					x2 = py + 97;
+					if (x1 < 0)
+						x1 = 0;
+					if (x2 > 255)
+						x2 = 255;
+					PLOT(x2, y2);
+					PLOT(x2, y1);
+					PLOT(x1, y2);
+					PLOT(x1, y1);
+
+					d -= py * 2 + 1;
+					if (d < 0)
+					{
+						d += px * 2 - 2;
+						px--;
+					}
+					py++;
+				}
+			}
+			Iwram_CopyWords((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
+		}
+
+		// 50 フレームまで片を描き、4 フレームから落とす
+		if (frame <= 50)
+		{
+			for (i = 0; i != 33; i++)
+			{
+				piece = &work->particles[i];
+				draw.nuri(canvas, (u8 *)work + BattlePieceOffset[i], HI(piece->x), HI(piece->y),
+					BattlePieceWidth[i], BattlePieceHeight[i]);
+				if (frame > 3)
+					EffectStep_AdvanceWithGravity2D(piece, 64, 0x4000);
+			}
+		}
+
+		// 8〜50 フレーム：色 1 を黒から白へ
+		if (frame >= 8 && frame <= 50)
+		{
+			s32 v;
+
+			v = frame - 8;
+			if (v > 31)
+				v = 31;
+			BG_PLTT[1] = (v << 10) | (v << 5) | v;
+		}
+
+		// 51 フレーム：閃光の絵と色を用意し、x 32〜63、y 80〜111 に 32 個を置く
+		if (frame == 51)
+		{
+			Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work, 1, 0);
+			for (i = 1; i != 64; i++)
+			{
+				s32 v;
+
+				v = i / 2;
+				if (v < 0)
+					v = 0;
+				BG_PLTT[i] = (v << 10) | ((v / 2) << 5) | v;
+			}
+			REG_BLDCNT = 0x3f44;
+			for (i = 0; i != 32; i++)
+			{
+				piece = &work->particles[i];
+				piece->x = ((Random16() & 31) + 32) << 16;
+				piece->y = ((Random16() & 31) + 80) << 16;
+				piece->velocity_x = ((Random16() & 0x1ff) - 0x100) << 12;
+				piece->velocity_y = 0;
+				piece->variant = 0;
+			}
+			work->transfer_mode = 2;
+			work->transfer_value = 50; // 転送のたびに半分へ減らして残像にする
+		}
+
+		// 閃光：i/4 フレームずつ遅れて出て、4 フレームごとに絵を進めながら昇る
+		if (frame > 52)
+		{
+			for (i = 0; i != 32; i++)
+			{
+				piece = &work->particles[i];
+				if (frame >= i / 4 + 52 && piece->variant <= 39)
+				{
+					s32 cell;
+
+					cell = piece->variant / 4;
+					if (cell > 5)
+						cell = 5;
+					draw.hikaku(canvas, (u8 *)work + (cell << 11), HI(piece->x) - 16, HI(piece->y) - 32,
+						32, 64);
+					EffectStep_AdvanceWithGravity2D(piece, 60, -0x1000);
+					piece->variant++;
+				}
+			}
+		}
+
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	// 背景と表示を元に戻す
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	ObjectGroup_UpdateMembers(work->effect->actors[0], -1, 1, -1, 0);
+	gBgScroll[1].x = work->saved_bg1_x;
+	gBgScroll[1].y = 32;
+	BattlePresentation_ConfigurePaletteFadeFar(2, battle->background, 0);
+	WaitFrames(1);
+	IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
+}
+
+#undef Camera_ApplyShake
+
+struct Streak
+{
+	s32 head;
+	s32 tail;
+	s32 unused_08;
+	s32 pitch;
+	s32 yaw;
+	s32 roll;
+	s32 unused_18;
+};
+
+struct StreakPoint
+{
+	s32 distance;
+	s32 y;
+	s32 z;
+};
+
+#define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
+
+struct BlitterPair_2
+{
+	DrawRectangle upper;
+	DrawRectangle lower;
+};
+
+void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
+{
+	struct EffectPosition	 ground;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	struct BlitterPair_2	 draw;
+	u8						*sheet;
+	void					*palette;
+	s32						 frame;
+	s32						 i;
+
+	work =
+		(struct BattleEffectWork *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
+	canvas = (void *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
+	sheet = (u8 *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x60e);
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	work->fade_frames = 24;
+	work->fade_step = 0;
+	REG_BLDALPHA = 0x100c;
+	REG_BG2PA = 0x100;
+	Resource_LoadAndDecompress((s32)&ResourceId_CyanSparkSheet, work->sheet, 1, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
+	switch (work->effect->kind)
+	{
+	case 0:
+		palette = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteA);
+		break;
+	case 1:
+		palette = Resource_GetTableEntry((s32)&ResourceId_IceTileSheet);
+		break;
+	case 2:
+		palette = Resource_GetTableEntry((s32)&ResourceId_RedPaletteA);
+		break;
+	default:
+		palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteA);
+		break;
+	}
+	{
+		Iwram_CopyWords((void *)0x05000000, palette, 128);
+	}
+
+	for (i = 0; i != 128; i++)
+	{
+		gFlecks[i].y = 0x800000;
+		gFlecks[i].x = Random16() & 0xffff;
+		gFlecks[i].z = (Random16() & 0x1ff) + 0x400;
+		gFlecks[i].variant = -i;
+	}
+	for (i = 0; i != 64; i++)
+	{
+		work->particles[i].x = Random16() & 0xffff;
+		work->particles[i].y = (Random16() & 31) + 16;
+		work->particles[i].variant = (i & 15) + 16;
+	}
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 3);
+	draw.upper =
+		(BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+	AudioCommand_PlayFar(140);
+
+	for (frame = 0; frame != 56; frame++)
+	{
+		EffectPosition_ApplyStepAndYOffset(effect->actor, &ground);
+		REG_BG2X = (64 - ground.x) << 8;
+		if (frame > 49)
+			REG_BLDALPHA = (0x70 - frame * 2) | 0x1000;
+		if (frame == 26)
+		{
+			AudioCommand_PlayFar(212);
+			ObjectGroup_UpdateMembers(work->effect->actors[0], 7, -1, 0, 20);
+		}
+		if (frame >= 28 && frame <= 48)
+			draw.upper(
+				canvas, work->sheet + (frame - 28) / 3 * 2304 + 0x1400, 40, ground.y - 24, 48, 48);
+		if (frame >= 0 && frame <= 14)
+		{
+			s32			   picture = frame / 3 % 5;
+			DrawRectangle *slot = &((DrawRectangle *)Ram_WorkSlot)[47];
+
+			for (i = 0; i != 4; i++)
+			{
+				BattleEffect_LoadWork(
+					HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CornerSparks_DrawFlags[i] | 3, 2);
+				draw.lower = *slot;
+				draw.lower(canvas, work->sheet + (picture << 10), CornerSparks_X[i] + 32,
+					ground.y + CornerSparks_Y[i] - 32, 32, 32);
+				Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+			}
+		}
+		if (frame >= 0)
+		{
+			for (i = 0; i != 64; i++)
+			{
+				struct EffectStep *mote = &work->particles[i];
+
+				if (mote->variant >= 0 && mote->y > 0)
+				{
+					s32 size = (mote->variant >> 3) + 1;
+					s32 x = (mote->y * Trig_Sin(mote->x) >> 16) + 64;
+					s32 y = (mote->y * Trig_Cos(mote->x) >> 16) + ground.y;
+
+					if (size <= 0)
+						size = 1;
+					draw.upper(canvas, sheet + BattleFx6_FlareCells[size - 1], x - size, y - size,
+						size * 2, size * 2);
+					mote->y -= 2;
+					mote->variant--;
+				}
+			}
+		}
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	BattleFx_EndCanvasLayer();
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
+}
+
+void BattlePresentation_DrawStreaks(void)
+{
+	struct BattleEffectWork *work = *(void **)gBattleFxWork;
+	s32						 frame;
+	s32						 i;
+	struct Streak			*streak;
+	struct StreakPoint		 point;
+	struct EffectPosition	 head;
+	struct EffectPosition	 tail;
+
+	frame = (work->frame)++;
+	if (frame == 0)
+	{
+		for (i = 0; i != 256; i++)
+		{
+			struct Streak *seed = &((struct Streak *)Ram_MapCellBuffer)[i];
+			s32			   r = Random16() & 15;
+
+			seed->head = r + 48;
+			seed->tail = r + 40;
+			seed->pitch = Random16() & 0xffff;
+			seed->yaw = Random16() & 0xffff;
+			seed->roll = Random16() & 0xffff;
+		}
+	}
+	point.y = 0;
+	point.z = 0;
+	i = 0;
+	for (; i != 64; i++)
+	{
+		streak = &((struct Streak *)Ram_MapCellBuffer)[i];
+		if (frame > i / 4 && streak->head > 0)
+		{
+			s32 fade;
+
+			Render_ResetTransformState();
+			SceneTransform_ApplyRoll(streak->roll);
+			SceneTransform_ApplyPitch(streak->pitch);
+			SceneTransform_ApplyYaw(streak->yaw);
+			point.distance = streak->head;
+			EffectPosition_ApplyBaseAndYOffset((s32 *)&point, &head);
+			head.x += 64;
+			head.y += 80;
+			point.distance = streak->tail;
+			EffectPosition_ApplyBaseAndYOffset((s32 *)&point, &tail);
+			tail.x += 64;
+			tail.y += 80;
+			streak->tail -= 4;
+			streak->head -= 4;
+			if (streak->tail < 0)
+				streak->tail = 0;
+			fade = -streak->tail / 2;
+			BattleFx_DrawClippedCanvasLine(tail.x - 1, tail.y, head.x - 1, head.y, fade + 48);
+			BattleFx_DrawClippedCanvasLine(tail.x, tail.y - 1, head.x, head.y - 1, fade + 48);
+			BattleFx_DrawClippedCanvasLine(tail.x, tail.y, head.x, head.y, fade + 56);
+		}
+	}
+	work->transfer_pending = 1;
+}
+
+void BattlePresentation_PrepareScene(s32 kind)
+{
+	struct BattleEffectWork *work;
+	void					*palette;
+	s32						 id;
+
+	work = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
+	Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
+	BattleFx_BeginCanvasLayer(0);
+	work->fade_frames = 24;
+	REG_BG2PA = 0x100;
+	REG_BLDALPHA = 0x1010;
+	switch (kind)
+	{
+	case 0:
+		id = (s32)&ResourceId_YellowPaletteB;
+		break;
+	case 1:
+		id = (s32)&ResourceId_CrystalSheet;
+		break;
+	case 2:
+		id = (s32)&ResourceId_EmberStreakSheet;
+		break;
+	case 3:
+		id = (s32)&ResourceId_VioletPaletteD;
+		break;
+	case 4:
+	default:
+		id = (s32)&ResourceId_DustPuffSheet;
+		break;
+	}
+	palette = Resource_GetTableEntry(id);
+	Iwram_CopyWords((void *)0x05000000, palette, 128);
+	work->frame = 0;
+	work->transfer_mode = 3;
+	work->transfer_value = 0x06060606;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_DrawStreaks, 0xC80);
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+}
+
+void BattleFx_ScheduleCallbacksAndReleaseBlocks(void)
+{
+	Scheduler_RemoveCallback(BattlePresentation_DrawStreaks);
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	{
+		Iwram_ClearWords((void *)0x06004000, 0x4000);
+	}
+	Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
+}
+
+void BattleFx_RunTwoResourceMode0(struct BattleEffectArgument *efx)
+{
+	BattleFx_RunTwoResource(efx, 0);
+}
+
+void BattleFx_RunTwoResourceMode1(struct BattleEffectArgument *efx)
+{
+	BattleFx_RunTwoResource(efx, 1);
+}
+
+void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
+{
+	struct BattleEffectWork *work;
+	void					*canvas;
+	struct MotionObject		*object;
+	struct EffectPosition	 position;
+	/* FAKEMATCH: needed to match: only draw[0] is used: the second word fills four bytes of the frame */
+	DrawRectangle draw[2];
+	s32			  frames;
+	s32			  frame;
+	s32			  cell;
+	void		**heap;
+	void		**p;
+
+	heap = (void **)gBattleFxWork;
+	p = heap;
+	work = *p++;
+	canvas = *p;
+	work->effect = efx;
+	BattleFx_BeginCanvasLayer(0);
+	REG_BG2PA = 0x100;
+	if (work->effect->side == 1)
+	{
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 1);
+		draw[0] = (DrawRectangle)heap[7];
+	}
+	else
+	{
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 1);
+		draw[0] = (DrawRectangle)heap[7];
+	}
+	Resource_LoadAndDecompress((s32)&ResourceId_MagentaSwirlSheet, work->sheet, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_MagentaTailSheet, Ram_MapCellBuffer, 1, 0);
+	if (mode == 0)
+	{
+		void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
+		/* FAKEMATCH: needed to match: the copier address is set before the costly 0x05000000 operand, as the reference loads it */
+		Iwram_CopyWords((void *)0x05000000, palette, 128);
+	}
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	object = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+	EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &position);
+	if (work->effect->side == 0)
+		REG_BG2X = (16 - position.x) << 8;
+	else
+		REG_BG2X = (112 - position.x) << 8;
+	frames = 74;
+	if (mode != 1)
+		frames = 48;
+	for (frame = 0; frame != frames; frame++)
+	{
+		cell = frame / 4;
+		if (cell <= 5)
+		{
+			if (cell <= 3)
+				draw[0](canvas, work->sheet + TwoResource_CellSourceOffsets[cell],
+					TwoResource_CellX[cell + work->effect->side * 6],
+					TwoResource_CellBiasY[cell] + 32, TwoResource_CellWidths[cell],
+					TwoResource_CellHeights[cell]);
+			else
+				draw[0](canvas, Ram_MapCellBuffer + TwoResource_CellSourceOffsets[cell],
+					TwoResource_CellX[cell + work->effect->side * 6],
+					TwoResource_CellBiasY[cell] + 32, TwoResource_CellWidths[cell],
+					TwoResource_CellHeights[cell]);
+		}
+		if (frame == 8)
+		{
+			if (mode == 0)
+			{
+				BattleEventRuntime_BeginPhaseFar(0x85);
+				BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 1);
+			}
+			else
+			{
+				AudioCommand_PlayFar(0x86);
+				ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 4);
+			}
+			work->shake_frames = 8;
+		}
+		if (mode == 1)
+		{
+			if (frame == 13)
+			{
+				object->velocity_y = 0xc0000;
+				object->vertical_motion_strength = 0x7851;
+				object->vertical_motion_phase = 0x4000;
+			}
+			if (frame == 65)
+			{
+				work->shake_frames = 4;
+				BattleEventRuntime_BeginPhaseFar(0x86);
+			}
+		}
+		Camera_ApplyShake(8, 8);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+#define ColorBuffer_BackupAndHalve ((void (*)(void *, void *, s32))ColorBuffer_BackupAndHalve)
+#define ColorBuffer_BackupAndScaleThreeQuarters \
+	((void (*)(void *, void *, s32))ColorBuffer_BackupAndScaleThreeQuarters)
+#define ColorBuffer_BackupAndDarken \
+	((void (*)(void *, s32, void *, s32))ColorBuffer_BackupAndDarken)
+#define ColorBuffer_BackupAndBrighten \
+	((void (*)(void *, s32, void *, s32))ColorBuffer_BackupAndBrighten)
+
+void AudioCommand_PlayFar(s32 cue);
+
+void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
+{
+	struct EffectPosition	 first;
+	struct EffectPosition	 last;
+	void					*canvas;
+	struct BattleEffectWork *work;
+	s32						 size;
+	s32						 step;
+
+	/* FAKEMATCH: the frame counter is pinned to r9, as the reference keeps it. 2026-10-11: as a plain local its priority (20 refs/232 insns) ties size and outranks step (13/240), so it takes sl and step r9 (differ 30, one register swap); the reference needs step ranked above the counter, which no plain shape gives (for/while/u32, declaration order, a bound variable, early init, argument use, 19k permuter candidates). */
+	register s32 frame __asm__("r9");
+	s32			 i;
+
+	/* FAKEMATCH: needed to match: size and step first hold the slot table and blend register addresses, sharing their registers */
+	size = (s32)&Ram_WorkSlot[40];
+	canvas = *(void **)size;
+	work = *(struct BattleEffectWork **)(size - 4);
+	work->effect = efx;
+	BattleFx_BeginCanvasLayer(2);
+	step = 0x04000052;
+	REG_BG2PA = 0x100;
+	*(u16 *)step = 0x1000;
+	EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &first);
+	EffectPosition_ApplyStepAndYOffset(work->effect->actors[work->effect->count - 1], &last);
+	first.x += (last.x - first.x) / 2;
+	REG_BG2X = (64 - first.x) << 8;
+	Resource_LoadAndDecompress((s32)&ResourceId_SpiderWebSheet, work->sheet, 1, 1);
+	work->transfer_mode = 1;
+	work->transfer_value = 0;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	AudioCommand_PlayFar(143);
+	frame = 0;
+	step = 1;
+	size = 32;
+	do
+	{
+		if (frame <= 8)
+			REG_BLDALPHA = (frame << 1) | 0x1000;
+		if (frame > 53)
+			REG_BLDALPHA = (0x7c - (frame << 1)) | 0x1000;
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, step);
+		((DrawRectangle)Ram_WorkSlot[46])(canvas, work, 33, 41, size, size);
+		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, step);
+		((DrawRectangle)Ram_WorkSlot[46])(canvas, work, 64, 41, size, size);
+		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 11, step);
+		((DrawRectangle)Ram_WorkSlot[46])(canvas, work, 33, 72, size, size);
+		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 15, step);
+		((DrawRectangle)Ram_WorkSlot[46])(canvas, work, 64, 72, size, size);
+		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+		if (frame == 32)
+			BattleEventRuntime_BeginPhaseFar(143);
+		for (i = 0; i != work->effect->count; i++)
+		{
+			if (frame == 10)
+				ObjectGroup_UpdateMembers(work->effect->actors[i], 7, -1, i, 8);
+		}
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = step;
+		WaitFrames(1);
+		frame++;
+	} while (frame != 63);
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	BattleFx_EndCanvasLayer();
+}
+
+void BattleEffect_WipeCanvas(s32 mode, s32 value)
+{
+	struct BattleEffectWork *work;
+	u8						*canvas;
+	u8						 delay[128];
+	s32						 x;
+	s32						 y;
+	s32						 pos;
+
+	canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+	work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+	for (x = 0; x != 128; x++)
+		delay[x] = Random16() & 0x3f;
+
+	if (mode == 1)
+	{
+		s32 front;
+		s32 speed;
+
+		front = 0;
+		speed = 1;
+		x = 0;
+		do
+		{
+			front += speed;
+			speed++;
+			for (; x != front; x++)
+			{
+				for (y = 0; y != 128; y++)
+				{
+					pos = x - delay[y];
+					if (pos >= 0)
+						if (pos <= 127)
+							canvas[(((y / 8) * 16 + pos / 8) * 8 + (y & 7)) * 8 + (pos & 7)] =
+								1 - value;
+				}
+			}
+			work->transfer_pending = 1;
+			WaitFrames(1);
+		} while (front <= 256);
+	}
+	else
+	{
+		s32 front;
+		s32 speed;
+
+		front = 0;
+		speed = 1;
+		y = 0;
+		do
+		{
+			front += speed / 2;
+			speed += 4;
+			for (; y != front; y++)
+			{
+				for (x = 0; x != 128; x++)
+				{
+					pos = y - delay[x];
+					if (pos >= 0)
+						if (pos <= 127)
+							canvas[(((pos / 8) * 16 + x / 8) * 8 + (pos & 7)) * 8 + (x & 7)] =
+								1 - value;
+				}
+			}
+			work->transfer_pending = 1;
+			WaitFrames(1);
+		} while (front <= 191);
+	}
+}
+
+void BattlePresentation_ProcessPendingGraphicsTransfer(void)
+{
+	void				   **heap_cache = (void **)gBattleFxWork;
+	struct BattleEffectWork *work = heap_cache[0];
+	void					*source;
+	s32						*counter;
+	s32						 next_counter;
+
+	if (work->transfer_pending == 1)
+	{
+		source = heap_cache[1];
+		switch (work->transfer_mode)
+		{
+		case 0:
+			Iwram_CopyWords((void *)0x06004000, source, 0x4000);
+			break;
+		case 1:
+			Iwram_CopyWords((void *)0x06004000, source, 0x4000);
+			Iwram_FillWords(source, 0x4000, work->transfer_value);
+			break;
+		case 2:
+			if (work->transfer_value == 50)
+			{
+				ColorBuffer_BackupAndHalve(source, (void *)0x06004000, 0x4000);
+			}
+			else
+			{
+				ColorBuffer_BackupAndScaleThreeQuarters(source, (void *)0x06004000, 0x4000);
+			}
+			break;
+		case 3:
+			ColorBuffer_BackupAndDarken(source, work->transfer_value, (void *)0x06004000, 0x4000);
+			break;
+		case 4:
+			ColorBuffer_BackupAndBrighten(source, work->transfer_value, (void *)0x06004000, 0x4000);
+			break;
+		}
+		work->transfer_pending = 0;
+		counter = &work->frames_since_transfer;
+		next_counter = 1;
+	}
+	else
+	{
+		counter = &work->frames_since_transfer;
+		next_counter = *counter + 1;
+	}
+	*counter = next_counter;
+}
+
+void BattleFx_FlushPendingGraphicsTransfer(void)
+{
+	void				   **heap_cache;
+	struct BattleEffectWork *work;
+	void					*source;
+	s32						 transfer_mode;
+
+	heap_cache = (void **)gBattleFxWork;
+	work = heap_cache[0];
+	source = Ram_MapCellBuffer;
+	if (work->transfer_pending != 1)
+		return;
+
+	transfer_mode = work->transfer_mode;
+	switch (transfer_mode)
+	{
+	case 0:
+		Iwram_CopyWords((void *)0x06008000, source, 0x7800);
+		break;
+	case 1:
+		Iwram_CopyWords((void *)0x06008000, source, 0x7800);
+		Iwram_FillWords(source, 0x7800, work->transfer_value);
+		break;
+	case 2:
+		if (work->transfer_value == 50)
+		{
+			ColorBuffer_BackupAndHalve(source, (void *)0x06008000, 0x7800);
+		}
+		else
+		{
+			ColorBuffer_BackupAndScaleThreeQuarters(source, (void *)0x06008000, 0x7800);
+		}
+		break;
+	case 3:
+		ColorBuffer_BackupAndDarken(source, work->transfer_value, (void *)0x06008000, 0x7800);
+		break;
+	}
+
+	work->transfer_pending = 0;
+}
+
+#define gBattleFxWork (*(struct BattleEffectWork **)&gBattleFxWork)
+
+#define FADE_STEP 1092
+
+void Graphics_ApplyWindowBlendRegisters(void)
+{
+	struct BattleEffectWork *work = gBattleFxWork;
+
+	REG_WIN0H = work->win0h;
+	REG_WIN0V = work->win0v;
+	REG_WIN1H = work->win1h;
+	REG_WIN1V = work->win1v;
+	REG_WININ = work->winin;
+	REG_WINOUT = work->winout;
+	REG_DISPCNT = work->dispcnt;
+	REG_BLDCNT = work->bldcnt;
+	REG_BLDALPHA = work->bldalpha;
+}
+
+void Display_ApplyBg2Reference(void)
+{
+	struct BattleEffectWork *work = gBattleFxWork;
+
+	REG_BG2X = work->bg2x;
+	REG_BG2Y = work->bg2y;
+}
+
+void Palette_StepFadeTransfer(void)
+{
+	struct BtlWork			*battle = WORK_SLOT(HEAP_SLOT_BATTLE);
+	struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+
+	if (work->fade_frames > 0)
+	{
+		s32 step = ++work->fade_step;
+
+		Graphics_ScaleRgb555ClampedFar(
+			battle->palette, (void *)&BG_PLTT_COLOR(6, 0), 0x10000 - step * FADE_STEP, 128);
+		work->fade_frames--;
+	}
+}
+
+void BattleFx_ClearActorTimers(void)
+{
+	Iwram_ClearWords(gBattleFxWork->actor_timers, sizeof(gBattleFxWork->actor_timers));
+}
+
+void ObjectGroup_TickMemberTimers(void)
+{
+	struct BattleEffectWork *work;
+	s32						 i;
+
+	work = gBattleFxWork;
+	i = 0;
+	do
+	{
+		if (work->actor_timers[i] != 0)
+		{
+			if ((work->actor_timers[i] = work->actor_timers[i] - 1) == 0)
+			{
+				ObjectGroup_UpdateMembers(work->effect->actors[i], 0, -1, -1, 0);
+			}
+		}
+		i += 1;
+	} while (i != 8);
+}
+
+//--------------------------------------------------------------------------
+// canvas.c
+// バトル演出：BG2 のキャンバス面を開く・閉じる
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+// キャンバスは 128x128 の 8bpp（0x4000 バイト）で、BG2 のアフィン面に
+// キャラクタブロック 1 から並べる。横は 2 倍に伸ばして 256 ドットで見せる
+//
+// REG_DISPCNT（モード 1・OBJ 1 次元）
+//   0x7741 : BG0〜2・OBJ・WIN0/1
+//   0x7341 : BG0・BG1・OBJ・WIN0/1（BG2 を消す）
+//   0x7541 : BG0・BG2・OBJ・WIN0/1（BG1 を消す）
+//   0x1741 : BG0〜2・OBJ
+//   0x1341 : BG0・BG1・OBJ
+//   0x1541 : BG0・BG2・OBJ
+//--------------------------------------------------------------------------
+
+#define BattlePresentation_SetPaletteLevelFar \
+	((void (*)(u16, s32))BattlePresentation_SetPaletteLevelFar)
+
+typedef s32 (*ClearWordsFn)(void *destination, s32 size);
+
+void AudioCommand_PlayFar(s32);
+
+//--------------------------------------------------------------------------
+// キャンバス面を開く（背景パレットをフェードさせ、BG2 をキャンバスにする）
+// bg_control : REG_BG2CNT に足す値
+//--------------------------------------------------------------------------
+void BattleFx_BeginCanvasLayer(s32 bg_control)
+{
+	struct BattleEffectWork		*work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+	struct BtlWork				*btl = *(gWorkSlot + HEAP_SLOT_BATTLE);
+	void						*canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+	struct BattleBackgroundView *display = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
+	s32							 row;
+	s32							 col;
+	s32							 ofs;
+
+	BattleFx_ClearActorTimers();
+	display->second_mode = 1;
+	WaitFrames(1);
+	REG_BLDCNT = 0;
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7741, 0x20000);
+	gBgScroll[1].y = 32;
+	WaitFrames(1);
+
+	// 背景パレットのフェードを始める
+	BattlePresentation_ConfigurePaletteFadeFar(1, btl->background, 0);
+	work->fade_frames = 0;
+	work->fade_step = 0;
+	Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0xc80);
+
+	// BG2 を消している間に設定を変える
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
+	WaitFrames(1);
+	REG_BG2CNT = bg_control | 0x784;
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
+	BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
+	display->second_mode = 0;
+	WaitFrames(1);
+
+	REG_BLDCNT = 0x3f44;   // BG2 を半透明にして下の面と重ねる
+	REG_BLDALPHA = 0x100e; // 14:16
+	REG_BG2X = 0;
+	REG_BG2Y = -0x1000; // 16 ライン下げる
+	REG_BG2PA = 0x80;	// 横 2 倍
+	REG_BG2PB = 0;
+	REG_BG2PC = 0;
+	REG_BG2PD = 0x100;
+	REG_WIN0H = 0xf0;	// 0〜240
+	REG_WIN0V = 0x1088; // 16〜136
+	REG_WIN1H = 0xf0;
+	REG_WIN1V = 0x1088;
+	REG_WININ = 0x3537;
+	REG_WINOUT = 0x3f21;
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7741, 0x20000);
+
+	// スクリーン：16x16 キャラクタを順に並べる（1 キャラ 1 バイトなので 2 個ずつ書く）
+	ofs = 0;
+	for (row = 0; row != 16; row++)
+	{
+		for (col = 0; col != 8; col++, ofs += 2)
+		{
+			s32 chr;
+			s16 pair;
+
+			chr = row * 16 + col * 2;
+			pair = ((chr + 1) << 8) | chr;
+			*(volatile s16 *)((u8 *)BG_CANVAS_MAP + ofs) = pair;
+		}
+	}
+
+	Iwram_ClearWords(canvas, 0x4000);
+	Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+	work->shake_frames = 0;
+	work->saved_bg1_x = gBgScroll[1].x;
+	work->saved_bg1_y = gBgScroll[1].y;
+	WaitFrames(1);
+}
+
+//--------------------------------------------------------------------------
+// キャンバス面を開く（ウインドウなしで始め、fade_frames を 24 にする版）
+// bg_control : REG_BG2CNT に足す値
+//--------------------------------------------------------------------------
+void BattleFx_OpenCanvasLayer(s32 bg_control)
+{
+	struct BattleEffectWork		*work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+	struct BtlWork				*btl = *(gWorkSlot + HEAP_SLOT_BATTLE);
+	void						*canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+	struct BattleBackgroundView *display = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
+	s32							 row;
+	s32							 col;
+	s32							 ofs;
+
+	BattleFx_ClearActorTimers();
+	display->second_mode = 1;
+	WaitFrames(1);
+	REG_BLDCNT = 0;
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1741, 0x20000);
+	gBgScroll[1].y = 32;
+	WaitFrames(1);
+	BattlePresentation_ConfigurePaletteFadeFar(1, btl->background, 128);
+	work->fade_frames = 24;
+	work->fade_step = 0;
+	Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0xc80);
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1341, 0x20000);
+	WaitFrames(1);
+	REG_BG2CNT = bg_control | 0x784;
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1341, 0x20000);
+	BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
+	display->second_mode = 0;
+	WaitFrames(1);
+
+	REG_BLDCNT = 0x3f44;
+	REG_BLDALPHA = 0x100e;
+	REG_BG2X = 0;
+	REG_BG2Y = -0x1000;
+	REG_BG2PA = 0x80;
+	REG_BG2PB = 0;
+	REG_BG2PC = 0;
+	REG_BG2PD = 0x100;
+	REG_WIN0H = 0xf0;
+	REG_WIN0V = 0x1088;
+	REG_WIN1H = 0xf0;
+	REG_WIN1V = 0x1088;
+	REG_WININ = 0x3537;
+	REG_WINOUT = 0x3f21;
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7741, 0x20000);
+	WaitFrames(1);
+
+	ofs = 0;
+	for (row = 0; row != 16; row++)
+	{
+		for (col = 0; col != 8; col++, ofs += 2)
+		{
+			s32 chr;
+			s16 pair;
+
+			chr = row * 16 + col * 2;
+			pair = ((chr + 1) << 8) | chr;
+			*(volatile s16 *)((u8 *)BG_CANVAS_MAP + ofs) = pair;
+		}
+	}
+
+	Iwram_ClearWords(canvas, 0x4000);
+	Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+	WaitFrames(1);
+}
+
+//--------------------------------------------------------------------------
+// キャンバス面を開き、BG2 を 256x256 の折り返しありにする
+// スクリーンの各行は 16 キャラのキャンバスと、16 キャラの 0 番
+// bg_control : REG_BG2CNT に足す値
+//--------------------------------------------------------------------------
+void BattleFx_BeginTiledCanvas(s32 bg_control)
+{
+	s32 row;
+	s32 col;
+	s32 ofs;
+
+	BattleFx_BeginCanvasLayer(bg_control);
+	REG_BG2CNT = bg_control | 0x6784;
+	ofs = 0;
+	for (row = 0; row != 16; row++)
+	{
+		for (col = 0; col != 8; col++, ofs += 2)
+		{
+			s32 chr;
+			s16 pair;
+
+			chr = row * 16 + col * 2;
+			pair = ((chr + 1) << 8) | chr;
+			*(volatile s16 *)((u8 *)BG_CANVAS_MAP + ofs) = pair;
+		}
+		for (col = 0; col != 8; col++, ofs += 2)
+		{
+			*(volatile u16 *)((u8 *)BG_CANVAS_MAP + ofs) = 0;
+		}
+	}
+}
+
+//--------------------------------------------------------------------------
+// キャンバス面を閉じ、背景パレットのレベルを 8 フレームで 21 から 0 へ戻す
+//--------------------------------------------------------------------------
+void BattleFx_EndCanvasLayer(void)
+{
+	struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+	struct BtlWork			*btl = *(gWorkSlot + HEAP_SLOT_BATTLE);
+	s32						 i;
+
+	AudioCommand_PlayFar(289);
+	gBgScroll[1].x = work->saved_bg1_x;
+	gBgScroll[1].y = work->saved_bg1_y;
+	gProjection.center_x = 120;
+	gProjection.center_y = 120;
+	REG_BG2CNT = 0x787;
+	Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+	Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+	gBgScroll[1].y = 32;
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
+	REG_BLDCNT = 0;
+	WaitFrames(1);
+
+	BattlePresentation_ConfigurePaletteFadeFar(2, btl->background, 7);
+	WaitFrames(1);
+	for (i = 0; i != 8; i++)
+	{
+		BattlePresentation_SetPaletteLevelFar(btl->background, 21 - i * 3);
+		WaitFrames(1);
+	}
+
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7541, 0x20000);
+	WaitFrames(1);
+}
+
+//--------------------------------------------------------------------------
+// BG1 とウインドウを消して、背景パレットのフェードを設定する
+//--------------------------------------------------------------------------
+void BattleFx_SetTransitionFlagAndDisplay(void)
+{
+	struct BtlWork *btl;
+	s32			   *flag;
+
+	flag = &((struct BattleBackgroundView *)Ram_WorkSlot[HEAP_SLOT_BATTLE_BACKGROUND])->second_mode;
+	btl = Ram_WorkSlot[HEAP_SLOT_BATTLE];
+	*flag = 1;
+	QueueIoWriteDelay2((u32)&REG_DISPCNT, 0x1541);
+	WaitFrames(1);
+	BattlePresentation_ConfigurePaletteFadeFar(2, btl->background, 0);
+	WaitFrames(1);
+}
+
+#define BattlePresentation_ConfigurePaletteFadeFar \
+	((void (*)(s32, s32, s32))BattlePresentation_ConfigurePaletteFadeFar)
+
+typedef s32 (*ClearFn)(void *dst, s32 size);
+typedef s32 (*FillFn)(void *dst, s32 size, u32 value);
+
+struct BattleScreen
+{
+	u8	unknown_000[0x648];
+	u16 palette_fade;
+};
+
+struct BattleLayer
+{
+	u8	unknown_00[12];
+	s32 offset;
+};
+
+void BattleFx_SetupCanvasTileMap(void)
+{
+	u8				   **cells = (u8 **)&BtlWk;
+	void				*canvas = cells[31];
+	struct BattleScreen *screen = (struct BattleScreen *)cells[0];
+	struct BattleLayer	*layer = (struct BattleLayer *)cells[35];
+	s32					 row;
+	s32					 col;
+	s32					 off;
+
+	BattleFx_ClearActorTimers();
+	BattlePresentation_ConfigurePaletteFadeFar(2, screen->palette_fade, 0);
+	gBgScroll[1].y = 32;
+	layer->offset = 0;
+	Iwram_ClearWords((void *)0x06003fc0, 64);
+	Iwram_FillWords((void *)0x0600f900, 0x200, -1);
+	off = 0;
+	for (row = 0; row != 16; row++)
+	{
+		for (col = 0; col != 32; col++, off += 2)
+		{
+			if (col > 15)
+				*(volatile u16 *)(0x0600fb00 + off) = 0xff;
+			else
+				*(volatile u16 *)(0x0600fb00 + off) = row * 16 + 0x100 + col;
+		}
+	}
+	REG_DISPCNT = 0x7741;
+	REG_BG1CNT = 0x1f81;
+	REG_BLDCNT = 0x3f42;
+	REG_WIN0H = 0xf0;
+	REG_WIN0V = 0x1088;
+	REG_WIN1H = 0xf0;
+	REG_WIN1V = 0x1088;
+	REG_WININ = 0x3537;
+	REG_WINOUT = 0x3f21;
+	REG_BLDALPHA = 0x100e;
+	Iwram_ClearWords(canvas, 0x4000);
+	Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+	WaitFrames(1);
+}
+
+//--------------------------------------------------------------------------
+
+// canvas_draw_clipped_line.c
+
+// バトル演出：キャンバスへ線を引く（y をキャンバス内に収める）
+
+//--------------------------------------------------------------------------
+
+#undef gBattleFxWork
+
+#define ABS(v) ((v) < 0 ? -(v) : (v))
+
+//--------------------------------------------------------------------------
+// 128x128 の 8bpp キャンバス（横 16 タイル）に線を引く
+// 既にある色番号より大きいときだけ書き込む
+// x0, y0 : 始点（ドット）
+// x1, y1 : 終点（ドット）
+// color  : 色番号
+//--------------------------------------------------------------------------
+void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
+{
+	s32 dx = x1 - x0;
+	s32 dy = y1 - y0;
+	s32 frac = 0x80; // 8bit 小数の 0.5
+	u8 *canvas = ((u8 **)gBattleFxWork)[1];
+	s32 step;
+	s32 i;
+	s32 x;
+	s32 y;
+	s32 tmp;
+	u32 ofs;
+
+	if (y0 < 0)
+		y0 = 0;
+	if (y0 > 127)
+		y0 = 127;
+	if (y1 < 0)
+		y1 = 0;
+	if (y1 > 127)
+		y1 = 127;
+
+	if (ABS(dx) < ABS(dy))
+	{
+		// 縦長：y を 1 ドットずつ進め、x は小数で追う
+		if (dy < 0)
+		{
+			tmp = x0;
+			x0 = x1;
+			x1 = tmp;
+			tmp = y0;
+			y0 = y1;
+			y1 = tmp;
+			dx = x1 - x0;
+			dy = y1 - y0;
+		}
+		step = (ABS(x1 - x0) << 8) / ABS(y1 - y0);
+		x = x0;
+		for (i = y0; i != y1; i++)
+		{
+			ofs = (((((u32)i >> 3) << 4) + ((u32)x >> 3)) << 3) + (i & 7);
+			ofs = (ofs << 3) + (x & 7);
+			if (canvas[ofs] < color)
+				canvas[ofs] = color;
+			frac += step;
+			if (frac & 0x100)
+			{
+				if (dx > 0)
+					x++;
+				else
+					x--;
+				frac &= ~0x100;
+			}
+		}
+	}
+	else
+	{
+		// 横長：x を 1 ドットずつ進め、y は小数で追う
+		if (dx < 0)
+		{
+			tmp = x0;
+			x0 = x1;
+			x1 = tmp;
+			tmp = y0;
+			y0 = y1;
+			y1 = tmp;
+			dx = x1 - x0;
+			dy = y1 - y0;
+		}
+		step = (ABS(y1 - y0) << 8) / ABS(x1 - x0);
+		y = y0;
+		for (i = x0; i != x1; i++)
+		{
+			ofs = (((((u32)y >> 3) << 4) + ((u32)i >> 3)) << 3) + (y & 7);
+			ofs = (ofs << 3) + (i & 7);
+			if (canvas[ofs] < color)
+				canvas[ofs] = color;
+			frac += step;
+			if (frac & 0x100)
+			{
+				if (dy > 0)
+					y++;
+				else
+					y--;
+				frac &= ~0x100;
+			}
+		}
+	}
+}
+#define Object_SetMoveTargetFar \
+	((void (*)(struct MotionObject *, s32, s32, s32))Object_SetMoveTargetFar)
+#define SceneTransform_ApplyPosition ((void (*)(s32 *))SceneTransform_ApplyPosition)
+#define Battle_GetObjectTableValueFar ((u32 (*)(s32))Battle_GetObjectTableValueFar)
+
+//--------------------------------------------------------------------------
+// 炎になって落ちる跳躍
+//--------------------------------------------------------------------------
+struct Chip
+{
+	s32 x; // 画面座標 (16.16 固定小数)
+	s32 y;
+	s32 velocity_x;
+	s32 unused_0c;
+	s32 velocity_y;
+	s32 unused_14;
+	s32 life; // 残りフレーム
+};
+
+#define gChips ((struct Chip *)Ram_MapCellBuffer)
+
+//--------------------------------------------------------------------------
+// 使い手が光って跳び上がり、炎の玉になって最初の対象へ落ち、破片を散らす
+// effect : side が落ちる向きを、actors[0] が落ちる先を決める
+//--------------------------------------------------------------------------
+void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
+{
+	struct EffectPosition	 pos;
+	DrawRectangle			 draw[2];
+	void				   **heap;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	u8						*sprites;
+	struct MotionObject		*target;
+	s32						 dx;
+	struct MotionObject		*actor;
+	u8						*palette;
+	s32						 frame;
+	s32						 i;
+
+	heap = (void **)gBattleFxWork;
+	cursor = heap;
+	work = *cursor++;
+	canvas = *cursor;
+	sprites = heap[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), sprites);
+	palette = Resource_GetTableEntry((s32)&ResourceId_FlashBurstSheet);
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+	palette += 128;
+	Resource_DecodeType01(palette, work);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+	draw[0] = heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+	draw[1] = heap[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	for (i = 0; i != 1024; i++)
+		gChips[i].life = 0;
+	actor = GetBattleObjectSlotFar(work->effect->actor)->object;
+	target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+	if (actor->x > 0)
+		dx = -(15 << 16);
+	else
+		dx = 15 << 16;
+
+	for (frame = 0; frame != 88; frame++)
+	{
+		struct BattleCamera *camera = gCameraWork;
+
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+		if (frame > 17 || frame == 0)
+		{
+			EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actor, &pos);
+			pos.x /= 2;
+		}
+
+		// 光 : 2〜3 は使い手の上に、4〜15 は 16 方向へ広がる
+		if (frame >= 2 && frame <= 3)
+			draw[0](canvas, work, pos.x - 16, pos.y - 64, 32, 64);
+		if (frame >= 4 && frame <= 15)
+		{
+			for (i = 0; i != 16; i++)
+			{
+				s32 x = pos.x + (frame * Trig_Sin(i << 12) >> 16);
+				s32 y = pos.y + (frame * Trig_Cos(i << 12) >> 16) - frame;
+
+				draw[0](canvas, work->sheet + ((frame - 4) / 2 << 11), x - 16, y - 64, 32, 64);
+			}
+		}
+		// 跳び上がる
+		if (frame == 4)
+		{
+			actor->velocity_y = 20 << 16;
+			actor->acceleration = 1 << 16;
+			actor->speed_limit = 3 << 16;
+			actor->vertical_motion_strength = 0xab85;
+			actor->auto_face_motion = 0;
+			actor->snap_to_target = 0;
+			Object_SetMoveTargetFar(actor, actor->x * 3, 0, actor->z);
+			ObjectDispatch_ApplyArgumentToChildrenFar(actor, 2);
+			work->shake_frames = frame;
+			AudioCommand_PlayFar(136);
+		}
+		// 炎の玉の絵に切りかえ、対象と同じ奥行きにそろえる
+		if (frame == 16)
+		{
+			palette = Resource_GetTableEntry((s32)&ResourceId_FlameballSheet);
+			Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+			palette += 128;
+			Resource_DecodeType01(palette, work);
+			actor->vertical_motion_strength = 0;
+			actor->velocity_x = 0;
+			actor->velocity_y = 0;
+			actor->z = target->z;
+			ObjectDispatch_InitFromTable6Far(actor);
+		}
+		// 1 フレームに横へ 15、下へ 8 ドット落ち、地面に着いたら破片を 256 個散らす
+		if (frame > 17)
+		{
+			if (actor->y > 0)
+			{
+				actor->x += dx;
+				actor->y -= 8 << 16;
+				if (work->effect->side == 0)
+				{
+					draw[0](canvas, work, pos.x - 20, pos.y - 52, 40, 64);
+					pos.x -= 8;
+				}
+				else
+				{
+					draw[1](canvas, work, pos.x - 26, pos.y - 52, 40, 64);
+					pos.y += 8;
+				}
+			}
+			if (actor->y < 0)
+			{
+				actor->y = 0;
+				for (i = 0; i != 256; i++)
+				{
+					struct Chip *chip = &gChips[i];
+					s32			 speed;
+					s32			 angle;
+
+					speed = 0x3ff;
+					speed &= Random16();
+					angle = Random16() & 0xffff;
+					chip->x = pos.x << 16;
+					chip->y = (pos.y - 24) << 16;
+					chip->velocity_x = Trig_Sin(angle) * (speed + 32) >> 6;
+					chip->velocity_y = -(Trig_Cos(angle) * (speed + 32) << 1) >> 6;
+					chip->life = (Random16() & 7) + 32;
+				}
+				work->shake_frames = 8;
+				BattleEventRuntime_BeginPhaseFar(145);
+				BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
+				ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 8);
+			}
+		}
+
+		// 破片 : 1 フレームに 56/64 へ減速して落ち、y = 112 で跳ね返る
+		for (i = 0; i != 256; i++)
+		{
+			struct Chip *chip = &gChips[i];
+			s32			 y;
+
+			if (chip->life > 0)
+			{
+				chip->x += chip->velocity_x;
+				y = chip->y + chip->velocity_y;
+				chip->life--;
+				chip->y = y;
+				chip->velocity_x = chip->velocity_x * 56 / 64;
+				chip->velocity_y = chip->velocity_y * 56 / 64 + 0x2000;
+				if (chip->y > 112 << 16)
+				{
+					chip->velocity_y = -chip->velocity_y / 2;
+				}
+				else if ((chip->x >= 0 && chip->x < 127 << 16) && chip->y >= 0)
+				{
+					s32 size = chip->life / 8 + 1;
+
+					draw[i & 1](canvas, sprites + ParticleStreams_CellOffsets[size - 1],
+						(chip->x >> 16) - size / 2, (chip->y >> 16) - size, size, size * 2);
+				}
+			}
+		}
+		Camera_ApplyShake(16, 16);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// 集まるどくろ
+//--------------------------------------------------------------------------
+#define gSkulls ((struct EffectStep *)Ram_MapCellBuffer) // 対象ひとりに 64 個
+
+typedef s32 (*WordCopy)(void *, const void *, s32);
+
+//--------------------------------------------------------------------------
+// 対象ごとに 32 フレームずつずらして、まわり 64 ドットに散ったどくろを
+// 4 フレームおきに 8 つ出し、回りながら対象へ寄せる
+//--------------------------------------------------------------------------
+void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
+{
+	struct EffectPosition	 pos;
+	s32						 point[3];
+	void				   **heap;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	struct BlitterPair		 draw;
+	struct BattleCamera		*camera;
+	u8						*palette;
+	s32						 i;
+	s32						 k;
+
+	heap = (void **)gBattleFxWork;
+	cursor = heap;
+	work = *cursor++;
+	canvas = *cursor;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	palette = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+	palette += 128;
+	Resource_DecodeType01(palette, work);
+	palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+	draw.upper = heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
+	draw.lower = heap[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+	Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
+	work->transfer_mode = 3;
+	work->transfer_value = 0x04040404;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	for (i = 0; i != 512; i++)
+	{
+		gSkulls[i].x = ((Random16() & 255) - 127) << 15;
+		gSkulls[i].y = ((Random16() & 255) - 127) << 15;
+		gSkulls[i].z = ((Random16() & 255) - 127) << 15;
+	}
+	AudioCommand_PlayFar(142);
+
+	for (frame = 0; frame != work->effect->count * 32 + 96; frame++)
+	{
+		s32 *row;
+
+		camera = gCameraWork;
+		if (frame == 96)
+			BattleEventRuntime_BeginPhaseFar(0);
+
+		// 背景を走査線ごとに横へ波打たせる
+		row = work->bg2_x;
+		if (work->effect->side == 0)
+		{
+			for (i = 0; i != 160; i++)
+				*row++ = (0x60000 - Trig_Sin((frame + i) << 11) * 6) >> 10;
+		}
+		else
+		{
+			for (i = 0; i != 160; i++)
+				*row++ = Trig_Sin((frame + i) << 11) * 6 >> 10;
+		}
+
+		for (k = 0; k != work->effect->count; k++)
+		{
+			struct MotionObject *target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
+
+			// 対象の 20 ドット上を中心に、毎フレーム回す
+			Render_ResetTransformState();
+			Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+			point[0] = target->x;
+			point[1] = 20 << 16;
+			point[2] = target->z;
+			SceneTransform_ApplyPosition(point);
+			if (frame > k * 32)
+			{
+				SceneTransform_ApplyPitch(frame << 9);
+				if (frame == k * 32 + 32)
+					ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 32);
+
+				// どくろは中心までの距離の 1/距離ずつ寄る
+				for (i = 0; i != 8; i++)
+				{
+					struct EffectStep *skull = &gSkulls[k * 64 + i];
+
+					if (frame > (k * 8 + i) * 4)
+					{
+						s32 x = (skull->x >> 8) * (skull->x >> 8);
+						s32 y = (skull->y >> 8) * (skull->y >> 8);
+						s32 z = (skull->z >> 8) * (skull->z >> 8);
+						s32 dist = Iwram_Sqrt(x + y + z) >> 8;
+
+						if (dist != 0)
+						{
+							EffectPosition_ApplyBaseAndYOffset((s32 *)skull, &pos);
+							pos.x >>= 1;
+							draw.upper(
+								canvas, work->sheet + i % 3 * 576, pos.x - 12, pos.y - 12, 24, 24);
+							skull->x -= skull->x / dist;
+							skull->y -= skull->y / dist;
+							skull->z -= skull->z / dist;
+							skull->variant++;
+						}
+					}
+				}
+			}
+		}
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// 回る渦 : 対象ごとに 16 フレームずつずらして、40 ドット上で
+// 半径 16 ドットの渦を 4 つ回す (60 フレーム)
+//--------------------------------------------------------------------------
+void BattleFx_RunMemberOrbit(void *effect)
+{
+	void				   **heap;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	void					*palette;
+	DrawRectangle			 draw[2];
+	s32						 point[3];
+	struct EffectPosition	 screen;
+	s32						 member;
+	s32						 ofs_x;
+	s32						 frame;
+
+	heap = (void **)gBattleFxWork;
+	cursor = heap;
+	work = *cursor++;
+	canvas = *cursor;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	REG_BG2PA = 0x100;
+	palette = Resource_GetTableEntry((s32)&ResourceId_SpiralSheet);
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+	Resource_DecodeType01((u8 *)palette + 128, work);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+	draw[0] = heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 15, 2);
+	draw[1] = heap[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+	Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
+	work->transfer_mode = 2;
+	work->transfer_value = 50;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	if (work->effect->side == 1)
+	{
+		REG_BG2X = -0x6800;
+		ofs_x = -112;
+	}
+	else
+	{
+		ofs_x = 0;
+	}
+	for (frame = 0; frame != (work->effect->count * 16) + 48; frame++)
+	{
+		struct BattleCamera *camera;
+		s32					*row;
+		s32					 i;
+
+		// 背景を走査線ごとに横へ波打たせる
+		camera = gCameraWork;
+		row = work->bg2_x;
+		if (work->effect->side == 0)
+		{
+			s32 angle;
+			s32 base;
+
+			for (i = 0, base = 0x80000, angle = frame << 10; i != 160; i++)
+			{
+				*row++ = (base - (Trig_Sin(angle) << 3)) >> 10;
+				angle += 1024;
+			}
+		}
+		else
+		{
+			s32 angle;
+
+			for (i = 0, angle = frame << 10; i != 160; i++)
+			{
+				*row++ = ((Trig_Sin(angle) << 3) >> 10) - 0x7000;
+				angle += 1024;
+			}
+		}
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+		member = 0;
+		if (work->effect->count != 0)
+		{
+			while (member != work->effect->count)
+			{
+				struct MotionObject *obj;
+
+				obj = GetBattleObjectSlotFar(work->effect->actors[member])->object;
+				if (frame > member * 16 && frame < (member * 16) + 60)
+				{
+					s32 spin;
+
+					if (frame == (member * 16) + 32)
+					{
+						ObjectGroup_UpdateMembers(work->effect->actors[member], 0, 5, -1, 0);
+					}
+					point[0] = obj->x;
+					point[1] = 40 << 16;
+					point[2] = obj->z;
+					EffectPosition_ApplyBaseAndYOffset(point, &screen);
+
+					// 渦 (32×32) : 4 コマ、16 フレームごとに描画関数を入れかえる
+					for (i = 0; i != 4; i++)
+					{
+						s32 x;
+						s32 y;
+						s32 half;
+
+						spin = (frame << 9) + (i << 14);
+						x = (screen.x + ((Trig_Sin(spin) << 4) >> 16)) + ofs_x;
+						y = screen.y + ((Trig_Cos(spin) << 4) >> 16);
+						half = frame / 16;
+						draw[half & 1](canvas, work->sheet + (((frame / 4) - (half * 4)) << 10),
+							x - 16, y - 16, 32, 32);
+					}
+				}
+				member++;
+			}
+		}
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// 散って集まる光 (mode が色を決める)
+//--------------------------------------------------------------------------
+void BattleFx_RunMemberBurstMode0(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunMemberBurst(effect, 0);
+}
+
+void BattleFx_RunMemberBurstMode1(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunMemberBurst(effect, 1);
+}
+
+void BattleFx_RunMemberBurstMode2(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunMemberBurst(effect, 2);
+}
+
+//--------------------------------------------------------------------------
+// 対象ごとに光の粒を使い手から散らし、30 フレームのちから対象の体の中ほどへ
+// 引き寄せ、32 ドット以内に入ったら消す
+// mode : 0 は PinkBurstSheet、1 は MarsDjinnSheet、2 は MercuryDjinnSheet の色
+//--------------------------------------------------------------------------
+void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
+{
+	struct EffectPosition	 pos;
+	DrawRectangle			 draw[2];
+	void				   **heap;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	s32						 k;
+	struct BattleCamera		*camera;
+	s32						 pal;
+	s32						 i;
+
+	heap = (void **)gBattleFxWork;
+	cursor = heap;
+	work = *cursor++;
+	canvas = *cursor;
+	camera = heap[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(1);
+	Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_MemberBurstImage), work);
+	if (mode == 0)
+		pal = (s32)&ResourceId_PinkBurstSheet;
+	else if (mode == 1)
+		pal = (s32)&ResourceId_MarsDjinnSheet;
+	else
+		pal = (s32)&ResourceId_MercuryDjinnSheet;
+	Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(pal), 128);
+	BattleFx_FetchRectangleBlitters(work->effect->side, draw);
+
+	// 粒 : 使い手の体の高さから、どの向きにも 2 ドットまでの速さで散る
+	for (i = 0; i != 1024; i++)
+		gMotes[i].variant = -1;
+	for (k = 0; k != work->effect->count; k++)
+	{
+		struct MotionObject *src = GetBattleObjectSlotFar(work->effect->actor)->object;
+		s32					 height = Battle_GetObjectTableValueFar(work->effect->actor);
+
+		for (i = 0; i != 128; i++)
+		{
+			struct EffectStep *mote = &gMotes[k * 128 + i];
+
+			mote->x = src->x;
+			mote->y = height;
+			mote->z = src->z;
+			mote->velocity_x = ((Random16() & 255) - 128) << 10;
+			mote->velocity_y = ((Random16() & 255) - 128) << 10;
+			mote->velocity_z = ((Random16() & 255) - 128) << 10;
+			mote->variant = 0;
+		}
+	}
+
+	Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	AudioCommand_PlayFar(146);
+
+	for (frame = 0; frame != MemberBurst_Counts[mode * 2 + 1] + work->effect->count * 20; frame++)
+	{
+		s32 *row;
+
+		if (frame == 80)
+		{
+			if (mode == 0)
+				BattleEventRuntime_BeginPhaseFar(134);
+			else
+				BattleEventRuntime_BeginPhaseFar(133);
+		}
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+
+		// 背景を走査線ごとに横へ波打たせる
+		row = work->bg2_x;
+		for (i = 0; i != 160; i++)
+			*row++ = (0x100000 - Trig_Sin((frame + i) << 10) * 16) >> 10;
+
+		for (k = 0; k != work->effect->count; k++)
+		{
+			struct MotionObject *target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
+			s32 half = (s32)Battle_GetObjectTableValueFar(work->effect->actors[k]) / 2;
+
+			if (frame == k * 20 + 71)
+			{
+				if (mode == 0)
+					AudioCommand_PlayFar(134);
+				else
+					AudioCommand_PlayFar(133);
+			}
+			if (frame == k * 20 + 70)
+				ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 26);
+			if (frame > k * 20)
+			{
+				for (i = 0; i != MemberBurst_Counts[mode * 2]; i++)
+				{
+					struct EffectStep *mote = &gMotes[k * 128 + i];
+
+					if (frame > (k * 10 + i) * 2 && mote->variant >= 0)
+					{
+						EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &pos);
+						pos.x >>= 1;
+						draw[0](canvas, work->sheet + i % 3 * 640, pos.x - 10, pos.y - 16, 20, 32);
+						EffectStep_AdvanceWithGravity3D(mote, 62, 0);
+						if (frame > k * 20 + i + 30)
+						{
+							s32 dx = (target->x - mote->x) >> 9;
+							s32 dy = (target->y + half - mote->y) >> 9;
+							s32 dz = (target->z - mote->z) >> 9;
+
+							mote->velocity_x += dx;
+							mote->velocity_y += dy;
+							mote->velocity_z += dz;
+							if ((dx >= -0xfff && dx <= 0xfff) && (dz >= -0xfff && dz <= 0xfff))
+								mote->variant = -1;
+						}
+					}
+				}
+			}
+		}
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// earthwal.c
+// バトル演出：キャンバス描画ルーチンの準備と、48 フレームの壁の演出
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+// 128×128 のキャンバスへ描く 2 つのルーチンを組み立てる
+// flip : 0 以外なら左右反転して描く
+// out  : [0] 比較合成 (大きい色番号を残す)、[1] 加算合成 (63 で飽和)
+//--------------------------------------------------------------------------
+void BattleFx_FetchRectangleBlitters(s32 flip, BattleEffectDrawRectangle *out)
+{
+	if (flip == 0)
+	{
+		BattleEffect_LoadWork(
+			HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+		out[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+		BattleEffect_LoadWork(
+			HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_KASAN);
+		out[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+	}
+	else
+	{
+		BattleEffect_LoadWork(
+			HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+		out[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+			GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_KASAN);
+		out[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+	}
+}
+
+//--------------------------------------------------------------------------
+// 3 つの入口：mode を決めて本体を呼ぶ
+//--------------------------------------------------------------------------
+void BattleFx_RunFortyEightFrameMode1(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunFortyEightFrameEffect(effect, 1);
+}
+
+void BattleFx_RunFortyEightFrameMode0(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunFortyEightFrameEffect(effect, 0);
+}
+
+void BattleFx_RunFortyEightFrameMode2(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunFortyEightFrameEffect(effect, 2);
+}
+
+//--------------------------------------------------------------------------
+// 最初の対象の足元に、左右対称の壁 (EarthWall の絵) を立てる
+// mode : 0 等倍、32 フレーム小さく揺らす
+//        1 横 1.25 倍、8 フレーム大きく揺らす
+//        2 横 1.25 倍、揺らさず Fireball のパレットで描く
+//--------------------------------------------------------------------------
+void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 mode)
+{
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	u8						*palette;
+	s32						 x;
+	struct EffectPosition	 pos;
+	DrawRectangle			 draw_r;
+	DrawRectangle			 draw_l;
+	u8						*state;
+	s32						 frame;
+	s32						 cell;
+
+	cursor = (void **)gBattleFxWork;
+	work = *cursor++;
+	canvas = *cursor;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+
+	// 絵は EarthWall、パレットは MarsDjinn (mode 2 は Fireball) で上書きする
+	palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);
+	Iwram_CopyWords((void *)0x05000000, palette, 128);
+	palette += 128;
+	Resource_DecodeType01(palette, work);
+	palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
+	Iwram_CopyWords((void *)0x05000000, palette, 128);
+	if (mode == 2)
+	{
+		palette = Resource_GetTableEntry((s32)&ResourceId_FireballSheet);
+		Iwram_CopyWords((void *)0x05000000, palette, 128);
+	}
+
+	// キャンバスの x = 64 が対象の位置にくるよう BG2 をずらす
+	EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &pos);
+	if (mode == 0)
+	{
+		REG_BG2PA = 0x100; // 等倍
+		x = 64 - pos.x;
+		REG_BG2X = x << 8;
+	}
+	else
+	{
+		REG_BG2PA = 0xcc; // 0.8 (横 1.25 倍に表示)
+		x = (-pos.x * 4) / 5 + 64;
+		REG_BG2X = x << 8;
+	}
+
+	// 左半分はそのまま、右半分は左右反転して比較合成で描く
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+	state = (u8 *)gWorkSlot;
+	draw_l = *(DrawRectangle *)(state + HEAP_SLOT_BLITTER * 4);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+		GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+	work->transfer_mode = 2;
+	/* FAKEMATCH: needed to match: reading the second blitter through the slot pointer's own variable keeps it in that register between the two transfer stores */
+	state += 188; // gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE]
+	state = *(u8 **)state;
+	work->transfer_value = 50; // 転送のたびに半分へ減らして残像にする
+	draw_r = (DrawRectangle)state;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	if (mode == 2)
+	{
+		work->shake_frames = 0;
+		AudioCommand_PlayFar(212);
+	}
+	else if (mode == 1)
+	{
+		work->shake_frames = 8;
+		AudioCommand_PlayFar(212);
+	}
+	else
+	{
+		work->shake_frames = 32;
+	}
+
+	for (frame = 0; frame != 48; frame++)
+	{
+		if (frame == 0)
+		{
+			if (mode == 2)
+				ObjectGroup_UpdateMembers(work->effect->actors[0], 7, -1, 0, 32);
+			else
+				ObjectGroup_UpdateMembers(work->effect->actors[0], 10, -1, 0, 32);
+		}
+		if (frame == 24)
+			BattleEventRuntime_BeginPhaseFar(0);
+		if (frame == 8 && mode == 0)
+			AudioCommand_PlayFar(126);
+
+		// 4 フレームごとに絵 0, 1, 2 と進め、その後は 2 と 1 を交互に (27 フレームまで)
+		if (frame <= 31)
+		{
+			cell = frame / 4;
+			if (cell > 2)
+				cell = (cell & 1) + 1;
+			if (frame <= 27)
+			{
+				draw_l(canvas, work->sheet + EarthWall_CellSourceOffsets[cell],
+					64 - EarthWall_CellWidths[cell], (pos.y - EarthWall_CellHeights[cell]) + 8,
+					EarthWall_CellWidths[cell], EarthWall_CellHeights[cell]);
+				draw_r(canvas, work->sheet + EarthWall_CellSourceOffsets[cell], 64,
+					(pos.y - EarthWall_CellHeights[cell]) + 8, EarthWall_CellWidths[cell],
+					EarthWall_CellHeights[cell]);
+			}
+		}
+		if (mode == 0)
+			Camera_ApplyShake(2, 2);
+		else
+			Camera_ApplyShake(16, 16);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// member_beam.c
+// 戦闘エフェクト：ジンが現れ、光の粒が降り、空から光の柱が対象に落ちる
+//--------------------------------------------------------------------------
+// work->sheet の中の絵
+#define PIC_MOTE 0x2710	 // 粒 (CrescentMoonSheet、24×24)
+#define PIC_DJINN 0x65c0 // ジン (40×40)
+
+void BattleFx_PrepareCanvasEffect(
+	struct BattleEffectArgument *effect, s32 kind, s32 side, s32 anchor, s32 *out_x, s32 *out_y);
+
+//--------------------------------------------------------------------------
+// mode 0 : ヴィーナスのジン
+//--------------------------------------------------------------------------
+void BattleFx_RunTwoModeAMode0(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunMemberBeam(effect, 0);
+}
+
+//--------------------------------------------------------------------------
+// mode 1 : マーキュリーのジン
+//--------------------------------------------------------------------------
+void BattleFx_RunTwoModeAMode1(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunMemberBeam(effect, 1);
+}
+
+//--------------------------------------------------------------------------
+// prelude が 1 ならジンを出して揺らしながら上へ動かし、対象ごとに
+// 16 フレームずつずらして粒を 8 つ降らせ、72 フレーム目から光の柱を落とす
+// mode : 0 はヴィーナス、1 はマーキュリーのジンの絵
+//--------------------------------------------------------------------------
+void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
+{
+	struct EffectPosition	 one;
+	struct EffectPosition	 pos;
+	s32						 ground[3];
+	s32						 point[3];
+	s32						 djinn_x;
+	s32						 djinn_y;
+	DrawRectangle			 draw[2];
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	s32						 ofs_x;
+	u8						*palette;
+	s32						 i;
+	s32						 k;
+
+	cursor = (void **)gBattleFxWork;
+	work = *cursor++;
+	canvas = *cursor;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	if (work->effect->prelude == 1)
+		BattleFx_PrepareCanvasEffect(
+			effect, mode, work->effect->side ^ work->effect->prelude, 0, &djinn_x, &djinn_y);
+	palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+	palette += 128;
+	Resource_DecodeType01(palette, work);
+	palette = Resource_GetTableEntry((s32)&ResourceId_CrescentMoonSheet);
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+	palette += 128;
+	Resource_DecodeType01(palette, work->sheet + PIC_MOTE);
+	if (mode == 0)
+		palette = Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet);
+	else
+		palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet);
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+	palette += 128;
+	Resource_DecodeType01(palette, work->sheet + PIC_DJINN);
+
+	// 粒 : 80 ドットの高さから、揺れの位相はでたらめ
+	for (i = 0; i != 512; i++)
+	{
+		gMotes[i].x = 0;
+		gMotes[i].y = 80 << 16;
+		gMotes[i].z = (Random16() | -32) << 14;
+		gMotes[i].variant = Random16() & 255;
+	}
+
+	// 対象がひとりなら、その画面位置が x = 64 に来るよう BG2 をずらす
+	REG_BG2PA = 0x100;
+	if (work->effect->count == 1)
+	{
+		EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &one);
+		ofs_x = 64 - one.x;
+	}
+	else
+	{
+		if (work->effect->side == 1)
+			ofs_x = -112;
+		else
+			ofs_x = 0;
+	}
+	REG_BG2X = ofs_x << 8;
+	work->transfer_mode = 2;
+	work->transfer_value = 50;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	for (frame = 0; frame != work->effect->count * 16 + 116; frame++)
+	{
+		struct BattleCamera *camera = gCameraWork;
+
+		if (frame == 64)
+			AudioCommand_PlayFar(212);
+		if (frame == 80)
+			BattleEventRuntime_BeginPhaseFar(0);
+
+		// ジン : 左右に 20 ドット揺れ、32 フレームのちから 2 ドットずつ上がる
+		k = work->effect->prelude;
+		if (k == 1)
+		{
+			s32 angle = frame << 11;
+			s32 x = (-Trig_Sin(angle) * 20 >> 16) + djinn_x + ofs_x - 20;
+			s32 y = (Trig_Cos(angle) * 4 >> 16) + djinn_y - 24;
+
+			BattleFx_FetchRectangleBlitters(work->effect->side ^ k, draw);
+			if (frame > 32)
+				y = y - frame * 2 + 64;
+			draw[1](canvas, work->sheet + PIC_DJINN, x, y, 40, 40);
+			if (frame <= 3)
+				draw[1](canvas, work->sheet + PIC_DJINN, x, y, 40, 40);
+			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+		}
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+		draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+		draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+
+		// 粒 : 8 フレームおきに出て、左右に 16 ドット揺れながら
+		// 1 ドットずつ降り、高さ 8 ドットで消える
+		for (k = 0; k != work->effect->count; k++)
+		{
+			struct MotionObject *target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
+			s32					 start = k * 16;
+
+			Render_ResetTransformState();
+			Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+			point[0] = target->x;
+			point[1] = 0;
+			point[2] = target->z;
+			SceneTransform_ApplyPosition(point);
+			if (frame > start)
+			{
+				for (i = 0; i != 8; i++)
+				{
+					struct EffectStep *mote = &gMotes[k * 64 + i];
+
+					if (frame > i * 8 + start && mote->y > 8 << 16)
+					{
+						s32 sway;
+
+						EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &pos);
+						pos.x += ofs_x;
+						sway = Trig_Sin(mote->variant << 10) * 16 >> 16;
+						if (i & 1)
+							pos.x -= sway;
+						else
+							pos.x += sway;
+						draw[i & 1](canvas,
+							work->sheet + MemberBeam_MotePictures[mote->variant / 8 & 7] * 576
+								+ PIC_MOTE,
+							pos.x - 12, pos.y - 12, 24, 24);
+						mote->y -= 1 << 16;
+						mote->variant++;
+					}
+				}
+			}
+		}
+
+		// 光の柱 : 画面の上から対象の足もとまで、左右対称に描く
+		// 幅は 6 ドット、88 フレーム目から 3 フレームに 1 ドットずつ細る
+		for (i = 0; i != work->effect->count; i++)
+		{
+			s32 start = i * 16;
+
+			if (frame >= start + 72)
+			{
+				struct MotionObject *target =
+					GetBattleObjectSlotFar(work->effect->actors[i])->object;
+
+				Render_ResetTransformState();
+				Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+				if (frame == start + 72)
+					ObjectGroup_UpdateMembers(work->effect->actors[i], 1, -1, -1, 0);
+				if (frame == start + 88)
+					ObjectGroup_UpdateMembers(work->effect->actors[i], 0, -1, -1, 0);
+				ground[0] = target->x;
+				ground[1] = 0;
+				ground[2] = target->z;
+				EffectPosition_ApplyBaseAndYOffset(ground, &pos);
+				pos.x += ofs_x;
+				if (frame < start + 104)
+				{
+					s32 pic = frame / 4;
+					s32 width = 6;
+
+					if (frame > start + 88)
+						width = 6 - (frame - start - 88) / 3;
+					if (pic > 2)
+						pic = (pic & 1) + 1;
+					// 足もとの光
+					if (frame < start + 100)
+					{
+						draw[0](canvas, work->sheet + MemberBeam_HeadOffsets[pic],
+							pos.x - MemberBeam_HeadWidths[pic],
+							pos.y - MemberBeam_HeadHeights[pic] + 8, MemberBeam_HeadWidths[pic],
+							MemberBeam_HeadHeights[pic]);
+						draw[1](canvas, work->sheet + MemberBeam_HeadOffsets[pic], pos.x,
+							pos.y - MemberBeam_HeadHeights[pic] + 8, MemberBeam_HeadWidths[pic],
+							MemberBeam_HeadHeights[pic]);
+					}
+					// 柱 (1 行ずつ)
+					for (k = 0; k != pos.y; k++)
+					{
+						draw[0](canvas, work->sheet + 5, pos.x - width, k, width, 1);
+						draw[1](canvas, work->sheet + 5, pos.x, k, width, 1);
+					}
+				}
+			}
+		}
+		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	BattleFx_EndCanvasLayer();
+}
+
+#undef Battle_GetObjectTableValueFar
+#undef SceneTransform_ApplyPosition
+
+void BattleFx_RunSevenModeMode4(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunSevenMode(effect, 4);
+}
+
+void BattleFx_RunSevenModeMode5(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunSevenMode(effect, 5);
+}
+
+void BattleFx_RunSevenModeMode0(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunSevenMode(effect, 0);
+}
+
+void BattleFx_RunSevenModeMode1(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunSevenMode(effect, 1);
+}
+
+void BattleFx_RunSevenModeMode6(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunSevenMode(effect, 6);
+}
+
+void BattleFx_RunSevenModeMode2(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunSevenMode(effect, 2);
+}
+
+void BattleFx_RunSevenModeMode3(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunSevenMode(effect, 3);
+}
+
+extern s8  SevenMode_Records[];
+extern u8  SevenMode_ShardWidths[];
+extern u8  SevenMode_ShardHeights[];
+extern u16 SevenMode_ShardOffsets[];
+
+#define gShots ((struct EffectStep *)Ram_MapCellBuffer)
+#define gBursts ((struct EffectStep *)(Ram_MapCellBuffer + 0x1c00))
+void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target);
+
+void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
+{
+	struct EffectPosition	 position;
+	DrawRectangle			 draw[2];
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	s32						 k;
+	s32						 total;
+	struct MotionObject		*source;
+	struct BattleCamera		*camera;
+	u8						*palette;
+	s32						 i;
+	s32						 height;
+
+	heap_cache = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	camera = heap_cache[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(1);
+	REG_BLDALPHA = 0x1010;
+	palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+	palette += 128;
+	Resource_DecodeType01(palette, work);
+	palette = Resource_GetTableEntry((s32)&ResourceId_SmokeSheet);
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+	palette += 128;
+	Resource_DecodeType01(palette, work->sheet + 0x3e80);
+	if (mode == 0)
+		palette = Resource_GetTableEntry((s32)&ResourceId_BluePalette);
+	else if (mode == 1)
+		palette = Resource_GetTableEntry((s32)&ResourceId_SpiderWebSheet);
+	else if (mode == 2)
+		palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
+	else if (mode == 3)
+		palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
+	else if (mode == 4)
+		palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
+	else if (mode == 6)
+		palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
+	else
+		palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
+	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+
+	for (i = 0; i != 1024; i++)
+		gShots[i].variant = -1;
+	source = GetBattleObjectSlotFar(work->effect->actor)->object;
+	height = 0x40000;
+	for (k = 0; k != work->effect->count; k++)
+	{
+		struct MotionObject *target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
+
+		for (i = 0; i != 16; i++)
+		{
+			struct EffectStep *shot = &gShots[k * 16 + i];
+
+			shot->x = source->x;
+			shot->y = height;
+			shot->z = source->z;
+			shot->velocity_x = (target->x - source->x) >> 4;
+			shot->velocity_y = 0x40000;
+			shot->velocity_z = (target->z - source->z) >> 4;
+			shot->variant = 0;
+		}
+	}
+	for (i = 0; i != 256; i++)
+		gBursts[i].variant = -1;
+
+	if (effect->side == 0)
+	{
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+		draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+		if (SevenMode_Records[mode * 2] == 0)
+		{
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
+			draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+		}
+		else
+		{
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+			draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+		}
+	}
+	else
+	{
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 2);
+		draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+		if (SevenMode_Records[mode * 2] == 0)
+		{
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
+			draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+		}
+		else
+		{
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+			draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+		}
+	}
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	if (SevenMode_Records[mode * 2] == 0)
+		total = work->effect->count * 8 + 72;
+	else
+		total = work->effect->count * 8 + 56;
+	AudioCommand_PlayFar(103);
+
+	for (frame = 0; frame != total; frame++)
+	{
+		struct EffectStep *burst;
+
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+		k = 0;
+		if (work->effect->count != 0)
+		{
+			do
+			{
+				if (frame >= k * 8)
+				{
+					struct EffectStep *shot = &gShots[k * 16];
+
+					if (frame == k * 8 + 17)
+					{
+						ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 16);
+						BattleEventRuntime_BeginPhaseFar(133);
+					}
+					/* FAKEMATCH: needed to match: restores the CSE block boundary after the hit block (k << 3 is recomputed) */
+					do
+					{
+					} while (0);
+					if (shot->variant >= 0)
+					{
+						s32 step = (frame - k * 8) / 3;
+
+						if (step > 9)
+							step = 9;
+						EffectPosition_ApplyBaseAndYOffset((s32 *)shot, &position);
+						position.x >>= 1;
+						if (step > 4)
+							draw[0](canvas, work->sheet + step * 768, position.x - 16,
+								position.y - 12, 32, 24);
+						else
+							draw[0](canvas, work->sheet + step * 768, position.x - 12,
+								position.y - 16, 24, 32);
+						if (shot->variant == 0)
+							EffectStep_AdvanceWithGravity3D(shot, 63, -0x8000);
+						if (shot->y < 0)
+						{
+							s32 count;
+							s8 *records = SevenMode_Records;
+							s32 row;
+
+							shot->y = 0;
+							shot->variant = 1;
+							/* FAKEMATCH: needed to match: native loads the table address before the row (r0, r1) */
+							row = mode * 2;
+							if (records[row] == 0)
+								count = 4;
+							else
+								count = 16;
+							for (i = 0; i != count; i++)
+							{
+								struct EffectStep *burst;
+								s32				   group = k * 4;
+
+								/* FAKEMATCH: needed to match: restores the CSE block boundary between group's set and group * 8 */
+								do
+								{
+								} while (0);
+								burst = &gBursts[group * 8 + i];
+
+								burst->x = shot->x;
+								burst->y = shot->y;
+								burst->z = shot->z;
+								if (SevenMode_Records[mode * 2] == 0)
+								{
+									burst->velocity_x = ((Random16() & 63) - 32) << 11;
+									burst->velocity_y = 0;
+									burst->velocity_z = ((Random16() & 63) - 32) << 11;
+								}
+								else
+								{
+									burst->velocity_x = ((Random16() & 63) - 32) << 13;
+									burst->velocity_y = ((Random16() & 31) + 32) << 12;
+									burst->velocity_z = ((Random16() & 63) - 32) << 13;
+								}
+								burst->variant = 0;
+							}
+						}
+					}
+				}
+				k++;
+			} while (k != work->effect->count);
+		}
+		for (i = 0, burst = gBursts; i != 256; burst++, i++)
+		{
+
+			if ((u32)burst->variant <= 44 && burst->y >= 0)
+			{
+				EffectPosition_ApplyBaseAndYOffset((s32 *)burst, &position);
+				position.x >>= 1;
+				if (SevenMode_Records[mode * 2] == 0)
+				{
+					draw[1](canvas, work->sheet + burst->variant / 8 * 1152 + 0x3e80,
+						position.x - 12, position.y - 24, 24, 48);
+				}
+				else
+				{
+					s32 picture = burst->variant / 5;
+					s32 flip;
+
+					if (i & 1)
+						picture += 9;
+					flip = effect->side;
+					draw[burst->velocity_x > 0 ? flip ^ 1 : flip](canvas,
+						work->sheet + SevenMode_ShardOffsets[picture] + 0x1e00,
+						position.x - SevenMode_ShardWidths[picture] / 2,
+						position.y - SevenMode_ShardHeights[picture] / 2,
+						SevenMode_ShardWidths[picture], SevenMode_ShardHeights[picture]);
+				}
+				if (SevenMode_Records[mode * 2] == 0)
+					EffectStep_AdvanceWithGravity3D(burst, 62, 0x800);
+				else
+					EffectStep_AdvanceWithGravity3D(burst, 62, -0x8000);
+				burst->variant++;
+			}
+		}
+		Camera_ApplyShake(2, 2);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+#define PIXEL_BUFFER Ram_MapCellBuffer
+
+void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
+{
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	u8						*sheet;
+	void					*cells;
+	DrawRectangleFn			 rectangle[2];
+	struct MotionObject		*member_object;
+	/* FAKEMATCH: needed to match: the second position is never used: it gives the frame its native 76 bytes */
+	struct EffectPosition pos[2];
+	s32					  curve[2];
+	s32					  draw_enabled;
+	s32					  idx_a;
+	s32					  idx_b;
+	s32					  zero_val;
+	s32					  frame;
+
+	heap_cache = (void **)gBattleFxWork;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	/* FAKEMATCH: needed to match: the zero is held in sl through the setup calls */
+	zero_val = 0;
+	work->effect = object;
+	BattleFx_BeginTiledCanvas(0);
+	REG_BG2PA = 0x100;
+	REG_BLDALPHA = 0x1010;
+	sheet = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);
+	Iwram_CopyWords(BG_PLTT, sheet, 128);
+	sheet = sheet + 128;
+	Resource_DecodeType01(sheet, work);
+	cells = Ram_MapCellBuffer;
+	sheet = Resource_GetTableEntry((s32)&ResourceId_RedCrescentSheetA);
+	sheet = sheet + 128;
+	Resource_DecodeType01(sheet, cells);
+	BattleEffect_LoadWork(46, 7, 7, 3, 1);
+	rectangle[0] = (DrawRectangleFn)heap_cache[7];
+	BattleEffect_LoadWork(47, 7, 7, 7, 1);
+	rectangle[1] = (DrawRectangleFn)heap_cache[8];
+	Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
+	work->transfer_mode = 1;
+	work->transfer_value = zero_val;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	draw_enabled = 1;
+	if (work->effect->side == 1)
+	{
+		curve[0] = -0x500000;
+	}
+	else
+	{
+		curve[0] = 0x700000;
+	}
+	curve[1] = -0x200000;
+	for (frame = 0; frame != 132; frame++)
+	{
+		s32	 spin;
+		s32	 screen_x;
+		s32	 screen_y;
+		s32	 amp;
+		s32	 row_base;
+		s32	 angle;
+		s32	 i;
+		s32 *scanline;
+
+		spin = frame << 9;
+		screen_x = (curve[0] >> 16) + ((Trig_Sin(spin) << 4) >> 16) + 48;
+		screen_y = (curve[1] >> 16) + ((Trig_Cos(spin) << 2) >> 16) + 16;
+		if (frame == 88)
+		{
+			AudioCommand_PlayFar(134);
+		}
+		if (frame == 32)
+		{
+			if (work->effect->side == 1)
+			{
+				curve[0] = -0x200000;
+			}
+			else
+			{
+				curve[0] = 0x480000;
+			}
+			curve[1] = 0x180000;
+			draw_enabled = 0;
+		}
+		if (frame == 33)
+		{
+			REG_BLDALPHA = 0x1010;
+			draw_enabled = 1;
+		}
+		if (frame == 64)
+		{
+			EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], pos);
+			if (work->effect->side == 1)
+			{
+				curve[0] = (pos[0].x - 128) << 16;
+			}
+			else
+			{
+				curve[0] = (pos[0].x - 64) << 16;
+			}
+			curve[1] = 0;
+			draw_enabled = 0;
+		}
+		if (frame == 65)
+		{
+			REG_BLDALPHA = 0x1010;
+			draw_enabled = 1;
+		}
+		scanline = work->bg2_x;
+		amp = 0;
+		if (frame <= 31)
+		{
+			if (frame > 15)
+			{
+				amp = (frame * 2) - 32;
+				REG_BLDALPHA = (31 - frame) | 0x1000;
+			}
+		}
+		else if (frame <= 63)
+		{
+			if (frame > 47)
+			{
+				amp = (frame * 2) - 96;
+				REG_BLDALPHA = (63 - frame) | 0x1000;
+			}
+		}
+		if (amp < 0)
+		{
+			amp = 0;
+		}
+
+		i = 0;
+		row_base = (6 - screen_x) << 8;
+		angle = frame << 11;
+		for (; i != 160; i++)
+		{
+			*scanline++ = row_base - ((Trig_Sin(angle) * amp) >> 10);
+			angle += 0x800;
+		}
+		if (draw_enabled != 0)
+		{
+			if (work->effect->side == 0)
+			{
+				idx_a = 0;
+				idx_b = 0;
+			}
+			else
+			{
+				idx_a = 1;
+				/* FAKEMATCH: needed to match: i is 160 here, so this is 0: a literal 0 drops a stack slot and shrinks the frame */
+				idx_b = i >> 31;
+			}
+			if (frame <= 87)
+			{
+				rectangle[work->effect->side](canvas, work, CounterReveal_PanelX[idx_a * 7],
+					CounterReveal_PanelY[idx_b * 7] + screen_y, 57, 98);
+			}
+			else
+			{
+				if (frame <= 91)
+				{
+					rectangle[work->effect->side](canvas, work, CounterReveal_PanelX[idx_a * 7],
+						CounterReveal_PanelY[idx_b * 7] + screen_y, 57, 98);
+				}
+				rectangle[work->effect->side](canvas, work->sheet + 0x15d2,
+					CounterReveal_PanelX[idx_a * 7 + 1],
+					CounterReveal_PanelY[idx_b * 7 + 1] + screen_y, 99, 69);
+				if ((frame - 88) <= 1U)
+				{
+					Iwram_FillWords(canvas, 0x4000, 0x3F3F3F3F);
+				}
+				if ((frame - 90) <= 1U)
+				{
+					rectangle[work->effect->side](canvas, work->sheet + 0x3081,
+						CounterReveal_PanelX[idx_a * 7 + 2],
+						CounterReveal_PanelY[idx_b * 7 + 2] + screen_y, 128, 91);
+				}
+				if ((frame - 92) <= 1U)
+				{
+					rectangle[work->effect->side](canvas, (void *)gMapCellBuffer,
+						CounterReveal_PanelX[idx_a * 7 + 3],
+						CounterReveal_PanelY[idx_b * 7 + 3] + screen_y, 128, 91);
+				}
+				if ((frame - 94) <= 1U)
+				{
+					rectangle[work->effect->side](canvas, gMapCellBuffer + 0x2d80,
+						CounterReveal_PanelX[idx_a * 7 + 4],
+						CounterReveal_PanelY[idx_b * 7 + 4] + screen_y, 128, 59);
+				}
+				if ((frame - 96) <= 1U)
+				{
+					rectangle[work->effect->side](canvas, gMapCellBuffer + 0x4b00,
+						CounterReveal_PanelX[idx_a * 7 + 5],
+						CounterReveal_PanelY[idx_b * 7 + 5] + screen_y, 122, 29);
+				}
+				if ((frame - 98) <= 1U)
+				{
+					rectangle[work->effect->side](canvas, gMapCellBuffer + 0x58d2,
+						CounterReveal_PanelX[idx_a * 7 + 6],
+						CounterReveal_PanelY[idx_b * 7 + 6] + screen_y, 76, 25);
+				}
+			}
+		}
+		if (frame == 88)
+		{
+			member_object = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+			member_object->velocity_y = 0x10000;
+			member_object->acceleration = 0x20000;
+			member_object->speed_limit = 0x20000;
+			member_object->vertical_motion_strength = 0;
+			member_object->auto_face_motion = 0;
+			member_object->snap_to_target = 0;
+			Object_SetMoveTargetFar(member_object, member_object->x << 1, 0, member_object->z);
+			ObjectGroup_UpdateMembers(work->effect->actors[0], -1, 5, -1, 0);
+		}
+		if (frame == 120)
+		{
+			GetBattleObjectSlotFar(work->effect->actors[0])->object->vertical_motion_strength =
+				0xAB85;
+		}
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+	BattleBackground_LoadFar(1, BtlWk->background, 24);
+	Runtime_ReleaseHeapBlock(47);
+	Runtime_ReleaseHeapBlock(46);
+	BattleFx_EndCanvasLayer();
+}
+
+void Graphics_ConvertBackgroundToBlueRamp(void)
+{
+	s32	 i, x, y, row, end, speed;
+	s32	 red, green, blue;
+	u16	 color;
+	u8	*delays, *p, *pixel;
+	u16 *palette;
+	u32	 delay_mask;
+	palette = (u16 *)0x05000040;
+	i = 0;
+	do
+	{
+		s32 half;
+		half = i / 2;
+		*palette++ = (i << 10) | (half << 5) | half;
+		i++;
+	} while (i != 32);
+	delays = *(u8 **)&gWorkSlot[41];
+	end = 0;
+	speed = 16;
+	Iwram_CopyWords(PIXEL_BUFFER, (void *)0x06008000, 0x7800);
+	delay_mask = 63;
+	p = delays;
+	do
+	{
+		*p++ = Random16() & delay_mask;
+	} while (p != delays + 256);
+	row = 0;
+	i = 0;
+	do
+	{
+		end += speed / 4;
+		speed++;
+		while (row != end)
+		{
+			x = 0;
+			do
+			{
+				y = row - delays[x];
+				if (y < 0)
+					goto next_pixel;
+				if (y > 119)
+					goto next_pixel;
+				{
+					pixel = PIXEL_BUFFER
+							+ ((x & 7) + ((x / 8) << 6) + ((y & 7) << 3) + ((y / 8) << 11));
+					color = ((s16 *)0x05000000)[*pixel];
+					red = color & 31;
+					green = (color >> 5) & 31;
+					blue = (color >> 10) & 31;
+					if (red < green)
+						red = green;
+					if (red < blue)
+						red = blue;
+					*pixel = 63 - red;
+				}
+			next_pixel:
+				x++;
+			} while (x != 256);
+			row++;
+		}
+		Iwram_CopyWords((void *)0x06008000, PIXEL_BUFFER, 0x7800);
+		WaitFrames(1);
+		if (end > 248)
+			break;
+		i++;
+	} while (i != 27);
+	palette = (u16 *)0x050000c0;
+	i = 0;
+	do
+	{
+		s32 half;
+		half = i / 2;
+		*palette++ = (i << 10) | (half << 5) | half;
+		i++;
+	} while (i != 32);
+	i = 0;
+	do
+	{
+		PIXEL_BUFFER[i] += 64;
+		i++;
+	} while (i != 0x7800);
+	Iwram_CopyWords((void *)0x06008000, PIXEL_BUFFER, 0x7800);
+	WaitFrames(1);
+}
+
+#define SceneTransform_ApplyScale ((void (*)(struct Vector3 *))SceneTransform_ApplyScale)
+
+void BattleFx_PrepareCanvasEffect(
+	struct BattleEffectArgument *effect, s32 a, s32 b, s32 c, s32 *x, s32 *y);
+
+void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
+{
+	struct EffectPosition	 anchor;
+	struct Vector3			 vector;
+	struct EffectPosition	 screen;
+	struct Vector3			 scale;
+	s32						 origin_x;
+	s32						 origin_y;
+	DrawRectangle			 draw[2];
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	s32						 member;
+	struct BattleCamera		*camera;
+	s32						 shift;
+	u8						*graphics;
+	u8						*palette;
+	struct MotionObject		*object;
+	s32						 tick;
+	struct EffectStep		*point;
+	s32						 size;
+	s32						 j;
+	s32						 k;
+
+	heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	graphics = heap_cache[2];
+	camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(1);
+	if (work->effect->prelude == 1)
+		BattleFx_PrepareCanvasEffect(effect, 3, work->effect->side, 0, &origin_x, &origin_y);
+	REG_BG2PA = 0x100;
+	palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
+	Iwram_CopyWords((void *)0x05000000, palette, 128);
+	palette += 128;
+	Resource_DecodeType01(palette, work);
+	Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
+	Resource_DecodeType01(
+		Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD), work->sheet + 0x1000);
+	palette = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet);
+	palette += 128;
+	Resource_DecodeType01(palette, work->sheet + 0x2000);
+	work->transfer_mode = 3;
+	work->transfer_value = 0x04040404;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
+	shift = 64 - anchor.x;
+	REG_BG2X = shift << 8;
+	AudioCommand_PlayFar(142);
+
+	for (frame = 0; frame != work->effect->count * 20 + 72; frame++)
+	{
+		if (frame == 64)
+			BattleEventRuntime_BeginPhaseFar(0);
+		Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
+		if (work->effect->prelude == 1)
+		{
+			s32 x;
+			s32 y;
+
+			x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin_x + shift - 20;
+			y = ((Trig_Cos(frame << 11) << 2) >> 16) + origin_y - 24;
+			BattleFx_FetchRectangleBlitters(work->effect->side, draw);
+			if (frame > 32)
+				y = y - frame * 2 + 64;
+			draw[0](canvas, work->sheet + 0x2000, x, y, 40, 40);
+			if (frame <= 3)
+				draw[1](canvas, work->sheet + 0x2000, x, y, 40, 40);
+			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+		}
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+		draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+		draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+		if (frame > 16 && (frame & 15) == 0)
+			work->transfer_value += 0x01010101;
+		for (member = 0; member != 1; member++)
+		{
+			tick = frame - member * 8;
+			object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
+			if (tick >= 0 && tick < 96)
+			{
+				Render_ResetTransformState();
+				Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+				vector.x = object->x;
+				vector.y = object->y;
+				vector.z = object->z;
+				EffectPosition_ApplyBaseAndYOffset((s32 *)&vector, &screen);
+				screen.x = anchor.x + shift;
+				screen.y -= 24;
+				if (tick <= 67)
+				{
+					for (j = 0; j != 3; j++)
+					{
+						point = &work->particles[member * 32 + j];
+						Render_ResetTransformState();
+						if (tick <= 63)
+						{
+							scale.x = 0x2a000 - (tick * 3 << 9);
+							scale.y = 0x2a000 - (tick * 3 << 9);
+							scale.z = 0x2a000 - (tick * 3 << 9);
+							SceneTransform_ApplyScale(&scale);
+							SceneTransform_ApplyRoll((64 - tick) << 9);
+							SceneTransform_ApplyYaw((64 - tick) << 9);
+						}
+						SceneTransform_ApplyRoll(j * 0x5555);
+						EffectPosition_ApplyBaseAndYOffset(
+							(s32 *)SpinningTriangle_Vertex, (struct EffectPosition *)&vector);
+						point->velocity_x = vector.x + screen.x;
+						point->velocity_y = vector.y + screen.y + 16;
+					}
+					for (j = 0; j != 3; j++)
+					{
+						struct EffectStep *from = &work->particles[j + member * 32];
+						struct EffectStep *to = &work->particles[(j + 1) % 3 + member * 32];
+
+						size = 5 - tick / 16;
+						for (k = 0; k != 24; k++)
+						{
+							s32 x = from->velocity_x + k * (to->velocity_x - from->velocity_x) / 24;
+							s32 y = from->velocity_y + k * (to->velocity_y - from->velocity_y) / 24;
+
+							draw[0](canvas, work->sheet + BattleFx6_FlareCells[size - 1] + 0x1000,
+								x - size, y - size, size * 2, size * 2);
+						}
+					}
+				}
+				if (tick > 63)
+				{
+					draw[0](canvas, work, screen.x - 24, screen.y - 24, 24, 48);
+					draw[1](canvas, work, screen.x, screen.y - 24, 24, 48);
+				}
+			}
+		}
+		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	BattleFx_EndCanvasLayer();
+}
+
+void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
+{
+	struct EffectPosition	 anchor;
+	struct Vector3			 vector;
+	struct EffectPosition	 screen;
+	struct Vector3			 scale;
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	DrawRectangle			 draw[2];
+	s32						 member;
+	struct BattleCamera		*camera;
+	s32						 shift;
+	u8						*graphics;
+	u8						*palette;
+	struct MotionObject		*object;
+	s32						 tick;
+	struct EffectStep		*point;
+	s32						 size;
+	s32						 j;
+	s32						 k;
+
+	heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	graphics = heap_cache[2];
+	camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	REG_BG2PA = 0x100;
+	palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
+	Iwram_CopyWords((void *)0x05000000, palette, 128);
+	palette += 128;
+	Resource_DecodeType01(palette, work);
+	Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
+	palette = Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD);
+	Resource_DecodeType01(palette, work->sheet + 0x1000);
+	work->transfer_mode = 3;
+	work->transfer_value = 0x04040404;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
+	shift = 64 - anchor.x;
+	REG_BG2X = shift << 8;
+	AudioCommand_PlayFar(142);
+
+	for (frame = 0; frame != work->effect->count * 20 + 72; frame++)
+	{
+		if (frame == 64)
+			BattleEventRuntime_BeginPhaseFar(0);
+		if (frame == 46)
+			BattleMotion_ApproachTargetFar(work->effect->actor, work->effect->actors[0], 16, 0);
+		Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+		draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+		draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+		if (frame > 16 && (frame & 15) == 0)
+			work->transfer_value += 0x01010101;
+		for (member = 0; member != 1; member++)
+		{
+			tick = frame - member * 8;
+			object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
+			if (tick >= 0 && tick < 96)
+			{
+				Render_ResetTransformState();
+				Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+				vector.x = object->x;
+				vector.y = object->y;
+				vector.z = object->z;
+				EffectPosition_ApplyBaseAndYOffset((s32 *)&vector, &screen);
+				screen.x = anchor.x + shift;
+				screen.y -= 24;
+				if (tick <= 67)
+				{
+					for (j = 0; j != 3; j++)
+					{
+						point = &work->particles[member * 32 + j];
+						Render_ResetTransformState();
+						if (tick <= 63)
+						{
+							scale.x = 0x2a000 - (tick * 3 << 9);
+							scale.y = 0x2a000 - (tick * 3 << 9);
+							scale.z = 0x2a000 - (tick * 3 << 9);
+							SceneTransform_ApplyScale(&scale);
+							SceneTransform_ApplyRoll((64 - tick) << 9);
+							SceneTransform_ApplyYaw((64 - tick) << 9);
+						}
+						SceneTransform_ApplyRoll(j * 0x5555);
+						EffectPosition_ApplyBaseAndYOffset(
+							(s32 *)TriangleStrike_Vertex, (struct EffectPosition *)&vector);
+						point->velocity_x = vector.x + screen.x;
+						point->velocity_y = vector.y + screen.y + 16;
+					}
+					for (j = 0; j != 3; j++)
+					{
+						struct EffectStep *from = &work->particles[j + member * 32];
+						struct EffectStep *to = &work->particles[(j + 1) % 3 + member * 32];
+
+						size = 5 - tick / 16;
+						for (k = 0; k != 24; k++)
+						{
+							s32 x = from->velocity_x + k * (to->velocity_x - from->velocity_x) / 24;
+							s32 y = from->velocity_y + k * (to->velocity_y - from->velocity_y) / 24;
+
+							draw[0](canvas, work->sheet + BattleFx6_FlareCells[size - 1] + 0x1000,
+								x - size, y - size, size * 2, size * 2);
+						}
+					}
+				}
+				if (tick > 63)
+				{
+					draw[0](canvas, work, screen.x - 24, screen.y - 24, 24, 48);
+					draw[1](canvas, work, screen.x, screen.y - 24, 24, 48);
+				}
+			}
+		}
+		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	BattleFx_EndCanvasLayer();
+}
+
+#define SceneTransform_ApplyPosition ((void (*)(void *))SceneTransform_ApplyPosition)
+#define ObjectDispatch_ApplyValueToChildrenFar \
+	((void (*)(struct MotionObject *, s32))ObjectDispatch_ApplyValueToChildrenFar)
+
+void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
+{
+	struct EffectPosition	 pos;
+	struct EffectPosition	 base;
+	struct Vector3			 scale;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	DrawRectangle			 draw[2];
+	s32						 i;
+	u8						*graphics;
+	struct BattleCamera		*camera;
+	struct MotionObject		*caster;
+	struct MotionObject		*source;
+	struct MotionObject		*target;
+	struct EffectStep		*point;
+	struct EffectStep		*step;
+	s32						 start;
+	s32						 peak;
+	s32						 size;
+	s32						 j;
+	s32						 k;
+	struct EffectStep		*trails;
+
+	work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+	canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+	graphics = *(gWorkSlot + HEAP_SLOT_BATTLE_SHEET);
+	camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+	caster = GetBattleObjectSlotFar(effect->actor)->object;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(1);
+	Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
+	Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
+	ObjectDispatch_ApplyArgumentToChildrenFar(caster, 2);
+	ObjectDispatch_ApplyValueToChildrenFar(caster, 48);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	source = GetBattleObjectSlotFar(work->effect->actor)->object;
+	target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+	for (i = 0, point = work->particles; i != 3; i++)
+	{
+		point->x = source->x;
+		point->y = source->y + 0x280000;
+		point->z = source->z;
+		if (i == 0)
+			point->velocity_x = (target->x - point->x) / 12;
+		else
+			point->velocity_x = (target->x * 2 - point->x) / 12;
+		point->velocity_y = (target->y - point->y + 0x280000) / 12;
+		point->velocity_z = (target->z - point->z) / 12;
+		point->variant = 0;
+		point++;
+	}
+
+	trails = (struct EffectStep *)gMapCellBuffer;
+	for (frame = 0; frame != 60; frame++)
+	{
+		if (frame <= 47)
+		{
+			struct BattleCamera *view = *(gWorkSlot + HEAP_SLOT_CAMERA);
+			s32					 speed;
+
+			if (frame <= 39)
+				speed = 128;
+			else
+				speed = 0x300 - frame * 16;
+			if (work->effect->side == 0)
+				view->yaw -= speed;
+			else
+				view->yaw += speed;
+		}
+		for (i = 0; i != 3; i++)
+		{
+			start = i * 12;
+			if (frame >= start)
+			{
+				step = &work->particles[i];
+				size = (frame - start) / 4 + 2;
+				if (size > 10)
+					size = 10;
+				Render_ResetTransformState();
+				Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+				SceneTransform_ApplyPosition(step);
+				peak = 0;
+				for (j = 0; j != 10; j++)
+				{
+					s32 depth;
+
+					Graphics_SaveTransferWorkOnce();
+					SceneTransform_ApplyRoll((frame - start) << 10);
+					SceneTransform_ApplyYaw(0x4000);
+					scale.x = ((frame - start) << 12) + 0x1000;
+					if (scale.x > 0x10000)
+						scale.x = 0x10000;
+					scale.y = scale.x;
+					scale.z = scale.x;
+					SceneTransform_ApplyScale(&scale);
+					SceneTransform_ApplyRoll(j * 0x199a);
+					depth =
+						EffectPosition_ApplyBaseAndYOffset((s32 *)&RingBolts_Points[j & 1], &pos);
+					if (peak < depth)
+						peak = depth;
+					pos.x >>= 1;
+					trails[i * 10 + j].velocity_x = pos.x + base.x;
+					trails[i * 10 + j].velocity_y = pos.y + base.y;
+					trails[i * 10 + j].velocity_x = pos.x;
+					trails[i * 10 + j].velocity_y = pos.y;
+					Graphics_RestoreTransferWork();
+				}
+				if (peak <= 399999)
+				{
+					for (j = 0; j != 10; j++)
+					{
+						struct EffectStep *from =
+							&((struct EffectStep *)gMapCellBuffer)[j + i * 10];
+						struct EffectStep *to =
+							&((struct EffectStep *)gMapCellBuffer)[(j + 1) % 10 + i * 10];
+
+						for (k = 0; k != 16; k++)
+						{
+							s32 x = from->velocity_x + (to->velocity_x - from->velocity_x) * k / 16;
+							s32 y = from->velocity_y + (to->velocity_y - from->velocity_y) * k / 16;
+
+							draw[0](canvas, graphics + ParticleStreams_CellOffsets[size - 1],
+								x - size / 2, y - size, size, size * 2);
+						}
+					}
+				}
+				step->x += step->velocity_x;
+				step->y += step->velocity_y;
+				step->z += step->velocity_z;
+				if (frame == start + i + 10)
+				{
+					target->acceleration = 0x20000;
+					target->speed_limit = 0x80000;
+					target->velocity_y = 0x50000;
+					target->vertical_motion_strength = 0xab85;
+					target->auto_face_motion = 0;
+					ObjectDispatch_InitFromTable6Far(target);
+					if (target->x < 0)
+						Object_SetMoveTargetFar(target, target->x - 0x280000, 0, target->z);
+					else
+						Object_SetMoveTargetFar(target, target->x + 0x280000, 0, target->z);
+					if (i == 2)
+					{
+						BattleEventRuntime_BeginPhaseFar(134);
+					}
+					else
+					{
+						AudioCommand_PlayFar(134);
+						ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 8);
+					}
+					work->shake_frames = 4;
+				}
+			}
+		}
+		Camera_ApplyShake(8, 8);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
+{
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	DrawRectangle			 draw[2];
+	s32						 i;
+	u8						*graphics;
+	struct BattleCamera		*camera;
+	struct MotionObject		*source;
+	struct MotionObject		*target;
+	struct EffectStep		*point;
+	struct EffectStep		*step;
+	struct EffectPosition	 pos;
+	s32						 size;
+	s32						 j;
+	s32						 k;
+	struct EffectStep		*trails;
+
+	work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+	canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+	graphics = *(gWorkSlot + HEAP_SLOT_BATTLE_SHEET);
+	camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(1);
+	Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
+	Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+	work->transfer_mode = 2;
+	work->transfer_value = 50;
+	draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	source = GetBattleObjectSlotFar(work->effect->actor)->object;
+	target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+	for (i = 0, point = work->particles; i != 8; i++)
+	{
+		s32 delay = i * 8;
+
+		point->x = source->x / 2;
+		point->y = source->y + 0x780000;
+		point->z = source->z;
+		point->velocity_x = (target->x + ((s32)((Random16() & 0x7f) - 64) << 16) - point->x) / 12;
+		point->velocity_y = (target->y - point->y + 0x140000) / 12;
+		point->velocity_z = (target->z - point->z) / 12;
+		point->variant = (Random16() & 15) + delay;
+		point++;
+	}
+
+	size = 2;
+	trails = (struct EffectStep *)gMapCellBuffer;
+	for (frame = 0; frame != 128; frame++)
+	{
+		Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
+		if (frame == 96)
+			BattleEventRuntime_BeginPhaseFar(134);
+		for (i = 0; i != 8; i++)
+		{
+			step = &work->particles[i];
+			if (frame >= step->variant)
+			{
+				Render_ResetTransformState();
+				Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+				EffectPosition_ApplyBaseAndYOffset((s32 *)step, &pos);
+				pos.x >>= 1;
+				if (pos.x >= -8 && pos.x <= 127)
+				{
+					if (pos.y <= 127)
+					{
+						if (pos.y >= -8)
+						{
+							for (j = 0; j != 10; j++)
+							{
+								trails[i * 10 + j].velocity_x =
+									pos.x
+									+ ((Trig_Sin(j * 0x199a - ((frame - step->variant) << 11))
+										   * SpinningStars_Radii[j & 1])
+											/ 2
+										>> 16);
+								trails[i * 10 + j].velocity_y =
+									pos.y
+									- (Trig_Cos(j * 0x199a - ((frame - step->variant) << 11))
+											* SpinningStars_Radii[j & 1]
+										>> 16);
+							}
+							for (j = 0; j != 10; j++)
+							{
+								struct EffectStep *from = &trails[j + i * 10];
+								struct EffectStep *to = &trails[i * 10 + (j + 1) % 10];
+
+								for (k = 0; k != 12; k++)
+								{
+									s32 x = from->velocity_x
+											+ (to->velocity_x - from->velocity_x) * k / 12;
+									s32 y = from->velocity_y
+											+ (to->velocity_y - from->velocity_y) * k / 12;
+
+									draw[0](canvas,
+										graphics + ParticleStreams_CellOffsets[size - 1],
+										x - size / 2, y - size, size, size * 2);
+								}
+							}
+						}
+					}
+				}
+				if (step->y <= 0x1dffff)
+				{
+					step->velocity_y = -step->velocity_y;
+					step->velocity_x /= 2;
+					step->velocity_z /= 2;
+					work->shake_frames = 4;
+					AudioCommand_PlayFar(134);
+					for (j = 0; j != work->effect->count; j++)
+						ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 8);
+				}
+				step->x += step->velocity_x;
+				step->y += step->velocity_y;
+				step->z += step->velocity_z;
+			}
+		}
+		Camera_ApplyShake(4, 4);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+struct Placement
+{
+	s32 x;
+	s32 y;
+	s32 z;
+	s32 unknown_0c;
+};
+
+struct DrawPair
+{
+	DrawRectangle rect;
+	DrawRectangle rect_alt;
+};
+
+struct ScalePair
+{
+	s32 x;
+	s32 y;
+};
+extern const struct ScalePair BattleFx_StarsUnitScale;
+extern u8					  WhirlwindComets_GridX[];
+extern u8					  WhirlwindComets_GridY[];
+extern u16					  WhirlwindComets_Frames[];
+extern u8					  WhirlwindComets_CellWidths[];
+extern u8					  WhirlwindComets_CellHeights[];
+extern u8					  WhirlwindComets_CellBiasY[];
+extern u16					  WhirlwindComets_CellOffsets[];
+s32							  ArcTan2(s32 x, s32 z);
+void						  Object_ApplyProjectedPlacementFar(
+	void *handle, struct Placement *place, struct ScalePair *scale, s32 mode);
+
+void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
+{
+	void				   **cells;
+	void					*draw_destination;
+	void					*view;
+	struct BattleEffectWork *runtime;
+	struct DrawPair			 draw;
+	s32						 frame;
+	u8						*graphics;
+	struct ScalePair		 wave;
+	struct ScalePair		 drift;
+	struct MotionObject		*object;
+	struct BtlObj			*context;
+	struct EffectStep		*point;
+	struct EffectStep		*spark;
+	struct EffectStep		*mark;
+	u8						*tbl;
+	u8						*src;
+	s32						 index;
+	s32						 slot;
+	s32						 size;
+	s32						 span;
+	s32						 dist;
+	s32						 alive;
+	s32						 width;
+	s32						 heading[8];
+	s32						 radius[8];
+	s32						 spin[8];
+	struct ScalePair		 home[8];
+	s32						 base_angle[8];
+	struct Vector3			 work;
+	struct EffectPosition	 screen;
+	struct Vector3			 shake;
+	struct Placement		 place;
+	struct ScalePair		 scale;
+
+	cells = (void **)(gBattleFxWork + 4);
+	draw_destination = cells[0];
+	view = *(void **)((u8 *)cells - 112);
+	runtime = cells[-1];
+	graphics = (u8 *)cells[1];
+	runtime->effect = argument;
+
+	BattleFx_BeginCanvasLayer(0);
+	BattleEffect_LoadWork(46, 7, 7, 3, 2);
+	draw.rect = (DrawRectangle)cells[6];
+	BattleEffect_LoadWork(47, 7, 7, 3, 3);
+	draw.rect_alt = (DrawRectangle)cells[7];
+
+	tbl = Resource_GetTableEntry((s32)&ResourceId_WhirlwindSheet);
+	Iwram_CopyWords((void *)0x05000000, tbl, 0x80);
+	tbl += 0x80;
+	Resource_DecodeType01(tbl, runtime);
+	Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
+
+	runtime->transfer_mode = 2;
+	runtime->transfer_value = 50;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	wave.x = 0x800000;
+	wave.y = 0x280000;
+	drift.x = 0;
+	drift.y = 0;
+
+	for (index = 0; index != runtime->effect->count; index++)
+	{
+		context = GetBattleObjectSlotFar(runtime->effect->actors[index]);
+		object = (struct MotionObject *)context->object;
+		home[index].x = object->x;
+		home[index].y = object->z;
+		base_angle[index] = object->angle;
+		heading[index] = (u16)ArcTan2(object->x, object->z);
+		radius[index] =
+			Iwram_Sqrt((object->x >> 8) * (object->x >> 8) + (object->z >> 8) * (object->z >> 8))
+			>> 7;
+		spin[index] = 0;
+		object->vertical_motion_strength = 0;
+	}
+
+	index = 0;
+	do
+	{
+		point = &runtime->particles[index];
+		point->z = 120;
+		point->y = 0;
+		Random16();
+		point->velocity_y = 0;
+		point->velocity_x = 0;
+		point->variant = Random16() & 63;
+		index++;
+	} while (index != 64);
+
+	width = 48;
+	frame = 0;
+	do
+	{
+		if ((gKeysRepeat & (KEY_A | KEY_B)) != 0)
+		{
+			if (frame <= 159)
+				frame = 160;
+			else if (frame <= 394)
+				frame = 395;
+		}
+
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(view, (u8 *)view + 12);
+
+		if (frame == 16)
+			AudioCommand_PlayFar(141);
+		if (frame == 256)
+			AudioCommand_PlayFar(140);
+		if (frame == 334)
+			AudioCommand_PlayFar(212);
+		if (frame == 347)
+			AudioCommand_PlayFar(212);
+		if (frame == 359)
+			AudioCommand_PlayFar(212);
+		if (frame == 372)
+			AudioCommand_PlayFar(212);
+
+		for (index = 0; index != runtime->effect->count; index++)
+		{
+			if (frame > index * 16)
+			{
+				context = GetBattleObjectSlotFar(runtime->effect->actors[index]);
+				object = (struct MotionObject *)context->object;
+				object->x = (radius[index] * Trig_Sin(heading[index])) >> 1;
+				object->z = (radius[index] * Trig_Cos(heading[index])) >> 1;
+
+				if (frame <= 159)
+				{
+					if (frame > index * 16 + 16)
+						spin[index] += 48;
+					if (radius[index] <= 31)
+						object->y += 0x60000;
+					else
+						object->y += 0x8000;
+					if (object->y > 0x7c0000)
+						object->y = 0x7c0000;
+				}
+
+				if (frame <= 490)
+				{
+					heading[index] += spin[index];
+					if (heading[index] > 0x10000)
+						heading[index] -= 0x10000;
+					object->angle += spin[index] / 4;
+				}
+
+				if (frame == 395)
+					object->vertical_motion_strength = 0xab85;
+
+				slot = 0;
+				do
+				{
+					if (frame == WhirlwindComets_Frames[slot])
+					{
+						object->velocity_y = 0;
+						ObjectGroup_UpdateMembers(runtime->effect->actors[index], 7, 5, index, 8);
+					}
+					slot++;
+				} while (slot != 4);
+
+				if (radius[index] > 16)
+					radius[index] -= 2;
+			}
+		}
+
+		if ((u32)(frame - 16) <= 143)
+		{
+			size = frame * 2 - 32;
+			if (size > 48)
+				size = 48;
+			draw.rect(draw_destination, &runtime->sheet[frame / 4 % 3 * 3072 + (width - size) * 48],
+				32, 112 - size, width, size);
+		}
+
+		if ((u32)(frame - 48) <= 111)
+		{
+			size = frame * 2 - 96;
+			if (size > 64)
+				size = 64;
+			draw.rect(draw_destination, &runtime->sheet[frame / 4 % 3 * 3072 + (64 - size) * 48],
+				32, 64 - size, width, size);
+		}
+
+		if ((u32)(frame - 160) <= 239)
+		{
+			src = (u8 *)runtime + frame / 4 % 3 * 3072;
+			draw.rect(draw_destination, src, 8, 0, width, 64);
+			draw.rect(draw_destination, src, 8, 64, width, 64);
+		}
+
+		if (frame <= 159)
+		{
+			index = 0;
+			point = runtime->particles;
+			do
+			{
+				if (point[index].variant == 0)
+				{
+					work.x = point[index].z * Trig_Sin(point[index].velocity_y);
+					work.y = point[index].y;
+					work.z = point[index].z * Trig_Cos(point[index].velocity_y);
+					EffectPosition_ApplyBaseAndYOffset(&work.x, &screen);
+					screen.x >>= 1;
+					if (point[index].y <= 0x3fffff)
+					{
+						draw.rect(draw_destination, (u8 *)runtime + 0x2400, screen.x - 12,
+							screen.y - 12, 16, 16);
+					}
+					if (point[index].z > 24)
+						point[index].z -= 4;
+					point[index].velocity_y += point[index].velocity_x * 2;
+					if (point[index].velocity_y > 0x10000)
+						point[index].velocity_y -= 0x10000;
+					point[index].velocity_x += 50;
+					if (point[index].velocity_x > 4096)
+						point[index].velocity_x = 4096;
+					point[index].velocity_y += 2048;
+					point[index].y += point[index].velocity_y * 2;
+					if (point[index].y > 0x300000)
+					{
+						point[index].y = 0;
+						point[index].z = 100;
+						point[index].velocity_y = 0;
+						point[index].velocity_x = 0;
+					}
+				}
+				else
+				{
+					point[index].variant--;
+				}
+				index++;
+			} while (index != 24);
+		}
+
+		if (frame == 160)
+		{
+			s32 speed;
+			s32 angle;
+
+			BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+			BattlePresentation_ConfigurePaletteFadeFar(1, (s32)&ResourceId_VioletSkyBackdrop, 8);
+			BattleFx_SelectLivingTargets(runtime->effect);
+			BattleFx_SpawnObjects(9, 376, 2);
+
+			tbl = Resource_GetTableEntry((s32)&ResourceId_VioletCometSheet);
+			Iwram_CopyWords((void *)0x05000000, tbl, 0x80);
+			tbl += 0x80;
+			Resource_DecodeType01(tbl, (u8 *)runtime + 0x3600);
+
+			index = 0;
+			do
+			{
+				((struct EffectStep *)Ram_MapCellBuffer)[index].variant = 0;
+				index++;
+			} while (index != 512);
+
+			for (index = 0; index != runtime->effect->count; index++)
+			{
+				context = GetBattleObjectSlotFar(runtime->effect->actors[index]);
+				object = (struct MotionObject *)context->object;
+				object->y = ((Random16() & 15) + 8) << 16;
+			}
+
+			gProjection.center_x = 72;
+
+			index = 0;
+			do
+			{
+				speed = Random16() & 127;
+				angle = (Random16() & 0x7fff) + 0x9fff;
+				runtime->particles[index].x = Trig_Sin(angle) * speed;
+				runtime->particles[index].y = Trig_Cos(angle) * speed;
+				runtime->particles[index].z = ((u32)Random16() % 200 - 100) << 16;
+				runtime->particles[index].variant = 0;
+				index++;
+			} while (index != 32);
+
+			for (index = 0; index != runtime->effect->count; index++)
+			{
+				radius[index] = 16;
+				spin[index] = 6000;
+			}
+		}
+
+		if (frame > 159)
+		{
+			scale = BattleFx_StarsUnitScale;
+			size = 16;
+			if (frame - 160 <= 64)
+				size = 32;
+
+			wave.x -= (Trig_Sin((frame - 160) << 7) * 32) >> 6;
+			wave.y += (Trig_Sin((frame - 160) << 9) * size) >> 6;
+			wave.x += drift.x;
+			wave.y += drift.y;
+			drift.x /= 2;
+			drift.y /= 2;
+
+			scale.x = 0x10000;
+			scale.y = 0x10000;
+			place.unknown_0c = 0;
+			index = 0;
+			do
+			{
+				place.x = (WhirlwindComets_GridX[index] << 16) + wave.x + 0x280000;
+				place.y = 0xff0000 + index * 0x400000;
+				place.z = ((WhirlwindComets_GridY[index] + index * 64) << 16) + wave.y;
+				Object_ApplyProjectedPlacementFar(runtime->objects[index], &place, &scale, 0);
+				index++;
+			} while (index != 9);
+
+			if (frame > 255)
+			{
+				s32 threshold;
+
+				shake.z = 0x1000000;
+				alive = 0;
+				shake.x = 0;
+				shake.y = 0;
+				Render_ResetTransformState();
+				SceneTransform_ApplyPosition(&shake);
+
+				if (frame <= 329)
+				{
+					index = 0;
+					do
+					{
+						s32 xx;
+						s32 yy;
+						s32 zz;
+
+						point = &runtime->particles[index];
+						xx = (point->x >> 8) * (point->x >> 8);
+						yy = (point->y >> 8) * (point->y >> 8);
+						zz = (point->z >> 8) * (point->z >> 8);
+						dist = Iwram_Sqrt(xx + yy + zz) >> 9;
+						if (dist != 0)
+						{
+							EffectPosition_ApplyBaseAndYOffset(&point->x, &screen);
+							screen.x = (screen.x >> 17) + (wave.x >> 17) + 32;
+							screen.y = (screen.y >> 16) + (wave.y >> 16) - 4;
+							screen.depth >>= 16;
+							if (screen.depth <= 169)
+								screen.depth = 170;
+							if (screen.depth > 350)
+								screen.depth = 350;
+							span = 6 - (screen.depth - 170) / 36;
+							draw.rect_alt(draw_destination,
+								graphics + ParticleStreams_CellOffsets[span - 1],
+								screen.x - span / 2, screen.y - span, span, span * 2);
+							point->x -= point->x / dist;
+							point->y -= point->y / dist;
+							point->z -= point->z / dist;
+						}
+						else
+						{
+							alive++;
+						}
+						index++;
+					} while (index != 32);
+
+					if (alive > 0)
+					{
+						span = alive / 10 + 1;
+						draw.rect_alt(draw_destination,
+							graphics + ParticleStreams_CellOffsets[span - 1],
+							(wave.x >> 17) - span / 2 + 32, (wave.y >> 16) - span - 4, span,
+							span * 2);
+					}
+				}
+
+				slot = 0;
+				do
+				{
+					if (frame == WhirlwindComets_Frames[slot])
+					{
+						s32 speed;
+						s32 angle;
+
+						index = 0;
+						do
+						{
+							speed = (Random16() & 127) + 16;
+							angle = Random16() & 0xffff;
+							spark = &((struct EffectStep *)Ram_MapCellBuffer)[slot * 128 + index];
+							spark->velocity_x = (Trig_Sin(angle) * speed) >> 6;
+							spark->velocity_y = -(Trig_Cos(angle) * speed) >> 6;
+							spark->velocity_y = ((Random16() & 255) - 128) << 10;
+							spark->x = 0;
+							spark->y = 0;
+							spark->z = 0;
+							spark->variant = (Random16() & 15) + 64;
+							index++;
+						} while (index != 96);
+					}
+
+					if (frame >= WhirlwindComets_Frames[0])
+					{
+						spark = ((struct EffectStep *)Ram_MapCellBuffer);
+						index = 0;
+						do
+						{
+							if (spark[index].variant > 0)
+							{
+								EffectPosition_ApplyBaseAndYOffset(&spark[index].x, &screen);
+								screen.x = (screen.x >> 17) + 32;
+								screen.y = (screen.y >> 16) + 56;
+								screen.depth >>= 16;
+								if (screen.depth <= 169)
+									screen.depth = 170;
+								if (screen.depth > 350)
+									screen.depth = 350;
+								span = 3 - (screen.depth - 170) / 90;
+								draw.rect(draw_destination,
+									graphics + ParticleStreams_CellOffsets[span - 1],
+									screen.x - span / 2, screen.y - span, span, span * 2);
+								spark[index].x += spark[index].velocity_x;
+								spark[index].y += spark[index].velocity_y;
+								spark[index].z += spark[index].velocity_y;
+								spark[index].variant--;
+							}
+							index++;
+						} while (index != 512);
+					}
+					slot++;
+				} while (slot != 4);
+
+				index = 0;
+				do
+				{
+					mark = &runtime->particles[index + 60];
+					threshold = index * 12 + 330;
+					if (frame == threshold)
+					{
+						mark->x = (wave.x >> 17) + 32;
+						mark->y = (wave.y >> 16) - 4;
+						mark->velocity_x = (wave.x >> 17) + 32;
+						mark->velocity_y = (wave.y >> 16) - 4;
+
+						slot = 0;
+						do
+						{
+							runtime->particles[slot + 32].variant = 4;
+							slot++;
+						} while (slot != 28);
+
+						drift.x = 0x80000;
+						drift.y = -0x20000;
+						runtime->shake_frames = 8;
+					}
+
+					if (frame >= threshold)
+					{
+						s32 size;
+
+						size = (frame - threshold) / 2;
+						if (size > 2)
+							size = 2;
+						draw.rect_alt(draw_destination,
+							(u8 *)runtime + WhirlwindComets_CellOffsets[size], mark->x,
+							mark->y - WhirlwindComets_CellBiasY[size],
+							WhirlwindComets_CellWidths[size], WhirlwindComets_CellHeights[size]);
+						mark->x -= 8;
+						mark->y += 2;
+
+						if (frame < threshold + 8)
+						{
+							SceneTransform_ApplyRoll(-2048);
+							SceneTransform_ApplyYaw(-4096);
+
+							slot = 0;
+							spark = &runtime->particles[32];
+							do
+							{
+								struct EffectStep *step;
+
+								step = &spark[slot];
+								work.x = 0;
+								work.y = step->variant * Trig_Cos(slot * 2340);
+								work.z = step->variant * Trig_Sin(slot * 2340);
+								step->variant += 2;
+								EffectPosition_ApplyBaseAndYOffset(&work.x, &screen);
+								screen.x =
+									(screen.x >> 17) + runtime->particles[index + 60].velocity_x;
+								screen.y =
+									(screen.y >> 16) + runtime->particles[index + 60].velocity_y;
+								screen.depth >>= 16;
+								if (screen.depth <= 169)
+									screen.depth = 170;
+								if (screen.depth > 350)
+									screen.depth = 350;
+								span = 3 - (screen.depth - 170) / 90;
+								draw.rect(draw_destination,
+									graphics + ParticleStreams_CellOffsets[span - 1],
+									screen.x - span / 2, screen.y - span, span, span * 2);
+								slot++;
+							} while (slot != 28);
+						}
+					}
+					index++;
+				} while (index != 4);
+			}
+		}
+
+		ObjectGroup_TickMemberTimers();
+		runtime->transfer_pending = 1;
+		WaitFrames(1);
+		frame++;
+	} while (frame != 400);
+
+	BattleEventRuntime_BeginPhaseFar(134);
+
+	for (index = 0; index != runtime->effect->count; index++)
+	{
+		struct MotionObject *obj;
+
+		context = GetBattleObjectSlotFar(runtime->effect->actors[index]);
+		obj = (struct MotionObject *)context->object;
+		obj->x = home[index].x;
+		obj->z = home[index].y;
+		obj->angle = base_angle[index];
+	}
+
+	gProjection.center_x = 120;
+
+	BattleEffect_SetupBlendedDisplay();
+
+	index = 0;
+	do
+	{
+		ResourceObject_ReleaseFar((struct ResourceObjectWork *)runtime->objects[index]);
+		index++;
+	} while (index != 9);
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(47);
+	Runtime_ReleaseHeapBlock(46);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// runtime_draw_render_animation_mode1.c
+// バトル演出：粒が昇る演出 (embers.c) の二つの入口
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+// mode 1 : 使う者の側から出し、LightningBolt のパレットで描く
+//--------------------------------------------------------------------------
+void BattleFx_RenderAnimationMode1(s32 effect)
+{
+	BattleEffect_RunPaletteParticles((struct BattleEffectArgument *)effect, 1);
+}
+
+//--------------------------------------------------------------------------
+// mode 0 : 8 体の隊列を出して動かし、最後にその位置で爆発を起こす
+//--------------------------------------------------------------------------
+void BattleFx_RenderAnimationMode0(s32 effect)
+{
+	BattleEffect_RunPaletteParticles((struct BattleEffectArgument *)effect, 0);
+}
+
+//--------------------------------------------------------------------------
+// embers.c
+// バトル演出：粒を下から昇らせる演出と、粒を噴き上げて 3 本の柱を流す演出
+//--------------------------------------------------------------------------
+
+#undef Camera_ApplyShake
+
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *state, s32 flags);
+#define AnimationObjects_SelectAnimationFar \
+	((void (*)(void *, s32))AnimationObjects_SelectAnimationFar)
+
+struct Point2D
+{
+	s32 x;
+	s32 y;
+};
+
+struct BattleEffectTargetArgument;
+void AudioCommand_PlayFar(s32 value);
+#define GRAINS ((struct EffectStep *)Ram_MapCellBuffer) // 昇る粒 (最大 512)
+
+struct BlitterPair_4
+{
+	DrawRectangle hikaku; // 比較合成
+	DrawRectangle kasan;  // 加算合成
+};
+
+//--------------------------------------------------------------------------
+// 208 フレームの演出。49〜159 フレームに A か B を押すと 160 フレームへ飛ばす
+// mode : 0 なら 8 体の隊列を出して動かし、最後にその位置で ImpactBurst を起こす
+//        1 なら effect->side で決まる位置から火花と閃光を出し、
+//        LightningBolt のパレットで描く
+// 粒は 4 種類 (キャンバス座標、y は下向きが正)：
+//   GRAINS[0..511]    昇る粒：y = 112 から上へ加速して昇る。33〜103 フレームは
+//                     1 フレームに 1 つ、104〜175 フレームは 8 つずつ出す
+//   particles[40..63] 火花：41〜127 の奇数フレームに 1 つずつ、斜め上へ飛ぶ
+//   particles[0..23]  閃光：129〜175 フレームに 1 つずつ、横へ飛ぶ
+//   particles[24..39] 筋：上から斜めに落ち、y が 55 を越えたら絵を繰り返す
+//--------------------------------------------------------------------------
+void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 mode)
+{
+	struct EffectPosition	 origin;
+	void				   **cursor;
+	void					*canvas;
+	struct BattleCamera		*camera;
+	struct BattleEffectWork *work;
+	struct BlitterPair_4		 draw;
+	s32						 frame;
+	u8						*sheet;
+	struct Point2D			 focus;
+	s32						 dir;
+	u8						*palette;
+	s32						 i;
+
+	// cursor は gWorkSlot[40] (キャンバス) を指す
+	cursor = (void **)(gBattleFxWork + 4);
+	canvas = cursor[0];
+	camera = cursor[-28]; // [12] カメラ
+	work = cursor[-1];	  // [39] 作業領域
+	sheet = cursor[1];	  // [41] 粒の絵
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	REG_BLDALPHA = 0x1010;
+	REG_BG2CNT = 0x784;
+	BattleEffect_LoadWork(46, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+	draw.hikaku = cursor[6];
+	BattleEffect_LoadWork(47, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_KASAN);
+	draw.kasan = cursor[7];
+
+	// 閃光は FlashBurst、筋は EmberStreak (sheet + 0x3000) の絵
+	palette = Resource_GetTableEntry((s32)&ResourceId_FlashBurstSheet);
+	Iwram_CopyWords((void *)0x05000000, palette, 128);
+	palette += 128;
+	Resource_DecodeType01(palette, work);
+	palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
+	palette += 128;
+	Resource_DecodeType01(palette, work->sheet + 0x3000);
+	Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), sheet);
+	if (mode == 1)
+		Iwram_CopyWords((void *)0x05000000,
+			Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
+	work->transfer_mode = 2;
+	work->transfer_value = 75; // 転送のたびに 3/4 へ減らして残像にする
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	// mode 1 で side が 1 なら左右を逆にする
+	if (mode == 0)
+		dir = 1;
+	else if (work->effect->side == 1)
+		dir = -1;
+	else
+		dir = 1;
+	if (mode == 1)
+	{
+		EffectPosition_ApplyStepAndYOffset(work->effect->actor, &origin);
+		origin.x /= 2;
+		origin.y = 66;
+		if (work->effect->side == 1)
+			origin.x = 76;
+		else
+			origin.x = 44;
+	}
+
+	// 隊列の中心は (212, -60) から
+	focus.x = 212 << 16;
+	focus.y = -(60 << 16);
+	for (i = 0; i != 64; i++)
+		work->particles[i].variant = -1;
+	for (i = 0; i != 16; i++)
+	{
+		struct EffectStep *streak = &work->particles[24 + i];
+
+		if (dir == 1)
+			streak->x = (Random16() & 127) + 128;
+		else
+			streak->x = (Random16() & 127) - 128;
+		streak->y = (Random16() & 7) - 72;
+		streak->variant = -(Random16() & 31); // 落ち始めるまでの待ち
+	}
+	for (i = 0; i != 512; i++)
+		GRAINS[i].variant = -1;
+	if (mode == 0)
+	{
+		BattleFx_SelectLivingTargets((struct BattleEffectTargetArgument *)work->effect);
+		WaitFrames(1);
+		BattleFx_SpawnObjects(8, 377, 2);
+	}
+
+	for (frame = 0; frame != 208; frame++)
+	{
+		// A か B で 160 フレームへ
+		if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 48 && frame <= 159)
+		{
+			if (mode == 0)
+			{
+				AnimationObjects_SelectAnimationFar(work->objects[0], 8);
+				AnimationObjects_SelectAnimationFar(work->objects[1], 9);
+				AnimationObjects_SelectAnimationFar(work->objects[3], 10);
+				AnimationObjects_SelectAnimationFar(work->objects[4], 11);
+			}
+			for (i = 0; i != work->effect->count; i++)
+			{
+				ObjectGroup_UpdateMembers(work->effect->actors[i], 10, 5, -1, 0);
+				BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 4);
+			}
+			frame = 160;
+		}
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+		if (frame == 178)
+			BattleEventRuntime_BeginPhaseFar(134);
+
+		// 128 から残像を半分に、160〜175 はキャンバスを塗りつぶしてパレットを明るくし、
+		// 176 からは転送のたびに画素値を 2 ずつ下げて消す
+		if (frame == 128)
+			work->transfer_value = 50;
+		if (frame == 176)
+		{
+			work->transfer_mode = 3;
+			work->transfer_value = 0x02020202;
+			palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
+			Iwram_CopyWords((void *)0x05000000, palette, 128);
+		}
+		else if (frame >= 160 && frame <= 175)
+		{
+			work->transfer_mode = 1;
+			work->transfer_value = 0x10101010;
+			if (frame > 173)
+				work->transfer_value = 0x3f3f3f3f;
+			Palette_BrightenBgEntries(2, 2, 2);
+		}
+
+		//------------------------------------------------------------------
+		// 新しい粒を出す
+		//------------------------------------------------------------------
+		// 昇る粒：y = 112 から上向きに出す
+		if (frame >= 33 && frame <= 175)
+		{
+			s32 spawned = 0;
+			s32 limit = 1;
+
+			if (frame > 103)
+				limit = 8;
+			for (i = 0; i != 512; i++)
+			{
+				struct EffectStep *grain = &GRAINS[i];
+
+				if (grain->variant == -1)
+				{
+					grain->x = ((Random16() & 255) - 32) << 16;
+					grain->y = 112 << 16;
+					grain->velocity_x = ((Random16() & 127) + PaletteParticles_DropSpeeds[i & 3])
+										<< 9;
+					grain->velocity_y = -((Random16() & 127) + PaletteParticles_DropSpeeds[i & 3])
+										<< 11;
+					grain->variant = 0;
+					spawned++;
+					if (spawned == limit)
+						break;
+				}
+			}
+		}
+		// 火花：奇数フレームに 1 つ、斜め上へ出す
+		if (frame >= 41 && frame <= 127)
+		{
+			s32 spawned = 0;
+
+			if (frame & 1)
+			{
+				for (i = 0; i != 24; i++)
+				{
+					struct EffectStep *spark = &work->particles[40 + i];
+
+					if (spark->variant == -1)
+					{
+						s32 speed = (Random16() & 255) + 128;
+						s32 angle = (Random16() & 0x1fff) + 20000;
+
+						if (mode == 0)
+						{
+							spark->x = ((Random16() & 7) + 78) << 16;
+							spark->y = 70 << 16;
+						}
+						else
+						{
+							spark->x = ((Random16() & 7) + origin.x - 8) << 16;
+							spark->y = origin.y << 16;
+						}
+						spark->velocity_x = speed * Trig_Sin(angle) >> 9;
+						spark->velocity_y = speed * Trig_Cos(angle) >> 9;
+						spawned++;
+						spark->variant = 0;
+						if (spawned == 1)
+							break;
+					}
+				}
+			}
+		}
+		if (frame == 48)
+			AudioCommand_PlayFar(141);
+		if (frame == 128)
+			AudioCommand_PlayFar(145);
+		// 閃光：1 フレームに 1 つ、横へ出す
+		if (frame >= 129 && frame <= 175)
+		{
+			s32 spawned = 0;
+
+			for (i = 0; i != 24; i++)
+			{
+				struct EffectStep *flash = &work->particles[i];
+
+				if (flash->variant == -1)
+				{
+					s32 speed = (Random16() & 255) + 128;
+					s32 angle = (Random16() & 0x1fff) - 20000;
+
+					if (mode == 0)
+					{
+						flash->x = 68 << 16;
+						flash->y = 64 << 16;
+					}
+					else
+					{
+						flash->x = origin.x << 16;
+						flash->y = origin.y << 16;
+					}
+					flash->velocity_x = speed * Trig_Sin(angle) >> 6;
+					flash->velocity_y = speed * Trig_Cos(angle) >> 6;
+					flash->variant = 0;
+					spawned++;
+					if (spawned == 1)
+						break;
+				}
+			}
+		}
+
+		//------------------------------------------------------------------
+		// 粒を描いて動かす
+		//------------------------------------------------------------------
+		// 閃光：4 フレームごとに絵を進め、24 フレームで消える
+		if (frame <= 175)
+		{
+			for (i = 0; i != 24; i++)
+			{
+				struct EffectStep *flash = &work->particles[i];
+
+				if (flash->variant >= 0)
+				{
+					draw.hikaku(canvas, work->sheet + ((flash->variant >> 2) << 11),
+						HI(flash->x) - 16, HI(flash->y) - 32, 32, 64);
+					flash->x += flash->velocity_x * dir;
+					flash->y += flash->velocity_y;
+					flash->variant++;
+					if (flash->variant == 24)
+						flash->variant = -1;
+				}
+			}
+		}
+
+		// 火花：1×2 の点、上へ加速して 48 フレームで消える
+		for (i = 0; i != 24; i++)
+		{
+			struct EffectStep *spark = &work->particles[40 + i];
+			s32				   size = 1;
+
+			if (spark->variant >= 0)
+			{
+				draw.kasan(canvas, PaletteParticles_SparkPixels, HI(spark->x), HI(spark->y) - size,
+					size, size * 2);
+				spark->x += spark->velocity_x * dir;
+				spark->y += spark->velocity_y;
+				spark->velocity_y += -0x400;
+				spark->variant++;
+				if (spark->variant == 48)
+					spark->variant = -1;
+			}
+		}
+
+		// 昇る粒：128 フレームまでは上へ加速し、その後は上昇の速さを保ったまま
+		// x の速度を毎フレーム減らして左へ曲げる (dir = -1 なら右、奇数番が強い)。
+		// 256 フレームで消える
+		if (frame <= 175)
+		{
+			for (i = 0; i != 512; i++)
+			{
+				struct EffectStep *grain = &GRAINS[i];
+
+				if (grain->variant >= 0)
+				{
+					u8	size = PaletteParticles_DropSizes[i & 3];
+					s32 height = size * 2;
+
+					draw.hikaku(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+						HI(grain->x) - size / 2, HI(grain->y) - size, size, height);
+					grain->x += grain->velocity_x * dir;
+					grain->y += grain->velocity_y;
+					if (frame > 128)
+					{
+						if (i & 1)
+							grain->velocity_x += -0x8000;
+						else
+							grain->velocity_x += -0x2000;
+					}
+					else
+					{
+						grain->velocity_y += -0x400;
+					}
+					grain->variant++;
+					if (grain->variant == 256)
+						grain->variant = -1;
+				}
+			}
+		}
+
+		//------------------------------------------------------------------
+		// 揺れと隊列
+		//------------------------------------------------------------------
+		if (frame == 128)
+			work->shake_frames = 48;
+		if (mode == 0 && frame == 48)
+			work->shake_frames = 8;
+
+		// 40〜47 フレームに隊列を 1 フレームあたり左へ 8、下へ 16 ドット動かす
+		if (frame >= 40 && frame <= 47)
+		{
+			focus.x += -(8 << 16);
+			focus.y += 16 << 16;
+		}
+		if (mode == 0)
+		{
+			if (frame == 128)
+			{
+				AnimationObjects_SelectAnimationFar(work->objects[0], 8);
+				AnimationObjects_SelectAnimationFar(work->objects[1], 9);
+				AnimationObjects_SelectAnimationFar(work->objects[3], 10);
+				AnimationObjects_SelectAnimationFar(work->objects[4], 11);
+			}
+			if (frame == 176)
+			{
+				AnimationObjects_SelectAnimationFar(work->objects[0], 0);
+				AnimationObjects_SelectAnimationFar(work->objects[1], 1);
+				AnimationObjects_SelectAnimationFar(work->objects[3], 3);
+				AnimationObjects_SelectAnimationFar(work->objects[4], 4);
+			}
+			BattleFx_PlaceFormationObjects(3, focus.x, focus.y);
+		}
+		if (frame == 138)
+		{
+			for (i = 0; i != work->effect->count; i++)
+			{
+				ObjectGroup_UpdateMembers(work->effect->actors[i], 10, 5, -1, 0);
+				BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 4);
+			}
+		}
+
+		// 筋：待ちの後、1 フレームに 6 ドットずつ斜めに落ち、y = 55 を越えたら
+		// 2 フレームごとに 6 枚の絵を繰り返す
+		if (frame <= 175)
+		{
+			for (i = 0; i != 16; i++)
+			{
+				struct EffectStep *streak = &work->particles[24 + i];
+
+				if (streak->y > 55)
+				{
+					if (streak->variant >= 0 && streak->variant <= 11)
+					{
+						s32 cel = streak->variant / 2;
+
+						draw.hikaku(canvas,
+							work->sheet + PaletteParticles_StreakOffsets[cel] + 0x3000,
+							streak->x - PaletteParticles_StreakWidths[cel] / 2,
+							streak->y + PaletteParticles_StreakDrops[cel],
+							PaletteParticles_StreakWidths[cel],
+							PaletteParticles_StreakHeights[cel]);
+					}
+					streak->variant++;
+					if (streak->variant == 12)
+						streak->variant = 0;
+				}
+				else if (streak->variant == 0)
+				{
+					s32 size = 10;
+
+					streak->x -= dir * 6;
+					streak->y += 6;
+					if (frame <= 47 && streak->y > 55)
+						AudioCommand_PlayFar(136);
+					draw.hikaku(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+						streak->x - size / 2, streak->y + 30, size, size * 2);
+				}
+				else
+				{
+					streak->variant++;
+				}
+			}
+		}
+		Camera_ApplyShake(8, 8);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(47);
+	Runtime_ReleaseHeapBlock(46);
+	if (mode == 0)
+	{
+		BattleEffect_RunImpactBurst(3, focus.x, focus.y);
+		for (i = 0; i != 8; i++)
+			ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
+	}
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// 124 フレームの演出。33〜97 フレームに A か B を押すと 98 フレームへ飛ばす
+// 12 体の隊列を右から入れ、28 フレームと 32〜79 フレームに粒を噴き上げる
+// 粒は重力で落ち、80 フレームを過ぎると上へ加速して昇る
+// 32〜79 フレームには 3 本の柱 (FirePillarA の絵) を上へ流す
+//--------------------------------------------------------------------------
+void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
+{
+	DrawRectangle			 draw[2];
+	void				   **cursor;
+	void					*canvas;
+	struct BattleEffectWork *work;
+	u8						*graphics;
+	u8						*palette;
+
+	// cursor は gWorkSlot[40] (キャンバス) を指す
+	cursor = &gWorkSlot[40];
+	canvas = cursor[0];
+	work = cursor[-1];	  // [39] 作業領域
+	graphics = cursor[1]; // [41] 粒の絵
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	REG_BLDALPHA = 0x1010;
+	BattleFx_FetchRectangleBlitters(0, draw);
+
+	// 下の帯は WaterSpray、柱は FirePillarA (sheet + 0x6e4) の絵
+	palette = Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet);
+	Iwram_CopyWords((void *)0x05000000, palette, 128);
+	palette += 128;
+	Resource_DecodeType01(palette, work);
+	palette = Resource_GetTableEntry((s32)&ResourceId_FirePillarSheetA);
+	palette += 128;
+	Resource_DecodeType01(palette, work->sheet + 0x6e4);
+	Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
+	work->transfer_mode = 2;
+	work->transfer_value = 75; // 転送のたびに 3/4 へ減らして残像にする
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	{
+		struct Point2D	   focus;
+		struct Point2D	   velocity;
+		s32				   rise;
+		s32				   frame;
+		s32				   k;
+		struct EffectStep *point;
+		struct EffectStep *spark;
+		struct EffectStep *sparks;
+		s32				  *life;
+
+		// 隊列は (256, 88) から左へ
+		rise = 0;
+		focus.x = 256 << 16;
+		focus.y = 88 << 16;
+		velocity.x = -(16 << 16);
+		velocity.y = -(4 << 16);
+		for (k = 0; k != 64; k++)
+			work->particles[k].variant = -1;
+		for (k = 0; k != 16; k++)
+		{
+			point = &work->particles[24 + k];
+			point->x = Random16() & 127;
+			point->y = (Random16() & 7) + 56;
+			point->variant = -(Random16() & 15);
+		}
+		life = &((struct EffectStep *)gMapCellBuffer)->variant;
+		for (k = 0; k != 1024; k++)
+		{
+			*life = -1;
+			life += 7; // sizeof (struct EffectStep) / 4
+		}
+		sparks = (struct EffectStep *)gMapCellBuffer;
+		BattleFx_SelectLivingTargets((struct BattleEffectTargetArgument *)work->effect);
+		WaitFrames(1);
+		BattleFx_SpawnObjects(12, 380, 2);
+
+		for (frame = 0; frame != 124; frame++)
+		{
+			if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 32 && frame <= 97)
+				frame = 98;
+			if (frame == 120)
+				BattleEventRuntime_BeginPhaseFar(134);
+			if (frame <= 15)
+				rise += 2;
+
+			// 隊列：速度を毎フレーム x 58/64、y 56/64 に減らし、x = 120 より左では右へ押し戻す
+			if (frame <= 99)
+			{
+				focus.x += velocity.x;
+				focus.y += velocity.y;
+				velocity.x = velocity.x * 58 / 64;
+				velocity.y = velocity.y * 56 / 64;
+				if (focus.x < 120 << 16)
+					velocity.x += 0x8000;
+			}
+			BattleFx_PlaceFormationObjects(1, focus.x, focus.y);
+
+			// 粒：(32, 96) のまわりから上向きに、28 フレームに 256 個、
+			// 32〜79 フレームには 1 フレームに 16 個ずつ噴き上げる
+			if (frame == 28)
+			{
+				for (k = 0; k != 256; k++)
+				{
+					spark = &sparks[k];
+					if (spark->variant == -1)
+					{
+						s32 radius = Random16() & 63;
+						s32 angle = Random16() & 0xffff;
+
+						spark->x = ((Trig_Sin(angle) * radius) >> 3) + (32 << 16);
+						spark->y = ((Trig_Cos(angle) * radius) >> 2) + (96 << 16);
+						spark->velocity_x = ((Random16() & 63) - 32) << 14;
+						spark->velocity_y = (-(Random16() & 63) - 8) << 13;
+						spark->variant = 0;
+					}
+				}
+			}
+			if (frame >= 32 && frame < 80)
+			{
+				s32 spawned = 0;
+
+				for (k = 0; k != 1024; k++)
+				{
+					spark = &sparks[k];
+					if (spark->variant == -1)
+					{
+						s32 radius = Random16() & 63;
+						s32 angle = Random16() & 0xffff;
+
+						spark->x = ((Trig_Sin(angle) * radius) >> 3) + (32 << 16);
+						spark->y = ((Trig_Cos(angle) * radius) >> 2) + (96 << 16);
+						spark->velocity_x = ((Random16() & 63) - 32) << 14;
+						spark->velocity_y = (-(Random16() & 63) - 8) << 13;
+						spark->variant = 0;
+						spawned++;
+						if (spawned == 16)
+							break;
+					}
+				}
+			}
+			if (frame == 0)
+				AudioCommand_PlayFar(164);
+			if (frame == 32)
+				AudioCommand_PlayFar(145);
+			if (frame == 80)
+				AudioCommand_PlayFar(144);
+
+			// 柱：104 ドットの絵を 1 フレームに 16 ドットずつ上へ流す
+			if (frame >= 32 && frame < 80)
+			{
+				for (k = 0; k != 3; k++)
+				{
+					s32 span = (frame * 16 - 256 + k * 25) % 104;
+
+					draw[0](canvas, work->sheet + 0x6e4, EmberColumns_Columns[k * 2] - 17,
+						EmberColumns_Columns[k * 2 + 1] - span - 104, 34, 104);
+					draw[0](canvas, work->sheet + 0x6e4, EmberColumns_Columns[k * 2] - 17,
+						EmberColumns_Columns[k * 2 + 1] - span, 34, span);
+				}
+			}
+
+			// 下の帯：32×32 の絵を 5 枚、16 フレームで 32 ドットせり上がる
+			if (frame <= 95)
+			{
+				for (k = 0; k != 5; k++)
+					draw[0](canvas, work, k * 32 + ((frame / 4) & 31) - 32, 120 - rise, 32, 32);
+			}
+
+			// 粒：68 フレームを過ぎると大きくし、落ちているものは加算合成で描く。
+			// 80 フレームまでは EmberColumns_Gravity で下へ、その後は上へ加速し、
+			// 速度は毎フレーム 62/64 に減らす。落ちながら y が 104 を越えたら消す
+			for (k = 0; k != 1024; k++)
+			{
+				spark = &sparks[k];
+				if (spark->variant >= 0)
+				{
+					s32 size = k % 3 + 2;
+
+					if (spark->velocity_y > 0)
+						size += 2;
+					if (frame > 68 && size <= 5)
+						size = 6;
+					if (frame > 70 && size <= 6)
+						size = 7;
+					if (frame > 72 && size <= 7)
+						size = 8;
+					if (frame > 74 && size <= 8)
+						size = 9;
+					if (frame > 76)
+						size = 10;
+					draw[spark->velocity_y > 0](canvas,
+						graphics + ParticleStreams_CellOffsets[size - 1], HI(spark->x) - size / 2,
+						HI(spark->y) - size, size, size * 2);
+					spark->x += spark->velocity_x;
+					spark->y += spark->velocity_y;
+					if (frame > 80)
+						spark->velocity_y += -0x8000;
+					else
+						spark->velocity_y += EmberColumns_Gravity[k & 3];
+					spark->velocity_x = spark->velocity_x * 62 / 64;
+					spark->velocity_y = spark->velocity_y * 62 / 64;
+					spark->variant++;
+					if (spark->velocity_y > 0 && HI(spark->y) > 104)
+						spark->variant = -1;
+				}
+			}
+
+			// 対象：36・48・60・72 フレームにパレット 7 で跳ねさせ、6 フレーム後にパレットを戻す
+			if (frame <= 79)
+			{
+				for (k = 0; k != work->effect->count; k++)
+				{
+					if (frame > 29)
+					{
+						s32 phase = frame % 12;
+
+						if (phase == 0)
+						{
+							struct MotionObject *obj =
+								GetBattleObjectSlotFar(work->effect->actors[k])->object;
+
+							ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, -1, 0);
+							obj->velocity_y = 0x48000;
+							obj->vertical_motion_strength = 0xab85;
+						}
+						if (phase == 6)
+							ObjectGroup_UpdateMembers(work->effect->actors[k], 0, 5, -1, 0);
+					}
+				}
+			}
+			work->transfer_pending = 1;
+			WaitFrames(1);
+		}
+
+		Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+		Runtime_ReleaseHeapBlock(47);
+		Runtime_ReleaseHeapBlock(46);
+		BattleEffect_RunImpactBurst(1, focus.x, focus.y);
+		for (k = 0; k != 12; k++)
+			ResourceObject_ReleaseFar(
+				(struct ResourceObjectWork *)((void **)(work->sheet + 0x77d8))[k]);
+	}
+	BattleFx_EndCanvasLayer();
+}
+
+#undef Camera_ApplyShake
+
+#define WORK_FIELD(work, offset) (*(s32 *)((u8 *)(work) + (offset)))
+
+void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
+{
+	struct EffectPosition	 pos;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	DrawRectangle			 draw[2];
+	u8						*palette;
+	struct MotionObject		*source;
+	struct MotionObject		*object;
+	struct EffectStep		*point;
+	struct EffectStep		*seat;
+	struct EffectStep		*target;
+	struct BattleCamera		*camera;
+	s32						 frame;
+	s32						 y;
+	s32						 i;
+	s8						*flags;
+
+	flags = (s8 *)gMapCellBuffer;
+	work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+	canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(1);
+	palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
+	Iwram_CopyWords((void *)0x05000000, palette, 128);
+	palette += 128;
+	Resource_DecodeType01(palette, work);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+	draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 15, 2);
+	REG_BLDALPHA = 0x0f0f;
+	draw[1] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE);
+	source = GetBattleObjectSlotFar(work->effect->actor)->object;
+	y = source->y + Battle_GetObjectTableValueFar(work->effect->actor);
+	for (i = 0; i != 30; i++)
+	{
+		point = &work->particles[i];
+		point->x = source->x;
+		point->y = y;
+		point->z = source->z;
+		point->velocity_x = ((s32)((Random16() & 255) - 127) << 16) >> 5;
+		point->velocity_y = ((s32)((Random16() & 127) - 16) << 16) >> 6;
+		point->velocity_z = ((s32)((Random16() & 255) - 127) << 16) >> 5;
+		point->variant = -1;
+		flags[i] = 0;
+	}
+	for (i = 0; i != work->effect->count; i++)
+	{
+		seat = &work->particles[32 + i];
+		object = GetBattleObjectSlotFar(work->effect->actors[i])->object;
+		seat->x = object->x;
+		seat->y = 0;
+		seat->z = object->z;
+	}
+	WORK_FIELD(work, 0x77ac) = 0;
+	WORK_FIELD(work, 0x77b0) = 0;
+	Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, 0x480);
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	AudioCommand_PlayFar(164);
+
+	for (frame = 0; frame != VortexMotes_Counts[work->effect->variant * 2 + 1]; frame++)
+	{
+		camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+		if (frame >= 17 && frame < 64)
+			WORK_FIELD(work, 0x77ac) = 0x180;
+		else
+			WORK_FIELD(work, 0x77ac) = 0;
+		if (frame == VortexMotes_Counts[work->effect->variant * 2 + 1] - 16)
+			BattleEventRuntime_BeginPhaseFar(132);
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+		for (i = 0; i != VortexMotes_Counts[work->effect->variant * 2]; i++)
+		{
+			point = &work->particles[i];
+			if (frame > i * 2 && flags[i] == 0)
+			{
+				EffectPosition_ApplyBaseAndYOffset((s32 *)point, &pos);
+				pos.x >>= 1;
+				if (pos.depth < 160)
+					pos.depth = 160;
+				if (pos.depth > 0x31f)
+					pos.depth = 0x31f;
+				draw[0](canvas, work->sheet + 0xc00, pos.x - 6, pos.y - 12, 12, 24);
+				point->x += point->velocity_x;
+				point->y += point->velocity_y;
+				point->z += point->velocity_z;
+			}
+			if (frame > i * 2 + 48 && flags[i] == 0)
+			{
+				target = &work->particles[32 + i % work->effect->count];
+				point->velocity_x += (target->x - point->x) >> 9;
+				point->velocity_y += (target->y - point->y) >> 9;
+				point->velocity_z += (target->z - point->z) >> 9;
+				if (frame < i * 2 + 85)
+				{
+					point->velocity_x = point->velocity_x * 60 / 64;
+					point->velocity_y = point->velocity_y * 60 / 64;
+					point->velocity_z = point->velocity_z * 60 / 64;
+				}
+				if (point->y < 0)
+				{
+					flags[i] = 1;
+					point->variant = 0;
+					point->x = pos.x;
+					point->y = pos.y + (Random16() & 31) - 16;
+					ObjectGroup_UpdateMembers(work->effect->actors[i % work->effect->count], 7, 5,
+						i % work->effect->count, 4);
+					BattleMotion_ApplyVariantMotionFar(
+						work->effect->actors[i % work->effect->count], 0);
+					work->shake_frames = 4;
+					AudioCommand_PlayFar(132);
+				}
+			}
+			if (point->variant >= 0 && point->variant < 16)
+			{
+				draw[0](canvas, work->sheet + ((point->variant / 2) % 3 << 10), point->x - 16,
+					point->y - 56, 16, 64);
+				draw[1](canvas, work->sheet + ((point->variant / 2) % 3 << 10), point->x,
+					point->y - 56, 16, 64);
+				point->variant++;
+			}
+		}
+		Camera_ApplyShake(work->effect->variant * 2 + 2, work->effect->variant * 2 + 2);
+		if (WORK_FIELD(work, 0x77b0) == 0)
+			WORK_FIELD(work, 0x77b0) = 1;
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(Camera_ApplyPhasedDelta);
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+void BattleFx_RunTornado(struct BattleEffectArgument *effect)
+{
+	DrawRectangle			 draw[2];
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 wave;
+	u8						*palette;
+	struct EffectStep		*point;
+	s32						 frame;
+	s32						 x;
+	s32						 y;
+	s32						 segment;
+	s32						 cell;
+	s32						 i;
+	s32						 j;
+
+	heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(1);
+	REG_BLDALPHA = 0x1010;
+	palette = Resource_GetTableEntry((s32)&ResourceId_TornadoSheet);
+	Iwram_CopyWords((void *)0x05000000, palette, 128);
+	palette += 128;
+	Resource_DecodeType01(palette, work);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+	draw[0] = (DrawRectangle)heap_cache[7];
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+	draw[1] = (DrawRectangle)heap_cache[8];
+	for (j = 0; j != 16; j++)
+	{
+		point = &work->particles[j];
+		point->x = Random16() & 31;
+		point->y = (Random16() & 63) + 16;
+		point->variant = -(Random16() & 15);
+	}
+	work->transfer_mode = 2;
+	work->transfer_value = 50;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	REG_BLDALPHA = 0x1000;
+	WaitFrames(1);
+	AudioCommand_PlayFar(141);
+
+	for (frame = 0; frame != 80; frame++)
+	{
+		wave = Trig_Sin(frame << 10) << 4;
+		if (frame == 32)
+			BattleEventRuntime_BeginPhaseFar(133);
+		for (i = 0; i != 7; i++)
+		{
+			if (frame == i * 8 + 16)
+				Iwram_FillWords(canvas, 0x4000, 0x08080808);
+		}
+		if (work->effect->side == 1)
+			wave += 0x200000;
+		else
+			wave -= 0x200000;
+		if (frame <= 16)
+			REG_BLDALPHA = frame | 0x1000;
+		if (frame > 63)
+			REG_BLDALPHA = (0x4f - frame) | 0x1000;
+		for (i = 0; i != Tornado_Shapes[work->effect->variant * 3]; i++)
+		{
+			x = ((Tornado_Shapes[work->effect->variant * 3 + 1]
+						 * Trig_Sin((frame << 11) + i * 0x4000)
+					 + wave)
+					>> 16)
+				+ 40;
+			y = (Trig_Cos((frame << 11) + i * 0x4000) * 2) >> 16;
+			segment = (frame / 2) % 3;
+			draw[0](canvas, work->sheet + segment * 0xa00 + 0xc56, x, y + 16, 40, 32);
+			draw[0](canvas, work->sheet + segment * 0x500 + 0x2a56, x, y + 48, 40, 32);
+			draw[0](canvas, work->sheet + segment * 0xa00 + 0x1156, x, y + 80, 40, 32);
+			for (j = 0; j != 4; j++)
+			{
+				point = &work->particles[i * 4 + j];
+				if (point->variant >= 0)
+				{
+					cell = point->variant / 2 + (j / 2) * 3;
+					draw[j & 1](canvas, work->sheet + BattleFx_GlintCellOffsets[cell], point->x + x,
+						point->y + y, BattleFx_GlintCellWidths[cell],
+						BattleFx_GlintCellHeights[cell]);
+				}
+				point->variant++;
+				if (point->variant == 6)
+				{
+					point->x = Random16() & 31;
+					point->y = (Random16() & 63) + 16;
+					point->variant = 0;
+				}
+			}
+		}
+		for (j = 0; j != work->effect->count; j++)
+		{
+			for (i = 0; i != 7; i++)
+			{
+				if (frame == i * 8 + j * 3 + 16)
+				{
+					ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 4);
+					BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 6);
+				}
+			}
+		}
+		work->shake_frames = 1;
+		Camera_ApplyShake(Tornado_Shapes[work->effect->variant * 3 + 2],
+			Tornado_Shapes[work->effect->variant * 3 + 2] * 2);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// crystal.c
+// バトル演出：降ってきて砕ける結晶
+//--------------------------------------------------------------------------
+
+#undef Camera_ApplyShake
+
+//--------------------------------------------------------------------------
+// 結晶が降ってきて地面で砕ける
+// Crystal_Counts は variant ごとに（結晶の数, 全体のフレーム数）
+// 結晶 : particles[]（z は砕けたら 1、variant は降り始めるフレーム）
+// 破片 : gMapCellBuffer に結晶 1 個あたり 16 個（z は回転の速さ）
+//--------------------------------------------------------------------------
+void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
+{
+	DrawRectangle			 draw[2];
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	struct EffectStep		*seed;
+	struct EffectStep		*cry;
+	struct EffectStep		*shards;
+	struct EffectStep		*shard;
+	s32						 x;
+	s32						 cell;
+	s32						 i;
+	s32						 j;
+
+	shards = (struct EffectStep *)gMapCellBuffer;
+	cursor = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+	work = *cursor++;
+	canvas = *cursor;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	REG_BLDALPHA = 0x1010;
+	Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 1);
+	BattleFx_FetchRectangleBlitters(work->effect->side, draw);
+	work->transfer_mode = 2; // 残像 1/2
+	work->transfer_value = 50;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	// 結晶を画面の上に並べ、8 フレームずつずらして降らせる
+	for (j = 0; j != Crystal_Counts[work->effect->variant * 2]; j++)
+	{
+		seed = &work->particles[j];
+		x = Random16() & 31;
+		seed->y = -0x400000;
+		if (work->effect->side == 1)
+		{
+			x = ((Random16() & 31) + 80) << 16;
+			seed->velocity_x = (Random16() & 63) << 12;
+		}
+		else
+		{
+			x = ((Random16() & 31) + 8) << 16;
+			seed->velocity_x = -(Random16() & 63) << 12;
+		}
+		seed->x = x - seed->velocity_x * 18;
+		seed->velocity_y = 0;
+		seed->z = 0;
+		seed->variant = j * 8;
+	}
+
+	for (frame = 0; frame != Crystal_Counts[work->effect->variant * 2 + 1]; frame++)
+	{
+		if (work->effect->variant == 2 && frame <= 103)
+		{
+			// カメラを横に回す（96 フレーム目から遅くする）
+			struct BattleCamera *camera = gCameraWork;
+			s32					 speed;
+
+			if (frame <= 95)
+				speed = 192;
+			else
+				speed = 2496 - frame * 24;
+			if (work->effect->side == 0)
+				camera->yaw -= speed;
+			else
+				camera->yaw += speed;
+		}
+		if (frame == Crystal_Counts[work->effect->variant * 2 + 1] - 80)
+			BattleEventRuntime_BeginPhaseFar(134);
+		if (frame == Crystal_Counts[work->effect->variant * 2 + 1] - 8)
+		{
+			// 最後の 8 フレームは暗くしていく
+			work->transfer_mode = 3;
+			work->transfer_value = 0x06060606;
+		}
+		if (frame <= Crystal_Counts[work->effect->variant * 2 + 1] - 8)
+		{
+			for (i = 0; i != Crystal_Counts[work->effect->variant * 2]; i++)
+			{
+				cry = &work->particles[i];
+				if (cry->z == 1)
+				{
+					// 砕けた結晶：破片を回しながら飛ばす
+					for (j = 0; j != 16; j++)
+					{
+						cell = (j % 5) * 3 + (shards[i * 16 + j].variant / 96) % 3;
+						shard = &shards[i * 16 + j];
+						draw[j <= 2](canvas, work->sheet + Crystal_ShardOffsets[cell] + 0x800,
+							HI(shard->x) - Crystal_ShardWidths[cell] / 2,
+							HI(shard->y) - Crystal_ShardHeights[cell] / 2,
+							Crystal_ShardWidths[cell], Crystal_ShardHeights[cell]);
+						EffectStep_AdvanceWithGravity2D(shard, 64, 0x2000);
+						shard->variant += shard->z;
+						if (shard->z > 1 && (frame & 1))
+							shard->z--;
+					}
+				}
+				else if (frame >= cry->variant)
+				{
+					// 落ちている結晶（32x64）
+					draw[i & 1](canvas, work, HI(cry->x) - 16, HI(cry->y), 32, 64);
+					EffectStep_AdvanceWithGravity2D(cry, 64, 0x10000);
+					if (cry->y > 0x380000)
+					{
+						// 地面（y = 56）に着いたら砕く
+						cry->z = 1;
+						cry->y = 0x380000;
+						for (j = 0; j != 16; j++)
+						{
+							shard = &shards[i * 16 + j];
+							shard->x = ((Crystal_ShardStarts[j * 2] - 40) << 16) + cry->x;
+							shard->y = Crystal_ShardStarts[j * 2 + 1] << 16;
+							shard->velocity_x = ((Random16() & 127) - 64) << 11;
+							shard->velocity_y = -(Random16() & 127) << 11;
+							if (i & 1)
+							{
+								shard->velocity_x *= 2;
+								shard->velocity_y *= 2;
+							}
+							shard->z = 32;
+							shard->variant = 0;
+						}
+						work->shake_frames = 8;
+						AudioCommand_PlayFar(144);
+						for (j = 0; j != work->effect->count; j++)
+							ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 4);
+					}
+				}
+			}
+		}
+		Camera_ApplyShake(work->effect->variant * 2 + 4, work->effect->variant * 4 + 8);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase)
+{
+	u16		 palette[64];
+	u16		*output;
+	s32		 phase;
+	s32		 red_offset;
+	s32		 green_offset;
+	s32		 blue_offset;
+	s32		 index;
+	WordCopy copy;
+
+	phase = frame * 0x400;
+	red_offset = (Trig_Sin(phase + red_phase) * 16) >> 15;
+	green_offset = (Trig_Sin(phase + green_phase) * 16) >> 15;
+	blue_offset = (Trig_Sin(phase + blue_phase) * 16) >> 15;
+
+	palette[0] = 0;
+	index = 1;
+	output = &palette[1];
+	do
+	{
+		s32 red;
+		s32 green;
+		s32 blue;
+
+		red = (index + red_offset) / 2;
+		green = (index + green_offset) / 2;
+		blue = (index + blue_offset) / 2;
+
+		if (red < 0)
+			red = 0;
+		if (red > 31)
+			red = 31;
+		if (green < 0)
+			green = 0;
+		if (green > 31)
+			green = 31;
+		if (blue < 0)
+			blue = 0;
+		if (blue > 31)
+			blue = 31;
+
+		*output++ = (blue << 10) | (green << 5) | red;
+		index++;
+	} while (index != 64);
+
+	Iwram_CopyWords((void *)0x05000002, palette, sizeof(palette));
+}
+
+//--------------------------------------------------------------------------
+// lightning.c
+// 戦闘エフェクト：稲妻の柱と飛び散る火花
+//--------------------------------------------------------------------------
+
+#define SPARK_MAX 1024 // 火花の数
+
+//--------------------------------------------------------------------------
+// 稲妻の柱を 8 フレームおきに落とし、そのたびに地面から火花を散らす
+// effect : variant が柱の本数と火花の数を、side が柱の並びを決める
+//--------------------------------------------------------------------------
+void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
+{
+	DrawRectangle			 draw[2];
+	void				   **heap;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 i;
+	u8						*sprites;
+	s32						 count;
+	s32						 frame;
+	s32						 k;
+	s32						 start;
+	s32						*var;
+	struct EffectStep		*spark;
+	struct EffectStep		*sparks;
+
+	heap = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+	cursor = heap;
+	work = *cursor++;
+	canvas = *cursor;
+	sprites = heap[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(1);
+	REG_BLDALPHA = 0x1010;
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
+	draw[0] = (DrawRectangle)heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+	draw[1] = (DrawRectangle)heap[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+	Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+	if (work->effect->variant != 2)
+	{
+		void *palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteB);
+		/* FAKEMATCH: needed to match: calling through a local copy of the routine's address loads that address before the palette address is shifted into place */
+		Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+	}
+
+	// 火花をすべて止める
+	var = &((struct EffectStep *)gMapCellBuffer)->variant;
+	for (k = 0; k != SPARK_MAX; k++)
+	{
+		*var = 0;
+		var += 7;
+	}
+	sparks = (struct EffectStep *)gMapCellBuffer;
+	work->transfer_mode = 2;
+	work->transfer_value = 50;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	count = LightningPillar_Counts[work->effect->variant];
+
+	for (frame = 0; frame != count * 8 - count + 48; frame++)
+	{
+		// variant 2 : 最初の 64 フレームはカメラを横へ流す
+		if (work->effect->variant == 2 && frame <= 63)
+		{
+			struct CameraWork *camera = (struct CameraWork *)gCameraWork;
+			s32				   speed;
+
+			if (frame <= 55)
+				speed = 256;
+			else
+				speed = 704 - frame * 8;
+			if (work->effect->side == 1)
+				camera->scroll -= speed;
+			else
+				camera->scroll += speed;
+		}
+		if (frame == 32)
+			BattleEventRuntime_BeginPhaseFar(134);
+
+		//------------------------------------------------------------------
+		// 柱 i は 8i フレーム目に落ち、+1 で 1 コマ目、+2〜3 で 2 コマ目を描く
+		//------------------------------------------------------------------
+		for (i = 0; i != count; i++)
+		{
+			start = i * 8;
+			if (frame == start)
+			{
+				AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
+				Iwram_FillWords(canvas, 0x4000, 0x10101010);
+			}
+			if (frame >= start && frame < start + 9)
+			{
+				if (frame >= start + 1 && frame < start + 2)
+					draw[0](canvas, work, LightningPillar_Columns[i + work->effect->side * 7] - 24,
+						0, 48, 112);
+				if (frame >= start + 2 && frame < start + 4)
+					draw[0](canvas, work->sheet + 0x1500,
+						LightningPillar_Columns[i + work->effect->side * 7] - 24, 0, 48, 112);
+
+				// 柱の根もと (y = 104) から上向き ±90 度へ火花を散らし、画面を揺らす
+				if (frame == start + 2)
+				{
+					s32 n = 0;
+
+					for (k = 0; k != SPARK_MAX; k++)
+					{
+						spark = &sparks[k];
+						if (spark->variant == 0)
+						{
+							s32 speed;
+							s32 angle;
+
+							speed = (Random16() & 0x3ff) + 32;
+							angle = (Random16() & 0x7fff) - 0x4000;
+
+							spark->x = LightningPillar_Columns[i + work->effect->side * 7] << 16;
+							spark->y = 104 << 16;
+							spark->velocity_x = (Trig_Sin(angle) * speed) >> 7;
+							spark->velocity_y = -((Trig_Cos(angle) * speed) << 1) >> 7;
+							spark->variant = (Random16() & 7) + 32;
+							n++;
+							if (n == LightningPillar_Sparks[work->effect->variant * 2])
+								break;
+						}
+					}
+					work->shake_frames = LightningPillar_Sparks[work->effect->variant * 2 + 1];
+				}
+			}
+			if (frame == start + 4)
+			{
+				for (k = 0; k != work->effect->count; k++)
+				{
+					BattleMotion_ApplyVariantMotionFar(work->effect->actors[k], 1);
+					ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 8);
+				}
+			}
+		}
+
+		// 火花 : 地面で半分の速さで跳ね返り、残りが少ないほど小さく描く
+		for (k = 0; k != SPARK_MAX; k++)
+		{
+			spark = &sparks[k];
+			if (spark->variant > 0)
+			{
+				spark->variant--;
+				EffectStep_AdvanceWithGravity2D(spark, 60, 0x1000);
+				if (spark->y > 104 << 16)
+				{
+					spark->velocity_y = -spark->velocity_y / 2;
+				}
+				else
+				{
+					s32 x = spark->x >> 16;
+					s32 y;
+					s32 size;
+
+					if (spark->x >= 0 && x <= 119 && spark->y >= 0)
+					{
+						y = spark->y >> 16;
+						size = spark->variant / 8 + 1;
+						draw[k & 1](canvas, sprites + ParticleStreams_CellOffsets[size - 1],
+							x - size / 2, y - size, size, size * 2);
+					}
+				}
+			}
+		}
+		Camera_ApplyShake(8, 16);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// run_two_mode_b_mode0.c
+// バトル演出：火花の群れ (sparks.c) の二つの入口
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+// kind 0 : キャンバスを優先度 1 で開き、(60, 48) から出す
+//--------------------------------------------------------------------------
+void BattleFx_RunTwoModeBMode0(s32 effect)
+{
+	BattleFx_RunSparkGroups(effect, 0);
+}
+
+//--------------------------------------------------------------------------
+// kind 1 : キャンバスを優先度 0 で開き、(60, 64) から OrangePaletteB で出す
+//--------------------------------------------------------------------------
+void BattleFx_RunTwoModeBMode1(s32 effect)
+{
+	BattleFx_RunSparkGroups(effect, 1);
+}
+
+#undef Camera_ApplyShake
+
+void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
+{
+	struct EffectPosition	 pos;
+	DrawRectangle			 draw[2];
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 i;
+	s32						 frame;
+	u8						*graphics;
+	s32						 origin_x;
+	s32						 origin_y;
+	s32						 j;
+	s32						 start;
+	struct EffectStep		*point;
+	struct EffectStep		*spark;
+	struct EffectStep		*sparks;
+
+	heap_cache = gWorkSlot + 39;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	graphics = heap_cache[2];
+	work->effect = effect;
+	if (kind == 0)
+	{
+		BattleFx_BeginCanvasLayer(1);
+		origin_x = 60;
+		origin_y = 48;
+	}
+	else if (kind == 1)
+	{
+		BattleFx_BeginCanvasLayer(0);
+		origin_x = 60;
+		origin_y = 64;
+	}
+	else
+	{
+		BattleFx_BeginCanvasLayer(0);
+		EffectPosition_ApplyStepAndYOffset(work->effect->actor, &pos);
+		origin_x = pos.x / 2;
+		origin_y = pos.y + 48;
+	}
+	REG_BLDALPHA = 0x1010;
+	BattleEffect_LoadWork(46, 7, 7, 3, 2);
+	draw[0] = (DrawRectangle)gWorkSlot[46];
+	BattleEffect_LoadWork(47, 7, 7, 3, 3);
+	draw[1] = (DrawRectangle)gWorkSlot[47];
+	Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
+	if (kind == 1)
+	{
+		Iwram_CopyWords((void *)0x05000000,
+			Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+	}
+	else if (kind == 2)
+	{
+		Iwram_CopyWords((void *)0x05000000,
+			Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
+	}
+	sparks = (struct EffectStep *)gMapCellBuffer;
+
+	for (i = 0; i != SparkGroups_Shapes[work->effect->variant * 5 + 1]; i++)
+	{
+		for (j = 0; j != 16; j++)
+		{
+			s32 radius;
+			s32 angle;
+
+			point = &work->particles[i * 16 + j];
+			radius = j * 2;
+			angle = Random16() & 0xffff;
+			point->x = Trig_Sin(angle) * radius;
+			point->y = -(Trig_Cos(angle) * radius);
+			point->variant = j / 2 + 25;
+		}
+		for (j = 0; j != SparkGroups_Shapes[work->effect->variant * 5]; j++)
+		{
+			s32 speed;
+			s32 angle;
+
+			spark = &sparks[i * SparkGroups_Shapes[work->effect->variant * 5]] + j;
+			speed = (Random16() & 0x3ff) + 32;
+			angle = Random16() & 0xffff;
+			if (work->effect->side == 1)
+				spark->x = (origin_x - SparkGroups_Shapes[work->effect->variant * 5 + i + 2] + 28)
+						   << 16;
+			else
+				spark->x = (origin_x + SparkGroups_Shapes[work->effect->variant * 5 + i + 2] - 28)
+						   << 16;
+			spark->y = origin_y << 16;
+			spark->velocity_x = (Trig_Sin(angle) * speed) >> 6;
+			spark->velocity_y = -((Trig_Cos(angle) * speed) << 1) >> 6;
+			spark->variant = (Random16() & 7) + 32;
+		}
+	}
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	for (frame = 0; frame != SparkGroups_Shapes[work->effect->variant * 5 + 1] * 8 + 56; frame++)
+	{
+		struct CameraWork *camera = *(struct CameraWork **)(gWorkSlot + 12);
+
+		if (work->effect->variant == 2 && frame <= 51)
+		{
+			if (work->effect->side == 0)
+				camera->scroll += 256;
+			else
+				camera->scroll -= 256;
+		}
+		/* FAKEMATCH: needed to match: this fill calls the fixed entry itself; through Iwram_FillWords a spilled invariant ahead of the frame loop is built in r2 where the ROM uses r1 (3 of 776 instructions differ). */
+		if (work->effect->variant == 3 && frame == 4)
+			Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+		if (kind == 1 || kind == 2)
+		{
+			if (frame == 2)
+				BattleEventRuntime_BeginPhaseFar(145);
+		}
+		else
+		{
+			if (frame == 2)
+				AudioCommand_PlayFar(145);
+			if (frame == 24)
+				BattleEventRuntime_BeginPhaseFar(134);
+		}
+		for (i = 0; i != SparkGroups_Shapes[work->effect->variant * 5 + 1]; i++)
+		{
+			start = i * 8;
+			if (frame == start)
+				work->shake_frames = 12;
+			if (frame >= start && frame < start + 2)
+			{
+				if (work->effect->side == 1)
+					draw[0](canvas, work,
+						origin_x - SparkGroups_Shapes[work->effect->variant * 5 + i + 2] + 12,
+						origin_y - 32, 32, 64);
+				else
+					draw[0](canvas, work,
+						origin_x + SparkGroups_Shapes[work->effect->variant * 5 + i + 2] - 44,
+						origin_y - 32, 32, 64);
+			}
+			if (frame >= start)
+			{
+				for (j = 0; j != 12; j++)
+				{
+					s32 x;
+					s32 y;
+
+					point = &work->particles[i * 16] + j;
+					y = ((s16 *)&point->y)[1] + origin_y;
+					if (work->effect->side == 1)
+						x = ((s16 *)&point->x)[1] + origin_x
+							- SparkGroups_Shapes[work->effect->variant * 5 + i + 2] + 28;
+					else
+						x = ((s16 *)&point->x)[1] + origin_x
+							+ SparkGroups_Shapes[work->effect->variant * 5 + i + 2] - 28;
+					if (point->variant >= 0 && point->variant < 18)
+						draw[0](canvas,
+							work->sheet + (SparkGroups_FlashCells[point->variant / 3] << 11),
+							x - 16, y - 32, 32, 64);
+					if (point->variant > 0)
+						point->variant--;
+					else
+						point->variant = -1;
+				}
+			}
+			if (frame > start + 5)
+			{
+				s32 gravity;
+
+				if (kind == 2)
+					gravity = -0x1000;
+				else
+					gravity = 0x1000;
+				for (j = 0; j != SparkGroups_Shapes[work->effect->variant * 5]; j++)
+				{
+					spark = &sparks[i * SparkGroups_Shapes[work->effect->variant * 5]] + j;
+					if (spark->variant > 0)
+					{
+						EffectStep_AdvanceWithGravity2D(spark, 60, gravity);
+						spark->variant--;
+						if (spark->y > 0x6c0000)
+						{
+							spark->velocity_y = -spark->velocity_y / 2;
+						}
+						else if (spark->x >= 0 && spark->x < 0x7f0000 && spark->y >= 0)
+						{
+							s32 y = spark->y >> 16;
+							s32 x = spark->x >> 16;
+							s32 size = spark->variant / 5 + 1;
+
+							draw[j & 1](canvas, graphics + ParticleStreams_CellOffsets[size - 1],
+								x - size / 2, y - size, size, size * 2);
+						}
+					}
+				}
+			}
+			for (j = 0; j != work->effect->count; j++)
+			{
+				if (frame == start + 6)
+				{
+					ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 10);
+					BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 4);
+				}
+			}
+		}
+		Camera_ApplyShake(16, 16);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(47);
+	Runtime_ReleaseHeapBlock(46);
+	BattleFx_EndCanvasLayer();
+}
+
+#undef Camera_ApplyShake
+
+void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
+{
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	s32						 pillar;
+	u8						*sheet;
+	struct EffectPosition	 screen;
+	DrawRectangle			 draw[2];
+	struct MotionObject		*object;
+	struct BattleCamera		*camera;
+	s32						 i;
+
+	heap_cache = &gWorkSlot[39];
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	sheet = heap_cache[2];
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(1);
+	REG_BLDALPHA = 0x1010;
+	Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	/* FAKEMATCH: needed to match: forwarded through Call3, each palette copy loads its routine before it shifts the destination, as the reference does */
+	if (work->effect->variant == 0)
+		Iwram_CopyWords((s32)BG_PLTT,
+			(s32)Resource_GetTableEntry((s32)&ResourceId_RedPaletteB), 128);
+	else if (work->effect->variant == 2)
+		Iwram_CopyWords((s32)BG_PLTT,
+			(s32)Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+	BattleEffect_LoadWork(46, 7, 7, 3, 2);
+	draw[0] = (DrawRectangle)gWorkSlot[46];
+	BattleEffect_LoadWork(47, 7, 7, 7, 2);
+	draw[1] = (DrawRectangle)gWorkSlot[47];
+
+	for (i = 0; i != 1024; i++)
+		((struct EffectStep *)Ram_MapCellBuffer)[i].variant = 0;
+
+	object = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+	for (i = 0; i != 4; i++)
+	{
+		struct EffectStep *base = &work->particles[i];
+		s32				   x;
+
+		x = ((Random16() & 15) + 72) << 16;
+		base->y = 0;
+		base->x = x;
+		base->z = FirePillars_Depths[work->effect->variant][i] << 16;
+		if (object->x < 0)
+			base->x = -x;
+	}
+
+	work->transfer_mode = 2;
+	work->transfer_value = 50;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	for (frame = 0; frame != 96; frame++)
+	{
+		camera = gCameraWork;
+		if (work->effect->variant == 2 && frame < 64)
+		{
+			if (work->effect->side == 0)
+				camera->yaw = camera->yaw + 192;
+			else
+				camera->yaw = (s16)camera->yaw - 192;
+		}
+		if (frame == 16)
+			BattleEventRuntime_BeginPhaseFar(134);
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+
+		if (frame < 64)
+		{
+			for (pillar = 0; pillar != FirePillars_Counts[work->effect->variant]; pillar++)
+			{
+				EffectPosition_ApplyBaseAndYOffset((s32 *)&work->particles[pillar], &screen);
+				screen.x /= 2;
+				screen.y -= 8;
+				if (frame == FirePillars_StartFrames[pillar])
+					AudioCommand_PlayFar(145);
+				if (frame >= FirePillars_StartFrames[pillar] + 4)
+				{
+					s32 scroll = (frame * 16 + pillar * 25) % 104;
+
+					draw[pillar & 1](canvas, work, screen.x - 17, screen.y - scroll - 104, 34, 104);
+					draw[pillar & 1](canvas, work, screen.x - 17, screen.y - scroll, 34, scroll);
+					if (frame & 1)
+					{
+						draw[0](canvas, work->sheet + 0xdd0, screen.x - 20, screen.y - 24, 20, 37);
+						draw[1](canvas, work->sheet + 0xdd0, screen.x, screen.y - 24, 20, 37);
+					}
+					else
+					{
+						draw[0](canvas, work->sheet + 0x10b4, screen.x - 20, screen.y - 24, 20, 37);
+						draw[1](canvas, work->sheet + 0x10b4, screen.x, screen.y - 24, 20, 37);
+					}
+				}
+				if (frame == FirePillars_StartFrames[pillar]
+					|| frame >= FirePillars_StartFrames[pillar] + 16)
+				{
+					s32 spawned = 0;
+
+					for (i = 0; i != 1024; i++)
+					{
+						struct EffectStep *spark = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+
+						if (spark->variant == 0)
+						{
+							s32 speed;
+							s32 angle;
+
+							speed = (Random16() & 0x3ff) + 32;
+							angle = (Random16() & 0x7fff) - 0x4000;
+							spark->x = screen.x << 8;
+							spark->y = (screen.y << 8) + 0x1000;
+							spark->z = (Trig_Sin(angle) * speed) >> 15;
+							spark->velocity_y = -(Trig_Cos(angle) * speed * 2) >> 15;
+							spawned++;
+							if (frame == FirePillars_StartFrames[pillar])
+							{
+								spark->variant = (Random16() & 7) + 48;
+								if (spawned == 200)
+									break;
+							}
+							else
+							{
+								spark->variant = (Random16() & 7) + 24;
+								if (spawned == 4)
+									break;
+							}
+						}
+					}
+				}
+				if (frame == FirePillars_StartFrames[pillar])
+				{
+					work->shake_frames = 2;
+					for (i = 0; i != work->effect->count; i++)
+					{
+						ObjectGroup_UpdateMembers(work->effect->actors[i], 10, 5, i, 8);
+						BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 1);
+					}
+				}
+			}
+		}
+
+		for (i = 0; i != 1024; i++)
+		{
+			struct EffectStep *spark = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+			s32				   life = spark->variant;
+
+			if (life > 0)
+			{
+				s32 x;
+				s32 y;
+				s32 py;
+
+				spark->variant = life - 1;
+				x = spark->x += spark->z;
+				y = spark->y += spark->velocity_y;
+				spark->z = spark->z * 60 / 64;
+				spark->velocity_y = spark->velocity_y * 60 / 64 - 16;
+				py = y / 256;
+				if (py > 120)
+				{
+					spark->velocity_y = -spark->velocity_y / 2;
+				}
+				else if (x >= 0 && x >> 8 <= 126 && y >= 0)
+				{
+					s32 px = x >> 8;
+					s32 size = (life - 17) / 8;
+
+					if (size <= 0)
+						size = 1;
+					draw[i & 1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+						px - size / 2, py - size, size, size * 2);
+				}
+			}
+		}
+		Camera_ApplyShake(16, 16);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Runtime_ReleaseHeapBlock(47);
+	Runtime_ReleaseHeapBlock(46);
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+
+// render_mode.c
+
+// バトル演出：粒子の演出の入口
+
+//--------------------------------------------------------------------------
+
+#undef AnimationObjects_SelectAnimationFar
+#undef SceneTransform_ApplyPosition
+
+//--------------------------------------------------------------------------
+// 演出ごとの入口。粒子の型（色と数）を BattleFx_RenderMode に渡す
+// effect : 演出の引数
+//--------------------------------------------------------------------------
+void BattleFx_RenderMode0Or1(struct BattleEffectArgument *effect)
+{
+	if (effect->variant == 0)
+	{
+		BattleFx_RenderMode(effect, 0);
+		return;
+	}
+	BattleFx_RenderMode(effect, 1);
+}
+
+void BattleFx_RenderMode1(struct BattleEffectArgument *effect)
+{
+	BattleFx_RenderMode(effect, 1);
+}
+
+void BattleFx_RenderMode2(struct BattleEffectArgument *effect)
+{
+	BattleFx_RenderMode(effect, 2);
+}
+
+void BattleFx_RenderMode3(struct BattleEffectArgument *effect)
+{
+	BattleFx_RenderMode(effect, 3);
+}
+
+void BattleFx_RenderMode4(struct BattleEffectArgument *effect)
+{
+	BattleFx_RenderMode(effect, 4);
+}
+
+void BattleFx_RenderMode5(struct BattleEffectArgument *effect)
+{
+	BattleFx_RenderMode(effect, 5);
+}
+
+void BattleFx_RenderMode7(struct BattleEffectArgument *effect)
+{
+	BattleFx_RenderMode(effect, 7);
+}
+
+void BattleFx_RenderMode6(struct BattleEffectArgument *effect)
+{
+	BattleFx_RenderMode(effect, 6);
+}
+
+#define SceneTransform_ApplyPosition ((void (*)(s32 *))SceneTransform_ApplyPosition)
+
+#define CONVERGES(mode) ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6 || (mode) == 7)
+#define DECAYS(mode) ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6)
+
+enum
+{
+	RENDER_MODE_TORNADO = 0x2580
+};
+
+void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
+{
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	s32						 total;
+	s32						 member;
+	s32						 count;
+	struct EffectPosition	 screen;
+	s32						 point[3];
+	struct EffectPosition	 base;
+	DrawRectangle			 draw[2];
+	void					*palette;
+	s32						*row;
+	s32						 i;
+
+	cursor = (void **)gBattleFxWork;
+	work = *cursor++;
+	canvas = *cursor;
+	count = 16;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
+	if (mode == 0)
+	{
+		palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
+	}
+	else if (mode == 1)
+	{
+		palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+	}
+	else if (mode == 2)
+	{
+		palette = Resource_GetTableEntry((s32)&ResourceId_CyanPalette);
+	}
+	else if (mode == 3)
+	{
+		palette = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
+	}
+	else if (mode == 4)
+	{
+		palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+	}
+	else if (mode == 5)
+	{
+		Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet, 1, 0);
+		palette = Resource_GetTableEntry((s32)&ResourceId_GlowOrbSheet);
+	}
+	else if (mode == 7)
+	{
+		count = 24;
+		Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet, 1, 0);
+		palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
+	}
+	else
+	{
+		count = 32;
+		Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work->sheet, 1, 0);
+		palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
+	}
+	/* FAKEMATCH: needed to match: forwarded through Call3, the palette copy loads its routine before it shifts the destination, as the reference does */
+	Iwram_CopyWords((s32)BG_PLTT, (s32)palette, 128);
+	if (mode == 4)
+		Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
+	if (mode == 3)
+		Resource_LoadAndDecompress(
+			(s32)&ResourceId_TornadoSheet, work->sheet + RENDER_MODE_TORNADO, 1, 0);
+
+	for (i = 0; i != 512; i++)
+	{
+		struct EffectStep *mote = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+
+		if (CONVERGES(mode))
+		{
+			mote->x = ((Random16() & 0xff) - 127) << 15;
+			mote->y = ((Random16() & 0xff) - 127) << 14;
+			mote->z = ((Random16() & 0xff) - 127) << 15;
+		}
+		else
+		{
+			mote->x = ((Random16() & 0xff) - 127) << 13;
+			mote->y = ((Random16() & 0xff) - 255) << 13;
+			mote->z = ((Random16() & 0xff) - 127) << 13;
+		}
+		mote->variant = 0;
+	}
+
+	if (CONVERGES(mode))
+		total = work->effect->count * 8 + 64;
+	else
+		total = work->effect->count * 8 + 32;
+	if (!(mode <= 1 || mode == 3))
+		Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	AudioCommand_PlayFar(142);
+
+	for (frame = 0; frame != total; frame++)
+	{
+		struct BattleCamera *camera = gCameraWork;
+
+		if (mode == 7)
+		{
+			if (frame == total - 46)
+				BattleMotion_ApproachTargetFar(work->effect->actor, work->effect->actors[0], 16, 0);
+			if (frame == total - 32)
+			{
+				BattleEventRuntime_BeginPhaseFar(134);
+				BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
+				work->shake_frames = 8;
+			}
+		}
+		else if (frame == total - 32)
+		{
+			BattleEventRuntime_BeginPhaseFar(133);
+		}
+		row = work->bg2_x;
+		for (i = 0; i != 160; i++)
+			*row++ = (0x40000 - (Trig_Sin((frame << 12) + i * 0x800) << 2)) >> 10;
+
+		for (member = 0; member != work->effect->count; member++)
+		{
+			struct MotionObject *object =
+				GetBattleObjectSlotFar(work->effect->actors[member])->object;
+
+			if (mode == 3 && frame > member * 8 && frame < member * 8 + 32)
+			{
+				EffectPosition_ApplyStepAndYOffset(work->effect->actors[member], &base);
+				for (i = 0; i != 2; i++)
+				{
+					s32 angle;
+					s32 radius;
+					s32 x;
+					s32 y;
+
+					angle = Random16() & 0xffff;
+					radius = (Random16() & 31) + 4;
+					x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17)
+						- (BattleFx_GlintCellWidths[frame & 3] >> 1);
+					y = base.y - ((Trig_Cos(angle) * radius) >> 16)
+						- (BattleFx_GlintCellHeights[frame & 3] >> 1);
+					BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+						3 | RenderMode_GlintFlips[Random16() & 3], 2);
+					((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
+						work->sheet + BattleFx_GlintCellOffsets[frame & 3] + RENDER_MODE_TORNADO, x,
+						y + 16, BattleFx_GlintCellWidths[frame & 3],
+						BattleFx_GlintCellHeights[frame & 3]);
+					Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+				}
+			}
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
+			draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+			draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+			Render_ResetTransformState();
+			Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+			point[0] = object->x;
+			point[1] = 160 << 13;
+			point[2] = object->z;
+			SceneTransform_ApplyPosition(point);
+			if (frame > member * 8)
+			{
+				SceneTransform_ApplyYaw(frame << 9);
+				if (mode <= 1 || mode == 4)
+					SceneTransform_ApplyPitch(frame << 9);
+				for (i = 0; i != count; i++)
+				{
+					struct EffectStep *mote =
+						&((struct EffectStep *)Ram_MapCellBuffer)[member * 64 + i];
+					s32 distance;
+
+					if (frame > member * 8 + i)
+					{
+						s32 xx = (mote->x >> 8) * (mote->x >> 8);
+						s32 yy = (mote->y >> 8) * (mote->y >> 8);
+						s32 zz = (mote->z >> 8) * (mote->z >> 8);
+
+						distance = Iwram_Sqrt(xx + yy + zz) >> 9;
+						if (distance != 0 && mote->variant <= 23)
+						{
+							s32 cel = mote->variant / 4;
+
+							EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &screen);
+							screen.x >>= 1;
+							if (mode == 5 || mode == 7)
+								draw[1](canvas, work->sheet + cel * 1600, screen.x - 20,
+									screen.y - 20, 40, 40);
+							else if (mode == 6)
+								draw[1](canvas, work->sheet + 0xc00, screen.x - 6, screen.y - 12,
+									12, 24);
+							else if (mode == 4)
+								draw[1](canvas, work->sheet, screen.x - 11, screen.y - 21, 22, 42);
+							else
+								draw[(i & 3) != 0](canvas, work->sheet + cel * 1152, screen.x - 12,
+									screen.y - 24, 24, 48);
+							if (DECAYS(mode))
+							{
+								mote->x -= mote->x / distance;
+								mote->y -= mote->y / distance;
+								mote->z -= mote->z / distance;
+							}
+							else
+							{
+								mote->y += 0x10000;
+							}
+							mote->variant++;
+							if (mote->variant == 24)
+							{
+								if (DECAYS(mode))
+								{
+									mote->variant = 0;
+								}
+								else
+								{
+									mote->x = ((Random16() & 0xff) - 127) << 13;
+									mote->y = ((Random16() & 0xff) - 255) << 12;
+									mote->z = ((Random16() & 0xff) - 127) << 13;
+								}
+							}
+						}
+					}
+				}
+			}
+			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+			if (frame == member * 8 + 16)
+			{
+				s32 delay = total - frame;
+
+				if (delay > 31)
+					delay = 31;
+				ObjectGroup_UpdateMembers(work->effect->actors[member], 7, 5, member, delay);
+			}
+		}
+		Camera_ApplyShake(16, 16);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	if (!(mode <= 1 || mode == 3))
+		Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
+	BattleFx_EndCanvasLayer();
+}
+
+#define gBattleFxWork ((void *(*)) & gBattleFxWork)
+
+void BattleFx_RunBouncingSheep(void *object)
+{
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 record[3];
+
+	struct EffectStep *one;
+	struct EffectStep *sheep;
+	s32				   i;
+	s32				   frame;
+	DrawRectangleFn	   draw_b;
+	DrawRectangleFn	   draw_a;
+	s32				   member;
+
+	sheep = (struct EffectStep *)Ram_MapCellBuffer;
+	heap_cache = gBattleFxWork;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	work->effect = object;
+	BattleFx_BeginCanvasLayer(0);
+	REG_BG2PA = 0x100;
+	REG_BLDCNT = 0;
+	Resource_LoadAndDecompress((s32)&ResourceId_SheepSheet, work->sheet, 1, 1);
+	BattleEffect_LoadWork(46, 7, 7, 3, 1);
+	draw_a = (DrawRectangleFn)heap_cache[7];
+	BattleEffect_LoadWork(47, 7, 7, 15, 1);
+	draw_b = (DrawRectangleFn)heap_cache[8];
+	for (i = 0; i != 32; i++)
+	{
+		one = &sheep[i];
+		one->x = ((Random16() & 63) + 32) << 16;
+		one->y = -0x200000;
+		one->velocity_y = Random16() & 0;
+		one->z = Random16() & 3;
+		one->variant = Random16() & 255;
+	}
+	if (work->effect->side == 1)
+		REG_BG2X = -0x7000;
+	work->transfer_mode = 1;
+	work->transfer_value = 0;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	AudioCommand_PlayFar(142);
+	for (frame = 0; frame != 148; frame++)
+	{
+		struct BattleCamera *camera;
+
+		camera = gCameraWork;
+		if (frame == 80)
+			BattleEventRuntime_BeginPhaseFar(0);
+		for (member = 0; member != work->effect->count; member++)
+		{
+			void *member_object;
+
+			member_object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
+			Render_ResetTransformState();
+			Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+			record[0] = *(s32 *)((u8 *)member_object + 8);
+			record[1] = 160 << 14;
+			record[2] = *(s32 *)((u8 *)member_object + 16);
+			SceneTransform_ApplyPosition(record);
+			if (frame == member * 16 + 64)
+				ObjectGroup_UpdateMembers(work->effect->actors[member], 0, 5, -1, 0);
+		}
+		one = sheep;
+		for (i = 0; i != 12; i++, one++)
+		{
+			if (frame > i * 4 && one->y <= 0x7fffff)
+			{
+				s32 cel;
+
+				cel = (one->variant / 16) & 7;
+				if (cel < 4)
+					draw_a(canvas, work->sheet + (cel << 10), (one->x >> 16) - 16,
+						(one->y >> 16) - 16, 32, 32);
+				else
+					draw_b(canvas, work->sheet + (cel << 10) - 0x1000, (one->x >> 16) - 16,
+						(one->y >> 16) - 16, 32, 32);
+				one->y += one->velocity_y;
+				one->velocity_y += 0x2000;
+				one->variant += one->z;
+				if (one->y > 0x5c0000 && one->velocity_y == 0)
+				{
+					s32 speed = one->velocity_y + 1;
+					one->y = 0x5c0000;
+					one->z += 4;
+					one->velocity_y = -speed / 2;
+				}
+			}
+		}
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(47);
+	Runtime_ReleaseHeapBlock(46);
+	BattleFx_EndCanvasLayer();
+}
+
+void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
+{
+	void				   **slot;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	/* FAKEMATCH: needed to match: the family's blitter pair: this effect loads only one */
+	DrawRectangle		  draw[2];
+	struct EffectStep	 *marker;
+	s32					  i;
+	s32					  frame;
+	s32					  start;
+	s32					  cel;
+	s32					  y;
+	struct EffectPosition pos;
+
+	slot = &gWorkSlot[40];
+	canvas = slot[0];
+	work = slot[-1];
+	work->effect = efx;
+	BattleFx_BeginCanvasLayer(1);
+	REG_BG2PA = 0x100;
+	REG_BLDCNT = 0;
+	Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1, 1);
+	if (work->effect->side == 1)
+	{
+		REG_BG2X = -0x7000;
+	}
+	BattleEffect_LoadWork(46, 7, 7, 3, 1);
+	work->transfer_mode = 1;
+	work->transfer_value = 0;
+	draw[0] = (DrawRectangle)slot[6];
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	for (i = 0; i != work->effect->count; i++)
+	{
+		work->particles[i].variant = Random16() & 63;
+	}
+	frame = 0;
+	while (frame != (work->effect->count << 5) + 32)
+	{
+		if (frame == 32)
+		{
+			BattleEventRuntime_BeginPhaseFar(0);
+		}
+		i = 0;
+		if (work->effect->count != 0)
+		{
+			marker = work->particles;
+			do
+			{
+				start = i << 4;
+				if (frame == start)
+				{
+					AudioCommand_PlayFar(143);
+				}
+				if (frame < start)
+				{
+					goto next;
+				}
+				if (frame >= start + 72)
+				{
+					goto next;
+				}
+				EffectPosition_ApplyStepAndYOffset(work->effect->actors[i], &pos);
+				if (work->effect->side == 1)
+				{
+					pos.x -= 112;
+				}
+				y = pos.y;
+				pos.y = y - 16;
+				draw[0](canvas, work->sheet + 1728, pos.x - 8, y - 20, 16, 20);
+				if (frame < start)
+				{
+					goto next;
+				}
+				cel = ((frame - start) + marker->variant) / 6 % 9;
+				draw[0](canvas, work->sheet + cel * 192, pos.x - 8, pos.y - 16, 16, 12);
+			next:
+				marker++;
+				i++;
+			} while (i != work->effect->count);
+		}
+		work->transfer_pending = 1;
+		WaitFrames(1);
+		frame += 1;
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(46);
+	BattleFx_EndCanvasLayer();
+}
+
+#undef gBattleFxWork
+
+void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
+{
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 member;
+	u8						*sheet;
+	DrawRectangle			*draw;
+	struct MotionObject		*actor;
+	struct MotionObject		*goal;
+	s32						 frame;
+	s32						 i;
+	s32						 position[3];
+	s32						 target[3];
+	s32						 delta[3];
+	s32						 rider[3];
+	struct EffectPosition	 screen;
+	s32						 point[3];
+	struct EffectPosition	 view;
+	DrawRectangle			 callbacks[2];
+
+	heap_cache = (void **)gBattleFxWork;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	sheet = heap_cache[2];
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet, work->sheet, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	BattleFx_FetchRectangleBlitters(work->effect->side ^ 1, draw = callbacks);
+	actor = GetBattleObjectSlotFar(work->effect->actor)->object;
+	goal = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+	for (i = 0; i != 64; i++)
+	{
+		struct EffectStep *spark = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+		s32				   heading = Random16() & 0xffff;
+		s32				   speed = (Random16() & 0xff) + 128;
+
+		spark->x = 0;
+		spark->y = ((Random16() & 31) + 20) << 16;
+		spark->z = 0;
+		spark->velocity_x = (Trig_Sin(heading) * speed) >> 5;
+		spark->velocity_y = 0;
+		spark->velocity_z = (Trig_Cos(heading) * speed) >> 5;
+		spark->variant = 0;
+	}
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	position[0] = actor->x;
+	position[1] = 0;
+	position[2] = actor->z;
+	target[0] = goal->x;
+	target[1] = 180 << 15;
+	target[2] = 0;
+	delta[0] = (target[0] - position[0]) / 40;
+	delta[1] = (target[1] - position[1]) / 40;
+	delta[2] = (target[2] - position[2]) / 40;
+	for (frame = 0; frame != 98; frame++)
+	{
+		struct BattleCamera *camera = gCameraWork;
+		if (frame == 8)
+			AudioCommand_PlayFar(212);
+		if (frame == 80)
+			AudioCommand_PlayFar(142);
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+		if (frame >= 30 && frame < 70)
+		{
+			position[0] += delta[0];
+			position[1] += delta[1];
+			position[2] += delta[2];
+		}
+		SceneTransform_ApplyPosition(position);
+		if (frame == 0)
+			ObjectGroup_UpdateMembers(work->effect->actor, 7, -1, -1, 0);
+		if (frame == 24)
+			ObjectGroup_UpdateMembers(work->effect->actor, 0, -1, -1, 0);
+		for (i = 0; i != 32; i++)
+		{
+			struct EffectStep *spark = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+			if (frame > i && spark->variant == 0)
+			{
+				s32 size;
+				Graphics_SaveTransferWorkOnce();
+				switch (i & 3)
+				{
+				case 0:
+					SceneTransform_ApplyYaw(frame * (i * 32 + 256));
+					break;
+				case 1:
+					SceneTransform_ApplyPitch(-frame * (i * 32 + 256));
+					break;
+				case 2:
+					SceneTransform_ApplyRoll(-frame * (i * 32 + 256));
+					break;
+				case 3:
+					SceneTransform_ApplyPitch(-frame * (i * 32 + 256));
+					SceneTransform_ApplyRoll(-frame * (i * 32 + 256));
+					break;
+				}
+				EffectPosition_ApplyBaseAndYOffset((s32 *)spark, &screen);
+				screen.x >>= 1;
+				Graphics_RestoreTransferWork();
+				if (screen.depth < 250)
+					screen.depth = 250;
+				if (screen.depth > 634)
+					screen.depth = 634;
+				size = 9 - (screen.depth - 250) / 64;
+				callbacks[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+					screen.x - size / 2, screen.y - size, size, size * 2);
+				EffectStep_AdvanceWithGravity3D(spark, 60, 0);
+				if (frame > i + 30)
+				{
+					s32 dx = -spark->x >> 8;
+					s32 dy = -spark->y >> 8;
+					s32 dz = -spark->z >> 8;
+
+					spark->velocity_x += dx;
+					spark->velocity_y += dy;
+					spark->velocity_z += dz;
+				}
+			}
+		}
+		if (frame > 82)
+		{
+			rider[0] = 0;
+			rider[1] = Trig_Sin(frame << 10) << 2;
+			rider[2] = 0;
+			EffectPosition_ApplyBaseAndYOffset(rider, &screen);
+			screen.x >>= 1;
+			draw[1](canvas, work, screen.x - 10, screen.y - 17, 20, 34);
+		}
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	for (i = 0; i != 512; i++)
+	{
+		struct EffectStep *spark = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+		spark->x = ((Random16() & 0xff) - 127) << 15;
+		spark->y = ((Random16() & 0x7f) + 64) << 15;
+		spark->z = ((Random16() & 0xff) - 127) << 15;
+		spark->variant = 0;
+	}
+	Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sheet, 0, 0);
+	for (frame = 0; frame != work->effect->count * 8 + 72; frame++)
+	{
+		struct BattleCamera *camera = gCameraWork;
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+		if (frame >= work->effect->count * 8 + 40)
+			target[1] += 0x40000;
+		point[0] = target[0];
+		point[1] = target[1];
+		point[2] = target[2] + Trig_Sin(frame << 11) * 40;
+		EffectPosition_ApplyBaseAndYOffset(point, &view);
+		view.x >>= 1;
+		callbacks[0](canvas, work, view.x - 10, view.y - 17, 20, 34);
+		for (member = 0; member != work->effect->count; member++)
+		{
+			struct MotionObject *object =
+				GetBattleObjectSlotFar(work->effect->actors[member])->object;
+			s32 start = member * 8;
+			Render_ResetTransformState();
+			Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+			position[0] = object->x;
+			position[1] = 160 << 14;
+			position[2] = object->z;
+			SceneTransform_ApplyPosition(position);
+			if (frame == start + 30)
+				AudioCommand_PlayFar(126);
+			if (frame == start + 40)
+				ObjectGroup_UpdateMembers(work->effect->actors[member], 7, -1, -1, 0);
+			if (frame == start + 64)
+				ObjectGroup_UpdateMembers(work->effect->actors[member], 0, -1, -1, 0);
+			if (frame > start)
+			{
+				SceneTransform_ApplyYaw((frame - start) << 9);
+				for (i = 0; i != 64; i++)
+				{
+					struct EffectStep *spark =
+						&((struct EffectStep *)Ram_MapCellBuffer)[member * 64 + i];
+
+					if (frame > start + i / 2)
+					{
+						s32 xx = (spark->x >> 8) * (spark->x >> 8);
+						s32 yy = (spark->y >> 8) * (spark->y >> 8);
+						s32 zz = (spark->z >> 8) * (spark->z >> 8);
+						s32 distance = Iwram_Sqrt(xx + yy + zz) >> 9;
+						if (distance != 0)
+						{
+							s32 cel;
+
+							EffectPosition_ApplyBaseAndYOffset((s32 *)spark, &view);
+							view.x >>= 1;
+							if (view.depth < 314)
+								view.depth = 314;
+							if (view.depth > 634)
+								view.depth = 634;
+							/* FAKEMATCH: needed to match: the size series A draws its sparks at, kept from that effect and never used here */
+							cel = 3 - (view.depth - 314) / 128;
+							cel = (i * 4 + frame) % 9;
+							{
+								u8 *cell = sheet + BattleFx_PuffCells[cel];
+								u32 edge = BattleFx_PuffSizes[cel];
+								u32 half = edge >> 1;
+
+								draw[1](canvas, cell, view.x - half, view.y - half, edge, edge);
+							}
+							spark->x -= spark->x / distance;
+							spark->y -= spark->y / distance;
+							spark->z -= spark->z / distance;
+						}
+					}
+				}
+			}
+		}
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+#undef gBattleFxWork
+
+#undef gBattleFxWork
+#define gBattleFxWork (*(struct BattleEffectWork * *)&gBattleFxWork)
+
+void Camera_ApplyPhasedDelta(void)
+{
+    struct BattleEffectWork *work = gBattleFxWork;
+    struct BattleCamera *camera = *(struct BattleCamera **)((u8 *)&gBattleFxWork - 108);
+    s32 *phase = &work->camera_phase;
+
+    if (*phase == 1) {
+        camera->yaw += work->camera_delta;
+        *phase = 0;
+    } else {
+        camera->yaw += work->camera_delta / 2;
+        if (*phase == 2)
+            *phase = 0;
+        else
+            *phase = 2;
+    }
+}
+
+//--------------------------------------------------------------------------
+// run_no_effect_frames.c
+// バトル演出：空の演出の繰り返し
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+// 何もしない BattleFx_RunNoEffect を cnt 回呼ぶ（フレーム待ちはしない）
+// cnt : 呼ぶ回数
+//--------------------------------------------------------------------------
+void BattleFx_RunNoEffectFrames(s32 cnt)
+{
+	s32 n;
+
+	n = 0;
+	if (cnt != 0)
+	{
+		do
+		{
+			n += 1;
+			BattleFx_RunNoEffect();
+		} while (n != cnt);
+	}
+}
+
+//--------------------------------------------------------------------------
+// dispatch.c
+// バトル演出：演出の振り分け・走査線ごとのウインドウ端・生きている対象
+//--------------------------------------------------------------------------
+
+#undef gBattleFxWork
+
+#define BattleEffect_RunCirclingFallingScene ((void (*)(s32 *))BattleEffect_RunCirclingFallingScene)
+#define BattleEffect_RunEmberColumns ((void (*)(s32 *))BattleEffect_RunEmberColumns)
+#define BattleFx_RunObjectRow ((void (*)(s32 *))BattleFx_RunObjectRow)
+#define BattleEffect_RunStagedParticles ((void (*)(s32 *))BattleEffect_RunStagedParticles)
+#define BattleFx_InitializeMode6 ((void (*)(s32 *))BattleFx_InitializeMode6)
+#define BattleFx_InitializeMode10 ((void (*)(s32 *))BattleFx_InitializeMode10)
+#define BattleFx_InitializeMode12 ((void (*)(s32 *))BattleFx_InitializeMode12)
+
+typedef void (*Callback)(s32 *);
+extern Callback BattleFx_ModeHandlers[];
+
+//--------------------------------------------------------------------------
+// 演出の作業領域を取り、種類（arg[0]）ごとの演出を流して返す
+// arg : struct BattleEffectArgument
+//--------------------------------------------------------------------------
+void BattleFx_InitializeMode(s32 *arg)
+{
+	Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x302);
+	Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectWork));
+	Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
+
+	if (*arg == 0)
+	{
+		BattleFx_InitializeDefaultMode((struct BattleEffectArgument *)arg);
+	}
+	else
+	{
+		switch (*arg)
+		{
+		case 1:
+			BattleEffect_RunCirclingFallingScene(arg);
+			break;
+		case 2:
+			BattleEffect_RunEmberColumns(arg);
+			break;
+		case 3:
+			BattleFx_RunObjectRow(arg);
+			break;
+		case 4:
+			BattleEffect_RunStagedParticles(arg);
+			break;
+		case 5:
+			BattleEffect_RunDitherDissolveScene((struct BattleEffectArgument *)arg);
+			break;
+		case 6:
+			BattleFx_InitializeMode6(arg);
+			break;
+		case 7:
+			BattleFx_RenderAnimationMode0(arg);
+			break;
+		case 8:
+			BattleFx_RunWhirlwindComets((struct BattleEffectArgument *)arg);
+			break;
+		case 9:
+			BattleEffect_RunShockwaveScene((struct BattleEffectArgument *)arg);
+			break;
+		case 10:
+			BattleFx_InitializeMode10(arg);
+			break;
+		case 11:
+			BattleFx_InitializeDefaultMode((struct BattleEffectArgument *)arg);
+			break;
+		case 12:
+			BattleFx_InitializeMode12(arg);
+			break;
+		}
+	}
+
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
+}
+
+//--------------------------------------------------------------------------
+// 演出の作業領域を取り、BattleFx_ModeHandlers の表から演出を流す
+// 種類 0 は演出なしで、variant（arg[6]）を 0 にする
+// arg : struct BattleEffectArgument
+//--------------------------------------------------------------------------
+void BattleFx_DispatchMode(s32 *arg)
+{
+	s32						 kind;
+	struct BattleEffectWork *work;
+
+	Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x302);
+	Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectWork));
+	Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
+
+	work = *(struct BattleEffectWork **)gBattleFxWork;
+	work->effect = (struct BattleEffectArgument *)arg;
+	kind = arg[0];
+	if (kind == 0)
+		arg[6] = 0;
+	else
+		BattleFx_ModeHandlers[kind - 1](arg);
+
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
+}
+
+//--------------------------------------------------------------------------
+// ウインドウ 0 の右端を走査線ごとに決め、HBlank DMA で毎ライン書き込む
+// （スケジューラのコールバック）
+// gMapCellBuffer +0   : 基準の右端（u16）
+// gMapCellBuffer +2   : 8〜135 ライン目のずれ（u8 × 128）
+// gMapCellBuffer +0x82: 作った WIN0H の表（u16 × 160）
+// 表の外のラインは 0xfff1（左端 > 右端）で、ウインドウに入らない
+//--------------------------------------------------------------------------
+void BattleFx_BuildWindowEdgeTable(void)
+{
+	u16 *base;
+	u16 *tbl;
+	u8	*ofs;
+	s32	 i;
+	s32	 x;
+
+	base = (u16 *)gMapCellBuffer;
+	tbl = (u16 *)(Ram_MapCellBuffer + 0x82);
+	ofs = Ram_MapCellBuffer + 2;
+	for (i = 0; i != 160; i++)
+	{
+		if (i >= 8 && i <= 135)
+		{
+			x = *base - ofs[i - 8];
+			if (x < 0)
+				x = 0;
+			if (x > 240)
+				x = 240;
+			tbl[i] = x;
+		}
+		else
+		{
+			tbl[i] = 0xfff1;
+		}
+	}
+	{
+		volatile u16 *channel = REG_DMA0;
+
+		// DMA0 のリピートと開始条件を消してから止める
+		channel[5] &= 0xc5ff;
+		channel[5] &= 0x7fff;
+		(void)channel[5];
+		// HBlank ごと・リピート・転送先リロードで 1 ハーフワード
+		Dma_Set(gMapCellBuffer + 0x82, (void *)&REG_WIN0H, 0xa2600001, (volatile u32 *)channel);
+	}
+}
+
+//--------------------------------------------------------------------------
+// 対象の側（敵か味方か）で HP の残っている者を集め、オブジェクトを出す
+// 敵の番号は 128 から
+//--------------------------------------------------------------------------
+void BattleFx_SelectLivingTargets(struct BattleEffectArgument *arg)
+{
+	s16 list[14];
+	s32 cnt;
+	s32 i;
+
+	cnt = 0;
+	if (arg->actors[0] > 127)
+	{
+		for (i = 0; i != 6; i++)
+		{
+			s32 id = i + 128;
+
+			if (UnitGetFar(id)->hp > 0)
+				list[cnt++] = id;
+		}
+	}
+	else
+	{
+		for (i = 0; i != 8; i++)
+		{
+			if (UnitGetFar(i)->hp > 0)
+				list[cnt++] = i;
+		}
+	}
+	list[cnt] = 0xff; // 終わり
+	BattleActor_SpawnObjectsForListFar(list, 0);
+}
+
+void WaitFrames(s32 frames);
+
+void BattleEffect_SetupBlendedDisplay(void)
+{
+	void		  **slots = &gWorkSlot[HEAP_SLOT_BATTLE];
+	u8			   *buffer = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE];
+	struct BtlWork *battle = slots[0];
+	volatile u32	zero;
+
+	REG_DISPCNT = 1;
+	gBgScroll[3] = 32;
+	BattleBackground_LoadFar(1, battle->background, 24);
+	zero = 0;
+	Dma_Set((const void *)&zero, buffer, 0x85001000, REG_DMA3);
+	zero = 0;
+	Dma_Set((const void *)&zero, (void *)0x06004000, 0x85001000, REG_DMA3);
+	WaitFrames(1);
+	REG_BLDALPHA = 0x100e;
+	REG_BLDCNT = 0x3f46;
+	REG_DISPCNT = 0x7741;
+	gProjection.center_y = 120;
+}
+
+#define GetMotionRecordFar ((void *(*)(void *, s32))GetMotionRecordFar)
+
+#undef gBattleFxWork
+#define gBattleFxWork (*(struct BattleEffectWork **)&gBattleFxWork)
+
+void ObjectGroup_UpdateMembers(
+	s32 set_id, s32 object_value, s32 group_value, s32 state_slot, s32 state_value)
+{
+	struct BtlObj			*set;
+	struct AnimationObject	*group;
+	struct BattleEffectWork *state;
+	s32						 group_index;
+
+	set = GetBattleObjectSlotFar(set_id);
+	state = gBattleFxWork;
+	group_index = 0;
+
+	while ((group = GetMotionRecordFar(set->object, group_index)) != NULL)
+	{
+		if (state_slot != -1)
+		{
+			state->actor_timers[state_slot] = ((u8 *)&state_value)[0];
+		}
+		if (set->fading == 0)
+		{
+			if (object_value != -1)
+			{
+				s32 object_index;
+
+				object_index = 0;
+				if (group->count != 0)
+				{
+					struct AnimationEntry **objects;
+
+					objects = group->entries;
+					do
+					{
+						struct AnimationEntry *object;
+
+						object = *objects++;
+						if (object != NULL && object != (struct AnimationEntry *)set->effect_entry
+							&& object != (struct AnimationEntry *)set->animation_entry)
+						{
+							if (object_value == 0)
+								object->param = BattleMotion_GetSlotPaletteFar(set_id);
+							else
+								object->param = object_value;
+							object->frame = 0xff;
+						}
+						object_index++;
+					} while (object_index != group->count);
+				}
+			}
+			if (group_value != -1)
+				AnimationObjects_SelectAnimationFar(group, group_value);
+		}
+		group_index++;
+	}
+}
+
+void BattleFx_InitTilemapAndFlushQueue(void)
+{
+	BattleFx_BeginTiledCanvas(1);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// initialize_mode10.c
+// 戦闘エフェクト：いばらのつる、岩と氷塊、氷の破片
+//--------------------------------------------------------------------------
+
+#undef BattleFx_InitializeMode10
+#undef GetMotionRecordFar
+#undef gBattleFxWork
+
+//--------------------------------------------------------------------------
+// いばらのつる : とげを飛ばし、つるを伸ばして対象を持ち上げ、
+// 絵を点ごとに消してから対象を落として爆発させる
+// effect : 対象の一覧
+//--------------------------------------------------------------------------
+void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
+{
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	u8						*canvas;
+	s32						 frame;
+	s32						 height;
+	s32						 speed;
+	s32						 phase;
+	s32						 rise;
+	s32						 i;
+	s32						 j;
+	u8						*order;
+	s32						 point[3];
+	struct EffectPosition	 screen;
+	DrawRectangle			 draw[2];
+
+	cursor = (void **)gBattleFxWork;
+	work = *cursor++;
+	canvas = *cursor;
+	work->effect = effect;
+	BattleFx_SpawnObjects(8, 0x177, 1);
+
+	// 消す順番 : 8 組の 0〜127 をでたらめに並べかえる
+	order = Ram_MapCellBuffer;
+	for (i = 0; i != 1024; i++)
+		order[i] = i & 127;
+	for (i = 0; i != 8; i++)
+	{
+		for (j = 0; j != 128; j++)
+		{
+			s32 a = Random16() & 127;
+			s32 b = Random16() & 127;
+			u8 *to = &order[i * 128 + b];
+			u8 *from = &order[i * 128 + a];
+			u8	t = *to;
+
+			*to = *from;
+			*from = t;
+		}
+	}
+
+	BattleFx_BeginCanvasLayer(0);
+	REG_BG2PA = 0x100;
+	REG_BLDCNT = 0;
+	Resource_LoadAndDecompress((s32)&ResourceId_ThornVineSheet, work->sheet, 1, 1);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 1);
+	draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 1);
+	draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+	work->transfer_mode = 1;
+	work->transfer_value = 0;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	REG_BG2X = -0x2000; // 左へ 32 ドット (20.8 固定小数)
+
+	// つる (0〜15) : x、根もとの y、伸びる速さ、伸びはじめるまでの待ち
+	for (i = 0; i != 16; i++)
+	{
+		struct EffectStep *vine = &work->particles[i];
+
+		if (i <= 4)
+		{
+			vine->x = i * 20;
+			vine->y = (Random16() & 7) + 104;
+		}
+		else
+		{
+			vine->x = i * 20 - 90;
+			vine->y = (Random16() & 7) + 108;
+		}
+		vine->velocity_y = (Random16() & 7) + 4;
+		vine->variant = (Random16() & 15) + 16;
+	}
+	// 光 (16〜31) : 負の variant は出るまでの待ち
+	for (i = 0; i != 16; i++)
+	{
+		struct EffectStep *spark = &work->particles[16 + i];
+
+		spark->x = (Random16() & 63) + 32;
+		spark->y = (Random16() & 31) + 64;
+		spark->variant = -(Random16() & 7) - 8;
+	}
+	// とげ (32〜47) : 右上から左へ飛ぶ
+	for (i = 0; i != 16; i++)
+	{
+		struct EffectStep *thorn = &work->particles[32 + i];
+
+		thorn->x = 128 << 16;
+		thorn->y = 64 << 16;
+		thorn->velocity_x = -((Random16() & 255) + 200) << 9;
+		thorn->velocity_y = 0;
+		thorn->variant = 0;
+	}
+	BattleFx_SelectLivingTargets(work->effect);
+
+	height = -(64 << 16);
+	speed = 0;
+	for (frame = 0; frame != 366; frame++)
+	{
+		struct BattleCamera *camera = gCameraWork;
+
+		// A・B で、つるの場面を落とす場面まで飛ばす
+		if ((gKeysRepeat & (KEY_A | KEY_B)) != 0 && frame > 190 && frame <= 285)
+		{
+			Iwram_ClearWords(canvas, 0x4000);
+			frame = 286;
+		}
+		if (frame == 224)
+			work->transfer_mode = 0;
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+		if (frame == 31)
+		{
+			work->shake_frames = 8;
+			AudioCommand_PlayFar(157);
+			for (i = 0; i != work->effect->count; i++)
+				BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 6);
+		}
+		if (frame == 72)
+			AudioCommand_PlayFar(136);
+		if (frame == 140)
+			AudioCommand_PlayFar(156);
+
+		// 陣形のオブジェクトを 64 ドットの高さまで落とす
+		speed += 0x4000;
+		height += speed;
+		if (height > 64 << 16)
+			height = 64 << 16;
+		BattleFx_PlaceFormationObjects(2, 128 << 16, height);
+		if (frame >= 48 && frame <= 96)
+		{
+			s32 pose = (frame - 48) / 24 % 3;
+
+			AnimationObjects_SelectAnimationFar(work->objects[3], ThornVines_ObjectPoses[pose * 2]);
+			AnimationObjects_SelectAnimationFar(
+				work->objects[4], ThornVines_ObjectPoses[pose * 2 + 1]);
+		}
+
+		// とげを 1 フレームに 1 本ずつ飛ばす
+		if (frame >= 72 && frame <= 127)
+		{
+			for (i = 0; i != 16; i++)
+			{
+				struct EffectStep *thorn = &work->particles[32 + i];
+
+				if (frame >= i + 72 && thorn->y < (104 << 16))
+				{
+					s32 cel = (frame + i) / 4 % 5;
+					s32 x = HI(thorn->x);
+					s32 y = thorn->y >> 16;
+					u8 *cell = work->sheet + ThornVines_ThornOffsets[cel];
+					u32 width = ThornVines_ThornWidths[cel];
+					u32 tall;
+
+					x -= width >> 1;
+					tall = ThornVines_ThornHeights[cel];
+					y -= tall >> 1;
+					draw[0](canvas, cell, x, y, width, tall);
+					EffectStep_AdvanceWithGravity2D(thorn, 64, 0x1000);
+				}
+			}
+		}
+		// 破片 (16〜63) を地面から跳ねあげる
+		if (frame == 128)
+		{
+			for (i = 0; i != 48; i++)
+			{
+				struct EffectStep *chip = &work->particles[16 + i];
+
+				chip->x = (Random16() % 96) << 16;
+				chip->y = ((Random16() & 7) + 88) << 16;
+				chip->velocity_x = ((Random16() & 255) - 128) << 11;
+				chip->velocity_y = -(Random16() & 255) << 11;
+				chip->variant = -(Random16() & 15) - 16;
+			}
+			REG_BG2X = 0;
+		}
+
+		// つるを伸ばす (伸びているあいだは画面を揺らす)
+		phase = frame - 128;
+		if (phase >= 0 && phase <= 96)
+		{
+			rise = phase;
+			if (rise > 80)
+				rise = 80;
+			else
+				work->shake_frames = 2;
+			for (i = 0; i != 10; i++)
+			{
+				struct EffectStep *vine = &work->particles[i];
+
+				if (rise > vine->variant)
+				{
+					u8 *sheet = work->sheet;
+					s32 top;
+					s32 wrap;
+					s32 k;
+
+					if (i > 5)
+						sheet = work->sheet + 0x6c0;
+					top = (rise - vine->variant) * vine->velocity_y;
+					for (wrap = top; wrap > 184; wrap -= 64)
+						;
+					// 先端 (24×8)
+					if (wrap <= 119)
+						draw[i & 1](canvas, sheet, vine->x, vine->y - wrap - 8, 24, 8);
+					// 茎 (24×64 を 3 枚、画面の上と根もとで切る)
+					for (k = 0; k != 3; k++)
+					{
+						s32 y = vine->y - wrap + k * 64;
+						s32 skip = 0;
+						s32 rows = 64;
+
+						if (y >= -64)
+						{
+							if (y < 0)
+							{
+								skip = -y * 24;
+								rows = y + 64;
+								y = 0;
+							}
+							if (y + rows > vine->y)
+								rows -= y + rows - vine->y;
+							draw[i & 1](canvas, sheet + skip + 192, vine->x, y, 24, rows);
+						}
+					}
+					// 葉 (奇数のつるだけ)
+					if ((i & 1) != 0)
+					{
+						s32 y = ((vine->y - top) & 127) - 16;
+						s32 kind = i % 3;
+						s32 full = ThornVines_LeafSizes[kind];
+						s32 rows = full;
+
+						if (y + rows > vine->y)
+							rows -= y + rows - vine->y;
+						if (rows > 0)
+							draw[i & 1](canvas, work->sheet + ThornVines_LeafOffsets[kind],
+								vine->x + 8, y, full, rows);
+					}
+				}
+			}
+		}
+		// 破片 : 落ちるか画面の外へ出たら、フレーム 159 まで跳ねあげなおす
+		if (phase >= 0 && phase <= 95)
+		{
+			for (i = 0; i != 32; i++)
+			{
+				struct EffectStep *chip = &work->particles[32 + i];
+
+				if (chip->variant >= 0)
+				{
+					s32 cel = i % 5;
+
+					draw[0](canvas, work->sheet + ThornVines_ChipOffsets[cel], HI(chip->x),
+						HI(chip->y), ThornVines_ChipWidths[cel], ThornVines_ChipHeights[cel]);
+					chip->x += chip->velocity_x;
+					chip->y += chip->velocity_y;
+					chip->velocity_y += 0x4000;
+					if ((chip->y < 0 || chip->y > 120 << 16) && frame <= 159)
+					{
+						chip->x = (Random16() % 96) << 16;
+						chip->y = ((Random16() & 7) + 88) << 16;
+						chip->velocity_x = ((Random16() & 255) - 128) << 11;
+						chip->velocity_y = -(Random16() & 255) << 11;
+					}
+				}
+				chip->variant++;
+			}
+		}
+
+		// BG パレットの 64 色を 4 フレームごとに灰色へ 1 段ずつ近づける
+		if (frame >= 224 && frame <= 247 && (frame & 3) == 0)
+		{
+			u16 *color = (u16 *)BG_PLTT;
+
+			for (i = 0; i != 64; i++)
+			{
+				s32 red = *color & 31;
+				s32 green = (*color >> 5) & 31;
+				s32 blue = (*color >> 10) & 31;
+				s32 grey = (red + green + blue) / 3;
+
+				if (red > grey)
+					red--;
+				if (red < grey)
+					red++;
+				if (green > grey)
+					green--;
+				if (green < grey)
+					green++;
+				if (blue > grey)
+					blue--;
+				if (blue < grey)
+					blue++;
+				*color++ = (blue << 10) | (green << 5) | red;
+			}
+		}
+
+		// 対象ごとに 6 つの光を、体のまわりでくり返し光らせる
+		if (phase >= 0 && phase <= 172)
+		{
+			for (i = 0; i != work->effect->count; i++)
+			{
+				struct MotionObject *object =
+					GetBattleObjectSlotFar(work->effect->actors[i])->object;
+
+				point[0] = object->x;
+				point[1] = object->y;
+				point[2] = object->z;
+				EffectPosition_ApplyBaseAndYOffset(point, &screen);
+				for (j = 0; j != 6; j++)
+				{
+					struct EffectStep *spark = &work->particles[16 + i * 6 + j];
+
+					if (spark->variant == 0)
+					{
+						spark->x = screen.x + (Random16() & 15) - 8;
+						spark->y = screen.y + (Random16() & 15) - 40;
+					}
+					if (spark->variant >= 0 && spark->variant <= 4)
+					{
+						u8 *cell = work->sheet + ThornVines_SparkOffsets[spark->variant];
+						u32 size = ThornVines_SparkSizes[spark->variant];
+						u32 half = size >> 1;
+
+						draw[0](canvas, cell, spark->x - half, spark->y - half, size, size);
+					}
+					spark->variant++;
+					if (frame <= 199 && spark->variant == 5)
+						spark->variant = -(Random16() & 7);
+				}
+			}
+		}
+
+		// 128×128 の絵を、上から 2 行ずつ順番どおりの点で消していく
+		if (frame > 232)
+		{
+			s32 row = frame * 2 - 496;
+
+			for (i = 0; i != 32; i++)
+			{
+				for (j = 0; j != 4; j++)
+				{
+					s32 y = row + i;
+
+					if (y >= 0 && y <= 127)
+					{
+						s32 x = order[((y & 7) * 32 + i) * 4 + j];
+
+						canvas[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = 0;
+					}
+				}
+			}
+			row++;
+			for (i = 0; i != 32; i++)
+			{
+				for (j = 0; j != 4; j++)
+				{
+					s32 y = row + i;
+
+					if (y >= 0 && y <= 127)
+					{
+						s32 x = order[((y & 7) * 32 + i) * 4 + j];
+
+						canvas[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = 0;
+					}
+				}
+			}
+		}
+
+		// 対象を 8 フレームずつずらして 128 ドットの高さまで持ち上げる
+		if (frame >= 161 && frame <= 223)
+		{
+			for (i = 0; i != work->effect->count; i++)
+			{
+				if (frame > i * 8 + 160)
+				{
+					struct BtlObj		*slot = GetBattleObjectSlotFar(work->effect->actors[i]);
+					struct MotionObject *object = slot->object;
+					void				*record;
+					s32					 n;
+
+					object->y += 8 << 16;
+					if (object->y > 128 << 16)
+						object->y = 128 << 16;
+					object->vertical_motion_strength = 0;
+					for (n = 0; (record = GetMotionRecordFar(slot->object, n)) != 0; n++)
+						AnimationObjects_SelectAnimationFar(record, 5);
+				}
+			}
+		}
+		// 5 フレームずつずらして 96 ドットから落とし、16 フレーム後にぶつける
+		for (i = 0; i != work->effect->count; i++)
+		{
+			if (frame == i * 5 + 286)
+			{
+				struct MotionObject *object =
+					GetBattleObjectSlotFar(work->effect->actors[i])->object;
+
+				object->y = 96 << 16;
+				object->vertical_motion_strength = 0xab85;
+			}
+			if (frame == i * 5 + 302)
+			{
+				ObjectGroup_UpdateMembers(work->effect->actors[i], 7, -1, i, 8);
+				AudioCommand_PlayFar(134);
+				work->shake_frames = 8;
+			}
+		}
+
+		// 爆発の絵に切りかえ、対象ごとに火の粉を 72 度おきに 10 個出す
+		if (frame == 302)
+		{
+			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+			Resource_LoadAndDecompress((s32)&ResourceId_YellowRingSheet, work->sheet, 1, 0);
+			Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet + 0x1680, 1, 1);
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+			draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+			draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+			REG_BLDCNT = 0x3f46;
+			REG_BG2PA = 0x80;
+			REG_BG2X = 0;
+			work->transfer_mode = 2;
+			work->transfer_value = 75;
+			Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+			for (i = 0; i != work->effect->count; i++)
+			{
+				struct MotionObject *object =
+					GetBattleObjectSlotFar(work->effect->actors[i])->object;
+
+				for (j = 0; j != 10; j++)
+				{
+					struct EffectStep *ember = &work->particles[i * 10 + j];
+
+					ember->x = object->x;
+					ember->y = 20 << 16;
+					ember->z = object->z;
+					ember->velocity_x = Trig_Sin(j * 0x3334) << 2;
+					ember->velocity_y = (Random16() & 0x7fff) + (1 << 16);
+					ember->velocity_z = Trig_Cos(j * 0x3334) << 2;
+					ember->variant = 0;
+				}
+			}
+		}
+		// 爆発 (40×24 を左右に分けて 6 コマ) と、そのあとの火の粉 5 個
+		if (frame > 301)
+		{
+			for (i = 0; i != work->effect->count; i++)
+			{
+				s32 start = i * 4 + 302;
+
+				if (frame >= start && frame < i * 4 + 314)
+				{
+					s32					 cel = (frame - start) / 2;
+					struct MotionObject *object =
+						GetBattleObjectSlotFar(work->effect->actors[i])->object;
+
+					point[0] = object->x;
+					point[1] = 0;
+					point[2] = object->z;
+					EffectPosition_ApplyBaseAndYOffset(point, &screen);
+					screen.x >>= 1;
+					draw[0](canvas, work->sheet + cel * 480, screen.x - 20, screen.y - 24, 20, 24);
+					draw[1](canvas, work->sheet + cel * 480, screen.x, screen.y - 24, 20, 24);
+				}
+				if (frame >= start + 6)
+				{
+					for (j = 0; j != 5; j++)
+					{
+						struct EffectStep *ember = &work->particles[i * 10 + j];
+
+						EffectPosition_ApplyBaseAndYOffset(&ember->x, &screen);
+						screen.x >>= 1;
+						if (ember->variant >= 0 && ember->variant <= 26)
+						{
+							s32 cel = 6;
+							s32 offset = ThornVines_EmberOffsets[cel];
+							u32 size = ThornVines_EmberSizes[cel];
+
+							draw[0](canvas, work->sheet + offset, screen.x - (size >> 1),
+								screen.y - (size >> 1), size, size);
+						}
+						EffectStep_AdvanceWithGravity2D(ember, 60, 0x1000);
+						ember->variant++;
+					}
+				}
+			}
+		}
+
+		if (frame <= 127)
+			Camera_ApplyShake(4, 16);
+		else if (frame <= 301)
+			Camera_ApplyShake(2, 2);
+		else
+			Camera_ApplyShake(4, 8);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleEventRuntime_BeginPhaseFar(134);
+	BattleEffect_RunImpactBurst(2, 128 << 16, height);
+	for (i = 0; i != 8; i++)
+		ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// 岩と氷塊
+//--------------------------------------------------------------------------
+
+#define AnimationObjects_SelectAnimationFar \
+	((s32 (*)(void *, s32))AnimationObjects_SelectAnimationFar)
+
+typedef struct Scale
+{
+	s32 x;
+	s32 y;
+} Scale;
+
+extern const Scale BattleFx10_UnitScale;
+
+struct Mode10Work
+{
+	u8							 sheet[0x7080];
+	struct EffectStep			 sparks[64]; // 落ちてくる氷塊、のちに飛び散る破片
+	s32							 transfer_mode;
+	s32							 transfer_value;
+	u8							 unknown_7788[0x20];
+	s32							 shake; // 画面を揺らすフレーム数
+	u8							 unknown_77ac[0x2c];
+	void						*objects[9];
+	u8							 unknown_77fc[0x28];
+	s32							 transfer_pending;
+	struct BattleEffectArgument *effect;
+};
+
+#define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
+#define TRAILS ((struct EffectStep *)(gMapCellBuffer + 0xe00)) // PARTICLES[128] から
+
+//--------------------------------------------------------------------------
+// 岩と氷塊 : 窓を開いて岩を崩し、大きな氷塊を落としてしぶきを散らしたあと、
+// 氷塊を降らせて対象に当て、大岩を崩して破片を跳ねさせる
+// effect : 対象の一覧
+//--------------------------------------------------------------------------
+void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
+{
+	s32							pts[32][2];
+	s32							pos[4];
+	void					   *canvas;
+	struct Mode10Work		   *work;
+	s32							frame;
+	DrawRectangle				draw;
+	DrawRectangle				draw_alt;
+	u8						   *dots;
+	s32							step;
+	s32							row;
+	u32						   *heap;
+	s32							count;
+	s32							i;
+	s32							j;
+	s32							ox;
+	s32							oy;
+	s32							y;
+	s32							t;
+	struct EffectStep		   *p;
+	struct EffectStep		   *q;
+	Scale						scale;
+
+	heap = (u32 *)&gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+	canvas = (void *)heap[0];
+	work = (struct Mode10Work *)heap[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
+	dots = (u8 *)heap[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
+	step = 1;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	BattlePres_ConfigureEffectDisplay();
+	PLTT_BACKDROP = 0;
+	*(u16 *)0x05000002 = 0; // BG パレット 0 の色 1
+	work->transfer_mode = 0;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	REG_WININ = 0x2137;
+	BattleEffect_WipeCanvas(1, 0);
+	REG_WIN0H = 0xf0f0; // 幅 0 の窓
+	Resource_LoadAndDecompress((s32)&ResourceId_IceBlockSheet, work->sheet, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, dots, 0, 0);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+	draw = (DrawRectangle)heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 1);
+	draw_alt = (DrawRectangle)heap[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_CANVAS];
+	gProjection.center_y = 240;
+	BattleFx_SelectLivingTargets(work->effect);
+	WaitFrames(1);
+	BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+	BattleFx_SpawnObjects(9, 0x174, 1);
+	REG_DISPCNT = 0x7741;
+	REG_BG2PA = 0x80;
+	REG_BLDALPHA = 0x1010;
+	REG_BLDCNT = 0x3f44;
+	work->transfer_mode = 2;
+	work->transfer_value = 50;
+
+	for (i = 0; i != 64; i++)
+	{
+		PARTICLES[i].x = (Random16() & 63) + 32;
+		PARTICLES[i].y = (Random16() & 31) + 120;
+		PARTICLES[i].variant = -1;
+	}
+
+	for (i = 0; i != 32; i++)
+	{
+		pts[i][0] = BattleFx10_Points[i][0];
+		pts[i][1] = BattleFx10_Points[i][1];
+	}
+
+	AudioCommand_PlayFar(141);
+
+	//------------------------------------------------------------------
+	// 前半 : 岩、大きな氷塊、しぶき (A・B で後半へ)
+	//------------------------------------------------------------------
+	for (frame = 0; frame != 288; frame++)
+	{
+		count = 16;
+		if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 16)
+		{
+			break;
+		}
+
+		// 窓を左から開く : 右端を加速しながら動かし、各行を 0〜63 ドット引っこめる
+		if (frame >= 0 && frame < 16)
+		{
+			u16 *edge = (u16 *)gMapCellBuffer;
+			if (frame == 1)
+			{
+				u8 *inset = Ram_MapCellBuffer + 2;
+				s32 n;
+				for (n = 0; n != 128; n++)
+				{
+					inset[n] = Random16() & 63;
+				}
+				*edge = 0;
+				Scheduler_AddOrUpdateCallback(BattleFx_BuildWindowEdgeTable, 0x480);
+			}
+			*edge += step;
+			step += 3;
+			if (frame == 15)
+			{
+				Scheduler_RemoveCallback(BattleFx_BuildWindowEdgeTable);
+			}
+		}
+
+		// 残っている岩の数
+		if (frame > 103)
+		{
+			count = 0;
+		}
+		else if (frame > 63)
+		{
+			count = 6;
+		}
+		else if (frame > 31)
+		{
+			count = 10;
+		}
+
+		// 揺れ : フレーム 167 まではでたらめ、176〜179 は表のとおり
+		if (frame <= 167)
+		{
+			ox = (Random16() & 3) - 1;
+			oy = (Random16() & 3) - 1;
+			((struct Cells03001ad0 *)gBgScroll)->unk04 = ox;
+			((struct Cells03001ad0 *)gBgScroll)->unk06 = oy + 32;
+		}
+		else
+		{
+			ox = 0;
+			oy = 0;
+			((struct Cells03001ad0 *)gBgScroll)->unk04 = 0;
+			((struct Cells03001ad0 *)gBgScroll)->unk06 = 32;
+		}
+		if (frame >= 176 && frame < 180)
+		{
+			ox = -BattleFx10_ShakeOffsets[frame - 176];
+			oy = BattleFx10_ShakeOffsets[frame - 176];
+			((struct Cells03001ad0 *)gBgScroll)->unk04 = ox;
+			((struct Cells03001ad0 *)gBgScroll)->unk06 = oy + 32;
+		}
+
+		for (i = 0; i != count; i++)
+		{
+			s32 n = i % 3;
+			draw(canvas, work->sheet + BattleFx10_RockCells[n], BattleFx10_Points[i][0] - ox,
+				BattleFx10_Points[i][1] - BattleFx10_RockHeights[n] - oy, BattleFx10_RockWidths[n],
+				BattleFx10_RockHeights[n]);
+		}
+
+		// 3×3 のオブジェクトを 32 ドットおきに並べる
+		scale = BattleFx10_UnitScale;
+		if (frame == 174)
+		{
+			for (i = 0; i != 9; i++)
+			{
+				((struct {
+					u8 pad[9];
+					u8 tile_hi : 2;
+					u8 priority : 2;
+					u8 palette : 4;
+				} *)work->objects[i])
+					->priority = 0;
+			}
+		}
+		if (frame > 208)
+		{
+			AnimationObjects_SelectAnimationFar(
+				work->objects[2], BattleFx10_Animations[(frame / 4) & 3]);
+		}
+
+		scale.x = 0x10000;
+		scale.y = 0x10000;
+		pos[3] = 0;
+		pos[1] = 255 << 16;
+		for (row = 0; row != 3; row++)
+		{
+			for (j = 0; j != 3; j++)
+			{
+				pos[0] = (j * 32 + 144 - ox) << 16;
+				pos[2] = (row * 32 + 76 - oy) << 16;
+				Object_ApplyProjectedPlacementFar(work->objects[row * 3 + j], pos, &scale, 0);
+			}
+		}
+
+		// 大きな氷塊 (24×48) : 160〜175 で右上から落ち、208 からゆっくり沈む
+		t = frame - 160;
+		if (t >= 0 && t < 158)
+		{
+			s32 u = frame - 208;
+			s32 sx = 80;
+			s32 sy = 8;
+			if (frame <= 175)
+			{
+				sx = 96 - t;
+				sy = t * 4 - 56;
+			}
+			else if (frame > 208)
+			{
+				sy = u / 4 + 8;
+			}
+			draw_alt(canvas, work->sheet + 0xc46, sx, sy, 24, 48);
+		}
+
+		if (frame == 32)
+		{
+			AudioCommand_PlayFar(134);
+		}
+		if (frame == 64)
+		{
+			AudioCommand_PlayFar(134);
+		}
+		if (frame == 104)
+		{
+			AudioCommand_PlayFar(134);
+		}
+		if (frame == 176)
+		{
+			AudioCommand_PlayFar(134);
+		}
+		if (frame == 226)
+		{
+			AudioCommand_PlayFar(145);
+		}
+		Render_ResetTransformState();
+
+		// 岩が崩れるたびに破片を 32 個ずつ跳ねあげる
+		if (frame == 32)
+		{
+			for (i = 0; i != 32; i++)
+			{
+				PARTICLES[i].x = ((Random16() & 31) + 68) << 16;
+				PARTICLES[i].y = ((Random16() & 31) + 8) << 16;
+				PARTICLES[i].velocity_x = ((Random16() & 127) - 63) << 11;
+				PARTICLES[i].velocity_y = ((-Random16() & 127) - 64) << 11;
+				PARTICLES[i].variant = (Random16() & 15) + 32;
+			}
+		}
+		if (frame == 64)
+		{
+			for (i = 0; i != 32; i++)
+			{
+				PARTICLES[i + 32].x = (Random16() % 48 + 60) << 16;
+				PARTICLES[i + 32].y = ((Random16() & 31) + 52) << 16;
+				PARTICLES[i + 32].velocity_x = ((Random16() & 127) - 63) << 12;
+				PARTICLES[i + 32].velocity_y = ((-Random16() & 31) - 32) << 13;
+				PARTICLES[i + 32].variant = (Random16() & 15) + 32;
+			}
+		}
+		if (frame == 104)
+		{
+			for (i = 0; i != 32; i++)
+			{
+				PARTICLES[i].x = ((Random16() & 63) + 52) << 16;
+				PARTICLES[i].y = ((Random16() & 31) + 72) << 16;
+				PARTICLES[i].velocity_x = ((Random16() & 127) - 63) << 11;
+				PARTICLES[i].velocity_y = ((-Random16() & 31) - 32) << 13;
+				PARTICLES[i].variant = (Random16() & 15) + 32;
+			}
+		}
+
+		if (frame >= 32 && frame < 208)
+		{
+			for (i = 0; i != 64; i++)
+			{
+				if (PARTICLES[i].variant >= 0)
+				{
+					s32 n;
+					if (frame > 191)
+					{
+						n = i % 7 + 4;
+					}
+					else
+					{
+						n = i & 3;
+					}
+					draw_alt(canvas, work->sheet + BattleFx10_DebrisCells[n], HI(PARTICLES[i].x),
+						HI(PARTICLES[i].y), BattleFx10_DebrisWidths[n],
+						BattleFx10_DebrisHeights[n]);
+					PARTICLES[i].x += PARTICLES[i].velocity_x;
+					PARTICLES[i].y += PARTICLES[i].velocity_y;
+					PARTICLES[i].velocity_y += 0x2000;
+				}
+			}
+		}
+
+		// しぶき : (72, 56) から左下へ 128 個、228 からはその跡に煙を残す
+		if (frame > 223)
+		{
+			if (frame == 224)
+			{
+				for (i = 0; i != 128; i++)
+				{
+					PARTICLES[i].x = 72 << 16;
+					PARTICLES[i].y = 56 << 16;
+					PARTICLES[i].velocity_x = (-(Random16() & 127) - 64) << 11;
+					PARTICLES[i].velocity_y = ((Random16() & 127) + 16) << 11;
+					PARTICLES[i].variant = Random16();
+				}
+			}
+			for (i = 0; i != 128; i++)
+			{
+				if (frame >= i / 4 + 224)
+				{
+					s32 n = i % 3;
+					if ((i & 1) == 0)
+					{
+						draw(canvas, work->sheet + BattleFx10_SprayCells[n], HI(PARTICLES[i].x),
+							HI(PARTICLES[i].y), BattleFx10_SprayWidths[n],
+							BattleFx10_SprayHeights[n]);
+					}
+					PARTICLES[i].x += PARTICLES[i].velocity_x;
+					PARTICLES[i].y += PARTICLES[i].velocity_y;
+					if ((PARTICLES[i].x >> 16) < -16 || (PARTICLES[i].y >> 16) > 120)
+					{
+						PARTICLES[i].x = 72 << 16;
+						PARTICLES[i].y = 56 << 16;
+					}
+					PARTICLES[i].variant++;
+				}
+			}
+			if (frame == 228)
+			{
+				for (i = 0; i != 128; i++)
+				{
+					p = &PARTICLES[i];
+					q = &TRAILS[i];
+					q->x = p->x;
+					q->y = p->y;
+					q->variant = 0;
+				}
+			}
+			for (i = 0, q = TRAILS, p = PARTICLES; i != 128; i++, q++, p++)
+			{
+				if (frame >= i + 228)
+				{
+					s32 n = q->variant / 2 % 9;
+					s32 sz = BattleFx_PuffSizes[n];
+					draw(canvas, dots + BattleFx_PuffCells[n], HI(q->x) - sz / 2, HI(q->y) - sz / 2,
+						sz, sz);
+					if (++q->variant == 18)
+					{
+						q->x = p->x;
+						q->y = p->y;
+						q->variant = 0;
+					}
+				}
+			}
+		}
+
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	//------------------------------------------------------------------
+	// 後半 : 氷塊を降らせて対象に当て、大岩を崩して破片を跳ねさせる
+	//------------------------------------------------------------------
+	for (i = 0; i != 9; i++)
+	{
+		ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
+	}
+	BattleEffect_SetupBlendedDisplay();
+	REG_BLDALPHA = 0x1010;
+	AudioCommand_PlayFar(289);
+
+	for (i = 0; i != 64; i++)
+	{
+		work->sparks[i].x = ((Random16() & 127) + 64) << 16;
+		work->sparks[i].z = -(16 << 16);
+		work->sparks[i].y = (-(Random16() & 127) - 64) << 16;
+		work->sparks[i].velocity_x = (-(Random16() & 63) - 127) << 12;
+		work->sparks[i].velocity_y = ((Random16() & 63) + 127) << 12;
+		work->sparks[i].variant = 0;
+	}
+	for (i = 0; i != 64; i++)
+	{
+		PARTICLES[i].x = Random16() & 127;
+		PARTICLES[i].y = (Random16() & 63) + i / 2;
+		PARTICLES[i].variant = -i / 2;
+	}
+
+	for (frame = 0; frame != 146; frame++)
+	{
+		count = 0;
+		if (frame == 96)
+		{
+			BattleEventRuntime_BeginPhaseFar(134);
+		}
+		if (frame == 16)
+		{
+			work->shake = 32;
+		}
+		// 大岩を 2 フレームに 1 つずつ、16 個まで出す
+		if (frame > 16)
+		{
+			count = (frame - 16) / 2;
+			if (count > 16)
+			{
+				count = 16;
+			}
+		}
+		if (frame >= 9 && frame < 72 && (frame & 3) == 0)
+		{
+			AudioCommand_PlayFar(132);
+		}
+		if (frame == 72)
+		{
+			AudioCommand_PlayFar(145);
+		}
+		// 右上から斜めに落ちる塊 (40×80)
+		if (frame > 64)
+		{
+			draw(canvas, work->sheet + 0x14f9, (64 - frame) * 7 + 88, frame * 14 - 992, 40, 80);
+		}
+		if (frame <= 71)
+		{
+			for (i = 0; i != count; i++)
+			{
+				s32 n = i % 3;
+				draw(canvas, work->sheet + BattleFx10_BoulderCells[n], BattleFx10_Points[i][0] - 56,
+					BattleFx10_Points[i][1] - BattleFx10_BoulderHeights[n],
+					BattleFx10_BoulderWidths[n], BattleFx10_BoulderHeights[n]);
+			}
+		}
+		// 大岩が崩れ、破片 64 個を岩の位置から跳ねあげる
+		if (frame == 72)
+		{
+			for (i = 0; i != 64; i++)
+			{
+				work->sparks[i].x = (BattleFx10_Points[i & 15][0] - 56) << 16;
+				work->sparks[i].y = BattleFx10_Points[i & 15][1] << 16;
+				work->sparks[i].velocity_x = ((Random16() & 127) - 63) << 13;
+				work->sparks[i].velocity_y = (-(Random16() & 31) - 16) << 14;
+			}
+			if (frame == 72)
+			{
+				work->shake = 4;
+			}
+		}
+		// 破片 : 速く落ちてきたものは y = 120 で 1/4 の速さで跳ね返る
+		if (frame > 71)
+		{
+			count = 32;
+			if (frame != 72)
+			{
+				count = 64;
+			}
+			for (i = 0; i != count; i++)
+			{
+				q = &work->sparks[i];
+				y = HI(q->y);
+				if (y <= 135)
+				{
+					s32 n = i % 3;
+					draw(canvas, work->sheet + BattleFx10_FallCells[n], HI(q->x),
+						y - BattleFx10_FallHeights[n], BattleFx10_FallWidths[n],
+						BattleFx10_FallHeights[n]);
+					EffectStep_AdvanceWithGravity2D(q, 64, 1 << 16);
+					if (HI(q->y) > 120 && q->velocity_y > 8 << 16)
+					{
+						q->velocity_y = -q->velocity_y / 4;
+						q->y = 120 << 16;
+						work->shake = 1;
+					}
+				}
+			}
+		}
+		// 降ってくる氷塊 (24×48) : フレーム 47 までは上から出しなおす
+		if (frame <= 71)
+		{
+			for (i = 0; i != 64; i++)
+			{
+				draw(canvas, work->sheet, HI(work->sparks[i].x) - 12, HI(work->sparks[i].y) - 24,
+					24, 48);
+				work->sparks[i].x += work->sparks[i].velocity_x;
+				work->sparks[i].y += work->sparks[i].velocity_y;
+				if ((work->sparks[i].y >> 16) > 120 && frame <= 47)
+				{
+					work->sparks[i].x = ((Random16() & 127) + 64) << 16;
+					work->sparks[i].y = -(16 << 16);
+				}
+			}
+		}
+
+		for (i = 0; i != work->effect->count; i++)
+		{
+			if (frame == i * 8 + 32)
+			{
+				ObjectGroup_UpdateMembers(work->effect->actors[i], 9, 5, -1, 0);
+			}
+		}
+
+		// 煙 : フレーム 127 までは出しなおす
+		if (frame > 72)
+		{
+			for (i = 0; i != 64; i++)
+			{
+				if (PARTICLES[i].variant >= 0 && PARTICLES[i].variant < 18)
+				{
+					s32 n = PARTICLES[i].variant / 2 % 9;
+					s32 sz = BattleFx_PuffSizes[n];
+					draw(canvas, dots + BattleFx_PuffCells[n], PARTICLES[i].x - sz / 2,
+						PARTICLES[i].y - sz / 2, sz, sz);
+				}
+				if (++PARTICLES[i].variant == 18 && frame <= 127)
+				{
+					PARTICLES[i].x = Random16() & 127;
+					PARTICLES[i].y = (Random16() & 63) + (frame - 54) / 2;
+					PARTICLES[i].variant = 0;
+				}
+			}
+		}
+
+		if (frame >= 72 && frame < 80)
+		{
+			Camera_ApplyShake(8, 8);
+		}
+		else
+		{
+			Camera_ApplyShake(2, 2);
+		}
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// 氷の破片
+//--------------------------------------------------------------------------
+#define SHARDS_PER_MEMBER 128 // 対象ひとりあたりの破片の数
+
+//--------------------------------------------------------------------------
+// 対象ごとに 20 フレームずつずらして、破片を跳ねあげる
+// effect : 対象の一覧
+//--------------------------------------------------------------------------
+void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
+{
+	void				   **heap;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	DrawRectangle			 draw;
+	u8						*sheet;
+	struct BattleCamera		*camera;
+	s32						 point[3];
+	struct EffectPosition	 screen;
+	s32						 member;
+	s32						 frame;
+	s32						 i;
+
+	heap = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+	cursor = heap;
+	work = *cursor++;
+	canvas = *cursor;
+	sheet = heap[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+	camera = heap[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_EFFECT];
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(1);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+	draw = (DrawRectangle)heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+
+	for (i = 0; i != 8 * SHARDS_PER_MEMBER; i++)
+		((struct EffectStep *)Ram_MapCellBuffer)[i].variant = -1;
+
+	Render_ResetTransformState();
+	Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+
+	// 体の中ほどのまわりに置き、横へばらけて上へ跳ねる
+	for (member = 0; member != work->effect->count; member++)
+	{
+		struct MotionObject *object;
+		s32					 offset;
+		s32					 height;
+		struct EffectStep	*shard;
+
+		offset = member * SHARDS_PER_MEMBER * sizeof(struct EffectStep);
+		object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
+		height = Battle_GetObjectTableValueFar(work->effect->actors[member]) / 2;
+		point[0] = object->x;
+		point[1] = height;
+		point[2] = object->z;
+		EffectPosition_ApplyBaseAndYOffset(point, &screen);
+		screen.x >>= 1;
+		for (i = 0, shard = (struct EffectStep *)(Ram_MapCellBuffer + offset);
+			i != SHARDS_PER_MEMBER; i++)
+		{
+			s32 radius;
+			s32 angle;
+			s32 lift;
+
+			radius = Random16() & 0xff;
+			angle = Random16() & 0xffff;
+			shard->x = ((Trig_Sin(angle) * radius) >> 7) + (screen.x << 16);
+			shard->y = ((Trig_Cos(angle) * radius) >> 3) + (screen.y << 16);
+			shard->velocity_x = (128 - (Random16() & 0xff)) << 9;
+			lift = Random16() & 0xff;
+			shard->variant = 0;
+			shard->velocity_y = (-lift - 128) << 10;
+			shard++;
+		}
+	}
+
+	work->transfer_mode = 2;
+	work->transfer_value = 50;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	for (frame = 0; frame != work->effect->count * 20 + 56; frame++)
+	{
+		if (frame == 32)
+			BattleEventRuntime_BeginPhaseFar(0);
+		for (member = 0; member != work->effect->count; member++)
+		{
+			s32 offset;
+
+			offset = member * SHARDS_PER_MEMBER * sizeof(struct EffectStep);
+			if (frame == member * 20)
+			{
+				AudioCommand_PlayFar(143);
+				ObjectGroup_UpdateMembers(work->effect->actors[member], 7, -1, member, 20);
+			}
+			// 落ちてきて y = 112 を越えたら消す
+			if (frame > member * 20)
+			{
+				struct EffectStep *shard;
+
+				for (i = 0, shard = (struct EffectStep *)(Ram_MapCellBuffer + offset);
+					i != SHARDS_PER_MEMBER; i++)
+				{
+					if (shard->variant >= 0)
+					{
+						s32 size;
+
+						size = i % 3 + 1;
+						draw(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+							HI(shard->x) - size / 2, HI(shard->y) - size, size, size * 2);
+						EffectStep_AdvanceWithGravity2D(shard, 62, IceShardBursts_Gravities[i & 3]);
+						shard->variant++;
+						if (shard->velocity_y > 0 && HI(shard->y) > 112)
+							shard->variant = -1;
+					}
+					shard++;
+				}
+			}
+		}
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// gather.c
+// バトル演出：対象から出た光の粒を使い手へ吸い寄せる
+//--------------------------------------------------------------------------
+
+#define MOTES_PER_MEMBER 128 // 対象ひとりあたりの粒の数
+
+#define MOTE(n) (&((struct EffectStep *)Ram_MapCellBuffer)[n])
+
+//--------------------------------------------------------------------------
+// 対象ごとに 20 フレームずつずらして粒を出し、使い手の体の中心へ集める
+// effect : variant が 0 なら IceBlock、それ以外は Blast のパレット
+//--------------------------------------------------------------------------
+void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
+{
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	DrawRectangle			 draw;
+	u8						*sheet;
+	struct BattleCamera		*camera;
+	struct EffectPosition	 screen;
+	s32						 alternate;
+	s32						 member;
+	s32						 frame;
+	s32						 i;
+
+	heap_cache = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	sheet = heap_cache[2];
+	camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * 4);
+	if (effect->variant == 0)
+		alternate = 0;
+	else
+		alternate = 1;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(1);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	Iwram_CopyWords((void *)BG_PLTT,
+		Resource_GetTableEntry(
+			alternate == 0 ? (s32)&ResourceId_IceBlockSheet : (s32)&ResourceId_BlastSheet),
+		128);
+
+	// 対象の体の中心から、各軸 ±2 ドット/フレームの乱数速度で飛び出す
+	for (i = 0; i != 8 * MOTES_PER_MEMBER; i++)
+		MOTE(i)->variant = -1;
+
+	for (member = 0; member != work->effect->count; member++)
+	{
+		struct MotionObject *obj;
+		s32					 half;
+
+		obj = GetBattleObjectSlotFar(work->effect->actors[member])->object;
+		half = Battle_GetObjectTableValueFar(work->effect->actors[member]) / 2;
+		for (i = 0; i != MOTES_PER_MEMBER; i++)
+		{
+			struct EffectStep *mote = MOTE(member * MOTES_PER_MEMBER + i);
+
+			mote->x = obj->x;
+			mote->y = obj->y + half;
+			mote->z = obj->z;
+			mote->velocity_x = ((Random16() & 0xff) - 128) << 10;
+			mote->velocity_y = ((Random16() & 0xff) - 128) << 10;
+			mote->velocity_z = ((Random16() & 0xff) - 128) << 10;
+			mote->variant = 0;
+		}
+	}
+
+	// 比較合成で描き、転送のたびにキャンバスの画素値を 4 ずつ下げて残像にする
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+	draw = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+	work->transfer_mode = 3;
+	work->transfer_value = 0x04040404;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	AudioCommand_PlayFar(142);
+
+	for (frame = 0; frame != work->effect->count * 20 + 72; frame++)
+	{
+		struct MotionObject *user;
+		s32					 half;
+
+		user = GetBattleObjectSlotFar(work->effect->actor)->object;
+		half = Battle_GetObjectTableValueFar(work->effect->actor) / 2;
+		if (frame == 64)
+			BattleEventRuntime_BeginPhaseFar(133);
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+		if (frame == 40)
+			ObjectGroup_UpdateMembers(work->effect->actor, 7, -1, -1, 0);
+		if (frame == work->effect->count * 20 + 52)
+			ObjectGroup_UpdateMembers(work->effect->actor, 0, -1, -1, 0);
+		for (member = 0; member != work->effect->count; member++)
+		{
+			if (frame == member * 20)
+				ObjectGroup_UpdateMembers(work->effect->actors[member], 7, 5, member, 42);
+			if (frame > member * 20)
+			{
+				for (i = 0; i != 32; i++)
+				{
+					struct EffectStep *mote = MOTE(member * MOTES_PER_MEMBER + i);
+
+					if (mote->variant >= 0)
+					{
+						s32 size;
+
+						// キャンバスは横 2 倍で表示するので x を半分にする
+						EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &screen);
+						screen.x >>= 1;
+						size = 6;
+						draw(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+							screen.x - size / 2, screen.y - size, size, size * 2);
+						EffectStep_AdvanceWithGravity3D(mote, 62, 0);
+
+						// 出てから 10 フレーム後 (粒ごとに 1 フレームずつ遅れる) に
+						// 距離の 1/256 ずつ使い手へ加速し、水平に 16 ドット以内まで近づいたら消す
+						if (frame > member * 20 + i + 10)
+						{
+							s32 dx;
+							s32 dy;
+							s32 dz;
+
+							dx = (user->x - mote->x) >> 8;
+							dy = (user->y + half - mote->y) >> 8;
+							dz = (user->z - mote->z) >> 8;
+							mote->velocity_x += dx;
+							mote->velocity_y += dy;
+							mote->velocity_z += dz;
+							if ((dx > -0x1000 && dx < 0x1000) && (dz > -0x1000 && dz < 0x1000))
+								mote->variant = -1;
+						}
+					}
+				}
+			}
+		}
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+
+// series_a.c
+
+// バトル演出：対象ごとに光の粒を回しながら集める (七種)
+
+//--------------------------------------------------------------------------
+
+#undef gBattleFxWork
+
+#define SPARKS ((struct EffectStep *)Ram_MapCellBuffer) // 光の粒 (対象ごとに 64)
+
+#define JIN_OFS 0x1000 // sheet の中のジンの絵
+
+void BattleFx_PrepareCanvasEffect(
+	struct BattleEffectArgument *effect, s32 kind, s32 side, s32 narrow, s32 *x, s32 *y);
+
+//--------------------------------------------------------------------------
+// mode ごとの入口
+//--------------------------------------------------------------------------
+void BattleFx_RunSeriesAMode0(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunSeriesA(effect, 0);
+}
+
+void BattleFx_RunSeriesAMode1(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunSeriesA(effect, 1);
+}
+
+void BattleFx_RunSeriesAMode2(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunSeriesA(effect, 2);
+}
+
+// effect->variant が 0 なら mode 3、ほかは mode 4
+void BattleFx_RunSeriesAMode3Or4(struct BattleEffectArgument *effect)
+{
+	if (effect->variant == 0)
+	{
+		BattleFx_RunSeriesA(effect, 3);
+		return;
+	}
+	BattleFx_RunSeriesA(effect, 4);
+}
+
+void BattleFx_RunSeriesAMode4(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunSeriesA(effect, 4);
+}
+
+void BattleFx_RunSeriesAMode5(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunSeriesA(effect, 5);
+}
+
+void BattleFx_RunSeriesAMode6(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunSeriesA(effect, 6);
+}
+
+//--------------------------------------------------------------------------
+// 対象ごとに 8 フレームずつずらして、まわりに散らした光の粒を回しながら
+// 中心へ集める。対象ごとに 20 フレーム目でかいふくの音
+// effect->prelude が 1 なら、先にジン (mode 6 は Mars、ほかは Mercury) を出して揺らす
+// mode : 粒の散らし方と回し方。0 だけキャンバスを等倍にして最初の対象を中央に置く
+//        3・4・5 は粒を寄せずに順に消し、0・3・4・5 は SparkleDots の絵で描く
+//        色は 6 が Mars、2 が Blast、ほかは variant が 0 なら IceShard、でなければ IceBlock
+//--------------------------------------------------------------------------
+void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
+{
+	void				   **slots;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 total;
+	s32						 member;
+	u8						*sprites;
+	s32						 limit;
+	s32						 shift;
+	s32						 narrow;
+	DrawRectangle			*draw;
+	s32						 frame;
+	s32						 i;
+	u8						*palette;
+	struct EffectPosition	 base;
+	struct EffectPosition	 screen;
+	s32						 point[3];
+	s32						 origin_x;
+	s32						 origin_y;
+	DrawRectangle			 blit[2];
+
+	slots = (void **)gBattleFxWork;
+	cursor = slots;
+	work = *cursor++;
+	canvas = *cursor;
+	sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+	shift = 0;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+
+	// ジンを出す。出た位置を origin に受け取る
+	if (work->effect->prelude == 1)
+	{
+		s32 kind = mode == 6 ? 2 : 1;
+
+		if (mode == 6 || mode == 0)
+			BattleFx_PrepareCanvasEffect(effect, kind, work->effect->side, 0, &origin_x, &origin_y);
+		else
+			BattleFx_PrepareCanvasEffect(effect, kind, work->effect->side, 1, &origin_x, &origin_y);
+		work->effect->variant = 0;
+	}
+
+	// mode 0 はキャンバスを横も等倍にし、最初の対象が中央 (64) に来るようずらす
+	// ほかは横 2 倍のまま (narrow)
+	if (mode == 0)
+	{
+		EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &base);
+		shift = 64 - base.x;
+		REG_BG2X = shift << 8;
+		REG_BG2PA = 0x100;
+		narrow = 0;
+	}
+	else
+	{
+		narrow = 1;
+	}
+
+	// 絵と色
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, work->sheet, 0, 0);
+	if (mode <= 1 || mode == 3 || mode == 4 || mode == 5)
+	{
+		if (work->effect->variant == 0)
+			palette = Resource_GetTableEntry((s32)&ResourceId_IceShardSheet);
+		else
+			palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
+	}
+	else if (mode == 6)
+	{
+		palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
+	}
+	else
+	{
+		palette = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
+	}
+	/* FAKEMATCH: needed to match: forwarded through Call3, the palette copy loads its routine before it shifts the destination, as the reference does */
+	Iwram_CopyWords((s32)BG_PLTT, (s32)palette, 128);
+
+	// ジンの絵 (等倍なら 40x40、横 2 倍なら 20x40 の小さい絵)
+	if (narrow == 0)
+	{
+		if (mode == 6)
+			palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
+		else
+			palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet);
+	}
+	else
+	{
+		if (mode == 6)
+			palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet);
+		else
+			palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet);
+	}
+	palette += 128;
+	Resource_DecodeType01(palette, work->sheet + JIN_OFS);
+	BattleFx_FetchRectangleBlitters(work->effect->side, draw = blit); // [0] 比較、[1] 加算
+
+	// 光の粒を中心のまわりに散らす
+	if (mode == 0 || mode == 6)
+	{
+		// x と z は ±64 ドット、y は 32〜95 ドット上
+		for (i = 0; i != 512; i++)
+		{
+			struct EffectStep *spark = &SPARKS[i];
+
+			spark->x = ((Random16() & 0xff) - 127) << 15;
+			spark->y = ((Random16() & 0x7f) + 64) << 15;
+			spark->z = ((Random16() & 0xff) - 127) << 15;
+			spark->variant = 0;
+		}
+		total = work->effect->count * 8 + 88;
+	}
+	else if (mode == 1)
+	{
+		// どれも ±64 ドット
+		for (i = 0; i != 512; i++)
+		{
+			struct EffectStep *spark = &SPARKS[i];
+
+			spark->x = ((Random16() & 0xff) - 127) << 15;
+			spark->y = ((Random16() & 0xff) - 127) << 15;
+			spark->z = ((Random16() & 0xff) - 127) << 15;
+			spark->variant = 0;
+		}
+		total = work->effect->count * 8 + 88;
+	}
+	else if (mode == 2)
+	{
+		// 50 ドット下の、半径 32〜95 ドットの輪
+		for (i = 0; i != 512; i++)
+		{
+			struct EffectStep *spark = &SPARKS[i];
+			s32				   heading = Random16() & 0xffff;
+			s32				   radius = (Random16() & 63) + 32;
+
+			spark->x = Trig_Sin(heading) * radius;
+			spark->y = -50 << 16;
+			spark->z = Trig_Cos(heading) * radius;
+			spark->velocity_y = ((Random16() & 31) + 32) << 13;
+			spark->variant = 0;
+		}
+		total = work->effect->count * 8 + 88;
+	}
+	else if (mode == 3)
+	{
+		// x と z は ±64 ドット、y は ±32 ドット
+		for (i = 0; i != 512; i++)
+		{
+			struct EffectStep *spark = &SPARKS[i];
+
+			spark->x = ((Random16() & 0xff) - 127) << 15;
+			spark->y = ((Random16() & 0xff) - 127) << 14;
+			spark->z = ((Random16() & 0xff) - 127) << 15;
+			spark->variant = 0;
+		}
+		total = work->effect->count * 8 + 72;
+	}
+	else
+	{
+		// どれも ±64 ドット
+		for (i = 0; i != 512; i++)
+		{
+			struct EffectStep *spark = &SPARKS[i];
+
+			spark->x = ((Random16() & 0xff) - 127) << 15;
+			spark->y = ((Random16() & 0xff) - 127) << 15;
+			spark->z = ((Random16() & 0xff) - 127) << 15;
+			spark->variant = 0;
+		}
+		total = work->effect->count * 8 + 72;
+	}
+
+	// 対象ひとりあたりの粒の数 (variant 0 は 32、2 は 128、ほかは 64)
+	limit = 64;
+	if (work->effect->variant == 0)
+		limit = 32;
+	else if (work->effect->variant == 2)
+		limit = 128;
+	work->transfer_mode = 2;   // 転送のたびに 3/4 へ減らして残像にする
+	work->transfer_value = 75; // 3/4
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	for (frame = 0; frame != total; frame++)
+	{
+		struct BattleCamera *camera = gCameraWork;
+
+		if (frame == 40)
+			BattleEventRuntime_BeginPhaseFar(0);
+
+		// ジン：左右に揺れ、32 フレームを過ぎたら 2 ドットずつ昇る
+		// はじめの 4 フレームは加算でも重ねる
+		if (work->effect->prelude == 1)
+		{
+			if (narrow == 0)
+			{
+				s32 x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin_x + shift - 20;
+				s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin_y - 24;
+
+				if (frame > 32)
+					y = y - frame * 2 + 64;
+				blit[0](canvas, work->sheet + JIN_OFS, x, y, 40, 40);
+				if (frame <= 3)
+					draw[1](canvas, work->sheet + JIN_OFS, x, y, 40, 40);
+			}
+			else
+			{
+				s32 x = ((Trig_Sin(frame << 11) * 10) >> 16) + origin_x / 2 - 10;
+				s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin_y - 24;
+
+				if (frame > 32)
+					y = y - frame * 2 + 64;
+				blit[0](canvas, work->sheet + JIN_OFS, x, y, 20, 40);
+				if (frame <= 3)
+					draw[1](canvas, work->sheet + JIN_OFS, x, y, 20, 40);
+			}
+		}
+
+		for (member = 0; member != work->effect->count; member++)
+		{
+			struct MotionObject *object =
+				GetBattleObjectSlotFar(work->effect->actors[member])->object;
+			s32 start = member * 8;
+
+			// 対象の 40 ドット上を中心にする
+			Render_ResetTransformState();
+			Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+			point[0] = object->x;
+			point[1] = 40 << 16;
+			point[2] = object->z;
+			SceneTransform_ApplyPosition(point);
+			if (frame == start + 20)
+				AudioCommand_PlayFar(SOUND_RECOVERY);
+			if (frame == start + 36)
+				ObjectGroup_UpdateMembers(work->effect->actors[member], 7, -1, member, 28);
+			if (frame > start)
+			{
+				if (mode == 0 || mode == 6)
+				{
+					SceneTransform_ApplyYaw((frame - member * 8) << 9);
+				}
+				else if (mode == 1)
+				{
+					SceneTransform_ApplyPitch(frame << 9);
+					SceneTransform_ApplyRoll(frame << 9);
+				}
+				else if (mode == 2)
+				{
+					SceneTransform_ApplyYaw((frame - member * 40) << 9);
+				}
+				else if (mode == 3)
+				{
+					SceneTransform_ApplyYaw((frame - member * 8) << 9);
+				}
+				else
+				{
+					SceneTransform_ApplyYaw((frame - member * 8) << 9);
+					SceneTransform_ApplyPitch((frame - member * 8) << 9);
+				}
+
+				// 粒は 1 フレームに 4 つずつ出る。3・4・5 では start + i / 2 + 32 フレームで消える
+				for (i = 0; i != limit; i++)
+				{
+					struct EffectStep *spark = &SPARKS[member * 64 + i];
+					s32				   end;
+
+					if (mode == 3 || mode == 4 || mode == 5)
+						end = start + i / 2 + 32;
+					else
+						end = 0x10000;
+					if (frame > start + i / 4 && frame < end)
+					{
+						s32 xx = (spark->x >> 8) * (spark->x >> 8);
+						s32 yy = (spark->y >> 8) * (spark->y >> 8);
+						s32 zz = (spark->z >> 8) * (spark->z >> 8);
+						s32 distance = Iwram_Sqrt(xx + yy + zz) >> 9;
+
+						if (distance != 0)
+						{
+							s32 size;
+
+							EffectPosition_ApplyBaseAndYOffset((s32 *)spark, &screen);
+							if (mode == 0)
+								screen.x += shift;
+							else
+								screen.x >>= 1;
+							screen.y += 16;
+
+							// 大きさは奥行き 314〜634 で 3〜1 (mode 0 は 9 種を順に)
+							if (screen.depth < 314)
+								screen.depth = 314;
+							if (screen.depth > 634)
+								screen.depth = 634;
+							size = 3 - (screen.depth - 314) / 128;
+							if (mode == 0)
+								size = (i * 4 + frame) % 9;
+							if (mode == 0 || mode == 3 || mode == 4 || mode == 5)
+							{
+								u8 *cell = work->sheet + BattleFx_PuffCells[size];
+								u32 edge = BattleFx_PuffSizes[size];
+								u32 half = edge >> 1;
+
+								draw[1](canvas, cell, screen.x - half, screen.y - half, edge, edge);
+							}
+							else
+							{
+								draw[1](canvas, sprites + ParticleStreams_CellOffsets[size - 1],
+									screen.x - size / 2, screen.y - size, size, size * 2);
+							}
+
+							// 1 フレームに 2 ドットずつ中心へ寄せる
+							if (mode <= 2 || mode == 6)
+							{
+								spark->x -= spark->x / distance;
+								spark->y -= spark->y / distance;
+								spark->z -= spark->z / distance;
+							}
+						}
+					}
+				}
+			}
+		}
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+
+// run_series_b_mode0.c
+
+// バトル演出：対象ごとに光を集め、はじけたあとに絵を出す (六種)
+
+//--------------------------------------------------------------------------
+
+#define FLARES ((struct EffectStep *)Ram_MapCellBuffer) // 集まる光 (対象ごとに 64)
+
+//--------------------------------------------------------------------------
+// mode ごとの入口
+//--------------------------------------------------------------------------
+void BattleFx_RunSeriesBMode0(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunSeriesB(effect, 0);
+}
+
+void BattleFx_RunSeriesBMode1(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunSeriesB(effect, 1);
+}
+
+void BattleFx_RunSeriesBMode2(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunSeriesB(effect, 2);
+}
+
+void BattleFx_RunSeriesBMode3(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunSeriesB(effect, 3);
+}
+
+void BattleFx_RunSeriesBMode5(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunSeriesB(effect, 5);
+}
+
+void BattleFx_RunSeriesBMode4(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunSeriesB(effect, 4);
+}
+
+// sheet の中の置き場所
+enum SeriesBSheet
+{
+	SERIES_B_FLARES = 0x0000,  // 光の粒 (ParticleSpritesD)
+	SERIES_B_BURST = 0x060e,   // はじける光 40x40 が 6 枚 (GlowOrb)
+	SERIES_B_PICTURE = 0x2b8e, // mode で選ぶ絵
+	SERIES_B_DJINNI = 0x65c0   // ジンの絵 40x40
+};
+
+//--------------------------------------------------------------------------
+// 対象ごとに 8 フレームずつずらして、まわりの光の粒を回しながら
+// 中心へ集め、はじけさせてから mode の絵を描く
+// キャンバスは横 1.25 倍で見せる (画面の x は 4/5 してキャンバスの x)
+// effect->prelude が 1 なら、先にジンを出してその場で揺らす
+// mode : 絵は 0 = 短剣 (Dagger)、1・2 = 盾 (Shield)、3・5 = 筋 (VioletStreak)、4 = Wisp
+//        色は 3 が Venus、2 が Jupiter、0・1・5 が Mars の絵から (4 は変えない)
+//        ジンは 3 が Venus、2・4 が Jupiter、ほかは Mars
+//--------------------------------------------------------------------------
+void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
+{
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	DrawRectangle			 draw[2];
+	s32						 member;
+	s32						 shift;
+	s32						 flags;
+	s32						 frame;
+	s32						 i;
+	struct EffectPosition	 base;
+	s32						 center[3];
+	struct EffectPosition	 screen;
+	s32						 point[3];
+	s32						 origin_x;
+	s32						 origin_y;
+
+	cursor = (void **)gBattleFxWork;
+	work = *cursor++;
+	canvas = *cursor;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+
+	// ジンを出す (Venus は 0、Jupiter は 3、Mars は 2)。出た位置を origin に受け取る
+	if (work->effect->prelude == 1)
+	{
+		if (mode == 3)
+			BattleFx_PrepareCanvasEffect(
+				effect, 0, work->effect->side ^ 1, 1, &origin_x, &origin_y);
+		else if (mode == 2 || mode == 4)
+			BattleFx_PrepareCanvasEffect(
+				effect, 3, work->effect->side ^ 1, 1, &origin_x, &origin_y);
+		else
+			BattleFx_PrepareCanvasEffect(
+				effect, 2, work->effect->side ^ 1, 1, &origin_x, &origin_y);
+		origin_x = origin_x * 4 / 5;
+	}
+	REG_BG2PA = 0xcc; // 横 1.25 倍
+
+	// 絵と色
+	Resource_LoadAndDecompress(
+		(s32)&ResourceId_ParticleSpritesD, work->sheet + SERIES_B_FLARES, 0, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet + SERIES_B_BURST, 1, 1);
+	/* FAKEMATCH: needed to match: forwarded through Call3, each palette copy loads its routine before it shifts the destination, as the reference does */
+	if (mode == 3 || mode == 5)
+	{
+		Resource_LoadAndDecompress(
+			(s32)&ResourceId_VioletStreakSheet, work->sheet + SERIES_B_PICTURE, 1, 1);
+		if (mode == 3)
+			Iwram_CopyWords((s32)BG_PLTT,
+				(s32)Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet), 128);
+		else
+			Iwram_CopyWords((s32)BG_PLTT,
+				(s32)Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
+	}
+	else if (mode == 4)
+	{
+		Resource_LoadAndDecompress(
+			(s32)&ResourceId_WispSheet, work->sheet + SERIES_B_PICTURE, 1, 1);
+	}
+	else
+	{
+		void *palette;
+
+		if (mode == 0)
+			Resource_LoadAndDecompress(
+				(s32)&ResourceId_DaggerSheet, work->sheet + SERIES_B_PICTURE, 1, 0);
+		else
+			Resource_LoadAndDecompress(
+				(s32)&ResourceId_ShieldSheet, work->sheet + SERIES_B_PICTURE, 1, 0);
+		if (mode == 0)
+			palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
+		else if (mode == 2 || mode == 4)
+			palette = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet);
+		else if (mode == 1)
+			palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
+		else
+			palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+		Iwram_CopyWords((s32)BG_PLTT, (s32)palette, 128);
+	}
+	if (mode == 3)
+		Resource_LoadAndDecompress(
+			(s32)&ResourceId_VenusDjinnSheet, work->sheet + SERIES_B_DJINNI, 1, 0);
+	else if (mode == 2 || mode == 4)
+		Resource_LoadAndDecompress(
+			(s32)&ResourceId_JupiterDjinnSheet, work->sheet + SERIES_B_DJINNI, 1, 0);
+	else
+		Resource_LoadAndDecompress(
+			(s32)&ResourceId_MarsDjinnSheet, work->sheet + SERIES_B_DJINNI, 1, 0);
+
+	// 光の粒：中心から x と z は ±25 ドット、y は ±50 ドットに散らす
+	for (i = 0; i != 512; i++)
+	{
+		struct EffectStep *flare = &FLARES[i];
+
+		flare->x = (Random16() % 200 - 100) << 14;
+		flare->y = (Random16() % 200 - 100) << 15;
+		flare->z = (Random16() % 200 - 100) << 14;
+		flare->variant = 0;
+	}
+
+	// 対象がひとりなら、その対象がキャンバスの中央 (64) に来るようずらす
+	if (work->effect->count == 1)
+	{
+		EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &base);
+		shift = -base.x * 4 / 5 + 64;
+	}
+	else
+	{
+		if (work->effect->side == 1)
+			shift = -64;
+		else
+			shift = 0;
+	}
+	REG_BG2X = shift << 8;
+	work->transfer_mode = 2;   // 転送のたびに半分へ減らして残像にする
+	work->transfer_value = 50; // 1/2
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	if (work->effect->side == 1)
+		flags = GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X;
+	else
+		flags = GOUSEI_CLIP_X | GOUSEI_CLIP_Y;
+	AudioCommand_PlayFar(142);
+
+	for (frame = 0; frame != work->effect->count * 8 + 108; frame++)
+	{
+		struct BattleCamera *camera = WORK_SLOT(HEAP_SLOT_CAMERA);
+
+		if (frame == 80)
+			BattleEventRuntime_BeginPhaseFar(0);
+
+		// ジン：左右に揺れ、32 フレームを過ぎたら 2 ドットずつ昇る
+		// はじめの 4 フレームは加算でも重ねる
+		if (work->effect->prelude == 1)
+		{
+			s32 x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin_x + shift - 20;
+			s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin_y - 24;
+
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags ^ GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+			draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+			BattleEffect_LoadWork(
+				HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, flags ^ GOUSEI_FLIP_X, GOUSEI_KASAN);
+			draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+			if (frame > 32)
+				y = y - frame * 2 + 64;
+			draw[0](canvas, work->sheet + SERIES_B_DJINNI, x, y, 40, 40);
+			if (frame <= 3)
+				draw[1](canvas, work->sheet + SERIES_B_DJINNI, x, y, 40, 40);
+			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+		}
+
+		for (member = 0; member != work->effect->count; member++)
+		{
+			struct MotionObject *object =
+				GetBattleObjectSlotFar(work->effect->actors[member])->object;
+			s32 height = Battle_GetObjectTableValueFar(work->effect->actors[member]) * 2 / 3;
+
+			if (frame == member * 8 + 80)
+				AudioCommand_PlayFar(212);
+			Render_ResetTransformState();
+			Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+			// 対象の 2/3 の高さを中心にする
+			point[0] = object->x;
+			point[1] = height;
+			point[2] = object->z;
+			SceneTransform_ApplyPosition(point);
+			if (frame == member * 8 + 48)
+				ObjectGroup_UpdateMembers(work->effect->actors[member], 7, -1, member, 16);
+
+			// 光の粒を回しながら、1 フレームに 2 ドットずつ中心へ寄せる
+			if (frame > member * 8)
+			{
+				BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, GOUSEI_HIKAKU);
+				draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+				BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, flags, GOUSEI_KASAN);
+				draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+				if (mode == 0)
+				{
+					SceneTransform_ApplyPitch(-frame << 10);
+				}
+				else if (mode == 1)
+				{
+				}
+				else if (mode == 2)
+				{
+					SceneTransform_ApplyYaw(frame << 10);
+				}
+				else
+				{
+					SceneTransform_ApplyYaw(frame << 10);
+					SceneTransform_ApplyRoll(frame << 10);
+				}
+				for (i = 0; i != 32; i++)
+				{
+					struct EffectStep *flare = &FLARES[member * 64 + i];
+
+					if (frame > member * 8 + i)
+					{
+						s32 xx = (flare->x >> 8) * (flare->x >> 8);
+						s32 yy = (flare->y >> 8) * (flare->y >> 8);
+						s32 zz = (flare->z >> 8) * (flare->z >> 8);
+						s32 distance = Iwram_Sqrt(xx + yy + zz) >> 9;
+
+						if (distance != 0)
+						{
+							s32 size;
+
+							// 大きさ (幅の半分) は奥行き 314〜634 で 6〜1
+							EffectPosition_ApplyBaseAndYOffset((s32 *)flare, &screen);
+							screen.x = screen.x * 4 / 5 + shift;
+							if (screen.depth < 314)
+								screen.depth = 314;
+							if (screen.depth > 634)
+								screen.depth = 634;
+							size = 6 - (screen.depth - 314) / 64;
+							draw[1](canvas, work->sheet + BattleFx6_FlareCells[size - 1],
+								screen.x - size, screen.y - size, size * 2, size * 2);
+							flare->x -= flare->x / distance;
+							flare->y -= flare->y / distance;
+							flare->z -= flare->z / distance;
+						}
+					}
+				}
+				Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+				Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+			}
+
+			// 中心の画面の位置
+			center[0] = 0;
+			center[1] = 0;
+			center[2] = 0;
+			EffectPosition_ApplyBaseAndYOffset(center, &screen);
+			screen.x = screen.x * 4 / 5 + shift;
+
+			// はじける光：52 フレーム目から 4 フレームずつ 6 枚
+			if (frame >= member * 8 + 52 && frame < member * 8 + 76)
+			{
+				s32 cel = (frame - member * 8 - 52) / 4 % 6;
+
+				BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, GOUSEI_HIKAKU);
+				draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+				draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_BURST, screen.x - 20,
+					screen.y - 20, 40, 40);
+				Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+			}
+
+			// 80 フレーム目から mode の絵
+			if (mode == 0)
+			{
+				// 24x40 を 4 フレームずつ 7 枚
+				if (frame >= member * 8 + 80 && frame < member * 8 + 108)
+				{
+					s32 cel = (frame - member * 8 - 80) / 4 % 7;
+
+					BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, GOUSEI_HIKAKU);
+					draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+					draw[0](canvas, work->sheet + cel * 960 + SERIES_B_PICTURE, screen.x - 12,
+						screen.y - 20, 24, 40);
+					Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+				}
+			}
+			else if (mode == 3 || mode == 5)
+			{
+				// 32x64 を 4 フレームずつ 6 枚
+				if (frame >= member * 8 + 80 && frame < member * 8 + 104)
+				{
+					s32 cel = (frame - member * 8 - 80) / 4 % 6;
+
+					BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, GOUSEI_HIKAKU);
+					draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+					draw[0](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE, screen.x - 16,
+						screen.y - 32, 32, 64);
+					Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+				}
+			}
+			else if (mode == 4)
+			{
+				// 64x32 を 2 フレームずつ、上下を反転した下半分と合わせて 64x64
+				if (frame >= member * 8 + 80 && frame < member * 8 + 104)
+				{
+					s32 cel = (frame - member * 8 - 80) / 2 % 6;
+
+					BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, GOUSEI_HIKAKU);
+					draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+					BattleEffect_LoadWork(
+						HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, flags | GOUSEI_FLIP_Y, GOUSEI_HIKAKU);
+					draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+					draw[0](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE, screen.x - 32,
+						screen.y - 24, 64, 32);
+					draw[1](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE, screen.x - 32,
+						screen.y + 8, 64, 32);
+					Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+					Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+				}
+			}
+			else
+			{
+				// 40x40 を 4 フレームずつ 6 枚、加算で
+				if (frame >= member * 8 + 80 && frame < member * 8 + 104)
+				{
+					s32 cel = (frame - member * 8 - 80) / 4 % 6;
+
+					BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, GOUSEI_KASAN);
+					draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+					draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_PICTURE, screen.x - 20,
+						screen.y - 20, 40, 40);
+					Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+				}
+			}
+		}
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	BattleFx_EndCanvasLayer();
+}
+
+#undef AnimationObjects_SelectAnimationFar
+#undef BattleEffect_RunStagedParticles
+#undef TRAILS
+
+void BattleFx_RunPaletteRampMode0(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunPaletteRamp(effect, 0);
+}
+
+void BattleFx_RunPaletteRampMode1(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunPaletteRamp(effect, 1);
+}
+
+void BattleFx_RunPaletteRampMode2(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunPaletteRamp(effect, 2);
+}
+
+void BattleFx_RunPaletteRampMode3(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunPaletteRamp(effect, 3);
+}
+
+#define RAMP_IMAGE 0x2580
+#define RAMP_SIZE 696
+
+void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
+{
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	s32						 j;
+	s32						 x_offset;
+	DrawRectangle			*draw;
+	struct BattleCamera		*camera;
+	s32						 origin[3];
+	struct EffectPosition	 screen;
+	s32						 point[3];
+	DrawRectangle			 callbacks[2];
+	s32						 i;
+	s32						 palette;
+
+	cursor = (void **)gBattleFxWork;
+	work = *cursor++;
+	canvas = *cursor;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	REG_BG2PA = 0x100;
+	if (mode == 0)
+		Resource_LoadAndDecompress((s32)&ResourceId_DaggerSheet, work->sheet, 1, 1);
+	else
+		Resource_LoadAndDecompress((s32)&ResourceId_ShieldSheet, work->sheet, 1, 1);
+	if (mode == 0)
+		palette = (s32)&ResourceId_PinkBurstSheet;
+	else if (mode == 1)
+		palette = (s32)&ResourceId_GlowOrbSheet;
+	else
+		palette = (s32)&ResourceId_PinkBurstSheet;
+	Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(palette), 128);
+	Resource_LoadAndDecompress((s32)&ResourceId_PaletteRampImage, work->sheet + RAMP_IMAGE, 0, 0);
+
+	for (i = 1; i != 8; i++)
+	{
+		for (j = 0; j != RAMP_SIZE; j++)
+		{
+			s32 level = work->sheet[RAMP_IMAGE + j];
+
+			if (level > 64 - i * 7)
+				level = 64 - i * 7;
+			if (level < 0)
+				level = 0;
+			work->sheet[RAMP_IMAGE + i * RAMP_SIZE + j] = level;
+		}
+	}
+
+	if (work->effect->side == 1)
+	{
+		REG_BG2X = -0x7000;
+		x_offset = -112;
+	}
+	else
+	{
+		REG_BG2X = 0;
+		x_offset = 0;
+	}
+
+	for (i = 0; i != 512; i++)
+	{
+		struct EffectStep *shard = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+		s32				   radius = 192;
+		s32				   angle;
+
+		angle = Random16() & 0xffff;
+		shard->x = 0;
+		if (mode == 0)
+		{
+			shard->y = ((i & 31) / 4 * 6 - 10) << 16;
+			shard->z = (i % 4 * 2 - 2) << 16;
+		}
+		else
+		{
+			shard->y = ((i & 31) / 4 * 6 - 10) << 16;
+			shard->z = (i % 4 * 8 - 16) << 16;
+		}
+		if (work->effect->side == 1)
+			shard->velocity_x = 0x20000;
+		else
+			shard->velocity_x = -0x20000;
+		shard->velocity_y = ((Trig_Cos(angle) * radius) >> 6) + 0x10000;
+		shard->velocity_z = (Trig_Sin(angle) * radius) >> 6;
+		shard->variant = Random16() & 0xff;
+	}
+
+	BattleFx_FetchRectangleBlitters(work->effect->side, draw = callbacks);
+	work->transfer_mode = 2;
+	work->transfer_value = 50;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	for (frame = 0; frame != work->effect->count * 4 + 64; frame++)
+	{
+		camera = gCameraWork;
+		if (frame == 72)
+			BattleEventRuntime_BeginPhaseFar(0);
+		for (j = 0; j != work->effect->count; j++)
+		{
+			struct MotionObject *object;
+			s32					 time;
+			s32					 x;
+			s32					 y;
+
+			time = frame - j * 4;
+			object = GetBattleObjectSlotFar(work->effect->actors[j])->object;
+			if (time > 0)
+			{
+				Render_ResetTransformState();
+				Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+				point[0] = object->x;
+				point[1] = 160 << 13;
+				point[2] = object->z;
+				Render_ResetTransformState();
+				Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+				SceneTransform_ApplyPosition(point);
+				origin[0] = 0;
+				origin[1] = 0;
+				origin[2] = 0;
+				EffectPosition_ApplyBaseAndYOffset(origin, &screen);
+				x = screen.x + x_offset;
+				y = screen.y;
+				if (mode == 0)
+				{
+					if (time <= 26)
+						callbacks[0](
+							canvas, work->sheet + time / 4 % 7 * 960, x - 12, y - 20, 24, 40);
+				}
+				else
+				{
+					if (time <= 23)
+						draw[1](canvas, work->sheet + time / 4 % 6 * 1600, x - 20, y - 20, 40, 40);
+				}
+				if (time == 24)
+					AudioCommand_PlayFar(143);
+				if (time >= 24 && time <= 60)
+				{
+					s32 level;
+
+					level = 0;
+					if (time > 28)
+					{
+						level = (time - 24) / 4;
+						if (level > 7)
+							level = 7;
+					}
+					for (i = 0; i != 24; i++)
+					{
+						struct EffectStep *shard =
+							&((struct EffectStep *)Ram_MapCellBuffer)[j * 32 + i];
+						s32 cell;
+
+						cell = i % 4 * 3 + (shard->variant + time) / 8 % 3;
+						EffectPosition_ApplyBaseAndYOffset((s32 *)shard, &screen);
+						x = screen.x + x_offset;
+						y = screen.y;
+						callbacks[0](canvas,
+							work->sheet + (level * RAMP_SIZE + PaletteRamp_ShardCells[cell])
+								+ RAMP_IMAGE,
+							x, y, PaletteRamp_ShardWidths[cell], PaletteRamp_ShardHeights[cell]);
+						EffectStep_AdvanceWithGravity3D(shard, 60, 0);
+					}
+				}
+			}
+		}
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(47);
+	Runtime_ReleaseHeapBlock(46);
+	BattleFx_EndCanvasLayer();
+}
+
+typedef struct Puff // work->particles と同じ置き場
+{
+	s32 x; // キャンバスのドット
+	s32 y;
+	s32 unk08;
+	s32 unk0C;
+	s32 unk10;
+	s32 unk14;
+	s32 tick; // 立ちのぼってからのフレーム（負なら待ち）
+} Puff;
+
+typedef struct
+{
+	s32 reserved_00[3];
+	s32 current_value;
+	s32 index_radius;
+	s32 entry_limit;
+	s32 reserved_18[3];
+	s16 values[1];
+} BattleEffectIndexWindow;
+
+#define HONOO_KAZU 9 // 炎の数
+
+//--------------------------------------------------------------------------
+// 9 つの炎が半円の弧の上に 4 フレームおきに立ちのぼる（80 フレーム）
+// variant 1 なら 16 ドット上にもうひとつ、variant 2 なら 32 ドット上にも
+// 対象は 16 フレーム目から 8 フレームおきに当たる
+//--------------------------------------------------------------------------
+void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
+{
+	u32						*heap;
+	u32						*cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	DrawRectangle			 draw;
+	s32						 i;
+	s32						 cell;
+	u32						 w;
+	s32						 sign;
+	s32						 org;
+	s32						 angle;
+	s32						 tick;
+	Puff					*puff;
+	Puff					*p;
+
+	// ワーク、キャンバス、BG1・BG2 を半透明に（14:16）
+	heap = (u32 *)&gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+	cursor = heap;
+	work = (struct BattleEffectWork *)*cursor++;
+	canvas = (void *)*cursor;
+	work->effect = efx;
+	BattleFx_BeginCanvasLayer(0);
+	REG_BLDCNT = 0x3f46;
+	REG_BLDALPHA = 0x100e;
+	Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1, 1);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_KASAN);
+	draw = (DrawRectangle)heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+
+	// 弧：-90 度から 22.5 度ずつ、横の半径 32、縦の半径 16
+	// 対象が 128 番以上なら左から、ほかは右から並べる
+	if (work->effect->actors[0] > 127)
+	{
+		org = 0;
+		sign = 1;
+	}
+	else
+	{
+		org = 64;
+		sign = -1;
+	}
+	angle = -0x4000;
+	i = 0;
+	tick = 0;
+	puff = (Puff *)work->particles;
+	do
+	{
+		puff->x = ((sign * ((Trig_Sin(angle) << 5) >> 16)) + org) + 20;
+		puff->y = ((Trig_Cos(angle) << 4) >> 16) + 40;
+		puff->tick = tick;
+		angle += 0x1000;
+		tick -= 4;
+		i += 1;
+		puff++;
+	} while (i != HONOO_KAZU);
+
+	work->transfer_mode = 2;
+	if (work->effect->variant == 2)
+	{
+		work->transfer_value = 75;
+	}
+	else
+	{
+		work->transfer_value = 50;
+	}
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	AudioCommand_PlayFar(136);
+	frame = 0;
+	do
+	{
+		if (frame == 24)
+		{
+			BattleEventRuntime_BeginPhaseFar(133);
+		}
+
+		// 炎の絵は 4 フレームごとに次へ、6 枚で消える
+		i = 0;
+		p = (Puff *)work->particles;
+		do
+		{
+			if ((p->tick >= 0) && (p->tick <= 23))
+			{
+				cell = p->tick / 4;
+				draw(canvas, work->sheet + PuffArc_CellSourceOffsets[cell],
+					p->x - ((w = PuffArc_CellWidths[cell]) >> 1), p->y + PuffArc_CellBiasY[cell], w,
+					PuffArc_CellHeights[cell]);
+				if (work->effect->variant != 0)
+				{
+					draw(canvas, work->sheet + PuffArc_CellSourceOffsets[cell],
+						p->x - ((w = PuffArc_CellWidths[cell]) >> 1),
+						(p->y + PuffArc_CellBiasY[cell]) - 16, w, PuffArc_CellHeights[cell]);
+				}
+				if (work->effect->variant == 2)
+				{
+					draw(canvas, work->sheet + PuffArc_CellSourceOffsets[cell],
+						p->x - ((w = PuffArc_CellWidths[cell]) >> 1),
+						(p->y + PuffArc_CellBiasY[cell]) - 32, w, PuffArc_CellHeights[cell]);
+				}
+			}
+			i += 1;
+			p->tick += 1;
+			p++;
+		} while (i != HONOO_KAZU);
+
+		i = 0;
+		while (i != work->effect->count)
+		{
+			if (frame == (i * 8) + 16)
+			{
+				ObjectGroup_UpdateMembers(work->effect->actors[i], 10, 5, i, 12);
+			}
+			i += 1;
+		}
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+		frame += 1;
+	} while (frame != 80);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// values のうち current_value のある位置を中心に、前後 index_radius の
+// 番号を out に並べ、その数を返す。0〜entry_limit - 1 の番号だけを入れる
+//--------------------------------------------------------------------------
+s32 BattleFx_BuildCenteredIndexList(BattleEffectIndexWindow *win, s16 *out)
+{
+	s32 len = win->index_radius * 2 + 1;
+	s32 n = 0;
+	s32 center = 0;
+	s32 i;
+
+	for (i = 0; i != len; i++)
+	{
+		if (win->current_value == win->values[i])
+		{
+			center = i;
+			break;
+		}
+	}
+	for (i = 0; i != len; i++)
+	{
+		s32 no = center + i - win->index_radius;
+
+		if (no >= 0 && no < win->entry_limit)
+		{
+			out[n++] = no;
+		}
+	}
+	return n;
+}
+
+// RockWall_Timings[variant] の並び
+enum
+{
+	TIMING_FRAMES,		// 全体のフレーム数
+	TIMING_RISE_FRAMES, // 柱が出ているフレーム数
+	TIMING_SHAKE		// 画面の揺れ幅
+};
+
+struct RockWallHeights
+{
+	s32 column[4]; // 柱ごとの高さ (ドット)
+};
+
+#define HASHIRA_W 40   // 柱の幅 (ドット)
+#define IWA_OFS 0x1e00 // sheet の中の岩の絵 (先頭 40x16 は背景の帯)
+
+// 横 32 キャラの 8bpp キャラ並びの中で、(x, y) のドットの位置
+#define BG_DOT(x, y) (((x) & 7) + (((x) / 8) << 6) + (((y) & 7) << 3) + (((y) / 8) << 11))
+
+//--------------------------------------------------------------------------
+// 岩の柱を左から 4 フレームおきに 3 本せり上げて沈め、上に乗った対象を
+// 打ち上げる。柱の頭には背景から切り出した帯をのせる
+// effect->variant で RockWall_Timings の行を選ぶ
+//--------------------------------------------------------------------------
+void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
+{
+	void				   **slots;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	s32						 column;
+	DrawRectangle			 draw;
+	struct BattleCamera		*camera;
+	s32						 x_offset;
+	struct RockWallHeights	 heights;
+	s32						 point[3];
+	struct EffectPosition	 screen;
+	s32						 member;
+	s32						 row;
+	s32						 col;
+	s32						 y;
+
+	slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+	cursor = slots;
+	work = *cursor++;
+	canvas = *cursor;
+	camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * 4);
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(1);
+	REG_BG2PA = 0x100; // 横も等倍
+	REG_BLDCNT = 0;	   // 半透明にしない
+	Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet, work->sheet + IWA_OFS, 1, 1);
+
+	// 背景のキャラ (VRAM 0x06008000 から 0x8000 バイト) を写し、
+	// x 32〜71・y 96〜111 の帯を sheet の先頭へ切り出す
+	/* FAKEMATCH: needed to match: forwarded through Call3, the copy loads the buffer address straight into r0, so the loop below loads its own after the call */
+	Iwram_CopyWords((s32)Ram_MapCellBuffer, 0x06008000, 0x8000);
+	for (row = 0; row != 16; row++)
+	{
+		y = row + 96;
+		for (col = 0; col != HASHIRA_W; col++)
+		{
+			s32 pixel = BG_DOT(col + 32, y);
+
+			work->sheet[row * HASHIRA_W + col] = Ram_MapCellBuffer[pixel];
+		}
+	}
+
+	// 向こう側ならキャンバスを右へ 112 ドットずらし、対象の座標もそれに合わせる
+	if (work->effect->side == 1)
+	{
+		REG_BG2X = -(112 << 8);
+		x_offset = -112;
+	}
+	else
+	{
+		x_offset = 0;
+	}
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, GOUSEI_NURI);
+	draw = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+	for (member = 0; member != work->effect->count; member++)
+		work->particles[member].variant = 0; // 着地したら 1
+	work->transfer_mode = 1;				 // 転送のたびにキャンバスを 0 で消す
+	work->transfer_value = 0;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	heights = RockWall_Heights;
+	work->shake_frames = 128;
+	AudioCommand_PlayFar(141);
+
+	for (frame = 0; frame != RockWall_Timings[work->effect->variant][TIMING_FRAMES]; frame++)
+	{
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+		if (frame == RockWall_Timings[work->effect->variant][TIMING_FRAMES] - 16)
+			BattleEventRuntime_BeginPhaseFar(133); // 終わりの 16 フレーム前に結果へ進む
+
+		// 柱は 16・20・24 フレーム目から出る
+		for (column = 0; column != 3; column++)
+		{
+			s32 start = column * 4 + 16;
+
+			if ((frame & 31) + 32 == start) // 左辺は 32 以上なので成り立たない
+				heights.column[column] += 32;
+			if (frame >= start
+				&& frame < start + RockWall_Timings[work->effect->variant][TIMING_RISE_FRAMES])
+			{
+				s32 height;
+				s32 top;
+
+				// 高さは sin で上がって下がる (1 フレームに 1/64 周)
+				height = (heights.column[column] * Trig_Sin((frame - start) << 10)) >> 16;
+				if (height < 0)
+					height = -height;
+				top = 112 - height;
+				draw(canvas, work->sheet + IWA_OFS, column * HASHIRA_W + 8, top, HASHIRA_W, height);
+				draw(canvas, work, column * HASHIRA_W + 8, 96 - height, HASHIRA_W, 16);
+
+				// 柱の上にいる対象を打ち上げる
+				for (member = 0; member != work->effect->count; member++)
+				{
+					struct MotionObject *object;
+
+					object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
+					point[0] = object->x;
+					point[1] = object->y;
+					point[2] = object->z;
+					EffectPosition_ApplyBaseAndYOffset(point, &screen);
+					screen.x += x_offset;
+					if (screen.x >= column * HASHIRA_W + 8
+						&& screen.x <= column * HASHIRA_W + 8 + HASHIRA_W && screen.y >= top)
+					{
+						object->velocity_y = 12 << 16; // 上へ 12 ドット/フレーム
+						object->vertical_motion_strength = 0xab85;
+					}
+					if (object->y < 0)
+						ObjectGroup_UpdateMembers(work->effect->actors[member], 0, 5, -1, 0);
+				}
+			}
+		}
+
+		// 落ちてきて着地した対象を、パレット 7 にして 5 フレーム後に戻す
+		for (member = 0; member != work->effect->count; member++)
+		{
+			struct MotionObject *object;
+			struct EffectStep	*state;
+
+			object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
+			state = &work->particles[member];
+			if (state->variant == 0 && object->y <= 0 && object->velocity_y < 0)
+			{
+				state->variant = 1;
+				ObjectGroup_UpdateMembers(work->effect->actors[member], 7, 5, member, 5);
+			}
+		}
+		Camera_ApplyShake(RockWall_Timings[work->effect->variant][TIMING_SHAKE],
+			RockWall_Timings[work->effect->variant][TIMING_SHAKE]);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// homing.c
+// バトル演出：使い手から飛び出した火の粉が対象を追って落ちる
+//--------------------------------------------------------------------------
+
+#define EMBER(n) (&((struct EffectStep *)Ram_MapCellBuffer)[n])
+
+//--------------------------------------------------------------------------
+// 火の粉を 1 フレームに 2 個ずつ飛ばし、出てから 48 フレーム後に対象へ向かわせる
+// 地面に落ちた火の粉は着弾の絵を 12 フレーム出す
+// effect : variant で火の粉の数 (HomingEmbers_Counts) を選ぶ
+//--------------------------------------------------------------------------
+void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
+{
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	struct BattleCamera		*camera;
+	u8						*sheet;
+	s32						 top;
+	struct EffectPosition	 screen;
+	DrawRectangle			 draw[2];
+	struct MotionObject		*user;
+	s32						 i;
+
+	heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * 4);
+	sheet = heap_cache[2];
+	work->effect = effect;
+	if (effect->side == 1)
+		BattleFx_BeginCanvasLayer(1);
+	else
+		BattleFx_BeginCanvasLayer(0);
+	Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_KASAN);
+	draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+	BattleEffect_LoadWork(
+		HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+	draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
+	REG_BLDALPHA = 0x1010;
+
+	// 使い手の体の上端から、水平は乱数の向きと速さ、縦は -16〜111 (1/64 ドット単位) で飛び出す
+	user = GetBattleObjectSlotFar(work->effect->actor)->object;
+	top = user->y + Battle_GetObjectTableValueFar(work->effect->actor);
+	for (i = 0; i != 64; i++)
+	{
+		struct EffectStep *ember = EMBER(i);
+		s32				   angle;
+		s32				   speed;
+
+		angle = Random16();
+		speed = (Random16() & 127) + 127;
+		ember->velocity_x = (Trig_Sin(angle) * speed) >> 6;
+		ember->velocity_y = (s32)(((Random16() & 127) - 16) << 16) >> 6;
+		ember->velocity_z = (Trig_Cos(angle) * speed) >> 6;
+		ember->x = user->x;
+		ember->y = top;
+		ember->z = user->z;
+		ember->variant = -1; // -1 は飛行中、0 以上は着弾の絵の経過フレーム
+	}
+
+	work->camera_delta = 0;
+	work->camera_phase = 0;
+	Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, 0x480);
+	work->transfer_mode = 2;
+	work->transfer_value = 75; // 転送のたびに 3/4 へ減らして残像にする
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	for (frame = 0; frame != (HomingEmbers_Counts[work->effect->variant] >> 1) + 132; frame++)
+	{
+		if (frame > 16 && frame < 80)
+			work->camera_delta = 0x100;
+		else
+			work->camera_delta = 0;
+		if (frame == (HomingEmbers_Counts[work->effect->variant] >> 1) + 108)
+			BattleEventRuntime_BeginPhaseFar(133);
+		BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+
+		//------------------------------------------------------------------
+		// 飛んでいる火の粉
+		//------------------------------------------------------------------
+		for (i = 0; i != HomingEmbers_Counts[work->effect->variant]; i++)
+		{
+			struct EffectStep *ember = EMBER(i);
+			s32				   start;
+
+			start = i / 2;
+			if (frame > start && ember->variant == -1)
+			{
+				s32 size;
+
+				// 奥行き 160〜799 を大きさ 10〜1 に。最初の 48 フレームは比較、後は加算合成
+				EffectPosition_ApplyBaseAndYOffset((s32 *)ember, &screen);
+				screen.x >>= 1;
+				if (screen.depth < 160)
+					screen.depth = 160;
+				if (screen.depth > 799)
+					screen.depth = 799;
+				size = 10 - (screen.depth - 160) / 64;
+				draw[frame < start + 48 ? 1 : 0](canvas,
+					sheet + ParticleStreams_CellOffsets[size - 1], screen.x - size / 2,
+					screen.y - size, size, size * 2);
+				ember->x += ember->velocity_x;
+				ember->y += ember->velocity_y;
+				ember->z += ember->velocity_z;
+			}
+
+			// 対象へ距離の 1/512 ずつ加速し、出てから 85 フレームまでは速度を 60/64 に抑える
+			if (frame > start + 48 && ember->variant == -1)
+			{
+				struct MotionObject *target;
+				s32					 vx;
+				s32					 vy;
+				s32					 vz;
+
+				target =
+					GetBattleObjectSlotFar(work->effect->actors[i % work->effect->count])->object;
+				vx = ember->velocity_x += (target->x - ember->x) >> 9;
+				vy = ember->velocity_y += (target->y - ember->y) >> 9;
+				vz = ember->velocity_z += (target->z - ember->z) >> 9;
+				if (frame < start + 85)
+				{
+					ember->velocity_x = vx * 60 / 64;
+					ember->velocity_y = vy * 60 / 64;
+					ember->velocity_z = vz * 60 / 64;
+				}
+
+				// 地面より下で着弾：画面位置を残して着弾の絵に切り替え、対象のパレットを
+				// 4 フレーム 10 番に替えてアニメ 5 にし、画面を 2 フレーム揺らす
+				if (ember->y < 0)
+				{
+					ember->variant = 0;
+					ember->x = screen.x;
+					ember->y = screen.y;
+					AudioCommand_PlayFar(136);
+					ObjectGroup_UpdateMembers(work->effect->actors[i % work->effect->count], 10, 5,
+						i % work->effect->count, 4);
+					work->shake_frames = 2;
+				}
+			}
+		}
+
+		//------------------------------------------------------------------
+		// 着弾の絵 (2 フレームごとに進め、6 枚で終わる)
+		//------------------------------------------------------------------
+		for (i = 0; i != HomingEmbers_Counts[work->effect->variant]; i++)
+		{
+			struct EffectStep *ember = EMBER(i);
+
+			if (ember->variant >= 0 && ember->variant < 12)
+			{
+				s32 cel;
+				u32 width;
+
+				cel = ember->variant / 2;
+				draw[1](canvas, work->sheet + HomingEmbers_FlareCells[cel],
+					ember->x - ((width = HomingEmbers_FlareWidths[cel]) >> 1),
+					ember->y + HomingEmbers_FlareBiasY[cel] - 56, width,
+					HomingEmbers_FlareHeights[cel]);
+				ember->variant++;
+			}
+		}
+
+		if (work->camera_phase == 0)
+			work->camera_phase = 1;
+		Camera_ApplyShake(8, 8);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Scheduler_RemoveCallback(Camera_ApplyPhasedDelta);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+#define CHIPS ((struct EffectStep *)Ram_MapCellBuffer)
+
+// RisingMotes_Timings の 1 組 (variant ごと)
+enum
+{
+	RISE_MOTES,	  // 昇る粒の数
+	RISE_COLUMNS, // 柱の数
+	RISE_FRAME	  // はじけるフレーム
+};
+
+//--------------------------------------------------------------------------
+// 粒が渦を巻いて昇り、柱が 3 フレームおきに立ち並ぶ。
+// RISE_FRAME で粒は広がって落ち、破片が跳ね、煙が上がる
+// effect : variant が粒と柱の数、はじけるフレームを決める
+//--------------------------------------------------------------------------
+void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
+{
+	void				   **heap;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	u8						*dots;
+	DrawRectangle			*draw;
+	s32						 count;
+	s32						 ymin;
+	s32						 ymax;
+	s32						 xyz[3];
+	struct EffectPosition	 screen;
+	s32						 point[3];
+	DrawRectangle			 pair[2];
+	struct EffectStep		*mote;
+	s32						 i;
+
+	heap = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+	cursor = heap;
+	work = *cursor++;
+	canvas = *cursor;
+	dots = heap[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(1);
+	REG_BG2PA = 0x100;
+	Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, dots, 0, 0);
+	BattleFx_FetchRectangleBlitters(0, draw = pair);
+
+	// 粒 : x が角度、z が半径 (56〜119)、y が高さ (-64〜-33 ドット)
+	for (i = 0; i != 64; i++)
+	{
+		struct EffectStep *seed = &work->particles[i];
+
+		seed->x = Random16() & 0xffff;
+		seed->z = (Random16() & 63) + 56;
+		seed->y = ((Random16() & 31) - 64) << 16;
+	}
+
+	work->transfer_mode = 2;
+	work->transfer_value = 50;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	if (work->effect->side == 1)
+		REG_BG2X = -0x7000;
+
+	for (frame = 0; frame != RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 75;
+		frame++)
+	{
+		ymin = 120 << 16;
+		ymax = 0;
+		if (frame == RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 11)
+			BattleEventRuntime_BeginPhaseFar(132);
+		point[0] = 0;
+		point[1] = 0;
+		point[2] = 512 << 16;
+		Render_ResetTransformState();
+		SceneTransform_ApplyPosition(point);
+		if (frame >= 36 && frame < 64 && (frame & 3) == 0)
+			AudioCommand_PlayFar(115);
+		if (frame == 85)
+			AudioCommand_PlayFar(136);
+		for (i = 0; i != work->effect->count; i++)
+		{
+			if (frame == i * 4 + 40)
+				ObjectGroup_UpdateMembers(work->effect->actors[i], 9, 5, -1, 0);
+		}
+
+		//------------------------------------------------------------------
+		// 粒 : はじけるまでは半径を縮め、5 ドットずつ 48 ドットまで昇りながら回る。
+		// はじけたあとは半径を広げて落ち、高さの上下限を求める
+		//------------------------------------------------------------------
+		if (frame < RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
+			count = RisingMotes_Timings[work->effect->variant * 3 + RISE_MOTES];
+		else
+			count = 16;
+		if (frame < RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 35)
+		{
+			for (i = 0; i != count; i++)
+			{
+				if (frame > i)
+				{
+					s32 cel = i % 8;
+
+					mote = &work->particles[i];
+					if (mote->y < (48 - i / 2) << 16 && mote->y > -(48 << 16))
+					{
+						struct EffectPosition *pos;
+						u32					   width;
+						u32					   height;
+
+						xyz[0] = mote->z * Trig_Sin(mote->x);
+						xyz[1] = mote->y;
+						xyz[2] = mote->z * Trig_Cos(mote->x);
+						EffectPosition_ApplyBaseAndYOffset(xyz, pos = &screen);
+						pos->x = (pos->x >> 17) + 64;
+						pos->y = HI(pos->y) + 60;
+						draw[1](canvas, work->sheet + RisingMotes_MoteCells[cel],
+							pos->x - ((width = RisingMotes_MoteWidths[cel]) >> 1),
+							pos->y - ((height = RisingMotes_MoteHeights[cel]) >> 1), width, height);
+					}
+					if (frame < RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
+					{
+						if (frame > i + 16)
+						{
+							if (mote->z > 4)
+								mote->z -= 2;
+							if (mote->y < 48 << 16)
+								mote->y += 5 << 16;
+							mote->x += 0x200;
+						}
+					}
+					else
+					{
+						mote->z += 8;
+						mote->y -= (i % 5 + 2) << 16;
+						if (ymin > mote->y)
+							ymin = mote->y;
+						if (ymax < mote->y)
+							ymax = mote->y;
+					}
+				}
+			}
+		}
+		ymin += 64 << 16;
+		ymax += 64 << 16;
+
+		// 柱 (幅 32) : 36 フレーム目から 3 フレームおきに 1 本ずつ立てる
+		if (frame < RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
+		{
+			for (i = 0; i != RisingMotes_Timings[work->effect->variant * 3 + RISE_COLUMNS]; i++)
+			{
+				if (i < (frame - 36) / 3)
+				{
+					s32 cel = i % 3;
+					u32 height;
+
+					if (frame >= RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] - 7)
+					{
+						draw[1](canvas, work->sheet + RisingMotes_ColumnCells[cel],
+							RisingMotes_ColumnSpots[i * 2],
+							RisingMotes_ColumnSpots[i * 2 + 1]
+								- (height = RisingMotes_ColumnHeights[cel]),
+							32, height);
+					}
+					else
+					{
+						pair[0](canvas, work->sheet + RisingMotes_ColumnCells[cel],
+							RisingMotes_ColumnSpots[i * 2],
+							RisingMotes_ColumnSpots[i * 2 + 1]
+								- (height = RisingMotes_ColumnHeights[cel]),
+							32, height);
+					}
+				}
+			}
+		}
+
+		// 破片 : はじけたとき、下の方から上へ 32 個を飛ばす (描くのは 24 個)
+		if (frame == RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
+		{
+			for (i = 0; i != 32; i++)
+			{
+				struct EffectStep *chip = &CHIPS[i];
+
+				chip->x = (Random16() & 127) << 16;
+				chip->y = ((Random16() & 15) + 80) << 16;
+				chip->z = ((Random16() & 63) - 32) << 12;
+				chip->velocity_y = ((-Random16() & 15) - 16) << 13;
+				chip->variant = (Random16() & 15) + 16;
+			}
+		}
+		if (frame >= RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
+		{
+			for (i = 0; i != 24; i++)
+			{
+				struct EffectStep *chip = &CHIPS[i];
+
+				if (chip->variant >= 0)
+				{
+					s32 cel = i % 8;
+
+					draw[1](canvas, work->sheet + RisingMotes_EmberCells[cel], HI(chip->x),
+						HI(chip->y), RisingMotes_EmberWidths[cel], RisingMotes_EmberHeights[cel]);
+					chip->x += chip->velocity_x;
+					chip->y += chip->velocity_y;
+					chip->variant--;
+				}
+				if (ymin > chip->y)
+					ymin = chip->y;
+				if (ymax < chip->y)
+					ymax = chip->y;
+			}
+		}
+		ymin >>= 16;
+		ymax >>= 16;
+		if (ymax <= ymin)
+			ymax = ymin + 1;
+
+		// 煙 : 粒と破片の高さの範囲に出し、1 フレームに 1/2 ドット上がる
+		if (frame == RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
+		{
+			for (i = 0; i != 32; i++)
+			{
+				struct EffectStep *puff = &work->particles[i];
+
+				puff->velocity_x = (Random16() & 127) << 16;
+				if (ymax == ymin)
+					puff->velocity_y = ymin << 16;
+				else
+					puff->velocity_y = (Random16() % (ymax - ymin) + ymin) << 16;
+				puff->variant = (Random16() & 15) + 20;
+			}
+		}
+		if (frame >= RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME])
+		{
+			s32 rise = (frame - RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME]) / 2;
+
+			for (i = 0; i != 32; i++)
+			{
+				struct EffectStep *puff = &work->particles[i];
+
+				if (puff->variant >= 0 && puff->variant <= 17)
+				{
+					s32 cel = (17 - puff->variant) / 2;
+					u32 size;
+
+					draw[1](canvas, dots + BattleFx_PuffCells[cel],
+						HI(puff->velocity_x) - ((size = BattleFx_PuffSizes[cel]) >> 1),
+						HI(puff->velocity_y) - (size >> 1) - rise, size, size);
+				}
+				puff->variant--;
+				if ((puff->variant == -1 || puff->variant == 17)
+					&& frame < RisingMotes_Timings[work->effect->variant * 3 + RISE_FRAME] + 35)
+				{
+					puff->variant = 17;
+					puff->velocity_x = (Random16() & 127) << 16;
+					puff->velocity_y = (Random16() % (ymax - ymin) + ymin) << 16;
+				}
+			}
+		}
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// bolts.c
+// バトル効果：まわりから寄ってくる四本の稲妻と、飛び散る火花
+//--------------------------------------------------------------------------
+
+#define SPARK_COUNT 1024
+
+#define BOLT_SHEET 0x60e // 稲妻の絵の置き場
+#define BOLT_SIZE 2880	 // 24x120 の一枚
+#define BOLT_COUNT 4
+
+//--------------------------------------------------------------------------
+// 四本の稲妻が回りながら中心へ寄り、根元から火花を散らす
+// 16 フレーム描き、火花は 64 フレームまで動かす
+//--------------------------------------------------------------------------
+void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
+{
+	void				   **heap;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	u8						*sheet;
+	s32						 bolt;
+	s32						 cnt;
+	DrawRectangle			 draw[2];
+	s32						 i;
+
+	// ワーク、キャンバス、BG2 の拡大と位置
+	heap = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+	cursor = heap;
+	work = *cursor++;
+	canvas = *cursor;
+	sheet = heap[2];
+	work->effect = effect;
+	BattleFx_BeginTiledCanvas(1);
+	if (work->effect->variant == 2)
+		REG_BG2PA = 0x80; // 横 2 倍
+	else
+		REG_BG2PA = 0x100;
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, GOUSEI_HIKAKU);
+	draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | GOUSEI_FLIP_X, GOUSEI_KASAN);
+	draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+	Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, work->sheet + BOLT_SHEET, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	if (work->effect->variant == 2)
+	{
+		if (work->effect->side == 1)
+			REG_BG2X = -0x1000;
+		else
+			REG_BG2X = 0x1000;
+	}
+	else
+	{
+		if (work->effect->side == 1)
+			REG_BG2X = -0x8000;
+	}
+
+	// 火花の初期化
+	for (i = 0; i != SPARK_COUNT; i++)
+	{
+		struct EffectStep *spark = &SPARKS[i];
+		s32				   speed;
+		s32				   angle;
+
+		speed = (Random16() & 0x3ff) + 256;
+		angle = (Random16() & 0x7fff) - 0x4000;
+		spark->x = 0x4000;
+		spark->y = 0x7000;
+		spark->z = (Trig_Sin(angle) * speed) >> 16;
+		spark->velocity_z = -(Trig_Cos(angle) * speed * 2) >> 16;
+		spark->variant = 0;
+	}
+
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	AudioCommand_PlayFar(138);
+
+	for (frame = 0; frame != 64; frame++)
+	{
+		if (frame == 20)
+			BattleEventRuntime_BeginPhaseFar(133); // 結果の再生を始める
+		if (frame < 16)
+		{
+			// 5 フレームごとにキャンバスを消す
+			if (frame % 5 == 2)
+				Iwram_FillWords(canvas, 0x4000, 0x10101010);
+			for (bolt = 0; bolt != BOLT_COUNT; bolt++)
+			{
+				s32 angle;
+				s32 x;
+				s32 y;
+
+				// 横の半径が 32 から 1 フレームに 1 ドットずつ縮む
+				cnt = 0;
+				angle = ((frame << 11) + 0x4000) * bolt;
+				x = (((32 - frame) * Trig_Sin(angle)) >> 16) + 64;
+				y = -((Trig_Cos(angle) << 3) >> 16) - 8;
+				if (work->effect->variant == 0)
+					draw[0](canvas, work->sheet + (Random16() & 3) * BOLT_SIZE + BOLT_SHEET,
+						x + (Random16() & 7) - 16, y, 24, 120);
+				else
+					draw[bolt & 1](canvas, work->sheet + (Random16() & 3) * BOLT_SIZE + BOLT_SHEET,
+						x + (Random16() & 7) - 16, y, 24, 120);
+
+				// 根元から火花を出す
+				for (i = 0; i != SPARK_COUNT; i++)
+				{
+					struct EffectStep *spark = &SPARKS[i];
+
+					if (spark->variant == 0)
+					{
+						s32 speed;
+						s32 spread;
+
+						speed = (Random16() & 0x1ff) + 128;
+						spread = (Random16() & 0x7fff) - 0x4000;
+						spark->x = x << 16;
+						spark->y = (y + 112) << 16;
+						spark->velocity_x = (Trig_Sin(spread) * speed) >> 9;
+						spark->velocity_y = -(Trig_Cos(spread) * speed * 2) >> 7;
+						spark->variant = (Random16() & 7) + 32;
+						cnt++;
+						if (cnt == LightningBolts_Sparks[work->effect->variant][1])
+							break;
+					}
+				}
+			}
+			work->shake_frames = 1;
+		}
+
+		// 火花を動かし、下 (y 120) ではね返す
+		for (i = 0; i != SPARK_COUNT; i++)
+		{
+			struct EffectStep *spark = &SPARKS[i];
+
+			if (spark->variant > 0)
+			{
+				spark->variant--;
+				EffectStep_AdvanceWithGravity2D(spark, 60, -0x800);
+				if (spark->y > 0x780000)
+				{
+					spark->velocity_y = -spark->velocity_y / 2;
+				}
+				else if (spark->x >= 0 && spark->x < 0x7f0000 && spark->y >= 0)
+				{
+					s32 x = spark->x >> 16;
+					s32 y = spark->y >> 16;
+					s32 size = spark->variant / 8 + 1;
+
+					draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1], x - size / 2,
+						y - size, size, size * 2);
+				}
+			}
+		}
+
+		// 対象は 4 フレームずつ遅れて当たる
+		if (frame >= 4 && frame < 96)
+		{
+			for (i = 0; i != work->effect->count; i++)
+			{
+				if (frame == i * 4 + 4)
+					ObjectGroup_UpdateMembers(work->effect->actors[i], 7, 5, i, 10);
+			}
+		}
+		Camera_ApplyShake(2, 4);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+void BattleFx_RunParticleFieldMode1(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunParticleField(effect, 1);
+}
+
+void BattleFx_RunParticleFieldMode0(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunParticleField(effect, 0);
+}
+
+enum
+{
+	FIELD_MOTES,
+	FIELD_PUFFS,
+	FIELD_FRAMES
+};
+
+void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
+{
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	DrawRectangle			 draw[2];
+	s32						 variant;
+	struct EffectPosition	 screen;
+	s32						 frame;
+	s32						 i;
+
+	cursor = (void **)gBattleFxWork;
+	work = *cursor++;
+	canvas = *cursor;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(1);
+	Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
+	if (mode == 1)
+	{
+		for (i = 0; i != 64; i++)
+		{
+			s32 level = i / 2;
+
+			BG_PLTT[i] = (level << 10) | (level << 5) | level;
+		}
+		variant = 1;
+	}
+	else
+	{
+		Iwram_CopyWords(
+			(void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_FireStreakSheet), 128);
+		variant = work->effect->variant;
+	}
+
+	for (i = 0; i != 32; i++)
+	{
+		struct EffectStep *puff = &work->particles[i];
+
+		if (work->effect->side == 1)
+			puff->x = 200 << 14;
+		else
+			puff->x = -(200 << 14);
+		puff->y = 0;
+		puff->z = 0;
+		puff->velocity_x = ((Random16() & 63) - 32) << 13;
+		puff->velocity_y = ((Random16() & 63) + 16) << 12;
+		puff->velocity_z = ((Random16() & 63) - 32) << 13;
+		puff->variant = 0;
+	}
+	for (i = 0; i != 1024; i++)
+	{
+		struct EffectStep *mote = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+
+		if (work->effect->side == 1)
+			mote->x = 200 << 14;
+		else
+			mote->x = -(200 << 14);
+		mote->y = 0;
+		mote->z = 0;
+		mote->velocity_x = ((Random16() & 63) - 32) << 13;
+		mote->velocity_y = ((Random16() & 31) + 8) << 13;
+		mote->velocity_z = ((Random16() & 63) - 32) << 13;
+		mote->variant = 0;
+	}
+
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+	draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	for (frame = 0; frame != ParticleField_Counts[variant][FIELD_FRAMES]; frame++)
+	{
+		struct BattleCamera *camera;
+
+		camera = gCameraWork;
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+		if (frame == 2)
+			AudioCommand_PlayFar(144);
+		if (frame == ParticleField_Counts[variant][FIELD_FRAMES] - 48)
+			BattleEventRuntime_BeginPhaseFar(133);
+
+		for (i = 0; i != ParticleField_Counts[variant][FIELD_MOTES]; i++)
+		{
+			struct EffectStep *mote = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+
+			if (mote->y >= 0)
+			{
+				s32 size;
+
+				EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &screen);
+				screen.x >>= 1;
+				screen.x += work->effect->side * 32 - 16;
+				if (screen.depth < 160)
+					screen.depth = 160;
+				if (screen.depth > 799)
+					screen.depth = 799;
+				size = 9 - (screen.depth - 160) / 64;
+				draw[0](canvas,
+					work->sheet + (ParticleStreams_CellOffsets[size - 1] + (i & 1) * 770) + 0x3200,
+					screen.x - size / 2, screen.y - size, size, size * 2);
+				EffectStep_AdvanceWithGravity3D(mote, 64, -0x2000);
+			}
+		}
+
+		if (frame > 2)
+		{
+			for (i = 0; i != ParticleField_Counts[variant][FIELD_PUFFS]; i++)
+			{
+				struct EffectStep *puff = &work->particles[i];
+
+				if (i < frame && puff->y >= 0)
+				{
+					EffectPosition_ApplyBaseAndYOffset((s32 *)puff, &screen);
+					screen.x >>= 1;
+					screen.x += work->effect->side * 32 - 16;
+					if (puff->variant >= 0 && puff->variant <= 20)
+					{
+						s32 cel = puff->variant / 3;
+						u32 width;
+
+						draw[0](canvas, work->sheet + ParticleField_PuffCells[cel],
+							screen.x - ((width = ParticleField_PuffSizes[cel]) >> 1),
+							screen.y - (width >> 1), width, width);
+					}
+					if (puff->variant <= 20)
+						puff->variant++;
+					EffectStep_AdvanceWithGravity3D(puff, 64, -0x2000);
+				}
+			}
+		}
+
+		if (mode == 0)
+		{
+			for (i = 0; i != work->effect->count; i++)
+			{
+				if (frame == i + 6)
+				{
+					ObjectGroup_UpdateMembers(work->effect->actors[i], 7, 5, i, 10);
+					BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 2);
+				}
+			}
+		}
+		else
+		{
+			for (i = 0; i != work->effect->count; i++)
+			{
+				if (frame == i + 6)
+					ObjectGroup_UpdateMembers(work->effect->actors[i], 7, 5, i, 10);
+			}
+		}
+		if (frame == 2)
+			work->shake_frames = 6;
+		Camera_ApplyShake(16, 16);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+#define gBattleFxWork (*(struct BattleEffectWork **)&gBattleFxWork)
+
+void BattleFx_SpawnObjects(s32 entry_count, s32 kind, u32 variant)
+{
+	struct BattleEffectWork *work = gBattleFxWork;
+	s32						 entry_index = 0;
+
+	if (entry_count == 0)
+	{
+		return;
+	}
+	do
+	{
+		struct AnimationObject *object = ResourceObject_CreateFar(kind);
+
+		work->objects[entry_index] = object;
+		if (object != 0)
+		{
+			object->flags = 0;
+			AnimationObjects_SelectAnimationFar(object, entry_index);
+			((struct AnimationObject *)work->objects[entry_index])->part[0].priority = variant;
+		}
+		entry_index++;
+	} while (entry_index != entry_count);
+}
+
+void BattleFx_RunNoEffect(void)
+{
+}
+
+#undef Camera_ApplyShake
+#undef SPARKS
+#undef SceneTransform_ApplyPosition
+#undef gBattleFxWork
+
+#define EffectPosition_ApplyAnimationAndYOffset \
+	((void (*)(s32, s32 *))EffectPosition_ApplyAnimationAndYOffset)
+
+typedef s32 (*CopyWords)(void *, const void *, s32);
+typedef struct BattleEffectArgument Efx;
+
+typedef struct Spark
+{
+	s32 x;
+	s32 y;
+	s32 unk08;
+	s32 dx;
+	s32 dy;
+	s32 unk14;
+	s32 tick;
+} Spark;
+
+#define WORK_EFX ((Efx *)work->effect)
+#define SHEET (work->sheet + 0xC56)
+#undef SPARKS
+#define SPARKS ((Spark *)work->particles)
+
+void BattleFx_ArmBg2AffineHBlankDma(void)
+{
+	struct BattleEffectWork *work = *(void **)gBattleFxWork;
+	volatile u16			*channel = REG_DMA0;
+	channel[5] &= 0xc5ff;
+	channel[5] &= 0x7fff;
+	(void)channel[5];
+	Dma_Set(work->bg2_x, (void *)0x04000028, 0xa6600001, (volatile u32 *)channel);
+}
+
+void BattleFx_RunSeriesIMode0(struct BattleEffectArgument *effect)
+{
+	BattleEffect_RunBurstShower(effect, 0);
+}
+
+void BattleFx_RunSeriesIMode2(struct BattleEffectArgument *effect)
+{
+	BattleEffect_RunBurstShower(effect, 2);
+}
+
+void BattleFx_RunSeriesIMode6(struct BattleEffectArgument *effect)
+{
+	BattleEffect_RunBurstShower(effect, 6);
+}
+
+void BattleFx_RunSeriesIMode3(struct BattleEffectArgument *effect)
+{
+	BattleEffect_RunBurstShower(effect, 3);
+}
+
+void BattleFx_RunSeriesIMode5(struct BattleEffectArgument *effect)
+{
+	BattleEffect_RunBurstShower(effect, 5);
+}
+
+void BattleFx_RunSeriesIMode7(struct BattleEffectArgument *effect)
+{
+	BattleEffect_RunBurstShower(effect, 7);
+}
+
+void BattleFx_RunSeriesIMode4(struct BattleEffectArgument *effect)
+{
+	BattleEffect_RunBurstShower(effect, 4);
+}
+
+void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
+{
+	u32						*cache;
+	struct BattleEffectWork *work;
+	void					*dst;
+	u8						*aux;
+	DrawRectangle			 blit[2];
+	s32						 pos[3];
+	s32						 seat[8][3];
+	s32						 aim[3];
+	u16						*pal;
+	s32						 frame;
+	s32						 i;
+	s32						 pick;
+	s32						 lum;
+	s32						 id;
+	s32						 width;
+	s32						 height;
+
+	cache = (u32 *)&gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+	dst = (void *)cache[0];
+	work = (struct BattleEffectWork *)cache[-1];
+	aux = (u8 *)cache[1];
+	work->effect = efx;
+	BattleFx_BeginCanvasLayer(0);
+	REG_BLDALPHA = 0x1010;
+
+	if (mode == 7)
+	{
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+		blit[0] = (DrawRectangle)cache[46 - 40];
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+		blit[1] = (DrawRectangle)cache[47 - 40];
+	}
+	else
+	{
+		BattleFx_FetchRectangleBlitters(WORK_EFX->side, blit);
+	}
+
+	Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
+	if (mode == 5)
+	{
+		Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetA, SHEET, 1, 1);
+	}
+	else if (mode == 7)
+	{
+		Resource_LoadAndDecompress((s32)&ResourceId_DemonFaceSheet, SHEET, 1, 1);
+	}
+	else
+	{
+		Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, SHEET, 1, 1);
+		Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, aux, 0, 0);
+		if (mode == 6)
+		{
+			for (i = 0, pal = (u16 *)0x05000000; i != 64; i++)
+			{
+				lum = i / 4;
+				*pal = ((lum << 10) | (lum << 5)) | lum;
+				pal++;
+			}
+			REG_BLDCNT = 0;
+		}
+		else
+		{
+			switch (mode)
+			{
+			case 0:
+				id = (s32)&ResourceId_FlashBurstSheet;
+				break;
+			case 1:
+				id = (s32)&ResourceId_IceBlockSheet;
+				break;
+			case 2:
+				id = (s32)&ResourceId_WaterSpraySheet;
+				break;
+			case 3:
+				id = (s32)&ResourceId_PinkPalette;
+				break;
+			case 4:
+			default:
+				id = (s32)&ResourceId_MarsDjinnSheet;
+				break;
+			}
+			Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(id), 128);
+		}
+	}
+
+	if (mode == 7)
+	{
+		work->transfer_mode = 2;
+		work->transfer_value = 50;
+	}
+	else
+	{
+		work->transfer_mode = 2;
+		work->transfer_value = 75;
+	}
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	for (i = 0; i != 64; i++)
+	{
+		SPARKS[i].tick = -1;
+	}
+
+	EffectPosition_ApplyAnimationAndYOffset(WORK_EFX->actor, pos);
+	if (mode == 3)
+	{
+		pos[1] -= 16;
+	}
+	if (mode == 4)
+	{
+		if (WORK_EFX->side == 1)
+		{
+			pos[0] += 28;
+		}
+		else
+		{
+			pos[0] -= 28;
+		}
+	}
+	if (mode == 7)
+	{
+		if (WORK_EFX->side == 1)
+		{
+			pos[0] += 16;
+		}
+		else
+		{
+			pos[0] -= 16;
+		}
+	}
+	if (mode == 5)
+	{
+		pos[0] = pos[0] / 3;
+		REG_BG2PA = 85;
+	}
+
+	i = 0;
+	while (i != WORK_EFX->count)
+	{
+		EffectPosition_ApplyStepAndYOffset(WORK_EFX->actors[i], (struct EffectPosition *)seat[i]);
+		i += 1;
+	}
+
+	frame = 0;
+	do
+	{
+		pick = frame % WORK_EFX->count;
+		if (frame == 4)
+		{
+			AudioCommand_PlayFar(0x88);
+		}
+		if (mode != 6)
+		{
+			if (frame == 24)
+			{
+				BattleEventRuntime_BeginPhaseFar(0x86);
+			}
+		}
+		else
+		{
+			if (frame == 60)
+			{
+				BattleEventRuntime_BeginPhaseFar(0x86);
+			}
+		}
+
+		if (mode == 5)
+		{
+			if (WORK_EFX->side == 1)
+			{
+				((DrawRectangle)blit[0])(
+					dst, SHEET + ((frame / 3 % 3 * 9) << 9), pos[0] - 2, pos[1] - 32, 72, 62);
+			}
+			else
+			{
+				((DrawRectangle)blit[0])(
+					dst, SHEET + ((frame / 3 % 3 * 9) << 9), pos[0] - 70, pos[1] - 32, 72, 62);
+			}
+		}
+		else
+		{
+			aim[0] = (seat[pick][0] + (Random16() & 31)) - 16;
+			aim[1] = (seat[pick][1] + (Random16() & 63)) - 16;
+			if (frame <= 47)
+			{
+				SPARKS[frame].x = pos[0] << 15;
+				SPARKS[frame].y = pos[1] << 16;
+				SPARKS[frame].dx = (aim[0] - pos[0]) << 11;
+				SPARKS[frame].dy = (aim[1] - pos[1]) << 11;
+				SPARKS[frame].tick = 0;
+			}
+		}
+
+		i = 0;
+		width = 32;
+		height = 64;
+		do
+		{
+			Spark *spark = &SPARKS[i];
+			if (spark->tick >= 0)
+			{
+				if (mode == 7)
+				{
+					if (spark->tick > 5)
+					{
+						((DrawRectangle)blit[WORK_EFX->side])(dst, SHEET,
+							((s16 *)&spark->x)[1] - 16, ((s16 *)&spark->y)[1] - 32, width, height);
+					}
+				}
+				else if (mode == 4)
+				{
+					if (spark->tick > 5)
+					{
+						((DrawRectangle)blit[0])(dst, SHEET + ((spark->tick / 4) << 11),
+							((s16 *)&spark->x)[1] - 16, ((s16 *)&spark->y)[1] - 32, width, height);
+					}
+				}
+				else if (mode != 5)
+				{
+					if (spark->tick > 1)
+					{
+						((DrawRectangle)blit[0])(dst, SHEET + ((spark->tick / 4) << 11),
+							((s16 *)&spark->x)[1] - 16, ((s16 *)&spark->y)[1] - 32, width, height);
+					}
+				}
+				spark->x += spark->dx;
+				spark->y += spark->dy;
+				spark->tick += 1;
+				if (spark->tick == 24)
+				{
+					spark->tick = -1;
+				}
+			}
+			i += 1;
+		} while (i != 64);
+
+		if (mode == 5)
+		{
+			i = 0;
+			while (i != WORK_EFX->count)
+			{
+				if ((frame >= (i * 4) + 2) && ((frame & 7) == i))
+				{
+					work->shake_frames = 8;
+					ObjectGroup_UpdateMembers(WORK_EFX->actors[i], 7, 5, i, 4);
+				}
+				i += 1;
+			}
+		}
+		else
+		{
+			i = 0;
+			while (i != WORK_EFX->count)
+			{
+				if ((frame >= (i * 4) + 16) && ((frame & 7) == i))
+				{
+					work->shake_frames = 8;
+					if (mode == 6)
+					{
+						ObjectGroup_UpdateMembers(WORK_EFX->actors[i], 14, 5, i, 4);
+					}
+					else
+					{
+						ObjectGroup_UpdateMembers(WORK_EFX->actors[i], 7, 5, i, 4);
+					}
+					BattleMotion_ApplyVariantMotionFar(WORK_EFX->actors[i], 4);
+				}
+				i += 1;
+			}
+		}
+
+		Camera_ApplyShake(4, 4);
+		if (mode != 6)
+		{
+			ObjectGroup_TickMemberTimers();
+		}
+		work->transfer_pending = 1;
+		WaitFrames(1);
+		frame += 1;
+	} while (frame != 64);
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+void BattleFx_RunSwirlingStars(void *object)
+{
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 record[3];
+	struct EffectPosition	 pos;
+	DrawRectangleFn			 draw[2];
+	struct EffectStep		*star;
+	s32						 i;
+	s32						 frame;
+
+	heap_cache = (void **)gBattleFxWork;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	work->effect = object;
+	BattleFx_BeginCanvasLayer(0);
+	Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work->sheet, 1, 1);
+	BattleFx_FetchRectangleBlitters(work->effect->side ^ 1, draw);
+	for (i = 0; i != 256; i++)
+	{
+		star = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+		star->x = ((Random16() & 0xff) - 127) << 16;
+		star->y = ((Random16() & 0xff) - 127) << 16;
+		star->z = ((Random16() & 0xff) - 127) << 16;
+		star->velocity_x = 0;
+		star->velocity_y = 0;
+		star->velocity_z = 0;
+		star->variant = 0;
+	}
+	work->transfer_mode = 1;
+	work->transfer_value = 0;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	record[0] = 0;
+	record[1] = 160 << 15;
+	record[2] = 0;
+	for (frame = 0; frame != 160; frame++)
+	{
+		struct BattleCamera *camera;
+
+		camera = gCameraWork;
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+		SceneTransform_ApplyPosition(record);
+		star = (struct EffectStep *)Ram_MapCellBuffer;
+		for (i = 0; i != 64; i++, star++)
+		{
+			if (frame > i / 4 && star->variant == 0)
+			{
+				s32 size;
+
+				Graphics_SaveTransferWorkOnce();
+				switch (i & 3)
+				{
+				case 0:
+					SceneTransform_ApplyYaw(frame * (i + 32) * 8);
+					break;
+				case 1:
+					SceneTransform_ApplyPitch(-frame * (i + 32) * 8);
+					break;
+				case 2:
+					SceneTransform_ApplyRoll(-frame * (i + 32) * 8);
+					break;
+				case 3:
+					SceneTransform_ApplyPitch(-frame * (i + 32) * 8);
+					SceneTransform_ApplyRoll(-frame * (i + 32) * 8);
+					break;
+				}
+				EffectPosition_ApplyBaseAndYOffset((s32 *)star, &pos);
+				pos.x >>= 1;
+				Graphics_RestoreTransferWork();
+				if (pos.depth < 250)
+					pos.depth = 250;
+				if (pos.depth > 0x27a)
+					pos.depth = 0x27a;
+				size = 9 - (pos.depth - 250) / 64;
+				draw[0](canvas,
+					work->sheet + ((i & 3) * 770 + ParticleStreams_CellOffsets[size - 1]),
+					pos.x - size / 2, pos.y - size, size, size * 2);
+				EffectStep_AdvanceWithGravity3D(star, 60, 0);
+				if (frame > i / 4 + 30)
+				{
+					s32 dx = -star->x >> 8;
+					s32 dy = -star->y >> 8;
+					s32 dz = -star->z >> 8;
+
+					star->velocity_x += dx;
+					star->velocity_y += dy;
+					star->velocity_z += dz;
+				}
+			}
+		}
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+void BattleFx_RunOrbitingSparks(void)
+{
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 record[3];
+	struct EffectPosition	 center;
+	struct EffectPosition	 pos;
+	s32						 frame;
+	/* FAKEMATCH: needed to match: only draw[0] is used: the second word fills four bytes of the frame */
+	DrawRectangleFn		 draw[2];
+	s32					 member;
+	struct BattleCamera *camera;
+	u8					*palette;
+	s32					 x_offset;
+	s32					 i;
+
+	work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+	canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
+	camera = WORK_SLOT(HEAP_SLOT_CAMERA);
+	BattleFx_BeginCanvasLayer(1);
+	REG_BG2PA = 0x100;
+	REG_BLDALPHA = 0x1010;
+	palette = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
+	Iwram_CopyWords(BG_PLTT, palette, 128);
+	Resource_DecodeType01(palette + 128, work);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+	work->transfer_mode = 1;
+	work->transfer_value = 0;
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	draw[0] = (DrawRectangleFn)WORK_SLOT(HEAP_SLOT_BLITTER);
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	if (work->effect->side == 0)
+		x_offset = 0;
+	else
+		x_offset = -112;
+	/* FAKEMATCH: needed to match: a one-pass loop is a sched2 barrier, so the seed counter is set before its pointer */
+	do
+	{
+		REG_BG2X = x_offset << 8;
+	} while (0);
+	for (i = 0; i != 64; i++)
+	{
+		struct EffectStep *step = &work->particles[i];
+
+		step->x = 0;
+		step->y = 0;
+		step->velocity_x = 0;
+		step->z = 4;
+	}
+	for (frame = 0; frame != work->effect->count * 16 + 64; frame++)
+	{
+		for (member = 0; member != work->effect->count; member++)
+		{
+			struct MotionObject *member_object;
+			u32					 window;
+
+			member_object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
+			EffectPosition_ApplyStepAndYOffset(work->effect->actors[member], &pos);
+			window = frame - member * 16;
+			pos.x += x_offset;
+			if (window < 64)
+			{
+				/* Ordinary rec differs 118 in EN (265 native, 269 built).
+				 * A generic output barrier before filling differs 155 (272
+				 * built); after filling it differs 118 (267 built). Keeping
+				 * rec live after the call differs 179 (270 built). None keeps
+				 * the native loop layout. */
+				/* FAKEMATCH: record is filled through r0 so loop.c cannot hoist its address into fp 2026-10-11: loop.c's second pass moves the invariant &record when 15 x savings x life 8 reaches the loop's insn count (about 100 after giv reduction); plain forms differ 118 (hoisted into fp, frame 92), loads before stores differ 12, and two one-pass blocks around the fill and the apply differ 2 (add r5, sp, #64 after the last store). */
+				register s32 *rec asm("r0");
+
+				Render_ResetTransformState();
+				Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+				rec = record;
+				rec[0] = member_object->x;
+				rec[1] = member_object->y;
+				rec[2] = member_object->z;
+				EffectPosition_ApplyBaseAndYOffset(rec, &center);
+				/* FAKEMATCH: needed to match: sched2 barrier, so this store precedes the spark counter as in the reference */
+				do
+				{
+					center.x += x_offset;
+				} while (0);
+				for (i = 0; i != 3; i++)
+				{
+					struct EffectStep *spark = &work->particles[member * 3 + i];
+					s32				   x;
+					s32				   y;
+
+					x = pos.x + ((Trig_Sin(spark->velocity_x + i * 0x5555) << 3) >> 16);
+					y = pos.y + ((Trig_Cos(spark->velocity_x + i * 0x5555) << 3) >> 16);
+					spark->velocity_x += 0x200;
+					draw[0](canvas, work->sheet + i * 0x240, x - 12, y - 28, 24, 24);
+				}
+			}
+		}
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+void BattleFx_RunTargetBursts(void *object)
+{
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	void					*palette;
+	s32						 frame;
+	void					*rectangle_b;
+	void					*rectangle_a;
+	struct EffectStep		*step;
+	s32						 i;
+	struct EffectPosition	 screen;
+	s32						 record[3];
+
+	heap_cache = (void **)gBattleFxWork;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	work->effect = object;
+	BattleFx_BeginCanvasLayer(0);
+	Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage, work->sheet + 0x1b00, 0, 0);
+	palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+	Iwram_CopyWords((void *)0x05000000, palette, 128);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
+	rectangle_a = heap_cache[7];
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+	rectangle_b = heap_cache[8];
+
+	for (i = 0; i != 64; i++)
+	{
+		s32 angle;
+		s32 magnitude;
+
+		step = &work->particles[i];
+		angle = Random16() & 0xffff;
+		magnitude = Random16() & 0xff;
+		step->x = 0;
+		step->y = 0;
+		step->z = 0;
+		if (i % 6 == 5)
+		{
+			step->velocity_x = 0;
+			step->velocity_y = 0;
+		}
+		else
+		{
+			step->velocity_x = (Trig_Sin(angle) * magnitude) >> 7;
+			step->velocity_y = (Trig_Cos(angle) * magnitude) >> 9;
+		}
+		step->velocity_z = 0;
+		step->variant = 0;
+	}
+
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	for (frame = 0; frame != 96; frame++)
+	{
+		s32					 member;
+		struct BattleCamera *camera;
+
+		camera = gCameraWork;
+		for (member = 0; member != work->effect->count; member++)
+		{
+			struct MotionObject *member_object;
+
+			member_object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
+			Render_ResetTransformState();
+			Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+			record[0] = member_object->x;
+			record[1] = 160 << 13;
+			record[2] = member_object->z;
+			SceneTransform_ApplyPosition(record);
+			if (frame >= member * 8 && frame < member * 8 + 40)
+			{
+				struct EffectStep *p;
+
+				for (i = 0; i != 6; i++)
+				{
+					s32 cel;
+
+					p = &work->particles[member * 6 + i];
+					cel = p->variant / 6;
+					if (cel > 5)
+						cel = 5;
+					EffectPosition_ApplyBaseAndYOffset((s32 *)p, &screen);
+					screen.x >>= 1;
+					if (i == 5)
+					{
+						EffectStep_AdvanceWithGravity3D(p, 62, 0x800);
+						((DrawRectangleFn)rectangle_a)(canvas, work->sheet + cel * 0x480 + 0x1b00,
+							screen.x - 12, screen.y - 36, 24, 48);
+					}
+					else
+					{
+						EffectStep_AdvanceWithGravity3D(p, 60, 0x200);
+						((DrawRectangleFn)rectangle_b)(canvas, work->sheet + cel * 0x480,
+							screen.x - 12, screen.y - 36, 24, 48);
+					}
+					p->variant += 1;
+				}
+			}
+		}
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+#define gTransitionWork (*(struct BattleBackgroundView **)&gTransitionWork)
+
+extern const Scale StagedParticles_UnitScale;
+
+#define OBJECTS (work->objects)
+#define TRAILS ((struct EffectStep *)Ram_MapCellBuffer)
+#define MATRICES (Ram_MapCellBuffer + 0x3800)
+
+enum SlashSheetCell
+{
+	SLASH_FLASH_1 = 0x0000,
+	SLASH_FLASH_2 = 0x0188,
+	SLASH_FLASH_3_TOP = 0x057c,
+	SLASH_FLASH_3_BOTTOM = 0x07d4,
+	SLASH_FLASH_4_TOP = 0x0aaa,
+	SLASH_FLASH_4_MIDDLE = 0x0c90,
+	SLASH_FLASH_4_BOTTOM = 0x0e74,
+	SLASH_FLASH_5_TOP = 0x1088,
+	SLASH_FLASH_5_MIDDLE = 0x11f8,
+	SLASH_FLASH_5_BOTTOM = 0x147c,
+	SLASH_TOP = 0x16ac,
+	SLASH_MIDDLE = 0x17fc,
+	SLASH_BOTTOM = 0x1bf3
+};
+
+void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
+{
+	s32							 point[3];
+	struct EffectPosition		 screen;
+	s32							 position[4];
+	struct EffectPosition		 target;
+	DrawRectangle				 draw[2];
+	void					   **cache;
+	struct BattleBackgroundView *presentation;
+	void						*canvas;
+	struct BattleEffectWork		*work;
+	s8							*path;
+	s32							 i;
+	s32							 j;
+	s32							 frame;
+	u8							*sheet;
+	s32							 scroll_x;
+	s32							 path_x;
+	s32							 path_y;
+	s32							 row;
+	s32							 column;
+
+	cache = (void **)&gTransitionWork;
+	presentation = cache[0];
+	canvas = cache[-4];
+	work = cache[-5];
+	sheet = cache[-3];
+	scroll_x = gBgScroll[1].x;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0x2000);
+	REG_BG2PA = 0x100;
+	BattlePres_ConfigureEffectDisplay();
+	BG_PLTT[0] = 0;
+	BG_PLTT[1] = 0;
+	work->transfer_mode = 0;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	BattleEffect_WipeCanvas(0, 0);
+	BattleFx_SelectLivingTargets(work->effect);
+	BattleFx_SpawnObjects(9, 370, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_SlashSheet, work->sheet, 1, 1);
+	Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_LimePalette), 128);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	path = Resource_GetTableEntry((s32)&ResourceId_StagedParticlePath);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
+	draw[0] = cache[2];
+	/* FAKEMATCH: needed to match: the one-pass block keeps the table address after the second read */
+	do
+	{
+		draw[1] = cache[3];
+	} while (0);
+	gProjection.center_y = 240;
+	WaitFrames(1);
+	BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+	work->scroll_timer = 0;
+	work->scroll_interval = 4;
+	work->scroll_step_x = -1;
+	work->scroll_step_y = 0;
+	Scheduler_AddOrUpdateCallback(BattleFx_AdvanceScrollOnInterval, 0x480);
+	presentation->busy = 1;
+	BattleEffect_WipeCanvas(0, 1);
+	REG_DISPCNT = 0x7741;
+	REG_BG2PA = 0x80;
+	REG_BLDALPHA = 0x1010;
+	REG_BLDCNT = 0x3f44;
+	path_x = 0;
+	path_y = 0;
+	for (i = 0; i != 16; i++)
+	{
+		struct EffectStep *slash = &work->particles[i];
+
+		slash->x = (Random16() % 96 + 12) << 16;
+		slash->y = ((Random16() & 63) + 32) << 16;
+		slash->velocity_x = 0;
+		slash->velocity_y = 0;
+		slash->variant = 0;
+		for (j = 0; j != 24; j++)
+		{
+			TRAILS[i * 24 + j].x = (Random16() & 15) + 48;
+			Render_ResetTransformState();
+			SceneTransform_ApplyRoll(Random16() & 0xffff);
+			SceneTransform_ApplyPitch(Random16() & 0xffff);
+			SceneTransform_ApplyYaw(Random16() & 0xffff);
+			Graphics_SaveTransferWork(MATRICES + (i * 24 + j) * 48);
+		}
+	}
+	work->transfer_mode = 2;
+	work->transfer_value = 50;
+	REG_BG2CNT = 0x784;
+	for (frame = 0; frame != 220 && !(gKeysRepeat & (KEY_A | KEY_B)); frame++)
+	{
+		if (frame <= 209)
+		{
+			if (frame == 0)
+			{
+				path_x = (path[0] << 8) + (u8)path[1];
+				path_y = (path[2] << 8) + (u8)path[3];
+				path += 4;
+			}
+			else
+			{
+				path_x += path[0];
+				path_y += path[1];
+				path += 2;
+			}
+			position[3] = 0;
+			position[1] = 0xff0000;
+			for (row = 0; row != 3; row++)
+			{
+				for (column = 0; column != 3; column++)
+				{
+					position[0] = (path_x + 80 + column * 32) << 16;
+					position[2] = (64 - path_y + row * 32) << 16;
+					Object_ApplyProjectedPlacementFar(
+						OBJECTS[row * 3 + column], position, &StagedParticles_UnitScale, 0);
+				}
+			}
+		}
+		point[1] = 0;
+		point[2] = 0;
+		if (frame == 48)
+		{
+			work->fade_frames = 24;
+			work->fade_step = 0;
+		}
+		for (i = 0; i != 16; i++)
+		{
+			s32 start = i * 8 + 64;
+
+			if (frame >= start)
+			{
+				struct EffectStep *slash = &work->particles[i];
+				s32				   x = HI(slash->x);
+				s32				   y = HI(slash->y);
+
+				if (frame == i * 8 + 84)
+					AudioCommand_PlayFar(212);
+				if (frame >= i * 8 + 85)
+				{
+					slash->x += slash->velocity_x;
+					slash->y += slash->velocity_y;
+					slash->velocity_x -= 0x10000;
+					slash->velocity_y += 0x20000;
+					draw[0](canvas, work->sheet + SLASH_TOP, x + 4, y - 40, 16, 21);
+					draw[0](canvas, work->sheet + SLASH_MIDDLE, x - 16, y - 19, 29, 35);
+					draw[0](canvas, work->sheet + SLASH_BOTTOM, x - 20, y + 16, 21, 24);
+				}
+				else if (frame >= i * 8 + 80)
+				{
+					switch (frame - start - 16)
+					{
+					case 0:
+						draw[0](canvas, work->sheet + SLASH_FLASH_1, x - 7, y - 14, 14, 28);
+						break;
+					case 1:
+						draw[0](canvas, work->sheet + SLASH_FLASH_2, x - 11, y - 22, 23, 44);
+						break;
+					case 2:
+						draw[0](canvas, work->sheet + SLASH_FLASH_3_TOP, x - 4, y - 31, 20, 30);
+						draw[0](canvas, work->sheet + SLASH_FLASH_3_BOTTOM, x - 16, y - 1, 22, 33);
+						break;
+					case 3:
+						draw[0](canvas, work->sheet + SLASH_FLASH_4_TOP, x + 1, y - 38, 18, 27);
+						draw[0](canvas, work->sheet + SLASH_FLASH_4_MIDDLE, x - 11, y - 11, 22, 22);
+						draw[0](canvas, work->sheet + SLASH_FLASH_4_BOTTOM, x - 19, y + 11, 19, 28);
+						break;
+					case 4:
+						draw[0](canvas, work->sheet + SLASH_FLASH_5_TOP, x + 4, y - 40, 16, 23);
+						draw[0](canvas, work->sheet + SLASH_FLASH_5_MIDDLE, x - 10, y - 17, 23, 28);
+						draw[0](canvas, work->sheet + SLASH_FLASH_5_BOTTOM, x - 20, y + 11, 20, 28);
+						break;
+					}
+				}
+				else
+				{
+					for (j = 0; j != 24; j++)
+					{
+						struct EffectStep *trail = &TRAILS[i * 24 + j];
+
+						if (trail->x > 0)
+						{
+							Graphics_LoadTransferWork(MATRICES + (i * 24 + j) * 48);
+							point[0] = trail->x;
+#if defined(TBS_EDITION_JA)
+							{
+								/* FAKEMATCH: needed to match: naming the result pointer keeps the point address in a register across this loop */
+								struct EffectPosition *out = &screen;
+
+								EffectPosition_ApplyBaseAndYOffset(point, out);
+							}
+							screen.x = (screen.x >> 1) + x;
+							screen.y = screen.y + y;
+#else
+							EffectPosition_ApplyBaseAndYOffset(point, &screen);
+							screen.x = (screen.x >> 1) + x;
+							screen.y = screen.y + y + 16;
+#endif
+							trail->x -= 4;
+							draw[1](canvas, sheet + ParticleStreams_CellOffsets[4], screen.x - 2,
+								screen.y - 5, 5, 10);
+						}
+					}
+				}
+			}
+		}
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	Scheduler_RemoveCallback(BattleFx_AdvanceScrollOnInterval);
+	presentation->busy = 0;
+	gBgScroll[1].x = scroll_x;
+	BattleEffect_SetupBlendedDisplay();
+	for (i = 0; i != 9; i++)
+		ResourceObject_ReleaseFar((struct ResourceObjectWork *)OBJECTS[i]);
+	REG_BG2PA = 0x80;
+	REG_DISPCNT = 0x7741;
+	Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, Ram_MapCellBuffer, 1, 0);
+	for (i = 0; i != 32; i++)
+	{
+		struct EffectStep *slash = &work->particles[i];
+		s32				   member = i % 6;
+
+		if (member < work->effect->count)
+		{
+			EffectPosition_ApplyStepAndYOffset(work->effect->actors[member], &target);
+			slash->y = -((Random16() & 31) + 40);
+			slash->x = target.x / 2 + (80 - slash->y) / 2;
+		}
+		else
+		{
+			slash->x = (Random16() & 63) + 80;
+			slash->y = -((Random16() & 31) + 40);
+		}
+		slash->variant = -1;
+	}
+	for (frame = 0; frame != 88; frame++)
+	{
+		for (i = 0; i != 24; i++)
+		{
+			struct EffectStep *slash = &work->particles[i];
+
+			if (frame >= i * 2 || frame > 40)
+			{
+				if (slash->variant >= 0)
+				{
+					if (slash->variant <= 23)
+					{
+						s32 cell = slash->variant / 4;
+						u32 width;
+
+						draw[i & 1](canvas, Ram_MapCellBuffer + PuffArc_CellSourceOffsets[cell],
+							slash->x - ((width = PuffArc_CellWidths[cell]) >> 1) - 8,
+							slash->y + PuffArc_CellBiasY[cell] - 40, width,
+							PuffArc_CellHeights[cell]);
+						if (slash->variant <= 11)
+						{
+							draw[0](canvas, work->sheet + SLASH_TOP, slash->x + 4, slash->y - 40,
+								16, 21);
+							draw[0](canvas, work->sheet + SLASH_MIDDLE, slash->x - 16,
+								slash->y - 19, 29, 35);
+						}
+					}
+					slash->variant++;
+				}
+				else
+				{
+					s32 height = 24;
+
+					if (slash->y > 56)
+						height = height - slash->y + 56;
+					draw[0](canvas, work->sheet + SLASH_TOP, slash->x + 4, slash->y - 40, 16, 21);
+					draw[0](
+						canvas, work->sheet + SLASH_MIDDLE, slash->x - 16, slash->y - 19, 29, 35);
+					if (height > 0)
+						draw[0](canvas, work->sheet + SLASH_BOTTOM, slash->x - 20, slash->y + 16,
+							21, height);
+					slash->x -= 6;
+					slash->y += 12;
+					if (slash->y > 79)
+					{
+						s32 member;
+
+						slash->variant = 0;
+						work->shake_frames = 2;
+						AudioCommand_PlayFar(134);
+						member = i % 6;
+						if (member < work->effect->count)
+						{
+							ObjectGroup_UpdateMembers(
+								work->effect->actors[member], 7, 5, member, 8);
+							BattleMotion_ApplyVariantMotionFar(work->effect->actors[member], 1);
+						}
+					}
+				}
+			}
+		}
+		Camera_ApplyShake(4, 8);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// columns.c
+// バトル演出：地面から次々に伸びるつる・柱・とげと土けむり
+//--------------------------------------------------------------------------
+
+#undef Camera_ApplyShake
+
+// 伸びる 1 本（struct EffectStep に重ねて使う）
+struct DualColumn
+{
+	s32 x; // 根もと（キャンバスのドット）
+	s32 y;
+	u8	unknown_08[8];
+	s32 height; // 伸びきったときの長さ
+	u8	unknown_14[4];
+	s32 start; // 伸び始めるフレーム
+};
+
+// 土けむり 1 つ（gMapCellBuffer に並べる）
+struct DualPuff
+{
+	s32 x;
+	s32 y;
+	u8	unknown_08[16];
+	s32 age; // 経過フレーム（-1 は空き）
+};
+
+#define PUFFS ((struct EffectStep *)Ram_MapCellBuffer) // とげの土けむり
+
+void BattleFx_RunDualTableMode0(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunDualTable(effect, 0);
+}
+
+void BattleFx_RunDualTableMode1(struct BattleEffectArgument *effect)
+{
+	BattleFx_RunDualTable(effect, 1);
+}
+
+//--------------------------------------------------------------------------
+// つる（mode 0）か緑の柱（mode 1）が、左右交互に 4 フレームおきに伸びる
+// 本数は DualTable_ColumnCounts[variant]、根もとから土けむりが上がる
+//--------------------------------------------------------------------------
+void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
+{
+	void				   **heap;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	void					*rectangle[2];
+	void					*second_slot;
+
+	s32	   frame;
+	s32	   duration;
+	void **draw;
+	s32	   cue_frame;
+	s32	   fade_start;
+	s32	   fade_end;
+	s32	   start;
+
+	u8 *age;
+
+	struct DualColumn *seed;
+	s32				   x;
+	s32				   height;
+	s32				   limit;
+
+	s32				   puff_cells;
+	struct DualColumn *column;
+	s32				   length;
+	s32				   reach;
+	s8				   pillar_height;
+
+	s32 n;
+	s32 react_frame;
+
+	s32				 i;
+	struct DualPuff *puff;
+	s32				 puff_age;
+	s32				 image;
+
+	heap = (void **)gBattleFxWork;
+	cursor = heap;
+	work = *cursor++;
+	canvas = *cursor;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(1);
+	REG_BG2PA = 0x100; // 横も等倍
+	REG_BLDCNT = 0;
+	if (mode == 1)
+	{
+		Resource_LoadAndDecompress((s32)&ResourceId_GreenPillarSheet, work->sheet, 1, 1);
+	}
+	else
+	{
+		Resource_LoadAndDecompress((s32)&ResourceId_VineSheet, work->sheet, 1, 1);
+	}
+	if (work->effect->side == 1)
+	{
+		REG_BG2X = -0x7000; // 112 ドット右へ
+	}
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_NURI);
+	rectangle[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+		GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_NURI);
+	second_slot = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+	/* FAKEMATCH: needed to match: the columns draw through a second pointer to the pair, whose address the frame keeps in a stack slot */
+	draw = rectangle;
+	draw[1] = second_slot;
+
+	duration = DualTable_ColumnCounts[work->effect->variant] * 4 + 56;
+
+	// 土けむりをすべて空きにする
+	age = gMapCellBuffer + 0x18;
+	i = 0;
+	do
+	{
+		i++;
+		*(s32 *)age = -1;
+		age += sizeof(struct DualPuff);
+	} while (i != 1024);
+
+	// 16 本の根もとと長さ
+	i = 0;
+	seed = (struct DualColumn *)work->particles;
+	do
+	{
+		x = (DualTable_ColumnX[i] + (7 & Random16())) - 4;
+		seed->y = i / 2 + 108;
+		seed->x = x;
+		height = (63 & Random16()) + 55;
+		seed->height = height;
+		limit = DualTable_HeightLimits[i % 3];
+		if (limit < height)
+		{
+			seed->height = limit;
+		}
+		limit = i * 4 + 8;
+		seed->start = limit;
+		i++;
+		seed++;
+	} while (i != 16);
+
+	work->transfer_mode = 1; // 毎フレーム 0 で消す
+	work->transfer_value = 0;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	frame = 0;
+	if (duration != 0)
+	{
+		cue_frame = duration - 64;
+		fade_start = duration - 20;
+		fade_end = duration - 4;
+		do
+		{
+			if (frame == cue_frame)
+			{
+				BattleEventRuntime_BeginPhaseFar(132);
+			}
+			if (frame >= fade_start && frame < fade_end)
+			{
+				// 終わりの 16 フレームで薄くする
+				REG_BLDCNT = 0x3f44;
+				REG_BLDALPHA = ((duration - frame) - 5) | 0x1000;
+			}
+			if (frame < fade_end)
+			{
+				i = 0;
+				if (DualTable_ColumnCounts[work->effect->variant] != 0)
+				{
+					do
+					{
+						column = (struct DualColumn *)((u8 *)work->particles
+													   + i * sizeof(struct DualColumn));
+						start = i * 4 + 8;
+						if (frame == i * 4 + 9)
+						{
+							work->shake_frames = 2;
+						}
+
+						// 1 フレームに 8 ドットずつ伸ばす（奇数番は左右反転）
+						if (frame > start)
+						{
+							u32 shape = i % 3;
+
+							length = (frame - start) * 8;
+							reach = column->height;
+							if (length > reach)
+							{
+								length = reach;
+							}
+							if (mode == 0)
+							{
+								{
+									s32 side = 1 & i;
+									s32 cell = DualTable_VineCells[shape];
+									shape = DualTable_VineWidths[shape];
+									((DrawRectangleFn)draw[side])(canvas, work->sheet + cell,
+										column->x - (shape >> 1), column->y - length, shape,
+										length);
+								}
+							}
+							else
+							{
+								pillar_height = DualTable_PillarHeights[7 & i];
+								if (length > pillar_height)
+								{
+									length = pillar_height;
+								}
+								{
+									s32 side = 1 & i;
+									s32 cell = DualTable_PillarCells[shape];
+									shape = DualTable_PillarWidths[shape];
+									((DrawRectangleFn)draw[side])(canvas, work->sheet + cell,
+										column->x - (shape >> 1), column->y - length, shape,
+										length);
+								}
+							}
+						}
+
+						// 伸び始めて 4 フレーム目に対象が反応する
+						n = 0;
+						if (work->effect->count != 0)
+						{
+							react_frame = start + 4;
+							do
+							{
+								if (frame == react_frame)
+								{
+									if (!(i & 1))
+									{
+										AudioCommand_PlayFar(133);
+									}
+									ObjectGroup_UpdateMembers(work->effect->actors[n], 7, 5, n, 3);
+								}
+								n++;
+							} while (n != work->effect->count);
+						}
+						else
+						{
+							react_frame = start + 4;
+						}
+
+						// 4・8 フレーム目に、空きの土けむりをひとつ根もとに出す
+						if ((frame == react_frame) || (frame == (start + 8)))
+						{
+							/* FAKEMATCH: needed to match: the scan reuses length as its puff pointer */
+							length = (u32)gMapCellBuffer;
+							n = 0;
+							while (n != 512)
+							{
+								if (((struct DualPuff *)length)->age == -1)
+								{
+									((struct DualPuff *)length)->x =
+										((Random16() & 0xf) + column->x) - 8;
+									((struct DualPuff *)length)->y = (Random16() & 0xf) + 80;
+									((struct DualPuff *)length)->age = 0;
+									break;
+								}
+								length += sizeof(struct DualPuff);
+								n++;
+							}
+						}
+						i++;
+					} while (i != DualTable_ColumnCounts[work->effect->variant]);
+				}
+			}
+
+			// 土けむり：7 コマを 2 フレームずつ、左右対称に描く
+			i = 0;
+			puff = (struct DualPuff *)gMapCellBuffer;
+			do
+			{
+				puff_age = puff->age;
+				if (puff_age >= 0)
+				{
+					image = puff_age / 2;
+					puff_cells = 0x1e59;
+					if (mode != 0)
+					{
+						puff_cells = 0xaff;
+					}
+					((DrawRectangleFn)rectangle[0])(canvas,
+						work->sheet + (DualTable_PuffCells[image] + puff_cells),
+						puff->x - DualTable_PuffWidths[image],
+						puff->y - (s8)DualTable_PuffHeights[image] / 2, DualTable_PuffWidths[image],
+						(s8)DualTable_PuffHeights[image]);
+					((DrawRectangleFn)rectangle[1])(canvas,
+						work->sheet + (DualTable_PuffCells[image] + puff_cells), puff->x,
+						puff->y - (s8)DualTable_PuffHeights[image] / 2, DualTable_PuffWidths[image],
+						(s8)DualTable_PuffHeights[image]);
+					puff->age++;
+					if (puff->age == 14)
+					{
+						puff->age = -1;
+					}
+				}
+				puff++;
+				i++;
+			} while (i != 512);
+
+			Camera_ApplyShake(4, 4);
+			ObjectGroup_TickMemberTimers();
+			work->transfer_pending = 1;
+			WaitFrames(1);
+			frame++;
+		} while (frame != duration);
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// 対象の列のまん中から、緑のつるが 16 本、2 フレームおきに伸びて縮む
+//--------------------------------------------------------------------------
+void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
+{
+	u32						*cache, *entry;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	DrawRectangle			 draw[2];
+	s32						 origin_x, origin_y;
+	struct EffectPosition	 first, last;
+	s32						 i, frame, cell, height, ofs, middle;
+	struct EffectStep		*column;
+
+	cache = (u32 *)(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+	entry = cache;
+	work = (struct BattleEffectWork *)*entry++;
+	canvas = (void *)*entry;
+	work->effect = effect;
+	BattleFx_PrepareCanvasEffect(effect, 4, effect->side, 4, &origin_x, &origin_y);
+	BattleFx_BeginCanvasLayer(1);
+	REG_BG2PA = 0x100; // 横も等倍
+	REG_BLDCNT = 0;
+	Resource_LoadAndDecompress((s32)&ResourceId_GreenVineSheet, work->sheet, 1, 1);
+
+	// 最初と最後の対象のまん中を、キャンバスの x = 64 に合わせる
+	EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &first);
+	EffectPosition_ApplyStepAndYOffset(work->effect->actors[work->effect->count - 1], &last);
+	middle = first.x;
+	middle += (last.x - middle) / 2;
+	first.x = middle;
+	REG_BG2X = (64 - first.x) << 8;
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_NURI);
+	draw[0] = (DrawRectangle)cache[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+		GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_NURI);
+	draw[1] = (DrawRectangle)cache[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+	column = work->particles;
+	i = 0;
+	do
+	{
+		column[i].x = RisingColumns_ColumnOffsets[i] + 64;
+		i++;
+	} while (i != 16);
+	work->transfer_mode = 1; // 毎フレーム 0 で消す
+	work->transfer_value = 0;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	frame = 0;
+	do
+	{
+		if (frame == 32)
+		{
+			AudioCommand_PlayFar(143);
+			for (i = 0; i != work->effect->count; i++)
+				ObjectGroup_UpdateMembers(work->effect->actors[i], 7, 5, i, 16);
+		}
+		i = 0;
+		column = work->particles;
+		do
+		{
+			if (frame == i * 4 + 5)
+				work->shake_frames = 2;
+
+			// 1 フレームに 4 ドット伸びて 32 で止まり、i * 2 + 32 フレーム目から縮む
+			ofs = i * 2;
+			if (frame > ofs + 4)
+			{
+				cell = (frame / 4 + i) % 5; // 32x32 を 5 コマ
+				if (frame < ofs + 32)
+				{
+					height = (frame - ofs) * 4 - 16;
+					if (height > 32)
+						height = 32;
+				}
+				else
+				{
+					height = 160 - (frame - ofs) * 4;
+				}
+				if (height > 0)
+					draw[i & 1](canvas, work->sheet + (cell << 10), column->x - 16,
+						(i & 7) - height + 104, 32, height);
+			}
+			i++;
+			column++;
+		} while (i != 16);
+		Camera_ApplyShake(4, 4);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+		frame++;
+	} while (frame != 70);
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// とげが 8 フレームおきに地面から突き出し、根もとから土けむりが上がる
+// 本数は BattleFxPillar_Counts[variant]、向きと大きさは BattleFxPillar_Kinds
+//--------------------------------------------------------------------------
+void BattleFx_RaisePillars(struct BattleEffectArgument *effect)
+{
+	void					*canvas;
+	s32						 frame;
+	DrawRectangle			 draw_flip;
+	DrawRectangle			 draw;
+	s32						 total;
+	u32						*cache;
+	u32						*cursor;
+	struct BattleEffectWork *work;
+	s32						 i;
+	s32						 j;
+	s32						 age;
+	s32						 start;
+
+	cache = (u32 *)(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+	cursor = cache;
+	work = (struct BattleEffectWork *)*cursor++;
+	canvas = (void *)*cursor;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(1);
+	REG_BG2PA = 0x100; // 横も等倍
+	REG_BLDCNT = 0;
+	REG_BLDALPHA = 0x1010;
+	Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work->sheet, 1, 1);
+	if (work->effect->side == 1)
+	{
+		REG_BG2X = -0x7000; // 112 ドット右へ
+	}
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_NURI);
+	draw = ((DrawRectangle *)cache)[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+		GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_NURI);
+	work->transfer_mode = 1; // 毎フレーム 0 で消す
+	work->transfer_value = 0;
+	draw_flip = ((DrawRectangle *)cache)[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	total = BattleFxPillar_Counts[work->effect->variant] * 8 + 56;
+
+	for (i = 0; i != 1024; i++)
+	{
+		PUFFS[i].variant = -1; // 空き
+	}
+
+	for (frame = 0; frame != total; frame++)
+	{
+		if (frame == total - 64)
+		{
+			BattleEventRuntime_BeginPhaseFar(132);
+		}
+		if (frame >= total - 16)
+		{
+			// 終わりの 16 フレームで薄くする
+			REG_BLDCNT = 0x3f44;
+			REG_BLDALPHA = (total - frame - 1) | 0x1000;
+		}
+
+		for (i = 0; i != BattleFxPillar_Counts[work->effect->variant]; i++)
+		{
+			start = i * 8 + 8;
+			age = frame - (i * 8 + 8);
+			if (frame > start)
+			{
+				s32 h;
+				s32 w;
+
+				// 種類 0・1 は大きいとげ（48 幅）、2・3 は小さいとげ（32 幅）
+				// 奇数は左右反転で、伸びるにつれて横へずれる
+				if (BattleFxPillar_Kinds[i] < 2)
+				{
+					h = age * 16;
+					w = age * 6;
+					if (h > 80)
+					{
+						h = 80;
+					}
+					if (w > 30)
+					{
+						w = 30;
+					}
+					if (BattleFxPillar_Kinds[i] & 1)
+					{
+						draw_flip(canvas, work->sheet, BattleFxPillar_X[i] - w, 108 - h, 48, h);
+					}
+					else
+					{
+						draw(canvas, work->sheet, BattleFxPillar_X[i] + w, 108 - h, 48, h);
+					}
+				}
+				else
+				{
+					h = age * 8;
+					w = age;
+					if (h > 64)
+					{
+						h = 64;
+					}
+					if (age > 8)
+					{
+						w = 8;
+					}
+					if (BattleFxPillar_Kinds[i] & 1)
+					{
+						draw_flip(
+							canvas, work->sheet + 0xf00, BattleFxPillar_X[i] - w, 108 - h, 32, h);
+					}
+					else
+					{
+						draw(canvas, work->sheet + 0xf00, BattleFxPillar_X[i] + w, 108 - h, 32, h);
+					}
+				}
+				if (frame == start + 1)
+				{
+					work->shake_frames = 3;
+				}
+
+				// 突き出して 2 フレームの間、毎フレーム土けむりをひとつ出す
+				if (frame < start + 3)
+				{
+					s32				   y = (Random16() & 31) + 72;
+					struct EffectStep *p;
+					for (j = 0; j != 64; j++)
+					{
+						p = &PUFFS[j];
+						if (p->variant == -1)
+						{
+							p->x = BattleFxPillar_X[i] + (Random16() & 31) + 32;
+							if (p->x > 96)
+							{
+								p->x = 96;
+							}
+							p->y = y;
+							p->variant = 0;
+							break;
+						}
+					}
+				}
+			}
+			for (j = 0; j != work->effect->count; j++)
+			{
+				if (frame == start + 4)
+				{
+					AudioCommand_PlayFar(132);
+					ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 3);
+				}
+			}
+		}
+
+		// 土けむり：7 コマを 2 フレームずつ、左右対称に描く
+		for (i = 0; i != 64; i++)
+		{
+			if (PUFFS[i].variant >= 0)
+			{
+				s32 n = PUFFS[i].variant / 2;
+				draw(canvas, work->sheet + BattleFxPillar_PuffCells[n],
+					PUFFS[i].x - BattleFxPillar_PuffWidths[n],
+					PUFFS[i].y - (s8)BattleFxPillar_PuffHeights[n] / 2,
+					BattleFxPillar_PuffWidths[n], (s8)BattleFxPillar_PuffHeights[n]);
+				draw_flip(canvas, work->sheet + BattleFxPillar_PuffCells[n], PUFFS[i].x,
+					PUFFS[i].y - (s8)BattleFxPillar_PuffHeights[n] / 2,
+					BattleFxPillar_PuffWidths[n], (s8)BattleFxPillar_PuffHeights[n]);
+				if (++PUFFS[i].variant == 14)
+				{
+					PUFFS[i].variant = -1;
+				}
+			}
+		}
+		Camera_ApplyShake(8, 8);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// lightning_bolts.c
+// 戦闘エフェクト：対象ごとに落ちる稲妻と、火花・光
+//--------------------------------------------------------------------------
+
+#undef SPARKS
+
+#undef SPARKS
+#define SPARKS ((struct EffectStep *)Ram_MapCellBuffer) // 対象ひとりに 128 個
+// 光ごとに作りなおす 2 つめの描画関数
+#define BLIT_ALT \
+	((DrawRectangle *)gBattleFxWork)[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT]
+
+//--------------------------------------------------------------------------
+// 対象ごとに 8 フレームずつずらして稲妻を落とす
+// effect : variant が稲妻の本数・火花の数・光の数と広がりを決める
+//--------------------------------------------------------------------------
+void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
+{
+	void				   **heap;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 i;
+	s32						 frame;
+	DrawRectangle			 draw[2];
+	u8						*sprites;
+	struct EffectPosition	 pos;
+	s32						 j;
+
+	heap = (void **)gBattleFxWork;
+	cursor = heap;
+	work = *cursor++;
+	canvas = *cursor;
+	sprites = heap[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(1);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+	draw[0] = heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+	Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, work->sheet + 0xc56, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+	for (j = 0; j != 1024; j++)
+		SPARKS[j].variant = 0;
+	for (j = 0; j != 64; j++)
+		work->particles[j].variant = -1;
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	AudioCommand_PlayFar(138);
+	for (frame = 0; frame != work->effect->count * 8 + 40; frame++)
+	{
+		if (frame == 24)
+			BattleEventRuntime_BeginPhaseFar(133);
+		for (i = 0; i != work->effect->count; i++)
+		{
+			if (frame == i * 8)
+				Iwram_FillWords(canvas, 0x4000, 0x10101010);
+		}
+		for (i = 0; i != work->effect->count; i++)
+		{
+			s32 start = i * 8;
+
+			EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[i], &pos);
+			pos.x /= 2;
+			if (frame == start + 1)
+				work->shake_frames = 4;
+			if (frame == start + 4)
+			{
+				ObjectGroup_UpdateMembers(work->effect->actors[i], 7, 5, i, 6);
+				BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 6);
+			}
+
+			// 稲妻 (幅 24) : 1 フレームに 64 ドット伸び、104 ドットで止まる
+			if (frame >= start && frame < start + 16)
+			{
+				s32 height = (frame - start) << 6;
+
+				if (height > 104)
+					height = 104;
+				for (j = 0; j != LightningBolts_Counts[work->effect->variant * 4 + 3]; j++)
+				{
+					draw[0](canvas, work->sheet + (((i + frame + j) / 2) & 3) * 2880 + 0xc56,
+						pos.x - 12, 0, 24, height);
+				}
+
+				// 足もと (y = 104) から上向き ±90 度へ火花を散らす
+				if (frame == start + 2)
+				{
+					for (j = 0; j != LightningBolts_Counts[work->effect->variant * 4]; j++)
+					{
+						struct EffectStep *spark = &SPARKS[i * 128 + j];
+						s32				   speed = (Random16() & 0x1ff) + 64;
+						s32				   angle = (Random16() & 0x7fff) - 0x4000;
+
+						spark->x = pos.x << 16;
+						spark->y = 104 << 16;
+						spark->velocity_x = (Trig_Sin(angle) * speed) >> 5;
+						spark->velocity_y = -(Trig_Cos(angle) * speed) >> 6;
+						spark->variant = (Random16() & 7) + 32;
+					}
+				}
+			}
+
+			// 光 : 足もとから上のでたらめな位置に、でたらめな向き (左右・上下反転) で描く
+			if (frame >= start + 2 && frame < start + 24)
+			{
+				for (j = 0; j != LightningBolts_Counts[work->effect->variant * 4 + 1]; j++)
+				{
+					s32 kind = j & 3;
+					s32 drop = Random16() % LightningBolts_Counts[work->effect->variant * 4 + 2];
+					s32 spread = LightningBolts_Counts[work->effect->variant * 4 + 2] - drop + 1;
+					s32 y = pos.y - drop - (BattleFx_GlintCellHeights[kind] >> 1) + 8;
+					u32 r = Random16();
+					s32 x = pos.x;
+
+					x += r % spread;
+					x -= spread / 2;
+					x -= (BattleFx_GlintCellWidths[kind] >> 1);
+
+					BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+						LightningBolts_GlintPalettes[Random16() & 3] | GOUSEI_CLIP_X
+							| GOUSEI_CLIP_Y,
+						LightningBolts_GlintModes[work->effect->variant]);
+					BLIT_ALT(canvas, work->sheet + BattleFx_GlintCellOffsets[kind], x, y,
+						BattleFx_GlintCellWidths[kind], BattleFx_GlintCellHeights[kind]);
+					Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+				}
+			}
+		}
+
+		// 火花 : 地面で半分の速さで跳ね返り、残りが少ないほど小さく描く
+		for (j = 0; j != 1024; j++)
+		{
+			struct EffectStep *spark = &SPARKS[j];
+
+			if (spark->variant > 0)
+			{
+				spark->variant--;
+				EffectStep_AdvanceWithGravity2D(spark, 60, 0x1000);
+				if (spark->y > 104 << 16)
+				{
+					spark->velocity_y = -spark->velocity_y / 2;
+				}
+				else if ((spark->x >= 0 && spark->x < 127 << 16) && spark->y >= 0)
+				{
+					s32 size = spark->variant / 16 + 1;
+					s32 x = spark->x >> 16;
+					s32 y = spark->y >> 16;
+
+					draw[0](canvas, sprites + ParticleStreams_CellOffsets[size - 1], x - size / 2,
+						y - size, size, size * 2);
+				}
+			}
+		}
+		Camera_ApplyShake(2, 8);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+#undef SceneTransform_ApplyPosition
+
+void BattleFx_PrepareCanvasEffect(
+	struct BattleEffectArgument *effect, s32 kind, s32 side, s32 anchor, s32 *out_x, s32 *out_y)
+{
+	s32						 base[3];
+	s32						 goal[3];
+	s32						 step[3];
+	s32						 point[3];
+	struct EffectPosition	 position;
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	DrawRectangle			 draw[2];
+	u8						*sheet;
+	s32						 total;
+	struct MotionObject		*target;
+	struct MotionObject		*actor;
+	u8						*palette;
+	s32						 resource;
+	s32						 frame;
+	s32						 i;
+	s32						 size;
+
+	heap_cache = (void **)gBattleFxWork;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	sheet = heap_cache[2];
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	/* FAKEMATCH: needed to match: the canvas size sits in a local set here, well ahead of the two clears that use it */
+	size = 0x4000;
+	work->fade_frames = 24;
+	work->fade_step = 0;
+	if (kind > 3)
+	{
+		kind -= 4;
+		total = 84;
+	}
+	else
+	{
+		total = 64;
+	}
+	switch (kind)
+	{
+	case 0:
+		resource = (s32)&ResourceId_VenusDjinnSmallSheet;
+		break;
+	case 1:
+		resource = (s32)&ResourceId_MercuryDjinnSmallSheet;
+		break;
+	case 2:
+		resource = (s32)&ResourceId_MarsDjinnSmallSheet;
+		break;
+	default:
+		resource = (s32)&ResourceId_JupiterDjinnSmallSheet;
+		break;
+	}
+	palette = Resource_GetTableEntry(resource);
+	Iwram_CopyWords((void *)0x05000000, palette, 128);
+	Resource_DecodeType01(palette + 128, work);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	if (side == 1)
+	{
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 3);
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+	}
+	else
+	{
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+	}
+	draw[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+	draw[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+	actor = GetBattleObjectSlotFar(work->effect->actor)->object;
+	target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+	for (i = 0; i != 64; i++)
+	{
+		struct EffectStep *spark = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+		s32				   angle = Random16() & 0xffff;
+		s32				   speed = (Random16() & 255) + 128;
+
+		spark->x = 0;
+		spark->y = ((Random16() & 31) + 20) << 16;
+		spark->z = 0;
+		spark->velocity_x = (Trig_Sin(angle) * speed) >> 5;
+		spark->velocity_y = 0;
+		spark->velocity_z = (Trig_Cos(angle) * speed) >> 5;
+		spark->variant = 0;
+	}
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	base[0] = actor->x;
+	base[1] = 0;
+	base[2] = actor->z;
+	switch (anchor)
+	{
+	case 0:
+		goal[0] = target->x;
+		goal[1] = 0x3c0000;
+		goal[2] = target->z;
+		break;
+	case 1:
+		goal[0] = target->x;
+		goal[1] = 0x3c0000;
+		goal[2] = 0;
+		break;
+	case 2:
+		goal[0] = actor->x;
+		goal[1] = 0x3c0000;
+		goal[2] = actor->z;
+		break;
+	case 3:
+		goal[0] = actor->x;
+		goal[1] = 0x3c0000;
+		goal[2] = 0;
+		break;
+	case 4:
+		goal[0] = 0;
+		goal[1] = 0x3c0000;
+		goal[2] = 0;
+		break;
+	}
+	step[0] = (goal[0] - base[0]) / 40;
+	step[1] = (goal[1] - base[1]) / 40;
+	step[2] = (goal[2] - base[2]) / 40;
+	for (frame = 0; frame != total; frame++)
+	{
+		struct BattleCamera *camera = gCameraWork;
+
+		if (frame > 75)
+			REG_BLDALPHA = (168 - frame * 2) | 0x1000;
+		if (frame == 8)
+			AudioCommand_PlayFar(212);
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+		if (frame >= 6 && frame <= 45)
+		{
+			base[0] += step[0];
+			base[1] += step[1];
+			base[2] += step[2];
+		}
+		SceneTransform_ApplyPosition(base);
+		if (frame == 0)
+			ObjectGroup_UpdateMembers(work->effect->actor, 7, -1, -1, 0);
+		if (frame == 24)
+			ObjectGroup_UpdateMembers(work->effect->actor, 0, -1, -1, 0);
+		for (i = 0; i != 32; i++)
+		{
+			struct EffectStep *spark = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+
+			if (frame >= i / 8 && spark->variant == 0)
+			{
+				s32 size;
+
+				Graphics_SaveTransferWorkOnce();
+				switch (i & 3)
+				{
+				case 0:
+					SceneTransform_ApplyYaw(frame * (i * 32 + 256));
+					break;
+				case 1:
+					SceneTransform_ApplyPitch(-frame * (i * 32 + 256));
+					break;
+				case 2:
+					SceneTransform_ApplyRoll(-frame * (i * 32 + 256));
+					break;
+				case 3:
+					SceneTransform_ApplyPitch(-frame * (i * 32 + 256));
+					SceneTransform_ApplyRoll(-frame * (i * 32 + 256));
+					break;
+				}
+				EffectPosition_ApplyBaseAndYOffset(&spark->x, &position);
+				position.x >>= 1;
+				Graphics_RestoreTransferWork();
+				if (position.depth < 250)
+					position.depth = 250;
+				if (position.depth > 634)
+					position.depth = 634;
+				size = 8 - (position.depth - 250) / 64;
+				draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+					position.x - size / 2, position.y - size, size, size * 2);
+				EffectStep_AdvanceWithGravity3D(spark, 60, 0);
+				if (frame >= i / 8 + 24)
+				{
+					s32 pull_x = -spark->x >> 7;
+					s32 pull_y = -spark->y >> 7;
+					s32 pull_z = -spark->z >> 7;
+
+					spark->velocity_x += pull_x;
+					spark->velocity_y += pull_y;
+					spark->velocity_z += pull_z;
+					spark->velocity_x = spark->velocity_x * 62 / 64;
+					spark->velocity_y = spark->velocity_y * 62 / 64;
+					spark->velocity_z = spark->velocity_z * 62 / 64;
+					if ((pull_x > -2048 && pull_x < 2048) && (pull_z > -2048 && pull_z < 2048))
+						spark->variant = -1;
+				}
+			}
+		}
+		if (frame >= 54 && frame <= 69)
+		{
+			point[0] = Trig_Sin(frame << 10) << 2;
+			point[1] = 0;
+			point[2] = 0;
+			EffectPosition_ApplyBaseAndYOffset(point, &position);
+			*out_x = position.x;
+			*out_y = position.y;
+			position.x >>= 1;
+			draw[0](canvas, work, position.x - 10, position.y - 20, 20, 40);
+		}
+		if (frame == 64)
+		{
+			for (i = 0; i != 64; i++)
+			{
+				struct EffectStep *mote = &work->particles[i];
+				s32				   angle = Random16() & 0xffff;
+				s32				   speed = (Random16() & 255) + 128;
+
+				mote->x = *out_x << 15;
+				mote->y = *out_y << 16;
+				mote->velocity_x = (Trig_Sin(angle) * speed) >> 6;
+				mote->velocity_y = (Trig_Cos(angle) * speed) >> 5;
+				mote->variant = (Random16() & 15) + 8;
+			}
+		}
+		if (frame > 63)
+		{
+			for (i = 0; i != 64; i++)
+			{
+				struct EffectStep *mote = &work->particles[i];
+
+				if (mote->variant >= 0)
+				{
+					s32 size = (mote->variant >> 3) + 2;
+
+					draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+						HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
+					EffectStep_AdvanceWithGravity2D(mote, 60, 0);
+					mote->variant--;
+				}
+			}
+		}
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+	Iwram_ClearWords((void *)0x06004000, size);
+	Iwram_ClearWords(canvas, size);
+	REG_BLDALPHA = 0x1010;
+}
+
+//--------------------------------------------------------------------------
+
+// projectile_volley.c
+
+// バトル効果：BattleFx_RunProjectileVolley の型ごとの入り口
+
+//--------------------------------------------------------------------------
+
+#undef BattleFx_InitializeMode12
+#undef ObjectDispatch_ApplyValueToChildrenFar
+#undef Object_SetMoveTargetFar
+#undef PARTICLES
+#undef SceneTransform_ApplyPosition
+#undef SceneTransform_ApplyScale
+
+#define ObjectDispatch_ApplyValueToChildrenFar \
+	((s32 (*)(s32, s32))ObjectDispatch_ApplyValueToChildrenFar)
+
+#define ARG(e) ((struct BattleEffectArgument *)(e))
+
+#define STEP_HAYAI 0x30 // 絵のアニメの step（ふだんは 0x10）
+#define STEP_FUTSU 0x10
+
+void BattleFx_RunMode0(void *effect)
+{
+	BattleFx_RunProjectileVolley(effect, 0);
+}
+
+void BattleFx_RunMode1(void *effect)
+{
+	BattleFx_RunProjectileVolley(effect, 1);
+}
+
+void BattleFx_RunMode2(void *effect)
+{
+	BattleFx_RunProjectileVolley(effect, 2);
+}
+
+void BattleFx_RunMode3(void *effect)
+{
+	BattleFx_RunProjectileVolley(effect, 3);
+}
+
+void BattleFx_RunMode11(void *effect)
+{
+	BattleFx_RunProjectileVolley(effect, 11);
+}
+
+void BattleFx_RunMode4(void *effect)
+{
+	BattleFx_RunProjectileVolley(effect, 4);
+}
+
+//--------------------------------------------------------------------------
+// 型 5 : 使う者を mode 2 にし、アニメを速めているあいだに放つ
+//--------------------------------------------------------------------------
+void BattleEffect_RunMode5WithAction(void *effect)
+{
+	s32 obj;
+
+	obj = (s32)GetBattleObjectSlotFar(ARG(effect)->actor)->object;
+	ObjectDispatch_ApplyArgumentToChildrenFar(obj, 2);
+	ObjectDispatch_ApplyValueToChildrenFar(obj, STEP_HAYAI);
+	BattleFx_RunProjectileVolley(effect, 5);
+	ObjectDispatch_ApplyValueToChildrenFar(obj, STEP_FUTSU);
+}
+
+//--------------------------------------------------------------------------
+// 型 6 : 型 5 と同じく、アニメを速めて放つ
+//--------------------------------------------------------------------------
+void BattleFx_RunMode6WithAction(void *effect)
+{
+	s32 obj;
+
+	obj = (s32)GetBattleObjectSlotFar(ARG(effect)->actor)->object;
+	ObjectDispatch_ApplyArgumentToChildrenFar(obj, 2);
+	ObjectDispatch_ApplyValueToChildrenFar(obj, STEP_HAYAI);
+	BattleFx_RunProjectileVolley(effect, 6);
+	ObjectDispatch_ApplyValueToChildrenFar(obj, STEP_FUTSU);
+}
+
+void BattleFx_RunMode7(void *effect)
+{
+	BattleFx_RunProjectileVolley(effect, 7);
+}
+
+void BattleFx_RunMode10(void *effect)
+{
+	BattleFx_RunProjectileVolley(effect, 10);
+}
+
+//--------------------------------------------------------------------------
+// 型 9 : 型 5 と同じく、アニメを速めて放つ
+//--------------------------------------------------------------------------
+void BattleFx_RunMode9WithAction(void *effect)
+{
+	s32 obj;
+
+	obj = (s32)GetBattleObjectSlotFar(ARG(effect)->actor)->object;
+	ObjectDispatch_ApplyArgumentToChildrenFar(obj, 2);
+	ObjectDispatch_ApplyValueToChildrenFar(obj, STEP_HAYAI);
+	BattleFx_RunProjectileVolley(effect, 9);
+	ObjectDispatch_ApplyValueToChildrenFar(obj, STEP_FUTSU);
+}
+
+//--------------------------------------------------------------------------
+// approach.c
+// バトル効果：対象へ飛ぶ弾の一斉射撃と、キャラの移動
+//--------------------------------------------------------------------------
+
+void ObjectDispatch_InitFromTable6Far(struct MotionObject *);
+
+extern u8  gBattleFxWork[];
+extern u16 ParticleStreams_CellOffsets[];
+
+// mode ごとの表
+extern u8 Volley_CometHeights[];
+extern u8
+	Volley_Modes[]; // 5 バイトずつ：弾の数、届くまでのフレーム、弾の間隔、対象の間隔、火花の数
+extern u8  Volley_FlashWidths[];
+extern u8  Volley_FlashHeights[];
+extern u8  Volley_FlashSteps[];
+extern u8  Volley_FlashRises[];
+extern u16 Volley_FlashOffsets[];
+extern u16 Volley_PelletOffsets[];
+
+// 粒の表：0- 当たりの光、100- 火花、512- 火の玉の尾
+#define PTCL ((struct EffectStep *)Ram_MapCellBuffer)
+#define PTCL_MAX 1024
+
+void BattleFx_PrepareCanvasEffect(
+	struct BattleEffectArgument *effect, s32 kind, s32 side, s32 mode, s32 *x, s32 *y);
+
+//--------------------------------------------------------------------------
+// 使う者から対象へ弾を飛ばし、当たったら光と火花を出す
+// mode : 弾の絵と飛び方 (0-11)
+//--------------------------------------------------------------------------
+void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
+{
+	struct EffectPosition	 position;
+	s32						 screen_x;
+	s32						 screen_y;
+	void				   **heap;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 i;
+	s32						 j;
+	s32						 frame;
+	struct BlitterPair		 draw;
+	struct BattleCamera		*camera;
+	u8						*sheet;
+	s32						 se_wait;
+	s32						 total;
+	s32						 kind;
+	s32						 shots;
+	s32						 steps;
+	struct MotionObject		*user;
+	s32						 k;
+	s32						 shift;
+	s32						 hit;
+	s32						 x;
+
+	// ワーク、キャンバス、カメラ
+	heap = (void **)gBattleFxWork;
+	cursor = heap;
+	work = *cursor++;
+	canvas = *cursor;
+	camera =
+		*(struct BattleCamera **)((u8 *)heap
+								  - (HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_CAMERA) * sizeof(void *));
+	sheet = heap[2];
+	se_wait = 0;
+	work->effect = effect;
+	kind = effect->variant;
+	if (mode == 10)
+		BattleFx_BeginCanvasLayer(0);
+	else
+		BattleFx_BeginCanvasLayer(1);
+	if (work->effect->prelude == 1)
+		BattleFx_PrepareCanvasEffect(effect, 1, work->effect->side, 2, &screen_x, &screen_y);
+
+	// 128x128 の合成。向こう側なら左右を反転する
+	if (mode == 5)
+	{
+		if (work->effect->side == 1)
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+		else
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, GOUSEI_HIKAKU);
+	}
+	else
+	{
+		if (work->effect->side == 1)
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | GOUSEI_FLIP_X, GOUSEI_KASAN);
+		else
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, GOUSEI_KASAN);
+	}
+	draw.upper = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+
+	// 弾の絵
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	if (mode == 0 || mode == 5 || mode == 8)
+	{
+		if (mode == 5)
+			kind = 2;
+		if (mode == 8)
+			kind = 0;
+		if (kind == 0)
+			Resource_LoadAndDecompress((s32)&ResourceId_CometSheetA, work->sheet + 0x1000, 1, 1);
+		else if (kind == 1)
+			Resource_LoadAndDecompress((s32)&ResourceId_CometSheetB, work->sheet + 0x1000, 1, 1);
+		else
+			Resource_LoadAndDecompress((s32)&ResourceId_CometSheetC, work->sheet + 0x1000, 1, 1);
+		if (mode == 5)
+		{
+			const void *pal = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
+			{
+				Iwram_CopyWords((void *)BG_PLTT, pal, 128);
+			}
+		}
+		Resource_LoadAndDecompress((s32)&ResourceId_WindStreakSheet, work->sheet + 0x2000, 1, 0);
+		if (mode == 5)
+		{
+			const void *pal = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
+			{
+				Iwram_CopyWords((void *)BG_PLTT, pal, 128);
+			}
+		}
+		work->transfer_mode = 2;
+		work->transfer_value = 75;
+	}
+	else if (mode == 1)
+	{
+		Resource_LoadAndDecompress((s32)&ResourceId_ShurikenSheet, work, 1, 1);
+		REG_BLDCNT = 0;
+		work->transfer_mode = 1;
+		work->transfer_value = 0;
+	}
+	else if (mode == 2)
+	{
+		Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_CometSheetA), 128);
+		Resource_LoadAndDecompress((s32)&ResourceId_ProjectileVolleyImage, work, 0, 0);
+		work->transfer_mode = 2;
+		work->transfer_value = 50;
+	}
+	else if (mode == 3 || mode == 4 || mode == 11)
+	{
+		Resource_LoadAndDecompress((s32)&ResourceId_YellowSparkSheet, work, 1, 1);
+		work->transfer_mode = 2;
+		work->transfer_value = 50;
+	}
+	else if (mode == 6)
+	{
+		Resource_LoadAndDecompress((s32)&ResourceId_FireballSheet, work, 1, 1);
+		work->transfer_mode = 2;
+		work->transfer_value = 50;
+	}
+	else
+	{
+		Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work, 1, 1);
+		Resource_LoadAndDecompress(
+			(s32)&ResourceId_MercuryDjinnSmallSheet, work->sheet + 0x65c0, 1, 0);
+		work->transfer_mode = 2;
+		work->transfer_value = 50;
+	}
+	Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	// 弾の出る位置と速さ
+	user = GetBattleObjectSlotFar(work->effect->actor)->object;
+	shots = Volley_Modes[mode * 5];
+	steps = Volley_Modes[mode * 5 + 1];
+	{
+		s32 stagger = Volley_Modes[mode * 5 + 2];
+		s32 delay = Volley_Modes[mode * 5 + 3];
+		s32 height = Battle_GetObjectTableValueFar(work->effect->actor);
+
+		if (work->effect->count * shots > 63) // particles[64] に収める
+			work->effect->count = 1;
+
+		for (i = 0; i != work->effect->count; i++)
+		{
+			struct MotionObject *tgt = GetBattleObjectSlotFar(work->effect->actors[i])->object;
+			s32 tgt_height = Battle_GetObjectTableValueFar(work->effect->actors[i]);
+
+			for (j = 0; j != shots; j++)
+			{
+				struct EffectStep *shot = &work->particles[i * shots + j];
+
+				shot->x = user->x;
+				if (mode == 7)
+					shot->y = user->y + ((Random16() & 15) << 16) + 0x3a0000;
+				else if (mode == 10)
+					shot->y = user->y + height / 2;
+				else if (mode == 6)
+					shot->y = user->y + height / 2;
+				else if (mode == 9)
+					shot->y = user->y + height / 2 + ((16 - (Random16() & 31)) << 16);
+				else if ((u32)(mode - 3) <= 1)
+					shot->y = user->y + height / 2 + ((16 - (Random16() & 31)) << 16);
+				else if (mode == 11)
+					shot->y = user->y + height / 2 + ((32 - (Random16() & 63)) << 16);
+				else if (mode == 5)
+					shot->y = user->y + height / 2;
+				else
+					shot->y = user->y + height;
+				shot->z = user->z;
+				shot->velocity_x = (tgt->x - shot->x) / steps;
+				if (mode == 7)
+					shot->velocity_y =
+						(s32)(tgt->y + ((Random16() & 63) << 16) - shot->y - 0xc0000) / steps;
+				else if (mode == 8)
+					shot->velocity_y =
+						(s32)(tgt->y + ((Random16() & 7) << 16) - shot->y + 0x160000) / steps;
+				else if (mode == 9)
+					shot->velocity_y =
+						(s32)(tgt->y + ((64 - (Random16() & 63)) << 16) - shot->y) / steps;
+				else if (mode == 10)
+					shot->velocity_y =
+						(s32)(tgt->y + ((Random16() & 31) << 16) - shot->y + 0x40000) / steps;
+				else if ((u32)(mode - 3) <= 1 || mode == 11 || mode == 5)
+					shot->velocity_y = 0;
+				else if (mode == 6)
+					shot->velocity_y =
+						(s32)(tgt->y + tgt_height / 2 + ((Random16() & 15) << 16) - shot->y)
+						/ steps;
+				else
+					shot->velocity_y =
+						(s32)(tgt->y + tgt_height - ((Random16() & 15) << 16) - shot->y) / steps;
+				shot->velocity_z = (tgt->z - shot->z) / steps;
+				shot->variant = 0;
+			}
+		}
+		for (i = 0; i != PTCL_MAX; i++)
+			PTCL[i].variant = 0;
+		if (mode == 6)
+			total = work->effect->count * delay + shots * stagger + 32;
+		else
+			total = work->effect->count * delay + shots * stagger + 16;
+
+		//------------------------------------------------------------------
+		// 毎フレームの動きと描画
+		//------------------------------------------------------------------
+		for (frame = 0; frame != total; frame++)
+		{
+			s32 index;
+
+			// 結果の再生を始める
+			if (se_wait > 0)
+				se_wait--;
+			if (mode == 6)
+			{
+				if (frame == 4)
+					AudioCommand_PlayFar(136);
+				if (frame == 32)
+					BattleEventRuntime_BeginPhaseFar(134);
+			}
+			else if (mode == 7)
+			{
+				if (frame == 48)
+					BattleEventRuntime_BeginPhaseFar(133);
+			}
+			else if (mode != 5)
+			{
+				if (frame == 16)
+					BattleEventRuntime_BeginPhaseFar(133);
+			}
+
+			// 前置き：ジンの小さな絵が円を描き、70 フレームから上へ去る
+			if (work->effect->prelude == 1)
+			{
+				s32 x = (-Trig_Sin(frame << 11) << 2 >> 16) + screen_x / 2 - 10;
+				s32 y = (Trig_Cos(frame << 11) << 1 >> 16) + screen_y - 24;
+
+				if (frame > 69)
+					y = y - frame * 2 + 138;
+				if (work->effect->side == 1)
+					BattleEffect_LoadWork(
+						HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | GOUSEI_FLIP_X, GOUSEI_KASAN);
+				else
+					BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, GOUSEI_KASAN);
+				draw.lower = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+				if (frame <= 3)
+					draw.lower(canvas, work->sheet + 0x65c0, x, y, 20, 40);
+				draw.lower(canvas, work->sheet + 0x65c0, x, y, 20, 40);
+				Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+			}
+
+			// 弾
+			Render_ResetTransformState();
+			Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+			index = 0;
+			for (i = 0; i != work->effect->count; i++)
+			{
+				struct MotionObject *tgt = GetBattleObjectSlotFar(work->effect->actors[i])->object;
+
+				for (j = 0; j != shots; j++, index++)
+				{
+					if (j * stagger + i * delay < frame)
+					{
+						struct EffectStep	  *shot = &work->particles[i * shots + j];
+						struct EffectPosition *pos = &position;
+
+						// 画面の位置 (キャンバスの横は半分)
+						EffectPosition_ApplyBaseAndYOffset((s32 *)shot, pos);
+						pos->x >>= 1;
+						shot->x += shot->velocity_x;
+						shot->y += shot->velocity_y;
+						shot->z += shot->velocity_z;
+						if (mode == 6)
+						{
+							// 火の玉の尾を二つ出す
+							shift = 0;
+							for (k = 512; k != PTCL_MAX; k++)
+							{
+								struct EffectStep *p = &PTCL[k];
+
+								if (p->variant == 0)
+								{
+									p->x = position.x << 16;
+									p->y = position.y << 16;
+									p->velocity_x = ((Random16() & 255) - 128) << 11;
+									p->velocity_y = ((Random16() & 255) - 128) << 11;
+									p->variant = (Random16() & 7) + 32;
+									shift++;
+									if (shift == 2)
+										break;
+								}
+							}
+						}
+						if (shot->variant == 0)
+						{
+							// 対象の側に入り、対象の x を越えたら当たり
+							x = shot->x;
+							if (tgt->x < 0)
+							{
+								hit = x < 0;
+								/* FAKEMATCH: conditional cancelling updates end CSE
+								 * before the hit test, preserving the native sign
+								 * result and duplicated side check. Both updates
+								 * disappear; removing both guards loses three
+								 * English instructions and changes 77 rows. */
+								if (tgt)
+								{
+									hit ^= x;
+									hit ^= x;
+								}
+								if (!hit)
+									goto draw_shot;
+							}
+							else
+							{
+								hit = x >= 0;
+								/* FAKEMATCH: the same CSE block end keeps the
+								 * opposite sign result before its side check;
+								 * the cancelling updates emit no instructions. */
+								if (tgt)
+								{
+									hit ^= x;
+									hit ^= x;
+								}
+								if (!hit)
+									goto draw_shot;
+							}
+							if (ABS(x) >= ABS(tgt->x))
+							{
+								s32				   spawned = 0;
+								struct EffectStep *flash = &PTCL[index];
+
+								shot->variant = 1;
+								if (mode == 5)
+								{
+									BattleEventRuntime_BeginPhaseFar(134);
+								}
+								else if (mode != 6 && se_wait == 0)
+								{
+									se_wait = 8;
+									AudioCommand_PlayFar(132);
+								}
+								if (mode == 2)
+								{
+									// はね返る
+									s32 kick = ((Random16() & 31) + 32) << 12;
+
+									if (Random16() & 1)
+										shot->velocity_y += kick;
+									else
+										shot->velocity_y -= kick;
+									shot->velocity_x = -shot->velocity_x;
+								}
+								flash->variant = 1;
+								flash->x = pos->x;
+								flash->y = pos->y;
+								flash->z = 0;
+								if (mode != 7)
+									work->shake_frames = 2;
+								ObjectGroup_UpdateMembers(work->effect->actors[i], 7, 5, i, 8);
+								if (mode != 7 && mode != 9 && mode != 10)
+								{
+									if (mode == 5)
+										BattleMotion_ApplyVariantMotionFar(
+											work->effect->actors[i], 4);
+									else
+										BattleMotion_ApplyVariantMotionFar(
+											work->effect->actors[i], 5);
+								}
+								// 火花
+								shift = mode == 5 ? 12 : 11;
+								for (k = 100; k != 512; k++)
+								{
+									struct EffectStep *p = &PTCL[k];
+
+									if (p->variant == 0)
+									{
+										p->x = position.x << 16;
+										p->y = position.y << 16;
+										p->velocity_x = ((Random16() & 255) - 128) << shift;
+										p->velocity_y = ((Random16() & 255) - 128) << shift;
+										p->variant = (Random16() & 7) + 16;
+										spawned++;
+										if (spawned == Volley_Modes[mode * 5 + 4])
+											break;
+									}
+								}
+							}
+						}
+					draw_shot:
+						if (mode == 0 || mode == 5 || mode == 8)
+						{
+							// 絵は上半分だけで、下半分は上下を反転して描く
+							if (work->effect->side == 1)
+								BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+									CLIP | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+							else
+								BattleEffect_LoadWork(
+									HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, GOUSEI_HIKAKU);
+							((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
+								work->sheet + 0x1000, pos->x - 16,
+								pos->y - Volley_CometHeights[kind], 32, Volley_CometHeights[kind]);
+							Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+							if (work->effect->side == 1)
+								BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+									CLIP | GOUSEI_FLIP, GOUSEI_HIKAKU);
+							else
+								BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+									CLIP | GOUSEI_FLIP_Y, GOUSEI_HIKAKU);
+							((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
+								work->sheet + 0x1000, pos->x - 16, pos->y, 32,
+								Volley_CometHeights[kind]);
+							Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+						}
+						else if (mode == 1)
+						{
+							if (ABS(shot->x) <= ABS(tgt->x))
+								draw.upper(canvas, work->sheet + frame % 6 * 768, pos->x - 16,
+									pos->y - 12, 32, 24);
+						}
+						else if (mode == 7 || mode == 9 || mode == 10)
+						{
+							s32 cell = j & 3;
+							draw.upper(canvas, work->sheet + Volley_PelletOffsets[cell], pos->x - 4,
+								pos->y - 4, 8, 8);
+						}
+						else if (mode == 2)
+						{
+							draw.upper(
+								canvas, work->sheet + j % 6 * 128, pos->x - 4, pos->y - 8, 8, 16);
+						}
+						else if (mode == 3)
+						{
+							draw.upper(canvas, work->sheet + 96, pos->x - 9, pos->y - 7, 18, 13);
+						}
+						else if (mode == 4)
+						{
+							draw.upper(canvas, work, pos->x - 6, pos->y - 4, 12, 8);
+						}
+						else if (mode == 11)
+						{
+							draw.upper(canvas, work->sheet + 330, pos->x - 15, pos->y - 12, 29, 23);
+						}
+						else
+						{
+							draw.upper(canvas, work, pos->x - 20, pos->y - 32, 40, 64);
+						}
+					}
+				}
+			}
+
+			// 当たりの光：12 フレーム。半分の絵を、反転してもう半分描く (奇数は縦横を入れ替えた絵)
+			if (mode == 0 || mode == 5 || mode == 8)
+			{
+				for (i = 0; i != work->effect->count * shots; i++)
+				{
+					struct EffectStep *flash = &PTCL[i];
+
+					if (flash->variant == 1)
+					{
+						s32 step = flash->z / 2;
+
+						if (!(i & 1))
+						{
+							BattleEffect_LoadWork(
+								HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, GOUSEI_HIKAKU);
+							((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
+								work->sheet + Volley_FlashOffsets[step],
+								flash->x - Volley_FlashWidths[step],
+								flash->y - Volley_FlashRises[step], Volley_FlashWidths[step],
+								Volley_FlashHeights[step]);
+							Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+							BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+								CLIP | GOUSEI_FLIP, GOUSEI_HIKAKU);
+							((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
+								work->sheet + Volley_FlashOffsets[step], flash->x,
+								flash->y + Volley_FlashSteps[step] - Volley_FlashRises[step],
+								Volley_FlashWidths[step], Volley_FlashHeights[step]);
+							Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+						}
+						else
+						{
+							BattleEffect_LoadWork(
+								HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, GOUSEI_HIKAKU);
+							((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
+								work->sheet + Volley_FlashOffsets[step] + 0x128a,
+								flash->x - Volley_FlashRises[step],
+								flash->y - Volley_FlashWidths[step], Volley_FlashHeights[step],
+								Volley_FlashWidths[step]);
+							Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+							BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+								CLIP | GOUSEI_FLIP, GOUSEI_HIKAKU);
+							((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
+								work->sheet + Volley_FlashOffsets[step] + 0x128a,
+								flash->x + Volley_FlashSteps[step] - Volley_FlashRises[step],
+								flash->y, Volley_FlashHeights[step], Volley_FlashWidths[step]);
+							Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+						}
+						flash->z++;
+						if (flash->z == 12)
+							flash->variant = 0;
+					}
+				}
+			}
+
+			// 火花：落ちて、下 (y 112) ではね返る
+			for (i = 100; i != 512; i++)
+			{
+				struct EffectStep *p = &PTCL[i];
+
+				if (p->variant > 0)
+				{
+					s32 size = (p->variant >> 3) + 1;
+
+					draw.upper(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+						HI(p->x) - size / 2, HI(p->y) - size, size, size * 2);
+					EffectStep_AdvanceWithGravity2D(p, 60, 0x1000);
+					if (p->y > 0x700000)
+						p->velocity_y = -p->velocity_y / 2;
+					p->variant--;
+				}
+			}
+
+			// 火の玉の尾：上へ昇る
+			for (i = 512; i != PTCL_MAX; i++)
+			{
+				struct EffectStep *p = &PTCL[i];
+
+				if (p->variant > 0)
+				{
+					s32 size = (p->variant >> 4) + 1;
+
+					draw.upper(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+						HI(p->x) - size / 2, HI(p->y) - size, size, size * 2);
+					EffectStep_AdvanceWithGravity2D(p, 60, -0x4000);
+					p->variant--;
+				}
+			}
+			Camera_ApplyShake(4, 4);
+			ObjectGroup_TickMemberTimers();
+			work->transfer_pending = 1;
+			WaitFrames(1);
+		}
+	}
+
+	Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// キャラを、上へはずみをつけて元の位置 (anchor) へ戻す
+//--------------------------------------------------------------------------
+void BattleFx_InitializeRisingObject(s32 id)
+{
+	struct BtlObj		*slot = GetBattleObjectSlotFar(id);
+	struct MotionObject *obj = slot->object;
+
+	obj->acceleration = 0x20000;
+	obj->speed_limit = 0x80000; // 8 ドット/フレーム
+	obj->velocity_y = 0x40000;
+	obj->vertical_motion_strength = 0xab85;
+	obj->vertical_motion_phase = 0;
+	obj->auto_face_motion = 0;
+	obj->snap_to_target = 1;
+	ObjectDispatch_InitFromTable6Far(obj);
+	Object_SetMoveTargetFar(obj, slot->anchor_x, 0, slot->anchor_z);
+	ObjectDispatch_ApplyArgumentToChildrenFar(obj, 1);
+}
+
+//--------------------------------------------------------------------------
+// キャラを、相手までの 8 割の位置へ frames フレームで動かす
+//--------------------------------------------------------------------------
+void BattleFx_SetApproachMotion(s32 id, s32 tgt_id, s32 frames)
+{
+	struct BtlObj		*slot = GetBattleObjectSlotFar(id);
+	struct BtlObj		*tgt_slot = GetBattleObjectSlotFar(tgt_id);
+	struct MotionObject *obj = slot->object;
+	struct MotionObject *tgt = tgt_slot->object;
+	s32					 rate = 80; // %
+	s32					 diff_x = tgt->x - obj->x;
+	s32					 start_x = obj->x;
+	s32					 dx = rate * diff_x / 100;
+	s32					 diff_z = tgt->z - obj->z;
+	s32					 start_z = obj->z;
+	s32					 dz = rate * diff_z / 100;
+	s32					 x = start_x + dx;
+	s32					 z = start_z + dz;
+	s32					 sx = dx >> 8; // 1/256 ドットで距離を求める
+	s32					 sz = dz >> 8;
+	s32					 dist;
+
+	dist = Iwram_Sqrt(sx * sx + sz * sz);
+	dist = (dist << 8) / frames;
+	obj->acceleration = dist;
+	obj->speed_limit = dist;
+	obj->snap_to_target = 1;
+	obj->vertical_motion_strength = 0xab85;
+	obj->velocity_y = 0;
+	obj->vertical_motion_phase = 0;
+	obj->auto_face_motion = 1;
+	ObjectDispatch_InitFromTable6Far(obj);
+	Object_SetMoveTargetFar(obj, x, 0, z);
+	ObjectDispatch_ApplyArgumentToChildrenFar(obj, 2);
+}
+
+//--------------------------------------------------------------------------
+// pack_rows.c
+// タイル：横 2 バイトを 1 バイトに詰める
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+// 1 行 40 バイトを 288 行、横に 2 バイトずつ 1 バイトに詰めて写す
+// （あとの奇数列のバイトが残る）
+// stride : src の 1 行のバイト数（dst はその半分）
+//--------------------------------------------------------------------------
+void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride)
+{
+	s32 y = 0;
+	s32 h = 288;
+	s32 ofs = 0;
+
+	do
+	{
+		s32 x;
+
+		for (x = 0; x != 40; x++)
+		{
+			dst[ofs / 2 + x / 2] = src[ofs + x];
+		}
+		ofs += stride;
+		y++;
+	} while (y != h);
+}
+
+#define TSUBU_MAX 64	// 粒の数
+#define RING_SIZE 0x3c0 // 輪の一枚 (20x48)
+#define Graphics_PackTileRows ((void (*)(void *source, void *destination, s32 width, s32 rows))Graphics_PackTileRows)
+
+//--------------------------------------------------------------------------
+// 四種の入口
+//--------------------------------------------------------------------------
+void BattleFx_RunParticleFieldVariant0(s32 effect)
+{
+	BattleFx_RunParticleFieldVariant((struct BattleEffectArgument *)effect, 0);
+}
+
+void BattleFx_RunParticleFieldVariant1(s32 effect)
+{
+	BattleFx_RunParticleFieldVariant((struct BattleEffectArgument *)effect, 1);
+}
+
+void BattleFx_RunParticleFieldVariant2(s32 effect)
+{
+	BattleFx_RunParticleFieldVariant((struct BattleEffectArgument *)effect, 2);
+}
+
+void BattleFx_RunParticleFieldVariant3(s32 effect)
+{
+	BattleFx_RunParticleFieldVariant((struct BattleEffectArgument *)effect, 3);
+}
+
+//--------------------------------------------------------------------------
+// 使う者が最初の対象へ寄り、10 フレーム目に当てる
+// 対象の位置に輪を出し、粒を 64 個飛び散らせる。全部で 60 フレーム
+// variant : 色 (パレットの元の絵 0-3)
+//--------------------------------------------------------------------------
+void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect, s32 variant)
+{
+	/* FAKEMATCH: needed to match: the blitter/camera declarations and independent store order preserve spill slots and loop preheader order */
+	void					**heap;
+	void					**cursor;
+	struct BattleEffectWork	 *work;
+	void					 *canvas;
+	BattleEffectDrawRectangle draw[2];
+	struct BattleCamera		 *camera;
+	u8						 *sheet;
+	struct EffectStep		 *p;
+	struct EffectStep		 *step;
+	struct EffectPosition	  origin;
+	struct EffectPosition	  screen;
+	struct EffectPosition	  pos;
+	struct MotionObject		 *tgt;
+	s32						  frame;
+	s32						  n;
+	s32						  size;
+	s32						  t;
+	s32						  pal;
+	u8						 *cells;
+
+	// ワーク、キャンバス、カメラ
+	cells = Ram_MapCellBuffer;
+	heap = (void **)&gBattleFxWork;
+	cursor = heap;
+	work = *cursor++;
+	canvas = *cursor;
+	camera =
+		*(struct BattleCamera **)((u8 *)heap
+								  - (HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_CAMERA) * sizeof(void *));
+	sheet = heap[2];
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+
+	// 上半分と、上下を反転した下半分。向こう側なら左右も反転する
+	if (work->effect->side == 0)
+	{
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, GOUSEI_HIKAKU);
+		BattleEffect_LoadWork(
+			HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | GOUSEI_FLIP_Y, GOUSEI_HIKAKU);
+	}
+	else
+	{
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | GOUSEI_FLIP, GOUSEI_HIKAKU);
+	}
+	draw[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+	draw[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+
+	// 絵と色
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1, 0);
+	Graphics_PackTileRows(work, cells, 40, 288);
+	Resource_LoadAndDecompress((s32)&ResourceId_BlueBurstSheet, work->sheet, 1, 1);
+	switch (variant)
+	{
+	case 0:
+		pal = (s32)&ResourceId_FirePillarSheetB;
+		break;
+	case 1:
+		pal = (s32)&ResourceId_IceBlockSheet;
+		break;
+	case 2:
+		pal = (s32)&ResourceId_PinkBurstSheet;
+		break;
+	default:
+		pal = (s32)&ResourceId_BlastSheet;
+		break;
+	}
+	Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(pal), 128);
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	// 使う者を寄せ、対象の位置に粒を用意する (x は画面の中央の側へ飛ぶ)
+	BattleFx_SetApproachMotion(work->effect->actor, work->effect->actors[0], 10);
+	tgt = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+	for (n = 0; n != TSUBU_MAX; n++)
+	{
+		step = &work->particles[n];
+		step->x = tgt->x;
+		step->y = tgt->y + 0xa0000; // 10 ドット上
+		step->z = tgt->z;
+		step->velocity_x = (Random16() & 0x1ff) << 11;
+		step->velocity_y = ((Random16() & 255) - 64) << 11;
+		step->velocity_z = ((Random16() & 255) - 128) << 11;
+		if (step->x > 0)
+			step->velocity_x = -step->velocity_x;
+		step->variant = n / 2 + 16; // 残りのフレーム
+	}
+	EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &origin);
+
+	for (frame = 0; frame != 60; frame++)
+	{
+		// 15 フレームのあいだ、使う者の位置に絵を上下二つに分けて描く
+		if (frame <= 14)
+		{
+			EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actor, &screen);
+			draw[0](canvas, work, screen.x / 2 - 16, screen.y - 48, 40, 32);
+			draw[1](canvas, work, screen.x / 2 - 16, screen.y - 16, 40, 32);
+		}
+		// 当たり
+		if (frame == 10)
+		{
+			ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 8);
+			BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
+			BattleEventRuntime_BeginPhaseFar(134);
+			work->shake_frames = 8;
+		}
+		// 輪：8 フレーム目から 2 フレームずつ 6 枚
+		t = frame - 8;
+		if (t >= 0 && t <= 11)
+		{
+			s32 ring = t / 2;
+			draw[0](canvas, cells + ring * RING_SIZE, origin.x / 2 - 16, screen.y - 40, 20, 48);
+		}
+		// 粒
+		if (t >= 0 && t <= 55)
+		{
+			Render_ResetTransformState();
+			Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+			for (n = 0; n != TSUBU_MAX; n++)
+			{
+				p = &work->particles[n];
+				size = p->variant;
+				if (size > 0)
+				{
+					EffectPosition_ApplyBaseAndYOffset(&p->x, &pos);
+					size >>= 4;
+					size += 2;
+					pos.x >>= 1;
+					draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1], pos.x - size / 2,
+						pos.y - size, size, size * 2);
+					EffectStep_AdvanceWithGravity3D(p, 60, -0x200);
+					p->variant--;
+				}
+			}
+		}
+		Camera_ApplyShake(8, 8);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+#undef Graphics_PackTileRows
+
+//--------------------------------------------------------------------------
+// transpose_copy.c
+// タイル：バイトの絵を右に 90 度回して写す
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+// 幅 w・高さ h の src を、幅 h・高さ w の dst に右へ 90 度回して写す
+// （src のいちばん上の行が dst のいちばん右の列になる）
+//--------------------------------------------------------------------------
+void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h)
+{
+	s32		  y;
+	s32		  x;
+	s32		  col;
+	s32		  ofs;
+	u8		 *d;
+	const u8 *s;
+
+	y = 0;
+	if (h != 0)
+	{
+		ofs = 0;
+		col = h;
+		do
+		{
+			x = 0;
+			if (w != 0)
+			{
+				d = (u8 *)(col + (u32)dst - 1);
+				s = (const u8 *)(ofs + (u32)src);
+				do
+				{
+					x++;
+					*d = *s;
+					s++;
+					d += h;
+				} while (x != w);
+			}
+			y++;
+			ofs += w;
+			col--;
+		} while (y != h);
+	}
+}
+
+//--------------------------------------------------------------------------
+// 水星のジン：(96, 60) のまわりを渦を巻いて回りながら、青い炎を 5 発左へ撃つ
+// 炎は 5 フレーム進むと 32 個の粒に砕ける
+//--------------------------------------------------------------------------
+void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
+{
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	u8						*sheet;
+	DrawRectangle			 blit[2];
+	DrawRectangle			*draw;
+	struct EffectStep		*flame;
+	struct EffectStep		*mote;
+	u8						*cells;
+	s32						 i;
+	s32						 j;
+
+	heap_cache = (void **)gBattleFxWork;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	sheet = heap_cache[2];
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	draw = blit;
+	BattleFx_FetchRectangleBlitters(0, draw);
+
+	// 炎の絵は BlueFlame を転置して写す
+	cells = Ram_MapCellBuffer;
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet, work->sheet, 1, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, cells, 1, 1);
+	Graphics_TransposeCopy(cells, work->sheet + 0x2a8, 17, 104);
+	Graphics_TransposeCopy(cells + 0x6e8, work->sheet + 0x990, 34, 65);
+	work->transfer_mode = 2;
+	work->transfer_value = 75; // 転送のたびに 3/4 へ減らして残像にする
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	for (i = 0; i != 8; i++)
+		work->particles[i].variant = -1;
+	for (i = 0; i != 512; i++)
+		MOTE(i)->variant = -1;
+	AudioCommand_PlayFar(162);
+	frame = 0;
+	do
+	{
+		if (frame == 56)
+			BattleEventRuntime_BeginPhaseFar(133);
+
+		// 炎：1 フレームに 12 ドット左へ進み、5 フレーム目で砕ける
+		for (i = 0; i != 5; i++)
+		{
+			flame = &work->particles[i];
+			if (flame->variant != -1)
+			{
+				blit[0](canvas, work->sheet + 0x990, flame->x - 16, flame->y - 17, 65, 34);
+				flame->x -= 12;
+				flame->variant++;
+				if (flame->variant == 5)
+				{
+					AudioCommand_PlayFar(133);
+					work->shake_frames = 4;
+					for (j = 0; j != 32; j++)
+					{
+						s32 dir;
+						s32 speed;
+
+						mote = MOTE(i * 32 + j);
+						dir = Random16() & 0xffff;
+						speed = (Random16() & 0x1ff) + 256;
+						mote->x = flame->x << 16;
+						mote->y = flame->y << 16;
+						mote->velocity_x = (Trig_Sin(dir) * speed) >> 8;
+						mote->velocity_y = (Trig_Cos(dir) * speed) >> 7;
+						mote->variant = (Random16() & 15) + 32; // 寿命 32〜47 フレーム
+					}
+				}
+			}
+		}
+
+		// ジン：32 フレームで 1 周する。半径 64 - 2 × frame (横はその半分) は
+		// 32 フレームで 0 になって中心を通り、その後は反対側へ広がる
+		if (frame <= 95)
+		{
+			s32 x = ((Trig_Sin(frame << 11) * (64 - frame * 2)) >> 17) + 96;
+			s32 y = ((Trig_Cos(frame << 11) * (64 - frame * 2)) >> 16) + 60;
+
+			draw[1](canvas, work, x - 10, y - 17, 20, 34);
+			for (i = 0; i != 5; i++)
+			{
+				// 決まったフレームに炎を撃ち、その 6 フレーム後に対象のパレットを
+				// 6 フレーム 7 番に替えてアニメ 5 にし、動き 6 を与える
+				if (frame == MercuryDjinnFlames_LaunchFrames[i])
+				{
+					struct EffectStep *shot = &work->particles[i];
+
+					if (shot->variant == -1)
+					{
+						shot->x = x - 8;
+						shot->velocity_x = x;
+						shot->y = y;
+						shot->variant = 0;
+						break;
+					}
+				}
+				if (frame == MercuryDjinnFlames_LaunchFrames[i] + 6)
+				{
+					for (j = 0; j != work->effect->count; j++)
+					{
+						ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 6);
+						BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 6);
+					}
+				}
+			}
+		}
+
+		// 粒：寿命に応じて小さくなり、落ちながら減速する
+		for (i = 0; i != 256; i++)
+		{
+			mote = MOTE(i);
+			if (mote->variant != -1)
+			{
+				s32 size = mote->variant / 16 + 2;
+
+				draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+					HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
+				EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
+				mote->variant--;
+			}
+		}
+		Camera_ApplyShake(4, 4);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+		frame++;
+	} while (frame != 96);
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// 木星のジン：回りながら、右上から左下へ火の玉を 8 つ落とす
+// 火の玉は y が 95 を越えると 32 個の粒に砕ける
+//--------------------------------------------------------------------------
+void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect)
+{
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	u8						*sheet;
+	DrawRectangle			 blit[2];
+	DrawRectangle			*draw;
+	struct EffectStep		*ball;
+	struct EffectStep		*mote;
+	s32						 frame;
+	s32						 i;
+	s32						 j;
+	s32						 angle;
+
+	heap_cache = (void **)gBattleFxWork;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	sheet = heap_cache[2];
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	REG_BLDALPHA = 0x1010;
+	draw = blit;
+	BattleFx_FetchRectangleBlitters(0, draw);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet, work->sheet, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet, work->sheet + 0x320, 1, 0);
+	work->transfer_mode = 2;
+	work->transfer_value = 75; // 転送のたびに 3/4 へ減らして残像にする
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	// 火の玉の出だし：x 64〜127、y -80〜-17
+	for (i = 0; i != 32; i++)
+	{
+		ball = &work->particles[i];
+		ball->x = (Random16() & 63) + 64;
+		ball->y = (Random16() & 63) - 80;
+	}
+	for (i = 0; i != 512; i++)
+		MOTE(i)->variant = -1;
+	AudioCommand_PlayFar(171);
+	frame = 0;
+	angle = 0x8000; // 180°
+	do
+	{
+		if (frame == 56)
+			BattleEventRuntime_BeginPhaseFar(133);
+
+		// ジン：1 フレームに 11.25° 回る。半径 64 - 2 × frame (横はその半分) は
+		// 32 フレームで 0 になって中心を通り、その後は反対側へ広がる
+		if (frame <= 95)
+		{
+			s32 x = (Trig_Sin(angle) * (64 - frame * 2)) >> 17;
+			s32 y = (Trig_Cos(angle) * (64 - frame * 2)) >> 16;
+
+			blit[0](canvas, work, x + 86, y + 28, 20, 40);
+		}
+
+		// 火の玉：4 フレームおきに 1 つずつ、1 フレームに左へ 6、下へ 12 ドット
+		for (i = 0; i != 8; i++)
+		{
+			ball = &work->particles[i];
+			if (frame >= i * 4 + 8 && ball->y <= 95)
+			{
+				blit[0](canvas, work->sheet + 0x320, ball->x - 20, ball->y - 32, 40, 64);
+				ball->x -= 6;
+				ball->y += 12;
+				if (ball->y > 95)
+				{
+					for (j = 0; j != 32; j++)
+					{
+						s32 dir;
+						s32 speed;
+
+						mote = MOTE(i * 32 + j);
+						dir = Random16() & 0xffff;
+						speed = (Random16() & 0x1ff) + 256;
+						mote->x = ball->x << 16;
+						mote->y = ball->y << 16;
+						mote->velocity_x = (Trig_Sin(dir) * speed) >> 7;
+						mote->velocity_y = (Trig_Cos(dir) * speed) >> 6;
+						mote->variant = (Random16() & 15) + 32; // 寿命 32〜47 フレーム
+					}
+					AudioCommand_PlayFar(133);
+					work->shake_frames = 4;
+					for (j = 0; j != work->effect->count; j++)
+					{
+						ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 6);
+						BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 6);
+					}
+				}
+			}
+		}
+
+		// 粒：寿命に応じて小さくなり、落ちながら減速する
+		for (i = 0; i != 512; i++)
+		{
+			mote = MOTE(i);
+			if (mote->variant != -1)
+			{
+				s32 size = mote->variant / 16 + 1;
+
+				draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+					HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
+				EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
+				mote->variant--;
+			}
+		}
+		Camera_ApplyShake(4, 4);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+		angle -= 0x800; // 11.25°
+		frame++;
+	} while (frame != 96);
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+//--------------------------------------------------------------------------
+// load_and_decompress.c
+// リソース：パレットつきのリソースを展開する
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+// リソース id を dst に展開する。先頭 128 バイトがパレットのとき、
+// copy_pal なら BG パレットの先頭に写し、skip_pal ならとばして展開する
+//--------------------------------------------------------------------------
+void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal)
+{
+	u8 *res = Resource_GetTableEntry(id);
+
+	if (copy_pal != 0)
+	{
+		/* FAKEMATCH: the routine is called through a local pointer to its fixed entry; a plain call matches The Broken Seal through its IWRAM call layer but not The Lost Age, whose header calls the entry directly (all six of its editions differ). */
+		s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
+
+		copy((void *)0x05000000, res, 128);
+	}
+	if (skip_pal != 0)
+		res += 128;
+	Resource_DecodeType01(res, dst);
+}
+
+#define EffectPosition_ApplyAlternateStepAndYOffset \
+	((void (*)(s16, s32 *))EffectPosition_ApplyAlternateStepAndYOffset)
+
+void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
+{
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	DrawRectangle			 draw[2];
+	u8						*sheet;
+	struct EffectStep		*step;
+	struct EffectStep		*mote;
+	s32						 i;
+	s32						 j;
+	s32						 angle;
+
+	heap_cache = (void **)gBattleFxWork;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	sheet = heap_cache[2];
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	REG_BLDALPHA = 0x1010;
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 11, 2);
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
+	draw[0] = heap_cache[7];
+	draw[1] = heap_cache[8];
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet + 0x2f8, 1, 0);
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	for (i = 0; i != 32; i++)
+	{
+		step = &work->particles[i];
+		step->x = Random16() & 63;
+		step->y = 104;
+	}
+	for (i = 0; i != 512; i++)
+		((struct EffectStep *)Ram_MapCellBuffer)[i].variant = -1;
+	AudioCommand_PlayFar(141);
+	frame = 0;
+	angle = 0x8000;
+	do
+	{
+		if (frame <= 79)
+		{
+			s32 x = (Trig_Sin(angle) * 24) >> 16;
+			s32 y = (Trig_Cos(angle) * (64 - frame * 2)) >> 16;
+
+			draw[1](canvas, work, x + 22, y + 29, 20, 38);
+		}
+		if (frame == 56)
+			BattleEventRuntime_BeginPhaseFar(133);
+		for (i = 0; i != 10; i++)
+		{
+			step = &work->particles[i];
+			if (frame >= i * 4 + 16)
+			{
+				draw[0](canvas, work->sheet + 0x9e0, step->x - 17, step->y - 32, 34, 65);
+				if (frame == i * 4 + 16)
+				{
+					for (j = 0; j != 16; j++)
+					{
+						s32 direction;
+						s32 speed;
+
+						mote = &((struct EffectStep *)Ram_MapCellBuffer)[i * 32 + j];
+						direction = (Random16() & 0x7fff) + 0x4000;
+						speed = (Random16() & 0x1ff) + 256;
+						mote->x = step->x << 16;
+						mote->y = (step->y + 16) << 16;
+						mote->velocity_x = (Trig_Sin(direction) * speed) >> 7;
+						mote->velocity_y = (Trig_Cos(direction) * speed) >> 6;
+						mote->variant = (Random16() & 15) + 32;
+					}
+					if (i & 1)
+						AudioCommand_PlayFar(133);
+					work->shake_frames = 4;
+					for (j = 0; j != work->effect->count; j++)
+					{
+						ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 6);
+						BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 6);
+					}
+				}
+				step->y -= 12;
+			}
+		}
+		for (i = 0; i != 512; i++)
+		{
+			mote = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+			if (mote->variant != -1)
+			{
+				s32 size = mote->variant / 16 + 2;
+
+				draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+					HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
+				EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
+				mote->variant--;
+			}
+		}
+		Camera_ApplyShake(4, 4);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+		angle -= 0x800;
+		frame++;
+	} while (frame != 96);
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
+{
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	u8						*sheet;
+	DrawRectangle			 callbacks[2];
+	DrawRectangle			*draw;
+	struct EffectStep		*step;
+	struct EffectStep		*mote;
+	s32						 member;
+	s32						 frame;
+	s32						 i;
+	s32						 curtain_y;
+
+	heap_cache = (void **)gBattleFxWork;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	sheet = heap_cache[2];
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	draw = callbacks;
+	BattleFx_FetchRectangleBlitters(0, draw);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work->sheet, 1, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet + 0x320, 1, 1);
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	member = 0;
+	step = work->particles;
+	do
+	{
+		s32 angle = member << 11;
+
+		step->x = (Trig_Sin(angle) * 24) >> 16;
+		step->y = ((Trig_Cos(angle) * 4) >> 16) + 52;
+		if (member & 1)
+			step->x = 32 - step->x;
+		else
+			step->x += 32;
+		step->variant = -(member * 2);
+		for (i = 0; i != 16; i++)
+		{
+			mote = &((struct EffectStep *)Ram_MapCellBuffer)[member * 16 + i];
+			mote->x = (((Random16() & 15) + step->x) - 8) << 16;
+			mote->y = ((Random16() & 7) + 96) << 16;
+			mote->velocity_x = ((Random16() & 127) - 64) << 11;
+			mote->velocity_y = ((Random16() & 127) - 64) << 10;
+			mote->z = Random16() & 0xffff;
+			mote->velocity_z = Random16() & 0xffff;
+		}
+		step++;
+		member++;
+	} while (member != 9);
+
+	AudioCommand_PlayFar(0x88);
+	frame = 0;
+	curtain_y = -172;
+	do
+	{
+		if (frame == 56)
+			BattleEventRuntime_BeginPhaseFar(0x85);
+		if (frame <= 23)
+			callbacks[0](canvas, work->sheet + 0x320 + (frame / 4) * 0x640, 40, 20, 40, 40);
+		if (frame == 20)
+			Iwram_CopyWords(
+				(void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
+		if (frame >= 20 && frame <= 31)
+		{
+			if (frame > 23)
+				draw[1](canvas, work->sheet, 146 - frame * 4, curtain_y, 20, 40);
+			else
+				callbacks[0](canvas, work->sheet, 50, 20, 20, 40);
+		}
+		if (frame == 32)
+		{
+			AudioCommand_PlayFar(0x91);
+			work->shake_frames = 8;
+			Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1, 1);
+		}
+		if (frame > 31)
+		{
+			member = 0;
+			step = work->particles;
+			do
+			{
+				if (step->variant >= 0 && step->variant <= 47)
+				{
+					s32 cell = step->variant / 8;
+					u32 width;
+
+					callbacks[0](canvas, work->sheet + PuffArc_CellSourceOffsets[cell],
+						step->x - ((width = PuffArc_CellWidths[cell]) >> 1),
+						step->y + PuffArc_CellBiasY[cell], width, PuffArc_CellHeights[cell]);
+				}
+				member++;
+				step->variant++;
+				step++;
+			} while (member != 9);
+		}
+		step = (struct EffectStep *)Ram_MapCellBuffer;
+		member = 0;
+		do
+		{
+			if (frame >= (member / 16) * 2 + 40)
+			{
+				s32 size;
+				s32 x;
+				s32 angle;
+
+				size = (member & 1) + 3;
+				x = HI(step->x) + ((Trig_Sin(step->z) * 4) >> 16);
+				draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1], x - ((u32)size >> 1),
+					HI(step->y) - size, size, size * 2);
+				EffectStep_AdvanceWithGravity2D(step, 64, -0x2000);
+				angle = step->z;
+				step->z = angle + 0x800;
+				if (step->z > 0xffff)
+					step->z = angle + 0x800 - 0xffff;
+			}
+			member++;
+			step++;
+		} while (member != 144);
+
+		if (frame == 38)
+		{
+			for (member = 0; member != work->effect->count; member++)
+			{
+				ObjectGroup_UpdateMembers(work->effect->actors[member], 7, 5, member, 16);
+				BattleMotion_ApplyVariantMotionFar(work->effect->actors[member], 6);
+			}
+		}
+		Camera_ApplyShake(8, 8);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+		curtain_y += 8;
+		frame++;
+	} while (frame != 112);
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+#define PARTICLE_COUNT 64
+
+void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
+{
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 spawn[3];
+	s32						 screen_y;
+	s32						 screen_x;
+	DrawRectangleFn			 routine[2];
+	struct EffectStep		*p;
+	s32						 i;
+	s32						 frame;
+	s32						 rise;
+
+	heap_cache = (void **)gBattleFxWork;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	BattleFx_PrepareCanvasEffect(effect, 1, work->effect->side, 2, &screen_x, &screen_y);
+	BattleFx_FetchRectangleBlitters(work->effect->side, routine);
+	Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1, 1);
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], spawn);
+
+	for (i = 0; i != PARTICLE_COUNT; i++)
+	{
+		s32 angle;
+		s32 speed;
+
+		angle = (Random16() & 0x7fff) + 0x4000;
+		speed = (Random16() & 0x1ff) + 0x80;
+		gMapCellBuffer[i].x = ((spawn[0] / 2 + (Random16() & 0xf)) - 8) << 16;
+		gMapCellBuffer[i].y = (spawn[1] + 8) << 16;
+		gMapCellBuffer[i].velocity_x = (Trig_Sin(angle) * speed) >> 9;
+		gMapCellBuffer[i].velocity_y = (Trig_Cos(angle) * speed) >> 6;
+		gMapCellBuffer[i].z = Random16() & 0x7f;
+		gMapCellBuffer[i].velocity_z = Random16() & 0x7f;
+		gMapCellBuffer[i].variant = (Random16() & 0xf) + 32;
+	}
+
+	for (frame = 0; frame != 64; frame++)
+	{
+		if (frame > 47)
+			REG_BLDALPHA = (64 - frame) | 0x1000;
+		if (frame == 1)
+		{
+			Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet + 0x400, 1, 1);
+			Resource_LoadAndDecompress(
+				(s32)&ResourceId_MercuryDjinnSmallSheet, work->sheet + 0x65c0, 1, 0);
+		}
+
+		if (work->effect->prelude == 1)
+		{
+			s32 orbit;
+			s32 x;
+			s32 y;
+
+			orbit = frame << 11;
+			x = ((-Trig_Sin(orbit) << 2) >> 16) + screen_x / 2 - 10;
+			y = ((Trig_Cos(orbit) << 1) >> 16) + screen_y - 22;
+			if (frame > 69)
+				y = (y - frame * 2) + 138;
+			routine[1](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+			if (frame <= 3)
+				routine[1](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+		}
+
+		for (i = 0, p = gMapCellBuffer; i != PARTICLE_COUNT; i++, p++)
+		{
+			if (frame >= i / 4 + 4)
+			{
+				s32 cell;
+				s32 w;
+				s32 h;
+
+				cell = (p->z / 128) & 3;
+				routine[i & 1](canvas, work->sheet + 0x400 + ParticleReveal_CellSourceOffsets[cell],
+					HI(p->x) - (w = ParticleReveal_CellWidths[cell]) / 2,
+					HI(p->y) - (h = ParticleReveal_CellHeights[cell]) / 2, w, h);
+				EffectStep_AdvanceWithGravity3D(p, 63, 0x1000);
+			}
+		}
+
+		if (frame == 8)
+		{
+			work->shake_frames = frame;
+			BattleEventRuntime_BeginPhaseFar(0x86);
+			ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 16);
+			BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 3);
+		}
+
+		rise = frame * 4;
+		if (rise > 32)
+			rise = 32;
+		if (work->effect->side == 0)
+		{
+			for (i = 0; i != 5; i++)
+				routine[0](canvas, work, (i << 5) - (frame / 4 & 31), 120 - rise, 32, 32);
+		}
+		else
+		{
+			for (i = 0; i != 5; i++)
+				routine[0](canvas, work, ((i << 5) + (frame / 4 & 31)) - 32, 120 - rise, 32, 32);
+		}
+
+		Camera_ApplyShake(4, 8);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
+{
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 i;
+	s32						 frame;
+	DrawRectangle			 draw[2];
+	struct BattleCamera		*camera;
+	struct MotionObject		*target;
+	struct MotionObject		*actor;
+	struct EffectPosition	 position;
+	s32						 screen_x;
+	s32						 screen_y;
+	s32						 j;
+
+	work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+	canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+	camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	BattleFx_PrepareCanvasEffect(effect, 0, work->effect->side, 2, &screen_x, &screen_y);
+	REG_BLDALPHA = 0x1010;
+	if (work->effect->side == 1)
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 2);
+	else
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+	draw[0] = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+	Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet + 0x65c0, 1, 1);
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	actor = GetBattleObjectSlotFar(work->effect->actor)->object;
+	target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+	for (i = 0; i != 8; i++)
+	{
+		struct EffectStep *rock = &work->particles[i];
+
+		rock->x = actor->x;
+		rock->y = 0x420000;
+		rock->z = actor->z;
+		rock->velocity_x = (i * 0x500000) >> 5;
+		rock->velocity_y = (s32)(((Random16() & 127) - 64) << 16) >> 6;
+		rock->velocity_z = (s32)(((Random16() & 255) - 127) << 16) >> 5;
+		if (rock->x > 0)
+			rock->velocity_x = -rock->velocity_x;
+		rock->variant = 1;
+	}
+	for (frame = 0; frame != 96; frame++)
+	{
+		if (frame > 16)
+			BattleFx_StepPaletteToResource((s32)&ResourceId_PortalSheet);
+		if (work->effect->prelude == 1)
+		{
+			s32 angle = frame << 11;
+			s32 x = ((-Trig_Sin(angle) << 2) >> 16) + screen_x / 2 - 10;
+			s32 y = ((Trig_Cos(angle) << 1) >> 16) + screen_y - 22;
+
+			if (frame > 16)
+				y = y - frame * 2 + 32;
+			if (work->effect->side == 1)
+				BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 3);
+			else
+				BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
+			if (frame <= 3)
+				((BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)
+						->slots[HEAP_SLOT_BLITTER_ALTERNATE])(
+					canvas, work->sheet + 0x65c0, x, y, 20, 40);
+			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+			draw[0](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+		}
+		if ((frame & 1) == 0)
+		{
+			for (i = 0; i != 32; i++)
+			{
+				struct EffectStep *chip = &work->particles[32 + i];
+
+				chip->velocity_x = Random16() % 6 + 3;
+				chip->velocity_y = RockToss_ChipFlips[Random16() & 3];
+			}
+		}
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+		for (i = 0; i != 6; i++)
+		{
+			struct EffectStep *rock = &work->particles[i];
+
+			if (rock->variant == 1)
+			{
+				if (frame > i * 2)
+				{
+					s32 x;
+					s32 y;
+
+					EffectPosition_ApplyBaseAndYOffset(&rock->x, &position);
+					position.x >>= 1;
+					x = position.x - 12;
+					y = position.y - 24;
+					draw[0](canvas, work, x, y, 24, 48);
+					if ((frame & 3) <= 1)
+						draw[0](canvas, work->sheet + RockToss_ChipCells[1], x + RockToss_ChipX[1],
+							y + RockToss_ChipY[1], RockToss_ChipWidths[1], RockToss_ChipHeights[1]);
+					else
+						draw[0](canvas, work->sheet + RockToss_ChipCells[2], x + RockToss_ChipX[2],
+							y + RockToss_ChipY[2], RockToss_ChipWidths[2], RockToss_ChipHeights[2]);
+					for (j = 0; j != 4; j++)
+					{
+						struct EffectStep *chip = &work->particles[32 + i * 4 + j];
+						s32				   chip_x;
+						s32				   chip_y;
+
+						BattleEffect_LoadWork(
+							HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, chip->velocity_y, 2);
+						draw[1] = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)
+									  ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
+						if (chip->velocity_y & 4)
+							chip_x = x - RockToss_ChipWidths[chip->velocity_x]
+									 - RockToss_ChipX[chip->velocity_x] + 24;
+						else
+							chip_x = x + RockToss_ChipX[chip->velocity_x];
+						if (chip->velocity_y & 8)
+							chip_y = y - RockToss_ChipHeights[chip->velocity_x]
+									 - RockToss_ChipY[chip->velocity_x] + 48;
+						else
+							chip_y = y + RockToss_ChipY[chip->velocity_x];
+						draw[1](canvas, work->sheet + RockToss_ChipCells[chip->velocity_x], chip_x,
+							chip_y, RockToss_ChipWidths[chip->velocity_x],
+							RockToss_ChipHeights[chip->velocity_x]);
+						Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+					}
+					rock->x += rock->velocity_x;
+					rock->y += rock->velocity_y;
+					rock->z += rock->velocity_z;
+				}
+				if (frame > i * 2 + 16)
+				{
+					rock->velocity_x += (target->x - rock->x) >> 8;
+					rock->velocity_y += (0x140000 - rock->y) >> 8;
+					rock->velocity_z += (target->z - rock->z) >> 8;
+					if (frame < i * 2 + 85)
+					{
+						rock->velocity_x = rock->velocity_x * 60 / 64;
+						rock->velocity_y = rock->velocity_y * 60 / 64;
+						rock->velocity_z = rock->velocity_z * 60 / 64;
+					}
+					if (rock->y < 0x140000)
+					{
+						work->shake_frames = 8;
+						rock->variant = 0;
+						AudioCommand_PlayFar(134);
+						ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 4);
+						BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
+					}
+				}
+			}
+		}
+		Camera_ApplyShake(16, 16);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	BattleFx_EndCanvasLayer();
+}
+
+#undef Camera_ApplyShake
+
+void Camera_ApplyShake(s32 random_mask, u32 shake_range)
+{
+	s32						 display_y;
+	s32						 offset_x;
+	s32						*remaining_frames;
+	s32						 restored_position;
+	struct BattleEffectWork *work;
+	s32						 offset_y;
+	s32						 half_range;
+	s32						 random_x;
+	struct BgScroll			*display_position;
+	struct Projection		*display_center;
+	struct BgScroll			*disp_p;
+	struct Projection		*center_p;
+
+	work = gBattleFxWork;
+	remaining_frames = &work->shake_frames;
+	if (*remaining_frames > 0)
+	{
+		random_x = (random_mask - 1) & Random16();
+		half_range = (s32)(shake_range + (shake_range >> 0x1F)) >> 1;
+		offset_y = ((shake_range - 1) & Random16()) - half_range;
+		display_position = gBgScroll;
+		offset_x = random_x - half_range;
+		display_y = offset_y + 0x20;
+		display_position[1].x = offset_x;
+		display_position[1].y = display_y;
+		display_center = &gProjection;
+		display_center->center_x = 0x78 - offset_x;
+		display_center->center_y = 0x78 - offset_y;
+		*remaining_frames -= 1;
+		return;
+	}
+	restored_position = work->saved_bg1_x;
+	disp_p = gBgScroll;
+	disp_p[1].x = restored_position;
+	restored_position = work->saved_bg1_y;
+	disp_p[1].y = restored_position;
+	center_p = &gProjection;
+	center_p->center_x = 0x78;
+	center_p->center_y = 0x78;
+}
+
+#undef gBattleFxWork
+#define gWorkSlot (*(u8(*)[]) & gWorkSlot)
+
+extern s16 Mode12_Points[][2];
+extern u8  Mode12_Animations[];
+extern u8  Mode12_SmokeFlips[];
+
+struct Point
+{
+	s32 x;
+	s32 y;
+	s32 z;
+};
+
+#define PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0xc58))
+#define SLOT(n) (((DrawRectangle *)gWorkSlot)[n])
+
+void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
+{
+	u8						 ramp[32];
+	s32						 vec[3];
+	struct Point			 pts[11];
+	s32						 pos[3];
+	s32						 scale[3];
+	void				   **slots;
+	s32						*ctrl;
+	struct BattleEffectWork *work;
+	void					*dst;
+	u8						*aux;
+	s32						 frame;
+	DrawRectangle			 blit[2];
+	s32						 size;
+	s32						 count;
+	s32						 i;
+	s32						 j;
+	s32						 n;
+	struct EffectStep *p;
+	DrawRectangle	  *cache;
+	s32				   rings = 0x2710;
+
+	slots = (void **)(gWorkSlot + 44 * 4);
+	ctrl = slots[0];
+	work = slots[-5];
+	dst = slots[-4];
+	aux = slots[-3];
+	work->effect = efx;
+	BattleFx_BeginCanvasLayer(0x2000);
+	*(u16 *)0x04000020 = 0x100;
+	Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesC, work->sheet + 0x1800, 0, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, aux, 0, 0);
+
+	{
+		s32 offset;
+		for (i = 0, offset = 0; i != 8; i++)
+		{
+			u8 *src;
+			for (j = 0, src = aux; j != 0x302; j++)
+			{
+				s32 v = *src++;
+
+				if (v > 64 - i * 7)
+				{
+					v = 64 - i * 7;
+				}
+				if (v < 0)
+				{
+					v = 0;
+				}
+				(work->sheet + 10000)[offset + j] = v;
+			}
+			offset += j;
+		}
+	}
+
+	BattlePres_ConfigureEffectDisplay();
+	*(u16 *)0x05000000 = 0;
+	*(u16 *)0x05000002 = 0;
+	*(u16 *)0x0400000c = 0x2784;
+	work->scroll_timer = 0;
+	work->scroll_interval = 2;
+	work->scroll_step_x = 1;
+	work->scroll_step_y = 0;
+	ctrl[4] = 1;
+	Scheduler_AddOrUpdateCallback((s32)BattleFx_AdvanceScrollOnInterval, 0x480);
+	Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	work->transfer_mode = 0;
+	BattleEffect_WipeCanvas(0, 0);
+	BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
+	gProjection.center_y = 240;
+	BattleEffect_WipeCanvas(0, 1);
+	*(u16 *)0x04000020 = 0x80;
+	BattleEffect_LoadWork(46, 7, 7, 3, 3);
+	cache = (DrawRectangle *)gWorkSlot;
+	blit[0] = cache[46];
+	*(u16 *)0x04000000 = 0x7741;
+	*(u16 *)0x04000020 = 0x80;
+	*(u16 *)0x04000052 = 0x100f;
+	*(u16 *)0x04000050 = 0x3f44;
+	work->transfer_mode = 2;
+	work->transfer_value = 75;
+
+	for (i = 0; i != 16; i++)
+	{
+		ramp[i] = i * 8 + 3;
+		ramp[31 - i] = i * 8 + 3;
+		if (ramp[i] > 63)
+		{
+			ramp[i] = 63;
+		}
+		if (ramp[31 - i] > 63)
+		{
+			ramp[31 - i] = 63;
+		}
+	}
+	*(u16 *)0x0400000c = 0x784;
+
+	for (frame = 0; frame != 170; frame++)
+	{
+		size = 2;
+		count = frame * 2;
+		if (frame == 16)
+		{
+			AudioCommand_PlayFar(140);
+		}
+		if (frame == 132)
+		{
+			AudioCommand_PlayFar(131);
+		}
+		if (frame == 151)
+		{
+			AudioCommand_PlayFar(145);
+		}
+		if (gKeysRepeat & (KEY_A | KEY_B))
+		{
+			break;
+		}
+		Graphics_UpdatePhasePalette(frame * 2, 0xaaab, 0x5555, 0);
+		if (frame == 150)
+		{
+			work->transfer_mode = 1;
+			work->transfer_value = 0x1a1a1a1a;
+		}
+		else
+		{
+			work->transfer_mode = 2;
+			work->transfer_value = 75;
+		}
+		Camera_StoreSceneParameters(0x1fe0000, Iwram_RatioMulQ14(0x1fe0000, 0xc000), 0x7fff0000);
+		Render_ResetTransformState();
+		if (frame > 128)
+		{
+			s32 a = frame - 128;
+			if (a > 22)
+			{
+				a = 20;
+			}
+			pos[0] = 0;
+			pos[1] = -a << 17;
+			pos[2] = 0x2000000;
+			size = (a >> 2) + 2;
+			if (size > 8)
+			{
+				size = 8;
+			}
+			SceneTransform_ApplyPosition(pos);
+			SceneTransform_ApplyPitch(-0x1000);
+			SceneTransform_ApplyRoll(0x8000);
+			SceneTransform_ApplyPitch(0x8000);
+			SceneTransform_ApplyYaw(a << 12);
+			if (frame > 150)
+			{
+				scale[0] = frame * 0x1800 - 0xd9400;
+				scale[1] = scale[0];
+				scale[2] = scale[0];
+				size = 5;
+			}
+			else
+			{
+				scale[0] = 0x10000 - a * 3 * 0x400;
+				scale[1] = scale[0];
+				scale[2] = scale[0];
+			}
+			SceneTransform_ApplyScale(scale);
+		}
+		else
+		{
+			pos[0] = 0;
+			pos[1] = 0;
+			pos[2] = 0x1000000;
+			SceneTransform_ApplyPosition(pos);
+			SceneTransform_ApplyPitch(-0x1000);
+			SceneTransform_ApplyRoll(frame << 8);
+			SceneTransform_ApplyPitch(frame << 8);
+		}
+
+		if (frame <= 149)
+		{
+			for (i = 0; i != 6; i++)
+			{
+				vec[0] = (Mode12_Points[i][0] - 96) << 16;
+				vec[1] = 0;
+				vec[2] = (Mode12_Points[i][1] - 96) << 16;
+				EffectPosition_ApplyBaseAndYOffset(vec, (struct EffectPosition *)&pts[i]);
+				pts[i].x = (pts[i].x >> 17) + 64;
+				pts[i].y = (pts[i].y >> 16) + 60;
+			}
+			for (i = 0; i != 3; i++)
+			{
+				n = count * 2 - i * 48 - 256;
+				if (n > 48)
+				{
+					n = 48;
+				}
+				if (n >= 0)
+				{
+					for (j = 0; j != n; j++)
+					{
+						s32 x = pts[i * 2].x
+								+ Iwram_MulQ16(j * (pts[i * 2 + 1].x - pts[i * 2].x), 0x555);
+						s32 y = pts[i * 2].y
+								+ Iwram_MulQ16(j * (pts[i * 2 + 1].y - pts[i * 2].y), 0x555);
+						blit[0](dst, aux + ParticleStreams_CellOffsets[size - 1], x - size / 2,
+							y - size, size, size * 2);
+					}
+				}
+			}
+		}
+
+		if (frame <= 179)
+		{
+			DrawRectangle blit47;
+			s32			  lvl = 0;
+
+			if (frame > 155)
+			{
+				lvl = frame - 156;
+			}
+			if (lvl > 7)
+			{
+				lvl = 7;
+			}
+			if (frame <= 139)
+			{
+				BattleEffect_LoadWork(47, 7, 7, 3, 3);
+				blit47 = SLOT(47);
+			}
+			else
+			{
+				BattleEffect_LoadWork(47, 7, 7, 3, 2);
+				blit47 = SLOT(47);
+			}
+			n = count;
+			if (n > 128)
+			{
+				n = 128;
+			}
+			for (i = 0; i != n; i++)
+			{
+				s32 s = size + 1;
+				vec[0] = Trig_Sin(i << 9) * 96;
+				vec[2] = -(Trig_Cos(i << 9) * 96);
+				EffectPosition_ApplyBaseAndYOffset(vec, (struct EffectPosition *)&pts[0]);
+				pts[0].x = (pts[0].x >> 17) + 64;
+				pts[0].y = (pts[0].y >> 16) + 60;
+				blit47(dst,
+					work->sheet + (lvl * 0x302 + ParticleStreams_CellOffsets[s - 1]) + rings,
+					pts[0].x - s / 2, pts[0].y - s, s, s * 2);
+			}
+			Runtime_ReleaseHeapBlock(47);
+		}
+
+		if ((u32)(frame - 151) <= 16)
+		{
+			s32 w = 0;
+			s32 h = (frame - 151) * 20 + 44;
+			if (frame > 151)
+			{
+				w = frame - 152;
+			}
+			if (w > 15)
+			{
+				w = 15;
+			}
+			for (i = 1; i != 10; i++)
+			{
+				if (w + i <= 15)
+				{
+					blit[0](dst, &ramp[w + i], w + 48 + i, 16 - i, 32 - w * 2 - i * 2, 1);
+				}
+			}
+			for (i = 0; i != h; i++)
+			{
+				s32 k = 32;
+				/* FAKEMATCH: loop.c matches this 32 with the smoke calls' 32 (life 19, savings 2: 12 * 2 * 19 = 456 >= 450 insns) and hoists it out of the frame loop, so it loses its register and later reloads rotate; the native builds it in this loop's preheader. 2026-10-11: loop.c's threshold is 12 after an earlier move (savings 2 x life 19 x 12 = 456 >= 448 insns); a 96 local declared before the ramp loops lowers that to 432 and defeats the hoist, but the asm pair's two codeless preheader insns also raise i's live length to 1292, which orders n (28 refs/106) before i (195 refs) and gives n r9; without them i takes r9 and a slot at [sp, #60] appears (differ 699). */
+				asm("" : "+r"(k));
+				blit[0](dst, ramp + w, w + 48, i + 16, k - w * 2, 1);
+			}
+			BattleEffect_LoadWork(47, 7, 7, 3, 2);
+			SLOT(47)(dst, work, 32, (frame - 151) * 20 - 12, 32, 96);
+			Runtime_ReleaseHeapBlock(47);
+			BattleEffect_LoadWork(47, 7, 7, 7, 2);
+			SLOT(47)(dst, work, 64, (frame - 151) * 20 - 12, 32, 96);
+			Runtime_ReleaseHeapBlock(47);
+		}
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+
+	ctrl[4] = 0;
+	Scheduler_RemoveCallback((u32)BattleFx_AdvanceScrollOnInterval);
+	BattleEffect_SetupBlendedDisplay();
+	BattleFx_SelectLivingTargets(work->effect);
+	BattleFx_SpawnObjects(9, 0x173, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer, 1, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_VioletMoteSheet, work->sheet + 0x6000, 1, 0);
+	Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_CrystalSheet), 128);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesB, aux, 0, 0);
+	*(u16 *)0x04000052 = 0x1010;
+	{
+		s32 cam_x;
+		s32 cam_y;
+		s32 vel_x;
+		s32 vel_y;
+		s32 cx;
+		s32 cy;
+
+		cam_x = 0x500000;
+		cam_y = 0x400000;
+		vel_x = 0;
+		vel_y = 0;
+		for (i = 0; i != 910; i++)
+		{
+			PARTICLES[i].variant = 0;
+		}
+		for (i = 0; i != 16; i++)
+		{
+			work->particles[i].x = (Random16() & 31) - 16;
+			work->particles[i].y = Random16() & 63;
+			work->particles[i].variant = -(Random16() & 15);
+		}
+		work->transfer_mode = 2;
+		work->transfer_value = 50;
+		AudioCommand_PlayFar(145);
+		cx = 60;
+		cy = 112;
+
+		for (frame = 0; frame != 192; frame++)
+		{
+			s32 d;
+			if (frame == 20)
+			{
+				Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetB, work, 1, 0);
+			}
+			d = frame - 80;
+			if ((u32)d <= 59 && !(frame & 7))
+			{
+				AudioCommand_PlayFar(134);
+			}
+			if (frame == 140)
+			{
+				BattleEventRuntime_BeginPhaseFar(134);
+			}
+			for (j = 0; j != 1; j++)
+			{
+				s32 start = j * 128 + 8;
+				if (frame >= start && frame < j * 128 + 17)
+				{
+					if (frame >= j * 128 + 9 && frame < j * 128 + 12)
+					{
+						blit[0](dst, work->sheet, 36, 0, 48, cy);
+					}
+					if (frame >= j * 128 + 12 && frame < start + 8)
+					{
+						blit[0](dst, work->sheet + 0x1500, 36, 0, 48, 112);
+					}
+					if (frame == start + 2)
+					{
+						s32 n = 0;
+						for (i = 0, p = PARTICLES; i != 910; i++, p++)
+						{
+							if (p->variant == 0)
+							{
+								s32 speed = 0x3ff;
+								s32 angle;
+								speed &= Random16();
+								angle = (Random16() & 0x7fff) - 0x4000;
+								p->x = cx << 16;
+								p->y = cy << 16;
+								speed += 32;
+								p->velocity_x = (Trig_Sin(angle) * speed) >> 7;
+								p->velocity_y = -((Trig_Cos(angle) * speed) << 1) >> 7;
+								p->variant = (Random16() & 7) + 32;
+								if (++n == 512)
+								{
+									break;
+								}
+							}
+						}
+						work->shake_frames = 8;
+					}
+				}
+			}
+			if (frame == 10)
+			{
+				for (i = 0; i != work->effect->count; i++)
+				{
+					ObjectGroup_UpdateMembers(work->effect->actors[i], 7, 5, i, 8);
+					BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 4);
+				}
+			}
+			if ((u32)d <= 63)
+			{
+				s32 ox;
+				s32 oy;
+				s32 sx;
+				for (i = 0; i != 6; i++)
+				{
+					if (frame == i * 8 + 80)
+					{
+						Iwram_FillWords(dst, 0x4000, 0x10101010);
+					}
+				}
+				for (i = 0; i != 30; i++)
+				{
+					if (frame >= i * 2 + 80)
+					{
+						if (frame < i * 2 + 82)
+						{
+							s32 rx = (Random16() & 3) - 3;
+							s32 ry = (Random16() & 3) + 32;
+							BattleEffect_LoadWork(47, 7, 7, 3, 2);
+							SLOT(47)(dst, work->sheet + i % 3 * 0x1440, rx, ry, 72, 72);
+							Runtime_ReleaseHeapBlock(47);
+						}
+						if (frame == i * 2 + 80)
+						{
+							s32 n = 0;
+							for (j = 0, p = PARTICLES; j != 910; j++, p++)
+							{
+								if (p->variant == 0)
+								{
+									s32 speed = 0x3ff;
+									s32 angle;
+									speed &= Random16();
+									angle = Random16() & 0xffff;
+									p->x = 0x100000;
+									p->y = 0x500000;
+									speed += 32;
+									p->velocity_x = (Trig_Sin(angle) * speed) >> 7;
+									p->velocity_y = -((Trig_Cos(angle) * speed) << 1) >> 7;
+									p->variant = (Random16() & 7) + 32;
+									if (++n == 16)
+									{
+										break;
+									}
+								}
+							}
+							work->shake_frames = 8;
+							for (j = 0; j != work->effect->count; j++)
+							{
+								ObjectGroup_UpdateMembers(work->effect->actors[j],
+									Mode12_Animations[Random16() & 3], 5, j, 4);
+								BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 4);
+							}
+						}
+					}
+				}
+				{
+					s32 r = 7;
+					s32 angle;
+					r &= Random16();
+					angle = Random16() & 0xffff;
+					ox = (Trig_Sin(angle) * (r + 8)) >> 16;
+					sx = ox + 72;
+					oy = 32 - ((Trig_Cos(angle) * (r + 8)) >> 16);
+				}
+				BattleEffect_LoadWork(47, 7, 7, 3, 2);
+				SLOT(47)(dst, work->sheet + 0x6000, ox + 60, oy - 24, 12, 24);
+				Runtime_ReleaseHeapBlock(47);
+				BattleEffect_LoadWork(47, 7, 7, 7, 2);
+				SLOT(47)(dst, work->sheet + 0x6000, sx, oy - 24, 12, 24);
+				Runtime_ReleaseHeapBlock(47);
+				BattleEffect_LoadWork(47, 7, 7, 11, 2);
+				SLOT(47)(dst, work->sheet + 0x6000, ox + 60, oy, 12, 24);
+				Runtime_ReleaseHeapBlock(47);
+				BattleEffect_LoadWork(47, 7, 7, 15, 2);
+				SLOT(47)(dst, work->sheet + 0x6000, sx, oy, 12, 24);
+				Runtime_ReleaseHeapBlock(47);
+				j = 0;
+				for (i = 0, p = PARTICLES; i != 910; i++, p++)
+				{
+					if (p->variant == 0)
+					{
+						s32 speed = 63;
+						s32 angle;
+						speed &= Random16();
+						angle = Random16() & 0xffff;
+						p->x = sx << 16;
+						p->y = oy << 16;
+						speed += 64;
+						p->velocity_x = (Trig_Sin(angle) * speed) >> 7;
+						p->velocity_y = -((Trig_Cos(angle) * speed) << 1) >> 7;
+						p->variant = (Random16() & 7) + 16;
+						if (++j == 4)
+						{
+							break;
+						}
+					}
+				}
+			}
+
+			BattleEffect_LoadWork(47, 7, 7, 15, 2);
+			{
+				DrawRectangle	   draw = SLOT(47);
+				struct EffectStep *q;
+				for (i = 0, q = PARTICLES; i != 910; i++, q++)
+				{
+					if (q->variant > 0)
+					{
+						q->variant--;
+						EffectStep_AdvanceWithGravity2D(q, 60, 0);
+						if (q->y > 0x780000)
+						{
+							q->velocity_y = -q->velocity_y / 2;
+						}
+						else if ((u32)q->x <= 0x7effff && q->y >= 0)
+						{
+							s32 x = q->x >> 16;
+							s32 y = q->y >> 16;
+							s32 s = q->variant / 16 + 1;
+							draw(dst, aux + ParticleStreams_CellOffsets[s - 1], x - s / 2, y - s, s,
+								s * 2);
+						}
+					}
+				}
+			}
+			Runtime_ReleaseHeapBlock(47);
+
+			if (frame > 15)
+			{
+				if (frame == 32)
+				{
+					vel_x = 0x40000;
+					vel_y = -0x4000;
+				}
+				if (frame > 31)
+				{
+					cam_x += vel_x;
+					cam_y += vel_y;
+					vel_x = vel_x * 60 / 64;
+					vel_y = vel_y * 60 / 64;
+				}
+				BattleFx_PlaceFormationObjects(0, cam_x, cam_y);
+			}
+			if ((u32)(frame - 16) <= 127)
+			{
+				s32 base;
+				for (i = 0, base = cam_x >> 17; i != 3; i++)
+				{
+					s32 k = i & 3;
+					s32 angle = Random16() & 0xffff;
+					s32 x =
+						((Trig_Sin(angle) << 3) >> 16) + base - (BattleFx_GlintCellWidths[k] >> 1);
+					s32 y = ((Trig_Cos(angle) * 40) >> 16) - (BattleFx_GlintCellHeights[k] >> 1);
+					BattleEffect_LoadWork(47, 7, 7, 3 | Mode12_SmokeFlips[Random16() & 3], 2);
+					SLOT(47)(dst, Ram_MapCellBuffer + BattleFx_GlintCellOffsets[k], x, y + 56,
+						BattleFx_GlintCellWidths[k], BattleFx_GlintCellHeights[k]);
+					Runtime_ReleaseHeapBlock(47);
+				}
+			}
+			if (frame <= 31)
+			{
+				Camera_ApplyShake(8, 16);
+			}
+			else
+			{
+				Camera_ApplyShake(4, 4);
+			}
+			ObjectGroup_TickMemberTimers();
+			work->transfer_pending = 1;
+			WaitFrames(1);
+		}
+
+		Runtime_ReleaseHeapBlock(46);
+		Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+		BattleEffect_RunImpactBurst(0, cam_x, cam_y);
+	}
+	for (i = 0; i != 9; i++)
+	{
+		ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
+	}
+	BattleFx_EndCanvasLayer();
+}
+
+void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
+{
+	void				   **heap_cache;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	DrawRectangleFn			 blit;
+	s32						 rows;
+	struct EffectPosition	 first;
+	struct EffectPosition	 final;
+	struct EffectStep		*rock;
+	struct EffectStep		*shard;
+	s32						 frame;
+	s32						 i;
+	s32						 j;
+	s32						 cell;
+	u32						 width;
+	u32						 height;
+
+	heap_cache = (void **)gBattleFxWork;
+	cursor = heap_cache;
+	work = *cursor++;
+	canvas = *cursor;
+	work->effect = object;
+	BattleFx_BeginCanvasLayer(1);
+	REG_BG2PA = 0x100;
+	REG_BLDCNT = 0;
+	Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
+	BattleEffect_LoadWork(46, 7, 7, 3, 1);
+	blit = heap_cache[7];
+	EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &first);
+	EffectPosition_ApplyStepAndYOffset(work->effect->actors[work->effect->count - 1], &final);
+	first.x += (final.x - first.x) / 2;
+	REG_BG2X = (64 - first.x) << 8;
+	work->transfer_mode = 1;
+	work->transfer_value = 0;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+	rows = ShatterRocks_RockCounts[work->effect->variant];
+	for (i = 0; i != rows; i++)
+	{
+		rock = &work->particles[i];
+		rock->y = -0x400000;
+		rock->velocity_y = 0;
+	}
+	for (i = 0; i != rows; i++)
+	{
+		for (j = 0; j != 21; j++)
+		{
+			struct EffectStep *seed = &((struct EffectStep *)Ram_MapCellBuffer)[i * 21 + j];
+
+			seed->x = (ShatterRocks_ShardOffsets[j * 2] + ShatterRocks_RockX[i]) << 16;
+			seed->y = ShatterRocks_ShardOffsets[j * 2 + 1] << 16;
+			seed->velocity_x = ((Random16() % 96) - 48) << 10;
+			seed->velocity_y = -((Random16() & 127) + 32) << 11;
+			seed->z = 32;
+			seed->variant = 0;
+		}
+	}
+	for (frame = 0; frame != ShatterRocks_DropFrames[rows - 1] + 80; frame++)
+	{
+		if (frame == ShatterRocks_DropFrames[rows - 1] + 48)
+			BattleEventRuntime_BeginPhaseFar(132);
+		for (i = 0; i != rows; i++)
+		{
+			rock = &work->particles[i];
+			if (frame == ShatterRocks_DropFrames[i] + 18)
+			{
+				AudioCommand_PlayFar(134);
+				work->shake_frames = 4;
+			}
+			if (frame >= ShatterRocks_DropFrames[i] + 18)
+			{
+				for (j = 0; j != 21; j++)
+				{
+					shard = &((struct EffectStep *)Ram_MapCellBuffer)[i * 21 + j];
+					cell = (j % 5) * 3 + shard->variant / 96 % 3;
+					blit(canvas, work->sheet + ShatterRocks_ShardCells[cell] + 0x83c,
+						HI(shard->x) - ((width = ShatterRocks_ShardWidths[cell]) >> 1),
+						HI(shard->y) - ((height = ShatterRocks_ShardHeights[cell]) >> 1), width,
+						height);
+					EffectStep_AdvanceWithGravity2D(shard, 64, 0x4000);
+					shard->variant += shard->z;
+					if (shard->z > 1 && (frame & 1))
+						shard->z--;
+				}
+			}
+			if (frame < ShatterRocks_DropFrames[i] + 18)
+			{
+				if (frame >= ShatterRocks_DropFrames[i])
+					blit(canvas, work, ShatterRocks_RockX[i] + 47, HI(rock->y), 34, 62);
+				rock->y += rock->velocity_y;
+				if (frame > ShatterRocks_DropFrames[i])
+					rock->velocity_y += 0x10000;
+				if (rock->y > 0x320000)
+					rock->y = 0x320000;
+			}
+			if (frame == ShatterRocks_DropFrames[i] + 18)
+			{
+				for (j = 0; j != work->effect->count; j++)
+					ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 8);
+			}
+		}
+		Camera_ApplyShake(2, 4);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(46);
+	BattleFx_EndCanvasLayer();
+}
+
+#undef gWorkSlot
+
+//--------------------------------------------------------------------------
+
+// animation_modes.c
+
+// 演出：バースト演出の入口
+
+//--------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------
+// 演出ごとの入口。バーストの型を BattlePres_RunBurstScene に渡す
+// step : 演出の引数
+//--------------------------------------------------------------------------
+void EffectStep_RunAnimationMode6Or7Or8(struct EffectStep *step)
+{
+	if (step->variant == 0)
+	{
+		BattlePres_RunBurstScene(step, 6);
+		return;
+	}
+	if (step->variant == 1)
+	{
+		BattlePres_RunBurstScene(step, 7);
+		return;
+	}
+	BattlePres_RunBurstScene(step, 8);
+}
+
+void EffectStep_RunAnimationMode0(struct EffectStep *step)
+{
+	BattlePres_RunBurstScene(step, 0);
+}
+
+void EffectStep_RunAnimationMode0Alternate(struct EffectStep *step)
+{
+	BattlePres_RunBurstScene(step, 0);
+}
+
+void EffectStep_RunAnimationMode1(struct EffectStep *step)
+{
+	BattlePres_RunBurstScene(step, 1);
+}
+
+void EffectStep_RunAnimationMode2(struct EffectStep *step)
+{
+	BattlePres_RunBurstScene(step, 2);
+}
+
+void EffectStep_RunAnimationMode3Or4Or5(struct EffectStep *step)
+{
+	if (step->variant == 0)
+	{
+		BattlePres_RunBurstScene(step, 3);
+		return;
+	}
+	if (step->variant == 1)
+	{
+		BattlePres_RunBurstScene(step, 4);
+		return;
+	}
+	BattlePres_RunBurstScene(step, 5);
+}
+
+//--------------------------------------------------------------------------
+
+// burst_scene.c
+
+// バトル演出：対象に重ねて弾ける連撃と、せり上がる岩の壁
+
+//--------------------------------------------------------------------------
+
+#undef gBattleFxWork
+#undef gWorkSlot
+
+void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
+
+//--------------------------------------------------------------------------
+// 対象に何度も重ねて弾ける連撃
+// BurstScene_Records は variant ごとに 7 バイト
+//   [0] 弧の絵（0 なら BlueArcSheetA、ほかは B。1 ならすべての回を弧で描く）
+//   [1] パレットを取るリソース（0〜3）
+//   [2] 回数
+//   [3] 1 回で飛ばす粒の数
+//   [4] 回と回の間（フレーム）
+//   [5] 全体のフレーム数
+//   [6] 1 なら当たるたびにキャンバスを塗りつぶす
+//--------------------------------------------------------------------------
+void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
+{
+	struct EffectPosition	 actor_pos;
+	struct EffectPosition	 target_pos;
+	struct EffectPosition	 pos;
+	s32						 screen_x;
+	s32						 screen_y;
+	DrawRectangle			 draw[2];
+	struct BattleEffectWork *work;
+	void					*canvas;
+	s32						 frame;
+	u8						*sprites;
+	struct BattleCamera		*camera;
+	struct MotionObject		*target;
+	u8						*pltt;
+	s32						 res;
+	s32						 row;
+	s32						 col;
+	s32						 i;
+	s32						 j;
+
+	work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+	canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+	sprites = *(gWorkSlot + HEAP_SLOT_BATTLE_SHEET);
+	camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+	REG_BLDALPHA = 0x1010;
+	if (work->effect->prelude == 1)
+		BattleFx_PrepareCanvasEffect(effect, 7, work->effect->side, 2, &screen_x, &screen_y);
+
+	//------------------------------------------------------------------
+	// 絵とパレット
+	//------------------------------------------------------------------
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+
+	// 玉（40x288）を横半分に詰めて 0x5100 から置く（キャンバスは横 2 倍で見せる）
+	Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1, 0);
+	for (row = 0; row != 288; row++)
+	{
+		for (col = 0; col != 40; col++)
+		{
+			s32 src = row * 40 + col;
+			s32 dst = row * 20 + col / 2 + 0x5100;
+
+			work->sheet[dst] = work->sheet[src];
+		}
+	}
+	if (BurstScene_Records[variant * 7] == 0)
+		Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work->sheet, 1, 1);
+	else
+		Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, Ram_MapCellBuffer + 0x5e00, 1, 0);
+	switch (BurstScene_Records[variant * 7 + 1])
+	{
+	case 0:
+		res = (s32)&ResourceId_MarsDjinnSheet;
+		break;
+	case 1:
+		res = (s32)&ResourceId_LimePalette;
+		break;
+	case 2:
+		res = (s32)&ResourceId_BlueArcSheetB;
+		break;
+	default:
+		res = (s32)&ResourceId_EmberStreakSheet;
+		break;
+	}
+	pltt = Resource_GetTableEntry(res);
+	Iwram_CopyWords((void *)BG_PLTT, pltt, 128);
+	WaitFrames(1);
+
+	EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &target_pos);
+	work->transfer_mode = 2; // 残像 3/4
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	// 粒：対象の 25 ドット上に用意しておく（x の速さは原点の側へ向ける）
+	target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+	for (i = 0; i != 768; i++)
+	{
+		struct EffectStep *mote = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+
+		mote->x = target->x;
+		mote->y = target->y + 0x190000;
+		mote->z = target->z;
+		mote->velocity_x = (Random16() & 255) << 12;
+		mote->velocity_y = ((Random16() & 255) - 127) << 12;
+		mote->velocity_z = ((Random16() & 255) - 127) << 12;
+		if (mote->x > 0)
+			mote->velocity_x = -mote->velocity_x;
+		mote->variant = -1; // 寿命（負なら出ていない）
+	}
+	BattleMotion_ApproachTargetFar(work->effect->actor, work->effect->actors[0], 4, 0);
+
+	for (frame = 0; frame != BurstScene_Records[variant * 7 + 5]; frame++)
+	{
+		s32 bursts = BurstScene_Records[variant * 7 + 2];
+
+		EffectPosition_ApplyStepAndYOffset(work->effect->actor, &actor_pos);
+		actor_pos.x /= 2;
+
+		// 弧と波：奇数回は上下反転で描く
+		if (work->effect->side == 0)
+		{
+			BattleEffect_LoadWork(
+				HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+				GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_Y, GOUSEI_HIKAKU);
+		}
+		else
+		{
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7,
+				GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+			BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+				GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP, GOUSEI_HIKAKU);
+		}
+		draw[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+		draw[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+		for (i = 0; i != bursts; i++)
+		{
+			s32 start = i * BurstScene_Records[variant * 7 + 4];
+
+			if (frame >= start && frame < start + 6)
+			{
+				s32 step = frame - start;
+
+				if ((i & 3) <= 1 || BurstScene_Records[variant * 7] == 1)
+				{
+					// 弧（48x72 を 6 コマ）
+					if (work->effect->side == 0)
+						draw[i & 1](canvas, work->sheet + step * 3456, target_pos.x / 2 - 16,
+							target_pos.y - 40, 48, 72);
+					else
+						draw[i & 1](canvas, work->sheet + step * 3456, target_pos.x / 2 - 32,
+							target_pos.y - 40, 48, 72);
+				}
+				else
+				{
+					// 波（48x16 を 6 コマ）
+					if (work->effect->side == 0)
+						draw[i & 1](canvas, Ram_MapCellBuffer + 0x5e00 + step * 768,
+							target_pos.x / 2 - 16, actor_pos.y - 8, 48, 16);
+					else
+						draw[i & 1](canvas, Ram_MapCellBuffer + 0x5e00 + step * 768,
+							target_pos.x / 2 - 32, actor_pos.y - 8, 48, 16);
+				}
+			}
+			if (frame == start + 2)
+			{
+				// 当たり：最後の回で締める
+				if (BurstScene_Records[variant * 7 + 6] == 1)
+					Iwram_FillWords(canvas, 0x4000, 0x2f2f2f2f);
+				ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 4);
+				if (i == bursts - 1)
+				{
+					BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
+					work->shake_frames = 8;
+					BattleEventRuntime_BeginPhaseFar(134);
+				}
+				else
+				{
+					if (i & 1)
+						BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 7);
+					work->shake_frames = 4;
+					AudioCommand_PlayFar(134);
+				}
+				for (j = 0; j != BurstScene_Records[variant * 7 + 3]; j++)
+					((struct EffectStep *)Ram_MapCellBuffer)[i * 32 + j].variant =
+						(Random16() & 7) + 15;
+			}
+			// 玉（20x48 を 6 コマ、2 フレームずつ）
+			if (frame >= start + 2 && frame < start + 14)
+				draw[0](canvas, work->sheet + ((frame - start - 2) / 2) * 960 + 0x5100,
+					target_pos.x / 2 - 10, target_pos.y - 24, 20, 48);
+		}
+		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+
+		// 粒：寿命が尽きるまで描き、地面で跳ね返す
+		Render_ResetTransformState();
+		Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
+		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_KASAN);
+		BattleEffect_LoadWork(
+			HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+		draw[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+		draw[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+		for (i = 0; i != 512; i++)
+		{
+			struct EffectStep *mote = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+
+			s32 size = mote->variant;
+
+			if (size > 0)
+			{
+				EffectPosition_ApplyBaseAndYOffset(&mote->x, &pos);
+				pos.x /= 2;
+				size >>= 3;
+				size++;
+				draw[(i / 2) & 1](canvas, sprites + ParticleStreams_CellOffsets[size - 1],
+					pos.x - size / 2, pos.y - size, size, size * 2);
+				EffectStep_AdvanceWithGravity3D(mote, 60, -0x400);
+				if (mote->y < 0x80000)
+					mote->velocity_y = -mote->velocity_y / 2;
+				mote->variant--;
+			}
+		}
+		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+		Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+		Camera_ApplyShake(8, 8);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	BattleFx_EndCanvasLayer();
+}
+
+struct WallScale
+{
+	s32 x;
+	s32 y;
+};
+
+extern const struct WallScale RisingWall_UnitScale;
+
+//--------------------------------------------------------------------------
+// 地面が盛り上がり、岩の壁がせり上がって、しばらくして沈む
+// 壁は左右対称で、左半分を描いてから右半分を左右反転で描く
+// 壁の中心はキャンバスの x = 64 + wall_x
+// 岩は 11 個のアニメーションオブジェクト（動きは particles[10〜20]）
+//--------------------------------------------------------------------------
+void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
+{
+	void				   **heap;
+	void				   **cursor;
+	struct BattleEffectWork *work;
+	void					*canvas;
+	DrawRectangle			 draw[2];
+	u8						*sprites;
+	s32						 wall_x;
+	s32						 rock_x;
+	struct WallScale		 scale;
+	s32						 pos[4];
+	u8						*src;
+	u16						*col;
+	void					*pltt = (void *)BG_PLTT;
+	s32						 n;
+	s32						 frame;
+	s32						 i;
+	s32						 j;
+	s32						 k;
+
+	heap = (void **)gBattleFxWork;
+	cursor = heap;
+	work = *cursor++;
+	canvas = *cursor;
+	sprites = heap[2];
+	work->effect = effect;
+	BattleFx_BeginCanvasLayer(0);
+
+	// variant が大きいほど壁を横に広げる
+	if (work->effect->variant == 0)
+		REG_BG2PA = 204; // 1.25 倍
+	else if (work->effect->variant == 1)
+		REG_BG2PA = 170; // 1.5 倍
+	if (work->effect->side == 1)
+	{
+		wall_x = 8;
+		if (work->effect->variant == 0)
+			rock_x = 40;
+		else if (work->effect->variant == 1)
+			rock_x = 36;
+		else
+			rock_x = 40;
+	}
+	else
+	{
+		wall_x = -16;
+		rock_x = -12;
+	}
+	REG_BG2X = RisingWall_Bg2Shifts[work->effect->side][work->effect->variant] << 8;
+
+	//------------------------------------------------------------------
+	// パレット：BG の 1〜63 番を各成分 8 段暗くする
+	//------------------------------------------------------------------
+	Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, Ram_MapCellBuffer, 1, 0);
+	Iwram_CopyWords(pltt, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteA), 128);
+	col = (u16 *)&BG_PLTT[1];
+	for (i = 0; i != 63; i++)
+	{
+		s32 c = *col;
+		s32 b = ((u16)c >> 10) & 31;
+		s32 g = ((u16)c >> 5) & 31;
+		s32 r = 31;
+
+		r &= c;
+		b -= 8;
+		g -= 8;
+		r -= 8;
+
+		if (b < 0)
+			b = 0;
+		if (g < 0)
+			g = 0;
+		if (r < 0)
+			r = 0;
+		*col++ = (b << 10) | (g << 5) | r;
+	}
+
+	//------------------------------------------------------------------
+	// 絵を work->sheet に並べ直す
+	//   伸びていく壁   : 1 ライン × 9 段を、それぞれ 32 ラインに伸ばす
+	//   壁の上 0x13c0  : 48x32 を縦 3 倍にして 48x96
+	//   壁の下 0x25c0  : 48x21
+	//   盛り上がり     : 3 コマ
+	//------------------------------------------------------------------
+	src = Ram_MapCellBuffer;
+	n = 0;
+	for (j = 0; j != 9; j++)
+	{
+		for (i = 0; i != 32; i++)
+		{
+			for (k = 0; k != RisingWall_RowWidths[j]; k++, n++)
+				work->sheet[n] = src[k];
+		}
+		src += RisingWall_RowWidths[j];
+	}
+	for (j = 0; j != 32; j++)
+	{
+		for (i = 0; i != 3; i++)
+		{
+			for (k = 0; k != 48; k++, n++)
+				work->sheet[n] = src[k];
+		}
+		src += 48;
+	}
+	for (i = 0; i != 1008; i++)
+		work->sheet[n++] = *src++;
+	for (i = 0; i != 3; i++)
+	{
+		for (k = 0; k != RisingWall_MoundWidths[i] * RisingWall_MoundHeights[i]; k++)
+			work->sheet[n++] = *src++;
+	}
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+
+	// 岩のオブジェクト
+	for (i = 0; i != 11; i++)
+	{
+		struct AnimationObject *obj = ResourceObject_CreateFar(390);
+
+		work->objects[i] = obj;
+		if (obj != 0)
+		{
+			obj->flags = 0;
+			AnimationObjects_SelectAnimationFar(obj, i / 4);
+			((struct AnimationObject *)work->objects[i])->part[0].priority = 1;
+		}
+	}
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+	draw[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
+		GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+	draw[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+	REG_BLDCNT = 0x3f46;
+	REG_BLDALPHA = 0x1010;
+	work->transfer_mode = 2; // 残像 3/4
+	work->transfer_value = 75;
+	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+	// 岩：x は列、y は 128 から z ずつ減らす数え、
+	// velocity_x は 1〜12 を回る数え、variant は出るまでの待ち
+	for (i = 0; i != 11; i++)
+	{
+		struct EffectStep *rock = &work->particles[10 + i];
+
+		rock->x = (Random16() & 15) + 88;
+		rock->y = 128;
+		rock->z = (Random16() & 15) + 2;
+		rock->velocity_x = i;
+		rock->velocity_y = 1;
+		rock->velocity_z = 0x8000;
+		rock->variant = 44 - i * 4;
+	}
+	for (i = 0; i != 6; i++)
+		work->particles[16 + i].x = RisingWall_LateRockColumns[i];
+
+	// 土ぼこり：壁の根もとから上へ昇る
+	for (i = 0; i != 256; i++)
+	{
+		struct EffectStep *dust = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+
+		dust->x = ((Random16() & 63) + wall_x + 32) << 16;
+		dust->y = ((Random16() & 7) + 96) << 16;
+		dust->velocity_y = ((Random16() & 63) + 32) << 13;
+		dust->variant = Random16() & 31;
+	}
+	REG_BG2CNT = 0x785;
+	work->shake_frames = 250;
+	for (frame = 0; frame != 192; frame++)
+	{
+		if (frame == 0)
+			AudioCommand_PlayFar(212);
+		if (frame == 40)
+			AudioCommand_PlayFar(141);
+		if (frame == 96)
+			AudioCommand_PlayFar(145);
+		if (frame == 120)
+			BattleEventRuntime_BeginPhaseFar(134);
+
+		// 盛り上がる地面（0〜81）
+		if (frame <= 81)
+		{
+			s32 cell = frame / 4;
+
+			if (cell > 2)
+				cell = (cell & 1) + 1;
+			draw[0](canvas, work->sheet + RisingWall_MoundSheetOffsets[cell],
+				wall_x - RisingWall_MoundWidths[cell] + 64, 116 - RisingWall_MoundHeights[cell],
+				RisingWall_MoundWidths[cell], RisingWall_MoundHeights[cell]);
+			draw[1](canvas, work->sheet + RisingWall_MoundSheetOffsets[cell], wall_x + 64,
+				116 - RisingWall_MoundHeights[cell], RisingWall_MoundWidths[cell],
+				RisingWall_MoundHeights[cell]);
+		}
+
+		// せり上がる壁（12〜87）
+		if (frame >= 12 && frame <= 87)
+		{
+			s32 row = (frame - 64) / 3;
+
+			if (row < 0)
+				row = 0;
+			if (row > 7)
+				row = 7;
+			for (i = 0; i != 4; i++)
+			{
+				draw[0](canvas, work->sheet + RisingWall_RowSheetOffsets[row],
+					wall_x - RisingWall_RowWidths[row] + 64, i * 32 - 12, RisingWall_RowWidths[row],
+					32);
+				draw[1](canvas, work->sheet + RisingWall_RowSheetOffsets[row], wall_x + 64,
+					i * 32 - 12, RisingWall_RowWidths[row], 32);
+			}
+		}
+
+		// 沈む壁（160〜183）
+		if (frame >= 160 && frame <= 183)
+		{
+			s32 row = 7 - (frame - 160) / 3;
+
+			if (row < 0)
+				row = 0;
+			if (row > 7)
+				row = 7;
+			for (i = 0; i != 4; i++)
+			{
+				draw[0](canvas, work->sheet + RisingWall_RowSheetOffsets[row],
+					wall_x - RisingWall_RowWidths[row] + 64, i * 32 - 12, RisingWall_RowWidths[row],
+					32);
+				draw[1](canvas, work->sheet + RisingWall_RowSheetOffsets[row], wall_x + 64,
+					i * 32 - 12, RisingWall_RowWidths[row], 32);
+			}
+		}
+
+		// 立ち切った壁（88〜159）
+		if (frame >= 88 && frame <= 159)
+		{
+			s32 width = 48;
+
+			draw[0](canvas, &work->sheet[0x13c0], wall_x + 16, 0, width, 96);
+			draw[1](canvas, &work->sheet[0x13c0], wall_x + 64, 0, width, 96);
+			draw[0](canvas, &work->sheet[0x25c0], wall_x + 16, 96, width, 21);
+			draw[1](canvas, &work->sheet[0x25c0], wall_x + 64, 96, width, 21);
+		}
+
+		// 土ぼこり（88〜）：上に抜けたら根もとへ戻す（159 まで）
+		if (frame > 87)
+		{
+			for (i = 0; i != 64; i++)
+			{
+				struct EffectStep *dust = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+
+				if (dust->variant == 0)
+				{
+					s32 size = (i & 3) + 5;
+
+					draw[0](canvas, sprites + ParticleStreams_CellOffsets[size - 1],
+						HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);
+					dust->y -= dust->velocity_y;
+					if (dust->y < 0 && frame <= 159)
+						dust->y = 0x600000;
+				}
+				else
+				{
+					dust->variant--;
+				}
+			}
+		}
+
+		// 岩（5〜）：72 フレーム目からは 11 個に増やし、大きくする
+		if (frame > 4)
+		{
+			s32 rocks = 6;
+
+			if (frame > 71)
+				rocks = 11;
+			for (k = 0; k != rocks; k++)
+			{
+				struct EffectStep *rock = &work->particles[10 + k];
+				s32				   slot;
+
+				if (rock->variant == 0)
+				{
+					scale = RisingWall_UnitScale;
+					if (frame > 71)
+					{
+						scale.x = (k << 12) + 0x8000;
+						scale.x += work->effect->variant << 14;
+					}
+					else
+					{
+						scale.x = 0x8000;
+					}
+					scale.y = scale.x;
+					pos[3] = 0;
+					pos[0] = (rock->x + rock_x * 2) << 16;
+					pos[1] = 0x2000000 - (rock->y << 16);
+					pos[2] = 0x2000000;
+					slot = (frame / 2 + k) % 11;
+					if (slot != -1)
+						Object_ApplyProjectedPlacementFar(work->objects[slot], pos, &scale, 0);
+					rock->y -= rock->z;
+					rock->velocity_x += rock->velocity_y;
+					if (rock->velocity_x > 12)
+						rock->velocity_x -= 12;
+					if (rock->y < 0)
+					{
+						// y が 0 を切ったら 128 から出し直す（88 フレーム目からは列と速さも選び直す）
+						if (frame > 159)
+						{
+							rock->variant = -1;
+						}
+						else
+						{
+							if (frame > 87)
+							{
+								rock->z = (Random16() & 7) + 8;
+								if (work->effect->variant == 0)
+									rock->x = Random16() % 96 + 42;
+								else if (work->effect->variant == 1)
+									rock->x = Random16() % 112 + 34;
+								else
+									rock->x = Random16() % 160 + 10;
+							}
+							rock->y = 128;
+							rock->variant = 8;
+						}
+					}
+				}
+				else
+				{
+					rock->variant--;
+				}
+			}
+		}
+
+		// 対象（86〜158）
+		if (frame <= 158)
+		{
+			for (i = 0; i != work->effect->count; i++)
+			{
+				if (frame > 85)
+				{
+					if (frame % 12 == 0)
+						ObjectGroup_UpdateMembers(work->effect->actors[i], 7, 5, i, 6);
+					if ((frame & 3) == 0)
+						BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 5);
+				}
+			}
+		}
+		if (frame < 90 || frame > 160)
+			Camera_ApplyShake(2, 2);
+		else
+			Camera_ApplyShake(8, 8);
+		ObjectGroup_TickMemberTimers();
+		work->transfer_pending = 1;
+		WaitFrames(1);
+	}
+	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	for (i = 0; i != 11; i++)
+		ResourceObject_ReleaseFar(work->objects[i]);
+	BattleFx_EndCanvasLayer();
+}
+
+#undef BattleEffect_RunCirclingFallingScene
+#undef BattleFx_InitializeMode6
+#undef BattleFx_RunObjectRow
+#undef BattlePresentation_ConfigurePaletteFadeFar
+#undef BattlePresentation_SetPaletteLevelFar
+#undef Camera_ApplyShake
+#undef EffectPosition_ApplyAlternateStepAndYOffset
+#undef EffectPosition_ApplyAnimationAndYOffset
+#undef GetMotionRecordFar
+#undef Graphics_PackTileRows
+#undef ObjectDispatch_ApplyValueToChildrenFar
+#undef PARTICLES
+#undef gTransitionWork
 
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity)
 {
@@ -594,16 +18406,11 @@ void BattleFx_StepPaletteToResource(s32 resource_id)
 }
 
 //--------------------------------------------------------------------------
-
 // casting.c
-
 // バトル演出：ジンの技（演出 100〜135）
-
 //--------------------------------------------------------------------------
 
 typedef BattleEffectDrawRectangle RectangleBlit; // キャンバスへの合成描画
-void Graphics_PackTileRows();
-
 
 static __inline__ void LoadResource(const void *id, void *dest, s32 skip, s32 copy)
 {
@@ -1935,8 +19742,6 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	}
 }
 
-void BattleFx_PrepareCanvasEffect(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
-
 void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
 {
 	void				   **heap_cache;
@@ -2085,10 +19890,6 @@ void ObjectGroup_StoreObjectAndRunStep7(s32 a0, s32 a1, s32 a2)
 	BattleFx_EndCanvasLayer();
 }
 
-extern struct EffectStep gMapCellBuffer[];
-
-void ObjectDispatch_InitFromTable6Far(struct MotionObject *object);
-
 void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
 {
 	void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
@@ -2236,22 +20037,18 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
 }
 
 //--------------------------------------------------------------------------
-
 // place_formation_objects.c
-
 // バトル効果：オブジェクトの並べかたと、着弾の閃光・火花
-
 //--------------------------------------------------------------------------
-
 //--------------------------------------------------------------------------
 // 並べかた
 //--------------------------------------------------------------------------
-struct Scale
+struct Scale_2
 {
 	s32 x; // 0x10000 で等倍
 	s32 y;
 };
-struct Placement
+struct Placement_2
 {
 	s32 x; // 16.16 ドット
 	s32 y;
@@ -2259,10 +20056,8 @@ struct Placement
 	s32 w;
 };
 
-extern const struct Scale Formation_NormalScale; // 等倍
-extern const struct Scale Formation_SmallScale;	 // 1.25 倍
-
-void Object_ApplyProjectedPlacementFar(void *object, void *pos, void *scale, s32 flags);
+extern const struct Scale_2 Formation_NormalScale; // 等倍
+extern const struct Scale_2 Formation_SmallScale;	 // 1.25 倍
 
 //--------------------------------------------------------------------------
 // work->objects を formation の形に並べる
@@ -2273,9 +20068,9 @@ void Object_ApplyProjectedPlacementFar(void *object, void *pos, void *scale, s32
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 {
 	struct BattleEffectWork *work = *(void **)gBattleFxWork;
-	struct Scale			 normal = Formation_NormalScale;
-	struct Scale			 big = Formation_SmallScale;
-	struct Placement		 pos;
+	struct Scale_2			 normal = Formation_NormalScale;
+	struct Scale_2			 big = Formation_SmallScale;
+	struct Placement_2		 pos;
 	s32						 i;
 
 	pos.w = 0;
@@ -2316,9 +20111,6 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 		break;
 	}
 }
-#define HI(v) (((s16 *)&(v))[1]) // 16.16 の整数部
-
-#define CLIP (GOUSEI_CLIP_X | GOUSEI_CLIP_Y)
 
 #define HAHEN_E 0x59d8 // 破片の絵の置き場（12×24 が 4 枚）
 
@@ -2494,7 +20286,6 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
 }
 
-
 void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta)
 {
     u16 *color = (u16 *)0x05000002;
@@ -2529,13 +20320,9 @@ void BattleFx_ArmPaletteHBlankDma(void)
 }
 
 //--------------------------------------------------------------------------
-
 // particle_stream_modes.c
-
 // 戦闘エフェクト：粒子の流れのモード 0・1 の入口
-
 //--------------------------------------------------------------------------
-
 //--------------------------------------------------------------------------
 // 粒子の流れをモード 0 で走らせる
 //--------------------------------------------------------------------------
@@ -2552,9 +20339,7 @@ void BattleFx_InitializeMode1(struct BattleEffectArgument *efx)
 	BattleEffect_RunParticleStreams(efx, 1);
 }
 
-extern const struct Scale CirclingScene_UnitScale;
-
-#define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
+extern const struct Scale_2 CirclingScene_UnitScale;
 
 extern s16 ParticleStreams_OrbitPoints[][3];
 extern s16 ParticleStreams_DropPoints[][2];
@@ -2620,7 +20405,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 	struct EffectPosition  spot;
 	struct EffectPosition *pos;
 	struct EffectPosition  point;
-	struct Scale		   scale;
+	struct Scale_2		   scale;
 	s32					   frame;
 	s32					   i;
 
@@ -2993,7 +20778,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 		s32					 size = (frame + 0x1d0) << 8;
 		struct BattleCamera *camera = gCameraWork;
 		s32					 elapsed = frame - 16;
-		struct Scale		 scale;
+		struct Scale_2		 scale;
 		s32					 x;
 		s32					 y;
 		s32					 grow;
@@ -3134,14 +20919,14 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
 {
 	s32						 position[4];
 	DrawRectangle			 draw[2];
-	struct Scale			 scale;
+	struct Scale_2			 scale;
 	void				   **cache;
 	void					*canvas;
 	struct BattleEffectWork *work;
 	s32						 frame;
 	u8						*sheet;
-	struct Scale			 base;
-	struct Scale			 orb;
+	struct Scale_2			 base;
+	struct Scale_2			 orb;
 	s32						 i;
 	s32						 k;
 
@@ -4106,6 +21891,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 
 #define DUST ((struct EffectStep *)Ram_MapCellBuffer)
 #undef SPARK
+#undef SPARK
 #define SPARK ((struct EffectStep *)(Ram_MapCellBuffer + 684 * sizeof(struct EffectStep)))
 
 void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
@@ -4493,20 +22279,20 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 	BattleFx_EndCanvasLayer();
 }
 
-
 struct ShockwaveWork
 {
 	u8 sheet[0x2710];
 	u8 ramp[8][770];
 };
 
-extern const struct Scale ShockwaveScene_UnitScale;
+extern const struct Scale_2 ShockwaveScene_UnitScale;
 extern const u8			  ShockwaveScene_BurstHeights[];
 extern const u16		  ShockwaveScene_BurstCells[];
 extern u16				  ShockwaveScene_ShardCells[];
 extern u8				  ShockwaveScene_ShardWidths[];
 extern u8				  ShockwaveScene_ShardHeights[];
 
+#undef SPARKS
 #undef SPARKS
 #define SPARKS (&DUST[128])
 
@@ -4555,8 +22341,8 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 	s32							   place[4];
 	volatile u32				   fill;
 	s32							   place2[4];
-	struct Scale				   pair;
-	struct Scale				   scale;
+	struct Scale_2				   pair;
+	struct Scale_2				   scale;
 	void						  *canvas;
 	struct BattleEffectWork		  *work;
 	struct BattlePresentationWork *ctrl;
@@ -5463,7 +23249,6 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 	BattleFx_EndCanvasLayer();
 }
 
-
 #define REG16(address) (*(volatile u16 *)(address))
 
 #define BURST ((struct EffectStep *)Ram_MapCellBuffer)
@@ -5951,8 +23736,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 	BattleFx_EndCanvasLayer();
 }
 
-
-extern const struct Scale BattleFx6_UnitScale;
+extern const struct Scale_2 BattleFx6_UnitScale;
 
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
@@ -5994,7 +23778,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
 	struct EffectStep		*q3;
 	struct EffectStep		*q4;
 	DrawRectangle			 blit[2];
-	struct Scale			 scale;
+	struct Scale_2			 scale;
 	s32						 ground = 112;
 
 	cache = (u32 *)&((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_CANVAS];
@@ -6516,13 +24300,10 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
 	BattleFx_EndCanvasLayer();
 }
 
-
 //--------------------------------------------------------------------------
 // wait_then_set_field.c
 // バトル演出：対象へ近づいてからのスパーク（型 4）
 //--------------------------------------------------------------------------
-
-
 //--------------------------------------------------------------------------
 // 行動者を最初の対象へ跳んで近づかせ、29 フレーム後に型 4 のスパークを出す
 // effect : 演出の引数
@@ -6557,7 +24338,6 @@ void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect)
 // colburst.c
 // バトル演出：4 コマの一枚絵と、立ちのぼる柱と火花
 //--------------------------------------------------------------------------
-
 
 void BattleFx_RunRevealColumnMode1(s32 arg)
 {
@@ -7532,4 +25312,3 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	end = (const u32 *)ParticleStreams_CellOffsets;
 	return src == end;
 }
-

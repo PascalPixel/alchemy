@@ -7,30 +7,874 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
-#include "affine.h"
-#include "resource.h"
-#include "fixed_math.h"
-#include "iwram_call.h"
-#include "global_cells.h"
+#include "mem.h"
 #include "dma.h"
 #include "ramcode.h"
-#include "mem.h"
-#include "vram_block.h"
-#include "scene.h"
-#include "callback_scheduler.h"
-#include "string.h"
 #include "io_reg.h"
-#include "low_runtime.h"
-#include "oam.h"
-#include "vram_tab.h"
-#include "irqlock.h"
-#include "lib.h"
-#include "layout_guard.h"
+#include "io_write_queue.h"
+#include "callback_scheduler.h"
+#include "irq.h"
+#include "types.h"
+#include "scene.h"
+#include "resource.h"
 #include "resource_ids.h"
-#include "heap_state.h"
+#include "global_cells.h"
+#include "cartboot.h"
 #include "ram_buffer.h"
+#include "serial_runtime.h"
+#include "frame.h"
+#include "keystate.h"
+#include "input.h"
+#include "oam.h"
+#include "map_scroll.h"
+#include "heap_state.h"
+#include "irqlock.h"
 #include "iowrite.h"
+#include "lib.h"
+#include "fixed_math.h"
+#include "affine.h"
+#include "iwram_call.h"
+#include "vram_block.h"
+#include "string.h"
+#include "low_runtime.h"
+#include "vram_tab.h"
+#include "layout_guard.h"
+#include "edition.h"
+#include "transform.h"
+#include "project.h"
+#include "save_state.h"
+#include "runtime_interfaces.h"
+#include "flash.h"
+#include "audio_engine_symbols.h"
+
+extern u8 gDebugMode;
+extern u8 gCpuLoadDisplayEnabled;
+extern u8 gOamCopyEnabled;
+
+void WaitFrames(s32 frames);
+
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#define HALT_ON_GAMEPAK_IRQ 1
+#endif
+
+void System_Initialize(void)
+{
+    volatile u32 zero;
+
+    {
+        volatile u16 *dma0 = REG_DMA0;
+
+        dma0[5] &= 0xc5ff;
+        dma0[5] &= 0x7fff;
+        dma0[5];
+    }
+    Io_Write16(WAITCNT_GAME, &REG_WAITCNT);
+    zero = 0;
+    Dma_Set((const void *)&zero, (void *)0x03000000, 0x85001e00, REG_DMA3);
+    Runtime_InitializeHeap();
+    Runtime_InstallIwramAndIrqs();
+    *(u32 *)&gIoWriteQueue.count = 0;
+    gDebugTextEnabled = 0;
+    gDebugMode = 0;
+    gCpuLoadDisplayEnabled = 0;
+    Resource_LoadWorkHeader();
+    Ui_LoadWindowGraphics();
+    Bg0_ClearTilemap();
+    REG_DISPCNT = 0x140;
+    Runtime_SetIrqHandler(0, 1, (void (*)(void))System_VBlankHandler);
+#if defined(HALT_ON_GAMEPAK_IRQ)
+    Runtime_SetIrqHandler(13, 1, IwramHalt);
+#endif
+    Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
+    Audio_InitializeRuntimeDefaultsFar();
+    Resource_InitializeTable();
+    Scheduler_ResetTaskTable();
+    gCartridgeResetMarker = 0;
+    gOamCopyEnabled = 1;
+    gSleepDisabled = 0;
+    WaitFrames(10);
+    Game_ResetForNewGameFar(0);
+}
+
+void Runtime_IdleForever(void)
+{
+    for (;;) {
+        (void)gKeyState;
+        WaitFrames(1);
+    }
+}
+
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+
+s32 System_GetLanguage(void)
+{
+    s32 language;
+
+    switch (Rom_LanguageCode) {
+    case 'D':
+        language = 1;
+        break;
+    case 'F':
+        language = 2;
+        break;
+    case 'S':
+        language = 3;
+        break;
+    case 'I':
+        language = 4;
+        break;
+    default:
+        language = 0;
+        break;
+    }
+    return language;
+}
+#endif
+
+void RuntimeDispatch_ReservedNoOpA(void)
+{
+}
+
+void RuntimeDispatch_ReservedNoOpB(void)
+{
+}
+
+void RuntimeDispatch_ReservedNoOpC(void)
+{
+}
+
+void RuntimeDispatch_ReservedNoOpD(void)
+{
+}
+
+void RuntimeDispatch_ReservedNoOpE(void)
+{
+}
+
+s32 RuntimeDispatch_ReturnZero(void)
+{
+    return 0;
+}
+
+struct ResourceWork {
+    u32 header[3];
+    u32 cursor;
+};
+
+void Resource_LoadWorkHeader(void)
+{
+    const void *header;
+    struct ResourceWork *work;
+
+    header = (const void *)Resource_GetTableEntry((u32)&ResourceId_BuildStamp);
+    work = (struct ResourceWork *)&IwramHi_Data1;
+    Dma_Set(header, work, 0x84000003, REG_DMA3);
+    work->cursor = 0;
+}
+
+void RuntimeDispatch_NoOpHook(void)
+{
+}
+
+void *Resource_GetTableEntry(s32 index)
+{
+    return Resource_DirectoryTable[index];
+}
+
+void PackedTable_AdjustMarkedOffsets(u16 *entries, s32 byte_length)
+{
+    s32 entry_count;
+    s32 entry_index;
+
+    entry_count = byte_length >> 1;
+    entry_index = 1;
+    entries++;
+    if (entry_index < entry_count) {
+        u32 next_marker_mask;
+        u32 current_marker_mask;
+        u32 payload_mask = 0x7ff;
+        next_marker_mask = 0xf800;
+        current_marker_mask = 0xf000;
+        entries -= 2;
+        do {
+            u16 current_entry;
+            u16 next_entry;
+            u32 next_marker_bits;
+            u32 current_marker_bits;
+
+            next_entry = entries[2];
+            next_marker_bits = next_entry & next_marker_mask;
+            entries++;
+            if (next_marker_bits == next_marker_mask) {
+                current_entry = entries[0];
+                current_marker_bits = current_entry & next_marker_bits;
+                if (current_marker_bits == current_marker_mask) {
+                    u32 packed_offset;
+                    u32 adjusted_current;
+                    u32 adjusted_next;
+
+                    packed_offset = (((current_entry & payload_mask) << 12)
+                        | ((next_entry & payload_mask) * 2)) - (entry_index * 2);
+                    adjusted_current = ((packed_offset >> 12) & payload_mask)
+                        | current_marker_bits;
+                    adjusted_next = ((packed_offset >> 1) & payload_mask)
+                        | next_marker_bits;
+                    entries[0] = adjusted_current;
+                    entries[1] = adjusted_next;
+                }
+            }
+            entry_index++;
+        } while (entry_index < entry_count);
+    }
+}
+
+void Resource_LoadCode(u32 index, void *destination)
+{
+    void (*routine)(void *, s32);
+    s32 end;
+
+    end = Resource_DecodeType01((const void *)Resource_GetTableEntry(index), destination);
+    RamCode_Load(routine, Resource_PatchThumbBranch, Resource_PatchThumbBranchCodeSize);
+    routine(destination, end);
+    MemFree(routine);
+}
+
+void Runtime_IgnoreInterrupt(void)
+{
+}
+
+void Runtime_InstallIwramAndIrqs(void)
+{
+    u8 *iwram;
+
+    Io_Write16(0, &REG_IME);
+    iwram = IwramIrqMain;
+    Dma_Set((const void *)IwramRuntime_Rom, iwram, 0x84000500, REG_DMA3);
+    gIrqVector = iwram;
+    Dma_Set((const void *)Runtime_IrqHandlers, (void *)gIrqHandlers, 0x8400000e, REG_DMA3);
+    Io_Write16(0, &REG_DISPSTAT);
+    Io_Write16(0xc3ff, &REG_KEYCNT);
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    Io_Write16(0x3001, &REG_IE);
+#else
+    Io_Write16(0x1001, &REG_IE);
+#endif
+    Io_Write16(1, &REG_IME);
+}
+
+static __inline__ void System_SoftReset(void)
+{
+    /* FAKEMATCH: a void-returning entry pointer places the target in r1; the value-returning pointer preserves the measured r0 call. */
+    s32 (*reset)(void) = (s32 (*)(void))Cart_Restart;
+
+    gCartridgeResetMarker = 0x19670704;
+    Io_Write16(0, &REG_IME);
+    reset();
+}
+
+#define VBlankIntrWait()                                                       \
+    {                                                                          \
+        gVBlankDone &= ~1;                                                     \
+        do {                                                                   \
+            CAMELOT_ASM("Halt, which no C compiles to")                    \
+            __asm__ volatile("swi 2");                                         \
+        } while (!(gVBlankDone & 1));                                          \
+    }
+
+void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler)
+{
+    if (irq <= 13) {
+        u32 ime;
+        u32 bit;
+        u32 ie;
+
+        IRQ_LOCK(ime);
+        bit = 1 << irq;
+        ie = REG_IE & ~bit;
+        if (handler != 0)
+            ie |= bit;
+        REG_IE = ie;
+        if (irq <= 2) {
+            u32 enable = 8 << irq;
+            u32 keep = ~enable;
+            u32 stat;
+
+            if (irq == 2) {
+                enable |= vcount << 8;
+                keep &= 0xff;
+            }
+            stat = REG_DISPSTAT & keep;
+            if (handler != 0)
+                stat |= enable;
+            REG_DISPSTAT = stat;
+        }
+        if (handler != 0)
+            gIrqHandlers[irq] = handler;
+        else
+            gIrqHandlers[irq] = Runtime_IgnoreInterrupt;
+        IRQ_UNLOCK(ime);
+    }
+}
+
+void WaitFrames(s32 frames)
+{
+    u8 *sp;
+    u32 i;
+    u8 *base;
+    u32 line;
+    s32 j;
+    s16 dispcnt;
+    s16 backdrop;
+
+    CAMELOT_ASM("read the hardware stack pointer for the proven stack switch")
+    __asm__ volatile("mov %0, sp" : "=r"(sp));
+
+    base = sp;
+    if (base < Ram_FrameWaitStackTop) {
+        u8 *top = Ram_FrameWaitStackTop;
+        u8 *next;
+
+        gSavedStackSize = top - base;
+        Dma_Set(base, gSavedStack, (gSavedStackSize >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
+        /* FAKEMATCH: needed to match: XOR cancellation defers the top-copy
+         * guard until after allocation, retaining top in r4 across DMA.
+         * Without this lifetime boundary, top and the DMA control constant
+         * exchange r4/r5 (12 aligned differences, same 0x434-byte extent).
+         * The redundant guard emits no extra comparison or copy. */
+        next = (u8 *)((u32)top ^ (u32)base);
+        next = (u8 *)((u32)next ^ (u32)base);
+        /* FAKEMATCH: the tied top operand retains its DMA lifetime; an input-only operand adds a copy through ip. */
+        CAMELOT_ASM("the stack switch, a write to sp no C can express")
+        __asm__ volatile("mov sp, %0" : "+r"(top) : : "sp", "memory");
+        do {
+            if (top == next)
+                break;
+            top = next;
+        } while (0);
+    }
+    for (i = 0; i < frames; i++) {
+        gSchedulerStatus = 1;
+        Runtime_InvokeCallbacksByKey(0xc80);
+        gSchedulerStatus = 0;
+        Render_BuildOamList(Runtime_AllocateHeapBlock(52, 0x400));
+        gFrameRenderPending = 1;
+        if (gCpuLoadDisplayEnabled) {
+            line = *(u16 *)&REG_VCOUNT;
+            if (line >= 160)
+                line -= 160;
+            else
+                line += 68;
+            line += (gLagFrameCount - 1) << 8;
+            if (gCpuLoadTimer == 0)
+                gCpuLoadPeak = 0;
+            else
+                gCpuLoadTimer--;
+            if (gCpuLoadPeak < line) {
+                gCpuLoadPeak = line;
+                gCpuLoadTimer = 30;
+            }
+        }
+        if (gSleepDisabled == 0) {
+            if (gOptionMirror) {
+                if (gKeysHeld)
+                    gPostLoadCounter = 0;
+                else {
+                    gPostLoadCounter++;
+                    if (gPostLoadCounter > 3 * 60 * 60)
+                        gSleepRequested = 1;
+                }
+            }
+            if (gKeysHeld == KEYS_SHOULDERS) {
+                gSleepComboFrames++;
+                if (gSleepComboFrames >= 180) {
+                    gSleepComboFrames = 0;
+                    gSleepRequested = 1;
+                }
+            } else {
+                gSleepComboFrames = 0;
+            }
+        }
+        if (gDebugMode) {
+            for (;;) {
+                if (gDebugPaused) {
+                    if (gKeysRepeat & (KEY_A | KEY_B | KEY_SELECT))
+                        break;
+                    if (gKeysHeld & KEYS_DPAD)
+                        break;
+                    if (gKeysRepeat & KEY_START) {
+                        gDebugPaused = 0;
+                        break;
+                    }
+                } else {
+                    if (gKeysHeld != (KEY_START | KEY_SELECT))
+                        break;
+                    gDebugPaused = 1;
+                }
+                CAMELOT_ASM("Halt in VBlankIntrWait")
+                VBlankIntrWait();
+                Input_UpdateKeyRepeatAndDirection();
+                if (gResetRequested) {
+                    gResetRequested = 0;
+                    System_SoftReset();
+                }
+            }
+        }
+        gLagFramesShown = gLagFrameCount;
+        gLagFrameCount = 0;
+        CAMELOT_ASM("Halt in VBlankIntrWait")
+        VBlankIntrWait();
+        Runtime_ReleaseHeapBlock(52);
+        Graphics_ResetFrameState();
+        gFrameCount++;
+        gLoadedStateWord++;
+        Input_UpdateKeyRepeatAndDirection();
+        if (gSerialExchangeActive) {
+            SerialRuntime_PollStatus();
+            if (gSerialRuntime.mode)
+                gSerialRuntime.transfer_enabled = 1;
+        }
+        if (gSleepRequested && gSleepDisabled == 0) {
+            dispcnt = REG_DISPCNT;
+            backdrop = PLTT_BACKDROP;
+            if (gSleepRequested == 1) {
+                Io_Write16(0, &REG_DISPCNT);
+                Io_Write16(0x7fff, &PLTT_BACKDROP);
+                for (j = 0; j < 60; j++)
+                    CAMELOT_ASM("Halt in VBlankIntrWait")
+                    VBlankIntrWait();
+                gSleepActive = 1;
+                Io_Write16(KEYCNT_SHOULDERS_WAKE, &REG_KEYCNT);
+                Bios_SoundBiasOff();
+                CAMELOT_ASM("Stop, which no C compiles to")
+                __asm__ volatile("swi 3");
+                Bios_SoundBiasOn();
+                Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
+                gSleepActive = 0;
+                Io_Write16((u16)dispcnt, &REG_DISPCNT);
+                Io_Write16((u16)backdrop, &PLTT_BACKDROP);
+                for (j = 0; j < 10; j++)
+                    CAMELOT_ASM("Halt in VBlankIntrWait")
+                    VBlankIntrWait();
+                gSleepRequested = 0;
+                gPostLoadCounter = 0;
+            } else {
+                gSleepRequested--;
+            }
+        }
+        if (gResetRequested) {
+            gResetRequested = 0;
+            System_SoftReset();
+        }
+    }
+    {
+        u32 *size = &gSavedStackSize;
+
+        if (*size) {
+            /* FAKEMATCH: needed to match: XOR cancellation keeps the initial base
+             * live across the frame loop. A plain sp assignment shrinks the frame
+             * from eight bytes to four (65 aligned differences); the one-pass
+             * boundary retains the restore copy's order. */
+            u8 *restore;
+
+            /* FAKEMATCH: tying the old base to the hardware read keeps the eight-byte frame and removes an extra copy through ip. */
+            CAMELOT_ASM("read the hardware stack pointer for its restore copy")
+            __asm__ volatile("mov %0, sp" : "+r"(base));
+            sp = base;
+            restore = (u8 *)((u32)sp ^ (u32)base);
+
+            restore = (u8 *)((u32)restore ^ (u32)base);
+            do {
+                base = restore;
+            } while (0);
+            /* FAKEMATCH: needed to match: the one-pass copy guard retains the
+             * current-SP copy in sl. A plain restore loses that copy and differs
+             * by five aligned instructions (403 native, 402 built, 400 common),
+             * shrinking 0x434 bytes to 0x430. The redundant guard ends CSE at the
+             * copy without emitting an extra comparison. */
+            do {
+                if (base == sp)
+                    break;
+                base = sp;
+            } while (0);
+            /* FAKEMATCH: needed to match: the volatile reread keeps this saved-size
+             * load separate from the conditional read (7 aligned differences
+             * without this qualification). */
+            base -= *(volatile u32 *)size;
+            /* FAKEMATCH: needed to match: the cancelling restore identity keeps
+             * the result in base before installing sp. A direct assignment swaps
+             * the native high-register copy pair (4 aligned differences, same
+             * 0x434-byte extent); the identity restores both without a binding. */
+            restore = (u8 *)((u32)base ^ (u32)sp);
+            restore = (u8 *)((u32)restore ^ (u32)sp);
+            sp = restore;
+            CAMELOT_ASM("restore the hardware stack pointer after the proven stack copy")
+            __asm__ volatile("mov sp, %0" : : "r"(sp) : "sp", "memory");
+            /* FAKEMATCH: clearing the old address and restoring a separate
+             * pointer in complementary conditions ends the restore CSE block.
+             * The conditions vanish, retaining the size-address reload in r3
+             * and its load into r2. Reusing size instead of next_size changes
+             * that pair to r2/r2 (4 aligned differences, same 0x434 extent);
+             * deleting the empty barrier alone gives 24 differences. */
+            size = NULL;
+            {
+                u32 *next_size = NULL;
+
+                if (sp)
+                    next_size = &gSavedStackSize;
+                if (!sp)
+                    next_size = &gSavedStackSize;
+                Dma_Set(gSavedStack, base, (*next_size >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
+            }
+            while (DMA3->control & DMA_ENABLE32)
+                ;
+            gSavedStackSize = 0;
+        }
+    }
+}
+
+void Runtime_SetMainState19(void)
+{
+    gKeyRepeatTimer = 19;
+}
+
+#define KEY_REPEAT_FIRST 19
+#define KEY_REPEAT_NEXT  6
+
+void Input_UpdateKeyRepeatAndDirection(void)
+{
+    s32 delay = gKeyRepeatTimer;
+    u32 keys;
+    u32 axis = 0;
+    u32 dirs;
+    u32 mask;
+
+    if (delay <= 0) {
+        gKeysRepeat = gKeysHeld;
+        keys = gKeysRepeat;
+        if (delay == 0)
+            gKeyRepeatTimer = KEY_REPEAT_NEXT;
+        else
+            gKeyRepeatTimer = KEY_REPEAT_FIRST;
+    } else {
+        gKeysRepeat = 0;
+        keys = gKeysRepeat;
+    }
+
+    if (keys != 0) {
+        dirs = 0;
+        if (keys & KEY_UP)
+            dirs = 1;
+        if (keys & KEY_DOWN)
+            dirs++;
+        if (keys & KEY_LEFT)
+            dirs++;
+        if (keys & KEY_RIGHT)
+            dirs++;
+
+        gKeysRepeatDirected = keys;
+        switch (dirs) {
+        default:
+            gKeysDirection = KEYS_HORIZONTAL;
+            mask = 0xffff & ~KEYS_DPAD;
+            gKeysRepeatDirected &= mask;
+            break;
+        case 0:
+            gKeysDirection = KEYS_HORIZONTAL;
+            break;
+        case 1:
+            gKeysDirection = keys & KEYS_DPAD;
+            break;
+        case 2:
+            if ((gKeysDirection & gKeysRepeatDirected) == 0)
+                gKeysDirection = KEYS_HORIZONTAL;
+            gKeysRepeatDirected &= gKeysDirection ^ 0xffff;
+            break;
+        case 3:
+            if (gKeysDirection & KEYS_HORIZONTAL)
+                axis = KEYS_HORIZONTAL;
+            if (gKeysDirection & KEYS_VERTICAL)
+                axis = KEYS_VERTICAL;
+            mask = 0xffff ^ axis;
+            gKeysDirection = keys & mask;
+            gKeysRepeatDirected &= mask;
+            break;
+        }
+    } else {
+        gKeysRepeatDirected = keys;
+    }
+
+    gKeyState =
+        (gKeysHeld ^ gKeysHeldLast)
+        & gKeysHeld;
+    gKeysHeldLast = gKeysHeld;
+}
+
+extern u16 gLinkStatus;
+
+#define SOUND_PRESET_COUNT 5
+#define SOUND_PRESET_SIZE 152
+
+void System_VBlankHandler(void)
+{
+    u32 keys;
+    void (*hook)(void);
+
+    {
+        volatile u16 *dma0 = REG_DMA0;
+
+        dma0[5] &= ~DMA_START_HBLANK_REPEAT;
+        dma0[5] &= ~DMA_ENABLE;
+        dma0[5];
+    }
+    if (gSerialExchangeActive != 0) {
+        u16 *status = &gLinkStatus;
+        *status = SerialRuntime_ExchangePayloads((void *)&gSerialTransfer, (void *)gSerialPeerPayloads);
+        SerialRuntime_StepBlockTransfer();
+    }
+    MusicPlayer_StepVolumeAndPitchTowardTargetsFar();
+    BlendTransition_Update();
+    if (gFrameRenderPending != 0) {
+        if (gOamCopyEnabled != 0)
+            Dma_Set(((union HeapState *)gWorkSlot)->slots[52], OAM, DMA_ENABLE32 | DMA_32BIT | 0x100, REG_DMA3);
+        Dma_Set(gBgScroll, REG_BG0HOFS, DMA_ENABLE32 | DMA_32BIT | 4, REG_DMA3);
+        IoWriteQueue_FlushPending();
+        gFrameRenderPending = 0;
+    }
+    hook = gVBlankHook;
+    if (hook != 0) {
+        gVBlankHook = 0;
+        hook();
+    }
+    Runtime_InvokeCallbacksByKey(0x480);
+    keys = REG_KEYINPUT ^ KEYS_MASK;
+    {
+        u32 pressed = keys & ~gKeysHeld;
+
+        gKeyState = pressed;
+        gKeysPressedLatch |= pressed;
+    }
+    gKeysHeld = keys;
+    if (keys == 0) {
+        gKeyRepeatTimer = 19;
+        gKeysRepeat = keys;
+    } else if (gKeysHeld & (gKeysHeldAtVBlank ^ 0xffff)) {
+        gKeyRepeatTimer = -1;
+        gKeysRepeat = keys;
+    } else if (gKeyRepeatTimer > 0) {
+        gKeyRepeatTimer--;
+    }
+    gKeysHeldAtVBlank = keys;
+    gFrameTick++;
+    gLagFrameCount++;
+    gVBlankDone = 1;
+    SoundDriver_EnterMixer();
+}
+
+s32 Sound_LoadPresetParameters(s32 preset)
+{
+    s32 index;
+
+    index = preset;
+    if ((u32)preset > SOUND_PRESET_COUNT - 1) {
+        index = 0;
+    }
+    Dma_Set(IwramCodeRecords + index * SOUND_PRESET_SIZE, IwramSoundPresetCode, 0x84000026,
+            REG_DMA3);
+    return 0;
+}
+
+void Sound_ReservedNoOpA(void)
+{
+}
+
+void Sound_ReservedNoOpB(void)
+{
+}
+
+void Input_HandleKeyInterrupt(void)
+{
+    if (gSleepActive == 0) {
+        Io_Write16(0xc3ff, &REG_KEYCNT);
+        gResetRequested = 1;
+    }
+}
+
+typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
+
+#define DEFINE_QUEUE_IO_WRITE(name, delay)                                  \
+    void name(u32 address, u32 value)                                       \
+    {                                                                       \
+        IO_WRITE_QUEUE_PUSH(address, value, delay);                         \
+    }
+
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay1, 0x10000)
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay2, 0x20000)
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay3, 0x30000)
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay5, 0x50000)
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay6, 0x60000)
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay7, 0x70000)
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay9, 0x90000)
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay10, 0xa0000)
+DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay11, 0xb0000)
+
+void IoWriteQueue_FlushPending(void)
+{
+    struct IoWriteQueue *queue;
+    u32 count;
+
+    queue = &gIoWriteQueue;
+    count = queue->count;
+    if (count != 0) {
+        QueueFlushRoutine routine;
+        u32 size = (u32)TransferCommandExecutor_Size;
+        u32 word_count = size >> 2;
+        u32 zero = 0;
+        u32 control = 0x84;
+
+        control <<= 24;
+        {
+            u8 routine_bytes[word_count << 2];
+
+            routine = (QueueFlushRoutine)routine_bytes;
+            Dma_Set((const void *)Resource_ExecuteTransfer, (void *)routine,
+                    word_count | control, REG_DMA3);
+            routine(queue, count);
+            queue->count = zero;
+        }
+    }
+}
+
+void BlendTransition_Update(void)
+{
+    if (gBlendDuration != 0) {
+        {
+            volatile u16 *blend_control;
+            u32 control;
+
+            if (gBlendBrighten != 0) {
+                control = gBlendLayers | 0x80;
+                blend_control = &REG_BLDCNT;
+            } else {
+                control = gBlendLayers | 0xc0;
+                blend_control = &REG_BLDCNT;
+            }
+            *blend_control = control;
+        }
+        {
+            u8 *remaining = &gBlendFramesLeft;
+            s32 delta;
+            s32 level;
+            s32 step;
+
+            (*remaining)--;
+            level = gBlendTargetLevel;
+            delta = gBlendStartLevel - gBlendTargetLevel;
+            step = *remaining;
+            level += __divsi3(delta * step, gBlendDuration);
+            REG_BLDY = level;
+            if (*remaining == 0)
+                gBlendDuration = 0;
+        }
+    }
+}
+
+// フェードは VBlank ごとに BlendTransition_Update が進める。
+// 明るさ（BLDY）は 0 で元のまま、16 で真っ白または真っ黒。
+//   gBlendBrighten   : 0 黒へ / 1 白へ
+//   gBlendLayers     : BLDCNT の対象レイヤー（下の 4 つは 0x3e で BG1〜3・OBJ・背景色）
+//   gBlendFramesLeft : 残りフレーム数
+//--------------------------------------------------------------------------
+// 黒へフェードアウト
+// frames : かけるフレーム数
+//--------------------------------------------------------------------------
+void Blend_SetDarkenTarget16(s32 frames)
+{
+	gBlendBrighten = 0;
+	gBlendLayers = 0x3e;
+	gBlendStartLevel = gBlendTargetLevel;
+	gBlendTargetLevel = 16;
+	gBlendDuration = frames;
+	gBlendFramesLeft = gBlendDuration;
+}
+
+//--------------------------------------------------------------------------
+// 黒からフェードイン
+//--------------------------------------------------------------------------
+void Blend_SetDarkenTarget0(s32 frames)
+{
+	gBlendBrighten = 0;
+	gBlendLayers = 0x3e;
+	gBlendStartLevel = gBlendTargetLevel;
+	gBlendTargetLevel = 0;
+	gBlendDuration = frames;
+	gBlendFramesLeft = gBlendDuration;
+}
+
+//--------------------------------------------------------------------------
+// 白へフェードアウト
+//--------------------------------------------------------------------------
+void Blend_SetBrightenTarget16(s32 frames)
+{
+	gBlendBrighten = 1;
+	gBlendLayers = 0x3e;
+	gBlendStartLevel = gBlendTargetLevel;
+	gBlendTargetLevel = 16;
+	gBlendDuration = frames;
+	gBlendFramesLeft = gBlendDuration;
+}
+
+//--------------------------------------------------------------------------
+// 白からフェードイン
+//--------------------------------------------------------------------------
+void Blend_SetBrightenTarget0(s32 frames)
+{
+	gBlendBrighten = 1;
+	gBlendLayers = 0x3e;
+	gBlendStartLevel = gBlendTargetLevel;
+	gBlendTargetLevel = 0;
+	gBlendDuration = frames;
+	gBlendFramesLeft = gBlendDuration;
+}
+
+//--------------------------------------------------------------------------
+// フェードを指定する
+// bright : 0 黒へ / 1 白へ
+// layer  : BLDCNT の対象レイヤー（下位 6 ビット）
+// start  : はじめの明るさ（16 より大きければ今の目標の明るさから）
+// target : 目標の明るさ
+// frames : かけるフレーム数
+//--------------------------------------------------------------------------
+void Blend_ConfigureTransition(s8 bright, s32 layer, u32 start, s32 target, s32 frames)
+{
+	gBlendBrighten = bright;
+	gBlendLayers = layer & 0x3f;
+	if (start > 16U)
+	{
+		gBlendStartLevel = gBlendTargetLevel;
+	}
+	else
+	{
+		gBlendStartLevel = start;
+	}
+	gBlendTargetLevel = target;
+	gBlendFramesLeft = (gBlendDuration = frames);
+}
+
+//--------------------------------------------------------------------------
+// フェードが終わるまで待つ
+//--------------------------------------------------------------------------
+void Blend_WaitForTransition(void)
+{
+	if (gBlendDuration != 0)
+	{
+		do
+		{
+			WaitFrames(1);
+		} while (gBlendDuration != 0);
+	}
+}
 
 extern u8 IwramClearWords[];
 #define gObjAffineCount (*(u8 (*)[])&gObjAffineCount)
@@ -122,13 +966,9 @@ void Render_BuildOamList(void *work)
 }
 
 //--------------------------------------------------------------------------
-
 // rescache.c
-
 // リソース：OBJ の VRAM をブロックに分けて貸し出すキャッシュ
-
 //--------------------------------------------------------------------------
-
 // OBJ のキャラクター（0x06010000 から）を 64 バイトのブロック 512 個に分け、
 // ResourceBlockOwners にブロックごとの持ち主（キャッシュの番号）を置く。
 // キャッシュは 96 個で、offset（バイト）が 0xffff ならあき。
@@ -961,8 +1801,7 @@ void Text_DrawSignedDecimalRightAligned(s32 value, s32 keta)
 	Text_FormatSignedDecimalToWork(value);
 	Runtime_WriteDebugTextTiles((const u8 *)(((u32)&gNumberTextDecimalEnd) - n));
 }
-
-extern u8 gCartridgeResetMarker[];
+#define gCartridgeResetMarker (*(u8 (*)[])&gCartridgeResetMarker)
 
 void Bg0_ClearTilemap(void)
 {
@@ -1137,3 +1976,1597 @@ done:
 void RuntimeMemory_ReservedNoOp(void)
 {
 }
+
+#undef gCartridgeResetMarker
+
+//--------------------------------------------------------------------------
+
+// render.c
+
+// 表示：変換行列の退避・復帰と、回転・移動・拡大・カメラの行列づくり
+
+//--------------------------------------------------------------------------
+
+// 変換行列 gTransform は s32 が 12 個（Q16 で 1.0 = 0x10000）。
+// [0]〜[8] が 3x3 の回転、[9]〜[11] が平行移動。
+// Iwram_TransformMatrix は渡した行列を今の行列にかけ合わせる。
+
+#define MTX_DMA (DMA_ENABLE32 | DMA_32BIT | 12) // 行列 1 つ分の DMA
+
+#if GAME_TLA
+#include "ram_buffer.h"
+
+//--------------------------------------------------------------------------
+// 何もしない
+//--------------------------------------------------------------------------
+void Render_EmptyHook(void)
+{
+}
+
+//--------------------------------------------------------------------------
+// 行列の退避先を確保し、今の行列を単位行列にする
+//--------------------------------------------------------------------------
+void Render_ResetTransformState(void)
+{
+	gTransformStackTop = Runtime_AllocateBlock(8, sizeof(gTransform));
+	gTransformStackDepth = 0;
+	{
+		s32 zero;
+
+		CAMELOT_ASM("transform.h's identity store, ⚓️ building the one before the zeros")
+		__asm__ volatile("mov r0, %1\n\tmov r1, #128\n\tlsl r1, r1, #9\n\tmov r2, #0\n\t"
+						 "mov %0, #0\n\tmov r4, #0\n\t"
+						 "stmia r0!, {r1, r2, %0, r4}\n\t"
+						 "stmia r0!, {r1, r2, %0, r4}\n\t"
+						 "stmia r0!, {r1, r2, %0, r4}"
+			: "=l"(zero)
+			: "r"(gTransform)
+			: "r0", "r1", "r2", "r4", "memory");
+	}
+}
+
+//--------------------------------------------------------------------------
+// 退避先を作業領域の先頭に戻す
+//--------------------------------------------------------------------------
+void SceneTransform_RewindStack(void)
+{
+	gTransformStackTop = Ram_HeapSlots->transform_stack;
+	gTransformStackDepth = 0;
+}
+
+#else
+#include "system.h"
+#include "iwram_call.h"
+
+typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
+
+//--------------------------------------------------------------------------
+// 行列の退避先を確保し、今の行列を単位行列にする
+//--------------------------------------------------------------------------
+void Render_ResetTransformState(void)
+{
+	gTransformStackTop = Runtime_AllocateBlock(2, sizeof(gTransform));
+	gTransformStackDepth = 0;
+	CAMELOT_ASM("the fixed-register identity store of transform.h")
+	Transform_ResetCurrent();
+}
+
+#endif
+
+//--------------------------------------------------------------------------
+// 今の行列を退避する（1 段まで）
+//--------------------------------------------------------------------------
+void Graphics_SaveTransferWorkOnce(void)
+{
+	if (gTransformStackDepth <= 0)
+	{
+		Dma_Set(gTransform, gTransformStackTop, MTX_DMA, REG_DMA3);
+		gTransformStackDepth++;
+		gTransformStackTop += sizeof(gTransform);
+	}
+}
+
+//--------------------------------------------------------------------------
+// 今の行列を dst に写す
+//--------------------------------------------------------------------------
+void Graphics_SaveTransferWork(void *dst)
+{
+	Dma_Set(gTransform, dst, MTX_DMA, REG_DMA3);
+}
+
+//--------------------------------------------------------------------------
+// src の行列を今の行列にする
+//--------------------------------------------------------------------------
+void Graphics_LoadTransferWork(const void *src)
+{
+	Dma_Set(src, gTransform, MTX_DMA, REG_DMA3);
+}
+
+//--------------------------------------------------------------------------
+// 退避した行列を戻す
+//--------------------------------------------------------------------------
+void Graphics_RestoreTransferWork(void)
+{
+	if (gTransformStackDepth > 0)
+	{
+		--gTransformStackDepth;
+		gTransformStackTop -= sizeof(gTransform);
+		Dma_Set(gTransformStackTop, gTransform, MTX_DMA, REG_DMA3);
+	}
+}
+
+#if !GAME_TLA
+
+//--------------------------------------------------------------------------
+// 今の行列を単位行列にする
+//--------------------------------------------------------------------------
+void SceneTransform_ResetMatrix(void)
+{
+	CAMELOT_ASM("the fixed-register identity store of transform.h")
+	Transform_ResetCurrent();
+}
+
+//--------------------------------------------------------------------------
+// X・Y・Z 軸の回転をかける
+// ang : 3 軸の角度
+//--------------------------------------------------------------------------
+void SceneTransform_ApplyRotation(s32 *ang)
+{
+	s32 sx, cx, sy, cy, sz, cz;
+	s32 m[12];
+
+	sx = Trig_Sin(ang[0]);
+	cx = Trig_Cos(ang[0]);
+	sy = Trig_Sin(ang[1]);
+	cy = Trig_Cos(ang[1]);
+	sz = Trig_Sin(ang[2]);
+	cz = Trig_Cos(ang[2]);
+	m[0] = Iwram_MulQ16(cy, cz);
+	m[1] = Iwram_MulQ16(cy, sz);
+	m[2] = -sy;
+	m[3] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), cz) - Iwram_MulQ16(cx, sz);
+	m[4] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), sz) + Iwram_MulQ16(cx, cz);
+	m[5] = Iwram_MulQ16(sx, cy);
+	m[6] = Iwram_MulQ16(Iwram_MulQ16(cx, sy), cz) + Iwram_MulQ16(sx, sz);
+	m[7] = Iwram_MulQ16(Iwram_MulQ16(cx, sy), sz) - Iwram_MulQ16(sx, cz);
+	m[8] = Iwram_MulQ16(cx, cy);
+	m[9] = 0;
+	m[10] = 0;
+	m[11] = 0;
+	Iwram_TransformMatrix(m);
+}
+
+//--------------------------------------------------------------------------
+// X 軸のまわりの回転をかける
+//--------------------------------------------------------------------------
+void SceneTransform_ApplyPitch(s32 ang)
+{
+	s32 m[12];
+	s32 sin = Trig_Sin(ang);
+	s32 cos = Trig_Cos(ang);
+
+	CAMELOT_ASM("the fixed-register identity store of transform.h")
+	Transform_SetIdentity(m);
+	m[4] = cos;
+	m[5] = sin;
+	m[7] = -sin;
+	m[8] = cos;
+	Iwram_TransformMatrix(m);
+}
+
+//--------------------------------------------------------------------------
+// Y 軸のまわりの回転をかける
+//--------------------------------------------------------------------------
+void SceneTransform_ApplyYaw(s32 ang)
+{
+	s32 m[12];
+	s32 sin = Trig_Sin(ang);
+	s32 cos = Trig_Cos(ang);
+
+	CAMELOT_ASM("the fixed-register identity store of transform.h")
+	Transform_SetIdentity(m);
+	m[0] = cos;
+	m[2] = -sin;
+	m[6] = sin;
+	m[8] = cos;
+	Iwram_TransformMatrix(m);
+}
+
+//--------------------------------------------------------------------------
+// Z 軸のまわりの回転をかける
+//--------------------------------------------------------------------------
+void SceneTransform_ApplyRoll(s32 ang)
+{
+	s32 m[12];
+	s32 sin = Trig_Sin(ang);
+	s32 cos = Trig_Cos(ang);
+
+	CAMELOT_ASM("the fixed-register identity store of transform.h")
+	Transform_SetIdentity(m);
+	m[0] = cos;
+	m[1] = sin;
+	m[3] = -sin;
+	m[4] = cos;
+	Iwram_TransformMatrix(m);
+}
+
+//--------------------------------------------------------------------------
+// 平行移動をかける
+// pos : X・Y・Z（Q16）
+//--------------------------------------------------------------------------
+void SceneTransform_ApplyPosition(const s32 *pos)
+{
+	s32 m[12];
+
+	CAMELOT_ASM("the fixed-register identity store of transform.h")
+	Transform_SetIdentity(m);
+	m[9] = pos[0];
+	m[10] = pos[1];
+	m[11] = pos[2];
+	Iwram_TransformMatrix(m);
+}
+
+//--------------------------------------------------------------------------
+// 拡大縮小をかける
+// scale : X・Y・Z の倍率（Q16）
+//--------------------------------------------------------------------------
+void SceneTransform_ApplyScale(const s32 *scale)
+{
+	s32 m[12];
+
+	CAMELOT_ASM("the fixed-register identity store of transform.h")
+	Transform_SetIdentity(m);
+	m[0] = scale[0];
+	m[4] = scale[1];
+	m[8] = scale[2];
+	Iwram_TransformMatrix(m);
+}
+
+//--------------------------------------------------------------------------
+// 回転と平行移動をまとめてかける
+//--------------------------------------------------------------------------
+void SceneTransform_ApplyRotationTranslation(s32 *ang, s32 *pos)
+{
+	s32 sx, cx, sy, cy, sz, cz;
+	s32 m[12];
+
+	sx = Trig_Sin(ang[0]);
+	cx = Trig_Cos(ang[0]);
+	sy = Trig_Sin(ang[1]);
+	cy = Trig_Cos(ang[1]);
+	sz = Trig_Sin(ang[2]);
+	cz = Trig_Cos(ang[2]);
+	m[0] = Iwram_MulQ16(cy, cz);
+	m[1] = Iwram_MulQ16(cy, sz);
+	m[2] = -sy;
+	m[3] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), cz) - Iwram_MulQ16(cx, sz);
+	m[4] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), sz) + Iwram_MulQ16(cx, cz);
+	m[5] = Iwram_MulQ16(sx, cy);
+	m[6] = Iwram_MulQ16(Iwram_MulQ16(cx, sy), cz) + Iwram_MulQ16(sx, sz);
+	m[7] = Iwram_MulQ16(Iwram_MulQ16(cx, sy), sz) - Iwram_MulQ16(sx, cz);
+	m[8] = Iwram_MulQ16(cx, cy);
+	m[9] = pos[0];
+	m[10] = pos[1];
+	m[11] = pos[2];
+	Iwram_TransformMatrix(m);
+}
+
+//--------------------------------------------------------------------------
+// 回転・行ごとの拡大・平行移動をまとめてかける
+// scale : 回転行列の 1〜3 行目にかける倍率
+//--------------------------------------------------------------------------
+void SceneTransform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale)
+{
+	s32 sx, cx, sy, cy, sz, cz;
+	s32 s;
+	s32 m[12];
+
+	sx = Trig_Sin(ang[0]);
+	cx = Trig_Cos(ang[0]);
+	sy = Trig_Sin(ang[1]);
+	cy = Trig_Cos(ang[1]);
+	sz = Trig_Sin(ang[2]);
+	cz = Trig_Cos(ang[2]);
+	s = scale[0];
+	m[0] = Iwram_MulQ16(s, Iwram_MulQ16(cy, cz));
+	m[1] = Iwram_MulQ16(s, Iwram_MulQ16(cy, sz));
+	m[2] = Iwram_MulQ16(s, -sy);
+	s = scale[1];
+	m[3] = Iwram_MulQ16(s, Iwram_MulQ16(Iwram_MulQ16(sx, sy), cz) - Iwram_MulQ16(cx, sz));
+	m[4] = Iwram_MulQ16(s, Iwram_MulQ16(Iwram_MulQ16(sx, sy), sz) + Iwram_MulQ16(cx, cz));
+	m[5] = Iwram_MulQ16(s, Iwram_MulQ16(sx, cy));
+	s = scale[2];
+	m[6] = Iwram_MulQ16(s, Iwram_MulQ16(Iwram_MulQ16(cx, sy), cz) + Iwram_MulQ16(sx, sz));
+	m[7] = Iwram_MulQ16(s, Iwram_MulQ16(Iwram_MulQ16(cx, sy), sz) - Iwram_MulQ16(sx, cz));
+	m[8] = Iwram_MulQ16(s, Iwram_MulQ16(cx, cy));
+	m[9] = pos[0];
+	m[10] = pos[1];
+	m[11] = pos[2];
+	Iwram_TransformMatrix(m);
+}
+
+//--------------------------------------------------------------------------
+// eye から target を見るカメラの行列を out につくる
+// 横の軸は水平（Y 成分 0）にとる
+//--------------------------------------------------------------------------
+void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
+{
+	u32 code[7];
+	s32 dx, dy, dz;
+	s32 ux;
+	s32 zero = 0;
+	s32 ex;
+	Dot3Fn		 dot;
+	s32			 ey;
+	s32 uz;
+	s32			 vx, vy, vz;
+	s32			 scale;
+	s32			 ez;
+	s32			 t;
+	u32			 num = 0x80000000; // 逆数を求めるときの被除数 2^31
+	u32 (*divide)(u32 dividend, u32 divisor);
+
+	// 内積のルーチンをスタックに写して、そこで呼ぶ
+	dot = (Dot3Fn)code;
+	Dma_Set(RelocatedQ16DotProduct, code, DMA_ENABLE32 | DMA_32BIT | 7, REG_DMA3);
+
+	// 視線の向き d（target から eye へ、長さ 1）
+	dx = target[0] - eye[0];
+	dy = target[1] - eye[1];
+	dz = target[2] - eye[2];
+	t = Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
+	/* FAKEMATCH: the routine is called through a local pointer to its fixed entry; a plain call matches The Broken Seal through its IWRAM call layer but not The Lost Age, whose header calls the entry directly (all six of its editions differ). */
+	divide = Iwram_UnsignedDivideEntry;
+	scale = divide(num, t) >> 15;
+	scale = -scale;
+	/* FAKEMATCH: the normalization keeps its CSE block; without it, the third
+	 * product spills before the negated axis (four reordered instructions). */
+	do
+	{
+		dx = Iwram_MulQ16(dx, scale);
+		dy = Iwram_MulQ16(dy, scale);
+		t = Iwram_MulQ16(dz, scale);
+		uz = -dx;
+		dz = t;
+	} while (0);
+
+	// 横の軸 u = (dz, 0, -dx) を長さ 1 に
+	t = Iwram_MulQ16(dy, dy);
+	scale = 0x10000;
+	if (scale - t > 0)
+		scale = divide(num, FixedSqrt(scale - t)) << 1;
+	ux = Iwram_MulQ16(dz, scale);
+	uz = Iwram_MulQ16(uz, scale);
+
+	// 上の軸 v = d と u の外積
+	vx = Iwram_MulQ16(dy, uz);
+	vy = Iwram_MulQ16(dz, ux) - Iwram_MulQ16(dx, uz);
+	vz = -Iwram_MulQ16(dy, ux);
+	scale = divide(num, FixedSqrt(dot(vx, vx, vy, vy, vz, vz))) << 1;
+	vx = Iwram_MulQ16(vx, scale);
+	vy = Iwram_MulQ16(vy, scale);
+	vz = Iwram_MulQ16(vz, scale);
+
+	// 3 つの軸を列に置き、移動は eye との内積
+	ex = eye[0];
+	ey = eye[1];
+	ez = eye[2];
+	{
+		out[0] = ux;
+		out[3] = zero;
+		out[6] = uz;
+		out[9] = -dot(ex, ux, ez, uz, zero, zero);
+	}
+	out[4] = vy;
+	out[7] = vz;
+	out[1] = vx;
+	out[10] = -dot(ex, vx, ey, vy, ez, vz);
+	out[2] = dx;
+	out[5] = dy;
+	out[8] = dz;
+	out[11] = -dot(ex, dx, ey, dy, ez, dz);
+}
+#endif
+
+void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target)
+{
+    Graphics_PrepareTransfer(eye, target, gTransform);
+}
+
+void Graphics_PrepareTransferAndRun(s32 *eye, s32 *target)
+{
+    s32 work[12];
+
+    Graphics_PrepareTransfer(eye, target, work);
+    Iwram_TransformMatrix(work);
+}
+
+void Camera_SetAngleParameters(u32 value, s32 param1, s32 param2)
+{
+    s32 half;
+    s32 first;
+    s32 result;
+
+    half = (s32)(value + (value >> 31)) >> 1;
+    first = Trig_Sin(half);
+    result = Iwram_RatioMulQ14(
+        first,
+        Trig_Cos(half)* 0x50
+    );
+    gProjection.near = param1;
+    gProjection.focal = result;
+    gProjection.far = param2;
+}
+
+void Camera_StoreSceneParameters(u32 value0, u32 value1, u32 value2)
+{
+    struct Projection *work = &gProjection;
+
+    work->focal = value0;
+    work->near = value1;
+    work->far = value2;
+}
+
+s32 Render_ProjectPoint(s32 *point, s32 *screen)
+{
+    struct Projection *projection;
+    s32 depth;
+    s32 scale;
+    s32 result;
+
+    Iwram_TransformVector(point, screen);
+    projection = &gProjection;
+    depth = -screen[2];
+    result = 0;
+    if (depth >= projection->near && depth <= projection->far) {
+        screen[2] = depth >> 16;
+        if (projection->focal != 0) {
+            u32 shifted = (u32)depth >> 11;
+
+            scale = Iwram_UnsignedDivide(projection->focal << 5, shifted);
+        } else {
+            scale = 0x151eb;
+        }
+        screen[0] = projection->center_x + Iwram_MulQ16(screen[0], scale) / 0x10000;
+        screen[1] = projection->center_y - Iwram_MulQ16(screen[1], scale) / 0x10000;
+        result = scale;
+    }
+    return result;
+}
+
+void Resource_DecompressHalfwords(const void *source, void *destination)
+{
+    u32 words = (u32)Resource_DecompressHalfwordsCodeSize >> 2;
+    u32 routine[words];
+    Dma_Set((const void *)Resource_DecodeHalfwordLz, routine, words | 0x84000000, REG_DMA3);
+    ((void (*)(const void *, void *))routine)(source, destination);
+}
+
+s32 Resource_DecodeType01(const void *source, void *destination)
+{
+    s32 (*routine)(const void *, void *);
+    s32 result;
+
+    RamCode_Load(routine, Resource_DecodeType01Arm, Resource_DecodeType01CodeSize);
+    result = routine(source, destination);
+    MemFree(routine);
+    return result;
+}
+
+s32 Resource_DecodeType2(const void *source, void *destination)
+{
+    s32 (*routine)(const void *, void *);
+    s32 result;
+
+    RamCode_Load(routine, Resource_Decode2, Resource_Decode2CodeSize);
+    result = routine(source, destination);
+    MemFree(routine);
+    return result;
+}
+
+s32 Resource_DecodeByteLz(const void *source, void *destination)
+{
+    s32 (*routine)(const void *, void *);
+    s32 result;
+
+    RamCode_Load(routine, Resource_DecodeByteLzArm, Resource_DecodeByteLzCodeSize);
+    result = routine(source, destination);
+    MemFree(routine);
+    return result;
+}
+
+void ColorBuffer_BackupAndBrighten(u8 *buffer, u32 amount, u8 *backup, u32 bytes)
+{
+    u32 words = (u32)ColorBuffer_BackupAndBrightenCodeSize >> 2;
+    u32 routine[words];
+    Dma_Set((const void *)ColorBuffer_BrightenKernel, routine, words | 0x84000000, REG_DMA3);
+    ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
+}
+
+void ColorBuffer_BackupAndDarken(u8 *buffer, u32 amount, u8 *backup, u32 bytes)
+{
+    u32 words = (u32)ColorBuffer_BackupAndDarkenCodeSize >> 2;
+    u32 routine[words];
+    Dma_Set((const void *)ColorBuffer_DarkenKernel, routine, words | 0x84000000, REG_DMA3);
+    ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
+}
+
+void ColorBuffer_BackupAndScaleThreeQuarters(u8 *buffer, u8 *backup, u32 bytes)
+{
+    u32 words = (u32)ColorBuffer_BackupAndScaleThreeQuartersCodeSize >> 2;
+    u32 routine[words];
+    Dma_Set((const void *)ColorBuffer_ScaleThreeQuartersKernel, routine, words | 0x84000000, REG_DMA3);
+    ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
+}
+
+void ColorBuffer_BackupAndHalve(u8 *buffer, u8 *backup, u32 bytes)
+{
+    u32 words = (u32)ColorBuffer_BackupAndHalveCodeSize >> 2;
+    u32 routine[words];
+    Dma_Set((const void *)ColorBuffer_HalveKernel, routine, words | 0x84000000, REG_DMA3);
+    ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
+}
+
+void ColorBuffer_BackupAndBrightenPartial(u8 *buffer, u32 amount, u8 *backup, u32 bytes)
+{
+    u32 words = (u32)ColorBuffer_BackupAndBrightenPartialCodeSize >> 2;
+    u32 routine[words];
+    Dma_Set((const void *)ColorBuffer_BrightenPartialKernel, routine, words | 0x84000000, REG_DMA3);
+    ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
+}
+
+void ColorBuffer_BackupAndDarkenPartial(u8 *buffer, u32 amount, u8 *backup, u32 bytes)
+{
+    u32 words = (u32)ColorBuffer_BackupAndDarkenPartialCodeSize >> 2;
+    u32 routine[words];
+    Dma_Set((const void *)ColorBuffer_DarkenPartialKernel, routine, words | 0x84000000, REG_DMA3);
+    ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
+}
+
+void ColorBuffer_BackupAndScaleNonzeroThreeQuarters(u8 *buffer, u8 *backup, u32 bytes)
+{
+    u32 words = (u32)ColorBuffer_BackupAndScaleNonzeroThreeQuartersCodeSize >> 2;
+    u32 routine[words];
+    Dma_Set((const void *)ColorBuffer_ScaleNonzeroThreeQuartersKernel, routine, words | 0x84000000, REG_DMA3);
+    ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
+}
+
+void ColorBuffer_BackupAndHalveNonzero(u8 *buffer, u8 *backup, u32 bytes)
+{
+    u32 words = (u32)ColorBuffer_BackupAndHalveNonzeroCodeSize >> 2;
+    u32 routine[words];
+    Dma_Set((const void *)ColorBuffer_HalveNonzeroKernel, routine, words | 0x84000000, REG_DMA3);
+    ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
+}
+
+s32 SaveState_InitializeWorkspace(void)
+{
+    struct SaveWorkspace *work;
+    struct SaveSlotHeader header;
+    struct SaveSlotHeader *slot;
+    volatile u32 zero;
+    u32 index;
+
+    work = Runtime_AllocateBlock(0x33, sizeof(*work));
+    zero = 0;
+    START_DMA(&zero, work, 0x85000440);
+    SetFlashTimerIntr(2, &gIrqHandlers[5]);
+
+    for (index = 0; index < 8; index++) {
+        if ((u16)IdentifyFlash() == 0)
+            break;
+        WaitFrames(1);
+    }
+    if (index > 7)
+        return 1;
+
+    for (index = 0; index <= 15; index++) {
+        u32 status;
+        u32 record;
+        u8 id;
+
+        work->occupied[index] = 0;
+        work->record_id[index] = 0x10;
+        work->sequence[index] = 0;
+        status = SaveState_ReadSlotAndCheckChecksum(index);
+        START_DMA(&work->slot, &header, 0x84000004);
+        WAIT_DMA();
+        slot = &header;
+
+        if (SaveState_CompareBytes(slot->signature, (u8 *)Save_Signature, 7) != 0)
+            continue;
+        work->sequence[index] = slot->sequence;
+        record = slot->record_id;
+        id = record;
+        if (id > 15)
+            continue;
+        if (status != 0)
+            continue;
+
+        work->occupied[index] = 1;
+        work->record_id[index] = record;
+        if (status < index) {
+            do {
+                if (work->record_id[status] == (u8)record) {
+                    if (work->sequence[status] < slot->sequence)
+                        work->occupied[status] = 0;
+                    else
+                        work->occupied[index] = 0;
+                }
+                status++;
+            } while (status < index);
+        }
+    }
+    return 0;
+}
+
+u32 Random16(void);
+
+u32 SaveState_SelectWriteSlot(s32 mode)
+{
+    u32 empty[16];
+    s32 count;
+    u32 index;
+    u8 *slot;
+    u8 value;
+
+    slot = gSaveWorkspace->occupied;
+    count = 0;
+    index = 0;
+    do {
+        value = *slot++;
+        if (value == 0) {
+            empty[count++] = index;
+        }
+        index += 1;
+    } while (index <= 0xFU);
+    index = 0x10;
+    if (count != 0) {
+        if (count == 1) {
+            index = empty[0];
+            if (SaveState_FindLatestSlot(mode) == 0x10) {
+                index = 0x10;
+            }
+        } else {
+            index = Random16() % count;
+            index = empty[index];
+        }
+    }
+    return index;
+}
+
+u32 SaveState_WriteWorkspaceSlot(s32 sector)
+{
+    s32 *param = &Flash_Handler0;
+    s32 result;
+    struct SaveWorkspace *work;
+    s32 value;
+
+    work = gSaveWorkspace;
+    value = (u16)sector;
+    if ((_call_via_r3(value, (s32)&work->slot,
+                       (s32)param, *param) << 0x10) != 0) {
+        return 1U;
+    }
+    result = Flash_VerifySector(value, (s32)&work->slot);
+    return (u32)((0 - result) | result) >> 0x1F;
+}
+
+#define Flash_Handler0 (*(s32 *)&Flash_Handler0)
+
+s32 SaveState_ReadSlotAndCheckChecksum(s32 index)
+{
+    struct SaveWorkspace *work;
+    struct SaveSlotHeader header;
+    u32 checksum;
+
+    work = gSaveWorkspace;
+    ReadFlash(index, 0, work->slot.bytes, sizeof(work->slot));
+    Dma_Set(&work->slot, &header, 0x84000004, REG_DMA3);
+    WAIT_DMA();
+    checksum = SaveState_ChecksumWorkspace();
+    return (u16)checksum - header.checksum;
+}
+
+typedef u16 (*EraseSectorProc)(u16);
+
+u16 SaveState_EraseSlotSector(u16 value)
+{
+    return ((EraseSectorProc)gEraseFlashSector)(value);
+}
+
+s32 SaveState_WriteRecord(s32 record_id, void *source)
+{
+    struct SaveWorkspace *work;
+    struct SaveSlotHeader header;
+    volatile u32 zero;
+    u32 current;
+    u32 slot;
+
+    work = gSaveWorkspace;
+    zero = 0;
+    START_DMA(&zero, &work->slot, 0x85000400);
+    WAIT_DMA();
+    current = SaveState_FindLatestSlot(record_id);
+    slot = SaveState_SelectWriteSlot(record_id);
+    if (slot > 15)
+        return 1;
+
+    START_DMA(source, work->slot.record.payload, 0x840003fc);
+    WAIT_DMA();
+    START_DMA(Save_HeaderTemplate, &header, 0x84000002);
+    WAIT_DMA();
+    header.record_id = record_id;
+    header.checksum = SaveState_ChecksumWorkspace();
+    header.sequence = SaveState_GetLatestSequence(record_id) + 1;
+    START_DMA(&header, &work->slot.record.header, 0x84000004);
+    WAIT_DMA();
+
+    if (SaveState_WriteWorkspaceSlot(slot) != 0)
+        return 1;
+    if (current <= 15 && SaveState_InvalidateSlot(current) != 0)
+        return 1;
+
+    if (header.sequence > 0xfde8) {
+        header.sequence = 1;
+        START_DMA(&header, &work->slot.record.header, 0x84000004);
+        WAIT_DMA();
+        if (SaveState_WriteWorkspaceSlot(current) != 0)
+            return 1;
+        if (SaveState_InvalidateSlot(slot) != 0)
+            return 1;
+        slot = current;
+    }
+
+    work->occupied[slot] = 1;
+    work->record_id[slot] = record_id;
+    work->sequence[slot] = header.sequence;
+    return 0;
+}
+
+u32 SaveState_ReadRecordPayload(s32 record_id, void *destination)
+{
+    struct SaveWorkspace *work;
+    u32 index;
+
+    work = gSaveWorkspace;
+    index = SaveState_FindLatestSlot(record_id);
+    if (index > 15)
+        return 1;
+    SaveState_ReadSlotAndCheckChecksum(index);
+    START_DMA(work->slot.record.payload, destination, 0x840003fc);
+    WAIT_DMA();
+    return 0;
+}
+
+u32 SaveState_DeleteRecord(s32 record_id)
+{
+    s32 index;
+    s32 deletion_result;
+
+    index = SaveState_FindLatestSlot(record_id);
+    if (index > 0xFU) {
+        return 1U;
+    }
+    deletion_result = SaveState_InvalidateSlot(index);
+    return (u32)((0 - deletion_result) | deletion_result) >> 0x1F;
+}
+
+s32 SaveState_ChecksumWorkspace(void)
+{
+    struct SaveWorkspace *work;
+    u32 limit;
+    u32 offset;
+    s32 sum;
+
+    work = gSaveWorkspace;
+    limit = 0xFE7;
+    sum = 0;
+    offset = 0;
+    do {
+        sum += work->slot.record.payload[offset + 0];
+        sum += work->slot.record.payload[offset + 1];
+        sum += work->slot.record.payload[offset + 2];
+        sum += work->slot.record.payload[offset + 3];
+        sum += work->slot.record.payload[offset + 4];
+        sum += work->slot.record.payload[offset + 5];
+        sum += work->slot.record.payload[offset + 6];
+        sum += work->slot.record.payload[offset + 7];
+        offset += 8;
+    } while (offset <= limit);
+    return sum;
+}
+
+u32 SaveState_FindLatestSlot(s32 record_id)
+{
+    struct SaveWorkspace *work;
+    u32 latest_sequence;
+    u32 latest_slot;
+    u32 i;
+
+    work = gSaveWorkspace;
+    latest_slot = 0x10;
+    latest_sequence = 0;
+    for (i = 0; i <= 15; i++) {
+        if (work->occupied[i] != 0 && record_id == work->record_id[i]) {
+            if (latest_sequence < work->sequence[i]) {
+                latest_sequence = work->sequence[i];
+                latest_slot = i;
+            }
+        }
+    }
+    return latest_slot;
+}
+
+s32 SaveState_InvalidateSlot(s32 index)
+{
+    struct SaveWorkspace *work;
+    struct SaveSlotHeader header;
+    volatile u32 zero;
+
+    work = gSaveWorkspace;
+    zero = 0;
+    START_DMA(&zero, &header, 0x85000004);
+    WAIT_DMA();
+    START_DMA(Save_HeaderTemplate, &header, 0x84000002);
+    WAIT_DMA();
+    header.record_id = 0x10;
+    header.sequence = 0;
+    START_DMA(&header, &work->slot.record.header, 0x84000004);
+    WAIT_DMA();
+    if (SaveState_WriteWorkspaceSlot(index) != 0)
+        return 1;
+    work->occupied[index] = 0;
+    work->record_id[index] = 0x10;
+    work->sequence[index] = 0;
+    return 0;
+}
+
+s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count)
+{
+    s32 difference = 0;
+
+    while (count != 0) {
+        difference = *left - *right;
+        if (difference != 0)
+            break;
+        count--;
+        left++;
+        right++;
+    }
+    return difference;
+}
+
+u32 SaveState_GetLatestSequence(s32 record_id)
+{
+    struct SaveWorkspace *work;
+    u32 latest_sequence;
+    u32 i;
+
+    work = gSaveWorkspace;
+    latest_sequence = 0;
+    for (i = 0; i <= 15; i++) {
+        if (work->occupied[i] != 0 && record_id == work->record_id[i]) {
+            if (latest_sequence < work->sequence[i])
+                latest_sequence = work->sequence[i];
+        }
+    }
+    return latest_sequence;
+}
+
+s32 SaveState_LoadSummaryRecords(void)
+{
+    struct SaveWorkspace *work;
+    struct SaveSummary *summary;
+    volatile u32 zero;
+    u32 group;
+    s32 count;
+
+    work = gSaveWorkspace;
+    summary = work->summary;
+    count = 0;
+    group = 0;
+    do {
+        u32 index;
+
+        zero = 0;
+        START_DMA(&zero, summary, 0x85000010);
+        index = SaveState_FindLatestSlot(group);
+        if (index <= 15) {
+            ReadFlash(index, 0, (u8 *)summary, sizeof(*summary));
+            count++;
+        }
+        index = SaveState_FindLatestSlot(group + 3);
+        if (index <= 15)
+            ReadFlash(index, 0x110, summary->unknown_38, sizeof(summary->unknown_38));
+        else
+            *(u32 *)summary->unknown_38 = 0;
+        group++;
+        summary++;
+    } while (group <= 2);
+    return count;
+}
+
+u32 SaveState_ReleaseWorkspace(void)
+{
+    // 値を返さない int 関数 (pop {r1}; bx r1)
+    Runtime_SetIrqHandler(5, 0, NULL);
+    Runtime_ReleaseHeapBlock(51);
+}
+
+void SerialRuntime_Initialize(void)
+{
+    u32 interrupt_enable;
+    /* FAKEMATCH: keep the fill word's address before its store. */
+    volatile u32 zero;
+    s32 index;
+    struct SerialRuntime *state;
+
+    IRQ_LOCK(interrupt_enable);
+    Runtime_SetIrqHandler(7, 0, SerialRuntime_HandleTransferInterrupt);
+    Runtime_SetIrqHandler(6, 0, SerialRuntime_HandleTransferInterrupt);
+    REG_IME = 0;
+    REG_IE &= 0xff3f;
+    if ((REG_IF & 0x80) != 0)
+        REG_IF = 0x80;
+    if ((REG_IF & 0x40) != 0)
+        REG_IF = 0x40;
+    REG_RCNT = 0x8000;
+    REG_RCNT = 0;
+    REG_SIOCNT = 0x1000;
+    REG_RCNT = 0;
+    REG_SIOCNT = 0x2000;
+    REG_SIOCNT16 = REG_SIOCNT16 | 0x4003;
+    state = &gSerialRuntime;
+    REG_IME = 1;
+    zero = 0;
+    Dma_Set(&zero, state, 0x85000058, REG_DMA3);
+    state->send_index = -1;
+    state->send_buffer[0] = (u16 *)(state->storage + 0);
+    state->send_buffer[1] = (u16 *)(state->storage + 32);
+    for (index = 0; index <= 1; index++) {
+        state->incoming_buffer[index] = (u16 *)(state->storage + 64 + index * 96);
+        state->ready_buffer[index] = (u16 *)(state->storage + 96 + index * 96);
+        state->pending_buffer[index] = (u16 *)(state->storage + 128 + index * 96);
+    }
+    REG_IME = 0;
+    REG_IE |= 0x80;
+    REG_IME = 1;
+    gSerialExchangeActive = 1;
+    gLinkExchangeState = 0;
+    gSerialSendSource = 0;
+    gSerialSendSize = 0;
+    gSerialReceiveDest = 0;
+    gSerialReceivedSize = 0;
+    BattleLink_ResetTransferState();
+    IRQ_UNLOCK(interrupt_enable);
+}
+
+void SerialRuntime_EnableTransferTimer(void)
+{
+    struct SerialRuntime *state = &gSerialRuntime;
+
+    if (state->mode != 0)
+        state->transfer_enabled = 1;
+}
+
+void SerialRuntime_DisableTransfer(void)
+{
+    struct SerialRuntime *state;
+
+    REG_IME = 0;
+    REG_IE = REG_IE & 0xff3f;
+    REG_IME = 1;
+    REG_SIOCNT16 = 0x2003;
+    REG_TM3CNT = 0x0000c963;
+    REG_IF = 0xc0;
+    state = &gSerialRuntime;
+    state->transfer_enabled = 0;
+}
+
+s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
+{
+    volatile u32 *siocnt;
+    u32 control;
+    s32 status;
+    s32 result;
+
+    siocnt = &REG_SIOCNT;
+    control = *siocnt;
+    switch (gSerialRuntime.phase) {
+    case 0: {
+        u8 mask30 = control & 0x30;
+        u8 mode;
+
+        if (mask30 == 0 && (mode = control & 0x88) == 8) {
+            u8 serial_error = control & 4;
+
+            if (serial_error == 0 && gSerialRuntime.send_index == -1) {
+                u32 ie;
+
+                /* FAKEMATCH: the do/while blocks and the separate enable variable are meaningless, as in SerialRuntime_PollStatus. */
+                do {
+                    REG_IME = serial_error;
+                } while (0);
+                ie = REG_IE;
+                do {
+                    ie &= ~0x80;
+                    ie |= 0x40;
+                    REG_IE = ie;
+                    {
+                        u8 enable = 1;
+                        REG_IME = enable;
+                    }
+                    *((volatile s8 *)siocnt + 1) &= ~0x40;
+                    REG_IF = 0xc0;
+                    REG_TM3CNT = 0xc963;
+                } while (0);
+                gSerialRuntime.mode = mode;
+            }
+        } else if (mask30 == 0) {
+            break;
+        }
+        gSerialRuntime.phase = 1;
+    }
+    case 1:
+        SerialRuntime_CollectReceivedPayloads(receive);
+        SerialRuntime_PrepareSendPacket(send);
+        break;
+    }
+
+    gSerialRuntime.sequence++;
+    status = gSerialRuntime.current_mask | (gSerialRuntime.received_mask << 8);
+    if (gSerialRuntime.mode == 8)
+        status |= 0x80;
+    result = SerialRuntime_AddParentFlag(status);
+    if (((control << 26) >> 30) > 1)
+        result |= 0x2000;
+    return result;
+}
+
+s32 SerialRuntime_PollStatus(void)
+{
+    volatile u32 *siocnt;
+    u32 control;
+    s32 status;
+    s32 result;
+
+    siocnt = &REG_SIOCNT;
+    control = *siocnt;
+    if (gSerialRuntime.phase == 0) {
+        u8 mode = control & 0x88;
+
+        if (mode == 8) {
+            u8 serial_error = control & 4;
+
+            if (serial_error == 0 && gSerialRuntime.send_index == -1) {
+                u32 ie;
+
+                /* FAKEMATCH: one-pass scopes place IE after the IME write and the mask after the IE read; fresh enable reuses r3 for ~0x40. */
+                do {
+                    REG_IME = serial_error;
+                } while (0);
+                ie = REG_IE;
+                do {
+                    ie &= ~0x80;
+                    ie |= 0x40;
+                    REG_IE = ie;
+                    {
+                        u8 enable = 1;
+                        REG_IME = enable;
+                    }
+                    *((volatile s8 *)siocnt + 1) &= ~0x40;
+                    REG_IF = 0xc0;
+                    REG_TM3CNT = 0xc963;
+                } while (0);
+                gSerialRuntime.mode = mode;
+            }
+            gSerialRuntime.phase = 1;
+        }
+        gSerialRuntime.sequence++;
+    }
+
+    status = gSerialRuntime.current_mask | (gSerialRuntime.received_mask << 8);
+    if (gSerialRuntime.mode == 8)
+        status |= 0x80;
+    result = SerialRuntime_AddParentFlag(status);
+    if (((control << 26) >> 30) > 1)
+        result |= 0x2000;
+    return result;
+}
+//--------------------------------------------------------------------------
+// sio_xchg.c
+// 通信：毎フレームのデータの受け渡しと、送るパケットの組み立て
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+// phase 1 なら受けたデータを receive に集め、send から次のパケットを作る
+// 戻り値は通信の状態
+//   ビット 0〜7  : current_mask（mode 8 ならビット 7 も立てる）
+//   ビット 8〜15 : received_mask
+//   0x1000       : 親
+//   0x2000       : SIOCNT のマルチプレイ ID が 2 以上
+//--------------------------------------------------------------------------
+s32 SerialRuntime_ExchangePayloads(void *send, void *receive)
+{
+	volatile u32 *siocnt;
+	u32			  cnt;
+	s32			  st;
+	s32			  ret;
+
+	siocnt = &REG_SIOCNT;
+	cnt = *siocnt;
+	if (gSerialRuntime.phase == 1)
+	{
+		SerialRuntime_CollectReceivedPayloads(receive);
+		SerialRuntime_PrepareSendPacket(send);
+		gSerialRuntime.sequence++;
+	}
+	st = gSerialRuntime.current_mask | (gSerialRuntime.received_mask << 8);
+	if (gSerialRuntime.mode == 8)
+		st |= 0x80;
+	ret = SerialRuntime_AddParentFlag(st);
+	if (((cnt << 26) >> 30) > 1) // ビット 4・5
+		ret |= 0x2000;
+	return ret;
+}
+
+//--------------------------------------------------------------------------
+// 送るパケットを send_buffer[0] に組み立てる
+// [0] 番号、[1] まだ受けていない相手のマスク、[2] チェックサム、[4] データ 24 バイト
+// チェックサムは先頭 28 バイトを 16 ビットずつ足して反転したもの
+//--------------------------------------------------------------------------
+void SerialRuntime_PrepareSendPacket(void *payload)
+{
+	volatile struct SerialRuntime *sr;
+	u32							   i;
+	u32							   sum;
+
+	sr = SERIAL_RUNTIME;
+	{
+		u8 *pkt;
+		u8	cur;
+		u8	recv;
+
+		pkt = (u8 *)sr->send_buffer[0];
+		pkt[0] = sr->sequence;
+		cur = sr->current_mask;
+		recv = sr->received_mask;
+		sum = 0;
+		pkt[1] = recv ^ cur;
+		*(u16 *)(pkt + 2) = sum;
+		Dma_Set(payload, pkt + 4, DMA_ENABLE32 | DMA_32BIT | 6, REG_DMA3);
+	}
+	{
+		u16 *pkt;
+		u32	 v;
+
+		pkt = sr->send_buffer[0];
+		for (i = 0; i <= 13; i++)
+		{
+			v = *pkt;
+			pkt++;
+			sum += v;
+		}
+	}
+	{
+		u32					 inv;
+		struct SerialPacket *pkt;
+
+		inv = ~sum;
+		pkt = (struct SerialPacket *)sr->send_buffer[0];
+		pkt->checksum = inv;
+	}
+
+	// タイマー 3 を止め、送る位置を戻してから動かしなおす
+	if (sr->mode != 0)
+		REG_TM3CNT_H = 0;
+	sr->send_index = -1;
+	if (sr->mode != 0 && sr->transfer_enabled != 0)
+		REG_TM3CNT_H = 0xc0; // 開始・割り込み
+}
+
+u8 SerialRuntime_CollectReceivedPayloads(void *payload)
+{
+    u8 flags[8];
+    s32 i;
+    u32 k;
+    u16 *packet;
+    u16 *swap;
+    s32 sum;
+
+    *(u32 *)&flags[4] = 0;
+    Io_Write16(0, &REG_IME);
+    for (i = 0; i <= 3; i++) {
+        swap = gSerialRuntime.pending_buffer[i];
+        gSerialRuntime.pending_buffer[i] = gSerialRuntime.ready_buffer[i];
+        gSerialRuntime.ready_buffer[i] = swap;
+    }
+    *(u32 *)flags = *(u32 *)gSerialRuntime.channel_flags;
+    *(u32 *)gSerialRuntime.channel_flags = 0;
+    Io_Write16(1, &REG_IME);
+    gSerialRuntime.current_mask = 0;
+    for (i = 0; i <= 1; i++) {
+        packet = gSerialRuntime.pending_buffer[i];
+        sum = 0;
+        for (k = 0; k <= 13; k++)
+            sum += packet[k];
+        if (flags[i] == 1 && (s16)sum == -1) {
+            Dma_Set(gSerialRuntime.pending_buffer[i] + 2, (u8 *)payload + i * 24, 0x84000006, REG_DMA3);
+            gSerialRuntime.current_mask |= 1 << i;
+        }
+        if ((s16)sum == -1)
+            gSerialRuntime.pending_buffer[i][1] = ~gSerialRuntime.pending_buffer[i][1];
+    }
+    gSerialRuntime.received_mask |= gSerialRuntime.current_mask;
+    return gSerialRuntime.current_mask;
+}
+
+void SerialRuntime_HandleTransferInterrupt(void)
+{
+    struct SerialRuntime *send_state;
+    struct SerialRuntime *receive_state;
+    struct SerialRuntime *tail_state;
+    u16 recv[4];
+    volatile u32 *sio_control;
+    s32 channel;
+
+    *(u64 *)recv = *(volatile u64 *)REG_SIODATA32;
+    sio_control = &REG_SIOCNT;
+    send_state = &gSerialRuntime;
+    send_state->is_parent = (*sio_control << 25) >> 31;
+
+    if (send_state->send_index == -1) {
+        u32 idle_word = 0xfefe;
+        u16 *swap;
+
+        ((volatile u16 *)sio_control)[1] = idle_word;
+        swap = send_state->send_buffer[1];
+        send_state->send_buffer[1] = send_state->send_buffer[0];
+        send_state->send_buffer[0] = swap;
+    } else if (send_state->send_index >= 0) {
+        ((volatile u16 *)sio_control)[1] =
+            send_state->send_buffer[1][send_state->send_index];
+    }
+    receive_state = &gSerialRuntime;
+    if (receive_state->send_index <= 14)
+        receive_state->send_index++;
+
+    channel = 0;
+receive_loop:
+    {
+        s32 receive_index;
+        u16 *incoming;
+
+        if (recv[channel] == 0xfefe &&
+            receive_state->receive_index[channel] > 13) {
+            receive_state->receive_index[channel] = -1;
+        } else {
+            receive_index = receive_state->receive_index[channel];
+            incoming = receive_state->incoming_buffer[channel];
+            incoming[receive_index] =
+                recv[channel];
+            if (receive_index == 13) {
+                u16 *swap = receive_state->ready_buffer[channel];
+
+                receive_state->ready_buffer[channel] = incoming;
+                receive_state->incoming_buffer[channel] = swap;
+                receive_state->channel_flags[channel] |= 1;
+            }
+        }
+    }
+    tail_state = &gSerialRuntime;
+    if (tail_state->is_parent != 0)
+        tail_state->channel_flags[channel] |= 2;
+    if (tail_state->receive_index[channel] <= 14)
+        tail_state->receive_index[channel]++;
+    channel++;
+    receive_state = tail_state;
+    if (channel <= 1) goto receive_loop;
+
+    if (tail_state->mode == 8) {
+        REG_TM3CNT_H = 0;
+        REG_SIOCNT16 = REG_SIOCNT16 | 0x80;
+        REG_TM3CNT_H = 0xc0;
+    }
+}
+
+void SerialRuntime_RemoveIrqHandlers(void)
+{
+    gSerialExchangeActive = 0;
+    Runtime_SetIrqHandler(7, 0, 0);
+    Runtime_SetIrqHandler(6, 0, 0);
+}
+#define gLinkStatus (*(volatile u16 (*))&gLinkStatus)
+
+u32 SerialRuntime_WaitForStatusMask(s32 mask)
+{
+    if ((mask & gLinkStatus) != mask) {
+        do {
+            WaitFrames(1);
+        } while ((mask & gLinkStatus) != mask);
+    }
+    return (REG_SIOCNT << 0x1A) >> 0x1E;
+}
+
+s32 SerialRuntime_BeginTransferA(void *source, s32 transfer_value)
+{
+    volatile s32 *active;
+    struct SerialTransferState *state;
+    u32 saved_interrupt_master;
+    s32 busy;
+    s32 value;
+    s32 transfer;
+
+    /* FAKEMATCH: sharing the integer address carrier with the result keeps the source in r0 through the busy check. A separate result is hoisted into r0 and moves the source to another register. */
+    value = (s32)source;
+    active = &gSerialSendSource;
+    busy = *active;
+    transfer = transfer_value;
+    /* FAKEMATCH: assigning active twice selects r5 for active and r6 for transfer; one-pass blocks preserve store order. */
+    do {
+        state = &gSerialTransfer;
+    } while (0);
+    active = &gSerialSendSource;
+    if (busy == 0)
+        goto begin_transfer;
+    value = -1;
+    goto transfer_complete;
+
+begin_transfer:
+    IRQ_LOCK(saved_interrupt_master);
+        state->status = 0x80;
+        gSerialSendSize = transfer;
+        gSerialBlockSequence = 0;
+        *active = value;
+        state->active = 1;
+    IRQ_UNLOCK(saved_interrupt_master);
+    value = 0;
+
+transfer_complete:
+    return value;
+}
+
+s32 SerialRuntime_BeginTransferB(void *destination)
+{
+    volatile s32 *active;
+    struct SerialTransferState *state;
+    u32 saved_interrupt_master;
+    s32 busy;
+    s32 value;
+
+    /* FAKEMATCH: sharing the integer address carrier with the result keeps the destination in r0 through the busy check. A separate result is hoisted into r0 and makes the function save another register. */
+    value = (s32)destination;
+    state = &gSerialTransfer;
+    active = &gSerialReceiveDest;
+    busy = *active;
+    if (busy == 0)
+        goto begin_transfer;
+    value = -1;
+    goto transfer_complete;
+
+begin_transfer:
+    IRQ_LOCK(saved_interrupt_master);
+        state->status = 0x81;
+        gSerialReceiveDest = value;
+        gSerialReceivedSize = 0;
+        state->active = 1;
+        gSerialBlockSequence = 0;
+    IRQ_UNLOCK(saved_interrupt_master);
+    value = 0;
+
+transfer_complete:
+    return value;
+}
+
+void SerialRuntime_WaitForTransferA(void)
+{
+    u32 count = 0;
+
+    if (gSerialSendSource != 0) {
+        do {
+            WaitFrames(1);
+            count++;
+        } while (count < 600000 && gSerialSendSource != 0);
+    }
+}
+
+void SerialRuntime_WaitForTransferB(void)
+{
+    u32 count = 0;
+
+    if (gSerialReceiveDest != 0) {
+        do {
+            WaitFrames(1);
+            count++;
+        } while (count < 600000 && gSerialReceiveDest != 0);
+    }
+}
+
+void SerialRuntime_WaitForTransfers(void)
+{
+    u32 count;
+
+    count = 0;
+    while (gSerialSendSource != 0 || gSerialReceiveDest != 0) {
+        WaitFrames(1);
+        count++;
+        if (count >= 600000)
+            return;
+    }
+}
+
+s32 SerialRuntime_GetActiveTransfers(void)
+{
+    s32 flags;
+
+    flags = 0;
+    if (gSerialSendSource != 0) {
+        flags = 1;
+    }
+    if (gSerialReceiveDest != 0) {
+        flags |= 2;
+    }
+    return flags;
+}
+
+void BattleLink_ResetTransferState(void)
+{
+    SerialRuntime_ResetTransferState();
+}
+
+struct OneCell { u16 v; };
+
+void SerialRuntime_StepBlockTransfer(void)
+{
+    struct SerialTransferState *peer;
+    u32 id;
+    struct SerialTransferState *own;
+    u32 gap;
+    /* FAKEMATCH: the halfword record retains the measured pooled-one construction; it is not protocol state. */
+    struct OneCell one;
+
+    id = ~((REG_SIOCNT << 26) >> 30) & 1;
+    one.v = 1;
+    own = &gSerialTransfer;
+    peer = (struct SerialTransferState *)gSerialPeerPayloads[id];
+    if ((gLinkStatus & 3) != 3)
+        return;
+    {
+        s32 *receive = &gSerialReceiveDest;
+        s32 dest = *receive;
+        if (dest != 0) {
+            if (own->flags == 1 && (u8)(peer->peer_flags - 1) <= 1) {
+                if (peer->active == (gSerialBlockSequence & 0x7f)) {
+                    own->active = 0;
+                    switch (peer->peer_flags) {
+                    case 1:
+                        Dma_Set(peer->payload, (void *)dest, 0x84000005, REG_DMA3);
+                        *receive += 20;
+                        gSerialReceivedSize += 20;
+                        own->status = (own->status + 1) | 0x80;
+                        break;
+                    case 2:
+                        Dma_Set(peer->payload, (void *)dest, 0x84000005, REG_DMA3);
+                        gSerialReceivedSize += 20;
+                        own->flags = 2;
+                        own->status = 0;
+                        own->active = one.v;
+                        break;
+                    }
+                    gSerialBlockSequence = (gSerialBlockSequence + 1) & 0x7f;
+                } else if (gSerialBlockSequence & 0x80) {
+                    if (own->active & 0x80) {
+                        own->active = one.v;
+                    } else if (own->active == 1) {
+                        own->active = 0;
+                        gSerialBlockSequence &= 0x7f;
+                    }
+                } else {
+                    own->active = gSerialBlockSequence | 0x80;
+                    gSerialBlockSequence |= 0x80;
+                }
+            } else {
+                own->active = 0;
+            }
+        }
+    }
+    {
+        s32 *send = &gSerialSendSource;
+        s32 src = *send;
+        if (src != 0) {
+            if (peer->flags == 1) {
+                if (peer->active & 0x80) {
+                    gap = (gSerialBlockSequence - peer->active) & 0x7f;
+                    *send = src - gap * 20;
+                    gSerialSendSize += gap * 20;
+                    gSerialBlockSequence -= gap;
+                    gSerialBlockSequence &= 0x7f;
+                }
+                if (gSerialSendSize != 0) {
+                    Dma_Set((void *)*send, own->payload, 0x84000005, REG_DMA3);
+                    gSerialSendSize += -20;
+                    if (gSerialSendSize != 0) {
+                        own->peer_flags = 1;
+                        own->active = gSerialBlockSequence & 0x7f;
+                        *send += 20;
+                    } else {
+                        own->peer_flags = 2;
+                        own->active = gSerialBlockSequence & 0x7f;
+                        *send += 20;
+                    }
+                    gSerialBlockSequence = (gSerialBlockSequence + 1) & 0x7f;
+                }
+            }
+            if (own->peer_flags == 2 && peer->flags == 2) {
+                gSerialSendSource = 0;
+                own->peer_flags = 0;
+                own->active = 1;
+            }
+        }
+    }
+    if (own->flags == 2) {
+        if (peer->peer_flags != 2) {
+            gSerialReceiveDest = 0;
+            own->flags = 0;
+        }
+    } else {
+        own->flags = 0;
+        if (gSerialReceiveDest != 0)
+            own->flags = 1;
+    }
+}
+
+extern u8 gMapCellBuffer[];
+extern const u8 Rom_Start[];
+
+void AudioCommand_PlayFar(s32 cue);
+
+void RuntimeWait_BusyLoopTick(void)
+{
+}
+
+void SerialTest_Run(void)
+{
+    u16 *tile;
+    s32 value;
+    s32 n;
+    s32 tick;
+    volatile u32 zero;
+
+    AudioCommand_PlayFar(3);
+    SerialRuntime_Initialize();
+    n = 19;
+    tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * 32 + 19;
+    value = (s16)0xf093;
+    do {
+        n--;
+        *tile = value;
+        tile--;
+        value--;
+    } while (n >= 0);
+    zero = 0;
+    Bios_CpuSet((const void *)&zero, (void *)gMapCellBuffer, 0x05000100);
+    SerialRuntime_WaitForStatusMask(3);
+restart:
+    SerialRuntime_BeginTransferB(gMapCellBuffer);
+    for (;;) {
+        if (gKeysHeld & 1)
+            SerialRuntime_BeginTransferA((void *)Cart_Restart, 0x280);
+        if (gKeysHeld & 2)
+            SerialRuntime_BeginTransferA((void *)(Rom_Start + 0x1000), 0x280);
+        if (gKeysHeld & 8) {
+            tick = 9999;
+            do {
+                tick--;
+                RuntimeWait_BusyLoopTick();
+            } while (tick >= 0);
+        }
+        if (gSerialReceiveDest == 0) {
+            Dma_Set((const void *)gMapCellBuffer, (void *)0x06001000, 0x840000a0, REG_DMA3);
+            goto restart;
+        }
+        WaitFrames(1);
+    }
+}
+
+#undef gLinkStatus

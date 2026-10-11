@@ -16,6 +16,10 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
+void FieldScene_ConfigureActor0ThenRun();
+void FieldScene_RunPairedStepA();
+void FieldScene_RunPairedStepB();
+
 void SceneData_InitRecordTable(u8 *o);
 
 #define NULL ((void *)0)
@@ -70,15 +74,8 @@ s32 ArcTan2(s32, s32);
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 void BattleEffect_CleanupSceneObjects(void);
 void Object_RefreshSelectorById();
-void FieldScene_RunPairedStepA();
-void FieldScene_RunPairedStepB();
 void Object_SetActionCallbackAndRefreshById();
 void Audio_PlayCueFromEventWork();
-
-
-void FieldScene_ConfigureActor0ThenRun();
-
-void Engine_MapCopyCellAttributes();
 void Object_SetTargetAndCallback();
 
 void Event_CallWithLastActiveObjectId(u8 *script);
@@ -1508,4 +1505,25 @@ hit:
     } while (0);
     KorimaMura_PendingPose = 1;
     return 0;
+}
+
+void FieldScene_RunPairedStepA();
+void FieldScene_RunPairedStepB();
+
+void FieldScene_RunFlag845And847Branches(void)
+{
+    if (Engine_GameFlagIsSet(0x845) == 0) {
+        Engine_ActorSetPosition(8, 0, 0);
+        { s32 k5 = 9, k6 = 18; Engine_MapCopyCellAttributes(9, 17, 5, 1, k5, k6); }
+        Engine_MapRedraw();
+        Engine_TaskWait(1);
+    } else {
+        Engine_ActorSetPosition(9, 0, 0);
+    }
+    if (Engine_GameFlagIsSet(0x847) != 0) {
+        { s32 k5 = 5, k6 = 7; Engine_MapCopyCellsTo(91, 19, 72, 9, k5, k6); }
+        { s32 k5 = 8, k6 = 11; Engine_MapCopyCellAttributes(23, 11, 5, 7, k5, k6); }
+        Engine_MapRedraw();
+        Engine_TaskWait(1);
+    }
 }

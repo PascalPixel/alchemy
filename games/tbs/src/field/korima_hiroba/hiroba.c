@@ -9,9 +9,9 @@
 #include "system.h"
 #include "types.h"
 #include "field_event.h"
-
 #include "staged_actor.h"
 #include "io_reg.h"
+
 #ifdef MODERN
 // called before its definition below, which modern GCC refuses for an
 // implicit int declaration of a u16 function
@@ -156,4 +156,69 @@ u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
     packed = (u32)(s32)red;
     packed |= ((u32)(s32)blue << 10) | ((u32)(s32)green << 5);
     return (u16)packed;
+}
+
+s32 SceneEffect_UpdateOrbitingParticle(struct Particle_02000c4c *record)
+{
+    u16 *sprite = record->sprite;
+    s32 lift;
+    s32 tilt;
+    s32 jitter;
+
+    lift = Engine_MathSin(record->angle) * 2;
+    if (lift > 0)
+        lift = -lift;
+
+    record->x = record->base_x + Engine_MathCos(record->angle) * 2;
+    record->y = record->base_y + lift;
+
+    tilt = Engine_MathCos(record->angle + 0x8000);
+    if (tilt < 0)
+        tilt += 7;
+    sprite[15] = (u16)(tilt >> 3);
+
+    jitter = (s32)(((u32)Engine_RandomNext() << 9) >> 16);
+    jitter += (s32)(((u32)Engine_RandomNext() << 9) >> 16);
+    record->angle += jitter + 1024;
+
+    return 0;
+}
+
+void SceneEffect_InitOrbitingParticle(s32 id)
+{
+    OrbitingSceneObject *actor;
+    OrbitingSceneObjectSprite *sprite;
+    u8 *transfer;
+    s32 zero;
+
+    actor = (void *)Object_GetById(id);
+    sprite = actor->sprite;
+    sprite->flags_09_mode = 1;
+    sprite->flags_05_bit_5 = 0;
+    sprite->flags_09_high = 0;
+
+    zero = 0;
+    sprite->state = zero;
+    Engine_ActorSetSpriteFlags(actor, zero);
+    actor->active = zero;
+    actor->mode = zero;
+
+    if (Engine_GameFlagIsSet(0x109) == 0)
+        actor->y += 0x200000;
+
+    actor->flags_23 &= 0xfe;
+    actor->visible = 1;
+
+    transfer = Engine_HeapAllocate(17, 0x608);
+    Engine_ItemLoadIcon(ITEM_NUT);
+    transfer += 0x400;
+    Engine_VramLoad(sprite->pal, 128, transfer);
+    Engine_HeapRelease(17);
+
+    actor->orbit_center_x = actor->x;
+    actor->orbit_angle = zero;
+    actor->orbit_center_y = actor->y;
+    actor->active = 1;
+    actor->callback = (u32)SceneEffect_UpdateOrbitingParticle;
+    actor->state = zero;
 }

@@ -1,3 +1,7 @@
+#include "fieldobj.h"
+#include "types.h"
+#include "field_event.h"
+#include "field_scene.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -9,10 +13,6 @@
 #include "system.h"
 #include "fx_scene.h"
 #include "global_cells.h"
-#include "sabaku.h"
-#include "types.h"
-#include "field_event.h"
-#include "field_scene.h"
 #include "io_write_queue.h"
 #include "io_reg.h"
 #include "call.h"
@@ -20,16 +20,140 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 
+#define NULL ((void *)0)
+
+extern u8 gEffectWork[];
+
+struct Selection_02000400 {
+    u8 reserved000[500];
+    s32 actor_id;
+};
+
+struct Actor_02000400 {
+    u8 reserved00[6];
+    u16 presentation;
+};
+
+struct SceneWork_02000400 {
+    u8 reserved000[386];
+    u16 state_one_marker;
+};
+
+extern u8 gSuharaSabakuExits[];
+extern u8 gSuharaSabakuActor12Action[];
+
+extern u16 gSuharaSabakuShownLevel;
+s32 GameFlag_GetByte();
+void GameFlag_SetByte();
+void BattleFx_SetPhaseRequest();
+void BattleFx_EmitRandomParticle();
+
+#define ACTOR_ID 13
+
+#define EncounterPalette (*(volatile u16 *)0x0500019e)
+
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
+
+void *OverlayObject_CreateAndInitialize(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+
+void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+
+void SceneState_SendRequest15With45(void);
+
+s32 SuharaSabaku_ClearActorSpriteAndCollisionFlags(u8 *obj);
+
+s32 SuharaSabaku_ToggleActorActive(u8 *obj);
+
+s32 SceneData_ReturnZero(void);
+
+u8 *SuharaSabaku_GetExits(void);
+
+void SuharaSabaku_SyncSelectedActorProgress(void);
+
+void FieldScene_RunMiddleAuxiliarySequence(s32 a0);
+
+void FieldScene_RunActor8Step(void);
+
+void FieldScene_RunActor9Step(void);
+
+void FieldScene_RunActor10Step(void);
+
+void FieldScene_RunActor11Step(void);
+
+void FieldScene_RunActor12Step(void);
+
+void FieldScene_RunLateActor8Step(void);
+
+void FieldScene_RunLateActor9Step(void);
+
+void FieldScene_RunLateActor10Step(void);
+
+void FieldScene_RunLateActor11Step(void);
+
+void FieldScene_RunLateActor12Step(void);
+
+void FieldScene_RunActorThirteenRestoration(void);
+
+void PlaceActorTwelveWhenFlagClear(void);
+
+void SuharaSabaku_EnableEffectChildOption(void);
+
+void EncounterPalette_Pulse(void);
+
+s32 FieldScene_RunOpeningAuxiliarySequence(void);
+
+s32 FieldScene_RunScene3c0SequenceA(void);
+
+void SuharaSabaku_ApplyVisitFlagBlend(void);
+
+void SuharaSabaku_ApplyAltarFlagBlend(void);
+
+void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+{
+    work->sprite->priority = mode;
+}
+
+void *OverlayObject_CreateAndInitialize(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+{
+    struct FieldActor *obj = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
+
+    if (obj != NULL) {
+        struct FieldSprite *sprite = obj->sprite;
+
+        sprite->priority = 0;
+        obj->motion_flags = 0;
+        obj->collision_flags = 8;
+        Engine_ActorSetSpriteFlags(obj, 0);
+        ObjectGroup_SetChildValue(obj, 14);
+        Engine_ObjectSetBlendMode(obj, 1);
+        return obj;
+    }
+    return NULL;
+}
+
+void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+{
+    struct FieldActor *result = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
+
+    if (result != NULL) {
+        struct FieldSprite *object = result->sprite;
+
+        object->priority = 1;
+        result->motion_flags = 0;
+        result->collision_flags = 8;
+        Engine_ActorSetSpriteFlags(result, 0);
+        ObjectGroup_SetChildValue(result, 15);
+        result->priority_flags = (result->priority_flags & 0xfe) | 2;
+        return result;
+    }
+    return NULL;
+}
+
 // 戦闘開始の種類 (battle/party/party.c と同じ)
-
-
-
-
 
 void BattleFx_SetWeightedResult(s32 actor, s32 mode);
 
 void Event_SetDestination(s32 scene, s32 entrance);
-
 
 struct FieldGlobals {
     u8 *map;

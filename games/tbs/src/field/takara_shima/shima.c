@@ -1,21 +1,24 @@
 #include "battle.h"
-#include "debug.h"
 #include "field.h"
-#include "game.h"
-#include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
-#include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "edition.h"
 #include "field_event.h"
-#include "field_service.h"
 #include "field_scene.h"
 #include "staged_actor.h"
 #include "field_effect.h"
+#include "debug.h"
+#include "game.h"
+#include "graphics.h"
+#include "minigame.h"
+#include "sound.h"
+#include "edition.h"
+#include "field_service.h"
 #include "call.h"
 #include "scene_ids.h"
+
+void InitializeSwayingSceneObject();
+void SpawnRadialEffectBurst();
 
 enum {
     ITEM_NUT = 181
@@ -85,13 +88,6 @@ struct V {
     s32 c;
 };
 
-struct Owner {
-    u8 unk0[9];
-    u8 unk9_0 : 2;
-    u8 mode : 2;
-    u8 unk9_4 : 4;
-};
-
 struct SceneObject {
     u8 filler00[8];
     s32 x;
@@ -156,25 +152,63 @@ typedef struct OrbitingSceneObject {
     u32 callback;
 } OrbitingSceneObject;
 
+void SetEffectOwnerMode(struct FieldActor *object, s32 priority)
+{
+    struct FieldSpritePriority *sprite = (struct FieldSpritePriority *)object->sprite;
+
+    sprite->priority = priority;
+}
+
+struct FieldActor *SpawnMode14Effect(s32 x, s32 y, s32 z, s32 kind)
+{
+    struct FieldActor *object = Engine_ObjectCreate(kind, x, y, z);
+
+    if (object != 0) {
+        ((struct FieldSpritePriority *)object->sprite)->priority = 0;
+        object->motion_flags = 0;
+        object->collision_flags = 8;
+        Engine_ActorSetSpriteFlags(object, 0);
+        ObjectGroup_SetChildValue(object, 14);
+        Engine_ObjectSetBlendMode(object, 1);
+        return object;
+    }
+    return 0;
+}
+
+struct FieldActor *SpawnMode15Effect(s32 x, s32 y, s32 z, s32 kind)
+{
+    struct FieldActor *object = Engine_ObjectCreate(kind, x, y, z);
+
+    if (object != 0) {
+        ((struct FieldSpritePriority *)object->sprite)->priority = 1;
+        object->motion_flags = 0;
+        object->collision_flags = 8;
+        Engine_ActorSetSpriteFlags(object, 0);
+        ObjectGroup_SetChildValue(object, 15);
+        object->priority_flags = (object->priority_flags & ~ACTOR_PRIORITY_AUTOMATIC) | ACTOR_PRIORITY_UNDERFOOT;
+        return object;
+    }
+    return 0;
+}
+
+struct Owner {
+    u8 unk0[9];
+    u8 unk9_0 : 2;
+    u8 mode : 2;
+    u8 unk9_4 : 4;
+};
+
 void Party_SetFields1ceAnd1d0(s32 arg0, s32 arg1);
 void BattleFx_SetWeightedResult(s32 arg0, s32 arg1);
-
-
-void InitializeSwayingSceneObject();
 void SetMapCellCollision();
 
 union GameStateRows {
     s16 halves[512][1];
 };
 
-void SpawnRadialEffectBurst();
-void Engine_ActorSetSpritePriority();
-void Engine_MapCopyCellAttributes();
-
 void BattleFx_SetWeightedResult();
 
 void Object_CommitPosition(Obj *);
-void Vector_AddPolarOffset(s32 arg0, s32 arg1, struct V *arg2);
 s32 Object_CheckMovementCollision(struct S *arg0, struct V *arg1);
 void SetMapCellCollision(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
@@ -1563,6 +1597,7 @@ transition80:
     Engine_MapCopyCellAttributes(0, 0, 3, 1, column, row);
 }
 
+#undef IN_COLUMNS
 #define IN_COLUMNS(x) ((x) >= 9 && (x) <= 11)
 
 void TakaraShima_SettleSecondBlockNorth(void)

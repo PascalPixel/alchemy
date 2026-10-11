@@ -1,26 +1,61 @@
 #include "battle.h"
-#include "debug.h"
 #include "field.h"
-#include "game.h"
-#include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
-#include "sound.h"
 #include "system.h"
-#include "edition.h"
+#include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"
 #include "create_configured_overlay_object.h"
+#include "debug.h"
+#include "game.h"
+#include "graphics.h"
+#include "minigame.h"
+#include "sound.h"
+#include "edition.h"
 #include "call.h"
 #include "btlsys.h"
 #include "item.h"
 #include "inventory.h"
 #include "text/msg_ids.h"
 
+void GomaIriguchi_GiveShamansRod();
+void GomaIriguchi_RunSpinningLeap();
+void GomaIriguchi_SetEntranceFlag();
+void OverlayObject_TurnStateByEighth();
+void OverlayObject_WaitForHeight();
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+
+void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+{
+    work->sprite->priority = mode;
+}
+
+void *OverlayObject_PrepareObject(s32 first, s32 second, s32 third, s32 fourth)
+{
+    struct FieldActor *obj;
+    struct FieldSprite *rec;
+
+    obj = Engine_ObjectCreate(fourth, first, second, third);
+    if (obj != NULL) {
+        rec = obj->sprite;
+        rec->priority = 0;
+        obj->motion_flags = 0;
+        obj->collision_flags = 8;
+        Engine_ActorSetSpriteFlags(obj, 0);
+        ObjectGroup_SetChildValue(obj, 0xE);
+        Engine_ObjectSetBlendMode(obj, 1);
+        return obj;
+    }
+    return NULL;
+}
+
+void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+{
+#include "create_configured_overlay_object_body.inc"
+}
 
 struct EffectRecord {
     u8 pad[9];
@@ -32,11 +67,6 @@ struct EffectRecord {
 void BattleFx_PlayQueuedSound();
 
 void BattleFx_SetQueuedSoundAndPlay();
-void Engine_MapCopyCellAttributes();
-
-void GomaIriguchi_RunSpinningLeap();
-void GomaIriguchi_SetEntranceFlag();
-void GomaIriguchi_GiveShamansRod();
 void Event_PrepareObjectAndApplyValue();
 
 extern u8 *gEffectWork;
@@ -45,9 +75,6 @@ void BattleFx_SetupObjectPair();
 void Field_DispatchTypeHandler();
 void EventObject_Initialize();
 void EffectRuntime_StopCurrentObject();
-
-void OverlayObject_TurnStateByEighth();
-void OverlayObject_WaitForHeight();
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);
 
 struct Actor {

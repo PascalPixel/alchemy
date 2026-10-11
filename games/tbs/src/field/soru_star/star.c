@@ -1,3 +1,9 @@
+#include "fieldobj.h"
+#include "types.h"
+#include "field_event.h"
+#include "field_scene.h"
+#include "create_configured_overlay_object.h"
+#include "overlay_object.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -7,19 +13,127 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "star.h"
-#include "types.h"
 #include "battle_unit.h"
 #include "call.h"
-#include "field_event.h"
 #include "field_service.h"
-#include "field_scene.h"
 #include "text/msg_ids.h"
 #include "glyph.h"
 
-extern struct EventWork *gEventWork;
+void SoruStar_RiseActorFourteenSparks();
+
+enum StarRoomActor {
+    ACTOR_SUKURETA = ACTOR_FIRST_PLACED + 1,
+    ACTOR_SATUROS,
+    ACTOR_MENARDI,
+    ACTOR_GARCIA_MASKED,
+    ACTOR_GARCIA,
+    ACTOR_ALEX
+};
+
+enum StarRoomFlag {
+    FLAG_STAR_ROOM_EXPLAINED = 0x83b,
+    FLAG_FIRST_STAR_BAGGED = 0x83c,
+    FLAG_MERCURY_STAR_BAGGED = 0x83d,
+    FLAG_STARS_GIVEN_TO_ALEX = 0x83e
+};
+
+enum {
+    ITEM_MYTHRIL_BAG = 224
+};
+
+#define NULL ((void *)0)
+#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(void *object);
+
+union MotionWork {
+    struct {
+        u32 unk_00[2];
+        s32 x, y, z;
+        u32 unk_14;
+        s32 accum_x, accum_y;
+        u32 unk_20[4];
+        s32 rate_x, rate_y;
+        u32 unk_38[3];
+        s32 velocity_x, velocity_y, velocity_z;
+        u16 *record;
+        u8 unk_54[16];
+        u16 angle_step;
+    } fields;
+    u8 bytes[102];
+};
+
+extern s32 Inventory_Count(s32 arg0);
+extern s32 Shop_PickUnitItem(s32 *out_first, s32 *out_second);
+s32 Inventory_Discard(s32 owner, s32 slot);
+extern void PartyInventory_Add(s32 arg0);
+
+s32 CalculateAngleFromCoordinateDelta(s32, s32);
+void Scene_UnmaskGarcia(void);
+void Scene_BagJupiterStar(void);
+void UiWork_PushValueSlot();
+s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z);
+void SoruStar_LineUpFollowers(void);
+void Party_RemoveOwnerRestored();
+void PartyInventory_Discard();
+void SoruStar_RiseActorFourteenSparks();
+void UiText_ShowCenteredMessage();
+void *UnitGet(u32 owner);
 
 struct ObjectRuntime;
+
+void Event_SayThenWait(s32 speaker, s32 frames);
+
+extern u16 SoruStar_StarCells[];
+extern s32 Placement_Scripts[];
+extern s32 Placement_Messages[];
+extern s32 Placement_Actors[];
+extern s32 Placement_Effects[];
+
+void OverlayObject_SetHandleFlagBits2And3(s32 object, u32 value)
+{
+    struct FieldActor *actor = (struct FieldActor *)object;
+
+    actor->sprite->priority = value;
+}
+
+void *OverlayObject_PrepareObject(s32 first, s32 second, s32 third, s32 fourth)
+{
+    struct FieldActor *obj;
+    struct FieldSprite *rec;
+
+    obj = Engine_ObjectCreate(fourth, first, second, third);
+    if (obj != NULL) {
+        rec = obj->sprite;
+        rec->priority = 0;
+        obj->motion_flags = 0;
+        obj->collision_flags = 8;
+        Engine_ActorSetSpriteFlags(obj, 0);
+        ObjectGroup_SetChildValue(obj, 0xE);
+        Engine_ObjectSetBlendMode(obj, 1);
+        return obj;
+    }
+    return NULL;
+}
+
+void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+{
+    struct FieldActor *result = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
+
+    if (result != NULL) {
+        struct FieldSprite *object = result->sprite;
+
+        object->priority = 1;
+        result->motion_flags = 0;
+        result->collision_flags = 8;
+        Engine_ActorSetSpriteFlags(result, 0);
+        ObjectGroup_SetChildValue(result, 15);
+        result->priority_flags = (result->priority_flags & 0xfe) | 2;
+        return result;
+    }
+    return NULL;
+}
+
+extern struct EventWork *gEventWork;
 void BattlePres_RunActionThenWaitIfModeZero();
 
 static __inline__ void SkipMessage(s32 amount)

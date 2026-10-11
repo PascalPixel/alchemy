@@ -2,15 +2,6 @@
 #include "../../../include/system/flash_data.h"
 #include "../../../include/system/io_reg.h"
 
-struct FlashChipInfo {
-    u8 unknown_00[4];
-    s32 size;
-    u8 shift;
-    u8 unknown_09[7];
-    u16 control;
-};
-
-extern struct FlashChipInfo *gFlash;
 extern FlashWaitProc Flash_Handler3;
 
 s32 _call_via_r3(s32, u8 *, u8, s32);
@@ -23,7 +14,7 @@ u16 EraseFlashChip(void)
 
     REG_WAITCNT =
         (REG_WAITCNT & 0xFFFC) |
-        gFlash->control;
+        gFlash->wait[0];
 
     *(volatile u8 *)0x0E005555 = 0xAA;
     *(volatile u8 *)0x0E002AAA = 0x55;

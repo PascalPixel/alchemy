@@ -2,11 +2,6 @@
 #include "../../../include/system/flash_data.h"
 #include "../../../include/system/io_reg.h"
 
-struct FlashConfig08007028 {
-    u8 unknown_00[0x24];
-    u16 wait;
-};
-
 extern FlashWaitProc Flash_Handler3;
 
 u16 EraseAtmelFlashChip(void)
@@ -20,7 +15,7 @@ u16 EraseAtmelFlashChip(void)
 
     REG_WAITCNT =
         (REG_WAITCNT & 0xFFFC) |
-        ((struct FlashConfig08007028 *)Flash_ChipAtmelLayout)->wait;
+        Flash_ChipAtmelLayout.type.wait[0];
 
     command = (volatile u8 *)0x0E005555;
     *command = 0xAA;

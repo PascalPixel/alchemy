@@ -1,15 +1,7 @@
 #include "../../../include/system/flash.h"
+#include "../../../include/system/flash_data.h"
 #include "../../../include/system/io_reg.h"
 
-struct FlashChipInfo {
-    u8 unknown_00[4];
-    s32 blockSize;
-    u8 sectorShift;
-    u8 unknown_09[7];
-    u16 wait;
-};
-
-extern struct FlashChipInfo *gFlash;
 extern u16 gFlashNumRemainingBytes;
 
 void CountRemainingErasedFlashBytes(void);
@@ -26,7 +18,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source)
     u8 attempt;
     u8 index;
     u8 rounds;
-    struct FlashChipInfo *chip;
+    const struct FlashType *chip;
     volatile u16 *waitcnt;
     u16 setting;
     u8 *destination;
@@ -35,7 +27,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source)
         return 0x80FF;
     }
 
-    destination = (u8 *)((sector << gFlash->sectorShift)
+    destination = (u8 *)((sector << gFlash->sector.shift)
                          + 0x0E000000);
 
     sourceCode = (u16 *)((s32)CountRemainingErasedFlashBytes ^ 1);
@@ -79,9 +71,9 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source)
     waitcnt = &REG_WAITCNT;
     setting = *waitcnt & 0xFFFC;
     chip = gFlash;
-    *waitcnt = setting | chip->wait;
+    *waitcnt = setting | chip->wait[0];
 
-    gFlashNumRemainingBytes = chip->blockSize;
+    gFlashNumRemainingBytes = chip->sector.size;
     counter = &gFlashNumRemainingBytes;
     while (*counter != 0) {
         status = ProgramFlashByte(source, destination);

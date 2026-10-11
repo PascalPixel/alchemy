@@ -1,15 +1,7 @@
 #include "../../../include/system/flash.h"
+#include "../../../include/system/flash_data.h"
 #include "../../../include/system/io_reg.h"
 
-struct FlashInfo08007220 {
-    u8 unknown_00[24];
-    s32 size;
-    u8 unknown_1c[8];
-    u16 control;
-};
-
-extern struct FlashInfo08007220 Flash_ChipAtmel;
-extern struct FlashInfo08007220 Flash_ChipAtmelLayout;
 extern u16 gFlashNumRemainingBytes;
 
 u16 ProgramAtmelFlashBlock(u16 sector, u8 *source)
@@ -25,10 +17,10 @@ u16 ProgramAtmelFlashBlock(u16 sector, u8 *source)
     CopyFlashReadRoutineToRam(savedCode);
     REG_WAITCNT =
         (REG_WAITCNT & 0xfffc) |
-        Flash_ChipAtmelLayout.control;
+        Flash_ChipAtmelLayout.type.wait[0];
 
     current = sector << 5;
-    gFlashNumRemainingBytes = Flash_ChipAtmel.size;
+    gFlashNumRemainingBytes = Flash_ChipAtmel.type.sector.size;
 
     while (gFlashNumRemainingBytes != 0) {
         retries = 2;
@@ -45,8 +37,8 @@ attempt:
         if (result != 0)
             break;
 
-        gFlashNumRemainingBytes -= Flash_ChipAtmelLayout.size;
-        source += Flash_ChipAtmelLayout.size;
+        gFlashNumRemainingBytes -= Flash_ChipAtmelLayout.type.sector.size;
+        source += Flash_ChipAtmelLayout.type.sector.size;
         current += 1;
     }
 

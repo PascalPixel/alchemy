@@ -57,8 +57,8 @@ struct ItemDefinition *Item_GetDirectFar(s32 item);
 
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiText_ShowMessageAndWaitCoreFar(s32 message);
-void Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
-void Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
+s32	 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
+s32	 Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
 s32	 BattleEventRuntime_SchedulePhase(s32 frames);
 void AudioCommand_PlayFar(s32 cue);
 void ObjectDispatch_ApplyArgumentToChildrenFar(struct MotionObject *object, s32 mode);

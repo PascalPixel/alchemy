@@ -2,10 +2,10 @@
 #include "../../../include/system/io_reg.h"
 
 extern u16 *Flash_Handler4;
-extern u16 gFlashSavedIme;
+extern volatile u16 gFlashSavedIme;
 extern volatile u8 gFlashTimerNum;
-extern u8 gFlashTimeoutFlag;
-extern u16 gFlashTimerCount;
+extern volatile u8 gFlashTimeoutFlag;
+extern volatile u16 gFlashTimerCount;
 extern u16 *volatile gFlashTimerReg;
 
 void StartFlashTimer(u8 index)

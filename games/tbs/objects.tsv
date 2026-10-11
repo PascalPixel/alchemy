@@ -89,6 +89,8 @@ main	rom_main_00	games/tbs/src/system/scheduler/numtext	.rodata
 main	rom_main_00	games/tbs/src/lib/q16_dot_product
 main	rom_main_00	games/tbs/src/system/save/savedata	.rodata
 main	rom_main_00	games/tbs/src/system/link/testdata	.rodata
+main	rom_main_00	games/tbs/src/system/save/summary	.rodata
+main	rom_main_00	games/tbs/src/system/save/save	.rodata
 main	rom_main_00	games/common/src/system/save/flashtab	.rodata
 main	rom_main_00	games/common/src/system/save/read_flash_id	.rodata
 main	rom_main_00	games/common/src/system/save/identify_flash	.rodata
@@ -96,11 +98,8 @@ main	rom_main_00	games/common/src/system/save/flash_timer_interrupt	.rodata
 main	rom_main_00	games/common/src/system/save/start_flash_timer	.rodata
 main	rom_main_00	games/common/src/system/save/flash_read_routines	.rodata
 main	rom_main_00	games/common/src/system/save/read_flash_core	.rodata
-main	rom_main_00	games/common/src/system/save/flash_verify	.rodata
-main	rom_main_00	games/common/src/system/save/flash_verify_callback	.rodata
-main	rom_main_00	games/tbs/src/system/save/summary	.rodata
-main	rom_main_00	games/tbs/src/system/save/save	.rodata
 main	rom_main_00	games/common/src/system/save/read_flash	.rodata
+main	rom_main_00	games/common/src/system/save/flash_verify	.rodata
 main	rom_main_00	games/common/src/system/save/verify_flash_sector	.rodata
 main	rom_main_00	games/common/src/system/save/flashsst	.rodata
 main	rom_main_00	games/common/src/system/save/erase_flash_chip	.rodata
@@ -108,6 +107,7 @@ main	rom_main_00	games/common/src/system/save/erase_flash_sector	.rodata
 main	rom_main_00	games/common/src/system/save/flash_program_byte	.rodata
 main	rom_main_00	games/common/src/system/save/program_flash_sector_with_erase_retry	.rodata
 main	rom_main_00	games/common/src/system/save/flash_erase_verify	.rodata
+main	rom_main_00	games/common/src/system/save/flash_verify_callback	.rodata
 main	rom_main_00	games/common/src/system/save/flashmx	.rodata
 main	rom_main_00	games/common/src/system/save/program_flash_sector	.rodata
 main	rom_main_00	games/common/src/system/save/flashat	.rodata
@@ -128,9 +128,9 @@ main	rom_main_01	games/tbs/src/graphics/tile/copy_strided
 main	rom_main_01	games/tbs/src/field/common/object/update	.text
 main	rom_main_01	games/tbs/src/system/updfar	.text
 main	rom_main_01	games/tbs/src/system/resource/animate	.text
-main	rom_main_01	games/common/src/system/resource/object	.text
-main	rom_main_01	games/common/src/system/resource/resobj	.text
-main	rom_main_01	games/common/src/field/common/object/object	.text
+main	rom_main_01	games/tbs/src/system/resource/object	.text
+main	rom_main_01	games/tbs/src/system/resource/resobj	.text
+main	rom_main_01	games/tbs/src/field/common/object/object	.text
 main	rom_main_01	games/common/src/field/common/script/script	.text
 main	rom_main_01	games/tbs/src/field/common/object/wait	.text
 main	rom_main_01	games/common/src/field/common/object/motion_set_position_and_reset_motion	.text
@@ -180,8 +180,8 @@ main	rom_main_02	games/common/src/graphics/text/get_wide_string_width	.text
 main	rom_main_02	games/tbs/src/graphics/window/measure	.text
 main	rom_main_02	games/common/src/graphics/window/adjust_value_without_limit	.text
 main	rom_main_02	games/tbs/src/graphics/text/text	.text
-main	rom_main_02	games/common/src/system/memory/clear_word_if_set	.text
-main	rom_main_02	games/common/src/graphics/window/uiwork	.text
+main	rom_main_02	games/tbs/src/system/memory/clear_word_if_set	.text
+main	rom_main_02	games/tbs/src/graphics/window/uiwork	.text
 main	rom_main_02	games/tbs/src/graphics/text/symbol	.text
 main	rom_main_02	games/tbs/src/graphics/glyph/glyph	.text
 main	rom_main_02	games/common/src/menu/get_node_at_count	.text
@@ -227,8 +227,8 @@ main	rom_main_02	games/common/src/battle/classify_entry_kind	.text
 main	rom_main_02	games/tbs/src/menu/resmenu	.text
 main	rom_main_02	games/common/src/menu/menu	.text
 main	rom_main_02	games/tbs/src/menu/rows	.text
-main	rom_main_02	games/common/src/menu/run_selection_with_cursor_object	.text
-main	rom_main_02	games/common/src/graphics/text/format_hex	.text
+main	rom_main_02	games/tbs/src/menu/run_selection_with_cursor_object	.text
+main	rom_main_02	games/tbs/src/graphics/text/format_hex	.text
 main	rom_main_02	games/tbs/src/menu/flaggrid	.text
 main	rom_main_02	games/tbs/src/menu/slider	.rodata
 main	rom_main_02	games/tbs/src/graphics/ui/marks	.rodata
@@ -521,8 +521,8 @@ main	rom_main_08	games/tbs/src/battle/effect/place_formation_objects	.text
 main	rom_main_08	games/tbs/src/graphics/palette/hblank	.text
 main	rom_main_08	games/common/src/graphics/palette/particle_stream_modes	.text
 main	rom_main_08	games/tbs/src/battle/effect/scenefx	.text
-main	rom_main_08	games/common/src/battle/effect/wait_then_set_field	.text
-main	rom_main_08	games/common/src/battle/effect/wait_twelve_frames_then_set_field	.text
+main	rom_main_08	games/tbs/src/battle/effect/wait_then_set_field	.text
+main	rom_main_08	games/tbs/src/battle/effect/wait_twelve_frames_then_set_field	.text
 main	rom_main_08	games/tbs/src/battle/effect/colburst	.text
 main	rom_main_08	games/tbs/src/battle/effect/fxscales	.rodata
 main	rom_main_08	games/tbs/src/battle/effect/sentou_kouka_gousei

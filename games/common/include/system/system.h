@@ -3,6 +3,10 @@
 
 #include "types.h"
 #include "mem.h"
+#include "edition.h"
+#if !GAME_TLA
+#include "farcall.h"
+#endif
 
 void	   WaitFrames(s32 frames);
 void	   System_WaitForFrameInterrupt(void);
@@ -142,14 +146,12 @@ void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no);
 #endif
 struct AnimationEntry *AnimationObject_Allocate(s32 id);
 void				   AnimationObjects_SetActiveTimerSteps(struct AnimationObject *group, s32 val);
-void				   Audio_InitializeRuntimeDefaultsFar(void);
 void				   Bg0_ClearTilemap(void);
 void				   Camera_ConfigureSceneFar(s32 offset);
 s32					   FixedSqrt(s32 value);
 void				   IwramHalt(void);
 s32					   Link_CreateCountdownLabelWindow(void);
 void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s32 reuse);
-void MusicPlayer_StepVolumeAndPitchTowardTargetsFar(void);
 void ObjectSystem_Configure(s32 mode);
 void PaletteDma_LoadBlock(void);
 u8	*Resource_DecompressLz(const u8 *source, u8 *destination);

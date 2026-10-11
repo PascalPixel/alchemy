@@ -374,7 +374,7 @@ main	rom_main_04	games/tbs/src/debug/swatch	.rodata
 main	rom_main_04	games/tbs/src/battle/effect/fxdata	.rodata
 main	rom_main_04	games/tbs/src/field/scenes	.rodata
 main	rom_main_04	games/tbs/src/field/common/object/scripts	.rodata
-main	rom_main_05	games/tbs/src/system/far_call/menu
+main	rom_main_05	games/tbs/src/system/far_call/MENU
 main	rom_main_05	games/tbs/src/system/scheduler/sched2	.text
 main	rom_main_05	games/common/src/graphics/window/lifecycle	.text
 main	rom_main_05	games/tbs/src/menu/status	.text
@@ -441,7 +441,7 @@ main	rom_main_05	games/tbs/src/game/djinn/pairres	.text
 main	rom_main_05	games/tbs/src/graphics/ui/menuspr	.rodata
 main	rom_main_05	games/tbs/src/menu/menustr	.rodata
 main	rom_main_05	games/tbs/src/menu/menudata	.rodata
-main	rom_main_06	games/tbs/src/system/far_call/shop
+main	rom_main_06	games/tbs/src/system/far_call/SHOP
 main	rom_main_06	games/tbs/src/menu/shop/visit	.text
 main	rom_main_06	games/tbs/src/menu/shop/shop	.text
 main	rom_main_06	games/tbs/src/menu/shop/draw_stock_page	.text
@@ -508,7 +508,7 @@ main	rom_main_07	games/tbs/src/battle/spoils	.text
 main	rom_main_07	games/tbs/src/battle/btldata	.rodata
 main	rom_main_07	games/tbs/src/battle/presentation/advarrow	.rodata
 main	rom_main_07	games/tbs/src/battle/btlvars	.rodata
-main	rom_main_08	games/tbs/src/system/far_call/effect
+main	rom_main_08	games/tbs/src/system/far_call/EFFECT
 main	rom_main_08	games/tbs/src/battle/presentation/falling	.text
 main	rom_main_08	games/tbs/src/battle/effect/fivemode	.text
 main	rom_main_08	games/tbs/src/battle/effect/canvas	.text
@@ -550,7 +550,7 @@ main	rom_main_08	games/tbs/src/battle/effect/sentou_kouka_gousei
 main	rom_main_08	games/tbs/src/battle/effect/koukatbl	.rodata
 main	rom_main_08	games/tbs/src/battle/effect/sentou_kouka_gousei_iro
 main	rom_main_08	games/tbs/src/battle/effect/koukabit	.rodata
-main	rom_main_09	games/tbs/src/system/far_call/scroll
+main	rom_main_09	games/tbs/src/system/far_call/SCROLL
 main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_sekiwa
 main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai
 main	rom_main_09	games/tbs/src/battle/effect/sentou_kouka_tenkai_link
@@ -562,7 +562,7 @@ main	rom_main_09	games/tbs/src/graphics/tile/slides	.text
 main	rom_main_09	games/tbs/src/graphics/tile/slides	.rodata
 main	rom_main_09	games/tbs/src/graphics/tile/slides	.data
 main	rom_main_09	games/tbs/src/graphics/display/staffrol	.rodata
-main	rom_main_10	games/tbs/src/system/far_call/palette
+main	rom_main_10	games/tbs/src/system/far_call/PALETTE
 main	rom_main_10	games/tbs/src/graphics/display/intro	.text
 main	rom_main_10	games/common/src/graphics/palette/interpolate_buffers	.text
 main	rom_main_10	games/tbs/src/graphics/palette/tint	.text
@@ -570,15 +570,15 @@ main	rom_main_10	games/common/src/graphics/palette/palette	.text
 main	rom_main_10	games/tbs/src/graphics/title/prompt	.rodata
 main	rom_main_10	games/tbs/src/graphics/display/intro	.rodata
 main	rom_main_10	games/tbs/src/graphics/palette/curve	.rodata
-main	rom_main_11	games/tbs/src/system/far_call/blank_run
+main	rom_main_11	games/tbs/src/system/far_call/BLANK_RUN
 main	rom_main_11	games/tbs/src/field/common/camera/camera	.text
 main	rom_main_11	games/common/src/graphics/palette/scale_rgb555_buffer	.text
 main	rom_main_11	games/common/src/graphics/palette/scale_rgb555_buffer	.rodata
-main	rom_main_12	games/tbs/src/system/far_call/blank_load
+main	rom_main_12	games/tbs/src/system/far_call/BLANK_LOAD
 main	rom_main_12	games/tbs/src/battle/effect/colorfx	.text
 main	rom_main_12	games/tbs/src/sound/track_slot_buffer	.text
 main	rom_main_12	games/tbs/src/battle/effect/colorfx	.rodata
-main	rom_main_13	games/tbs/src/system/far_call/sound
+main	rom_main_13	games/tbs/src/system/far_call/SOUND
 main	rom_main_13	games/tbs/src/sound/sound	.text
 main	rom_main_13	games/tbs/src/sound/driver/umul_high
 main	rom_main_13	games/tbs/src/sound/driver/mixer_entry
@@ -877,7 +877,7 @@ main	rom_tail_00	games/common/sound/sequence/se_308	.rodata
 main	rom_tail_00	games/common/sound/sequence/se_309	.rodata
 main	rom_tail_00	games/common/sound/sequence/se_310	.rodata
 main	rom_tail_00	games/common/sound/sequence/se_311	.rodata
-main	rom_tail_01	games/tbs/src/system/far_call/resource
+main	rom_tail_01	games/tbs/src/system/far_call/RESOURCE
 main	rom_tail_01	games/tbs/src/system/resource/metadata_get_record	.text
 main	rom_tail_01	games/tbs/src/graphics/sprite/sprites	.rodata
 main	rom_tail_01	games/tbs/src/graphics/animref0

@@ -5,6 +5,9 @@
 
 #include "types.h"
 #include "edition.h"
+#if !GAME_TLA
+#include "farcall.h"
+#endif
 
 struct UiWindow;
 
@@ -190,12 +193,9 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames
 #ifndef OWN_BattleFx_PlayUnitElementEffect
 void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant);
 #endif
-void BattleFx_RunGatheringBurstFar(struct EffectLaunch *launch);
-void BattleFx_ScheduleCallbacksAndReleaseBlocksFar(void);
 void BattlePalette_UpdateBlend(void);
 s32	 BattleParty_PrepareActiveOwnersFar(s32);
 s32	 BattlePlacement_CountValidEntriesFar(s32, u8 *);
-void BattlePresentation_PrepareSceneFar(s32 kind);
 void Blend_SetBrightenTarget0(s32 duration);
 void Blend_SetBrightenTarget16(s32 duration);
 void Blend_SetDarkenTarget0(s32 duration);
@@ -298,9 +298,6 @@ void SceneTransform_ApplyScale(const s32 *scale);
 void SceneTransform_ApplyYaw(s32 angle);
 void Scheduler_ScheduleCallbackA(void);
 void Scheduler_ScheduleCallbackAAfterFrames(void);
-#ifndef OWN_ShopCursor_MoveTowardTargetFar
-void ShopCursor_MoveTowardTargetFar(struct ShopCursor *cursor);
-#endif
 s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir);
 #ifndef OWN_Text_FormatHex
 void Text_FormatHex(u32 value, u32 count, u8 *output);

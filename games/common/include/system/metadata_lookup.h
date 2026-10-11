@@ -3,6 +3,10 @@
 
 #include "types.h"
 #include "layout_guard.h"
+#include "edition.h"
+#if !GAME_TLA
+#include "farcall.h"
+#endif
 
 struct AnimationMetadata
 {
@@ -31,7 +35,9 @@ LAYOUT_OFFSET_GUARD(AnimationMetadata_Frames, struct AnimationMetadata, frames, 
 LAYOUT_OFFSET_GUARD(AnimationMetadata_Animation, struct AnimationMetadata, animation, 0x10);
 
 struct AnimationMetadata *Resource_GetMetadataRecord(u32 number);
+#if GAME_TLA
 struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 number);
+#endif
 struct AnimationMetadata *Resource_GetMetadataRecordFarFar(u32 number);
 
 #endif

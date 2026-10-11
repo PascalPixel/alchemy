@@ -5,6 +5,9 @@
 
 #include "types.h"
 #include "edition.h"
+#if !GAME_TLA
+#include "farcall.h"
+#endif
 
 extern u8 CharacterMenu_CursorWidths[];
 extern u8 Menu_ListOrderDefault[];
@@ -255,15 +258,12 @@ void Menu_InitializeSelectedWorkspace(void);
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base);
 void Menu_LoadSelectedResource(void);
 void Menu_LoadSelectionNodeResource(struct SelectionScreen *state, u32 index);
-s32	 Menu_OpenActionFlow(void);
 s32	 Menu_OpenBackdropScreen(void);
-s32	 Menu_OpenConfirmPromptFar(void);
 #ifndef OWN_Menu_OpenSelectionWindow
 void Menu_OpenSelectionWindow(s32 mode, u32 count);
 #endif
 void Menu_PlaceEntryObjectsInGrid(s32 origin_x, s32 origin_y, s32 phase);
 void Menu_ReleaseEntryObjects(void);
-void Menu_ReleaseEntryObjectsFar(void);
 void Menu_ReloadNodeResource(struct SelectionScreen *state, u32 index);
 void Menu_ResetTwoResourceEntries(void);
 s32	 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action);
@@ -346,7 +346,6 @@ struct RenderOutput *RenderOutput_CreateFromResourceFar(
 void RenderOutput_PrepareForRedrawFar(s32 window);
 void Resource_LoadPairedBlocksIfAvailable(void);
 void Resource_ResetOwnerEntries(void);
-s32	 RunAssetSelectionScreenFar(void);
 void Runtime_ScheduleCallbackAndReleaseBlock20A(void);
 void Runtime_ScheduleCallbackAndReleaseBlock20B(void);
 s32	 Sanctum_RunPartyService(void);
@@ -363,7 +362,6 @@ void				 Shop_DrawSelMsg(s32 target, s32 selection);
 #ifndef OWN_Shop_FillSelector
 void Shop_FillSelector(s32 count, s32 selector, u8 *base);
 #endif
-void Shop_FillSelectorFar(s32 value, s32 column, void *tiles);
 void Shop_HiliteUnit(s32 enabled, s32 selected);
 void Shop_InitEffect(void);
 void Shop_InitializeCursorWork(void);
@@ -383,16 +381,7 @@ s32	 Shop_ServicePrice(s32 entry_no, s32 kind);
 #ifndef OWN_Shop_SetCursor
 void Shop_SetCursor(struct ShopCursor *cursor, s32 target_x, s32 target_y, s8 kind);
 #endif
-#ifndef OWN_Shop_SetCursorFar
-void Shop_SetCursorFar(struct ShopCursor *cursor, s32 target_x, s32 target_y, s8 kind);
-#endif
 void Shop_StepCursor(void);
-#ifndef OWN_ShopCursor_AdvanceFar
-void ShopCursor_AdvanceFar(struct ShopCursor *cursor);
-#endif
-#ifndef OWN_ShopCursor_SetPositionImmediateFar
-void ShopCursor_SetPositionImmediateFar(struct ShopCursor *cursor, s32 x, s32 y);
-#endif
 #ifndef OWN_SideObject_CreateFar
 struct RenderOutput *SideObject_CreateFar(
 	s32 object_kind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5);
@@ -401,9 +390,6 @@ struct RenderOutput *SideObject_CreateFar(
 void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st);
 #endif
 s32 UiIcon_LoadResourceIntoSlot(s32 resource_id, s32 slot);
-#ifndef OWN_UiIcon_PrepareObjectFar
-void UiIcon_PrepareObjectFar(struct RenderOutput *object);
-#endif
 s32	 UiMenu_CreateCursor(void *source);
 void UiMenu_PositionCursor(s32 x_offset, s32 y_offset);
 void UiMenu_SlideCursor(s32 x, s32 y);

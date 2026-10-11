@@ -8,6 +8,9 @@
 #if !GAME_TLA
 #include "battle_effect_runtime.h"
 #endif
+#if !GAME_TLA
+#include "farcall.h"
+#endif
 
 struct BattleActionRecord;
 struct BattleEffectArgument;
@@ -441,7 +444,6 @@ void Animation_ApplyChildArgumentFar(void *, s32);
 void Animation_ApplyChildPalette(struct MotionObject *obj, s32 palette);
 #endif
 void Animation_SetWorkEntryFar(struct AnimationEntry *effect, s32 entry_index);
-s32	 AudioCommand_GetSecondaryStateByteFar(void);
 void Battle_AwardSpoils(void);
 s32	 Battle_ClearSerialTransferPayload(void);
 s32	 Battle_CollectPartyCommandsFar(void *entries, u16 *excluded_units, s32 excluded_count);
@@ -508,7 +510,6 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect);
 #ifndef OWN_BattleEffect_RunTargetedItemBreak
 void BattleEffect_RunTargetedItemBreak(void);
 #endif
-void BattleEffect_RunTileAndPaletteAnimationFar(struct TransitionActorList *list);
 #ifndef OWN_BattleEffect_SelectNearbyObject
 s32 BattleEffect_SelectNearbyObject(s32 sourceId);
 #endif
@@ -554,12 +555,6 @@ void BattleFx_CleanupResourcesAndWindow(void);
 void BattleFx_ClearChildValueOnMismatch(void);
 void BattleFx_ComputeHueChannels(s32 value, s32 *maximum, s32 *center, s32 *minimum);
 s32	 BattleFx_CopyLinkedObjectPosition(void *obj);
-#ifndef OWN_BattleFx_DispatchByIdRangeFar
-void BattleFx_DispatchByIdRangeFar(s32 *arg0);
-#endif
-#ifndef OWN_BattleFx_DispatchModeFar
-void BattleFx_DispatchModeFar(s32 *state);
-#endif
 void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter);
@@ -628,9 +623,6 @@ s32 BattleFx_RunEventAction(void *arg0, s32 arg1, s32 arg2);
 void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode);
 void BattleFx_RunFlashingCallbackSequence(void);
 void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 mode);
-#ifndef OWN_BattleFx_RunIceFleckBurstFar
-void BattleFx_RunIceFleckBurstFar(struct BattleEffectArgument *effect);
-#endif
 void BattleFx_RunItemBreakSequence(void);
 #ifndef OWN_BattleFx_RunKind6DescriptorAction
 s32 BattleFx_RunKind6DescriptorAction(s32 arg0);
@@ -946,8 +938,6 @@ s32 ScriptObject_CheckOverlapFar(struct ScriptObjectEntry *object, s32 *values);
 #endif
 struct FxObject *ScriptObject_FindOverlappingEntryFar(
 	struct FxObject *object, struct Output_08097f80 *position);
-void Shop_InitEffectFar(void);
-void Shop_RestoreSceneTilesFar(s32 value);
 void Summon_ClearWorkFields(void);
 s32	 Summon_GetEntryByte4(s32 index);
 s32	 Summon_GetEntryFlag1Field(s32 index);

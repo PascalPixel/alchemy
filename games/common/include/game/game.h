@@ -16,6 +16,9 @@
 #if GAME_TLA
 #include "btltype.h"
 #endif
+#if !GAME_TLA
+#include "farcall.h"
+#endif
 
 struct ItemDefinition;
 struct SummonDefinition;
@@ -88,7 +91,6 @@ u32 Party_GetAverageLevel(void);
 s32 Party_LookupCharacterValueByFlag32(u32 index);
 #endif
 s32	 Shop_GetSelectionState(s32 owner, s32 slot);
-s32	 Shop_PickUnitItemFar(s32 *owner, s32 *slot);
 void UiText_DecodeMessageFar(s32 message, u16 *buffer, s32 length);
 s32	 DjinnMenu_ShowOwnerStatus(void);
 #endif

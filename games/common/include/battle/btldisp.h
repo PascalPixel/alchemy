@@ -5,6 +5,10 @@
 
 #include "types.h"
 #include "layout_guard.h"
+#include "edition.h"
+#if !GAME_TLA
+#include "farcall.h"
+#endif
 
 struct BattleCamera
 {
@@ -99,7 +103,9 @@ s32	 BattleObject_IsValidId(u32 object_id);
 void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode);
 void BattlePres_SetActorRecordMode(s32 actor, s32 mode);
 void BtlObjPut(void);
+#if GAME_TLA
 void BattleFx_InitializeModeFar(s32 *context);
+#endif
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_ArmBg2AffineHBlankDma(void);
 void Palette_StepFadeTransfer(void);

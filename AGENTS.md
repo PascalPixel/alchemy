@@ -257,7 +257,11 @@ or functions is exactly this cheating.
   explains a habit of the whole game is source, not a device: the ☀️ scene
   script layer (inline helpers forwarding to the engine services in
   `field_event.h`, `field_service.h` and `runpa_jo/jo.h`) matches every scene
-  where direct calls break 642 functions (Pascal, 2026-10-05). Never patch
+  where direct calls break 642 functions (Pascal, 2026-10-05). So is the ☀️
+  IWRAM call layer (one inline per resident routine in `iwram_call.h`,
+  calling its checked fixed entry): 360 call sites match through it, and
+  five sites in two functions keep a tagged direct call (2026-10-11,
+  decided under Pascal's delegation). Never patch
   compiler output. _Check: no-asm (in lint-staged)._
 - **S3** Camelotize: reconstruct readable source consistent with the games'
   hardware, approved compilers and demonstrated program structure. Separate

@@ -481,8 +481,7 @@ s32 Scene_Initialize(void)
 		{
 			return 0;
 		}
-		/* FAKEMATCH: InitializeSwayingSceneObject is called as void (*)(); as void (*)(void), its prototype, Scene_Initialize does not compile */
-		((void (*)())InitializeSwayingSceneObject)(8);
+		InitializeSwayingSceneObject(8);
 		return 0;
 	}
 	first = (s32)&SceneId_TakaraShima6;
@@ -2567,14 +2566,14 @@ s32 UpdateSwayingSceneObject(struct S *object)
 	return 0;
 }
 
-void InitializeSwayingSceneObject(void)
+void InitializeSwayingSceneObject(s32 object_id)
 {
 	OrbitingSceneObject		  *actor;
 	OrbitingSceneObjectSprite *sprite;
 	u8						  *transfer;
 	s32						   zero;
 
-	actor = ((s32 (*)())Object_GetById)();
+	actor = (OrbitingSceneObject *)Object_GetById(object_id);
 	sprite = actor->sprite;
 	sprite->flags_09_mode = 1;
 	sprite->flags_05_bit_5 = 0;

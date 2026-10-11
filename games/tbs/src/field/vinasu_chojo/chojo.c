@@ -994,8 +994,7 @@ void Scene_RunActorEntrySequence(void)
 	Engine_TaskWait(1);
 	Actor_SetChildValue(6, 0);
 	Engine_TaskWait(10);
-	/* FAKEMATCH: VinasuChojo_CleanupSceneObjects is called as void (*)(); as void (*)(s32), its prototype, Scene_RunActorEntrySequence does not compile */
-	((void (*)())VinasuChojo_CleanupSceneObjects)();
+	VinasuChojo_CleanupSceneObjects();
 	Engine_ActorJump(6, 2, 40);
 	VinasuChojo_ShowMessage(6);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x103, 20);
@@ -1392,10 +1391,9 @@ void SceneState_ApplyPair140And0(void)
 	Engine_PsynergyBegin(140, 0);
 }
 
-void VinasuChojo_CleanupSceneObjects(s32 a)
+void VinasuChojo_CleanupSceneObjects(void)
 {
-	/* FAKEMATCH: BattleEffect_CleanupSceneObjects is called as void (*)(s32); as void (*)(void), its prototype, VinasuChojo_CleanupSceneObjects does not compile */
-	((void (*)(s32))BattleEffect_CleanupSceneObjects)(a);
+	BattleEffect_CleanupSceneObjects();
 }
 
 void FieldScene_RunStep6(void)

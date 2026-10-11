@@ -22,7 +22,7 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count);
 void BattleParty_CollectUnitList(void);
 s32 BattlePresentation_InitializeTilePattern(void);
 void BattlePresentation_ClearBg0VerticalOffset(void);
-void Party_ReservedNoOp5B14(void);
+void Party_ReservedNoOp5B14(s32 unused);
 s32 BattleParty_ResetActiveRuntimeFields(void);
 s32 BattleParty_ReconcileDjinnRecovery(void);
 struct BattleSummonState *BattleSummon_UpdateAvailability(void);

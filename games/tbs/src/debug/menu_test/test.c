@@ -173,8 +173,7 @@ void DebugMenu_RunMessageTest(void)
 
 void SceneState_ApplyOne(void)
 {
-	/* FAKEMATCH: Battle_ApplyPresetItemsAndFlags is called as s32 (*)(); as s32 (*)(void), its prototype, SceneState_ApplyOne does not compile */
-	((s32 (*)())Battle_ApplyPresetItemsAndFlags)(1);
+	Battle_ApplyPresetItemsAndFlags(1);
 }
 
 void SceneState_NoOp(void)
@@ -802,10 +801,9 @@ s32 DebugMenu_SelectCharacter(void)
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #else
-s32 SceneState_GetFarResult2418(void)
+s32 SceneState_GetFarResult2418(s32 unit_id)
 {
-	/* FAKEMATCH: Shop_ConfirmAct is called as s32 (*)(void); as s32 (*)(s32), its prototype, SceneState_GetFarResult2418 does not compile */
-	return ((s32 (*)(void))Shop_ConfirmAct)();
+	return Shop_ConfirmAct(unit_id);
 }
 #endif
 

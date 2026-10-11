@@ -917,8 +917,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 			Engine_MapCopyCellAttributes(56, 13, 1, 1, pos, row);
 		}
 		Engine_ActorSetAnimation(31, 10);
-		/* FAKEMATCH: BattleEffect_PauseObject is called as void (*)(); as void (*)(s32), its prototype, KorosseoKabe_ApplyEntryState has 6 of 1288 bytes different */
-		((void (*)())BattleEffect_PauseObject)(31);
+		BattleEffect_PauseObject(31);
 	}
 	else
 	{

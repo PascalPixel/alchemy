@@ -2142,8 +2142,7 @@ scene:
 		Engine_ActorEnableActionCallback(actor, FuneKanpan_RosterActions);
 	}
 
-	/* FAKEMATCH: Object_RefreshSelectorById is called as void (*)(s32); as void (*)(u32), its prototype, FieldScene_RunPartyRosterScene has 23 of 1228 bytes different */
-	((void (*)(s32))Object_RefreshSelectorById)(actor);
+	Object_RefreshSelectorById(actor);
 	Engine_EventWait(40);
 	Engine_ActorSetPosition(0, 216 << 16, 146 << 18);
 	Engine_TaskWait(1);

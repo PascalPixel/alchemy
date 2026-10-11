@@ -42,7 +42,7 @@ void Effect_AnimateVerticalPositive(struct StagedVerticalEffect *effect);
 void Effect_AnimateVerticalNegative(struct StagedVerticalEffect *effect);
 void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent);
 void SceneState_ApplyPair140And0(void);
-void VinasuChojo_CleanupSceneObjects(s32 a);
+void VinasuChojo_CleanupSceneObjects(void);
 void FieldScene_RunStep6(void);
 void Scene_RunPairedActorEffectSequence(void);
 void VinasuChojo_FlashScreen(void);

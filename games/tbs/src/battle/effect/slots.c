@@ -1697,8 +1697,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
 		{
 			n = sum / 0x10000;
 			work->encounter_steps = sum & 0xffff;
-			/* FAKEMATCH: needed to match: the call passes a second 0 the function does not take */
-			((void (*)(s32, s32))BattleParty_ApplyDrain)(n, 0);
+			BattleParty_ApplyDrain(n, 0);
 			if (BattlePlacement_UpdateTimedEntriesFar())
 				AudioCommand_PlayFar(STEP_CUE_EFFECT);
 			Event_ClearInvalidPackedValues();
@@ -1762,7 +1761,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
 	}
 }
 
-void BattleParty_ApplyDrain(s32 amount)
+void BattleParty_ApplyDrain(s32 amount, s32 unused)
 {
 	s32 target_count = Party_CountActiveOwnersFar();
 	s32 i;
@@ -3256,8 +3255,7 @@ s32 Field_RunTileAction(s32 tile)
 							AudioCommand_PlayFar(83);
 							UiWork_PushValueSlotFar((*(const u16 *)&descriptor->value), 5);
 							UiText_ShowPositionedMessageAndWaitFar((s32)MsgGotPsynergyStone, 3);
-							/* FAKEMATCH: needed to match: the call passes a second 0 the function does not take */
-							((void (*)(s32, s32))BattleParty_ApplyDrain)(999, 0);
+							BattleParty_ApplyDrain(999, 0);
 							UiWindow_CreateWithLayoutBoundsFar(1);
 							AudioCommand_PlayFar(126);
 							UiText_ShowPositionedMessageAndWaitFar((s32)MsgGotPsynergyStone + 1, 1);
@@ -8174,7 +8172,7 @@ s32 ObjectTable_FindActiveByValue(s32 value)
 	return result;
 }
 
-struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
+struct UiWindow *UiText_OpenMessageAtObject(s32 arg, s32 unused)
 {
 	struct UiRenderWork	 *win;
 	struct EventRuntime	 *work;
@@ -8402,9 +8400,7 @@ void BattleEv_RunWait(s32 action, s32 flag)
 {
 	s32					 masked_action;
 	struct EventRuntime *runtime = (struct EventRuntime *)gEventWork;
-	/* FAKEMATCH: called with a second argument the function does not take */
-	struct UiWindow *window =
-		((struct UiWindow * (*)(s32, s32)) UiText_OpenMessageAtObject)(action, flag);
+	struct UiWindow *window = UiText_OpenMessageAtObject(action, flag);
 	s32 message_id;
 	u32 frames;
 
@@ -8452,8 +8448,7 @@ s32 BattleEventRuntime_ProcessAction(s32 object_id, s32 action_id)
 	struct EventRuntime *runtime;
 	struct GameState	*save;
 
-	/* FAKEMATCH: called with a second argument the function does not take */
-	((struct UiWindow * (*)(s32, s32)) UiText_OpenMessageAtObject)(object_id, action_id);
+	UiText_OpenMessageAtObject(object_id, action_id);
 	save = &gGameState;
 	result = Inventory_PromptAndSetObjectMode(save->selected_actor, 0);
 	if (result == 0)
@@ -11880,8 +11875,7 @@ void BattleFx_DispatchRequestKind(void)
 		CALL_WITH_TARGET(BattleFx_CallEffect03AndStop, target_id);
 		break;
 	case 14:
-		/* FAKEMATCH: BattleFx_CallEffect14 is called as s32 (*)(); as void (*)(void), its prototype, BattleFx_DispatchRequestKind does not compile */
-		((s32 (*)())BattleFx_CallEffect14)(target_id);
+		BattleFx_CallEffect14(target_id);
 		break;
 	case 13:
 		CALL_WITH_TARGET(BattleFx_RunEffect13Hook, target_id);
@@ -15919,7 +15913,7 @@ void BattleFx_ShrinkObjectScaleUntilHalf(struct MotionObject *obj)
 	}
 }
 
-void BattleFx_CallEffect14(void)
+void BattleFx_CallEffect14(s32 unused)
 {
 	RunBattleEffect14();
 }

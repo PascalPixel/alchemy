@@ -76,7 +76,7 @@ void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
 void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
 void SceneEffect_ApplyPairWithValue141(s32 a, s32 b);
 void SceneState_SetValue2ThenFinish(void);
-void OverlayObject_ConfigureObject22WithResource17(s32 a);
+void OverlayObject_ConfigureObject22WithResource17(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 u8 *SceneData_FindEntryAtPosition(s32 *o);
 struct StopRecord *KuupuappuHeya_SnapToNearestStop(struct StopSet *set, s16 *pos);
 s32 KuupuappuHeya_IsRecordNearPoint(s32 x, s32 y, s32 id);

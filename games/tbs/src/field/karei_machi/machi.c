@@ -735,8 +735,7 @@ void FieldScene_RunStagedGroupSequence(void)
 		message = (s32)MsgKareiShortOnePerson;
 		Engine_EventSetMessage(message);
 		Event_ShowMessageAndWait(20, 0, 40);
-		/* FAKEMATCH: KareiMachi_SpeedUpActors is called as void (*)(); as void (*)(s32, s32), its prototype, FieldScene_RunStagedGroupSequence does not compile */
-		((void (*)())KareiMachi_SpeedUpActors)();
+		KareiMachi_SpeedUpActors();
 		Actor_WalkToAndWait(20, 178, 272);
 		Actor_FaceDirection(20, FACING_EAST, 0);
 		Engine_EventWait(240);
@@ -1406,7 +1405,7 @@ void SceneEffect_SetSlotVariantAndDescriptor(s32 a)
 	Engine_ObjectSetScript(p, (s32)KareiMachi_Script01);
 }
 
-void KareiMachi_SpeedUpActors(s32 a0, s32 a1)
+void KareiMachi_SpeedUpActors(void)
 {
 
 	{

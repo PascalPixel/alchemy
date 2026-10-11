@@ -73,7 +73,7 @@ FAR_CALL(ObjectGroup_SetChildValueFar, ObjectGroup_SetChildValue, void,
 FAR_CALL(Object_SetTargetAndCallbackFar, Object_SetTargetAndCallback, void,
 	(u32 object_id, s32 target_id, const void *callback))
 FAR_CALL(Event_SetMessageIdFar, Event_SetMessageId, void, (s16 value))
-FAR_CALL(UiText_OpenMessageAtObjectFar, UiText_OpenMessageAtObject, struct UiWindow *, (s32 arg))
+FAR_CALL(UiText_OpenMessageAtObjectFar, UiText_OpenMessageAtObject, struct UiWindow *, (s32 arg, s32 unused))
 FAR_CALL(BattleEv_RunWaitFar, BattleEv_RunWait, void, (s32 action, s32 flag))
 FAR_CALL(BattlePres_RunActionThenWaitIfModeZeroFar, BattlePres_RunActionThenWaitIfModeZero, void,
 	(s32 first, s32 second, s32 value))
@@ -204,7 +204,7 @@ FAR_CALL(Event_GetSpecialValueFar, Event_GetSpecialValue, s32, (void))
 FAR_SLOT(BattleFx_StartItemBreak)
 FAR_SLOT(BattleFx_SnapScaleToFull)
 FAR_SLOT(UpdateRisingParticleBurst)
-FAR_CALL(BattleParty_ApplyDrainFar, BattleParty_ApplyDrain, void, (s32 amount))
+FAR_CALL(BattleParty_ApplyDrainFar, BattleParty_ApplyDrain, void, (s32 amount, s32 unused))
 FAR_SLOT(BattleParty_ApplyHealthDelta)
 FAR_SLOT(ResourceTable_CountFreeBlocks)
 FAR_CALL(Object_CallSpawnRoutineAtOriginFar, Object_CallSpawnRoutineAtOrigin, s32, (s32 value))

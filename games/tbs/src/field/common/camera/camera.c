@@ -324,7 +324,7 @@ void LuckyDice_Run(void)
 	work = Runtime_AllocateBlock(39, 0x782c);
 	sprites = Runtime_AllocateBlock(45, 0x618);
 	render = Runtime_AllocateBlock(12, 76);
-	((void (*)(s32))RuntimeDispatch_NoOpHook)((s32)&ResourceId_EffectFarCalls);
+	RuntimeDispatch_NoOpHook((s32)&ResourceId_EffectFarCalls);
 	Camera_ResetSceneDefaults();
 	Scheduler_ResetTaskTable();
 	gOamCopyEnabled = 0;

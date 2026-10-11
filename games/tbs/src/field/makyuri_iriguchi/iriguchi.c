@@ -442,8 +442,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
 	GameFlag_Set(0x111);
 	gGameState.retreat_entrance = 11;
 	gGameState.retreat_scene = (s32)&SceneId_MakyuriHeya4;
-	/* FAKEMATCH: BattleFx_StartFadeOverlay is called as void (*)(s32); as void (*)(void *), its prototype, MakyuriIriguchi_ApplyEntryState has 32 of 1104 bytes different */
-	((void (*)(s32))BattleFx_StartFadeOverlay)(0);
+	BattleFx_StartFadeOverlay(0);
 	if (GameFlag_IsSet(0x875))
 		Engine_TaskAddCallback(Makyuri_CyclePalette, 0xc80);
 	else

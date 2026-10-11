@@ -1117,8 +1117,7 @@ void ReelGame_Run(void)
 	state = Runtime_AllocateBlock(45, sizeof(struct ReelWork));
 	tiles = Ram_MapCellBuffer;
 	save = (struct ReelSave *)((u8 *)&gGameState + 12);
-	/* FAKEMATCH: RuntimeDispatch_NoOpHook is called as void (*)(s32); as void (*)(void), its prototype, ReelGame_Run does not compile */
-	((void (*)(s32))RuntimeDispatch_NoOpHook)((s32)&ResourceId_EffectFarCalls);
+	RuntimeDispatch_NoOpHook((s32)&ResourceId_EffectFarCalls);
 	save->won_prizes[0] = -1;
 	state->repeat = 0;
 	state->bet = 1;

@@ -308,7 +308,6 @@ clear_actors:;
 s32 RamakanSabaku_ConfigureAreaLayout(void)
 {
 	s32 i;
-	s32 record;
 
 	Engine_GameFlagClear(0x200);
 	Engine_GameFlagSet(0x201);
@@ -378,15 +377,11 @@ reset_objects:;
 	{
 		MapObject_SetPosition(i, -1, -1);
 	}
-	/* FAKEMATCH: BattleFx_EmitRandomParticle is called as s32 (*)(); as void (*)(void), its prototype, RamakanSabaku_ConfigureAreaLayout does not compile */
-	record = ((s32 (*)())BattleFx_EmitRandomParticle)();
+	BattleFx_EmitRandomParticle();
 	if (gGameState.scene != (s32)&SceneId_RamakanSabaku4)
 	{
-		/* FAKEMATCH: DisplayScroll_DisarmHBlankDma is called as s32 (*)(); as void (*)(void), its prototype, RamakanSabaku_ConfigureAreaLayout does not compile */
-		record = ((s32 (*)())DisplayScroll_DisarmHBlankDma)();
-		return record;
+		DisplayScroll_DisarmHBlankDma();
 	}
-	return record;
 }
 
 void RamakanSabaku_ReturnToArea3(void)

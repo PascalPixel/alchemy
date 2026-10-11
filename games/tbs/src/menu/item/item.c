@@ -5714,8 +5714,7 @@ s32 Menu_OpenCharacterSelector(void)
 	UiWindow_InitializeWork(0);
 
 	state->party_count = Party_ListActiveOwnersFar(state->owner_ids);
-	/* FAKEMATCH: Menu_InitSelectorCursorAndEntries is called as void (*)(); as void (*)(void), its prototype, Menu_OpenCharacterSelector does not compile */
-	((void (*)())Menu_InitSelectorCursorAndEntries)(0, 3, 0, 7);
+	Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
 	state->selector_window = (struct UiWindow *)UiWindow_CreateFar(13, 0, 17, 5, 2);
 	for (index = 0; index < ROW_CNT; index++)
 		state->owner_y[index] = 30;
@@ -5770,8 +5769,7 @@ s32 ActionMenu_Open(void)
 	UiWindow_InitializeWork(0);
 	state->page = 0;
 	state->party_count = Party_ListActiveOwnersFar(state->owner_ids);
-	/* FAKEMATCH: Menu_InitSelectorCursorAndEntries is called as void (*)(); as void (*)(void), its prototype, ActionMenu_Open does not compile */
-	((void (*)())Menu_InitSelectorCursorAndEntries)(0, 3, 0, 7);
+	Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
 	Iwram_CopyWords(palette, (void *)0x05000000, 64);
 #if !EDITION_INTERNATIONAL
 	Iwram_CopyWords(tiles, (void *)0x06004000, SAVED_TILE_BYTES);
@@ -5790,8 +5788,7 @@ s32 ActionMenu_Open(void)
 	for (index = 0; index < MENU_ROW_COUNT; index++)
 		state->owner_y[index] = 30;
 	if (Party_SumDjinnCountsFar(-1) != 0)
-		/* FAKEMATCH: FourObjectMotion_InitializeTopRow is called as void (*)(); as void (*)(void), its prototype, ActionMenu_Open does not compile */
-		((void (*)())FourObjectMotion_InitializeTopRow)(state->selector_window, 0);
+		FourObjectMotion_InitializeTopRow(state->selector_window, 0);
 	for (index = 0; index < 4; index++)
 	{
 		state->row_x[index] = 130 + index * 32;
@@ -6263,7 +6260,7 @@ s32 CharacterSelector_MoveEntry(s32 selected_index, s32 direction)
 	return 1;
 }
 
-void Menu_InitSelectorCursorAndEntries(void)
+void Menu_InitSelectorCursorAndEntries(s32 unused0, s32 unused1, s32 unused2, s32 unused3)
 {
 	struct CharacterMenuState *state;
 
@@ -8525,8 +8522,7 @@ s32 ItemMenu_Run(void)
 	menu->target = zero;
 	menu->slot = 0;
 	menu->target_slot = 0;
-	/* FAKEMATCH: FourObjectMotion_InitializeBottomRow is called as void (*)(s32, s32); as void (*)(void), its prototype, ItemMenu_Run does not compile */
-	((void (*)(s32, s32))FourObjectMotion_InitializeBottomRow)(menu->window, 0);
+	FourObjectMotion_InitializeBottomRow(menu->window, 0);
 	DjinnMenu_RunScreen();
 	FourObjectMotion_ClearSlotsAndScheduleAlt();
 	Menu_ResetTwoResourceEntries();
@@ -10383,7 +10379,7 @@ s32 DjinnMenu_DrawStatPreview(
 #undef UiWindow_SetTilemapEntryFar
 #undef UiWindow_DrawDividerLineFar
 
-void FourObjectMotion_InitializeTopRow(void)
+void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1)
 {
 	struct FourObjectMotionState *state = gMenuWork;
 	s32							  index;
@@ -10519,7 +10515,7 @@ void FourObjectMotion_UpdateBottomRow(void)
 	} while (i <= 3);
 }
 
-void FourObjectMotion_InitializeBottomRow(void)
+void FourObjectMotion_InitializeBottomRow(s32 unused0, s32 unused1)
 {
 	struct FourObjectMotionState *state = gMenuWork;
 	s32							  index;

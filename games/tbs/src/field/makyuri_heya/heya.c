@@ -2820,8 +2820,7 @@ void SceneState_SetRecordTableValue(s32 key, s32 value)
 
 		if (index != -1)
 		{
-			/* FAKEMATCH: UnitGet is called as struct SceneLookupRecord *(*)(); as void *(*)(u32), its prototype, SceneState_SetRecordTableValue does not compile */
-			((struct SceneLookupRecord *(*)())UnitGet)(slot)->tbl[index] = value;
+			((struct SceneLookupRecord *)UnitGet(slot))->tbl[index] = value;
 		}
 	}
 }

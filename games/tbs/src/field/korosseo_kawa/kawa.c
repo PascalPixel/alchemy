@@ -668,8 +668,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
 			FieldScene_RunTwoArmSequence(1);
 		}
 		Object_LinkObjectAndSetCallback(1, 0);
-		/* FAKEMATCH: Object_LinkObjectAndSetCallback is called as void (*)(s32, s32); as void (*)(u32, u32), its prototype, KorosseoKawa_ApplyEntryState has 6 of 892 bytes different */
-		((void (*)(s32, s32))Object_LinkObjectAndSetCallback)(2, 0);
+		Object_LinkObjectAndSetCallback(2, 0);
 		Object_LinkObjectAndSetCallback(3, 0);
 		SceneState_InitControlWhenFlag109Clear((s32)&ResourceId_RivalPathA);
 		break;

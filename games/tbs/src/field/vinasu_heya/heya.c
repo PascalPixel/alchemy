@@ -2241,8 +2241,7 @@ void VinasuHeya_ResolveFloatingBlock(void)
 			other = Object_GetById(slot + 10);
 			FloatingBlock_Settle(other, 0);
 			Engine_CameraSetSpeed(0x30000, 0x6000);
-			/* FAKEMATCH: Battle_GetWorkObject1e0 is called as struct FieldActor *(*)(void); as s32 (*)(void), its prototype, VinasuHeya_ResolveFloatingBlock does not compile */
-			((struct FieldActor *(*)(void))Battle_GetWorkObject1e0)()->motion_flags = 0;
+			((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
 			Engine_CameraMoveTo(0x880000, 0x80000, 0x1580000, 1);
 			Engine_CameraWaitForMove();
 			SceneActor_PickHighestSlotAtSameTileAndRelease(slot + 10);

@@ -1071,9 +1071,7 @@ void FieldScene_RunMiddleSequence(void)
 	{
 		if (Object_GetById(i + 12)->sprite->priority == 3 && GameFlag_IsSet(i + 0x200) == 0)
 		{
-			Actor_Get(i + 12);
-			/* FAKEMATCH: SceneActor_WaitValueBelowLimit is called as int (*)(); as void (*)(struct Track02001038 *), its prototype, FieldScene_RunMiddleSequence does not compile */
-			((int (*)())SceneActor_WaitValueBelowLimit)();
+			SceneActor_WaitValueBelowLimit((struct Track02001038 *)Actor_Get(i + 12));
 			Actor_SetPosition(i + 12, 0, 0);
 			GameFlag_Set(i + 0x200);
 			break;

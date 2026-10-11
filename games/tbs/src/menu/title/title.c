@@ -110,8 +110,7 @@ s32 Title_Run(void)
 		Event_SetDestination((s32)&SceneId_Clear, 2);
 		return 0;
 	}
-	/* FAKEMATCH: RuntimeDispatch_NoOpHook is called as void (*)(s32); as void (*)(void), its prototype, Title_Run does not compile */
-	((void (*)(s32))RuntimeDispatch_NoOpHook)((s32)&ResourceId_PaletteFarCalls);
+	RuntimeDispatch_NoOpHook((s32)&ResourceId_PaletteFarCalls);
 	if (gGameState.entrance == 2)
 	{
 	menu:

@@ -538,7 +538,7 @@ void BattlePresentation_ClearBg0VerticalOffset(void)
 //--------------------------------------------------------------------------
 // 何もしない
 //--------------------------------------------------------------------------
-void Party_ReservedNoOp5B14(void)
+void Party_ReservedNoOp5B14(s32 unused)
 {
 }
 
@@ -1277,8 +1277,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
 	BattleBackground_Load(1, battle->background, 0);
 	BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
 	BattlePres_SetupTransitionScene(0, 0, 0, 190);
-	/* FAKEMATCH: Party_ReservedNoOp5B14 is called as void (*)(s32); as void (*)(void), its prototype, Battle_RunEncounter does not compile */
-	((void (*)(s32))Party_ReservedNoOp5B14)(1);
+	Party_ReservedNoOp5B14(1);
 	REG_BLDCNT = 0;
 	Summon_ClearWorkFields();
 	battle->prompt_slot = Resource_LoadIntoFreeSlot(128);
@@ -2856,13 +2855,11 @@ s32 Camera_ApplyTransformByFlag(void)
 	if (GameFlag_TestFar(0x16B) != 0)
 	{
 		Iwram_TransformMatrix((s32 *)Camera_FlagTransformWork);
-		/* FAKEMATCH: Graphics_PrepareTransferAndRun is called as s32 (*)(void *, void *); as void (*)(s32 *, s32 *), its prototype, Camera_ApplyTransformByFlag does not compile */
-		return ((s32 (*)(void *, void *))Graphics_PrepareTransferAndRun)(state, state->pos);
+		Graphics_PrepareTransferAndRun(state->eye, state->pos);
 	}
 	else
 	{
-		/* FAKEMATCH: Graphics_PrepareTransferInIwramWork is called as s32 (*)(void *, void *); as void (*)(s32 *, s32 *), its prototype, Camera_ApplyTransformByFlag does not compile */
-		return ((s32 (*)(void *, void *))Graphics_PrepareTransferInIwramWork)(state, state->pos);
+		Graphics_PrepareTransferInIwramWork(state->eye, state->pos);
 	}
 }
 

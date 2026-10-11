@@ -153,7 +153,7 @@ void RuntimeDispatch_ReservedNoOpE(void)
 {
 }
 
-s32 RuntimeDispatch_ReturnZero(void)
+s32 RuntimeDispatch_ReturnZero(s32 unused0, const u8 *unused1)
 {
 	return 0;
 }
@@ -175,7 +175,7 @@ void Resource_LoadWorkHeader(void)
 	work->cursor = 0;
 }
 
-void RuntimeDispatch_NoOpHook(void)
+void RuntimeDispatch_NoOpHook(s32 unused)
 {
 }
 

@@ -332,8 +332,7 @@ void Scene_RunExtendedPresentationSequence(void)
 	Engine_EventWait(30);
 	Engine_ActorFaceDirection(1, 57344, 0);
 	Engine_EventWait(20);
-	/* FAKEMATCH: UiText_OpenMessageAtObject is called as s32 (*)(); as struct UiWindow *(*)(s32), its prototype, Scene_RunExtendedPresentationSequence does not compile */
-	((s32 (*)())UiText_OpenMessageAtObject)(1, 0);
+	UiText_OpenMessageAtObject(1, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(30);
@@ -374,8 +373,7 @@ void Scene_RunExtendedPresentationSequence(void)
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(3, 4);
 	Engine_EventWait(20);
-	/* FAKEMATCH: UiText_OpenMessageAtObject is called as s32 (*)(); as struct UiWindow *(*)(s32), its prototype, Scene_RunExtendedPresentationSequence does not compile */
-	((s32 (*)())UiText_OpenMessageAtObject)(3, 0);
+	UiText_OpenMessageAtObject(3, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_EventWait(20);
@@ -412,8 +410,7 @@ void Scene_RunExtendedPresentationSequence(void)
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(3, 3);
 	Engine_EventWait(20);
-	/* FAKEMATCH: UiText_OpenMessageAtObject is called as s32 (*)(); as struct UiWindow *(*)(s32), its prototype, Scene_RunExtendedPresentationSequence does not compile */
-	((s32 (*)())UiText_OpenMessageAtObject)(3, 0);
+	UiText_OpenMessageAtObject(3, 0);
 	Actor_FaceDirection(1, 57344, 0);
 	Actor_FaceDirection(3, 49152, 0);
 	Engine_ActorFaceDirection(2, 40960, 0);

@@ -5508,7 +5508,7 @@ void Resource_PushPendingPair(u32 first, u32 second)
 	}
 }
 
-void MenuSelection_BuildEntries(void)
+void MenuSelection_BuildEntries(u32 unused)
 {
 	struct SelectionScreen *screen = gResQueueWork;
 	u32						count = screen->count;
@@ -6987,8 +6987,7 @@ u32 Menu_RunSelectionForValue(u32 value)
 
 	state->cursor_index = value;
 	state->locked = 1;
-	/* FAKEMATCH: MenuSelection_BuildEntries is called as void (*)(u32); as void (*)(void), its prototype, Menu_RunSelectionForValue does not compile */
-	((void (*)(u32))MenuSelection_BuildEntries)(value);
+	MenuSelection_BuildEntries(value);
 	Menu_SetupSelectionBothSides();
 	Menu_OpenSelectionWindow(0, 5);
 	Resource_ScheduleOwnerResetDelayed();
@@ -12308,7 +12307,7 @@ s32 Menu_BuildLocalizedPatternTiles(void)
 	}
 }
 
-int UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+int UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 unused)
 {
 	// 値を返さない int 関数 (pop {r1}; bx r1)
 	s32 tile_offset = arg3 * 2;
@@ -13375,8 +13374,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 				tile = 11;
 			else
 				tile--;
-			/* FAKEMATCH: UiWindow_DrawThreeTileColumn is called as s32 (*)(struct RenderInput *, s32, s32, s32, s32); as int (*)(s32, s32, s32, s32), its prototype, DjinnMenu_ShowChangePreview does not compile */
-			((s32 (*)(struct RenderInput *, s32, s32, s32, s32))UiWindow_DrawThreeTileColumn)(win, 16, n * 2, tile, 0);
+			UiWindow_DrawThreeTileColumn((s32)win, 16, n * 2, tile, 0);
 
 			Ui_CreateOutputFromResourceSlot(win, 0, n * 16 - 4, list[i] & 0x3fff);
 			if ((list[i] & 0x8000) != 0)
@@ -15918,8 +15916,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 					{
 						range--;
 					}
-					/* FAKEMATCH: UiWindow_DrawThreeTileColumn is called as void (*)(struct UiWindow *, s32, s32, s32, s32); as int (*)(s32, s32, s32, s32), its prototype, BattleMenu_RunActionSelection does not compile */
-					((void (*)(struct UiWindow *, s32, s32, s32, s32))UiWindow_DrawThreeTileColumn)(window, 16, i * 2, range, 0);
+					UiWindow_DrawThreeTileColumn((s32)window, 16, i * 2, range, 0);
 				}
 				icon_count = i;
 				drawn_page = page;

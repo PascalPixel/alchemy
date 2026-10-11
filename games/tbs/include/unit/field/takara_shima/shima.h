@@ -90,6 +90,6 @@ void AdvanceActor14AlongEscapeRoute(void);
 void RetreatActor16AlongEscapeRoute(void);
 void AdvanceActor16AlongEscapeRoute(void);
 s32 UpdateSwayingSceneObject(struct S *object);
-void InitializeSwayingSceneObject(void);
+void InitializeSwayingSceneObject(s32 object_id);
 
 #endif

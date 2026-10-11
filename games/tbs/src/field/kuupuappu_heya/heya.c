@@ -1847,8 +1847,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 			Actor_SetPosition(18, 0x2380000, 0x2880000);
 			((void (*)())Engine_ActorEnableActionCallback)(18, 1);
 			Actor_FaceDirection(18, 0x4000, 0);
-			/* FAKEMATCH: OverlayObject_ConfigureObject22WithResource17 is called as void (*)(); as void (*)(s32), its prototype, KuupuappuHeya_ApplyEntryState does not compile */
-			((void (*)())OverlayObject_ConfigureObject22WithResource17)(231, 0x2380000, 0x100000, 0x2a00000);
+			OverlayObject_ConfigureObject22WithResource17(231, 0x2380000, 0x100000, 0x2a00000);
 			((void (*)())Engine_TaskAddCallback)((s32)SceneState_SetFlagByActorPosition, 0xc80);
 		}
 		else if (Engine_GameFlagIsSet(0x853) != 0)
@@ -2784,7 +2783,7 @@ void SceneState_SetValue2ThenFinish(void)
 	BattleEffect_CleanupSceneObjects();
 }
 
-void OverlayObject_ConfigureObject22WithResource17(s32 a)
+void OverlayObject_ConfigureObject22WithResource17(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z)
 {
 	u8 *o;
 	u8 *q;
@@ -2794,7 +2793,7 @@ void OverlayObject_ConfigureObject22WithResource17(s32 a)
 	s32 m;
 
 	z = 0;
-	o = ((u8 * (*)(s32)) Engine_ObjectCreate)(22);
+	o = (u8 *)Engine_ObjectCreate(22, fixed_x, fixed_y, fixed_z);
 	if (o != 0)
 	{
 		q = (u8 *)((struct FieldActor *)o)->sprite;

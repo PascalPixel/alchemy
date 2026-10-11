@@ -447,8 +447,7 @@ void FieldScene_RunStagedActorScene(void)
 	Engine_EventWait(40);
 	Engine_ActorFaceEachOther(JASMINE, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(40);
-	/* FAKEMATCH: UiText_OpenMessageAtObject is called as s32 (*)(); as struct UiWindow *(*)(s32), its prototype, FieldScene_RunStagedActorScene does not compile */
-	((s32 (*)())UiText_OpenMessageAtObject)(8, 0);
+	UiText_OpenMessageAtObject(8, 0);
 	Actor_FaceDirection(0, 0x4000, 0);
 	Actor_FaceDirection(5, 0x4000, 0);
 	Actor_FaceDirection(1, 0x4000, 0);

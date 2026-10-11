@@ -214,7 +214,7 @@ done:
 #define FINAL_ARG 2
 #endif
 
-s32 Battle_ApplyPresetItemsAndFlags(void)
+s32 Battle_ApplyPresetItemsAndFlags(s32 unused)
 {
 	gGameState.coins = 0x30d40;
 	gGameState.shop_gifts = 0x1c;

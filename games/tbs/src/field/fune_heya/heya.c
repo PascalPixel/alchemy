@@ -2459,14 +2459,10 @@ void SceneState_RunFlagGatedSetupCascade(void)
 		return;
 	}
 
+	if (Engine_GameFlagIsSet(0x928) != 0)
 	{
-		s32 t = Engine_GameFlagIsSet(0x928);
-		if (t != 0)
-		{
-			/* FAKEMATCH: SceneState_ApplyActor8FourFlags is called as void (*)(); as void (*)(void), its prototype, SceneState_RunFlagGatedSetupCascade does not compile */
-			((void (*)())SceneState_ApplyActor8FourFlags)(t);
-			return;
-		}
+		SceneState_ApplyActor8FourFlags();
+		return;
 	}
 
 	if (Engine_GameFlagIsSet(0x925) != 0)

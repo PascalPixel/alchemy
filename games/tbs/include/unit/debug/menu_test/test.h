@@ -36,6 +36,6 @@ void FieldScene_AssignCodeSetBToSlots(void);
 s32 CommandTable_ConfigureCommandList(void);
 s32 SceneState_GetFarResult2384(void);
 s32 DebugMenu_SelectCharacter(void);
-s32 SceneState_GetFarResult2418(void);
+s32 SceneState_GetFarResult2418(s32 unit_id);
 
 #endif

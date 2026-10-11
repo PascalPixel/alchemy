@@ -1320,20 +1320,20 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
         if (state == 0) {
             if (state < count) {
                 for (i = 0; i < count; i++) {
-                    Party_RemoveActiveOwner((s32)(s8)buf[i]);
+                    Party_RemoveActiveOwner((s8)buf[i]);
                 }
             }
             for (i = 0; i < count; i++) {
-                if ((s32)(s8)buf[i] != 0) {
-                    Party_AddActiveOwner((s32)(s8)buf[i]);
+                if ((s8)buf[i] != 0) {
+                    Party_AddActiveOwner((s8)buf[i]);
                 }
             }
             obj = Menu_OpenCharacterSelector();
             for (i = 0; i < count; i++) {
-                Party_RemoveActiveOwner((s32)(s8)buf[i]);
+                Party_RemoveActiveOwner((s8)buf[i]);
             }
             for (i = 0; i < count; i++) {
-                Party_AddActiveOwner((s32)(s8)buf[i]);
+                Party_AddActiveOwner((s8)buf[i]);
             }
             if (obj != -1) {
                 goto L_main;
@@ -1400,8 +1400,8 @@ void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param)
 {
     s32 handler;
 
-    Korosseo_ModeTaskMode = (u16)mode;
-    Korosseo_ModeTaskParam = (u16)(param << 4);
+    Korosseo_ModeTaskMode = mode;
+    Korosseo_ModeTaskParam = (param << 4);
 
     Engine_TaskAddCallback((s32)(Korosseo_UpdateModeTask), 0xc80);
 
@@ -1542,9 +1542,9 @@ void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style)
 {
     KorosseoKawa_EnsureMarkerSlot();
 
-    Korosseo_MarkerX = (u16)x;
-    Korosseo_MarkerY = (u16)y;
-    Korosseo_MarkerPriority = (u16)(style & 3);
+    Korosseo_MarkerX = x;
+    Korosseo_MarkerY = y;
+    Korosseo_MarkerPriority = (style & 3);
     Korosseo_MarkerBlink = 0;
     Korosseo_MarkerSteps = 0;
 
@@ -1553,11 +1553,11 @@ void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style)
 
 void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration)
 {
-    Korosseo_MarkerEndX = (u16)x;
-    Korosseo_MarkerEndY = (u16)y;
+    Korosseo_MarkerEndX = x;
+    Korosseo_MarkerEndY = y;
     *(u16 *)&Korosseo_MarkerStartX = Korosseo_MarkerX;
     *(u16 *)&Korosseo_MarkerStartY = Korosseo_MarkerY;
-    Korosseo_MarkerSteps = (u16)duration;
+    Korosseo_MarkerSteps = duration;
     Korosseo_MarkerStep = 0;
 
     Engine_TaskAddCallback((s32)(Korosseo_UpdateMarker), 0xc80);
@@ -1771,11 +1771,11 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mo
     desc = Runtime_AllocateBlock(59, 0x7170);
     handle = (s32)Runtime_BumpAllocateAlternatePool(512);
 
-    *(u16 *)(desc + 222) = (u16)first;
-    *(u16 *)(desc + 224) = (u16)second;
-    *(u16 *)(desc + 226) = (u16)third;
-    *(u16 *)(desc + 228) = (u16)fourth;
-    *(u16 *)(desc + 230) = (u16)mode;
+    *(u16 *)(desc + 222) = first;
+    *(u16 *)(desc + 224) = second;
+    *(u16 *)(desc + 226) = third;
+    *(u16 *)(desc + 228) = fourth;
+    *(u16 *)(desc + 230) = mode;
     *(s32 *)(desc + 232) = centre;
     *(s32 *)(desc + 236) = extra;
 
@@ -1794,7 +1794,7 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mo
     Resource_DecodeType01(Korosseo_GaugeGraphics, handle);
 
     pal = Resource_FindFreeEntry();
-    *(u16 *)(desc + 216) = (u16)pal;
+    *(u16 *)(desc + 216) = pal;
     Engine_VramLoad((s16)pal, 512, handle);
 
     Engine_TaskAddCallback((s32)Korosseo_DrawGauge + 1, 0xc76);
@@ -1861,10 +1861,10 @@ void StagedActor_PushActorAhead(void)
     dir = subject->facing >> 12;
 
     step = KorosseoKawa_DirectionSteps[dir];
-    pos.x = subject->x.fixed + (s32)(step & 0xffff0000);
+    pos.x = subject->x.fixed + (step & 0xffff0000);
     pos.y = subject->y.fixed;
     step <<= 16;
-    pos.z = subject->z.fixed + (s32)step;
+    pos.z = subject->z.fixed + step;
 
     target = SceneActor_FindSlotAtTilePosition(&pos, subject);
     if (target == 0) {
@@ -1872,10 +1872,10 @@ void StagedActor_PushActorAhead(void)
     }
 
     step = KorosseoKawa_DirectionSteps[dir];
-    pos.x = target->x.fixed + (s32)(step & 0xffff0000);
+    pos.x = target->x.fixed + (step & 0xffff0000);
     pos.y = target->y.fixed;
     step <<= 16;
-    pos.z = target->z.fixed + (s32)step;
+    pos.z = target->z.fixed + step;
 
     blocker = SceneActor_FindSlotAtTilePosition(&pos, target);
     if (blocker != 0 && (blocker->collision_flags & 1) != 0) {
@@ -1895,10 +1895,10 @@ void StagedActor_PushActorAhead(void)
     zero = 0;
 
     step = KorosseoKawa_DirectionSteps[dir];
-    pos.x = target->x.fixed + (s32)(step & 0xffff0000);
+    pos.x = target->x.fixed + (step & 0xffff0000);
     pos.y = target->y.fixed;
     step <<= 16;
-    pos.z = target->z.fixed + (s32)step;
+    pos.z = target->z.fixed + step;
 
     if (Object_CheckMovementCollision(target, &pos) > 0) {
         return;

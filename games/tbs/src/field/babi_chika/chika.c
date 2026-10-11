@@ -244,7 +244,7 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 	actor->speedX = 0x00030000;
 	actor->speedY = 0x00020000;
 	actor->speedZ = 0x00040000;
-	actor->flags &= (u8)0x7e;
+	actor->flags &= 0x7e;
 
 	Engine_ActorSetSpriteFlags(actor, 0);
 #if EDITION_INTERNATIONAL
@@ -441,7 +441,7 @@ void SceneActor_WaitValueBelowLimit(struct Track02001038 *track)
 	}
 	track->state = 0;
 	track->value = limit;
-	track->mark = (s32)0x80000000;
+	track->mark = 0x80000000;
 }
 
 void Effect_AdvanceMotion(struct MotionEffect *effect)
@@ -663,7 +663,7 @@ void SceneActor_MirrorFlag201IntoSlot14(void)
 	if (Engine_GameFlagIsSet(0x201) != 0)
 	{
 		Object_GetById(14)->rise_counter = 0;
-		Object_GetById(14)->collision_flags &= (u8)0xf7;
+		Object_GetById(14)->collision_flags &= 0xf7;
 	}
 	else
 	{
@@ -685,7 +685,7 @@ void BabiChika_ConfigureActorFourteenRise(void)
 	if (Engine_GameFlagIsSet(0x200) != 0)
 	{
 		Object_GetById(14)->rise_counter = 0;
-		Object_GetById(14)->collision_flags &= (u8)0xf7;
+		Object_GetById(14)->collision_flags &= 0xf7;
 	}
 	else
 	{
@@ -963,7 +963,7 @@ void SceneActor_SetupSlotNineAndInstallHandler(void)
 
 	{
 		u8 *flag = &Object_GetById(9)->priority_flags;
-		*flag &= (u8)0xfd;
+		*flag &= 0xfd;
 	}
 
 	Engine_GameFlagSet(0x204);
@@ -1045,7 +1045,7 @@ void SceneActor_LandOnHighestPlatform(s32 subject)
 			continue;
 
 		best = Object_GetById(slot)->y.fixed + 0x100000;
-		Object_GetById(subject)->timer = (u16)slot;
+		Object_GetById(subject)->timer = slot;
 	}
 
 	Engine_ActorSetSpeed(subject, 0x40000, 0x20000);

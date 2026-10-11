@@ -612,11 +612,11 @@ void DebugMenu_SelectItem(void)
 			item = (item + 270) % count;
 			Engine_DebugRedrawWindow(window);
 			Engine_DebugClearWindow(window);
-			UiText_DrawStringInWindow((u8 *)gDebugItemPrompt, window, 0, 0);
+			UiText_DrawStringInWindow(gDebugItemPrompt, window, 0, 0);
 			UiText_DrawNumberAtOffset(item, 0, window, 80, 0);
 			if (PartyInventory_HasSpace())
 			{
-				UiText_DrawStringInWindow((u8 *)gDebugItemCapacityLabel, window, 0, 32);
+				UiText_DrawStringInWindow(gDebugItemCapacityLabel, window, 0, 32);
 				index = item & 0x1ff;
 				Engine_DebugGetItem(index);
 				UiText_DrawCharacterAtOffset(index + (s32)MsgItemName, window, 120, 0);
@@ -626,7 +626,7 @@ void DebugMenu_SelectItem(void)
 			}
 			else
 			{
-				UiText_DrawStringInWindow((u8 *)gDebugItemFullLabel, window, 0, 32);
+				UiText_DrawStringInWindow(gDebugItemFullLabel, window, 0, 32);
 			}
 		}
 		if (gKeyState & KEY_A)

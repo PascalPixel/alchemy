@@ -153,7 +153,7 @@ void EV12_MOVE(void)
 {
     struct FieldActor *actor;
 
-    actor = (struct FieldActor *)Actor_Get(12);
+    actor = Actor_Get(12);
     if ((actor->z.fixed >> 20) > 22) {
         Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
@@ -1265,15 +1265,15 @@ void RunpaJo_GatherPartyAroundActorTwelve(void)
 {
     struct FieldActor *actor;
 
-    actor = (struct FieldActor *)Actor_Get(0);
+    actor = Actor_Get(0);
     if (actor != NULL) {
         Actor_SetPosition(IWAN, actor->x.fixed, actor->z.fixed);
     }
-    actor = (struct FieldActor *)Actor_Get(0);
+    actor = Actor_Get(0);
     if (actor != NULL) {
         Actor_SetPosition(MEARI, actor->x.fixed, actor->z.fixed);
     }
-    actor = (struct FieldActor *)Actor_Get(0);
+    actor = Actor_Get(0);
     if (actor != NULL) {
         Actor_SetPosition(GERALD, actor->x.fixed, actor->z.fixed);
     }

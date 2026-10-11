@@ -284,14 +284,14 @@ void SceneDialogue_RunActorFifteenFacingPreservedDialogue(void)
     s16 facing0;
 
     actor = Object_GetById(15);
-    facing0 = (s16)actor->facing;
+    facing0 = actor->facing;
     actor->state_flags |= 2;
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKuupuappuWishVaultsElders);
     Engine_ActorSetAnimation(15, 0);
     Engine_ActorFaceEachOther(15, ACTOR_PARTY_LEADER, 2);
     Engine_EventShowMessageAndWait(15, 0, 10);
-    actor->facing = (u16)facing0;
+    actor->facing = facing0;
     Engine_TaskWait(1);
     Engine_EventEnd();
     actor->state_flags = 0;

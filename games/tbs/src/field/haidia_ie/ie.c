@@ -31,7 +31,7 @@ s32 Object_UpdateFacingTowardTarget(struct FacingObject *object)
 
     target = object->facing_target;
     if (target != NULL) {
-        object->facing_flags = (u8)(0xFE & object->facing_flags);
+        object->facing_flags = (0xFE & object->facing_flags);
         target_facing = (u16)ArcTan2(target->position_z - object->position_z, target->position_x - object->position_x);
         old_facing = object->facing;
         facing_delta = (s16)(target_facing - old_facing);
@@ -43,7 +43,7 @@ s32 Object_UpdateFacingTowardTarget(struct FacingObject *object)
             if (facing_delta < -0x1000) {
                 facing_delta = -0x1000;
             }
-            object->facing = (u16)(old_facing + facing_delta);
+            object->facing = (old_facing + facing_delta);
         }
     }
     return 1;
@@ -1236,7 +1236,7 @@ void Scene_RunExtendedActorSequence(void)
     Object_GetById(0)->priority_flags |= v5;
     {
         struct FieldActor *actor = Object_GetById(1);
-        u8 value = (u8)(v5 | actor->priority_flags);
+        u8 value = (v5 | actor->priority_flags);
 
         actor->priority_flags = value;
     }

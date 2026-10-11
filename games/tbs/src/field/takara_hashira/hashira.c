@@ -1175,11 +1175,11 @@ void SceneEffect_SpawnRandomizedParticle(void)
     d->rotation = mask;
     d->update = FieldScene_RunScene3b3SequenceE;
 
-    draw = (u32)Engine_RandomNext();
-    spread = -((s32)((draw * 5) >> 16) * 0x10000 + 0x60000);
+    draw = Engine_RandomNext();
+    spread = -(((draw * 5) >> 16) * 0x10000 + 0x60000);
     spread /= 2;
-    draw = (u32)Engine_RandomNext();
-    secondary = -((s32)((draw * 5) >> 16) * 0x10000 + 0x50000);
+    draw = Engine_RandomNext();
+    secondary = -(((draw * 5) >> 16) * 0x10000 + 0x50000);
 
     Effect_Spawn(PIXELS(324), PIXELS(48), PIXELS(228), spread, secondary, 0,
                  EFFECT_USE_UPDATE | EFFECT_USE_ROTATION | EFFECT_USE_START_SCALE
@@ -1205,10 +1205,10 @@ s32 SceneEffect_SpawnRandomEffectEveryEightFrames(struct FieldActor *actor)
     p->start_scale_x = 0xb333;
     p->start_scale_y = 0xb333;
 
-    x = actor->x.fixed + (((s32)(((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
-    y = actor->y.fixed + ((s32)(((u32)Engine_RandomNext() * 17) >> 16) << 16);
-    z = actor->z.fixed + (((s32)(((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
-    scale = Math_Divide((s32)(((u32)Engine_RandomNext() * 5) >> 16) * 0x10000 + 0x30000, 10);
+    x = actor->x.fixed + (((((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
+    y = actor->y.fixed + ((((u32)Engine_RandomNext() * 17) >> 16) << 16);
+    z = actor->z.fixed + (((((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
+    scale = Math_Divide((((u32)Engine_RandomNext() * 5) >> 16) * 0x10000 + 0x30000, 10);
 
     Effect_Spawn(x, y, z, 0, scale, phase, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1, p);
     return 0;

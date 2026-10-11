@@ -57,7 +57,7 @@ s32 SceneActor_UpdatePlayerProximity(struct SceneActor *actor,
             Object_SetMode(actor, 1);
             result = 1;
         }
-        if ((u8 *)target == Object_GetById(0) && (farRight == facing || farLeft == facing)) {
+        if (target == Object_GetById(0) && (farRight == facing || farLeft == facing)) {
             actor->active = 1;
             Object_SetMode(actor, 1);
             result = 1;

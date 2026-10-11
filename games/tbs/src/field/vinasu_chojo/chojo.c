@@ -266,7 +266,7 @@ void VinasuChojo_StepSpriteRotation(struct FieldActor *actor)
     struct FieldSprite *sprite = actor->sprite;
     u16 rotation = sprite->rotation;
 
-    if ((s32)((rotation + 0xffff) << 16) < 0) {
+    if (((rotation + 0xffff) << 16) < 0) {
         {
             s32 t = rotation - 0xa00;
             sprite->rotation = t;
@@ -466,7 +466,7 @@ s32 Scene_Initialize(void)
     Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
     Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
     Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
-    v = (s32)0xffff0000;
+    v = 0xffff0000;
     Object_GetById(10)->scale_x = v;
     Object_GetById(11)->scale_x = v;
     i = 12;
@@ -1992,8 +1992,8 @@ void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
 
     {
         s32 next = *pangle;
-        next = next + (s32)0xfffff800;
-        *pangle = (u16)next;
+        next = next + 0xfffff800;
+        *pangle = next;
     }
 }
 
@@ -3137,7 +3137,7 @@ void VinasuChojo_RunTransitionStep(void)
     }
     if (spawn) {
         rise = ((u32)(Random_Next() * 80) >> 16) << 16;
-        effect = Object_Create(284, center->x.fixed, center->y.fixed - rise + (s32)0xfff80000, center->z.fixed);
+        effect = Object_Create(284, center->x.fixed, center->y.fixed - rise + 0xfff80000, center->z.fixed);
         if (effect != 0) {
             sprite = effect->sprite;
             Object_SetScript(effect, VinasuChojo_RiseParticleScript);
@@ -3168,7 +3168,7 @@ void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor)
     if (actor->rise_enabled != 0) {
         u8 counter = actor->rise_counter;
 
-        actor->y.fixed = actor->rise_base_y + ((u32)(counter >> 2) << 16);
+        actor->y.fixed = actor->rise_base_y + ((counter >> 2) << 16);
 
         SceneActor_ParkRecord(actor);
 

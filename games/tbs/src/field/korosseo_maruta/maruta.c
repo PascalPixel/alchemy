@@ -2132,20 +2132,20 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
         if (state == 0) {
             if (state < count) {
                 for (i = 0; i < count; i++) {
-                    Party_RemoveActiveOwner((s32)(s8)buf[i]);
+                    Party_RemoveActiveOwner((s8)buf[i]);
                 }
             }
             for (i = 0; i < count; i++) {
-                if ((s32)(s8)buf[i] != 0) {
-                    Party_AddActiveOwner((s32)(s8)buf[i]);
+                if ((s8)buf[i] != 0) {
+                    Party_AddActiveOwner((s8)buf[i]);
                 }
             }
             obj = Menu_OpenCharacterSelector();
             for (i = 0; i < count; i++) {
-                Party_RemoveActiveOwner((s32)(s8)buf[i]);
+                Party_RemoveActiveOwner((s8)buf[i]);
             }
             for (i = 0; i < count; i++) {
-                Party_AddActiveOwner((s32)(s8)buf[i]);
+                Party_AddActiveOwner((s8)buf[i]);
             }
             if (obj != -1) {
                 goto L_main;
@@ -2215,8 +2215,8 @@ void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
 {
     s32 handler;
 
-    Korosseo_ModeTaskMode = (u16)mode;
-    Korosseo_ModeTaskParam = (u16)(parameter << 4);
+    Korosseo_ModeTaskMode = mode;
+    Korosseo_ModeTaskParam = (parameter << 4);
 
     {
         s32 budget = 0xc80;
@@ -2268,7 +2268,7 @@ void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
     Engine_EventWaitForScreen();
     {
         s16 *base = gColossoModeScriptDefault;
-        *(s16 *)((u8 *)base + 30) = (s16)(mode * 60);
+        *(s16 *)((u8 *)base + 30) = (mode * 60);
     }
     Engine_EventWait(30);
     Engine_AudioPlayCue(mode + 0x5a);
@@ -2375,9 +2375,9 @@ void ColossoLogRollingStage_StartPaletteTask(u32 first_value, u32 second_value, 
 {
     ColossoLogRollingStage_EnsurePaletteHandle();
 
-    Korosseo_MarkerX = (u16)first_value;
-    Korosseo_MarkerY = (u16)second_value;
-    Korosseo_MarkerPriority = (u16)(mode & 3);
+    Korosseo_MarkerX = first_value;
+    Korosseo_MarkerY = second_value;
+    Korosseo_MarkerPriority = (mode & 3);
     Korosseo_MarkerBlink = 0;
     Korosseo_MarkerSteps = 0;
 
@@ -2390,11 +2390,11 @@ void ColossoLogRollingStage_StartPaletteTask(u32 first_value, u32 second_value, 
 
 void ColossoLogRollingStage_StartPaletteTaskFromState(u32 first_value, u32 second_value, u32 mode)
 {
-    Korosseo_MarkerEndX = (u16)first_value;
-    Korosseo_MarkerEndY = (u16)second_value;
+    Korosseo_MarkerEndX = first_value;
+    Korosseo_MarkerEndY = second_value;
     *(u16 *)&Korosseo_MarkerStartX = Korosseo_MarkerX;
     *(u16 *)&Korosseo_MarkerStartY = Korosseo_MarkerY;
-    Korosseo_MarkerSteps = (u16)mode;
+    Korosseo_MarkerSteps = mode;
     Korosseo_MarkerStep = 0;
 
     {
@@ -2608,11 +2608,11 @@ void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_act
     descriptor = Runtime_AllocateBlock(59, 0x7170);
     handle = (s32)Runtime_BumpAllocateAlternatePool(512);
 
-    *(u16 *)(descriptor + 222) = (u16)first_actor;
-    *(u16 *)(descriptor + 224) = (u16)second_actor;
-    *(u16 *)(descriptor + 226) = (u16)third_actor;
-    *(u16 *)(descriptor + 228) = (u16)fourth_actor;
-    *(u16 *)(descriptor + 230) = (u16)mode;
+    *(u16 *)(descriptor + 222) = first_actor;
+    *(u16 *)(descriptor + 224) = second_actor;
+    *(u16 *)(descriptor + 226) = third_actor;
+    *(u16 *)(descriptor + 228) = fourth_actor;
+    *(u16 *)(descriptor + 230) = mode;
     *(s32 *)(descriptor + 232) = centre;
     *(s32 *)(descriptor + 236) = extra;
 
@@ -2631,7 +2631,7 @@ void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_act
     Resource_DecodeType01(Korosseo_GaugeGraphics, handle);
 
     extent = Resource_FindFreeEntry();
-    *(u16 *)(descriptor + 216) = (u16)extent;
+    *(u16 *)(descriptor + 216) = extent;
     Engine_VramLoad((s16)extent, 512, handle);
 
     Engine_TaskAddCallback((s32)Korosseo_DrawGauge + 1, 0xc76);
@@ -2698,10 +2698,10 @@ void ColossoLogRollingStage_PushStagedActor(void)
     direction = subject->facing >> 12;
 
     step = StagedActor_DirectionSteps[direction];
-    position.x = subject->x + (s32)(step & 0xffff0000);
+    position.x = subject->x + (step & 0xffff0000);
     position.y = subject->y;
     step <<= 16;
-    position.z = subject->z + (s32)step;
+    position.z = subject->z + step;
 
     target = FindActorAtWholeTilePosition(&position, subject);
     if (target == 0) {
@@ -2709,10 +2709,10 @@ void ColossoLogRollingStage_PushStagedActor(void)
     }
 
     step = StagedActor_DirectionSteps[direction];
-    position.x = target->x + (s32)(step & 0xffff0000);
+    position.x = target->x + (step & 0xffff0000);
     position.y = target->y;
     step <<= 16;
-    position.z = target->z + (s32)step;
+    position.z = target->z + step;
 
     blocker = FindActorAtWholeTilePosition(&position, target);
     if (blocker != 0 && (blocker->flags & 1) != 0) {
@@ -2732,10 +2732,10 @@ void ColossoLogRollingStage_PushStagedActor(void)
     zero = 0;
 
     step = StagedActor_DirectionSteps[direction];
-    position.x = target->x + (s32)(step & 0xffff0000);
+    position.x = target->x + (step & 0xffff0000);
     position.y = target->y;
     step <<= 16;
-    position.z = target->z + (s32)step;
+    position.z = target->z + step;
 
     if (Object_CheckMovementCollision(target, &position) > 0) {
         return;

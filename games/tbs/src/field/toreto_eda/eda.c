@@ -91,7 +91,7 @@ void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
     if (obj != 0) {
         obj->x += dx;
         obj->z += dz;
-        h = Map_GetTerrainHeight((s32)obj->layer, obj->x, obj->z);
+        h = Map_GetTerrainHeight(obj->layer, obj->x, obj->z);
         obj->y = h;
         obj->settled_y = h;
     }
@@ -100,7 +100,7 @@ void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
     if (obj != 0) {
         obj->x += dx;
         obj->z += dz;
-        h = Map_GetTerrainHeight((s32)obj->layer, obj->x, obj->z);
+        h = Map_GetTerrainHeight(obj->layer, obj->x, obj->z);
         obj->y = h;
         obj->settled_y = h;
     }

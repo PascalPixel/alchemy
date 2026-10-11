@@ -107,7 +107,7 @@ void BattleFx_ArmWin0HBlankDma(void)
 	channel[5] &= 0xc5ff;
 	channel[5] &= 0x7fff;
 	(void)channel[5];
-	Dma_Set((void *)gMapCellBuffer, (void *)0x04000040, 0xa2600001, (volatile u32 *)channel);
+	Dma_Set(gMapCellBuffer, (void *)0x04000040, 0xa2600001, (volatile u32 *)channel);
 }
 
 void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
@@ -2217,9 +2217,9 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
 	s32						 i;
 
 	work =
-		(struct BattleEffectWork *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
-	canvas = (void *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
-	sheet = (u8 *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x60e);
+		Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
+	canvas = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
+	sheet = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x60e);
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0);
 	work->fade_frames = 24;
@@ -3830,7 +3830,7 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
 		for (k = 0; k != work->effect->count; k++)
 		{
 			struct MotionObject *target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
-			s32 half = (s32)Battle_GetObjectTableValueFar(work->effect->actors[k]) / 2;
+			s32 half = Battle_GetObjectTableValueFar(work->effect->actors[k]) / 2;
 
 			if (frame == k * 20 + 71)
 			{
@@ -5242,7 +5242,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
 		point++;
 	}
 
-	trails = (struct EffectStep *)gMapCellBuffer;
+	trails = gMapCellBuffer;
 	for (frame = 0; frame != 60; frame++)
 	{
 		if (frame <= 47)
@@ -5406,7 +5406,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
 	}
 
 	size = 2;
-	trails = (struct EffectStep *)gMapCellBuffer;
+	trails = gMapCellBuffer;
 	for (frame = 0; frame != 128; frame++)
 	{
 		Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
@@ -5559,7 +5559,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 	draw_destination = cells[0];
 	view = *(void **)((u8 *)cells - 112);
 	runtime = cells[-1];
-	graphics = (u8 *)cells[1];
+	graphics = cells[1];
 	runtime->effect = argument;
 
 	BattleFx_BeginCanvasLayer(0);
@@ -5586,7 +5586,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 	for (index = 0; index != runtime->effect->count; index++)
 	{
 		context = GetBattleObjectSlotFar(runtime->effect->actors[index]);
-		object = (struct MotionObject *)context->object;
+		object = context->object;
 		home[index].x = object->x;
 		home[index].y = object->z;
 		base_angle[index] = object->angle;
@@ -5644,7 +5644,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 			if (frame > index * 16)
 			{
 				context = GetBattleObjectSlotFar(runtime->effect->actors[index]);
-				object = (struct MotionObject *)context->object;
+				object = context->object;
 				object->x = (radius[index] * Trig_Sin(heading[index])) >> 1;
 				object->z = (radius[index] * Trig_Cos(heading[index])) >> 1;
 
@@ -6041,7 +6041,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 		struct MotionObject *obj;
 
 		context = GetBattleObjectSlotFar(runtime->effect->actors[index]);
-		obj = (struct MotionObject *)context->object;
+		obj = context->object;
 		obj->x = home[index].x;
 		obj->z = home[index].y;
 		obj->angle = base_angle[index];
@@ -6054,7 +6054,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 	index = 0;
 	do
 	{
-		ResourceObject_ReleaseFar((struct ResourceObjectWork *)runtime->objects[index]);
+		ResourceObject_ReleaseFar(runtime->objects[index]);
 		index++;
 	} while (index != 9);
 
@@ -6598,13 +6598,13 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
 			point->y = (Random16() & 7) + 56;
 			point->variant = -(Random16() & 15);
 		}
-		life = &((struct EffectStep *)gMapCellBuffer)->variant;
+		life = &gMapCellBuffer->variant;
 		for (k = 0; k != 1024; k++)
 		{
 			*life = -1;
 			life += 7; // sizeof (struct EffectStep) / 4
 		}
-		sparks = (struct EffectStep *)gMapCellBuffer;
+		sparks = gMapCellBuffer;
 		BattleFx_SelectLivingTargets((struct BattleEffectTargetArgument *)work->effect);
 		WaitFrames(1);
 		BattleFx_SpawnObjects(12, 380, 2);
@@ -6773,7 +6773,7 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
 		BattleEffect_RunImpactBurst(1, focus.x, focus.y);
 		for (k = 0; k != 12; k++)
 			ResourceObject_ReleaseFar(
-				(struct ResourceObjectWork *)((void **)(work->sheet + 0x77d8))[k]);
+				((void **)(work->sheet + 0x77d8))[k]);
 	}
 	BattleFx_EndCanvasLayer();
 }
@@ -7069,7 +7069,7 @@ void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
 	s32						 i;
 	s32						 j;
 
-	shards = (struct EffectStep *)gMapCellBuffer;
+	shards = gMapCellBuffer;
 	cursor = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
 	work = *cursor++;
 	canvas = *cursor;
@@ -7508,7 +7508,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
 		Iwram_CopyWords((void *)0x05000000,
 			Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
 	}
-	sparks = (struct EffectStep *)gMapCellBuffer;
+	sparks = gMapCellBuffer;
 
 	for (i = 0; i != SparkGroups_Shapes[work->effect->variant * 5 + 1]; i++)
 	{
@@ -9423,7 +9423,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 	BattleEventRuntime_BeginPhaseFar(134);
 	BattleEffect_RunImpactBurst(2, 128 << 16, height);
 	for (i = 0; i != 8; i++)
-		ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
+		ResourceObject_ReleaseFar(work->objects[i]);
 	BattleFx_EndCanvasLayer();
 }
 
@@ -17997,7 +17997,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
             draw[0](canvas, Ram_MapCellBuffer + (frame - 4) / 2 * 0x780,
                 anchor.x - 16, anchor.y - 24, 40, 48);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((u8 *)camera, (u8 *)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera, (u8 *)camera->pos);
         if (frame >= 4 && frame <= 31) {
             for (i = 0; i != 64; i++) {
                 s32 pair = i / 2;
@@ -18217,7 +18217,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
         else if (frame <= 7)
             draw[0](canvas, Ram_MapCellBuffer + 0x3840, 0, 0, 120, 120);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork((u8 *)camera, (u8 *)camera->pos);
+        Graphics_PrepareTransferInIwramWork(camera, (u8 *)camera->pos);
         if (frame >= 4 && frame <= 31) {
             for (i = 0; i != 64; i++) {
                 s32 pair = i / 2;
@@ -19803,13 +19803,13 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
 	work->transfer_value = 50;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-	life = &((struct EffectStep *)gMapCellBuffer)->variant;
+	life = &gMapCellBuffer->variant;
 	for (i = 0; i != 1024; i++)
 	{
 		*life = 0;
 		life += 7;
 	}
-	sparks = (struct EffectStep *)gMapCellBuffer;
+	sparks = gMapCellBuffer;
 
 	{
 		struct MotionObject *object = GetBattleObjectSlotFar(work->effect->actor)->object;

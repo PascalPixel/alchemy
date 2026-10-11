@@ -1170,7 +1170,7 @@ void SceneState_UpdateZoneFlagsFromActorZero(void)
     s32 h;
     State *st;
 
-    obj = ((T *)Object_GetById(0));
+    obj = (Object_GetById(0));
     x = obj->unk8;
     cx = x >> 19;
     g = 0x200;

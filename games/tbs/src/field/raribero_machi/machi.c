@@ -106,9 +106,9 @@ void SceneActor_StartLament(s32 actor)
 
     struct FieldActor *object;
 
-    object = (struct FieldActor *)Actor_Get(actor);
+    object = Actor_Get(actor);
     object->scale_x = 0x10000;
-    object = (struct FieldActor *)Actor_Get(actor);
+    object = Actor_Get(actor);
     object->scale_y = 0x10000;
     Engine_EventSetMessage((s32)MsgRariberoOhhTheyTookShebaHeaded);
     Event_ShowMessage(actor, 0);
@@ -560,9 +560,9 @@ void FieldScene_RunSecondarySequence(void)
     gEventWork->message += 1;
     Engine_PartyGiveItem(242, 0);
     Engine_EventWait(10);
-    ((struct FieldActor *)Actor_Get(22))->steering_flags &= ~ACTOR_FACES_MOTION;
+    Actor_Get(22)->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkByAndWait(22, 0, -16);
-    ((struct FieldActor *)Actor_Get(22))->steering_flags |= ACTOR_FACES_MOTION;
+    Actor_Get(22)->steering_flags |= ACTOR_FACES_MOTION;
     Actor_FaceDirection(22, 0x4100, 0);
     Engine_EventWait(30);
     Engine_EventWait(10);

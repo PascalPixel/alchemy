@@ -84,7 +84,7 @@ s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object)
 s32 SceneActor_UpdateRandomCounterMode(u8 *object)
 {
     u16 *counter = (u16 *)(object + 100);
-    *counter = (u16)(*counter + (((u32)Engine_RandomNext() * 100) >> 16));
+    *counter = (*counter + (((u32)Engine_RandomNext() * 100) >> 16));
     if ((s16)*counter > 1000) ObjectGroup_SetChildValue(object, 7);
     else ObjectGroup_SetChildValue(object, 10);
     if (*(s16 *)counter > 1200) { u16 z = 0; *counter = z; }
@@ -149,7 +149,7 @@ s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
         Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, request->cell_x, request->cell_z);
         Object_SetMode((struct FieldActor *)actor, 6);
         Engine_ActorSetSpriteFlags((struct FieldActor *)actor, 1);
-        *flags = (u8)ret;
+        *flags = ret;
         Engine_ActorSetAnimation(10, 7);
         actor->position_x += 0xffff0000;
         actor->position_z += 0xffff0000;
@@ -1060,9 +1060,9 @@ void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 s32 SceneEffect_AdvanceAngleAndFinishWhenParked(struct Struct2798 *p)
 {
     p->field18 += 0x1eb8;
-    if (p->field38 == (s32)0x80000000
-        && p->field3c == (s32)0x80000000
-        && p->field40 == (s32)0x80000000) {
+    if (p->field38 == 0x80000000
+        && p->field3c == 0x80000000
+        && p->field40 == 0x80000000) {
         Engine_ObjectDispatchRelease(p);
     }
     return 1;
@@ -1162,7 +1162,7 @@ void KorimaHashi_AlternateBridgePostHeights(void)
 {
     struct FieldActor *p;
 
-    p = (void *)Object_GetById(13);
+    p = Object_GetById(13);
     if (p != 0) {
         p->motion_flags = 0;
         if ((gFrameCount & 1) == 0) {
@@ -1171,7 +1171,7 @@ void KorimaHashi_AlternateBridgePostHeights(void)
             p->y.fixed = 0x1f40000;
         }
     }
-    p = (void *)Object_GetById(14);
+    p = Object_GetById(14);
     if (p != 0) {
         p->motion_flags = 0;
         if ((gFrameCount & 1) != 0) {
@@ -1180,7 +1180,7 @@ void KorimaHashi_AlternateBridgePostHeights(void)
             p->y.fixed = 0x1f40000;
         }
     }
-    p = (void *)Object_GetById(15);
+    p = Object_GetById(15);
     if (p != 0) {
         p->motion_flags = 0;
         if ((gFrameCount & 1) == 0) {
@@ -1189,7 +1189,7 @@ void KorimaHashi_AlternateBridgePostHeights(void)
             p->y.fixed = 0x1f40000;
         }
     }
-    p = (void *)Object_GetById(16);
+    p = Object_GetById(16);
     if (p != 0) {
         p->motion_flags = 0;
         if ((gFrameCount & 1) != 0) {

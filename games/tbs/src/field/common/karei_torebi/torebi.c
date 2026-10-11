@@ -201,7 +201,7 @@ void SceneDialogue_RunActor12Event(void)
     s16 angle;
 
     record = Actor_Get(ACTOR_PARTY_LEADER);
-    angle = (u16)((record->facing + 0x2000) & ~0x3fff);
+    angle = ((record->facing + 0x2000) & ~0x3fff);
     Engine_EventBegin();
     if (GameFlag_IsSet(0x8a7) != 0) {
         if (GameFlag_IsSet(0x8a9) != 0) {

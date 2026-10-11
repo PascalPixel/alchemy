@@ -118,7 +118,7 @@ void *SceneData_SelectPlacementTableBySubstate(void)
 
         sub = *(s16 *)((u8 *)&gGameState + off);
     }
-    switch ((s32)sub) {
+    switch (sub) {
     case 1:
     case 2:
         return ShindenHeya_PlacementB;
@@ -1438,7 +1438,7 @@ void SceneEffect_StepEllipseOrbit(u8 *obj)
     ((struct FieldActor *)obj)->target_z = z;
     ((struct FieldActor *)obj)->target_x = tmp;
 
-    *angle = (u16)(*angle + ((struct FieldActor *)obj)->work);
+    *angle = (*angle + ((struct FieldActor *)obj)->work);
 }
 
 void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
@@ -1828,7 +1828,7 @@ void ShindenHeya_UpdateRisingSpark(union FieldObject *object)
     spark->y.fixed += spark->timer << 12;
     spark->target_y = spark->y.fixed;
     scale = 0;
-    switch ((u16)((s16)spark->work >> 2) & 3) {
+    switch (((s16)spark->work >> 2) & 3) {
     case 0:
         scale = 0x10000;
         break;

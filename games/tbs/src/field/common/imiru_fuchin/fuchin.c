@@ -271,18 +271,18 @@ void FieldScene_RunActor8Transition305(void)
 
 void FieldScene_RunActor8FlaggedSequence(void)
 {
-    Engine_AudioPlayCue((s32) 0xF1);
+    Engine_AudioPlayCue(0xF1);
 
-    if (Engine_GameFlagIsSet((s32) 0x306) != 0) {
+    if (Engine_GameFlagIsSet(0x306) != 0) {
         SceneActor_PlacePairAtOffset(8, 16, 0);
-        Engine_GameFlagClear((s32) 0x305);
+        Engine_GameFlagClear(0x305);
     } else {
         SceneActor_PlacePairAtOffset(8, 144, 0);
 
-        Engine_GameFlagSet((s32) 0x304);
+        Engine_GameFlagSet(0x304);
     }
 
-    Engine_AudioPlayCue((s32) 0x121);
+    Engine_AudioPlayCue(0x121);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupTwo();
 }
@@ -328,31 +328,31 @@ void FieldScene_RunActorTenDepthSequence(void)
 
     s32 depth = -96;
 
-    Engine_AudioPlayCue((s32) 0xF1);
+    Engine_AudioPlayCue(0xF1);
     SceneActor_PlacePairAtOffset(10, 0, depth);
     SceneActor_PlacePairAtOffset(10, 0, depth);
     SceneActor_PlacePairAtOffset(10, 0, -80);
-    Engine_AudioPlayCue((s32) 0x121);
-    Engine_GameFlagSet((s32) 0x307);
+    Engine_AudioPlayCue(0x121);
+    Engine_GameFlagSet(0x307);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupTwo();
 }
 
 void FieldScene_PlaceActorEightByFlags(void)
 {
-    Engine_AudioPlayCue((s32) 0xF1);
+    Engine_AudioPlayCue(0xF1);
 
-    if (Engine_GameFlagIsSet((s32) 0x310) != 0 || Engine_GameFlagIsSet((s32) 0x30D) != 0) {
+    if (Engine_GameFlagIsSet(0x310) != 0 || Engine_GameFlagIsSet(0x30D) != 0) {
         SceneActor_PlacePairAtOffset(8, -48, 0);
-        Engine_GameFlagClear((s32) 0x308);
-        Engine_GameFlagSet((s32) 0x309);
+        Engine_GameFlagClear(0x308);
+        Engine_GameFlagSet(0x309);
     } else {
         SceneActor_PlacePairAtOffset(8, -96, 0);
-        Engine_GameFlagSet((s32) 0x308);
-        Engine_GameFlagClear((s32) 0x309);
+        Engine_GameFlagSet(0x308);
+        Engine_GameFlagClear(0x309);
     }
 
-    Engine_AudioPlayCue((s32) 0x121);
+    Engine_AudioPlayCue(0x121);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
 }
@@ -372,20 +372,20 @@ void ActorPresentation_SetupActorEightForFlags308And309Guarded(void)
 {
     void SceneActor_PlacePairAtOffset(s32, s32, s32);
 
-    if (Engine_GameFlagIsSet((s32) 0x310) != 0) {
+    if (Engine_GameFlagIsSet(0x310) != 0) {
         return;
     }
-    if (Engine_GameFlagIsSet((s32) 0x30D) != 0) {
+    if (Engine_GameFlagIsSet(0x30D) != 0) {
         return;
     }
 
-    Engine_AudioPlayCue((s32) 0xF1);
+    Engine_AudioPlayCue(0xF1);
 
-    Engine_GameFlagSet((s32) 0x308);
-    Engine_GameFlagClear((s32) 0x309);
+    Engine_GameFlagSet(0x308);
+    Engine_GameFlagClear(0x309);
 
     SceneActor_PlacePairAtOffset(8, -48, 0);
-    Engine_AudioPlayCue((s32) 0x121);
+    Engine_AudioPlayCue(0x121);
     Engine_TaskWait(2);
     DialogueLayout_ConfigureGroupThree();
 }
@@ -1010,7 +1010,7 @@ void DialogueLayout_ConfigureGroupThree(void)
 void FieldScene_RunFlagBranchedLayoutSteps(void)
 {
 
-    if ((u32)((u32)((u16)gGameState.entrance - 1) << 16) <= (u32)0x10000) {
+    if ((((u16)gGameState.entrance - 1) << 16) <= (u32)0x10000) {
         { s32 x = 14; s32 y = 10; Engine_MapCopyCellAttributes(22, 20, 9, 8,  x, y); }
     } else {
         { s32 x = 7; s32 y = 45; Engine_MapCopyCellAttributes(20, 45, 11, 4,  x, y); }
@@ -1227,8 +1227,8 @@ void ImiruFuchin_TakeDragonsEye(void)
         Engine_RunRisingObjectSequence(gImiruFuchinDragonsEye, 3);
     }
 
-    Engine_PartyGiveItem((s32) 0xE6, 0);
-    Engine_GameFlagSet((s32) 0xF13);
+    Engine_PartyGiveItem(0xE6, 0);
+    Engine_GameFlagSet(0xF13);
 
     if (gImiruFuchinDragonsEye != NULL) {
         Engine_ObjectDispatchRelease(gImiruFuchinDragonsEye);
@@ -1320,7 +1320,7 @@ void ImiruFuchin_BlowCaveMouthDust(void)
     if ((gFrameCount & 7) == 0)
         Engine_AudioPlayCue(136);
     dx = -0x10000 - ((((u32)Engine_RandomNext() << 1) >> 16) << 16);
-    dy = -(s32)((((u32)Engine_RandomNext() * 3) >> 16) * 0x3333);
+    dy = -((((u32)Engine_RandomNext() * 3) >> 16) * 0x3333);
     Effect_Spawn(0x1340000, 0x400000, 0xde0000, dx, dy, phase, 0xd0001,
         (const struct EffectOptions *)&params);
 }
@@ -1487,7 +1487,7 @@ void SceneActor_StepSubjectAlongHeading(void)
         if (marker == 255
                 || Map_GetTerrainHeight(subject->terrain_id, probe.x, probe.z)
                     - subject->y.fixed > 0x80000) {
-            subject->facing = (u16)heading;
+            subject->facing = heading;
             goto tail;
         }
 

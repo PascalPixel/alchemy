@@ -260,7 +260,7 @@ s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state)
     case 0:
         ((struct FieldActor *)state)->scale_x = 0x10000;
         ((struct FieldActor *)state)->scale_y = 0x10000;
-        ((struct FieldActor *)state)->timer = (s16)(Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
+        ((struct FieldActor *)state)->timer = (Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
         break;
     }
     ((struct FieldActor *)state)->timer--;
@@ -2698,7 +2698,7 @@ void OverlayObject_UpdateRandomSlotByFrame(s32 obj)
     s32 n;
 
     if ((gFrameCount & 1) != 0) {
-        t = (s32)(gFrameCount >> 1);
+        t = (gFrameCount >> 1);
         Engine_ObjectSetPartPalettes(obj, Math_RemainderUnsigned(t, 6));
     }
     n = (HaidiaArashi_ShakeShift << 3) + 16;
@@ -2712,7 +2712,7 @@ void HaidiaArashi_CycleObjectPalettes(s32 o)
     s32 t;
 
     if ((gFrameCount & 1) != 0) {
-        t = (s32)(gFrameCount >> 1);
+        t = (gFrameCount >> 1);
         Engine_ObjectSetPartPalettes(o, Math_RemainderUnsigned(t, 6));
     }
 }

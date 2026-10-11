@@ -176,7 +176,7 @@ void UiWork_InitializeWithResourceCounters(void)
     volatile u32 fill;
 #endif
 
-    work = (struct UiRenderWork *)Runtime_AllocateBlock(15, RENDER_WORK_SIZE);
+    work = Runtime_AllocateBlock(15, RENDER_WORK_SIZE);
 #if EDITION_INTERNATIONAL
     fill = 0;
     Dma_Set((const void *)&fill, work, 0x850004bf, REG_DMA3);
@@ -1946,7 +1946,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, 
             }
         } else {
 #if EDITION_INTERNATIONAL
-            if ((((struct UiWindow *)window)->flags & 8) == 0) {
+            if ((window->flags & 8) == 0) {
                 next = *text;
 #if defined(TBS_EDITION_ES)
                 if (c > 32 && next > 32) {
@@ -2028,7 +2028,7 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x, 
     work = (struct UiRenderWork *)gWindowWork[0];
     start = x;
     if (text == NULL) {
-        text = (s16 *)work->entries;
+        text = work->entries;
         work->entries[work->count] = 0;
         work->count = (work->count + 1) & RENDER_ENTRY_MASK;
     }

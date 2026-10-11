@@ -237,7 +237,7 @@ s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect)
             break;
         }
         next_timer = (u32)(Engine_RandomNext() * 0x50) >> 0x10;
-        effect->action_timer = (s16)next_timer;
+        effect->action_timer = next_timer;
         if (next_timer != 0) {
             goto decrement_timer;
         }
@@ -731,7 +731,7 @@ void FieldScene_RunStagedGroupSequence(void)
         Engine_ActorRunRepeatedMotion(30, 1);
         Engine_EventSetMessage(message + 6);
         Event_ShowMessageAndWait(30, 0, 10);
-        Scheduler_RemoveCallback((u32)((s32)KareiMachi_AlternateDance));
+        Scheduler_RemoveCallback(((s32)KareiMachi_AlternateDance));
         Engine_ActorStop(20);
         Engine_ActorStop(21);
         Engine_TaskWait(1);
@@ -1861,10 +1861,10 @@ void FieldScene_RunLateSequence(void)
     s32 k;
 
     leader = Object_GetById(ACTOR_PARTY_LEADER);
-    idx = (s32)((u32)leader->facing >> 12);
+    idx = (leader->facing >> 12);
     a = leader->x.part.pixel;
     w = KareiMachi_Data01[idx];
-    block = SceneActor_FindActorAtCell((a + (w >> 16)) >> 4, (leader->z.part.pixel + (s32)(s16)w) >> 4);
+    block = SceneActor_FindActorAtCell((a + (w >> 16)) >> 4, (leader->z.part.pixel + (s16)w) >> 4);
     if (block != NULL) {
         zero = 0;
         block->terrain_id = 2;

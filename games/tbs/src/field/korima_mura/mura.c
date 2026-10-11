@@ -115,7 +115,7 @@ void SceneData_InitRecordTable(u8 *o)
     special = 110;
     for (; i <= 8; i++) {
         *(u16 *)p = normal;
-        if ((u32)(i - 6) <= 1) {
+        if ((i - 6) <= 1) {
             *(u16 *)p = special;
         }
         p[22] = 2;

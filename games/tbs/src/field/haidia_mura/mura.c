@@ -571,7 +571,7 @@ void HaidiaMura_AskAboutSneakingToAleph(s32 a0, s32 a1)
     Engine_EventSetMessage((s32)MsgHaidiaNotSneakingUpMtAleph);
     Event_AskYesNo(22, 0);
     record = Actor_Get(22);
-    ((struct FieldActor *)record)->update = (void (*)(union FieldObject *))SceneActor_RunStep18WhenTargetSet;
+    record->update = (void (*)(union FieldObject *))SceneActor_RunStep18WhenTargetSet;
     Engine_ActorEnableActionCallback(22, gHaidiaMuraActor22Actions);
     Engine_EventEnd();
 }
@@ -2587,7 +2587,7 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
 s32 SceneActor_RunStep18WhenTargetSet(s32 *p)
 {
     struct FieldActor *t = Object_GetById(ACTOR_PARTY_LEADER);
-    if (p[14] == (s32)0x80000000 && p[16] == (s32)0x80000000)
+    if (p[14] == 0x80000000 && p[16] == 0x80000000)
         return 0;
     HaidiaMura_TestFacing((struct FieldActor *)p, t, 18, 0);
     return 0;
@@ -2666,9 +2666,9 @@ void Effect_SpawnRisingDustBurst(struct Resource373Emitter *emitter)
     emitter->x = 0;
     emitter->y = 0;
     emitter->z = 0;
-    emitter->field38 = (s32)0x80000000;
-    emitter->field3c = (s32)0x80000000;
-    emitter->field40 = (s32)0x80000000;
+    emitter->field38 = 0x80000000;
+    emitter->field3c = 0x80000000;
+    emitter->field40 = 0x80000000;
     emitter->field24 = 0;
     emitter->field28 = 0;
     emitter->field2c = 0;

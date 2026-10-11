@@ -649,7 +649,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
         rec8->z.fixed = yb;
     }
     if (KorosseoKabe_SpectatorTimer != 0
-        && rec7->target_x == (s32)0x80000000) {
+        && rec7->target_x == 0x80000000) {
         if (KorosseoKabe_SpectatorPhase == 0) {
             Map_CopyCellAttributes(58, 28, 7, 1, 58, 13);
         } else {
@@ -1607,20 +1607,20 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
         if (state == 0) {
             if (state < count) {
                 for (i = 0; i < count; i++) {
-                    Party_RemoveActiveOwner((s32)(s8)buf[i]);
+                    Party_RemoveActiveOwner((s8)buf[i]);
                 }
             }
             for (i = 0; i < count; i++) {
-                if ((s32)(s8)buf[i] != 0) {
-                    Party_AddActiveOwner((s32)(s8)buf[i]);
+                if ((s8)buf[i] != 0) {
+                    Party_AddActiveOwner((s8)buf[i]);
                 }
             }
             obj = Menu_OpenCharacterSelector();
             for (i = 0; i < count; i++) {
-                Party_RemoveActiveOwner((s32)(s8)buf[i]);
+                Party_RemoveActiveOwner((s8)buf[i]);
             }
             for (i = 0; i < count; i++) {
-                Party_AddActiveOwner((s32)(s8)buf[i]);
+                Party_AddActiveOwner((s8)buf[i]);
             }
             if (obj != -1) {
                 goto L_main;
@@ -1689,8 +1689,8 @@ void KorosseoKabe_InitializeModeTask(u32 mode, u32 param)
 {
     s32 handler;
 
-    Korosseo_ModeTaskMode = (u16)mode;
-    Korosseo_ModeTaskParam = (u16)(param << 4);
+    Korosseo_ModeTaskMode = mode;
+    Korosseo_ModeTaskParam = (param << 4);
 
     {
         s32 budget = 0xc80;
@@ -1740,7 +1740,7 @@ void KorosseoKabe_RunScriptedTransition(s32 mode)
     Engine_EventWaitForScreen();
     {
         s16 *base = KorosseoKabe_ModeRecordDefault;
-        *(s16 *)((u8 *)base + 30) = (s16)(mode * 60);
+        *(s16 *)((u8 *)base + 30) = (mode * 60);
     }
     Engine_EventWait(30);
     Engine_AudioPlayCue(mode + 0x5a);
@@ -1823,8 +1823,8 @@ void StagedActor_ResetMotionAfterRefresh(s32 slot)
     ObjectDispatch_InitFromTable6(actor);
     actor->velocity_x = 0;
     actor->velocity_z = 0;
-    actor->target_x = (s32)0x80000000;
-    actor->target_z = (s32)0x80000000;
+    actor->target_x = 0x80000000;
+    actor->target_z = 0x80000000;
 }
 
 void SceneState_InitCursorWhenUnset(void)
@@ -1841,9 +1841,9 @@ void SceneEffect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style)
 {
     SceneState_InitCursorWhenUnset();
 
-    Korosseo_MarkerX = (u16)x;
-    Korosseo_MarkerY = (u16)y;
-    Korosseo_MarkerPriority = (u16)(style & 3);
+    Korosseo_MarkerX = x;
+    Korosseo_MarkerY = y;
+    Korosseo_MarkerPriority = (style & 3);
     Korosseo_MarkerBlink = 0;
     Korosseo_MarkerSteps = 0;
 
@@ -1855,11 +1855,11 @@ void SceneEffect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style)
 
 void SceneState_StartMarkerMove(u32 x, u32 y, u32 duration)
 {
-    Korosseo_MarkerEndX = (u16)x;
-    Korosseo_MarkerEndY = (u16)y;
+    Korosseo_MarkerEndX = x;
+    Korosseo_MarkerEndY = y;
     *(u16 *)&Korosseo_MarkerStartX = Korosseo_MarkerX;
     *(u16 *)&Korosseo_MarkerStartY = Korosseo_MarkerY;
-    Korosseo_MarkerSteps = (u16)duration;
+    Korosseo_MarkerSteps = duration;
     Korosseo_MarkerStep = 0;
 
     {
@@ -1912,7 +1912,7 @@ void SceneActor_PlaceWithScale14000(s32 no, s32 x, s32 z)
         *p = zero;
     }
 
-    ObjectDispatch_InitFromTable6((struct FieldActor *)obj);
+    ObjectDispatch_InitFromTable6(obj);
     Object_SetMode(obj, 5);
     Engine_ObjectSetPosition(obj, x << 16, obj->y.fixed, z << 16);
     Object_CommitPosition(obj);
@@ -2078,11 +2078,11 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s
     descriptor = Runtime_AllocateBlock(59, 0x7170);
     handle = (s32)Runtime_BumpAllocateAlternatePool(512);
 
-    *(u16 *)(descriptor + 222) = (u16)first;
-    *(u16 *)(descriptor + 224) = (u16)second;
-    *(u16 *)(descriptor + 226) = (u16)third;
-    *(u16 *)(descriptor + 228) = (u16)fourth;
-    *(u16 *)(descriptor + 230) = (u16)mode;
+    *(u16 *)(descriptor + 222) = first;
+    *(u16 *)(descriptor + 224) = second;
+    *(u16 *)(descriptor + 226) = third;
+    *(u16 *)(descriptor + 228) = fourth;
+    *(u16 *)(descriptor + 230) = mode;
     *(s32 *)(descriptor + 232) = centre;
     *(s32 *)(descriptor + 236) = extra;
 
@@ -2101,7 +2101,7 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s
     Resource_DecodeType01(Korosseo_GaugeGraphics, handle);
 
     extent = Resource_FindFreeEntry();
-    *(u16 *)(descriptor + 216) = (u16)extent;
+    *(u16 *)(descriptor + 216) = extent;
     Engine_VramLoad((s16)extent, 512, handle);
 
     Engine_TaskAddCallback(Korosseo_DrawGauge, 0xc76);
@@ -2114,7 +2114,7 @@ void SceneState_InitControlRecordAndStartTask(s32 resource)
     u8 *state = *(u8 **)(gWorkSlot + WORK_SLOT_STAGE * 4);
     struct StageControl *m = (struct StageControl *)gSceneState;
 
-    Resource_DecodeType01((const u8 *)Resource_GetTableEntry(resource), state + 240);
+    Resource_DecodeType01(Resource_GetTableEntry(resource), state + 240);
     if (Engine_GameFlagIsSet(0x109) == 0) {
         m->status = 1;
         m->f2 = 1;
@@ -2164,10 +2164,10 @@ void StagedActor_PushActorAhead(void)
     dir = subject->facing >> 12;
 
     step = KorosseoKabe_DirectionSteps[dir];
-    pos.x = subject->x + (s32)(step & 0xffff0000);
+    pos.x = subject->x + (step & 0xffff0000);
     pos.y = subject->y;
     step <<= 16;
-    pos.z = subject->z + (s32)step;
+    pos.z = subject->z + step;
 
     target = (KabeSceneRecord *)SceneData_FindSlotAtPosition((s32 *)&pos, subject);
     if (target == 0) {
@@ -2175,10 +2175,10 @@ void StagedActor_PushActorAhead(void)
     }
 
     step = KorosseoKabe_DirectionSteps[dir];
-    pos.x = target->x + (s32)(step & 0xffff0000);
+    pos.x = target->x + (step & 0xffff0000);
     pos.y = target->y;
     step <<= 16;
-    pos.z = target->z + (s32)step;
+    pos.z = target->z + step;
 
     blocker = (KabeSceneRecord *)SceneData_FindSlotAtPosition((s32 *)&pos, target);
     if (blocker != 0 && (blocker->flags & 1) != 0) {
@@ -2198,10 +2198,10 @@ void StagedActor_PushActorAhead(void)
     zero = 0;
 
     step = KorosseoKabe_DirectionSteps[dir];
-    pos.x = target->x + (s32)(step & 0xffff0000);
+    pos.x = target->x + (step & 0xffff0000);
     pos.y = target->y;
     step <<= 16;
-    pos.z = target->z + (s32)step;
+    pos.z = target->z + step;
 
     if (Object_CheckMovementCollision(target, &pos) > 0) {
         return;

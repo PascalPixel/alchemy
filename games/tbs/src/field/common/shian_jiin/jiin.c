@@ -507,7 +507,7 @@ void FieldScene_RunForwardArcBurst(void)
 
     for (index = 8; index > 3; index--) {
         angle = index << 12;
-        actor->sprite->rotation = (u16)angle;
+        actor->sprite->rotation = angle;
         Engine_TaskWait((index - 4) * 2);
         actor->x.fixed += Engine_MathCos(angle)* 6;
         actor->z.fixed += Engine_MathSin(angle)* 6;
@@ -563,7 +563,7 @@ void FieldScene_RunDescentBurst(void)
         step -= 2;
     } while (i <= 3);
     zero = 0;
-    actor->sprite->rotation = (u16)zero;
+    actor->sprite->rotation = zero;
     Engine_AudioPlayCue(227);
     Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed + 0xfff80000, 0xffff3334,
                   0, 0xffffcccd, 0, 0);
@@ -644,7 +644,7 @@ void ShianJiin_WalkByFacing(void)
 
     dir = Object_GetById(0)->facing;
     limit = 0x3fff;
-    if ((u32)((dir + -0x2000) << 16) <= 0x3fff0000) {
+    if (((dir + -0x2000) << 16) <= 0x3fff0000) {
         Engine_ActorWalkToAndWait(15, 216, 168);
         Engine_ActorWalkToAndWait(15, 224, 168);
         Actor_FaceDirection(15, 0x2000, 20);
@@ -891,7 +891,7 @@ void FieldScene_RunSecondEnsembleBeat(void)
     rec->steering_flags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(16, 154 << 1, 136 << 1);
     Engine_EventWait(1);
-    rec = (struct FieldActor *)Actor_Get(16);
+    rec = Actor_Get(16);
 
     rec->steering_flags = ACTOR_FACES_MOTION | rec->steering_flags;
     Event_ShowMessageAndWait(16, 0, 50);
@@ -1040,13 +1040,13 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Engine_EventWait(20);
     Actor_SetPosition(19, 232 << 16, 168 << 16);
     Actor_SetPosition(20, 232 << 16, 168 << 16);
-    rec = (struct FieldActor *)Actor_Get(19);
+    rec = Actor_Get(19);
     rec->y.fixed = 0xc0000;
-    rec = (struct FieldActor *)Actor_Get(19);
+    rec = Actor_Get(19);
     rec->target_y = ACTOR_NO_TARGET;
-    rec = (struct FieldActor *)Actor_Get(19);
+    rec = Actor_Get(19);
     rec->scale_x = 0xcccc;
-    rec = (struct FieldActor *)Actor_Get(19);
+    rec = Actor_Get(19);
     {
         struct FieldSprite *sprite = rec->sprite;
         s32 rotation = 0x8000;
@@ -2329,7 +2329,7 @@ void FieldScene_RunParticleRain(void)
         y = actor->y.fixed
             + ((((u32)Engine_RandomNext() << 5) >> 16) << 16)
             + 0xfff00000;
-        scale = (((u32)((u32)Engine_RandomNext() << 2) >> 16) << 15) + (128 << 8);
+        scale = ((((u32)Engine_RandomNext() << 2) >> 16) << 15) + (128 << 8);
         Effect_Spawn(x, y, actor->z.fixed, 0,
                       scale, 0, 152 << 13, (u8 *)&descriptor);
         Engine_TaskWait(2);

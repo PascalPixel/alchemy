@@ -207,7 +207,7 @@ void SceneDialogue_RunActorFourteenDialogue11AA(void)
         Engine_EventShowMessage(0xE, 0);
     } else {
         work = gEventWork;
-        work->message = (u16)(work->message + 1);
+        work->message = (work->message + 1);
         Engine_EventAskYesNo(0xE, 0);
     }
     Engine_EventEnd();
@@ -893,7 +893,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Engine_TaskWait(1);
     Engine_CameraFollowActor(18, 1);
     clear = 0;
-    actor = (struct FieldActor *)Engine_ObjectCreate(22, 0x1480000, 0x20000, 0xc30000);
+    actor = Engine_ObjectCreate(22, 0x1480000, 0x20000, 0xc30000);
     actor->motion_flags = clear;
     sprite = actor->sprite;
     actor->y.fixed = 0x50000;
@@ -963,7 +963,7 @@ void SceneEffect_UpdateAnchoredRiseFrame(union FieldObject *object)
     s32 amplitude;
 
     anchor = &((union PairObject *)object)->link.parent->object.actor;
-    self->timer = (u16)(self->timer + 1);
+    self->timer = (self->timer + 1);
     frame = self->timer;
 
     if (frame > 31) {
@@ -987,7 +987,7 @@ void OverlayObject_UpdateArcFromAnchor(union FieldObject *object)
     s32 amp;
 
     anchor = &((union PairObject *)object)->link.parent->object.actor;
-    obj->timer = (u16)(obj->timer + 1);
+    obj->timer = (obj->timer + 1);
     frame = obj->timer;
 
     if (frame > 31) {

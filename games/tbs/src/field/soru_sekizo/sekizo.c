@@ -1128,8 +1128,8 @@ void SoruSekizo_RunEventSequence(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
     Object_GetById(p9)->steering_flags &= ~ACTOR_FACES_MOTION;
     Engine_ActorSetAnimation(0, 8);
     Engine_ActorSetDestination(0, ((a3 << 4) + 8), ((a4 << 4) + 8));
-    p8b = ((s32)p8 << 4);
-    p10b = ((s32)p10 << 4);
+    p8b = (p8 << 4);
+    p10b = (p10 << 4);
     Engine_ActorSetDestination(p9, (p8b + 8), (p10b + 8));
     Engine_ActorWaitForMove(p9);
     Engine_ActorSetAnimation(0, 1);

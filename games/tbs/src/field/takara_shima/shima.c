@@ -492,7 +492,7 @@ void FieldScene_HandleEscapeColumn(void)
         s32 off = 448;
         slot = (s16 *) ((u8 *) ((s16 *)&gGameState) + off);
     }
-    if ((u8 *)Engine_GameFlagIsSet(*slot + (0x8d2 - (s32)&SceneId_TakaraShima6)) != 0) {
+    if (Engine_GameFlagIsSet(*slot + (0x8d2 - (s32)&SceneId_TakaraShima6)) != 0) {
         return;
     }
 #endif
@@ -786,7 +786,7 @@ void MarkGridLeftOfSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute
         Engine_ActorSetSpritePriority(actor_mode, 3);
         v = 2;
         v |= p->f23;
-        p->f23 = (u8)v;
+        p->f23 = v;
         {
             s32 k5 = p->f10 >> 20;
             s32 k4 = (p->f08 >> 20) - 1;
@@ -806,7 +806,7 @@ void MarkGridAboveSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute,
         Engine_ActorSetSpritePriority(actor_mode, 3);
         v = 2;
         v |= p->f23;
-        p->f23 = (u8)v;
+        p->f23 = v;
         {
             s32 k4 = p->f08 >> 20;
             s32 k5 = (p->f10 >> 20) - 1;
@@ -1548,11 +1548,11 @@ void AdvanceActor18AlongEscapeRoute(void)
     s32 companion14Column;
 
     s32 permuted_5;
-    permuted_5 = ((struct FieldActor *)Object_GetById(18))->x.fixed >> 20;
-    row = ((struct FieldActor *)Object_GetById(18))->z.fixed >> 20;
+    permuted_5 = Object_GetById(18)->x.fixed >> 20;
+    row = Object_GetById(18)->z.fixed >> 20;
     column  = permuted_5;
-    companion19Column = ((struct FieldActor *)Object_GetById(19))->x.fixed >> 20;
-    companion14Column = ((struct FieldActor *)Object_GetById(14))->x.fixed >> 20;
+    companion19Column = Object_GetById(19)->x.fixed >> 20;
+    companion14Column = Object_GetById(14)->x.fixed >> 20;
 
     if (row == 9) {
         if ((u32)(companion14Column - 6) <= 2) {
@@ -1597,7 +1597,7 @@ transition80:
 
     column -= 1;
     Engine_MapCopyCellAttributes(column, row, 3, 1,
-                  column, ((struct FieldActor *)Object_GetById(18))->z.fixed >> 20);
+                  column, Object_GetById(18)->z.fixed >> 20);
     Engine_MapCopyCellAttributes(0, 0, 3, 1, column, row);
 }
 
@@ -1687,12 +1687,12 @@ void AdvanceActor9AlongEscapeRoute(void)
     s32 companion16Column;
 
     s32 permuted_6;
-    permuted_6 = ((struct FieldActor *)Object_GetById(9))->x.fixed >> 20;
-    row = ((struct FieldActor *)Object_GetById(9))->z.fixed >> 20;
+    permuted_6 = Object_GetById(9)->x.fixed >> 20;
+    row = Object_GetById(9)->z.fixed >> 20;
     column  = permuted_6;
-    companion19Column = ((struct FieldActor *)Object_GetById(19))->x.fixed >> 20;
-    companion14Column = ((struct FieldActor *)Object_GetById(14))->x.fixed >> 20;
-    companion16Column = ((struct FieldActor *)Object_GetById(16))->x.fixed >> 20;
+    companion19Column = Object_GetById(19)->x.fixed >> 20;
+    companion14Column = Object_GetById(14)->x.fixed >> 20;
+    companion16Column = Object_GetById(16)->x.fixed >> 20;
 
     if (row == 8) {
         if ((u32)(companion16Column - 9) <= 2) {
@@ -1739,7 +1739,7 @@ transition48:
 
     column -= 1;
     Engine_MapCopyCellAttributes(column, row, 3, 1,
-                  column, ((struct FieldActor *)Object_GetById(9))->z.fixed >> 20);
+                  column, Object_GetById(9)->z.fixed >> 20);
     Engine_MapCopyCellAttributes(0, 0, 3, 1, column, row);
 }
 
@@ -1871,11 +1871,11 @@ void RetreatActor14AlongEscapeRoute(void)
     s32 rowM1;
 
     s32 permuted_7;
-    column = ((struct FieldActor *)Object_GetById(14))->x.fixed >> 20;
-    permuted_7 = ((struct FieldActor *)Object_GetById(14))->z.fixed >> 20;
-    companion18Row = ((struct FieldActor *)Object_GetById(18))->z.fixed >> 20;
+    column = Object_GetById(14)->x.fixed >> 20;
+    permuted_7 = Object_GetById(14)->z.fixed >> 20;
+    companion18Row = Object_GetById(18)->z.fixed >> 20;
     row  = permuted_7;
-    companion9Row = ((struct FieldActor *)Object_GetById(9))->z.fixed >> 20;
+    companion9Row = Object_GetById(9)->z.fixed >> 20;
 
     if (column == 13) {
         if ((u32)(companion9Row - 12) <= 2) {
@@ -1912,7 +1912,7 @@ void RetreatActor14AlongEscapeRoute(void)
 
     rowM1 = row - 1;
     Engine_MapCopyCellAttributes(column, rowM1, 1, 3,
-                  ((struct FieldActor *)Object_GetById(14))->x.fixed >> 20, rowM1);
+                  Object_GetById(14)->x.fixed >> 20, rowM1);
     Engine_MapCopyCellAttributes(0, 0, 1, 3, column, rowM1);
 }
 
@@ -1925,11 +1925,11 @@ void AdvanceActor14AlongEscapeRoute(void)
     s32 rowM1;
 
     s32 permuted_7;
-    column = ((struct FieldActor *)Object_GetById(14))->x.fixed >> 20;
-    permuted_7 = ((struct FieldActor *)Object_GetById(14))->z.fixed >> 20;
-    companion18Row = ((struct FieldActor *)Object_GetById(18))->z.fixed >> 20;
+    column = Object_GetById(14)->x.fixed >> 20;
+    permuted_7 = Object_GetById(14)->z.fixed >> 20;
+    companion18Row = Object_GetById(18)->z.fixed >> 20;
     row  = permuted_7;
-    companion9Row = ((struct FieldActor *)Object_GetById(9))->z.fixed >> 20;
+    companion9Row = Object_GetById(9)->z.fixed >> 20;
 
     if (column == 6) {
         if ((u32)(companion9Row - 12) <= 2) {
@@ -1959,7 +1959,7 @@ void AdvanceActor14AlongEscapeRoute(void)
 
     rowM1 = row - 1;
     Engine_MapCopyCellAttributes(column, rowM1, 1, 3,
-                  ((struct FieldActor *)Object_GetById(14))->x.fixed >> 20, rowM1);
+                  Object_GetById(14)->x.fixed >> 20, rowM1);
     Engine_MapCopyCellAttributes(0, 0, 1, 3, column, rowM1);
 }
 
@@ -1972,11 +1972,11 @@ void RetreatActor16AlongEscapeRoute(void)
     s32 rowM1;
 
     s32 permuted_7;
-    column = ((struct FieldActor *)Object_GetById(16))->x.fixed >> 20;
-    permuted_7 = ((struct FieldActor *)Object_GetById(16))->z.fixed >> 20;
-    companion18Row = ((struct FieldActor *)Object_GetById(18))->z.fixed >> 20;
+    column = Object_GetById(16)->x.fixed >> 20;
+    permuted_7 = Object_GetById(16)->z.fixed >> 20;
+    companion18Row = Object_GetById(18)->z.fixed >> 20;
     row  = permuted_7;
-    companion9Row = ((struct FieldActor *)Object_GetById(9))->z.fixed >> 20;
+    companion9Row = Object_GetById(9)->z.fixed >> 20;
 
     if (column == 13) {
         if ((u32)(companion9Row - 9) <= 2) {
@@ -2010,7 +2010,7 @@ void RetreatActor16AlongEscapeRoute(void)
 
     rowM1 = row - 1;
     Engine_MapCopyCellAttributes(column, rowM1, 1, 3,
-                  ((struct FieldActor *)Object_GetById(16))->x.fixed >> 20, rowM1);
+                  Object_GetById(16)->x.fixed >> 20, rowM1);
     Engine_MapCopyCellAttributes(0, 0, 1, 3, column, rowM1);
 }
 
@@ -2021,9 +2021,9 @@ void AdvanceActor16AlongEscapeRoute(void)
     s32 companionRow;
 
     s32 permuted_6;
-    column = ((struct FieldActor *)Object_GetById(16))->x.fixed >> 20;
-    permuted_6 = ((struct FieldActor *)Object_GetById(16))->z.fixed >> 20;
-    companionRow = ((struct FieldActor *)Object_GetById(9))->z.fixed >> 20;
+    column = Object_GetById(16)->x.fixed >> 20;
+    permuted_6 = Object_GetById(16)->z.fixed >> 20;
+    companionRow = Object_GetById(9)->z.fixed >> 20;
     row  = permuted_6;
 
     if (column == 6) {
@@ -2049,7 +2049,7 @@ void AdvanceActor16AlongEscapeRoute(void)
 
     row -= 1;
     Engine_MapCopyCellAttributes(column, row, 1, 3,
-                  ((struct FieldActor *)Object_GetById(16))->x.fixed >> 20, row);
+                  Object_GetById(16)->x.fixed >> 20, row);
     Engine_MapCopyCellAttributes(0, 0, 1, 3, column, row);
 }
 
@@ -2066,7 +2066,7 @@ s32 UpdateSwayingSceneObject(struct S *object)
     }
     object->f08 = object->f38 + Engine_MathCos(object->f30) * 2;
     object->f0c = object->f3c + vertical_offset;
-    sprite->f1e = (u16)(Engine_MathCos(object->f30 + 0x8000) / 8);
+    sprite->f1e = (Engine_MathCos(object->f30 + 0x8000) / 8);
     random_a = Engine_RandomNext();
     random_b = Engine_RandomNext();
     object->f30 += (((u32)(random_a << 9)) >> 16) + (((u32)(random_b << 9)) >> 16) + 0x400;

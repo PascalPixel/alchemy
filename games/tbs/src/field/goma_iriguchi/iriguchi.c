@@ -637,7 +637,7 @@ void GomaIriguchi_GiveShamansRod(void)
     s32 id;
 
     id = 65;
-    member = (struct Member_387 *)UnitGet(2);
+    member = UnitGet(2);
     tries = 0;
 retry:
     if (++tries > 1000) {

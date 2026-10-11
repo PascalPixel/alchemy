@@ -142,10 +142,10 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     case 15:
     case 16:
     case 17:
-        table = ((const struct ScenePlacement *)KuupuappuHeya_SceneTableB);
+        table = (KuupuappuHeya_SceneTableB);
         break;
     default:
-        table = ((const struct ScenePlacement *)KuupuappuHeya_SceneTableA);
+        table = (KuupuappuHeya_SceneTableA);
         break;
     }
     FieldScene_PrepareActors(table);
@@ -1316,7 +1316,7 @@ void FieldScene_RunScene383SequenceB(void)
     actor24 = Object_GetById(24);
     actor25 = Object_GetById(25);
     Engine_EventBegin();
-    Scheduler_RemoveCallback((u32)((s32)SceneActor_FaceActors24And25TowardActorZero));
+    Scheduler_RemoveCallback(((s32)SceneActor_FaceActors24And25TowardActorZero));
     GameFlag_Clear(0x300);
     if (actor24->timer <= 3) {
         Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptG);
@@ -1437,7 +1437,7 @@ void FieldScene_SelectActorPair(void)
 
     work = gEventWork;
     Engine_EventBegin();
-    Scheduler_RemoveCallback((u32)((s32)KuupuappuHeya_UpdateActorStops));
+    Scheduler_RemoveCallback(((s32)KuupuappuHeya_UpdateActorStops));
     GameFlag_Clear(0x107);
     GameFlag_Clear(0x250);
     Engine_ActorSetAnimation(24, 1);
@@ -1697,7 +1697,7 @@ void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 next, c
 
     if (rec->timer == expected) {
         Engine_ActorEnableActionCallback(actor, desc);
-        rec->timer = (u16)next;
+        rec->timer = next;
     }
 }
 
@@ -1781,8 +1781,8 @@ s32 KuupuappuHeya_ApplyEntryState(void)
                 Engine_MapCopyCellAttributes(14, 50, 3, 1, 14, 44);
                 break;
             }
-            ((struct ActorMode *)((u8 *)Object_GetById(24)))->mode = 5;
-            ((struct ActorMode *)((u8 *)Object_GetById(25)))->mode = 4;
+            ((struct ActorMode *)(Object_GetById(24)))->mode = 5;
+            ((struct ActorMode *)(Object_GetById(25)))->mode = 4;
             ((void (*)())Engine_TaskAddCallback)((s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
         }
         break;
@@ -1794,7 +1794,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
         Engine_MapCopyCellsTo(54, 2, 35, 80, 2, 10);
         Map_CopyCellsTo(54, 2, 46, 21, 4, 8);
         Engine_MapCopyCellsTo(54, 2, 46, 81, 4, 8);
-        ((struct ActorFlags *)((u8 *)Object_GetById(26)))->flags |= 4;
+        ((struct ActorFlags *)(Object_GetById(26)))->flags |= 4;
         Engine_ActorSetSpriteFlags(Object_GetById(26), 0);
         if (Engine_GameFlagIsSet(0x859) != 0) {
             Actor_SetPosition(26, 0x2a40000, 0x19b0000);
@@ -2769,11 +2769,11 @@ s32 KuupuappuHeya_IsRecordNearPoint(s32 x, s32 y, s32 id)
     s32 dx;
     s32 dy;
 
-    if (target_x == (s32)0x80000000) {
+    if (target_x == 0x80000000) {
         target_x = rec->f8;
     }
     target_y = rec->f64;
-    if (target_y == (s32)0x80000000) {
+    if (target_y == 0x80000000) {
         target_y = rec->f16;
     }
 
@@ -2925,7 +2925,7 @@ move_second:
         }
     }
     if (blocked != 0) {
-        if ((u16)++KuupuappuHeya_StopTimer > 29)
+        if (++KuupuappuHeya_StopTimer > 29)
             work->raised_trigger = blocked + 200;
     } else {
         KuupuappuHeya_StopTimer = blocked;

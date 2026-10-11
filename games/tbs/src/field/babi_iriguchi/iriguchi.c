@@ -104,7 +104,7 @@ u8 *OverlayObject_SpawnConfiguredObject(s32 x, s32 y, s32 z, s32 kind)
 
 		u32 masked = ~12;
 		masked = masked & owner[9];
-		owner[9] = (u8)masked;
+		owner[9] = masked;
 		object[85] = 0;
 		object[89] = 8;
 		Engine_ActorSetSpriteFlags(object, 0);
@@ -130,14 +130,14 @@ u8 *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind)
 		u32 mask = ~12;
 		u32 low;
 		mask = mask & owner[9];
-		owner[9] = (u8)(mask | 4);
+		owner[9] = (mask | 4);
 		object[85] = 0;
 		object[89] = 8;
 		Engine_ActorSetSpriteFlags(object, 0);
 		ObjectGroup_SetChildValue(object, 15);
 		low = 0xfe;
 		low = low & object[35];
-		object[35] = (u8)(low | 2);
+		object[35] = (low | 2);
 		result = object;
 	}
 	else

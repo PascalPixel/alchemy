@@ -139,7 +139,7 @@ s32 SceneActor_FaceActorZero(struct FieldActor *obj)
     s32 dz = target->z.fixed - obj->z.fixed;
     s32 dx = target->x.fixed - obj->x.fixed;
 
-    obj->facing = (s16)ArcTan2(dz, dx);
+    obj->facing = ArcTan2(dz, dx);
     return 0;
 }
 
@@ -436,14 +436,14 @@ void HaidiaDou_RunProbedColumnScene(void)
         if ((probe.position_x >> 20) == 17) {
             Engine_ActorSetAnimation(probe.actor_slot, 3);
             v6 = 0;
-            ((struct FieldActor *)Object_GetById(probe.actor_slot))->motion_flags = v6;
+            Object_GetById(probe.actor_slot)->motion_flags = v6;
             record = Object_GetById(probe.actor_slot);
             record->bounce = v6;
             Engine_ActorSetDestinationOffset(probe.actor_slot, -12, 0);
             Engine_ActorWaitForMove(probe.actor_slot);
             Engine_ActorSetAnimation(probe.actor_slot, 3);
             Engine_ActorSetSpritePriority(10, 3);
-            ((struct FieldActor *)Object_GetById(probe.actor_slot))->motion_flags = 3;
+            Object_GetById(probe.actor_slot)->motion_flags = 3;
             Engine_ActorSetDestinationOffset(probe.actor_slot, -6, 0);
             SceneActor_WaitActorDescent(Object_GetById(probe.actor_slot));
             Engine_ActorSetAnimation(probe.actor_slot, 8);

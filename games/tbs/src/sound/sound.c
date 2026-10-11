@@ -186,7 +186,7 @@ void Audio_InitializeRuntimeDefaults(void)
     gMusicPitchStep = 4;
     gMusicFadeRequested = 0;
     Audio_CommandMask = 0;
-    player_volume = (s16 *)gMusicPlayerVolumes;
+    player_volume = gMusicPlayerVolumes;
     Ewram_Data1 = 0;
     remaining = 7;
     do {

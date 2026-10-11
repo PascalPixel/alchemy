@@ -701,7 +701,7 @@ void FieldScene_RunConditionalSceneSetup(void)
         Engine_ActorStartRepeatedMotion(RECORD_17, 2);
         Engine_EventSetMessage((s32)MsgKorashiamuSilence);
         Event_ShowMessage(RECORD_17, 0);
-        *(u8 *)(((u8 *)Engine_EventGetViewCenter()) + 85) = flag_8a4;
+        *(((u8 *)Engine_EventGetViewCenter()) + 85) = flag_8a4;
         Engine_TaskWait(1);
         Camera_SetSpeed(0x66666, 0xcccc);
         Camera_MoveTo(0x21c0000, -1, 0xd00000, 1);
@@ -843,7 +843,7 @@ void KorashiamuIriguchi_ShowQualifyingTrialMessage(void)
 
     if (Engine_GameFlagIsSet(0x8a4) != 0) {
         gEventWork->message =
-            (u16)(gEventWork->message + 1);
+            (gEventWork->message + 1);
     }
 
     FieldScene_CallPairWith10(17);

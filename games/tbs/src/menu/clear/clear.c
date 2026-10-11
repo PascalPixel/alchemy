@@ -848,8 +848,8 @@ void SaveMenu_FillTileGrid(struct RenderInput *window, s32 value)
 
 void SaveMenu_FillTileBlock(const struct RenderInput *window)
 {
-    s16 *mirror = (s16 *)((struct UiRenderWork *)gWindowWork[0])->tilemap;
-    s16 *buffer = (s16 *)Runtime_BumpAllocateAlternatePool(0x300);
+    s16 *mirror = ((struct UiRenderWork *)gWindowWork[0])->tilemap;
+    s16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);
     s16 *vram;
     s32 cell;
     s32 row;

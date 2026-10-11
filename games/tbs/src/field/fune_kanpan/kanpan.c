@@ -1818,7 +1818,7 @@ void FieldScene_RunPartyRosterScene(void)
 
     found = 0;
     for (index = 0; index <= 3; index++) {
-        roster[index] = SceneState_FindFirstSetFlagOfGroup((s32)index);
+        roster[index] = SceneState_FindFirstSetFlagOfGroup(index);
         category[index] = 0;
     }
 
@@ -2049,7 +2049,7 @@ s32 SceneState_FindFirstSetFlagOfGroup(u32 sel)
 
 void FuneKanpan_RockDeck(void)
 {
-    struct MapWork *map = ((struct MapWork *)gMapWork[0]);
+    struct MapWork *map = (gMapWork[0]);
     s32 *camera = map->camera;
     s32 dx = Engine_MathCos(FuneKanpan_WaveAngleX);
     s32 dy = Engine_MathSin(FuneKanpan_WaveAngleY);

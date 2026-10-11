@@ -189,7 +189,7 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
         Engine_MapCopyCellsTo(34, 34, 18, 16, arg4, arg5);
         Engine_MapCopyCellsTo(34, 94, 18, 76, arg4, arg5);
         Engine_MapCopyCellsTo(94, 34, 78, 16, arg4, arg5);
-    } else if ((u32)((sel - 8) << 16) <= (128 << 9)) {
+    } else if (((sel - 8) << 16) <= (128 << 9)) {
         s32 arg5;
         s32 arg4;
         arg4 = 11;

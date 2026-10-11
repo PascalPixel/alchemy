@@ -43,7 +43,7 @@ s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
 
     target = object->facing_target;
     if (target != NULL) {
-        object->facing_flags = (u8)(0xFE & object->facing_flags);
+        object->facing_flags = (0xFE & object->facing_flags);
         tgt = (u16)ArcTan2(target->position_z - object->position_z, target->position_x - object->position_x);
         old = object->facing;
         delta = (s16)(tgt - old);
@@ -55,7 +55,7 @@ s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
             if (delta < -0x1000) {
                 delta = -0x1000;
             }
-            object->facing = (u16)(old + delta);
+            object->facing = (old + delta);
         }
     }
     return 1;
@@ -230,7 +230,7 @@ void FieldScene_RunEarlySequence(void)
             record->motion_flags = 0;
         }
     }
-    v5 = (s32)((s32)(*(u16 *)(p7 + 0x16c) - 3) << 16) >> 16;
+    v5 = ((*(u16 *)(p7 + 0x16c) - 3) << 16) >> 16;
     if (v5 == 6) {
         Event_PlayCue(188);
     } else {
@@ -492,7 +492,7 @@ void Scene_UpdatePuzzleActors(void)
     Map_CopyCellAttributes(15, 11, 3, 1, 15, 13);
     Map_CopyCellAttributes(15, 11, 3, 1, 15, 14);
     Map_CopyCellAttributes(1, 0, 1, 1, (p6 >> 20), row);
-    if (((s32)p6 >> 20) == 16) {
+    if ((p6 >> 20) == 16) {
         if (row == 13) {
             goto L_02000a60;
         }
@@ -595,8 +595,8 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
     tz = actor->z.fixed >> 20;
 
     for (i = 0; i < 20; i += 2) {
-        s32 x = (s32)((u8 *)Mura_RepaintCells)[i];
-        s32 z = (s32)((u8 *)Mura_RepaintCells)[i + 1];
+        s32 x = ((u8 *)Mura_RepaintCells)[i];
+        s32 z = ((u8 *)Mura_RepaintCells)[i + 1];
         Engine_MapCopyCellAttributes(1, 0, 1, 1, x, z);
     }
 

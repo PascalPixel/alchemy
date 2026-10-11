@@ -134,7 +134,7 @@ s32 UiWindow_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h, s32 flags)
 		return 0;
 	}
 	style = flags & 0xff;
-	*handle = (s32)UiWindow_CreateFar(x, y, w, h, style);
+	*handle = UiWindow_CreateFar(x, y, w, h, style);
 	return 1;
 }
 
@@ -553,7 +553,7 @@ void Menu_ReleaseEntryObjects(void)
     void **p;
     s32 i;
 
-    count = (u16)Party_ListActiveOwnersFar((s16 *)buf);
+    count = (u16)Party_ListActiveOwnersFar(buf);
     if (count != 0) {
         p = (void **)base->tab_objects;
         i = count;
@@ -1243,7 +1243,7 @@ s32 RunAssetSelectionScreen(void)
     size = 0x2000;
     backup = Runtime_BumpAllocateAlternatePool(size);
 #endif
-    screen = (struct InventoryMenuState *)Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0xa70);
+    screen = Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0xa70);
     cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_MENU_CONTROL];
     ((struct ObjectSystemWork *)cache[0])->suspended = 1;
     UiWindow_DrawFrameFar(0, 0, 30, 20);
@@ -3519,7 +3519,7 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
 	win = UiWindow_CreateFar(13, 3, 17, 10, 2);
 	slot = a0 & ITEM_ID_MASK;
 	Item_GetDirectFar(slot);
-	UiText_DrawCharacterAtOffsetFar(slot + (s32)((u8 *)MsgItemName), win, 24, 0);
+	UiText_DrawCharacterAtOffsetFar(slot + (s32)(MsgItemName), win, 24, 0);
 	text = (s32)MsgConfirmDrop;
 #if EDITION_INTERNATIONAL
 	UiText_DrawCharacterAtOffsetFar(text, win, 0, 16);
@@ -3974,7 +3974,7 @@ s32 Menu_OpenConfirmPrompt(void)
 #if defined(PROMPT_SAVES_TILES)
     void *saved = Runtime_BumpAllocateAlternatePool(PROMPT_TILES_SIZE);
 #endif
-    struct PsynergyMenuState *state = (struct PsynergyMenuState *)Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0xa70);
+    struct PsynergyMenuState *state = Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0xa70);
     s32 high;
     s32 unused;
     s32 low;
@@ -4400,7 +4400,7 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 owner_id)
     struct BtlUnit *owner;
 
     menu = gMenuWork;
-    owner = (struct BtlUnit *)UnitGetFar(owner_id);
+    owner = UnitGetFar(owner_id);
     psynergies = menu->psynergies;
     menu->psynergy_count =
         PsynergyMenu_CollectActions(owner, psynergies, 2);
@@ -4436,7 +4436,7 @@ s32 PsynergyMenu_SelectTarget(s32 mode)
     s32 shown;
     struct RenderOutput *marker;
 
-    menu = ((struct PsynergyMenuState *)gMenuWork);
+    menu = (gMenuWork);
     selection = menu->tab_index[1];
     count = menu->owner_count;
     pending = 1;
@@ -4964,7 +4964,7 @@ s32 PsynergyMenu_RunList(s32 pane)
     s32 work[5];
     struct MenuResult state;
 
-    menu = ((struct PsynergyMenuState *)gMenuWork);
+    menu = (gMenuWork);
     result = 0;
     prev = 0;
     prompt = 0;
@@ -5219,7 +5219,7 @@ void ItemMenu_Close(void);
 s32 Menu_OpenCharacterSelector(void)
 {
     struct CharacterMenuState *state =
-        (struct CharacterMenuState *)Runtime_AllocateHeapBlock(55, 0x0a70);
+        Runtime_AllocateHeapBlock(55, 0x0a70);
     s32 result;
     s32 index;
 
@@ -5272,7 +5272,7 @@ typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 
 s32 ActionMenu_Open(void)
 {
-    struct CharacterMenuState *state = (struct CharacterMenuState *)Runtime_AllocateHeapBlock(55, 0x0a70);
+    struct CharacterMenuState *state = Runtime_AllocateHeapBlock(55, 0x0a70);
     void *palette = Runtime_BumpAllocateAlternatePool(64);
     void *tiles = Runtime_BumpAllocateAlternatePool(SAVED_TILE_BYTES);
     s32 result;
@@ -5400,7 +5400,7 @@ s32 CharacterMenu_SelectOwner(s32 slot)
     s32 result;
     s32 index;
 
-    menu = (struct CharacterMenuState *)gMenuWork;
+    menu = gMenuWork;
     index = menu->owner_index[slot];
     result = 0;
     cursor = menu->owner_cursors[slot];
@@ -5510,7 +5510,7 @@ s32 CharacterSelector_RunRearrange(void)
     s32 result;
     s32 i;
 
-    work = (struct CharacterMenuState *)gMenuWork;
+    work = gMenuWork;
     cursor = work->owner_index[0];
     count = work->owner_count[0];
     redraw = 1;
@@ -5674,7 +5674,7 @@ s32 PsynergyMenu_SelectOwner(void)
 
 s32 CharacterSelector_MoveEntry(s32 selected_index, s32 direction)
 {
-    struct CharacterMenuState *state = (struct CharacterMenuState *)gMenuWork;
+    struct CharacterMenuState *state = gMenuWork;
     u32 reordered[14];
     s32 index;
 
@@ -5728,7 +5728,7 @@ void Menu_InitSelectorCursorAndEntries(void)
 {
     struct CharacterMenuState *state;
 
-    state = (struct CharacterMenuState *)gMenuWork;
+    state = gMenuWork;
     PsynergyMenu_InitializeEntryObjects(UiMenu_CreateCursor(state), 2, 2, 8, 0);
     state->unknown_window_028 = 0;
     state->status_window = 0;
@@ -5747,7 +5747,7 @@ void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame)
     struct RenderOutput *object;
     struct CharacterMenuState *state;
 
-    state = (struct CharacterMenuState *)gMenuWork;
+    state = gMenuWork;
     created = 0;
     handle = (s32)state->status_window;
     if (handle == 0) {
@@ -5783,7 +5783,7 @@ s32 CharacterMenu_SelectCommand(void)
     s32 i;
     u8 entries[8];
 
-    menu = (struct CharacterMenuState *)gMenuWork;
+    menu = gMenuWork;
     pane = 0;
     result = 0;
     selected = 0;
@@ -5911,7 +5911,7 @@ s32 CharacterMenu_SelectCommand(void)
 void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected,
     u8 *entries, s32 invert)
 {
-    struct CharacterMenuState *state = (struct CharacterMenuState *)gMenuWork;
+    struct CharacterMenuState *state = gMenuWork;
     u32 different;
     s32 count;
     s32 index;
@@ -6352,7 +6352,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
     s32 row;
     s32 base;
 
-    menu = (struct PsynergyMenuState *)gMenuWork;
+    menu = gMenuWork;
     state->selected_index = state->page * PAGE_ROWS + state->row;
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
     RenderOutput_RedrawSavedRectFar(menu->info_window);
@@ -6530,7 +6530,7 @@ s32 PsynergyMenu_SelectAction(void)
     s32 i;
     struct MenuResult state;
 
-    menu = ((struct PsynergyMenuState *)gMenuWork);
+    menu = (gMenuWork);
     result = 0;
     done = 0;
     Menu_BuildPatternTiles();
@@ -6558,7 +6558,7 @@ s32 PsynergyMenu_SelectAction(void)
         ItemMenu_PosCategory();
         RenderOutput_RedrawSavedRectFar(menu->status_window);
         menu->psynergy_count = PsynergyMenu_CollectActions(
-            (struct BtlUnit *)UnitGetFar(menu->owner_ids[0]), menu->psynergies, 0);
+            UnitGetFar(menu->owner_ids[0]), menu->psynergies, 0);
         WaitFrames(1);
         Menu_BuildPageResult(&state, 0);
         PsynergyMenu_DrawPreparedPsynergyIcons(menu->status_window, menu->owner_ids[0]);
@@ -7717,7 +7717,7 @@ s32 ItemMenu_Run(void)
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
     UiWindow_InitializeWork(0);
-    saved = (struct ItemMenuSavedGraphics *)Runtime_BumpAllocateAlternatePool(0x2130);
+    saved = Runtime_BumpAllocateAlternatePool(0x2130);
     menu->saved = saved;
     saved->reserved_2128 = 0;
     saved->variant = 0;
@@ -7784,7 +7784,7 @@ s32 DjinnMenu_RunScreen(void)
     done = 0;
     result = 0;
     ret = 0;
-    menu = (struct DjinnMenuWork *)gMenuWork;
+    menu = gMenuWork;
     cursor = menu->cursor;
     cursor->active = 13;
     cursor->anim_step = 0;
@@ -9151,7 +9151,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
     take_element = menu->pair_element[take];
     take_index = menu->pair_index[take];
     take_set = menu->pair_entries[take] & 0x8000;
-    saved = (struct BtlUnit *)MemAlloc(sizeof(struct BtlUnit));
+    saved = MemAlloc(sizeof(struct BtlUnit));
     Unit_Copy(saved, state);
 
     if (page == 0) {
@@ -9412,13 +9412,13 @@ void FourObjectMotion_UpdateAllPositions(void)
 
         if (object != 0) {
             u32 vertical = VERTICAL_ORIGIN -
-                ((u32)(s32)state->vertical_origins[index] << 16);
+                ((s32)state->vertical_origins[index] << 16);
             ((struct FieldSprite *)object)->priority = 0;
             motion[0] = FIXED_ONE;
             motion[1] = FIXED_ONE;
-            request[0] = (u32)(s32)state->positions_x[index] << 16;
+            request[0] = (s32)state->positions_x[index] << 16;
             request[1] = vertical;
-            request[2] = ((u32)(s32)state->positions_y[index] << 16) + vertical;
+            request[2] = ((s32)state->positions_y[index] << 16) + vertical;
             request[3] = 0;
             Object_ApplyProjectedPlacementFar(object, request, motion, 0x4000);
         }
@@ -9477,7 +9477,7 @@ void FourObjectMotion_UpdateBottomRow(void)
 
 void FourObjectMotion_InitializeBottomRow(void)
 {
-    struct FourObjectMotionState *state = (struct FourObjectMotionState *)gMenuWork;
+    struct FourObjectMotionState *state = gMenuWork;
     s32 index;
 
     for (index = 0; index < 4; index++) {
@@ -9503,7 +9503,7 @@ void FourObjectMotion_InitializeBottomRow(void)
 
 s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative)
 {
-    struct FourObjectMotionState *state = (struct FourObjectMotionState *)gMenuWork;
+    struct FourObjectMotionState *state = gMenuWork;
 
     if (state->objects[index] != NULL) {
         state->positions_x[index] = x;
@@ -9520,7 +9520,7 @@ void FourObjectMotion_SetSlotPhase(s32 index, s32 phase)
 
 s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value)
 {
-    struct FourObjectMotionState *state = (struct FourObjectMotionState *)gMenuWork;
+    struct FourObjectMotionState *state = gMenuWork;
 
     if (state->objects[index] != NULL) {
         ResourceObject_ReleaseFar(state->objects[index]);
@@ -9538,7 +9538,7 @@ s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value)
 
 void FourObjectMotion_ClearSlotsAndScheduleAlt(void)
 {
-    struct FourObjectMotionState *state = (struct FourObjectMotionState *)gMenuWork;
+    struct FourObjectMotionState *state = gMenuWork;
     s32 index = 0;
 
     do {

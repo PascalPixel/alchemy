@@ -31,8 +31,8 @@ void SceneState_CheckPositionWindow(void)
     s32 v0;
 
     v0 = ((struct Resource386FirstView *)Object_GetById(0))->sample_08;
-    v1 = (s32)((struct Resource386SecondView *)Object_GetById(0))->sample_10 >> 0x14;
-    if (((u32)((v0 >> 0x14) - 0x22) <= 1U) && (v1 > 0x28) && (v1 <= 0x2A)) {
+    v1 = ((struct Resource386SecondView *)Object_GetById(0))->sample_10 >> 0x14;
+    if ((((v0 >> 0x14) - 0x22) <= 1U) && (v1 > 0x28) && (v1 <= 0x2A)) {
         Engine_GameFlagSet(0x250);
         return;
     }

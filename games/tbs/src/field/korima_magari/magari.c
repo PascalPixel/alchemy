@@ -443,7 +443,7 @@ void State_StampRecordCells(s16 *records, s32 value)
         for (i = 3; i >= 0; i--) {
             u8 *cell;
             cell = ((u8 *)gMapCellBuffer) + ((column + (row << 7)) << 2);
-            cell[2] = (u8)value;
+            cell[2] = value;
             if (along == 0) column++;
             else row++;
         }
@@ -583,22 +583,22 @@ void Effect_AdjustPaletteColors(s32 amount)
 
 u16 Effect_AdjustColorChannels(u16 color, s32 adj)
 {
-    s16 green = (s16)((color >> 5) & 31);
-    s16 red = (s16)(color & 31);
-    s16 blue = (s16)((color >> 10) & 31);
+    s16 green = ((color >> 5) & 31);
+    s16 red = (color & 31);
+    s16 blue = ((color >> 10) & 31);
     u32 packed;
 
-    red = (s16)(red + Math_DivideSigned(
+    red = (red + Math_DivideSigned(
         red,
-        (s32)((u32)adj << 2)
+        (adj << 2)
     ));
-    green = (s16)(green - Math_DivideSigned(green, adj));
-    blue = (s16)(blue - Math_DivideSigned(blue, adj));
+    green = (green - Math_DivideSigned(green, adj));
+    blue = (blue - Math_DivideSigned(blue, adj));
 
     if (red > 31)
         red = 31;
 
-    packed = (u32)(s32)red;
-    packed |= ((u32)(s32)blue << 10) | ((u32)(s32)green << 5);
-    return (u16)packed;
+    packed = (s32)red;
+    packed |= ((s32)blue << 10) | ((s32)green << 5);
+    return packed;
 }

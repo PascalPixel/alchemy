@@ -235,7 +235,7 @@ void SuharaSabaku_SyncSelectedActorProgress(void)
 
     actor = Object_GetById(((struct Selection_02000400 *)((s16 *)&gGameState))->actor_id);
     scene = *(struct SceneWork_02000400 **)((u8 *)&gEventWork);
-    actor->presentation = (u16)(gFrameCount << 12);
+    actor->presentation = (gFrameCount << 12);
 
     progress = GameFlag_GetByte(0x210);
     if (progress != 0) {
@@ -279,7 +279,7 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
         Engine_ActorWaitForMove((s32)p6);
         rec7->velocity_y = rec2;
         rec7->motion_flags = 4;
-        *(u8 *)(base + 498) = 2;
+        *(base + 498) = 2;
         GameFlag_Set(0x20f);
         GameFlag_SetByte(0x218, p10);
         GameFlag_SetByte(0x210, 180);

@@ -460,7 +460,7 @@ void FieldScene_RunGuardedSixWordStep(void)
 
 void ArutamiraDou_UpdateScalePulse(struct Obj *obj)
 {
-	s32 v = ArutamiraDou_PulseScales[(u16)(obj->frame >> 2) & 3];
+	s32 v = ArutamiraDou_PulseScales[(obj->frame >> 2) & 3];
 
 	obj->a = v;
 	obj->b = v;

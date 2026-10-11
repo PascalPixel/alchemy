@@ -796,14 +796,14 @@ s32 SceneDialogue_PickTopicVariantId(s32 topic)
     }
 
     if (topic == 5) {
-        topic = (s32)((unsigned int)(Engine_RandomNext() * 5) >> 16);
+        topic = ((unsigned int)(Engine_RandomNext() * 5) >> 16);
     }
 
     cursor = gGameState.won_prizes[8 + topic];
 
     variant = (cursor + (s32)((unsigned int)(Engine_RandomNext() * 2) >> 16) + 4) % 3;
 
-    gGameState.won_prizes[8 + topic] = (s8)variant;
+    gGameState.won_prizes[8 + topic] = variant;
 
     return TorebiIzumi_TopicIds[topic * 3 + variant];
 }
@@ -1253,8 +1253,8 @@ void SceneState_InitFourActorRecordsAndInstallTask(void)
     ztbl = (u8 *)TorebiIzumi_ActorTileZ;
 
     do {
-        *(s32 *)(rec + 0) = (s32)*xtbl << 16;
-        *(s32 *)(rec + 8) = (s32)*ztbl << 16;
+        *(s32 *)(rec + 0) = *xtbl << 16;
+        *(s32 *)(rec + 8) = *ztbl << 16;
         *(s32 *)(rec + 4) = 0;
         *(u16 *)(rec + 12) = *htbl;
         *(u16 *)(rec + 14) = 0;
@@ -1269,7 +1269,7 @@ void SceneState_InitFourActorRecordsAndInstallTask(void)
         rec += 24;
     } while (i != 4);
 
-    ride->trail[0].x = (s32)0xffe20000;
+    ride->trail[0].x = 0xffe20000;
     ride->trail[0].y = 0;
     ride->trail[0].z = 0x640000;
     ride->velocity.x = 0;

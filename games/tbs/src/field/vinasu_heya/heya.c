@@ -575,13 +575,13 @@ s32 SceneEffect_SpawnRandomEveryEightFramesB(struct Object_020005e4 *object)
     s32 phase, x, y, speed;
     phase = gFrameCount & 7;
     if (phase != 0) goto done;
-    params.unk00 = 3 - (s32)((u32)(Engine_RandomNext() * 2) >> 16);
+    params.unk00 = 3 - ((u32)(Engine_RandomNext() * 2) >> 16);
     params.color1 = 0x6666;
     params.color2 = 0x6666;
     params.mode = 14;
-    x = object->x + (((s32)((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16);
-    y = object->y + ((32 - (s32)((u32)(Engine_RandomNext() * 32) >> 16)) << 16);
-    speed = Math_Divide(((s32)((u32)(Engine_RandomNext() * 5) >> 16) << 16) + 0x00050000, 10);
+    x = object->x + ((((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16);
+    y = object->y + ((32 - ((u32)(Engine_RandomNext() * 32) >> 16)) << 16);
+    speed = Math_Divide((((u32)(Engine_RandomNext() * 5) >> 16) << 16) + 0x00050000, 10);
     Effect_Spawn(x, y, object->z, 0, speed, phase, 0x000b0000, &params);
 done:
     return 0;
@@ -603,7 +603,7 @@ s32 SceneEffect_SpawnTwoRandomizedParticles(struct Object_020006a0 *obj)
     params.color2 = 0x0000cccc;
     params.unk00 = 0;
 
-    speed = (s32)((u32)(Engine_RandomNext() * 8) >> 16) * 0x3333;
+    speed = ((u32)(Engine_RandomNext() * 8) >> 16) * 0x3333;
     phase = gFrameCount & 15;
 
     Effect_Spawn(
@@ -622,7 +622,7 @@ s32 SceneEffect_SpawnTwoRandomizedParticles(struct Object_020006a0 *obj)
         params.color2 = 0x00008000;
         Effect_Spawn(
             obj->x
-                + (((s32)((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16),
+                + ((((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16),
             obj->y,
             obj->z,
             0,
@@ -1011,7 +1011,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
     v = gGameState.scene;
     if (v == (s32)&SceneId_VinasuHeya1) {
-        return (const struct ScenePlacement *)gVinasuHeyaPlacements1;
+        return gVinasuHeyaPlacements1;
     }
     if (v == (s32)&SceneId_VinasuHeya2) {
         ret = gVinasuHeyaPlacements2;
@@ -1030,7 +1030,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     return (const struct ScenePlacement *)ret;
 
 no_match:
-    return (const struct ScenePlacement *)gVinasuHeyaPlacementsOther;
+    return gVinasuHeyaPlacementsOther;
 }
 
 void VinasuHeya_ShowLockedDoorMessage(void)
@@ -1947,7 +1947,7 @@ void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 {
 
     struct FieldActor *cand;
-    s32 highest = (s32)0xffb00000;
+    s32 highest = 0xffb00000;
     u8 *sel = 0;
     u32 i;
 
@@ -1971,7 +1971,7 @@ void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 
         cand_y = cand->y.fixed + 0x100000;
         if (highest <= cand_y) {
-            *(u16 *)(sel + 100) = (u16)no;
+            *(u16 *)(sel + 100) = no;
             highest = cand_y;
         }
     }
@@ -2277,7 +2277,7 @@ void Scene_RunScene3c8SequenceA(void)
             continue;
 
         priority = leader->sprite->priority;
-        if ((u32)(leader->z.fixed >> 20) <= gVinasuPillarCells[slot].z) {
+        if ((leader->z.fixed >> 20) <= gVinasuPillarCells[slot].z) {
             effect = OverlayObject_PrepareObjectWithCommand15(actor->x.fixed, actor->y.fixed,
                                    actor->z.fixed - 0x40000, 20);
             Actor_SetSpritePriority(0, 3);
@@ -2403,24 +2403,24 @@ const struct SceneEvent *Scene_GetEvents(void)
     s32 v = gGameState.scene;
 
     if (v == (s32)&SceneId_VinasuHeya1) {
-        return (const struct SceneEvent *)gVinasuHeyaEvents1;
+        return gVinasuHeyaEvents1;
     }
     if (v == (s32)&SceneId_VinasuHeya2) {
-        return (const struct SceneEvent *)gVinasuHeyaEvents2;
+        return gVinasuHeyaEvents2;
     }
     if (v == (s32)&SceneId_VinasuHeya3) {
-        return (const struct SceneEvent *)gVinasuHeyaEvents3;
+        return gVinasuHeyaEvents3;
     }
     if (v == (s32)&SceneId_VinasuHeya4) {
-        return (const struct SceneEvent *)gVinasuHeyaEvents4;
+        return gVinasuHeyaEvents4;
     }
     if (v == (s32)&SceneId_VinasuHeya5) {
-        return (const struct SceneEvent *)gVinasuHeyaEvents5;
+        return gVinasuHeyaEvents5;
     }
     if (v == (s32)&SceneId_VinasuHeya6) {
-        return (const struct SceneEvent *)gVinasuHeyaEvents6;
+        return gVinasuHeyaEvents6;
     }
-    return (const struct SceneEvent *)gVinasuHeyaEvents2;
+    return gVinasuHeyaEvents2;
 }
 
 void SceneActor_ClearActorModeAndSetState5(s32 no)
@@ -3353,7 +3353,7 @@ s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
     pos[0] = actor->x.fixed;
     pos[1] = actor->y.fixed - 0x100000;
     pos[2] = actor->z.fixed;
-    piece = (struct FieldActor *)SceneData_FindSlotAtPosition(pos, 0);
+    piece = SceneData_FindSlotAtPosition(pos, 0);
     sprite = (struct TrackSprite *)piece->sprite;
     if (sprite->animations[0]->id == 0x100) {
         s32 vx = actor->velocity_x;

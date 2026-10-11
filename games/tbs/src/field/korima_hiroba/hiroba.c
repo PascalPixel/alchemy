@@ -125,7 +125,7 @@ void SceneEffect_AdjustPaletteWindow(s32 adj)
         u32 idx = phase >> 16;
         u32 win;
 
-        if ((u32)(phase + 0xffef0000) > 0x60000) {
+        if ((phase + 0xffef0000) > 0x60000) {
             win = (idx + 0xff3f) << 16;
             if (win > 0x70000)
                 pal[idx] = SceneEffect_AdjustColorChannels(pal[idx], adj);
@@ -138,24 +138,24 @@ void SceneEffect_AdjustPaletteWindow(s32 adj)
 
 u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
 {
-    s16 green = (s16)((color >> 5) & 31);
-    s16 red = (s16)(color & 31);
-    s16 blue = (s16)((color >> 10) & 31);
+    s16 green = ((color >> 5) & 31);
+    s16 red = (color & 31);
+    s16 blue = ((color >> 10) & 31);
     u32 packed;
 
-    red = (s16)(red + Math_Divide(
+    red = (red + Math_Divide(
         red,
-        (s32)((u32)adj << 2)
+        (adj << 2)
     ));
-    green = (s16)(green - Math_Divide(green, adj));
-    blue = (s16)(blue - Math_Divide(blue, adj));
+    green = (green - Math_Divide(green, adj));
+    blue = (blue - Math_Divide(blue, adj));
 
     if (red > 31)
         red = 31;
 
-    packed = (u32)(s32)red;
-    packed |= ((u32)(s32)blue << 10) | ((u32)(s32)green << 5);
-    return (u16)packed;
+    packed = (s32)red;
+    packed |= ((s32)blue << 10) | ((s32)green << 5);
+    return packed;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -178,10 +178,10 @@ s32 SceneEffect_UpdateOrbitingParticle(struct Particle_02000c4c *record)
     tilt = Engine_MathCos(record->angle + 0x8000);
     if (tilt < 0)
         tilt += 7;
-    sprite[15] = (u16)(tilt >> 3);
+    sprite[15] = (tilt >> 3);
 
-    jitter = (s32)(((u32)Engine_RandomNext() << 9) >> 16);
-    jitter += (s32)(((u32)Engine_RandomNext() << 9) >> 16);
+    jitter = (((u32)Engine_RandomNext() << 9) >> 16);
+    jitter += (((u32)Engine_RandomNext() << 9) >> 16);
     record->angle += jitter + 1024;
 
     return 0;

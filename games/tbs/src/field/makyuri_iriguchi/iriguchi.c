@@ -164,7 +164,7 @@ s32 MakyuriIriguchi_TrailSparks(struct FieldActor *a0)
     FIELD(rec, s32, 12) = 0xcccc;
     FIELD(rec, s32, 0) = 0;
     value = Engine_RandomNext();
-    magic = -(s32)(((u32)(value << 3) >> 16) * 0x3333);
+    magic = -(((u32)(value << 3) >> 16) * 0x3333);
     Effect_Spawn((a0->x.fixed + ((8 - (gFrameCount & 15)) << 16)), (a0->y.fixed + 0x1a0000), a0->z.fixed, 0, magic, 0, 0xb0000, rec);
     return 0;
 }
@@ -391,7 +391,7 @@ void MakyuriIriguchi_ArriveWithSparks(void)
     s32 flag;
     s32 record;
 
-    actor = (struct FieldActor *)Object_GetById(ACTOR_PARTY_LEADER);
+    actor = Object_GetById(ACTOR_PARTY_LEADER);
     flag = GameFlag_IsSet(0x109);
     if (flag == 0) {
         Engine_EventBegin();
@@ -715,7 +715,7 @@ s32 OverlayObject_RampWords24And28Over16Frames(struct FieldActor *o)
     s16 n;
 
     *c = *c + 1;
-    n = (s16)*c;
+    n = *c;
     if (n > 16) {
         return 0;
     }
@@ -730,7 +730,7 @@ s32 OverlayObject_AdvanceScaleCounter(struct FieldActor *o)
     s16 n;
 
     *c = *c + 1;
-    n = (s16)*c;
+    n = *c;
     if (n > 16) {
         return 0;
     }

@@ -163,7 +163,7 @@ s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z, u32 width, u
             struct MapCell *cell = cells + (row << 7);
 
             for (column = 0; column < width; column++) {
-                cell->collision_code = (u8)value;
+                cell->collision_code = value;
                 cell++;
             }
         }
@@ -189,7 +189,7 @@ s32 StagedActor_StopBlockedMotion(struct StagedActor *actor)
         u32 i = 0;
         s32 kind =
             target->animation->entries[0]->anim_id;
-        s32 *kinds = (s32 *)StagedActor_FootprintKinds;
+        s32 *kinds = StagedActor_FootprintKinds;
 
         do {
             if (kind == *kinds++) goto done;

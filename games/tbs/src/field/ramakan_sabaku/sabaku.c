@@ -379,14 +379,14 @@ void RamakanSabaku_ShowRandomPartyLine(s32 a0)
         }
     }
     Engine_EventBegin();
-    Engine_EventSetMessage((s32)((s32)(((s32)p8 << 1) + p8) + v6) + MSGNO(MsgShianJiinIDoNotThinkMasterHama));
+    Engine_EventSetMessage((((p8 << 1) + p8) + v6) + MSGNO(MsgShianJiinIDoNotThinkMasterHama));
     Engine_EventShowMessage((v6 + 1), 0);
     Engine_EventEnd();
 }
 
 void RamakanSabaku_RaiseQuarterTriggers(void)
 {
-    struct EventWork *work = (struct EventWork *)gEventWork;
+    struct EventWork *work = gEventWork;
     u8 *state = (u8 *)&gGameState;
     s32 percent = *(s16 *)(state + 0x232) * 100 / *(s16 *)(state + 0x22c);
 
@@ -585,7 +585,7 @@ void RamakanSabaku_UpdateTravelDust(void)
     s32 phase;
     actor = Object_GetById(gGameState.selected_actor);
     event = gEventWork;
-    if (actor->target_x == (s32)0x80000000) {
+    if (actor->target_x == 0x80000000) {
         return;
     }
     gGameState.hazard_steps++;
@@ -1024,7 +1024,7 @@ void RamakanSabaku_RunSandstorm(void)
         sprite->next = NULL;
         sprite->oam.word.attr01 = (y << 16) | x | attributes;
         sprite->oam.word.attr23 = 0xe400 | tile;
-        Runtime_PushSlotEntry((s32 *)((u8 *)RamakanSabaku_SandWork + offset), 255);
+        Runtime_PushSlotEntry(((u8 *)RamakanSabaku_SandWork + offset), 255);
         sprite++;
         tile += 8;
         offset += 12;

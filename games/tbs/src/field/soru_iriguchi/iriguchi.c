@@ -220,7 +220,7 @@ void FieldScene_RunFlag821Dialogue(void)
 
             u16 *frame = &work->unknown_172;
             s32 one = 1;
-            *frame = (u16)one;
+            *frame = one;
         }
     } else {
         Engine_MessageShowCentered((s32)MsgSoruMinotaurReliefOneEye, 1);

@@ -144,7 +144,7 @@ void Actor_UpdatePresentationFlag(void)
     if (scene->field_0e > 31) {
         ((struct Actor *)Object_GetById(20))->presentation_flags |= 2;
     } else {
-        ((struct Actor *)Object_GetById(20))->presentation_flags &= (u8)~2;
+        ((struct Actor *)Object_GetById(20))->presentation_flags &= ~2;
     }
 }
 
@@ -427,9 +427,9 @@ void ShianMura_ActivateActorTwentyPlatform(void)
     s32 x;
 
     Engine_EventBegin();
-    ((struct FieldActor *)Object_GetById(20))->priority_flags &= 253;
+    Object_GetById(20)->priority_flags &= 253;
     v5 = 0;
-    ((struct FieldActor *)Object_GetById(20))->motion_flags = v5;
+    Object_GetById(20)->motion_flags = v5;
     record = Object_GetById(20);
     x = *(s32 *)(record + 8);
     record = Object_GetById(20);
@@ -535,7 +535,7 @@ void ShianMura_HopLeaderAhead(void)
     union FieldCoordinate pos[3];
     union FieldCoordinate *p;
 
-    leader = (struct FieldActor *)Object_GetById(0);
+    leader = Object_GetById(0);
     flags = leader->motion_flags;
     if (Engine_GameFlagIsSet(0x200) != 0) {
         p = pos;
@@ -568,7 +568,7 @@ void ShianMura_WalkThroughExit(s32 a0)
     u32 i;
     s32 record;
 
-    ((struct FieldActor *)Object_GetById(0))->motion_flags = 0;
+    Object_GetById(0)->motion_flags = 0;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     if (a0 == 6) {
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);

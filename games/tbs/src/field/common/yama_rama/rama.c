@@ -645,8 +645,8 @@ s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct FieldActor *actor)
 
 void SceneActor_UpdateActorFourteenByDepth(void)
 {
-    struct FieldActor *current = (void *)Object_GetById(0);
-    struct FieldActor *other = (void *)Object_GetById(14);
+    struct FieldActor *current = Object_GetById(0);
+    struct FieldActor *other = Object_GetById(14);
 
     if (current->z.fixed <= other->z.fixed) {
         Engine_ActorSetSpritePriority(14, 1);
@@ -719,7 +719,7 @@ s32 YamaRama_ApplyEntryState(void)
             FieldScene_RunScene3a2SequenceA();
         }
     } else if (gGameState.scene == (s32)&SceneId_YamaRama1) {
-        Engine_ActorSetSpriteFlags((struct FieldActor *)Object_GetById(14), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
         Object_GetById(14)->priority_flags |= 2;
         if (Engine_GameFlagIsSet(0x200)) {
             Engine_ActorSetAnimation(14, 5);

@@ -151,7 +151,7 @@ void Title_LoadSprites(s32 unused)
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
     u8 *res;
 
-    buffer = (u8 *)Runtime_BumpAllocateAlternatePool(0x9600);
+    buffer = Runtime_BumpAllocateAlternatePool(0x9600);
     res = Resource_GetTableEntry((s32)&ResourceId_IntroTilesB);
     if (gTitleVramBlock == -1)
         gTitleVramBlock = Resource_FindFreeEntry();
@@ -160,7 +160,7 @@ void Title_LoadSprites(s32 unused)
     Resource_DecodeType01(res, buffer);
     Vram_Load(gTitleVramBlock, 0x1e00, buffer + 0x7800);
 #else
-    buffer = (u8 *)Runtime_BumpAllocateAlternatePool(0x520);
+    buffer = Runtime_BumpAllocateAlternatePool(0x520);
     if (gTitleVramBlock == -1)
         gTitleVramBlock = Resource_FindFreeEntry();
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), buffer);

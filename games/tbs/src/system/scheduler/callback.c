@@ -167,7 +167,7 @@ void Resource_LoadWorkHeader(void)
     const void *header;
     struct ResourceWork *work;
 
-    header = (const void *)Resource_GetTableEntry((u32)&ResourceId_BuildStamp);
+    header = Resource_GetTableEntry((u32)&ResourceId_BuildStamp);
     work = (struct ResourceWork *)&IwramHi_Data1;
     Dma_Set(header, work, 0x84000003, REG_DMA3);
     work->cursor = 0;
@@ -234,7 +234,7 @@ void Resource_LoadCode(u32 index, void *destination)
     void (*routine)(void *, s32);
     s32 end;
 
-    end = Resource_DecodeType01((const void *)Resource_GetTableEntry(index), destination);
+    end = Resource_DecodeType01(Resource_GetTableEntry(index), destination);
     RamCode_Load(routine, Resource_PatchThumbBranch, Resource_PatchThumbBranchCodeSize);
     routine(destination, end);
     MemFree(routine);
@@ -250,9 +250,9 @@ void Runtime_InstallIwramAndIrqs(void)
 
     Io_Write16(0, &REG_IME);
     iwram = IwramIrqMain;
-    Dma_Set((const void *)IwramRuntime_Rom, iwram, 0x84000500, REG_DMA3);
+    Dma_Set(IwramRuntime_Rom, iwram, 0x84000500, REG_DMA3);
     gIrqVector = iwram;
-    Dma_Set((const void *)Runtime_IrqHandlers, (void *)gIrqHandlers, 0x8400000e, REG_DMA3);
+    Dma_Set(Runtime_IrqHandlers, gIrqHandlers, 0x8400000e, REG_DMA3);
     Io_Write16(0, &REG_DISPSTAT);
     Io_Write16(0xc3ff, &REG_KEYCNT);
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
@@ -630,7 +630,7 @@ void System_VBlankHandler(void)
     }
     if (gSerialExchangeActive != 0) {
         u16 *status = &gLinkStatus;
-        *status = SerialRuntime_ExchangePayloads((void *)&gSerialTransfer, (void *)gSerialPeerPayloads);
+        *status = SerialRuntime_ExchangePayloads((void *)&gSerialTransfer, gSerialPeerPayloads);
         SerialRuntime_StepBlockTransfer();
     }
     MusicPlayer_StepVolumeAndPitchTowardTargetsFar();
@@ -738,7 +738,7 @@ void IoWriteQueue_FlushPending(void)
             u8 routine_bytes[word_count << 2];
 
             routine = (QueueFlushRoutine)routine_bytes;
-            Dma_Set((const void *)Resource_ExecuteTransfer, (void *)routine,
+            Dma_Set(Resource_ExecuteTransfer, (void *)routine,
                     word_count | control, REG_DMA3);
             routine(queue, count);
             queue->count = zero;
@@ -1685,7 +1685,7 @@ void Text_FormatSignedDecimalToWork(s32 arg0) {
     val = result;
     tbl = (u32 *)Text_PowersOfTen;
     sign = 0x20;
-    out = (s8 *)gNumberTextBuffer;
+    out = gNumberTextBuffer;
     if (val < 0) {
         val = -val;
         sign = 0x2D;
@@ -1817,7 +1817,7 @@ void Ui_LoadWindowGraphics(void)
 {
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles), BG_CHAR_BLOCK(0), 0x84000800,
             REG_DMA3);
-    Dma_Set((const void *)Ui_WindowPalette, (void *)&BG_PLTT_COLOR(15, 0), 0x80000010,
+    Dma_Set(Ui_WindowPalette, (void *)&BG_PLTT_COLOR(15, 0), 0x80000010,
             REG_DMA3);
     Io_Write16(0, &PLTT_BACKDROP);
     Io_Write16(0x4180, &BG_PLTT_COLOR(15, 4));
@@ -1827,13 +1827,13 @@ void Ui_LoadWindowGraphics(void)
     Io_Write16(0x49a0, &BG_PLTT_COLOR(15, 8));
     Io_Write16(0x51c0, &BG_PLTT_COLOR(15, 9));
     Io_Write16(0x59e0, &BG_PLTT_COLOR(15, 10));
-    Dma_Set((const void *)System_BasicColorPalette, (void *)OBJ_PLTT, 0x800000e0,
+    Dma_Set(System_BasicColorPalette, (void *)OBJ_PLTT, 0x800000e0,
             REG_DMA3);
 }
 
 void PaletteDma_LoadBlock(void)
 {
-    Dma_Set((const void *)System_BasicColorPalette, (void *)OBJ_PLTT, 0x800000e0, REG_DMA3);
+    Dma_Set(System_BasicColorPalette, (void *)OBJ_PLTT, 0x800000e0, REG_DMA3);
 }
 
 void Runtime_InitializeHeap(void)
@@ -2438,7 +2438,7 @@ void Resource_DecompressHalfwords(const void *source, void *destination)
 {
     u32 words = (u32)Resource_DecompressHalfwordsCodeSize >> 2;
     u32 routine[words];
-    Dma_Set((const void *)Resource_DecodeHalfwordLz, routine, words | 0x84000000, REG_DMA3);
+    Dma_Set(Resource_DecodeHalfwordLz, routine, words | 0x84000000, REG_DMA3);
     ((void (*)(const void *, void *))routine)(source, destination);
 }
 
@@ -2479,7 +2479,7 @@ void ColorBuffer_BackupAndBrighten(u8 *buffer, u32 amount, u8 *backup, u32 bytes
 {
     u32 words = (u32)ColorBuffer_BackupAndBrightenCodeSize >> 2;
     u32 routine[words];
-    Dma_Set((const void *)ColorBuffer_BrightenKernel, routine, words | 0x84000000, REG_DMA3);
+    Dma_Set(ColorBuffer_BrightenKernel, routine, words | 0x84000000, REG_DMA3);
     ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
@@ -2487,7 +2487,7 @@ void ColorBuffer_BackupAndDarken(u8 *buffer, u32 amount, u8 *backup, u32 bytes)
 {
     u32 words = (u32)ColorBuffer_BackupAndDarkenCodeSize >> 2;
     u32 routine[words];
-    Dma_Set((const void *)ColorBuffer_DarkenKernel, routine, words | 0x84000000, REG_DMA3);
+    Dma_Set(ColorBuffer_DarkenKernel, routine, words | 0x84000000, REG_DMA3);
     ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
@@ -2495,7 +2495,7 @@ void ColorBuffer_BackupAndScaleThreeQuarters(u8 *buffer, u8 *backup, u32 bytes)
 {
     u32 words = (u32)ColorBuffer_BackupAndScaleThreeQuartersCodeSize >> 2;
     u32 routine[words];
-    Dma_Set((const void *)ColorBuffer_ScaleThreeQuartersKernel, routine, words | 0x84000000, REG_DMA3);
+    Dma_Set(ColorBuffer_ScaleThreeQuartersKernel, routine, words | 0x84000000, REG_DMA3);
     ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
 
@@ -2503,7 +2503,7 @@ void ColorBuffer_BackupAndHalve(u8 *buffer, u8 *backup, u32 bytes)
 {
     u32 words = (u32)ColorBuffer_BackupAndHalveCodeSize >> 2;
     u32 routine[words];
-    Dma_Set((const void *)ColorBuffer_HalveKernel, routine, words | 0x84000000, REG_DMA3);
+    Dma_Set(ColorBuffer_HalveKernel, routine, words | 0x84000000, REG_DMA3);
     ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
 
@@ -2511,7 +2511,7 @@ void ColorBuffer_BackupAndBrightenPartial(u8 *buffer, u32 amount, u8 *backup, u3
 {
     u32 words = (u32)ColorBuffer_BackupAndBrightenPartialCodeSize >> 2;
     u32 routine[words];
-    Dma_Set((const void *)ColorBuffer_BrightenPartialKernel, routine, words | 0x84000000, REG_DMA3);
+    Dma_Set(ColorBuffer_BrightenPartialKernel, routine, words | 0x84000000, REG_DMA3);
     ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
@@ -2519,7 +2519,7 @@ void ColorBuffer_BackupAndDarkenPartial(u8 *buffer, u32 amount, u8 *backup, u32 
 {
     u32 words = (u32)ColorBuffer_BackupAndDarkenPartialCodeSize >> 2;
     u32 routine[words];
-    Dma_Set((const void *)ColorBuffer_DarkenPartialKernel, routine, words | 0x84000000, REG_DMA3);
+    Dma_Set(ColorBuffer_DarkenPartialKernel, routine, words | 0x84000000, REG_DMA3);
     ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
@@ -2527,7 +2527,7 @@ void ColorBuffer_BackupAndScaleNonzeroThreeQuarters(u8 *buffer, u8 *backup, u32 
 {
     u32 words = (u32)ColorBuffer_BackupAndScaleNonzeroThreeQuartersCodeSize >> 2;
     u32 routine[words];
-    Dma_Set((const void *)ColorBuffer_ScaleNonzeroThreeQuartersKernel, routine, words | 0x84000000, REG_DMA3);
+    Dma_Set(ColorBuffer_ScaleNonzeroThreeQuartersKernel, routine, words | 0x84000000, REG_DMA3);
     ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
 
@@ -2535,7 +2535,7 @@ void ColorBuffer_BackupAndHalveNonzero(u8 *buffer, u8 *backup, u32 bytes)
 {
     u32 words = (u32)ColorBuffer_BackupAndHalveNonzeroCodeSize >> 2;
     u32 routine[words];
-    Dma_Set((const void *)ColorBuffer_HalveNonzeroKernel, routine, words | 0x84000000, REG_DMA3);
+    Dma_Set(ColorBuffer_HalveNonzeroKernel, routine, words | 0x84000000, REG_DMA3);
     ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
 
@@ -3545,7 +3545,7 @@ void SerialTest_Run(void)
         value--;
     } while (n >= 0);
     zero = 0;
-    Bios_CpuSet((const void *)&zero, (void *)gMapCellBuffer, 0x05000100);
+    Bios_CpuSet((const void *)&zero, gMapCellBuffer, 0x05000100);
     SerialRuntime_WaitForStatusMask(3);
 restart:
     SerialRuntime_BeginTransferB(gMapCellBuffer);
@@ -3562,7 +3562,7 @@ restart:
             } while (tick >= 0);
         }
         if (gSerialReceiveDest == 0) {
-            Dma_Set((const void *)gMapCellBuffer, (void *)0x06001000, 0x840000a0, REG_DMA3);
+            Dma_Set(gMapCellBuffer, (void *)0x06001000, 0x840000a0, REG_DMA3);
             goto restart;
         }
         WaitFrames(1);

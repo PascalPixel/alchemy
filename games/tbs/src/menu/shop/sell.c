@@ -138,7 +138,7 @@ s32 Shop_Run(s32 row, s32 keeper_id)
         row = 0;
     EventTable_ApplyRowAbilities(row);
     Shop_InitializeCursorWork();
-    shop = ((struct ShopRuntime *)gMenuWork);
+    shop = (gMenuWork);
     shop->shop_type = EventTable_GetRowType(row);
     if (row == 16)
         shop->warrior_shop = 1;
@@ -451,7 +451,7 @@ void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor)
 
     sprite = cursor->anchor;
     if (sprite != NULL) {
-        delta = (u16)sprite->x - cursor->target_x;
+        delta = sprite->x - cursor->target_x;
         step = delta / 4;
         if (step < 0)
             step = -step;
@@ -459,7 +459,7 @@ void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor)
             if (step != 0)
                 sprite->x = sprite->x - step;
             else
-                sprite->x = (u16)sprite->x - 1;
+                sprite->x = sprite->x - 1;
         } else {
             if (delta >= 0)
                 goto move_y;
@@ -471,7 +471,7 @@ void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor)
         sprite->oam.x = sprite->x;
 
 move_y:
-        delta = (u16)sprite->y - cursor->target_y;
+        delta = sprite->y - cursor->target_y;
         step = delta / 4;
         if (step < 0)
             step = -step;
@@ -479,7 +479,7 @@ move_y:
             if (step != 0)
                 sprite->y = sprite->y - step;
             else
-                sprite->y = (u16)sprite->y - 1;
+                sprite->y = sprite->y - 1;
         } else {
             if (delta >= 0)
                 return;
@@ -1237,7 +1237,7 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
 s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 {
     struct ShopRuntime *menu = gMenuWork;
-    struct BtlUnit *unit = (struct BtlUnit *)UnitGetFar(unit_id);
+    struct BtlUnit *unit = UnitGetFar(unit_id);
     s32 item_id = unit->inventory[slot] & 0x1ff;
     struct ItemDefinition *info = Item_GetDirectFar(item_id);
     s32 replaced;
@@ -2078,7 +2078,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
     struct RenderOutput *cursor_anchor;
 
     Shop_InitializeCursorWork();
-    shop = ((struct ShopRuntime *)gMenuWork);
+    shop = (gMenuWork);
     shop->party_action = list_window;
 
     {
@@ -2147,7 +2147,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
 
 s32 Sanctum_RunPartyService(void)
 {
-    struct ShopRuntime *shop = ((struct ShopRuntime *)gMenuWork);
+    struct ShopRuntime *shop = (gMenuWork);
     s32 price_window;
     s32 redraw;
     s32 kind;
@@ -2386,7 +2386,7 @@ enum InnMessageId {
 
 void Shop_ResetEffects(void)
 {
-    struct ShopRuntime *shop = (struct ShopRuntime *)gMenuWork;
+    struct ShopRuntime *shop = gMenuWork;
     struct EffectSlot *effect = shop->effects;
     s32 count = 23;
     s8 member;
@@ -2496,7 +2496,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
 
 s32 Inn_RoomPrice(s32 mode)
 {
-    struct ShopRuntime *shop = (struct ShopRuntime *)gMenuWork;
+    struct ShopRuntime *shop = gMenuWork;
     s32 active = 0;
     s32 factor = Inn_PriceMultipliers[mode];
     s32 index;

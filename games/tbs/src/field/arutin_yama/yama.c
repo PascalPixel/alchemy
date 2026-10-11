@@ -151,7 +151,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object)
 	target = object->facing_target;
 	if (target != NULL)
 	{
-		object->facing_flags = (u8)(0xFE & object->facing_flags);
+		object->facing_flags = (0xFE & object->facing_flags);
 		angle = (u16)ArcTan2(
 			target->position_z - object->position_z, target->position_x - object->position_x);
 		old = object->facing;
@@ -167,7 +167,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object)
 			{
 				delta = -0x1000;
 			}
-			object->facing = (u16)(old + delta);
+			object->facing = (old + delta);
 		}
 	}
 	return 1;
@@ -591,7 +591,7 @@ void FieldScene_RunEarlySequence(void)
 	{
 		Engine_TaskWait(1);
 		v = *(u16 *)ArutinYama_RiseTimer + 1;
-		*(u16 *)ArutinYama_RiseTimer = (u16)v;
+		*(u16 *)ArutinYama_RiseTimer = v;
 	} while ((u32)(v << 16) <= 0x640000);
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, 0);
@@ -628,7 +628,7 @@ void FieldScene_RunScene3a4SequenceH(void)
 	{
 		Engine_TaskWait(1);
 		v = *(u16 *)ArutinYama_RiseTimer + 1;
-		*(u16 *)ArutinYama_RiseTimer = (u16)v;
+		*(u16 *)ArutinYama_RiseTimer = v;
 	} while ((u32)(v << 16) <= 0x640000);
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, 0);
@@ -667,7 +667,7 @@ void FieldScene_RunScene3a4SequenceI(void)
 	{
 		Engine_TaskWait(1);
 		v = *(u16 *)ArutinYama_RiseTimer + 1;
-		*(u16 *)ArutinYama_RiseTimer = (u16)v;
+		*(u16 *)ArutinYama_RiseTimer = v;
 	} while ((u32)(v << 16) <= 0x640000);
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, 0);
@@ -1157,7 +1157,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	{
 		if (Engine_GameFlagIsSet(0x8fd) != 0)
 		{
-			table = (const struct SceneEvent *)ArutinYama_OpenedAreaScript;
+			table = ArutinYama_OpenedAreaScript;
 		}
 		else
 		{
@@ -2036,7 +2036,7 @@ void FieldScene_RunScene3a4SequenceG(void)
 
 	if (gFrameCount % 3 == 0)
 	{
-		spark = (struct FieldActor *)Object_Create(
+		spark = Object_Create(
 			200, (((u32)(Engine_RandomNext() * 48) >> 16) << 16) + 0x2fd0000, -0x400000, 0x2600000);
 		if (spark != NULL)
 		{
@@ -2057,7 +2057,7 @@ void FieldScene_RunScene3a4SequenceG(void)
 			spark->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
 			spark->sprite->priority = 1;
 			Object_SetMode(spark, 1);
-			Engine_ObjectSetScript(spark, (const s32 *)ArutinYama_SparkScript);
+			Engine_ObjectSetScript(spark, ArutinYama_SparkScript);
 			spark->velocity_x = (((u32)(Engine_RandomNext() * 6) >> 16) - 3) << 16;
 			spark->velocity_y = 0x80000;
 			spark->velocity_z = ((u32)(Engine_RandomNext() * 0x600) >> 16) - 0x300;
@@ -2532,7 +2532,7 @@ void ArutinYama_AdvanceRollingObject(struct FieldActor *object)
 	timer = (s16 *)&object->work;
 	if (*timer != 0)
 	{
-		if ((s16)-- * timer == 20)
+		if (-- * timer == 20)
 		{
 			Engine_AudioPlayCue(184);
 		}

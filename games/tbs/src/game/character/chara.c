@@ -171,7 +171,7 @@ void UnitCalc(s32 owner)
     s32 cap;
     s16 old;
 
-    work = (struct StatWork *)Runtime_BumpAllocateAlternatePool(sizeof(struct StatWork));
+    work = Runtime_BumpAllocateAlternatePool(sizeof(struct StatWork));
     st = UnitGet(owner);
     work->hp = st->base_hp;
     work->ep = st->base_ep;
@@ -645,7 +645,7 @@ void Party_ApplyStatePreset(void)
     GameFlag_SetBit(282);
 
     for (id = 0; id <= 1; id++) {
-        struct BtlUnit *unit = (struct BtlUnit *)UnitGet(id);
+        struct BtlUnit *unit = UnitGet(id);
         s32 ratio;
         s32 rate;
         s32 slot;
@@ -1386,7 +1386,7 @@ s32 Inventory_Remove(s32 owner, s32 slot)
             s32 i;
 
             inv->inventory[slot] = 0;
-            list = (s16 *)inv->inventory;
+            list = inv->inventory;
             count = 0;
             for (i = 0; i < 15; i++) {
                 if (list[i] != 0)
@@ -1695,7 +1695,7 @@ struct LevelUpWork {
 
 s32 OwnerAction_Add(s32 state_index, s32 value)
 {
-    struct BtlUnit *state = (struct BtlUnit *)UnitGet(state_index);
+    struct BtlUnit *state = UnitGet(state_index);
     s32 key = value & OWNER_ACTION_ID_MASK;
     s32 found = -1;
     s32 index;
@@ -1761,7 +1761,7 @@ void Owner_InitRecords(void)
     u8 *name;
 
     for (owner = 0; owner <= 7; owner++) {
-        state = (struct BtlUnit *)UnitGet(owner);
+        state = UnitGet(owner);
         Ui_AdjustValueWithoutLimitFar(owner + (s32)MsgCharacterName, name_buf);
         name = state->name;
         name[0] = name_buf[0];
@@ -1779,7 +1779,7 @@ void Owner_InitRecords(void)
 
     if (*remote != -1) {
         do {
-            state = (struct BtlUnit *)UnitGet(*remote);
+            state = UnitGet(*remote);
             if (state != 0) {
                 state->class_id = *remote;
                 tmpl = Character_GetDefinition(state->class_id);
@@ -1809,7 +1809,7 @@ void Owner_LevelNoOp(void)
 
 u32 Owner_GetLevelThreshold(s32 owner, s32 level)
 {
-    struct BtlUnit *state = (struct BtlUnit *)UnitGet(owner);
+    struct BtlUnit *state = UnitGet(owner);
 
     if (state->class_index != 0) {
         if (level <= 0) {
@@ -1831,8 +1831,8 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
     s32 diff;
     s32 level;
 
-    st = (struct BtlUnit *)UnitGet(owner);
-    work = (struct LevelUpWork *)Runtime_BumpAllocateAlternatePool(sizeof(struct LevelUpWork));
+    st = UnitGet(owner);
+    work = Runtime_BumpAllocateAlternatePool(sizeof(struct LevelUpWork));
     work->class_index = st->class_index;
     level = st->level;
     work->level = level;
@@ -1896,7 +1896,7 @@ struct LevelUpResult *Owner_GetValueIfLevelThresholdReached(s32 owner_no, struct
 {
     struct BtlUnit *owner;
 
-    owner = (struct BtlUnit *)UnitGet(owner_no);
+    owner = UnitGet(owner_no);
     if ((owner->experience >= Owner_GetLevelThreshold(owner_no, owner->level + 1)) &&
         (Owner_LevelUp(owner_no, value) != NULL)) {
         return value;
@@ -1936,7 +1936,7 @@ s32 GameFlag_Test(s32 flag)
 
     flag_mask = 1 << (7 & flag);
     flag = ((u32)flag << 0x14) >> 0x17;
-    flag_bytes = (u8 *)GameFlagBytes;
+    flag_bytes = GameFlagBytes;
     flag_value = flag_bytes[flag] & flag_mask;
     return (u32)((0 - flag_value) | flag_value) >> 0x1F;
 }
@@ -1947,7 +1947,7 @@ s32 GameFlag_SetBit(s32 flag)
     u8 *flag_bytes;
 
     flag_mask = 1 << (7 & flag);
-    flag_bytes = (u8 *)GameFlagBytes;
+    flag_bytes = GameFlagBytes;
     flag = ((u32)flag << 0x14) >> 0x17;
     flag_bytes[flag] = flag_bytes[flag] | flag_mask;
     return flag;
@@ -1959,7 +1959,7 @@ void GameFlag_ClearBit(s32 flag)
     u8 *flag_bytes;
 
     flag_mask = ~(1 << (7 & flag));
-    flag_bytes = (u8 *)GameFlagBytes;
+    flag_bytes = GameFlagBytes;
     flag = ((u32)flag << 0x14) >> 0x17;
     flag_bytes[flag] = flag_bytes[flag] & flag_mask;
 }
@@ -1971,7 +1971,7 @@ u32 GameFlag_Toggle(s32 flag)
     s32 flag_value;
 
     flag_mask = 1 << (7 & flag);
-    flag_bytes = (u8 *)GameFlagBytes;
+    flag_bytes = GameFlagBytes;
     flag = ((u32)flag << 0x14) >> 0x17;
     flag_bytes[flag] = flag_bytes[flag] ^ flag_mask;
     flag_value = flag_bytes[flag] & flag_mask;
@@ -1999,7 +1999,7 @@ u8 GameFlag_IncrementByte(s32 flag)
 {
     u8 *flag_bytes;
 
-    flag_bytes = (u8 *)GameFlagBytes;
+    flag_bytes = GameFlagBytes;
     flag = ((u32)flag << 0x14) >> 0x17;
     if (flag_bytes[flag] <= 0xFE) {
         flag_bytes[flag] = flag_bytes[flag] + 1;
@@ -2011,7 +2011,7 @@ u8 GameFlag_DecrementByte(s32 flag)
 {
     u8 *flag_bytes;
 
-    flag_bytes = (u8 *)GameFlagBytes;
+    flag_bytes = GameFlagBytes;
     flag = ((u32)flag << 0x14) >> 0x17;
     if (flag_bytes[flag] != 0) {
         flag_bytes[flag] = flag_bytes[flag] + 0xFF;
@@ -2039,7 +2039,7 @@ void GameFlag_SetNibble(s32 flag, s32 value)
     s32 field_mask = 0xF;
     s32 shift = 4 & flag;
     s32 mask = field_mask << shift;
-    u8 *bytes = (u8 *)GameFlagBytes;
+    u8 *bytes = GameFlagBytes;
 
     flag = ((u32)flag << 0x14) >> 0x17;
     bytes[flag] = (bytes[flag] & ~mask) |
@@ -2342,7 +2342,7 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
 
 s32 Owner_GetResistanceValue(s32 owner, s32 index)
 {
-    struct BtlUnit *state = (struct BtlUnit *)UnitGet(owner);
+    struct BtlUnit *state = UnitGet(owner);
     s32 values[4];
     s32 result = 0;
 
@@ -2366,7 +2366,7 @@ s32 Owner_GetDefaultElement(struct BtlUnit *state)
 
 u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2])
 {
-    struct BtlUnit *state = (struct BtlUnit *)UnitGet(owner);
+    struct BtlUnit *state = UnitGet(owner);
     u32 index;
     s32 values[4];
     s32 i;
@@ -2626,7 +2626,7 @@ s32 Item_GetEquippedElement(s32 id)
 	unit = UnitGet(id);
 	if (unit->class_index == 0)
 		return Owner_GetDefaultElement(unit);
-	item = Inventory_GetEquippedDefinition((void *)unit, 1); // 1 : 武器
+	item = Inventory_GetEquippedDefinition(unit, 1); // 1 : 武器
 	if (item != NULL)
 		return item->element;
 	return 4;
@@ -2924,7 +2924,7 @@ s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit)
 s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)
 {
     struct BtlUnit *state =
-        (struct BtlUnit *)UnitGet(owner);
+        UnitGet(owner);
     struct DjinnRecoveryList *table;
     s32 i;
     s32 status;
@@ -2963,7 +2963,7 @@ u32 Djinn_IsActive(s32 owner, s32 index, s32 bit)
 s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
 {
     struct BtlUnit *state =
-        (struct BtlUnit *)UnitGet(owner);
+        UnitGet(owner);
     s32 result = Trade_CanOfferDjinn(owner, index, bit);
 
     if (result != 0) {
@@ -2981,7 +2981,7 @@ s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
 u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit)
 {
     struct BtlUnit *state =
-        (struct BtlUnit *)UnitGet(owner);
+        UnitGet(owner);
     u32 present = Djinn_IsActive(owner, index, bit);
 
     if (present != 0) {
@@ -3094,7 +3094,7 @@ s32 Party_SumDjinnCounts(s32 index)
 {
     u16 owners[16];
     s32 result = 0;
-    s32 count = Party_ListActiveOwners((s16 *)owners);
+    s32 count = Party_ListActiveOwners(owners);
 
     if (result < count) {
         u16 *owner = owners;
@@ -3152,7 +3152,7 @@ void InventorySnapshot_Save(void)
         first = gGameState.first_shortcut;
         second = gGameState.second_shortcut;
         for (owner = 0; owner < 4; owner++) {
-            unit = (struct BtlUnit *)UnitGet(owner);
+            unit = UnitGet(owner);
             for (n = 0; n < 15; n++)
                 *save++ = unit->inventory[n];
             for (n = 0; n < 15; n++) {
@@ -3160,7 +3160,7 @@ void InventorySnapshot_Save(void)
                     unit->inventory[n] = 0;
             }
             n = 0;
-            inventory = (s16 *)unit->inventory;
+            inventory = unit->inventory;
             for (i = 0; i < 15; i++) {
                 if (inventory[i] != 0)
                     inventory[n++] = inventory[i];
@@ -3204,7 +3204,7 @@ void InventorySnapshot_Restore(void)
 
         gGameState.first_shortcut = *source++;
         gGameState.second_shortcut = *source++;
-        *(u16 *)((u8 *)gGameState.active_owners) = *source++;
+        *(u16 *)(gGameState.active_owners) = *source++;
         *(u16 *)((u8 *)gGameState.active_owners + 2) = *source;
         source = gInventorySnapshot;
         *source = 0;

@@ -928,7 +928,7 @@ void PaletteScene_AdjustPaletteWindow(s32 adjustment)
         u32 index = phase >> 16;
         u32 second_window;
 
-        if ((u32)(phase + 0xffef0000) > 0x60000) {
+        if ((phase + 0xffef0000) > 0x60000) {
             second_window = (index + 0xff3f) << 16;
             if (second_window > 0x70000)
                 palette[index] = PaletteScene_AdjustColor(palette[index], adjustment);
@@ -941,22 +941,22 @@ void PaletteScene_AdjustPaletteWindow(s32 adjustment)
 
 u16 PaletteScene_AdjustColor(u16 color, s32 adjustment)
 {
-    s16 green = (s16)((color >> 5) & 31);
-    s16 red = (s16)(color & 31);
-    s16 blue = (s16)((color >> 10) & 31);
+    s16 green = ((color >> 5) & 31);
+    s16 red = (color & 31);
+    s16 blue = ((color >> 10) & 31);
     u32 packed;
 
-    red = (s16)(red + Math_Divide(
+    red = (red + Math_Divide(
         red,
-        (s32)((u32)adjustment << 2)
+        (adjustment << 2)
     ));
-    green = (s16)(green - Math_Divide(green, adjustment));
-    blue = (s16)(blue - Math_Divide(blue, adjustment));
+    green = (green - Math_Divide(green, adjustment));
+    blue = (blue - Math_Divide(blue, adjustment));
 
     if (red > 31)
         red = 31;
 
-    packed = (u32)(s32)red;
-    packed |= ((u32)(s32)blue << 10) | ((u32)(s32)green << 5);
-    return (u16)packed;
+    packed = (s32)red;
+    packed |= ((s32)blue << 10) | ((s32)green << 5);
+    return packed;
 }

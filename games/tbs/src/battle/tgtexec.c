@@ -2065,7 +2065,7 @@ void BtlObjMake(struct BtlObj *actor, s32 unit, s32 x, s32 y)
 	class_id = unit_record->class_id;
 	actor->overlay = anim;
 
-	if (class_id <= GERALD && Inventory_GetEquippedItemFar((struct BtlUnit *)unit_record, 1) == 15)
+	if (class_id <= GERALD && Inventory_GetEquippedItemFar(unit_record, 1) == 15)
 	{
 		if (unit_record->class_id == ROBIN)
 		{
@@ -3198,7 +3198,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 id)
 	object = BtlObjGet(id)->object;
 	if ((object != NULL) && ((0xF & object->record_storage_kind) == 1))
 	{
-		entry = ResourceMetadata_RegisterFar((struct AnimationObject *)object->records, 0x11b);
+		entry = ResourceMetadata_RegisterFar(object->records, 0x11b);
 		if (entry != 0)
 		{
 			effect = (struct AnimationEntry *)entry;
@@ -3968,7 +3968,7 @@ void BattleUnit_ResetGuardLevels(void)
 	s32 count;
 	s32 index;
 
-	count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)ids);
+	count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, ids);
 	for (index = 0; index < count; index++)
 	{
 		struct BtlUnit *actor;
@@ -4029,8 +4029,8 @@ s32 BattleEscape_CheckSuccess(void)
 
 s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries)
 {
-	u16 *excluded_units = (u16 *)Runtime_BumpAllocateAlternatePool(17);
-	u16 *unit_ids = (u16 *)Runtime_BumpAllocateAlternatePool(9);
+	u16 *excluded_units = Runtime_BumpAllocateAlternatePool(17);
+	u16 *unit_ids = Runtime_BumpAllocateAlternatePool(9);
 	s32	 unit_count = BattleParty_ListLivingUnits(1, unit_ids);
 	s32	 excluded_count = 0;
 	s32	 entry_count = 0;
@@ -11364,7 +11364,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 {
 	s32						   match_count = 0;
 	struct FormationCandidate *pool =
-		(struct FormationCandidate *)Runtime_BumpAllocateAlternatePool(128);
+		Runtime_BumpAllocateAlternatePool(128);
 	u16 party[8];
 	s32 level_total = 0;
 	s32 unit_count = BattleParty_PrepareActiveOwners(party);
@@ -11460,7 +11460,7 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 	s32						i;
 
 	base =
-		(struct BattleBaseStats *)Runtime_BumpAllocateAlternatePool(sizeof(struct BattleBaseStats));
+		Runtime_BumpAllocateAlternatePool(sizeof(struct BattleBaseStats));
 	state = UnitGetFar(owner);
 	Iwram_CopyWords(base, &state->base_hp, sizeof(struct BattleBaseStats));
 
@@ -12123,11 +12123,11 @@ void Battle_AwardSpoils(void)
 	}
 	list = units;
 	count = BattleParty_ListLivingUnits(1, list);
-	backup = (struct BtlUnit *)Runtime_BumpAllocateAlternatePool(sizeof(struct BtlUnit));
+	backup = Runtime_BumpAllocateAlternatePool(sizeof(struct BtlUnit));
 	for (i = 0; i < count; i++)
 	{
 		unit_id = list[i];
-		unit = (struct BtlUnit *)UnitGetFar(unit_id);
+		unit = UnitGetFar(unit_id);
 		unit->experience += spoils->experience;
 		while (Iwram_CopyWords(backup, unit, sizeof(struct BtlUnit)),
 			Owner_GetValueIfLevelThresholdReachedFar(unit_id, gains) != 0)

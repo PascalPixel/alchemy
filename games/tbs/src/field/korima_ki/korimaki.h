@@ -70,22 +70,22 @@ struct PaletteSceneRecord
 	u16 values[1];
 };
 
-extern u8 gKorimaKiEntrances[];
-extern u8 gKorimaKiRegions[];
-extern u8 gKorimaKiExits[];
-extern u8 gKorimaKiPlacements[];
-extern u8 gKorimaKiEvents[];
+extern struct SceneEntrance gKorimaKiEntrances[];
+extern s16 gKorimaKiRegions[];
+extern u32 gKorimaKiExits[];
+extern struct ScenePlacement gKorimaKiPlacements[];
+extern struct SceneEvent gKorimaKiEvents[];
 
 extern s32		 gKorimaKiSparkOrigin[3];
 extern s32		 gKorimaKiSparkCount;
 extern s32		 gKorimaKiSparkSound;
 extern s32		 gKorimaKiTransitionStep;
 void			 PaletteScene_SpawnEffect(void);
-extern const s32 SceneAction_ActorOneEntry[];
-extern const s32 SceneAction_ActorTwoEntry[];
-extern const s32 SceneAction_ActorThreeEntry[];
-extern const s32 SceneAction_GroupFinish[];
-extern u8		 gKorimaKiEffectScript[];
+extern s32 SceneAction_ActorOneEntry[];
+extern s32 SceneAction_ActorTwoEntry[];
+extern s32 SceneAction_ActorThreeEntry[];
+extern s32 SceneAction_GroupFinish[];
+extern s32 gKorimaKiEffectScript[];
 
 void					   Battle_ResetEffectCounter();
 void					   Object_RefreshSelectorById();

@@ -269,16 +269,16 @@ struct FloatingNut
 	s32 (*update)(union FieldObject *object);
 };
 
-extern const struct SceneEntrance  gLunpaEntrances[];
-extern const struct SceneEntrance  gGateEntrances[];
-extern const u32				   gLunpaExits[];
-extern const u32				   gGateExits[];
-extern const struct ScenePlacement gLunpaPlacements[];
-extern const struct ScenePlacement gGatePlacements[];
-extern const struct SceneEvent	   gLunpaSealedEvents[];
-extern const struct SceneEvent	   gLunpaReopenedEvents[];
-extern const struct SceneEvent	   gGateEvents[];
-extern const struct LunpaDoor	   gLunpaDoors[];
+extern struct SceneEntrance gLunpaEntrances[];
+extern struct SceneEntrance gGateEntrances[];
+extern u32 gLunpaExits[];
+extern u32 gGateExits[];
+extern struct ScenePlacement gLunpaPlacements[];
+extern struct ScenePlacement gGatePlacements[];
+extern struct SceneEvent gLunpaSealedEvents[];
+extern struct SceneEvent gLunpaReopenedEvents[];
+extern struct SceneEvent gGateEvents[];
+extern struct LunpaDoor gLunpaDoors[];
 
 void FloatingNut_Catch(void);
 void HiddenPuddle_Freeze(void);

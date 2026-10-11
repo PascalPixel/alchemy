@@ -50,7 +50,7 @@ void Engine_EventBegin(void);
 void SceneState_ApplyValues14And0And5(void);
 s32	 SceneData_ReturnZero(void);
 
-extern u8 KareiTorebi_SceneTable[];
+extern u32 KareiTorebi_SceneTable[];
 u8		 *KareiTorebi_GetExits(void);
 void	  KareiTorebi_MoveGuardAside(void);
 void	  KareiTorebi_AskGoToTolbi(void);

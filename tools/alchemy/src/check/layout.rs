@@ -657,7 +657,7 @@ mod tests {
     fn sources_name_tile_recipes_directly_and_through_part_lists() {
         let directory = tempfile::tempdir().unwrap();
         let root = directory.path();
-        std::fs::create_dir_all(root.join("A")).unwrap();
+        std::fs::create_dir_all(root.join("a")).unwrap();
         std::fs::write(
             root.join("a/logo.tsv"),
             "LOGO_TILES\tgbapal\nLOGO_TILES\t8bpp\n",

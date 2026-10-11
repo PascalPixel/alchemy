@@ -458,7 +458,7 @@ SECTIONS
     "*/games/common/src/graphics/window/adjust_value_without_limit.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0003ca74)
     "*/recon/tla/ja/rom.o"(.rom.0003cad8)
-    "*/games/common/src/system/memory/clear_word_if_set.o"(.text)
+    "*/games/tla/src/system/memory/clear_word_if_set.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0003cbd2)
     "*/games/tla/src/graphics/window/drain.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0003cc5e)

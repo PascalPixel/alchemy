@@ -535,7 +535,7 @@
         "*/games/common/src/graphics/window/adjust_value_without_limit.o"(.text)
         "*/recon/tla/raw/0803c9bc.o"(.text)
         "*/recon/tla/raw/0803ca20.o"(.text)
-        "*/games/common/src/system/memory/clear_word_if_set.o"(.text)
+        "*/games/tla/src/system/memory/clear_word_if_set.o"(.text)
         "*/recon/tla/raw/0803cb1a.o"(.text)
         "*/games/tla/src/graphics/window/drain.o"(.text)
         "*/recon/tla/raw/0803cba6.o"(.text)

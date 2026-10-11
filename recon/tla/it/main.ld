@@ -434,7 +434,7 @@
     "*/games/common/src/graphics/window/adjust_value_without_limit.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0003c9bc)
     "*/recon/tla/it/rom.o"(.rom.0003ca20)
-    "*/games/common/src/system/memory/clear_word_if_set.o"(.text)
+    "*/games/tla/src/system/memory/clear_word_if_set.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0003cb72)
     "*/games/tla/src/graphics/window/drain.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0003cbfe)

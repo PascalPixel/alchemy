@@ -2174,7 +2174,7 @@ void FieldScene_SpawnEightShots(void)
     record = Object_GetById(8);
     descriptor.field0 = 1;
     descriptor.field24 = 0x0119;
-    descriptor.field28 = 0x0200d1d8;
+    descriptor.field28 = (u32)ShianJiin_ShotScript;
     descriptor.field16 = 224 << 10;
     descriptor.field20 = 192 << 9;
     for (i = 0; i <= 7; i++) {

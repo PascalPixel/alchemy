@@ -57,7 +57,7 @@ void KorimaPalette_Capture(void);
 
 void State_ApplyRectByLayoutSelector(void)
 {
-    if (**(s16 **)0x020092c4 == 1) {
+    if (*(s16 *)gKorimaMagariReturned == 1) {
         Map_CopyCellAttributes(0, 0, 1, 4, 4, 9);
     } else {
         Map_CopyCellAttributes(0, 0, 1, 4, 6, 9);

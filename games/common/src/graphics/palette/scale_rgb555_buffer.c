@@ -6,6 +6,7 @@
 #include "mem.h"
 #include "io_reg.h"
 #include "dma.h"
+#include "ram_buffer.h"
 #include "fixed_math.h"
 #include "system.h"
 #include "ui.h"
@@ -253,14 +254,14 @@ void LuckyDice_Run(void)
 	Dma_Set((void *)base, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
 	Dma_Set((void *)0x05000000, palette, 0x84000080, (volatile u32 *)0x040000d4);
 	base += 0x1c0;
-	LuckyDice_Decode((void *)base, (void *)0x02010000);
-	Dma_Set((void *)0x02010000, (void *)0x06004000, 0x84002580, (volatile u32 *)0x040000d4);
+	LuckyDice_Decode((void *)base, Ram_MapCellBuffer);
+	Dma_Set(Ram_MapCellBuffer, (void *)0x06004000, 0x84002580, (volatile u32 *)0x040000d4);
 	base = (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
 	Dma_Set((void *)base, obj_palette, 0x84000080, (volatile u32 *)0x040000d4);
 	Dma_Set((void *)base, (void *)0x05000200, 0x84000080, (volatile u32 *)0x040000d4);
 	base += 0x200;
-	LuckyDice_Decode((void *)base, (void *)0x02010000);
-	Dma_Set((void *)0x02010000, (void *)0x06010000, 0x84001f00, (volatile u32 *)0x040000d4);
+	LuckyDice_Decode((void *)base, Ram_MapCellBuffer);
+	Dma_Set(Ram_MapCellBuffer, (void *)0x06010000, 0x84001f00, (volatile u32 *)0x040000d4);
 	Graphics_ScaleRgb555Buffer(obj_palette, (u16 *)0x05000200, 0, 256);
 	Graphics_ScaleRgb555Buffer(palette, (u16 *)0x05000000, 0, 256);
 

@@ -6,14 +6,12 @@
 
 s32 PsynergyMenu_CollectActions(struct BtlUnit *owner, u16 *actions, s32 mode)
 {
-    /* FAKEMATCH: the scalar cursor, offset clears and empty branches preserve operand order and 274 bytes; indexed clearing yields 266. */
+    /* FAKEMATCH: the doubled zero store through the byte-offset cursor makes loop.c replace the counter with the pointer (274 bytes); a single indexed clear keeps the counter (266). */
     s32 n;
-    u16 *out;
     s32 passes;
     s32 count;
     s32 i;
     s32 j;
-    s32 off;
 
     passes = (mode != 2) ? 4 : 3;
     for (n = 62; n >= 0; n -= 2) {
@@ -24,32 +22,27 @@ s32 PsynergyMenu_CollectActions(struct BtlUnit *owner, u16 *actions, s32 mode)
     count = 0;
 
     if (mode == 1) {
-        for (i = 0, off = (u8 *)owner->action_slots - (u8 *)owner, out = actions; i <= 31; i++, off += 4) {
-            if (*(u16 *)(off + (s32)owner) != 0) {
-                if (BtlActGet(*(u16 *)(off + (s32)owner) & ACTION_ID_MASK)->type_0c != 0) {
-                    *out = *(u16 *)((s32)owner + off);
-                    out++;
+        for (i = 0; i < 32; i++) {
+            if (owner->action_slots[i].encoded_action != 0) {
+                if (BtlActGet(owner->action_slots[i].encoded_action & ACTION_ID_MASK)->type_0c != 0) {
+                    actions[count] = owner->action_slots[i].encoded_action;
                     count++;
                 }
             }
         }
     } else {
         for (j = 0; j < passes; j++) {
-            out = (u16 *)(count * sizeof(actions[0]) + (s32)actions);
-
             for (i = 0; i < 32; i++) {
                 if (owner->action_slots[i].encoded_action != 0) {
                     struct BtlAct *ability = BtlActGet(owner->action_slots[i].encoded_action & ACTION_ID_MASK);
 
                     if (j == 0 && (ability->type_0c != 0 || (ability->tgt_flg & 0x40) != 0)) {
-                        *out = owner->action_slots[i].encoded_action;
-                        out++;
+                        actions[count] = owner->action_slots[i].encoded_action;
                         count++;
                     } else if (j == 1) {
                     } else if (j == 2) {
                     } else if (j == 3 && ability->type_0c == 0 && (ability->tgt_flg & 0x40) == 0) {
-                        *out = owner->action_slots[i].encoded_action;
-                        out++;
+                        actions[count] = owner->action_slots[i].encoded_action;
                         count++;
                     }
                 }

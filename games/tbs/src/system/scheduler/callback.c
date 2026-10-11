@@ -898,7 +898,7 @@ void Text_DrawSignedDecimalRightAligned(s32 value, s32 keta)
 #include "heap_state.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
-#include "../iowrite.h"
+#include "iowrite.h"
 
 extern u8 gCartridgeResetMarker[];
 

@@ -24,6 +24,7 @@
 #include "heap_state.h"
 #include "battle_efx.h"
 #include "io_write_queue.h"
+#include "iowrite.h"
 #include "effect_step.h"
 #include "battle_formation.h"
 #include "character.h"
@@ -455,16 +456,6 @@ struct EffectLaunch
 	s16 actors[24];
 };
 
-/* FAKEMATCH: needed to match: the write goes through its own int, which loads each value as a word, and the do/while (0) ends a scheduling region after it, as in the slideshow's register writes. */
-#define Io_Write16(reg, value)                                                                                            \
-	do                                                                                                                    \
-	{                                                                                                                     \
-		/* FAKEMATCH: needed to match: the one-pass register-write boundary preserves measured instruction scheduling. */ \
-		/* FAKEMATCH: needed to match: the register-write word temporary preserves measured value allocation. */          \
-		s32 value_ = (value);                                                                                             \
-		(reg) = value_;                                                                                                   \
-	} while (0)
-
 void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 {
 	/* FAKEMATCH: needed to match: an unread ten-word launch tail, the native frame's 40 extra bytes. */
@@ -488,10 +479,10 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 	QueueIoWriteDelay2(0x0400000c, 0x784);
 	QueueIoWriteDelay2(0x04000050, 0x3f44);
 	WaitFrames(1);
-	Io_Write16(REG_WIN0H, 240);
-	Io_Write16(REG_WIN0V, 0x1088);
-	Io_Write16(REG_WININ, 63);
-	Io_Write16(REG_WINOUT, 17);
+	Io_Write16(240, &REG_WIN0H);
+	Io_Write16(0x1088, &REG_WIN0V);
+	Io_Write16(63, &REG_WININ);
+	Io_Write16(17, &REG_WINOUT);
 	if (mode == 0)
 	{
 		QueueIoWriteDelay2(0x04000052, 0x100e);

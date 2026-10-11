@@ -2,7 +2,7 @@
 #include "dma.h"
 #include "io_reg.h"
 #include "irqlock.h"
-#include "../iowrite.h"
+#include "iowrite.h"
 
 void SerialRuntime_Initialize(void)
 {

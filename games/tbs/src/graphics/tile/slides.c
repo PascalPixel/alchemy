@@ -14,6 +14,7 @@
 #include "types.h"
 #include "callback_scheduler.h"
 #include "io_write_queue.h"
+#include "iowrite.h"
 #include "io_reg.h"
 #include "map_scroll.h"
 #include "heap_state.h"
@@ -139,15 +140,6 @@ extern u8 gOptionMirror;
 
 void WaitFrames(s32 frames);
 
-/* FAKEMATCH: needed to match: the int temporary and one-pass write keep word-value construction, register order and a single literal pool. */
-#define Io_Write16(reg, value) \
-    do { \
-        /* FAKEMATCH: needed to match: the one-pass register-write boundary preserves measured instruction scheduling. */ \
-        /* FAKEMATCH: needed to match: the register-write word temporary preserves measured value allocation. */ \
-        s32 value_ = (value); \
-        (reg) = value_; \
-    } while (0)
-
 s32 DisplayScroll_RunSlideshow(void)
 {
     u32 slide;
@@ -159,37 +151,35 @@ s32 DisplayScroll_RunSlideshow(void)
     gOptionMirror = 0;
     Scheduler_ResetTaskTable();
     Scheduler_AddOrUpdateCallback(DisplayScroll_StepPositionEveryFourFrames, 0x480);
-    Io_Write16(REG_DISPCNT, 0x40);
+    Io_Write16(0x40, &REG_DISPCNT);
     DisplayScroll_BuildHblankWordTable((u32 *)0x06007800);
     DisplayScroll_BuildHblankWordTable((u32 *)0x0600f800);
     Graphics_ClearCharacterBlockAndPalette(0);
     Graphics_ClearCharacterBlockAndPalette(1);
-    Io_Write16(REG_BG2CNT, 0x1f8a);
-    Io_Write16(REG_BG3CNT, 0x0f83);
-    Io_Write16(REG_DISPCNT, 0x1c40);
-    Io_Write16(REG_BLDCNT, 0x2844);
+    Io_Write16(0x1f8a, &REG_BG2CNT);
+    Io_Write16(0x0f83, &REG_BG3CNT);
+    Io_Write16(0x1c40, &REG_DISPCNT);
+    Io_Write16(0x2844, &REG_BLDCNT);
     DisplayScroll_InitObjectTable();
     WaitFrames(300);
     for (slide = 0; slide <= 32; slide++) {
         Graphics_LoadCharacterBlockAndPalette(DisplayScroll_SlideResources[slide], (slide & 1) ^ 1);
         for (alpha = 1; alpha <= 16; alpha++) {
             if (slide & 1)
-                Io_Write16(REG_BLDALPHA, (alpha << 8) | (16 - alpha));
+                Io_Write16((alpha << 8) | (16 - alpha), &REG_BLDALPHA);
             else
-                Io_Write16(REG_BLDALPHA, ((16 - alpha) << 8) | alpha);
+                Io_Write16(((16 - alpha) << 8) | alpha, &REG_BLDALPHA);
             WaitFrames(4);
         }
         WaitFrames(267);
     }
-    Io_Write16(REG_BLDCNT, 0);
-    Io_Write16(REG_DISPCNT, 0x1040);
+    Io_Write16(0, &REG_BLDCNT);
+    Io_Write16(0x1040, &REG_DISPCNT);
     Ui_LoadWindowGraphics();
     Bg0_ClearTilemap();
     gOamCopyEnabled = 1;
     return 0;
 }
-
-#undef Io_Write16
 
 #define Flash_Handler0 (*(s16 *)&Flash_Handler0)
 #define gFlashNumRemainingBytes (*(struct DisplayScrollObject * *)&gFlashNumRemainingBytes)

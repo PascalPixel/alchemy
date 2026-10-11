@@ -436,8 +436,8 @@ void WaitFrames(s32 frames)
                 Bios_SoundBiasOn();
                 Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
                 gSleepActive = 0;
-                Io_Write16(dispcnt, &REG_DISPCNT);
-                Io_Write16(backdrop, &PLTT_BACKDROP);
+                Io_Write16((u16)dispcnt, &REG_DISPCNT);
+                Io_Write16((u16)backdrop, &PLTT_BACKDROP);
                 for (j = 0; j < 10; j++)
                     CAMELOT_ASM("Halt in VBlankIntrWait")
                     VBlankIntrWait();

@@ -8,7 +8,7 @@
 #define Io_Write16(v, reg)     \
 	do                         \
 	{                          \
-		u32 value_ = (u16)(v); \
+		u32 value_ = (v);      \
 		*(reg) = value_;       \
 	} while (0)
 

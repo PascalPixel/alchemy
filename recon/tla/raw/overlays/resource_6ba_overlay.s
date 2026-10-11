@@ -1077,6 +1077,68 @@ Func_02000848:
 	.4byte Data_02000ea8
 .L_02008aa8:
 	.4byte gInput
+	.section .text.x02008ae0,"ax",%progbits
+	.balign 4
+	.global Func_02000ae0
+	.thumb_func
+Func_02000ae0:
+	push {r5, r6, r7, lr}
+	mov r7, r10
+	mov r6, r8
+	push {r6, r7}
+	adds r6, r1, #0
+	mov r10, r0
+	adds r0, r6, #0
+	adds r7, r2, #0
+	mov r8, r3
+	bl Object_GetById
+	mov r2, r10
+	adds r5, r0, #0
+	cmp r2, #1
+	bne .L_02008b10
+	mov r3, r8
+	lsls r2, r3, #16
+	lsls r1, r7, #16
+	adds r0, r6, #0
+	bl Func_02000df8
+	movs r3, #0
+	str r3, [r5, #24]
+	str r3, [r5, #28]
+.L_02008b10:
+	mov r2, r10
+	cmp r2, #2
+	bne .L_02008b46
+	ldr r3, [r5, #24]
+	movs r2, #128
+	lsls r2, r2, #9
+	cmp r3, r2
+	bge .L_02008b3e
+.L_02008b20:
+	movs r0, #1
+	bl WaitFrames
+	ldr r3, [r5, #24]
+	movs r2, #160
+	lsls r2, r2, #3
+	adds r2, #30
+	adds r3, r3, r2
+	movs r2, #255
+	lsls r2, r2, #8
+	adds r2, #255
+	str r3, [r5, #24]
+	str r3, [r5, #28]
+	cmp r3, r2
+	ble .L_02008b20
+.L_02008b3e:
+	movs r3, #128
+	lsls r3, r3, #9
+	str r3, [r5, #24]
+	str r3, [r5, #28]
+.L_02008b46:
+	pop {r3, r5}
+	mov r8, r3
+	mov r10, r5
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
 	.section .text.x02008ba0,"ax",%progbits
 	.balign 4
 	.global Func_02000ba0

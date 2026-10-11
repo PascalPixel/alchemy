@@ -1,4 +1,3 @@
-#define OWN_Object_CreateFar
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -8,19 +7,371 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
+#include "mem.h"
+#include "object_lookup.h"
 #include "types.h"
-#include "objdisp.h"
-#include "iwram_call.h"
-#include "object_runtime.h"
-#include "fixed_math.h"
+#include "field_event.h"
+#include "object_effect.h"
 #include "global_cells.h"
+#include "object_runtime.h"
+#include "map_scroll.h"
+#include "event_runtime.h"
+#include "animspr.h"
+#include "fieldobj.h"
+#include "metadata_lookup.h"
+#include "objdisp.h"
+#include "callback_scheduler.h"
+#include "scene.h"
+#include "iwram_call.h"
+#include "fixed_math.h"
+#include "battle_effect_runtime.h"
+#include "heap_state.h"
 #include "game_state.h"
 #include "script_object_runtime.h"
 #include "field_sprite.h"
-#include "animspr.h"
 #include "btlpty.h"
 #include "b5_context.h"
-#include "field_event.h"
+#include "ram_buffer.h"
+#include "map.h"
+#include "fieldcoo.h"
+#include "fieldrun.h"
+
+void Object_AttachWorkTargetToObject(s32 id, s32 flag)
+{
+    struct ObjectRuntime *obj;
+    struct ObjectRuntime *target;
+    struct EventWork *work;
+    struct MapScrollWork *p;
+
+    obj = ObjectTable_Get(id);
+    work = Runtime_AllocateBlock(0x1B, 0xCCC);
+    target = (struct ObjectRuntime *)work->view_center;
+    p = gMapWork[0];
+    if (obj != 0) {
+        p->origin = &target->x;
+        ObjectDispatch_InitFromTable4WithArgumentFar(target, (void *)obj);
+        if (flag == 0) {
+            target->x = obj->x;
+            target->y = obj->y;
+            target->z = obj->z;
+            WaitFrames(1);
+            if (((struct EventRuntime *)work)->mode_19e != 3) {
+                Map_ApplyWorkOriginAndSpanFar();
+            }
+        }
+    }
+}
+
+void ObjectTable_AllocateAndSetObjectSpeed(s32 first, s32 second)
+{
+    struct EventWork *owner = Runtime_AllocateBlock(0x1b, 0xccc);
+    ((struct ObjectRuntime *)owner->view_center)->speed_limit = first;
+    ((struct ObjectRuntime *)owner->view_center)->acceleration = second;
+}
+
+void ObjectDispatch_InitFromTable6Far(void *);
+
+void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use_setter)
+{
+    s32 should_use_setter;
+    struct EventWork *runtime_block;
+    s32 minimum_x;
+    s32 minimum_z;
+    s32 maximum_x;
+    s32 object_z_offset;
+    s32 maximum_z;
+    s32 position_x;
+    s32 position_z;
+    s32 position_y;
+    struct MapScrollWork *camera_state;
+    struct ObjectRuntime *object;
+
+    position_x = requested_x;
+    position_y = requested_y;
+    should_use_setter = use_setter;
+    position_z = requested_z;
+    runtime_block = Runtime_AllocateBlock(0x1B, 0xCCC);
+    object = (struct ObjectRuntime *)runtime_block->view_center;
+    camera_state = gMapWork[0];
+    minimum_x = camera_state->min_x + 0x780000;
+    object_z_offset = object->y;
+    minimum_z = camera_state->min_y + object_z_offset + 0x600000;
+    maximum_x = camera_state->max_x + 0xFF880000;
+    maximum_z = camera_state->max_y + object_z_offset + 0xFFC00000;
+    camera_state->origin = &object->x;
+    ObjectDispatch_InitFromTable6Far(object);
+    if (position_x == -1) {
+        position_x = object->x;
+    }
+    if (position_y == -1) {
+        position_y = object->y;
+    }
+    if (position_z == -1) {
+        position_z = object->z;
+    }
+    if (position_x < minimum_x) {
+        position_x = minimum_x;
+    }
+    if (position_z < minimum_z) {
+        position_z = minimum_z;
+    }
+    if (position_x > maximum_x) {
+        position_x = maximum_x;
+    }
+    if (position_z > maximum_z) {
+        position_z = maximum_z;
+    }
+    if (should_use_setter == 0) {
+        object->x = position_x;
+        object->y = position_y;
+        object->z = position_z;
+        WaitFrames(1U);
+        if (((struct EventRuntime *)runtime_block)->mode_19e != 3) {
+            Map_ApplyWorkOriginAndSpanFar();
+        }
+    } else {
+        Object_SetMoveTargetFar(object, position_x, position_y, position_z);
+    }
+}
+
+void Object_PlaceCurrentWithinCameraBounds(s32 arg0, s32 arg1)
+{
+    struct ObjectRuntime *obj;
+
+    obj = ObjectTable_Get();
+    Runtime_AllocateBlock(0x1B, 0xCCC);
+    if (obj != NULL) {
+        Motion_CamBounds(obj->x, -1, obj->z, arg1);
+    }
+}
+
+void Script_WaitForEventTimeoutFar(struct ObjectRuntime *);
+
+void BattleFx_CommitObjectPositionAndWait(void)
+{
+    Script_WaitForEventTimeoutFar((struct ObjectRuntime *)
+        ((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))->view_center);
+    Battle_WaitMode0(2);
+}
+
+s32 Battle_GetWorkObject1e0(void)
+{
+    return (s32)((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))->view_center;
+}
+
+void BattleFx_LinkObjectToTarget(struct ObjectRuntime *target, s32 keep_current_position)
+{
+    struct ObjectRuntime *object;
+
+    object = (struct ObjectRuntime *)
+        ((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))->view_center;
+    if (target != NULL) {
+        ObjectDispatch_InitFromTable4WithArgumentFar(object, NULL);
+        object->linked_object = target;
+        if (keep_current_position == 0) {
+            object->x = target->x;
+            object->y = target->y;
+            object->z = target->z;
+        }
+    }
+}
+
+//--------------------------------------------------------------------------
+
+// mapfx.c
+
+// マップの表示範囲とズームの移り変わり、ほかのオブジェクトについて回るオブジェクト
+
+//--------------------------------------------------------------------------
+
+#define WaitFrames ((s32 (*)(s32))WaitFrames)
+
+#define gScanlinePitch ((u8 *)&gScanlinePitch)
+
+// スプライトの OAM 属性2 の上位バイト (bit 2〜3 が表示優先度)
+#define ATTR2_HI(spr) (((u8 *)&((struct AnimationObject *)(spr))->part[0])[9])
+
+s16 *BattleAction_FindDescriptor(s16 action);
+void			   ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 mode);
+void			   AudioCommand_PlayFar(s32 cue);
+void			   Battle_WaitMode0(s32 state);
+
+//--------------------------------------------------------------------------
+// マップの表示範囲を決める
+//--------------------------------------------------------------------------
+void Map_SetViewBounds(s32 min_x, s32 min_y, s32 max_x, s32 max_y)
+{
+	struct MapScrollWork *work = gMapWork[0];
+
+	work->min_x = min_x;
+	work->min_y = min_y;
+	work->max_x = max_x;
+	work->max_y = max_y;
+}
+
+//--------------------------------------------------------------------------
+// 毎フレームの処理 : ズームを前の値から目標へ 1 段すすめる
+// 画面中心のオブジェクトが止まっているあいだは待つ
+//--------------------------------------------------------------------------
+s32 BattleFx_StepRatioTransition(void)
+{
+	struct PerspectiveWork *work;
+	s16					   *frames;
+	s32					   *from;
+	s16					   *step;
+	s32						zoom;
+	s32						delta;
+
+	work = gMapWork[0];
+	if (((struct EventWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT, 0xccc))->view_center->paused
+		!= 0)
+		return;
+	frames = (s16 *)&work->zoom_transition_frames;
+	if (*frames == 0)
+		return;
+	from = &work->previous_zoom;
+	delta = work->zoom - *from;
+	step = &work->zoom_transition_step;
+	(*step)++;
+	zoom = *from + __divsi3(delta * *step, *frames);
+	work->distance = Iwram_MulQ16(work->far_plane, zoom);
+	*(u32 *)gScanlinePitch = work->pitch + 1;
+	if (*step == *frames)
+	{
+		*frames = 0;
+		Scheduler_RemoveCallback((SchedulerCallback)BattleFx_StepRatioTransition);
+	}
+}
+
+//--------------------------------------------------------------------------
+// ズームの移り変わりを始める (イベントの mode が 3 のときだけ)
+// zoom   : 倍率 (16.16 固定小数)
+// frames : かけるフレーム数
+//--------------------------------------------------------------------------
+void BattleFx_ScheduleRatioTransition(s32 zoom, s32 frames)
+{
+	struct PerspectiveWork *work = gMapWork[0];
+	s32						inv;
+
+	if (((struct EventWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT, 0xccc))->mode != 3)
+		return;
+	{
+		inv = Iwram_RatioMulQ14(zoom, 0x10000); // 1 / zoom
+	}
+	work->previous_zoom = work->zoom;
+	work->zoom = inv;
+	work->zoom_transition_frames = frames;
+	work->zoom_transition_step = 0;
+	Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleFx_StepRatioTransition, 0xc94);
+}
+
+//--------------------------------------------------------------------------
+// ズームの移り変わりが終わるまで待つ (イベントの mode が 3 のとき、最長 300 フレーム)
+//--------------------------------------------------------------------------
+void Event_WaitForZoomTransition(void)
+{
+	s32						frames;
+	struct PerspectiveWork *work = gMapWork[0];
+
+	if (((struct EventWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT, 0xccc))->mode == 3)
+	{
+		frames = 0;
+		if (*(s16 *)&work->zoom_transition_frames != 0)
+		{
+			do
+			{
+				WaitFrames(1);
+				frames++;
+			} while (frames < 300 && *(s16 *)&work->zoom_transition_frames != 0);
+		}
+	}
+}
+
+//--------------------------------------------------------------------------
+// 毎フレームの処理 : 付いていく相手の位置に置き、y には絵の box_x と 8 ドットを足す
+//--------------------------------------------------------------------------
+s32 BattleFx_CopyLinkedObjectPosition(void *self)
+{
+	struct FieldActor *obj = self;
+	struct FieldActor *link;
+
+	link = obj->linked_object;
+	if (link != NULL)
+	{
+		obj->motion_flags = 0;
+		obj->x.fixed = link->x.fixed;
+		obj->y.fixed =
+			link->y.fixed
+			+ ((s8)Resource_GetMetadataRecordFar(*BattleAction_FindDescriptor(*(s16 *)&obj->work))
+					->box_x
+				<< 16)
+			+ (8 << 16);
+		obj->terrain_height = link->terrain_height;
+		obj->z.fixed = link->z.fixed;
+	}
+	return 0;
+}
+
+//--------------------------------------------------------------------------
+// id のオブジェクトについて回るオブジェクト (種類 21) を出し、wait フレーム待つ
+// mode : 下位 4 ビットはオブジェクトの mode、下位 8 ビットが 6 なら音 110、
+//        0x100 で表示優先度 1 (なければ相手と同じ優先度)
+//--------------------------------------------------------------------------
+void BattleFx_SpawnLinked(s32 id, s32 mode, s32 wait)
+{
+	struct FieldActor *target;
+
+	if ((mode & 0xff) == 6)
+	{
+		AudioCommand_PlayFar(110);
+	}
+
+	target = ObjectTable_Get(id);
+	if (target != 0)
+	{
+		struct FieldActor *obj =
+			Object_CreateFar(21, target->x.fixed, target->y.fixed, target->z.fixed);
+
+		if (obj != 0)
+		{
+			ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_LinkedObjectScript);
+			ObjectDispatch_ApplyArgumentToChildrenFar(obj, mode & 15);
+			obj->motion_flags = 0;
+			obj->timer = 0;
+			obj->work = id;
+			obj->update = (void (*)(union FieldObject *))BattleFx_CopyLinkedObjectPosition;
+			obj->sprite->flags = 0;
+			obj->linked_object = target;
+
+			if ((mode & 0x100) != 0)
+			{
+				s32 mask = 13;
+				u8	attr = ATTR2_HI(obj->sprite);
+
+				mask = -mask;
+				mask &= attr;
+				mask |= 4;
+				ATTR2_HI(obj->sprite) = mask;
+			}
+			else
+			{
+				s32 pri = 12;
+				u8	src = ATTR2_HI(target->sprite);
+				u8	dst;
+				s32 mask = 13;
+
+				pri &= src;
+				dst = ATTR2_HI(obj->sprite);
+				mask = -mask;
+				mask &= dst;
+				mask |= pri;
+				ATTR2_HI(obj->sprite) = mask;
+			}
+		}
+		Battle_WaitMode0(wait);
+	}
+}
+
 void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
 void ObjectDispatch_ReleaseFar(struct DispatchObject *work);
 
@@ -41,8 +392,6 @@ struct LinkedEffectObject {
     struct LinkedEffectObject *resource;
     s32 (*callback)(void *);
 };
-
-void *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 
 void ObjectDispatch_SetSingleChildFlagsFar(void *, s32);
 s32 ArcTan2(s32, s32);
@@ -272,4 +621,227 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
     if (((struct AnimationObject *)found->animation)->entries[0]->anim_id != id)
         return NULL;
     return found;
+}
+
+#undef WaitFrames
+
+void Vector_AddPolarOffset(s32 distance, s32 angle, struct FieldPosition *position);
+s32 Map_CheckObjectStepFar(struct ObjectRuntime *actor, struct FieldPosition *position);
+void Battle_Reset(void);
+void WaitFrames(s32 frames);
+void BattleFx_FinishAction(void);
+
+#define TILE_CELLS ((struct MapCell *)Ram_MapCellBuffer)
+#define TILE_CELLS_TARGET ((struct MapCell *)(Ram_MapCellBuffer + 0x200))
+#define TILE_CELLS_ABOVE ((struct MapCell *)(Ram_MapCellBuffer - 0x200))
+void ObjectMotion_ArmCallback(s32, s32, s32);
+void Object_RefreshSelectorById(s32);
+void ObjectMotion_CommitCurrentPositionAndActivate(s32);
+void Battle_WaitMode0(s32);
+
+s32 Field_TryJumpForward(void)
+{
+    struct ObjectRuntime *leader = Object_GetById(gGameState.selected_actor);
+    s32 result = -1;
+    s32 angle = (leader->angle + 0x2000) & 0xc000;
+    u8 *flags = &leader->flags;
+    u8 saved = *flags;
+    struct FieldStepWork *work = gEventWork;
+    s32 child_mode = 1;
+    struct FieldPosition position;
+    struct FieldPosition *pos;
+    struct ObjectRuntime *target;
+
+    pos = &position;
+again:
+    pos->x = (leader->x & 0xfff00000) + 0x80000;
+    pos->y = leader->y;
+    pos->z = (leader->z & 0xfff00000) + 0x80000;
+    Vector_AddPolarOffset(0x100000, angle, pos);
+    if (Map_CheckObjectStepFar(leader, pos) == 1)
+        return -1;
+    pos->x = (leader->x & 0xfff00000) + 0x80000;
+    pos->y = leader->y;
+    pos->z = (leader->z & 0xfff00000) + 0x80000;
+    Vector_AddPolarOffset(0x200000, angle, pos);
+    if (Map_CheckObjectStepFar(leader, pos) != 0)
+        goto done;
+    if (leader->animation_kind == 1)
+        child_mode = ((struct FieldSprite *)leader->animation)->flags;
+    Battle_Reset();
+    ObjectDispatch_ApplyArgumentToChildrenFar(leader, 6);
+    WaitFrames(6);
+    AudioCommand_PlayFar(152);
+    ObjectDispatch_ApplyArgumentToChildrenFar(leader, 7);
+    leader->speed_limit = 0x30000;
+    leader->acceleration = 0x20000;
+    leader->velocity_y = 0x40000;
+    *flags &= 0x7e;
+    ObjectDispatch_SetSingleChildFlagsFar(leader, child_mode & 0xfe);
+    ObjectMotion_SetPositionAndCommit(gGameState.selected_actor, ((union FieldCoordinate *)&pos->x)->part.pixel, ((union FieldCoordinate *)&pos->z)->part.pixel);
+    ObjectDispatch_ApplyArgumentToChildrenFar(leader, 6);
+    ObjectDispatch_SetSingleChildFlagsFar(leader, child_mode);
+    if ((target = Object_FindNearestFacingTarget(leader, 207)) != NULL
+        || (target = Object_FindNearestFacingTarget(leader, 205)) != NULL) {
+        ObjectDispatch_ApplyArgumentToChildrenFar(target, 7);
+        leader->y -= 0x10000;
+        leader->terrain_height -= 0x10000;
+        WaitFrames(2);
+        leader->y -= 0x10000;
+        leader->terrain_height -= 0x10000;
+        WaitFrames(10);
+        leader->y += 0x10000;
+        leader->terrain_height += 0x10000;
+        WaitFrames(4);
+        leader->y += 0x10000;
+        leader->terrain_height += 0x10000;
+    } else {
+        WaitFrames(6);
+    }
+    *flags = saved;
+    BattleFx_FinishAction();
+    if (work != NULL)
+        work->encounter_steps += Iwram_MulQ16(work->encounter_rate, 0x200000);
+    if (GetMapCellCollisionFar(leader->terrain_id, pos->x, pos->z) == 0xf9) {
+        ObjectDispatch_ApplyArgumentToChildrenFar(leader, 1);
+        WaitFrames(6);
+        goto again;
+    }
+    result = 0;
+done:
+    return result;
+}
+
+s32 FieldEffect_UpdateGridPlacement(void)
+{
+    struct ObjectRuntime *object = Object_GetById(gGameState.selected_actor);
+    s32 grid_x = 8 + ((((union FieldCoordinate *)&object->x)->part.pixel) & 0xfff0);
+    s32 grid_z = 8 + ((((union FieldCoordinate *)&object->z)->part.pixel) & 0xfff0);
+    s32 tile_x = grid_x - 8;
+    s32 tile_z = grid_z - 8;
+    s32 result;
+
+    Battle_Reset();
+
+    if (gGameState.movement_mode == 0) {
+        s32 index = grid_x / 16 + (grid_z / 16) * 128;
+
+        if (TILE_CELLS[index].collision_code == TILE_CELLS_TARGET[index].collision_code) {
+            /* FAKEMATCH: needed to match: the six-word probe preserves the 24-byte frame; a three-word position halves it. */
+            s32 vector[6];
+            struct FieldPosition *position = (struct FieldPosition *)vector;
+
+            position->x = object->x;
+            position->y = object->y - 0x100000;
+            position->z = object->z;
+            result = CheckMapPositionCellOccupiedFar((const s32 *)position);
+            if (result != 0)
+                goto failure;
+
+            ObjectMotion_SetPositionAndCommit(gGameState.selected_actor, grid_x, grid_z);
+            object->speed_limit = 0x10000;
+            ObjectMotion_ArmCallback(gGameState.selected_actor, 0xc000, 0);
+            Object_RefreshSelectorById(gGameState.selected_actor);
+            object->action_flags = 1;
+            object->flags = 0;
+            ObjectDispatch_SetSingleChildFlagsFar(object, 0);
+            ObjectDispatch_ApplyArgumentToChildrenFar(object, 13);
+            Object_SetMoveTargetFar(object, grid_x << 16,
+                object->y - 0x100000, (grid_z << 16) + 0x100000);
+            ObjectMotion_CommitCurrentPositionAndActivate(gGameState.selected_actor);
+            gGameState.movement_mode = 1;
+        } else {
+            goto failure;
+        }
+    } else {
+        ObjectDispatch_ApplyArgumentToChildrenFar(object, 10);
+        object->flags = 3;
+        object->velocity_y = 0x40000;
+        object->terrain_height = object->y;
+        ObjectDispatch_SetSingleChildFlagsFar(object, 1);
+        Battle_WaitMode0(6);
+        gGameState.movement_mode = 0;
+        object->action_flags = 1;
+        object->angle = 0xc000;
+    }
+
+    BattleFx_FinishAction();
+    return 0;
+
+failure:
+    BattleFx_FinishAction();
+    return -1;
+}
+
+s32 battle_owner_69(void)
+{
+    struct ObjectRuntime *object = Object_GetById(gGameState.selected_actor);
+    s16 child_mode = 1;
+    s32 grid_x = 8 + ((((union FieldCoordinate *)&object->x)->part.pixel) & 0xfff0);
+    s32 grid_z = 8 + ((((union FieldCoordinate *)&object->z)->part.pixel) & 0xfff0);
+    s32 tile_x = grid_x - 8;
+    s32 tile_z = grid_z - 8;
+    s32 result;
+
+    Battle_Reset();
+
+    if (object->animation_kind == 1)
+        child_mode = ((struct FieldSprite *)object->animation)->flags;
+
+    if (gGameState.movement_mode == 0) {
+        s32 index = grid_x / 16 + (grid_z / 16) * 128;
+
+        if (TILE_CELLS[index].collision_code == TILE_CELLS_ABOVE[index].collision_code) {
+            /* FAKEMATCH: needed to match: the six-word probe preserves the 24-byte frame; a three-word position halves it. */
+            s32 vector[6];
+            struct FieldPosition *position = (struct FieldPosition *)vector;
+
+            position->x = object->x;
+            position->y = object->y;
+            position->z = object->z;
+            result = CheckMapPositionCellOccupiedFar((const s32 *)position);
+            if (result != 0)
+                goto failure;
+
+            object->action_flags = 0;
+            ObjectMotion_SetPositionAndCommit(gGameState.selected_actor, grid_x, grid_z);
+            ObjectDispatch_ApplyArgumentToChildrenFar(object, 6);
+            WaitFrames(4);
+            ObjectDispatch_ApplyArgumentToChildrenFar(object, 7);
+            object->velocity_y = 0x40000;
+            WaitFrames(4);
+            object->flags = 0;
+            child_mode &= 0xfe;
+            ObjectDispatch_SetSingleChildFlagsFar(object, child_mode);
+            object->speed_limit = 0x10000;
+            object->velocity_y = 0;
+            ObjectDispatch_ApplyArgumentToChildrenFar(object, 12);
+            WaitFrames(4);
+            gGameState.movement_mode = 1;
+            object->action_flags = 1;
+            WaitFrames(8);
+        } else {
+            goto failure;
+        }
+    } else {
+        object->flags = 0;
+        ObjectDispatch_ApplyArgumentToChildrenFar(object, 11);
+        Object_SetMoveTargetFar(object, grid_x << 16, object->y + 0x80000,
+            (grid_z << 16) - 0x100000);
+        ObjectMotion_CommitCurrentPositionAndActivate(gGameState.selected_actor);
+        object->flags = 3;
+        child_mode |= 1;
+        object->terrain_height = object->y;
+        ObjectDispatch_SetSingleChildFlagsFar(object, child_mode);
+        Battle_WaitMode0(4);
+        gGameState.movement_mode = 0;
+        object->action_flags = 1;
+    }
+
+    BattleFx_FinishAction();
+    return 0;
+
+failure:
+    BattleFx_FinishAction();
+    return -1;
 }

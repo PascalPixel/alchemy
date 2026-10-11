@@ -16,6 +16,8 @@
 #include "iwram_call.h"
 #include "field_effect.h"
 #include "text/msg_ids.h"
+#include "field_scene.h"
+#include "objcmd.h"
 
 s32 Math_RemainderUnsigned(s32 value, s32 modulus);
 
@@ -122,7 +124,7 @@ struct WorldMapOam
 
 u8 *SceneData_GetScriptTable(void)
 {
-	return Placement_Scripts;
+	return (u8 *)Placement_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -132,17 +134,17 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-	return Placement_Messages;
+	return (u8 *)Placement_Messages;
 }
 
 u8 *SceneData_GetActorTable(void)
 {
-	return Placement_Actors;
+	return (u8 *)Placement_Actors;
 }
 
 u8 *SceneData_GetEffectTable(void)
 {
-	return Placement_Effects;
+	return (u8 *)Placement_Effects;
 }
 
 void Scene_SaturosTakesHostages(void)
@@ -1559,7 +1561,7 @@ void FieldScene_RunFourWayEffectSequence(u32 mode)
 	Event_PlayCue(214);
 	i = 0;
 	zero = i;
-	for (pos = &Funka_ArcOrigins[0][0]; i <= 9; i++, pos += 2)
+	for (pos = &Funka_ArcOrigins[0]; i <= 9; i++, pos += 2)
 	{
 		x = pos[0];
 		y = pos[1];
@@ -1894,3 +1896,160 @@ void FieldScene_RunActor15TwoStep(void)
 {
 	SceneState_ForwardByRuntimeWordBits((s32)Object_GetById(15));
 }
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../soru_star/ring_setup.c"
+
+s32 Funka_ArcOriginsHead[] = {
+	SC_SET(SW_VELOCITY_Y, 0x60000),
+	SC_LABEL(1),
+	SC_ADD(SW_SCALE_X, 2621),
+	SC_ADD(SW_SCALE_Y, 2621),
+	SC_WAIT(1),
+	SC_LOOP(18, SC_TO(1)),
+	SC_SET(SW_SCALE_X, 0x10000),
+	SC_SET(SW_SCALE_Y, 0x10000),
+	SC_END,
+};
+
+s32 Funka_ArcOrigins[] = {
+	PIXELS(-6), 0,
+	PIXELS(10), PIXELS(10),
+	PIXELS(8), PIXELS(25),
+	PIXELS(4), PIXELS(30),
+	PIXELS(-5), PIXELS(20),
+	PIXELS(2), PIXELS(5),
+	PIXELS(-6), PIXELS(35),
+	PIXELS(-8), PIXELS(15),
+	PIXELS(2), PIXELS(40),
+	PIXELS(-2), PIXELS(15),
+};
+
+struct SceneEntrance Placement_Scripts[] = {
+	{ 0, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ SCENE_TABLE_END },
+};
+
+u32 Placement_Messages[] = {
+	SCENE_EXITS(18),
+	SCENE_EXIT(5, 11, 8),
+	SCENE_EXITS_END,
+};
+
+struct ScenePlacement Placement_Actors[] = {
+	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ JASMINE, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x1e, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x20, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x21, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x22, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x23, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x2b, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0xfc, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0xd8, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0xd8, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0xd8, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0xd8, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0xd8, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0xd8, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0xd8, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0xd8, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0xd8, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0xd8, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0xd8, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0xd8, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0xd8, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0xd8, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0xd8, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0xd8, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEvent Placement_Effects[] = {
+	{ SCENE_EVENTS_END },
+};
+
+u16 SoruFunka_StarCells[] = {
+	MAP_CELL_STEP(59, 40, 3, 4, 6), MAP_CELL_STEP(62, 40, 3, 4, 6), MAP_CELL_STEP(65, 40, 3, 4, 6), MAP_CELL_STEP(68, 40, 3, 4, 6), MAP_CELL_STEP(71, 40, 3, 4, 6), MAP_CELL_STEP(74, 40, 3, 4, 6), MAP_CELL_STEP(77, 40, 3, 4, 6), MAP_CELL_STEP(80, 40, 3, 4, 6), MAP_CELL_STEP(83, 40, 3, 4, 0), MAP_CELL_STEPS_END,
+};
+
+s32 Funka_EmberScript[] = {
+	SC_CALL(OverlayObject_SetRecordAngleFromHeading),
+	SC_END,
+};
+
+u8 Soru_RingDrift[][3] = {
+	{ 4, 4, 4 },
+	{ 4, 0, 3 },
+	{ 4, 0, 4 },
+	{ 4, 0, 4 },
+	{ 3, 0, 4 },
+	{ 4, 6, 4 },
+	{ 6, 0, 4 },
+	{ 4, 0, 3 },
+	{ 2, 0, 1 },
+	{ 2, 0, 2 },
+};
+
+u8 Soru_RingSwing[][3] = {
+	{ 1, 1, 2 },
+	{ 1, 0, 2 },
+	{ 1, 0, 2 },
+	{ 1, 0, 1 },
+	{ 1, 0, 2 },
+	{ 1, 1, 2 },
+	{ 1, 0, 2 },
+	{ 1, 0, 2 },
+	{ 1, 0, 2 },
+	{ 1, 0, 2 },
+};
+
+s8 Soru_RingDirection[][3] = {
+	{ 1, 1, 1 },
+	{ 1, 0, 1 },
+	{ 1, 0, 1 },
+	{ -1, 0, 1 },
+	{ -1, 0, -1 },
+	{ 1, 1, 1 },
+	{ -1, 0, -1 },
+	{ -1, 0, -1 },
+	{ -1, 0, -1 },
+	{ -1, 0, -1 },
+};
+
+s32 Soru_RingOffsetX[] = {
+	0x9999, 0xcccc, 0xb333, 0x9999, 0xcccc, 0x9999, 0xb333, 0x9999,
+	0x9999, 0xb333,
+};
+
+s32 Soru_RingOffsetZ[] = {
+	655, 458, 655, 458, 655, 458, 655, 655,
+	524, 655,
+};

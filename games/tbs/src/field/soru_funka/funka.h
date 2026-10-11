@@ -114,10 +114,10 @@ void BattleEffect_CleanupSceneObjects(void);
 
 void SceneEffect_AdvanceTenEntryTimers(void);
 
-extern u8 Placement_Scripts[];
-extern u8 Placement_Messages[];
-extern u8 Placement_Actors[];
-extern u8 Placement_Effects[];
+extern struct SceneEntrance Placement_Scripts[];
+extern u32 Placement_Messages[];
+extern struct ScenePlacement Placement_Actors[];
+extern struct SceneEvent Placement_Effects[];
 void	  SoruFunka_StepEmbers();
 void	  SceneState_UpdateRandomTimerLevel();
 

@@ -32,6 +32,7 @@
 #include "io_reg.h"
 #include "window.h"
 #include "heap_state.h"
+#include "objcmd.h"
 
 void FieldScene_RunMultiActorPresentation();
 void SceneEffect_SpawnParticlesBesideActor();
@@ -97,10 +98,10 @@ struct StagedVerticalEffect
 	s32 *f68;
 };
 
-extern const struct SceneEntrance  gVinasuChojoEntrances[];
-extern const u32				   gVinasuChojoExits[];
-extern const struct ScenePlacement gVinasuChojoPlacements[];
-extern const struct SceneEvent	   gVinasuChojoEvents[];
+extern struct SceneEntrance gVinasuChojoEntrances[];
+extern u32 gVinasuChojoExits[];
+extern struct ScenePlacement gVinasuChojoPlacements[];
+extern struct SceneEvent gVinasuChojoEvents[];
 extern s32						   VinasuChojo_NearestActor;
 
 s32	 Math_RemainderUnsigned(s32, s32);
@@ -2119,9 +2120,6 @@ void SceneEffect_SpawnParticlesAboveActor(void)
 	}
 }
 
-#define VinasuChojo_BeamOpenAction ((u8(*)) & VinasuChojo_BeamOpenAction)
-#define VinasuChojo_ScaleStepAction ((u8(*)) & VinasuChojo_ScaleStepAction)
-
 void SceneEffect_SpawnParticlesAboveActor();
 void Event_SetDestination();
 void ObjectTable_Snapshot();
@@ -3372,3 +3370,287 @@ void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object)
 	*(s32 *)((u8 *)object + 64) = object->effect.z;
 	object->effect.spin -= 0x200;
 }
+
+s32 gEffectScript0[] = {
+	SC_WAIT(1),
+	SC_LOOP(22, SC_TOP),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+s32 gEffectScript1[] = {
+	SC_WAIT(1),
+	SC_LOOP(44, SC_TOP),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+s32 gEffectScript2[] = {
+	SC_WAIT(1),
+	SC_LOOP(126, SC_TOP),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+const s32 *gEffectScripts[] = {
+	gEffectScript0,
+	gEffectScript1,
+	gEffectScript2,
+};
+
+s32 VinasuChojo_PairActionScript[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(492), 0, PIXELS(164)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_END,
+};
+
+s32 SceneAction_EntryGroup[] = {
+	SC_SET(SW_SPEED, 0x3333),
+	SC_SET(SW_ACCEL, 0x1999),
+	SC_ARG(2),
+	SC_MOVE_BY(PIXELS(-8), 0, 0),
+	SC_SYNC,
+	SC_END,
+};
+
+s32 SceneAction_EntryPair[] = {
+	SC_SET(SW_SPEED, 0x3333),
+	SC_SET(SW_ACCEL, 0x1999),
+	SC_ARG(2),
+	SC_MOVE_BY(PIXELS(8), 0, 0),
+	SC_SYNC,
+	SC_END,
+};
+
+s32 VinasuChojo_ScaleStepAction[] = {
+	SC_CALL(OverlayObject_StepScaleByCounter),
+	SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+s32 VinasuChojo_BeamOpenAction[] = {
+	SC_ADD(SW_SCALE_X, 0x1000),
+	SC_WAIT(1),
+	SC_LOOP(32, SC_TOP),
+	SC_END,
+};
+
+s32 Data_020060ac[] = {
+	SC_ADD(SW_SCALE_X, -896),
+	SC_WAIT(1),
+	SC_LOOP(140, SC_TOP),
+	SC_END,
+};
+
+s32 VinasuChojo_BeamRiseAction[] = {
+	SC_ADD(SW_SCALE_X, -896),
+	SC_WAIT(1),
+	SC_LOOP(160, SC_TOP),
+	SC_END,
+};
+
+s32 VinasuChojo_BeamCloseAction[] = {
+	SC_ADD(SW_Y, PIXELS(4)),
+	SC_WAIT(1),
+	SC_LOOP(30, SC_TOP),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_END,
+};
+
+s32 VinasuChojo_BeamEndAction[] = {
+	SC_ADD(SW_Y, PIXELS(2)),
+	SC_WAIT(1),
+	SC_LOOP(160, SC_TOP),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_END,
+};
+
+s32 VinasuChojo_OrbitParticleScript[] = {
+	SC_SET(SW_SCALE_X, 0xcccc),
+	SC_SET(SW_SCALE_Y, 0xcccc),
+	SC_ARG(1),
+	SC_LABEL(1),
+	SC_ADD(SW_Y, PIXELS(1)),
+	SC_WAIT(1),
+	SC_LOOP(16, SC_TO(1)),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+s32 VinasuChojo_RiseParticleScript[] = {
+	SC_SET(SW_SCALE_X, 0xcccc),
+	SC_SET(SW_SCALE_Y, 0xcccc),
+	SC_ARG(1),
+	SC_LABEL(1),
+	SC_ADD(SW_Y, PIXELS(-1)),
+	SC_WAIT(1),
+	SC_LOOP(16, SC_TO(1)),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+s32 Data_0200622c[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(268), 0, PIXELS(186)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(268), 0, PIXELS(252)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(232), 0, PIXELS(222)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(232), 0, PIXELS(136)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(200), 0, PIXELS(136)),
+	SC_SYNC,
+	SC_MOVE(PIXELS(200), 0, PIXELS(200)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_END,
+};
+
+s32 VinasuChojo_RiseActionScript[] = {
+	SC_LABEL(1),
+	SC_ADD(SW_SCALE_X, -1536),
+	SC_WAIT(1),
+	SC_LOOP(4, SC_TO(1)),
+	SC_LABEL(2),
+	SC_ADD(SW_SCALE_X, 1536),
+	SC_WAIT(1),
+	SC_LOOP(4, SC_TO(2)),
+	SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+s32 VinasuChojo_StepBackAction[] = {
+	SC_ADD(SW_Y, -0xc000),
+	SC_WAIT(1),
+	SC_LOOP(120, SC_TOP),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_END,
+};
+
+s32 VinasuChojo_LeapAction[] = {
+	SC_ADD(SW_Y, -0x48000),
+	SC_WAIT(1),
+	SC_LOOP(80, SC_TOP),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_END,
+};
+
+s32 VinasuChojo_PartyExitAction[] = {
+	SC_ARG(2),
+	SC_MOVE(PIXELS(330), 0, PIXELS(173)),
+	SC_SYNC,
+	SC_FREE,
+	SC_END,
+};
+
+s32 VinasuChojo_PartyHeadingAction[] = {
+	SC_CALL(OverlayObject_UpdateHeadingTimer),
+	SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+struct SceneEntrance gVinasuChojoEntrances[] = {
+	{ 0, CONDITION_ALWAYS, 304, 0, 216, FACING_SOUTHEAST + FACING_STEP, 0, 0, 0, 600, 420, 0 },
+	{ 1, CONDITION_ALWAYS, 504, 0, 168, FACING_SOUTHEAST + FACING_STEP, 0, 0, 0, 600, 420, 0 },
+	{ 2, CONDITION_ALWAYS, 340, 0, 184, FACING_WEST, 0, 0, 0, 600, 420, 0 },
+	{ 3, CONDITION_ALWAYS, 340, 0, 184, FACING_WEST, 0, 0, 0, 600, 420, 0 },
+	{ 9, CONDITION_ALWAYS, 0, 0, 0, FACING_WEST, 0, 0, 0, 600, 420, 0 },
+	{ SCENE_TABLE_END },
+};
+
+u32 gVinasuChojoExits[] = {
+	SCENE_EXITS(187),
+	SCENE_EXIT(1, 2, 73),
+	SCENE_EXIT(2, 180, 99),
+	SCENE_EXIT(9, 179, 12),
+	SCENE_EXITS_END,
+};
+
+struct ScenePlacement gVinasuChojoPlacements[] = {
+	{ 0x102, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(248), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x102, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(280), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ 0x102, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(328), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ 0x102, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(360), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ 0xf2, CONDITION_ALWAYS, 7,
+		PIXELS(440), 0, PIXELS(252), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0xf2, CONDITION_ALWAYS, 7,
+		PIXELS(472), 0, PIXELS(252), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ 0xf2, CONDITION_ALWAYS, 7,
+		PIXELS(504), 0, PIXELS(252), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ 0xf2, CONDITION_ALWAYS, 7,
+		PIXELS(104), 0, PIXELS(252), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ 0xf2, CONDITION_ALWAYS, 7,
+		PIXELS(136), 0, PIXELS(252), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ 0xf2, CONDITION_ALWAYS, 7,
+		PIXELS(168), 0, PIXELS(252), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ 0xf2, CONDITION_ALWAYS, 7,
+		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(504), 0, PIXELS(148), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ IWAN, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(504), 0, PIXELS(148), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ MEARI, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(504), 0, PIXELS(148), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0x21, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(280), 0, PIXELS(164), FACING_NORTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+	{ 0x20, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(296), 0, PIXELS(180), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
+	{ 0x6, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(248), 0, PIXELS(172), FACING_EAST, TALK_KEEP_FACING, 0 },
+	{ 0x23, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(264), 0, PIXELS(252), FACING_NORTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+	{ 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0xf4, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0xe5, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+	{ 0xe5, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ 0xe5, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ 0xe5, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ 0xe5, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
+	{ SCENE_TABLE_END },
+};
+
+s32 VinasuChojo_NearestActor = 0;
+
+struct SceneEvent gVinasuChojoEvents[] = {
+	{ 0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(InitializeActorZeroMotion) },
+	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuChojo_ConfigureGroupMotion) },
+	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(InitializeActorZeroMotion) },
+	{ EVENT_TOUCH, 10, 0x250, EVENT_SCRIPT(SceneEffect_SpawnAndBobWithActorZero) },
+	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunActorEntrySequence) },
+	{ SCENE_EVENTS_END },
+};
+
+s32 VinasuChojo_BesideParticleScript[] = {
+	SC_SET(SW_SCALE_Y, 0x16666),
+	SC_SET(SW_SCALE_X, 0x16666),
+	SC_ARG(4),
+	SC_WAIT(30),
+	SC_FREE,
+};

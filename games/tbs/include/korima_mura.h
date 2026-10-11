@@ -11,14 +11,14 @@ extern s32 KorimaMura_PendingPose;
 extern s32 KorimaMura_LayoutFlag;
 extern s32 KorimaMura_EffectActive;
 
-extern u8 KorimaMura_ActionTable1[];
-extern u8 KorimaMura_ActionTable2[];
-extern u8 KorimaMura_ActionTable3[];
-extern u8 KorimaMura_ActionTable4[];
-extern u8 KorimaMura_ActionTable5[];
-extern u8 KorimaMura_ActionTable6[];
-extern u8 KorimaMura_ActionTable7[];
-extern u8 KorimaMura_Object26Script[];
+extern s32 KorimaMura_ActionTable1[];
+extern s32 KorimaMura_ActionTable2[];
+extern s32 KorimaMura_ActionTable3[];
+extern s32 KorimaMura_ActionTable4[];
+extern s32 KorimaMura_ActionTable5[];
+extern s32 KorimaMura_ActionTable6[];
+extern s32 KorimaMura_ActionTable7[];
+extern s32 KorimaMura_Object26Script[];
 
 void SceneEffect_SpawnObject26EveryEightFrames(void);
 void FieldScene_UpdateFallingEffect(void);

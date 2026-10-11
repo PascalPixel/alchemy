@@ -22,10 +22,10 @@ struct TrackingWork
 	struct FieldActor *actor;
 };
 
-extern s16				  gImiruFuchinKeyHeadings[];
-extern s16				  gImiruFuchinHeadings[];
-extern struct FieldActor *gImiruFuchinDragonsEye;
-extern s32				  gImiruFuchinExits[];
+extern s16 gImiruFuchinKeyHeadings[];
+extern s16 gImiruFuchinHeadings[];
+extern s32 gImiruFuchinDragonsEye;
+extern u32 gImiruFuchinExits[];
 
 void ImiruFuchin_BlowCaveMouthDust(void);
 void SceneActor_TurnTowardTableAngle(union FieldObject *object);

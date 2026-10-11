@@ -52,13 +52,6 @@ struct SoruRingList
 	u16					 count;
 };
 
-u32					   Engine_RandomNext(void);
-s32					   Engine_MathSin(s32 angle);
-s32					   Engine_MathCos(s32 angle);
-struct SoruRingObject *Object_GetById(s32 actor);
-void				   Engine_ObjectSetBlendMode(struct SoruRingObject *obj, s32 mode);
-s32					   Engine_TaskAddCallback(void *callback, s32 priority);
-
 void Soru_UpdateRing(void)
 {
 	struct SoruRingList	 *list = Runtime_AllocateBlock(33, 404);
@@ -122,9 +115,9 @@ void Soru_UpdateRing(void)
 				obj->scale_x = scale;
 				obj->scale_y = scale;
 			}
-			rx = (Soru_RingDrift[i][0] * Engine_RandomNext()) >> 16;
-			ry = (Soru_RingDrift[i][1] * Engine_RandomNext()) >> 16;
-			rz = (Soru_RingDrift[i][2] * Engine_RandomNext()) >> 16;
+			rx = (Soru_RingDrift[i][0] * (u32)Engine_RandomNext()) >> 16;
+			ry = (Soru_RingDrift[i][1] * (u32)Engine_RandomNext()) >> 16;
+			rz = (Soru_RingDrift[i][2] * (u32)Engine_RandomNext()) >> 16;
 			rx = rx != 0 ? (rx << 16) / 1000 : 0;
 			ry = ry != 0 ? (ry << 16) / 1000 : 0;
 			rz = rz != 0 ? (rz << 16) / 1000 : 0;
@@ -221,7 +214,7 @@ void SoruStar_SetupElementalRings(s32 first, u32 count)
 		cleared = none;
 		do
 		{
-			obj = Object_GetById(first);
+			obj = (struct SoruRingObject *)Object_GetById(first);
 			{
 				u8 *frame = &obj->anim[38];
 
@@ -239,5 +232,5 @@ void SoruStar_SetupElementalRings(s32 first, u32 count)
 		} while (i != count);
 	}
 	list->count = count;
-	Engine_TaskAddCallback((void *)Soru_UpdateRing, 0xc80);
+	Engine_TaskAddCallback(Soru_UpdateRing, 0xc80);
 }

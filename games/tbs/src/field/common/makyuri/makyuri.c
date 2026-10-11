@@ -69,8 +69,8 @@ void Makyuri_RunActorMove(void)
 	flags = &actor->motion_flags;
 	saved = *flags;
 	keys = gKeysHeld;
-	angle = (u16)Makyuri_MoveAngles[(keys >> 4) & 15];
-	if (Makyuri_MoveAngles[(keys >> 4) & 15] == -1)
+	angle = Makyuri_MoveAngles[(keys >> 4) & 15];
+	if ((s16)Makyuri_MoveAngles[(keys >> 4) & 15] == -1)
 		return;
 	pos[0].fixed = (actor->x.fixed & -0x100000) + 0x80000;
 	pos[1].fixed = ((struct ObjectRuntime *)actor)->terrain_height;

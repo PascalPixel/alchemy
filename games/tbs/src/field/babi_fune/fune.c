@@ -26,6 +26,9 @@
 #include "scroll.h"
 #include "resource.h"
 #include "vram_block.h"
+#include "ability_ids.h"
+#include "field_scene.h"
+#include "objcmd.h"
 
 void BabiFune_ScheduleFade(void);
 
@@ -525,14 +528,6 @@ void Scene_RunExtendedPresentationSequence(void)
 	Event_SetDestination((s32)&SceneId_Title, 9);
 }
 
-#define BabiFune_ShimmerActive (*(u32 *)&BabiFune_ShimmerActive)
-#define BabiFune_ShimmerPhase (*(u32 *)&BabiFune_ShimmerPhase)
-#define BabiFune_CountTicks (*(u32 *)&BabiFune_CountTicks)
-#define BabiFune_DriftActive (*(u32 *)&BabiFune_DriftActive)
-#define BabiFune_SwellActive (*(u32 *)&BabiFune_SwellActive)
-#define BabiFune_SwellLayerSixY (*(u32 *)&BabiFune_SwellLayerSixY)
-#define BabiFune_SwellLayerSevenY (*(u32 *)&BabiFune_SwellLayerSevenY)
-
 void Inventory_AddItem(s32 a, s32 b);
 
 union GameStateRows
@@ -916,3 +911,202 @@ void BabiFune_ScheduleFade(void)
 	BabiFune_FadeStep = 0x30;
 	Scheduler_AddOrUpdateCallback((s32)BabiFune_StepFade, 0xc80);
 }
+
+struct SceneEvent BabiFune_PaletteFrames[] = {
+	{0x69c05860, 0x7f20, 0x69c0, 0x48005860},
+	{0x69c05860, 0x7f20, 0x69c0, 0x5860},
+};
+
+s32 BabiFune_DriftScript[] = {
+	SC_FREE,
+};
+
+s16 BabiFune_WaveSine[256] = {
+	0, 100, 200, 301, 401, 501, 601, 700,
+	799, 897, 995, 1092, 1189, 1284, 1379, 1474,
+	1567, 1659, 1751, 1841, 1930, 2018, 2105, 2191,
+	2275, 2358, 2439, 2519, 2598, 2675, 2750, 2824,
+	2896, 2966, 3034, 3101, 3166, 3229, 3289, 3348,
+	3405, 3460, 3513, 3563, 3612, 3658, 3702, 3744,
+	3784, 3821, 3856, 3889, 3919, 3947, 3973, 3996,
+	4017, 4035, 4051, 4065, 4076, 4084, 4091, 4094,
+	4096, 4094, 4091, 4084, 4076, 4065, 4051, 4035,
+	4017, 3996, 3973, 3947, 3919, 3889, 3856, 3821,
+	3784, 3744, 3702, 3658, 3612, 3563, 3513, 3460,
+	3405, 3348, 3289, 3229, 3166, 3101, 3034, 2966,
+	2896, 2824, 2750, 2675, 2598, 2519, 2439, 2358,
+	2275, 2191, 2105, 2018, 1930, 1841, 1751, 1659,
+	1567, 1474, 1379, 1284, 1189, 1092, 995, 897,
+	799, 700, 601, 501, 401, 301, 200, 100,
+	0, -100, -200, -301, -401, -501, -601, -700,
+	-799, -897, -995, -1092, -1189, -1284, -1379, -1474,
+	-1567, -1659, -1751, -1841, -1930, -2018, -2105, -2191,
+	-2275, -2358, -2439, -2519, -2598, -2675, -2750, -2824,
+	-2896, -2966, -3034, -3101, -3166, -3229, -3289, -3348,
+	-3405, -3460, -3513, -3563, -3612, -3658, -3702, -3744,
+	-3784, -3821, -3856, -3889, -3919, -3947, -3973, -3996,
+	-4017, -4035, -4051, -4065, -4076, -4084, -4091, -4094,
+	-4096, -4094, -4091, -4084, -4076, -4065, -4051, -4035,
+	-4017, -3996, -3973, -3947, -3919, -3889, -3856, -3821,
+	-3784, -3744, -3702, -3658, -3612, -3563, -3513, -3460,
+	-3405, -3348, -3289, -3229, -3166, -3101, -3034, -2966,
+	-2896, -2824, -2750, -2675, -2598, -2519, -2439, -2358,
+	-2275, -2191, -2105, -2018, -1930, -1841, -1751, -1659,
+	-1567, -1474, -1379, -1284, -1189, -1092, -995, -897,
+	-799, -700, -601, -501, -401, -301, -200, -100,
+};
+
+struct SceneEntrance BabiFune_SceneTableA[] = {
+	{0, CONDITION_ALWAYS, 408, 0, 200, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+	{1, CONDITION_ALWAYS, 312, 0, 296, FACING_NORTH, 0, -1, -1, -1, 328, 0},
+	{SCENE_TABLE_END},
+};
+
+u32 BabiFune_SceneTableB[] = {
+	SCENE_EXITS(188),
+	SCENE_EXIT(1, 180, 31),
+	SCENE_EXITS_END,
+};
+
+struct ScenePlacement BabiFune_SceneTableC[] = {
+	{GERALD, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0},
+	{IWAN, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0},
+	{MEARI, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0},
+	{0x1f6, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(248), FACING_SOUTH,
+		TALK_KEEP_FACING, 0},
+	{0x1f6, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(312), FACING_SOUTH,
+		TALK_KEEP_FACING, 0},
+	{SCENE_TABLE_END},
+};
+
+struct SceneEvent BabiFune_SceneTableD[] = {
+	{EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(PlayWorkspaceCueAndClearPaletteZero)},
+	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
+		EVENT_SCRIPT(BabiFune_LoadTablesAndStopDma)},
+	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
+		EVENT_SCRIPT(FieldScene_ConfigureFixedPointValues)},
+	{0xf204, 10, CONDITION_ALWAYS, EVENT_SCRIPT(BabiFune_RunDeparture)},
+	{SCENE_EVENTS_END},
+};
+
+s32 BabiFune_ShimmerActive = 0;
+
+s32 BabiFune_ShimmerPhase = 0;
+
+s32 BabiFune_Count = 16;
+
+s32 BabiFune_CountTicks = 0;
+
+s32 BabiFune_DriftActive = 0;
+
+s32 BabiFune_SwellActive = 0;
+
+s32 BabiFune_SwellPhase = 0;
+
+s32 BabiFune_SwellLayerSixY = 0;
+
+s32 BabiFune_SwellLayerSevenY = 0;
+
+s32 BabiFune_StoredSlot0 = -0x10000;
+
+s32 BabiFune_StoredRecord1 = -0x10000;
+
+s32 BabiFune_StoredSlot3 = -0x10000;
+
+s32 BabiFune_StoredRecord2 = -0x10000;
+
+u32 BabiFune_PaletteStep[] = {
+	0,
+};
+
+s32 BabiFune_ActionScriptA[] = {
+	SC_ARG(2),
+	SC_MOVE_BY(PIXELS(-8), 0, 0),
+	SC_SYNC,
+	SC_MOVE_BY(0, 0, PIXELS(-16)),
+	SC_SYNC,
+	SC_SET(SW_VELOCITY_Y, 0x80000),
+	SC_SE(153),
+	SC_MOVE_BY(0, 0, PIXELS(-24)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_WAIT(20),
+	SC_ARG(2),
+	SC_MOVE_BY(PIXELS(-8), 0, 0),
+	SC_SYNC,
+	SC_MOVE_BY(0, 0, PIXELS(-56)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_SET(SW_FACING, FACING_SOUTH),
+	SC_WAIT(1),
+	SC_CALL(BabiFune_StoreLeaderHeight),
+	SC_END,
+};
+
+s32 BabiFune_ActionScriptB[] = {
+	SC_ARG(2),
+	SC_MOVE_BY(0, 0, PIXELS(-32)),
+	SC_SYNC,
+	SC_SET(SW_VELOCITY_Y, 0x80000),
+	SC_SE(153),
+	SC_MOVE_BY(0, 0, PIXELS(-24)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_WAIT(20),
+	SC_ARG(2),
+	SC_MOVE_BY(PIXELS(-8), 0, 0),
+	SC_SYNC,
+	SC_MOVE_BY(0, 0, PIXELS(-40)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_SET(SW_FACING, FACING_SOUTH),
+	SC_WAIT(1),
+	SC_CALL(BabiFune_StoreActorOneHeight),
+	SC_END,
+};
+
+s32 BabiFune_ActionScriptC[] = {
+	SC_ARG(2),
+	SC_MOVE_BY(PIXELS(-20), 0, 0),
+	SC_SYNC,
+	SC_MOVE_BY(0, 0, PIXELS(-32)),
+	SC_SYNC,
+	SC_SET(SW_VELOCITY_Y, 0x80000),
+	SC_SE(153),
+	SC_MOVE_BY(0, 0, PIXELS(-24)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_WAIT(20),
+	SC_ARG(2),
+	SC_MOVE_BY(PIXELS(-8), 0, 0),
+	SC_SYNC,
+	SC_MOVE_BY(0, 0, PIXELS(-24)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_SET(SW_FACING, FACING_SOUTH),
+	SC_WAIT(1),
+	SC_CALL(BabiFune_StoreActorTwoHeight),
+	SC_END,
+};
+
+s32 BabiFune_ActionScriptD[] = {
+	SC_ARG(2),
+	SC_MOVE_BY(PIXELS(-8), 0, 0),
+	SC_SYNC,
+	SC_MOVE_BY(0, 0, PIXELS(-8)),
+	SC_SYNC,
+	SC_SET(SW_VELOCITY_Y, 0x80000),
+	SC_SE(153),
+	SC_MOVE_BY(0, 0, PIXELS(-24)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_WAIT(20),
+	SC_ARG(2),
+	SC_MOVE_BY(PIXELS(-8), 0, 0),
+	SC_SYNC,
+	SC_MOVE_BY(0, 0, PIXELS(-8)),
+	SC_SYNC,
+	SC_ARG(1),
+	SC_CALL(BabiFune_StoreActorThreeHeight),
+	SC_END,
+};

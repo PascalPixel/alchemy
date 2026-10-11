@@ -28,10 +28,10 @@ typedef struct DirectionalSceneActor
 	s32 y;
 	s32 z;
 } DirectionalSceneActor;
-extern u32 gRunpaJoRandomPick;
-extern s32 gRunpaJoPairTableA[];
-extern s32 gRunpaJoPairTableB[];
-extern s32 gRunpaJoPairTableC[];
+extern s32 gRunpaJoRandomPick;
+extern u32 gRunpaJoPairTableA[];
+extern u32 gRunpaJoPairTableB[];
+extern u32 gRunpaJoPairTableC[];
 
 s32 TryStartActorInteraction(s32 actor_id, s32 interaction_id);
 

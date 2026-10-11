@@ -33,10 +33,7 @@ struct PairWork
 	u16 vram_block;
 };
 
-extern struct PairWork *gEffectWork;
-void					Effect_AnimateVerticalNegative(union FieldObject *object);
-void					Effect_AnimateVerticalPositive(union FieldObject *object);
-s32						AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
+s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 
 struct WorldMapOam
 {
@@ -47,13 +44,14 @@ struct WorldMapOam
 	u16 size : 2;
 };
 
-void WorldMap_CreateLinkedEffects(union PairObject *parent)
+void WorldMap_CreateLinkedEffects(void *object)
 {
+	union PairObject   *parent = object;
 	union PairObject   *pair[2];
 	union PairObject   *child;
 	struct PairSprite  *part;
 	struct FieldSprite *sprite;
-	struct PairWork	   *work = gEffectWork;
+	struct PairWork	   *work = (struct PairWork *)gEffectWork;
 	s32					i;
 
 	for (i = 0; i < 2; ++i)
@@ -88,7 +86,7 @@ void WorldMap_CreateLinkedEffects(union PairObject *parent)
 		union PairObject   *p = pair[0];
 		struct FieldSprite *sp = p->object.actor.sprite;
 
-		p->object.actor.update = Effect_AnimateVerticalNegative;
+		p->object.actor.update = (void *)Effect_AnimateVerticalNegative;
 		sp->priority = 1;
 	}
 	{
@@ -96,7 +94,7 @@ void WorldMap_CreateLinkedEffects(union PairObject *parent)
 		struct FieldSprite *sp = p->sprite;
 
 		sp->priority = 1;
-		p->update = Effect_AnimateVerticalPositive;
+		p->update = (void *)Effect_AnimateVerticalPositive;
 		p->priority_flags = 2;
 	}
 }

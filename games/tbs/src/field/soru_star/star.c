@@ -18,6 +18,8 @@
 #include "field_service.h"
 #include "text/msg_ids.h"
 #include "glyph.h"
+#include "ability_ids.h"
+#include "objcmd.h"
 
 void SoruStar_RiseActorFourteenSparks();
 
@@ -88,10 +90,10 @@ struct ObjectRuntime;
 void Event_SayThenWait(s32 speaker, s32 frames);
 
 extern u16 SoruStar_StarCells[];
-extern s32 Placement_Scripts[];
-extern s32 Placement_Messages[];
-extern s32 Placement_Actors[];
-extern s32 Placement_Effects[];
+extern struct SceneEntrance Placement_Scripts[];
+extern u32 Placement_Messages[];
+extern struct ScenePlacement Placement_Actors[];
+extern struct SceneEvent Placement_Effects[];
 
 void OverlayObject_SetHandleFlagBits2And3(s32 object, u32 value)
 {
@@ -184,7 +186,7 @@ s32 UpdateOverlayObjectAngle(struct OverlayObject *object)
 
 s32 *SceneData_GetScriptTable(void)
 {
-	return Placement_Scripts;
+	return (s32 *)Placement_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -194,17 +196,17 @@ s32 SceneData_ReturnZero(void)
 
 s32 *SceneData_GetMessageTable(void)
 {
-	return Placement_Messages;
+	return (s32 *)Placement_Messages;
 }
 
 s32 *SceneData_GetActorTable(void)
 {
-	return Placement_Actors;
+	return (s32 *)Placement_Actors;
 }
 
 s32 *SceneData_GetEffectTable(void)
 {
-	return Placement_Effects;
+	return (s32 *)Placement_Effects;
 }
 
 void Scene_BagVenusStar(void)
@@ -2313,3 +2315,215 @@ void SoruStar_RiseActorFourteenSparks(void)
 	((void (*)(struct Actor *, s32))Engine_ActorSetSpriteFlags)(
 		(struct Actor *)Object_GetById(14), 1);
 }
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "ring_setup.c"
+
+s32 gEffectScript0[] = {
+	SC_WAIT(1),
+	SC_LOOP(22, SC_TOP),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+s32 gEffectScript1[] = {
+	SC_WAIT(1),
+	SC_LOOP(44, SC_TOP),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+s32 gEffectScript2[] = {
+	SC_WAIT(1),
+	SC_LOOP(126, SC_TOP),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+const s32 *gEffectScripts[] = {
+	gEffectScript0,
+	gEffectScript1,
+	gEffectScript2,
+};
+
+s32 SoruStar_AngleScript[] = {
+	SC_CALL(UpdateOverlayObjectAngle),
+	SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+s32 SoruStar_PresentItemScript[] = {
+	SC_SET(SW_SCALE_X, 0x8000),
+	SC_SET(SW_SCALE_Y, 0x8000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0xc000),
+	SC_SET(SW_SCALE_Y, 0xc000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0xe000),
+	SC_SET(SW_SCALE_Y, 0xe000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0xf000),
+	SC_SET(SW_SCALE_Y, 0xf000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0x10000),
+	SC_SET(SW_SCALE_Y, 0x10000),
+	SC_WAIT(16),
+	SC_SET(SW_SCALE_X, 0x16000),
+	SC_SET(SW_SCALE_Y, 0x16000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0x18000),
+	SC_SET(SW_SCALE_Y, 0x18000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0x12000),
+	SC_SET(SW_SCALE_Y, 0x12000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0x10000),
+	SC_SET(SW_SCALE_Y, 0x10000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0x16000),
+	SC_SET(SW_SCALE_Y, 0x16000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0x18000),
+	SC_SET(SW_SCALE_Y, 0x18000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0x12000),
+	SC_SET(SW_SCALE_Y, 0x12000),
+	SC_WAIT(2),
+	SC_SET(SW_SCALE_X, 0x10000),
+	SC_SET(SW_SCALE_Y, 0x10000),
+	SC_WAIT(2),
+	SC_END,
+};
+
+struct SceneEntrance Placement_Scripts[] = {
+	{ 0, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ SCENE_TABLE_END },
+};
+
+u32 Placement_Messages[] = {
+	SCENE_EXITS(17),
+	SCENE_EXIT(2, 18, 10),
+	SCENE_EXITS_END,
+};
+
+struct ScenePlacement Placement_Actors[] = {
+	{ GERALD, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ JASMINE, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, 3, 0 },
+	{ 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x1e, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, 3, 0 },
+	{ 0x20, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x21, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x22, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x23, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x2b, CONDITION_ALWAYS, ACTOR_STAND,
+		0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+	{ 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(617), 0, PIXELS(408), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(429), 0, PIXELS(221), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(696), 0, PIXELS(113), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(170), 0, PIXELS(168), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(308), 0, PIXELS(511), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(397), 0, PIXELS(418), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(542), 0, PIXELS(269), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(421), 0, PIXELS(117), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(295), 0, PIXELS(210), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+		PIXELS(742), 0, PIXELS(310), FACING_EAST, TALK_FACE_PARTY, 0 },
+	{ SCENE_TABLE_END },
+};
+
+struct SceneEvent Placement_Effects[] = {
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Sukureta_Talk) },
+	{ EVENT_TALK, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Jasmine_Talk) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Saturos_Talk) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Menardi_Talk) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Garcia_Talk) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Alex_Talk) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSoruSukuretaIAmResponsible) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Jasmine_Talk) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgSoruSaturosBringTheFinalStar) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Menardi_Talk) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgSoruAlexOnlyOneLeft) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunLine1072WithPair9And10) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(SoruStar_CheckLeaderAhead) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(SoruStar_CheckLeaderAhead) },
+	{ SEARCH(SEARCH_UNNAMED), 2, 0x83c, EVENT_SCRIPT(Scene_BagVenusStar) },
+	{ SEARCH(SEARCH_UNNAMED), 3, 0x83d, EVENT_SCRIPT(Scene_BagMercuryStar) },
+	{ SEARCH(SEARCH_UNNAMED), 4, 0x83e, EVENT_SCRIPT(Scene_HandOverStars) },
+	{ SEARCH(SEARCH_UNNAMED), 5, 0x83f, EVENT_SCRIPT(Scene_BagMarsStar) },
+	{ SCENE_EVENTS_END },
+};
+
+u16 SoruStar_StarCells[] = {
+	MAP_CELL_STEP(59, 40, 3, 4, 6), MAP_CELL_STEP(62, 40, 3, 4, 6), MAP_CELL_STEP(65, 40, 3, 4, 6), MAP_CELL_STEP(68, 40, 3, 4, 6), MAP_CELL_STEP(71, 40, 3, 4, 6), MAP_CELL_STEP(74, 40, 3, 4, 6), MAP_CELL_STEP(77, 40, 3, 4, 6), MAP_CELL_STEP(80, 40, 3, 4, 6), MAP_CELL_STEP(83, 40, 3, 4, 0), MAP_CELL_STEPS_END,
+};
+
+u8 Soru_RingDrift[][3] = {
+	{ 4, 4, 4 },
+	{ 4, 0, 3 },
+	{ 4, 0, 4 },
+	{ 4, 0, 4 },
+	{ 3, 0, 4 },
+	{ 4, 6, 4 },
+	{ 6, 0, 4 },
+	{ 4, 0, 3 },
+	{ 2, 0, 1 },
+	{ 2, 0, 2 },
+};
+
+u8 Soru_RingSwing[][3] = {
+	{ 1, 1, 2 },
+	{ 1, 0, 2 },
+	{ 1, 0, 2 },
+	{ 1, 0, 1 },
+	{ 1, 0, 2 },
+	{ 1, 1, 2 },
+	{ 1, 0, 2 },
+	{ 1, 0, 2 },
+	{ 1, 0, 2 },
+	{ 1, 0, 2 },
+};
+
+s8 Soru_RingDirection[][3] = {
+	{ 1, 1, 1 },
+	{ 1, 0, 1 },
+	{ 1, 0, 1 },
+	{ -1, 0, 1 },
+	{ -1, 0, -1 },
+	{ 1, 1, 1 },
+	{ -1, 0, -1 },
+	{ -1, 0, -1 },
+	{ -1, 0, -1 },
+	{ -1, 0, -1 },
+};
+
+s32 Soru_RingOffsetX[] = {
+	0x9999, 0xcccc, 0xb333, 0x9999, 0xcccc, 0x9999, 0xb333, 0x9999,
+	0x9999, 0xb333,
+};
+
+s32 Soru_RingOffsetZ[] = {
+	655, 458, 655, 458, 655, 458, 655, 655,
+	524, 655,
+};

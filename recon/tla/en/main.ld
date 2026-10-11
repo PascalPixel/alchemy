@@ -179,7 +179,7 @@
         "*/games/common/src/system/save/program_flash_sector.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.08017f24)
         "*/games/common/src/system/save/atmel.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.08017fbc)
+        . = ABSOLUTE(0x08020000);
         "*/games/tla/src/system/far_call/resource.o"(.text .rodata .data .padding)
         "*/games/tla/src/system/far_call/table.o"(.text .rodata .data .padding)
         "*/games/tla/src/system/far_call/animatio.o"(.text .rodata .data .padding)
@@ -400,7 +400,7 @@
         "*/games/tla/src/graphics/tile/grid.o"(.text)
         "*/recon/tla/unidentified.o"(.unidentified.0802e89c)
         "*/recon/tla/raw/08030310.o"(.text)
-        "*/recon/tla/unidentified.o"(.unidentified.08030320)
+        . = ABSOLUTE(0x08038000);
         "*/games/tla/src/system/far_call/uitext.o"(.text .rodata .data .padding)
         "*/games/tla/src/system/far_call/uitext_2.o"(.text .rodata .data .padding)
         "*/games/tla/src/system/far_call/uitext_3.o"(.text .rodata .data .padding)
@@ -758,6 +758,7 @@
         "*/recon/tla/unidentified.o"(.unidentified.0805c0e0)
         "*/games/tla/text/messages.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.080aa0dc)
+        . = ABSOLUTE(0x080ad000);
         "*/games/tla/src/system/far_call/inventor.o"(.text .rodata .data .padding)
         "*/games/tla/src/system/far_call/inventor_2.o"(.text .rodata .data .padding)
         "*/games/tla/src/system/far_call/inventor_3.o"(.text .rodata .data .padding)
@@ -871,6 +872,7 @@
         "*/recon/tla/unidentified.o"(.unidentified.080b127c)
         "*/recon/tla/raw/080b1f28.o"(.text)
         "*/recon/tla/unidentified.o"(.unidentified.080b1f2c)
+        . = ABSOLUTE(0x080c8000);
         "*/recon/tla/raw/080c8000.o"(.text)
         "*/games/tla/src/system/far_call/event.o"(.text .rodata .data .padding)
         "*/games/tla/src/system/far_call/objectmo.o"(.text .rodata .data .padding)
@@ -1463,6 +1465,7 @@
         "*/recon/tla/unidentified.o"(.unidentified.080ef824)
         "*/games/tla/src/field/scenes.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.080f21d0)
+        . = ABSOLUTE(0x080f8000);
         "*/games/tla/src/system/far_call/table_38.o"(.text .rodata .data .padding)
         "*/games/tla/src/system/far_call/uiicon_2.o"(.text .rodata .data .padding)
         "*/games/tla/src/system/far_call/table_39.o"(.text .rodata .data .padding)
@@ -1639,6 +1642,7 @@
         "*/games/tla/src/menu/build_availability.o"(.text)
         "*/recon/tla/raw/081055f6.o"(.text)
         "*/recon/tla/unidentified.o"(.unidentified.081055f8)
+        . = ABSOLUTE(0x08108000);
         "*/games/tla/src/system/far_call/table_41.o"(.text .rodata .data .padding)
         "*/games/tla/src/system/far_call/table_42.o"(.text .rodata .data .padding)
         "*/games/tla/src/menu/shop/list_items.o"(.text)
@@ -1721,6 +1725,7 @@
         "*/recon/tla/raw/0810bebc.o"(.text)
         "*/recon/tla/raw/0810bf98.o"(.text)
         "*/recon/tla/unidentified.o"(.unidentified.0810c008)
+        . = ABSOLUTE(0x08118000);
         "*/recon/tla/raw/08118000.o"(.text)
         "*/recon/tla/raw/08118008.o"(.text)
         "*/games/tla/src/system/far_call/table_43.o"(.text .rodata .data .padding)
@@ -1938,6 +1943,7 @@
         "*/recon/tla/unidentified.o"(.unidentified.081287c4)
         "*/recon/tla/raw/0812ce74.o"(.text)
         "*/recon/tla/unidentified.o"(.unidentified.0812ce7c)
+        . = ABSOLUTE(0x08138000);
         "*/games/tla/src/system/far_call/table_47.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle/effect/kernel_bank_integrate_vectors.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081380ac.o"(.text)
@@ -2298,6 +2304,7 @@
         "*/games/tla/src/battle/effect/sentou_kouka_gousei_iro.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle/effect/patch_template.o"(.text .rodata .data .padding)
         "*/recon/tla/unidentified.o"(.unidentified.081973f0)
+        . = ABSOLUTE(0x081a0000);
         "*/recon/tla/raw/081a0000.o"(.text)
         "*/recon/tla/raw/081a0008.o"(.text)
         "*/recon/tla/raw/081a0010.o"(.text)
@@ -2340,6 +2347,7 @@
         "*/recon/tla/raw/081a1830.o"(.text)
         "*/recon/tla/raw/081a18f8.o"(.text)
         "*/recon/tla/unidentified.o"(.unidentified.081a1928)
+        . = ABSOLUTE(0x081a6000);
         "*/recon/tla/raw/081a6000.o"(.text)
         "*/recon/tla/raw/081a6008.o"(.text)
         "*/recon/tla/raw/081a6010.o"(.text)
@@ -2367,6 +2375,7 @@
         "*/games/tla/src/battle/effect/clamp.o"(.text)
         "*/recon/tla/raw/081a8286.o"(.text)
         "*/recon/tla/unidentified.o"(.unidentified.081a8288)
+        . = ABSOLUTE(0x081ac000);
         "*/games/tla/src/system/far_call/resource_d.o"(.text)
         "*/games/tla/src/system/scheduler/blank_display_and_run.o"(.text)
         "*/recon/tla/raw/081ac026.o"(.text)
@@ -2378,6 +2387,7 @@
         "*/games/common/src/graphics/palette/scale_rgb555_buffer.o"(.text)
         "*/recon/tla/raw/081ac15c.o"(.text .rodata .data .padding)
         "*/recon/tla/unidentified.o"(.unidentified.081ad348)
+        . = ABSOLUTE(0x081b2000);
         "*/games/tla/src/system/far_call/resource_e.o"(.text)
         "*/recon/tla/raw/081b2008.o"(.text)
         "*/games/tla/src/graphics/palette/scale_rgb555.o"(.text)
@@ -2396,6 +2406,7 @@
         "*/recon/tla/raw/081b3fb0.o"(.text)
         "*/recon/tla/raw/081b3ff4.o"(.text)
         "*/recon/tla/unidentified.o"(.unidentified.081b4888)
+        . = ABSOLUTE(0x081b8000);
         "*/games/tla/src/system/far_call/resource_f.o"(.text)
         "*/games/tla/src/field/common/camera/camera.o"(.text)
         "*/recon/tla/raw/081b8020.o"(.text)
@@ -2909,9 +2920,9 @@
         "*/games/tla/sound/sequence/bgm_753.o"(.rodata)
         "*/games/tla/sound/sequence/bgm_754.o"(.rodata)
         "*/games/tla/sound/sequence/bgm_799.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.082f9030)
+        . = ABSOLUTE(0x08300000);
         "*/games/tla/src/graphics/sprite/sprites.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.086322b2)
+        . = ABSOLUTE(0x08680000);
         "*/games/tla/src/system/resource/directory.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.08682000)
         "*/games/common/src/graphics/ui/window_tiles.o"(.rodata)

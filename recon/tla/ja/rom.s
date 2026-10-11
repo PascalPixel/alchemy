@@ -378,8 +378,6 @@ Flash_ChipAtmel:
 	.global Flash_ChipAtmelLayout
 Flash_ChipAtmelLayout:
 	.incbin "baserom.gba", 0x00017f68, 0x0000002c
-	.section .rom.00017fbc, "ax"
-	.incbin "baserom.gba", 0x00017fbc, 0x00008044
 	.section .rom.000203a8, "ax"
 	.global ResourceSlot_ConversionTables
 ResourceSlot_ConversionTables:
@@ -809,7 +807,7 @@ ObjectDispatch_Table6:
 	.incbin "baserom.gba", 0x0002f17c, 0x000000dc
 	.global Script_OperandHandlerTable
 Script_OperandHandlerTable:
-	.incbin "baserom.gba", 0x0002f258, 0x00008da8
+	.incbin "baserom.gba", 0x0002f258, 0x00001044
 	.section .rom.000385e0, "ax"
 	.incbin "baserom.gba", 0x000385e0, 0x00000310
 	.section .rom.000391b8, "ax"
@@ -1580,7 +1578,7 @@ Menu_TopEntryPositionByCommand:
 	.incbin "baserom.gba", 0x0009d0d0, 0x00000594
 	.global Ui_FixedTileBlocks
 Ui_FixedTileBlocks:
-	.incbin "baserom.gba", 0x0009d664, 0x0000a99c
+	.incbin "baserom.gba", 0x0009d664, 0x00000004
 	.section .rom.000a8070, "ax"
 	.global Inventory_GetEquippedItemFar
 	.type Inventory_GetEquippedItemFar, %function
@@ -2167,7 +2165,7 @@ Battle_Effect91Classes:
 	.section .rom.000c1b80, "ax"
 	.global Djinn_Definitions
 Djinn_Definitions:
-	.incbin "baserom.gba", 0x000c1b80, 0x00006480
+	.incbin "baserom.gba", 0x000c1b80, 0x000003b8
 	.section .rom.000c8000, "ax"
 	.global Resource_FarCall006
 Resource_FarCall006:
@@ -3946,7 +3944,7 @@ ColorBuffer_FadeStep2Map:
 	.incbin "baserom.gba", 0x000f3b08, 0x00000020
 	.global ColorBuffer_FadeStep3Map
 ColorBuffer_FadeStep3Map:
-	.incbin "baserom.gba", 0x000f3b28, 0x000044d8
+	.incbin "baserom.gba", 0x000f3b28, 0x000002b0
 	.section .rom.000f8170, "ax"
 	.incbin "baserom.gba", 0x000f8170, 0x00000498
 	.section .rom.000f8830, "ax"
@@ -4159,7 +4157,7 @@ CharacterMenu_CursorWidths:
 	.incbin "baserom.gba", 0x00105a30, 0x00000008
 	.global Data_08105a40
 Data_08105a40:
-	.incbin "baserom.gba", 0x00105a38, 0x000025c8
+	.incbin "baserom.gba", 0x00105a38, 0x0000001c
 	.section .rom.00108148, "ax"
 	.global Func_08108148
 	.type Func_08108148, %function
@@ -4288,7 +4286,7 @@ Shop_GlyphRowOffsets:
 	.incbin "baserom.gba", 0x0010c398, 0x00000070
 	.global Data_0810c3f4
 Data_0810c3f4:
-	.incbin "baserom.gba", 0x0010c408, 0x0000bbf8
+	.incbin "baserom.gba", 0x0010c408, 0x00000b48
 	.section .rom.00118000, "ax"
 	.global Resource_FarCall009
 Resource_FarCall009:
@@ -4596,7 +4594,7 @@ BattleFormation_Records:
 	.incbin "baserom.gba", 0x0012ce78, 0x00003e90
 	.global Summon_EntryTable
 Summon_EntryTable:
-	.incbin "baserom.gba", 0x00130d08, 0x000072f8
+	.incbin "baserom.gba", 0x00130d08, 0x00000c14
 	.section .rom.001380ac, "ax"
 	.incbin "baserom.gba", 0x001380ac, 0x00000f1c
 	.section .rom.0013ba50, "ax"
@@ -5065,7 +5063,7 @@ TitlePalette_UpdateFade:
 Graphics_TransformPaletteBuffer:
 	.incbin "baserom.gba", 0x001a7a28, 0x00000724
 	.section .rom.001a8286, "ax"
-	.incbin "baserom.gba", 0x001a8286, 0x00003d7a
+	.incbin "baserom.gba", 0x001a8286, 0x000005b6
 	.section .rom.001ac026, "ax"
 	.incbin "baserom.gba", 0x001ac026, 0x0000008a
 	.section .rom.001ac15c, "ax"
@@ -5073,7 +5071,7 @@ Graphics_TransformPaletteBuffer:
 	.type LuckyDice_Run, %function
 	.thumb_func
 LuckyDice_Run:
-	.incbin "baserom.gba", 0x001ac15c, 0x00005ea4
+	.incbin "baserom.gba", 0x001ac15c, 0x00001234
 	.section .rom.001b2008, "ax"
 	.global Func_081b2008
 	.type Func_081b2008, %function
@@ -5087,7 +5085,7 @@ Func_081b2008:
 	.section .rom.001b3d28, "ax"
 	.incbin "baserom.gba", 0x001b3d28, 0x00000040
 	.section .rom.001b3d90, "ax"
-	.incbin "baserom.gba", 0x001b3d90, 0x00004270
+	.incbin "baserom.gba", 0x001b3d90, 0x000009f8
 	.section .rom.001b8020, "ax"
 	.incbin "baserom.gba", 0x001b8020, 0x00000088
 	.section .rom.001b810c, "ax"
@@ -5096,7 +5094,7 @@ Func_081b2008:
 	.type Func_081b83c4, %function
 	.thumb_func
 Func_081b83c4:
-	.incbin "baserom.gba", 0x001b83c4, 0x00007c3c
+	.incbin "baserom.gba", 0x001b83c4, 0x00001f5c
 	.section .rom.001c00b0, "ax"
 	.incbin "baserom.gba", 0x001c00b0, 0x00000064
 	.global LeftoverSoundDriver_StaleCallTarget
@@ -5265,10 +5263,6 @@ Sound_ExtendedCommandTable:
 	.global Sound_PlayerSlots
 Sound_PlayerSlots:
 	.incbin "baserom.gba", 0x001c44d0, 0x00000060
-	.section .rom.002f9030, "ax"
-	.incbin "baserom.gba", 0x002f9030, 0x00006fd0
-	.section .rom.006322b0, "ax"
-	.incbin "baserom.gba", 0x006322b0, 0x0004dd50
 	.section .rom.00682000, "ax"
 	.global Resource_Data002
 Resource_Data002:

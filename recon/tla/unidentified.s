@@ -40,8 +40,6 @@ Flash_ChipAtmel:
 	.global Flash_ChipAtmelLayout
 Flash_ChipAtmelLayout:
 	.incbin "baserom.gba", 0x00017f68, 0x0000002c
-	.section .unidentified.08017fbc,"a"
-	.incbin "baserom.gba", 0x00017fbc, 0x00008044
 	.section .unidentified.080203a8,"a"
 	.global ResourceSlot_ConversionTables
 ResourceSlot_ConversionTables:
@@ -194,8 +192,6 @@ Script_OperandHandlerTable:
 	.global Data_0802f380
 Data_0802f380:
 	.incbin "baserom.gba", 0x0002f380, 0x00000f90
-	.section .unidentified.08030320,"a"
-	.incbin "baserom.gba", 0x00030320, 0x00007ce0
 	.section .unidentified.0804e584,"a"
 	.global Data_0804e584
 Data_0804e584:
@@ -460,7 +456,7 @@ Data_080aa2d8:
 	.incbin "baserom.gba", 0x000aa2d8, 0x00000104
 	.global Ui_FixedTileBlocks
 Ui_FixedTileBlocks:
-	.incbin "baserom.gba", 0x000aa3dc, 0x00002c24
+	.incbin "baserom.gba", 0x000aa3dc, 0x00000004
 	.section .unidentified.080b127c,"a"
 	.global Data_080b127c
 Data_080b127c:
@@ -525,7 +521,7 @@ Battle_Effect91Classes:
 	.incbin "baserom.gba", 0x000c6b76, 0x0000003a
 	.global Djinn_Definitions
 Djinn_Definitions:
-	.incbin "baserom.gba", 0x000c6bb0, 0x00001450
+	.incbin "baserom.gba", 0x000c6bb0, 0x000003b8
 	.section .unidentified.080c89cc,"a"
 	.incbin "baserom.gba", 0x000c89cc, 0x00000a00
 	.section .unidentified.080ed80c,"a"
@@ -858,7 +854,7 @@ ColorBuffer_FadeStep2Map:
 	.incbin "baserom.gba", 0x000f3bfc, 0x00000020
 	.global ColorBuffer_FadeStep3Map
 ColorBuffer_FadeStep3Map:
-	.incbin "baserom.gba", 0x000f3c1c, 0x000043e4
+	.incbin "baserom.gba", 0x000f3c1c, 0x000002b0
 	.section .unidentified.081055f8,"a"
 	.incbin "baserom.gba", 0x001055f8, 0x00000240
 	.global Data_08105838
@@ -938,7 +934,7 @@ Data_08105a40:
 	.incbin "baserom.gba", 0x00105a40, 0x00000010
 	.global Data_08105a50
 Data_08105a50:
-	.incbin "baserom.gba", 0x00105a50, 0x000025b0
+	.incbin "baserom.gba", 0x00105a50, 0x0000000c
 	.section .unidentified.0810c008,"a"
 	.global Shop_GlyphBytes
 Shop_GlyphBytes:
@@ -969,7 +965,7 @@ Data_0810cf28:
 	.incbin "baserom.gba", 0x0010cf28, 0x00000004
 	.global Data_0810cf2c
 Data_0810cf2c:
-	.incbin "baserom.gba", 0x0010cf2c, 0x0000b0d4
+	.incbin "baserom.gba", 0x0010cf2c, 0x00000010
 	.section .unidentified.081287c4,"a"
 	.incbin "baserom.gba", 0x001287c4, 0x00000004
 	.global Data_081287c8
@@ -1117,7 +1113,7 @@ Data_08130c5c:
 	.incbin "baserom.gba", 0x00130c5c, 0x000000b0
 	.global Summon_EntryTable
 Summon_EntryTable:
-	.incbin "baserom.gba", 0x00130d0c, 0x000072f4
+	.incbin "baserom.gba", 0x00130d0c, 0x00000c14
 	.section .unidentified.08196dd8,"a"
 	.global Data_08196dd8
 Data_08196dd8:
@@ -2904,7 +2900,7 @@ Data_0819a140:
 	.incbin "baserom.gba", 0x0019a140, 0x00000020
 	.global Data_0819a160
 Data_0819a160:
-	.incbin "baserom.gba", 0x0019a160, 0x00005ea0
+	.incbin "baserom.gba", 0x0019a160, 0x00000048
 	.section .unidentified.081a1928,"a"
 	.incbin "baserom.gba", 0x001a1928, 0x00000080
 	.global Data_081a19a8
@@ -2918,7 +2914,7 @@ DisplayScroll_LineTable:
 	.incbin "baserom.gba", 0x001a20bc, 0x00000344
 	.global Data_081a2400
 Data_081a2400:
-	.incbin "baserom.gba", 0x001a2400, 0x00003c00
+	.incbin "baserom.gba", 0x001a2400, 0x000002f4
 	.section .unidentified.081a8288,"a"
 	.global Data_081a8288
 Data_081a8288:
@@ -2940,7 +2936,7 @@ Data_081a87ba:
 	.incbin "baserom.gba", 0x001a87ba, 0x00000040
 	.global Data_081a87fa
 Data_081a87fa:
-	.incbin "baserom.gba", 0x001a87fa, 0x00003806
+	.incbin "baserom.gba", 0x001a87fa, 0x00000042
 	.section .unidentified.081ad348,"a"
 	.incbin "baserom.gba", 0x001ad348, 0x00000020
 	.global Data_081ad368
@@ -2954,7 +2950,7 @@ Data_081ad374:
 	.incbin "baserom.gba", 0x001ad374, 0x00000012
 	.global Data_081ad386
 Data_081ad386:
-	.incbin "baserom.gba", 0x001ad386, 0x00004c7a
+	.incbin "baserom.gba", 0x001ad386, 0x0000000e
 	.section .unidentified.081b4888,"a"
 	.global Data_081b4888
 Data_081b4888:
@@ -2973,7 +2969,7 @@ Data_081b48b8:
 	.incbin "baserom.gba", 0x001b48b8, 0x0000000e
 	.global ReelGame_TitleLetterWidths
 ReelGame_TitleLetterWidths:
-	.incbin "baserom.gba", 0x001b48c6, 0x0000373a
+	.incbin "baserom.gba", 0x001b48c6, 0x0000000a
 	.section .unidentified.081ba30c,"a"
 	.global Data_081ba30c
 Data_081ba30c:
@@ -3027,10 +3023,6 @@ Sound_ExtendedCommandTable:
 	.global Sound_PlayerSlots
 Sound_PlayerSlots:
 	.incbin "baserom.gba", 0x001c44d0, 0x00000060
-	.section .unidentified.082f9030,"a"
-	.incbin "baserom.gba", 0x002f9030, 0x00006fd0
-	.section .unidentified.086322b2,"a"
-	.incbin "baserom.gba", 0x006322b2, 0x0004dd4e
 	.section .unidentified.08682000,"a"
 	.global Resource_Data002
 Resource_Data002:

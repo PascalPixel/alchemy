@@ -1363,10 +1363,6 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3a6	text	games/tbs/src/field/common/effect/spawn	.text.effect_spawn
 3a6	text	games/tbs/src/field/common/object/staged_actor	.text
 3a6	text	games/tbs/src/field/haidia_dou/dou	.text
-3a6	text	games/tbs/src/field/haidia_dou/probed_column_scene	.text
-3a6	text	games/tbs/src/field/haidia_dou/actor_nine	.text
-3a6	text	games/tbs/src/field/haidia_dou/lowered_actor_scene	.text
-3a6	text	games/tbs/src/field/haidia_dou/scene	.text
 3a6	text	games/tbs/src/field/haidia_dou/import	.text
 3a6	text	libgcc.a:_call_via_rX	.text
 3a6	text	games/tbs/src/field/haidia_dou/data	.data

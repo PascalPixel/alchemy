@@ -98,6 +98,9 @@ struct EventWork
 	u16					   message;
 	u8					   unknown_1da[6];
 	struct FieldActor	  *view_center;
+	u8					   unknown_1e4[0xade];
+	u16					   choice_message; // 選択肢のメッセージ
+	u16					   unknown_cc4;
 };
 
 LAYOUT_OFFSET_GUARD(EventWork_PlacedActors, struct EventWork, placed_actors, 0x34);
@@ -115,6 +118,7 @@ LAYOUT_OFFSET_GUARD(EventWork_StartTransition, struct EventWork, start_transitio
 LAYOUT_OFFSET_GUARD(EventWork_TransitionFrames, struct EventWork, transition_frames, 0x1c8);
 LAYOUT_OFFSET_GUARD(EventWork_Message, struct EventWork, message, 0x1d8);
 LAYOUT_OFFSET_GUARD(EventWork_ViewCenter, struct EventWork, view_center, 0x1e0);
+LAYOUT_OFFSET_GUARD(EventWork_ChoiceMessage, struct EventWork, choice_message, 0xcc2);
 #endif
 
 #endif

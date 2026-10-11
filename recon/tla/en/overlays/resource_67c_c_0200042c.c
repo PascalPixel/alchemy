@@ -310,15 +310,24 @@ void Func_02003a70(void)
 
 s32 Func_02003ba4(s32 index)
 {
-    return VENT_ROW(index)->active;
+    u8 *base = (u8 *)VENT_WORK;
+    struct VentRow *row = (struct VentRow *)(base + index * 20);
+
+    return row->active;
 }
 
 void Func_02003bb8(s32 index, s32 active)
 {
-    VENT_ROW(index)->active = active;
+    u8 *base = (u8 *)VENT_WORK;
+    struct VentRow *row = (struct VentRow *)(base + index * 20);
+
+    row->active = active;
 }
 
 void Func_02003c00(s32 index, s32 value)
 {
-    VENT_ROW(index)->value = value;
+    u8 *base = (u8 *)VENT_WORK;
+    struct VentRow *row = (struct VentRow *)(base + index * 20);
+
+    row->value = value;
 }

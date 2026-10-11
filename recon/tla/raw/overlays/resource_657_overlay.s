@@ -1,33 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x0200804c,"ax",%progbits
-	.global Func_0200004c
-	.thumb_func
-Func_0200004c:
-	push {lr}
-	ldr r3, .L_02008068
-	movs r1, #240
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, .L_0200806c
-	cmp r2, r3
-	bne .L_02008064
-	ldr r0, .L_02008070
-	b .L_02008066
-.L_02008064:
-	ldr r0, .L_02008074
-.L_02008066:
-	pop {pc}
-.L_02008068:
-	.4byte gPartyState
-.L_0200806c:
-	.4byte 0x0000002a
-.L_02008070:
-	.4byte Data_0200235c
-.L_02008074:
-	.4byte Data_020022cc
 	.section .text.x02008078,"ax",%progbits
 	.global Func_02000078
 	.thumb_func
@@ -118,34 +90,6 @@ Func_02000078:
 	.2byte 0x0000
 .L_02008138:
 	.4byte gPartyState
-	.section .text.x0200813c,"ax",%progbits
-	.global Func_0200013c
-	.thumb_func
-Func_0200013c:
-	push {lr}
-	ldr r3, .L_02008158
-	movs r1, #240
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, .L_0200815c
-	cmp r2, r3
-	bne .L_02008154
-	ldr r0, .L_02008160
-	b .L_02008156
-.L_02008154:
-	ldr r0, .L_02008164
-.L_02008156:
-	pop {pc}
-.L_02008158:
-	.4byte gPartyState
-.L_0200815c:
-	.4byte 0x0000002b
-.L_02008160:
-	.4byte Data_020023f8
-.L_02008164:
-	.4byte Data_020023ec
 	.section .text.x02008168,"ax",%progbits
 	.global Func_02000168
 	.thumb_func

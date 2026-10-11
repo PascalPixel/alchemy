@@ -248,55 +248,6 @@ Func_0200015c:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008338:
 	.4byte 0xffff0000
-	.section .text.x02008360,"ax",%progbits
-	.balign 4
-	.global Func_02000360
-	.thumb_func
-Func_02000360:
-	push {lr}
-	ldr r3, .L_02008390
-	movs r1, #240
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, .L_02008394
-	cmp r2, r3
-	bne .L_02008378
-	ldr r0, .L_02008398
-	b .L_0200838e
-.L_02008378:
-	ldr r3, .L_0200839c
-	cmp r2, r3
-	bne .L_02008382
-	ldr r0, .L_020083a0
-	b .L_0200838e
-.L_02008382:
-	ldr r3, .L_020083a4
-	cmp r2, r3
-	bne .L_0200838c
-	ldr r0, .L_020083a8
-	b .L_0200838e
-.L_0200838c:
-	ldr r0, .L_020083ac
-.L_0200838e:
-	pop {pc}
-.L_02008390:
-	.4byte gPartyState
-.L_02008394:
-	.4byte 0x0000009a
-.L_02008398:
-	.4byte Data_02002218
-.L_0200839c:
-	.4byte 0x0000009c
-.L_020083a0:
-	.4byte Data_02002320
-.L_020083a4:
-	.4byte 0x0000009b
-.L_020083a8:
-	.4byte Data_02002458
-.L_020083ac:
-	.4byte Data_02002200
 	.section .text.x020083e8,"ax",%progbits
 	.global Func_020003e8
 	.thumb_func
@@ -970,54 +921,6 @@ Func_020007a4:
 	.4byte Func_02000540
 .L_02008970:
 	.4byte Func_020006bc
-	.section .text.x02008d90,"ax",%progbits
-	.global Func_02000d90
-	.thumb_func
-Func_02000d90:
-	push {lr}
-	ldr r3, .L_02008dc0
-	movs r1, #240
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, .L_02008dc4
-	cmp r2, r3
-	bne .L_02008da8
-	ldr r0, .L_02008dc8
-	b .L_02008dbe
-.L_02008da8:
-	ldr r3, .L_02008dcc
-	cmp r2, r3
-	bne .L_02008db2
-	ldr r0, .L_02008dd0
-	b .L_02008dbe
-.L_02008db2:
-	ldr r3, .L_02008dd4
-	cmp r2, r3
-	bne .L_02008dbc
-	ldr r0, .L_02008dd8
-	b .L_02008dbe
-.L_02008dbc:
-	ldr r0, .L_02008ddc
-.L_02008dbe:
-	pop {pc}
-.L_02008dc0:
-	.4byte gPartyState
-.L_02008dc4:
-	.4byte 0x0000009a
-.L_02008dc8:
-	.4byte Data_020024d0
-.L_02008dcc:
-	.4byte 0x0000009c
-.L_02008dd0:
-	.4byte Data_02002698
-.L_02008dd4:
-	.4byte 0x0000009b
-.L_02008dd8:
-	.4byte Data_0200280c
-.L_02008ddc:
-	.4byte Data_020024b8
 	.section .text.x02008ef8,"ax",%progbits
 	.global Func_02000ef8
 	.thumb_func

@@ -4,9 +4,9 @@ SECTIONS
     {
         "*/games/tla/src/field/overlay_657/entry.o"(.text)
         "*/games/tla/src/field/overlay_657/scene_tables.o"(.text)
-        "*/resource_657_overlay.o"(.text.x0200804c)
+        "*/games/tla/src/field/overlay_657/s004c.o"(.text)
         "*/resource_657_overlay.o"(.text.x02008078)
-        "*/resource_657_overlay.o"(.text.x0200813c)
+        "*/games/tla/src/field/overlay_657/s013c.o"(.text)
         "*/resource_657_overlay.o"(.text.x02008168)
         "*/resource_657_overlay.o"(.text.x02008188)
         "*/resource_657_overlay.o"(.text.x020081cc)

@@ -49,45 +49,6 @@ Func_02000058:
 	negs r0, r0
 	pop {r5, r6, pc}
 	.2byte 0x0000
-	.section .text.x020080ac,"ax",%progbits
-	.global Func_020000ac
-	.thumb_func
-Func_020000ac:
-	push {lr}
-	ldr r3, .L_020080d4
-	movs r1, #240
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, .L_020080d8
-	cmp r2, r3
-	bne .L_020080c4
-	ldr r0, .L_020080dc
-	b .L_020080d0
-.L_020080c4:
-	ldr r3, .L_020080e0
-	cmp r2, r3
-	bne .L_020080ce
-	ldr r0, .L_020080e4
-	b .L_020080d0
-.L_020080ce:
-	ldr r0, .L_020080e8
-.L_020080d0:
-	pop {pc}
-	.2byte 0x0000
-.L_020080d4:
-	.4byte gPartyState
-.L_020080d8:
-	.4byte 0x0000006b
-.L_020080dc:
-	.4byte Data_020015f0
-.L_020080e0:
-	.4byte 0x0000006c
-.L_020080e4:
-	.4byte Data_020018c8
-.L_020080e8:
-	.4byte Data_02001294
 	.section .text.x020080ec,"ax",%progbits
 	.global Func_020000ec
 	.thumb_func
@@ -667,54 +628,6 @@ Func_0200051c:
 .L_020085e8:
 	add sp, #8
 	pop {r5, r6, r7, pc}
-	.section .text.x020085ec,"ax",%progbits
-	.global Func_020005ec
-	.thumb_func
-Func_020005ec:
-	push {lr}
-	ldr r3, .L_0200861c
-	movs r1, #240
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, .L_02008620
-	cmp r2, r3
-	bne .L_02008604
-	ldr r0, .L_02008624
-	b .L_0200861a
-.L_02008604:
-	ldr r3, .L_02008628
-	cmp r2, r3
-	bne .L_0200860e
-	ldr r0, .L_0200862c
-	b .L_0200861a
-.L_0200860e:
-	ldr r3, .L_02008630
-	cmp r2, r3
-	bne .L_02008618
-	ldr r0, .L_02008634
-	b .L_0200861a
-.L_02008618:
-	ldr r0, .L_02008638
-.L_0200861a:
-	pop {pc}
-.L_0200861c:
-	.4byte gPartyState
-.L_02008620:
-	.4byte 0x0000006b
-.L_02008624:
-	.4byte Data_02001ae4
-.L_02008628:
-	.4byte 0x0000006c
-.L_0200862c:
-	.4byte Data_02001c58
-.L_02008630:
-	.4byte 0x0000006d
-.L_02008634:
-	.4byte Data_02001db4
-.L_02008638:
-	.4byte Data_02001ad8
 	.section .text.x0200863c,"ax",%progbits
 	.global Func_0200063c
 	.thumb_func

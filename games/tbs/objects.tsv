@@ -289,10 +289,6 @@ main	rom_main_04	games/common/src/battle/effect/fragment	.text
 main	rom_main_04	games/tbs/src/battle/effect/fieldfx	.text
 main	rom_main_04	games/tbs/src/battle/effect/orbit	.text
 main	rom_main_04	games/tbs/src/battle/effect/orb	.text
-main	rom_main_04	games/tbs/src/battle/effect/particles	.text
-main	rom_main_04	games/tbs/src/battle/effect/lift_drop	.text
-main	rom_main_04	games/tbs/src/battle/effect/shards	.text
-main	rom_main_04	games/tbs/src/battle/effect/update_object_motion_scale_and_linked_angle	.text
 main	rom_main_04	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 main	rom_main_04	games/tbs/src/battle/effect/radial	.text
 main	rom_main_04	games/common/src/battle/effect/filter_object_id	.text

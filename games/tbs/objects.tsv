@@ -370,11 +370,7 @@ main	rom_main_05	games/tbs/src/graphics/ui/menuspr	.rodata
 main	rom_main_05	games/tbs/src/menu/menustr	.rodata
 main	rom_main_05	games/tbs/src/menu/menudata	.rodata
 main	rom_main_06	games/tbs/src/system/far_call/SHOP
-main	rom_main_06	games/tbs/src/menu/shop/visit	.text
 main	rom_main_06	games/tbs/src/menu/shop/shop	.text
-main	rom_main_06	games/tbs/src/menu/shop/draw_stock_page	.text
-main	rom_main_06	games/tbs/src/menu/shop/draw_money	.text
-main	rom_main_06	games/tbs/src/menu/shop/draw_item_price	.text
 main	rom_main_06	games/common/src/menu/shop/draw_message	.text
 main	rom_main_06	games/tbs/src/menu/shop/sell	.text
 main	rom_main_06	games/tbs/src/menu/shop/shopspr	.rodata

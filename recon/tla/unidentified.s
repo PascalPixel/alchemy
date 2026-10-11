@@ -239,15 +239,7 @@ Data_0805c17c:
 	.global Data_0805c1b4
 Data_0805c1b4:
 	.incbin "baserom.gba", 0x0005c1b4, 0x00000010
-	.global Data_0805c1c4
-Data_0805c1c4:
-	.incbin "baserom.gba", 0x0005c1c4, 0x00000400
-	.global Data_0805c5c4
-Data_0805c5c4:
-	.incbin "baserom.gba", 0x0005c5c4, 0x00000400
-	.global Data_0805c9c4
-Data_0805c9c4:
-	.incbin "baserom.gba", 0x0005c9c4, 0x00002000
+	.section .unidentified.0805e9c4,"a"
 	.global Data_0805e9c4
 Data_0805e9c4:
 	.incbin "baserom.gba", 0x0005e9c4, 0x00000048
@@ -299,9 +291,7 @@ Data_0805eb58:
 	.global Data_0805eb7c
 Data_0805eb7c:
 	.incbin "baserom.gba", 0x0005eb7c, 0x00000108
-	.global Data_0805ec84
-Data_0805ec84:
-	.incbin "baserom.gba", 0x0005ec84, 0x00000800
+	.section .unidentified.0805f484,"a"
 	.global Data_0805f484
 Data_0805f484:
 	.incbin "baserom.gba", 0x0005f484, 0x000000e0
@@ -1014,9 +1004,7 @@ Data_08129828:
 	.global Data_08129830
 Data_08129830:
 	.incbin "baserom.gba", 0x00129830, 0x0000013c
-	.global Data_0812996c
-Data_0812996c:
-	.incbin "baserom.gba", 0x0012996c, 0x00000800
+	.section .unidentified.0812a16c,"a"
 	.global Data_0812a16c
 Data_0812a16c:
 	.incbin "baserom.gba", 0x0012a16c, 0x00000008
@@ -1062,19 +1050,6 @@ Data_0812cd74:
 	.global Data_0812ce54
 Data_0812ce54:
 	.incbin "baserom.gba", 0x0012ce54, 0x00000020
-	.section .unidentified.0812ce7c,"a"
-	.global BattleFormation_Records
-BattleFormation_Records:
-	.incbin "baserom.gba", 0x0012ce7c, 0x00000018
-	.global Data_0812ce94
-Data_0812ce94:
-	.incbin "baserom.gba", 0x0012ce94, 0x00003dc8
-	.global Data_08130c5c
-Data_08130c5c:
-	.incbin "baserom.gba", 0x00130c5c, 0x000000b0
-	.global Summon_EntryTable
-Summon_EntryTable:
-	.incbin "baserom.gba", 0x00130d0c, 0x00000c14
 	.section .unidentified.08196dd8,"a"
 	.global Data_08196dd8
 Data_08196dd8:

@@ -612,6 +612,10 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000599f0)
     "*/games/common/src/graphics/font/text.o"(.rodata)
     "*/recon/tla/ja/rom.o"(.rom.0005cdcc)
+    "*/games/tla/src/menu/curtiles.o"(.rodata)
+    "*/recon/tla/ja/rom.o"(.rom.0005f674)
+    "*/games/tla/src/graphics/window/curframe.o"(.rodata)
+    "*/recon/tla/ja/rom.o"(.rom.00060134)
     "*/games/tla/text/messages.o"(.rodata)
     "*/recon/tla/ja/rom.o"(.rom.0009d0d0)
     . = ABSOLUTE(0x080a8000);
@@ -1291,6 +1295,9 @@ SECTIONS
     "*/games/tla/src/battle/summon/definition.o"(.text)
     "*/games/tla/src/game/item/encode_banked_id.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.001281e6)
+    "*/games/tla/src/graphics/window/curframe_2.o"(.rodata)
+    "*/recon/tla/ja/rom.o"(.rom.0012a168)
+    "*/games/tla/src/battle/btlvars.o"(.rodata)
     . = ABSOLUTE(0x08138000);
     "*/games/tla/src/system/far_call/table_47.o"(.text .rodata .data .padding)
     "*/games/tla/src/battle/effect/kernel_bank_integrate_vectors.o"(.text .rodata .data .padding)

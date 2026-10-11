@@ -1536,13 +1536,17 @@ Func_0804e3f4:
 RenderResource_PairSourceTable:
 	.incbin "baserom.gba", 0x00059b74, 0x00000d58
 	.section .rom.0005cdcc, "ax"
-	.incbin "baserom.gba", 0x0005cdcc, 0x00002a3c
+	.incbin "baserom.gba", 0x0005cdcc, 0x000000a8
+	.section .rom.0005f674, "ax"
+	.incbin "baserom.gba", 0x0005f674, 0x00000194
 	.global Data_0805eb58
 Data_0805eb58:
 	.incbin "baserom.gba", 0x0005f808, 0x00000024
 	.global Data_0805eb7c
 Data_0805eb7c:
-	.incbin "baserom.gba", 0x0005f82c, 0x00000a44
+	.incbin "baserom.gba", 0x0005f82c, 0x00000108
+	.section .rom.00060134, "ax"
+	.incbin "baserom.gba", 0x00060134, 0x0000013c
 	.global StatusMenu_LevelLetterString
 StatusMenu_LevelLetterString:
 	.incbin "baserom.gba", 0x00060270, 0x000000f0
@@ -4548,16 +4552,12 @@ BattlePlacement_StepPairs:
 	.incbin "baserom.gba", 0x00128840, 0x00000024
 	.global Data_08128868
 Data_08128868:
-	.incbin "baserom.gba", 0x00128864, 0x00004268
+	.incbin "baserom.gba", 0x00128864, 0x00001104
+	.section .rom.0012a168, "ax"
+	.incbin "baserom.gba", 0x0012a168, 0x00002964
 	.global Resource_SlotAssignments
 Resource_SlotAssignments:
 	.incbin "baserom.gba", 0x0012cacc, 0x000003ac
-	.global BattleFormation_Records
-BattleFormation_Records:
-	.incbin "baserom.gba", 0x0012ce78, 0x00003e90
-	.global Summon_EntryTable
-Summon_EntryTable:
-	.incbin "baserom.gba", 0x00130d08, 0x00000c14
 	.section .rom.001380ac, "ax"
 	.incbin "baserom.gba", 0x001380ac, 0x00000f1c
 	.section .rom.0013ba50, "ax"

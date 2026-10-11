@@ -758,6 +758,10 @@
         "*/recon/tla/unidentified.o"(.unidentified.080597f4)
         "*/games/common/src/graphics/font/text.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0805c0e0)
+        "*/games/tla/src/menu/curtiles.o"(.rodata)
+        "*/recon/tla/unidentified.o"(.unidentified.0805e9c4)
+        "*/games/tla/src/graphics/window/curframe.o"(.rodata)
+        "*/recon/tla/unidentified.o"(.unidentified.0805f484)
         "*/games/tla/text/messages.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.080aa0dc)
         . = ABSOLUTE(0x080ad000);
@@ -1952,8 +1956,10 @@
         "*/recon/tla/raw/0812824c.o"(.text)
         "*/recon/tla/raw/081284c0.o"(.text)
         "*/recon/tla/unidentified.o"(.unidentified.081287c4)
+        "*/games/tla/src/graphics/window/curframe_2.o"(.rodata)
+        "*/recon/tla/unidentified.o"(.unidentified.0812a16c)
         "*/recon/tla/raw/0812ce74.o"(.text)
-        "*/recon/tla/unidentified.o"(.unidentified.0812ce7c)
+        "*/games/tla/src/battle/btlvars.o"(.rodata)
         . = ABSOLUTE(0x08138000);
         "*/games/tla/src/system/far_call/table_47.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle/effect/kernel_bank_integrate_vectors.o"(.text .rodata .data .padding)

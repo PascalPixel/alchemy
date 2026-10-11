@@ -1654,8 +1654,6 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays	.overlays
 3c9	discard	games/tbs/src/field/common/effect/spawn	.text.effect_spawn_resident
 3ca	text	games/tbs/src/field/babi_fune/entry	.text
 3ca	text	games/tbs/src/field/babi_fune/fune	.text
-3ca	text	games/tbs/src/field/babi_fune/scene	.text
-3ca	text	games/tbs/src/field/babi_fune/waves	.text
 3ca	text	games/tbs/src/graphics/display/scroll_initialize_hblank_dma	.text
 3ca	text	games/tbs/src/field/babi_fune/stop_dma	.text
 3ca	text	games/tbs/src/field/babi_fune/import	.text

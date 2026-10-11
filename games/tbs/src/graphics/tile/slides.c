@@ -1269,7 +1269,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
     else if (align == 1)
         x = (width - pos) / 2;
 
-    /* FAKEMATCH: needed to match: an assignment nothing reads; without it the first character is fetched through r2 and the text pointer stepped by a constant in r3. */
+    // p is set to the text again, though nothing reads it before the glyph rows; the first character is fetched through it
     p = text;
     pos = 0;
     while ((c = *text++) != 0) {

@@ -116,7 +116,7 @@ void UiText_PrepareMessageWork(s32 argument)
 
     state = ((struct BattleMessageSlotRange *)gWindowWork)->render;
     control = ((struct BattleMessageSlotRange *)gWindowWork)->display;
-    /* FAKEMATCH: needed to match: result is cleared before the entry lookup, though it is assigned again before it is read; that zero's register clears marked below (47 differ without it). */
+    // result starts as NULL, though it is assigned again before it is read; the same zero clears marked below
     result = NULL;
     state->menu_state = 2;
     index = UiText_BuildRenderEntries(argument, 1);
@@ -208,7 +208,7 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed)
 
     work = (struct UiRenderWork *)gWindowWork[0];
     work->result[0] = (packed << 4) >> 20;
-    /* FAKEMATCH: needed to match: the window starts as NULL, though it is assigned before it is read; that zero's register serves the plain zeros below. */
+    // the window starts as NULL, though it is assigned before it is read; the same zero serves the zeros below
     window = NULL;
     work->result[1] = 0;
     packed &= 0xffff;

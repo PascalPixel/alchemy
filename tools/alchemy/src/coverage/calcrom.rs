@@ -193,7 +193,7 @@ fn source_mark(
     }
     Ok(Mark {
         steered,
-        veneer: builds_veneers(&text),
+        veneer: !path.ends_with(".c") && crate::evidence::builds_veneers(root, Path::new(&path)),
         assembly_proof: crate::evidence::assembly_review(root, &path, &text),
         reasons,
     })
@@ -222,15 +222,6 @@ fn steering_roots(
         }
     }
     roots
-}
-
-/// Assembly that builds its entries with a veneer macro: the 8-byte far-call
-/// and IWRAM entry stubs counted as veneers.
-fn builds_veneers(text: &str) -> bool {
-    text.lines().any(|line| {
-        let word = line.split_whitespace().next().unwrap_or("");
-        word == "overlay_veneer" || word == "IwramEntry"
-    })
 }
 
 /// Check the placed object itself, not the spelling of a macro invocation.

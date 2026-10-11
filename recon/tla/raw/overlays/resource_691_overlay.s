@@ -616,44 +616,6 @@ Func_020005cc:
 	.4byte 0xfdff0000
 .L_02008628:
 	.4byte gMapShapeGrid
-	.section .text.x0200862c,"ax",%progbits
-	.global Func_0200062c
-	.thumb_func
-Func_0200062c:
-	push {lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r4, [r3, #32]
-	cmp r4, #0
-	bne .L_0200863c
-	movs r0, #0
-	b .L_02008662
-.L_0200863c:
-	cmp r0, #2
-	bhi .L_02008650
-	lsls r3, r0, #3
-	subs r3, r3, r0
-	movs r0, #156
-	lsls r3, r3, #3
-	lsls r0, r0, #1
-	adds r3, r3, r0
-	ldr r4, [r4, r3]
-	b .L_02008652
-.L_02008650:
-	ldr r4, .L_02008664
-.L_02008652:
-	lsls r3, r2, #7
-	adds r3, r1, r3
-	lsls r3, r3, #2
-	adds r4, r4, r3
-	ldrb r0, [r4, #2]
-	ldrb r3, [r4, #3]
-	lsls r0, r0, #8
-	orrs r0, r3
-.L_02008662:
-	pop {pc}
-.L_02008664:
-	.4byte gMapCellBuffer
 	.section .text.x02008668,"ax",%progbits
 	.global Func_02000668
 	.thumb_func
@@ -726,7 +688,7 @@ Func_020006cc:
 	ldr r2, [r5, #16]
 	asrs r1, r1, #20
 	asrs r2, r2, #20
-	bl Func_0200062c
+	bl MapCell_GetAttributes
 	movs r3, #64
 	ands r0, r3
 	cmp r0, #0
@@ -854,7 +816,7 @@ Func_0200079c:
 	asrs r2, r2, #20
 	asrs r1, r1, #20
 	movs r0, #0
-	bl Func_0200062c
+	bl MapCell_GetAttributes
 	movs r3, #255
 	ands r3, r0
 	str r3, [r7, #76]
@@ -885,7 +847,7 @@ Func_0200079c:
 	asrs r1, r1, #20
 	asrs r2, r2, #20
 	movs r0, #0
-	bl Func_0200062c
+	bl MapCell_GetAttributes
 	movs r3, #64
 	ands r0, r3
 	cmp r0, #0
@@ -1976,7 +1938,7 @@ Func_02001084:
 	asrs r1, r1, #20
 	asrs r2, r2, #20
 	movs r0, #0
-	bl Func_0200062c
+	bl MapCell_GetAttributes
 	movs r7, #0
 	asrs r2, r0, #8
 	b .L_020090a8
@@ -2015,7 +1977,7 @@ Func_020010cc:
 	adds r1, r3, #0
 	adds r2, r4, #0
 	movs r0, #0
-	bl Func_0200062c
+	bl MapCell_GetAttributes
 	movs r2, #255
 	ldrh r3, [r5]
 	lsls r2, r2, #8
@@ -2215,7 +2177,7 @@ Func_020011e4:
 	asrs r2, r2, #20
 	asrs r1, r1, #20
 	movs r0, #2
-	bl Func_0200062c
+	bl MapCell_GetAttributes
 	asrs r0, r0, #8
 	cmp r0, #212
 	beq .L_020092d6

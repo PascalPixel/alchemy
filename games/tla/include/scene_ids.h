@@ -4,6 +4,9 @@
 extern char SceneId_VinasuChojo;
 extern char SceneId_DeriHeya1;
 extern char SceneId_DeriHeya2;
+extern char SceneId_Ov680Room1;
+extern char SceneId_Ov680Room2;
+extern char SceneId_Ov680Room3;
 extern char SceneId_Ov687Room1;
 extern char SceneId_Ov687Room2;
 extern char SceneId_Kabe1;

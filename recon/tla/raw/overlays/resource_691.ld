@@ -17,7 +17,7 @@ SECTIONS
         "*/resource_691_overlay.o"(.text.x02008538)
         "*/games/tla/src/field/overlay_691/distance.o"(.text)
         "*/resource_691_overlay.o"(.text.x020085cc)
-        "*/resource_691_overlay.o"(.text.x0200862c)
+        "*/games/tla/src/field/common/map/cellget.o"(.text)
         "*/resource_691_overlay.o"(.text.x02008668)
         "*/resource_691_overlay.o"(.text.x020086cc)
         "*/resource_691_overlay.o"(.text.x0200874c)

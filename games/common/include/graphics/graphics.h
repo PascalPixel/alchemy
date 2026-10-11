@@ -259,7 +259,6 @@ s32	 Menu_DrawAtWindowOffset(void *win, s32 arg1, s32 arg2, s32 arg3, s32 arg4, 
 #ifndef OWN_MenuSelection_BuildEntries
 void MenuSelection_BuildEntries(void);
 #endif
-s32	 Object_GetScreenPositionFar(s32 object, s32 *out);
 void ObjectGroup_TickMemberTimers(void);
 void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta);
 u16	 Palette_ScaleTintChannels(struct WorkspaceWork *work, s32 scale_r, s32 scale_g, s32 scale_b);

@@ -22,6 +22,8 @@ struct BtlUnit;
 struct DispatchObject;
 struct EffectLaunch;
 struct EffectPosition;
+struct EffectSlot;
+struct EffectVector;
 struct EnemyDefinition;
 struct FieldActor;
 struct FxObject;
@@ -34,6 +36,8 @@ struct RenderInput;
 struct RenderOutput;
 struct ResourceObject;
 struct ResourceObjectWork;
+struct ScenePlacement;
+struct SceneRegionEntry;
 struct ScriptObjectEntry;
 struct ShopCursor;
 struct SummonDefinition;
@@ -48,6 +52,7 @@ struct UiWindow;
 #include "farcall/field.h"
 #include "farcall/window.h"
 #include "farcall/game.h"
+#include "farcall/object.h"
 #include "farcall/menu.h"
 #include "farcall/shop.h"
 #include "farcall/battle.h"

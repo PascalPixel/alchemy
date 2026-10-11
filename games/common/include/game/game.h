@@ -59,9 +59,6 @@ s32	 Djinn_CheckTurnBalance(s32 from, s32 to);
 void Djinn_CountTurns(u8 *counts);
 s32	 DjinnMenu_RunScreen(void);
 s32	 DjinnMenu_SelectDjinn(s32 mode);
-#ifndef OWN_Game_ResetForNewGameFar
-void Game_ResetForNewGameFar(s32 mode);
-#endif
 void GameFlag_ClearBit(s32 flag);
 void GameState_InitDefaults(void);
 void Inventory_AddAndEquip(s32 owner, s32 target);

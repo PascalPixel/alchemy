@@ -278,7 +278,7 @@ main	rom_main_03	games/tbs/src/game/character/summons	.rodata
 main	rom_main_03	games/tbs/src/game/character/classes	.rodata
 main	rom_main_03	games/tbs/src/game/character/elemtbl	.rodata
 main	rom_main_03	games/tbs/src/game/djinn/djinntbl	.rodata
-main	rom_main_04	games/tbs/src/system/far_call/object
+main	rom_main_04	games/tbs/src/system/far_call/OBJECT
 main	rom_main_04	games/tbs/src/field/common/map/select_group_entry	.text
 main	rom_main_04	games/tbs/src/battle/effect/data_get_resource_group	.text
 main	rom_main_04	games/tbs/src/field/common/map/scenerun	.text

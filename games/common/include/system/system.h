@@ -175,7 +175,6 @@ s32 Runtime_GetRemainingIwram(void);
 #ifndef OWN_RuntimeDispatch_NoOpHook
 void RuntimeDispatch_NoOpHook(void);
 #endif
-void  SaveState_CaptureObjectTableFar(void);
 void  SerialRuntime_Initialize(void);
 void  SoundDriver_EnterMixer(void);
 void  System_VBlankHandler(void);

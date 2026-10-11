@@ -146,14 +146,6 @@ s32	 AbilityMenu_BuildAvailableList(void);
 void AffineEffect_UpdateFrame(void);
 s32	 Audio_PlayCueReturnOne(s32 cue);
 void AudioCommand_WaitForStateByteClear(void);
-void BattleFx_ClearOwnedSlotFar(struct EffectSlot *effect);
-void BattleFx_ClearRandomParticlesFar(void);
-#ifndef OWN_BattleFx_GetResourceIdFar
-s32 BattleFx_GetResourceIdFar(u16);
-#endif
-s32	 BattleFx_HasMatchingEvent5Far(u8 effect);
-s32	 BattleFx_HasReachedTargetFar(struct EffectSlot *);
-s32	 BattleFx_HasTriggerFar(s32 item);
 void BattleFx_UpdateRadialMotion(struct EffectSlot *effect);
 void BattleUnit_ResetStateByMode(s32 id, s32 mode);
 s32	 CharacterMenu_UpdateSelectionIcons(const u8 *enabled);
@@ -170,10 +162,6 @@ s32 DjinnMenu_DrawStatPreview(
 #ifndef OWN_DjinnMenu_ShowCurrentList
 s32 DjinnMenu_ShowCurrentList(void);
 #endif
-void EffectSlot_InitializeFar(struct EffectSlot *effect, s32 mode, s32 x, s32 z);
-void EffectSlot_SetObjectModeFar(struct EffectSlot *effect, s32 value);
-void EffectSlot_SetPositionFar(struct EffectSlot *, s32, s32);
-void EffectSlot_UpdateFar(s32);
 void EventTable_ApplyRowAbilities(s32 row_no);
 s32	 EventTable_CopyRowHeader(s32 row_no, s16 *output);
 s32	 EventTable_GetRowLimit(void);
@@ -268,7 +256,6 @@ void Menu_UpdateSecondObjectRowPositions(void);
 u32	 Menu_WaitForSelectionInput(u32 mode);
 void MenuSelection_DrawFrame(void);
 void MenuSelection_DrawSideMarker(struct SelectionScreen *state, s32 index);
-s32	 Object_GetTriggerTileAheadOfCurrentFar(void);
 #ifndef OWN_ObjectPlacement_CreateGroup
 void ObjectPlacement_CreateGroup(
 	struct RenderInput *origin, s32 x, s32 y, struct PlacementDescriptor *descriptor);
@@ -282,8 +269,6 @@ void Palette_CopyObjectBankToBackground14(void);
 void Palette_LightenBankHighlight(s32 bank);
 s32	 PaletteFar_Entry00(s32 mode);
 void PaletteFar_Entry20(s32 mode);
-s32 Party_RemapCharacterIdByFlagsFar(u16 value);
-s32 Party_RemapCharacterIdIfEnabledFar(s8 kind, s8 variant);
 #ifndef OWN_PartyTalkMenu_Choose
 s32 PartyTalkMenu_Choose(void);
 #endif

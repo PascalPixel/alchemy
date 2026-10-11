@@ -804,7 +804,6 @@ void EffectRuntime_PrepareRisingObject(struct ObjectRuntime *object);
 void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z);
 #endif
 s32						Event_FindFacingTrigger(s32 source);
-s32						Event_GetSpecialValueFar(void);
 void					EventActor_RunHopAndLeapSequence(s32 arg);
 void					FarCall_WindowTable(void);
 s32						Field_RunScene(s32 entrance);

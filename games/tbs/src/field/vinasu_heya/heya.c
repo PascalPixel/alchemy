@@ -376,21 +376,14 @@ void OverlayObject_WaitUntilIdle(struct BusyObject *obj)
 
 void Effect_AdvanceMotion(struct Effect_0200096c *effect)
 {
-    s32 velocity_z;
     struct Sprite_0200096c *sprite;
-    s32 velocity_x;
 
-    /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
-    do {
-        velocity_x = effect->velocity[0];
-        effect->position[0] += velocity_x;
-        effect->position[1] += effect->velocity[1];
-    } while (0);
-    velocity_z = effect->velocity[2];
-    effect->position[2] += velocity_z;
+    effect->position[0] += effect->velocity[0];
+    effect->position[1] += effect->velocity[1];
+    effect->position[2] += effect->velocity[2];
 
-    effect->velocity[0] = velocity_x - Math_Divide(velocity_x, 18);
-    effect->velocity[2] = velocity_z - velocity_z / 16;
+    effect->velocity[0] -= effect->velocity[0] / 18;
+    effect->velocity[2] -= effect->velocity[2] / 16;
 
     effect->accum18 += effect->rate30;
     effect->accum1c += effect->rate34;
@@ -1083,7 +1076,6 @@ void Scene_RunActorLeapSequence(void)
         OverlayObject_SpawnWithMode14(rec7->x.fixed, 0, z, 223);
     }
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    /* FAKEMATCH: the existing map adapter keeps destination setup and zero/state scheduling; the direct Engine call changes nine instruction bytes in this complete localized leap. */
     Map_CopyCellAttributes(33, 35, 7, 1, 33, 34);
     *state = 3;
 #else
@@ -2606,7 +2598,6 @@ void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
     s32 hit;
     s32 phase;
     s32 x;
-    s32 vz;
 
     {
         struct EventWork *event = gEventWork;
@@ -2623,14 +2614,9 @@ void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
     if (phase == 0) {
         params.angle = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
         x = actor->x.fixed + (((u32)(Engine_RandomNext() * 12) >> 16) << 16) - 0x60000;
-        /* FAKEMATCH: this scope preserves the velocity and parameter spill order. */
-        {
-            s32 vx;
-
-            vx = (((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd) * dir->x;
-            vz = dir->z * (((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd);
-            Effect_Spawn(x, actor->y.fixed, actor->z.fixed, vx, phase, vz, 0x800000, &params);
-        }
+        Effect_Spawn(x, actor->y.fixed, actor->z.fixed,
+                     (((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd) * dir->x, phase,
+                     dir->z * (((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd), 0x800000, &params);
     }
     if (hit < 0) {
         Engine_ActorSetAttachedEffect(id, 0x102);

@@ -386,7 +386,7 @@ void SceneDialogue_PromptAndCountSkip(s32 x)
     SceneActor_SetPairZeroAndValue(x, 0, 2);
     Engine_EventOpenMessage(x, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
-        gEventWork->message += 1;
+        gEventWork->message++;
     }
     Engine_EventShowMessage(x, 0);
 }
@@ -620,16 +620,6 @@ void Djinn_Transfer(s32 owner, s32 djinn, s32 element, s32 flags);
 
 s32 BattleFx_PlayCueAndStartEmitterOnTarget();
 void Party_RemoveOwnerRestored();
-
-static __inline__ void bump_halfword(s32 off, s32 amount)
-{
-    u8 *work = (u8 *)gEventWork;
-    u16 *slot = (u16 *)(work + off);
-    /* FAKEMATCH: the word-sized sum avoids a pooled one, an extra saved register and changed pool placement. */
-    s32 next = *slot + amount;
-
-    *slot = next;
-}
 
 struct Stop {
     u8 id;
@@ -2216,7 +2206,6 @@ void RunEventScript01(void)
 
 void RunDialoguePromptScene(void)
 {
-    s32 off1d8;
     struct FieldActor *obj;
     struct FieldActor *actor;
     s32 aftermath;
@@ -2349,17 +2338,7 @@ void RunDialoguePromptScene(void)
     Engine_MessageShowCentered((aftermath + 5), 1);
     Engine_ActorSetAnimation(15, 2);
     Actor_SetPosition(18, 0, 0);
-    {
-        u8 *work0 = (u8 *)gEventWork;
-        u16 *slot0;
-        s32 next0;
-
-        /* FAKEMATCH: the step offset is parked in off1d8 for the later bump and the sum goes through a word-sized temporary; both keep the reference's registers. */
-        off1d8 = 0x1d8;
-        slot0 = (u16 *)(work0 + off1d8);
-        next0 = *slot0 + 1;
-        *slot0 = next0;
-    }
+    gEventWork->message++;
     Engine_ActorRunRepeatedMotion(14, 1);
     SceneActor_SetModeZeroAndValue(14, 20);
     SceneActor_SetPairZeroAndValue(0, 1, 40);
@@ -2373,15 +2352,7 @@ void RunDialoguePromptScene(void)
     Engine_ActorRunRepeatedMotion(14, 2);
     Event_PlayCue(124);
     Engine_ActorSetAnimation(16, 4);
-    {
-        struct FieldActor *rec;
-        /* FAKEMATCH: the zero is spelled as a sum of a zero local with itself, which keeps the reference's register for it. */
-        s32 t = 0;
-        u16 zero_sym = (u16)(t + t);
-
-        rec = Object_GetById(19);
-        rec->motion_flags = zero_sym;
-    }
+    Object_GetById(19)->motion_flags = 0;
     Engine_ActorSetSpritePriority(19, 1);
     Actor_SetPosition(19, 0x3680000, 0x1980000);
     Actor_SetSpeed(19, 0xcccc, 0x6666);
@@ -2392,7 +2363,7 @@ void RunDialoguePromptScene(void)
     Engine_MessageShowCentered((aftermath + 8), 1);
     Engine_ActorSetAnimation(16, 2);
     Actor_SetPosition(19, 0, 0);
-    bump_halfword(off1d8, 1);
+    gEventWork->message++;
     Actor_ShowEmote(9, 0x102, 0);
     Engine_EventWait(60);
     SceneActor_SetModeZeroAndValue(9, 20);

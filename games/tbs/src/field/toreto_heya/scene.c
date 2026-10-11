@@ -822,21 +822,14 @@ void SceneEffect_RegisterPaletteFadeCallback(void)
 
 void ToretoHeya_AdvanceEffectMotion(struct Effect *effect)
 {
-    s32 velocity_z;
     struct Sprite *sprite;
-    s32 velocity_x;
 
-    /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
-    do {
-        velocity_x = effect->velocity_x;
-        effect->position[0] += velocity_x;
-        effect->position[1] += effect->velocity_y;
-    } while (0);
-    velocity_z = effect->velocity_z;
-    effect->position[2] += velocity_z;
+    effect->position[0] += effect->velocity_x;
+    effect->position[1] += effect->velocity_y;
+    effect->position[2] += effect->velocity_z;
 
-    effect->velocity_x = velocity_x - Math_Divide(velocity_x, 18);
-    effect->velocity_z = velocity_z - velocity_z / 16;
+    effect->velocity_x -= effect->velocity_x / 18;
+    effect->velocity_z -= effect->velocity_z / 16;
 
     effect->accum18 += effect->rate30;
     effect->accum1c += effect->rate34;

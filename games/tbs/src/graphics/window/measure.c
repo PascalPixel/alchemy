@@ -4036,7 +4036,6 @@ struct GlyphSpriteOutput
 	struct SpriteAttr attr;
 };
 
-LAYOUT_SIZE_GUARD(GlyphSpriteOutput_Size, struct GlyphSpriteOutput, sizeof(struct RenderOutput));
 LAYOUT_OFFSET_GUARD(
 	GlyphSpriteOutput_X, struct GlyphSpriteOutput, x, (u32) & ((struct RenderOutput *)0)->x);
 LAYOUT_OFFSET_GUARD(

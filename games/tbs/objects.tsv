@@ -197,7 +197,6 @@ main	rom_main_02	games/common/src/graphics/text/text	.text
 main	rom_main_02	games/tbs/src/system/save/save	.text
 main	rom_main_02	games/tbs/src/graphics/window/name	.text
 main	rom_main_02	games/tbs/src/game/party/lookup_character_value_by_flag32	.text
-main	rom_main_02	games/tbs/src/graphics/render/load_pair	.text
 main	rom_main_02	games/tbs/src/graphics/window/resource	.text
 main	rom_main_02	games/common/src/graphics/window/get_table_word_zero	.text
 main	rom_main_02	games/tbs/src/graphics/window/run_copied_routine	.text

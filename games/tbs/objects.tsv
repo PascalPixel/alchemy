@@ -260,14 +260,7 @@ main	rom_main_03	games/tbs/src/game/character/elemtbl	.rodata
 main	rom_main_03	games/tbs/src/game/djinn/djinntbl	.rodata
 main	rom_main_04	games/tbs/src/system/far_call/OBJECT
 main	rom_main_04	games/tbs/src/battle/effect/encountr	.text
-main	rom_main_04	games/tbs/src/field/common/object/table	.text
-main	rom_main_04	games/tbs/src/battle/effect/bounds	.text
-main	rom_main_04	games/tbs/src/field/common/object/snapshot	.text
-main	rom_main_04	games/tbs/src/field/common/step	.text
-main	rom_main_04	games/tbs/src/battle/party/field	.text
-main	rom_main_04	games/tbs/src/debug/paledit	.text
 main	rom_main_04	games/tbs/src/battle/effect/descript	.text
-main	rom_main_04	games/tbs/src/field/common/tileact	.text
 main	rom_main_04	games/tbs/src/battle/effect/nearobj	.text
 main	rom_main_04	games/tbs/src/battle/items	.text
 main	rom_main_04	games/tbs/src/battle/action	.text

@@ -1,11 +1,14 @@
 #ifndef ALCHEMY_SCENE_IDS_H
 #define ALCHEMY_SCENE_IDS_H
 
+extern char SceneId_WorldMap;
 extern char SceneId_VinasuChojo;
 extern char SceneId_DeriHeya1;
 extern char SceneId_DeriHeya2;
 extern char SceneId_Ov687Room1;
 extern char SceneId_Ov687Room2;
+extern char SceneId_Ov65ERoom2;
+extern char SceneId_Ov667;
 extern char SceneId_Kabe1;
 extern char SceneId_Kabe2;
 extern char SceneId_Kabe3;

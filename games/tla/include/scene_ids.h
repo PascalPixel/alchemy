@@ -17,5 +17,13 @@ extern char SceneId_Kabe8;
 extern char SceneId_Kabe9;
 extern char SceneId_Kabe10;
 extern char SceneId_Kabe11;
+extern char SceneId_Ov686Room1;
+extern char SceneId_Ov686Room2;
+extern char SceneId_Ov686Room3;
+extern char SceneId_Ov686Room4;
+extern char SceneId_Ov686Room5;
+extern char SceneId_Ov686Room6;
+extern char SceneId_Ov686Room7;
+extern char SceneId_Ov686Room8;
 
 #endif

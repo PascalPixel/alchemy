@@ -4527,8 +4527,6 @@ Func_08157530:
 	.section .rom.00158dc8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00158dc8, 0x0000127c
-	.section .rom.0015a0bc, "ax"
-	.incbin "baserom.gba", 0x0015a0bc, 0x00000030
 	.section .rom.0015a110, "ax"
 	.global BattlePres_RunBurstScene
 	.type BattlePres_RunBurstScene, %function

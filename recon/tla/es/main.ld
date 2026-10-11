@@ -1367,7 +1367,6 @@
     "*/games/tla/src/battle/effect/screen_shake.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00158dc8)
     "*/games/common/src/field/common/effect/animation_modes.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.0015a0bc)
     "*/games/tla/src/field/common/effect/animalt.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.0015a110)
     "*/games/tla/src/battle/effect/fxmodee.o"(.text)

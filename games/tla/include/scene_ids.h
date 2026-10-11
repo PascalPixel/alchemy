@@ -17,5 +17,11 @@ extern char SceneId_Kabe8;
 extern char SceneId_Kabe9;
 extern char SceneId_Kabe10;
 extern char SceneId_Kabe11;
+extern char SceneId_Kibonbo1;
+extern char SceneId_Kibonbo2;
+extern char SceneId_Kibonbo3;
+extern char SceneId_Kibonbo4;
+extern char SceneId_Kibonbo5;
+extern char SceneId_Kibonbo6;
 
 #endif

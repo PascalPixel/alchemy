@@ -1,0 +1,168 @@
+#ifndef TLA_OVERLAY_670_H
+#define TLA_OVERLAY_670_H
+
+#include "types.h"
+#include "party_state.h"
+#include "ram_buffer.h"
+#include "scene_ids.h"
+#include "text/msg_ids.h"
+#include "field_sprite.h"
+
+struct Ov670Object {
+    u8 unknown_00[6];
+    u16 facing;
+    s32 x;
+    s32 y;
+    s32 z;
+    s32 height;
+    s32 scale_x;
+    s32 scale_y;
+    u8 unknown_20[3];
+    u8 priority_flags;
+    s32 velocity_x;
+    s32 velocity_y;
+    u8 unknown_2c[0x18];
+    s32 field_44;
+    s32 field_48;
+    u8 unknown_4c[4];
+    struct FieldSprite *sprite;
+    u8 unknown_54;
+    u8 motion_flags;
+    u8 unknown_56[3];
+    u8 collision_flags;
+    u8 unknown_5a[2];
+    u8 field_5c;
+    u8 unknown_5d[5];
+    u8 timer;
+    u8 unknown_63;
+    s16 field_64;
+    s16 field_66;
+    s32 field_68;
+    void *update;
+};
+
+struct Ov670EventWork {
+    u8 unknown_000[0x154];
+    s16 exit;
+    u8 unknown_156[4];
+    s16 field_15a;
+    u8 unknown_15c[2];
+    s16 field_15e;
+    u8 unknown_160[6];
+    s16 field_166;
+    u8 unknown_168[0x44];
+    s32 screen_effect;
+};
+
+extern s32 gFrameCount;
+
+u32 Random16Far(void);
+void WaitFrames(s32 frames);
+s32 GameFlag_Test(s32 flag);
+void GameFlag_SetBit(s32 flag);
+void GameFlag_ClearBit(s32 flag);
+void Battle_WaitMode0(s32 frames);
+struct Ov670Object *Object_GetById(s32 id);
+void Object_SetPositionAndResetMotion(struct Ov670Object *object, s32 x, s32 y, s32 z);
+void Object_SetPartAttribute(struct Ov670Object *object, s32 value);
+void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
+void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
+void ObjectMotion_SetActionVariant(s32 actor, s32 variant);
+
+void Func_02005a64(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_02005a6c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_02005a9c(void);
+void Func_02005aa4(void);
+void Func_02005b4c(s32 message);
+void Func_02005b5c(s32 actor, s32 a, s32 b);
+void Func_02005b64(s32 speaker, s32 flags);
+s32 Func_02005b6c(s32 speaker, s32 flags);
+void Func_02005b7c(s32 actor, s32 angle);
+void Func_02005b8c(s32 actor);
+void Func_02005c3c(s32 skip);
+void Func_02005c6c(const void *script);
+void Func_02005c84(s32 shop, s32 keeper);
+void Func_02005c8c(s32 keeper);
+void Func_02005c94(s32 shop, s32 keeper);
+void Func_02005c9c(s32 cue);
+void Func_02005b0c(s32 actor, s32 x, s32 z);
+struct Ov670Object *Func_02005a34(s32 type, s32 x, s32 y, s32 z);
+void Func_02005a24(struct Ov670Object *object, s32 mode);
+void Func_02005a3c(struct Ov670Object *object);
+void ObjectDispatch_SetSingleChildFlags(struct Ov670Object *object, u32 value);
+void Animation_SetStateFlags(struct Ov670Object *object, s32 flags);
+void Object_SetModeById(s32 actor, s32 mode);
+void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void Field_DispatchTypeHandler(s32 type);
+void Event_FinishScreenTransition(void);
+void Event_WaitTransitionFrames(void);
+void Func_02005bb4(void);
+void Func_02005bc4(s32 countdown);
+void Func_02005c14(s32 a, s32 b);
+s32 Func_02005c1c(s32 a, s32 b);
+void Func_02005c24(void);
+void Func_02005c2c(void);
+void Func_02005c34(void);
+
+void Func_02000524(s32 show);
+void Func_0200057c(void);
+void Func_02000590(s32 show, s32 first, u32 count);
+void Func_020005e0(void);
+void Func_02000624(void);
+void Func_02000668(void);
+void Func_020006ac(void);
+void Func_020006f0(void);
+void Func_02001318(void);
+s32 Func_02002b08(s32 value);
+void Func_02002b18(s32 index, s32 entry, s32 delta);
+void Func_02002ba4(s32 index, s32 entry, s32 delta);
+void Func_02002c34(void);
+void Func_02002ccc(void);
+void Func_02002d64(void);
+void Func_020031f0(s32 id);
+void Func_02003220(void);
+void Func_02003504(void);
+void Func_02003898(void);
+void Func_020038ec(void);
+
+extern s16 Data_02007948[];
+extern struct Ov670Object *Data_02007950;
+
+static inline void Ov670_ObjTurn(s32 actor, s32 angle)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02005b7c(actor, angle);
+}
+
+static inline void Ov670_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
+{
+    /* FAKEMATCH: the blend start reaches the engine through one inline layer. */
+    Func_02005a6c(a, b, c, d, e, f);
+}
+
+static inline s32 Ov670_FlagChk(s32 flag)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    return GameFlag_Test(flag);
+}
+
+static inline void Ov670_FlagSet(s32 flag)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    GameFlag_SetBit(flag);
+}
+
+static inline void Ov670_ObjArm(s32 actor, s32 angle, s32 frames)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    ObjectMotion_ArmCallback(actor, angle, frames);
+}
+
+static inline void Ov670_ObjSetPos(struct Ov670Object *object, s32 x, s32 y, s32 z)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Object_SetPositionAndResetMotion(object, x, y, z);
+}
+
+#endif

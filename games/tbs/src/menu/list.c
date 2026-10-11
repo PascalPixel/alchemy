@@ -82,23 +82,14 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
     cursor_handle = Resource_LoadIntoFreeSlot(128);
     message_window = UiWindow_Create(0, 5, 30, 4, 42);
     icon_count = 0;
-    /* FAKEMATCH: needed to match: a one-pass block restores the saved row before the window call */
-    do {
-        page = ((struct MenuCell *)gWindowWork[42])->page;
-        row = ((struct MenuCell *)gWindowWork[42])->row;
-        preferred_row = ((struct MenuCell *)gWindowWork[42])->preferred_row;
-    } while (0);
+    MenuCell_GetCursor(page, row, preferred_row);
     window = UiWindow_Create(15, 9, 15, BATTLE_LIST_ROWS * 2 + 1, 6);
 
     for (i = 0; i < BATTLE_LIST_ROWS; i++) {
         s32 y = i * 2;
 
         spr = &sprites[i];
-        /* FAKEMATCH: the one-pass block keeps both attribute words ahead of the x/y field stores. */
-        do {
-            sprites[i].oam.word.attr01 = MENU_SPRITE_SIZE_16;
-            sprites[i].oam.word.attr23 = 0;
-        } while (0);
+        MenuSprite_Init(sprites[i], MENU_SPRITE_SIZE_16);
         spr->oam.f.x = window->x * 8 + 8;
         spr->oam.f.y = (y + window->y) * 8 + 4;
     }
@@ -412,23 +403,14 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
     unit = UnitGetFar(unit_id);
     message_window = UiWindow_Create(0, 5, 30, 4, 42);
     icon_count = BATTLE_LIST_ROWS;
-    /* FAKEMATCH: needed to match: a one-pass block restores the saved row before the list window */
-    do {
-        page = ((struct MenuCell *)gWindowWork[42])->page;
-        row = ((struct MenuCell *)gWindowWork[42])->row;
-        preferred_row = ((struct MenuCell *)gWindowWork[42])->preferred_row;
-    } while (0);
+    MenuCell_GetCursor(page, row, preferred_row);
     window = UiWindow_Create(9, 9, 21, BATTLE_LIST_ROWS * 2 + 1, 6);
 
     for (i = 0; i < BATTLE_LIST_ROWS; i++) {
         s32 y = i * 2;
 
         spr = &sprites[i];
-        /* FAKEMATCH: the block that runs once keeps y = i * 2 first. */
-        do {
-            sprites[i].oam.word.attr01 = MENU_SPRITE_SIZE_16;
-            sprites[i].oam.word.attr23 = 0;
-        } while (0);
+        MenuSprite_Init(sprites[i], MENU_SPRITE_SIZE_16);
         spr->oam.f.x = window->x * 8 + 8;
         spr->oam.f.y = (y + window->y) * 8 + 4;
     }

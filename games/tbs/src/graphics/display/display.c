@@ -113,9 +113,7 @@ void UiText_DrawCharacter(struct SelectionWork *work, s32 index, u32 kind)
 
     UiText_LoadRemappedGlyph(&work->palette, kind, index * 16);
     work->entries[index].kind = kind;
-    /* FAKEMATCH: needed to match: the empty do-while around this store only moves the scheduler; the reference sets the constant after the value store. */
-    do { entry->sprite.oam.word.attr01 = 0x80002000; } while (0);
-    entry->sprite.oam.word.attr23 = 0;
+    MenuSprite_Init(entry->sprite, 0x80002000);
     entry->sprite.oam.f.tile = Resource_LoadIndexedIntoBuffer(work->entries[index].resource, kind);
 }
 

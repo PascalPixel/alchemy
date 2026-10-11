@@ -65,6 +65,15 @@ struct CursorSprite
 
 #define MENU_SPRITE_SIZE_16 0x40000000
 
+// スプライトの形 (attr0/attr1) を決め、残りを 0 にする
+/* FAKEMATCH: the one-pass block keeps both attribute words ahead of the stores that follow (the x/y fields in the list setup loops of ItemList_SelectEntry, BattleMenu_RunActionSelection and SummonMenu_SelectSummon; the tile in UiText_DrawCharacter). Not source: the same two stores match only as plain statements in Battle_CollectPartyCommands (resmenu.c, five times) and Ui_RunOwnerStatusScreen (preview.c, three times). */
+#define MenuSprite_Init(sprite, shape)           \
+	do                                           \
+	{                                            \
+		(sprite).oam.word.attr01 = (shape);      \
+		(sprite).oam.word.attr23 = 0;            \
+	} while (0)
+
 struct PartyStatusWindow
 {
 	struct UiWindow *window;
@@ -111,6 +120,15 @@ LAYOUT_OFFSET_GUARD(MenuCell_Active, struct MenuCell, active, 0x4c);
 LAYOUT_OFFSET_GUARD(MenuCell_AutoEnabled, struct MenuCell, auto_enabled, 0xd8);
 LAYOUT_OFFSET_GUARD(MenuCell_AutoDelay, struct MenuCell, auto_delay, 0xdc);
 LAYOUT_OFFSET_GUARD(MenuCell_AutoMode, struct MenuCell, auto_mode, 0xe0);
+
+// 前に選んでいた位置 (ページ、行、戻る行) を読み戻す
+#define MenuCell_GetCursor(page_, row_, preferred_)                              \
+	do                                                                           \
+	{                                                                            \
+		(page_) = ((struct MenuCell *)gWindowWork[42])->page;                    \
+		(row_) = ((struct MenuCell *)gWindowWork[42])->row;                      \
+		(preferred_) = ((struct MenuCell *)gWindowWork[42])->preferred_row;      \
+	} while (0)
 
 extern struct MenuCell *gLinkCountdownWork;
 extern volatile u32		gFrameCount;

@@ -1126,12 +1126,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
     msg_win = (struct UiWindow *)UiWindow_Create(0, 4, 30, 4, 42);
     UiWork_SetAltFlagAndClearTable(1);
     list_win = (struct UiWindow *)UiWindow_Create(21, 9, 9, 11, 6);
-    /* FAKEMATCH: needed to match: a one-pass block restores the saved row before the owner lookup */
-    do {
-        page = ((struct MenuCell *)gWindowWork[42])->page;
-        row = ((struct MenuCell *)gWindowWork[42])->row;
-        saved_row = ((struct MenuCell *)gWindowWork[42])->preferred_row;
-    } while (0);
+    MenuCell_GetCursor(page, row, saved_row);
     unit = UnitGetFar(owner);
 
     for (x = 0; x <= 3; x++) {

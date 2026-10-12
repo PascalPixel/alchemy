@@ -1278,28 +1278,30 @@ s32 PsynergyMenu_RunList(s32 pane)
 					done = 1;
 					break;
 				}
-				if (menu->psynergies[state.selected_index] == 0)
+				if (menu->psynergies[state.selected_index] != 0)
 				{
-					goto no_accept;
+					if (PsynergyMenu_IsActionRestricted(menu->psynergies[state.selected_index])
+						!= 0)
+					{
+						AudioCommand_PlayFar(114);
+						continue;
+					}
+					ability =
+						BtlActGet(menu->psynergies[state.selected_index] & OWNER_ACTION_ID_MASK);
+					if (ability->pp_cost > owner->ep)
+					{
+						AudioCommand_PlayFar(114);
+					}
+					else
+					{
+						AudioCommand_PlayFar(173);
+						result = menu->psynergies[state.selected_index];
+						done = 1;
+						break;
+					}
 				}
-				if (PsynergyMenu_IsActionRestricted(menu->psynergies[state.selected_index]) != 0)
-				{
-					AudioCommand_PlayFar(114);
-					continue;
-				}
-				ability = BtlActGet(menu->psynergies[state.selected_index] & OWNER_ACTION_ID_MASK);
-				if (ability->pp_cost > owner->ep)
-				{
-					AudioCommand_PlayFar(114);
-					goto no_accept;
-				}
-				AudioCommand_PlayFar(173);
-				result = menu->psynergies[state.selected_index];
-				done = 1;
-				break;
 			}
 
-		no_accept:
 			if ((gKeyState & KEY_B) != 0)
 			{
 				AudioCommand_PlayFar(113);
@@ -1404,16 +1406,8 @@ s32 PsynergyMenu_RunList(s32 pane)
 s32 PsynergyMenu_IsActionRestricted(s32 no)
 {
 	struct BtlAct *action = BtlActGet((u32)(no << 18) >> 18);
-	u32			   flags;
 
-	if (action->type_0c != 0)
-		goto restricted;
-	flags = action->tgt_flg & 0xc0;
-	no = 1;
-	if (flags != 0xc0)
-		goto done;
-restricted:
-	no = 0;
-done:
-	return no;
+	if (action->type_0c != 0 || (action->tgt_flg & 0xc0) == 0xc0)
+		return 0;
+	return 1;
 }

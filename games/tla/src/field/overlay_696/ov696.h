@@ -274,6 +274,14 @@ static inline void Ov696_ObjEmote(s32 actor, s32 emote, s32 frames)
     Func_020049cc(actor, emote, frames);
 }
 
+void Func_0200493c(s32 actor, s32 x, s32 z, s32 angle);
+
+static inline void Ov696_ObjPut(s32 actor, s32 x, s32 z, s32 angle)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_0200493c(actor, x, z, angle);
+}
+
 // ---- this overlay
 
 void Func_0200057c(void);

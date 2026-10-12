@@ -216,72 +216,56 @@ static void FieldScene_RunScene398SequenceB(void)
 {
 	struct FieldActor *rec7;
 	struct FieldActor *rec8;
-	s32				   record;
 	s32				   v5;
 
 	rec7 = Object_GetById(11);
 	rec8 = Actor_Get(12);
-	if ((rec7->x.fixed >> 20) == 35)
+	if ((rec7->x.fixed >> 20) == 35 && (rec7->z.fixed >> 20) == 23)
 	{
-		if ((rec7->z.fixed >> 20) != 23)
-		{
-			goto clear_first;
-		}
 		GameFlag_Set(0x303);
 	}
 	else
 	{
-	clear_first:;
 		GameFlag_Clear(0x303);
 	}
-	if ((rec8->x.fixed >> 20) == 35)
+	if ((rec8->x.fixed >> 20) == 35 && (rec8->z.fixed >> 20) == 23)
 	{
-		if ((rec8->z.fixed >> 20) != 23)
-		{
-			goto clear_second;
-		}
 		GameFlag_Set(0x304);
 	}
 	else
 	{
-	clear_second:;
 		GameFlag_Clear(0x304);
 	}
-	if (GameFlag_IsSet(0x303) == 0)
+	if (GameFlag_IsSet(0x303) != 0 || GameFlag_IsSet(0x304) != 0)
 	{
-		record = GameFlag_IsSet(0x304);
-		if (record == 0)
+		if (GameFlag_IsSet(0x302) == 0)
 		{
-			goto neither_set;
+			Engine_EventBegin();
+			Engine_EventWait(40);
+			Event_PlayCue(210);
+			v5 = 36;
+			Engine_ActorSetAnimationAndWait(17, 6);
+			Map_CopyCellAttributes(0, 1, 1, 1, v5, 22);
+			Map_CopyCellAttributes(0, 2, 1, 1, v5, 24);
+			Engine_EventEnd();
 		}
+		GameFlag_Set(0x302);
 	}
-	if (GameFlag_IsSet(0x302) == 0)
+	else
 	{
-		Engine_EventBegin();
-		Engine_EventWait(40);
-		Event_PlayCue(210);
-		v5 = 36;
-		Engine_ActorSetAnimationAndWait(17, 6);
-		Map_CopyCellAttributes(0, 1, 1, 1, v5, 22);
-		Map_CopyCellAttributes(0, 2, 1, 1, v5, 24);
-		Engine_EventEnd();
+		if (GameFlag_IsSet(0x302) != 0)
+		{
+			Engine_EventBegin();
+			Engine_EventWait(40);
+			Event_PlayCue(220);
+			v5 = 36;
+			Engine_ActorSetAnimationAndWait(17, 2);
+			Map_CopyCellAttributes(1, 1, 1, 1, v5, 22);
+			Map_CopyCellAttributes(1, 2, 1, 1, v5, 24);
+			Engine_EventEnd();
+		}
+		GameFlag_Clear(0x302);
 	}
-	GameFlag_Set(0x302);
-	goto done;
-neither_set:;
-	if (GameFlag_IsSet(0x302) != 0)
-	{
-		Engine_EventBegin();
-		Engine_EventWait(40);
-		Event_PlayCue(220);
-		v5 = 36;
-		Engine_ActorSetAnimationAndWait(17, 2);
-		Map_CopyCellAttributes(1, 1, 1, 1, v5, 22);
-		Map_CopyCellAttributes(1, 2, 1, 1, v5, 24);
-		Engine_EventEnd();
-	}
-	GameFlag_Clear(0x302);
-done:;
 }
 
 static void EV08_PSYNERGY_3(void)

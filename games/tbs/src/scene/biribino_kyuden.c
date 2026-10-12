@@ -412,31 +412,19 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
 	{
 		Engine_GameFlagClear(0x200);
 	}
-	if (Engine_GameFlagIsSet(0x84f) == 0)
+	if (Engine_GameFlagIsSet(0x84f) == 0 && Engine_GameFlagIsSet(0x845) == 0)
 	{
-		record = Engine_GameFlagIsSet(0x845);
-		if (record != 0)
-		{
-			goto after_flag;
-		}
 		if (gGameState.entrance == 29)
 		{
 			Kyuden_RunKolimaRequest();
-			goto done;
 		}
-		if (gGameState.entrance != 9)
+		else if (gGameState.entrance == 9 && Engine_GameFlagIsSet(0x321) != 0)
 		{
-			goto done;
+			FieldScene_RunPalaceGreeting();
 		}
-		if (Engine_GameFlagIsSet(0x321) == 0)
-		{
-			goto done;
-		}
-		FieldScene_RunPalaceGreeting();
 	}
 	else
 	{
-	after_flag:;
 		rec8 = Engine_GameFlagIsSet(0x84e);
 		if (rec8 != 0)
 		{
@@ -445,16 +433,14 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
 		{
 			if (gGameState.entrance == 29)
 			{
-				if (Engine_GameFlagIsSet(0x85e) != 0)
+				if (Engine_GameFlagIsSet(0x85e) == 0)
 				{
-					goto done;
+					record = Engine_GameFlagIsSet(0x845);
+					if (record != 0)
+					{
+						RunEventScript02();
+					}
 				}
-				record = Engine_GameFlagIsSet(0x845);
-				if (record == 0)
-				{
-					goto done;
-				}
-				RunEventScript02();
 			}
 			else
 			{
@@ -500,7 +486,6 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
 			}
 		}
 	}
-done:;
 	return 0;
 }
 

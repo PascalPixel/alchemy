@@ -1321,6 +1321,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 		}
 		Engine_ActorSetAnimation(MEARI, 3);
 		Engine_ActorSetAnimationAndWait(GERALD, 3);
+		Engine_ActorSetAnimationAndWait(IWAN, 3);
 	}
 	else
 	{
@@ -1336,104 +1337,103 @@ static void FieldScene_RunExtendedActorSequence(void)
 		Engine_EventWait(10);
 		Engine_ActorSetAnimationAndWait(IWAN, 4);
 		Event_OpenMessage(IWAN, 0);
-		if (Engine_EventChooseYesNo(0, 0) != 0)
+		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
-			goto relieved;
-		}
-		Engine_EventWait(20);
-		Actor_ShowEmote(IWAN, 0x103, 0);
-		Engine_EventWait(40);
-		FieldScene_RunPairedStepB(2, 0xe000, 10);
-		FieldScene_RunPairedStepA(2, 10);
-		if (KorimaMura_LayoutFlag != 0)
-		{
-			FieldScene_RunPairedStepB(3, 0, 10);
-			Engine_ActorStartRepeatedMotion(MEARI, 3);
-			FieldScene_RunPairedStepA(3, 20);
+			Engine_EventWait(20);
+			Actor_ShowEmote(IWAN, 0x103, 0);
+			Engine_EventWait(40);
+			FieldScene_RunPairedStepB(2, 0xe000, 10);
+			FieldScene_RunPairedStepA(2, 10);
+			if (KorimaMura_LayoutFlag != 0)
+			{
+				FieldScene_RunPairedStepB(3, 0, 10);
+				Engine_ActorStartRepeatedMotion(MEARI, 3);
+				FieldScene_RunPairedStepA(3, 20);
+			}
+			else
+			{
+				gEventWork->message++;
+			}
+			Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+			Actor_SetAttachedEffect(GERALD, 0x102);
+			Engine_EventWait(40);
+			Engine_ActorRunRepeatedMotion(GERALD, 2);
+			FieldScene_RunPairedStepA(1, 20);
+			Actor_ShowEmote(GERALD, 0x105, 0);
+			Engine_EventWait(120);
+			FieldScene_RunPairedStepA(2, 40);
+			if (KorimaMura_LayoutFlag != 0)
+			{
+				FieldScene_RunPairedStepB(3, 0x2000, 10);
+				Engine_ActorSetAnimationAndWait(MEARI, 4);
+				FieldScene_RunPairedStepA(3, 10);
+			}
+			else
+			{
+				gEventWork->message++;
+			}
+			Engine_EventWait(60);
+			Engine_ActorRunRepeatedMotion(IWAN, 2);
+			if (KorimaMura_LayoutFlag != 0)
+			{
+				FieldScene_RunPairedStepB(2, 0xa000, 40);
+				FieldScene_RunPairedStepB(2, 0xe000, 20);
+			}
+			FieldScene_RunPairedStepA(2, 10);
+			Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+			Engine_ActorRunRepeatedMotion(GERALD, 2);
+			Engine_EventWait(40);
+			FieldScene_RunPairedStepA(2, 20);
+			Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+			Engine_ActorSetAnimationAndWait(GERALD, 3);
+			Engine_EventWait(20);
+			Engine_ActorSetAnimation(MEARI, 3);
+			Engine_ActorSetAnimationAndWait(IWAN, 3);
 		}
 		else
 		{
-			gEventWork->message++;
+			Actor_ShowEmote(IWAN, 0x105, 0);
+			Engine_EventWait(40);
+			Engine_ActorSetAnimationAndWait(IWAN, 3);
+			Engine_EventSetMessage((s32)MsgKorimaThatsReliefRobinThoughtYoud);
+			FieldScene_RunPairedStepA(2, 20);
+			if (KorimaMura_LayoutFlag != 0)
+			{
+				FieldScene_RunPairedStepB(3, 0, 10);
+				Engine_ActorStartRepeatedMotion(MEARI, 1);
+				FieldScene_RunPairedStepA(3, 20);
+			}
+			else
+			{
+				gEventWork->message++;
+			}
+			Actor_SetAttachedEffect(GERALD, 0x102);
+			Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+			Engine_EventWait(40);
+			Engine_ActorRunRepeatedMotion(GERALD, 2);
+			FieldScene_RunPairedStepA(1, 20);
+			Actor_ShowEmote(IWAN, 0x105, 0);
+			Engine_EventWait(80);
+			FieldScene_RunPairedStepA(2, 40);
+			if (KorimaMura_LayoutFlag != 0)
+			{
+				FieldScene_RunPairedStepB(3, 0x2000, 20);
+				Engine_ActorSetAnimation(MEARI, 4);
+				FieldScene_RunPairedStepA(3, 40);
+			}
+			else
+			{
+				gEventWork->message++;
+			}
+			Engine_ActorRunRepeatedMotion(IWAN, 2);
+			Engine_EventWait(20);
+			FieldScene_RunPairedStepA(2, 20);
+			Engine_ActorStartRepeatedMotion(GERALD, 2);
+			Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+			Engine_EventWait(40);
+			FieldScene_RunPairedStepA(2, 20);
 		}
-		Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-		Actor_SetAttachedEffect(GERALD, 0x102);
-		Engine_EventWait(40);
-		Engine_ActorRunRepeatedMotion(GERALD, 2);
-		FieldScene_RunPairedStepA(1, 20);
-		Actor_ShowEmote(GERALD, 0x105, 0);
-		Engine_EventWait(120);
-		FieldScene_RunPairedStepA(2, 40);
-		if (KorimaMura_LayoutFlag != 0)
-		{
-			FieldScene_RunPairedStepB(3, 0x2000, 10);
-			Engine_ActorSetAnimationAndWait(MEARI, 4);
-			FieldScene_RunPairedStepA(3, 10);
-		}
-		else
-		{
-			gEventWork->message++;
-		}
-		Engine_EventWait(60);
-		Engine_ActorRunRepeatedMotion(IWAN, 2);
-		if (KorimaMura_LayoutFlag != 0)
-		{
-			FieldScene_RunPairedStepB(2, 0xa000, 40);
-			FieldScene_RunPairedStepB(2, 0xe000, 20);
-		}
-		FieldScene_RunPairedStepA(2, 10);
-		Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-		Engine_ActorRunRepeatedMotion(GERALD, 2);
-		Engine_EventWait(40);
-		FieldScene_RunPairedStepA(2, 20);
-		Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-		Engine_ActorSetAnimationAndWait(GERALD, 3);
-		Engine_EventWait(20);
-		Engine_ActorSetAnimation(MEARI, 3);
 	}
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
-	goto leave;
-relieved:
-	Actor_ShowEmote(IWAN, 0x105, 0);
-	Engine_EventWait(40);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
-	Engine_EventSetMessage((s32)MsgKorimaThatsReliefRobinThoughtYoud);
-	FieldScene_RunPairedStepA(2, 20);
-	if (KorimaMura_LayoutFlag != 0)
-	{
-		FieldScene_RunPairedStepB(3, 0, 10);
-		Engine_ActorStartRepeatedMotion(MEARI, 1);
-		FieldScene_RunPairedStepA(3, 20);
-	}
-	else
-	{
-		gEventWork->message++;
-	}
-	Actor_SetAttachedEffect(GERALD, 0x102);
-	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-	Engine_EventWait(40);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	FieldScene_RunPairedStepA(1, 20);
-	Actor_ShowEmote(IWAN, 0x105, 0);
-	Engine_EventWait(80);
-	FieldScene_RunPairedStepA(2, 40);
-	if (KorimaMura_LayoutFlag != 0)
-	{
-		FieldScene_RunPairedStepB(3, 0x2000, 20);
-		Engine_ActorSetAnimation(MEARI, 4);
-		FieldScene_RunPairedStepA(3, 40);
-	}
-	else
-	{
-		gEventWork->message++;
-	}
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
-	Engine_EventWait(20);
-	FieldScene_RunPairedStepA(2, 20);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_EventWait(40);
-	FieldScene_RunPairedStepA(2, 20);
-leave:
 	Event_PlayCue(17);
 	Actor_SetSpeed(GERALD, 0x13333, 0x9999);
 	Actor_SetSpeed(IWAN, 0x13333, 0x9999);
@@ -1538,31 +1538,30 @@ static s32 KorimaMura_TriggerRegionScript(struct FieldActor *actor)
 {
 	if (KorimaMura_LayoutFlag != 0)
 	{
-		if (actor->x.fixed > 0x3b0000 && actor->x.fixed < 0x8d0000 && actor->z.fixed > 0xd30000
-			&& actor->z.fixed < 0x1010000)
-			goto hit;
-		if (actor->x.fixed > 0x450000 && actor->x.fixed < 0x7a0000 && actor->z.fixed > 0xc20000
-			&& actor->z.fixed < 0x1150000)
-			goto hit;
+		if ((actor->x.fixed > 0x3b0000 && actor->x.fixed < 0x8d0000 && actor->z.fixed > 0xd30000
+				&& actor->z.fixed < 0x1010000)
+			|| (actor->x.fixed > 0x450000 && actor->x.fixed < 0x7a0000 && actor->z.fixed > 0xc20000
+				&& actor->z.fixed < 0x1150000))
+		{
+			Engine_AudioPlayCue(106);
+			Engine_ObjectSetScript(actor, KorimaMura_RegionScript);
+			KorimaMura_PendingPose = 1;
+		}
 	}
 	else
 	{
-		if (actor->x.fixed > 0x3b0000 && actor->x.fixed < 0x6f0000 && actor->z.fixed > 0xc20000
-			&& actor->z.fixed < 0xe60000)
-			goto hit;
-		if (actor->x.fixed > 0x6f0000 && actor->x.fixed < 0x8d0000 && actor->z.fixed > 0xd80000
-			&& actor->z.fixed < 0xfa0000)
-			goto hit;
-		if (actor->x.fixed > 0x4e0000 && actor->x.fixed < 0x7a0000 && actor->z.fixed > 0xf10000
-			&& actor->z.fixed < 0x1150000)
-			goto hit;
+		if ((actor->x.fixed > 0x3b0000 && actor->x.fixed < 0x6f0000 && actor->z.fixed > 0xc20000
+				&& actor->z.fixed < 0xe60000)
+			|| (actor->x.fixed > 0x6f0000 && actor->x.fixed < 0x8d0000 && actor->z.fixed > 0xd80000
+				&& actor->z.fixed < 0xfa0000)
+			|| (actor->x.fixed > 0x4e0000 && actor->x.fixed < 0x7a0000 && actor->z.fixed > 0xf10000
+				&& actor->z.fixed < 0x1150000))
+		{
+			Engine_AudioPlayCue(106);
+			Engine_ObjectSetScript(actor, KorimaMura_RegionScript);
+			KorimaMura_PendingPose = 1;
+		}
 	}
-	goto done;
-hit:
-	Engine_AudioPlayCue(106);
-	Engine_ObjectSetScript(actor, KorimaMura_RegionScript);
-	KorimaMura_PendingPose = 1;
-done:
 	return 0;
 }
 

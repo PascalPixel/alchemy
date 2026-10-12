@@ -1147,10 +1147,7 @@ static void EV37_TALK(s32 a0)
 	{
 		Engine_EventBegin();
 		rec2 = SceneDialogue_RunFlagGatedPromptInteraction(a0, 3);
-		if (rec2 != 0)
-		{
-		}
-		else
+		if (rec2 == 0)
 		{
 			Engine_EventSetMessage((s32)MsgKorosseoLogRollingStage);
 			Camera_SetSpeed(0x30000, 0x6000);
@@ -1183,14 +1180,12 @@ static void EV37_TALK(s32 a0)
 			Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
 			Actor_SetPosition(33, 0x3480000, 0xe80000);
 			Korosseo_ShowFollowUpPrompt(a0, 3);
-			goto run_stage;
 		}
-		if (rec2 == 1)
+		else if (rec2 == 1)
 		{
 			Engine_EventSetMessage((s32)MsgKorosseoHereYourObjectiveRideLogs);
 			Event_ShowMessage(a0, 0);
 		}
-	run_stage:;
 		FieldScene_RunMiddleSequence(rec2, a0, 3);
 		Engine_EventEnd();
 	}
@@ -1420,12 +1415,10 @@ static void KorosseoKabe_RunScriptedTransition(s32 mode)
 	KorosseoKabe_InitializeModeTask(1, 0);
 	Engine_EventWait(120);
 
-	goto check_transition;
-wait_transition:
-	Engine_TaskWait(1);
-check_transition:
-	if (AudioCommand_GetStateByte() != 0)
-		goto wait_transition;
+	while (AudioCommand_GetStateByte() != 0)
+	{
+		Engine_TaskWait(1);
+	}
 
 	Engine_AudioPlayCue(0x121);
 	Korosseo_LoadPortrait(5);

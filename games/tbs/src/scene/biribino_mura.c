@@ -534,15 +534,10 @@ static void EV20_PSYNERGY(void)
 	Map_CopyCellAttributes(15, 11, 3, 1, 15, 13);
 	Map_CopyCellAttributes(15, 11, 3, 1, 15, 14);
 	Map_CopyCellAttributes(1, 0, 1, 1, (p6 >> 20), row);
-	if ((p6 >> 20) == 16)
+	if ((p6 >> 20) != 16 || row != 13)
 	{
-		if (row == 13)
-		{
-			goto check_second;
-		}
+		Map_CopyCellAttributes(0, 0, 1, 1, 16, 13);
 	}
-	Map_CopyCellAttributes(0, 0, 1, 1, 16, 13);
-check_second:;
 	if (p9 == 16)
 	{
 		if (p10 == 13)
@@ -587,14 +582,18 @@ static void FieldScene_RunScene38bSequenceA(void)
 		Map_CopyCellAttributes(26, 15, 1, 3, 10, 15);
 		if (GameFlag_IsSet(0x849) == 0)
 		{
-			if (GameFlag_IsSet(0x848) != 0)
+			if (GameFlag_IsSet(0x848) == 0)
 			{
-				goto run_event;
+				Engine_ActorSetPosition(14, 0, 0);
+				Actor_FaceDirection(12, 0xd000, 0);
+				Actor_FaceDirection(13, 0xb000, 0);
 			}
-			Engine_ActorSetPosition(14, 0, 0);
 		}
-		Actor_FaceDirection(12, 0xd000, 0);
-		Actor_FaceDirection(13, 0xb000, 0);
+		else
+		{
+			Actor_FaceDirection(12, 0xd000, 0);
+			Actor_FaceDirection(13, 0xb000, 0);
+		}
 	}
 	else
 	{
@@ -623,11 +622,13 @@ static void FieldScene_RunScene38bSequenceA(void)
 			if (GameFlag_IsSet(0x848) != 0)
 			{
 				Actor_SetPosition(11, 0x840000, 0xba0000);
-				goto run_event;
 			}
-			Actor_SetPosition(11, 0x580000, 0xc40000);
-			Engine_ActorSetSpritePriority(11, 3);
-			rec->collision_flags |= 4;
+			else
+			{
+				Actor_SetPosition(11, 0x580000, 0xc40000);
+				Engine_ActorSetSpritePriority(11, 3);
+				rec->collision_flags |= 4;
+			}
 		}
 		else
 		{
@@ -636,7 +637,6 @@ static void FieldScene_RunScene38bSequenceA(void)
 			rec->y.fixed = 0x300000;
 		}
 	}
-run_event:;
 	EV08_PSYNERGY_3();
 }
 

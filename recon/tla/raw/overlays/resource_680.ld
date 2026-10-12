@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_680/events_b.o"(.text)
         "*/resource_680_overlay.o"(.text.x02008164)
         "*/games/tla/src/field/overlay_680/events_c.o"(.text)
-        "*/resource_680_overlay.o"(.text.x02008474)
+        "*/games/tla/src/field/overlay_680/wander.o"(.text)
         "*/resource_680_overlay.o"(.text.x02008528)
         "*/resource_680_overlay.o"(.text.x020085f0)
         "*/resource_680_overlay.o"(.text.x02008630)

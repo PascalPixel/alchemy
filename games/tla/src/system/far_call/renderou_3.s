@@ -48,7 +48,7 @@ Resource_CopyFixedBlockAFar:
 	.global Func_08038310
 	.thumb_func
 Func_08038310:
-	overlay_veneer Func_0803e774
+	overlay_veneer Menu_SetNodeCoordinates
 	.global Func_08038318
 	.thumb_func
 Func_08038318:

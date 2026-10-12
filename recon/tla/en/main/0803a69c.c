@@ -18,7 +18,7 @@ struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 fla
 s32 UiText_QueueRenderEntries(struct RenderInput *window, s32 entry, s32 x, s32 y, const u16 *colours, s32 flags);
 void UiWork_Finalize(struct RenderInput *window, s32 release);
 
-struct RenderInput *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed)
+struct RenderInput *UiText_OpenMessageWindow(s32 message, s32 x, long y, u32 packed)
 {
     s32 entry;
     u32 height;

@@ -66,17 +66,6 @@ System_WaitForFrameInterrupt:
 	.thumb_func
 Input_UpdateKeyRepeatAndDirection:
 	.incbin "baserom.gba", 0x000138b4, 0x0000027c
-	.section .rom.00013b30, "ax"
-	.global Sound_LoadPresetParameters
-	.type Sound_LoadPresetParameters, %function
-	.thumb_func
-Sound_LoadPresetParameters:
-	.incbin "baserom.gba", 0x00013b30, 0x00000010
-	.global Input_HandleKeyInterrupt
-	.type Input_HandleKeyInterrupt, %function
-	.thumb_func
-Input_HandleKeyInterrupt:
-	.incbin "baserom.gba", 0x00013b40, 0x00000028
 	.section .rom.00013d84, "ax"
 	.incbin "baserom.gba", 0x00013d84, 0x000000ec
 	.section .rom.0001401c, "ax"
@@ -443,14 +432,6 @@ Func_0802386c:
 	.thumb_func
 Func_08023e18:
 	.incbin "baserom.gba", 0x00023e18, 0x000000e4
-	.section .rom.00023f62, "ax"
-	.incbin "baserom.gba", 0x00023f62, 0x00000002
-	.section .rom.00023f64, "ax"
-	.global Object_IsTargetUnset
-	.type Object_IsTargetUnset, %function
-	.thumb_func
-Object_IsTargetUnset:
-	.incbin "baserom.gba", 0x00023f64, 0x00000030
 	.section .rom.00023f9c, "ax"
 	.incbin "baserom.gba", 0x00023f9c, 0x0000071c
 	.section .rom.00024736, "ax"
@@ -938,18 +919,13 @@ Func_0803dd98:
 	.thumb_func
 Func_0803df24:
 	.incbin "baserom.gba", 0x0003e058, 0x00000684
-	.section .rom.0003e8a8, "ax"
-	.global Func_0803e774
-	.type Func_0803e774, %function
+	.section .rom.0003e8fc, "ax"
+	.balign 4
+	.global Func_0803e7c8
+	.type Func_0803e7c8, %function
 	.thumb_func
-Func_0803e774:
-	.incbin "baserom.gba", 0x0003e8a8, 0x00000038
-	.section .rom.0003e8e0, "ax"
-	.global Func_0803e7ac
-	.type Func_0803e7ac, %function
-	.thumb_func
-Func_0803e7ac:
-	.incbin "baserom.gba", 0x0003e8e0, 0x00000140
+Func_0803e7c8:
+	.incbin "baserom.gba", 0x0003e8fc, 0x00000124
 	.section .rom.0003ea4a, "ax"
 	.incbin "baserom.gba", 0x0003ea4a, 0x00000002
 	.section .rom.0003ea4c, "ax"
@@ -3385,7 +3361,8 @@ Func_080de9f8:
 	.type Func_080debd8, %function
 	.thumb_func
 Func_080debd8:
-	.incbin "baserom.gba", 0x000deb94, 0x000000e0
+	.incbin "baserom.gba", 0x000deb94, 0x000000b4
+	.section .rom.000dec74, "ax"
 	.global Func_080decb8
 	.type Func_080decb8, %function
 	.thumb_func
@@ -5000,12 +4977,8 @@ Func_081c0f3c:
 	.thumb_func
 Func_081c0f44:
 	.incbin "baserom.gba", 0x001c0f44, 0x00000014
-	.section .rom.001c1000, "ax"
-	.global AudioEngine_SuspendDirectSoundWrapper
-	.type AudioEngine_SuspendDirectSoundWrapper, %function
-	.thumb_func
-AudioEngine_SuspendDirectSoundWrapper:
-	.incbin "baserom.gba", 0x001c1000, 0x00000014
+	.section .rom.001c1008, "ax"
+	.incbin "baserom.gba", 0x001c1008, 0x0000000c
 	.section .rom.001c1014, "ax"
 	.global Func_081c1014
 	.type Func_081c1014, %function

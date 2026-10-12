@@ -88,39 +88,39 @@ main	rom_main_02	games/tbs/src/graphics/tile/decompress_4bpp	.text .rodata .text
 main	rom_main_02	games/tbs/src/graphics/tile/expand_masked_masks	.rodata
 main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque
 main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque_masks	.rodata
-main	rom_main_02	games/tbs/src/graphics/window/window	.text
-main	rom_main_02	games/tbs/src/graphics/window/icon	.text
-main	rom_main_02	games/tbs/src/graphics/window/select	.text
-main	rom_main_02	games/tbs/src/graphics/window/notice	.text
-main	rom_main_02	games/tbs/src/graphics/window/config	.text
-main	rom_main_02	games/tbs/src/graphics/window/wintile	.text
-main	rom_main_02	games/tbs/src/graphics/window/output	.text
-main	rom_main_02	games/tbs/src/graphics/window/ptystat	.text
-main	rom_main_02	games/tbs/src/graphics/window/save	.text
-main	rom_main_02	games/tbs/src/graphics/window/btlcmd	.text
-main	rom_main_02	games/tbs/src/graphics/window/cmdicon	.text
-main	rom_main_02	games/tbs/src/graphics/window/debug	.text
+main	rom_main_02	games/tbs/src/window/window	.text
+main	rom_main_02	games/tbs/src/window/icon	.text
+main	rom_main_02	games/tbs/src/window/select	.text
+main	rom_main_02	games/tbs/src/window/notice	.text
+main	rom_main_02	games/tbs/src/window/config	.text
+main	rom_main_02	games/tbs/src/window/wintile	.text
+main	rom_main_02	games/tbs/src/window/output	.text
+main	rom_main_02	games/tbs/src/window/ptystat	.text
+main	rom_main_02	games/tbs/src/window/save	.text
+main	rom_main_02	games/tbs/src/window/btlcmd	.text
+main	rom_main_02	games/tbs/src/window/cmdicon	.text
+main	rom_main_02	games/tbs/src/window/debug	.text
 main	rom_main_02	games/tbs/src/menu/slider	.rodata
 main	rom_main_02	games/tbs/src/graphics/ui/marks	.rodata
 main	rom_main_02	games/tbs/src/graphics/ui/menu_icons	.rodata
-main	rom_main_02	games/tbs/src/graphics/window/fixblk	.rodata
+main	rom_main_02	games/tbs/src/window/fixblk	.rodata
 main	rom_main_02	games/tbs/src/graphics/render/labels	.rodata
 main	rom_main_02	games/common/src/graphics/font/text	.rodata
 main	rom_main_02	games/tbs/src/graphics/font/mark_codes	.rodata	ja en
 main	rom_main_02	games/tbs/src/graphics/text/article	.rodata	en de es fr it
-main	rom_main_02	games/tbs/src/graphics/window/spranim	.rodata
+main	rom_main_02	games/tbs/src/window/spranim	.rodata
 main	rom_main_02	games/tbs/src/menu/cursor	.rodata
-main	rom_main_02	games/tbs/src/graphics/window/scales	.rodata
+main	rom_main_02	games/tbs/src/window/scales	.rodata
 main	rom_main_02	games/tbs/src/menu/optdata	.rodata
-main	rom_main_02	games/tbs/src/graphics/window/sideobjt	.rodata
-main	rom_main_02	games/tbs/src/graphics/window/curframe	.rodata
-main	rom_main_02	games/tbs/src/graphics/window/windata	.rodata
+main	rom_main_02	games/tbs/src/window/sideobjt	.rodata
+main	rom_main_02	games/tbs/src/window/curframe	.rodata
+main	rom_main_02	games/tbs/src/window/windata	.rodata
 main	rom_main_02	games/tbs/text/messages	.rodata
 main	rom_main_02	games/tbs/src/graphics/text/genders	.rodata	en de es fr it
-main	rom_main_02	games/tbs/src/graphics/window/textspd	.rodata
+main	rom_main_02	games/tbs/src/window/textspd	.rodata
 main	rom_main_02	games/tbs/src/graphics/text/numwords	.rodata	en de
 main	rom_main_02	games/tbs/src/menu/slidpal	.rodata
-main	rom_main_02	games/tbs/src/graphics/window/keyboard	.rodata
+main	rom_main_02	games/tbs/src/window/keyboard	.rodata
 main	rom_main_03	games/tbs/src/system/far_call/GAME
 main	rom_main_03	games/tbs/src/game/character/chara
 main	rom_main_03	games/tbs/src/game/character/item

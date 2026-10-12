@@ -1,11 +1,11 @@
 #ifndef ALCHEMY_CHARACTER_MENU_H
 #define ALCHEMY_CHARACTER_MENU_H
 
-#include "unit/graphics/window/window.h"
-#include "unit/graphics/window/output.h"
-#include "unit/graphics/window/save.h"
-#include "unit/graphics/window/btlcmd.h"
-#include "unit/graphics/window/debug.h"
+#include "unit/window/window.h"
+#include "unit/window/output.h"
+#include "unit/window/save.h"
+#include "unit/window/btlcmd.h"
+#include "unit/window/debug.h"
 #include "unit/menu/item/menu.h"
 #include "unit/menu/item/item.h"
 #include "unit/menu/item/psynergy.h"

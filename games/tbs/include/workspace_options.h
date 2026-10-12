@@ -1,10 +1,10 @@
 #ifndef ALCHEMY_WORKSPACE_OPTIONS_H
 #define ALCHEMY_WORKSPACE_OPTIONS_H
 
-#include "unit/graphics/window/window.h"
-#include "unit/graphics/window/config.h"
-#include "unit/graphics/window/output.h"
-#include "unit/graphics/window/save.h"
+#include "unit/window/window.h"
+#include "unit/window/config.h"
+#include "unit/window/output.h"
+#include "unit/window/save.h"
 #include "types.h"
 #include "render_input.h"
 

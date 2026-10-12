@@ -91,6 +91,7 @@ main	rom_main_02	games/tbs/src/menu/slidpal	.rodata
 main	rom_main_02	games/tbs/src/graphics/window/keyboard	.rodata
 main	rom_main_03	games/tbs/src/system/far_call/GAME
 main	rom_main_03	games/tbs/src/game/character/chara
+main	rom_main_03	games/tbs/src/game/character/chara6
 main	rom_main_03	games/tbs/src/game/character/chara7
 main	rom_main_03	games/tbs/src/game/character/chara8
 main	rom_main_03	games/tbs/src/game/character/exptbl

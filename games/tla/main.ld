@@ -1295,7 +1295,7 @@ SECTIONS
     "*/games/tla/src/menu/shop/cursor_place.o"(.text)
     "*/games/tla/src/system/resource/load_resource_to_block.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00108b70)
-    "*/games/common/src/menu/shop/draw_message.o"(.text)
+    "*/games/common/src/shop/draw_message.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0010928a)
     "*/games/tla/src/menu/shop/buynum.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.001096f8)

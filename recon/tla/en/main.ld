@@ -1611,7 +1611,7 @@
         "*/recon/tla/raw/08109068.o"(.text)
         "*/games/tla/src/menu/shop/coinwin.o"(.text)
         "*/recon/tla/raw/081091cc.o"(.text)
-        "*/games/common/src/menu/shop/draw_message.o"(.text)
+        "*/games/common/src/shop/draw_message.o"(.text)
         "*/recon/tla/raw/0810928c.o"(.text)
         "*/recon/tla/raw/081093a4.o"(.text)
         "*/recon/tla/raw/081095b0.o"(.text)

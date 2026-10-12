@@ -1312,7 +1312,7 @@
     "*/recon/tla/it/rom.o"(.rom.00108b70)
     "*/games/tla/src/menu/shop/coinwin.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.001091cc)
-    "*/games/common/src/menu/shop/draw_message.o"(.text)
+    "*/games/common/src/shop/draw_message.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0010928c)
     "*/games/tla/src/menu/shop/buynum.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.001096f8)

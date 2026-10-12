@@ -1,30 +1,25 @@
-/* Pin-free trial (tla-en): listing 38 instructions, draft 36, common 23, differ 28.
- * Earlier register-allocation notes describe the prior pinned form.
- */
+/* Near miss, differ 20 of 38 (2026-10-12; 28 before): this game reads the two arrow resources at 0x4ee and 0x4f0 of the menu runtime slot. Same instructions; the registers differ as in 08104ba8: the native copies variant to r5, keeps the runtime pointer in r3 and y in r2; this draft leaves variant in r3, puts the pointer in r2 and moves y to r4. */
 #include "types.h"
 #include "render_input.h"
 
 struct ArrowResources {
-    u8 unknown_000[0x392];
+    u8 unknown_000[0x4ee];
     u16 resource[2];
 };
 
-extern struct ArrowResources *gMenuWork;
+#include "ram_buffer.h"
 
 s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 variant)
 {
     struct RenderOutput *object;
     u32 resource;
-    s32 v = variant; /* Earlier pinned trial: keeps the variant in r5 */
-    struct RenderInput *w = window; /* Earlier pinned trial: keeps the window in r4 */
-    s32 xx = x; /* Earlier pinned trial: keeps x in r6 */
-    struct ArrowResources *data = gMenuWork;
+    struct ArrowResources *data = Ram_HeapSlots->menu_runtime;
 
-    if (v == 0)
+    if (variant == 0)
         resource = data->resource[0];
     else
         resource = data->resource[1];
-    object = RenderOutput_CreateFar(resource, 0x40000000, w, xx, y);
+    object = RenderOutput_CreateFar(resource, 0x40000000, window, x, y);
     if (object == 0)
         return -1;
     object->kind = 0;

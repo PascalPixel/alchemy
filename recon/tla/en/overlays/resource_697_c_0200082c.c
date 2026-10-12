@@ -3,18 +3,6 @@
 
 extern const u8 Data_02005a7c[];
 
-static __inline__ struct ObjectRuntime *Object_Create(s32 type, s32 x, s32 y, s32 z)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    return Func_020057d8(type, x, y, z);
-}
-
-static __inline__ void Map_Stamp(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_02005820(a, b, c, d, e, f);
-}
-
 static __inline__ void Shadow_SetHeight(s32 id, s32 value)
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */

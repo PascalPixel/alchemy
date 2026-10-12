@@ -754,38 +754,6 @@ Func_020007ec:
 	strh r3, [r1, #18]
 	pop {r5, r6, pc}
 	.2byte 0x0000
-	.section .text.x02008848,"ax",%progbits
-	.balign 4
-	.global Func_02000848
-	.thumb_func
-Func_02000848:
-	push {r5, lr}
-	ldr r3, .L_02008878
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	adds r5, r0, #0
-	ldr r0, [r3]
-	bl Object_GetById
-	ldr r3, [r5, #16]
-	ldr r2, [r0, #16]
-	adds r0, #35
-	cmp r2, r3
-	ble .L_0200886c
-	ldrb r2, [r0]
-	movs r3, #4
-	orrs r3, r2
-	b .L_02008872
-.L_0200886c:
-	ldrb r2, [r0]
-	movs r3, #249
-	ands r3, r2
-.L_02008872:
-	strb r3, [r0]
-	pop {r5, pc}
-	.2byte 0x0000
-.L_02008878:
-	.4byte gPartyState
 	.section .text.x0200887c,"ax",%progbits
 	.balign 4
 	.global Func_0200087c

@@ -8,20 +8,30 @@ void Func_020009ac(s32 a, s32 b)
     s32 id;
 
     id = 18;
-    do {
+next:
+    {
         struct ObjectRuntime *object = Object_GetById(id);
         s32 x = object->x >> 20;
         s32 z = object->z >> 20;
         u8 *covered = &OBJECT_BYTE(Object_GetById(Data_02005a88[(id - 18) & 3]), 99);
         s32 other;
 
+        other = 15;
         *covered = 0;
-        for (other = 15; other <= 17; other++) {
+        goto test;
+    step:
+        other++;
+    test:
+        if (other <= 17) {
             object = Object_GetById(other);
-            if (x == object->x >> 20 && z == object->z >> 20) {
-                *covered = 1;
-                break;
-            }
+            if (x != object->x >> 20)
+                goto step;
+            if (z != object->z >> 20)
+                goto step;
+            *covered = 1;
         }
-    } while (++id <= 21);
+    }
+    id++;
+    if (id <= 21)
+        goto next;
 }

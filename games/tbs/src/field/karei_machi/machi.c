@@ -1180,7 +1180,7 @@ static void FieldScene_RunMiddleSequence(void)
 		Map_CopyCellsTo(71, 12, 71, 43, 10, 13);
 		Map_CopyCellAttributes(6, 13, 12, 12, 6, 44);
 		Map_CopyCellAttributes(0, 1, 1, 1, 7, 44);
-		goto L_02001cc2;
+		goto second_half;
 	}
 	switch (((union GameStateRows *)&gGameState)->halves[225][0])
 	{
@@ -1189,7 +1189,7 @@ static void FieldScene_RunMiddleSequence(void)
 		BattleFx_SetQueuedSoundAndPlay(170);
 		break;
 	}
-L_02001cc2:;
+second_half:;
 	if (GameFlag_IsSet(0x303) == 0)
 	{
 	}
@@ -1217,7 +1217,7 @@ L_02001cc2:;
 		Map_CopyCellsTo(38, 14, 38, 44, 8, 4);
 		Map_CopyCellsTo(102, 14, 102, 44, 8, 12);
 		Map_CopyCellAttributes(37, 13, 10, 12, 37, 43);
-		goto L_02001e5a;
+		goto done;
 	}
 	switch (((union GameStateRows *)&gGameState)->halves[225][0])
 	{
@@ -1226,7 +1226,7 @@ L_02001cc2:;
 		BattleFx_SetQueuedSoundAndPlay(170);
 		break;
 	}
-L_02001e5a:;
+done:;
 }
 
 static void SceneState_SetValues27Through34(void)

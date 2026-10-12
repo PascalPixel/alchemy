@@ -1421,11 +1421,11 @@ static void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1)
 static void EV03_TOUCH_1(void)
 {
 	struct FieldActor *record;
-	s32				   base5_200a5b9;
+	s32				   particle_task;
 
 	Engine_EventBegin();
-	base5_200a5b9 = (s32)FieldScene_SpawnRandomizedParticle;
-	((void (*)())Engine_TaskAddCallback)(base5_200a5b9, 0xc80);
+	particle_task = (s32)FieldScene_SpawnRandomizedParticle;
+	((void (*)())Engine_TaskAddCallback)(particle_task, 0xc80);
 	Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
 	gEventWork->transition_frames = 60;
 	Engine_EventCloseScreen();
@@ -1436,7 +1436,7 @@ static void EV03_TOUCH_1(void)
 	Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
 	record = Object_GetById(ACTOR_PARTY_LEADER);
 	Engine_ActorSetSpriteFlags(record, 0);
-	Scheduler_RemoveCallback(base5_200a5b9);
+	Scheduler_RemoveCallback(particle_task);
 	Engine_EventWaitForScreen();
 	Engine_EventRequestExit(3);
 	Engine_EventEnd();

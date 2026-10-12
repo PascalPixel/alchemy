@@ -389,7 +389,7 @@ s32 SaveMenu_Run(void)
 		return 0;
 	}
 	gSleepDisabled = started;
-L_020004a8:;
+menu_top:;
 	v6 = SaveState_ScanRecordFlags();
 	if (v6 < 0)
 	{
@@ -420,23 +420,23 @@ L_020004a8:;
 	}
 	if (v6 != 0)
 	{
-		goto L_0200057a;
+		goto chosen;
 	}
 	GameState_InitDefaults();
 	PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
 	v5 = 1;
 	v7 = 0;
-L_02000522:;
+edit_name:;
 	Engine_TaskWait(6);
 	v6 = NameEntry_EditOwnerName(v7);
 	if (v6 == -1)
 	{
 		if (v7 == 0)
 		{
-			goto L_020004a8;
+			goto menu_top;
 		}
 		v7--;
-		goto L_02000522;
+		goto edit_name;
 	}
 	if (Clear_CodeUnlocked != 0)
 	{
@@ -449,13 +449,13 @@ L_02000522:;
 	v7 = (v7 + 1);
 	if (v7 < v5)
 	{
-		goto L_02000522;
+		goto edit_name;
 	}
 	Party_SetFlag32AndRefreshMembers();
 	gGameState.scene = (s32)&SceneId_HaidiaBabi;
 	gGameState.entrance = 20;
-	goto L_02000c96;
-L_0200057a:;
+	goto leave;
+chosen:;
 	if (v6 != 1)
 	{
 	}
@@ -466,7 +466,7 @@ L_0200057a:;
 		v6 = SaveState_LoadRecordIntoWork(1);
 		if (v6 == -1)
 		{
-			goto L_020004a8;
+			goto menu_top;
 		}
 		GameFlag_Set(0x109);
 		state = &gGameState;
@@ -482,7 +482,7 @@ L_0200057a:;
 			if (Scene_GetModeMask() != 0)
 			{
 				UiText_ShowPositionedMessageAndWait((s32)MsgSaveRecoveryFailed, 9);
-				goto L_020004a8;
+				goto menu_top;
 			}
 			state->scene = state->saved_scene;
 			state->entrance = state->saved_entrance;
@@ -496,14 +496,14 @@ L_0200057a:;
 			if (Menu_RunConfirmSelection(1, 0, 0, 0) != 0)
 			{
 				UiWork_FinalizePendingCore();
-				goto L_020004a8;
+				goto menu_top;
 			}
 			UiWork_FinalizePendingCore();
 			if (Scene_GetModeMask() != 0)
 			{
 				/* FAKEMATCH: MsgSaveRecoveryFailed as MsgSaveDataCorrupted + 2, the native adds 2 to the register holding message 4 (186 by name). */
 				UiText_ShowPositionedMessageAndWait((s32)MsgSaveDataCorrupted + 2, 9);
-				goto L_020004a8;
+				goto menu_top;
 			}
 			state->scene = state->saved_scene;
 			state->entrance = state->saved_entrance;
@@ -511,24 +511,24 @@ L_0200057a:;
 			Engine_GameFlagSet(0x13f);
 		}
 		GameFlag_ClearBit(0x106);
-		goto L_02000c96;
+		goto leave;
 	}
 	if (v6 == 2)
 	{
 		SaveState_CopySlotPair();
-		goto L_020004a8;
+		goto menu_top;
 	}
 	if (v6 == 3)
 	{
 		SaveState_DeleteSelectedSlot();
-		goto L_020004a8;
+		goto menu_top;
 	}
 	if (v6 == 4)
 	{
 		v6 = SaveState_LoadRecordIntoWork(4);
 		if (v6 == -1)
 		{
-			goto L_020004a8;
+			goto menu_top;
 		}
 		gGameState.selected_actor = 0;
 		if (GameFlag_IsSet(0x952) != 0)
@@ -549,30 +549,30 @@ L_0200057a:;
 		Engine_GameFlagSet(0x17e);
 		gSleepDisabled = 1;
 		Event_SetDestination((s32)&SceneId_LinkLobby, 1);
-		goto L_02000c96;
+		goto leave;
 	}
 	else
 	{
 		if (v6 != 5)
 		{
-			goto L_020004a8;
+			goto menu_top;
 		}
-	L_020007b8:;
+	link_load:;
 		v6 = SaveState_LoadRecordIntoWork(5);
 		if (v6 == -1)
 		{
-			goto L_020004a8;
+			goto menu_top;
 		}
 		PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
-	L_020007dc:;
+	link_select:;
 		v6 = Menu_SelectResourceLayout(0);
 		if (v6 == -1)
 		{
-			goto L_020007b8;
+			goto link_load;
 		}
 		if (v6 != 1)
 		{
-			goto L_020009cc;
+			goto not_first;
 		}
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
@@ -640,7 +640,7 @@ L_0200057a:;
 							if (received[3] == 83)
 							{
 								v7 = 1;
-								goto L_020008e0;
+								goto link_waited;
 							}
 						}
 					}
@@ -649,11 +649,11 @@ L_0200057a:;
 			Engine_TaskWait(1);
 		}
 		Engine_AudioPlayCue(113);
-	L_020008e0:;
+	link_waited:;
 		UiWork_Finalize(v6, 2);
 		if (v7 == 0)
 		{
-			goto L_020007dc;
+			goto link_select;
 		}
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
@@ -708,16 +708,16 @@ L_0200057a:;
 	RenderOutput_PrepareForRedraw(v6);
 	UiWork_Finalize(v6, 2);
 #endif
-	goto L_020004a8;
-L_020009cc:;
+	goto menu_top;
+not_first:;
 	if (v6 == 0)
 	{
-	L_020009d2:;
+	page_select:;
 		v6 = Menu_SelectResourceLayout(1);
 
 		if (v6 == -1)
 		{
-			goto L_020007dc;
+			goto link_select;
 		}
 		{
 			u8 *data = save_data;
@@ -779,7 +779,7 @@ L_020009cc:;
 				UiWork_Finalize(page_window, 2);
 				UiWork_Finalize(help_window, 2);
 				UiWork_Finalize(heading_window, 2);
-				goto L_020009d2;
+				goto page_select;
 			}
 			if ((gKeyState & KEY_A) != 0)
 			{
@@ -793,7 +793,7 @@ L_020009cc:;
 					UiWork_Finalize(help_window, 2);
 					UiWork_Finalize(heading_window, 2);
 					Engine_TaskWait(1);
-					goto L_020004a8;
+					goto menu_top;
 				}
 				Engine_AudioPlayCue(111);
 			}
@@ -803,7 +803,7 @@ L_020009cc:;
 				{
 					if (page_count <= 1)
 					{
-						goto L_02000b30;
+						goto check_right;
 					}
 					Engine_AudioPlayCue(111);
 					rec5 = page + page_count;
@@ -811,14 +811,14 @@ L_020009cc:;
 				}
 				else
 				{
-				L_02000b30:;
+				check_right:;
 					if ((gKeyState & KEY_RIGHT) == 0)
 					{
-						goto L_02000b58;
+						goto keys_done;
 					}
 					if (page_count <= 1)
 					{
-						goto L_02000b58;
+						goto keys_done;
 					}
 					Engine_AudioPlayCue(111);
 					rec5 = page + page_count;
@@ -828,7 +828,7 @@ L_020009cc:;
 				v7 = 1;
 				page = rec5;
 			}
-		L_02000b58:;
+		keys_done:;
 			if (v7 != 1)
 			{
 				v5 = page_message;
@@ -904,8 +904,8 @@ L_020009cc:;
 		}
 	}
 	Engine_TaskWait(0x12c);
-	goto L_020004a8;
-L_02000c96:;
+	goto menu_top;
+leave:;
 	gEventWork->requested_exit = 0x3e7;
 	Engine_EventWait(30);
 	Engine_AudioPlayCue(17);

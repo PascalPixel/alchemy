@@ -1027,7 +1027,7 @@ static void Scene_RunActorFormation(s32 a0)
 		Map_CopyCellAttributes(121, 20, 1, 1, 100, 32);
 		if (a0 == 0)
 		{
-			goto L_02001890;
+			goto actor10;
 		}
 		Actor_SetPosition(9, 0x6380000, 0x2080000);
 	}
@@ -1042,13 +1042,13 @@ static void Scene_RunActorFormation(s32 a0)
 			}
 		}
 	}
-L_02001890:;
+actor10:;
 	if (GameFlag_IsSet(0x313) != 0)
 	{
 		Map_CopyCellAttributes(121, 20, 1, 1, 104, 32);
 		if (a0 == 0)
 		{
-			goto L_020018f2;
+			goto actor11;
 		}
 		Actor_SetPosition(10, 0x6780000, 0x2080000);
 	}
@@ -1063,13 +1063,13 @@ L_02001890:;
 			}
 		}
 	}
-L_020018f2:;
+actor11:;
 	if (GameFlag_IsSet(0x315) != 0)
 	{
 		Map_CopyCellAttributes(121, 20, 1, 1, 108, 32);
 		if (a0 == 0)
 		{
-			goto L_02001956;
+			goto actor12;
 		}
 		Actor_SetPosition(11, 0x6b80000, 0x2080000);
 	}
@@ -1084,13 +1084,13 @@ L_020018f2:;
 			}
 		}
 	}
-L_02001956:;
+actor12:;
 	if (GameFlag_IsSet(0x317) != 0)
 	{
 		Map_CopyCellAttributes(121, 20, 1, 1, 112, 32);
 		if (a0 == 0)
 		{
-			goto L_020019b8;
+			goto actor13;
 		}
 		Actor_SetPosition(12, 0x6f80000, 0x2080000);
 	}
@@ -1105,13 +1105,13 @@ L_02001956:;
 			}
 		}
 	}
-L_020019b8:;
+actor13:;
 	if (GameFlag_IsSet(0x319) != 0)
 	{
 		Map_CopyCellAttributes(121, 20, 1, 1, 116, 32);
 		if (a0 == 0)
 		{
-			goto L_02001a1c;
+			goto actor14;
 		}
 		Actor_SetPosition(13, 0x7380000, 0x2080000);
 	}
@@ -1126,13 +1126,13 @@ L_020019b8:;
 			}
 		}
 	}
-L_02001a1c:;
+actor14:;
 	if (GameFlag_IsSet(0x31b) != 0)
 	{
 		Map_CopyCellAttributes(121, 20, 1, 1, 120, 32);
 		if (a0 == 0)
 		{
-			goto L_02001a7e;
+			goto done;
 		}
 		Actor_SetPosition(14, 0x7780000, 0x2080000);
 	}
@@ -1147,7 +1147,7 @@ L_02001a1c:;
 			}
 		}
 	}
-L_02001a7e:;
+done:;
 }
 
 static void EV10_SEARCH(void)
@@ -1170,7 +1170,7 @@ static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
 		*timer = (*timer - 1);
 		if (v3 != 40)
 		{
-			goto L_02001b14;
+			goto done;
 		}
 		Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	}
@@ -1184,7 +1184,7 @@ static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
 			*timer = 80;
 		}
 	}
-L_02001b14:;
+done:;
 }
 
 struct SceneEntrance gSoruIriguchiEntrancesOther[] = {

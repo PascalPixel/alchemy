@@ -143,7 +143,7 @@ static void EV18_TALK(void)
 			Engine_EventWait(20);
 			Engine_EventSetMessage((s32)MsgKuupuappuWowHaveManyThingsArent);
 			Event_ShowMessage(18, 0);
-			goto L_020002d4;
+			goto turn_back;
 		}
 		Engine_ItemShowFound(ITEM_BONE, 3);
 		Engine_PartyGiveItem(ITEM_BONE, 0);
@@ -157,7 +157,7 @@ static void EV18_TALK(void)
 		Engine_EventWait(20);
 		Event_ShowMessage(18, 0);
 	}
-L_020002d4:;
+turn_back:;
 	Actor_FaceDirection(18, 0x4000, 0);
 	Engine_EventEnd();
 }

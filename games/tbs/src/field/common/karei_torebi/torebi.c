@@ -187,7 +187,7 @@ static void EV11_TALK(void)
 		{
 			Event_ShowMessage(11, 0);
 			GameFlag_Set(0x8a6);
-			goto L_020002c2;
+			goto end_event;
 		}
 		gEventWork->message++;
 		Event_ShowMessage(11, 0);
@@ -197,7 +197,7 @@ static void EV11_TALK(void)
 		Engine_EventSetMessage((s32)MsgKareiPassMessageDaughter);
 		Event_ShowMessage(11, 0);
 	}
-L_020002c2:;
+end_event:;
 	Engine_EventEnd();
 }
 
@@ -367,13 +367,13 @@ static void EV08_TALK_2(void)
 				Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 4);
 				Engine_EventWait(10);
 				Event_ShowMessage(8, 0);
-				goto L_02000660;
+				goto end_event;
 			}
 			else
 			{
 				if ((u32)six00 <= (u32)state->coins)
 				{
-					goto L_0200061e;
+					goto pay;
 				}
 				UiWork_Finalize(rec7, 2);
 				Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -381,9 +381,9 @@ static void EV08_TALK_2(void)
 				gEventWork->message++;
 				Event_PlayCue(113);
 				Event_ShowMessage(8, 0);
-				goto L_02000660;
+				goto end_event;
 			}
-		L_0200061e:;
+		pay:;
 			UiWork_Finalize(rec7, 2);
 			Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 			Engine_EventWait(10);
@@ -393,7 +393,7 @@ static void EV08_TALK_2(void)
 			GameFlag_Set(0x8a5);
 			Party_AdjustCoins(-six00);
 		}
-	L_02000660:;
+	end_event:;
 		Engine_EventEnd();
 	}
 }
@@ -443,7 +443,7 @@ static void KareiTorebi_DeliverParentsMessage(void)
 				Engine_EventWait(20);
 				Event_ShowMessage(11, 0);
 				GameFlag_Set(0x8a8);
-				goto L_020007be;
+				goto end_event;
 			}
 			Engine_EventWait(10);
 			gEventWork->message++;
@@ -458,7 +458,7 @@ static void KareiTorebi_DeliverParentsMessage(void)
 			Actor_FaceDirection(11, 0, 0);
 			Engine_EventWait(30);
 		}
-	L_020007be:;
+	end_event:;
 		Engine_EventEnd();
 	}
 }

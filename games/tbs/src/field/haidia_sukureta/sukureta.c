@@ -789,7 +789,7 @@ s32 HaidiaSukureta_RestoreEntryState(void)
 		v5 = 20;
 		Engine_MapCopyCellAttributes(9, 24, 1, 1, 23, 20);
 		Engine_MapCopyCellAttributes(9, 24, 1, 1, 24, 20);
-		goto L_0200171e;
+		goto done;
 	}
 	Engine_ActorSetPosition(9, 0, 0);
 	Engine_ActorSetPosition(10, 0, 0);
@@ -824,7 +824,7 @@ s32 HaidiaSukureta_RestoreEntryState(void)
 		Actor_SetPosition(16, 0x840000, 0x1080000);
 	}
 	Engine_EventEnd();
-L_0200171e:;
+done:;
 	return 0;
 }
 

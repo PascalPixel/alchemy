@@ -225,26 +225,26 @@ static void FieldScene_RunScene398SequenceB(void)
 	{
 		if ((rec7->z.fixed >> 20) != 23)
 		{
-			goto L_02000330;
+			goto clear_first;
 		}
 		GameFlag_Set(0x303);
 	}
 	else
 	{
-	L_02000330:;
+	clear_first:;
 		GameFlag_Clear(0x303);
 	}
 	if ((rec8->x.fixed >> 20) == 35)
 	{
 		if ((rec8->z.fixed >> 20) != 23)
 		{
-			goto L_02000350;
+			goto clear_second;
 		}
 		GameFlag_Set(0x304);
 	}
 	else
 	{
-	L_02000350:;
+	clear_second:;
 		GameFlag_Clear(0x304);
 	}
 	if (GameFlag_IsSet(0x303) == 0)
@@ -252,7 +252,7 @@ static void FieldScene_RunScene398SequenceB(void)
 		record = GameFlag_IsSet(0x304);
 		if (record == 0)
 		{
-			goto L_020003c2;
+			goto neither_set;
 		}
 	}
 	if (GameFlag_IsSet(0x302) == 0)
@@ -267,8 +267,8 @@ static void FieldScene_RunScene398SequenceB(void)
 		Engine_EventEnd();
 	}
 	GameFlag_Set(0x302);
-	goto L_02000414;
-L_020003c2:;
+	goto done;
+neither_set:;
 	if (GameFlag_IsSet(0x302) != 0)
 	{
 		Engine_EventBegin();
@@ -281,7 +281,7 @@ L_020003c2:;
 		Engine_EventEnd();
 	}
 	GameFlag_Clear(0x302);
-L_02000414:;
+done:;
 }
 
 static void EV08_PSYNERGY_3(void)

@@ -79,7 +79,7 @@ static void EV13_TOUCH(void)
 		record = GameFlag_IsSet(0x201);
 		if (record != 0)
 		{
-			goto L_020000f0;
+			goto done;
 		}
 		Engine_EventBegin();
 		ColorBuffer_ApplyTarget(0x2051cc, 1);
@@ -113,7 +113,7 @@ static void EV13_TOUCH(void)
 			Engine_EventEnd();
 		}
 	}
-L_020000f0:;
+done:;
 }
 
 static void EV15_TOUCH(void)
@@ -139,7 +139,7 @@ static void EV14_TOUCH(void)
 		record = GameFlag_IsSet(0x200);
 		if (record != 0)
 		{
-			goto L_020001d6;
+			goto done;
 		}
 		Engine_EventBegin();
 		ColorBuffer_ApplyTarget(0x10000, 1);
@@ -166,7 +166,7 @@ static void EV14_TOUCH(void)
 			Engine_EventEnd();
 		}
 	}
-L_020001d6:;
+done:;
 }
 
 static void EV12_TOUCH(void)
@@ -1456,7 +1456,7 @@ s32 SoruNichigetsu_RestoreEntryState(void)
 				}
 			}
 			Engine_ActorSetPosition(16, 0, 0);
-			goto L_02002510;
+			goto light_scene;
 		}
 		lit = 0;
 		if (Engine_GameFlagIsSet(0x80b) != 0)
@@ -1487,22 +1487,22 @@ s32 SoruNichigetsu_RestoreEntryState(void)
 		{
 			if (lit == 0)
 			{
-				goto L_020024fc;
+				goto mark_cells;
 			}
 		}
 		Engine_MapCopyCellsTo(30, 43, 32, 40, 8, 3);
 		Engine_MapCopyCellsTo(30, 43, 33, 39, 8, 1);
 		Engine_MapCopyCellsTo(30, 43, 36, 38, 3, 3);
 		Engine_MapCopyCellsTo(36, 58, 32, 41, 8, 4);
-	L_020024fc:;
+	mark_cells:;
 		Map_CopyCellAttributes(15, 6, 2, 1, 17, 6);
 	}
-L_02002510:;
+light_scene:;
 	if (GameFlag_IsSet(0x309) == 0)
 	{
 		if (gGameState.entrance != 8)
 		{
-			goto L_0200254a;
+			goto light_seen;
 		}
 		SoruNichigetsu_RunLightScene();
 		Engine_GameFlagSet(0x309);
@@ -1510,7 +1510,7 @@ L_02002510:;
 	}
 	else
 	{
-	L_0200254a:;
+	light_seen:;
 		if (Engine_GameFlagIsSet(0x814) != 0)
 		{
 			BattleFx_SetQueuedSoundAndPlay(141);

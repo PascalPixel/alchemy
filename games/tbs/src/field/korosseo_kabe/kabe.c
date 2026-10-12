@@ -1189,14 +1189,14 @@ static void EV37_TALK(s32 a0)
 			Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
 			Actor_SetPosition(33, 0x3480000, 0xe80000);
 			Korosseo_ShowFollowUpPrompt(a0, 3);
-			goto L_020016b0;
+			goto run_stage;
 		}
 		if (rec2 == 1)
 		{
 			Engine_EventSetMessage((s32)MsgKorosseoHereYourObjectiveRideLogs);
 			Event_ShowMessage(a0, 0);
 		}
-	L_020016b0:;
+	run_stage:;
 		FieldScene_RunMiddleSequence(rec2, a0, 3);
 		Engine_EventEnd();
 	}

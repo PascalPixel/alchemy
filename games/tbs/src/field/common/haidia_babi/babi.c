@@ -311,17 +311,17 @@ s32 HaidiaBabi_RestoreEntryState(void)
 			Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
 			if (gGameState.entrance != 6 && gGameState.entrance != 7)
 			{
-				goto L_02000550;
+				goto done;
 			}
 			if (Engine_GameFlagIsSet(0x109) != 0)
 			{
 				record = Engine_GameFlagIsSet(0x203);
 				if (record == 0)
 				{
-					goto L_02000550;
+					goto done;
 				}
 				Map_ClearLayerEntryFlag(12);
-				goto L_02000550;
+				goto done;
 			}
 			Map_ClearLayerEntryFlag(11);
 			record = (s32)Object_GetById(8);
@@ -371,7 +371,7 @@ s32 HaidiaBabi_RestoreEntryState(void)
 			}
 		}
 	}
-L_02000550:;
+done:;
 	return 0;
 }
 

@@ -417,26 +417,26 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
 		record = Engine_GameFlagIsSet(0x845);
 		if (record != 0)
 		{
-			goto L_02000758;
+			goto after_flag;
 		}
 		if (gGameState.entrance == 29)
 		{
 			Kyuden_RunKolimaRequest();
-			goto L_02000888;
+			goto done;
 		}
 		if (gGameState.entrance != 9)
 		{
-			goto L_02000888;
+			goto done;
 		}
 		if (Engine_GameFlagIsSet(0x321) == 0)
 		{
-			goto L_02000888;
+			goto done;
 		}
 		FieldScene_RunPalaceGreeting();
 	}
 	else
 	{
-	L_02000758:;
+	after_flag:;
 		rec8 = Engine_GameFlagIsSet(0x84e);
 		if (rec8 != 0)
 		{
@@ -447,12 +447,12 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
 			{
 				if (Engine_GameFlagIsSet(0x85e) != 0)
 				{
-					goto L_02000888;
+					goto done;
 				}
 				record = Engine_GameFlagIsSet(0x845);
 				if (record == 0)
 				{
-					goto L_02000888;
+					goto done;
 				}
 				RunEventScript02();
 			}
@@ -500,7 +500,7 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
 			}
 		}
 	}
-L_02000888:;
+done:;
 	return 0;
 }
 

@@ -543,7 +543,7 @@ s32 HaidiaIe_RestoreEntryState(void)
 			record = Engine_GameFlagIsSet(0x840);
 			if (record == 0)
 			{
-				goto L_02000aaa;
+				goto check_entrance;
 			}
 			Engine_ActorSetPosition(17, 0, 0);
 			Engine_ActorSetPosition(18, 0, 0);
@@ -560,7 +560,7 @@ s32 HaidiaIe_RestoreEntryState(void)
 				Engine_TaskWait(1);
 			}
 		}
-	L_02000aaa:;
+	check_entrance:;
 		if (gGameState.entrance == 12)
 		{
 			Scene_RunExtendedActorSequence();
@@ -604,13 +604,13 @@ s32 HaidiaIe_RestoreEntryState(void)
 					record = Engine_GameFlagIsSet(0x842);
 					if (record == 0)
 					{
-						goto L_02000b6a;
+						goto open_screen;
 					}
 					HaidiaIe_RunScriptScene();
 				}
 				else
 				{
-				L_02000b6a:;
+				open_screen:;
 					if (Engine_GameFlagIsSet(0x834) != 0)
 					{
 						Engine_EventOpenScreen();
@@ -621,7 +621,7 @@ s32 HaidiaIe_RestoreEntryState(void)
 			}
 		}
 	}
-L_02000b80:;
+done:;
 	return 0;
 }
 
@@ -1019,10 +1019,10 @@ static void Scene_RunExtendedActorSequence(void)
 	struct FieldActor *record;
 	struct EventWork  *work;
 	s32				   v5;
-	const u8		  *base5_200ac00;
-	const u8		  *base5_200ac90;
+	const u8		  *face_actions;
+	const u8		  *actor31_actions;
 	s32				   v6;
-	const u8		  *base5_200adf0;
+	const u8		  *pair_actions;
 
 	Owner_RefreshActiveRatios(1);
 	Engine_EventBegin();
@@ -1082,9 +1082,9 @@ static void Scene_RunExtendedActorSequence(void)
 	Engine_ActorSetAnimation(30, 3);
 	Engine_ActorEnableActionCallback(30, (s32)HaidiaIe_Actor30Actions);
 	Engine_EventWait(40);
-	base5_200ac00 = (const u8 *)HaidiaIe_FaceTargetActions;
-	FieldObject_SetTargetAndCallback(11, 0x1001e, base5_200ac00);
-	FieldObject_SetTargetAndCallback(12, 0x1001e, base5_200ac00);
+	face_actions = (const u8 *)HaidiaIe_FaceTargetActions;
+	FieldObject_SetTargetAndCallback(11, 0x1001e, face_actions);
+	FieldObject_SetTargetAndCallback(12, 0x1001e, face_actions);
 	Object_RefreshSelectorById(30);
 	Engine_ActorStop(11);
 	Engine_ActorStop(12);
@@ -1142,12 +1142,12 @@ static void Scene_RunExtendedActorSequence(void)
 	Engine_ActorSetSpritePriority(31, 2);
 	Actor_SetSpeed(31, 0x39999, 0x1cccc);
 	Engine_ActorSetAnimation(31, 2);
-	base5_200ac90 = HaidiaIe_Actor31Actions;
-	Engine_ActorEnableActionCallback(31, base5_200ac90);
+	actor31_actions = HaidiaIe_Actor31Actions;
+	Engine_ActorEnableActionCallback(31, actor31_actions);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(30, 3);
 	Actor_SetSpeed(30, 0x4cccc, 0x26666);
-	Object_SetActionCallbackAndRefreshById(30, base5_200ac90);
+	Object_SetActionCallbackAndRefreshById(30, actor31_actions);
 	Engine_EventWait(60);
 	Engine_ActorRunRepeatedMotion(12, 2);
 	SceneActor_SetPairZeroAndValue(12, 0x7000, 10);
@@ -1319,14 +1319,14 @@ static void Scene_RunExtendedActorSequence(void)
 	SceneActor_SetPairZeroAndValue(0, 0x4000, 10);
 	SceneActor_SetPairZeroAndValue(1, 0x5000, 20);
 	Actor_SetSpeed(0, 0xcccc, 0x6666);
-	base5_200adf0 = HaidiaIe_Actor0And1Actions;
-	Engine_ActorEnableActionCallback(0, base5_200adf0);
+	pair_actions = HaidiaIe_Actor0And1Actions;
+	Engine_ActorEnableActionCallback(0, pair_actions);
 	Engine_EventWait(20);
 	Camera_SetSpeed(0x6666, 0xccc);
 	Engine_CameraMoveTo(0xd80000, 0x100000, 0x3890000, 1);
 	Engine_EventWait(20);
 	Actor_SetSpeed(1, 0xcccc, 0x6666);
-	Engine_ActorEnableActionCallback(1, base5_200adf0);
+	Engine_ActorEnableActionCallback(1, pair_actions);
 	Engine_EventWait(60);
 	work = gEventWork;
 	work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

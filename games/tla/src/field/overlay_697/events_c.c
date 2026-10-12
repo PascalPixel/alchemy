@@ -1,5 +1,41 @@
 #include "ov697.h"
 
+#include "scene_call.h"
+#include "text/msg_ids.h"
+
+struct EventWork15a {
+    u8 unknown_000[0x15a];
+    u16 value;
+};
+
+void Func_02005880(void);
+void Func_02005888(void);
+void Func_020059e8(s32 a);
+
+void Func_020005b4(s32 id)
+{
+    s32 flag;
+
+    if (id == 9 || id == 11)
+        flag = 0x285;
+    else
+        flag = 0x286;
+    if (!GameFlag_Test(flag)) {
+        Func_02005880();
+        Func_020059e8(0);
+        UiText_ShowPositionedMessageAndWait((s32)MsgTrialRoadChestBlocked, 1);
+        Func_02005888();
+    } else {
+        UiText_ShowPositionedMessageAndWait((s32)MsgTrialRoadPlaceItemPrompt, 13);
+        if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 1) == 0)
+            ((struct EventWork15a *)Ram_HeapSlots->event_work)->value = 1;
+    }
+}
+
+void Func_02000628(void)
+{
+}
+
 void Func_0200062c(s32 id)
 {
     struct Ov697MapWork *map = (struct Ov697MapWork *)Ram_HeapSlots->map_work;

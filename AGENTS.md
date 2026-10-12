@@ -263,7 +263,12 @@ or functions is exactly this cheating.
   one standing: `alchemy check devices` counts pins, barriers, inline asm and
   volatiles, and a count may only fall; trading one device for another is
   not progress unless the new form is the source's, and a device that stays
-  records in its tag the plain forms measured against it (S4). A device is
+  records in its tag the plain forms measured against it (S4). The same
+  check counts `goto` statements, and that count may only fall too. A `goto`
+  is ordinary C and no FAKEMATCH device: it carries no tag and is outside
+  the FAKEMATCH figures. But one that only forces a layout is not how the
+  function was written, and it goes when its loop or branch is found
+  (Pascal, 2026-10-12). A device is
   for a difference of instruction order or register choice, an unused
   local of a real type whose size exactly explains the native stack frame,
   or a form the bytes prove the source had (a CSE block that ended where
@@ -320,7 +325,8 @@ or functions is exactly this cheating.
   - Layout: `games/<game>/src`, `include`, `sound`, `text`, the same folders
     in both games (`games/tbs`, `games/tla`) and `games/common`; lowercase
     8.3 file and folder names, `.c` and `.h` (Pascal, 2026-10-08: no evidence
-    for the uppercase style). The one exception follows the GNU convention:
+    for the uppercase style). A scene's file takes its place's full name
+    and may be longer than eight letters (Pascal, 2026-10-12). The one exception follows the GNU convention:
     an assembly file the C preprocessor reads (`#include`, `#define`, `#if`)
     is all capitals, name and extension (`NAME.S`); plain assembly such as
     `rom_head.s` is lowercase. The build chooses preprocessing by the
@@ -709,7 +715,7 @@ alchemy adopt-data OBJECT PIECE...     # a data block's object into all six edit
 alchemy objects EDITION...             # what differs from the ROM, object or placement
 alchemy dead [--apply PATH]            # what no edition links, includes or selects
 make progress                          # DONE code and data, one line per edition (alchemy progress)
-alchemy check devices [--update]       # register pins, asm barriers, inline asm, volatile: may only fall
+alchemy check devices [--update]       # register pins, asm barriers, inline asm, volatile, goto: may only fall
 alchemy fakematch [--show N]           # every FAKEMATCH tag by device and family, weighed by the bytes it steers
 # Camelotize
 make worst                             # maintained C ranked by how mechanical it reads

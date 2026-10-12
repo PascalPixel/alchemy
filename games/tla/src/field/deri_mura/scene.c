@@ -3,6 +3,7 @@
 #include "party_state.h"
 #include "scene_ids.h"
 #include "ram_buffer.h"
+#include "object_runtime.h"
 
 extern s16 Data_02000d80[];
 
@@ -16,6 +17,22 @@ static inline void MapCopyAttr(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
 {
     /* FAKEMATCH: as in the scene layer of The Broken Seal, the inline parameters keep the native registers (direct: the second stack constant reuses r3 after the first store) */
     Func_02000c48(a, b, c, d, e, f);
+}
+
+void Func_02000d58(s16 *data);
+
+void Func_02000a9c(void)
+{
+    u8 *event = Ram_HeapSlots->event_work;
+    struct ObjectRuntime *object;
+    s32 flags;
+
+    Func_02000d58(Data_02000d80);
+    object = *(struct ObjectRuntime **)(event + 0xcbc);
+    flags = 1;
+    flags |= object->priority_flags;
+    flags &= 0xfd;
+    object->priority_flags = flags;
 }
 
 s32 Func_02000ac8(void)

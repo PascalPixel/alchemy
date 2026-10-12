@@ -558,29 +558,3 @@ Func_020003a0:
 	pop {r5, r6, pc}
 .L_02008920:
 	.4byte gPartyState
-	.section .text.x02008a9c,"ax",%progbits
-	.balign 4
-	.global Func_02000a9c
-	.thumb_func
-Func_02000a9c:
-	push {r5, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r0, .L_02008ac4
-	ldr r5, [r3, #108]
-	bl Func_02000d58
-	movs r3, #192
-	lsls r3, r3, #4
-	adds r3, #188
-	adds r5, r5, r3
-	ldr r1, [r5]
-	movs r3, #1
-	adds r1, #35
-	ldrb r2, [r1]
-	orrs r3, r2
-	movs r2, #253
-	ands r3, r2
-	strb r3, [r1]
-	pop {r5, pc}
-.L_02008ac4:
-	.4byte Data_02000d80

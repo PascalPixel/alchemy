@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_MENU_ITEM_ITEM_H
-#define ALCHEMY_UNIT_MENU_ITEM_ITEM_H
+#ifndef ALCHEMY_UNIT_MENU_ITEM_H
+#define ALCHEMY_UNIT_MENU_ITEM_H
 
 #include "types.h"
 

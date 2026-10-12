@@ -342,7 +342,7 @@ Func_080cb91c:
 	movs r0, #10
 	adds r0, #255
 	bl GameFlag_ClearBit
-	bl Func_080cafc4
+	bl BattleFx_SumCounters
 	cmp r0, #0
 	beq .L_080cbc02
 	b .L_080cbd7c
@@ -1408,7 +1408,7 @@ Func_080cb91c:
 	mov r0, r10
 	strh r0, [r3]
 .L_080cc47e:
-	bl Func_080cafc4
+	bl BattleFx_SumCounters
 	cmp r0, #0
 	beq .L_080cc488
 	b .L_080cbdec
@@ -1463,7 +1463,7 @@ Func_080cb91c:
 	ldr r3, [r3, #16]
 	bl Func_080cb2b8
 .L_080cc4f0:
-	bl Func_080cafc4
+	bl BattleFx_SumCounters
 	cmp r0, #0
 	beq .L_080cc49e
 	b .L_080cbd8c

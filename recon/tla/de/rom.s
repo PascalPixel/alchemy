@@ -1855,8 +1855,9 @@ Func_080caa4c:
 	.thumb_func
 Func_080cae5c:
 	.incbin "baserom.gba", 0x000d7e5c, 0x00000110
-	.section .rom.000d7fc4, "ax"
-	.incbin "baserom.gba", 0x000d7fc4, 0x00000704
+	.section .rom.000d809c, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000d809c, 0x0000062c
 	.section .rom.000d891c, "ax"
 	.incbin "baserom.gba", 0x000d891c, 0x00000c30
 	.section .rom.000d954c, "ax"
@@ -2694,9 +2695,12 @@ Func_080decb8:
 RunBattleEffect05:
 	.incbin "baserom.gba", 0x000ebde8, 0x00000ac0
 	.section .rom.000ec8de, "ax"
-	.incbin "baserom.gba", 0x000ec8de, 0x000001d6
-	.section .rom.000ecb0a, "ax"
-	.incbin "baserom.gba", 0x000ecb0a, 0x0000007e
+	.incbin "baserom.gba", 0x000ec8de, 0x00000002
+	.global Func_080df8e0
+	.type Func_080df8e0, %function
+	.thumb_func
+Func_080df8e0:
+	.incbin "baserom.gba", 0x000ec8e0, 0x000001d4
 	.section .rom.000ecc3c, "ax"
 	.incbin "baserom.gba", 0x000ecc3c, 0x00000098
 	.section .rom.000ecd00, "ax"

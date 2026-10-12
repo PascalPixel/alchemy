@@ -2119,7 +2119,12 @@ Event_FinishScreenTransitionFar:
 	.type Event_WaitTransitionFramesFar, %function
 	.thumb_func
 Event_WaitTransitionFramesFar:
-	.incbin "baserom.gba", 0x000c83b8, 0x00000020
+	.incbin "baserom.gba", 0x000c83b8, 0x00000008
+	.global DisplayScroll_InitializeHBlankDmaFar
+	.type DisplayScroll_InitializeHBlankDmaFar, %function
+	.thumb_func
+DisplayScroll_InitializeHBlankDmaFar:
+	.incbin "baserom.gba", 0x000c83c0, 0x00000018
 	.global Func_080c83d8
 	.type Func_080c83d8, %function
 	.thumb_func

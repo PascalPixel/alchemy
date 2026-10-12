@@ -234,6 +234,7 @@ Animation_ApplyChildValues:
 	.thumb_func
 Func_020031a8:
 	overlay_veneer ObjectDispatch_SetSpritePriorityFar
+	.ifndef TLA_EDITION_JA
 	.global Func_020031b0
 	.thumb_func
 Func_020031b0:
@@ -250,6 +251,7 @@ Func_020031b0:
 	overlay_veneer Func_08020318
 	.else
 	overlay_veneer Runtime_CheckRadiusOverlapFar
+	.endif
 	.endif
 	.endif
 	.endif

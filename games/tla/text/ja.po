@@ -14323,7 +14323,7 @@ msgctxt "message"
 msgid "03578"
 msgstr "なにも ないようだ{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene653No01"
 msgid "03579"
 msgstr "とびらは かたくとざされている{end_wait}"
 
@@ -25007,7 +25007,7 @@ msgctxt "MsgFieldTravelersWithNowhereToGoThis"
 msgid "06249"
 msgstr "たびの戦士が ヒマにしていて・・・{line_break}まちがって海神様のおやしろにでも{line_break}行かれでもしたら たいへんです{page_break}海神様が おいかりになる前に{line_break}マドラの町へでも どこでも・・・{line_break}はやく 村から立ちさりなさい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene653No02"
 msgid "06250"
 msgstr "ピポイ様に ようじ?{end_now}"
 
@@ -25019,7 +25019,7 @@ msgctxt "message"
 msgid "06252"
 msgstr "けんぶつに きたのか・・・{line_break}でも 寺には入れられない{line_break}あきらめて かえりなよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene653No03"
 msgid "06253"
 msgstr "しゅぎょうが はじまると{line_break}寺には だれも入れないんだ{page_break}ピポイ様のワザをうけつぐため{line_break}せいしんの しゅうちゅうが{line_break}ひつようだからなんだってさ。{end_wait}"
 
@@ -25055,7 +25055,7 @@ msgctxt "MsgFieldEmptyTheMindToLightenThe"
 msgid "06261"
 msgstr "こころをカラにすることで{line_break}からだは かるくなる・・・{page_break}しかし しゅぎょうで・・・{line_break}なにも たべていないから{line_break}ハラがへって へって・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene653No04"
 msgid "06262"
 msgstr "ほら お前たち{line_break}しっかり やらんか!{end_wait}"
 
@@ -25147,7 +25147,7 @@ msgctxt "MsgFieldIsItReallyPossibleForAnyone"
 msgid "06284"
 msgstr "こんな きびしいものを{line_break}こえられるヤツって・・・{line_break}ホントに いるのだろうか?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene653No05"
 msgid "06285"
 msgstr "この きびしいしれんを{line_break}よくぞ こえてくれた・・・{line_break}わたしは うれしいぞ!{end_wait}"
 
@@ -25163,11 +25163,11 @@ msgctxt "message"
 msgid "06288"
 msgstr "どうやってと・・・{line_break}いわれてものう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene653No06"
 msgid "06289"
 msgstr "ロープはないようじゃ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene653No07"
 msgid "06290"
 msgstr "すると しゅぎょうのアナを{line_break}クリアしてきたのか・・・。{end_wait}"
 
@@ -25295,7 +25295,7 @@ msgctxt "MsgFieldTakeThePowerOfLashIt"
 msgid "06321"
 msgstr "リリースの おうぎを{line_break}うけとるがよい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene653No08"
 msgid "06322"
 msgstr "それこそ カンドラ寺に伝わる{line_break}おうぎ リリースであるぞ!{end_wait}"
 
@@ -25327,7 +25327,7 @@ msgctxt "MsgFieldHoHoIFeelTheStrength"
 msgid "06329"
 msgstr "おお おお ビンビンと{line_break}そなたの せいしん力が{line_break}ワシに おくられている{page_break}あっぱれ あっぱれ{line_break}みごとなエネルギーじゃ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene653No09"
 msgid "06330"
 msgstr "しゅぎょうのアナを{line_break}クリアしたのは{line_break}もしかして キミ?{end_now}"
 
@@ -25383,7 +25383,7 @@ msgctxt "MsgFieldWheneverTheMasterGoesToTown"
 msgid "06343"
 msgstr "ピポイ様が 村に行くと{line_break}村人たちは みんな{line_break}ペコペコするんだ{page_break}オレも きっといつか{line_break}あんなふうに なるんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene653No10"
 msgid "06344"
 msgstr "しんとうめっきゃくすれば{line_break}火もまた すずし{page_break}むねんむそうに たっすれば{line_break}アツアツのかまも もてるハズ!{line_break}          -ピポイ-{end_wait}"
 
@@ -25391,11 +25391,11 @@ msgctxt "message"
 msgid "06345"
 msgstr "{text_effect:2}アウチ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene653No11"
 msgid "06346"
 msgstr "うーむ このカベ なにやら {line_break}あやしそうじゃぞ {actor_name:5}。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene653No12"
 msgid "06347"
 msgstr "{actor_name:5}よ みごとじゃ これからも{line_break}あやしいばしょでは エナジーを使い{line_break}目の前のナゾをときあかすのじゃぞ。{end_wait}"
 
@@ -47823,11 +47823,11 @@ msgctxt "MsgScene6ABNo06"
 msgid "11953"
 msgstr "星をもつ者よ{line_break}心して きけ{page_break}天空へと のぞむならば{line_break}われに 星をささげよ{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouDo"
 msgid "11954"
 msgstr "星をもたぬ者に{line_break}天空へのぼる しかくはない{line_break}たちされ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWhoHold"
 msgid "11955"
 msgstr "星をもつ者よ{line_break}心して きけ。{end_wait}"
 
@@ -47835,23 +47835,23 @@ msgctxt "message"
 msgid "11956"
 msgstr "天空へと のぞむならば{line_break}4つのたましいに{line_break}いのちの火をともせ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMankindWithThe"
 msgid "11957"
 msgstr "ヒト・・・えいちによって{line_break}地をしはいした いのち{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFishWithCold"
 msgid "11958"
 msgstr "サカナ・・・ゆうきをおこし{line_break}水をしはいした いのち{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDragonsBurningWith"
 msgid "11959"
 msgstr "ドラゴン・・・力によって{line_break}火をしはいした いのち{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBirdOnThe"
 msgid "11960"
 msgstr "トリ・・・しんじつを知り{line_break}風をしはいした いのち{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouHaveProven"
 msgid "11961"
 msgstr "しかくある者よ さあ ゆけ{line_break}しょうりゅうのごとく{line_break}天空へと のぼるがいい!{end_wait}"
 
@@ -50639,7 +50639,7 @@ msgctxt "MsgDeriWellSeawater"
 msgid "12657"
 msgstr "いどに 海の水が{line_break}入ってしまっている{page_break}これじゃ とうぶん{line_break}使えなさそう・・・{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene653No13"
 msgid "12658"
 msgstr "いどのそこにつうろがある{page_break}ここに つうろがあるなんて{line_break}みんなは しってるのかな{end_wait}"
 

@@ -2125,7 +2125,7 @@
     "*/games/tla/src/graphics/title/title_screen.o"(.rodata)
     "*/recon/tla/de/rom.o"(.rom.0068a0ca)
     "*/games/common/src/graphics/title/intro_peak.o"(.rodata)
-    "*/recon/tla/de/rom.o"(.rom.006927c4)
+    "*/games/tla/src/graphics/title/intro_018.o"(.rodata)
     "*/games/tla/src/graphics/title/intro_lighthouse.o"(.rodata)
     "*/games/tla/src/graphics/title/intro_gulls.o"(.rodata)
     "*/recon/tla/de/rom.o"(.rom.006a45cd)

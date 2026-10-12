@@ -3002,7 +3002,7 @@
         "*/games/tla/src/graphics/title/title_screen.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0868a3fe)
         "*/games/common/src/graphics/title/intro_peak.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.08692af8)
+        "*/games/tla/src/graphics/title/intro_018.o"(.rodata)
         "*/games/tla/src/graphics/title/intro_lighthouse.o"(.rodata)
         "*/games/tla/src/graphics/title/intro_gulls.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.086a48dd)

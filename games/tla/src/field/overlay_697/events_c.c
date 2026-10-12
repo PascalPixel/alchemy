@@ -40,12 +40,6 @@ s32 Func_02000694(struct ObjectRuntime *object)
 
 extern const u8 Data_02005a7c[];
 
-static __inline__ struct ObjectRuntime *Object_Create(s32 type, s32 x, s32 y, s32 z)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    return Func_020057d8(type, x, y, z);
-}
-
 void Func_020006b4(s32 id)
 {
     struct ObjectRuntime *owner = Object_GetById(id);
@@ -58,7 +52,7 @@ void Func_020006b4(s32 id)
             Func_020057d0(object, Data_02005a7c);
             object->linked_object = owner;
             /* FAKEMATCH: stores the owner link before it copies the object for the priority flags (differ 2 without it; an explicit flag pointer is differ 27). */
-            __asm__("");
+            do { } while (0);
             object->priority_flags |= 0x80;
             object->motion_flags = 0;
             object->collision_flags = 0;

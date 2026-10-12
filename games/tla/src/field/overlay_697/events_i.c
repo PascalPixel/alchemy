@@ -25,7 +25,7 @@ void Func_02000c84(void)
     s32 y = Object_GetById(gPartyState.current_owner)->y;
 
     /* FAKEMATCH: loads the leader height before it builds the threshold (differ 2 without it, as in Func_020007b4). */
-    __asm__("");
+    do { } while (0);
     if (y >= 0x100000) {
         Func_020059c0();
     } else if (Func_02005a30()) {

@@ -40,7 +40,7 @@ void Func_02001178(void)
         s32 y = leader->y;
 
         /* FAKEMATCH: loads the leader height before it builds the threshold (differ 2 without it, as in Func_020007b4). */
-        __asm__("");
+        do { } while (0);
         if (y < 0x200000)
             leader->y = 0x200000;
     }

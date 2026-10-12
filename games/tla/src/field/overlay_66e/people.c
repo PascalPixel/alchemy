@@ -28,7 +28,7 @@ void Func_020000c4(s32 actor)
     u16 facing = Object_GetById(gPartyState.current_owner)->angle;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load (differ 2 without it; a quadrant temporary, inline helpers and step-by-step arithmetic measured the same). */
-    __asm__("");
+    do { } while (0);
 
     if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
         Func_02001190(14, actor);
@@ -46,7 +46,7 @@ void Func_02000124(s32 actor)
     u16 facing = Object_GetById(gPartyState.current_owner)->angle;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load (differ 2 without it, as in Func_020000c4). */
-    __asm__("");
+    do { } while (0);
 
     if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
         Func_02001190(14, actor);
@@ -64,7 +64,7 @@ void Func_02000184(s32 actor)
     u16 facing = Object_GetById(gPartyState.current_owner)->angle;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load (differ 2 without it, as in Func_020000c4). */
-    __asm__("");
+    do { } while (0);
 
     if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
         Func_02001190(15, actor);
@@ -82,7 +82,7 @@ void Func_020001e4(s32 actor)
     u16 facing = Object_GetById(gPartyState.current_owner)->angle;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load (differ 2 without it, as in Func_020000c4). */
-    __asm__("");
+    do { } while (0);
 
     if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
         Func_02001190(15, actor);
@@ -100,7 +100,7 @@ void Func_02000244(s32 actor)
     u16 facing = Object_GetById(gPartyState.current_owner)->angle;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load (differ 2 without it, as in Func_020000c4). */
-    __asm__("");
+    do { } while (0);
 
     if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
         Func_02001198(5, actor);
@@ -118,7 +118,7 @@ void Func_020002a4(s32 actor)
     u16 facing = Object_GetById(gPartyState.current_owner)->angle;
 
     /* FAKEMATCH: keeps the quadrant offset after the facing load (differ 2 without it, as in Func_020000c4). */
-    __asm__("");
+    do { } while (0);
 
     if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
         Func_02001198(5, actor);

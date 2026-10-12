@@ -35,7 +35,7 @@ void Func_020010d8(void)
     struct PartyState *party = &gPartyState;
 
     /* FAKEMATCH: loads the party base before it builds the render-mode offset (differ 2 without it). */
-    __asm__("");
+    do { } while (0);
     if (party->render_mode == 2)
         Func_020059c8();
     else

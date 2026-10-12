@@ -1992,12 +1992,7 @@ Inventory_Remove:
 Owner_UpdateClassActions:
 	.incbin "baserom.gba", 0x000b44e4, 0x00000210
 	.section .rom.000b47ac, "ax"
-	.incbin "baserom.gba", 0x000b47ac, 0x00000124
-	.global Owner_GetLevelThreshold
-	.type Owner_GetLevelThreshold, %function
-	.thumb_func
-Owner_GetLevelThreshold:
-	.incbin "baserom.gba", 0x000b48d0, 0x0000004c
+	.incbin "baserom.gba", 0x000b47ac, 0x00000120
 	.section .rom.000b491c, "ax"
 	.global Owner_LevelUp
 	.type Owner_LevelUp, %function

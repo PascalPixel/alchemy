@@ -819,7 +819,6 @@
         "*/games/tla/src/game/character/growth.o"(.text)
         "*/recon/tla/raw/080af7ac.o"(.text)
         "*/games/tla/src/game/character/level_hook.o"(.text)
-        "*/recon/tla/raw/080af8d0.o"(.text)
         "*/recon/tla/raw/080af91c.o"(.text)
         "*/recon/tla/raw/080afb80.o"(.text)
         "*/games/common/src/game/party/advance_owner_count_to_target.o"(.text)

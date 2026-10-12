@@ -685,7 +685,6 @@
     "*/games/tla/src/game/character/growth.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000bc7ac)
     "*/games/tla/src/game/character/level_hook.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.000bc8d0)
     "*/recon/tla/de/rom.o"(.rom.000bc91c)
     "*/games/common/src/game/party/advance_owner_count_to_target.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000bcbec)

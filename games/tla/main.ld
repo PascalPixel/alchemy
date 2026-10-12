@@ -709,6 +709,7 @@ SECTIONS
     "*/games/tla/src/game/character/add_action.o"(.text)
     "*/games/tla/src/game/character/growth.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000aa7a8)
+    "*/games/tla/src/game/character/level_hook.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000aa918)
     "*/games/common/src/game/party/advance_owner_count_to_target.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000aabe8)

@@ -1641,13 +1641,6 @@ Owner_UpdateClassActions:
 	.thumb_func
 Func_080af7ac:
 	.incbin "baserom.gba", 0x000bc7ac, 0x00000120
-	.section .rom.000bc8d0, "ax"
-	.balign 4
-	.global Owner_GetLevelThreshold
-	.type Owner_GetLevelThreshold, %function
-	.thumb_func
-Owner_GetLevelThreshold:
-	.incbin "baserom.gba", 0x000bc8d0, 0x0000004c
 	.section .rom.000bc91c, "ax"
 	.global Owner_LevelUp
 	.type Owner_LevelUp, %function

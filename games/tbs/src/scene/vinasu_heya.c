@@ -283,17 +283,17 @@ static s32 SceneEffect_SpawnRandomEveryEightFramesB(struct FieldActor *object)
 	struct EffectOptions params;
 	s32					 phase, x, y, speed;
 	phase = gFrameCount & 7;
-	if (phase != 0)
-		goto done;
-	params.priority = 3 - ((u32)(Engine_RandomNext() * 2) >> 16);
-	params.start_scale_x = 0x6666;
-	params.start_scale_y = 0x6666;
-	params.palette = 14;
-	x = object->x.fixed + ((((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16);
-	y = object->y.fixed + ((32 - ((u32)(Engine_RandomNext() * 32) >> 16)) << 16);
-	speed = Math_Divide((((u32)(Engine_RandomNext() * 5) >> 16) << 16) + 0x00050000, 10);
-	Effect_Spawn(x, y, object->z.fixed, 0, speed, phase, 0x000b0000, &params);
-done:
+	if (phase == 0)
+	{
+		params.priority = 3 - ((u32)(Engine_RandomNext() * 2) >> 16);
+		params.start_scale_x = 0x6666;
+		params.start_scale_y = 0x6666;
+		params.palette = 14;
+		x = object->x.fixed + ((((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16);
+		y = object->y.fixed + ((32 - ((u32)(Engine_RandomNext() * 32) >> 16)) << 16);
+		speed = Math_Divide((((u32)(Engine_RandomNext() * 5) >> 16) << 16) + 0x00050000, 10);
+		Effect_Spawn(x, y, object->z.fixed, 0, speed, phase, 0x000b0000, &params);
+	}
 	return 0;
 }
 
@@ -632,31 +632,33 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	if (v == (s32)&SceneId_VinasuHeya2)
 	{
 		ret = gVinasuHeyaPlacements2;
+		FieldScene_PrepareActors((void *)ret);
+		return (const struct ScenePlacement *)ret;
 	}
-	else if (v == (s32)&SceneId_VinasuHeya3)
+	if (v == (s32)&SceneId_VinasuHeya3)
 	{
 		ret = gVinasuHeyaPlacements3;
+		FieldScene_PrepareActors((void *)ret);
+		return (const struct ScenePlacement *)ret;
 	}
-	else if (v == (s32)&SceneId_VinasuHeya4)
+	if (v == (s32)&SceneId_VinasuHeya4)
 	{
 		ret = gVinasuHeyaPlacements4;
+		FieldScene_PrepareActors((void *)ret);
+		return (const struct ScenePlacement *)ret;
 	}
-	else if (v == (s32)&SceneId_VinasuHeya5)
+	if (v == (s32)&SceneId_VinasuHeya5)
 	{
 		ret = gVinasuHeyaPlacements5;
+		FieldScene_PrepareActors((void *)ret);
+		return (const struct ScenePlacement *)ret;
 	}
-	else if (v == (s32)&SceneId_VinasuHeya6)
+	if (v == (s32)&SceneId_VinasuHeya6)
 	{
 		ret = gVinasuHeyaPlacements6;
+		FieldScene_PrepareActors((void *)ret);
+		return (const struct ScenePlacement *)ret;
 	}
-	else
-	{
-		goto no_match;
-	}
-	FieldScene_PrepareActors((void *)ret);
-	return (const struct ScenePlacement *)ret;
-
-no_match:
 	return gVinasuHeyaPlacementsOther;
 }
 
@@ -2211,9 +2213,8 @@ s32 Scene_RunEntrySetup(void)
 		Engine_ActorSetSpritePriority(12, 2);
 		SceneActor_ClearActorModeAndSetState5(13);
 		SceneActor_ClearActorModeAndSetState5(14);
-		goto end;
 	}
-	if (area == (s32)&SceneId_VinasuHeya2)
+	else if (area == (s32)&SceneId_VinasuHeya2)
 	{
 		switch (gGameState.entrance)
 		{
@@ -2351,7 +2352,8 @@ s32 Scene_RunEntrySetup(void)
 		case 3:
 		case 4:
 		case 19:
-			goto cue;
+			BattleFx_SetQueuedSoundAndPlay(170);
+			break;
 		}
 	}
 	else if (area == (s32)&SceneId_VinasuHeya4)
@@ -2360,7 +2362,8 @@ s32 Scene_RunEntrySetup(void)
 		{
 		case 2:
 			FieldScene_RunOpeningAuxiliarySequence();
-			goto cue;
+			BattleFx_SetQueuedSoundAndPlay(170);
+			break;
 		case 4:
 		case 6:
 			BattleFx_StartFadeOverlay(0);
@@ -2430,7 +2433,8 @@ s32 Scene_RunEntrySetup(void)
 			gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 			break;
 		case 1:
-			goto cue;
+			BattleFx_SetQueuedSoundAndPlay(170);
+			break;
 		}
 	}
 	else if (area == (s32)&SceneId_VinasuHeya5)
@@ -2523,7 +2527,8 @@ s32 Scene_RunEntrySetup(void)
 			VinasuHeya_SettlePushedBlocks();
 			break;
 		case 6:
-			goto cue;
+			BattleFx_SetQueuedSoundAndPlay(170);
+			break;
 		}
 	}
 	else if (area == (s32)&SceneId_VinasuHeya6)
@@ -2544,7 +2549,13 @@ s32 Scene_RunEntrySetup(void)
 					{
 						z = actor->z.fixed >> 20;
 						if (z == 7 && Engine_GameFlagIsSet(i + 0x200))
-							goto found;
+						{
+							actor->priority_flags |= 2;
+							actor->collision_flags = 0;
+							actor->motion_flags = 0;
+							Engine_MapCopyCellAttributes(4, 19, 1, 1, x, z);
+							break;
+						}
 					}
 				}
 			}
@@ -2584,7 +2595,6 @@ s32 Scene_RunEntrySetup(void)
 			break;
 		case 13:
 		case 14:
-		cue:
 			BattleFx_SetQueuedSoundAndPlay(170);
 			break;
 		case 18:
@@ -2634,12 +2644,6 @@ s32 Scene_RunEntrySetup(void)
 			}
 			if (gGameState.entrance == 20)
 				FieldScene_RunLeaderDropSequence();
-			break;
-		found:
-			actor->priority_flags |= 2;
-			actor->collision_flags = 0;
-			actor->motion_flags = 0;
-			Engine_MapCopyCellAttributes(4, 19, 1, 1, x, z);
 			break;
 		case 15:
 		case 16:
@@ -2691,7 +2695,6 @@ s32 Scene_RunEntrySetup(void)
 			break;
 		}
 	}
-end:
 	return 0;
 }
 
@@ -2839,17 +2842,19 @@ static void Scene_RunPairedParticleWaveSequence(void)
 		options.start_scale_x = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
 		options.start_scale_y = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
 		options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-	again:
-		for (i = 0; i < 4 && row < 8; i++)
+		for (;;)
 		{
-			Effect_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x3600000, 0,
-				0x300000 + row * 0x100000 + i * 0x40000, 0, 0, 0, 0x880000, &options);
-		}
-		Engine_TaskWait(3);
-		if (row == 3 && repeat < 3)
-		{
+			for (i = 0; i < 4 && row < 8; i++)
+			{
+				Effect_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x3600000, 0,
+					0x300000 + row * 0x100000 + i * 0x40000, 0, 0, 0, 0x880000, &options);
+			}
+			Engine_TaskWait(3);
+			if (row != 3 || repeat >= 3)
+			{
+				break;
+			}
 			repeat++;
-			goto again;
 		}
 		Map_CopyCellsTo(48, row + 3, 54, row + 3, 3, 1);
 	}

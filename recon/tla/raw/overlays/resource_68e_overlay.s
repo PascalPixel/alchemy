@@ -1,57 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x02008070,"ax",%progbits
-	.global Func_02000070
-	.thumb_func
-Func_02000070:
-	push {r5, r6, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r5, [r3, #32]
-	movs r0, #216
-	bl Func_02001408
-	movs r2, #188
-	lsls r2, r2, #1
-	adds r6, r5, r2
-	movs r5, #15
-.L_02008086:
-	ldr r3, [r6, #12]
-	ldr r2, .L_020080c8
-	movs r0, #4
-	adds r3, r3, r2
-	str r3, [r6, #12]
-	subs r5, #1
-	bl WaitFrames
-	cmp r5, #0
-	bge .L_02008086
-	movs r5, #0
-.L_0200809c:
-	movs r2, #252
-	movs r3, #128
-	lsls r2, r2, #6
-	lsls r3, r3, #19
-	adds r2, #66
-	adds r3, #80
-	strh r2, [r3]
-	ldr r2, .L_020080cc
-	lsls r3, r5, #1
-	ldrh r2, [r2, r3]
-	movs r3, #128
-	lsls r3, r3, #19
-	adds r3, #82
-	strh r2, [r3]
-	movs r0, #8
-	adds r5, #1
-	bl WaitFrames
-	cmp r5, #7
-	ble .L_0200809c
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_020080c8:
-	.4byte 0xffff0000
-.L_020080cc:
-	.4byte Data_02001678
 	.section .text.x0200812c,"ax",%progbits
+	.balign 4
 	.global Func_0200012c
 	.thumb_func
 Func_0200012c:

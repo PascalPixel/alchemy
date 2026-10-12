@@ -34,7 +34,7 @@ void Func_020048c4(void);
 void Func_02004ab8(void);
 void Func_02004bb4(void);
 
-extern u8 Data_02004880[];
+void Func_02004880(void);
 
 extern u32 Data_02005f9c[];
 extern u32 Data_02005fd8[];
@@ -844,7 +844,7 @@ s32 Data_02006fa0[] = {
 	(s32)Func_02003d40,
 	0x8602,
 	(s32)0xffff000c,
-	(s32)((u8 *)Data_02004880 + 1),
+	(s32)Func_02004880,
 	0xc403,
 	(s32)0xffff001e,
 	(s32)Func_02004534,

@@ -36,7 +36,9 @@ struct PartyState {
     u16 packed_events[2];
     u8 unknown_244[7];
     u8 battle_rule_24b;
-    u8 unknown_24c[0x10];
+    u8 unknown_24c[0xa];
+    s16 unknown_256;
+    u8 unknown_258[4];
     u16 tally_25c;
     u8 unknown_25e[0xb];
     u8 saved_byte;

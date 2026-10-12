@@ -629,12 +629,8 @@ Func_08023e18:
 	.thumb_func
 Object_IsTargetUnset:
 	.incbin "baserom.gba", 0x00023f64, 0x00000030
-	.section .rom.00023f94, "ax"
-	.global Func_08023f94
-	.type Func_08023f94, %function
-	.thumb_func
-Func_08023f94:
-	.incbin "baserom.gba", 0x00023f94, 0x00000788
+	.section .rom.00023f9c, "ax"
+	.incbin "baserom.gba", 0x00023f9c, 0x0000071c
 	.section .rom.00024736, "ax"
 	.incbin "baserom.gba", 0x00024736, 0x00000002
 	.section .rom.00024738, "ax"
@@ -798,11 +794,6 @@ Func_0802d71c:
 	.thumb_func
 Func_0802d87c:
 	.incbin "baserom.gba", 0x0002d87c, 0x000001a8
-	.global Func_0802da24
-	.type Func_0802da24, %function
-	.thumb_func
-Func_0802da24:
-	.incbin "baserom.gba", 0x0002da24, 0x00000064
 	.section .rom.0002da88, "ax"
 	.global Func_0802db88
 	.type Func_0802db88, %function
@@ -2936,7 +2927,13 @@ BattleFx_SpawnScaledArcObjects:
 BattleFx_UpdateArcEffect:
 	.incbin "baserom.gba", 0x000ee50c, 0x000000f0
 	.section .rom.000ee678, "ax"
-	.incbin "baserom.gba", 0x000ee678, 0x00000f70
+	.incbin "baserom.gba", 0x000ee678, 0x000008ac
+	.section .rom.000eef2c, "ax"
+	.global Func_080e1f2c
+	.type Func_080e1f2c, %function
+	.thumb_func
+Func_080e1f2c:
+	.incbin "baserom.gba", 0x000eef2c, 0x000006bc
 	.section .rom.000ef5e8, "ax"
 	.global Func_080e25e8
 	.type Func_080e25e8, %function
@@ -2954,7 +2951,14 @@ Func_080e2774:
 	.type Func_080e28d4, %function
 	.thumb_func
 Func_080e28d4:
-	.incbin "baserom.gba", 0x000ef8d4, 0x0000078c
+	.incbin "baserom.gba", 0x000ef8d4, 0x00000364
+	.global Func_080e2c38
+	.type Func_080e2c38, %function
+	.thumb_func
+Func_080e2c38:
+	.incbin "baserom.gba", 0x000efc38, 0x00000108
+	.section .rom.000efd64, "ax"
+	.incbin "baserom.gba", 0x000efd64, 0x000002fc
 	.section .rom.000f0074, "ax"
 	.global Func_080e3074
 	.type Func_080e3074, %function
@@ -4242,7 +4246,9 @@ Func_08157530:
 	.type BattlePres_RunBurstScene, %function
 	.thumb_func
 BattlePres_RunBurstScene:
-	.incbin "baserom.gba", 0x0015a110, 0x00002848
+	.incbin "baserom.gba", 0x0015a110, 0x00001300
+	.section .rom.0015b434, "ax"
+	.incbin "baserom.gba", 0x0015b434, 0x00001524
 	.section .rom.0015c970, "ax"
 	.balign 4
 	.global Func_0815c970

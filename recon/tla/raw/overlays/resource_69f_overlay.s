@@ -1,85 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x020081e8,"ax",%progbits
-	.global Func_020001e8
-	.thumb_func
-Func_020001e8:
-	push {r5, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r2, #214
-	lsls r2, r2, #1
-	movs r5, #129
-	movs r0, #160
-	adds r3, r3, r2
-	lsls r5, r5, #2
-	lsls r0, r0, #4
-	str r5, [r3]
-	adds r0, #25
-	sub sp, #4
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02008220
-	movs r1, #144
-	movs r2, #150
-	movs r0, #12
-	lsls r1, r1, #15
-	lsls r2, r2, #18
-	bl Func_02001b6c
-	movs r0, #0
-	bl Func_020000b4
-.L_02008220:
-	movs r0, #128
-	lsls r0, r0, #2
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02008232
-	movs r0, #0
-	bl Func_020000b4
-.L_02008232:
-	ldr r3, .L_02008284
-	movs r2, #241
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	ldrh r3, [r3]
-	movs r2, #128
-	subs r3, #5
-	lsls r3, r3, #16
-	lsls r2, r2, #9
-	cmp r3, r2
-	bhi .L_0200825e
-	movs r3, #31
-	movs r1, #160
-	movs r2, #224
-	str r3, [sp, #0]
-	lsls r1, r1, #2
-	lsls r2, r2, #2
-	movs r0, #33
-	movs r3, #20
-	bl Func_02001250
-	b .L_0200827e
-.L_0200825e:
-	movs r3, #31
-	movs r1, #160
-	movs r2, #224
-	lsls r1, r1, #2
-	lsls r2, r2, #2
-	str r3, [sp, #0]
-	movs r0, #43
-	movs r3, #21
-	bl Func_02001250
-	movs r1, #3
-	negs r1, r1
-	movs r0, #21
-	adds r2, r5, #0
-	bl Func_0200196c
-.L_0200827e:
-	movs r0, #0
-	add sp, #4
-	pop {r5, pc}
-.L_02008284:
-	.4byte gPartyState
 	.section .text.x020082da,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x020082e8,"ax",%progbits
@@ -183,50 +103,8 @@ Func_020002e8:
 	.4byte Data_020023e8
 .L_020083a0:
 	.4byte 0x05000184
-	.section .text.x02008428,"ax",%progbits
-	.balign 4
-	.global Func_02000428
-	.thumb_func
-Func_02000428:
-	push {r5, lr}
-	bl Object_GetById
-	adds r5, r0, #0
-	adds r1, r5, #0
-	adds r1, #85
-	movs r3, #4
-	strb r3, [r1]
-	movs r2, #0
-	ldr r3, [r5, #20]
-	str r2, [r5, #68]
-	movs r2, #128
-	lsls r2, r2, #14
-	adds r3, r3, r2
-	str r3, [r5, #12]
-	subs r1, #50
-	ldrb r2, [r1]
-	movs r3, #128
-	orrs r3, r2
-	strb r3, [r1]
-	adds r3, r5, #0
-	adds r3, #34
-	ldr r1, [r5, #8]
-	ldr r2, [r5, #16]
-	ldrb r0, [r3]
-	bl Map_GetTerrainHeight
-	adds r3, r0, #0
-	asrs r3, r3, #19
-	ldr r0, [r5, #8]
-	ldr r1, [r5, #16]
-	adds r3, #6
-	movs r2, #0
-	bl Func_02001b34
-	ldr r0, [r5, #8]
-	ldr r1, [r5, #16]
-	movs r2, #0
-	movs r3, #128
-	bl Func_02001be4
-	pop {r5, pc}
 	.section .text.x0200847c,"ax",%progbits
+	.balign 4
 	.global Func_0200047c
 	.thumb_func
 Func_0200047c:

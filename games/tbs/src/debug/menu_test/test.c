@@ -3,6 +3,7 @@
 #include "unit/debug/menu_test/test.h"
 #include "unit/battle/effect/object.h"
 #include "unit/game/character/chara.h"
+#include "unit/game/character/chara4.h"
 #include "unit/game/character/chara5.h"
 #include "unit/game/character/chara6.h"
 #include "unit/game/character/chara7.h"

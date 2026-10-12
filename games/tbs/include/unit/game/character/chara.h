@@ -81,12 +81,6 @@ u8 GameFlag_IncrementByte(s32 flag);
 u8 GameFlag_DecrementByte(s32 flag);
 s32 GameFlag_GetNibble(u32 flag);
 void GameFlag_SetNibble(s32 flag, s32 value);
-s32 BtlUnitSet(s32 unit_id, s32 enemy_id, s32 suffix);
-s32 Party_CountActiveOwners(void);
-s32 Party_AddActiveOwner(s32 value);
-s32 Party_RemoveActiveOwner(s32 value);
-s32 Party_ListActiveOwners(s16 *owners);
-s32 Party_AdjustCoins(s32 amount);
 s32 Party_AdjustSixDigitCounterB(s32 amount);
 s32 Party_AdjustCounterCappedAt28(s32 amount);
 

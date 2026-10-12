@@ -459,84 +459,6 @@ Func_02000574:
 	.global Data_020005f4
 Data_020005f4:
 	.4byte 0x00004770
-	.section .text.x02008644,"ax",%progbits
-	.global Func_02000644
-	.thumb_func
-Func_02000644:
-	.ifdef TLA_EDITION_JA
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r7, r1, #0
-	adds r0, r7, #0
-	sub sp, #8
-	bl Object_GetById
-	cmp r7, #9
-	bne .L_ja_02008668
-	ldr r3, [r0, #8]
-	asrs r6, r3, #20
-	cmp r6, #39
-	bne .L_ja_02008668
-	adds r5, r0, #0
-	movs r3, #0
-	adds r5, #85
-	mov r8, r3
-	movs r3, #3
-	strb r3, [r5, #0]
-	movs r0, #15
-	bl WaitFrames
-	movs r0, #144
-	mov r3, r8
-	lsls r0, r0, #4
-	strb r3, [r5, #0]
-	adds r0, #92
-	bl GameFlag_SetBit
-	movs r0, #41
-	movs r1, #9
-	movs r2, #1
-	movs r3, #1
-	str r6, [sp, #0]
-	str r7, [sp, #4]
-	bl Func_02003d1c
-.L_ja_02008668:
-	add sp, #8
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-	.else
-	push {r5, r6, r7, lr}
-	adds r5, r1, #0
-	adds r0, r5, #0
-	sub sp, #8
-	bl Object_GetById
-	adds r6, r0, #0
-	cmp r5, #9
-	bne .L_0200868c
-	ldr r3, [r6, #8]
-	asrs r7, r3, #20
-	cmp r7, #39
-	bne .L_0200868c
-	bl Func_02003d7c
-	movs r0, #0
-	bl Func_02003eac
-	adds r0, r6, #0
-	bl Func_0200061c
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #92
-	bl GameFlag_SetBit
-	movs r0, #41
-	movs r1, #9
-	movs r2, #1
-	movs r3, #1
-	str r7, [sp, #0]
-	str r5, [sp, #4]
-	bl Func_02003d1c
-	bl Func_02003d84
-.L_0200868c:
-	add sp, #8
-	pop {r5, r6, r7, pc}
-	.endif
 	.section .text.x0200871c,"ax",%progbits
 	.global Func_0200071c
 	.thumb_func
@@ -854,80 +776,8 @@ Func_02000958:
 	pop {r5, r6, pc}
 .L_02008a20:
 	.4byte gPartyState
-	.section .text.x02008a98,"ax",%progbits
-	.global Func_02000a98
-	.thumb_func
-Func_02000a98:
-	push {r5, lr}
-	bl Func_02003628
-	movs r1, #4
-	movs r2, #16
-	movs r3, #2
-	movs r0, #16
-	bl Func_02003688
-	movs r0, #22
-	movs r1, #4
-	movs r2, #16
-	movs r3, #0
-	bl Func_02003688
-	movs r5, #5
-.L_02008ab8:
-	movs r1, #55
-	movs r0, #33
-	bl Func_020036b8
-	subs r5, #1
-	movs r0, #15
-	bl WaitFrames
-	cmp r5, #0
-	bge .L_02008ab8
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #102
-	bl GameFlag_SetBit
-	pop {r5, pc}
-	.section .text.x02008bd4,"ax",%progbits
-	.balign 4
-	.global Func_02000bd4
-	.thumb_func
-Func_02000bd4:
-	push {r5, r6, lr}
-	movs r0, #165
-	lsls r0, r0, #1
-	adds r0, #255
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02008c24
-	movs r1, #38
-	movs r0, #12
-	bl Func_02000b24
-	bl Func_02003628
-	movs r0, #12
-	movs r1, #2
-	movs r2, #45
-	movs r3, #1
-	bl Func_02003688
-	movs r5, #3
-.L_02008bfe:
-	movs r0, #33
-	movs r1, #55
-	bl Func_020036b8
-	subs r5, #1
-	adds r6, r0, #0
-	cmp r5, #0
-	bge .L_02008bfe
-	movs r0, #146
-	lsls r0, r0, #2
-	bl GameFlag_SetBit
-	cmp r6, #1
-	bne .L_02008c24
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #100
-	bl GameFlag_SetBit
-.L_02008c24:
-	pop {r5, r6, pc}
-	.2byte 0x0000
 	.section .text.x02008cc8,"ax",%progbits
+	.balign 4
 	.global Func_02000cc8
 	.thumb_func
 Func_02000cc8:
@@ -1744,71 +1594,6 @@ Func_0200147c:
 	.4byte IwramMulQ16
 .L_0200951c:
 	.4byte gFrameCount
-	.section .text.x02009520,"ax",%progbits
-	.global Func_02001520
-	.thumb_func
-Func_02001520:
-	push {r5, r6, lr}
-	mov r6, r8
-	push {r6}
-	adds r5, r0, #0
-	ldr r6, [r5, #104]
-	ldr r3, [r5, #8]
-	ldr r0, [r6, #8]
-	movs r1, #10
-	subs r0, r0, r3
-	movs r3, #10
-	mov r8, r3
-	bl __divsi3
-	str r0, [r5, #68]
-	ldr r3, [r5, #12]
-	ldr r0, [r6, #12]
-	movs r1, #10
-	subs r0, r0, r3
-	movs r3, #128
-	lsls r3, r3, #13
-	adds r0, r0, r3
-	bl __divsi3
-	str r0, [r5, #76]
-	ldr r3, [r5, #16]
-	ldr r0, [r6, #16]
-	movs r1, #10
-	subs r0, r0, r3
-	bl __divsi3
-	mov r3, r8
-	str r0, [r5, #72]
-	adds r5, #98
-	strb r3, [r5]
-	movs r0, #0
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, pc}
-	.section .text.x0200956c,"ax",%progbits
-	.global Func_0200156c
-	.thumb_func
-Func_0200156c:
-	ldr r3, [r0, #8]
-	ldr r2, [r0, #68]
-	adds r3, r3, r2
-	str r3, [r0, #8]
-	ldr r2, [r0, #76]
-	ldr r3, [r0, #12]
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	ldr r2, [r0, #72]
-	ldr r3, [r0, #16]
-	adds r3, r3, r2
-	str r3, [r0, #16]
-	adds r0, #98
-	ldrb r3, [r0]
-	adds r3, #255
-	strb r3, [r0]
-	lsls r3, r3, #24
-	lsrs r3, r3, #24
-	negs r0, r3
-	orrs r0, r3
-	lsrs r0, r0, #31
-	bx lr
 	.section .text.x02009598,"ax",%progbits
 	.global Func_02001598
 	.thumb_func
@@ -2715,47 +2500,6 @@ Func_02001f04:
 	.4byte gPartyState
 .L_02009fc8:
 	.4byte 0xfffff334
-	.section .text.x02009fcc,"ax",%progbits
-	.global Func_02001fcc
-	.thumb_func
-Func_02001fcc:
-	push {lr}
-	bl Func_02003bcc
-	cmp r0, #0
-	beq .L_02009fde
-	ldr r3, .L_0200a018
-	cmp r0, r3
-	beq .L_02009ff6
-	b .L_0200a00e
-.L_02009fde:
-	movs r1, #1
-	movs r0, #0
-	bl Func_02003bb8
-	movs r0, #1
-	movs r1, #1
-	bl Func_02003bb8
-	movs r0, #170
-	bl Func_02003ecc
-	b .L_0200a00e
-.L_02009ff6:
-	movs r1, #0
-	movs r0, #0
-	bl Func_02003bb8
-	movs r0, #1
-	movs r1, #0
-	bl Func_02003bb8
-	movs r0, #1
-	negs r0, r0
-	bl Func_02003ecc
-.L_0200a00e:
-	ldr r0, .L_0200a01c
-	bl Func_02003bd8
-	pop {pc}
-	.2byte 0x0000
-.L_0200a018:
-	.4byte 0x00034bbf
-.L_0200a01c:
-	.4byte 0x00034bc0
 	.section .text.x0200a020,"ax",%progbits
 	.global Func_02002020
 	.thumb_func
@@ -5925,48 +5669,6 @@ Func_02003ab0:
 	.4byte IwramClearWords
 .L_0200bba0:
 	.4byte Func_02003a70
-	.section .text.x0200bba4,"ax",%progbits
-	.global Func_02003ba4
-	.thumb_func
-Func_02003ba4:
-	ldr r2, .L_0200bbb4
-	lsls r3, r0, #2
-	adds r3, r3, r0
-	lsls r3, r3, #2
-	adds r3, r3, r2
-	movs r2, #8
-	ldrsh r0, [r3, r2]
-	bx lr
-.L_0200bbb4:
-	.4byte Data_020023c4 + 0x188
-	.section .text.x0200bbb8,"ax",%progbits
-	.global Func_02003bb8
-	.thumb_func
-Func_02003bb8:
-	ldr r2, .L_0200bbc8
-	lsls r3, r0, #2
-	adds r3, r3, r0
-	lsls r3, r3, #2
-	adds r3, r3, r2
-	strh r1, [r3, #8]
-	bx lr
-	.2byte 0x0000
-.L_0200bbc8:
-	.4byte Data_020023c4 + 0x188
-	.section .text.x0200bc00,"ax",%progbits
-	.global Func_02003c00
-	.thumb_func
-Func_02003c00:
-	ldr r2, .L_0200bc10
-	lsls r3, r0, #2
-	adds r3, r3, r0
-	lsls r3, r3, #2
-	adds r3, r3, r2
-	str r1, [r3, #24]
-	bx lr
-	.2byte 0x0000
-.L_0200bc10:
-	.4byte Data_020023c4 + 0x188
 	.section .rodata.x0200c14c,"a",%progbits
 	.global Data_0200414c
 Data_0200414c:

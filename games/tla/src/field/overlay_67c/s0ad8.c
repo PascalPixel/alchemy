@@ -8,7 +8,7 @@ void Func_02000ad8(void)
     GameFlag_SetBit(0xa6a);
 }
 
-void Func_02000b24(s32 id, s32 value)
+s32 Func_02000b24(s32 id, s32 value)
 {
     struct MapWork *map = Ram_HeapSlots->map_work;
     struct ObjectRuntime *object = Object_GetById(id);

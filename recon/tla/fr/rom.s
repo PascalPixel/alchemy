@@ -3242,16 +3242,7 @@ Data_080f3950:
 	.incbin "baserom.gba", 0x000f8944, 0x00000024
 	.global BattleFx_UntargetedObjectScript
 BattleFx_UntargetedObjectScript:
-	.incbin "baserom.gba", 0x000f8968, 0x00000268
-	.global ColorBuffer_FadeStep1Map
-ColorBuffer_FadeStep1Map:
-	.incbin "baserom.gba", 0x000f8bd0, 0x00000020
-	.global ColorBuffer_FadeStep2Map
-ColorBuffer_FadeStep2Map:
-	.incbin "baserom.gba", 0x000f8bf0, 0x00000020
-	.global ColorBuffer_FadeStep3Map
-ColorBuffer_FadeStep3Map:
-	.incbin "baserom.gba", 0x000f8c10, 0x000002b0
+	.incbin "baserom.gba", 0x000f8968, 0x00000050
 	.section .rom.000fa028, "ax"
 	.global UiIcon_PrepareObjectFar
 	.type UiIcon_PrepareObjectFar, %function

@@ -1155,6 +1155,7 @@ SECTIONS
         "*/recon/tla/ja/rom.o"(.rom.000f376a)
         "*/games/tla/src/field/common/object/d00f38b2.o"(.rodata)
         "*/recon/tla/ja/rom.o"(.rom.000f380d)
+        "*/games/tla/src/battle/effect/fademap.o"(.rodata)
         . = ABSOLUTE(0x080f8000);
     "*/games/tla/src/system/far_call/table_38.o"(.text .rodata .data .padding)
     "*/games/tla/src/system/far_call/uiicon_2.o"(.text .rodata .data .padding)

@@ -610,21 +610,6 @@ Data_080f3978:
 	.global Data_080f3984
 Data_080f3984:
 	.incbin "baserom.gba", 0x000f3984, 0x00000040
-	.global Data_080f39c4
-Data_080f39c4:
-	.incbin "baserom.gba", 0x000f39c4, 0x00000200
-	.global Data_080f3bc4
-Data_080f3bc4:
-	.incbin "baserom.gba", 0x000f3bc4, 0x00000018
-	.global ColorBuffer_FadeStep1Map
-ColorBuffer_FadeStep1Map:
-	.incbin "baserom.gba", 0x000f3bdc, 0x00000020
-	.global ColorBuffer_FadeStep2Map
-ColorBuffer_FadeStep2Map:
-	.incbin "baserom.gba", 0x000f3bfc, 0x00000020
-	.global ColorBuffer_FadeStep3Map
-ColorBuffer_FadeStep3Map:
-	.incbin "baserom.gba", 0x000f3c1c, 0x000002b0
 	.section .unidentified.081055f8,"a"
 	.incbin "baserom.gba", 0x001055f8, 0x00000240
 	.global Data_08105838

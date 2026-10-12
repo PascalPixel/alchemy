@@ -1178,6 +1178,7 @@
         "*/recon/tla/de/rom.o"(.rom.0010085e)
         "*/games/tla/src/field/common/object/d00f38b2.o"(.rodata)
         "*/recon/tla/de/rom.o"(.rom.00100901)
+        "*/games/tla/src/battle/effect/fademap.o"(.rodata)
         . = ABSOLUTE(0x08102000);
     "*/games/tla/src/system/far_call/table_38.o"(.text .rodata .data .padding)
     "*/recon/tla/de/rom.o"(.rom.00102028)

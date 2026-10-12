@@ -374,14 +374,14 @@ void FieldScene_RunPrimarySequence(void)
 
 void SceneEffect_ActivateNearbyActor(void)
 {
-	u8 *leader = Object_GetById(ACTOR_PARTY_LEADER);
-	if ((*(s32 *)(leader + 16) >> 20) <= 13)
+	struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
+	if ((leader->z.fixed >> 20) <= 13)
 		Engine_ActorSetSpritePriority(20, 1);
 }
 
 void ShianMura_ActivateActorTwentyPlatform(void)
 {
-	s32 record;
+	struct FieldActor *record;
 	s32 v5;
 	s32 x;
 
@@ -390,9 +390,9 @@ void ShianMura_ActivateActorTwentyPlatform(void)
 	v5 = 0;
 	Object_GetById(20)->motion_flags = v5;
 	record = Object_GetById(20);
-	x = *(s32 *)(record + 8);
+	x = record->x.fixed;
 	record = Object_GetById(20);
-	Map_CopyCellAttributes(3, 17, 1, 1, (x >> 20), (*(s32 *)(record + 16) >> 20));
+	Map_CopyCellAttributes(3, 17, 1, 1, (x >> 20), (record->z.fixed >> 20));
 	Engine_TaskAddCallback((s32)Actor_UpdatePresentationFlag, 0xc80);
 	GameFlag_Set(0x201);
 	Engine_ActorSetSpritePriority(20, 2);

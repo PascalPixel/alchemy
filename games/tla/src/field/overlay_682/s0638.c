@@ -32,8 +32,11 @@ s32 Object_GetById();
 s32 ObjectMotion_ResetAndSetPosition();
 s32 Func_02002a9c();
 s32 Func_02002a4c();
-extern u8 MsgScene665No19[];
+extern u8 MsgScene682No52[];
 
+// The Japanese edition has an older form of this scene (no flag 0 test, a message this catalogue
+// does not name); it stays on its listing in recon/tla/raw/overlays (S4).
+#if !defined(TLA_EDITION_JA)
 void Func_02000638(void)
 {
     s32 t0;
@@ -50,8 +53,12 @@ void Func_02000638(void)
             Call1(GameFlag_SetBit, 0xa75);
             Func_02002a44();
             Call1(Func_02002b64, 0);
-            Call1(Func_02002adc, (s32)MsgScene665No19);
-            Call4(Func_02002aa4, 0x1d, 0x13a0000, 0x2a70000, 0xc000);
+            Call1(Func_02002adc, (s32)MsgScene682No52);
+            {
+                s32 angle = 0xc000; /* FAKEMATCH: the local starts the facing before the other arguments, as the native has (one reordered row as a plain argument). */
+
+                Call4(Func_02002aa4, 0x1d, 0x13a0000, 0x2a70000, angle);
+            }
             Call3(Func_02002aec, 0x1d, 0, 5);
             Call3(ObjectMotion_SetPositionAndReset, 4, 0x13a, 0x244);
             Call3(ObjectMotion_ArmCallback, 4, 0x4000, 0);
@@ -74,7 +81,14 @@ void Func_02000638(void)
             Call4(Func_02002b74, 0x1e, 0x10, 0, 0x4000);
             Call1(ObjectMotion_CommitCurrentPositionAndActivate, 0x1e);
             Call1(Battle_WaitMode0, 0x14);
-            Call3(Func_02002b1c, 0x1e, 0x101, 0x1e);
+            {
+                /* FAKEMATCH: the native loads the emote and the frames before the actor; pinned to their argument registers they are loaded first (the actor comes one row early through the inline). */
+                register s32 emote asm("r1") = 0x101;
+                /* FAKEMATCH: the frames, pinned with the emote above. */
+                register s32 frames asm("r2") = 0x1e;
+
+                Func_02002b1c(0x1e, emote, frames);
+            }
             Call3(Func_02002aec, 0x1e, 0, 5);
             Call2(Motion_SetVarCbAndRefresh, 0x1d, 2);
             Call1(Battle_WaitMode0, 5);
@@ -178,3 +192,4 @@ void Func_02000638(void)
     }
 }
 
+#endif

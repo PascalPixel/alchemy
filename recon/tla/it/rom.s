@@ -1176,8 +1176,8 @@ Func_080400e8:
 	.incbin "baserom.gba", 0x00040d1c, 0x00000340
 	.section .rom.000410c0, "ax"
 	.incbin "baserom.gba", 0x000410c0, 0x0000019c
-	.section .rom.000412c0, "ax"
-	.incbin "baserom.gba", 0x000412c0, 0x00000464
+	.section .rom.000412e4, "ax"
+	.incbin "baserom.gba", 0x000412e4, 0x00000440
 	.global UiText_RenderStringTiles
 	.type UiText_RenderStringTiles, %function
 	.thumb_func
@@ -1212,13 +1212,8 @@ UiWindow_DrawDividerLine:
 	.thumb_func
 Func_08041f70:
 	.incbin "baserom.gba", 0x00041fd4, 0x00000020
-	.section .rom.00041ff4, "ax"
-	.global Func_08041f90
-	.type Func_08041f90, %function
-	.thumb_func
-Func_08041f90:
-	.incbin "baserom.gba", 0x00041ff4, 0x00000014
 	.section .rom.00042008, "ax"
+	.balign 4
 	.global UiText_DrawResource
 	.type UiText_DrawResource, %function
 	.thumb_func
@@ -1549,7 +1544,10 @@ RenderResource_PairSourceTable:
 	.section .rom.0005c2e4, "ax"
 	.incbin "baserom.gba", 0x0005c2e4, 0x00000128
 	.section .rom.0005ec0c, "ax"
-	.incbin "baserom.gba", 0x0005ec0c, 0x00000194
+	.incbin "baserom.gba", 0x0005ec0c, 0x0000018c
+	.global Data_0805eb50
+Data_0805eb50:
+	.incbin "baserom.gba", 0x0005ed98, 0x00000008
 	.global Data_0805eb58
 Data_0805eb58:
 	.incbin "baserom.gba", 0x0005eda0, 0x00000024

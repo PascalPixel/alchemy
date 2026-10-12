@@ -7639,7 +7639,7 @@ msgctxt "message"
 msgid "01907"
 msgstr "Ladro"
 
-msgctxt "message"
+msgctxt "MsgAbilityNothing"
 msgid "01908"
 msgstr "Nulla"
 

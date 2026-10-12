@@ -47,7 +47,7 @@ Func_0811d2f8:
 .L_0811d34c:
 	movs r6, #0
 .L_0811d34e:
-	bl Func_0801692c
+	bl SerialRuntime_GetActiveTransfers
 	cmp r0, #0
 	bne .L_0811d324
 	ldr r3, .L_0811d40c
@@ -112,7 +112,7 @@ Func_0811d2f8:
 .L_0811d3d0:
 	movs r6, #0
 .L_0811d3d2:
-	bl Func_0801692c
+	bl SerialRuntime_GetActiveTransfers
 	cmp r0, #0
 	bne .L_0811d392
 	mov r1, r9

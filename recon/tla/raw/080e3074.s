@@ -704,7 +704,7 @@ Func_080e3074:
 	asrs r3, r3, #24
 	cmp r3, #0
 	beq .L_080e3664
-	bl Func_080e2d40
+	bl BattleFx_EndX
 	b .L_080e3664
 .L_080e3618:
 	.4byte Func_080e2d64

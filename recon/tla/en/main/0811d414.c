@@ -22,7 +22,7 @@
 
 
 s32 Func_0801680c(void *source, s32 size);
-s32 Func_0801692c(void);
+s32 SerialRuntime_GetActiveTransfers(void);
 void MemFree(void *block);
 
 extern volatile u16 gLinkStatus;
@@ -52,7 +52,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
         timeout = 300;
         if (status == -1)
             return status;
-        while (Func_0801692c()) {
+        while (SerialRuntime_GetActiveTransfers()) {
             WaitFrames(1);
             if (--timeout < 0)
                 return -1;
@@ -67,7 +67,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
             status = Func_0801680c(actions, allocation_size);
             if (status == -1)
                 return status;
-            while (Func_0801692c()) {
+            while (SerialRuntime_GetActiveTransfers()) {
                 WaitFrames(1);
                 if (--timeout < 0)
                     return -1;
@@ -92,7 +92,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
         timeout = 300;
         if (status == -1)
             return status;
-        while (Func_0801692c()) {
+        while (SerialRuntime_GetActiveTransfers()) {
             if (gSerialReceivedSize > 20)
                 return -1;
             WaitFrames(1);
@@ -112,7 +112,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
             status = SerialRuntime_BeginTransferB(actions + count);
             if (status == -1)
                 return status;
-            while (Func_0801692c()) {
+            while (SerialRuntime_GetActiveTransfers()) {
                 if (gSerialReceivedSize > (u32)(result * 16 + 19) / 20 * 20)
                     return -1;
                 WaitFrames(1);

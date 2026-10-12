@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
 	.section .text.x02008060,"ax",%progbits
+	.balign 4
 	.global Func_02000060
 	.thumb_func
 Func_02000060:
@@ -78,62 +79,8 @@ Func_020000b0:
 	pop {r5, r6, pc}
 .L_020080fc:
 	.4byte gPartyState
-	.section .text.x02008120,"ax",%progbits
-	.global Func_02000120
-	.thumb_func
-Func_02000120:
-	push {lr}
-	movs r0, #128
-	lsls r0, r0, #4
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02008168
-	bl Func_0200055c
-	movs r0, #0
-	bl Func_020005cc
-	bl Event_StartScreenTransition
-	bl Event_WaitTransitionFrames
-	ldr r2, .L_0200818c
-	movs r3, #128
-	lsls r3, r3, #2
-	adds r3, #18
-	adds r1, r2, r3
-	movs r3, #6
-	strb r3, [r1]
-	movs r1, #128
-	lsls r1, r1, #2
-	adds r1, #118
-	adds r2, r2, r1
-	movs r3, #1
-	strh r3, [r2]
-	movs r0, #8
-	movs r1, #7
-	bl Object_SetModeById
-	bl Func_02000564
-	b .L_02008188
-.L_02008168:
-	ldr r2, .L_0200818c
-	movs r3, #133
-	lsls r3, r3, #2
-	adds r1, r2, r3
-	movs r3, #4
-	str r3, [r1]
-	movs r1, #128
-	lsls r1, r1, #2
-	adds r1, #18
-	adds r3, r2, r1
-	strb r0, [r3]
-	movs r3, #128
-	lsls r3, r3, #2
-	adds r3, #118
-	adds r2, r2, r3
-	strh r0, [r2]
-.L_02008188:
-	pop {pc}
-	.2byte 0x0000
-.L_0200818c:
-	.4byte gPartyState
 	.section .text.x02008190,"ax",%progbits
+	.balign 4
 	.global Func_02000190
 	.thumb_func
 Func_02000190:
@@ -300,6 +247,7 @@ Func_02000190:
 .L_02008308:
 	.4byte 0x000000c7
 	.section .text.x02008310,"ax",%progbits
+	.balign 4
 	.global Func_02000310
 	.thumb_func
 Func_02000310:

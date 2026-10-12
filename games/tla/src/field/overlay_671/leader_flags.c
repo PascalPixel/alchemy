@@ -5,7 +5,7 @@
 #include "resource.h"
 
 extern u8 gSceneState[];
-extern const u8 Data_02005948[];
+extern const u8 Field_CachedTilesA[];
 struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);

@@ -175,48 +175,6 @@ Func_02000404:
 	.4byte Data_02002cec
 .L_020084bc:
 	.4byte 0x05000184
-	.section .text.x02008544,"ax",%progbits
-	.global Func_02000544
-	.thumb_func
-Func_02000544:
-	push {r5, lr}
-	bl Object_GetById
-	adds r5, r0, #0
-	adds r1, r5, #0
-	adds r1, #85
-	movs r3, #4
-	strb r3, [r1]
-	movs r2, #0
-	ldr r3, [r5, #20]
-	str r2, [r5, #68]
-	movs r2, #128
-	lsls r2, r2, #14
-	adds r3, r3, r2
-	str r3, [r5, #12]
-	subs r1, #50
-	ldrb r2, [r1]
-	movs r3, #128
-	orrs r3, r2
-	strb r3, [r1]
-	adds r3, r5, #0
-	adds r3, #34
-	ldr r1, [r5, #8]
-	ldr r2, [r5, #16]
-	ldrb r0, [r3]
-	bl Map_GetTerrainHeight
-	adds r3, r0, #0
-	asrs r3, r3, #19
-	ldr r0, [r5, #8]
-	ldr r1, [r5, #16]
-	adds r3, #6
-	movs r2, #0
-	bl Func_02002368
-	ldr r0, [r5, #8]
-	ldr r1, [r5, #16]
-	movs r2, #0
-	movs r3, #128
-	bl Func_02002460
-	pop {r5, pc}
 	.section .text.x02008598,"ax",%progbits
 	.global Func_02000598
 	.thumb_func
@@ -1177,7 +1135,7 @@ Func_02000c78:
 	adds r1, r6, #0
 	adds r2, r5, #0
 	adds r3, r7, #0
-	bl Func_02000d84
+	bl Map_FillCellRectByte2
 	mov r2, r10
 	mov r3, r8
 	str r2, [sp, #0]
@@ -1186,7 +1144,7 @@ Func_02000c78:
 	adds r1, r6, #0
 	adds r2, r5, #0
 	adds r3, r7, #0
-	bl Func_02000d84
+	bl Map_FillCellRectByte2
 	movs r0, #1
 .L_02008d72:
 	add sp, #8
@@ -1198,51 +1156,8 @@ Func_02000c78:
 	.4byte Data_02002478
 .L_02008d80:
 	.4byte Data_02002484
-	.section .text.x02008d84,"ax",%progbits
-	.global Func_02000d84
-	.thumb_func
-Func_02000d84:
-	push {r5, r6, lr}
-	adds r5, r3, #0
-	ldr r3, [sp, #12]
-	lsls r2, r2, #7
-	mov r12, r3
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r4, [r3, #32]
-	lsls r3, r0, #3
-	subs r3, r3, r0
-	movs r0, #156
-	lsls r0, r0, #1
-	lsls r3, r3, #3
-	adds r3, r3, r0
-	ldr r0, [r4, r3]
-	adds r1, r1, r2
-	lsls r1, r1, #2
-	adds r0, r0, r1
-	movs r1, #0
-	ldr r6, [sp, #16]
-	cmp r1, r12
-	bcs .L_02008dca
-.L_02008db0:
-	lsls r3, r1, #9
-	movs r2, #0
-	adds r3, r0, r3
-	cmp r2, r5
-	bcs .L_02008dc4
-.L_02008dba:
-	adds r2, #1
-	strb r6, [r3, #2]
-	adds r3, #4
-	cmp r2, r5
-	bcc .L_02008dba
-.L_02008dc4:
-	adds r1, #1
-	cmp r1, r12
-	bcc .L_02008db0
-.L_02008dca:
-	pop {r5, r6, pc}
 	.section .text.x02008dcc,"ax",%progbits
+	.balign 4
 	.global Func_02000dcc
 	.thumb_func
 Func_02000dcc:
@@ -1692,7 +1607,7 @@ Func_02001050:
 	mov r2, r12
 	ldr r3, [sp, #24]
 	movs r0, #0
-	bl Func_02000d84
+	bl Map_FillCellRectByte2
 	mov r1, r10
 	movs r2, #200
 	ldr r0, [r1]
@@ -1845,7 +1760,7 @@ Func_02001050:
 	ldr r3, [sp, #24]
 	movs r0, #0
 	str r5, [sp, #4]
-	bl Func_02000d84
+	bl Map_FillCellRectByte2
 	mov r3, r11
 	ldr r1, [sp, #88]
 	ldr r2, [sp, #96]
@@ -1853,7 +1768,7 @@ Func_02001050:
 	movs r0, #2
 	ldr r3, [sp, #24]
 	str r5, [sp, #4]
-	bl Func_02000d84
+	bl Map_FillCellRectByte2
 	ldr r0, [sp, #12]
 	mov r4, r10
 	ldrsb r3, [r4, r7]
@@ -1889,7 +1804,7 @@ Func_02001050:
 	movs r0, #2
 	ldr r3, [sp, #24]
 	str r4, [sp, #4]
-	bl Func_02000d84
+	bl Map_FillCellRectByte2
 	bl Func_02002430
 	add sp, #56
 	pop {r3, r5, r6, r7}
@@ -2213,35 +2128,6 @@ Func_02001388:
 	.4byte 0xc000a000
 .L_02009540:
 	.4byte Data_02002e32
-	.section .text.x020096cc,"ax",%progbits
-	.balign 4
-	.global Func_020016cc
-	.thumb_func
-Func_020016cc:
-	push {r5, lr}
-	adds r5, r1, #0
-	bl Object_GetById
-	adds r4, r0, #0
-	cmp r4, #0
-	beq .L_020096f2
-	adds r3, r4, #0
-	adds r3, #100
-	strh r5, [r3]
-	ldr r1, .L_020096f4
-	ldr r0, .L_020096f8
-	ldrh r2, [r1]
-	movs r5, #0
-	ldrsh r3, [r1, r5]
-	adds r2, #1
-	lsls r3, r3, #2
-	str r4, [r0, r3]
-	strh r2, [r1]
-.L_020096f2:
-	pop {r5, pc}
-.L_020096f4:
-	.4byte Data_02002d2e
-.L_020096f8:
-	.4byte Data_02002d30
 	.section .text.x0200974e,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02009786,"ax",%progbits
@@ -2926,72 +2812,8 @@ Func_02001a7c:
 	.4byte 0x11111111
 .L_02009cbc:
 	.4byte Func_02001950
-	.section .text.x02009cc0,"ax",%progbits
-	.global Func_02001cc0
-	.thumb_func
-Func_02001cc0:
-	push {r5, r6, lr}
-	mov r6, r10
-	mov r5, r8
-	push {r5, r6}
-	ldr r1, .L_02009d40
-	movs r2, #133
-	mov r8, r1
-	lsls r2, r2, #2
-	add r8, r2
-	mov r3, r8
-	ldr r0, [r3]
-	bl Object_GetById
-	mov r1, r8
-	ldr r5, [r0, #8]
-	ldr r6, [r0, #16]
-	mov r10, r0
-	movs r2, #128
-	ldr r0, [r1]
-	movs r1, #128
-	lsls r1, r1, #11
-	lsls r2, r2, #10
-	bl ObjectMotion_SetSpeedParameters
-	asrs r5, r5, #20
-	mov r2, r8
-	asrs r6, r6, #20
-	ldr r0, [r2]
-	lsls r1, r5, #4
-	lsls r2, r6, #4
-	adds r1, #8
-	adds r2, #8
-	bl ObjectMotion_SetPositionAndCommit
-	movs r0, #1
-	bl WaitFrames
-	movs r3, #128
-	lsls r3, r3, #12
-	lsls r5, r5, #20
-	lsls r6, r6, #20
-	adds r5, r5, r3
-	mov r1, r10
-	adds r6, r6, r3
-	ldr r2, [r1, #12]
-	adds r3, r6, #0
-	adds r1, r5, #0
-	mov r0, r10
-	bl Object_SetPositionAndResetMotion
-	movs r0, #4
-	bl Battle_WaitMode0
-	bl Func_020023f0
-	ldr r2, .L_02009d44
-	ldr r3, [r0, #12]
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_02009d40:
-	.4byte gPartyState
-.L_02009d44:
-	.4byte 0xfff80000
 	.section .text.x02009d48,"ax",%progbits
+	.balign 4
 	.global Func_02001d48
 	.thumb_func
 Func_02001d48:
@@ -3566,300 +3388,6 @@ Func_02002198:
 	.4byte gPartyState
 .L_0200a24c:
 	.4byte Data_02002e34
-	.section .rodata.x0200a4dc,"a",%progbits
-	.global Data_020024dc
-Data_020024dc:
-	.4byte 0x06345d01
-	.4byte 0x08003b01
-	.4byte 0x2f010026
-	.4byte 0x5f1f7000
-	.4byte 0x667b0906
-	.4byte 0x01040901
-	.4byte 0x0e287800
-	.4byte 0x56053b3f
-	.4byte 0x5f6f080e
-	.4byte 0x08100800
-	.4byte 0xa1076601
-	.4byte 0x001d0800
-	.4byte 0x08071768
-	.4byte 0x660015bb
-	.4byte 0x0e020016
-	.4byte 0x66177000
-	.4byte 0x3b02080d
-	.4byte 0x020010df
-	.4byte 0x66128010
-	.4byte 0x01037a01
-	.4byte 0x04277910
-	.4byte 0xfb44013d
-	.4byte 0x02007800
-	.4byte 0x20590414
-	.4byte 0x57052700
-	.4byte 0x50002066
-	.4byte 0x20ff0016
-	.4byte 0x00162a00
-	.4byte 0x0016002e
-	.4byte 0x162a0020
-	.4byte 0x4e002000
-	.4byte 0x7f320040
-	.4byte 0x04aa023b
-	.4byte 0x02500006
-	.4byte 0xe7169207
-	.4byte 0x0010e103
-	.4byte 0x0301ff0d
-	.4byte 0x0c01e709
-	.4byte 0x5906dd03
-	.4byte 0x210a6118
-	.4byte 0xfd340030
-	.4byte 0x0403a425
-	.4byte 0x5f290630
-	.4byte 0x02490100
-	.4byte 0xf8063b58
-	.4byte 0x3b5704af
-	.4byte 0x163bb406
-	.4byte 0x0800200e
-	.4byte 0x283ea00f
-	.4byte 0x070820ff
-	.4byte 0x2e050010
-	.4byte 0x057807f8
-	.4byte 0x0a980488
-	.4byte 0xdd660ba8
-	.4byte 0x07080030
-	.4byte 0x38205f22
-	.4byte 0x33481706
-	.4byte 0x00603b58
-	.4byte 0x783ffe78
-	.4byte 0x08076918
-	.4byte 0x1f017900
-	.4byte 0x0a782700
-	.4byte 0x2aff5f11
-	.4byte 0x701f07a8
-	.4byte 0xef273000
-	.4byte 0x00505704
-	.4byte 0x4c002037
-	.4byte 0xf7000040
-	.4byte 0x0040002a
-	.4byte 0x1100206e
-	.4byte 0x403b0046
-	.4byte 0x00200000
-	.4byte 0x2a00402c
-	.4byte 0x244819f7
-	.4byte 0x2d004000
-	.4byte 0x043b0803
-	.4byte 0x05830722
-	.4byte 0x1817b705
-	.4byte 0x0028003b
-	.4byte 0x66015920
-	.4byte 0x00072260
-	.4byte 0x6805041a
-	.4byte 0x3f1b01ff
-	.4byte 0x06150458
-	.4byte 0x40182a2c
-	.4byte 0x8f000900
-	.4byte 0xe0130302
-	.4byte 0x0030cd0c
-	.2byte 0x0002
-	.global Data_0200263e
-Data_0200263e:
-	.2byte 0x0000
-	.4byte 0xac862b05
-	.4byte 0xaf643138
-	.4byte 0x426905df
-	.4byte 0xabd8ac4e
-	.4byte 0xbe810f20
-	.4byte 0x7015130e
-	.4byte 0x58aaf4f3
-	.4byte 0x1c57fed1
-	.4byte 0xba72f5fa
-	.4byte 0x15f3c78f
-	.4byte 0x2c4bddfc
-	.4byte 0x8c405c2e
-	.4byte 0x5a901050
-	.4byte 0x669c3d02
-	.4byte 0x813f657c
-	.4byte 0xc48af4a0
-	.4byte 0x70f27d1e
-	.4byte 0xdfcf8f1f
-	.4byte 0x0be667d7
-	.4byte 0x54be3c30
-	.4byte 0xa442f8f4
-	.4byte 0xeb17cfc7
-	.4byte 0x058022f4
-	.4byte 0xc3a1d0c0
-	.4byte 0xf05c0a2b
-	.4byte 0xbcc4f23e
-	.4byte 0xe8ae7760
-	.4byte 0x38745730
-	.4byte 0xe6259c57
-	.4byte 0x0e73008e
-	.4byte 0x075f2408
-	.4byte 0x1297a050
-	.4byte 0x8f028687
-	.4byte 0xebc03222
-	.4byte 0x3e706883
-	.4byte 0x8034e810
-	.4byte 0x161c479c
-	.4byte 0x9c090038
-	.4byte 0x0a75ee0f
-	.4byte 0xbf6039f8
-	.4byte 0xf613af4e
-	.4byte 0x08e7ee5a
-	.4byte 0x3df8973f
-	.4byte 0xf81f363e
-	.4byte 0x63e27cd8
-	.4byte 0x9df381f3
-	.4byte 0xf7e793f3
-	.4byte 0xd0e1c9fa
-	.4byte 0xf258ce1d
-	.4byte 0x3873c780
-	.4byte 0xb93be3cc
-	.4byte 0x2f3be3cc
-	.4byte 0x6118fcc1
-	.4byte 0x980e30ca
-	.4byte 0x7cef9c33
-	.4byte 0x29f1be0c
-	.4byte 0xc7c786f0
-	.4byte 0x5edecbe6
-	.4byte 0x9239f837
-	.4byte 0xebc2b9d8
-	.4byte 0xd2f88ad8
-	.4byte 0xa9bcc731
-	.4byte 0x71e99cc7
-	.4byte 0x5f547988
-	.4byte 0x27049ac1
-	.4byte 0xd7ae264f
-	.4byte 0xc532a694
-	.4byte 0x12fa7ae5
-	.4byte 0xc43ef833
-	.4byte 0x7d1e54f6
-	.4byte 0x97fdb2f9
-	.4byte 0xc6a7c3dd
-	.4byte 0x3415957d
-	.4byte 0x1f1897ad
-	.4byte 0xac141210
-	.4byte 0x047b4ae7
-	.4byte 0x9eb43c03
-	.4byte 0xcd180907
-	.4byte 0x000079ea
-	.4byte 0xf6450423
-	.4byte 0xa7d80d99
-	.4byte 0x78059b49
-	.4byte 0x467a0580
-	.4byte 0xb85c205b
-	.4byte 0xd050008c
-	.4byte 0x500b31ab
-	.4byte 0x7833d893
-	.4byte 0x8307f302
-	.4byte 0x3a9c0502
-	.4byte 0x3831102c
-	.4byte 0x306a301c
-	.4byte 0x3831101d
-	.4byte 0x3026301c
-	.4byte 0x38f2201a
-	.4byte 0x0f2f2e80
-	.4byte 0xc0861624
-	.4byte 0x1f1ec23c
-	.4byte 0x04f95397
-	.4byte 0xc067c07c
-	.4byte 0xc701f244
-	.4byte 0x644c7e42
-	.4byte 0x28ae605c
-	.4byte 0xa2b8f289
-	.4byte 0x087d19d7
-	.4byte 0xb7fbd5ce
-	.4byte 0x8db92233
-	.4byte 0xa5310573
-	.4byte 0x8e792a73
-	.4byte 0x80804174
-	.4byte 0x783318f3
-	.4byte 0x3905033e
-	.4byte 0x7c0bd78f
-	.4byte 0x71e9ce5c
-	.4byte 0xebc2b80d
-	.4byte 0xfe12e605
-	.4byte 0x385d04be
-	.4byte 0xc06a9047
-	.4byte 0x83a09e03
-	.4byte 0x1efc23d7
-	.4byte 0xf02b869f
-	.4byte 0x3002f9f9
-	.4byte 0x3f0df1e0
-	.4byte 0x793f904f
-	.4byte 0xc78f423c
-	.4byte 0x3e067c3b
-	.4byte 0x3e29ebe7
-	.4byte 0xf7f39f16
-	.4byte 0x33967f4d
-	.4byte 0x780c9067
-	.4byte 0x6ce3c57c
-	.4byte 0x37ce61c6
-	.4byte 0x37cc0e8c
-	.4byte 0xcfc6d8fc
-	.4byte 0xfcf83ef7
-	.4byte 0xe07f9f03
-	.4byte 0xfe7c0ff3
-	.4byte 0xf03fcf81
-	.4byte 0xff3e07f9
-	.4byte 0xf816c7c0
-	.2byte 0x0000
-	.global Data_0200286e
-Data_0200286e:
-	.2byte 0x0100
-	.4byte 0xcf81fe7c
-	.4byte 0x07f9f03f
-	.4byte 0x6080ff3e
-	.4byte 0xead9f7b4
-	.4byte 0x1e7cf8d3
-	.4byte 0xca9f3dc1
-	.4byte 0x8bf7f3e3
-	.4byte 0x5b2fc50f
-	.4byte 0xf00e1c7d
-	.4byte 0xe7c5f8b1
-	.4byte 0x4a1f1bef
-	.4byte 0x8bf0f3e0
-	.4byte 0x3e3dc58f
-	.4byte 0xa1f0df7f
-	.4byte 0x0a7dbf05
-	.4byte 0xf8d3e16e
-	.4byte 0x829f7b46
-	.4byte 0xe7b8e75e
-	.4byte 0x828df1f3
-	.4byte 0x5ad8295e
-	.4byte 0x3e060bd0
-	.4byte 0x49a8e07d
-	.4byte 0x6264f270
-	.4byte 0x32a6829c
-	.4byte 0x127b65c5
-	.4byte 0xf6fcf033
-	.4byte 0x54f6c43c
-	.4byte 0xb2f97d1e
-	.4byte 0xc3dd97fd
-	.4byte 0x957dc6a7
-	.4byte 0x8914e015
-	.4byte 0x012101f1
-	.4byte 0x166b2b8f
-	.4byte 0xf00c11e4
-	.4byte 0x241e7ad0
-	.4byte 0xe7ab3460
-	.4byte 0x108c0001
-	.4byte 0x3667d914
-	.4byte 0xde0f9f60
-	.4byte 0x1b4b2a37
-	.4byte 0x2c23c02c
-	.4byte 0x02da33d0
-	.4byte 0x0465c6e1
-	.4byte 0x8d5e8282
-	.4byte 0xc49a8459
-	.4byte 0x9813c19e
-	.4byte 0x2854187f
-	.4byte 0x8161d4e0
-	.4byte 0x80e1c388
-	.4byte 0x80e98751
-	.4byte 0x80e1c388
-	.4byte 0x00d18131
-	.4byte 0x7401c791
-	.4byte 0xb1207979
-	.4byte 0x7c37dd8f
-	.4byte 0x00000000
 	.section .bss,"aw",%nobits
 	.global Data_02002ce8
 Data_02002ce8:

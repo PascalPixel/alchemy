@@ -16,7 +16,7 @@ SECTIONS
         "*/resource_69b_overlay.o"(.text.x02008500)
         "*/games/tla/src/field/overlay_69b/s0674.o"(.text)
         "*/games/tla/src/field/overlay_69b/s0680.o"(.text)
-        "*/resource_69b_overlay.o"(.text.x020086dc)
+        "*/games/tla/src/field/overlay_69b/s06dc.o"(.text)
         "*/games/tla/src/field/overlay_69b/s0704.o"(.text)
         "*/games/tla/src/field/overlay_69b/scene_events.o"(.text)
         "*/resource_69b_overlay.o"(.text.x02008720)
@@ -37,7 +37,7 @@ SECTIONS
         "*/resource_69b_overlay.o"(.text.x020090cc)
         "*/resource_69b_overlay.o"(.text.x0200925c)
         "*/games/tla/src/field/overlay_69b/s1418.o"(.text)
-        "*/resource_69b_overlay.o"(.text.x020095a0)
+        "*/games/tla/src/field/overlay_69b/s15a0.o"(.text)
         "*/games/tla/src/field/overlay_69b/s15d0.o"(.text)
         "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
         "*/resource_69b_overlay.o"(.text.x02009622)
@@ -55,7 +55,9 @@ SECTIONS
         "*/resource_69b_overlay.o"(.text.x02009fbc)
         "*/resource_69b_overlay.o"(.text.x0200a06c)
         "*/games/tla/src/field/overlay_69b/import.o"(.text)
-        "*/resource_69b_overlay.o"(.rodata.x0200a334)
+        "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
+        "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
+        "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
         "*/games/tla/src/field/overlay_69b/data.o"(.data)
     }
     .bss : { "*/resource_69b_overlay.o"(.bss) }

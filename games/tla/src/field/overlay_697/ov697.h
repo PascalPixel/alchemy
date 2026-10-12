@@ -24,9 +24,9 @@ struct Ov697MapWork {
 struct Ov697State {
     u8 unknown_00[0x10];
     s16 pattern;
-    u8 unknown_12[2];
+    s16 mirrored;
     s16 field_14;
-    u8 unknown_16[4];
+    s16 field_16[2];
     s16 field_1a;
     s16 field_1c;
 };
@@ -65,5 +65,60 @@ void Func_020059c0(void);
 void Func_020059c8(void);
 s32 Func_02005a30(void);
 void Func_02005a38(void);
+
+struct PartyState254 {
+    u8 unknown_000[0x254];
+    u16 value;
+};
+
+void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
+void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
+void Object_SetModeById(u32 id, s32 mode);
+void Func_020006b4(s32 id);
+void Func_020007b4(void);
+void Func_02005810(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_020058e0(s32 id, s32 x, s32 z);
+void Func_020058e8(s32 id, s32 x, s32 z, s32 angle);
+void Func_02005998(s32 a, s32 b);
+void Func_02005a50(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void Func_02005a60(s32 a, s32 b, s32 c);
+void Func_02005a68(s32 a);
+
+static __inline__ struct ObjectRuntime *Object_Create(s32 type, s32 x, s32 y, s32 z)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    return Func_020057d8(type, x, y, z);
+}
+
+static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02005818(a, b, c, d, e, f);
+}
+
+static __inline__ void Map_Stamp(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02005820(a, b, c, d, e, f);
+}
+
+static __inline__ void Func_02005810_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02005810(a, b, c, d, e, f);
+}
+
+static __inline__ void Func_02005a50_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02005a50(a, b, c, d, e, f, g);
+}
+
+/* The store-flag form of a logical not: the equality tests of this stage return 1 - (difference != 0) with no branch, which the compiler emits only for !value on a register (as plain comparisons they compile to a compare and branch). */
+static __inline__ s32 IsZero(s32 value)
+{
+    return !value;
+}
 
 #endif

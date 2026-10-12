@@ -267,4 +267,11 @@ extern const u8 Data_0200301e[];
 extern const u8 Data_02003034[];
 extern const u8 Data_0200304e[];
 
+void Func_02001a04(void);
+void Func_02001650(void);
+void Func_02002bf8(struct Ov656Object *object, const void *script);
+void Func_02002dc8(const void *script);
+void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
+extern const u8 Data_02003ef8[];
+
 #endif

@@ -1,3 +1,56 @@
+#include "ov662.h"
+
+u32 *Func_02000d44(void)
+{
+    if (gPartyState.scene == (s32)&SceneId_Ov662Room2)
+        return (u32 *)Data_02001bd0;
+    if (gPartyState.scene == (s32)&SceneId_Ov662Room3)
+        return (u32 *)Data_02001c18;
+    return Data_02001b58;
+}
+
+void Func_02000d84(void)
+{
+    struct Ov662Rect rect;
+
+    if (Func_020001d4(&rect))
+        Func_02000458(rect);
+}
+
+void Func_02000dac(void)
+{
+    Func_02000898();
+    Func_02001958();
+    {
+        u8 *party = (u8 *)&gPartyState;
+
+        /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
+        do {
+        } while (0);
+        party[0x2c2] = 2;
+    }
+    Func_020018d8((s32)&SceneId_Ov662Room1, 10);
+    Battle_WaitMode0(40);
+    Func_020008fc();
+}
+
+void Func_02000de0(void)
+{
+    Func_02000898();
+    Func_02001958();
+    {
+        u8 *party = (u8 *)&gPartyState;
+
+        /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
+        do {
+        } while (0);
+        party[0x2c2] = 2;
+    }
+    Func_020018d8((s32)&SceneId_Ov662Room1, 9);
+    Battle_WaitMode0(40);
+    Func_020008fc();
+}
+
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"

@@ -32,11 +32,18 @@ struct PartyState {
     u8 battle_fx_enabled;
     u8 unknown_22b;
     u8 event_mode;
-    u8 unknown_22d[0x13];
+    u8 unknown_22d[3];
+    u16 keys_230;
+    u16 unknown_232;
+    u16 keys_234;
+    u16 keys_236;
+    u8 unknown_238[8];
     u16 packed_events[2];
     u8 unknown_244[7];
     u8 battle_rule_24b;
-    u8 unknown_24c[0x10];
+    u8 unknown_24c[0xa];
+    s16 unknown_256;
+    u8 unknown_258[4];
     u16 tally_25c;
     u8 unknown_25e[0xb];
     u8 saved_byte;
@@ -51,6 +58,8 @@ struct PartyState {
     u16 forge_item;
     u8 unknown_2be[4];
     u8 unknown_2c2;
+    u8 unknown_2c3;
+    u16 link_tallies[8];
 };
 
 extern struct PartyState gPartyState;

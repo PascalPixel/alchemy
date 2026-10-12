@@ -1,8 +1,6 @@
 /*
- * Drafts of Func_02000c38 and Func_02000cdc (overlay 6A9, 02008c38 and
- * 02008cdc). Func_02000c38: differ 20, one swap: ⚓️ keeps the position
- * in r6 and the motion flags' address in r7. Func_02000cdc: differ 2, the
- * 0x200000 is built one instruction early.
+ * Draft of Func_02000c38 (overlay 6A9, 02008c38): differ 20, one swap: ⚓️ keeps
+ * the position in r6 and the motion flags' address in r7.
  */
 #include "../../../../games/tla/src/field/overlay_6a9/ov6a9.h"
 
@@ -193,15 +191,4 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position)
         return 1;
     }
     return 0;
-}
-
-void Func_02000cdc(void)
-{
-    struct FieldActor *leader = Object_GetById(gPartyState.current_owner);
-    s32 position[3];
-
-    position[0] = leader->x + 0x200000;
-    position[1] = leader->y;
-    position[2] = leader->z;
-    Func_02000c38(leader, (s16 *)position);
 }

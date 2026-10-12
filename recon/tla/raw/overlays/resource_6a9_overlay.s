@@ -7,6 +7,7 @@
 	.section .text.x0200815a,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200815c,"ax",%progbits
+	.balign 4
 	.global Func_0200015c
 	.thumb_func
 Func_0200015c:
@@ -253,6 +254,7 @@ Func_0200015c:
 	.section .text.x02008452,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02008454,"ax",%progbits
+	.balign 4
 	.global Func_02000454
 	.thumb_func
 Func_02000454:
@@ -364,6 +366,7 @@ Func_02000454:
 .L_02008538:
 	.4byte gPartyState
 	.section .text.x0200853c,"ax",%progbits
+	.balign 4
 	.global Func_0200053c
 	.thumb_func
 Func_0200053c:
@@ -537,6 +540,7 @@ Func_0200053c:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 	.section .text.x020086a8,"ax",%progbits
+	.balign 4
 	.global Func_020006a8
 	.thumb_func
 Func_020006a8:
@@ -702,6 +706,7 @@ Func_020006a8:
 .L_020087e8:
 	.4byte gPartyState
 	.section .text.x020087ec,"ax",%progbits
+	.balign 4
 	.global Func_020007ec
 	.thumb_func
 Func_020007ec:
@@ -750,6 +755,7 @@ Func_020007ec:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 	.section .text.x02008848,"ax",%progbits
+	.balign 4
 	.global Func_02000848
 	.thumb_func
 Func_02000848:
@@ -781,6 +787,7 @@ Func_02000848:
 .L_02008878:
 	.4byte gPartyState
 	.section .text.x0200887c,"ax",%progbits
+	.balign 4
 	.global Func_0200087c
 	.thumb_func
 Func_0200087c:
@@ -1065,6 +1072,7 @@ Func_0200087c:
 .L_02008acc:
 	.4byte Func_02000848
 	.section .text.x02008b20,"ax",%progbits
+	.balign 4
 	.global Func_02000b20
 	.thumb_func
 Func_02000b20:
@@ -1103,6 +1111,7 @@ Func_02000b20:
 .L_02008b60:
 	.4byte 0x00000116
 	.section .text.x02008ba8,"ax",%progbits
+	.balign 4
 	.global Func_02000ba8
 	.thumb_func
 Func_02000ba8:
@@ -1142,6 +1151,7 @@ Func_02000ba8:
 	pop {r5, pc}
 	.2byte 0x0000
 	.section .text.x02008c38,"ax",%progbits
+	.balign 4
 	.global Func_02000c38
 	.thumb_func
 Func_02000c38:
@@ -1216,32 +1226,4 @@ Func_02000c38:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008cd8:
-	.4byte gPartyState
-	.section .text.x02008cdc,"ax",%progbits
-	.global Func_02000cdc
-	.thumb_func
-Func_02000cdc:
-	push {lr}
-	ldr r3, .L_02008d0c
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	ldr r0, [r3]
-	sub sp, #12
-	bl Object_GetById
-	ldr r3, [r0, #8]
-	movs r2, #128
-	lsls r2, r2, #14
-	mov r1, sp
-	adds r3, r3, r2
-	str r3, [r1]
-	ldr r3, [r0, #12]
-	str r3, [r1, #4]
-	ldr r3, [r0, #16]
-	str r3, [r1, #8]
-	bl Func_02000c38
-	add sp, #12
-	pop {pc}
-	.2byte 0x0000
-.L_02008d0c:
 	.4byte gPartyState

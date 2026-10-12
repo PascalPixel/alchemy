@@ -463,6 +463,7 @@ Func_020001d8:
 .L_0200860c:
 	.4byte 0xfffff700
 	.section .text.x02008618,"ax",%progbits
+	.balign 4
 	.global Func_02000618
 	.thumb_func
 Func_02000618:
@@ -515,34 +516,8 @@ Func_02000618:
 	.4byte gPartyState
 .L_0200867c:
 	.4byte 0x0000010c
-	.section .text.x02008680,"ax",%progbits
-	.global Func_02000680
-	.thumb_func
-Func_02000680:
-	push {lr}
-	ldr r3, .L_020086ac
-	movs r2, #241
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #3
-	bne .L_02008696
-	bl Func_02000064
-.L_02008696:
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #14
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_020086a8
-	bl Func_02000064
-.L_020086a8:
-	movs r0, #0
-	pop {pc}
-.L_020086ac:
-	.4byte gPartyState
 	.section .text.x020086b0,"ax",%progbits
+	.balign 4
 	.global Func_020006b0
 	.thumb_func
 Func_020006b0:
@@ -828,7 +803,7 @@ Func_020006b0:
 .L_02008900:
 	.4byte 0x000001e8
 .L_02008904:
-	.4byte Data_02000b60
+	.4byte Field_Palette685
 .L_02008908:
 	.4byte 0x050003e0
 .L_0200890c:
@@ -904,14 +879,3 @@ Func_020006b0:
 	mov r10, r6
 	mov r11, r7
 	pop {r5, r6, r7, pc}
-	.section .rodata.x02008b60,"a",%progbits
-	.global Data_02000b60
-Data_02000b60:
-	.4byte 0x575a0260
-	.4byte 0x46754ad7
-	.4byte 0x31cf3a32
-	.4byte 0x28ea294c
-	.4byte 0x00750009
-	.4byte 0x01bf011f
-	.4byte 0x031f027f
-	.4byte 0x7fff03ff

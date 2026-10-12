@@ -179,7 +179,7 @@ msgctxt "message"
 msgid "00042"
 msgstr "ちょっとまて"
 
-msgctxt "message"
+msgctxt "MsgJoinedParty"
 msgid "00043"
 msgstr "{argument_actor_name:150}゙ なかまになった{end_now}"
 
@@ -5795,7 +5795,7 @@ msgctxt "message"
 msgid "01446"
 msgstr "スナッチャー"
 
-msgctxt "message"
+msgctxt "MsgAbilityNothing"
 msgid "01447"
 msgstr "なし"
 
@@ -26691,7 +26691,7 @@ msgctxt "message"
 msgid "06670"
 msgstr "父さんたち パヤヤームをおい{line_break}オセニア大陸にむかったけど{line_break}いまごろ どうしたかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No39"
 msgid "06671"
 msgstr "大陸がくっついたとおもったら{line_break}チャンパぞくのしゅうげきだよ{line_break}えらいことに なっちまったな。{end_wait}"
 
@@ -31159,7 +31159,7 @@ msgctxt "MsgScene659No86"
 msgid "07787"
 msgstr "キボンボが よこしまな力を{line_break}使わないでくれたおかげで{line_break}ひがいがすくなかったんじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No87"
 msgid "07788"
 msgstr "キボンボって きいたはなしでは{line_break}ブラックマジックというまほうを{line_break}使うっていうことなんだけど・・・{page_break}こんかいのヤツらのしゅうげきでは{line_break}そんなの使わなかったよなあ・・・。{end_wait}"
 
@@ -35155,7 +35155,7 @@ msgctxt "MsgScene659No154"
 msgid "08786"
 msgstr "海のいい伝えは 海にくらす村が{line_break}もっとも くわしいのじゃが・・・{page_break}ワシらは その伝説のいくつかを{line_break}町にやってきた男たちからきいて{line_break}こうしてマドラに伝えているんじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene659No155"
 msgid "08787"
 msgstr "はまべに たくさんのサカナが{line_break}うちあげられてるからって{line_break}あんた しんぱいしてるのか?{end_now}"
 

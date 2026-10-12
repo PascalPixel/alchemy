@@ -1,6 +1,6 @@
 #include "local.h"
 
-void Func_02003688(s32 x, s32 y, s32 z, s32 kind)
+s32 Func_02003688(s32 x, s32 y, s32 z, s32 kind)
 {
     struct BeamWork *work = &Data_02005970;
     struct BeamEntry *entry = work->entries;

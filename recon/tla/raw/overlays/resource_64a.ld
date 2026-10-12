@@ -7,7 +7,7 @@ SECTIONS
         "*/resource_64a_overlay.o"(.text.x0200805c)
         "*/resource_64a_overlay.o"(.text.x0200815c)
         "*/resource_64a_overlay.o"(.text.x020081f4)
-        "*/resource_64a_overlay.o"(.text.x020082e0)
+        "*/games/tla/src/field/overlay_64a/s02e0.o"(.text)
         "*/resource_64a_overlay.o"(.text.x02008328)
         "*/games/tla/src/field/overlay_64a/prepare.o"(.text)
         "*/resource_64a_overlay.o"(.text.x02008a70)

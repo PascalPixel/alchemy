@@ -1,4 +1,5 @@
 #include "types.h"
+#include "iwram_call.h"
 
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
 
@@ -39,4 +40,35 @@ struct PoolEntry *Func_081969f8(s32 count)
         entries[i].tail = 0;
     }
     return entries;
+}
+
+struct Texture {
+    u8 log_width;
+    u8 log_height;
+    u16 unknown_02;
+    u32 pixels;
+};
+
+u32 Runtime_GetRemainingIwram(void);
+void *MemAlloc(s32 size);
+
+s32 Func_08196a28(struct Texture *source, struct Texture *copy)
+{
+    s32 size = (1 << source->log_width) << source->log_height;
+    u32 pixels;
+    s32 misalign;
+    s32 mask;
+
+    if (Runtime_GetRemainingIwram() < size + 8)
+        return 0;
+    *(u16 *)copy = *(u16 *)source;
+    copy->pixels = (u32)MemAlloc(size + 8);
+    asm volatile(""); /* FAKEMATCH: ⚓️ stores the allocation before it starts the mask; without the barrier the forced mask below is scheduled before the store */
+    mask = 4;
+    asm volatile("" : "+l"(mask)); /* FAKEMATCH: ⚓️ starts the -4 mask before it loads the pixels; as a plain constant the mask starts after the misalignment is added (differ 2) */
+    pixels = source->pixels;
+    misalign = pixels & 3;
+    Iwram_CopyWords((void *)copy->pixels, (void *)(pixels - misalign), (size + misalign + 3) & -mask);
+    copy->pixels += misalign;
+    return 1;
 }

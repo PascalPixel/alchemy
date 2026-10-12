@@ -10,8 +10,8 @@ void Func_02000168(void);
 void Func_020001d4(void);
 void Func_02000818(void);
 
-extern u8 Data_02000098[];
-extern u8 Data_0200009c[];
+void Func_02000098(void);
+void Func_0200009c(void);
 
 s16 Data_02001608[] = {
 	16, 515, -1, 0,
@@ -208,10 +208,10 @@ s32 Data_02001a90[] = {
 	(s32)Func_020000ec,
 	0x10008c15,
 	(s32)0xffff0008,
-	(s32)((u8 *)Data_02000098 + 1),
+	(s32)Func_02000098,
 	0x8c15,
 	(s32)0xffff0008,
-	(s32)((u8 *)Data_0200009c + 1),
+	(s32)Func_0200009c,
 	-1,
 	0,
 	0,

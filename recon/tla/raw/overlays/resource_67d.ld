@@ -3,8 +3,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/field/overlay_67d/entry.o"(.text)
-        "*/resource_67d_overlay.o"(.text.x02008038)
-        "*/resource_67d_overlay.o"(.text.x0200806c)
+        "*/games/tla/src/field/overlay_67d/s0038.o"(.text)
         "*/games/tla/src/field/overlay_67d/scene_tables.o"(.text)
         "*/games/tla/src/field/overlay_67d/s00b4.o"(.text)
         "*/resource_67d_overlay.o"(.text.x02008458)

@@ -15,7 +15,7 @@ SECTIONS
         "*/resource_67b_overlay.o"(.text.x02008344)
         "*/games/tla/src/field/overlay_67b/exits.o"(.text)
         "*/resource_67b_overlay.o"(.text.x02008384)
-        "*/resource_67b_overlay.o"(.text.x02008468)
+        "*/games/tla/src/field/overlay_67b/s0468.o"(.text)
         "*/games/tla/src/field/overlay_67b/events_a.o"(.text)
         "*/resource_67b_overlay.o"(.text.x0200852c)
         "*/resource_67b_overlay.o"(.text.x02008580)
@@ -59,7 +59,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_67b/events_j.o"(.text)
         "*/games/tla/src/field/overlay_67b/import.o"(.text)
         "*/games/tla/src/field/overlay_67b/data.o"(.data)
-        "*/resource_67b_overlay.o"(.rodata.x0200ac74)
+        "*/games/tla/src/field/overlay_67b/tiles.o"(.rodata)
         "*/games/tla/src/field/overlay_67b/data2.o"(.data)
         "*/resource_67b_overlay.o"(.rodata.x0200b388)
     }

@@ -16,7 +16,15 @@ Func_08020308:
 	.global Func_08020310
 	.thumb_func
 Func_08020310:
+.ifdef TLA_EDITION_JA
 	overlay_veneer Func_0802d71c
+.else
+.ifdef TLA_EDITION_EN
+	overlay_veneer Func_0802d71c
+.else
+	overlay_veneer Func_080237e8
+.endif
+.endif
 	.global Func_08020318
 	.thumb_func
 Func_08020318:

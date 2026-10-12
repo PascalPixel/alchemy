@@ -42,7 +42,7 @@ Func_0811d24c:
 .L_0811d296:
 	movs r6, #0
 .L_0811d298:
-	bl Func_0801692c
+	bl SerialRuntime_GetActiveTransfers
 	cmp r0, #0
 	bne .L_0811d276
 	adds r3, r7, #0
@@ -80,7 +80,7 @@ Func_0811d24c:
 .L_0811d2e0:
 	movs r6, #0
 .L_0811d2e2:
-	bl Func_0801692c
+	bl SerialRuntime_GetActiveTransfers
 	cmp r0, #0
 	bne .L_0811d2bc
 .L_0811d2ea:

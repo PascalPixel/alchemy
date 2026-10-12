@@ -282,3 +282,22 @@ void Func_02000488(void)
 {
     Func_02001d44_(53, 64, 1, 1, 52, 64, 2);
 }
+
+void Func_020004a8(void)
+{
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+
+    Func_02001d44_(59, 64, 4, 3, 49, 71, 2);
+    if (GameFlag_Test(0xfbb) == 0) {
+        Func_02001c2c_(69, 0x3280000, 0x4980000);
+        if (leader->x >> 20 == 50 && leader->z >> 20 == 73) {
+            Func_02001bcc();
+            Func_02001d04(0);
+            Func_02001cac(gPartyState.current_owner, 0x102);
+            ObjectMotion_OffsetPositionAndResetMotion_(gPartyState.current_owner, 16, 0);
+            leader->velocity_y = 0x60000;
+            ObjectMotion_CommitCurrentPositionAndActivate(gPartyState.current_owner);
+            Func_02001bd4();
+        }
+    }
+}

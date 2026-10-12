@@ -1,4 +1,4 @@
-/* differ 4: the native loads the window work before building the resource-id offset; only ARM9TDMI load scheduling differs */
+/* differ 4: the native loads the window work before building the resource-id offset; only ARM9TDMI load scheduling differs. Measured: an empty asm barrier after the window work swaps the registers of the work and of 999 (differ 12); a one-pass block around the load gives the registers but loads 999 before the offset is started and moves the literal pool ahead of the return (differ 3). */
 #include "types.h"
 #include "graphics.h"
 #include "window.h"

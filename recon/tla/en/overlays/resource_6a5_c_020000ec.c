@@ -1,24 +1,28 @@
+/*
+ * Draft of overlay 6a5 Func_020000ec: an object circling object 36.
+ * 2 instructions differ: the listing reloads the centre (mov r1, r8) before
+ * the radius is finished and multiplied, the draft after the multiply.
+ * The multiply takes the cosine first, and the timer steps through a signed
+ * halfword pointer: with "-= 0x800" on the u16 field the step's constant is
+ * loaded after the timer (4 differ).
+ */
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#include "field_event.h"
 
-#include "call.h"
-s32 Object_GetById();
+#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
+
+struct FieldActor *Object_GetById();
 s32 Math_Cosine();
 s32 Math_Sine();
 
-void Func_020000ec(s32 a0)
+void Func_020000ec(struct FieldActor *self)
 {
-    s32 t0;
-    s32 t1;
-    s32 t2;
+    struct FieldActor *centre = Object_GetById(36);
+    u16 angle = self->timer;
 
-    t0 = Value1(Object_GetById, 0x24);
-    t1 = Value1(Math_Cosine, FIELD_AT((a0 + 0x64), u16, 0));
-    FIELD_AT(a0, s32, 8) = (FIELD_AT(t0, s32, 8) + (((FIELD_AT(a0, s32, 48) + FIELD_AT((0x62 + a0), u8, 0)) + 6) * t1));
-    t2 = Value1(Math_Sine, FIELD_AT((a0 + 0x64), u16, 0));
-    FIELD_AT(a0, s32, 16) = (FIELD_AT(t0, s32, 16) + ((FIELD_AT((0x62 + a0), u8, 0) + 4) * t2));
-    FIELD_AT(a0, s32, 56) = FIELD_AT(a0, s32, 8);
-    FIELD_AT(a0, s32, 64) = (FIELD_AT(t0, s32, 16) + ((FIELD_AT((0x62 + a0), u8, 0) + 4) * t2));
-    FIELD_AT((a0 + 0x64), s16, 0) = (FIELD_AT((a0 + 0x64), s16, 0) + -2048);
+    self->x = centre->x + Math_Cosine(angle) * (self->speed + BYTE_AT(self, 98) + 6);
+    self->z = centre->z + Math_Sine(angle) * (BYTE_AT(self, 98) + 4);
+    self->target_x = self->x;
+    self->target_z = self->z;
+    *(s16 *)&self->timer += -0x800;
 }
-

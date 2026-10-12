@@ -65,10 +65,10 @@ BattleParty_ApplyDrainFar:
 	.thumb_func
 BattleParty_ApplyHealthDeltaFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Menu_RunDefaultConfirmation
+	overlay_veneer Func_080d295c
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Menu_RunDefaultConfirmation
+	overlay_veneer Func_080d295c
 .else
 	overlay_veneer BattleParty_ApplyHealthDelta
 .endif

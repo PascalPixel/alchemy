@@ -2,9 +2,12 @@
 #define ALCHEMY_SCENE_IDS_H
 
 extern char SceneId_WorldMap;
+extern char SceneId_Ov64a;
 extern char SceneId_VinasuChojo;
 extern char SceneId_DeriHeya1;
 extern char SceneId_DeriHeya2;
+extern char SceneId_DeriMura1;
+extern char SceneId_DeriMura2;
 extern char SceneId_Ov661Room1;
 extern char SceneId_Ov661Room2;
 extern char SceneId_Ov661Room3;
@@ -29,6 +32,16 @@ extern char SceneId_Ov694Room1;
 extern char SceneId_Ov694Room2;
 extern char SceneId_Ov694Room3;
 extern char SceneId_Ov694Room4;
+extern char SceneId_Ov660Room1;
+extern char SceneId_Ov660Room2;
+extern char SceneId_Ov660Room3;
+extern char SceneId_Ov671Room1;
+extern char SceneId_Ov671Room2;
+extern char SceneId_Ov671Room3;
+extern char SceneId_Ov671Room4;
+extern char SceneId_Ov671Room5;
+extern char SceneId_Ov671Room6;
+extern char SceneId_Ov671Room7;
 extern char SceneId_Ov6B0Room1;
 extern char SceneId_Ov680Room1;
 extern char SceneId_Ov680Room2;
@@ -91,6 +104,7 @@ extern char SceneId_Ov6a8Room3;
 extern char SceneId_Ov6a8Room4;
 extern char SceneId_Ov6a8Room5;
 extern char SceneId_Ov6a8Room6;
+extern char SceneId_Ov6afRoom1;
 extern char SceneId_Ov6afRoom2;
 extern char SceneId_Ov6afRoom3;
 extern char SceneId_Ov6afRoom4;
@@ -124,8 +138,13 @@ extern char SceneId_Ov697Room1;
 extern char SceneId_Ov697Room2;
 extern char SceneId_Ov697Room3;
 extern char SceneId_Ov697Room4;
+extern char SceneId_Ov699Room1;
+extern char SceneId_Ov699Room2;
 
 extern char SceneId_Ov690Room3;
 extern char SceneId_Ov690Room5;
+extern char SceneId_Ov65dRoom1;
+extern char SceneId_Ov65dRoom2;
+extern char SceneId_Ov68b;
 
 #endif

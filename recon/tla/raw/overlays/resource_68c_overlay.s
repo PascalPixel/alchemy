@@ -1,49 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x02008104,"ax",%progbits
-	.balign 4
-	.global Func_02000104
-	.thumb_func
-Func_02000104:
-	push {r5, lr}
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #102
-	adds r5, r1, #0
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_0200811a
-	ldr r0, .L_02008148
-	b .L_0200812a
-.L_0200811a:
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #101
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02008138
-	ldr r0, .L_0200814c
-.L_0200812a:
-	bl Func_020028ac
-	adds r0, r5, #0
-	movs r1, #0
-	bl Func_020028c4
-	b .L_02008146
-.L_02008138:
-	ldr r0, .L_02008150
-	bl Func_020028ac
-	adds r0, r5, #0
-	movs r1, #0
-	bl Func_020028c4
-.L_02008146:
-	pop {r5, pc}
-.L_02008148:
-	.4byte MsgScene68CNo12
-.L_0200814c:
-	.4byte MsgScene68CNo09
-.L_02008150:
-	.4byte MsgScene68CNo06
 	.section .text.x02008284,"ax",%progbits
+	.balign 4
 	.global Func_02000284
 	.thumb_func
 Func_02000284:
@@ -1152,6 +1110,7 @@ Func_020012dc:
 .L_02009394:
 	.4byte 0xfff80000
 	.section .text.x020093f0,"ax",%progbits
+	.balign 4
 	.global Func_020013f0
 	.thumb_func
 Func_020013f0:

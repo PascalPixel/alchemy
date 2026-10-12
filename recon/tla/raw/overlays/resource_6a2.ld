@@ -11,7 +11,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_6a2/lightflag.o"(.text)
         "*/resource_6a2_overlay.o"(.text.x020083a4)
         "*/games/tla/src/field/overlay_6a2/lightset.o"(.text)
-        "*/resource_6a2_overlay.o"(.text.x020084e4)
         "*/resource_6a2_overlay.o"(.text.x02008538)
         "*/games/tla/src/field/overlay_6a2/dist.o"(.text)
         "*/resource_6a2_overlay.o"(.text.x02008750)
@@ -20,7 +19,6 @@ SECTIONS
         "*/resource_6a2_overlay.o"(.text.x02008a88)
         "*/resource_6a2_overlay.o"(.text.x02008c18)
         "*/games/tla/src/field/overlay_6a2/light.o"(.text)
-        "*/resource_6a2_overlay.o"(.text.x02008f5c)
         "*/games/tla/src/field/overlay_6a2/lightcue.o"(.text)
         "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
         "*/resource_6a2_overlay.o"(.text.x02008fde)
@@ -38,7 +36,9 @@ SECTIONS
         "*/resource_6a2_overlay.o"(.text.x02009978)
         "*/resource_6a2_overlay.o"(.text.x02009a28)
         "*/games/tla/src/field/overlay_6a2/import.o"(.text)
-        "*/resource_6a2_overlay.o"(.rodata.x02009ca8)
+        "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
+        "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
+        "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
         "*/games/tla/src/field/overlay_6a2/data.o"(.data)
     }
     .bss : { "*/resource_6a2_overlay.o"(.bss) }

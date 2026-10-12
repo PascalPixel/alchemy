@@ -1,0 +1,19 @@
+#include "types.h"
+#include "party_state.h"
+
+extern char SceneId_Ov663Room1;
+extern char SceneId_Ov663Room2;
+extern s32 Data_020043d4[];
+extern s32 Data_020044d0[];
+extern s32 Data_0200459c[];
+
+s32 *Func_020007e4(void)
+{
+    s32 scene = gPartyState.scene;
+
+    if (scene == (s32)&SceneId_Ov663Room1)
+        return Data_020043d4;
+    if (scene == (s32)&SceneId_Ov663Room2)
+        return Data_020044d0;
+    return Data_0200459c;
+}

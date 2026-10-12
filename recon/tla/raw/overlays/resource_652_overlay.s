@@ -1,31 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008704,"ax",%progbits
-	.balign 4
-	.global Func_02000704
-	.thumb_func
-Func_02000704:
-	push {r5, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r0, .L_0200872c
-	ldr r5, [r3, #108]
-	bl Func_02000dcc
-	movs r3, #192
-	lsls r3, r3, #4
-	adds r3, #188
-	adds r5, r5, r3
-	ldr r1, [r5]
-	movs r3, #1
-	adds r1, #35
-	ldrb r2, [r1]
-	orrs r3, r2
-	movs r2, #253
-	ands r3, r2
-	strb r3, [r1]
-	pop {r5, pc}
-.L_0200872c:
-	.4byte Data_02000e04
 	.section .text.x02008878,"ax",%progbits
 	.balign 4
 	.global Func_02000878

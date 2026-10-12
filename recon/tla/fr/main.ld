@@ -78,7 +78,6 @@
     "*/recon/tla/fr/rom.o"(.rom.00014028)
     "*/recon/tla/fr/rom.o"(.rom.00014048)
     "*/recon/tla/fr/rom.o"(.rom.00014104)
-    "*/recon/tla/fr/rom.o"(.rom.0001424c)
     "*/games/tla/src/system/resource/clear_slot_references.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000142a0)
     "*/games/tla/src/system/resource/activate_entry.o"(.text)

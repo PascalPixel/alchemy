@@ -89,7 +89,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00013ffc)
     "*/recon/tla/ja/rom.o"(.rom.0001401c)
     "*/recon/tla/ja/rom.o"(.rom.000140d8)
-    "*/recon/tla/ja/rom.o"(.rom.00014220)
     "*/games/tla/src/system/resource/clear_slot_references.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00014274)
     "*/games/tla/src/system/resource/activate_entry.o"(.text)

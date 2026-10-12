@@ -1,6 +1,24 @@
 #include "resource.h"
 #include "vram_tab.h"
 
+s32 Func_08014220(void)
+{
+    u8 *marker = ResourceBlockOwners;
+    s32 free_count;
+    s32 remaining;
+
+    asm volatile(""); /* FAKEMATCH: ⚓️ loads the table address before it starts the count of 512; without the barrier the count's first half is scheduled ahead of the load (differ 2) */
+    free_count = 0;
+    remaining = 0x200;
+    do {
+        if (*marker++ == 0xff) {
+            free_count++;
+        }
+        remaining--;
+    } while (remaining != 0);
+    return free_count;
+}
+
 s32 Resource_ClearSlotReferences(s32 resource_id)
 {
     s32 cleared_count = 0;

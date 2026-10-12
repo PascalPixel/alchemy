@@ -1,13 +1,13 @@
-/* Draft, differ 28 of 51 (the same loop as Func_02005428, drafted here too): the native
- * rebuilds 0xffff for the end test on every pass (movs r2, #255; lsls; adds) and reads the id
- * again at the top of the body; this form keeps 0xffff in r10 across the loop. Measured in
- * the loop dump (alchemy diff --rtl): the u16 test is narrowed to HImode, its constant is
- * three insns (the halfword constant and two shifts), and loop.c moves them (life 4,
- * savings 2). With the test in SImode the constant is one insn and stays: an assignment in
- * the test (while ((end = entry[0]) != 0xffff)) rebuilds it every pass as the native does,
- * but then shares that read with the body's (differ 24). An inline end test builds a flag
- * (differ 36); an s16 table with (u16) casts and a masked read are no better. Wanted: a
- * form whose end test is SImode and whose body reads the id again. */
+/* Drafts of Func_020053bc (differ 6 of 51) and Func_02005428 (differ 49 of 61).
+ * Func_020053bc: the test on an int copy of the word (while ((value = *entry) != 0xffff)) is an
+ * SImode compare, whose constant is one insn that loop.c leaves inside the loop, as the native
+ * rebuilds 0xffff on every pass; compared directly the u16 test is narrowed to HImode, its
+ * constant is three insns (life 4, savings 2) and moves above the loop (differ 28). The id as a
+ * u16 read with post-increments keeps the body's own read and the parameter in r0 for the first
+ * test. Left are three reordered pairs: the native reads the word between the halves of 0xffff
+ * in both tests (movs r2, #255; ldrh; lsls; adds), and steps the pointer before the last call.
+ * Func_02005428: the native enters its loop at the test (b to the bottom, the test not copied
+ * above) and reads the second and third words after stepping the pointer by 2; not shaped yet. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -25,16 +25,17 @@ struct EffectWork {
 /* 層の切り替え表: 3 語ずつ (id, mode, flag)、0xffff で終わり */
 void Func_020053bc(const u16 *entry)
 {
-    while (entry[0] != 0xffff) {
-        s32 id = entry[0];
+    s32 value;
+
+    while ((value = *entry) != 0xffff) {
+        u16 id = *entry++;
         struct ObjectRuntime *object = Object_GetById(id);
-        s16 mode = entry[1];
-        s16 flag = entry[2];
+        s16 mode = *entry++;
+        s16 flag = *entry++;
 
         object->collision_flags &= 0xfe;
         ObjectDispatch_SetSingleChildFlags(object, 0);
         Func_020054ac(id, (u16)mode, (u16)flag, object->terrain_id);
-        entry += 3;
     }
 }
 
@@ -42,7 +43,9 @@ void Func_02005428(const u16 *entry, s32 set, s32 step)
 {
     struct EffectWork *work = Ram_HeapSlots->effect_work;
 
-    while (entry[0] != 0xffff) {
+    s32 value;
+
+    while ((value = *entry) != 0xffff) {
         s32 id = work->target;
 
         if (id == entry[0]) {

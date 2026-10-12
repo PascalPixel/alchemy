@@ -953,7 +953,7 @@
         "*/games/tla/src/field/common/object/set_wide_sprite.o"(.text)
         "*/recon/tla/raw/080cee80.o"(.text)
         "*/games/tla/src/field/common/object/sprite_shape.o"(.text)
-        "*/recon/tla/raw/080cef24.o"(.text)
+        "*/games/tla/src/field/common/object/shakeang.o"(.text)
         "*/games/tla/src/field/common/object/event_pose.o"(.text)
         "*/recon/tla/raw/080cf050.o"(.text)
         "*/games/tla/src/battle/effect/emitter.o"(.text)

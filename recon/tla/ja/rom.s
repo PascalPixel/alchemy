@@ -2636,9 +2636,6 @@ Func_080ce458:
 	.global Func_080cee80
 Func_080cee80:
 	.incbin "baserom.gba", 0x000cee60, 0x0000002c
-	.section .rom.000cef04, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x000cef04, 0x00000044
 	.section .rom.000cf030, "ax"
 	.global Func_080cf050
 	.type Func_080cf050, %function

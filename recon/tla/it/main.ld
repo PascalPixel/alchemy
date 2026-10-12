@@ -813,6 +813,7 @@
     "*/recon/tla/it/rom.o"(.rom.000cec34)
     "*/games/tla/src/field/common/object/set_wide_sprite.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000cee80)
+    "*/games/tla/src/field/common/object/shakeang.o"(.text)
     "*/games/tla/src/field/common/object/event_pose.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000cf050)
     "*/games/tla/src/battle/effect/emitter.o"(.text)

@@ -824,7 +824,7 @@ SECTIONS
     "*/games/tla/src/field/common/object/set_wide_sprite.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000cee60)
     "*/games/tla/src/field/common/object/sprite_shape.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000cef04)
+    "*/games/tla/src/field/common/object/shakeang.o"(.text)
     "*/games/tla/src/field/common/object/event_pose.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000cf030)
     "*/games/tla/src/battle/effect/emitter.o"(.text)

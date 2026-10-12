@@ -65,3 +65,20 @@ s32 Menu_SelectTopEntry(s32 sel)
 
     return ret;
 }
+
+// 日本語版はこの関数が違うので、まだ scaffold のまま (S4)
+#if !defined(TLA_EDITION_JA)
+s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
+{
+    UiWindow_OpenMode1AndWaitFrame();
+    AffineEffect_InitializeWork();
+    Menu_AppendResourceEntry(1);
+    Menu_AppendResourceEntry(0xF);
+    Menu_AppendResourceEntry(2);
+    Menu_AppendResourceEntry(7);
+    arg1 = Menu_SelectResource(arg0, arg1 - 1);
+    Menu_EndResourceSelection();
+    UiWork_CloseAndRelease();
+    return arg1;
+}
+#endif

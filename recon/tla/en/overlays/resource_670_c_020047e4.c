@@ -1,0 +1,27 @@
+// near miss: differ 24 (listing 71 instructions, draft 71); as Func_02000d74's wait loop
+#include "../../../../games/tla/src/field/overlay_670/ov670.h"
+
+void Func_020047e4(void)
+{
+    Func_02004524();
+    Func_02005c9c(161);
+    Func_02003640(0, 1);
+    Battle_WaitMode0(20);
+    Func_02005b4c((s32)MsgYouAreStillNot);
+    Func_02005b64(17, 0);
+    if (Data_02007950 != 0) {
+        Data_02007950->motion_flags = 0;
+        while (Data_02007950->y > 0x240000) {
+            Ov670_ObjArm(17, 0xd000, 0);
+            Data_02007950->y += 0xffffc000;
+            WaitFrames(1);
+        }
+    }
+    Motion_SetModeAndWaitAnimation(17, 4);
+    Func_02005b64(17, 0);
+    Ov670_ObjTurn(17, 0x3000);
+    Func_02005b64(0x4011, 0);
+    GameFlag_SetBit(0x8fc);
+    GameFlag_SetBit(265);
+    Func_02005bc4(12);
+}

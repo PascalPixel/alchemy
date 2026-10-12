@@ -697,7 +697,7 @@ Func_080fdad4:
 	ldrh r1, [r7, r3]
 	movs r2, #0
 	str r4, [sp, #8]
-	bl Func_080fd52c
+	bl Party_SetPackedEvent
 	ldr r4, [sp, #8]
 	cmp r0, #0
 	beq .L_080fe050
@@ -756,7 +756,7 @@ Func_080fdad4:
 	ldrh r1, [r7, r3]
 	movs r2, #1
 	str r4, [sp, #8]
-	bl Func_080fd52c
+	bl Party_SetPackedEvent
 	ldr r4, [sp, #8]
 	cmp r0, #0
 	beq .L_080fe0c4

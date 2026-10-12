@@ -5,7 +5,7 @@
 #include "object_runtime.h"
 
 extern u8 Data_02006c08[];
-extern const u8 Data_02005920[];
+extern const u8 gWorldMapPackedTilesC[];
 extern u8 Data_02006f20[];
 extern u8 Data_02006e0e[];
 extern u8 Data_02006e0c[];
@@ -44,7 +44,7 @@ struct TileSprite {
 
 void Func_02004a1c(void)
 {
-    Func_02004aa8(Data_02005920, Data_02006f20);
+    Func_02004aa8(gWorldMapPackedTilesC, Data_02006f20);
     Resource_ResetEntry(*(s16 *)Data_02006e0e);
     *(s16 *)Data_02006e0c = -1;
     Scheduler_RemoveCallbackFar(Func_020048f4);

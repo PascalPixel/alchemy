@@ -179,7 +179,7 @@ msgctxt "message"
 msgid "00042"
 msgstr "No"
 
-msgctxt "message"
+msgctxt "MsgJoinedParty"
 msgid "00043"
 msgstr "{argument_actor_name:1} è nella tua{line_break}squadra ora.{end_wait}"
 
@@ -7639,7 +7639,7 @@ msgctxt "message"
 msgid "01907"
 msgstr "Ladro"
 
-msgctxt "message"
+msgctxt "MsgAbilityNothing"
 msgid "01908"
 msgstr "Nulla"
 

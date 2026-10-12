@@ -71,7 +71,7 @@ Func_08119148:
 	negs r1, r1
 	cmp r0, r1
 	beq .L_081191e6
-	bl Func_080168a0
+	bl SerialRuntime_WaitForTransferA
 	adds r5, #1
 	movs r0, #2
 	bl WaitFrames
@@ -86,7 +86,7 @@ Func_08119148:
 	mov r8, r3
 	b .L_081191fe
 .L_081191f2:
-	bl Func_080168a0
+	bl SerialRuntime_WaitForTransferA
 	movs r0, #2
 	bl WaitFrames
 	adds r5, #1
@@ -150,7 +150,7 @@ Func_08119148:
 	negs r1, r1
 	cmp r0, r1
 	beq .L_08119288
-	bl Func_080168a0
+	bl SerialRuntime_WaitForTransferA
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #2

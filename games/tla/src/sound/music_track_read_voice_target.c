@@ -11,6 +11,13 @@ union PackedWord {
     } part;
 };
 
+void Runtime_CallWorkEntryWithArgs(struct SoundPlayer *player, struct SoundTrack *track)
+{
+    SoundCommand func = *(&Sound_CommandTable[0]);
+
+    func(player, track);
+}
+
 void MusicTrack_ReadVoiceTarget(struct SoundPlayer *player, struct SoundTrack *track)
 {
     const u8 *pos = track->cursor;

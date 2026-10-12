@@ -182,7 +182,7 @@ void	   Func_080c8368(s32, s32);
 void	   BattleFx_ApplyColorToSourceBufferFar(s32);
 void	   Runtime_ScheduleCallbackAndReleaseBlock32BFar(void);
 void	   BattleFx_SetPrimaryBufferValueFar(void);
-void	   ItemMenu_ArrangeCategoryItemIcons(u8 *items);
+void	   ItemMenu_ArrangeCategoryItemIcons(u16 *items);
 void	   ItemMenu_DrawEquippedItemNames(s32 window, u8 *items);
 void	   Menu_DrawFlagBitTable(s32, s32);
 s32		   Menu_HandleFlagGridInput(s32, s32 *, s32 *);

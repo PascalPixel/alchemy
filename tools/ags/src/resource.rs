@@ -31,7 +31,7 @@ pub fn is_recipe(built: &str) -> bool {
         || data_form(form)
         || matches!(
             form,
-            "font" | "gbapal" | "bitmap" | "frames" | "icons" | "icon4" | "glyphs" | "1bpp"
+            "font" | "gbapal" | "bitmap" | "frames" | "icons" | "icon4" | "glyphs" | "1bpp" | "strips"
         );
     !stem.is_empty() && form && codec.is_none_or(|codec| CODECS.contains(&codec))
 }
@@ -414,6 +414,9 @@ fn plane(built: &str, text: &[u8]) -> Result<Vec<u8>, String> {
         .collect())
 }
 
+/// A block map: one offset word per 16x16 block of the grid, then each
+/// block's words as a palette stream. A block the map leaves out is written
+/// `-` in all its cells: its offset is zero and it has no stream.
 fn block_map(built: &str, grid: &[u8]) -> Result<Vec<u8>, String> {
     let text = std::str::from_utf8(grid).map_err(|_| format!("{built}: grid is not text"))?;
     let rows = text
@@ -421,9 +424,11 @@ fn block_map(built: &str, grid: &[u8]) -> Result<Vec<u8>, String> {
         .filter(|line| !line.trim().is_empty())
         .map(|line| {
             line.split('\t')
-                .map(|word| {
-                    u32::from_str_radix(word.trim(), 16)
-                        .map_err(|_| format!("{built}: {word:?} is not a hex word"))
+                .map(|word| match word.trim() {
+                    "-" => Ok(None),
+                    word => u32::from_str_radix(word, 16)
+                        .map(Some)
+                        .map_err(|_| format!("{built}: {word:?} is not a hex word")),
                 })
                 .collect::<Result<Vec<_>, _>>()
         })
@@ -440,10 +445,19 @@ fn block_map(built: &str, grid: &[u8]) -> Result<Vec<u8>, String> {
     let mut output = vec![0u8; 4 * count];
     for index in 0..count {
         let (x, y) = (index % (width / 16) * 16, index / (width / 16) * 16);
-        let words: Vec<u8> = rows[y..y + 16]
+        let cells: Vec<Option<u32>> = rows[y..y + 16]
             .iter()
-            .flat_map(|row| row[x..x + 16].iter().flat_map(|word| word.to_le_bytes()))
+            .flat_map(|row| row[x..x + 16].iter().copied())
             .collect();
+        if cells.iter().all(Option::is_none) {
+            continue;
+        }
+        let words = cells
+            .iter()
+            .map(|cell| cell.map(u32::to_le_bytes))
+            .collect::<Option<Vec<_>>>()
+            .ok_or_else(|| format!("{built}: block {index} is left out in part"))?
+            .concat();
         let at = output.len() as u32;
         output[4 * index..4 * index + 4].copy_from_slice(&at.to_le_bytes());
         output.extend(compress_palette(&words, &PACKER)?);
@@ -593,6 +607,35 @@ fn sprite_bank(built: &str, pixels: &[u8], width: usize, height: usize) -> Resul
     Ok(output)
 }
 
+/// A picture kept as strips: one offset word for the palette and one for
+/// each 8-pixel row band, then the PNG's palette as BGR555 and each band's
+/// 8bpp tiles, left to right, as its own tagged stream.
+fn strip_picture(
+    built: &str,
+    image: &crate::assets::image::IndexedImage,
+) -> Result<Vec<u8>, String> {
+    let (width, height) = (image.width as usize, image.height as usize);
+    if !width.is_multiple_of(8) || !height.is_multiple_of(8) {
+        return Err(format!("{built}: a strip picture is whole 8x8 tiles"));
+    }
+    let pixels = indices(image);
+    let palette = bgr555_palette_of(image).map_err(|error| format!("{built}: {}", error.0))?;
+    let bands = height / 8;
+    let mut output = vec![0u8; 4 * (bands + 1)];
+    let place = |output: &mut Vec<u8>, index: usize| {
+        let at = output.len() as u32;
+        output[4 * index..4 * index + 4].copy_from_slice(&at.to_le_bytes());
+    };
+    place(&mut output, 0);
+    output.extend(palette);
+    for (band, rows) in pixels.chunks(8 * width).enumerate() {
+        place(&mut output, band + 1);
+        let tiles = metatiles(rows, width, 8, GbaBpp::Bpp8, 1, 1)?;
+        output.extend(compress_tagged_packed(&tiles, &tiles, &PACKER)?);
+    }
+    Ok(output)
+}
+
 fn obj_shape(name: &str) -> Option<(usize, usize)> {
     let (wide, high) = name.split_once('x')?;
     let shape = (
@@ -610,6 +653,7 @@ fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
     Ok(match form {
         "gbapal" => bgr555_palette_of(&image).map_err(|error| format!("{built}: {}", error.0))?,
         "bitmap" => indices(&image),
+        "strips" => strip_picture(built, &image)?,
         "4bpp" => metatiles(&indices(&image), width, height, GbaBpp::Bpp4, 1, 1)?,
         "8bpp" => metatiles(&indices(&image), width, height, GbaBpp::Bpp8, 1, 1)?,
         form if form.starts_with("4bpp") || form.starts_with("8bpp") => {
@@ -692,5 +736,51 @@ mod tests {
         assert!(one_bpp("T.1bpp", &pixels[..120], 15, 8).is_err());
         assert!(is_recipe("graphics/display/staff.1bpp"));
         assert!(!is_recipe("graphics/display/staff.2bpp"));
+    }
+    #[test]
+    fn a_strip_picture_packs_each_row_band_behind_its_offset() {
+        // 16x16, three colours: the top band is colour 1, the bottom band
+        // colour 2 with one pixel of colour 0 at the left of its last row.
+        let mut pixels = vec![1u8; 16 * 8];
+        pixels.extend(vec![2u8; 16 * 8]);
+        pixels[16 * 15] = 0;
+        let palette = [0u8, 0, 0x1f, 0, 0xe0, 0x03];
+        let png = crate::assets::image::png_from_bitmap(&pixels, &palette, 16).unwrap();
+        let built = build_file("P.strips", &png).unwrap();
+        let word = |at: usize| u32::from_le_bytes(built[at..at + 4].try_into().unwrap()) as usize;
+        assert_eq!(word(0), 12, "the palette follows three offsets");
+        assert_eq!(built[12..18], palette);
+        assert_eq!(word(4), 18);
+        let top = compress_tagged_packed(&[1u8; 128], &[1u8; 128], &PACKER).unwrap();
+        assert_eq!(built[18..18 + top.len()], top[..]);
+        assert_eq!(word(8), 18 + top.len());
+        // The bottom band's tiles are left to right: the odd pixel is byte 56.
+        let mut tiles = vec![2u8; 128];
+        tiles[56] = 0;
+        let bottom = compress_tagged_packed(&tiles, &tiles, &PACKER).unwrap();
+        assert_eq!(built[word(8)..], bottom[..]);
+        assert!(is_recipe("graphics/title/picture.strips"));
+        let odd = crate::assets::image::png_from_bitmap(&pixels[..16 * 12], &palette, 16).unwrap();
+        assert!(build_file("P.strips", &odd).unwrap_err().contains("whole 8x8 tiles"));
+    }
+
+    #[test]
+    fn a_block_map_leaves_out_the_blocks_written_as_dashes() {
+        let row = |left: &str, right: &str| format!("{}\t{}\n", [left; 16].join("\t"), [right; 16].join("\t"));
+        let grid = |left: &str, right: &str| row(left, right).repeat(16);
+        let both = block_map("M.blocks", grid("1a", "2").as_bytes()).unwrap();
+        let word = |bytes: &[u8], at: usize| u32::from_le_bytes(bytes[at..at + 4].try_into().unwrap());
+        assert_eq!(word(&both, 0), 8);
+        let second = word(&both, 4) as usize;
+        // A block left out has offset zero and no stream; the others keep theirs.
+        let right = block_map("M.blocks", grid("-", "2").as_bytes()).unwrap();
+        assert_eq!((word(&right, 0), word(&right, 4)), (0, 8));
+        assert_eq!(right[8..], both[second..]);
+        let none = block_map("M.blocks", grid("-", "-").as_bytes()).unwrap();
+        assert_eq!(none, [0u8; 8]);
+        // A block is whole or left out, never half.
+        let half = format!("{}{}", row("-", "2"), row("1", "2").repeat(15));
+        assert!(block_map("M.blocks", half.as_bytes()).unwrap_err().contains("left out in part"));
+        assert!(block_map("M.blocks", grid("x", "2").as_bytes()).is_err());
     }
 }

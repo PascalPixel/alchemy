@@ -179,7 +179,7 @@ msgctxt "message"
 msgid "00042"
 msgstr "Wait a sec"
 
-msgctxt "message"
+msgctxt "MsgJoinedParty"
 msgid "00043"
 msgstr "{argument_actor_name:1} joined your{line_break}party.{end_now}"
 
@@ -5795,7 +5795,7 @@ msgctxt "message"
 msgid "01446"
 msgstr "Thief"
 
-msgctxt "message"
+msgctxt "MsgAbilityNothing"
 msgid "01447"
 msgstr "Nothing"
 

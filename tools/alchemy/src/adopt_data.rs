@@ -312,6 +312,72 @@ pub(crate) fn cut_head(text: &str, name: &str, size: u32) -> Result<Cut, String>
     cut_range(head, all, index, 0, size)
 }
 
+/// Each run of base-ROM bytes a scaffold section holds without a gap, as
+/// (file offset, size): where a copy of code can lie whole.
+pub(crate) fn extents(text: &str) -> Result<Vec<(u32, u32)>, String> {
+    let mut runs: Vec<(u32, u32)> = Vec::new();
+    for section in sections(text)?.1 {
+        let mut open = false;
+        for (_, line) in &section.lines {
+            let Line::Bytes { file, size } = line else { continue };
+            match runs.last_mut() {
+                Some((start, length)) if open && *start + *length == *file => *length += size,
+                _ => runs.push((*file, *size)),
+            }
+            open = true;
+        }
+    }
+    Ok(runs)
+}
+
+/// Each label of a scaffold with the file offset of the byte it names.
+pub(crate) fn label_offsets(text: &str) -> Result<Vec<(String, u32)>, String> {
+    let mut labels = Vec::new();
+    for section in sections(text)?.1 {
+        for (offset, label) in section.labels() {
+            let file = section.lines.iter().find_map(|(at, line)| match line {
+                Line::Bytes { file, size } if *at <= offset && offset < at + size => Some(file + (offset - at)),
+                _ => None,
+            });
+            if let Some(file) = file {
+                labels.push((label.to_string(), file));
+            }
+        }
+    }
+    Ok(labels)
+}
+
+/// Takes the `size` bytes at file offset `file` out of the scaffold section
+/// that holds them, wherever its labels are: a function's copy in an edition
+/// whose scaffold does not name it, or names more than it in one section.
+/// Labels inside leave with the bytes, and so do their `.size` lines.
+pub(crate) fn cut_bytes(text: &str, file: u32, size: u32) -> Result<Cut, String> {
+    let (head, all) = sections(text)?;
+    let covering = |section: &Section, wanted: u32| {
+        section.lines.iter().find_map(|(offset, line)| match line {
+            Line::Bytes { file, size } if *file <= wanted && wanted < file + size => Some(offset + (wanted - file)),
+            _ => None,
+        })
+    };
+    let found = all
+        .iter()
+        .enumerate()
+        .find_map(|(index, section)| covering(section, file).map(|start| (index, start)));
+    let Some((index, start)) = found else {
+        return Err(format!("no section holds the byte at {file:#x}"));
+    };
+    if size == 0 || covering(&all[index], file + size - 1) != Some(start + size - 1) {
+        return Err(format!("the {size:#x} bytes at {file:#x} do not lie in one section"));
+    }
+    let mut cut = cut_range(head, all, index, start, start + size)?;
+    let sized: Vec<String> = cut.labels.iter().map(|label| format!("\t.size {label}, .-{label}")).collect();
+    if cut.text.lines().any(|line| sized.iter().any(|gone| gone == line)) {
+        let kept: Vec<&str> = cut.text.lines().filter(|line| !sized.iter().any(|gone| gone == line)).collect();
+        cut.text = kept.join("\n") + "\n";
+    }
+    Ok(cut)
+}
+
 fn cut_range(head: Vec<String>, mut all: Vec<Section>, index: usize, start: u32, end: u32) -> Result<Cut, String> {
     let section = all[index].clone();
     let owner = owned_by_next_label(&section.lines);
@@ -415,6 +481,20 @@ fn linked_sections(line: &str) -> (&str, Vec<&str>) {
 /// object, then the bytes after it. An object already linked for other
 /// input sections (its .text elsewhere) may still take this block as its .rodata.
 pub(crate) fn relink(script: &str, scaffold: &str, prefix: &str, cut: &Cut, object: &str) -> Result<String, String> {
+    let (path, wanted) = linked_sections(object);
+    for line in script.lines() {
+        let (other, sections) = linked_sections(line.trim());
+        if other == path && sections.iter().any(|section| wanted.contains(section)) {
+            return Err(format!("{path} already links {}", sections.join(" ")));
+        }
+    }
+    relink_parts(script, scaffold, prefix, cut, Some(object))
+}
+
+/// Links what is left of the cut section where it was: the bytes before the
+/// block, `object` when the block's source is not linked yet, and the bytes
+/// after the block.
+pub(crate) fn relink_parts(script: &str, scaffold: &str, prefix: &str, cut: &Cut, object: Option<&str>) -> Result<String, String> {
     let link = |name: &str| format!("\"*/{scaffold}\"({prefix}{name})");
     let old = link(&cut.section);
     let lines: Vec<&str> = script.lines().collect();
@@ -427,19 +507,14 @@ pub(crate) fn relink(script: &str, scaffold: &str, prefix: &str, cut: &Cut, obje
     let [at] = at[..] else {
         return Err(format!("{} lines link {old}", at.len()));
     };
-    let (path, wanted) = linked_sections(object);
-    for line in &lines {
-        let (other, sections) = linked_sections(line.trim());
-        if other == path && sections.iter().any(|section| wanted.contains(section)) {
-            return Err(format!("{path} already links {}", sections.join(" ")));
-        }
-    }
     let indent = &lines[at][..lines[at].len() - lines[at].trim_start().len()];
     let mut out: Vec<String> = lines[..at].iter().map(|line| line.to_string()).collect();
     if cut.before {
         out.push(format!("{indent}{old}"));
     }
-    out.push(format!("{indent}{object}"));
+    if let Some(object) = object {
+        out.push(format!("{indent}{object}"));
+    }
     if let Some(name) = &cut.after {
         out.push(format!("{indent}{}", link(name)));
     }

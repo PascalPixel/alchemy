@@ -30,25 +30,25 @@ Func_080eb3d0:
 	adds r0, r5, #0
 	mov r1, r8
 	adds r2, r7, #0
-	bl Func_080eb2d8
+	bl BattleFx_PlotHalfCanvasPixel
 	ldr r3, [sp, #0]
 	mov r2, r11
 	subs r6, r3, r2
 	adds r0, r5, #0
 	adds r1, r6, #0
 	adds r2, r7, #0
-	bl Func_080eb2d8
+	bl BattleFx_PlotHalfCanvasPixel
 	ldr r3, [sp, #4]
 	mov r2, r10
 	subs r5, r3, r2
 	adds r0, r5, #0
 	mov r1, r8
 	adds r2, r7, #0
-	bl Func_080eb2d8
+	bl BattleFx_PlotHalfCanvasPixel
 	adds r0, r5, #0
 	adds r1, r6, #0
 	adds r2, r7, #0
-	bl Func_080eb2d8
+	bl BattleFx_PlotHalfCanvasPixel
 	ldr r3, [sp, #0]
 	ldr r5, [sp, #4]
 	add r3, r10
@@ -57,25 +57,25 @@ Func_080eb3d0:
 	adds r0, r5, #0
 	mov r1, r8
 	adds r2, r7, #0
-	bl Func_080eb2d8
+	bl BattleFx_PlotHalfCanvasPixel
 	ldr r2, [sp, #0]
 	mov r3, r10
 	subs r6, r2, r3
 	adds r0, r5, #0
 	adds r1, r6, #0
 	adds r2, r7, #0
-	bl Func_080eb2d8
+	bl BattleFx_PlotHalfCanvasPixel
 	ldr r2, [sp, #4]
 	mov r3, r11
 	subs r5, r2, r3
 	adds r0, r5, #0
 	mov r1, r8
 	adds r2, r7, #0
-	bl Func_080eb2d8
+	bl BattleFx_PlotHalfCanvasPixel
 	adds r2, r7, #0
 	adds r0, r5, #0
 	adds r1, r6, #0
-	bl Func_080eb2d8
+	bl BattleFx_PlotHalfCanvasPixel
 	mov r2, r11
 	lsls r3, r2, #1
 	mov r2, r9

@@ -340,47 +340,6 @@ Func_020001f4:
 	strh r5, [r1]
 .L_020082de:
 	pop {r5, r6, r7, pc}
-	.section .text.x020082e0,"ax",%progbits
-	.global Func_020002e0
-	.thumb_func
-Func_020002e0:
-	push {lr}
-	movs r0, #162
-	lsls r0, r0, #1
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_020082f2
-	movs r0, #0
-	b .L_0200831c
-.L_020082f2:
-	ldr r2, .L_02008320
-	movs r1, #128
-	lsls r1, r1, #2
-	adds r1, #94
-	adds r3, r2, r1
-	movs r1, #0
-	ldrsh r3, [r3, r1]
-	movs r0, #0
-	cmp r3, #2
-	beq .L_0200831c
-	movs r1, #240
-	lsls r1, r1, #1
-	adds r3, r2, r1
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	ldr r2, .L_02008324
-	eors r3, r2
-	negs r0, r3
-	orrs r0, r3
-	lsrs r0, r0, #31
-	negs r0, r0
-.L_0200831c:
-	pop {pc}
-	.2byte 0x0000
-.L_02008320:
-	.4byte gPartyState
-.L_02008324:
-	.4byte 0x00000002
 	.section .text.x02008328,"ax",%progbits
 	.global Func_02000328
 	.thumb_func
@@ -7301,106 +7260,7 @@ Func_0200217c:
 	pop {r5, r6, r7, pc}
 .L_0200a1bc:
 	.4byte 0xffffefdf
-	.section .rodata.x0200a410,"a",%progbits
-	.global Data_02002410
-Data_02002410:
-	.4byte 0x00040004
-	.4byte 0x00000004
-	.global Data_02002418
-Data_02002418:
-	.4byte 0x00800040
-	.4byte 0x00800040
-	.4byte 0x00100020
-	.4byte 0x00100020
-	.4byte 0x00100040
-	.4byte 0x00200080
-	.4byte 0x00040040
-	.4byte 0x00000000
-	.global Data_02002438
-Data_02002438:
-	.4byte 0x03020100
-	.4byte 0x00010203
-	.global Data_02002440
-Data_02002440:
-	.4byte 0x44434241
-	.4byte 0x47462045
-	.4byte 0x204b4a48
-	.4byte 0x504e4d4c
-	.4byte 0x00522051
-	.global Data_02002454
-Data_02002454:
-	.4byte 0x56555453
-	.4byte 0x59582057
-	.4byte 0x2033325a
-	.4byte 0x37363534
-	.4byte 0x00392038
-	.global Data_02002468
-Data_02002468:
-	.4byte 0x64636261
-	.4byte 0x67662065
-	.4byte 0x206a6968
-	.4byte 0x706e6d6b
-	.4byte 0x00722071
-	.global Data_0200247c
-Data_0200247c:
-	.4byte 0x76757473
-	.4byte 0x79782077
-	.4byte 0x203f217a
-	.4byte 0x25242623
-	.4byte 0x003d202b
-	.global Data_02002490
-Data_02002490:
-	.4byte 0x09510941
-	.4byte 0x08d108b3
-	.4byte 0x0868081e
-	.global gSceneEntrances
-gSceneEntrances:
-	.4byte 0xffff0000
-	.4byte 0x00000000
-	.4byte 0x40000000
-	.4byte 0xffff0000
-	.4byte 0xffffffff
-	.4byte 0x0000ffff
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global gSceneExits
-gSceneExits:
-	.4byte 0x000001ff
-	.global gScenePlacements
-gScenePlacements:
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global gSceneEvents
-gSceneEvents:
-	.4byte 0xffffffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_020024f4
-Data_020024f4:
-	.2byte 0x0000
-	.global Data_020024f6
-Data_020024f6:
-	.2byte 0x0000
-	.global Data_020024f8
-Data_020024f8:
-	.2byte 0x0000
-	.global Data_020024fa
-Data_020024fa:
-	.2byte 0x0000
-	.global Data_020024fc
-Data_020024fc:
-	.2byte 0x0000
-	.global Data_020024fe
-Data_020024fe:
-	.2byte 0x0000
+	.section .rodata.x0200a500,"a",%progbits
 	.global Data_02002500
 Data_02002500:
 	.4byte 0x00000000
@@ -7510,63 +7370,6 @@ Data_0200265e:
 	.4byte 0x39383736
 	.4byte 0x3d3c3b3a
 	.4byte 0x00003f3e
-	.global Data_020026a0
-Data_020026a0:
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000002
-	.4byte 0x00000003
-	.global Data_020026b0
-Data_020026b0:
-	.4byte 0x00c900c8
-	.4byte 0x00cb00ca
-	.4byte 0x00cd00cc
-	.4byte 0x00cf00ce
-	.global Data_020026c0
-Data_020026c0:
-	.4byte 0x00b500b4
-	.4byte 0x00b700b6
-	.4byte 0x00bb00ba
-	.4byte 0x00bd00bc
-	.4byte 0x00c000bf
-	.4byte 0x00c200c1
-	.4byte 0x00c400c3
-	.4byte 0x00e300e2
-	.4byte 0x00e500e4
-	.4byte 0x00ee00ec
-	.4byte 0x00f000ef
-	.4byte 0x000000f1
-	.global Data_020026f0
-Data_020026f0:
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000002
-	.4byte 0x00000003
-	.global Data_02002700
-Data_02002700:
-	.4byte 0x09510941
-	.4byte 0x08d108b3
-	.4byte 0x0868081e
-	.global Data_0200270c
-Data_0200270c:
-	.4byte 0x00c900c8
-	.4byte 0x00cb00ca
-	.4byte 0x00cd00cc
-	.4byte 0x00cf00ce
-	.global Data_0200271c
-Data_0200271c:
-	.4byte 0x00b500b4
-	.4byte 0x00b700b6
-	.4byte 0x00bb00ba
-	.4byte 0x00bd00bc
-	.4byte 0x00c000bf
-	.4byte 0x00c200c1
-	.4byte 0x00c400c3
-	.4byte 0x00e300e2
-	.4byte 0x00e500e4
-	.4byte 0x00ee00ec
-	.4byte 0x00f000ef
-	.2byte 0x00f1
 	.section .bss,"aw",%nobits
 	.global Data_0200274a
 Data_0200274a:

@@ -1,0 +1,29 @@
+/* Draft, differ 2 of 32: the native stores motion_flags = 3 before it builds
+ * the frame count (strb, movs r6 #60, mov r8 r2); this form schedules the
+ * store after them. Assigning frames after the store, a for loop, a do/break
+ * loop and a counting-up loop all swap the object and the count (r5/r6),
+ * differ 14 to 16. */
+#include "types.h"
+#include "object_runtime.h"
+
+struct ObjectRuntime *Object_GetById(s32 id);
+void WaitFrames(s32 frames);
+void Func_02002eec(s32 a);
+
+void Func_02000b30(s32 id, s32 cue)
+{
+    struct ObjectRuntime *object = Object_GetById(id);
+    s32 frames = 60;
+
+    object->motion_flags = 3;
+    while (frames != 0) {
+        WaitFrames(1);
+        frames--;
+        if (object->velocity_y == 0)
+            break;
+    }
+    if (cue != 0)
+        Func_02002eec(cue);
+    WaitFrames(10);
+    object->motion_flags = 0;
+}

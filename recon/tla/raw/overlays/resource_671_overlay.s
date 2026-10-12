@@ -5,6 +5,7 @@
 	.section .text.x020080b6,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x020080b8,"ax",%progbits
+	.balign 4
 	.global Func_020000b8
 	.thumb_func
 Func_020000b8:
@@ -237,6 +238,7 @@ Func_020000b8:
 .L_0200827c:
 	.4byte 0xffff0000
 	.section .text.x020082dc,"ax",%progbits
+	.balign 4
 	.global Func_020002dc
 	.thumb_func
 Func_020002dc:
@@ -311,6 +313,7 @@ Func_020002dc:
 .L_02008358:
 	.4byte Data_02005eec
 	.section .text.x02008398,"ax",%progbits
+	.balign 4
 	.global Func_02000398
 	.thumb_func
 Func_02000398:
@@ -369,6 +372,7 @@ Func_02000398:
 .L_02008404:
 	.4byte Data_02005af0
 	.section .text.x0200847c,"ax",%progbits
+	.balign 4
 	.global Func_0200047c
 	.thumb_func
 Func_0200047c:
@@ -403,6 +407,7 @@ Func_0200047c:
 	movs r0, #1
 	pop {r5, pc}
 	.section .text.x020084b8,"ax",%progbits
+	.balign 4
 	.global Func_020004b8
 	.thumb_func
 Func_020004b8:
@@ -490,6 +495,7 @@ Func_020004b8:
 .L_0200854c:
 	.4byte Data_02006a90
 	.section .text.x02008550,"ax",%progbits
+	.balign 4
 	.global Func_02000550
 	.thumb_func
 Func_02000550:
@@ -541,6 +547,7 @@ Func_02000550:
 .L_020085b0:
 	.4byte Data_02006b38
 	.section .text.x02008624,"ax",%progbits
+	.balign 4
 	.global Func_02000624
 	.thumb_func
 Func_02000624:
@@ -655,6 +662,7 @@ Func_02000740:
 .L_02008780:
 	.4byte Data_02005af0
 	.section .text.x02008784,"ax",%progbits
+	.balign 4
 	.global Func_02000784
 	.thumb_func
 Func_02000784:
@@ -903,6 +911,7 @@ Func_02000784:
 .L_02008974:
 	.4byte 0xffffeaab
 	.section .text.x02008978,"ax",%progbits
+	.balign 4
 	.global Func_02000978
 	.thumb_func
 Func_02000978:
@@ -994,6 +1003,7 @@ Func_02000978:
 .L_02008a1c:
 	.4byte 0xfffe0000
 	.section .text.x02008a20,"ax",%progbits
+	.balign 4
 	.global Func_02000a20
 	.thumb_func
 Func_02000a20:
@@ -1080,6 +1090,7 @@ Func_02000a20:
 .L_02008ad0:
 	.4byte 0xfffe8000
 	.section .text.x02008ad4,"ax",%progbits
+	.balign 4
 	.global Func_02000ad4
 	.thumb_func
 Func_02000ad4:
@@ -1267,6 +1278,7 @@ Func_02000ad4:
 .L_02008c34:
 	.4byte 0x00000076
 	.section .text.x02008cf0,"ax",%progbits
+	.balign 4
 	.global Func_02000cf0
 	.thumb_func
 Func_02000cf0:
@@ -1658,6 +1670,7 @@ Func_02000fc0:
 .L_02009120:
 	.4byte gPartyState
 	.section .text.x02009124,"ax",%progbits
+	.balign 4
 	.global Func_02001124
 	.thumb_func
 Func_02001124:
@@ -1745,6 +1758,7 @@ Func_02001124:
 .L_020091b8:
 	.4byte Data_02006e78
 	.section .text.x020091bc,"ax",%progbits
+	.balign 4
 	.global Func_020011bc
 	.thumb_func
 Func_020011bc:
@@ -1832,6 +1846,7 @@ Func_020011bc:
 .L_02009280:
 	.4byte 0xfff40000
 	.section .text.x02009630,"ax",%progbits
+	.balign 4
 	.global Func_02001630
 	.thumb_func
 Func_02001630:
@@ -1945,6 +1960,7 @@ Func_02001630:
 .L_02009724:
 	.4byte gInput
 	.section .text.x02009728,"ax",%progbits
+	.balign 4
 	.global Func_02001728
 	.thumb_func
 Func_02001728:
@@ -1977,6 +1993,7 @@ Func_02001728:
 .L_02009768:
 	.4byte 0x00019999
 	.section .text.x0200976c,"ax",%progbits
+	.balign 4
 	.global Func_0200176c
 	.thumb_func
 Func_0200176c:
@@ -2025,81 +2042,8 @@ Func_0200176c:
 	.4byte gPartyState
 .L_020097d8:
 	.4byte 0x00019999
-	.section .text.x020098ec,"ax",%progbits
-	.global Func_020018ec
-	.thumb_func
-Func_020018ec:
-	push {lr}
-	ldr r3, .L_0200991c
-	movs r1, #240
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, .L_02009920
-	cmp r2, r3
-	bne .L_0200990a
-	movs r1, #8
-	movs r2, #1
-	bl Func_02001950
-	b .L_02009918
-.L_0200990a:
-	ldr r3, .L_02009924
-	cmp r2, r3
-	bne .L_02009918
-	movs r1, #29
-	movs r2, #2
-	bl Func_02001950
-.L_02009918:
-	pop {pc}
-	.2byte 0x0000
-.L_0200991c:
-	.4byte gPartyState
-.L_02009920:
-	.4byte 0x00000073
-.L_02009924:
-	.4byte 0x00000074
-	.section .text.x02009950,"ax",%progbits
-	.balign 4
-	.global Func_02001950
-	.thumb_func
-Func_02001950:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r6, r2, #0
-	movs r5, #0
-	mov r8, r0
-	adds r7, r1, #0
-	cmp r5, r6
-	bcs .L_02009988
-.L_02009962:
-	adds r0, r7, r5
-	bl Object_GetById
-	mov r3, r8
-	adds r0, #35
-	adds r1, r5, #1
-	cmp r3, #0
-	beq .L_0200997a
-	ldrb r2, [r0]
-	movs r3, #239
-	ands r3, r2
-	b .L_02009980
-.L_0200997a:
-	ldrb r2, [r0]
-	movs r3, #16
-	orrs r3, r2
-.L_02009980:
-	strb r3, [r0]
-	adds r5, r1, #0
-	cmp r5, r6
-	bcc .L_02009962
-.L_02009988:
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
 	.section .text.x020099d0,"ax",%progbits
+	.balign 4
 	.global Func_020019d0
 	.thumb_func
 Func_020019d0:
@@ -2165,6 +2109,7 @@ Func_020019d0:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 	.section .text.x02009c10,"ax",%progbits
+	.balign 4
 	.global Func_02001c10
 	.thumb_func
 Func_02001c10:
@@ -2741,6 +2686,7 @@ Func_02001c10:
 .L_0200a070:
 	.4byte Func_02001b98
 	.section .text.x0200a074,"ax",%progbits
+	.balign 4
 	.global Func_02002074
 	.thumb_func
 Func_02002074:
@@ -2776,40 +2722,8 @@ Func_02002074:
 	.2byte 0x0000
 .L_0200a0ac:
 	.4byte 0xff180000
-	.section .text.x0200a0b0,"ax",%progbits
-	.global Func_020020b0
-	.thumb_func
-Func_020020b0:
-	push {r5, r6, lr}
-	mov r6, r10
-	mov r5, r8
-	push {r5, r6}
-	mov r10, r2
-	adds r5, r1, #0
-	bl Object_GetById
-	adds r6, r0, #0
-	ldr r3, [r6, #80]
-	ldr r2, .L_0200a0ec
-	mov r8, r3
-	adds r5, #1
-	movs r3, #3
-	ands r5, r3
-	ldrsb r1, [r2, r5]
-	bl Func_02005624
-	adds r6, #92
-	movs r3, #2
-	strb r3, [r6]
-	mov r0, r8
-	mov r1, r10
-	bl Func_0200561c
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_0200a0ec:
-	.4byte Data_02005940
 	.section .text.x0200a0f0,"ax",%progbits
+	.balign 4
 	.global Func_020020f0
 	.thumb_func
 Func_020020f0:
@@ -3042,6 +2956,7 @@ Func_020020f0:
 .L_0200a2cc:
 	.4byte 0x0000007b
 	.section .text.x0200a2d0,"ax",%progbits
+	.balign 4
 	.global Func_020022d0
 	.thumb_func
 Func_020022d0:
@@ -3097,6 +3012,7 @@ Func_020022d0:
 	.section .text.x0200a392,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200a394,"ax",%progbits
+	.balign 4
 	.global Func_02002394
 	.thumb_func
 Func_02002394:
@@ -3289,6 +3205,7 @@ Func_02002394:
 .L_0200a538:
 	.4byte 0x01090001
 	.section .text.x0200a53c,"ax",%progbits
+	.balign 4
 	.global Func_0200253c
 	.thumb_func
 Func_0200253c:
@@ -3562,6 +3479,7 @@ Func_0200253c:
 .L_0200a7c8:
 	.4byte 0x0004cccc
 	.section .text.x0200a7cc,"ax",%progbits
+	.balign 4
 	.global Func_020027cc
 	.thumb_func
 Func_020027cc:
@@ -3831,6 +3749,7 @@ Func_020027cc:
 .L_0200aa60:
 	.4byte Data_02005ca0
 	.section .text.x0200aa64,"ax",%progbits
+	.balign 4
 	.global Func_02002a64
 	.thumb_func
 Func_02002a64:
@@ -4371,6 +4290,7 @@ Func_02002a64:
 .L_0200af6c:
 	.4byte Data_02005c40
 	.section .text.x0200af70,"ax",%progbits
+	.balign 4
 	.global Func_02002f70
 	.thumb_func
 Func_02002f70:
@@ -4774,6 +4694,7 @@ Func_02002f70:
 .L_0200b334:
 	.4byte MsgGabombaSawEnergyFlow
 	.section .text.x0200b398,"ax",%progbits
+	.balign 4
 	.global Func_02003398
 	.thumb_func
 Func_02003398:
@@ -4898,52 +4819,8 @@ Func_02003398:
 	.4byte 0x00000079
 .L_0200b490:
 	.4byte 0x0000007b
-	.section .text.x0200b494,"ax",%progbits
-	.global Func_02003494
-	.thumb_func
-Func_02003494:
-	push {lr}
-	ldr r1, .L_0200b4e4
-	movs r0, #240
-	lsls r0, r0, #1
-	adds r3, r1, r0
-	movs r0, #0
-	ldrsh r2, [r3, r0]
-	ldr r3, .L_0200b4e8
-	cmp r2, r3
-	bne .L_0200b4e0
-	movs r2, #241
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r0, #0
-	ldrsh r3, [r3, r0]
-	cmp r3, #1
-	bne .L_0200b4e0
-	movs r0, #10
-	adds r0, #255
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_0200b4e0
-	movs r0, #128
-	lsls r0, r0, #4
-	adds r0, #205
-	bl GameFlag_ClearBit
-	movs r0, #128
-	lsls r0, r0, #4
-	adds r0, #206
-	bl GameFlag_ClearBit
-	movs r0, #250
-	lsls r0, r0, #3
-	adds r0, #255
-	bl GameFlag_ClearBit
-.L_0200b4e0:
-	movs r0, #0
-	pop {pc}
-.L_0200b4e4:
-	.4byte gPartyState
-.L_0200b4e8:
-	.4byte 0x0000007b
 	.section .text.x0200b4f4,"ax",%progbits
+	.balign 4
 	.global Func_020034f4
 	.thumb_func
 Func_020034f4:
@@ -5024,6 +4901,7 @@ Func_020034f4:
 .L_0200b598:
 	.4byte Data_02005d7c
 	.section .text.x0200b59c,"ax",%progbits
+	.balign 4
 	.global Func_0200359c
 	.thumb_func
 Func_0200359c:
@@ -5066,19 +4944,8 @@ Func_0200359c:
 	.2byte 0x0000
 .L_0200b5ec:
 	.4byte gPartyState
-	.section .text.x0200b5f0,"ax",%progbits
-	.global Func_020035f0
-	.thumb_func
-Func_020035f0:
-	push {lr}
-	bl Func_02005824
-	movs r1, #8
-	movs r2, #9
-	movs r0, #0
-	bl Func_0200582c
-	pop {pc}
-	.2byte 0x0000
 	.section .text.x0200b634,"ax",%progbits
+	.balign 4
 	.global Func_02003634
 	.thumb_func
 Func_02003634:
@@ -5310,6 +5177,7 @@ Func_02003634:
 .L_0200b864:
 	.4byte Data_02005d8c
 	.section .text.x0200b8ac,"ax",%progbits
+	.balign 4
 	.global Func_020038ac
 	.thumb_func
 Func_020038ac:
@@ -5343,7 +5211,7 @@ Func_020038ac:
 .L_0200b8ec:
 	.4byte gSceneState
 .L_0200b8f0:
-	.4byte Data_02005948
+	.4byte Field_CachedTilesA
 	.section .text.x0200b974,"ax",%progbits
 	.balign 4
 	.global Func_02003974
@@ -5474,6 +5342,7 @@ Func_02003974:
 .L_0200ba60:
 	.4byte gSceneState
 	.section .text.x0200ba64,"ax",%progbits
+	.balign 4
 	.global Func_02003a64
 	.thumb_func
 Func_02003a64:
@@ -6170,6 +6039,7 @@ Func_02003a64:
 .L_0200bfbc:
 	.4byte .L_0200bf34
 	.section .text.x0200bfc0,"ax",%progbits
+	.balign 4
 	.global Func_02003fc0
 	.thumb_func
 Func_02003fc0:
@@ -6486,6 +6356,7 @@ Func_02003fc0:
 .L_0200c220:
 	.4byte Data_02005ac0 + 0x1
 	.section .text.x0200c288,"ax",%progbits
+	.balign 4
 	.global Func_02004288
 	.thumb_func
 Func_02004288:
@@ -6616,6 +6487,7 @@ Func_02004288:
 .L_0200c37c:
 	.4byte gSceneState
 	.section .text.x0200c3ec,"ax",%progbits
+	.balign 4
 	.global Func_020043ec
 	.thumb_func
 Func_020043ec:
@@ -6723,6 +6595,7 @@ Func_020043ec:
 .L_0200c4b0:
 	.4byte gSceneState
 	.section .text.x0200c4d0,"ax",%progbits
+	.balign 4
 	.global Func_020044d0
 	.thumb_func
 Func_020044d0:
@@ -6775,6 +6648,7 @@ Func_020044d0:
 .L_0200c52c:
 	.4byte gSceneState
 	.section .text.x0200c530,"ax",%progbits
+	.balign 4
 	.global Func_02004530
 	.thumb_func
 Func_02004530:
@@ -6857,47 +6731,8 @@ Func_02004530:
 	.4byte gSceneState
 .L_0200c5d4:
 	.4byte 0xfffffccd
-	.section .text.x0200c5d8,"ax",%progbits
-	.global Func_020045d8
-	.thumb_func
-Func_020045d8:
-	push {r5, lr}
-	ldr r1, .L_0200c61c
-	movs r0, #181
-	lsls r0, r0, #1
-	adds r5, r1, r0
-	movs r3, #0
-	ldrsb r3, [r5, r3]
-	sub sp, #8
-	cmp r3, #0
-	beq .L_0200c618
-	movs r2, #182
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r0, #0
-	ldrsh r2, [r3, r0]
-	movs r0, #183
-	lsls r0, r0, #1
-	adds r3, r1, r0
-	movs r1, #0
-	ldrsh r3, [r3, r1]
-	adds r2, #3
-	subs r3, #2
-	str r2, [sp, #0]
-	str r3, [sp, #4]
-	movs r0, #1
-	movs r3, #1
-	movs r1, #12
-	movs r2, #1
-	bl Func_0200567c
-	movs r3, #0
-	strb r3, [r5]
-.L_0200c618:
-	add sp, #8
-	pop {r5, pc}
-.L_0200c61c:
-	.4byte gSceneState
 	.section .text.x0200c620,"ax",%progbits
+	.balign 4
 	.global Func_02004620
 	.thumb_func
 Func_02004620:
@@ -6980,47 +6815,8 @@ Func_02004620:
 	pop {r5, r6, pc}
 .L_0200c6c4:
 	.4byte gSceneState
-	.section .text.x0200c6c8,"ax",%progbits
-	.global Func_020046c8
-	.thumb_func
-Func_020046c8:
-	push {r5, lr}
-	ldr r1, .L_0200c70c
-	movs r0, #108
-	adds r0, #255
-	adds r5, r1, r0
-	movs r3, #0
-	ldrsb r3, [r5, r3]
-	sub sp, #8
-	cmp r3, #0
-	beq .L_0200c708
-	movs r2, #182
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r0, #0
-	ldrsh r2, [r3, r0]
-	movs r0, #183
-	lsls r0, r0, #1
-	adds r3, r1, r0
-	movs r1, #0
-	ldrsh r3, [r3, r1]
-	adds r2, #7
-	subs r3, #2
-	str r2, [sp, #0]
-	str r3, [sp, #4]
-	movs r0, #0
-	movs r3, #1
-	movs r1, #12
-	movs r2, #1
-	bl Func_0200567c
-	movs r3, #0
-	strb r3, [r5]
-.L_0200c708:
-	add sp, #8
-	pop {r5, pc}
-.L_0200c70c:
-	.4byte gSceneState
 	.section .text.x0200c710,"ax",%progbits
+	.balign 4
 	.global Func_02004710
 	.thumb_func
 Func_02004710:
@@ -7229,6 +7025,7 @@ Func_02004710:
 .L_0200c8a0:
 	.4byte 0x40002000
 	.section .text.x0200c8a4,"ax",%progbits
+	.balign 4
 	.global Func_020048a4
 	.thumb_func
 Func_020048a4:
@@ -7300,6 +7097,7 @@ Func_020048a4:
 .L_0200c934:
 	.4byte IwramClearWords
 	.section .text.x0200c938,"ax",%progbits
+	.balign 4
 	.global Func_02004938
 	.thumb_func
 Func_02004938:
@@ -7874,6 +7672,7 @@ Func_02004938:
 .L_0200cd44:
 	.4byte Data_02006ec0
 	.section .text.x0200cd48,"ax",%progbits
+	.balign 4
 	.global Func_02004d48
 	.thumb_func
 Func_02004d48:
@@ -8123,6 +7922,7 @@ Func_02004d48:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 	.section .text.x0200cf84,"ax",%progbits
+	.balign 4
 	.global Func_02004f84
 	.thumb_func
 Func_02004f84:
@@ -8197,6 +7997,7 @@ Func_02004f84:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 	.section .text.x0200d090,"ax",%progbits
+	.balign 4
 	.global Func_02005090
 	.thumb_func
 Func_02005090:
@@ -8390,6 +8191,7 @@ Func_02005090:
 .L_0200d20c:
 	.4byte 0xffff0000
 	.section .text.x0200d2a4,"ax",%progbits
+	.balign 4
 	.global Func_020052a4
 	.thumb_func
 Func_020052a4:
@@ -8465,6 +8267,7 @@ Func_020052a4:
 .L_0200d338:
 	.4byte Func_0200525c
 	.section .text.x0200d3bc,"ax",%progbits
+	.balign 4
 	.global Func_020053bc
 	.thumb_func
 Func_020053bc:
@@ -8522,6 +8325,7 @@ Func_020053bc:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 	.section .text.x0200d428,"ax",%progbits
+	.balign 4
 	.global Func_02005428
 	.thumb_func
 Func_02005428:
@@ -8594,6 +8398,7 @@ Func_02005428:
 .L_0200d4a8:
 	.4byte 0xffffe100
 	.section .text.x0200d4ac,"ax",%progbits
+	.balign 4
 	.global Func_020054ac
 	.thumb_func
 Func_020054ac:
@@ -8680,1611 +8485,6 @@ Func_020054ac:
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, r7, pc}
-	.section .rodata.x0200d85c,"a",%progbits
-.L_0200d85c:
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x0000000d
-	.4byte 0x00000016
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000002
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000026
-	.4byte 0x00000011
-.L_0200d898:
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x0000000d
-	.4byte 0x0000002c
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000002
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000026
-	.4byte 0x00000011
-.L_0200d8d4:
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x0000000d
-	.4byte 0x0000007e
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000002
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000026
-	.4byte 0x00000011
-	.global Data_02005910
-Data_02005910:
-	.4byte 0x00020007
-	.4byte 0x00000200
-	.4byte 0x00020003
-	.4byte 0x00020004
-	.4byte 0x00000204
-	.4byte 0x00000203
-	.4byte 0x00020101
-	.4byte 0x00010201
-	.4byte 0x00020102
-	.4byte 0x00010202
-	.4byte 0x0000f800
-	.4byte 0x00000000
-	.global Data_02005940
-Data_02005940:
-	.4byte 0x00020103
-	.global Data_02005944
-Data_02005944:
-	.4byte 0x00000026
-	.global Data_02005948
-Data_02005948:
-	.4byte 0x06345d01
-	.4byte 0x08003b01
-	.4byte 0x2f010026
-	.4byte 0x5f1f7000
-	.4byte 0x667b0906
-	.4byte 0x01040901
-	.4byte 0x0e287800
-	.4byte 0x56053b3f
-	.4byte 0x5f6f080e
-	.4byte 0x08100800
-	.4byte 0xa1076601
-	.4byte 0x001d0800
-	.4byte 0x08071768
-	.4byte 0x660015bb
-	.4byte 0x0e020016
-	.4byte 0x66177000
-	.4byte 0x3b02080d
-	.4byte 0x020010df
-	.4byte 0x66128010
-	.4byte 0x01037a01
-	.4byte 0x04277910
-	.4byte 0xfb44013d
-	.4byte 0x02007800
-	.4byte 0x20590414
-	.4byte 0x57052700
-	.4byte 0x50002066
-	.4byte 0x20ff0016
-	.4byte 0x00162a00
-	.4byte 0x0016002e
-	.4byte 0x162a0020
-	.4byte 0x4e002000
-	.4byte 0x7f320040
-	.4byte 0x04aa023b
-	.4byte 0x02500006
-	.4byte 0xe7169207
-	.4byte 0x0010e103
-	.4byte 0x0301ff0d
-	.4byte 0x0c01e709
-	.4byte 0x5906dd03
-	.4byte 0x210a6118
-	.4byte 0xfd340030
-	.4byte 0x0403a425
-	.4byte 0x5f290630
-	.4byte 0x02490100
-	.4byte 0xf8063b58
-	.4byte 0x3b5704af
-	.4byte 0x163bb406
-	.4byte 0x0800200e
-	.4byte 0x283ea00f
-	.4byte 0x070820ff
-	.4byte 0x2e050010
-	.4byte 0x057807f8
-	.4byte 0x0a980488
-	.4byte 0xdd660ba8
-	.4byte 0x07080030
-	.4byte 0x38205f22
-	.4byte 0x33481706
-	.4byte 0x00603b58
-	.4byte 0x783ffe78
-	.4byte 0x08076918
-	.4byte 0x1f017900
-	.4byte 0x0a782700
-	.4byte 0x2aff5f11
-	.4byte 0x701f07a8
-	.4byte 0xef273000
-	.4byte 0x00505704
-	.4byte 0x4c002037
-	.4byte 0xf7000040
-	.4byte 0x0040002a
-	.4byte 0x1100206e
-	.4byte 0x403b0046
-	.4byte 0x00200000
-	.4byte 0x2a00402c
-	.4byte 0x244819f7
-	.4byte 0x2d004000
-	.4byte 0x043b0803
-	.4byte 0x05830722
-	.4byte 0x1817b705
-	.4byte 0x0028003b
-	.4byte 0x66015920
-	.4byte 0x00072260
-	.4byte 0x6805041a
-	.4byte 0x3f1b01ff
-	.4byte 0x06150458
-	.4byte 0x40182a2c
-	.4byte 0x8f000900
-	.4byte 0xe0130302
-	.4byte 0x0030cd0c
-	.4byte 0x00000002
-	.4byte 0x01020200
-	.4byte 0x07030301
-	.4byte 0x05060405
-	.4byte 0x09040607
-	.4byte 0x0a080809
-	.global Data_02005ac0
-Data_02005ac0:
-	.4byte 0x0000010a
-	.4byte 0x0000ff01
-	.global Data_02005ac8
-Data_02005ac8:
-	.4byte 0x050a00ff
-	.4byte 0x0c06030f
-	.4byte 0x0f0f0f09
-	.global Data_02005ad4
-Data_02005ad4:
-	.4byte 0x060a0502
-	.4byte 0x0a060107
-	.4byte 0x0702040a
-	.4byte 0x01050a04
-	.global Data_02005ae4
-Data_02005ae4:
-	.4byte .L_0200d85c
-	.4byte .L_0200d898
-	.4byte .L_0200d8d4
-	.global Data_02005af0
-Data_02005af0:
-	.4byte 0x00000000
-	.global Data_02005af4
-Data_02005af4:
-	.4byte 0x00000027
-	.4byte 0x00000002
-	.4byte 0x00000004
-	.4byte 0x01d80000
-	.4byte 0x00000000
-	.4byte 0x00b80000
-	.4byte 0x00000001
-	.4byte 0x00000027
-	.4byte 0x00000001
-	.4byte 0x00000011
-	.global Data_02005b1c
-Data_02005b1c:
-	.4byte 0x00000027
-	.4byte 0x00000002
-	.4byte 0x00000004
-	.4byte 0x01e80000
-	.4byte 0x00000000
-	.4byte 0x00b00000
-	.4byte 0x00000001
-	.4byte 0x00000027
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000016
-	.4byte 0x00000003
-	.4byte 0x00004000
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000011
-	.global Data_02005b60
-Data_02005b60:
-	.4byte 0x00000027
-	.4byte 0x00000002
-	.4byte 0x00000004
-	.4byte 0x01c80000
-	.4byte 0x00000000
-	.4byte 0x00b00000
-	.4byte 0x00000001
-	.4byte 0x00000027
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000016
-	.4byte 0x00000003
-	.4byte 0x00004000
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000011
-	.global Data_02005ba4
-Data_02005ba4:
-	.4byte 0x00000027
-	.4byte 0x00000002
-	.4byte 0x00000004
-	.4byte 0x01d00000
-	.4byte 0x00000000
-	.4byte 0x00d00000
-	.4byte 0x00000001
-	.4byte 0x00000027
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000016
-	.4byte 0x00000003
-	.4byte 0x00005000
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000011
-	.global Data_02005be8
-Data_02005be8:
-	.4byte 0x00000027
-	.4byte 0x00000002
-	.4byte 0x00000004
-	.4byte 0x01b00000
-	.4byte 0x00000000
-	.4byte 0x011e0000
-	.4byte 0x00000001
-	.4byte 0x00000004
-	.4byte 0x01b00000
-	.4byte 0x00000000
-	.4byte 0x01380000
-	.4byte 0x00000001
-	.4byte 0x00000027
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000016
-	.4byte 0x00000003
-	.4byte 0x00003000
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000011
-	.global Data_02005c40
-Data_02005c40:
-	.4byte 0x00000027
-	.4byte 0x00000002
-	.4byte 0x00000004
-	.4byte 0x015c0000
-	.4byte 0x00000000
-	.4byte 0x01380000
-	.4byte 0x00000001
-	.4byte 0x00000027
-	.4byte 0x00000001
-	.4byte 0x00000003
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000011
-	.global Data_02005c74
-Data_02005c74:
-	.4byte 0x00000016
-	.4byte 0x00000023
-	.4byte 0x0000c000
-	.4byte 0x00000016
-	.4byte 0x00000024
-	.4byte 0x0000e000
-	.4byte 0x00000016
-	.4byte 0x00000028
-	.4byte 0x00000000
-	.4byte 0x0000002e
-	.4byte Func_0200028c
-	.global Data_02005ca0
-Data_02005ca0:
-	.4byte 0x00000016
-	.4byte 0x00000023
-	.4byte 0x0000c000
-	.4byte 0x00000016
-	.4byte 0x00000024
-	.4byte 0x0000a000
-	.4byte 0x00000016
-	.4byte 0x00000028
-	.4byte 0x00000000
-	.4byte 0x0000002e
-	.4byte Func_0200028c
-	.global Data_02005ccc
-Data_02005ccc:
-	.4byte 0x00000027
-	.4byte 0x00000002
-	.4byte 0x00000004
-	.4byte 0x01d80000
-	.4byte 0x00000000
-	.4byte 0x01340000
-	.4byte 0x00000001
-	.4byte 0x00000004
-	.4byte 0x01b80000
-	.4byte 0x00000000
-	.4byte 0x01380000
-	.4byte 0x00000001
-	.4byte 0x00000027
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000016
-	.4byte 0x00000003
-	.4byte 0x00004000
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000011
-	.global Data_02005d24
-Data_02005d24:
-	.4byte 0x00000027
-	.4byte 0x00000002
-	.4byte 0x00000004
-	.4byte 0x01d80000
-	.4byte 0x00000000
-	.4byte 0x01340000
-	.4byte 0x00000001
-	.4byte 0x00000004
-	.4byte 0x01cc0000
-	.4byte 0x00000000
-	.4byte 0x01380000
-	.4byte 0x00000001
-	.4byte 0x00000027
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000016
-	.4byte 0x00000003
-	.4byte 0x00005000
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000011
-	.global Data_02005d7c
-Data_02005d7c:
-	.4byte 0x0002000c
-	.4byte 0x000d08ce
-	.4byte 0x08cf0002
-	.4byte 0x0000ffff
-	.global Data_02005d8c
-Data_02005d8c:
-	.4byte 0x00000024
-	.4byte 0x0000007a
-	.4byte 0x000000c9
-	.4byte 0x00000138
-	.4byte 0x000001af
-	.4byte 0x000001f8
-	.4byte 0x0000026b
-	.4byte 0x000002c8
-	.4byte 0x00000337
-	.4byte 0x0000038c
-	.4byte 0x0000041e
-	.4byte 0x00000461
-	.4byte 0x000004b7
-	.4byte 0x0000051f
-	.4byte 0x00000579
-	.4byte 0x00000613
-	.global gSceneEntrances
-gSceneEntrances:
-	.4byte 0xffff0000
-	.4byte 0x00000188
-	.4byte 0x40000098
-	.4byte 0xffff0000
-	.4byte 0xffffffff
-	.4byte 0x0000ffff
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_02005dfc
-Data_02005dfc:
-	.4byte 0x00100310
-	.4byte 0x03200050
-	.4byte 0x00600020
-	.4byte 0x0001ffff
-	.4byte 0x00300050
-	.4byte 0x00600170
-	.4byte 0x01800040
-	.4byte 0x0002ffff
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_02005e2c
-Data_02005e2c:
-	.4byte 0x001001d0
-	.4byte 0x01e000f0
-	.4byte 0x01000020
-	.4byte 0x0002ffff
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_02005e4c
-Data_02005e4c:
-	.4byte 0x00100210
-	.4byte 0x02200040
-	.4byte 0x00500020
-	.4byte 0x0002ffff
-	.4byte 0x00100060
-	.4byte 0x007000a0
-	.4byte 0x00b00020
-	.4byte 0x0003ffff
-	.4byte 0x001002a0
-	.4byte 0x02b000a0
-	.4byte 0x00b00020
-	.4byte 0x0004ffff
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_02005e8c
-Data_02005e8c:
-	.4byte 0x00100180
-	.4byte 0x01900070
-	.4byte 0x00800020
-	.4byte 0x0004ffff
-	.4byte 0x00100060
-	.4byte 0x00700090
-	.4byte 0x00a00020
-	.4byte 0x0005ffff
-	.4byte 0x001002a0
-	.4byte 0x02b00090
-	.4byte 0x00a00020
-	.4byte 0x0006ffff
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_02005ecc
-Data_02005ecc:
-	.4byte 0x001001b0
-	.4byte 0x01c001c0
-	.4byte 0x01d00020
-	.4byte 0x0004ffff
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_02005eec
-Data_02005eec:
-	.4byte 0x00100130
-	.4byte 0x01400090
-	.4byte 0x00a00020
-	.4byte 0x0002ffff
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global gSceneExits
-gSceneExits:
-	.4byte 0x0000007b
-	.4byte 0x1010306f
-	.4byte 0x0000086b
-	.4byte 0x10103072
-	.4byte 0xffffffff
-	.4byte 0x10201073
-	.4byte 0xffffffff
-	.4byte 0x00000073
-	.4byte 0x0010207b
-	.4byte 0x00201074
-	.4byte 0x00000074
-	.4byte 0x00102073
-	.4byte 0x00201075
-	.4byte 0x00302075
-	.4byte 0x00403075
-	.4byte 0x00000075
-	.4byte 0x00102074
-	.4byte 0x00203074
-	.4byte 0x00304074
-	.4byte 0x00401076
-	.4byte 0x00502076
-	.4byte 0x00603076
-	.4byte 0x00000076
-	.4byte 0x00104075
-	.4byte 0x00205075
-	.4byte 0x00306075
-	.4byte 0x00401077
-	.4byte 0x00507075
-	.4byte 0x00608075
-	.4byte 0x00000077
-	.4byte 0x00104076
-	.4byte 0x00201078
-	.4byte 0x00000079
-	.4byte 0x00102078
-	.4byte 0x00a0a07d
-	.4byte 0x00b0b07d
-	.4byte 0x00c0b072
-	.4byte 0x00d0c072
-	.4byte 0x00e0d072
-	.4byte 0x00f0e072
-	.4byte 0x0100f072
-	.4byte 0x0110a07d
-	.4byte 0x01206078
-	.4byte 0x000001ff
-.L_0200dfbc:
-	.4byte 0x0000002e
-	.4byte Func_02000364
-	.4byte 0x00000011
-.L_0200dfc8:
-	.4byte 0x0000002e
-	.4byte Func_02000408
-	.4byte 0x00000011
-	.global Data_02005fd4
-Data_02005fd4:
-	.4byte 0xffff0151
-	.4byte 0x00000001
-	.4byte 0x01d80000
-	.4byte 0x00000000
-	.4byte 0x00f80000
-	.4byte 0x00024000
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_02006004
-Data_02006004:
-	.4byte 0xffff0197
-	.4byte 0x00000001
-	.4byte 0x01280000
-	.4byte 0x00000000
-	.4byte 0x00580000
-	.4byte 0x00020000
-	.4byte 0xffff0197
-	.4byte .L_0200dfc8
-	.4byte 0x01480000
-	.4byte 0x00000000
-	.4byte 0x00580000
-	.4byte 0x00020000
-	.4byte 0xffff0197
-	.4byte 0x00000001
-	.4byte 0x02180000
-	.4byte 0x00000000
-	.4byte 0x00980000
-	.4byte 0x00020000
-	.4byte 0xffff0197
-	.4byte 0x00000001
-	.4byte 0x01e80000
-	.4byte 0x00000000
-	.4byte 0x00980000
-	.4byte 0x00020000
-	.4byte 0xffff0196
-	.4byte 0x00000001
-	.4byte 0x01480000
-	.4byte 0x00000000
-	.4byte 0x01e80000
-	.4byte 0x00020000
-	.4byte 0xffff0196
-	.4byte 0x00000001
-	.4byte 0x01880000
-	.4byte 0x00000000
-	.4byte 0x01e80000
-	.4byte 0x00020000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x01880000
-	.4byte 0x00000000
-	.4byte 0x00480000
-	.4byte 0x00020000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x01e80000
-	.4byte 0x00000000
-	.4byte 0x00480000
-	.4byte 0x01028000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x00f80000
-	.4byte 0x00000000
-	.4byte 0x00a80000
-	.4byte 0x01020000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x01080000
-	.4byte 0x00000000
-	.4byte 0x00f80000
-	.4byte 0x01020000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x02080000
-	.4byte 0x00000000
-	.4byte 0x00f80000
-	.4byte 0x01020000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x01680000
-	.4byte 0x00000000
-	.4byte 0x02080000
-	.4byte 0x01020000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x01880000
-	.4byte 0x00000000
-	.4byte 0x02280000
-	.4byte 0x01020000
-	.4byte 0xffff0165
-	.4byte 0x00000001
-	.4byte 0x01580000
-	.4byte 0x00000000
-	.4byte 0x00580000
-	.4byte 0x00028000
-	.4byte 0xffff0165
-	.4byte 0x00000001
-	.4byte 0x01280000
-	.4byte 0x00000000
-	.4byte 0x00c80000
-	.4byte 0x01028000
-	.4byte 0xffff0165
-	.4byte 0x00000001
-	.4byte 0x02080000
-	.4byte 0x00000000
-	.4byte 0x00d80000
-	.4byte 0x01028000
-	.4byte 0xffff0165
-	.4byte 0x00000001
-	.4byte 0x01680000
-	.4byte 0x00000000
-	.4byte 0x02280000
-	.4byte 0x01028000
-	.4byte 0xffff0165
-	.4byte 0x00000001
-	.4byte 0x01c80000
-	.4byte 0x00000000
-	.4byte 0x01e80000
-	.4byte 0x01028000
-	.4byte 0xffff0165
-	.4byte .L_0200dfbc
-	.4byte 0x01680000
-	.4byte 0x00000000
-	.4byte 0x01e80000
-	.4byte 0x00020000
-	.4byte 0xffff016a
-	.4byte 0x00000001
-	.4byte 0x01600000
-	.4byte 0x00000000
-	.4byte 0x00a80000
-	.4byte 0x00028000
-	.4byte 0xffff016a
-	.4byte 0x00000001
-	.4byte 0x01900000
-	.4byte 0x00000000
-	.4byte 0x00a80000
-	.4byte 0x01020000
-	.4byte 0xffff0151
-	.4byte 0x00000001
-	.4byte 0x00680000
-	.4byte 0x00000000
-	.4byte 0x00a80000
-	.4byte 0x00024000
-	.4byte 0xffff0151
-	.4byte 0x00000001
-	.4byte 0x02a80000
-	.4byte 0x00000000
-	.4byte 0x00a80000
-	.4byte 0x01024000
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_02006244
-Data_02006244:
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x00380000
-	.4byte 0x00000000
-	.4byte 0x00a80000
-	.4byte 0x00020000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x00980000
-	.4byte 0x00000000
-	.4byte 0x00980000
-	.4byte 0x01028000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x00880000
-	.4byte 0x00000000
-	.4byte 0x00c80000
-	.4byte 0x01020000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x01580000
-	.4byte 0x00000000
-	.4byte 0x00780000
-	.4byte 0x01020000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x01e80000
-	.4byte 0x00000000
-	.4byte 0x00d80000
-	.4byte 0x01020000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x02780000
-	.4byte 0x00000000
-	.4byte 0x00980000
-	.4byte 0x01020000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x02d80000
-	.4byte 0x00000000
-	.4byte 0x01080000
-	.4byte 0x01028000
-	.4byte 0xffff0165
-	.4byte 0x00000001
-	.4byte 0x00380000
-	.4byte 0x00000000
-	.4byte 0x00e80000
-	.4byte 0x00020000
-	.4byte 0xffff0165
-	.4byte 0x00000001
-	.4byte 0x00f80000
-	.4byte 0x00000000
-	.4byte 0x00a80000
-	.4byte 0x01020000
-	.4byte 0xffff0165
-	.4byte 0x00000001
-	.4byte 0x01080000
-	.4byte 0x00000000
-	.4byte 0x00f80000
-	.4byte 0x01028000
-	.4byte 0xffff0165
-	.4byte 0x00000001
-	.4byte 0x01e80000
-	.4byte 0x00000000
-	.4byte 0x00a80000
-	.4byte 0x01020000
-	.4byte 0xffff0165
-	.4byte 0x00000001
-	.4byte 0x02c80000
-	.4byte 0x00000000
-	.4byte 0x00c80000
-	.4byte 0x01020000
-	.4byte 0xffff0167
-	.4byte 0x00000001
-	.4byte 0x00580000
-	.4byte 0x00000000
-	.4byte 0x00b80000
-	.4byte 0x00020000
-	.4byte 0xffff0167
-	.4byte 0x00000001
-	.4byte 0x00680000
-	.4byte 0x00000000
-	.4byte 0x01080000
-	.4byte 0x01028000
-	.4byte 0xffff0167
-	.4byte 0x00000001
-	.4byte 0x01980000
-	.4byte 0x00000000
-	.4byte 0x01280000
-	.4byte 0x01020000
-	.4byte 0xffff0167
-	.4byte 0x00000001
-	.4byte 0x02980000
-	.4byte 0x00000000
-	.4byte 0x00a80000
-	.4byte 0x01020000
-	.4byte 0xffff0167
-	.4byte 0x00000001
-	.4byte 0x02980000
-	.4byte 0x00000000
-	.4byte 0x00f80000
-	.4byte 0x01020000
-	.4byte 0xffff0168
-	.4byte 0x00000001
-	.4byte 0x00980000
-	.4byte 0x00000000
-	.4byte 0x00e80000
-	.4byte 0x00020000
-	.4byte 0xffff0168
-	.4byte 0x00000001
-	.4byte 0x01280000
-	.4byte 0x00000000
-	.4byte 0x00d80000
-	.4byte 0x01020000
-	.4byte 0xffff0168
-	.4byte 0x00000001
-	.4byte 0x01680000
-	.4byte 0x00000000
-	.4byte 0x00f80000
-	.4byte 0x01020000
-	.4byte 0xffff0168
-	.4byte 0x00000001
-	.4byte 0x02780000
-	.4byte 0x00000000
-	.4byte 0x00d80000
-	.4byte 0x01020000
-	.4byte 0xffff0169
-	.4byte 0x00000001
-	.4byte 0x01a80000
-	.4byte 0x00000000
-	.4byte 0x00880000
-	.4byte 0x00020000
-	.4byte 0xffff0169
-	.4byte 0x00000001
-	.4byte 0x01d80000
-	.4byte 0x00000000
-	.4byte 0x00f80000
-	.4byte 0x01020000
-	.4byte 0xffff0197
-	.4byte 0x00000001
-	.4byte 0x01a80000
-	.4byte 0x00000000
-	.4byte 0x00c80000
-	.4byte 0x00024000
-	.4byte 0xffff0197
-	.4byte 0x00000001
-	.4byte 0x01780000
-	.4byte 0x00000000
-	.4byte 0x00c80000
-	.4byte 0x01024000
-	.4byte 0x003900f3
-	.4byte 0x00000001
-	.4byte 0x01f80000
-	.4byte 0x00000000
-	.4byte 0x00d80000
-	.4byte 0x00004000
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_020064cc
-Data_020064cc:
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x00380000
-	.4byte 0x00000000
-	.4byte 0x00980000
-	.4byte 0x00020000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x00280000
-	.4byte 0x00000000
-	.4byte 0x00b80000
-	.4byte 0x01028000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x00880000
-	.4byte 0x00000000
-	.4byte 0x00a80000
-	.4byte 0x01028000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x01380000
-	.4byte 0x00000000
-	.4byte 0x00780000
-	.4byte 0x01028000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x01680000
-	.4byte 0x00000000
-	.4byte 0x00980000
-	.4byte 0x01020000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x01680000
-	.4byte 0x00000000
-	.4byte 0x00b80000
-	.4byte 0x01028000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x01b80000
-	.4byte 0x00000000
-	.4byte 0x00b80000
-	.4byte 0x01020000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x01e80000
-	.4byte 0x00000000
-	.4byte 0x00880000
-	.4byte 0x01020000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x02080000
-	.4byte 0x00000000
-	.4byte 0x00880000
-	.4byte 0x01028000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x01580000
-	.4byte 0x00000000
-	.4byte 0x01380000
-	.4byte 0x01020000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x01480000
-	.4byte 0x00000000
-	.4byte 0x01980000
-	.4byte 0x01020000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x02a80000
-	.4byte 0x00000000
-	.4byte 0x00e80000
-	.4byte 0x01028000
-	.4byte 0xffff0166
-	.4byte 0x00000001
-	.4byte 0x02d80000
-	.4byte 0x00000000
-	.4byte 0x00f80000
-	.4byte 0x01028000
-	.4byte 0xffff0165
-	.4byte 0x00000001
-	.4byte 0x00480000
-	.4byte 0x00000000
-	.4byte 0x00e80000
-	.4byte 0x00020000
-	.4byte 0xffff0165
-	.4byte 0x00000001
-	.4byte 0x01380000
-	.4byte 0x00000000
-	.4byte 0x00980000
-	.4byte 0x01020000
-	.4byte 0xffff0165
-	.4byte 0x00000001
-	.4byte 0x01880000
-	.4byte 0x00000000
-	.4byte 0x00b80000
-	.4byte 0x01020000
-	.4byte 0xffff0165
-	.4byte 0x00000001
-	.4byte 0x01b80000
-	.4byte 0x00000000
-	.4byte 0x00880000
-	.4byte 0x01028000
-	.4byte 0xffff0165
-	.4byte 0x00000001
-	.4byte 0x01480000
-	.4byte 0x00000000
-	.4byte 0x01780000
-	.4byte 0x01028000
-	.4byte 0xffff0165
-	.4byte 0x00000001
-	.4byte 0x01880000
-	.4byte 0x00000000
-	.4byte 0x01a80000
-	.4byte 0x01020000
-	.4byte 0xffff0165
-	.4byte 0x00000001
-	.4byte 0x02880000
-	.4byte 0x00000000
-	.4byte 0x00a80000
-	.4byte 0x01028000
-	.4byte 0xffff0165
-	.4byte 0x00000001
-	.4byte 0x02a80000
-	.4byte 0x00000000
-	.4byte 0x01080000
-	.4byte 0x01020000
-	.4byte 0xffff0167
-	.4byte 0x00000001
-	.4byte 0x00c80000
-	.4byte 0x00000000
-	.4byte 0x00e80000
-	.4byte 0x00020000
-	.4byte 0xffff0167
-	.4byte 0x00000001
-	.4byte 0x01380000
-	.4byte 0x00000000
-	.4byte 0x00c80000
-	.4byte 0x01028000
-	.4byte 0xffff0167
-	.4byte 0x00000001
-	.4byte 0x02080000
-	.4byte 0x00000000
-	.4byte 0x00a80000
-	.4byte 0x01020000
-	.4byte 0xffff0167
-	.4byte 0x00000001
-	.4byte 0x01780000
-	.4byte 0x00000000
-	.4byte 0x01480000
-	.4byte 0x01020000
-	.4byte 0xffff0167
-	.4byte 0x00000001
-	.4byte 0x02c80000
-	.4byte 0x00000000
-	.4byte 0x00c80000
-	.4byte 0x01028000
-	.4byte 0xffff0168
-	.4byte 0x00000001
-	.4byte 0x00780000
-	.4byte 0x00000000
-	.4byte 0x00f80000
-	.4byte 0x00020000
-	.4byte 0xffff0168
-	.4byte 0x00000001
-	.4byte 0x00980000
-	.4byte 0x00000000
-	.4byte 0x00c80000
-	.4byte 0x01020000
-	.4byte 0xffff0168
-	.4byte 0x00000001
-	.4byte 0x02380000
-	.4byte 0x00000000
-	.4byte 0x00d80000
-	.4byte 0x01020000
-	.4byte 0xffff0169
-	.4byte 0x00000001
-	.4byte 0x01c80000
-	.4byte 0x00000000
-	.4byte 0x00d80000
-	.4byte 0x00020000
-	.4byte 0xffff0169
-	.4byte 0x00000001
-	.4byte 0x01e80000
-	.4byte 0x00000000
-	.4byte 0x00d80000
-	.4byte 0x01020000
-	.4byte 0x0a6c0084
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x0002c000
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_020067e4
-Data_020067e4:
-	.4byte 0xffff0197
-	.4byte 0x00000001
-	.4byte 0x01380000
-	.4byte 0x00000000
-	.4byte 0x00e80000
-	.4byte 0x00020000
-	.4byte 0xffff0197
-	.4byte 0x00000001
-	.4byte 0x01680000
-	.4byte 0x00000000
-	.4byte 0x00e80000
-	.4byte 0x00020000
-	.4byte 0xffff0167
-	.4byte 0x00000001
-	.4byte 0x01880000
-	.4byte 0x00000000
-	.4byte 0x00980000
-	.4byte 0x00020000
-	.4byte 0xffff0167
-	.4byte 0x00000001
-	.4byte 0x01680000
-	.4byte 0x00000000
-	.4byte 0x01280000
-	.4byte 0x01020000
-	.4byte 0xffff016a
-	.4byte 0x00000001
-	.4byte 0x01a00000
-	.4byte 0x00000000
-	.4byte 0x00d80000
-	.4byte 0x00028000
-	.4byte 0xffff016a
-	.4byte 0x00000001
-	.4byte 0x01d00000
-	.4byte 0x00000000
-	.4byte 0x00d80000
-	.4byte 0x01020000
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_0200e88c
-Data_0200e88c:
-	.4byte 0x0000002e
-	.4byte Func_0200047c
-	.4byte 0x00000011
-	.global Data_02006898
-Data_02006898:
-	.4byte 0xffff0178
-	.4byte 0x00000001
-	.4byte 0x01880000
-	.4byte 0x00000000
-	.4byte 0x00e80000
-	.4byte 0x00024000
-	.4byte 0xffff0176
-	.4byte 0x00000001
-	.4byte 0x01480000
-	.4byte 0x00000000
-	.4byte 0x01280000
-	.4byte 0x00024000
-	.4byte 0xffff0176
-	.4byte 0x00000001
-	.4byte 0x01c80000
-	.4byte 0x00000000
-	.4byte 0x01280000
-	.4byte 0x00024000
-	.4byte 0xffff015d
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00024000
-	.4byte 0xffff015d
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00024000
-	.4byte 0xffff015d
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00024000
-	.4byte 0xffff015d
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00024000
-	.4byte 0xffff0196
-	.4byte 0x00000001
-	.4byte 0x01880000
-	.4byte 0x00000000
-	.4byte 0x00980000
-	.4byte 0x00024000
-	.4byte 0xffff019b
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00080000
-	.4byte 0x00000000
-	.4byte 0x00024000
-	.4byte 0xffff019b
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00080000
-	.4byte 0x00000000
-	.4byte 0x01024000
-	.4byte 0xffff019b
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00080000
-	.4byte 0x00000000
-	.4byte 0x01024000
-	.4byte 0xffff019b
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00080000
-	.4byte 0x00000000
-	.4byte 0x01024000
-	.4byte 0xffff019b
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00080000
-	.4byte 0x00000000
-	.4byte 0x01024000
-	.4byte 0xffff019b
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00080000
-	.4byte 0x00000000
-	.4byte 0x01024000
-	.4byte 0xffff019b
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00080000
-	.4byte 0x00000000
-	.4byte 0x01024000
-	.4byte 0xffff0038
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00024000
-	.4byte 0xffff001a
-	.4byte 0x00000001
-	.4byte 0x01880000
-	.4byte 0x00000000
-	.4byte 0x01ae0000
-	.4byte 0x00024000
-	.4byte 0xffff0005
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00024000
-	.4byte 0xffff0006
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00024000
-	.4byte 0xffff0007
-	.4byte 0x00000001
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00024000
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_02006a90
-Data_02006a90:
-	.4byte 0xffff016a
-	.4byte 0x00000001
-	.4byte 0x02680000
-	.4byte 0x00000000
-	.4byte 0x01200000
-	.4byte 0x00020000
-	.4byte 0xffff016a
-	.4byte 0x00000001
-	.4byte 0x02680000
-	.4byte 0x00000000
-	.4byte 0x01500000
-	.4byte 0x01020000
-	.4byte 0xffff016a
-	.4byte 0x00000001
-	.4byte 0x01880000
-	.4byte 0x00000000
-	.4byte 0x01880000
-	.4byte 0x01020000
-	.4byte 0xffff016a
-	.4byte 0x00000001
-	.4byte 0x00800000
-	.4byte 0x00000000
-	.4byte 0x01c80000
-	.4byte 0x01020000
-	.4byte 0xffff016a
-	.4byte 0x00000001
-	.4byte 0x00b00000
-	.4byte 0x00000000
-	.4byte 0x01c80000
-	.4byte 0x01028000
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_02006b20
-Data_02006b20:
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_02006b38
-Data_02006b38:
-	.4byte 0x00010101
-	.4byte 0xffff0000
-	.4byte 0x000000ff
-	.4byte 0x00000101
-	.4byte 0x0000ffff
-	.4byte 0x00ff0001
-	.4byte 0x00000000
-	.global Data_02006b54
-Data_02006b54:
-	.4byte 0x00000202
-	.4byte 0xffff0001
-	.4byte Func_02001284
-	.4byte 0xffffffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_02006b6c
-Data_02006b6c:
-	.4byte 0x00000202
-	.4byte 0xffff0001
-	.4byte Func_020012ec
-	.4byte 0x00000002
-	.4byte 0xffff000a
-	.4byte Func_020017dc
-	.4byte 0x00000002
-	.4byte 0xffff000b
-	.4byte Func_02001820
-	.4byte 0x00008515
-	.4byte 0x02010008
-	.4byte Func_02000550
-	.4byte 0x00008515
-	.4byte 0x0202000a
-	.4byte 0x00000000
-	.4byte 0x50008615
-	.4byte 0x08ce000c
-	.4byte Func_02001990
-	.4byte 0x50008615
-	.4byte 0x08cf000d
-	.4byte Func_02001990
-	.4byte 0x00000006
-	.4byte 0x08cd00c8
-	.4byte Func_020019d0
-	.4byte 0xffffffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_02006bd8
-Data_02006bd8:
-	.4byte 0x00000202
-	.4byte 0xffff0001
-	.4byte Func_02001364
-	.4byte 0x00000202
-	.4byte 0xffff0002
-	.4byte Func_020013bc
-	.4byte 0x00000202
-	.4byte 0xffff0003
-	.4byte Func_02001430
-	.4byte 0x00000002
-	.4byte 0xffff0050
-	.4byte Func_02000740
-	.4byte 0x00000002
-	.4byte 0xffff0051
-	.4byte Func_02000784
-	.4byte 0x00000002
-	.4byte 0xffff0052
-	.4byte Func_02000978
-	.4byte 0x00000002
-	.4byte 0xffff0053
-	.4byte Func_02000ad4
-	.4byte 0x00000602
-	.4byte 0xffff0054
-	.4byte Func_02000c38
-	.4byte 0x00008602
-	.4byte 0xffff0054
-	.4byte Func_02000c38
-	.4byte 0x0000c602
-	.4byte 0xffff0054
-	.4byte Func_02000c8c
-	.4byte 0x00004602
-	.4byte 0xffff0054
-	.4byte Func_02000c8c
-	.4byte 0x00008515
-	.4byte 0x0201001f
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x12040021
-	.4byte Func_02000280
-	.4byte 0xffffffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_02006c80
-Data_02006c80:
-	.4byte 0x00000202
-	.4byte 0xffff0001
-	.4byte Func_02001498
-	.4byte 0x00000202
-	.4byte 0xffff0002
-	.4byte Func_02001500
-	.4byte 0x00000202
-	.4byte 0xffff0003
-	.4byte Func_02001564
-	.4byte 0x00000002
-	.4byte 0xffff0050
-	.4byte Func_02000740
-	.4byte 0x00000002
-	.4byte 0xffff0051
-	.4byte Func_02000784
-	.4byte 0x00000002
-	.4byte 0xffff0052
-	.4byte Func_02000978
-	.4byte 0x00000002
-	.4byte 0xffff0053
-	.4byte Func_02000ad4
-	.4byte 0x00000602
-	.4byte 0xffff0054
-	.4byte Func_02000c38
-	.4byte 0x00008602
-	.4byte 0xffff0054
-	.4byte Func_02000c38
-	.4byte 0x0000c602
-	.4byte 0xffff0054
-	.4byte Func_02000c8c
-	.4byte 0x00004602
-	.4byte 0xffff0054
-	.4byte Func_02000c8c
-	.4byte 0x00000002
-	.4byte 0x0a6c004d
-	.4byte Func_02000cf0
-	.4byte 0xffffffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_02006d1c
-Data_02006d1c:
-	.4byte 0x00000202
-	.4byte 0xffff0001
-	.4byte Func_020015b8
-	.4byte 0x00000002
-	.4byte 0xffff0050
-	.4byte Func_02000740
-	.4byte 0x00000002
-	.4byte 0xffff0051
-	.4byte Func_02000784
-	.4byte 0x00000002
-	.4byte 0xffff0052
-	.4byte Func_02000978
-	.4byte 0x00000002
-	.4byte 0xffff0053
-	.4byte Func_02000ad4
-	.4byte 0x00000602
-	.4byte 0xffff0054
-	.4byte Func_02000c38
-	.4byte 0x00008602
-	.4byte 0xffff0054
-	.4byte Func_02000c38
-	.4byte 0x0000c602
-	.4byte 0xffff0054
-	.4byte Func_02000c8c
-	.4byte 0x00004602
-	.4byte 0xffff0054
-	.4byte Func_02000c8c
-	.4byte 0x00000002
-	.4byte 0xffff000a
-	.4byte Func_02001864
-	.4byte 0x00000002
-	.4byte 0xffff000b
-	.4byte Func_020018a8
-	.4byte 0x00008515
-	.4byte 0xffff0008
-	.4byte 0x00000000
-	.4byte 0xffffffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_02006db8
-Data_02006db8:
-	.4byte 0x00000202
-	.4byte 0xffff0001
-	.4byte Func_02001630
-	.4byte 0x00000002
-	.4byte 0xffff0050
-	.4byte Func_020045d8
-	.4byte 0x00000002
-	.4byte 0xffff0051
-	.4byte Func_02004530
-	.4byte 0x00000002
-	.4byte 0xffff0052
-	.4byte Func_020046c8
-	.4byte 0x00000002
-	.4byte 0xffff0053
-	.4byte Func_02004620
-	.4byte 0x00000006
-	.4byte 0x020500c9
-	.4byte Func_02000fc0
-	.4byte 0x50008615
-	.4byte 0x08fb000f
-	.4byte Func_02001a6c
-	.4byte 0x00000006
-	.4byte 0xffff00c8
-	.4byte Func_02001a8c
-	.4byte 0x50008615
-	.4byte 0xffff0010
-	.4byte Func_020043ec
-	.4byte 0x50008615
-	.4byte 0xffff0011
-	.4byte Func_020043ec
-	.4byte 0x50008615
-	.4byte 0xffff0012
-	.4byte Func_020043ec
-	.4byte 0x50008615
-	.4byte 0xffff0013
-	.4byte Func_020043ec
-	.4byte 0x50008615
-	.4byte 0xffff0014
-	.4byte Func_020043ec
-	.4byte 0x50008615
-	.4byte 0xffff0015
-	.4byte Func_020043ec
-	.4byte 0x50008615
-	.4byte 0xffff0016
-	.4byte Func_020043ec
-	.4byte 0xffffffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_02006e78
-Data_02006e78:
-	.4byte 0x00000002
-	.4byte 0xffff000a
-	.4byte Func_02001728
-	.4byte 0x00000002
-	.4byte 0xffff000b
-	.4byte Func_0200176c
-	.4byte 0xffffffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_02006e9c
-Data_02006e9c:
-	.4byte 0xffffffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.global Data_02006ea8
-Data_02006ea8:
-	.4byte 0x02020000
-	.4byte 0x03030101
-	.4byte 0x06040507
-	.4byte 0x04060705
-	.4byte 0x08080909
-	.4byte 0x0b0b0a0a
-	.global Data_02006ec0
-Data_02006ec0:
-	.4byte 0x00000027
-	.4byte 0x00000001
-	.4byte 0x80010000
-	.4byte 0x00000017
-	.4byte 0x00000009
-	.4byte 0x00000a00
-	.4byte 0x00000017
-	.4byte 0x0000000a
-	.4byte 0x00000a00
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x0000000d
-	.4byte 0x00000018
-	.4byte 0xc0010000
-	.4byte 0x00000002
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000016
-	.4byte 0x00000009
-	.4byte 0x00010000
-	.4byte 0x00000016
-	.4byte 0x0000000a
-	.4byte 0x00010000
-	.4byte 0x00000016
-	.4byte 0x00000028
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000011
-	.global Data_02006f38
-Data_02006f38:
-	.4byte 0x00000027
-	.4byte 0x00000000
-	.4byte 0x00000016
-	.4byte 0x00000009
-	.4byte 0x00020000
-	.4byte 0x00000016
-	.4byte 0x0000000a
-	.4byte 0x00020000
-	.4byte 0x80010000
-	.4byte 0x00000017
-	.4byte 0x00000009
-	.4byte 0xfffff600
-	.4byte 0x00000017
-	.4byte 0x0000000a
-	.4byte 0xfffff600
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x0000000d
-	.4byte 0x00000030
-	.4byte 0xc0010000
-	.4byte 0x00000002
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000016
-	.4byte 0x00000009
-	.4byte 0x00010000
-	.4byte 0x00000016
-	.4byte 0x0000000a
-	.4byte 0x00010000
-	.4byte 0x00000016
-	.4byte 0x00000028
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000001
-	.4byte 0x00000011
 	.section .bss,"aw",%nobits
 	.global Data_02006fc8
 Data_02006fc8:

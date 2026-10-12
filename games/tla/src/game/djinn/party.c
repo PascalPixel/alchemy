@@ -9,6 +9,7 @@
 #include "system.h"
 #include "owner_state.h"
 #include "party_state.h"
+#include "types.h"
 
 s32 Party_SumDjinnCounts(s32 index)
 {
@@ -58,3 +59,19 @@ void Djinn_ActivateOfferedForParty(void)
         }
     }
 }
+
+#if !defined(TLA_EDITION_JA) /* the Japanese copy differs and stays on its scaffold (S4) */
+s32 Func_080b106c(s32 id)
+{
+    switch (id & 0x1ff) {
+    case 191:
+    case 192:
+    case 193:
+    case 194:
+    case 195:
+    case 196:
+        return 1;
+    }
+    return 0;
+}
+#endif

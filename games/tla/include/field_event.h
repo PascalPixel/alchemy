@@ -61,7 +61,7 @@ void Engine_EventSetMessage(s32 message);
 s32 Engine_EventOpenMessage(s32 speaker, s32 flags);
 void Engine_EventShowMessage(s32 speaker, s32 flags);
 s32 Engine_EventChooseYesNo(s32 actor, s32 flags);
-void Engine_EventSetCountdown(u16 countdown);
+void Engine_EventSetCountdown(s32 countdown);
 void Engine_EventCloseScreen(void);
 void Engine_EventWaitDelay(void);
 s32 Engine_PartyGetLeaderActor(void);

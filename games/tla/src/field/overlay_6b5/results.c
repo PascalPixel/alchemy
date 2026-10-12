@@ -1,0 +1,43 @@
+#include "battle.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
+#include "types.h"
+#include "input.h"
+#include "party_state.h"
+#include "scene_ids.h"
+#include "serial_runtime.h"
+#include "text/msg_ids.h"
+
+s32 Func_02000f6c(s32 id);
+s32 Func_02000fbc(s32 actor);
+void Func_0200191c(void);
+void Func_0200197c(void);
+void Func_02001984(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Func_020019e4(s32 value, s32 digits);
+void Func_020019ec(void);
+void Func_02001a14(void);
+void Func_02001a1c(void);
+void Func_02001a64(s32 message);
+void Func_02001a74(s32 actor, s32 flags);
+void Func_02001a7c(s32 actor, s32 animation, s32 flags);
+s32 Func_02001a84(s32 scene, s32 entrance);
+void Func_02001ab4(s32 skip);
+void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
+void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 flags);
+
+s32 Func_020013ec(void)
+{
+    Func_020019ec();
+    UiText_ShowPositionedMessageAndWait(MsgBattleResultsWere, 1);
+}
+
+s32 Func_02001400(void)
+{
+    Func_020019ec();
+    UiText_ShowPositionedMessageAndWait(MsgMonsterBattleResults, 1);
+}

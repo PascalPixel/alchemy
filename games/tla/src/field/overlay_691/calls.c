@@ -18,3 +18,21 @@ void Func_02001bb0(void)
 {
     Func_02002e30(Data_02003dba);
 }
+
+#include "call.h"
+
+void GameFlag_SetBit(s32 flag);
+void GameFlag_ClearBit(s32 flag);
+void Func_02003ad4(s32 a, s32 x, s32 z, s32 frames);
+
+void Func_02001bc0(void)
+{
+    Call4((void (*)())Func_02003ad4, 0, 0x1080000, 0x2280000, 30);
+    GameFlag_SetBit(0x212);
+}
+
+void Func_02001be0(void)
+{
+    Call4((void (*)())Func_02003ad4, 0, 0x1080000, 0x2280000, 0);
+    GameFlag_ClearBit(0x212);
+}

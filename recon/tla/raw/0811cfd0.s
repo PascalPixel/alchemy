@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global BattlePres_BuildOpponentEntries
 	.thumb_func
 BattlePres_BuildOpponentEntries:

@@ -8,6 +8,7 @@
 #include "field_scene.h"
 #include "iwram_call.h"
 #include "field_sprite.h"
+#include "input.h"
 
 extern const struct SceneEntrance gSceneEntrances[];
 extern const u32 gSceneExits[];
@@ -36,7 +37,7 @@ void Func_02005230(s32 id, s32 a, s32 b);
 void Func_02005280(s32 message);
 void Func_02005298(s32 id, s32 a);
 void Func_020052b0(s32 id, s32 a);
-void Func_020052c8(s32 a, s32 b, s32 c);
+s32 Func_020052c8(s32 a, s32 b, s32 c);
 void Func_02005308(s32 a, s32 b);
 void Func_02005370(s32 a);
 void Func_02005378(s32 id, s32 x, s32 z, s32 angle);
@@ -69,6 +70,82 @@ extern u32 gFrameCount;
 extern const u8 Data_02005494[];
 extern const u8 Data_020054e4[];
 extern const u8 Data_020054f0[];
+
+void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
+void ObjectMotion_EnableActionAndResetMotion(s32 actor);
+void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *callback);
+void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
+void ObjectMotion_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
+void Event_FinishScreenTransition(void);
+void Event_WaitTransitionFrames(void);
+void Func_02005170(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_02005178(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+s32 Func_020052a0(s32 id, s32 a);
+void Func_020052f8(s32 a);
+s32 Func_020053b0(void);
+void Func_020053c0(const void *data);
+void Func_020053c8(void);
+void Func_020053d0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void Func_020053d8(s32 cue);
+void Func_02005160(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Func_02005168(struct ObjectRuntime *object);
+void Func_020052e8(void);
+void Func_02005300(s32 a, s32 b);
+void Func_02005338(s32 a);
+void Motion_CamBounds(s32 x, s32 y, s32 z, s32 mode);
+void Motion_SetVarCbAndRefresh(s32 actor, s32 variant);
+s32 ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
+void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
+void Func_0200290c(void);
+void Func_02002a5c(void);
+void Func_02002a84(void);
+void Func_02002c1c(void);
+void Func_02003a14(void);
+void Func_02003a5c(void);
+void Func_02003a8c(void);
+void Func_02003b2c(void);
+void Func_02003c8c(void);
+extern u8 MsgScene653No12;
+extern char SceneId_Ov653Room1;
+extern char SceneId_Ov653Room2;
+extern char SceneId_Ov653Room3;
+extern char SceneId_Ov653Room4;
+extern char SceneId_Ov653Room5;
+extern char SceneId_Ov653Room6;
+extern char SceneId_Ov653Room7;
+extern char SceneId_Ov653Room8;
+extern char SceneId_Ov653Room9;
+void Func_02000cf8(s32 id, s32 dy, s32 scale);
+void Func_02005388(s32 a);
+void Func_02005390(void);
+void Func_020053a8(s32 a, s32 b, s32 c, s32 d);
+void Func_02005238(s32 id, s32 x, s32 z, s32 angle);
+void Func_020051b0(s32 a);
+void Event_StartScreenTransition(void);
+void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
+void VramBlock_LoadCached(s32 block, s32 count, const void *data);
+void Runtime_ReleaseHeapBlock(s32 slot);
+extern struct ObjectRuntime *Data_020062ac;
+extern s32 Data_02005548[];
+extern s32 Data_02005550[];
+
+struct EventWork1ac {
+    u8 unknown_000[0x1ac];
+    s32 value;
+};
+
+void Func_02001d40(void);
+void Func_02001db4(void);
+void Func_02001f3c(void);
+void Func_02003524(void);
+extern u8 MsgScene653No01;
+extern u8 MsgScene653No02;
+extern u8 MsgScene653No03;
+extern u8 MsgScene653No09;
+extern u8 MsgScene653No10;
+extern u32 Data_02005514[];
+extern s16 Data_020054dc[];
+extern s16 Data_020054e0[];
 
 static __inline__ s32 GameFlag_Test_(s32 flag)
 {
@@ -195,5 +272,51 @@ static __inline__ void Object_SetPositionAndResetMotion_(struct ObjectRuntime *o
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     Object_SetPositionAndResetMotion(object, x, y, z);
 }
+
+static __inline__ void Func_02005178_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
+{
+    /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters give each stack argument its own register; a direct call builds both in r3. */
+    Func_02005178(a, b, c, d, e, f);
+}
+
+static __inline__ void ObjectMotion_ResetAndSetPositionInMode2_(s32 id, s32 x, s32 z)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    ObjectMotion_ResetAndSetPositionInMode2(id, x, z);
+}
+
+static __inline__ void Func_020053d0_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g)
+{
+    /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters give each stack argument its own register; a direct call builds them all in r3. */
+    Func_020053d0(a, b, c, d, e, f, g);
+}
+
+static __inline__ void Func_02000cf8_(s32 id, s32 dy, s32 scale)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02000cf8(id, dy, scale);
+}
+
+static __inline__ void Func_020053a8_(s32 a, s32 b, s32 c, s32 d)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_020053a8(a, b, c, d);
+}
+
+static __inline__ void Func_02005238_(s32 id, s32 x, s32 z, s32 angle)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02005238(id, x, z, angle);
+}
+
+/* FAKEMATCH: the native schedules this call as a value-returning one (the variant is loaded before the actor: one reordered pair with the shared void prototype). The routine is not C yet, so its return type is unproven. */
+#define ObjectMotion_SetActionVariantValue(id, variant) \
+    (((s32 (*)(u32, s32))ObjectMotion_SetActionVariant)((id), (variant)))
+
+/* FAKEMATCH: the native schedules a store to this byte as one that cannot alias the party state's words, so its lvalue is not a char: a whole-byte bit-field has the struct's alias set. As u8 priority_flags the next load is scheduled one step early. */
+struct ObjectFlags23 {
+    u8 unknown_00[0x23];
+    u8 flags : 8;
+};
 
 #endif

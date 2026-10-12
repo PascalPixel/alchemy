@@ -18,7 +18,8 @@ struct EventWork
 	s16					  exit;
 	u8					  unknown_156[2];
 	s16					  countdown;
-	u8					  unknown_15a[0xa];
+	u16					  unknown_15a;
+	u8					  unknown_15c[8];
 	u16					  battle_group;
 	u8					  unknown_166[4];
 	u16					  unknown_16a;

@@ -180,7 +180,15 @@ Func_080c8360:
 	.global Func_080c8368
 	.thumb_func
 Func_080c8368:
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_ApplyColorToTargetBuffer
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_ApplyColorToTargetBuffer
+.else
 	overlay_veneer Func_080ccec8
+.endif
+.endif
 	.global BattleEffect_InitializeBuffersFar
 	.thumb_func
 BattleEffect_InitializeBuffersFar:

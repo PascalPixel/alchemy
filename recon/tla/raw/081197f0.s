@@ -205,7 +205,7 @@ Func_081197f0:
 	lsls r0, r0, #2
 	bl GameFlag_GetByte
 	adds r6, r0, #0
-	bl Func_081195a0
+	bl BattleParty_AssignMemberSlots
 	mov r2, r9
 	adds r2, #66
 	movs r3, #0

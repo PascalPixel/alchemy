@@ -4,10 +4,10 @@ SECTIONS
     {
         "*/games/tla/src/field/overlay_657/entry.o"(.text)
         "*/games/tla/src/field/overlay_657/scene_tables.o"(.text)
-        "*/resource_657_overlay.o"(.text.x0200804c)
+        "*/games/tla/src/field/overlay_657/s004c.o"(.text)
         "*/resource_657_overlay.o"(.text.x02008078)
-        "*/resource_657_overlay.o"(.text.x0200813c)
-        "*/resource_657_overlay.o"(.text.x02008168)
+        "*/games/tla/src/field/overlay_657/s013c.o"(.text)
+        "*/games/tla/src/field/overlay_657/s0168.o"(.text)
         "*/resource_657_overlay.o"(.text.x02008188)
         "*/resource_657_overlay.o"(.text.x020081cc)
         "*/resource_657_overlay.o"(.text.x02008210)
@@ -29,7 +29,7 @@ SECTIONS
         "*/resource_657_overlay.o"(.text.x02009d60)
         "*/resource_657_overlay.o"(.text.x02009da0)
         "*/games/tla/src/field/overlay_657/import.o"(.text)
-        "*/resource_657_overlay.o"(.rodata.x0200a0dc)
+        "*/games/tla/src/field/overlay_657/data.o"(.data)
     }
     .bss : { "*/resource_657_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

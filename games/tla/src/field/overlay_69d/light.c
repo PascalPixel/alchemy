@@ -3,9 +3,9 @@
 #include "field_event.h"
 #include "callback_scheduler.h"
 
-extern u8 Data_02001f10[];
-extern u8 Data_02002072[];
-extern u8 Data_020022a2[];
+extern u8 Field_CachedTilesA[];
+extern u8 Field_CachedTilesB[];
+extern u8 Field_CachedTilesC[];
 extern s16 Data_0200275c;
 extern s16 Data_0200275e;
 extern struct FieldActor *Data_02002760[];
@@ -36,7 +36,7 @@ void Func_02001014(void)
     u8 *buffer = BumpAlloc(0xc00);
 
     Iwram_ClearWords(Data_02002760, 64);
-    Func_02001d68(Data_02001f10, buffer);
+    Func_02001d68(Field_CachedTilesA, buffer);
     Data_0200275c = Resource_FindFreeEntry();
     VramLoad(Data_0200275c, 0xc00, buffer);
     MemFree(buffer);
@@ -51,7 +51,7 @@ void Func_02001094(void)
     u8 *buffer = BumpAlloc(0xc00);
 
     Iwram_ClearWords(Data_02002760, 64);
-    Func_02001d68(Data_02002072 + 1, buffer);
+    Func_02001d68(Field_CachedTilesB, buffer);
     Data_0200275c = Resource_FindFreeEntry();
     VramLoad(Data_0200275c, 0x800, buffer);
     MemFree(buffer);
@@ -66,7 +66,7 @@ void Func_02001114(void)
     u8 *buffer = BumpAlloc(0x800);
 
     Iwram_ClearWords(Data_02002760, 64);
-    Func_02001d68(Data_020022a2, buffer);
+    Func_02001d68(Field_CachedTilesC, buffer);
     Data_0200275c = Resource_FindFreeEntry();
     VramLoad(Data_0200275c, 0x800, buffer);
     MemFree(buffer);

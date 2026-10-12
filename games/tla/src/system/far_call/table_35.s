@@ -56,7 +56,15 @@ Func_080c8888:
 	.global Func_080c8890
 	.thumb_func
 Func_080c8890:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080d1d54
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080d1d54
+	.else
 	overlay_veneer Func_080e70f8
+	.endif
+	.endif
 	.global Func_080c8898
 	.thumb_func
 Func_080c8898:
@@ -64,7 +72,15 @@ Func_080c8898:
 	.global Func_080c88a0
 	.thumb_func
 Func_080c88a0:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080d1df0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080d1df0
+	.else
 	overlay_veneer Func_080d1d54
+	.endif
+	.endif
 	.global Func_080c88a8
 	.thumb_func
 Func_080c88a8:
@@ -72,7 +88,15 @@ Func_080c88a8:
 	.global Func_080c88b0
 	.thumb_func
 Func_080c88b0:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer ObjectGroup_ApplyRandomChildValues
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer ObjectGroup_ApplyRandomChildValues
+	.else
 	overlay_veneer Func_080d1df0
+	.endif
+	.endif
 	.global Func_080c88b8
 	.thumb_func
 Func_080c88b8:
@@ -90,4 +114,12 @@ BattleFx_DecodeFrameTranslationBase:
 	.global ObjectGroup_ApplyRandomChildValuesFar
 	.thumb_func
 ObjectGroup_ApplyRandomChildValuesFar:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080e2774
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080e2774
+.else
 	overlay_veneer ObjectGroup_ApplyRandomChildValues
+.endif
+.endif

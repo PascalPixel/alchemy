@@ -5,7 +5,7 @@
 #include "object_runtime.h"
 
 extern u8 Data_02006c08[];
-extern const u8 Data_02005920[];
+extern const u8 gWorldMapPackedTilesC[];
 extern u8 Data_02006f20[];
 extern u8 Data_02006e0e[];
 extern u8 Data_02006e0c[];

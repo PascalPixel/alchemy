@@ -10,6 +10,7 @@
 #include "types.h"
 #include "object_lookup.h"
 #include "system.h"
+#include "ram_buffer.h"
 
 
 struct EventWordWork {
@@ -20,4 +21,9 @@ struct EventWordWork {
 void Event_CallWithLastActiveObjectId(s32 event_id)
 {
     Event_SpawnObjectTable(event_id, ObjectTable_FindLastActiveId());
+}
+
+void Event_SetSceneEvents(s32 events)
+{
+    ((struct EventWordWork *)Ram_HeapSlots->event_work)->word_10 = events;
 }

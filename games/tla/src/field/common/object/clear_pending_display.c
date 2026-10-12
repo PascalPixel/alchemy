@@ -1,4 +1,6 @@
 #include "types.h"
+#include "party_state.h"
+#include "ram_buffer.h"
 
 struct DisplayBlock {
     u8 unknown_000[0x18a];
@@ -20,4 +22,22 @@ void Func_080cb8a4(void)
         block->object[91] = 0;
         Func_08020270();
     }
+}
+
+void *Func_080cb8e8(void)
+{
+    struct PartyState *party = &gPartyState;
+    void **event;
+
+    asm volatile("" : "+l"(party)); /* FAKEMATCH: the party state address is loaded first; without the barrier the two constants beside it are begun before it (2 differ) */
+    event = Ram_HeapSlots->event_work;
+    if (party->owner_override == 0) {
+        s32 offset = party->current_owner * 4;
+
+        offset += 20;
+        event = *(void **)((u8 *)event + offset);
+    } else {
+        event = event[13];
+    }
+    return event;
 }

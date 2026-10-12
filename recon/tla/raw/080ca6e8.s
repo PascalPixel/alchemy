@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Event_SpawnObjectTable
 	.thumb_func
 Event_SpawnObjectTable:

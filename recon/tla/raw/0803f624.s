@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global UiTextResource_Initialize
 	.thumb_func
 UiTextResource_Initialize:

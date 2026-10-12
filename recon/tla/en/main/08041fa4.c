@@ -1,26 +1,25 @@
+/* Draft, differ 10 of 49, three pairs in the other order: the native loads
+ * the window work before it starts the count's offset, loads the entry mask
+ * from the pool before it rereads the count, and advances to the entries
+ * before the mask is applied. Measured: an empty asm barrier after the
+ * window work swaps r5 and r6 (differ 22). Twin of The Broken Seal's
+ * UiText_DrawResource. */
 #include "text_render_runtime.h"
-#include "mem.h"
-extern u8 Data_03001e8c[];
+#include "window.h"
+#include "ram_buffer.h"
 
-extern u8 *gWindowWork;
-
-s32 UiText_BuildRenderEntries(s32 character, s32 count);
-u8 *UiText_FormatNumber(u8 *output, s32 value, s32 width);
-void UiText_RenderWideStringAtOffset(void *text, s32 work, s32 x, s32 y);
-void UiText_RenderWideStringInWindow(u16 *text, s32 work, s32 x, s32 y);
-s32 UiText_RenderStringTiles(void *text, s32 source, s32 destination, s32 phase);
+s32 UiText_BuildRenderEntries(s32 message, s32 mode);
+void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, s32 y);
 
 void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    u8 *base = *(u8 **)((u32)&Data_03001e8c);
-    u16 *counter = (u16 *)(base + RENDER_ENTRY_COUNT_OFS);
-    s32 offset;
+    struct UiRenderWork *canvas = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    u16 *counter = &canvas->count;
     s32 zero = 0;
 
     *counter = zero;
     UiText_BuildRenderEntries(arg0, 1);
-    offset = *counter * 2 + RENDER_ENTRY_TBL_OFS;
-    *(u16 *)(base + offset) = zero;
-    *counter = (*counter + 1) & RENDER_ENTRY_MASK;
-    UiText_RenderWideStringAtOffset(base + RENDER_ENTRY_TBL_OFS, arg1, arg2, arg3);
+    canvas->entries[*counter] = zero;
+    *counter = (*counter + 1) & (UI_TEXT_ENTRY_COUNT - 1);
+    UiText_RenderWideStringAtOffset(canvas->entries, (struct UiWindow *)arg1, arg2, arg3);
 }

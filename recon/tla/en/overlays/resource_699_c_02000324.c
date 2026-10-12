@@ -1,0 +1,61 @@
+/* Draft, differ 38 of 75: the native keeps the party state base in r5 only through the first room and reloads it from the pool for the second entrance test and the second room test, and loads the two blend values from pool words placed before the party base; this form shares r5 differently. */
+#include "types.h"
+
+#include "ram_buffer.h"
+#include "object_runtime.h"
+#include "party_state.h"
+#include "scene_ids.h"
+#include "frame.h"
+#include "field_sprite.h"
+
+struct EventWork1ac {
+    u8 unknown_000[0x1ac];
+    s32 value;
+};
+
+struct CellTarget {
+    u8 unknown_00[6];
+    s16 x;
+    s16 z;
+};
+
+s32 GameFlag_Test(s32 flag);
+void WaitFrames(s32 frames);
+void Battle_WaitMode0(s32 frames);
+struct ObjectRuntime *Object_GetById(s32 id);
+s32 Math_Cosine(s32 angle);
+void ObjectDispatch_ApplyValueToChildren(struct ObjectRuntime *object, s32 value);
+void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
+void Map_EnableUpdateCallback(void);
+void Map_DisableUpdateCallback(void);
+void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void Func_0200015c(struct ObjectRuntime *object);
+void Func_020004dc(s32 mode);
+struct ObjectRuntime *Func_02001c04(s32 type, s32 x, s32 y, s32 z);
+void Func_02001c34(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+struct ObjectRuntime *Func_02001cdc(void);
+void Func_02001d3c(s32 id);
+void Func_02001d4c(s32 cue);
+
+#define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
+
+s32 Func_02000324(void)
+{
+    ((struct EventWork1ac *)Ram_HeapSlots->event_work)->value = 0x204;
+    if (gPartyState.scene == (s32)&SceneId_Ov699Room1) {
+        Func_020004dc(1);
+        if (!GameFlag_Test(0x109) && gPartyState.entrance == 4)
+            Func_02001d3c(gPartyState.current_owner);
+        if (!GameFlag_Test(0x109) && gPartyState.entrance == 6)
+            Func_02001d3c(gPartyState.current_owner);
+    }
+    if (gPartyState.scene == (s32)&SceneId_Ov699Room2) {
+        *(volatile u16 *)0x04000052 = 0x1008;
+        *(volatile u16 *)0x04000050 = 0x3f10;
+        Func_02000298();
+    }
+    return 0;
+}

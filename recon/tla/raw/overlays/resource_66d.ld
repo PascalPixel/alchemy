@@ -9,7 +9,7 @@ SECTIONS
         "*/resource_66d_overlay.o"(.text.x02008368)
         "*/games/tla/src/field/overlay_66d/prepare.o"(.text)
         "*/games/tla/src/field/overlay_66d/import.o"(.text)
-        "*/resource_66d_overlay.o"(.rodata.x020085fc)
+        "*/games/tla/src/field/overlay_66d/data.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

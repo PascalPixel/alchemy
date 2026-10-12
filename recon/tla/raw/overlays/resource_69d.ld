@@ -12,7 +12,7 @@ SECTIONS
         "*/resource_69d_overlay.o"(.text.x020084fc)
         "*/games/tla/src/field/common/scene_set_arrival_flags.o"(.text)
         "*/resource_69d_overlay.o"(.text.x020085d6)
-        "*/resource_69d_overlay.o"(.text.x020085d8)
+        "*/games/tla/src/field/overlay_69d/s05d8.o"(.text)
         "*/resource_69d_overlay.o"(.text.x020085e4)
         "*/games/tla/src/field/overlay_69d/lightset.o"(.text)
         "*/resource_69d_overlay.o"(.text.x02008778)
@@ -31,7 +31,7 @@ SECTIONS
         "*/resource_69d_overlay.o"(.text.x02009258)
         "*/resource_69d_overlay.o"(.text.x02009420)
         "*/resource_69d_overlay.o"(.text.x0200954c)
-        "*/resource_69d_overlay.o"(.text.x02009790)
+        "*/games/tla/src/field/overlay_69d/s1790.o"(.text)
         "*/resource_69d_overlay.o"(.text.x02009818)
         "*/resource_69d_overlay.o"(.text.x02009888)
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
@@ -40,7 +40,10 @@ SECTIONS
         "*/resource_69d_overlay.o"(.text.x02009bb8)
         "*/resource_69d_overlay.o"(.text.x02009c68)
         "*/games/tla/src/field/overlay_69d/import.o"(.text)
-        "*/resource_69d_overlay.o"(.rodata.x02009f10)
+        "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
+        "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
+        "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
+        "*/games/tla/src/field/overlay_69d/data.o"(.data)
     }
     .bss : { "*/resource_69d_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

@@ -1,76 +1,102 @@
-/* Draft, differ 205 of 228: The Broken Seal's Graphics_PrepareTransfer for The Lost Age: the
- * dot-product routine copied to the stack is eight words here (Math_DotProductQ16Code, frame 68),
- * the square roots are Iwram_Sqrt shifted left 8, and the native holds three routines in registers
- * for the whole function, the divide in r9, the stack routine in r10 and the multiply in r11,
- * loading only the square root entry from the pool at each use; it keeps eye, out, the view vector
- * and the side axis on the stack. This form gives r9 to out and reloads the divide entry at each
- * call, so nearly every row after the prologue differs in registers. Local pointers for the divide
- * and the multiply, with and without The Broken Seal's zero and dividend locals and its one-pass
- * block, all measured 202 to 208. */
-#include "system.h"
-#include "mem.h"
-#include "edition.h"
+/* Draft, differ 199 of 228: The Broken Seal's Graphics_PrepareTransfer (games/common render.c)
+ * for The Lost Age: the dot-product routine copied to the stack is eight words here
+ * (Math_DotProductQ16Code, frame 68), the square roots are Iwram_Sqrt at its fixed entry
+ * shifted left 8, and the native holds three routines in registers for the whole function,
+ * the divide in r9, the stack routine in r10 and the multiply in r11, loading only the square
+ * root entry from the pool at each use; it keeps eye, out, the view vector and the side axis on
+ * the stack. This form keeps out in r9 and spills the dot pointer, so nearly every row after
+ * the prologue differs in registers. It has The Broken Seal's zero and dividend locals, its
+ * one-pass block around the normalization, and local pointers for the divide and the multiply
+ * set before the copy. Measured beside it: the same pointers initialized at their declarations
+ * with plain statements, with and without those locals and that block, 202 to 208 (the form
+ * this draft replaces was 205). Not yet tried: the locals' declaration order and volatile. */
 #include "types.h"
 #include "transform.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
+#include "graphics.h"
+
+#define FixedSqrt(v) (Iwram_Sqrt(v) << 8)
+#define RelocatedQ16DotProduct Math_DotProductQ16Code
+extern const u32 Math_DotProductQ16Code[];
 
 typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
-extern const u32 Math_DotProductQ16Code[];
-#define SQRT_Q16(x) (Iwram_Sqrt(x) << 8)
 
 void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
 {
 	u32 code[8];
 	s32 dx, dy, dz;
-	s32 ux, uz;
-	s32 vx, vy, vz;
-	s32 ex, ey, ez;
-	s32 scale;
-	s32 t;
-	u32 (*divide)(u32 dividend, u32 divisor) = Iwram_UnsignedDivideEntry;
-	Dot3Fn dot = (Dot3Fn)code;
-	s32 (*mul)(s32 a, s32 b) = Iwram_MulQ16;
+	s32 ux;
+	s32 zero = 0;
+	s32 ex;
+	Dot3Fn		 dot;
+	s32			 ey;
+	s32 uz;
+	s32			 vx, vy, vz;
+	s32			 scale;
+	s32			 ez;
+	s32			 t;
+	u32			 num = 0x80000000; // 逆数を求めるときの被除数 2^31
+	u32 (*divide)(u32 dividend, u32 divisor);
+	s32 (*mul)(s32 a, s32 b);
 
-	Dma_Set(Math_DotProductQ16Code, code, DMA_ENABLE32 | DMA_32BIT | 8, REG_DMA3);
+	// 内積のルーチンをスタックに写して、そこで呼ぶ
+	divide = Iwram_UnsignedDivideEntry;
+	mul = Iwram_MulQ16;
+	dot = (Dot3Fn)code;
+	Dma_Set(RelocatedQ16DotProduct, code, DMA_ENABLE32 | DMA_32BIT | 8, REG_DMA3);
 
+	// 視線の向き d（target から eye へ、長さ 1）
 	dx = target[0] - eye[0];
 	dy = target[1] - eye[1];
 	dz = target[2] - eye[2];
 	t = Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
-	scale = -(s32)(divide(0x80000000, t) >> 15);
-	dx = mul(dx, scale);
-	dy = mul(dy, scale);
-	dz = mul(dz, scale);
+	/* FAKEMATCH: the routine is called through a local pointer to its fixed entry; a plain call matches The Broken Seal through its IWRAM call layer but not The Lost Age, whose header calls the entry directly (all six of its editions differ). */
+	scale = divide(num, t) >> 15;
+	scale = -scale;
+	/* FAKEMATCH: the normalization keeps its CSE block; without it, the third
+	 * product spills before the negated axis (four reordered instructions). */
+	do
+	{
+		dx = mul(dx, scale);
+		dy = mul(dy, scale);
+		t = mul(dz, scale);
+		uz = -dx;
+		dz = t;
+	} while (0);
 
-	uz = -dx;
+	// 横の軸 u = (dz, 0, -dx) を長さ 1 に
 	t = mul(dy, dy);
 	scale = 0x10000;
 	if (scale - t > 0)
-		scale = divide(0x80000000, SQRT_Q16(scale - t)) << 1;
+		scale = divide(num, FixedSqrt(scale - t)) << 1;
 	ux = mul(dz, scale);
 	uz = mul(uz, scale);
 
+	// 上の軸 v = d と u の外積
 	vx = mul(dy, uz);
 	vy = mul(dz, ux) - mul(dx, uz);
 	vz = -mul(dy, ux);
-	scale = divide(0x80000000, SQRT_Q16(dot(vx, vx, vy, vy, vz, vz))) << 1;
+	scale = divide(num, FixedSqrt(dot(vx, vx, vy, vy, vz, vz))) << 1;
 	vx = mul(vx, scale);
 	vy = mul(vy, scale);
 	vz = mul(vz, scale);
 
+	// 3 つの軸を列に置き、移動は eye との内積
 	ex = eye[0];
 	ey = eye[1];
 	ez = eye[2];
-	out[0] = ux;
-	out[3] = 0;
-	out[6] = uz;
-	out[9] = -dot(ex, ux, ez, uz, 0, 0);
-	out[1] = vx;
+	{
+		out[0] = ux;
+		out[3] = zero;
+		out[6] = uz;
+		out[9] = -dot(ex, ux, ez, uz, zero, zero);
+	}
 	out[4] = vy;
 	out[7] = vz;
+	out[1] = vx;
 	out[10] = -dot(ex, vx, ey, vy, ez, vz);
 	out[2] = dx;
 	out[5] = dy;

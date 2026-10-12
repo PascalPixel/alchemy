@@ -13,6 +13,7 @@
 #include "unit/game/character/chara8.h"
 #include "unit/graphics/window/window.h"
 #include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtime8.h"
 #include "unit/system/scheduler/runtime9.h"
 #include "unit/system/scheduler/runtim10.h"
 #include "unit/system/scheduler/runtim11.h"

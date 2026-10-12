@@ -1,7 +1,7 @@
 #include "battle_effect_runtime.h"
 #include "global_cells.h"
 #include "unit/import.h"
-#include "unit/field/korima_kawa/staged_palette.h"
+#include "unit/field/korima_kawa/kawa.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/korima/palette.h"
 #include "unit/battle/effect/slots.h"

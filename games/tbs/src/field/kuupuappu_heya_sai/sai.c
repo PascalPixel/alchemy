@@ -1,6 +1,6 @@
 
 #include "game_state.h"
-#include "unit/field/kuupuappu_heya_sai/placement.h"
+#include "unit/field/kuupuappu_heya_sai/sai.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/game/character/chara.h"
 #include "battle.h"

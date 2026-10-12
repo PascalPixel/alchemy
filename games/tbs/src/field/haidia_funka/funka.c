@@ -1,5 +1,5 @@
 #include "game_state.h"
-#include "unit/field/haidia_funka/conditional_setup.h"
+#include "unit/field/haidia_funka/funka.h"
 #include "unit/battle/effect/slots.h"
 #include "battle.h"
 #include "debug.h"

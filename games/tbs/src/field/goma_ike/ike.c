@@ -1,6 +1,6 @@
 
 
-#include "unit/field/goma_ike/gate_placement.h"
+#include "unit/field/goma_ike/ike.h"
 #include "unit/battle/effect/slots.h"
 #include "battle.h"
 #include "debug.h"

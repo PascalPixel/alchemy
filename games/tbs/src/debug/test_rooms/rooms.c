@@ -1,4 +1,4 @@
-#include "unit/debug/test_rooms/empty.h"
+#include "unit/debug/test_rooms/rooms.h"
 #include "unit/battle/effect/slots.h"
 #include "battle.h"
 #include "debug.h"

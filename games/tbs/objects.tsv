@@ -674,7 +674,7 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 378	text	games/tbs/src/field/common/shinden_heya/heya
 378	text	games/tbs/src/field/common/shinden_heya/import
 379	text	games/tbs/src/field/haidia_funka/entry
-379	text	games/tbs/src/field/haidia_funka/conditional_setup
+379	text	games/tbs/src/field/haidia_funka/funka
 379	text	games/tbs/src/field/haidia_funka/import
 37a	text	games/tbs/src/field/soru_nichigetsu/entry
 37a	text	games/tbs/src/field/soru_nichigetsu/nichigetsu
@@ -685,13 +685,13 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 37b	text	games/tbs/src/field/soru_sekizo/import
 37b	bss	games/tbs/src/field/soru_sekizo/sekizo	.bss COMMON
 37c	text	games/tbs/src/field/soru_dou/entry
-37c	text	games/tbs/src/field/soru_dou/table_update
+37c	text	games/tbs/src/field/soru_dou/dou
 37c	text	games/tbs/src/field/soru_dou/import
 37d	text	games/tbs/src/field/soru_meiro/entry
-37d	text	games/tbs/src/field/soru_meiro/scene_37d
+37d	text	games/tbs/src/field/soru_meiro/meiro
 37d	text	games/tbs/src/field/soru_meiro/import
 37e	text	games/tbs/src/field/soru_roka/entry
-37e	text	games/tbs/src/field/soru_roka/scene_37e
+37e	text	games/tbs/src/field/soru_roka/roka
 37e	text	games/tbs/src/field/soru_roka/import
 37f	text	games/tbs/src/field/soru_iriguchi/entry
 37f	text	games/tbs/src/field/soru_iriguchi/iriguchi
@@ -713,20 +713,20 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 383	text	games/tbs/src/field/kuupuappu_heya/import
 383	bss	games/tbs/src/field/kuupuappu_heya/heya	.bss COMMON
 384	text	games/tbs/src/field/common/kuupuappu_runpa/entry
-384	text	games/tbs/src/field/common/kuupuappu_runpa/jail
+384	text	games/tbs/src/field/common/kuupuappu_runpa/runpa
 384	text	games/tbs/src/field/common/kuupuappu_runpa/import
 385	text	games/tbs/src/field/kuupuappu_mura_sai/entry
 385	text	games/tbs/src/field/kuupuappu_mura_sai/sai
 385	text	games/tbs/src/field/kuupuappu_mura_sai/import
 385	text	libgcc.a:_call_via_rX
 386	text	games/tbs/src/field/kuupuappu_heya_sai/entry
-386	text	games/tbs/src/field/kuupuappu_heya_sai/placement
+386	text	games/tbs/src/field/kuupuappu_heya_sai/sai
 386	text	games/tbs/src/field/kuupuappu_heya_sai/import
 387	text	games/tbs/src/field/goma_iriguchi/entry
 387	text	games/tbs/src/field/goma_iriguchi/iriguchi
 387	text	games/tbs/src/field/goma_iriguchi/import
 388	text	games/tbs/src/field/goma_ike/entry
-388	text	games/tbs/src/field/goma_ike/gate_placement
+388	text	games/tbs/src/field/goma_ike/ike
 388	text	games/tbs/src/field/goma_ike/import
 389	text	games/tbs/src/field/goma_hashira/entry
 389	text	games/tbs/src/field/goma_hashira/hashira
@@ -741,7 +741,7 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 38b	text	games/tbs/src/field/biribino_mura/import
 38b	bss	games/tbs/src/field/biribino_mura/mura	.bss COMMON
 38c	text	games/tbs/src/field/biribino_heya/entry
-38c	text	games/tbs/src/field/biribino_heya/message_branch
+38c	text	games/tbs/src/field/biribino_heya/heya
 38c	text	games/tbs/src/field/biribino_heya/import
 38d	text	games/tbs/src/field/biribino_kyuden/entry
 38d	text	games/tbs/src/field/biribino_kyuden/kyuden
@@ -754,7 +754,7 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 38f	text	games/tbs/src/field/korima_mura/import
 38f	bss	games/tbs/src/field/korima_mura/mura	.bss
 390	text	games/tbs/src/field/korima_heya/entry
-390	text	games/tbs/src/field/korima_heya/entry_layout
+390	text	games/tbs/src/field/korima_heya/heya
 390	text	games/tbs/src/field/korima_heya/import
 391	text	games/tbs/src/field/korima_hashi/entry
 391	text	games/tbs/src/field/korima_hashi/hashi
@@ -767,10 +767,10 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 392	text	libgcc.a:_call_via_rX
 392	bss	games/tbs/src/field/korima_hiroba/hiroba	.bss
 393	text	games/tbs/src/field/korima_kawa/entry
-393	text	games/tbs/src/field/korima_kawa/staged_palette
+393	text	games/tbs/src/field/korima_kawa/kawa
 393	text	games/tbs/src/field/korima_kawa/import
 393	text	libgcc.a:_call_via_rX
-393	bss	games/tbs/src/field/korima_kawa/staged_palette	.bss
+393	bss	games/tbs/src/field/korima_kawa/kawa	.bss
 394	text	games/tbs/src/field/korima_magari/entry
 394	text	games/tbs/src/field/korima_magari/magari
 394	text	games/tbs/src/field/korima_magari/import
@@ -1003,7 +1003,7 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3cb	text	libgcc.a:_call_via_rX
 3cb	bss	games/tbs/src/menu/link_lobby/lobby	.bss
 3cc	text	games/tbs/src/debug/test_rooms/entry
-3cc	text	games/tbs/src/debug/test_rooms/empty
+3cc	text	games/tbs/src/debug/test_rooms/rooms
 3cc	text	games/tbs/src/debug/test_rooms/import
 3cd	text	games/tbs/src/debug/item_level/entry
 3cd	text	games/tbs/src/debug/item_level/level

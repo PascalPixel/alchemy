@@ -376,6 +376,12 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 	}
 }
 
+// 数字の転送先
+static const u16 Shop_GlyphOffsets[5] =
+{
+	0xc0, 0x90, 0x80, 0x50, 0x40,
+};
+
 void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2)
 {
 	u8 *src = Shop_GlyphBytes + (arg0 << 5);

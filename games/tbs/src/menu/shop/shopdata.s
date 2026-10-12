@@ -1,9 +1,5 @@
 	.section .rodata
 	.balign 2
-@ 数字の転送先
-	.global Shop_GlyphOffsets
-Shop_GlyphOffsets:
-	.2byte 0xc0, 0x90, 0x80, 0x50, 0x40
 @ 贈り物の値段
 	.global Shop_SpecialItemPrices
 Shop_SpecialItemPrices:

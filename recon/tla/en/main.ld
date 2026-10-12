@@ -1185,7 +1185,6 @@
         "*/games/tla/src/battle/effect/spark.o"(.text)
         "*/games/tla/src/field/common/object/resource.o"(.text)
         "*/games/tla/src/battle/effect/group.o"(.text)
-        "*/recon/tla/raw/080dc1b0.o"(.text)
         "*/games/tla/src/battle/effect/palfade.o"(.text)
         "*/recon/tla/raw/080dc294.o"(.text)
         "*/games/tla/src/battle/effect/scene.o"(.text)

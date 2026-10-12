@@ -1000,7 +1000,6 @@
     "*/games/tla/src/battle/effect/spark.o"(.text)
     "*/games/tla/src/field/common/object/resource.o"(.text)
     "*/games/tla/src/battle/effect/group.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.000e91b0)
     "*/games/tla/src/battle/effect/palfade.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000e9294)
     "*/games/tla/src/battle/effect/scene.o"(.text)

@@ -976,7 +976,6 @@ SECTIONS
     "*/games/tla/src/battle/effect/spark.o"(.text)
     "*/games/tla/src/field/common/object/resource.o"(.text)
     "*/games/tla/src/battle/effect/group.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000dc16c)
     "*/games/tla/src/battle/effect/palfade.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000dc250)
     "*/games/tla/src/battle/effect/scene.o"(.text)

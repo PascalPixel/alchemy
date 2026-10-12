@@ -2,7 +2,7 @@
 #include "unit/debug/item_level/level.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/game/character/chara.h"
-#include "unit/graphics/window/measure.h"
+#include "unit/graphics/window/window.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

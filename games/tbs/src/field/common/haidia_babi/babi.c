@@ -8,7 +8,7 @@
 #include "unit/field/common/haidia_babi/babi.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
-#include "unit/graphics/window/measure.h"
+#include "unit/graphics/window/window.h"
 #include "unit/system/scheduler/callback.h"
 #include "types.h"
 #include "facing_object.h"

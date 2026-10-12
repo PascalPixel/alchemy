@@ -3,7 +3,7 @@
 #include "unit/import.h"
 #include "unit/field/karei_machi/machi.h"
 #include "unit/battle/effect/slots.h"
-#include "unit/graphics/window/measure.h"
+#include "unit/graphics/window/window.h"
 #include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"

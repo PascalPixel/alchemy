@@ -6,7 +6,7 @@
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
 #include "unit/game/character/chara.h"
-#include "unit/graphics/window/measure.h"
+#include "unit/graphics/window/window.h"
 #include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"

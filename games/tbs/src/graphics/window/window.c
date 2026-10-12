@@ -9,7 +9,7 @@
 #include "unit/graphics/window/spranim.h"
 #include "unit/graphics/window/textspd.h"
 #include "unit/menu/optdata.h"
-#include "unit/graphics/window/measure.h"
+#include "unit/graphics/window/window.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/graphics/text/moji.h"
 #include "unit/system/scheduler/callback.h"

@@ -8,6 +8,7 @@
 #include "unit/game/character/chara.h"
 #include "unit/graphics/window/window.h"
 #include "unit/menu/shop/shop.h"
+#include "unit/menu/shop/shop4.h"
 #include "unit/menu/shop/shop5.h"
 #include "unit/menu/shop/shop6.h"
 #include "unit/system/scheduler/runtime.h"

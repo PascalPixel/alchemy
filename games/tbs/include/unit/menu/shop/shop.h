@@ -59,19 +59,5 @@ s32 EventTable_GetRowLimit(void);
 void EventTable_ApplyRowAbilities(s32 row_no);
 s32 EventTable_CopyRowHeader(s32 row_no, s16 *output);
 s32 EventTable_GetRowType(s32 index);
-s32 Shop_ServicePrice(s32 entry_no, s32 kind);
-s32 Shop_CanServe(s32 entry_no, s32 kind);
-s32 Shop_CountUnits(void);
-s32 Shop_MsgByMode(s32 value);
-void UiMessage_ShowResolvedAndWait(s32 value);
-void UiMessage_ShowResolvedAndRestoreState(s32 arg0);
-s32 Shop_ConfirmAct(s32 unit_id);
-s32 Sanctum_RunPartyService(void);
-void BattleUnit_ResetStateByMode(s32 id, s32 mode);
-void Shop_HiliteUnit(s32 enabled, s32 selected);
-void Shop_DrawSelMsg(s32 target, s32 selection);
-void BattleFx_UpdateRadialMotion(struct EffectSlot *effect);
-void Shop_ResetEffects(void);
-void Shop_RunPartyMemberIconBurst(s32 member);
 
 #endif

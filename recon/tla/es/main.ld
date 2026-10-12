@@ -2472,7 +2472,7 @@
     "*/recon/tla/es/rom.o"(.rom.00862ee6)
     "*/games/tla/src/graphics/summon/bronze_automaton.o"(.rodata)
     "*/recon/tla/es/rom.o"(.rom.00865daf)
-    "*/games/tla/src/graphics/summon/colour_noise.o"(.rodata)
+    "*/games/tla/src/graphics/summon/missile.o"(.rodata)
     "*/recon/tla/es/rom.o"(.rom.00866061)
     "*/games/tla/src/graphics/summon/golden_dragon_head.o"(.rodata)
     "*/recon/tla/es/rom.o"(.rom.00867443)

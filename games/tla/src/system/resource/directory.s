@@ -172,7 +172,7 @@ Resource_DirectoryTable:
 	resource , Summon_WhiteWispsTiles
 	resource , Summon_ForestCanopyTiles
 	resource , Summon_BronzeAutomatonTiles
-	resource , Summon_ColourNoiseTiles
+	resource , Summon_MissileTiles
 	resource , Summon_GoldenDragonHeadTiles
 	resource , Summon_GoldenDragonTiles
 	resource , Summon_RobedGoddessTiles

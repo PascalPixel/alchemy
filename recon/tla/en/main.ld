@@ -3059,7 +3059,7 @@
         "*/recon/tla/unidentified.o"(.unidentified.08862a7a)
         "*/games/tla/src/graphics/summon/bronze_automaton.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.08865943)
-        "*/games/tla/src/graphics/summon/colour_noise.o"(.rodata)
+        "*/games/tla/src/graphics/summon/missile.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.08865bf5)
         "*/games/tla/src/graphics/summon/golden_dragon_head.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.08866fd7)

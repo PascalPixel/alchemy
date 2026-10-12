@@ -2488,7 +2488,7 @@
     "*/recon/tla/it/rom.o"(.rom.0086269e)
     "*/games/tla/src/graphics/summon/bronze_automaton.o"(.rodata)
     "*/recon/tla/it/rom.o"(.rom.00865567)
-    "*/games/tla/src/graphics/summon/colour_noise.o"(.rodata)
+    "*/games/tla/src/graphics/summon/missile.o"(.rodata)
     "*/recon/tla/it/rom.o"(.rom.00865819)
     "*/games/tla/src/graphics/summon/golden_dragon_head.o"(.rodata)
     "*/recon/tla/it/rom.o"(.rom.00866bfb)

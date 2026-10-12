@@ -2470,7 +2470,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00862ada)
     "*/games/tla/src/graphics/summon/bronze_automaton.o"(.rodata)
     "*/recon/tla/ja/rom.o"(.rom.008659a3)
-    "*/games/tla/src/graphics/summon/colour_noise.o"(.rodata)
+    "*/games/tla/src/graphics/summon/missile.o"(.rodata)
     "*/recon/tla/ja/rom.o"(.rom.00865c55)
     "*/games/tla/src/graphics/summon/golden_dragon_head.o"(.rodata)
     "*/recon/tla/ja/rom.o"(.rom.00867037)

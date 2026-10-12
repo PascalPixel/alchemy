@@ -1045,7 +1045,7 @@ void RunBattleEffect08(void)
 	struct DisplayTransitionState *work;
 	struct FieldActor			  *target;
 	s32							   arg;
-	s32							   ev;
+	void						  *ev;
 	s32							   frame;
 
 	scene = WORK_SLOT(HEAP_SLOT_EVENT);
@@ -1063,7 +1063,7 @@ void RunBattleEffect08(void)
 #endif
 	WaitFrames(1);
 	ev = BattleFx_FindMatchingEvent(0x50000005, 8, &arg);
-	if (ev != 0)
+	if (ev != NULL)
 		BattleFx_RunEventAction(ev, gGameState.selected_actor, arg);
 	AudioCommand_PlayFar(131);
 
@@ -1658,7 +1658,7 @@ void RunBattleEffect04(void)
 	struct BattleFxScene   *scene;
 	struct EffectSlot	   *slot;
 	struct AnimationObject *res;
-	s32						ev;
+	void				   *ev;
 	s32						scale;
 	s32						i;
 	u8						res_slot;
@@ -1792,8 +1792,8 @@ void RunBattleEffect04(void)
 
 	// 応じるマップのイベントがあれば動かす
 	ev = BattleFx_FindMatchingEvent(0x50000005, 4, &ctx);
-	if (ev != 0)
-		BattleFx_RunEventAction((void *)ev, gGameState.selected_actor, ctx);
+	if (ev != NULL)
+		BattleFx_RunEventAction(ev, gGameState.selected_actor, ctx);
 	WaitFrames(10);
 	BattleFx_PrepareBufferInterpolation();
 	WaitFrames(20);

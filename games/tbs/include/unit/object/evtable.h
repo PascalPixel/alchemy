@@ -28,7 +28,7 @@ void Animation_ApplyChildPalette(struct MotionObject *obj, s32 palette);
 void Battle_ResetEffectCounter(void);
 s32 Event_FindFacingTrigger(s32 source);
 s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot);
-s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result);
+void *BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result);
 s32 BattleFx_ExecutePackedAbilityEffect(s32 packed);
 s32 BattleCommand_ExecuteSelectedAction(u32 code);
 s32 BattleFx_HasMatchingEvent5(s32 group);

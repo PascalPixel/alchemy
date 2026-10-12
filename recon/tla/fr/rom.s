@@ -1989,12 +1989,6 @@ Func_080af0e4:
 	.thumb_func
 Inventory_Remove:
 	.incbin "baserom.gba", 0x000b4148, 0x00000080
-	.section .rom.000b4378, "ax"
-	.global Item_AdjustCounter
-	.type Item_AdjustCounter, %function
-	.thumb_func
-Item_AdjustCounter:
-	.incbin "baserom.gba", 0x000b4378, 0x00000028
 	.section .rom.000b44e4, "ax"
 	.balign 4
 	.global Owner_UpdateClassActions
@@ -2093,7 +2087,10 @@ Func_080b11f8:
 Data_080b127c:
 	.incbin "baserom.gba", 0x000b627c, 0x0000004c
 	.section .rom.000b6f28, "ax"
-	.incbin "baserom.gba", 0x000b6f28, 0x0000043c
+	.incbin "baserom.gba", 0x000b6f28, 0x00000018
+	.global Data_080b1f40
+Data_080b1f40:
+	.incbin "baserom.gba", 0x000b6f40, 0x00000424
 	.section .rom.000cb684, "ax"
 	.incbin "baserom.gba", 0x000cb684, 0x00000480
 	.global Data_080c6b04
@@ -3291,8 +3288,6 @@ Func_080eaf98:
 	.thumb_func
 Func_080eb01c:
 	.incbin "baserom.gba", 0x000f0010, 0x0000027c
-	.section .rom.000f02cc, "ax"
-	.incbin "baserom.gba", 0x000f02cc, 0x00000018
 	.section .rom.000f030c, "ax"
 	.incbin "baserom.gba", 0x000f030c, 0x00000204
 	.section .rom.000f0588, "ax"

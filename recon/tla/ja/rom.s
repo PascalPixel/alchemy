@@ -2766,13 +2766,6 @@ Func_080caa2c:
 	.thumb_func
 Func_080caa4c:
 	.incbin "baserom.gba", 0x000caa4c, 0x00000274
-	.section .rom.000cacec, "ax"
-	.balign 4
-	.global Scene_AssignViewFlags
-	.type Scene_AssignViewFlags, %function
-	.thumb_func
-Scene_AssignViewFlags:
-	.incbin "baserom.gba", 0x000cacec, 0x00000078
 	.section .rom.000cae5c, "ax"
 	.global Func_080cae5c
 	.type Func_080cae5c, %function
@@ -3039,11 +3032,6 @@ Func_080d1f20:
 	.thumb_func
 Func_080d20fc:
 	.incbin "baserom.gba", 0x000d20dc, 0x000000f8
-	.global EventRuntime_UpdateWaitMode
-	.type EventRuntime_UpdateWaitMode, %function
-	.thumb_func
-EventRuntime_UpdateWaitMode:
-	.incbin "baserom.gba", 0x000d21d4, 0x0000004c
 	.section .rom.000d25a8, "ax"
 	.global Func_080d25c8
 	.type Func_080d25c8, %function
@@ -3853,13 +3841,6 @@ UiIcon_PrepareObject:
 	.incbin "baserom.gba", 0x000f8830, 0x0000003c
 	.section .rom.000f8878, "ax"
 	.incbin "baserom.gba", 0x000f8878, 0x000002ec
-	.section .rom.000f8b74, "ax"
-	.balign 4
-	.global Func_080f8bcc
-	.type Func_080f8bcc, %function
-	.thumb_func
-Func_080f8bcc:
-	.incbin "baserom.gba", 0x000f8b74, 0x0000004c
 	.section .rom.000f8c8e, "ax"
 	.incbin "baserom.gba", 0x000f8c8e, 0x0000022a
 	.section .rom.000f8f14, "ax"
@@ -3889,7 +3870,10 @@ ItemMenu_DrawIcons:
 	.incbin "baserom.gba", 0x000fb03c, 0x00000534
 	.section .rom.000fb60c, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x000fb60c, 0x000001c0
+	.incbin "baserom.gba", 0x000fb60c, 0x00000064
+	.section .rom.000fb6b8, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000fb6b8, 0x00000114
 	.section .rom.000fb7d8, "ax"
 	.global Func_080fb8b8
 	.type Func_080fb8b8, %function

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 
 struct SceneRegionEntry {
     s16 id;
@@ -9,8 +10,6 @@ struct SceneRegionEntry {
     s32 z;
     u8 unknown_14[4];
 };
-
-#include "ram_buffer.h"
 
 struct MapViewBounds {
     u8 unknown_000[0xec];

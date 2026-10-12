@@ -1,6 +1,6 @@
 #include "types.h"
 #include "m7_interfaces.h"
-extern u8 Data_03001f2c[];
+#include "ram_buffer.h"
 
 void PsynergyMenu_RefreshOwnerEntries(s32 origin_x, s32 origin_y, s32 columns);
 
@@ -11,7 +11,7 @@ void PsynergyMenu_RefreshOwnerEntries(s32 origin_x, s32 origin_y, s32 columns)
     s32 index;
 
     index = 0;
-    slot = (struct RenderOutput **)(*(s32 *)((u32)&Data_03001f2c) + 0x48);
+    slot = (struct RenderOutput **)((u8 *)Ram_HeapSlots->menu_runtime + 0x4c);
     scan = slot;
     do {
         if (*scan++ != NULL) {

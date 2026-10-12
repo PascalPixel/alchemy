@@ -2616,7 +2616,12 @@ Func_080c8928:
 	.type Func_080c8930, %function
 	.thumb_func
 Func_080c8930:
-	.incbin "baserom.gba", 0x000c8930, 0x00000018
+	.incbin "baserom.gba", 0x000c8930, 0x00000010
+	.global Func_080c8940
+	.type Func_080c8940, %function
+	.thumb_func
+Func_080c8940:
+	.incbin "baserom.gba", 0x000c8940, 0x00000008
 	.global Func_080c8948
 	.type Func_080c8948, %function
 	.thumb_func

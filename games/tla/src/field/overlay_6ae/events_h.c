@@ -1,5 +1,8 @@
 #include "ov6ae.h"
 
+// 日本版にはない: この四つと、その行、Func_02004e80
+#if !defined(TLA_EDITION_JA)
+
 void Func_02004ec0(void)
 {
     Func_02004e80(28, 2);
@@ -19,3 +22,4 @@ void Func_02004ee4(void)
 {
     Func_02004e80(29, 21);
 }
+#endif

@@ -5,6 +5,8 @@ void Func_02004d14(void)
     GameFlag_ClearBit(0x202);
 }
 
+// 日本版にはない (Func_02004d50 も同じ)
+#if !defined(TLA_EDITION_JA)
 void Func_02004d24(s32 id)
 {
     u8 *work = Ram_HeapSlots->window_tiles;
@@ -14,3 +16,4 @@ void Func_02004d24(s32 id)
     if (((struct Ov6aeParty *)&gPartyState)->held == id)
         work[0x138a] = 1;
 }
+#endif

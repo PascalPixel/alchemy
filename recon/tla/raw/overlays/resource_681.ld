@@ -14,7 +14,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_681/scene_tables.o"(.text)
         "*/games/tla/src/field/overlay_681/s0344.o"(.text)
         "*/games/tla/src/field/overlay_681/s036c.o"(.text)
-        "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
+        "*/games/tla/src/field/overlay_681/effadv.o"(.text)
         "*/resource_681_overlay.o"(.text.x0200842a)
         "*/resource_681_overlay.o"(.text.x0200842c)
         "*/games/tla/src/field/overlay_681/exits.o"(.text)

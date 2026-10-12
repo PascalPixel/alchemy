@@ -15,7 +15,7 @@ msgctxt "message"
 msgid "00001"
 msgstr "(神殿からのスタートになります)"
 
-msgctxt "MsgIDonTKnowMy"
+msgctxt "message"
 msgid "00002"
 msgstr "(まだクリアしてません)"
 
@@ -59,7 +59,7 @@ msgctxt "message"
 msgid "00012"
 msgstr "{text_color:5}かきこみにしっぱいしました{end_wait}"
 
-msgctxt "MsgIThoughtID"
+msgctxt "message"
 msgid "00013"
 msgstr "{text_color:5}よみこみにしっぱいしました{end_wait}"
 
@@ -159,7 +159,7 @@ msgctxt "message"
 msgid "00037"
 msgstr "らくらくでいってみますか?{line_break}(失われし時代クリアデータの{line_break}つよさでスタート){end_now}"
 
-msgctxt "MsgBothKyleAnd"
+msgctxt "message"
 msgid "00038"
 msgstr "・・・ざんねんですが{line_break}クリアデータがありません{end_wait}"
 
@@ -275,7 +275,7 @@ msgctxt "message"
 msgid "00066"
 msgstr "しらべる"
 
-msgctxt "message"
+msgctxt "MsgFieldRepelEvil"
 msgid "00067"
 msgstr "つかう"
 
@@ -13883,7 +13883,7 @@ msgctxt "message"
 msgid "03468"
 msgstr "だ  でど"
 
-msgctxt "message"
+msgctxt "MsgFieldSpace"
 msgid "03469"
 msgstr "ばびぶべぼ"
 
@@ -13895,11 +13895,11 @@ msgctxt "message"
 msgid "03471"
 msgstr "もどる"
 
-msgctxt "message"
+msgctxt "MsgFieldInvalidPassword"
 msgid "03472"
 msgstr "おわる"
 
-msgctxt "message"
+msgctxt "MsgFieldPasswordAccepted"
 msgid "03473"
 msgstr "パスワードがちがいます"
 
@@ -17923,7 +17923,7 @@ msgctxt "message"
 msgid "04478"
 msgstr "パスワード"
 
-msgctxt "message"
+msgctxt "MsgFieldPreparingToReceive"
 msgid "04479"
 msgstr "ぼうけんのきろく"
 
@@ -17931,7 +17931,7 @@ msgctxt "message"
 msgid "04480"
 msgstr "じゅしん じゅんび中です"
 
-msgctxt "message"
+msgctxt "MsgFieldTransferringData"
 msgid "04481"
 msgstr "データを じゅしん中です"
 
@@ -17939,7 +17939,7 @@ msgctxt "message"
 msgid "04482"
 msgstr "B:やめる"
 
-msgctxt "message"
+msgctxt "MsgFieldDataTransferWasInterrupted"
 msgid "04483"
 msgstr "つうしんが せつだんされました"
 
@@ -35847,7 +35847,7 @@ msgctxt "MsgSniffSniffI"
 msgid "08959"
 msgstr "あれあれー キミから{line_break}おいしそうなミルクの{line_break}においがするんだワン!{end_wait}"
 
-msgctxt "MsgScene681No05"
+msgctxt "message"
 msgid "08960"
 msgstr "ハァ ハァ どうかボクに{line_break}ミルクをくれないかなワン{page_break}かわりにボクがつかまえた{line_break}これを あげるんだワン。{end_wait}"
 
@@ -37019,7 +37019,7 @@ msgctxt "message"
 msgid "09252"
 msgstr "なにか ものが おけそうだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene681No01"
 msgid "09253"
 msgstr "{protagonist_name}は さいだんの上に{line_break}にんぎょうを のせた。{end_wait}"
 
@@ -37027,7 +37027,7 @@ msgctxt "message"
 msgid "09254"
 msgstr "しかし なにもおこらなかった。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene681No02"
 msgid "09255"
 msgstr "だれだ あんた・・・{line_break}どうやって やってきた?{end_wait}"
 
@@ -37043,27 +37043,27 @@ msgctxt "message"
 msgid "09258"
 msgstr "よっぱらわせたところで{line_break}あいつと 戦うのさ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene681No03"
 msgid "09259"
 msgstr "わかったら じゃましないで{line_break}あっちへ行ってくれ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene681No04"
 msgid "09260"
 msgstr "いったい どれだけのませれば{line_break}オロチは よっぱらうんだろう?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene681No05"
 msgid "09261"
 msgstr "そこから どいてくれ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene681No11"
 msgid "09262"
 msgstr "さかずきには なみなみと{line_break}さけが そそがれている。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldYouYouCannotFightThe"
 msgid "09263"
 msgstr "あんた シラフのオロチと{line_break}戦うなんてムチャしすぎだ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAtLastTheSerpentHas"
 msgid "09264"
 msgstr "オロチよ よっぱらったな{line_break}この時をオレはまっていた!{end_wait}"
 
@@ -37083,7 +37083,7 @@ msgctxt "message"
 msgid "09268"
 msgstr "さけで よわせただけじゃ{line_break}オロチはたおせない・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene681No06"
 msgid "09269"
 msgstr "オロチは よわせただけでは{line_break}まだ たりないみたいだ・・・{page_break}ヤツをよわらせるほうほうが{line_break}なにかあれば あるいは・・・。{end_wait}"
 
@@ -37091,15 +37091,15 @@ msgctxt "message"
 msgid "09270"
 msgstr "さかずきには なみなみと{line_break}さけが そそがれている。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene681No07"
 msgid "09271"
 msgstr "・・・なんてザマだ{line_break}クシナダをすくえるのは{line_break}オレしか いないというのに。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldLikeISaidTheSerpent"
 msgid "09272"
 msgstr "だから いったろ・・・{line_break}さけで よわせただけじゃ{line_break}オロチはたおせないって。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldItLooksLikeTheDragon"
 msgid "09273"
 msgstr "オロチは くるしそうじゃが{line_break}死にそうにもないぞ・・・。{end_wait}"
 
@@ -37127,7 +37127,7 @@ msgctxt "message"
 msgid "09279"
 msgstr "もちろん クシナダのところさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene681No08"
 msgid "09280"
 msgstr "目をとじたオロチの像は{line_break}まるで生きているようだ。{end_wait}"
 
@@ -37967,7 +37967,7 @@ msgctxt "MsgThatDragonWanted"
 msgid "09489"
 msgstr "オロチって まいとしのように{line_break}おヨメさんをもらう気だったのね{line_break}オロチって・・・女のてきだわ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene681No09"
 msgid "09490"
 msgstr "{actor_name:5}は せきばんをしらべた{line_break}なにやら もじがきざまれている{page_break}地の力を あやつりし者よ{line_break}このせきばんに ふれてみよ{page_break}さすれば われはなんじに{line_break}すなの中へと とけこむ力{line_break}サンドを さずけよう。{end_wait}"
 
@@ -37991,7 +37991,7 @@ msgctxt "MsgICanT"
 msgid "09495"
 msgstr "もう けはいは{line_break}かんじられない。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene681No10"
 msgid "09496"
 msgstr "ダメだ オロチにやられて{line_break}からだが 動かないぞ・・・。{end_wait}"
 
@@ -48411,47 +48411,47 @@ msgctxt "message"
 msgid "12100"
 msgstr "じかんがないぞ {actor_name:5}・・・{line_break}さあ マーズスターを使って{line_break}いまこそ 灯台をともす時じゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOurQuestIs"
 msgid "12101"
 msgstr "かなしい たびのおわりだね・・・{line_break}父さんのことを母さんのキニーに{line_break}なんて つげたらいいのかな・・・{page_break}だけど かなしむのはあとだ・・・{line_break}いまは灯台に火をともすことだけを{line_break}かんがえることにしよう・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWishICould"
 msgid "12102"
 msgstr "父さんと母さんをうしなうなんて{line_break}オレ なんていったらいいか・・・{page_break}{actor_name:5}の母さんのクッキーを{line_break}もういちど くいたかったなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIUnderstandYour"
 msgid "12103"
 msgstr "{actor_name:5} りょうしんをうしなって{line_break}つらいのは よくわかります・・・{page_break}だけどまだ あなたには・・・{line_break}いもうとの{actor_name:6}がいます。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfAlexSet"
 msgid "12104"
 msgstr "あのアレクスが こんなことを{line_break}しくんでいたのだとしたら・・・{line_break}わたし かれをゆるせませんわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIThoughtID"
 msgid "12105"
 msgstr "げんきな パパとママにあえるって{line_break}わたしは しんじていたのよ・・・{page_break}なのに わたし それと知らず{line_break}ドラゴンにされたパパやママを{line_break}たおしてしまっていたのね・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDonTKnowMy"
 msgid "12106"
 msgstr "わたし 父さんや母さんなんか・・・{line_break}どこにいるのかも 知らないけど{line_break}こんなのって ひどすぎるわよ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIMSorryThings"
 msgid "12107"
 msgstr "{actor_name:6} パパやママにあえると{line_break}あんなに よろこんでいたのに・・・{line_break}こんなことになって ざんねんです。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBothKyleAnd"
 msgid "12108"
 msgstr "お前の父や母 それにドリー・・・{line_break}みんな いい ともだちじゃった{line_break}ワシも すごくかなしいわい・・・{page_break}かれらへの とむらいのためにも{line_break}いっこくもはやく 灯台をともし{line_break}ガイアフォールを とめるんじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUnnnnIAm"
 msgid "12109"
 msgstr "むふうう・・・{actor_name:5}か・・・{line_break}{actor_name:6}も いるのだな・・・{page_break}むふうう・・・さいごに・・・{line_break}子どもたちに あえて・・・{line_break}わたしは・・・しあわせだ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUhhhhnnnICan"
 msgid "12110"
 msgstr "ハアハア あなた {actor_name:5}ね{line_break}目が見えなくなってきたけれど{line_break}子どものことは わかるわ・・・{page_break}ハアハア 父さんと母さん・・・{line_break}もし これでいなくなっても{line_break}{actor_name:6}と なかよくね・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKoffKoffYou"
 msgid "12111"
 msgstr "ゲホゲホ・・・{actor_name:5}・・・{line_break}よく ぶじにかえったな・・・{line_break}キミには たのみがある・・・{page_break}ゲホゲホ・・・キニーには・・・{line_break}わたしの分まで つよく生きろ{line_break}そう 伝えてほしいのだ・・・。{end_wait}"
 

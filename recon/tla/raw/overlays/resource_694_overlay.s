@@ -1722,6 +1722,141 @@ Func_020017f4:
 	bl Object_SetModeById
 	pop {r5, pc}
 	.section .text.x02009938,"ax",%progbits
+	.ifdef TLA_EDITION_ES
+	.global Func_02001938
+	.thumb_func
+Func_02001938:
+	push {r5, r6, r7, lr}
+	adds r5, r0, #0
+	movs r0, #228
+	bl PartyInventory_CountItem
+	adds r6, r0, #0
+	bl Func_0200422c
+	cmp r5, #0
+	bne .L_es_020099ca
+	ldr r7, .L_es_02009a38
+	adds r0, r7, #0
+	bl Func_0200412c
+	movs r0, #18
+	movs r1, #0
+	bl Func_02004144
+	cmp r6, #0
+	beq .L_es_020099f2
+	adds r0, r7, #2
+	bl Func_0200412c
+	adds r0, r6, #0
+	movs r1, #5
+	bl Func_0200403c
+	movs r1, #0
+	movs r0, #18
+	bl UiText_OpenMessageAtObject
+	ldr r3, .L_es_02009a3c
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r3, r3, r2
+	ldr r0, [r3]
+	movs r1, #0
+	bl Inventory_PromptAndSetObjectMode
+	cmp r0, #1
+	beq .L_es_020099f2
+	bl PartyInventory_CountFreeSlots
+	adds r5, r0, #0
+	cmp r5, #0
+	bne .L_es_0200999c
+	adds r0, r7, #4
+	bl Func_0200412c
+	movs r0, #18
+	movs r1, #0
+	bl UiText_OpenMessageAtObject
+	b .L_es_020099ae
+.L_es_0200999c:
+	cmp r5, #6
+	bgt .L_es_020099fc
+	adds r0, r7, #5
+	bl Func_0200412c
+	movs r0, #18
+	movs r1, #0
+	bl UiText_OpenMessageAtObject
+.L_es_020099ae:
+	cmp r5, #6
+	bgt .L_es_020099fc
+	ldr r3, .L_es_02009a3c
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r3, r3, r2
+	ldr r0, [r3]
+	movs r1, #0
+	bl Inventory_PromptAndSetObjectMode
+	cmp r0, #1
+	bne .L_es_020099fc
+	ldr r0, .L_es_02009a40
+	b .L_es_020099ee
+.L_es_020099ca:
+	cmp r6, #0
+	bne .L_es_020099d2
+	ldr r0, .L_es_02009a44
+	b .L_es_020099ee
+.L_es_020099d2:
+	ldr r0, .L_es_02009a48
+	bl Func_0200412c
+	movs r1, #0
+	movs r0, #18
+	bl UiText_OpenMessageAtObject
+	movs r0, #0
+	movs r1, #0
+	bl Inventory_PromptAndSetObjectMode
+	cmp r0, #1
+	bne .L_es_020099fc
+	ldr r0, .L_es_02009a4c
+.L_es_020099ee:
+	bl Func_0200412c
+.L_es_020099f2:
+	movs r0, #18
+	movs r1, #0
+	bl Func_02004144
+	b .L_es_02009a34
+.L_es_020099fc:
+	ldr r0, .L_es_02009a50
+	bl Func_0200412c
+	movs r1, #0
+	movs r0, #18
+	bl Func_02004144
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_SetBit
+	movs r0, #144
+	lsls r0, r0, #4
+	adds r0, #229
+	bl GameFlag_SetBit
+	movs r0, #1
+	bl WaitFrames
+	movs r0, #254
+	lsls r0, r0, #1
+	movs r1, #0
+	bl Field_SetDestination
+	ldr r0, .L_es_02009a54
+	movs r1, #20
+	bl Party_SetFields1eeAnd1f0
+.L_es_02009a34:
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
+.L_es_02009a38:
+	.4byte MsgScene694No10
+.L_es_02009a3c:
+	.4byte gPartyState
+.L_es_02009a40:
+	.4byte 0x00001578
+.L_es_02009a44:
+	.4byte 0x00001581
+.L_es_02009a48:
+	.4byte MsgScene694No12
+.L_es_02009a4c:
+	.4byte MsgScene694No18
+.L_es_02009a50:
+	.4byte MsgScene694No19
+.L_es_02009a54:
+	.4byte 0x000000ee
+	.else
 	.global Func_02001938
 	.thumb_func
 Func_02001938:
@@ -1855,6 +1990,7 @@ Func_02001938:
 	.4byte MsgScene694No13
 .L_02009a5c:
 	.4byte 0x000000ee
+	.endif
 	.section .text.x02009abc,"ax",%progbits
 	.balign 4
 	.global Func_02001abc
@@ -4313,6 +4449,267 @@ Func_020039d4:
 .L_0200ba88:
 	.4byte Data_02004a1c
 	.section .text.x0200ba8c,"ax",%progbits
+	.ifdef TLA_EDITION_ES
+	.global Func_02003a8c
+	.thumb_func
+Func_02003a8c:
+	push {r5, r6, r7, lr}
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r3, [r3, #108]
+	movs r1, #214
+	movs r2, #133
+	lsls r1, r1, #1
+	lsls r2, r2, #1
+	adds r3, r3, r1
+	adds r2, #255
+	str r2, [r3]
+	movs r0, #13
+	bl Func_02001c44
+	movs r0, #16
+	bl Func_02001c44
+	movs r0, #17
+	bl Func_02001c44
+	movs r0, #19
+	bl Func_02001c44
+	movs r0, #20
+	bl Func_02001c44
+	movs r0, #14
+	bl Object_GetById
+	movs r1, #1
+	bl Object_SetPartAttribute
+	movs r0, #15
+	bl Object_GetById
+	movs r1, #2
+	bl Object_SetPartAttribute
+	movs r0, #8
+	bl Object_GetById
+	movs r1, #0
+	bl Object_SetPartAttribute
+	movs r0, #9
+	bl Object_GetById
+	movs r1, #3
+	bl Object_SetPartAttribute
+	movs r0, #144
+	lsls r0, r0, #4
+	adds r0, #229
+	bl GameFlag_Test
+	cmp r0, #0
+	bne .L_es_0200baf8
+	b .L_es_0200bcaa
+.L_es_0200baf8:
+	movs r0, #144
+	lsls r0, r0, #4
+	adds r0, #229
+	bl GameFlag_ClearBit
+	ldr r2, .L_es_0200bcac
+	movs r1, #241
+	lsls r1, r1, #1
+	adds r3, r2, r1
+	movs r1, #0
+	ldrsh r3, [r3, r1]
+	cmp r3, #18
+	bne .L_es_0200bb46
+	ldr r3, .L_es_0200bcb0
+	ldr r2, [r2, #16]
+	ldr r3, [r3]
+	subs r5, r2, r3
+	bl Func_0200406c
+	movs r0, #0
+	bl Func_02004204
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
+	cmp r5, #0
+	ble .L_es_0200bbb4
+	movs r2, #156
+	lsls r2, r2, #7
+	adds r2, #31
+	cmp r5, r2
+	bgt .L_es_0200bb72
+	movs r3, #152
+	lsls r3, r3, #5
+	adds r3, #135
+	cmp r5, r3
+	bgt .L_es_0200bb84
+	b .L_es_0200bb8c
+.L_es_0200bb46:
+	cmp r3, #19
+	bne .L_es_0200bbd4
+	ldr r3, .L_es_0200bcb0
+	ldr r2, [r2, #16]
+	ldr r3, [r3]
+	subs r5, r2, r3
+	bl Func_0200406c
+	movs r0, #0
+	bl Func_02004204
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
+	cmp r5, #0
+	ble .L_es_0200bbb4
+	movs r1, #156
+	lsls r1, r1, #7
+	adds r1, #31
+	cmp r5, r1
+	ble .L_es_0200bb7a
+.L_es_0200bb72:
+	movs r0, #93
+	bl Func_020042b4
+	b .L_es_0200bb92
+.L_es_0200bb7a:
+	movs r2, #152
+	lsls r2, r2, #5
+	adds r2, #135
+	cmp r5, r2
+	ble .L_es_0200bb8c
+.L_es_0200bb84:
+	movs r0, #92
+	bl Func_020042b4
+	b .L_es_0200bb92
+.L_es_0200bb8c:
+	movs r0, #91
+	bl Func_020042b4
+.L_es_0200bb92:
+	movs r0, #20
+	bl Battle_WaitMode0
+	ldr r0, .L_es_0200bcb4
+	bl Func_0200412c
+	adds r0, r5, #0
+	movs r1, #5
+	bl Func_0200403c
+	movs r0, #14
+	movs r1, #0
+	bl Func_02004144
+	bl AudioCommand_WaitForStateByteClear
+	b .L_es_0200bbce
+.L_es_0200bbb4:
+	cmp r5, #0
+	bge .L_es_0200bbce
+	ldr r0, .L_es_0200bcb8
+	bl Func_0200412c
+	negs r0, r5
+	movs r1, #5
+	bl Func_0200403c
+	movs r0, #14
+	movs r1, #0
+	bl Func_02004144
+.L_es_0200bbce:
+	bl Func_02004074
+	b .L_es_0200bcaa
+.L_es_0200bbd4:
+	cmp r3, #20
+	bne .L_es_0200bcaa
+	movs r3, #166
+	lsls r3, r3, #1
+	adds r7, r2, r3
+	bl Func_0200406c
+	movs r0, #0
+	bl Func_02004204
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
+	movs r0, #20
+	bl Battle_WaitMode0
+	movs r3, #0
+	ldrsb r3, [r7, r3]
+	movs r5, #1
+	negs r5, r5
+	cmp r3, r5
+	bne .L_es_0200bc0a
+	movs r0, #1
+	bl Func_02001938
+	b .L_es_0200bca6
+.L_es_0200bc0a:
+	movs r1, #2
+	negs r1, r1
+	cmp r3, r1
+	bne .L_es_0200bc22
+	ldr r0, .L_es_0200bcbc
+	bl Func_0200412c
+	movs r0, #18
+	movs r1, #0
+	bl Func_02004144
+	b .L_es_0200bca6
+.L_es_0200bc22:
+	ldr r0, .L_es_0200bcc0
+	bl Func_0200412c
+	movs r0, #18
+	movs r1, #0
+	bl Func_02004144
+	movs r3, #0
+	ldrsb r3, [r7, r3]
+	cmp r3, r5
+	beq .L_es_0200bc8c
+	adds r6, r7, #0
+.L_es_0200bc3a:
+	cmp r6, r7
+	bne .L_es_0200bc46
+	ldr r0, .L_es_0200bcc4
+	bl Func_0200412c
+	b .L_es_0200bc4c
+.L_es_0200bc46:
+	ldr r0, .L_es_0200bcc8
+	bl Func_0200412c
+.L_es_0200bc4c:
+	movs r0, #0
+	ldrsb r0, [r6, r0]
+	bl Func_02001a60
+	movs r1, #2
+	adds r5, r0, #0
+	bl Func_0200403c
+	movs r0, #18
+	movs r1, #0
+	bl Func_02004144
+	adds r0, r5, #0
+	movs r1, #3
+	bl Func_020041fc
+	movs r1, #0
+	adds r0, r5, #0
+	bl PartyInventory_GiveItem
+	movs r1, #192
+	movs r0, #0
+	lsls r1, r1, #8
+	adds r6, #1
+	bl Func_0200415c
+	movs r3, #0
+	ldrsb r3, [r6, r3]
+	movs r2, #1
+	negs r2, r2
+	cmp r3, r2
+	bne .L_es_0200bc3a
+.L_es_0200bc8c:
+	ldr r3, .L_es_0200bcac
+	movs r1, #166
+	lsls r1, r1, #1
+	adds r3, r3, r1
+	movs r2, #254
+	ldr r0, .L_es_0200bccc
+	strb r2, [r3]
+	bl Func_0200412c
+	movs r0, #18
+	movs r1, #0
+	bl Func_02004144
+.L_es_0200bca6:
+	bl Func_02004074
+.L_es_0200bcaa:
+	pop {r5, r6, r7, pc}
+.L_es_0200bcac:
+	.4byte gPartyState
+.L_es_0200bcb0:
+	.4byte gSceneState
+.L_es_0200bcb4:
+	.4byte 0x0000155a
+.L_es_0200bcb8:
+	.4byte 0x0000155b
+.L_es_0200bcbc:
+	.4byte MsgScene694No04
+.L_es_0200bcc0:
+	.4byte MsgScene694No05
+.L_es_0200bcc4:
+	.4byte MsgScene694No11
+.L_es_0200bcc8:
+	.4byte MsgScene694No14
+.L_es_0200bccc:
+	.4byte 0x00001580
+	.else
 	.global Func_02003a8c
 	.thumb_func
 Func_02003a8c:
@@ -4572,6 +4969,7 @@ Func_02003a8c:
 	.4byte MsgScene694No16
 .L_0200bcd4:
 	.4byte MsgScene694No17
+	.endif
 	.section .text.x0200bcd8,"ax",%progbits
 	.global Func_02003cd8
 	.thumb_func
@@ -4897,7 +5295,7 @@ Func_02003e54:
 .L_0200bf50:
 	.4byte 0x80004000
 	.section .bss,"aw",%nobits
-	.space 0x00000004
+	.balign 16
 	.global Data_02006000
 Data_02006000:
 	.space 0x00000004

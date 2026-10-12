@@ -59,7 +59,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_67b/events_j.o"(.text)
         "*/games/tla/src/field/overlay_67b/import.o"(.text)
         "*/games/tla/src/field/overlay_67b/data.o"(.data)
-        "*/resource_67b_overlay.o"(.rodata.x0200ac74)
+        "*/games/tla/src/field/overlay_67b/tiles.o"(.rodata)
         "*/games/tla/src/field/overlay_67b/data2.o"(.data)
         "*/resource_67b_overlay.o"(.rodata.x0200b388)
     }

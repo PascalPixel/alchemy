@@ -23,7 +23,8 @@ SECTIONS
         "*/games/tla/src/field/overlay_6b1/list.o"(.text)
         "*/games/tla/src/field/overlay_6b1/import.o"(.text)
         "*/games/tla/src/field/overlay_6b1/data.o"(.data)
-        "*/resource_6b1_overlay.o"(.rodata.x02008ef2)
+        "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
+        "*/games/tla/src/graphics/field/cached_d.o"(.rodata)
         "*/games/tla/src/field/overlay_6b1/data2.o"(.data)
     }
     .bss : { "*/resource_6b1_overlay.o"(.bss) }

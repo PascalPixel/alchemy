@@ -41,7 +41,9 @@ SECTIONS
         "*/resource_69f_overlay.o"(.text.x020098bc)
         "*/resource_69f_overlay.o"(.text.x0200996c)
         "*/games/tla/src/field/overlay_69f/import.o"(.text)
-        "*/resource_69f_overlay.o"(.rodata.x02009bf4)
+        "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
+        "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
+        "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
         "*/games/tla/src/field/overlay_69f/data.o"(.data)
     }
     .bss : { "*/resource_69f_overlay.o"(.bss) }

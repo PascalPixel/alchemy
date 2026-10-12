@@ -87,7 +87,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_67c/s3c14.o"(.text)
         "*/games/tla/src/field/overlay_67c/import.o"(.text)
         "*/games/tla/src/field/overlay_67c/data.o"(.data)
-        "*/resource_67c_overlay.o"(.rodata.x0200c14c)
+        "*/games/tla/src/field/overlay_67c/tiles.o"(.rodata)
         "*/games/tla/src/field/overlay_67c/data2.o"(.data)
     }
     .bss : { "*/resource_67c_overlay.o"(.bss) }

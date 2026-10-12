@@ -120,7 +120,7 @@ SECTIONS
         "*/resource_697_overlay.o"(.text.x0200d6e8)
         "*/games/tla/src/field/overlay_697/import.o"(.text)
         "*/games/tla/src/field/overlay_697/data.o"(.data)
-        "*/resource_697_overlay.o"(.rodata.x0200dfa0)
+        "*/games/tla/src/graphics/field/tiles64d.o"(.rodata)
         "*/games/tla/src/field/overlay_697/data2.o"(.data)
         "*/resource_697_overlay.o"(.rodata.x0200e2b4)
         "*/games/tla/src/field/overlay_697/data3.o"(.data)

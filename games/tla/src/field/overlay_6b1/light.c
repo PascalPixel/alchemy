@@ -3,8 +3,8 @@
 #include "field_event.h"
 #include "callback_scheduler.h"
 
-extern u8 Data_02000ef2[];
-extern u8 Data_02001054[];
+extern u8 Field_CachedTilesA[];
+extern u8 Field_CachedTilesD[];
 extern s16 Data_02001cdc;
 extern s16 Data_02001cde;
 extern struct FieldActor *Data_02001ce0[];
@@ -36,7 +36,7 @@ void Func_02000a98(void)
     u8 *buffer = BumpAlloc(0xc00);
 
     Iwram_ClearWords(Data_02001ce0, 64);
-    Func_02000c24(Data_02000ef2, buffer);
+    Func_02000c24(Field_CachedTilesA, buffer);
     Data_02001cdc = Resource_FindFreeEntry();
     VramLoad(Data_02001cdc, 0xc00, buffer);
     MemFree(buffer);
@@ -51,7 +51,7 @@ void Func_02000b18(void)
     u8 *buffer = BumpAlloc(0x1800);
 
     Iwram_ClearWords(Data_02001ce0, 64);
-    Func_02000c24(Data_02001054 + 1, buffer);
+    Func_02000c24(Field_CachedTilesD, buffer);
     Data_02001cdc = Resource_FindFreeEntry();
     VramLoad(Data_02001cdc, 0x1800, buffer);
     MemFree(buffer);

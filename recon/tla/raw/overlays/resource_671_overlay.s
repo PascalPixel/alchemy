@@ -5343,7 +5343,7 @@ Func_020038ac:
 .L_0200b8ec:
 	.4byte gSceneState
 .L_0200b8f0:
-	.4byte Data_02005948
+	.4byte Field_CachedTilesA
 	.section .text.x0200b974,"ax",%progbits
 	.balign 4
 	.global Func_02003974
@@ -8680,103 +8680,6 @@ Func_020054ac:
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, r7, pc}
-	.section .rodata.x0200d948,"a",%progbits
-	.global Data_02005948
-Data_02005948:
-	.4byte 0x06345d01
-	.4byte 0x08003b01
-	.4byte 0x2f010026
-	.4byte 0x5f1f7000
-	.4byte 0x667b0906
-	.4byte 0x01040901
-	.4byte 0x0e287800
-	.4byte 0x56053b3f
-	.4byte 0x5f6f080e
-	.4byte 0x08100800
-	.4byte 0xa1076601
-	.4byte 0x001d0800
-	.4byte 0x08071768
-	.4byte 0x660015bb
-	.4byte 0x0e020016
-	.4byte 0x66177000
-	.4byte 0x3b02080d
-	.4byte 0x020010df
-	.4byte 0x66128010
-	.4byte 0x01037a01
-	.4byte 0x04277910
-	.4byte 0xfb44013d
-	.4byte 0x02007800
-	.4byte 0x20590414
-	.4byte 0x57052700
-	.4byte 0x50002066
-	.4byte 0x20ff0016
-	.4byte 0x00162a00
-	.4byte 0x0016002e
-	.4byte 0x162a0020
-	.4byte 0x4e002000
-	.4byte 0x7f320040
-	.4byte 0x04aa023b
-	.4byte 0x02500006
-	.4byte 0xe7169207
-	.4byte 0x0010e103
-	.4byte 0x0301ff0d
-	.4byte 0x0c01e709
-	.4byte 0x5906dd03
-	.4byte 0x210a6118
-	.4byte 0xfd340030
-	.4byte 0x0403a425
-	.4byte 0x5f290630
-	.4byte 0x02490100
-	.4byte 0xf8063b58
-	.4byte 0x3b5704af
-	.4byte 0x163bb406
-	.4byte 0x0800200e
-	.4byte 0x283ea00f
-	.4byte 0x070820ff
-	.4byte 0x2e050010
-	.4byte 0x057807f8
-	.4byte 0x0a980488
-	.4byte 0xdd660ba8
-	.4byte 0x07080030
-	.4byte 0x38205f22
-	.4byte 0x33481706
-	.4byte 0x00603b58
-	.4byte 0x783ffe78
-	.4byte 0x08076918
-	.4byte 0x1f017900
-	.4byte 0x0a782700
-	.4byte 0x2aff5f11
-	.4byte 0x701f07a8
-	.4byte 0xef273000
-	.4byte 0x00505704
-	.4byte 0x4c002037
-	.4byte 0xf7000040
-	.4byte 0x0040002a
-	.4byte 0x1100206e
-	.4byte 0x403b0046
-	.4byte 0x00200000
-	.4byte 0x2a00402c
-	.4byte 0x244819f7
-	.4byte 0x2d004000
-	.4byte 0x043b0803
-	.4byte 0x05830722
-	.4byte 0x1817b705
-	.4byte 0x0028003b
-	.4byte 0x66015920
-	.4byte 0x00072260
-	.4byte 0x6805041a
-	.4byte 0x3f1b01ff
-	.4byte 0x06150458
-	.4byte 0x40182a2c
-	.4byte 0x8f000900
-	.4byte 0xe0130302
-	.4byte 0x0030cd0c
-	.4byte 0x00000002
-	.4byte 0x01020200
-	.4byte 0x07030301
-	.4byte 0x05060405
-	.4byte 0x09040607
-	.4byte 0x0a080809
 	.section .bss,"aw",%nobits
 	.global Data_02006fc8
 Data_02006fc8:

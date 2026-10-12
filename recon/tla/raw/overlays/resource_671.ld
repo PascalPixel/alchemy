@@ -95,7 +95,7 @@ SECTIONS
         "*/resource_671_overlay.o"(.text.x0200d4ac)
         "*/games/tla/src/field/overlay_671/import.o"(.text)
         "*/games/tla/src/field/overlay_671/data.o"(.data)
-        "*/resource_671_overlay.o"(.rodata.x0200d948)
+        "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/field/overlay_671/data2.o"(.data)
     }
     .bss : { "*/resource_671_overlay.o"(.bss) }

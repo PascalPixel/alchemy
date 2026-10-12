@@ -22,7 +22,7 @@ SECTIONS
         "*/resource_64d_overlay.o"(.text.x0200a6f4)
         "*/games/tla/src/field/vinasu_iriguchi/sparks.o"(.text)
         "*/games/tla/src/field/vinasu_iriguchi/import.o"(.text)
-        "*/resource_64d_overlay.o"(.rodata.x0200aa6c)
+        "*/games/tla/src/graphics/field/tiles64d.o"(.rodata)
         "*/games/tla/src/field/vinasu_iriguchi/data.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

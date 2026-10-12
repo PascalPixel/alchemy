@@ -17,7 +17,7 @@ typedef struct
 	u8	filler14[80];
 	u16 unk64;
 	s16 unk66;
-} T_0200154c;
+} CountdownArcObject;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 s32 SceneData_ReturnZero(void);

@@ -66,7 +66,7 @@ static void SceneState_SetValues352_365_2116_2117_40(void);
 
 u8 *HaidiaIe_GetEntrances(void)
 {
-	return (u8 *)Data_0200afa0;
+	return (u8 *)gHaidiaIeEntrances;
 }
 
 s32 HaidiaIe_GetDefaultResult(void)
@@ -78,26 +78,26 @@ void *SceneData_SelectTableByFlag834(void)
 {
 	if (Engine_GameFlagIsSet(0x834) != 0)
 	{
-		return Data_0200b144;
+		return gHaidiaIeExitsFlag834;
 	}
-	return Data_0200b108;
+	return gHaidiaIeExits;
 }
 
 void *SceneData_SelectTableByFlags834And87a(void)
 {
 	if (Engine_GameFlagIsSet(0x834) != 0)
 	{
-		return Data_0200b380;
+		return gHaidiaIePlacementsFlag834;
 	}
 	if (gGameState.entrance == 12)
 	{
-		return Data_0200b560;
+		return gHaidiaIePlacementsEntrance12;
 	}
 	if (Engine_GameFlagIsSet(0x87a) != 0)
 	{
-		return Data_0200b7d0;
+		return gHaidiaIePlacementsFlag87a;
 	}
-	return Data_0200b170;
+	return gHaidiaIePlacements;
 }
 
 static void EV100_SEARCH(void)
@@ -117,21 +117,21 @@ void *SceneData_SelectTableByFlags87a_815_834(void)
 {
 	if (Engine_GameFlagIsSet(0x87a) != 0)
 	{
-		return Data_0200bcec;
+		return gHaidiaIeEventsFlag87a;
 	}
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 	{
-		return Data_0200bb3c;
+		return gHaidiaIeEventsAfterLeaving;
 	}
 	if (gGameState.entrance == 12)
 	{
-		return Data_0200bb30;
+		return gHaidiaIeEventsEntrance12;
 	}
 	if (Engine_GameFlagIsSet(0x834) != 0)
 	{
-		return Data_0200ba64;
+		return gHaidiaIeEventsFlag834;
 	}
-	return Data_0200b938;
+	return gHaidiaIeEvents;
 }
 
 static void EV23_TALK(void)
@@ -390,7 +390,7 @@ static void Scene_PsynergyStoneIsGone(void)
 	Engine_GameFlagSet(0x306);
 	Engine_ActorStop(21);
 	Engine_TaskWait(1);
-	Engine_ActorEnableActionCallback(21, Data_0200ae34);
+	Engine_ActorEnableActionCallback(21, HaidiaIe_Actor21Actions);
 	Engine_EventEnd();
 }
 
@@ -400,7 +400,7 @@ static void Scene_PsynergyStoneIsGone(void)
 static void EV01_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)&Value_0200beb4, 44, 7);
+	Map_AnimateCells((s32)&HaidiaIe_CellSteps, 44, 7);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 0x117);
 	Haidia_RequestBackdropExit(1);
 }
@@ -421,7 +421,7 @@ static void EV02_TOUCH(void)
 static void EV03_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)&Value_0200beb4, 43, 15);
+	Map_AnimateCells((s32)&HaidiaIe_CellSteps, 43, 15);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 230, 0x197);
 	Haidia_RequestBackdropExit(3);
 }
@@ -429,7 +429,7 @@ static void EV03_TOUCH(void)
 static void EV04_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)&Value_0200beb4, 52, 18);
+	Map_AnimateCells((s32)&HaidiaIe_CellSteps, 52, 18);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 374, 0x1a3);
 	Haidia_RequestBackdropExit(4);
 }
@@ -437,7 +437,7 @@ static void EV04_TOUCH(void)
 static void EV05_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)&Value_0200beb4, 41, 32);
+	Map_AnimateCells((s32)&HaidiaIe_CellSteps, 41, 32);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 200, 0x222);
 	Haidia_RequestBackdropExit(5);
 }
@@ -445,7 +445,7 @@ static void EV05_TOUCH(void)
 static void EV06_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)&Value_0200beb4, 35, 36);
+	Map_AnimateCells((s32)&HaidiaIe_CellSteps, 35, 36);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x263);
 	Haidia_RequestBackdropExit(6);
 }
@@ -453,7 +453,7 @@ static void EV06_TOUCH(void)
 static void EV07_TOUCH(void)
 {
 	Event_PlayCue(158);
-	Map_AnimateCells((s32)&Value_0200beb4, 51, 39);
+	Map_AnimateCells((s32)&HaidiaIe_CellSteps, 51, 39);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 358, 0x29e);
 	Haidia_RequestBackdropExit(7);
 }
@@ -543,7 +543,7 @@ s32 HaidiaIe_RestoreEntryState(void)
 			record = Engine_GameFlagIsSet(0x840);
 			if (record == 0)
 			{
-				goto L_02000aaa;
+				goto check_entrance;
 			}
 			Engine_ActorSetPosition(17, 0, 0);
 			Engine_ActorSetPosition(18, 0, 0);
@@ -560,7 +560,7 @@ s32 HaidiaIe_RestoreEntryState(void)
 				Engine_TaskWait(1);
 			}
 		}
-	L_02000aaa:;
+	check_entrance:;
 		if (gGameState.entrance == 12)
 		{
 			Scene_RunExtendedActorSequence();
@@ -604,13 +604,13 @@ s32 HaidiaIe_RestoreEntryState(void)
 					record = Engine_GameFlagIsSet(0x842);
 					if (record == 0)
 					{
-						goto L_02000b6a;
+						goto open_screen;
 					}
 					HaidiaIe_RunScriptScene();
 				}
 				else
 				{
-				L_02000b6a:;
+				open_screen:;
 					if (Engine_GameFlagIsSet(0x834) != 0)
 					{
 						Engine_EventOpenScreen();
@@ -621,7 +621,7 @@ s32 HaidiaIe_RestoreEntryState(void)
 			}
 		}
 	}
-L_02000b80:;
+done:;
 	return 0;
 }
 
@@ -989,13 +989,13 @@ static void HaidiaIe_RunActorPairEffectScene(void)
 	record = Object_GetById(23);
 	record->bounce = 0x28f;
 	record->gravity = (v5 << 8);
-	Engine_ActorEnableActionCallback(23, (s32)Data_0200aa48);
+	Engine_ActorEnableActionCallback(23, (s32)HaidiaIe_Actor23BounceActions);
 	Engine_EventWait(24);
 	Engine_ActorSetSpeed(24, 0x26666, 0x13333);
 	record = Object_GetById(24);
 	record->bounce = 0x28f;
 	record->gravity = (v5 << 8);
-	Object_SetActionCallbackAndRefreshById(24, (s32)Data_0200ab2c);
+	Object_SetActionCallbackAndRefreshById(24, (s32)HaidiaIe_Actor24BounceActions);
 	Engine_EventWait(40);
 	BattleFx_SetBlock30ValuesMaxZero();
 	BattleFx_SetBlock30Values12Zero();
@@ -1019,10 +1019,10 @@ static void Scene_RunExtendedActorSequence(void)
 	struct FieldActor *record;
 	struct EventWork  *work;
 	s32				   v5;
-	const u8		  *base5_200ac00;
-	const u8		  *base5_200ac90;
+	const u8		  *face_actions;
+	const u8		  *actor31_actions;
 	s32				   v6;
-	const u8		  *base5_200adf0;
+	const u8		  *pair_actions;
 
 	Owner_RefreshActiveRatios(1);
 	Engine_EventBegin();
@@ -1080,11 +1080,11 @@ static void Scene_RunExtendedActorSequence(void)
 	Actor_SetPosition(30, 0x6e0000, 0x2e80000);
 	Engine_TaskWait(2);
 	Engine_ActorSetAnimation(30, 3);
-	Engine_ActorEnableActionCallback(30, (s32)Data_0200ac14);
+	Engine_ActorEnableActionCallback(30, (s32)HaidiaIe_Actor30Actions);
 	Engine_EventWait(40);
-	base5_200ac00 = (const u8 *)HaidiaIe_FaceTargetActions;
-	FieldObject_SetTargetAndCallback(11, 0x1001e, base5_200ac00);
-	FieldObject_SetTargetAndCallback(12, 0x1001e, base5_200ac00);
+	face_actions = (const u8 *)HaidiaIe_FaceTargetActions;
+	FieldObject_SetTargetAndCallback(11, 0x1001e, face_actions);
+	FieldObject_SetTargetAndCallback(12, 0x1001e, face_actions);
 	Object_RefreshSelectorById(30);
 	Engine_ActorStop(11);
 	Engine_ActorStop(12);
@@ -1142,12 +1142,12 @@ static void Scene_RunExtendedActorSequence(void)
 	Engine_ActorSetSpritePriority(31, 2);
 	Actor_SetSpeed(31, 0x39999, 0x1cccc);
 	Engine_ActorSetAnimation(31, 2);
-	base5_200ac90 = Data_0200ac90;
-	Engine_ActorEnableActionCallback(31, base5_200ac90);
+	actor31_actions = HaidiaIe_Actor31Actions;
+	Engine_ActorEnableActionCallback(31, actor31_actions);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(30, 3);
 	Actor_SetSpeed(30, 0x4cccc, 0x26666);
-	Object_SetActionCallbackAndRefreshById(30, base5_200ac90);
+	Object_SetActionCallbackAndRefreshById(30, actor31_actions);
 	Engine_EventWait(60);
 	Engine_ActorRunRepeatedMotion(12, 2);
 	SceneActor_SetPairZeroAndValue(12, 0x7000, 10);
@@ -1163,14 +1163,14 @@ static void Scene_RunExtendedActorSequence(void)
 	Engine_EventWait(20);
 	Actor_SetSpeed(11, 0x26666, 0x13333);
 	Actor_SetSpeed(12, 0x26666, 0x13333);
-	Engine_ActorEnableActionCallback(11, (s32)Data_0200acf8);
+	Engine_ActorEnableActionCallback(11, (s32)HaidiaIe_Actor11Actions);
 	Engine_EventWait(10);
 	Camera_SetSpeed(0x26666, 0x4ccc);
 	v6 = 0;
 	Battle_GetWorkObject1e0()->motion_flags = v6;
 	Camera_MoveTo(0xd70000, 0x100000, 0x3210000, 1);
 	Engine_EventWait(10);
-	Engine_ActorEnableActionCallback(12, (s32)Data_0200ad74);
+	Engine_ActorEnableActionCallback(12, (s32)HaidiaIe_Actor12Actions);
 	Object_RefreshSelectorById(12);
 	SceneActor_SetPairZeroAndValue(12, 0x3000, 120);
 	Engine_ActorRunRepeatedMotion(13, 2);
@@ -1319,14 +1319,14 @@ static void Scene_RunExtendedActorSequence(void)
 	SceneActor_SetPairZeroAndValue(0, 0x4000, 10);
 	SceneActor_SetPairZeroAndValue(1, 0x5000, 20);
 	Actor_SetSpeed(0, 0xcccc, 0x6666);
-	base5_200adf0 = Data_0200adf0;
-	Engine_ActorEnableActionCallback(0, base5_200adf0);
+	pair_actions = HaidiaIe_Actor0And1Actions;
+	Engine_ActorEnableActionCallback(0, pair_actions);
 	Engine_EventWait(20);
 	Camera_SetSpeed(0x6666, 0xccc);
 	Engine_CameraMoveTo(0xd80000, 0x100000, 0x3890000, 1);
 	Engine_EventWait(20);
 	Actor_SetSpeed(1, 0xcccc, 0x6666);
-	Engine_ActorEnableActionCallback(1, base5_200adf0);
+	Engine_ActorEnableActionCallback(1, pair_actions);
 	Engine_EventWait(60);
 	work = gEventWork;
 	work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1594,7 +1594,7 @@ s32 HaidiaIe_Actor25Actions[] = {
 	SC_END,
 };
 
-s32 Data_0200aa48[] = {
+s32 HaidiaIe_Actor23BounceActions[] = {
 	SC_ARG(5),
 	SC_WAIT(10),
 	SC_ARG(6),
@@ -1622,7 +1622,7 @@ s32 Data_0200aa48[] = {
 	SC_END,
 };
 
-s32 Data_0200ab2c[] = {
+s32 HaidiaIe_Actor24BounceActions[] = {
 	SC_ARG(5),
 	SC_WAIT(10),
 	SC_ARG(6),
@@ -1653,7 +1653,7 @@ s32 HaidiaIe_FaceTargetActions[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 Data_0200ac14[] = {
+s32 HaidiaIe_Actor30Actions[] = {
 	SC_MOVE(PIXELS(132), 0, PIXELS(636)),
 	SC_SYNC,
 	SC_MOVE(PIXELS(171), 0, PIXELS(629)),
@@ -1669,7 +1669,7 @@ s32 Data_0200ac14[] = {
 	SC_END,
 };
 
-s32 Data_0200ac90[] = {
+s32 HaidiaIe_Actor31Actions[] = {
 	SC_MOVE(PIXELS(271), 0, PIXELS(571)),
 	SC_SYNC,
 	SC_MOVE(PIXELS(187), 0, PIXELS(577)),
@@ -1683,7 +1683,7 @@ s32 Data_0200ac90[] = {
 	SC_END,
 };
 
-s32 Data_0200acf8[] = {
+s32 HaidiaIe_Actor11Actions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(137), 0, PIXELS(639)),
 	SC_SYNC,
@@ -1699,7 +1699,7 @@ s32 Data_0200acf8[] = {
 	SC_END,
 };
 
-s32 Data_0200ad74[] = {
+s32 HaidiaIe_Actor12Actions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(137), 0, PIXELS(639)),
 	SC_SYNC,
@@ -1715,7 +1715,7 @@ s32 Data_0200ad74[] = {
 	SC_END,
 };
 
-s32 Data_0200adf0[] = {
+s32 HaidiaIe_Actor0And1Actions[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(216), 0, PIXELS(854)),
 	SC_SYNC,
@@ -1725,7 +1725,7 @@ s32 Data_0200adf0[] = {
 	SC_END,
 };
 
-s32 Data_0200ae34[] = {
+s32 HaidiaIe_Actor21Actions[] = {
 	SC_SET(SW_SPEED, 0x8000),
 	SC_SET(SW_ACCEL, 3276),
 	SC_SET(SW_COLLISION, 3),
@@ -1778,7 +1778,7 @@ s32 HaidiaIe_Actor25StepActions[] = {
 	SC_END,
 };
 
-struct SceneEntrance Data_0200afa0[] = {
+struct SceneEntrance gHaidiaIeEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 352, 0, 308, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -1796,7 +1796,7 @@ struct SceneEntrance Data_0200afa0[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 Data_0200b108[] = {
+u32 gHaidiaIeExits[] = {
 	SCENE_EXITS(5),
 	SCENE_EXIT(1, 7, 8),
 	SCENE_EXIT(2, 8, 3),
@@ -1818,7 +1818,7 @@ u32 Data_0200b108[] = {
 	SCENE_EXITS_END,
 };
 
-u32 Data_0200b144[] = {
+u32 gHaidiaIeExitsFlag834[] = {
 	SCENE_EXITS(5),
 	SCENE_EXIT(1, 7, 8),
 	SCENE_EXIT(2, 8, 3),
@@ -1832,7 +1832,7 @@ u32 Data_0200b144[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement Data_0200b170[] = {
+struct ScenePlacement gHaidiaIePlacements[] = {
 	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1878,7 +1878,7 @@ struct ScenePlacement Data_0200b170[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement Data_0200b380[] = {
+struct ScenePlacement gHaidiaIePlacementsFlag834[] = {
 	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1925,7 +1925,7 @@ struct ScenePlacement Data_0200b380[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement Data_0200b560[] = {
+struct ScenePlacement gHaidiaIePlacementsEntrance12[] = {
 	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1979,7 +1979,7 @@ struct ScenePlacement Data_0200b560[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement Data_0200b7d0[] = {
+struct ScenePlacement gHaidiaIePlacementsFlag87a[] = {
 	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2011,7 +2011,7 @@ struct ScenePlacement Data_0200b7d0[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent Data_0200b938[] = {
+struct SceneEvent gHaidiaIeEvents[] = {
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaQuietDay) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaSukuretaHadVisitors) },
 	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TALK) },
@@ -2039,7 +2039,7 @@ struct SceneEvent Data_0200b938[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent Data_0200ba64[] = {
+struct SceneEvent gHaidiaIeEventsFlag834[] = {
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFlagGatedMessageStep) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaOldWomanCannotUsePsynergy) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaExhaustedFromFallingRocks) },
@@ -2059,11 +2059,11 @@ struct SceneEvent Data_0200ba64[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent Data_0200bb30[] = {
+struct SceneEvent gHaidiaIeEventsEntrance12[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent Data_0200bb3c[] = {
+struct SceneEvent gHaidiaIeEventsAfterLeaving[] = {
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaTremorsSettled) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaRoadToKuupuappu) },
 	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgHaidiaRoadToGomaRange) },
@@ -2102,7 +2102,7 @@ struct SceneEvent Data_0200bb3c[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent Data_0200bcec[] = {
+struct SceneEvent gHaidiaIeEventsFlag87a[] = {
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaCameBackSooner) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaMadeFriendsOnJourney) },
@@ -2143,6 +2143,6 @@ struct SceneEvent Data_0200bcec[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 Value_0200beb4[] = {
+u16 HaidiaIe_CellSteps[] = {
 	MAP_CELL_STEP(0, 57, 2, 2, 1), MAP_CELL_STEP(0, 59, 2, 2, 1), MAP_CELL_STEP(2, 59, 2, 2, 1), MAP_CELL_STEPS_END,
 };

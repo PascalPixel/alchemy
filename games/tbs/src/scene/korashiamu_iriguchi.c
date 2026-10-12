@@ -232,7 +232,7 @@ static void EV16_TALK_3(void)
 				Engine_EventWait(40);
 				Event_ShowMessage(16, 0);
 				GameFlag_Set(0x3c0);
-				goto L_02000448;
+				goto end_event;
 			}
 		}
 		Event_ShowMessage(16, 0);
@@ -242,7 +242,7 @@ static void EV16_TALK_3(void)
 		Engine_EventSetMessage((s32)MsgKorashiamuDoKnowLuckyGuess);
 		Event_AskYesNo(16, 0);
 	}
-L_02000448:;
+end_event:;
 	Engine_EventEnd();
 }
 
@@ -1442,7 +1442,7 @@ static void KorashiamuIriguchi_WalkToEastExit(void)
 
 static void KorashiamuIriguchi_CelebrateAdvancement(void)
 {
-	s32 base5_200adac;
+	s32 actions;
 
 	Engine_EventBegin();
 	Actor_SetPosition(GERALD, 0x3180000, 0x880000);
@@ -1467,10 +1467,10 @@ static void KorashiamuIriguchi_CelebrateAdvancement(void)
 	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
 	Actor_SetSpeed(IWAN, 0x10000, 0x8000);
 	Actor_SetSpeed(MEARI, 0x10000, 0x8000);
-	base5_200adac = (s32)KorashiamuIriguchi_ActionTable3;
-	Engine_ActorEnableActionCallback(GERALD, base5_200adac);
-	Engine_ActorEnableActionCallback(2, base5_200adac);
-	Object_SetActionCallbackAndRefreshById(3, base5_200adac);
+	actions = (s32)KorashiamuIriguchi_ActionTable3;
+	Engine_ActorEnableActionCallback(GERALD, actions);
+	Engine_ActorEnableActionCallback(2, actions);
+	Object_SetActionCallbackAndRefreshById(3, actions);
 	Engine_EventWait(20);
 	SceneState_ForwardMaskedHalfwordWith10(0, 0);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -1540,7 +1540,7 @@ static void KorashiamuIriguchi_WalkToWestExit(void)
 
 static void KorashiamuIriguchi_CelebrateBothWins(void)
 {
-	s32 base5_200adac;
+	s32 actions;
 
 	Engine_EventBegin();
 	Actor_SetPosition(GERALD, 0x3180000, 0x880000);
@@ -1565,10 +1565,10 @@ static void KorashiamuIriguchi_CelebrateBothWins(void)
 	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
 	Actor_SetSpeed(IWAN, 0x10000, 0x8000);
 	Actor_SetSpeed(MEARI, 0x10000, 0x8000);
-	base5_200adac = (s32)KorashiamuIriguchi_ActionTable3;
-	Engine_ActorEnableActionCallback(GERALD, base5_200adac);
-	Engine_ActorEnableActionCallback(2, base5_200adac);
-	Object_SetActionCallbackAndRefreshById(3, base5_200adac);
+	actions = (s32)KorashiamuIriguchi_ActionTable3;
+	Engine_ActorEnableActionCallback(GERALD, actions);
+	Engine_ActorEnableActionCallback(2, actions);
+	Object_SetActionCallbackAndRefreshById(3, actions);
 	Engine_EventWait(20);
 	SceneState_ForwardMaskedHalfwordWith10(0, 0);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);

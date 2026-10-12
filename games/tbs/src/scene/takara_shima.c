@@ -681,7 +681,7 @@ static void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
 
 static void MarkGridLeftOfSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute, s32 unused)
 {
-	struct S_020009dc *p = (struct S_020009dc *)Object_GetById(actor_mode);
+	struct GridMarkActor *p = (struct GridMarkActor *)Object_GetById(actor_mode);
 
 	if (p != 0)
 	{
@@ -702,7 +702,7 @@ static void MarkGridLeftOfSceneActor(s32 actor_mode, s32 grid_value, s32 grid_at
 
 static void MarkGridAboveSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute, s32 unused)
 {
-	struct S_020009dc *p = (struct S_020009dc *)Object_GetById(actor_mode);
+	struct GridMarkActor *p = (struct GridMarkActor *)Object_GetById(actor_mode);
 
 	if (p != 0)
 	{

@@ -5,7 +5,7 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-struct Slot02000338
+struct AngledSlot
 {
 	u8	head[6];
 	u16 angle;
@@ -38,7 +38,7 @@ struct Actor
 	s32 f08;
 };
 
-struct Actor02000c0c
+struct SpanActor
 {
 	u8	head[18];
 	u8	gap18[6];

@@ -24,6 +24,6 @@ extern u32 gMakyuriChojoExits[];
 extern struct ScenePlacement gMakyuriChojoPlacements[];
 extern struct SceneEvent gMakyuriChojoEvents[];
 extern s32 MakyuriChojo_NearestActor;
-extern s32 Data_02003c54[];
+extern s32 MakyuriChojo_SparkScript[];
 
 #endif

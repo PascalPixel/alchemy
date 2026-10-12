@@ -668,7 +668,7 @@ static void KuupuappuHeya_OfferBone(void)
 			Engine_EventWait(20);
 			Engine_EventSetMessage((s32)MsgKuupuappuWowHaveManyThingsArent);
 			Event_ShowMessage(18, 0);
-			goto L_020009ec;
+			goto turn_back;
 		}
 		Engine_ItemShowFound(ITEM_BONE, 3);
 		Engine_PartyGiveItem(ITEM_BONE, 0);
@@ -682,7 +682,7 @@ static void KuupuappuHeya_OfferBone(void)
 		Engine_EventWait(20);
 		Event_ShowMessage(18, 0);
 	}
-L_020009ec:;
+turn_back:;
 	Actor_FaceDirection(18, 0x4000, 0);
 	Engine_EventEnd();
 }
@@ -1968,7 +1968,7 @@ static void RunEventScript01(void)
 {
 	struct FieldActor *record;
 	struct EventWork  *work;
-	s32				   base5_200d17c;
+	s32				   actions;
 	u8				  *actor12_record;
 
 	record = Object_GetById(12);
@@ -1988,8 +1988,8 @@ static void RunEventScript01(void)
 	Engine_ActorSetAnimation(12, 9);
 	Object_GetById(12)->priority_flags &= 254;
 	actor12_record[9] |= 12;
-	base5_200d17c = (s32)KuupuappuHeya_ActionTable;
-	Engine_ActorEnableActionCallback(10, base5_200d17c);
+	actions = (s32)KuupuappuHeya_ActionTable;
+	Engine_ActorEnableActionCallback(10, actions);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3180000, 0x1b80000);
 	Actor_SetPosition(GERALD, 0x3280000, 0x1b00000);
 	Actor_SetPosition(IWAN, 0x3080000, 0x1b80000);
@@ -2003,9 +2003,9 @@ static void RunEventScript01(void)
 	Engine_CameraWaitForMove();
 	Engine_MapRedraw();
 	KuupuappuHeya_OpenWindowTransition();
-	Engine_ActorEnableActionCallback(11, base5_200d17c);
+	Engine_ActorEnableActionCallback(11, actions);
 	Engine_EventWait(30);
-	Engine_ActorEnableActionCallback(12, base5_200d17c);
+	Engine_ActorEnableActionCallback(12, actions);
 	Engine_EventWait(30);
 	Engine_EventSetMessage((s32)MsgKuupuappuTheyTheyGotUs);
 	SceneActor_SetModeZeroAndValue(10, 20);
@@ -2037,7 +2037,7 @@ static void RunEventScript01(void)
 	Engine_EventWait(50);
 	Engine_ActorRunRepeatedMotion(11, 2);
 	SceneActor_SetModeZeroAndValue(11, 20);
-	Engine_ActorEnableActionCallback(11, base5_200d17c);
+	Engine_ActorEnableActionCallback(11, actions);
 	Engine_ActorRunRepeatedMotion(GERALD, 1);
 	Engine_EventWait(20);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
@@ -2046,7 +2046,7 @@ static void RunEventScript01(void)
 	SceneActor_SetModeZeroAndValue(1, 20);
 	Engine_ActorRunRepeatedMotion(12, 2);
 	SceneActor_SetModeZeroAndValue(12, 30);
-	Engine_ActorEnableActionCallback(12, base5_200d17c);
+	Engine_ActorEnableActionCallback(12, actions);
 	Actor_ShowEmote(GERALD, 0x103, 0);
 	Engine_EventWait(60);
 	SceneActor_SetModeZeroAndValue(1, 30);

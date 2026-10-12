@@ -215,7 +215,7 @@ static void EV21_TALK(void)
 
 static s32 SceneActor_IsSlotZeroAngleInRange(void)
 {
-	struct Slot02000338 *slot = (struct Slot02000338 *)Object_GetById(0);
+	struct AngledSlot *slot = (struct AngledSlot *)Object_GetById(0);
 
 	if ((u32)((slot->angle + 0x5FFF) << 16) <= 0x3FFE0000)
 	{
@@ -667,7 +667,7 @@ static void FieldScene_RunScene3a3SequenceD(void)
 	}
 }
 
-static void SceneActor_ResetStateAndSpan(struct Actor02000c0c *actor)
+static void SceneActor_ResetStateAndSpan(struct SpanActor *actor)
 {
 
 	u8 *state = &actor->state;

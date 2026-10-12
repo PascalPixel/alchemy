@@ -128,11 +128,11 @@ struct LinkedCaptureObject;
 struct MotionObject;
 struct ObjectRuntime;
 struct OrbitEffect;
-struct Output_08097f80;
+struct PolarOffsetOutput;
 struct RockWallHeights;
 struct SceneInteractionEntry;
 struct ScriptObjectEntry;
-struct Source_0808f28c;
+struct BattleSource;
 struct SparkObject;
 struct TransitionActorList;
 struct WaveFxWork;
@@ -142,7 +142,7 @@ struct CameraWork
 	u8	unknown_00[0x36];
 	u16 scroll;
 };
-struct Cells03001ad0
+struct BgScrollWords
 {
 	u16 unk00;
 	u16 unk02;

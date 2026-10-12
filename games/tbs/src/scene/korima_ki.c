@@ -153,7 +153,7 @@ static void KorimaKi_TalkToToreto(void)
 			record = PartyInventory_FindOwner(184);
 			if (record == -1)
 			{
-				goto L_02000220;
+				goto end_event;
 			}
 			{
 				u16 *target = &gEventWork->unknown_172;
@@ -177,7 +177,7 @@ static void KorimaKi_TalkToToreto(void)
 			Engine_TaskWait(40);
 		}
 	}
-L_02000220:;
+end_event:;
 	Engine_EventEnd();
 }
 

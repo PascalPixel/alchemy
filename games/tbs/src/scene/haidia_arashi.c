@@ -217,14 +217,14 @@ static void EV07_TOUCH(void)
 		record = GameFlag_IsSet(0x831);
 		if (record != 0)
 		{
-			goto L_020002b4;
+			goto leave;
 		}
 		FieldScene_RunScene372SequenceA();
 		GameFlag_Set(0x206);
 	}
 	else
 	{
-	L_020002b4:;
+	leave:;
 		Actor_WalkTo(ACTOR_PARTY_LEADER, 0x106, 0x325);
 		Engine_EventWait(3);
 		Haidia_RequestBackdropExit(6);

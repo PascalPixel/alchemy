@@ -13,7 +13,7 @@ IwramSoundRenderFrame:
 	orr	r8, r8, r8, lsr #16
 	mov	sl, #-2147483648
 	orr	lr, sl, sl, lsr #16
-.L_audio_0b78:
+.L_audio_render_four:
 	ldm	r0, {r1, r2, r3, r4}
 	eor	r6, r1, r1, lsl #1
 	ands	r6, r6, lr
@@ -82,7 +82,7 @@ IwramSoundPresetCode:
 	adds	r1, r7, r6, lsl #16
 	stmia	r0!, {r1, r2, r3, r4}
 	subs	r9, r9, #4, 0
-	bgt	.L_audio_0b78
+	bgt	.L_audio_render_four
 	add	sp, sp, #28, 0
 	pop	{r8, r9, sl, fp}
 	pop	{r5, r6, r7, lr}
@@ -101,7 +101,7 @@ IwramSoundSynthWave:
 	ldrb	r0, [r3, #1]
 	lsl	r0, r0, #24
 	mla	r6, sl, r1, r0
-.L_audio_0cbc:
+.L_audio_mode0_four:
 	ldm	r5, {r0, r1, sl, lr}
 	cmp	r7, r6
 	addcc	r0, r0, fp, lsl #6
@@ -121,7 +121,7 @@ IwramSoundSynthWave:
 	adds	r7, r7, r4, lsl #3
 	stmia	r5!, {r0, r1, sl, lr}
 	subs	r8, r8, #4, 0
-	bgt	.L_audio_0cbc
+	bgt	.L_audio_mode0_four
 	b	IwramSoundMixDone
 .L_audio_noise_mode:
 	subs	ip, ip, #1, 0
@@ -130,7 +130,7 @@ IwramSoundSynthWave:
 	lsr	fp, fp, #1
 	bic	fp, fp, #65280
 	mov	ip, #112, 0
-.L_audio_0d28:
+.L_audio_noise_four:
 	ldm	r5, {r0, r1, sl, lr}
 	adds	r7, r7, r4, lsl #3
 	rsb	r9, ip, r7, lsr #24
@@ -158,12 +158,12 @@ IwramSoundSynthWave:
 	mlane	lr, fp, r2, lr
 	stmia	r5!, {r0, r1, sl, lr}
 	subs	r8, r8, #4, 0
-	bgt	.L_audio_0d28
+	bgt	.L_audio_noise_four
 	b	IwramSoundMixDone
 .L_audio_square_mode:
 	mov	r6, #128, 0
 	mov	ip, #384
-.L_audio_0da4:
+.L_audio_square_four:
 	ldm	r5, {r0, r1, sl, lr}
 	adds	r7, r7, r4, lsl #3
 	rsbpl	r9, r6, r7, asr #23
@@ -183,7 +183,7 @@ IwramSoundSynthWave:
 	mla	lr, fp, r9, lr
 	stmia	r5!, {r0, r1, sl, lr}
 	subs	r8, r8, #4, 0
-	bgt	.L_audio_0da4
+	bgt	.L_audio_square_four
 	b	IwramSoundMixDone
 .syntax unified
 	.section .data,"aw",%progbits
@@ -202,7 +202,7 @@ IwramCopyWords:
 	ands	ip, r2, #224, 0
 	rsb	ip, ip, #240, 0
 	add	pc, pc, ip, lsr #2
-.L_audio_1398:
+.L_audio_copy_block:
 	ldm	r1!, {r3, r4, r5, r6, r7, r8, r9, ip}
 	stmia	r0!, {r3, r4, r5, r6, r7, r8, r9, ip}
 	ldm	r1!, {r3, r4, r5, r6, r7, r8, r9, ip}
@@ -220,14 +220,14 @@ IwramCopyWords:
 	ldm	r1!, {r3, r4, r5, r6, r7, r8, r9, ip}
 	stmia	r0!, {r3, r4, r5, r6, r7, r8, r9, ip}
 	subs	r2, r2, #256
-	bpl	.L_audio_1398
+	bpl	.L_audio_copy_block
 	ands	r2, r2, #28, 0
-	beq	.L_audio_13f8
-.L_audio_13e8:
+	beq	.L_audio_copy_done
+.L_audio_copy_word:
 	ldm	r1!, {r3}
 	stmia	r0!, {r3}
 	subs	r2, r2, #4, 0
-	bgt	.L_audio_13e8
-.L_audio_13f8:
+	bgt	.L_audio_copy_word
+.L_audio_copy_done:
 	pop	{r5, r6, r7, r8, r9}
 	bx	lr

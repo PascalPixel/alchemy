@@ -538,11 +538,11 @@ static void EV20_PSYNERGY(void)
 	{
 		if (row == 13)
 		{
-			goto L_02000a60;
+			goto check_second;
 		}
 	}
 	Map_CopyCellAttributes(0, 0, 1, 1, 16, 13);
-L_02000a60:;
+check_second:;
 	if (p9 == 16)
 	{
 		if (p10 == 13)
@@ -589,7 +589,7 @@ static void FieldScene_RunScene38bSequenceA(void)
 		{
 			if (GameFlag_IsSet(0x848) != 0)
 			{
-				goto L_02000c92;
+				goto run_event;
 			}
 			Engine_ActorSetPosition(14, 0, 0);
 		}
@@ -623,7 +623,7 @@ static void FieldScene_RunScene38bSequenceA(void)
 			if (GameFlag_IsSet(0x848) != 0)
 			{
 				Actor_SetPosition(11, 0x840000, 0xba0000);
-				goto L_02000c92;
+				goto run_event;
 			}
 			Actor_SetPosition(11, 0x580000, 0xc40000);
 			Engine_ActorSetSpritePriority(11, 3);
@@ -636,7 +636,7 @@ static void FieldScene_RunScene38bSequenceA(void)
 			rec->y.fixed = 0x300000;
 		}
 	}
-L_02000c92:;
+run_event:;
 	EV08_PSYNERGY_3();
 }
 

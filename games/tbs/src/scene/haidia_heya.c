@@ -377,8 +377,8 @@ static void FieldScene_RunLongPresentationSequence(void)
 	struct FieldActor *record;
 	struct FieldActor *actor;
 	s32				   v6;
-	s32				   base7_20090c1;
-	s32				   base5_2009400;
+	s32				   timed_update;
+	s32				   party_script;
 
 	Engine_EventBegin();
 	Camera_MoveTo(-1, -1, -1, 0);
@@ -400,8 +400,8 @@ static void FieldScene_RunLongPresentationSequence(void)
 	Object_GetById(23)->motion_flags = v6;
 	Object_GetById(24)->motion_flags = v6;
 	Object_GetById(25)->motion_flags = v6;
-	base7_20090c1 = (s32)Scene_UpdateTimedActor;
-	Engine_TaskAddCallback((void (*)(void))base7_20090c1, 0xc80);
+	timed_update = (s32)Scene_UpdateTimedActor;
+	Engine_TaskAddCallback((void (*)(void))timed_update, 0xc80);
 	Engine_TaskWait(1);
 	gEventWork->transition_frames = 32;
 	Engine_EventOpenScreen();
@@ -516,7 +516,7 @@ static void FieldScene_RunLongPresentationSequence(void)
 	Engine_ActorSetAnimationAndWait(GERALD, 3);
 	Event_ShowMessageAndWait(0x1001, 0, 20);
 	Engine_ActorRunRepeatedMotion(8, 2);
-	Engine_TaskRemoveCallback((void (*)(void))base7_20090c1);
+	Engine_TaskRemoveCallback((void (*)(void))timed_update);
 	Engine_EventWait(40);
 	Engine_ActorSetAnimationAndWait(8, 6);
 	Engine_EventWait(20);
@@ -646,10 +646,10 @@ static void FieldScene_RunLongPresentationSequence(void)
 	Engine_ActorSetAnimationAndWait(MEARI, 3);
 	Engine_EventWait(20);
 	Actor_SetSpeed(IWAN, 0x10000, 0x8000);
-	base5_2009400 = (s32)gValePartyScript;
-	Engine_ActorEnableActionCallback(GERALD, base5_2009400);
-	Engine_ActorEnableActionCallback(2, base5_2009400);
-	Object_SetActionCallbackAndRefreshById(3, base5_2009400);
+	party_script = (s32)gValePartyScript;
+	Engine_ActorEnableActionCallback(GERALD, party_script);
+	Engine_ActorEnableActionCallback(2, party_script);
+	Object_SetActionCallbackAndRefreshById(3, party_script);
 	Engine_ActorEnableActionCallback(10, (s32)gValeActor10Script);
 	Actor_WalkToAndWait(11, 0x345, 0x178);
 	Actor_FaceDirection(11, 0xd000, 20);

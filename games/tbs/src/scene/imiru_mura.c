@@ -50,7 +50,7 @@ static void RunEventScript02(void);
 static void FieldScene_RunThreeActorChoreography(void);
 static void StagedActor_RunHeadingProbeStep(void);
 
-#define ACTOR_FLAGS_OFFSET_020019e8 90
+#define ACTOR_FLAGS_OFFSET 90
 
 typedef struct
 {
@@ -68,7 +68,7 @@ typedef struct
 	u8 unk17;
 } State;
 
-struct SharedData_02000240
+struct SelectedSubject
 {
 	u8	pad_000[500];
 	s32 selected_subject;
@@ -969,7 +969,7 @@ static void FieldScene_RunPrimaryScriptChoreography(void)
 	Engine_EventEnd();
 }
 
-static void SceneActor_UpdateCountdownArcPosition(T_0200154c *o)
+static void SceneActor_UpdateCountdownArcPosition(CountdownArcObject *o)
 {
 	s32	 buf[3];
 	s32 *b;
@@ -1380,7 +1380,7 @@ static void FieldScene_RunThreeActorChoreography(void)
 	Object_GetById(20)->steering_flags &= ~ACTOR_FACES_MOTION;
 	Actor_WalkToAndWait(20, 0x284, 166);
 	Engine_EventWait(1);
-	*(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) |= 1;
+	*(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET) |= 1;
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	GameFlag_Set(0x82e);
 	GameFlag_Clear(0x82d);
@@ -1436,7 +1436,7 @@ static void StagedActor_RunHeadingProbeStep(void)
 	s32					 x;
 	u8					*p;
 
-	subject = Engine_ActorLookup(((struct SharedData_02000240 *)&gGameState)->selected_subject);
+	subject = Engine_ActorLookup(((struct SelectedSubject *)&gGameState)->selected_subject);
 
 	for (;;)
 	{

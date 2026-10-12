@@ -277,7 +277,7 @@ static void EV09_SEARCH(void)
 		Engine_TaskWait(8);
 		Engine_MapCopyCells(65, 53, 2, 1, v5, 29);
 		Map_CopyCells(65, 40, 2, 4, 15, 28);
-		goto L_02000626;
+		goto draw_panels;
 	}
 	Actor_SetPosition(9, 0x1000000, 0x1e00000);
 	Engine_MapCopyCells(78, 34, 1, 2, 83, 25);
@@ -297,7 +297,7 @@ static void EV09_SEARCH(void)
 	Engine_TaskWait(6);
 	Engine_MapCopyCells(65, 50, 2, 5, 79, 25);
 	Engine_TaskWait(30);
-L_02000626:;
+draw_panels:;
 	if (*gKorimaMagariLayout == 0)
 	{
 		Map_DrawCellPanel(9, 19, 16, 5, *gKorimaMagariLayout, 9, 30);

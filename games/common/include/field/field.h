@@ -63,7 +63,7 @@ struct BattleEffectArgument;
 struct BtlUnit;
 struct BurstParticle;
 struct DispatchObject;
-struct EffectObject_02000c5c;
+struct FieldEffectObject;
 struct EffectPosition;
 struct EffectRecord;
 struct EffectStep;
@@ -78,11 +78,11 @@ struct ModeRecord;
 struct MotionObject;
 struct ObjectRuntime;
 struct PillarEffect;
-struct S_02000474;
+struct FieldRecord;
 struct SceneEntrance;
 struct SceneEntry;
 struct SceneEvent;
-struct SceneObject_02000b98;
+struct FieldSceneObject;
 struct ScenePlacement;
 struct SceneRegion;
 struct SceneRegionEntry;
@@ -94,19 +94,19 @@ struct TileRun2;
 struct V;
 union FieldObject;
 
-struct Actor_02000640
+struct FacingStateActor
 {
 	u8	reserved00[6];
 	u16 facing;
 	u8	reserved08[92];
 	u16 state_flags;
 };
-struct Actor_02000754
+struct AcceptActor11
 {
 	u8 reserved00[91];
 	u8 accepted;
 };
-struct Actor_020007d4
+struct AcceptActor13
 {
 	u8 reserved00[91];
 	u8 accepted;
@@ -132,7 +132,7 @@ struct HeightTrackedObject
 	u8	pad00[12];
 	s32 height;
 };
-struct Obj_02002608
+struct FieldObjectRecord
 {
 	u8			pad00[0x18];
 	s32			f18;
@@ -184,12 +184,12 @@ struct Presentation
 	u8 reserved_00[9];
 	u8 flags;
 };
-struct Presentation_02000c1c
+struct PresentationB
 {
 	u8 unk_00[9];
 	u8 flags;
 };
-struct S_020009dc
+struct GridMarkActor
 {
 	s32 f00;
 	s32 f04;
@@ -199,33 +199,33 @@ struct S_020009dc
 	u8	pad14[15];
 	u8	f23;
 };
-struct SceneActor_020004b4
+struct PresentedActor
 {
 	u8					 reserved_00[35];
 	u8					 state_23;
 	u8					 reserved_24[44];
 	struct Presentation *presentation;
 };
-struct SceneActor_02000c1c
+struct PresentedActorB
 {
-	u8							  unk_00[35];
-	u8							  state_23;
-	u8							  unk_24[44];
-	struct Presentation_02000c1c *presentation;
+	u8					  unk_00[35];
+	u8					  state_23;
+	u8					  unk_24[44];
+	struct PresentationB *presentation;
 };
-struct SceneActor_0200113c
+struct PresentedActorC
 {
 	u8					 reserved_00[35];
 	u8					 state_23;
 	u8					 reserved_24[44];
 	struct Presentation *presentation;
 };
-struct SceneWork_020006b4
+struct BranchCounterWork
 {
 	u8	reserved000[472];
 	u16 branch_counter;
 };
-struct SceneWork_02000e90
+struct Actor18MarkerWork
 {
 	u8	reserved000[370];
 	u16 actor18_marker;

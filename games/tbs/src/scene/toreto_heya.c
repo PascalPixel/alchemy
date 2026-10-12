@@ -380,8 +380,8 @@ static void FieldScene_RunFourActorEncounter(void)
 	struct FieldActor *record;
 	s32				   v6;
 	s32				   v5;
-	s32				   base5_200962d;
-	s32				   base5_2009ec8;
+	s32				   spark_task;
+	s32				   actions;
 
 	rec = GameFlag_IsSet(3);
 	Object_GetById(3)->priority_flags &= 254;
@@ -524,12 +524,12 @@ static void FieldScene_RunFourActorEncounter(void)
 		s32 *bank = (s32 *)ToretoHeya_SparkOrigin;
 		bank[0] = 0xa80000;
 		bank[1] = 0x200000;
-		base5_200962d = (s32)ToretoHeya_SpawnSwirlSparks;
+		spark_task = (s32)ToretoHeya_SpawnSwirlSparks;
 		bank[2] = 0x340000;
 	}
-	Task_AddCallback((void (*)(void))base5_200962d, 0xc80);
+	Task_AddCallback((void (*)(void))spark_task, 0xc80);
 	Engine_EventWait(220);
-	Engine_TaskRemoveCallback(base5_200962d);
+	Engine_TaskRemoveCallback(spark_task);
 	ColorBuffer_ApplyTarget(0x10000, 1);
 	Engine_ColorBufferInterpolate(20);
 	Engine_TaskWait(40);
@@ -560,13 +560,13 @@ static void FieldScene_RunFourActorEncounter(void)
 	Engine_ActorSetAnimation(GERALD, 3);
 	Engine_ActorSetAnimation(MEARI, 3);
 	Engine_ActorSetAnimationAndWait(IWAN, 3);
-	base5_2009ec8 = (s32)ToretoHeya_ActionTable2;
-	Engine_ActorEnableActionCallback(GERALD, base5_2009ec8);
+	actions = (s32)ToretoHeya_ActionTable2;
+	Engine_ActorEnableActionCallback(GERALD, actions);
 	if (rec != 0)
 	{
-		Engine_ActorEnableActionCallback(MEARI, base5_2009ec8);
+		Engine_ActorEnableActionCallback(MEARI, actions);
 	}
-	Object_SetActionCallbackAndRefreshById(2, base5_2009ec8);
+	Object_SetActionCallbackAndRefreshById(2, actions);
 	Engine_EventWait(20);
 	Object_GetById(0)->priority_flags |= 1;
 	GameFlag_Set(0x844);

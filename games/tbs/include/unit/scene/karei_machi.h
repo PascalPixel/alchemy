@@ -15,7 +15,7 @@ typedef struct RenderData
 	s16			  rotation;
 } RenderData;
 
-typedef struct Effect_0200390c
+typedef struct LobeOrbitEffect
 {
 	unsigned char pad00[8];
 	s32			  x;
@@ -27,7 +27,7 @@ typedef struct Effect_0200390c
 	s32			  base_y;
 	unsigned char pad40[0x10];
 	RenderData	 *render;
-} Effect_0200390c;
+} LobeOrbitEffect;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 s32 SceneData_ReturnZero(void);

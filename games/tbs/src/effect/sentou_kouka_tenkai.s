@@ -25,9 +25,9 @@
 SentouKouka_TenkaiYomi:
 	and	ip, r3, #7
 	ldr	pc, [pc, ip, lsl #2]
-AlchemyUncredited_080f0100:
+AlchemyUncredited_sentou_kouka_tenkai_1:
 	nop
-AlchemyUncreditedEnd_080f0100:
+AlchemyUncreditedEnd_sentou_kouka_tenkai_1:
 .syntax unified
 	.section .data,"aw",%progbits
 	.arm

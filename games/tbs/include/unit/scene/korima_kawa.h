@@ -13,9 +13,9 @@ s32 KorimaKawa_PrepareWindowTransition(void);
 extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];
-extern struct SceneEntrance Data_02008fc8[];
-extern u32 Data_02009028[];
-extern struct ScenePlacement Data_02009038[];
-extern struct SceneEvent Data_02009098[];
+extern struct SceneEntrance gKorimaKawaEntrances[];
+extern u32 gKorimaKawaExits[];
+extern struct ScenePlacement gKorimaKawaPlacements[];
+extern struct SceneEvent gKorimaKawaEvents[];
 
 #endif

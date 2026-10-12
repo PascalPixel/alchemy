@@ -1583,8 +1583,8 @@ static void Scene_RunPairedActorEffectSequence(void)
 	Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
 	ColorBuffer_ApplyTarget(0x4063ff, 0);
 	ColorBuffer_Interpolate(120);
-	Actor_EnableActionCallback(24, Data_020060ac);
-	Actor_EnableActionCallback(25, Data_020060ac);
+	Actor_EnableActionCallback(24, VinasuChojo_BeamNarrowAction);
+	Actor_EnableActionCallback(25, VinasuChojo_BeamNarrowAction);
 	Task_Wait(120);
 	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
 	ColorBuffer_ApplyTarget(0x203210, 0);
@@ -1707,9 +1707,9 @@ static void Scene_RunPairedActorEffectSequence(void)
 	VinasuChojo_ShowMessage(0xa015);
 	Actor_SetSpeed(6, 0x10000, 0x8000);
 	Actor_SetSpeed(21, 0x10000, 0x8000);
-	Actor_EnableActionCallback(21, Data_0200622c);
+	Actor_EnableActionCallback(21, VinasuChojo_WalkOutAction);
 	Event_Wait(20);
-	Actor_EnableActionCallback(6, Data_0200622c);
+	Actor_EnableActionCallback(6, VinasuChojo_WalkOutAction);
 	VinasuChojo_FaceActor(GERALD, FACING_SOUTHWEST);
 	Actor_StartRepeatedMotion(GERALD, 2);
 	VinasuChojo_ShowMessage(GERALD);
@@ -3226,7 +3226,7 @@ s32 VinasuChojo_BeamOpenAction[] = {
 	SC_END,
 };
 
-s32 Data_020060ac[] = {
+s32 VinasuChojo_BeamNarrowAction[] = {
 	SC_ADD(SW_SCALE_X, -896),
 	SC_WAIT(1),
 	SC_LOOP(140, SC_TOP),
@@ -3284,7 +3284,7 @@ s32 VinasuChojo_RiseParticleScript[] = {
 	SC_FREE,
 };
 
-s32 Data_0200622c[] = {
+s32 VinasuChojo_WalkOutAction[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(268), 0, PIXELS(186)),
 	SC_SYNC,

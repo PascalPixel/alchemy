@@ -1607,7 +1607,7 @@ static void FieldScene_RunActorSequence(void)
 	struct FieldActor *rec8;
 	struct FieldActor *record;
 	s32				   base5_0;
-	const u8		  *base5_200c888;
+	const u8		  *sailor_actions;
 
 	Engine_EventBegin();
 	Engine_ActorSetChildValue(0, 15);
@@ -1698,16 +1698,16 @@ static void FieldScene_RunActorSequence(void)
 	Engine_ActorStop(28);
 	Engine_TaskWait(1);
 	Actor_SetSpeed(28, 0x19999, 0xcccc);
-	base5_200c888 = FuneKanpan_SailorActions;
-	Engine_ActorEnableActionCallback(28, base5_200c888);
+	sailor_actions = FuneKanpan_SailorActions;
+	Engine_ActorEnableActionCallback(28, sailor_actions);
 	FieldScene_CallPairWith10(30, 0xd000);
 	FuneKanpan_OpenFirstDoor();
 	Engine_EventWait(10);
-	Engine_ActorEnableActionCallback(30, base5_200c888);
+	Engine_ActorEnableActionCallback(30, sailor_actions);
 	Engine_ActorStop(29);
 	Engine_TaskWait(1);
 	Actor_SetSpeed(29, 0x19999, 0xcccc);
-	Object_SetActionCallbackAndRefreshById(29, base5_200c888);
+	Object_SetActionCallbackAndRefreshById(29, sailor_actions);
 	Engine_EventWait(20);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();

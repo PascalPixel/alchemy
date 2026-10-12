@@ -4090,7 +4090,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
 	py = 200 << 16;
 	vx = -0x40000;
 	vy = -0x80000;
-	scroll = ((struct Cells03001ad0 *)gBgScroll)->unk04;
+	scroll = ((struct BgScrollWords *)gBgScroll)->unk04;
 	spot = (s32 *)cache[44 - 40];
 	work->transfer_mode = 2;
 	work->transfer_value = 75;
@@ -4443,7 +4443,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
 		WaitFrames(1);
 	} while (++frame != 244 && (frame <= 16 || !(gKeysRepeat & (KEY_A | KEY_B))));
 
-	((struct Cells03001ad0 *)gBgScroll)->unk04 = scroll;
+	((struct BgScrollWords *)gBgScroll)->unk04 = scroll;
 	spot[4] = 0;
 	Runtime_SetIrqHandler(2, 0, 0);
 	BattleEffect_SetupBlendedDisplay();

@@ -236,7 +236,7 @@ void AudioCommand_WaitForStateByteClear(void)
 	}
 }
 
-struct Record_080b06c0
+struct SelectorRecord
 {
 	u8 filler0[4];
 	u8 values[21];
@@ -364,7 +364,7 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 		offset = Shop_SelectorTileOffsets;
 		do
 		{
-			struct Record_080b06c0 *record = (struct Record_080b06c0 *)(base + *offset++);
+			struct SelectorRecord *record = (struct SelectorRecord *)(base + *offset++);
 			record->values[0] = selector;
 			record->values[4] = selector;
 			record->values[8] = selector;

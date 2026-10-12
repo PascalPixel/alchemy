@@ -123,9 +123,9 @@ s32 FieldScene_PlaceActor8OnEntry(void)
 	return 0;
 }
 
-static void SceneEffect_RotateRecord(EffectWork_020004c4 *work)
+static void SceneEffect_RotateRecord(RotatingEffectWork *work)
 {
-	EffectRecord_020004c4 *record = work->record;
+	RotatingEffectRecord *record = work->record;
 
 	record->angle -= 0x800;
 }

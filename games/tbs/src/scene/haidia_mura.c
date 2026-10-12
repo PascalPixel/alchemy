@@ -2876,7 +2876,7 @@ static void FieldScene_RunScene373SequenceB(void)
 		rec7 = GameFlag_IsSet(0x106);
 		if (rec7 != 0)
 		{
-			goto L_02005a8a;
+			goto done;
 		}
 		Object_GetById(22)->paused = rec7;
 		GameFlag_Clear(0x241);
@@ -2889,7 +2889,7 @@ static void FieldScene_RunScene373SequenceB(void)
 			GameFlag_Set(0x241);
 		}
 	}
-L_02005a8a:;
+done:;
 }
 
 static void SceneActor_SetFlagByteBySlotZeroPosition(void)

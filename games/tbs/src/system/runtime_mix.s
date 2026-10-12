@@ -14,10 +14,10 @@ IwramSoundMixEntry:
 	ldrb	r6, [r4, #0]
 	movs	r0, #199
 	tst	r0, r6
-	beq.n	.L_audio_069a
+	beq.n	.L_audio_skip_channel
 	lsls	r0, r6, #25
-	bcc.n	.L_audio_0688
-	bmi.n	.L_audio_0696
+	bcc.n	.L_audio_envelope
+	bmi.n	.L_audio_stop_channel
 	movs	r6, #3
 	adds	r0, r3, #0
 	adds	r0, #16
@@ -29,67 +29,67 @@ IwramSoundMixEntry:
 	str	r5, [r4, #28]
 	ldrb	r2, [r3, #3]
 	lsrs	r0, r2, #6
-	beq.n	.L_audio_06d6
+	beq.n	.L_audio_attack
 	movs	r0, #16
 	orrs	r6, r0
-	b.n	.L_audio_06d6
-.L_audio_0688:
+	b.n	.L_audio_attack
+.L_audio_envelope:
 	ldrb	r5, [r4, #9]
 	lsls	r0, r6, #29
-	bpl.n	.L_audio_069c
+	bpl.n	.L_audio_release
 	ldrb	r0, [r4, #13]
 	subs	r0, #1
 	strb	r0, [r4, #13]
-	bhi.n	.L_audio_06e4
-.L_audio_0696:
+	bhi.n	.L_audio_volume
+.L_audio_stop_channel:
 	movs	r0, #0
 	strb	r0, [r4, #0]
-.L_audio_069a:
+.L_audio_skip_channel:
 	b.n	IwramSoundMixNextChannel
-.L_audio_069c:
+.L_audio_release:
 	lsls	r0, r6, #25
-	bpl.n	.L_audio_06b8
+	bpl.n	.L_audio_decay
 	ldrb	r0, [r4, #7]
 	muls	r5, r0
 	lsrs	r5, r5, #8
 	ldrb	r0, [r4, #12]
 	cmp	r5, r0
-	bhi.n	.L_audio_06e4
-.L_audio_06ac:
+	bhi.n	.L_audio_volume
+.L_audio_echo:
 	ldrb	r5, [r4, #12]
 	cmp	r5, #0
-	beq.n	.L_audio_0696
+	beq.n	.L_audio_stop_channel
 	movs	r0, #4
 	orrs	r6, r0
-	b.n	.L_audio_06e2
-.L_audio_06b8:
+	b.n	.L_audio_store_status
+.L_audio_decay:
 	movs	r2, #3
 	ands	r2, r6
 	cmp	r2, #2
-	bne.n	.L_audio_06d2
+	bne.n	.L_audio_attack_check
 	ldrb	r0, [r4, #5]
 	muls	r5, r0
 	lsrs	r5, r5, #8
 	ldrb	r0, [r4, #6]
 	cmp	r5, r0
-	bhi.n	.L_audio_06e4
+	bhi.n	.L_audio_volume
 	adds	r5, r0, #0
-	beq.n	.L_audio_06ac
-	b.n	.L_audio_06e0
-.L_audio_06d2:
+	beq.n	.L_audio_echo
+	b.n	.L_audio_next_phase
+.L_audio_attack_check:
 	cmp	r2, #3
-	bne.n	.L_audio_06e4
-.L_audio_06d6:
+	bne.n	.L_audio_volume
+.L_audio_attack:
 	ldrb	r0, [r4, #4]
 	adds	r5, r5, r0
 	cmp	r5, #255
-	bcc.n	.L_audio_06e2
+	bcc.n	.L_audio_store_status
 	movs	r5, #255
-.L_audio_06e0:
+.L_audio_next_phase:
 	subs	r6, #1
-.L_audio_06e2:
+.L_audio_store_status:
 	strb	r6, [r4, #0]
-.L_audio_06e4:
+.L_audio_volume:
 	strb	r5, [r4, #9]
 	ldrb	r0, [r4, #2]
 	muls	r0, r5
@@ -101,13 +101,13 @@ IwramSoundMixEntry:
 	mov	fp, r0
 	movs	r0, #16
 	ands	r0, r6
-	beq.n	.L_audio_0706
+	beq.n	.L_audio_loop_length
 	adds	r3, #8
 	ldmia	r3!, {r0, r1}
 	adds	r3, r0, r3
 	str	r3, [sp, #12]
 	subs	r0, r1, r0
-.L_audio_0706:
+.L_audio_loop_length:
 	str	r0, [sp, #16]
 	ldr	r5, [pc, #12]
 	ldr	r2, [r4, #24]
@@ -116,19 +116,19 @@ IwramSoundMixEntry:
 	lsrs	r1, r0, #4
 	add	r1, pc, #8
 	bx	r1
-AlchemyUncredited_08000e86:
+AlchemyUncredited_runtime_mix_1:
 	.2byte	0x0000
 .L_audio_workspace_pointer:
-AlchemyUncreditedEnd_08000e86:
+AlchemyUncreditedEnd_runtime_mix_1:
 	.4byte IwramSoundMixWorkspace
 
 	.global IwramSoundMixArm
 	.arm
 IwramSoundMixArm:
 	mov	r8, #352
-.L_audio_0720:
+.L_audio_pack_volumes:
 	orr	fp, sl, fp, lsl #16
-.L_audio_0724:
+.L_audio_select_mixer:
 	bcs	IwramSoundMixBlock
 	push	{r4, r9, ip}
 	movs	r2, r2
@@ -159,7 +159,7 @@ IwramSoundMixArm:
 	add	r9, pc, #516
 	stm	r9, {r2, sl, sp}
 	cmpcc	r0, #1024
-	bcs	.L_audio_07c8
+	bcs	.L_audio_pick_kernel
 	bic	r1, r3, #3, 0
 	mov	r9, #67108864
 	add	r9, r9, #212, 0
@@ -170,7 +170,7 @@ IwramSoundMixArm:
 	add	r3, r3, sp
 	orr	lr, r0, #-2080374784
 	stm	r9, {r1, sp, lr}
-.L_audio_07c8:
+.L_audio_pick_kernel:
 	subs	r4, r4, #8388608
 	lslpl	fp, fp, #1
 	add	r0, pc, #252, 0
@@ -180,78 +180,78 @@ IwramSoundMixArm:
 	addpl	r4, r4, #8388608
 	ldr	r2, [pc, #228]
 	cmp	r0, r2
-	beq	.L_audio_081c
+	beq	.L_audio_kernel_ready
 	str	r0, [pc, #216]
 	stmfd	sp!, {r6}
 	ldm	r0, {r0, r1, r2, r6, r9, sl}
 	add	lr, pc, #36, 0
-.L_audio_0800:
+.L_audio_patch_kernel:
 	stmia	lr!, {r0, r1}
 	add	lr, lr, #4, 0
 	stm	lr, {r2, r6, r9, sl}
 	add	lr, lr, #24, 0
 	adds	r5, r5, #1073741824
-	bcc	.L_audio_0800
+	bcc	.L_audio_patch_kernel
 	ldmfd	sp!, {r6}
-.L_audio_081c:
+.L_audio_kernel_ready:
 	mov	r2, #-16777216
-.L_audio_0820:
+.L_audio_mix_four:
 	ldm	r5, {r0, r1, sl, lr}
 	mul	r9, r7, ip
-AlchemyUncredited_08000f98:
+AlchemyUncredited_runtime_mix_2:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_08000f98:
+AlchemyUncreditedEnd_runtime_mix_2:
 	mlane	r0, fp, r9, r0
-AlchemyUncredited_08000fa4:
+AlchemyUncredited_runtime_mix_3:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_08000fa4:
+AlchemyUncreditedEnd_runtime_mix_3:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
-AlchemyUncredited_08000fbc:
+AlchemyUncredited_runtime_mix_4:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_08000fbc:
+AlchemyUncreditedEnd_runtime_mix_4:
 	mlane	r1, fp, r9, r1
-AlchemyUncredited_08000fc8:
+AlchemyUncredited_runtime_mix_5:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_08000fc8:
+AlchemyUncreditedEnd_runtime_mix_5:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
-AlchemyUncredited_08000fe0:
+AlchemyUncredited_runtime_mix_6:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_08000fe0:
+AlchemyUncreditedEnd_runtime_mix_6:
 	mlane	sl, fp, r9, sl
-AlchemyUncredited_08000fec:
+AlchemyUncredited_runtime_mix_7:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_08000fec:
+AlchemyUncreditedEnd_runtime_mix_7:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
-AlchemyUncredited_08001004:
+AlchemyUncredited_runtime_mix_8:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_08001004:
+AlchemyUncreditedEnd_runtime_mix_8:
 	mlane	lr, fp, r9, lr
-AlchemyUncredited_08001010:
+AlchemyUncredited_runtime_mix_9:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_08001010:
+AlchemyUncreditedEnd_runtime_mix_9:
 	bic	r7, r7, r2, asr #1
 	stmia	r5!, {r0, r1, sl, lr}
 	subs	r8, r8, #4, 0
-	bgt	.L_audio_0820
+	bgt	.L_audio_mix_four
 	add	ip, pc, #212, 0
 	ldm	ip, {r2, r3, sp}
 	b	IwramSoundMixDone

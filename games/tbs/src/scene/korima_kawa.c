@@ -43,7 +43,7 @@
 
 u8 *MapStagedScene_SelectPrimaryData(void)
 {
-	return Data_02008fc8;
+	return gKorimaKawaEntrances;
 }
 
 s32 MapStagedScene_GetEmptyData(void)
@@ -53,12 +53,12 @@ s32 MapStagedScene_GetEmptyData(void)
 
 u8 *MapStagedScene_SelectSecondaryData(void)
 {
-	return Data_02009028;
+	return gKorimaKawaExits;
 }
 
 u8 *MapStagedScene_SelectTertiaryData(void)
 {
-	return Data_02009038;
+	return gKorimaKawaPlacements;
 }
 
 static void EV10_SCRIPT(void)
@@ -92,7 +92,7 @@ static void EV10_SCRIPT(void)
 
 u8 *KorimaKawa_GetEvents(void)
 {
-	return Data_02009098;
+	return gKorimaKawaEvents;
 }
 
 s32 KorimaKawa_PrepareWindowTransition(void)
@@ -158,21 +158,21 @@ s32 StagedActor_FootprintBounds[] = {
 	-8, -32, 8, 32,
 };
 
-struct SceneEntrance Data_02008fc8[] = {
+struct SceneEntrance gKorimaKawaEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 320, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ 2, CONDITION_ALWAYS, 480, 0, 104, FACING_WEST, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-u32 Data_02009028[] = {
+u32 gKorimaKawaExits[] = {
 	SCENE_EXITS(42),
 	SCENE_EXIT(1, 43, 1),
 	SCENE_EXIT(2, 41, 2),
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement Data_02009038[] = {
+struct ScenePlacement gKorimaKawaPlacements[] = {
 	{ 0xcf, CONDITION_ALWAYS, 7,
 		PIXELS(256), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 	{ 0xcf, CONDITION_ALWAYS, 7,
@@ -182,7 +182,7 @@ struct ScenePlacement Data_02009038[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent Data_02009098[] = {
+struct SceneEvent gKorimaKawaEvents[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT) },

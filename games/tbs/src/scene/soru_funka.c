@@ -187,12 +187,12 @@ static void Scene_SaturosTakesHostages(void)
 	void Event_PlayCue();
 
 	u8 *record;
-	s32 base5_3001ec4;
-	s32 base5_3001ebc;
+	s32 particle_work_ptr;
+	s32 event_work_ptr;
 	u8 *p7;
 
-	base5_3001ec4 = (s32)gParticleWork;
-	p7 = *(u8 **)base5_3001ec4;
+	particle_work_ptr = (s32)gParticleWork;
+	p7 = *(u8 **)particle_work_ptr;
 	Engine_EventBegin();
 	*(s32 *)(((s32)p7 + 0x40c)) = 0;
 	Event_PlayCue(141);
@@ -208,10 +208,10 @@ static void Scene_SaturosTakesHostages(void)
 	Actor_SetPosition(ACTOR_GARCIA, 0x1d70000, 0x1320000);
 	Actor_SetPosition(ACTOR_ALEX, 0x1df0000, 0x16a0000);
 	Engine_ActorSetSpritePriority(15, 1);
-	base5_3001ebc = base5_3001ec4 - 8;
+	event_work_ptr = particle_work_ptr - 8;
 	Camera_MoveTo(0xe80000, -1, 0x9c0000, 0);
 	Engine_MapRedraw();
-	*(s32 *)((*(s32 *)base5_3001ebc + 0x1c8)) = 8;
+	*(s32 *)((*(s32 *)event_work_ptr + 0x1c8)) = 8;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	ColorBuffer_ApplyTarget(0x7fff, 0);
@@ -1685,7 +1685,7 @@ static void SceneEffect_AdvanceTenEntryTimers(void)
 
 	u32			  i;
 	s32			  v;
-	Ent_02002ba0 *p;
+	ArcEffect *p;
 
 	for (i = 0; i <= 9; i++)
 	{
@@ -1720,9 +1720,9 @@ static void SceneEffect_AdvanceTenEntryTimers(void)
 
 static void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b)
 {
-	Ent_02002c1c *p;
+	ViewCenter *p;
 
-	p = (Ent_02002c1c *)Engine_EventGetViewCenter();
+	p = (ViewCenter *)Engine_EventGetViewCenter();
 	b <<= 16;
 	a <<= 16;
 	Engine_CameraMoveTo(a, -1, b, 1);

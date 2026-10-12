@@ -13,13 +13,13 @@ typedef struct
 {
 	u8	pad_to_angle[30];
 	u16 angle;
-} EffectRecord_020004c4;
+} RotatingEffectRecord;
 
 typedef struct
 {
 	u8					   pad_to_record[80];
-	EffectRecord_020004c4 *record;
-} EffectWork_020004c4;
+	RotatingEffectRecord *record;
+} RotatingEffectWork;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);

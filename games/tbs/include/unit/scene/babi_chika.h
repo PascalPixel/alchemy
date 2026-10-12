@@ -8,12 +8,12 @@
 struct SceneEntrance;
 struct SceneRegion;
 
-typedef struct Target_02000cd0
+typedef struct MoveTarget
 {
 	union FieldCoordinate x;
 	s32					  pad4;
 	union FieldCoordinate z;
-} Target_02000cd0;
+} MoveTarget;
 
 typedef struct Record
 {
@@ -36,21 +36,21 @@ extern s32 StagedActor_FootprintBounds[];
 extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];
 extern s32 gEffectScript2[];
-extern u32 Data_0200b350[];
+extern u32 BabiChika_SettleHeights[];
 extern const s32 *gEffectScripts[];
-extern s32 Data_0200b8f4_1[];
-extern s32 Data_0200b8f4_0[];
+extern s32 BabiChika_ShrinkScript[];
+extern s32 BabiChika_StretchScript[];
 extern s32 BabiChika_FlickerScript[];
-extern u16 Data_0200b3ec[];
-extern u16 Data_0200b40c[];
+extern u16 BabiChika_CellStepsA[];
+extern u16 BabiChika_CellStepsB[];
 extern struct SceneEntrance gBabiChikaEntrancesOther[];
 extern struct SceneEntrance gBabiChikaEntrances1[];
 extern struct SceneEntrance gBabiChikaEntrances2[];
 extern s16 gBabiChikaRegions2[];
-extern u32 Data_0200b85c[];
-extern struct ScenePlacement Data_0200b8f4[];
-extern u32 Data_0200ba74[];
-extern struct SceneEvent Data_0200bc0c[];
-extern struct SceneEvent Data_0200bef4[];
+extern u32 gBabiChikaExits[];
+extern struct ScenePlacement gBabiChikaPlacements1[];
+extern u32 gBabiChikaPlacementsOther[];
+extern struct SceneEvent gBabiChikaEvents1[];
+extern struct SceneEvent gBabiChikaEventsOther[];
 
 #endif

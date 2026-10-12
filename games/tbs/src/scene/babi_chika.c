@@ -69,7 +69,7 @@ static s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 	return 0;
 }
 
-static s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
+static s32 SceneActor_MoveActorZeroToTarget(const MoveTarget *target)
 {
 	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 	u8				   saved = actor->motion_flags;
@@ -330,7 +330,7 @@ const struct SceneRegion *Scene_GetRegions(void)
 
 u8 *BabiChika_GetExits(void)
 {
-	return Data_0200b85c;
+	return gBabiChikaExits;
 }
 
 u8 *SceneData_SelectAndApplyTableBySceneId(void)
@@ -339,11 +339,11 @@ u8 *SceneData_SelectAndApplyTableBySceneId(void)
 
 	if (gGameState.scene == (s32)&SceneId_BabiChika1)
 	{
-		tbl = Data_0200b8f4;
+		tbl = gBabiChikaPlacements1;
 	}
 	else
 	{
-		tbl = Data_0200ba74;
+		tbl = gBabiChikaPlacementsOther;
 	}
 	FieldScene_PrepareActors((struct SceneRegionEntry *)tbl);
 	return tbl;
@@ -752,13 +752,13 @@ static void BabiChika_SettleSteps(s32 wait)
 		Engine_AudioPlayCue(180);
 	}
 	Engine_ObjectSetPosition(Object_GetById(10), Object_GetById(10)->x.fixed,
-		Data_0200b350[Object_GetById(10)->timer], Object_GetById(10)->z.fixed);
+		BabiChika_SettleHeights[Object_GetById(10)->timer], Object_GetById(10)->z.fixed);
 	Engine_ObjectSetPosition(Object_GetById(11), Object_GetById(11)->x.fixed,
-		Data_0200b350[Object_GetById(11)->timer], Object_GetById(11)->z.fixed);
+		BabiChika_SettleHeights[Object_GetById(11)->timer], Object_GetById(11)->z.fixed);
 	Engine_ActorWaitForMove(10);
 	Engine_ActorWaitForMove(11);
-	Object_GetById(10)->y.fixed = Data_0200b350[Object_GetById(10)->timer];
-	Object_GetById(11)->y.fixed = Data_0200b350[Object_GetById(11)->timer];
+	Object_GetById(10)->y.fixed = BabiChika_SettleHeights[Object_GetById(10)->timer];
+	Object_GetById(11)->y.fixed = BabiChika_SettleHeights[Object_GetById(11)->timer];
 	if (wait != 0)
 	{
 		Engine_AudioPlayCue(0x121);
@@ -1048,7 +1048,7 @@ static void FieldScene_RunScene3c4SequenceA(void)
 		Engine_EventWait(30);
 		GameFlag_Set(0x984);
 		Engine_AudioPlayCue(158);
-		Map_AnimateCells(Data_0200b3ec, 32, 46);
+		Map_AnimateCells(BabiChika_CellStepsA, 32, 46);
 		Map_CopyCellAttributes(24, 60, 1, 1, 32, 47);
 		Engine_EventWait(40);
 	}
@@ -1063,7 +1063,7 @@ static void FieldScene_RunScene3c4SequenceA(void)
 			Engine_EventWait(30);
 			GameFlag_Clear(0x984);
 			Engine_AudioPlayCue(159);
-			Map_AnimateCells(Data_0200b40c, 32, 46);
+			Map_AnimateCells(BabiChika_CellStepsB, 32, 46);
 			Map_CopyCellAttributes(31, 47, 1, 1, 32, 47);
 			Engine_EventWait(40);
 		}
@@ -1105,9 +1105,9 @@ s32 BabiChika_SelectEvents(void)
 {
 	if (gGameState.scene == (s32)&SceneId_BabiChika1)
 	{
-		return (s32)Data_0200bc0c;
+		return (s32)gBabiChikaEvents1;
 	}
-	return (s32)Data_0200bef4;
+	return (s32)gBabiChikaEventsOther;
 }
 
 static void FieldScene_PlaceAndPinSlots8And9(void)
@@ -1553,7 +1553,7 @@ s32 gEffectScript2[] = {
 	SC_FREE,
 };
 
-u32 Data_0200b350[] = {
+u32 BabiChika_SettleHeights[] = {
 	0xfff00000,
 	0xfff00000,
 	0xffe00000,
@@ -1569,7 +1569,7 @@ const s32 *gEffectScripts[] = {
 	gEffectScript2,
 };
 
-s32 Data_0200b8f4_1[] = {
+s32 BabiChika_ShrinkScript[] = {
 	SC_SET(SW_SCALE_X, 0x9999),
 	SC_SET(SW_SCALE_Y, 0x9999),
 	SC_SET(SW_COLLISION, 0),
@@ -1577,7 +1577,7 @@ s32 Data_0200b8f4_1[] = {
 	SC_END,
 };
 
-s32 Data_0200b8f4_0[] = {
+s32 BabiChika_StretchScript[] = {
 	SC_SET(SW_SCALE_Y, 0x19999),
 	SC_END,
 };
@@ -1591,14 +1591,14 @@ s32 BabiChika_FlickerScript[] = {
 	SC_END,
 };
 
-u16 Data_0200b3ec[] = {
+u16 BabiChika_CellStepsA[] = {
 	MAP_CELL_STEP(28, 59, 1, 2, 4),
 	MAP_CELL_STEP(26, 59, 1, 2, 4),
 	MAP_CELL_STEP(24, 59, 1, 2, 4),
 	MAP_CELL_STEPS_END,
 };
 
-u16 Data_0200b40c[] = {
+u16 BabiChika_CellStepsB[] = {
 	MAP_CELL_STEP(26, 59, 1, 2, 4),
 	MAP_CELL_STEP(28, 59, 1, 2, 4),
 	MAP_CELL_STEP(30, 59, 1, 2, 4),
@@ -1691,7 +1691,7 @@ s16 gBabiChikaRegions2[] = {
 	0,
 };
 
-u32 Data_0200b85c[] = {
+u32 gBabiChikaExits[] = {
 	SCENE_EXITS(172),
 	SCENE_EXIT(1, 174, 1),
 	SCENE_EXIT(2, 172, 3),
@@ -1732,7 +1732,7 @@ u32 Data_0200b85c[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement Data_0200b8f4[] = {
+struct ScenePlacement gBabiChikaPlacements1[] = {
 	{0xfd, 0x0, ACTOR_STAND, PIXELS(152), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING, 0},
 	{0xfd, 0x0, ACTOR_STAND, PIXELS(168), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING,
 		PLACEMENT_SHARE_PREVIOUS_SPRITE},
@@ -1744,22 +1744,22 @@ struct ScenePlacement Data_0200b8f4[] = {
 		PLACEMENT_SHARE_PREVIOUS_SPRITE},
 	{0xfe, 0x0, ACTOR_STAND, PIXELS(424), 0, PIXELS(792), FACING_SOUTH, TALK_KEEP_FACING,
 		PLACEMENT_SHARE_PREVIOUS_SPRITE},
-	{0xf8, 0x0, (s32)Data_0200b8f4_0, PIXELS(416), 0, PIXELS(794), FACING_NORTH, TALK_FACE_PARTY,
-		0},
-	{0xf8, 0x0, (s32)Data_0200b8f4_0, PIXELS(432), 0, PIXELS(794), FACING_NORTH, TALK_FACE_PARTY,
-		0},
-	{0xf8, 0x970, (s32)Data_0200b8f4_0, PIXELS(568), 0, PIXELS(856), FACING_NORTH, TALK_FACE_PARTY,
-		0},
+	{0xf8, 0x0, (s32)BabiChika_StretchScript, PIXELS(416), 0, PIXELS(794), FACING_NORTH,
+		TALK_FACE_PARTY, 0},
+	{0xf8, 0x0, (s32)BabiChika_StretchScript, PIXELS(432), 0, PIXELS(794), FACING_NORTH,
+		TALK_FACE_PARTY, 0},
+	{0xf8, 0x970, (s32)BabiChika_StretchScript, PIXELS(568), 0, PIXELS(856), FACING_NORTH,
+		TALK_FACE_PARTY, 0},
 	{0xff, 0x0, ACTOR_STAND, PIXELS(680), 0, PIXELS(136), FACING_NORTH, TALK_KEEP_FACING, 0},
 	{0xff, 0x0, ACTOR_STAND, PIXELS(808), 0, PIXELS(232), FACING_NORTH, TALK_KEEP_FACING, 0},
 	{0xe3, 0x0, ACTOR_STAND, PIXELS(728), 0, PIXELS(184), FACING_NORTH, TALK_KEEP_FACING, 0},
 	{0xe3, 0x0, ACTOR_STAND, PIXELS(728), 0, PIXELS(184), FACING_NORTH, TALK_KEEP_FACING, 0},
-	{0x114, 0x0, (s32)Data_0200b8f4_1, PIXELS(232), 0, PIXELS(248), FACING_SOUTH, TALK_KEEP_FACING,
-		0},
+	{0x114, 0x0, (s32)BabiChika_ShrinkScript, PIXELS(232), 0, PIXELS(248), FACING_SOUTH,
+		TALK_KEEP_FACING, 0},
 	{SCENE_TABLE_END},
 };
 
-u32 Data_0200ba74[] = {
+u32 gBabiChikaPlacementsOther[] = {
 	SCENE_EXITS(255),
 	SCENE_EXIT(0, 1, 0),
 	SCENE_EXIT(24, 0, 128),
@@ -1864,7 +1864,7 @@ u32 Data_0200ba74[] = {
 	SCENE_EXIT(0, 0, 0),
 };
 
-struct SceneEvent Data_0200bc0c[] = {
+struct SceneEvent gBabiChikaEvents1[] = {
 	{0x21, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1948,7 +1948,7 @@ struct SceneEvent Data_0200bc0c[] = {
 	{SCENE_EVENTS_END},
 };
 
-struct SceneEvent Data_0200bef4[] = {
+struct SceneEvent gBabiChikaEventsOther[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},

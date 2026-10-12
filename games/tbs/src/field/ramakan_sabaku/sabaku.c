@@ -66,18 +66,8 @@ static void EV13_TALK(void)
 	BattleFx_RunPageEffectForSlot(13, 3, 3);
 }
 
-static void RamakanSabaku_WaitForActorHeight(u8 *o, s32 limit)
-{
-	s32 frames = 60;
-
-	while (frames != 0)
-	{
-		Engine_TaskWait(1);
-		frames--;
-		if (((struct FieldActor *)o)->y.fixed <= limit)
-			break;
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/waitdown.c"
 
 static s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor)
 {
@@ -515,7 +505,7 @@ static void EV20_TOUCH(void)
 	Actor_Get(ACTOR_PARTY_LEADER)->velocity_y = 0x60000;
 	Event_PlayCue(152);
 	leader = Actor_Get(ACTOR_PARTY_LEADER);
-	RamakanSabaku_WaitForActorHeight((u8 *)leader, Actor_Get(ACTOR_PARTY_LEADER)->y.fixed);
+	SceneActor_WaitObjectBelowHeight(leader, Actor_Get(ACTOR_PARTY_LEADER)->y.fixed);
 	Event_PlayCue(241);
 	{
 		struct FieldActor *actor = Actor_Get(ACTOR_PARTY_LEADER);

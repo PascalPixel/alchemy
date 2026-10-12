@@ -518,17 +518,8 @@ static void OverlayObject_TurnStateByEighth(struct FieldActor *obj)
 	state->rotation = v;
 }
 
-static void OverlayObject_WaitForHeight(struct FieldActor *obj, s32 height)
-{
-	s32 cnt = 60;
-	while (cnt != 0)
-	{
-		Engine_TaskWait(1);
-		cnt--;
-		if (obj->y.fixed <= height)
-			break;
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/waitdown.c"
 
 static void GomaIriguchi_RunSpinningLeap(s32 id)
 {
@@ -557,7 +548,7 @@ static void GomaIriguchi_RunSpinningLeap(s32 id)
 	actor->layer = 3;
 	actor->flags34 = 0;
 	Engine_ActorWaitForMove(id);
-	OverlayObject_WaitForHeight(actor, 0x200000);
+	SceneActor_WaitObjectBelowHeight(actor, 0x200000);
 	Engine_AudioPlayCue(188);
 	Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
 	Engine_AudioPlayCue(141);
@@ -575,7 +566,7 @@ static void GomaIriguchi_RunSpinningLeap(s32 id)
 	actor->speed = 0x50000;
 	Engine_ActorSetDestination(id, 139, 196);
 	Engine_ActorWaitForMove(id);
-	OverlayObject_WaitForHeight(actor, 0x200000);
+	SceneActor_WaitObjectBelowHeight(actor, 0x200000);
 	actor->callback = 0;
 	actor->sprite->angle = 0x1000;
 	p = &params;

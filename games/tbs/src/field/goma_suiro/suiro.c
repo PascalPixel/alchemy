@@ -130,18 +130,8 @@ static void SceneEffect_RotateRecord(EffectWork_020004c4 *work)
 	record->angle -= 0x800;
 }
 
-static void SceneActor_WaitObjectBelowHeight(struct FieldActor *object, s32 height)
-{
-	s32 frames = 60;
-
-	while (frames != 0)
-	{
-		Engine_TaskWait(1);
-		frames--;
-		if (object->y.fixed <= height)
-			break;
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/waitdown.c"
 
 union SceneActor
 {

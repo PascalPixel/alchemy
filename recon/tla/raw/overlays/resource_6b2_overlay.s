@@ -1,30 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x02008038,"ax",%progbits
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	push {lr}
-	ldr r3, .L_0200805c
-	movs r2, #1
-	ldr r3, [r3]
-	lsrs r3, r3, #1
-	ands r3, r2
-	cmp r3, #0
-	beq .L_02008050
-	movs r1, #15
-	bl Object_SetPartAttribute
-	b .L_02008056
-.L_02008050:
-	movs r1, #7
-	bl Object_SetPartAttribute
-.L_02008056:
-	movs r0, #0
-	pop {pc}
-	.2byte 0x0000
-.L_0200805c:
-	.4byte Data_020007e4
 	.section .text.x02008060,"ax",%progbits
+	.balign 4
 	.global Func_02000060
 	.thumb_func
 Func_02000060:
@@ -499,46 +476,6 @@ Func_020001b0:
 	.4byte MsgImiruVoicesDisbeliefReply
 .L_020084c0:
 	.4byte Func_02000060
-	.section .text.x020084c4,"ax",%progbits
-	.global Func_020004c4
-	.thumb_func
-Func_020004c4:
-	push {lr}
-	ldr r3, .L_02008518
-	movs r2, #241
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #12
-	bne .L_0200850e
-	bl Func_02000568
-	movs r0, #0
-	bl Func_020005f8
-	bl Event_StartScreenTransition
-	bl Event_WaitTransitionFrames
-	movs r0, #201
-	bl Func_02000610
-	movs r0, #254
-	lsls r0, r0, #7
-	movs r1, #0
-	adds r0, #255
-	bl Func_020005d0
-	movs r0, #20
-	bl Func_020005d8
-	movs r0, #20
-	bl WaitFrames
-	movs r0, #9
-	bl Func_020005c8
-	b .L_02008512
-.L_0200850e:
-	bl Func_020001b0
-.L_02008512:
-	movs r0, #0
-	pop {pc}
-	.2byte 0x0000
-.L_02008518:
-	.4byte gPartyState
 	.section .bss,"aw",%nobits
 	.global Data_020007e4
 Data_020007e4:

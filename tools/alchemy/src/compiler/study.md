@@ -326,7 +326,7 @@ compatibility and compiler runtime. No ROM or compiler-generated object belongs
 in the public report or source bundle. Private corpus objects and detailed
 addresses remain local study artifacts.
 
-The study used Alchemy glyph `7c99ea6759197b436dd3339b1e8fab3b391375b4`,
+The study used Alchemy at its commit of 2026-10-10 "Record GCC 2.95.2 library and agbcc glyph trials",
 agscc `629474adaee19177f64f9f04a3e56ee606c9b235` (today's `4d71920`: the
 same files, renamed when the history's dates were corrected on 2026-10-11),
 and agbcc

@@ -168,7 +168,7 @@ Render_ResetTransformStateFar:
 	.global SceneTransform_ResetMatrixFar
 	.thumb_func
 SceneTransform_ResetMatrixFar:
-	overlay_veneer Func_08014ee0
+	overlay_veneer SceneTransform_ResetMatrix
 	.global Graphics_SaveTransferWorkOnceFar
 	.thumb_func
 Graphics_SaveTransferWorkOnceFar:
@@ -180,7 +180,7 @@ Graphics_RestoreTransferWorkFar:
 	.global SceneTransform_ApplyRotationFar
 	.thumb_func
 SceneTransform_ApplyRotationFar:
-	overlay_veneer Func_08014efc
+	overlay_veneer SceneTransform_ApplyRotation
 	.global SceneTransform_ApplyPitchFar
 	.thumb_func
 SceneTransform_ApplyPitchFar:
@@ -204,11 +204,11 @@ SceneTransform_ApplyScaleFar:
 	.global SceneTransform_ApplyRotationTranslationFar
 	.thumb_func
 SceneTransform_ApplyRotationTranslationFar:
-	overlay_veneer Func_0801524c
+	overlay_veneer SceneTransform_ApplyRotationTranslation
 	.global SceneTransform_ApplyScaledRotationFar
 	.thumb_func
 SceneTransform_ApplyScaledRotationFar:
-	overlay_veneer Func_08015384
+	overlay_veneer SceneTransform_ApplyScaledRotation
 	.global Graphics_PrepareTransferInIwramWorkFar
 	.thumb_func
 Graphics_PrepareTransferInIwramWorkFar:
@@ -372,7 +372,7 @@ SerialRuntime_WaitForTransferBFar:
 	.global SerialRuntime_WaitForTransfersFar
 	.thumb_func
 SerialRuntime_WaitForTransfersFar:
-	overlay_veneer Func_080168f8
+	overlay_veneer SerialRuntime_WaitForTransfers
 	.global SerialRuntime_GetActiveTransfersFar
 	.thumb_func
 SerialRuntime_GetActiveTransfersFar:

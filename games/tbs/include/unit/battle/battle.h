@@ -147,23 +147,13 @@ s32 BattleEventRuntime_WaitForReady(void);
 u32 BattleParty_IsUnitListed(u32 id);
 s32 BattlePlacement_CountValidEntries(u32 unit_id, u8 *counts);
 s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan);
-s32 BattleUnit_RollCounterEarlyEnd(s32 unit_id, s32 turns, s32 bias);
-s32 BattleUnit_TickAttackModifier(s32 unit_id);
 s32 BattleUnit_TickDefenseModifier(s32 unit_id);
 s32 BattleUnit_TickResistanceModifier(s32 unit_id);
 s32 BattleUnit_TickDelusion(s32 unit_id);
-s32 BattleUnit_TickConfusion(s32 unit_id);
 s32 BattleUnit_TickCharm(s32 unit_id);
 s32 BattleUnit_TickStun(s32 unit_id);
 s32 BattleUnit_TickSleep(s32 unit_id);
-s32 Battle_AdvanceCounterAndCheckChance(s32 id);
-s32 BattleUnit_TickRefrain(s32 unit_id);
-s32 BattleUnit_TickReflect(s32 id);
-s32 BattleUnit_TickAgilityModifier(s32 id);
-s32 BattlePlacement_UpdateTimedEntries(void);
-s32 BattlePlacement_UpdateTimedEntriesTwentyTimes(void);
-void Battle_ReservedNoOpF674(void);
-s32 Battle_ProcessRoundEnd(void);
-s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan);
+
+#define MES_PUSH(m) BtlEvPush(BEV_MES, (u32)(m))
 
 #endif

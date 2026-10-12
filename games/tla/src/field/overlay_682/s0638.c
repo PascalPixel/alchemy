@@ -34,6 +34,9 @@ s32 Func_02002a9c();
 s32 Func_02002a4c();
 extern u8 MsgScene682No52[];
 
+// The Japanese edition has an older form of this scene (no flag 0 test, a message this catalogue
+// does not name); it stays on its listing in recon/tla/raw/overlays (S4).
+#if !defined(TLA_EDITION_JA)
 void Func_02000638(void)
 {
     s32 t0;
@@ -189,3 +192,4 @@ void Func_02000638(void)
     }
 }
 
+#endif

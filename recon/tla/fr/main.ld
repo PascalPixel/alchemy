@@ -814,7 +814,6 @@
     "*/recon/tla/fr/rom.o"(.rom.000d6ae4)
     "*/recon/tla/fr/rom.o"(.rom.000d6cc0)
     "*/games/tla/src/battle/effect/d1d34.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.000d6d54)
     "*/recon/tla/fr/rom.o"(.rom.000d6dac)
     "*/games/tla/src/battle/effect/d1df0.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000d6e18)

@@ -2006,16 +2006,6 @@ UnitCalc:
 	.thumb_func
 GameFlag_RefreshLureCap:
 	.incbin "baserom.gba", 0x000b2bec, 0x000000a4
-	.global Func_080adc90
-	.type Func_080adc90, %function
-	.thumb_func
-Func_080adc90:
-	.incbin "baserom.gba", 0x000b2c90, 0x0000005c
-	.global Func_080adcec
-	.type Func_080adcec, %function
-	.thumb_func
-Func_080adcec:
-	.incbin "baserom.gba", 0x000b2cec, 0x00000070
 	.section .rom.000b2df0, "ax"
 	.global Func_080addf0
 	.type Func_080addf0, %function
@@ -2540,12 +2530,6 @@ Func_080d1ae4:
 	.thumb_func
 Func_080d1cc0:
 	.incbin "baserom.gba", 0x000d6cc0, 0x00000074
-	.section .rom.000d6d54, "ax"
-	.global Func_080d1d54
-	.type Func_080d1d54, %function
-	.thumb_func
-Func_080d1d54:
-	.incbin "baserom.gba", 0x000d6d54, 0x00000058
 	.section .rom.000d6dac, "ax"
 	.global Func_080d1dac
 	.type Func_080d1dac, %function

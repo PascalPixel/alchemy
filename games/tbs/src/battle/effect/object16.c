@@ -681,40 +681,41 @@ void BattleFx_SteerPushedTarget(s32 target_id)
 			continue;
 		}
 		hit = ScriptObject_FindOverlappingEntryFar(target, p);
-		if (hit == NULL)
-			goto move;
-		if (hit != user)
+		if (hit != NULL)
 		{
-			ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
-			if ((gFrameCount & 15) == 0)
-				AudioCommand_PlayFar(SOUND_MENU_ERROR);
-			continue;
-		}
+			if (hit != user)
+			{
+				ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
+				if ((gFrameCount & 15) == 0)
+					AudioCommand_PlayFar(SOUND_MENU_ERROR);
+				continue;
+			}
 
-		// 押す先が使い手と重なる：使い手のマスが押す先なら押せない。使い手が 32 ドット先の
-		// マスにいれば、そこが通れるときだけ使い手もそこへ動かす
-		cell_x = user->x.fixed & CELL_MASK;
-		cell_z = user->z.fixed & CELL_MASK;
-		if (cell_x == (p->x & CELL_MASK) && cell_z == (p->z & CELL_MASK))
-		{
-			ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
-			if ((gFrameCount & 15) == 0)
-				AudioCommand_PlayFar(SOUND_MENU_ERROR);
-			continue;
+			// 押す先が使い手と重なる：使い手のマスが押す先なら押せない。使い手が 32 ドット先の
+			// マスにいれば、そこが通れるときだけ使い手もそこへ動かす
+			cell_x = user->x.fixed & CELL_MASK;
+			cell_z = user->z.fixed & CELL_MASK;
+			if (cell_x == (p->x & CELL_MASK) && cell_z == (p->z & CELL_MASK))
+			{
+				ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
+				if ((gFrameCount & 15) == 0)
+					AudioCommand_PlayFar(SOUND_MENU_ERROR);
+				continue;
+			}
+			if (cell_x == (beyond.x & CELL_MASK) && cell_z == (beyond.z & CELL_MASK))
+			{
+				if (Map_GetCellAttributeLowNibbleFar(user->terrain_id, beyond.x, beyond.z) != 0)
+				{
+					ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
+					if ((gFrameCount & 15) == 0)
+						AudioCommand_PlayFar(SOUND_MENU_ERROR);
+					continue;
+				}
+				moved = 1;
+			}
 		}
-		if (cell_x != (beyond.x & CELL_MASK) || cell_z != (beyond.z & CELL_MASK))
-			goto move;
-		if (Map_GetCellAttributeLowNibbleFar(user->terrain_id, beyond.x, beyond.z) != 0)
-		{
-			ObjectDispatch_ApplyArgumentToChildrenFar(pusher, 4);
-			if ((gFrameCount & 15) == 0)
-				AudioCommand_PlayFar(SOUND_MENU_ERROR);
-			continue;
-		}
-		moved = 1;
 
 		// 押す：押すオブジェクトの動作は angle と押す向きの差 (90° 単位) で選ぶ
-	move:
 		AudioCommand_PlayFar(175);
 		x = position.x;
 		z = position.z;
@@ -1777,15 +1778,8 @@ void RunBattleEffect04(void)
 	}
 
 	// 弾のスクリプトが終わるまで、60 フレームまで待つ
-	i = 0;
-	if (((struct ScriptMotionObject *)obj)->script != NULL)
-	{
-	wait_script:
+	for (i = 0; i <= 59 && ((struct ScriptMotionObject *)obj)->script != NULL; i++)
 		WaitFrames(1);
-		i++;
-		if (i <= 59 && ((struct ScriptMotionObject *)obj)->script != NULL)
-			goto wait_script;
-	}
 
 	// 当たった物を、ぶつからなければ 16 ドット押し出す（child_option なら跳ねる）
 	if (tgt != NULL && scene->child_mode == 0)
@@ -3282,7 +3276,8 @@ top:
 		effect->acceleration = 4 << 16;
 		effect->max_speed = 4 << 16;
 		effect->flag42 = state;
-		goto advance;
+		*st = *st + 1;
+		return;
 	}
 	if (state == 1)
 	{
@@ -3302,7 +3297,6 @@ top:
 		effect->target_z = pos.z;
 		effect->max_turn_step = 0x1000;
 		effect->flag42 = 1;
-	advance:
 		*st = *st + 1;
 		return;
 	}

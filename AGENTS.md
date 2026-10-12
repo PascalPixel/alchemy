@@ -145,7 +145,7 @@ A game is finished when all six hold (Pascal, 2026-10-08):
   (S3); `field_event.h` and `field_service.h` hold the script layer the
   commands expand to.
 - `recon/tla/<lang>` holds that ⚓️ edition's scaffold (`main.ld`, `main/`,
-  `overlays/`, `units/`) beside `recon/tla/overlays.s` and its symbol files;
+  `overlays/`, `units/`) beside `recon/tla/unidentified.s` (data not yet identified, placed from the ROM) and the symbol files;
   ☀️ has no scaffold left, and `recon/tbs/en` keeps only near-miss drafts
   (`main/`, `overlays/`, S4), each named by the address it would replace.
 - `tools/` holds alchemy (one `alchemy` command for both games: build,

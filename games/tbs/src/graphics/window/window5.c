@@ -876,65 +876,68 @@ s32 Menu_RunWorkspaceSelectionLoop(void)
 	{
 		rows += 3;
 	}
-redraw_menu:
-	if (redraw != 0)
+	for (;;)
 	{
-		redraw = 0;
-		page = (page + rows) % rows;
-		work->page = page;
-		i = 0;
-		if (i < rows)
+		if (redraw != 0)
 		{
-			j = first;
-			tbl = Menu_WorkspaceIconFrames;
-			do
+			redraw = 0;
+			page = (page + rows) % rows;
+			work->page = page;
+			i = 0;
+			if (i < rows)
 			{
-				icon = work->icon[i];
-				icon->sentinel = 0xFB;
-				UiIcon_PrepareObjectFar(icon);
-				index = (u8)icon->index;
-				dim = 0;
-				if (i != work->page)
+				j = first;
+				tbl = Menu_WorkspaceIconFrames;
+				do
 				{
-					dim = 1;
-				}
-				RenderResource_LoadFrame(*(s8 *)(j + (s32)tbl), index, dim);
-				i++;
-				j++;
-			} while (i < rows);
+					icon = work->icon[i];
+					icon->sentinel = 0xFB;
+					UiIcon_PrepareObjectFar(icon);
+					index = (u8)icon->index;
+					dim = 0;
+					if (i != work->page)
+					{
+						dim = 1;
+					}
+					RenderResource_LoadFrame(*(s8 *)(j + (s32)tbl), index, dim);
+					i++;
+					j++;
+				} while (i < rows);
+			}
+			top = window->y;
+			x = window->x * 8;
+			y = (((page * 3) + top) * 8) + 0x10;
+			Shop_SetCursorFar(&work->cursor, x, y, 3);
 		}
-		top = window->y;
-		x = window->x * 8;
-		y = (((page * 3) + top) * 8) + 0x10;
-		Shop_SetCursorFar(&work->cursor, x, y, 3);
-	}
-	Ui_ApplyTableOffsetToPair(pair);
-	WaitFrames(1);
-	if (gKeyState & KEY_A)
-	{
-		result = page;
-		AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
-	}
-	else if (gKeyState & (KEY_B | KEY_START))
-	{
-		result = -1;
-		AudioCommand_PlayFar(SOUND_MENU_CANCEL);
-	}
-	else
-	{
-		if (gKeysRepeat & KEY_UP)
+		Ui_ApplyTableOffsetToPair(pair);
+		WaitFrames(1);
+		if (gKeyState & KEY_A)
 		{
-			AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-			page -= 1;
-			redraw = 1;
+			result = page;
+			AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
 		}
-		else if (gKeysRepeat & KEY_DOWN)
+		else if (gKeyState & (KEY_B | KEY_START))
 		{
-			AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-			page += 1;
-			redraw = 1;
+			result = -1;
+			AudioCommand_PlayFar(SOUND_MENU_CANCEL);
 		}
-		goto redraw_menu;
+		else
+		{
+			if (gKeysRepeat & KEY_UP)
+			{
+				AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+				page -= 1;
+				redraw = 1;
+			}
+			else if (gKeysRepeat & KEY_DOWN)
+			{
+				AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+				page += 1;
+				redraw = 1;
+			}
+			continue;
+		}
+		break;
 	}
 	UiWork_Finalize(window, 2);
 	Runtime_ScheduleCallbackAndReleaseBlock20A();

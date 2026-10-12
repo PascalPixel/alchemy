@@ -639,9 +639,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
 	switch (gGameState.entrance)
 	{
 	case 1:
-		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-		((s32 (*)(s32, s32, s32, s32, s32, s32, s32))FieldScene_BuildSceneDescriptorAndInstallTask)(
-			0, 8, 4, 0x5180000, 0xc00000, 24, 25);
+		FieldScene_BuildSceneDescriptorAndInstallTask(0, 8, 4, 0x5180000, 0xc00000, 24, 25);
 		Map_CopyCellsLayered(127, 0, 1, 2, 19, 2);
 		Engine_ActorDestroy(19);
 		Engine_ActorDestroy(20);
@@ -858,10 +856,9 @@ void KorosseoKawa_RunStageIntro(s32 scene)
 			Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 10);
 			Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x106, 60);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-			/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-			((s32 (*)(s32, s32, s32))OverlayObject_PlaceWithScale14000)(0, 296, 184);
-			((s32 (*)(s32, s32, s32))OverlayObject_PlaceWithScale14000)(0, 296, 152);
-			((s32 (*)(s32, s32, s32))OverlayObject_PlaceWithScale14000)(0, 312, 152);
+			OverlayObject_PlaceWithScale14000(0, 296, 184);
+			OverlayObject_PlaceWithScale14000(0, 296, 152);
+			OverlayObject_PlaceWithScale14000(0, 312, 152);
 			Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 15);
 			StagedActor_PushActorAhead();
 			OverlayObject_ResetMotionFields(0);
@@ -888,7 +885,7 @@ void KorosseoKawa_RunStageIntro(s32 scene)
 			Engine_EventSetMessage((s32)MsgKorosseoObjectiveStageClear);
 			Engine_EventShowMessage(scene, 0);
 		}
-		((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(path, scene, 1);
+		FieldScene_RunMiddleSequence(path, scene, 1);
 		Engine_EventEnd();
 	}
 }
@@ -967,8 +964,7 @@ void Korosseo_RunPipeworksIntro(s32 a0)
 			Engine_EventSetMessage((s32)MsgKorosseoObjectiveMakeGood);
 			Engine_EventShowMessage(a0, 0);
 		}
-		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-		((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(rec4, a0, 2);
+		FieldScene_RunMiddleSequence(rec4, a0, 2);
 		Engine_EventEnd();
 	}
 }
@@ -1015,8 +1011,7 @@ void Korosseo_RunBrokenBridgeIntro(s32 scene)
 			Engine_EventSetMessage((s32)MsgKorosseoOperatorBridgeWillAlsoCheer);
 			Event_ShowMessage(scene, 0);
 		}
-		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-		((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(path, scene, 3);
+		FieldScene_RunMiddleSequence(path, scene, 3);
 		Engine_EventEnd();
 	}
 }
@@ -1039,8 +1034,7 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
 		Camera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
 		Engine_CameraWaitForMove();
 		Event_ShowMessage(scene, 0);
-		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-		((s32 (*)(s32, s32, s32))SceneState_StoreParamsAndInitTable)(120, 72, 0);
+		SceneState_StoreParamsAndInitTable(120, 72, 0);
 		Event_ShowMessage(scene, 0);
 		KorosseoKawa_ReleaseMarker();
 		Engine_EventWait(15);
@@ -1051,8 +1045,8 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 30);
 		Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x106, 60);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-		((s32 (*)(s32, s32, s32))OverlayObject_PlaceWithScale14000)(0, 1000, 192);
-		((s32 (*)(s32, s32, s32))OverlayObject_PlaceWithScale14000)(0, 1000, 176);
+		OverlayObject_PlaceWithScale14000(0, 1000, 192);
+		OverlayObject_PlaceWithScale14000(0, 1000, 176);
 		OverlayObject_PlaceWithScale14000(0, 1016, 168);
 		Engine_EventWait(15);
 		/* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
@@ -1076,7 +1070,7 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
 		Engine_EventSetMessage((s32)MsgKorosseoLogsKeyClearingStage);
 		Event_ShowMessage(scene, 0);
 	}
-	((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(path, scene, 4);
+	FieldScene_RunMiddleSequence(path, scene, 4);
 	Engine_EventEnd();
 }
 

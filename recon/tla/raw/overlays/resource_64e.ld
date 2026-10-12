@@ -11,7 +11,7 @@ SECTIONS
         "*/games/tla/src/field/vinasu_chojo/distance.o"(.text)
         "*/resource_64e_overlay.o"(.text.x0200834c)
         "*/resource_64e_overlay.o"(.text.x0200838c)
-        "*/resource_64e_overlay.o"(.text.x02008510)
+        "*/games/tla/src/field/vinasu_chojo/cellfill.o"(.text)
         "*/games/tla/src/field/vinasu_chojo/flicker.o"(.text)
         "*/resource_64e_overlay.o"(.text.x020085a8)
         "*/games/tla/src/field/vinasu_chojo/scene_tables.o"(.text)

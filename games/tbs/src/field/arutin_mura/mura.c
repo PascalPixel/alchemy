@@ -2,6 +2,7 @@
 #include "scene_ids.h"
 #include "unit/field/arutin_mura/mura.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object11.h"
 #include "unit/battle/effect/object12.h"
 #include "unit/battle/effect/object13.h"
 #include "unit/battle/effect/object14.h"

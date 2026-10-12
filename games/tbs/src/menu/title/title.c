@@ -14,6 +14,7 @@
 #include "unit/graphics/palette/palette.h"
 #include "unit/graphics/window/window.h"
 #include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtim13.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

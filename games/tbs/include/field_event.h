@@ -3,6 +3,7 @@
 
 #include "unit/battle/effect/object.h"
 #include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtim13.h"
 #include "mapcopy.h"
 
 #include "layout_guard.h"

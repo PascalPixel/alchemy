@@ -5,6 +5,7 @@
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtim13.h"
 #include "object_effect.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS

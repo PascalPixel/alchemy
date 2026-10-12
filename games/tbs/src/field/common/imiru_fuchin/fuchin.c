@@ -14,6 +14,7 @@
 #include "unit/game/character/chara7.h"
 #include "unit/game/character/chara8.h"
 #include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtim13.h"
 #include "battle.h"
 #include "field_service.h"
 #include "debug.h"

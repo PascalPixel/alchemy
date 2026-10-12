@@ -15,6 +15,7 @@
 #include "unit/game/character/chara8.h"
 #include "unit/graphics/window/window.h"
 #include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtim13.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

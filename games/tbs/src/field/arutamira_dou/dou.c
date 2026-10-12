@@ -11,6 +11,7 @@
 #include "unit/menu/shop/shop5.h"
 #include "unit/menu/shop/shop6.h"
 #include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtim13.h"
 #include "iowrite.h"
 
 #include "battle.h"

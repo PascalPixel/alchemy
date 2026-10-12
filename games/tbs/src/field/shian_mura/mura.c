@@ -5,6 +5,7 @@
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtim13.h"
 
 #define NULL ((void *)0)
 #include "fieldobj.h"

@@ -4872,3 +4872,5 @@ struct SceneEvent FuneHeya_SceneTable14[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaImInNoRushAnywayThis) },
 	{ SCENE_EVENTS_END },
 };
+
+s32 FuneHeya_CueTimer;

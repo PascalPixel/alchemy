@@ -3707,3 +3707,5 @@ s32 *KuupuappuHeya_ResponseScripts[] = {
 	KuupuappuHeya_PairScriptN,
 	KuupuappuHeya_PairScriptR,
 };
+
+u16 KuupuappuHeya_StopTimer;

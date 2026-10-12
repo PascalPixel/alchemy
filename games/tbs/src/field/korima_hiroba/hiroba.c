@@ -331,3 +331,6 @@ struct SceneEvent KorimaHiroba_Extras[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 11, 0xfd3, EVENT_SCRIPT(KorimaHiroba_AwardHiddenNut) },
 	{ SCENE_EVENTS_END },
 };
+
+u8 KorimaPalette_First[1792] __attribute__((section(".bss")));
+u8 KorimaPalette_Second[896] __attribute__((section(".bss")));

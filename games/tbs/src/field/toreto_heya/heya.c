@@ -34,9 +34,9 @@
 #include "text/msg_ids.h"
 #include "heap_state.h"
 
-extern s16 *ToretoHeya_PaletteBuffer;
 extern u8	ToretoHeya_SparkOrigin[];
 extern u8	ToretoHeya_SparkCounter[];
+extern s16 *ToretoHeya_PaletteBuffer;
 
 void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
@@ -1367,3 +1367,7 @@ struct SceneEvent gToretoHeyaEvents[] = {
 };
 
 s32 ToretoHeya_TintIndex = 0;
+
+u8	 ToretoHeya_SparkOrigin[12] __attribute__((section(".bss")));
+u8	 ToretoHeya_SparkCounter[4] __attribute__((section(".bss")));
+s16 *ToretoHeya_PaletteBuffer __attribute__((section(".bss")));

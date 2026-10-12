@@ -278,3 +278,6 @@ struct SceneEvent Data_02009098[] = {
 	{ TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_ApplyOffsetObjectPosition) },
 	{ SCENE_EVENTS_END },
 };
+
+u8 KorimaPalette_First[1792] __attribute__((section(".bss")));
+u8 KorimaPalette_Second[896] __attribute__((section(".bss")));

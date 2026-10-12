@@ -2010,3 +2010,5 @@ u16 ImiruMura_CellStepsA[] = {
 u16 ImiruMura_CellStepsB[] = {
 	MAP_CELL_STEP(1, 125, 1, 2, 10), MAP_CELL_STEP(2, 125, 1, 2, 10), MAP_CELL_STEPS_END,
 };
+
+s32 ImiruMura_ArcOrigin[3];

@@ -1028,3 +1028,5 @@ struct SceneEvent gSuharaSabakuEvents3[] = {
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ SCENE_EVENTS_END },
 };
+
+u16 gSuharaSabakuShownLevel __attribute__((section(".bss")));

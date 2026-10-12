@@ -11,11 +11,11 @@ overlay	bss
 38b	.bss (NOLOAD)
 38f	.bss (NOLOAD)
 391	.bss (NOLOAD)
-392	.bss
-393	.bss
+392	.bss ALIGN(16)
+393	.bss ALIGN(16)
 394	.bss
 395	.bss ALIGN(16) (NOLOAD)
-396	.bss
+396	.bss ALIGN(8)
 397	.bss ALIGN(16) (NOLOAD)
 399	.bss
 39a	.bss (NOLOAD)

@@ -19,26 +19,13 @@
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"
-#include "resource_386_state.h"
 #include "inventory.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 
-static void SceneState_CheckPositionWindow(void)
-{
-	s32 v1;
-	s32 v0;
-
-	v0 = ((struct Resource386FirstView *)Object_GetById(0))->sample_08;
-	v1 = ((struct Resource386SecondView *)Object_GetById(0))->sample_10 >> 0x14;
-	if ((((v0 >> 0x14) - 0x22) <= 1U) && (v1 > 0x28) && (v1 <= 0x2A))
-	{
-		Engine_GameFlagSet(0x250);
-		return;
-	}
-	Engine_GameFlagClear(0x250);
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/spotflag.c"
 
 u8 *SceneData_GetScriptTable(void)
 {
@@ -191,25 +178,8 @@ static void EV1040_PSYNERGY(void)
 	Engine_ActorEnableActionCallback(16, 2);
 }
 
-static void EV41_SEARCH(void)
-{
-	Engine_EventBegin();
-
-	if (PartyInventory_HasSpace() == 0)
-	{
-		Engine_ActorSetAnimationAndWait(18, 4);
-		Engine_EventWait(20);
-		Engine_EventSetMessage((s32)MsgKuupuappuWowHaveManyThingsArent);
-		Engine_EventShowMessage(18, 0);
-	}
-	else
-	{
-		Engine_ItemShowFound(ITEM_BONE, 3);
-		Engine_PartyGiveItem(ITEM_BONE, 0);
-	}
-
-	Engine_EventEnd();
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/bone.c"
 
 static void EV19_TALK(void)
 {
@@ -333,7 +303,7 @@ s32 FieldScene_InitSceneStateByStep(void)
 	else if (scene == 7 || scene == 11)
 	{
 		OverlayObject_ConfigureObject22WithResource17(0xe7, 0x02380000, 0x00100000, 0x02a00000);
-		Engine_TaskAddCallback(SceneState_CheckPositionWindow, 0xc80);
+		Engine_TaskAddCallback(SceneState_SetFlagByActorPosition, 0xc80);
 	}
 
 	return 0;

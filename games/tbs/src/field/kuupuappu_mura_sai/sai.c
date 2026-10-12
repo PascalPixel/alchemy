@@ -431,25 +431,8 @@ static void EV12_TOUCH(void)
 	SceneActor_PlaceAndSetSceneDelay(72, 160, 12);
 }
 
-static void EV01_TOUCH(void)
-{
-	Engine_GameFlagSet(0x200);
-	{
-		s32 a = 23;
-		s32 b = 26;
-		Engine_MapCopyCellAttributes(55, 26, 4, 2, a, b);
-	}
-}
-
-static void EV02_TOUCH(void)
-{
-	Engine_GameFlagClear(0x200);
-	{
-		s32 first_value = 23;
-		s32 second_value = 26;
-		Engine_MapCopyCellAttributes(23, 23, 4, 2, first_value, second_value);
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/toggle.c"
 
 static void EV21_TALK(void)
 {

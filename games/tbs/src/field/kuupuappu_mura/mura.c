@@ -111,17 +111,8 @@ static int KuupuappuMura_GetIwanVenusDjinnCount(void)
 	return UnitGet(2)->djinn_owned_counts[0];
 }
 
-static s32 OverlayObject_RunObject2WhenFlagged(void)
-{
-	BattlePlacement_UpdateTimedEntriesTwentyTimes();
-	if ((UnitGet(2)->djinn_available[0] & 1) != 0)
-	{
-		Djinn_Transfer(2, 0, 0, 0);
-		Engine_AudioPlayCue(126);
-		UnitCalc(0);
-		UnitCalc(2);
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/djinn.c"
 
 static void KuupuappuMura_SayFarewellToIvan(void)
 {
@@ -333,19 +324,8 @@ static void SceneActor_RunActorStep(s32 actor)
 	Engine_EventEnd();
 }
 
-static void SceneActor_RunActorCommandWithFlag91(s32 x)
-{
-	u8 *flag = &Object_GetById(x)->paused;
-	s32 zero = 0;
-
-	*flag = 1;
-	Engine_EventBegin();
-	Engine_ActorSetAnimation(x, 1);
-	Engine_EventWait(2);
-	Engine_EventShowMessage(x, 0);
-	Engine_EventEnd();
-	*flag = zero;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/talk.c"
 
 static void EV08_TALK(void)
 {
@@ -595,25 +575,8 @@ static void EV21_PSYNERGY(void)
 	Engine_EventEnd();
 }
 
-static void EV01_TOUCH(void)
-{
-	Engine_GameFlagSet(0x200);
-	{
-		int v1 = 23;
-		int v2 = 26;
-		Engine_MapCopyCellAttributes(55, 26, 4, 2, v1, v2);
-	}
-}
-
-static void EV02_TOUCH(void)
-{
-	Engine_GameFlagClear(0x200);
-	{
-		int v1 = 23;
-		int v2 = 26;
-		Engine_MapCopyCellAttributes(23, 23, 4, 2, v1, v2);
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/toggle.c"
 
 static void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 continuation)
 {

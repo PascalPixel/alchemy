@@ -1,4 +1,3 @@
-/* Near miss, differ 2 of 62: the native loads the party state address (ldr r5) right before the map mode store (strb); with the pointer local first and a one-pass block after the store this form loads it two instructions early, and without them right after the store. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"
@@ -17,8 +16,7 @@ void Func_02000b84(void);
 
 struct MapMode {
     u8 unknown_00[23];
-    u8 low : 2;
-    u8 mode : 2;
+    struct MapModeBits { u8 low : 2; u8 mode : 2; } __attribute__((packed)) bits;
 };
 
 static __inline__ void AddCallback(void (*callback)(void), s32 priority)
@@ -29,15 +27,20 @@ static __inline__ void AddCallback(void (*callback)(void), s32 priority)
 
 s32 Func_02000be0(void)
 {
-    struct PartyState *party = &gPartyState;
+    struct PartyState *party;
+    struct MapMode *map = (struct MapMode *)Ram_HeapSlots->map_work;
+    struct MapModeBits bits = map->bits;
 
-    ((struct MapMode *)Ram_HeapSlots->map_work)->mode = 1;
+    bits.mode = 1;
+    /* FAKEMATCH: the mode goes through a one-byte copy with the loop note before its store: the native loads the party state address between the or and the store. As map->bits.mode = 1 the load comes right after the store (differ 2), and with the note after that store two rows early. */
     do { } while (0);
+    party = &gPartyState;
+    map->bits = bits;
     if (party->scene == (s32)&SceneId_Ov657Room1) {
         Func_02000b84();
     } else {
         *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x100;
-        do { } while (0);
+        do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block after the store; without it the ROM differs (measured by make compare-tla-en). */
         Object_GetById(party->current_owner)->priority_flags |= 0x20;
         Object_SetModeById(8, 1);
         Func_020020c4(Data_020020dc);

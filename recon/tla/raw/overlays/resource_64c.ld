@@ -25,7 +25,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_64c/s12ac.o"(.text)
         "*/games/tla/src/field/overlay_64c/s12f8.o"(.text)
         "*/resource_64c_overlay.o"(.text.x0200930c)
-        "*/resource_64c_overlay.o"(.text.x02009364)
+        "*/games/tla/src/field/overlay_64c/s1364.o"(.text)
         "*/resource_64c_overlay.o"(.text.x02009400)
         "*/games/tla/src/field/overlay_64c/cycle.o"(.text)
         "*/games/tla/src/field/overlay_64c/s19d4.o"(.text)

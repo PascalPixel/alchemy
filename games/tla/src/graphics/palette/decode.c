@@ -13,6 +13,17 @@
 #include "io_reg.h"
 
 
+extern const u8 Resource_DecodeHalfwordLzCode[];
+extern u8 Resource_DecompressHalfwordsCodeSize[];
+
+void Resource_DecompressHalfwords(const void *source, void *destination)
+{
+    u8 routine[(u32)Resource_DecompressHalfwordsCodeSize];
+
+    Dma_Set((const void *)Resource_DecodeHalfwordLzCode, routine, ((u32)Resource_DecompressHalfwordsCodeSize >> 2) | 0x84000000, REG_DMA3);
+    ((void (*)(const void *, void *))routine)(source, destination);
+}
+
 s32 Resource_DecodeType01(const void *source, void *destination)
 {
     s32 (*routine)(const void *, void *);

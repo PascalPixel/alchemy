@@ -19,7 +19,21 @@ struct Orbiter {
 extern s32 Data_02005af0;
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *position);
 s32 __divsi3(s32 numerator, s32 denominator);
-void Func_02000398(struct Orbiter *actor, s32 *x, s32 *z);
+
+void Func_02000398(struct Orbiter *actor, s32 *x, s32 *z)
+{
+    s32 position[3];
+    s32 angle = (actor->phase << 16) / 180;
+    s32 turn;
+
+    position[0] = (actor->center_x + 16) << 16;
+    position[1] = 0x100000;
+    position[2] = actor->center_z << 16;
+    turn = Data_02005af0 * 0x3000 + angle;
+    Vector_AddPolarOffsetFar(0xd0000, turn + 0x8000, position);
+    *x = position[0];
+    *z = position[2];
+}
 
 s32 Func_02000408(struct Orbiter *actor)
 {

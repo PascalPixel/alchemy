@@ -5,16 +5,16 @@
 	.thumb_func
 VramBlock_Reset93Far:
 .ifdef TLA_EDITION_DE
-	overlay_veneer Func_08022c78
+	overlay_veneer VramBlock_Load93
 .else
 .ifdef TLA_EDITION_ES
-	overlay_veneer Func_08022c78
+	overlay_veneer VramBlock_Load93
 .else
 .ifdef TLA_EDITION_FR
-	overlay_veneer Func_08022c78
+	overlay_veneer VramBlock_Load93
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Func_08022c78
+	overlay_veneer VramBlock_Load93
 .else
 	overlay_veneer VramBlock_Reset93
 .endif
@@ -24,7 +24,23 @@ VramBlock_Reset93Far:
 	.global Func_08020388
 	.thumb_func
 Func_08020388:
+.ifdef TLA_EDITION_DE
 	overlay_veneer Func_08022c84
+.else
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_08022c84
+.else
+.ifdef TLA_EDITION_FR
+	overlay_veneer Func_08022c84
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_08022c84
+.else
+	overlay_veneer VramBlock_Load93
+.endif
+.endif
+.endif
+.endif
 	.global Func_08020390
 	.thumb_func
 Func_08020390:

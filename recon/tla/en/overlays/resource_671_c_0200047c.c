@@ -1,4 +1,4 @@
-/* Draft, differ 36 of 29: the native keeps the object in r0 and the owner in r2 and reuses the angle register for the polar call (adds r1, r3); this form copies the object to r2 and reloads the angle from the object. */
+/* Draft, differ 12 of 29: through the scene layer's inline the object stays in r0 and the owner in r2, as the native has them. Left: the native passes the angle as a copy of the value it stored (adds r1, r3), where this form reads it back (ldrh r1, [r0, #6]), and three loads are scheduled one step apart. An s32 or u16 angle variable builds it in r1 and drops the copy (differ 19); four minutes of permuter reached differ 10. */
 #include "types.h"
 
 #include "ram_buffer.h"
@@ -88,6 +88,12 @@ static __inline__ void Vram_Load(s32 handle, s32 size, void *source)
     VramBlock_LoadCached(handle, size, source);
 }
 
+static __inline__ void Vector_AddPolar(s32 radius, s32 angle, s32 *position)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Vector_AddPolarOffsetFar(radius, angle, position);
+}
+
 s32 Func_0200047c(struct ObjectRuntime *object)
 {
     struct ObjectRuntime *owner = object->linked_object;
@@ -100,7 +106,7 @@ s32 Func_0200047c(struct ObjectRuntime *object)
         phase = &OBJECT_BYTE(object, 98);
         object->z = owner->z;
         object->angle = *phase << 8;
-        Vector_AddPolarOffsetFar(0x60000, object->angle, &object->x);
+        Vector_AddPolar(0x60000, object->angle, &object->x);
         *phase += 16;
     }
     return 1;

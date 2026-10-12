@@ -185,7 +185,7 @@ Graphics_PrepareTransfer:
 	.type Render_ProjectPoint, %function
 	.thumb_func
 Render_ProjectPoint:
-	.incbin "baserom.gba", 0x000157a4, 0x00000104
+	.incbin "baserom.gba", 0x000157a4, 0x000000b8
 	.section .rom.00015998, "ax"
 	.global Func_0801596c
 	.type Func_0801596c, %function
@@ -422,13 +422,7 @@ InitializeAnimationObjects:
 	.thumb_func
 Func_08022bd8:
 	.incbin "baserom.gba", 0x00022bd8, 0x000000a0
-	.section .rom.00022c84, "ax"
-	.balign 4
-	.global Func_08022c78
-	.type Func_08022c78, %function
-	.thumb_func
-Func_08022c78:
-	.incbin "baserom.gba", 0x00022c84, 0x00000014
+	.section .rom.00022c98, "ax"
 	.global AnimationObject_Allocate
 	.type AnimationObject_Allocate, %function
 	.thumb_func
@@ -669,24 +663,17 @@ Func_0802d71c:
 Func_0802d87c:
 	.incbin "baserom.gba", 0x0002d87c, 0x000001a8
 	.section .rom.0002da88, "ax"
-	.global Func_0802db88
-	.type Func_0802db88, %function
+	.global Func_0802da88
+	.type Func_0802da88, %function
 	.thumb_func
-Func_0802db88:
+Func_0802da88:
 	.incbin "baserom.gba", 0x0002da88, 0x00000038
 	.global Func_0802b7e0
 	.type Func_0802b7e0, %function
 	.thumb_func
 Func_0802b7e0:
-	.section .rom.0002db64, "ax"
-	.incbin "baserom.gba", 0x0002db64, 0x000000e4
-	.section .rom.0002dd08, "ax"
-	.balign 4
-	.global Func_0802dd08
-	.type Func_0802dd08, %function
-	.thumb_func
-Func_0802dd08:
-	.incbin "baserom.gba", 0x0002dd08, 0x00000184
+	.section .rom.0002dd70, "ax"
+	.incbin "baserom.gba", 0x0002dd70, 0x0000011c
 	.section .rom.0002de8c, "ax"
 	.global Func_0802a650
 	.type Func_0802a650, %function
@@ -2834,10 +2821,10 @@ BattleAction_FindDescriptor:
 	.section .rom.000ccd76, "ax"
 	.incbin "baserom.gba", 0x000ccd76, 0x00000002
 	.section .rom.000ccd78, "ax"
-	.global Func_080d25c8
-	.type Func_080d25c8, %function
+	.global Func_080c8958_Target
+	.type Func_080c8958_Target, %function
 	.thumb_func
-Func_080d25c8:
+Func_080c8958_Target:
 	.incbin "baserom.gba", 0x000ccd78, 0x0000010c
 	.section .rom.000cce94, "ax"
 	.balign 4
@@ -3063,12 +3050,8 @@ Func_080d1ee8:
 	.incbin "baserom.gba", 0x000d1f20, 0x00000164
 	.section .rom.000d20fc, "ax"
 	.incbin "baserom.gba", 0x000d20fc, 0x000000f8
-	.section .rom.000d25c8, "ax"
-	.global Func_080c8950_Target
-	.type Func_080c8950_Target, %function
-	.thumb_func
-Func_080c8950_Target:
-	.incbin "baserom.gba", 0x000d25c8, 0x00000218
+	.section .rom.000d260c, "ax"
+	.incbin "baserom.gba", 0x000d260c, 0x000001d4
 	.section .rom.000d2834, "ax"
 	.global Inventory_PromptAndSetObjectMode
 	.type Inventory_PromptAndSetObjectMode, %function
@@ -3105,12 +3088,6 @@ Func_080d1e18:
 	.thumb_func
 Func_080d2d70:
 	.incbin "baserom.gba", 0x000d2d64, 0x00000014
-	.section .rom.000d3064, "ax"
-	.global Func_080d3070
-	.type Func_080d3070, %function
-	.thumb_func
-Func_080d3070:
-	.incbin "baserom.gba", 0x000d3064, 0x0000008c
 	.section .rom.000d310a, "ax"
 	.incbin "baserom.gba", 0x000d310a, 0x00000002
 	.global ObjectMotion_SetHorizontalPositionWithTerrain
@@ -4073,7 +4050,10 @@ Data_080f1140:
 	.incbin "baserom.gba", 0x000f3210, 0x000000b4
 	.global Object_OffsetMotionScript
 Object_OffsetMotionScript:
-	.incbin "baserom.gba", 0x000f32c4, 0x00000030
+	.incbin "baserom.gba", 0x000f32c4, 0x00000010
+	.global Data_080f32e0
+Data_080f32e0:
+	.incbin "baserom.gba", 0x000f32d4, 0x00000020
 	.global ObjectMotion_StepAngleScript
 ObjectMotion_StepAngleScript:
 	.incbin "baserom.gba", 0x000f32f4, 0x00000480
@@ -5274,7 +5254,7 @@ Func_0818f620:
 	.type Func_08196404, %function
 	.thumb_func
 Func_08196404:
-	.incbin "baserom.gba", 0x00196404, 0x000005a8
+	.incbin "baserom.gba", 0x00196404, 0x00000554
 	.section .rom.00196a7c, "ax"
 	.incbin "baserom.gba", 0x00196a7c, 0x00000560
 	.section .rom.001973f0, "ax"

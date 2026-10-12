@@ -611,7 +611,7 @@
         "*/games/common/src/graphics/palette/glow_update_sine.o"(.text)
         "*/games/tla/src/graphics/window/tilefill.o"(.text)
         "*/recon/tla/raw/08043a64.o"(.text)
-        "*/recon/tla/raw/08043b34.o"(.text)
+        "*/games/tla/src/menu/objrows.o"(.text)
         "*/recon/tla/raw/08043b70.o"(.text)
         "*/games/common/src/graphics/text/text.o"(.text)
         "*/recon/tla/raw/08043cd8.o"(.text)

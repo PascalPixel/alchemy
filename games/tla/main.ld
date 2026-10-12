@@ -542,6 +542,8 @@ SECTIONS
     "*/games/common/src/graphics/palette/glow_update_sine.o"(.text)
     "*/games/tla/src/graphics/window/tilefill.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00043ba8)
+    "*/games/tla/src/menu/objrows.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.00043cb4)
     "*/games/common/src/graphics/text/text.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00043e1c)
     "*/games/tla/src/graphics/window/fixed_block.o"(.text)

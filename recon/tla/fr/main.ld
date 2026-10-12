@@ -524,6 +524,8 @@
     "*/games/common/src/graphics/palette/glow_update_sine.o"(.text)
     "*/games/tla/src/graphics/window/tilefill.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00043ab4)
+    "*/games/tla/src/menu/objrows.o"(.text)
+    "*/recon/tla/fr/rom.o"(.rom.00043bc0)
     "*/games/common/src/graphics/text/text.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00043d40)
     "*/games/tla/src/graphics/window/return_one.o"(.text)

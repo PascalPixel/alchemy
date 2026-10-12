@@ -10981,7 +10981,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 	}
 	else if (mode == 1)
 	{
-		// ここのワークは scenefx.c の struct BattleEffectWork だが、星のワークと同じオフセットに書く
+		// ここのワークは effect.c の struct BattleEffectWork だが、星のワークと同じオフセットに書く
 		BattlePresentation_PrepareSceneFar(kind);
 		for (frame = 0; frame < 40; frame++)
 		{

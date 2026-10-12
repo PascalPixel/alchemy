@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_BATTLE_EFFECT_SCENEFX_H
-#define ALCHEMY_UNIT_BATTLE_EFFECT_SCENEFX_H
+#ifndef ALCHEMY_UNIT_BATTLE_EFFECT_EFFECT_H
+#define ALCHEMY_UNIT_BATTLE_EFFECT_EFFECT_H
 
 #include "types.h"
 #include "battle_effect_work.h"

@@ -1,5 +1,5 @@
 #include "unit/battle/effect/koukatbl.h"
-#include "unit/battle/effect/scenefx.h"
+#include "unit/battle/effect/effect.h"
 #include "types.h"
 
 //--------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 #include "unit/battle/effect/fxscales.h"
 #include "unit/battle/effect/koukabit.h"
 #include "unit/battle/effect/koukatbl.h"
-#include "unit/battle/effect/scenefx.h"
+#include "unit/battle/effect/effect.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/system/scheduler/callback.h"
 #include "battle.h"

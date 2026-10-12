@@ -16,3 +16,14 @@ void EffectSlot_SetObjectMode(struct EffectSlot *effect, s32 mode)
 {
     Animation_ApplyChildArgumentFar(effect->object, mode);
 }
+
+void EffectSlot_SetCallback(struct EffectSlot *effect, EffectCallback callback)
+{
+    effect->callback = callback;
+    effect->callback_delay = 0;
+    /* FAKEMATCH: a one-pass block loads the state's zero before the halfword zero is built; stored straight the two rows trade places (differ 2). */
+    do {
+        effect->age = 0;
+        effect->state = 0;
+    } while (0);
+}

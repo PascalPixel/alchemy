@@ -1389,9 +1389,6 @@ Graphics_MergeShiftedTileRows:
 	.incbin "baserom.gba", 0x00045640, 0x0000018c
 	.section .rom.000457e2, "ax"
 	.incbin "baserom.gba", 0x000457e2, 0x00000002
-	.section .rom.000457f8, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x000457f8, 0x0000001c
 	.section .rom.00045832, "ax"
 	.incbin "baserom.gba", 0x00045832, 0x00000966
 	.section .rom.000462e8, "ax"
@@ -4107,9 +4104,8 @@ Func_080db0b0:
 	.thumb_func
 EffectSlot_UpdateMotion:
 	.incbin "baserom.gba", 0x000ebd18, 0x0000014c
-	.section .rom.000ebea8, "ax"
-	.align 2, 0
-	.incbin "baserom.gba", 0x000ebea8, 0x000000b4
+	.section .rom.000ebebc, "ax"
+	.incbin "baserom.gba", 0x000ebebc, 0x000000a0
 	.section .rom.000ebf88, "ax"
 	.incbin "baserom.gba", 0x000ebf88, 0x000001b8
 	.section .rom.000ec1c4, "ax"

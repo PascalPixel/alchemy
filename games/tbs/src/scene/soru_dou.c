@@ -1,5 +1,5 @@
 
-#include "unit/field/soru_dou/dou.h"
+#include "unit/scene/soru_dou.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

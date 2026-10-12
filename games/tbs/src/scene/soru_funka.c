@@ -1,7 +1,7 @@
 #include "game_state.h"
-#include "unit/field/soru_funka/funka.h"
+#include "unit/scene/soru_funka.h"
 #include "unit/field/common/effect/psynergy.h"
-#include "unit/field/soru_star/ring_setup.h"
+#include "unit/scene/soru_star_ring_setup.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"
@@ -26,7 +26,7 @@
 #include "system.h"
 #include "resource.h"
 #include "b5_context.h"
-#include "funka.h"
+#include "soru_funka.h"
 #include "types.h"
 #include "field_event.h"
 #include "field_service.h"
@@ -1814,7 +1814,7 @@ static void SceneState_ForwardByRuntimeWordBits(s32 a)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/vertical.c"
+#include "../field/common/effect/vertical.c"
 
 static void SoruFunka_SpawnEffectPair(union PairObject *parent)
 {
@@ -1867,7 +1867,7 @@ static void SoruFunka_SpawnEffectPair(union PairObject *parent)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/psynergy.c"
+#include "../field/common/effect/psynergy.c"
 
 static void FieldScene_RunActor15TwoStep(void)
 {
@@ -1875,7 +1875,7 @@ static void FieldScene_RunActor15TwoStep(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../soru_star/ring_setup.c"
+#include "soru_star_ring_setup.c"
 
 s32 Funka_ArcOriginsHead[] = {
 	SC_SET(SW_VELOCITY_Y, 0x60000),

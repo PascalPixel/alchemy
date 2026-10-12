@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_FIELD_SORU_STAR_STAR_H
-#define ALCHEMY_UNIT_FIELD_SORU_STAR_STAR_H
+#ifndef ALCHEMY_UNIT_SCENE_SORU_STAR_H
+#define ALCHEMY_UNIT_SCENE_SORU_STAR_H
 
 #include "types.h"
 #include "field_scene.h"

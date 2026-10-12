@@ -1,6 +1,6 @@
 #include "game_state.h"
 #include "unit/import.h"
-#include "unit/field/soru_iriguchi/iriguchi.h"
+#include "unit/scene/soru_iriguchi.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/evtable.h"
@@ -24,7 +24,7 @@
 #include "field_event.h"
 #include "field_scene.h"
 #include "field_service.h"
-#include "soru.h"
+#include "soru_iriguchi.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
@@ -483,7 +483,7 @@ static void EV14_PSYNERGY(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/findcell.c"
+#include "../field/common/object/findcell.c"
 
 static void SoruIriguchi_PushFacedBlock(void)
 {

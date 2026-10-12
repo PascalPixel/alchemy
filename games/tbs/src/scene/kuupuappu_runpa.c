@@ -1,5 +1,5 @@
 #include "game_state.h"
-#include "unit/field/common/kuupuappu_runpa/runpa.h"
+#include "unit/scene/kuupuappu_runpa.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/evbasic.h"

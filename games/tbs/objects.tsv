@@ -289,20 +289,20 @@ main	rom_tail_02	@games/tbs/src/system/resource/directory
 37a	bss	resource_37a_overlay	.bss
 37b	unit	games/tbs/src/scene/soru_sekizo
 37b	bss	games/tbs/src/scene/soru_sekizo	.bss COMMON
-37c	unit	games/tbs/src/field/soru_dou/dou
-37d	unit	games/tbs/src/field/soru_meiro/meiro
-37e	unit	games/tbs/src/field/soru_roka/roka
-37f	unit	games/tbs/src/field/soru_iriguchi/iriguchi
-37f	bss	games/tbs/src/field/soru_iriguchi/iriguchi	.bss
-380	unit	games/tbs/src/field/soru_star/star
-381	unit	games/tbs/src/field/soru_funka/funka
+37c	unit	games/tbs/src/scene/soru_dou
+37d	unit	games/tbs/src/scene/soru_meiro
+37e	unit	games/tbs/src/scene/soru_roka
+37f	unit	games/tbs/src/scene/soru_iriguchi
+37f	bss	games/tbs/src/scene/soru_iriguchi	.bss
+380	unit	games/tbs/src/scene/soru_star
+381	unit	games/tbs/src/scene/soru_funka
 381	bss	resource_381_overlay	.bss
-382	unit	games/tbs/src/field/kuupuappu_mura/mura
+382	unit	games/tbs/src/scene/kuupuappu_mura
 382	text	libgcc.a:_call_via_rX
-383	unit	games/tbs/src/field/kuupuappu_heya/heya
-383	bss	games/tbs/src/field/kuupuappu_heya/heya	.bss COMMON
-384	unit	games/tbs/src/field/common/kuupuappu_runpa/runpa
-385	unit	games/tbs/src/field/kuupuappu_mura_sai/sai
+383	unit	games/tbs/src/scene/kuupuappu_heya
+383	bss	games/tbs/src/scene/kuupuappu_heya	.bss COMMON
+384	unit	games/tbs/src/scene/kuupuappu_runpa
+385	unit	games/tbs/src/scene/kuupuappu_mura_sai
 385	text	libgcc.a:_call_via_rX
 386	unit	games/tbs/src/field/kuupuappu_heya_sai/sai
 387	unit	games/tbs/src/field/goma_iriguchi/iriguchi

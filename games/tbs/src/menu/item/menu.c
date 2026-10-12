@@ -10196,24 +10196,29 @@ void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1)
 	Scheduler_AddOrUpdateCallback((s32)FourObjectMotion_UpdateAllPositions, 0xc80);
 }
 
-void FourObjectMotion_ClearSlotsAndSchedule(void)
-{
-	struct FourObjectMotionState *state = gMenuWork;
-	s32							  index = 0;
+// 4 つのオブジェクトを解放し、スケジューラから update を外す
+#define DEFINE_FOUR_OBJECT_RELEASE(name, update)                    \
+	void name(void)                                                 \
+	{                                                               \
+		struct FourObjectMotionState *state = gMenuWork;            \
+		s32							  index = 0;                    \
+                                                                    \
+		do                                                          \
+		{                                                           \
+			struct AnimationObject *object = state->objects[index]; \
+                                                                    \
+			if (object != NULL)                                     \
+			{                                                       \
+				ResourceObject_ReleaseFar(object);                  \
+				state->objects[index] = NULL;                       \
+			}                                                       \
+			index++;                                                \
+		} while (index < 4);                                        \
+		Scheduler_RemoveCallback((u32)update);                      \
+	}
 
-	do
-	{
-		struct AnimationObject *object = state->objects[index];
-
-		if (object != 0)
-		{
-			ResourceObject_ReleaseFar(object);
-			state->objects[index] = 0;
-		}
-		index++;
-	} while (index < 4);
-	Scheduler_RemoveCallback((u32)FourObjectMotion_UpdateAllPositions);
-}
+DEFINE_FOUR_OBJECT_RELEASE(FourObjectMotion_ClearSlotsAndSchedule,
+	FourObjectMotion_UpdateAllPositions)
 
 #define FIXED_ONE 0x10000u
 #define VERTICAL_ORIGIN 0x01e20000u
@@ -10368,24 +10373,8 @@ s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value)
 	return 1;
 }
 
-void FourObjectMotion_ClearSlotsAndScheduleAlt(void)
-{
-	struct FourObjectMotionState *state = gMenuWork;
-	s32							  index = 0;
-
-	do
-	{
-		struct AnimationObject *object = state->objects[index];
-
-		if (object != NULL)
-		{
-			ResourceObject_ReleaseFar(object);
-			state->objects[index] = NULL;
-		}
-		index++;
-	} while (index < 4);
-	Scheduler_RemoveCallback((u32)FourObjectMotion_UpdateBottomRow);
-}
+DEFINE_FOUR_OBJECT_RELEASE(FourObjectMotion_ClearSlotsAndScheduleAlt,
+	FourObjectMotion_UpdateBottomRow)
 
 void Menu_EnableAllItemObjects(void)
 {

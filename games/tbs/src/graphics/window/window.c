@@ -3371,37 +3371,28 @@ void UiText_MeasureResourceEntries(s32 no, s32 *x, s32 *y)
 	UiText_MeasureEntryDimensions(UiText_BuildRenderEntries(no, 0), (u32 *)x, (u32 *)y, 0);
 }
 
-s32 UiText_GetResourceDimensions(s32 no, s32 *x, s32 *y, u32 *width, u32 *height)
-{
-	struct UiRenderWork *work;
-	s32					 temp;
-
-	work = UI_WORK;
-	temp = UiText_BuildRenderEntries(no, 0);
-	if (work->entries[temp] == 0)
-	{
-		return 0;
-	}
-	UiWindow_FitOnScreen(temp, x, y, width, height, 0, 0);
-	return 1;
-}
-
-s32 UiText_GetResourceDimensionsAlt(s32 no, s32 *x, s32 *y, u32 *width, u32 *height)
-{
-	struct UiRenderWork *work;
-	s32					 idx;
-
-	work = UI_WORK;
-	idx = UiText_BuildRenderEntries(no, 0);
-	if (work->entries[idx] == 0)
-	{
-		return 0;
-	}
-	UiWindow_FitOnScreen(idx, x, y, width, height, 0, 1);
-	return 1;
-}
-
 s32 __divsi3(s32 numerator, s32 denominator);
+
+// no の表示エントリを作り、UiWindow_FitOnScreen に flags をつけてわたす。
+// エントリがなければ 0 を返す
+#define DEFINE_GET_RESOURCE_DIMENSIONS(name, flags)               \
+	s32 name(s32 no, s32 *x, s32 *y, u32 *width, u32 *height)     \
+	{                                                             \
+		struct UiRenderWork *work;                                \
+		s32					 idx;                                 \
+                                                                  \
+		work = UI_WORK;                                           \
+		idx = UiText_BuildRenderEntries(no, 0);                   \
+		if (work->entries[idx] == 0)                              \
+		{                                                         \
+			return 0;                                             \
+		}                                                         \
+		UiWindow_FitOnScreen(idx, x, y, width, height, 0, flags); \
+		return 1;                                                 \
+	}
+
+DEFINE_GET_RESOURCE_DIMENSIONS(UiText_GetResourceDimensions, 0)
+DEFINE_GET_RESOURCE_DIMENSIONS(UiText_GetResourceDimensionsAlt, 1)
 
 void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16 *spacing)
 {

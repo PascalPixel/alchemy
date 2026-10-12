@@ -4211,7 +4211,8 @@ void EffectRuntime_ReservedNoOp(void)
 {
 }
 
-void EffectRuntime_SetMode5AndPlayCue(s32 id)
+// id のオブジェクトの絵のアニメを mode にし、音 cue を鳴らして 12 フレーム待つ
+static __inline__ void SetModeAndPlayCue(s32 id, s32 mode, s32 cue)
 {
 	s32						  slot;
 	struct EffectRuntimeSlot *slot_data;
@@ -4223,10 +4224,15 @@ void EffectRuntime_SetMode5AndPlayCue(s32 id)
 		slot_data = &((struct EffectRuntime *)gEventWork)->slots[slot];
 		object = slot_data->object;
 		if (object != NULL)
-			ObjectDispatch_ApplyArgumentToChildrenFar(object, 5);
-		AudioCommand_PlayFar(0x7d);
+			ObjectDispatch_ApplyArgumentToChildrenFar(object, mode);
+		AudioCommand_PlayFar(cue);
 		WaitFrames(0xc);
 	}
+}
+
+void EffectRuntime_SetMode5AndPlayCue(s32 id)
+{
+	SetModeAndPlayCue(id, 5, 0x7d);
 }
 
 void EffectRuntime_SetMode7AndLaunch(s32 id)
@@ -4254,20 +4260,7 @@ void EffectRuntime_SetMode7AndLaunch(s32 id)
 
 void EffectRuntime_SetMode4AndPlayCue(s32 id)
 {
-	s32						  slot;
-	struct EffectRuntimeSlot *slot_data;
-	struct ObjectRuntime	 *object;
-
-	slot = EffectRuntime_FindSlotByObject(id);
-	if (slot != -1)
-	{
-		slot_data = &((struct EffectRuntime *)gEventWork)->slots[slot];
-		object = slot_data->object;
-		if (object != NULL)
-			ObjectDispatch_ApplyArgumentToChildrenFar(object, 4);
-		AudioCommand_PlayFar(0x7c);
-		WaitFrames(0xc);
-	}
+	SetModeAndPlayCue(id, 4, 0x7c);
 }
 
 void EffectRuntime_SetMode2(s32 id)
@@ -10240,19 +10233,25 @@ void Djinn_ResolvePendingEvent(s32 capture)
 	gGameState.pending_djinn_event = 0;
 }
 
-void BattleFx_UpdateAllSlots(void)
+// 演出スロット 24 個を動かす
+static __inline__ void UpdateAllEffectSlots(void)
 {
 	struct EffectSlot *slot;
-	s32				   remaining_slots;
+	s32				   n;
 
 	slot = ((struct BattleFxScene *)gEffectWork)->slots;
-	remaining_slots = 0x17;
+	n = 23;
 	do
 	{
-		remaining_slots -= 1;
+		n -= 1;
 		EffectSlot_Update(slot);
 		slot++;
-	} while (remaining_slots >= 0);
+	} while (n >= 0);
+}
+
+void BattleFx_UpdateAllSlots(void)
+{
+	UpdateAllEffectSlots();
 }
 
 void BattleFx_InitializeSlots(void)
@@ -10481,19 +10480,23 @@ void BattleFx_AdvanceAngleWithRamp(void *obj)
 	}
 }
 
-void BattleFx_ShrinkObjectAndDestroySlow(void *obj)
-{
-	s32 scale;
-
-	scale = ((struct MotionObject *)obj)->scale_x + 0xFFFFFE40;
-	((struct MotionObject *)obj)->scale_y = ((struct MotionObject *)obj)->scale_y + 0xFFFFFE40;
-	((struct MotionObject *)obj)->angle = ((struct MotionObject *)obj)->angle + 0x2000;
-	((struct MotionObject *)obj)->scale_x = scale;
-	if (scale < 0x3000)
-	{
-		ObjectDispatch_ReleaseFar(obj);
+// 毎フレームの更新 : 45 度ずつ回しながら拡大率に step を足し、0x3000 を下回ったら消す
+#define DEFINE_SHRINK_AND_DESTROY(name, step)                                                 \
+	void name(void *obj)                                                                      \
+	{                                                                                         \
+		s32 scale;                                                                            \
+                                                                                              \
+		scale = ((struct MotionObject *)obj)->scale_x + step;                                 \
+		((struct MotionObject *)obj)->scale_y = ((struct MotionObject *)obj)->scale_y + step; \
+		((struct MotionObject *)obj)->angle = ((struct MotionObject *)obj)->angle + 0x2000;   \
+		((struct MotionObject *)obj)->scale_x = scale;                                        \
+		if (scale < 0x3000)                                                                   \
+		{                                                                                     \
+			ObjectDispatch_ReleaseFar(obj);                                                   \
+		}                                                                                     \
 	}
-}
+
+DEFINE_SHRINK_AND_DESTROY(BattleFx_ShrinkObjectAndDestroySlow, 0xFFFFFE40)
 
 void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
 {
@@ -10688,19 +10691,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
 	BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 
-void BattleFx_ShrinkObjectAndDestroyFast(void *obj)
-{
-	s32 scale;
-
-	scale = ((struct MotionObject *)obj)->scale_x + 0xFFFFFC00;
-	((struct MotionObject *)obj)->scale_y = ((struct MotionObject *)obj)->scale_y + 0xFFFFFC00;
-	((struct MotionObject *)obj)->angle = ((struct MotionObject *)obj)->angle + 0x2000;
-	((struct MotionObject *)obj)->scale_x = scale;
-	if (scale < 0x3000)
-	{
-		ObjectDispatch_ReleaseFar(obj);
-	}
-}
+DEFINE_SHRINK_AND_DESTROY(BattleFx_ShrinkObjectAndDestroyFast, 0xFFFFFC00)
 
 void BattleFx_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg)
 {
@@ -11727,17 +11718,7 @@ void BattleFx_CycleObjectValueByCounter(s32 obj)
 //--------------------------------------------------------------------------
 void BattleFx_UpdateAllEffectSlots(void)
 {
-	s32 p;
-	s32 n;
-
-	p = (s32)((struct BattleFxScene *)gEffectWork)->slots;
-	n = 23;
-	do
-	{
-		n -= 1;
-		EffectSlot_Update((struct EffectSlot *)p);
-		p += sizeof(struct EffectSlot);
-	} while (n >= 0);
+	UpdateAllEffectSlots();
 }
 
 //--------------------------------------------------------------------------
@@ -13288,64 +13269,69 @@ void BattleEffect_RunTargetedItemBreak(s32 unused)
 // エナジー演出 7：左右の二つの物体と、飛び散る破片
 //--------------------------------------------------------------------------
 
-#define HAHEN_MAX 24 // 破片の数
+// 破片の数
+#define HAHEN_MAX 24
 
 //--------------------------------------------------------------------------
+// 対象のない演出の本体：演出の位置の 16 ドット上、左右 32 ドットに spawn で
+// 物体を出し、それぞれの向きへ 24 ドット動かしてから、破片を 24 個、
+// 8-32 ドット先へ散らす
+//--------------------------------------------------------------------------
+#define DEFINE_ITEM_BREAK_EFFECT(name, spawn)                                          \
+	void name(void)                                                                    \
+	{                                                                                  \
+		struct BattleFxScene  *work;                                                   \
+		struct MotionObject	  *obj;                                                    \
+		struct MotionObject	  *pair[2];                                                \
+		struct ScatterPosition pos;                                                    \
+		struct MotionObject	 **walk;                                                   \
+		s32					   n;                                                      \
+		s32					   dist;                                                   \
+                                                                                       \
+		work = gEffectWork;                                                            \
+		BattleEffect_InitializeSharedScene();                                          \
+		pos.x = work->x;                                                               \
+		pos.y = work->y + 0x100000;                                                    \
+		pos.z = work->z;                                                               \
+		pair[0] = spawn(pos.x + 0x200000, pos.y, pos.z, 0x8000);                       \
+		pair[1] = spawn(pos.x - 0x200000, pos.y, pos.z, 0);                            \
+                                                                                       \
+		WaitFrames(15);                                                                \
+		walk = pair;                                                                   \
+		for (n = 0; n < 2; n++)                                                        \
+		{                                                                              \
+			obj = *walk++;                                                             \
+			if (obj != 0)                                                              \
+				Motion_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->angle); \
+		}                                                                              \
+                                                                                       \
+		Script_WaitForEventTimeoutFar(pair[0]);                                        \
+		AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);                                      \
+		for (n = 0; n < HAHEN_MAX; n++)                                                \
+		{                                                                              \
+			pos.x = work->x;                                                           \
+			pos.y = work->y + 0x100000;                                                \
+			pos.z = work->z;                                                           \
+			obj = Object_Spawn(285, pos.x, pos.y, pos.z);                              \
+			if (obj != 0)                                                              \
+			{                                                                          \
+				ObjectDispatch_InitializeFar(                                          \
+					(struct DispatchObject *)obj, BattleFx_FragmentScript);            \
+				obj->speed_limit = Random16() + 0x20000;                               \
+				obj->acceleration = 0x20000;                                           \
+				obj->motion_flags = 0;                                                 \
+				dist = Random16() * 24 + 0x80000;                                      \
+				Motion_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());     \
+			}                                                                          \
+		}                                                                              \
+                                                                                       \
+		ObjectDispatch_ReleaseFar(pair[0]);                                            \
+		ObjectDispatch_ReleaseFar(pair[1]);                                            \
+		BattleFx_PrepareBufferInterpolation();                                         \
+	}
+
 // 対象のない演出 7
-// 演出の位置の左右 32 ドットに物体を出して動かし、破片を 24 個散らす
-//--------------------------------------------------------------------------
-void RunBattleEffect07(void)
-{
-	struct BattleFxScene  *work;
-	struct MotionObject	  *obj;
-	struct MotionObject	  *pair[2];
-	struct ScatterPosition pos;
-	struct MotionObject	 **walk;
-	s32					   n;
-	s32					   dist;
-
-	work = gEffectWork;
-	BattleEffect_InitializeSharedScene();
-	pos.x = work->x;
-	pos.y = work->y + 0x100000; // 16 ドット上
-	pos.z = work->z;
-	pair[0] = BattleFx_SpawnItemBreakMode3(pos.x + 0x200000, pos.y, pos.z, 0x8000);
-	pair[1] = BattleFx_SpawnItemBreakMode3(pos.x - 0x200000, pos.y, pos.z, 0);
-
-	// それぞれの向きへ 24 ドット動かす
-	WaitFrames(15);
-	walk = pair;
-	for (n = 0; n < 2; n++)
-	{
-		obj = *walk++;
-		if (obj != 0)
-			Motion_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->angle);
-	}
-
-	// 破片：8-32 ドット先へ散る
-	Script_WaitForEventTimeoutFar(pair[0]);
-	AudioCommand_PlayFar(SOUND_HEAVY_IMPACT);
-	for (n = 0; n < HAHEN_MAX; n++)
-	{
-		pos.x = work->x;
-		pos.y = work->y + 0x100000;
-		pos.z = work->z;
-		obj = Object_Spawn(285, pos.x, pos.y, pos.z);
-		if (obj != 0)
-		{
-			ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_FragmentScript);
-			obj->speed_limit = Random16() + 0x20000;
-			obj->acceleration = 0x20000;
-			obj->motion_flags = 0;
-			dist = Random16() * 24 + 0x80000;
-			Motion_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());
-		}
-	}
-
-	ObjectDispatch_ReleaseFar(pair[0]);
-	ObjectDispatch_ReleaseFar(pair[1]);
-	BattleFx_PrepareBufferInterpolation();
-}
+DEFINE_ITEM_BREAK_EFFECT(RunBattleEffect07, BattleFx_SpawnItemBreakMode3)
 
 //--------------------------------------------------------------------------
 // 物体 215 を出し、回しながら 1/4 から等倍まで 24 フレームで大きくする
@@ -14853,57 +14839,7 @@ void BattleFx_SteerLiftedTarget(s32 id)
 	}
 }
 
-void RunBattleEffect11(void)
-{
-	struct BattleFxScene  *scene;
-	struct MotionObject	  *obj;
-	struct MotionObject	  *anchors[2];
-	struct ScatterPosition position;
-	struct MotionObject	 **walk;
-	s32					   index;
-	s32					   magnitude;
-
-	scene = gEffectWork;
-	BattleEffect_InitializeSharedScene();
-	position.x = scene->x;
-	position.y = scene->y + 0x100000;
-	position.z = scene->z;
-	anchors[0] =
-		BattleFx_SpawnItemBreakMode1(position.x + 0x200000, position.y, position.z, 0x8000);
-	anchors[1] = BattleFx_SpawnItemBreakMode1(position.x - 0x200000, position.y, position.z, 0);
-
-	WaitFrames(15);
-	walk = anchors;
-	for (index = 0; index < 2; index++)
-	{
-		obj = *walk++;
-		if (obj != 0)
-			Motion_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->angle);
-	}
-
-	Script_WaitForEventTimeoutFar(anchors[0]);
-	AudioCommand_PlayFar(134);
-	for (index = 0; index < 24; index++)
-	{
-		position.x = scene->x;
-		position.y = scene->y + 0x100000;
-		position.z = scene->z;
-		obj = Object_Spawn(0x11d, position.x, position.y, position.z);
-		if (obj != 0)
-		{
-			ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_FragmentScript);
-			obj->speed_limit = Random16() + 0x20000;
-			obj->acceleration = 0x20000;
-			obj->motion_flags = 0;
-			magnitude = Random16() * 24 + 0x80000;
-			Motion_SetTargetPositionFromMagnitudeAngle(obj, magnitude, Random16());
-		}
-	}
-
-	ObjectDispatch_ReleaseFar(anchors[0]);
-	ObjectDispatch_ReleaseFar(anchors[1]);
-	BattleFx_PrepareBufferInterpolation();
-}
+DEFINE_ITEM_BREAK_EFFECT(RunBattleEffect11, BattleFx_SpawnItemBreakMode1)
 
 struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle)
 {

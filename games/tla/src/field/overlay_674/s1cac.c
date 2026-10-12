@@ -1,7 +1,4 @@
-// Near miss, differ 2 of 34: the listing reads the DMA control (ldrh r4, [r3, #10]) before it starts the mask
-// 0xc5ff; here the mask starts first. The read as its own barrier-held value turns the mask into a pool
-// load (differ 11). The same shape as Func_080dcdc8 in battle/effect/hue.c.
-#include "../../../../games/tla/src/field/overlay_674/ov674.h"
+#include "ov674.h"
 #include "dma.h"
 #include "io_reg.h"
 
@@ -24,11 +21,14 @@ void Func_02001cac(void)
     __asm__("");
     dma = REG_DMA0;
 
-    dma[5] &= 0xc5ff; // 開始タイミングとリピートを消す
-    dma[5] &= 0x7fff; // 止める
-    lines++;
-    /* FAKEMATCH: keeps the cursor step before the last control read */
-    __asm__("" : : "r"(lines));
+    /* FAKEMATCH: the one-pass block reads the control before its mask is started; without it the mask is started first (differ 2) */
+    do {
+        dma[5] &= 0xc5ff; // 開始タイミングとリピートを消す
+        dma[5] &= 0x7fff; // 止める
+        lines++;
+        /* FAKEMATCH: keeps the cursor step before the last control read */
+        __asm__("" : : "r"(lines));
+    } while (0);
     (void)dma[5];
     Dma_Set(lines, (void *)scroll, 0xa2600001, (volatile u32 *)dma);
 }

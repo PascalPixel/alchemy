@@ -8,7 +8,7 @@ Resource_Overlay64A:
 	.incbin "baserom.gba", 0x00ec3c1c, 0x00001c88
 	.global Resource_Overlay64B
 Resource_Overlay64B:
-	.incbin "baserom.gba", 0x00ec58a4, 0x00003dd4
+	.incbin "overlays/resource_64b.lz"
 	.global Resource_Overlay64C
 Resource_Overlay64C:
 	.incbin "overlays/resource_64c.lz"
@@ -106,7 +106,7 @@ Resource_Overlay665:
 	.incbin "baserom.gba", 0x00ef13ea, 0x00000002
 	.global Resource_Overlay666
 Resource_Overlay666:
-	.incbin "baserom.gba", 0x00ef13ec, 0x00000a58
+	.incbin "overlays/resource_666.lz"
 	.global Resource_Overlay667
 Resource_Overlay667:
 	.incbin "overlays/resource_667.lz"
@@ -159,7 +159,8 @@ Resource_Overlay673:
 	.incbin "baserom.gba", 0x00f03cf2, 0x00000002
 	.global Resource_Overlay674
 Resource_Overlay674:
-	.incbin "baserom.gba", 0x00f03cf4, 0x00002aac
+	.incbin "overlays/resource_674.lz"
+	.incbin "baserom.gba", 0x00f0679d, 0x00000003
 	.global Resource_Overlay675
 Resource_Overlay675:
 	.incbin "overlays/resource_675.lz"
@@ -197,7 +198,8 @@ Resource_Overlay67D:
 	.incbin "overlays/resource_67d.lz"
 	.global Resource_Overlay67E
 Resource_Overlay67E:
-	.incbin "baserom.gba", 0x00f12f30, 0x00000a7c
+	.incbin "overlays/resource_67e.lz"
+	.incbin "baserom.gba", 0x00f139a9, 0x00000003
 	.global Resource_Overlay67F
 Resource_Overlay67F:
 	.incbin "overlays/resource_67f.lz"
@@ -354,7 +356,8 @@ Resource_Overlay6A7:
 	.incbin "baserom.gba", 0x00f5b0a9, 0x00000003
 	.global Resource_Overlay6A8
 Resource_Overlay6A8:
-	.incbin "baserom.gba", 0x00f5b0ac, 0x00002d18
+	.incbin "overlays/resource_6a8.lz"
+	.incbin "baserom.gba", 0x00f5ddc2, 0x00000002
 	.global Resource_Overlay6A9
 Resource_Overlay6A9:
 	.incbin "overlays/resource_6a9.lz"
@@ -372,7 +375,8 @@ Resource_Overlay6AC:
 	.incbin "overlays/resource_6ac.lz"
 	.global Resource_Overlay6AD
 Resource_Overlay6AD:
-	.incbin "baserom.gba", 0x00f676c8, 0x00004480
+	.incbin "overlays/resource_6ad.lz"
+	.incbin "baserom.gba", 0x00f6bb46, 0x00000002
 	.global Resource_Overlay6AE
 Resource_Overlay6AE:
 	.incbin "baserom.gba", 0x00f6bb48, 0x00003248

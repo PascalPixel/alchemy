@@ -1,6 +1,55 @@
 .syntax unified
 	.thumb
 	.section .text.x02008038,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.balign 4
+	.global Func_02000038
+	.thumb_func
+Func_02000038:
+	push {r5, r6, r7, lr}
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r6, [r3, #108]
+	ldr r3, .L_ja_0200808c
+	movs r2, #150
+	lsls r2, r2, #2
+	adds r7, r3, r2
+	movs r3, #204
+	lsls r3, r3, #1
+	adds r5, r6, r3
+	ldr r3, [r5]
+	movs r1, #10
+	lsls r0, r3, #3
+	adds r0, r0, r3
+	bl __divsi3
+	ldr r3, [r7]
+	cmp r3, r0
+	blt .L_ja_02008088
+	bl Random16Far
+	movs r2, #128
+	lsls r2, r2, #8
+	cmp r0, r2
+	bcs .L_ja_02008084
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #10
+	movs r1, #8
+	bl Func_02004d50
+	movs r3, #202
+	lsls r3, r3, #1
+	adds r2, r6, r3
+	movs r3, #0
+	str r3, [r2]
+	b .L_ja_02008088
+.L_ja_02008084:
+	ldr r3, [r5]
+	str r3, [r7]
+.L_ja_02008088:
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
+.L_ja_0200808c:
+	.4byte gPartyState
+	.else
 	.balign 4
 	.global Func_02000038
 	.thumb_func
@@ -54,7 +103,56 @@ Func_02000038:
 	.2byte 0x0000
 .L_02008098:
 	.4byte gPartyState
+	.endif
 	.section .text.x0200809c,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.global Func_0200009c
+	.thumb_func
+Func_0200009c:
+	push {r5, r6, r7, lr}
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r6, [r3, #108]
+	ldr r3, .L_ja_020080e4
+	movs r2, #150
+	lsls r2, r2, #2
+	adds r7, r3, r2
+	movs r3, #204
+	lsls r3, r3, #1
+	adds r5, r6, r3
+	ldr r3, [r5]
+	movs r1, #10
+	lsls r0, r3, #3
+	adds r0, r0, r3
+	bl __divsi3
+	ldr r3, [r7]
+	cmp r3, r0
+	blt .L_ja_020080e0
+	bl Random16Far
+	movs r2, #128
+	lsls r2, r2, #8
+	cmp r0, r2
+	bcs .L_ja_020080dc
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #11
+	movs r1, #28
+	bl Func_02004d50
+	movs r3, #202
+	lsls r3, r3, #1
+	adds r2, r6, r3
+	movs r3, #0
+	str r3, [r2]
+	b .L_ja_020080e0
+.L_ja_020080dc:
+	ldr r3, [r5]
+	str r3, [r7]
+.L_ja_020080e0:
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
+.L_ja_020080e4:
+	.4byte gPartyState
+	.else
 	.global Func_0200009c
 	.thumb_func
 Func_0200009c:
@@ -107,7 +205,56 @@ Func_0200009c:
 	.2byte 0x0000
 .L_020080fc:
 	.4byte gPartyState
+	.endif
 	.section .text.x02008100,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.global Func_02000100
+	.thumb_func
+Func_02000100:
+	push {r5, r6, r7, lr}
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r6, [r3, #108]
+	ldr r3, .L_ja_0200813c
+	movs r2, #150
+	lsls r2, r2, #2
+	adds r7, r3, r2
+	movs r3, #204
+	lsls r3, r3, #1
+	adds r5, r6, r3
+	ldr r3, [r5]
+	movs r1, #10
+	lsls r0, r3, #3
+	adds r0, r0, r3
+	bl __divsi3
+	ldr r3, [r7]
+	cmp r3, r0
+	blt .L_ja_02008138
+	bl Random16Far
+	movs r2, #128
+	lsls r2, r2, #8
+	cmp r0, r2
+	bcs .L_ja_02008134
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #12
+	movs r1, #31
+	bl Func_02004d50
+	movs r3, #202
+	lsls r3, r3, #1
+	adds r2, r6, r3
+	movs r3, #0
+	str r3, [r2]
+	b .L_ja_02008138
+.L_ja_02008134:
+	ldr r3, [r5]
+	str r3, [r7]
+.L_ja_02008138:
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
+.L_ja_0200813c:
+	.4byte gPartyState
+	.else
 	.global Func_02000100
 	.thumb_func
 Func_02000100:
@@ -160,7 +307,56 @@ Func_02000100:
 	.2byte 0x0000
 .L_02008160:
 	.4byte gPartyState
+	.endif
 	.section .text.x02008164,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.global Func_02000164
+	.thumb_func
+Func_02000164:
+	push {r5, r6, r7, lr}
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r6, [r3, #108]
+	ldr r3, .L_ja_02008194
+	movs r2, #150
+	lsls r2, r2, #2
+	adds r7, r3, r2
+	movs r3, #204
+	lsls r3, r3, #1
+	adds r5, r6, r3
+	ldr r3, [r5]
+	movs r1, #10
+	lsls r0, r3, #3
+	adds r0, r0, r3
+	bl __divsi3
+	ldr r3, [r7]
+	cmp r3, r0
+	blt .L_ja_02008190
+	bl Random16Far
+	movs r2, #128
+	lsls r2, r2, #8
+	cmp r0, r2
+	bcs .L_ja_0200818c
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #13
+	movs r1, #72
+	bl Func_02004d50
+	movs r3, #202
+	lsls r3, r3, #1
+	adds r2, r6, r3
+	movs r3, #0
+	str r3, [r2]
+	b .L_ja_02008190
+.L_ja_0200818c:
+	ldr r3, [r5]
+	str r3, [r7]
+.L_ja_02008190:
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
+.L_ja_02008194:
+	.4byte gPartyState
+	.else
 	.global Func_02000164
 	.thumb_func
 Func_02000164:
@@ -213,7 +409,56 @@ Func_02000164:
 	.2byte 0x0000
 .L_020081c4:
 	.4byte gPartyState
+	.endif
 	.section .text.x020081c8,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.global Func_020001c8
+	.thumb_func
+Func_020001c8:
+	push {r5, r6, r7, lr}
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r6, [r3, #108]
+	ldr r3, .L_ja_020081ec
+	movs r2, #150
+	lsls r2, r2, #2
+	adds r7, r3, r2
+	movs r3, #204
+	lsls r3, r3, #1
+	adds r5, r6, r3
+	ldr r3, [r5]
+	movs r1, #10
+	lsls r0, r3, #3
+	adds r0, r0, r3
+	bl __divsi3
+	ldr r3, [r7]
+	cmp r3, r0
+	blt .L_ja_020081e8
+	bl Random16Far
+	movs r2, #128
+	lsls r2, r2, #8
+	cmp r0, r2
+	bcs .L_ja_020081e4
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #14
+	movs r1, #13
+	bl Func_02004d50
+	movs r3, #202
+	lsls r3, r3, #1
+	adds r2, r6, r3
+	movs r3, #0
+	str r3, [r2]
+	b .L_ja_020081e8
+.L_ja_020081e4:
+	ldr r3, [r5]
+	str r3, [r7]
+.L_ja_020081e8:
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
+.L_ja_020081ec:
+	.4byte gPartyState
+	.else
 	.global Func_020001c8
 	.thumb_func
 Func_020001c8:
@@ -266,7 +511,56 @@ Func_020001c8:
 	.2byte 0x0000
 .L_02008228:
 	.4byte gPartyState
+	.endif
 	.section .text.x0200822c,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.global Func_0200022c
+	.thumb_func
+Func_0200022c:
+	push {r5, r6, r7, lr}
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r6, [r3, #108]
+	ldr r3, .L_ja_02008244
+	movs r2, #150
+	lsls r2, r2, #2
+	adds r7, r3, r2
+	movs r3, #204
+	lsls r3, r3, #1
+	adds r5, r6, r3
+	ldr r3, [r5]
+	movs r1, #10
+	lsls r0, r3, #3
+	adds r0, r0, r3
+	bl __divsi3
+	ldr r3, [r7]
+	cmp r3, r0
+	blt .L_ja_02008240
+	bl Random16Far
+	movs r2, #128
+	lsls r2, r2, #8
+	cmp r0, r2
+	bcs .L_ja_0200823c
+	movs r0, #226
+	lsls r0, r0, #3
+	adds r0, #255
+	movs r1, #53
+	bl Func_02004d50
+	movs r3, #202
+	lsls r3, r3, #1
+	adds r2, r6, r3
+	movs r3, #0
+	str r3, [r2]
+	b .L_ja_02008240
+.L_ja_0200823c:
+	ldr r3, [r5]
+	str r3, [r7]
+.L_ja_02008240:
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
+.L_ja_02008244:
+	.4byte gPartyState
+	.else
 	.global Func_0200022c
 	.thumb_func
 Func_0200022c:
@@ -319,6 +613,7 @@ Func_0200022c:
 	.2byte 0x0000
 .L_0200828c:
 	.4byte gPartyState
+	.endif
 	.section .text.x020082c4,"ax",%progbits
 	.balign 4
 	.global WorldMap_UpdateBobbingMarker
@@ -569,6 +864,161 @@ Func_0200050c:
 .L_02008570:
 	.4byte gPartyState
 	.section .text.x02008574,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.global Func_02000574
+	.thumb_func
+Func_02000574:
+	push {r5, r6, r7, lr}
+	mov r7, r10
+	mov r6, r9
+	mov r5, r8
+	push {r5, r6, r7}
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r3, [r3, #108]
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #222
+	mov r9, r3
+	bl GameFlag_Test
+	cmp r0, #0
+	bne .L_ja_0200854e
+	b .L_ja_02008672
+.L_ja_0200854e:
+	ldr r1, .L_ja_0200867c
+	movs r3, #133
+	mov r8, r1
+	lsls r3, r3, #2
+	add r3, r8
+	ldr r0, [r3]
+	mov r10, r3
+	bl Func_02004d68
+	mov r1, r10
+	adds r5, r0, #0
+	ldr r0, [r1]
+	bl Object_GetById
+	adds r6, r0, #0
+	movs r0, #8
+	bl Object_GetById
+	adds r7, r0, #0
+	ldr r3, [r7, #8]
+	ldr r1, [r6, #8]
+	ldr r2, [r7, #16]
+	subs r1, r1, r3
+	ldr r3, [r6, #16]
+	asrs r1, r1, #16
+	subs r3, r3, r2
+	asrs r3, r3, #16
+	adds r2, r1, #0
+	muls r2, r1
+	adds r1, r3, #0
+	muls r1, r3
+	adds r3, r1, #0
+	adds r2, r2, r3
+	cmp r5, #8
+	beq .L_ja_02008598
+	cmp r2, #255
+	bgt .L_ja_02008672
+.L_ja_02008598:
+	bl Func_02004c20
+	movs r0, #0
+	bl Func_02004db8
+	movs r2, #128
+	lsls r2, r2, #2
+	adds r2, #18
+	add r2, r8
+	movs r3, #7
+	strb r3, [r2]
+	movs r2, #128
+	lsls r2, r2, #2
+	adds r2, #118
+	add r2, r8
+	movs r3, #1
+	movs r0, #187
+	strh r3, [r2]
+	lsls r0, r0, #1
+	bl GameFlag_SetBit
+	ldr r3, [r7, #8]
+	movs r2, #158
+	lsls r2, r2, #2
+	add r2, r8
+	str r3, [r2]
+	ldr r3, [r7, #16]
+	movs r2, #159
+	lsls r2, r2, #2
+	add r2, r8
+	str r3, [r2]
+	movs r2, #160
+	ldrh r3, [r7, #6]
+	lsls r2, r2, #2
+	add r2, r8
+	str r3, [r2]
+	movs r0, #78
+	bl Func_02004e30
+	movs r1, #6
+	adds r0, r6, #0
+	bl Func_02004b18
+	movs r0, #6
+	bl WaitFrames
+	movs r0, #152
+	bl Func_02004e30
+	adds r0, r6, #0
+	movs r1, #0
+	bl ObjectDispatch_SetSingleChildFlags
+	movs r1, #7
+	adds r0, r6, #0
+	bl Func_02004b18
+	movs r3, #192
+	lsls r3, r3, #10
+	str r3, [r6, #48]
+	movs r3, #128
+	lsls r3, r3, #10
+	str r3, [r6, #52]
+	movs r3, #128
+	lsls r3, r3, #11
+	str r3, [r6, #40]
+	str r3, [r6, #20]
+	adds r0, r6, #0
+	bl Func_02004b48
+	ldr r3, [r7, #16]
+	movs r2, #0
+	ldr r1, [r7, #8]
+	adds r0, r6, #0
+	bl Func_02004b50
+	adds r0, r6, #0
+	bl Func_02004b58
+	movs r1, #6
+	adds r0, r6, #0
+	bl Func_02004b18
+	movs r5, #0
+	movs r0, #6
+	bl WaitFrames
+	str r5, [r6, #20]
+	mov r3, r10
+	ldr r0, [r3]
+	movs r1, #0
+	movs r2, #0
+	bl Func_02004c88
+	bl Func_02004dc8
+	bl Func_02004dc0
+	bl Func_02004c28
+	movs r3, #174
+	lsls r3, r3, #1
+	add r3, r9
+	movs r0, #128
+	strh r5, [r3]
+	lsls r0, r0, #9
+	movs r1, #30
+	bl Func_02004df8
+.L_ja_02008672:
+	pop {r3, r5, r6}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	pop {r5, r6, r7, pc}
+.L_ja_0200867c:
+	.4byte gPartyState
+	.else
 	.global Func_02000574
 	.thumb_func
 Func_02000574:
@@ -726,6 +1176,7 @@ Func_02000574:
 	pop {r5, r6, r7, pc}
 .L_020086cc:
 	.4byte gPartyState
+	.endif
 	.section .text.x020086d0,"ax",%progbits
 	.global Func_020006d0
 	.thumb_func

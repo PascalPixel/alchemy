@@ -2224,7 +2224,17 @@ Func_080c84e8:
 	.type Func_080c84f0, %function
 	.thumb_func
 Func_080c84f0:
-	.incbin "baserom.gba", 0x000c84f0, 0x00000018
+	.incbin "baserom.gba", 0x000c84f0, 0x00000008
+	.global Func_080c84f8
+	.type Func_080c84f8, %function
+	.thumb_func
+Func_080c84f8:
+	.incbin "baserom.gba", 0x000c84f8, 0x00000008
+	.global Func_080c8500
+	.type Func_080c8500, %function
+	.thumb_func
+Func_080c8500:
+	.incbin "baserom.gba", 0x000c8500, 0x00000008
 	.section .rom.000c8520, "ax"
 	.incbin "baserom.gba", 0x000c8520, 0x00000008
 	.global BattleFx_StartItemBreakFar

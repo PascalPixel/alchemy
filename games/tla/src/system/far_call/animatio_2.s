@@ -8,11 +8,11 @@ Animation_SetIndexAndInitObjectsFar:
 	.global Func_08020240
 	.thumb_func
 Func_08020240:
-	overlay_veneer Func_080237f8
+	overlay_veneer Graphics_EnableObjLayerAndCallbacks
 	.global Func_08020248
 	.thumb_func
 Func_08020248:
-	overlay_veneer Func_08023840
+	overlay_veneer ObjectDispatch_StopCallbacksAndHideLayers
 	.global Animation_SetDisplayFlagFar
 	.thumb_func
 Animation_SetDisplayFlagFar:

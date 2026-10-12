@@ -179,7 +179,7 @@ msgctxt "message"
 msgid "00042"
 msgstr "Otro modo..."
 
-msgctxt "message"
+msgctxt "MsgJoinedParty"
 msgid "00043"
 msgstr "{argument_actor_name:1} se{line_break}unió a tu equipo.{end_now}"
 

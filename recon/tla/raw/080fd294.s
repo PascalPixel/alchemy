@@ -24,7 +24,7 @@ Func_080fd294:
 	movs r0, #108
 	movs r1, #32
 	movs r2, #8
-	bl Func_080f8bcc
+	bl PsynergyMenu_RefreshOwnerEntries
 	adds r0, r6, #0
 	bl Func_080fd6b0
 	ldrb r3, [r5]

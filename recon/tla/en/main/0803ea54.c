@@ -1,3 +1,7 @@
+/* Near miss, differ 2 of 100 (2026-10-12): in the end + 1 < count test the
+ * listing loads the count (ldrh r3, [r0]) before it copies the end row
+ * (mov r2, sl); this draft copies first. A u16 count temporary with a barrier
+ * changes nothing, and a u32 one moves the allocation (differ 75). */
 #include "layout_guard.h"
 
 #define NODE_STATUS_SCROLLING 33
@@ -53,11 +57,11 @@ void Menu_MoveSelectionForward(struct SelectionScreen *screen)
         screen->cursor--;
         screen->downScroll = ARROW_SCROLL_FRAMES;
         screen->top++;
-        Menu_ScrollSelectionList(screen, TRUE);
+        Menu_ScrollSelectionList(screen, 1);
         if (screen->top + screen->cursor + 2 == screen->count) {
-            screen->downArrow = FALSE;
+            screen->downArrow = 0;
         }
-        screen->upArrow = TRUE;
+        screen->upArrow = 1;
     }
     screen->status = NODE_STATUS_SHOWN;
     Menu_LoadSelectionNodeResource(screen, screen->cursor);

@@ -1,3 +1,6 @@
+/* Near miss, differ 10 of 80 (2026-10-12): three scheduling differences, all
+ * loads the listing takes before the 0xffff constant it adds, and the up-arrow
+ * offset built after the store instead of before. */
 #include "types.h"
 #include "io_reg.h"
 #include "scene.h"
@@ -68,9 +71,9 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen)
     if (cursor == 1 && screen->top != 0) {
         screen->upScroll = ARROW_SCROLL_FRAMES;
         screen->top--;
-        Menu_ScrollSelectionList(screen, FALSE);
+        Menu_ScrollSelectionList(screen, 0);
         if (screen->top == 0) {
-            screen->upArrow = FALSE;
+            screen->upArrow = 0;
         }
         screen->downArrow = cursor;
     } else {

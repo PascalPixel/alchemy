@@ -42,7 +42,8 @@ struct UiRenderWork {
     u16 names[8];
     u16 resource_ids[2];
     u16 output_ids[2];
-    u8 unknown_1384[8];
+    u16 result[2];
+    u8 unknown_1388[4];
     s8 text_mode;
     u8 unknown_138d[3];
 };

@@ -199,7 +199,7 @@ Func_080f9644:
 	ldrb r0, [r3]
 	ldrh r1, [r2]
 	mov r11, r3
-	bl Func_080fb638
+	bl Item_ClassifyUseMode
 	adds r6, r0, #0
 	cmp r6, #1
 	bne .L_080f980a

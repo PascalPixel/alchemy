@@ -179,7 +179,7 @@ msgctxt "message"
 msgid "00042"
 msgstr "Moment!"
 
-msgctxt "message"
+msgctxt "MsgJoinedParty"
 msgid "00043"
 msgstr "{argument_actor_name:1} gehört nun{line_break}zum Team.{end_wait}"
 

@@ -179,7 +179,7 @@ msgctxt "message"
 msgid "00042"
 msgstr "ちょっとまて"
 
-msgctxt "message"
+msgctxt "MsgJoinedParty"
 msgid "00043"
 msgstr "{argument_actor_name:150}゙ なかまになった{end_now}"
 

@@ -500,30 +500,19 @@ Animation_SetDisplayFlag:
 	.thumb_func
 Func_0802372c:
 	.incbin "baserom.gba", 0x0002372c, 0x0000009c
-	.section .rom.000237c8, "ax"
-	.global Func_080237c8
-	.type Func_080237c8, %function
+	.section .rom.0002386c, "ax"
+	.global Func_0802386c
+	.type Func_0802386c, %function
 	.thumb_func
-Func_080237c8:
-	.incbin "baserom.gba", 0x000237c8, 0x00000020
-	.section .rom.000237e8, "ax"
-	.global Func_080237e8
-	.type Func_080237e8, %function
+Func_0802386c:
+	.incbin "baserom.gba", 0x0002386c, 0x00000510
+	.section .rom.00023d80, "ax"
+	.incbin "baserom.gba", 0x00023d80, 0x00000098
+	.global Func_08023e18
+	.type Func_08023e18, %function
 	.thumb_func
-Func_080237e8:
-	.incbin "baserom.gba", 0x000237e8, 0x00000010
-	.section .rom.000237f8, "ax"
-	.global Func_080237f8
-	.type Func_080237f8, %function
-	.thumb_func
-Func_080237f8:
-	.incbin "baserom.gba", 0x000237f8, 0x00000048
-	.section .rom.00023840, "ax"
-	.global Func_08023840
-	.type Func_08023840, %function
-	.thumb_func
-Func_08023840:
-	.incbin "baserom.gba", 0x00023840, 0x000006bc
+Func_08023e18:
+	.incbin "baserom.gba", 0x00023e18, 0x000000e4
 	.section .rom.00023f62, "ax"
 	.incbin "baserom.gba", 0x00023f62, 0x00000002
 	.section .rom.00023f64, "ax"
@@ -1078,7 +1067,12 @@ UiTextResource_Initialize:
 	.type Menu_RunTopSelection, %function
 	.thumb_func
 Menu_RunTopSelection:
-	.incbin "baserom.gba", 0x0003f8ac, 0x00000098
+	.incbin "baserom.gba", 0x0003f8ac, 0x00000088
+	.global UiWindow_OpenMode1AndWaitFrame
+	.type UiWindow_OpenMode1AndWaitFrame, %function
+	.thumb_func
+UiWindow_OpenMode1AndWaitFrame:
+	.incbin "baserom.gba", 0x0003f934, 0x00000010
 	.section .rom.0003f9a0, "ax"
 	.global Func_0803f86c
 	.type Func_0803f86c, %function
@@ -1326,18 +1320,12 @@ Func_080438c8:
 	.thumb_func
 Func_08044558:
 	.incbin "baserom.gba", 0x00044640, 0x00000610
-	.section .rom.00044c50, "ax"
-	.global Func_08044a54
-	.type Func_08044a54, %function
-	.thumb_func
-Func_08044a54:
-	.incbin "baserom.gba", 0x00044c50, 0x00000004
 	.section .rom.00044c54, "ax"
 	.global Func_08044a58
 	.type Func_08044a58, %function
 	.thumb_func
 Func_08044a58:
-	.incbin "baserom.gba", 0x00044c54, 0x00000140
+	.incbin "baserom.gba", 0x00044c54, 0x00000128
 	.section .rom.00044d94, "ax"
 	.global Func_08044b98
 	.type Func_08044b98, %function
@@ -1425,7 +1413,12 @@ Menu_EndResourceSelection:
 	.type Menu_RunResourceSelectionLoop, %function
 	.thumb_func
 Menu_RunResourceSelectionLoop:
-	.incbin "baserom.gba", 0x0004d360, 0x000001d8
+	.incbin "baserom.gba", 0x0004d360, 0x00000120
+	.global Menu_SelectResource
+	.type Menu_SelectResource, %function
+	.thumb_func
+Menu_SelectResource:
+	.incbin "baserom.gba", 0x0004d480, 0x000000b8
 	.section .rom.0004d5dc, "ax"
 	.global Menu_CenterResourceEntries
 	.type Menu_CenterResourceEntries, %function
@@ -1509,7 +1502,10 @@ Data_0805eb7c:
 	.incbin "baserom.gba", 0x00060134, 0x0000013c
 	.global StatusMenu_LevelLetterString
 StatusMenu_LevelLetterString:
-	.incbin "baserom.gba", 0x00060270, 0x000000f0
+	.incbin "baserom.gba", 0x00060270, 0x00000026
+	.global Data_0805f666
+Data_0805f666:
+	.incbin "baserom.gba", 0x00060296, 0x000000ca
 	.global gRomShiftedTilePair
 gRomShiftedTilePair:
 	.incbin "baserom.gba", 0x00060360, 0x00000040
@@ -1899,12 +1895,6 @@ PartyInventory_CountItemFar:
 	.thumb_func
 PartyInventory_DiscardFar:
 	.incbin "baserom.gba", 0x000a82b0, 0x00000008
-	.section .rom.000a8338, "ax"
-	.global Func_080ad338
-	.type Func_080ad338, %function
-	.thumb_func
-Func_080ad338:
-	.incbin "baserom.gba", 0x000a8338, 0x00000010
 	.section .rom.000a83f6, "ax"
 	.incbin "baserom.gba", 0x000a83f6, 0x00000002
 	.section .rom.000a83f8, "ax"
@@ -2775,13 +2765,6 @@ Func_080caa2c:
 	.thumb_func
 Func_080caa4c:
 	.incbin "baserom.gba", 0x000caa4c, 0x00000274
-	.section .rom.000cacec, "ax"
-	.balign 4
-	.global Scene_AssignViewFlags
-	.type Scene_AssignViewFlags, %function
-	.thumb_func
-Scene_AssignViewFlags:
-	.incbin "baserom.gba", 0x000cacec, 0x00000078
 	.section .rom.000cae5c, "ax"
 	.global Func_080cae5c
 	.type Func_080cae5c, %function
@@ -3042,18 +3025,12 @@ Func_080d1ee8:
 	.thumb_func
 Func_080d1f20:
 	.incbin "baserom.gba", 0x000d1f00, 0x00000164
-	.section .rom.000d2084, "ax"
-	.incbin "baserom.gba", 0x000d2084, 0x00000058
+	.section .rom.000d20dc, "ax"
 	.global Func_080d20fc
 	.type Func_080d20fc, %function
 	.thumb_func
 Func_080d20fc:
 	.incbin "baserom.gba", 0x000d20dc, 0x000000f8
-	.global EventRuntime_UpdateWaitMode
-	.type EventRuntime_UpdateWaitMode, %function
-	.thumb_func
-EventRuntime_UpdateWaitMode:
-	.incbin "baserom.gba", 0x000d21d4, 0x0000004c
 	.section .rom.000d25a8, "ax"
 	.global Func_080d25c8
 	.type Func_080d25c8, %function
@@ -3874,13 +3851,6 @@ UiIcon_PrepareObject:
 	.incbin "baserom.gba", 0x000f8830, 0x0000003c
 	.section .rom.000f8878, "ax"
 	.incbin "baserom.gba", 0x000f8878, 0x000002ec
-	.section .rom.000f8b74, "ax"
-	.balign 4
-	.global Func_080f8bcc
-	.type Func_080f8bcc, %function
-	.thumb_func
-Func_080f8bcc:
-	.incbin "baserom.gba", 0x000f8b74, 0x0000004c
 	.section .rom.000f8c8e, "ax"
 	.incbin "baserom.gba", 0x000f8c8e, 0x0000022a
 	.section .rom.000f8f14, "ax"
@@ -3907,13 +3877,13 @@ Func_080f94a4:
 ItemMenu_DrawIcons:
 	.incbin "baserom.gba", 0x000fad08, 0x000002d4
 	.section .rom.000fb03c, "ax"
-	.incbin "baserom.gba", 0x000fb03c, 0x00000790
-	.section .rom.000fb7cc, "ax"
-	.global ItemMenu_DrawItemDetails
-	.type ItemMenu_DrawItemDetails, %function
-	.thumb_func
-ItemMenu_DrawItemDetails:
-	.incbin "baserom.gba", 0x000fb7cc, 0x0000000c
+	.incbin "baserom.gba", 0x000fb03c, 0x00000534
+	.section .rom.000fb60c, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000fb60c, 0x00000064
+	.section .rom.000fb6b8, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000fb6b8, 0x00000114
 	.section .rom.000fb7d8, "ax"
 	.global Func_080fb8b8
 	.type Func_080fb8b8, %function
@@ -4384,7 +4354,7 @@ Func_08120060:
 	.type BattleEv_DispatchQueued, %function
 	.thumb_func
 BattleEv_DispatchQueued:
-	.incbin "baserom.gba", 0x001201c0, 0x000001c4
+	.incbin "baserom.gba", 0x001201c0, 0x0000019c
 	.section .rom.00120450, "ax"
 	.global BtlTgtExec
 	.type BtlTgtExec, %function
@@ -4462,7 +4432,7 @@ Func_08126944:
 	.type Func_08126978, %function
 	.thumb_func
 Func_08126978:
-	.incbin "baserom.gba", 0x00126974, 0x00000054
+	.incbin "baserom.gba", 0x00126974, 0x00000044
 	.section .rom.001269f4, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x001269f4, 0x000000ec
@@ -4655,7 +4625,14 @@ Func_0814ea58:
 	.type BattleFx_RunSeriesA, %function
 	.thumb_func
 BattleFx_RunSeriesA:
-	.incbin "baserom.gba", 0x0014ef44, 0x00001564
+	.incbin "baserom.gba", 0x0014ef44, 0x00000ac4
+	.section .rom.0014fab8, "ax"
+	.balign 4
+	.global Func_0814fab8
+	.type Func_0814fab8, %function
+	.thumb_func
+Func_0814fab8:
+	.incbin "baserom.gba", 0x0014fab8, 0x000009f0
 	.section .rom.001504d6, "ax"
 	.incbin "baserom.gba", 0x001504d6, 0x00000002
 	.global SummonFx_RunCanvasEffect

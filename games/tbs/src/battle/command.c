@@ -484,6 +484,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
 
 	s32 BattleLink_ReceiveActions(void)
 	{
+		/* FAKEMATCH: gSerialReceivedSize is volatile (serial_runtime.h), so every read here is a load of its own. Measured on tbs-en: without the qualifier differ 116, 129 instructions for 131. */
 		s32 timeout;
 		s32 disconnected;
 		s32 status = SerialRuntime_BeginTransferB(state);

@@ -22,7 +22,7 @@ u32 Random16(void);
 #endif
 extern u32 gRandomState;
 
-extern volatile u16 gSleepActive;
+extern u16 gSleepActive;
 
 /* SYSTEM */
 
@@ -51,15 +51,16 @@ extern u32 Flash_Handler4;
 extern struct FlashChipInfo *gFlash;
 #endif
 #ifndef OWN_gFlashSavedIme
-extern volatile u16 gFlashSavedIme;
+extern u16 gFlashSavedIme;
 #endif
 #ifndef OWN_gFlashTimeoutFlag
 extern u8 gFlashTimeoutFlag;
 #endif
 #ifndef OWN_gFlashTimerCount
+/* FAKEMATCH: volatile as flash.c declares it for FlashTimerIntr (library C): without it that function: differ 5 in tbs-en, 13 instructions for 14. No game C reads this cell. */
 extern volatile u16 gFlashTimerCount;
 #endif
-extern volatile u8 gFlashTimerNum;
+extern u8 gFlashTimerNum;
 extern u8		   gNumberTextDecimalEnd[];
 extern u8		   gNumberTextHexEnd[];
 extern u8		   Link_TimeLabelString[];

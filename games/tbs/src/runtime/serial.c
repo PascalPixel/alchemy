@@ -263,6 +263,7 @@ s32 SerialRuntime_ExchangePayloads(void *send, void *receive)
 //--------------------------------------------------------------------------
 void SerialRuntime_PrepareSendPacket(void *payload)
 {
+	/* FAKEMATCH: volatile keeps the second load of sr->send_buffer[0], as the bytes do; through a plain pointer CSE reuses the first (differ 8, 48 instructions either way). */
 	volatile struct SerialRuntime *sr;
 	u32							   i;
 	u32							   sum;
@@ -540,6 +541,7 @@ struct OneCell
 
 void SerialRuntime_StepBlockTransfer(void)
 {
+	/* FAKEMATCH: gSerialSendSize and gSerialBlockSequence are volatile (serial_runtime.h), so every access here is a load or store of its own. Measured on tbs-en: without the first qualifier differ 2, 257 instructions either way; without the second differ 258, 249 for 257. */
 	struct SerialTransferState *peer;
 	u32							id;
 	struct SerialTransferState *own;

@@ -240,6 +240,7 @@ struct SoundPlayer
 struct SoundWork
 {
 	u32				lock;
+	/* FAKEMATCH: volatile steers library C only: without it AudioEngine_ResumeDirectSound: differ 9 in tbs-en, 22 instructions for 23. */
 	volatile u8		transfer_countdown;
 	u8				reverb;
 	u8				pcm_note_count;

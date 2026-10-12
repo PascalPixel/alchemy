@@ -10,6 +10,7 @@ struct InputState
 	u32			 held;
 	u32			 pressed;
 	u32			 previous_vblank_held;
+	/* FAKEMATCH: volatile steers The Lost Age only: without it, in tla-en, WaitFrames: differ 57, Menu_WaitForSelectionInput: 24, Func_02000e4c: 17 and Menu_SelectionLoop: 15. The six tbs editions build the same bytes without it: no tbs code reads gInput. */
 	volatile u32 repeat;
 	u32			 direction;
 	u32			 previous_direction;

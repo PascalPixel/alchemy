@@ -27,6 +27,7 @@ extern u8 gSceneState[];
 
 extern u8 *gKorosseoWork;
 
+// volatile: gFrameCount carries its tag where frame.h declares it
 extern volatile u32 gFrameCount;
 
 #include "fieldobj.h"

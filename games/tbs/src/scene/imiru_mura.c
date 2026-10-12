@@ -1087,6 +1087,7 @@ static void FieldScene_RunSupplementalSequenceTwo(union FieldObject *object)
 
 static void FieldScene_RunScene399SequenceA(void)
 {
+	// volatile: the type of &gFrameCount (tagged in frame.h); the six editions build the same bytes without it
 	volatile u32	  *frame;
 	union FieldObject *object;
 

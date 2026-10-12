@@ -430,6 +430,7 @@ void ObjectMotion_WaitForAnimationChange(u32 object_id)
 {
 	struct ObjectRuntime   *object;
 	struct AnimationObject *sprite;
+	/* FAKEMATCH: volatile restores the form the bytes prove: saved lives in a 4-byte frame, stored once and loaded again for each compare. Without it differ 29, 26 instructions for 31 and no frame. */
 	volatile s32			saved;
 	s32						i;
 

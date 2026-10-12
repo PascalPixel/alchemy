@@ -459,31 +459,6 @@ Func_02000574:
 	.global Data_020005f4
 Data_020005f4:
 	.4byte 0x00004770
-	.section .text.x0200861c,"ax",%progbits
-	.global Func_0200061c
-	.thumb_func
-Func_0200061c:
-	.ifdef TLA_EDITION_JA
-	.else
-	push {r5, r6, r7, lr}
-	adds r6, r0, #0
-	adds r7, r6, #0
-	adds r7, #85
-	movs r3, #3
-	strb r3, [r7]
-.L_02008628:
-	movs r0, #1
-	bl WaitFrames
-	ldr r5, [r6, #40]
-	cmp r5, #0
-	bne .L_02008628
-	movs r0, #188
-	bl Func_02003ef4
-	movs r0, #10
-	bl WaitFrames
-	strb r5, [r7]
-	pop {r5, r6, r7, pc}
-	.endif
 	.section .text.x02008644,"ax",%progbits
 	.global Func_02000644
 	.thumb_func

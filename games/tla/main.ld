@@ -665,7 +665,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000aa0de)
     "*/recon/tla/ja/rom.o"(.rom.000aa144)
     "*/games/tla/src/game/inventory/mutation.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000aa1f6)
     "*/games/tla/src/game/inventory/remove.o"(.text)
     "*/games/tla/src/game/inventory/state.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000aa374)

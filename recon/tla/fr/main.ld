@@ -644,7 +644,6 @@
     "*/recon/tla/fr/rom.o"(.rom.000b40e2)
     "*/recon/tla/fr/rom.o"(.rom.000b4148)
     "*/games/tla/src/game/inventory/mutation.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.000b41fa)
     "*/games/tla/src/game/inventory/remove.o"(.text)
     "*/games/tla/src/game/inventory/state.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000b4378)

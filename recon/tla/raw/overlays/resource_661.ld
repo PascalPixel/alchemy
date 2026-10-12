@@ -50,7 +50,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_661/s2140.o"(.text)
         "*/resource_661_overlay.o"(.text.x0200a180)
         "*/games/tla/src/field/overlay_661/events_b.o"(.text)
-        "*/resource_661_overlay.o"(.text.x0200a1f0)
+        "*/games/tla/src/field/overlay_661/s21f0.o"(.text)
         "*/resource_661_overlay.o"(.text.x0200a208)
         "*/resource_661_overlay.o"(.text.x0200a318)
         "*/resource_661_overlay.o"(.text.x0200a3cc)

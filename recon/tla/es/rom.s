@@ -2089,8 +2089,6 @@ Func_080af0e4:
 	.thumb_func
 Inventory_Remove:
 	.incbin "baserom.gba", 0x000b8154, 0x00000080
-	.section .rom.000b8206, "ax"
-	.incbin "baserom.gba", 0x000b8206, 0x0000009e
 	.section .rom.000b8384, "ax"
 	.global Item_AdjustCounter
 	.type Item_AdjustCounter, %function

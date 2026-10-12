@@ -125,8 +125,6 @@
 #include "disptran.h"
 #include "frame.h"
 
-s32 __divsi3(s32 numerator, s32 denominator);
-
 s32 __divsi3(s32, s32);
 
 static __inline__ u32 XorWord(u32 word, u32 mask)

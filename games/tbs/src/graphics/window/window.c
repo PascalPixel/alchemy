@@ -3408,8 +3408,6 @@ void UiText_MeasureResourceEntries(s32 no, s32 *x, s32 *y)
 	UiText_MeasureEntryDimensions(UiText_BuildRenderEntries(no, 0), (u32 *)x, (u32 *)y, 0);
 }
 
-s32 __divsi3(s32 numerator, s32 denominator);
-
 DEFINE_GET_RESOURCE_DIMENSIONS(UiText_GetResourceDimensions, 0)
 DEFINE_GET_RESOURCE_DIMENSIONS(UiText_GetResourceDimensionsAlt, 1)
 

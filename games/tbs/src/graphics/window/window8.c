@@ -125,8 +125,6 @@
 #include "disptran.h"
 #include "frame.h"
 
-s32 __divsi3(s32 numerator, s32 denominator);
-
 #define TILE_ROW_FROM_BOTTOM(tile, up) ((u32 *)((tile) * 32 - (up) * 4 + 0x0600001c))
 
 void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode);

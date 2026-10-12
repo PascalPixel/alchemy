@@ -1,9 +1,4 @@
-/* Near miss, differ 2 of 75 (one reordered pair): the native loads the
- * object's priority flags before it builds the zero for the cell state;
- * the draft builds the zero first. A flags temporary with a one-pass block
- * gives the order but swaps r2 and r3 in the or (differ 8); a one-pass
- * block between the two statements leaves differ 4. */
-#include "../../../../games/tla/src/field/overlay_66a/local.h"
+#include "local.h"
 
 void Func_02001320(s32 id, u32 kind, s32 flag, s32 layer)
 {
@@ -12,8 +7,14 @@ void Func_02001320(s32 id, u32 kind, s32 flag, s32 layer)
 
     cell += Func_02001588();
     if (GameFlag_Test(flag)) {
+        /* FAKEMATCH: the flags are read before the cell store and ORed into the register that holds 2, as the native does; as one |= the 0 for the cell is built before the read */
+        u8 flags = object->priority_flags;
+        s32 bits;
+
         cell->state = 0;
-        object->priority_flags |= 2;
+        bits = 2;
+        bits |= flags;
+        object->priority_flags = bits;
         switch (kind) {
         case 0:
             Func_020013f0(object, 2);

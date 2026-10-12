@@ -6202,32 +6202,8 @@ Func_02004394:
 	pop {pc}
 .L_0200c3c4:
 	.4byte gFrameCount
-	.section .text.x0200c3c8,"ax",%progbits
-	.global Func_020043c8
-	.thumb_func
-Func_020043c8:
-	push {r5, lr}
-	ldr r3, .L_0200c3f4
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	ldr r0, [r3]
-	bl Object_GetById
-	ldr r3, [r0, #80]
-	movs r0, #21
-	ldrb r5, [r3, #9]
-	lsls r5, r5, #28
-	lsrs r5, r5, #30
-	adds r1, r5, #0
-	bl ObjectMotion_SetActionVariant
-	movs r0, #14
-	adds r1, r5, #0
-	bl ObjectMotion_SetActionVariant
-	pop {r5, pc}
-	.2byte 0x0000
-.L_0200c3f4:
-	.4byte gPartyState
 	.section .text.x0200c3f8,"ax",%progbits
+	.balign 4
 	.global Func_020043f8
 	.thumb_func
 Func_020043f8:
@@ -6552,32 +6528,8 @@ Func_02004534:
 	.4byte gInput
 .L_0200c6b8:
 	.4byte 0x00019999
-	.section .text.x0200c6bc,"ax",%progbits
-	.global Func_020046bc
-	.thumb_func
-Func_020046bc:
-	push {r5, lr}
-	ldr r3, .L_0200c6e8
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	ldr r0, [r3]
-	bl Object_GetById
-	ldr r3, [r0, #80]
-	movs r0, #9
-	ldrb r5, [r3, #9]
-	lsls r5, r5, #28
-	lsrs r5, r5, #30
-	adds r1, r5, #0
-	bl ObjectMotion_SetActionVariant
-	movs r0, #10
-	adds r1, r5, #0
-	bl ObjectMotion_SetActionVariant
-	pop {r5, pc}
-	.2byte 0x0000
-.L_0200c6e8:
-	.4byte gPartyState
 	.section .text.x0200c6ec,"ax",%progbits
+	.balign 4
 	.global Func_020046ec
 	.thumb_func
 Func_020046ec:

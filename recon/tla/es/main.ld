@@ -1118,7 +1118,6 @@
     "*/games/tla/src/battle/effect/f0ec298.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000f52ac)
     "*/games/tla/src/battle/effect/f0ed804.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.000f6800)
     "*/games/tla/src/battle/effect/arctiles.o"(.rodata)
     "*/games/tla/src/battle/effect/d00ed90c.o"(.rodata)
     "*/recon/tla/es/rom.o"(.rom.000f6a00)

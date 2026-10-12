@@ -1110,7 +1110,6 @@ SECTIONS
     "*/games/tla/src/battle/effect/f0ec298.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000ec200)
     "*/games/tla/src/battle/effect/f0ed804.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000ed718)
     "*/games/tla/src/battle/effect/arctiles.o"(.rodata)
     "*/games/tla/src/battle/effect/d00ed90c.o"(.rodata)
     "*/recon/tla/ja/rom.o"(.rom.000ed918)

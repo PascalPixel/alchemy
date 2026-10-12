@@ -1,52 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x0200828c,"ax",%progbits
-	.balign 4
-	.global Func_0200028c
-	.thumb_func
-Func_0200028c:
-	push {lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r1, #214
-	lsls r1, r1, #1
-	movs r2, #128
-	adds r3, r3, r1
-	lsls r2, r2, #1
-	str r2, [r3]
-	ldr r3, .L_020082d0
-	adds r2, #224
-	adds r3, r3, r2
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, .L_020082d4
-	cmp r2, r3
-	bne .L_020082b6
-	bl Func_02000110
-	b .L_020082cc
-.L_020082b6:
-	ldr r3, .L_020082d8
-	cmp r2, r3
-	bne .L_020082c2
-	bl Func_02000168
-	b .L_020082cc
-.L_020082c2:
-	ldr r3, .L_020082dc
-	cmp r2, r3
-	bne .L_020082cc
-	bl Func_02000264
-.L_020082cc:
-	movs r0, #0
-	pop {pc}
-.L_020082d0:
-	.4byte gPartyState
-.L_020082d4:
-	.4byte 0x00000006
-.L_020082d8:
-	.4byte 0x00000007
-.L_020082dc:
-	.4byte 0x00000008
 	.section .text.x020083ac,"ax",%progbits
 	.balign 4
 	.global Func_020003ac
@@ -287,53 +240,4 @@ Func_02000494:
 .L_020085e0:
 	.4byte 0x00000007
 .L_020085e4:
-	.4byte 0x00000004
-	.section .text.x020085e8,"ax",%progbits
-	.global Func_020005e8
-	.thumb_func
-Func_020005e8:
-	push {r5, lr}
-	movs r0, #8
-	movs r2, #0
-	movs r1, #4
-	bl ObjectMotion_Launch
-	ldr r5, .L_02008644
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r5, r2
-	ldr r0, [r3]
-	bl Object_GetById
-	cmp r0, #0
-	beq .L_02008614
-	movs r3, #10
-	ldrsh r1, [r0, r3]
-	movs r3, #18
-	ldrsh r2, [r0, r3]
-	movs r0, #8
-	bl ObjectMotion_ResetAndSetPosition
-.L_02008614:
-	movs r0, #20
-	bl Battle_WaitMode0
-	ldr r0, .L_02008648
-	movs r1, #99
-	bl Party_SetFields1eeAnd1f0
-	ldr r0, .L_0200864c
-	movs r1, #98
-	bl Party_SetFields1f2And1f4
-	movs r3, #166
-	lsls r3, r3, #1
-	adds r3, #255
-	adds r2, r5, r3
-	movs r3, #2
-	strb r3, [r2]
-	movs r0, #9
-	movs r1, #3
-	bl Func_02000a40
-	bl Func_02000990
-	pop {r5, pc}
-.L_02008644:
-	.4byte gPartyState
-.L_02008648:
-	.4byte 0x00000008
-.L_0200864c:
 	.4byte 0x00000004

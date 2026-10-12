@@ -1,30 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x020080c8,"ax",%progbits
-	.balign 4
-	.global Func_020000c8
-	.thumb_func
-Func_020000c8:
-	push {lr}
-	adds r1, r0, #0
-	ldr r0, .L_020080e4
-	cmp r1, #3
-	bne .L_020080d4
-	adds r0, #8
-.L_020080d4:
-	cmp r1, #16
-	bne .L_020080da
-	ldr r0, .L_020080e8
-.L_020080da:
-	movs r2, #0
-	bl Func_02000054
-	pop {pc}
-	.2byte 0x0000
-.L_020080e4:
-	.4byte Data_02002368
-.L_020080e8:
-	.4byte Data_02002378
 	.section .text.x020080f4,"ax",%progbits
+	.balign 4
 	.global Func_020000f4
 	.thumb_func
 Func_020000f4:
@@ -141,6 +118,7 @@ Func_02000158:
 .L_020081d0:
 	.4byte gPartyState
 	.section .text.x020081d8,"ax",%progbits
+	.balign 4
 	.global Func_020001d8
 	.thumb_func
 Func_020001d8:
@@ -520,28 +498,8 @@ Func_020003a0:
 	.4byte Func_020002b4
 .L_020084e4:
 	.4byte Data_0200308c
-	.section .text.x020084e8,"ax",%progbits
-	.global Func_020004e8
-	.thumb_func
-Func_020004e8:
-	push {lr}
-	ldr r0, .L_02008504
-	bl Scheduler_RemoveCallbackFar
-	ldr r3, .L_02008508
-	ldr r0, [r3]
-	bl Resource_ResetEntry
-	ldr r3, .L_0200850c
-	ldr r0, [r3]
-	bl Resource_ResetEntry
-	pop {pc}
-	.2byte 0x0000
-.L_02008504:
-	.4byte Func_020002b4
-.L_02008508:
-	.4byte Data_02003020
-.L_0200850c:
-	.4byte Data_02003094
 	.section .text.x02008510,"ax",%progbits
+	.balign 4
 	.global Func_02000510
 	.thumb_func
 Func_02000510:

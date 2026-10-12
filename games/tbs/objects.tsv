@@ -19,6 +19,7 @@ main	rom_main_00	games/tbs/src/lib/trig
 main	rom_main_00	games/tbs/src/system/resource/decode_01	.text .rodata .text.decode_2_loop
 main	rom_main_00	games/tbs/src/system/heapfree	.text .text.* .rodata .data .padding
 main	rom_main_00	games/tbs/src/system/scheduler/runtime	.text
+main	rom_main_00	games/tbs/src/system/scheduler/runtime4	.text
 main	rom_main_00	games/tbs/src/system/scheduler/runtime5	.text
 main	rom_main_00	games/tbs/src/system/scheduler/runtime6	.text
 main	rom_main_00	games/tbs/src/system/scheduler/runtime7	.text

@@ -5,6 +5,7 @@
 
 #include "unit/graphics/tile/slides.h"
 #include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtime4.h"
 #include "unit/system/scheduler/runtime5.h"
 #include "unit/system/scheduler/runtime6.h"
 #include "unit/system/scheduler/runtime7.h"

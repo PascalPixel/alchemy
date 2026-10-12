@@ -22,6 +22,7 @@
 #include "unit/game/character/chara8.h"
 #include "unit/graphics/window/window.h"
 #include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtime4.h"
 #include "unit/system/scheduler/runtime5.h"
 #include "unit/system/scheduler/runtime6.h"
 #include "unit/system/scheduler/runtime7.h"

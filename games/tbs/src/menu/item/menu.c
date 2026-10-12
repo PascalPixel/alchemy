@@ -10196,7 +10196,7 @@ void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1)
 	Scheduler_AddOrUpdateCallback((s32)FourObjectMotion_UpdateAllPositions, 0xc80);
 }
 
-// 4 つのオブジェクトを解放し、毎フレームの更新 update を外す
+// 4 つのオブジェクトを解放し、スケジューラから update を外す
 #define DEFINE_FOUR_OBJECT_RELEASE(name, update)                    \
 	void name(void)                                                 \
 	{                                                               \

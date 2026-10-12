@@ -15923,11 +15923,11 @@ msgctxt "message"
 msgid "03978"
 msgstr "{argument_ability_name}...{page_break}Funktioniert hier nicht.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMonstersAttackLess"
 msgid "03979"
 msgstr "Monster greifen{line_break}nicht mehr so oft an.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAbilityWoreOff"
 msgid "03980"
 msgstr "{argument_ability_name} lässt nach.{end_wait}"
 
@@ -15935,7 +15935,7 @@ msgctxt "message"
 msgid "03981"
 msgstr "{argument_item_name:1} einsetzen?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgItemWoreOff"
 msgid "03982"
 msgstr "{argument_item_name:1} lässt nach.{end_wait}"
 

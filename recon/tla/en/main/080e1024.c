@@ -1,5 +1,13 @@
+/* Near miss, differ 8 (four reordered rows, same instructions): the twin of The
+ * Broken Seal's BattleFx_SpawnDescendingArcParticles with this game's sprite
+ * layout (resource 16, active 17, animation 26) and tile slot (0x710). The
+ * listing stores the leader to its stack slot before the loop registers are
+ * set, loads the pooled zero before it builds 0x6666, stores the tile word and
+ * loads byte 5 before the -33 mask is built, and loads byte 9 before the -13
+ * mask. No barrier was tried yet: each row is a load or store one step early. */
 #include "resource.h"
 #include "types.h"
+#include "ram_buffer.h"
 
 void BattleFx_UpdateDescendingParticleNegativeArc(void);
 void BattleFx_UpdateDescendingParticlePositiveArc(void);
@@ -29,13 +37,13 @@ struct ArcSprite {
             u8 flags09_4 : 4;
         } byte;
     } attr;
-    u8 padding0c[16];
+    u8 padding0c[4];
     u8 resource;
     u8 active : 1;
-    u8 flags1d_1 : 7;
-    u8 padding1e[8];
+    u8 flags11_1 : 7;
+    u8 padding12[8];
     u8 animation;
-    u8 padding27;
+    u8 padding1b[13];
     struct ArcFrame *frame;
 };
 
@@ -59,14 +67,13 @@ struct ArcObject {
 };
 
 #include "vram_tab.h"
-extern u8 *gEffectWork;
 
-struct ArcObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-void AnimationObjects_SelectAnimationFar(struct ArcSprite *sprite, s32 animation);
+struct ArcObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+void Animation_ApplyChildArgumentFar(struct ArcSprite *sprite, s32 animation);
 
-void BattleFx_SpawnDescendingArcParticles(struct ArcObject *source)
+void Func_080e1024(struct ArcObject *source)
 {
-    u8 *work = gEffectWork;
+    u8 *work = Ram_HeapSlots->effect_work;
     struct ArcObject *leader = *(struct ArcObject **)(work + 16);
     struct ArcObject *objects[2];
     struct ArcObject *object;
@@ -75,7 +82,7 @@ void BattleFx_SpawnDescendingArcParticles(struct ArcObject *source)
     u8 zero;
 
     for (i = 0; i <= 1; i++) {
-        object = Object_CreateFar(26, source->x, source->y + 0x400000, source->z);
+        object = Func_080200c0(271, source->x, source->y + 0x400000, source->z);
         objects[i] = object;
         if (object == NULL)
             continue;
@@ -89,10 +96,10 @@ void BattleFx_SpawnDescendingArcParticles(struct ArcObject *source)
         object->scale_x = 0x6666;
         if (sprite == NULL)
             continue;
-        AnimationObjects_SelectAnimationFar(sprite, 0);
+        Animation_ApplyChildArgumentFar(sprite, 0);
         sprite->animation = zero;
         Resource_ResetEntry(sprite->resource);
-        sprite->resource = *(u16 *)(work + 0x71a);
+        sprite->resource = *(u16 *)(work + 0x710);
         sprite->active = 1;
         sprite->attr.half.tile = ResourceTableEntries[sprite->resource].offset >> 5;
         sprite->flags05_5 = 0;

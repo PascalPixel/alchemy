@@ -45,7 +45,9 @@ struct PartyState {
     s16 unknown_256;
     u8 unknown_258[4];
     u16 tally_25c;
-    u8 unknown_25e[0xb];
+    u8 unknown_25e[6];
+    s32 avoid_distance;
+    s8 avoid_by_item;
     u8 saved_byte;
     u8 unknown_26a[2];
     s8 pending_third;

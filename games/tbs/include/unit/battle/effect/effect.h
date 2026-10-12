@@ -56,10 +56,6 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect);
 void BattlePresentation_DrawStreaks(void);
 void BattlePresentation_PrepareScene(s32 kind);
 void BattleFx_ScheduleCallbacksAndReleaseBlocks(void);
-void BattleFx_RunTwoResourceMode0(struct BattleEffectArgument *efx);
-void BattleFx_RunTwoResourceMode1(struct BattleEffectArgument *efx);
-void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode);
-void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx);
 
 // 粒の置き場：Ram_MapCellBuffer を struct EffectStep の並びとして使う
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)

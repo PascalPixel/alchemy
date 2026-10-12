@@ -2,7 +2,7 @@
 
 void Func_020001f4(s32 unused, s32 id)
 {
-    struct FieldActor *object = Object_GetById(id);
+    struct ObjectRuntime *object = Object_GetById(id);
 
     if (object->x >> 20 == 50) {
         GameFlag_SetBit(0xa38);
@@ -12,7 +12,7 @@ void Func_020001f4(s32 unused, s32 id)
 
 void Func_0200021c(void)
 {
-    struct FieldActor *object = Object_GetById(16);
+    struct ObjectRuntime *object = Object_GetById(16);
 
     Func_02005688();
     if (object->x >> 20 == 50) {

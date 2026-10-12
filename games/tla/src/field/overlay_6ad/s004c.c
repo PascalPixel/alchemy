@@ -10,7 +10,7 @@ extern const u8 Data_02006710[];
 extern const u8 Data_02006890[];
 extern const u8 Data_02006a0c[];
 
-s32 Func_0200004c(struct FieldActor *object)
+s32 Func_0200004c(struct ObjectRuntime *object)
 {
     ObjectDispatch_SetSingleChildFlags(object, 0);
     return 0;
@@ -40,8 +40,8 @@ void Func_020000bc(void)
 
 void Func_020000d0(void)
 {
-    struct FieldActor *object = Object_GetById(gPartyState.current_owner);
-    u32 facing = object->facing;
+    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
+    u32 facing = object->angle;
 
     if (facing == 0 || facing == 0x8000) {
         s32 x = object->x >> 20;

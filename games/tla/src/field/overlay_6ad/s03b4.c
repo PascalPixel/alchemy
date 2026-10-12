@@ -83,7 +83,7 @@ void Func_020004f8(void)
 
 void Func_02000514(void)
 {
-    struct FieldActor *object = Object_GetById(9);
+    struct ObjectRuntime *object = Object_GetById(9);
 
     Func_02005598(10, 0, 0);
     Func_02005598(9, S16_AT(object, 100) << 16, S16_AT(object, 102) << 16);

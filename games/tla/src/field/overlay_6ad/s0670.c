@@ -96,7 +96,7 @@ void Func_020007e4(void)
 
 void Func_020007f0(s32 unused, s32 id)
 {
-    struct FieldActor *object = Object_GetById(id);
+    struct ObjectRuntime *object = Object_GetById(id);
 
     if (object->x >> 20 == 13) {
         object->motion_flags = 3;

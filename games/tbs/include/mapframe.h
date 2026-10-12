@@ -2,6 +2,7 @@
 #define ALCHEMY_MAPFRAME_H
 
 #include "unit/field/common/script/field.h"
+#include "unit/field/common/script/field2.h"
 #include "unit/field/common/script/field3.h"
 #include "unit/field/common/script/field5.h"
 #include "unit/field/common/script/field6.h"

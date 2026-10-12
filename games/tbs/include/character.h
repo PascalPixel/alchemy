@@ -2,6 +2,7 @@
 #define ALCHEMY_CHARACTER_H
 
 #include "unit/game/character/chara.h"
+#include "unit/game/character/chara8.h"
 #include "types.h"
 #include "ownerval.h"
 #include "layout_guard.h"

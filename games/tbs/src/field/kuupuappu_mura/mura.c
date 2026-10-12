@@ -5,6 +5,7 @@
 #include "unit/battle/effect/object.h"
 #include "unit/battle/battle.h"
 #include "unit/game/character/chara.h"
+#include "unit/game/character/chara8.h"
 #include "unit/system/scheduler/runtime.h"
 #include "fieldobj.h"
 #include "types.h"

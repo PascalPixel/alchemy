@@ -125,8 +125,5 @@ s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target);
 s32 Trade_CountPendingOffers(u8 *counts);
 s32 Djinn_GetDefinitionHeader(u32 group, u32 index);
 s32 Party_SumDjinnCounts(s32 index);
-void Inventory_AddAndEquip(s32 owner, s32 target);
-void InventorySnapshot_Save(void);
-void InventorySnapshot_Restore(void);
 
 #endif

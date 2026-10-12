@@ -5,6 +5,7 @@
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/game/character/chara.h"
+#include "unit/game/character/chara8.h"
 #include "unit/system/scheduler/runtime.h"
 #include "types.h"
 #include "field_event.h"

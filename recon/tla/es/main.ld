@@ -1212,7 +1212,6 @@
     "*/games/tla/src/menu/item/item_list.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00100d12)
     "*/games/tla/src/menu/item/count.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.00100dc4)
     "*/games/tla/src/menu/item/icons.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00100ec8)
     "*/games/tla/src/game/inventory/remove_first_unflagged.o"(.text)

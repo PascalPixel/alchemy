@@ -4105,13 +4105,6 @@ Func_080fa5a4:
 	.thumb_func
 Menu_HideEmptyEntryIcons:
 	.incbin "baserom.gba", 0x00100d14, 0x00000044
-	.section .rom.00100dc4, "ax"
-	.balign 4
-	.global ItemMenu_Collect
-	.type ItemMenu_Collect, %function
-	.thumb_func
-ItemMenu_Collect:
-	.incbin "baserom.gba", 0x00100dc4, 0x00000048
 	.section .rom.00100ec8, "ax"
 	.incbin "baserom.gba", 0x00100ec8, 0x00000218
 	.section .rom.00101140, "ax"

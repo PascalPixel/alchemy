@@ -1204,7 +1204,6 @@ SECTIONS
     "*/games/tla/src/menu/item/item_list.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000fac0e)
     "*/games/tla/src/menu/item/count.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000facc0)
     "*/games/tla/src/menu/item/icons.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000fadc4)
     "*/games/tla/src/game/inventory/remove_first_unflagged.o"(.text)

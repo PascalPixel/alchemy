@@ -1470,7 +1470,6 @@
         "*/recon/tla/raw/080facd6.o"(.text)
         "*/recon/tla/raw/080facd8.o"(.text)
         "*/games/tla/src/menu/item/count.o"(.text)
-        "*/recon/tla/raw/080fad88.o"(.text)
         "*/games/tla/src/menu/item/icons.o"(.text)
         "*/recon/tla/raw/080fae8c.o"(.text)
         "*/games/tla/src/game/inventory/remove_first_unflagged.o"(.text)

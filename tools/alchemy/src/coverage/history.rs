@@ -488,6 +488,33 @@ fn count_models(commits: &[sessions::Commit]) -> BTreeMap<String, BTreeMap<Strin
     }
     days
 }
+/// Take into the published history what the checkout's own history has
+/// measured since: every hour after the published history's last hour, and
+/// every day from its last day on (that day went on after its last
+/// published hour). Earlier rows are the published ones and stay. A
+/// landing on a branch that is pushed later is measured when it lands, and
+/// those rows travel in the checkout's history.tsv; one push then publishes
+/// the days between, not one stroke from the last push to this one.
+pub(crate) fn take_over(published: &mut History, carried: &History) {
+    let last_hour = published.hours.last().map(|row| row.date.clone()).unwrap_or_default();
+    let last_day = published.days.last().map(|row| row.date.clone()).unwrap_or_default();
+    for hour in carried.hours.iter().filter(|row| row.date > last_hour) {
+        published.hours.push(hour.clone());
+    }
+    for day in carried.days.iter().filter(|row| row.date >= last_day) {
+        let (tbs, tla, correction) = (day.tbs.clone(), day.tla.clone(), day.correction.clone());
+        let row = published.day_mut(&day.date);
+        if tbs.is_some() {
+            row.tbs = tbs;
+        }
+        if tla.is_some() {
+            row.tla = tla;
+        }
+        if correction.is_some() {
+            row.correction = correction;
+        }
+    }
+}
 pub(crate) fn record_models(history: &mut History, date: &str, models: &BTreeMap<String, u64>) {
     if models.is_empty() {
         return;
@@ -802,5 +829,35 @@ mod tests {
         );
         let invalid = format!("{HEADER}\n2026-10-08\t-\t-\t1.0\t9\t10\t-\t-\t-\t-\t-\t-\t-\n");
         assert!(parse(&invalid).is_err());
+    }
+    #[test]
+    fn a_publication_takes_over_what_the_checkout_measured_since() {
+        let day = |date: &str, percent: f64| Day {
+            tbs: Some(Measure::published(percent)),
+            ..Day::new(date)
+        };
+        let mut published = History {
+            began: "2026-10-01".into(),
+            days: vec![day("2026-10-04", 80.0), day("2026-10-05", 90.0)],
+            hours: vec![day("2026-10-05T13", 90.0)],
+            ..History::default()
+        };
+        let carried = History {
+            began: "2026-10-01".into(),
+            // The checkout measured other values for old days: they are not taken.
+            days: vec![day("2026-10-04", 81.0), day("2026-10-05", 94.0), day("2026-10-07", 97.0)],
+            hours: vec![day("2026-10-05T11", 93.0), day("2026-10-05T17", 94.0), day("2026-10-07T10", 97.0)],
+            ..History::default()
+        };
+        take_over(&mut published, &carried);
+        let days: Vec<(&str, Option<f64>)> =
+            published.days.iter().map(|row| (row.date.as_str(), row.tbs.as_ref().and_then(Measure::percent))).collect();
+        assert_eq!(days, [("2026-10-04", Some(80.0)), ("2026-10-05", Some(94.0)), ("2026-10-07", Some(97.0))]);
+        let hours: Vec<&str> = published.hours.iter().map(|row| row.date.as_str()).collect();
+        assert_eq!(hours, ["2026-10-05T13", "2026-10-05T17", "2026-10-07T10"]);
+        // Taking over twice adds nothing.
+        let once = published.clone();
+        take_over(&mut published, &carried);
+        assert_eq!(published, once);
     }
 }

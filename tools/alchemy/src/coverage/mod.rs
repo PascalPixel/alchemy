@@ -166,6 +166,10 @@ fn publish_figures(root: &Path, measurement: &Path, directory: &Path) -> Result<
     let [sun, anchor] = parse_measurement(&read(measurement)?)?;
     let path = directory.join("history.tsv");
     let mut history = history::load_file(&path)?;
+    // What main measured at its landings since the last publication.
+    if let Ok(carried) = history::load(root) {
+        history::take_over(&mut history, &carried);
+    }
     let hour = history::this_hour();
     let today = hour[..10].to_string();
     history::record(&mut history, &today, sun, anchor);

@@ -2,6 +2,7 @@
 #define FIELD_SERVICE_H
 
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object8.h"
 #include "unit/battle/effect/object9.h"
 #include "unit/battle/effect/object10.h"
 #include "unit/battle/effect/object11.h"

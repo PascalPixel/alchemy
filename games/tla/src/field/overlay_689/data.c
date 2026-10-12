@@ -24,7 +24,9 @@ s32 Data_0200059c[] = {
 
 struct ScenePlacement gScenePlacements[] = {
 	{56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 0, 0},
+#if !defined(TLA_EDITION_JA)
 	{420, CONDITION_ALWAYS, 1, PIXELS(384), 0, PIXELS(392), FACING_EAST, 2, 0},
+#endif
 	{SCENE_TABLE_END},
 };
 

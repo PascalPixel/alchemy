@@ -35419,7 +35419,7 @@ msgctxt "message"
 msgid "08852"
 msgstr "さあ そこまで行きましょう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene656No01"
 msgid "08853"
 msgstr "ボクが 船にいないあいだに{line_break}まものが すみついてたなんて{line_break}ホントにショックだったな・・・。{end_wait}"
 
@@ -35535,7 +35535,7 @@ msgctxt "message"
 msgid "08881"
 msgstr "ようし 出発しようぞ{line_break}レッツ ゴーじゃ {actor_name:5}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene656No02"
 msgid "08882"
 msgstr "はんのうがない 動力が{line_break}さどうしていないようだ。{end_wait}"
 
@@ -49715,7 +49715,7 @@ msgctxt "MsgScene659No168"
 msgid "12426"
 msgstr "ことしのコロッセオの戦いでは{line_break}{actor_name:1}・・・まだ子どものような{line_break}戦士にまけて なさけなかったぞ{page_break}つぎのコロッセオでは かならず{line_break}われわれがリベンジするためにと{line_break}ぼうけんのたびをはじめたのだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIFound2"
 msgid "12427"
 msgstr "ぶしつけで きょうしゅくだが・・・。{end_wait}"
 
@@ -49783,7 +49783,7 @@ msgctxt "message"
 msgid "12443"
 msgstr "オレたち コロッセオでの{line_break}お前の戦い方についてを{line_break}はなしあったんだよ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHeyTheseGuys"
 msgid "12444"
 msgstr "それで オレたちは みんな{line_break}{actor_name:1}が ゆうしょうしたのは{line_break}おかしいってことになったのさ。{end_wait}"
 
@@ -49807,7 +49807,7 @@ msgctxt "message"
 msgid "12449"
 msgstr "ま まつんじゃ エナジーは{line_break}{actor_name:1}の戦士の力であって{line_break}インチキではないのじゃ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheseGuysWere"
 msgid "12450"
 msgstr "きこえないね ジイさん・・・{line_break}あのコロッセオでのうらみを{line_break}ここで はらさせてもらうぜ!{end_wait}"
 
@@ -50791,7 +50791,7 @@ msgctxt "message"
 msgid "12695"
 msgstr "見たこともない おにくを{line_break}にこんでいる{page_break}たきぎ代わりに もえているのは{line_break}ツノ みたいだけど・・・{line_break}まさか あのどうぶつ?!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene656No03"
 msgid "12696"
 msgstr "船の「こうかいにっし」がある{page_break}いそいで レムリアへかえり{line_break}あのことを ほうこくしなくては{line_break}・・・などと かかれている。{end_wait}"
 
@@ -50827,7 +50827,7 @@ msgctxt "MsgScene68CNo34"
 msgid "12704"
 msgstr "「ハイドロのにっき」がある{page_break}{actor_name:8}は かならず生きている{line_break}どうか ぶじにもどってきておくれ{line_break}・・・などと かかれている。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene656No04"
 msgid "12705"
 msgstr "ひんやりしている・・・。{end_wait}"
 
@@ -51071,7 +51071,7 @@ msgctxt "MsgIAmTheGuardian"
 msgid "12765"
 msgstr "われ 水の力をまもりし者なり{line_break}さらなる力を ほっするならば{line_break}お前の力を 見せてみよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIAmThe"
 msgid "12766"
 msgstr "われ 炎の力をまもりし者なり{line_break}さらなる力を ほっするならば{line_break}お前の力を 見せてみよ。{end_wait}"
 

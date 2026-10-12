@@ -347,7 +347,7 @@ msgctxt "MsgCurePoison2"
 msgid "00084"
 msgstr "Purifier"
 
-msgctxt "message"
+msgctxt "MsgFieldRepelEvil"
 msgid "00085"
 msgstr "Repousser"
 
@@ -13883,7 +13883,7 @@ msgctxt "message"
 msgid "03468"
 msgstr "Maître"
 
-msgctxt "message"
+msgctxt "MsgFieldSpace"
 msgid "03469"
 msgstr "?"
 
@@ -13895,11 +13895,11 @@ msgctxt "message"
 msgid "03471"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgFieldInvalidPassword"
 msgid "03472"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgFieldPasswordAccepted"
 msgid "03473"
 msgstr "?"
 
@@ -19783,7 +19783,7 @@ msgctxt "message"
 msgid "04943"
 msgstr "Mot de passe"
 
-msgctxt "message"
+msgctxt "MsgFieldPreparingToReceive"
 msgid "04944"
 msgstr "Prêt à recevoir les"
 
@@ -19791,7 +19791,7 @@ msgctxt "message"
 msgid "04945"
 msgstr "données du jeu terminé"
 
-msgctxt "message"
+msgctxt "MsgFieldTransferringData"
 msgid "04946"
 msgstr "Transfert de données"
 
@@ -19799,7 +19799,7 @@ msgctxt "message"
 msgid "04947"
 msgstr "Bouton B: Quitter"
 
-msgctxt "message"
+msgctxt "MsgFieldDataTransferWasInterrupted"
 msgid "04948"
 msgstr "Le transfert a été interrompu."
 

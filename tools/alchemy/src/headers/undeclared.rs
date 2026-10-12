@@ -214,7 +214,7 @@ fn shaped(used: &Use) -> bool {
 }
 
 /// The tags that go with the calls now written plainly: a FAKEMATCH
-/// comment directly above such a call's statement, or after it on its
+/// comment directly above such a call's statement, or at its end on its
 /// line, when no cast of a called function and no call helper is left
 /// between the comment and the next tag of its function.
 pub(crate) fn tag_edits(text: &str, sites: &[Site]) -> Vec<Edit> {
@@ -237,11 +237,13 @@ pub(crate) fn tag_edits(text: &str, sites: &[Site]) -> Vec<Edit> {
             let to = own.get(index + 1).map_or(body.close, |(next, _)| line_start(*next));
             let alone = text[from..start].trim().is_empty();
             // The statement the tag stands on: the one below it, or the
-            // one that ends before it on its line.
+            // one that ends on its line, before it or right after it.
             let statement = if alone {
                 next(&mask, end).map(|first| (first, statement_end(&mask, first, body.close)))
             } else {
-                previous(&mask, start).filter(|&last| mask[last] == b';' && last >= from).map(|last| (statement_start(&mask, last, body.open), last))
+                let before = previous(&mask, start).filter(|&last| mask[last] == b';' && last >= from);
+                let last = before.or_else(|| next(&mask, end).filter(|&after| mask[after] == b';'));
+                last.map(|last| (statement_start(&mask, last, body.open), last))
             };
             let Some((first, last)) = statement else {
                 continue;
@@ -404,10 +406,12 @@ pub(crate) fn candidates(model: &Model, headers: &BTreeMap<String, String>, writ
 
 /// The files a set of candidates changes, as their new texts: the calls
 /// written plainly, each header with the comment or the prototype, and,
-/// with `tidy`, the tags that went with the calls taken out.
-pub(crate) fn changes(model: &Model, headers: &BTreeMap<String, String>, chosen: &[(&Candidate, &Verdict)], tidy: bool) -> BTreeMap<String, String> {
+/// with `tidy`, the tags that went with the calls taken out, which the
+/// second value counts.
+pub(crate) fn changes(model: &Model, headers: &BTreeMap<String, String>, chosen: &[(&Candidate, &Verdict)], tidy: bool) -> (BTreeMap<String, String>, usize) {
     let mut plain_sites: BTreeMap<&str, Vec<Site>> = BTreeMap::new();
     let mut new: BTreeMap<String, String> = BTreeMap::new();
+    let mut tags = 0;
     for (candidate, verdict) in chosen {
         if matches!(verdict, Verdict::Undeclared | Verdict::Spare) {
             for (file, sites) in &candidate.sites {
@@ -434,11 +438,13 @@ pub(crate) fn changes(model: &Model, headers: &BTreeMap<String, String>, chosen:
         let text = &model.text[file];
         let mut edits: Vec<Edit> = sites.iter().flat_map(plain).collect();
         if tidy {
-            edits.extend(tag_edits(text, &sites));
+            let gone = tag_edits(text, &sites);
+            tags += gone.len();
+            edits.extend(gone);
         }
         new.insert(file.to_string(), apply(text, &edits));
     }
-    new
+    (new, tags)
 }
 
 /// The units a candidate's changes reach: every unit that compiles its
@@ -518,7 +524,7 @@ pub(crate) fn run(root: &Path, dry: bool, only: &[String], report: Option<&str>)
         if let Some(unit) = units.iter().find(|unit| before[*unit].iter().any(|built| built.is_err())) {
             return Verdict::Refused(format!("{unit} does not compile as it is"));
         }
-        let trial = |verdict: Verdict| differs(root, bench, &model, &before, &units, &changes(&model, &headers, &[(candidate, &verdict)], false));
+        let trial = |verdict: Verdict| differs(root, bench, &model, &before, &units, &changes(&model, &headers, &[(candidate, &verdict)], false).0);
         if candidate.out {
             return if trial(Verdict::Declared).is_none() { Verdict::Declared } else { Verdict::Stays };
         }
@@ -532,14 +538,14 @@ pub(crate) fn run(root: &Path, dry: bool, only: &[String], report: Option<&str>)
     })?;
     // All that the trials accept, together: each unit once more.
     let accepted = |verdict: &Verdict| matches!(verdict, Verdict::Undeclared | Verdict::Declared);
-    let new = loop {
+    let (new, tags) = loop {
         let chosen: Vec<(&Candidate, &Verdict)> = found.iter().zip(&verdicts).filter(|(_, verdict)| accepted(verdict)).collect();
-        let new = changes(&model, &headers, &chosen, true);
+        let (new, tags) = changes(&model, &headers, &chosen, true);
         let units: Vec<&str> = chosen.iter().flat_map(|(candidate, _)| reached(&model, candidate)).collect::<BTreeSet<_>>().into_iter().collect();
         let bad = super::parallel(&units, || Bench::new(root), |bench, unit| differs(root, bench, &model, &before, &BTreeSet::from([*unit]), &new).map(|how| (*unit, how)))?;
         let bad: BTreeMap<&str, String> = bad.into_iter().flatten().collect();
         if bad.is_empty() {
-            break new;
+            break (new, tags);
         }
         // A unit that differs with all of them: none of its candidates stays.
         let dropped: Vec<(usize, String)> = found
@@ -576,13 +582,26 @@ pub(crate) fn run(root: &Path, dry: bool, only: &[String], report: Option<&str>)
         println!("{functions} functions {kind} ({calls} calls)");
     }
     if dry {
-        println!("{} files would change", new.len());
+        println!("{} files would change, {tags} FAKEMATCH tags would go", new.len());
         return Ok(());
     }
     for (file, text) in &new {
         super::write(root, file, text)?;
     }
-    println!("{} files changed", new.len());
+    // What was written, compiled from the tree itself: a unit that
+    // differs now puts every file back.
+    let units: Vec<&str> = found.iter().zip(&verdicts).filter(|(_, verdict)| accepted(verdict)).flat_map(|(candidate, _)| reached(&model, candidate)).collect::<BTreeSet<_>>().into_iter().collect();
+    let bad = super::parallel(&units, || Bench::new(root), |bench, unit| {
+        let now = bench.build(root, unit, new.get(*unit).unwrap_or(&model.text[*unit]));
+        objects::differing(&before[unit], &now).into_iter().next().map(|part| format!("{unit}: {part} differs"))
+    })?;
+    if let Some(how) = bad.into_iter().flatten().next() {
+        for file in new.keys() {
+            super::write(root, file, model.text.get(file).or_else(|| headers.get(file)).map_or("", String::as_str))?;
+        }
+        return Err(format!("{how} once the files are written: they are put back"));
+    }
+    println!("{} files changed, {tags} FAKEMATCH tags gone", new.len());
     Ok(())
 }
 
@@ -628,18 +647,18 @@ mod tests {
 
     #[test]
     fn a_tag_goes_with_the_calls_it_stood_on() {
-        let text = "void Run(s32 a)\n{\n\t/* FAKEMATCH: void function called as returning s32. */\n\t((s32 (*)())Late)(a, 1);\n\t((s32 (*)())Late)(a, 2);\n\tPlain(a);\n\t/* FAKEMATCH: the result sets r0 last. */\n\tValue2(Veneer, a, 0);\n\tif (a)\n\t{\n\t\t/* FAKEMATCH: void functions called as returning s32. */\n\t\t((s32 (*)())Late)(a, 3);\n\t}\n\telse\n\t{\n\t\t((s32 (*)())Before)(a, 4);\n\t}\n\t((s32 (*)())Late)(a, 5); /* FAKEMATCH: called with no prototype. */\n\t/* FAKEMATCH: the zero is a forced temporary. */\n\tzero = 0;\n\t((s32 (*)())Late)(zero, 6);\n}\n";
+        let text = "void Run(s32 a)\n{\n\t/* FAKEMATCH: void function called as returning s32. */\n\t((s32 (*)())Late)(a, 1);\n\t((s32 (*)())Late)(a, 2);\n\tPlain(a);\n\t/* FAKEMATCH: the result sets r0 last. */\n\tValue2(Veneer, a, 0);\n\tif (a)\n\t{\n\t\t/* FAKEMATCH: void functions called as returning s32. */\n\t\t((s32 (*)())Late)(a, 3);\n\t}\n\telse\n\t{\n\t\t((s32 (*)())Before)(a, 4);\n\t}\n\t((s32 (*)())Late)(a, 5); /* FAKEMATCH: called with no prototype. */\n\t/* FAKEMATCH: the zero is a forced temporary. */\n\tzero = 0;\n\t((s32 (*)())Late)(zero, 6);\n\t((s32 (*)())Late)(a, 7) /* FAKEMATCH: an argument too many. */;\n}\n";
         let found = sites(text, &|name| name == "Late");
-        assert_eq!(found.len(), 5);
+        assert_eq!(found.len(), 6);
         let mut edits: Vec<Edit> = found.iter().flat_map(plain).collect();
         edits.extend(tag_edits(text, &found));
-        // The first tag and the one after a call go with their calls. The
+        // The first tag and the two at a call's end go with their calls. The
         // helper's tag stands on another call, the tag in the branch still
         // has the cast of the other branch under it, and the last one
         // stands on a statement that is no call.
         assert_eq!(
             apply(text, &edits),
-            "void Run(s32 a)\n{\n\tLate(a, 1);\n\tLate(a, 2);\n\tPlain(a);\n\t/* FAKEMATCH: the result sets r0 last. */\n\tValue2(Veneer, a, 0);\n\tif (a)\n\t{\n\t\t/* FAKEMATCH: void functions called as returning s32. */\n\t\tLate(a, 3);\n\t}\n\telse\n\t{\n\t\t((s32 (*)())Before)(a, 4);\n\t}\n\tLate(a, 5);\n\t/* FAKEMATCH: the zero is a forced temporary. */\n\tzero = 0;\n\tLate(zero, 6);\n}\n"
+            "void Run(s32 a)\n{\n\tLate(a, 1);\n\tLate(a, 2);\n\tPlain(a);\n\t/* FAKEMATCH: the result sets r0 last. */\n\tValue2(Veneer, a, 0);\n\tif (a)\n\t{\n\t\t/* FAKEMATCH: void functions called as returning s32. */\n\t\tLate(a, 3);\n\t}\n\telse\n\t{\n\t\t((s32 (*)())Before)(a, 4);\n\t}\n\tLate(a, 5);\n\t/* FAKEMATCH: the zero is a forced temporary. */\n\tzero = 0;\n\tLate(zero, 6);\n\tLate(a, 7);\n}\n"
         );
         // With the other branch's call plain too, its tag goes.
         let both = text.replace("Before", "Late");
@@ -713,7 +732,8 @@ mod tests {
     fn the_changes_leave_a_function_out_or_declare_it_again() {
         let Sample { model, headers, .. } = &sample();
         let found = sample().candidates();
-        let new = changes(model, headers, &[(&found[0], &Verdict::Undeclared), (&found[1], &Verdict::Declared), (&found[2], &Verdict::Kept(String::new()))], true);
+        let (new, tags) = changes(model, headers, &[(&found[0], &Verdict::Undeclared), (&found[1], &Verdict::Declared), (&found[2], &Verdict::Kept(String::new()))], true);
+        assert_eq!(tags, 1);
         assert_eq!(new.keys().map(String::as_str).collect::<Vec<_>>(), [HEADER, PART_HEADER, UNIT]);
         assert_eq!(new[HEADER], "void Run(s32 a);\n/* Late is called before its definition with no prototype in scope. */\nvoid After(s32 a);\nvoid Shared(s32 a);\n");
         assert_eq!(new[PART_HEADER], "void Part(s32 a);\n");
@@ -721,7 +741,7 @@ mod tests {
         // cast below the definition and the refused function's stay.
         assert_eq!(new[UNIT], model.text[UNIT].replace("\t/* FAKEMATCH: void function called as returning s32. */\n\t((s32 (*)())Late)(a, 1);", "\tLate(a, 1);"));
         // The trial of a spare cast takes the cast out and leaves the header.
-        let spare = changes(model, headers, &[(&found[0], &Verdict::Spare)], false);
+        let (spare, _) = changes(model, headers, &[(&found[0], &Verdict::Spare)], false);
         assert_eq!(spare.keys().map(String::as_str).collect::<Vec<_>>(), [UNIT]);
         assert!(spare[UNIT].contains("FAKEMATCH: void function called as returning s32. */\n\tLate(a, 1);"));
     }

@@ -46,8 +46,8 @@ const USAGE: &str = "usage: alchemy headers apply [--dry-run] [--functions] [--l
        alchemy headers undeclared [--dry-run] [--report FILE] [FILE.c]...\n\
   undeclared  a call with no prototype in scope is C89's implicit\n\
          `int name()`, and some callers match only as that: a function's\n\
-         callers above its definition, written under a FAKEMATCH tag as a\n\
-         cast of the function or through a ValueN or CallN helper. For\n\
+         callers above its definition, written as a cast of the function\n\
+         or through a ValueN or CallN helper, each a device. For\n\
          each such function no other file names, try what the source had:\n\
          the function left out of its file's header, a comment in the\n\
          prototype's place saying it is called before its definition with\n\

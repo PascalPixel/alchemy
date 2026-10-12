@@ -133,67 +133,8 @@ static void EV10_SCRIPT(void)
 	Engine_EventEnd();
 }
 
-static s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
-{
-	struct StagedActorEffect *actor = (void *)Object_GetById(0);
-	u8						 *flags = &actor->motion_flags;
-	u8						  saved = *flags;
-	s32						  ret = Object_CheckMovementCollision(actor, request);
-
-	if (ret == 0)
-	{
-		Engine_EventBegin();
-		Object_SetMode((struct FieldActor *)actor, 6);
-		Engine_TaskWait(6);
-		Engine_AudioPlayCue(152);
-		Object_SetMode((struct FieldActor *)actor, 7);
-		actor->move_rate_x = 0x30000;
-		actor->move_rate_z = 0x20000;
-		actor->elevation_rate = 0x40000;
-		*flags &= 0x7e;
-		Engine_ActorSetSpriteFlags((struct FieldActor *)actor, 0);
-		Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, request->cell_x, request->cell_z);
-		Object_SetMode((struct FieldActor *)actor, 6);
-		Engine_ActorSetSpriteFlags((struct FieldActor *)actor, 1);
-		*flags = ret;
-		Engine_ActorSetAnimation(10, 7);
-		actor->position_x += 0xffff0000;
-		actor->position_z += 0xffff0000;
-		Engine_TaskWait(2);
-		actor->position_x += 0xffff0000;
-		actor->position_z += 0xffff0000;
-		Engine_TaskWait(10);
-		actor->position_x += 0x10000;
-		actor->position_z += 0x10000;
-		Engine_TaskWait(4);
-		actor->position_x += 0x10000;
-		actor->position_z += 0x10000;
-		*flags = saved;
-		Engine_EventEnd();
-		return 1;
-	}
-	return 0;
-}
-
-static void EV11_TOUCH(void)
-{
-	u32 buf[3];
-#if !EDITION_INTERNATIONAL
-	buf[0] = Object_GetById(0)->x.fixed + 0x1e0000;
-	buf[1] = Object_GetById(0)->y.fixed;
-	buf[2] = Object_GetById(0)->z.fixed;
-#else
-	s32				   off = 500;
-	struct FieldActor *p = Object_GetById(*(s32 *)((u8 *)&gGameState + off));
-	u32				   base = p->x.fixed & 0xfff00000;
-
-	buf[0] = base + 0x80000;
-	buf[1] = p->y.fixed;
-	buf[2] = (p->z.fixed & 0xfff00000) + 0x80000;
-	buf[0] = base + 0x280000;
-#endif
-	StagedActor_RunStepEffect((struct StagedActorEffectRequest *)buf);
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korima/jump.c"
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
@@ -1120,15 +1061,8 @@ static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 	Engine_EventWait(c);
 }
 
-static s32 SceneEffect_AdvanceAngleAndFinishWhenParked(struct FieldActor *p)
-{
-	p->scale_x += 0x1eb8;
-	if (p->target_x == 0x80000000 && p->target_y == 0x80000000 && p->target_z == 0x80000000)
-	{
-		Engine_ObjectDispatchRelease(p);
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korima/grow.c"
 
 static void SceneEffect_SpawnObject26EveryEightFrames(void)
 {
@@ -1169,19 +1103,8 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void)
 	Engine_ObjectSetScript(obj, KorimaHashi_Object26Script);
 }
 
-static s32 OverlayObject_SelectValueByFrameBit1(s32 obj)
-{
-
-	if (((gFrameCount >> 1) & 1) != 0)
-	{
-		ObjectGroup_SetChildValue(obj, 10);
-	}
-	else
-	{
-		ObjectGroup_SetChildValue(obj, 7);
-	}
-	return 0;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korima/blink.c"
 
 static s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0)
 {
@@ -1449,7 +1372,7 @@ struct SceneEvent KorimaHashi_Events[] = {
 };
 
 s32 KorimaHashi_Object26Script[] = {
-	SC_CALL(SceneEffect_AdvanceAngleAndFinishWhenParked),
+	SC_CALL(SceneEffect_AdvanceAngleUntilIdle),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
@@ -1462,15 +1385,15 @@ s32 KorimaHashi_TriggerScript[] = {
 
 s32 gFallingEffectScript[] = {
 	SC_ADD(SW_Y, PIXELS(-2)),
-	SC_CALL(OverlayObject_SelectValueByFrameBit1),
+	SC_CALL(SceneEffect_SetModeByFrameBit1),
 	SC_WAIT(1),
 	SC_ADD(SW_Y, PIXELS(-2)),
-	SC_CALL(OverlayObject_SelectValueByFrameBit1),
+	SC_CALL(SceneEffect_SetModeByFrameBit1),
 	SC_WAIT(1),
 	SC_LOOP(30, SC_TOP),
 	SC_LABEL(1),
 	SC_ADD(SW_Y, PIXELS(-1)),
-	SC_CALL(OverlayObject_SelectValueByFrameBit1),
+	SC_CALL(SceneEffect_SetModeByFrameBit1),
 	SC_WAIT(1),
 	SC_LOOP(40, SC_TO(1)),
 	SC_CALL(SceneActor_CheckRegionTrigger),

@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/haidia_arashi/arashi.h"
+#include "unit/field/common/effect/psynergy.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"
@@ -60,8 +61,6 @@ static void FieldScene_ConfigureActorTwentyTwoScene(void);
 static void FieldScene_BuildPlacementGrid(void);
 static void SceneActor_SetModeByFrameBit1(s32 o);
 static void HaidiaArashi_SpawnEffectPair(union PairObject *parent);
-static void SceneState_SetValue140Mode0(void);
-static void FieldScene_RunSingleStep(void);
 static void FieldScene_RunFourPairedSteps(void);
 static void SceneState_SetValue19ThenCall(void);
 static void HaidiaArashi_CopyLeaderSpritePriority(void);
@@ -101,31 +100,8 @@ static s32 HaidiaArashi_RerollHeadingOnCountdown(struct FieldActor *object)
 	return 1;
 }
 
-static s32 UpdateFixedPointCountdown(struct FieldActor *state)
-{
-	switch (state->timer)
-	{
-	case 6:
-		state->scale_x -= 0x4000;
-		state->scale_y += 0x2000;
-		break;
-	case 4:
-		state->scale_x += 0x2000;
-		state->scale_y += -0x1000;
-		break;
-	case 2:
-		state->scale_x += 0x1000;
-		state->scale_y -= 0x800;
-		break;
-	case 0:
-		state->scale_x = 0x10000;
-		state->scale_y = 0x10000;
-		state->timer = (Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
-		break;
-	}
-	state->timer--;
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/pulse.c"
 
 u8 *HaidiaArashi_GetEntrances(void)
 {
@@ -175,20 +151,8 @@ static void EV14_TOUCH(void)
 	Engine_MapCopyCellAttributes(40, 89, 7, 4, a, b);
 }
 
-static void HaidiaArashi_RequestBackdropExit(u8 *o)
-{
-
-	struct EventWork *state;
-
-	if (Engine_GameFlagIsSet(0x834) != 0)
-	{
-		BattleFx_SetBlock30ValuesMaxZero();
-	}
-	state = gEventWork;
-	state->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	state->transition_frames = 16;
-	Engine_EventRequestExit(o);
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/haidia/exit.c"
 
 static void HaidiaArashi_OpenBackdropExit11(void)
 {
@@ -196,28 +160,28 @@ static void HaidiaArashi_OpenBackdropExit11(void)
 	Engine_MapAnimateCells(HaidiaArashi_CellSteps0, 45, 11);
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x101, 0x1A4);
 	Engine_EventWait(3);
-	HaidiaArashi_RequestBackdropExit(11);
+	Haidia_RequestBackdropExit(11);
 }
 
 static void EV02_TOUCH(void)
 {
 
 	Engine_AudioPlayCue(0x7B);
-	HaidiaArashi_RequestBackdropExit(1);
+	Haidia_RequestBackdropExit(1);
 }
 
 static void EV03_TOUCH(void)
 {
 
 	Engine_AudioPlayCue(0x7B);
-	HaidiaArashi_RequestBackdropExit(3);
+	Haidia_RequestBackdropExit(3);
 }
 
 static void EV04_TOUCH(void)
 {
 
 	Engine_AudioPlayCue(0x7B);
-	HaidiaArashi_RequestBackdropExit(4);
+	Haidia_RequestBackdropExit(4);
 }
 
 static void EV05_TOUCH(void)
@@ -227,7 +191,7 @@ static void EV05_TOUCH(void)
 	{
 		FieldScene_ConfigureActorTwentyTwoScene();
 	}
-	HaidiaArashi_RequestBackdropExit(2);
+	Haidia_RequestBackdropExit(2);
 }
 
 static void EV06_TOUCH(void)
@@ -236,7 +200,7 @@ static void EV06_TOUCH(void)
 	Engine_MapAnimateCells(HaidiaArashi_CellSteps1, 54, 32);
 	Engine_ActorWalkTo(0, 0x196, 0x2d7);
 	Engine_EventWait(3);
-	HaidiaArashi_RequestBackdropExit(5);
+	Haidia_RequestBackdropExit(5);
 }
 
 static void EV07_TOUCH(void)
@@ -263,7 +227,7 @@ static void EV07_TOUCH(void)
 	L_020002b4:;
 		Actor_WalkTo(ACTOR_PARTY_LEADER, 0x106, 0x325);
 		Engine_EventWait(3);
-		HaidiaArashi_RequestBackdropExit(6);
+		Haidia_RequestBackdropExit(6);
 	}
 }
 
@@ -276,7 +240,7 @@ static void EV08_TOUCH(void)
 	}
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x154, 0x378);
 	Engine_EventWait(3);
-	HaidiaArashi_RequestBackdropExit(7);
+	Haidia_RequestBackdropExit(7);
 }
 
 static void EV09_TOUCH(void)
@@ -285,7 +249,7 @@ static void EV09_TOUCH(void)
 	Engine_MapAnimateCells(HaidiaArashi_CellSteps2, 49, 69);
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x146, 0x466);
 	Engine_EventWait(3);
-	HaidiaArashi_RequestBackdropExit(8);
+	Haidia_RequestBackdropExit(8);
 }
 
 static void EV10_TOUCH(void)
@@ -294,7 +258,7 @@ static void EV10_TOUCH(void)
 	Engine_MapAnimateCells(HaidiaArashi_CellSteps3, 52, 76);
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x176, 0x4d6);
 	Engine_EventWait(3);
-	HaidiaArashi_RequestBackdropExit(9);
+	Haidia_RequestBackdropExit(9);
 }
 
 static void EV11_TOUCH(void)
@@ -303,7 +267,7 @@ static void EV11_TOUCH(void)
 	Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 74);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
 	Engine_EventWait(3);
-	HaidiaArashi_RequestBackdropExit(10);
+	Haidia_RequestBackdropExit(10);
 }
 
 static void EV12_TOUCH(void)
@@ -312,7 +276,7 @@ static void EV12_TOUCH(void)
 	Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 73);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
 	Engine_EventWait(3);
-	HaidiaArashi_RequestBackdropExit(12);
+	Haidia_RequestBackdropExit(12);
 }
 
 static void EV13_TOUCH(void)
@@ -321,7 +285,7 @@ static void EV13_TOUCH(void)
 	Map_AnimateCells(HaidiaArashi_CellSteps2, 38, 72);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 146, 0x49e);
 	Engine_EventWait(3);
-	HaidiaArashi_RequestBackdropExit(13);
+	Haidia_RequestBackdropExit(13);
 }
 
 s32 FieldScene_RunFlagGatedActorSetup(void)
@@ -1362,7 +1326,7 @@ static void EV34_TOUCH(void)
 		Event_ShowMessage(22, 0);
 		Actor_FaceActor(ACTOR_PARTY_LEADER, 22, 0);
 		Engine_EventWait(20);
-		FieldScene_RunSingleStep();
+		SceneEffect_CleanupSceneObjects();
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
 		Engine_ActorSetAnimationAndWait(22, 3);
 		Engine_EventWait(20);
@@ -2700,55 +2664,8 @@ static void HaidiaArashi_CycleObjectPalettes(s32 o)
 	}
 }
 
-static void Effect_AnimateVerticalPositive(union FieldObject *object)
-{
-	struct FieldActor *self = &object->actor;
-	struct FieldActor *anchor;
-	s32				   frame;
-	s32				   amplitude;
-
-	anchor = self->linked_object;
-	self->timer = (self->timer + 1);
-	frame = self->timer;
-
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease(self);
-		return;
-	}
-
-	amplitude = Engine_MathSin(frame << 10);
-	self->scale_x = amplitude;
-	self->scale_y = amplitude;
-	self->x.fixed = anchor->x.fixed;
-	self->y.fixed += 0x10000;
-	self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
-}
-
-static void Effect_AnimateVerticalNegative(union FieldObject *object)
-{
-	struct FieldActor *self = &object->actor;
-	struct FieldActor *anchor;
-	s32				   frame;
-	s32				   amplitude;
-
-	anchor = self->linked_object;
-	self->timer = (self->timer + 1);
-	frame = self->timer;
-
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease(self);
-		return;
-	}
-
-	amplitude = Engine_MathSin(frame << 10);
-	self->scale_x = amplitude;
-	self->scale_y = -amplitude;
-	self->x.fixed = anchor->x.fixed;
-	self->y.fixed += 0x10000;
-	self->z.fixed = anchor->z.fixed - (0x10000 - amplitude) * 5 + 0x100000;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/vertical.c"
 
 static void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
 {
@@ -2805,16 +2722,8 @@ static void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
 	}
 }
 
-static void SceneState_SetValue140Mode0(void)
-{
-
-	Engine_PsynergyBegin(140, 0);
-}
-
-static void FieldScene_RunSingleStep(void)
-{
-	BattleEffect_CleanupSceneObjects();
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/psynergy.c"
 
 static void FieldScene_RunFourPairedSteps(void)
 {
@@ -3097,7 +3006,7 @@ s32 HaidiaArashi_LookAroundScript[] = {
 };
 
 s32 HaidiaArashi_ActorEightScript[] = {
-	SC_CALL(UpdateFixedPointCountdown),
+	SC_CALL(SceneActor_UpdateScalePulse),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

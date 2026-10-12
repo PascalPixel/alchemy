@@ -1,6 +1,7 @@
 
 #include "game_state.h"
 #include "unit/field/kuupuappu_heya_sai/sai.h"
+#include "unit/field/common/kuupuappu/itemobj.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/evbasic.h"
@@ -18,29 +19,13 @@
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"
-#include "resource_386_state.h"
 #include "inventory.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 
-// 前方宣言
-static void OverlayObject_InitObject22(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z);
-
-static void SceneState_CheckPositionWindow(void)
-{
-	s32 v1;
-	s32 v0;
-
-	v0 = ((struct Resource386FirstView *)Object_GetById(0))->sample_08;
-	v1 = ((struct Resource386SecondView *)Object_GetById(0))->sample_10 >> 0x14;
-	if ((((v0 >> 0x14) - 0x22) <= 1U) && (v1 > 0x28) && (v1 <= 0x2A))
-	{
-		Engine_GameFlagSet(0x250);
-		return;
-	}
-	Engine_GameFlagClear(0x250);
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/spotflag.c"
 
 u8 *SceneData_GetScriptTable(void)
 {
@@ -193,25 +178,8 @@ static void EV1040_PSYNERGY(void)
 	Engine_ActorEnableActionCallback(16, 2);
 }
 
-static void EV41_SEARCH(void)
-{
-	Engine_EventBegin();
-
-	if (PartyInventory_HasSpace() == 0)
-	{
-		Engine_ActorSetAnimationAndWait(18, 4);
-		Engine_EventWait(20);
-		Engine_EventSetMessage((s32)MsgKuupuappuWowHaveManyThingsArent);
-		Engine_EventShowMessage(18, 0);
-	}
-	else
-	{
-		Engine_ItemShowFound(ITEM_BONE, 3);
-		Engine_PartyGiveItem(ITEM_BONE, 0);
-	}
-
-	Engine_EventEnd();
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/bone.c"
 
 static void EV19_TALK(void)
 {
@@ -334,44 +302,15 @@ s32 FieldScene_InitSceneStateByStep(void)
 	}
 	else if (scene == 7 || scene == 11)
 	{
-		OverlayObject_InitObject22(0xe7, 0x02380000, 0x00100000, 0x02a00000);
-		Engine_TaskAddCallback(SceneState_CheckPositionWindow, 0xc80);
+		OverlayObject_ConfigureObject22WithResource17(0xe7, 0x02380000, 0x00100000, 0x02a00000);
+		Engine_TaskAddCallback(SceneState_SetFlagByActorPosition, 0xc80);
 	}
 
 	return 0;
 }
 
-static void OverlayObject_InitObject22(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z)
-{
-	u8 *o;
-	u8 *q;
-	u8 *p;
-	u8 *v;
-	s32 z;
-	s32 m;
-
-	z = 0;
-	o = (u8 *)Engine_ObjectCreate(22, fixed_x, fixed_y, fixed_z);
-	if (o != 0)
-	{
-		q = *(u8 **)(o + 0x50);
-		p = q + 38;
-		*p = z;
-		p += 1;
-		*p = z;
-		m = 33;
-		m = -m;
-		q[5] &= m;
-		q[9] &= 15;
-		o[0x55] = z;
-		o[0x5c] = 1;
-		v = Engine_HeapAllocate(17, 0x608);
-		Engine_ItemLoadIcon(a);
-		v += 0x400;
-		Engine_VramLoad(q[28], 0x80, v);
-		Engine_HeapRelease(17);
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/itemobj.c"
 
 struct SceneEntrance Placement_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },

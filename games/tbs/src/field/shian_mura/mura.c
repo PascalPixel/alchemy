@@ -51,46 +51,8 @@ struct PeriodicEffectConfig
 
 void Effect_Spawn();
 
-static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
-{
-	work->sprite->priority = mode;
-}
-
-static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
-{
-	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
-
-	if (object != 0)
-	{
-		object->sprite->priority = 0;
-		object->motion_flags = 0;
-		object->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 14);
-		Engine_ObjectSetBlendMode(object, 1);
-		return object;
-	}
-	return 0;
-}
-
-static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
-{
-	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
-
-	if (object != 0)
-	{
-		object->sprite->priority = 1;
-		object->motion_flags = 0;
-		object->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 15);
-		object->priority_flags = (object->priority_flags & 0xfe) | 2;
-		return object;
-	}
-	return 0;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawn.c"
 
@@ -173,17 +135,8 @@ static void SceneEffect_SpawnPeriodicEffect(void)
 	}
 }
 
-static s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
-{
-	s32 delta_x = (*first_position++ - *second_position++) >> 16;
-	s32 delta_y = (*first_position++ - *second_position++) >> 16;
-	s32 delta_z = (*first_position - *second_position) >> 16;
-	s32 delta_x_squared = delta_x * delta_x;
-	s32 delta_y_squared = delta_y * delta_y;
-	s32 delta_z_squared = delta_z * delta_z;
-
-	return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/distance.c"
 
 static s32 SceneActor_UpdateTracking(
 	struct MapActor *actor, struct MapActor *target, s32 distance_limit, s32 force_tracking)

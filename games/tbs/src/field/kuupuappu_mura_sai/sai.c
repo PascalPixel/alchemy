@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "window.h"
 #include "unit/field/kuupuappu_mura_sai/sai.h"
+#include "unit/field/common/kuupuappu/range.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
@@ -33,129 +34,13 @@
 #include "edition.h"
 #include "call.h"
 
-static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
-{
-	work->sprite->priority = mode;
-}
-
-static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
-{
-	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
-
-	if (object != 0)
-	{
-		object->sprite->priority = 0;
-		object->motion_flags = 0;
-		object->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 14);
-		Engine_ObjectSetBlendMode(object, 1);
-		return object;
-	}
-	return 0;
-}
-
-static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
-{
-	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
-
-	if (object != 0)
-	{
-		object->sprite->priority = 1;
-		object->motion_flags = 0;
-		object->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 15);
-		object->priority_flags = (object->priority_flags & 0xfe) | 2;
-		return object;
-	}
-	return 0;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawn.c"
-
-static s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
-{
-	s32 delta_x = (*first_position++ - *second_position++) >> 16;
-	s32 delta_y = (*first_position++ - *second_position++) >> 16;
-	s32 delta_z = (*first_position - *second_position) >> 16;
-	s32 delta_x_squared = delta_x * delta_x;
-	s32 delta_y_squared = delta_y * delta_y;
-	s32 delta_z_squared = delta_z * delta_z;
-
-	return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
-}
-
-static s32 SceneActor_UpdateProximity(
-	struct FieldActor *actor, struct FieldActor *target, s32 range, s32 force)
-{
-	s32	 result = 0;
-	s32 *targetPos = &target->x.fixed;
-	s32 *actorPos = &actor->x.fixed;
-
-	if (FixedPoint_Distance(targetPos, actorPos) < range || force != 0)
-	{
-		u32 angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed, *targetPos - *actorPos);
-		u32 left = (angle - 0x1000) & 0xf000;
-		u32 right = (angle + 0x1000) & 0xf000;
-		u32 forward = angle & 0xf000;
-		u32 facing = actor->facing & 0xf000;
-
-		if (forward == facing || right == facing || left == facing || force != 0)
-		{
-			actor->paused = 1;
-			Object_SetMode(actor, 1);
-			result = 1;
-		}
-	}
-	else
-	{
-		actor->paused = 0;
-		Object_SetMode(actor, 2);
-	}
-	return result;
-}
-
-static s32 UpdateActorProximity(struct FieldActor *actor)
-{
-	u8				 **globals = gWindowWork;
-	u8				  *scene = globals[0];
-	u8				  *work = globals[12];
-	u16				  *flags = (u16 *)&actor->timer;
-	s32				   force = 0;
-	s32				   range = 18;
-	struct FieldActor *partner;
-	struct FieldActor *player;
-
-	if ((*flags & 1) != 0)
-	{
-		partner = Object_GetById(15);
-	}
-	else
-	{
-		partner = Object_GetById(14);
-	}
-	if (SceneActor_UpdateProximity(actor, partner, 32, 0) != 0)
-	{
-		return 0;
-	}
-
-	player = Object_GetById(ACTOR_PARTY_LEADER);
-
-	if (*(s16 *)(work + 376) != 0 || scene[RENDER_MODE_OFS] != 0)
-	{
-		range = 26;
-		if ((*flags & 2) != 0)
-		{
-			force = 1;
-		}
-	}
-
-	SceneActor_UpdateProximity(actor, player, range, force);
-	return 0;
-}
+#include "../common/object/distance.c"
+#include "../common/kuupuappu/range.c"
+#include "../common/kuupuappu/nearby.c"
 
 const void *SceneData_GetScriptTable(void)
 {
@@ -546,25 +431,8 @@ static void EV12_TOUCH(void)
 	SceneActor_PlaceAndSetSceneDelay(72, 160, 12);
 }
 
-static void EV01_TOUCH(void)
-{
-	Engine_GameFlagSet(0x200);
-	{
-		s32 a = 23;
-		s32 b = 26;
-		Engine_MapCopyCellAttributes(55, 26, 4, 2, a, b);
-	}
-}
-
-static void EV02_TOUCH(void)
-{
-	Engine_GameFlagClear(0x200);
-	{
-		s32 first_value = 23;
-		s32 second_value = 26;
-		Engine_MapCopyCellAttributes(23, 23, 4, 2, first_value, second_value);
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/toggle.c"
 
 static void EV21_TALK(void)
 {
@@ -656,7 +524,7 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
 	Engine_MapCopyCellsTo(45, 41, 8, 45, 3, 3);
 	Engine_TaskWait(1);
 	actor = Object_GetById(14);
-	actor->update = (void (*)(union FieldObject *))UpdateActorProximity;
+	actor->update = (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
 	{
 		struct FieldActor *actor = Object_GetById(14);
 		s32				   mode = 1;
@@ -664,7 +532,7 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
 	}
 	mode = 0;
 	actor = Object_GetById(15);
-	actor->update = (void (*)(union FieldObject *))UpdateActorProximity;
+	actor->update = (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
 	Object_GetById(15)->timer = mode;
 	if (Engine_GameFlagIsSet(0x858))
 		Actor_SetPosition(18, 0xd80000, 0x1880000);

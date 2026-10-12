@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/field/biribino_niwa/niwa.h"
+#include "unit/field/common/object/orbit.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"
@@ -35,82 +36,9 @@
 static void BiribinoNiwa_ApplyEntryState(void);
 static void BiribinoNiwa_RunGardenScene(void);
 static void FieldScene_OpenGate(void);
-static void InitializeStagedActorSceneOrbitingEffect(s32 id);
 
-typedef struct OrbitingSceneObjectSprite
-{
-	u8 padding_00[5];
-	u8 flags_05_low : 5;
-	u8 flags_05_bit_5 : 1;
-	u8 flags_05_high : 2;
-	u8 padding_06[3];
-	u8 flags_09_low : 2;
-	u8 flags_09_mode : 2;
-	u8 flags_09_high : 4;
-	u8 padding_0a[18];
-	u8 palette;
-	u8 padding_1d[10];
-	u8 state;
-} OrbitingSceneObjectSprite;
-
-typedef struct OrbitingSceneObject
-{
-	u8						   padding_00[8];
-	s32						   x;
-	s32						   y;
-	s32						   z;
-	u8						   padding_14[15];
-	u8						   flags_23;
-	u8						   padding_24[12];
-	s32						   orbit_angle;
-	u8						   padding_34[4];
-	s32						   orbit_center_x;
-	s32						   orbit_center_y;
-	s32						   orbit_center_z;
-	u8						   padding_44[12];
-	OrbitingSceneObjectSprite *sprite;
-	u8						   padding_54;
-	u8						   mode;
-	u8						   state;
-	u8						   padding_57[5];
-	u8						   active;
-	u8						   padding_5d[4];
-	u8						   visible;
-	u8						   padding_62[10];
-	u32						   callback;
-} OrbitingSceneObject;
-
-static s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
-{
-	s32					 delta;
-	u16					 old;
-	s32					 angle;
-	struct FacingObject *target;
-
-	target = obj->facing_target;
-	if (target != 0)
-	{
-		obj->facing_flags = (0xFE & obj->facing_flags);
-		angle = (u16)ArcTan2(
-			target->position_z - obj->position_z, target->position_x - obj->position_x);
-		old = obj->facing;
-		delta = (s16)(angle - old);
-		if (delta != 0)
-		{
-			if (delta > 0x1000)
-			{
-				delta = 0x1000;
-			}
-
-			if (delta < -0x1000)
-			{
-				delta = -0x1000;
-			}
-			obj->facing = (old + delta);
-		}
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/facing.c"
 
 u8 *SceneData_GetScriptTable(void)
 {
@@ -437,60 +365,8 @@ static void FieldScene_OpenGate(void)
 	Engine_GameFlagSet(0x200);
 }
 
-static s32 SceneEffect_UpdateOrbitPosition(s32 *p)
-{
-	s16 *q = (s16 *)p[20];
-	s32	 a, b;
-	s32	 d = Engine_MathSin(p[12]) * 2;
-	if (d > 0)
-		d = -d;
-	p[2] = p[14] + Engine_MathCos(p[12]) * 2;
-	p[3] = p[15] + d;
-	q[15] = Engine_MathCos(p[12] + 0x8000) / 8;
-	a = Engine_RandomNext();
-	b = Engine_RandomNext();
-	p[12] = p[12] + ((((u32)a << 9) >> 16) + (((u32)b << 9) >> 16)) + 0x400;
-	return 0;
-}
-
-static void InitializeStagedActorSceneOrbitingEffect(s32 id)
-{
-	OrbitingSceneObject		  *actor;
-	OrbitingSceneObjectSprite *sprite;
-	u8						  *transfer;
-	s32						   zero;
-
-	actor = (OrbitingSceneObject *)Object_GetById(id);
-	sprite = actor->sprite;
-	sprite->flags_09_mode = 1;
-	sprite->flags_05_bit_5 = 0;
-	sprite->flags_09_high = 0;
-
-	zero = 0;
-	sprite->state = zero;
-	Engine_ActorSetSpriteFlags(actor, zero);
-	actor->active = zero;
-	actor->mode = zero;
-
-	if (Engine_GameFlagIsSet(0x109) == 0)
-		actor->y += 0x200000;
-
-	actor->flags_23 &= 0xfe;
-	actor->visible = 1;
-
-	transfer = Engine_HeapAllocate(17, 0x608);
-	Engine_ItemLoadIcon(ITEM_NUT);
-	transfer += 0x400;
-	Engine_VramLoad(sprite->palette, 128, transfer);
-	Engine_HeapRelease(17);
-
-	actor->orbit_center_x = actor->x;
-	actor->orbit_angle = zero;
-	actor->orbit_center_y = actor->y;
-	actor->active = 1;
-	actor->callback = (u32)SceneEffect_UpdateOrbitPosition;
-	actor->state = zero;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/orbit.c"
 
 u16 Niwa_GateCells[] = {
 	MAP_CELL_STEP(34, 25, 1, 3, 5), MAP_CELL_STEP(35, 25, 1, 3, 5), MAP_CELL_STEP(36, 25, 1, 3, 5), MAP_CELL_STEPS_END,

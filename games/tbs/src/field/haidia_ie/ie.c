@@ -2,6 +2,7 @@
 #include "scene_ids.h"
 #include "vram_tab.h"
 #include "unit/field/haidia_ie/ie.h"
+#include "unit/field/common/effect/psynergy.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/fldmain.h"
@@ -55,44 +56,13 @@ static void Event_SayThenWait(s32 speaker, s32 frames);
 static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
 static void OverlayObject_UpdateOnFrameBit1(s32 obj);
 static void HaidiaIe_SpawnEffectPair(union PairObject *parent);
-static void SceneState_ApplyPair140And0(void);
-static void HaidiaIe_CleanupSceneObjects(void);
 static void FieldScene_RunStep15(void);
 static void FieldScene_RunStep17(void);
 static void FieldScene_RunStep20(void);
 static void SceneState_SetValues352_365_2116_2117_40(void);
 
-static s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
-{
-	s32					 delta;
-	u16					 old;
-	s32					 angle;
-	struct FacingObject *target;
-
-	target = obj->facing_target;
-	if (target != 0)
-	{
-		obj->facing_flags = (0xFE & obj->facing_flags);
-		angle = (u16)ArcTan2(
-			target->position_z - obj->position_z, target->position_x - obj->position_x);
-		old = obj->facing;
-		delta = (s16)(angle - old);
-		if (delta != 0)
-		{
-			if (delta > 0x1000)
-			{
-				delta = 0x1000;
-			}
-
-			if (delta < -0x1000)
-			{
-				delta = -0x1000;
-			}
-			obj->facing = (old + delta);
-		}
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/facing.c"
 
 u8 *HaidiaIe_GetEntrances(void)
 {
@@ -231,7 +201,7 @@ static void EV17_TALK(void)
 		Engine_EventWait(20);
 		Engine_ActorStartRepeatedMotion(17, 2);
 		Engine_EventWait(15);
-		SceneState_ApplyPair140And0();
+		SceneState_SetValue140Mode0();
 		shakes = 0;
 		for (i = 0; i < 40; i++)
 		{
@@ -259,7 +229,7 @@ static void EV17_TALK(void)
 		Engine_AudioPlayCue(0x121);
 		Scheduler_RemoveCallback((s32)FieldScene_RunStep17);
 		Engine_TaskWait(1);
-		HaidiaIe_CleanupSceneObjects();
+		SceneEffect_CleanupSceneObjects();
 		Engine_ActorSetChildValue(17, 0);
 		Engine_EventWait(40);
 		Engine_EventSetMessage((s32)MsgHaidiaBeholdPowerPsynergy);
@@ -334,7 +304,7 @@ static void FieldScene_RunMiddleAuxiliarySequence(void)
 	SceneActor_SetPairZeroAndValue(15, 0xa000, 20);
 	Actor_SetAttachedEffect(15, 0x102);
 	Engine_EventWait(20);
-	SceneState_ApplyPair140And0();
+	SceneState_SetValue140Mode0();
 	for (i = 0; i < 40; i++)
 	{
 		OverlayObject_UpdateOnFrameBit1(Object_GetById(15));
@@ -360,7 +330,7 @@ static void FieldScene_RunMiddleAuxiliarySequence(void)
 	Actor_SetChildValue(15, 0);
 	Actor_SetChildValue(20, 0);
 	Engine_EventWait(40);
-	HaidiaIe_CleanupSceneObjects();
+	SceneEffect_CleanupSceneObjects();
 	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 15, 30);
 	Event_ShowMessage(15, 0);
 	Engine_EventEnd();
@@ -424,25 +394,15 @@ static void Scene_PsynergyStoneIsGone(void)
 	Engine_EventEnd();
 }
 
-static void HaidiaIe_RequestBackdropExit(s32 no)
-{
-	struct EventWork *p;
-	if (Engine_GameFlagIsSet(0x834) != 0)
-	{
-		BattleFx_SetBlock30ValuesMaxZero();
-	}
-	p = gEventWork;
-	p->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	p->transition_frames = 16;
-	Engine_EventRequestExit(no);
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/haidia/exit.c"
 
 static void EV01_TOUCH(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)&Value_0200beb4, 44, 7);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 0x117);
-	HaidiaIe_RequestBackdropExit(1);
+	Haidia_RequestBackdropExit(1);
 }
 
 static void EV02_TOUCH(void)
@@ -455,7 +415,7 @@ static void EV02_TOUCH(void)
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 306);
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 296);
-	HaidiaIe_RequestBackdropExit(2);
+	Haidia_RequestBackdropExit(2);
 }
 
 static void EV03_TOUCH(void)
@@ -463,7 +423,7 @@ static void EV03_TOUCH(void)
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)&Value_0200beb4, 43, 15);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 230, 0x197);
-	HaidiaIe_RequestBackdropExit(3);
+	Haidia_RequestBackdropExit(3);
 }
 
 static void EV04_TOUCH(void)
@@ -471,7 +431,7 @@ static void EV04_TOUCH(void)
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)&Value_0200beb4, 52, 18);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 374, 0x1a3);
-	HaidiaIe_RequestBackdropExit(4);
+	Haidia_RequestBackdropExit(4);
 }
 
 static void EV05_TOUCH(void)
@@ -479,7 +439,7 @@ static void EV05_TOUCH(void)
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)&Value_0200beb4, 41, 32);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 200, 0x222);
-	HaidiaIe_RequestBackdropExit(5);
+	Haidia_RequestBackdropExit(5);
 }
 
 static void EV06_TOUCH(void)
@@ -487,7 +447,7 @@ static void EV06_TOUCH(void)
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)&Value_0200beb4, 35, 36);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x263);
-	HaidiaIe_RequestBackdropExit(6);
+	Haidia_RequestBackdropExit(6);
 }
 
 static void EV07_TOUCH(void)
@@ -495,13 +455,13 @@ static void EV07_TOUCH(void)
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)&Value_0200beb4, 51, 39);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 358, 0x29e);
-	HaidiaIe_RequestBackdropExit(7);
+	Haidia_RequestBackdropExit(7);
 }
 
 static void EV09_TOUCH(void)
 {
 	Engine_AudioPlayCue(123);
-	HaidiaIe_RequestBackdropExit(8);
+	Haidia_RequestBackdropExit(8);
 }
 
 static void EV08_TOUCH(void)
@@ -509,7 +469,7 @@ static void EV08_TOUCH(void)
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 	{
 		Engine_AudioPlayCue(123);
-		HaidiaIe_RequestBackdropExit(10);
+		Haidia_RequestBackdropExit(10);
 	}
 }
 
@@ -1429,55 +1389,8 @@ static void SceneEffect_UpdateByFrameBit(s32 no)
 	}
 }
 
-static void Effect_AnimateVerticalPositive(union FieldObject *object)
-{
-	struct FieldActor *self = &object->actor;
-	struct FieldActor *anchor;
-	s32				   frame;
-	s32				   amplitude;
-
-	anchor = self->linked_object;
-	self->timer = (self->timer + 1);
-	frame = self->timer;
-
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease(self);
-		return;
-	}
-
-	amplitude = Engine_MathSin(frame << 10);
-	self->scale_x = amplitude;
-	self->scale_y = amplitude;
-	self->x.fixed = anchor->x.fixed;
-	self->y.fixed += 0x10000;
-	self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
-}
-
-static void Effect_AnimateVerticalNegative(union FieldObject *object)
-{
-	struct FieldActor *self = &object->actor;
-	struct FieldActor *anchor;
-	s32				   frame;
-	s32				   amplitude;
-
-	anchor = self->linked_object;
-	self->timer = (self->timer + 1);
-	frame = self->timer;
-
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease(self);
-		return;
-	}
-
-	amplitude = Engine_MathSin(frame << 10);
-	self->scale_x = amplitude;
-	self->scale_y = -amplitude;
-	self->x.fixed = anchor->x.fixed;
-	self->y.fixed += 0x10000;
-	self->z.fixed = anchor->z.fixed - (0x10000 - amplitude) * 5 + 0x100000;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/vertical.c"
 
 static void HaidiaIe_SpawnEffectPair(union PairObject *parent)
 {
@@ -1534,15 +1447,8 @@ static void HaidiaIe_SpawnEffectPair(union PairObject *parent)
 	}
 }
 
-static void SceneState_ApplyPair140And0(void)
-{
-	Engine_PsynergyBegin(140, 0);
-}
-
-static void HaidiaIe_CleanupSceneObjects(void)
-{
-	BattleEffect_CleanupSceneObjects();
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/psynergy.c"
 
 static void FieldScene_RunStep15(void)
 {

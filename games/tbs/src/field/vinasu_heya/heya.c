@@ -133,36 +133,9 @@ static void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 t
 #include "ability_ids.h"
 #include "objcmd.h"
 
-static s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
-{
-	s32 delta_x = (*first_position++ - *second_position++) >> 16;
-	s32 delta_y = (*first_position++ - *second_position++) >> 16;
-	s32 delta_z = (*first_position - *second_position) >> 16;
-	s32 delta_x_squared = delta_x * delta_x;
-	s32 delta_y_squared = delta_y * delta_y;
-	s32 delta_z_squared = delta_z * delta_z;
-
-	return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
-}
-
-static void *SceneData_FindSlotAtPosition(void *position, void *self)
-{
-	s32				   *pos = position;
-	struct FieldActor **slots = gEventWork->actors;
-	u32					i;
-
-	for (i = 8; i <= 65; i++)
-	{
-		struct FieldActor *p = slots[i];
-
-		if ((pos[0] >> 20) == (p->x.fixed >> 20) && (pos[1] >> 20) == (p->y.fixed >> 20)
-			&& (pos[2] >> 20) == (p->z.fixed >> 20))
-		{
-			return p;
-		}
-	}
-	return 0;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/distance.c"
+#include "../common/object/findslot.c"
 
 static void RunStagedActorTransition(void)
 {
@@ -422,85 +395,10 @@ static void EV31_TOUCH_3(void)
 	*(s32 *)(gActorEffectWork + 24) = 0;
 }
 
-static s32 SceneActor_SetFlagBitByRelativeDepth(struct FieldActor *actor)
-{
-	struct FieldActor *ref;
-	u8				  *fp;
-	u8				   flags;
-	ref = Object_GetById(ACTOR_PARTY_LEADER);
-	fp = &actor->priority_flags;
-	flags = *fp | 2;
-	*fp = flags;
-	if (ref->z.fixed < actor->z.fixed)
-	{
-		s32 diff = actor->z.fixed - ref->z.fixed;
-		s32 lim;
-		diff += 0x00040000;
-		lim = actor->y.fixed;
-		lim += diff;
-		if (ref->y.fixed <= lim)
-		{
-			flags &= 0xfd;
-			*fp = flags;
-		}
-	}
-	return 0;
-}
-
-static void SceneActor_SwapPositionsByDepth(s32 group, s32 index)
-{
-	struct FieldActor *first;
-	struct FieldActor *second;
-	s32				   value;
-
-	first = Object_GetById(group);
-	second = Object_GetById(index);
-	if (first->z.fixed <= second->z.fixed)
-	{
-		value = first->x.fixed;
-		first->x.fixed = second->x.fixed;
-		second->x.fixed = value;
-
-		value = first->y.fixed;
-		first->y.fixed = second->y.fixed;
-		second->y.fixed = value;
-
-		value = first->z.fixed;
-		first->z.fixed = second->z.fixed;
-		second->z.fixed = value;
-		Engine_TaskWait(1);
-	}
-}
-
-static void OverlayObject_WaitUntilIdle(struct FieldActor *obj)
-{
-	s32 cnt;
-	s32 busy;
-
-	cnt = 60;
-	while (cnt != 0)
-	{
-		Engine_TaskWait(1);
-		busy = obj->velocity_y;
-		cnt--;
-		if (busy == 0)
-			break;
-	}
-}
-
-static void Effect_AdvanceMotion(union FieldObject *object)
-{
-	struct FieldEffect *efx = &object->effect;
-
-	efx->x += efx->velocity_x;
-	efx->y += efx->velocity_y;
-	efx->z += efx->velocity_z;
-	efx->velocity_x -= efx->velocity_x / 18;
-	efx->velocity_z -= efx->velocity_z / 16;
-	efx->scale_x += efx->scale_rate_x;
-	efx->scale_y += efx->scale_rate_y;
-	efx->sprite->rotation += efx->spin;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/depth.c"
+#include "../common/object/waitidle.c"
+#include "../common/effect/advance.c"
 
 static void FieldScene_RunSupplementalSequenceOne(void)
 {
@@ -553,34 +451,8 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 	Engine_EventEnd();
 }
 
-static void SceneEffect_SpawnNineRadialEffects(s32 actor)
-{
-	struct FieldActor	*object;
-	struct Vec			 vec;
-	struct EffectOptions params;
-	u32					 i;
-	s32					 v;
-	s32					 x;
-	s32					 z;
-
-	object = Object_GetById(actor);
-	params.priority = 1;
-	params.palette = 7;
-	params.update = Effect_AdvanceMotion;
-	for (i = 0; i <= 16; i += 2)
-	{
-		v = i << 12;
-		vec.x = Engine_MathCos(v);
-		vec.y = 0;
-		z = Engine_MathSin(v);
-		x = vec.x;
-		vec.z = z;
-		x += Math_Divide(x, 3);
-		vec.x = x;
-		Effect_Spawn(
-			object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y, z, 0x01030001, &params);
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/radial.c"
 
 static s32 SceneEffect_SpawnRandomizedParticleEveryFourFrames(struct FieldActor *obj)
 {

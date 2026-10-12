@@ -39,46 +39,8 @@ static void GomaIriguchi_SetEntranceFlag(void);
 static void GomaIriguchi_RunSpinningLeap(s32 id);
 static void GomaIriguchi_GiveShamansRod(void);
 
-static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
-{
-	work->sprite->priority = mode;
-}
-
-static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
-{
-	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
-
-	if (object != 0)
-	{
-		object->sprite->priority = 0;
-		object->motion_flags = 0;
-		object->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 14);
-		Engine_ObjectSetBlendMode(object, 1);
-		return object;
-	}
-	return 0;
-}
-
-static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
-{
-	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
-
-	if (object != 0)
-	{
-		object->sprite->priority = 1;
-		object->motion_flags = 0;
-		object->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 15);
-		object->priority_flags = (object->priority_flags & 0xfe) | 2;
-		return object;
-	}
-	return 0;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawn.c"
 
@@ -556,17 +518,8 @@ static void OverlayObject_TurnStateByEighth(struct FieldActor *obj)
 	state->rotation = v;
 }
 
-static void OverlayObject_WaitForHeight(struct FieldActor *obj, s32 height)
-{
-	s32 cnt = 60;
-	while (cnt != 0)
-	{
-		Engine_TaskWait(1);
-		cnt--;
-		if (obj->y.fixed <= height)
-			break;
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/waitdown.c"
 
 static void GomaIriguchi_RunSpinningLeap(s32 id)
 {
@@ -595,7 +548,7 @@ static void GomaIriguchi_RunSpinningLeap(s32 id)
 	actor->layer = 3;
 	actor->flags34 = 0;
 	Engine_ActorWaitForMove(id);
-	OverlayObject_WaitForHeight(actor, 0x200000);
+	SceneActor_WaitObjectBelowHeight(actor, 0x200000);
 	Engine_AudioPlayCue(188);
 	Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
 	Engine_AudioPlayCue(141);
@@ -613,7 +566,7 @@ static void GomaIriguchi_RunSpinningLeap(s32 id)
 	actor->speed = 0x50000;
 	Engine_ActorSetDestination(id, 139, 196);
 	Engine_ActorWaitForMove(id);
-	OverlayObject_WaitForHeight(actor, 0x200000);
+	SceneActor_WaitObjectBelowHeight(actor, 0x200000);
 	actor->callback = 0;
 	actor->sprite->angle = 0x1000;
 	p = &params;
@@ -628,17 +581,8 @@ static void GomaIriguchi_RunSpinningLeap(s32 id)
 	Engine_MapWaitWorkValuesBelow256();
 }
 
-static void SceneActor_ApplyValueAndMatchingSlots(s32 group, s32 value)
-{
-	u8 *work = UnitGet(group);
-	s32 i;
-	Inventory_AddItem(group, value);
-	for (i = 0; i < 15; i++)
-	{
-		if (*(u16 *)(work + 216 + i * 2) == value)
-			Inventory_Equip(group, i);
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/item/addequip.c"
 
 static void GomaIriguchi_GiveShamansRod(void)
 {

@@ -5,9 +5,16 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/korosseo_maruta/maruta.h"
+#include "unit/field/common/korosseo/saved.h"
 #include "unit/field/common/korosseo/solo_competitor.h"
+#include "unit/field/common/korosseo/raised.h"
 #include "unit/field/common/korosseo/solo_round.h"
+#include "unit/field/common/korosseo/cheer.h"
 #include "unit/field/common/korosseo/compete.h"
+#include "unit/field/common/korosseo/markslot.h"
+#include "unit/field/common/korosseo/markmove.h"
+#include "unit/field/common/korosseo/setup.h"
+#include "unit/field/common/korosseo/occupant.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/evtable.h"
@@ -77,50 +84,11 @@
 // 前方宣言
 static void FieldScene_RunMultiPhaseActorSequence(s32 a0);
 static void Korosseo_RunGreetScene(s32 a0);
-static void ColossoLogRollingStage_RestoreActorPositions(void);
-static void ColossoLogRollingStage_MarkSceneProgress(void);
-static void ColossoLogRollingStage_ClearSavedActorPositions(void);
-static s32 ColossoLogRollingStage_RunStateInteraction(s32 actor, s32 flags);
-static void ColossoLogRollingStage_InitializeStateInteraction(s32 actor, s32 flags);
 static void ColossoLogRollingStage_RunScriptedTransition(s32 mode);
-static void ColossoLogRollingStage_ResetActorMotion(s32 selector);
-static void ColossoLogRollingStage_StartPaletteTaskFromState(u32 first_value, u32 second_value, u32 mode);
-static void ColossoLogRollingStage_StopPaletteTask(void);
-static void ColossoLogRollingStage_PositionScaledObject(s32 id, s32 x, s32 z);
 static void ColossoLogRollingStage_NoopSceneHook(void);
 static void ColossoLogRollingStage_WaitForBalanceState(void);
 static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_handle);
-static void ColossoLogRollingStage_InitializeSceneControl(s32 resource);
 static void ColossoLogRollingStage_PushStagedActor(void);
-static void *SceneActor_FindOccupantAheadOfSubject(void);
-
-typedef struct ActorSpriteRef
-{
-	u8	 filler00[0x28];
-	s16 *entry;
-} ActorSpriteRef;
-
-typedef struct StageActor
-{
-	u8				filler00[8];
-	s32				x;
-	u8				filler0C[4];
-	s32				z;
-	u8				filler14[0x3c];
-	ActorSpriteRef *sprite;
-	u8				state;
-} StageActor;
-
-typedef struct ScaledStageObject
-{
-	u8	pad00[12];
-	s32 y;
-	u8	pad10[32];
-	s32 scale_x;
-	s32 scale_z;
-	u8	pad38[35];
-	u8	state;
-} ScaledStageObject;
 
 typedef struct SceneControl
 {
@@ -1105,7 +1073,7 @@ s32 StageSetup_BuildAndDispatch(void)
 	switch (gGameState.entrance)
 	{
 	case 1:
-		ColossoLogRollingStage_SetupSceneDescriptor(0, 8, 6, 1512 << 16, 192 << 16, 39, 40);
+		FieldScene_BuildSceneDescriptorAndInstallTask(0, 8, 6, 1512 << 16, 192 << 16, 39, 40);
 		Map_CopyCellsLayered(127, 0, 1, 2, 5, 2);
 		Engine_ActorDestroy(32);
 		Engine_ActorDestroy(33);
@@ -1118,25 +1086,25 @@ s32 StageSetup_BuildAndDispatch(void)
 		{
 			Engine_AudioPlayCue(17);
 			Korosseo_SelectSoloCompetitor(0);
-			ColossoLogRollingStage_RestoreActorPositions();
+			SceneActor_PlacePartyAtSavedTiles();
 			Object_LinkObjectAndSetCallback(1, 0);
 			ColossoLogRollingStage_RunScriptedTransition(3);
 		}
 		Object_LinkObjectAndSetCallback(1, 0);
 		Object_LinkObjectAndSetCallback(2, 0);
 		Object_LinkObjectAndSetCallback(3, 0);
-		ColossoLogRollingStage_InitializeSceneControl((s32)&ResourceId_RivalPathC);
+		SceneState_InitControlWhenFlag109Clear((s32)&ResourceId_RivalPathC);
 		break;
 
 	case 2:
-		Engine_TaskAddCallback(ColossoLogRollingStage_MarkSceneProgress, 3200);
+		Engine_TaskAddCallback(SceneState_RaiseTriggerOnPsynergyTarget, 3200);
 		Engine_ActorDestroy(39);
 		Engine_ActorDestroy(40);
 		if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0)
 		{
 			break;
 		}
-		ColossoLogRollingStage_RestoreActorPositions();
+		SceneActor_PlacePartyAtSavedTiles();
 		Korosseo_SelectSoloCompetitor(1);
 		ColossoLogRollingStage_RunScriptedTransition(0);
 		break;
@@ -1147,7 +1115,7 @@ s32 StageSetup_BuildAndDispatch(void)
 			break;
 		}
 		Korosseo_RunGreetScene(32);
-		ColossoLogRollingStage_ClearSavedActorPositions();
+		Korosseo_ClearSavedActorPositions();
 		break;
 
 	case 4:
@@ -1516,7 +1484,7 @@ static void EV33_TALK(s32 scene)
 		return;
 	}
 	Engine_EventBegin();
-	state = ColossoLogRollingStage_RunStateInteraction(scene, 1);
+	state = SceneDialogue_RunFlagGatedPromptInteraction(scene, 1);
 	if (state == 0)
 	{
 		Engine_EventSetMessage((s32)MsgKorosseoStageCalledScales);
@@ -1525,12 +1493,12 @@ static void EV33_TALK(s32 scene)
 		Engine_CameraWaitForMove();
 		Engine_EventWait(30);
 		Engine_EventShowMessage(scene, 0);
-		ColossoLogRollingStage_StartPaletteTask(104, 68, 0);
+		SceneEffect_SeedMarkerAndInstallTask(104, 68, 0);
 		Engine_EventWait(60);
-		ColossoLogRollingStage_StartPaletteTaskFromState(168, 96, 10);
+		SceneState_StartMarkerMove(168, 96, 10);
 		Engine_EventWait(70);
 		Engine_EventShowMessage(scene, 0);
-		ColossoLogRollingStage_StopPaletteTask();
+		SceneEffect_RemoveMarkerTask();
 		Engine_TaskWait(2);
 		pan1 = Object_GetById(10);
 		pan1->motion_flags = 0;
@@ -1557,17 +1525,17 @@ static void EV33_TALK(s32 scene)
 		Object_CommitPosition(back2);
 		Engine_EventWait(15);
 		Engine_EventShowMessage(scene, 0);
-		ColossoLogRollingStage_StartPaletteTask(104, 68, 0);
+		SceneEffect_SeedMarkerAndInstallTask(104, 68, 0);
 		Engine_EventWait(30);
-		ColossoLogRollingStage_StartPaletteTaskFromState(168, 96, 10);
+		SceneState_StartMarkerMove(168, 96, 10);
 		Engine_EventWait(40);
-		ColossoLogRollingStage_StartPaletteTaskFromState(104, 68, 10);
+		SceneState_StartMarkerMove(104, 68, 10);
 		Engine_EventWait(70);
 		Engine_EventShowMessage(scene, 0);
-		ColossoLogRollingStage_StopPaletteTask();
+		SceneEffect_RemoveMarkerTask();
 		Engine_TaskWait(2);
 		Engine_CameraFollowActor(0, 0);
-		ColossoLogRollingStage_InitializeStateInteraction(scene, 1);
+		Korosseo_ShowFollowUpPrompt(scene, 1);
 	}
 	else if (state == 1)
 	{
@@ -1589,7 +1557,7 @@ static void EV34_TALK(s32 scene)
 		return;
 	}
 	Engine_EventBegin();
-	state = ColossoLogRollingStage_RunStateInteraction(scene, 2);
+	state = SceneDialogue_RunFlagGatedPromptInteraction(scene, 2);
 	if (state == 0)
 	{
 		Engine_EventSetMessage((s32)MsgKorosseoSteppingStoneStage);
@@ -1601,8 +1569,8 @@ static void EV34_TALK(s32 scene)
 		Event_ShowMessage(scene, 0);
 		Korosseo_FadeInCompetitor(0, x, 200);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-		ColossoLogRollingStage_SpawnPositionedObject(0, x, 152);
-		ColossoLogRollingStage_SpawnPositionedObject(0, 296, 152);
+		OverlayObject_PlaceWithScale14000(0, x, 152);
+		OverlayObject_PlaceWithScale14000(0, 296, 152);
 		Engine_EventWait(10);
 		Engine_LeaderCheckAhead();
 		Camera_MoveTo(-1, -1, -1, 0);
@@ -1614,18 +1582,18 @@ static void EV34_TALK(s32 scene)
 		Camera_MoveTo(-1, -1, -1, 0);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 15);
 		Event_ShowMessage(scene, 0);
-		ColossoLogRollingStage_StartPaletteTask(96, 40, 0);
-		ColossoLogRollingStage_StartPaletteTaskFromState(128, 40, 10);
+		SceneEffect_SeedMarkerAndInstallTask(96, 40, 0);
+		SceneState_StartMarkerMove(128, 40, 10);
 		Engine_EventWait(30);
-		ColossoLogRollingStage_StartPaletteTaskFromState(160, 40, 10);
+		SceneState_StartMarkerMove(160, 40, 10);
 		Engine_EventWait(30);
-		ColossoLogRollingStage_StartPaletteTaskFromState(160, 72, 10);
+		SceneState_StartMarkerMove(160, 72, 10);
 		Engine_EventWait(30);
 		Event_ShowMessage(scene, 0);
-		ColossoLogRollingStage_StopPaletteTask();
+		SceneEffect_RemoveMarkerTask();
 		Korosseo_RestoreCompetitor(0);
 		Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-		ColossoLogRollingStage_InitializeStateInteraction(scene, 2);
+		Korosseo_ShowFollowUpPrompt(scene, 2);
 	}
 	else if (state == 1)
 	{
@@ -1648,7 +1616,7 @@ static void EV35_TALK(s32 scene)
 	else
 	{
 		Engine_EventBegin();
-		state = ColossoLogRollingStage_RunStateInteraction(scene, 3);
+		state = SceneDialogue_RunFlagGatedPromptInteraction(scene, 3);
 		if (state == 0)
 		{
 			work = gEventWork;
@@ -1667,7 +1635,7 @@ static void EV35_TALK(s32 scene)
 			Value3(Engine_ActorFaceDirection, 0, 0, 0);
 			ColossoLogRollingStage_WaitForSceneTask();
 			Actor_SetSpeed(0, 0x18000, 0xc000);
-			ColossoLogRollingStage_PositionScaledObject(0, 680, 200);
+			SceneActor_StartMode5MoveToTile(0, 680, 200);
 			if (work->raised_trigger != 5)
 			{
 				do
@@ -1685,7 +1653,7 @@ static void EV35_TALK(s32 scene)
 			Engine_EventShowMessage(scene, 0);
 			Korosseo_RestoreCompetitor(0);
 			Engine_CameraFollowActor(0, 0);
-			ColossoLogRollingStage_InitializeStateInteraction(scene, 3);
+			Korosseo_ShowFollowUpPrompt(scene, 3);
 			work->raised_trigger = 0;
 		}
 		else if (state == 1)
@@ -1715,7 +1683,7 @@ static void EV36_TALK(s32 event)
 	else
 	{
 		Engine_EventBegin();
-		result = ColossoLogRollingStage_RunStateInteraction(event, 4);
+		result = SceneDialogue_RunFlagGatedPromptInteraction(event, 4);
 		if (result == 0)
 		{
 			Engine_EventSetMessage((s32)MsgKorosseoPlaceNormallyCalledFreeClimb);
@@ -1754,7 +1722,7 @@ static void EV36_TALK(s32 event)
 			Event_ShowMessage(event, 0);
 			Korosseo_RestoreCompetitor(0);
 			Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-			ColossoLogRollingStage_InitializeStateInteraction(event, 4);
+			Korosseo_ShowFollowUpPrompt(event, 4);
 		}
 		else if (result == 1)
 		{
@@ -1810,7 +1778,7 @@ static void EV37_TALK(s32 event)
 	else
 	{
 		Engine_EventBegin();
-		result = ColossoLogRollingStage_RunStateInteraction(event, 5);
+		result = SceneDialogue_RunFlagGatedPromptInteraction(event, 5);
 		if (result == 0)
 		{
 			Engine_EventSetMessage((s32)MsgKorosseoCalledMovingSidewalkStage);
@@ -1828,7 +1796,7 @@ static void EV37_TALK(s32 event)
 			Engine_EventWait(120);
 			Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
 			Engine_EventWait(120);
-			ColossoLogRollingStage_ResetActorMotion(0);
+			OverlayObject_ResetMotionFields(0);
 			Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 #if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_FR) && !defined(TBS_EDITION_IT)
 			Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
@@ -1846,11 +1814,11 @@ static void EV37_TALK(s32 event)
 			Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x103, 60);
 			ColossoLogRollingStage_PositionActor(0, 0x460, 184);
 			Event_ShowMessage(event, 0);
-			ColossoLogRollingStage_ResetActorMotion(0);
+			OverlayObject_ResetMotionFields(0);
 			gGameState.movement_mode = 1;
 			Korosseo_RestoreCompetitor(0);
 			Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-			ColossoLogRollingStage_InitializeStateInteraction(event, 5);
+			Korosseo_ShowFollowUpPrompt(event, 5);
 		}
 		else if (result == 1)
 		{
@@ -1874,7 +1842,7 @@ static void EV38_TALK(s32 actor)
 	}
 
 	Engine_EventBegin();
-	state = ColossoLogRollingStage_RunStateInteraction(actor, 6);
+	state = SceneDialogue_RunFlagGatedPromptInteraction(actor, 6);
 
 	if (state == 0)
 	{
@@ -1884,19 +1852,19 @@ static void EV38_TALK(s32 actor)
 		Engine_CameraWaitForMove();
 		Engine_EventWait(30);
 		Engine_EventShowMessage(actor, 0);
-		ColossoLogRollingStage_StartPaletteTask(0xb4, 0x58, 0);
+		SceneEffect_SeedMarkerAndInstallTask(0xb4, 0x58, 0);
 		Engine_EventWait(60);
 		Engine_EventShowMessage(actor, 0);
-		ColossoLogRollingStage_StartPaletteTaskFromState(0x20, 0x54, 10);
+		SceneState_StartMarkerMove(0x20, 0x54, 10);
 		Engine_EventWait(30);
 		Engine_EventShowMessage(actor, 0);
-		ColossoLogRollingStage_StartPaletteTaskFromState(0x60, 0x54, 30);
+		SceneState_StartMarkerMove(0x60, 0x54, 30);
 		Engine_EventWait(60);
 		Engine_EventShowMessage(actor, 0);
-		ColossoLogRollingStage_StopPaletteTask();
+		SceneEffect_RemoveMarkerTask();
 		Engine_EventWait(2);
 		Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-		ColossoLogRollingStage_InitializeStateInteraction(actor, 6);
+		Korosseo_ShowFollowUpPrompt(actor, 6);
 	}
 	else if (state == 1)
 	{
@@ -1908,386 +1876,13 @@ static void EV38_TALK(s32 actor)
 	Engine_EventEnd();
 }
 
-static void ColossoLogRollingStage_RestoreActorPositions(void)
-{
-
-	s32 center;
-
-	{
-		s32 x = GameFlag_GetByte(896);
-		s32 z = GameFlag_GetByte(904);
-		center = 0x80000;
-		x <<= 20;
-		x += center;
-		z <<= 20;
-		z += center;
-		Engine_ActorSetPosition(GERALD, x, z);
-	}
-	{
-		s32 x = GameFlag_GetByte(912);
-		s32 z = GameFlag_GetByte(920);
-		x <<= 20;
-		x += center;
-		z <<= 20;
-		z += center;
-		Engine_ActorSetPosition(IWAN, x, z);
-	}
-	{
-		s32 x = GameFlag_GetByte(928);
-		s32 z = GameFlag_GetByte(936);
-		x <<= 20;
-		x += center;
-		z <<= 20;
-		z += center;
-		Engine_ActorSetPosition(MEARI, x, z);
-	}
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/saved.c"
 #include "../common/korosseo/solo_competitor.c"
-
-static void ColossoLogRollingStage_MarkSceneProgress(void)
-{
-
-	u8	*state;
-	s16 *table;
-	s32	 slotValue;
-	s32	 value;
-	u16 *field;
-
-	state = *(u8 **)&gEventWork;
-	table = (s16 *)&gGameState;
-	slotValue = ((struct GameState *)table)->selected_actor;
-	if (slotValue != 0)
-	{
-		if ((s16) * (u16 *)&((struct EventWork *)state)->psynergy_request >> 10 == slotValue)
-		{
-			if (Engine_GameFlagIsSet(0x141) != 0)
-			{
-				field = (u16 *)&((struct EventWork *)state)->raised_trigger;
-				value = 99;
-				*field = value;
-			}
-		}
-	}
-}
-
-static void EV99_RAISED(void)
-{
-
-	struct EventWork *state;
-	s16				 *table;
-	StageActor		 *target;
-	StageActor		 *actor;
-	s32				 *frame;
-	s32				  active_slot;
-	s32				  slot;
-	s32				  best;
-	s32				  best_slot;
-	s32				  dx;
-	s32				  adx;
-	s32				  dz;
-	s32				  base;
-	s32				  z;
-
-	state = gEventWork;
-	best_slot = 8;
-	best = 0x100000;
-	table = (s16 *)&gGameState;
-	active_slot = *(s32 *)&table[250];
-	target = Object_GetById(active_slot);
-	Engine_EventBegin();
-	for (slot = 8; slot <= 66; slot++)
-	{
-		actor = Object_GetById(slot);
-		if (actor == 0)
-		{
-			continue;
-		}
-		if (actor->state != 1)
-		{
-			continue;
-		}
-		if (*actor->sprite->entry != 165)
-		{
-			continue;
-		}
-		dx = (target->x - actor->x) / 65536;
-		dz = (target->z - actor->z) / 65536;
-		if (dz > 0)
-		{
-			continue;
-		}
-		adx = dx;
-		if (adx < 0)
-		{
-			adx = -adx;
-		}
-		if (dz < 0)
-		{
-			dz = -dz;
-		}
-		if (adx + dz < best)
-		{
-			best_slot = slot;
-			best = adx + dz;
-		}
-	}
-	Engine_EventSetMessage((s32)MsgKorosseoMatchAboutBeginPleaseTake);
-	Engine_EventShowMessage(best_slot, 0);
-	frame = &state->start_transition;
-	*frame = 0x200;
-	state->transition_frames = 15;
-	Engine_EventWait(20);
-	Engine_EventCloseScreen();
-	Engine_EventWaitForScreen();
-	base = active_slot * 16;
-	GameFlag_SetByte(base + 880, target->x >> 20);
-	z = target->z >> 20;
-	GameFlag_SetByte(base + 888, z);
-	active_slot++;
-	if (active_slot > 3)
-	{
-		Engine_EventRequestExit(10);
-		Engine_GameFlagSet(282);
-	}
-	else
-	{
-		Korosseo_SelectSoloCompetitor(active_slot);
-		Engine_EventOpenScreen();
-		Engine_EventWaitForScreen();
-		*frame = 0;
-	}
-	Engine_EventEnd();
-}
-
-// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/raised.c"
 #include "../common/korosseo/solo_round.c"
-
-static void ColossoLogRollingStage_ClearSavedActorPositions(void)
-{
-
-	GameFlag_SetByte(896, 0);
-	GameFlag_SetByte(904, 0);
-	GameFlag_SetByte(912, 0);
-	GameFlag_SetByte(920, 0);
-	GameFlag_SetByte(928, 0);
-	GameFlag_SetByte(936, 0);
-}
-
-static s32 ColossoLogRollingStage_RunStateInteraction(s32 actor, s32 flags)
-{
-	s32 scene;
-	s32 msg;
-	s32 result;
-
-	Battle_ResetEffectCounter();
-	UiText_DrawQuantity(flags, 5);
-	scene = gGameState.scene;
-	if (scene == (s32)&SceneId_KorosseoKawa)
-	{
-		msg = (s32)MsgKorosseoStageFirstFinalsMatch;
-	}
-	else if (scene == (s32)&SceneId_KorosseoKabe)
-	{
-		msg = (s32)MsgKorosseoStageSecondFinalsMatch;
-	}
-	else
-	{
-		msg = (s32)MsgKorosseoStageThirdFinalsMatch;
-	}
-	Engine_EventSetMessage(msg);
-	Engine_EventShowMessage(actor, 0);
-	if (Engine_GameFlagIsSet(flags + 512) != 0)
-	{
-		return 2;
-	}
-	if (Engine_GameFlagIsSet(flags + 520) != 0)
-	{
-		result = PartyTalkMenu_Choose(0);
-		if (result == 1)
-		{
-			return 2;
-		}
-		if (result == 2 || result == -1)
-		{
-			return 3;
-		}
-		return result;
-	}
-	Engine_GameFlagSet(flags + 520);
-	Engine_EventSetMessage((s32)MsgKorosseoWouldYouLikeHearDescription);
-	Engine_EventOpenMessage(actor, 0);
-	return Engine_EventChooseYesNo(0, 0);
-}
-
-static void ColossoLogRollingStage_InitializeStateInteraction(s32 actor, s32 flags)
-{
-	s32 scene;
-	s32 msg;
-
-	UiText_DrawQuantity(flags, 5);
-	scene = gGameState.scene;
-	if (scene == (s32)&SceneId_KorosseoKawa)
-	{
-		msg = (s32)MsgKorosseoStageFirstFinalsMatch;
-	}
-	else if (scene == (s32)&SceneId_KorosseoKabe)
-	{
-		msg = (s32)MsgKorosseoStageSecondFinalsMatch;
-	}
-	else
-	{
-		msg = (s32)MsgKorosseoStageThirdFinalsMatch;
-	}
-	Engine_EventSetMessage(msg + 1);
-	Engine_EventShowMessage(actor, 0);
-}
-
-void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
-{
-
-	struct FieldActor *rec;
-	struct FieldActor *record;
-	s32				   p9;
-	s32				   p11;
-	s32				   count;
-	s32				   state;
-	s32				   obj;
-	s32				   hi;
-	s32				   lo;
-	s32				   tail;
-	s32				   sx;
-	s32				   sy;
-	s32				   i;
-	u8				   buf[8];
-
-	rec = Object_GetById(owner);
-	p9 = rec->x.part.pixel;
-	p11 = rec->z.part.pixel;
-	if (mode != 3)
-	{
-		count = GetPartyMemberCount();
-		for (i = 0; i < count; i++)
-		{
-			s32 at = 504 + i;
-
-			buf[i] = ((u8 *)&gGameState)[at];
-		}
-		if (count <= 1)
-		{
-			Engine_EventSetMessage((s32)MsgKorosseoDoYourBest);
-			Engine_EventShowMessage(owner, 0);
-			return;
-		}
-		if (GameFlag_IsSet(base + 512) != 0)
-		{
-			Engine_EventSetMessage((s32)MsgKorosseoUnfortunatelyWeHaveFullHouse);
-			Engine_EventShowMessage(owner, 0);
-			return;
-		}
-		if (mode == 2)
-		{
-			state = 0;
-			Engine_TaskWait(6);
-		}
-		else
-		{
-			Engine_EventSetMessage((s32)MsgKorosseoWouldLikeFriendCheerFor);
-			Event_OpenMessage(owner, 0);
-			state = Engine_EventChooseYesNo(0, 0);
-		}
-		if (state == 0)
-		{
-			if (state < count)
-			{
-				for (i = 0; i < count; i++)
-				{
-					Party_RemoveActiveOwner((s8)buf[i]);
-				}
-			}
-			for (i = 0; i < count; i++)
-			{
-				if ((s8)buf[i] != 0)
-				{
-					Party_AddActiveOwner((s8)buf[i]);
-				}
-			}
-			obj = Menu_OpenCharacterSelector();
-			for (i = 0; i < count; i++)
-			{
-				Party_RemoveActiveOwner((s8)buf[i]);
-			}
-			for (i = 0; i < count; i++)
-			{
-				Party_AddActiveOwner((s8)buf[i]);
-			}
-			if (obj != -1)
-			{
-				goto L_main;
-			}
-		}
-	}
-	Engine_EventSetMessage((s32)MsgKorosseoIfKnowWhoWantCheer);
-	Engine_EventShowMessage(owner, 0);
-	return;
-L_main:
-	UiText_DrawQuantity(obj, 1);
-	Engine_EventSetMessage((s32)MsgKorosseoRobinWillCheerForWay);
-	Event_ShowMessage(owner, 0);
-	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-	Actor_SetSpeed(obj, 0x10000, 0x8000);
-	Actor_SetSpeed(owner, 0x10000, 0x8000);
-	record = Object_GetById(0);
-	if (record != 0)
-	{
-		Actor_SetPosition(obj, record->x.fixed, record->z.fixed);
-	}
-	hi = p11 + 16;
-	Actor_WalkToAndWait(obj, p9, hi);
-	lo = p9 + 16;
-	Engine_ActorWalkToAndWait(0, lo, hi);
-	Engine_ActorFaceEachOther(obj, ACTOR_PARTY_LEADER, 30);
-	Engine_ActorSetAnimation(obj, 3);
-	tail = hi - 32;
-	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-	Actor_WalkToAndWait(owner, p9, tail);
-	Engine_ActorWalkTo(owner, lo, tail);
-	Object_LinkObjectAndSetCallback(0, obj);
-	Actor_WalkToAndWait(obj, p9, tail);
-	Engine_ActorSetAnimation(owner, 1);
-	Actor_FaceDirection(owner, 0x8000, 0);
-	Actor_WalkToAndWait(obj, p9, p11 - 48);
-	Actor_WalkToAndWait(owner, p9, tail);
-	Actor_WalkToAndWait(owner, p9, p11);
-	Party_RemoveActiveOwner(obj);
-	GameFlag_Set(base + 512);
-	rec = Object_GetById(obj);
-	sx = rec->x.fixed >> 20;
-	GameFlag_SetByte((obj << 4) + 880, sx);
-	sy = rec->z.fixed >> 20;
-	GameFlag_SetByte((obj << 4) + 888, sy);
-}
-
-static void ColossoLogRollingStage_ApplyItemToMatchingSlots(s32 handle, s32 item)
-{
-
-	u8 *record;
-	s32 slot;
-
-	record = UnitGet(handle);
-	Inventory_AddItem(handle, item);
-
-	for (slot = 0; slot <= 14; slot++)
-	{
-		if (((struct BtlUnit *)record)->inventory[slot] == item)
-		{
-			Inventory_Equip(handle, slot);
-		}
-	}
-}
-
-// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/cheer.c"
+#include "../common/item/addequip.c"
 #include "../common/korosseo/korosseo.c"
 
 static void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
@@ -2433,122 +2028,9 @@ static void FieldScene_RunScene3bcSequenceA(s32 a0)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/compete.c"
-
-static void ColossoLogRollingStage_ResetActorMotion(s32 selector)
-{
-
-	struct FieldActor *record;
-
-	record = Object_GetById(selector);
-	ObjectDispatch_InitFromTable6(record);
-
-	record->velocity_x = 0;
-	record->velocity_z = 0;
-	record->target_x = 0x80000000;
-	record->target_z = 0x80000000;
-}
-
-static void ColossoLogRollingStage_EnsurePaletteHandle(void)
-{
-
-	s16 *cursor = &Korosseo_MarkerSlot;
-
-	if (*cursor == -1)
-	{
-		*cursor = Resource_LoadFixedBlockBIntoFreeSlot();
-	}
-}
-
-// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/markslot.c"
 #include "../common/korosseo/marker.c"
-
-void ColossoLogRollingStage_StartPaletteTask(u32 first_value, u32 second_value, u32 mode)
-{
-	ColossoLogRollingStage_EnsurePaletteHandle();
-
-	Korosseo_MarkerX = first_value;
-	Korosseo_MarkerY = second_value;
-	Korosseo_MarkerPriority = (mode & 3);
-	Korosseo_MarkerBlink = 0;
-	Korosseo_MarkerSteps = 0;
-
-	{
-		s32 budget = 0xc80;
-		s32 task = (s32)Korosseo_UpdateMarker;
-		Engine_TaskAddCallback(task, budget);
-	}
-}
-
-static void ColossoLogRollingStage_StartPaletteTaskFromState(u32 first_value, u32 second_value, u32 mode)
-{
-	Korosseo_MarkerEndX = first_value;
-	Korosseo_MarkerEndY = second_value;
-	*(u16 *)&Korosseo_MarkerStartX = Korosseo_MarkerX;
-	*(u16 *)&Korosseo_MarkerStartY = Korosseo_MarkerY;
-	Korosseo_MarkerSteps = mode;
-	Korosseo_MarkerStep = 0;
-
-	{
-		s32 budget = 0xc80;
-		s32 task = (s32)Korosseo_UpdateMarker;
-		Engine_TaskAddCallback(task, budget);
-	}
-}
-
-static void ColossoLogRollingStage_StopPaletteTask(void)
-{
-
-	Engine_TaskRemoveCallback(Korosseo_UpdateMarker);
-	Resource_ResetEntry(Korosseo_MarkerSlot);
-	Korosseo_MarkerSlot = -1;
-}
-
-static void ColossoLogRollingStage_PositionScaledObject(s32 id, s32 x, s32 z)
-{
-
-	ScaledStageObject *object = (ScaledStageObject *)Engine_ActorLookup(id);
-	s32				   scale;
-
-	if (object != 0)
-	{
-		scale = 0x20000;
-		object->scale_x = scale;
-		object->scale_z = scale / 2;
-		object->state = 0;
-		ObjectDispatch_InitFromTable6(object);
-		Object_SetMode(object, 5);
-		Engine_ObjectSetPosition(object, x << 16, object->y, z << 16);
-	}
-}
-
-void ColossoLogRollingStage_SpawnPositionedObject(s32 object_id, s32 x, s32 z)
-{
-
-	u8 *object = (u8 *)Engine_ActorLookup(object_id);
-
-	if (object == 0)
-	{
-		return;
-	}
-
-	{
-		s32 move_rate = 0x14000;
-		u8 *state_byte = object;
-		u8	zero = 0;
-		((struct FieldActor *)object)->speed = move_rate;
-		((struct FieldActor *)object)->acceleration = move_rate >> 1;
-		state_byte = &((struct FieldActor *)object)->paused;
-		*state_byte = zero;
-	}
-
-	ObjectDispatch_InitFromTable6(object);
-	Object_SetMode(object, 5);
-	Engine_ObjectSetPosition(object, x << 16, ((struct FieldActor *)object)->y.fixed, z << 16);
-	Object_CommitPosition(object);
-	Object_SetMode(object, 1);
-}
-
-// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/markmove.c"
 #include "../common/korosseo/item_icon.c"
 
 static void WriteU32AsHex(u8 *hex_text, u32 value)
@@ -2685,15 +2167,15 @@ static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 seco
 	if (flag == 0)
 	{
 		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-		((s32 (*)())ColossoLogRollingStage_ApplyItemToMatchingSlots)(0, first_handle);
-		UiText_DrawQuantity(first_handle, 2);
+		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, first_handle);
+		UiWork_PushValueSlot(first_handle, 2);
 	}
 	else
 	{
-		((s32 (*)())ColossoLogRollingStage_ApplyItemToMatchingSlots)(0, second_handle);
-		UiText_DrawQuantity(second_handle, 2);
+		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, second_handle);
+		UiWork_PushValueSlot(second_handle, 2);
 	}
-	UiText_DrawQuantity(gGameState.selected_actor, 1);
+	UiWork_PushValueSlot(gGameState.selected_actor, 1);
 	Engine_MessageShowCentered((s32)MsgKorosseoRobinGotItem, 3);
 	ObjectDispatch_WaitForValue16(actor);
 	return flag;
@@ -2701,89 +2183,9 @@ static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 seco
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/path_rival.c"
-
-void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_actor, s32 mode,
-	s32 centre, s32 extra, s32 third_actor, s32 fourth_actor)
-{
-
-	u8				  *descriptor;
-	struct FieldActor *first_record;
-	struct FieldActor *second_record;
-	s32				   handle;
-	s32				   extent;
-
-	descriptor = Runtime_AllocateBlock(59, 0x7170);
-	handle = (s32)Runtime_BumpAllocateAlternatePool(512);
-
-	*(u16 *)(descriptor + 222) = first_actor;
-	*(u16 *)(descriptor + 224) = second_actor;
-	*(u16 *)(descriptor + 226) = third_actor;
-	*(u16 *)(descriptor + 228) = fourth_actor;
-	*(u16 *)(descriptor + 230) = mode;
-	*(s32 *)(descriptor + 232) = centre;
-	*(s32 *)(descriptor + 236) = extra;
-
-	first_record = Object_GetById(first_actor);
-	second_record = Object_GetById(second_actor);
-
-	if (Engine_GameFlagIsSet(0x109) == 0)
-	{
-		second_record->x.fixed = (centre << 1) - first_record->x.fixed;
-		second_record->z.fixed = first_record->z.fixed;
-	}
-
-	*(u16 *)(descriptor + 218) = 0;
-	*(u16 *)(descriptor + 220) = 0;
-
-	Resource_DecodeType01(Korosseo_GaugeGraphics, handle);
-
-	extent = Resource_FindFreeEntry();
-	*(u16 *)(descriptor + 216) = extent;
-	Engine_VramLoad((s16)extent, 512, handle);
-
-	Engine_TaskAddCallback((s32)Korosseo_DrawGauge + 1, 0xc76);
-
-	Runtime_BumpFree(handle);
-}
-
-static void ColossoLogRollingStage_InitializeSceneControl(s32 resource)
-{
-	u8			 *work = gKorosseoWork;
-	SceneControl *control = (SceneControl *)gSceneState;
-
-	Resource_DecodeType01(Resource_GetTableEntry(resource), work + 240);
-	if (Engine_GameFlagIsSet(0x109) == 0)
-	{
-		control->enabled = 1;
-		control->active = 1;
-		control->scene_variant = *(u16 *)(work + 224);
-		control->timer = 0;
-		control->phase = 0;
-	}
-	Engine_TaskAddCallback(Korosseo_UpdatePathRival, 0xc85);
-}
-
-// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/setup.c"
 #include "../common/korosseo/scene_state.c"
-
-static void *SceneData_FindSlotAtPosition(void *position, void *self)
-{
-	s32				   *pos = position;
-	struct FieldActor **slots = gEventWork->actors;
-	u32					i;
-
-	for (i = 8; i <= 65; i++)
-	{
-		struct FieldActor *p = slots[i];
-
-		if ((pos[0] >> 20) == (p->x.fixed >> 20) && (pos[1] >> 20) == (p->y.fixed >> 20)
-			&& (pos[2] >> 20) == (p->z.fixed >> 20))
-		{
-			return p;
-		}
-	}
-	return 0;
-}
+#include "../common/object/findslot.c"
 
 static void ColossoLogRollingStage_PushStagedActor(void)
 {
@@ -2874,35 +2276,8 @@ static void ColossoLogRollingStage_PushStagedActor(void)
 	Object_SetMode(subject, 1);
 }
 
-static void *SceneActor_FindOccupantAheadOfSubject(void)
-{
-	struct FieldActor *record;
-	s32				   facing;
-	s32				   position[3];
-	s32				  *occupant;
-
-	record = Object_GetById(gGameState.selected_actor);
-
-	facing = (record->facing + 0x2000) & 0xc000;
-
-	position[0] = (record->x.fixed & 0xfff00000) + 0x80000;
-	position[1] = record->y.fixed;
-	position[2] = (record->z.fixed & 0xfff00000) + 0x80000;
-	Vector_AddPolarOffset(0x100000, facing, position);
-
-	occupant = SceneData_FindSlotAtPosition(position, record);
-	if (occupant == 0)
-	{
-		position[0] = (record->x.fixed & 0xfff00000) + 0x80000;
-		position[1] = record->y.fixed;
-		position[2] = (record->z.fixed & 0xfff00000) + 0x80000;
-		Vector_AddPolarOffset(0x200000, facing, position);
-
-		occupant = SceneData_FindSlotAtPosition(position, record);
-	}
-
-	return occupant;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/occupant.c"
 
 const s32 KorosseoMaruta_Record30Script[] = {
 	SC_SET(SW_Y, PIXELS(1)),

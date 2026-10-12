@@ -2,6 +2,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/kuupuappu_heya/heya.h"
+#include "unit/field/common/kuupuappu/itemobj.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/evtable.h"
@@ -63,7 +64,6 @@ static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
 static void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
 static void SceneEffect_ApplyPairWithValue141(s32 a, s32 b);
 static void SceneState_SetValue2ThenFinish(void);
-static void OverlayObject_ConfigureObject22WithResource17(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 static void KuupuappuHeya_UpdateActorStops(void);
 static void KuupuappuHeya_StartActorStops(void);
 
@@ -272,23 +272,8 @@ static void EV23_TALK(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActorEighteenConditionalScene(void)
-{
-	Engine_EventBegin();
-	if (PartyInventory_HasSpace() == 0)
-	{
-		Engine_ActorSetAnimationAndWait(18, 4);
-		Engine_EventWait(20);
-		Engine_EventSetMessage((s32)MsgKuupuappuWowHaveManyThingsArent);
-		Engine_EventShowMessage(18, 0);
-	}
-	else
-	{
-		Engine_ItemShowFound(ITEM_BONE, 3);
-		Engine_PartyGiveItem(ITEM_BONE, 0);
-	}
-	Engine_EventEnd();
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/bone.c"
 
 static void EV250_RAISED(void)
 {
@@ -338,19 +323,8 @@ static void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x)
 	Engine_EventShowMessage(x, 0);
 }
 
-static void SceneState_RunGuardedActorStep(s32 x)
-{
-	u8 *flag = &Object_GetById(x)->paused;
-	s32 zero = 0;
-
-	*flag = 1;
-	Engine_EventBegin();
-	Engine_ActorSetAnimation(x, 1);
-	Engine_EventWait(2);
-	Engine_EventShowMessage(x, 0);
-	Engine_EventEnd();
-	*flag = zero;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/talk.c"
 
 static void SceneDialogue_PromptAndCountSkip(s32 x)
 {
@@ -724,7 +698,7 @@ static void EV09_PSYNERGY(void)
 	{
 		Engine_EventSetMessage((s32)MsgKuupuappuIfRockWorthlessMaybeThats);
 	}
-	SceneState_RunGuardedActorStep(9);
+	SceneActor_RunActorCommandWithFlag91(9);
 	Engine_EventEnd();
 }
 
@@ -739,7 +713,7 @@ static void EV11_PSYNERGY(void)
 	{
 		Engine_EventSetMessage((s32)MsgKuupuappuFatherLooksSadWorryingLike);
 	}
-	SceneState_RunGuardedActorStep(11);
+	SceneActor_RunActorCommandWithFlag91(11);
 	Engine_EventEnd();
 }
 
@@ -754,7 +728,7 @@ static void EV12_PSYNERGY(void)
 	{
 		Engine_EventSetMessage((s32)MsgKuupuappuGuessNothingInOurHouse);
 	}
-	SceneState_RunGuardedActorStep(12);
+	SceneActor_RunActorCommandWithFlag91(12);
 	Engine_EventEnd();
 }
 
@@ -769,7 +743,7 @@ static void EV16_PSYNERGY(void)
 	{
 		Engine_EventSetMessage((s32)MsgKuupuappuCaveInGomaRangeDangerous);
 	}
-	SceneState_RunGuardedActorStep(16);
+	SceneActor_RunActorCommandWithFlag91(16);
 	Engine_EventEnd();
 }
 
@@ -788,7 +762,7 @@ static void EV18_PSYNERGY(void)
 	{
 		Engine_EventSetMessage((s32)MsgKuupuappuHeReallyLikesBonesWonder);
 	}
-	SceneState_RunGuardedActorStep(18);
+	SceneActor_RunActorCommandWithFlag91(18);
 	Engine_EventEnd();
 }
 
@@ -1718,28 +1692,8 @@ static void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 
 	}
 }
 
-static void SceneState_SetFlagByActorPosition(void)
-{
-	struct FieldActor *p0 = Object_GetById(0);
-	s32				   rx = p0->x.fixed;
-	s32				   x;
-	s32				   z;
-
-	struct FieldActor *p1 = Object_GetById(0);
-	x = rx >> 20;
-	z = p1->z.fixed;
-	x -= 34;
-	z >>= 20;
-
-	if ((u32)x <= 1 && z > 40 && z <= 42)
-	{
-		Engine_GameFlagSet(148 << 2);
-	}
-	else
-	{
-		Engine_GameFlagClear(148 << 2);
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/spotflag.c"
 
 s32 KuupuappuHeya_ApplyEntryState(void)
 {
@@ -2007,20 +1961,8 @@ static s32 KuupuappuHeya_GetIwanVenusDjinnCount(void)
 	return UnitGet(2)->djinn_owned_counts[0];
 }
 
-static s32 OverlayObject_RunObjectTwoWhenFlagged(void)
-{
-	u8 *state;
-
-	BattlePlacement_UpdateTimedEntriesTwentyTimes();
-	state = UnitGet(2);
-	if (*(s32 *)(state + 0xf8) & 1)
-	{
-		Djinn_Transfer(2, 0, 0, 0);
-		Engine_AudioPlayCue(126);
-		UnitCalc(0);
-		UnitCalc(2);
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/djinn.c"
 
 static void RunEventScript01(void)
 {
@@ -2627,7 +2569,7 @@ static void RunDialoguePromptScene(void)
 		{
 			Engine_EventSetMessage((s32)MsgKuupuappuWaitDontWantTakeYour);
 			Event_ShowMessage(IWAN, 0);
-			OverlayObject_RunObjectTwoWhenFlagged();
+			OverlayObject_RunObject2WhenFlagged();
 		}
 		Party_RemoveOwnerRestored(2);
 		*slot = saved;
@@ -2716,37 +2658,8 @@ static void SceneState_SetValue2ThenFinish(void)
 	BattleEffect_CleanupSceneObjects();
 }
 
-static void OverlayObject_ConfigureObject22WithResource17(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z)
-{
-	u8 *o;
-	u8 *q;
-	u8 *p;
-	u8 *v;
-	s32 z;
-	s32 m;
-
-	z = 0;
-	o = (u8 *)Engine_ObjectCreate(22, fixed_x, fixed_y, fixed_z);
-	if (o != 0)
-	{
-		q = (u8 *)((struct FieldActor *)o)->sprite;
-		p = q + 38;
-		*p = z;
-		p += 1;
-		*p = z;
-		m = 33;
-		m = -m;
-		q[5] &= m;
-		q[9] &= 15;
-		o[0x55] = z;
-		o[0x5c] = 1;
-		v = Runtime_AllocateHeapBlock(17, 0x608);
-		Engine_ItemLoadIcon(a);
-		v += 0x400;
-		Engine_VramLoad(q[28], 0x80, v);
-		Engine_HeapRelease(17);
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/itemobj.c"
 
 static u8 *SceneData_FindEntryAtPosition(s32 *o)
 {
@@ -3560,7 +3473,7 @@ struct SceneEvent gKuupuappuHeyaEventsEntrances15To17[] = {
 };
 
 struct SceneEvent gKuupuappuHeyaEventsFlag855[] = {
-	{ SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorEighteenConditionalScene) },
+	{ SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(EV41_SEARCH) },
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 5 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 6 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 7 },

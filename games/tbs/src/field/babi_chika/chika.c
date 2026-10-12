@@ -58,46 +58,8 @@ struct Vec
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
 
-static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
-{
-	work->sprite->priority = mode;
-}
-
-static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
-{
-	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
-
-	if (object != 0)
-	{
-		object->sprite->priority = 0;
-		object->motion_flags = 0;
-		object->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 14);
-		Engine_ObjectSetBlendMode(object, 1);
-		return object;
-	}
-	return 0;
-}
-
-static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
-{
-	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
-
-	if (object != 0)
-	{
-		object->sprite->priority = 1;
-		object->motion_flags = 0;
-		object->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 15);
-		object->priority_flags = (object->priority_flags & 0xfe) | 2;
-		return object;
-	}
-	return 0;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawn.c"
 
@@ -221,52 +183,8 @@ static void BabiChika_UpdateTrackedActor(void)
 	}
 }
 
-static s32 SceneActor_SetFlagBitByRelativeDepth(struct FieldActor *actor)
-{
-	struct FieldActor *ref;
-	u8				  *fp;
-	u8				   flag;
-	ref = Object_GetById(ACTOR_PARTY_LEADER);
-	fp = &actor->priority_flags;
-	flag = *fp | 2;
-	*fp = flag;
-	if (ref->z.fixed < actor->z.fixed)
-	{
-		s32 lim = actor->z.fixed - ref->z.fixed;
-		s32 ay;
-		lim += 0x00040000;
-		ay = actor->y.fixed;
-		ay += lim;
-		if (ref->y.fixed <= ay)
-		{
-			flag &= 0xfd;
-			*fp = flag;
-		}
-	}
-	return 0;
-}
-
-static void SceneState_SwapSlotPairByRank(s32 first, s32 second)
-{
-	struct FieldActor *a = Object_GetById(first);
-	struct FieldActor *b = Object_GetById(second);
-
-	if (a->z.fixed <= b->z.fixed)
-	{
-		s32 t;
-
-		t = a->x.fixed;
-		a->x.fixed = b->x.fixed;
-		b->x.fixed = t;
-		t = a->y.fixed;
-		a->y.fixed = b->y.fixed;
-		b->y.fixed = t;
-		t = a->z.fixed;
-		a->z.fixed = b->z.fixed;
-		b->z.fixed = t;
-		Engine_TaskWait(1);
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/depth.c"
 
 static s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object)
 {
@@ -337,19 +255,8 @@ static void SceneActor_WaitValueBelowLimit(struct FieldActor *track)
 	track->target_y = ACTOR_NO_TARGET;
 }
 
-static void Effect_AdvanceMotion(union FieldObject *object)
-{
-	struct FieldEffect *efx = &object->effect;
-
-	efx->x += efx->velocity_x;
-	efx->y += efx->velocity_y;
-	efx->z += efx->velocity_z;
-	efx->velocity_x -= efx->velocity_x / 18;
-	efx->velocity_z -= efx->velocity_z / 16;
-	efx->scale_x += efx->scale_rate_x;
-	efx->scale_y += efx->scale_rate_y;
-	efx->sprite->rotation += efx->spin;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/advance.c"
 
 static void BabiChika_RunLeaderSpray(void)
 {
@@ -394,34 +301,8 @@ static void BabiChika_RunLeaderSpray(void)
 #define ACTOR_UPDATE_IDLE ((void (*)(union FieldObject *))SceneActor_SetFlagBitByRelativeDepth)
 #define ACTOR_UPDATE_PANEL ((void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor)
 
-static void SceneEffect_SpawnNineRadialEffects(s32 actor)
-{
-	struct FieldActor	*object;
-	struct Vec			 vec;
-	struct EffectOptions params;
-	u32					 i;
-	s32					 v;
-	s32					 x;
-	s32					 z;
-
-	object = Object_GetById(actor);
-	params.priority = 1;
-	params.palette = 7;
-	params.update = Effect_AdvanceMotion;
-	for (i = 0; i <= 16; i += 2)
-	{
-		v = i << 12;
-		vec.x = Engine_MathCos(v);
-		vec.y = 0;
-		z = Engine_MathSin(v);
-		x = vec.x;
-		vec.z = z;
-		x += Math_Divide(x, 3);
-		vec.x = x;
-		Effect_Spawn(
-			object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y, z, 0x01030001, &params);
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/radial.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -1237,7 +1118,7 @@ static void FieldScene_PlaceAndPinSlots8And9(void)
 		s32 p5 = 9, p6 = 38;
 		Engine_MapCopyCellAttributes(73, 38, 5, 5, p5, p6);
 	}
-	SceneState_SwapSlotPairByRank(9, 8);
+	SceneActor_SwapPositionsByDepth(9, 8);
 
 	{
 		s32 col = Object_GetById(8)->x.fixed >> 20;
@@ -1260,7 +1141,7 @@ static void FieldScene_PlaceAndPinSlots10And11(void)
 		s32 k5 = 29, k6 = 30;
 		Engine_MapCopyCellAttributes(93, 30, 6, 5, k5, k6);
 	}
-	SceneState_SwapSlotPairByRank(11, 10);
+	SceneActor_SwapPositionsByDepth(11, 10);
 
 	{
 		s32 col20 = Object_GetById(10)->x.fixed >> 20;

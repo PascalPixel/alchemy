@@ -2,6 +2,8 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/haidia_mura/mura.h"
+#include "unit/field/common/object/orbit.h"
+#include "unit/field/common/effect/psynergy.h"
 #include "unit/field/world_map/linked_effects.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
@@ -58,8 +60,6 @@ static void HaidiaMura_MoveActorAlongHigherZPath(s32 a0, s32 a1, s32 a2, s32 a3)
 static void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode);
 static void FieldScene_RunLargeStagingSequence(void);
 static void Scene_RepairTheHouse(void);
-static void FieldScene_RunStep8C(void);
-static void FieldScene_RunSingleStep(void);
 static void SceneState_SetValue1ThenCall(void);
 static void SceneState_SetValue0ThenCall(void);
 static void FieldScene_RunStep9(void);
@@ -74,53 +74,9 @@ static void HaidiaMura_OpenVillagerLane(void);
 static void Effect_PlayStepSound(void);
 static void FieldScene_RunScene373SequenceB(void);
 static void SceneActor_SetFlagByteBySlotZeroPosition(void);
-static void InitializeStagedActorSceneOrbitingEffect(s32 id);
 static void OverlayObject_UpdateOnFrameBit1(s32 p);
 static void SceneEffect_UpdateObjectOnOddFrames(s32 p);
 static void SceneEffect_UpdateObjectOnOddFramesOnly(s32 p);
-
-typedef struct OrbitingSceneObjectSprite
-{
-	u8 padding_00[5];
-	u8 flags_05_low : 5;
-	u8 flags_05_bit_5 : 1;
-	u8 flags_05_high : 2;
-	u8 padding_06[3];
-	u8 flags_09_low : 2;
-	u8 flags_09_mode : 2;
-	u8 flags_09_high : 4;
-	u8 padding_0a[18];
-	u8 palette;
-	u8 padding_1d[10];
-	u8 state;
-} OrbitingSceneObjectSprite;
-
-typedef struct OrbitingSceneObject
-{
-	u8						   padding_00[8];
-	s32						   x;
-	s32						   y;
-	s32						   z;
-	u8						   padding_14[15];
-	u8						   flags_23;
-	u8						   padding_24[12];
-	s32						   orbit_angle;
-	u8						   padding_34[4];
-	s32						   orbit_center_x;
-	s32						   orbit_center_y;
-	s32						   orbit_center_z;
-	u8						   padding_44[12];
-	OrbitingSceneObjectSprite *sprite;
-	u8						   padding_54;
-	u8						   mode;
-	u8						   state;
-	u8						   padding_57[5];
-	u8						   active;
-	u8						   padding_5d[4];
-	u8						   visible;
-	u8						   padding_62[10];
-	u32						   callback;
-} OrbitingSceneObject;
 
 enum HouseActor
 {
@@ -1835,7 +1791,7 @@ static void FieldScene_RunLargeStagingSequence(void)
 	Actor_ShowEmote(GERALD, 0x105, 40);
 	Engine_ActorRunRepeatedMotion(GERALD, 2);
 	Engine_EventWait(20);
-	FieldScene_RunStep8C();
+	SceneState_SetValue140Mode0();
 	Engine_ActorSetAnimation(GERALD, 17);
 	Event_ShowMessageAndWait(0x2001, 0, 20);
 	Event_PlayCue(131);
@@ -1879,7 +1835,7 @@ static void FieldScene_RunLargeStagingSequence(void)
 	Actor_FaceDirection(GERALD, 0x3000, 0);
 	Engine_ActorSetAnimation(GERALD, 1);
 	Effect_SpawnRisingDustBurst((s32)rec8);
-	FieldScene_RunSingleStep();
+	SceneEffect_CleanupSceneObjects();
 	Engine_EventWait(10);
 	Actor_WalkToAndWait(JASMINE, 0x1a8, 0x270);
 	Engine_ActorFaceEachOther(GERALD, JASMINE, 60);
@@ -2090,7 +2046,7 @@ static void Scene_RepairTheHouse(void)
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
 	Engine_EventWait(20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 40);
-	FieldScene_RunStep8C();
+	SceneState_SetValue140Mode0();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 17);
 	Engine_TaskAddCallback((void (*)(void))Effect_PlayStepSound, 3200);
 	for (i = 0; i < 40; i++)
@@ -2215,7 +2171,7 @@ static void Scene_RepairTheHouse(void)
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 11);
 	Engine_ActorEnableActionCallback(0, (u32)gLeaderHammerAction);
 	Engine_EventWait(120);
-	FieldScene_RunSingleStep();
+	SceneEffect_CleanupSceneObjects();
 	Map_CopyCellsTo(5, 103, 82, 42, 1, 1);
 	Engine_ActorEnableActionCallback(0, 1);
 	scene->scale_x = 0x10000;
@@ -2649,15 +2605,8 @@ static void Scene_RepairTheHouse(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunStep8C(void)
-{
-	Engine_PsynergyBegin(0x8c, 0);
-}
-
-static void FieldScene_RunSingleStep(void)
-{
-	BattleEffect_CleanupSceneObjects();
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/psynergy.c"
 
 static void SceneState_SetValue1ThenCall(void)
 {
@@ -2960,60 +2909,8 @@ static void SceneActor_SetFlagByteBySlotZeroPosition(void)
 	}
 }
 
-static s32 SceneEffect_UpdateOrbitPosition(s32 *p)
-{
-	s16 *q = (s16 *)p[20];
-	s32	 a, b;
-	s32	 d = Engine_MathSin(p[12]) * 2;
-	if (d > 0)
-		d = -d;
-	p[2] = p[14] + Engine_MathCos(p[12]) * 2;
-	p[3] = p[15] + d;
-	q[15] = Engine_MathCos(p[12] + 0x8000) / 8;
-	a = Engine_RandomNext();
-	b = Engine_RandomNext();
-	p[12] = p[12] + ((((u32)a << 9) >> 16) + (((u32)b << 9) >> 16)) + 0x400;
-	return 0;
-}
-
-static void InitializeStagedActorSceneOrbitingEffect(s32 id)
-{
-	OrbitingSceneObject		  *actor;
-	OrbitingSceneObjectSprite *sprite;
-	u8						  *transfer;
-	s32						   zero;
-
-	actor = (OrbitingSceneObject *)Object_GetById(id);
-	sprite = actor->sprite;
-	sprite->flags_09_mode = 1;
-	sprite->flags_05_bit_5 = 0;
-	sprite->flags_09_high = 0;
-
-	zero = 0;
-	sprite->state = zero;
-	Engine_ActorSetSpriteFlags(actor, zero);
-	actor->active = zero;
-	actor->mode = zero;
-
-	if (Engine_GameFlagIsSet(0x109) == 0)
-		actor->y += 0x200000;
-
-	actor->flags_23 &= 0xfe;
-	actor->visible = 1;
-
-	transfer = Engine_HeapAllocate(17, 0x608);
-	Engine_ItemLoadIcon(ITEM_NUT);
-	transfer += 0x400;
-	Engine_VramLoad(sprite->palette, 128, transfer);
-	Engine_HeapRelease(17);
-
-	actor->orbit_center_x = actor->x;
-	actor->orbit_angle = zero;
-	actor->orbit_center_y = actor->y;
-	actor->active = 1;
-	actor->callback = (u32)SceneEffect_UpdateOrbitPosition;
-	actor->state = zero;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/orbit.c"
 
 static void OverlayObject_UpdateOnFrameBit1(s32 p)
 {
@@ -3040,57 +2937,8 @@ static void SceneEffect_UpdateObjectOnOddFramesOnly(s32 p)
 		Engine_ObjectSetPartPalettes(p, (gFrameCount >> 1) % 6);
 }
 
-static void Effect_AnimateVerticalPositive(union FieldObject *object)
-{
-	struct FieldActor *self = &object->actor;
-	struct FieldActor *anchor;
-	s32				   frame;
-	s32				   amplitude;
-
-	anchor = self->linked_object;
-	self->timer = (self->timer + 1);
-	frame = self->timer;
-
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease(self);
-		return;
-	}
-
-	amplitude = Engine_MathSin(frame << 10);
-	self->scale_x = amplitude;
-	self->scale_y = amplitude;
-	self->x.fixed = anchor->x.fixed;
-	self->y.fixed += 0x10000;
-	self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
-}
-
-static void Effect_AnimateVerticalNegative(union FieldObject *object)
-{
-	struct FieldActor *self = &object->actor;
-	struct FieldActor *anchor;
-	s32				   frame;
-	s32				   amplitude;
-
-	anchor = self->linked_object;
-	self->timer = (self->timer + 1);
-	frame = self->timer;
-
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease(self);
-		return;
-	}
-
-	amplitude = Engine_MathSin(frame << 10);
-	self->scale_x = amplitude;
-	self->scale_y = -amplitude;
-	self->x.fixed = anchor->x.fixed;
-	self->y.fixed += 0x10000;
-	self->z.fixed = anchor->z.fixed - (0x10000 - amplitude) * 5 + 0x100000;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/vertical.c"
 #include "../world_map/linked_effects.c"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)

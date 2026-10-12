@@ -6,6 +6,7 @@
 #include "game_state.h"
 #include "vram_tab.h"
 #include "unit/field/common/haidia_babi/babi.h"
+#include "unit/field/common/effect/psynergy.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"
@@ -65,37 +66,8 @@ static void FieldScene_RunSupplementalSequenceOne(void);
 static void HaidiaBabi_SpawnEffectPair(union FieldObject *object);
 static void FieldScene_RunSixStepSequence17e4(void);
 
-static s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
-{
-	s32					 delta;
-	u16					 old;
-	s32					 angle;
-	struct FacingObject *target;
-
-	target = obj->facing_target;
-	if (target != 0)
-	{
-		obj->facing_flags = (0xFE & obj->facing_flags);
-		angle = (u16)ArcTan2(
-			target->position_z - obj->position_z, target->position_x - obj->position_x);
-		old = obj->facing;
-		delta = (s16)(angle - old);
-		if (delta != 0)
-		{
-			if (delta > 0x1000)
-			{
-				delta = 0x1000;
-			}
-
-			if (delta < -0x1000)
-			{
-				delta = -0x1000;
-			}
-			obj->facing = (old + delta);
-		}
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../object/facing.c"
 
 enum
 {
@@ -998,55 +970,8 @@ static void OverlayObject_ApplyRandomSlotOnOddFrames(union FieldObject *object)
 	}
 }
 
-static void Effect_AnimateVerticalPositive(union FieldObject *object)
-{
-	struct FieldActor *self = &object->actor;
-	struct FieldActor *anchor;
-	s32				   frame;
-	s32				   amplitude;
-
-	anchor = self->linked_object;
-	self->timer = (self->timer + 1);
-	frame = self->timer;
-
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease(self);
-		return;
-	}
-
-	amplitude = Engine_MathSin(frame << 10);
-	self->scale_x = amplitude;
-	self->scale_y = amplitude;
-	self->x.fixed = anchor->x.fixed;
-	self->y.fixed += 0x10000;
-	self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
-}
-
-static void Effect_AnimateVerticalNegative(union FieldObject *object)
-{
-	struct FieldActor *self = &object->actor;
-	struct FieldActor *anchor;
-	s32				   frame;
-	s32				   amplitude;
-
-	anchor = self->linked_object;
-	self->timer = (self->timer + 1);
-	frame = self->timer;
-
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease(self);
-		return;
-	}
-
-	amplitude = Engine_MathSin(frame << 10);
-	self->scale_x = amplitude;
-	self->scale_y = -amplitude;
-	self->x.fixed = anchor->x.fixed;
-	self->y.fixed += 0x10000;
-	self->z.fixed = anchor->z.fixed - (0x10000 - amplitude) * 5 + 0x100000;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../effect/vertical.c"
 
 static void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
 {
@@ -1103,15 +1028,8 @@ static void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
 	}
 }
 
-static void SceneState_SetValue140Mode0(void)
-{
-	Engine_PsynergyBegin(0x8C, 0);
-}
-
-static void FieldScene_RunSingleStep(void)
-{
-	BattleEffect_CleanupSceneObjects();
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../effect/psynergy.c"
 
 static void FieldScene_RunActor8TwoStep(void)
 {

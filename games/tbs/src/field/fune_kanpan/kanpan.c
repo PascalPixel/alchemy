@@ -75,33 +75,10 @@ static void FuneKanpan_PlaceLeaderOnDeck(void);
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
 
-static s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
-{
-	s32 Math_RemainderUnsigned(s32, s16);
-	switch (actor->timer)
-	{
-	case 6:
-		actor->scale_x += -0x4000;
-		actor->scale_y += 0x2000;
-		break;
-	case 4:
-		actor->scale_x += 0x2000;
+s32 Math_RemainderUnsigned(s32, s16);
 
-		actor->scale_y -= 0x1000;
-		break;
-	case 2:
-		actor->scale_x += 0x1000;
-		actor->scale_y += -0x800;
-		break;
-	case 0:
-		actor->scale_x = 0x10000;
-		actor->scale_y = 0x10000;
-		actor->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
-		break;
-	}
-	actor->timer--;
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/pulse.c"
 
 static s32 SceneState_ApplyArgMode1AndReturnZero(s32 a)
 {
@@ -1178,7 +1155,6 @@ static void FuneKanpan_ApplyEntryState(void)
 
 static void FuneKanpan_PlaceRandomDeckActors(void)
 {
-	s32				   Math_RemainderUnsigned(s32, s16);
 	struct FieldActor *actor;
 	s32				   flag;
 

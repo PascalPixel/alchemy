@@ -59,46 +59,8 @@ static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
 
-static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
-{
-	work->sprite->priority = mode;
-}
-
-static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
-{
-	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
-
-	if (object != 0)
-	{
-		object->sprite->priority = 0;
-		object->motion_flags = 0;
-		object->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 14);
-		Engine_ObjectSetBlendMode(object, 1);
-		return object;
-	}
-	return 0;
-}
-
-static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
-{
-	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
-
-	if (object != 0)
-	{
-		object->sprite->priority = 1;
-		object->motion_flags = 0;
-		object->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 15);
-		object->priority_flags = (object->priority_flags & 0xfe) | 2;
-		return object;
-	}
-	return 0;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawn.c"
 
@@ -107,34 +69,9 @@ static void EV08_TALK(void)
 	BattleFx_SetPhaseRequest(8, 66);
 }
 
-static void OverlayObject_WaitUntilIdle(s32 *obj)
-{
-	s32 i = 60;
-
-	while (i != 0)
-	{
-		Engine_TaskWait(1);
-		i--;
-		if (obj[10] == 0)
-		{
-			break;
-		}
-	}
-}
-
-static void Effect_AdvanceMotion(union FieldObject *object)
-{
-	struct FieldEffect *efx = &object->effect;
-
-	efx->x += efx->velocity_x;
-	efx->y += efx->velocity_y;
-	efx->z += efx->velocity_z;
-	efx->velocity_x -= efx->velocity_x / 18;
-	efx->velocity_z -= efx->velocity_z / 16;
-	efx->scale_x += efx->scale_rate_x;
-	efx->scale_y += efx->scale_rate_y;
-	efx->sprite->rotation += efx->spin;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/waitidle.c"
+#include "../common/effect/advance.c"
 
 static void FieldScene_RunSupplementalSequenceOne(void)
 {
@@ -206,7 +143,7 @@ static void FieldScene_RunScene3c5SequenceA(s32 exit)
 	Object_GetById(0)->motion_flags = 3;
 	leader = Actor_Get(ACTOR_PARTY_LEADER);
 	leader->velocity_y = -0x50000;
-	OverlayObject_WaitUntilIdle((s32 *)Actor_Get(ACTOR_PARTY_LEADER));
+	OverlayObject_WaitUntilIdle(Actor_Get(ACTOR_PARTY_LEADER));
 	Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
 	Engine_EventRequestExit(exit);
 	Engine_EventEnd();

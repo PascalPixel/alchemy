@@ -2,6 +2,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/karei_machi/machi.h"
+#include "unit/field/common/object/orbit.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"
@@ -40,6 +41,7 @@
 
 #include "fieldobj.h"
 #include "object_effect.h"
+#include "orbit.h"
 
 // 前方宣言
 static void KareiMachi_SetupEntryActors(void);
@@ -57,50 +59,6 @@ static void FieldScene_RunScene3a8SequenceB(void);
 static void FieldScene_RunSupplementalSequenceOne(s32 a0);
 static void FieldScene_RunScene3a8SequenceA(s32 a0, s32 a1, s32 a2);
 static void SceneEffect_UpdateLobeOrbitEffect26(void);
-static void InitializeStagedActorSceneOrbitingEffect(s32 id);
-
-typedef struct OrbitingSceneObjectSprite
-{
-	u8 padding_00[5];
-	u8 flags_05_low : 5;
-	u8 flags_05_bit_5 : 1;
-	u8 flags_05_high : 2;
-	u8 padding_06[3];
-	u8 flags_09_low : 2;
-	u8 flags_09_mode : 2;
-	u8 flags_09_high : 4;
-	u8 padding_0a[18];
-	u8 palette;
-	u8 padding_1d[10];
-	u8 state;
-} OrbitingSceneObjectSprite;
-
-typedef struct OrbitingSceneObject
-{
-	u8						   padding_00[8];
-	s32						   x;
-	s32						   y;
-	s32						   z;
-	u8						   padding_14[15];
-	u8						   flags_23;
-	u8						   padding_24[12];
-	s32						   orbit_angle;
-	u8						   padding_34[4];
-	s32						   orbit_center_x;
-	s32						   orbit_center_y;
-	s32						   orbit_center_z;
-	u8						   padding_44[12];
-	OrbitingSceneObjectSprite *sprite;
-	u8						   padding_54;
-	u8						   mode;
-	u8						   state;
-	u8						   padding_57[5];
-	u8						   active;
-	u8						   padding_5d[4];
-	u8						   visible;
-	u8						   padding_62[10];
-	u32						   callback;
-} OrbitingSceneObject;
 
 union GameStateRows
 {
@@ -155,27 +113,8 @@ static s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect)
 	return 1;
 }
 
-static s32 OverlayObject_AdvanceXWhenCounterExpires(struct FieldActor *obj)
-{
-	s32 cnt = obj->work;
-	s32 loaded = (s16)obj->work;
-	s32 amount;
-
-	if (loaded == 0)
-	{
-		obj->facing += (u32)(Engine_RandomNext() << 15) >> 16;
-		amount = (u32)(Engine_RandomNext() * 80) >> 16;
-		obj->work = amount;
-		if (amount == 0)
-		{
-			goto done;
-		}
-		cnt = amount;
-	}
-	obj->work = cnt - 1;
-done:
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/heading.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -1847,22 +1786,8 @@ static void FieldScene_RunSecondaryGroupSequence(void)
 	Engine_EventEnd();
 }
 
-static struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
-{
-	struct FieldActor **actors = gEventWork->placed_actors - 8;
-	u32					i;
-
-	for (i = 8; i <= 65; i++)
-	{
-		struct FieldActor *actor = actors[i];
-
-		if (x == actor->x.fixed >> 20 && z == actor->z.fixed >> 20)
-		{
-			return actor;
-		}
-	}
-	return 0;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/findcell.c"
 
 static void FieldScene_RunLateSequence(void)
 {
@@ -2189,60 +2114,8 @@ static void EV11_PSYNERGY(void)
 	Engine_GameFlagSet(0x201);
 }
 
-static s32 SceneEffect_UpdateOrbitPosition(s32 *p)
-{
-	s16 *q = (s16 *)p[20];
-	s32	 a, b;
-	s32	 d = Engine_MathSin(p[12]) * 2;
-	if (d > 0)
-		d = -d;
-	p[2] = p[14] + Engine_MathCos(p[12]) * 2;
-	p[3] = p[15] + d;
-	q[15] = Engine_MathCos(p[12] + 0x8000) / 8;
-	a = Engine_RandomNext();
-	b = Engine_RandomNext();
-	p[12] = p[12] + ((((u32)a << 9) >> 16) + (((u32)b << 9) >> 16)) + 0x400;
-	return 0;
-}
-
-static void InitializeStagedActorSceneOrbitingEffect(s32 id)
-{
-	OrbitingSceneObject		  *actor;
-	OrbitingSceneObjectSprite *sprite;
-	u8						  *transfer;
-	s32						   zero;
-
-	actor = (OrbitingSceneObject *)Object_GetById(id);
-	sprite = actor->sprite;
-	sprite->flags_09_mode = 1;
-	sprite->flags_05_bit_5 = 0;
-	sprite->flags_09_high = 0;
-
-	zero = 0;
-	sprite->state = zero;
-	Engine_ActorSetSpriteFlags(actor, zero);
-	actor->active = zero;
-	actor->mode = zero;
-
-	if (Engine_GameFlagIsSet(0x109) == 0)
-		actor->y += 0x200000;
-
-	actor->flags_23 &= 0xfe;
-	actor->visible = 1;
-
-	transfer = Engine_HeapAllocate(17, 0x608);
-	Engine_ItemLoadIcon(ITEM_NUT);
-	transfer += 0x400;
-	Engine_VramLoad(sprite->palette, 128, transfer);
-	Engine_HeapRelease(17);
-
-	actor->orbit_center_x = actor->x;
-	actor->orbit_angle = zero;
-	actor->orbit_center_y = actor->y;
-	actor->active = 1;
-	actor->callback = (u32)SceneEffect_UpdateOrbitPosition;
-	actor->state = zero;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/orbit.c"
 
 // 向きごとの 1 マス先: 上位 16 ビットが x、下位 16 ビットが z
 #define FACING_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
@@ -2411,7 +2284,7 @@ s32 KareiMachi_DanceScriptF[] = {
 };
 
 s32 KareiMachi_Data02[] = {
-	SC_CALL(OverlayObject_AdvanceXWhenCounterExpires),
+	SC_CALL(OverlayObject_UpdateHeadingTimer),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

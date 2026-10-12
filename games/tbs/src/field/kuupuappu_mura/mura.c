@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "window.h"
 #include "unit/field/kuupuappu_mura/mura.h"
+#include "unit/field/common/kuupuappu/range.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
@@ -45,50 +46,11 @@
 
 // 前方宣言
 static void SceneActor_RunActorStep(s32 actor);
-static s32 SceneActor_CheckFacingAndRange(struct FieldActor *actor, struct FieldActor *target, s32 range, s32 force);
 static void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay);
 static void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay);
 
-static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
-{
-	work->sprite->priority = mode;
-}
-
-static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
-{
-	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
-
-	if (object != 0)
-	{
-		object->sprite->priority = 0;
-		object->motion_flags = 0;
-		object->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 14);
-		Engine_ObjectSetBlendMode(object, 1);
-		return object;
-	}
-	return 0;
-}
-
-static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
-{
-	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
-
-	if (object != 0)
-	{
-		object->sprite->priority = 1;
-		object->motion_flags = 0;
-		object->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 15);
-		object->priority_flags = (object->priority_flags & 0xfe) | 2;
-		return object;
-	}
-	return 0;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawn.c"
 
@@ -98,44 +60,8 @@ union DriftingObject
 	struct OverlayEffectMotion motion;
 };
 
-static s32 SceneActor_UpdateProximityToLeader(struct FieldActor *self)
-{
-	u8				 **globals = gWindowWork;
-	u8				  *scene = globals[0];
-	u8				  *workspace = globals[12];
-	s16				  *flags = &self->timer;
-	s32				   force = 0;
-	s32				   range = 18;
-	struct FieldActor *partner;
-	struct FieldActor *player;
-
-	if ((*flags & 1) != 0)
-	{
-		partner = Object_GetById(15);
-	}
-	else
-	{
-		partner = Object_GetById(14);
-	}
-	if (SceneActor_CheckFacingAndRange(self, partner, 32, 0) != 0)
-	{
-		return 0;
-	}
-
-	player = Object_GetById(ACTOR_PARTY_LEADER);
-
-	if (*(s16 *)(workspace + 376) != 0 || scene[RENDER_MODE_OFS] != 0)
-	{
-		range = 26;
-		if ((*flags & 2) != 0)
-		{
-			force = 1;
-		}
-	}
-
-	SceneActor_CheckFacingAndRange(self, player, range, force);
-	return 0;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/nearby.c"
 
 static s32 ActorPresentation_UpdateEntityFromLeader(struct FieldActor *entity)
 {
@@ -185,17 +111,8 @@ static int KuupuappuMura_GetIwanVenusDjinnCount(void)
 	return UnitGet(2)->djinn_owned_counts[0];
 }
 
-static s32 OverlayObject_RunObject2WhenFlagged(void)
-{
-	BattlePlacement_UpdateTimedEntriesTwentyTimes();
-	if ((UnitGet(2)->djinn_available[0] & 1) != 0)
-	{
-		Djinn_Transfer(2, 0, 0, 0);
-		Engine_AudioPlayCue(126);
-		UnitCalc(0);
-		UnitCalc(2);
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/djinn.c"
 
 static void KuupuappuMura_SayFarewellToIvan(void)
 {
@@ -407,19 +324,8 @@ static void SceneActor_RunActorStep(s32 actor)
 	Engine_EventEnd();
 }
 
-static void SceneActor_RunActorCommandWithFlag91(s32 x)
-{
-	u8 *flag = &Object_GetById(x)->paused;
-	s32 zero = 0;
-
-	*flag = 1;
-	Engine_EventBegin();
-	Engine_ActorSetAnimation(x, 1);
-	Engine_EventWait(2);
-	Engine_EventShowMessage(x, 0);
-	Engine_EventEnd();
-	*flag = zero;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/talk.c"
 
 static void EV08_TALK(void)
 {
@@ -669,25 +575,8 @@ static void EV21_PSYNERGY(void)
 	Engine_EventEnd();
 }
 
-static void EV01_TOUCH(void)
-{
-	Engine_GameFlagSet(0x200);
-	{
-		int v1 = 23;
-		int v2 = 26;
-		Engine_MapCopyCellAttributes(55, 26, 4, 2, v1, v2);
-	}
-}
-
-static void EV02_TOUCH(void)
-{
-	Engine_GameFlagClear(0x200);
-	{
-		int v1 = 23;
-		int v2 = 26;
-		Engine_MapCopyCellAttributes(23, 23, 4, 2, v1, v2);
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/toggle.c"
 
 static void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 continuation)
 {
@@ -988,45 +877,9 @@ s32 KuupuappuMura_RestoreEntryState(void)
 	return 0;
 }
 
-static s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
-{
-	s32 delta_x = (*first_position++ - *second_position++) >> 16;
-	s32 delta_y = (*first_position++ - *second_position++) >> 16;
-	s32 delta_z = (*first_position - *second_position) >> 16;
-	s32 delta_x_squared = delta_x * delta_x;
-	s32 delta_y_squared = delta_y * delta_y;
-	s32 delta_z_squared = delta_z * delta_z;
-
-	return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
-}
-
-static s32 SceneActor_CheckFacingAndRange(
-	struct FieldActor *actor, struct FieldActor *target, s32 range, s32 force)
-{
-	s32	 result = 0;
-	s32 *target_pos = &target->x.fixed;
-	s32 *actor_pos = &actor->x.fixed;
-	if (FixedPoint_Distance(target_pos, actor_pos) < range || force != 0)
-	{
-		u32 angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed, *target_pos - *actor_pos);
-		u32 left = (angle - 0x1000) & 0xf000;
-		u32 right = (angle + 0x1000) & 0xf000;
-		u32 forward = angle & 0xf000;
-		u32 facing = actor->facing & 0xf000;
-		if (forward == facing || right == facing || left == facing || force != 0)
-		{
-			actor->paused = 1;
-			Object_SetMode(actor, 1);
-			result = 1;
-		}
-	}
-	else
-	{
-		actor->paused = 0;
-		Object_SetMode(actor, 2);
-	}
-	return result;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/distance.c"
+#include "../common/kuupuappu/range.c"
 
 static void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay)
 {

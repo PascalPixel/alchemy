@@ -51,37 +51,8 @@ struct SpawnCounter
 
 struct SpawnCounter gCornerSpawnCounter;
 
-static s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
-{
-	s32					 delta;
-	u16					 old;
-	s32					 angle;
-	struct FacingObject *target;
-
-	target = obj->facing_target;
-	if (target != 0)
-	{
-		obj->facing_flags = (0xFE & obj->facing_flags);
-		angle = (u16)ArcTan2(
-			target->position_z - obj->position_z, target->position_x - obj->position_x);
-		old = obj->facing;
-		delta = (s16)(angle - old);
-		if (delta != 0)
-		{
-			if (delta > 0x1000)
-			{
-				delta = 0x1000;
-			}
-
-			if (delta < -0x1000)
-			{
-				delta = -0x1000;
-			}
-			obj->facing = (old + delta);
-		}
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/facing.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -711,22 +682,8 @@ static void BiribinoMura_RestoreRaisedEntrance(void)
 	}
 }
 
-static struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
-{
-	struct FieldActor **actors = gEventWork->placed_actors - 8;
-	u32					i;
-
-	for (i = 8; i <= 65; i++)
-	{
-		struct FieldActor *actor = actors[i];
-
-		if (x == actor->x.fixed >> 20 && z == actor->z.fixed >> 20)
-		{
-			return actor;
-		}
-	}
-	return 0;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/findcell.c"
 
 static void BiribinoMura_PushFacedBlock(void)
 {

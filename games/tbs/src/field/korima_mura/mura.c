@@ -136,37 +136,8 @@ static s32 SceneEffect_UpdateFallingObject(struct Obj *p)
 	return 1;
 }
 
-static s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
-{
-	s32					 delta;
-	u16					 old;
-	s32					 angle;
-	struct FacingObject *target;
-
-	target = obj->facing_target;
-	if (target != 0)
-	{
-		obj->facing_flags = (0xFE & obj->facing_flags);
-		angle = (u16)ArcTan2(
-			target->position_z - obj->position_z, target->position_x - obj->position_x);
-		old = obj->facing;
-		delta = (s16)(angle - old);
-		if (delta != 0)
-		{
-			if (delta > 0x1000)
-			{
-				delta = 0x1000;
-			}
-
-			if (delta < -0x1000)
-			{
-				delta = -0x1000;
-			}
-			obj->facing = (old + delta);
-		}
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/facing.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -1513,15 +1484,8 @@ static void FieldScene_RunPairedStepB(s32 arg0, s32 arg1, s32 arg2)
 	Engine_EventWait(arg2);
 }
 
-static s32 SceneEffect_AdvanceAngleUntilIdle(struct FieldActor *p)
-{
-	p->scale_x += 0x1eb8;
-	if (p->target_x == 0x80000000 && p->target_y == p->target_x && p->target_z == p->target_y)
-	{
-		Engine_ObjectDispatchRelease(p);
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korima/grow.c"
 
 static void SceneEffect_SpawnObject26EveryEightFrames(void)
 {
@@ -1567,18 +1531,8 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void)
 	Engine_ObjectSetScript(p, KorimaMura_Object26Script);
 }
 
-static s32 SceneEffect_SetModeByFrameBit1(s32 arg0)
-{
-	if ((gFrameCount >> 1) & 1)
-	{
-		ObjectGroup_SetChildValue(arg0, 10);
-	}
-	else
-	{
-		ObjectGroup_SetChildValue(arg0, 7);
-	}
-	return 0;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korima/blink.c"
 
 static s32 KorimaMura_TriggerRegionScript(struct FieldActor *actor)
 {

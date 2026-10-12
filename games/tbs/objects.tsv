@@ -304,20 +304,20 @@ main	rom_tail_02	@games/tbs/src/system/resource/directory
 384	unit	games/tbs/src/scene/kuupuappu_runpa
 385	unit	games/tbs/src/scene/kuupuappu_mura_sai
 385	text	libgcc.a:_call_via_rX
-386	unit	games/tbs/src/field/kuupuappu_heya_sai/sai
-387	unit	games/tbs/src/field/goma_iriguchi/iriguchi
-388	unit	games/tbs/src/field/goma_ike/ike
-389	unit	games/tbs/src/field/goma_hashira/hashira
+386	unit	games/tbs/src/scene/kuupuappu_heya_sai
+387	unit	games/tbs/src/scene/goma_iriguchi
+388	unit	games/tbs/src/scene/goma_ike
+389	unit	games/tbs/src/scene/goma_hashira
 389	text	libgcc.a:_call_via_rX
 389	bss	*	.bss COMMON
-38a	unit	games/tbs/src/field/goma_suiro/suiro
-38b	unit	games/tbs/src/field/biribino_mura/mura
-38b	bss	games/tbs/src/field/biribino_mura/mura	.bss COMMON
-38c	unit	games/tbs/src/field/biribino_heya/heya
-38d	unit	games/tbs/src/field/biribino_kyuden/kyuden
-38e	unit	games/tbs/src/field/biribino_niwa/niwa
-38f	unit	games/tbs/src/field/korima_mura/mura
-38f	bss	games/tbs/src/field/korima_mura/mura	.bss
+38a	unit	games/tbs/src/scene/goma_suiro
+38b	unit	games/tbs/src/scene/biribino_mura
+38b	bss	games/tbs/src/scene/biribino_mura	.bss COMMON
+38c	unit	games/tbs/src/scene/biribino_heya
+38d	unit	games/tbs/src/scene/biribino_kyuden
+38e	unit	games/tbs/src/scene/biribino_niwa
+38f	unit	games/tbs/src/scene/korima_mura
+38f	bss	games/tbs/src/scene/korima_mura	.bss
 390	unit	games/tbs/src/field/korima_heya/heya
 391	unit	games/tbs/src/field/korima_hashi/hashi
 391	text	libgcc.a:_call_via_rX

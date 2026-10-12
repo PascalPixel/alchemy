@@ -1,6 +1,6 @@
 #include "global_cells.h"
 #include "unit/import.h"
-#include "unit/field/goma_hashira/hashira.h"
+#include "unit/scene/goma_hashira.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/marker.h"
@@ -73,7 +73,7 @@ enum PillarEffectPlane
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/staged_actor.c"
+#include "../field/common/object/staged_actor.c"
 
 static void EV12_TALK(void)
 {

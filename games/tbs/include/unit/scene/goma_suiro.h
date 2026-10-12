@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_FIELD_GOMA_SUIRO_SUIRO_H
-#define ALCHEMY_UNIT_FIELD_GOMA_SUIRO_SUIRO_H
+#ifndef ALCHEMY_UNIT_SCENE_GOMA_SUIRO_H
+#define ALCHEMY_UNIT_SCENE_GOMA_SUIRO_H
 
 #include "types.h"
 #include "field_scene.h"

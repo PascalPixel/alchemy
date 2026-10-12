@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_FIELD_GOMA_IKE_IKE_H
-#define ALCHEMY_UNIT_FIELD_GOMA_IKE_IKE_H
+#ifndef ALCHEMY_UNIT_SCENE_GOMA_IKE_H
+#define ALCHEMY_UNIT_SCENE_GOMA_IKE_H
 
 #include "types.h"
 #include "field_scene.h"

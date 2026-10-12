@@ -1,6 +1,6 @@
 
 
-#include "unit/field/goma_ike/ike.h"
+#include "unit/scene/goma_ike.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/evbasic.h"

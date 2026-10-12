@@ -1,5 +1,5 @@
 #include "game_state.h"
-#include "unit/field/goma_suiro/suiro.h"
+#include "unit/scene/goma_suiro.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
@@ -35,9 +35,9 @@
 static void SceneEffect_RunActorBurst(s32 no);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/create.c"
-#include "../common/effect/move.c"
-#include "../common/effect/spawn.c"
+#include "../field/common/effect/create.c"
+#include "../field/common/effect/move.c"
+#include "../field/common/effect/spawn.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -131,7 +131,7 @@ static void SceneEffect_RotateRecord(EffectWork_020004c4 *work)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/waitdown.c"
+#include "../field/common/object/waitdown.c"
 
 union SceneActor
 {

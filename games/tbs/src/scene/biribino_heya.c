@@ -1,4 +1,4 @@
-#include "unit/field/biribino_heya/heya.h"
+#include "unit/scene/biribino_heya.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"

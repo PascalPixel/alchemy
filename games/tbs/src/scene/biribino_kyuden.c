@@ -1,6 +1,6 @@
 #include "game_state.h"
 #include "scene_ids.h"
-#include "unit/field/biribino_kyuden/kyuden.h"
+#include "unit/scene/biribino_kyuden.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/evtable.h"
@@ -22,7 +22,7 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "kyuden.h"
+#include "biribino_kyuden.h"
 #include "types.h"
 #include "call.h"
 #include "field_event.h"
@@ -54,7 +54,7 @@ struct KyudenSceneRecord
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/facing.c"
+#include "../field/common/object/facing.c"
 
 u8 *SceneData_GetScriptTable(void)
 {

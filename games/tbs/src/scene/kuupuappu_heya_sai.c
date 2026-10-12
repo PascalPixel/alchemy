@@ -1,6 +1,6 @@
 
 #include "game_state.h"
-#include "unit/field/kuupuappu_heya_sai/sai.h"
+#include "unit/scene/kuupuappu_heya_sai.h"
 #include "unit/field/common/kuupuappu/itemobj.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
@@ -25,7 +25,7 @@
 #include "item_ids.h"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/kuupuappu/spotflag.c"
+#include "../field/common/kuupuappu/spotflag.c"
 
 u8 *SceneData_GetScriptTable(void)
 {
@@ -179,7 +179,7 @@ static void EV1040_PSYNERGY(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/kuupuappu/bone.c"
+#include "../field/common/kuupuappu/bone.c"
 
 static void EV19_TALK(void)
 {
@@ -310,7 +310,7 @@ s32 FieldScene_InitSceneStateByStep(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/kuupuappu/itemobj.c"
+#include "../field/common/kuupuappu/itemobj.c"
 
 struct SceneEntrance Placement_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },

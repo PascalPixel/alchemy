@@ -1894,7 +1894,7 @@
         "*/recon/tla/raw/08125cfc.o"(.text)
         "*/games/tla/src/battle/presentation/bg0vofs.o"(.text)
         "*/recon/tla/raw/08125d74.o"(.text)
-        "*/recon/tla/raw/08126218.o"(.text)
+        "*/games/tla/src/battle/presentation/pallevel.o"(.text)
         "*/recon/tla/raw/0812628c.o"(.text)
         "*/recon/tla/raw/081263c4.o"(.text)
         "*/games/tla/src/battle/presentation/transwrk.o"(.text)

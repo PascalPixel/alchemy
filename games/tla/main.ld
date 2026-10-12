@@ -1419,7 +1419,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00125c90)
         "*/games/tla/src/battle/presentation/bg0vofs.o"(.text)
         "*/recon/tla/ja/rom.o"(.rom.00125d70)
-    "*/recon/tla/ja/rom.o"(.rom.00126214)
+    "*/games/tla/src/battle/presentation/pallevel.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00126288)
         "*/games/tla/src/battle/presentation/transwrk.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.001263f8)

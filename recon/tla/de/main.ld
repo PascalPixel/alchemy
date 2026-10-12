@@ -1447,6 +1447,8 @@
     "*/recon/tla/de/rom.o"(.rom.00125cac)
         "*/games/tla/src/battle/presentation/bg0vofs.o"(.text)
         "*/recon/tla/de/rom.o"(.rom.00125d8c)
+        "*/games/tla/src/battle/presentation/pallevel.o"(.text)
+        "*/recon/tla/de/rom.o"(.rom.001262a4)
         "*/games/tla/src/battle/presentation/transwrk.o"(.text)
         "*/recon/tla/de/rom.o"(.rom.00126414)
     "*/recon/tla/de/rom.o"(.rom.0012681c)

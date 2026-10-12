@@ -1932,13 +1932,8 @@ BattleFx_SelectBattleCue:
 	.thumb_func
 Func_080ca6a4:
 	.incbin "baserom.gba", 0x000d76a4, 0x00000040
-	.section .rom.000d76e4, "ax"
-	.global Func_080ca6e4
-	.type Func_080ca6e4, %function
-	.thumb_func
-Func_080ca6e4:
-	.incbin "baserom.gba", 0x000d76e4, 0x00000004
 	.section .rom.000d76e8, "ax"
+	.balign 4
 	.global Event_SpawnObjectTable
 	.type Event_SpawnObjectTable, %function
 	.thumb_func
@@ -3280,7 +3275,10 @@ Func_080f8bcc:
 Func_080f94a4:
 	.incbin "baserom.gba", 0x001034a4, 0x00000f3c
 	.section .rom.00104484, "ax"
-	.incbin "baserom.gba", 0x00104484, 0x00000864
+	.incbin "baserom.gba", 0x00104484, 0x00000410
+	.section .rom.001048b8, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x001048b8, 0x00000430
 	.section .rom.00104d1e, "ax"
 	.incbin "baserom.gba", 0x00104d1e, 0x000000fa
 	.global ItemMenu_DrawIcons
@@ -4055,7 +4053,9 @@ Func_0813fd40:
 	.type Func_08142944, %function
 	.thumb_func
 Func_08142944:
-	.incbin "baserom.gba", 0x00142944, 0x00000c9c
+	.incbin "baserom.gba", 0x00142944, 0x00000b94
+	.section .rom.001434f8, "ax"
+	.incbin "baserom.gba", 0x001434f8, 0x000000e8
 	.section .rom.001435e0, "ax"
 	.global BattleFx_BeginCanvasLayer
 	.type BattleFx_BeginCanvasLayer, %function

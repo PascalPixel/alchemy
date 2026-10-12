@@ -1964,18 +1964,31 @@ fn raw_changes(value: &[u8]) -> Result<(bool, Vec<(String, bool)>), String> {
     let mut index = 0;
     while index < fields.len() {
         let metadata: Vec<_> = fields[index].split_whitespace().collect();
-        if metadata.len() != 5 || !metadata[0].starts_with(':') {
+        // A merge's combined record (`diff-tree -c`) opens with a colon for
+        // each parent and gives each parent's mode and object before the
+        // result's, then one status letter for each parent and the result's
+        // path alone.
+        let parents = metadata
+            .first()
+            .map_or(0, |first| first.bytes().take_while(|byte| *byte == b':').count());
+        if parents == 0 || metadata.len() != 2 * parents + 3 {
             return Err("invalid raw git diff".to_string());
         }
         index += 1;
-        let paired = metadata[4].starts_with('R') || metadata[4].starts_with('C');
+        let (mode, status) = (metadata[parents], metadata[2 * parents + 2]);
+        let paired = parents == 1 && (status.starts_with('R') || status.starts_with('C'));
         if index + usize::from(paired) >= fields.len() {
             return Err("invalid raw git diff".to_string());
         }
         let path = fields[index + usize::from(paired)].clone();
         index += 1 + usize::from(paired);
-        if metadata[4] != "D" {
-            changes.push((path, metadata[1] == "160000"));
+        let deleted = if parents == 1 {
+            status == "D"
+        } else {
+            mode.bytes().all(|byte| byte == b'0')
+        };
+        if !deleted {
+            changes.push((path, mode == "160000"));
         }
     }
     Ok((!fields.is_empty(), changes))
@@ -2242,7 +2255,7 @@ fn compiler_source_reason(text: &str) -> Option<&'static str> {
 // over the project's life, so history takes an editable asset for what it
 // is, wherever it lay and whatever the case of its name, and refuses every
 // other binary as the tip does. `commit_message_reason` judges every
-// outgoing message.
+// outgoing message, and a merge is read for the versions it alone made.
 
 /// What Git lists for a version in an outgoing commit.
 ///
@@ -2431,6 +2444,9 @@ fn check_push(root: &Path, updates: &str) -> Result<(), String> {
     }
     let mut entries = Vec::new();
     for commit in commits {
+        // `-c` lists what a merge itself wrote: the versions that differ
+        // from every parent. Without it a merge lists nothing, and a version
+        // only a merge made would reach the remote unread.
         let output = git(
             root,
             &[
@@ -2442,6 +2458,7 @@ fn check_push(root: &Path, updates: &str) -> Result<(), String> {
                 "--find-renames",
                 "-r",
                 "-z",
+                "-c",
                 &commit,
             ],
             &format!("commit path scan {commit}"),
@@ -4312,6 +4329,53 @@ mod tests {
                 && line.contains(&format!(" {path}: "))
                 && line.contains(reason)
         })
+    }
+
+    #[test]
+    fn push_reads_the_versions_only_a_merge_made() {
+        let raw = b"::100644 100644 100644 a b c MM\0merged.c\0\
+                    ::100644 100644 000000 a b 0 DD\0dropped.c\0\
+                    :::000000 000000 000000 160000 0 0 0 d AAA\0vendor\0\
+                    :100644 100644 a b M\0kept.c\0";
+        let (_, changes) = raw_changes(raw).unwrap();
+        assert_eq!(
+            changes,
+            [
+                ("merged.c".to_string(), false),
+                ("vendor".to_string(), true),
+                ("kept.c".to_string(), false)
+            ]
+        );
+        assert!(raw_changes(b"::100644 100644 a b M\0short.c\0").is_err());
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        let run = |args: &[&str]| git(root, args, "merge fixture").unwrap();
+        run(&["init", "--quiet", "-b", "main"]);
+        run(&["config", "user.name", "fixture"]);
+        run(&["config", "user.email", "fixture@example.invalid"]);
+        let published = commit(root, &[("README.md", b"Project\n".to_vec())]);
+        run(&["update-ref", "refs/remotes/origin/main", &published]);
+        run(&["checkout", "--quiet", "-b", "side"]);
+        commit(root, &[("side.c", b"void Side(void) {}\n".to_vec())]);
+        run(&["checkout", "--quiet", "main"]);
+        commit(root, &[("main.c", b"void Main(void) {}\n".to_vec())]);
+        // The merge itself adds a file neither parent has, and the next
+        // commit deletes it: no other commit lists that version.
+        run(&["merge", "--quiet", "--no-ff", "--no-commit", "side"]);
+        commit(root, &[("private.DUMP", b"fixture\n".to_vec())]);
+        run(&["rm", "--quiet", "private.DUMP"]);
+        let tip = commit(root, &[]);
+        assert!(check_tree(root, Some(&tip)).is_ok());
+        let update = format!(
+            "refs/heads/main {tip} refs/heads/main {}\n",
+            "0".repeat(40)
+        );
+        let error = check_push(root, &update).unwrap_err();
+        assert!(
+            refuses(&error, false, "private.DUMP", "private or generated file type"),
+            "{error}"
+        );
+        assert_eq!(error.lines().count(), 2, "{error}");
     }
 
     #[test]

@@ -1363,23 +1363,15 @@ void EquipmentMenu_StartCompatibilityIndicators(void)
 
 s32 ItemMenu_IsSpecial(s32 item_id)
 {
-	s32 result;
-	s32 first;
-
-	if (item_id > 0xC4)
+	switch (item_id)
 	{
-		goto L0;
+	case 0xC1:
+	case 0xC2:
+	case 0xC3:
+	case 0xC4:
+		return 1;
 	}
-	first = 0xC1;
-	if (item_id < first)
-	{
-		goto L0;
-	}
-	result = 1;
-	return result;
-L0:
-	result = 0;
-	return result;
+	return 0;
 }
 
 void ItemMenu_DrawMsg(s32 unused, s32 message)
@@ -2123,10 +2115,26 @@ s32 Menu_SelectQuantity(s32 value)
 	Palette_CopyObjectBankToBackground14();
 	WaitFrames(1);
 
-	goto check_exit;
-
-adjust:
+	for (;;)
 	{
+		if (GameFlag_TestFar(336) != 0)
+			break;
+
+		if (changed != 0)
+		{
+			changed = 0;
+			quantity = (quantity + 5) % 5;
+			ItemMenu_DrawItemDetails(window, value);
+		}
+
+		if (gKeyState & 1)
+			break;
+		if (gKeyState & 2)
+		{
+			quantity = -1;
+			break;
+		}
+
 		if (gKeysRepeat & 0x40)
 		{
 			quantity -= 1;
@@ -2137,32 +2145,9 @@ adjust:
 			quantity += 1;
 			changed = 1;
 		}
-	}
-	WaitFrames(1);
-
-check_exit:
-	if (GameFlag_TestFar(336) != 0)
-		goto done;
-
-	if (changed != 0)
-	{
-		changed = 0;
-		quantity = (quantity + 5) % 5;
-		ItemMenu_DrawItemDetails(window, value);
+		WaitFrames(1);
 	}
 
-	{
-		if (gKeyState & 1)
-			goto done;
-		if (gKeyState & 2)
-		{
-			quantity = -1;
-			goto done;
-		}
-	}
-	goto adjust;
-
-done:
 	RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
 	WaitFrames(1);
 	UiWork_FinalizeFar((void *)window, 1);

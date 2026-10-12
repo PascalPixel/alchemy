@@ -212,13 +212,21 @@ pub(crate) fn main_script(text: &str) -> String {
     lines.join("\n") + "\n"
 }
 
-/// An overlay's script for modern objects: an overlay has one image, so each
-/// object's code, constants and data all land in its listed place.
+/// An overlay's script for modern objects. An overlay has one image, so a
+/// statement that takes only an object's code, `(.text)`, takes its
+/// constants and data with it: they land in its listed place. Any other
+/// statement keeps what it takes, widened to GCC's names as in the main
+/// script: a plain place lists every object once for its code
+/// (`.text .padding`), once for its constants (`.rodata`) and once for its
+/// data, and each pass takes GCC's sections of its own kind.
 pub(crate) fn overlay_text(text: &str) -> String {
-    let object = regex::Regex::new(r#"("\*/[^"]+\.o")\(\.text\)"#).expect("static pattern");
+    let object = regex::Regex::new(r#"("\*/[^"]+\.o")\(([^)]*)\)"#).expect("static pattern");
     let mut out = object
         .replace_all(text, |capture: &regex::Captures| {
-            format!("{}({CATCH_ALL})", &capture[1])
+            match capture[2].trim() {
+                ".text" => format!("{}({CATCH_ALL})", &capture[1]),
+                sections => format!("{}({})", &capture[1], widened(sections)),
+            }
         })
         .into_owned();
     if !out.ends_with('\n') {
@@ -640,6 +648,59 @@ mod tests {
         let out = overlay_text(text);
         assert!(out.contains(&format!("\"*/A.o\"({CATCH_ALL})")));
         assert!(out.contains("\"*/r_overlay.o\"(.rodata.x0200a3f0)"));
+    }
+
+    #[test]
+    fn a_plain_overlay_place_takes_gccs_sections_pass_by_pass() {
+        let text = "SECTIONS\n{\n    .text 0x2008000 :\n    {\n    \"*/a.o\"(.text .padding)\n    \"*libgcc.a:_call_via_rX.o\"(.text .padding)\n    \"*/a.o\"(.rodata)\n    \"*libgcc.a:_call_via_rX.o\"(.rodata)\n    \"*/a.o\"(.data .overlays)\n    }\n    .bss (NOLOAD) :\n    {\n    \"*/a.o\"(.bss COMMON)\n    }\n}\n";
+        let out = overlay_text(text);
+        let lines: Vec<&str> = out.lines().map(str::trim).filter(|line| line.starts_with('"')).collect();
+        assert_eq!(
+            lines,
+            [
+                "\"*/a.o\"(.text .text.unlikely .text.hot .text.startup .padding)",
+                "\"*libgcc.a:_call_via_rX.o\"(.text .padding)",
+                "\"*/a.o\"(.rodata .rodata.str* .rodata.cst*)",
+                "\"*libgcc.a:_call_via_rX.o\"(.rodata)",
+                "\"*/a.o\"(.data .overlays)",
+                "\"*/a.o\"(.bss COMMON)",
+            ],
+            "each pass takes GCC's names of its own kind, and a library member stays as listed"
+        );
+        // A row that names all four of an object's sections is widened too.
+        assert!(overlay_text("\"*/b.o\"(.text .rodata .data .padding)\n")
+            .contains("\"*/b.o\"(.text .text.unlikely .text.hot .text.startup .rodata .rodata.str* .rodata.cst* .data .padding)"));
+    }
+
+    /// The object list as it stands: no C object of an overlay leaves its
+    /// modern code, constants or data to the linker's orphan placement.
+    #[test]
+    fn every_overlay_of_the_list_places_gccs_sections_of_its_c_objects() {
+        let root = crate::compiler::routing::root();
+        let mut checked = 0;
+        for edition in ["ja", "en", "de", "es", "fr", "it"] {
+            let target = decomp_target(Some(&format!("tbs-{edition}"))).unwrap();
+            for id in crate::edition::overlay_ids(root, target).unwrap() {
+                let image = crate::edition::Image::Overlay(&id);
+                let text = crate::edition::image_script(root, target, image).unwrap();
+                let statements = crate::edition::statements(&overlay_text(&text)).unwrap();
+                for object in crate::edition::built_objects(&statements) {
+                    if !root.join(&object).with_extension("c").is_file() {
+                        continue;
+                    }
+                    let taken: BTreeSet<&str> = statements
+                        .iter()
+                        .filter(|statement| statement.object == object && statement.section == ".text")
+                        .flat_map(|statement| statement.sections.split_whitespace())
+                        .collect();
+                    for section in [".text", ".text.unlikely", ".text.hot", ".rodata", ".rodata.str*", ".rodata.cst*", ".data"] {
+                        assert!(taken.contains(section), "{} overlay {id}: {object} has no place for {section}", target.id);
+                    }
+                    checked += 1;
+                }
+            }
+        }
+        assert!(checked > 6 * 90, "{checked} C objects in ☀️'s overlays");
     }
 
     #[test]

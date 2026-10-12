@@ -2051,10 +2051,10 @@ fn overlay_script_inputs(
 
 fn overlay_gate(elf: &str, map: &str, modern: bool) -> Result<(), String> {
     let image = fs::read(elf).map_err(|error| format!("{elf}: {error}"))?;
-    if modern {
-        return crate::gate::overlay::check_modern(&image);
-    }
     let map = fs::read_to_string(map).map_err(|error| format!("{map}: {error}"))?;
+    if modern {
+        return crate::gate::overlay::check_modern(&image, &map);
+    }
     crate::gate::overlay::check(&image, &map)
 }
 

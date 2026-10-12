@@ -3898,7 +3898,9 @@ RunBattleEffect05:
 	.section .rom.000e88d2, "ax"
 	.incbin "baserom.gba", 0x000e88d2, 0x000001d6
 	.section .rom.000e8afe, "ax"
-	.incbin "baserom.gba", 0x000e8afe, 0x000001ca
+	.incbin "baserom.gba", 0x000e8afe, 0x0000007e
+	.section .rom.000e8c30, "ax"
+	.incbin "baserom.gba", 0x000e8c30, 0x00000098
 	.section .rom.000e8cf4, "ax"
 	.global RunBattleEffect14
 RunBattleEffect14:
@@ -4462,7 +4464,7 @@ Func_0810824c:
 Func_081082c4:
 	.incbin "baserom.gba", 0x0010c2c4, 0x000001a0
 	.section .rom.0010c4f4, "ax"
-	.incbin "baserom.gba", 0x0010c4f4, 0x0000013c
+	.incbin "baserom.gba", 0x0010c4f4, 0x00000088
 	.section .rom.0010c690, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0010c690, 0x000000cc
@@ -4803,11 +4805,6 @@ Func_08122c4c:
 	.thumb_func
 BattleEvent_Playback:
 	.incbin "baserom.gba", 0x00122d28, 0x00000794
-	.global BattleEventRuntime_Reset
-	.type BattleEventRuntime_Reset, %function
-	.thumb_func
-BattleEventRuntime_Reset:
-	.incbin "baserom.gba", 0x001234bc, 0x0000004c
 	.section .rom.0012358c, "ax"
 	.global Func_08123574
 	.type Func_08123574, %function

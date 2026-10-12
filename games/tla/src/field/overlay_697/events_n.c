@@ -30,3 +30,18 @@ void Func_02001168(s32 a, s32 b)
 {
     Func_02001104(18, a, b);
 }
+
+void Func_02001178(void)
+{
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    struct ObjectRuntime *block = Object_GetById(15);
+
+    if (block->x >> 20 == leader->x >> 20 && block->z >> 20 == leader->z >> 20) {
+        s32 y = leader->y;
+
+        /* FAKEMATCH: loads the leader height before it builds the threshold (differ 2 without it, as in Func_020007b4). */
+        do { } while (0);
+        if (y < 0x200000)
+            leader->y = 0x200000;
+    }
+}

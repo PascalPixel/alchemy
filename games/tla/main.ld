@@ -971,6 +971,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000df89a)
     "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000dfac6)
+    "*/games/tla/src/battle/effect/radial.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.000dfbf8)
     "*/games/tla/src/battle/effect/shrink_object_scale_until_half.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000dfcbc)
     "*/games/tla/src/battle/effect/age_and_cue.o"(.text)

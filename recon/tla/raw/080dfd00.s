@@ -361,6 +361,6 @@ RunBattleEffect14:
 .L_080dfff0:
 	.4byte Func_080dfc3c
 .L_080dfff4:
-	.4byte Func_080dfb88
+	.4byte BattleFx_WanderAroundAnchor
 .L_080dfff8:
 	.4byte BattleFx_AgeAndCueAtEighty

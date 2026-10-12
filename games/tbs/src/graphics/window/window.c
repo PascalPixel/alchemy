@@ -373,18 +373,14 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs)
 
 	slot = UI_WORK->windows;
 	found = 0;
-	i = 0;
-	while ((slot->flags & 1) != 0 || slot->duration != 0)
+	for (i = 0; i != WINDOW_COUNT; i++, slot++)
 	{
-		i++;
-		slot++;
-		if (i == WINDOW_COUNT)
+		if ((slot->flags & 1) == 0 && slot->duration == 0)
 		{
-			goto done;
+			found = slot;
+			break;
 		}
 	}
-	found = slot;
-done:
 	if (found != 0)
 	{
 		found->y = y;
@@ -648,7 +644,6 @@ struct UiChannelSlot *UiWork_ActivateChannel(struct UiWindow *work, s32 value, s
 	struct UiChannelSlot *slot;
 	struct UiChannelSlot *selected;
 	u16					 *destination;
-	u16					  val04;
 	u16					  zero;
 	u32					  index;
 
@@ -668,11 +663,10 @@ struct UiChannelSlot *UiWork_ActivateChannel(struct UiWindow *work, s32 value, s
 		if (selected->work == 0)
 		{
 			selected->y = 0xA00;
-			val04 = 0x300;
 			selected->work = work;
-			goto reset_x;
+			selected->x = 0x300;
 		}
-		if (preserve == 0)
+		else if (preserve == 0)
 		{
 			if (selected->y == 0)
 			{
@@ -686,9 +680,7 @@ struct UiChannelSlot *UiWork_ActivateChannel(struct UiWindow *work, s32 value, s
 			{
 				UiWork_ResetChannelTransition(selected);
 			}
-			val04 = 0x300;
-		reset_x:
-			selected->x = val04;
+			selected->x = 0x300;
 		}
 
 		zero = 0;
@@ -4466,36 +4458,36 @@ void UiWork_DrainPending(s32 unused)
 	} while (i != 3);
 
 	// 閉じ終えたチャンネルを空ける。動いているものがあれば 1 フレーム待つ
-poll:
-	done = 1;
-	ch = uw->channels;
-	i = 0;
-	do
+	for (;;)
 	{
-		poll_work = ch->work;
-		if (poll_work != 0)
+		done = 1;
+		ch = uw->channels;
+		i = 0;
+		do
 		{
-			if ((*(s32 *)&poll_work->frame) == 0) // frame と duration がともに 0
+			poll_work = ch->work;
+			if (poll_work != 0)
 			{
-				flag = poll_work->flags;
-				if (flag == 0)
-					ch->work = (struct UiWindow *)(u32)flag;
+				if ((*(s32 *)&poll_work->frame) == 0) // frame と duration がともに 0
+				{
+					flag = poll_work->flags;
+					if (flag == 0)
+						ch->work = (struct UiWindow *)(u32)flag;
+					else
+						done = 0;
+				}
 				else
+				{
 					done = 0;
+				}
 			}
-			else
-			{
-				done = 0;
-			}
-		}
-		i++;
-		ch++;
-	} while (i != 3);
-	i = 0;
-	if (!done)
-	{
+			i++;
+			ch++;
+		} while (i != 3);
+		i = 0;
+		if (done)
+			break;
 		WaitFrames(1);
-		goto poll;
 	}
 
 	// 直接開いたウィンドウ

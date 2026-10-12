@@ -107,6 +107,13 @@ A game is finished when all six hold (Pascal, 2026-10-08):
 
 - `games/<game>/src`, `include`, `sound`, `text` and `games/common` hold the
   source; `<game>` is `tbs` or `tla`.
+- ☀️'s code sits in one folder for each bank of the main image, named for
+  the bank (`runtime`, `field`, `window`, `game`, `menu`, `shop`, `battle`,
+  `effect`, `object`), and in `scene`: each scene overlay is
+  `scene/<place>.c` with its entry table `scene/entry/<place>.s` and its
+  import table `scene/import/<place>.s`, and text several scenes include is
+  under `scene/common`. Unit headers follow the same paths under
+  `include/unit`.
 - `games/tbs/objects.tsv` is ☀️'s object list: the object order of the main
   image and of each overlay, with the editions that link each row. A row is
   one linker statement, or stands for several: a `unit` row for an

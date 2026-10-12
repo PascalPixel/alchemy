@@ -194,7 +194,7 @@ void Func_02000aa0(s32 a0)
     Call3(Func_02001c84, 0x1e, 0, 0xa);
     Call2(Motion_SetModeAndWaitAnimation, 0x1d, 4);
     Call3(Func_02001c84, 0x1d, 0, 0xa);
-    Call3(Func_02001ca4, 0x1e, 0x102, 0x1e);
+    Value3((s32 (*)())Func_02001ca4, 0x1e, 0x102, 0x1e);
     Call3(ObjectMotion_ArmCallback, 0x1e, 0, 0);
     Call1(Battle_WaitMode0, 0x14);
     Call2(Motion_SetVarCbAndRefresh, 0x1d, 2);
@@ -456,4 +456,3 @@ void Func_02000aa0(s32 a0)
     Func_02001ccc();
     Func_02001bec();
 }
-

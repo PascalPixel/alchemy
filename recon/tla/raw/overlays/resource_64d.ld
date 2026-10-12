@@ -12,7 +12,7 @@ SECTIONS
         "*/games/tla/src/field/vinasu_iriguchi/s030c.o"(.text)
         "*/games/tla/src/field/vinasu_iriguchi/s0440.o"(.text)
         "*/resource_64d_overlay.o"(.text.x02008510)
-        "*/resource_64d_overlay.o"(.text.x02009a2c)
+        "*/games/tla/src/field/vinasu_iriguchi/s1a2c.o"(.text)
         "*/games/tla/src/field/vinasu_iriguchi/s1bb0.o"(.text)
         "*/games/tla/src/field/vinasu_iriguchi/s1c30.o"(.text)
         "*/resource_64d_overlay.o"(.text.x02009fd0)

@@ -77,7 +77,7 @@ void Func_02001958(s32 a0)
             __asm__ volatile("" : "+l"(b), "+l"(c));
             Call3(Func_02001ca4, 0x19, b, c);
         }
-        Call2(UiText_OpenMessageAtObject, 0x19, 0);
+        Value2((s32 (*)())UiText_OpenMessageAtObject, 0x19, 0);
         t30 = Value2(Inventory_PromptAndSetObjectMode, 4, 0);
         if (t30 == 0) {
             Call1(Battle_WaitMode0, 0x1e);
@@ -121,4 +121,3 @@ void Func_02001958(s32 a0)
     Call3(Func_02001c3c, 0x19, 0, 0);
     Func_02001bec();
 }
-

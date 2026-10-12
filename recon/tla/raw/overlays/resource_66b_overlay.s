@@ -536,63 +536,6 @@ Func_02000738:
 	.4byte gFrameCount
 .L_02008764:
 	.4byte Data_02001ae0
-	.section .text.x02008768,"ax",%progbits
-	.global Func_02000768
-	.thumb_func
-Func_02000768:
-	push {lr}
-	ldr r1, .L_020087c4
-	movs r2, #241
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #99
-	bne .L_0200879a
-	movs r3, #128
-	lsls r3, r3, #2
-	adds r3, #18
-	adds r2, r1, r3
-	movs r3, #7
-	strb r3, [r2]
-	movs r3, #128
-	lsls r3, r3, #2
-	adds r3, #118
-	adds r2, r1, r3
-	movs r3, #1
-	strh r3, [r2]
-	ldr r0, .L_020087c8
-	movs r1, #1
-	bl Func_020012b4
-.L_0200879a:
-	bl Func_020012fc
-	movs r1, #9
-	movs r2, #10
-	movs r0, #0
-	bl Func_02001304
-	movs r1, #160
-	lsls r1, r1, #19
-	ldr r3, .L_020087cc
-	adds r1, #24
-	movs r2, #8
-	ldr r0, .L_020087d0
-	mov lr, r3
-	.2byte 0xf800
-	movs r1, #144
-	lsls r1, r1, #3
-	ldr r0, .L_020087d4
-	bl Scheduler_AddOrUpdateCallback
-	pop {pc}
-.L_020087c4:
-	.4byte gPartyState
-.L_020087c8:
-	.4byte 0x00000067
-.L_020087cc:
-	.4byte IwramCopyWords
-.L_020087d0:
-	.4byte Data_02001ae0
-.L_020087d4:
-	.4byte Func_02000738
 	.section .text.x020087d8,"ax",%progbits
 	.global Func_020007d8
 	.thumb_func

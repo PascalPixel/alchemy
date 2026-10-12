@@ -1,7 +1,3 @@
-/* Near miss, differ 6: three calls set their argument registers in another
- * order (the listing builds r0 last for Func_02001304 and loads the callback
- * after the shift for Scheduler_AddOrUpdateCallback); direct calls and the
- * call.h layer give the same code. */
 #include "types.h"
 #include "iwram_call.h"
 #include "call.h"
@@ -24,7 +20,7 @@ void Func_02000768(void)
         Func_020012b4((s32)&SceneId_Ov66bRoom2, 1);
     }
     Func_020012fc();
-    Call3(Func_02001304, 0, 9, 10);
-    Iwram_CopyWords(Data_02001ae0, (void *)0x05000018, 8);
-    Call2(Scheduler_AddOrUpdateCallback, (s32)Func_02000738, 0x480);
+    Value3((s32 (*)())Func_02001304, 0, 9, 10);
+    Value3((s32 (*)())Iwram_CopyWordsEntry, (s32)Data_02001ae0, 0x05000018, 8);
+    Value2((s32 (*)())Scheduler_AddOrUpdateCallback, (s32)Func_02000738, 0x480);
 }

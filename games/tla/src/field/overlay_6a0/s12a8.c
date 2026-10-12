@@ -1,6 +1,3 @@
-/* Matches (differ 0) as overlays 699, 69D and 69E write it, with their asm
-   barrier that loads the ground height before the word is cleared. It stays
-   a draft: this overlay spends no new device on it. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "field_event.h"

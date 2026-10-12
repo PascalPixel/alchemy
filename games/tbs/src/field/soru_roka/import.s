@@ -1,6 +1,2 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
-	.include "games/tbs/src/system/overlay.inc"
-	import Engine_WorkSetValuesIfNonNegative, Runtime_SetWorkTripleIfNonNegativeFar
-	import Engine_GameFlagIsSet, GameFlag_TestFar
-	import InitializeSceneRecordBuffer, FieldEffect_InitSparklesFar
-	import QueueSceneSound, BattleFx_SetQueuedSoundAndPlayFar
+	.include "games/tbs/src/system/overlay/import.inc"

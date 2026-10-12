@@ -39,6 +39,7 @@
 #include "unit/game/character/chara8.h"
 #include "unit/graphics/palette/palette.h"
 #include "unit/graphics/window/window.h"
+#include "unit/graphics/window/window3.h"
 #include "unit/graphics/window/window4.h"
 #include "unit/graphics/window/window5.h"
 #include "unit/graphics/window/window6.h"

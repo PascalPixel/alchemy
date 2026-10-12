@@ -3,6 +3,7 @@
 #include "vram_tab.h"
 #include "unit/field/haidia_ie/ie.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object2.h"
 #include "unit/battle/effect/object3.h"
 #include "unit/battle/effect/object4.h"
 #include "unit/battle/effect/object5.h"

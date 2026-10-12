@@ -2,6 +2,7 @@
 #include "unit/field/goma_suiro/suiro.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object2.h"
 #include "unit/battle/effect/object3.h"
 #include "unit/battle/effect/object4.h"
 #include "unit/battle/effect/object5.h"

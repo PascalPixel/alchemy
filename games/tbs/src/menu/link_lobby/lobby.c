@@ -1,6 +1,7 @@
 #include "unit/import.h"
 #include "unit/menu/link_lobby/lobby.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object2.h"
 #include "unit/battle/effect/object3.h"
 #include "unit/battle/effect/object4.h"
 #include "unit/battle/effect/object5.h"

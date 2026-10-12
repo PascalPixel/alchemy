@@ -2430,37 +2430,25 @@ s32 Party_AdjustCoins(s32 amount)
 	return value;
 }
 
-s32 Party_AdjustSixDigitCounterB(s32 amount)
-{
-	s32 value;
+// gGameState の field に amount を足し、0 から max までにおさめて返す
+#define DEFINE_PARTY_ADJUST(name, field, max)     \
+	s32 name(s32 amount)                          \
+	{                                             \
+		s32 value;                                \
+		struct GameState *progress = &gGameState; \
+                                                  \
+		value = progress->field;                  \
+		value += amount;                          \
+		if (value > max)                          \
+			value = max;                          \
+		if (value < 0)                            \
+			value = 0;                            \
+		progress->field = value;                  \
+		return value;                             \
+	}
 
-	struct GameState *progress = &gGameState;
-
-	value = progress->shop_credit;
-	value += amount;
-	if (value > 0xf423f)
-		value = 0xf423f;
-	if (value < 0)
-		value = 0;
-	progress->shop_credit = value;
-	return value;
-}
-
-s32 Party_AdjustCounterCappedAt28(s32 amount)
-{
-	s32 value;
-
-	struct GameState *progress = &gGameState;
-
-	value = progress->shop_gifts;
-	value += amount;
-	if (value > 28)
-		value = 28;
-	if (value < 0)
-		value = 0;
-	progress->shop_gifts = value;
-	return value;
-}
+DEFINE_PARTY_ADJUST(Party_AdjustSixDigitCounterB, shop_credit, 0xf423f)
+DEFINE_PARTY_ADJUST(Party_AdjustCounterCappedAt28, shop_gifts, 28)
 
 s32 Trade_ListFlaggedEntries(u8 *output)
 {

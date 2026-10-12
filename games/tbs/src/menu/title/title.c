@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "vram_tab.h"
 #include "unit/menu/title/title.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "unit/game/character/chara.h"
 #include "unit/graphics/palette/palette.h"

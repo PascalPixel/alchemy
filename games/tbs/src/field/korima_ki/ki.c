@@ -2,7 +2,7 @@
 #include "game_state.h"
 #include "unit/field/korima_ki/ki.h"
 #include "unit/field/common/korima/palette.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/game/character/chara.h"
 #include "unit/system/scheduler/runtime.h"
 #include "battle.h"

@@ -4,7 +4,7 @@
 /* DEBUG */
 
 #include "unit/graphics/window/sideobjt.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/battle/tgtexec.h"
 #include "types.h"
 #include "edition.h"

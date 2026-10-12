@@ -1,6 +1,6 @@
 #include "unit/field/goma_iriguchi/iriguchi.h"
 #include "unit/field/common/effect/move.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/game/character/chara.h"
 #include "battle.h"
 #include "field.h"

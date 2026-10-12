@@ -3,7 +3,7 @@
 #include "scene_ids.h"
 #include "unit/field/toreto_heya/heya.h"
 #include "unit/field/common/effect/move.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "unit/game/character/chara.h"
 #include "unit/system/scheduler/runtime.h"

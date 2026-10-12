@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "unit/field/suhara_sabaku/sabaku.h"
 #include "unit/field/common/effect/move.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/game/character/chara.h"
 #include "fieldobj.h"
 #include "types.h"

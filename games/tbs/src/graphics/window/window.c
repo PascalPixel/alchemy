@@ -10,7 +10,7 @@
 #include "unit/graphics/window/textspd.h"
 #include "unit/menu/optdata.h"
 #include "unit/graphics/window/window.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/graphics/text/moji.h"
 #include "unit/system/scheduler/runtime.h"
 #include "types.h"

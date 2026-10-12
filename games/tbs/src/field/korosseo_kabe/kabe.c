@@ -12,7 +12,7 @@
 #include "unit/field/common/korosseo/item_icon.h"
 #include "unit/field/common/korosseo/path_rival.h"
 #include "unit/field/common/korosseo/scene_state.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "unit/game/character/chara.h"
 #include "unit/graphics/window/window.h"

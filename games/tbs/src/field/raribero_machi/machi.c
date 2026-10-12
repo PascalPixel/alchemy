@@ -1,6 +1,6 @@
 #include "game_state.h"
 #include "unit/field/raribero_machi/machi.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "unit/system/scheduler/runtime.h"
 #include "battle.h"

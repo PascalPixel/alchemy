@@ -1,7 +1,7 @@
 #ifndef ALCHEMY_FIELD_EVENT_H
 #define ALCHEMY_FIELD_EVENT_H
 
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/system/scheduler/runtime.h"
 #include "mapcopy.h"
 

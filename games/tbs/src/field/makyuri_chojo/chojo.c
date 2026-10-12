@@ -3,7 +3,7 @@
 #include "unit/import.h"
 #include "unit/field/makyuri_chojo/chojo.h"
 #include "unit/field/common/effect/move.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/game/character/chara.h"
 #include "unit/system/scheduler/runtime.h"
 #include "types.h"

@@ -4,7 +4,7 @@
 #include "unit/field/mogoru_mori/mori.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/effect/move.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "fieldobj.h"

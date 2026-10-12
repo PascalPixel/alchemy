@@ -2,7 +2,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/kuupuappu_dou/dou.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/system/scheduler/runtime.h"
 #include "battle.h"
 #include "debug.h"

@@ -1,6 +1,6 @@
 #include "keystate.h"
 #include "unit/field/torebi_izumi/izumi.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "unit/game/character/chara.h"
 #include "unit/graphics/window/window.h"

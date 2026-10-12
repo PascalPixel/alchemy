@@ -1,7 +1,7 @@
 
 #include "game_state.h"
 #include "unit/field/korima_heya/heya.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

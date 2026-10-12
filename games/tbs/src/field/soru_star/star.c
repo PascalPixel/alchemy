@@ -3,7 +3,7 @@
 #include "unit/field/soru_star/star.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/soru_star/ring_setup.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "unit/game/character/chara.h"
 #include "unit/graphics/window/window.h"

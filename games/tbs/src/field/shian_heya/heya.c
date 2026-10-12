@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "unit/field/shian_heya/heya.h"
 #include "unit/field/common/effect/move.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"

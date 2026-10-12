@@ -1,6 +1,6 @@
 #include "scene_ids.h"
 #include "unit/menu/clear/clear.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/game/character/chara.h"
 #include "unit/graphics/window/window.h"
 #include "unit/system/scheduler/runtime.h"

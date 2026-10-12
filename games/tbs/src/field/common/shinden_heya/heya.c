@@ -1,7 +1,7 @@
 #include "battle_effect_runtime.h"
 #include "game_state.h"
 #include "unit/field/common/shinden_heya/heya.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "unit/graphics/window/window.h"
 #include "unit/sound/sound.h"

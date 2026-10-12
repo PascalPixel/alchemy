@@ -1,7 +1,7 @@
 #ifndef GUARD_CREATE_CONFIGURED_OVERLAY_OBJECT_H
 #define GUARD_CREATE_CONFIGURED_OVERLAY_OBJECT_H
 
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "types.h"
 
 #define NULL ((void *)0)

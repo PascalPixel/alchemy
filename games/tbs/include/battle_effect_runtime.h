@@ -1,7 +1,7 @@
 #ifndef ALCHEMY_BATTLE_EFFECT_RUNTIME_H
 #define ALCHEMY_BATTLE_EFFECT_RUNTIME_H
 
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "object_lookup.h"
 #include "types.h"
 #include "layout_guard.h"

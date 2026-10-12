@@ -4,7 +4,7 @@
 #include "unit/field/korima_hiroba/hiroba.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/korima/palette.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

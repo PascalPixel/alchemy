@@ -1,7 +1,7 @@
 #include "unit/battle/effect/btlcue.h"
 #include "unit/battle/effect/zonedata.h"
 #include "vram_tab.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/graphics/display/scroll_initialize_hblank_dma.h"
 #include "unit/system/scheduler/runtime.h"

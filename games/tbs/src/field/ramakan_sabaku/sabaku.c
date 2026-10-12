@@ -2,7 +2,7 @@
 #include "unit/import.h"
 #include "unit/field/ramakan_sabaku/sabaku.h"
 #include "unit/field/common/effect/move.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "unit/system/scheduler/runtime.h"
 #include "fieldobj.h"

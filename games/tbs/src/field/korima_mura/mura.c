@@ -3,7 +3,7 @@
 #include "scene_ids.h"
 #include "unit/field/korima_mura/mura.h"
 #include "unit/field/korima_hashi/falling_effect.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "unit/system/scheduler/runtime.h"
 #include "battle.h"

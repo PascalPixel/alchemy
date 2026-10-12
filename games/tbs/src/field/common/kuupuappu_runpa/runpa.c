@@ -1,6 +1,6 @@
 #include "game_state.h"
 #include "unit/field/common/kuupuappu_runpa/runpa.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

@@ -2,7 +2,7 @@
 #include "field_event.h"
 #include "unit/import.h"
 #include "unit/field/suhara_heya/heya.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "unit/system/scheduler/runtime.h"
 #include "suhara.h"

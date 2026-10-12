@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/field/karei_kyuden/kyuden.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "battle.h"
 #include "debug.h"

@@ -3,7 +3,7 @@
 #include "unit/import.h"
 #include "unit/field/world_map/map.h"
 #include "unit/field/world_map/linked_effects.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "unit/game/character/chara.h"
 #include "unit/graphics/window/window.h"

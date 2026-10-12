@@ -2,7 +2,7 @@
 #include "scene_ids.h"
 #include "field_event.h"
 #include "unit/field/runpa_dou/dou.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "cave.h"
 #include "text/msg_ids.h"
 

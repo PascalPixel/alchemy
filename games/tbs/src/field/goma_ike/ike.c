@@ -1,7 +1,7 @@
 
 
 #include "unit/field/goma_ike/ike.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

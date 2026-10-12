@@ -2,7 +2,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/biribino_dou/dou.h"
-#include "unit/battle/effect/slots.h"
+#include "unit/battle/effect/object.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

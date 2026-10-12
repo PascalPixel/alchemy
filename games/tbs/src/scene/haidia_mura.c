@@ -2874,12 +2874,11 @@ static void FieldScene_RunScene373SequenceB(void)
 	if (GameFlag_IsSet(0x241) != 0)
 	{
 		rec7 = GameFlag_IsSet(0x106);
-		if (rec7 != 0)
+		if (rec7 == 0)
 		{
-			goto done;
+			Object_GetById(22)->paused = rec7;
+			GameFlag_Clear(0x241);
 		}
-		Object_GetById(22)->paused = rec7;
-		GameFlag_Clear(0x241);
 	}
 	else
 	{
@@ -2889,7 +2888,6 @@ static void FieldScene_RunScene373SequenceB(void)
 			GameFlag_Set(0x241);
 		}
 	}
-done:;
 }
 
 static void SceneActor_SetFlagByteBySlotZeroPosition(void)

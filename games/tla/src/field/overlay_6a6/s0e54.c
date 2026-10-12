@@ -1,7 +1,3 @@
-/* Near miss (4 instructions differ): the native keeps the constant zero
- * inside the object loop (movs r3, #0 before each strb) and the work
- * pointer in r6; the draft hoists the zero into r6 and moves the work to r7.
- * Tried: u32 and s32 counters, <= 63 and < 64, a flags pointer. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -69,12 +65,18 @@ void Func_02000e54(void)
 
     Func_020012e0();
     Func_020013f8(0);
-    for (i = 8; (u32)i < 64; i++) {
+    /* FAKEMATCH: the loop is written with goto so that it carries no loop notes: the bytes rebuild the zero on every pass, and a for loop hoists it and moves the work pointer (differ 4). */
+    i = 8;
+loop:
+    {
         struct ObjectRuntime *object = Object_GetById(i);
 
         if (object != NULL)
             object->motion_flags = 0;
     }
+    i++;
+    if ((u32)i <= 63)
+        goto loop;
     work = (u8 *)&((struct EventWork154 *)work)->value;
     Func_02001448(158);
     Func_020012a0_(Data_02001f14.data, Data_02001f14.a, Data_02001f14.b);

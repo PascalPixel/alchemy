@@ -35,7 +35,7 @@ typedef struct StageEffect
 	u8	state;
 } StageEffect;
 
-typedef struct StageEffect_02003d88
+typedef struct LinkedStageEffect
 {
 	s32 reserved_00;
 	s32 reserved_04;
@@ -46,7 +46,7 @@ typedef struct StageEffect_02003d88
 	u8	state;
 	u8	reserved_56[14];
 	s16 linked_effect_slot;
-} StageEffect_02003d88;
+} LinkedStageEffect;
 
 u8 *ColossoLogRollingStage_GetScriptData(void);
 s32 ColossoLogRollingStage_GetMessageData(void);

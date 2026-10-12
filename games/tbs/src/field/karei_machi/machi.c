@@ -2083,7 +2083,7 @@ static void FieldScene_RunScene3a8SequenceA(s32 a0, s32 a1, s32 a2)
 
 static void SceneEffect_UpdateLobeOrbitEffect26(void)
 {
-	Effect_0200390c *effect = Object_GetById(26);
+	LobeOrbitEffect *effect = Object_GetById(26);
 	RenderData		*render = effect->render;
 	s32				 offset = Engine_MathSin(effect->angle) * 2;
 	s32				 first;

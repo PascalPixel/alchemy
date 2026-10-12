@@ -69,7 +69,7 @@ static s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 	return 0;
 }
 
-static s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
+static s32 SceneActor_MoveActorZeroToTarget(const MoveTarget *target)
 {
 	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 	u8				   saved = actor->motion_flags;

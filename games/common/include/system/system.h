@@ -30,7 +30,7 @@ extern volatile u16 gSleepActive;
 #include "edition.h"
 
 struct FlashChipInfo;
-struct FlashInfo08007220;
+struct FlashChipAtmelInfo;
 
 struct FlashChipType
 {
@@ -40,7 +40,7 @@ struct FlashChipType
 	u16 unknown_1a;
 	u8	sector_shift;
 };
-extern struct FlashInfo08007220	  Flash_ChipAtmel;
+extern struct FlashChipAtmelInfo  Flash_ChipAtmel;
 extern const struct FlashChipType Flash_ChipUnknown;
 extern u32						  Flash_Handler1;
 extern u32						  gEraseFlashSector;

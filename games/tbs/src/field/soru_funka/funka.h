@@ -41,7 +41,7 @@ typedef struct
 	s32 unk1C;
 	u8	filler20[28];
 	s32 unk3C;
-} Ent_02002ba0;
+} ArcEffect;
 
 typedef struct
 {
@@ -57,7 +57,7 @@ typedef struct
 	s32 unk38;
 	u8	filler3C[4];
 	s32 unk40;
-} Ent_02002c1c;
+} ViewCenter;
 
 extern u8 *gParticleWork[];
 

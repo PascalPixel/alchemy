@@ -1685,7 +1685,7 @@ static void SceneEffect_AdvanceTenEntryTimers(void)
 
 	u32			  i;
 	s32			  v;
-	Ent_02002ba0 *p;
+	ArcEffect *p;
 
 	for (i = 0; i <= 9; i++)
 	{
@@ -1720,9 +1720,9 @@ static void SceneEffect_AdvanceTenEntryTimers(void)
 
 static void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b)
 {
-	Ent_02002c1c *p;
+	ViewCenter *p;
 
-	p = (Ent_02002c1c *)Engine_EventGetViewCenter();
+	p = (ViewCenter *)Engine_EventGetViewCenter();
 	b <<= 16;
 	a <<= 16;
 	Engine_CameraMoveTo(a, -1, b, 1);

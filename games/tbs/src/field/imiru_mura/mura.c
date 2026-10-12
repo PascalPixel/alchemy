@@ -68,7 +68,7 @@ typedef struct
 	u8 unk17;
 } State;
 
-struct SharedData_02000240
+struct SelectedSubject
 {
 	u8	pad_000[500];
 	s32 selected_subject;
@@ -969,7 +969,7 @@ static void FieldScene_RunPrimaryScriptChoreography(void)
 	Engine_EventEnd();
 }
 
-static void SceneActor_UpdateCountdownArcPosition(T_0200154c *o)
+static void SceneActor_UpdateCountdownArcPosition(CountdownArcObject *o)
 {
 	s32	 buf[3];
 	s32 *b;
@@ -1436,7 +1436,7 @@ static void StagedActor_RunHeadingProbeStep(void)
 	s32					 x;
 	u8					*p;
 
-	subject = Engine_ActorLookup(((struct SharedData_02000240 *)&gGameState)->selected_subject);
+	subject = Engine_ActorLookup(((struct SelectedSubject *)&gGameState)->selected_subject);
 
 	for (;;)
 	{

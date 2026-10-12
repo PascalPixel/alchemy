@@ -730,22 +730,22 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *effect)
 		{
 			ox = (Random16() & 3) - 1;
 			oy = (Random16() & 3) - 1;
-			((struct Cells03001ad0 *)gBgScroll)->unk04 = ox;
-			((struct Cells03001ad0 *)gBgScroll)->unk06 = oy + 32;
+			((struct BgScrollWords *)gBgScroll)->unk04 = ox;
+			((struct BgScrollWords *)gBgScroll)->unk06 = oy + 32;
 		}
 		else
 		{
 			ox = 0;
 			oy = 0;
-			((struct Cells03001ad0 *)gBgScroll)->unk04 = 0;
-			((struct Cells03001ad0 *)gBgScroll)->unk06 = 32;
+			((struct BgScrollWords *)gBgScroll)->unk04 = 0;
+			((struct BgScrollWords *)gBgScroll)->unk06 = 32;
 		}
 		if (frame >= 176 && frame < 180)
 		{
 			ox = -BattleFx10_ShakeOffsets[frame - 176];
 			oy = BattleFx10_ShakeOffsets[frame - 176];
-			((struct Cells03001ad0 *)gBgScroll)->unk04 = ox;
-			((struct Cells03001ad0 *)gBgScroll)->unk06 = oy + 32;
+			((struct BgScrollWords *)gBgScroll)->unk04 = ox;
+			((struct BgScrollWords *)gBgScroll)->unk06 = oy + 32;
 		}
 
 		for (i = 0; i != count; i++)

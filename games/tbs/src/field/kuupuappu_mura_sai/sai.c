@@ -163,7 +163,7 @@ static void EV16_TALK(void)
 	Engine_EventOpenMessage(16, 0);
 	if (Engine_EventChooseYesNo(0, 0) != 0)
 	{
-		((struct SceneWork_020006b4 *)gEventWork)->branch_counter += 1;
+		((struct BranchCounterWork *)gEventWork)->branch_counter += 1;
 	}
 	Engine_EventShowMessage(16, 0);
 	Engine_GameFlagSet(0x308);
@@ -185,9 +185,9 @@ static void EV1032_PSYNERGY(void)
 static void EV11_PSYNERGY(void)
 {
 	Engine_EventSetMessage((s32)MsgKuupuappuOnceDodonpaTook);
-	((struct Actor_02000754 *)Object_GetById(11))->accepted = 1;
+	((struct AcceptActor11 *)Object_GetById(11))->accepted = 1;
 	ActorPresentation_RunActorModeOneThenZero(11);
-	((struct Actor_02000754 *)Object_GetById(11))->accepted = 0;
+	((struct AcceptActor11 *)Object_GetById(11))->accepted = 0;
 }
 
 static void EV1036_PSYNERGY(void)
@@ -206,9 +206,9 @@ static void EV1036_PSYNERGY(void)
 static void EV13_PSYNERGY(void)
 {
 	Engine_EventSetMessage((s32)MsgKuupuappuGreatEverythingSolved);
-	((struct Actor_020007d4 *)Object_GetById(13))->accepted = 1;
+	((struct AcceptActor13 *)Object_GetById(13))->accepted = 1;
 	ActorPresentation_RunActorModeOneThenZero(13);
-	((struct Actor_020007d4 *)Object_GetById(13))->accepted = 0;
+	((struct AcceptActor13 *)Object_GetById(13))->accepted = 0;
 }
 
 static void KuupuappuMuraSai_RunActor14Talk(void)
@@ -357,7 +357,7 @@ static void EV07_TOUCH(void)
 
 static void EV08_TOUCH(void)
 {
-	struct SceneActor_020004b4 *actor = Object_GetById(ACTOR_PARTY_LEADER);
+	struct PresentedActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 	struct Presentation		   *presentation = actor->presentation;
 	u8							flags;
 
@@ -378,7 +378,7 @@ static void EV08_TOUCH(void)
 
 static void EV09_TOUCH(void)
 {
-	struct SceneActor_020004b4 *actor = Object_GetById(ACTOR_PARTY_LEADER);
+	struct PresentedActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 	struct Presentation		   *presentation = actor->presentation;
 	u8							flags;
 
@@ -412,8 +412,8 @@ static void EV10_TOUCH(void)
 
 static void EV12_TOUCH(void)
 {
-	struct SceneActor_02000c1c	 *actor = Object_GetById(ACTOR_PARTY_LEADER);
-	struct Presentation_02000c1c *presentation = actor->presentation;
+	struct PresentedActorB	 *actor = Object_GetById(ACTOR_PARTY_LEADER);
+	struct PresentationB *presentation = actor->presentation;
 	u8							  flags;
 
 	Engine_AudioPlayCue(158);
@@ -492,7 +492,7 @@ static void EV18_TALK(void)
 
 	if (PartyInventory_FindOwner(231) != -1 && Engine_GameFlagIsSet(0x858) == 0)
 	{
-		((struct SceneWork_02000e90 *)gEventWork)->actor18_marker = 1;
+		((struct Actor18MarkerWork *)gEventWork)->actor18_marker = 1;
 	}
 
 	Engine_EventEnd();

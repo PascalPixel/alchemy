@@ -8,12 +8,12 @@
 struct SceneEntrance;
 struct SceneRegion;
 
-typedef struct Target_02000cd0
+typedef struct MoveTarget
 {
 	union FieldCoordinate x;
 	s32					  pad4;
 	union FieldCoordinate z;
-} Target_02000cd0;
+} MoveTarget;
 
 typedef struct Record
 {

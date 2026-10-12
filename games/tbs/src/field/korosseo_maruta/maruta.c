@@ -2110,10 +2110,10 @@ static void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source)
 	}
 }
 
-static s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(StageEffect_02003d88 *source)
+static s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(LinkedStageEffect *source)
 {
 
-	StageEffect_02003d88 *effect = Object_GetById(source->linked_effect_slot);
+	LinkedStageEffect *effect = Object_GetById(source->linked_effect_slot);
 
 	Engine_ObjectSetPosition(effect, source->x, source->y + 0x240000, source->z);
 	effect->state = 0;

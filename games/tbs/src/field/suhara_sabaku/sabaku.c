@@ -42,19 +42,19 @@
 static void SuharaSabaku_ApplyVisitFlagBlend(void);
 static void SuharaSabaku_ApplyAltarFlagBlend(void);
 
-struct Selection_02000400
+struct SelectedActorId
 {
 	u8	reserved000[500];
 	s32 actor_id;
 };
 
-struct Actor_02000400
+struct SelectedActorFacing
 {
 	u8	reserved00[6];
 	u16 presentation;
 };
 
-struct SceneWork_02000400
+struct StateMarkerWork
 {
 	u8	reserved000[386];
 	u16 state_one_marker;
@@ -150,12 +150,12 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 static void SuharaSabaku_SyncSelectedActorProgress(void)
 {
-	struct Actor_02000400	  *actor;
-	struct SceneWork_02000400 *scene;
+	struct SelectedActorFacing	  *actor;
+	struct StateMarkerWork *scene;
 	s32						   progress;
 
-	actor = Object_GetById(((struct Selection_02000400 *)((s16 *)&gGameState))->actor_id);
-	scene = *(struct SceneWork_02000400 **)((u8 *)&gEventWork);
+	actor = Object_GetById(((struct SelectedActorId *)((s16 *)&gGameState))->actor_id);
+	scene = *(struct StateMarkerWork **)((u8 *)&gEventWork);
 	actor->presentation = (gFrameCount << 12);
 
 	progress = GameFlag_GetByte(0x210);

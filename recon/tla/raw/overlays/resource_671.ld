@@ -53,7 +53,7 @@ SECTIONS
         "*/resource_671_overlay.o"(.text.x0200aa64)
         "*/resource_671_overlay.o"(.text.x0200af70)
         "*/games/tla/src/field/overlay_671/gabomba.o"(.text)
-        "*/resource_671_overlay.o"(.text.x0200b398)
+        "*/games/tla/src/field/overlay_671/s3398.o"(.text)
         "*/games/tla/src/field/overlay_671/s3494.o"(.text)
         "*/games/tla/src/field/overlay_671/statue_init.o"(.text)
         "*/games/tla/src/field/overlay_671/s359c.o"(.text)

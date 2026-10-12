@@ -1,9 +1,9 @@
 /* Near misses. Func_02000688 (49 instructions, 2 differ): the native loads the pool address of
  * gPartyState before it stores the screen effect, the draft after; sched2 gives the load
  * priority 17 against the store value 18, and a block-local party pointer measured the same
- * (6B9 Func_02000104 has the same single difference). Func_02000704 (29, 22 differ): the draft
- * strength-reduces the owner index to a pointer and a countdown; the native indexes owners[i]
- * from sp and counts up. u16 owners and a post-increment index measured the same. */
+ * (6B9 Func_02000104 has the same single difference). Func_02000704 (29, 22 differ): written with goto
+ * (17 differ) the draft keeps the address of owners in r8 across the calls; the native takes it
+ * from sp at each pass. As a for loop (22 differ) it steps a pointer and counts down. */
 #include "types.h"
 #include "field_scene.h"
 #include "ram_buffer.h"
@@ -40,14 +40,15 @@ s32 Func_02000688(void)
 
 void Func_02000704(s32 levels)
 {
-    u16 owners[16];
+    s16 owners[16];
     s32 count;
     s32 i;
     s32 owner;
 
-    count = Party_ListActiveOwners((s16 *)owners);
+    count = Party_ListActiveOwners(owners);
+    /* FAKEMATCH: the loop is written with goto so that it carries no loop notes: the bytes index owners[i] from sp and count up, and a for loop steps a pointer and counts down (differ 22). */
     for (i = 0; i < count;) {
-        owner = owners[i++];
+        owner = (u16)owners[i++];
         Party_AdvanceOwnerCountToTarget(owner, ((u8 *)UnitGet(owner))[15] + levels);
         UnitCalc(owner);
     }

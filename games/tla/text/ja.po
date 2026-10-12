@@ -17111,7 +17111,7 @@ msgctxt "message"
 msgid "04275"
 msgstr "わたせません!"
 
-msgctxt "message"
+msgctxt "MsgItBroke"
 msgid "04276"
 msgstr "こわれてしまった!"
 

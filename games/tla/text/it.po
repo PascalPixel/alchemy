@@ -18963,7 +18963,7 @@ msgctxt "message"
 msgid "04738"
 msgstr "Non c'è posto!"
 
-msgctxt "message"
+msgctxt "MsgItBroke"
 msgid "04739"
 msgstr "Strum. rotto!"
 

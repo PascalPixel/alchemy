@@ -17123,7 +17123,7 @@ msgctxt "message"
 msgid "04278"
 msgstr "Can't hold more!"
 
-msgctxt "message"
+msgctxt "MsgItBroke"
 msgid "04279"
 msgstr "It broke!"
 

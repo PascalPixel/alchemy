@@ -206,8 +206,8 @@ Func_0801596c:
 	.section .rom.00015cd0, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00015cd0, 0x000001a0
-	.section .rom.00016048, "ax"
-	.incbin "baserom.gba", 0x00016048, 0x00000038
+	.section .rom.00016080, "ax"
+	.balign 4
 	.global Func_08016054
 	.type Func_08016054, %function
 	.thumb_func
@@ -221,12 +221,6 @@ Func_08016180:
 	.incbin "baserom.gba", 0x000161ac, 0x0000015c
 	.section .rom.00016372, "ax"
 	.incbin "baserom.gba", 0x00016372, 0x00000002
-	.section .rom.00016374, "ax"
-	.global Func_08016348
-	.type Func_08016348, %function
-	.thumb_func
-Func_08016348:
-	.incbin "baserom.gba", 0x00016374, 0x000000e8
 	.section .rom.00016512, "ax"
 	.incbin "baserom.gba", 0x00016512, 0x00000002
 	.section .rom.000165e0, "ax"
@@ -258,7 +252,10 @@ SerialRuntime_BeginTransferB:
 	.type Func_08016990, %function
 	.thumb_func
 Func_08016990:
-	.incbin "baserom.gba", 0x000169bc, 0x00000314
+	.incbin "baserom.gba", 0x000169bc, 0x00000248
+	.section .rom.00016c08, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00016c08, 0x000000c8
 	.section .rom.00016cd0, "ax"
 	.global UnitGet
 	.type UnitGet, %function
@@ -839,6 +836,10 @@ UiText_ShowPositionedMessageAndWait:
 	.incbin "baserom.gba", 0x0003a778, 0x0000011c
 	.section .rom.0003a8c8, "ax"
 	.balign 4
+	.global Func_0803a8fc
+	.type Func_0803a8fc, %function
+	.thumb_func
+Func_0803a8fc:
 	.incbin "baserom.gba", 0x0003a8c8, 0x000001a8
 	.section .rom.0003aa96, "ax"
 	.incbin "baserom.gba", 0x0003aa96, 0x00000002
@@ -888,13 +889,8 @@ UiText_MeasureEntryDimensions:
 	.thumb_func
 Func_0803c068:
 	.incbin "baserom.gba", 0x0003c054, 0x00000108
-	.section .rom.0003c15c, "ax"
-	.global Func_0803c170
-	.type Func_0803c170, %function
-	.thumb_func
-Func_0803c170:
-	.incbin "baserom.gba", 0x0003c15c, 0x00000028
 	.section .rom.0003c184, "ax"
+	.balign 4
 	.global Func_0803c198
 	.type Func_0803c198, %function
 	.thumb_func
@@ -3387,7 +3383,12 @@ UiIcon_PrepareObject:
 Func_080f88d0:
 	.incbin "baserom.gba", 0x000fa8d0, 0x000002ec
 	.section .rom.000face6, "ax"
-	.incbin "baserom.gba", 0x000face6, 0x0000025a
+	.incbin "baserom.gba", 0x000face6, 0x00000002
+	.global Func_080f8ce8
+	.type Func_080f8ce8, %function
+	.thumb_func
+Func_080f8ce8:
+	.incbin "baserom.gba", 0x000face8, 0x00000258
 	.section .rom.000faf9c, "ax"
 	.incbin "baserom.gba", 0x000faf9c, 0x0000016c
 	.section .rom.000fb2dc, "ax"
@@ -3421,9 +3422,6 @@ ItemMenu_DrawIcons:
 	.incbin "baserom.gba", 0x000fce28, 0x000002d4
 	.section .rom.000fd15c, "ax"
 	.incbin "baserom.gba", 0x000fd15c, 0x00000544
-	.section .rom.000fd73c, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x000fd73c, 0x00000064
 	.section .rom.000fd7e8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000fd7e8, 0x0000012c

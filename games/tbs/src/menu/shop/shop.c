@@ -1,4 +1,5 @@
 #include "unit/menu/shop/shop.h"
+#include "unit/menu/shop/shop3.h"
 #include "unit/menu/shop/shop4.h"
 #include "unit/menu/shop/shop5.h"
 #include "unit/menu/shop/shop6.h"
@@ -2051,71 +2052,4 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
 	}
 done:
 	shop->selected_item = saved;
-}
-
-s32 EventTable_GetRowLimit(void)
-{
-	return 35;
-}
-
-void EventTable_ApplyRowAbilities(s32 row_no)
-{
-	s16 *row;
-	s16 *entry;
-	s32	 value;
-	s32	 count;
-	s32	 flag;
-
-	flag = row_no + 0x400;
-	if (GameFlag_TestFar(flag) == 0)
-	{
-		GameFlag_SetBitFar(flag);
-		count = 0;
-		value = Shop_StockTable[row_no][24];
-		if (value != 0)
-		{
-			row = Shop_StockTable[row_no];
-			entry = row + 24;
-			do
-			{
-				Item_AdjustCounterFar(value, 1);
-				count++;
-				if (count > 7)
-					break;
-				entry++;
-				value = *entry;
-			} while (value != 0);
-		}
-	}
-}
-
-s32 EventTable_CopyRowHeader(s32 row_no, s16 *output)
-{
-	s16 *src;
-	s16 *dst;
-	s32	 count;
-
-	count = 0;
-	if (Shop_StockTable[row_no][0] != 0)
-	{
-		dst = output;
-		src = Shop_StockTable[row_no];
-		do
-		{
-			/* FAKEMATCH: only the copy read is volatile, so its lifetime stays separate from the signed sentinel read. Without volatile: differ 41; indexed and while forms: 34 to 54. */
-			*dst = *(volatile s16 *)src;
-			count++;
-			src++;
-			dst++;
-			if (count > 23)
-				break;
-		} while (*src != 0);
-	}
-	output[count] = 0;
-	return count;
-}
-
-s32 EventTable_GetRowType(s32 index)
-{
-	return Shop_StockTable[index][32];
 }

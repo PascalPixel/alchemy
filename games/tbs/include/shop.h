@@ -2,6 +2,7 @@
 #define ALCHEMY_SHOP_H
 
 #include "unit/menu/shop/shop.h"
+#include "unit/menu/shop/shop3.h"
 #include "unit/menu/shop/shop4.h"
 #include "unit/menu/shop/shop5.h"
 #include "unit/menu/shop/shop6.h"

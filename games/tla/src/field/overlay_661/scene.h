@@ -67,11 +67,59 @@ void Func_020041b0(void);
 void Func_020041b8(s32 skip);
 void Func_020041c8(s32 cue);
 s32 Func_020041e0(struct FieldActor *object);
+void Func_020040d0(s32 actor, s32 flags);
+void Func_020004e0(void);
+void Func_02000918(u16 *list);
+void Func_0200095c(u16 *list);
+void ObjectMotion_SetAngleToward(s32 id, s32 target, s32 flags);
+void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 flags);
+void Object_AttachWorkTargetToObject(s32 id, s32 mode);
+void Object_LinkObjectAndSetCallback(s32 id, s32 target);
+void Event_StartScreenTransition(void);
+void Event_FinishScreenTransition(void);
+void Event_WaitTransitionFrames(void);
+void Battle_WaitMode0(s32 frames);
+void PartyInventory_GiveItem(s32 item, s32 flags);
+struct FieldActor *Func_02001b70(void);
+void Func_02003fc8(struct FieldActor *object);
+void Func_020041f8(s32 cue);
+extern struct FieldActor *Data_0200480c;
+extern s32 gInput;
 
 static inline void Scene_TaskAdd(void (*callback)(void), s32 priority)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Scheduler_AddOrUpdateCallback(callback, priority);
+}
+
+static inline s32 Scene_FlagTest(s32 flag)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    return GameFlag_Test(flag);
+}
+
+static inline void Scene_FlagSet(s32 flag)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    GameFlag_SetBit(flag);
+}
+
+static inline void Scene_FlagClear(s32 flag)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    GameFlag_ClearBit(flag);
+}
+
+static inline void Scene_ArmCallback(s32 id, s32 angle, s32 flags)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    ObjectMotion_ArmCallback(id, angle, flags);
+}
+
+static inline void Scene_Call4090(s32 actor, s32 x, s32 z)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02004090(actor, x, z);
 }
 
 static inline void Scene_Call4178(s32 a, s32 b, s32 c)

@@ -2,7 +2,7 @@
 #define ALCHEMY_CHARACTER_MENU_H
 
 #include "unit/graphics/window/window.h"
-#include "unit/menu/item/item.h"
+#include "unit/menu/item/menu.h"
 #include "types.h"
 #include "global_cells.h"
 #include "layout_guard.h"

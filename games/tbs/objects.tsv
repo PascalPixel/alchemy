@@ -164,6 +164,7 @@ main	rom_main_07	games/tbs/src/system/far_call/BATTLE
 main	rom_main_07	games/tbs/src/graphics/tile/decode	.text .rodata .text.bit_dispatch
 main	rom_main_07	games/tbs/src/graphics/tile/decode	.data .text.bit_commands
 main	rom_main_07	games/tbs/src/battle/battle
+main	rom_main_07	games/tbs/src/battle/battle8
 main	rom_main_07	games/tbs/src/battle/battle9
 main	rom_main_07	games/tbs/src/battle/battle10
 main	rom_main_07	games/tbs/src/battle/battle11

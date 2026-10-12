@@ -72,7 +72,7 @@ SECTIONS
         "*/resource_655_overlay.o"(.text.x0200b764)
         "*/resource_655_overlay.o"(.text.x0200b90c)
         "*/resource_655_overlay.o"(.text.x0200ba30)
-        "*/resource_655_overlay.o"(.text.x0200baa0)
+        "*/games/tla/src/field/overlay_655/s3aa0.o"(.text)
         "*/games/tla/src/field/overlay_655/prepare.o"(.text)
         "*/games/tla/src/field/overlay_655/import.o"(.text)
         "*/games/tla/src/field/overlay_655/data.o"(.data)

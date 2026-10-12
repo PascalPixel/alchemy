@@ -2,6 +2,7 @@
 #define ALCHEMY_MENU_RESULT_H
 
 #include "unit/menu/item/menu.h"
+#include "unit/menu/item/menu3.h"
 #include "unit/menu/item/menu4.h"
 #include "unit/menu/item/menu5.h"
 #include "unit/menu/item/menu6.h"

@@ -1,6 +1,7 @@
 #include "keystate.h"
 #include "unit/field/torebi_izumi/izumi.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object9.h"
 #include "unit/battle/effect/object10.h"
 #include "unit/battle/effect/object11.h"
 #include "unit/battle/effect/object12.h"

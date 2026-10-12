@@ -2,6 +2,7 @@
 #define ALCHEMY_FIELD_EVENT_H
 
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object9.h"
 #include "unit/battle/effect/object10.h"
 #include "unit/battle/effect/object11.h"
 #include "unit/battle/effect/object12.h"

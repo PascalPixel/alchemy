@@ -501,66 +501,6 @@ Func_0200082c:
 	bl GameFlag_SetBit
 .L_020088a2:
 	pop {r5, r6, r7, pc}
-	.section .text.x020089ac,"ax",%progbits
-	.balign 4
-	.global Func_020009ac
-	.thumb_func
-Func_020009ac:
-	push {r5, r6, r7, lr}
-	mov r7, r10
-	mov r6, r8
-	push {r6, r7}
-	movs r7, #18
-.L_020089b6:
-	adds r0, r7, #0
-	bl Object_GetById
-	ldr r3, [r0, #8]
-	ldr r1, .L_02008a14
-	asrs r3, r3, #20
-	mov r10, r3
-	ldr r3, [r0, #16]
-	movs r2, #3
-	asrs r3, r3, #20
-	mov r8, r3
-	adds r3, r7, #0
-	subs r3, #18
-	ands r3, r2
-	ldrsb r0, [r1, r3]
-	bl Object_GetById
-	adds r6, r0, #0
-	adds r6, #99
-	movs r3, #0
-	movs r5, #15
-	strb r3, [r6]
-	b .L_020089e6
-.L_020089e4:
-	adds r5, #1
-.L_020089e6:
-	cmp r5, #17
-	bgt .L_02008a04
-	adds r0, r5, #0
-	bl Object_GetById
-	ldr r3, [r0, #8]
-	asrs r3, r3, #20
-	cmp r10, r3
-	bne .L_020089e4
-	ldr r3, [r0, #16]
-	asrs r3, r3, #20
-	cmp r8, r3
-	bne .L_020089e4
-	movs r3, #1
-	strb r3, [r6]
-.L_02008a04:
-	adds r7, #1
-	cmp r7, #21
-	ble .L_020089b6
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_02008a14:
-	.4byte Data_02005a88
 	.section .text.x02008a18,"ax",%progbits
 	.balign 4
 	.global Func_02000a18
@@ -5922,32 +5862,6 @@ Func_02004ce0:
 	.4byte gMapShapeGrid
 .L_0200cd68:
 	.4byte 0x000fffff
-	.section .text.x0200cd84,"ax",%progbits
-	.balign 4
-	.global Func_02004d84
-	.thumb_func
-Func_02004d84:
-	push {lr}
-	ldr r4, .L_0200cda8
-	adds r0, #8
-	movs r3, #0
-	strb r3, [r0]
-	movs r2, #7
-	subs r0, #1
-.L_0200cd92:
-	movs r3, #15
-	ands r3, r1
-	ldrb r3, [r4, r3]
-	subs r2, #1
-	strb r3, [r0]
-	lsrs r1, r1, #4
-	subs r0, #1
-	cmp r2, #0
-	bge .L_0200cd92
-	pop {pc}
-	.2byte 0x0000
-.L_0200cda8:
-	.4byte Data_020063ac
 	.section .text.x0200cddc,"ax",%progbits
 	.balign 4
 	.global Func_02004ddc

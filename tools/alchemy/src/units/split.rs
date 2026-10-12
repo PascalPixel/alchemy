@@ -925,8 +925,8 @@ mod tests {
     #[test]
     fn the_list_gains_a_row_after_each_row_of_the_head() {
         let text = format!("{}\nmain\trom_main_02\tgames/tbs/src/a/before\nmain\trom_main_02\tgames/tbs/src/a/file\t.text\nmain\trom_main_02\tgames/tbs/src/a/after\nmain\trom_main_05\tgames/tbs/src/a/file\t.rodata\tja en\n", object_list::HEADER);
-        let rows = object_list::parse(&text).unwrap();
-        let out = object_list::format(&with_rows(&rows, "games/tbs/src/a/file", "games/tbs/src/a/file2"));
+        let rows = object_list::parse(Path::new(""), &text).unwrap();
+        let out = object_list::format(Path::new(""), &with_rows(&rows, "games/tbs/src/a/file", "games/tbs/src/a/file2"));
         assert_eq!(
             out,
             format!("{}\nmain\trom_main_02\tgames/tbs/src/a/before\nmain\trom_main_02\tgames/tbs/src/a/file\t.text\nmain\trom_main_02\tgames/tbs/src/a/file2\t.text\nmain\trom_main_02\tgames/tbs/src/a/after\nmain\trom_main_05\tgames/tbs/src/a/file\t.rodata\tja en\nmain\trom_main_05\tgames/tbs/src/a/file2\t.rodata\tja en\n", object_list::HEADER)

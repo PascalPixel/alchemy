@@ -1,7 +1,7 @@
-@ The head of an overlay's two stub tables, entry.s and import.s, and of the
-@ far-call banks' stub.inc: Thumb code on a word boundary, and the stub.
-@ After the head, for an import.s alone, the list of the stubs an overlay
-@ imports.
+@ The head of an overlay's two stub tables, its entry table and its import
+@ table, and of the far-call banks' stub.inc: Thumb code on a word boundary,
+@ and the stub. After the head, for an import table alone, the list of the
+@ stubs an overlay imports.
 	.syntax unified
 	.thumb
 	.balign 4
@@ -10,9 +10,9 @@
 @ Camelot's four divide routines, then the far-call entries in the order of
 @ the main image (games/tbs/include/farcall, by bank). The list is here, in
 @ the file every stub table includes, and only an import table reads it: an
-@ overlay's import.s sets `overlay_imports` and includes this file, and the
+@ overlay's import table sets `overlay_imports` and includes this file, and the
 @ build tells the assembler `import.NAME` for each NAME the overlay's other
-@ objects call: those rows are the overlay's table. An entry.s and a
+@ objects call: those rows are the overlay's table. An entry table and a
 @ far-call bank do not set the symbol, and the list is nothing to them.
 @ A row is `import NAME, TARGET`: the overlay's code calls NAME, and the
 @ stub goes to TARGET. Several names may go to one target; an overlay calls

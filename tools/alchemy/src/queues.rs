@@ -95,7 +95,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let mut taken = BTreeSet::new();
     for branch in branches.lines().filter(|b| !b.is_empty() && *b != current) {
         let Ok(theirs) = crate::process::run(&["git", "show", &format!("{branch}:{script_path}")], root) else { continue };
-        let Ok(theirs) = crate::object_list::lines_of(&theirs, game, "en") else { continue };
+        let Ok(theirs) = crate::object_list::lines_of(root, &theirs, game, "en") else { continue };
         let theirs = runs(&theirs, game);
         taken.extend(run_of.keys().filter(|a| !theirs.contains_key(*a)).cloned());
     }

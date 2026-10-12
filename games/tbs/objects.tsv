@@ -277,7 +277,7 @@ main	rom_tail_02	@games/tbs/src/system/resource/directory
 371	bss	games/tbs/src/field/world_map/map	.bss COMMON
 372	unit	games/tbs/src/field/haidia_arashi/arashi
 372	bss	games/tbs/src/field/haidia_arashi/arashi	.bss COMMON
-373	unit	games/tbs/src/field/haidia_mura/mura
+373	unit	games/tbs/src/scene/haidia_mura
 373	text	libgcc.a:_call_via_rX
 374	unit	games/tbs/src/field/haidia_ie/ie
 375	unit	games/tbs/src/field/haidia_sukureta/sukureta

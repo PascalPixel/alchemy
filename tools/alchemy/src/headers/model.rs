@@ -219,7 +219,7 @@ impl Model {
             model.far.extend(far_entries(header, &model.text[header]));
         }
         // An overlay's import file stands in its image beside its unit.
-        for row in rows.iter().filter(|row| row.image != "main" && row.object.ends_with("/import")) {
+        for row in rows.iter().filter(|row| row.image != "main" && crate::object_list::import_table(&row.object)) {
             let Ok(text) = std::fs::read_to_string(root.join(format!("{}.s", row.object))) else {
                 continue;
             };

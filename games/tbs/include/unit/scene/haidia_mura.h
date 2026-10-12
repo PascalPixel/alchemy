@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_FIELD_HAIDIA_MURA_MURA_H
-#define ALCHEMY_UNIT_FIELD_HAIDIA_MURA_MURA_H
+#ifndef ALCHEMY_UNIT_SCENE_HAIDIA_MURA_H
+#define ALCHEMY_UNIT_SCENE_HAIDIA_MURA_H
 
 #include "types.h"
 #include "field_scene.h"

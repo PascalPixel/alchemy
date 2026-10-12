@@ -444,11 +444,21 @@ fn destination(root: &Path, objects: &[String], judged: &[super::Judged], name: 
     Ok(path)
 }
 
-/// An area's main unit, the one defining what its entry.s veneers name,
-/// takes the last word of its folder (haidia_mura/mura.c), or the 8.3
-/// abbreviation of it the folder's files already use. None when the run is
-/// not the main unit or another file already has that name.
+/// An area's main unit, the one defining what its entry table's veneers
+/// name. Where the area has a folder of its own, with entry.s in it, the
+/// unit takes the last word of the folder (haidia_mura/mura.c), or the 8.3
+/// abbreviation of it the folder's files already use. Where areas share
+/// one folder, each with an entry table of its own (scene/entry/NAME.s, as
+/// a unit row of the object list finds it), the unit keeps its name, the
+/// area's. None when the run is not the main unit or another file already
+/// has that name.
 fn area_word(root: &Path, folder: &str, objects: &[String]) -> Option<String> {
+    let own = objects.iter().filter_map(|o| stem(o).strip_prefix(folder)?.strip_prefix('/')).find(|name| {
+        crate::object_list::tables(root, &format!("{folder}/{name}")).is_some_and(|[entry, _]| entry == format!("{folder}/entry/{name}"))
+    });
+    if let Some(own) = own {
+        return Some(own.to_owned());
+    }
     let entry = read(&root.join(folder).join("entry.s")).ok()?;
     let entries: Vec<&str> = entry.lines().filter_map(|l| l.trim().strip_prefix("overlay_veneer")).map(str::trim).filter(|n| !n.is_empty()).collect();
     let main = objects.iter().any(|o| {
@@ -1028,7 +1038,7 @@ mod tests {
 
     #[test]
     fn an_object_list_takes_the_merged_object_in_every_image_and_edition() {
-        let list = |rows: &str| crate::object_list::parse(&format!("{}\n{rows}", crate::object_list::HEADER)).unwrap();
+        let list = |rows: &str| crate::object_list::parse(Path::new(""), &format!("{}\n{rows}", crate::object_list::HEADER)).unwrap();
         let before = list(
             "main\trom_start\tgames/g/x\t.text\n\
              main\trom_start\tgames/g/a\t.text\n\
@@ -1114,6 +1124,21 @@ mod tests {
         assert_eq!(area_word(root.path(), folder, &[o("other")]), None);
         fs::write(root.path().join(folder).join("mura.c"), "").unwrap();
         assert_eq!(area_word(root.path(), folder, &[o("setup")]), None);
+    }
+
+    #[test]
+    fn an_area_in_a_shared_folder_keeps_its_name() {
+        let root = tempfile::tempdir().unwrap();
+        let folder = "games/g/src/scene";
+        fs::create_dir_all(root.path().join(folder).join("entry")).unwrap();
+        fs::write(root.path().join(folder).join("entry/haidia_mura.s"), "\toverlay_veneer HaidiaMura_Setup\n").unwrap();
+        fs::write(root.path().join(folder).join("haidia_mura.c"), "s32 HaidiaMura_Setup(void)\n{\n}\n").unwrap();
+        fs::write(root.path().join(folder).join("other.c"), "void Other(void)\n{\n}\n").unwrap();
+        let o = |n: &str| format!("{folder}/{n}.o");
+        // The file with the entry table of its own is the area's, whichever comes first.
+        assert_eq!(area_word(root.path(), folder, &[o("other"), o("haidia_mura")]).as_deref(), Some("haidia_mura"));
+        // A run without it is no area's main unit: the folder has no entry.s.
+        assert_eq!(area_word(root.path(), folder, &[o("other")]), None);
     }
 
     #[test]

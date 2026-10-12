@@ -13,6 +13,7 @@
 #include "unit/battle/effect/object.h"
 #include "unit/graphics/text/moji.h"
 #include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtim10.h"
 #include "unit/system/scheduler/runtim11.h"
 #include "unit/system/scheduler/runtim13.h"
 #include "types.h"

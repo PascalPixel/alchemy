@@ -2,6 +2,7 @@
 #include "unit/field/common/yama_rama/rama.h"
 #include "unit/battle/effect/object.h"
 #include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtim10.h"
 #include "unit/system/scheduler/runtim11.h"
 #include "unit/system/scheduler/runtim13.h"
 #include "battle.h"

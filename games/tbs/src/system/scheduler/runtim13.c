@@ -2,6 +2,7 @@
 #include "unit/system/scheduler/mathtbl.h"
 #include "unit/system/scheduler/numtext.h"
 #include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtim10.h"
 #include "unit/system/scheduler/runtim11.h"
 #include "unit/system/scheduler/runtim13.h"
 #include "battle.h"

@@ -3234,24 +3234,28 @@ s32 BattlePresentation_BuildSortedUnitEntries(struct BattleActionRecord *entries
 	return count;
 }
 
-void BattlePres_AdjustCameraByShoulderKeys(void)
-{
-	struct BattleCamera					*cam = WORK_SLOT(HEAP_SLOT_CAMERA);
-	struct BattlePresentationTransition *trans = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+// L・R を押しているあいだカメラの yaw を 512 ずつ動かす。同じ関数がふたつある
+#define DEFINE_ADJUST_CAMERA(name)                                                           \
+	void name(void)                                                                          \
+	{                                                                                        \
+		struct BattleCamera					*cam = WORK_SLOT(HEAP_SLOT_CAMERA);              \
+		struct BattlePresentationTransition *trans = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND); \
+                                                                                             \
+		if ((gKeysHeld & KEY_L) != 0)                                                        \
+		{                                                                                    \
+			cam->yaw += 512;                                                                 \
+		}                                                                                    \
+		if ((gKeysHeld & KEY_R) != 0)                                                        \
+		{                                                                                    \
+			cam->yaw -= 512;                                                                 \
+		}                                                                                    \
+		if (trans->flag == 0)                                                                \
+		{                                                                                    \
+			BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);                        \
+		}                                                                                    \
+	}
 
-	if ((gKeysHeld & 512) != 0)
-	{
-		cam->yaw += 512;
-	}
-	if ((gKeysHeld & 256) != 0)
-	{
-		cam->yaw -= 512;
-	}
-	if (trans->flag == 0)
-	{
-		BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);
-	}
-}
+DEFINE_ADJUST_CAMERA(BattlePres_AdjustCameraByShoulderKeys)
 
 s32 BattlePres_RunAction(struct BattleActionRecord *action)
 {
@@ -4453,24 +4457,7 @@ s32 Battle_FindTaggedSlotByValue(u32 id)
 	}
 }
 
-void BattlePres_AdjustCameraByShoulderKeysAlt(void)
-{
-	struct BattleCamera					*cam = WORK_SLOT(HEAP_SLOT_CAMERA);
-	struct BattlePresentationTransition *trans = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
-
-	if ((gKeysHeld & KEY_L) != 0)
-	{
-		cam->yaw += 512;
-	}
-	if ((gKeysHeld & KEY_R) != 0)
-	{
-		cam->yaw -= 512;
-	}
-	if (trans->flag == 0)
-	{
-		BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);
-	}
-}
+DEFINE_ADJUST_CAMERA(BattlePres_AdjustCameraByShoulderKeysAlt)
 
 void Battle_ReservedNoOp9B2C(void)
 {
@@ -8930,66 +8917,56 @@ s32 BattleUnit_TickAttackModifier(s32 unit_id)
 	return 0;
 }
 
-s32 BattleUnit_TickDefenseModifier(s32 unit_id)
-{
-	struct BtlUnit *state = UnitGetFar(unit_id);
-
-	if (state->def_cnt != 0)
-	{
-		state->def_cnt--;
-		if (state->def_cnt == 0)
-		{
-			state->def_lv = 0;
-			return 1;
-		}
-		if (state->def_lv < 0 && BattleUnit_RollCounterEarlyEnd(unit_id, state->def_cnt, 20) != 0)
-		{
-			state->def_lv = 0;
-			state->def_cnt = 0;
-			return 1;
-		}
+// 能力変化の残りターン (counter) を 1 減らす。0 になったとき、または下がった能力
+// (level が負) が BattleUnit_RollCounterEarlyEnd で早く切れたときに、level を戻して 1 を返す
+#define DEFINE_TICK_MODIFIER(name, counter, level)                                   \
+	s32 name(s32 unit_id)                                                            \
+	{                                                                                \
+		struct BtlUnit *state = UnitGetFar(unit_id);                                 \
+                                                                                     \
+		if (state->counter != 0)                                                     \
+		{                                                                            \
+			state->counter--;                                                        \
+			if (state->counter == 0)                                                 \
+			{                                                                        \
+				state->level = 0;                                                    \
+				return 1;                                                            \
+			}                                                                        \
+			if (state->level < 0                                                     \
+				&& BattleUnit_RollCounterEarlyEnd(unit_id, state->counter, 20) != 0) \
+			{                                                                        \
+				state->level = 0;                                                    \
+				state->counter = 0;                                                  \
+				return 1;                                                            \
+			}                                                                        \
+		}                                                                            \
+		return 0;                                                                    \
 	}
-	return 0;
-}
 
-s32 BattleUnit_TickResistanceModifier(s32 unit_id)
-{
-	struct BtlUnit *state = UnitGetFar(unit_id);
+DEFINE_TICK_MODIFIER(BattleUnit_TickDefenseModifier, def_cnt, def_lv)
+DEFINE_TICK_MODIFIER(BattleUnit_TickResistanceModifier, res_cnt, res_lv)
 
-	if (state->res_cnt != 0)
-	{
-		state->res_cnt--;
-		if (state->res_cnt == 0)
-		{
-			state->res_lv = 0;
-			return 1;
-		}
-		if (state->res_lv < 0 && BattleUnit_RollCounterEarlyEnd(unit_id, state->res_cnt, 20) != 0)
-		{
-			state->res_lv = 0;
-			state->res_cnt = 0;
-			return 1;
-		}
+// 状態異常の残りターン (counter) を 1 減らす。0 になったとき、または
+// BattleUnit_RollCounterEarlyEnd (bias) で早く切れたときに 1 を返す
+#define DEFINE_TICK_STATUS(name, counter, bias)                                     \
+	s32 name(s32 unit_id)                                                           \
+	{                                                                               \
+		struct BtlUnit *state = UnitGetFar(unit_id);                                \
+		if (state->counter != 0)                                                    \
+		{                                                                           \
+			state->counter--;                                                       \
+			if (state->counter == 0)                                                \
+				return 1;                                                           \
+			if (BattleUnit_RollCounterEarlyEnd(unit_id, state->counter, bias) != 0) \
+			{                                                                       \
+				state->counter = 0;                                                 \
+				return 1;                                                           \
+			}                                                                       \
+		}                                                                           \
+		return 0;                                                                   \
 	}
-	return 0;
-}
 
-s32 BattleUnit_TickDelusion(s32 unit_id)
-{
-	struct BtlUnit *state = UnitGetFar(unit_id);
-	if (state->maboroshi != 0)
-	{
-		state->maboroshi--;
-		if (state->maboroshi == 0)
-			return 1;
-		if (BattleUnit_RollCounterEarlyEnd(unit_id, state->maboroshi, 30) != 0)
-		{
-			state->maboroshi = 0;
-			return 1;
-		}
-	}
-	return 0;
-}
+DEFINE_TICK_STATUS(BattleUnit_TickDelusion, maboroshi, 30)
 
 s32 BattleUnit_TickConfusion(s32 unit_id)
 {
@@ -9008,56 +8985,9 @@ s32 BattleUnit_TickConfusion(s32 unit_id)
 	return 0;
 }
 
-s32 BattleUnit_TickCharm(s32 unit_id)
-{
-	struct BtlUnit *state = UnitGetFar(unit_id);
-	if (state->charm != 0)
-	{
-		state->charm--;
-		if (state->charm == 0)
-			return 1;
-		if (BattleUnit_RollCounterEarlyEnd(unit_id, state->charm, 70) != 0)
-		{
-			state->charm = 0;
-			return 1;
-		}
-	}
-	return 0;
-}
-
-s32 BattleUnit_TickStun(s32 unit_id)
-{
-	struct BtlUnit *state = UnitGetFar(unit_id);
-	if (state->shibire != 0)
-	{
-		state->shibire--;
-		if (state->shibire == 0)
-			return 1;
-		if (BattleUnit_RollCounterEarlyEnd(unit_id, state->shibire, 40) != 0)
-		{
-			state->shibire = 0;
-			return 1;
-		}
-	}
-	return 0;
-}
-
-s32 BattleUnit_TickSleep(s32 unit_id)
-{
-	struct BtlUnit *state = UnitGetFar(unit_id);
-	if (state->nemuri != 0)
-	{
-		state->nemuri--;
-		if (state->nemuri == 0)
-			return 1;
-		if (BattleUnit_RollCounterEarlyEnd(unit_id, state->nemuri, 50) != 0)
-		{
-			state->nemuri = 0;
-			return 1;
-		}
-	}
-	return 0;
-}
+DEFINE_TICK_STATUS(BattleUnit_TickCharm, charm, 70)
+DEFINE_TICK_STATUS(BattleUnit_TickStun, shibire, 40)
+DEFINE_TICK_STATUS(BattleUnit_TickSleep, nemuri, 50)
 
 s32 Battle_AdvanceCounterAndCheckChance(s32 id)
 {

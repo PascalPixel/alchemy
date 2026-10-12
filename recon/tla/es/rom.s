@@ -4212,13 +4212,6 @@ ItemMenu_DrawEquippedItemNames:
 	.thumb_func
 ItemMenu_PosCategory:
 	.incbin "baserom.gba", 0x00106854, 0x00000640
-	.section .rom.00106eac, "ax"
-	.balign 4
-	.global Func_08100d58
-	.type Func_08100d58, %function
-	.thumb_func
-Func_08100d58:
-	.incbin "baserom.gba", 0x00106eac, 0x000000d0
 	.section .rom.00106fd0, "ax"
 	.global Func_08100e7c
 	.type Func_08100e7c, %function
@@ -4529,12 +4522,6 @@ Func_08118f6c:
 	.incbin "baserom.gba", 0x0011915e, 0x0000015a
 	.section .rom.00119604, "ax"
 	.incbin "baserom.gba", 0x00119604, 0x00000148
-	.section .rom.0011974c, "ax"
-	.global Func_08119734
-	.type Func_08119734, %function
-	.thumb_func
-Func_08119734:
-	.incbin "baserom.gba", 0x0011974c, 0x00000074
 	.section .rom.00119808, "ax"
 	.global Func_081197f0
 	.type Func_081197f0, %function
@@ -4557,10 +4544,19 @@ Func_0811a39c:
 BattleMotion_ReleaseObjectSlotByValue:
 	.incbin "baserom.gba", 0x0011a614, 0x00000044
 	.section .rom.0011a68c, "ax"
-	.incbin "baserom.gba", 0x0011a68c, 0x00000af8
+	.incbin "baserom.gba", 0x0011a68c, 0x00000138
+	.global BtlObjMake
+	.type BtlObjMake, %function
+	.thumb_func
+BtlObjMake:
+	.incbin "baserom.gba", 0x0011a7c4, 0x000009c0
 	.section .rom.0011b198, "ax"
 	.incbin "baserom.gba", 0x0011b198, 0x00000114
 	.section .rom.0011b2dc, "ax"
+	.global EnmUpd
+	.type EnmUpd, %function
+	.thumb_func
+EnmUpd:
 	.incbin "baserom.gba", 0x0011b2dc, 0x000001e8
 	.section .rom.0011b4f0, "ax"
 	.balign 4
@@ -4709,8 +4705,6 @@ BattleEvent_Playback:
 	.thumb_func
 Func_08123574:
 	.incbin "baserom.gba", 0x0012358c, 0x0000129c
-	.section .rom.00124b10, "ax"
-	.incbin "baserom.gba", 0x00124b10, 0x000000b0
 	.section .rom.00124cdc, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00124cdc, 0x00000eb4
@@ -4781,7 +4775,12 @@ Func_08126e00:
 	.incbin "baserom.gba", 0x00127320, 0x00000264
 	.section .rom.001275a0, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x001275a0, 0x00000618
+	.incbin "baserom.gba", 0x001275a0, 0x00000554
+	.global EnmCntDec
+	.type EnmCntDec, %function
+	.thumb_func
+EnmCntDec:
+	.incbin "baserom.gba", 0x00127af4, 0x000000c4
 	.section .rom.00127c96, "ax"
 	.incbin "baserom.gba", 0x00127c96, 0x00000002
 	.section .rom.00127cec, "ax"

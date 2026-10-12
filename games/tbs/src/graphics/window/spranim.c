@@ -1,3 +1,4 @@
+#include "unit/graphics/window/spranim.h"
 #include "types.h"
 
 // カーソルの上下

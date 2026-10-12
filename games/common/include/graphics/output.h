@@ -1,10 +1,13 @@
 #ifndef ALCHEMY_OUTPUT_H
 #define ALCHEMY_OUTPUT_H
 
+#include "edition.h"
 #include "render_input.h"
 
+#if GAME_TLA
 struct RenderOutput *RenderOutput_AcquireFree(void);
 void				 RenderOutput_ReleaseFree(struct RenderOutput *entry);
 void RenderOutput_AppendToList(struct RenderOutputList *list, struct RenderOutput *node);
+#endif
 
 #endif

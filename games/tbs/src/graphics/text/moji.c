@@ -1,16 +1,18 @@
+#include "unit/graphics/text/moji.h"
 #include "types.h"
 #include "uiwindow.h"
 #include "glyph.h"
 #include "text_font.h"
-
-extern const u8 UiText_GlyphWidths[];
+#include "edition.h"
+#include "graphics.h"
 
 static __inline__ void GlyphDot(u32 stride, u32 x, u32 tile_y, u32 row_line, u8 *vram, u32 color)
 {
 	u16 *p;
-	u32  mask;
+	u32	 mask;
 
-	p = (u16 *)((u32)vram + (((x >> 3) * (stride - 2) + tile_y) << 5) | ((row_line | ((x & 7) >> 2)) << 1));
+	p = (u16 *)((u32)vram + (((x >> 3) * (stride - 2) + tile_y) << 5)
+				| ((row_line | ((x & 7) >> 2)) << 1));
 	mask = 15 << ((x & 3) << 2);
 	*p = (*p & ~mask) | (mask & color);
 }
@@ -23,10 +25,10 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y, co
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
 	u32 result;
 #endif
-	u32		   stride;
-	u32		   row;
-	u32		   rownext;
-	u32		   col;
+	u32 stride;
+	u32 row;
+	u32 rownext;
+	u32 col;
 #if defined(TBS_EDITION_EN)
 	u32 index;
 #endif
@@ -251,4 +253,118 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y, co
 #else
 	return width;
 #endif
+}
+
+void Tile_BuildMetatiles(u16 *dst, u16 *src)
+{
+	u32 row;
+	u32 col;
+	s32 a;
+	s32 b;
+	s32 c;
+	s32 d;
+	s32 e;
+	s32 f;
+	s32 found;
+	s32 v;
+
+	for (row = 0; row < 20; row++)
+	{
+		d = 0;
+		a = d;
+		c = d;
+		f = d;
+		b = f;
+		e = f;
+		found = f;
+		col = f;
+		dst++;
+		for (; col < 30; col++)
+		{
+			u16 cmd = *src++;
+
+			if (cmd == 0)
+				continue;
+			if (found == 0)
+			{
+				switch (cmd)
+				{
+				case 0xf010:
+					a = col * 8;
+					b = a + 8;
+					c = a + 1;
+					d = a;
+					e = d + 7;
+					f = b;
+					found++;
+					break;
+				case 0xf013:
+					a = col * 8;
+					b = a + 8;
+					c = a;
+					d = a + 1;
+					e = b;
+					f = a + 7;
+					found++;
+					break;
+				case 0xf007:
+				case 0xf016:
+#if EDITION_INTERNATIONAL || GAME_TLA
+				case 0xf01a:
+#endif
+					a = col * 8;
+					b = a + 8;
+					d = a;
+					c = d;
+					f = b;
+					e = f;
+					found++;
+				}
+			}
+			else
+			{
+				switch (cmd)
+				{
+				case 0xf012:
+					b = col * 8 + 8;
+					e = col * 8 + 7;
+					f = b;
+					break;
+				case 0xf015:
+					b = col * 8 + 8;
+					e = b;
+					f = col * 8 + 7;
+					break;
+				case 0xf007:
+				case 0xf017:
+#if EDITION_INTERNATIONAL || GAME_TLA
+				case 0xf01b:
+#endif
+					f = col * 8 + 8;
+					b = f;
+					e = f;
+					break;
+				}
+			}
+		}
+		v = e + (c << 8);
+		*dst++ = v;
+		v = b + (a << 8);
+		dst++;
+		*dst++ = v;
+		dst++;
+		*dst++ = v;
+		dst++;
+		*dst++ = v;
+		dst++;
+		src += 2;
+		*dst++ = v;
+		dst++;
+		*dst++ = v;
+		dst++;
+		*dst++ = v;
+		v = f + (d << 8);
+		dst++;
+		*dst++ = v;
+	}
 }

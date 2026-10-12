@@ -1,3 +1,13 @@
+#include "unit/battle/effect/koukatbl.h"
+#include "unit/battle/effect/effect.h"
+#include "unit/battle/effect/effect2.h"
+#include "unit/battle/effect/effect3.h"
+#include "unit/battle/effect/effect5.h"
+#include "unit/battle/effect/effect6.h"
+#include "unit/battle/effect/effect7.h"
+#include "unit/battle/effect/effect8.h"
+#include "unit/battle/effect/effect10.h"
+#include "unit/battle/effect/effect11.h"
 #include "types.h"
 
 //--------------------------------------------------------------------------
@@ -24,150 +34,6 @@ typedef struct Scale
 	s32 x;
 	s32 y;
 } Scale;
-
-void BattleFx_RunRockWall(struct BattleEffectArgument *effect);
-void BattleFx_RunShatteringRocks(struct BattleEffectArgument *effect);
-void BattlePres_RunRisingWall(struct BattleEffectArgument *effect);
-void BattleFx_RunDualTableMode0(struct BattleEffectArgument *effect);
-void BattleFx_RaisePillars(struct BattleEffectArgument *effect);
-void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect);
-void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect);
-void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect);
-void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect);
-void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect);
-void BattleFx_RunPuffArc(struct BattleEffectArgument *effect);
-void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect);
-void BattleFx_RunFirePillars(struct BattleEffectArgument *effect);
-void BattleFx_RunParticleFieldMode0(struct BattleEffectArgument *effect);
-void BattleFx_RunTwoModeBMode0(struct BattleEffectArgument *effect);
-void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect);
-void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect);
-void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect);
-void BattleFx_RunMode0(struct BattleEffectArgument *effect);
-void BattleFx_RunTornado(struct BattleEffectArgument *effect);
-void BattleFx_RunSeriesAMode2(struct BattleEffectArgument *effect);
-void BattleFx_RunSeriesAMode0(struct BattleEffectArgument *effect);
-void BattleFx_RunSeriesAMode1(struct BattleEffectArgument *effect);
-void BattleFx_RunSeriesAMode3Or4(struct BattleEffectArgument *effect);
-void BattleFx_RunTwoModeAMode0(struct BattleEffectArgument *effect);
-void BattleFx_RunSeriesBMode0(struct BattleEffectArgument *effect);
-void BattleFx_RunPaletteRampMode0(struct BattleEffectArgument *effect);
-void BattleFx_RunSeriesBMode1(struct BattleEffectArgument *effect);
-void BattleFx_RunPaletteRampMode1(struct BattleEffectArgument *effect);
-void BattleFx_RunSeriesBMode2(struct BattleEffectArgument *effect);
-void BattleFx_RunPaletteRampMode2(struct BattleEffectArgument *effect);
-void BattleFx_RenderMode0Or1(struct BattleEffectArgument *effect);
-void BattleFx_RenderMode2(struct BattleEffectArgument *effect);
-void BattleFx_RunMemberOrbit(struct BattleEffectArgument *effect);
-void BattleFx_RenderMode4(struct BattleEffectArgument *effect);
-void BattleFx_RenderMode3(struct BattleEffectArgument *effect);
-void BattleFx_RunBouncingSheep(struct BattleEffectArgument *effect);
-void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect);
-void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect);
-void BattleFx_RunCounterReveal(struct BattleEffectArgument *effect);
-void BattleFx_RunTargetMarkers(struct BattleEffectArgument *effect);
-void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect);
-void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect);
-void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect);
-void BattleFx_RunMemberBurstMode0(struct BattleEffectArgument *effect);
-void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect);
-void BattleFx_RunRevealColumnMode1(struct BattleEffectArgument *effect);
-void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect);
-void BattleFx_RunMode1(struct BattleEffectArgument *effect);
-void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect);
-void BattleFx_RunDualTableMode1(struct BattleEffectArgument *effect);
-void BattleEffect_RunMode5WithAction(struct BattleEffectArgument *effect);
-void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect);
-void BattleFx_RunMode6WithAction(struct BattleEffectArgument *effect);
-void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect);
-void BattleFx_RunFallingSword(struct BattleEffectArgument *effect);
-void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect);
-void BattleFx_RunMode9WithAction(struct BattleEffectArgument *effect);
-void BattleFx_RenderMode7(struct BattleEffectArgument *effect);
-void BattleFx_RunRevealColumnMode2(struct BattleEffectArgument *effect);
-void BattleFx_RenderMode6(struct BattleEffectArgument *effect);
-void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect);
-void BattleFx_RunRingBolts(struct BattleEffectArgument *effect);
-void BattleFx_RunSeriesBMode3(struct BattleEffectArgument *effect);
-void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect);
-void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect);
-void BattleFx_RunMode7(struct BattleEffectArgument *effect);
-void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect);
-void BattleFx_RunSeriesAMode5(struct BattleEffectArgument *effect);
-void BattleFx_RunTwoModeAMode1(struct BattleEffectArgument *effect);
-void BattleFx_RunSeriesAMode6(struct BattleEffectArgument *effect);
-void BattleFx_RunSeriesBMode5(struct BattleEffectArgument *effect);
-void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect);
-void BattleFx_RunSeriesBMode4(struct BattleEffectArgument *effect);
-void ObjectGroup_StoreObjectAndRunStep7(struct BattleEffectArgument *effect);
-void EffectStep_RunAnimationMode6Or7Or8(struct BattleEffectArgument *effect);
-void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect);
-void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect);
-void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect);
-void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect);
-void BattleFx_RunFiveModeMode0(struct BattleEffectArgument *effect);
-void BattleFx_RunFiveModeMode1(struct BattleEffectArgument *effect);
-void BattleFx_RunFiveModeMode2(struct BattleEffectArgument *effect);
-void BattleFx_RunMode2(struct BattleEffectArgument *effect);
-void BattleFx_RunFiveModeMode4(struct BattleEffectArgument *effect);
-void BattleFx_RunFiveModeMode3(struct BattleEffectArgument *effect);
-void BattleFx_RunMode4(struct BattleEffectArgument *effect);
-void BattleFx_RunMode3(struct BattleEffectArgument *effect);
-void BattleFx_RunMemberBurstMode1(struct BattleEffectArgument *effect);
-void BattleFx_RunSevenModeMode0(struct BattleEffectArgument *effect);
-void BattleFx_RunParticleFieldVariant0(struct BattleEffectArgument *effect);
-void BattleFx_RenderMode5(struct BattleEffectArgument *effect);
-void BattleFx_RunTwelveModeMode6(struct BattleEffectArgument *effect);
-void BattleFx_RunParticleFieldVariant1(struct BattleEffectArgument *effect);
-void BattleFx_RunSevenModeMode1(struct BattleEffectArgument *effect);
-void BattleFx_RunTwelveModeMode3(struct BattleEffectArgument *effect);
-void EffectStep_RunAnimationMode0(struct BattleEffectArgument *effect);
-void BattleFx_RunTwelveModeMode1(struct BattleEffectArgument *effect);
-void EffectStep_RunAnimationMode3Or4Or5(struct BattleEffectArgument *effect);
-void BattleFx_RunRisingBurst(struct BattleEffectArgument *effect);
-void EffectStep_RunAnimationMode0Alternate(struct BattleEffectArgument *effect);
-void BattleFx_RunSevenModeMode2(struct BattleEffectArgument *effect);
-void BattleFx_RunTwelveModeMode5(struct BattleEffectArgument *effect);
-void BattleFx_RunTwelveModeMode9(struct BattleEffectArgument *effect);
-void BattleFx_RunParticleFieldVariant2(struct BattleEffectArgument *effect);
-void BattleFx_RunTwelveModeMode4(struct BattleEffectArgument *effect);
-void EffectStep_RunAnimationMode1(struct BattleEffectArgument *effect);
-void BattleFx_RunSevenModeMode3(struct BattleEffectArgument *effect);
-void BattleFx_RunTwelveModeMode0(struct BattleEffectArgument *effect);
-void BattleFx_RunTwelveModeMode8(struct BattleEffectArgument *effect);
-void EffectStep_RunAnimationMode2(struct BattleEffectArgument *effect);
-void BattleFx_RunTwelveModeMode7(struct BattleEffectArgument *effect);
-void BattleFx_RunTwelveModeMode10(struct BattleEffectArgument *effect);
-void BattleFx_RunTwelveModeMode2(struct BattleEffectArgument *effect);
-void BattleFx_RunTwoModeBMode1(struct BattleEffectArgument *effect);
-void BattleFx_RunParticleFieldVariant3(struct BattleEffectArgument *effect);
-void BattleFx_RunSevenModeMode6(struct BattleEffectArgument *effect);
-void BattleFx_RunParticlePoolMode0(struct BattleEffectArgument *effect);
-void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect);
-void BattleFx_RunSevenModeMode4(struct BattleEffectArgument *effect);
-void BattleFx_RunFortyEightFrameMode0(struct BattleEffectArgument *effect);
-void BattleFx_RunParticlePoolMode1(struct BattleEffectArgument *effect);
-void BattleFx_RunSevenModeMode5(struct BattleEffectArgument *effect);
-void BattleFx_RunMemberBurstMode2(struct BattleEffectArgument *effect);
-void BattleFx_RunFortyEightFrameMode1(struct BattleEffectArgument *effect);
-void BattleFx_RunParticleFieldMode1(struct BattleEffectArgument *effect);
-void BattleFx_RunMode11(struct BattleEffectArgument *effect);
-void BattleFx_RunTwoResourceMode0(struct BattleEffectArgument *effect);
-void BattleFx_RunTwoResourceMode1(struct BattleEffectArgument *effect);
-void BattleFx_InitializeMode1(struct BattleEffectArgument *effect);
-void BattleFx_RenderAnimationMode1(struct BattleEffectArgument *effect);
-void BattleFx_RunTwelveModeMode11(struct BattleEffectArgument *effect);
-void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect);
-void BattleFx_RunSparkApproachVariant4(struct BattleEffectArgument *effect);
-void BattleFx_RunFortyEightFrameMode2(struct BattleEffectArgument *effect);
-void BattleFx_RunSeriesIMode0(struct BattleEffectArgument *effect);
-void BattleFx_RunSeriesIMode2(struct BattleEffectArgument *effect);
-void BattleFx_RunMode10(struct BattleEffectArgument *effect);
-void BattleFx_RunSeriesIMode6(struct BattleEffectArgument *effect);
-void BattleFx_RunSeriesIMode3(struct BattleEffectArgument *effect);
-void BattleFx_RunSeriesIMode5(struct BattleEffectArgument *effect);
-void BattleFx_RunSeriesIMode7(struct BattleEffectArgument *effect);
-void BattleFx_RunSeriesIMode4(struct BattleEffectArgument *effect);
 
 // 共有のセル配置
 const u16 ParticleStreams_CellOffsets[] = {0, 2, 10, 28, 60, 110, 182, 280, 408, 570};
@@ -244,8 +110,8 @@ const u8  MemberBeam_HeadWidths[] = {17, 19, 20};
 const u8  MemberBeam_HeadHeights[] = {49, 55, 64};
 
 // seven_mode_dispatch.c
-const s8 SevenMode_Records[] = {0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0};
-const u8 SevenMode_ShardWidths[] = {9, 10, 9, 9, 9, 11, 11, 11, 12, 6, 7, 7, 7, 6, 6, 8, 8, 8};
+const s8  SevenMode_Records[] = {0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0};
+const u8  SevenMode_ShardWidths[] = {9, 10, 9, 9, 9, 11, 11, 11, 12, 6, 7, 7, 7, 6, 6, 8, 8, 8};
 const u8 SevenMode_ShardHeights[] = {12, 12, 12, 12, 12, 12, 12, 12, 12, 8, 7, 6, 6, 8, 6, 4, 3, 3};
 const u16 SevenMode_ShardOffsets[] = {0, 108, 228, 336, 444, 552, 684, 816, 948, 1092, 1140, 1189,
 	1231, 1273, 1321, 1357, 1389, 1413};
@@ -530,7 +396,7 @@ const u16 ThornVines_EmberSizes[] = {16, 32, 48, 48, 48, 48, 48};
 const u8 BattleFx10_Points[][2] = {{57, 130}, {75, 128}, {71, 104}, {101, 130}, {86, 126}, {85, 98},
 	{64, 98}, {98, 96}, {77, 87}, {84, 88}, {68, 67}, {81, 49}, {94, 70}, {70, 51}, {93, 36},
 	{81, 50}};
-const s8 BattleFx10_ShakeOffsets[] = {-4, -3, -2, 0};
+const s8  BattleFx10_ShakeOffsets[] = {-4, -3, -2, 0};
 const u16 BattleFx10_RockCells[] = {0, 1152, 2064};
 const u8  BattleFx10_RockWidths[] = {24, 24, 20};
 const u8  BattleFx10_RockHeights[] = {48, 38, 26};

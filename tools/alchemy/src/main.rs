@@ -22,6 +22,7 @@ mod decode;
 mod deps;
 mod deps_command;
 mod diff;
+mod duplicates;
 mod edition;
 mod editions;
 mod evidence;
@@ -29,6 +30,7 @@ mod elf;
 mod fakematch;
 mod gate;
 mod gbafix;
+mod headers;
 mod integrate;
 mod keep;
 mod label;
@@ -99,6 +101,8 @@ Camelotize
   keep          keep only the edits that leave all twelve editions identical
   sweep         drop FAKEMATCH pins, barriers and volatiles the bytes no longer need
   units         propose Camelot's translation units from the linked images
+  duplicates    the functions ☀️'s C writes out more than once, by the code
+                the build made of them, and the runs that stand together
 
 Work in parallel
   queues        split not-yet-C work into queues that cannot collide
@@ -128,6 +132,7 @@ fn main() -> ExitCode {
             check::entry(&args)
         }
         "deps" => deps_command::entry(rest),
+        "duplicates" => result(duplicates::run(rest)),
         "adopt" => result(adopt::run(rest)),
         "label" => result(label::run(rest)),
         "adopt-data" => result(adopt_data::run(rest)),
@@ -145,6 +150,7 @@ fn main() -> ExitCode {
         "camelotize" => result(camelotize::run(rest)),
         "objects" => result(objects::run(rest)),
         "dead" => result(dead::run(rest)),
+        "headers" => result(headers::run(rest)),
         "show" => result(show::run(rest)),
         "sweep" => result(sweep::run(rest)),
         "units" => result(units::run(rest)),

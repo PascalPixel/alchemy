@@ -5,7 +5,7 @@ use std::collections::{BTreeMap, BTreeSet};
 const REMEDY: &str = "call main-image code through the overlay's own import.s veneers";
 
 pub(crate) fn check(elf: &[u8], map: &str) -> Result<(), String> {
-    let image = read(elf)?;
+    let image = read(elf, map)?;
     let mut problems = linker_stubs(map);
     problems.extend(outside_branches(&image));
     if problems.is_empty() {
@@ -39,6 +39,21 @@ struct Image {
     sections: Vec<Section>,
     marks: BTreeMap<u32, u8>,
     names: BTreeMap<u32, String>,
+    /// Each input section the linker's map places in the image, by its
+    /// first address, with its end.
+    inputs: BTreeMap<u32, u32>,
+}
+
+impl Image {
+    /// The end of the input section that holds `address`, when the map
+    /// names one.
+    fn input_end(&self, address: u32) -> Option<u32> {
+        self.inputs
+            .range(..=address)
+            .next_back()
+            .map(|(_, end)| *end)
+            .filter(|end| address < *end)
+    }
 }
 
 fn mapping(name: &str) -> Option<u8> {
@@ -48,7 +63,7 @@ fn mapping(name: &str) -> Option<u8> {
         .then_some(kind)
 }
 
-fn read(elf: &[u8]) -> Result<Image, String> {
+fn read(elf: &[u8], map: &str) -> Result<Image, String> {
     let file = object::File::parse(elf).map_err(|error| error.to_string())?;
     let mut sections = Vec::new();
     let mut allocated = BTreeSet::new();
@@ -93,18 +108,29 @@ fn read(elf: &[u8]) -> Result<Image, String> {
             None => {}
         }
     }
+    let mut inputs = BTreeMap::new();
+    for placed in &crate::ld_map::Map::parse(map).placed {
+        let held = sections
+            .iter()
+            .any(|section| placed.address.wrapping_sub(section.address) < section.size);
+        if held && placed.size > 0 && !placed.is_fill() {
+            let end = inputs.entry(placed.address).or_insert(0);
+            *end = placed.end().max(*end);
+        }
+    }
     Ok(Image {
         sections,
         marks,
         names,
+        inputs,
     })
 }
 
 /// The modern build's gate (`alchemy build modern`): its compiler's runtime
 /// is ARM code, so the linker's interworking glue inside an overlay is
 /// expected, but no long-branch veneer and no branch may leave the image.
-pub(crate) fn check_modern(elf: &[u8]) -> Result<(), String> {
-    let image = read(elf)?;
+pub(crate) fn check_modern(elf: &[u8], map: &str) -> Result<(), String> {
+    let image = read(elf, map)?;
     let file = object::File::parse(elf).map_err(|error| error.to_string())?;
     let mut problems: Vec<String> = file
         .symbols()
@@ -138,6 +164,19 @@ fn linker_stubs(map: &str) -> Vec<String> {
         .collect()
 }
 
+/// Every branch in the image's code whose target lies outside the image.
+///
+/// Code is what the mapping symbols say: from a `$t` or `$a` to the next
+/// mapping symbol, and no further than the end of the input section the
+/// symbol is in. A mapping symbol speaks for its own section only, and the
+/// image is one section where the objects had many. The linker marks an
+/// input section that has no mapping symbol as data, but adds none to a
+/// section that has one anywhere, and the assembler marks a data file's
+/// closing `.balign` padding, not its first byte. Read without the
+/// sections' bounds, such data (packed tiles after an `.incbin`) is code
+/// whenever the object placed before it ends in code. A symbol the map
+/// places in no input section still runs to the next symbol, or to the
+/// image's end.
 fn outside_branches(image: &Image) -> Vec<String> {
     let inside = |target: u32| {
         image
@@ -162,7 +201,8 @@ fn outside_branches(image: &Image) -> Vec<String> {
             .map(|(address, kind)| (*address, *kind))
             .collect();
         for (index, &(start, kind)) in marks.iter().enumerate() {
-            let stop = marks.get(index + 1).map_or(end, |next| next.0);
+            let next = marks.get(index + 1).map_or(end, |next| next.0);
+            let stop = next.min(image.input_end(start).unwrap_or(end));
             for (site, target, text) in branches(section, start, stop, kind) {
                 if inside(target) {
                     continue;
@@ -314,6 +354,95 @@ mod tests {
         image[4..0x0c].fill(0);
         image[0x34..0x38].fill(0);
         check(&elf(&image), "").unwrap();
+    }
+
+    /// Three objects in one image: code, then packed tiles whose bytes
+    /// happen to spell a `bl` out of the image, then more code. The tiles
+    /// carry the one mark the assembler gives such a file: `$d` at the
+    /// padding of its closing `.balign`, two bytes before their end.
+    fn objects(image: &[u8]) -> Vec<u8> {
+        build(
+            ".text",
+            BASE,
+            image,
+            &[
+                Symbol("$t", BASE, SECTION, false),
+                Symbol("$d", BASE + 0x3e, SECTION, false),
+                Symbol("$t", BASE + 0x40, SECTION, false),
+                Symbol("Scene_Run", BASE, SECTION, true),
+                Symbol("Sand_Tiles", BASE + 0x10, SECTION, true),
+                Symbol("Scene_Draw", BASE + 0x40, SECTION, true),
+                Symbol("Random16Far", 0x0200_1000, ABSOLUTE, true),
+            ],
+            &[],
+        )
+    }
+
+    const OBJECTS: &str = "\
+Linker script and memory map
+
+.text           0x0000000002008000       0x50
+ */scene.o(.text)
+ .text          0x0000000002008000        0xe /out/obj/scene.o
+                0x0000000002008000                Scene_Run
+ */sand.o(.rodata)
+ *fill*         0x000000000200800e        0x2
+ .rodata        0x0000000002008010       0x30 /out/obj/sand.o
+                0x0000000002008010                Sand_Tiles
+ */draw.o(.text)
+ .text          0x0000000002008040       0x10 /out/obj/draw.o
+                0x0000000002008040                Scene_Draw
+
+.debug_line     0x0000000000000000       0x60
+ .debug_line    0x0000000000000000       0x60 /out/obj/scene.o
+";
+
+    fn tiles() -> Vec<u8> {
+        let mut image = vec![0u8; 0x50];
+        put(&mut image, BASE, &thumb_bl(BASE, BASE + 0x40));
+        put(&mut image, BASE + 4, &0x4770u16.to_le_bytes());
+        put(&mut image, BASE + 0x18, &thumb_bl(BASE + 0x18, 0x0200_1000));
+        put(&mut image, BASE + 0x40, &0x4770u16.to_le_bytes());
+        image
+    }
+
+    #[test]
+    fn data_of_another_object_placed_after_code_is_not_code() {
+        let image = tiles();
+        // With no map the gate knows no object's bounds: the tiles read in
+        // the state the code before them left, as they always did.
+        let error = check(&objects(&image), "").unwrap_err();
+        assert!(error.contains("Sand_Tiles+0x8 (0x02008018): bl 0x02001000 (Random16Far)"), "{error}");
+        check(&objects(&image), OBJECTS).unwrap();
+        check_modern(&objects(&image), OBJECTS).unwrap();
+    }
+
+    #[test]
+    fn a_branch_out_of_the_image_in_any_objects_code_still_fails() {
+        // In the object before the tiles.
+        let mut image = tiles();
+        put(&mut image, BASE + 6, &thumb_bl(BASE + 6, 0x0200_1000));
+        let error = check(&objects(&image), OBJECTS).unwrap_err();
+        let lines: Vec<&str> = error.lines().collect();
+        assert_eq!(
+            lines,
+            [
+                "overlay code leaves its image 0x02008000-0x02008050:",
+                "  Scene_Run+0x6 (0x02008006): bl 0x02001000 (Random16Far)",
+                "call main-image code through the overlay's own import.s veneers",
+            ]
+        );
+        assert!(check_modern(&objects(&image), OBJECTS).unwrap_err().contains("Scene_Run+0x6"));
+        // In the object after them, to its last instruction.
+        let mut image = tiles();
+        put(&mut image, BASE + 0x4c, &thumb_bl(BASE + 0x4c, 0x0200_1000));
+        let error = check(&objects(&image), OBJECTS).unwrap_err();
+        assert!(error.contains("  Scene_Draw+0xc (0x0200804c): bl 0x02001000 (Random16Far)\n"), "{error}");
+        assert!(!error.contains("Sand_Tiles"), "{error}");
+        assert!(check_modern(&objects(&image), OBJECTS).unwrap_err().contains("Scene_Draw+0xc"));
+        // Code the map places in no object runs to the next mark, as before.
+        let unlisted = OBJECTS.replace(" .text          0x0000000002008040       0x10 /out/obj/draw.o\n", "");
+        assert!(check(&objects(&image), &unlisted).unwrap_err().contains("Scene_Draw+0xc"));
     }
 
     #[test]

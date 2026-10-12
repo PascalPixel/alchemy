@@ -1,6 +1,11 @@
 #ifndef ALCHEMY_WINDOW_H
 #define ALCHEMY_WINDOW_H
 
+#include "unit/graphics/window/window.h"
+#include "unit/graphics/window/window7.h"
+#include "unit/graphics/window/window9.h"
+#include "unit/graphics/window/window10.h"
+#include "unit/graphics/window/window12.h"
 #include "types.h"
 #include "tbs_edition.h"
 #include "layout_guard.h"
@@ -85,25 +90,10 @@ LAYOUT_OFFSET_GUARD(
 	UiRenderWork_SpacingAfter, struct UiRenderWork, spacing_after, RENDER_BUSY_OFS + 2);
 LAYOUT_SIZE_GUARD(UiRenderWork_Size, struct UiRenderWork, RENDER_WORK_SIZE);
 
-extern u8		*gWindowWork[];
-struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
+extern u8 *gWindowWork[];
 
-void UiText_MeasureEntryDimensions(s32 start, u32 *width, u32 *height, u16 *spacing);
-void UiText_MeasureStringVariant(s32 start, u32 *width, u32 *height, u16 *spacing);
-void UiWindow_FitOnScreen(
-	s32 entry, s32 *x, s32 *y, u32 *width, u32 *height, u16 *spacing, u32 flags);
-s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 mode);
 #if EDITION_INTERNATIONAL
-s32 UiText_RenderGlyphPair(s32 code, u32 *tiles);
 #else
-s32 UiText_RenderGlyphPair(u32 code, u32 *tiles);
 #endif
-s32 UiText_BuildRenderEntries(s32 message, s32 mode);
-u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width);
-u32 UiText_AppendArticleName(
-	s32 mode, u16 *name, u32 pos, u16 *entry, s32 no, s32 plural, s32 *suffix);
-void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity);
-u32	 UiRender_LookupNamedValue(u32 name, u32 clear);
-void UiWork_ClearValueNameTables(void);
 
 #endif

@@ -1,3 +1,4 @@
+#include "unit/field/common/fielddat.h"
 #include "types.h"
 
 // 十字キー入力ごとの向き (0xffff = 入力なし)

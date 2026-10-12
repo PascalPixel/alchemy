@@ -20,7 +20,9 @@ extern u32				Sound_PcmFrequencySteps[];
 extern u8				Sound_PcmPitchCodes[];
 extern struct SoundWork Sound_Work;
 extern u8				Sound_WorkBytes[];
+#if GAME_TLA
 void					Audio_EmptyCallback(void);
+#endif
 void					Audio_ResumeAllPlayers(void);
 void					Audio_ResumePlayer(struct SoundPlayer *player);
 void					Audio_StopAllPlayers(void);

@@ -1,3 +1,28 @@
+#include "game_state.h"
+#include "unit/import.h"
+#include "unit/debug/menu_test/test.h"
+#include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object2.h"
+#include "unit/battle/effect/object9.h"
+#include "unit/battle/effect/object11.h"
+#include "unit/game/character/chara.h"
+#include "unit/game/character/chara2.h"
+#include "unit/game/character/chara4.h"
+#include "unit/game/character/chara7.h"
+#include "unit/graphics/window/window.h"
+#include "unit/graphics/window/window5.h"
+#include "unit/graphics/window/window6.h"
+#include "unit/graphics/window/window7.h"
+#include "unit/graphics/window/window8.h"
+#include "unit/graphics/window/window9.h"
+#include "unit/graphics/window/window10.h"
+#include "unit/graphics/window/window12.h"
+#include "unit/menu/item/menu.h"
+#include "unit/menu/item/menu4.h"
+#include "unit/menu/item/menu8.h"
+#include "unit/menu/shop/shop.h"
+#include "unit/menu/shop/shop4.h"
+#include "unit/menu/shop/shop6.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -20,19 +45,16 @@
 #include "itemgift.h"
 #include "tbs_edition.h"
 #include "text/msg_ids.h"
-
+#include "ability_ids.h"
+#include "field_scene.h"
 
 void Engine_EventSetMessage(s16 message);
 
-void				Engine_AudioPlayCue(s32 cue);
-struct RenderInput *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height, s32 style);
-void				UiText_DrawStringInWindow(u8 *text, struct RenderInput *window, s32 x, s32 y);
-void UiText_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *window, s32 x, s32 y);
-void UiText_DrawResource(s32 text, struct RenderInput *window, s32 x, s32 y);
+void Engine_AudioPlayCue(s32 cue);
 
 u8 *MenuTest_GetEntrances(void)
 {
-	return MenuTest_Entrances;
+	return (u8 *)MenuTest_Entrances;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -42,16 +64,16 @@ s32 SceneData_ReturnZero(void)
 
 u8 *MenuTest_GetExits(void)
 {
-	return MenuTest_Exits;
+	return (u8 *)MenuTest_Exits;
 }
 
 u8 *MenuTest_GetPlacements(void)
 {
-	return MenuTest_Placements;
+	return (u8 *)MenuTest_Placements;
 }
 
 #if EDITION_INTERNATIONAL
-void SceneDialogue_ShowMessageAndWait(s32 arg0)
+static void SceneDialogue_ShowMessageAndWait(s32 arg0)
 {
 	UiWork_FinalizePendingCore();
 	UiText_OpenMessageWindow(arg0, 5, 0, 0x22);
@@ -62,7 +84,7 @@ void SceneDialogue_ShowMessageAndWait(s32 arg0)
 	Engine_TaskWait(1);
 }
 
-void CommandTable_RunDirectionalInput(s32 x, s32 cnt)
+static void CommandTable_RunDirectionalInput(s32 x, s32 cnt)
 {
 	volatile s32 *key;
 	s32			  token;
@@ -114,43 +136,43 @@ end:
 	Engine_DebugFinalizeWindow(token, 2);
 }
 
-void SceneState_ApplyBlockC9b(void)
+static void SceneState_ApplyBlockC9b(void)
 {
 	CommandTable_RunDirectionalInput(
 		(s32)MsgWeaponShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-void SceneState_ApplyBlockCc6(void)
+static void SceneState_ApplyBlockCc6(void)
 {
 	CommandTable_RunDirectionalInput(
 		(s32)MsgArmorShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-void SceneState_ApplyBlockCf1(void)
+static void SceneState_ApplyBlockCf1(void)
 {
 	CommandTable_RunDirectionalInput(
 		(s32)MsgItemShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-void SceneState_ApplyBlockD21(void)
+static void SceneState_ApplyBlockD21(void)
 {
 	CommandTable_RunDirectionalInput(
 		(s32)MsgSanctumWelcome, MsgWarriorShopWelcome - MsgSanctumWelcome);
 }
 
-void SceneState_ApplyBlockD4c(void)
+static void SceneState_ApplyBlockD4c(void)
 {
 	CommandTable_RunDirectionalInput(
 		(s32)MsgWarriorShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-void SceneState_ApplyBlockD77(void)
+static void SceneState_ApplyBlockD77(void)
 {
 	CommandTable_RunDirectionalInput(
 		(s32)MsgWarriorArmorShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-void SceneState_ApplyBlockDa2(void)
+static void SceneState_ApplyBlockDa2(void)
 {
 	CommandTable_RunDirectionalInput(
 		(s32)MsgWarriorItemShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
@@ -159,7 +181,7 @@ void SceneState_ApplyBlockDa2(void)
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
-void DebugMenu_RunMessageTest(void)
+static void DebugMenu_RunMessageTest(void)
 {
 	Engine_EventSetMessage(MSGNO(MsgBattleAdditionalPsynergyHelp));
 	Engine_EventSetMessage(MSGNO(MsgHaidiaComeOnHurry));
@@ -167,38 +189,38 @@ void DebugMenu_RunMessageTest(void)
 }
 #endif
 
-void SceneState_ApplyOne(void)
+static void EV12_TALK(void)
 {
 	Battle_ApplyPresetItemsAndFlags(1);
 }
 
-void SceneState_NoOp(void)
+static void SceneState_NoOp(void)
 {
 }
 
-void SceneState_QueryTwoValues(void)
+static void EV08_TALK(void)
 {
 	s32 a;
 	s32 b;
 	Shop_PickUnitItem(&a, &b);
 }
 
-void SceneState_ApplyZero(void)
+static void EV03_TALK(void)
 {
 	NameEntry_EditOwnerName(0);
 }
 
-void CommandTable_NoOpCallback(void)
+static void EV15_PSYNERGY(void)
 {
 }
 
-void SceneState_SetRecordFlag53(void)
+static void EV15_SCRIPT(void)
 {
-	gEffectWork->child_mode = 1;
+	((struct BattleFxScene *)gEffectWork)->child_mode = 1;
 }
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-void DebugMenu_GiveItemToParty(void)
+static void DebugMenu_GiveItemToParty(void)
 {
 	PartyInventory_GiveItem(181, 0);
 }
@@ -209,12 +231,12 @@ s32 MenuTest_GetEvents(void)
 	return (s32)MenuTest_Events;
 }
 
-void MenuTest_RaisePartyLevelTarget(void)
+static void EV01_TALK(void)
 {
 	s32 *p;
 
 	UiText_ShowPositionedMessageAndWait(MsgDebugWentLevel, 1);
-	p = (s32 *)MenuTest_SlotOffsets;
+	p = &MenuTest_SlotOffsets;
 	Party_AdvanceOwnerCountToTarget(0, *p);
 	Party_AdvanceOwnerCountToTarget(1, *p);
 	Party_AdvanceOwnerCountToTarget(3, *p);
@@ -226,11 +248,8 @@ void MenuTest_RaisePartyLevelTarget(void)
 	UnitCalc(2);
 }
 
-void FieldScene_GrantItemListToSlots(void)
+static void EV02_TALK(void)
 {
-	u32 tmp;
-	s32 slot;
-
 	UiText_ShowPositionedMessageAndWait(MsgDebugGotItem, 1);
 	Inventory_AddItem(0, 187);
 	Inventory_AddItem(0, 187);
@@ -429,7 +448,7 @@ void FieldScene_GrantItemListToSlots(void)
 	UnitCalc(2);
 }
 
-void CommandTable_ConfigureCommandGroups(void)
+static void EV09_TALK(void)
 {
 	u8 buf[256];
 #if !EDITION_INTERNATIONAL
@@ -514,9 +533,8 @@ void CommandTable_ConfigureCommandGroups(void)
 	UnitCalc(2);
 }
 
-void FieldScene_ApplySlotOffsetsAndFlags(void)
+static void EV10_TALK(void)
 {
-	u32 i;
 	u8 *record;
 
 	UiText_ShowPositionedMessageAndWait(MsgDebugBodyTornApart, 1);
@@ -541,7 +559,7 @@ void FieldScene_ApplySlotOffsetsAndFlags(void)
 	UnitCalc(2);
 }
 
-void FieldScene_AssignCodeSetAToSlots(void)
+static void EV05_TALK(void)
 {
 	UiText_ShowPositionedMessageAndWait(MsgDebugGotSturdyEquipment, 1);
 	Inventory_AddItem(0, 85);
@@ -584,7 +602,7 @@ void FieldScene_AssignCodeSetAToSlots(void)
 	UnitCalc(2);
 }
 
-void DebugMenu_SelectItem(void)
+static void DebugMenu_SelectItem(void)
 {
 	struct RenderInput *window;
 	struct RenderInput *details;
@@ -686,13 +704,13 @@ done:
 	Engine_DebugFinalizeWindow(details, 1);
 }
 
-void SceneState_RunCall1c00(void)
+static void EV17_TALK(void)
 {
 
 	DebugMenu_SelectItem();
 }
 
-void FieldScene_AssignCodeSetBToSlots(void)
+static void EV11_TALK(void)
 {
 	UiText_ShowPositionedMessageAndWait(MsgDebugGotTreasure, 1);
 	Inventory_AddItem(ROBIN, 0xb8);
@@ -783,13 +801,13 @@ s32 CommandTable_ConfigureCommandList(void)
 	return 0;
 }
 
-s32 SceneState_GetFarResult2384(void)
+static s32 EV15_TALK(void)
 {
 	return DebugMenu_BrowseIcons();
 }
 
 #if !EDITION_INTERNATIONAL
-s32 DebugMenu_SelectCharacter(void)
+static s32 DebugMenu_SelectCharacter(void)
 {
 	return Menu_OpenCharacterSelector();
 }
@@ -797,8 +815,165 @@ s32 DebugMenu_SelectCharacter(void)
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #else
-s32 SceneState_GetFarResult2418(void)
+static s32 SceneState_GetFarResult2418(s32 unit_id)
 {
-	return Shop_ConfirmAct();
+	return Shop_ConfirmAct(unit_id);
 }
 #endif
+
+u32 gDebugItemPromptHead[] = {
+	0x500050,
+	0,
+	80,
+	0x500000,
+	0x10003,
+	2,
+	0,
+	0x780078,
+	0,
+	120,
+	0x780000,
+	0x10003,
+	2,
+	0,
+	0x28003c,
+	0,
+	128,
+	0x800000,
+	0x10002,
+	1,
+	0,
+	0x28003c,
+	0,
+	128,
+	0x800000,
+	0x10002,
+	3,
+	0,
+	0x800080,
+	0,
+	128,
+	0x800000,
+	0x20003,
+	1,
+	0,
+	0x800080,
+	0,
+	128,
+	0x800000,
+	0x20003,
+	1,
+	0,
+	0x200020,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0x800080,
+	0,
+	128,
+	0x800000,
+	0x20003,
+	1,
+	0,
+};
+
+char gDebugItemPrompt[12] = "Item No:";
+
+char gDebugItemCapacityLabel[24] = "A:Get Item  B:Return";
+
+char gDebugItemFullLabel[20] = "ITEM FULL........";
+
+struct SceneEntrance MenuTest_Entrances[] = {
+	{0, CONDITION_ALWAYS, 60, 0, 94, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+	{SCENE_TABLE_END},
+};
+
+u32 MenuTest_Exits[] = {
+	SCENE_EXITS(511),
+};
+
+struct ScenePlacement MenuTest_Placements[] = {
+	{GERALD, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(40), 0, PIXELS(48), FACING_SOUTHEAST,
+		TALK_FACE_PARTY, 0},
+	{JASMINE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(40), 0, PIXELS(80), FACING_SOUTHEAST,
+		TALK_FACE_PARTY, 0},
+	{IWAN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(40), 0, PIXELS(112), FACING_SOUTHEAST,
+		TALK_FACE_PARTY, 0},
+	{MEARI, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(40), 0, PIXELS(144), FACING_SOUTHEAST,
+		TALK_FACE_PARTY, 0},
+	{0x1e, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(80), 0, PIXELS(48), FACING_SOUTHEAST,
+		TALK_FACE_PARTY, 0},
+	{0x1f, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(80), 0, PIXELS(80), FACING_SOUTHEAST,
+		TALK_FACE_PARTY, 0},
+	{0x20, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(80), 0, PIXELS(112), FACING_SOUTHEAST,
+		TALK_FACE_PARTY, 0},
+	{0x21, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(80), 0, PIXELS(144), FACING_SOUTHEAST,
+		TALK_FACE_PARTY, 0},
+	{0x7d, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(120), 0, PIXELS(48), FACING_SOUTHEAST,
+		TALK_FACE_PARTY, 0},
+	{0x1f, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(120), 0, PIXELS(80), FACING_SOUTHEAST,
+		TALK_FACE_PARTY, 0},
+	{0x20, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(120), 0, PIXELS(112), FACING_SOUTHEAST,
+		TALK_FACE_PARTY, 0},
+	{0xf8, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(120), 0, PIXELS(144), FACING_SOUTHEAST,
+		TALK_FACE_PARTY, 0},
+	{0x23, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(160), 0, PIXELS(48), FACING_SOUTHEAST,
+		TALK_FACE_PARTY, 0},
+	{0x23, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(160), 0, PIXELS(80), FACING_SOUTHEAST,
+		TALK_FACE_PARTY, 0},
+	{SCENE_TABLE_END},
+};
+
+struct SceneEvent MenuTest_Events[] = {
+	{EVENT_TALK, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TALK)},
+	{EVENT_TALK, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TALK)},
+	{EVENT_TALK, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TALK)},
+	{EVENT_TALK, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TALK)},
+	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK)},
+	{EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK)},
+	{EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK)},
+	{EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK)},
+	{EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK)},
+#if defined(TBS_EDITION_FR)
+	{EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_GiveItemToParty)},
+#elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+	{EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTorebiFuneThenTheyAreDangerous)},
+#else
+	{EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_GetFarResult2418)},
+#endif
+	{EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaKyleAbleStop)},
+	{EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK)},
+#if !EDITION_INTERNATIONAL
+	{EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_SelectCharacter)},
+	{EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK)},
+#elif defined(TBS_EDITION_EN)
+	{0xc400, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockC9b)},
+	{0x8400, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockCc6)},
+	{0x400, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockCf1)},
+	{0x4400, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockD21)},
+	{0xc400, 17, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockD4c)},
+	{0x8400, 17, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockD77)},
+	{0x400, 17, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockDa2)},
+#else
+	{0xc400, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockC9b)},
+	{0x8400, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockCc6)},
+	{0x400, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockCf1)},
+	{0x4400, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockD21)},
+	{0xc400, 17, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockD4c)},
+	{0x8400, 17, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockD77)},
+	{0x400, 17, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockDa2)},
+	{0x4400, 17, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_RunMessageTest)},
+#endif
+	{PSYNERGY_ON_ACTOR(0x4e), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_PSYNERGY)},
+	{PSYNERGY_ON_ACTOR(0x8e), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_PSYNERGY)},
+	{PSYNERGY_ON_ACTOR(ABILITY_CATCH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_PSYNERGY)},
+	{0x10008e15, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_SCRIPT)},
+	{SCENE_EVENTS_END},
+};
+
+s32 MenuTest_SlotOffsets = 10;
+
+s32 MenuTest_BenchmarkCharacter = 65;

@@ -1,3 +1,4 @@
+#include "unit/graphics/window/sideobjt.h"
 #include "types.h"
 #include "chara.h"
 

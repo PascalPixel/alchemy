@@ -1,3 +1,5 @@
+#include "unit/sound/sound.h"
+#include "unit/system/scheduler/runtime.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -85,9 +87,9 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
     if ((s16)gMusicVolumeTarget != (s16)gMusicVolume) {
         delta = (s16)gMusicVolumeTarget - (s16)gMusicVolume;
         if (delta > 0) {
-            gMusicVolume = gMusicVolume + gMusicVolumeStep;
+            gMusicVolume += gMusicVolumeStep;
         } else {
-            gMusicVolume = gMusicVolume - gMusicVolumeStep;
+            gMusicVolume -= gMusicVolumeStep;
         }
         if ((((s16)gMusicVolumeTarget - (s16)gMusicVolume) ^ delta) < 0) {
             gMusicVolume = gMusicVolumeTarget;
@@ -97,9 +99,9 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
     if ((s16)gMusicPitchTarget != (s16)gMusicPitch) {
         delta = (s16)gMusicPitchTarget - (s16)gMusicPitch;
         if (delta > 0) {
-            gMusicPitch = gMusicPitch + gMusicPitchStep;
+            gMusicPitch += gMusicPitchStep;
         } else {
-            gMusicPitch = gMusicPitch - gMusicPitchStep;
+            gMusicPitch -= gMusicPitchStep;
         }
         if ((((s16)gMusicPitchTarget - (s16)gMusicPitch) ^ delta) < 0) {
             gMusicPitch = gMusicPitchTarget;
@@ -111,8 +113,6 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void)
 }
 
 
-void AudioCommand_Play(s32 id);
-
 void AudioTest_RunParameterController(void)
 {
     s32 cues[3] = {0, 80, 100};
@@ -122,7 +122,7 @@ void AudioTest_RunParameterController(void)
 
     row = 0;
     preset = 2;
-    /* FAKEMATCH: the one-pass block keeps the state-address load after preset setup and the state store before timer setup. */
+    /* FAKEMATCH: the one-pass block keeps the state-address load after preset setup and the state store before timer setup. Plain store: differ 8 or more in nine statement orders. */
     do {
         IwramHi_Data1 = 0;
     } while (0);
@@ -186,7 +186,7 @@ void Audio_InitializeRuntimeDefaults(void)
     gMusicPitchStep = 4;
     gMusicFadeRequested = 0;
     Audio_CommandMask = 0;
-    player_volume = (s16 *)gMusicPlayerVolumes;
+    player_volume = gMusicPlayerVolumes;
     Ewram_Data1 = 0;
     remaining = 7;
     do {
@@ -225,7 +225,7 @@ void Audio_SetMusicVolumeTargetAndStep(u16 primary, u16 secondary)
     gMusicVolumeStep = secondary;
 }
 
-u8 AudioCommand_GetStateByte(void)
+s32 AudioCommand_GetStateByte(void)
 {
     return gMusicRestoreDelay;
 }
@@ -251,7 +251,7 @@ void AudioCommand_UpdateToggleMask(u32 command)
         Audio_CommandMask = command;
 }
 
-u8 AudioCommand_GetSecondaryStateByte(void)
+s32 AudioCommand_GetSecondaryStateByte(void)
 {
     return gAudioSecondaryState;
 }

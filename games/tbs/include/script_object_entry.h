@@ -1,6 +1,8 @@
 #ifndef ALCHEMY_SCRIPT_OBJECT_ENTRY_H
 #define ALCHEMY_SCRIPT_OBJECT_ENTRY_H
 
+#include "unit/field/common/script/field.h"
+#include "unit/field/common/script/field3.h"
 #include "types.h"
 
 struct ScriptObjectEntry
@@ -25,9 +27,5 @@ typedef char
 typedef char ScriptObjectEntry_size[sizeof(struct ScriptObjectEntry) == 0x70 ? 1 : -1];
 
 #undef SCRIPT_OBJECT_ENTRY_OFFSET
-
-s32						  ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values);
-struct ScriptObjectEntry *ScriptObject_FindOverlappingEntry(
-	struct ScriptObjectEntry *object, s32 *values);
 
 #endif

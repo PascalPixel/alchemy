@@ -1,3 +1,20 @@
+#include "game_state.h"
+#include "unit/debug/item_level/level.h"
+#include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object2.h"
+#include "unit/battle/effect/object9.h"
+#include "unit/battle/effect/object10.h"
+#include "unit/game/character/chara.h"
+#include "unit/game/character/chara2.h"
+#include "unit/game/character/chara4.h"
+#include "unit/graphics/window/window.h"
+#include "unit/graphics/window/window5.h"
+#include "unit/graphics/window/window6.h"
+#include "unit/graphics/window/window7.h"
+#include "unit/graphics/window/window8.h"
+#include "unit/graphics/window/window9.h"
+#include "unit/graphics/window/window10.h"
+#include "unit/graphics/window/window12.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -21,20 +38,16 @@
 #include "edition.h"
 #include "uiflow.h"
 #include "text/msg_ids.h"
-
-#define RenderOutput_RedrawSavedRect ((void (*)(struct RenderInput *))RenderOutput_RedrawSavedRect)
+#include "field_scene.h"
 
 void Engine_AudioPlayCue(s32 cue);
 void Engine_TaskWait(s32 frames);
-void UiText_DrawStringInWindow(u8 *text, struct RenderInput *window, s32 x, s32 y);
-void UiText_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *window, s32 x, s32 y);
 #define ITEM_COUNT 270
-void UiText_DrawResource(s32 text, struct RenderInput *window, s32 x, s32 y);
 #define ABILITY_COUNT 270
 
 u8 *ItemLevel_GetEntrances(void)
 {
-	return gItemLevelEntrances;
+	return (u8 *)gItemLevelEntrances;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -44,23 +57,23 @@ s32 SceneData_ReturnZero(void)
 
 u8 *ItemLevel_GetExits(void)
 {
-	return gItemLevelExits;
+	return (u8 *)gItemLevelExits;
 }
 
 u8 *ItemLevel_GetPlacements(void)
 {
-	return gItemLevelPlacements;
+	return (u8 *)gItemLevelPlacements;
 }
 
 #if EDITION_INTERNATIONAL
-void FieldScene_RunActor13Mode102Step(void)
+static void FieldScene_RunActor13Mode102Step(void)
 {
 	Engine_EventSetMessage(MsgDebugWontStopYou);
 	Call3(Engine_ActorShowEmote, 13, 0x102, 0);
 	Engine_EventShowMessage(13, 0);
 }
 
-void FieldScene_RunActor13Mode105Step(void)
+static void FieldScene_RunActor13Mode105Step(void)
 {
 	Engine_ActorShowEmote(13, 0x105, 0);
 	Engine_EventSetMessage(MsgDebugWontStopYou);
@@ -70,10 +83,10 @@ void FieldScene_RunActor13Mode105Step(void)
 
 u8 *ItemLevel_GetEvents(void)
 {
-	return gItemLevelEvents;
+	return (u8 *)gItemLevelEvents;
 }
 
-void SceneState_AddToRecordCount(s32 id, s32 amount)
+static void SceneState_AddToRecordCount(s32 id, s32 amount)
 {
 	u8 *entry = UnitGet(id);
 
@@ -81,13 +94,13 @@ void SceneState_AddToRecordCount(s32 id, s32 amount)
 	UnitCalc(id);
 }
 
-void Scene_AddToListedRecordCounts(s32 amount)
+static void Scene_AddToListedRecordCounts(s32 amount)
 {
 	u16	 list[16];
 	u16 *p;
 	s32	 n;
 
-	n = Value1((s32 (*)(u16 *))Party_ListActiveOwners, (s32)(list));
+	n = Value1((s32 (*)(u16 *))Party_ListActiveOwners, (s32)list);
 	if (n > 0)
 	{
 		s32 count;
@@ -100,12 +113,12 @@ void Scene_AddToListedRecordCounts(s32 amount)
 	}
 }
 
-void FieldScene_RunCountAdjustPanel(void)
+static void EV11_TALK(void)
 {
 	u8 *record;
-	s32			  win;
-	s32			  flag;
-	s32			  msg;
+	s32 win;
+	s32 flag;
+	s32 msg;
 
 	record = UnitGet(gGameState.selected_actor);
 	win = UiWindow_Create(0, 0, 30, 9, 2);
@@ -160,7 +173,7 @@ void FieldScene_RunCountAdjustPanel(void)
 	}
 }
 
-void ItemLevel_SelectItem(void)
+static void EV08_TALK(void)
 {
 	struct RenderInput *window;
 	struct RenderInput *details;
@@ -300,7 +313,7 @@ done:
 }
 
 #if EDITION_INTERNATIONAL
-void ItemLevel_SelectAbility(void)
+static void ItemLevel_SelectAbility(void)
 {
 	struct RenderInput *window;
 	struct RenderInput *details;
@@ -414,7 +427,7 @@ done:
 }
 #endif
 
-void SceneState_SetWorkWords1c0And1c8(void)
+static void SceneState_SetWorkWords1c0And1c8(void)
 {
 	gEventWork->start_transition = 0x201;
 	gEventWork->transition_frames = 24;
@@ -426,21 +439,20 @@ s32 FieldScene_RunEntrySetup(void)
 	gEventWork->start_transition = 516;
 	gEventWork->transition_frames = 24;
 #if EDITION_INTERNATIONAL
-	((struct FieldActor *)Object_GetById(11))->scale_y = 0x19999;
-	((struct FieldActor *)Object_GetById(11))->scale_x = 0x19999;
+	Object_GetById(11)->scale_y = 0x19999;
+	Object_GetById(11)->scale_x = 0x19999;
 	Engine_ActorSetAnimation(13, 5);
 	Engine_ActorSetAnimation(14, 2);
 #else
-	((struct FieldActor *)Object_GetById(11))->scale_y = 0x1b333;
-	((struct FieldActor *)Object_GetById(11))->scale_x = 0x1b333;
+	Object_GetById(11)->scale_y = 0x1b333;
+	Object_GetById(11)->scale_x = 0x1b333;
 #endif
 	return 0;
 }
 
 #if !EDITION_INTERNATIONAL
-void ItemLevel_RunMotionTest(void)
+static void ItemLevel_RunMotionTest(void)
 {
-	/* FAKEMATCH: Call3 places the actor argument before the coordinate shifts; the ordinary direct call schedules it after both shifts. */
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(10, 2);
 	Engine_ActorSetAnimation(11, 4);
@@ -451,10 +463,10 @@ void ItemLevel_RunMotionTest(void)
 #endif
 
 #if EDITION_INTERNATIONAL
-void FieldScene_DrawThreeCaptionWindow(void)
+static void FieldScene_DrawThreeCaptionWindow(void)
 {
 	struct RenderInput *window;
-	/* FAKEMATCH: an unread 32-byte text buffer, the native frame's 32 extra bytes. */
+	/* FAKEMATCH: an unread 32-byte text buffer, the native frame's 32 extra bytes. Without it: differ 4 (sp moves 4 for 36). */
 	u8 text[32];
 
 	window = (struct RenderInput *)UiWindow_Create(0, 13, 30, 6, 2);
@@ -464,19 +476,111 @@ void FieldScene_DrawThreeCaptionWindow(void)
 }
 #endif
 
-void SceneState_SetRecordFlag53(void)
+static void EV10_SCRIPT(void)
 {
-	u8 *record = *(u8 **)gEffectWork;
+	u8 *record = gEffectWork;
 
 	record[53] = 1;
 }
 
-int SceneState_GetFarResult100c(void)
+static int EV09_TALK(void)
 {
 	return DebugMenu_BrowseIcons();
 }
 
-int SceneState_GetFarResult1020(void)
+static int EV10_TALK(void)
 {
 	return DebugMenu_BrowseEntryGlyphs();
 }
+
+char gItemLevelLvLabel[4] = "Lv";
+
+char gItemLevelItemPrompt[12] = "Item No:";
+
+char gItemLevelItemHelp[24] = "A:Get Item  B:Return";
+
+char gItemLevelItemFull[20] = "ITEM FULL........";
+
+#if EDITION_INTERNATIONAL
+char gItemLevelPsyPrompt[8] = "Psy No:";
+#endif
+
+#if EDITION_INTERNATIONAL
+char gItemLevelPsyHelp[12] = "B:Return";
+#endif
+
+#if EDITION_INTERNATIONAL
+char gItemLevelGlyphsUpper[28] = "A B C D E F G H J K L M N O";
+#endif
+
+#if EDITION_INTERNATIONAL
+char gItemLevelGlyphsLower[28] = "P Q R S T U V W X Y Z a b c";
+#endif
+
+#if EDITION_INTERNATIONAL
+char gItemLevelGlyphsMarks[12] = "! ? # $ %";
+#endif
+
+struct SceneEntrance gItemLevelEntrances[] = {
+	{0, CONDITION_ALWAYS, 824, 0, 864, FACING_NORTH, 0, 280, 504, 912, 896, 0},
+	{SCENE_TABLE_END},
+};
+
+u32 gItemLevelExits[] = {
+	SCENE_EXITS(511),
+};
+
+struct ScenePlacement gItemLevelPlacements[] = {
+	{0x1f4, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(792), 0, PIXELS(864), FACING_SOUTHEAST,
+		TALK_FACE_PARTY, 0},
+	{0x20, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(792), 0, PIXELS(480), FACING_SOUTHEAST,
+		TALK_FACE_PARTY, 0},
+	{0x21, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(792), 0, PIXELS(504), FACING_SOUTHEAST,
+		TALK_FACE_PARTY, 0},
+#if !EDITION_INTERNATIONAL
+	{0x88, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(792), 0, PIXELS(800), FACING_SOUTHEAST,
+		TALK_FACE_PARTY, 0},
+#elif defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
+	{0x88, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(792), 0, PIXELS(800), FACING_EAST, TALK_FACE_PARTY,
+		0},
+	{0x8f, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(848), 0, PIXELS(864), FACING_SOUTH + FACING_STEP,
+		TALK_FACE_PARTY_AND_BACK, 0},
+	{0x15, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(848), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
+		TALK_KEEP_FACING, 0},
+	{0x15, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(816), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
+		TALK_KEEP_FACING, 0},
+#else
+	{0x88, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(792), 0, PIXELS(800), FACING_EAST, TALK_FACE_PARTY,
+		0},
+	{0x8f, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(80), 0, PIXELS(864), FACING_SOUTH + FACING_STEP,
+		TALK_FACE_PARTY_AND_BACK, 0},
+	{0x15, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(848), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
+		TALK_KEEP_FACING, 0},
+	{0x15, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(816), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
+		TALK_KEEP_FACING, 0},
+#endif
+	{SCENE_TABLE_END},
+};
+
+struct SceneEvent gItemLevelEvents[] = {
+	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK)},
+	{EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK)},
+	{EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK)},
+	{EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK)},
+#if !EDITION_INTERNATIONAL
+	{PSYNERGY_ON_ACTOR(0x8e), 10, CONDITION_ALWAYS, EVENT_SCRIPT(ItemLevel_RunMotionTest)},
+#elif defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
+	{EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(ItemLevel_SelectAbility)},
+	{EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor13Mode102Step)},
+	{EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor13Mode105Step)},
+	{PSYNERGY_ON_ACTOR(0x8e), 10, CONDITION_ALWAYS,
+		EVENT_SCRIPT(FieldScene_DrawThreeCaptionWindow)},
+#else
+	{EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor13Mode102Step)},
+	{EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor13Mode105Step)},
+	{PSYNERGY_ON_ACTOR(0x8e), 10, CONDITION_ALWAYS,
+		EVENT_SCRIPT(FieldScene_DrawThreeCaptionWindow)},
+#endif
+	{0x10008e15, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT)},
+	{SCENE_EVENTS_END},
+};

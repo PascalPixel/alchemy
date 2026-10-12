@@ -1,3 +1,4 @@
+#include "unit/field/common/object/objdata.h"
 #include "types.h"
 
 // タイル消去の画素順

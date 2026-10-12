@@ -7,91 +7,72 @@
 #include "field_scene.h"
 
 #define NULL ((void *)0)
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 #include "palette_scene.h"
 
-struct PaletteEffectFrame {
-    s32 pad00[6];
-    s32 progress;
-    s32 pad1c[7];
-    s32 limit;
-    s32 second_limit;
-    s32 third_limit;
+struct PaletteEffectFrame
+{
+	s32 pad00[6];
+	s32 progress;
+	s32 pad1c[7];
+	s32 limit;
+	s32 second_limit;
+	s32 third_limit;
 };
 
-struct EffectSprite { u8 pad00[9]; u8 flags; u8 pad0a[28]; u8 state; };
-
-struct PaletteEffect {
-    u8 pad00[0x18];
-    s32 progress;
-    u8 pad1c[7];
-    u8 flags;
-    u8 pad24[12];
-    s32 rate_x;
-    s32 rate_y;
-    u8 pad38[24];
-    struct EffectSprite *sprite;
-    u8 pad54[1];
-    u8 mode;
+struct EffectSprite
+{
+	u8 pad00[9];
+	u8 flags;
+	u8 pad0a[28];
+	u8 state;
 };
 
-struct OrbitingPaletteEffect {
-    s32 pad00[2];
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 pad14;
-    s32 angle_x;
-    s32 angle_y;
-    s32 pad20[6];
-    s32 anchor_x;
-    s32 anchor_y;
-    s32 anchor_z;
-    s32 pad44[3];
-    u8 *owner;
-    s32 pad54[4];
-    s16 step;
-    s16 heading;
+struct PaletteEffect
+{
+	u8					 pad00[0x18];
+	s32					 progress;
+	u8					 pad1c[7];
+	u8					 flags;
+	u8					 pad24[12];
+	s32					 rate_x;
+	s32					 rate_y;
+	u8					 pad38[24];
+	struct EffectSprite *sprite;
+	u8					 pad54[1];
+	u8					 mode;
 };
 
-struct PaletteSceneRecord {
-    u8 pad00[216];
-    u16 values[1];
+struct OrbitingPaletteEffect
+{
+	s32 pad00[2];
+	s32 x;
+	s32 y;
+	s32 z;
+	s32 pad14;
+	s32 angle_x;
+	s32 angle_y;
+	s32 pad20[6];
+	s32 anchor_x;
+	s32 anchor_y;
+	s32 anchor_z;
+	s32 pad44[3];
+	u8 *owner;
+	s32 pad54[4];
+	s16 step;
+	s16 heading;
 };
 
-extern u8 gKorimaKiEntrances[];
-extern u8 gKorimaKiRegions[];
-extern u8 gKorimaKiExits[];
-extern u8 gKorimaKiPlacements[];
-extern u8 gKorimaKiEvents[];
+struct PaletteSceneRecord
+{
+	u8	pad00[216];
+	u16 values[1];
+};
 
 extern s32 gKorimaKiSparkOrigin[3];
 extern s32 gKorimaKiSparkCount;
 extern s32 gKorimaKiSparkSound;
 extern s32 gKorimaKiTransitionStep;
-void PaletteScene_SpawnEffect(void);
-extern const s32 SceneAction_ActorOneEntry[];
-extern const s32 SceneAction_ActorTwoEntry[];
-extern const s32 SceneAction_ActorThreeEntry[];
-extern const s32 SceneAction_GroupFinish[];
-extern u8 gKorimaKiEffectScript[];
-
-void Battle_ResetEffectCounter();
-void Object_RefreshSelectorById();
-void Object_SetActionCallbackAndRefreshById();
-void Vector_AddPolarOffset();
-s32 PartyInventory_FindOwner();
-s32 Inventory_Find();
-struct PaletteSceneRecord *UnitGet();
-void Audio_PlayCueFromEventWork();
-
-void KorimaKi_PlayGesture(s32 actor, s32 gesture);
-void KorimaKi_SpawnOrbitSparks(void);
-void KorimaPalette_SaveFirst(void);
-void KorimaPalette_SaveSecond(void);
-void KorimaPalette_Capture(void);
-void KorimaPalette_Restore(s32 second);
-void PaletteScene_AdvanceTransition(void);
 
 #endif

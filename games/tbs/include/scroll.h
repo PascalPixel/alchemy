@@ -26,10 +26,4 @@ LAYOUT_OFFSET_GUARD(DisplayScrollWork_Frequency, struct DisplayScrollWork, freq_
 extern struct DisplayScrollWork *gHBlankScrollWork;
 extern const s16				 DisplayScroll_WaveSine[];
 
-void DisplayScroll_InitializeHBlankDma(
-	s32 mode, s32 freq_x, s32 step_x, s32 amp_x, s32 freq_y, s32 step_y, s32 amp_y);
-void DisplayScroll_BuildAndSwapHBlankPage(void);
-void DisplayScroll_ArmHBlankDma(void);
-void DisplayScroll_DisarmHBlankDma(void);
-
 #endif

@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_BATTLE_PARTY_H
 #define ALCHEMY_BATTLE_PARTY_H
 
+#include "edition.h"
 #include "layout_guard.h"
 
 enum BattleUnitPresence
@@ -45,6 +46,7 @@ struct DjinnRecoveryTable
 	struct DjinnRecoveryList list;
 };
 
+#if GAME_TLA
 s32 BattleParty_PrepareActiveOwners(u16 *unit_ids);
 s32 BtlEnmList(s16 *unit_ids);
 s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids);
@@ -65,5 +67,6 @@ s32 BattleUnit_TickReflect(s32 unit_id);
 s32 BattleUnit_TickAgilityModifier(s32 unit_id);
 s32 BattlePlacement_UpdateTimedEntries(void);
 s32 BattlePlacement_UpdateTimedEntriesTwentyTimes(void);
+#endif
 
 #endif

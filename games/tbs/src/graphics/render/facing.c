@@ -1,3 +1,4 @@
+#include "unit/graphics/render/facing.h"
 #include "types.h"
 
 // 向きごとのフレーム番号 (0x80 = 左右反転)

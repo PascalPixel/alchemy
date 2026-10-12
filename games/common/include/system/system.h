@@ -8,12 +8,18 @@
 #include "farcall.h"
 #endif
 
-void	   WaitFrames(s32 frames);
-void	   System_WaitForFrameInterrupt(void);
-void	   Graphics_ResetFrameState(void);
-void	   Bios_SoundBiasOff(void);
-void	   Bios_SoundBiasOn(void);
-u32		   Random16(void);
+#if GAME_TLA
+void WaitFrames(s32 frames);
+#endif
+void System_WaitForFrameInterrupt(void);
+#if GAME_TLA
+void Graphics_ResetFrameState(void);
+#endif
+void Bios_SoundBiasOff(void);
+void Bios_SoundBiasOn(void);
+#if GAME_TLA
+u32 Random16(void);
+#endif
 extern u32 gRandomState;
 
 extern volatile u16 gSleepActive;
@@ -61,20 +67,26 @@ extern void		  *Resource_DirectoryTable[];
 extern u8		   Resource_PatchThumbBranchCodeSize[];
 extern u8		   ResourceSlot_ConversionTables[][256];
 extern const u16   Ui_WindowPalette[];
-s32				   Animation_LookupValueByKey(s32 key);
+#if GAME_TLA
+s32 Animation_LookupValueByKey(s32 key);
+#endif
 #ifndef OWN_CountRemainingErasedFlashBytes
 s32 CountRemainingErasedFlashBytes(u8 *ptr);
 #endif
 #if GAME_TLA
-s32	 Map_DisableUpdateCallbackFar(void);
-s32	 Map_EnableUpdateCallbackFar(void);
+s32 Map_DisableUpdateCallbackFar(void);
+s32 Map_EnableUpdateCallbackFar(void);
 #endif
-s32	 RunFlashEraseVerifier(u8 *, u8 *);
+s32 RunFlashEraseVerifier(u8 *, u8 *);
+#if GAME_TLA
 void Runtime_WriteDebugTextTiles(const u8 *src);
+#endif
 #ifndef OWN_StartFlashTimer
 void StartFlashTimer(u8 index);
 #endif
+#if GAME_TLA
 void UiWork_FinalizeAndReleaseBlock16(void);
+#endif
 
 #if !GAME_TLA
 struct AnimationEntry;
@@ -111,15 +123,12 @@ extern s16		 gSaveSlot;
 extern u8		 IwramCodeRecords[];
 extern u8		 LoadedRuntime_Size[];
 extern const u16 Math_ArcTanTable[];
-extern const u16 Math_TanTable[];
 extern const u8	 Object_ShadowTiles[];
 extern const u8	 Render_BuildOamListKernel[];
 extern const u8	 Resource_ExecuteTransfer[];
 extern const u8	 Resource_PatchThumbBranch[];
 extern const u8	 Rom_LanguageCode;
-extern const u8	 Text_HexDigits[];
 extern u8		 RomBytes_080308a0[];
-extern const u16 SentouKouka_BitOperands[];
 extern const u32 SentouKouka_Hikaku4Gyaku[];
 extern const u32 SentouKouka_Hikaku4Jun[];
 extern const u32 SentouKouka_HikakuGyaku[];
@@ -136,52 +145,22 @@ extern const u32 SentouKouka_NuriJun[];
 extern const u32 SentouKouka_YomiGyaku[];
 extern const u32 SentouKouka_YomiJun[];
 extern const u8	 System_BasicColorPalette[];
-extern const s32 Text_PowersOfTen[];
 extern u8		 Tile_CopyStrided[];
 extern u8		 Tile_CopyStridedCodeSize[];
 extern u8		 TransferCommandExecutor_Size[];
 void			 _call_via_r2(s32 arg0, s32 arg1, s32 target);
-s32				 Animation_InitializeObjects(struct AnimationObject *state);
-void			 Animation_InitWorkFromMetadata(struct AnimationEntry *work);
 #ifndef OWN_Animation_SetWorkEntry
-void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no);
 #endif
-struct AnimationEntry *AnimationObject_Allocate(s32 id);
-void				   AnimationObjects_SetActiveTimerSteps(struct AnimationObject *group, s32 val);
-void				   Bg0_ClearTilemap(void);
-s32					   FixedSqrt(s32 value);
-void				   IwramHalt(void);
-s32					   Link_CreateCountdownLabelWindow(void);
-void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s32 reuse);
-void ObjectSystem_Configure(s32 mode);
-void PaletteDma_LoadBlock(void);
-u8	*Resource_DecompressLz(const u8 *source, u8 *destination);
-struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
-void				  Resource_InitializeTable(void);
-s32					  Resource_LoadByMode(s32 mode, s32 value);
-void				  Resource_LoadWorkHeader(void);
-void				  Resource_ScheduleOwnerReset(void);
-void				  Resource_ScheduleOwnerResetDelayed(void);
-s32					  ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
+void IwramHalt(void);
 #ifndef OWN_Runtime_GetLowTableAddress
-s32 Runtime_GetLowTableAddress(void);
 #endif
 #ifndef OWN_Runtime_GetRemainingEwram
-s32 Runtime_GetRemainingEwram(void);
 #endif
 #ifndef OWN_Runtime_GetRemainingIwram
-s32 Runtime_GetRemainingIwram(void);
 #endif
 #ifndef OWN_RuntimeDispatch_NoOpHook
-void RuntimeDispatch_NoOpHook(void);
 #endif
-void  SerialRuntime_Initialize(void);
-void  SoundDriver_EnterMixer(void);
-void  System_VBlankHandler(void);
-void  Text_FormatHexToWork(u32 value);
-void *Text_FormatPlayTime(s32 value, u8 *out);
-void  Text_FormatSignedDecimalToWork(s32 arg0);
-void  Ui_LoadWindowGraphics(void);
+void SoundDriver_EnterMixer(void);
 #endif
 
 #if GAME_TLA

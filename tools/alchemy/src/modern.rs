@@ -26,7 +26,14 @@
 //! - `-fno-tree-loop-distribute-patterns`: the game links no C library, so
 //!   loops must not become memset or memcpy calls.
 //! - `-ffreestanding -nostdinc`, `-DMODERN=1` for the source's guards, and
-//!   `-Wall -Wextra -fdiagnostics-plain-output` for the report.
+//!   `-Wall -Wextra -fdiagnostics-plain-output` for the report, less four
+//!   classes that question style and no behaviour: sign-compare,
+//!   unused-parameter, missing-field-initializers and pointer-sign.
+//!
+//! The count of distinct warnings may only fall. tools/alchemy/modern.tsv
+//! holds the count allowed for the compiler it was measured with; a build
+//! of all six editions with that compiler fails above it, and `--update`
+//! lowers it. Another compiler's count is reported and not compared.
 //!
 //! Linking reuses the edition's linker script with GCC's extra section names
 //! beside each object's own (`.rodata.str1.4` and the like), a catch-all ROM
@@ -42,14 +49,20 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
-const USAGE: &str = "usage: alchemy build modern [--target GAME-EDITION]... [--cc COMPILER] [--keep-going]
+const USAGE: &str = "usage: alchemy build modern [--target GAME-EDITION]... [--cc COMPILER] [--keep-going] [--update]
 Build each edition (all six of ☀️ by default) from the same source with a
 modern GCC, as pret's `make modern`: out/modern/<edition>.gba, a ROM that
 matches nothing, and every compiler and linker warning in
 out/modern/warnings.txt with a summary by kind and file in
 out/modern/warnings-summary.txt. The compiler is --cc, else $MODERN_CC,
 else the arm-none-eabi-gcc on PATH. --keep-going writes an
-image despite link errors.";
+image despite link errors. A build of all six editions fails when it has
+more distinct warnings than tools/alchemy/modern.tsv allows for its
+compiler; --update lowers that count to the build's.";
+
+/// The count of distinct warnings a build of the six editions may have.
+const ALLOWED: &str = "tools/alchemy/modern.tsv";
+const ALLOWED_HEADER: &str = "compiler\twarnings";
 
 const DEFAULT_CC: &str = "arm-none-eabi-gcc";
 const OUTPUT: &str = "out/modern";
@@ -78,6 +91,10 @@ const COMMON_FLAGS: &[&str] = &[
     "-DMODERN=1",
     "-Wall",
     "-Wextra",
+    "-Wno-sign-compare",
+    "-Wno-unused-parameter",
+    "-Wno-missing-field-initializers",
+    "-Wno-pointer-sign",
     "-fdiagnostics-plain-output",
     "-fcall-used-r4",
 ];
@@ -212,13 +229,21 @@ pub(crate) fn main_script(text: &str) -> String {
     lines.join("\n") + "\n"
 }
 
-/// An overlay's script for modern objects: an overlay has one image, so each
-/// object's code, constants and data all land in its listed place.
+/// An overlay's script for modern objects. An overlay has one image, so a
+/// statement that takes only an object's code, `(.text)`, takes its
+/// constants and data with it: they land in its listed place. Any other
+/// statement keeps what it takes, widened to GCC's names as in the main
+/// script: a plain place lists every object once for its code
+/// (`.text .padding`), once for its constants (`.rodata`) and once for its
+/// data, and each pass takes GCC's sections of its own kind.
 pub(crate) fn overlay_text(text: &str) -> String {
-    let object = regex::Regex::new(r#"("\*/[^"]+\.o")\(\.text\)"#).expect("static pattern");
+    let object = regex::Regex::new(r#"("\*/[^"]+\.o")\(([^)]*)\)"#).expect("static pattern");
     let mut out = object
         .replace_all(text, |capture: &regex::Captures| {
-            format!("{}({CATCH_ALL})", &capture[1])
+            match capture[2].trim() {
+                ".text" => format!("{}({CATCH_ALL})", &capture[1]),
+                sections => format!("{}({})", &capture[1], widened(sections)),
+            }
         })
         .into_owned();
     if !out.ends_with('\n') {
@@ -249,6 +274,7 @@ pub fn run(args: &[String]) -> Result<(), String> {
         .filter(|cc| !cc.is_empty())
         .unwrap_or_else(|| DEFAULT_CC.to_owned());
     let mut keep_going = false;
+    let mut update = false;
     let mut args = args.iter();
     while let Some(arg) = args.next() {
         match arg.as_str() {
@@ -259,10 +285,12 @@ pub fn run(args: &[String]) -> Result<(), String> {
             "--target" => targets.push(decomp_target(Some(args.next().ok_or(USAGE)?))?),
             "--cc" => cc = args.next().ok_or(USAGE)?.clone(),
             "--keep-going" => keep_going = true,
+            "--update" => update = true,
             _ => return Err(USAGE.into()),
         }
     }
-    if targets.is_empty() {
+    let all = targets.is_empty();
+    if all {
         for edition in ["ja", "en", "de", "es", "fr", "it"] {
             targets.push(decomp_target(Some(&format!("tbs-{edition}")))?);
         }
@@ -291,11 +319,60 @@ pub fn run(args: &[String]) -> Result<(), String> {
         .filter(|(_, result)| result.is_err())
         .map(|(target, _)| target.id.to_string())
         .collect();
-    if failed.is_empty() {
-        Ok(())
-    } else {
-        Err(format!("the modern build failed for {}", failed.join(", ")))
+    if !failed.is_empty() {
+        return Err(format!("the modern build failed for {}", failed.join(", ")));
     }
+    if !all {
+        return Ok(());
+    }
+    let compiler = modern.signature.split('\0').next().unwrap_or(&cc).to_owned();
+    let path = root.join(ALLOWED);
+    let before = fs::read_to_string(&path).unwrap_or_default();
+    let (text, verdict) = hold(&before, &compiler, report.diagnostics.len(), update)?;
+    if text != before {
+        fs::write(&path, text).map_err(|error| format!("{ALLOWED}: {error}"))?;
+    }
+    println!("{verdict}");
+    Ok(())
+}
+
+/// Hold a build's count of distinct warnings to the count allowed for its
+/// compiler: the table's text afterwards and what to tell the builder, or
+/// the refusal of a count that rose.
+fn hold(table: &str, compiler: &str, found: usize, update: bool) -> Result<(String, String), String> {
+    let mut rows: Vec<(String, usize)> = Vec::new();
+    for line in table.lines().skip(1) {
+        let (name, count) = line.split_once('\t').ok_or_else(|| format!("{ALLOWED}: {line:?} is no row"))?;
+        let count = count.parse().map_err(|_| format!("{ALLOWED}: {count:?} is no count"))?;
+        rows.push((name.to_owned(), count));
+    }
+    let allowed = rows.iter().find(|(name, _)| name == compiler).map(|(_, count)| *count);
+    let verdict = match allowed {
+        Some(allowed) if found > allowed => {
+            return Err(format!(
+                "{found} distinct warnings, and {ALLOWED} allows {allowed} for {compiler}: the count may only fall"
+            ));
+        }
+        Some(allowed) if found < allowed && !update => {
+            format!("{found} distinct warnings, {allowed} allowed: lower the count with --update")
+        }
+        Some(allowed) if !update || found == allowed => format!("{found} distinct warnings, {allowed} allowed"),
+        None if !update => format!("{found} distinct warnings; {ALLOWED} holds no count for {compiler}, so none is compared"),
+        _ => {
+            rows.retain(|(name, _)| name != compiler);
+            rows.push((compiler.to_owned(), found));
+            rows.sort();
+            format!("{found} distinct warnings, now the count allowed for {compiler}")
+        }
+    };
+    let mut text = format!("{ALLOWED_HEADER}\n");
+    for (name, count) in &rows {
+        text += &format!("{name}\t{count}\n");
+    }
+    if rows.is_empty() && table.is_empty() {
+        text.clear();
+    }
+    Ok((text, verdict))
 }
 
 fn build(
@@ -373,6 +450,16 @@ fn collect_warnings(root: &Path, targets: &[DecompTarget]) -> Result<Report, Str
     let mut texts: BTreeMap<String, BTreeMap<String, Vec<String>>> = BTreeMap::new();
     for target in targets {
         let output = root.join(OUTPUT).join(target.id.as_str());
+        // What this edition links now: an object it built once and links no
+        // more (a file since merged into another, or renamed) left its
+        // warnings behind.
+        let mut linked = BTreeSet::new();
+        let mut images = vec![crate::edition::Image::Main];
+        let ids = crate::edition::overlay_ids(root, *target)?;
+        images.extend(ids.iter().map(|id| crate::edition::Image::Overlay(id)));
+        for image in images {
+            linked.extend(crate::edition::built_objects(&crate::edition::linked_statements(root, *target, image)?));
+        }
         let mut files = Vec::new();
         walk(&output.join("obj"), &mut files);
         let link = output.join(format!("{}.link-warnings", target.id));
@@ -395,6 +482,12 @@ fn collect_warnings(root: &Path, targets: &[DecompTarget]) -> Result<Report, Str
                 .with_extension("")
                 .to_string_lossy()
                 .into_owned();
+            // An object whose source was renamed or removed is built no more:
+            // its warnings are a stale file's, not the tree's.
+            if stale(root, &name) || (name.starts_with("games/") && !linked.contains(&name)) {
+                let _ = fs::remove_file(&path);
+                continue;
+            }
             texts
                 .entry(name)
                 .or_default()
@@ -419,6 +512,12 @@ fn collect_warnings(root: &Path, targets: &[DecompTarget]) -> Result<Report, Str
         log,
         diagnostics: seen.into_iter().collect(),
     })
+}
+
+/// A warning file of an object under games/ that the checkout has no source
+/// for any more.
+fn stale(root: &Path, object: &str) -> bool {
+    object.starts_with("games/") && crate::build_rom::source_for(root, object).is_err()
 }
 
 /// The linker names every empty .bss and dynamic-linking section of the
@@ -609,7 +708,7 @@ mod tests {
         }
         assert_eq!(family_flags(CompilerFamily::GameArm)[0], "-marm");
         let target = decomp_target(Some("tbs-en")).unwrap();
-        assert!(compiles(target, Path::new("games/tbs/src/battle/tgtexec.c")));
+        assert!(compiles(target, Path::new("games/tbs/src/battle/battle.c")));
         assert!(compiles(target, Path::new("games/tbs/src/graphics/text/moji.c")));
         assert!(!compiles(target, Path::new("games/common/src/sound/engine.c")));
         assert!(!compiles(target, Path::new("games/common/src/system/save/flash.c")));
@@ -643,6 +742,59 @@ mod tests {
     }
 
     #[test]
+    fn a_plain_overlay_place_takes_gccs_sections_pass_by_pass() {
+        let text = "SECTIONS\n{\n    .text 0x2008000 :\n    {\n    \"*/a.o\"(.text .padding)\n    \"*libgcc.a:_call_via_rX.o\"(.text .padding)\n    \"*/a.o\"(.rodata)\n    \"*libgcc.a:_call_via_rX.o\"(.rodata)\n    \"*/a.o\"(.data .overlays)\n    }\n    .bss (NOLOAD) :\n    {\n    \"*/a.o\"(.bss COMMON)\n    }\n}\n";
+        let out = overlay_text(text);
+        let lines: Vec<&str> = out.lines().map(str::trim).filter(|line| line.starts_with('"')).collect();
+        assert_eq!(
+            lines,
+            [
+                "\"*/a.o\"(.text .text.unlikely .text.hot .text.startup .padding)",
+                "\"*libgcc.a:_call_via_rX.o\"(.text .padding)",
+                "\"*/a.o\"(.rodata .rodata.str* .rodata.cst*)",
+                "\"*libgcc.a:_call_via_rX.o\"(.rodata)",
+                "\"*/a.o\"(.data .overlays)",
+                "\"*/a.o\"(.bss COMMON)",
+            ],
+            "each pass takes GCC's names of its own kind, and a library member stays as listed"
+        );
+        // A row that names all four of an object's sections is widened too.
+        assert!(overlay_text("\"*/b.o\"(.text .rodata .data .padding)\n")
+            .contains("\"*/b.o\"(.text .text.unlikely .text.hot .text.startup .rodata .rodata.str* .rodata.cst* .data .padding)"));
+    }
+
+    /// The object list as it stands: no C object of an overlay leaves its
+    /// modern code, constants or data to the linker's orphan placement.
+    #[test]
+    fn every_overlay_of_the_list_places_gccs_sections_of_its_c_objects() {
+        let root = crate::compiler::routing::root();
+        let mut checked = 0;
+        for edition in ["ja", "en", "de", "es", "fr", "it"] {
+            let target = decomp_target(Some(&format!("tbs-{edition}"))).unwrap();
+            for id in crate::edition::overlay_ids(root, target).unwrap() {
+                let image = crate::edition::Image::Overlay(&id);
+                let text = crate::edition::image_script(root, target, image).unwrap();
+                let statements = crate::edition::statements(&overlay_text(&text)).unwrap();
+                for object in crate::edition::built_objects(&statements) {
+                    if !root.join(&object).with_extension("c").is_file() {
+                        continue;
+                    }
+                    let taken: BTreeSet<&str> = statements
+                        .iter()
+                        .filter(|statement| statement.object == object && statement.section == ".text")
+                        .flat_map(|statement| statement.sections.split_whitespace())
+                        .collect();
+                    for section in [".text", ".text.unlikely", ".text.hot", ".rodata", ".rodata.str*", ".rodata.cst*", ".data"] {
+                        assert!(taken.contains(section), "{} overlay {id}: {object} has no place for {section}", target.id);
+                    }
+                    checked += 1;
+                }
+            }
+        }
+        assert!(checked > 6 * 90, "{checked} C objects in ☀️'s overlays");
+    }
+
+    #[test]
     fn warnings_parse_by_option_and_group_by_kind() {
         let text = "games/a.c: In function 'f':\n\
 games/a.c:3:5: warning: implicit declaration of function 'g' [-Wimplicit-function-declaration]\n\
@@ -672,5 +824,37 @@ games/b.c:7:1: warning: array subscript 4 is above array bounds [-Warray-bounds=
         image[3] = 0;
         crate::gbafix::fix(&mut image, &crate::gbafix::Fields::default(), false);
         assert!(header_check(&image).is_err());
+    }
+
+    #[test]
+    fn the_count_of_warnings_may_only_fall() {
+        let table = "compiler\twarnings\ngcc 16\t100\n";
+        assert_eq!(hold(table, "gcc 16", 100, false).unwrap(), (table.to_owned(), "100 distinct warnings, 100 allowed".to_owned()));
+        assert!(hold(table, "gcc 16", 101, false).unwrap_err().contains("allows 100 for gcc 16: the count may only fall"));
+        assert!(hold(table, "gcc 16", 101, true).unwrap_err().contains("may only fall"));
+        let (kept, verdict) = hold(table, "gcc 16", 90, false).unwrap();
+        assert_eq!((kept.as_str(), verdict.as_str()), (table, "90 distinct warnings, 100 allowed: lower the count with --update"));
+        let (lowered, _) = hold(table, "gcc 16", 90, true).unwrap();
+        assert_eq!(lowered, "compiler\twarnings\ngcc 16\t90\n");
+        // Another compiler has other warnings: its count is not compared
+        // until it has a row of its own.
+        let (kept, verdict) = hold(table, "gcc 15", 500, false).unwrap();
+        assert_eq!(kept, table);
+        assert!(verdict.contains("holds no count for gcc 15"));
+        let (both, _) = hold(table, "gcc 15", 500, true).unwrap();
+        assert_eq!(both, "compiler\twarnings\ngcc 15\t500\ngcc 16\t100\n");
+        assert_eq!(hold("", "gcc 16", 7, false).unwrap().0, "");
+        assert_eq!(hold("", "gcc 16", 7, true).unwrap().0, "compiler\twarnings\ngcc 16\t7\n");
+    }
+
+    #[test]
+    fn warnings_of_a_source_that_is_gone_are_stale() {
+        let root = tempfile::tempdir().unwrap();
+        fs::create_dir_all(root.path().join("games/g/src")).unwrap();
+        fs::write(root.path().join("games/g/src/kept.c"), "").unwrap();
+        assert!(!stale(root.path(), "games/g/src/kept"));
+        assert!(stale(root.path(), "games/g/src/renamed"));
+        // What the build makes itself has no source and is never stale.
+        assert!(!stale(root.path(), "resource_3ad_overlay"));
     }
 }

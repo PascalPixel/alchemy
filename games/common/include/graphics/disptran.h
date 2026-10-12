@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_DISPTRAN_H
 #define ALCHEMY_DISPTRAN_H
 
+#include "edition.h"
 #include "types.h"
 #include "layout_guard.h"
 
@@ -70,6 +71,7 @@ LAYOUT_OFFSET_GUARD(
 	DisplayTransitionState_Duration, struct DisplayTransitionState, duration, 0x53c);
 LAYOUT_SIZE_GUARD(DisplayTransitionState_Size, struct DisplayTransitionState, 0x540);
 
+#if GAME_TLA
 void						   DisplayTransition_InitializeBattleEffectState(s32 mode);
 void						   BattleFx_EnableTwoCallbacks(void);
 struct DisplayTransitionState *DisplayTransition_AllocateAndClearState(void);
@@ -84,5 +86,6 @@ void DisplayTransition_FillTilemapAndSolidTile(s32 color);
 void DisplayTransition_InitializeState(s32 mode);
 void DisplayTransition_UpdateScanlineTable(void);
 void BattleFx_StartWindowHBlankDma(void);
+#endif
 
 #endif

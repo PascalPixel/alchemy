@@ -3,6 +3,4 @@
 
 #include "btlsys.h"
 
-void *UnitGet();
-
 #endif

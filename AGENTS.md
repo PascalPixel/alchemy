@@ -108,8 +108,11 @@ A game is finished when all six hold (Pascal, 2026-10-08):
 - `games/<game>/src`, `include`, `sound`, `text` and `games/common` hold the
   source; `<game>` is `tbs` or `tla`.
 - `games/tbs/objects.tsv` is ☀️'s object list: the object order of the main
-  image and of each overlay, one linker statement per row, with the
-  editions that link it. `games/tbs/main.ld` is the one main script of all
+  image and of each overlay, with the editions that link each row. A row is
+  one linker statement, or stands for several: a `unit` row for an
+  overlay's entry table, C object and import table, and a `@TABLE` row for
+  the modules a table names, in the table's order (the resource directory,
+  the song table). `games/tbs/main.ld` is the one main script of all
   six editions and names no object: it has the memory, the output sections,
   an `INCLUDE` for each place of the list and the far-call banks' fixed
   addresses for each edition, chosen by `--defsym TBS_EDITION_<LANG>=1`. The
@@ -385,7 +388,7 @@ or functions is exactly this cheating.
     comments, organization and byte identity, preserving necessary casts,
     hardware `volatile`, `goto`, work arrays and S2 devices with their reasons.
   - The showcase is `BtlTgtExec` in
-    `games/tbs/src/battle/tgtexec.c`.
+    `games/tbs/src/battle/battle6.c`.
 - **S4** Never throw work away: commit each adoption and attempt, and keep a
   near miss as a draft with the remaining difference in its header. One draft
   per listing, overwritten as it improves: a trial is a commit or a line in

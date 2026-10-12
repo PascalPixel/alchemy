@@ -1,5 +1,6 @@
 //! A game's object list, games/<game>/objects.tsv: what each image links,
-//! one linker statement per row, in link order.
+//! one linker statement per row (three for an overlay's `unit` row), in
+//! link order.
 //!
 //! Columns: `image` (`main`, or an overlay's resource id such as `3ad`),
 //! `place` (the output section, or its span between two fixed placements),
@@ -9,6 +10,27 @@
 //! `.text .rodata .data .padding`) and `editions` (blank means all six, else
 //! the languages that link the row, such as `ja en`). An object may take
 //! several rows: one for each place that takes some of its sections.
+//!
+//! An overlay begins with three objects of one folder: its entry table
+//! (`entry`), the object of its C file and its import table (`import`).
+//! One row says so: a row whose place is `unit` names the object between
+//! the two tables and stands for those three rows of the `text` place, each
+//! a whole object, for the row's editions. It names no sections. What an
+//! overlay links besides (a library member, a picture, its `.bss`) has its
+//! own rows after it. The list is read as the rows it stands for, so every
+//! tool sees one row per statement, and it is written with a `unit` row
+//! wherever three rows are one.
+//!
+//! A row whose object is `@TABLE` names no object: it stands for the
+//! modules TABLE names, a row each with its place, sections and editions,
+//! in the order TABLE first names a label of each. TABLE.s is a resource
+//! directory (`resource NAME, PLACE` rows) or a song table
+//! (`song HEADER, PLAYER` rows); a module is an assembler source, or a
+//! song's MIDI, under the table's game or games/common that no other
+//! source includes and no other row links; the game's own module comes
+//! before a games/common one of the same names. The data's order is then
+//! written once, in its table. Every reader has those rows written out,
+//! and `alchemy check object-list --rows` prints the list that way.
 //!
 //! An overlay's places are `text` (its code and data at 0x2008000), `bss`
 //! and `discard`. The table beside the list, games/<game>/overlays.tsv, has
@@ -39,13 +61,23 @@ pub(crate) const MAIN: &str = "main";
 const EVERY: &str = "*";
 /// The places of an overlay: its code and data at 0x2008000, its
 /// uninitialized data after them, and the sections it leaves out.
-const OVERLAY_PLACES: [&str; 3] = ["text", "bss", "discard"];
+const OVERLAY_PLACES: [&str; 3] = [TEXT, "bss", "discard"];
+const TEXT: &str = "text";
+/// The place of a row that names an overlay's C object and stands for
+/// three rows of its text place: the entry table of the object's folder,
+/// the object, and that folder's import table.
+const UNIT: &str = "unit";
+const ENTRY: &str = "entry";
+const IMPORT: &str = "import";
 /// The archive member an overlay links to call through a register, and the
 /// symbol that pulls it from the archive.
 const CALL_VIA: &str = "libgcc.a:_call_via_rX";
 pub(crate) const BSS_HEADER: &str = "overlay\tbss";
 
-const USAGE: &str = "usage: alchemy check object-list\n\
+const USAGE: &str = "usage: alchemy check object-list [--rows]\n\
+--rows prints each list as the build reads it, a row for every object: a\n\
+row `@TABLE` written out as the modules that table names, in its order.\n\
+\n\
 Fails when a game's object list (games/<game>/objects.tsv) is not what its\n\
 build can link: a malformed row, an object with no C, assembly or MIDI\n\
 source, an input section of an object given twice to one edition, a place\n\
@@ -57,7 +89,10 @@ they include, do not define its resources in the order its rows first name\n\
 them. A place is an\n\
 output section (rom_start; text, bss and discard in an overlay), or the\n\
 span of one between two fixed placements, numbered from the section's start\n\
-(rom_main_00, rom_main_01 ...). A game without a list is not checked.";
+(rom_main_00, rom_main_01 ...). An overlay's row of the place unit names\n\
+its C object and is three rows of its text place: the entry table of that\n\
+object's folder (entry), the object, and the folder's import table\n\
+(import). A game without a list is not checked.";
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct Row {
@@ -104,14 +139,68 @@ fn language(name: &str) -> Result<&'static str, String> {
 }
 
 pub(crate) fn parse(text: &str) -> Result<Vec<Row>, String> {
+    Ok(parse_lines(text)?.into_iter().map(|(_, row)| row).collect())
+}
+
+/// The rows a list's text stands for, each with the line it is written on:
+/// the three rows of a unit row share its line.
+fn parse_lines(text: &str) -> Result<Vec<(usize, Row)>, String> {
     let mut lines = text.lines().enumerate();
     match lines.next() {
         Some((_, HEADER)) => {}
         _ => return Err(format!("line 1: the header is {HEADER:?}")),
     }
-    lines
-        .map(|(index, line)| row(line).map_err(|error| format!("line {}: {error}", index + 1)))
-        .collect()
+    let mut rows = Vec::new();
+    for (index, line) in lines {
+        let written = row(line).and_then(unit_rows).map_err(|error| format!("line {}: {error}", index + 1))?;
+        rows.extend(written.into_iter().map(|row| (index + 1, row)));
+    }
+    Ok(rows)
+}
+
+/// The folder of an object a unit row can name: an object the build makes,
+/// other than its folder's entry and import tables.
+fn unit_folder(object: &str) -> Option<&str> {
+    let (folder, name) = object.rsplit_once('/')?;
+    (!object.contains(':') && !matches!(name, "" | ENTRY | IMPORT)).then_some(folder)
+}
+
+/// The rows a written row stands for: itself, or for a unit row the entry
+/// table of the named object's folder, the object and the folder's import
+/// table, each a whole object of the text place.
+fn unit_rows(row: Row) -> Result<Vec<Row>, String> {
+    if row.place != UNIT {
+        return Ok(vec![row]);
+    }
+    let folder = unit_folder(&row.object).ok_or_else(|| {
+        format!("unit {:?} is not an object of a folder, between that folder's {ENTRY} and {IMPORT}", row.object)
+    })?;
+    Ok([format!("{folder}/{ENTRY}"), row.object.clone(), format!("{folder}/{IMPORT}")]
+        .into_iter()
+        .map(|object| Row { place: TEXT.to_owned(), object, ..row.clone() })
+        .collect())
+}
+
+/// The row that names the unit the first three rows are: an overlay's entry
+/// table, an object of the same folder and that folder's import table, each
+/// whole in the text place and for the same editions.
+fn unit(rows: &[Row]) -> Option<&Row> {
+    let [entry, named, import, ..] = rows else {
+        return None;
+    };
+    let folder = unit_folder(&named.object)?;
+    let whole = |row: &Row, object: &str| {
+        row.image == named.image
+            && row.place == TEXT
+            && row.object == object
+            && row.sections == DEFAULT_SECTIONS
+            && row.editions == named.editions
+    };
+    (named.image != MAIN
+        && whole(entry, &format!("{folder}/{ENTRY}"))
+        && whole(named, &named.object)
+        && whole(import, &format!("{folder}/{IMPORT}")))
+    .then_some(named)
 }
 
 fn row(line: &str) -> Result<Row, String> {
@@ -136,8 +225,15 @@ fn row(line: &str) -> Result<Row, String> {
     if object != EVERY && (!plain(object) || object.ends_with(".o")) {
         return Err(format!("object {object:?} is not a path or archive member without .o"));
     }
-    if image != MAIN && !OVERLAY_PLACES.contains(&place) {
-        return Err(format!("place {place:?} is not one of an overlay's: {}", OVERLAY_PLACES.join(" ")));
+    if place == UNIT {
+        if image == MAIN {
+            return Err("a unit row is an overlay's: the main image has a row for each object".into());
+        }
+        if fields.get(3).is_some_and(|sections| !sections.is_empty()) {
+            return Err("a unit row names no sections: its entry table, object and import table link whole".into());
+        }
+    } else if image != MAIN && !OVERLAY_PLACES.contains(&place) {
+        return Err(format!("place {place:?} is not one of an overlay's: {}, or {UNIT}", OVERLAY_PLACES.join(" ")));
     }
     let sections = match fields.get(3).copied().unwrap_or("") {
         "" => DEFAULT_SECTIONS.to_owned(),
@@ -180,29 +276,42 @@ fn row(line: &str) -> Result<Row, String> {
 }
 
 /// The list as its file's text: what `parse` reads back as the same rows.
+/// Three rows that are one unit are written as its row.
 pub(crate) fn format(rows: &[Row]) -> String {
+    write_rows(rows, true)
+}
+
+/// The rows as a list's text; with `units`, three rows that are one unit
+/// are written as its one row.
+fn write_rows(rows: &[Row], units: bool) -> String {
     let mut text = format!("{HEADER}\n");
-    for row in rows {
+    let mut at = 0;
+    while at < rows.len() {
+        let (row, place, count) = match unit(&rows[at..]).filter(|_| units) {
+            Some(named) => (named, UNIT, 3),
+            None => (&rows[at], rows[at].place.as_str(), 1),
+        };
         let sections = if row.sections == DEFAULT_SECTIONS { "" } else { &row.sections };
         let editions = if row.editions.len() == LANGUAGES.len() { String::new() } else { row.editions.join(" ") };
-        let mut fields = vec![row.image.as_str(), &row.place, &row.object, sections, &editions];
+        let mut fields = vec![row.image.as_str(), place, &row.object, sections, &editions];
         while fields.last().is_some_and(|field| field.is_empty()) {
             fields.pop();
         }
         text += &fields.join("\t");
         text.push('\n');
+        at += count;
     }
     text
 }
 
 /// A game's list, or None for a game that links by scripts naming their own
-/// objects.
+/// objects: every row an object's, a `@TABLE` row written out as the
+/// modules its table names.
 pub(crate) fn read(root: &Path, target: DecompTarget) -> Result<Option<Vec<Row>>, String> {
     let Some(path) = target.object_list() else {
         return Ok(None);
     };
-    let text = fs::read_to_string(root.join(&path)).map_err(|error| format!("{}: {error}", path.display()))?;
-    parse(&text).map(Some).map_err(|error| format!("{}: {error}", path.display()))
+    read_path(root, &path).map(Some)
 }
 
 /// The overlay table beside a game's list, games/<game>/overlays.tsv: for
@@ -285,11 +394,48 @@ pub(crate) fn overlay_fragments(
     ])
 }
 
+/// The input sections a plain place takes from each of its objects, one
+/// pass after another: code, read-only data, data.
+const PLAIN_PASSES: [&str; 3] = [".text .padding", ".rodata", ".data .overlays"];
+
+/// A plain place is a ROM place of the main image, or an overlay's text
+/// place, whose rows all name a whole object or a whole library member and
+/// no sections: an ordered list of objects, as a makefile has them with
+/// its libraries last, linked as `*(.text) *(.rodata) *(.data)` would link
+/// them.
+fn plain(image: &str, place: &str, rows: &[Row]) -> bool {
+    let mut own = rows.iter().filter(|row| row.image == image && row.place == place).peekable();
+    (if image == MAIN { place.starts_with("rom_") } else { place == TEXT })
+        && own.peek().is_some()
+        && own.all(|row| row.sections == DEFAULT_SECTIONS && row.object != EVERY)
+}
+
 /// One edition's linker fragments for an image: each place the list gives
-/// the image, in the list's order, with the statements of the rows the
-/// edition links, one per line. A place no row of this edition is in still
-/// has its fragment, empty, for the script's INCLUDE to read.
+/// the image, in the list's order. A plain place links every object's code
+/// in the list's order, then every object's read-only data in that order,
+/// then its data; any other place has the statements of its rows, one per
+/// line. A place no row of this edition is in still has its fragment,
+/// empty, for the script's INCLUDE to read.
 pub(crate) fn render(rows: &[Row], image: &str, language: &str) -> Vec<(String, String)> {
+    render_rows(rows, image, language)
+        .into_iter()
+        .map(|(place, fragment)| {
+            if !plain(image, &place, rows) {
+                return (place, fragment);
+            }
+            let mut passes = String::new();
+            for sections in PLAIN_PASSES {
+                for row in rows.iter().filter(|row| row.place == place && row.links(image, language)) {
+                    passes += &format!("    {}\n", statement(&row.object, sections));
+                }
+            }
+            (place, passes)
+        })
+        .collect()
+}
+
+/// The rows as they are written: each place with one statement per row.
+pub(crate) fn render_rows(rows: &[Row], image: &str, language: &str) -> Vec<(String, String)> {
     let mut fragments: Vec<(String, String)> = Vec::new();
     for row in rows.iter().filter(|row| row.image == image) {
         let at = match fragments.iter().position(|(place, _)| *place == row.place) {
@@ -357,7 +503,7 @@ pub(crate) fn images(rows: &[Row]) -> Vec<String> {
 /// tools that edit object lines: each place as a section of that name, a
 /// statement per line.
 pub(crate) fn view(rows: &[Row], image: &str, language: &str) -> String {
-    render(rows, image, language)
+    render_rows(rows, image, language)
         .into_iter()
         .map(|(place, fragment)| format!("{place} :\n{{\n{fragment}}}\n"))
         .collect()
@@ -484,10 +630,12 @@ pub(crate) fn write_main_lines(root: &Path, game: &str, edits: &[(&str, String)]
         }
         return Ok(());
     };
-    let mut rows = read_path(root, &path)?;
+    let before = read_written(root, &path)?;
+    let mut rows = expand(root, before.clone()).map_err(|error| format!("{}: {error}", path.display()))?;
     for (language, text) in edits {
         apply(&mut rows, MAIN, language, text).map_err(|error| format!("{} {language}: {error}", path.display()))?;
     }
+    let rows = collapse(root, &before, rows).map_err(|error| format!("{}: {error}", path.display()))?;
     fs::write(root.join(&path), format(&rows)).map_err(|error| format!("{}: {error}", path.display()))
 }
 
@@ -497,8 +645,212 @@ pub(crate) fn main_lines_path(game: &str, language: &str) -> std::path::PathBuf 
 }
 
 fn read_path(root: &Path, path: &Path) -> Result<Vec<Row>, String> {
+    expand(root, read_written(root, path)?).map_err(|error| format!("{}: {error}", path.display()))
+}
+
+/// The rows as the list's file has them, a `@TABLE` row still one row.
+fn read_written(root: &Path, path: &Path) -> Result<Vec<Row>, String> {
     let text = fs::read_to_string(root.join(path)).map_err(|error| format!("{}: {error}", path.display()))?;
     parse(&text).map_err(|error| format!("{}: {error}", path.display()))
+}
+
+/// Before a table's path in the object column: the row stands for the
+/// modules that table names.
+const NAMED_BY: char = '@';
+
+/// A module a table names: its object, and the table's names it defines.
+struct Named {
+    object: String,
+    labels: Vec<String>,
+}
+
+/// What each row stands for: itself, or for a `@TABLE` row a row for each
+/// module the table names, with that row's place, sections and editions, in
+/// the order the table first names a label of each. A module another row
+/// links is that row's, and is left out; so is a games/common module
+/// whose every name the game's own modules define, which is the other
+/// game's.
+fn stands_for(root: &Path, rows: &[Row]) -> Result<Vec<Vec<Row>>, String> {
+    let listed: BTreeSet<&str> = rows.iter().map(|row| row.object.as_str()).collect();
+    let mut found = Vec::with_capacity(rows.len());
+    for row in rows {
+        let Some(table) = row.object.strip_prefix(NAMED_BY) else {
+            found.push(vec![row.clone()]);
+            continue;
+        };
+        let mut owners: BTreeMap<&str, &str> = BTreeMap::new();
+        let mut run = Vec::new();
+        let modules = named(root, table)?;
+        let shared = |module: &Named| module.object.starts_with("games/common/");
+        let own: BTreeSet<&str> = modules
+            .iter()
+            .filter(|module| !shared(module) || listed.contains(module.object.as_str()))
+            .flat_map(|module| module.labels.iter().map(String::as_str))
+            .collect();
+        for module in modules.iter().filter(|module| !listed.contains(module.object.as_str())) {
+            if shared(module) && module.labels.iter().all(|label| own.contains(label.as_str())) {
+                continue;
+            }
+            for label in &module.labels {
+                if let Some(other) = owners.insert(label, &module.object) {
+                    return Err(format!("{table} names {label}, which {other} and {} both define", module.object));
+                }
+            }
+            run.push(Row { object: module.object.clone(), ..row.clone() });
+        }
+        if run.is_empty() {
+            return Err(format!("{table} names no module that is not a row already"));
+        }
+        found.push(run);
+    }
+    Ok(found)
+}
+
+/// The rows with each `@TABLE` row written out as the rows it stands for.
+fn expand(root: &Path, rows: Vec<Row>) -> Result<Vec<Row>, String> {
+    if !rows.iter().any(|row| row.object.starts_with(NAMED_BY)) {
+        return Ok(rows);
+    }
+    Ok(stands_for(root, &rows)?.into_iter().flatten().collect())
+}
+
+/// Rows a tool edited, as the list's file writes them: each run of rows a
+/// `@TABLE` row of `written` stood for is that one row again. A tool
+/// cannot edit such a run, which follows the table and its modules: an
+/// edit the written list would not read back is refused.
+fn collapse(root: &Path, written: &[Row], rows: Vec<Row>) -> Result<Vec<Row>, String> {
+    let refused = |table: &Row| {
+        format!(
+            "{} {}: the rows {} stands for were edited; they follow that table and the modules it names",
+            table.image, table.place, table.object
+        )
+    };
+    let runs = stands_for(root, written)?;
+    let tables: Vec<(&Row, &Vec<Row>)> =
+        written.iter().zip(&runs).filter(|(row, _)| row.object.starts_with(NAMED_BY)).collect();
+    let mut found = rows.clone();
+    for (table, run) in &tables {
+        let at = found.windows(run.len()).position(|window| window == run.as_slice()).ok_or_else(|| refused(table))?;
+        found.splice(at..at + run.len(), [(*table).clone()]);
+    }
+    match tables.first() {
+        Some((table, _)) if expand(root, found.clone())? != rows => Err(refused(table)),
+        _ => Ok(found),
+    }
+}
+
+/// A game's rows as its list's file writes them, for a tool that changed
+/// the rows `read` gave it.
+pub(crate) fn written(root: &Path, target: DecompTarget, rows: Vec<Row>) -> Result<String, String> {
+    let path = target.object_list().ok_or("the game has no object list")?;
+    let before = read_written(root, &path)?;
+    collapse(root, &before, rows).map(|rows| format(&rows)).map_err(|error| format!("{}: {error}", path.display()))
+}
+
+/// The modules a table names, in the order it first names a label of each.
+/// The table is an assembler source, TABLE.s: a resource directory, whose
+/// `resource NAME, PLACE` rows name places, or a song table, whose
+/// `song HEADER, PLAYER` rows name song headers. A module is an assembler
+/// source, or for a song table a MIDI too, under the table's game or
+/// games/common that no assembler source includes; its labels are its own
+/// and those of the sources it includes. One scan serves a process while
+/// the table's file is as it was.
+fn named(root: &Path, table: &str) -> Result<std::sync::Arc<Vec<Named>>, String> {
+    type Stamp = (std::time::SystemTime, u64);
+    type Known = BTreeMap<std::path::PathBuf, (Stamp, std::sync::Arc<Vec<Named>>)>;
+    static KNOWN: std::sync::Mutex<Known> = std::sync::Mutex::new(BTreeMap::new());
+    let source = format!("{table}.s");
+    let path = root.join(&source);
+    let stamp = fs::metadata(&path)
+        .and_then(|found| Ok((found.modified()?, found.len())))
+        .map_err(|error| format!("{source}: {error}"))?;
+    if let Some((known, modules)) = KNOWN.lock().expect("the scans").get(&path) {
+        if *known == stamp {
+            return Ok(modules.clone());
+        }
+    }
+    let text = fs::read_to_string(&path).map_err(|error| format!("{source}: {error}"))?;
+    let (names, songs) = match directory_places(&text) {
+        places if places.is_empty() => (song_headers(&text), true),
+        places => (places, false),
+    };
+    if names.is_empty() {
+        return Err(format!("{source} has no resource or song row to name a module"));
+    }
+    let game = match table.split('/').collect::<Vec<_>>()[..] {
+        ["games", game, _, ..] => game.to_owned(),
+        _ => return Err(format!("{table} is no source under games/<game>")),
+    };
+    let mut sources = Vec::new();
+    for folder in BTreeSet::from([format!("games/{game}"), "games/common".to_owned()]) {
+        module_sources(root, &folder, songs, &mut sources)?;
+    }
+    let mut included = BTreeSet::new();
+    for source in sources.iter().filter(|source| source.ends_with(".s")) {
+        let text = fs::read_to_string(root.join(source)).map_err(|error| format!("{source}: {error}"))?;
+        included.extend(crate::build_rom::included_sources(&text));
+    }
+    let mut modules = Vec::new();
+    for source in sources.iter().filter(|source| !included.contains(*source)) {
+        let (object, kind) = source.rsplit_once('.').expect("a source has an extension");
+        if object == table {
+            continue;
+        }
+        let mut labels = Vec::new();
+        if kind == "s" {
+            module_labels(root, source, &mut Vec::new(), &mut labels)?;
+        } else {
+            let midi = fs::read(root.join(source)).map_err(|error| format!("{source}: {error}"))?;
+            labels = ags::sound::sequence_labels(&midi).map_err(|error| format!("{source}: {error}"))?;
+        }
+        let mut order: Vec<usize> =
+            labels.iter().filter_map(|label| names.iter().position(|name| name == label)).collect();
+        order.sort_unstable();
+        if let Some(first) = order.first().copied() {
+            let labels = order.into_iter().map(|at| names[at].clone()).collect();
+            modules.push((first, Named { object: object.to_owned(), labels }));
+        }
+    }
+    modules.sort_by(|a, b| (a.0, &a.1.object).cmp(&(b.0, &b.1.object)));
+    let modules = std::sync::Arc::new(modules.into_iter().map(|(_, module)| module).collect::<Vec<_>>());
+    KNOWN.lock().expect("the scans").insert(path, (stamp, modules.clone()));
+    Ok(modules)
+}
+
+/// The assembler sources under a folder of the checkout, and with `midi`
+/// the MIDI sources, as paths from the checkout.
+fn module_sources(root: &Path, folder: &str, midi: bool, found: &mut Vec<String>) -> Result<(), String> {
+    let Ok(entries) = fs::read_dir(root.join(folder)) else {
+        return Ok(());
+    };
+    for entry in entries {
+        let entry = entry.map_err(|error| format!("{folder}: {error}"))?;
+        let name = entry.file_name().to_string_lossy().into_owned();
+        let path = format!("{folder}/{name}");
+        let kind = entry.file_type().map_err(|error| format!("{path}: {error}"))?;
+        if kind.is_dir() {
+            module_sources(root, &path, midi, found)?;
+        } else if name.ends_with(".s") || midi && name.ends_with(".mid") {
+            found.push(path);
+        }
+    }
+    Ok(())
+}
+
+/// The song headers a song table names, in the order it first names each:
+/// a row is `song HEADER, PLAYER`.
+fn song_headers(text: &str) -> Vec<String> {
+    let mut headers: Vec<String> = Vec::new();
+    for line in text.lines() {
+        let Some(row) = line.trim().strip_prefix("song").filter(|rest| rest.starts_with(char::is_whitespace)) else {
+            continue;
+        };
+        let header = row.split(',').next().unwrap_or("").trim();
+        if header.starts_with(|c: char| c.is_ascii_alphabetic() || c == '_') && !headers.iter().any(|known| known == header) {
+            headers.push(header.to_owned());
+        }
+    }
+    headers
 }
 
 pub fn entry(args: &[String]) -> std::process::ExitCode {
@@ -507,6 +859,18 @@ pub fn entry(args: &[String]) -> std::process::ExitCode {
         [flag] if flag == "-h" || flag == "--help" => {
             println!("{USAGE}");
             return std::process::ExitCode::SUCCESS;
+        }
+        [flag] if flag == "--rows" => {
+            return match rows_text(crate::compiler::routing::root()) {
+                Ok(text) => {
+                    print!("{text}");
+                    std::process::ExitCode::SUCCESS
+                }
+                Err(error) => {
+                    eprintln!("error: {error}");
+                    std::process::ExitCode::FAILURE
+                }
+            };
         }
         _ => {
             eprintln!("{USAGE}");
@@ -525,6 +889,17 @@ pub fn entry(args: &[String]) -> std::process::ExitCode {
     }
 }
 
+/// Each game's list with every row an object's: what the build links.
+fn rows_text(root: &Path) -> Result<String, String> {
+    let mut text = String::new();
+    for game in TARGET_IDS.chunks(6) {
+        if let Some(rows) = read(root, target_for(game[0]))? {
+            text += &write_rows(&rows, false);
+        }
+    }
+    Ok(text)
+}
+
 fn run(root: &Path) -> Result<String, String> {
     let mut summary = Vec::new();
     let mut failures = Vec::new();
@@ -533,9 +908,20 @@ fn run(root: &Path) -> Result<String, String> {
         let Some(list) = first.object_list() else {
             continue;
         };
-        let rows = read(root, first)?.expect("a listed game has a list");
         let shown = list.display();
-        failures.extend(repeats(&rows).into_iter().map(|found| format!("{shown}: {found}")));
+        let text = fs::read_to_string(root.join(&list)).map_err(|error| format!("{shown}: {error}"))?;
+        // The rows as written, a unit row as its three, and then each table
+        // row as the modules it names, on the table row's line.
+        let written_lines = parse_lines(&text).map_err(|error| format!("{shown}: {error}"))?;
+        let written: Vec<Row> = written_lines.iter().map(|(_, row)| row.clone()).collect();
+        let stood = stands_for(root, &written).map_err(|error| format!("{shown}: {error}"))?;
+        let lines: Vec<(usize, Row)> = written_lines
+            .iter()
+            .zip(stood)
+            .flat_map(|((line, _), rows)| rows.into_iter().map(move |row| (*line, row)))
+            .collect();
+        let rows: Vec<Row> = lines.iter().map(|(_, row)| row.clone()).collect();
+        failures.extend(repeats(&lines).into_iter().map(|found| format!("{shown}: {found}")));
         let mut sourced = BTreeSet::new();
         for row in rows.iter().filter(|row| row.built() && sourced.insert((row.image.as_str(), row.object.as_str()))) {
             // An overlay's own data and bss are resource_<id>_overlay.o, which
@@ -572,8 +958,14 @@ fn run(root: &Path) -> Result<String, String> {
         }
         let (resources, found) = resources(root, &rows)?;
         failures.extend(found.into_iter().map(|found| format!("{shown}: {found}")));
+        let tables = written.iter().filter(|row| row.object.starts_with(NAMED_BY)).count();
+        let named = match tables {
+            0 => String::new(),
+            _ => format!(", {} of them named by {tables} tables", rows.len() + tables - written.len()),
+        };
         summary.push(format!(
-            "{shown}: {} rows of {} images, each linked where its script includes its place; {resources} resources in their directory's order",
+            "{shown}: {} rows standing for {} of {} images{named}, each linked where its script includes its place; {resources} resources in their directory's order",
+            text.lines().count() - 1,
             rows.len(),
             images.len()
         ));
@@ -640,12 +1032,133 @@ fn labels_of(text: &str) -> Vec<String> {
         .collect()
 }
 
+/// The directory's rows as the assembler sees them: the file's own group
+/// macros and `.irp`, `.irpc`, `.rept` and `.ifnc` expanded, down to the
+/// `resource` rows they stand for.
+fn directory_rows(text: &str) -> Vec<String> {
+    let lines: Vec<String> =
+        text.lines().map(|line| line.split('@').next().unwrap_or("").trim().to_owned()).filter(|line| !line.is_empty()).collect();
+    let mut macros: BTreeMap<String, (Vec<String>, Vec<String>)> = BTreeMap::new();
+    let mut body = Vec::new();
+    let mut at = 0;
+    while at < lines.len() {
+        if let Some(rest) = lines[at].strip_prefix(".macro") {
+            let mut words = rest.split(|c: char| c == ',' || c.is_whitespace()).filter(|word| !word.is_empty());
+            let name = words.next().unwrap_or("").to_owned();
+            let parameters = words.map(|word| word.split(':').next().unwrap_or("").to_owned()).collect();
+            let mut inner = Vec::new();
+            at += 1;
+            while at < lines.len() && lines[at] != ".endm" {
+                inner.push(lines[at].clone());
+                at += 1;
+            }
+            macros.insert(name, (parameters, inner));
+        } else {
+            body.push(lines[at].clone());
+        }
+        at += 1;
+    }
+    // `resource` is the row itself.
+    macros.remove("resource");
+    let mut rows = Vec::new();
+    expand_rows(&body, &macros, &mut rows, 0);
+    rows
+}
+
+fn expand_rows(lines: &[String], macros: &BTreeMap<String, (Vec<String>, Vec<String>)>, rows: &mut Vec<String>, depth: usize) {
+    if depth > 8 {
+        return;
+    }
+    let bound = |inner: &[String], names: &[(String, String)]| -> Vec<String> { inner.iter().map(|line| substitute(line, names)).collect() };
+    let mut at = 0;
+    while at < lines.len() {
+        let line = &lines[at];
+        let (word, rest) = line.split_once(char::is_whitespace).map_or((line.as_str(), ""), |(word, rest)| (word, rest.trim()));
+        if matches!(word, ".irp" | ".irpc" | ".rept" | ".ifnc") {
+            let repeats = word != ".ifnc";
+            let opens = |w: &str| if repeats { matches!(w, ".irp" | ".irpc" | ".rept") } else { w == ".ifnc" };
+            let close = if repeats { ".endr" } else { ".endif" };
+            let (mut level, mut end) = (1, at + 1);
+            while end < lines.len() {
+                let first = lines[end].split_whitespace().next().unwrap_or("");
+                if opens(first) {
+                    level += 1;
+                } else if first == close {
+                    level -= 1;
+                    if level == 0 {
+                        break;
+                    }
+                }
+                end += 1;
+            }
+            let inner = &lines[at + 1..end.min(lines.len())];
+            let (first, others) = rest.split_once(',').map_or((rest, ""), |(first, others)| (first.trim(), others.trim()));
+            match word {
+                ".rept" => {
+                    for _ in 0..rest.parse::<usize>().unwrap_or(0) {
+                        expand_rows(inner, macros, rows, depth + 1);
+                    }
+                }
+                ".irp" => {
+                    for value in others.split(',').map(str::trim) {
+                        expand_rows(&bound(inner, &[(first.to_owned(), value.to_owned())]), macros, rows, depth + 1);
+                    }
+                }
+                ".irpc" => {
+                    for value in others.chars() {
+                        expand_rows(&bound(inner, &[(first.to_owned(), value.to_string())]), macros, rows, depth + 1);
+                    }
+                }
+                _ => {
+                    if first != others {
+                        expand_rows(inner, macros, rows, depth + 1);
+                    }
+                }
+            }
+            at = end + 1;
+            continue;
+        }
+        if let Some((parameters, inner)) = macros.get(word) {
+            let arguments: Vec<&str> = rest.split(',').map(str::trim).collect();
+            let names: Vec<(String, String)> = parameters
+                .iter()
+                .enumerate()
+                .map(|(index, parameter)| {
+                    // The last parameter takes what is left: a list.
+                    let value = if index + 1 == parameters.len() {
+                        arguments.get(index..).map_or(String::new(), |left| left.join(", "))
+                    } else {
+                        arguments.get(index).copied().unwrap_or("").to_owned()
+                    };
+                    (parameter.clone(), value)
+                })
+                .collect();
+            expand_rows(&bound(inner, &names), macros, rows, depth + 1);
+        } else if word == "resource" {
+            rows.push(line.clone());
+        }
+        at += 1;
+    }
+}
+
+/// `line` with each `\name` (and `\name\()`) replaced by its value, longer
+/// names first.
+fn substitute(line: &str, names: &[(String, String)]) -> String {
+    let mut order: Vec<&(String, String)> = names.iter().collect();
+    order.sort_by_key(|(name, _)| std::cmp::Reverse(name.len()));
+    let mut out = line.to_owned();
+    for (name, value) in order {
+        out = out.replace(&format!("\\{name}\\()"), value).replace(&format!("\\{name}"), value);
+    }
+    out
+}
+
 /// The places a resource directory names, in the order it first names each:
 /// a row is `resource NAME, PLACE`, and a place of 0 is an unused row.
 fn directory_places(text: &str) -> Vec<String> {
     let mut places: Vec<String> = Vec::new();
-    for line in text.lines() {
-        let line = line.split('@').next().unwrap_or("").trim();
+    for line in directory_rows(text) {
+        let line = line.as_str();
         let Some(row) = line.strip_prefix("resource").filter(|rest| rest.starts_with(char::is_whitespace)) else {
             continue;
         };
@@ -704,16 +1217,15 @@ fn out_of_order(places: &[String], modules: &[(String, Vec<String>)]) -> Vec<Str
 
 /// Input sections the list gives one edition twice: the linker places a
 /// section by the first statement that names it, so a second is never read.
-fn repeats(rows: &[Row]) -> Vec<String> {
+fn repeats(rows: &[(usize, Row)]) -> Vec<String> {
     let mut seen = BTreeSet::new();
     let mut found = Vec::new();
-    for (index, row) in rows.iter().enumerate() {
+    for (line, row) in rows {
         for section in row.sections.split(' ') {
             for edition in &row.editions {
                 if !seen.insert((row.image.as_str(), row.object.as_str(), section, *edition)) {
                     found.push(format!(
-                        "line {}: {} {section} of {} is already listed for {edition}",
-                        index + 2,
+                        "line {line}: {} {section} of {} is already listed for {edition}",
                         row.image,
                         row.object
                     ));
@@ -770,6 +1282,16 @@ fn disagreements(rows: &[Row], image: &str, language: &str, script: &str) -> Res
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_directory_s_group_statements_expand_to_its_rows() {
+        let text = "\t.macro resource name, place:req\n\t.4byte \\place\n\t.endm\n\t.macro area set:req, sheets:req, maps:vararg\n\t.irp m, \\maps\n\tresource , Field_Map\\m\n\t.endr\n\tresource , Tileset_\\set\\()Palette\n\t.ifnc \\sheets, -\n\t.irpc s, \\sheets\n\tresource , Tileset_\\set\\()Tiles\\s\n\t.endr\n\t.endif\n\t.endm\n\t.macro unused count:req\n\t.rept \\count\n\tresource , 0\n\t.endr\n\t.endm\nTable:\n\tresource First, Rom_Start\n\tarea Set01, AB, 002, 003\n\tarea Set02, -, 004\n\tunused 2\n";
+        assert_eq!(
+            directory_places(text),
+            ["Rom_Start", "Field_Map002", "Field_Map003", "Tileset_Set01Palette", "Tileset_Set01TilesA", "Tileset_Set01TilesB", "Field_Map004", "Tileset_Set02Palette"]
+        );
+        assert_eq!(directory_rows(text).len(), 10);
+    }
 
     fn list(rows: &str) -> String {
         format!("{HEADER}\n{rows}")
@@ -883,12 +1405,145 @@ mod tests {
 
     #[test]
     fn a_section_listed_twice_for_an_edition_is_found() {
-        let rows = |text: &str| parse(&list(text)).unwrap();
+        let rows = |text: &str| parse_lines(&list(text)).unwrap();
         assert_eq!(repeats(&rows(AGREEING)), Vec::<String>::new());
         let twice = format!("{AGREEING}main\trom_main_01\tgames/g/b\t.rodata .text\tde\n");
         assert_eq!(repeats(&rows(&twice)), ["line 8: main .text of games/g/b is already listed for de"]);
         let apart = "main\trom_main_00\tgames/g/a\t.text\tja\nmain\trom_main_01\tgames/g/a\t.text\ten de\n3ad\ttext\tgames/g/a\t.text\n";
         assert_eq!(repeats(&rows(apart)), Vec::<String>::new());
+        // A unit row gives its three objects, and the line named is the file's.
+        let unit = "3ad\tunit\tgames/g/a/a\n3ad\tbss\tgames/g/a/a\t.bss\n3ad\ttext\tgames/g/a/import\t.rodata\tja\n";
+        assert_eq!(repeats(&rows(unit)), ["line 4: 3ad .rodata of games/g/a/import is already listed for ja"]);
+    }
+
+    /// `text` with each unit row written out as the three rows it stands
+    /// for, by the convention's words alone: entry, the object, import.
+    fn written_out(text: &str) -> String {
+        let mut out = String::new();
+        for line in text.lines() {
+            let fields: Vec<&str> = line.split('\t').collect();
+            if fields.get(1) != Some(&"unit") {
+                out += &format!("{line}\n");
+                continue;
+            }
+            let (folder, name) = fields[2].rsplit_once('/').unwrap();
+            for object in ["entry", name, "import"] {
+                let mut row = vec![fields[0].to_owned(), "text".to_owned(), format!("{folder}/{object}")];
+                row.extend(fields[3..].iter().map(|field| (*field).to_owned()));
+                out += &format!("{}\n", row.join("\t"));
+            }
+        }
+        out
+    }
+
+    #[test]
+    fn a_unit_row_is_its_folders_entry_table_the_object_and_the_import_table() {
+        let written = list(
+            "3a5\tunit\tgames/g/sabaku/sabaku\n\
+             3a5\ttext\tlibgcc.a:_call_via_rX\n\
+             3a5\ttext\tgames/g/graphics/sand\n\
+             3a5\tbss\tresource_3a5_overlay\t.bss\n\
+             3ae\tunit\tgames/g/torebi/torebi\t\tja\n\
+             3ae\ttext\tgames/g/torebi/late\t.text\ten de es fr it\n",
+        );
+        let explicit = list(
+            "3a5\ttext\tgames/g/sabaku/entry\n\
+             3a5\ttext\tgames/g/sabaku/sabaku\n\
+             3a5\ttext\tgames/g/sabaku/import\n\
+             3a5\ttext\tlibgcc.a:_call_via_rX\n\
+             3a5\ttext\tgames/g/graphics/sand\n\
+             3a5\tbss\tresource_3a5_overlay\t.bss\n\
+             3ae\ttext\tgames/g/torebi/entry\t\tja\n\
+             3ae\ttext\tgames/g/torebi/torebi\t\tja\n\
+             3ae\ttext\tgames/g/torebi/import\t\tja\n\
+             3ae\ttext\tgames/g/torebi/late\t.text\ten de es fr it\n",
+        );
+        assert_eq!(written_out(&written), explicit);
+        // The rows are those of the list written out: no row is a unit's.
+        let rows = parse(&written).unwrap();
+        assert_eq!(rows, parse(&explicit).unwrap());
+        assert_eq!(rows.len(), 10);
+        assert!(rows.iter().all(|row| row.place != UNIT));
+        let lines: Vec<usize> = parse_lines(&written).unwrap().into_iter().map(|(line, _)| line).collect();
+        assert_eq!(lines, [2, 2, 2, 3, 4, 5, 6, 6, 6, 7]);
+        // The statements are the same: the place is still a list of whole
+        // objects, linked pass by pass with the library member after the
+        // import table.
+        let bss = parse_bss("overlay\tbss\n3a5\t.bss ALIGN(16)\n").unwrap();
+        let fragment = |name: &str, text: &str| (name.to_owned(), text.to_owned());
+        assert_eq!(
+            overlay_fragments(&rows, &bss, "3a5", "en").unwrap(),
+            [
+                fragment("extern", "EXTERN(_call_via_r0)\n"),
+                fragment(
+                    "text",
+                    "    \"*/games/g/sabaku/entry.o\"(.text .padding)\n\
+                     \x20   \"*/games/g/sabaku/sabaku.o\"(.text .padding)\n\
+                     \x20   \"*/games/g/sabaku/import.o\"(.text .padding)\n\
+                     \x20   \"*libgcc.a:_call_via_rX.o\"(.text .padding)\n\
+                     \x20   \"*/games/g/graphics/sand.o\"(.text .padding)\n\
+                     \x20   \"*/games/g/sabaku/entry.o\"(.rodata)\n\
+                     \x20   \"*/games/g/sabaku/sabaku.o\"(.rodata)\n\
+                     \x20   \"*/games/g/sabaku/import.o\"(.rodata)\n\
+                     \x20   \"*libgcc.a:_call_via_rX.o\"(.rodata)\n\
+                     \x20   \"*/games/g/graphics/sand.o\"(.rodata)\n\
+                     \x20   \"*/games/g/sabaku/entry.o\"(.data .overlays)\n\
+                     \x20   \"*/games/g/sabaku/sabaku.o\"(.data .overlays)\n\
+                     \x20   \"*/games/g/sabaku/import.o\"(.data .overlays)\n\
+                     \x20   \"*libgcc.a:_call_via_rX.o\"(.data .overlays)\n\
+                     \x20   \"*/games/g/graphics/sand.o\"(.data .overlays)\n"
+                ),
+                fragment("bss", "    .bss ALIGN(16) :\n    {\n    \"*/resource_3a5_overlay.o\"(.bss)\n    }\n"),
+                fragment("discard", ""),
+            ]
+        );
+        // A unit row's editions are its three rows'.
+        let all = ".text .rodata .data .padding";
+        assert_eq!(
+            render(&rows, "3ae", "ja")[0].1,
+            format!("    \"*/games/g/torebi/entry.o\"({all})\n    \"*/games/g/torebi/torebi.o\"({all})\n    \"*/games/g/torebi/import.o\"({all})\n")
+        );
+        assert_eq!(render(&rows, "3ae", "en")[0].1, "    \"*/games/g/torebi/late.o\"(.text)\n");
+        // Written back, three rows that are one are its unit row again.
+        assert_eq!(format(&rows), written);
+        assert_eq!(format(&parse(&explicit).unwrap()), written);
+    }
+
+    #[test]
+    fn only_three_whole_rows_of_one_overlay_folder_are_a_unit() {
+        let kept = |rows: &str| {
+            let text = list(rows);
+            assert_eq!(format(&parse(&text).unwrap()), text);
+        };
+        // The main image has no units.
+        kept("main\trom_start\tgames/g/a/entry\nmain\trom_start\tgames/g/a/a\nmain\trom_start\tgames/g/a/import\n");
+        // An edition that leaves one of the three out.
+        kept("3ad\ttext\tgames/g/a/entry\n3ad\ttext\tgames/g/a/a\n3ad\ttext\tgames/g/a/import\t\tja\n");
+        // One of the three placed by its sections.
+        kept("3ad\ttext\tgames/g/a/entry\n3ad\ttext\tgames/g/a/a\t.text .rodata\n3ad\ttext\tgames/g/a/import\n");
+        // Tables of another folder, an object between, another overlay's.
+        kept("3ad\ttext\tgames/g/b/entry\n3ad\ttext\tgames/g/a/a\n3ad\ttext\tgames/g/a/import\n");
+        kept("3ad\ttext\tgames/g/a/entry\n3ad\ttext\tgames/g/a/a\n3ad\ttext\tgames/g/a/b\n3ad\ttext\tgames/g/a/import\n");
+        kept("3ad\ttext\tgames/g/a/entry\n3ad\ttext\tgames/g/a/a\n3ae\ttext\tgames/g/a/import\n");
+        // A library member is no unit, and the tables are not each other's.
+        kept("3ad\ttext\tgames/g/entry\n3ad\ttext\tgames/g/libgcc.a:_call_via_rX\n3ad\ttext\tgames/g/import\n");
+        kept("3ad\ttext\tgames/g/a/entry\n3ad\ttext\tgames/g/a/entry\t.rodata.late\n3ad\ttext\tgames/g/a/import\n");
+        // A unit after an entry table of its own is still found.
+        let late = list("3ad\ttext\tgames/g/a/entry\t.text.first\n3ad\tunit\tgames/g/a/a\n");
+        assert_eq!(parse(&late).unwrap().len(), 4);
+        kept(late.strip_prefix(&list("")).unwrap());
+
+        let refused = |rows: &str| parse(&list(rows)).unwrap_err();
+        assert!(refused("main\tunit\tgames/g/a/a\n").contains("line 2: a unit row is an overlay's"));
+        assert!(refused("3ad\tunit\tgames/g/a/a\t.text\n").contains("names no sections"));
+        assert!(refused("3ad\tunit\tgames/g/a/a\t.text .rodata .data .padding\n").contains("names no sections"));
+        for object in ["a", "libgcc.a:_call_via_rX", "games/g/libgcc.a:_call_via_rX", "*", "games/g/a/entry", "games/g/a/import", "games/g/a/"] {
+            let error = refused(&format!("3ad\tunit\t{object}\n"));
+            assert!(error.contains("is not an object of a folder") || error.contains("is not a path"), "{object}: {error}");
+        }
+        assert!(refused("3ad\tunits\tgames/g/a/a\n").contains("not one of an overlay's: text bss discard, or unit"));
+        // The editions of a unit row are read as any row's.
+        assert!(refused("3ad\tunit\tgames/g/a/a\t\ten ja\n").contains("order"));
     }
 
     #[test]
@@ -1010,6 +1665,45 @@ mod tests {
     }
 
     #[test]
+    fn a_place_of_whole_objects_links_code_then_constants_then_data() {
+        let rows = parse(&list(
+            "3ad\ttext\tgames/g/entry\n\
+             3ad\ttext\tgames/g/a\n\
+             3ad\ttext\tgames/g/import\n\
+             3ad\ttext\tlibgcc.a:_call_via_rX\n\
+             3ad\ttext\tgames/g/only_ja\t\tja\n\
+             3ad\tbss\tgames/g/a\t.bss COMMON\n\
+             3ae\ttext\tgames/g/b\n\
+             3ae\ttext\tgames/g/b_data\t.data\n",
+        ))
+        .unwrap();
+        let passes = |objects: &[&str]| -> String {
+            PLAIN_PASSES
+                .iter()
+                .flat_map(|sections| objects.iter().map(move |object| format!("    \"*{object}.o\"({sections})\n")))
+                .collect()
+        };
+        // Every object's code in the list's order, the library member's
+        // after the import table's, then the constants, then the data.
+        let listed = ["/games/g/entry", "/games/g/a", "/games/g/import", "libgcc.a:_call_via_rX"];
+        assert_eq!(render(&rows, "3ad", "en")[0], ("text".to_owned(), passes(&listed)));
+        let japanese = [&listed[..], &["/games/g/only_ja"]].concat();
+        assert_eq!(render(&rows, "3ad", "ja")[0].1, passes(&japanese));
+        // The bss place is its rows, and the member still asks libgcc for it.
+        assert_eq!(render(&rows, "3ad", "en")[1].1, "    \"*/games/g/a.o\"(.bss COMMON)\n");
+        let bss = parse_bss("overlay\tbss\n3ad\t.bss\n").unwrap();
+        assert_eq!(overlay_fragments(&rows, &bss, "3ad", "en").unwrap()[0].1, "EXTERN(_call_via_r0)\n");
+        // One row that names its sections, and the place is its rows as written.
+        assert_eq!(
+            render(&rows, "3ae", "en")[0].1,
+            "    \"*/games/g/b.o\"(.text .rodata .data .padding)\n    \"*/games/g/b_data.o\"(.data)\n"
+        );
+        // A place outside the ROM is never a plain list.
+        let ram = parse(&list("main\tiwram_runtime\tgames/g/a\n")).unwrap();
+        assert_eq!(render(&ram, MAIN, "en")[0].1, "    \"*/games/g/a.o\"(.text .rodata .data .padding)\n");
+    }
+
+    #[test]
     fn the_overlay_table_takes_the_bss_headers_the_overlays_show() {
         let table = parse_bss("overlay\tbss\n36f\t.bss (NOLOAD)\n3a7\t.bss\n3b0\t.bss ALIGN(8)\n3ce\t.bss ALIGN(16) (NOLOAD)\n").unwrap();
         assert_eq!(table["3b0"], ".bss ALIGN(8)");
@@ -1078,11 +1772,109 @@ mod tests {
     }
 
     #[test]
+    fn a_table_row_stands_for_the_modules_its_table_names_in_its_order() {
+        let root = tempfile::tempdir().unwrap();
+        let write = |path: &str, text: &str| {
+            let path = root.path().join(path);
+            fs::create_dir_all(path.parent().unwrap()).unwrap();
+            fs::write(path, text).unwrap();
+        };
+        let directory = "Resource_DirectoryTable:\n\tresource , FarCall_Table\n\tresource , Ui_Tiles\n\
+                         \tresource , Title_Sun\n\tresource , Field_Map\n\tresource , Title_Sun\n\tresource , Title_Peak\n";
+        write("games/g/dir.s", directory);
+        // A row of its own, a source another includes, the other game's
+        // module of a name this game defines, and a module the table does
+        // not name: none is the table's.
+        write("games/g/code.s", "FarCall_Table:\n");
+        write("games/common/ui.s", "Ui_Tiles:\n");
+        write("games/common/peak.s", "Title_Peak:\n");
+        write("games/g/spare.s", "Spare:\n");
+        write("games/g/title.s", "\t.include \"games/common/ui.s\"\nTitle_Sun:\nTitle_Peak:\n");
+        write("games/g/map/map.s", "Field_Map:\n");
+        let text = list("main\trom_main\tgames/g/code\nmain\trom_tail\tgames/g/dir\nmain\trom_tail\t@games/g/dir\t.rodata\tja en\n");
+        let written = parse(&text).unwrap();
+        let rows = expand(root.path(), written.clone()).unwrap();
+        let objects: Vec<&str> = rows.iter().map(|row| row.object.as_str()).collect();
+        assert_eq!(objects, ["games/g/code", "games/g/dir", "games/g/title", "games/g/map/map"]);
+        assert_eq!((rows[2].place.as_str(), rows[2].sections.as_str()), ("rom_tail", ".rodata"));
+        assert_eq!(rows[3].editions, ["ja", "en"]);
+        // A tool's rows are written with the table's row again, beside its
+        // own edit; an edit of the table's rows is refused.
+        assert_eq!(format(&collapse(root.path(), &written, rows.clone()).unwrap()), text);
+        let mut edited = rows.clone();
+        edited.push(Row { object: "games/g/spare".into(), ..rows[0].clone() });
+        let kept = collapse(root.path(), &written, edited).unwrap();
+        assert_eq!(format(&kept), format!("{text}main\trom_main\tgames/g/spare\n"));
+        let mut edited = rows.clone();
+        edited.swap(2, 3);
+        assert!(collapse(root.path(), &written, edited).unwrap_err().contains("@games/g/dir stands for were edited"));
+        let mut edited = rows.clone();
+        edited.remove(3);
+        assert!(collapse(root.path(), &written, edited).unwrap_err().contains("were edited"));
+        // Two of the game's modules define one name: the table cannot choose.
+        write("games/g/twice.s", "Field_Map:\n");
+        write("games/g/dir.s", &format!("{directory}\tresource , 0\n"));
+        assert_eq!(
+            expand(root.path(), written.clone()).unwrap_err(),
+            "games/g/dir names Field_Map, which games/g/map/map and games/g/twice both define"
+        );
+        // A table with nothing left to name, and a source that is no table.
+        let alone = parse(&list("main\trom_tail\t@games/g/spare\n")).unwrap();
+        assert!(expand(root.path(), alone).unwrap_err().contains("has no resource or song row"));
+    }
+
+    #[test]
+    fn a_song_table_names_its_sequences_by_their_headers() {
+        let root = tempfile::tempdir().unwrap();
+        let write = |path: &str, text: &str| {
+            let path = root.path().join(path);
+            fs::create_dir_all(path.parent().unwrap()).unwrap();
+            fs::write(path, text).unwrap();
+        };
+        let songs = "\t.macro song header:req, player:req\n\t.4byte \\header\n\t.endm\nSound_SongTable:\n\
+                     \tsong sound_001, 1\n\tsong Sound_EmptySong, 0\n\tsong sound_000, 1\n\tsong sound_001, 0\n";
+        assert_eq!(song_headers(songs), ["sound_001", "Sound_EmptySong", "sound_000"]);
+        write("games/g/sound/songs.s", songs);
+        write("games/g/sound/players.s", "Sound_EmptySong:\n");
+        write("games/g/sound/sequence/bgm_000.s", "sound_000_track:\nsound_000:\n");
+        write("games/common/sound/sequence/se_shop.s", "sound_001:\n");
+        let written = parse(&list(
+            "main\trom_tail\tgames/g/sound/players\t.rodata\nmain\trom_tail\tgames/g/sound/songs\t.rodata\nmain\trom_tail\t@games/g/sound/songs\t.rodata\n",
+        ))
+        .unwrap();
+        let rows = expand(root.path(), written).unwrap();
+        let objects: Vec<&str> = rows.iter().map(|row| row.object.as_str()).collect();
+        assert_eq!(
+            objects,
+            ["games/g/sound/players", "games/g/sound/songs", "games/common/sound/sequence/se_shop", "games/g/sound/sequence/bgm_000"]
+        );
+    }
+
+    #[test]
     fn the_committed_list_is_what_the_build_links() {
         let root = crate::compiler::routing::root();
         let summary = run(root).unwrap();
         assert!(summary.contains("games/tbs/objects.tsv"), "{summary}");
         let text = fs::read_to_string(root.join("games/tbs/objects.tsv")).unwrap();
-        assert_eq!(format(&parse(&text).unwrap()), text);
+        let rows = parse(&text).unwrap();
+        assert_eq!(format(&rows), text);
+        // Every overlay's unit row written out as its three rows is the same
+        // list: the same fragments for every image and edition.
+        let explicit = written_out(&text);
+        assert!(explicit.lines().count() > text.lines().count(), "the list has unit rows");
+        let rows_written_out = parse(&explicit).unwrap();
+        assert_eq!(rows, rows_written_out);
+        let bss = read_bss(root, target_for(TARGET_IDS[0])).unwrap();
+        for image in images(&rows) {
+            for language in LANGUAGES {
+                assert_eq!(render(&rows, &image, language), render(&rows_written_out, &image, language));
+                if image != MAIN {
+                    assert_eq!(
+                        overlay_fragments(&rows, &bss, &image, language),
+                        overlay_fragments(&rows_written_out, &bss, &image, language)
+                    );
+                }
+            }
+        }
     }
 }

@@ -1,3 +1,4 @@
+#include "unit/graphics/tile/vertices.h"
 #include "types.h"
 #include "frame.h"
 #include "mulq16.h"
@@ -16,9 +17,9 @@ extern struct FarCallEntry FarCall_RuntimeTable[];
 extern u32				   gScanlineAngle;
 
 #define FAR_CALL(index, type) ((type)FarCall_RuntimeTable[index].target)
-#define ArcTan2(x, z)		  FAR_CALL(8, s32 (*)(s32, s32))(x, z)
-#define Sin(angle)			  FAR_CALL(11, s32 (*)(s32))(angle)
-#define Cos(angle)			  FAR_CALL(12, s32 (*)(s32))(angle)
+#define ArcTan2(x, z) FAR_CALL(8, s32 (*)(s32, s32))(x, z)
+#define Sin(angle) FAR_CALL(11, s32 (*)(s32))(angle)
+#define Cos(angle) FAR_CALL(12, s32 (*)(s32))(angle)
 
 struct Position
 {
@@ -49,8 +50,8 @@ struct BgAffine
 	s32 y;
 };
 
-void Transform_UpdateVertices(struct Position *eye, struct Position *target, struct ScanVertex *vtx,
-							  struct BgAffine *out)
+void Transform_UpdateVertices(
+	struct Position *eye, struct Position *target, struct ScanVertex *vtx, struct BgAffine *out)
 {
 	u32 angle;
 	s32 px;

@@ -104,9 +104,44 @@ pub fn rewrite(script: &str, objects: &[String], merged: &str) -> Result<Option<
     Ok(Some(out))
 }
 
+/// The forced rewrite of an experiment: every line naming one of `objects`
+/// names `merged` instead, and a later line whose sections the merged
+/// object already places goes. It keeps no promise about order or about
+/// editions that linked only some of the objects; the build judges.
+pub fn rewrite_forced(script: &str, objects: &[String], merged: &str) -> Option<String> {
+    let mut out = String::with_capacity(script.len());
+    let mut placed: Vec<String> = Vec::new();
+    let mut hit = false;
+    for line in script.split_inclusive('\n') {
+        let Some((object, rest)) = named(line).filter(|(object, _)| objects.iter().any(|o| o == object)) else {
+            out.push_str(line);
+            continue;
+        };
+        hit = true;
+        let mut wanted: Vec<String> = sections(rest).iter().map(|s| s.to_string()).collect();
+        if wanted.is_empty() {
+            wanted.push(String::new());
+        }
+        if wanted.iter().all(|s| placed.contains(s)) {
+            continue;
+        }
+        placed.extend(wanted);
+        let at = line.find(object).expect("object in line");
+        out.push_str(&format!("{}{merged}{}", &line[..at], &line[at + object.len()..]));
+    }
+    hit.then_some(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_forced_rewrite_names_the_merged_object_once_per_section() {
+        let apart = "\"*/g/A.o\"(.text)\n\"*/g/X.o\"(.text)\n\"*/g/B.o\"(.text)\n\"*/g/B.o\"(.rodata)\n";
+        assert_eq!(rewrite_forced(apart, &objects(&["g/A", "g/B"]), "g/M").unwrap(), "\"*/g/M.o\"(.text)\n\"*/g/X.o\"(.text)\n\"*/g/M.o\"(.rodata)\n");
+        assert_eq!(rewrite_forced(apart, &objects(&["g/Q"]), "g/M"), None);
+    }
 
     fn objects(list: &[&str]) -> Vec<String> {
         list.iter().map(|s| s.to_string()).collect()

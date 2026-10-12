@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_WORKSPACE_OPTIONS_H
 #define ALCHEMY_WORKSPACE_OPTIONS_H
 
+#include "unit/graphics/window/window.h"
+#include "unit/graphics/window/window5.h"
+#include "unit/graphics/window/window7.h"
+#include "unit/graphics/window/window9.h"
 #include "types.h"
 #include "render_input.h"
 
@@ -29,7 +33,5 @@ struct WorkspaceWork
 };
 
 extern struct WorkspaceWork *gSelectionWork;
-
-struct RenderInput *Menu_OpenWorkspaceOptions(void);
 
 #endif

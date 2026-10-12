@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_NODE_CHAIN_H
 #define ALCHEMY_NODE_CHAIN_H
 
+#include "edition.h"
 #include "types.h"
 #include "layout_guard.h"
 
@@ -22,7 +23,9 @@ LAYOUT_SIZE_GUARD(NodeChainNode_Size, struct NodeChainNode, 8);
 LAYOUT_OFFSET_GUARD(NodeChainState_NodeOffset, struct NodeChainState, node, 0x348);
 LAYOUT_OFFSET_GUARD(NodeChainState_CountOffset, struct NodeChainState, count, 0x39e);
 
+#if GAME_TLA
 struct NodeChainNode *NodeChain_GetNodeAtCount(struct NodeChainState *state);
 struct NodeChainNode *NodeChain_GetNodeAtIndex(struct NodeChainState *);
+#endif
 
 #endif

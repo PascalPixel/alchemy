@@ -1,6 +1,11 @@
 #ifndef ALCHEMY_OBJECT_RUNTIME_H
 #define ALCHEMY_OBJECT_RUNTIME_H
 
+#include "unit/field/common/script/field.h"
+#include "unit/field/common/script/field2.h"
+#include "unit/field/common/script/field3.h"
+#include "unit/field/common/script/field5.h"
+#include "unit/field/common/script/field10.h"
 #include "object_lookup.h"
 #include "types.h"
 
@@ -44,13 +49,13 @@ struct ObjectRuntime
 	u8					  unknown_6c[0x04];
 };
 
+extern struct ObjectRuntime gObjectSnapshots[32];
+
 typedef char ObjectRuntime_size[sizeof(struct ObjectRuntime) == 0x70 ? 1 : -1];
 
 typedef char ObjectRuntime_arrival_axis_offset
 	[(u32) & (((struct ObjectRuntime *)0)->arrival_axis) == 0x56 ? 1 : -1];
 typedef char ObjectRuntime_snap_to_target_offset
 	[(u32) & (((struct ObjectRuntime *)0)->snap_to_target) == 0x58 ? 1 : -1];
-
-void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 
 #endif

@@ -1,6 +1,12 @@
 #ifndef ALCHEMY_MENU_LIST_H
 #define ALCHEMY_MENU_LIST_H
 
+#include "unit/graphics/window/window.h"
+#include "unit/graphics/window/window3.h"
+#include "unit/graphics/window/window7.h"
+#include "unit/graphics/window/window9.h"
+#include "unit/graphics/window/window10.h"
+#include "unit/graphics/window/window12.h"
 #include "types.h"
 #include "resource.h"
 #include "callback_scheduler.h"
@@ -67,11 +73,11 @@ struct CursorSprite
 
 // スプライトの形 (attr0/attr1) を決め、残りを 0 にする
 /* FAKEMATCH: the one-pass block keeps both attribute words ahead of the stores that follow (the x/y fields in the list setup loops of ItemList_SelectEntry, BattleMenu_RunActionSelection and SummonMenu_SelectSummon; the tile in UiText_DrawCharacter). Not source: the same two stores match only as plain statements in Battle_CollectPartyCommands (resmenu.c, five times) and Ui_RunOwnerStatusScreen (preview.c, three times). */
-#define MenuSprite_Init(sprite, shape)           \
-	do                                           \
-	{                                            \
-		(sprite).oam.word.attr01 = (shape);      \
-		(sprite).oam.word.attr23 = 0;            \
+#define MenuSprite_Init(sprite, shape)      \
+	do                                      \
+	{                                       \
+		(sprite).oam.word.attr01 = (shape); \
+		(sprite).oam.word.attr23 = 0;       \
 	} while (0)
 
 struct PartyStatusWindow
@@ -122,28 +128,17 @@ LAYOUT_OFFSET_GUARD(MenuCell_AutoDelay, struct MenuCell, auto_delay, 0xdc);
 LAYOUT_OFFSET_GUARD(MenuCell_AutoMode, struct MenuCell, auto_mode, 0xe0);
 
 // 前に選んでいた位置 (ページ、行、戻る行) を読み戻す
-#define MenuCell_GetCursor(page_, row_, preferred_)                              \
-	do                                                                           \
-	{                                                                            \
-		(page_) = ((struct MenuCell *)gWindowWork[42])->page;                    \
-		(row_) = ((struct MenuCell *)gWindowWork[42])->row;                      \
-		(preferred_) = ((struct MenuCell *)gWindowWork[42])->preferred_row;      \
+#define MenuCell_GetCursor(page_, row_, preferred_)                         \
+	do                                                                      \
+	{                                                                       \
+		(page_) = ((struct MenuCell *)gWindowWork[42])->page;               \
+		(row_) = ((struct MenuCell *)gWindowWork[42])->row;                 \
+		(preferred_) = ((struct MenuCell *)gWindowWork[42])->preferred_row; \
 	} while (0)
 
 extern struct MenuCell *gLinkCountdownWork;
 extern volatile u32		gFrameCount;
 extern u8				Resource_FixedBlockBTiles[];
 extern const u8			Menu_AnimatedCursorTiles[];
-
-void WaitFrames(s32 frames);
-void Runtime_SetMainState19(void);
-void RenderOutput_RedrawSavedRect(struct UiWindow *window);
-s32	 UiText_CopyMessageString(s32 message, u16 *buffer, u32 count);
-void UiText_RenderWideStringAtOffset(u16 *buffer, struct UiWindow *window, s32 x, s32 y);
-void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 tile, s32 x, s32 y, u32 layer);
-void UiWork_SetParamNibble(s32 param);
-void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 value);
-s32	 Ui_FillVramBlockPattern(void);
-void Vram_CopyTile(u32 source_tile, u32 destination_tile);
 
 #endif

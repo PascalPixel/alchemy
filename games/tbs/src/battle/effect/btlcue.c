@@ -1,3 +1,4 @@
+#include "unit/battle/effect/btlcue.h"
 #include "types.h"
 
 // 0x8000 | 曲, 続いてその曲を選ぶ組 ((first << 4) + second), 0 で終わり

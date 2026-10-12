@@ -53,7 +53,7 @@ u16 EraseFlashSector(u16 sector)
         return 0x80FF;
     }
 
-    waitcnt = (volatile u16 *)0x04000204;
+    waitcnt = &REG_WAITCNT;
     setting = *waitcnt & 0xFFFC;
     chip = gFlash;
     *waitcnt = setting | chip->wait[0];

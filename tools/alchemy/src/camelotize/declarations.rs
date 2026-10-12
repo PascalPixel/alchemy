@@ -9,7 +9,7 @@ fn declaration() -> &'static Regex {
     static PATTERN: OnceLock<Regex> = OnceLock::new();
     PATTERN.get_or_init(|| {
         Regex::new(
-            r"^(?:extern )?(?:const )?(?:void|s8|u8|s16|u16|s32|u32|char|int|struct \w+|union \w+|[A-Z]\w*) ?\**\s*([A-Z][A-Za-z0-9]*_\w+)\s*\(([^;{}]*)\);[ \t]*$",
+            r"^(?:extern )?(?:const )?(?:void|s8|u8|s16|u16|s32|u32|char|int|struct \w+|union \w+|[A-Z]\w*)(?:\s+\**\s*|\*+\s*)([A-Z][A-Za-z0-9]*_\w+)\s*\(([^;{}]*)\);[ \t]*$",
         )
         .expect("declaration pattern")
     })
@@ -104,6 +104,18 @@ mod tests {
     fn unprototyped_header_declarations_and_unknown_functions_stay() {
         let text = "#include \"field_event.h\"\ns32 Engine_Wait();\nvoid Local_Thing(s32 x);\n";
         assert_eq!(rewrite(text, &indexed()), (text.to_string(), 0));
+    }
+
+    #[test]
+    fn a_macro_call_is_not_a_declaration() {
+        let mut found = BTreeMap::new();
+        add(&mut found, "LAYOUT_SIZE_GUARD(Work_Size, struct Work, 0x0c);\nu8 *Work_Find(s32 id);\nvoid\t\tWork_Free(u8 *work);\n", "work.h");
+        assert_eq!(found.keys().collect::<Vec<_>>(), ["Work_Find", "Work_Free"]);
+        let text = "LAYOUT_OFFSET_GUARD(Work_Child, struct Work, child, 0x14);\nstruct Work*Work_Find(s32);\n";
+        let (out, removed) = rewrite(text, &found);
+        assert_eq!(removed, 1);
+        assert!(out.contains("LAYOUT_OFFSET_GUARD(Work_Child, struct Work, child, 0x14);"));
+        assert!(!out.contains("Work_Find"));
     }
 
     #[test]

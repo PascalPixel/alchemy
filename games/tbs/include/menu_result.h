@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_MENU_RESULT_H
 #define ALCHEMY_MENU_RESULT_H
 
+#include "unit/menu/item/menu.h"
+#include "unit/menu/item/menu2.h"
+#include "unit/menu/item/menu3.h"
+#include "unit/menu/item/menu4.h"
 #include "types.h"
 
 struct MenuResult
@@ -13,8 +17,5 @@ struct MenuResult
 	s32 entry_count;
 	s32 selected_index;
 };
-
-s32 Menu_BuildPageResult(struct MenuResult *, s32);
-s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s32 *page);
 
 #endif

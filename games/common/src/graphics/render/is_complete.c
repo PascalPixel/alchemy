@@ -8,8 +8,6 @@
 #include "window.h"
 #if GAME_TLA
 #include "ram_buffer.h"
-#else
-#include "global_cells.h"
 #endif
 
 //--------------------------------------------------------------------------
@@ -23,8 +21,6 @@ s32 UiWork_IsComplete(void)
 
 #if GAME_TLA
 	ch = ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)->channels;
-#else
-	ch = ((struct UiRenderWork *)gWindowWork[0])->channels;
 #endif
 	for (i = 0; i != 3; i++, ch++)
 	{

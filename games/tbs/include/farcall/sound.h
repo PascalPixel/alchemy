@@ -2,15 +2,17 @@
 FAR_CALL(AudioEngine_RunMixerFar, AudioEngine_RunMixer, void, (void))
 FAR_CALL(Audio_InitializeRuntimeDefaultsFar, Audio_InitializeRuntimeDefaults, void, (void))
 #ifndef OWN_AudioCommand_PlayFar
-FAR_CALL(AudioCommand_PlayFar, AudioCommand_Play, void, (s32 cue))
+FAR_CALL(AudioCommand_PlayFar, AudioCommand_Play, void, (s32 id))
 #endif
-FAR_CALL(MusicPlayer_StepVolumeAndPitchTowardTargetsFar, MusicPlayer_StepVolumeAndPitchTowardTargets, void, (void))
-FAR_CALL(MusicCommand_SetPitchAndUpdateFrequencyFar, MusicCommand_SetPitchAndUpdateFrequency, void, (u16 value))
+FAR_CALL(MusicPlayer_StepVolumeAndPitchTowardTargetsFar,
+	MusicPlayer_StepVolumeAndPitchTowardTargets, void, (void))
+FAR_CALL(MusicCommand_SetPitchAndUpdateFrequencyFar, MusicCommand_SetPitchAndUpdateFrequency, void,
+	(u16 value))
 FAR_SLOT(MusicCommand_SetPitch)
 FAR_SLOT(Audio_SetWorkPairB)
 FAR_SLOT(MusicCommand_SetVolume)
 FAR_SLOT(Audio_SetMusicVolumeTargetAndStep)
-FAR_ENTRY(AudioCommand_GetStateByteFar, AudioCommand_GetStateByte)
+FAR_CALL(AudioCommand_GetStateByteFar, AudioCommand_GetStateByte, s32, (void))
 FAR_SLOT(AudioTest_RunParameterController)
 FAR_SLOT(AudioCommand_StopAllPlayers)
 FAR_SLOT(AudioCommand_ResumeAllPlayers)

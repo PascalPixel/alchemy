@@ -35,8 +35,6 @@ s32 Item_CanOwnerEquipDirect(s32 unit, s32 item)
 {
 #if GAME_TLA
 	struct OwnerInventoryState *st = UnitGet(unit);
-#else
-	struct BtlUnit *st = UnitGet(unit);
 #endif
 	struct ItemDefinition *def = Item_GetDirect(item);
 	s32					   mask = def->equip_mask;

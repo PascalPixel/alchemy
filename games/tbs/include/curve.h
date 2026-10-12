@@ -10,7 +10,4 @@ enum
 	CURVE_FULL_STEPS = 16,
 };
 
-extern u8 Curve_LerpWeightTable[];
-extern u8 Curve_SampleIndexTable[];
-
 #endif

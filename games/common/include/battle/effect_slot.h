@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_EFFECT_SLOT_H
 #define ALCHEMY_EFFECT_SLOT_H
 
+#include "edition.h"
 #include "types.h"
 #include "layout_guard.h"
 
@@ -44,10 +45,12 @@ LAYOUT_SIZE_GUARD(EffectSlot_Size, struct EffectSlot, 0x48);
 LAYOUT_OFFSET_GUARD(EffectSlot_OrbitRadius, struct EffectSlot, orbit_radius, 0x3c);
 LAYOUT_OFFSET_GUARD(EffectSlot_State, struct EffectSlot, state, 0x40);
 
+#if GAME_TLA
 u32	 BattleFx_HasReachedTarget(struct EffectSlot *);
 void EffectSlot_SetPosition(struct EffectSlot *, s32, s32);
 void EffectSlot_SetObjectMode(struct EffectSlot *, s32);
 void EffectSlot_SetCallback(struct EffectSlot *, EffectCallback);
 void EffectSlot_Update(struct EffectSlot *);
+#endif
 
 #endif

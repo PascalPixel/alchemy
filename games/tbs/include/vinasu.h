@@ -12,9 +12,4 @@ enum
 	FLAG_PAIR_GROWING = 0x235
 };
 
-void VinasuChojo_ShowMessage(s32 speaker);
-void VinasuChojo_FaceActor(s32 actor, s32 facing);
-void VinasuChojo_FlashScreen(void);
-void VinasuChojo_UpdateBeamActors(void);
-
 #endif

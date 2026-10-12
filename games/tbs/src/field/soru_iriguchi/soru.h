@@ -5,13 +5,15 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-enum {
-    ACTOR_SUKURETA = ACTOR_FIRST_PLACED
+enum
+{
+	ACTOR_SUKURETA = ACTOR_FIRST_PLACED
 };
 
-enum SanctumEntranceFlag {
-    FLAG_SOL_SANCTUM_ENTERED = 0x802,
-    FLAG_SEARCHING_FOR_HIDDEN_PASSAGE = 0x804
+enum SanctumEntranceFlag
+{
+	FLAG_SOL_SANCTUM_ENTERED = 0x802,
+	FLAG_SEARCHING_FOR_HIDDEN_PASSAGE = 0x804
 };
 
 #define GATE_ID 2081
@@ -21,10 +23,5 @@ enum SanctumEntranceFlag {
 #define RECORD_B16(rec) (*(s16 *)((rec) + 18))
 
 extern s32 SoruIriguchi_CueTimer;
-
-void Battle_ResetEffectCounter(void);
-
-void Scene_RunActorFormation(s32 a0);
-void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2);
 
 #endif

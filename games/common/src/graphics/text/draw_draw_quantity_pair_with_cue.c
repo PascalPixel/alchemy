@@ -12,9 +12,6 @@ void OwnerAction_AddFar(void);
 #if GAME_TLA
 void Audio_PlayCue(s32);
 void UiText_DrawQuantity(s32, s32);
-#else
-void AudioCommand_PlayFar(s32);
-void UiWork_PushValueSlotFar(s32, s32);
 #endif
 void UiText_ShowPositionedMessageAndWaitFar(void *, s32);
 
@@ -31,10 +28,6 @@ void UiText_DrawQuantityPairWithCue(s32 unit, s32 abil)
 	Audio_PlayCue(83);
 	UiText_DrawQuantity(unit, 1);
 	UiText_DrawQuantity(abil, 4);
-#else
-	AudioCommand_PlayFar(83);
-	UiWork_PushValueSlotFar(unit, 1);
-	UiWork_PushValueSlotFar(abil, 4);
 #endif
 	UiText_ShowPositionedMessageAndWaitFar(MsgAbilityLearned, 3);
 }

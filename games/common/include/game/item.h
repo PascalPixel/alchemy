@@ -96,19 +96,23 @@ LAYOUT_OFFSET_GUARD(ItemDefinition_Effects, struct ItemDefinition, effects, 0x18
 LAYOUT_OFFSET_GUARD(ItemDefinition_ActionId, struct ItemDefinition, action_id, 0x28);
 
 struct ItemDefinition *Item_Get(s32 item);
+#if GAME_TLA
 struct ItemDefinition *Item_GetDirect(s32 item);
 s32					   Equipment_GetUnleashRateBonus(struct BtlUnit *owner);
 s32					   RollWeaponUnleash(struct BtlUnit *owner);
+#endif
 
 #if GAME_TLA
-s32					   RollWeaponUnleashFar(struct BtlUnit *owner);
+s32 RollWeaponUnleashFar(struct BtlUnit *owner);
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
 #endif
+#if GAME_TLA
 s32 Item_CanOwnerEquipDirect(s32 owner, s32 item);
 s32 Item_IsCompatibleWithOwner(s32 owner, s32 item);
 s32 Item_GetEquipmentGroup(s32 item);
 u8	Item_GetTargetMode(s32 item);
 s32 ItemCounter_Adjust(s32 counter, s32 delta);
 s32 Item_AdjustCounter(s32 item, s32 delta);
+#endif
 
 #endif

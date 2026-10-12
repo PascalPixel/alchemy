@@ -1,6 +1,8 @@
 #ifndef GUARD_SAVE_STATE_H
 #define GUARD_SAVE_STATE_H
 
+#include "unit/graphics/window/window.h"
+#include "unit/graphics/window/window9.h"
 #include "types.h"
 #include "layout_guard.h"
 #include "dma.h"
@@ -74,9 +76,6 @@ extern struct SaveWorkspace *gSaveWorkspace;
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
 #define DMA3_BUSY 0x80000000
 
-extern const u8 Save_Signature[];
-extern const u8 Save_HeaderTemplate[];
-
 #define START_DMA(source_, destination_, control_) \
 	Dma_Set((const void *)(source_), (void *)(destination_), (control_), (volatile u32 *)0x040000d4)
 
@@ -90,34 +89,5 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel)
 #define WAIT_DMA() WaitDma(DMA3)
 
 extern s16 gTitleSendOptionEnabled;
-
-s32 SaveState_InitializeWorkspace(void);
-u32 SaveState_ReleaseWorkspace(void);
-u32 SaveState_SelectWriteSlot(s32 record_id);
-u32 SaveState_WriteWorkspaceSlot(s32 sector);
-s32 SaveState_ReadSlotAndCheckChecksum(s32 sector);
-u16 SaveState_EraseSlotSector(u16 sector);
-s32 SaveState_WriteRecord(s32 record_id, void *source);
-u32 SaveState_ReadRecordPayload(s32 record_id, void *destination);
-u32 SaveState_DeleteRecord(s32 record_id);
-s32 SaveState_ChecksumWorkspace(void);
-u32 SaveState_FindLatestSlot(s32 record_id);
-s32 SaveState_InvalidateSlot(s32 sector);
-s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count);
-u32 SaveState_GetLatestSequence(s32 record_id);
-s32 SaveState_LoadSummaryRecords(void);
-u32 SaveState_FindFreeSummarySlot(void);
-s32 SaveState_CountRecordsExcludingFlagged(s32 exclude_flagged);
-s32 SaveState_ScanRecordFlags(void);
-u32 SaveState_BuildSummaryHeader(void);
-s16 SaveState_WriteCurrentSlotPair(void);
-s32 SaveState_WriteSlotPair(s32 slot);
-s32 SaveState_ProcessSelectedSlot(void);
-s32 SaveState_ConfirmAndProcessSelectedSlot(void);
-s32 SaveState_CopySlotPair(void);
-s32 SaveState_DeleteSelectedSlot(void);
-s32 SaveState_LoadRecordIntoWork(s32 mode);
-s32 Save_WriteSelectedSlot(void);
-s32 SaveMenu_SelectSlot(s32 slot, s32 mode);
 
 #endif

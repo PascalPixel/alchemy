@@ -25,6 +25,4 @@ LAYOUT_OFFSET_GUARD(SceneMotion_Timer, struct SceneMotion, timer, 0x64);
 LAYOUT_OFFSET_GUARD(SceneMotion_Delay, struct SceneMotion, delay, 0x66);
 LAYOUT_OFFSET_GUARD(SceneMotion_Active, struct SceneMotion, active, 0x68);
 
-void SceneMotion_UpdateTimedActor(struct SceneMotion *work);
-
 #endif

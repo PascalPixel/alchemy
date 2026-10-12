@@ -1,11 +1,27 @@
 #ifndef ALCHEMY_FIELD_EVENT_H
 #define ALCHEMY_FIELD_EVENT_H
 
+#include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object6.h"
+#include "unit/battle/effect/object10.h"
+#include "unit/battle/effect/object12.h"
+#include "unit/battle/effect/object14.h"
+#include "unit/battle/effect/object15.h"
+#include "unit/battle/effect/object16.h"
 #include "mapcopy.h"
 
 #include "layout_guard.h"
 
 #include "game_state.h"
+
+// A scene stores into its own const tables: an overlay's data is in RAM.
+// The games' compiler takes the store as written; a current GCC refuses it,
+// so the modern build names the place without its const.
+#ifdef MODERN
+#define STORE_CONST(place) (*(__typeof_unqual__(place) *)&(place))
+#else
+#define STORE_CONST(place) (place)
+#endif
 
 extern u8 gSceneState[];
 
@@ -44,46 +60,45 @@ struct MapCellAnim
 	u16		   y;
 };
 
-void			   Engine_EventBegin(void);
-void			   Engine_EventEnd(void);
-void			   Engine_EventWait(s32 frames);
-void			   Engine_TaskWait(s32 frames);
-void			   Engine_EventSetMessage(s32 message);
-void			   Engine_EventShowMessage(s32 speaker, s32 flags);
-s32				   Engine_EventOpenMessage(s32 speaker, s32 flags);
-s32				   Engine_EventAskYesNo(s32 speaker, s32 flags);
-s32				   Engine_EventChooseYesNo(s32 actor, s32 flags);
-void			   Engine_MessageShowCentered(s32 message, s32 flags);
-void			   Engine_EventRequestExit(s32 exit);
-void			   Engine_EventOpenScreen(void);
-void			   Engine_EventCloseScreen(void);
-void			   Engine_EventWaitForScreen(void);
-void			   Engine_BlendSetDarkenTarget16(s32 target);
-u8				  *Engine_ResourceGetTableEntry(s32 resource);
-struct FieldActor *Object_GetById(s32 actor);
-void			   Engine_ActorSetPosition(s32 actor, s32 fixed_x, s32 fixed_z);
-void			   Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
-void			   Engine_ActorSetDestination(s32 actor, s32 x, s32 z);
-void			   Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
-void			   Engine_ActorWalkTo(s32 actor, s32 x, s32 z);
-void			   Engine_ActorWalkBy(s32 actor, s32 dx, s32 dz);
-void			   Engine_ActorWaitForMove(s32 actor);
-void			   Engine_ActorFaceDirection(s32 actor, s32 facing, s32 frames);
-void			   Engine_ActorFaceActor(s32 actor, s32 target, s32 frames);
-void			   Engine_ActorFaceEachOther(s32 actor, s32 other, s32 frames);
-void			   Engine_ActorSetAnimation(s32 actor, s32 animation);
-void			   Engine_ActorSetAnimationAndWait(s32 actor, s32 animation);
-void			   Engine_ActorStartRepeatedMotion(s32 actor, s32 repeats);
-void			   Engine_ActorRunRepeatedMotion(s32 actor, s32 repeats);
-void			   Engine_ActorShowEmote(s32 actor, s32 emote, s32 frames);
-void			   Engine_ActorSetAttachedEffect(s32 actor, s32 effect);
-void			   Engine_ActorSetSpritePriority(s32 actor, s32 priority);
-void			   Engine_ActorSetSpriteFlags(struct FieldActor *actor, s32 flags);
-void			   Engine_CameraFollowActor(s32 actor, s32 keep_position);
-void			   Engine_CameraSetSpeed(s32 speed, s32 acceleration);
-void			   Engine_CameraMoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z, s32 pan);
-void			   Engine_CameraMoveToActor(s32 actor, s32 pan);
-void			   Engine_CameraWaitForMove(void);
+void Engine_EventBegin(void);
+void Engine_EventEnd(void);
+void Engine_EventWait(s32 frames);
+void Engine_TaskWait(s32 frames);
+void Engine_EventSetMessage(s32 message);
+void Engine_EventShowMessage(s32 speaker, s32 flags);
+s32	 Engine_EventOpenMessage(s32 speaker, s32 flags);
+s32	 Engine_EventAskYesNo(s32 speaker, s32 flags);
+s32	 Engine_EventChooseYesNo(s32 actor, s32 flags);
+void Engine_MessageShowCentered(s32 message, s32 flags);
+void Engine_EventRequestExit(s32 exit);
+void Engine_EventOpenScreen(void);
+void Engine_EventCloseScreen(void);
+void Engine_EventWaitForScreen(void);
+void Engine_BlendSetDarkenTarget16(s32 target);
+u8	*Engine_ResourceGetTableEntry(s32 resource);
+void Engine_ActorSetPosition(s32 actor, s32 fixed_x, s32 fixed_z);
+void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
+void Engine_ActorSetDestination(s32 actor, s32 x, s32 z);
+void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
+void Engine_ActorWalkTo(s32 actor, s32 x, s32 z);
+void Engine_ActorWalkBy(s32 actor, s32 dx, s32 dz);
+void Engine_ActorWaitForMove(s32 actor);
+void Engine_ActorFaceDirection(s32 actor, s32 facing, s32 frames);
+void Engine_ActorFaceActor(s32 actor, s32 target, s32 frames);
+void Engine_ActorFaceEachOther(s32 actor, s32 other, s32 frames);
+void Engine_ActorSetAnimation(s32 actor, s32 animation);
+void Engine_ActorSetAnimationAndWait(s32 actor, s32 animation);
+void Engine_ActorStartRepeatedMotion(s32 actor, s32 repeats);
+void Engine_ActorRunRepeatedMotion(s32 actor, s32 repeats);
+void Engine_ActorShowEmote(s32 actor, s32 emote, s32 frames);
+void Engine_ActorSetAttachedEffect(s32 actor, s32 effect);
+void Engine_ActorSetSpritePriority(s32 actor, s32 priority);
+void Engine_ActorSetSpriteFlags(struct FieldActor *actor, s32 flags);
+void Engine_CameraFollowActor(s32 actor, s32 keep_position);
+void Engine_CameraSetSpeed(s32 speed, s32 acceleration);
+void Engine_CameraMoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z, s32 pan);
+void Engine_CameraMoveToActor(s32 actor, s32 pan);
+void Engine_CameraWaitForMove(void);
 void Engine_MapCopyCells(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 void Engine_MapCopyCellAttributes(
 	s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
@@ -109,7 +124,6 @@ struct FieldActor *Engine_ObjectCreate(s32 type, s32 fixed_x, s32 fixed_y, s32 f
 void			   Object_SetMode(struct FieldActor *object, s32 animation);
 void			   Engine_ObjectSetScript(struct FieldActor *object, const s32 *script);
 void			   Engine_ObjectSetBlendMode(struct FieldActor *object, s32 mode);
-void			   ObjectGroup_SetChildValue(struct FieldActor *object, s32 palette);
 void			   Engine_ObjectSetPartPalettes(struct FieldActor *object, s32 palette);
 void Engine_ObjectSetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 void Engine_ObjectCommitPosition(struct FieldActor *object);
@@ -133,7 +147,7 @@ struct FieldActor *Engine_EventGetViewCenter(void);
 struct FieldActor *Engine_ActorLookup(s32 actor);
 void			   Engine_ActorDestroy(s32 actor);
 void			   Engine_ActorSetChildValue(s32 actor, s32 value);
-void			   Engine_ActorEnableActionCallback(s32 actor, const u8 *table);
+void			   Engine_ActorEnableActionCallback(s32 actor, const s32 *table);
 void			   Engine_ActorSetActionCallback(struct FieldActor *actor, s32 value);
 void			   Engine_ActorsRefresh(void);
 void Engine_MapCopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
@@ -156,12 +170,6 @@ void Engine_MapWaitWorkValuesBelow256(void);
 void Engine_RunRisingObjectSequence(struct FieldActor *object, s32 mode);
 
 #ifdef FIELD_STAGED_ACTOR_IMPORTS
-void Battle_WaitMode0(s32 frames);
-void WaitFrames(s32 frames);
-void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
-void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
-void Object_SetModeById(s32 actor, s32 animation);
 void Audio_PlayCue(s32 cue);
 #endif
 

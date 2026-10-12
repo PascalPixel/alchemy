@@ -1,9 +1,33 @@
-#include "edition.h"
-#include "babi.h"
+#include "game_state.h"
+#include "global_cells.h"
+#include "unit/import.h"
+#include "unit/field/babi_chika/chika.h"
+#include "unit/field/common/effect/move.h"
+#include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object2.h"
+#include "unit/battle/effect/object5.h"
+#include "unit/battle/effect/object6.h"
+#include "unit/battle/effect/object8.h"
+#include "unit/battle/effect/object9.h"
+#include "unit/battle/effect/object10.h"
+#include "unit/battle/effect/object12.h"
+#include "unit/battle/effect/object14.h"
+#include "unit/battle/effect/object15.h"
+#include "unit/battle/effect/object16.h"
+#include "unit/system/scheduler/runtime7.h"
+#include "object_effect.h"
+
+#define FIELD_STAGED_ACTOR_IMPORTS
+#include "fieldobj.h"
 #include "types.h"
+#include "text/msg_ids.h"
 #include "field_event.h"
-#include "scene_ids.h"
+#include "field_scene.h"
 #include "field_effect.h"
+#include "staged_actor.h"
+#include "spawn_configured_effect.h"
+#include "edition.h"
+#include "scene_ids.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -13,31 +37,87 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "field_scene.h"
 #include "call.h"
+#include "ability_ids.h"
+#include "objcmd.h"
 
-s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record);
+// 前方宣言
+static s32	OverlayObject_SetYAboveLinkedActor(struct FieldActor *owner);
+static void FieldScene_PlaceAndPinSlots8And9(void);
+static void FieldScene_PlaceAndPinSlots10And11(void);
+static void BabiChika_RestorePlatformCells(void);
+static void BabiChika_MarkActorCells(void);
 
-#define FIELD_STAGED_ACTOR_IMPORTS
-extern u8 *gActorEffectWork;
+struct Vec
+{
+	s32 x;
+	s32 y;
+	s32 z;
+};
 
-s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/staged_actor.c"
+
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+{
+	work->sprite->priority = mode;
+}
+
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+{
+	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
+
+	if (object != 0)
+	{
+		object->sprite->priority = 0;
+		object->motion_flags = 0;
+		object->collision_flags = 8;
+		Engine_ActorSetSpriteFlags(object, 0);
+		ObjectGroup_SetChildValue(object, 14);
+		Engine_ObjectSetBlendMode(object, 1);
+		return object;
+	}
+	return 0;
+}
+
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+{
+	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
+
+	if (object != 0)
+	{
+		object->sprite->priority = 1;
+		object->motion_flags = 0;
+		object->collision_flags = 8;
+		Engine_ActorSetSpriteFlags(object, 0);
+		ObjectGroup_SetChildValue(object, 15);
+		object->priority_flags = (object->priority_flags & 0xfe) | 2;
+		return object;
+	}
+	return 0;
+}
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/move.c"
+#include "../common/effect/spawn.c"
+
+static s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 {
 	Engine_ActorSetSpriteFlags(no, 0);
 	return 0;
 }
 
-s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
+static s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 {
-	Actor_02000cd0 *actor = Object_GetById(ACTOR_PARTY_LEADER);
-	u8				saved = actor->flags;
-	s32				probe[3];
+	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
+	u8				   saved = actor->motion_flags;
+	s32				   probe[3];
 
-	probe[0] = (actor->x & 0xfff00000) + 0x00080000;
-	probe[1] = actor->y;
-	probe[2] = (actor->z & 0xfff00000) + 0x00080000;
+	probe[0] = (actor->x.fixed & 0xfff00000) + 0x00080000;
+	probe[1] = actor->y.fixed;
+	probe[2] = (actor->z.fixed & 0xfff00000) + 0x00080000;
 
-	Vector_AddPolarOffset(0x00100000, (actor->tag + 0x2000) & 0xc000, probe);
+	Call3(Vector_AddPolarOffset, 0x00100000, (actor->facing + 0x2000) & 0xc000, (s32)probe);
 
 	if (Object_CheckMovementCollision(actor, probe) == 1)
 	{
@@ -54,10 +134,10 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 	Engine_AudioPlayCue(152);
 	Object_SetMode(actor, 7);
 
-	actor->speedX = 0x00030000;
-	actor->speedY = 0x00020000;
-	actor->speedZ = 0x00040000;
-	actor->flags &= (u8)0x7e;
+	actor->speed = 0x00030000;
+	actor->acceleration = 0x00020000;
+	actor->velocity_y = 0x00040000;
+	actor->motion_flags &= 0x7e;
 
 	Engine_ActorSetSpriteFlags(actor, 0);
 #if EDITION_INTERNATIONAL
@@ -70,7 +150,7 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 	Engine_ActorSetSpriteFlags(actor, 1);
 	Engine_TaskWait(6);
 
-	actor->flags = saved;
+	actor->motion_flags = saved;
 	Engine_EventEnd();
 	return 0;
 
@@ -78,7 +158,7 @@ refuse:
 	return 1;
 }
 
-void SceneActor_PassRaisedPointOfActorZero(void)
+static void SceneActor_PassRaisedPointOfActorZero(void)
 {
 	s32				   pos[3];
 	struct FieldActor *p = Object_GetById(ACTOR_PARTY_LEADER);
@@ -89,7 +169,7 @@ void SceneActor_PassRaisedPointOfActorZero(void)
 	SceneActor_MoveActorZeroToTarget(pos);
 }
 
-void SceneActor_PassActorZeroOffsetPoint(void)
+static void SceneActor_PassActorZeroOffsetPoint(void)
 {
 	s32				   pos[3];
 	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -100,7 +180,7 @@ void SceneActor_PassActorZeroOffsetPoint(void)
 	SceneActor_MoveActorZeroToTarget(pos);
 }
 
-void BabiChika_UpdateTrackedActor(void)
+static void BabiChika_UpdateTrackedActor(void)
 {
 	struct FieldActor *actor;
 	u8				  *work;
@@ -141,23 +221,23 @@ void BabiChika_UpdateTrackedActor(void)
 	}
 }
 
-s32 SceneActor_SetFlagBitByRelativeDepth(struct Actor_02000ec8 *actor)
+static s32 SceneActor_SetFlagBitByRelativeDepth(struct FieldActor *actor)
 {
-	struct Actor_02000ec8 *ref;
-	u8					  *fp;
-	u8					   flag;
+	struct FieldActor *ref;
+	u8				  *fp;
+	u8				   flag;
 	ref = Object_GetById(ACTOR_PARTY_LEADER);
-	fp = &actor->flatla3;
+	fp = &actor->priority_flags;
 	flag = *fp | 2;
 	*fp = flag;
-	if (ref->z < actor->z)
+	if (ref->z.fixed < actor->z.fixed)
 	{
-		s32 lim = actor->z - ref->z;
+		s32 lim = actor->z.fixed - ref->z.fixed;
 		s32 ay;
 		lim += 0x00040000;
-		ay = actor->y;
+		ay = actor->y.fixed;
 		ay += lim;
-		if (ref->y <= ay)
+		if (ref->y.fixed <= ay)
 		{
 			flag &= 0xfd;
 			*fp = flag;
@@ -166,29 +246,29 @@ s32 SceneActor_SetFlagBitByRelativeDepth(struct Actor_02000ec8 *actor)
 	return 0;
 }
 
-void SceneState_SwapSlotPairByRank(s32 first, s32 second)
+static void SceneState_SwapSlotPairByRank(s32 first, s32 second)
 {
-	struct Slot02000f10 *a = Object_GetById(first);
-	struct Slot02000f10 *b = Object_GetById(second);
+	struct FieldActor *a = Object_GetById(first);
+	struct FieldActor *b = Object_GetById(second);
 
-	if (a->rank <= b->rank)
+	if (a->z.fixed <= b->z.fixed)
 	{
 		s32 t;
 
-		t = a->x;
-		a->x = b->x;
-		b->x = t;
-		t = a->y;
-		a->y = b->y;
-		b->y = t;
-		t = a->rank;
-		a->rank = b->rank;
-		b->rank = t;
+		t = a->x.fixed;
+		a->x.fixed = b->x.fixed;
+		b->x.fixed = t;
+		t = a->y.fixed;
+		a->y.fixed = b->y.fixed;
+		b->y.fixed = t;
+		t = a->z.fixed;
+		a->z.fixed = b->z.fixed;
+		b->z.fixed = t;
 		Engine_TaskWait(1);
 	}
 }
 
-s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object)
+static s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object)
 {
 	struct EffectOptions options;
 	s32					 x;
@@ -209,7 +289,7 @@ s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object)
 	return 0;
 }
 
-s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record)
+static s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record)
 {
 	Record *ref = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -228,7 +308,7 @@ s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record)
 	return 0;
 }
 
-void SceneActor_WaitValueBelowLimit(struct Track02001038 *track)
+static void SceneActor_WaitValueBelowLimit(struct FieldActor *track)
 {
 	s32 cnt = 60;
 	s32 limit;
@@ -240,8 +320,8 @@ void SceneActor_WaitValueBelowLimit(struct Track02001038 *track)
 			s32 value;
 
 			Engine_TaskWait(1);
-			value = track->value;
-			limit = track->limit;
+			value = track->y.fixed;
+			limit = track->terrain_height;
 			cnt--;
 			if (value <= limit)
 			{
@@ -249,33 +329,29 @@ void SceneActor_WaitValueBelowLimit(struct Track02001038 *track)
 			}
 			continue;
 		}
-		limit = track->limit;
+		limit = track->terrain_height;
 		break;
 	}
-	track->state = 0;
-	track->value = limit;
-	track->mark = (s32)0x80000000;
+	track->velocity_y = 0;
+	track->y.fixed = limit;
+	track->target_y = ACTOR_NO_TARGET;
 }
 
-void Effect_AdvanceMotion(struct MotionEffect *effect)
+static void Effect_AdvanceMotion(union FieldObject *object)
 {
-	struct Sprite *sprite;
+	struct FieldEffect *efx = &object->effect;
 
-	effect->position[0] += effect->velocity[0];
-	effect->position[1] += effect->velocity[1];
-	effect->position[2] += effect->velocity[2];
-
-	effect->velocity[0] -= effect->velocity[0] / 18;
-	effect->velocity[2] -= effect->velocity[2] / 16;
-
-	effect->accum18 += effect->rate30;
-	effect->accum1c += effect->rate34;
-
-	sprite = effect->sprite;
-	sprite->angle += effect->step64;
+	efx->x += efx->velocity_x;
+	efx->y += efx->velocity_y;
+	efx->z += efx->velocity_z;
+	efx->velocity_x -= efx->velocity_x / 18;
+	efx->velocity_z -= efx->velocity_z / 16;
+	efx->scale_x += efx->scale_rate_x;
+	efx->scale_y += efx->scale_rate_y;
+	efx->sprite->rotation += efx->spin;
 }
 
-void BabiChika_RunLeaderSpray(void)
+static void BabiChika_RunLeaderSpray(void)
 {
 	struct FieldActor	*leader = Object_GetById(0);
 	struct EffectOptions options;
@@ -315,29 +391,23 @@ void BabiChika_RunLeaderSpray(void)
 	Engine_EventEnd();
 }
 
-#define SceneActor_MoveActorZeroToTarget ((int (*)())SceneActor_MoveActorZeroToTarget)
-#define SceneActor_PassActorZeroOffsetPoint ((int (*)())SceneActor_PassActorZeroOffsetPoint)
-#define SceneActor_WaitValueBelowLimit ((int (*)())SceneActor_WaitValueBelowLimit)
-#define SceneState_SwapSlotPairByRank ((int (*)())SceneState_SwapSlotPairByRank)
-
-void BattleFx_StartFadeOverlay(s32 value);
 #define ACTOR_UPDATE_IDLE ((void (*)(union FieldObject *))SceneActor_SetFlagBitByRelativeDepth)
 #define ACTOR_UPDATE_PANEL ((void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor)
 
-void SceneEffect_SpawnNineRadialEffects(s32 actor)
+static void SceneEffect_SpawnNineRadialEffects(s32 actor)
 {
-	struct FieldActor  *object;
-	struct Vec			vec;
-	struct EffectParams params;
-	u32					i;
-	s32					v;
-	s32					x;
-	s32					z;
+	struct FieldActor	*object;
+	struct Vec			 vec;
+	struct EffectOptions params;
+	u32					 i;
+	s32					 v;
+	s32					 x;
+	s32					 z;
 
 	object = Object_GetById(actor);
-	params.unk00 = 1;
-	params.mode = 7;
-	params.callback = (s32)Effect_AdvanceMotion;
+	params.priority = 1;
+	params.palette = 7;
+	params.update = Effect_AdvanceMotion;
 	for (i = 0; i <= 16; i += 2)
 	{
 		v = i << 12;
@@ -346,9 +416,9 @@ void SceneEffect_SpawnNineRadialEffects(s32 actor)
 		z = Engine_MathSin(v);
 		x = vec.x;
 		vec.z = z;
-		x = x + Math_Divide(x, 3);
+		x += Math_Divide(x, 3);
 		vec.x = x;
-		((void (*)())Effect_Spawn)(
+		Effect_Spawn(
 			object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y, z, 0x01030001, &params);
 	}
 }
@@ -398,7 +468,7 @@ u8 *SceneData_SelectAndApplyTableBySceneId(void)
 	return tbl;
 }
 
-void SceneState_RunRect73x38Step(void)
+static void EV24_SCRIPT(void)
 {
 	Engine_EventBegin();
 	Map_CopyCellAttributes(73, 38, 5, 5, 9, 38);
@@ -407,7 +477,7 @@ void SceneState_RunRect73x38Step(void)
 	Engine_EventEnd();
 }
 
-void SceneActor_ApplyPointLeftOfActorZero(void)
+static void SceneActor_ApplyPointLeftOfActorZero(void)
 {
 	s32				   point[3];
 	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -418,7 +488,7 @@ void SceneActor_ApplyPointLeftOfActorZero(void)
 	SceneActor_MoveActorZeroToTarget(point);
 }
 
-void FieldScene_RunLayoutAt93By30(void)
+static void EV26_SCRIPT(void)
 {
 	Engine_EventBegin();
 	Map_CopyCellAttributes(93, 30, 6, 5, 29, 30);
@@ -427,12 +497,12 @@ void FieldScene_RunLayoutAt93By30(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunStepWith6(void)
+static void FieldScene_RunStepWith6(void)
 {
 	BattleFx_RunRisingObjectSequence(0, 6, 0);
 }
 
-void SceneActor_PassPointTwoRightOfActorZero(void)
+static void SceneActor_PassPointTwoRightOfActorZero(void)
 {
 	s32				   pos[3];
 	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -443,7 +513,7 @@ void SceneActor_PassPointTwoRightOfActorZero(void)
 	SceneActor_MoveActorZeroToTarget(pos);
 }
 
-void SceneState_ApplyTwoRectsAndRunThree(void)
+static void EV28_SCRIPT(void)
 {
 	Engine_EventBegin();
 	Engine_MapCopyCellAttributes(89, 49, 3, 2, 25, 49);
@@ -453,7 +523,7 @@ void SceneState_ApplyTwoRectsAndRunThree(void)
 	Engine_EventEnd();
 }
 
-void SceneActor_CheckTwoUnitsAboveActorZero(void)
+static void EV28_TOUCH(void)
 {
 	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 	s32				   target[3];
@@ -463,11 +533,11 @@ void SceneActor_CheckTwoUnitsAboveActorZero(void)
 	target[2] = actor->z.fixed + 0x00200000;
 	if (SceneActor_MoveActorZeroToTarget(target) != 0)
 	{
-		SceneState_ApplyTwoRectsAndRunThree();
+		EV28_SCRIPT();
 	}
 }
 
-void SceneActor_MirrorFlag201IntoSlot14(void)
+static void EV15_PSYNERGY(void)
 {
 	u8 *flags;
 	u8	value;
@@ -476,7 +546,7 @@ void SceneActor_MirrorFlag201IntoSlot14(void)
 	if (Engine_GameFlagIsSet(0x201) != 0)
 	{
 		Object_GetById(14)->rise_counter = 0;
-		Object_GetById(14)->collision_flags &= (u8)0xf7;
+		Object_GetById(14)->collision_flags &= 0xf7;
 	}
 	else
 	{
@@ -489,7 +559,7 @@ void SceneActor_MirrorFlag201IntoSlot14(void)
 	}
 }
 
-void BabiChika_ConfigureActorFourteenRise(void)
+static void EV16_PSYNERGY(void)
 {
 	u8 *p;
 	u8	val;
@@ -498,7 +568,7 @@ void BabiChika_ConfigureActorFourteenRise(void)
 	if (Engine_GameFlagIsSet(0x200) != 0)
 	{
 		Object_GetById(14)->rise_counter = 0;
-		Object_GetById(14)->collision_flags &= (u8)0xf7;
+		Object_GetById(14)->collision_flags &= 0xf7;
 	}
 	else
 	{
@@ -511,12 +581,12 @@ void BabiChika_ConfigureActorFourteenRise(void)
 	}
 }
 
-void SceneState_ApplyFlag970(void)
+static void EV17_PSYNERGY(void)
 {
 	Engine_GameFlagSet(0x970);
 }
 
-void SceneState_RunUnlessActorZeroAtTile32x50(void)
+static void SceneState_RunUnlessActorZeroAtTile32x50(void)
 {
 	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -526,7 +596,7 @@ void SceneState_RunUnlessActorZeroAtTile32x50(void)
 	}
 }
 
-void SceneState_RunUnlessActorZeroAt30_52(void)
+static void SceneState_RunUnlessActorZeroAt30_52(void)
 {
 	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -536,28 +606,28 @@ void SceneState_RunUnlessActorZeroAt30_52(void)
 	}
 }
 
-void FieldScene_RunSupplementalSequenceTwo(void)
+static void EV18_PSYNERGY(void)
 {
-	u32				   i;
-	s32				   rec2;
-	s32				   rec7;
-	struct FieldActor *actor;
-	s32				   value;
-	s32				   v5;
-	s32				   v6;
-	u8				   slot16[40];
-	u8				  *frame;
+	u32					  i;
+	s32					  rec2;
+	s32					  rec7;
+	struct FieldActor	 *actor;
+	s32					  value;
+	s32					  v5;
+	s32					  v6;
+	struct EffectOptions  slot16;
+	struct EffectOptions *frame;
 
 	Engine_EventBegin();
 	actor = Object_GetById(18);
 	if ((actor->x.fixed >> 20) == 46)
 	{
 		Engine_EventWait(30);
-		rec2 = OverlayObject_CreateAndInitialize(0x2e80000, 0, 0xb80000, 253);
-		frame = slot16;
-		*(s32 *)(frame + 8) = 0x9999;
-		*(s32 *)(frame + 12) = 0x9999;
-		*(s32 *)(frame + 4) = 7;
+		rec2 = OverlayObject_PrepareObject(0x2e80000, 0, 0xb80000, 253);
+		frame = &slot16;
+		frame->start_scale_x = 0x9999;
+		frame->start_scale_y = 0x9999;
+		frame->palette = 7;
 		Actor_Get(18)->motion_flags = 0;
 		Engine_AudioPlayCue(185);
 		for (i = 0; i < 16; i++)
@@ -567,9 +637,8 @@ void FieldScene_RunSupplementalSequenceTwo(void)
 			rec7 = Random_Next();
 			rec7 = ((((u32)(rec7 << 4) >> 16) << 16) + 0x2e00000);
 			value = Engine_RandomNext();
-			((void (*)())Effect_Spawn)(rec7, 0,
-				((((u32)(((value << 3) + value) << 1) >> 16) << 16) + 0x800000), 0, 0, 0, 0x90000,
-				frame);
+			Effect_Spawn(rec7, 0, ((((u32)(((value << 3) + value) << 1) >> 16) << 16) + 0x800000),
+				0, 0, 0, 0x90000, frame);
 		}
 		Map_CopyCellAttributes(51, 8, 1, 1, 49, 8);
 		Engine_EventWait(30);
@@ -596,17 +665,15 @@ void FieldScene_RunSupplementalSequenceTwo(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFourCallSequenceB(void)
+static void EV29_SCRIPT(void)
 {
-	typedef s32 (*Handler_02001a10)(struct Record_02000ec8 *record);
-
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
 	Engine_EventEnd();
-	FieldScene_RunSupplementalSequenceTwo();
+	EV18_PSYNERGY();
 }
 
-void ActorPresentation_ConfigureActorTwentyAndFlag200(void)
+static void EV20_PSYNERGY(void)
 {
 	u8 *flags;
 
@@ -618,19 +685,19 @@ void ActorPresentation_ConfigureActorTwentyAndFlag200(void)
 	Engine_GameFlagSet(0x200);
 }
 
-void FieldScene_RunSupplementalSequenceOne(void)
+static void FieldScene_RunSupplementalSequenceOne(void)
 {
-	u32				   i;
-	s32				   rec2;
-	s32				   rec7;
-	struct FieldActor *actor;
-	s32				   value;
-	s32				   arg0;
-	s32				   arg2;
-	s32				   v5;
-	s32				   v6;
-	u8				   slot16[40];
-	u8				  *slot;
+	u32					  i;
+	s32					  rec2;
+	s32					  rec7;
+	struct FieldActor	 *actor;
+	s32					  value;
+	s32					  arg0;
+	s32					  arg2;
+	s32					  v5;
+	s32					  v6;
+	struct EffectOptions  slot16;
+	struct EffectOptions *slot;
 
 	Engine_EventBegin();
 	actor = Object_GetById(19);
@@ -639,11 +706,11 @@ void FieldScene_RunSupplementalSequenceOne(void)
 		if (GameFlag_IsSet(0x202) != 0)
 		{
 			Engine_EventWait(30);
-			rec2 = OverlayObject_CreateAndInitialize(0x3020000, 0, 0x1120000, 223);
-			slot = slot16;
-			*(s32 *)(slot + 8) = 0x9999;
-			*(s32 *)(slot + 12) = 0x9999;
-			*(s32 *)(slot + 4) = 7;
+			rec2 = OverlayObject_PrepareObject(0x3020000, 0, 0x1120000, 223);
+			slot = &slot16;
+			slot->start_scale_x = 0x9999;
+			slot->start_scale_y = 0x9999;
+			slot->palette = 7;
 			Actor_Get(19)->motion_flags = 0;
 			Engine_AudioPlayCue(185);
 			for (i = 0; i < 16; i++)
@@ -654,7 +721,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 				arg0 = ((((u32)(rec7 << 4) >> 16) << 16) + 0x3000000);
 				value = Engine_RandomNext();
 				arg2 = ((((u32)(((value << 3) + value) << 1) >> 16) << 16) + 0xe00000);
-				((void (*)())Effect_Spawn)(arg0, 0, arg2, 0, 0, 0, 0x90000, slot);
+				Effect_Spawn(arg0, 0, arg2, 0, 0, 0, 0x90000, slot);
 			}
 			Map_CopyCellAttributes(51, 8, 1, 1, 45, 14);
 			Engine_EventWait(30);
@@ -682,28 +749,26 @@ void FieldScene_RunSupplementalSequenceOne(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFourStepSequenceA(void)
+static void FieldScene_RunFourStepSequenceA(void)
 {
-	typedef s32 (*Handler_02001a10)(struct Record_02000ec8 *record);
-
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
 	Engine_EventEnd();
 	FieldScene_RunSupplementalSequenceOne();
 }
 
-void BabiChika_InstallActorNineteenFlicker(void)
+static void EV19_SCRIPT(void)
 {
 	Engine_ActorEnableActionCallback(19, BabiChika_FlickerScript);
 }
 
-void SceneState_SetValue202ThenCall(void)
+static void SceneState_SetValue202ThenCall(void)
 {
 	Engine_GameFlagSet(0x202);
 	FieldScene_RunSupplementalSequenceOne();
 }
 
-void SceneActor_ConfigureSlot21AndSetFlag201(void)
+static void EV21_PSYNERGY(void)
 {
 	u8 *flags;
 
@@ -715,7 +780,7 @@ void SceneActor_ConfigureSlot21AndSetFlag201(void)
 	Engine_GameFlagSet(0x201);
 }
 
-void SceneDialogue_RunFlag982Or983Dialogue(void)
+static void EV40_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -730,28 +795,22 @@ void SceneDialogue_RunFlag982Or983Dialogue(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunTwoStepSequence(void)
+static void EV08_PSYNERGY(void)
 {
-	typedef s32 (*Handler_02001a10)(struct Record_02000ec8 *record);
-
 	Engine_EventBegin();
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFourStepSequenceB(void)
+static void EV25_SCRIPT(void)
 {
-	typedef s32 (*Handler_02001a10)(struct Record_02000ec8 *record);
-
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
 	Engine_EventEnd();
-	FieldScene_RunTwoStepSequence();
+	EV08_PSYNERGY();
 }
 
-void SceneActor_InstallSlotNineHandler(void)
+static void EV08_SCRIPT(void)
 {
-	typedef s32 (*Handler_02001a10)(struct Record_02000ec8 *record);
-
 	struct FieldActor *owner;
 
 	Engine_ActorEnableActionCallback(8, BabiChika_FlickerScript);
@@ -760,13 +819,11 @@ void SceneActor_InstallSlotNineHandler(void)
 	owner->update = (void (*)(union FieldObject *))SceneActor_CopyActor8PositionWhenAtRow10;
 }
 
-void SceneActor_SetupSlotNineAndInstallHandler(void)
+static void EV09_PSYNERGY(void)
 {
-	typedef s32 (*Handler_02001a10)(struct Record_02000ec8 *record);
-
-	u8 *desc;
-	s32 col;
-	s32 row;
+	struct FieldActor *desc;
+	s32				   col;
+	s32				   row;
 
 	Engine_EventBegin();
 	Engine_ActorSetSpritePriority(9, 1);
@@ -776,7 +833,7 @@ void SceneActor_SetupSlotNineAndInstallHandler(void)
 
 	{
 		u8 *flag = &Object_GetById(9)->priority_flags;
-		*flag &= (u8)0xfd;
+		*flag &= 0xfd;
 	}
 
 	Engine_GameFlagSet(0x204);
@@ -786,24 +843,24 @@ void SceneActor_SetupSlotNineAndInstallHandler(void)
 	Engine_MapCopyCellAttributes(26, 8, 1, 1, col >> 20, row);
 
 	desc = Object_GetById(9);
-	*(Handler_02001a10 *)(desc + 108) = SceneActor_SetFlagBitByRelativeDepth;
+	desc->update = ACTOR_UPDATE_IDLE;
 
 	desc = Object_GetById(8);
-	*(Handler_02001a10 *)(desc + 108) = SceneActor_SetFlagBitByRelativeDepth;
+	desc->update = ACTOR_UPDATE_IDLE;
 
 	((u8 * (*)()) Engine_EventEnd)(desc);
 }
 
-s32 OverlayObject_SetYAboveLinkedActor(u8 *owner)
+static s32 OverlayObject_SetYAboveLinkedActor(struct FieldActor *owner)
 {
-	s16				  *id = (s16 *)(owner + 100);
+	s16				  *id = &owner->timer;
 	struct FieldActor *actor = Object_GetById(*id);
 
-	*(s32 *)(owner + 12) = actor->y.fixed + 0x100000;
+	owner->y.fixed = actor->y.fixed + 0x100000;
 	return 0;
 }
 
-void BabiChika_SettleSteps(s32 wait)
+static void BabiChika_SettleSteps(s32 wait)
 {
 	u32 i;
 
@@ -837,7 +894,7 @@ void BabiChika_SettleSteps(s32 wait)
 	Engine_EventWait(wait);
 }
 
-void SceneActor_LandOnHighestPlatform(s32 subject)
+static void SceneActor_LandOnHighestPlatform(s32 subject)
 {
 	s32 best = -0x500000;
 	u32 i;
@@ -858,7 +915,7 @@ void SceneActor_LandOnHighestPlatform(s32 subject)
 			continue;
 
 		best = Object_GetById(slot)->y.fixed + 0x100000;
-		Object_GetById(subject)->timer = (u16)slot;
+		Object_GetById(subject)->timer = slot;
 	}
 
 	Engine_ActorSetSpeed(subject, 0x40000, 0x20000);
@@ -877,7 +934,7 @@ void SceneActor_LandOnHighestPlatform(s32 subject)
 	Engine_EventWait(30);
 }
 
-void FieldScene_RunMiddleSequence(void)
+static void FieldScene_RunMiddleSequence(void)
 {
 	struct FieldActor saved;
 	s32				  i;
@@ -889,8 +946,7 @@ void FieldScene_RunMiddleSequence(void)
 	{
 		if (Object_GetById(i + 12)->sprite->priority == 3 && GameFlag_IsSet(i + 0x200) == 0)
 		{
-			Actor_Get(i + 12);
-			SceneActor_WaitValueBelowLimit();
+			SceneActor_WaitValueBelowLimit(Actor_Get(i + 12));
 			Actor_SetPosition(i + 12, 0, 0);
 			GameFlag_Set(i + 0x200);
 			break;
@@ -926,7 +982,7 @@ void FieldScene_RunMiddleSequence(void)
 			Actor_Get(found + 12)->motion_flags = 0;
 			Object_GetById(found + 12)->timer = 0;
 			Engine_CameraSetSpeed(0x30000, 0x6000);
-			((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
+			Battle_GetWorkObject1e0()->motion_flags = 0;
 			Camera_MoveTo(0xa80000, 0x80000, 0xb80000, 1);
 			Engine_CameraWaitForMove();
 			SceneActor_LandOnHighestPlatform(found + 12);
@@ -951,16 +1007,14 @@ void FieldScene_RunMiddleSequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunThreeStepSequence(void)
+static void FieldScene_RunThreeStepSequence(void)
 {
-	typedef s32 (*Handler_02001a10)(struct Record_02000ec8 *record);
-
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
 	Engine_EventEnd();
 }
 
-void SceneState_SetSlot17And18Selectors(void)
+static void SceneState_SetSlot17And18Selectors(void)
 {
 	Engine_EventBegin();
 
@@ -986,17 +1040,15 @@ void SceneState_SetSlot17And18Selectors(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFourCallSequence(void)
+static void EV29_TOUCH(void)
 {
-	typedef s32 (*Handler_02001a10)(struct Record_02000ec8 *record);
-
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
 	SceneState_SetSlot17And18Selectors();
 	Engine_EventEnd();
 }
 
-void FieldScene_RunLateSequenceHead(void)
+static void FieldScene_RunLateSequenceHead(void)
 {
 	Map_CopyCellAttributes(72, 49, 1, 1, 8, 49);
 	Map_CopyCellAttributes(113, 43, 1, 1, 49, 43);
@@ -1006,7 +1058,7 @@ void FieldScene_RunLateSequenceHead(void)
 	Actor_SetPosition(16, 51904512, 45613056);
 }
 
-void FieldScene_RunLateSequenceSecond(void)
+static void FieldScene_RunLateSequenceSecond(void)
 {
 	Map_CopyCellAttributes(8, 113, 1, 1, 8, 49);
 	Map_CopyCellAttributes(49, 107, 1, 1, 49, 43);
@@ -1016,7 +1068,7 @@ void FieldScene_RunLateSequenceSecond(void)
 	Actor_SetPosition(16, 0, 0);
 }
 
-void FieldScene_RunScene3c4SequenceA(void)
+static void FieldScene_RunScene3c4SequenceA(void)
 {
 	struct FieldActor *record;
 	s32				   v6;
@@ -1139,7 +1191,7 @@ void FieldScene_RunScene3c4SequenceA(void)
 done:;
 }
 
-void FieldScene_RunLayoutAt83By45(void)
+static void EV41_SCRIPT(void)
 {
 	Engine_EventBegin();
 	{
@@ -1153,7 +1205,7 @@ void FieldScene_RunLayoutAt83By45(void)
 	Engine_EventEnd();
 }
 
-void SceneState_SetValue268bInScene(void)
+static void EV42_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -1161,7 +1213,7 @@ void SceneState_SetValue268bInScene(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScriptedStep953(void)
+static void EV20_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
@@ -1177,10 +1229,8 @@ s32 BabiChika_SelectEvents(void)
 	return (s32)Data_0200bef4;
 }
 
-void FieldScene_PlaceAndPinSlots8And9(void)
+static void FieldScene_PlaceAndPinSlots8And9(void)
 {
-	typedef s32 (*Handler_02001a10)(struct Record_02000ec8 *record);
-
 	s32 row;
 
 	{
@@ -1202,7 +1252,7 @@ void FieldScene_PlaceAndPinSlots8And9(void)
 	}
 }
 
-void FieldScene_PlaceAndPinSlots10And11(void)
+static void FieldScene_PlaceAndPinSlots10And11(void)
 {
 	s32 row;
 
@@ -1225,7 +1275,7 @@ void FieldScene_PlaceAndPinSlots10And11(void)
 	}
 }
 
-void BabiChika_RestorePlatformCells(void)
+static void BabiChika_RestorePlatformCells(void)
 {
 	struct FieldActor *record;
 	s32				   p5;
@@ -1236,21 +1286,21 @@ void BabiChika_RestorePlatformCells(void)
 	record = Object_GetById(12);
 	p5 = record->x.fixed;
 	record = Object_GetById(12);
-	p5 = p5 >> 20;
+	p5 >>= 20;
 	Map_CopyCellAttributes(22, 52, 1, 1, p5, (record->z.fixed >> 20));
 	record = Object_GetById(13);
 	p5 = record->x.fixed;
 	record = Object_GetById(13);
-	p5 = p5 >> 20;
+	p5 >>= 20;
 	Map_CopyCellAttributes(22, 52, 1, 1, p5, (record->z.fixed >> 20));
 	record = Object_GetById(14);
 	p5 = record->x.fixed;
 	record = Object_GetById(14);
-	p5 = p5 >> 20;
+	p5 >>= 20;
 	Map_CopyCellAttributes(22, 52, 1, 1, p5, (record->z.fixed >> 20));
 }
 
-void BabiChika_MarkActorCells(void)
+static void BabiChika_MarkActorCells(void)
 {
 	Map_CopyCellAttributes(108, 19, 4, 1, 44, 19);
 	StagedActor_FillGridAttributeRectangle(
@@ -1537,7 +1587,554 @@ s32 FieldScene_InitializeActorGroups(void)
 	return 0;
 }
 
-#undef SceneActor_MoveActorZeroToTarget
-#undef SceneActor_PassActorZeroOffsetPoint
-#undef SceneActor_WaitValueBelowLimit
-#undef SceneState_SwapSlotPairByRank
+// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
+
+s32 StagedActor_DirectionSteps[] = {
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(16, 0),
+};
+
+u32 StagedActor_FootprintKinds[] = {
+	207,
+	205,
+	228,
+	229,
+	298,
+	297,
+};
+
+s32 StagedActor_FootprintBounds[] = {
+	-32,
+	-8,
+	32,
+	8,
+	-8,
+	-32,
+	8,
+	32,
+	-32,
+	-16,
+	32,
+	0,
+	-8,
+	-32,
+	8,
+	32,
+	-32,
+	-8,
+	32,
+	8,
+	-8,
+	-32,
+	8,
+	32,
+};
+
+s32 gEffectScript0[] = {
+	SC_WAIT(1),
+	SC_LOOP(22, SC_TOP),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+s32 gEffectScript1[] = {
+	SC_WAIT(1),
+	SC_LOOP(44, SC_TOP),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+s32 gEffectScript2[] = {
+	SC_WAIT(1),
+	SC_LOOP(126, SC_TOP),
+	SC_WAIT(1),
+	SC_POS(0, 0, 0),
+	SC_WAIT(1),
+	SC_FREE,
+};
+
+u32 Data_0200b350[] = {
+	0xfff00000,
+	0xfff00000,
+	0xffe00000,
+	0xffd00000,
+	0xffc00000,
+	0xffb00000,
+	0xffb00000,
+};
+
+const s32 *gEffectScripts[] = {
+	gEffectScript0,
+	gEffectScript1,
+	gEffectScript2,
+};
+
+s32 Data_0200b8f4_1[] = {
+	SC_SET(SW_SCALE_X, 0x9999),
+	SC_SET(SW_SCALE_Y, 0x9999),
+	SC_SET(SW_COLLISION, 0),
+	SC_CALL(SceneState_ApplyArgMode0AndReturnZero),
+	SC_END,
+};
+
+s32 Data_0200b8f4_0[] = {
+	SC_SET(SW_SCALE_Y, 0x19999),
+	SC_END,
+};
+
+s32 BabiChika_FlickerScript[] = {
+	SC_WAIT(35),
+	SC_SET(SW_HOOK, (s32)BabiChika_UpdateFlickerEffect),
+	SC_WAIT(130),
+	SC_SET(SW_HOOK, 0),
+	SC_ARG(2),
+	SC_END,
+};
+
+u16 Data_0200b3ec[] = {
+	MAP_CELL_STEP(28, 59, 1, 2, 4),
+	MAP_CELL_STEP(26, 59, 1, 2, 4),
+	MAP_CELL_STEP(24, 59, 1, 2, 4),
+	MAP_CELL_STEPS_END,
+};
+
+u16 Data_0200b40c[] = {
+	MAP_CELL_STEP(26, 59, 1, 2, 4),
+	MAP_CELL_STEP(28, 59, 1, 2, 4),
+	MAP_CELL_STEP(30, 59, 1, 2, 4),
+	MAP_CELL_STEPS_END,
+};
+
+struct SceneEntrance gBabiChikaEntrancesOther[] = {
+	{0, CONDITION_ALWAYS, 744, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+	{10, CONDITION_ALWAYS, 440, 0, 552, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+	{SCENE_TABLE_END},
+};
+
+struct SceneEntrance gBabiChikaEntrances1[] = {
+	{0, CONDITION_ALWAYS, 744, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+	{1, CONDITION_ALWAYS, 104, 0, 152, FACING_SOUTH, 0, 48, 48, 288, 368, 0},
+	{2, CONDITION_ALWAYS, 200, 0, 328, FACING_NORTH, 0, 48, 48, 288, 368, 0},
+	{3, CONDITION_ALWAYS, 184, 0, 552, FACING_SOUTH, 0, 64, 464, 304, 816, 0},
+	{4, CONDITION_ALWAYS, 168, 0, 816, FACING_NORTH, 0, 64, 464, 304, 816, 0},
+	{5, CONDITION_ALWAYS, 520, 0, 104, FACING_SOUTH, 0, 336, 48, 576, 288, 0},
+	{6, CONDITION_ALWAYS, 392, 0, 192, FACING_NORTH, 0, 336, 48, 576, 288, 0},
+	{7, CONDITION_ALWAYS, 520, 0, 256, FACING_NORTH, 0, 336, 48, 576, 288, 0},
+	{8, CONDITION_ALWAYS, 568, 0, 440, FACING_SOUTH, 0, 384, 352, 624, 640, 0},
+	{9, CONDITION_ALWAYS, 440, 0, 648, FACING_NORTH, 0, 384, 352, 624, 640, 0},
+	{10, CONDITION_ALWAYS, 744, 0, 104, FACING_SOUTH, 0, 624, 40, 864, 288, 0},
+	{11, CONDITION_ALWAYS, 680, 0, 256, FACING_NORTH, 0, 624, 40, 864, 288, 0},
+	{12, CONDITION_ALWAYS, 504, 0, 792, FACING_SOUTH, 0, 368, 720, 608, 976, 0},
+	{13, CONDITION_ALWAYS, 568, 0, 872, FACING_SOUTH, 0, 368, 720, 608, 976, 0},
+	{14, CONDITION_ALWAYS, 776, 0, 432, FACING_NORTH, 0, 688, 368, 928, 640, 0},
+	{15, CONDITION_ALWAYS, 840, 0, 608, FACING_NORTH, 0, 688, 368, 928, 640, 0},
+	{16, CONDITION_ALWAYS, 744, 0, 792, FACING_SOUTH, 0, 688, 736, 928, 976, 0},
+	{17, CONDITION_ALWAYS, 744, 0, 944, FACING_NORTH, 0, 688, 736, 928, 976, 0},
+	{18, CONDITION_ALWAYS, 872, 0, 880, FACING_NORTH, 0, 688, 736, 928, 976, 0},
+	{SCENE_TABLE_END},
+};
+
+struct SceneEntrance gBabiChikaEntrances2[] = {
+	{0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+	{1, CONDITION_ALWAYS, 632, 0, 344, FACING_SOUTH, 0, 592, 64, 880, 400, 0},
+	{2, CONDITION_ALWAYS, 840, 0, 120, FACING_SOUTH, 0, 592, 64, 880, 400, 0},
+	{3, CONDITION_ALWAYS, 824, 0, 344, FACING_SOUTH, 0, 592, 64, 880, 400, 0},
+	{4, CONDITION_ALWAYS, 216, 0, 104, FACING_SOUTH, 0, 32, 48, 272, 320, 0},
+	{5, CONDITION_ALWAYS, 216, 0, 296, FACING_NORTH, 0, 32, 48, 272, 320, 0},
+	{6, CONDITION_ALWAYS, 360, 0, 104, FACING_SOUTH, 0, 304, 48, 544, 352, 0},
+	{7, CONDITION_ALWAYS, 488, 0, 328, FACING_NORTH, 0, 304, 48, 544, 352, 0},
+	{8, CONDITION_ALWAYS, 120, 0, 568, FACING_NORTH, 0, 80, 400, 448, 592, 0},
+	{9, CONDITION_ALWAYS, 216, 0, 456, FACING_SOUTH, 0, 80, 400, 448, 592, 0},
+	{10, CONDITION_ALWAYS, 312, 0, 568, FACING_NORTH, 0, 80, 400, 448, 592, 0},
+	{11, CONDITION_ALWAYS, 408, 0, 456, FACING_SOUTH, 0, 80, 400, 448, 592, 0},
+	{12, CONDITION_ALWAYS, 136, 0, 712, FACING_SOUTH, 0, 16, 656, 256, 880, 0},
+	{13, CONDITION_ALWAYS, 392, 0, 712, FACING_SOUTH, 0, 288, 656, 560, 864, 0},
+	{14, CONDITION_ALWAYS, 520, 0, 776, FACING_SOUTH, 0, 288, 656, 560, 864, 0},
+	{15, CONDITION_ALWAYS, 648, 0, 952, FACING_NORTH, 0, 608, 816, 848, 976, 0},
+	{16, CONDITION_ALWAYS, 776, 0, 904, FACING_SOUTH, 0, 608, 816, 848, 976, 0},
+	{17, CONDITION_ALWAYS, 696, 0, 680, FACING_SOUTH, 0, 624, 592, 864, 768, 0},
+	{SCENE_TABLE_END},
+};
+
+s16 gBabiChikaRegions2[] = {
+	624,
+	16,
+	336,
+	640,
+	32,
+	352,
+	-1,
+	15,
+	816,
+	16,
+	336,
+	832,
+	32,
+	352,
+	-1,
+	16,
+	832,
+	16,
+	112,
+	848,
+	32,
+	128,
+	-1,
+	17,
+	-1,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+};
+
+u32 Data_0200b85c[] = {
+	SCENE_EXITS(172),
+	SCENE_EXIT(1, 174, 1),
+	SCENE_EXIT(2, 172, 3),
+	SCENE_EXIT(3, 172, 2),
+	SCENE_EXIT(4, 172, 5),
+	SCENE_EXIT(5, 172, 4),
+	SCENE_EXIT(6, 172, 8),
+	SCENE_EXIT(7, 172, 10),
+	SCENE_EXIT(8, 172, 6),
+	SCENE_EXIT(9, 172, 12),
+	SCENE_EXIT(10, 172, 7),
+	SCENE_EXIT(11, 172, 16),
+	SCENE_EXIT(12, 172, 9),
+	SCENE_EXIT(13, 172, 14),
+	SCENE_EXIT(14, 172, 13),
+	SCENE_EXIT(15, 173, 4),
+	SCENE_EXIT(16, 172, 11),
+	SCENE_EXIT(17, 173, 6),
+	SCENE_EXIT(18, 173, 17),
+	SCENE_EXIT(0, 173, 0),
+	SCENE_EXIT(1, 172, 15),
+	SCENE_EXIT(2, 173, 9),
+	SCENE_EXIT(3, 172, 17),
+	SCENE_EXIT(4, 173, 11),
+	SCENE_EXIT(5, 173, 5),
+	SCENE_EXIT(6, 173, 7),
+	SCENE_EXIT(7, 173, 12),
+	SCENE_EXIT(8, 173, 13),
+	SCENE_EXIT(9, 173, 8),
+	SCENE_EXIT(10, 173, 10),
+	SCENE_EXIT(11, 173, 15),
+	SCENE_EXIT(12, 172, 18),
+	SCENE_EXIT(13, 173, 14),
+	SCENE_EXIT(14, 183, 18),
+	SCENE_EXIT(15, 176, 4),
+	SCENE_EXIT(16, 176, 5),
+	SCENE_EXIT(17, 176, 6),
+	SCENE_EXITS_END,
+};
+
+struct ScenePlacement Data_0200b8f4[] = {
+	{0xfd, 0x0, ACTOR_STAND, PIXELS(152), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING, 0},
+	{0xfd, 0x0, ACTOR_STAND, PIXELS(168), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING,
+		PLACEMENT_SHARE_PREVIOUS_SPRITE},
+	{0xfd, 0x0, ACTOR_STAND, PIXELS(520), 0, PIXELS(488), FACING_SOUTH, TALK_KEEP_FACING, 0},
+	{0xfd, 0x0, ACTOR_STAND, PIXELS(536), 0, PIXELS(488), FACING_SOUTH, TALK_KEEP_FACING,
+		PLACEMENT_SHARE_PREVIOUS_SPRITE},
+	{0xfe, 0x0, ACTOR_STAND, PIXELS(488), 0, PIXELS(840), FACING_SOUTH, TALK_KEEP_FACING, 0},
+	{0xfe, 0x0, ACTOR_STAND, PIXELS(520), 0, PIXELS(840), FACING_SOUTH, TALK_KEEP_FACING,
+		PLACEMENT_SHARE_PREVIOUS_SPRITE},
+	{0xfe, 0x0, ACTOR_STAND, PIXELS(424), 0, PIXELS(792), FACING_SOUTH, TALK_KEEP_FACING,
+		PLACEMENT_SHARE_PREVIOUS_SPRITE},
+	{0xf8, 0x0, (s32)Data_0200b8f4_0, PIXELS(416), 0, PIXELS(794), FACING_NORTH, TALK_FACE_PARTY,
+		0},
+	{0xf8, 0x0, (s32)Data_0200b8f4_0, PIXELS(432), 0, PIXELS(794), FACING_NORTH, TALK_FACE_PARTY,
+		0},
+	{0xf8, 0x970, (s32)Data_0200b8f4_0, PIXELS(568), 0, PIXELS(856), FACING_NORTH, TALK_FACE_PARTY,
+		0},
+	{0xff, 0x0, ACTOR_STAND, PIXELS(680), 0, PIXELS(136), FACING_NORTH, TALK_KEEP_FACING, 0},
+	{0xff, 0x0, ACTOR_STAND, PIXELS(808), 0, PIXELS(232), FACING_NORTH, TALK_KEEP_FACING, 0},
+	{0xe3, 0x0, ACTOR_STAND, PIXELS(728), 0, PIXELS(184), FACING_NORTH, TALK_KEEP_FACING, 0},
+	{0xe3, 0x0, ACTOR_STAND, PIXELS(728), 0, PIXELS(184), FACING_NORTH, TALK_KEEP_FACING, 0},
+	{0x114, 0x0, (s32)Data_0200b8f4_1, PIXELS(232), 0, PIXELS(248), FACING_SOUTH, TALK_KEEP_FACING,
+		0},
+	{SCENE_TABLE_END},
+};
+
+u32 Data_0200ba74[] = {
+	SCENE_EXITS(255),
+	SCENE_EXIT(0, 1, 0),
+	SCENE_EXIT(24, 0, 128),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(10, 0, 128),
+	SCENE_EXIT(0, 0, 44),
+	SCENE_EXIT(0, 227, 0),
+	SCENE_EXIT(0, 1, 0),
+	SCENE_EXIT(24, 0, 128),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(15, 0, 128),
+	SCENE_EXIT(0, 0, 44),
+	SCENE_EXIT(0, 257, 0),
+	SCENE_EXIT(0, 7, 0),
+	SCENE_EXIT(8, 0, 128),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(9, 0, 128),
+	SCENE_EXIT(0, 0, 44),
+	SCENE_EXIT(0, 257, 0),
+	SCENE_EXIT(0, 7, 0),
+	SCENE_EXIT(12, 0, 128),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(9, 0, 128),
+	SCENE_EXIT(16, 0, 44),
+	SCENE_EXIT(0, 256, 0),
+	SCENE_EXIT(0, 1, 0),
+	SCENE_EXIT(9, 0, 128),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(8, 0, 128),
+	SCENE_EXIT(0, 0, 44),
+	SCENE_EXIT(0, 256, 0),
+	SCENE_EXIT(0, 1, 0),
+	SCENE_EXIT(11, 0, 128),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(8, 0, 128),
+	SCENE_EXIT(16, 0, 44),
+	SCENE_EXIT(0, 256, 0),
+	SCENE_EXIT(0, 1, 0),
+	SCENE_EXIT(13, 0, 128),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(8, 0, 128),
+	SCENE_EXIT(16, 0, 44),
+	SCENE_EXIT(0, 258, 0),
+	SCENE_EXIT(0, 1, 0),
+	SCENE_EXIT(8, 0, 128),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(49, 0, 128),
+	SCENE_EXIT(0, 0, 36),
+	SCENE_EXIT(0, 258, 0),
+	SCENE_EXIT(0, 1, 0),
+	SCENE_EXIT(49, 0, 128),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(43, 0, 128),
+	SCENE_EXIT(0, 0, 36),
+	SCENE_EXIT(0, 253, 0),
+	SCENE_EXIT(0, 1, 0),
+	SCENE_EXIT(46, 0, 128),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(19, 0, 128),
+	SCENE_EXIT(0, 0, 36),
+	SCENE_EXIT(0, 253, 0),
+	SCENE_EXIT(0, 1, 0),
+	SCENE_EXIT(47, 0, 128),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(19, 0, 128),
+	SCENE_EXIT(0, 0, 36),
+	SCENE_EXIT(0, 500, 0),
+	SCENE_EXIT(0, 1, 0),
+	SCENE_EXIT(21, 0, 128),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(47, 0, 128),
+	SCENE_EXIT(0, 0, 36),
+	SCENE_EXIT(0, 500, 0),
+	SCENE_EXIT(0, 1, 0),
+	SCENE_EXIT(27, 0, 128),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(47, 0, 128),
+	SCENE_EXIT(0, 0, 36),
+	SCENE_EXIT(0, 500, 0),
+	SCENE_EXIT(0, 1, 0),
+	SCENE_EXIT(21, 0, 128),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(50, 0, 128),
+	SCENE_EXIT(0, 0, 36),
+	SCENE_EXIT(0, 500, 0),
+	SCENE_EXIT(0, 1, 0),
+	SCENE_EXIT(27, 0, 128),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(50, 0, 128),
+	SCENE_EXIT(0, 0, 36),
+	SCENE_EXIT(0, 500, 0),
+	SCENE_EXIT(0, 1, 0),
+	SCENE_EXIT(24, 0, 128),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(51, 0, 128),
+	SCENE_EXIT(0, 0, 36),
+	SCENE_EXIT(0, 4095, 15),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(0, 0, 0),
+	SCENE_EXIT(0, 0, 0),
+};
+
+struct SceneEvent Data_0200bc0c[] = {
+	{0x21, 1, CONDITION_ALWAYS, 1},
+	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
+	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
+	{EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
+	{EVENT_EXIT, 5, CONDITION_ALWAYS, 5},
+	{EVENT_EXIT, 6, CONDITION_ALWAYS, 6},
+	{EVENT_EXIT, 7, CONDITION_ALWAYS, 7},
+	{EVENT_EXIT, 8, CONDITION_ALWAYS, 8},
+	{EVENT_EXIT, 9, CONDITION_ALWAYS, 9},
+	{EVENT_EXIT, 10, CONDITION_ALWAYS, 10},
+	{EVENT_EXIT, 11, CONDITION_ALWAYS, 11},
+	{EVENT_EXIT, 12, CONDITION_ALWAYS, 12},
+	{EVENT_EXIT, 13, CONDITION_ALWAYS, 13},
+	{EVENT_EXIT, 14, CONDITION_ALWAYS, 14},
+	{EVENT_EXIT, 15, CONDITION_ALWAYS, 15},
+	{EVENT_EXIT, 16, CONDITION_ALWAYS, 16},
+	{EVENT_EXIT, 17, CONDITION_ALWAYS, 17},
+	{EVENT_EXIT, 18, CONDITION_ALWAYS, 18},
+	{TOUCH_WALKING_INTO(FACING_SOUTH), 23, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStepWith6)},
+	{TOUCH_WALKING_INTO(FACING_WEST), 23, CONDITION_ALWAYS,
+		EVENT_SCRIPT(SceneActor_ApplyPointLeftOfActorZero)},
+	{0x202, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_SCRIPT)},
+	{TOUCH_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS,
+		EVENT_SCRIPT(BabiChika_RunLeaderSpray)},
+	{0x202, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EV26_SCRIPT)},
+	{TOUCH_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStepWith6)},
+	{TOUCH_WALKING_INTO(FACING_EAST), 27, CONDITION_ALWAYS,
+		EVENT_SCRIPT(SceneActor_PassPointTwoRightOfActorZero)},
+	{TOUCH_WALKING_INTO(FACING_WEST), 50, CONDITION_ALWAYS,
+		EVENT_SCRIPT(SceneState_RunUnlessActorZeroAtTile32x50)},
+	{TOUCH_WALKING_INTO(FACING_EAST), 50, CONDITION_ALWAYS,
+		EVENT_SCRIPT(SceneActor_PassPointTwoRightOfActorZero)},
+	{TOUCH_WALKING_INTO(FACING_NORTH), 50, CONDITION_ALWAYS,
+		EVENT_SCRIPT(SceneState_RunUnlessActorZeroAt30_52)},
+	{TOUCH_WALKING_INTO(FACING_SOUTH), 50, CONDITION_ALWAYS,
+		EVENT_SCRIPT(SceneActor_PassRaisedPointOfActorZero)},
+	{TOUCH_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(EV28_TOUCH)},
+	{0x202, 28, CONDITION_ALWAYS, EVENT_SCRIPT(EV28_SCRIPT)},
+	{0x202, 29, 0x971, EVENT_SCRIPT(EV29_SCRIPT)},
+	{TOUCH_WALKING_INTO(FACING_EAST), 29, 0x200,
+		EVENT_SCRIPT(SceneActor_PassPointTwoRightOfActorZero)},
+	{TOUCH_WALKING_INTO(FACING_SOUTH), 29, 0x200,
+		EVENT_SCRIPT(SceneActor_PassRaisedPointOfActorZero)},
+	{TOUCH_WALKING_INTO(FACING_NORTH), 29, 0x200,
+		EVENT_SCRIPT(SceneActor_PassActorZeroOffsetPoint)},
+	{TOUCH_WALKING_INTO(FACING_WEST), 31, 0x200,
+		EVENT_SCRIPT(SceneActor_ApplyPointLeftOfActorZero)},
+	{TOUCH_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS,
+		EVENT_SCRIPT(SceneActor_PassPointTwoRightOfActorZero)},
+	{0x202, 30, 0x972, EVENT_SCRIPT(FieldScene_RunFourStepSequenceA)},
+	{TOUCH_WALKING_INTO(FACING_WEST), 30, 0x201,
+		EVENT_SCRIPT(SceneActor_ApplyPointLeftOfActorZero)},
+	{TOUCH_WALKING_INTO(FACING_SOUTH), 30, 0x201,
+		EVENT_SCRIPT(SceneActor_PassRaisedPointOfActorZero)},
+	{TOUCH_WALKING_INTO(FACING_NORTH), 30, 0x201,
+		EVENT_SCRIPT(SceneActor_PassActorZeroOffsetPoint)},
+	{TOUCH_WALKING_INTO(FACING_EAST), 32, 0x202, EVENT_SCRIPT(FieldScene_RunFourStepSequenceA)},
+	{TOUCH_WALKING_INTO(FACING_EAST), 32, 0x201,
+		EVENT_SCRIPT(SceneActor_PassPointTwoRightOfActorZero)},
+	{TOUCH_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS,
+		EVENT_SCRIPT(SceneActor_ApplyPointLeftOfActorZero)},
+	{SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS, EVENT_SCRIPT(EV40_SEARCH)},
+	{PSYNERGY_ON_ACTOR(0x8c), 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_PlaceAndPinSlots8And9)},
+	{PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_PlaceAndPinSlots8And9)},
+	{PSYNERGY_ON_ACTOR(0x8c), 10, CONDITION_ALWAYS,
+		EVENT_SCRIPT(FieldScene_PlaceAndPinSlots10And11)},
+	{PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS,
+		EVENT_SCRIPT(FieldScene_PlaceAndPinSlots10And11)},
+	{PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(BabiChika_RestorePlatformCells)},
+	{PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, EVENT_SCRIPT(BabiChika_RestorePlatformCells)},
+	{PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, EVENT_SCRIPT(BabiChika_RestorePlatformCells)},
+	{PSYNERGY_ON_ACTOR(0x4e), 15, 0x200, EVENT_SCRIPT(EV15_PSYNERGY)},
+	{PSYNERGY_ON_ACTOR(0x4e), 16, 0x201, EVENT_SCRIPT(EV16_PSYNERGY)},
+	{PSYNERGY_ON_ACTOR(0x4e), 17, 0x970, EVENT_SCRIPT(EV17_PSYNERGY)},
+	{PSYNERGY_ON_ACTOR(0x8c), 18, 0x971, EVENT_SCRIPT(EV18_PSYNERGY)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 20, 0x200, EVENT_SCRIPT(EV20_PSYNERGY)},
+	{PSYNERGY_ON_ACTOR(0x8c), 19, 0x972, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceOne)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 21, 0x201, EVENT_SCRIPT(EV21_PSYNERGY)},
+	{0x10002115, 19, 0x202, EVENT_SCRIPT(EV19_SCRIPT)},
+	{PSYNERGY_ON_ACTOR(0x21), 19, 0x202, EVENT_SCRIPT(SceneState_SetValue202ThenCall)},
+	{SCENE_EVENTS_END},
+};
+
+struct SceneEvent Data_0200bef4[] = {
+	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
+	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
+	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
+	{EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
+	{EVENT_EXIT, 5, CONDITION_ALWAYS, 5},
+	{EVENT_EXIT, 6, CONDITION_ALWAYS, 6},
+	{EVENT_EXIT, 7, CONDITION_ALWAYS, 7},
+	{EVENT_EXIT, 8, CONDITION_ALWAYS, 8},
+	{EVENT_EXIT, 9, CONDITION_ALWAYS, 9},
+	{EVENT_EXIT, 10, CONDITION_ALWAYS, 10},
+	{EVENT_EXIT, 11, CONDITION_ALWAYS, 11},
+	{EVENT_EXIT, 12, CONDITION_ALWAYS, 12},
+	{EVENT_EXIT, 13, CONDITION_ALWAYS, 13},
+	{0x21, 14, CONDITION_ALWAYS, 14},
+	{0x202, 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_SCRIPT)},
+	{TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStepWith6)},
+	{TOUCH_WALKING_INTO(FACING_WEST), 26, CONDITION_ALWAYS,
+		EVENT_SCRIPT(SceneActor_ApplyPointLeftOfActorZero)},
+	{TOUCH_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS,
+		EVENT_SCRIPT(BabiChika_RunLeaderSpray)},
+	{0x202, 28, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunThreeStepSequence)},
+	{TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS,
+		EVENT_SCRIPT(SceneActor_PassPointTwoRightOfActorZero)},
+	{TOUCH_WALKING_INTO(FACING_WEST), 30, CONDITION_ALWAYS,
+		EVENT_SCRIPT(SceneActor_ApplyPointLeftOfActorZero)},
+	{0x202, 30, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunThreeStepSequence)},
+	{TOUCH_WALKING_INTO(FACING_EAST), 29, CONDITION_ALWAYS, EVENT_SCRIPT(EV29_TOUCH)},
+	{TOUCH_WALKING_INTO(FACING_SOUTH), 29, CONDITION_ALWAYS,
+		EVENT_SCRIPT(SceneActor_PassRaisedPointOfActorZero)},
+	{TOUCH_WALKING_INTO(FACING_NORTH), 29, CONDITION_ALWAYS,
+		EVENT_SCRIPT(SceneActor_PassActorZeroOffsetPoint)},
+	{0x202, 41, CONDITION_ALWAYS, EVENT_SCRIPT(EV41_SCRIPT)},
+	{SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SEARCH)},
+	{SEARCH(SEARCH_UNNAMED), 42, CONDITION_ALWAYS, EVENT_SCRIPT(EV42_SEARCH)},
+	{SEARCH(SEARCH_CHEST), 100, 0xf32, FIND_ITEM(0x71)},
+	{SEARCH(SEARCH_CHEST), 101, 0xf33, FIND_ITEM(0x54)},
+	{PSYNERGY_ON_ACTOR(0x8c), 8, 0x204, EVENT_SCRIPT(EV08_PSYNERGY)},
+	{0x10002115, 8, 0x203, EVENT_SCRIPT(EV08_SCRIPT)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x204, EVENT_SCRIPT(EV09_PSYNERGY)},
+	{PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, 0},
+	{PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, 0},
+	{PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, 0},
+	{PSYNERGY_ON_ACTOR(0x93), 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunMiddleSequence)},
+	{PSYNERGY_ON_ACTOR(0x93), 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunMiddleSequence)},
+	{PSYNERGY_ON_ACTOR(0x93), 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunMiddleSequence)},
+	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
+		EVENT_SCRIPT(FieldScene_RunLateSequenceSecond)},
+	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
+		EVENT_SCRIPT(FieldScene_RunLateSequenceHead)},
+	{PSYNERGY_ON_ACTOR(0x8c), 17, CONDITION_ALWAYS,
+		EVENT_SCRIPT(SceneState_SetSlot17And18Selectors)},
+	{PSYNERGY_ON_ACTOR(0x8c), 18, CONDITION_ALWAYS,
+		EVENT_SCRIPT(SceneState_SetSlot17And18Selectors)},
+	{PSYNERGY_ON_ACTOR(0x8c), 19, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3c4SequenceA)},
+	{PSYNERGY_ON_ACTOR(0x8c), 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3c4SequenceA)},
+	{PSYNERGY_ON_ACTOR(0x8c), 21, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3c4SequenceA)},
+	{PSYNERGY_ON_ACTOR(0x8c), 22, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3c4SequenceA)},
+	{PSYNERGY_ON_ACTOR(0x8c), 23, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3c4SequenceA)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+		MSGNO(MsgBabiChikaRedShinesNorthwestOfMe)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+		MSGNO(MsgBabiChikaYellowShinesNortheastOfMe)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
+		MSGNO(MsgBabiChikaRedShinesDueWestOfMe)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
+		MSGNO(MsgBabiChikaVioletShinesSoutheastOfMe)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
+		MSGNO(MsgBabiChikaVioletPointsSoutheast)},
+	{SCENE_EVENTS_END},
+};

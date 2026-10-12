@@ -6,14 +6,6 @@
 #include "field_scene.h"
 #include "map_render_work.h"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-extern s32 StagedActor_DirectionSteps[];
-
-void FieldScene_RunScene398SequenceB(void);
-void RunGuardedSceneSetup(void);
-void BiribinoDou_PrepareWindowTransition(void);
-void FieldScene_RunScene398SequenceC(void);
-void Resource398_ImportBankNoOp();
+#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 #endif

@@ -5,8 +5,4 @@
 
 #include "game_state.h"
 
-s32	 Party_CountActiveOwners(void);
-s32	 Party_ListActiveOwners(s16 *owners);
-void Party_AdvanceOwnerCountToTarget(s32 owner, s32 level);
-
 #endif

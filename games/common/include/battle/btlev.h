@@ -49,13 +49,16 @@ enum BattleEventOpcode
 	BEV_SE = 14
 };
 
+#if GAME_TLA
 s32 BattleActor_DestroyTemporaryObject(s32 unit_id);
+#endif
 
 #if GAME_TLA
 void BtlEvPush(u32 opcode, u32 operand);
 #else
-u32 BtlEvPush(u32 opcode, u32 operand);
 #endif
+#if GAME_TLA
 u32 BattleEv_DispatchQueued(void);
+#endif
 
 #endif

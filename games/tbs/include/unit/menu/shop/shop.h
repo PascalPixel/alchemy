@@ -1,0 +1,35 @@
+#ifndef ALCHEMY_UNIT_MENU_SHOP_SHOP_H
+#define ALCHEMY_UNIT_MENU_SHOP_SHOP_H
+
+#include "types.h"
+
+struct EffectSlot;
+struct NodeChainNode;
+struct NodeChainState;
+struct RenderOutput;
+struct ShopCursor;
+
+s32 AbilityMenu_BuildAvailableList(void);
+void Shop_StepCursor(void);
+void Shop_InitializeCursorWork(void);
+void Inn_Cleanup(void);
+s32 Shop_Run(s32 row, s32 keeper_id);
+s32 Battle_ApplyPresetItemsAndFlags(s32 unused);
+void AudioCommand_WaitForStateByteClear(void);
+void UiMessage_ShowAndWait(s32 arg0);
+void UiMessage_ShowAndRestoreState(s32 message_id);
+s32 UiMessage_ShowChoice(s32 arg0);
+s32 UiMessage_ShowChoiceVariant(s32 arg0);
+struct NodeChainNode *NodeChain_GetNodeAtIndex(struct NodeChainState *state);
+void Shop_FillSelector(s32 count, s32 selector, u8 *base);
+void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2);
+struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y);
+void Shop_RestoreSceneTiles(s32 layer);
+void Shop_InitEffect(void);
+void ShopCursor_Advance(struct ShopCursor *cursor);
+void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor);
+void Shop_SetCursor(struct ShopCursor *cursor, s32 target_x, s32 target_y, s32 kind);
+void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y);
+void Shop_PlaceCursor(void *window, s32 x, s32 y);
+
+#endif

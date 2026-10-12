@@ -3,6 +3,7 @@
 
 /* DEBUG */
 
+#include "unit/battle/effect/object2.h"
 #include "types.h"
 #include "edition.h"
 #include "farcall.h"
@@ -11,28 +12,10 @@ struct ItemDefinition;
 struct RenderInput;
 
 extern const u8		   Debug_PaletteSwatchTiles[];
-extern u8			   gDebugItemCapacityLabel[];
-extern u8			   gDebugItemFullLabel[];
-extern u8			   gDebugItemPrompt[];
-extern u8			   gItemLevelItemFull[];
-extern u8			   gItemLevelItemHelp[];
-extern u8			   gItemLevelItemPrompt[];
-extern u8			   gItemLevelPsyHelp[];
-extern u8			   gItemLevelPsyPrompt[];
-extern const s16	   Portrait_SpriteMap[];	// 2 entries a row: key, id
-extern const s16	   Portrait_CharacterMap[]; // 2 entries a row: key, id
-extern u8			   TestRooms_Entrances[];
-extern u8			   TestRooms_Events[];
-extern u8			   TestRooms_Exits[];
-extern u8			   TestRooms_Placements[];
-void				   BattleMap_ApplyEntranceView(void);
-void				   Debug_RunPaletteEditor(void);
-void				   DebugBattle_ViewMessages(void);
 void				   Engine_DebugClearWindow(struct RenderInput *window);
 void				   Engine_DebugDrawItemDetails(struct RenderInput *window, s32 item);
 u8					  *Engine_DebugGetAbility(s32 ability);
 struct ItemDefinition *Engine_DebugGetItem(s32 item);
 void				   Engine_DebugRedrawWindow(struct RenderInput *window);
-s32					   Object_GetTriggerTileAheadOfCurrent(void);
 
 #endif

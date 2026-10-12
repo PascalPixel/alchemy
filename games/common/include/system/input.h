@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_INPUT_H
 #define ALCHEMY_INPUT_H
 
+#include "edition.h"
 #include "types.h"
 #include "layout_guard.h"
 
@@ -24,6 +25,8 @@ LAYOUT_OFFSET_GUARD(InputState_Repeat, struct InputState, repeat, 12);
 LAYOUT_OFFSET_GUARD(InputState_RepeatTimer, struct InputState, repeat_timer, 32);
 
 extern struct InputState gInput;
-void					 Input_UpdateKeyRepeatAndDirection(void);
+#if GAME_TLA
+void Input_UpdateKeyRepeatAndDirection(void);
+#endif
 
 #endif

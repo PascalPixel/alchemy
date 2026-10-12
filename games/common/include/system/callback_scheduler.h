@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_CALLBACK_SCHEDULER_H
 #define ALCHEMY_CALLBACK_SCHEDULER_H
 
+#include "edition.h"
 #include "types.h"
 #include "layout_guard.h"
 
@@ -30,10 +31,13 @@ extern volatile u8			gSchedulerStatus;
 extern u8					gSchedulerTaskCount;
 extern struct SchedulerTask gSchedulerTaskTable[];
 
+#if GAME_TLA
 void Runtime_PushSlotEntry(void *entry, s32 priority);
 
 void Runtime_InvokeCallbacksByKey(s32 key);
+#endif
 void Runtime_CallWorkEntryWithArgs(s32 arg0, s32 arg1);
+#if GAME_TLA
 void Scheduler_ScheduleCallbackBAfterFrames(void);
 
 void Scheduler_ResetTaskTable(void);
@@ -51,6 +55,7 @@ s32	 Scheduler_DisableCallbacks(SchedulerCallback callback);
 s32	 Scheduler_DisableOverlayCallbacks(void);
 s32	 Scheduler_DisableOverlayCallbacksWithFlags(void);
 s32	 Scheduler_EnableOverlayCallbacksWithFlags(void);
+#endif
 
 void Scheduler_RunCallbacksByKey(s32 key);
 s32	 Scheduler_CountCallbacksByKey(s32 key);

@@ -1,5 +1,9 @@
-@ C2: Sound synthesis uses fp as packed volume/sample arithmetic and writes
+@ C2: IwramSoundRenderFrame to IwramSoundSynthWave:
+@ Sound synthesis uses fp as packed volume/sample arithmetic and writes
 @ computed mixed words with stmia r5! without a matching block-copy source.
+@ C2: IwramCopyWords:
+@ Computed add pc enters the unrolled copy body; r5-r9 are saved without
+@ lr.
 .syntax unified
 	.arm
 IwramSoundRenderFrame:
@@ -181,3 +185,49 @@ IwramSoundSynthWave:
 	subs	r8, r8, #4, 0
 	bgt	.L_audio_0da4
 	b	IwramSoundMixDone
+.syntax unified
+	.section .data,"aw",%progbits
+	.arm
+
+	.global IwramSoundMixWorkspace
+IwramSoundMixWorkspace:
+	.space 0x590, 0
+.syntax unified
+	.section .text.runtime_copy_words,"ax",%progbits
+	.arm
+
+	.global IwramCopyWords
+IwramCopyWords:
+	push	{r5, r6, r7, r8, r9}
+	ands	ip, r2, #224, 0
+	rsb	ip, ip, #240, 0
+	add	pc, pc, ip, lsr #2
+.L_audio_1398:
+	ldm	r1!, {r3, r4, r5, r6, r7, r8, r9, ip}
+	stmia	r0!, {r3, r4, r5, r6, r7, r8, r9, ip}
+	ldm	r1!, {r3, r4, r5, r6, r7, r8, r9, ip}
+	stmia	r0!, {r3, r4, r5, r6, r7, r8, r9, ip}
+	ldm	r1!, {r3, r4, r5, r6, r7, r8, r9, ip}
+	stmia	r0!, {r3, r4, r5, r6, r7, r8, r9, ip}
+	ldm	r1!, {r3, r4, r5, r6, r7, r8, r9, ip}
+	stmia	r0!, {r3, r4, r5, r6, r7, r8, r9, ip}
+	ldm	r1!, {r3, r4, r5, r6, r7, r8, r9, ip}
+	stmia	r0!, {r3, r4, r5, r6, r7, r8, r9, ip}
+	ldm	r1!, {r3, r4, r5, r6, r7, r8, r9, ip}
+	stmia	r0!, {r3, r4, r5, r6, r7, r8, r9, ip}
+	ldm	r1!, {r3, r4, r5, r6, r7, r8, r9, ip}
+	stmia	r0!, {r3, r4, r5, r6, r7, r8, r9, ip}
+	ldm	r1!, {r3, r4, r5, r6, r7, r8, r9, ip}
+	stmia	r0!, {r3, r4, r5, r6, r7, r8, r9, ip}
+	subs	r2, r2, #256
+	bpl	.L_audio_1398
+	ands	r2, r2, #28, 0
+	beq	.L_audio_13f8
+.L_audio_13e8:
+	ldm	r1!, {r3}
+	stmia	r0!, {r3}
+	subs	r2, r2, #4, 0
+	bgt	.L_audio_13e8
+.L_audio_13f8:
+	pop	{r5, r6, r7, r8, r9}
+	bx	lr

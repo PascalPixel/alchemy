@@ -12,8 +12,6 @@
 
 #if GAME_TLA
 #define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->window_tiles)
-#else
-#define UI_WORK ((struct UiRenderWork *)gWindowWork[0])
 #endif
 
 //--------------------------------------------------------------------------

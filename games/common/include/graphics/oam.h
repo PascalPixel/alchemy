@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_OAM_H
 #define ALCHEMY_OAM_H
 
+#include "edition.h"
 #include "types.h"
 #include "layout_guard.h"
 
@@ -14,6 +15,8 @@ LAYOUT_SIZE_GUARD(OamUsage_Size, struct OamUsage, 4);
 LAYOUT_OFFSET_GUARD(OamUsage_Limit, struct OamUsage, limit, 2);
 
 extern struct OamUsage gOamUsage;
-void				   Render_BuildOamList(void *work);
+#if GAME_TLA
+void Render_BuildOamList(void *work);
+#endif
 
 #endif

@@ -1,4 +1,14 @@
+#include "battle_effect_runtime.h"
+#include "unit/graphics/palette/palette.h"
+#include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtime3.h"
+#include "unit/system/scheduler/runtime4.h"
+#include "unit/system/scheduler/runtime5.h"
+#include "unit/system/scheduler/runtime6.h"
+#include "unit/system/scheduler/runtime8.h"
+#include "unit/system/scheduler/runtime9.h"
 #include "battle.h"
+#include "keystate.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -7,874 +17,1062 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "game_state.h"
-#include "workspace_options.h"
-#include "types.h"
-#include "iwram_call.h"
-#include "fixed_math.h"
-#include "io_reg.h"
 #include "mem.h"
+#include "types.h"
 #include "callback_scheduler.h"
+#include "dma.h"
+#include "edition.h"
+#include "io_reg.h"
+#include "io_write_queue.h"
+#include "map_scroll.h"
+#include "ram_buffer.h"
 #include "resource.h"
 #include "resource_ids.h"
-#include "dma.h"
-#include "keystate.h"
-#include "edition.h"
-#include "render_input.h"
-#include "tbs_edition.h"
-#include "uiflow.h"
-#include "text/msg_ids.h"
+#include "palbuf.h"
+#include "iwram_call.h"
+#include "heap_state.h"
 #include "scene.h"
 #include "global_cells.h"
-#include "text_render_runtime.h"
-#include "sound_ids.h"
-#include "btlsys.h"
+#include "frame.h"
 
-struct MenuWorkspaceEntry {
-    u8 unknown_00[10];
-    u16 state;
-    u8 unknown_0c[40];
+struct IntroSprite
+{
+	u32 unknown_0;
+	u8	y;
+	u8	unknown_5;
+	u16 x : 9;
+	u16 unknown_6 : 7;
+	s32 tile;
 };
 
-void Menu_ResetWorkspaceSelection(struct WorkspaceWork *work)
+struct IntroWork
 {
-    struct MenuWorkspaceEntry *entry = (struct MenuWorkspaceEntry *)((u8 *)work + 0x400);
-    u16 zero = 0;
-
-    entry->state = zero;
-    entry++;
-    entry->state = zero;
-    entry++;
-    entry->state = zero;
-    entry++;
-    entry->state = zero;
-    entry++;
-    entry->state = zero;
-    entry++;
-    entry->state = zero;
-    entry++;
-    entry->state = zero;
-    work->page = zero;
-    work->tint[0] = zero;
-    work->tint[1] = zero;
-    work->tint[2] = zero;
-    work->cursor_frame = zero;
-}
-
-void GraphicsPalette_SetTintChannelsFromCounters(struct WorkspaceWork *work)
-{
-    s16 phase;
-    s32 bias;
-    s32 blue;
-    s32 red;
-    s32 green;
-
-    phase = (gGameState.palette_glow[0] + 12) % 24 * 4;
-    bias = gGameState.palette_glow[1] - 7;
-    red = PaletteGlow_WaveTable[(phase % 96)];
-    green = PaletteGlow_WaveTable[(phase + 32) % 96];
-    blue = PaletteGlow_WaveTable[(phase + 64) % 96];
-    red += bias;
-    green += bias;
-    blue += bias;
-    if (red < 0)
-        red = 0;
-    if (green < 0)
-        green = 0;
-    if (blue < 0)
-        blue = 0;
-    if (red > 31)
-        red = 31;
-    if (green > 31)
-        green = 31;
-    if (blue > 31)
-        blue = 31;
-    work->tint[0] = red;
-    work->tint[1] = green;
-    work->tint[2] = blue;
-}
-
-void Palette_WriteBlendedBank15Entries(struct WorkspaceWork *work)
-{
-    *(s16 *)0x050001E8 = Palette_ScaleTintChannels(work, 0xEEEE, 0xCCCC, 0x11110);
-    *(s16 *)0x050001EA = Palette_ScaleTintChannels(work, 0xD555, 0xBBBB, 0xEEEE);
-    *(s16 *)0x050001EC = Palette_ScaleTintChannels(work, 0xBBBB, 0xAAAA, 0xCCCC);
-    *(s16 *)0x050001EE = Palette_ScaleTintChannels(work, 0xA221, 0x9999, 0xAAAA);
-    *(s16 *)0x050001F0 = Palette_ScaleTintChannels(work, 0x10888, 0xDDDD, 0x13333);
-    *(s16 *)0x050001F2 = Palette_ScaleTintChannels(work, 0x12221, 0xEEEE, 0x15555);
-    *(s16 *)0x050001F4 = Palette_ScaleTintChannels(work, 0x13BBB, 0x10000, 0x17777);
-}
-
-u16 Palette_ScaleTintChannels(struct WorkspaceWork *work, s32 scale_r, s32 scale_g, s32 scale_b)
-{
-    s32 r;
-    s32 g;
-    s32 b;
-
-    r = Iwram_MulQ16(work->tint[0] << 16, scale_r) >> 16;
-    g = Iwram_MulQ16(work->tint[1] << 16, scale_g) >> 16;
-    b = Iwram_MulQ16(work->tint[2] << 16, scale_b) >> 16;
-    if (r < 0)
-        r = 0;
-    if (g < 0)
-        g = 0;
-    if (b < 0)
-        b = 0;
-    if (r > 31)
-        r = 31;
-    if (g > 31)
-        g = 31;
-    if (b > 31)
-        b = 31;
-    return r + ((b << 10) + (g << 5));
-}
-
-u16 Color_ScaleComponents(s16 *rgb, s32 red_scale, s32 green_scale, s32 blue_scale)
-{
-    s32 red;
-    s32 green;
-    s32 blue;
-
-    red = Iwram_MulQ16(rgb[0] << 16, red_scale) >> 16;
-    green = Iwram_MulQ16(rgb[1] << 16, green_scale) >> 16;
-    blue = Iwram_MulQ16(rgb[2] << 16, blue_scale) >> 16;
-    if (red < 0)
-        red = 0;
-    if (red > 31)
-        red = 31;
-    if (green < 0)
-        green = 0;
-    if (green > 31)
-        green = 31;
-    if (blue < 0)
-        blue = 0;
-    if (blue > 31)
-        blue = 31;
-    return red + ((blue << 10) + (green << 5));
-}
-
-void PaletteGlow_Update(s32 phase, s32 brightness)
-{
-    s16 rgb[3];
-    s16 step;
-    s16 red;
-    s16 green;
-    s16 blue;
-    s16 offset;
-
-    step = ((phase + 12) % 24) * 4;
-    offset = brightness - 7;
-    red = PaletteGlow_WaveTable[(step % 96)] + offset;
-    green = PaletteGlow_WaveTable[(step + 32) % 96] + offset;
-    blue = PaletteGlow_WaveTable[(step + 64) % 96] + offset;
-    if (red < 0)
-        red = 0;
-    if (red > 31)
-        red = 31;
-    if (green < 0)
-        green = 0;
-    if (green > 31)
-        green = 31;
-    if (blue < 0)
-        blue = 0;
-    if (blue > 31)
-        blue = 31;
-    rgb[0] = red;
-    rgb[1] = green;
-    rgb[2] = blue;
-    BG_PLTT_COLOR(15, 4) = Color_ScaleComponents(rgb, 0xeeee, 0xcccc, 0x11110);
-    BG_PLTT_COLOR(15, 5) = Color_ScaleComponents(rgb, 0xd555, 0xbbbb, 0xeeee);
-    BG_PLTT_COLOR(15, 6) = Color_ScaleComponents(rgb, 0xbbbb, 0xaaaa, 0xcccc);
-    BG_PLTT_COLOR(15, 7) = Color_ScaleComponents(rgb, 0xa221, 0x9999, 0xaaaa);
-    BG_PLTT_COLOR(15, 8) = Color_ScaleComponents(rgb, 0x10888, 0xdddd, 0x13333);
-    BG_PLTT_COLOR(15, 9) = Color_ScaleComponents(rgb, 0x12221, 0xeeee, 0x15555);
-    BG_PLTT_COLOR(15, 10) = Color_ScaleComponents(rgb, 0x13bbb, 0x10000, 0x17777);
-}
-
-void GraphicsPalette_DecrementSelectionWrap(struct WorkspaceWork *work)
-{
-    if (work->page == 0)
-        work->page = 2;
-    else
-        work->page--;
-}
-
-void Menu_AdvanceWorkspaceIndexModulo3(struct WorkspaceWork *work)
-{
-    if (++work->page > 2)
-        work->page = 0;
-}
-
-void GraphicsPalette_DecrementSelectedCounter(struct WorkspaceWork *work)
-{
-    switch (work->page) {
-    case 0:
-        if (gGameState.message_speed != 0)
-            gGameState.message_speed--;
-        break;
-    case 1:
-        if (gGameState.palette_glow[0] != 0)
-            gGameState.palette_glow[0]--;
-        break;
-    case 2:
-        if (gGameState.palette_glow[1] != 0)
-            gGameState.palette_glow[1]--;
-        break;
-    }
-}
-
-void GraphicsPalette_AdjustSelectionCounter(struct WorkspaceWork *work)
-{
-    switch (work->page) {
-    case 0:
-        if (gGameState.message_speed <= 1)
-            gGameState.message_speed++;
-        break;
-    case 1:
-        if (gGameState.palette_glow[0] <= 23)
-            gGameState.palette_glow[0]++;
-        break;
-    case 2:
-        if (gGameState.palette_glow[1] <= 14)
-            gGameState.palette_glow[1]++;
-        break;
-    }
-}
-
-void GraphicsPalette_SelectionNoOp(void)
-{
-}
-
-#define ShopCursor_AdvanceFar ((void (*)(void*))ShopCursor_AdvanceFar)
-#define ShopCursor_MoveTowardTargetFar ((void (*)(void*))ShopCursor_MoveTowardTargetFar)
-#define Ui_ApplyTableScaleToObject ((void (*)(void*))Ui_ApplyTableScaleToObject)
-
-void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
-{
-    s32 src0;
-    s32 src1;
-    s32 sel;
-    struct WorkspaceWork *work;
-
-    work = gSelectionWork;
-    sel = work->page;
-    ShopCursor_AdvanceFar(&work->cursor);
-    ShopCursor_MoveTowardTargetFar(&work->marker[0]);
-    ShopCursor_MoveTowardTargetFar(&work->marker[1]);
-
-    if (sel == 0) {
-        src0 = (work->cursor_frame & 7) +
-            (s32)&ResourceId_ShopCursorFrames;
-    } else {
-        src0 = (s32)&ResourceId_ShopCursorFrames;
-    }
-    VramBlock_LoadCached(
-        (u8)work->marker[0].output->index,
-        0x100,
-        Resource_GetTableEntry(src0));
-
-    if (sel == 1) {
-        src1 = (work->cursor_frame & 7) +
-            (s32)&ResourceId_ShopCursorFrames;
-    } else {
-        src1 = (s32)&ResourceId_ShopCursorFrames;
-    }
-    VramBlock_LoadCached(
-        (u8)work->marker[1].output->index,
-        0x100,
-        Resource_GetTableEntry(src1));
-
-    if (sel > 1)
-        Ui_ApplyTableScaleToObject(work->frame[sel - 2][work->option[sel]]);
-    work->cursor_frame++;
-}
-
-void OptionMenu_InitializeWork(void)
-{
-    struct WorkspaceWork *work;
-    volatile u32 zero;
-
-    work = (struct WorkspaceWork *)Runtime_AllocateBlock(20, 0x628);
-    zero = 0;
-    Dma_Set((const void *)&zero, work, 0x8500018a, REG_DMA3);
-    work->option[0] = gGameState.palette_glow[0];
-    work->option_count[0] = 24;
-    work->option[1] = gGameState.palette_glow[1];
-    work->option_count[1] = 15;
-    work->option[2] = gGameState.message_speed;
-    work->option_count[2] = 3;
-    work->option[3] = gGameState.speech;
-    work->option_count[3] = 2;
-    work->option[4] = gGameState.saved_options;
-    work->option_count[4] = 2;
-    Scheduler_AddOrUpdateCallback(GraphicsPalette_LoadSelectionResourcesAndAdvance, 0xc80);
-}
-
-void Runtime_ScheduleCallbackAndReleaseBlock20B(void)
-{
-    Scheduler_RemoveCallback(GraphicsPalette_LoadSelectionResourcesAndAdvance);
-    Runtime_ReleaseHeapBlock(0x14);
-}
-
-#define Resource_FixedBlockBTiles ((const u8 *)&Resource_FixedBlockBTiles)
-#define UiWindow_Create ((struct RenderInput * (*)(s32, s32, s32, s32, s32))UiWindow_Create)
-#define UiText_DrawCharacterAtOffset ((void (*)(s32, struct RenderInput *, s32, s32))UiText_DrawCharacterAtOffset)
-
-#define RenderResource_CreateFrame ((void * (*)(s32,s32,struct RenderInput*,s32,s32))RenderResource_CreateFrame)
-#define ShopCursor_SetPositionImmediateFar ((void (*)(void*,s32,s32))ShopCursor_SetPositionImmediateFar)
-#define Shop_SetCursorFar ((void (*)(void*,s32,s32,s32))Shop_SetCursorFar)
-#define UiWindow_ClearInteriorTiles ((void (*)(struct RenderInput*,s32,s32,s32,s32))UiWindow_ClearInteriorTiles)
-#define Ui_ApplyTableOffsetToPair ((void (*)(void*))Ui_ApplyTableOffsetToPair)
-
-#define SLIDER_PALETTE 14
-#define RESOURCE_SLOTS 96
-void UiWindow_DrawDividerLine(struct RenderInput *, s32, s32, s32, s32);
-
-extern u8 gSleepDisabled;
-extern u8 gOptionMirror;
-void WaitFrames(s32);
-void PaletteGlow_Update(s32, s32);
-void UiText_DrawResource(s32, struct RenderInput *, s32, s32);
-void AudioCommand_PlayFar(s32);
-
-struct RenderInput *Menu_OpenWorkspaceOptions(void)
-{
-    /* FAKEMATCH: the shared cursor union keeps pointer stores before window reads; an equal-size struct reorders these moves in all six editions. */
-    struct WorkspaceWork *work;
-    struct RenderInput *win;
-    struct RenderOutput *out;
-    s32 x;
-    s32 y;
-    s32 msg;
-
-    work = gSelectionWork;
-    win = UiWindow_Create(OPTION_WINDOW_X, 5, OPTION_WINDOW_WIDTH, 14, 2);
-    UiWindow_DrawDividerLine(win, 0, 2, OPTION_WINDOW_WIDTH - 1, 2);
-    UiWindow_DrawDividerLine(win, 0, 4, OPTION_WINDOW_WIDTH - 1, 4);
-    UiWindow_DrawDividerLine(win, 0, 7, OPTION_WINDOW_WIDTH - 1, 7);
-    UiWindow_DrawDividerLine(win, 0, 10, OPTION_WINDOW_WIDTH - 1, 10);
-    msg = (s32)MsgWindowColorLabel;
-    UiText_DrawCharacterAtOffset(msg, win, 8, 0);
-    msg++;
-    UiText_DrawCharacterAtOffset(msg, win, 8, 16);
-#if EDITION_INTERNATIONAL
-    msg = (s32)MsgMessageSpeedLabel;
-    UiText_DrawCharacterAtOffset(msg, win, 8, 32);
-    msg++;
-    UiText_DrawCharacterAtOffset(msg, win, 32, 40);
-#else
-    UiText_DrawCharacterAtOffset((s32)MsgMessageSpeedLabel, win, 8, 40);
-#endif
-    UiText_DrawCharacterAtOffset((s32)MsgSpeechLabel, win, 8, 64);
-    UiText_DrawCharacterAtOffset((s32)MsgAutoSleepLabel, win, 8, 88);
-
-    x = Resource_FindFreeEntry();
-    if (x < RESOURCE_SLOTS) {
-        VramBlock_LoadCached(x, 128, (const void *)Resource_FixedBlockBTiles);
-        out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
-        work->cursor.output = out;
-        x = win->x * 8;
-        y = win->y * 8 + 12;
-        ShopCursor_SetPositionImmediateFar(&work->cursor, x, y);
-    }
-
-    x = Resource_FindFreeEntry();
-    if (x < RESOURCE_SLOTS) {
-        Dma_Set(WorkspaceOptions_SliderPalette, (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0), 0x80000020, REG_DMA3);
-        VramBlock_LoadCached(x, 256, WorkspaceOptions_SliderTiles);
-        y = 0;
-        out = RenderOutput_Create(x, 0x40004000, win, OPTION_SLIDER_X - 6, y);
-        out->oam.palette = SLIDER_PALETTE;
-        out = RenderOutput_Create(x, 0x40004000, win, OPTION_SLIDER_X + 26, y);
-        out->oam.index += 4;
-        out->oam.palette = SLIDER_PALETTE;
-        y = 16;
-        out = RenderOutput_Create(x, 0x40004000, win, OPTION_SLIDER_X - 6, y);
-        out->oam.palette = 15;
-        out = RenderOutput_Create(x, 0x40004000, win, OPTION_SLIDER_X + 26, y);
-        out->oam.index += 4;
-        out->oam.palette = 15;
-    }
-
-    x = Resource_FindFreeEntry();
-    if (x < RESOURCE_SLOTS) {
-        VramBlock_LoadCached(x, 256, 0);
-        out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
-        out->oam.palette_256 = 1;
-        work->marker[0].output = out;
-        x = win->x * 8 + OPTION_SLIDER_X;
-        x += work->option[0] * 60 / work->option_count[0];
-        y = win->y * 8 + 4;
-        ShopCursor_SetPositionImmediateFar(&work->marker[0], x, y);
-    }
-
-    x = Resource_FindFreeEntry();
-    if (x < RESOURCE_SLOTS) {
-        VramBlock_LoadCached(x, 256, 0);
-        out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
-        out->oam.palette_256 = 1;
-        work->marker[1].output = out;
-        x = win->x * 8 + OPTION_SLIDER_X;
-        x += work->option[1] * 60 / work->option_count[1];
-        y = win->y * 8 + 20;
-        ShopCursor_SetPositionImmediateFar(&work->marker[1], x, y);
-    }
-
-    y = 28;
-    work->frame[0][0] = RenderResource_CreateFrame(OptionMenu_SpeedFrames[0], 0, win, OPTION_FRAME_X, y);
-    work->frame[0][1] = RenderResource_CreateFrame(OptionMenu_SpeedFrames[1], 0, win, OPTION_FRAME_X + 24, y);
-    work->frame[0][2] = RenderResource_CreateFrame(OptionMenu_SpeedFrames[2], 0, win, OPTION_FRAME_X + 48, y);
-    y = 52;
-    work->frame[1][0] = RenderResource_CreateFrame(OptionMenu_SpeechFrames[0], 0, win, 100, y);
-    work->frame[1][1] = RenderResource_CreateFrame(OptionMenu_SpeechFrames[1], 0, win, 124, y);
-    y = 76;
-    work->frame[2][0] = RenderResource_CreateFrame(OptionMenu_SleepFrames[0], 0, win, 100, y);
-    work->frame[2][1] = RenderResource_CreateFrame(OptionMenu_SleepFrames[1], 0, win, 124, y);
-    return win;
-}
-
-s32 Menu_RunWorkspaceOptions(void)
-{
-    struct WorkspaceWork *work;
-    struct RenderInput *icon;
-    struct RenderInput *win;
-    struct RenderOutput *pair;
-    s8 *pA;
-    s8 *pB;
-    s32 redraw;
-    s32 page;
-    s32 i;
-    s32 dim;
-    s32 index;
-    s32 x;
-    s32 y;
-    s32 result;
-    struct RenderOutput *frame;
-
-    redraw = 1;
-    page = 0;
-    OptionMenu_InitializeWork();
-    work = gSelectionWork;
-    win = UiWindow_Create(OPTION_WINDOW_X, 2, OPTION_WINDOW_WIDTH, 3, 2);
-    icon = Menu_OpenWorkspaceOptions();
-    pair = RenderResource_CreatePair(7, icon, 64, -48);
-    WaitFrames(1);
-    pA = &work->option[0];
-    pB = &work->option[1];
-
-    for (;;) {
-        if (redraw != 0) {
-            redraw = 0;
-            page = (page + 5) % 5;
-            work->option[page] = (work->option[page] + work->option_count[page]) % work->option_count[page];
-            work->page = page;
-            if (gSleepDisabled != 0)
-                work->option[4] = 0;
-
-            for (i = 0; i <= 2; i++) {
-                frame = work->frame[0][i];
-                frame->sentinel = 0xfb;
-                UiIcon_PrepareObjectFar(frame);
-                index = (u8)work->frame[0][i]->index;
-                dim = 0;
-                if (i != work->option[2])
-                    dim = 1;
-                RenderResource_LoadFrame(OptionMenu_SpeedFrames[i], index, dim);
-            }
-            for (i = 0; i <= 1; i++) {
-                frame = work->frame[1][i];
-                frame->sentinel = 0xfb;
-                UiIcon_PrepareObjectFar(frame);
-                index = (u8)work->frame[1][i]->index;
-                dim = 0;
-                if (i != work->option[3])
-                    dim = 1;
-                RenderResource_LoadFrame(OptionMenu_SpeechFrames[i], index, dim);
-            }
-            for (i = 0; i <= 1; i++) {
-                frame = work->frame[2][i];
-                frame->sentinel = 0xfb;
-                UiIcon_PrepareObjectFar(frame);
-                index = (u8)work->frame[2][i]->index;
-                dim = 0;
-                if (i != work->option[4])
-                    dim = 1;
-                RenderResource_LoadFrame(OptionMenu_SleepFrames[i], index, dim);
-            }
-
-            x = icon->x * 8 + OPTION_SLIDER_X;
-            x += (*pA * 60) / work->option_count[0];
-            y = icon->y * 8 + 4;
-            Shop_SetCursorFar(&work->marker[0], x, y, 1);
-            x = icon->x * 8 + OPTION_SLIDER_X;
-            x += (*pB * 60) / work->option_count[1];
-            y = icon->y * 8 + 20;
-            Shop_SetCursorFar(&work->marker[1], x, y, 1);
-
-            x = work->option[2] + (s32)MsgMessageSpeedSetting;
-            UiWindow_ClearInteriorTiles(icon, OPTION_SETTING_X, 40, OPTION_SPEED_END, 48);
-            UiText_DrawCharacterAtOffset(x, icon, OPTION_SETTING_X, 40);
-            x = work->option[3] + (s32)MsgSpeechSetting;
-            UiWindow_ClearInteriorTiles(icon, OPTION_SETTING_X, 64, OPTION_SETTING_END, 72);
-            UiText_DrawCharacterAtOffset(x, icon, OPTION_SETTING_X, 64);
-            x = work->option[4] + (s32)MsgAutoSleepSetting;
-            UiWindow_ClearInteriorTiles(icon, OPTION_SETTING_X, 88, OPTION_SETTING_END, 96);
-            UiText_DrawCharacterAtOffset(x, icon, OPTION_SETTING_X, 88);
-            PaletteGlow_Update(*pA, *pB);
-
-            x = icon->x * 8;
-            y = (page * 3 + icon->y) * 8 + 4;
-            if (page == 0)
-                y += 8;
-            Shop_SetCursorFar(&work->cursor, x, y, 3);
-            RenderOutput_ClearList(win);
-            UiText_DrawResource(page + (s32)MsgOptionHelp, win, 0, 0);
-        }
-        Ui_ApplyTableOffsetToPair(pair);
-        WaitFrames(1);
-
-        if (gKeyState & KEY_SELECT) {
-            AudioCommand_PlayFar(112);
-            work->preset++;
-            redraw = 1;
-            if (work->preset > 5)
-                work->preset = 0;
-            *pA = OptionMenu_FirstColorPresets[work->preset];
-            *pB = OptionMenu_SecondColorPresets[work->preset];
-            continue;
-        }
-        if (gKeyState & (KEY_A | KEY_START)) {
-            result = 0;
-            AudioCommand_PlayFar(112);
-            break;
-        }
-        if (gKeyState & KEY_B) {
-            result = -1;
-            AudioCommand_PlayFar(113);
-            break;
-        }
-        if (gKeysRepeat & KEY_UP) {
-            AudioCommand_PlayFar(111);
-            page--;
-            redraw = 1;
-        } else if (gKeysRepeat & KEY_DOWN) {
-            AudioCommand_PlayFar(111);
-            page++;
-            redraw = 1;
-        } else {
-            if (gKeysRepeat & KEY_LEFT) {
-                AudioCommand_PlayFar(111);
-                work->option[page]--;
-                redraw = 1;
-            }
-            if (gKeysRepeat & KEY_RIGHT) {
-                AudioCommand_PlayFar(111);
-                work->option[page]++;
-                redraw = 1;
-            }
-        }
-    }
-
-    UiWork_Finalize(win, 2);
-    UiWork_Finalize(icon, 2);
-    if (result == 0) {
-        gGameState.palette_glow[0] = work->option[0];
-        gGameState.palette_glow[1] = work->option[1];
-        gGameState.message_speed = work->option[2];
-        gGameState.speech = work->option[3];
-        gGameState.saved_options = work->option[4];
-        gOptionMirror = gGameState.saved_options;
-    } else {
-        PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
-    }
-    Runtime_ScheduleCallbackAndReleaseBlock20B();
-    WaitFrames(1);
-    return result;
-}
-
-s32 GameFlag_TestFar(s32 flag);
-
-#define FLAG_WORKSPACE_SETTINGS_ONLY 0x17e
-#define WORKSPACE_ROWS 3
-#define WORKSPACE_DEBUG_ROWS 3
-#define WORKSPACE_ROW_HEIGHT 24
-#define WORKSPACE_TEXT_X 48
-
-extern u8 gDebugMode;
-
-void Menu_RunSelectedWorkspaceEntry(void)
-{
-    struct WorkspaceWork *work = gSelectionWork;
-    u32 index;
-
-    ShopCursor_AdvanceFar(&work->cursor);
-    index = work->page;
-    Ui_ApplyTableScaleToObject(work->icon[index]);
-}
-
-void Menu_InitializeSelectedWorkspace(void)
-{
-    void *work;
-    volatile u32 zero;
-    work = Runtime_AllocateBlock(20, 0x628);
-    zero = 0;
-    Dma_Set(&zero, work, 0x8500018a, REG_DMA3);
-    Scheduler_AddOrUpdateCallback(Menu_RunSelectedWorkspaceEntry, 3200);
-}
-
-void Runtime_ScheduleCallbackAndReleaseBlock20A(void)
-{
-    Scheduler_RemoveCallback(&Menu_RunSelectedWorkspaceEntry);
-    Runtime_ReleaseHeapBlock(0x14);
-}
-
-struct RenderInput *Menu_CreateWorkspaceWindows(void)
-{
-    struct WorkspaceWork *work;
-    s32 rows;
-    s32 first;
-    s32 settings_only;
-    s32 top;
-    s32 height;
-    struct RenderInput *win;
-    s32 y;
-    s32 slot;
-    s32 msg;
-    s32 i;
-    s32 x;
-
-    rows = WORKSPACE_ROWS;
-    work = gSelectionWork;
-    settings_only = GameFlag_TestFar(FLAG_WORKSPACE_SETTINGS_ONLY);
-    first = 0;
-    if (settings_only != 0) {
-        rows = 1;
-        first = 2;
-    }
-    if (gDebugMode != 0)
-        rows += WORKSPACE_DEBUG_ROWS;
-    top = 8 - rows;
-    height = rows * 3 + 1;
-    if (top + height > 19) {
-        top = 1;
-        height = 19;
-    }
-    win = UiWindow_Create(5, top, 20, height, 2);
-    for (i = 1; i < rows; i++)
-        UiWindow_DrawDividerLine(win, 0, i * 3, 19, i * 3);
-    y = 4;
-    if (settings_only == 0) {
-        msg = (s32)MsgWorkspaceSaveQuest;
-        UiText_DrawResource(msg, win, WORKSPACE_TEXT_X, 4);
-        msg++;
-        UiText_DrawResource(msg, win, WORKSPACE_TEXT_X, 4 + WORKSPACE_ROW_HEIGHT);
-        y = 4 + 2 * WORKSPACE_ROW_HEIGHT;
-    }
-    UiText_DrawResource((s32)MsgWorkspaceChangeSettings, win, WORKSPACE_TEXT_X, y);
-    y += WORKSPACE_ROW_HEIGHT;
-    if (gDebugMode != 0) {
-        msg = (s32)MsgWorkspaceRoughMenu;
-        UiText_DrawResource(msg, win, WORKSPACE_TEXT_X, y);
-        y += WORKSPACE_ROW_HEIGHT;
-        UiText_DrawResource(msg + 1, win, WORKSPACE_TEXT_X, y);
-        y += WORKSPACE_ROW_HEIGHT;
-        msg += 2;
-        UiText_DrawResource(msg, win, WORKSPACE_TEXT_X, y);
-    }
-    slot = Resource_FindFreeEntry();
-    if (slot < RESOURCE_SLOTS) {
-        VramBlock_LoadCached(slot, 128, Resource_FixedBlockBTiles);
-        work->cursor.output = RenderOutput_Create(slot, 0x40000000, win, 0, 0);
-        x = win->x * 8;
-        y = win->y * 8 + 16;
-        ShopCursor_SetPositionImmediateFar(&work->cursor, x, y);
-    }
-    y = -4;
-    for (i = 0; i < rows; i++) {
-        work->icon[i] = RenderResource_CreateFrame(Menu_WorkspaceIconFrames[first + i], 0, win, 12, y);
-        y += WORKSPACE_ROW_HEIGHT;
-    }
-    return win;
-}
-
-void AudioCommand_PlayFar(s32 cue);
-
-#define gWindowWork (*(struct UiTileSlotWork * *)&gWindowWork)
-#define UiIcon_PrepareObjectFar ((void (*)(void*))UiIcon_PrepareObjectFar)
-
-s32 Menu_RunWorkspaceSelectionLoop(void)
-{
-    struct RenderInput *window;
-    s32 redraw;
-    struct RenderOutput *pair;
-    s32 first;
-    s32 i;
-    s32 j;
-    s32 rows;
-    s32 settings_only;
-    s32 dim;
-    s32 y;
-    s32 result;
-    s32 page;
-    s32 index;
-    s32 x;
-    s32 top;
-    s8 *tbl;
-    struct RenderOutput *icon;
-    struct WorkspaceWork *work;
-
-    redraw = 1;
-    rows = 3;
-    settings_only = GameFlag_TestFar(0x17E);
-    first = 0;
-    Menu_InitializeSelectedWorkspace();
-    work = gSelectionWork;
-    window = Menu_CreateWorkspaceWindows();
-#if EDITION_INTERNATIONAL
-    y = -0x18;
-    if (gDebugMode != 0) {
-        y = -0x10;
-    }
-    pair = RenderResource_CreatePair(6, window, 0x28, y);
-#else
-    pair = RenderResource_CreatePair(6, window, 0x28, -0x18);
-#endif
-    WaitFrames(1);
-    page = work->page;
-    if (settings_only != 0) {
-        rows = 1;
-        first = 2;
-    }
-    if (gDebugMode != 0) {
-        rows += 3;
-    }
-redraw_menu:
-    if (redraw != 0) {
-        redraw = 0;
-        page = (page + rows) % rows;
-        work->page = page;
-        i = 0;
-        if (i < rows) {
-            j = first;
-            tbl = Menu_WorkspaceIconFrames;
-            do {
-                icon = work->icon[i];
-                icon->sentinel = 0xFB;
-                UiIcon_PrepareObjectFar(icon);
-                index = (u8)icon->index;
-                dim = 0;
-                if (i != work->page) {
-                    dim = 1;
-                }
-                RenderResource_LoadFrame(*(s8 *)(j + (s32)tbl), index, dim);
-                i++;
-                j++;
-            } while (i < rows);
-        }
-        top = window->y;
-        x = window->x * 8;
-        y = (((page * 3) + top) * 8) + 0x10;
-        Shop_SetCursorFar(
-            &work->cursor,
-            x,
-            y,
-            3);
-    }
-    Ui_ApplyTableOffsetToPair(pair);
-    WaitFrames(1);
-    if (gKeyState & KEY_A) {
-        result = page;
-        AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
-    } else if (gKeyState & (KEY_B | KEY_START)) {
-        result = -1;
-        AudioCommand_PlayFar(SOUND_MENU_CANCEL);
-    } else {
-        if (gKeysRepeat & KEY_UP) {
-            AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-            page -= 1;
-            redraw = 1;
-        } else if (gKeysRepeat & KEY_DOWN) {
-            AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-            page += 1;
-            redraw = 1;
-        }
-        goto redraw_menu;
-    }
-    UiWork_Finalize(window, 2);
-    Runtime_ScheduleCallbackAndReleaseBlock20A();
-    WaitFrames(1);
-    if (result >= 0) {
-        result += first;
-    }
-    return result;
-}
-
-struct UiTileSlotWork {
-    u8 unknown_000[RENDER_TILE_ATTR_OFS];
-    u8 used[0x100];
-    u16 next;
+	s32 back_rows;
+	s32 front_rows;
+	s32 frame;
+	s32 tick;
+	s32 state;
+	s32 rise;
+	union
+	{
+		volatile u32 objects[120][2];
+		struct
+		{
+			u8				   unknown_18[0x68];
+			struct IntroSprite sprites[8];
+		} prompt;
+	} area;
 };
 
-void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern, u8 *remap)
+// 六列のスプライトの x
+const u8 Title_IntroSpriteColumns[] = {96, 136, 140, 160, 168, 184};
+
+// プロンプトの明るさ（60 フレームで一巡）
+const u8 Title_PromptBlendLevels[60] = {
+	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+	16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+	16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+	15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+};
+
+#define ENTRY(i, word) (work->area.objects[i][word])
+
+#define WRAP256(v)    \
+	while ((v) > 255) \
+		(v) -= 256;   \
+	while ((v) < 0)   \
+	(v) += 256
+
+#define PLACE(column, half)                                       \
+	x = Title_IntroSpriteColumns[column] - (half);                \
+	y = (top - base) * ((x + (half)) - 104) / 80 + base - (half); \
+	WRAP256(y)
+
+#define QUAD(i, size, shape, tile)                                                            \
+	ENTRY(i, 0) = ((x + 4) << 16) | y | ((shape) + 0x00002400);                               \
+	ENTRY((i) + 1, 0) = ((x + 4 + (size)) << 16) | y | ((shape) + 0x10002400);                \
+	ENTRY((i) + 2, 0) = ((x + 4) << 16) | (u8)(y + (size)) | ((shape) + 0x20002400);          \
+	ENTRY((i) + 3, 0) = ((x + 4 + (size)) << 16) | (u8)(y + (size)) | ((shape) + 0x30002400); \
+	ENTRY(i, 1) = (tile);                                                                     \
+	ENTRY((i) + 1, 1) = (tile);                                                               \
+	ENTRY((i) + 2, 1) = (tile);                                                               \
+	ENTRY((i) + 3, 1) = (tile)
+
+void Title_PlaceIntroSprites(void)
 {
-    struct UiTileSlotWork *work = gWindowWork;
-    u8 pixels[128];
-    u8 *sheet = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
-    u32 slot = *(u8 *)entry;
-    u8 *src;
-    u8 *dst;
-    u32 n;
-    u32 i;
+	struct IntroWork *work;
+	u32				  n;
+	s32				  base;
+	s32				  top;
+	s32				  x;
+	s32				  y;
+	s32				  line;
 
-    dst = pixels;
-    src = (u8 *)(0x06000000 + 32 * slot);
-    for (i = 0; i < 32; i++) {
-        n = *src++;
-        *dst++ = n & 15;
-        *dst++ = n >> 4;
-    }
+	work = Ram_WorkSlot[43];
+	n = 0;
+	if (gDebugPaused == 0)
+	{
+		if ((++work->tick & 3) == 0)
+			work->rise++;
+	}
+	base = 48 - gBgScroll[1].y;
+	top = 144 - work->rise;
+	if (work->frame < 0x118)
+	{
+		if ((work->tick & 1) == 0)
+		{
+			PLACE(0, 16);
+			QUAD(n, 16, 0x40000000, 232);
+			n += 4;
+			PLACE(2, 16);
+			ENTRY(n, 0) = ((x + 4) << 16) | y | 0x80002400;
+			ENTRY(n, 1) = 128;
+			n++;
+			PLACE(4, 32);
+			QUAD(n, 32, 0x80000000, 192);
+			n += 4;
+		}
+		else
+		{
+			PLACE(1, 16);
+			QUAD(n, 16, 0x40000000, 232);
+			n += 4;
+			PLACE(3, 16);
+			QUAD(n, 16, 0x40000000, 224);
+			n += 4;
+			PLACE(5, 32);
+			QUAD(n, 32, 0x80000000, 160);
+			n += 4;
+		}
+	}
+	for (; n <= 119; n++)
+		ENTRY(n, 0) = 0x400020a0;
+	REG_BLDCNT = 0x3f50;
+	REG_BLDALPHA = 0x0e0e;
+	Dma_Set(&ENTRY(0, 0), OAM, ((n * 8) >> 2) | 0x84000000, REG_DMA3);
+	line = 32 - gBgScroll[1].y;
+	WRAP256(line);
+	ENTRY(12, 0) = line | 0xc05c2000;
+	ENTRY(12, 1) = 0x800;
+	Dma_Set(&ENTRY(12, 0), (u8 *)OAM + n * 8, 0x84000002, REG_DMA3);
+	Dma_Set(&ENTRY(0, 0), OAM, 0x84000008, REG_DMA3);
+}
 
-    dst = pixels;
-    src = sheet + pattern * 32;
-    for (i = 0; i < 32; i++) {
-        u32 value = *src++;
-        u32 color = remap[value & 15];
+void Title_LoadIntroBackgrounds(void)
+{
+	struct IntroWork *work;
+	u8				 *data;
+	u16				 *map;
+	s32				  x;
+	s32				  y;
+	u16				  tile;
+	s32				  blank;
 
-        if (color != 0)
-            *dst = color;
-        dst++;
-        color = remap[value >> 4];
-        if (color != 0)
-            *dst = color;
-        dst++;
-    }
+	work = Ram_WorkSlot[43];
+	REG_DISPCNT = 0;
+	data = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsA);
+	Dma_Set(data, (void *)OBJ_PLTT, 0x84000080, REG_DMA3);
+	OBJ_PLTT[0] = 0;
+	data += 0x200;
+	Resource_DecodeByteLz(data, Ram_MapCellBuffer);
+	Dma_Set(Ram_MapCellBuffer, (void *)0x06010000, 0x80000f00, REG_DMA3);
+	data = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsC);
+	Dma_Set(data, (void *)BG_PLTT, 0x84000080, REG_DMA3);
+	BG_PLTT[0] = 0;
+	data += 0x200;
+	Resource_DecodeByteLz(data, Ram_MapCellBuffer);
+	Dma_Set(Ram_MapCellBuffer + 0x2940, BG_CHAR_BLOCK(0), 0x80002760, REG_DMA3);
+	Dma_Set(Ram_MapCellBuffer + 0xa140, (void *)0x06004ec0, 0x80004ec0, REG_DMA3);
 
-    {
-        u8 *p;
+	blank = 0x1ff;
+	map = (u16 *)BG_SCREEN_BLOCK(30);
+	tile = 0x267;
+	for (y = 0; y <= 10; y++)
+	{
+		for (x = 0; x < 30; x++)
+			*map++ = tile++;
+		*map++ = blank;
+		*map++ = blank;
+	}
+	tile = 0x13b;
+	for (y = 11; y <= 31; y++)
+	{
+		for (x = 0; x < 30; x++)
+			*map++ = tile++;
+		*map++ = blank;
+		*map++ = blank;
+	}
+	map = (u16 *)BG_SCREEN_BLOCK(31);
+	tile = 300;
+	for (y = 0; y <= 10; y++)
+	{
+		for (x = 0; x < 30; x++)
+			*map++ = tile++;
+		*map++ = blank;
+		*map++ = blank;
+	}
+	tile = 0;
+	for (y = 11; y <= 31; y++)
+	{
+		for (x = 0; x < 30; x++)
+			*map++ = tile++;
+		*map++ = blank;
+		*map++ = blank;
+	}
 
-        dst = pixels;
-        for (i = 0, p = dst; i < 32; i++) {
-            u32 value = p[0] | p[1] << 4;
+	REG_BG1CNT = 0x1f43;
+	REG_BG2CNT = 0x1e81;
+	REG_WIN0H = 0xf0;
+	REG_WIN0V = 0x9f;
+	REG_WIN1H = 0xf0;
+	REG_WIN1V = 0x9f;
+	REG_WININ = 0x1616;
+	for (y = 0; y < 4; y++)
+	{
+		gBgScroll[y].y = 0;
+		gBgScroll[y].x = 0;
+	}
+	gBgScroll[1].y = 96;
+	gBgScroll[2].y = 96;
+	work->frame = 0;
+	work->back_rows = 0;
+	work->front_rows = 0;
+	work->tick = 0;
+	work->rise = 0;
+	work->state = 0;
+	Dma_Set(gBgScroll, REG_BG0HOFS, 0x84000004, REG_DMA3);
+	REG_BLDCNT = 0x3fbf;
+	REG_BLDALPHA = 0x1010;
+	REG_BLDCNT = 0x3f44;
+}
 
-            p += 2;
-            *dst++ = value;
-        }
-    }
+#if defined(TBS_EDITION_DE)
+#define PROMPT_TILES 8
+#else
+#define PROMPT_TILES 5
+#endif
+#if defined(TBS_EDITION_DE)
+#define PROMPT_ROWS 2
+#define PROMPT_SPRITES 3
+#define PROMPT_X 80
+#define PROMPT_Y 116
+#elif !EDITION_INTERNATIONAL
+#define PROMPT_SPRITES 5
+#define PROMPT_X 56
+#define PROMPT_Y 126
+#elif defined(TBS_EDITION_FR)
+#define PROMPT_SPRITES 5
+#define PROMPT_X 56
+#define PROMPT_Y 124
+#else
+#define PROMPT_SPRITES 3
+#define PROMPT_X 80
+#define PROMPT_Y 124
+#endif
 
-    if ((s8)slot >= 0) {
-        for (n = 0; n < 128; n++) {
-            u32 value = work->next;
-            u32 following = (value + 1) % 128;
+s32 Title_ShowIntro(s32 prompt)
+{
+	struct IntroWork *work;
+	s32				  result;
+	u8				  saved;
+	u16				  zero;
+	u8				 *data;
+	u16				 *map;
+	u32				  i;
+	u16				  tile;
+	u32				  j;
+	u32				  limit;
+	s32				  blank;
 
-            slot = (u8)value;
-            work->next = following;
-            if (work->used[slot] == 0)
-                break;
-        }
-        work->used[slot] = 1;
-        slot |= 0x80;
-        *entry = slot | 0xf000;
-        *mirror = slot | 0xf000;
-    }
-    Dma_Set(pixels, (void *)(0x06000000 + slot * 32), 0x84000008, REG_DMA3);
+	result = 0;
+	blank = 0x1ff;
+	saved = gCpuLoadDisplayEnabled;
+	work = Runtime_AllocateHeapBlock(43, 224);
+	Bg0_ClearTilemap();
+	Resource_InitializeTable();
+	WaitFrames(1);
+	Scheduler_ResetTaskTable();
+	gOamCopyEnabled = result;
+	gCpuLoadDisplayEnabled = result;
+	Title_LoadIntroBackgrounds();
+	TitlePalette_InitializeBuffers();
+	Graphics_TransformSmallPalette(2, 0);
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0xf740, 0x20000);
+	Graphics_UpdatePaletteInterpolation(60);
+	Scheduler_AddOrUpdateCallback(Title_PlaceIntroSprites, 0x480);
+
+	for (;;)
+	{
+		s32 frame;
+		s32 next;
+		s32 tick;
+
+		frame = work->frame;
+		if (frame > 20 && frame < 239 && (gKeyState & (KEY_A | KEY_START)) != 0)
+		{
+			work->state = 1;
+			work->frame = 239;
+			frame = 239;
+		}
+		next = frame + 1;
+		work->frame = next;
+		if (next <= 278)
+		{
+			tick = work->tick;
+			if (tick % 3 == 0)
+			{
+				s32 y;
+
+				gBgScroll[1].y--;
+				y = gBgScroll[1].y;
+				if ((y & 7) == 0)
+				{
+					Dma_Set(Ram_MapCellBuffer + 0x2580 - work->back_rows * 960,
+						(u8 *)0x06004b00 - work->back_rows * 960, 0x800001e0, REG_DMA3);
+					work->back_rows++;
+					tick = work->tick;
+				}
+			}
+			if ((tick & 1) == 0)
+			{
+				s32 y;
+
+				gBgScroll[2].y--;
+				y = gBgScroll[2].y;
+				if ((y & 7) == 0)
+				{
+					if (work->front_rows * 8 <= 24)
+					{
+						Dma_Set(Ram_MapCellBuffer + 0x99c0 - work->front_rows * 1920,
+							(u8 *)0x0600e4c0 - work->front_rows * 1920, 0x800003c0, REG_DMA3);
+					}
+					else
+					{
+						zero = 0;
+						Dma_Set(&zero, (u8 *)0x06004ec0 + (160 - work->front_rows * 8) % 160 * 240,
+							0x810003c0, REG_DMA3);
+						map = (u16 *)0x0600f6c0;
+						for (i = 0; i < 5; i++)
+						{
+							for (j = 0; j < 30; j++)
+								*map++ = 0x13b;
+							*map++ = 0x13b;
+							*map++ = 0x13b;
+						}
+					}
+					work->front_rows++;
+				}
+			}
+			if (work->frame == 239)
+				work->state = 1;
+		}
+		else if (next == 281)
+		{
+			work->state = 2;
+		}
+		else if (next == 289)
+		{
+			work->state = 0;
+		}
+		else if (next == 280)
+		{
+			Blend_SetBrightenTarget16(1);
+			Scheduler_RemoveCallback(Title_PlaceIntroSprites);
+			gOamCopyEnabled = 1;
+			WaitFrames(1);
+			REG_BG2CNT = 0x681;
+			REG_DISPCNT = 0x1440;
+			gBgScroll[2].y = 0;
+			data = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsB);
+			Dma_Set(data, (void *)BG_PLTT, 0x84000078, REG_DMA3);
+			BG_PLTT[0] = 0;
+			data += 0x200;
+			Resource_DecodeByteLz(data, Ram_MapCellBuffer);
+			Dma_Set(Ram_MapCellBuffer, BG_CHAR_BLOCK(1), 0x80004b00, REG_DMA3);
+			map = (u16 *)BG_SCREEN_BLOCK(6);
+			tile = 0x100;
+			i = 0;
+			break;
+		}
+		WaitFrames(1);
+	}
+	for (; i < 20; i++)
+	{
+		for (j = 0; j < 30; j++)
+			*map++ = tile++;
+		*map++ = blank;
+		*map++ = blank;
+	}
+
+	Ui_LoadWindowGraphics();
+	Bg0_ClearTilemap();
+	if (prompt != 0)
+	{
+		u8				   *buffer = Runtime_AllocateBlock(14, 0x400);
+		struct IntroSprite *sprite = work->area.prompt.sprites;
+
+		Resource_DecodeByteLz(Title_PromptTiles, buffer);
+		for (i = 0; i < PROMPT_TILES; i++)
+		{
+			s32	 block = VramBlock_LoadCached(Resource_FindFreeEntry(), 128, buffer + (i << 8) / 2);
+			u32 *out = (u32 *)sprite;
+
+			*out++ = 0;
+			sprite++;
+			*out++ = 0x40004000;
+			*out = block;
+		}
+		Runtime_ReleaseHeapBlock(14);
+	}
+	Blend_SetBrightenTarget0(30);
+	Blend_WaitForTransition();
+	REG_DISPCNT = 0x1540;
+	if (prompt != 0)
+		limit = 3600;
+	else
+		limit = 300;
+	for (i = 0; i < limit; i++)
+	{
+		if (prompt != 0)
+		{
+			struct IntroSprite *sprite = work->area.prompt.sprites;
+			u32					level;
+			s32					x;
+#if defined(TBS_EDITION_DE)
+			u32 row;
+			s32 y;
+
+			for (row = 0, y = PROMPT_Y; row < PROMPT_ROWS; y += 8, row++)
+			{
+				for (j = 0, x = PROMPT_X; j < PROMPT_SPRITES; j++)
+				{
+					sprite->x = x;
+					sprite->y = y;
+					Runtime_PushSlotEntry(sprite, 0);
+					x += 32;
+					sprite++;
+				}
+			}
+#else
+
+			for (j = 0, x = PROMPT_X; j < PROMPT_SPRITES; j++)
+			{
+				sprite->x = x;
+				sprite->y = PROMPT_Y;
+				Runtime_PushSlotEntry(sprite, 0);
+				x += 32;
+				sprite++;
+			}
+#endif
+			level = Title_PromptBlendLevels[i % 60];
+			REG_BLDCNT = 0x2f50;
+			REG_BLDALPHA = (16 - level) * 256 + level;
+		}
+		if ((gKeyState & (KEY_A | KEY_START)) != 0)
+		{
+			result = 1;
+			break;
+		}
+		WaitFrames(1);
+	}
+	gCpuLoadDisplayEnabled = saved;
+	Runtime_ReleaseHeapBlock(43);
+	REG_BLDCNT = 0;
+	REG_BLDALPHA = 0;
+	WaitFrames(1);
+	return result;
+}
+
+void Title_NoOpPalette(void)
+{
+}
+
+s32 Title_ShowSplashScreen(s32 mode)
+{
+	s32	 result;
+	u8	*data;
+	u16 *map;
+	u32	 x;
+	u32	 y;
+	u16	 tile;
+	s32	 blank;
+	s32	 resource;
+
+	AudioCommand_PlayFar(110);
+	gOamCopyEnabled = 1;
+	resource = (s32)&ResourceId_NintendoLogo;
+	blank = 0x1ff;
+	Scheduler_ResetTaskTable();
+	Blend_SetDarkenTarget16(1);
+	Bg0_ClearTilemap();
+	WaitFrames(1);
+	REG_BG2CNT = 0x681;
+	REG_DISPCNT = 0x1440;
+	result = 0;
+	gBgScroll[2].y = result;
+	data = Resource_GetTableEntry(resource);
+	Dma_Set(data, (void *)BG_PLTT, 0x84000070, REG_DMA3);
+	Resource_DecodeType01(data + 448, Ram_MapCellBuffer);
+	Dma_Set(Ram_MapCellBuffer, BG_CHAR_BLOCK(1), 0x84002580, REG_DMA3);
+	tile = 256;
+	map = (u16 *)BG_SCREEN_BLOCK(6);
+	for (y = 0; y < 20; y++)
+	{
+		for (x = 0; x < 30; x++)
+			*map++ = tile++;
+		*map++ = blank;
+		*map++ = blank;
+	}
+	for (y = 0; y < 4; y++)
+	{
+		gBgScroll[y].y = 0;
+		gBgScroll[y].x = 0;
+	}
+	Dma_Set(gBgScroll, REG_BG0HOFS, 0x84000004, REG_DMA3);
+	Ui_LoadWindowGraphics();
+	Bg0_ClearTilemap();
+	REG_DISPCNT = 0x1540;
+	if (mode == 0)
+	{
+		Blend_SetDarkenTarget0(1);
+		Blend_WaitForTransition();
+		for (y = 0; y < 120; y++)
+		{
+			if (gKeyState & (KEY_A | KEY_START))
+			{
+				result = -1;
+				break;
+			}
+			WaitFrames(1);
+		}
+		return result;
+	}
+	for (y = 0; y < 60; y++)
+	{
+		if (gKeyState & (KEY_A | KEY_START))
+		{
+			result = -1;
+			break;
+		}
+		WaitFrames(1);
+	}
+	if (result != 0)
+		Blend_SetDarkenTarget0(8);
+	else
+		Blend_SetDarkenTarget0(60);
+	Blend_WaitForTransition();
+	if (result == 0)
+	{
+		for (y = 0; y < 180; y++)
+		{
+			if (gKeyState & (KEY_A | KEY_START))
+			{
+				result = -1;
+				break;
+			}
+			WaitFrames(1);
+		}
+	}
+	if (result != 0)
+		Blend_SetDarkenTarget16(8);
+	else
+		Blend_SetDarkenTarget16(60);
+	Blend_WaitForTransition();
+	return result;
+}
+
+s32 Title_ShowAnimatedSplash(void)
+{
+	s32 result;
+	u32 i;
+	u8 *buffer;
+	s32 resource;
+
+	gOamCopyEnabled = 1;
+	result = 0;
+	resource = (s32)&ResourceId_CamelotLogo;
+	Scheduler_ResetTaskTable();
+	Blend_SetDarkenTarget16(1);
+	Bg0_ClearTilemap();
+	WaitFrames(1);
+	REG_BG2CNT = 0x685;
+	REG_DISPCNT = 0x1440;
+	gBgScroll[2].y = result;
+	/* FAKEMATCH: needed to match: i carries the decode destination before it counts; a pointer of its own is coalesced with buffer (31 differ). */
+	i = (u32)Ram_MapCellBuffer;
+	Resource_DecodeType01(Resource_GetTableEntry(resource), (u8 *)i);
+	buffer = (u8 *)i;
+	Dma_Set(buffer, (void *)BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 0x1c0 / 4, REG_DMA3);
+	buffer += 0x1c0;
+	Dma_Set(buffer, BG_SCREEN_BLOCK(6), DMA_ENABLE32 | DMA_32BIT | 0x800 / 4, REG_DMA3);
+	buffer += 0x800;
+	Dma_Set(buffer, BG_CHAR_BLOCK(1), DMA_ENABLE32 | DMA_32BIT | 0x4000 / 4, REG_DMA3);
+	buffer += 0x4000;
+	for (i = 0; i < 4; i++)
+	{
+		gBgScroll[i].y = 0;
+		gBgScroll[i].x = 0;
+	}
+	Dma_Set(gBgScroll, REG_BG0HOFS, DMA_ENABLE32 | DMA_32BIT | 4, REG_DMA3);
+	Ui_LoadWindowGraphics();
+	Bg0_ClearTilemap();
+	Blend_SetBrightenTarget0(1);
+	Blend_WaitForTransition();
+	REG_DISPCNT = 0x1540;
+	for (i = 0; i < 120; i++)
+	{
+		Dma_Set(((gFrameCount >> 3) & 3) * 0x400 + buffer, BG_CHAR_BLOCK(1) + 0x100,
+			DMA_ENABLE32 | DMA_32BIT | 0x340 / 4, REG_DMA3);
+		if (gKeyState & (KEY_A | KEY_START))
+			break;
+		WaitFrames(1);
+	}
+	return result;
+}
+
+void Graphics_NoOpColor(void)
+{
+}
+
+//--------------------------------------------------------------------------
+
+// interpolate_buffers.c
+
+// パレット：フェードの 1 フレームあたりの変化量を求める
+
+//--------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------
+// 512 色の RGB 成分（1536 個）について、今の値から目標の値までを
+// frames で割った変化量を step に書く
+// src    : 今の成分
+// dst    : 目標の成分
+// step   : 変化量の書き込み先
+// frames : かけるフレーム数（0 以下なら何もしない）
+//--------------------------------------------------------------------------
+void Graphics_InterpolatePaletteBuffers(s16 *src, s16 *dst, s16 *step, s32 frames)
+{
+	s32 n;
+	s32 from;
+	s32 to;
+
+	if (frames > 0)
+	{
+		n = 3 * 512 - 1;
+		do
+		{
+			from = *src;
+			to = *dst;
+			*step = Iwram_SignedDivide(to - from, frames);
+			n--;
+			src++;
+			dst++;
+			step++;
+		} while (n >= 0);
+	}
+}
+
+void TitlePalette_UpdateFade(void)
+{
+	struct TitlePaletteWork *work = gPaletteBufferWork;
+	u16						*delta = work->delta;
+	u16						*current;
+	u16						*packed;
+	s32						 i;
+	u16						*bank;
+	s32						 blue;
+
+	if (work->duration == 0)
+		return;
+	if ((s8)++work->step < work->duration)
+	{
+		current = work->current;
+		for (i = 0; i <= 0x5ff; i++)
+			*current++ += *delta++;
+	}
+	else
+	{
+		Dma_Set(work->target, work->current, DMA_ENABLE32 | DMA_32BIT | 0x300, REG_DMA3);
+		work->duration = 0;
+	}
+	packed = work->packed[work->page ^ 1];
+	blue = 0x7c00;
+	i = 512;
+	current = work->current;
+	for (; i != 0; i--)
+	{
+		*packed++ = (current[0] & blue) | (((s16)current[1] >> 5) & 0x3e0)
+					| (((s16)current[2] >> 10) & 0x1f);
+		current += 3;
+	}
+	work->page ^= 1;
+	bank = work->packed[work->page];
+	{
+		u16 *front = bank;
+
+		IO_WRITE_QUEUE_PUSH(0x05000000, (u32)front, 0x84000080);
+	}
+	IO_WRITE_QUEUE_PUSH(0x05000200, (u32)(bank + 256), 0x84000080);
+}
+
+void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
+{
+	u32 i;
+	u32 cnt = 512;
+	s32 r;
+	s32 b;
+	u32 c;
+	s32 g;
+
+	if (mode == PALETTE_TRANSFORM_FROM_SOURCE)
+		mode = *src;
+	if (half == 1)
+	{
+		cnt = 256;
+	}
+	else if (half == 2)
+	{
+		dst += 768;
+		src += 256;
+		cnt = 256;
+	}
+
+	if (mode < PALETTE_TRANSFORM_FROM_SOURCE)
+	{
+		*dst++ = mode & 0x7c00;
+		*dst++ = (mode & 0x03e0) << 5;
+		*dst++ = (mode & 0x001f) << 10;
+		Dma_Set(dst - 3, dst, (((cnt - 1) * 6) >> 1) | DMA_ENABLE32, REG_DMA3);
+	}
+	else if (mode < PALETTE_TRANSFORM_FLAGS)
+	{
+		switch (mode)
+		{
+		case PALETTE_TRANSFORM_GREY:
+			for (i = 0; i < cnt; i++)
+			{
+				c = *src++;
+				r = ((c << 11) & 0xf800);
+				g = ((c << 7) & 0x1f000);
+				b = (c & 0x7c00);
+				c = Iwram_SignedDivide(r + g + b, 7);
+				*dst++ = c;
+				*dst++ = c;
+				*dst++ = c;
+			}
+			break;
+		case PALETTE_TRANSFORM_SEPIA:
+			for (i = 0; i < cnt; i++)
+			{
+				c = *src++;
+				r = c & 31;
+				c = Iwram_SignedDivide(r + ((c >> 5) & 31) + ((c >> 10) & 31), 10);
+				r = c * 4 + 5;
+				b = c * 3 + 5;
+				/* FAKEMATCH: needed to match: this reversible XOR initialization
+                 * folds late, preserving the blue-first add/copy and independent
+                 * lower comparison. Copying g = b before two XOR assignments
+                 * exchanges the add/copy registers (four aligned differences). */
+				g = b ^ r;
+				g ^= r;
+				if (r < 8)
+					r = 8;
+				if (b < 8)
+				{
+					g = 8;
+					/* FAKEMATCH: needed to match: g is 8, so this pair changes no bits. Its late fold retains the separate blue lower test; an ordinary copy threads past that test and loses two instructions. */
+					b ^= g;
+					b ^= 8;
+				}
+				if (b < 8)
+					b = 8;
+				if (r > 28)
+					r = 28;
+				if (g > 28)
+					g = 28;
+				if (b > 28)
+					b = 28;
+				*dst++ = Palette_ChannelCurveLight[b];
+				*dst++ = Palette_ChannelCurveLight[g];
+				*dst++ = Palette_ChannelCurveLight[r];
+			}
+			break;
+		case PALETTE_TRANSFORM_WARM:
+			for (i = 0; i < cnt; i++)
+			{
+				c = *src++;
+				r = c & 31;
+				g = (c >> 5) & 31;
+				b = (c >> 10) & 31;
+				r -= (u32)r >> 1;
+				g -= g / 3;
+				r += 6;
+				g += 4;
+				b -= 6;
+				r = Graphics_ClampRgb555Channel(r);
+				g = Graphics_ClampRgb555Channel(g);
+				b = Graphics_ClampRgb555Channel(b);
+				dst[0] = Palette_ChannelCurveContrast[b];
+				dst[1] = Palette_ChannelCurveLight[g];
+				dst[2] = Palette_ChannelCurve[r];
+				dst += 3;
+			}
+			break;
+		case PALETTE_TRANSFORM_MUTED:
+			for (i = 0; i < cnt; i++)
+			{
+				c = *src++;
+				r = c & 31;
+				g = (c >> 5) & 31;
+				b = (c >> 10) & 31;
+				if (r < 10)
+					r = 10;
+				if (g < 16)
+					g = 16;
+				if (b < 16)
+					b = 16;
+				if (r > 28)
+					r = 28;
+				if (g > 24)
+					g = 24;
+				if (b > 26)
+					b = 26;
+				g += 2;
+				b += 2;
+				r = Graphics_ClampRgb555Channel(r);
+				g = Graphics_ClampRgb555Channel(g);
+				b = Graphics_ClampRgb555Channel(b);
+				*dst++ = Palette_ChannelCurve[b];
+				*dst++ = Palette_ChannelCurve[g];
+				*dst++ = Palette_ChannelCurve[r];
+			}
+			break;
+		case PALETTE_TRANSFORM_PALE:
+			for (i = 0; i < cnt; i++)
+			{
+				s32 mean;
+
+				c = *src++;
+				r = c & 31;
+				g = (c >> 5) & 31;
+				b = (c >> 10) & 31;
+				mean = Graphics_ClampRgb555Channel((r + g + b) / 3);
+				r = (r >> 1) + mean;
+				g = (g >> 1) + mean;
+				b = (b >> 1) + mean;
+				r = Graphics_ClampRgb555Channel(r);
+				g = Graphics_ClampRgb555Channel(g);
+				b = Graphics_ClampRgb555Channel(b);
+				dst[0] = Palette_ChannelCurveContrast[b];
+				dst[1] = Palette_ChannelCurveContrast[g];
+				dst[2] = Palette_ChannelCurveContrast[r];
+				dst += 3;
+			}
+			break;
+		case PALETTE_TRANSFORM_RED:
+			for (i = 0; i < cnt; i++)
+			{
+				c = *src++;
+				r = c & 31;
+				g = (c >> 5) & 31;
+				b = (c >> 10) & 31;
+				r += ((g >> 3) + (b >> 3));
+				r = Graphics_ClampRgb555Channel(r);
+				g -= g / 3;
+				b -= b / 3;
+				dst[0] = Palette_ChannelCurve[b];
+				dst[1] = Palette_ChannelCurve[g];
+				dst[2] = Palette_ChannelCurveLight[r];
+				dst += 3;
+			}
+			break;
+		case PALETTE_TRANSFORM_WARM2:
+			for (i = 0; i < cnt; i++)
+			{
+				c = *src++;
+				r = c & 31;
+				g = (c >> 5) & 31;
+				b = (c >> 10) & 31;
+				r -= (u32)r >> 1;
+				g -= g / 3;
+				r += 6;
+				g += 4;
+				b -= 6;
+				r = Graphics_ClampRgb555Channel(r);
+				g = Graphics_ClampRgb555Channel(g);
+				b = Graphics_ClampRgb555Channel(b);
+				dst[0] = Palette_ChannelCurveContrast[b];
+				dst[1] = Palette_ChannelCurveLight[g];
+				dst[2] = Palette_ChannelCurve[r];
+				dst += 3;
+			}
+			break;
+		default:
+			for (i = 0; i < cnt; i++)
+			{
+				c = *src++;
+				dst[i * 3 + 0] = c & 0x7c00;
+				dst[i * 3 + 1] = (c & 0x03e0) << 5;
+				dst[i * 3 + 2] = (c & 0x001f) << 10;
+			}
+			break;
+		}
+	}
+	else if (mode & PALETTE_TRANSFORM_TINT)
+	{
+		u32 tr;
+		u32 tg;
+		u32 tb;
+
+		tr = mode & 31;
+		tg = (mode >> 5) & 31;
+		tb = (mode >> 10) & 31;
+		for (i = 0; i < cnt; i++)
+		{
+			c = *src++;
+			r = ((c << 11) & 0xf800);
+			g = ((c << 7) & 0x1f000);
+			b = (c & 0x7c00);
+			c = Iwram_SignedDivide(r + g + b, 96);
+			r = c * tr;
+			g = c * tg;
+			b = c * tb;
+			r = Graphics_ClampRgb555Component(r);
+			g = Graphics_ClampRgb555Component(g);
+			b = Graphics_ClampRgb555Component(b);
+			dst[0] = b;
+			dst[1] = g;
+			dst[2] = r;
+			dst += 3;
+		}
+	}
+	else if (mode & PALETTE_TRANSFORM_BLEND)
+	{
+		u32 tr;
+		u32 tg;
+		u32 tb;
+
+		tr = mode & 31;
+		tg = (mode >> 5) & 31;
+		tb = (mode >> 10) & 31;
+		for (i = 0; i < cnt; i++)
+		{
+			c = *src++;
+			r = c & 31;
+			c = Iwram_SignedDivide((r + ((c >> 5) & 31) + ((c >> 10) & 31)) << 4, tr + tg + tb);
+			r = Iwram_MulQ16(((c * tr) >> 4) << 16, (s32)(tr << 16) >> 4);
+			g = Iwram_MulQ16(((c * tg) >> 4) << 16, (s32)(tg << 16) >> 4);
+			b = Iwram_MulQ16(((c * tb) >> 4) << 16, (s32)(tb << 16) >> 4);
+			r = Graphics_ClampRgb555Channel((u32)r >> 16);
+			g = Graphics_ClampRgb555Channel((u32)g >> 16);
+			b = Graphics_ClampRgb555Channel((u32)b >> 16);
+			*dst++ = Palette_ChannelCurve[b];
+			*dst++ = Palette_ChannelCurve[g];
+			*dst++ = Palette_ChannelCurve[r];
+		}
+	}
+	else if (mode & PALETTE_TRANSFORM_SPLIT)
+	{
+		for (i = 0; i < cnt; i++)
+		{
+			c = *src++;
+			dst[i * 3 + 0] = c & 0x7c00;
+			dst[i * 3 + 1] = (c & 0x03e0) << 5;
+			dst[i * 3 + 2] = (c & 0x001f) << 10;
+		}
+	}
+	else
+	{
+		if (half == 2)
+			mode += 0x600;
+		Dma_Set((const void *)mode, dst, ((cnt * 6) >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
+	}
+}
+
+void TitlePalette_InitializeBuffers(void)
+{
+	volatile u32			 zero;
+	struct TitlePaletteWork *buffer;
+	s32						 operation;
+
+	buffer = Runtime_AllocateBlock(32, sizeof(*buffer));
+	zero = 0;
+	Dma_Set(&zero, buffer, 0x85000c01, REG_DMA3);
+	Dma_Set((void *)0x05000000, buffer, 0x84000080, REG_DMA3);
+	Dma_Set((void *)0x05000200, &buffer->palette[256], 0x84000080, REG_DMA3);
+	Graphics_TransformPaletteBuffer(0x10000, buffer->palette, buffer->target, 0);
+	operation = 3200;
+	Scheduler_AddOrUpdateCallback(TitlePalette_UpdateFade, operation);
+}
+
+void Runtime_ScheduleCallbackAndReleaseBlock32A(void)
+{
+	Scheduler_RemoveCallback(&TitlePalette_UpdateFade);
+	Runtime_ReleaseHeapBlock(0x20);
+}
+
+void Graphics_TransformLargePalette(s32 index, s32 transform)
+{
+	struct TitlePaletteWork *target = gPaletteBufferWork;
+
+	if (target != NULL)
+		Graphics_TransformPaletteBuffer(index, target->palette, target->target, transform);
+}
+
+void Graphics_TransformSmallPalette(s32 index, s32 transform)
+{
+	struct TitlePaletteWork *target = gPaletteBufferWork;
+
+	if (target != NULL)
+		Graphics_TransformPaletteBuffer(index, target, target->current, transform);
+}
+
+void Graphics_SetPaletteTransformValue(s32 value)
+{
+	struct TitlePaletteWork *target = gPaletteBufferWork;
+
+	if (target != NULL)
+		target->palette[0] = value;
+}
+
+void Graphics_UpdatePaletteInterpolation(s32 value)
+{
+	struct TitlePaletteWork *state = gPaletteBufferWork;
+
+	if (state != NULL)
+	{
+		state->duration = value;
+		state->step = 0;
+		Graphics_InterpolatePaletteBuffers(state->current, state->target, state->delta, value);
+	}
+}
+
+//--------------------------------------------------------------------------
+
+// palette.c
+
+// パレット：RGB555 の成分を範囲に収める
+
+//--------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------
+// 5 ビットの成分を 0〜31 に収める
+//--------------------------------------------------------------------------
+s32 Graphics_ClampRgb555Channel(s32 val)
+{
+	if (val > 31)
+		return 31;
+	if (val < 0)
+		val = 0;
+	return val;
+}
+
+//--------------------------------------------------------------------------
+// 値の上限を 0x7c00（RGB555 の青の最大と同じ値）に収める。下限はない
+//--------------------------------------------------------------------------
+s32 Graphics_ClampRgb555Component(s32 val)
+{
+	if (val > 0x7c00)
+		val = 0x7c00;
+	return val;
 }

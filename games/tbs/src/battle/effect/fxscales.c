@@ -1,3 +1,4 @@
+#include "unit/battle/effect/fxscales.h"
 #include "types.h"
 
 // 拡大率 {x, y} (Q16)

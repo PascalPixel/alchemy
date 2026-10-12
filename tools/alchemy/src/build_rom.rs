@@ -1021,6 +1021,19 @@ fn compile_all(
     output: &Path,
     index: &Index,
 ) -> Result<Vec<PathBuf>, String> {
+    compile_told(root, build, sources, &BTreeMap::new(), output, index)
+}
+
+/// Compile and assemble sources, an import table among them with the
+/// symbols the assembler is told for it (`ImportList`).
+fn compile_told(
+    root: &Path,
+    build: Build,
+    sources: &[PathBuf],
+    told: &BTreeMap<PathBuf, Vec<String>>,
+    output: &Path,
+    index: &Index,
+) -> Result<Vec<PathBuf>, String> {
     let target = build.target;
     let objects: Vec<PathBuf> = sources
         .iter()
@@ -1028,7 +1041,8 @@ fn compile_all(
         .collect();
     let pairs: Vec<(&PathBuf, &PathBuf)> = sources.iter().zip(&objects).collect();
     let plans = parallel(&pairs, |(source, object)| {
-        plan(root, build, source, object, index)
+        let told = told.get(*source).map_or(&[][..], Vec::as_slice);
+        plan(root, build, source, object, told, index)
             .map_err(|error| format!("{}: {error}", source.display()))
     })?;
     let stale: Vec<Plan> = plans.into_iter().flatten().collect();
@@ -1065,6 +1079,7 @@ fn plan(
     build: Build,
     source: &Path,
     object: &Path,
+    told: &[String],
     index: &Index,
 ) -> Result<Option<Plan>, String> {
     let target = build.target;
@@ -1137,9 +1152,12 @@ fn plan(
             .and_then(Path::parent)
             .ok_or("an object lies outside its build's obj directory")?;
         assembly_inputs(&mut hasher, root, target, source, base, index)?;
-        let steps = target_assembly_steps(target, &source_text, &object_text, base);
+        let mut steps = target_assembly_steps(target, &source_text, &object_text, base);
         if steps.len() > 1 {
             scratch.push(object.with_extension("i"));
+        }
+        if let Some(assemble) = steps.last_mut() {
+            assemble.splice(1..1, told_arguments(told));
         }
         steps
     };
@@ -1742,7 +1760,39 @@ fn build_overlay_streams(
     let mut asset_sources = sources.clone();
     asset_sources.extend(ids.iter().filter_map(|id| overlay_data(root, target, id)));
     prepare_assets(root, target, &asset_sources, output, index)?;
-    compile_all(root, build, &sources, output, index)?;
+    // An overlay's import table is assembled after its other objects: the
+    // assembler is told which stubs of the game's import list they call.
+    let list = ImportList::read(root, target)?;
+    let (tables, others): (Vec<PathBuf>, Vec<PathBuf>) = sources
+        .iter()
+        .cloned()
+        .partition(|source| list.as_ref().is_some_and(|list| list.read_by(root, source)));
+    compile_all(root, build, &others, output, index)?;
+    if let Some(list) = &list {
+        let object = |source: &PathBuf| output.join("obj").join(source).with_extension("o");
+        let table_objects: Vec<PathBuf> = tables.iter().map(object).collect();
+        let mut told: BTreeMap<PathBuf, Vec<String>> = BTreeMap::new();
+        for (id, _, objects) in &linked {
+            let rest: Vec<PathBuf> = objects
+                .iter()
+                .filter(|object| !table_objects.contains(object))
+                .map(|object| root.join(object))
+                .collect();
+            if rest.len() == objects.len() {
+                continue;
+            }
+            let symbols = list.told(&rest).map_err(|error| format!("resource_{id}: {error}"))?;
+            for (table, _) in tables.iter().zip(&table_objects).filter(|(_, object)| objects.contains(object)) {
+                if told.insert(table.clone(), symbols.clone()).is_some_and(|known| known != symbols) {
+                    return Err(format!(
+                        "{}: overlays that call different stubs share this import table",
+                        table.display()
+                    ));
+                }
+            }
+        }
+        compile_told(root, build, &tables, &told, output, index)?;
+    }
     parallel(&linked, |(id, script, objects)| {
         let overlay = Overlay {
             root,
@@ -1769,6 +1819,116 @@ fn build_overlay_streams(
             .map(|data| (data, directory.join(format!("resource_{id}_overlay.o"))))
     }));
     Ok(objects)
+}
+
+/// A game's import list, in games/<game>/src/system/overlay.inc after the
+/// head of its stub tables: the stubs its overlays import, one
+/// `import NAME, TARGET` row each, in the order every overlay keeps them;
+/// every other line of the file is skipped. An overlay's import table is
+/// the assembler source that sets `overlay_imports` and includes the file:
+/// an entry table includes it too and, not setting the symbol, reads no
+/// row. The assembler writes the stub of a row when it is told the symbol
+/// `import.NAME`, and the build tells it the names the overlay's other
+/// objects call and none of them defines: what a linker takes from a
+/// library of stubs. A game whose file has no row, or no such file, writes
+/// its tables by hand.
+struct ImportList {
+    path: String,
+    names: BTreeSet<String>,
+}
+
+/// The symbol an import table sets before it includes the file: the
+/// assembler reads the list's rows only where it is set.
+const IMPORT_TABLE: &str = "overlay_imports";
+
+impl ImportList {
+    fn read(root: &Path, target: DecompTarget) -> Result<Option<Self>, String> {
+        let path = format!("{}/src/system/overlay.inc", target.game_dir());
+        match fs::read_to_string(root.join(&path)) {
+            Ok(text) => {
+                let names = import_names(&text);
+                Ok((!names.is_empty()).then_some(Self { names, path }))
+            }
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
+            Err(error) => Err(format!("{path}: {error}")),
+        }
+    }
+
+    /// Whether an assembler source is an import table: it sets the list's
+    /// symbol and includes the list.
+    fn read_by(&self, root: &Path, source: &Path) -> bool {
+        source.extension().is_some_and(|extension| extension == "s")
+            && fs::read_to_string(root.join(source))
+                .is_ok_and(|text| sets(&text, IMPORT_TABLE) && includes(&text, &self.path))
+    }
+
+    /// The symbols the assembler is told for the table of an overlay with
+    /// these other objects.
+    fn told(&self, objects: &[PathBuf]) -> Result<Vec<String>, String> {
+        use object::{Object, ObjectSymbol};
+        let (mut undefined, mut defined) = (BTreeSet::new(), BTreeSet::new());
+        for path in objects {
+            let bytes = fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
+            let file = object::File::parse(&*bytes).map_err(|error| format!("{}: {error}", path.display()))?;
+            for symbol in file.symbols() {
+                let Ok(name) = symbol.name() else { continue };
+                if symbol.is_undefined() {
+                    undefined.insert(name.to_owned());
+                } else if symbol.is_global() {
+                    defined.insert(name.to_owned());
+                }
+            }
+        }
+        Ok(told_imports(&self.names, &undefined, &defined))
+    }
+}
+
+/// Whether an assembler source's text includes a file by this path.
+fn includes(text: &str, path: &str) -> bool {
+    text.lines().any(|line| {
+        line.trim()
+            .strip_prefix(".include")
+            .is_some_and(|rest| rest.trim().trim_matches('"') == path)
+    })
+}
+
+/// Whether an assembler source's text sets this symbol with `.set`.
+fn sets(text: &str, symbol: &str) -> bool {
+    text.lines().any(|line| {
+        line.trim()
+            .strip_prefix(".set")
+            .and_then(|rest| rest.strip_prefix(char::is_whitespace))
+            .and_then(|rest| rest.split(',').next())
+            .is_some_and(|name| name.trim() == symbol)
+    })
+}
+
+/// The names an import list binds: the first operand of each `import` row.
+fn import_names(list: &str) -> BTreeSet<String> {
+    list.lines()
+        .filter_map(|line| line.trim().strip_prefix("import")?.strip_prefix(char::is_whitespace))
+        .filter_map(|row| row.split(',').next())
+        .map(|name| name.trim().to_owned())
+        .filter(|name| !name.is_empty())
+        .collect()
+}
+
+/// The symbols told for an import table, `import.NAME` in the order of the
+/// names: the list's names an overlay's other objects leave undefined, less
+/// those one of them defines.
+fn told_imports(names: &BTreeSet<String>, undefined: &BTreeSet<String>, defined: &BTreeSet<String>) -> Vec<String> {
+    undefined
+        .iter()
+        .filter(|name| names.contains(*name) && !defined.contains(*name))
+        .map(|name| format!("import.{name}"))
+        .collect()
+}
+
+/// The assembler's arguments for the symbols a source is told; they stay
+/// out of its object's symbol table.
+fn told_arguments(told: &[String]) -> Vec<String> {
+    let strip = (!told.is_empty()).then(|| "--strip-local-absolute".to_owned());
+    strip.into_iter().chain(told.iter().flat_map(|symbol| ["--defsym".to_owned(), format!("{symbol}=1")])).collect()
 }
 
 /// An overlay's linker script: its text as the linker reads it, and the
@@ -2051,10 +2211,10 @@ fn overlay_script_inputs(
 
 fn overlay_gate(elf: &str, map: &str, modern: bool) -> Result<(), String> {
     let image = fs::read(elf).map_err(|error| format!("{elf}: {error}"))?;
-    if modern {
-        return crate::gate::overlay::check_modern(&image);
-    }
     let map = fs::read_to_string(map).map_err(|error| format!("{map}: {error}"))?;
+    if modern {
+        return crate::gate::overlay::check_modern(&image, &map);
+    }
     crate::gate::overlay::check(&image, &map)
 }
 
@@ -2292,6 +2452,54 @@ mod tests {
         for name in ["obj", "overlays", "text", "symbols", "tbs-en.gba", "Map", "_x", ""] {
             assert!(!asset_root(name), "{name}");
         }
+    }
+
+    #[test]
+    fn an_import_table_is_told_the_stubs_its_overlay_calls() {
+        let root = tempfile::tempdir().unwrap();
+        let folder = root.path().join("games/tbs/src/system");
+        fs::create_dir_all(&folder).unwrap();
+        fs::create_dir_all(root.path().join("games/tbs/src/field/mura")).unwrap();
+        let target = decomp_target(Some("tbs-en")).unwrap();
+        // A game without the list writes its tables by hand: it has no
+        // such file, or the file is the head of its stub tables alone.
+        assert!(ImportList::read(root.path(), target).unwrap().is_none());
+        let head = "@ the head\n\t.thumb\n\t.balign 4\n\t.include \"games/common/src/system/overlay.s\"\n";
+        fs::write(folder.join("overlay.inc"), head).unwrap();
+        assert!(ImportList::read(root.path(), target).unwrap().is_none());
+        // The list follows the head; a line that is not a row is skipped.
+        let rows = "@ the list: a row is `import NAME, TARGET`\n\
+             \t.macro import name, target\n\t.ifdef import.\\name\n\\name:\n\toverlay_veneer \\target\n\t.endif\n\t.endm\n\t.ifdef overlay_imports\n\
+             \timport __divsi3, IwramSignedDivide\n\timport Engine_TaskWait, WaitFramesFar\n\timport Object_GetById, Object_GetByIdFar\n\
+             \t.endif\n";
+        fs::write(folder.join("overlay.inc"), format!("{head}{rows}")).unwrap();
+        let list = ImportList::read(root.path(), target).unwrap().unwrap();
+        assert_eq!(list.names.iter().map(String::as_str).collect::<Vec<_>>(), ["Engine_TaskWait", "Object_GetById", "__divsi3"]);
+        // The table is the assembler source that sets the list's symbol
+        // and includes the file; an entry table includes the same file.
+        let include = "\t.include \"games/tbs/src/system/overlay.inc\"\n";
+        let table = format!("@ C2: veneers\n\t.set overlay_imports, 1\n{include}");
+        fs::write(root.path().join("games/tbs/src/field/mura/import.s"), table).unwrap();
+        fs::write(root.path().join("games/tbs/src/field/mura/entry.s"), format!("{include}\toverlay_veneer Scene_Initialize\n")).unwrap();
+        fs::write(root.path().join("games/tbs/src/field/mura/other.s"), "\t.set overlay_imports, 1\n").unwrap();
+        assert!(list.read_by(root.path(), Path::new("games/tbs/src/field/mura/import.s")));
+        assert!(!list.read_by(root.path(), Path::new("games/tbs/src/field/mura/entry.s")));
+        assert!(!list.read_by(root.path(), Path::new("games/tbs/src/field/mura/other.s")));
+        assert!(!list.read_by(root.path(), Path::new("games/tbs/src/field/mura/mura.c")));
+        // Told: what the other objects call of the list, less what one of
+        // them defines; a name the list does not bind is the linker's.
+        let set = |names: &[&str]| names.iter().map(|name| (*name).to_owned()).collect::<BTreeSet<_>>();
+        let told = told_imports(
+            &list.names,
+            &set(&["Object_GetById", "__divsi3", "gEventWork", "Engine_TaskWait"]),
+            &set(&["Engine_TaskWait", "Scene_Initialize"]),
+        );
+        assert_eq!(told, ["import.Object_GetById", "import.__divsi3"]);
+        assert_eq!(
+            told_arguments(&told),
+            ["--strip-local-absolute", "--defsym", "import.Object_GetById=1", "--defsym", "import.__divsi3=1"]
+        );
+        assert!(told_arguments(&[]).is_empty());
     }
 
     #[test]

@@ -149,11 +149,11 @@ LAYOUT_OFFSET_GUARD(BattleUnit_EnemyId, struct BtlUnit, enemy_id, 0x14a);
 
 // HP と PP を上限まで戻す
 /* FAKEMATCH: the one-pass block keeps both copies ahead of the gauge ratio that follows (Party_ApplyStatePreset, Owner_RefreshActiveRatios, Party_RemoveOwnerRestored, Party_SetReturnPoint). Not source: the same two stores match only as plain statements in kyuden.c, sell.c and solo_competitor.c, where the block changes the saved registers (kyuden.c, sell.c) and the object differs. */
-#define Unit_Recover(unit)             \
-	do                                 \
-	{                                  \
-		(unit)->hp = (unit)->max_hp;   \
-		(unit)->ep = (unit)->max_ep;   \
+#define Unit_Recover(unit)           \
+	do                               \
+	{                                \
+		(unit)->hp = (unit)->max_hp; \
+		(unit)->ep = (unit)->max_ep; \
 	} while (0)
 
 #endif

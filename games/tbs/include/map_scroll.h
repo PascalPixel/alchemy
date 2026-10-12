@@ -54,7 +54,4 @@ struct BgScroll
 
 extern struct BgScroll gBgScroll[];
 
-void Map_RenderPaletteMappedBlock(u32 layer, s32 x, s32 y);
-void Map_RenderMetatileRow(u32 layer, s32 x, s32 y);
-
 #endif

@@ -96,8 +96,6 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts)
 
 #if GAME_TLA
 	work = Ram_HeapSlots->battle_work;
-#else
-	work = BtlWk;
 #endif
 	{
 		struct BattleActionRecord *rec = work->actions;
@@ -115,8 +113,6 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts)
 	// コマンドを選ぶあいだ立てるフラグ
 #if GAME_TLA
 	GameFlag_SetBit(363);
-#else
-	GameFlag_SetBitFar(363);
 #endif
 	mode = &work->encounter_mode;
 	Camera_ConfigureScene(0);
@@ -140,9 +136,6 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts)
 	// 通信対戦の相手か、敵の行動
 #if GAME_TLA
 	if (Ram_HeapSlots->battle_work->two_sided != 0)
-	{
-#else
-	if (BtlWk->two_sided != 0)
 	{
 #endif
 		add = BattlePresentation_AppendLinkedActions(acts, cnt);
@@ -177,9 +170,6 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts)
 #if GAME_TLA
 				unit = UnitGet(act->unit_id);
 				unit->guard_lv = act->command == 3 ? 1 : 3;
-#else
-				unit = UnitGetFar(act->unit_id);
-				unit->guard_lv = act->command == 3 ? 1 : 2;
 #endif
 			}
 			act++;
@@ -190,14 +180,10 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts)
 finish:
 #if GAME_TLA
 	GameFlag_ClearBit(363);
-#else
-	GameFlag_ClearBitFar(363);
 #endif
 	Camera_InitDefaultTransform();
 #if GAME_TLA
 	Ram_HeapSlots->transition_work->target_yaw = 0x2000;
-#else
-	gTransitionWork->target_yaw = 0x2000;
 #endif
 	return cnt;
 }
@@ -210,8 +196,6 @@ s16 Battle_GetTaggedSlotValue(s32 slot)
 {
 #if GAME_TLA
 	struct BtlWork *work = Ram_HeapSlots->battle_work;
-#else
-	struct BtlWork *work = BtlWk;
 #endif
 
 	if ((slot & 0x80) != 0)
@@ -228,8 +212,6 @@ s32 Battle_FindTaggedSlotByValue(u32 id)
 {
 #if GAME_TLA
 	struct BtlWork *work = Ram_HeapSlots->battle_work;
-#else
-	struct BtlWork *work = BtlWk;
 #endif
 	s32 i;
 	s16 unit;

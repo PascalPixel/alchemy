@@ -22,7 +22,7 @@ u32 Random16(void);
 #endif
 extern u32 gRandomState;
 
-extern volatile u16 gSleepActive;
+extern u16 gSleepActive;
 
 /* SYSTEM */
 
@@ -51,7 +51,7 @@ extern u32 Flash_Handler4;
 extern struct FlashChipInfo *gFlash;
 #endif
 #ifndef OWN_gFlashSavedIme
-extern volatile u16 gFlashSavedIme;
+extern u16 gFlashSavedIme;
 #endif
 #ifndef OWN_gFlashTimeoutFlag
 extern u8 gFlashTimeoutFlag;
@@ -59,7 +59,7 @@ extern u8 gFlashTimeoutFlag;
 #ifndef OWN_gFlashTimerCount
 extern volatile u16 gFlashTimerCount;
 #endif
-extern volatile u8 gFlashTimerNum;
+extern u8 gFlashTimerNum;
 extern u8		   gNumberTextDecimalEnd[];
 extern u8		   gNumberTextHexEnd[];
 extern u8		   Link_TimeLabelString[];

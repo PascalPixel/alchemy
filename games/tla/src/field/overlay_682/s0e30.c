@@ -2,6 +2,23 @@
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
 #include "call.h"
+
+s32 UiText_OpenMessageAtObject();
+
+static __inline__ void Ov682_MesOpen(s32 speaker, s32 flags)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    UiText_OpenMessageAtObject(speaker, flags);
+}
+
+#define OV682_EMOTE(actor, emote, frames) \
+    { \
+        /* FAKEMATCH: the native loads the emote and the frames before the actor at every emote of this overlay; pinned to their argument registers they are loaded first, as there. Through an inline the actor comes one row early wherever the emote takes two instructions, and an empty asm barrier at each call moves the literal pools of a long scene. */ \
+        register s32 emote_ __asm__("r1") = (emote); \
+        /* FAKEMATCH: the frames, pinned with the emote above. */ \
+        register s32 frames_ __asm__("r2") = (frames); \
+        Func_02002b1c((actor), emote_, frames_); \
+    }
 s32 GameFlag_Test();
 s32 GameFlag_SetBit();
 s32 Func_02002a44();
@@ -75,12 +92,8 @@ void Func_02000e30(void)
     Call3(Func_02002a9c, 0x1b, 0xa80000, 0x2680000);
     Call1(Func_02002bc4, 0x4e);
     Call2(Func_02002af4, 0x19, 0);
-    {
-        s32 b = 0x101, c = 0x14;
-        /* FAKEMATCH: the native schedule sets the first argument last. */
-        __asm__ volatile("" : "+l"(b), "+l"(c));
-        Call3(Func_02002b1c, 4, b, c);
-    }
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(4, 0x101, 0x14)
     Call3(ObjectMotion_SetPositionAndReset, 4, 0x138, 0x268);
     Call4(Motion_CamBounds, 0x1380000, -1, 0x2580000, 1);
     Func_02002b3c();
@@ -93,12 +106,8 @@ void Func_02000e30(void)
     Call4(Func_02002b74, 6, -16, 0x10, 0xc000);
     Call4(Func_02002b74, 0x1c, -32, 0, 0xd000);
     Call1(ObjectMotion_CommitCurrentPositionAndActivate, 0x1c);
-    {
-        s32 b = 0x100, c = 0x1e;
-        /* FAKEMATCH: the native schedule sets the first argument last. */
-        __asm__ volatile("" : "+l"(b), "+l"(c));
-        Call3(Func_02002b1c, 6, b, c);
-    }
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(6, 0x100, 0x1e)
     Call2(Func_02002af4, 6, 0);
     Call2(Motion_SetModeAndWaitAnimation, 0x19, 3);
     Call1(Battle_WaitMode0, 0x14);
@@ -109,10 +118,12 @@ void Func_02000e30(void)
     Call2(Func_02002af4, 0x1c, 0);
     Call3(ObjectMotion_ArmCallback, 0x1c, 0xd000, 0);
     Call2(Func_02002b04, 7, 0xc000);
-    Func_02002b1c(7, 0x100, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(7, 0x100, 0x1e)
     Call2(Func_02002af4, 7, 0);
-    Func_02002b1c(0x19, 0x101, 0x1e);
-    Call2(UiText_OpenMessageAtObject, 0x2019, 0);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x19, 0x101, 0x1e)
+    Ov682_MesOpen(0x2019, 0);
     t42 = Value2(Inventory_PromptAndSetObjectMode, 4, 0);
     if (t42 == 0) {
         Call1(Battle_WaitMode0, 0xf);
@@ -126,27 +137,22 @@ void Func_02000e30(void)
     Call3(ObjectMotion_ArmCallback, 7, 0, 0);
     Call2(Func_02002b04, 4, 0x8000);
     Call1(Battle_WaitMode0, 0xa);
-    {
-        s32 b = 0x101, c = 0;
-        /* FAKEMATCH: the native schedule sets the first argument last. */
-        __asm__ volatile("" : "+l"(b), "+l"(c));
-        Call3(Func_02002b1c, 7, b, c);
-    }
-    {
-        s32 b = 0x101, c = 0;
-        /* FAKEMATCH: the native schedule sets the first argument last. */
-        __asm__ volatile("" : "+l"(b), "+l"(c));
-        Call3(Func_02002b1c, 4, b, c);
-    }
-    Func_02002b1c(0x1c, 0x101, 0x32);
-    Func_02002b1c(5, 0x107, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(7, 0x101, 0)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(4, 0x101, 0)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x1c, 0x101, 0x32)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(5, 0x107, 0x1e)
     Call2(Func_02002af4, 0x2005, 0);
     Call3(ObjectMotion_ArmCallback, 0x1c, 0xd000, 0);
     Call3(ObjectMotion_ArmCallback, 7, 0xc000, 0);
     Call2(Func_02002b04, 4, 0xc000);
     Call1(Battle_WaitMode0, 0xa);
     Call2(Func_02002b04, 0x19, 0x3000);
-    Func_02002b1c(0x19, 0x109, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x19, 0x109, 0x1e)
     Call2(Func_02002af4, 0x2019, 0);
     Call1(Battle_WaitMode0, 5);
     UiText_OpenMessageAtObject(0x2019, 0);
@@ -172,7 +178,8 @@ void Func_02000e30(void)
         Call2(Func_02002af4, 6, 0);
     }
     Call2(Func_02002b04, 0x19, 0x5000);
-    Call3(Func_02002b1c, 0x19, 0x105, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x19, 0x105, 0x1e)
     Call2(Func_02002af4, 0x2019, 0);
     Call3(ObjectMotion_ArmCallback, 4, 0xc000, 0);
     Call3(ObjectMotion_ArmCallback, 5, 0xc000, 0);
@@ -201,38 +208,24 @@ void Func_02000e30(void)
     Call2(Func_02002b04, 0x1c, 0);
     Call3(ObjectMotion_SetPositionAndReset, 0x1a, 0x158, 0x268);
     Call1(Battle_WaitMode0, 5);
-    {
-        s32 b = 0x102, c = 0;
-        /* FAKEMATCH: the native schedule sets the first argument last. */
-        __asm__ volatile("" : "+l"(b), "+l"(c));
-        Call3(Func_02002b1c, 4, b, c);
-    }
-    {
-        s32 b = 0x102, c = 0;
-        /* FAKEMATCH: the native schedule sets the first argument last. */
-        __asm__ volatile("" : "+l"(b), "+l"(c));
-        Call3(Func_02002b1c, 5, b, c);
-    }
-    {
-        s32 b = 0x102, c = 0;
-        /* FAKEMATCH: the native schedule sets the first argument last. */
-        __asm__ volatile("" : "+l"(b), "+l"(c));
-        Call3(Func_02002b1c, 6, b, c);
-    }
-    {
-        s32 b = 0x102, c = 0;
-        /* FAKEMATCH: the native schedule sets the first argument last. */
-        __asm__ volatile("" : "+l"(b), "+l"(c));
-        Call3(Func_02002b1c, 7, b, c);
-    }
-    Call3(Func_02002b1c, 0x1c, 0x102, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(4, 0x102, 0)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(5, 0x102, 0)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(6, 0x102, 0)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(7, 0x102, 0)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x1c, 0x102, 0x1e)
     Call2(Motion_SetVarCbAndRefresh, 6, 2);
     Call2(Func_02002af4, 6, 0);
     Call2(Motion_SetModeAndWaitAnimation, 0x1a, 3);
     Call2(Func_02002af4, 0x1a, 0);
     Call2(Func_02002b04, 5, 0xc000);
     Call2(Func_02002af4, 0x2005, 0);
-    Call3(Func_02002b1c, 0x19, 0x108, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x19, 0x108, 0x1e)
     Call2(Func_02002af4, 0x2019, 0);
     Call2(Func_02002af4, 0x1b, 0);
     Call2(ObjectMotion_SetVariantCallback, 4, 3);
@@ -254,32 +247,18 @@ void Func_02000e30(void)
     Call2(Func_02002b04, 0x1c, 0x8000);
     Call3(ObjectMotion_SetPositionAndReset, 0x1b, 0xe8, 0x268);
     Call1(Battle_WaitMode0, 0xa);
-    {
-        s32 b = 0x101, c = 0;
-        /* FAKEMATCH: the native schedule sets the first argument last. */
-        __asm__ volatile("" : "+l"(b), "+l"(c));
-        Call3(Func_02002b1c, 4, b, c);
-    }
-    {
-        s32 b = 0x101, c = 0;
-        /* FAKEMATCH: the native schedule sets the first argument last. */
-        __asm__ volatile("" : "+l"(b), "+l"(c));
-        Call3(Func_02002b1c, 5, b, c);
-    }
-    {
-        s32 b = 0x101, c = 0;
-        /* FAKEMATCH: the native schedule sets the first argument last. */
-        __asm__ volatile("" : "+l"(b), "+l"(c));
-        Call3(Func_02002b1c, 6, b, c);
-    }
-    {
-        s32 b = 0x101, c = 0;
-        /* FAKEMATCH: the native schedule sets the first argument last. */
-        __asm__ volatile("" : "+l"(b), "+l"(c));
-        Call3(Func_02002b1c, 7, b, c);
-    }
-    Call3(Func_02002b1c, 0x1c, 0x101, 0x3c);
-    Call3(Func_02002b1c, 0x19, 0x101, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(4, 0x101, 0)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(5, 0x101, 0)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(6, 0x101, 0)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(7, 0x101, 0)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x1c, 0x101, 0x3c)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x19, 0x101, 0x1e)
     Call2(Func_02002af4, 0x2019, 0);
     Call2(Func_02002b04, 0x1a, 0xb000);
     Call2(Func_02002af4, 0x1a, 0);
@@ -295,13 +274,10 @@ void Func_02000e30(void)
     Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
     Call2(Func_02002b04, 6, 0);
     Call1(Battle_WaitMode0, 0xa);
-    {
-        s32 b = 0x103, c = 0;
-        /* FAKEMATCH: the native schedule sets the first argument last. */
-        __asm__ volatile("" : "+l"(b), "+l"(c));
-        Call3(Func_02002b1c, 6, b, c);
-    }
-    Call3(Func_02002b1c, 5, 0x103, 0x32);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(6, 0x103, 0)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(5, 0x103, 0x32)
     Call2(Func_02002b04, 0x19, 0x3000);
     Call2(Motion_SetModeAndWaitAnimation, 0x19, 4);
     Call2(Func_02002af4, 0x2019, 0);
@@ -313,16 +289,20 @@ void Func_02000e30(void)
     Call1(Battle_WaitMode0, 0xa);
     Call2(Func_02002b04, 0x19, 0x5000);
     Call1(Battle_WaitMode0, 5);
-    Call3(Func_02002b1c, 0x19, 0x108, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x19, 0x108, 0x1e)
     Call2(Func_02002af4, 0x2019, 0);
-    Call3(Func_02002b1c, 7, 0x100, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(7, 0x100, 0x1e)
     Call2(Func_02002af4, 7, 0);
     Call2(Motion_SetModeAndWaitAnimation, 0x19, 3);
     Call1(Battle_WaitMode0, 0xa);
     Call2(Func_02002af4, 0x2019, 0);
-    Call3(Func_02002b1c, 0x19, 0x105, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x19, 0x105, 0x1e)
     Call2(Func_02002af4, 0x2019, 0);
-    Func_02002b1c(0x1c, 0x106, 0x2a);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x1c, 0x106, 0x2a)
     Call3(ObjectMotion_CommitPositionAndActivate, 0x1c, 0, -16);
     Call2(Func_02002b04, 0x1c, 0xd000);
     Call2(Func_02002af4, 0x1c, 0);
@@ -330,12 +310,15 @@ void Func_02000e30(void)
     Call1(Battle_WaitMode0, 0xa);
     Call2(Motion_SetModeAndWaitAnimation, 0x19, 4);
     Call2(Func_02002af4, 0x2019, 0);
-    Call3(Func_02002b1c, 5, 0x107, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(5, 0x107, 0x1e)
     Call2(Func_02002af4, 0x2005, 0);
-    Call3(Func_02002b1c, 0x19, 0x109, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x19, 0x109, 0x1e)
     Call2(Func_02002b04, 0x19, 0x3000);
     Call2(Func_02002af4, 0x2019, 0);
-    Call3(Func_02002b1c, 6, 0x101, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(6, 0x101, 0x1e)
     Call2(Func_02002af4, 6, 0);
     Call2(Func_02002b04, 0x19, 0x5000);
     Call1(Battle_WaitMode0, 0xa);
@@ -349,7 +332,8 @@ void Func_02000e30(void)
     Call3(ObjectMotion_SetSpeedParameters, 0x1c, 0x10000, 0x8000);
     Call3(ObjectMotion_CommitPositionAndActivate, 0x1c, 8, -8);
     Call1(Battle_WaitMode0, 5);
-    Call3(Func_02002b1c, 0x1c, 0x108, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x1c, 0x108, 0x1e)
     Call2(Func_02002af4, 0x1c, 0);
     Call3(ObjectMotion_SetSpeedParameters, 0x19, 0x10000, 0x8000);
     t216 = Value1(Object_GetById, 0x19);
@@ -360,11 +344,14 @@ void Func_02000e30(void)
     FIELD_AT((t219 + 0x5a), u8, 0) = (FIELD_AT((t219 + 0x5a), u8, 0) | 1);
     Call1(Battle_WaitMode0, 0xa);
     Call2(Func_02002b04, 0x19, 0x5000);
-    Call3(Func_02002b1c, 0x19, 0x108, 0x28);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x19, 0x108, 0x28)
     Call2(Func_02002af4, 0x2019, 0);
     Call1(Battle_WaitMode0, 0xa);
-    Call3(Func_02002b1c, 0x1c, 0x105, 0x32);
-    Call3(Func_02002b1c, 5, 0x105, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x1c, 0x105, 0x32)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(5, 0x105, 0x1e)
     Call2(Func_02002af4, 0x2005, 0);
     Call2(ObjectMotion_SetVariantCallback, 0x19, 3);
     Call2(Func_02002b24, 0x19, 0x102);
@@ -380,16 +367,19 @@ void Func_02000e30(void)
     Call2(Motion_SetModeAndWaitAnimation, 0x19, 3);
     Call1(Battle_WaitMode0, 0xa);
     Call2(Func_02002af4, 0x2019, 0);
-    Call3(Func_02002b1c, 0x1b, 0x101, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x1b, 0x101, 0x1e)
     Call2(Func_02002af4, 0x1b, 0);
     Call2(Func_02002b04, 0x19, 0x5000);
     Call2(Func_02002af4, 0x2019, 0);
-    Func_02002b1c(0x1a, 0x105, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x1a, 0x105, 0x1e)
     Call2(Func_02002af4, 0x1a, 0);
     Call2(Func_02002b04, 0x19, 0x3000);
     Call2(Motion_SetModeAndWaitAnimation, 0x19, 4);
     Call2(Func_02002af4, 0x2019, 0);
-    Call3(Func_02002b1c, 0x1b, 0x102, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x1b, 0x102, 0x1e)
     Call2(Func_02002b04, 0x1b, 0);
     Call1(Battle_WaitMode0, 5);
     Call2(Func_02002af4, 0x1b, 0);
@@ -410,12 +400,8 @@ void Func_02000e30(void)
     Call2(Func_02002b04, 0x1c, 0x5000);
     Call2(Motion_SetModeAndWaitAnimation, 0x1c, 4);
     Call2(Func_02002af4, 0x201c, 0);
-    {
-        s32 b = 0x103, c = 0x2a;
-        /* FAKEMATCH: the native schedule sets the first argument last. */
-        __asm__ volatile("" : "+l"(b), "+l"(c));
-        Call3(Func_02002b1c, 0x1a, b, c);
-    }
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x1a, 0x103, 0x2a)
     Call3(ObjectMotion_Launch, 0x1a, 6, 0xf);
     Call3(ObjectMotion_Launch, 0x1a, 6, 0x17);
     Call2(Func_02002af4, 0x1a, 0);
@@ -434,20 +420,28 @@ void Func_02000e30(void)
     Call3(ObjectMotion_CommitPositionAndActivate, 0x1a, -12, 0);
     Call1(Battle_WaitMode0, 5);
     Call2(Func_02002af4, 0x1a, 0);
-    Call3(Func_02002b1c, 4, 0x102, 0);
-    Call3(Func_02002b1c, 5, 0x102, 0);
-    Call3(Func_02002b1c, 6, 0x102, 0);
-    Call3(Func_02002b1c, 7, 0x102, 0);
-    Call3(Func_02002b1c, 0x1c, 0x102, 0x2d);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(4, 0x102, 0)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(5, 0x102, 0)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(6, 0x102, 0)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(7, 0x102, 0)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x1c, 0x102, 0x2d)
     Call3(ObjectMotion_SetSpeedParameters, 0x1b, 0x1cccc, 0xe666);
     Call3(ObjectMotion_CommitPositionAndActivate, 0x1b, 0xc, 0);
     Call1(Battle_WaitMode0, 5);
-    Call3(Func_02002b1c, 0x1b, 0x108, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x1b, 0x108, 0x1e)
     Call2(Func_02002af4, 0x1b, 0);
-    Call3(Func_02002b1c, 6, 0x100, 0x14);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(6, 0x100, 0x14)
     Call2(Func_02002b04, 6, 0x8000);
     Call2(Func_02002af4, 0x2006, 0);
-    Func_02002b1c(0x19, 0x108, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x19, 0x108, 0x1e)
     Call2(Func_02002af4, 0x2019, 0);
     Call3(ObjectMotion_ArmCallback, 0x1a, 0xb000, 0);
     Call3(ObjectMotion_ArmCallback, 0x1b, 0xd000, 0);
@@ -459,7 +453,8 @@ void Func_02000e30(void)
     Call1(Battle_WaitMode0, 0xa);
     Call2(Motion_SetModeAndWaitAnimation, 0x19, 4);
     Call2(Func_02002af4, 0x2019, 0);
-    Call3(Func_02002b1c, 0x1a, 0x107, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x1a, 0x107, 0x1e)
     Call2(Func_02002af4, 0x1a, 0);
     Call3(ObjectMotion_ArmCallback, 4, 0, 0);
     Call3(ObjectMotion_ArmCallback, 7, 0, 0);
@@ -469,7 +464,8 @@ void Func_02000e30(void)
     Call2(Func_02002b04, 0x1c, 0);
     Call2(Motion_SetModeAndWaitAnimation, 0x19, 4);
     Call2(Func_02002af4, 0x2019, 0);
-    Call3(Func_02002b1c, 0x1b, 0x103, 0x2a);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x1b, 0x103, 0x2a)
     Call3(ObjectMotion_Launch, 0x1b, 6, 0xf);
     Call3(ObjectMotion_Launch, 0x1b, 6, 0x17);
     Call2(Func_02002af4, 0x1b, 0);
@@ -492,7 +488,8 @@ void Func_02000e30(void)
     Call3(ObjectMotion_ArmCallback, 0x19, 0x3000, 0);
     Call2(Func_02002b04, 0x1c, 0);
     Call1(Battle_WaitMode0, 0x14);
-    Call3(Func_02002b1c, 0x19, 0x109, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x19, 0x109, 0x1e)
     Call2(Func_02002af4, 0x2019, 0);
     Call2(Motion_SetVarCbAndRefresh, 0x1b, 2);
     Call2(Func_02002af4, 0x1b, 0);
@@ -521,12 +518,15 @@ void Func_02000e30(void)
     Call3(ObjectMotion_ArmCallback, 6, 0xc000, 0);
     Call2(Func_02002b04, 0x1c, 0xd000);
     Call1(Battle_WaitMode0, 0xa);
-    Call3(Func_02002b1c, 5, 0x101, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(5, 0x101, 0x1e)
     Call2(Func_02002af4, 0x2005, 0);
     Call2(Func_02002b04, 0x19, 0x3000);
-    Call3(Func_02002b1c, 0x19, 0x108, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x19, 0x108, 0x1e)
     Call2(Func_02002af4, 0x2019, 0);
-    Call3(Func_02002b1c, 6, 0x107, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(6, 0x107, 0x1e)
     Call2(Func_02002af4, 6, 0);
     Call2(Func_02002b04, 0x19, 0x5000);
     Call2(Motion_SetModeAndWaitAnimation, 0x19, 4);
@@ -535,7 +535,8 @@ void Func_02000e30(void)
     Call2(Func_02002af4, 7, 0);
     Call2(Func_02002b04, 0x19, 0xd000);
     Call1(Battle_WaitMode0, 0xf);
-    Call3(Func_02002b1c, 0x19, 0x108, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x19, 0x108, 0x1e)
     Call2(Func_02002af4, 0x2019, 0);
     Call2(Motion_SetModeAndWaitAnimation, 0x1a, 3);
     Call2(Func_02002af4, 0x1a, 0);
@@ -603,7 +604,8 @@ void Func_02000e30(void)
     Call3(ObjectMotion_CommitPositionAndActivate, 0x19, 0, 0x20);
     Call3(ObjectMotion_CommitPositionAndActivate, 0x19, -16, 0x10);
     Call3(ObjectMotion_CommitPositionAndActivate, 0x19, 0, 8);
-    Call3(Func_02002b1c, 0x19, 0x100, 0x28);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x19, 0x100, 0x28)
     Call2(Func_02002b04, 0x19, 0xb000);
     Call4(Motion_CamBounds, 0x1300000, -1, 0x2880000, 1);
     Func_02002b3c();
@@ -617,13 +619,16 @@ void Func_02000e30(void)
     Call1(Battle_WaitMode0, 0xa);
     Call2(Motion_SetModeAndWaitAnimation, 0x1c, 3);
     Call2(Func_02002af4, 0x1c, 0);
-    Call3(Func_02002b1c, 0x1c, 0x101, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x1c, 0x101, 0x1e)
     Call2(Func_02002af4, 0x1c, 0);
     Call2(Motion_SetModeAndWaitAnimation, 0x19, 4);
     Call2(Func_02002af4, 0x2019, 0);
-    Call3(Func_02002b1c, 0x1c, 0x107, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x1c, 0x107, 0x1e)
     Call2(Func_02002af4, 0x1c, 0);
-    Call3(Func_02002b1c, 0x19, 0x108, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x19, 0x108, 0x1e)
     Call2(Func_02002af4, 0x2019, 0);
     Call2(ObjectMotion_SetVariantCallback, 0x1c, 3);
     Call2(Func_02002b24, 0x1c, 0x102);
@@ -652,13 +657,15 @@ void Func_02000e30(void)
     Call2(Motion_SetModeAndWaitAnimation, 0x19, 4);
     Call2(Func_02002af4, 0x2019, 0);
     Call2(Func_02002b04, 6, 0x4000);
-    Call3(Func_02002b1c, 6, 0x107, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(6, 0x107, 0x1e)
     Call2(Func_02002af4, 6, 0);
     Call2(Motion_SetModeAndWaitAnimation, 0x19, 3);
     Call1(Battle_WaitMode0, 0x19);
     Call2(Motion_SetVarCbAndRefresh, 5, 2);
     Call2(Func_02002af4, 0x2005, 0);
-    Call3(Func_02002b1c, 0x19, 0x105, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x19, 0x105, 0x1e)
     Call2(Func_02002af4, 0x2019, 0);
     Call2(Motion_SetModeAndWaitAnimation, 0x19, 4);
     Call2(Func_02002af4, 0x2019, 0);
@@ -668,8 +675,10 @@ void Func_02000e30(void)
     Call3(ObjectMotion_ArmCallback, 4, 0x4000, 0);
     Call2(Func_02002b04, 7, 0x4000);
     Call1(Battle_WaitMode0, 0xa);
-    Call3(Func_02002b1c, 4, 0x101, 0);
-    Call3(Func_02002b1c, 7, 0x101, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(4, 0x101, 0)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(7, 0x101, 0x1e)
     Call2(Func_02002af4, 7, 0);
     Call2(Motion_SetModeAndWaitAnimation, 0x19, 3);
     Call1(Battle_WaitMode0, 0xa);
@@ -678,7 +687,8 @@ void Func_02000e30(void)
     Call2(Func_02002af4, 0x2019, 0);
     Call2(Motion_SetVarCbAndRefresh, 6, 2);
     Call2(Func_02002af4, 6, 0);
-    Call3(Func_02002b1c, 0x19, 0x108, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x19, 0x108, 0x1e)
     Call2(Func_02002af4, 0x2019, 0);
     Call2(Func_02002b04, 0x19, 0x5000);
     Call1(Battle_WaitMode0, 0xa);
@@ -691,29 +701,30 @@ void Func_02000e30(void)
     Func_02002b3c();
     Call1(Battle_WaitMode0, 0xa);
     Call1(Func_02002bc4, 3);
-    Call3(Func_02002b1c, 5, 0x107, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(5, 0x107, 0x1e)
     Call2(Func_02002af4, 0x2005, 0);
-    Call3(Func_02002b1c, 6, 0x103, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(6, 0x103, 0x1e)
     Call2(Func_02002af4, 6, 0);
-    Call3(Func_02002b1c, 7, 0x109, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(7, 0x109, 0x1e)
     Call2(Func_02002af4, 7, 0);
     Call2(Func_02002b04, 6, 0xc000);
     Call1(Battle_WaitMode0, 0xa);
-    Call3(Func_02002b1c, 6, 0x101, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(6, 0x101, 0x1e)
     Call2(Func_02002af4, 6, 0);
     Call2(Motion_SetVarCbAndRefresh, 7, 2);
     Call2(Func_02002af4, 7, 0);
-    {
-        s32 b = 0x100, c = 0x1e;
-        /* FAKEMATCH: the native schedule sets the first argument last. */
-        __asm__ volatile("" : "+l"(b), "+l"(c));
-        Call3(Func_02002b1c, 5, b, c);
-    }
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(5, 0x100, 0x1e)
     Call3(ObjectMotion_ArmCallback, 4, 0x6000, 0);
     Call2(Func_02002b04, 5, 0xa000);
     Call1(Battle_WaitMode0, 0xa);
     Call2(Func_02002af4, 0x2005, 0);
-    Call3(Func_02002b1c, 6, 0x100, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(6, 0x100, 0x1e)
     Call2(Func_02002af4, 6, 0);
     Call2(Object_SetModeById, 0x1c, 1);
     Call1(Battle_WaitMode0, 0xa);
@@ -730,23 +741,28 @@ void Func_02000e30(void)
     Call1(Battle_WaitMode0, 0x14);
     Call2(Motion_SetModeAndWaitAnimation, 0x1c, 3);
     Call2(Func_02002af4, 0x1c, 0);
-    Call3(Func_02002b1c, 7, 0x100, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(7, 0x100, 0x1e)
     Call2(Func_02002af4, 0x2007, 0);
     Call2(Motion_SetModeAndWaitAnimation, 0x1c, 4);
     Call2(Func_02002af4, 0x1c, 0);
     Call2(ObjectMotion_SetVariantCallback, 7, 3);
     Call2(Func_02002b24, 7, 0x102);
     Call1(Battle_WaitMode0, 0x2d);
-    Call3(Func_02002b1c, 5, 0x101, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(5, 0x101, 0x1e)
     Call2(Func_02002af4, 0x2005, 0);
-    Call3(Func_02002b1c, 6, 0x101, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(6, 0x101, 0x1e)
     Call2(Func_02002af4, 0x2006, 0);
     Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
     Call2(Func_02002b04, 6, 1);
     Call1(Battle_WaitMode0, 0x19);
     Call2(Func_02000c90, 5, 6);
-    Call3(Func_02002b1c, 5, 0x101, 0);
-    Func_02002b1c(6, 0x101, 0x28);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(5, 0x101, 0)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(6, 0x101, 0x28)
     Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
     Call2(Func_02002b04, 6, 0x8000);
     Call1(Battle_WaitMode0, 0xa);
@@ -761,21 +777,25 @@ void Func_02000e30(void)
     Call3(ObjectMotion_ArmCallback, 5, 0xc000, 0);
     Call2(Func_02002b04, 6, 0xe000);
     Call1(Battle_WaitMode0, 0xa);
-    Call3(Func_02002b1c, 5, 0x107, 0);
-    Func_02002b1c(6, 0x107, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(5, 0x107, 0)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(6, 0x107, 0x1e)
     Call11(Func_02000d4c, 5, 8, 5, 0x12, 8, 6, 8, 0xe, 8, 9, 0);
     Call2(Func_02002b04, 4, 0x6000);
     t613 = Value2(Inventory_PromptAndSetObjectMode, 4, 0);
     if (t613 == 0) {
         Call2(Func_02000e04, 5, 6);
         Call1(Battle_WaitMode0, 0xf);
-        Func_02002b1c(0x1c, 0x102, 0x1e);
+        /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+        OV682_EMOTE(0x1c, 0x102, 0x1e)
         Call2(Func_02002af4, 0x1c, 0);
         FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) = (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
     } else {
         Call2(Func_02000e04, 5, 6);
         Call1(Battle_WaitMode0, 0x23);
-        Func_02002b1c(0x1c, 0x105, 0x1e);
+        /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+        OV682_EMOTE(0x1c, 0x105, 0x1e)
         FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) = (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
         Call2(Func_02002af4, 0x1c, 0);
     }
@@ -783,8 +803,10 @@ void Func_02000e30(void)
     Call3(ObjectMotion_ArmCallback, 5, 0x8000, 0);
     Call2(Func_02002b04, 6, 0x8000);
     Call1(Battle_WaitMode0, 0xa);
-    Call3(Func_02002b1c, 5, 0x107, 0);
-    Call3(Func_02002b1c, 6, 0x107, 0x2d);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(5, 0x107, 0)
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(6, 0x107, 0x2d)
     Call2(Motion_SetModeAndWaitAnimation, 0x1c, 4);
     Call2(Func_02002af4, 0x1c, 0);
     Call3(ObjectMotion_Launch, 5, 6, 0xf);
@@ -798,25 +820,24 @@ void Func_02000e30(void)
     Call2(Motion_SetModeAndWaitAnimation, 0x1c, 3);
     Call2(Func_02002af4, 0x1c, 0);
     Call1(Battle_WaitMode0, 0xa);
-    {
-        s32 b = 0x101, c = 0x28;
-        /* FAKEMATCH: the native schedule sets the first argument last. */
-        __asm__ volatile("" : "+l"(b), "+l"(c));
-        Call3(Func_02002b1c, 0x1c, b, c);
-    }
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x1c, 0x101, 0x28)
     Call3(ObjectMotion_CommitPositionAndActivate, 0x1c, 0, -8);
     Call2(Func_02002b04, 0x1c, 0);
     Call1(Battle_WaitMode0, 5);
     Call2(Func_02002af4, 0x1c, 0);
-    Call3(Func_02002b1c, 7, 0x108, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(7, 0x108, 0x1e)
     Call2(Func_02002af4, 0x2007, 0);
-    Call3(Func_02002b1c, 0x1c, 0x102, 0x1e);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x1c, 0x102, 0x1e)
     Call2(Func_02002af4, 0x1c, 0);
     Call2(Motion_SetModeAndWaitAnimation, 7, 3);
     Call1(Battle_WaitMode0, 0xa);
     Call2(Func_02002af4, 0x2007, 0);
     Call1(Battle_WaitMode0, 5);
-    Call3(Func_02002b1c, 0x1c, 0x101, 0x2d);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV682_EMOTE. */
+    OV682_EMOTE(0x1c, 0x101, 0x2d)
     Call2(Motion_SetModeAndWaitAnimation, 7, 3);
     Call1(Battle_WaitMode0, 0xa);
     Call2(Func_02002af4, 0x2007, 0);

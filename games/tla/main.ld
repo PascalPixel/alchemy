@@ -1610,6 +1610,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00196408)
     "*/games/tla/src/battle/effect/project_vertices.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00196a80)
+    "*/games/tla/src/battle/effect/sentou_kouka_gousei.o"(.text)
     "*/games/tla/src/battle/effect/sentou_kouka_gousei_iro.o"(.text .rodata .data .padding)
     "*/games/tla/src/battle/effect/patch_template.o"(.text .rodata .data .padding)
     "*/recon/tla/ja/rom.o"(.rom.001973f4)

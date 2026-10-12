@@ -2288,7 +2288,7 @@
         "*/games/tla/src/battle/effect/project_vertices.o"(.text)
         "*/recon/tla/raw/08196a7c.o"(.text)
         "*/recon/tla/unidentified.o"(.unidentified.08196dd8)
-        "*/recon/tla/raw/08196fdc.o"(.text)
+        "*/games/tla/src/battle/effect/sentou_kouka_gousei.o"(.text)
         "*/games/tla/src/battle/effect/sentou_kouka_gousei_iro.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle/effect/patch_template.o"(.text .rodata .data .padding)
         "*/recon/tla/unidentified.o"(.unidentified.081973f0)

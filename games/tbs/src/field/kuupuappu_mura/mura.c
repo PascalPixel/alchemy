@@ -4,6 +4,7 @@
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/battle.h"
+#include "unit/battle/battle12.h"
 #include "unit/game/character/chara.h"
 #include "unit/game/character/chara2.h"
 #include "unit/game/character/chara3.h"

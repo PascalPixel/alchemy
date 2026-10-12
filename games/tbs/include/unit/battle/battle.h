@@ -218,10 +218,5 @@ u32 Battle_GetSpriteFlagNibble(u32 index);
 u32 Battle_GetSpriteFlagHighBits(u32 index);
 s32 Summon_IsEntrySecondaryFlagged(s32 index);
 s32 Summon_GetEntryByte4(s32 index);
-u32 Item_EncodeBankedId(u32 value);
-void Summon_ClearWorkFields(void);
-s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned);
-void Battle_AwardSpoils(void);
-void Battle_ReservedNoOp2A08(void);
 
 #endif

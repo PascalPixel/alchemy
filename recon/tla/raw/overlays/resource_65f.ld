@@ -32,7 +32,6 @@ SECTIONS
         "*/resource_65f_overlay.o"(.text.x020092a6)
         "*/resource_65f_overlay.o"(.text.x020092a8)
         "*/games/tla/src/field/overlay_65f/spawn.o"(.text)
-        "*/resource_65f_overlay.o"(.text.x020093b0)
         "*/games/tla/src/field/overlay_65f/push.o"(.text)
         "*/resource_65f_overlay.o"(.text.x02009490)
         "*/games/tla/src/field/overlay_65f/s22f4.o"(.text)

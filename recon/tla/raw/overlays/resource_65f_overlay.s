@@ -1028,55 +1028,6 @@ Func_020012a8:
 	.2byte 0x0000
 .L_02009328:
 	.4byte Effect_AdvanceMotion
-	.section .text.x020093b0,"ax",%progbits
-	.global Func_020013b0
-	.thumb_func
-Func_020013b0:
-	push {r5, r6, lr}
-	mov r6, r8
-	push {r6}
-	sub sp, #4
-	bl Object_GetById
-	adds r5, r0, #0
-	ldr r0, [r5, #8]
-	movs r3, #128
-	lsls r3, r3, #12
-	ldr r1, [r5, #12]
-	adds r0, r0, r3
-	movs r3, #224
-	lsls r3, r3, #13
-	mov r8, r3
-	movs r3, #128
-	ldr r2, [r5, #16]
-	add r1, r8
-	lsls r3, r3, #5
-	movs r6, #20
-	str r6, [sp, #0]
-	bl Func_02001360
-	movs r0, #151
-	bl Func_02005394
-	movs r0, #20
-	bl Battle_WaitMode0
-	ldr r0, [r5, #8]
-	ldr r3, .L_02009414
-	ldr r1, [r5, #12]
-	adds r0, r0, r3
-	movs r3, #240
-	ldr r2, [r5, #16]
-	add r1, r8
-	lsls r3, r3, #8
-	str r6, [sp, #0]
-	bl Func_02001360
-	movs r0, #151
-	bl Func_02005394
-	movs r0, #20
-	bl Battle_WaitMode0
-	add sp, #4
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, pc}
-.L_02009414:
-	.4byte 0xfff80000
 	.section .text.x02009490,"ax",%progbits
 	.balign 4
 	.global Func_02001490

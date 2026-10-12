@@ -1,6 +1,7 @@
 
 
 #include "unit/field/soru_meiro/meiro.h"
+#include "unit/field/common/soru/initzoom.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -46,25 +47,8 @@ u8 *SceneData_GetEffectTable(void)
 	return (u8 *)SoruMeiro_SceneTable3;
 }
 
-s32 Scene_InitSceneRequestAndCameraZoom(void)
-{
-	struct Resource37deSceneRuntime *runtime;
-
-	s32 zoom_x = 0x10000;
-	s32 zoom_y = 0x10000;
-	s32 zoom_z = 0x10000;
-
-	runtime = (struct Resource37deSceneRuntime *)gEventWork;
-	runtime->scene_request_1c0 = 0x204;
-	runtime->scene_setup_word_1c8 = 0x10;
-	if (Engine_GameFlagIsSet(0x814) != 0)
-	{
-		QueueSceneSound(0x8D);
-		Engine_WorkSetValuesIfNonNegative(zoom_x, zoom_y, zoom_z);
-		InitializeSceneRecordBuffer();
-	}
-	return 0;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/soru/initzoom.c"
 
 struct SceneEntrance SoruMeiro_SceneTable0[] = {
 	{ 0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },

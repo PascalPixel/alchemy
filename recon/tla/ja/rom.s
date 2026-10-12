@@ -570,13 +570,20 @@ Object_SetMoveTarget:
 	.balign 4
 	.incbin "baserom.gba", 0x0002632c, 0x00000aa4
 	.section .rom.00026e60, "ax"
+	.global Func_08026e60
+	.type Func_08026e60, %function
+	.thumb_func
+Func_08026e60:
 	.incbin "baserom.gba", 0x00026e60, 0x00000120
 	.section .rom.00026fc8, "ax"
 	.global Func_08026fc8
 	.type Func_08026fc8, %function
 	.thumb_func
 Func_08026fc8:
-	.incbin "baserom.gba", 0x00026fc8, 0x000034e0
+	.incbin "baserom.gba", 0x00026fc8, 0x00000dc0
+	.section .rom.00027d9c, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00027d9c, 0x0000270c
 	.section .rom.0002a560, "ax"
 	.incbin "baserom.gba", 0x0002a560, 0x0000006c
 	.section .rom.0002a5cc, "ax"
@@ -2967,37 +2974,29 @@ Func_080d1760:
 Func_080d17e8:
 	.incbin "baserom.gba", 0x000d17c8, 0x00000034
 	.section .rom.000d181e, "ax"
-	.incbin "baserom.gba", 0x000d181e, 0x000001da
+	.incbin "baserom.gba", 0x000d181e, 0x00000002
+	.global Func_080d1840
+	.type Func_080d1840, %function
+	.thumb_func
+Func_080d1840:
+	.incbin "baserom.gba", 0x000d1820, 0x000001d8
 	.global Func_080d1a18
 	.type Func_080d1a18, %function
 	.thumb_func
 Func_080d1a18:
 	.incbin "baserom.gba", 0x000d19f8, 0x000000ac
-	.global Func_080d1ac4
-	.type Func_080d1ac4, %function
+	.section .rom.000d1ac4, "ax"
+	.global Func_080d1ae4
+	.type Func_080d1ae4, %function
 	.thumb_func
-Func_080d1ac4:
-	.incbin "baserom.gba", 0x000d1aa4, 0x00000010
-	.global Func_080d1ad4
-	.type Func_080d1ad4, %function
-	.thumb_func
-Func_080d1ad4:
-	.incbin "baserom.gba", 0x000d1ab4, 0x000001ec
+Func_080d1ae4:
+	.incbin "baserom.gba", 0x000d1ac4, 0x000001dc
 	.global Func_080d1cc0
 	.type Func_080d1cc0, %function
 	.thumb_func
 Func_080d1cc0:
 	.incbin "baserom.gba", 0x000d1ca0, 0x00000074
-	.global Func_080d1d34
-	.type Func_080d1d34, %function
-	.thumb_func
-Func_080d1d34:
-	.incbin "baserom.gba", 0x000d1d14, 0x00000010
-	.global Func_080d1d44
-	.type Func_080d1d44, %function
-	.thumb_func
-Func_080d1d44:
-	.incbin "baserom.gba", 0x000d1d24, 0x00000010
+	.section .rom.000d1d34, "ax"
 	.global Func_080d1d54
 	.type Func_080d1d54, %function
 	.thumb_func
@@ -3576,7 +3575,13 @@ RunBattleEffect14:
 	.incbin "baserom.gba", 0x000dfcbc, 0x000002fc
 	.section .rom.000dffdc, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x000dffdc, 0x000002cc
+	.incbin "baserom.gba", 0x000dffdc, 0x000000fc
+	.section .rom.000e00f0, "ax"
+	.global Func_080e0134
+	.type Func_080e0134, %function
+	.thumb_func
+Func_080e0134:
+	.incbin "baserom.gba", 0x000e00f0, 0x000001b8
 	.section .rom.000e0318, "ax"
 	.global Func_080e035c
 	.type Func_080e035c, %function

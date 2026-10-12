@@ -2,15 +2,15 @@
 //! file that defines it; none for a function the bytes show was called
 //! before its definition with no prototype in scope.
 
-mod expand;
-mod generate;
+pub(crate) mod expand;
+pub(crate) mod generate;
 pub(crate) mod lint;
-mod model;
-mod objects;
-mod plan;
-mod scan;
+pub(crate) mod model;
+pub(crate) mod objects;
+pub(crate) mod plan;
+pub(crate) mod scan;
 mod settle;
-mod undeclared;
+pub(crate) mod undeclared;
 
 use crate::compiler::preprocess::Expansion;
 use crate::compiler::routing::root;

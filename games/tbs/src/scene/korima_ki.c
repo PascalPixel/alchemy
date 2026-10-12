@@ -1,6 +1,6 @@
 #include "battle_effect_runtime.h"
 #include "game_state.h"
-#include "unit/field/korima_ki/ki.h"
+#include "unit/scene/korima_ki.h"
 #include "unit/field/common/korima/palette.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
@@ -32,7 +32,7 @@
 #include "sound.h"
 #include "system.h"
 #include "resource.h"
-#include "korimaki.h"
+#include "korima_ki.h"
 #include "types.h"
 #include "call.h"
 #include "field_event.h"
@@ -729,7 +729,7 @@ s32 KorimaKi_PrepareActors(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/korima/grow.c"
+#include "../field/common/korima/grow.c"
 
 static void PaletteScene_SpawnEffect(void)
 {
@@ -994,7 +994,7 @@ static void PaletteScene_SetRecordValue(s32 key, s32 value)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/korima/palette.c"
+#include "../field/common/korima/palette.c"
 
 s32 SceneAction_ActorOneEntry[] = {
 	SC_ARG(2),

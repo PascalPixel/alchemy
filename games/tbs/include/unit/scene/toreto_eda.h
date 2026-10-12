@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_FIELD_TORETO_EDA_EDA_H
-#define ALCHEMY_UNIT_FIELD_TORETO_EDA_EDA_H
+#ifndef ALCHEMY_UNIT_SCENE_TORETO_EDA_H
+#define ALCHEMY_UNIT_SCENE_TORETO_EDA_H
 
 #include "types.h"
 #include "field_scene.h"

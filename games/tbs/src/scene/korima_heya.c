@@ -1,6 +1,6 @@
 
 #include "game_state.h"
-#include "unit/field/korima_heya/heya.h"
+#include "unit/scene/korima_heya.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"

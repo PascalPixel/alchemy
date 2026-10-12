@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_FIELD_KORIMA_KI_KI_H
-#define ALCHEMY_UNIT_FIELD_KORIMA_KI_KI_H
+#ifndef ALCHEMY_UNIT_SCENE_KORIMA_KI_H
+#define ALCHEMY_UNIT_SCENE_KORIMA_KI_H
 
 #include "types.h"
 #include "field_scene.h"

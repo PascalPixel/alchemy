@@ -1,4 +1,4 @@
-#include "unit/field/toreto_eda/eda.h"
+#include "unit/scene/toreto_eda.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/disptran.h"

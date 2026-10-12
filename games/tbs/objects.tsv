@@ -318,28 +318,28 @@ main	rom_tail_02	@games/tbs/src/system/resource/directory
 38e	unit	games/tbs/src/scene/biribino_niwa
 38f	unit	games/tbs/src/scene/korima_mura
 38f	bss	games/tbs/src/scene/korima_mura	.bss
-390	unit	games/tbs/src/field/korima_heya/heya
-391	unit	games/tbs/src/field/korima_hashi/hashi
+390	unit	games/tbs/src/scene/korima_heya
+391	unit	games/tbs/src/scene/korima_hashi
 391	text	libgcc.a:_call_via_rX
-391	bss	games/tbs/src/field/korima_hashi/hashi	.bss
-392	unit	games/tbs/src/field/korima_hiroba/hiroba
+391	bss	games/tbs/src/scene/korima_hashi	.bss
+392	unit	games/tbs/src/scene/korima_hiroba
 392	text	libgcc.a:_call_via_rX
-392	bss	games/tbs/src/field/korima_hiroba/hiroba	.bss
-393	unit	games/tbs/src/field/korima_kawa/kawa
+392	bss	games/tbs/src/scene/korima_hiroba	.bss
+393	unit	games/tbs/src/scene/korima_kawa
 393	text	libgcc.a:_call_via_rX
-393	bss	games/tbs/src/field/korima_kawa/kawa	.bss
-394	unit	games/tbs/src/field/korima_magari/magari
+393	bss	games/tbs/src/scene/korima_kawa	.bss
+394	unit	games/tbs/src/scene/korima_magari
 394	bss	resource_394_overlay	.bss
-395	unit	games/tbs/src/field/korima_ki/ki
-395	bss	games/tbs/src/field/korima_ki/ki	.bss
+395	unit	games/tbs/src/scene/korima_ki
+395	bss	games/tbs/src/scene/korima_ki	.bss
 395	bss	resource_395_overlay	.bss
-396	unit	games/tbs/src/field/toreto_heya/heya
-396	bss	games/tbs/src/field/toreto_heya/heya	.bss
-397	unit	games/tbs/src/field/toreto_eda/eda
-397	bss	games/tbs/src/field/toreto_eda/eda	.bss
-398	unit	games/tbs/src/field/biribino_dou/dou
-399	unit	games/tbs/src/field/imiru_mura/mura
-399	bss	games/tbs/src/field/imiru_mura/mura	.bss COMMON
+396	unit	games/tbs/src/scene/toreto_heya
+396	bss	games/tbs/src/scene/toreto_heya	.bss
+397	unit	games/tbs/src/scene/toreto_eda
+397	bss	games/tbs/src/scene/toreto_eda	.bss
+398	unit	games/tbs/src/scene/biribino_dou
+399	unit	games/tbs/src/scene/imiru_mura
+399	bss	games/tbs/src/scene/imiru_mura	.bss COMMON
 39a	unit	games/tbs/src/field/common/imiru_fuchin/fuchin
 39a	bss	games/tbs/src/field/common/imiru_fuchin/fuchin	.bss COMMON
 39b	unit	games/tbs/src/field/makyuri_iriguchi/iriguchi

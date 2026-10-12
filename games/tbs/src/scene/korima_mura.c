@@ -2,7 +2,7 @@
 #include "global_cells.h"
 #include "scene_ids.h"
 #include "unit/scene/korima_mura.h"
-#include "unit/field/korima_hashi/falling_effect.h"
+#include "unit/scene/korima_hashi_falling_effect.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/marker.h"
@@ -1567,7 +1567,7 @@ done:
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/korima_hashi/falling_effect.c"
+#include "korima_hashi_falling_effect.c"
 s32 KorimaMura_PendingPose __attribute__((section(".bss")));
 s32 KorimaMura_LayoutFlag __attribute__((section(".bss")));
 s32 KorimaMura_EffectActive __attribute__((section(".bss")));

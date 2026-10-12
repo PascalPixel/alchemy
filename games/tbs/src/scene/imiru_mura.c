@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "keystate.h"
 #include "scene_ids.h"
-#include "unit/field/imiru_mura/mura.h"
+#include "unit/scene/imiru_mura.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"
@@ -111,7 +111,7 @@ static s32 OverlayObject_UpdateWobbleByCounter(struct FieldActor *obj)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/facing.c"
+#include "../field/common/object/facing.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

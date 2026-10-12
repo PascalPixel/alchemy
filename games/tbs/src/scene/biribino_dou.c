@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/import.h"
-#include "unit/field/biribino_dou/dou.h"
+#include "unit/scene/biribino_dou.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"
@@ -21,7 +21,7 @@
 #include "sound.h"
 #include "system.h"
 #include "global_cells.h"
-#include "region.h"
+#include "biribino_dou.h"
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"
@@ -449,7 +449,7 @@ static void FieldScene_RunScene398SequenceC(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/findcell.c"
+#include "../field/common/object/findcell.c"
 
 static void StagedActor_PushActorAhead(void)
 {

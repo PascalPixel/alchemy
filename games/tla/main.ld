@@ -288,6 +288,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00026fc8)
     "*/games/tla/src/field/common/script/s27e0c.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00027d9c)
+    "*/games/tla/src/field/common/script/s29810.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.000297b4)
     "*/games/tla/src/field/common/remap_bytes.o"(.text)
     "*/games/common/src/graphics/tile/decode_staged_buffer.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0002a560)

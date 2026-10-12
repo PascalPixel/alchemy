@@ -316,7 +316,7 @@
         "*/recon/tla/raw/080290f4.o"(.text)
         "*/recon/tla/raw/080292fc.o"(.text)
         "*/recon/tla/raw/08029570.o"(.text)
-        "*/recon/tla/raw/08029810.o"(.text)
+        "*/games/tla/src/field/common/script/s29810.o"(.text)
         "*/recon/tla/raw/08029838.o"(.text)
         "*/recon/tla/raw/080298c0.o"(.text)
         "*/recon/tla/raw/0802a124.o"(.text)

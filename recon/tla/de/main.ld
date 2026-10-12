@@ -267,6 +267,8 @@
     "*/recon/tla/de/rom.o"(.rom.00026fc8)
     "*/games/tla/src/field/common/script/s27e0c.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00027e20)
+    "*/games/tla/src/field/common/script/s29810.o"(.text)
+    "*/recon/tla/de/rom.o"(.rom.00029838)
     "*/games/tla/src/field/common/remap_bytes.o"(.text)
     "*/games/common/src/graphics/tile/decode_staged_buffer.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0002a5e4)

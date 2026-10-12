@@ -1,5 +1,6 @@
 #include "unit/field/toreto_eda/eda.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object12.h"
 #include "unit/battle/effect/object13.h"
 #include "unit/battle/effect/object14.h"
 #include "unit/battle/effect/object15.h"

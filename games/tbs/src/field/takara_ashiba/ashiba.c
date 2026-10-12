@@ -5,6 +5,7 @@
 #include "unit/field/takara_ashiba/ashiba.h"
 #include "unit/field/common/korosseo/item_icon.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object12.h"
 #include "unit/battle/effect/object13.h"
 #include "unit/battle/effect/object14.h"
 #include "unit/battle/effect/object15.h"

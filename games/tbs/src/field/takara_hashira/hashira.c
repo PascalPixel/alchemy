@@ -5,6 +5,7 @@
 #include "unit/field/takara_hashira/hashira.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object12.h"
 #include "unit/battle/effect/object13.h"
 #include "unit/battle/effect/object14.h"
 #include "unit/battle/effect/object15.h"

@@ -560,52 +560,15 @@ static void DialogueLayout_ConfigureRowsByFlag301(void)
 	}
 }
 
-static void SceneActor_PositionPair(s32 a0, s32 a1, s32 a2)
-{
-
-	struct FieldActor *p;
-	struct FieldActor *q;
-	s32				   x;
-	s32				   y;
-
-	p = Object_GetById(gGameState.selected_actor);
-	q = Object_GetById(a0);
-	Engine_EventBegin();
-	{
-		x = ((p->x.fixed + (a1 << 16)) & 0xFFF00000) + 0x80000;
-		y = ((p->z.fixed + (a2 << 16)) & 0xFFF00000) + 0x80000;
-
-		p->speed = 0x10000;
-		p->acceleration = 0x8000;
-		Engine_ObjectSetPosition(p, x, p->y.fixed, y);
-	}
-	Object_SetMode(p, 27);
-	{
-		x = ((q->x.fixed + (a1 << 16)) & 0xFFF00000) + 0x80000;
-		y = ((q->z.fixed + (a2 << 16)) & 0xFFF00000) + 0x80000;
-
-		q->speed = 0x10000;
-		q->acceleration = 0x8000;
-		Engine_ObjectSetPosition(q, x, q->y.fixed, y);
-	}
-	if (a1 < 0 || a2 < 0)
-	{
-		Object_SetMode(q, 4);
-	}
-	else
-	{
-		Object_SetMode(q, 3);
-	}
-	Object_CommitPosition(p);
-	Engine_EventEnd();
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/pairmove.c"
 
 static void EV20_TOUCH(void)
 {
 
 	Engine_AudioPlayCue(241);
-	SceneActor_PositionPair(11, 112, 0);
-	SceneActor_PositionPair(11, 80, 0);
+	SceneActor_PlacePairAtOffset(11, 112, 0);
+	SceneActor_PlacePairAtOffset(11, 80, 0);
 	Engine_GameFlagSet(0x301);
 	Engine_TaskWait(2);
 	DialogueLayout_ConfigureRowsByFlag301();
@@ -616,8 +579,8 @@ static void FieldScene_RunActor11Transition301(void)
 {
 
 	Engine_AudioPlayCue(241);
-	SceneActor_PositionPair(11, -112, 0);
-	SceneActor_PositionPair(11, -80, 0);
+	SceneActor_PlacePairAtOffset(11, -112, 0);
+	SceneActor_PlacePairAtOffset(11, -80, 0);
 	Engine_GameFlagClear(0x301);
 	Engine_TaskWait(2);
 	DialogueLayout_ConfigureRowsByFlag301();

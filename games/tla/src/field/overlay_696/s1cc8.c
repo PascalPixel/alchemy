@@ -71,31 +71,16 @@ void Func_02001d3c(void)
     Ov696_ObjWalk(gPartyState.current_owner, 120, 264);
     Battle_WaitMode0(1);
     Object_GetById(gPartyState.current_owner)->action_flags |= 1;
-    {
-        s32 emote = 259;
-
-        /* FAKEMATCH: the barrier holds r0 until the emote is complete, so the actor is set last as the native has; through the inline alone it comes one row early. */
-        __asm__("" : "+l"(emote) : : "r0");
-        Func_020049cc(15, emote, 20);
-    }
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
+    OV696_EMOTE(15, 259, 20)
     Ov696_MesPut(0x800f, 0);
     ObjectMotion_SetVariantCallback(17, 1);
-    {
-        s32 emote = 259;
-
-        /* FAKEMATCH: the barrier holds r0 until the emote is complete, so the actor is set last as the native has; through the inline alone it comes one row early. */
-        __asm__("" : "+l"(emote) : : "r0");
-        Func_020049cc(17, emote, 0);
-    }
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
+    OV696_EMOTE(17, 259, 0)
     Ov696_MesPut(0x8011, 0);
     ObjectMotion_SetVariantCallback(16, 1);
-    {
-        s32 emote = 259;
-
-        /* FAKEMATCH: the barrier holds r0 until the emote is complete, so the actor is set last as the native has; through the inline alone it comes one row early. */
-        __asm__("" : "+l"(emote) : : "r0");
-        Func_020049cc(16, emote, 0);
-    }
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
+    OV696_EMOTE(16, 259, 0)
     Ov696_MesPut(0x8010, 0);
     Motion_SetModeAndWaitAnimation(15, 3);
     Ov696_MesPut(0x800f, 0);

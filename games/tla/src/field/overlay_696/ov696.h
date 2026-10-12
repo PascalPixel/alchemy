@@ -268,11 +268,14 @@ static inline void Ov696_ObjPlace(s32 actor, s32 x, s32 z)
     Func_02004934(actor, x, z);
 }
 
-static inline void Ov696_ObjEmote(s32 actor, s32 emote, s32 frames)
-{
-    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
-    Func_020049cc(actor, emote, frames);
-}
+#define OV696_EMOTE(actor, emote, frames) \
+    { \
+        /* FAKEMATCH: the native loads the emote and the frames before the actor at every emote of this overlay; pinned to their argument registers they are loaded first, as there. Measured against it: an inline (the actor comes one row early wherever the emote takes two instructions), an inline with its parameters in another order or modified, a local (shared between calls), a one-pass block, and barriers that hold r0 (each empty asm adds four bytes to the pool estimate and moves the literal pool of a long scene). */ \
+        register s32 emote_ __asm__("r1") = (emote); \
+        /* FAKEMATCH: the frames, pinned with the emote above. */ \
+        register s32 frames_ __asm__("r2") = (frames); \
+        Func_020049cc((actor), emote_, frames_); \
+    }
 
 void Func_0200493c(s32 actor, s32 x, s32 z, s32 angle);
 
@@ -280,6 +283,12 @@ static inline void Ov696_ObjPut(s32 actor, s32 x, s32 z, s32 angle)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Func_0200493c(actor, x, z, angle);
+}
+
+static inline void Ov696_MesWait(s32 speaker, s32 a, s32 frames)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_0200499c(speaker, a, frames);
 }
 
 // ---- this overlay

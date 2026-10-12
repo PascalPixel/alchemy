@@ -54,7 +54,8 @@ void Func_0200290c(void)
             return;
         }
     }
-    Ov696_ObjEmote(15, 257, 20);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
+    OV696_EMOTE(15, 257, 20)
     Ov696_MesPut(0x200f, 0);
     Func_0200289c();
 }

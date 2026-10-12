@@ -2,6 +2,7 @@
 #include "unit/menu/link_lobby/lobby.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/battle.h"
+#include "unit/battle/battle10.h"
 #include "unit/battle/battle11.h"
 #include "unit/battle/battle12.h"
 #include "unit/field/common/script/field.h"

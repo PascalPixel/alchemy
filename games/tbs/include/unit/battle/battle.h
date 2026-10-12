@@ -202,13 +202,5 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 co
 /* BattleFx_PlayUnitElementEffect is called before its definition with no prototype in scope. */
 void BattlePres_RunWithZeroArguments(void);
 void Runtime_RemoveIrqHandlerSlot2(void);
-s32 Party_ComputeEligibleMemberAverage(s32 record_id);
-s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin);
-s32 Owner_ApplyLevelGains(s32 owner, s32 levels);
-s32 EnmCntDec(s32 no, s32 n);
-s32 EnmCntRel(s32 actor_id);
-s32 EnmCntClr(s32 class_id);
-s32 BtlGrpRnd(s32 record_id);
-s32 BattleFormation_BuildEnemyList(s32 record_id);
 
 #endif

@@ -1458,7 +1458,7 @@
     "*/games/common/src/graphics/tile/build_sequential_table.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00125bd0)
     "*/games/tla/src/battle/presentation/f125c5c.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.00125cac)
+    "*/recon/tla/fr/rom.o"(.rom.00125d14)
         "*/games/tla/src/battle/presentation/bg0vofs.o"(.text)
         "*/recon/tla/fr/rom.o"(.rom.00125d8c)
     "*/games/tla/src/battle/presentation/pallevel.o"(.text)

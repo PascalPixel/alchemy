@@ -282,7 +282,7 @@ Func_08125d74:
 	bl Runtime_SetIrqHandler
 	b .L_081261b8
 .L_08125fb0:
-	.4byte Func_08125c94
+	.4byte BattlePres_AdvanceTransitionTimer
 .L_08125fb4:
 	.4byte Func_08125cfc
 .L_08125fb8:

@@ -4703,7 +4703,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00ec364b)
     "*/games/tla/src/graphics/tileset/blank/r648.o"(.rodata)
     "*/recon/tla/ja/rom.o"(.rom.00ec378b)
-    "*/recon/tla/ja/overlays.o"(.overlays)
+    "*/games/tla/src/system/overlay/overlays.o"(.overlays)
 } > ROM
     IwramRuntime_Rom = LOADADDR(.iwram_runtime);
     Sound_Mixer = LOADADDR(.iwram_mixer) + 1;

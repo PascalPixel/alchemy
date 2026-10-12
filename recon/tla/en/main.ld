@@ -5516,6 +5516,5 @@
         "*/recon/tla/unidentified.o"(.unidentified.08ec3737)
         "*/games/tla/src/graphics/tileset/blank/r648.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.08ec3877)
-        "*/recon/tla/overlays.o"(.overlays)
-        "*/recon/tla/unidentified.o"(.unidentified.08f79646)
+        "*/games/tla/src/system/overlay/overlays.o"(.overlays)
     }

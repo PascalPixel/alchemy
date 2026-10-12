@@ -4726,5 +4726,5 @@
     "*/recon/tla/fr/rom.o"(.rom.00ec3757)
     "*/games/tla/src/graphics/tileset/blank/r648.o"(.rodata)
     "*/recon/tla/fr/rom.o"(.rom.00ec3897)
-    "*/recon/tla/fr/overlays.o"(.overlays)
+    "*/games/tla/src/system/overlay/overlays.o"(.overlays)
 }

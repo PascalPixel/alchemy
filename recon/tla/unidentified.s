@@ -5276,5 +5276,3 @@ Resource_Data60D:
 	.incbin "baserom.gba", 0x00ec3737, 0x00000001
 	.section .unidentified.08ec3877,"a"
 	.incbin "baserom.gba", 0x00ec3877, 0x00000001
-	.section .unidentified.08f79646,"a"
-	.incbin "baserom.gba", 0x00f79646, 0x00000002

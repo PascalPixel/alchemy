@@ -241,11 +241,6 @@ void EffectPosition_ApplyStepAndYOffset(s32 id, struct EffectPosition *position)
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
 void BattleFx_ProbeKeysForExtendedActor(void);
-void BattleFx_DispatchByIdRange(s32 *arg0);
-void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect);
-void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect);
-void BattleFx_StepPaletteToResource(s32 resource_id);
-void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind);
 
 // 粒の置き場：Ram_MapCellBuffer を struct EffectStep の並びとして使う
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)

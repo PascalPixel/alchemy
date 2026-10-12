@@ -73,4 +73,69 @@ void Func_02003164(void);
 void Func_0200329c(void);
 void Func_02003e3c(struct ObjectRuntime *object, s32 value);
 
+struct Ov674MapFlags {
+    u8 unknown_00[0x17];
+    u8 unused : 2;
+    u8 mode : 2;
+};
+
+struct Ov674Exit {
+    s32 value;
+    struct {
+        u16 first;
+        u16 second;
+    } pair;
+};
+
+struct Ov674Vector {
+    s32 x;
+    s32 y;
+    s32 z;
+};
+
+struct Ov674Pair {
+    s32 first;
+    s32 second;
+};
+
+struct Ov674Target {
+    s32 a;
+    s32 b;
+    s32 c;
+    s32 d;
+    struct Ov674Pair pair;
+};
+
+extern u8 Data_02004754[];
+extern u8 Data_0200476c[];
+extern u8 Data_020047e4[];
+extern u8 Data_0200494c[];
+extern u8 Data_020049c4[];
+extern u8 Data_02004a84[];
+extern s32 Data_02005190;
+extern s32 Data_02005194;
+extern s32 Data_02005198;
+extern s32 Data_0200519c;
+extern const u8 Data_02004028[];
+extern const struct Ov674Exit Data_020046bc[];
+extern const u16 Data_02004070[];
+
+void Func_020020ec(s32 x, s32 z, s32 layers, s32 value);
+void Func_020021d0(void);
+void Func_02002bd8(void);
+void Func_02003fe4(void);
+void Func_02003edc(s32 actor, s32 x, s32 z);
+void Func_02003e14(struct ObjectRuntime *object);
+void Func_02003e1c(s32 value, s32 first, s32 second);
+s32 Func_02003e2c(struct ObjectRuntime *object, struct Ov674Vector *position);
+struct ObjectRuntime *Func_02003fdc(struct Ov674Vector *position, s32 mode);
+s32 Func_020037d8(struct Ov674Target *target);
+void Func_02003a5c(struct Ov674Target target);
+void Vector_AddPolarOffsetFar(s32 distance, s32 angle, struct Ov674Vector *position);
+void Motion_CamBounds(s32 a, s32 b, s32 c, s32 d);
+void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *script);
+void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);
+void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+
 #endif

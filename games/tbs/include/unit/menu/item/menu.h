@@ -199,15 +199,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode);
 s32 Djinn_ListOwnerEntries(u16 *out, s32 owner, s32 element);
 s32 Menu_RunPairedEntryAction(s32 mode, s32 param);
 s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner, s32 give, s32 take, s32 mode, s32 page, s32 side);
-void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1);
 void FourObjectMotion_ClearSlotsAndSchedule(void);
-void FourObjectMotion_UpdateAllPositions(void);
-void FourObjectMotion_UpdateBottomRow(void);
-void FourObjectMotion_InitializeBottomRow(s32 unused0, s32 unused1);
-s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative);
-s32 FourObjectMotion_SetSlotPhase(s32 index, s32 phase);
-s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value);
 void FourObjectMotion_ClearSlotsAndScheduleAlt(void);
-void Menu_EnableAllItemObjects(void);
 
 #endif

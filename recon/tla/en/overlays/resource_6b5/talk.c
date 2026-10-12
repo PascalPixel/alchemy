@@ -1,3 +1,15 @@
+/* Overlay 6B5 near misses from ☀️ link_lobby/lobby.c (2026-10-12).
+ * Func_02000f6c (LinkLobby_PartyContains), differ 26 of 33, and Func_02001414
+ * (LinkLobby_DrawThreeDigitValue), differ 12 of 32: the same source is strength
+ * reduced in ☀️, but the ⚓️ listing shows loops loop.c left alone. In 0f6c the
+ * party state address and the 0x218 offset are rebuilt inside the loop and the
+ * byte is addressed as base + (i + 0x218); in 1414 the constant 1 for the two
+ * stack arguments is rebuilt inside the loop instead of living in r7.
+ * A loop built from if and goto comes to differ 9 for 0f6c (only the shape of
+ * the return 1 is left: the listing sets r0 before the compare). -O1 and
+ * -fno-strength-reduce do not produce the listing either (out/exp, analysis
+ * only). Func_02000fb8 is the empty function the listing keeps as
+ * .4byte 0x00004770 after 0f6c. */
 #include "battle.h"
 #include "field.h"
 #include "game.h"

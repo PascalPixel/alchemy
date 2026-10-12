@@ -10,15 +10,25 @@ struct SceneRegionEntry {
     u8 unknown_14[4];
 };
 
-void GameFlag_SetBitFar(s32 flag);
-void GameFlag_ClearBitFar(s32 flag);
+#include "ram_buffer.h"
+
+struct MapViewBounds {
+    u8 unknown_000[0xec];
+    s32 min_x;
+    s32 min_y;
+    s32 max_x;
+    s32 max_y;
+};
+
+void GameFlag_SetBit(s32 flag);
+void GameFlag_ClearBit(s32 flag);
 
 void Scene_AssignViewFlags(struct SceneRegionEntry *entry)
 {
-    struct MapScrollWork *view = gCam;
+    struct MapViewBounds *view = (struct MapViewBounds *)Ram_HeapSlots->map_work;
 
-    GameFlag_ClearBitFar(0x164);
-    GameFlag_SetBitFar(0x165);
+    GameFlag_ClearBit(0x164);
+    GameFlag_SetBit(0x165);
     while (entry->id != -1) {
         /* FAKEMATCH: reading the flag through a u16 adds one loop
            instruction, which keeps loop-invariant motion to the reference's

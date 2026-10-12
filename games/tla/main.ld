@@ -339,8 +339,6 @@ SECTIONS
     "*/games/tla/src/field/common/map/cellopen.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0002da04)
     "*/games/tla/src/field/common/map/world_collision.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.0002dae0)
-    "*/recon/tla/ja/rom.o"(.rom.0002db04)
     "*/games/tla/src/field/common/map/terrain.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0002dc84)
     "*/recon/tla/ja/rom.o"(.rom.0002de08)

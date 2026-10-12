@@ -319,7 +319,6 @@
     "*/games/tla/src/field/common/map/cellopen.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.0002da88)
     "*/games/tla/src/field/common/map/world_collision.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.0002db64)
     "*/games/tla/src/field/common/map/terrain.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.0002dd08)
     "*/recon/tla/es/rom.o"(.rom.0002de8c)

@@ -41,3 +41,82 @@ s32 GetWorldMapCollision(struct WorldPosition *position)
 
     return 7;
 }
+
+s32 Func_0802da88(struct WorldPosition *position);
+
+s32 Func_0802db64(void *object, struct WorldPosition *position)
+{
+    if (Func_0802da88(position) != 255) {
+        if ((u32)(GetWorldMapCollision(position) - 5) <= 7)
+            return 0;
+    }
+    return -1;
+}
+
+s32 Func_0802db88(void *object, struct WorldPosition *position)
+{
+    if (Func_0802da88(position) != 255) {
+        s32 collision = GetWorldMapCollision(position);
+        u8 *work = Ram_HeapSlots->event_work;
+        s32 mode;
+
+        /* FAKEMATCH: the native loads the event work before it builds the mode offset; the plain read builds the offset first (one reordered pair, differ 2). */
+        asm volatile("");
+        mode = *(s8 *)(work + 0xd3a);
+        if (mode == 0) {
+            if ((u32)(collision - 1) <= 3 || collision == 6)
+                return 0;
+        } else if (mode == 1) {
+            if ((u32)(collision - 1) <= 3 || collision == 6)
+                return 0;
+        } else if (mode == 2) {
+            if ((u32)(collision - 1) <= 3 || collision == 6)
+                return 0;
+        }
+    }
+    return -1;
+}
+
+struct WorldMover {
+    u8 unknown_00[12];
+    s32 height;
+};
+
+s32 Func_0802dbd0(struct WorldMover *mover, struct WorldPosition *position)
+{
+    if (Func_0802da88(position) != 255) {
+        s32 collision = GetWorldMapCollision(position);
+        u8 *work = Ram_HeapSlots->event_work;
+
+        s32 height = mover->height;
+
+        /* FAKEMATCH: the native loads the height before it builds the limit; the plain test builds the limit first (one reordered pair, differ 2). */
+        asm volatile("");
+        if (height < 0x40000) {
+            if ((u32)(collision - 1) > 3 && collision != 6)
+                return -1;
+            return 0;
+        } else {
+            s32 mode = *(s8 *)(work + 0xd3a);
+
+            if (mode == 0) {
+                if ((u32)(collision - 1) <= 5)
+                    return 0;
+            } else if (mode == 1) {
+                if ((u32)(collision - 1) <= 7)
+                    return 0;
+            } else {
+                if (mode == 2) {
+                    if ((u32)(collision - 1) <= 7)
+                        return 0;
+                } else {
+                    if ((u32)(collision - 4) <= 4)
+                        return 0;
+                }
+                if (collision == 10)
+                    return 0;
+            }
+        }
+    }
+    return -1;
+}

@@ -1,7 +1,28 @@
 #include "types.h"
 #include "iwram_call.h"
+#include "dma.h"
+#include "mem.h"
+#include "io_reg.h"
 
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
+
+extern const u8 Data_0813b9a0[];
+extern u8 Data_0813b9a0CodeSize[];
+
+void Func_08196958(s32 arg0, s32 arg1, s32 arg2)
+{
+    void (*routine)(s32, s32, s32);
+    u32 size;
+
+    /* FAKEMATCH: the wrapper keeps the size load after the parameter copies, as in UiText_LookupMessage. */
+    do {
+        size = (u32)Data_0813b9a0CodeSize;
+    } while (0);
+    routine = (void (*)(s32, s32, s32))MemAlloc(size);
+    Dma_Set((const void *)Data_0813b9a0, routine, 0x84000000 | (size >> 2), REG_DMA3);
+    routine(arg0, arg1, arg2);
+    MemFree(routine);
+}
 
 void Func_081969ac(s8 *vertices, s16 *screen, s32 count)
 {

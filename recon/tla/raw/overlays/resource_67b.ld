@@ -32,7 +32,7 @@ SECTIONS
         "*/resource_67b_overlay.o"(.text.x02009224)
         "*/games/tla/src/field/overlay_67b/events_e.o"(.text)
         "*/resource_67b_overlay.o"(.text.x020093f8)
-        "*/resource_67b_overlay.o"(.text.x02009460)
+        "*/games/tla/src/field/overlay_67b/s1460.o"(.text)
         "*/games/tla/src/field/overlay_67b/s153c.o"(.text)
         "*/games/tla/src/field/overlay_67b/s15e8.o"(.text)
         "*/games/tla/src/field/overlay_67b/events_f.o"(.text)

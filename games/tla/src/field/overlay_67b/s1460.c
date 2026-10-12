@@ -1,4 +1,4 @@
-#include "../../../../games/tla/src/field/overlay_67b/local.h"
+#include "local.h"
 #include "input.h"
 
 void Func_02002998(void);

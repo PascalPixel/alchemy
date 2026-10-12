@@ -2907,13 +2907,7 @@ ReelGame_TitleLetterWidths:
 	.section .unidentified.081ba30c,"a"
 	.global Data_081ba30c
 Data_081ba30c:
-	.incbin "baserom.gba", 0x001ba30c, 0x00005500
-	.global Func_081bf80c
-Func_081bf80c:
-	.incbin "baserom.gba", 0x001bf80c, 0x00000010
-	.global Func_081bf81c
-Func_081bf81c:
-	.incbin "baserom.gba", 0x001bf81c, 0x000007e4
+	.incbin "baserom.gba", 0x001ba30c, 0x00000014
 	.section .unidentified.081c3430,"a"
 	.global Data_081c3430
 Data_081c3430:
@@ -4448,9 +4442,8 @@ Resource_Data2EF:
 	.incbin "baserom.gba", 0x00c25b87, 0x00000001
 	.section .unidentified.08c27635,"a"
 	.incbin "baserom.gba", 0x00c27635, 0x00000003
-	.global Resource_Data3CC
-Resource_Data3CC:
-	.incbin "baserom.gba", 0x00c27638, 0x00001490
+	.section .unidentified.08c28ac5,"a"
+	.incbin "baserom.gba", 0x00c28ac5, 0x00000003
 	.section .unidentified.08c28f2f,"a"
 	.incbin "baserom.gba", 0x00c28f2f, 0x00000001
 	.section .unidentified.08c290ee,"a"
@@ -4781,9 +4774,8 @@ Resource_Data3CC:
 	.incbin "baserom.gba", 0x00d260df, 0x00000001
 	.section .unidentified.08d28b83,"a"
 	.incbin "baserom.gba", 0x00d28b83, 0x00000001
-	.global Resource_Data4B3
-Resource_Data4B3:
-	.incbin "baserom.gba", 0x00d28b84, 0x000021b0
+	.section .unidentified.08d2ad31,"a"
+	.incbin "baserom.gba", 0x00d2ad31, 0x00000003
 	.section .unidentified.08d2cbaa,"a"
 	.incbin "baserom.gba", 0x00d2cbaa, 0x00000002
 	.section .unidentified.08d2cceb,"a"

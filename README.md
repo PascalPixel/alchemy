@@ -21,8 +21,8 @@ game is only 100% done when both numbers are. The Broken Seal comes first;
 The Lost Age has just started. Both pictures redraw themselves after every
 change.
 
-The chart shows that climb day by day: code as the thick line and data,
-measured since 8 October 2026, as the thin one. The colours along the bottom
+The chart shows that climb day by day: code as the bright line and data,
+measured since 8 October 2026, as the darker one. The colours along the bottom
 show which AI models did the work. Sudden drops are honesty checks: when we find
 something that only looked finished, it comes back off the count until it’s
 done properly. The map below it shows the whole project by size: everything

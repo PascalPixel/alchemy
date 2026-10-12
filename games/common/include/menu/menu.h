@@ -70,7 +70,6 @@ extern struct SelectionScreen *gResQueueWork;
 #ifndef OWN_gTitleExtraOptionEnabled
 extern u8 gTitleExtraOptionEnabled[];
 #endif
-extern s8		Inn_PriceMultipliers[];
 extern u8		ItemMenu_ArrangeKeysString[];
 extern s32		ItemMenu_CommandColumnXTable[];
 extern u8		ItemMenu_EquipmentKeyString[];

@@ -8,7 +8,3 @@ Shop_StockTable:
 	.global Shop_PartyActionCues
 Shop_PartyActionCues:
 	.byte 0x52, 0x54, 0x58, 0x57
-@ 宿代の倍率
-	.global Inn_PriceMultipliers
-Inn_PriceMultipliers:
-	.byte 2, 4, 7, 8, 8, 10, 12, 15, 20, 0, 18, 25

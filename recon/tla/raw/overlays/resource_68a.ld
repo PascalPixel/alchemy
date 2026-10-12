@@ -4,7 +4,6 @@ SECTIONS
     {
         "*/games/tla/src/field/overlay_68a/entry.o"(.text)
         "*/games/tla/src/field/overlay_68a/start.o"(.text)
-        "*/resource_68a_overlay.o"(.text.x02008080)
         "*/games/tla/src/field/overlay_68a/scene_tables.o"(.text)
         "*/games/tla/src/field/overlay_68a/map.o"(.text)
         "*/resource_68a_overlay.o"(.text.x02008110)
@@ -14,7 +13,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_68a/scene_events.o"(.text)
         "*/resource_68a_overlay.o"(.text.x02008630)
         "*/resource_68a_overlay.o"(.text.x020086bc)
-        "*/resource_68a_overlay.o"(.text.x020087a4)
         "*/games/tla/src/field/overlay_68a/s0830.o"(.text)
         "*/resource_68a_overlay.o"(.text.x02008838)
         "*/games/tla/src/field/overlay_68a/import.o"(.text)

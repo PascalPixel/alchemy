@@ -94,6 +94,7 @@ extern char SceneId_Ov6a8Room3;
 extern char SceneId_Ov6a8Room4;
 extern char SceneId_Ov6a8Room5;
 extern char SceneId_Ov6a8Room6;
+extern char SceneId_Ov6afRoom1;
 extern char SceneId_Ov6afRoom2;
 extern char SceneId_Ov6afRoom3;
 extern char SceneId_Ov6afRoom4;

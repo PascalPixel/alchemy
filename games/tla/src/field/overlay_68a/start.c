@@ -14,3 +14,14 @@ void Func_02000048(struct FieldActor *object)
     if ((time & 15) == 0)
         Func_02001a2c(155);
 }
+
+void Func_02000080(s32 id)
+{
+    struct FieldActor *object = Object_GetById(id);
+    struct FieldSprite *sprite = object->sprite;
+
+    asm volatile(""); /* FAKEMATCH: the sprite is loaded before the zero is built; a struct field, a chained assignment and a zero local all build the zero first (2 differ) */
+    WORD_AT(object, 108) = 0;
+    object->timer = 0;
+    sprite->rotation = 0;
+}

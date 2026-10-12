@@ -42,11 +42,11 @@ Pcm_KeyToFrequencyWorkCopy:
 	ldr r4, [r1, #4]
 	subs r0, r0, r5
 	adds r1, r7, #0
-	bl Func_081bf80c
+	bl Resource_FarCall010 - 0x7f4
 	adds r1, r0, #0
 	adds r1, r5, r1
 	adds r0, r4, #0
-	bl Func_081bf80c
+	bl Resource_FarCall010 - 0x7f4
 	pop {r4, r5, r6, r7}
 	pop {r1}
 	bx r1

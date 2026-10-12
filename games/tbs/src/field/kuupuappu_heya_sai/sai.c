@@ -2,6 +2,7 @@
 #include "game_state.h"
 #include "unit/field/kuupuappu_heya_sai/sai.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object16.h"
 #include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"
 #include "unit/game/character/chara.h"

@@ -3,6 +3,7 @@
 #include "scene_ids.h"
 #include "unit/field/imiru_mura/mura.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object16.h"
 #include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"
 #include "unit/field/common/script/field.h"

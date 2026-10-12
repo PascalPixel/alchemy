@@ -2,6 +2,7 @@
 
 #include "unit/field/goma_ike/ike.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object16.h"
 #include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"
 #include "battle.h"

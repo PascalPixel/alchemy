@@ -130,6 +130,7 @@ main	rom_main_03	games/tbs/src/game/character/elemtbl
 main	rom_main_03	games/tbs/src/game/djinn/djinntbl
 main	rom_main_04	games/tbs/src/system/far_call/OBJECT
 main	rom_main_04	games/tbs/src/battle/effect/object
+main	rom_main_04	games/tbs/src/battle/effect/object16
 main	rom_main_04	games/tbs/src/battle/effect/object17
 main	rom_main_04	games/tbs/src/battle/effect/object18
 main	rom_main_04	games/tbs/src/battle/effect/arcspark

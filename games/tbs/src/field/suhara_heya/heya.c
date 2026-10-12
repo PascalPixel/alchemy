@@ -3,6 +3,7 @@
 #include "unit/import.h"
 #include "unit/field/suhara_heya/heya.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object16.h"
 #include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"
 #include "unit/field/common/script/field.h"

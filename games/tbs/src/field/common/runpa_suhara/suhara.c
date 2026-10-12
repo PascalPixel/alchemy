@@ -2,6 +2,7 @@
 #include "field_event.h"
 #include "unit/field/common/runpa_suhara/suhara.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object16.h"
 #include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"
 #include "interiors.h"

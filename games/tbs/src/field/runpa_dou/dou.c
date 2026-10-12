@@ -3,6 +3,7 @@
 #include "field_event.h"
 #include "unit/field/runpa_dou/dou.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object16.h"
 #include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"
 #include "cave.h"

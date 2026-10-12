@@ -13,6 +13,7 @@
 #include "unit/battle/battle11.h"
 #include "unit/battle/battle12.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object16.h"
 #include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"
 #include "unit/system/scheduler/runtime.h"

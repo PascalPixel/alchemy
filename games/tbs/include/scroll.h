@@ -2,6 +2,7 @@
 #define ALCHEMY_SCROLL_H
 
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object16.h"
 #include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"
 #include "unit/graphics/display/scroll_initialize_hblank_dma.h"

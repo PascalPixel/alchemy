@@ -257,7 +257,7 @@ void Func_081180f0(void *, void *, s32, s32);
 struct ActorPos **Func_08118098(s32);
 void Func_0814cd48(s32, s32, s32, s32, s32);
 void Func_081180e8(s32);
-void Func_0815f000(s32, s32, s32, s32, s32, s32);
+void BattleFx_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_08138086(struct Particle *, s32, s32);
 void EffectPosition_ApplyStepAndYOffset(s32, struct Particle *);
 void Func_08158d68(s32);
@@ -1406,7 +1406,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                 for (i = 0; i != arg->count; i++) {
                     s32 spin = Random16();
 
-                    Func_0815f000(arg->actors[i], 1, 0x40000, 0x80000, spin * 2 + 0x20000,
+                    BattleFx_StartActorMotion(arg->actors[i], 1, 0x40000, 0x80000, spin * 2 + 0x20000,
                         (Random16() & 31) + 120);
                     Func_0814cd48(arg->actors[i], 7, 5, i, 32);
                 }

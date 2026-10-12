@@ -943,7 +943,7 @@ Func_0818eda4:
 	str r3, [sp, #4]
 	movs r1, #1
 	movs r3, #0
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	ldr r3, [sp, #48]
 	movs r1, #7
 	movs r2, #36

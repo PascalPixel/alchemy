@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Func_080d489c
 	.thumb_func
 Func_080d489c:
@@ -23,7 +24,7 @@ Func_080d489c:
 	cmp r3, #2
 	beq .L_080d48ce
 	ldr r0, [r7, #104]
-	bl Func_080d4868
+	bl Object_IsOutsideAnimation108
 	cmp r0, #0
 	beq .L_080d48f0
 .L_080d48ce:

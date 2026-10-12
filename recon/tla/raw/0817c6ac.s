@@ -169,7 +169,7 @@ Func_0817c6ac:
 	lsls r3, r3, #11
 	movs r1, #1
 	str r2, [sp, #0]
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	ldr r4, [sp, #80]
 	movs r1, #7
 	movs r3, #36

@@ -1023,12 +1023,6 @@ UiWindow_OpenMode1AndWaitFrame:
 	.thumb_func
 Func_0803f9c0:
 	.incbin "baserom.gba", 0x0003fa04, 0x000001a0
-	.section .rom.0003fba4, "ax"
-	.global Func_0803fb60
-	.type Func_0803fb60, %function
-	.thumb_func
-Func_0803fb60:
-	.incbin "baserom.gba", 0x0003fba4, 0x000000d8
 	.section .rom.0003fc7c, "ax"
 	.incbin "baserom.gba", 0x0003fc7c, 0x000000dc
 	.section .rom.0003fd6c, "ax"
@@ -2167,9 +2161,6 @@ Func_080ce458:
 	.global Func_080cee80
 Func_080cee80:
 	.incbin "baserom.gba", 0x000d3e80, 0x0000002c
-	.section .rom.000d3f24, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x000d3f24, 0x00000044
 	.section .rom.000d4050, "ax"
 	.global Func_080cf050
 	.type Func_080cf050, %function
@@ -2203,12 +2194,6 @@ Func_080cf6fc:
 	.thumb_func
 Func_080cf78c:
 	.incbin "baserom.gba", 0x000d478c, 0x0000096c
-	.section .rom.000d50f8, "ax"
-	.global Func_080d00f8
-	.type Func_080d00f8, %function
-	.thumb_func
-Func_080d00f8:
-	.incbin "baserom.gba", 0x000d50f8, 0x0000008c
 	.section .rom.000d51cc, "ax"
 	.global DisplayTransition_Start
 	.type DisplayTransition_Start, %function
@@ -2455,8 +2440,9 @@ Motion_CamBounds:
 	.type Func_080d47b4, %function
 	.thumb_func
 Func_080d47b4:
-	.incbin "baserom.gba", 0x000d97a8, 0x000000e8
+	.incbin "baserom.gba", 0x000d97a8, 0x000000b4
 	.section .rom.000d9890, "ax"
+	.balign 4
 	.global Func_080d489c
 	.type Func_080d489c, %function
 	.thumb_func
@@ -2734,12 +2720,6 @@ Func_080dbd5c:
 	.section .rom.000e0ec4, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000e0ec4, 0x00000174
-	.section .rom.000e11a4, "ax"
-	.global Func_080dc1b0
-	.type Func_080dc1b0, %function
-	.thumb_func
-Func_080dc1b0:
-	.incbin "baserom.gba", 0x000e11a4, 0x00000094
 	.section .rom.000e1288, "ax"
 	.global BattleEffect_InitializeSharedScene
 	.type BattleEffect_InitializeSharedScene, %function
@@ -3757,11 +3737,6 @@ Func_0811a39c:
 	.incbin "baserom.gba", 0x0011a3b4, 0x000000b0
 	.section .rom.0011a4f6, "ax"
 	.incbin "baserom.gba", 0x0011a4f6, 0x0000011e
-	.global BattleMotion_ReleaseObjectSlotByValue
-	.type BattleMotion_ReleaseObjectSlotByValue, %function
-	.thumb_func
-BattleMotion_ReleaseObjectSlotByValue:
-	.incbin "baserom.gba", 0x0011a614, 0x00000044
 	.section .rom.0011a68c, "ax"
 	.incbin "baserom.gba", 0x0011a68c, 0x00000af8
 	.section .rom.0011b198, "ax"
@@ -4267,13 +4242,27 @@ Func_0815c970:
 	.incbin "baserom.gba", 0x0015e22c, 0x0000005c
 	.global BattleUnit_ProjectToScreen
 BattleUnit_ProjectToScreen:
-	.incbin "baserom.gba", 0x0015e288, 0x00000098
-	.section .rom.0015e320, "ax"
-	.global Func_0815e320
-	.type Func_0815e320, %function
+	.incbin "baserom.gba", 0x0015e288, 0x00000074
+	.section .rom.0015e3ac, "ax"
+	.balign 4
+	.global Func_0815e3ac
+	.type Func_0815e3ac, %function
 	.thumb_func
-Func_0815e320:
-	.incbin "baserom.gba", 0x0015e320, 0x000058e0
+Func_0815e3ac:
+	.incbin "baserom.gba", 0x0015e3ac, 0x00000648
+	.global Func_0815e9f4
+	.type Func_0815e9f4, %function
+	.thumb_func
+Func_0815e9f4:
+	.incbin "baserom.gba", 0x0015e9f4, 0x0000060c
+	.section .rom.0015f0a0, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0015f0a0, 0x000000cc
+	.global Func_0815f16c
+	.type Func_0815f16c, %function
+	.thumb_func
+Func_0815f16c:
+	.incbin "baserom.gba", 0x0015f16c, 0x00004a94
 	.section .rom.00163c2c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00163c2c, 0x00000fc8

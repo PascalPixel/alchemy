@@ -152,7 +152,7 @@ Func_08180c94:
 	adds r2, r7, #0
 	lsls r3, r3, #12
 	str r7, [sp, #0]
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	ldr r4, [sp, #32]
 	movs r3, #7
 	ldrsh r0, [r5, r4]

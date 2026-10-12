@@ -309,7 +309,7 @@ Func_08178710:
 	movs r1, #1
 	lsls r2, r2, #10
 	str r3, [sp, #0]
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	b .L_081789bc
 .L_08178990:
 	.4byte IwramFillWords
@@ -331,7 +331,7 @@ Func_08178710:
 	movs r1, #1
 	lsls r2, r2, #10
 	lsls r3, r3, #11
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 .L_081789bc:
 	ldr r1, [sp, #84]
 	movs r3, #8

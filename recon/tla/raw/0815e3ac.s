@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Func_0815e3ac
 	.thumb_func
 Func_0815e3ac:
@@ -405,7 +406,7 @@ Func_0815e3ac:
 	movs r1, #1
 	lsls r2, r2, #9
 	lsls r3, r3, #11
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	b .L_0815e704
 .L_0815e6f8:
 	ldr r5, [sp, #52]

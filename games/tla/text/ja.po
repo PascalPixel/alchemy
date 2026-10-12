@@ -14083,7 +14083,7 @@ msgctxt "message"
 msgid "03518"
 msgstr "{argument_ability_name}・・・{page_break}エナジーは かきけされてしまった・・・{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMonstersAttackLess"
 msgid "03519"
 msgstr "モンスターが おそってきにくくなった{end_wait}"
 

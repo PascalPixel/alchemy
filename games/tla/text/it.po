@@ -15923,7 +15923,7 @@ msgctxt "message"
 msgid "03978"
 msgstr "{argument_ability_name}...{page_break}Qui non funziona.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMonstersAttackLess"
 msgid "03979"
 msgstr "Ora i mostri attaccheranno{line_break}più raramente.{end_wait}"
 

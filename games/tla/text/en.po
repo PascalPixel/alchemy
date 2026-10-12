@@ -14079,7 +14079,7 @@ msgctxt "message"
 msgid "03517"
 msgstr "{argument_ability_name}...{page_break}It doesn't work here.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMonstersAttackLess"
 msgid "03518"
 msgstr "Monsters won't attack{line_break}so often now.{end_wait}"
 

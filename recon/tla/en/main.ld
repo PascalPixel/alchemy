@@ -1309,7 +1309,6 @@
         "*/recon/tla/raw/080e1024.o"(.text)
         "*/recon/tla/raw/080e1154.o"(.text)
         "*/games/tla/src/battle/effect/arcmsg.o"(.text)
-        "*/recon/tla/raw/080e1214.o"(.text)
         "*/games/tla/src/battle/effect/flicker_object_and_tick.o"(.text)
         "*/recon/tla/raw/080e1448.o"(.text)
         "*/recon/tla/raw/080e150c.o"(.text)

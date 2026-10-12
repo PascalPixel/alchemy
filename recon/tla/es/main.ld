@@ -1053,7 +1053,6 @@
     "*/games/tla/src/battle/effect/advance_angle_with_ramp.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000e9ca0)
     "*/games/tla/src/battle/effect/arcmsg.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.000ea208)
     "*/games/tla/src/battle/effect/flicker_object_and_tick.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000ea43c)
     "*/games/tla/src/battle/effect/arc_effect.o"(.text)

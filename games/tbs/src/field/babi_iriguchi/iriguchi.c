@@ -69,22 +69,8 @@ static void EV08_TALK(void)
 	BattleFx_SetPhaseRequest(8, 66);
 }
 
-static void OverlayObject_WaitUntilIdle(s32 *obj)
-{
-	s32 i = 60;
-
-	while (i != 0)
-	{
-		Engine_TaskWait(1);
-		i--;
-		if (obj[10] == 0)
-		{
-			break;
-		}
-	}
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/waitidle.c"
 #include "../common/effect/advance.c"
 
 static void FieldScene_RunSupplementalSequenceOne(void)
@@ -157,7 +143,7 @@ static void FieldScene_RunScene3c5SequenceA(s32 exit)
 	Object_GetById(0)->motion_flags = 3;
 	leader = Actor_Get(ACTOR_PARTY_LEADER);
 	leader->velocity_y = -0x50000;
-	OverlayObject_WaitUntilIdle((s32 *)Actor_Get(ACTOR_PARTY_LEADER));
+	OverlayObject_WaitUntilIdle(Actor_Get(ACTOR_PARTY_LEADER));
 	Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
 	Engine_EventRequestExit(exit);
 	Engine_EventEnd();

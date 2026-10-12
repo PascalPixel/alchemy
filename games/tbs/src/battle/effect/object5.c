@@ -160,80 +160,80 @@ void Battle_PlaceMapMarkers(void)
 	while (column != 255 || row != 255)
 	{
 		id = *list++;
-		if (id < 100 || id > 239)
-			goto next;
-		event = gOverlayArea.events();
-		for (; event->control != -1; event++)
+		if (id >= 100 && id <= 239)
 		{
-			if (event->trigger != id)
-				continue;
-			if ((event->control & 0x1ff) == 19)
+			event = gOverlayArea.events();
+			for (; event->control != -1; event++)
 			{
-				// マスの中心に物体 20 を置く
-				obj = (struct ScriptObjectRuntime *)Object_CreateFar(
-					20, (column << 20) + 0x80000, 0, (row << 20) + 0x80000);
-				if (obj == NULL)
+				if (event->trigger != id)
 					continue;
-				ObjectMotion_SnapToTerrain(obj);
-				ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
-				if (GameFlag_TestFar(event->condition))
+				if ((event->control & 0x1ff) == 19)
 				{
-					if ((event->value & 0xfff00000) == 0x500000)
-					{
-						ObjectDispatch_ReleaseFar(obj);
+					// マスの中心に物体 20 を置く
+					obj = (struct ScriptObjectRuntime *)Object_CreateFar(
+						20, (column << 20) + 0x80000, 0, (row << 20) + 0x80000);
+					if (obj == NULL)
 						continue;
+					ObjectMotion_SnapToTerrain(obj);
+					ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
+					if (GameFlag_TestFar(event->condition))
+					{
+						if ((event->value & 0xfff00000) == 0x500000)
+						{
+							ObjectDispatch_ReleaseFar(obj);
+							continue;
+						}
+						ObjectDispatch_ApplyArgumentToChildrenFar(obj, 2);
 					}
-					ObjectDispatch_ApplyArgumentToChildrenFar(obj, 2);
+					ObjectDispatch_InitFromTable6Far(obj);
+					obj->home_x = obj->x / 0x10000;
+					obj->home_z = obj->z / 0x10000;
+					obj->unknown_23 = 1;
+					obj->flags_59 = 1;
+					slot->id = event->trigger;
+					slot->object = obj;
+					slot->column = obj->x / 0x100000;
+					slot->row = obj->z / 0x100000;
+					slot++;
+					count++;
+					if (count >= MARKER_MAX)
+						return;
 				}
-				ObjectDispatch_InitFromTable6Far(obj);
-				obj->home_x = obj->x / 0x10000;
-				obj->home_z = obj->z / 0x10000;
-				obj->unknown_23 = 1;
-				obj->flags_59 = 1;
-				slot->id = event->trigger;
-				slot->object = obj;
-				slot->column = obj->x / 0x100000;
-				slot->row = obj->z / 0x100000;
-				slot++;
-				count++;
-				if (count >= MARKER_MAX)
-					return;
-			}
-			else if ((event->control & 0x1ff) == 3)
-			{
-				// フラグが立っていなければ、物体 28 を置く
-				if ((event->value & 0xfff00000) != 0x300000)
+				else if ((event->control & 0x1ff) == 3)
+				{
+					// フラグが立っていなければ、物体 28 を置く
+					if ((event->value & 0xfff00000) != 0x300000)
+						continue;
+					if (GameFlag_TestFar(event->condition))
+						continue;
+					obj = (struct ScriptObjectRuntime *)Object_CreateFar(
+						28, (column << 20) + 0x80000, 0, (row << 20) + 0x80000);
+					if (obj == NULL)
+						continue;
+					ObjectMotion_SnapToTerrain(obj);
+					ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
+					ObjectDispatch_InitFromTable6Far(obj);
+					ObjectDispatch_ApplyArgumentToChildrenFar(obj, 1);
+					obj->home_x = obj->x / 0x10000;
+					obj->home_z = obj->z / 0x10000;
+					obj->flags_59 = 1;
+					obj->unknown_23 = 1;
+					slot->object = obj;
+					slot->id = event->trigger;
+					slot->column = obj->x / 0x100000;
+					slot->row = obj->z / 0x100000;
+					slot++;
+					count++;
+					if (count >= MARKER_MAX)
+						return;
+				}
+				else
+				{
 					continue;
-				if (GameFlag_TestFar(event->condition))
-					continue;
-				obj = (struct ScriptObjectRuntime *)Object_CreateFar(
-					28, (column << 20) + 0x80000, 0, (row << 20) + 0x80000);
-				if (obj == NULL)
-					continue;
-				ObjectMotion_SnapToTerrain(obj);
-				ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
-				ObjectDispatch_InitFromTable6Far(obj);
-				ObjectDispatch_ApplyArgumentToChildrenFar(obj, 1);
-				obj->home_x = obj->x / 0x10000;
-				obj->home_z = obj->z / 0x10000;
-				obj->flags_59 = 1;
-				obj->unknown_23 = 1;
-				slot->object = obj;
-				slot->id = event->trigger;
-				slot->column = obj->x / 0x100000;
-				slot->row = obj->z / 0x100000;
-				slot++;
-				count++;
-				if (count >= MARKER_MAX)
-					return;
+				}
+				break;
 			}
-			else
-			{
-				continue;
-			}
-			break;
 		}
-	next:
 		column = *list++;
 		row = *list++;
 	}
@@ -247,22 +247,12 @@ s32 EffectRuntime_FindSlotByObject(s32 id)
 
 	slot = ((struct EffectRuntime *)gEventWork)->slots;
 	found = -1;
-	index = 0;
-	if (slot->active == id)
+	for (index = 0; index <= 9; index++, slot++)
 	{
-		found = 0;
-	}
-	else
-	{
-	next_slot:
-		index++;
-		slot++;
-		if (index <= 9)
+		if (slot->active == id)
 		{
-			if (slot->active == id)
-				found = index;
-			else
-				goto next_slot;
+			found = index;
+			break;
 		}
 	}
 	return found;

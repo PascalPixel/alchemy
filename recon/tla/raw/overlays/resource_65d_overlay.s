@@ -1,58 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008040,"ax",%progbits
-	.global Func_02000040
-	.thumb_func
-Func_02000040:
-	push {lr}
-	ldr r3, .L_0200805c
-	movs r1, #240
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, .L_02008060
-	movs r0, #0
-	cmp r2, r3
-	bne .L_02008058
-	ldr r0, .L_02008064
-.L_02008058:
-	pop {pc}
-	.2byte 0x0000
-.L_0200805c:
-	.4byte gPartyState
-.L_02008060:
-	.4byte 0x00000038
-.L_02008064:
-	.4byte Data_02000794
-	.section .text.x02008070,"ax",%progbits
-	.global Func_02000070
-	.thumb_func
-Func_02000070:
-	push {lr}
-	ldr r3, .L_0200808c
-	movs r1, #240
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, .L_02008090
-	cmp r2, r3
-	bne .L_02008088
-	ldr r0, .L_02008094
-	b .L_0200808a
-.L_02008088:
-	ldr r0, .L_02008098
-.L_0200808a:
-	pop {pc}
-.L_0200808c:
-	.4byte gPartyState
-.L_02008090:
-	.4byte 0x00000037
-.L_02008094:
-	.4byte Data_02000fa0
-.L_02008098:
-	.4byte Data_020010c0
 	.section .text.x0200809c,"ax",%progbits
 	.global Func_0200009c
 	.thumb_func
@@ -134,35 +81,6 @@ Func_0200009c:
 	.4byte Data_0200073c
 .L_02008148:
 	.4byte gPartyState
-	.section .text.x0200815c,"ax",%progbits
-	.balign 4
-	.global Func_0200015c
-	.thumb_func
-Func_0200015c:
-	push {lr}
-	ldr r3, .L_02008178
-	movs r1, #240
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, .L_0200817c
-	cmp r2, r3
-	bne .L_02008174
-	ldr r0, .L_02008180
-	b .L_02008176
-.L_02008174:
-	ldr r0, .L_02008184
-.L_02008176:
-	pop {pc}
-.L_02008178:
-	.4byte gPartyState
-.L_0200817c:
-	.4byte 0x00000038
-.L_02008180:
-	.4byte Data_020012ac
-.L_02008184:
-	.4byte Data_020010d8
 	.section .text.x0200830c,"ax",%progbits
 	.global Func_0200030c
 	.thumb_func

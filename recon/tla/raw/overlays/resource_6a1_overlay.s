@@ -1,45 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x02008054,"ax",%progbits
-	.global Func_02000054
-	.thumb_func
-Func_02000054:
-	push {lr}
-	bl Func_02001f60
-	cmp r0, #0
-	beq .L_02008064
-	movs r0, #13
-	bl Func_02002270
-.L_02008064:
-	pop {pc}
-	.2byte 0x0000
-	.section .text.x02008068,"ax",%progbits
-	.global Func_02000068
-	.thumb_func
-Func_02000068:
-	push {r5, lr}
-	sub sp, #32
-	add r5, sp, #8
-	adds r0, r5, #0
-	bl Func_02000c44
-	cmp r0, #0
-	beq .L_0200808c
-	mov r2, sp
-	add r3, sp, #24
-	ldmia r3!, {r0, r1}
-	stmia r2!, {r0, r1}
-	ldr r0, [r5]
-	ldr r1, [r5, #4]
-	ldr r2, [r5, #8]
-	ldr r3, [r5, #12]
-	bl Func_02000ec8
-.L_0200808c:
-	add sp, #32
-	pop {r5, pc}
-	.global Data_02000090
-Data_02000090:
-	.4byte 0x00004770
 	.section .text.x02008094,"ax",%progbits
+	.balign 4
 	.global Func_02000094
 	.thumb_func
 Func_02000094:
@@ -239,18 +201,6 @@ Func_020001d4:
 	pop {r5, pc}
 .L_02008240:
 	.4byte 0xffe00000
-	.section .text.x0200826e,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x02008270,"ax",%progbits
-	.global Func_02000270
-	.thumb_func
-Func_02000270:
-	ldr r3, .L_02008278
-	str r0, [r3]
-	bx lr
-	.2byte 0x0000
-.L_02008278:
-	.4byte Data_02002a88
 	.section .text.x0200827c,"ax",%progbits
 	.global Func_0200027c
 	.thumb_func

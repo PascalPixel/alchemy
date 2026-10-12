@@ -14,3 +14,18 @@ const u32 *Scene_GetExits(void)
 {
     return gSceneExits;
 }
+
+#include "party_state.h"
+#include "scene_ids.h"
+
+extern s32 Data_02000fa0[];
+extern u32 Data_020010c0[];
+
+void *Func_02000070(void)
+{
+    s16 scene = gPartyState.scene;
+
+    if (scene == (s32)&SceneId_Ov65dRoom1)
+        return Data_02000fa0;
+    return Data_020010c0;
+}

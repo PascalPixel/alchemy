@@ -390,22 +390,7 @@ Battle_Effect91Classes:
 	.global Data_080eda0c
 Data_080eda0c:
 	.incbin "baserom.gba", 0x000eda0c, 0x000000c0
-	.section .unidentified.080eff22,"a"
-	.global Data_080eff22
-Data_080eff22:
-	.incbin "baserom.gba", 0x000eff22, 0x00000006
-	.global Data_080eff28
-Data_080eff28:
-	.incbin "baserom.gba", 0x000eff28, 0x000000b0
-	.global Data_080effd8
-Data_080effd8:
-	.incbin "baserom.gba", 0x000effd8, 0x0000009c
-	.global Data_080f0074
-Data_080f0074:
-	.incbin "baserom.gba", 0x000f0074, 0x00000120
-	.global BattleFx_ParticleScript
-BattleFx_ParticleScript:
-	.incbin "baserom.gba", 0x000f0194, 0x00000024
+	.section .unidentified.080f01b8,"a"
 	.global Data_080f01b8
 Data_080f01b8:
 	.incbin "baserom.gba", 0x000f01b8, 0x0000000c
@@ -768,13 +753,6 @@ Data_08128960:
 	.global Data_0812896c
 Data_0812896c:
 	.incbin "baserom.gba", 0x0012896c, 0x00000006
-	.section .unidentified.08129828,"a"
-	.global Data_08129828
-Data_08129828:
-	.incbin "baserom.gba", 0x00129828, 0x00000008
-	.global Data_08129830
-Data_08129830:
-	.incbin "baserom.gba", 0x00129830, 0x0000013c
 	.section .unidentified.0812ce54,"a"
 	.global Data_0812ce54
 Data_0812ce54:

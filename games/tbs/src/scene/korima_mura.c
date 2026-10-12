@@ -1538,31 +1538,30 @@ static s32 KorimaMura_TriggerRegionScript(struct FieldActor *actor)
 {
 	if (KorimaMura_LayoutFlag != 0)
 	{
-		if (actor->x.fixed > 0x3b0000 && actor->x.fixed < 0x8d0000 && actor->z.fixed > 0xd30000
-			&& actor->z.fixed < 0x1010000)
-			goto hit;
-		if (actor->x.fixed > 0x450000 && actor->x.fixed < 0x7a0000 && actor->z.fixed > 0xc20000
-			&& actor->z.fixed < 0x1150000)
-			goto hit;
+		if ((actor->x.fixed > 0x3b0000 && actor->x.fixed < 0x8d0000 && actor->z.fixed > 0xd30000
+				&& actor->z.fixed < 0x1010000)
+			|| (actor->x.fixed > 0x450000 && actor->x.fixed < 0x7a0000 && actor->z.fixed > 0xc20000
+				&& actor->z.fixed < 0x1150000))
+		{
+			Engine_AudioPlayCue(106);
+			Engine_ObjectSetScript(actor, KorimaMura_RegionScript);
+			KorimaMura_PendingPose = 1;
+		}
 	}
 	else
 	{
-		if (actor->x.fixed > 0x3b0000 && actor->x.fixed < 0x6f0000 && actor->z.fixed > 0xc20000
-			&& actor->z.fixed < 0xe60000)
-			goto hit;
-		if (actor->x.fixed > 0x6f0000 && actor->x.fixed < 0x8d0000 && actor->z.fixed > 0xd80000
-			&& actor->z.fixed < 0xfa0000)
-			goto hit;
-		if (actor->x.fixed > 0x4e0000 && actor->x.fixed < 0x7a0000 && actor->z.fixed > 0xf10000
-			&& actor->z.fixed < 0x1150000)
-			goto hit;
+		if ((actor->x.fixed > 0x3b0000 && actor->x.fixed < 0x6f0000 && actor->z.fixed > 0xc20000
+				&& actor->z.fixed < 0xe60000)
+			|| (actor->x.fixed > 0x6f0000 && actor->x.fixed < 0x8d0000 && actor->z.fixed > 0xd80000
+				&& actor->z.fixed < 0xfa0000)
+			|| (actor->x.fixed > 0x4e0000 && actor->x.fixed < 0x7a0000 && actor->z.fixed > 0xf10000
+				&& actor->z.fixed < 0x1150000))
+		{
+			Engine_AudioPlayCue(106);
+			Engine_ObjectSetScript(actor, KorimaMura_RegionScript);
+			KorimaMura_PendingPose = 1;
+		}
 	}
-	goto done;
-hit:
-	Engine_AudioPlayCue(106);
-	Engine_ObjectSetScript(actor, KorimaMura_RegionScript);
-	KorimaMura_PendingPose = 1;
-done:
 	return 0;
 }
 

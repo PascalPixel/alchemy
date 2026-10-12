@@ -95,7 +95,7 @@ fn self_sufficient(text: &str, own: &str, owner: &BTreeMap<String, String>) -> (
     }
     let lines: Vec<&str> = text.split_inclusive('\n').collect();
     let is_include = |line: &&str| line.trim_start().strip_prefix('#').is_some_and(|rest| rest.trim_start().starts_with("include"));
-    let at = lines.iter().rposition(|line| is_include(line)).or_else(|| lines.iter().position(|line| line.trim_start().starts_with("#define"))).map_or(0, |at| at + 1);
+    let at = lines.iter().rposition(is_include).or_else(|| lines.iter().position(|line| line.trim_start().starts_with("#define"))).map_or(0, |at| at + 1);
     let mut out: String = lines[..at].concat();
     for unit in &wanted {
         out.push_str(&format!("#include \"{unit}\"\n"));

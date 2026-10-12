@@ -1570,8 +1570,6 @@ static void Event_SayThenWait(s32 speaker, s32 frames)
 	Engine_EventWait(frames);
 }
 
-s32 SoruSekizo_SpriteRowsGfx[] = { 0 };
-
 struct SceneEntrance SceneEventRuntime_ScriptData[] = {
 	{ 0, CONDITION_ALWAYS, 287, 0, 176, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 646, 0, 329, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },

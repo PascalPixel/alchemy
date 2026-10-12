@@ -288,6 +288,7 @@ main	rom_tail_02	@games/tbs/src/system/resource/directory
 37a	unit	games/tbs/src/scene/soru_nichigetsu
 37a	bss	resource_37a_overlay	.bss
 37b	unit	games/tbs/src/scene/soru_sekizo
+37b	text	games/tbs/src/graphics/soru_sekizo/rows
 37b	bss	games/tbs/src/scene/soru_sekizo	.bss COMMON
 37c	unit	games/tbs/src/scene/soru_dou
 37d	unit	games/tbs/src/scene/soru_meiro

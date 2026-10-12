@@ -7,7 +7,7 @@ SECTIONS
         "*/resource_6ba_overlay.o"(.text.x02008054)
         "*/games/tla/src/field/overlay_6ba/menu_calls.o"(.text)
         "*/games/tla/src/field/overlay_6ba/s01d4.o"(.text)
-        "*/resource_6ba_overlay.o"(.text.x020082a8)
+        "*/games/tla/src/field/overlay_6ba/s02a8.o"(.text)
         "*/games/tla/src/field/overlay_6ba/loop_call.o"(.text)
         "*/resource_6ba_overlay.o"(.text.x020083b8)
         "*/resource_6ba_overlay.o"(.text.x02008520)

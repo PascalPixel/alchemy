@@ -1,5 +1,3 @@
-/* Near miss of Func_020002a8 of overlay 6BA (86 instructions, 2 differ): the native copies
- * the item into r0 for Func_02000d08 after it saves the price in r8; the draft before. */
 #include "types.h"
 #include "party_state.h"
 #include "flag_call.h"
@@ -16,7 +14,7 @@ extern const u8 MsgManSunshineWould[];
 void Battle_WaitMode0(s32 frames);
 s32 UiText_OpenMessageAtObject(s32 id, s32 flags);
 s32 Inventory_PromptAndSetObjectMode(s32 id, s32 flags);
-void PartyInventory_GiveItem(s32 item, s32 count);
+s32 PartyInventory_GiveItem(s32 item, s32 count);
 void Party_AdjustCoins(s32 amount);
 void Func_02000d08(s32 value, s32 slot);
 u16 *Func_02000d48(s32 item);

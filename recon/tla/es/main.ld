@@ -304,7 +304,6 @@
     "*/games/tla/src/lib/step.o"(.text)
     "*/games/tla/src/lib/curve_row.o"(.text)
     "*/games/tla/src/lib/curve_lookup.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.0002d400)
     "*/games/tla/src/lib/step3.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.0002d45c)
     "*/games/tla/src/field/common/map/cell_collision.o"(.text)

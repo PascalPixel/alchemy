@@ -348,7 +348,6 @@
         "*/games/tla/src/lib/step.o"(.text)
         "*/games/tla/src/lib/curve_row.o"(.text)
         "*/games/tla/src/lib/curve_lookup.o"(.text)
-        "*/recon/tla/raw/0802d400.o"(.text)
         "*/games/tla/src/lib/step3.o"(.text)
         "*/recon/tla/raw/0802d45c.o"(.text)
         "*/games/tla/src/field/common/map/cell_collision.o"(.text)

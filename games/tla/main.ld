@@ -323,7 +323,6 @@ SECTIONS
     "*/games/tla/src/lib/step.o"(.text)
     "*/games/tla/src/lib/curve_row.o"(.text)
     "*/games/tla/src/lib/curve_lookup.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.0002d37c)
     "*/games/tla/src/lib/step3.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0002d3d8)
     "*/games/tla/src/field/common/map/cell_collision.o"(.text)

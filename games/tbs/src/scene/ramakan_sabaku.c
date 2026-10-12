@@ -188,50 +188,42 @@ static s32 RamakanSabaku_ApplyEntryState(void)
 		Map_CopyCells(70, 68, 4, 2, 36, 44);
 		Map_CopyCells(70, 68, 4, 2, 14, 55);
 	}
-	else
+	else if (gGameState.scene == (s32)&SceneId_RamakanSabaku2)
 	{
-		if (gGameState.scene != (s32)&SceneId_RamakanSabaku2)
-		{
-		}
-		else
-		{
-			Map_CopyCells(70, 68, 4, 2, 42, 5);
-			Engine_MapCopyCells(70, 68, 4, 2, 20, 11);
-			Engine_MapCopyCellAttributes(70, 68, 4, 1, 20, 13);
-			Map_CopyCells(70, 68, 4, 2, 14, 12);
-			Engine_MapCopyCells(70, 68, 4, 2, 56, 18);
-			Engine_MapCopyCells(70, 68, 4, 2, 7, 22);
-			Engine_MapCopyCellAttributes(70, 68, 4, 1, 7, 24);
-			Engine_MapCopyCells(70, 68, 4, 2, 44, 23);
-			Engine_MapCopyCellAttributes(70, 68, 4, 1, 44, 25);
-			Engine_MapCopyCells(70, 68, 4, 2, 38, 24);
-			Map_CopyCells(70, 68, 4, 2, 26, 28);
-			Map_CopyCells(70, 68, 4, 2, 17, 35);
-			Map_CopyCells(70, 68, 4, 2, 50, 36);
-			Engine_MapCopyCells(70, 68, 4, 2, 34, 43);
-			Engine_MapCopyCellAttributes(70, 68, 4, 1, 34, 45);
-			Map_CopyCells(70, 68, 4, 2, 6, 46);
-			Map_CopyCells(70, 68, 4, 2, 27, 55);
-			Engine_MapCopyCells(70, 68, 4, 2, 43, 56);
-			goto clear_actors;
-		}
-		if (gGameState.scene == (s32)&SceneId_RamakanSabaku3)
-		{
-			Engine_MapCopyCellsLayered(69, 99, 4, 2, 8, 16);
-			Engine_MapCopyCellsLayered(69, 99, 4, 2, 6, 20);
-			Engine_MapCopyCellsLayered(69, 99, 4, 2, 10, 23);
-			Engine_MapCopyCellAttributes(69, 99, 4, 2, 8, 14);
-			Map_CopyCellAttributes(69, 99, 4, 2, 6, 18);
-			Engine_MapCopyCellAttributes(69, 99, 4, 1, 6, 20);
-			Engine_MapCopyCellAttributes(69, 99, 4, 2, 10, 21);
-			Map_CopyCells(0, 121, 5, 7, 8, 32);
-			Engine_MapCopyCells(0, 121, 5, 7, 43, 32);
-			Engine_MapCopyCells(6, 120, 3, 1, 9, 5);
-			Engine_MapCopyCells(9, 120, 3, 1, 44, 5);
-			Engine_MapCopyCellAttributes(9, 0, 3, 3, 9, 6);
-		}
+		Map_CopyCells(70, 68, 4, 2, 42, 5);
+		Engine_MapCopyCells(70, 68, 4, 2, 20, 11);
+		Engine_MapCopyCellAttributes(70, 68, 4, 1, 20, 13);
+		Map_CopyCells(70, 68, 4, 2, 14, 12);
+		Engine_MapCopyCells(70, 68, 4, 2, 56, 18);
+		Engine_MapCopyCells(70, 68, 4, 2, 7, 22);
+		Engine_MapCopyCellAttributes(70, 68, 4, 1, 7, 24);
+		Engine_MapCopyCells(70, 68, 4, 2, 44, 23);
+		Engine_MapCopyCellAttributes(70, 68, 4, 1, 44, 25);
+		Engine_MapCopyCells(70, 68, 4, 2, 38, 24);
+		Map_CopyCells(70, 68, 4, 2, 26, 28);
+		Map_CopyCells(70, 68, 4, 2, 17, 35);
+		Map_CopyCells(70, 68, 4, 2, 50, 36);
+		Engine_MapCopyCells(70, 68, 4, 2, 34, 43);
+		Engine_MapCopyCellAttributes(70, 68, 4, 1, 34, 45);
+		Map_CopyCells(70, 68, 4, 2, 6, 46);
+		Map_CopyCells(70, 68, 4, 2, 27, 55);
+		Engine_MapCopyCells(70, 68, 4, 2, 43, 56);
 	}
-clear_actors:;
+	else if (gGameState.scene == (s32)&SceneId_RamakanSabaku3)
+	{
+		Engine_MapCopyCellsLayered(69, 99, 4, 2, 8, 16);
+		Engine_MapCopyCellsLayered(69, 99, 4, 2, 6, 20);
+		Engine_MapCopyCellsLayered(69, 99, 4, 2, 10, 23);
+		Engine_MapCopyCellAttributes(69, 99, 4, 2, 8, 14);
+		Map_CopyCellAttributes(69, 99, 4, 2, 6, 18);
+		Engine_MapCopyCellAttributes(69, 99, 4, 1, 6, 20);
+		Engine_MapCopyCellAttributes(69, 99, 4, 2, 10, 21);
+		Map_CopyCells(0, 121, 5, 7, 8, 32);
+		Engine_MapCopyCells(0, 121, 5, 7, 43, 32);
+		Engine_MapCopyCells(6, 120, 3, 1, 9, 5);
+		Engine_MapCopyCells(9, 120, 3, 1, 44, 5);
+		Engine_MapCopyCellAttributes(9, 0, 3, 3, 9, 6);
+	}
 	Engine_ActorSetPosition(8, 0, 0);
 	Engine_ActorSetPosition(9, 0, 0);
 	Engine_ActorSetPosition(10, 0, 0);
@@ -270,12 +262,8 @@ static s32 RamakanSabaku_ConfigureAreaLayout(void)
 		Map_CopyCells(84, 126, 4, 2, 14, 55);
 		Actor_SetPosition(9, 0x1900000, 0x16c0000);
 	}
-	else
+	else if (gGameState.scene == (s32)&SceneId_RamakanSabaku2)
 	{
-		if (gGameState.scene != (s32)&SceneId_RamakanSabaku2)
-		{
-			goto third_area;
-		}
 		Map_CopyCells(64, 126, 4, 2, 42, 5);
 		Engine_MapCopyCells(68, 126, 4, 2, 20, 11);
 		Map_CopyCellAttributes(68, 126, 4, 2, 20, 12);
@@ -300,9 +288,7 @@ static s32 RamakanSabaku_ConfigureAreaLayout(void)
 		Actor_SetPosition(12, 0x2400000, 0x2cc0000);
 		Actor_SetPosition(13, 0x2880000, 0x1980000);
 	}
-	goto reset_objects;
-third_area:;
-	if (gGameState.scene == (s32)&SceneId_RamakanSabaku3)
+	else if (gGameState.scene == (s32)&SceneId_RamakanSabaku3)
 	{
 		Engine_MapCopyCells(64, 124, 4, 4, 8, 14);
 		Engine_MapCopyCells(68, 124, 4, 4, 6, 18);
@@ -320,7 +306,6 @@ third_area:;
 			Engine_MapCopyCells(0, 119, 3, 1, 9, 5);
 		}
 	}
-reset_objects:;
 	for (i = 100; i <= 107; i++)
 	{
 		MapObject_SetPosition(i, -1, -1);
@@ -851,12 +836,8 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
 			Engine_MapCopyCells(36, 44, 4, 2, 80, 126);
 			Engine_MapCopyCells(14, 55, 4, 2, 84, 126);
 		}
-		else
+		else if (gGameState.scene == (s32)&SceneId_RamakanSabaku2)
 		{
-			if (gGameState.scene != (s32)&SceneId_RamakanSabaku2)
-			{
-				goto third_area;
-			}
 			Map_CopyCells(42, 5, 4, 2, 64, 126);
 			Engine_MapCopyCells(20, 11, 4, 2, 68, 126);
 			Engine_MapCopyCells(14, 12, 4, 2, 72, 126);
@@ -872,9 +853,7 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
 			Engine_MapCopyCells(27, 55, 4, 2, 112, 126);
 			Engine_MapCopyCells(43, 56, 4, 2, 116, 126);
 		}
-		goto apply_entry_state;
-	third_area:;
-		if (gGameState.scene == (s32)&SceneId_RamakanSabaku3)
+		else if (gGameState.scene == (s32)&SceneId_RamakanSabaku3)
 		{
 			v5 = 124;
 			BattleFx_SetQueuedSoundAndPlay(169);
@@ -882,7 +861,6 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
 			Engine_MapCopyCells(6, 18, 4, 4, 68, v5);
 			Engine_MapCopyCells(10, 21, 4, 4, 72, v5);
 		}
-	apply_entry_state:;
 		RamakanSabaku_ApplyEntryState();
 	}
 	return 0;

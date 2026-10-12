@@ -339,10 +339,23 @@ struct NodeChainNode *NodeChain_GetNodeAtIndex(struct NodeChainState *state)
 	return node;
 }
 
+// 選択枠のタイル位置
+static const u16 Shop_SelectorTileOffsets[30] =
+{
+	0x00, 0x01, 0x02, 0x03,
+	0x20, 0x21, 0x22, 0x23,
+	0x40, 0x41, 0x42, 0x43,
+	0x60, 0x61, 0x62, 0x63,
+	0x80, 0x81, 0x82, 0x83,
+	0xa0, 0xa1, 0xa2, 0xa3,
+	0xc0, 0xc1, 0xc2, 0xc3,
+	0xe0, 0xe1,
+};
+
 void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 {
-	u32	 shifted = selector << 4;
-	u16 *offset;
+	u32		   shifted = selector << 4;
+	const u16 *offset;
 
 	selector = shifted + 1;
 
@@ -362,6 +375,12 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 		} while (count != 0);
 	}
 }
+
+// 数字の転送先
+static const u16 Shop_GlyphOffsets[5] =
+{
+	0xc0, 0x90, 0x80, 0x50, 0x40,
+};
 
 void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2)
 {

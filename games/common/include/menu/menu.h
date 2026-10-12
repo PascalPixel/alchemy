@@ -58,10 +58,8 @@ extern u8		  Menu_ArrowTiles[];
 extern u8		  Menu_PairSpriteATiles[];
 extern u8		  Menu_PairSpriteBTiles[];
 extern const u8	  Menu_QuantityTiles[];
-extern s8		  Shop_PartyActionCues[];
 extern const char DjinnMenu_TextLevel[];
 extern const char DjinnMenu_TextSlash[];
-extern s16		  Shop_StockTable[][33];
 #ifndef OWN_gMenuCtrlWork
 extern struct ObjectSystemWork *gMenuCtrlWork;
 #endif
@@ -70,7 +68,6 @@ extern struct SelectionScreen *gResQueueWork;
 #ifndef OWN_gTitleExtraOptionEnabled
 extern u8 gTitleExtraOptionEnabled[];
 #endif
-extern s8		Inn_PriceMultipliers[];
 extern u8		ItemMenu_ArrangeKeysString[];
 extern s32		ItemMenu_CommandColumnXTable[];
 extern u8		ItemMenu_EquipmentKeyString[];
@@ -100,9 +97,6 @@ extern u8		 Menu_TimesString[];
 extern s8		 OptionMenu_SleepFrames[];
 extern s8		 OptionMenu_SpeechFrames[];
 extern s8		 OptionMenu_SpeedFrames[];
-extern u16		 Shop_SelectorTileOffsets[];
-extern u16		 Shop_GlyphOffsets[];
-extern const s16 Shop_SpecialItemPrices[];
 extern u8		 Ui_LvString[];
 extern u8		 UiMenu_CursorBobX[];
 extern u8		 UiMenu_CursorBobY[];

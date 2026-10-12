@@ -56,6 +56,12 @@ enum InnMessageId
 #define MESSAGE_WINDOW_ROWS 11
 #endif
 
+// 宿代の倍率
+static const s8 Inn_PriceMultipliers[12] =
+{
+	2, 4, 7, 8, 8, 10, 12, 15, 20, 0, 18, 25,
+};
+
 s32 Inn_RoomPrice(s32 mode)
 {
 	struct ShopRuntime *shop = gMenuWork;

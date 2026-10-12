@@ -51,6 +51,8 @@ struct PartyState {
     u16 forge_item;
     u8 unknown_2be[4];
     u8 unknown_2c2;
+    u8 unknown_2c3;
+    u16 link_tallies[3];
 };
 
 extern struct PartyState gPartyState;

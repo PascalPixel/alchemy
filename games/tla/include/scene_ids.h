@@ -2,6 +2,7 @@
 #define ALCHEMY_SCENE_IDS_H
 
 extern char SceneId_WorldMap;
+extern char SceneId_Ov64a;
 extern char SceneId_VinasuChojo;
 extern char SceneId_DeriHeya1;
 extern char SceneId_DeriHeya2;

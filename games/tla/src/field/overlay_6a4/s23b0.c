@@ -1,6 +1,4 @@
-/* Near miss: differ 2 of 56 (one reordered row): the native copies the object
- * to r10 after it loads x and z; the draft copies it first. */
-#include "../../../../games/tla/src/field/overlay_6a4/ov6a4.h"
+#include "ov6a4.h"
 
 void Func_020023b0(void)
 {
@@ -9,6 +7,7 @@ void Func_020023b0(void)
     s32 z = object->z;
 
     ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x40000, 0x20000);
+    do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads x and z before it copies the object to r10 (one reordered row). */
     x >>= 20;
     z >>= 20;
     ObjectMotion_SetPositionAndCommit(gPartyState.current_owner, (x << 4) + 8, (z << 4) + 8);

@@ -154,7 +154,7 @@ Func_02000038:
 	mov r2, r8
 	mov r3, r11
 	str r5, [sp, #4]
-	bl Func_0200018c
+	bl Map_FillCellRectByte2
 	mov r3, r9
 	str r3, [sp, #0]
 	movs r0, #2
@@ -162,7 +162,7 @@ Func_02000038:
 	mov r2, r8
 	mov r3, r11
 	str r5, [sp, #4]
-	bl Func_0200018c
+	bl Map_FillCellRectByte2
 	movs r0, #1
 .L_02008174:
 	add sp, #8
@@ -177,51 +177,8 @@ Func_02000038:
 	.4byte Data_02001968
 .L_02008188:
 	.4byte Data_02001974
-	.section .text.x0200818c,"ax",%progbits
-	.global Func_0200018c
-	.thumb_func
-Func_0200018c:
-	push {r5, r6, lr}
-	adds r5, r3, #0
-	ldr r3, [sp, #12]
-	lsls r2, r2, #7
-	mov r12, r3
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r4, [r3, #32]
-	lsls r3, r0, #3
-	subs r3, r3, r0
-	movs r0, #156
-	lsls r0, r0, #1
-	lsls r3, r3, #3
-	adds r3, r3, r0
-	ldr r0, [r4, r3]
-	adds r1, r1, r2
-	lsls r1, r1, #2
-	adds r0, r0, r1
-	movs r1, #0
-	ldr r6, [sp, #16]
-	cmp r1, r12
-	bcs .L_020081d2
-.L_020081b8:
-	lsls r3, r1, #9
-	movs r2, #0
-	adds r3, r0, r3
-	cmp r2, r5
-	bcs .L_020081cc
-.L_020081c2:
-	adds r2, #1
-	strb r6, [r3, #2]
-	adds r3, #4
-	cmp r2, r5
-	bcc .L_020081c2
-.L_020081cc:
-	adds r1, #1
-	cmp r1, r12
-	bcc .L_020081b8
-.L_020081d2:
-	pop {r5, r6, pc}
 	.section .text.x020081d4,"ax",%progbits
+	.balign 4
 	.global Func_020001d4
 	.thumb_func
 Func_020001d4:
@@ -674,7 +631,7 @@ Func_02000458:
 	ldr r3, [sp, #32]
 	movs r0, #0
 	adds r2, r7, #0
-	bl Func_0200018c
+	bl Map_FillCellRectByte2
 	movs r2, #200
 	mov r4, r10
 	movs r1, #128
@@ -856,7 +813,7 @@ Func_02000458:
 	ldr r3, [sp, #32]
 	movs r0, #0
 	str r5, [sp, #4]
-	bl Func_0200018c
+	bl Map_FillCellRectByte2
 	ldr r3, [sp, #28]
 	ldr r1, [sp, #96]
 	ldr r2, [sp, #104]
@@ -864,7 +821,7 @@ Func_02000458:
 	movs r0, #2
 	ldr r3, [sp, #32]
 	str r5, [sp, #4]
-	bl Func_0200018c
+	bl Map_FillCellRectByte2
 	ldr r0, [sp, #16]
 	mov r4, r11
 	ldrsb r3, [r7, r4]

@@ -4,7 +4,7 @@ SECTIONS
     {
         "*/games/tla/src/field/overlay_662/entry.o"(.text)
         "*/resource_662_overlay.o"(.text.x02008038)
-        "*/resource_662_overlay.o"(.text.x0200818c)
+        "*/games/tla/src/field/common/map/cellfill.o"(.text)
         "*/resource_662_overlay.o"(.text.x020081d4)
         "*/resource_662_overlay.o"(.text.x0200833c)
         "*/resource_662_overlay.o"(.text.x02008458)

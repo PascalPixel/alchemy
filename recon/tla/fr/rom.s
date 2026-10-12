@@ -1247,16 +1247,7 @@ PtyStDraw:
 	.incbin "baserom.gba", 0x000429cc, 0x00000430
 	.section .rom.00042e14, "ax"
 	.incbin "baserom.gba", 0x00042e14, 0x00000064
-	.global Func_08042e28
-	.type Func_08042e28, %function
-	.thumb_func
-Func_08042e28:
-	.incbin "baserom.gba", 0x00042e78, 0x000000c4
-	.global Func_08042eec
-	.type Func_08042eec, %function
-	.thumb_func
-Func_08042eec:
-	.incbin "baserom.gba", 0x00042f3c, 0x00000024
+	.section .rom.00042f60, "ax"
 	.global Func_08042f10
 	.type Func_08042f10, %function
 	.thumb_func
@@ -1494,7 +1485,10 @@ Data_0805eb58:
 Data_0805eb7c:
 	.incbin "baserom.gba", 0x0005eea4, 0x00000108
 	.section .rom.0005f7ac, "ax"
-	.incbin "baserom.gba", 0x0005f7ac, 0x000001b8
+	.incbin "baserom.gba", 0x0005f7ac, 0x000000fb
+	.global Data_0805f585
+Data_0805f585:
+	.incbin "baserom.gba", 0x0005f8a7, 0x000000bd
 	.global StatusMenu_LevelLetterString
 StatusMenu_LevelLetterString:
 	.incbin "baserom.gba", 0x0005f964, 0x00000030
@@ -2712,25 +2706,8 @@ Func_080d7240:
 	.thumb_func
 Func_080d7304:
 	.incbin "baserom.gba", 0x000dc2f8, 0x000000b0
-	.section .rom.000dc3a8, "ax"
-	.global Func_080d73b4
-	.type Func_080d73b4, %function
-	.thumb_func
-Func_080d73b4:
-	.incbin "baserom.gba", 0x000dc3a8, 0x0000002c
-	.section .rom.000dc3d4, "ax"
-	.global Func_080d73e0
-	.type Func_080d73e0, %function
-	.thumb_func
-Func_080d73e0:
-	.incbin "baserom.gba", 0x000dc3d4, 0x00000028
-	.section .rom.000dc3fc, "ax"
-	.global Func_080d7408
-	.type Func_080d7408, %function
-	.thumb_func
-Func_080d7408:
-	.incbin "baserom.gba", 0x000dc3fc, 0x00000028
 	.section .rom.000dc424, "ax"
+	.balign 4
 	.global Func_080d7430
 	.type Func_080d7430, %function
 	.thumb_func

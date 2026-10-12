@@ -18,8 +18,8 @@ s32 Func_0801596c(void);
 s32 Func_08016054(void);
 void SaveState_ReleaseWorkspace(void);
 s32 SaveState_ReadRecordPayload(s32 slot, void *buffer);
-s32 Func_08042e28(s32 arg0);
-void Func_08042eec(s32 arg0);
+s32 SaveProgress_Open(s32 arg0);
+void SaveProgress_Close(s32 arg0);
 s32 Func_08042f10(s32 slot, void *buffer);
 s32 Func_08043cd8(s32 slot, s32 mode);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
@@ -53,9 +53,9 @@ s32 SaveState_ProcessSelectedSlot(void)
             dst = (u8 *)buffer + (s32)Data_02000504;
             dst -= (s32)Data_02000000;
             Iwram_CopyWords(dst, Data_02000504, 16);
-            token = Func_08042e28(0);
+            token = SaveProgress_Open(0);
             found = Func_08042f10(Data_020036d0, buffer);
-            Func_08042eec(token);
+            SaveProgress_Close(token);
             if (found != 0) {
                 UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);
                 error = 3;

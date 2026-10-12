@@ -127,15 +127,15 @@ msgctxt "MsgSaving"
 msgid "00029"
 msgstr "Guardando..."
 
-msgctxt "message"
+msgctxt "MsgErasing"
 msgid "00030"
 msgstr "Borrando..."
 
-msgctxt "message"
+msgctxt "MsgCopying"
 msgid "00031"
 msgstr "Copiando..."
 
-msgctxt "message"
+msgctxt "MsgDoNotTurnThePower"
 msgid "00032"
 msgstr "No apagues (OFF)"
 

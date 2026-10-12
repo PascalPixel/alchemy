@@ -64,8 +64,8 @@ s32 SaveState_SelectAndLoad(s32 mode)
 extern u8 MsgEraseFailed;
 extern u8 MsgFileCopied;
 u32 SaveState_FindFreeSummarySlot(void);
-s32 Func_08042e28(s32 arg0);
-void Func_08042eec(s32 arg0);
+s32 SaveProgress_Open(s32 arg0);
+void SaveProgress_Close(s32 arg0);
 s32 Func_08042f10(s32 slot, void *buffer);
 
 // ファイルを選んで空きへ写す
@@ -96,9 +96,9 @@ s32 SaveState_CopySlot(void)
                     UiText_ShowPositionedMessageAndWait((s32)&MsgEraseFailed, 1);
                     result = -5;
                 } else {
-                    token = Func_08042e28(2);
+                    token = SaveProgress_Open(2);
                     value = Func_08042f10(value, buffer);
-                    Func_08042eec(token);
+                    SaveProgress_Close(token);
                     if (value != 0) {
                         UiText_ShowPositionedMessageAndWait((s32)&MsgEraseFailed, 1);
                         result = -3;
@@ -150,9 +150,9 @@ s32 SaveState_DeleteSelectedSlot(void)
                 UiWork_FinalizePendingCore();
             } else {
                 UiWork_FinalizePendingCore();
-                token = Func_08042e28(1);
+                token = SaveProgress_Open(1);
                 found = Func_08042ff0(value);
-                Func_08042eec(token);
+                SaveProgress_Close(token);
                 if (found != 0) {
                     UiText_ShowPositionedMessageAndWait((s32)&MsgEraseFailed, 1);
                     result = -4;

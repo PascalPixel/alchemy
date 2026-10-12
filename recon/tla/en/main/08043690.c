@@ -23,8 +23,8 @@ s32 Func_0801596c(void);
 s32 Func_08016054(void);
 void SaveState_ReleaseWorkspace(void);
 s32 SaveState_BuildSummaryHeader(void);
-s32 Func_08042e28(s32 arg0);
-void Func_08042eec(s32 arg0);
+s32 SaveProgress_Open(s32 arg0);
+void SaveProgress_Close(s32 arg0);
 s32 Func_08042f10(s32 slot, void *buffer);
 s32 Func_08043cd8(s32 slot, s32 mode);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
@@ -64,11 +64,11 @@ s32 SaveState_SelectAndSave(void)
                 UiWork_FinalizePendingCore();
             }
             Data_020036d0 = slot;
-            token = Func_08042e28(0);
+            token = SaveProgress_Open(0);
             SaveState_BuildSummaryHeader();
             ObjectTable_SnapshotFar();
             found = Func_08042f10(slot, Data_02000000);
-            Func_08042eec(token);
+            SaveProgress_Close(token);
             UiWork_FinalizePendingCore();
             if (found != 0) {
                 UiText_ShowPositionedMessageAndWait((s32)&MsgSaveFailed, 1);

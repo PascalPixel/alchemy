@@ -127,15 +127,15 @@ msgctxt "MsgSaving"
 msgid "00029"
 msgstr "Sauvegarde en cours..."
 
-msgctxt "message"
+msgctxt "MsgErasing"
 msgid "00030"
 msgstr "Effacement en cours..."
 
-msgctxt "message"
+msgctxt "MsgCopying"
 msgid "00031"
 msgstr "Copie en cours..."
 
-msgctxt "message"
+msgctxt "MsgDoNotTurnThePower"
 msgid "00032"
 msgstr "Ne touchez pas au"
 

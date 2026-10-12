@@ -127,15 +127,15 @@ msgctxt "MsgSaving"
 msgid "00029"
 msgstr "Speichervorgang..."
 
-msgctxt "message"
+msgctxt "MsgErasing"
 msgid "00030"
 msgstr "Löschen..."
 
-msgctxt "message"
+msgctxt "MsgCopying"
 msgid "00031"
 msgstr "Kopieren..."
 
-msgctxt "message"
+msgctxt "MsgDoNotTurnThePower"
 msgid "00032"
 msgstr "Schalte nicht ab, bevor"
 

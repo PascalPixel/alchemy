@@ -908,7 +908,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000dc250)
     "*/games/tla/src/battle/effect/scene.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000dc3cc)
-    "*/recon/tla/ja/rom.o"(.rom.000dc5e8)
+    "*/games/tla/src/battle/effect/pair.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000dc694)
     "*/games/tla/src/battle/effect/stopobj.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000dc7a4)

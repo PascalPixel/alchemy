@@ -3044,12 +3044,6 @@ BattleEffect_InitializeSharedScene:
 	.thumb_func
 BattleFx_LoadActionEffectResources:
 	.incbin "baserom.gba", 0x000e1404, 0x0000021c
-	.section .rom.000e1620, "ax"
-	.global BattleFx_SetupObjectPair
-	.type BattleFx_SetupObjectPair, %function
-	.thumb_func
-BattleFx_SetupObjectPair:
-	.incbin "baserom.gba", 0x000e1620, 0x000000ac
 	.section .rom.000e16cc, "ax"
 	.global Func_080dc6d8
 	.type Func_080dc6d8, %function

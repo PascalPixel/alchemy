@@ -941,6 +941,8 @@
     "*/recon/tla/it/rom.o"(.rom.000dc288)
     "*/games/tla/src/battle/effect/scene.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000dc404)
+    "*/games/tla/src/battle/effect/pair.o"(.text)
+    "*/recon/tla/it/rom.o"(.rom.000dc6cc)
     "*/games/tla/src/battle/effect/stopobj.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000dc7dc)
     "*/games/tla/src/battle/effect/mapmode.o"(.text)

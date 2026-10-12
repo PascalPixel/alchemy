@@ -1239,7 +1239,7 @@
         "*/recon/tla/raw/080dc294.o"(.text)
         "*/games/tla/src/battle/effect/scene.o"(.text)
         "*/recon/tla/raw/080dc410.o"(.text)
-        "*/recon/tla/raw/080dc62c.o"(.text)
+        "*/games/tla/src/battle/effect/pair.o"(.text)
         "*/recon/tla/raw/080dc6d8.o"(.text)
         "*/games/tla/src/battle/effect/stopobj.o"(.text)
         "*/recon/tla/raw/080dc7e8.o"(.text)

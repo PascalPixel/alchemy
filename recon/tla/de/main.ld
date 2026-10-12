@@ -966,7 +966,7 @@
     "*/recon/tla/de/rom.o"(.rom.000e9294)
     "*/games/tla/src/battle/effect/scene.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000e9410)
-    "*/recon/tla/de/rom.o"(.rom.000e962c)
+    "*/games/tla/src/battle/effect/pair.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000e96d8)
     "*/games/tla/src/battle/effect/stopobj.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000e97e8)

@@ -488,38 +488,35 @@ static void TorebiIzumi_OfferLuckyWheels(s32 spoken)
 			Engine_EventSetMessage(message + 4);
 			Engine_EventOpenMessage(8, 0);
 		}
-		else
+		else if (room <= 6)
 		{
-			if (room > 6)
-			{
-				goto play;
-			}
 			Engine_EventSetMessage(message + 5);
 			Engine_EventOpenMessage(8, 0);
 		}
-		if (room > 6 || Engine_EventChooseYesNo(0, 0) == 0)
+		if (room <= 6 && Engine_EventChooseYesNo(0, 0) != 0)
 		{
-			goto play;
+			Engine_EventSetMessage((s32)MsgTorebiGetRidItems);
+			Engine_EventShowMessage(8, 0);
+			return;
 		}
-		Engine_EventSetMessage((s32)MsgTorebiGetRidItems);
-		Engine_EventShowMessage(8, 0);
-		return;
 	}
-	if (tickets == 0)
+	else
 	{
-		Engine_EventSetMessage((s32)MsgTorebiBadComeBack);
-		Engine_EventShowMessage(8, 0);
-		return;
+		if (tickets == 0)
+		{
+			Engine_EventSetMessage((s32)MsgTorebiBadComeBack);
+			Engine_EventShowMessage(8, 0);
+			return;
+		}
+		Engine_EventSetMessage((s32)MsgTorebiBadLikeUse);
+		Engine_EventOpenMessage(8, 0);
+		if (Engine_EventChooseYesNo(0, 0) != 0)
+		{
+			Engine_EventSetMessage((s32)MsgTorebiComeAgain);
+			Engine_EventShowMessage(8, 0);
+			return;
+		}
 	}
-	Engine_EventSetMessage((s32)MsgTorebiBadLikeUse);
-	Engine_EventOpenMessage(8, 0);
-	if (Engine_EventChooseYesNo(0, 0) != 0)
-	{
-		Engine_EventSetMessage((s32)MsgTorebiComeAgain);
-		Engine_EventShowMessage(8, 0);
-		return;
-	}
-play:
 	Engine_EventSetMessage((s32)MsgTorebiStepRightEnjoy);
 	Engine_EventShowMessage(8, 0);
 	Event_RequestDestination(508, 0);
@@ -624,38 +621,33 @@ prompt:
 	}
 	if (choice == 0)
 	{
-		if (coins != 0)
+		if (coins == 0)
 		{
-			goto play;
-		}
-		Event_SetMessage(message + 1);
-		Event_ShowMessage(-1, 0);
-		Task_Wait(1);
-		goto prompt;
-	}
-	if (choice != 1)
-	{
-		goto play;
-	}
-	if (tickets != 0)
-	{
-		goto room;
-	}
-	Event_SetMessage(message + 2);
-	Event_ShowMessage(-1, 0);
-	Task_Wait(1);
-	goto prompt;
-room:
-	if (PartyInventory_CountFreeSlots() == 0)
-	{
-		Event_SetMessage(message + 4);
-		Event_OpenMessage(-1, 0);
-		if (Event_ChooseYesNo(0, 0) != 0)
-		{
-			goto end;
+			Event_SetMessage(message + 1);
+			Event_ShowMessage(-1, 0);
+			Task_Wait(1);
+			goto prompt;
 		}
 	}
-play:
+	else if (choice == 1)
+	{
+		if (tickets == 0)
+		{
+			Event_SetMessage(message + 2);
+			Event_ShowMessage(-1, 0);
+			Task_Wait(1);
+			goto prompt;
+		}
+		if (PartyInventory_CountFreeSlots() == 0)
+		{
+			Event_SetMessage(message + 4);
+			Event_OpenMessage(-1, 0);
+			if (Event_ChooseYesNo(0, 0) != 0)
+			{
+				goto end;
+			}
+		}
+	}
 	window = UiWindow_Create(TOSS_X, 15, TOSS_WIDTH, 4, 2);
 	{
 		text = (s32)MsgTorebiToss;
@@ -763,96 +755,97 @@ play:
 		break;
 	}
 #endif
-	if (result == cancel)
+	if (result != cancel)
 	{
-		goto end;
-	}
-	if (choice == 0)
-	{
-		Party_AdjustCoins(-1);
-	}
-	else if (choice == 1)
-	{
-		PartyInventory_Remove(229);
-	}
-	result = TorebiIzumi_RunSpringRide(choice);
-	if (choice == 0)
-	{
-		if (result != 4)
+		if (choice == 0)
 		{
-			Party_AdjustCoins(((struct { u16 coins[1]; } *)TorebiIzumi_CoinPrizes)->coins[result]);
-			Event_PlayCue(91);
-			UiWork_PushValueSlot(((struct { u16 coins[1]; } *)TorebiIzumi_CoinPrizes)->coins[result], 5);
-			Event_SetMessage((s32)MsgTorebiWonNumberCoin);
-			Event_ShowMessage(-1, 0);
+			Party_AdjustCoins(-1);
+		}
+		else if (choice == 1)
+		{
+			PartyInventory_Remove(229);
+		}
+		result = TorebiIzumi_RunSpringRide(choice);
+		if (choice == 0)
+		{
+			if (result != 4)
+			{
+				Party_AdjustCoins(
+					((struct { u16 coins[1]; } *)TorebiIzumi_CoinPrizes)->coins[result]);
+				Event_PlayCue(91);
+				UiWork_PushValueSlot(
+					((struct { u16 coins[1]; } *)TorebiIzumi_CoinPrizes)->coins[result], 5);
+				Event_SetMessage((s32)MsgTorebiWonNumberCoin);
+				Event_ShowMessage(-1, 0);
+			}
+			else
+			{
+				Event_PlayCue(113);
+				Event_Wait(10);
+			}
 		}
 		else
 		{
-			Event_PlayCue(113);
-			Event_Wait(10);
-		}
-	}
-	else
-	{
-		sum = 0;
-		i = 0;
-		if (i < result * 3 + 3)
-		{
-			do
+			sum = 0;
+			i = 0;
+			if (i < result * 3 + 3)
 			{
-				u8 w = ((u8 *)state)[i + 285];
-				sum += (s8)w;
-				i++;
-			} while (i < result * 3 + 3);
-		}
-		roll = (u32)(Random_Next() * sum) >> 16;
-		for (i = 0; i < 15; i++)
-		{
-			roll -= state->prize_weights[i];
-			if (roll < 0)
-			{
-				break;
+				do
+				{
+					u8 w = ((u8 *)state)[i + 285];
+					sum += (s8)w;
+					i++;
+				} while (i < result * 3 + 3);
 			}
-		}
-		if (i == 15)
-		{
-			i = 14;
-		}
-		TorebiIzumi_RevealPrize(((struct { s32 prize[1]; } *)TorebiIzumi_PrizeItems)->prize[i]);
+			roll = (u32)(Random_Next() * sum) >> 16;
+			for (i = 0; i < 15; i++)
+			{
+				roll -= state->prize_weights[i];
+				if (roll < 0)
+				{
+					break;
+				}
+			}
+			if (i == 15)
+			{
+				i = 14;
+			}
+			TorebiIzumi_RevealPrize(((struct { s32 prize[1]; } *)TorebiIzumi_PrizeItems)->prize[i]);
 
 #if EDITION_INTERNATIONAL
-		/* FAKEMATCH: the pointer pair keeps the native prize-weight base
-         * recomputation in r0 after the call. Without it, the earlier
-         * roulette base survives in r5 (280 -> 278 instructions, 42 rows
-         * differ in the international editions). */
-		state++;
-		state--;
-		{
-
-			/* FAKEMATCH: keeps the slot in r1 and state + 1 in r0. 2026-10-11: plain forms share state + 1 with the roulette's peeled first iteration through GCSE PRE (struct field 42/96, s8 pointer 57/107, direct global 38/100 rows in EN/JA); the ++/-- pair breaks the sharing, but then global allocation gives the later-defined pointer r1 before the slot (differ 10) or, pointer first, sched2 keeps adds r0, #1 ahead of adds r1, r6, r3 by RTL order (differ 2). */
-			register s32 slot asm("r1") = i + 284;
-			s8			*w = (s8 *)state + 1;
-
-			if (w[slot] > 1)
+			/* FAKEMATCH: the pointer pair keeps the native prize-weight base
+	         * recomputation in r0 after the call. Without it, the earlier
+	         * roulette base survives in r5 (280 -> 278 instructions, 42 rows
+	         * differ in the international editions). */
+			state++;
+			state--;
 			{
-				w[slot] /= 2;
+
+				/* FAKEMATCH: keeps the slot in r1 and state + 1 in r0. 2026-10-11: plain forms share state + 1 with the roulette's peeled first iteration through GCSE PRE (struct field 42/96, s8 pointer 57/107, direct global 38/100 rows in EN/JA); the ++/-- pair breaks the sharing, but then global allocation gives the later-defined pointer r1 before the slot (differ 10) or, pointer first, sched2 keeps adds r0, #1 ahead of adds r1, r6, r3 by RTL order (differ 2). */
+				register s32 slot asm("r1") = i + 284;
+				s8			*w = (s8 *)state + 1;
+
+				if (w[slot] > 1)
+				{
+					w[slot] /= 2;
+				}
 			}
-		}
 #else
-		{
-			/* FAKEMATCH: keeps state + 1 in r0 as the native does. */
-			register s8 *w asm("r0");
-			s32			 slot = i + 284;
-
-			/* FAKEMATCH: the native recomputes state + 1 after the call. */
-			__asm__("" : "=r"(w) : "0"(state));
-			w++;
-			if (w[slot] > 1)
 			{
-				w[slot] /= 2;
+				/* FAKEMATCH: keeps state + 1 in r0 as the native does. */
+				register s8 *w asm("r0");
+				s32			 slot = i + 284;
+
+				/* FAKEMATCH: the native recomputes state + 1 after the call. */
+				__asm__("" : "=r"(w) : "0"(state));
+				w++;
+				if (w[slot] > 1)
+				{
+					w[slot] /= 2;
+				}
 			}
-		}
 #endif
+		}
 	}
 end:
 	Event_End();

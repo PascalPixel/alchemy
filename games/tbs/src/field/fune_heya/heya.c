@@ -38,6 +38,7 @@
 #include "unit/game/character/chara7.h"
 #include "unit/game/character/chara8.h"
 #include "unit/graphics/window/window.h"
+#include "unit/graphics/window/window8.h"
 #include "unit/graphics/window/window9.h"
 #include "unit/graphics/window/window10.h"
 #include "unit/graphics/window/window11.h"

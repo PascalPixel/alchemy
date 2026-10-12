@@ -242,13 +242,6 @@ void RenderOutput_SetAnimation(struct RenderOutput *out, s32 mode);
 void RenderOutput_SetInvertedSentinel(void *arg0, s32 arg1);
 void UiWindow_FillFromScene(void *dst);
 void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 height, s32 value);
-void UiWindow_BuildLayoutBounds(s32 flags);
-void UiWindow_CreateWithLayoutBounds(s32 flags);
-void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags);
-s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y, s32 value);
-void PtyStDraw(s32 flags);
-void UiWork_FinalizeAndReleaseBlock16(void);
-void UiWindow_SetTileAttributeBitRect(const struct RenderInput *window, s32 x, s32 y, s32 width, s32 height, u32 field);
 
 #define UI_WORK ((struct UiRenderWork *)gWindowWork[0])
 

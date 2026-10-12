@@ -12903,7 +12903,7 @@ msgctxt "message"
 msgid "03223"
 msgstr "{argument_actor_name:1}'s {argument_ability_name} is on standby!"
 
-msgctxt "message"
+msgctxt "MsgPartyFlees"
 msgid "03224"
 msgstr "{protagonist_name} and friends run!"
 
@@ -19291,7 +19291,7 @@ msgctxt "message"
 msgid "04820"
 msgstr "Visit us again anytime{line_break}you need healing.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgReviveService"
 msgid "04821"
 msgstr "Hmm, you were downed{line_break}in battle and need{line_break}reviving, do you?{page_break}"
 
@@ -19331,7 +19331,7 @@ msgctxt "message"
 msgid "04830"
 msgstr "This ally needs no healing."
 
-msgctxt "message"
+msgctxt "MsgCurePoisonService"
 msgid "04831"
 msgstr "Hmm, so you need an{line_break}antidote to poison or{line_break}deadly poison?{page_break}"
 
@@ -19371,7 +19371,7 @@ msgctxt "message"
 msgid "04840"
 msgstr "This ally is not poisoned."
 
-msgctxt "message"
+msgctxt "MsgExorcismService"
 msgid "04841"
 msgstr "You wish me to drive{line_break}evil spirits away?{page_break}"
 
@@ -19411,7 +19411,7 @@ msgctxt "message"
 msgid "04850"
 msgstr "This ally is not haunted."
 
-msgctxt "message"
+msgctxt "MsgRemoveCurseService"
 msgid "04851"
 msgstr "Hmm, so you wish to have{line_break}the cursed equipment{line_break}removed, do you?{page_break}"
 

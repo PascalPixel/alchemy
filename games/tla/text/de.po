@@ -14747,7 +14747,7 @@ msgctxt "message"
 msgid "03684"
 msgstr "{argument_actor_name:1}{possessive_suffix} {argument_ability_name} ist auf Standby!"
 
-msgctxt "message"
+msgctxt "MsgPartyFlees"
 msgid "03685"
 msgstr "{protagonist_name} und seine Freunde flüchten!"
 
@@ -21303,7 +21303,7 @@ msgctxt "message"
 msgid "05323"
 msgstr "Wenn ihr nach Heilung sucht,{line_break}besucht mich wieder.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgReviveService"
 msgid "05324"
 msgstr "Du wurdest also im Kampf{line_break}bezwungen und musst nun{line_break}wieder belebt werden?{page_break}"
 
@@ -21343,7 +21343,7 @@ msgctxt "message"
 msgid "05333"
 msgstr "Dein Freund bedarf keiner Heilung."
 
-msgctxt "message"
+msgctxt "MsgCurePoisonService"
 msgid "05334"
 msgstr "Hmm, du brauchst also{line_break}ein Antidot für Gift?{page_break}"
 
@@ -21383,7 +21383,7 @@ msgctxt "message"
 msgid "05343"
 msgstr "Nicht vergiftet."
 
-msgctxt "message"
+msgctxt "MsgExorcismService"
 msgid "05344"
 msgstr "Möchtest du, dass ich{line_break}die bösen Geister vertreibe?{page_break}"
 
@@ -21423,7 +21423,7 @@ msgctxt "message"
 msgid "05353"
 msgstr "Keine Heimsuchung."
 
-msgctxt "message"
+msgctxt "MsgRemoveCurseService"
 msgid "05354"
 msgstr "Hmm, du wünschst also, dass{line_break}ich die verfluchte{line_break}Ausrüstung entferne?{page_break}"
 

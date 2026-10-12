@@ -14747,7 +14747,7 @@ msgctxt "message"
 msgid "03684"
 msgstr "{argument_ability_name} di {argument_actor_name:1} è in standby."
 
-msgctxt "message"
+msgctxt "MsgPartyFlees"
 msgid "03685"
 msgstr "{protagonist_name} e gli amici fuggono!"
 
@@ -21131,7 +21131,7 @@ msgctxt "message"
 msgid "05280"
 msgstr "Se volete altri rimedi,{line_break}venite a trovarci!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgReviveService"
 msgid "05281"
 msgstr "Qualcuno è stato messo KO{line_break}nella lotta e ora vuole{line_break}rianimarsi, vero?{page_break}"
 
@@ -21171,7 +21171,7 @@ msgctxt "message"
 msgid "05290"
 msgstr "Non ha bisogno di cure."
 
-msgctxt "message"
+msgctxt "MsgCurePoisonService"
 msgid "05291"
 msgstr "Vi serve un antidoto{line_break}per il veleno o il{line_break}veleno +?{page_break}"
 
@@ -21211,7 +21211,7 @@ msgctxt "message"
 msgid "05300"
 msgstr "Quest'alleato non è avvelenato."
 
-msgctxt "message"
+msgctxt "MsgExorcismService"
 msgid "05301"
 msgstr "Devo scacciare gli{line_break}spiriti maligni?{page_break}"
 
@@ -21251,7 +21251,7 @@ msgctxt "message"
 msgid "05310"
 msgstr "Quest'alleato non è avvelenato."
 
-msgctxt "message"
+msgctxt "MsgRemoveCurseService"
 msgid "05311"
 msgstr "Allora vuoi che elimini{line_break}gli strumenti maledetti?{page_break}"
 

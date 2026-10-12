@@ -66,17 +66,6 @@ System_WaitForFrameInterrupt:
 	.thumb_func
 Input_UpdateKeyRepeatAndDirection:
 	.incbin "baserom.gba", 0x000138b4, 0x0000027c
-	.section .rom.00013b30, "ax"
-	.global Sound_LoadPresetParameters
-	.type Sound_LoadPresetParameters, %function
-	.thumb_func
-Sound_LoadPresetParameters:
-	.incbin "baserom.gba", 0x00013b30, 0x00000010
-	.global Input_HandleKeyInterrupt
-	.type Input_HandleKeyInterrupt, %function
-	.thumb_func
-Input_HandleKeyInterrupt:
-	.incbin "baserom.gba", 0x00013b40, 0x00000028
 	.section .rom.00013d84, "ax"
 	.incbin "baserom.gba", 0x00013d84, 0x000000ec
 	.section .rom.0001401c, "ax"
@@ -399,14 +388,6 @@ Func_0802386c:
 	.thumb_func
 Func_08023e18:
 	.incbin "baserom.gba", 0x00023e18, 0x000000e4
-	.section .rom.00023f62, "ax"
-	.incbin "baserom.gba", 0x00023f62, 0x00000002
-	.section .rom.00023f64, "ax"
-	.global Object_IsTargetUnset
-	.type Object_IsTargetUnset, %function
-	.thumb_func
-Object_IsTargetUnset:
-	.incbin "baserom.gba", 0x00023f64, 0x00000030
 	.section .rom.00023f9c, "ax"
 	.incbin "baserom.gba", 0x00023f9c, 0x0000071c
 	.section .rom.00024736, "ax"
@@ -450,6 +431,10 @@ Func_08026fc8:
 	.section .rom.000297b4, "ax"
 	.incbin "baserom.gba", 0x000297b4, 0x00000cf4
 	.section .rom.0002a560, "ax"
+	.global Func_0802a5e4
+	.type Func_0802a5e4, %function
+	.thumb_func
+Func_0802a5e4:
 	.incbin "baserom.gba", 0x0002a560, 0x0000006c
 	.section .rom.0002a5cc, "ax"
 	.global Func_0802a650
@@ -499,18 +484,7 @@ Func_0802b450:
 	.thumb_func
 Func_0802b590:
 	.incbin "baserom.gba", 0x0002b50c, 0x00000090
-	.section .rom.0002b75c, "ax"
-	.global Func_0802b7e0
-	.type Func_0802b7e0, %function
-	.thumb_func
-Func_0802b7e0:
-	.incbin "baserom.gba", 0x0002b75c, 0x00000048
-	.section .rom.0002b7a4, "ax"
-	.global Func_0802b828
-	.type Func_0802b828, %function
-	.thumb_func
-Func_0802b828:
-	.incbin "baserom.gba", 0x0002b7a4, 0x00000050
+	.section .rom.0002b7f4, "ax"
 	.global Map_WriteLayerCellTile
 	.type Map_WriteLayerCellTile, %function
 	.thumb_func
@@ -733,12 +707,6 @@ Func_0803a60c:
 	.thumb_func
 UiText_OpenMessageWindow:
 	.incbin "baserom.gba", 0x0003a630, 0x00000110
-	.section .rom.0003a740, "ax"
-	.global UiText_ShowPositionedMessageAndWait
-	.type UiText_ShowPositionedMessageAndWait, %function
-	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	.incbin "baserom.gba", 0x0003a740, 0x0000011c
 	.section .rom.0003a890, "ax"
 	.balign 4
 	.global Func_0803a8fc
@@ -899,18 +867,13 @@ Func_0803dd98:
 	.thumb_func
 Func_0803df24:
 	.incbin "baserom.gba", 0x0003e058, 0x00000684
-	.section .rom.0003e8a8, "ax"
-	.global Func_0803e774
-	.type Func_0803e774, %function
+	.section .rom.0003e8fc, "ax"
+	.balign 4
+	.global Func_0803e7c8
+	.type Func_0803e7c8, %function
 	.thumb_func
-Func_0803e774:
-	.incbin "baserom.gba", 0x0003e8a8, 0x00000038
-	.section .rom.0003e8e0, "ax"
-	.global Func_0803e7ac
-	.type Func_0803e7ac, %function
-	.thumb_func
-Func_0803e7ac:
-	.incbin "baserom.gba", 0x0003e8e0, 0x00000140
+Func_0803e7c8:
+	.incbin "baserom.gba", 0x0003e8fc, 0x00000124
 	.section .rom.0003ea4a, "ax"
 	.incbin "baserom.gba", 0x0003ea4a, 0x00000002
 	.section .rom.0003ea4c, "ax"
@@ -2000,6 +1963,10 @@ Func_080c8078:
 UiText_DrawQuantityPairWithCueFar:
 	.incbin "baserom.gba", 0x000c8080, 0x00000008
 	.section .rom.000c82a8, "ax"
+	.global Func_080c82a8
+	.type Func_080c82a8, %function
+	.thumb_func
+Func_080c82a8:
 	.incbin "baserom.gba", 0x000c82a8, 0x00000018
 	.global Func_080c82c0
 	.type Func_080c82c0, %function
@@ -3339,7 +3306,8 @@ Func_080de9f8:
 	.type Func_080debd8, %function
 	.thumb_func
 Func_080debd8:
-	.incbin "baserom.gba", 0x000deb94, 0x000000e0
+	.incbin "baserom.gba", 0x000deb94, 0x000000b4
+	.section .rom.000dec74, "ax"
 	.global Func_080decb8
 	.type Func_080decb8, %function
 	.thumb_func
@@ -3997,7 +3965,9 @@ Func_08109cac:
 Forge_FindRecipe:
 	.incbin "baserom.gba", 0x0010a71c, 0x0000003c
 	.section .rom.0010a8fc, "ax"
-	.incbin "baserom.gba", 0x0010a8fc, 0x00000194
+	.incbin "baserom.gba", 0x0010a8fc, 0x00000074
+	.section .rom.0010a9bc, "ax"
+	.incbin "baserom.gba", 0x0010a9bc, 0x000000d4
 	.global Func_0810aa80
 	.type Func_0810aa80, %function
 	.thumb_func
@@ -4190,11 +4160,20 @@ Func_0811c074:
 	.incbin "baserom.gba", 0x0011c11c, 0x000000d8
 	.section .rom.0011c3b8, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x0011c3b8, 0x00000294
+	.incbin "baserom.gba", 0x0011c3b8, 0x000001d8
 	.section .rom.0011c666, "ax"
 	.incbin "baserom.gba", 0x0011c666, 0x00000002
 	.section .rom.0011c70c, "ax"
-	.incbin "baserom.gba", 0x0011c70c, 0x000004d8
+	.global Func_0811c710
+	.type Func_0811c710, %function
+	.thumb_func
+Func_0811c710:
+	.incbin "baserom.gba", 0x0011c70c, 0x00000344
+	.global Func_0811ca54
+	.type Func_0811ca54, %function
+	.thumb_func
+Func_0811ca54:
+	.incbin "baserom.gba", 0x0011ca50, 0x00000194
 	.section .rom.0011cd78, "ax"
 	.balign 4
 	.global Camera_ConfigureScene
@@ -4989,12 +4968,8 @@ Func_081c0f3c:
 	.thumb_func
 Func_081c0f44:
 	.incbin "baserom.gba", 0x001c0f44, 0x00000014
-	.section .rom.001c1000, "ax"
-	.global AudioEngine_SuspendDirectSoundWrapper
-	.type AudioEngine_SuspendDirectSoundWrapper, %function
-	.thumb_func
-AudioEngine_SuspendDirectSoundWrapper:
-	.incbin "baserom.gba", 0x001c1000, 0x00000014
+	.section .rom.001c1008, "ax"
+	.incbin "baserom.gba", 0x001c1008, 0x0000000c
 	.section .rom.001c1014, "ax"
 	.global Func_081c1014
 	.type Func_081c1014, %function

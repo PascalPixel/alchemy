@@ -17,16 +17,16 @@ Func_08020340:
 	.thumb_func
 Runtime_CheckRadiusOverlapFar:
 .ifdef TLA_EDITION_DE
-	overlay_veneer Func_0802b828
+	overlay_veneer Map_LoadCellsAndShapes
 .else
 .ifdef TLA_EDITION_ES
-	overlay_veneer Func_0802b828
+	overlay_veneer Map_LoadCellsAndShapes
 .else
 .ifdef TLA_EDITION_FR
-	overlay_veneer Func_0802b828
+	overlay_veneer Map_LoadCellsAndShapes
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Func_0802b828
+	overlay_veneer Map_LoadCellsAndShapes
 .else
 	overlay_veneer Runtime_CheckRadiusOverlap
 .endif

@@ -14747,7 +14747,7 @@ msgctxt "message"
 msgid "03684"
 msgstr "¡{argument_ability_name} de {argument_actor_name:1} está preparado!"
 
-msgctxt "message"
+msgctxt "MsgPartyFlees"
 msgid "03685"
 msgstr "¡{protagonist_name} y sus amigos huyen!"
 
@@ -21159,7 +21159,7 @@ msgctxt "message"
 msgid "05287"
 msgstr "Volved cuando necesitéis{line_break}alguna otra cura.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgReviveService"
 msgid "05288"
 msgstr "Mmm... Caíste en la{line_break}batalla y necesitas{line_break}resucitar, ¿no?{page_break}"
 
@@ -21199,7 +21199,7 @@ msgctxt "message"
 msgid "05297"
 msgstr "No necesita cura."
 
-msgctxt "message"
+msgctxt "MsgCurePoisonService"
 msgid "05298"
 msgstr "Mmm... ¿Así que{line_break}necesitas un antídoto{line_break}para curar el veneno?{page_break}"
 
@@ -21239,7 +21239,7 @@ msgctxt "message"
 msgid "05307"
 msgstr "No tiene veneno."
 
-msgctxt "message"
+msgctxt "MsgExorcismService"
 msgid "05308"
 msgstr "¿Quieres que espante{line_break}a los malos espíritus?{page_break}"
 
@@ -21279,7 +21279,7 @@ msgctxt "message"
 msgid "05317"
 msgstr "El aliado no está poseído."
 
-msgctxt "message"
+msgctxt "MsgRemoveCurseService"
 msgid "05318"
 msgstr "Mmm... Así que queréis{line_break}despojaros de los objetos{line_break}malditos, ¿no?{page_break}"
 

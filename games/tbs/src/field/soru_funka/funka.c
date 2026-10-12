@@ -2,7 +2,7 @@
 #include "unit/field/soru_funka/funka.h"
 #include "unit/field/soru_star/ring_setup.h"
 #include "unit/battle/effect/slots.h"
-#include "unit/field/common/script/script.h"
+#include "unit/field/common/script/field.h"
 #include "unit/system/scheduler/callback.h"
 #include "battle.h"
 #include "debug.h"

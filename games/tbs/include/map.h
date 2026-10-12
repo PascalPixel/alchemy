@@ -2,7 +2,7 @@
 #define ALCHEMY_MAP_H
 
 #include "unit/battle/effect/slots.h"
-#include "unit/field/common/script/script.h"
+#include "unit/field/common/script/field.h"
 #include "types.h"
 #include "layout_guard.h"
 

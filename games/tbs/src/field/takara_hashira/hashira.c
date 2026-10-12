@@ -7,7 +7,7 @@
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/map/panel.h"
 #include "unit/battle/effect/slots.h"
-#include "unit/field/common/script/script.h"
+#include "unit/field/common/script/field.h"
 #include "unit/system/scheduler/callback.h"
 #include "fieldobj.h"
 #include "types.h"

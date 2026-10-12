@@ -4,7 +4,7 @@
 #include "unit/field/common/effect/move.h"
 #include "unit/field/soru_star/ring_setup.h"
 #include "unit/battle/effect/slots.h"
-#include "unit/field/common/script/script.h"
+#include "unit/field/common/script/field.h"
 #include "unit/game/character/chara.h"
 #include "unit/graphics/window/window.h"
 #include "unit/menu/shop/sell.h"

@@ -2,7 +2,7 @@
 #include "vram_tab.h"
 #include "unit/menu/title/title.h"
 #include "unit/battle/effect/slots.h"
-#include "unit/field/common/script/script.h"
+#include "unit/field/common/script/field.h"
 #include "unit/game/character/chara.h"
 #include "unit/graphics/palette/tint.h"
 #include "unit/graphics/window/window.h"

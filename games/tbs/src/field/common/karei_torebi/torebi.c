@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "unit/field/common/karei_torebi/torebi.h"
 #include "unit/battle/effect/slots.h"
-#include "unit/field/common/script/script.h"
+#include "unit/field/common/script/field.h"
 #include "unit/game/character/chara.h"
 #include "unit/graphics/window/window.h"
 #include "unit/system/scheduler/callback.h"

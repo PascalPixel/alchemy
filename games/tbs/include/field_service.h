@@ -2,7 +2,7 @@
 #define FIELD_SERVICE_H
 
 #include "unit/battle/effect/slots.h"
-#include "unit/field/common/script/script.h"
+#include "unit/field/common/script/field.h"
 #include "unit/system/scheduler/callback.h"
 #include "field_event.h"
 #include "farcall.h"

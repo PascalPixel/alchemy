@@ -1,7 +1,7 @@
 #ifndef ALCHEMY_OBJECT_DISPATCH_H
 #define ALCHEMY_OBJECT_DISPATCH_H
 
-#include "unit/field/common/script/script.h"
+#include "unit/field/common/script/field.h"
 #include "types.h"
 
 struct DispatchObject

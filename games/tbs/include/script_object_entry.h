@@ -1,7 +1,7 @@
 #ifndef ALCHEMY_SCRIPT_OBJECT_ENTRY_H
 #define ALCHEMY_SCRIPT_OBJECT_ENTRY_H
 
-#include "unit/field/common/script/script.h"
+#include "unit/field/common/script/field.h"
 #include "types.h"
 
 struct ScriptObjectEntry

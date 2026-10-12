@@ -14,7 +14,7 @@
 #include "unit/battle/effect/djinnev.h"
 #include "unit/battle/effect/psydisp.h"
 #include "unit/battle/effect/psyfx.h"
-#include "unit/field/common/script/mapview.h"
+#include "unit/field/mapview.h"
 #include "unit/game/character/chara.h"
 #include "unit/game/character/party.h"
 #include "unit/menu/shop/shop.h"

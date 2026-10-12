@@ -10,7 +10,7 @@
 #include "unit/battle/effect/djinnev.h"
 #include "unit/battle/effect/psydisp.h"
 #include "unit/battle/effect/psyfx.h"
-#include "unit/field/common/script/mapview.h"
+#include "unit/field/mapview.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

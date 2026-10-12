@@ -1,8 +1,8 @@
 #ifndef ALCHEMY_OBJECT_DISPATCH_H
 #define ALCHEMY_OBJECT_DISPATCH_H
 
-#include "unit/field/common/script/field.h"
-#include "unit/field/common/script/fldobj.h"
+#include "unit/field/field.h"
+#include "unit/field/fldobj.h"
 #include "types.h"
 
 struct DispatchObject

@@ -11,7 +11,7 @@
 #include "unit/battle/effect/djinnev.h"
 #include "unit/battle/effect/psydisp.h"
 #include "unit/battle/effect/psyfx.h"
-#include "unit/field/common/script/fldobj.h"
+#include "unit/field/fldobj.h"
 #include "unit/graphics/window/window.h"
 #include "unit/graphics/window/output.h"
 #include "unit/graphics/window/save.h"

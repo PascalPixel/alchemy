@@ -4,7 +4,7 @@
 #include "unit/battle/effect/disptran.h"
 #include "unit/battle/effect/evbasic.h"
 #include "unit/battle/effect/evactor.h"
-#include "unit/field/common/script/mapcell.h"
+#include "unit/field/mapcell.h"
 #include "unit/runtime/runtime.h"
 #include "unit/runtime/serial.h"
 #include "battle.h"

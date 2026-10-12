@@ -6,7 +6,7 @@
 #include "unit/battle/effect/evactor.h"
 #include "unit/battle/battle.h"
 #include "unit/battle/turnend.h"
-#include "unit/field/common/script/mapview.h"
+#include "unit/field/mapview.h"
 #include "unit/game/character/chara.h"
 #include "unit/game/character/flag.h"
 #include "unit/game/character/party.h"

@@ -15,11 +15,11 @@
 #include "unit/battle/effect/djinnev.h"
 #include "unit/battle/effect/psydisp.h"
 #include "unit/battle/effect/psyfx.h"
-#include "unit/field/common/script/field.h"
-#include "unit/field/common/script/fldobj.h"
-#include "unit/field/common/script/script.h"
-#include "unit/field/common/script/player.h"
-#include "unit/field/common/script/mapcell.h"
+#include "unit/field/field.h"
+#include "unit/field/fldobj.h"
+#include "unit/field/script.h"
+#include "unit/field/player.h"
+#include "unit/field/mapcell.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "mapcopy.h"

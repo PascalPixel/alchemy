@@ -10,7 +10,7 @@
 #include "unit/battle/effect/djinnev.h"
 #include "unit/battle/effect/psydisp.h"
 #include "unit/battle/effect/psyfx.h"
-#include "unit/field/common/script/mapcell.h"
+#include "unit/field/mapcell.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "configured_effect_spawn.h"

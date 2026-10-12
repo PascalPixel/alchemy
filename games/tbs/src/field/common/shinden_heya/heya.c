@@ -10,7 +10,7 @@
 #include "unit/battle/effect/djinnev.h"
 #include "unit/battle/effect/psydisp.h"
 #include "unit/battle/effect/psyfx.h"
-#include "unit/field/common/script/field.h"
+#include "unit/field/field.h"
 #include "unit/graphics/window/window.h"
 #include "unit/graphics/window/icon.h"
 #include "unit/graphics/window/select.h"

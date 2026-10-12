@@ -398,6 +398,7 @@ const u8 ReelGame_TitleLetterWidths[REEL_TITLE_LETTERS] = {
 
 void ReelGame_RunFrame(void)
 {
+	/* FAKEMATCH: the OAM shadow words (struct ReelObject) are volatile, as LuckyDice_Run's in camera.c. Without attr01's qualifier differ 119, 1730 instructions for 1729; without attr2's differ 1558, 1701 for 1729. */
 	struct ReelWork			*work;
 	struct BattleEffectWork *fx;
 	volatile u16			*dma;

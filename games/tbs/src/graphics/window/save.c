@@ -2633,6 +2633,7 @@ void Ui_ApplyTableOffsetToPair(struct RenderOutput *obj)
 	value = (u8)obj->y + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
 	obj->oam.y = value;
 	obj = obj->next;
+	/* FAKEMATCH: the volatile read loads gFrameTick again for the second sprite, as the bytes do; read plainly, CSE reuses the first index and the function differs 33, 15 instructions for 22. */
 	value = (u8)obj->y + Ui_PairBobOffsets[(*(volatile u32 *)&gFrameTick >> 2) & 7];
 	obj->oam.y = value;
 }

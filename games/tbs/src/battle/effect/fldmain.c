@@ -941,6 +941,7 @@ s32 Field_RunScene(s32 entrance)
 				{
 					Menu_RunSelectionFar();
 				}
+				/* FAKEMATCH: the volatile read loads gDebugMode again for this second test, as the bytes do; read plainly in both tests, CSE reuses the first load and Field_RunScene differs 48, 961 instructions for 965. The other three reads of gDebugMode in this function need no qualifier. */
 				else if (*(volatile u8 *)&gDebugMode != 0 && (gKeysHeld & KEY_L) != 0)
 				{
 					Debug_RunPaletteEditor();

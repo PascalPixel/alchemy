@@ -57,6 +57,7 @@ extern u16 gFlashSavedIme;
 extern u8 gFlashTimeoutFlag;
 #endif
 #ifndef OWN_gFlashTimerCount
+/* FAKEMATCH: volatile as flash.c declares it for FlashTimerIntr (library C): without it that function: differ 5 in tbs-en, 13 instructions for 14. No game C reads this cell. */
 extern volatile u16 gFlashTimerCount;
 #endif
 extern u8 gFlashTimerNum;

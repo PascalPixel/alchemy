@@ -109,10 +109,13 @@ extern struct SerialTransferState gSerialTransfer;
 extern struct SerialRuntime		  gSerialRuntime;
 extern u16						  gSerialExchangeActive;
 extern s32						  gSerialSendSource;
+// volatile: tagged where it steers, in SerialRuntime_StepBlockTransfer (tbs serial.c)
 extern volatile u16				  gSerialSendSize;
 extern s32						  gSerialReceiveDest;
+// volatile: tagged where it steers, in BattleLink_ReceiveActions (tbs command.c) and LinkLobby_ReceivePartyRecords (tbs lobby.c)
 extern volatile u16				  gSerialReceivedSize;
 extern u8						  gSerialPeerPayloads[4][24];
+// volatile: tagged where it steers, in SerialRuntime_StepBlockTransfer (tbs serial.c)
 extern volatile u8				  gSerialBlockSequence;
 extern u8						  gLinkExchangeState;
 

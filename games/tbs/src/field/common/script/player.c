@@ -213,6 +213,7 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 		if (free - 136 < 0)
 			AudioCommand_PlayFar(135);
 	}
+	/* FAKEMATCH: the volatile read puts gDebugMode's address in r5 here and at the test before it, as the bytes do; read plainly both take r3 (differ 12, 808 instructions either way). */
 	if (*(volatile u8 *)&gDebugMode != 0)
 	{
 		s32 mask;

@@ -100,6 +100,7 @@ const u8 Title_PromptBlendLevels[60] = {
 
 void Title_PlaceIntroSprites(void)
 {
+	/* FAKEMATCH: the OAM shadow words (area.objects of struct IntroWork, written through ENTRY) are volatile, as LuckyDice_Run's in camera.c. Without the qualifier differ 205, 471 instructions for 496. */
 	struct IntroWork *work;
 	u32				  n;
 	s32				  base;

@@ -174,6 +174,7 @@ struct WaveMap
 
 static void BabiFune_UpdateWaves(void)
 {
+	/* FAKEMATCH: volatile restores the form the bytes prove: blend lives at sp+18 and is loaded again with ldrh for the register write (a 20-byte frame for 16). Without it differ 24, 223 instructions for 225. */
 	volatile u16			   blend;
 	struct FixedPointPosition  place;
 	struct FixedPointPosition *pos;
@@ -561,6 +562,7 @@ static void EV10_SCRIPT(void)
 	s32				white;
 	s32				dark;
 	s32				sunk;
+	/* FAKEMATCH: volatile restores the form the bytes prove: cnt lives at sp+6 and each BGxCNT value is stored there with strh on its way to the register (an 8-byte frame for 4). Without it differ 26, 225 instructions for 231. */
 	volatile u16	cnt;
 
 	map = gMapWork[0];
@@ -659,6 +661,7 @@ static void EV10_SCRIPT(void)
 s32 BabiFune_SetupScene(void)
 {
 	struct WaveMap *map;
+	/* FAKEMATCH: volatile restores the form the bytes prove: cnt lives at sp+2 and each step is stored there with strh (a 4-byte frame for none). Without it differ 53, 164 instructions for 165. */
 	volatile u16	cnt;
 
 	map = gMapWork[0];

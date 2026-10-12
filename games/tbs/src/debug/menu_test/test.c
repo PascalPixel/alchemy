@@ -86,6 +86,7 @@ static void SceneDialogue_ShowMessageAndWait(s32 arg0)
 
 static void CommandTable_RunDirectionalInput(s32 x, s32 cnt)
 {
+	/* FAKEMATCH: volatile, as gKeysHeld is declared (keystate.h): each *key is a load of its own. A plain pointer differs 58, 73 instructions for 75. */
 	volatile s32 *key;
 	s32			  token;
 	s32			  i;

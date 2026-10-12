@@ -12,10 +12,12 @@
 struct UiWindow;
 
 extern u8		   gBlendBrighten;
+/* FAKEMATCH: volatile makes every access to this cell a load or store of its own; without it five functions of tbs's fade.c differ in tbs-en: Blend_ConfigureTransition (31), Blend_SetDarkenTarget0 (19), Blend_SetBrightenTarget0, Blend_SetBrightenTarget16 and Blend_SetDarkenTarget16 (7 each). */
 extern volatile u8 gBlendDuration;
 extern u8		   gBlendFramesLeft;
 extern u16		   gBlendLayers;
 extern u8		   gBlendStartLevel;
+/* FAKEMATCH: volatile makes every access to this cell a load or store of its own; without it BlendTransition_Update: differ 29 in tbs-en, 45 instructions for 46. */
 extern volatile u8 gBlendTargetLevel;
 extern u8		   gRomShiftedTilePair[];
 extern const u32   RelocatedQ16DotProduct[];

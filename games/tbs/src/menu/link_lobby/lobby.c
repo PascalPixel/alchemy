@@ -283,6 +283,7 @@ static s32 EV02_RAISED(void)
 
 static s32 LinkLobby_ReceivePartyRecords(void)
 {
+	/* FAKEMATCH: gSerialReceivedSize is volatile (serial_runtime.h), so every read here is a load of its own. Measured on tbs-en: without the qualifier differ 69, 186 instructions for 189. */
 	u16 buf[24];
 	u32 size;
 	s32 heap;

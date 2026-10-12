@@ -27,6 +27,7 @@ LAYOUT_OFFSET_GUARD(SchedulerTask_Mask, struct SchedulerTask, mask, 6);
 
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->state)[1])
 
+/* FAKEMATCH: volatile makes every access to this cell a load or store of its own; without it Scheduler_AddOrUpdateCallback: differ 14 in tbs-en, 59 instructions for 61. */
 extern volatile u8			gSchedulerStatus;
 extern u8					gSchedulerTaskCount;
 extern struct SchedulerTask gSchedulerTaskTable[];

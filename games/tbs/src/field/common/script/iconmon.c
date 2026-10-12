@@ -93,6 +93,7 @@ void Ui_RunIconMonitor(void)
 	u32						  cnt;
 	s32						  alt;
 	s32						  moved;
+	/* FAKEMATCH: volatile, as gKeysHeld and gKeysRepeat are declared (keystate.h): each *held and *repeat is a load of its own. A plain held differs 245, 663 instructions for 672; a plain repeat 89, 669 for 672. */
 	volatile u32			 *held;
 	volatile u32			 *repeat;
 	u32						  i;

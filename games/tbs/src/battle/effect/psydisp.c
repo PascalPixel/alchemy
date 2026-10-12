@@ -445,6 +445,7 @@ void ObjectGroup_ApplyRandomChildValues(void *owner)
 	s32			  cnt;
 	void		**entry;
 	void		 *part;
+	/* FAKEMATCH: volatile, as gFrameCount is declared (frame.h): each *frame_count is a load of its own. A plain pointer differs 16, 46 instructions either way. */
 	volatile s32 *frame_count;
 	s32			  value;
 

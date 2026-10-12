@@ -32,7 +32,12 @@ struct PartyState {
     u8 battle_fx_enabled;
     u8 unknown_22b;
     u8 event_mode;
-    u8 unknown_22d[0x13];
+    u8 unknown_22d[3];
+    u16 keys_230;
+    u16 unknown_232;
+    u16 keys_234;
+    u16 keys_236;
+    u8 unknown_238[8];
     u16 packed_events[2];
     u8 unknown_244[7];
     u8 battle_rule_24b;

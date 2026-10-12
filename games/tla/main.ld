@@ -812,6 +812,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000d181e)
     "*/games/tla/src/battle/effect/d1ac4.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d1ac4)
+    "*/games/tla/src/battle/effect/d1cc0.o"(.text)
     "*/games/tla/src/battle/effect/d1d34.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d1d8c)
     "*/games/tla/src/battle/effect/d1df0.o"(.text)

@@ -3225,7 +3225,7 @@ Func_080d1840:
 	.type Func_080d1ae4, %function
 	.thumb_func
 Func_080d1ae4:
-	.incbin "baserom.gba", 0x000daae4, 0x00000250
+	.incbin "baserom.gba", 0x000daae4, 0x000001dc
 	.section .rom.000dadac, "ax"
 	.global Func_080d2cc4
 	.type Func_080d2cc4, %function
@@ -4725,7 +4725,7 @@ BattlePresentation_AppendLinkedActions:
 	.incbin "baserom.gba", 0x0011d7b4, 0x00000048
 	.section .rom.0011d800, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x0011d800, 0x000001bc
+	.incbin "baserom.gba", 0x0011d800, 0x000000b4
 	.section .rom.0011d9e4, "ax"
 	.incbin "baserom.gba", 0x0011d9e4, 0x000009a0
 	.section .rom.0011e3c2, "ax"

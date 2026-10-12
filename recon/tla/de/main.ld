@@ -810,7 +810,7 @@
     "*/recon/tla/de/rom.o"(.rom.000dea18)
     "*/games/tla/src/battle/effect/d1ac4.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000deae4)
-    "*/recon/tla/de/rom.o"(.rom.000decc0)
+    "*/games/tla/src/battle/effect/d1cc0.o"(.text)
     "*/games/tla/src/battle/effect/d1d34.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000dedac)
     "*/games/tla/src/battle/effect/d1df0.o"(.text)

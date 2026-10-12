@@ -2,6 +2,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/kuupuappu_heya/heya.h"
+#include "unit/field/common/kuupuappu/itemobj.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
 #include "unit/battle/effect/object4.h"
@@ -63,7 +64,6 @@ static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
 static void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
 static void SceneEffect_ApplyPairWithValue141(s32 a, s32 b);
 static void SceneState_SetValue2ThenFinish(void);
-static void OverlayObject_ConfigureObject22WithResource17(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 static void KuupuappuHeya_UpdateActorStops(void);
 static void KuupuappuHeya_StartActorStops(void);
 
@@ -2716,37 +2716,8 @@ static void SceneState_SetValue2ThenFinish(void)
 	BattleEffect_CleanupSceneObjects();
 }
 
-static void OverlayObject_ConfigureObject22WithResource17(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z)
-{
-	u8 *o;
-	u8 *q;
-	u8 *p;
-	u8 *v;
-	s32 z;
-	s32 m;
-
-	z = 0;
-	o = (u8 *)Engine_ObjectCreate(22, fixed_x, fixed_y, fixed_z);
-	if (o != 0)
-	{
-		q = (u8 *)((struct FieldActor *)o)->sprite;
-		p = q + 38;
-		*p = z;
-		p += 1;
-		*p = z;
-		m = 33;
-		m = -m;
-		q[5] &= m;
-		q[9] &= 15;
-		o[0x55] = z;
-		o[0x5c] = 1;
-		v = Runtime_AllocateHeapBlock(17, 0x608);
-		Engine_ItemLoadIcon(a);
-		v += 0x400;
-		Engine_VramLoad(q[28], 0x80, v);
-		Engine_HeapRelease(17);
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/itemobj.c"
 
 static u8 *SceneData_FindEntryAtPosition(s32 *o)
 {

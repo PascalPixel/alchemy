@@ -1,4 +1,4 @@
-/* Draft, differ 30 of 34: the native keeps the address of the entrance in r5 across the range test and the equality test (ldrh, subs #7, lsls #16, cmp 0x10000, bhi); this form reloads it. */
+/* Draft, differ 30 of 34: the native keeps the address of the entrance in r5 across the range test and the equality test (ldrh, subs #7, lsls #16, cmp 0x10000, bhi); this form reloads it. Measured: an unsigned read in the range test (*(u16 *)&gPartyState.entrance) gives the native's separate ldrsh for the second test but folds the address into one pool word and the 7 into 0xfff9 (differ 15); a double (u16) cast and the second test on an int copy change nothing. */
 #include "types.h"
 
 #include "ram_buffer.h"

@@ -31,7 +31,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data012
 	resource WindowTiles, Ui_WindowTiles
 	resource , UiText_SmallFont
-	resource , Resource_Data015
+	resource Data015, Resource_Data015
 	resource , Title_ScreenPicture
 	resource , Title_IntroGraphicsC
 	resource , Resource_Data018

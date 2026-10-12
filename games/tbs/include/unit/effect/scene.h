@@ -1,14 +1,14 @@
-#ifndef ALCHEMY_UNIT_BATTLE_EFFECT_SCENE_H
-#define ALCHEMY_UNIT_BATTLE_EFFECT_SCENE_H
+#ifndef ALCHEMY_UNIT_EFFECT_SCENE_H
+#define ALCHEMY_UNIT_EFFECT_SCENE_H
 
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_efx.h"
-#include "unit/battle/effect/effect.h"
-#include "unit/battle/effect/fxdirect.h"
-#include "unit/battle/effect/twopic.h"
-#include "unit/battle/effect/strike.h"
-#include "unit/battle/effect/dispatch.h"
+#include "unit/effect/effect.h"
+#include "unit/effect/fxdirect.h"
+#include "unit/effect/twopic.h"
+#include "unit/effect/strike.h"
+#include "unit/effect/dispatch.h"
 
 struct BattleEffectArgument;
 

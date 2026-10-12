@@ -1,10 +1,10 @@
-#ifndef ALCHEMY_UNIT_BATTLE_EFFECT_CANVAS_H
-#define ALCHEMY_UNIT_BATTLE_EFFECT_CANVAS_H
+#ifndef ALCHEMY_UNIT_EFFECT_CANVAS_H
+#define ALCHEMY_UNIT_EFFECT_CANVAS_H
 
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_efx.h"
-#include "unit/battle/effect/effect.h"
+#include "unit/effect/effect.h"
 
 void BattleEffect_WipeCanvas(s32 mode, s32 value);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);

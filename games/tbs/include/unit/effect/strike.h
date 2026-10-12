@@ -1,12 +1,12 @@
-#ifndef ALCHEMY_UNIT_BATTLE_EFFECT_STRIKE_H
-#define ALCHEMY_UNIT_BATTLE_EFFECT_STRIKE_H
+#ifndef ALCHEMY_UNIT_EFFECT_STRIKE_H
+#define ALCHEMY_UNIT_EFFECT_STRIKE_H
 
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_efx.h"
-#include "unit/battle/effect/effect.h"
-#include "unit/battle/effect/fxdirect.h"
-#include "unit/battle/effect/twopic.h"
+#include "unit/effect/effect.h"
+#include "unit/effect/fxdirect.h"
+#include "unit/effect/twopic.h"
 
 struct BattleEffectArgument;
 

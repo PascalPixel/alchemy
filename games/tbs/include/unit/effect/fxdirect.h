@@ -1,10 +1,10 @@
-#ifndef ALCHEMY_UNIT_BATTLE_EFFECT_FXDIRECT_H
-#define ALCHEMY_UNIT_BATTLE_EFFECT_FXDIRECT_H
+#ifndef ALCHEMY_UNIT_EFFECT_FXDIRECT_H
+#define ALCHEMY_UNIT_EFFECT_FXDIRECT_H
 
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_efx.h"
-#include "unit/battle/effect/effect.h"
+#include "unit/effect/effect.h"
 
 struct BattleEffectArgument;
 

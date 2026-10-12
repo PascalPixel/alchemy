@@ -1,11 +1,11 @@
-#ifndef ALCHEMY_UNIT_BATTLE_EFFECT_STEP_H
-#define ALCHEMY_UNIT_BATTLE_EFFECT_STEP_H
+#ifndef ALCHEMY_UNIT_EFFECT_STEP_H
+#define ALCHEMY_UNIT_EFFECT_STEP_H
 
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_efx.h"
-#include "unit/battle/effect/effect.h"
-#include "unit/battle/effect/burst.h"
+#include "unit/effect/effect.h"
+#include "unit/effect/burst.h"
 
 struct EffectPosition;
 struct EffectStep;

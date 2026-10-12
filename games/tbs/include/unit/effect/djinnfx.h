@@ -1,17 +1,17 @@
-#ifndef ALCHEMY_UNIT_BATTLE_EFFECT_DJINNFX_H
-#define ALCHEMY_UNIT_BATTLE_EFFECT_DJINNFX_H
+#ifndef ALCHEMY_UNIT_EFFECT_DJINNFX_H
+#define ALCHEMY_UNIT_EFFECT_DJINNFX_H
 
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_efx.h"
-#include "unit/battle/effect/effect.h"
-#include "unit/battle/effect/fxdirect.h"
-#include "unit/battle/effect/twopic.h"
-#include "unit/battle/effect/strike.h"
-#include "unit/battle/effect/dispatch.h"
-#include "unit/battle/effect/scene.h"
-#include "unit/battle/effect/burst.h"
-#include "unit/battle/effect/step.h"
+#include "unit/effect/effect.h"
+#include "unit/effect/fxdirect.h"
+#include "unit/effect/twopic.h"
+#include "unit/effect/strike.h"
+#include "unit/effect/dispatch.h"
+#include "unit/effect/scene.h"
+#include "unit/effect/burst.h"
+#include "unit/effect/step.h"
 
 struct BattleEffectArgument;
 

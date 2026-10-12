@@ -629,7 +629,7 @@ Func_0802d71c:
 Object_IsTargetUnset:
 	.incbin "baserom.gba", 0x00023f64, 0x00000030
 	.section .rom.00023f9c, "ax"
-	.incbin "baserom.gba", 0x00023f9c, 0x00000780
+	.incbin "baserom.gba", 0x00023f9c, 0x0000071c
 	.section .rom.00024736, "ax"
 	.incbin "baserom.gba", 0x00024736, 0x00000002
 	.section .rom.00024738, "ax"
@@ -789,11 +789,6 @@ Func_0802d45c:
 	.thumb_func
 Func_0802d87c:
 	.incbin "baserom.gba", 0x0002d87c, 0x000001a8
-	.global Func_0802da24
-	.type Func_0802da24, %function
-	.thumb_func
-Func_0802da24:
-	.incbin "baserom.gba", 0x0002da24, 0x00000064
 	.section .rom.0002da88, "ax"
 	.global Func_0802db88
 	.type Func_0802db88, %function

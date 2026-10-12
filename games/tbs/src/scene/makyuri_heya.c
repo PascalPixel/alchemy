@@ -1058,9 +1058,9 @@ static void EV40_SCRIPT(void)
 				else if (start == 48)
 					SceneEffect_SpawnParticleRowsByMode(1);
 				MakyuriHeya_OpenStoneDoor(2);
-				goto wait;
+				Engine_EventWait(60);
 			}
-			if (column == 48)
+			else if (column == 48)
 			{
 				Engine_GameFlagSet(0x31a);
 				Engine_GameFlagClear(0x31b);
@@ -1087,21 +1087,22 @@ static void EV40_SCRIPT(void)
 					Engine_EventCloseScreen();
 					Engine_EventWaitForScreen();
 					Engine_EventRequestExit(15);
-					break;
 				}
-				SceneEffect_SpawnParticleRowsByMode(2);
-				MakyuriHeya_StopActorNinePositionCallback();
-				MakyuriHeya_OpenStoneDoor(1);
-				goto wait;
+				else
+				{
+					SceneEffect_SpawnParticleRowsByMode(2);
+					MakyuriHeya_StopActorNinePositionCallback();
+					MakyuriHeya_OpenStoneDoor(1);
+					Engine_EventWait(60);
+				}
 			}
-			if (column == 53)
+			else if (column == 53)
 			{
 				Engine_GameFlagSet(0x31b);
 				Engine_GameFlagClear(0x319);
 				Engine_GameFlagClear(0x31a);
 				MakyuriHeya_StartPillarPush();
 				SceneEffect_SpawnParticleRowsByMode(0);
-			wait:
 				Engine_EventWait(60);
 			}
 			else

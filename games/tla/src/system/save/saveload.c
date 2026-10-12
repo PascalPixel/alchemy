@@ -15,13 +15,7 @@ struct SaveGameWords {
 
 extern u8 MsgNoBackupMemory;
 extern u8 MsgSaveFailed;
-#if defined(TLA_EDITION_JA)
-// 日本語版のカタログでは、この番号に overlay_6ae の表が使う名前が付いている
-extern u8 MsgIThoughtID;
-#define MsgLoadFailed MsgIThoughtID
-#else
 extern u8 MsgLoadFailed;
-#endif
 
 extern u8 Data_02000000[];
 extern s16 Data_020036d0;

@@ -59,7 +59,7 @@ msgctxt "MsgSaveFailed"
 msgid "00012"
 msgstr "{text_color:5}かきこみにしっぱいしました{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLoadFailed"
 msgid "00013"
 msgstr "{text_color:5}よみこみにしっぱいしました{end_wait}"
 

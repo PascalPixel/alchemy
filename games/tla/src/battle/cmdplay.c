@@ -43,6 +43,6 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames)
     ev->event_index = 0;
     ev->timer = frames;
     ev->phase = BATTLE_PLAYBACK_DISPATCH;
-    work->unknown_56c[0x111] = 0;
+    work->unknown_670[0x0d] = 0;
     return Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0x480);
 }

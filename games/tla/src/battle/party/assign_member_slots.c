@@ -1,11 +1,10 @@
 #include "btlpty.h"
-
-extern u8 *BtlWk;
+#include "ram_buffer.h"
 
 s32 BattleParty_AssignMemberSlots(void)
 {
     u16 active_members[8];
-    u8 *battle_state = BtlWk;
+    u8 *battle_state = (u8 *)Ram_HeapSlots->battle_work;
     s32 party_size = BattleParty_PrepareActiveOwners(active_members);
     s32 member_slot;
     s32 unit_id;

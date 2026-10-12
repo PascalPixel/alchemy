@@ -582,6 +582,10 @@ fn icon_bank(built: &str, pixels: &[u8], width: usize, height: usize) -> Result<
     Ok(output)
 }
 
+/// Square frames stacked in one sheet: an offset word for each and a zero,
+/// then the odd frames' zero-skip streams and the even ones'. A frame drawn
+/// wholly in index 255, which no stream can hold, is a slot the bank numbers
+/// but never drew: its word points where the next stream starts.
 fn sprite_bank(built: &str, pixels: &[u8], width: usize, height: usize) -> Result<Vec<u8>, String> {
     if width == 0 || !height.is_multiple_of(width) {
         return Err(format!("{built}: frames must be square and stacked"));
@@ -594,6 +598,9 @@ fn sprite_bank(built: &str, pixels: &[u8], width: usize, height: usize) -> Resul
     let front = (0..frames.len()).step_by(2);
     for index in back.chain(front) {
         offsets[index] = (table + body.len()) as u32;
+        if frames[index].iter().all(|pixel| *pixel == 0xff) {
+            continue;
+        }
         body.extend(
             encode_zero_skip(frames[index]).map_err(|error| format!("{built}: {}", error.0))?,
         );
@@ -736,6 +743,23 @@ mod tests {
         assert!(one_bpp("T.1bpp", &pixels[..120], 15, 8).is_err());
         assert!(is_recipe("graphics/display/staff.1bpp"));
         assert!(!is_recipe("graphics/display/staff.2bpp"));
+    }
+    #[test]
+    fn a_frame_bank_numbers_a_slot_it_never_drew() {
+        // Four 2x2 frames; the third is drawn wholly in index 255.
+        let mut pixels = vec![1u8; 4];
+        pixels.extend([2u8; 4]);
+        pixels.extend([0xffu8; 4]);
+        pixels.extend([0u8, 3, 3, 0]);
+        let bank = sprite_bank("T.frames", &pixels, 2, 8).unwrap();
+        let word =
+            |index: usize| u32::from_le_bytes(bank[4 * index..4 * index + 4].try_into().unwrap());
+        // odd frames first: 1 and 3, then 0; slot 2 points at the bank's end
+        assert_eq!([word(1), word(3), word(0), word(2), word(4)], [20, 25, 30, 35, 0]);
+        assert_eq!(&bank[20..], &[2, 2, 2, 2, 0, 0xe0, 3, 3, 0xe0, 0, 1, 1, 1, 1, 0]);
+        // a frame that only touches index 255 is still refused
+        pixels[8] = 1;
+        assert!(sprite_bank("T.frames", &pixels, 2, 8).is_err());
     }
     #[test]
     fn a_strip_picture_packs_each_row_band_behind_its_offset() {

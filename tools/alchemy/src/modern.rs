@@ -698,7 +698,7 @@ mod tests {
         }
         assert_eq!(family_flags(CompilerFamily::GameArm)[0], "-marm");
         let target = decomp_target(Some("tbs-en")).unwrap();
-        assert!(compiles(target, Path::new("games/tbs/src/battle/tgtexec.c")));
+        assert!(compiles(target, Path::new("games/tbs/src/battle/battle.c")));
         assert!(compiles(target, Path::new("games/tbs/src/graphics/text/moji.c")));
         assert!(!compiles(target, Path::new("games/common/src/sound/engine.c")));
         assert!(!compiles(target, Path::new("games/common/src/system/save/flash.c")));

@@ -1,7 +1,7 @@
 #include "unit/import.h"
 #include "unit/menu/link_lobby/lobby.h"
 #include "unit/battle/effect/object.h"
-#include "unit/battle/tgtexec.h"
+#include "unit/battle/battle.h"
 #include "unit/field/common/script/field.h"
 #include "unit/game/character/chara.h"
 #include "unit/graphics/window/window.h"

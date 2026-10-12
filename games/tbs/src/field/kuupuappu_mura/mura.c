@@ -3,7 +3,7 @@
 #include "unit/field/kuupuappu_mura/mura.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
-#include "unit/battle/tgtexec.h"
+#include "unit/battle/battle.h"
 #include "unit/game/character/chara.h"
 #include "unit/system/scheduler/runtime.h"
 #include "fieldobj.h"

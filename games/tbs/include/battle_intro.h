@@ -1,7 +1,7 @@
 #ifndef ALCHEMY_BATTLE_INTRO_H
 #define ALCHEMY_BATTLE_INTRO_H
 
-#include "unit/battle/tgtexec.h"
+#include "unit/battle/battle.h"
 #include "types.h"
 
 enum BattleEncounterAdvantage

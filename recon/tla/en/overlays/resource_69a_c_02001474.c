@@ -2,9 +2,10 @@
  * Draft of overlay 69a Func_02001474 (twins: 6a3 Func_020040b4, 6a5
  * Func_0200510c). 2 instructions differ: the listing copies the object to r10
  * after the two position reads (ldr r5; ldr r6; mov sl, r0), the draft before
- * them. Tried: the Value1 call layer, a second pointer assigned after the
- * reads (same 2), an empty asm barrier after the reads (6: the owner reload
- * mov r1, r8 then falls behind it).
+ * them. Tried: the Value1 call layer and a second pointer assigned after the
+ * reads (same 2); an empty asm barrier after the reads (6) or a one-pass
+ * block there (4), which hold back the owner reload (mov r1, r8) that the
+ * listing has before the reads; a one-pass block right after the lookup (6).
  */
 #include "types.h"
 #include "party_state.h"
@@ -20,14 +21,11 @@ struct FieldActor *Func_02001b7c();
 
 void Func_02001474(void)
 {
-    struct FieldActor *found = Object_GetById(gPartyState.current_owner);
-    struct FieldActor *object;
+    struct FieldActor *object = Object_GetById(gPartyState.current_owner);
     struct FieldActor *other;
-    s32 x = found->x;
-    s32 z = found->z;
+    s32 x = object->x;
+    s32 z = object->z;
 
-    object = found;
-    asm volatile(""); /* FAKEMATCH: the barrier keeps the copy to r10 behind the two reads; without it the copy comes first (2 differ), with or without a second pointer */
     ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x40000, 0x20000);
     x >>= 20;
     z >>= 20;

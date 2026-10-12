@@ -1829,7 +1829,6 @@
         "*/games/common/src/battle/presentation/actions.o"(.text)
         "*/recon/tla/raw/0811d79c.o"(.text)
         "*/games/tla/src/battle/presentation/d7e4.o"(.text)
-        "*/recon/tla/raw/0811d7e8.o"(.text)
         "*/games/tla/src/battle/presentation/d9a4.o"(.text)
         "*/recon/tla/raw/0811d9cc.o"(.text)
         "*/recon/tla/raw/0811ddd8.o"(.text)

@@ -1251,7 +1251,6 @@ SECTIONS
     "*/games/common/src/battle/presentation/actions.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011d798)
     "*/games/tla/src/battle/presentation/d7e4.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.0011d7e4)
     "*/games/tla/src/battle/presentation/d9a4.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011d9c8)
     "*/games/common/src/battle/presentation/act_run_entries.o"(.text)

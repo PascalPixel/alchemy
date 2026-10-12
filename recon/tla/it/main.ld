@@ -1276,7 +1276,6 @@
     "*/games/common/src/battle/presentation/actions.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0011d7b4)
     "*/games/tla/src/battle/presentation/d7e4.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.0011d800)
     "*/games/tla/src/battle/presentation/d9a4.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0011d9e4)
     "*/games/common/src/battle/presentation/act_run_entries.o"(.text)

@@ -408,103 +408,8 @@ Func_0200032c:
 	pop {r5, r6, r7, pc}
 .L_0200852c:
 	.4byte gPartyState
-	.section .text.x02008538,"ax",%progbits
-	.balign 4
-	.global Func_02000538
-	.thumb_func
-Func_02000538:
-	push {r5, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r2, #214
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	ldr r5, .L_02008600
-	adds r2, #85
-	str r2, [r3]
-	subs r2, #31
-	adds r3, r5, r2
-	ldrh r3, [r3]
-	movs r2, #128
-	subs r3, #3
-	lsls r3, r3, #16
-	lsls r2, r2, #9
-	cmp r3, r2
-	bhi .L_02008574
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r5, r2
-	ldr r0, [r3]
-	bl Object_GetById
-	adds r0, #35
-	ldrb r2, [r0]
-	movs r3, #32
-	orrs r3, r2
-	strb r3, [r0]
-.L_02008574:
-	movs r0, #0
-	bl Func_02000858
-	movs r0, #15
-	movs r1, #1
-	bl Func_02002b28
-	movs r1, #1
-	movs r0, #16
-	bl Func_02002b28
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r5, r2
-	ldr r0, [r3]
-	bl Object_GetById
-	adds r0, #35
-	ldrb r2, [r0]
-	movs r3, #64
-	orrs r3, r2
-	strb r3, [r0]
-	movs r0, #17
-	bl Object_GetById
-	adds r0, #35
-	ldrb r3, [r0]
-	movs r5, #128
-	orrs r3, r5
-	strb r3, [r0]
-	movs r0, #18
-	bl Object_GetById
-	adds r0, #35
-	ldrb r3, [r0]
-	orrs r3, r5
-	strb r3, [r0]
-	movs r0, #19
-	bl Object_GetById
-	adds r0, #35
-	ldrb r3, [r0]
-	orrs r3, r5
-	strb r3, [r0]
-	movs r0, #20
-	bl Object_GetById
-	adds r0, #35
-	ldrb r3, [r0]
-	orrs r3, r5
-	strb r3, [r0]
-	movs r0, #21
-	bl Object_GetById
-	adds r0, #35
-	ldrb r3, [r0]
-	orrs r3, r5
-	strb r3, [r0]
-	movs r0, #22
-	bl Object_GetById
-	adds r0, #35
-	ldrb r3, [r0]
-	orrs r5, r3
-	strb r5, [r0]
-	bl Func_02000e80
-	movs r0, #0
-	pop {r5, pc}
-	.2byte 0x0000
-.L_02008600:
-	.4byte gPartyState
 	.section .text.x02008604,"ax",%progbits
+	.balign 4
 	.global Func_02000604
 	.thumb_func
 Func_02000604:
@@ -767,48 +672,6 @@ Func_0200079c:
 	.4byte Data_02003340
 .L_02008854:
 	.4byte 0x05000184
-	.section .text.x020088dc,"ax",%progbits
-	.global Func_020008dc
-	.thumb_func
-Func_020008dc:
-	push {r5, lr}
-	bl Object_GetById
-	adds r5, r0, #0
-	adds r1, r5, #0
-	adds r1, #85
-	movs r3, #4
-	strb r3, [r1]
-	movs r2, #0
-	ldr r3, [r5, #20]
-	str r2, [r5, #68]
-	movs r2, #128
-	lsls r2, r2, #14
-	adds r3, r3, r2
-	str r3, [r5, #12]
-	subs r1, #50
-	ldrb r2, [r1]
-	movs r3, #128
-	orrs r3, r2
-	strb r3, [r1]
-	adds r3, r5, #0
-	adds r3, #34
-	ldr r1, [r5, #8]
-	ldr r2, [r5, #16]
-	ldrb r0, [r3]
-	bl Map_GetTerrainHeight
-	adds r3, r0, #0
-	asrs r3, r3, #19
-	ldr r0, [r5, #8]
-	ldr r1, [r5, #16]
-	adds r3, #6
-	movs r2, #0
-	bl Func_02002a78
-	ldr r0, [r5, #8]
-	ldr r1, [r5, #16]
-	movs r2, #0
-	movs r3, #128
-	bl Func_02002b58
-	pop {r5, pc}
 	.section .text.x02008930,"ax",%progbits
 	.global Func_02000930
 	.thumb_func
@@ -1692,32 +1555,8 @@ Func_02001010:
 	pop {r5, pc}
 .L_02009058:
 	.4byte gDecodeFillByte
-	.section .text.x0200905c,"ax",%progbits
-	.global Func_0200105c
-	.thumb_func
-Func_0200105c:
-	adds r2, r0, #0
-	adds r2, #99
-	movs r3, #0
-	strb r3, [r2]
-	ldr r3, .L_0200906c
-	str r3, [r0, #108]
-	bx lr
-	.2byte 0x0000
-.L_0200906c:
-	.4byte Func_02001010
-	.section .text.x02009070,"ax",%progbits
-	.global Func_02001070
-	.thumb_func
-Func_02001070:
-	push {lr}
-	movs r3, #0
-	movs r1, #4
-	str r3, [r0, #108]
-	bl Animation_ApplyChildValues
-	pop {pc}
-	.2byte 0x0000
 	.section .text.x02009080,"ax",%progbits
+	.balign 4
 	.global Func_02001080
 	.thumb_func
 Func_02001080:
@@ -3218,35 +3057,6 @@ Func_02001a78:
 	.4byte 0xc000a000
 .L_02009c30:
 	.4byte Data_02003486
-	.section .text.x02009dbc,"ax",%progbits
-	.balign 4
-	.global Func_02001dbc
-	.thumb_func
-Func_02001dbc:
-	push {r5, lr}
-	adds r5, r1, #0
-	bl Object_GetById
-	adds r4, r0, #0
-	cmp r4, #0
-	beq .L_02009de2
-	adds r3, r4, #0
-	adds r3, #100
-	strh r5, [r3]
-	ldr r1, .L_02009de4
-	ldr r0, .L_02009de8
-	ldrh r2, [r1]
-	movs r5, #0
-	ldrsh r3, [r1, r5]
-	adds r2, #1
-	lsls r3, r3, #2
-	str r4, [r0, r3]
-	strh r2, [r1]
-.L_02009de2:
-	pop {r5, pc}
-.L_02009de4:
-	.4byte Data_02003382
-.L_02009de8:
-	.4byte Data_02003384
 	.section .text.x02009e3e,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02009e76,"ax",%progbits
@@ -3931,72 +3741,8 @@ Func_0200216c:
 	.4byte 0x11111111
 .L_0200a3ac:
 	.4byte Func_02002040
-	.section .text.x0200a3b0,"ax",%progbits
-	.global Func_020023b0
-	.thumb_func
-Func_020023b0:
-	push {r5, r6, lr}
-	mov r6, r10
-	mov r5, r8
-	push {r5, r6}
-	ldr r1, .L_0200a430
-	movs r2, #133
-	mov r8, r1
-	lsls r2, r2, #2
-	add r8, r2
-	mov r3, r8
-	ldr r0, [r3]
-	bl Object_GetById
-	mov r1, r8
-	ldr r5, [r0, #8]
-	ldr r6, [r0, #16]
-	mov r10, r0
-	movs r2, #128
-	ldr r0, [r1]
-	movs r1, #128
-	lsls r1, r1, #11
-	lsls r2, r2, #10
-	bl ObjectMotion_SetSpeedParameters
-	asrs r5, r5, #20
-	mov r2, r8
-	asrs r6, r6, #20
-	ldr r0, [r2]
-	lsls r1, r5, #4
-	lsls r2, r6, #4
-	adds r1, #8
-	adds r2, #8
-	bl ObjectMotion_SetPositionAndCommit
-	movs r0, #1
-	bl WaitFrames
-	movs r3, #128
-	lsls r3, r3, #12
-	lsls r5, r5, #20
-	lsls r6, r6, #20
-	adds r5, r5, r3
-	mov r1, r10
-	adds r6, r6, r3
-	ldr r2, [r1, #12]
-	adds r3, r6, #0
-	adds r1, r5, #0
-	mov r0, r10
-	bl Object_SetPositionAndResetMotion
-	movs r0, #4
-	bl Battle_WaitMode0
-	bl Func_02002af8
-	ldr r2, .L_0200a434
-	ldr r3, [r0, #12]
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_0200a430:
-	.4byte gPartyState
-.L_0200a434:
-	.4byte 0xfff80000
 	.section .text.x0200a438,"ax",%progbits
+	.balign 4
 	.global Func_02002438
 	.thumb_func
 Func_02002438:

@@ -46,4 +46,28 @@ extern u32 Data_02006b6c;
 
 void Func_02004e80(s32 from, s32 to);
 
+extern const u8 MsgDoNotLet[];
+extern u16 Data_02006cd0;
+extern u16 Data_02006cd8;
+extern u16 Data_02006cdc;
+extern u16 *Data_02006ce0;
+extern u16 Data_02006cec;
+extern u16 Data_02006cf0;
+
+struct Ov6aeParty {
+    u8 unknown_000[0x26a];
+    s16 held;
+};
+
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+s32 Func_0200508c(u16 *list);
+void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
+
+static inline void Ov6ae_ObjTurn(s32 id, s32 angle)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02005704(id, angle);
+}
+
 #endif

@@ -3798,45 +3798,8 @@ Func_02002f34:
 .L_0200afe8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
-	.section .text.x0200afec,"ax",%progbits
-	.global Func_02002fec
-	.thumb_func
-Func_02002fec:
-	push {lr}
-	adds r1, r0, #0
-	adds r1, #100
-	movs r3, #0
-	ldrsh r2, [r1, r3]
-	ldr r3, [r0, #8]
-	lsls r2, r2, #8
-	adds r3, r3, r2
-	str r3, [r0, #8]
-	ldr r3, [r0, #12]
-	movs r2, #128
-	lsls r2, r2, #8
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	movs r2, #160
-	ldr r3, [r0, #24]
-	lsls r2, r2, #3
-	adds r2, #30
-	adds r3, r3, r2
-	str r3, [r0, #24]
-	ldr r3, [r0, #28]
-	adds r3, r3, r2
-	str r3, [r0, #28]
-	ldrh r3, [r1]
-	adds r3, #2
-	strh r3, [r1]
-	ldr r3, [r0, #104]
-	subs r3, #1
-	str r3, [r0, #104]
-	cmp r3, #0
-	bne .L_0200b02e
-	bl Func_02005a3c
-.L_0200b02e:
-	pop {pc}
 	.section .text.x0200b030,"ax",%progbits
+	.balign 4
 	.global Func_02003030
 	.thumb_func
 Func_02003030:

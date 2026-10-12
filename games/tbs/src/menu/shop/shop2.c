@@ -1429,6 +1429,17 @@ void Shop_RepairItem(s32 unit_id, s32 slot)
 		Shop_SellOld(unit_id, equipped);
 }
 
+// 贈り物の値段
+static const s16 Shop_SpecialItemPrices[30] =
+{
+	300, 300, 300, 300, 300,
+	500, 500, 500, 500, 500,
+	1000, 1000, 1000, 1000, 1000,
+	2000, 2000, 2000, 2000, 2000,
+	4000, 4000, 4000, 4000, 4000,
+	8000, 8000, 8000, 8000, 8000,
+};
+
 void Shop_BuySpecialItem(void *window, s32 item_window)
 {
 	struct ShopRuntime *shop = gMenuWork;

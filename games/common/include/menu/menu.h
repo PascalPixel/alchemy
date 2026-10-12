@@ -100,7 +100,6 @@ extern u8		 Menu_TimesString[];
 extern s8		 OptionMenu_SleepFrames[];
 extern s8		 OptionMenu_SpeechFrames[];
 extern s8		 OptionMenu_SpeedFrames[];
-extern const s16 Shop_SpecialItemPrices[];
 extern u8		 Ui_LvString[];
 extern u8		 UiMenu_CursorBobX[];
 extern u8		 UiMenu_CursorBobY[];

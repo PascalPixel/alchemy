@@ -1546,12 +1546,8 @@ Func_080afbec:
 	.thumb_func
 Trade_ListFlaggedEntries:
 	.incbin "baserom.gba", 0x000bcf28, 0x00000054
-	.section .rom.000bcf94, "ax"
-	.global Func_080aff94
-	.type Func_080aff94, %function
-	.thumb_func
-Func_080aff94:
-	.incbin "baserom.gba", 0x000bcf94, 0x00000018
+	.section .rom.000bcfac, "ax"
+	.balign 4
 	.global Owner_GetDigitValues
 	.type Owner_GetDigitValues, %function
 	.thumb_func
@@ -3806,7 +3802,10 @@ BattlePlacement_StepPairs:
 	.section .rom.001380ac, "ax"
 	.incbin "baserom.gba", 0x001380ac, 0x00000f1c
 	.section .rom.0013ba50, "ax"
-	.incbin "baserom.gba", 0x0013ba50, 0x00000b5c
+	.incbin "baserom.gba", 0x0013ba50, 0x000000e8
+	.section .rom.0013bba0, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0013bba0, 0x00000a0c
 	.section .rom.0013c5f4, "ax"
 	.balign 4
 	.global Func_0813c5f4
@@ -4150,7 +4149,14 @@ Func_08181ed4:
 	.balign 4
 	.global Func_081823a8
 Func_081823a8:
-	.incbin "baserom.gba", 0x001823a8, 0x00007e48
+	.incbin "baserom.gba", 0x001823a8, 0x000004a4
+	.section .rom.00182898, "ax"
+	.balign 4
+	.global Func_08182898
+	.type Func_08182898, %function
+	.thumb_func
+Func_08182898:
+	.incbin "baserom.gba", 0x00182898, 0x00007958
 	.section .rom.0018a220, "ax"
 	.balign 4
 	.global Func_0818a220

@@ -5,7 +5,9 @@
  * starts the offset first and loads the entry after it. Measured: the entry
  * in a local gives the native order with the table in r3 for r2 (differ 4);
  * one pointer reused for table and entry, or the table behind a "+l" barrier
- * or a one-pass block, trade r2 and r3 through the store (differ 8). */
+ * or a one-pass block, trade r2 and r3 through the store (differ 8); the
+ * table pinned to r2 before a one-pass block lets the two arms share their
+ * store (differ 23). */
 #include "battle.h"
 #include "field.h"
 #include "game.h"

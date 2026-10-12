@@ -3,7 +3,9 @@
  * =gPartyState; adds r7, r3, r2); this form adds first. Measured: the owner
  * field's address in a local ahead of the layer (differ 9: the pool holds
  * the field's own address); the party state and the offset behind one "+l"
- * barrier (differ 40). The scale call through an inline keeps its three
+ * barrier (differ 40); both as locals before a one-pass block (differ 4: the
+ * pair is the native's, but the pool load and the frame's sub sp come ahead
+ * of the offset, where the native makes the frame last). The scale call through an inline keeps its three
  * constants apart, and the goto loop keeps the step's pool load inside the
  * loop (a for loop: differ 30). */
 #include "../../../../games/tla/src/field/overlay_654/kabe.h"

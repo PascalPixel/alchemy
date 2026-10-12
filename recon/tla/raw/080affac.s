@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Owner_GetDigitValues
 	.thumb_func
 Owner_GetDigitValues:

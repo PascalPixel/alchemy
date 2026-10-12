@@ -4,6 +4,7 @@
 #include "unit/field/korima_mura/mura.h"
 #include "unit/field/korima_hashi/falling_effect.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object15.h"
 #include "unit/battle/effect/object16.h"
 #include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"

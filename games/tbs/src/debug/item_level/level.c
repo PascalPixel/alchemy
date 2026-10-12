@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "unit/debug/item_level/level.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object15.h"
 #include "unit/battle/effect/object16.h"
 #include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"

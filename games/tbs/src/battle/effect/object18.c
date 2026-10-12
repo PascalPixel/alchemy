@@ -2,6 +2,7 @@
 #include "unit/battle/effect/zonedata.h"
 #include "vram_tab.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object15.h"
 #include "unit/battle/effect/object16.h"
 #include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"

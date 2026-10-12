@@ -318,32 +318,6 @@ void BattleFx_RunVenusDjinnCapture(s32 arg);
 void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect);
 void BattleFx_HalveDistanceToTarget(struct FieldActor *object);
 void BattleFx_RunMercuryDjinnCapture(s32 id);
-void Field_DispatchTypeHandler(s32 kind);
-void BattleFx_Run(void);
-void BattleFx_DispatchRequestKind(void);
-void BattleFx_ClearChildValueOnMismatch(void);
-void FieldEvent_RunTypeHandler(void);
-s32 BattleFx_RunEventAction(void *event, s32 param, s32 target);
-void ObjectGroup_ApplyRandomChildValues(void *owner);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object, s32 magnitude, s32 angle);
-s32 ResourceTable_CountFreeBlocks(void);
-void *Object_ReplaceResourceEntry(void *src, void *alt);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state, s32 value);
-void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj);
-void BattleFx_UpdateScaledArcObjectB(struct FieldActor *obj);
-void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked);
-void BattleFx_FlickerObjectAndTick(s32 obj);
-void BattleFx_CycleObjectValueByCounter(s32 obj);
-void BattleFx_UpdateAllEffectSlots(void);
-void BattleFx_LoadActionEffectResources(s32 act_no, s32 mode);
-void BattleFx_SetupObjectPair(s32 user_id, s32 tgt_id);
-void EffectRuntime_StopCurrentObject(void);
-void BattleEffect_CleanupSceneObjects(void);
-void EventObject_Initialize(void);
-void BattleEffect_InitializeSharedScene(void);
-void BattleFx_PrepareBufferInterpolation(void);
-void Camera_WorldToScreen(struct EffectVector *position);
 void RunBattleEffect07(void);
 void RunBattleEffect11(void);
 
@@ -361,5 +335,17 @@ struct ActionDescriptor
 };
 
 struct ActionDescriptor;
+
+// シーンのイベント表の 1 件（struct SceneEvent と同じ 12 バイト）
+struct EffectDescriptor
+{
+	s32 flags; // 下位 4bit が種類（SceneEventKind、7 は止めた相手と話す）
+	u8	value; // 相手（オブジェクト番号など）
+	u8	unused_05;
+	s16 condition; // GameFlag_IsConditionActive の条件
+	s32 result;	   // 0x10000 未満はメッセージ、それ以上は呼ぶ関数
+};
+
+#define OBJ_LAST 66 // 調べるオブジェクト番号の最後
 
 #endif

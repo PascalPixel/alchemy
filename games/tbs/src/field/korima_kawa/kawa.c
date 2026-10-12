@@ -4,6 +4,7 @@
 #include "unit/field/korima_kawa/kawa.h"
 #include "unit/field/common/korima/palette.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object15.h"
 #include "unit/battle/effect/object16.h"
 #include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"

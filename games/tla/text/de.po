@@ -20671,7 +20671,7 @@ msgctxt "MsgPiece"
 msgid "05165"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgYourCoins"
 msgid "05166"
 msgstr "Vermögen:"
 

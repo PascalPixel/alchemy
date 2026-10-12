@@ -18659,7 +18659,7 @@ msgctxt "MsgPiece"
 msgid "04662"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgYourCoins"
 msgid "04663"
 msgstr "Your Coins:"
 

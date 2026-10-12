@@ -845,7 +845,12 @@ UiWork_ProcessDirectWork:
 	.type UiWindow_DrawFrame, %function
 	.thumb_func
 UiWindow_DrawFrame:
-	.incbin "baserom.gba", 0x0003a044, 0x00000334
+	.incbin "baserom.gba", 0x0003a044, 0x0000013c
+	.global Func_0803a1c0
+	.type Func_0803a1c0, %function
+	.thumb_func
+Func_0803a1c0:
+	.incbin "baserom.gba", 0x0003a180, 0x000001f8
 	.section .rom.0003a406, "ax"
 	.incbin "baserom.gba", 0x0003a406, 0x00000002
 	.section .rom.0003a50c, "ax"
@@ -958,7 +963,7 @@ UiText_DecodeMessage:
 	.section .rom.0003cb6e, "ax"
 	.incbin "baserom.gba", 0x0003cb6e, 0x00000002
 	.section .rom.0003cbfa, "ax"
-	.incbin "baserom.gba", 0x0003cbfa, 0x00000102
+	.incbin "baserom.gba", 0x0003cbfa, 0x00000002
 	.section .rom.0003cd5c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0003cd5c, 0x00000114
@@ -3264,8 +3269,6 @@ Func_08104ef8:
 	.incbin "baserom.gba", 0x0010f374, 0x000000c4
 	.section .rom.0010f574, "ax"
 	.incbin "baserom.gba", 0x0010f574, 0x000000c0
-	.section .rom.0010f664, "ax"
-	.incbin "baserom.gba", 0x0010f664, 0x00000034
 	.section .rom.0010f6ac, "ax"
 	.incbin "baserom.gba", 0x0010f6ac, 0x000000a0
 	.section .rom.0010f7c2, "ax"
@@ -3357,7 +3360,9 @@ Func_081089e4:
 Func_08108aa8:
 	.incbin "baserom.gba", 0x00110aa8, 0x00000048
 	.section .rom.00110b70, "ax"
-	.incbin "baserom.gba", 0x00110b70, 0x00000700
+	.incbin "baserom.gba", 0x00110b70, 0x00000618
+	.section .rom.001111cc, "ax"
+	.incbin "baserom.gba", 0x001111cc, 0x000000a4
 	.section .rom.0011128c, "ax"
 	.incbin "baserom.gba", 0x0011128c, 0x0000080c
 	.section .rom.00111ad8, "ax"
@@ -3788,12 +3793,9 @@ BattleEv_DispatchQueued:
 BtlTgtExec:
 	.incbin "baserom.gba", 0x0012046c, 0x0000206c
 	.section .rom.001224f0, "ax"
-	.incbin "baserom.gba", 0x001224f0, 0x00000774
-	.global Func_08122c4c
-	.type Func_08122c4c, %function
-	.thumb_func
-Func_08122c4c:
-	.incbin "baserom.gba", 0x00122c64, 0x000000c4
+	.incbin "baserom.gba", 0x001224f0, 0x00000740
+	.section .rom.00122ce8, "ax"
+	.incbin "baserom.gba", 0x00122ce8, 0x00000040
 	.global BattleEvent_Playback
 	.type BattleEvent_Playback, %function
 	.thumb_func
@@ -3868,9 +3870,17 @@ BattlePres_SetActorRecordMode:
 	.type BattlePres_SetActorModes, %function
 	.thumb_func
 BattlePres_SetActorModes:
-	.incbin "baserom.gba", 0x00126d14, 0x0000033c
+	.incbin "baserom.gba", 0x00126d14, 0x00000104
+	.global Func_08126e00
+	.type Func_08126e00, %function
+	.thumb_func
+Func_08126e00:
+	.incbin "baserom.gba", 0x00126e18, 0x00000238
 	.section .rom.00127080, "ax"
-	.incbin "baserom.gba", 0x00127080, 0x00000504
+	.incbin "baserom.gba", 0x00127080, 0x00000248
+	.section .rom.00127320, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00127320, 0x00000264
 	.section .rom.001275a0, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x001275a0, 0x00000618

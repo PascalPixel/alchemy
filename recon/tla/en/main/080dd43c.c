@@ -1,6 +1,8 @@
 #include "fixed_math.h"
 #include "system.h"
-u32 BattleFx_HasReachedTarget(struct EffectSlot *);
+#include "effect_slot.h"
+
+void BattleFx_ClearOwnedSlot(struct EffectSlot *);
 
 struct Output_08097f80 {
     s32 x;

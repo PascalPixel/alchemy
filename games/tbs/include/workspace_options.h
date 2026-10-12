@@ -7,12 +7,7 @@
 #include "unit/window/save.h"
 #include "types.h"
 #include "render_input.h"
-
-union MenuCursor
-{
-	struct RenderOutput *output;
-	u8					 data[0x10];
-};
+#include "cursor.h"
 
 struct WorkspaceWork
 {

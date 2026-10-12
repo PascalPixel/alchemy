@@ -4,6 +4,7 @@
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/battle.h"
+#include "unit/battle/battle3.h"
 #include "unit/battle/battle4.h"
 #include "unit/battle/battle5.h"
 #include "unit/battle/battle6.h"

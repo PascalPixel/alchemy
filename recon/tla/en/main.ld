@@ -161,6 +161,7 @@
         "*/games/common/src/system/save/atmel.o"(.text)
         "*libgcc.a:_call_via_rX.o"(.text)
         "*/recon/tla/unidentified.o"(.unidentified.080178b4)
+        "*/games/tla/src/lib/mathtan.o"(.rodata)
         "*/games/tla/src/system/memory/winpal.o"(.rodata)
         "*/games/tla/src/system/memory/syspal.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.08017cd0)

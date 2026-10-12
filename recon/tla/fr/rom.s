@@ -308,10 +308,7 @@ Func_08016dd0:
 	.section .rom.000178e0, "ax"
 	.global Runtime_IrqHandlers
 Runtime_IrqHandlers:
-	.incbin "baserom.gba", 0x000178e0, 0x00000136
-	.global Math_ArcTanTable
-Math_ArcTanTable:
-	.incbin "baserom.gba", 0x00017a16, 0x00000106
+	.incbin "baserom.gba", 0x000178e0, 0x00000038
 	.section .rom.00017cfc, "ax"
 	.global Data_08017cd0
 Data_08017cd0:

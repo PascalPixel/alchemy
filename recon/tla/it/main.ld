@@ -150,6 +150,7 @@
     "*/games/common/src/system/save/atmel.o"(.text)
     "*libgcc.a:_call_via_rX.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000178e0)
+    "*/games/tla/src/lib/mathtan.o"(.rodata)
     "*/games/tla/src/system/memory/winpal.o"(.rodata)
     "*/games/tla/src/system/memory/syspal.o"(.rodata)
     "*/recon/tla/it/rom.o"(.rom.00017cfc)

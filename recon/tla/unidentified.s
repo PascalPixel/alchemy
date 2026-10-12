@@ -2,10 +2,6 @@
 	.global Runtime_IrqHandlers
 Runtime_IrqHandlers:
 	.incbin "baserom.gba", 0x000178b4, 0x00000038
-	.incbin "baserom.gba", 0x000178ec, 0x000000fe
-	.global Math_ArcTanTable
-Math_ArcTanTable:
-	.incbin "baserom.gba", 0x000179ea, 0x00000106
 	.section .unidentified.08017cd0,"a"
 	.global Data_08017cd0
 Data_08017cd0:

@@ -81,42 +81,35 @@ static s32 SceneActor_MoveActorZeroToTarget(const MoveTarget *target)
 
 	Call3(Vector_AddPolarOffset, 0x00100000, (actor->facing + 0x2000) & 0xc000, (s32)probe);
 
-	if (Object_CheckMovementCollision(actor, probe) == 1)
+	if (Object_CheckMovementCollision(actor, probe) != 1
+		&& Object_CheckMovementCollision(actor, target) == 0)
 	{
-		goto refuse;
-	}
-	if (Object_CheckMovementCollision(actor, target) != 0)
-	{
-		goto refuse;
-	}
+		Engine_EventBegin();
+		Object_SetMode(actor, 6);
+		Engine_TaskWait(6);
+		Engine_AudioPlayCue(152);
+		Object_SetMode(actor, 7);
 
-	Engine_EventBegin();
-	Object_SetMode(actor, 6);
-	Engine_TaskWait(6);
-	Engine_AudioPlayCue(152);
-	Object_SetMode(actor, 7);
+		actor->speed = 0x00030000;
+		actor->acceleration = 0x00020000;
+		actor->velocity_y = 0x00040000;
+		actor->motion_flags &= 0x7e;
 
-	actor->speed = 0x00030000;
-	actor->acceleration = 0x00020000;
-	actor->velocity_y = 0x00040000;
-	actor->motion_flags &= 0x7e;
-
-	Engine_ActorSetSpriteFlags(actor, 0);
+		Engine_ActorSetSpriteFlags(actor, 0);
 #if EDITION_INTERNATIONAL
-	Engine_ActorMoveToAndWait(
-		ACTOR_PARTY_LEADER, ((target->x.fixed >> 20) << 4) + 8, ((target->z.fixed >> 20) << 4) + 8);
+		Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, ((target->x.fixed >> 20) << 4) + 8,
+			((target->z.fixed >> 20) << 4) + 8);
 #else
-	Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, target->x.part.pixel, target->z.part.pixel);
+		Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, target->x.part.pixel, target->z.part.pixel);
 #endif
-	Object_SetMode(actor, 6);
-	Engine_ActorSetSpriteFlags(actor, 1);
-	Engine_TaskWait(6);
+		Object_SetMode(actor, 6);
+		Engine_ActorSetSpriteFlags(actor, 1);
+		Engine_TaskWait(6);
 
-	actor->motion_flags = saved;
-	Engine_EventEnd();
-	return 0;
-
-refuse:
+		actor->motion_flags = saved;
+		Engine_EventEnd();
+		return 0;
+	}
 	return 1;
 }
 
@@ -1039,7 +1032,7 @@ static void FieldScene_RunScene3c4SequenceA(void)
 		if (GameFlag_IsSet(0x984) != 0)
 		{
 			Engine_EventEnd();
-			goto done;
+			return;
 		}
 		Engine_EventWait(20);
 		Camera_SetSpeed(0xcccc, 0x1999);
@@ -1069,7 +1062,6 @@ static void FieldScene_RunScene3c4SequenceA(void)
 		}
 	}
 	Engine_EventEnd();
-done:;
 }
 
 static void EV41_SCRIPT(void)

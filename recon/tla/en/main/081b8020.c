@@ -1,3 +1,8 @@
+/* Draft, differ 2 of 54: after the two zero stores to the local vector the
+ * native copies the state pointer for the call (adds r1, r5, #0) before it
+ * loads the distance; this loads first. Measured: the pointer as a
+ * temporary behind a "+l" barrier moves the copy after the routine's
+ * address instead (differ 2). */
 #include "io_reg.h"
 #include "types.h"
 #include "ram_buffer.h"

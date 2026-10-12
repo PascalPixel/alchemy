@@ -1438,19 +1438,12 @@ Graphics_MergeShiftedTileRows:
 	.type Func_0804bc08, %function
 	.thumb_func
 Func_0804bc08:
-	.incbin "baserom.gba", 0x0004be30, 0x000014d4
-	.section .rom.0004d304, "ax"
-	.global AffineEffect_InitializeWork
-	.type AffineEffect_InitializeWork, %function
+	.incbin "baserom.gba", 0x0004be30, 0x000011a0
+	.global Func_0804cda8
+	.type Func_0804cda8, %function
 	.thumb_func
-AffineEffect_InitializeWork:
-	.incbin "baserom.gba", 0x0004d304, 0x0000003c
-	.section .rom.0004d340, "ax"
-	.global Menu_EndResourceSelection
-	.type Menu_EndResourceSelection, %function
-	.thumb_func
-Menu_EndResourceSelection:
-	.incbin "baserom.gba", 0x0004d340, 0x00000054
+Func_0804cda8:
+	.incbin "baserom.gba", 0x0004cfd0, 0x00000334
 	.section .rom.0004d394, "ax"
 	.global Menu_RunResourceSelectionLoop
 	.type Menu_RunResourceSelectionLoop, %function

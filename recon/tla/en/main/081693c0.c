@@ -1,3 +1,5 @@
+/* Draft, differ 2 of 6: as Func_081693b0, the pooled halfword is loaded
+ * before the register address is started. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "dma.h"

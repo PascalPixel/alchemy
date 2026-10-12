@@ -17779,7 +17779,7 @@ msgctxt "message"
 msgid "04442"
 msgstr "Restart quest"
 
-msgctxt "message"
+msgctxt "MsgFullPpAndMoney"
 msgid "04443"
 msgstr "Full PP and Money"
 

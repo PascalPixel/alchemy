@@ -19619,7 +19619,7 @@ msgctxt "message"
 msgid "04902"
 msgstr "Recommencer"
 
-msgctxt "message"
+msgctxt "MsgFullPpAndMoney"
 msgid "04903"
 msgstr "PP et Pièces remplis"
 

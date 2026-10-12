@@ -17759,7 +17759,7 @@ msgctxt "message"
 msgid "04437"
 msgstr "ぼうけんをさいかい"
 
-msgctxt "message"
+msgctxt "MsgFullPpAndMoney"
 msgid "04438"
 msgstr "EPまんたん&かねもち"
 

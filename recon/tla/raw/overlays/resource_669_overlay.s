@@ -1,35 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008058,"ax",%progbits
-	.balign 4
-	.global Func_02000058
-	.thumb_func
-Func_02000058:
-	push {r5, r6, lr}
-	adds r0, r1, #0
-	bl Object_GetById
-	ldr r3, [r0, #8]
-	asrs r6, r3, #20
-	ldr r3, [r0, #16]
-	asrs r5, r3, #20
-	cmp r6, #24
-	bne .L_02008078
-	cmp r5, #40
-	bne .L_02008078
-	movs r0, #144
-	lsls r0, r0, #4
-	bl GameFlag_SetBit
-.L_02008078:
-	cmp r6, #23
-	bne .L_02008088
-	cmp r5, #40
-	bne .L_02008088
-	movs r0, #144
-	lsls r0, r0, #4
-	bl GameFlag_ClearBit
-.L_02008088:
-	pop {r5, r6, pc}
-	.2byte 0x0000
 	.section .text.x0200813c,"ax",%progbits
 	.balign 4
 	.global Func_0200013c
@@ -150,6 +120,7 @@ Func_0200013c:
 .L_02008244:
 	.4byte MsgGooGooGa
 	.section .text.x02008250,"ax",%progbits
+	.balign 4
 	.global Func_02000250
 	.thumb_func
 Func_02000250:
@@ -338,6 +309,7 @@ Func_02000250:
 .L_020083e0:
 	.4byte 0x01db0000
 	.section .text.x020083e8,"ax",%progbits
+	.balign 4
 	.global Func_020003e8
 	.thumb_func
 Func_020003e8:

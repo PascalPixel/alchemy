@@ -29,7 +29,7 @@ main	rom_main_00	games/tbs/src/system/scheduler/runtime8	.text
 main	rom_main_00	games/tbs/src/system/scheduler/runtime9	.text
 main	rom_main_00	games/tbs/src/system/scheduler/runtim10	.text
 main	rom_main_00	games/tbs/src/system/scheduler/runtim11	.text
-main	rom_main_00	games/tbs/src/system/scheduler/runtim13	.text
+main	rom_main_00	games/tbs/src/system/scheduler/runtim12	.text
 main	rom_main_00	games/tbs/src/system/cpu_set	.text .padding .text.sound_vsync_on
 main	rom_main_00	games/common/src/system/save/flash	.text
 main	rom_main_00	games/common/src/system/save/sst	.text

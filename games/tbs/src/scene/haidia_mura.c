@@ -4,7 +4,7 @@
 #include "unit/scene/haidia_mura.h"
 #include "unit/field/common/object/orbit.h"
 #include "unit/field/common/effect/psynergy.h"
-#include "unit/field/world_map/linked_effects.h"
+#include "unit/scene/world_map_linked_effects.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/marker.h"
@@ -2939,7 +2939,7 @@ static void SceneEffect_UpdateObjectOnOddFramesOnly(s32 p)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../field/common/effect/vertical.c"
-#include "../field/world_map/linked_effects.c"
+#include "world_map_linked_effects.c"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

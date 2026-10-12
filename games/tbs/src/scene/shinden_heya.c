@@ -1,6 +1,6 @@
 #include "battle_effect_runtime.h"
 #include "game_state.h"
-#include "unit/field/common/shinden_heya/heya.h"
+#include "unit/scene/shinden_heya.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"

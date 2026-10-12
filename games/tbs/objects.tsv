@@ -272,23 +272,23 @@ main	rom_tail_02	@games/tbs/src/system/resource/directory
 36f	bss	resource_36f_overlay	.bss
 370	unit	games/tbs/src/menu/clear/clear
 370	text	games/tbs/src/menu/clear/keybd
-371	unit	games/tbs/src/field/world_map/map
+371	unit	games/tbs/src/scene/world_map
 371	text	games/tbs/src/graphics/world_map/story
-371	bss	games/tbs/src/field/world_map/map	.bss COMMON
-372	unit	games/tbs/src/field/haidia_arashi/arashi
-372	bss	games/tbs/src/field/haidia_arashi/arashi	.bss COMMON
+371	bss	games/tbs/src/scene/world_map	.bss COMMON
+372	unit	games/tbs/src/scene/haidia_arashi
+372	bss	games/tbs/src/scene/haidia_arashi	.bss COMMON
 373	unit	games/tbs/src/scene/haidia_mura
 373	text	libgcc.a:_call_via_rX
-374	unit	games/tbs/src/field/haidia_ie/ie
-375	unit	games/tbs/src/field/haidia_sukureta/sukureta
-376	unit	games/tbs/src/field/haidia_heya/heya
-377	unit	games/tbs/src/field/common/haidia_babi/babi
-378	unit	games/tbs/src/field/common/shinden_heya/heya
-379	unit	games/tbs/src/field/haidia_funka/funka
-37a	unit	games/tbs/src/field/soru_nichigetsu/nichigetsu
+374	unit	games/tbs/src/scene/haidia_ie
+375	unit	games/tbs/src/scene/haidia_sukureta
+376	unit	games/tbs/src/scene/haidia_heya
+377	unit	games/tbs/src/scene/haidia_babi
+378	unit	games/tbs/src/scene/shinden_heya
+379	unit	games/tbs/src/scene/haidia_funka
+37a	unit	games/tbs/src/scene/soru_nichigetsu
 37a	bss	resource_37a_overlay	.bss
-37b	unit	games/tbs/src/field/soru_sekizo/sekizo
-37b	bss	games/tbs/src/field/soru_sekizo/sekizo	.bss COMMON
+37b	unit	games/tbs/src/scene/soru_sekizo
+37b	bss	games/tbs/src/scene/soru_sekizo	.bss COMMON
 37c	unit	games/tbs/src/field/soru_dou/dou
 37d	unit	games/tbs/src/field/soru_meiro/meiro
 37e	unit	games/tbs/src/field/soru_roka/roka

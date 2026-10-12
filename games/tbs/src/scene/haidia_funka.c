@@ -1,5 +1,5 @@
 #include "game_state.h"
-#include "unit/field/haidia_funka/funka.h"
+#include "unit/scene/haidia_funka.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/evbasic.h"

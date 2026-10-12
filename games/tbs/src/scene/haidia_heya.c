@@ -1,6 +1,6 @@
 #include "game_state.h"
 #include "unit/import.h"
-#include "unit/field/haidia_heya/heya.h"
+#include "unit/scene/haidia_heya.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"
@@ -13,7 +13,7 @@
 #include "unit/battle/effect/psyfx.h"
 #include "unit/field/common/script/mapview.h"
 #include "unit/system/scheduler/math.h"
-#include "timed_events.h"
+#include "haidia_heya.h"
 #include "call.h"
 #include "fxblend.h"
 #include "field_event.h"
@@ -31,7 +31,7 @@ static void FieldScene_RunLongPresentationSequence(void);
 static void Scene_UpdateTimedActor(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/facing.c"
+#include "../field/common/object/facing.c"
 
 static s32 AdvancePositionScaleAndVelocity(ScaledMotion *motion)
 {

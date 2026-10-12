@@ -1,6 +1,6 @@
 #include "game_state.h"
 #include "unit/import.h"
-#include "unit/field/haidia_sukureta/sukureta.h"
+#include "unit/scene/haidia_sukureta.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"
@@ -21,7 +21,7 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "sukureta.h"
+#include "haidia_sukureta.h"
 #include "call.h"
 #include "types.h"
 #include "field_event.h"
@@ -34,7 +34,7 @@
 #include "facing_object.h"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/facing.c"
+#include "../field/common/object/facing.c"
 
 u8 *SceneData_GetScriptTable(void)
 {

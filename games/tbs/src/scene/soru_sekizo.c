@@ -1,5 +1,5 @@
 #include "game_state.h"
-#include "unit/field/soru_sekizo/sekizo.h"
+#include "unit/scene/soru_sekizo.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"

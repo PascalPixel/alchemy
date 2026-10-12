@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_FIELD_WORLD_MAP_MAP_H
-#define ALCHEMY_UNIT_FIELD_WORLD_MAP_MAP_H
+#ifndef ALCHEMY_UNIT_SCENE_WORLD_MAP_H
+#define ALCHEMY_UNIT_SCENE_WORLD_MAP_H
 
 #include "types.h"
 #include "field_scene.h"

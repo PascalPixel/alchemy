@@ -3988,7 +3988,7 @@ void Scene_RunFourActorProgressPresentation(void)
 	Engine_EventWait(40);
 	base5_200e938 = (s32)&FuneHeya_ProgressTableC;
 	Object_SetActionCallbackAndRefreshById(rec2, base5_200e938);
-	Engine_ActorEnableActionCallback(rec2, (const u8 *)base6_200e904);
+	Engine_ActorEnableActionCallback(rec2, base6_200e904);
 	Object_SetActionCallbackAndRefreshById(rec, base5_200e938);
 	Object_SetActionCallbackAndRefreshById(rec, base6_200e904);
 	Actor_SetSpeed(1, 0x10000, 0x8000);

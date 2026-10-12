@@ -485,18 +485,18 @@ void FieldScene_RunStagedGroupSequence(void)
 		Actor_SetSpeed(33, 0xb333, 0x5999);
 		Actor_SetSpeed(34, 0xb333, 0x5999);
 		Actor_SetSpeed(21, 0x9999, 0x4ccc);
-		Engine_ActorEnableActionCallback(20, (const u8 *)SceneAction_GroupMotion);
-		Engine_ActorEnableActionCallback(27, (const u8 *)SceneAction_GroupMotion);
-		Engine_ActorEnableActionCallback(28, (const u8 *)SceneAction_GroupMotion);
-		Engine_ActorEnableActionCallback(29, (const u8 *)SceneAction_GroupMotion);
-		Engine_ActorEnableActionCallback(30, (const u8 *)SceneAction_GroupMotion);
-		Engine_ActorEnableActionCallback(32, (const u8 *)SceneAction_GroupMotion);
-		Engine_ActorEnableActionCallback(31, (const u8 *)SceneAction_GroupMotion);
-		Engine_ActorEnableActionCallback(33, (const u8 *)SceneAction_GroupMotion);
-		Engine_ActorEnableActionCallback(34, (const u8 *)SceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(20, SceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(27, SceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(28, SceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(29, SceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(30, SceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(32, SceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(31, SceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(33, SceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(34, SceneAction_GroupMotion);
 		last = Actor_Get(21);
 		last->timer = 0;
-		Engine_ActorEnableActionCallback(21, (const u8 *)SceneAction_GroupMotion);
+		Engine_ActorEnableActionCallback(21, SceneAction_GroupMotion);
 		Camera_MoveTo(PIXELS(186), -1, PIXELS(272), 1);
 		Object_RefreshSelectorById(20);
 		Actor_FaceDirection(20, FACING_EAST, 0);
@@ -657,8 +657,8 @@ void FieldScene_RunStagedGroupSequence(void)
 		last_wait->timer = 0;
 		Actor_SetSpeed(20, 0xcccc, 0x6666);
 		Actor_SetSpeed(21, 0xcccc, 0x6666);
-		Engine_ActorEnableActionCallback(20, (const u8 *)KareiMachi_DanceScriptC);
-		Engine_ActorEnableActionCallback(21, (const u8 *)KareiMachi_DanceScriptD);
+		Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptC);
+		Engine_ActorEnableActionCallback(21, KareiMachi_DanceScriptD);
 		Engine_ActorStop(29);
 		Engine_TaskWait(1);
 		Actor_FaceDirection(29, FACING_SOUTH + FACING_STEP, 10);
@@ -672,8 +672,8 @@ void FieldScene_RunStagedGroupSequence(void)
 		{
 			Engine_TaskWait(1);
 		} while (Actor_Get(20)->timer == 0 || Actor_Get(21)->timer != 1);
-		Engine_ActorEnableActionCallback(20, (const u8 *)KareiMachi_DanceScriptE);
-		Engine_ActorEnableActionCallback(21, (const u8 *)KareiMachi_DanceScriptF);
+		Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptE);
+		Engine_ActorEnableActionCallback(21, KareiMachi_DanceScriptF);
 		Engine_ActorStop(31);
 		Engine_TaskWait(1);
 		Actor_FaceDirection(31, FACING_SOUTH + FACING_STEP, 10);
@@ -806,18 +806,18 @@ void FieldScene_RunStagedGroupSequence(void)
 		Engine_ActorStop(20);
 		Engine_ActorStop(21);
 		Engine_TaskWait(1);
-		Engine_ActorEnableActionCallback(20, (const u8 *)SceneAction_GroupOffsetMotion);
-		Engine_ActorEnableActionCallback(27, (const u8 *)SceneAction_GroupOffsetMotion);
-		Engine_ActorEnableActionCallback(28, (const u8 *)SceneAction_GroupOffsetMotion);
-		Engine_ActorEnableActionCallback(29, (const u8 *)SceneAction_GroupOffsetMotion);
-		Engine_ActorEnableActionCallback(30, (const u8 *)SceneAction_GroupOffsetMotion);
-		Engine_ActorEnableActionCallback(32, (const u8 *)SceneAction_GroupOffsetMotion);
-		Engine_ActorEnableActionCallback(31, (const u8 *)SceneAction_GroupOffsetMotion);
-		Engine_ActorEnableActionCallback(33, (const u8 *)SceneAction_GroupOffsetMotion);
-		Engine_ActorEnableActionCallback(34, (const u8 *)SceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(20, SceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(27, SceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(28, SceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(29, SceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(30, SceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(32, SceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(31, SceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(33, SceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(34, SceneAction_GroupOffsetMotion);
 		closing = Actor_Get(21);
 		closing->timer = 0;
-		Engine_ActorEnableActionCallback(21, (const u8 *)SceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(21, SceneAction_GroupOffsetMotion);
 		do
 		{
 			Engine_TaskWait(1);
@@ -845,7 +845,7 @@ void FieldScene_RunStagedGroupSequence(void)
 		Actor_SetSpeed(14, 0x13333, 0x9999);
 		closing = Actor_Get(14);
 		closing->timer = 0;
-		Engine_ActorEnableActionCallback(14, (const u8 *)SceneAction_GroupOffsetMotion);
+		Engine_ActorEnableActionCallback(14, SceneAction_GroupOffsetMotion);
 		do
 		{
 			Engine_TaskWait(1);
@@ -1304,14 +1304,14 @@ void KareiMachi_AlternateDance(void)
 	{
 	case 0:
 		ClearStep(Object_GetById(21));
-		Engine_ActorEnableActionCallback(21, (const u8 *)KareiMachi_DanceScriptA);
+		Engine_ActorEnableActionCallback(21, KareiMachi_DanceScriptA);
 		KareiMachi_DanceStep++;
 		break;
 	case 1:
 		if (Object_GetById(21)->timer != 0)
 		{
 			ClearStep(Object_GetById(20));
-			Engine_ActorEnableActionCallback(20, (const u8 *)KareiMachi_DanceScriptB);
+			Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptB);
 			KareiMachi_DanceStep++;
 		}
 		break;
@@ -1319,7 +1319,7 @@ void KareiMachi_AlternateDance(void)
 		if (Object_GetById(20)->timer != 0)
 		{
 			ClearStep(Object_GetById(20));
-			Engine_ActorEnableActionCallback(20, (const u8 *)KareiMachi_DanceScriptA);
+			Engine_ActorEnableActionCallback(20, KareiMachi_DanceScriptA);
 			KareiMachi_DanceStep++;
 		}
 		break;
@@ -1327,7 +1327,7 @@ void KareiMachi_AlternateDance(void)
 		if (Object_GetById(20)->timer != 0)
 		{
 			ClearStep(Object_GetById(21));
-			Engine_ActorEnableActionCallback(21, (const u8 *)KareiMachi_DanceScriptB);
+			Engine_ActorEnableActionCallback(21, KareiMachi_DanceScriptB);
 			KareiMachi_DanceStep++;
 		}
 		break;
@@ -1930,7 +1930,7 @@ void FieldScene_RunScene3a8SequenceB(void)
 		rec2->scale_x = 0x1999;
 		rec2->scale_y = 0x1999;
 		Actor_SetPosition(11, 0x960000, 0x2d80000);
-		Engine_ActorEnableActionCallback(11, (const u8 *)KareiMachi_ActionScript01);
+		Engine_ActorEnableActionCallback(11, KareiMachi_ActionScript01);
 		v6 = 1;
 		Map_CopyCellsTo(67, 64, 71, 44, v6, v5);
 		Map_CopyCellsTo(67, 64, 72, 44, v6, v5);

@@ -350,7 +350,7 @@ void Scene_RunFourActorStagingSequence(void)
 	Engine_TaskWait(1);
 	Engine_ActorSetChildValue(0, 15);
 	Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
-	Engine_ActorEnableActionCallback(8, (const u8 *)FuneHobashira_LookoutActions);
+	Engine_ActorEnableActionCallback(8, FuneHobashira_LookoutActions);
 	event = &(*(struct FieldGlobals *)gMapWork).event;
 	(*event)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
 	Engine_EventOpenScreen();
@@ -363,7 +363,7 @@ void Scene_RunFourActorStagingSequence(void)
 	Object_GetById(9)->motion_flags = zero;
 	FuneHobashira_CameraCenter[0] = x;
 	FuneHobashira_CameraCenter[1] = zero;
-	Engine_ActorEnableActionCallback(9, (const u8 *)FuneHobashira_FollowCameraActions);
+	Engine_ActorEnableActionCallback(9, FuneHobashira_FollowCameraActions);
 	Engine_EventWait(20);
 	Engine_AudioPlayCue(29);
 	Engine_GameFlagSet(0x8f0);
@@ -436,7 +436,7 @@ void FieldScene_RunActorNinePresentationCycles(void)
 	OverlayObject_InitWithRandomFields(13);
 	OverlayObject_InitWithRandomFields(14);
 	OverlayObject_InitWithRandomFields(15);
-	Engine_ActorEnableActionCallback(8, (const u8 *)FuneHobashira_LookoutActions);
+	Engine_ActorEnableActionCallback(8, FuneHobashira_LookoutActions);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
@@ -466,7 +466,7 @@ void FieldScene_RunActorNinePresentationCycles(void)
 	Actor_SetSpeed(9, 0x20000, 0x10000);
 	OverlayObject_InitWithRandomFields(9);
 	Engine_EventWait(20);
-	Engine_ActorEnableActionCallback(8, (const u8 *)FuneHobashira_LookoutActions);
+	Engine_ActorEnableActionCallback(8, FuneHobashira_LookoutActions);
 	Engine_EventWait(120);
 	Engine_ActorStop(9);
 	rec9->target_x = ACTOR_NO_TARGET;
@@ -532,7 +532,7 @@ void OverlayObject_InitWithRandomFields(s32 a)
 	obj->rise_base_y = ((x * 3 << 13) >> 16) - 0x3000;
 	obj->scale_x = 0x14000;
 	obj->scale_y = 0x14000;
-	Engine_ActorEnableActionCallback(a, (const u8 *)FuneHobashira_DriftActions);
+	Engine_ActorEnableActionCallback(a, FuneHobashira_DriftActions);
 }
 
 void FieldScene_RunPrimarySequence(void)
@@ -555,7 +555,7 @@ void FieldScene_RunPrimarySequence(void)
 	OverlayObject_InitWithRandomFields(13);
 	OverlayObject_InitWithRandomFields(14);
 	OverlayObject_InitWithRandomFields(15);
-	Engine_ActorEnableActionCallback(8, (const u8 *)FuneHobashira_LookoutActions);
+	Engine_ActorEnableActionCallback(8, FuneHobashira_LookoutActions);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
@@ -628,7 +628,7 @@ void FieldScene_RunPrimarySequence(void)
 	Engine_ActorJump(8, 6, 20);
 	Event_PlayCue(147);
 	Engine_EventWait(20);
-	Engine_ActorEnableActionCallback(8, (const u8 *)FuneHobashira_WaveActions);
+	Engine_ActorEnableActionCallback(8, FuneHobashira_WaveActions);
 	Engine_EventWait(80);
 	Engine_ActorSetSpritePriority(17, 1);
 	Actor_SetSpeed(17, 0x10000, 0x8000);
@@ -666,7 +666,7 @@ void FieldScene_RunSevenActorEnsemble(void)
 	OverlayObject_InitWithRandomFields(13);
 	OverlayObject_InitWithRandomFields(14);
 	OverlayObject_InitWithRandomFields(15);
-	Engine_ActorEnableActionCallback(8, (const u8 *)FuneHobashira_LookoutActions);
+	Engine_ActorEnableActionCallback(8, FuneHobashira_LookoutActions);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
@@ -685,13 +685,13 @@ void FieldScene_RunSevenActorEnsemble(void)
 	Actor_SetSpeed(13, 0x30000, 0x18000);
 	Actor_SetSpeed(14, 0x30000, 0x18000);
 	Actor_SetSpeed(15, 0x30000, 0x18000);
-	Engine_ActorEnableActionCallback(9, (const u8 *)FuneHobashira_EnsembleWalk9);
-	Engine_ActorEnableActionCallback(10, (const u8 *)FuneHobashira_EnsembleWalk10);
-	Engine_ActorEnableActionCallback(11, (const u8 *)FuneHobashira_EnsembleWalk11);
-	Engine_ActorEnableActionCallback(12, (const u8 *)FuneHobashira_EnsembleWalk12);
-	Engine_ActorEnableActionCallback(13, (const u8 *)FuneHobashira_EnsembleWalk13);
-	Engine_ActorEnableActionCallback(14, (const u8 *)FuneHobashira_EnsembleWalk14);
-	Engine_ActorEnableActionCallback(15, (const u8 *)FuneHobashira_EnsembleWalk15);
+	Engine_ActorEnableActionCallback(9, FuneHobashira_EnsembleWalk9);
+	Engine_ActorEnableActionCallback(10, FuneHobashira_EnsembleWalk10);
+	Engine_ActorEnableActionCallback(11, FuneHobashira_EnsembleWalk11);
+	Engine_ActorEnableActionCallback(12, FuneHobashira_EnsembleWalk12);
+	Engine_ActorEnableActionCallback(13, FuneHobashira_EnsembleWalk13);
+	Engine_ActorEnableActionCallback(14, FuneHobashira_EnsembleWalk14);
+	Engine_ActorEnableActionCallback(15, FuneHobashira_EnsembleWalk15);
 	Engine_EventWait(40);
 	Engine_ActorStartRepeatedMotion(8, 3);
 	Actor_SetAttachedEffect(8, 258);

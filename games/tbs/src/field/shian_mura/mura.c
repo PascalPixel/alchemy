@@ -645,7 +645,7 @@ void Scene_RunActorNineteenScript(void)
 	s32 cb;
 
 	Engine_EventBegin();
-	Engine_ActorEnableActionCallback(19, (const u8 *)ShianMura_Actor19Motion);
+	Engine_ActorEnableActionCallback(19, ShianMura_Actor19Motion);
 	cb = (s32)SceneEffect_AdvanceRotatingSprite;
 	Engine_TaskAddCallback((void (*)(void))cb, 0xc80);
 	Object_RefreshSelectorById(19);
@@ -676,7 +676,7 @@ void ShianMura_EscortActorEighteen(void)
 	s32 record;
 
 	Engine_EventBegin();
-	Engine_ActorEnableActionCallback(18, (const u8 *)1);
+	Engine_ActorEnableActionCallback(18, (const s32 *)1);
 	record = Actor_Get(18);
 	*(s32 *)(record + 108) = 0;
 	record = Actor_Get(18);

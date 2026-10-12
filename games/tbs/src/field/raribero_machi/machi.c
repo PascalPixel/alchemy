@@ -106,7 +106,7 @@ void SceneActor_StartLament(s32 actor)
 	Event_ShowMessage(actor, 0);
 	Actor_FaceDirection(actor, 0xc000, 0);
 	Engine_EventWait(20);
-	Engine_ActorEnableActionCallback(actor, (const u8 *)RariberoMachi_LamentActions);
+	Engine_ActorEnableActionCallback(actor, RariberoMachi_LamentActions);
 }
 
 void RariberoMachi_AskLeaving(s32 obj)

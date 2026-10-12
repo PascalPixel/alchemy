@@ -1183,7 +1183,7 @@ void ColossoLogRollingStage_SpawnPeriodicParticle(void)
 	}
 	particle->velocity_x = 25;
 	particle->velocity_y = 128;
-	Engine_ActorEnableActionCallback(kind, (u8 *)gColossoParticleKinds);
+	Engine_ActorEnableActionCallback(kind, gColossoParticleKinds);
 }
 
 void FieldScene_RunMultiPhaseActorSequence(s32 a0)
@@ -1207,7 +1207,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 	{
 		Engine_ActorSetAnimation(8, 8);
 	}
-	Engine_ActorEnableActionCallback(8, (u8 *)KorosseoMaruta_Actor8Action);
+	Engine_ActorEnableActionCallback(8, KorosseoMaruta_Actor8Action);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0x5e00000, 0xc00000);
 	record = Object_GetById(0);
 	{
@@ -1215,7 +1215,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 
 		record->facing = shown;
 	}
-	Engine_ActorEnableActionCallback(0, (u8 *)KorosseoMaruta_LeaderActionA);
+	Engine_ActorEnableActionCallback(0, KorosseoMaruta_LeaderActionA);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 35);
 	Actor_SetSpeed(1, 0x10000, 0x8000);
 	Actor_SetSpeed(IWAN, 0x10000, 0x8000);
@@ -1262,7 +1262,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 	record = Object_GetById(0);
 	Engine_ActorSetSpriteFlags(record, 0);
 	Engine_EventWait(20);
-	Engine_ActorEnableActionCallback(0, (u8 *)KorosseoMaruta_LeaderActionB);
+	Engine_ActorEnableActionCallback(0, KorosseoMaruta_LeaderActionB);
 	Event_ShowMessage(GERALD, 0);
 	Engine_EventWait(20);
 	Actor_WalkToAndWait(1, 0x5e0, 176);
@@ -1299,7 +1299,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 	Object_LinkObjectAndSetCallback(1, 3);
 	Engine_EventWait(20);
 	Event_ShowMessage(MEARI, 0);
-	Engine_ActorEnableActionCallback(0, (u8 *)KorosseoMaruta_LeaderActionC);
+	Engine_ActorEnableActionCallback(0, KorosseoMaruta_LeaderActionC);
 	Engine_ActorRunRepeatedMotion(GERALD, 2);
 	Object_LinkObjectAndSetCallback(1, 0);
 	Engine_EventWait(20);

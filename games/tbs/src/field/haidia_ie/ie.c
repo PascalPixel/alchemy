@@ -557,7 +557,7 @@ s32 HaidiaIe_RestoreEntryState(void)
 			}
 			Engine_ActorSetPosition(17, 0, 0);
 			Engine_ActorSetPosition(18, 0, 0);
-			FieldObject_SetTargetAndCallback(19, 0x10000, (const u8 *)HaidiaIe_FaceTargetActions);
+			FieldObject_SetTargetAndCallback(19, 0x10000, HaidiaIe_FaceTargetActions);
 		}
 		else
 		{
@@ -783,7 +783,7 @@ void FieldScene_RunElderAidEvent(void)
 		}
 		Engine_ActorWaitForMove(22);
 		Engine_ActorSetPosition(22, 0, 0);
-		FieldObject_SetTargetAndCallback(19, 0x10000, (const u8 *)HaidiaIe_FaceTargetActions);
+		FieldObject_SetTargetAndCallback(19, 0x10000, HaidiaIe_FaceTargetActions);
 		Engine_GameFlagSet(0x840);
 		Engine_EventEnd();
 	}
@@ -903,7 +903,7 @@ void FieldScene_RunGroupChoreography(void)
 	SceneActor_SetPairZeroAndValue(24, turn_speed, 20);
 	Engine_ActorRunRepeatedMotion(25, 2);
 	Event_SayThenWait(0x1019, 10);
-	FieldObject_SetTargetAndCallback(0, 0x10019, (const u8 *)HaidiaIe_FaceTargetActions);
+	FieldObject_SetTargetAndCallback(0, 0x10019, HaidiaIe_FaceTargetActions);
 	Actor_WalkToAndWait(25, 93, 0x169);
 	SceneActor_SetPairZeroAndValue(25, approach_speed, 40);
 	Event_SayThenWait(25, 20);

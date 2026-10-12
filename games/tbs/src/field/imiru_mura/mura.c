@@ -706,7 +706,7 @@ s32 ImiruMura_ApplyEntryState(void)
 				Engine_MapCopyCellsTo(3, 125, 9, 69, 3, 3);
 				Engine_MapRedraw();
 				Engine_TaskWait(1);
-				Engine_ActorEnableActionCallback(8, (const u8 *)2);
+				Engine_ActorEnableActionCallback(8, (const s32 *)2);
 				Engine_ActorSetPosition(10, 0, 0);
 			}
 			else if (Engine_GameFlagIsSet(0x82c) && Engine_GameFlagIsSet(0x82a))
@@ -737,7 +737,7 @@ s32 ImiruMura_ApplyEntryState(void)
 				}
 				else
 				{
-					Engine_ActorEnableActionCallback(8, (const u8 *)2);
+					Engine_ActorEnableActionCallback(8, (const s32 *)2);
 				}
 			}
 		}

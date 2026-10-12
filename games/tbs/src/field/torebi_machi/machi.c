@@ -416,14 +416,14 @@ s32 TorebiMachi_ApplyEntryState(s32 a0)
 
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	Actor_SetPosition(16, 0x1600000, 0x1600000);
-	Engine_ActorEnableActionCallback(16, (const u8 *)gTorebiMachiActor16Action);
+	Engine_ActorEnableActionCallback(16, gTorebiMachiActor16Action);
 	record = Object_GetById(16);
 	handler = (s32)SceneActor_UpdatePartnerProximity;
 	((struct SceneActor *)record)->proximity_flags = 1;
 	*(s32 *)(record + 108) = handler;
 	hidden = 0;
 	Engine_ActorSetPosition(17, 0x1700000, 0x1400000);
-	Engine_ActorEnableActionCallback(17, (const u8 *)gTorebiMachiActor17Action);
+	Engine_ActorEnableActionCallback(17, gTorebiMachiActor17Action);
 	record = Object_GetById(17);
 	((struct SceneActor *)record)->proximity_flags = hidden;
 	*(s32 *)(record + 108) = handler;

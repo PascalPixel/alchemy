@@ -1073,7 +1073,7 @@ void FieldScene_RunScene372SequenceE(void)
 		Object_SetActionCallbackAndRefreshById(22, (s32)HaidiaArashi_ActorTwentyTwoScriptA);
 		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
 		Engine_EventWait(30);
-		Engine_ActorEnableActionCallback(22, (const u8 *)HaidiaArashi_ActorTwentyTwoScriptB);
+		Engine_ActorEnableActionCallback(22, HaidiaArashi_ActorTwentyTwoScriptB);
 		Event_ShowMessage(22, 0);
 		record = Actor_Get(22);
 		record->scale_y = 0x10000;
@@ -1685,9 +1685,9 @@ void HaidiaArashi_RunRiverSearch(void)
 	record = Engine_RandomNext();
 	entry->timer = (Math_RemainderUnsigned(record, 90) + 60);
 	script = (s32)HaidiaArashi_ActorEightScript;
-	Engine_ActorEnableActionCallback(10, (const u8 *)script);
-	Engine_ActorEnableActionCallback(24, (const u8 *)script);
-	Engine_ActorEnableActionCallback(25, (const u8 *)script);
+	Engine_ActorEnableActionCallback(10, script);
+	Engine_ActorEnableActionCallback(24, script);
+	Engine_ActorEnableActionCallback(25, script);
 	Object_RefreshSelectorById(26);
 	Engine_EventWait(10);
 	Event_PlayCue(159);

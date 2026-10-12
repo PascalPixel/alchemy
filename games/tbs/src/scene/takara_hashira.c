@@ -146,22 +146,15 @@ static s32 FieldScene_QueryActorFootprint(
 	s32					a;
 	s32					b;
 
-	i = 0;
-	if (actor->animation->entries[0]->anim_id != StagedActor_FootprintKinds[i])
+	for (i = 0; i <= 5; i++)
 	{
-	miss:
+		if (actor->animation->entries[0]->anim_id == StagedActor_FootprintKinds[i])
+		{
+			probe->footprint_index = i;
+			break;
+		}
 		probe->footprint_index = 7;
-		if (++i > 5)
-		{
-			goto check;
-		}
-		if (actor->animation->entries[0]->anim_id != StagedActor_FootprintKinds[i])
-		{
-			goto miss;
-		}
 	}
-	probe->footprint_index = i;
-check:
 	if ((u32)probe->footprint_index > 6)
 	{
 		return 0;
@@ -462,51 +455,42 @@ static s32 FieldScene_RunScene3b3SequenceD(void)
 	step <<= 16;
 	p[2] = leader->z.fixed + step;
 #endif
-	if (Object_CheckMovementCollision(leader, p) == 1)
+	if (Object_CheckMovementCollision(leader, p) != 1
+		&& StagedActor_FindAtTile(p, (struct StagedActor *)leader) == 0)
 	{
-		goto reject;
-	}
-	if (StagedActor_FindAtTile(p, (struct StagedActor *)leader) != 0)
-	{
-		goto reject;
-	}
 #if EDITION_INTERNATIONAL
-	p[0] = (leader->x.fixed & -0x100000) + 0x80000;
-	p[1] = leader->y.fixed;
-	p[2] = (leader->z.fixed & -0x100000) + 0x80000;
-	Vector_AddPolarOffset(0x200000, mode, p);
+		p[0] = (leader->x.fixed & -0x100000) + 0x80000;
+		p[1] = leader->y.fixed;
+		p[2] = (leader->z.fixed & -0x100000) + 0x80000;
+		Vector_AddPolarOffset(0x200000, mode, p);
 #else
-	step = StagedActor_DirectionSteps[mode];
-	p[0] = leader->x.fixed + ((step & 0xffff0000) * 2);
-	p[1] = leader->y.fixed;
-	step <<= 17;
-	p[2] = leader->z.fixed + step;
+		step = StagedActor_DirectionSteps[mode];
+		p[0] = leader->x.fixed + ((step & 0xffff0000) * 2);
+		p[1] = leader->y.fixed;
+		step <<= 17;
+		p[2] = leader->z.fixed + step;
 #endif
-	if (StagedActor_FindAtTile(p, (struct StagedActor *)leader) != 0)
-	{
-		goto reject;
+		if (StagedActor_FindAtTile(p, (struct StagedActor *)leader) == 0
+			&& Object_CheckMovementCollision(leader, p) == 0)
+		{
+			Engine_EventBegin();
+			Object_SetMode(leader, 6);
+			Engine_TaskWait(6);
+			Engine_AudioPlayCue(152);
+			Object_SetMode(leader, 7);
+			leader->speed = 0x30000;
+			leader->acceleration = 0x20000;
+			leader->velocity_y = 0x40000;
+			*flags &= 126;
+			Engine_ActorSetSpriteFlags(leader, 0);
+			Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, ((s16 *)p)[1], ((s16 *)p)[5]);
+			Object_SetMode(leader, 6);
+			Engine_ActorSetSpriteFlags(leader, 1);
+			*flags = saved;
+			Engine_EventEnd();
+			return 1;
+		}
 	}
-	if (Object_CheckMovementCollision(leader, p) != 0)
-	{
-		goto reject;
-	}
-	Engine_EventBegin();
-	Object_SetMode(leader, 6);
-	Engine_TaskWait(6);
-	Engine_AudioPlayCue(152);
-	Object_SetMode(leader, 7);
-	leader->speed = 0x30000;
-	leader->acceleration = 0x20000;
-	leader->velocity_y = 0x40000;
-	*flags &= 126;
-	Engine_ActorSetSpriteFlags(leader, 0);
-	Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, ((s16 *)p)[1], ((s16 *)p)[5]);
-	Object_SetMode(leader, 6);
-	Engine_ActorSetSpriteFlags(leader, 1);
-	*flags = saved;
-	Engine_EventEnd();
-	return 1;
-reject:
 	return 0;
 }
 

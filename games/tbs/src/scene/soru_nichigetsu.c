@@ -77,28 +77,27 @@ static void EV13_TOUCH(void)
 	if (CheckAllStatueLights() != 0)
 	{
 		record = GameFlag_IsSet(0x201);
-		if (record != 0)
+		if (record == 0)
 		{
-			goto done;
-		}
-		Engine_EventBegin();
-		ColorBuffer_ApplyTarget(0x2051cc, 1);
-		Engine_ColorBufferInterpolate(20);
-		GameFlag_Set(0x201);
-		GameFlag_Clear(0x200);
-		GameFlag_Clear(0x202);
-		if (GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0)
-		{
-			Scene_EnterInnerSanctum();
-		}
-		if (CheckAllStatueLights() != 0)
-		{
-			if (GameFlag_IsSet(0x811) == 0)
+			Engine_EventBegin();
+			ColorBuffer_ApplyTarget(0x2051cc, 1);
+			Engine_ColorBufferInterpolate(20);
+			GameFlag_Set(0x201);
+			GameFlag_Clear(0x200);
+			GameFlag_Clear(0x202);
+			if (GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0)
 			{
-				FieldScene_RunActorPositionTransition();
+				Scene_EnterInnerSanctum();
 			}
+			if (CheckAllStatueLights() != 0)
+			{
+				if (GameFlag_IsSet(0x811) == 0)
+				{
+					FieldScene_RunActorPositionTransition();
+				}
+			}
+			Engine_EventEnd();
 		}
-		Engine_EventEnd();
 	}
 	else
 	{
@@ -113,7 +112,6 @@ static void EV13_TOUCH(void)
 			Engine_EventEnd();
 		}
 	}
-done:;
 }
 
 static void EV15_TOUCH(void)
@@ -137,17 +135,16 @@ static void EV14_TOUCH(void)
 	if (CheckAllStatueLights() != 0)
 	{
 		record = GameFlag_IsSet(0x200);
-		if (record != 0)
+		if (record == 0)
 		{
-			goto done;
+			Engine_EventBegin();
+			ColorBuffer_ApplyTarget(0x10000, 1);
+			Engine_ColorBufferInterpolate(20);
+			GameFlag_Set(0x200);
+			GameFlag_Clear(0x201);
+			GameFlag_Clear(0x202);
+			Engine_EventEnd();
 		}
-		Engine_EventBegin();
-		ColorBuffer_ApplyTarget(0x10000, 1);
-		Engine_ColorBufferInterpolate(20);
-		GameFlag_Set(0x200);
-		GameFlag_Clear(0x201);
-		GameFlag_Clear(0x202);
-		Engine_EventEnd();
 	}
 	else
 	{
@@ -166,7 +163,6 @@ static void EV14_TOUCH(void)
 			Engine_EventEnd();
 		}
 	}
-done:;
 }
 
 static void EV12_TOUCH(void)
@@ -1419,15 +1415,9 @@ s32 SoruNichigetsu_RestoreEntryState(void)
 		Engine_GameFlagSet(0x829);
 	}
 	Engine_TaskWait(4);
-	if (done != 0)
+	if (done == 0)
 	{
-	}
-	else
-	{
-		if (CheckAllStatueLights() == 0)
-		{
-		}
-		else
+		if (CheckAllStatueLights() != 0)
 		{
 			Map_CopyCellsTo(30, 44, 30, 38, 12, 5);
 			Engine_MapCopyCellsTo(30, 44, 34, 37, 4, 1);
@@ -1456,61 +1446,52 @@ s32 SoruNichigetsu_RestoreEntryState(void)
 				}
 			}
 			Engine_ActorSetPosition(16, 0, 0);
-			goto light_scene;
 		}
-		lit = 0;
-		if (Engine_GameFlagIsSet(0x80b) != 0)
+		else
 		{
-			Map_CopyCellsTo(45, 28, 34, 10, 2, 1);
-			Engine_MapCopyCellsTo(45, 30, 16, 10, 2, 1);
-			lit = 1;
-		}
-		if (Engine_GameFlagIsSet(0x80c) != 0)
-		{
-			Map_CopyCellsTo(47, 28, 36, 10, 2, 1);
-			Engine_MapCopyCellsTo(47, 30, 18, 10, 2, 1);
-			lit = 1;
-		}
-		if (Engine_GameFlagIsSet(0x80d) != 0)
-		{
-			Map_CopyCellsTo(45, 29, 34, 11, 2, 1);
-			Engine_MapCopyCellsTo(45, 31, 16, 11, 2, 1);
-			lit = 1;
-		}
-		if (Engine_GameFlagIsSet(0x80e) != 0)
-		{
-			Map_CopyCellsTo(47, 29, 36, 11, 2, 1);
-			Engine_MapCopyCellsTo(47, 31, 18, 11, 2, 1);
-			lit = 1;
-		}
-		if (Engine_GameFlagIsSet(0x812) == 0)
-		{
-			if (lit == 0)
+			lit = 0;
+			if (Engine_GameFlagIsSet(0x80b) != 0)
 			{
-				goto mark_cells;
+				Map_CopyCellsTo(45, 28, 34, 10, 2, 1);
+				Engine_MapCopyCellsTo(45, 30, 16, 10, 2, 1);
+				lit = 1;
 			}
+			if (Engine_GameFlagIsSet(0x80c) != 0)
+			{
+				Map_CopyCellsTo(47, 28, 36, 10, 2, 1);
+				Engine_MapCopyCellsTo(47, 30, 18, 10, 2, 1);
+				lit = 1;
+			}
+			if (Engine_GameFlagIsSet(0x80d) != 0)
+			{
+				Map_CopyCellsTo(45, 29, 34, 11, 2, 1);
+				Engine_MapCopyCellsTo(45, 31, 16, 11, 2, 1);
+				lit = 1;
+			}
+			if (Engine_GameFlagIsSet(0x80e) != 0)
+			{
+				Map_CopyCellsTo(47, 29, 36, 11, 2, 1);
+				Engine_MapCopyCellsTo(47, 31, 18, 11, 2, 1);
+				lit = 1;
+			}
+			if (Engine_GameFlagIsSet(0x812) != 0 || lit != 0)
+			{
+				Engine_MapCopyCellsTo(30, 43, 32, 40, 8, 3);
+				Engine_MapCopyCellsTo(30, 43, 33, 39, 8, 1);
+				Engine_MapCopyCellsTo(30, 43, 36, 38, 3, 3);
+				Engine_MapCopyCellsTo(36, 58, 32, 41, 8, 4);
+			}
+			Map_CopyCellAttributes(15, 6, 2, 1, 17, 6);
 		}
-		Engine_MapCopyCellsTo(30, 43, 32, 40, 8, 3);
-		Engine_MapCopyCellsTo(30, 43, 33, 39, 8, 1);
-		Engine_MapCopyCellsTo(30, 43, 36, 38, 3, 3);
-		Engine_MapCopyCellsTo(36, 58, 32, 41, 8, 4);
-	mark_cells:;
-		Map_CopyCellAttributes(15, 6, 2, 1, 17, 6);
 	}
-light_scene:;
-	if (GameFlag_IsSet(0x309) == 0)
+	if (GameFlag_IsSet(0x309) == 0 && gGameState.entrance == 8)
 	{
-		if (gGameState.entrance != 8)
-		{
-			goto light_seen;
-		}
 		SoruNichigetsu_RunLightScene();
 		Engine_GameFlagSet(0x309);
 		Map_CopyCellAttributes(15, 6, 2, 1, 17, 6);
 	}
 	else
 	{
-	light_seen:;
 		if (Engine_GameFlagIsSet(0x814) != 0)
 		{
 			BattleFx_SetQueuedSoundAndPlay(141);

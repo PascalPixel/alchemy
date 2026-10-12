@@ -1944,14 +1944,13 @@ static void VinasuChojo_UpdateBeamActors(void)
 		{
 			Engine_ActorSetChildValue(ACTOR_FIRST_OF_PAIR, 7);
 			Engine_ActorSetChildValue(ACTOR_SECOND_OF_PAIR, 7);
-			if (first->scale_x >= 0x14000)
+			if (first->scale_x < 0x14000)
 			{
-				goto slide;
+				first->scale_x += 0x200;
+				first->scale_y += 0x200;
+				second->scale_x += 0x200;
+				second->scale_y += 0x200;
 			}
-			first->scale_x += 0x200;
-			first->scale_y += 0x200;
-			second->scale_x += 0x200;
-			second->scale_y += 0x200;
 		}
 		else
 		{
@@ -1966,7 +1965,6 @@ static void VinasuChojo_UpdateBeamActors(void)
 				Engine_ActorSetChildValue(ACTOR_SECOND_OF_PAIR, 15);
 			}
 		}
-	slide:;
 		if (Engine_GameFlagIsSet(FLAG_PAIR_SLIDING) != 0)
 		{
 			if (first->x.fixed < PIXELS(312))

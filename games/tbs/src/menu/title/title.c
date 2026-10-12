@@ -4,7 +4,7 @@
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/field.h"
 #include "unit/game/character/chara.h"
-#include "unit/graphics/palette/tint.h"
+#include "unit/graphics/palette/palette.h"
 #include "unit/graphics/window/window.h"
 #include "unit/system/scheduler/runtime.h"
 #include "battle.h"

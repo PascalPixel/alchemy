@@ -1939,10 +1939,7 @@ Func_080b11f8:
 Data_080b127c:
 	.incbin "baserom.gba", 0x000b1288, 0x0000004c
 	.section .rom.000b1f34, "ax"
-	.incbin "baserom.gba", 0x000b1f34, 0x00000018
-	.global Data_080b1f40
-Data_080b1f40:
-	.incbin "baserom.gba", 0x000b1f4c, 0x00000424
+	.incbin "baserom.gba", 0x000b1f34, 0x00000004
 	.section .rom.000c6b10, "ax"
 	.global Data_080c6b04
 Data_080c6b04:
@@ -3966,32 +3963,12 @@ EffectSlot_Initialize:
 	.incbin "baserom.gba", 0x000ec2ac, 0x000014d0
 	.section .rom.000eda00, "ax"
 	.incbin "baserom.gba", 0x000eda00, 0x000000c0
-	.section .rom.000ee6c8, "ax"
-	.incbin "baserom.gba", 0x000ee6c8, 0x00000880
-	.global Encounter_AreaEntryTable
-Encounter_AreaEntryTable:
-	.incbin "baserom.gba", 0x000eef48, 0x00000140
 	.section .rom.000ef810, "ax"
-	.incbin "baserom.gba", 0x000ef810, 0x00000554
-	.section .rom.000eff16, "ax"
-	.incbin "baserom.gba", 0x000eff16, 0x00000006
-	.global Data_080eff28
-Data_080eff28:
-	.incbin "baserom.gba", 0x000eff1c, 0x000000b0
-	.global Data_080effd8
-Data_080effd8:
-	.incbin "baserom.gba", 0x000effcc, 0x000001bc
-	.global BattleFx_ParticleScript
-BattleFx_ParticleScript:
-	.incbin "baserom.gba", 0x000f0188, 0x00000030
+	.incbin "baserom.gba", 0x000ef810, 0x00000008
+	.section .rom.000f01ac, "ax"
+	.incbin "baserom.gba", 0x000f01ac, 0x0000000c
 	.section .rom.000f02fa, "ax"
-	.incbin "baserom.gba", 0x000f02fa, 0x000003d2
-	.global Object_VariantMotionScripts
-Object_VariantMotionScripts:
-	.incbin "baserom.gba", 0x000f06cc, 0x000001b4
-	.global ObjectGroup_BlinkChildValues
-ObjectGroup_BlinkChildValues:
-	.incbin "baserom.gba", 0x000f0880, 0x00000004
+	.incbin "baserom.gba", 0x000f02fa, 0x00000002
 	.section .rom.000f0b44, "ax"
 	.incbin "baserom.gba", 0x000f0b44, 0x0000002c
 	.section .rom.000f0bf0, "ax"
@@ -4026,7 +4003,7 @@ BattleFx_RandomChildValues:
 Data_080f1140:
 	.incbin "baserom.gba", 0x000f1134, 0x00000668
 	.section .rom.000f21c4, "ax"
-	.incbin "baserom.gba", 0x000f21c4, 0x00000ccc
+	.incbin "baserom.gba", 0x000f21c4, 0x00000034
 	.section .rom.000f3210, "ax"
 	.incbin "baserom.gba", 0x000f3210, 0x000000b4
 	.global Object_OffsetMotionScript
@@ -4086,16 +4063,7 @@ Data_080f3950:
 	.incbin "baserom.gba", 0x000f3944, 0x00000024
 	.global BattleFx_UntargetedObjectScript
 BattleFx_UntargetedObjectScript:
-	.incbin "baserom.gba", 0x000f3968, 0x00000268
-	.global ColorBuffer_FadeStep1Map
-ColorBuffer_FadeStep1Map:
-	.incbin "baserom.gba", 0x000f3bd0, 0x00000020
-	.global ColorBuffer_FadeStep2Map
-ColorBuffer_FadeStep2Map:
-	.incbin "baserom.gba", 0x000f3bf0, 0x00000020
-	.global ColorBuffer_FadeStep3Map
-ColorBuffer_FadeStep3Map:
-	.incbin "baserom.gba", 0x000f3c10, 0x000002b0
+	.incbin "baserom.gba", 0x000f3968, 0x00000050
 	.section .rom.000f8170, "ax"
 	.incbin "baserom.gba", 0x000f8170, 0x000004a0
 	.section .rom.000f8888, "ax"
@@ -4547,11 +4515,6 @@ Shop_PriceTiles:
 	.global Shop_GlyphRowOffsets
 Shop_GlyphRowOffsets:
 	.incbin "baserom.gba", 0x0010c378, 0x0000000a
-	.section .rom.0010c3be, "ax"
-	.incbin "baserom.gba", 0x0010c3be, 0x0000002a
-	.global Data_0810c3f4
-Data_0810c3f4:
-	.incbin "baserom.gba", 0x0010c3e8, 0x00000b48
 	.section .rom.00118000, "ax"
 	.global Resource_FarCall009
 Resource_FarCall009:
@@ -4859,8 +4822,6 @@ BattlePlacement_StepPairs:
 	.incbin "baserom.gba", 0x0012885c, 0x00000024
 	.section .rom.001288b0, "ax"
 	.incbin "baserom.gba", 0x001288b0, 0x000000da
-	.section .rom.00129840, "ax"
-	.incbin "baserom.gba", 0x00129840, 0x00000144
 	.section .rom.0012ce6c, "ax"
 	.incbin "baserom.gba", 0x0012ce6c, 0x00000028
 	.section .rom.001380ac, "ax"

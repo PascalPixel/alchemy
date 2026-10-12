@@ -1,5 +1,6 @@
 //! A game's object list, games/<game>/objects.tsv: what each image links,
-//! one linker statement per row, in link order.
+//! one linker statement per row (three for an overlay's `unit` row), in
+//! link order.
 //!
 //! Columns: `image` (`main`, or an overlay's resource id such as `3ad`),
 //! `place` (the output section, or its span between two fixed placements),
@@ -9,6 +10,16 @@
 //! `.text .rodata .data .padding`) and `editions` (blank means all six, else
 //! the languages that link the row, such as `ja en`). An object may take
 //! several rows: one for each place that takes some of its sections.
+//!
+//! An overlay begins with three objects of one folder: its entry table
+//! (`entry`), the object of its C file and its import table (`import`).
+//! One row says so: a row whose place is `unit` names the object between
+//! the two tables and stands for those three rows of the `text` place, each
+//! a whole object, for the row's editions. It names no sections. What an
+//! overlay links besides (a library member, a picture, its `.bss`) has its
+//! own rows after it. The list is read as the rows it stands for, so every
+//! tool sees one row per statement, and it is written with a `unit` row
+//! wherever three rows are one.
 //!
 //! An overlay's places are `text` (its code and data at 0x2008000), `bss`
 //! and `discard`. The table beside the list, games/<game>/overlays.tsv, has
@@ -39,7 +50,14 @@ pub(crate) const MAIN: &str = "main";
 const EVERY: &str = "*";
 /// The places of an overlay: its code and data at 0x2008000, its
 /// uninitialized data after them, and the sections it leaves out.
-const OVERLAY_PLACES: [&str; 3] = ["text", "bss", "discard"];
+const OVERLAY_PLACES: [&str; 3] = [TEXT, "bss", "discard"];
+const TEXT: &str = "text";
+/// The place of a row that names an overlay's C object and stands for
+/// three rows of its text place: the entry table of the object's folder,
+/// the object, and that folder's import table.
+const UNIT: &str = "unit";
+const ENTRY: &str = "entry";
+const IMPORT: &str = "import";
 /// The archive member an overlay links to call through a register, and the
 /// symbol that pulls it from the archive.
 const CALL_VIA: &str = "libgcc.a:_call_via_rX";
@@ -57,7 +75,10 @@ they include, do not define its resources in the order its rows first name\n\
 them. A place is an\n\
 output section (rom_start; text, bss and discard in an overlay), or the\n\
 span of one between two fixed placements, numbered from the section's start\n\
-(rom_main_00, rom_main_01 ...). A game without a list is not checked.";
+(rom_main_00, rom_main_01 ...). An overlay's row of the place unit names\n\
+its C object and is three rows of its text place: the entry table of that\n\
+object's folder (entry), the object, and the folder's import table\n\
+(import). A game without a list is not checked.";
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct Row {
@@ -104,14 +125,68 @@ fn language(name: &str) -> Result<&'static str, String> {
 }
 
 pub(crate) fn parse(text: &str) -> Result<Vec<Row>, String> {
+    Ok(parse_lines(text)?.into_iter().map(|(_, row)| row).collect())
+}
+
+/// The rows a list's text stands for, each with the line it is written on:
+/// the three rows of a unit row share its line.
+fn parse_lines(text: &str) -> Result<Vec<(usize, Row)>, String> {
     let mut lines = text.lines().enumerate();
     match lines.next() {
         Some((_, HEADER)) => {}
         _ => return Err(format!("line 1: the header is {HEADER:?}")),
     }
-    lines
-        .map(|(index, line)| row(line).map_err(|error| format!("line {}: {error}", index + 1)))
-        .collect()
+    let mut rows = Vec::new();
+    for (index, line) in lines {
+        let written = row(line).and_then(unit_rows).map_err(|error| format!("line {}: {error}", index + 1))?;
+        rows.extend(written.into_iter().map(|row| (index + 1, row)));
+    }
+    Ok(rows)
+}
+
+/// The folder of an object a unit row can name: an object the build makes,
+/// other than its folder's entry and import tables.
+fn unit_folder(object: &str) -> Option<&str> {
+    let (folder, name) = object.rsplit_once('/')?;
+    (!object.contains(':') && !matches!(name, "" | ENTRY | IMPORT)).then_some(folder)
+}
+
+/// The rows a written row stands for: itself, or for a unit row the entry
+/// table of the named object's folder, the object and the folder's import
+/// table, each a whole object of the text place.
+fn unit_rows(row: Row) -> Result<Vec<Row>, String> {
+    if row.place != UNIT {
+        return Ok(vec![row]);
+    }
+    let folder = unit_folder(&row.object).ok_or_else(|| {
+        format!("unit {:?} is not an object of a folder, between that folder's {ENTRY} and {IMPORT}", row.object)
+    })?;
+    Ok([format!("{folder}/{ENTRY}"), row.object.clone(), format!("{folder}/{IMPORT}")]
+        .into_iter()
+        .map(|object| Row { place: TEXT.to_owned(), object, ..row.clone() })
+        .collect())
+}
+
+/// The row that names the unit the first three rows are: an overlay's entry
+/// table, an object of the same folder and that folder's import table, each
+/// whole in the text place and for the same editions.
+fn unit(rows: &[Row]) -> Option<&Row> {
+    let [entry, named, import, ..] = rows else {
+        return None;
+    };
+    let folder = unit_folder(&named.object)?;
+    let whole = |row: &Row, object: &str| {
+        row.image == named.image
+            && row.place == TEXT
+            && row.object == object
+            && row.sections == DEFAULT_SECTIONS
+            && row.editions == named.editions
+    };
+    (named.image != MAIN
+        && whole(entry, &format!("{folder}/{ENTRY}"))
+        && whole(named, &named.object)
+        && whole(import, &format!("{folder}/{IMPORT}")))
+    .then_some(named)
 }
 
 fn row(line: &str) -> Result<Row, String> {
@@ -136,8 +211,15 @@ fn row(line: &str) -> Result<Row, String> {
     if object != EVERY && (!plain(object) || object.ends_with(".o")) {
         return Err(format!("object {object:?} is not a path or archive member without .o"));
     }
-    if image != MAIN && !OVERLAY_PLACES.contains(&place) {
-        return Err(format!("place {place:?} is not one of an overlay's: {}", OVERLAY_PLACES.join(" ")));
+    if place == UNIT {
+        if image == MAIN {
+            return Err("a unit row is an overlay's: the main image has a row for each object".into());
+        }
+        if fields.get(3).is_some_and(|sections| !sections.is_empty()) {
+            return Err("a unit row names no sections: its entry table, object and import table link whole".into());
+        }
+    } else if image != MAIN && !OVERLAY_PLACES.contains(&place) {
+        return Err(format!("place {place:?} is not one of an overlay's: {}, or {UNIT}", OVERLAY_PLACES.join(" ")));
     }
     let sections = match fields.get(3).copied().unwrap_or("") {
         "" => DEFAULT_SECTIONS.to_owned(),
@@ -180,17 +262,24 @@ fn row(line: &str) -> Result<Row, String> {
 }
 
 /// The list as its file's text: what `parse` reads back as the same rows.
+/// Three rows that are one unit are written as its row.
 pub(crate) fn format(rows: &[Row]) -> String {
     let mut text = format!("{HEADER}\n");
-    for row in rows {
+    let mut at = 0;
+    while at < rows.len() {
+        let (row, place, count) = match unit(&rows[at..]) {
+            Some(named) => (named, UNIT, 3),
+            None => (&rows[at], rows[at].place.as_str(), 1),
+        };
         let sections = if row.sections == DEFAULT_SECTIONS { "" } else { &row.sections };
         let editions = if row.editions.len() == LANGUAGES.len() { String::new() } else { row.editions.join(" ") };
-        let mut fields = vec![row.image.as_str(), &row.place, &row.object, sections, &editions];
+        let mut fields = vec![row.image.as_str(), place, &row.object, sections, &editions];
         while fields.last().is_some_and(|field| field.is_empty()) {
             fields.pop();
         }
         text += &fields.join("\t");
         text.push('\n');
+        at += count;
     }
     text
 }
@@ -296,7 +385,7 @@ const PLAIN_PASSES: [&str; 3] = [".text .padding", ".rodata", ".data .overlays"]
 /// them.
 fn plain(image: &str, place: &str, rows: &[Row]) -> bool {
     let mut own = rows.iter().filter(|row| row.image == image && row.place == place).peekable();
-    (if image == MAIN { place.starts_with("rom_") } else { place == "text" })
+    (if image == MAIN { place.starts_with("rom_") } else { place == TEXT })
         && own.peek().is_some()
         && own.all(|row| row.sections == DEFAULT_SECTIONS && row.object != EVERY)
 }
@@ -570,9 +659,11 @@ fn run(root: &Path) -> Result<String, String> {
         let Some(list) = first.object_list() else {
             continue;
         };
-        let rows = read(root, first)?.expect("a listed game has a list");
         let shown = list.display();
-        failures.extend(repeats(&rows).into_iter().map(|found| format!("{shown}: {found}")));
+        let text = fs::read_to_string(root.join(&list)).map_err(|error| format!("{shown}: {error}"))?;
+        let lines = parse_lines(&text).map_err(|error| format!("{shown}: {error}"))?;
+        let rows: Vec<Row> = lines.iter().map(|(_, row)| row.clone()).collect();
+        failures.extend(repeats(&lines).into_iter().map(|found| format!("{shown}: {found}")));
         let mut sourced = BTreeSet::new();
         for row in rows.iter().filter(|row| row.built() && sourced.insert((row.image.as_str(), row.object.as_str()))) {
             // An overlay's own data and bss are resource_<id>_overlay.o, which
@@ -610,7 +701,8 @@ fn run(root: &Path) -> Result<String, String> {
         let (resources, found) = resources(root, &rows)?;
         failures.extend(found.into_iter().map(|found| format!("{shown}: {found}")));
         summary.push(format!(
-            "{shown}: {} rows of {} images, each linked where its script includes its place; {resources} resources in their directory's order",
+            "{shown}: {} rows standing for {} of {} images, each linked where its script includes its place; {resources} resources in their directory's order",
+            text.lines().count() - 1,
             rows.len(),
             images.len()
         ));
@@ -862,16 +954,15 @@ fn out_of_order(places: &[String], modules: &[(String, Vec<String>)]) -> Vec<Str
 
 /// Input sections the list gives one edition twice: the linker places a
 /// section by the first statement that names it, so a second is never read.
-fn repeats(rows: &[Row]) -> Vec<String> {
+fn repeats(rows: &[(usize, Row)]) -> Vec<String> {
     let mut seen = BTreeSet::new();
     let mut found = Vec::new();
-    for (index, row) in rows.iter().enumerate() {
+    for (line, row) in rows {
         for section in row.sections.split(' ') {
             for edition in &row.editions {
                 if !seen.insert((row.image.as_str(), row.object.as_str(), section, *edition)) {
                     found.push(format!(
-                        "line {}: {} {section} of {} is already listed for {edition}",
-                        index + 2,
+                        "line {line}: {} {section} of {} is already listed for {edition}",
                         row.image,
                         row.object
                     ));
@@ -1051,12 +1142,145 @@ mod tests {
 
     #[test]
     fn a_section_listed_twice_for_an_edition_is_found() {
-        let rows = |text: &str| parse(&list(text)).unwrap();
+        let rows = |text: &str| parse_lines(&list(text)).unwrap();
         assert_eq!(repeats(&rows(AGREEING)), Vec::<String>::new());
         let twice = format!("{AGREEING}main\trom_main_01\tgames/g/b\t.rodata .text\tde\n");
         assert_eq!(repeats(&rows(&twice)), ["line 8: main .text of games/g/b is already listed for de"]);
         let apart = "main\trom_main_00\tgames/g/a\t.text\tja\nmain\trom_main_01\tgames/g/a\t.text\ten de\n3ad\ttext\tgames/g/a\t.text\n";
         assert_eq!(repeats(&rows(apart)), Vec::<String>::new());
+        // A unit row gives its three objects, and the line named is the file's.
+        let unit = "3ad\tunit\tgames/g/a/a\n3ad\tbss\tgames/g/a/a\t.bss\n3ad\ttext\tgames/g/a/import\t.rodata\tja\n";
+        assert_eq!(repeats(&rows(unit)), ["line 4: 3ad .rodata of games/g/a/import is already listed for ja"]);
+    }
+
+    /// `text` with each unit row written out as the three rows it stands
+    /// for, by the convention's words alone: entry, the object, import.
+    fn written_out(text: &str) -> String {
+        let mut out = String::new();
+        for line in text.lines() {
+            let fields: Vec<&str> = line.split('\t').collect();
+            if fields.get(1) != Some(&"unit") {
+                out += &format!("{line}\n");
+                continue;
+            }
+            let (folder, name) = fields[2].rsplit_once('/').unwrap();
+            for object in ["entry", name, "import"] {
+                let mut row = vec![fields[0].to_owned(), "text".to_owned(), format!("{folder}/{object}")];
+                row.extend(fields[3..].iter().map(|field| (*field).to_owned()));
+                out += &format!("{}\n", row.join("\t"));
+            }
+        }
+        out
+    }
+
+    #[test]
+    fn a_unit_row_is_its_folders_entry_table_the_object_and_the_import_table() {
+        let written = list(
+            "3a5\tunit\tgames/g/sabaku/sabaku\n\
+             3a5\ttext\tlibgcc.a:_call_via_rX\n\
+             3a5\ttext\tgames/g/graphics/sand\n\
+             3a5\tbss\tresource_3a5_overlay\t.bss\n\
+             3ae\tunit\tgames/g/torebi/torebi\t\tja\n\
+             3ae\ttext\tgames/g/torebi/late\t.text\ten de es fr it\n",
+        );
+        let explicit = list(
+            "3a5\ttext\tgames/g/sabaku/entry\n\
+             3a5\ttext\tgames/g/sabaku/sabaku\n\
+             3a5\ttext\tgames/g/sabaku/import\n\
+             3a5\ttext\tlibgcc.a:_call_via_rX\n\
+             3a5\ttext\tgames/g/graphics/sand\n\
+             3a5\tbss\tresource_3a5_overlay\t.bss\n\
+             3ae\ttext\tgames/g/torebi/entry\t\tja\n\
+             3ae\ttext\tgames/g/torebi/torebi\t\tja\n\
+             3ae\ttext\tgames/g/torebi/import\t\tja\n\
+             3ae\ttext\tgames/g/torebi/late\t.text\ten de es fr it\n",
+        );
+        assert_eq!(written_out(&written), explicit);
+        // The rows are those of the list written out: no row is a unit's.
+        let rows = parse(&written).unwrap();
+        assert_eq!(rows, parse(&explicit).unwrap());
+        assert_eq!(rows.len(), 10);
+        assert!(rows.iter().all(|row| row.place != UNIT));
+        let lines: Vec<usize> = parse_lines(&written).unwrap().into_iter().map(|(line, _)| line).collect();
+        assert_eq!(lines, [2, 2, 2, 3, 4, 5, 6, 6, 6, 7]);
+        // The statements are the same: the place is still a list of whole
+        // objects, linked pass by pass with the library member after the
+        // import table.
+        let bss = parse_bss("overlay\tbss\n3a5\t.bss ALIGN(16)\n").unwrap();
+        let fragment = |name: &str, text: &str| (name.to_owned(), text.to_owned());
+        assert_eq!(
+            overlay_fragments(&rows, &bss, "3a5", "en").unwrap(),
+            [
+                fragment("extern", "EXTERN(_call_via_r0)\n"),
+                fragment(
+                    "text",
+                    "    \"*/games/g/sabaku/entry.o\"(.text .padding)\n\
+                     \x20   \"*/games/g/sabaku/sabaku.o\"(.text .padding)\n\
+                     \x20   \"*/games/g/sabaku/import.o\"(.text .padding)\n\
+                     \x20   \"*libgcc.a:_call_via_rX.o\"(.text .padding)\n\
+                     \x20   \"*/games/g/graphics/sand.o\"(.text .padding)\n\
+                     \x20   \"*/games/g/sabaku/entry.o\"(.rodata)\n\
+                     \x20   \"*/games/g/sabaku/sabaku.o\"(.rodata)\n\
+                     \x20   \"*/games/g/sabaku/import.o\"(.rodata)\n\
+                     \x20   \"*libgcc.a:_call_via_rX.o\"(.rodata)\n\
+                     \x20   \"*/games/g/graphics/sand.o\"(.rodata)\n\
+                     \x20   \"*/games/g/sabaku/entry.o\"(.data .overlays)\n\
+                     \x20   \"*/games/g/sabaku/sabaku.o\"(.data .overlays)\n\
+                     \x20   \"*/games/g/sabaku/import.o\"(.data .overlays)\n\
+                     \x20   \"*libgcc.a:_call_via_rX.o\"(.data .overlays)\n\
+                     \x20   \"*/games/g/graphics/sand.o\"(.data .overlays)\n"
+                ),
+                fragment("bss", "    .bss ALIGN(16) :\n    {\n    \"*/resource_3a5_overlay.o\"(.bss)\n    }\n"),
+                fragment("discard", ""),
+            ]
+        );
+        // A unit row's editions are its three rows'.
+        let all = ".text .rodata .data .padding";
+        assert_eq!(
+            render(&rows, "3ae", "ja")[0].1,
+            format!("    \"*/games/g/torebi/entry.o\"({all})\n    \"*/games/g/torebi/torebi.o\"({all})\n    \"*/games/g/torebi/import.o\"({all})\n")
+        );
+        assert_eq!(render(&rows, "3ae", "en")[0].1, "    \"*/games/g/torebi/late.o\"(.text)\n");
+        // Written back, three rows that are one are its unit row again.
+        assert_eq!(format(&rows), written);
+        assert_eq!(format(&parse(&explicit).unwrap()), written);
+    }
+
+    #[test]
+    fn only_three_whole_rows_of_one_overlay_folder_are_a_unit() {
+        let kept = |rows: &str| {
+            let text = list(rows);
+            assert_eq!(format(&parse(&text).unwrap()), text);
+        };
+        // The main image has no units.
+        kept("main\trom_start\tgames/g/a/entry\nmain\trom_start\tgames/g/a/a\nmain\trom_start\tgames/g/a/import\n");
+        // An edition that leaves one of the three out.
+        kept("3ad\ttext\tgames/g/a/entry\n3ad\ttext\tgames/g/a/a\n3ad\ttext\tgames/g/a/import\t\tja\n");
+        // One of the three placed by its sections.
+        kept("3ad\ttext\tgames/g/a/entry\n3ad\ttext\tgames/g/a/a\t.text .rodata\n3ad\ttext\tgames/g/a/import\n");
+        // Tables of another folder, an object between, another overlay's.
+        kept("3ad\ttext\tgames/g/b/entry\n3ad\ttext\tgames/g/a/a\n3ad\ttext\tgames/g/a/import\n");
+        kept("3ad\ttext\tgames/g/a/entry\n3ad\ttext\tgames/g/a/a\n3ad\ttext\tgames/g/a/b\n3ad\ttext\tgames/g/a/import\n");
+        kept("3ad\ttext\tgames/g/a/entry\n3ad\ttext\tgames/g/a/a\n3ae\ttext\tgames/g/a/import\n");
+        // A library member is no unit, and the tables are not each other's.
+        kept("3ad\ttext\tgames/g/entry\n3ad\ttext\tgames/g/libgcc.a:_call_via_rX\n3ad\ttext\tgames/g/import\n");
+        kept("3ad\ttext\tgames/g/a/entry\n3ad\ttext\tgames/g/a/entry\t.rodata.late\n3ad\ttext\tgames/g/a/import\n");
+        // A unit after an entry table of its own is still found.
+        let late = list("3ad\ttext\tgames/g/a/entry\t.text.first\n3ad\tunit\tgames/g/a/a\n");
+        assert_eq!(parse(&late).unwrap().len(), 4);
+        kept(late.strip_prefix(&list("")).unwrap());
+
+        let refused = |rows: &str| parse(&list(rows)).unwrap_err();
+        assert!(refused("main\tunit\tgames/g/a/a\n").contains("line 2: a unit row is an overlay's"));
+        assert!(refused("3ad\tunit\tgames/g/a/a\t.text\n").contains("names no sections"));
+        assert!(refused("3ad\tunit\tgames/g/a/a\t.text .rodata .data .padding\n").contains("names no sections"));
+        for object in ["a", "libgcc.a:_call_via_rX", "games/g/libgcc.a:_call_via_rX", "*", "games/g/a/entry", "games/g/a/import", "games/g/a/"] {
+            let error = refused(&format!("3ad\tunit\t{object}\n"));
+            assert!(error.contains("is not an object of a folder") || error.contains("is not a path"), "{object}: {error}");
+        }
+        assert!(refused("3ad\tunits\tgames/g/a/a\n").contains("not one of an overlay's: text bss discard, or unit"));
+        // The editions of a unit row are read as any row's.
+        assert!(refused("3ad\tunit\tgames/g/a/a\t\ten ja\n").contains("order"));
     }
 
     #[test]
@@ -1290,6 +1514,25 @@ mod tests {
         let summary = run(root).unwrap();
         assert!(summary.contains("games/tbs/objects.tsv"), "{summary}");
         let text = fs::read_to_string(root.join("games/tbs/objects.tsv")).unwrap();
-        assert_eq!(format(&parse(&text).unwrap()), text);
+        let rows = parse(&text).unwrap();
+        assert_eq!(format(&rows), text);
+        // Every overlay's unit row written out as its three rows is the same
+        // list: the same fragments for every image and edition.
+        let explicit = written_out(&text);
+        assert!(explicit.lines().count() > text.lines().count(), "the list has unit rows");
+        let rows_written_out = parse(&explicit).unwrap();
+        assert_eq!(rows, rows_written_out);
+        let bss = read_bss(root, target_for(TARGET_IDS[0])).unwrap();
+        for image in images(&rows) {
+            for language in LANGUAGES {
+                assert_eq!(render(&rows, &image, language), render(&rows_written_out, &image, language));
+                if image != MAIN {
+                    assert_eq!(
+                        overlay_fragments(&rows, &bss, &image, language),
+                        overlay_fragments(&rows_written_out, &bss, &image, language)
+                    );
+                }
+            }
+        }
     }
 }

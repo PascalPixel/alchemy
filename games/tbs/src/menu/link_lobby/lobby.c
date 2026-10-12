@@ -4,6 +4,7 @@
 #include "unit/battle/battle.h"
 #include "unit/field/common/script/field.h"
 #include "unit/game/character/chara.h"
+#include "unit/game/character/chara2.h"
 #include "unit/game/character/chara3.h"
 #include "unit/game/character/chara4.h"
 #include "unit/game/character/chara5.h"

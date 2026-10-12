@@ -1,5 +1,6 @@
 #include "unit/game/character/starteq.h"
 #include "unit/game/character/chara.h"
+#include "unit/game/character/chara2.h"
 #include "unit/game/character/chara3.h"
 #include "unit/game/character/chara4.h"
 #include "unit/game/character/chara5.h"

@@ -4491,15 +4491,15 @@ void UiWork_DrainPending(s32 unused)
 	}
 
 	// 直接開いたウィンドウ
-	goto win_test;
-win_loop:
-	if (win->flags != 0)
-		UiWork_Finalize(win, 0);
-	win++;
-	i++;
-win_test:
-	if (i != WINDOW_COUNT)
-		goto win_loop;
+	for (;;)
+	{
+		if (i == WINDOW_COUNT)
+			break;
+		if (win->flags != 0)
+			UiWork_Finalize(win, 0);
+		win++;
+		i++;
+	}
 }
 
 //--------------------------------------------------------------------------

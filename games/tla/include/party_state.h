@@ -22,7 +22,8 @@ struct PartyState {
     s16 special;
     u8 unknown_1f8[2];
     s16 map;
-    u8 unknown_1fc[0x14];
+    u8 unknown_1fc[0x12];
+    s16 scene_cue;
     s16 cue;
     u8 render_mode;
     u8 unknown_213;

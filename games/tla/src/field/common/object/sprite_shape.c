@@ -47,7 +47,7 @@ void Object_ReturnHome(s32 mode, u32 object_id, s32 flag)
     if (mode == 2) {
         GameFlag_SetBit(flag);
         if (object->x != 0)
-            Func_080cee80(object_id);
+            Object_SetSquareSprite(object_id);
         object->x = object->home_x << 16;
         object->z = object->home_z << 16;
         Func_080e70f8(object_id);

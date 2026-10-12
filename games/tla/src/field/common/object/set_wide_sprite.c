@@ -31,3 +31,22 @@ void Object_SetWideSprite(u32 object_id, s32 mode)
     sprite->attr0_high = (sprite->attr0_high & 0x3f) | 0x40;
     sprite->attr1_high &= 0x3f;
 }
+
+void Object_SetSquareSprite(u32 object_id)
+{
+    struct ObjectRuntime *object;
+    struct ObjectSprite *sprite;
+
+    object = ObjectTable_Get(object_id);
+    if (object == 0)
+        return;
+    sprite = object->animation;
+    if (sprite == 0)
+        return;
+    /* FAKEMATCH: the one-pass block reads the shape byte before the offset's 8 is built; written plainly the 8 is built first (differ 2). */
+    do {
+        sprite->y_offset = 8;
+        sprite->attr0_high &= 0x3f;
+    } while (0);
+    sprite->attr1_high = (sprite->attr1_high & 0x3f) | 0x40;
+}

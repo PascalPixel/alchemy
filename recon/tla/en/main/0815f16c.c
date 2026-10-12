@@ -243,7 +243,7 @@ void Func_08158ce0(s32, s32);
 void Func_0815b434(void *, s32, s32);
 void EffectPosition_ApplyBaseAndYOffset(void *, s32 *);
 void EffectPosition_ApplyStepAndYOffset(s32, s32 *);
-void Func_0815f000(s32, s32, s32, s32, s32, s32);
+void BattleFx_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0815f0a0(s32);
 void Graphics_PackTileRows(void *, void *, s32, s32);
 void Func_0818caa8(void *, s32, s32, s32);
@@ -1490,7 +1490,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 if (frame == 13) {
                     Func_081c0010(134);
                     work->unk77a8 = 8;
-                    Func_0815f000(action->actor, 1, 0x20000, 0x80000, 0x30000, 150);
+                    BattleFx_StartActorMotion(action->actor, 1, 0x20000, 0x80000, 0x30000, 150);
                     p = SPARKS;
                     tbl = Data_081977f8;
                     for (i = 0; i != 16; i++, p++) {
@@ -1532,7 +1532,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 }
             }
             if (frame == 14) {
-                Func_0815f000(action->actor, 1, 0x20000, 0x80000, 0x30000, 150);
+                BattleFx_StartActorMotion(action->actor, 1, 0x20000, 0x80000, 0x30000, 150);
                 Func_081c0010(134);
                 work->unk77a8 = 8;
             }
@@ -2024,7 +2024,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                 }
             }
             if (frame == 24) {
-                Func_0815f000(action->actor, 1, 0, 0, 0x90000, 100);
+                BattleFx_StartActorMotion(action->actor, 1, 0, 0, 0x90000, 100);
                 Func_0814cd48(action->actor, 7, 5, 0, 4);
                 Func_081180e8(134);
                 work->unk77a8 = 8;

@@ -256,7 +256,7 @@ Func_08189b14:
 	movs r1, #1
 	movs r3, #0
 	movs r2, #0
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	ldr r4, [sp, #52]
 	movs r1, #7
 	movs r3, #36

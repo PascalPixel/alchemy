@@ -4257,7 +4257,10 @@ Func_0815e3ac:
 	.type Func_0815e9f4, %function
 	.thumb_func
 Func_0815e9f4:
-	.incbin "baserom.gba", 0x0015e9f4, 0x00000778
+	.incbin "baserom.gba", 0x0015e9f4, 0x0000060c
+	.section .rom.0015f0a0, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0015f0a0, 0x000000cc
 	.global Func_0815f16c
 	.type Func_0815f16c, %function
 	.thumb_func

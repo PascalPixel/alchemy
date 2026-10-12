@@ -1576,6 +1576,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0015e22c)
     "*/games/tla/src/field/common/effect/fxdisp.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0015e3ac)
+    "*/games/tla/src/battle/effect/actmove.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.0015f0a0)
     "*/games/tla/src/battle/effect/m8163c00.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00163c2c)
     "*/games/common/src/graphics/palette/particle_stream_modes.o"(.text)

@@ -2084,7 +2084,7 @@
         "*/games/tla/src/field/common/effect/fxdisp.o"(.text)
         "*/recon/tla/raw/0815e3ac.o"(.text)
         "*/recon/tla/raw/0815e9f4.o"(.text)
-        "*/recon/tla/raw/0815f000.o"(.text)
+        "*/games/tla/src/battle/effect/actmove.o"(.text)
         "*/recon/tla/raw/0815f0a0.o"(.text)
         "*/recon/tla/raw/0815f16c.o"(.text)
         "*/recon/tla/raw/081638d0.o"(.text)

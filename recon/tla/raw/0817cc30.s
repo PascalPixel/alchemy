@@ -159,7 +159,7 @@ Func_0817cc30:
 	movs r1, #1
 	movs r2, #0
 	movs r3, #0
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 .L_0817cd7c:
 	mov r2, r11
 	cmp r2, #38

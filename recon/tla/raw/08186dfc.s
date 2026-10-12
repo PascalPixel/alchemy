@@ -2667,7 +2667,7 @@ Func_08186dfc:
 	adds r2, r6, #0
 	lsls r3, r3, #12
 	str r6, [sp, #0]
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	ldr r4, [sp, #100]
 	movs r3, #16
 	ldrsh r0, [r5, r4]
@@ -2721,7 +2721,7 @@ Func_08186dfc:
 	movs r1, #1
 	adds r2, r6, #0
 	str r6, [sp, #0]
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	ldr r2, [sp, #100]
 	movs r1, #7
 	ldrsh r0, [r5, r2]
@@ -2769,7 +2769,7 @@ Func_08186dfc:
 	adds r2, r6, #0
 	lsls r3, r3, #12
 	str r6, [sp, #0]
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	ldr r4, [sp, #100]
 	movs r3, #16
 	ldrsh r0, [r5, r4]

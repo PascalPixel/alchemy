@@ -171,7 +171,7 @@ Func_0817b66c:
 	movs r1, #1
 	movs r2, #0
 	movs r3, #0
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 .L_0817b7ce:
 	adds r7, #1
 	adds r5, #6
@@ -208,7 +208,7 @@ Func_0817b66c:
 	movs r1, #1
 	movs r2, #0
 	movs r3, #0
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 .L_0817b81c:
 	movs r0, #32
 	bl Runtime_BumpAllocateAlternatePool

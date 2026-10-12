@@ -170,7 +170,7 @@ void ResourceObject_ReleaseFar(Sprite *);
 s32 Func_080143e0(s32);
 void PaletteDma_LoadBlock(void);
 void Func_08152404(s32, s32, s32);
-void Func_0815f000(s32, s32, s32, s32, s32, s32);
+void BattleFx_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0814cd48(s32, s32, s32, s32, s32);
 void Func_08158ce0(s32, s32);
 void Func_08143bb8(void);
@@ -999,7 +999,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                     }
                     Func_081c0010(144);
                     for (j = 0; j < arg->count; j++) {
-                        Func_0815f000(arg->actors[j], 1, 0, 0, 0x20000, 100);
+                        BattleFx_StartActorMotion(arg->actors[j], 1, 0, 0, 0x20000, 100);
                         Func_0814cd48(arg->actors[j], 7, 5, j, 7);
                         work->shake = 4;
                     }

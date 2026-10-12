@@ -4078,11 +4078,6 @@ Func_0811a39c:
 	.incbin "baserom.gba", 0x0011a398, 0x000000b0
 	.section .rom.0011a4da, "ax"
 	.incbin "baserom.gba", 0x0011a4da, 0x0000011e
-	.global BattleMotion_ReleaseObjectSlotByValue
-	.type BattleMotion_ReleaseObjectSlotByValue, %function
-	.thumb_func
-BattleMotion_ReleaseObjectSlotByValue:
-	.incbin "baserom.gba", 0x0011a5f8, 0x00000044
 	.section .rom.0011a670, "ax"
 	.incbin "baserom.gba", 0x0011a670, 0x00000af8
 	.section .rom.0011b17c, "ax"

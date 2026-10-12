@@ -291,132 +291,6 @@ Func_02000398:
 	.4byte gPartyState
 .L_02008424:
 	.4byte MsgAreThereOther
-	.section .text.x020084a8,"ax",%progbits
-	.global Func_020004a8
-	.thumb_func
-Func_020004a8:
-	push {r5, r6, lr}
-	ldr r3, .L_02008534
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r6, r3, r2
-	ldr r0, [r6]
-	sub sp, #12
-	bl Object_GetById
-	movs r3, #49
-	movs r2, #71
-	movs r1, #2
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	str r1, [sp, #8]
-	adds r5, r0, #0
-	movs r1, #64
-	movs r0, #59
-	movs r2, #4
-	movs r3, #3
-	bl Func_02001d44
-	movs r0, #240
-	lsls r0, r0, #4
-	adds r0, #187
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_0200852e
-	movs r1, #202
-	movs r2, #147
-	movs r0, #69
-	lsls r1, r1, #18
-	lsls r2, r2, #19
-	bl Func_02001c2c
-	ldr r3, [r5, #8]
-	asrs r3, r3, #20
-	cmp r3, #50
-	bne .L_0200852e
-	ldr r3, [r5, #16]
-	asrs r3, r3, #20
-	cmp r3, #73
-	bne .L_0200852e
-	bl Func_02001bcc
-	movs r0, #0
-	bl Func_02001d04
-	movs r1, #129
-	ldr r0, [r6]
-	lsls r1, r1, #1
-	bl Func_02001cac
-	ldr r0, [r6]
-	movs r1, #16
-	movs r2, #0
-	bl ObjectMotion_OffsetPositionAndResetMotion
-	movs r3, #192
-	lsls r3, r3, #11
-	str r3, [r5, #40]
-	ldr r0, [r6]
-	bl ObjectMotion_CommitCurrentPositionAndActivate
-	bl Func_02001bd4
-.L_0200852e:
-	add sp, #12
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_02008534:
-	.4byte gPartyState
-	.section .text.x02008538,"ax",%progbits
-	.global Func_02000538
-	.thumb_func
-Func_02000538:
-	push {lr}
-	bl Func_02001d74
-	ldr r0, .L_02008558
-	movs r1, #2
-	bl Func_02001ccc
-	ldr r3, .L_0200855c
-	movs r2, #128
-	lsls r2, r2, #2
-	adds r2, #194
-	adds r3, r3, r2
-	movs r2, #2
-	strb r2, [r3]
-	pop {pc}
-	.2byte 0x0000
-.L_02008558:
-	.4byte 0x000000ca
-.L_0200855c:
-	.4byte gPartyState
-	.section .text.x02008560,"ax",%progbits
-	.global Func_02000560
-	.thumb_func
-Func_02000560:
-	push {r5, r6, r7, lr}
-	movs r0, #144
-	lsls r0, r0, #4
-	movs r5, #214
-	movs r7, #254
-	lsls r5, r5, #18
-	lsls r7, r7, #18
-	adds r0, #99
-	bl GameFlag_SetBit
-	adds r1, r7, #0
-	adds r0, r5, #0
-	movs r2, #0
-	bl Func_02001d5c
-	movs r6, #64
-	adds r1, r7, #0
-	adds r3, r0, #0
-	movs r7, #129
-	orrs r3, r6
-	lsls r7, r7, #19
-	adds r0, r5, #0
-	movs r2, #0
-	bl Func_02001d64
-	adds r1, r7, #0
-	adds r0, r5, #0
-	movs r2, #0
-	bl Func_02001d5c
-	adds r3, r0, #0
-	orrs r3, r6
-	adds r0, r5, #0
-	adds r1, r7, #0
-	movs r2, #0
-	bl Func_02001d64
-	pop {r5, r6, r7, pc}
 	.section .text.x0200862c,"ax",%progbits
 	.balign 4
 	.global Func_0200062c
@@ -715,46 +589,6 @@ Func_0200062c:
 	.4byte MsgAreYouKids
 .L_020088e4:
 	.4byte MsgWhatSThe
-	.section .text.x020088e8,"ax",%progbits
-	.global Func_020008e8
-	.thumb_func
-Func_020008e8:
-	push {lr}
-	ldr r3, .L_0200892c
-	movs r1, #133
-	lsls r1, r1, #2
-	adds r3, r3, r1
-	ldr r0, [r3]
-	bl Object_GetById
-	ldr r3, [r0, #12]
-	movs r2, #180
-	lsls r2, r2, #15
-	cmp r3, r2
-	bge .L_02008918
-	ldr r0, .L_02008930
-	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
-	movs r0, #126
-	bl Func_02001d7c
-	movs r0, #1
-	bl Func_02001bb4
-	b .L_02008928
-.L_02008918:
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r1, #173
-	lsls r1, r1, #1
-	adds r2, r3, r1
-	movs r3, #1
-	strh r3, [r2]
-.L_02008928:
-	pop {pc}
-	.2byte 0x0000
-.L_0200892c:
-	.4byte gPartyState
-.L_02008930:
-	.4byte MsgAndTheOthers
 	.section .text.x02008934,"ax",%progbits
 	.global Func_02000934
 	.thumb_func
@@ -1069,24 +903,6 @@ Func_02000b28:
 	.4byte Data_020025a0
 .L_02008bb8:
 	.4byte gFrameCount
-	.section .text.x02008bbc,"ax",%progbits
-	.global Func_02000bbc
-	.thumb_func
-Func_02000bbc:
-	push {lr}
-	movs r1, #144
-	lsls r1, r1, #3
-	ldr r0, .L_02008bd4
-	bl Scheduler_AddOrUpdateCallback
-	movs r1, #200
-	lsls r1, r1, #4
-	ldr r0, .L_02008bd8
-	bl Scheduler_AddOrUpdateCallback
-	pop {pc}
-.L_02008bd4:
-	.4byte Func_02000b28
-.L_02008bd8:
-	.4byte Func_02000ad8
 	.section .text.x02008bdc,"ax",%progbits
 	.global Func_02000bdc
 	.thumb_func
@@ -2698,13 +2514,6 @@ Func_02001160:
 	.4byte 0x00013333
 .L_02009b38:
 	.4byte gPartyState
-	.section .text.x02009b3c,"ax",%progbits
-	.global Func_02001b3c
-	.thumb_func
-Func_02001b3c:
-	push {lr}
-	bl Func_02001d6c
-	pop {pc}
 	.section .bss,"aw",%nobits
 	.global Data_02002590
 Data_02002590:

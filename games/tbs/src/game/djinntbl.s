@@ -3,4 +3,4 @@
 @ ジン 4 属性 x 20
 	.global Djinn_DefinitionTable
 Djinn_DefinitionTable:
-	.incbin "game/djinn/djinn.table"
+	.incbin "game/djinn.table"

@@ -2,4 +2,4 @@
 @ 技 519 個
 	.global BattleAction_DefinitionTable
 BattleAction_DefinitionTable:
-	.incbin "game/inventory/actions.table"
+	.incbin "game/actions.table"

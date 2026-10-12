@@ -1,5 +1,6 @@
 kind	count
 cast-macro	7
-extern	265
+extern	264
 prototype	59
 second-declaration	31
+undeclared	2

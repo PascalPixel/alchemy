@@ -189,9 +189,14 @@ type Wording<'a> = (String, &'a [String], &'a str);
 /// The header's text for the entries of one C file and the names it
 /// declares, or none when the file defines nothing for other code.
 /// `problems` takes what it could not say; such a name is left out.
-/// `existing` is the header as it stands: the types it holds stay.
+/// `existing` is the header as it stands: the types it holds stay, and so
+/// does each comment that leaves a function out, in the prototype's place.
 pub(crate) fn header(path: &str, text: &str, existing: Option<&str>, entries: &[Entry], types: &Types, problems: &mut Vec<String>) -> Option<(String, BTreeSet<String>)> {
     let held: Vec<&str> = existing.map(held).unwrap_or_default();
+    // A function the header leaves out, under the comment that says it is
+    // called with no prototype in scope, stays out: the comment is kept
+    // where the prototype would stand.
+    let out: BTreeSet<&str> = existing.map(super::undeclared::left_out).unwrap_or_default().into_iter().map(|(name, _, _)| name).collect();
     // Each name once, at its first definition, with every wording it has.
     let mut order: Vec<&str> = Vec::new();
     let mut wordings: BTreeMap<&str, Vec<Wording>> = BTreeMap::new();
@@ -233,6 +238,10 @@ pub(crate) fn header(path: &str, text: &str, existing: Option<&str>, entries: &[
     own_types.tags.extend(held_types.tags);
     'names: for name in order {
         let list = &wordings[name];
+        if out.contains(name) && list.iter().all(|(declaration, _, _)| !declaration.starts_with("extern ")) {
+            lines.push((String::new(), super::undeclared::comment(name)));
+            continue;
+        }
         let mut own = (Vec::new(), Vec::new(), Vec::new());
         for (declaration, conditions, signature) in list {
             let condition = if list.len() == 1 { String::new() } else { conditions.join(" && ") };
@@ -365,6 +374,27 @@ mod tests {
             text,
             "#ifndef ALCHEMY_UNIT_A_H\n#define ALCHEMY_UNIT_A_H\n\n#include \"types.h\"\n#include \"objdisp.h\"\n\ntypedef struct Record\n{\n\ts32 x;\n\tHandle h;\n} Record;\n\ns32 Copy(Record *record);\n\n#endif\n"
         );
+    }
+
+    #[test]
+    fn a_header_keeps_the_comment_of_a_function_it_leaves_out() {
+        let source = "void Run(void)\n{\n}\nvoid Late(s32 a)\n{\n}\nu8 gCount = 1;\n";
+        let said = |name: &str| format!("/* {name} is called before its definition with no prototype in scope. */\n");
+        let head = "#ifndef ALCHEMY_UNIT_A_H\n#define ALCHEMY_UNIT_A_H\n\n#include \"types.h\"\n\nvoid Run(void);\n";
+        // The comment of a function the file no longer defines goes, and
+        // an object is declared whatever a comment says.
+        let existing = format!("{head}{}{}{}extern u8 gCount;\n\n#endif\n", said("Late"), said("Gone"), said("gCount"));
+        let mut problems = Vec::new();
+        let (text, names) = header("games/tbs/include/unit/a.h", source, Some(&existing), &entries(source), &types(), &mut problems).unwrap();
+        assert_eq!(problems, Vec::<String>::new());
+        assert_eq!(names.iter().map(String::as_str).collect::<Vec<_>>(), ["Run", "gCount"]);
+        assert_eq!(text, format!("{head}{}extern u8 gCount;\n\n#endif\n", said("Late")));
+        // The header it wrote is the header it writes again.
+        assert_eq!(header("games/tbs/include/unit/a.h", source, Some(&text), &entries(source), &types(), &mut problems).unwrap().0, text);
+        // With no comment the function is declared.
+        let (text, names) = header("games/tbs/include/unit/a.h", source, None, &entries(source), &types(), &mut problems).unwrap();
+        assert_eq!(names.iter().map(String::as_str).collect::<Vec<_>>(), ["Late", "Run", "gCount"]);
+        assert_eq!(text, format!("{head}void Late(s32 a);\nextern u8 gCount;\n\n#endif\n"));
     }
 
     #[test]

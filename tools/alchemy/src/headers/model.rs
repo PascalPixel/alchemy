@@ -283,6 +283,30 @@ impl Model {
 }
 
 #[cfg(test)]
+impl Model {
+    /// A model of these files for a test: each unit with the files it
+    /// reaches, in order; a unit under `main/` is the main image's.
+    pub(crate) fn of(files: &[(&str, &str)], units: &[(&str, &[&str])]) -> Model {
+        let mut model = Model::default();
+        for (file, text) in files {
+            model.entries.insert(file.to_string(), entries(text));
+            model.text.insert(file.to_string(), text.to_string());
+        }
+        for (unit, reach) in units {
+            model.units.push(unit.to_string());
+            if unit.contains("/main/") {
+                model.main.insert(unit.to_string());
+            }
+            model.reach.insert(unit.to_string(), reach.iter().map(|file| file.to_string()).collect());
+        }
+        let reached: BTreeSet<&str> = units.iter().flat_map(|(_, reach)| reach.iter().copied()).collect();
+        model.fragments = reached.iter().filter(|file| file.ends_with(".c")).map(|file| file.to_string()).collect();
+        model.headers = reached.iter().filter(|file| file.ends_with(".h")).map(|file| file.to_string()).collect();
+        model
+    }
+}
+
+#[cfg(test)]
 mod tests {
     use super::*;
 

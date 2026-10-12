@@ -110,6 +110,13 @@ impl Bench {
     pub(crate) fn build(&self, root: &Path, file: &str, text: &str) -> Built {
         self.compilers.iter().map(|compiler| compiler.object(root, &root.join(file), text).and_then(|bytes| parts(&bytes))).collect()
     }
+
+    /// The parts of this text in place of the file, compiled among other
+    /// files of the tree read as the texts given (path under the root,
+    /// text), in every edition. Nothing in the tree is written.
+    pub(crate) fn build_among(&self, root: &Path, file: &str, text: &str, others: &[(String, String)]) -> Built {
+        self.compilers.iter().map(|compiler| compiler.object_among(root, &root.join(file), text, others).and_then(|bytes| parts(&bytes))).collect()
+    }
 }
 
 /// The names whose part differs between two builds in any edition; an

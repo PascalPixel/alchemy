@@ -20,6 +20,8 @@ pub(crate) struct Sight {
     pub how: How,
     /// The declaration in sight, as a shape; none is an implicit one.
     pub seen: Option<String>,
+    /// Whether the name's own definition stands above this use.
+    pub defined: bool,
 }
 
 #[derive(Default)]
@@ -85,6 +87,8 @@ pub(crate) fn read(root: &str, text: &str, unit: &str, wanted: &dyn Fn(&str) -> 
     }
     let mask = crate::camelotize::source::mask(text);
     let mut global: HashMap<String, String> = HashMap::new();
+    // The functions whose bodies the text has reached, their own included.
+    let mut bodied: BTreeSet<String> = BTreeSet::new();
     // A later declaration adds to an earlier one only a parameter list.
     let declare = |global: &mut HashMap<String, String>, name: &str, new: String| match global.get_mut(name) {
         Some(old) if is_function(old) && is_function(&new) && !prototyped(old) && prototyped(&new) => *old = new,
@@ -121,6 +125,7 @@ pub(crate) fn read(root: &str, text: &str, unit: &str, wanted: &dyn Fn(&str) -> 
                     continue;
                 };
                 declare(&mut global, &body.name, shape(&body.signature, &body.name));
+                bodied.insert(body.name.clone());
                 if body.local {
                     out.hidden.insert(body.name.clone());
                 } else {
@@ -137,7 +142,8 @@ pub(crate) fn read(root: &str, text: &str, unit: &str, wanted: &dyn Fn(&str) -> 
                         .map(|l| shape(&l.signature, &l.name));
                     let seen = local.or_else(|| global.get(&used.name).cloned());
                     let (file, line) = origin(used.at);
-                    out.sights.push(Sight { file, line, function: body.name.clone(), open: open.clone(), name: used.name.clone(), how: used.how.clone(), seen });
+                    let defined = bodied.contains(&used.name);
+                    out.sights.push(Sight { file, line, function: body.name.clone(), open: open.clone(), name: used.name.clone(), how: used.how.clone(), seen, defined });
                 }
             }
             _ => {}
@@ -307,6 +313,14 @@ mod tests {
         assert_eq!(found.sights[0].open, ("games/tbs/src/a.c".to_string(), 7));
         assert!(found.active["games/tbs/src/a.c"].contains(&9) && !found.active["games/tbs/src/a.c"].contains(&11));
         assert!(found.active.contains_key("games/tbs/include/h.h"));
+    }
+
+    #[test]
+    fn a_use_knows_whether_its_definition_stands_above() {
+        let text = "# 1 \"games/tbs/src/a.c\"\nvoid Run(void)\n{\n\tLate(1); Run();\n}\nvoid Late(s32 a)\n{\n}\nvoid After(void)\n{\n\tLate(2); Far();\n}\n";
+        let found = read("/root", text, "games/tbs/src/a.c", &|name| ["Run", "Late", "Far"].contains(&name));
+        let seen: Vec<(&str, usize, bool)> = found.sights.iter().map(|sight| (sight.name.as_str(), sight.line, sight.defined)).collect();
+        assert_eq!(seen, [("Late", 3, false), ("Run", 3, true), ("Late", 10, true), ("Far", 10, false)]);
     }
 
     #[test]

@@ -1154,7 +1154,6 @@ static void SceneState_UpdateZoneFlagsFromActorZero(void)
 	struct FieldActor *obj;
 	s32				   x;
 	s32				   cx;
-	s32				   y;
 	s32				   r;
 	s32				   g;
 	s32				   h;
@@ -1165,22 +1164,17 @@ static void SceneState_UpdateZoneFlagsFromActorZero(void)
 	cx = x >> 19;
 	g = 0x200;
 	h = 0x201;
-	if ((u32)(cx - 24) > 7)
+	if ((u32)(cx - 24) <= 7 || ((u32)((obj->z.fixed >> 19) - 36) <= 9 && (u32)(cx - 22) <= 9))
 	{
-		y = obj->z.fixed;
-		if ((u32)((y >> 19) - 36) > 9 || (u32)(cx - 22) > 9)
-			goto rest;
-	}
-	r = Engine_GameFlagIsSet(g);
-	if (r != 0)
+		r = Engine_GameFlagIsSet(g);
+		if (r != 0)
+			return;
+		((State *)gMapWork[0])->unk17 = r;
+		((void (*)(s32))Engine_GameFlagSet)(g);
+		Engine_GameFlagClear(h);
 		return;
-	((State *)gMapWork[0])->unk17 = r;
-	((void (*)(s32))Engine_GameFlagSet)(g);
-	Engine_GameFlagClear(h);
-	return;
-
-rest:
-	if (x > 0xE80000 && obj->y.fixed > 0x1E0000 && y > 0xD40000)
+	}
+	if (x > 0xE80000 && obj->y.fixed > 0x1E0000 && obj->z.fixed > 0xD40000)
 	{
 		st = gMapWork[0];
 		st->unk17 = 0;
@@ -1478,32 +1472,29 @@ static void StagedActor_RunHeadingProbeStep(void)
 		Engine_ObjectCommitPosition(subject);
 		subject->update = (void (*)(union FieldObject *))SceneActor_TurnTowardTableAngle;
 
-		goto advanceProbe;
-	continueProbe:
-		if (Map_GetTerrainHeight(*p, probe.x, probe.z) - subject->y.fixed > 0x80000)
+		for (;;)
 		{
-			goto finishProbe;
-		}
-		x = probe.x;
-		z = probe.z;
-		subject->speed = 0x20000;
-		subject->acceleration = 0x1999;
-		Engine_ObjectSetPosition(subject, probe.x, probe.y, probe.z);
-		Engine_ObjectCommitPosition(subject);
-		if (marker != goal)
-		{
-			goto blocked;
-		}
-
-	advanceProbe:
-		FieldVector_AddPolarOffset(0x100000, heading, &probe);
-		marker = GetMapCellCollision(*p, probe.x, probe.z);
-		if (marker != 255)
-		{
-			goto continueProbe;
+			FieldVector_AddPolarOffset(0x100000, heading, &probe);
+			if ((marker = GetMapCellCollision(*p, probe.x, probe.z)) == 255)
+			{
+				break;
+			}
+			if (Map_GetTerrainHeight(*p, probe.x, probe.z) - subject->y.fixed > 0x80000)
+			{
+				break;
+			}
+			x = probe.x;
+			z = probe.z;
+			subject->speed = 0x20000;
+			subject->acceleration = 0x1999;
+			Engine_ObjectSetPosition(subject, probe.x, probe.y, probe.z);
+			Engine_ObjectCommitPosition(subject);
+			if (marker != goal)
+			{
+				goto blocked;
+			}
 		}
 
-	finishProbe:
 		subject->speed = 0x20000;
 		subject->acceleration = 0x10000;
 		Engine_ObjectSetPosition(subject, x, subject->y.fixed, z);

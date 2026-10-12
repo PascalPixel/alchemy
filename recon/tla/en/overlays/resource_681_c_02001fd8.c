@@ -1,22 +1,34 @@
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#include "ram_buffer.h"
 
-#include "call.h"
-s32 UiText_ShowPositionedMessageAndWait();
-s32 PartyInventory_FindOwner();
-extern u8 MsgCheckedTheAltar[];
+struct Ov681EventWork {
+    u8 unknown_000[0x15a];
+    u16 unknown_15a;
+};
+
+extern const u8 MsgCheckedTheAltar[];
+
+void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 position);
+s32 PartyInventory_FindOwner(s32 item);
 
 void Func_02001fd8(void)
 {
-    s32 t1;
+    const u8 *message = MsgCheckedTheAltar;
+    const u8 *next;
+    s32 owner;
 
-    Call2(UiText_ShowPositionedMessageAndWait, (s32)MsgCheckedTheAltar, 1);
-    t1 = Value1(PartyInventory_FindOwner, 0x1c3);
-    if (t1 != -1) {
-        Call2(UiText_ShowPositionedMessageAndWait, 0x22f7, 1);
-        FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x15a), u16, 0) = 1;
+    UiText_ShowPositionedMessageAndWait(message, 1);
+    owner = PartyInventory_FindOwner(451);
+    next = message + 2;
+    if (owner != -1) {
+        struct Ov681EventWork *work = Ram_HeapSlots->event_work;
+
+        /* FAKEMATCH: as overlay 680's Func_02000314, a one-pass block keeps the work pointer load before the message arguments (one reordered instruction, differ 2). */
+        do {
+        } while (0);
+        UiText_ShowPositionedMessageAndWait(next, 1);
+        work->unknown_15a = 1;
     } else {
-        Call2(UiText_ShowPositionedMessageAndWait, 0x22f7, 1);
+        UiText_ShowPositionedMessageAndWait(next, 1);
     }
 }
-

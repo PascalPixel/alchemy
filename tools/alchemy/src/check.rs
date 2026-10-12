@@ -1,7 +1,7 @@
 use std::process::ExitCode;
 
 mod aliases;
-mod hygiene;
+pub(crate) mod hygiene;
 mod layout;
 mod no_asm;
 mod publication;

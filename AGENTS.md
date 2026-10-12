@@ -295,7 +295,7 @@ or functions is exactly this cheating.
   `Transform_UpdateVertices`, which are compiled C around it. A layer that
   explains a habit of the whole game is source, not a device: the ☀️ scene
   script layer (inline helpers forwarding to the engine services in
-  `field_event.h`, `field_service.h` and `runpa_jo/jo.h`) matches every scene
+  `field_event.h`, `field_service.h` and `scene/runpa_jo.h`) matches every scene
   where direct calls break 642 functions (Pascal, 2026-10-05). So is the ☀️
   IWRAM call layer (one inline per resident routine in `iwram_call.h`,
   calling its checked fixed entry): 360 call sites match through it, and

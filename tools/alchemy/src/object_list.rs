@@ -11,11 +11,17 @@
 //! the languages that link the row, such as `ja en`). An object may take
 //! several rows: one for each place that takes some of its sections.
 //!
-//! An overlay begins with three objects of one folder: its entry table
-//! (`entry`), the object of its C file and its import table (`import`).
-//! One row says so: a row whose place is `unit` names the object between
-//! the two tables and stands for those three rows of the `text` place, each
-//! a whole object, for the row's editions. It names no sections. What an
+//! An overlay begins with three objects: its entry table, the object of its
+//! C file and its import table. One row says so: a row whose place is
+//! `unit` names the object DIR/NAME between the two tables and stands for
+//! those three rows of the `text` place, each a whole object, for the row's
+//! editions. The entry table is DIR/entry/NAME where the checkout has that
+//! assembler source and DIR/entry otherwise, and the import table is
+//! DIR/import/NAME or DIR/import the same way. So an overlay with a folder
+//! of its own keeps `entry.s` and `import.s` beside its C file
+//! (games/tbs/src/menu/title), and overlays whose C files share one folder
+//! (games/tbs/src/scene) keep their tables in its `entry` and `import`
+//! folders, each named as its C file. The row names no sections. What an
 //! overlay links besides (a library member, a picture, its `.bss`) has its
 //! own rows after it. The list is read as the rows it stands for, so every
 //! tool sees one row per statement, and it is written with a `unit` row
@@ -64,9 +70,11 @@ const EVERY: &str = "*";
 const OVERLAY_PLACES: [&str; 3] = [TEXT, "bss", "discard"];
 const TEXT: &str = "text";
 /// The place of a row that names an overlay's C object and stands for
-/// three rows of its text place: the entry table of the object's folder,
-/// the object, and that folder's import table.
+/// three rows of its text place: its entry table, the object, and its
+/// import table.
 const UNIT: &str = "unit";
+/// The two tables of a unit DIR/NAME: DIR/entry/NAME and DIR/import/NAME
+/// where the checkout has those sources, DIR/entry and DIR/import otherwise.
 const ENTRY: &str = "entry";
 const IMPORT: &str = "import";
 /// The archive member an overlay links to call through a register, and the
@@ -90,9 +98,11 @@ them. A place is an\n\
 output section (rom_start; text, bss and discard in an overlay), or the\n\
 span of one between two fixed placements, numbered from the section's start\n\
 (rom_main_00, rom_main_01 ...). An overlay's row of the place unit names\n\
-its C object and is three rows of its text place: the entry table of that\n\
-object's folder (entry), the object, and the folder's import table\n\
-(import). A game without a list is not checked.";
+its C object DIR/NAME and is three rows of its text place: its entry\n\
+table, the object, and its import table. The entry table is DIR/entry/NAME\n\
+where the checkout has that assembler source and DIR/entry otherwise; the\n\
+import table is DIR/import/NAME or DIR/import the same way. A game without\n\
+a list is not checked.";
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct Row {
@@ -138,13 +148,23 @@ fn language(name: &str) -> Result<&'static str, String> {
         .ok_or_else(|| format!("{name:?} is not one of {}", LANGUAGES.join(" ")))
 }
 
-pub(crate) fn parse(text: &str) -> Result<Vec<Row>, String> {
-    Ok(parse_lines(text)?.into_iter().map(|(_, row)| row).collect())
+/// The rows a list's text stands for, a unit row's tables found in the
+/// checkout at `root`.
+pub(crate) fn parse(root: &Path, text: &str) -> Result<Vec<Row>, String> {
+    Ok(parse_lines(text, &sourced_in(root))?.into_iter().map(|(_, row)| row).collect())
+}
+
+/// Whether the checkout has an assembler source for an object: how a unit
+/// row's tables are found.
+type Sourced<'a> = &'a dyn Fn(&str) -> bool;
+
+fn sourced_in(root: &Path) -> impl Fn(&str) -> bool + '_ {
+    move |object| root.join(format!("{object}.s")).is_file()
 }
 
 /// The rows a list's text stands for, each with the line it is written on:
 /// the three rows of a unit row share its line.
-fn parse_lines(text: &str) -> Result<Vec<(usize, Row)>, String> {
+fn parse_lines(text: &str, sourced: Sourced) -> Result<Vec<(usize, Row)>, String> {
     let mut lines = text.lines().enumerate();
     match lines.next() {
         Some((_, HEADER)) => {}
@@ -152,43 +172,69 @@ fn parse_lines(text: &str) -> Result<Vec<(usize, Row)>, String> {
     }
     let mut rows = Vec::new();
     for (index, line) in lines {
-        let written = row(line).and_then(unit_rows).map_err(|error| format!("line {}: {error}", index + 1))?;
+        let written =
+            row(line).and_then(|row| unit_rows(row, sourced)).map_err(|error| format!("line {}: {error}", index + 1))?;
         rows.extend(written.into_iter().map(|row| (index + 1, row)));
     }
     Ok(rows)
 }
 
-/// The folder of an object a unit row can name: an object the build makes,
-/// other than its folder's entry and import tables.
-fn unit_folder(object: &str) -> Option<&str> {
+/// The entry table and the import table of an object DIR/NAME a unit row
+/// can name: DIR/entry/NAME and DIR/import/NAME where the checkout has
+/// those sources, DIR/entry and DIR/import otherwise. An archive member is
+/// no unit, and neither is a folder's own table.
+fn unit_tables(object: &str, sourced: Sourced) -> Option<[String; 2]> {
     let (folder, name) = object.rsplit_once('/')?;
-    (!object.contains(':') && !matches!(name, "" | ENTRY | IMPORT)).then_some(folder)
+    if object.contains(':') || matches!(name, "" | ENTRY | IMPORT) {
+        return None;
+    }
+    Some([ENTRY, IMPORT].map(|table| {
+        let own = format!("{folder}/{table}/{name}");
+        if sourced(&own) {
+            own
+        } else {
+            format!("{folder}/{table}")
+        }
+    }))
 }
 
-/// The rows a written row stands for: itself, or for a unit row the entry
-/// table of the named object's folder, the object and the folder's import
-/// table, each a whole object of the text place.
-fn unit_rows(row: Row) -> Result<Vec<Row>, String> {
+/// The entry table and the import table of the unit an object of the
+/// checkout is, as a unit row finds them.
+pub(crate) fn tables(root: &Path, object: &str) -> Option<[String; 2]> {
+    unit_tables(object, &sourced_in(root))
+}
+
+/// Whether an object is an import table by its name: a folder's `import`,
+/// or one of the tables in a folder of that name.
+pub(crate) fn import_table(object: &str) -> bool {
+    let mut names = object.rsplit('/');
+    names.next() == Some(IMPORT) || names.next() == Some(IMPORT)
+}
+
+/// The rows a written row stands for: itself, or for a unit row the named
+/// object's entry table, the object and its import table, each a whole
+/// object of the text place.
+fn unit_rows(row: Row, sourced: Sourced) -> Result<Vec<Row>, String> {
     if row.place != UNIT {
         return Ok(vec![row]);
     }
-    let folder = unit_folder(&row.object).ok_or_else(|| {
-        format!("unit {:?} is not an object of a folder, between that folder's {ENTRY} and {IMPORT}", row.object)
+    let [entry, import] = unit_tables(&row.object, sourced).ok_or_else(|| {
+        format!("unit {:?} is not an object of a folder, between its {ENTRY} and {IMPORT} tables", row.object)
     })?;
-    Ok([format!("{folder}/{ENTRY}"), row.object.clone(), format!("{folder}/{IMPORT}")]
+    Ok([entry, row.object.clone(), import]
         .into_iter()
         .map(|object| Row { place: TEXT.to_owned(), object, ..row.clone() })
         .collect())
 }
 
 /// The row that names the unit the first three rows are: an overlay's entry
-/// table, an object of the same folder and that folder's import table, each
+/// table, the object the table is of and that object's import table, each
 /// whole in the text place and for the same editions.
-fn unit(rows: &[Row]) -> Option<&Row> {
+fn unit<'a>(rows: &'a [Row], sourced: Sourced) -> Option<&'a Row> {
     let [entry, named, import, ..] = rows else {
         return None;
     };
-    let folder = unit_folder(&named.object)?;
+    let tables = unit_tables(&named.object, sourced)?;
     let whole = |row: &Row, object: &str| {
         row.image == named.image
             && row.place == TEXT
@@ -196,11 +242,8 @@ fn unit(rows: &[Row]) -> Option<&Row> {
             && row.sections == DEFAULT_SECTIONS
             && row.editions == named.editions
     };
-    (named.image != MAIN
-        && whole(entry, &format!("{folder}/{ENTRY}"))
-        && whole(named, &named.object)
-        && whole(import, &format!("{folder}/{IMPORT}")))
-    .then_some(named)
+    (named.image != MAIN && whole(entry, &tables[0]) && whole(named, &named.object) && whole(import, &tables[1]))
+        .then_some(named)
 }
 
 fn row(line: &str) -> Result<Row, String> {
@@ -275,19 +318,20 @@ fn row(line: &str) -> Result<Row, String> {
     })
 }
 
-/// The list as its file's text: what `parse` reads back as the same rows.
-/// Three rows that are one unit are written as its row.
-pub(crate) fn format(rows: &[Row]) -> String {
-    write_rows(rows, true)
+/// The list as its file's text: what `parse` reads back as the same rows
+/// in the same checkout. Three rows that are one unit are written as its
+/// row.
+pub(crate) fn format(root: &Path, rows: &[Row]) -> String {
+    write_rows(rows, Some(&sourced_in(root)))
 }
 
-/// The rows as a list's text; with `units`, three rows that are one unit
-/// are written as its one row.
-fn write_rows(rows: &[Row], units: bool) -> String {
+/// The rows as a list's text; with `units`, which finds a unit's tables,
+/// three rows that are one unit are written as its one row.
+fn write_rows(rows: &[Row], units: Option<Sourced>) -> String {
     let mut text = format!("{HEADER}\n");
     let mut at = 0;
     while at < rows.len() {
-        let (row, place, count) = match unit(&rows[at..]).filter(|_| units) {
+        let (row, place, count) = match units.and_then(|sourced| unit(&rows[at..], sourced)) {
             Some(named) => (named, UNIT, 3),
             None => (&rows[at], rows[at].place.as_str(), 1),
         };
@@ -529,7 +573,10 @@ pub(crate) fn apply(rows: &mut Vec<Row>, image: &str, language: &str, view: &str
         replace(&mut edited, image, language, &place, &new);
     }
     edited.retain(|row| !row.editions.is_empty());
-    *rows = parse(&format(&edited)).map_err(|error| format!("the edited list: {error}"))?;
+    // Read back from their own text, a row each: no row is a unit's, so no
+    // table is looked for.
+    let read = parse_lines(&write_rows(&edited, None), &|_| false).map_err(|error| format!("the edited list: {error}"))?;
+    *rows = read.into_iter().map(|(_, row)| row).collect();
     Ok(())
 }
 
@@ -613,9 +660,9 @@ pub(crate) fn main_lines(root: &Path, game: &str, language: &str) -> Result<Stri
 /// The object lines of one edition's main image in a file's text, as
 /// `main_lines` reads the checkout's: the text of an edition's script as it
 /// is, or the view of an object list's.
-pub(crate) fn lines_of(text: &str, game: &str, language: &str) -> Result<String, String> {
+pub(crate) fn lines_of(root: &Path, text: &str, game: &str, language: &str) -> Result<String, String> {
     match crate::targets::object_list_path(game) {
-        Some(_) => Ok(view(&parse(text)?, MAIN, language)),
+        Some(_) => Ok(view(&parse(root, text)?, MAIN, language)),
         None => Ok(text.to_owned()),
     }
 }
@@ -636,7 +683,7 @@ pub(crate) fn write_main_lines(root: &Path, game: &str, edits: &[(&str, String)]
         apply(&mut rows, MAIN, language, text).map_err(|error| format!("{} {language}: {error}", path.display()))?;
     }
     let rows = collapse(root, &before, rows).map_err(|error| format!("{}: {error}", path.display()))?;
-    fs::write(root.join(&path), format(&rows)).map_err(|error| format!("{}: {error}", path.display()))
+    fs::write(root.join(&path), format(root, &rows)).map_err(|error| format!("{}: {error}", path.display()))
 }
 
 /// Where a tool tells people the object lines of an edition are.
@@ -651,7 +698,7 @@ fn read_path(root: &Path, path: &Path) -> Result<Vec<Row>, String> {
 /// The rows as the list's file has them, a `@TABLE` row still one row.
 fn read_written(root: &Path, path: &Path) -> Result<Vec<Row>, String> {
     let text = fs::read_to_string(root.join(path)).map_err(|error| format!("{}: {error}", path.display()))?;
-    parse(&text).map_err(|error| format!("{}: {error}", path.display()))
+    parse(root, &text).map_err(|error| format!("{}: {error}", path.display()))
 }
 
 /// Before a table's path in the object column: the row stands for the
@@ -744,7 +791,7 @@ fn collapse(root: &Path, written: &[Row], rows: Vec<Row>) -> Result<Vec<Row>, St
 pub(crate) fn written(root: &Path, target: DecompTarget, rows: Vec<Row>) -> Result<String, String> {
     let path = target.object_list().ok_or("the game has no object list")?;
     let before = read_written(root, &path)?;
-    collapse(root, &before, rows).map(|rows| format(&rows)).map_err(|error| format!("{}: {error}", path.display()))
+    collapse(root, &before, rows).map(|rows| format(root, &rows)).map_err(|error| format!("{}: {error}", path.display()))
 }
 
 /// The modules a table names, in the order it first names a label of each.
@@ -894,7 +941,7 @@ fn rows_text(root: &Path) -> Result<String, String> {
     let mut text = String::new();
     for game in TARGET_IDS.chunks(6) {
         if let Some(rows) = read(root, target_for(game[0]))? {
-            text += &write_rows(&rows, false);
+            text += &write_rows(&rows, None);
         }
     }
     Ok(text)
@@ -912,7 +959,7 @@ fn run(root: &Path) -> Result<String, String> {
         let text = fs::read_to_string(root.join(&list)).map_err(|error| format!("{shown}: {error}"))?;
         // The rows as written, a unit row as its three, and then each table
         // row as the modules it names, on the table row's line.
-        let written_lines = parse_lines(&text).map_err(|error| format!("{shown}: {error}"))?;
+        let written_lines = parse_lines(&text, &sourced_in(root)).map_err(|error| format!("{shown}: {error}"))?;
         let written: Vec<Row> = written_lines.iter().map(|(_, row)| row.clone()).collect();
         let stood = stands_for(root, &written).map_err(|error| format!("{shown}: {error}"))?;
         let lines: Vec<(usize, Row)> = written_lines
@@ -922,17 +969,7 @@ fn run(root: &Path) -> Result<String, String> {
             .collect();
         let rows: Vec<Row> = lines.iter().map(|(_, row)| row.clone()).collect();
         failures.extend(repeats(&lines).into_iter().map(|found| format!("{shown}: {found}")));
-        let mut sourced = BTreeSet::new();
-        for row in rows.iter().filter(|row| row.built() && sourced.insert((row.image.as_str(), row.object.as_str()))) {
-            // An overlay's own data and bss are resource_<id>_overlay.o, which
-            // the build assembles from ovl_<id>.s, or empty without one.
-            if row.image != MAIN && row.object == format!("resource_{}_overlay", row.image) {
-                continue;
-            }
-            if let Err(error) = crate::build_rom::source_for(root, &row.object) {
-                failures.push(format!("{shown}: {error}"));
-            }
-        }
+        failures.extend(unsourced(root, &rows).into_iter().map(|found| format!("{shown}: {found}")));
         let images = images(&rows);
         let bss = read_bss(root, first)?;
         failures.extend(
@@ -977,6 +1014,32 @@ fn run(root: &Path) -> Result<String, String> {
         return Ok("no game has an object list".into());
     }
     Ok(summary.join("\n"))
+}
+
+/// The objects the checkout has no source for, each once for an image. A
+/// unit whose table is missing is found here: with no table of its own, the
+/// row stands for its folder's, and that has no source either.
+fn unsourced(root: &Path, rows: &[Row]) -> Vec<String> {
+    let mut found = Vec::new();
+    let mut seen = BTreeSet::new();
+    for row in rows.iter().filter(|row| row.built() && seen.insert((row.image.as_str(), row.object.as_str()))) {
+        // An overlay's own data and bss are resource_<id>_overlay.o, which
+        // the build assembles from ovl_<id>.s, or empty without one.
+        if row.image != MAIN && row.object == format!("resource_{}_overlay", row.image) {
+            continue;
+        }
+        let Err(error) = crate::build_rom::source_for(root, &row.object) else {
+            continue;
+        };
+        match row.object.rsplit_once('/') {
+            Some((_, table @ (ENTRY | IMPORT))) if row.image != MAIN => found.push(format!(
+                "{error}: a unit's {table} table is {}/NAME.s for its object NAME, or {}.s for its folder",
+                row.object, row.object
+            )),
+            _ => found.push(error),
+        }
+    }
+    found
 }
 
 /// The label that starts a game's resource directory, a table of pointers
@@ -1283,6 +1346,20 @@ fn disagreements(rows: &[Row], image: &str, language: &str, script: &str) -> Res
 mod tests {
     use super::*;
 
+    /// The list read in a checkout where no unit has a table of its own:
+    /// every unit row is its folder's entry and import tables.
+    fn parse(text: &str) -> Result<Vec<Row>, String> {
+        Ok(parse_lines(text)?.into_iter().map(|(_, row)| row).collect())
+    }
+
+    fn parse_lines(text: &str) -> Result<Vec<(usize, Row)>, String> {
+        super::parse_lines(text, &|_| false)
+    }
+
+    fn format(rows: &[Row]) -> String {
+        write_rows(rows, Some(&|_| false))
+    }
+
     #[test]
     fn a_directory_s_group_statements_expand_to_its_rows() {
         let text = "\t.macro resource name, place:req\n\t.4byte \\place\n\t.endm\n\t.macro area set:req, sheets:req, maps:vararg\n\t.irp m, \\maps\n\tresource , Field_Map\\m\n\t.endr\n\tresource , Tileset_\\set\\()Palette\n\t.ifnc \\sheets, -\n\t.irpc s, \\sheets\n\tresource , Tileset_\\set\\()Tiles\\s\n\t.endr\n\t.endif\n\t.endm\n\t.macro unused count:req\n\t.rept \\count\n\tresource , 0\n\t.endr\n\t.endm\nTable:\n\tresource First, Rom_Start\n\tarea Set01, AB, 002, 003\n\tarea Set02, -, 004\n\tunused 2\n";
@@ -1417,8 +1494,11 @@ mod tests {
     }
 
     /// `text` with each unit row written out as the three rows it stands
-    /// for, by the convention's words alone: entry, the object, import.
-    fn written_out(text: &str) -> String {
+    /// for, by the convention's words alone: the entry table, the object,
+    /// the import table. A table is the object's own, in the folder named
+    /// `entry` or `import`, where `sourced` has it, and else that name in
+    /// the object's folder.
+    fn written_out(text: &str, sourced: Sourced) -> String {
         let mut out = String::new();
         for line in text.lines() {
             let fields: Vec<&str> = line.split('\t').collect();
@@ -1427,7 +1507,15 @@ mod tests {
                 continue;
             }
             let (folder, name) = fields[2].rsplit_once('/').unwrap();
-            for object in ["entry", name, "import"] {
+            let table = |table: &str| {
+                let own = format!("{table}/{name}");
+                if sourced(&format!("{folder}/{own}")) {
+                    own
+                } else {
+                    table.to_owned()
+                }
+            };
+            for object in [table("entry"), name.to_owned(), table("import")] {
                 let mut row = vec![fields[0].to_owned(), "text".to_owned(), format!("{folder}/{object}")];
                 row.extend(fields[3..].iter().map(|field| (*field).to_owned()));
                 out += &format!("{}\n", row.join("\t"));
@@ -1458,7 +1546,7 @@ mod tests {
              3ae\ttext\tgames/g/torebi/import\t\tja\n\
              3ae\ttext\tgames/g/torebi/late\t.text\ten de es fr it\n",
         );
-        assert_eq!(written_out(&written), explicit);
+        assert_eq!(written_out(&written, &|_| false), explicit);
         // The rows are those of the list written out: no row is a unit's.
         let rows = parse(&written).unwrap();
         assert_eq!(rows, parse(&explicit).unwrap());
@@ -1544,6 +1632,149 @@ mod tests {
         assert!(refused("3ad\tunits\tgames/g/a/a\n").contains("not one of an overlay's: text bss discard, or unit"));
         // The editions of a unit row are read as any row's.
         assert!(refused("3ad\tunit\tgames/g/a/a\t\ten ja\n").contains("order"));
+    }
+
+    /// A checkout of three overlays: a title with a folder of its own, and
+    /// two scenes whose C files share one folder, with their tables in its
+    /// `entry` and `import` folders.
+    fn checkout() -> tempfile::TempDir {
+        let root = tempfile::tempdir().unwrap();
+        for source in [
+            "games/g/title/entry.s",
+            "games/g/title/title.c",
+            "games/g/title/import.s",
+            "games/g/scene/entry/haidia_mura.s",
+            "games/g/scene/haidia_mura.c",
+            "games/g/scene/import/haidia_mura.s",
+            "games/g/scene/entry/fune_heya.s",
+            "games/g/scene/fune_heya.c",
+            "games/g/scene/import/fune_heya.s",
+        ] {
+            let path = root.path().join(source);
+            fs::create_dir_all(path.parent().unwrap()).unwrap();
+            fs::write(path, "\n").unwrap();
+        }
+        root
+    }
+
+    const BOTH_LAYOUTS: &str = "36f\tunit\tgames/g/title/title\n\
+         373\tunit\tgames/g/scene/haidia_mura\n\
+         373\ttext\tlibgcc.a:_call_via_rX\n\
+         3b1\tunit\tgames/g/scene/fune_heya\t\tja en\n\
+         3b1\tbss\tgames/g/scene/fune_heya\t.bss COMMON\n";
+
+    #[test]
+    fn a_unit_row_finds_its_tables_in_a_folder_of_its_own_or_in_one_all_units_share() {
+        let root = checkout();
+        let written = list(BOTH_LAYOUTS);
+        let rows = super::parse(root.path(), &written).unwrap();
+        let objects: Vec<&str> = rows.iter().map(|row| row.object.as_str()).collect();
+        assert_eq!(
+            objects,
+            [
+                // A folder of its own: the tables beside the C file.
+                "games/g/title/entry",
+                "games/g/title/title",
+                "games/g/title/import",
+                // One folder for all: each table named as its C file.
+                "games/g/scene/entry/haidia_mura",
+                "games/g/scene/haidia_mura",
+                "games/g/scene/import/haidia_mura",
+                "libgcc.a:_call_via_rX",
+                "games/g/scene/entry/fune_heya",
+                "games/g/scene/fune_heya",
+                "games/g/scene/import/fune_heya",
+                "games/g/scene/fune_heya",
+            ]
+        );
+        assert!(rows[..10].iter().all(|row| row.place == TEXT && row.sections == DEFAULT_SECTIONS));
+        assert_eq!(rows[7].editions, ["ja", "en"]);
+        let sourced = sourced_in(root.path());
+        assert_eq!(rows, super::parse(root.path(), &written_out(&written, &sourced)).unwrap());
+        assert_eq!(unsourced(root.path(), &rows), Vec::<String>::new());
+        assert_eq!(repeats(&super::parse_lines(&written, &sourced).unwrap()), Vec::<String>::new());
+        // Written back, each three rows are their unit row again, and the
+        // rows written out one by one are read as the same units.
+        assert_eq!(super::format(root.path(), &rows), written);
+        assert_eq!(write_rows(&rows, None).lines().count(), 12);
+        assert_eq!(super::format(root.path(), &super::parse(root.path(), &write_rows(&rows, None)).unwrap()), written);
+        // The linker's statements name each table where it is.
+        assert_eq!(
+            render(&rows, "373", "en")[0].1.lines().take(4).collect::<Vec<_>>(),
+            [
+                "    \"*/games/g/scene/entry/haidia_mura.o\"(.text .padding)",
+                "    \"*/games/g/scene/haidia_mura.o\"(.text .padding)",
+                "    \"*/games/g/scene/import/haidia_mura.o\"(.text .padding)",
+                "    \"*libgcc.a:_call_via_rX.o\"(.text .padding)",
+            ]
+        );
+        assert_eq!(tables(root.path(), "games/g/scene/fune_heya").unwrap(), ["games/g/scene/entry/fune_heya", "games/g/scene/import/fune_heya"]);
+        assert_eq!(tables(root.path(), "games/g/title/title").unwrap(), ["games/g/title/entry", "games/g/title/import"]);
+        assert_eq!(tables(root.path(), "games/g/scene/entry"), None);
+        assert_eq!(tables(root.path(), "libgcc.a:_call_via_rX"), None);
+        // In this checkout a scene's three rows by the other layout's names
+        // are no unit: its tables are its own.
+        let folder_form = list("373\ttext\tgames/g/scene/entry\n373\ttext\tgames/g/scene/haidia_mura\n373\ttext\tgames/g/scene/import\n");
+        assert_eq!(super::format(root.path(), &super::parse(root.path(), &folder_form).unwrap()), folder_form);
+        // The same text in a checkout without those tables is the folder's.
+        let elsewhere: Vec<String> = parse(&written).unwrap().into_iter().map(|row| row.object).collect();
+        assert_eq!(elsewhere[3..6], ["games/g/scene/entry", "games/g/scene/haidia_mura", "games/g/scene/import"]);
+        assert!(import_table("games/g/title/import") && import_table("games/g/scene/import/fune_heya"));
+        assert!(!import_table("games/g/scene/entry/fune_heya") && !import_table("games/g/scene/fune_heya") && !import_table("import/a/b"));
+    }
+
+    #[test]
+    fn a_unit_without_a_table_is_refused() {
+        let root = checkout();
+        let rows = |root: &Path| super::parse(root, &list(BOTH_LAYOUTS)).unwrap();
+        // Neither a table of its own nor its folder's: the entry table.
+        fs::remove_file(root.path().join("games/g/scene/entry/fune_heya.s")).unwrap();
+        assert_eq!(
+            unsourced(root.path(), &rows(root.path())),
+            ["games/g/scene/entry.o has no C, assembly or MIDI source: a unit's entry table is games/g/scene/entry/NAME.s for its object NAME, or games/g/scene/entry.s for its folder"]
+        );
+        // The import table of a unit with a folder of its own.
+        fs::write(root.path().join("games/g/scene/entry/fune_heya.s"), "\n").unwrap();
+        fs::remove_file(root.path().join("games/g/title/import.s")).unwrap();
+        assert_eq!(
+            unsourced(root.path(), &rows(root.path())),
+            ["games/g/title/import.o has no C, assembly or MIDI source: a unit's import table is games/g/title/import/NAME.s for its object NAME, or games/g/title/import.s for its folder"]
+        );
+        // The C file itself, and an object of the main image, as before.
+        fs::write(root.path().join("games/g/title/import.s"), "\n").unwrap();
+        fs::remove_file(root.path().join("games/g/scene/haidia_mura.c")).unwrap();
+        let main = super::parse(root.path(), &list("main\trom_start\tgames/g/entry\n")).unwrap();
+        assert_eq!(unsourced(root.path(), &[rows(root.path()), main].concat()), [
+            "games/g/scene/haidia_mura.o has no C, assembly or MIDI source",
+            "games/g/entry.o has no C, assembly or MIDI source",
+        ]);
+    }
+
+    #[test]
+    fn one_import_table_may_serve_two_overlays_and_not_one_overlay_twice() {
+        // Two scenes with entry tables of their own and no import table of
+        // their own: both rows stand for the folder's.
+        let sourced: Sourced = &|object| object.starts_with("games/g/scene/entry/");
+        let rows = |text: &str| super::parse_lines(&list(text), sourced).unwrap();
+        let shared = "373\tunit\tgames/g/scene/haidia_mura\n3b1\tunit\tgames/g/scene/fune_heya\n";
+        let objects: Vec<(String, String)> = rows(shared).into_iter().map(|(_, row)| (row.image, row.object)).collect();
+        assert_eq!(objects[2], ("373".to_owned(), "games/g/scene/import".to_owned()));
+        assert_eq!(objects[5], ("3b1".to_owned(), "games/g/scene/import".to_owned()));
+        assert_eq!(repeats(&rows(shared)), Vec::<String>::new());
+        assert_eq!(write_rows(&rows(shared).into_iter().map(|(_, row)| row).collect::<Vec<_>>(), Some(sourced)), list(shared));
+        // The same table a second time in one image is a repeat, on its line.
+        let doubled = format!("{shared}3b1\ttext\tgames/g/scene/import\t.text\tja\n");
+        assert_eq!(repeats(&rows(&doubled)), ["line 4: 3b1 .text of games/g/scene/import is already listed for ja"]);
+        // So is a unit row given twice, each of its three objects.
+        let twice = format!("{shared}373\tunit\tgames/g/scene/haidia_mura\t\tde\n");
+        assert_eq!(
+            repeats(&rows(&twice)).iter().filter(|found| found.contains(".text of")).collect::<Vec<_>>(),
+            [
+                "line 4: 373 .text of games/g/scene/entry/haidia_mura is already listed for de",
+                "line 4: 373 .text of games/g/scene/haidia_mura is already listed for de",
+                "line 4: 373 .text of games/g/scene/import is already listed for de",
+            ]
+        );
     }
 
     #[test]
@@ -1856,13 +2087,13 @@ mod tests {
         let summary = run(root).unwrap();
         assert!(summary.contains("games/tbs/objects.tsv"), "{summary}");
         let text = fs::read_to_string(root.join("games/tbs/objects.tsv")).unwrap();
-        let rows = parse(&text).unwrap();
-        assert_eq!(format(&rows), text);
+        let rows = super::parse(root, &text).unwrap();
+        assert_eq!(super::format(root, &rows), text);
         // Every overlay's unit row written out as its three rows is the same
         // list: the same fragments for every image and edition.
-        let explicit = written_out(&text);
+        let explicit = written_out(&text, &sourced_in(root));
         assert!(explicit.lines().count() > text.lines().count(), "the list has unit rows");
-        let rows_written_out = parse(&explicit).unwrap();
+        let rows_written_out = super::parse(root, &explicit).unwrap();
         assert_eq!(rows, rows_written_out);
         let bss = read_bss(root, target_for(TARGET_IDS[0])).unwrap();
         for image in images(&rows) {

@@ -272,99 +272,99 @@ main	rom_tail_02	@games/tbs/src/system/resource/directory
 36f	bss	resource_36f_overlay	.bss
 370	unit	games/tbs/src/menu/clear/clear
 370	text	games/tbs/src/menu/clear/keybd
-371	unit	games/tbs/src/field/world_map/map
+371	unit	games/tbs/src/scene/world_map
 371	text	games/tbs/src/graphics/world_map/story
-371	bss	games/tbs/src/field/world_map/map	.bss COMMON
-372	unit	games/tbs/src/field/haidia_arashi/arashi
-372	bss	games/tbs/src/field/haidia_arashi/arashi	.bss COMMON
-373	unit	games/tbs/src/field/haidia_mura/mura
+371	bss	games/tbs/src/scene/world_map	.bss COMMON
+372	unit	games/tbs/src/scene/haidia_arashi
+372	bss	games/tbs/src/scene/haidia_arashi	.bss COMMON
+373	unit	games/tbs/src/scene/haidia_mura
 373	text	libgcc.a:_call_via_rX
-374	unit	games/tbs/src/field/haidia_ie/ie
-375	unit	games/tbs/src/field/haidia_sukureta/sukureta
-376	unit	games/tbs/src/field/haidia_heya/heya
-377	unit	games/tbs/src/field/common/haidia_babi/babi
-378	unit	games/tbs/src/field/common/shinden_heya/heya
-379	unit	games/tbs/src/field/haidia_funka/funka
-37a	unit	games/tbs/src/field/soru_nichigetsu/nichigetsu
+374	unit	games/tbs/src/scene/haidia_ie
+375	unit	games/tbs/src/scene/haidia_sukureta
+376	unit	games/tbs/src/scene/haidia_heya
+377	unit	games/tbs/src/scene/haidia_babi
+378	unit	games/tbs/src/scene/shinden_heya
+379	unit	games/tbs/src/scene/haidia_funka
+37a	unit	games/tbs/src/scene/soru_nichigetsu
 37a	bss	resource_37a_overlay	.bss
-37b	unit	games/tbs/src/field/soru_sekizo/sekizo
-37b	bss	games/tbs/src/field/soru_sekizo/sekizo	.bss COMMON
-37c	unit	games/tbs/src/field/soru_dou/dou
-37d	unit	games/tbs/src/field/soru_meiro/meiro
-37e	unit	games/tbs/src/field/soru_roka/roka
-37f	unit	games/tbs/src/field/soru_iriguchi/iriguchi
-37f	bss	games/tbs/src/field/soru_iriguchi/iriguchi	.bss
-380	unit	games/tbs/src/field/soru_star/star
-381	unit	games/tbs/src/field/soru_funka/funka
+37b	unit	games/tbs/src/scene/soru_sekizo
+37b	bss	games/tbs/src/scene/soru_sekizo	.bss COMMON
+37c	unit	games/tbs/src/scene/soru_dou
+37d	unit	games/tbs/src/scene/soru_meiro
+37e	unit	games/tbs/src/scene/soru_roka
+37f	unit	games/tbs/src/scene/soru_iriguchi
+37f	bss	games/tbs/src/scene/soru_iriguchi	.bss
+380	unit	games/tbs/src/scene/soru_star
+381	unit	games/tbs/src/scene/soru_funka
 381	bss	resource_381_overlay	.bss
-382	unit	games/tbs/src/field/kuupuappu_mura/mura
+382	unit	games/tbs/src/scene/kuupuappu_mura
 382	text	libgcc.a:_call_via_rX
-383	unit	games/tbs/src/field/kuupuappu_heya/heya
-383	bss	games/tbs/src/field/kuupuappu_heya/heya	.bss COMMON
-384	unit	games/tbs/src/field/common/kuupuappu_runpa/runpa
-385	unit	games/tbs/src/field/kuupuappu_mura_sai/sai
+383	unit	games/tbs/src/scene/kuupuappu_heya
+383	bss	games/tbs/src/scene/kuupuappu_heya	.bss COMMON
+384	unit	games/tbs/src/scene/kuupuappu_runpa
+385	unit	games/tbs/src/scene/kuupuappu_mura_sai
 385	text	libgcc.a:_call_via_rX
-386	unit	games/tbs/src/field/kuupuappu_heya_sai/sai
-387	unit	games/tbs/src/field/goma_iriguchi/iriguchi
-388	unit	games/tbs/src/field/goma_ike/ike
-389	unit	games/tbs/src/field/goma_hashira/hashira
+386	unit	games/tbs/src/scene/kuupuappu_heya_sai
+387	unit	games/tbs/src/scene/goma_iriguchi
+388	unit	games/tbs/src/scene/goma_ike
+389	unit	games/tbs/src/scene/goma_hashira
 389	text	libgcc.a:_call_via_rX
 389	bss	*	.bss COMMON
-38a	unit	games/tbs/src/field/goma_suiro/suiro
-38b	unit	games/tbs/src/field/biribino_mura/mura
-38b	bss	games/tbs/src/field/biribino_mura/mura	.bss COMMON
-38c	unit	games/tbs/src/field/biribino_heya/heya
-38d	unit	games/tbs/src/field/biribino_kyuden/kyuden
-38e	unit	games/tbs/src/field/biribino_niwa/niwa
-38f	unit	games/tbs/src/field/korima_mura/mura
-38f	bss	games/tbs/src/field/korima_mura/mura	.bss
-390	unit	games/tbs/src/field/korima_heya/heya
-391	unit	games/tbs/src/field/korima_hashi/hashi
+38a	unit	games/tbs/src/scene/goma_suiro
+38b	unit	games/tbs/src/scene/biribino_mura
+38b	bss	games/tbs/src/scene/biribino_mura	.bss COMMON
+38c	unit	games/tbs/src/scene/biribino_heya
+38d	unit	games/tbs/src/scene/biribino_kyuden
+38e	unit	games/tbs/src/scene/biribino_niwa
+38f	unit	games/tbs/src/scene/korima_mura
+38f	bss	games/tbs/src/scene/korima_mura	.bss
+390	unit	games/tbs/src/scene/korima_heya
+391	unit	games/tbs/src/scene/korima_hashi
 391	text	libgcc.a:_call_via_rX
-391	bss	games/tbs/src/field/korima_hashi/hashi	.bss
-392	unit	games/tbs/src/field/korima_hiroba/hiroba
+391	bss	games/tbs/src/scene/korima_hashi	.bss
+392	unit	games/tbs/src/scene/korima_hiroba
 392	text	libgcc.a:_call_via_rX
-392	bss	games/tbs/src/field/korima_hiroba/hiroba	.bss
-393	unit	games/tbs/src/field/korima_kawa/kawa
+392	bss	games/tbs/src/scene/korima_hiroba	.bss
+393	unit	games/tbs/src/scene/korima_kawa
 393	text	libgcc.a:_call_via_rX
-393	bss	games/tbs/src/field/korima_kawa/kawa	.bss
-394	unit	games/tbs/src/field/korima_magari/magari
+393	bss	games/tbs/src/scene/korima_kawa	.bss
+394	unit	games/tbs/src/scene/korima_magari
 394	bss	resource_394_overlay	.bss
-395	unit	games/tbs/src/field/korima_ki/ki
-395	bss	games/tbs/src/field/korima_ki/ki	.bss
+395	unit	games/tbs/src/scene/korima_ki
+395	bss	games/tbs/src/scene/korima_ki	.bss
 395	bss	resource_395_overlay	.bss
-396	unit	games/tbs/src/field/toreto_heya/heya
-396	bss	games/tbs/src/field/toreto_heya/heya	.bss
-397	unit	games/tbs/src/field/toreto_eda/eda
-397	bss	games/tbs/src/field/toreto_eda/eda	.bss
-398	unit	games/tbs/src/field/biribino_dou/dou
-399	unit	games/tbs/src/field/imiru_mura/mura
-399	bss	games/tbs/src/field/imiru_mura/mura	.bss COMMON
-39a	unit	games/tbs/src/field/common/imiru_fuchin/fuchin
-39a	bss	games/tbs/src/field/common/imiru_fuchin/fuchin	.bss COMMON
-39b	unit	games/tbs/src/field/makyuri_iriguchi/iriguchi
+396	unit	games/tbs/src/scene/toreto_heya
+396	bss	games/tbs/src/scene/toreto_heya	.bss
+397	unit	games/tbs/src/scene/toreto_eda
+397	bss	games/tbs/src/scene/toreto_eda	.bss
+398	unit	games/tbs/src/scene/biribino_dou
+399	unit	games/tbs/src/scene/imiru_mura
+399	bss	games/tbs/src/scene/imiru_mura	.bss COMMON
+39a	unit	games/tbs/src/scene/imiru_fuchin
+39a	bss	games/tbs/src/scene/imiru_fuchin	.bss COMMON
+39b	unit	games/tbs/src/scene/makyuri_iriguchi
 39b	text	libgcc.a:_call_via_rX
-39c	unit	games/tbs/src/field/makyuri_heya/heya
+39c	unit	games/tbs/src/scene/makyuri_heya
 39c	text	libgcc.a:_call_via_rX
-39d	unit	games/tbs/src/field/makyuri_chojo/chojo
+39d	unit	games/tbs/src/scene/makyuri_chojo
 39d	text	libgcc.a:_call_via_rX
-39e	unit	games/tbs/src/field/common/shian_jiin/jiin
-39f	unit	games/tbs/src/field/mogoru_mori/mori
+39e	unit	games/tbs/src/scene/shian_jiin
+39f	unit	games/tbs/src/scene/mogoru_mori
 39f	text	libgcc.a:_call_via_rX
-3a0	unit	games/tbs/src/field/shian_mura/mura
+3a0	unit	games/tbs/src/scene/shian_mura
 3a0	text	libgcc.a:_call_via_rX
-3a1	unit	games/tbs/src/field/shian_heya/heya
-3a2	unit	games/tbs/src/field/common/yama_rama/rama
-3a3	unit	games/tbs/src/field/arutin_mura/mura
-3a4	unit	games/tbs/src/field/arutin_yama/yama
+3a1	unit	games/tbs/src/scene/shian_heya
+3a2	unit	games/tbs/src/scene/yama_rama
+3a3	unit	games/tbs/src/scene/arutin_mura
+3a4	unit	games/tbs/src/scene/arutin_yama
 3a4	bss	resource_3a4_overlay	.bss
-3a5	unit	games/tbs/src/field/ramakan_sabaku/sabaku
+3a5	unit	games/tbs/src/scene/ramakan_sabaku
 3a5	text	libgcc.a:_call_via_rX
 3a5	text	games/tbs/src/graphics/ramakan/sand
 3a5	bss	resource_3a5_overlay	.bss
-3a6	unit	games/tbs/src/field/haidia_dou/dou
+3a6	unit	games/tbs/src/scene/haidia_dou
 3a6	text	libgcc.a:_call_via_rX
-3a7	unit	games/tbs/src/field/kuupuappu_dou/dou
+3a7	unit	games/tbs/src/scene/kuupuappu_dou
 3a7	text	libgcc.a:_addsub_df
 3a7	text	libgcc.a:_si_to_df
 3a7	text	libgcc.a:_df_to_si
@@ -372,52 +372,52 @@ main	rom_tail_02	@games/tbs/src/system/resource/directory
 3a7	text	libgcc.a:_pack_df
 3a7	text	libgcc.a:_unpack_df
 3a7	text	libgcc.a:_thenan_df
-3a8	unit	games/tbs/src/field/karei_machi/machi
+3a8	unit	games/tbs/src/scene/karei_machi
 3a8	bss	resource_3a8_overlay	.bss
-3a9	unit	games/tbs/src/field/karei_heya/heya
-3aa	unit	games/tbs/src/field/karei_kyuden/kyuden
-3ab	unit	games/tbs/src/field/runpa_mura/mura
-3ac	unit	games/tbs/src/field/common/runpa_suhara/suhara
-3ad	unit	games/tbs/src/field/runpa_dou/dou
-3ae	unit	games/tbs/src/field/common/karei_torebi/torebi
-3af	unit	games/tbs/src/field/fune_kanpan/kanpan
-3af	bss	games/tbs/src/field/fune_kanpan/kanpan	.bss COMMON
-3b0	unit	games/tbs/src/field/fune_hobashira/hobashira
-3b0	bss	games/tbs/src/field/fune_hobashira/hobashira	.bss
-3b1	unit	games/tbs/src/field/fune_heya/heya
-3b1	bss	games/tbs/src/field/fune_heya/heya	.bss COMMON
-3b2	unit	games/tbs/src/field/takara_shima/shima
+3a9	unit	games/tbs/src/scene/karei_heya
+3aa	unit	games/tbs/src/scene/karei_kyuden
+3ab	unit	games/tbs/src/scene/runpa_mura
+3ac	unit	games/tbs/src/scene/runpa_suhara
+3ad	unit	games/tbs/src/scene/runpa_dou
+3ae	unit	games/tbs/src/scene/karei_torebi
+3af	unit	games/tbs/src/scene/fune_kanpan
+3af	bss	games/tbs/src/scene/fune_kanpan	.bss COMMON
+3b0	unit	games/tbs/src/scene/fune_hobashira
+3b0	bss	games/tbs/src/scene/fune_hobashira	.bss
+3b1	unit	games/tbs/src/scene/fune_heya
+3b1	bss	games/tbs/src/scene/fune_heya	.bss COMMON
+3b2	unit	games/tbs/src/scene/takara_shima
 3b2	text	libgcc.a:_call_via_rX
-3b3	unit	games/tbs/src/field/takara_hashira/hashira
+3b3	unit	games/tbs/src/scene/takara_hashira
 3b3	text	libgcc.a:_call_via_rX
-3b3	bss	games/tbs/src/field/takara_hashira/hashira	.bss
-3b4	unit	games/tbs/src/field/takara_ashiba/ashiba
+3b3	bss	games/tbs/src/scene/takara_hashira	.bss
+3b4	unit	games/tbs/src/scene/takara_ashiba
 3b4	text	libgcc.a:_call_via_rX
-3b5	unit	games/tbs/src/field/torebi_machi/machi
+3b5	unit	games/tbs/src/scene/torebi_machi
 3b5	text	libgcc.a:_call_via_rX
-3b6	unit	games/tbs/src/field/torebi_heya/heya
-3b7	unit	games/tbs/src/field/torebi_izumi/izumi
+3b6	unit	games/tbs/src/scene/torebi_heya
+3b7	unit	games/tbs/src/scene/torebi_izumi
 3b7	text	libgcc.a:_call_via_rX
-3b7	bss	games/tbs/src/field/torebi_izumi/izumi	.bss
-3b8	unit	games/tbs/src/field/torebi_kyuden/kyuden
-3b9	unit	games/tbs/src/field/korashiamu_iriguchi/iriguchi
-3ba	unit	games/tbs/src/field/korosseo_kawa/kawa
+3b7	bss	games/tbs/src/scene/torebi_izumi	.bss
+3b8	unit	games/tbs/src/scene/torebi_kyuden
+3b9	unit	games/tbs/src/scene/korashiamu_iriguchi
+3ba	unit	games/tbs/src/scene/korosseo_kawa
 3ba	text	libgcc.a:_call_via_rX
 3ba	text	games/tbs/src/graphics/korosseo/gauge
 3ba	bss	resource_3ba_overlay	.bss
-3bb	unit	games/tbs/src/field/korosseo_kabe/kabe
+3bb	unit	games/tbs/src/scene/korosseo_kabe
 3bb	text	games/tbs/src/graphics/korosseo/gauge
 3bb	bss	resource_3bb_overlay	.bss
-3bc	unit	games/tbs/src/field/korosseo_maruta/maruta
+3bc	unit	games/tbs/src/scene/korosseo_maruta
 3bc	text	libgcc.a:_call_via_rX
 3bc	text	games/tbs/src/graphics/korosseo/gauge
 3bc	bss	resource_3bc_overlay	.bss
-3bd	unit	games/tbs/src/field/arutamira_dou/dou
+3bd	unit	games/tbs/src/scene/arutamira_dou
 3bd	text	libgcc.a:_call_via_rX
-3bd	bss	games/tbs/src/field/arutamira_dou/dou	.bss COMMON
-3be	unit	games/tbs/src/field/karagoru_dou/dou
+3bd	bss	games/tbs/src/scene/arutamira_dou	.bss COMMON
+3be	unit	games/tbs/src/scene/karagoru_dou
 3be	text	libgcc.a:_call_via_rX
-3bf	unit	games/tbs/src/field/runpa_jo/runpa_jo
+3bf	unit	games/tbs/src/scene/runpa_jo
 3bf	text	libgcc.a:_call_via_rX
 3bf	text	libgcc.a:_addsub_df
 3bf	text	libgcc.a:_si_to_df
@@ -426,24 +426,24 @@ main	rom_tail_02	@games/tbs/src/system/resource/directory
 3bf	text	libgcc.a:_pack_df
 3bf	text	libgcc.a:_unpack_df
 3bf	text	libgcc.a:_thenan_df
-3c0	unit	games/tbs/src/field/suhara_sabaku/sabaku
-3c0	bss	games/tbs/src/field/suhara_sabaku/sabaku	.bss
-3c1	unit	games/tbs/src/field/suhara_mura/mura
-3c2	unit	games/tbs/src/field/suhara_heya/heya
-3c3	unit	games/tbs/src/field/suhara_gate/gate
-3c4	unit	games/tbs/src/field/babi_chika/chika
+3c0	unit	games/tbs/src/scene/suhara_sabaku
+3c0	bss	games/tbs/src/scene/suhara_sabaku	.bss
+3c1	unit	games/tbs/src/scene/suhara_mura
+3c2	unit	games/tbs/src/scene/suhara_heya
+3c3	unit	games/tbs/src/scene/suhara_gate
+3c4	unit	games/tbs/src/scene/babi_chika
 3c4	text	libgcc.a:_call_via_rX
-3c5	unit	games/tbs/src/field/babi_iriguchi/iriguchi
+3c5	unit	games/tbs/src/scene/babi_iriguchi
 3c5	text	libgcc.a:_call_via_rX
-3c6	unit	games/tbs/src/field/raribero_machi/machi
-3c7	unit	games/tbs/src/field/raribero_heya/heya
-3c8	unit	games/tbs/src/field/vinasu_heya/heya
+3c6	unit	games/tbs/src/scene/raribero_machi
+3c7	unit	games/tbs/src/scene/raribero_heya
+3c8	unit	games/tbs/src/scene/vinasu_heya
 3c8	text	libgcc.a:_call_via_rX
-3c9	unit	games/tbs/src/field/vinasu_chojo/chojo
+3c9	unit	games/tbs/src/scene/vinasu_chojo
 3c9	text	libgcc.a:_call_via_rX
-3c9	bss	games/tbs/src/field/vinasu_chojo/chojo	.bss
-3ca	unit	games/tbs/src/field/babi_fune/fune
-3ca	bss	games/tbs/src/field/babi_fune/fune	.bss
+3c9	bss	games/tbs/src/scene/vinasu_chojo	.bss
+3ca	unit	games/tbs/src/scene/babi_fune
+3ca	bss	games/tbs/src/scene/babi_fune	.bss
 3cb	unit	games/tbs/src/menu/link_lobby/lobby
 3cb	text	libgcc.a:_call_via_rX
 3cb	bss	games/tbs/src/menu/link_lobby/lobby	.bss

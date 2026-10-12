@@ -2,7 +2,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/makyuri_chojo.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/effect/move.h"
 #include "unit/scene/common/object/nearest.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
@@ -70,8 +70,8 @@ struct ActorTable
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
+#include "common/effect/move.c"
+#include "common/effect/spawn.c"
 #include "objcmd.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void)

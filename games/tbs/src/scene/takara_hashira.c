@@ -3,7 +3,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/takara_hashira.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/effect/move.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/marker.h"
@@ -82,12 +82,12 @@ struct MapLayer_2
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
+#include "common/effect/move.c"
+#include "common/effect/spawn.c"
 #include "common/object/staged_actor.c"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/map/panel.c"
+#include "common/map/panel.c"
 
 static void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
 {

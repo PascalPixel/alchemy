@@ -13,7 +13,7 @@
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/object/fxslot.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/effect/move.h"
 #include "unit/runtime/runtime.h"
 #include "unit/runtime/objvram.h"
 #include "unit/runtime/sched.h"
@@ -2996,7 +2996,7 @@ struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/move.c"
+#include "../scene/common/effect/move.c"
 
 // FieldActor と同じ物体。0x64 を符号なし、0x66 を符号つきで読む (FieldActor の型ではバイトが変わる)
 struct OrbitEffect
@@ -3019,7 +3019,7 @@ struct OrbitEffect
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #define EFFECT_SPAWN_RESIDENT
-#include "../field/common/effect/spawn.c"
+#include "../scene/common/effect/spawn.c"
 #undef EFFECT_SPAWN_RESIDENT
 
 //--------------------------------------------------------------------------

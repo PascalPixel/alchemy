@@ -4,7 +4,7 @@
 #include "keystate.h"
 #include "unit/import.h"
 #include "unit/scene/makyuri_iriguchi.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/effect/move.h"
 #include "unit/scene/common/makyuri/lights.h"
 #include "unit/scene/makyuri_iriguchi_pillar.h"
 #include "unit/scene/common/makyuri/makyuri.h"
@@ -71,8 +71,8 @@ struct WorkPointers
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
+#include "common/effect/move.c"
+#include "common/effect/spawn.c"
 #include "common/object/staged_actor.c"
 #include "common/makyuri/sparks.c"
 

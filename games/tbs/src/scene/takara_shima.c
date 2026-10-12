@@ -3,7 +3,7 @@
 #include "unit/import.h"
 #include "unit/scene/takara_shima.h"
 #include "unit/scene/common/object/orbit.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/effect/move.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/marker.h"
@@ -61,8 +61,8 @@ struct Vec
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
+#include "common/effect/move.c"
+#include "common/effect/spawn.c"
 
 union GameStateRows
 {

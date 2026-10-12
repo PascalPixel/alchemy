@@ -1,6 +1,6 @@
 #include "game_state.h"
 #include "unit/scene/suhara_sabaku.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/effect/move.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"
@@ -68,8 +68,8 @@ static u16 gSuharaSabakuShownLevel;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
+#include "common/effect/move.c"
+#include "common/effect/spawn.c"
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
 

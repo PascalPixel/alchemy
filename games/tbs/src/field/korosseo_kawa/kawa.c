@@ -10,6 +10,7 @@
 #include "unit/field/common/korosseo/item_icon.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
+#include "unit/field/common/script/field7.h"
 #include "unit/field/common/script/field8.h"
 #include "unit/field/common/script/field9.h"
 #include "unit/field/common/script/field10.h"

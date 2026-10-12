@@ -2,6 +2,7 @@
 #define ALCHEMY_SCRIPT_OBJECT_ENTRY_H
 
 #include "unit/field/common/script/field.h"
+#include "unit/field/common/script/field7.h"
 #include "unit/field/common/script/field8.h"
 #include "unit/field/common/script/field9.h"
 #include "unit/field/common/script/field10.h"

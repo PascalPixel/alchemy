@@ -3,6 +3,7 @@
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
+#include "unit/field/common/script/field11.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "configured_effect_spawn.h"

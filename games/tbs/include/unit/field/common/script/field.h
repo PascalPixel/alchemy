@@ -240,13 +240,7 @@ void Runtime_SetWorkTripleIfNonNegative(s32 value0, s32 value1, s32 value2);
 void Map_WaitWorkValuesBelow256(void);
 void Resource_RunCopiedDecoder(s32 a, s32 b);
 void WorldMap_BuildScanlineTable(s32 depth, s32 *position, struct MapScanline *row);
-void Ui_RunIconMonitor(void);
-s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step);
-void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out);
 void Ui_SetGridColumnParameter(s32 slot, s32 value);
 void Ui_SetGridColumnPriority(s32 slot, s32 value);
-void Ui_FillGridColumnFromMetadata(s32 slot, s32 value);
-void Ui_SetGridColumnNumber(s32 slot, s32 no);
-void Battle_PlaceActorsByFormationKind(void);
 
 #endif

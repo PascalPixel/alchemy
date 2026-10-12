@@ -3,6 +3,7 @@
 
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
+#include "unit/field/common/script/field11.h"
 #include "types.h"
 #include "layout_guard.h"
 

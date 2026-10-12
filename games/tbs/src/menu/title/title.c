@@ -3,6 +3,7 @@
 #include "unit/menu/title/title.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
+#include "unit/field/common/script/field11.h"
 #include "unit/game/character/chara.h"
 #include "unit/game/character/chara2.h"
 #include "unit/game/character/chara3.h"

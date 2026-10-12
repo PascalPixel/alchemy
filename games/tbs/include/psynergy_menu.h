@@ -2,6 +2,7 @@
 #define ALCHEMY_PSYNERGY_MENU_H
 
 #include "unit/menu/item/menu.h"
+#include "unit/menu/item/menu8.h"
 #include "global_cells.h"
 #include "layout_guard.h"
 #include "menu_result.h"

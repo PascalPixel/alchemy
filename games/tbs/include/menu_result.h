@@ -2,6 +2,7 @@
 #define ALCHEMY_MENU_RESULT_H
 
 #include "unit/menu/item/menu.h"
+#include "unit/menu/item/menu8.h"
 #include "types.h"
 
 struct MenuResult

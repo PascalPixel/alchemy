@@ -30,6 +30,7 @@
 #include "unit/game/character/chara8.h"
 #include "unit/graphics/window/window.h"
 #include "unit/menu/item/menu.h"
+#include "unit/menu/item/menu8.h"
 #include "unit/sound/sound.h"
 #include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime3.h"

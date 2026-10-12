@@ -4964,64 +4964,8 @@ Func_02002b58:
 	.2byte 0x0000
 .L_0200abcc:
 	.4byte 0xfff00000
-	.section .text.x0200abd0,"ax",%progbits
-	.global Func_02002bd0
-	.thumb_func
-Func_02002bd0:
-	push {r5, r6, lr}
-	mov r6, r10
-	mov r5, r8
-	push {r5, r6}
-	adds r6, r0, #0
-	ldr r3, [r6, #20]
-	ldr r5, [r6, #12]
-	ldr r0, [r6, #48]
-	subs r5, r5, r3
-	movs r3, #128
-	lsls r3, r3, #13
-	asrs r5, r5, #1
-	adds r5, r5, r3
-	movs r3, #255
-	ands r0, r3
-	lsls r0, r0, #11
-	mov r8, r3
-	bl Math_Cosine
-	ldr r3, .L_0200ac3c
-	adds r1, r5, #0
-	mov r10, r3
-	mov lr, r10
-	.2byte 0xf800
-	ldr r3, [r6, #68]
-	adds r3, r3, r0
-	ldr r0, [r6, #48]
-	str r3, [r6, #8]
-	mov r3, r8
-	ands r0, r3
-	lsls r0, r0, #11
-	bl Math_Sine
-	adds r1, r5, #0
-	mov lr, r10
-	.2byte 0xf800
-	movs r1, #3
-	bl __divsi3
-	ldr r3, [r6, #76]
-	ldr r2, [r6, #72]
-	adds r3, r3, r0
-	str r3, [r6, #16]
-	ldr r3, [r6, #12]
-	adds r3, r3, r2
-	str r3, [r6, #12]
-	ldr r3, [r6, #48]
-	adds r3, #1
-	str r3, [r6, #48]
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_0200ac3c:
-	.4byte IwramMulQ16
 	.section .text.x0200ac40,"ax",%progbits
+	.balign 4
 	.global Func_02002c40
 	.thumb_func
 Func_02002c40:

@@ -11,16 +11,6 @@
 
 #include "palette_scene.h"
 
-struct PaletteEffectFrame
-{
-	s32 pad00[6];
-	s32 progress;
-	s32 pad1c[7];
-	s32 limit;
-	s32 second_limit;
-	s32 third_limit;
-};
-
 struct EffectSprite
 {
 	u8 pad00[9];

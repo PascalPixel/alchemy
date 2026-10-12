@@ -1484,15 +1484,8 @@ static void FieldScene_RunPairedStepB(s32 arg0, s32 arg1, s32 arg2)
 	Engine_EventWait(arg2);
 }
 
-static s32 SceneEffect_AdvanceAngleUntilIdle(struct FieldActor *p)
-{
-	p->scale_x += 0x1eb8;
-	if (p->target_x == 0x80000000 && p->target_y == p->target_x && p->target_z == p->target_y)
-	{
-		Engine_ObjectDispatchRelease(p);
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korima/grow.c"
 
 static void SceneEffect_SpawnObject26EveryEightFrames(void)
 {

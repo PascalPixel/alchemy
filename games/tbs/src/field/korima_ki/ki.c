@@ -728,21 +728,8 @@ s32 KorimaKi_PrepareActors(void)
 	return 0;
 }
 
-static s32 PaletteScene_AdvanceEffectFrame(struct PaletteEffectFrame *frame)
-{
-	frame->progress += 0x1EB8;
-	if (frame->limit == 0x80000000)
-	{
-		if (frame->second_limit == frame->limit)
-		{
-			if (frame->third_limit == frame->second_limit)
-			{
-				Engine_ObjectDispatchRelease(frame);
-			}
-		}
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korima/grow.c"
 
 static void PaletteScene_SpawnEffect(void)
 {
@@ -1104,6 +1091,6 @@ struct SceneEvent gKorimaKiEvents[] = {
 
 s32 gKorimaKiEffectScript[] = {
 	SC_ADD(SW_SCALE_X, 0x1999),
-	SC_CALL(PaletteScene_AdvanceEffectFrame),
+	SC_CALL(SceneEffect_AdvanceAngleUntilIdle),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };

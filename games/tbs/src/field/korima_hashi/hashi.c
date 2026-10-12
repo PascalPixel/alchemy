@@ -1061,15 +1061,8 @@ static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 	Engine_EventWait(c);
 }
 
-static s32 SceneEffect_AdvanceAngleAndFinishWhenParked(struct FieldActor *p)
-{
-	p->scale_x += 0x1eb8;
-	if (p->target_x == 0x80000000 && p->target_y == 0x80000000 && p->target_z == 0x80000000)
-	{
-		Engine_ObjectDispatchRelease(p);
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korima/grow.c"
 
 static void SceneEffect_SpawnObject26EveryEightFrames(void)
 {
@@ -1390,7 +1383,7 @@ struct SceneEvent KorimaHashi_Events[] = {
 };
 
 s32 KorimaHashi_Object26Script[] = {
-	SC_CALL(SceneEffect_AdvanceAngleAndFinishWhenParked),
+	SC_CALL(SceneEffect_AdvanceAngleUntilIdle),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

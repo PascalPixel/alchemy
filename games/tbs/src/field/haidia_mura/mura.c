@@ -3,6 +3,7 @@
 #include "unit/import.h"
 #include "unit/field/haidia_mura/mura.h"
 #include "unit/field/common/object/orbit.h"
+#include "unit/field/common/effect/psynergy.h"
 #include "unit/field/world_map/linked_effects.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
@@ -59,8 +60,6 @@ static void HaidiaMura_MoveActorAlongHigherZPath(s32 a0, s32 a1, s32 a2, s32 a3)
 static void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode);
 static void FieldScene_RunLargeStagingSequence(void);
 static void Scene_RepairTheHouse(void);
-static void FieldScene_RunStep8C(void);
-static void FieldScene_RunSingleStep(void);
 static void SceneState_SetValue1ThenCall(void);
 static void SceneState_SetValue0ThenCall(void);
 static void FieldScene_RunStep9(void);
@@ -1792,7 +1791,7 @@ static void FieldScene_RunLargeStagingSequence(void)
 	Actor_ShowEmote(GERALD, 0x105, 40);
 	Engine_ActorRunRepeatedMotion(GERALD, 2);
 	Engine_EventWait(20);
-	FieldScene_RunStep8C();
+	SceneState_SetValue140Mode0();
 	Engine_ActorSetAnimation(GERALD, 17);
 	Event_ShowMessageAndWait(0x2001, 0, 20);
 	Event_PlayCue(131);
@@ -1836,7 +1835,7 @@ static void FieldScene_RunLargeStagingSequence(void)
 	Actor_FaceDirection(GERALD, 0x3000, 0);
 	Engine_ActorSetAnimation(GERALD, 1);
 	Effect_SpawnRisingDustBurst((s32)rec8);
-	FieldScene_RunSingleStep();
+	SceneEffect_CleanupSceneObjects();
 	Engine_EventWait(10);
 	Actor_WalkToAndWait(JASMINE, 0x1a8, 0x270);
 	Engine_ActorFaceEachOther(GERALD, JASMINE, 60);
@@ -2047,7 +2046,7 @@ static void Scene_RepairTheHouse(void)
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
 	Engine_EventWait(20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 40);
-	FieldScene_RunStep8C();
+	SceneState_SetValue140Mode0();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 17);
 	Engine_TaskAddCallback((void (*)(void))Effect_PlayStepSound, 3200);
 	for (i = 0; i < 40; i++)
@@ -2172,7 +2171,7 @@ static void Scene_RepairTheHouse(void)
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 11);
 	Engine_ActorEnableActionCallback(0, (u32)gLeaderHammerAction);
 	Engine_EventWait(120);
-	FieldScene_RunSingleStep();
+	SceneEffect_CleanupSceneObjects();
 	Map_CopyCellsTo(5, 103, 82, 42, 1, 1);
 	Engine_ActorEnableActionCallback(0, 1);
 	scene->scale_x = 0x10000;
@@ -2606,15 +2605,8 @@ static void Scene_RepairTheHouse(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunStep8C(void)
-{
-	Engine_PsynergyBegin(0x8c, 0);
-}
-
-static void FieldScene_RunSingleStep(void)
-{
-	BattleEffect_CleanupSceneObjects();
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/psynergy.c"
 
 static void SceneState_SetValue1ThenCall(void)
 {

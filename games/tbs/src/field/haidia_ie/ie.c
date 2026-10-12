@@ -2,6 +2,7 @@
 #include "scene_ids.h"
 #include "vram_tab.h"
 #include "unit/field/haidia_ie/ie.h"
+#include "unit/field/common/effect/psynergy.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
 #include "unit/battle/effect/object3.h"
@@ -55,8 +56,6 @@ static void Event_SayThenWait(s32 speaker, s32 frames);
 static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
 static void OverlayObject_UpdateOnFrameBit1(s32 obj);
 static void HaidiaIe_SpawnEffectPair(union PairObject *parent);
-static void SceneState_ApplyPair140And0(void);
-static void HaidiaIe_CleanupSceneObjects(void);
 static void FieldScene_RunStep15(void);
 static void FieldScene_RunStep17(void);
 static void FieldScene_RunStep20(void);
@@ -202,7 +201,7 @@ static void EV17_TALK(void)
 		Engine_EventWait(20);
 		Engine_ActorStartRepeatedMotion(17, 2);
 		Engine_EventWait(15);
-		SceneState_ApplyPair140And0();
+		SceneState_SetValue140Mode0();
 		shakes = 0;
 		for (i = 0; i < 40; i++)
 		{
@@ -230,7 +229,7 @@ static void EV17_TALK(void)
 		Engine_AudioPlayCue(0x121);
 		Scheduler_RemoveCallback((s32)FieldScene_RunStep17);
 		Engine_TaskWait(1);
-		HaidiaIe_CleanupSceneObjects();
+		SceneEffect_CleanupSceneObjects();
 		Engine_ActorSetChildValue(17, 0);
 		Engine_EventWait(40);
 		Engine_EventSetMessage((s32)MsgHaidiaBeholdPowerPsynergy);
@@ -305,7 +304,7 @@ static void FieldScene_RunMiddleAuxiliarySequence(void)
 	SceneActor_SetPairZeroAndValue(15, 0xa000, 20);
 	Actor_SetAttachedEffect(15, 0x102);
 	Engine_EventWait(20);
-	SceneState_ApplyPair140And0();
+	SceneState_SetValue140Mode0();
 	for (i = 0; i < 40; i++)
 	{
 		OverlayObject_UpdateOnFrameBit1(Object_GetById(15));
@@ -331,7 +330,7 @@ static void FieldScene_RunMiddleAuxiliarySequence(void)
 	Actor_SetChildValue(15, 0);
 	Actor_SetChildValue(20, 0);
 	Engine_EventWait(40);
-	HaidiaIe_CleanupSceneObjects();
+	SceneEffect_CleanupSceneObjects();
 	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 15, 30);
 	Event_ShowMessage(15, 0);
 	Engine_EventEnd();
@@ -1448,15 +1447,8 @@ static void HaidiaIe_SpawnEffectPair(union PairObject *parent)
 	}
 }
 
-static void SceneState_ApplyPair140And0(void)
-{
-	Engine_PsynergyBegin(140, 0);
-}
-
-static void HaidiaIe_CleanupSceneObjects(void)
-{
-	BattleEffect_CleanupSceneObjects();
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/psynergy.c"
 
 static void FieldScene_RunStep15(void)
 {

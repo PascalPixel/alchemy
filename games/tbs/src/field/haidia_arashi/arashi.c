@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/haidia_arashi/arashi.h"
+#include "unit/field/common/effect/psynergy.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
 #include "unit/battle/effect/object6.h"
@@ -60,8 +61,6 @@ static void FieldScene_ConfigureActorTwentyTwoScene(void);
 static void FieldScene_BuildPlacementGrid(void);
 static void SceneActor_SetModeByFrameBit1(s32 o);
 static void HaidiaArashi_SpawnEffectPair(union PairObject *parent);
-static void SceneState_SetValue140Mode0(void);
-static void FieldScene_RunSingleStep(void);
 static void FieldScene_RunFourPairedSteps(void);
 static void SceneState_SetValue19ThenCall(void);
 static void HaidiaArashi_CopyLeaderSpritePriority(void);
@@ -1327,7 +1326,7 @@ static void EV34_TOUCH(void)
 		Event_ShowMessage(22, 0);
 		Actor_FaceActor(ACTOR_PARTY_LEADER, 22, 0);
 		Engine_EventWait(20);
-		FieldScene_RunSingleStep();
+		SceneEffect_CleanupSceneObjects();
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
 		Engine_ActorSetAnimationAndWait(22, 3);
 		Engine_EventWait(20);
@@ -2723,16 +2722,8 @@ static void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
 	}
 }
 
-static void SceneState_SetValue140Mode0(void)
-{
-
-	Engine_PsynergyBegin(140, 0);
-}
-
-static void FieldScene_RunSingleStep(void)
-{
-	BattleEffect_CleanupSceneObjects();
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/psynergy.c"
 
 static void FieldScene_RunFourPairedSteps(void)
 {

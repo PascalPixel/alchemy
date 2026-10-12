@@ -1,5 +1,6 @@
 #include "game_state.h"
 #include "unit/field/soru_funka/funka.h"
+#include "unit/field/common/effect/psynergy.h"
 #include "unit/field/soru_star/ring_setup.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
@@ -58,8 +59,6 @@ static void SceneState_ConfigureEightCornerRegions(void);
 static void FieldScene_RunVariantStep(s32 a, s32 b, s32 c);
 static void FieldScene_RunStepByRuntimeBits(s32 a);
 static void SoruFunka_SpawnEffectPair(union PairObject *parent);
-static void SceneState_SetValue140Mode0(void);
-static void SoruFunka_CleanupSceneObjects(void);
 static void FieldScene_RunActor15TwoStep(void);
 
 s32 Math_RemainderUnsigned(s32 value, s32 modulus);
@@ -1469,7 +1468,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 	quake->fading = 1;
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	Engine_MapRenderWaitForValues();
-	SoruFunka_CleanupSceneObjects();
+	SceneEffect_CleanupSceneObjects();
 	GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);
 	GameFlag_Set(FLAG_STAR_ROOM_COLLAPSED);
 	Engine_EventRequestExit(5);
@@ -1867,15 +1866,8 @@ static void SoruFunka_SpawnEffectPair(union PairObject *parent)
 	}
 }
 
-static void SceneState_SetValue140Mode0(void)
-{
-	Engine_PsynergyBegin(140, 0);
-}
-
-static void SoruFunka_CleanupSceneObjects(void)
-{
-	BattleEffect_CleanupSceneObjects();
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/psynergy.c"
 
 static void FieldScene_RunActor15TwoStep(void)
 {

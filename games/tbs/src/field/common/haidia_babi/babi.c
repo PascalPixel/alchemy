@@ -6,6 +6,7 @@
 #include "game_state.h"
 #include "vram_tab.h"
 #include "unit/field/common/haidia_babi/babi.h"
+#include "unit/field/common/effect/psynergy.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
 #include "unit/battle/effect/object6.h"
@@ -1027,15 +1028,8 @@ static void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
 	}
 }
 
-static void SceneState_SetValue140Mode0(void)
-{
-	Engine_PsynergyBegin(0x8C, 0);
-}
-
-static void FieldScene_RunSingleStep(void)
-{
-	BattleEffect_CleanupSceneObjects();
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../effect/psynergy.c"
 
 static void FieldScene_RunActor8TwoStep(void)
 {

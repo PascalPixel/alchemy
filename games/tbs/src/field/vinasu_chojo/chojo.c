@@ -4,6 +4,7 @@
 #include "unit/field/vinasu_chojo/chojo.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/common/object/nearest.h"
+#include "unit/field/common/effect/psynergy.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
 #include "unit/battle/effect/object6.h"
@@ -67,8 +68,6 @@ static void Scene_RunScriptedActorPresentation(void);
 static void VinasuChojo_ShowPartyMember(s32 actor, s32 shown);
 static void SceneEffect_UpdateObjectByFrameParity(s32 a);
 static void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent);
-static void SceneState_ApplyPair140And0(void);
-static void VinasuChojo_CleanupSceneObjects(void);
 static void FieldScene_RunStep6(void);
 static void Scene_RunPairedActorEffectSequence(void);
 static void VinasuChojo_FlashScreen(void);
@@ -836,7 +835,7 @@ static void EV05_TOUCH(void)
 	Engine_ActorFaceDirection(6, FACING_EAST, 20);
 	Engine_ActorSetAnimationAndWait(6, 3);
 	Engine_EventWait(40);
-	SceneState_ApplyPair140And0();
+	SceneState_SetValue140Mode0();
 	Engine_TaskWait(1);
 	frame = 0;
 	do
@@ -867,7 +866,7 @@ static void EV05_TOUCH(void)
 	Engine_TaskWait(1);
 	Actor_SetChildValue(6, 0);
 	Engine_TaskWait(10);
-	VinasuChojo_CleanupSceneObjects();
+	SceneEffect_CleanupSceneObjects();
 	Engine_ActorJump(6, 2, 40);
 	VinasuChojo_ShowMessage(6);
 	Actor_ShowEmote(ACTOR_FIRST_OF_PAIR, 0x103, 20);
@@ -1220,15 +1219,8 @@ static void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
 	}
 }
 
-static void SceneState_ApplyPair140And0(void)
-{
-	Engine_PsynergyBegin(140, 0);
-}
-
-static void VinasuChojo_CleanupSceneObjects(void)
-{
-	BattleEffect_CleanupSceneObjects();
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/psynergy.c"
 
 static void FieldScene_RunStep6(void)
 {

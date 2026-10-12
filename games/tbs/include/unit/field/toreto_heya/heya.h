@@ -4,12 +4,17 @@
 #include "types.h"
 #include "field_scene.h"
 
+struct FieldActor;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 struct Swirl;
+union FieldObject;
 
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type);
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
 const u32 *Scene_GetExits(void);
@@ -49,6 +54,7 @@ void ToretoHeya_UpdateSwirlObject(struct Swirl *obj);
 void ToretoHeya_SpawnSwirlSparks(void);
 void ToretoHeya_ApplyFlaggedMapPatches(void);
 void SceneEffect_RegisterPaletteFadeCallback(void);
+void Effect_AdvanceMotion(union FieldObject *object);
 void ToretoHeya_RunLandingDustScene(void);
 extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];

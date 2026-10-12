@@ -10,6 +10,9 @@ struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type);
 void FieldScene_ApplyActor13Values3And3(void);
 void RamakanSabaku_WaitForActorHeight(u8 *o, s32 limit);
 s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor);

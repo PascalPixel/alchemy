@@ -8,6 +8,7 @@
 struct FieldActor;
 struct SceneEntrance;
 struct SceneRegion;
+union FieldObject;
 
 typedef struct Target_02000cd0
 {
@@ -25,6 +26,9 @@ typedef struct Record
 	s32 w16;
 } Record;
 
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type);
 s32 SceneState_ApplyArgMode0AndReturnZero(s32 no);
 s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target);
 void SceneActor_PassRaisedPointOfActorZero(void);
@@ -35,6 +39,7 @@ void SceneState_SwapSlotPairByRank(s32 first, s32 second);
 s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object);
 s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record);
 void SceneActor_WaitValueBelowLimit(struct FieldActor *track);
+void Effect_AdvanceMotion(union FieldObject *object);
 void BabiChika_RunLeaderSpray(void);
 void SceneEffect_SpawnNineRadialEffects(s32 actor);
 const struct SceneEntrance *Scene_GetEntrances(void);

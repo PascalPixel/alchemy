@@ -6,6 +6,10 @@
 
 struct FieldActor;
 
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type);
+s32 FixedPoint_Distance(s32 *first_position, s32 *second_position);
 s32 SceneActor_UpdateProximity(struct FieldActor *actor, struct FieldActor *target, s32 range, s32 force);
 s32 UpdateActorProximity(struct FieldActor *actor);
 const void *SceneData_GetScriptTable(void);

@@ -9,6 +9,9 @@ struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type);
 void SceneState_ApplyPair12And21(void);
 void MakyuriHeya_UpdateLeaderEffectTarget(void);
 s32 MakyuriHeya_TrailSparks(struct FieldActor *actor);

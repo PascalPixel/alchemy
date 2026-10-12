@@ -4,6 +4,13 @@
 #include "types.h"
 #include "field_scene.h"
 
+struct FacingObject;
+struct FieldActor;
+
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type);
+s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj);
 s32 *SceneData_GetScriptTable(void);
 s32 SceneData_ReturnZero(void);
 s32 *SceneData_GetMessageTable(void);

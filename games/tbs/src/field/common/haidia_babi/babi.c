@@ -6,8 +6,6 @@
 #include "game_state.h"
 #include "vram_tab.h"
 #include "unit/field/common/haidia_babi/babi.h"
-#include "unit/field/common/effect/vertical.h"
-#include "unit/field/common/object/facing.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
 #include "unit/graphics/window/measure.h"
@@ -42,9 +40,39 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "iowrite.h"
+#include "fieldobj.h"
 
-// ここに共通ソースが入る（ROM の並びのとおり）
-#include "../object/facing.c"
+s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
+{
+	s32					 delta;
+	u16					 old;
+	s32					 angle;
+	struct FacingObject *target;
+
+	target = obj->facing_target;
+	if (target != 0)
+	{
+		obj->facing_flags = (0xFE & obj->facing_flags);
+		angle = (u16)ArcTan2(
+			target->position_z - obj->position_z, target->position_x - obj->position_x);
+		old = obj->facing;
+		delta = (s16)(angle - old);
+		if (delta != 0)
+		{
+			if (delta > 0x1000)
+			{
+				delta = 0x1000;
+			}
+
+			if (delta < -0x1000)
+			{
+				delta = -0x1000;
+			}
+			obj->facing = (old + delta);
+		}
+	}
+	return 1;
+}
 
 enum
 {
@@ -951,8 +979,55 @@ void OverlayObject_ApplyRandomSlotOnOddFrames(union FieldObject *object)
 	}
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
-#include "../effect/vertical.c"
+void Effect_AnimateVerticalPositive(union FieldObject *object)
+{
+	struct FieldActor *self = &object->actor;
+	struct FieldActor *anchor;
+	s32				   frame;
+	s32				   amplitude;
+
+	anchor = self->linked_object;
+	self->timer = (self->timer + 1);
+	frame = self->timer;
+
+	if (frame > 31)
+	{
+		Engine_ObjectDispatchRelease(self);
+		return;
+	}
+
+	amplitude = Engine_MathSin(frame << 10);
+	self->scale_x = amplitude;
+	self->scale_y = amplitude;
+	self->x.fixed = anchor->x.fixed;
+	self->y.fixed += 0x10000;
+	self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
+}
+
+void Effect_AnimateVerticalNegative(union FieldObject *object)
+{
+	struct FieldActor *self = &object->actor;
+	struct FieldActor *anchor;
+	s32				   frame;
+	s32				   amplitude;
+
+	anchor = self->linked_object;
+	self->timer = (self->timer + 1);
+	frame = self->timer;
+
+	if (frame > 31)
+	{
+		Engine_ObjectDispatchRelease(self);
+		return;
+	}
+
+	amplitude = Engine_MathSin(frame << 10);
+	self->scale_x = amplitude;
+	self->scale_y = -amplitude;
+	self->x.fixed = anchor->x.fixed;
+	self->y.fixed += 0x10000;
+	self->z.fixed = anchor->z.fixed - (0x10000 - amplitude) * 5 + 0x100000;
+}
 
 void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
 {

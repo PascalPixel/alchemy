@@ -2,11 +2,7 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/babi_chika/chika.h"
-#include "unit/field/common/effect/advance.h"
-#include "unit/field/common/effect/create.h"
 #include "unit/field/common/object/staged_actor.h"
-#include "unit/field/common/object/distance.h"
-#include "unit/field/common/object/fillgrid.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/system/scheduler/callback.h"
@@ -44,7 +40,45 @@ struct Vec
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
-#include "../common/effect/create.c"
+
+void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+{
+	work->sprite->priority = mode;
+}
+
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+{
+	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
+
+	if (object != 0)
+	{
+		object->sprite->priority = 0;
+		object->motion_flags = 0;
+		object->collision_flags = 8;
+		Engine_ActorSetSpriteFlags(object, 0);
+		ObjectGroup_SetChildValue(object, 14);
+		Engine_ObjectSetBlendMode(object, 1);
+		return object;
+	}
+	return 0;
+}
+
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+{
+	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
+
+	if (object != 0)
+	{
+		object->sprite->priority = 1;
+		object->motion_flags = 0;
+		object->collision_flags = 8;
+		Engine_ActorSetSpriteFlags(object, 0);
+		ObjectGroup_SetChildValue(object, 15);
+		object->priority_flags = (object->priority_flags & 0xfe) | 2;
+		return object;
+	}
+	return 0;
+}
 
 extern u8 *gActorEffectWork;
 
@@ -288,8 +322,19 @@ void SceneActor_WaitValueBelowLimit(struct FieldActor *track)
 	track->target_y = ACTOR_NO_TARGET;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/advance.c"
+void Effect_AdvanceMotion(union FieldObject *object)
+{
+	struct FieldEffect *efx = &object->effect;
+
+	efx->x += efx->velocity_x;
+	efx->y += efx->velocity_y;
+	efx->z += efx->velocity_z;
+	efx->velocity_x -= efx->velocity_x / 18;
+	efx->velocity_z -= efx->velocity_z / 16;
+	efx->scale_x += efx->scale_rate_x;
+	efx->scale_y += efx->scale_rate_y;
+	efx->sprite->rotation += efx->spin;
+}
 
 void BabiChika_RunLeaderSpray(void)
 {

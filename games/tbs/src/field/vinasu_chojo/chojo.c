@@ -2,9 +2,6 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/vinasu_chojo/chojo.h"
-#include "unit/field/common/effect/vertical.h"
-#include "unit/field/common/effect/create.h"
-#include "unit/field/common/object/distance.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -62,8 +59,46 @@ typedef struct
 
 s32 Math_RemainderUnsigned(s32, s32);
 
+void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+{
+	work->sprite->priority = mode;
+}
+
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+{
+	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
+
+	if (object != 0)
+	{
+		object->sprite->priority = 0;
+		object->motion_flags = 0;
+		object->collision_flags = 8;
+		Engine_ActorSetSpriteFlags(object, 0);
+		ObjectGroup_SetChildValue(object, 14);
+		Engine_ObjectSetBlendMode(object, 1);
+		return object;
+	}
+	return 0;
+}
+
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+{
+	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
+
+	if (object != 0)
+	{
+		object->sprite->priority = 1;
+		object->motion_flags = 0;
+		object->collision_flags = 8;
+		Engine_ActorSetSpriteFlags(object, 0);
+		ObjectGroup_SetChildValue(object, 15);
+		object->priority_flags = (object->priority_flags & 0xfe) | 2;
+		return object;
+	}
+	return 0;
+}
+
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 
@@ -216,8 +251,17 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gVinasuChojoPlacements;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/distance.c"
+s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
+{
+	s32 delta_x = (*first_position++ - *second_position++) >> 16;
+	s32 delta_y = (*first_position++ - *second_position++) >> 16;
+	s32 delta_z = (*first_position - *second_position) >> 16;
+	s32 delta_x_squared = delta_x * delta_x;
+	s32 delta_y_squared = delta_y * delta_y;
+	s32 delta_z_squared = delta_z * delta_z;
+
+	return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
+}
 
 s32 SceneActor_FindNearestSlotOfKindF2(void)
 {
@@ -1191,8 +1235,55 @@ void SceneState_ForwardByRuntimeWordBits(s32 a)
 	}
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/vertical.c"
+void Effect_AnimateVerticalPositive(union FieldObject *object)
+{
+	struct FieldActor *self = &object->actor;
+	struct FieldActor *anchor;
+	s32				   frame;
+	s32				   amplitude;
+
+	anchor = self->linked_object;
+	self->timer = (self->timer + 1);
+	frame = self->timer;
+
+	if (frame > 31)
+	{
+		Engine_ObjectDispatchRelease(self);
+		return;
+	}
+
+	amplitude = Engine_MathSin(frame << 10);
+	self->scale_x = amplitude;
+	self->scale_y = amplitude;
+	self->x.fixed = anchor->x.fixed;
+	self->y.fixed += 0x10000;
+	self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
+}
+
+void Effect_AnimateVerticalNegative(union FieldObject *object)
+{
+	struct FieldActor *self = &object->actor;
+	struct FieldActor *anchor;
+	s32				   frame;
+	s32				   amplitude;
+
+	anchor = self->linked_object;
+	self->timer = (self->timer + 1);
+	frame = self->timer;
+
+	if (frame > 31)
+	{
+		Engine_ObjectDispatchRelease(self);
+		return;
+	}
+
+	amplitude = Engine_MathSin(frame << 10);
+	self->scale_x = amplitude;
+	self->scale_y = -amplitude;
+	self->x.fixed = anchor->x.fixed;
+	self->y.fixed += 0x10000;
+	self->z.fixed = anchor->z.fixed - (0x10000 - amplitude) * 5 + 0x100000;
+}
 
 void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
 {

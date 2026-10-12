@@ -2,12 +2,7 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/takara_shima/shima.h"
-#include "unit/field/common/effect/advance.h"
-#include "unit/field/common/object/orbit.h"
-#include "unit/field/common/effect/create.h"
 #include "unit/field/common/object/staged_actor.h"
-#include "unit/field/common/object/distance.h"
-#include "unit/field/common/object/fillgrid.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -33,6 +28,8 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
+#include "fieldobj.h"
+#include "../common/object/orbit.h"
 
 struct Vec
 {
@@ -43,7 +40,47 @@ struct Vec
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
-#include "../common/effect/create.c"
+
+void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+{
+	work->sprite->priority = mode;
+}
+
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+{
+	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
+
+	if (object != 0)
+	{
+		object->sprite->priority = 0;
+		object->motion_flags = 0;
+		object->collision_flags = 8;
+		Engine_ActorSetSpriteFlags(object, 0);
+		ObjectGroup_SetChildValue(object, 14);
+		Engine_ObjectSetBlendMode(object, 1);
+		return object;
+	}
+	return 0;
+}
+
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+{
+	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
+
+	if (object != 0)
+	{
+		object->sprite->priority = 1;
+		object->motion_flags = 0;
+		object->collision_flags = 8;
+		Engine_ActorSetSpriteFlags(object, 0);
+		ObjectGroup_SetChildValue(object, 15);
+		object->priority_flags = (object->priority_flags & 0xfe) | 2;
+		return object;
+	}
+	return 0;
+}
+
+// ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 
@@ -112,8 +149,19 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gTakaraShimaPlacementsOther;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/advance.c"
+void Effect_AdvanceMotion(union FieldObject *object)
+{
+	struct FieldEffect *efx = &object->effect;
+
+	efx->x += efx->velocity_x;
+	efx->y += efx->velocity_y;
+	efx->z += efx->velocity_z;
+	efx->velocity_x -= efx->velocity_x / 18;
+	efx->velocity_z -= efx->velocity_z / 16;
+	efx->scale_x += efx->scale_rate_x;
+	efx->scale_y += efx->scale_rate_y;
+	efx->sprite->rotation += efx->spin;
+}
 
 void SpawnRadialEffectBurst(s32 object_id)
 {
@@ -2346,8 +2394,60 @@ void AdvanceActor16AlongEscapeRoute(void)
 	Engine_MapCopyCellAttributes(0, 0, 1, 3, column, row);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/orbit.c"
+s32 SceneEffect_UpdateOrbitPosition(s32 *p)
+{
+	s16 *q = (s16 *)p[20];
+	s32	 a, b;
+	s32	 d = Engine_MathSin(p[12]) * 2;
+	if (d > 0)
+		d = -d;
+	p[2] = p[14] + Engine_MathCos(p[12]) * 2;
+	p[3] = p[15] + d;
+	q[15] = Engine_MathCos(p[12] + 0x8000) / 8;
+	a = Engine_RandomNext();
+	b = Engine_RandomNext();
+	p[12] = p[12] + ((((u32)a << 9) >> 16) + (((u32)b << 9) >> 16)) + 0x400;
+	return 0;
+}
+
+void InitializeStagedActorSceneOrbitingEffect(s32 id)
+{
+	OrbitingSceneObject		  *actor;
+	OrbitingSceneObjectSprite *sprite;
+	u8						  *transfer;
+	s32						   zero;
+
+	actor = (OrbitingSceneObject *)Object_GetById(id);
+	sprite = actor->sprite;
+	sprite->flags_09_mode = 1;
+	sprite->flags_05_bit_5 = 0;
+	sprite->flags_09_high = 0;
+
+	zero = 0;
+	sprite->state = zero;
+	Engine_ActorSetSpriteFlags(actor, zero);
+	actor->active = zero;
+	actor->mode = zero;
+
+	if (Engine_GameFlagIsSet(0x109) == 0)
+		actor->y += 0x200000;
+
+	actor->flags_23 &= 0xfe;
+	actor->visible = 1;
+
+	transfer = Engine_HeapAllocate(17, 0x608);
+	Engine_ItemLoadIcon(ITEM_NUT);
+	transfer += 0x400;
+	Engine_VramLoad(sprite->palette, 128, transfer);
+	Engine_HeapRelease(17);
+
+	actor->orbit_center_x = actor->x;
+	actor->orbit_angle = zero;
+	actor->orbit_center_y = actor->y;
+	actor->active = 1;
+	actor->callback = (u32)SceneEffect_UpdateOrbitPosition;
+	actor->state = zero;
+}
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

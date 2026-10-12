@@ -4,9 +4,11 @@
 #include "types.h"
 #include "field_scene.h"
 
+struct FacingObject;
 struct SceneEvent;
 struct ScenePlacement;
 
+s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj);
 u8 *SceneData_GetScriptTable(void);
 s32 SceneData_ReturnZero(void);
 u8 *SceneData_GetMessageTable(void);
@@ -23,6 +25,8 @@ s32 Scene_Initialize(void);
 void BiribinoNiwa_ApplyEntryState(void);
 void BiribinoNiwa_RunGardenScene(void);
 void FieldScene_OpenGate(void);
+s32 SceneEffect_UpdateOrbitPosition(s32 *p);
+void InitializeStagedActorSceneOrbitingEffect(s32 id);
 extern u16 Niwa_GateCells[];
 extern s32 BiribinoNiwa_GuardScript[];
 extern struct SceneEntrance Placement_Scripts[];

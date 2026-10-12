@@ -5,6 +5,7 @@
 #include "field_scene.h"
 
 struct FieldActor;
+union FieldObject;
 union PairObject;
 
 extern s32 HaidiaArashi_ShakeDone;
@@ -69,6 +70,8 @@ void SceneState_SetWorkWordsAndFlag87f(void);
 void SceneActor_SetModeByFrameBit1(s32 o);
 void OverlayObject_UpdateRandomSlotByFrame(s32 obj);
 void HaidiaArashi_CycleObjectPalettes(s32 o);
+void Effect_AnimateVerticalPositive(union FieldObject *object);
+void Effect_AnimateVerticalNegative(union FieldObject *object);
 void HaidiaArashi_SpawnEffectPair(union PairObject *parent);
 void SceneState_SetValue140Mode0(void);
 void FieldScene_RunSingleStep(void);

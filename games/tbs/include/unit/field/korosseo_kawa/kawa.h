@@ -68,7 +68,9 @@ s32 SceneActor_PlaceLinkedActorAbove(struct FieldActor *a);
 s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b);
 /* FieldScene_BuildSceneDescriptorAndInstallTask is called before its definition with no prototype in scope. */
 void SceneState_InitControlWhenFlag109Clear(s32 resource);
+void *SceneData_FindSlotAtPosition(void *position, void *self);
 void StagedActor_PushActorAhead(void);
+void *SceneActor_FindOccupantAheadOfSubject(void);
 extern const u8 Korosseo_PortraitPaletteOffsets[];
 extern const s16 KorosseoKawa_ModeRecordTwo[];
 extern const s16 KorosseoKawa_SpanB[];

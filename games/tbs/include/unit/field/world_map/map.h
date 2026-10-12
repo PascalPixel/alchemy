@@ -7,6 +7,7 @@
 struct FieldActor;
 struct SceneEvent;
 struct ScenePlacement;
+union FieldObject;
 
 void StoryProgress_TriggerEvent0808(void);
 void StoryProgress_TriggerEvent0809(void);
@@ -79,6 +80,8 @@ void Scene_RunScene371SequenceA(s32 palette);
 void SceneActor_UpdateObjectByCounterBits(u8 *obj);
 void OverlayObject_UpdateOnFrameParity(u8 *obj);
 void SceneState_RunSlotStepOnOddFrames(s32 arg0);
+void Effect_AnimateVerticalPositive(union FieldObject *object);
+void Effect_AnimateVerticalNegative(union FieldObject *object);
 extern s32 gTransferArrive10[];
 extern s32 gTransferDepart10[];
 extern s32 gTransferReturn10[];

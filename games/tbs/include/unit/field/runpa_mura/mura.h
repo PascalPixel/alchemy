@@ -4,11 +4,15 @@
 #include "types.h"
 #include "field_scene.h"
 
+struct FieldActor;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type);
 extern s32 gShortEffectScript[];
 extern s32 gMediumEffectScript[];
 extern s32 gLongEffectScript[];
@@ -55,6 +59,8 @@ void Leader_KickUpDust(void);
 void Party_ThrownOut(void);
 void Leader_SneaksOut(void);
 s32 Scene_Initialize(void);
+s32 SceneEffect_UpdateOrbitPosition(s32 *p);
+void InitializeStagedActorSceneOrbitingEffect(s32 id);
 extern struct SceneEntrance gLunpaEntrances[];
 extern struct SceneEntrance gGateEntrances[];
 extern u32 gLunpaExits[];

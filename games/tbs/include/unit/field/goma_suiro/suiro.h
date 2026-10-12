@@ -22,6 +22,9 @@ typedef struct
 	EffectRecord_020004c4 *record;
 } EffectWork_020004c4;
 
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type);
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
 const u32 *Scene_GetExits(void);

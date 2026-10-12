@@ -4,6 +4,7 @@
 #include "types.h"
 #include "field_scene.h"
 
+struct FacingObject;
 struct FieldActor;
 struct SceneEntrance;
 struct SceneEvent;
@@ -13,6 +14,7 @@ struct SceneRegion;
 union FieldObject;
 
 void SceneState_SetValue14Mode23(void);
+s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj);
 s32 SceneActor_CopyActor8PositionWithFixedY(struct FieldActor *dst);
 s32 OverlayObject_IntegrateAndDamp(struct FieldActor *actor);
 const struct SceneEntrance *Scene_GetEntrances(void);

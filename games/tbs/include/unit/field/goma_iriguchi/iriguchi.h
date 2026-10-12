@@ -6,6 +6,9 @@
 
 struct FieldActor;
 
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type);
 void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames);
 void *GomaIriguchi_GetEntrances(void);
 int SceneData_ReturnZero(void);

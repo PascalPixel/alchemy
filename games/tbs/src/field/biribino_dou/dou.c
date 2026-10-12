@@ -2,7 +2,6 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/biribino_dou/dou.h"
-#include "unit/field/common/object/findcell.h"
 #include "unit/battle/effect/slots.h"
 #include "battle.h"
 #include "debug.h"
@@ -21,6 +20,7 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
+#include "fieldobj.h"
 
 s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 {
@@ -434,8 +434,22 @@ void FieldScene_RunScene398SequenceC(void)
 	}
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/findcell.c"
+struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
+{
+	struct FieldActor **actors = gEventWork->placed_actors - 8;
+	u32					i;
+
+	for (i = 8; i <= 65; i++)
+	{
+		struct FieldActor *actor = actors[i];
+
+		if (x == actor->x.fixed >> 20 && z == actor->z.fixed >> 20)
+		{
+			return actor;
+		}
+	}
+	return 0;
+}
 
 void StagedActor_PushActorAhead(void)
 {

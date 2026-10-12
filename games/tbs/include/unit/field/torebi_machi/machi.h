@@ -9,6 +9,7 @@ struct SceneActor;
 union FieldObject;
 
 void SceneState_SetValues31_2_4(void);
+s32 FixedPoint_Distance(s32 *first_position, s32 *second_position);
 s32 SceneActor_UpdatePlayerProximity(struct SceneActor *actor, struct SceneActor *target, s32 range, s32 force);
 s32 SceneActor_UpdatePartnerProximity(u8 *self);
 u8 *TorebiMachi_GetEntrances(void);

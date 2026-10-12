@@ -12,6 +12,8 @@ void SceneActor_RunPlacementQuery(void);
 void KorimaHiroba_AwardHiddenNut(void);
 u8 *SceneData_GetExtraTable(void);
 s32 FieldScene_SetupEntryActors8To11(void);
+s32 SceneEffect_UpdateOrbitPosition(s32 *p);
+void InitializeStagedActorSceneOrbitingEffect(s32 id);
 extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];

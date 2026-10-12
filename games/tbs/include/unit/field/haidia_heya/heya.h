@@ -4,6 +4,9 @@
 #include "types.h"
 #include "field_scene.h"
 
+struct FacingObject;
+
+s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj);
 void *HaidiaHeya_GetEntrances(void);
 int SceneData_ReturnZero(void);
 void *HaidiaHeya_SelectExits(void);

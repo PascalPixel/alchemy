@@ -4,10 +4,14 @@
 #include "types.h"
 #include "field_scene.h"
 
+struct FieldActor;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type);
 void SceneState_SetValue18Mode2(void);
 s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg);
 s32 MogoruMori_CopyTimerToChild(s32 a);
@@ -46,6 +50,8 @@ void MogoruMori_RunActorEighteenEscape(void);
 void MogoruMori_RunClosingChoreography(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 FieldScene_RunSceneEntryHook(void);
+s32 SceneEffect_UpdateOrbitPosition(s32 *p);
+void InitializeStagedActorSceneOrbitingEffect(s32 id);
 extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];

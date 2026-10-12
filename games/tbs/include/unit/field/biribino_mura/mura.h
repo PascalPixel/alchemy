@@ -4,12 +4,14 @@
 #include "types.h"
 #include "field_scene.h"
 
+struct FacingObject;
 struct FieldActor;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 
+s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj);
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
 u8 *SceneData_GetMessageTable(void);
@@ -36,6 +38,7 @@ void Scene_UpdatePuzzleActors(void);
 void FieldScene_RunScene38bSequenceA(void);
 void ActorPresentation_RepaintTenCellsAndActorEightCell(void);
 void BiribinoMura_RestoreRaisedEntrance(void);
+struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z);
 void BiribinoMura_PushFacedBlock(void);
 void BiribinoMura_UpdateCornerSpawn(void);
 void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor);

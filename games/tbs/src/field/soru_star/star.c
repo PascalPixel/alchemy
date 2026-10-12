@@ -1,8 +1,6 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/soru_star/star.h"
-#include "unit/field/common/object/facing.h"
-#include "unit/field/common/effect/create.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/soru_star/ring_setup.h"
 #include "unit/battle/effect/slots.h"
@@ -33,6 +31,7 @@
 #include "glyph.h"
 #include "ability_ids.h"
 #include "objcmd.h"
+#include "facing_object.h"
 
 enum StarRoomActor
 {
@@ -63,8 +62,46 @@ struct ObjectRuntime;
 
 extern struct SceneEvent Placement_Effects[];
 
+void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+{
+	work->sprite->priority = mode;
+}
+
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+{
+	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
+
+	if (object != 0)
+	{
+		object->sprite->priority = 0;
+		object->motion_flags = 0;
+		object->collision_flags = 8;
+		Engine_ActorSetSpriteFlags(object, 0);
+		ObjectGroup_SetChildValue(object, 14);
+		Engine_ObjectSetBlendMode(object, 1);
+		return object;
+	}
+	return 0;
+}
+
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+{
+	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
+
+	if (object != 0)
+	{
+		object->sprite->priority = 1;
+		object->motion_flags = 0;
+		object->collision_flags = 8;
+		Engine_ActorSetSpriteFlags(object, 0);
+		ObjectGroup_SetChildValue(object, 15);
+		object->priority_flags = (object->priority_flags & 0xfe) | 2;
+		return object;
+	}
+	return 0;
+}
+
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 
@@ -75,8 +112,37 @@ static __inline__ void SkipMessage(s32 amount)
 	gEventWork->message += amount;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/facing.c"
+s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
+{
+	s32					 delta;
+	u16					 old;
+	s32					 angle;
+	struct FacingObject *target;
+
+	target = obj->facing_target;
+	if (target != 0)
+	{
+		obj->facing_flags = (0xFE & obj->facing_flags);
+		angle = (u16)ArcTan2(
+			target->position_z - obj->position_z, target->position_x - obj->position_x);
+		old = obj->facing;
+		delta = (s16)(angle - old);
+		if (delta != 0)
+		{
+			if (delta > 0x1000)
+			{
+				delta = 0x1000;
+			}
+
+			if (delta < -0x1000)
+			{
+				delta = -0x1000;
+			}
+			obj->facing = (old + delta);
+		}
+	}
+	return 1;
+}
 
 s32 *SceneData_GetScriptTable(void)
 {

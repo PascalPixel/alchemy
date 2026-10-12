@@ -9,6 +9,9 @@ struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type);
 s32 StopXianActor(void *actor);
 s32 FaceXianActorToPlayer(struct FieldActor *actor);
 const struct SceneEntrance *Scene_GetEntrances(void);

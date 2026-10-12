@@ -122,7 +122,9 @@ s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(StageEffect_02003d88 *source);
 s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_handle);
 /* ColossoLogRollingStage_SetupSceneDescriptor is called before its definition with no prototype in scope. */
 void ColossoLogRollingStage_InitializeSceneControl(s32 resource);
+void *SceneData_FindSlotAtPosition(void *position, void *self);
 void ColossoLogRollingStage_PushStagedActor(void);
+void *SceneActor_FindOccupantAheadOfSubject(void);
 extern const s32 KorosseoMaruta_Record30Script[];
 extern const s8 KorosseoMaruta_LogPattern[][6];
 extern const u16 gColossoEarlySequenceData[];

@@ -10,6 +10,7 @@ struct FieldActor;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
+union FieldObject;
 
 typedef struct
 {
@@ -20,7 +21,10 @@ typedef struct
 void ConfigureOverlayObject(struct FieldActor *object, s32 palette);
 void *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 type);
 void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 type);
+s32 FixedPoint_Distance(s32 *first_position, s32 *second_position);
+void *SceneData_FindSlotAtPosition(void *position, void *self);
 void RunStagedActorTransition(void);
+s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);
 void SceneActor_ApplySlotsMatchingKind212(void);
 s32 VinasuHeya_UpdateChildFromTimer(struct FieldActor *obj);
 s32 OverlayObject_UpdateEveryFourFrames(void *obj);
@@ -34,6 +38,7 @@ void VinasuHeya_ReleaseEffectLeader(void);
 s32 SceneActor_SetFlagBitByRelativeDepth(struct FieldActor *actor);
 void SceneActor_SwapPositionsByDepth(s32 group, s32 index);
 void OverlayObject_WaitUntilIdle(struct FieldActor *obj);
+void Effect_AdvanceMotion(union FieldObject *object);
 void FieldScene_RunSupplementalSequenceOne(void);
 void SceneEffect_SpawnNineRadialEffects(s32 actor);
 s32 SceneEffect_SpawnRandomizedParticleEveryFourFrames(struct FieldActor *obj);

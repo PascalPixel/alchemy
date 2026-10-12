@@ -6,6 +6,9 @@
 
 struct FieldActor;
 
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type);
 s32 MakyuriIriguchi_TrailSparks(struct FieldActor *a0);
 s32 SceneAudio_PlayCue118AndReturnZero(void);
 s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object);

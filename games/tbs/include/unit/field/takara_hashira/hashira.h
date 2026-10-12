@@ -13,6 +13,9 @@ struct SceneRegion;
 struct StagedActorProbe;
 union FieldObject;
 
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type);
 void OverlayObject_WaitUntilSettledAndReset(u8 *obj);
 void SceneActor_WaitHeightBelowLimit(struct FieldActor *obj, s32 limit);
 s32 FieldScene_QueryActorFootprint(s32 id, s32 *width, s32 *depth, struct StagedActorProbe *probe, s32 *left, s32 *top);

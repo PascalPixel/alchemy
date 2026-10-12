@@ -4,8 +4,6 @@
 #include "unit/import.h"
 #include "unit/field/takara_ashiba/ashiba.h"
 #include "unit/field/common/object/staged_actor.h"
-#include "unit/field/common/object/distance.h"
-#include "unit/field/common/object/fillgrid.h"
 #include "unit/field/common/korosseo/item_icon.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"

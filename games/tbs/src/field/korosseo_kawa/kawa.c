@@ -4,8 +4,6 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/korosseo_kawa/kawa.h"
-#include "unit/field/common/korosseo/occupant.h"
-#include "unit/field/common/object/findslot.h"
 #include "unit/field/common/korosseo/solo_competitor.h"
 #include "unit/field/common/korosseo/solo_round.h"
 #include "unit/field/common/korosseo/korosseo.h"
@@ -48,6 +46,7 @@
 #include "edition.h"
 #include "item_ids.h"
 #include "objcmd.h"
+#include "fieldobj.h"
 
 typedef struct PartyInteractionRecord
 {
@@ -1888,7 +1887,25 @@ void SceneState_InitControlWhenFlag109Clear(s32 resource)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/scene_state.c"
-#include "../common/object/findslot.c"
+
+void *SceneData_FindSlotAtPosition(void *position, void *self)
+{
+	s32				   *pos = position;
+	struct FieldActor **slots = gEventWork->actors;
+	u32					i;
+
+	for (i = 8; i <= 65; i++)
+	{
+		struct FieldActor *p = slots[i];
+
+		if ((pos[0] >> 20) == (p->x.fixed >> 20) && (pos[1] >> 20) == (p->y.fixed >> 20)
+			&& (pos[2] >> 20) == (p->z.fixed >> 20))
+		{
+			return p;
+		}
+	}
+	return 0;
+}
 
 void StagedActor_PushActorAhead(void)
 {
@@ -1979,8 +1996,35 @@ void StagedActor_PushActorAhead(void)
 	Object_SetMode(subject, 1);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/korosseo/occupant.c"
+void *SceneActor_FindOccupantAheadOfSubject(void)
+{
+	struct FieldActor *record;
+	s32				   facing;
+	s32				   position[3];
+	s32				  *occupant;
+
+	record = Object_GetById(gGameState.selected_actor);
+
+	facing = (record->facing + 0x2000) & 0xc000;
+
+	position[0] = (record->x.fixed & 0xfff00000) + 0x80000;
+	position[1] = record->y.fixed;
+	position[2] = (record->z.fixed & 0xfff00000) + 0x80000;
+	Vector_AddPolarOffset(0x100000, facing, position);
+
+	occupant = SceneData_FindSlotAtPosition(position, record);
+	if (occupant == 0)
+	{
+		position[0] = (record->x.fixed & 0xfff00000) + 0x80000;
+		position[1] = record->y.fixed;
+		position[2] = (record->z.fixed & 0xfff00000) + 0x80000;
+		Vector_AddPolarOffset(0x200000, facing, position);
+
+		occupant = SceneData_FindSlotAtPosition(position, record);
+	}
+
+	return occupant;
+}
 
 const u8 Korosseo_PortraitPaletteOffsets[] = {
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)

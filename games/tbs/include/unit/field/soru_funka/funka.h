@@ -4,6 +4,7 @@
 #include "types.h"
 #include "field_scene.h"
 
+union FieldObject;
 union PairObject;
 
 u8 *SceneData_GetScriptTable(void);
@@ -33,6 +34,8 @@ void SceneState_ConfigureEightCornerRegions(void);
 void FieldScene_RunVariantStep(s32 a, s32 b, s32 c);
 void FieldScene_RunStepByRuntimeBits(s32 a);
 void SceneState_ForwardByRuntimeWordBits(s32 a);
+void Effect_AnimateVerticalPositive(union FieldObject *object);
+void Effect_AnimateVerticalNegative(union FieldObject *object);
 void SoruFunka_SpawnEffectPair(union PairObject *parent);
 void SceneState_SetValue140Mode0(void);
 void SoruFunka_CleanupSceneObjects(void);

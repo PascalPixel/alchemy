@@ -1,7 +1,6 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/soru_iriguchi/iriguchi.h"
-#include "unit/field/common/object/findcell.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
 #include "unit/system/scheduler/callback.h"
@@ -22,6 +21,7 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
+#include "fieldobj.h"
 
 s32 SoruIriguchi_CueTimer __attribute__((section(".bss")));
 
@@ -466,8 +466,22 @@ void Scene_UpdateFormationActor14Flags(void)
 	Scene_RunActorFormation(0);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/findcell.c"
+struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
+{
+	struct FieldActor **actors = gEventWork->placed_actors - 8;
+	u32					i;
+
+	for (i = 8; i <= 65; i++)
+	{
+		struct FieldActor *actor = actors[i];
+
+		if (x == actor->x.fixed >> 20 && z == actor->z.fixed >> 20)
+		{
+			return actor;
+		}
+	}
+	return 0;
+}
 
 void SoruIriguchi_PushFacedBlock(void)
 {

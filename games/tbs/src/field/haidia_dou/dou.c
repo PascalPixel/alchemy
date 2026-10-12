@@ -2,11 +2,8 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/haidia_dou/dou.h"
-#include "unit/field/common/effect/create.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/common/object/staged_actor.h"
-#include "unit/field/common/object/distance.h"
-#include "unit/field/common/object/fillgrid.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/system/scheduler/callback.h"
 
@@ -34,8 +31,46 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
+void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+{
+	work->sprite->priority = mode;
+}
+
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+{
+	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
+
+	if (object != 0)
+	{
+		object->sprite->priority = 0;
+		object->motion_flags = 0;
+		object->collision_flags = 8;
+		Engine_ActorSetSpriteFlags(object, 0);
+		ObjectGroup_SetChildValue(object, 14);
+		Engine_ObjectSetBlendMode(object, 1);
+		return object;
+	}
+	return 0;
+}
+
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+{
+	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
+
+	if (object != 0)
+	{
+		object->sprite->priority = 1;
+		object->motion_flags = 0;
+		object->collision_flags = 8;
+		Engine_ActorSetSpriteFlags(object, 0);
+		ObjectGroup_SetChildValue(object, 15);
+		object->priority_flags = (object->priority_flags & 0xfe) | 2;
+		return object;
+	}
+	return 0;
+}
+
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 #include "../common/object/staged_actor.c"

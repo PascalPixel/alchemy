@@ -4,14 +4,20 @@
 #include "types.h"
 #include "field_scene.h"
 
+struct FieldActor;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 struct StagedActor;
+union FieldObject;
 
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type);
 void SceneState_SetValue8Mode66(void);
 void OverlayObject_WaitUntilIdle(s32 *obj);
+void Effect_AdvanceMotion(union FieldObject *object);
 void FieldScene_RunSupplementalSequenceOne(void);
 void FieldScene_RunScene3c5SequenceA(s32 exit);
 const struct SceneEntrance *Scene_GetEntrances(void);

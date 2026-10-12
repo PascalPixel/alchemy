@@ -1,7 +1,6 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/haidia_arashi/arashi.h"
-#include "unit/field/common/effect/vertical.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
 #include "unit/system/scheduler/callback.h"
@@ -2667,8 +2666,55 @@ void HaidiaArashi_CycleObjectPalettes(s32 o)
 	}
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/vertical.c"
+void Effect_AnimateVerticalPositive(union FieldObject *object)
+{
+	struct FieldActor *self = &object->actor;
+	struct FieldActor *anchor;
+	s32				   frame;
+	s32				   amplitude;
+
+	anchor = self->linked_object;
+	self->timer = (self->timer + 1);
+	frame = self->timer;
+
+	if (frame > 31)
+	{
+		Engine_ObjectDispatchRelease(self);
+		return;
+	}
+
+	amplitude = Engine_MathSin(frame << 10);
+	self->scale_x = amplitude;
+	self->scale_y = amplitude;
+	self->x.fixed = anchor->x.fixed;
+	self->y.fixed += 0x10000;
+	self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
+}
+
+void Effect_AnimateVerticalNegative(union FieldObject *object)
+{
+	struct FieldActor *self = &object->actor;
+	struct FieldActor *anchor;
+	s32				   frame;
+	s32				   amplitude;
+
+	anchor = self->linked_object;
+	self->timer = (self->timer + 1);
+	frame = self->timer;
+
+	if (frame > 31)
+	{
+		Engine_ObjectDispatchRelease(self);
+		return;
+	}
+
+	amplitude = Engine_MathSin(frame << 10);
+	self->scale_x = amplitude;
+	self->scale_y = -amplitude;
+	self->x.fixed = anchor->x.fixed;
+	self->y.fixed += 0x10000;
+	self->z.fixed = anchor->z.fixed - (0x10000 - amplitude) * 5 + 0x100000;
+}
 
 void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
 {

@@ -1,10 +1,6 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/vinasu_heya/heya.h"
-#include "unit/field/common/object/fillgrid.h"
-#include "unit/field/common/object/findslot.h"
-#include "unit/field/common/effect/advance.h"
-#include "unit/field/common/object/distance.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -35,6 +31,7 @@
 #include "field_service.h"
 #include "io_reg.h"
 #include "scene_ids.h"
+#include "map.h"
 
 struct DirXZ
 {
@@ -115,9 +112,36 @@ extern u8 *gActorEffectWork;
 #include "ability_ids.h"
 #include "objcmd.h"
 
-// ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/distance.c"
-#include "../common/object/findslot.c"
+s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
+{
+	s32 delta_x = (*first_position++ - *second_position++) >> 16;
+	s32 delta_y = (*first_position++ - *second_position++) >> 16;
+	s32 delta_z = (*first_position - *second_position) >> 16;
+	s32 delta_x_squared = delta_x * delta_x;
+	s32 delta_y_squared = delta_y * delta_y;
+	s32 delta_z_squared = delta_z * delta_z;
+
+	return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
+}
+
+void *SceneData_FindSlotAtPosition(void *position, void *self)
+{
+	s32				   *pos = position;
+	struct FieldActor **slots = gEventWork->actors;
+	u32					i;
+
+	for (i = 8; i <= 65; i++)
+	{
+		struct FieldActor *p = slots[i];
+
+		if ((pos[0] >> 20) == (p->x.fixed >> 20) && (pos[1] >> 20) == (p->y.fixed >> 20)
+			&& (pos[2] >> 20) == (p->z.fixed >> 20))
+		{
+			return p;
+		}
+	}
+	return 0;
+}
 
 void RunStagedActorTransition(void)
 {
@@ -195,8 +219,40 @@ void RunStagedActorTransition(void)
 	Object_SetMode(leader, 1);
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/fillgrid.c"
+extern u8 gMapCellBuffer[];
+
+s32 StagedActor_FillGridAttributeRectangle(
+	u32 layer, s32 x, s32 z, u32 width, u32 height, s32 value)
+{
+	struct MapState *map = gMapWork[0];
+	struct MapCell	*cells;
+	u32				 row;
+	u32				 column;
+
+	if (map != 0)
+	{
+		if (layer <= 2)
+		{
+			cells = map->layers[layer].cells;
+		}
+		else
+		{
+			cells = (struct MapCell *)gMapCellBuffer;
+		}
+		cells += x + (z << 7);
+		for (row = 0; row < height; row++)
+		{
+			struct MapCell *cell = cells + (row << 7);
+
+			for (column = 0; column < width; column++)
+			{
+				cell->collision_code = value;
+				cell++;
+			}
+		}
+	}
+	return 0;
+}
 
 void SceneActor_ApplySlotsMatchingKind212(void)
 {
@@ -413,8 +469,19 @@ void OverlayObject_WaitUntilIdle(struct FieldActor *obj)
 	}
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/advance.c"
+void Effect_AdvanceMotion(union FieldObject *object)
+{
+	struct FieldEffect *efx = &object->effect;
+
+	efx->x += efx->velocity_x;
+	efx->y += efx->velocity_y;
+	efx->z += efx->velocity_z;
+	efx->velocity_x -= efx->velocity_x / 18;
+	efx->velocity_z -= efx->velocity_z / 16;
+	efx->scale_x += efx->scale_rate_x;
+	efx->scale_y += efx->scale_rate_y;
+	efx->sprite->rotation += efx->spin;
+}
 
 void FieldScene_RunSupplementalSequenceOne(void)
 {

@@ -2,7 +2,6 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/world_map/map.h"
-#include "unit/field/common/effect/vertical.h"
 #include "unit/field/world_map/linked_effects.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -39,6 +38,7 @@
 #include "event_runtime.h"
 #include "ability_ids.h"
 #include "objcmd.h"
+#include "fieldobj.h"
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
 
@@ -2434,8 +2434,57 @@ void SceneState_RunSlotStepOnOddFrames(s32 arg0)
 	}
 }
 
+void Effect_AnimateVerticalPositive(union FieldObject *object)
+{
+	struct FieldActor *self = &object->actor;
+	struct FieldActor *anchor;
+	s32				   frame;
+	s32				   amplitude;
+
+	anchor = self->linked_object;
+	self->timer = (self->timer + 1);
+	frame = self->timer;
+
+	if (frame > 31)
+	{
+		Engine_ObjectDispatchRelease(self);
+		return;
+	}
+
+	amplitude = Engine_MathSin(frame << 10);
+	self->scale_x = amplitude;
+	self->scale_y = amplitude;
+	self->x.fixed = anchor->x.fixed;
+	self->y.fixed += 0x10000;
+	self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
+}
+
+void Effect_AnimateVerticalNegative(union FieldObject *object)
+{
+	struct FieldActor *self = &object->actor;
+	struct FieldActor *anchor;
+	s32				   frame;
+	s32				   amplitude;
+
+	anchor = self->linked_object;
+	self->timer = (self->timer + 1);
+	frame = self->timer;
+
+	if (frame > 31)
+	{
+		Engine_ObjectDispatchRelease(self);
+		return;
+	}
+
+	amplitude = Engine_MathSin(frame << 10);
+	self->scale_x = amplitude;
+	self->scale_y = -amplitude;
+	self->x.fixed = anchor->x.fixed;
+	self->y.fixed += 0x10000;
+	self->z.fixed = anchor->z.fixed - (0x10000 - amplitude) * 5 + 0x100000;
+}
+
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/vertical.c"
 #include "linked_effects.c"
 
 s32 gTransferArrive10[] = {

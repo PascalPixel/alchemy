@@ -1,8 +1,6 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/field/runpa_mura/mura.h"
-#include "unit/field/common/object/orbit.h"
-#include "unit/field/common/effect/create.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
 #include "types.h"
@@ -12,6 +10,8 @@
 #include "edition.h"
 #include "village.h"
 #include "text/msg_ids.h"
+#include "fieldobj.h"
+#include "../common/object/orbit.h"
 
 enum
 {
@@ -19,8 +19,46 @@ enum
 	PALETTE_EFFECT = 15
 };
 
+void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+{
+	work->sprite->priority = mode;
+}
+
+void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+{
+	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
+
+	if (object != 0)
+	{
+		object->sprite->priority = 0;
+		object->motion_flags = 0;
+		object->collision_flags = 8;
+		Engine_ActorSetSpriteFlags(object, 0);
+		ObjectGroup_SetChildValue(object, 14);
+		Engine_ObjectSetBlendMode(object, 1);
+		return object;
+	}
+	return 0;
+}
+
+void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+{
+	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
+
+	if (object != 0)
+	{
+		object->sprite->priority = 1;
+		object->motion_flags = 0;
+		object->collision_flags = 8;
+		Engine_ActorSetSpriteFlags(object, 0);
+		ObjectGroup_SetChildValue(object, 15);
+		object->priority_flags = (object->priority_flags & 0xfe) | 2;
+		return object;
+	}
+	return 0;
+}
+
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 
@@ -901,8 +939,60 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/orbit.c"
+s32 SceneEffect_UpdateOrbitPosition(s32 *p)
+{
+	s16 *q = (s16 *)p[20];
+	s32	 a, b;
+	s32	 d = Engine_MathSin(p[12]) * 2;
+	if (d > 0)
+		d = -d;
+	p[2] = p[14] + Engine_MathCos(p[12]) * 2;
+	p[3] = p[15] + d;
+	q[15] = Engine_MathCos(p[12] + 0x8000) / 8;
+	a = Engine_RandomNext();
+	b = Engine_RandomNext();
+	p[12] = p[12] + ((((u32)a << 9) >> 16) + (((u32)b << 9) >> 16)) + 0x400;
+	return 0;
+}
+
+void InitializeStagedActorSceneOrbitingEffect(s32 id)
+{
+	OrbitingSceneObject		  *actor;
+	OrbitingSceneObjectSprite *sprite;
+	u8						  *transfer;
+	s32						   zero;
+
+	actor = (OrbitingSceneObject *)Object_GetById(id);
+	sprite = actor->sprite;
+	sprite->flags_09_mode = 1;
+	sprite->flags_05_bit_5 = 0;
+	sprite->flags_09_high = 0;
+
+	zero = 0;
+	sprite->state = zero;
+	Engine_ActorSetSpriteFlags(actor, zero);
+	actor->active = zero;
+	actor->mode = zero;
+
+	if (Engine_GameFlagIsSet(0x109) == 0)
+		actor->y += 0x200000;
+
+	actor->flags_23 &= 0xfe;
+	actor->visible = 1;
+
+	transfer = Engine_HeapAllocate(17, 0x608);
+	Engine_ItemLoadIcon(ITEM_NUT);
+	transfer += 0x400;
+	Engine_VramLoad(sprite->palette, 128, transfer);
+	Engine_HeapRelease(17);
+
+	actor->orbit_center_x = actor->x;
+	actor->orbit_angle = zero;
+	actor->orbit_center_y = actor->y;
+	actor->active = 1;
+	actor->callback = (u32)SceneEffect_UpdateOrbitPosition;
+	actor->state = zero;
+}
 
 #define LUNPA_ENTRANCE(entrance, x, z, facing) \
 	{(entrance), CONDITION_ALWAYS, (x), 0, (z), (facing), 0, -1, -1, -1, -1, 0}

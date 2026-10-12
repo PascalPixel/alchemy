@@ -4,6 +4,7 @@
 #include "types.h"
 #include "field_scene.h"
 
+struct FieldActor;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
@@ -27,6 +28,7 @@ void Scene_UpdateFormationActor11Flags(void);
 void Scene_UpdateFormationActor12Flags(void);
 void Scene_UpdateFormationActor13Flags(void);
 void Scene_UpdateFormationActor14Flags(void);
+struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z);
 void SoruIriguchi_PushFacedBlock(void);
 s32 Scene_Initialize(void);
 void SoruIriguchi_ApplyEntryState(void);

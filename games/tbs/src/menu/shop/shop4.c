@@ -1,4 +1,5 @@
 #include "unit/menu/shop/shop.h"
+#include "unit/menu/shop/shop2.h"
 #include "unit/menu/shop/shop3.h"
 #include "unit/menu/shop/shop4.h"
 #include "unit/menu/shop/shop5.h"

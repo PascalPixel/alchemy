@@ -6,6 +6,7 @@
 #include "unit/graphics/window/window.h"
 #include "unit/menu/item/menu.h"
 #include "unit/menu/shop/shop.h"
+#include "unit/menu/shop/shop2.h"
 #include "unit/menu/shop/shop3.h"
 #include "unit/menu/shop/shop4.h"
 #include "unit/menu/shop/shop5.h"

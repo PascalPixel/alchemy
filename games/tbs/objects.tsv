@@ -120,6 +120,7 @@ main	rom_main_05	games/tbs/src/menu/menustr
 main	rom_main_05	games/tbs/src/menu/menudata
 main	rom_main_06	games/tbs/src/system/far_call/SHOP
 main	rom_main_06	games/tbs/src/menu/shop/shop
+main	rom_main_06	games/tbs/src/menu/shop/shop2
 main	rom_main_06	games/tbs/src/menu/shop/shop3
 main	rom_main_06	games/tbs/src/menu/shop/shop4
 main	rom_main_06	games/tbs/src/menu/shop/shop5

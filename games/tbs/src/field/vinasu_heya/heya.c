@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/vinasu_heya/heya.h"
+#include "unit/field/common/object/distance.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -417,17 +418,8 @@ extern u8 *gActorEffectWork;
 #include "ability_ids.h"
 #include "objcmd.h"
 
-s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b)
-{
-	s32 dx = (*a++ - *b++) >> 16;
-	s32 dy = (*a++ - *b++) >> 16;
-	s32 dz = (*a - *b) >> 16;
-	s32 dxsq = dx * dx;
-	s32 dysq = dy * dy;
-	s32 dzsq = dz * dz;
-
-	return Iwram_Sqrt(dxsq + dysq + dzsq);
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/distance.c"
 
 struct FieldActor *SceneData_FindSlotAtPosition(s32 *pos, struct FieldActor *self)
 {

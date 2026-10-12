@@ -2,6 +2,7 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/vinasu_chojo/chojo.h"
+#include "unit/field/common/object/distance.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -300,17 +301,8 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gVinasuChojoPlacements;
 }
 
-s32 MeasureFixedPointPositionDistance(s32 *first_position, s32 *second_position)
-{
-	s32 delta_x = (*first_position++ - *second_position++) >> 16;
-	s32 delta_y = (*first_position++ - *second_position++) >> 16;
-	s32 delta_z = (*first_position - *second_position) >> 16;
-	s32 delta_x_squared = delta_x * delta_x;
-	s32 delta_y_squared = delta_y * delta_y;
-	s32 delta_z_squared = delta_z * delta_z;
-
-	return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/distance.c"
 
 s32 SceneActor_FindNearestSlotOfKindF2(void)
 {
@@ -332,7 +324,7 @@ s32 SceneActor_FindNearestSlotOfKindF2(void)
 		{
 			if (*((Spr_020004bc *)actor)->obj->unk28 == 0xf2)
 			{
-				s32 dist = MeasureFixedPointPositionDistance(&ref->x.fixed, &actor->x.fixed);
+				s32 dist = FixedPoint_Distance(&ref->x.fixed, &actor->x.fixed);
 				if (dist < limit)
 				{
 					limit = dist;

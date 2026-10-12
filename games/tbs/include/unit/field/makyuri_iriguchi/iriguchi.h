@@ -5,7 +5,6 @@
 #include "field_scene.h"
 
 struct FieldActor;
-struct Work_39c;
 
 void SetEffectRecordMode(struct FieldActor *work, s32 mode);
 void *OverlayObject_CreateConfigured(s32 first, s32 second, s32 third, s32 fourth);
@@ -38,11 +37,6 @@ s32 MakyuriIriguchi_ApplyEntryState(void);
 void MakyuriIriguchi_CrossDoorway(void);
 void MakyuriIriguchi_RunDoorScene(void);
 void OverlayObject_SpawnKind24AtObject(struct FieldActor *src);
-s32 SceneEffect_AdvanceAnchoredRiseFrame(struct Work_39c *work);
-s32 OverlayObject_RampWords24And28Over16Frames(struct FieldActor *o);
-s32 OverlayObject_AdvanceScaleCounter(struct FieldActor *o);
-void SceneState_ClearCurrentRecordAndReleaseTarget(void);
-void OverlayObject_ReleasePublishedAttachment(void);
 extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];
 extern s32 gEffectScript2[];

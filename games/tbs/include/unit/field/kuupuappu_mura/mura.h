@@ -65,7 +65,6 @@ void ActorPresentation_MoveActorToPositionAndWait(int actor, int x, int z, int f
 void FieldScene_RunActor23SequenceOnceByFlag867(void);
 void FieldScene_RunActor19MotionSequence(void);
 s32 KuupuappuMura_RestoreEntryState(void);
-s32 SceneActor_GetPositionDistance(s32 *a, s32 *b);
 s32 SceneActor_CheckFacingAndRange(struct FieldActor *actor, struct FieldActor *target, s32 range, s32 force);
 void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay);
 void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay);

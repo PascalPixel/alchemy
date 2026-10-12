@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "window.h"
 #include "unit/field/kuupuappu_mura/mura.h"
+#include "unit/field/common/object/distance.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/kuupuappu_mura/scene_cells.h"
 #include "unit/battle/effect/slots.h"
@@ -986,17 +987,8 @@ s32 KuupuappuMura_RestoreEntryState(void)
 	return 0;
 }
 
-s32 SceneActor_GetPositionDistance(s32 *a, s32 *b)
-{
-	s32 dx = (*a++ - *b++) >> 16;
-	s32 dy = (*a++ - *b++) >> 16;
-	s32 dz = (*a - *b) >> 16;
-	s32 dxsq = dx * dx;
-	s32 dysq = dy * dy;
-	s32 dzsq = dz * dz;
-
-	return Iwram_Sqrt(dxsq + dysq + dzsq);
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/distance.c"
 
 s32 SceneActor_CheckFacingAndRange(
 	struct FieldActor *actor, struct FieldActor *target, s32 range, s32 force)
@@ -1004,7 +996,7 @@ s32 SceneActor_CheckFacingAndRange(
 	s32	 result = 0;
 	s32 *target_pos = &target->x.fixed;
 	s32 *actor_pos = &actor->x.fixed;
-	if (SceneActor_GetPositionDistance(target_pos, actor_pos) < range || force != 0)
+	if (FixedPoint_Distance(target_pos, actor_pos) < range || force != 0)
 	{
 		u32 angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed, *target_pos - *actor_pos);
 		u32 left = (angle - 0x1000) & 0xf000;

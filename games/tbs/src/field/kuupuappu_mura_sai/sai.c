@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "window.h"
 #include "unit/field/kuupuappu_mura_sai/sai.h"
+#include "unit/field/common/object/distance.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/kuupuappu_mura/scene_cells.h"
 #include "unit/battle/effect/slots.h"
@@ -121,18 +122,7 @@ struct SceneActor_02000350
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
-
-s32 SceneActor_GetPositionDistance(s32 *first_position, s32 *second_position)
-{
-	s32 delta_x = (*first_position++ - *second_position++) >> 16;
-	s32 delta_y = (*first_position++ - *second_position++) >> 16;
-	s32 delta_z = (*first_position - *second_position) >> 16;
-	s32 delta_x_squared = delta_x * delta_x;
-	s32 delta_y_squared = delta_y * delta_y;
-	s32 delta_z_squared = delta_z * delta_z;
-
-	return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
-}
+#include "../common/object/distance.c"
 
 s32 SceneActor_UpdateProximity(
 	struct SceneActor_02000350 *actor, struct SceneActor_02000350 *target, s32 range, s32 force)
@@ -141,7 +131,7 @@ s32 SceneActor_UpdateProximity(
 	s32 *targetPos = &target->x;
 	s32 *actorPos = &actor->x;
 
-	if (SceneActor_GetPositionDistance(targetPos, actorPos) < range || force != 0)
+	if (FixedPoint_Distance(targetPos, actorPos) < range || force != 0)
 	{
 		u32 angle = (u16)ArcTan2(target->z - actor->z, *targetPos - *actorPos);
 		u32 left = (angle - 0x1000) & 0xf000;

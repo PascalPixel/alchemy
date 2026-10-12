@@ -20,7 +20,6 @@ const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
 void FieldScene_RunFourActorPresentation(void);
-s32 FixedPoint_Distance(s32 *first_position, s32 *second_position);
 s32 FindNearestF2Actor(void);
 void SceneActor_InitializeMotion(void);
 void MakyuriChojo_StepOntoNearestActor(void);

@@ -31,6 +31,29 @@ struct PushState
 
 #define MAP_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 
+void SceneState_ClearCurrentRecordAndReleaseTarget(void)
+{
+	s32 *record = **(s32 ***)&((struct WorkPointers *)&gEventWork)->scene;
+	s32 *target;
+
+	if (record[0] == 0)
+	{
+		return;
+	}
+
+	record[0] = 0;
+	Engine_GameFlagClear(0x161);
+
+	target = (s32 *)record[5];
+	if (target != 0)
+	{
+		*(short *)((u8 *)target + 0x64) = 0;
+		Engine_ObjectSetScript(target, (s32)Makyuri_ScaleCounterScript);
+		Object_SetMode(target, 7);
+		record[5] = 0;
+	}
+}
+
 static __inline__ s32 CheckMove(struct FieldActor *actor, union FieldCoordinate *pos)
 {
 	/* FAKEMATCH: needed to match: the inline boundary rematerializes pos for the collision call. */
@@ -188,4 +211,20 @@ void Makyuri_TickSpawnTimer(void)
 		OverlayObject_SpawnKind24AtObject(point);
 		timer->count = ((u32)(Engine_RandomNext() * 30) >> 16) + 10;
 	}
+}
+
+void OverlayObject_ReleasePublishedAttachment(void)
+{
+	u8 **pub = Runtime_AllocateBlock(35, 4);
+	u8	*state;
+	u8	*obj;
+
+	if (pub == 0)
+		return;
+	state = *pub;
+	obj = *(u8 **)(state + 20);
+	if (obj == 0)
+		return;
+	Engine_ObjectDispatchRelease(obj);
+	*(u8 **)(state + 20) = 0;
 }

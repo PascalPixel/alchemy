@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/shian_mura/mura.h"
+#include "unit/field/common/object/distance.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -168,17 +169,8 @@ void SceneEffect_SpawnPeriodicEffect(void)
 	}
 }
 
-s32 SceneEffect_CalculatePositionDistance(s32 *first_position, s32 *second_position)
-{
-	s32 delta_x = (*first_position++ - *second_position++) >> 16;
-	s32 delta_y = (*first_position++ - *second_position++) >> 16;
-	s32 delta_z = (*first_position - *second_position) >> 16;
-	s32 delta_x_squared = delta_x * delta_x;
-	s32 delta_y_squared = delta_y * delta_y;
-	s32 delta_z_squared = delta_z * delta_z;
-
-	return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/distance.c"
 
 s32 SceneActor_UpdateTracking(
 	struct MapActor *actor, struct MapActor *target, s32 distance_limit, s32 force_tracking)
@@ -191,7 +183,7 @@ s32 SceneActor_UpdateTracking(
 		return 1;
 	}
 
-	if (SceneEffect_CalculatePositionDistance(&target->x, &actor->x) < distance_limit
+	if (FixedPoint_Distance(&target->x, &actor->x) < distance_limit
 		|| force_tracking != 0)
 	{
 		u16 angle = ArcTan2(target->z - actor->z, target->x - actor->x);

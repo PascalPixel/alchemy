@@ -1,4 +1,5 @@
 #include "unit/field/torebi_machi/machi.h"
+#include "unit/field/common/object/distance.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
 #include "unit/graphics/window/measure.h"
@@ -21,17 +22,8 @@ void SceneState_SetValues31_2_4(void)
 	BattleFx_RunPageEffectForSlot(0x1F, 2, 4);
 }
 
-s32 SceneActor_GetPositionDistance(s32 *a, s32 *b)
-{
-	s32 dx = (*a++ - *b++) >> 16;
-	s32 dy = (*a++ - *b++) >> 16;
-	s32 dz = (*a - *b) >> 16;
-	s32 dxsq = dx * dx;
-	s32 dysq = dy * dy;
-	s32 dzsq = dz * dz;
-
-	return Iwram_Sqrt(dxsq + dysq + dzsq);
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/distance.c"
 
 s32 SceneActor_UpdatePlayerProximity(
 	struct SceneActor *actor, struct SceneActor *target, s32 range, s32 force)
@@ -40,7 +32,7 @@ s32 SceneActor_UpdatePlayerProximity(
 	s32 *targetPos = &target->x;
 	s32 *actorPos = &actor->x;
 
-	if (SceneActor_GetPositionDistance(targetPos, actorPos) < range || force != 0)
+	if (FixedPoint_Distance(targetPos, actorPos) < range || force != 0)
 	{
 		u32 angle = (u16)ArcTan2(target->z - actor->z, *targetPos - *actorPos);
 		u32 farLeft = (angle - 0x2000) & 0xf000;

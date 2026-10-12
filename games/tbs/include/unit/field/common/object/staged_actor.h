@@ -7,7 +7,6 @@
 struct StagedActor;
 struct StagedActorProbe;
 
-s32 FixedPoint_Distance(s32 *first_position, s32 *second_position);
 struct StagedActor *StagedActor_FindAtTile(s32 *position, struct StagedActor *origin);
 void StagedActor_AdvancePair(void);
 s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);

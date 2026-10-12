@@ -45,29 +45,6 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-struct Src_39c
-{
-	u8	pad00[8];
-	s32 f8;
-	u8	pad0c[4];
-	s32 f16;
-};
-
-struct Work_39c
-{
-	u8				pad00[8];
-	s32				f8;
-	s32				f12;
-	s32				f16;
-	u8				pad14[4];
-	s32				f24;
-	s32				f28;
-	u8				pad20[68];
-	s16				f100;
-	u8				pad66[2];
-	struct Src_39c *f104;
-};
-
 struct WorkPointers
 {
 	u8 *event;
@@ -694,103 +671,9 @@ void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 	}
 }
 
-s32 SceneEffect_AdvanceAnchoredRiseFrame(struct Work_39c *work)
-{
-	struct Src_39c *source = work->f104;
-	s16				step = ++work->f100;
-	s32				seed;
-
-	if (step > 31)
-	{
-		return 0;
-	}
-
-	seed = Engine_MathSin(step << 10);
-	work->f24 = seed;
-	work->f28 = seed;
-	work->f8 = source->f8;
-	work->f12 += 0x10000;
-	work->f16 = source->f16;
-	return 1;
-}
-
-s32 OverlayObject_RampWords24And28Over16Frames(struct FieldActor *o)
-{
-	u16 *c = &o->timer;
-	s16	 n;
-
-	*c = *c + 1;
-	n = *c;
-	if (n > 16)
-	{
-		return 0;
-	}
-	o->scale_x = (n * 3) << 10;
-	o->scale_y = (n * 3) << 10;
-	return 1;
-}
-
-s32 OverlayObject_AdvanceScaleCounter(struct FieldActor *o)
-{
-	u16 *c = &o->timer;
-	s16	 n;
-
-	*c = *c + 1;
-	n = *c;
-	if (n > 16)
-	{
-		return 0;
-	}
-	o->scale_x = (n << 11) + 0x10000;
-	o->scale_y = (n << 11) + 0x10000;
-	return 1;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
-
 #include "pillar.c"
-
-void SceneState_ClearCurrentRecordAndReleaseTarget(void)
-{
-	s32 *record = **(s32 ***)&((struct WorkPointers *)&gEventWork)->scene;
-	s32 *target;
-
-	if (record[0] == 0)
-	{
-		return;
-	}
-
-	record[0] = 0;
-	Engine_GameFlagClear(0x161);
-
-	target = (s32 *)record[5];
-	if (target != 0)
-	{
-		*(short *)((u8 *)target + 0x64) = 0;
-		Engine_ObjectSetScript(target, (s32)Makyuri_ScaleCounterScript);
-		Object_SetMode(target, 7);
-		record[5] = 0;
-	}
-}
-
-// ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/makyuri/makyuri.c"
-
-void OverlayObject_ReleasePublishedAttachment(void)
-{
-	u8 **pub = Runtime_AllocateBlock(35, 4);
-	u8	*state;
-	u8	*obj;
-
-	if (pub == 0)
-		return;
-	state = *pub;
-	obj = *(u8 **)(state + 20);
-	if (obj == 0)
-		return;
-	Engine_ObjectDispatchRelease(obj);
-	*(u8 **)(state + 20) = 0;
-}
 
 s32 gEffectScript0[] = {
 	SC_WAIT(1),

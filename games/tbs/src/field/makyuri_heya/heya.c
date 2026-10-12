@@ -82,29 +82,6 @@ typedef struct
 	s32 t1;
 } SceneEvent;
 
-struct EffectAnchor
-{
-	u8	pad00[8];
-	s32 f8;
-	u8	pad0c[4];
-	s32 f16;
-};
-
-struct AnchoredEffect
-{
-	u8					 pad00[8];
-	s32					 f8;
-	s32					 f12;
-	s32					 f16;
-	u8					 pad14[4];
-	s32					 f24;
-	s32					 f28;
-	u8					 pad20[68];
-	s16					 f100;
-	u8					 pad66[2];
-	struct EffectAnchor *f104;
-};
-
 struct SceneLookupRecord
 {
 	u8	pad00[216];
@@ -2856,104 +2833,9 @@ void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 	}
 }
 
-s32 SceneEffect_AdvanceAnchoredRiseFrame(struct AnchoredEffect *work)
-{
-	struct EffectAnchor *src = work->f104;
-	s16					 step = ++work->f100;
-	s32					 seed;
-
-	if (step > 31)
-	{
-		return 0;
-	}
-
-	seed = Engine_MathSin(step << 10);
-	work->f24 = seed;
-	work->f28 = seed;
-	work->f8 = src->f8;
-	work->f12 += 0x10000;
-	work->f16 = src->f16;
-	return 1;
-}
-
-s32 SceneEffect_AdvanceScaleOverSixteenFrames(struct FieldActor *o)
-{
-	u16 *c = &o->timer;
-	s16	 n;
-
-	*c = *c + 1;
-	n = *c;
-	if (n > 16)
-	{
-		return 0;
-	}
-	o->scale_x = (n * 3) << 10;
-	o->scale_y = (n * 3) << 10;
-	return 1;
-}
-
-s32 OverlayObject_StepScaleUpSixteenFrames(struct FieldActor *o)
-{
-	u16 *c = &o->timer;
-	s16	 n;
-
-	*c = *c + 1;
-	n = *c;
-	if (n > 16)
-	{
-		return 0;
-	}
-	o->scale_x = (n << 11) + 0x10000;
-	o->scale_y = (n << 11) + 0x10000;
-	return 1;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../makyuri_iriguchi/pillar.c"
-
-void SceneState_ClearCurrentRecordAndReleaseTarget(void)
-{
-	s32 *rec = **(s32 ***)&((struct WorkPointers *)&gEventWork)->scene;
-	s32 *target;
-
-	if (rec[0] == 0)
-	{
-		return;
-	}
-
-	rec[0] = 0;
-	Engine_GameFlagClear(0x161);
-
-	target = (s32 *)rec[5];
-	if (target != 0)
-	{
-		*(short *)((u8 *)target + 0x64) = 0;
-		Engine_ObjectSetScript(target, (s32)Makyuri_ScaleCounterScript);
-		Object_SetMode(target, 7);
-		rec[5] = 0;
-	}
-}
-
-// ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/makyuri/makyuri.c"
-
-void OverlayObject_ReleasePublishedAttachmentB(void)
-{
-	u8 **slot = Runtime_AllocateBlock(35, 4);
-	u8	*state;
-	u8	*obj;
-
-	if (slot == 0)
-		return;
-
-	state = *slot;
-	obj = *(u8 **)(state + 20);
-	if (obj == 0)
-		return;
-
-	Engine_ObjectDispatchRelease(obj);
-	*(u8 **)(state + 20) = 0;
-}
 
 s32 gEffectScript0[] = {
 	SC_WAIT(1),
@@ -3025,12 +2907,12 @@ s32 MakyuriHeya_SparkScript[] = {
 };
 
 s32 Makyuri_RampScript[] = {
-	SC_CALL(SceneEffect_AdvanceScaleOverSixteenFrames),
+	SC_CALL(OverlayObject_RampWords24And28Over16Frames),
 	SC_END,
 };
 
 s32 Makyuri_ScaleCounterScript[] = {
-	SC_CALL(OverlayObject_StepScaleUpSixteenFrames),
+	SC_CALL(OverlayObject_AdvanceScaleCounter),
 	SC_FREE,
 };
 
@@ -3374,7 +3256,7 @@ struct SceneEvent gMakyuriHeyaEvents1[] = {
 	{ 0x202, 25, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_RunPushedBlockScene) },
 	{ EVENT_TALK, 3, 0x873, MSGNO(MsgMakyuriHeyaThePathIsBlockedAgainWhat) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 3, 0x873, MSGNO(MsgMakyuriHeyaThisStatueWasntHereBeforeI) },
-	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachmentB) },
+	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x873, EVENT_SCRIPT(MakyuriHeya_RunPartyScene) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf64, FIND_ITEM(ITEM_SLEEP_BOMB) },
 	{ SCENE_EVENTS_END },
@@ -3404,7 +3286,7 @@ struct SceneEvent gMakyuriHeyaEvents2[] = {
 	{ EVENT_TOUCH, 46, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_WalkLeaderIn) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyPair12And21) },
 	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScriptedSteps0And953) },
-	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachmentB) },
+	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 11, 0x874, EVENT_SCRIPT(FieldScene_RunActorElevenAtTile5And13) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xf66, FIND_ITEM(0xba) },
 	{ SEARCH(SEARCH_CHEST), 102, 0xf67, FIND_ITEM(ITEM_NUT) },
@@ -3433,7 +3315,7 @@ struct SceneEvent gMakyuriHeyaEvents3[] = {
 	{ 0x202, 40, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_RunColumnProbeScene) },
 	{ 0x202, 47, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFourStepSequence) },
 	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScriptedSteps0And953) },
-	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachmentB) },
+	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x878, EVENT_SCRIPT(SceneState_RunWhenActor8AtTile10x23) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 15, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_SyncBlockFlags) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 16, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_SyncBlockFlags) },
@@ -3470,7 +3352,7 @@ struct SceneEvent gMakyuriHeyaEventsOther[] = {
 	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x82b, 0 },
 	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x871, EVENT_SCRIPT(FieldScene_RunColumnChoreography) },
 	{ PSYNERGY_ON_ACTOR(0x5d), 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunRandomEffectActorSequence) },
-	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachmentB) },
+	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
 	{ 0xb904, 5, IF_FLAG_SET(0x881), EVENT_SCRIPT(FieldScene_RunActor184Sequence) },
 	{ SCENE_EVENTS_END },
 };

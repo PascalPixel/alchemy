@@ -4,7 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct AnchoredEffect;
 struct FieldActor;
 struct SceneEntrance;
 struct SceneEvent;
@@ -85,11 +84,6 @@ void MakyuriHeya_RideLift(void);
 void MakyuriHeya_CastPsynergyAtActor11(void);
 void SceneState_SetRecordTableValue(s32 key, s32 value);
 void OverlayObject_SpawnKind24AtObject(struct FieldActor *src);
-s32 SceneEffect_AdvanceAnchoredRiseFrame(struct AnchoredEffect *work);
-s32 SceneEffect_AdvanceScaleOverSixteenFrames(struct FieldActor *o);
-s32 OverlayObject_StepScaleUpSixteenFrames(struct FieldActor *o);
-void SceneState_ClearCurrentRecordAndReleaseTarget(void);
-void OverlayObject_ReleasePublishedAttachmentB(void);
 extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];
 extern s32 gEffectScript2[];

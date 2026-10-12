@@ -25,7 +25,6 @@ const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
-s32 MeasureFixedPointPositionDistance(s32 *first_position, s32 *second_position);
 s32 SceneActor_FindNearestSlotOfKindF2(void);
 void InitializeActorZeroMotion(void);
 void SceneEffect_SpawnAndBobWithActorZero(void);

@@ -10,6 +10,17 @@
 //! the languages that link the row, such as `ja en`). An object may take
 //! several rows: one for each place that takes some of its sections.
 //!
+//! A row whose object is `@TABLE` names no object: it stands for the
+//! modules TABLE names, a row each with its place, sections and editions,
+//! in the order TABLE first names a label of each. TABLE.s is a resource
+//! directory (`resource NAME, PLACE` rows) or a song table
+//! (`song HEADER, PLAYER` rows); a module is an assembler source, or a
+//! song's MIDI, under the table's game or games/common that no other
+//! source includes and no other row links; the game's own module comes
+//! before a games/common one of the same names. The data's order is then
+//! written once, in its table. Every reader has those rows written out,
+//! and `alchemy check object-list --rows` prints the list that way.
+//!
 //! An overlay's places are `text` (its code and data at 0x2008000), `bss`
 //! and `discard`. The table beside the list, games/<game>/overlays.tsv, has
 //! a row for each overlay with a `bss` place: columns `overlay` (its id)
@@ -45,7 +56,10 @@ const OVERLAY_PLACES: [&str; 3] = ["text", "bss", "discard"];
 const CALL_VIA: &str = "libgcc.a:_call_via_rX";
 pub(crate) const BSS_HEADER: &str = "overlay\tbss";
 
-const USAGE: &str = "usage: alchemy check object-list\n\
+const USAGE: &str = "usage: alchemy check object-list [--rows]\n\
+--rows prints each list as the build reads it, a row for every object: a\n\
+row `@TABLE` written out as the modules that table names, in its order.\n\
+\n\
 Fails when a game's object list (games/<game>/objects.tsv) is not what its\n\
 build can link: a malformed row, an object with no C, assembly or MIDI\n\
 source, an input section of an object given twice to one edition, a place\n\
@@ -196,13 +210,13 @@ pub(crate) fn format(rows: &[Row]) -> String {
 }
 
 /// A game's list, or None for a game that links by scripts naming their own
-/// objects.
+/// objects: every row an object's, a `@TABLE` row written out as the
+/// modules its table names.
 pub(crate) fn read(root: &Path, target: DecompTarget) -> Result<Option<Vec<Row>>, String> {
     let Some(path) = target.object_list() else {
         return Ok(None);
     };
-    let text = fs::read_to_string(root.join(&path)).map_err(|error| format!("{}: {error}", path.display()))?;
-    parse(&text).map(Some).map_err(|error| format!("{}: {error}", path.display()))
+    read_path(root, &path).map(Some)
 }
 
 /// The overlay table beside a game's list, games/<game>/overlays.tsv: for
@@ -521,10 +535,12 @@ pub(crate) fn write_main_lines(root: &Path, game: &str, edits: &[(&str, String)]
         }
         return Ok(());
     };
-    let mut rows = read_path(root, &path)?;
+    let before = read_written(root, &path)?;
+    let mut rows = expand(root, before.clone()).map_err(|error| format!("{}: {error}", path.display()))?;
     for (language, text) in edits {
         apply(&mut rows, MAIN, language, text).map_err(|error| format!("{} {language}: {error}", path.display()))?;
     }
+    let rows = collapse(root, &before, rows).map_err(|error| format!("{}: {error}", path.display()))?;
     fs::write(root.join(&path), format(&rows)).map_err(|error| format!("{}: {error}", path.display()))
 }
 
@@ -534,8 +550,212 @@ pub(crate) fn main_lines_path(game: &str, language: &str) -> std::path::PathBuf 
 }
 
 fn read_path(root: &Path, path: &Path) -> Result<Vec<Row>, String> {
+    expand(root, read_written(root, path)?).map_err(|error| format!("{}: {error}", path.display()))
+}
+
+/// The rows as the list's file has them, a `@TABLE` row still one row.
+fn read_written(root: &Path, path: &Path) -> Result<Vec<Row>, String> {
     let text = fs::read_to_string(root.join(path)).map_err(|error| format!("{}: {error}", path.display()))?;
     parse(&text).map_err(|error| format!("{}: {error}", path.display()))
+}
+
+/// Before a table's path in the object column: the row stands for the
+/// modules that table names.
+const NAMED_BY: char = '@';
+
+/// A module a table names: its object, and the table's names it defines.
+struct Named {
+    object: String,
+    labels: Vec<String>,
+}
+
+/// What each row stands for: itself, or for a `@TABLE` row a row for each
+/// module the table names, with that row's place, sections and editions, in
+/// the order the table first names a label of each. A module another row
+/// links is that row's, and is left out; so is a games/common module
+/// whose every name the game's own modules define, which is the other
+/// game's.
+fn stands_for(root: &Path, rows: &[Row]) -> Result<Vec<Vec<Row>>, String> {
+    let listed: BTreeSet<&str> = rows.iter().map(|row| row.object.as_str()).collect();
+    let mut found = Vec::with_capacity(rows.len());
+    for row in rows {
+        let Some(table) = row.object.strip_prefix(NAMED_BY) else {
+            found.push(vec![row.clone()]);
+            continue;
+        };
+        let mut owners: BTreeMap<&str, &str> = BTreeMap::new();
+        let mut run = Vec::new();
+        let modules = named(root, table)?;
+        let shared = |module: &Named| module.object.starts_with("games/common/");
+        let own: BTreeSet<&str> = modules
+            .iter()
+            .filter(|module| !shared(module) || listed.contains(module.object.as_str()))
+            .flat_map(|module| module.labels.iter().map(String::as_str))
+            .collect();
+        for module in modules.iter().filter(|module| !listed.contains(module.object.as_str())) {
+            if shared(module) && module.labels.iter().all(|label| own.contains(label.as_str())) {
+                continue;
+            }
+            for label in &module.labels {
+                if let Some(other) = owners.insert(label, &module.object) {
+                    return Err(format!("{table} names {label}, which {other} and {} both define", module.object));
+                }
+            }
+            run.push(Row { object: module.object.clone(), ..row.clone() });
+        }
+        if run.is_empty() {
+            return Err(format!("{table} names no module that is not a row already"));
+        }
+        found.push(run);
+    }
+    Ok(found)
+}
+
+/// The rows with each `@TABLE` row written out as the rows it stands for.
+fn expand(root: &Path, rows: Vec<Row>) -> Result<Vec<Row>, String> {
+    if !rows.iter().any(|row| row.object.starts_with(NAMED_BY)) {
+        return Ok(rows);
+    }
+    Ok(stands_for(root, &rows)?.into_iter().flatten().collect())
+}
+
+/// Rows a tool edited, as the list's file writes them: each run of rows a
+/// `@TABLE` row of `written` stood for is that one row again. A tool
+/// cannot edit such a run, which follows the table and its modules: an
+/// edit the written list would not read back is refused.
+fn collapse(root: &Path, written: &[Row], rows: Vec<Row>) -> Result<Vec<Row>, String> {
+    let refused = |table: &Row| {
+        format!(
+            "{} {}: the rows {} stands for were edited; they follow that table and the modules it names",
+            table.image, table.place, table.object
+        )
+    };
+    let runs = stands_for(root, written)?;
+    let tables: Vec<(&Row, &Vec<Row>)> =
+        written.iter().zip(&runs).filter(|(row, _)| row.object.starts_with(NAMED_BY)).collect();
+    let mut found = rows.clone();
+    for (table, run) in &tables {
+        let at = found.windows(run.len()).position(|window| window == run.as_slice()).ok_or_else(|| refused(table))?;
+        found.splice(at..at + run.len(), [(*table).clone()]);
+    }
+    match tables.first() {
+        Some((table, _)) if expand(root, found.clone())? != rows => Err(refused(table)),
+        _ => Ok(found),
+    }
+}
+
+/// A game's rows as its list's file writes them, for a tool that changed
+/// the rows `read` gave it.
+pub(crate) fn written(root: &Path, target: DecompTarget, rows: Vec<Row>) -> Result<String, String> {
+    let path = target.object_list().ok_or("the game has no object list")?;
+    let before = read_written(root, &path)?;
+    collapse(root, &before, rows).map(|rows| format(&rows)).map_err(|error| format!("{}: {error}", path.display()))
+}
+
+/// The modules a table names, in the order it first names a label of each.
+/// The table is an assembler source, TABLE.s: a resource directory, whose
+/// `resource NAME, PLACE` rows name places, or a song table, whose
+/// `song HEADER, PLAYER` rows name song headers. A module is an assembler
+/// source, or for a song table a MIDI too, under the table's game or
+/// games/common that no assembler source includes; its labels are its own
+/// and those of the sources it includes. One scan serves a process while
+/// the table's file is as it was.
+fn named(root: &Path, table: &str) -> Result<std::sync::Arc<Vec<Named>>, String> {
+    type Stamp = (std::time::SystemTime, u64);
+    type Known = BTreeMap<std::path::PathBuf, (Stamp, std::sync::Arc<Vec<Named>>)>;
+    static KNOWN: std::sync::Mutex<Known> = std::sync::Mutex::new(BTreeMap::new());
+    let source = format!("{table}.s");
+    let path = root.join(&source);
+    let stamp = fs::metadata(&path)
+        .and_then(|found| Ok((found.modified()?, found.len())))
+        .map_err(|error| format!("{source}: {error}"))?;
+    if let Some((known, modules)) = KNOWN.lock().expect("the scans").get(&path) {
+        if *known == stamp {
+            return Ok(modules.clone());
+        }
+    }
+    let text = fs::read_to_string(&path).map_err(|error| format!("{source}: {error}"))?;
+    let (names, songs) = match directory_places(&text) {
+        places if places.is_empty() => (song_headers(&text), true),
+        places => (places, false),
+    };
+    if names.is_empty() {
+        return Err(format!("{source} has no resource or song row to name a module"));
+    }
+    let game = match table.split('/').collect::<Vec<_>>()[..] {
+        ["games", game, _, ..] => game.to_owned(),
+        _ => return Err(format!("{table} is no source under games/<game>")),
+    };
+    let mut sources = Vec::new();
+    for folder in BTreeSet::from([format!("games/{game}"), "games/common".to_owned()]) {
+        module_sources(root, &folder, songs, &mut sources)?;
+    }
+    let mut included = BTreeSet::new();
+    for source in sources.iter().filter(|source| source.ends_with(".s")) {
+        let text = fs::read_to_string(root.join(source)).map_err(|error| format!("{source}: {error}"))?;
+        included.extend(crate::build_rom::included_sources(&text));
+    }
+    let mut modules = Vec::new();
+    for source in sources.iter().filter(|source| !included.contains(*source)) {
+        let (object, kind) = source.rsplit_once('.').expect("a source has an extension");
+        if object == table {
+            continue;
+        }
+        let mut labels = Vec::new();
+        if kind == "s" {
+            module_labels(root, source, &mut Vec::new(), &mut labels)?;
+        } else {
+            let midi = fs::read(root.join(source)).map_err(|error| format!("{source}: {error}"))?;
+            labels = ags::sound::sequence_labels(&midi).map_err(|error| format!("{source}: {error}"))?;
+        }
+        let mut order: Vec<usize> =
+            labels.iter().filter_map(|label| names.iter().position(|name| name == label)).collect();
+        order.sort_unstable();
+        if let Some(first) = order.first().copied() {
+            let labels = order.into_iter().map(|at| names[at].clone()).collect();
+            modules.push((first, Named { object: object.to_owned(), labels }));
+        }
+    }
+    modules.sort_by(|a, b| (a.0, &a.1.object).cmp(&(b.0, &b.1.object)));
+    let modules = std::sync::Arc::new(modules.into_iter().map(|(_, module)| module).collect::<Vec<_>>());
+    KNOWN.lock().expect("the scans").insert(path, (stamp, modules.clone()));
+    Ok(modules)
+}
+
+/// The assembler sources under a folder of the checkout, and with `midi`
+/// the MIDI sources, as paths from the checkout.
+fn module_sources(root: &Path, folder: &str, midi: bool, found: &mut Vec<String>) -> Result<(), String> {
+    let Ok(entries) = fs::read_dir(root.join(folder)) else {
+        return Ok(());
+    };
+    for entry in entries {
+        let entry = entry.map_err(|error| format!("{folder}: {error}"))?;
+        let name = entry.file_name().to_string_lossy().into_owned();
+        let path = format!("{folder}/{name}");
+        let kind = entry.file_type().map_err(|error| format!("{path}: {error}"))?;
+        if kind.is_dir() {
+            module_sources(root, &path, midi, found)?;
+        } else if name.ends_with(".s") || midi && name.ends_with(".mid") {
+            found.push(path);
+        }
+    }
+    Ok(())
+}
+
+/// The song headers a song table names, in the order it first names each:
+/// a row is `song HEADER, PLAYER`.
+fn song_headers(text: &str) -> Vec<String> {
+    let mut headers: Vec<String> = Vec::new();
+    for line in text.lines() {
+        let Some(row) = line.trim().strip_prefix("song").filter(|rest| rest.starts_with(char::is_whitespace)) else {
+            continue;
+        };
+        let header = row.split(',').next().unwrap_or("").trim();
+        if header.starts_with(|c: char| c.is_ascii_alphabetic() || c == '_') && !headers.iter().any(|known| known == header) {
+            headers.push(header.to_owned());
+        }
+    }
+    headers
 }
 
 pub fn entry(args: &[String]) -> std::process::ExitCode {
@@ -544,6 +764,18 @@ pub fn entry(args: &[String]) -> std::process::ExitCode {
         [flag] if flag == "-h" || flag == "--help" => {
             println!("{USAGE}");
             return std::process::ExitCode::SUCCESS;
+        }
+        [flag] if flag == "--rows" => {
+            return match rows_text(crate::compiler::routing::root()) {
+                Ok(text) => {
+                    print!("{text}");
+                    std::process::ExitCode::SUCCESS
+                }
+                Err(error) => {
+                    eprintln!("error: {error}");
+                    std::process::ExitCode::FAILURE
+                }
+            };
         }
         _ => {
             eprintln!("{USAGE}");
@@ -562,6 +794,17 @@ pub fn entry(args: &[String]) -> std::process::ExitCode {
     }
 }
 
+/// Each game's list with every row an object's: what the build links.
+fn rows_text(root: &Path) -> Result<String, String> {
+    let mut text = String::new();
+    for game in TARGET_IDS.chunks(6) {
+        if let Some(rows) = read(root, target_for(game[0]))? {
+            text += &format(&rows);
+        }
+    }
+    Ok(text)
+}
+
 fn run(root: &Path) -> Result<String, String> {
     let mut summary = Vec::new();
     let mut failures = Vec::new();
@@ -571,6 +814,7 @@ fn run(root: &Path) -> Result<String, String> {
             continue;
         };
         let rows = read(root, first)?.expect("a listed game has a list");
+        let written = read_written(root, &list)?;
         let shown = list.display();
         failures.extend(repeats(&rows).into_iter().map(|found| format!("{shown}: {found}")));
         let mut sourced = BTreeSet::new();
@@ -609,8 +853,17 @@ fn run(root: &Path) -> Result<String, String> {
         }
         let (resources, found) = resources(root, &rows)?;
         failures.extend(found.into_iter().map(|found| format!("{shown}: {found}")));
+        let tables = written.iter().filter(|row| row.object.starts_with(NAMED_BY)).count();
+        let named = match tables {
+            0 => String::new(),
+            _ => format!(
+                ", {} of them written and {} named by {tables} tables",
+                written.len() - tables,
+                rows.len() + tables - written.len()
+            ),
+        };
         summary.push(format!(
-            "{shown}: {} rows of {} images, each linked where its script includes its place; {resources} resources in their directory's order",
+            "{shown}: {} rows of {} images{named}, each linked where its script includes its place; {resources} resources in their directory's order",
             rows.len(),
             images.len()
         ));
@@ -1282,6 +1535,85 @@ mod tests {
         );
         // A list that links no directory has no resources to order.
         assert_eq!(resources(root.path(), &rows("map title")).unwrap(), (0, Vec::new()));
+    }
+
+    #[test]
+    fn a_table_row_stands_for_the_modules_its_table_names_in_its_order() {
+        let root = tempfile::tempdir().unwrap();
+        let write = |path: &str, text: &str| {
+            let path = root.path().join(path);
+            fs::create_dir_all(path.parent().unwrap()).unwrap();
+            fs::write(path, text).unwrap();
+        };
+        let directory = "Resource_DirectoryTable:\n\tresource , FarCall_Table\n\tresource , Ui_Tiles\n\
+                         \tresource , Title_Sun\n\tresource , Field_Map\n\tresource , Title_Sun\n\tresource , Title_Peak\n";
+        write("games/g/dir.s", directory);
+        // A row of its own, a source another includes, the other game's
+        // module of a name this game defines, and a module the table does
+        // not name: none is the table's.
+        write("games/g/code.s", "FarCall_Table:\n");
+        write("games/common/ui.s", "Ui_Tiles:\n");
+        write("games/common/peak.s", "Title_Peak:\n");
+        write("games/g/spare.s", "Spare:\n");
+        write("games/g/title.s", "\t.include \"games/common/ui.s\"\nTitle_Sun:\nTitle_Peak:\n");
+        write("games/g/map/map.s", "Field_Map:\n");
+        let text = list("main\trom_main\tgames/g/code\nmain\trom_tail\tgames/g/dir\nmain\trom_tail\t@games/g/dir\t.rodata\tja en\n");
+        let written = parse(&text).unwrap();
+        let rows = expand(root.path(), written.clone()).unwrap();
+        let objects: Vec<&str> = rows.iter().map(|row| row.object.as_str()).collect();
+        assert_eq!(objects, ["games/g/code", "games/g/dir", "games/g/title", "games/g/map/map"]);
+        assert_eq!((rows[2].place.as_str(), rows[2].sections.as_str()), ("rom_tail", ".rodata"));
+        assert_eq!(rows[3].editions, ["ja", "en"]);
+        // A tool's rows are written with the table's row again, beside its
+        // own edit; an edit of the table's rows is refused.
+        assert_eq!(format(&collapse(root.path(), &written, rows.clone()).unwrap()), text);
+        let mut edited = rows.clone();
+        edited.push(Row { object: "games/g/spare".into(), ..rows[0].clone() });
+        let kept = collapse(root.path(), &written, edited).unwrap();
+        assert_eq!(format(&kept), format!("{text}main\trom_main\tgames/g/spare\n"));
+        let mut edited = rows.clone();
+        edited.swap(2, 3);
+        assert!(collapse(root.path(), &written, edited).unwrap_err().contains("@games/g/dir stands for were edited"));
+        let mut edited = rows.clone();
+        edited.remove(3);
+        assert!(collapse(root.path(), &written, edited).unwrap_err().contains("were edited"));
+        // Two of the game's modules define one name: the table cannot choose.
+        write("games/g/twice.s", "Field_Map:\n");
+        write("games/g/dir.s", &format!("{directory}\tresource , 0\n"));
+        assert_eq!(
+            expand(root.path(), written.clone()).unwrap_err(),
+            "games/g/dir names Field_Map, which games/g/map/map and games/g/twice both define"
+        );
+        // A table with nothing left to name, and a source that is no table.
+        let alone = parse(&list("main\trom_tail\t@games/g/spare\n")).unwrap();
+        assert!(expand(root.path(), alone).unwrap_err().contains("has no resource or song row"));
+    }
+
+    #[test]
+    fn a_song_table_names_its_sequences_by_their_headers() {
+        let root = tempfile::tempdir().unwrap();
+        let write = |path: &str, text: &str| {
+            let path = root.path().join(path);
+            fs::create_dir_all(path.parent().unwrap()).unwrap();
+            fs::write(path, text).unwrap();
+        };
+        let songs = "\t.macro song header:req, player:req\n\t.4byte \\header\n\t.endm\nSound_SongTable:\n\
+                     \tsong sound_001, 1\n\tsong Sound_EmptySong, 0\n\tsong sound_000, 1\n\tsong sound_001, 0\n";
+        assert_eq!(song_headers(songs), ["sound_001", "Sound_EmptySong", "sound_000"]);
+        write("games/g/sound/songs.s", songs);
+        write("games/g/sound/players.s", "Sound_EmptySong:\n");
+        write("games/g/sound/sequence/bgm_000.s", "sound_000_track:\nsound_000:\n");
+        write("games/common/sound/sequence/se_shop.s", "sound_001:\n");
+        let written = parse(&list(
+            "main\trom_tail\tgames/g/sound/players\t.rodata\nmain\trom_tail\tgames/g/sound/songs\t.rodata\nmain\trom_tail\t@games/g/sound/songs\t.rodata\n",
+        ))
+        .unwrap();
+        let rows = expand(root.path(), written).unwrap();
+        let objects: Vec<&str> = rows.iter().map(|row| row.object.as_str()).collect();
+        assert_eq!(
+            objects,
+            ["games/g/sound/players", "games/g/sound/songs", "games/common/sound/sequence/se_shop", "games/g/sound/sequence/bgm_000"]
+        );
     }
 
     #[test]

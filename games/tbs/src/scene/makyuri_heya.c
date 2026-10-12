@@ -303,72 +303,72 @@ static void EV25_SCRIPT(void)
 	s32				  x;
 
 	Engine_EventBegin();
-	if (StagedActor_FindClearPosition(&probe) == 0)
-		goto end;
-	switch ((u32)probe.word[1])
+	if (StagedActor_FindClearPosition(&probe) != 0)
 	{
-	case 9:
-		if (probe.word[4] >> 20 == 8)
+		switch ((u32)probe.word[1])
 		{
-			((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
-			Engine_EventWait(20);
-			Map_CopyCellsTo(119, 9, 109, 11, 1, 1);
-			SceneEffect_SpawnRandomizedBurst(0x2d60000, 0, 0xb40000, 0x8000);
-			GameFlag_Set(0x310);
-		}
-		else
-		{
-			s32 one = 1;
-
-			Map_CopyCellsTo(117, 9, 104, 7, one, one);
-			Map_CopyCellsTo(119, 8, 109, 11, one, one);
-			Map_CopyCellsTo(118, 8, 104, 13, one, one);
-			((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
-			GameFlag_Clear(0x310);
-		}
-		break;
-	case 10:
-		if (probe.word[4] >> 20 == 12)
-		{
-			((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
-			Engine_EventWait(10);
-			if (GameFlag_IsSet(0x310))
+		case 9:
+			if (probe.word[4] >> 20 == 8)
 			{
-				Map_CopyCellsTo(118, 9, 104, 13, 1, 1);
-				SceneEffect_SpawnRandomizedBurst(0x2840000, 0, 0xd20000, 0x4000);
+				((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
+				Engine_EventWait(20);
+				Map_CopyCellsTo(119, 9, 109, 11, 1, 1);
+				SceneEffect_SpawnRandomizedBurst(0x2d60000, 0, 0xb40000, 0x8000);
+				GameFlag_Set(0x310);
 			}
-			GameFlag_Set(0x311);
-		}
-		else
-		{
-			s32 one = 1;
-
-			Map_CopyCellsTo(119, 8, 109, 11, one, one);
-			if (GameFlag_IsSet(0x310))
+			else
 			{
-				Map_CopyCellsTo(119, 9, 109, 11, one, one);
+				s32 one = 1;
+
+				Map_CopyCellsTo(117, 9, 104, 7, one, one);
+				Map_CopyCellsTo(119, 8, 109, 11, one, one);
 				Map_CopyCellsTo(118, 8, 104, 13, one, one);
+				((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
+				GameFlag_Clear(0x310);
 			}
-			((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
-			GameFlag_Clear(0x311);
+			break;
+		case 10:
+			if (probe.word[4] >> 20 == 12)
+			{
+				((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
+				Engine_EventWait(10);
+				if (GameFlag_IsSet(0x310))
+				{
+					Map_CopyCellsTo(118, 9, 104, 13, 1, 1);
+					SceneEffect_SpawnRandomizedBurst(0x2840000, 0, 0xd20000, 0x4000);
+				}
+				GameFlag_Set(0x311);
+			}
+			else
+			{
+				s32 one = 1;
+
+				Map_CopyCellsTo(119, 8, 109, 11, one, one);
+				if (GameFlag_IsSet(0x310))
+				{
+					Map_CopyCellsTo(119, 9, 109, 11, one, one);
+					Map_CopyCellsTo(118, 8, 104, 13, one, one);
+				}
+				((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
+				GameFlag_Clear(0x311);
+			}
+			break;
+		case 11:
+			x = probe.word[2];
+			if (x >> 20 == 40)
+			{
+				((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
+				GameFlag_Set(0x312);
+			}
+			else
+			{
+				((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
+				GameFlag_Clear(0x312);
+			}
+			break;
 		}
-		break;
-	case 11:
-		x = probe.word[2];
-		if (x >> 20 == 40)
-		{
-			((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
-			GameFlag_Set(0x312);
-		}
-		else
-		{
-			((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
-			GameFlag_Clear(0x312);
-		}
-		break;
+		MakyuriHeya_ExitWhenChannelsOpen();
 	}
-	MakyuriHeya_ExitWhenChannelsOpen();
-end:
 	Engine_EventEnd();
 }
 
@@ -1032,94 +1032,94 @@ static void EV40_SCRIPT(void)
 	s32				  start;
 
 	Engine_EventBegin();
-	if (StagedActor_FindClearPosition(&probe) == 0)
-		goto end;
-	switch (probe.word[1])
+	if (StagedActor_FindClearPosition(&probe) != 0)
 	{
-	case 10:
-		((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
-		if (probe.word[4] >> 20 == 38)
-			Engine_GameFlagSet(0x318);
-		else
-			Engine_GameFlagClear(0x318);
-		break;
-	case 11:
-		start = Object_GetById(11)->x.fixed >> 20;
-		((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
-		column = probe.word[2] >> 20;
-		if (column == 47)
+		switch (probe.word[1])
 		{
-			Engine_GameFlagSet(0x319);
-			Engine_GameFlagClear(0x31a);
-			Engine_GameFlagClear(0x31b);
-			MakyuriHeya_StartPillarPush();
-			if (start == 54)
-				SceneEffect_SpawnParticleRowsByMode(0);
-			else if (start == 48)
-				SceneEffect_SpawnParticleRowsByMode(1);
-			MakyuriHeya_OpenStoneDoor(2);
-			goto wait;
-		}
-		if (column == 48)
-		{
-			Engine_GameFlagSet(0x31a);
-			Engine_GameFlagClear(0x31b);
-			Engine_GameFlagClear(0x319);
-			if (MakyuriHeya_StartPillarPush() != 0)
+		case 10:
+			((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
+			if (probe.word[4] >> 20 == 38)
+				Engine_GameFlagSet(0x318);
+			else
+				Engine_GameFlagClear(0x318);
+			break;
+		case 11:
+			start = Object_GetById(11)->x.fixed >> 20;
+			((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
+			column = probe.word[2] >> 20;
+			if (column == 47)
 			{
-				s32 x;
+				Engine_GameFlagSet(0x319);
+				Engine_GameFlagClear(0x31a);
+				Engine_GameFlagClear(0x31b);
+				MakyuriHeya_StartPillarPush();
+				if (start == 54)
+					SceneEffect_SpawnParticleRowsByMode(0);
+				else if (start == 48)
+					SceneEffect_SpawnParticleRowsByMode(1);
+				MakyuriHeya_OpenStoneDoor(2);
+				goto wait;
+			}
+			if (column == 48)
+			{
+				Engine_GameFlagSet(0x31a);
+				Engine_GameFlagClear(0x31b);
+				Engine_GameFlagClear(0x319);
+				if (MakyuriHeya_StartPillarPush() != 0)
+				{
+					s32 x;
 
+					SceneEffect_SpawnParticleRowsByMode(2);
+					x = 210 << 18;
+					MakyuriHeya_StopActorNinePositionCallback();
+					MakyuriHeya_OpenStoneDoor(1);
+					Object_RefreshSelectorById(9);
+					OverlayObject_PrepareObject(x, 0, 0x3120000, 223);
+					OverlayObject_PrepareObject(x, 0, 0x3320000, 223);
+					Engine_ActorSetDestination(9, 0x348, 0x2e8);
+					Engine_EventWait(5);
+					Engine_AudioPlayCue(189);
+					Engine_ActorWaitForMove(9);
+					Engine_EventWait(40);
+					Engine_GameFlagSet(0x877);
+					Engine_ColorBufferApplySource(0x10000, 0);
+					*(s32 *)&(*(struct GameState **)&gEventWork)->scene = 0x100;
+					Engine_EventCloseScreen();
+					Engine_EventWaitForScreen();
+					Engine_EventRequestExit(15);
+					break;
+				}
 				SceneEffect_SpawnParticleRowsByMode(2);
-				x = 210 << 18;
 				MakyuriHeya_StopActorNinePositionCallback();
 				MakyuriHeya_OpenStoneDoor(1);
-				Object_RefreshSelectorById(9);
-				OverlayObject_PrepareObject(x, 0, 0x3120000, 223);
-				OverlayObject_PrepareObject(x, 0, 0x3320000, 223);
-				Engine_ActorSetDestination(9, 0x348, 0x2e8);
-				Engine_EventWait(5);
-				Engine_AudioPlayCue(189);
-				Engine_ActorWaitForMove(9);
-				Engine_EventWait(40);
-				Engine_GameFlagSet(0x877);
-				Engine_ColorBufferApplySource(0x10000, 0);
-				*(s32 *)&(*(struct GameState **)&gEventWork)->scene = 0x100;
-				Engine_EventCloseScreen();
-				Engine_EventWaitForScreen();
-				Engine_EventRequestExit(15);
-				goto end;
+				goto wait;
 			}
-			SceneEffect_SpawnParticleRowsByMode(2);
-			MakyuriHeya_StopActorNinePositionCallback();
-			MakyuriHeya_OpenStoneDoor(1);
-			goto wait;
+			if (column == 53)
+			{
+				Engine_GameFlagSet(0x31b);
+				Engine_GameFlagClear(0x319);
+				Engine_GameFlagClear(0x31a);
+				MakyuriHeya_StartPillarPush();
+				SceneEffect_SpawnParticleRowsByMode(0);
+			wait:
+				Engine_EventWait(60);
+			}
+			else
+			{
+				Engine_GameFlagClear(0x319);
+				Engine_GameFlagClear(0x31a);
+				Engine_GameFlagClear(0x31b);
+				MakyuriHeya_StartPillarPush();
+				if (start == 47)
+					SceneEffect_SpawnParticleRowsByMode(2);
+				else if (start == 48)
+					SceneEffect_SpawnParticleRowsByMode(1);
+				MakyuriHeya_OpenStoneDoor(0);
+				Engine_EventWait(60);
+			}
+			break;
 		}
-		if (column == 53)
-		{
-			Engine_GameFlagSet(0x31b);
-			Engine_GameFlagClear(0x319);
-			Engine_GameFlagClear(0x31a);
-			MakyuriHeya_StartPillarPush();
-			SceneEffect_SpawnParticleRowsByMode(0);
-		wait:
-			Engine_EventWait(60);
-		}
-		else
-		{
-			Engine_GameFlagClear(0x319);
-			Engine_GameFlagClear(0x31a);
-			Engine_GameFlagClear(0x31b);
-			MakyuriHeya_StartPillarPush();
-			if (start == 47)
-				SceneEffect_SpawnParticleRowsByMode(2);
-			else if (start == 48)
-				SceneEffect_SpawnParticleRowsByMode(1);
-			MakyuriHeya_OpenStoneDoor(0);
-			Engine_EventWait(60);
-		}
-		break;
 	}
-end:
 	Engine_EventEnd();
 }
 

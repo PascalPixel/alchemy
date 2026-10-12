@@ -110,17 +110,6 @@ void EffectRuntime_SetMode2(s32 id);
 struct ObjectRuntime *EffectRuntime_GetCurrentObject(s32 id);
 void EffectRuntime_ClearCurrentFlags(s32 id);
 void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 y);
-void BattleFx_EmitRandomParticle(void);
-void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter);
-struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item);
-void Object_DestroyIfPresent(void *object);
-void EffectRuntime_PrepareRisingObject(struct ObjectRuntime *object);
-void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags);
-void BattleFx_StartEffectObject22(s32 value, s32 flags);
-void BattleFx_ClearRandomParticles(void);
-void BattleFx_SpawnRandomParticleAtPosition(const struct FieldActor *source);
-u32 EffectRuntime_IsActive(void);
-void FieldEffect_SpawnNearbyMarkers(void);
 void BattleFx_ShrinkObjectAndDestroySlow(void *obj);
 void BattleFx_ShrinkObjectAndDestroyFast(void *obj);
 void RunBattleEffect07(void);
@@ -166,5 +155,10 @@ static __inline__ s32 Vitals_Ratio(s32 value, s32 max)
 		clamped = ratio;
 	return clamped;
 }
+
+//--------------------------------------------------------------------------
+// マップのマーカー物体
+//--------------------------------------------------------------------------
+#define MARKER_MAX 10
 
 #endif

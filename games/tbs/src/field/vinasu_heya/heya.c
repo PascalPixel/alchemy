@@ -395,55 +395,8 @@ static void EV31_TOUCH_3(void)
 	*(s32 *)(gActorEffectWork + 24) = 0;
 }
 
-static s32 SceneActor_SetFlagBitByRelativeDepth(struct FieldActor *actor)
-{
-	struct FieldActor *ref;
-	u8				  *fp;
-	u8				   flags;
-	ref = Object_GetById(ACTOR_PARTY_LEADER);
-	fp = &actor->priority_flags;
-	flags = *fp | 2;
-	*fp = flags;
-	if (ref->z.fixed < actor->z.fixed)
-	{
-		s32 diff = actor->z.fixed - ref->z.fixed;
-		s32 lim;
-		diff += 0x00040000;
-		lim = actor->y.fixed;
-		lim += diff;
-		if (ref->y.fixed <= lim)
-		{
-			flags &= 0xfd;
-			*fp = flags;
-		}
-	}
-	return 0;
-}
-
-static void SceneActor_SwapPositionsByDepth(s32 group, s32 index)
-{
-	struct FieldActor *first;
-	struct FieldActor *second;
-	s32				   value;
-
-	first = Object_GetById(group);
-	second = Object_GetById(index);
-	if (first->z.fixed <= second->z.fixed)
-	{
-		value = first->x.fixed;
-		first->x.fixed = second->x.fixed;
-		second->x.fixed = value;
-
-		value = first->y.fixed;
-		first->y.fixed = second->y.fixed;
-		second->y.fixed = value;
-
-		value = first->z.fixed;
-		first->z.fixed = second->z.fixed;
-		second->z.fixed = value;
-		Engine_TaskWait(1);
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/depth.c"
 
 static void OverlayObject_WaitUntilIdle(struct FieldActor *obj)
 {
@@ -461,19 +414,8 @@ static void OverlayObject_WaitUntilIdle(struct FieldActor *obj)
 	}
 }
 
-static void Effect_AdvanceMotion(union FieldObject *object)
-{
-	struct FieldEffect *efx = &object->effect;
-
-	efx->x += efx->velocity_x;
-	efx->y += efx->velocity_y;
-	efx->z += efx->velocity_z;
-	efx->velocity_x -= efx->velocity_x / 18;
-	efx->velocity_z -= efx->velocity_z / 16;
-	efx->scale_x += efx->scale_rate_x;
-	efx->scale_y += efx->scale_rate_y;
-	efx->sprite->rotation += efx->spin;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/advance.c"
 
 static void FieldScene_RunSupplementalSequenceOne(void)
 {

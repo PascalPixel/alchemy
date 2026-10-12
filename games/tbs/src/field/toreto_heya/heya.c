@@ -934,19 +934,8 @@ static void EV00_PSYNERGY(void)
 	Engine_TaskRemoveCallback(ToretoPalette_ApplyTint);
 }
 
-static void Effect_AdvanceMotion(union FieldObject *object)
-{
-	struct FieldEffect *efx = &object->effect;
-
-	efx->x += efx->velocity_x;
-	efx->y += efx->velocity_y;
-	efx->z += efx->velocity_z;
-	efx->velocity_x -= efx->velocity_x / 18;
-	efx->velocity_z -= efx->velocity_z / 16;
-	efx->scale_x += efx->scale_rate_x;
-	efx->scale_y += efx->scale_rate_y;
-	efx->sprite->rotation += efx->spin;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/advance.c"
 
 static void ToretoHeya_RunLandingDustScene(void)
 {

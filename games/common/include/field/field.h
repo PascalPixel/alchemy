@@ -171,19 +171,6 @@ struct OverlayEffectMotion
 	u8	pad44[32];
 	s16 mode;
 };
-struct Particle_02000c4c
-{
-	u8	 unknown_00[8];
-	s32	 x;
-	s32	 y;
-	u8	 unknown_10[0x20];
-	s32	 angle;
-	u8	 unknown_34[4];
-	s32	 base_x;
-	s32	 base_y;
-	u8	 unknown_40[0x10];
-	u16 *sprite;
-};
 struct PathRecorder
 {
 	s16 mode;

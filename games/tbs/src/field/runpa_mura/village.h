@@ -244,31 +244,6 @@ struct LunpaDoor
 	u16		   y;
 };
 
-struct FloatingNut
-{
-	u8					unknown_00[8];
-	s32					x;
-	s32					y;
-	u8					unknown_10[0x13];
-	u8					priority_flags;
-	u8					unknown_24[0x0c];
-	s32					angle;
-	u8					unknown_34[4];
-	s32					rest_x;
-	s32					rest_y;
-	u8					unknown_40[0x10];
-	struct FieldSprite *sprite;
-	u8					unknown_54;
-	u8					motion_flags;
-	u8					status;
-	u8					unknown_57[5];
-	u8					ready;
-	u8					unknown_5d[4];
-	u8					free_motion;
-	u8					unknown_62[10];
-	s32 (*update)(union FieldObject *object);
-};
-
 extern struct LunpaDoor gLunpaDoors[];
 
 #endif

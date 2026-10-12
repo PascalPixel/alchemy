@@ -472,6 +472,12 @@ fn collect_warnings(root: &Path, targets: &[DecompTarget]) -> Result<Report, Str
                 .with_extension("")
                 .to_string_lossy()
                 .into_owned();
+            // An object whose source was renamed or removed is built no more:
+            // its warnings are a stale file's, not the tree's.
+            if stale(root, &name) {
+                let _ = fs::remove_file(&path);
+                continue;
+            }
             texts
                 .entry(name)
                 .or_default()
@@ -496,6 +502,12 @@ fn collect_warnings(root: &Path, targets: &[DecompTarget]) -> Result<Report, Str
         log,
         diagnostics: seen.into_iter().collect(),
     })
+}
+
+/// A warning file of an object under games/ that the checkout has no source
+/// for any more.
+fn stale(root: &Path, object: &str) -> bool {
+    object.starts_with("games/") && crate::build_rom::source_for(root, object).is_err()
 }
 
 /// The linker names every empty .bss and dynamic-linking section of the
@@ -823,5 +835,16 @@ games/b.c:7:1: warning: array subscript 4 is above array bounds [-Warray-bounds=
         assert_eq!(both, "compiler\twarnings\ngcc 15\t500\ngcc 16\t100\n");
         assert_eq!(hold("", "gcc 16", 7, false).unwrap().0, "");
         assert_eq!(hold("", "gcc 16", 7, true).unwrap().0, "compiler\twarnings\ngcc 16\t7\n");
+    }
+
+    #[test]
+    fn warnings_of_a_source_that_is_gone_are_stale() {
+        let root = tempfile::tempdir().unwrap();
+        fs::create_dir_all(root.path().join("games/g/src")).unwrap();
+        fs::write(root.path().join("games/g/src/kept.c"), "").unwrap();
+        assert!(!stale(root.path(), "games/g/src/kept"));
+        assert!(stale(root.path(), "games/g/src/renamed"));
+        // What the build makes itself has no source and is never stale.
+        assert!(!stale(root.path(), "resource_3ad_overlay"));
     }
 }

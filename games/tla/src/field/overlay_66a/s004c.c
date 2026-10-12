@@ -109,6 +109,14 @@ s32 Func_02000258(void)
 
 s32 Func_0200027c(void)
 {
+#if defined(TLA_EDITION_JA) /* 日本版は入口を見ない */
+    ((struct Ov66aEventWork *)Ram_HeapSlots->event_work)->value_1ac = 0x201;
+    if (gPartyState.scene == (s32)&SceneId_Ov66aRoom1)
+        Func_020002f8();
+    else if (gPartyState.scene == (s32)&SceneId_Ov66aRoom2)
+        Func_0200051c();
+    return 0;
+#else
     s32 scene = gPartyState.scene;
 
     if (scene == (s32)&SceneId_Ov66aRoom1) {
@@ -122,4 +130,5 @@ s32 Func_0200027c(void)
         Func_0200051c();
     }
     return 0;
+#endif
 }

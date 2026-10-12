@@ -205,7 +205,7 @@ main	rom_main_07	games/tbs/src/battle/enemy
 main	rom_main_07	games/tbs/src/battle/smnentry
 main	rom_main_07	games/tbs/src/battle/spoils
 main	rom_main_07	games/tbs/src/battle/btldata
-main	rom_main_07	games/tbs/src/battle/presentation/advarrow
+main	rom_main_07	games/tbs/src/battle/advarrow
 main	rom_main_07	games/tbs/src/battle/btlvars
 main	rom_main_08	games/tbs/src/system/far_call/EFFECT
 main	rom_main_08	games/tbs/src/effect/effect	.text

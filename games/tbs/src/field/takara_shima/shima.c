@@ -2,6 +2,7 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/takara_shima/shima.h"
+#include "unit/field/common/object/orbit.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
@@ -41,7 +42,6 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "fieldobj.h"
-#include "orbit.h"
 
 // 前方宣言
 static void FieldScene_RunScene3b2SequenceA(void);

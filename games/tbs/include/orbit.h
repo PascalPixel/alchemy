@@ -46,6 +46,4 @@ typedef struct OrbitingSceneObject
 	u32						   callback;
 } OrbitingSceneObject;
 
-static void InitializeStagedActorSceneOrbitingEffect(s32 id);
-
 #endif

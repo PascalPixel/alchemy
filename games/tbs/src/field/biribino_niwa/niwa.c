@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/field/biribino_niwa/niwa.h"
+#include "unit/field/common/object/orbit.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
 #include "unit/battle/effect/object6.h"
@@ -30,7 +31,6 @@
 #include "field_scene.h"
 #include "objcmd.h"
 #include "facing_object.h"
-#include "orbit.h"
 
 // 前方宣言
 static void BiribinoNiwa_ApplyEntryState(void);

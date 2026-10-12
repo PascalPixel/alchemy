@@ -2,6 +2,7 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/korima_hiroba/hiroba.h"
+#include "unit/field/common/object/orbit.h"
 #include "unit/field/common/korima/palette.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
@@ -28,7 +29,6 @@
 #include "io_reg.h"
 #include "ability_ids.h"
 #include "field_scene.h"
-#include "orbit.h"
 
 #ifdef MODERN
 // called before its definition below, which modern GCC refuses for an

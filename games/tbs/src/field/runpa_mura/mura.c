@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/field/runpa_mura/mura.h"
+#include "unit/field/common/object/orbit.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
@@ -19,7 +20,6 @@
 #include "village.h"
 #include "text/msg_ids.h"
 #include "fieldobj.h"
-#include "orbit.h"
 
 // 前方宣言
 static void Guards_Watch(void);

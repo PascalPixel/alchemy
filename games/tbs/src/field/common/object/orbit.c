@@ -16,7 +16,7 @@ static s32 SceneEffect_UpdateOrbitPosition(s32 *p)
 	return 0;
 }
 
-static void InitializeStagedActorSceneOrbitingEffect(s32 id)
+void InitializeStagedActorSceneOrbitingEffect(s32 id)
 {
 	OrbitingSceneObject		  *actor;
 	OrbitingSceneObjectSprite *sprite;

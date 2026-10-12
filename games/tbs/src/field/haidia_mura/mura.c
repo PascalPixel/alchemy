@@ -2,6 +2,7 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/haidia_mura/mura.h"
+#include "unit/field/common/object/orbit.h"
 #include "unit/field/world_map/linked_effects.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
@@ -49,7 +50,6 @@
 #include "objcmd.h"
 #include "fieldobj.h"
 #include "field_effect.h"
-#include "orbit.h"
 
 // 前方宣言
 static void FieldScene_RunScene373SequenceC(void);

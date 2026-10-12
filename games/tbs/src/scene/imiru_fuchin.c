@@ -1765,33 +1765,31 @@ static void SceneActor_StepSubjectAlongHeading(void)
 		Object_CommitPosition(subject);
 		subject->update = SceneActor_TurnTowardTableAngle;
 
-		goto advance_probe;
-	continue_probe:
-		if (Map_GetTerrainHeight(subject->terrain_id, probe.x, probe.z) - subject->y.fixed
-			> 0x80000)
+		for (;;)
 		{
-			goto finish_probe;
-		}
-		x = probe.x;
-		z = probe.z;
-		subject->speed = 0x20000;
-		subject->acceleration = 0x1999;
-		Engine_ObjectSetPosition(subject, probe.x, probe.y, probe.z);
-		Object_CommitPosition(subject);
-		if (marker != goal)
-		{
-			goto blocked;
+			FieldVector_AddPolarOffset(0x100000, heading, &probe);
+			marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
+			if (marker == 255)
+			{
+				break;
+			}
+			if (Map_GetTerrainHeight(subject->terrain_id, probe.x, probe.z) - subject->y.fixed
+				> 0x80000)
+			{
+				break;
+			}
+			x = probe.x;
+			z = probe.z;
+			subject->speed = 0x20000;
+			subject->acceleration = 0x1999;
+			Engine_ObjectSetPosition(subject, probe.x, probe.y, probe.z);
+			Object_CommitPosition(subject);
+			if (marker != goal)
+			{
+				goto blocked;
+			}
 		}
 
-	advance_probe:
-		FieldVector_AddPolarOffset(0x100000, heading, &probe);
-		marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
-		if (marker != 255)
-		{
-			goto continue_probe;
-		}
-
-	finish_probe:
 		subject->speed = 0x20000;
 		subject->acceleration = 0x10000;
 		Engine_ObjectSetPosition(subject, x, subject->y.fixed, z);

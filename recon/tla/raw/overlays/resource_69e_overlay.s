@@ -654,69 +654,8 @@ Func_020002b8:
 	mov r10, r6
 	mov r11, r7
 	pop {r5, r6, r7, pc}
-	.section .text.x020086ac,"ax",%progbits
-	.global Func_020006ac
-	.thumb_func
-Func_020006ac:
-	push {lr}
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #14
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_0200871e
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #14
-	bl GameFlag_SetBit
-	bl Func_020028b0
-	movs r0, #0
-	bl Func_020029a8
-	movs r0, #128
-	lsls r0, r0, #9
-	movs r1, #0
-	bl Func_02002980
-	movs r0, #128
-	lsls r0, r0, #9
-	movs r1, #1
-	adds r0, #3
-	bl Func_02002978
-	movs r0, #30
-	bl Func_02002988
-	bl Event_WaitTransitionFrames
-	movs r1, #1
-	movs r0, #0
-	bl Object_SetModeById
-	movs r0, #30
-	bl Battle_WaitMode0
-	movs r2, #2
-	negs r2, r2
-	ldr r0, .L_02008720
-	movs r1, #0
-	bl Func_02002898
-	movs r0, #128
-	lsls r0, r0, #9
-	movs r1, #0
-	bl Func_02002978
-	movs r0, #30
-	bl Func_02002988
-	bl Func_020028b8
-.L_0200871e:
-	pop {pc}
-.L_02008720:
-	.4byte MsgFieldShowAnemosPower
-	.section .text.x02008724,"ax",%progbits
-	.global Func_02000724
-	.thumb_func
-Func_02000724:
-	push {lr}
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #14
-	bl GameFlag_ClearBit
-	pop {pc}
-	.2byte 0x0000
 	.section .text.x02008734,"ax",%progbits
+	.balign 4
 	.global Func_02000734
 	.thumb_func
 Func_02000734:
@@ -1317,17 +1256,8 @@ Func_02000bf0:
 	.4byte gPartyState
 	.section .text.x02008cb6,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x02008cb8,"ax",%progbits
-	.global Func_02000cb8
-	.thumb_func
-Func_02000cb8:
-	ldr r3, .L_02008cc0
-	str r0, [r3]
-	bx lr
-	.2byte 0x0000
-.L_02008cc0:
-	.4byte Data_020033dc
 	.section .text.x02008cc4,"ax",%progbits
+	.balign 4
 	.global Func_02000cc4
 	.thumb_func
 Func_02000cc4:
@@ -2664,30 +2594,8 @@ Func_02001718:
 	.4byte 0x000001ef
 .L_02009858:
 	.4byte Func_02001538
-	.section .text.x0200985c,"ax",%progbits
-	.global Func_0200185c
-	.thumb_func
-Func_0200185c:
-	push {r5, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	adds r3, #220
-	ldr r0, .L_02009884
-	ldr r5, [r3]
-	bl Scheduler_RemoveCallbackFar
-	movs r3, #232
-	lsls r3, r3, #5
-	adds r3, #156
-	adds r5, r5, r3
-	movs r3, #0
-	ldrsh r0, [r5, r3]
-	bl Resource_ResetEntry
-	movs r0, #220
-	bl Runtime_ReleaseHeapBlock
-	pop {r5, pc}
-.L_02009884:
-	.4byte Func_02001538
 	.section .text.x02009888,"ax",%progbits
+	.balign 4
 	.global Func_02001888
 	.thumb_func
 Func_02001888:

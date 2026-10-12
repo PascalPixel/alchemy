@@ -26,6 +26,27 @@ void ItemMenu_RefreshEntry(s32 mode);
 
 void Menu_HideEmptyEntryIcons(const u16 *items);
 
+s32 ItemMenu_Collect(struct OwnerInventoryState *owner, u16 *items, s32 mode)
+{
+    s32 count;
+    s32 i;
+
+    /* FAKEMATCH: the empty one-pass block before the clearing loop keeps the zero's literal pool before the second loop (differ 10 without it). */
+    do { } while (0);
+    for (i = 0; i < 32; i++) {
+        items[i] = 0;
+    }
+    count = 0;
+    for (i = 0; i < 15; i++) {
+        items[i] = 0;
+        if (owner->inventory[i] != 0) {
+            items[count] = owner->inventory[i];
+            count++;
+        }
+    }
+    return count;
+}
+
 void ItemMenu_DrawIcons(u16 *items, s32 style)
 {
     s32 remaining;
@@ -54,7 +75,6 @@ void ItemMenu_DrawIcons(u16 *items, s32 style)
 extern char MsgItemMenuEmpty[];
 
 s32 ItemMenu_Count(s32 owner_id);
-s32 ItemMenu_Collect(struct OwnerInventoryState *owner, u16 *items, s32 mode);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 s32 UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 

@@ -224,18 +224,6 @@ SerialRuntime_CollectReceivedPayloads:
 	.thumb_func
 SerialRuntime_HandleTransferInterrupt:
 	.incbin "baserom.gba", 0x000166c0, 0x00000118
-	.section .rom.00016838, "ax"
-	.global Func_0801680c
-	.type Func_0801680c, %function
-	.thumb_func
-Func_0801680c:
-	.incbin "baserom.gba", 0x00016838, 0x00000048
-	.section .rom.00016880, "ax"
-	.global SerialRuntime_BeginTransferB
-	.type SerialRuntime_BeginTransferB, %function
-	.thumb_func
-SerialRuntime_BeginTransferB:
-	.incbin "baserom.gba", 0x00016880, 0x0000004c
 	.section .rom.000169bc, "ax"
 	.global Func_08016990
 	.type Func_08016990, %function
@@ -2806,12 +2794,6 @@ RunBattleEffect14:
 	.thumb_func
 Func_080e0134:
 	.incbin "baserom.gba", 0x000e5128, 0x000001b8
-	.section .rom.000e5350, "ax"
-	.global Func_080e035c
-	.type Func_080e035c, %function
-	.thumb_func
-Func_080e035c:
-	.incbin "baserom.gba", 0x000e5350, 0x00000050
 	.section .rom.000e53b6, "ax"
 	.incbin "baserom.gba", 0x000e53b6, 0x00000002
 	.section .rom.000e53c0, "ax"
@@ -3292,13 +3274,6 @@ Func_080fa5a4:
 	.thumb_func
 Menu_HideEmptyEntryIcons:
 	.incbin "baserom.gba", 0x000fcd30, 0x00000044
-	.section .rom.000fcde0, "ax"
-	.balign 4
-	.global ItemMenu_Collect
-	.type ItemMenu_Collect, %function
-	.thumb_func
-ItemMenu_Collect:
-	.incbin "baserom.gba", 0x000fcde0, 0x00000048
 	.section .rom.000fcee4, "ax"
 	.incbin "baserom.gba", 0x000fcee4, 0x00000218
 	.section .rom.000fd15c, "ax"
@@ -3357,13 +3332,9 @@ Func_080fe580:
 	.thumb_func
 ItemMenu_DrawEquippedItemNames:
 	.incbin "baserom.gba", 0x001026b0, 0x000000e4
-	.section .rom.00102870, "ax"
+	.section .rom.001028a8, "ax"
 	.balign 4
-	.global ItemMenu_PosCategory
-	.type ItemMenu_PosCategory, %function
-	.thumb_func
-ItemMenu_PosCategory:
-	.incbin "baserom.gba", 0x00102870, 0x00000640
+	.incbin "baserom.gba", 0x001028a8, 0x00000608
 	.section .rom.00102fec, "ax"
 	.global Func_08100e7c
 	.type Func_08100e7c, %function

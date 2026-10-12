@@ -46,3 +46,18 @@ void BattleEffect_PauseObject(s32 id)
         ObjectDispatch_ApplyValueToChildrenFar(object, 0);
     }
 }
+
+void BattleFx_ResumeObject(s32 id)
+{
+    struct DispatchObject *object = ObjectTable_Get(id);
+
+    if (object != NULL) {
+        if (object->update == BattleEffect_SetRandomTableValueOnObject) {
+            object->update = (void *)gPartyState.saved_callback;
+            gPartyState.saved_callback = 0;
+            Animation_ApplyChildValuesFar(object, (s8)gPartyState.saved_byte);
+        }
+        object->value_5b = 0;
+        ObjectDispatch_ApplyValueToChildrenFar(object, 16);
+    }
+}

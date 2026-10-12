@@ -1,7 +1,11 @@
 /* Draft of Func_02003a30 (overlay 655), differ 22 of 48: the native loads the
  * address of Data_02004420 into r5 before the spawn call and keeps the zero
  * for the three byte stores in r7 (set after the call); this loads the
- * address after the call into r3 and keeps the zero in r1. */
+ * address after the call into r3 and keeps the zero in r1. Tried
+ * (2026-10-12): the object assigned from the call first and stored to
+ * Data_02004420 after, with the sprite bits cleared through byte masks
+ * (sprite[5] &= ~0x20; sprite[9] &= 0xf) and plain zero stores: differ 29
+ * of 47. */
 #include "types.h"
 #include "mem.h"
 #include "resource.h"

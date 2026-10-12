@@ -34,7 +34,7 @@
 #include "serial_runtime.h"
 
 
-s32 Func_0801680c(void *source, s32 size);
+s32 SerialRuntime_BeginTransferA(void *source, s32 size);
 s32 SerialRuntime_GetActiveTransfers(void);
 void MemFree(void *block);
 
@@ -59,7 +59,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
     {
         s32 timeout;
         s32 disconnected;
-        s32 status = Func_0801680c(state, 20);
+        s32 status = SerialRuntime_BeginTransferA(state, 20);
 
         disconnected = 0;
         timeout = 300;
@@ -77,7 +77,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
             }
         }
         if (allocation_size) {
-            status = Func_0801680c(actions, allocation_size);
+            status = SerialRuntime_BeginTransferA(actions, allocation_size);
             if (status == -1)
                 return status;
             while (SerialRuntime_GetActiveTransfers()) {

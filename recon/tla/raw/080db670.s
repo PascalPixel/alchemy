@@ -223,7 +223,7 @@ BattleFx_DispatchRequestKind:
 	negs r3, r3
 	cmp r0, r3
 	beq .L_080db832
-	bl Func_080e035c
+	bl BattleFx_ResumeObject
 	movs r3, #255
 	lsls r3, r3, #8
 	adds r3, #255

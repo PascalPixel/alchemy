@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_MENU_LINK_LOBBY_LOBBY_H
-#define ALCHEMY_UNIT_MENU_LINK_LOBBY_LOBBY_H
+#ifndef ALCHEMY_UNIT_MENU_LOBBY_H
+#define ALCHEMY_UNIT_MENU_LOBBY_H
 
 #include "types.h"
 #include "field_scene.h"

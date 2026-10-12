@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_MENU_TITLE_TITLE_H
-#define ALCHEMY_UNIT_MENU_TITLE_TITLE_H
+#ifndef ALCHEMY_UNIT_MENU_TITLE_H
+#define ALCHEMY_UNIT_MENU_TITLE_H
 
 #include "types.h"
 #include "field_scene.h"

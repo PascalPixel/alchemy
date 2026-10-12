@@ -1,5 +1,5 @@
 #include "scene_ids.h"
-#include "unit/menu/clear/clear.h"
+#include "unit/menu/clear.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"

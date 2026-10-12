@@ -1,5 +1,5 @@
 #include "game_state.h"
-#include "unit/debug/item_level/level.h"
+#include "unit/debug/level.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evbasic.h"

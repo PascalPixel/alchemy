@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_DEBUG_TEST_ROOMS_ROOMS_H
-#define ALCHEMY_UNIT_DEBUG_TEST_ROOMS_ROOMS_H
+#ifndef ALCHEMY_UNIT_DEBUG_ROOMS_H
+#define ALCHEMY_UNIT_DEBUG_ROOMS_H
 
 #include "types.h"
 #include "field_scene.h"

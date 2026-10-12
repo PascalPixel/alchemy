@@ -268,10 +268,10 @@ main	rom_tail_01	games/tbs/src/graphics/animref2	.rodata
 main	rom_tail_01	games/tbs/src/graphics/sprite/sprites	.rodata.b
 main	rom_tail_02	games/tbs/src/system/resource/directory
 main	rom_tail_02	@games/tbs/src/system/resource/directory
-36f	unit	games/tbs/src/menu/title/title
+36f	unit	games/tbs/src/menu/title
 36f	bss	resource_36f_overlay	.bss
-370	unit	games/tbs/src/menu/clear/clear
-370	text	games/tbs/src/menu/clear/keybd
+370	unit	games/tbs/src/menu/clear
+370	text	games/tbs/src/menu/keybd
 371	unit	games/tbs/src/scene/world_map
 371	text	games/tbs/src/graphics/world_map/story
 371	bss	games/tbs/src/scene/world_map	.bss COMMON
@@ -444,9 +444,9 @@ main	rom_tail_02	@games/tbs/src/system/resource/directory
 3c9	bss	games/tbs/src/scene/vinasu_chojo	.bss
 3ca	unit	games/tbs/src/scene/babi_fune
 3ca	bss	games/tbs/src/scene/babi_fune	.bss
-3cb	unit	games/tbs/src/menu/link_lobby/lobby
+3cb	unit	games/tbs/src/menu/lobby
 3cb	text	libgcc.a:_call_via_rX
-3cb	bss	games/tbs/src/menu/link_lobby/lobby	.bss
-3cc	unit	games/tbs/src/debug/test_rooms/rooms
-3cd	unit	games/tbs/src/debug/item_level/level
-3ce	unit	games/tbs/src/debug/menu_test/test
+3cb	bss	games/tbs/src/menu/lobby	.bss
+3cc	unit	games/tbs/src/debug/rooms
+3cd	unit	games/tbs/src/debug/level
+3ce	unit	games/tbs/src/debug/test

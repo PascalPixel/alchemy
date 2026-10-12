@@ -1,6 +1,6 @@
 #include "game_state.h"
 #include "unit/import.h"
-#include "unit/debug/menu_test/test.h"
+#include "unit/debug/test.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evbasic.h"

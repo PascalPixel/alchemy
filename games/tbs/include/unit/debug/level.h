@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_DEBUG_ITEM_LEVEL_LEVEL_H
-#define ALCHEMY_UNIT_DEBUG_ITEM_LEVEL_LEVEL_H
+#ifndef ALCHEMY_UNIT_DEBUG_LEVEL_H
+#define ALCHEMY_UNIT_DEBUG_LEVEL_H
 
 #include "types.h"
 #include "field_scene.h"

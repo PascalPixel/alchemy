@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_DEBUG_MENU_TEST_TEST_H
-#define ALCHEMY_UNIT_DEBUG_MENU_TEST_TEST_H
+#ifndef ALCHEMY_UNIT_DEBUG_TEST_H
+#define ALCHEMY_UNIT_DEBUG_TEST_H
 
 #include "types.h"
 #include "field_scene.h"

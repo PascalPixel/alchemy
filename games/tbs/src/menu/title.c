@@ -1,6 +1,6 @@
 #include "game_state.h"
 #include "vram_tab.h"
-#include "unit/menu/title/title.h"
+#include "unit/menu/title.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evbasic.h"

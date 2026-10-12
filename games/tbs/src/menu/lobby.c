@@ -1,5 +1,5 @@
 #include "unit/import.h"
-#include "unit/menu/link_lobby/lobby.h"
+#include "unit/menu/lobby.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evbasic.h"

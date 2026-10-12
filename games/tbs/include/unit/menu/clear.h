@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_MENU_CLEAR_CLEAR_H
-#define ALCHEMY_UNIT_MENU_CLEAR_CLEAR_H
+#ifndef ALCHEMY_UNIT_MENU_CLEAR_H
+#define ALCHEMY_UNIT_MENU_CLEAR_H
 
 #include "types.h"
 #include "field_scene.h"

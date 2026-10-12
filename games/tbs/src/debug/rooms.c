@@ -1,4 +1,4 @@
-#include "unit/debug/test_rooms/rooms.h"
+#include "unit/debug/rooms.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evbasic.h"

@@ -1,6 +1,3 @@
-/* Near miss, differ 2: the listing loads the timer argument from the stack
- * before the zero for next_frame (ldr r3, [sp, #16]; ldr r1, =0); this draft
- * loads the zero first. A cast pointer and a struct field give the same. */
 #include "types.h"
 #include "field_event.h"
 
@@ -46,7 +43,13 @@ void Func_0200128c(s32 x, s32 y, s32 z, s16 rotation, s32 timer)
         Func_020027f4(object, 1);
         Func_020027fc(object, Data_02002dec);
         object->motion_flags = 0;
-        ((struct SpawnedActor *)object)->timer = timer;
+        {
+            s32 ticks = timer;
+
+            /* FAKEMATCH: the native loads the timer argument before the zero for next_frame (differ 2 without the temporary and barrier). */
+            __asm__("");
+            ((struct SpawnedActor *)object)->timer = ticks;
+        }
         sprite->next_frame = 0;
         sprite->rotation = rotation;
     }

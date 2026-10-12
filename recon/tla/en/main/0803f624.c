@@ -1,3 +1,4 @@
+/* Near miss, differ 4 of 49 (two reordered rows): the native stores the tile word before it starts the mode mask (strh; movs r0, #13; ldrb; negs r0); this draft starts the mask first. Tried 2026-10-12: an empty asm barrier after the tile store moves the load of byte 7 below the shape mask and the mid-function pool branch one row up (differ 10). */
 #include "types.h"
 #include "resource.h"
 

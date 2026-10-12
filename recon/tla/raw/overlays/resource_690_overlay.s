@@ -1348,80 +1348,8 @@ Func_02000fd0:
 	.4byte 0x00026666
 .L_020091b8:
 	.4byte 0x00013333
-	.section .text.x02009304,"ax",%progbits
-	.balign 4
-	.global Func_02001304
-	.thumb_func
-Func_02001304:
-	push {r5, r6, lr}
-	movs r0, #10
-	sub sp, #8
-	bl Object_GetById
-	ldr r3, [r0, #8]
-	asrs r6, r3, #20
-	ldr r3, [r0, #16]
-	asrs r5, r3, #20
-	bl Func_02001200
-	ldr r0, .L_02009388
-	bl Func_02002190
-	cmp r6, #12
-	bne .L_02009336
-	cmp r5, #15
-	bne .L_02009336
-	movs r3, #42
-	movs r2, #14
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #42
-	movs r1, #3
-	b .L_02009352
-.L_02009336:
-	cmp r6, #13
-	bne .L_0200933e
-	cmp r5, #15
-	beq .L_02009346
-.L_0200933e:
-	cmp r6, #16
-	bne .L_02009370
-	cmp r5, #15
-	bne .L_02009370
-.L_02009346:
-	movs r3, #42
-	movs r2, #14
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #42
-	movs r1, #0
-.L_02009352:
-	movs r2, #7
-	movs r3, #3
-	bl Func_02002030
-	movs r3, #11
-	movs r2, #73
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #42
-	movs r1, #9
-	movs r2, #10
-	movs r3, #10
-	bl Func_02002030
-	b .L_02009384
-.L_02009370:
-	movs r3, #11
-	movs r2, #73
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #42
-	movs r1, #9
-	movs r2, #10
-	movs r3, #10
-	bl Func_02002030
-.L_02009384:
-	add sp, #8
-	pop {r5, r6, pc}
-.L_02009388:
-	.4byte Data_02002272
 	.section .text.x0200938c,"ax",%progbits
+	.balign 4
 	.global Func_0200138c
 	.thumb_func
 Func_0200138c:

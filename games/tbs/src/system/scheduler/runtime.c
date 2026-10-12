@@ -606,8 +606,6 @@ void Input_UpdateKeyRepeatAndDirection(void)
 	gKeysHeldLast = gKeysHeld;
 }
 
-extern volatile u16 gLinkStatus;
-
 #define SOUND_PRESET_COUNT 5
 #define SOUND_PRESET_SIZE 152
 

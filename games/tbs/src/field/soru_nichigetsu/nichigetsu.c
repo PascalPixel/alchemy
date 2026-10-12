@@ -29,8 +29,6 @@ static s32 CheckAllStatueLights(void);
 static void SetSolShindenActorStep(s32 actor_step, s32 wait_frames);
 static void SoruNichigetsu_RunLightScene(void);
 
-extern struct EventWork *gEventWork;
-
 void InitializeSceneRecordBuffer(void);
 
 struct EventGlobals

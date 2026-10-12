@@ -199,7 +199,7 @@ static void EV15_PSYNERGY(void)
 
 static void EV15_SCRIPT(void)
 {
-	gEffectWork->child_mode = 1;
+	((struct BattleFxScene *)gEffectWork)->child_mode = 1;
 }
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)

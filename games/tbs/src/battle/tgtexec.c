@@ -358,8 +358,6 @@ restart:
 	goto restart;
 }
 
-extern volatile u16 gLinkStatus;
-
 void BattlePresentation_UpdateCamera(void)
 {
 	void							   **slot = (void **)&gCameraWork;

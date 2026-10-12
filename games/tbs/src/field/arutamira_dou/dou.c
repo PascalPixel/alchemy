@@ -35,6 +35,7 @@
 #include "effect_slot.h"
 #include "item_ids.h"
 #include "objcmd.h"
+#include "ram_buffer.h"
 
 // 前方宣言
 static void ArutamiraDou_ReleaseWallBurst(void);
@@ -269,8 +270,6 @@ static void ArutamiraDou_ApplyRoomVisuals(void)
 
 static void SceneState_RunFlag200SetupAndPlaceActors16To20(void)
 {
-	extern u8 *gEffectWork;
-
 	u8	*work = gEffectWork;
 	s16 *tbl;
 
@@ -292,7 +291,6 @@ static void SceneState_RunFlag200SetupAndPlaceActors16To20(void)
 
 static void ArutamiraDou_RespawnActorObject(void)
 {
-	extern u8		  *gEffectWork;
 	u8				  *work;
 	struct FieldActor *old;
 	struct FieldActor *copy;
@@ -336,7 +334,6 @@ static void EV77_TOUCH(void)
 
 static void EV11_SCRIPT(void)
 {
-	extern u8		  *gEffectWork;
 	u8				  *obj = gEffectWork;
 	struct FieldActor *p = Object_GetById(11);
 	Vec				   v;
@@ -353,7 +350,6 @@ static void EV11_SCRIPT(void)
 
 static void EV11_PSYNERGY(void)
 {
-	extern u8		  *gEffectWork;
 	u8				  *obj = gEffectWork;
 	struct FieldActor *p = Object_GetById(11);
 	s32				   t;
@@ -2064,7 +2060,6 @@ static void OverlayObject_UpdateThreeStateMotion(struct EffectSlot *obj)
 
 static void ArutamiraDou_ReleaseWallBurst(void)
 {
-	extern u8		  *gEffectWork;
 	u8				  *work;
 	s32				   pos[3];
 	s32				  *p;

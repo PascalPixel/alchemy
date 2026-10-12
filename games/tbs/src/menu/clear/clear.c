@@ -35,6 +35,7 @@
 #include "game_state.h"
 #include "uiwindow.h"
 #include "call.h"
+#include "text/msg_ids.h"
 
 // 前方宣言
 static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out);
@@ -296,16 +297,6 @@ struct SaveMenuSceneState
 	u8	unknown_000[0x100];
 	s32 word_100;
 };
-extern u8 MsgNoBackupMemory[];
-extern u8 MsgSaveAdventureQuestion[];
-extern u8 MsgSaveDataCorrupted[];
-extern u8 MsgSaveRecoveryFailed[];
-extern u8 MsgClearCommunicationError[];
-extern u8 MsgClearSendingData[];
-extern u8 MsgClearPasswordLabel[];
-extern u8 MsgClearSaveLabel[];
-
-extern volatile u16 gLinkStatus;
 
 extern u8 gSleepDisabled;
 extern u8 gDebugMode;

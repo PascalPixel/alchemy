@@ -27,6 +27,7 @@
 #include "objcmd.h"
 
 #include "fieldobj.h"
+#include "object_effect.h"
 
 // 前方宣言
 static void KareiMachi_SetupEntryActors(void);
@@ -88,8 +89,6 @@ typedef struct OrbitingSceneObject
 	u8						   padding_62[10];
 	u32						   callback;
 } OrbitingSceneObject;
-
-extern u8 *gActorEffectWork;
 
 union GameStateRows
 {

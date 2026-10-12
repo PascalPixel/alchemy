@@ -43,6 +43,7 @@ extern const u16					Djinn_DefinitionTable[];
 extern const s16					Element_PowerResistCurve[5][2];
 extern const struct EnemyDefinition Enemy_Definitions[];
 extern struct PresetValues			Enemy_ElementPresetTable[];
+extern u8							GameFlagBytes[];
 extern u16							gInventorySnapshot[];
 extern u8							gItemCounters[128];
 extern u8							gSaveStamp[];

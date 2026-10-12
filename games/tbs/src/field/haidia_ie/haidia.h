@@ -88,7 +88,7 @@ struct WorldMapOam
 	u16 size : 2;
 };
 
-extern struct PairWork *gEffectWork;
+#include "ram_buffer.h"
 
 s32	 Math_RemainderUnsigned();
 void Engine_ActorSetSpriteFlags();

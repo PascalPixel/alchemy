@@ -22,6 +22,7 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
+#include "ram_buffer.h"
 
 // 前方宣言
 static void FieldScene_RunSecondEnsembleBeat(void);
@@ -31,8 +32,6 @@ static void FieldScene_SetFlag140AndFinishSequence(s32 arg0, s32 arg1);
 static void FieldScene_FinishSequence(void);
 static void FieldScene_SpawnEightShots(void);
 static void FieldScene_RunParticleRain(void);
-
-extern struct EventWork *gEventWork;
 
 static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
@@ -72,8 +71,6 @@ static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 	}
 	return 0;
 }
-
-extern u8 gEffectWork[];
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../effect/move.c"
@@ -2258,7 +2255,7 @@ static void FieldScene_SetFlag140AndFinishSequence(s32 arg0, s32 arg1)
 
 	Engine_GameFlagSet(160 << 1);
 	Engine_PsynergyBegin(141, 1);
-	globalCtx = *(u8 **)gEffectWork;
+	globalCtx = gEffectWork;
 	Engine_PsynergySetTarget(arg0, arg1);
 	globalCtx[0x23] = 0;
 	Engine_PsynergyRaiseHands();

@@ -39,6 +39,7 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 #include "fieldobj.h"
+#include "ram_buffer.h"
 
 // 前方宣言
 static s32 StoryActor_ApplyMapRotation(struct FieldActor *actor);
@@ -98,8 +99,6 @@ struct StoryVerticalEffectActor
 	u8								 filler66[2];
 	struct StoryVerticalEffectActor *anchor;
 };
-
-extern struct StorySharedState *gEffectWork;
 
 enum
 {
@@ -2252,7 +2251,7 @@ static void EV95_TOUCH(void)
 
 static void EV54_SCRIPT(void)
 {
-	gEffectWork->active = 1;
+	((struct StorySharedState *)gEffectWork)->active = 1;
 }
 
 static void EV54_PSYNERGY(void)

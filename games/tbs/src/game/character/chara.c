@@ -41,6 +41,7 @@
 #include "btltype.h"
 #include "battle_effect_chance.h"
 #include "btlpty.h"
+#include "field_event.h"
 
 struct StatWork
 {
@@ -589,9 +590,6 @@ u32 Runtime_GetBuildStampTime(void)
 	}
 	return (u16)result;
 }
-
-extern u8 GameFlagBytes[];
-extern u8 gSceneState[];
 
 struct SceneStateTail
 {

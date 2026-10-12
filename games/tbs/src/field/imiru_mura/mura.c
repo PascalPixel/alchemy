@@ -30,6 +30,7 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
+#include "ram_buffer.h"
 
 // 前方宣言
 static void FieldScene_RunPrimaryScriptChoreography(void);
@@ -40,8 +41,6 @@ static void EV11_PSYNERGY(void);
 static void RunEventScript02(void);
 static void FieldScene_RunThreeActorChoreography(void);
 static void StagedActor_RunHeadingProbeStep(void);
-
-extern u8 gEffectWork[];
 
 #define ACTOR_FLAGS_OFFSET_020019e8 90
 
@@ -1067,7 +1066,7 @@ static void ImiruMura_CastPsynergyAtActorNine(void)
 	u8 *work;
 
 	Engine_PsynergyBegin(93, 1);
-	work = *(u8 **)gEffectWork;
+	work = gEffectWork;
 	Engine_PsynergySetTarget(3, 9);
 	*(s32 *)(work + 36) = (s32)ImiruMura_ShowActorNineTurnMessage;
 	Engine_PsynergyRaiseHands();

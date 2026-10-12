@@ -73,8 +73,6 @@ typedef struct OrbitingSceneObject
 	u32						   callback;
 } OrbitingSceneObject;
 
-extern struct EventWork *gEventWork;
-
 static s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 {
 	s32					 delta;

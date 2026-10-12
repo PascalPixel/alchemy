@@ -1118,8 +1118,6 @@ static __inline__ void SetPose(u8 *rec, s32 pose)
 	((struct FieldActor *)rec)->facing = pose;
 }
 
-extern struct EventWork *gEventWork;
-
 static s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
 {
 	struct FieldActor *obj = Object_GetById(0);

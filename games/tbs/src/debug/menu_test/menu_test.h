@@ -12,7 +12,7 @@
 
 #include "character.h"
 
-extern struct BattleFxScene *gEffectWork;
+#include "ram_buffer.h"
 
 u8 Engine_TaskWait();
 

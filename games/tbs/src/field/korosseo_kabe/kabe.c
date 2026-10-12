@@ -43,6 +43,7 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "fieldobj.h"
+#include "ram_buffer.h"
 
 // 前方宣言
 static void Korosseo_RunGreetScene(s32 a0);
@@ -61,7 +62,6 @@ static void StagedActor_PushActorAhead(void);
 
 extern u8 gWorkSlot[];
 #define WORK_SLOT_STAGE 59
-extern u8 gEffectWork[];
 
 typedef struct Sub
 {
@@ -235,7 +235,7 @@ static void SceneState_StoreSlotTileXToWork832To848(void)
 
 static void EV18_SCRIPT(void)
 {
-	u8 *record = *(u8 **)gEffectWork;
+	u8 *record = gEffectWork;
 
 	((struct BattleFxScene *)record)->child_mode = 1;
 }

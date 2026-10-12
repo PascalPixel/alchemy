@@ -9299,8 +9299,6 @@ void PtyStDraw(s32 flags)
 	work->menu_busy = 0;
 }
 
-extern u32 GameFlagBytes[];
-
 void UiWork_FinalizeAndReleaseBlock16(void)
 {
 	UiWork_Finalize((struct UiWindow *)**(s32 **)(u32)&gWindowWork[1], 1);
@@ -9559,7 +9557,7 @@ u32 SaveState_BuildSummaryHeader(void)
 			frames = *frame;
 		}
 		frames = *frame;
-		word = GameFlagBytes;
+		word = (u32 *)GameFlagBytes;
 		i = 0;
 		n <<= 2;
 		summary->frames = frames;
@@ -16736,8 +16734,6 @@ struct WindowBuffer
 	struct WindowLine lines[160];
 };
 extern u8 *gDisplayTransition;
-
-extern volatile u16 gLinkStatus;
 
 s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 count)
 {

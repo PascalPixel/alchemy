@@ -598,8 +598,6 @@ static void EV20_TOUCH(void)
 	RamakanSabaku_SetSandPhase(0);
 }
 
-extern struct EventWork *gEventWork;
-
 static void RamakanSabaku_UpdateTravelDust(void)
 {
 	struct FieldActor	*actor;

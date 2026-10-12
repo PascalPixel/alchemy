@@ -6,6 +6,7 @@
 #include "unit/field/common/script/field.h"
 #include "unit/system/scheduler/runtime.h"
 #include "iowrite.h"
+#include "object_effect.h"
 
 #define NULL ((void *)0)
 #include "global_cells.h"
@@ -113,8 +114,6 @@ static void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 t
 	}
 	return 0;
 }
-
-extern u8 *gActorEffectWork;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/move.c"

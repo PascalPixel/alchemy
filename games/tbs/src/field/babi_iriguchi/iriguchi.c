@@ -7,6 +7,7 @@
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "unit/system/scheduler/runtime.h"
+#include "ram_buffer.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "mapcopy.h"
@@ -37,8 +38,6 @@
 // 前方宣言
 static void BabiIriguchi_CloseTruthDoor(void);
 static void SceneState_ApplyRectsAtActors8And9(void);
-
-extern u8 gEffectWork[];
 
 static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
 {
@@ -1071,7 +1070,7 @@ static struct StagedActor *BabiIriguchi_FindActorAhead(struct StagedActor *actor
 
 static void EV12_SCRIPT(void)
 {
-	((struct BattleFxScene *)*(void **)gEffectWork)->child_option = 1;
+	((struct BattleFxScene *)gEffectWork)->child_option = 1;
 }
 
 static void EV12_PSYNERGY(void)

@@ -7,7 +7,7 @@
 #include "window.h"
 
 extern struct EventWork *gEventWork;
-extern u8				 gEffectWork[];
+#include "ram_buffer.h"
 
 void Engine_ActorSetAnimation();
 void Engine_ActorShowEmote();

@@ -506,8 +506,6 @@ struct EncounterZone
 	u8	weights[8]; // 各グループの重み
 };
 
-extern u16 Encounter_EnemyGroupTable[];
-
 //--------------------------------------------------------------------------
 // 今のマップと部屋に合う規則から、出現テーブル番号の並びを作る
 // use_rules : 0 なら規則を見ずに、すべて 0 (出現なし) にする
@@ -2880,7 +2878,6 @@ s32 BattleFx_FindDescriptorWithOverride(s32 id)
 //--------------------------------------------------------------------------
 s32 BattleFx_RunDescriptorAction(s32 id)
 {
-	extern const u8			   ObjectMotion_StepAngleScript[];
 	struct BattleEffectAction *place = (struct BattleEffectAction *)BattleAction_FindDescriptor(id);
 	s32						   ret = -1;
 	struct ObjectRuntime	  *obj = (struct ObjectRuntime *)Object_GetById(id);
@@ -7798,7 +7795,6 @@ void Object_ResetTargetAndSetMode1(u32 object_id)
 
 void ObjectMotion_ArmCallback(s32 object_id, s32 angle, s32 wait)
 {
-	extern const u8		  ObjectMotion_StepAngleScript[];
 	struct ObjectRuntime *object = ObjectTable_Get(object_id);
 
 	if (object != NULL)
@@ -10204,8 +10200,6 @@ struct MapActor
 	s16 event;
 };
 
-extern struct BattleFxScene *gEffectWork;
-
 void Djinn_ResolvePendingEvent(s32 capture)
 {
 	struct GameState *st = &gGameState;
@@ -10267,7 +10261,7 @@ void BattleFx_UpdateAllSlots(void)
 	struct EffectSlot *slot;
 	s32				   remaining_slots;
 
-	slot = gEffectWork->slots;
+	slot = ((struct BattleFxScene *)gEffectWork)->slots;
 	remaining_slots = 0x17;
 	do
 	{
@@ -11372,7 +11366,7 @@ void FieldEvent_RunTypeHandler(void)
 {
 	u32 kind;
 
-	kind = gEffectWork->animation;
+	kind = ((struct BattleFxScene *)gEffectWork)->animation;
 	switch (kind)
 	{
 	case 8:
@@ -11756,7 +11750,7 @@ void BattleFx_UpdateAllEffectSlots(void)
 	s32 p;
 	s32 n;
 
-	p = (s32)gEffectWork->slots;
+	p = (s32)((struct BattleFxScene *)gEffectWork)->slots;
 	n = 23;
 	do
 	{
@@ -11892,7 +11886,7 @@ void BattleEffect_CleanupSceneObjects(void)
 	struct EffectSlot			*scene_object;
 	s32							 remaining;
 
-	scene_cell = &gEffectWork;
+	scene_cell = (struct BattleFxScene **)&gEffectWork;
 	scene = *scene_cell;
 	runtime = *(struct FieldWork **)((u8 *)scene_cell - 116);
 	position = *(struct BattleEffectPosition **)((u8 *)scene_cell - 192);
@@ -13110,7 +13104,7 @@ void BattleFx_RunBurstParticleMainObject(s32 unused)
 {
 	struct FieldActor *tgt;
 
-	tgt = gEffectWork->child;
+	tgt = ((struct BattleFxScene *)gEffectWork)->child;
 	if (tgt != NULL)
 	{
 		BattleEffect_SpawnBurstParticleField();
@@ -15287,7 +15281,7 @@ top:
 //--------------------------------------------------------------------------
 void BattleFx_MarkChildAndRunFallbackTransition(s32 unused)
 {
-	struct FieldActor *tgt = gEffectWork->child;
+	struct FieldActor *tgt = ((struct BattleFxScene *)gEffectWork)->child;
 
 	tgt->paused = 1;
 	BattleEffect_RunFallbackObjectTransition();
@@ -15623,7 +15617,7 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot)
 	s32					state;
 	u32					r;
 
-	src = gEffectWork->main_object;
+	src = ((struct BattleFxScene *)gEffectWork)->main_object;
 	state = slot->state;
 
 	if (state == 0)

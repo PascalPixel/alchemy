@@ -134,8 +134,6 @@ struct Vec
 	s32 z;
 };
 
-extern struct EventWork *gEventWork;
-
 static void EV18_TALK(void)
 {
 	BattleFx_SetPhaseRequest(18, 2);

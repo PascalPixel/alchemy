@@ -27,7 +27,6 @@
 // 前方宣言
 static void ToretoEda_StartBg3Split(void);
 
-extern struct EventWork *gEventWork;
 extern u8				 gDisplayTransition[];
 
 struct SceneObject

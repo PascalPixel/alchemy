@@ -5,6 +5,7 @@
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/system/scheduler/runtime.h"
+#include "object_effect.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "fieldobj.h"
@@ -85,8 +86,6 @@ static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 	}
 	return 0;
 }
-
-extern u8 *gActorEffectWork;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/move.c"

@@ -14354,8 +14354,6 @@ void BattleFx_RunMode9WithAction(void *effect)
 // バトル効果：対象へ飛ぶ弾の一斉射撃と、キャラの移動
 //--------------------------------------------------------------------------
 
-extern u16 ParticleStreams_CellOffsets[];
-
 // mode ごとの表
 extern u8 Volley_CometHeights[];
 extern u8

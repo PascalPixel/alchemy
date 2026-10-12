@@ -27,6 +27,7 @@
 #include "tbs_edition.h"
 #include "b5_context.h"
 #include "objcmd.h"
+#include "ram_buffer.h"
 
 // 前方宣言
 union PairObject;
@@ -2361,8 +2362,6 @@ struct PairWork
 	u8	unknown_00[70];
 	u16 vram_block;
 };
-
-extern struct PairWork *gEffectWork;
 
 extern struct WorldMapVramBlock gVramBlockCache[];
 

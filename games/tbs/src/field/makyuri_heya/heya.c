@@ -76,8 +76,6 @@ enum
 	ITEM_HERMES_WATER = 184
 };
 
-extern u8 gEffectWork[];
-
 struct WorkPointers
 {
 	u8 *event;
@@ -2759,7 +2757,7 @@ static void MakyuriHeya_CastPsynergyAtActor11(void)
 	u8 *addr;
 	u8	v;
 
-	p5 = *(u8 **)gEffectWork;
+	p5 = gEffectWork;
 	Actor_SetPosition(11, 0x3480000, 0x2580000);
 	Engine_PsynergyBegin(93, 1);
 	Engine_PsynergySetTarget(3, 11);

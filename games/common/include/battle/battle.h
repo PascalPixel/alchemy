@@ -254,6 +254,7 @@ extern u16							 EarthWall_CellSourceOffsets[];
 extern u8							 EarthWall_CellWidths[];
 extern u8							 EmberColumns_Columns[];
 extern s32							 EmberColumns_Gravity[];
+extern u16				   Encounter_EnemyGroupTable[];
 extern u8							 FallingBolts_Counts[];
 extern s16							 FieldFx_GroundParticleFrames[];
 extern const u8						 FieldFx_GroundParticleTiles[];

@@ -29,12 +29,11 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "iowrite.h"
+#include "ram_buffer.h"
 
 // 前方宣言
 static void SuharaSabaku_ApplyVisitFlagBlend(void);
 static void SuharaSabaku_ApplyAltarFlagBlend(void);
-
-extern u8 gEffectWork[];
 
 struct Selection_02000400
 {
@@ -527,7 +526,7 @@ static void EV81_TOUCH(void)
 
 static void SuharaSabaku_EnableEffectChildOption(void)
 {
-	u8 *state = *(u8 **)gEffectWork;
+	u8 *state = gEffectWork;
 	((struct BattleFxScene *)state)->child_option = 1;
 }
 

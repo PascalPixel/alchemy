@@ -10398,19 +10398,6 @@ void Menu_EnableAllItemObjects(void)
 	}
 }
 
-extern u8 MsgCurrentStatus[];
-
-extern u8 MsgDjinnName[];
-extern u8 MsgDjinnPsyHelp[];
-extern u8 MsgDjinnStatusHelp[];
-extern u8 MsgDjinnCompareSet[];
-extern u8 MsgDjinnCompareStandby[];
-extern u8 MsgDjinnCompareGive[];
-extern u8 MsgDjinnCompareTrade[];
-extern u8 MsgDjinnCompareConfirm[];
-extern u8 MsgDjinnTutorialClassPsynergy[];
-extern u8 MsgDjinnTutorialSetChanges[];
-
 s32 OwnerAction_RunCompareLoop(u32 mode)
 {
 	struct DjinnMenuWork	 *state;

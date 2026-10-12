@@ -466,7 +466,7 @@ static void FieldScene_DrawThreeCaptionWindow(void)
 
 static void EV10_SCRIPT(void)
 {
-	u8 *record = *(u8 **)gEffectWork;
+	u8 *record = gEffectWork;
 
 	record[53] = 1;
 }

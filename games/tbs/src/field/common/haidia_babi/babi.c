@@ -546,8 +546,6 @@ static __inline__ void SetBlendAlpha(u32 value)
 	REG_BLDALPHA = value;
 }
 
-extern struct EventWork *gEventWork;
-
 union PairObject
 {
 	union FieldObject object;
@@ -564,8 +562,6 @@ struct PairWork
 	u8	unknown_00[70];
 	u16 vram_block;
 };
-
-extern struct PairWork *gEffectWork;
 
 static void FieldScene_RunPaletteRampSequence(void)
 {

@@ -118,8 +118,6 @@ static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 #include "../common/effect/move.c"
 #include "../common/effect/spawn.c"
 
-extern struct EventWork *gEventWork;
-
 static __inline__ void SkipMessage(s32 amount)
 {
 	gEventWork->message += amount;

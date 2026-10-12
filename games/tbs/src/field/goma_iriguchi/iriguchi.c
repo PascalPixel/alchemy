@@ -23,6 +23,7 @@
 #include "inventory.h"
 #include "text/msg_ids.h"
 #include "objcmd.h"
+#include "ram_buffer.h"
 
 // 前方宣言
 static void GomaIriguchi_SetEntranceFlag(void);
@@ -71,8 +72,6 @@ static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/move.c"
 #include "../common/effect/spawn.c"
-
-extern u8 *gEffectWork;
 
 // struct FieldActor の別の見方: sprite の先の角度を符号付き 16 ビットで読む
 struct Actor

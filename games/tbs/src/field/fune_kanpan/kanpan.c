@@ -311,8 +311,6 @@ static s32 FuneKanpan_UpdateHoverGullB(struct FieldActor *obj)
 	return 1;
 }
 
-extern struct EventWork *gEventWork;
-
 struct MapLayer
 {
 	u8	unknown_00[8];

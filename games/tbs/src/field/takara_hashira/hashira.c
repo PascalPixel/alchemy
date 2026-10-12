@@ -36,12 +36,11 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
+#include "heap_state.h"
 
 #define NULL ((void *)0)
 #define REC_ID 16
 #define QUERY_FLAG 0x200
-
-extern void *gWorkSlot[];
 
 struct PillarWork
 {
@@ -65,8 +64,6 @@ struct MapLayer_2
 	struct MapCellFields *cells;
 	u8					  pad04[44];
 };
-
-extern u8 *gEffectWork;
 
 static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {

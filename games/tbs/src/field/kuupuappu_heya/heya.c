@@ -573,8 +573,6 @@ static void KuupuappuHeya_RunActor25Response(void)
 #define RATIO_HI 52428
 #define RATIO_LO 26214
 
-extern struct EventWork *gEventWork;
-
 struct Stop
 {
 	u8 id;

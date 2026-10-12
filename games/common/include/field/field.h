@@ -361,6 +361,7 @@ extern const u8 ObjectMotion_ActionKind4Script[];
 extern u8		ObjectMotion_LaunchScript;
 extern const u8 ObjectMotion_MoveTowardTargetScript[];
 extern const u8 ObjectMotion_ResetActionScript[];
+extern const u8 ObjectMotion_StepAngleScript[];
 extern const u8 ObjectMotion_TurnTowardLinkedScript[];
 extern const u8 ObjectMotion_VariantScripts[];
 #ifndef OWN_RamakanSabaku_SandCounter

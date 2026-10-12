@@ -4,8 +4,7 @@
 #include "glyph.h"
 #include "text_font.h"
 #include "edition.h"
-
-extern const u8 UiText_GlyphWidths[];
+#include "graphics.h"
 
 static __inline__ void GlyphDot(u32 stride, u32 x, u32 tile_y, u32 row_line, u8 *vram, u32 color)
 {

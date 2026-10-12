@@ -2,6 +2,7 @@
 #include "unit/field/suhara_sabaku/sabaku.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object7.h"
 #include "unit/battle/effect/object8.h"
 #include "unit/battle/effect/object9.h"
 #include "unit/battle/effect/object10.h"

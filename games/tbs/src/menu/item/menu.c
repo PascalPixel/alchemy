@@ -968,7 +968,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s
 
 	result = -1;
 	if (count == 0)
-		goto done;
+		return result;
 	Link_DrawShiftedTilePairFar(0x06002500);
 	pages = count / per_page;
 	if (count % per_page != 0)
@@ -1000,7 +1000,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s
 		}
 		Runtime_SetMainState19();
 		result = 1;
-		goto done;
+		return result;
 	}
 	if (page_forward)
 	{
@@ -1015,7 +1015,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s
 		}
 		Runtime_SetMainState19();
 		result = 1;
-		goto done;
+		return result;
 	}
 	if (previous)
 	{
@@ -1027,11 +1027,11 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s
 			if (*cursor > per_page - 1)
 				*cursor = per_page - 1;
 		}
-		goto row_changed;
+		return 0;
 	}
 	result = -1;
 	if (next == 0)
-		goto done;
+		return result;
 	{
 		AudioCommand_PlayFar(111);
 		result = 0;
@@ -1040,10 +1040,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s
 		if (*cursor > per_page - 1)
 			*cursor = result;
 	}
-row_changed:
-	result = 0;
-done:
-	return result;
+	return 0;
 }
 
 void Palette_LightenBankHighlight(s32 bank)

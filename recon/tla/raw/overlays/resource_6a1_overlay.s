@@ -1208,7 +1208,7 @@ Func_02000af0:
 	adds r1, r6, #0
 	adds r2, r5, #0
 	adds r3, r7, #0
-	bl Func_02000bfc
+	bl Map_FillCellRectByte2
 	mov r2, r10
 	mov r3, r8
 	str r2, [sp, #0]
@@ -1217,7 +1217,7 @@ Func_02000af0:
 	adds r1, r6, #0
 	adds r2, r5, #0
 	adds r3, r7, #0
-	bl Func_02000bfc
+	bl Map_FillCellRectByte2
 	movs r0, #1
 .L_02008bea:
 	add sp, #8
@@ -1229,50 +1229,6 @@ Func_02000af0:
 	.4byte Data_020022d0
 .L_02008bf8:
 	.4byte Data_020022dc
-	.section .text.x02008bfc,"ax",%progbits
-	.global Func_02000bfc
-	.thumb_func
-Func_02000bfc:
-	push {r5, r6, lr}
-	adds r5, r3, #0
-	ldr r3, [sp, #12]
-	lsls r2, r2, #7
-	mov r12, r3
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r4, [r3, #32]
-	lsls r3, r0, #3
-	subs r3, r3, r0
-	movs r0, #156
-	lsls r0, r0, #1
-	lsls r3, r3, #3
-	adds r3, r3, r0
-	ldr r0, [r4, r3]
-	adds r1, r1, r2
-	lsls r1, r1, #2
-	adds r0, r0, r1
-	movs r1, #0
-	ldr r6, [sp, #16]
-	cmp r1, r12
-	bcs .L_02008c42
-.L_02008c28:
-	lsls r3, r1, #9
-	movs r2, #0
-	adds r3, r0, r3
-	cmp r2, r5
-	bcs .L_02008c3c
-.L_02008c32:
-	adds r2, #1
-	strb r6, [r3, #2]
-	adds r3, #4
-	cmp r2, r5
-	bcc .L_02008c32
-.L_02008c3c:
-	adds r1, #1
-	cmp r1, r12
-	bcc .L_02008c28
-.L_02008c42:
-	pop {r5, r6, pc}
 	.section .text.x02008c44,"ax",%progbits
 	.global Func_02000c44
 	.thumb_func
@@ -1723,7 +1679,7 @@ Func_02000ec8:
 	mov r2, r12
 	ldr r3, [sp, #24]
 	movs r0, #0
-	bl Func_02000bfc
+	bl Map_FillCellRectByte2
 	mov r1, r10
 	movs r2, #200
 	ldr r0, [r1]
@@ -1876,7 +1832,7 @@ Func_02000ec8:
 	ldr r3, [sp, #24]
 	movs r0, #0
 	str r5, [sp, #4]
-	bl Func_02000bfc
+	bl Map_FillCellRectByte2
 	mov r3, r11
 	ldr r1, [sp, #88]
 	ldr r2, [sp, #96]
@@ -1884,7 +1840,7 @@ Func_02000ec8:
 	movs r0, #2
 	ldr r3, [sp, #24]
 	str r5, [sp, #4]
-	bl Func_02000bfc
+	bl Map_FillCellRectByte2
 	ldr r0, [sp, #12]
 	mov r4, r10
 	ldrsb r3, [r4, r7]
@@ -1920,7 +1876,7 @@ Func_02000ec8:
 	movs r0, #2
 	ldr r3, [sp, #24]
 	str r4, [sp, #4]
-	bl Func_02000bfc
+	bl Map_FillCellRectByte2
 	bl Func_020022a0
 	add sp, #56
 	pop {r3, r5, r6, r7}
@@ -2928,71 +2884,6 @@ Func_020018f4:
 	.4byte 0x11111111
 .L_02009b34:
 	.4byte Func_020017c8
-	.section .text.x02009b38,"ax",%progbits
-	.global Func_02001b38
-	.thumb_func
-Func_02001b38:
-	push {r5, r6, lr}
-	mov r6, r10
-	mov r5, r8
-	push {r5, r6}
-	ldr r1, .L_02009bb8
-	movs r2, #133
-	mov r8, r1
-	lsls r2, r2, #2
-	add r8, r2
-	mov r3, r8
-	ldr r0, [r3]
-	bl Object_GetById
-	mov r1, r8
-	ldr r5, [r0, #8]
-	ldr r6, [r0, #16]
-	mov r10, r0
-	movs r2, #128
-	ldr r0, [r1]
-	movs r1, #128
-	lsls r1, r1, #11
-	lsls r2, r2, #10
-	bl ObjectMotion_SetSpeedParameters
-	asrs r5, r5, #20
-	mov r2, r8
-	asrs r6, r6, #20
-	ldr r0, [r2]
-	lsls r1, r5, #4
-	lsls r2, r6, #4
-	adds r1, #8
-	adds r2, #8
-	bl ObjectMotion_SetPositionAndCommit
-	movs r0, #1
-	bl WaitFrames
-	movs r3, #128
-	lsls r3, r3, #12
-	lsls r5, r5, #20
-	lsls r6, r6, #20
-	adds r5, r5, r3
-	mov r1, r10
-	adds r6, r6, r3
-	ldr r2, [r1, #12]
-	adds r3, r6, #0
-	adds r1, r5, #0
-	mov r0, r10
-	bl Object_SetPositionAndResetMotion
-	movs r0, #4
-	bl Battle_WaitMode0
-	bl Func_02002268
-	ldr r2, .L_02009bbc
-	ldr r3, [r0, #12]
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_02009bb8:
-	.4byte gPartyState
-.L_02009bbc:
-	.4byte 0xfff80000
 	.section .text.x02009bc0,"ax",%progbits
 	.global Func_02001bc0
 	.thumb_func

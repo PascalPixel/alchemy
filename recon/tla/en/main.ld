@@ -874,7 +874,8 @@
         "*/games/tla/src/game/character/classes.o"(.rodata)
         "*/games/tla/src/game/character/d00c6604.o"(.rodata)
         "*/games/tla/src/game/character/d00c6644.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.080c6684)
+        "*/games/tla/src/game/character/elempre.o"(.rodata)
+        "*/recon/tla/unidentified.o"(.unidentified.080c6b04)
         "*/games/tla/src/game/djinn/djinntbl.o"(.rodata)
         . = ABSOLUTE(0x080c8000);
         "*/recon/tla/raw/080c8000.o"(.text)
@@ -1948,6 +1949,7 @@
         "*/recon/tla/unidentified.o"(.unidentified.081287c4)
         "*/games/tla/src/battle/d0128868.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.08128898)
+        "*/games/tla/src/battle/btlact.o"(.rodata)
         "*/games/tla/src/battle/d01297c4.o"(.rodata)
         "*/games/tla/src/battle/d012980c.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.08129828)

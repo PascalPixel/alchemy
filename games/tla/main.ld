@@ -754,7 +754,8 @@ SECTIONS
     "*/games/tla/src/game/character/classes.o"(.rodata)
     "*/games/tla/src/game/character/d00c6604.o"(.rodata)
     "*/games/tla/src/game/character/d00c6644.o"(.rodata)
-    "*/recon/tla/ja/rom.o"(.rom.000c1654)
+    "*/games/tla/src/game/character/elempre.o"(.rodata)
+    "*/recon/tla/ja/rom.o"(.rom.000c1ad4)
     "*/games/tla/src/game/djinn/djinntbl.o"(.rodata)
     . = ABSOLUTE(0x080c8000);
     "*/recon/tla/ja/rom.o"(.rom.000c8000)
@@ -1457,6 +1458,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.001281e6)
     "*/games/tla/src/battle/d0128868.o"(.rodata)
     "*/recon/tla/ja/rom.o"(.rom.00128894)
+    "*/games/tla/src/battle/btlact.o"(.rodata)
     "*/games/tla/src/battle/d01297c4.o"(.rodata)
     "*/games/tla/src/battle/d012980c.o"(.rodata)
     "*/recon/tla/ja/rom.o"(.rom.00129824)

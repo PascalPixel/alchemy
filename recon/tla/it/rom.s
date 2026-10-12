@@ -2093,8 +2093,7 @@ Data_080b127c:
 	.global Data_080b1f40
 Data_080b1f40:
 	.incbin "baserom.gba", 0x000b1f4c, 0x00000424
-	.section .rom.000c6690, "ax"
-	.incbin "baserom.gba", 0x000c6690, 0x00000480
+	.section .rom.000c6b10, "ax"
 	.global Data_080c6b04
 Data_080c6b04:
 	.incbin "baserom.gba", 0x000c6b10, 0x00000014
@@ -4917,7 +4916,7 @@ BattlePres_SetActorModes:
 BattlePlacement_StepPairs:
 	.incbin "baserom.gba", 0x0012885c, 0x00000024
 	.section .rom.001288b0, "ax"
-	.incbin "baserom.gba", 0x001288b0, 0x00000f2c
+	.incbin "baserom.gba", 0x001288b0, 0x000000da
 	.section .rom.00129840, "ax"
 	.incbin "baserom.gba", 0x00129840, 0x00000144
 	.section .rom.0012ce6c, "ax"

@@ -390,10 +390,7 @@ Data_080b1f40:
 	.global Data_080b2340
 Data_080b2340:
 	.incbin "baserom.gba", 0x000b2340, 0x00000024
-	.section .unidentified.080c6684,"a"
-	.global Data_080c6684
-Data_080c6684:
-	.incbin "baserom.gba", 0x000c6684, 0x00000480
+	.section .unidentified.080c6b04,"a"
 	.global Data_080c6b04
 Data_080c6b04:
 	.incbin "baserom.gba", 0x000c6b04, 0x00000014
@@ -855,13 +852,6 @@ Data_08128960:
 	.global Data_0812896c
 Data_0812896c:
 	.incbin "baserom.gba", 0x0012896c, 0x00000006
-	.global Data_08128972
-Data_08128972:
-	.incbin "baserom.gba", 0x00128972, 0x00000006
-	.incbin "baserom.gba", 0x00128978, 0x000002d8
-	.global Data_08128c50
-Data_08128c50:
-	.incbin "baserom.gba", 0x00128c50, 0x00000b74
 	.section .unidentified.08129828,"a"
 	.global Data_08129828
 Data_08129828:

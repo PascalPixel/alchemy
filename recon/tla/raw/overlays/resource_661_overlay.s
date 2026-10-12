@@ -5716,79 +5716,8 @@ Func_02003b80:
 	.4byte IwramMulQ16
 .L_0200bd9c:
 	.4byte 0xfffe0000
-	.section .text.x0200bda0,"ax",%progbits
-	.global Func_02003da0
-	.thumb_func
-Func_02003da0:
-	push {r5, r6, r7, lr}
-	movs r0, #10
-	adds r0, #255
-	adds r7, r1, #0
-	ldr r6, .L_0200be28
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_0200bdbe
-	movs r1, #228
-	ldr r3, .L_0200be2c
-	adds r0, r6, #0
-	lsls r1, r1, #1
-	mov lr, r3
-	.2byte 0xf800
-.L_0200bdbe:
-	movs r0, #128
-	lsls r0, r0, #4
-	bl Runtime_BumpAllocateAlternatePool
-	adds r5, r0, #0
-	adds r1, r5, #0
-	ldr r0, .L_0200be30
-	bl Func_02003f70
-	bl Resource_FindFreeEntry
-	movs r1, #128
-	strh r0, [r6]
-	lsls r0, r0, #16
-	adds r2, r5, #0
-	lsls r1, r1, #4
-	asrs r0, r0, #16
-	bl VramBlock_LoadCached
-	adds r0, r5, #0
-	bl MemFree
-	movs r0, #240
-	lsls r0, r0, #2
-	bl Runtime_BumpAllocateAlternatePool
-	movs r2, #226
-	lsls r2, r2, #1
-	movs r1, #128
-	adds r3, r6, r2
-	lsls r1, r1, #3
-	str r0, [r3]
-	adds r1, #141
-	strh r7, [r6, #2]
-	ldr r0, .L_0200be34
-	bl Scheduler_AddOrUpdateCallback
-	movs r1, #144
-	lsls r1, r1, #3
-	ldr r0, .L_0200be38
-	bl Scheduler_AddOrUpdateCallback
-	bl Func_020041f0
-	bl Object_GetById
-	adds r0, #35
-	ldrb r2, [r0]
-	movs r3, #64
-	orrs r3, r2
-	strb r3, [r0]
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_0200be28:
-	.4byte Data_020023c4 + 0x188
-.L_0200be2c:
-	.4byte IwramClearWords
-.L_0200be30:
-	.4byte Field_Tiles64D
-.L_0200be34:
-	.4byte Func_020039b8
-.L_0200be38:
-	.4byte Func_02003b80
 	.section .text.x0200be3c,"ax",%progbits
+	.balign 4
 	.global Func_02003e3c
 	.thumb_func
 Func_02003e3c:

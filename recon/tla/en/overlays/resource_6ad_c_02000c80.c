@@ -1,6 +1,5 @@
 /* Near misses of overlay 6ad: Func_02000c80 differ 6 (Func_02000cb8 has the same shape, with 0 for 255 and
- * priority_flags |= 2): three rows of the cell address are scheduled apart. Func_020025b0 differ 8: the bit and
- * the sprite byte swap r2 and r3. Func_020028ec differ 8 with the forced turn step, 4 without it: the listing
+ * priority_flags |= 2): three rows of the cell address are scheduled apart. Func_020028ec differ 8 with the forced turn step, 4 without it: the listing
  * builds 0x1000 across the two scale updates. */
 #include "../../../../games/tla/src/field/overlay_6ad/room.h"
 #include "iwram_call.h"
@@ -32,27 +31,6 @@ void Func_02000c80(s32 id)
     cell += (x + (z << 7)) << 2;
     cell[2] = 255;
     Object_GetById(id)->priority_flags = 0;
-}
-
-void Func_020025b0(void)
-{
-    u8 *work = Data_020023c4 + 0x188;
-    struct ObjectRuntime *object;
-    struct SpriteParts *parts;
-    s32 bit;
-
-    if (!GameFlag_Test(265))
-        Iwram_ClearWords(work, 116);
-    object = Func_02005498_(365, 1, 0, 0);
-    object->unknown_5c[0] = 2;
-    Func_02005480(object, 1);
-    parts = object->animation;
-    bit = 1;
-    /* FAKEMATCH: ⚓️ builds the bit before it reads the sprite, in the register it ORs into */
-    asm volatile("" : "+l"(bit));
-    WORD_AT(work, 112) = (s32)object;
-    U16_AT(work, 12) = parts->unknown_10;
-    parts->unknown_11 |= bit;
 }
 
 void Func_020028ec(struct ObjectRuntime *object)

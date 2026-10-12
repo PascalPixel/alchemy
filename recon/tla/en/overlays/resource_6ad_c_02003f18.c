@@ -1,6 +1,5 @@
-/* Near misses of overlay 6ad (the same four are in overlays 6aa and 69e): Func_02003af0 differ 2 (the listing
- * saves the object after it loads x and z), Func_02003b78 differ 2 (the bit copy and the x load swap).
- * Func_02003f18 and Func_02003fc8 are first drafts: the registers of the loop and of the two flag bytes differ. */
+/* First drafts of overlay 6ad (the same pair is in overlays 6aa and 69e): Func_02003f18 and Func_02003fc8;
+ * the registers of the loop and of the two flag bytes differ. */
 #include "../../../../games/tla/src/field/overlay_6ad/room.h"
 
 struct WarpEntry {
@@ -35,36 +34,6 @@ void Func_02003af0(void);
 void Func_02003b78(struct WarpWork *work, struct WarpEntry *entry);
 void Func_02003be8(struct WarpWork *work, struct WarpEntry *entry);
 void Func_02003d80(void);
-
-void Func_02003af0(void)
-{
-    struct PartyState *party = &gPartyState;
-    struct ObjectRuntime *found = Object_GetById(party->current_owner);
-    s32 x = found->x;
-    s32 z = found->z;
-    struct ObjectRuntime *object = found;
-
-    ObjectMotion_SetSpeedParameters(party->current_owner, 0x40000, 0x20000);
-    x >>= 20;
-    z >>= 20;
-    ObjectMotion_SetPositionAndCommit(party->current_owner, (x << 4) + 8, (z << 4) + 8);
-    WaitFrames(1);
-    Object_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y, (z << 20) + 0x80000);
-    Battle_WaitMode0(4);
-    Func_020055e8()->y += 0xfff80000;
-}
-
-void Func_02003b78(struct WarpWork *work, struct WarpEntry *entry)
-{
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
-    s32 x = (object->x >> 20) | (s16)(work->source_x & 64);
-    s32 z = (object->z >> 20) | (s16)(work->source_z & 64);
-
-    Func_02003af0();
-    Func_020056c0(161);
-    Func_020054e0_(work->source_x, work->source_z + 1, 1, 1, x, z);
-    Battle_WaitMode0(12);
-}
 
 s32 Func_02003f18(void)
 {

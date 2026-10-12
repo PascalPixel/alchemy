@@ -845,7 +845,6 @@ SECTIONS
     "*/games/tla/src/battle/effect/buffers.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d1740)
     "*/games/tla/src/battle/effect/bufstart.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000d17c8)
     "*/games/common/src/graphics/palette/palette.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d181e)
     "*/games/tla/src/battle/effect/d1ac4.o"(.text)

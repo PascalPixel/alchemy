@@ -1009,7 +1009,6 @@
         "*/games/tla/src/battle/effect/buffers.o"(.text)
         "*/recon/tla/raw/080d1760.o"(.text)
         "*/games/tla/src/battle/effect/bufstart.o"(.text)
-        "*/recon/tla/raw/080d17e8.o"(.text)
         "*/games/common/src/graphics/palette/palette.o"(.text)
         "*/recon/tla/raw/080d183e.o"(.text)
         "*/recon/tla/raw/080d1840.o"(.text)

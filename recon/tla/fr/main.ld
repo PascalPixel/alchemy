@@ -846,7 +846,6 @@
     "*/games/tla/src/battle/effect/buffers.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000d6760)
     "*/games/tla/src/battle/effect/bufstart.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.000d67e8)
     "*/games/common/src/graphics/palette/palette.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000d683e)
     "*/recon/tla/fr/rom.o"(.rom.000d6a18)

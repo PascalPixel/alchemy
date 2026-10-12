@@ -2844,12 +2844,6 @@ BattleFx_BuildBuffer:
 	.thumb_func
 Func_080d1760:
 	.incbin "baserom.gba", 0x000d1740, 0x0000004c
-	.section .rom.000d17c8, "ax"
-	.global Func_080d17e8
-	.type Func_080d17e8, %function
-	.thumb_func
-Func_080d17e8:
-	.incbin "baserom.gba", 0x000d17c8, 0x00000034
 	.section .rom.000d181e, "ax"
 	.incbin "baserom.gba", 0x000d181e, 0x00000002
 	.global Func_080d1840

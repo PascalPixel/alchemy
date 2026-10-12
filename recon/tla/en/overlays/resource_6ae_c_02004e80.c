@@ -1,5 +1,7 @@
 /* Near miss: differ 2 of 27 (one reordered row): the draft builds the saved-byte offset before it loads
- * the party state address. */
+ * the party state address. Tried: an asm barrier on the party pointer (the
+ * object's copy to r8 then moves up), a u8 pointer with a one-pass block
+ * (the zero leaves r5). */
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"

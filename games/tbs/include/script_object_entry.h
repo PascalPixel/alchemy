@@ -2,7 +2,7 @@
 #define ALCHEMY_SCRIPT_OBJECT_ENTRY_H
 
 #include "unit/field/common/script/field.h"
-#include "unit/field/common/script/field3.h"
+#include "unit/field/common/script/script.h"
 #include "types.h"
 
 struct ScriptObjectEntry

@@ -2,9 +2,9 @@
 #define ALCHEMY_CHARACTER_H
 
 #include "unit/game/character/chara.h"
-#include "unit/game/character/chara2.h"
-#include "unit/game/character/chara5.h"
-#include "unit/game/character/chara6.h"
+#include "unit/game/character/item.h"
+#include "unit/game/character/class.h"
+#include "unit/game/character/btlcalc.h"
 #include "types.h"
 #include "ownerval.h"
 #include "layout_guard.h"

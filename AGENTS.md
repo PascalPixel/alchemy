@@ -388,7 +388,7 @@ or functions is exactly this cheating.
     comments, organization and byte identity, preserving necessary casts,
     hardware `volatile`, `goto`, work arrays and S2 devices with their reasons.
   - The showcase is `BtlTgtExec` in
-    `games/tbs/src/battle/battle6.c`.
+    `games/tbs/src/battle/tgtexec.c`.
 - **S4** Never throw work away: commit each adoption and attempt, and keep a
   near miss as a draft with the remaining difference in its header. One draft
   per listing, overwritten as it improves: a trial is a commit or a line in

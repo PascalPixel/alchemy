@@ -2,12 +2,12 @@
 #define ALCHEMY_FIELD_EVENT_H
 
 #include "unit/battle/effect/object.h"
-#include "unit/battle/effect/object6.h"
-#include "unit/battle/effect/object10.h"
-#include "unit/battle/effect/object12.h"
-#include "unit/battle/effect/object14.h"
-#include "unit/battle/effect/object15.h"
-#include "unit/battle/effect/object16.h"
+#include "unit/battle/effect/sparkle.h"
+#include "unit/battle/effect/evactor.h"
+#include "unit/battle/effect/evcamera.h"
+#include "unit/battle/effect/djinnev.h"
+#include "unit/battle/effect/psydisp.h"
+#include "unit/battle/effect/psyfx.h"
 #include "mapcopy.h"
 
 #include "layout_guard.h"

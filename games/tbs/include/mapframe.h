@@ -2,7 +2,7 @@
 #define ALCHEMY_MAPFRAME_H
 
 #include "unit/field/common/script/field.h"
-#include "unit/field/common/script/field10.h"
+#include "unit/field/common/script/mapcell.h"
 #include "types.h"
 #include "layout_guard.h"
 

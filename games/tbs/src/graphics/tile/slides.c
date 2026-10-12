@@ -5,9 +5,9 @@
 
 #include "unit/graphics/tile/slides.h"
 #include "unit/system/scheduler/runtime.h"
-#include "unit/system/scheduler/runtime6.h"
-#include "unit/system/scheduler/runtime8.h"
-#include "unit/system/scheduler/runtime9.h"
+#include "unit/system/scheduler/sched.h"
+#include "unit/system/scheduler/basepal.h"
+#include "unit/system/scheduler/heap.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "types.h"

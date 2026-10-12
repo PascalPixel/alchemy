@@ -2,9 +2,9 @@
 
 #include "unit/field/goma_ike/ike.h"
 #include "unit/battle/effect/object.h"
-#include "unit/battle/effect/object2.h"
-#include "unit/battle/effect/object9.h"
-#include "unit/battle/effect/object10.h"
+#include "unit/battle/effect/objtable.h"
+#include "unit/battle/effect/evbasic.h"
+#include "unit/battle/effect/evactor.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

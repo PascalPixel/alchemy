@@ -19,17 +19,17 @@ main	rom_main_00	games/tbs/src/lib/trig
 main	rom_main_00	games/tbs/src/system/resource/decode_01	.text .rodata .text.decode_2_loop
 main	rom_main_00	games/tbs/src/system/heapfree	.text .text.* .rodata .data .padding
 main	rom_main_00	games/tbs/src/system/scheduler/runtime	.text
-main	rom_main_00	games/tbs/src/system/scheduler/runtime2	.text
-main	rom_main_00	games/tbs/src/system/scheduler/runtime3	.text
-main	rom_main_00	games/tbs/src/system/scheduler/runtime4	.text
-main	rom_main_00	games/tbs/src/system/scheduler/runtime5	.text
-main	rom_main_00	games/tbs/src/system/scheduler/runtime6	.text
-main	rom_main_00	games/tbs/src/system/scheduler/runtime7	.text
-main	rom_main_00	games/tbs/src/system/scheduler/runtime8	.text
-main	rom_main_00	games/tbs/src/system/scheduler/runtime9	.text
-main	rom_main_00	games/tbs/src/system/scheduler/runtim10	.text
-main	rom_main_00	games/tbs/src/system/scheduler/runtim11	.text
-main	rom_main_00	games/tbs/src/system/scheduler/runtim12	.text
+main	rom_main_00	games/tbs/src/system/scheduler/ioqueue	.text
+main	rom_main_00	games/tbs/src/system/scheduler/fade	.text
+main	rom_main_00	games/tbs/src/system/scheduler/oamlist	.text
+main	rom_main_00	games/tbs/src/system/scheduler/objvram	.text
+main	rom_main_00	games/tbs/src/system/scheduler/sched	.text
+main	rom_main_00	games/tbs/src/system/scheduler/math	.text
+main	rom_main_00	games/tbs/src/system/scheduler/basepal	.text
+main	rom_main_00	games/tbs/src/system/scheduler/heap	.text
+main	rom_main_00	games/tbs/src/system/scheduler/matrix	.text
+main	rom_main_00	games/tbs/src/system/scheduler/ramcode	.text
+main	rom_main_00	games/tbs/src/system/scheduler/serial	.text
 main	rom_main_00	games/tbs/src/system/cpu_set	.text .padding .text.sound_vsync_on
 main	rom_main_00	games/common/src/system/save/flash	.text
 main	rom_main_00	games/common/src/system/save/sst	.text
@@ -60,16 +60,16 @@ main	rom_main_01	games/tbs/src/graphics/tile/convert_map
 main	rom_main_01	games/tbs/src/field/common/object/update
 main	rom_main_01	games/tbs/src/system/updfar
 main	rom_main_01	games/tbs/src/field/common/script/field
-main	rom_main_01	games/tbs/src/field/common/script/field2
-main	rom_main_01	games/tbs/src/field/common/script/field3
-main	rom_main_01	games/tbs/src/field/common/script/field4
-main	rom_main_01	games/tbs/src/field/common/script/field5
-main	rom_main_01	games/tbs/src/field/common/script/field6
-main	rom_main_01	games/tbs/src/field/common/script/field7
-main	rom_main_01	games/tbs/src/field/common/script/field8
-main	rom_main_01	games/tbs/src/field/common/script/field9
-main	rom_main_01	games/tbs/src/field/common/script/field10
-main	rom_main_01	games/tbs/src/field/common/script/field11
+main	rom_main_01	games/tbs/src/field/common/script/fldobj
+main	rom_main_01	games/tbs/src/field/common/script/script
+main	rom_main_01	games/tbs/src/field/common/script/operands
+main	rom_main_01	games/tbs/src/field/common/script/player
+main	rom_main_01	games/tbs/src/field/common/script/maplayer
+main	rom_main_01	games/tbs/src/field/common/script/mapview
+main	rom_main_01	games/tbs/src/field/common/script/palqueue
+main	rom_main_01	games/tbs/src/field/common/script/curve
+main	rom_main_01	games/tbs/src/field/common/script/mapcell
+main	rom_main_01	games/tbs/src/field/common/script/iconmon
 main	rom_main_01	games/tbs/src/system/resource/animdata
 main	rom_main_01	games/tbs/src/graphics/render/facing
 main	rom_main_01	games/tbs/src/field/common/object/objdata
@@ -89,17 +89,17 @@ main	rom_main_02	games/tbs/src/graphics/tile/expand_masked_masks	.rodata
 main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque
 main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque_masks	.rodata
 main	rom_main_02	games/tbs/src/graphics/window/window	.text
-main	rom_main_02	games/tbs/src/graphics/window/window2	.text
-main	rom_main_02	games/tbs/src/graphics/window/window3	.text
-main	rom_main_02	games/tbs/src/graphics/window/window4	.text
-main	rom_main_02	games/tbs/src/graphics/window/window5	.text
-main	rom_main_02	games/tbs/src/graphics/window/window6	.text
-main	rom_main_02	games/tbs/src/graphics/window/window7	.text
-main	rom_main_02	games/tbs/src/graphics/window/window8	.text
-main	rom_main_02	games/tbs/src/graphics/window/window9	.text
-main	rom_main_02	games/tbs/src/graphics/window/window10	.text
-main	rom_main_02	games/tbs/src/graphics/window/window11	.text
-main	rom_main_02	games/tbs/src/graphics/window/window12	.text
+main	rom_main_02	games/tbs/src/graphics/window/icon	.text
+main	rom_main_02	games/tbs/src/graphics/window/select	.text
+main	rom_main_02	games/tbs/src/graphics/window/notice	.text
+main	rom_main_02	games/tbs/src/graphics/window/config	.text
+main	rom_main_02	games/tbs/src/graphics/window/wintile	.text
+main	rom_main_02	games/tbs/src/graphics/window/output	.text
+main	rom_main_02	games/tbs/src/graphics/window/ptystat	.text
+main	rom_main_02	games/tbs/src/graphics/window/save	.text
+main	rom_main_02	games/tbs/src/graphics/window/btlcmd	.text
+main	rom_main_02	games/tbs/src/graphics/window/cmdicon	.text
+main	rom_main_02	games/tbs/src/graphics/window/debug	.text
 main	rom_main_02	games/tbs/src/menu/slider	.rodata
 main	rom_main_02	games/tbs/src/graphics/ui/marks	.rodata
 main	rom_main_02	games/tbs/src/graphics/ui/menu_icons	.rodata
@@ -123,13 +123,13 @@ main	rom_main_02	games/tbs/src/menu/slidpal	.rodata
 main	rom_main_02	games/tbs/src/graphics/window/keyboard	.rodata
 main	rom_main_03	games/tbs/src/system/far_call/GAME
 main	rom_main_03	games/tbs/src/game/character/chara
-main	rom_main_03	games/tbs/src/game/character/chara2
-main	rom_main_03	games/tbs/src/game/character/chara3
-main	rom_main_03	games/tbs/src/game/character/chara4
-main	rom_main_03	games/tbs/src/game/character/chara5
-main	rom_main_03	games/tbs/src/game/character/chara6
-main	rom_main_03	games/tbs/src/game/character/chara7
-main	rom_main_03	games/tbs/src/game/character/chara8
+main	rom_main_03	games/tbs/src/game/character/item
+main	rom_main_03	games/tbs/src/game/character/flag
+main	rom_main_03	games/tbs/src/game/character/party
+main	rom_main_03	games/tbs/src/game/character/class
+main	rom_main_03	games/tbs/src/game/character/btlcalc
+main	rom_main_03	games/tbs/src/game/character/djinn
+main	rom_main_03	games/tbs/src/game/character/invsave
 main	rom_main_03	games/tbs/src/game/character/exptbl
 main	rom_main_03	games/tbs/src/game/inventory/artslot
 main	rom_main_03	games/tbs/src/game/character/starteq
@@ -143,23 +143,23 @@ main	rom_main_03	games/tbs/src/game/character/elemtbl
 main	rom_main_03	games/tbs/src/game/djinn/djinntbl
 main	rom_main_04	games/tbs/src/system/far_call/OBJECT
 main	rom_main_04	games/tbs/src/battle/effect/object
-main	rom_main_04	games/tbs/src/battle/effect/object2
-main	rom_main_04	games/tbs/src/battle/effect/object3
-main	rom_main_04	games/tbs/src/battle/effect/object4
-main	rom_main_04	games/tbs/src/battle/effect/object5
-main	rom_main_04	games/tbs/src/battle/effect/object6
-main	rom_main_04	games/tbs/src/battle/effect/object7
-main	rom_main_04	games/tbs/src/battle/effect/object8
-main	rom_main_04	games/tbs/src/battle/effect/object9
-main	rom_main_04	games/tbs/src/battle/effect/object10
-main	rom_main_04	games/tbs/src/battle/effect/object11
-main	rom_main_04	games/tbs/src/battle/effect/object12
-main	rom_main_04	games/tbs/src/battle/effect/object13
-main	rom_main_04	games/tbs/src/battle/effect/object14
-main	rom_main_04	games/tbs/src/battle/effect/object15
-main	rom_main_04	games/tbs/src/battle/effect/object16
-main	rom_main_04	games/tbs/src/battle/effect/object17
-main	rom_main_04	games/tbs/src/battle/effect/object18
+main	rom_main_04	games/tbs/src/battle/effect/objtable
+main	rom_main_04	games/tbs/src/battle/effect/fldmain
+main	rom_main_04	games/tbs/src/battle/effect/evtable
+main	rom_main_04	games/tbs/src/battle/effect/marker
+main	rom_main_04	games/tbs/src/battle/effect/sparkle
+main	rom_main_04	games/tbs/src/battle/effect/disptran
+main	rom_main_04	games/tbs/src/battle/effect/palbuf
+main	rom_main_04	games/tbs/src/battle/effect/evbasic
+main	rom_main_04	games/tbs/src/battle/effect/evactor
+main	rom_main_04	games/tbs/src/battle/effect/evmes
+main	rom_main_04	games/tbs/src/battle/effect/evcamera
+main	rom_main_04	games/tbs/src/battle/effect/scenefx
+main	rom_main_04	games/tbs/src/battle/effect/djinnev
+main	rom_main_04	games/tbs/src/battle/effect/psydisp
+main	rom_main_04	games/tbs/src/battle/effect/psyfx
+main	rom_main_04	games/tbs/src/battle/effect/fxslot
+main	rom_main_04	games/tbs/src/battle/effect/worldmap
 main	rom_main_04	games/tbs/src/battle/effect/arcspark
 main	rom_main_04	games/tbs/src/battle/effect/locrule
 main	rom_main_04	games/tbs/src/battle/effect/zonedata
@@ -171,55 +171,55 @@ main	rom_main_04	games/tbs/src/field/scenes
 main	rom_main_04	games/tbs/src/field/common/object/scripts
 main	rom_main_05	games/tbs/src/system/far_call/MENU
 main	rom_main_05	games/tbs/src/menu/item/menu
-main	rom_main_05	games/tbs/src/menu/item/menu2
-main	rom_main_05	games/tbs/src/menu/item/menu3
-main	rom_main_05	games/tbs/src/menu/item/menu4
-main	rom_main_05	games/tbs/src/menu/item/menu5
-main	rom_main_05	games/tbs/src/menu/item/menu6
-main	rom_main_05	games/tbs/src/menu/item/menu7
-main	rom_main_05	games/tbs/src/menu/item/menu8
+main	rom_main_05	games/tbs/src/menu/item/item
+main	rom_main_05	games/tbs/src/menu/item/psynergy
+main	rom_main_05	games/tbs/src/menu/item/status
+main	rom_main_05	games/tbs/src/menu/item/useitem
+main	rom_main_05	games/tbs/src/menu/item/djinn
+main	rom_main_05	games/tbs/src/menu/item/fourobj
+main	rom_main_05	games/tbs/src/menu/item/compare
 main	rom_main_05	games/tbs/src/graphics/ui/menuspr
 main	rom_main_05	games/tbs/src/menu/menustr
 main	rom_main_05	games/tbs/src/menu/menudata
 main	rom_main_06	games/tbs/src/system/far_call/SHOP
 main	rom_main_06	games/tbs/src/menu/shop/shop
-main	rom_main_06	games/tbs/src/menu/shop/shop2
-main	rom_main_06	games/tbs/src/menu/shop/shop3
-main	rom_main_06	games/tbs/src/menu/shop/shop4
-main	rom_main_06	games/tbs/src/menu/shop/shop5
-main	rom_main_06	games/tbs/src/menu/shop/shop6
+main	rom_main_06	games/tbs/src/menu/shop/buysell
+main	rom_main_06	games/tbs/src/menu/shop/wares
+main	rom_main_06	games/tbs/src/menu/shop/seido
+main	rom_main_06	games/tbs/src/menu/shop/yadoya
+main	rom_main_06	games/tbs/src/menu/shop/pickitem
 main	rom_main_06	games/tbs/src/menu/shop/shopspr
 main	rom_main_06	games/tbs/src/menu/shop/shopdata
 main	rom_main_07	games/tbs/src/system/far_call/BATTLE
 main	rom_main_07	games/tbs/src/graphics/tile/decode	.text .rodata .text.bit_dispatch
 main	rom_main_07	games/tbs/src/graphics/tile/decode	.data .text.bit_commands
 main	rom_main_07	games/tbs/src/battle/battle
-main	rom_main_07	games/tbs/src/battle/battle2
-main	rom_main_07	games/tbs/src/battle/battle3
-main	rom_main_07	games/tbs/src/battle/battle4
-main	rom_main_07	games/tbs/src/battle/battle5
-main	rom_main_07	games/tbs/src/battle/battle6
-main	rom_main_07	games/tbs/src/battle/battle7
-main	rom_main_07	games/tbs/src/battle/battle8
-main	rom_main_07	games/tbs/src/battle/battle9
-main	rom_main_07	games/tbs/src/battle/battle10
-main	rom_main_07	games/tbs/src/battle/battle11
-main	rom_main_07	games/tbs/src/battle/battle12
+main	rom_main_07	games/tbs/src/battle/unit
+main	rom_main_07	games/tbs/src/battle/actlist
+main	rom_main_07	games/tbs/src/battle/command
+main	rom_main_07	games/tbs/src/battle/action
+main	rom_main_07	games/tbs/src/battle/tgtexec
+main	rom_main_07	games/tbs/src/battle/turnend
+main	rom_main_07	games/tbs/src/battle/screen
+main	rom_main_07	games/tbs/src/battle/elemfx
+main	rom_main_07	games/tbs/src/battle/enemy
+main	rom_main_07	games/tbs/src/battle/smnentry
+main	rom_main_07	games/tbs/src/battle/spoils
 main	rom_main_07	games/tbs/src/battle/btldata
 main	rom_main_07	games/tbs/src/battle/presentation/advarrow
 main	rom_main_07	games/tbs/src/battle/btlvars
 main	rom_main_08	games/tbs/src/system/far_call/EFFECT
 main	rom_main_08	games/tbs/src/battle/effect/effect	.text
-main	rom_main_08	games/tbs/src/battle/effect/effect2	.text
-main	rom_main_08	games/tbs/src/battle/effect/effect3	.text
-main	rom_main_08	games/tbs/src/battle/effect/effect4	.text
-main	rom_main_08	games/tbs/src/battle/effect/effect5	.text
-main	rom_main_08	games/tbs/src/battle/effect/effect6	.text
-main	rom_main_08	games/tbs/src/battle/effect/effect7	.text
-main	rom_main_08	games/tbs/src/battle/effect/effect8	.text
-main	rom_main_08	games/tbs/src/battle/effect/effect9	.text
-main	rom_main_08	games/tbs/src/battle/effect/effect10	.text
-main	rom_main_08	games/tbs/src/battle/effect/effect11	.text
+main	rom_main_08	games/tbs/src/battle/effect/fxdirect	.text
+main	rom_main_08	games/tbs/src/battle/effect/twopic	.text
+main	rom_main_08	games/tbs/src/battle/effect/canvas	.text
+main	rom_main_08	games/tbs/src/battle/effect/strike	.text
+main	rom_main_08	games/tbs/src/battle/effect/dispatch	.text
+main	rom_main_08	games/tbs/src/battle/effect/scene	.text
+main	rom_main_08	games/tbs/src/battle/effect/burst	.text
+main	rom_main_08	games/tbs/src/battle/effect/step	.text
+main	rom_main_08	games/tbs/src/battle/effect/djinnfx	.text
+main	rom_main_08	games/tbs/src/battle/effect/swirl	.text
 main	rom_main_08	games/tbs/src/battle/effect/fxscales	.rodata
 main	rom_main_08	games/tbs/src/battle/effect/sentou_kouka_gousei
 main	rom_main_08	games/tbs/src/battle/effect/koukatbl	.rodata

@@ -2,9 +2,9 @@
 #define ALCHEMY_INVENTORY_MENU_H
 
 #include "unit/menu/item/menu.h"
-#include "unit/menu/item/menu2.h"
-#include "unit/menu/item/menu3.h"
-#include "unit/menu/item/menu4.h"
+#include "unit/menu/item/item.h"
+#include "unit/menu/item/psynergy.h"
+#include "unit/menu/item/status.h"
 #include "global_cells.h"
 #include "layout_guard.h"
 #include "menu_result.h"

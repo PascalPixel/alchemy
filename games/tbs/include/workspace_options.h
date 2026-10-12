@@ -2,9 +2,9 @@
 #define ALCHEMY_WORKSPACE_OPTIONS_H
 
 #include "unit/graphics/window/window.h"
-#include "unit/graphics/window/window5.h"
-#include "unit/graphics/window/window7.h"
-#include "unit/graphics/window/window9.h"
+#include "unit/graphics/window/config.h"
+#include "unit/graphics/window/output.h"
+#include "unit/graphics/window/save.h"
 #include "types.h"
 #include "render_input.h"
 

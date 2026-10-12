@@ -1,8 +1,4 @@
-/* Near miss, differ 26: the native rebuilds 0xffff for the loop test on every pass and
- * keeps only r8 above r7; this draft keeps 0xffff in r10 across the loop. The native also
- * tests the list head through r0 before copying the list to r7, and reads x before the
- * collision flags. Tried: while, guarded do-while, a separate cursor, a 6-byte struct
- * (the ABI pads it to 8). */
+/* Near miss, differ 6 of 51 (26 before, 2026-10-12): the loop is written with goto, so 0xffff is built again for each test as the native does (loop.c moves it out of a do-while). Three rows are left in another order: both tests load the list entry between movs r2, #255 and its shift (this draft shifts first), and the native advances the entry (adds r7, #6) before the last call where this draft does it after; written before the call in the source it is still emitted after. Tried earlier: while, guarded do-while, a separate cursor, a 6-byte struct (the ABI pads it to 8). */
 #include "types.h"
 #include "object_runtime.h"
 
@@ -17,7 +13,8 @@ void Func_02003820(const u16 *list)
     if (list[0] == 0xffff)
         return;
     entry = list;
-    do {
+next:
+    {
         s32 id = entry[0];
         struct ObjectRuntime *object = Object_GetById(id);
         s32 x = (s16)entry[1];
@@ -27,5 +24,7 @@ void Func_02003820(const u16 *list)
         ObjectDispatch_SetSingleChildFlags(object, 0);
         Func_02003910(id, x, z, object->terrain_id);
         entry += 3;
-    } while (entry[0] != 0xffff);
+    }
+    if (entry[0] != 0xffff)
+        goto next;
 }

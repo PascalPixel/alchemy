@@ -1,4 +1,4 @@
-/* Near miss: listing 44 instructions, draft 44, common 41, differ 6; the rest differs in instruction order. */
+/* Near miss: listing 44 instructions, draft 44, common 41, differ 6; the rest differs in instruction order. Tried 2026-10-12: a barrier after the work load orders the first row but swaps r2 and r3 through the two stores; the handler table held in a local behind a barrier orders the second row but indexes it with add, sub, ldr [r3] in place of sub, ldr [r2, r3]. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

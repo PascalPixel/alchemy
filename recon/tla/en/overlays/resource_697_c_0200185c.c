@@ -1,4 +1,4 @@
-/* Draft, differ 2 of 21: the native loads the constant -0x10000 from the pool before it loads y (ldr r2, =0xffff0000; ldr r3, [r5, #12]); this form loads y first. Tried: y -= 0x10000, y += -0x10000, -0x10000 + y, a step temporary behind a one-pass block or an asm barrier, and this pixel inline. */
+/* Draft, differ 2 of 21: the native loads the constant -0x10000 from the pool before it loads y (ldr r2, =0xffff0000; ldr r3, [r5, #12]); this form loads y first. Tried: y -= 0x10000, y += -0x10000, -0x10000 + y, a step temporary behind a one-pass block or an asm barrier, and this pixel inline. Tried 2026-10-12: an inline taking the whole delta, and delta + object->y in it: the same row. */
 #include "../../../../games/tla/src/field/overlay_697/ov697.h"
 
 static __inline__ void Object_AddY(struct ObjectRuntime *object, s32 pixels)

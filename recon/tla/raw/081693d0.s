@@ -508,7 +508,7 @@ Func_081693d0:
 .L_081697dc:
 	.4byte Data_02010002
 .L_081697e0:
-	.4byte Func_0814cbcc
+	.4byte BattleFx_BuildWindowEdgeTable
 .L_081697e4:
 	.4byte Data_08196e8c
 .L_081697e8:

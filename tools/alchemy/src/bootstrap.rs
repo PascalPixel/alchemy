@@ -71,17 +71,16 @@ pub fn run(args: &[String]) -> Result<(), String> {
 
 fn with_install_lock(action: impl FnOnce() -> Result<(), String>) -> Result<(), String> {
     crate::compiler::bundle::ensure_canonical_bundle_root()?;
-    let installation = bundle();
-    let parent = installation
-        .parent()
-        .ok_or("compiler installation has no parent")?;
+    // The file every build holds shared while it runs these compilers.
+    let path = crate::compiler::bundle::lock_path(&bundle());
+    let parent = path.parent().ok_or("compiler installation has no parent")?;
     fs::create_dir_all(parent).map_err(|e| e.to_string())?;
     let lock = fs::OpenOptions::new()
         .create(true)
         .truncate(false)
         .read(true)
         .write(true)
-        .open(parent.join(".compiler.lock"))
+        .open(&path)
         .map_err(|e| e.to_string())?;
     FileExt::lock_exclusive(&lock).map_err(|e| e.to_string())?;
     action()

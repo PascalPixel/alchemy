@@ -518,7 +518,7 @@ static void FieldScene_RunEarlySequence(void)
 			record = Actor_Get(8);
 			record->scale_y = 0x1999;
 			Actor_SetPosition(8, 0x980000, 0xd80000);
-			Engine_ActorEnableActionCallback(8, (const u8 *)ArutinYama_EarlyActorScript);
+			Engine_ActorEnableActionCallback(8, ArutinYama_EarlyActorScript);
 		}
 	}
 	Runtime_SetIrqHandler(1, 0, SceneState_SetDispcntBit9ByThreshold);
@@ -894,7 +894,7 @@ static void FieldScene_RunSharedSetPiece(s32 a0)
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x28000, 0x14000);
 	actor0->timer = 0;
-	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, (const u8 *)ArutinYama_LeaderRideScript);
+	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ArutinYama_LeaderRideScript);
 	if (GameFlag_IsSet(0x205) != 0)
 	{
 		Actor_SetPosition(GERALD, 0x36e0000, 0x2100000);
@@ -907,7 +907,7 @@ static void FieldScene_RunSharedSetPiece(s32 a0)
 	Engine_ActorSetSpritePriority(8, 1);
 	Actor_SetSpeed(8, 0x195c2, 0xcae1);
 	actor8->timer = 0;
-	Engine_ActorEnableActionCallback(8, (const u8 *)ArutinYama_LogRideScript);
+	Engine_ActorEnableActionCallback(8, ArutinYama_LogRideScript);
 	do
 	{
 		Engine_TaskWait(1);
@@ -1303,7 +1303,7 @@ static void EV10_TOUCH_1(void)
 	Engine_CameraSetSpeed(0x4cccc, 0x9999);
 	Engine_CameraMoveTo(rec7->x.fixed, rec7->y.fixed, rec7->z.fixed, 1);
 	Engine_CameraWaitForMove();
-	FieldObject_SetTargetAndCallback(10, 0x10000, (const u8 *)ArutinYama_ActorScript);
+	FieldObject_SetTargetAndCallback(10, 0x10000, ArutinYama_ActorScript);
 	Engine_GameFlagSet(0x904);
 	Engine_EventEnd();
 }
@@ -1515,7 +1515,7 @@ static void ArutinYama_ApplyEntryState(void)
 		actor->y.fixed = 0x200000;
 		Map_CopyCellAttributes(2, 0, 1, 1, 18, 13);
 		Actor_SetPosition(10, 0x1040000, 0xd70000);
-		FieldObject_SetTargetAndCallback(10, 0x10000, (const u8 *)ArutinYama_ActorScript);
+		FieldObject_SetTargetAndCallback(10, 0x10000, ArutinYama_ActorScript);
 	}
 	else
 	{
@@ -2140,8 +2140,8 @@ static void RunEventScript01(void)
 	Actor_SetSpeed(GERALD, 0x9999, 0x4ccc);
 	Actor_SetSpeed(IWAN, 0x9999, 0x4ccc);
 	Actor_SetSpeed(MEARI, 0x9999, 0x4ccc);
-	Engine_ActorEnableActionCallback(1, (const u8 *)ArutinYama_GeraldScript);
-	Engine_ActorEnableActionCallback(2, (const u8 *)ArutinYama_IvanScript);
+	Engine_ActorEnableActionCallback(1, ArutinYama_GeraldScript);
+	Engine_ActorEnableActionCallback(2, ArutinYama_IvanScript);
 	Object_SetActionCallbackAndRefreshById(3, ArutinYama_MiaScript);
 	Actor_FaceDirection(GERALD, 0xc000, 0);
 	Actor_FaceDirection(IWAN, 0xc000, 0);

@@ -1407,7 +1407,7 @@ static void FieldScene_ConfigurePairedActors(void)
 	SceneActor_SetModeZeroAndValue(24, 20);
 	Actor_SetSpeed(24, 0x40000, 0x20000);
 	Actor_SetSpeed(25, 0x38000, 0x1c000);
-	Engine_ActorEnableActionCallback(25, (const u8 *)KuupuappuHeya_PairScriptO);
+	Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptO);
 	Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptB);
 	Object_RefreshSelectorById(24);
 	{
@@ -1758,7 +1758,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 #else
 			Actor_SetPosition(16, 0x2180000, 0x1d00000);
 #endif
-			Engine_ActorEnableActionCallback(16, (const u8 *)1);
+			Engine_ActorEnableActionCallback(16, (const s32 *)1);
 			Actor_FaceDirection(16, 0x5000, 0);
 		}
 		break;
@@ -1767,7 +1767,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 		if (Engine_GameFlagIsSet(0x855) != 0)
 		{
 			Actor_SetPosition(18, 0x2380000, 0x2880000);
-			Engine_ActorEnableActionCallback(18, (const u8 *)1);
+			Engine_ActorEnableActionCallback(18, (const s32 *)1);
 			Actor_FaceDirection(18, 0x4000, 0);
 			OverlayObject_ConfigureObject22WithResource17(231, 0x2380000, 0x100000, 0x2a00000);
 			((void (*)())Engine_TaskAddCallback)((s32)SceneState_SetFlagByActorPosition, 0xc80);
@@ -2324,7 +2324,7 @@ static void RunDialoguePromptScene(void)
 	SceneActor_SetModeZeroAndValue(9, 20);
 	Engine_ActorEnableActionCallback(14, KuupuappuHeya_VaultScriptC);
 	Engine_EventWait(50);
-	Engine_ActorEnableActionCallback(9, (const u8 *)KuupuappuHeya_VaultScriptD);
+	Engine_ActorEnableActionCallback(9, KuupuappuHeya_VaultScriptD);
 	Actor_SetSpeed(GERALD, 0xcccc, 0x6666);
 	Actor_SetSpeed(IWAN, 0xcccc, 0x6666);
 	Actor_WalkToAndWait(GERALD, 0x318, 0x1c8);

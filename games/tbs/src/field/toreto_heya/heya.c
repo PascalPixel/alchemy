@@ -358,8 +358,8 @@ static void EV40_TOUCH(void)
 		}
 		Engine_ActorEnableActionCallback(3, ToretoHeya_TableActions3);
 	}
-	Engine_ActorEnableActionCallback(0, (const u8 *)ToretoHeya_TableActions0);
-	Engine_ActorEnableActionCallback(1, (const u8 *)ToretoHeya_TableActions1);
+	Engine_ActorEnableActionCallback(0, ToretoHeya_TableActions0);
+	Engine_ActorEnableActionCallback(1, ToretoHeya_TableActions1);
 	Object_SetActionCallbackAndRefreshById(2, (s32)ToretoHeya_TableActions2);
 	Engine_EventWait(10);
 	Actor_FaceDirection(0, 0xc000, 0);

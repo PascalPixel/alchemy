@@ -142,7 +142,7 @@ struct FieldActor *Engine_EventGetViewCenter(void);
 struct FieldActor *Engine_ActorLookup(s32 actor);
 void			   Engine_ActorDestroy(s32 actor);
 void			   Engine_ActorSetChildValue(s32 actor, s32 value);
-void			   Engine_ActorEnableActionCallback(s32 actor, const u8 *table);
+void			   Engine_ActorEnableActionCallback(s32 actor, const s32 *table);
 void			   Engine_ActorSetActionCallback(struct FieldActor *actor, s32 value);
 void			   Engine_ActorsRefresh(void);
 void Engine_MapCopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);

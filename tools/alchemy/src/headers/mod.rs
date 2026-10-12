@@ -3,16 +3,16 @@
 //! before its definition with no prototype in scope.
 
 mod events;
-mod expand;
-mod generate;
+pub(crate) mod expand;
+pub(crate) mod generate;
 mod internal;
 pub(crate) mod lint;
-mod model;
-mod objects;
-mod plan;
-mod scan;
+pub(crate) mod model;
+pub(crate) mod objects;
+pub(crate) mod plan;
+pub(crate) mod scan;
 mod settle;
-mod undeclared;
+pub(crate) mod undeclared;
 
 use crate::compiler::preprocess::Expansion;
 use crate::compiler::routing::root;

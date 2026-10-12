@@ -10,7 +10,8 @@ mod dryrun;
 mod flatten;
 mod floor;
 mod ldscript;
-pub use flatten::run as unit;
+mod split;
+pub use split::run as unit;
 mod load;
 mod model;
 

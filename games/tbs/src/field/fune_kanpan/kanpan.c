@@ -872,9 +872,9 @@ static void EV10_TOUCH(void)
 		Camera_SetSpeed(0xcccc, 0x1999);
 		Camera_MoveTo(0xb60000, -1, 0x2f80000, 1);
 		Actor_SetSpeed(23, 0xcccc, 0x6666);
-		Engine_ActorEnableActionCallback(23, (const u8 *)FuneKanpan_PresentationActionsA);
+		Engine_ActorEnableActionCallback(23, FuneKanpan_PresentationActionsA);
 		Actor_SetSpeed(22, 0xcccc, 0x6666);
-		Engine_ActorEnableActionCallback(22, (const u8 *)FuneKanpan_PresentationActionsB);
+		Engine_ActorEnableActionCallback(22, FuneKanpan_PresentationActionsB);
 		Actor_SetSpeed(20, 0xcccc, 0x6666);
 		Actor_WalkToAndWait(20, 182, 0x2f8);
 		Engine_ActorStartRepeatedMotion(20, 2);

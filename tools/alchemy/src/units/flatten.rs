@@ -325,7 +325,7 @@ fn rewritten_lists(root: &Path, objects: &[String], merged: &str, force: bool) -
         };
         let rows = rewritten_rows(&before, objects, merged, force).map_err(|e| format!("{}: {e}", path.display()))?;
         if rows != before {
-            found.push((path, crate::object_list::format(&rows)));
+            found.push((path.clone(), crate::object_list::written(root, target, rows)?));
         }
     }
     Ok(found)

@@ -877,6 +877,21 @@ pub(crate) fn build_midi_sequence(midi: &[u8]) -> Result<Data, String> {
     }
     build_sequence(&layout)
 }
+/// The song header labels a sequence MIDI defines, in its skeleton's order.
+pub fn sequence_labels(midi: &[u8]) -> Result<Vec<String>, String> {
+    let midi = read_sequence_midi(midi)?;
+    let skeleton = midi
+        .skeleton
+        .as_ref()
+        .ok_or("MIDI conductor skeleton is missing")?;
+    Ok(skeleton
+        .iter()
+        .filter_map(|segment| match segment {
+            Segment::Header { label, .. } => Some(label.clone()),
+            _ => None,
+        })
+        .collect())
+}
 pub fn sequence_assembly(midi: &[u8]) -> Result<String, String> {
     Ok(format!(
         "\t.section .rodata\n{}",

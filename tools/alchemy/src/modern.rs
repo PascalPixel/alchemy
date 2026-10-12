@@ -26,7 +26,14 @@
 //! - `-fno-tree-loop-distribute-patterns`: the game links no C library, so
 //!   loops must not become memset or memcpy calls.
 //! - `-ffreestanding -nostdinc`, `-DMODERN=1` for the source's guards, and
-//!   `-Wall -Wextra -fdiagnostics-plain-output` for the report.
+//!   `-Wall -Wextra -fdiagnostics-plain-output` for the report, less four
+//!   classes that question style and no behaviour: sign-compare,
+//!   unused-parameter, missing-field-initializers and pointer-sign.
+//!
+//! The count of distinct warnings may only fall. tools/alchemy/modern.tsv
+//! holds the count allowed for the compiler it was measured with; a build
+//! of all six editions with that compiler fails above it, and `--update`
+//! lowers it. Another compiler's count is reported and not compared.
 //!
 //! Linking reuses the edition's linker script with GCC's extra section names
 //! beside each object's own (`.rodata.str1.4` and the like), a catch-all ROM
@@ -42,14 +49,20 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
-const USAGE: &str = "usage: alchemy build modern [--target GAME-EDITION]... [--cc COMPILER] [--keep-going]
+const USAGE: &str = "usage: alchemy build modern [--target GAME-EDITION]... [--cc COMPILER] [--keep-going] [--update]
 Build each edition (all six of ☀️ by default) from the same source with a
 modern GCC, as pret's `make modern`: out/modern/<edition>.gba, a ROM that
 matches nothing, and every compiler and linker warning in
 out/modern/warnings.txt with a summary by kind and file in
 out/modern/warnings-summary.txt. The compiler is --cc, else $MODERN_CC,
 else the arm-none-eabi-gcc on PATH. --keep-going writes an
-image despite link errors.";
+image despite link errors. A build of all six editions fails when it has
+more distinct warnings than tools/alchemy/modern.tsv allows for its
+compiler; --update lowers that count to the build's.";
+
+/// The count of distinct warnings a build of the six editions may have.
+const ALLOWED: &str = "tools/alchemy/modern.tsv";
+const ALLOWED_HEADER: &str = "compiler\twarnings";
 
 const DEFAULT_CC: &str = "arm-none-eabi-gcc";
 const OUTPUT: &str = "out/modern";
@@ -78,6 +91,10 @@ const COMMON_FLAGS: &[&str] = &[
     "-DMODERN=1",
     "-Wall",
     "-Wextra",
+    "-Wno-sign-compare",
+    "-Wno-unused-parameter",
+    "-Wno-missing-field-initializers",
+    "-Wno-pointer-sign",
     "-fdiagnostics-plain-output",
     "-fcall-used-r4",
 ];
@@ -257,6 +274,7 @@ pub fn run(args: &[String]) -> Result<(), String> {
         .filter(|cc| !cc.is_empty())
         .unwrap_or_else(|| DEFAULT_CC.to_owned());
     let mut keep_going = false;
+    let mut update = false;
     let mut args = args.iter();
     while let Some(arg) = args.next() {
         match arg.as_str() {
@@ -267,10 +285,12 @@ pub fn run(args: &[String]) -> Result<(), String> {
             "--target" => targets.push(decomp_target(Some(args.next().ok_or(USAGE)?))?),
             "--cc" => cc = args.next().ok_or(USAGE)?.clone(),
             "--keep-going" => keep_going = true,
+            "--update" => update = true,
             _ => return Err(USAGE.into()),
         }
     }
-    if targets.is_empty() {
+    let all = targets.is_empty();
+    if all {
         for edition in ["ja", "en", "de", "es", "fr", "it"] {
             targets.push(decomp_target(Some(&format!("tbs-{edition}")))?);
         }
@@ -299,11 +319,60 @@ pub fn run(args: &[String]) -> Result<(), String> {
         .filter(|(_, result)| result.is_err())
         .map(|(target, _)| target.id.to_string())
         .collect();
-    if failed.is_empty() {
-        Ok(())
-    } else {
-        Err(format!("the modern build failed for {}", failed.join(", ")))
+    if !failed.is_empty() {
+        return Err(format!("the modern build failed for {}", failed.join(", ")));
     }
+    if !all {
+        return Ok(());
+    }
+    let compiler = modern.signature.split('\0').next().unwrap_or(&cc).to_owned();
+    let path = root.join(ALLOWED);
+    let before = fs::read_to_string(&path).unwrap_or_default();
+    let (text, verdict) = hold(&before, &compiler, report.diagnostics.len(), update)?;
+    if text != before {
+        fs::write(&path, text).map_err(|error| format!("{ALLOWED}: {error}"))?;
+    }
+    println!("{verdict}");
+    Ok(())
+}
+
+/// Hold a build's count of distinct warnings to the count allowed for its
+/// compiler: the table's text afterwards and what to tell the builder, or
+/// the refusal of a count that rose.
+fn hold(table: &str, compiler: &str, found: usize, update: bool) -> Result<(String, String), String> {
+    let mut rows: Vec<(String, usize)> = Vec::new();
+    for line in table.lines().skip(1) {
+        let (name, count) = line.split_once('\t').ok_or_else(|| format!("{ALLOWED}: {line:?} is no row"))?;
+        let count = count.parse().map_err(|_| format!("{ALLOWED}: {count:?} is no count"))?;
+        rows.push((name.to_owned(), count));
+    }
+    let allowed = rows.iter().find(|(name, _)| name == compiler).map(|(_, count)| *count);
+    let verdict = match allowed {
+        Some(allowed) if found > allowed => {
+            return Err(format!(
+                "{found} distinct warnings, and {ALLOWED} allows {allowed} for {compiler}: the count may only fall"
+            ));
+        }
+        Some(allowed) if found < allowed && !update => {
+            format!("{found} distinct warnings, {allowed} allowed: lower the count with --update")
+        }
+        Some(allowed) if !update || found == allowed => format!("{found} distinct warnings, {allowed} allowed"),
+        None if !update => format!("{found} distinct warnings; {ALLOWED} holds no count for {compiler}, so none is compared"),
+        _ => {
+            rows.retain(|(name, _)| name != compiler);
+            rows.push((compiler.to_owned(), found));
+            rows.sort();
+            format!("{found} distinct warnings, now the count allowed for {compiler}")
+        }
+    };
+    let mut text = format!("{ALLOWED_HEADER}\n");
+    for (name, count) in &rows {
+        text += &format!("{name}\t{count}\n");
+    }
+    if rows.is_empty() && table.is_empty() {
+        text.clear();
+    }
+    Ok((text, verdict))
 }
 
 fn build(
@@ -733,5 +802,26 @@ games/b.c:7:1: warning: array subscript 4 is above array bounds [-Warray-bounds=
         image[3] = 0;
         crate::gbafix::fix(&mut image, &crate::gbafix::Fields::default(), false);
         assert!(header_check(&image).is_err());
+    }
+
+    #[test]
+    fn the_count_of_warnings_may_only_fall() {
+        let table = "compiler\twarnings\ngcc 16\t100\n";
+        assert_eq!(hold(table, "gcc 16", 100, false).unwrap(), (table.to_owned(), "100 distinct warnings, 100 allowed".to_owned()));
+        assert!(hold(table, "gcc 16", 101, false).unwrap_err().contains("allows 100 for gcc 16: the count may only fall"));
+        assert!(hold(table, "gcc 16", 101, true).unwrap_err().contains("may only fall"));
+        let (kept, verdict) = hold(table, "gcc 16", 90, false).unwrap();
+        assert_eq!((kept.as_str(), verdict.as_str()), (table, "90 distinct warnings, 100 allowed: lower the count with --update"));
+        let (lowered, _) = hold(table, "gcc 16", 90, true).unwrap();
+        assert_eq!(lowered, "compiler\twarnings\ngcc 16\t90\n");
+        // Another compiler has other warnings: its count is not compared
+        // until it has a row of its own.
+        let (kept, verdict) = hold(table, "gcc 15", 500, false).unwrap();
+        assert_eq!(kept, table);
+        assert!(verdict.contains("holds no count for gcc 15"));
+        let (both, _) = hold(table, "gcc 15", 500, true).unwrap();
+        assert_eq!(both, "compiler\twarnings\ngcc 15\t500\ngcc 16\t100\n");
+        assert_eq!(hold("", "gcc 16", 7, false).unwrap().0, "");
+        assert_eq!(hold("", "gcc 16", 7, true).unwrap().0, "compiler\twarnings\ngcc 16\t7\n");
     }
 }

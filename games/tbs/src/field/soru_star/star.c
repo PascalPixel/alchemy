@@ -1193,12 +1193,12 @@ static void SoruStar_LineUpFollowers(void)
 
 	leader = Object_GetById(0);
 	Engine_EventBegin();
-	Engine_ActorEnableActionCallback(5, (const u8 *)1);
-	Engine_ActorEnableActionCallback(9, (const u8 *)1);
-	Engine_ActorEnableActionCallback(11, (const u8 *)1);
-	Engine_ActorEnableActionCallback(10, (const u8 *)1);
-	Engine_ActorEnableActionCallback(14, (const u8 *)1);
-	Engine_ActorEnableActionCallback(13, (const u8 *)1);
+	Engine_ActorEnableActionCallback(5, (const s32 *)1);
+	Engine_ActorEnableActionCallback(9, (const s32 *)1);
+	Engine_ActorEnableActionCallback(11, (const s32 *)1);
+	Engine_ActorEnableActionCallback(10, (const s32 *)1);
+	Engine_ActorEnableActionCallback(14, (const s32 *)1);
+	Engine_ActorEnableActionCallback(13, (const s32 *)1);
 	Actor_SetPosition(5, 0x1db0000, 0x14c0000);
 	Actor_SetPosition(9, 0x1eb0000, 0x14c0000);
 	Actor_SetPosition(11, 0x1cb0000, 0x15c0000);

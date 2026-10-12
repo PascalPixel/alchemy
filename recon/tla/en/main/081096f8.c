@@ -1,3 +1,7 @@
+/* Near miss, differ 30: (1) each Shop_FillSelector call finishes its count in r0 before
+ * loading r1 and r2 in the native, where this draft loads r1 and r2 first (an inline
+ * wrapper leaves the order unchanged); (2) the native keeps the result in r5 and the
+ * B-button test in r6, this draft the other way round. Everything else matches. */
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

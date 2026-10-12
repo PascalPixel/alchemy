@@ -16539,7 +16539,7 @@ msgctxt "message"
 msgid "04132"
 msgstr "Insieme"
 
-msgctxt "message"
+msgctxt "MsgDebugEntryName"
 msgid "04133"
 msgstr "Schermo del titolo"
 
@@ -16931,7 +16931,7 @@ msgctxt "message"
 msgid "04230"
 msgstr "Shop Test"
 
-msgctxt "message"
+msgctxt "MsgDebugCategoryName"
 msgid "04231"
 msgstr "TITLE"
 
@@ -20603,7 +20603,7 @@ msgctxt "message"
 msgid "05148"
 msgstr "Non potrai metterlo in{line_break}uso, {argument_actor_name:1}. Va bene?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHowManyToBuy"
 msgid "05149"
 msgstr "Quantità?{end_now}"
 

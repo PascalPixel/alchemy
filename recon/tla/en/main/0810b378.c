@@ -1,3 +1,8 @@
+/* Near miss, differ 4: the native loads the menu work before it starts the 0x504 count
+ * offset, and loads the multiplier table address one instruction earlier; this draft
+ * starts the offset first. An empty asm barrier after the work load gives both orders
+ * but then keeps sub sp, #4 above it (the native schedules it after the count test is
+ * built); a one-pass block does the same. */
 #include "types.h"
 #include "ram_buffer.h"
 

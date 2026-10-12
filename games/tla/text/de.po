@@ -16539,7 +16539,7 @@ msgctxt "message"
 msgid "04132"
 msgstr "Zusammen"
 
-msgctxt "message"
+msgctxt "MsgDebugEntryName"
 msgid "04133"
 msgstr "Titelbildschirm"
 
@@ -16931,7 +16931,7 @@ msgctxt "message"
 msgid "04230"
 msgstr "Laden-Test"
 
-msgctxt "message"
+msgctxt "MsgDebugCategoryName"
 msgid "04231"
 msgstr "TITEL"
 
@@ -20775,7 +20775,7 @@ msgctxt "message"
 msgid "05191"
 msgstr "Du kannst das nicht{line_break}anlegen. Willst du es{page_break}trotzdem haben?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHowManyToBuy"
 msgid "05192"
 msgstr "Wie viele willst du?{end_now}"
 

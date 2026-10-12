@@ -14703,7 +14703,7 @@ msgctxt "message"
 msgid "03673"
 msgstr "みんなで"
 
-msgctxt "message"
+msgctxt "MsgDebugEntryName"
 msgid "03674"
 msgstr "タイトルがめん"
 
@@ -15095,7 +15095,7 @@ msgctxt "message"
 msgid "03771"
 msgstr "ショップテスト"
 
-msgctxt "message"
+msgctxt "MsgDebugCategoryName"
 msgid "03772"
 msgstr "TITLE"
 
@@ -18707,7 +18707,7 @@ msgctxt "message"
 msgid "04674"
 msgstr "{argument_actor_name:155}んは そうびできないけど{line_break}それでも かまわないだろ?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHowManyToBuy"
 msgid "04675"
 msgstr "いくつ ほしいんだい?{end_now}"
 

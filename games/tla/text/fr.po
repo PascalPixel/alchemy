@@ -16539,7 +16539,7 @@ msgctxt "message"
 msgid "04132"
 msgstr "Ensemble"
 
-msgctxt "message"
+msgctxt "MsgDebugEntryName"
 msgid "04133"
 msgstr "Ecran titre"
 
@@ -16931,7 +16931,7 @@ msgctxt "message"
 msgid "04230"
 msgstr "Test magasin"
 
-msgctxt "message"
+msgctxt "MsgDebugCategoryName"
 msgid "04231"
 msgstr "TITLE"
 
@@ -20603,7 +20603,7 @@ msgctxt "message"
 msgid "05148"
 msgstr "Impossible à équiper.{line_break}Vous le voulez toujours?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHowManyToBuy"
 msgid "05149"
 msgstr "Combien en voulez-vous?{end_now}"
 

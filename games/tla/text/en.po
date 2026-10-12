@@ -14695,7 +14695,7 @@ msgctxt "message"
 msgid "03671"
 msgstr "Together"
 
-msgctxt "message"
+msgctxt "MsgDebugEntryName"
 msgid "03672"
 msgstr "Title screen"
 
@@ -15087,7 +15087,7 @@ msgctxt "message"
 msgid "03769"
 msgstr "Shop Test"
 
-msgctxt "message"
+msgctxt "MsgDebugCategoryName"
 msgid "03770"
 msgstr "TITLE"
 
@@ -18763,7 +18763,7 @@ msgctxt "message"
 msgid "04688"
 msgstr "You can't equip this, {argument_actor_name:1}.{line_break}Do you still want it?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHowManyToBuy"
 msgid "04689"
 msgstr "How many do you want?{end_now}"
 

@@ -435,7 +435,7 @@ Func_08108b70:
 	bl WaitFrames
 	ldrh r1, [r5]
 	adds r0, r6, #0
-	bl Func_08109624
+	bl Shop_SelBuyNum
 	movs r1, #1
 	movs r3, #1
 	negs r1, r1

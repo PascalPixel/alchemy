@@ -122,7 +122,7 @@ Func_080f94a4:
 	ldr r2, [r7, #60]
 	ldr r3, .L_080f95ec
 	strb r3, [r2, #6]
-	bl Func_080fa478
+	bl ItemMenu_Close
 	movs r1, #0
 	movs r2, #30
 	movs r3, #20

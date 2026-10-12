@@ -151,7 +151,7 @@ Func_08100e7c:
 	bl Menu_ResetTwoResourceEntries
 	movs r0, #1
 	bl WaitFrames
-	bl Func_080fa478
+	bl ItemMenu_Close
 	movs r1, #0
 	b .L_08100fd8
 .L_08100fd0:

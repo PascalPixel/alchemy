@@ -508,24 +508,6 @@ Func_02000a98:
 	.4byte Data_020056e0
 .L_02008af4:
 	.4byte gFrameCount
-	.section .text.x02008af8,"ax",%progbits
-	.global Func_02000af8
-	.thumb_func
-Func_02000af8:
-	push {lr}
-	movs r1, #144
-	lsls r1, r1, #3
-	ldr r0, .L_02008b10
-	bl Scheduler_AddOrUpdateCallback
-	movs r1, #200
-	lsls r1, r1, #4
-	ldr r0, .L_02008b14
-	bl Scheduler_AddOrUpdateCallback
-	pop {pc}
-.L_02008b10:
-	.4byte Func_02000a98
-.L_02008b14:
-	.4byte Func_02000a44
 	.section .text.x02008b18,"ax",%progbits
 	.global Func_02000b18
 	.thumb_func
@@ -5241,7 +5223,7 @@ Func_020040ec:
 	adds r1, r6, #0
 	adds r2, r5, #0
 	adds r3, r7, #0
-	bl Func_020041f8
+	bl Map_FillCellRectByte2
 	mov r2, r10
 	mov r3, r8
 	str r2, [sp, #0]
@@ -5250,7 +5232,7 @@ Func_020040ec:
 	adds r1, r6, #0
 	adds r2, r5, #0
 	adds r3, r7, #0
-	bl Func_020041f8
+	bl Map_FillCellRectByte2
 	movs r0, #1
 .L_0200c1e6:
 	add sp, #8
@@ -5262,50 +5244,6 @@ Func_020040ec:
 	.4byte Data_02004ca4
 .L_0200c1f4:
 	.4byte Data_02004cb0
-	.section .text.x0200c1f8,"ax",%progbits
-	.global Func_020041f8
-	.thumb_func
-Func_020041f8:
-	push {r5, r6, lr}
-	adds r5, r3, #0
-	ldr r3, [sp, #12]
-	lsls r2, r2, #7
-	mov r12, r3
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r4, [r3, #32]
-	lsls r3, r0, #3
-	subs r3, r3, r0
-	movs r0, #156
-	lsls r0, r0, #1
-	lsls r3, r3, #3
-	adds r3, r3, r0
-	ldr r0, [r4, r3]
-	adds r1, r1, r2
-	lsls r1, r1, #2
-	adds r0, r0, r1
-	movs r1, #0
-	ldr r6, [sp, #16]
-	cmp r1, r12
-	bcs .L_0200c23e
-.L_0200c224:
-	lsls r3, r1, #9
-	movs r2, #0
-	adds r3, r0, r3
-	cmp r2, r5
-	bcs .L_0200c238
-.L_0200c22e:
-	adds r2, #1
-	strb r6, [r3, #2]
-	adds r3, #4
-	cmp r2, r5
-	bcc .L_0200c22e
-.L_0200c238:
-	adds r1, #1
-	cmp r1, r12
-	bcc .L_0200c224
-.L_0200c23e:
-	pop {r5, r6, pc}
 	.section .text.x0200c240,"ax",%progbits
 	.global Func_02004240
 	.thumb_func
@@ -5756,7 +5694,7 @@ Func_020044c4:
 	mov r2, r12
 	ldr r3, [sp, #24]
 	movs r0, #0
-	bl Func_020041f8
+	bl Map_FillCellRectByte2
 	mov r1, r10
 	movs r2, #200
 	ldr r0, [r1]
@@ -5909,7 +5847,7 @@ Func_020044c4:
 	ldr r3, [sp, #24]
 	movs r0, #0
 	str r5, [sp, #4]
-	bl Func_020041f8
+	bl Map_FillCellRectByte2
 	mov r3, r11
 	ldr r1, [sp, #88]
 	ldr r2, [sp, #96]
@@ -5917,7 +5855,7 @@ Func_020044c4:
 	movs r0, #2
 	ldr r3, [sp, #24]
 	str r5, [sp, #4]
-	bl Func_020041f8
+	bl Map_FillCellRectByte2
 	ldr r0, [sp, #12]
 	mov r4, r10
 	ldrsb r3, [r4, r7]
@@ -5953,7 +5891,7 @@ Func_020044c4:
 	movs r0, #2
 	ldr r3, [sp, #24]
 	str r4, [sp, #4]
-	bl Func_020041f8
+	bl Map_FillCellRectByte2
 	bl Func_02004c0c
 	add sp, #56
 	pop {r3, r5, r6, r7}
@@ -6173,93 +6111,6 @@ Func_02004868:
 	pop {r5, r6, r7, pc}
 .L_0200c8e8:
 	.4byte 0xffffe100
-	.section .text.x0200c8ec,"ax",%progbits
-	.global Func_020048ec
-	.thumb_func
-Func_020048ec:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r5, r3, #0
-	mov r8, r2
-	adds r6, r1, #0
-	bl Object_GetById
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r2, [r3, #32]
-	lsls r3, r5, #3
-	subs r3, r3, r5
-	movs r1, #156
-	lsls r1, r1, #1
-	lsls r3, r3, #3
-	adds r3, r3, r1
-	ldr r5, [r2, r3]
-	adds r7, r0, #0
-	bl Func_02004c34
-	lsls r0, r0, #2
-	adds r5, r5, r0
-	mov r0, r8
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_0200c960
-	adds r1, r7, #0
-	adds r1, #35
-	ldrb r2, [r1]
-	movs r3, #0
-	strb r3, [r5, #2]
-	movs r3, #2
-	orrs r3, r2
-	strb r3, [r1]
-	cmp r6, #1
-	beq .L_0200c94c
-	cmp r6, #1
-	bcc .L_0200c942
-	cmp r6, #2
-	beq .L_0200c956
-	b .L_0200c98e
-.L_0200c942:
-	adds r0, r7, #0
-	movs r1, #2
-	bl Func_02004a0c
-	b .L_0200c98e
-.L_0200c94c:
-	adds r0, r7, #0
-	movs r1, #4
-	bl Func_02004a0c
-	b .L_0200c98e
-.L_0200c956:
-	adds r0, r7, #0
-	movs r1, #6
-	bl Func_02004a0c
-	b .L_0200c98e
-.L_0200c960:
-	movs r3, #255
-	strb r3, [r5, #2]
-	cmp r6, #1
-	beq .L_0200c97c
-	cmp r6, #1
-	bcc .L_0200c972
-	cmp r6, #2
-	beq .L_0200c986
-	b .L_0200c98e
-.L_0200c972:
-	adds r0, r7, #0
-	movs r1, #1
-	bl Func_02004a0c
-	b .L_0200c98e
-.L_0200c97c:
-	adds r0, r7, #0
-	movs r1, #3
-	bl Func_02004a0c
-	b .L_0200c98e
-.L_0200c986:
-	adds r0, r7, #0
-	movs r1, #5
-	bl Func_02004a0c
-.L_0200c98e:
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
 	.section .bss,"aw",%nobits
 	.space 0x00000008
 	.global Data_020056e0

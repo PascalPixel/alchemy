@@ -28,7 +28,6 @@
 
 #include "staged_actor.h"
 #include "staged_actor_effect.h"
-#include "resource_393.h"
 #include "fieldobj.h"
 #include "game_state.h"
 #include "field_event.h"
@@ -88,67 +87,8 @@ static void EV10_SCRIPT(void)
 	Engine_EventEnd();
 }
 
-static s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
-{
-
-	struct StagedActorEffect *actor = (void *)Object_GetById(0);
-	u8						 *flags = &actor->motion_flags;
-	u8						  saved = *flags;
-	s32						  result = Object_CheckMovementCollision(actor, request);
-
-	if (result == 0)
-	{
-		Engine_EventBegin();
-		Object_SetMode((struct FieldActor *)actor, 6);
-		Engine_TaskWait(6);
-		Engine_AudioPlayCue(152);
-		Object_SetMode((struct FieldActor *)actor, 7);
-		actor->move_rate_x = 0x30000;
-		actor->move_rate_z = 0x20000;
-		actor->elevation_rate = 0x40000;
-		*flags &= 0x7e;
-		Engine_ActorSetSpriteFlags((struct FieldActor *)actor, 0);
-		ObjectMotion_SetPositionAndCommit(0, request->cell_x, request->cell_z);
-		Object_SetMode((struct FieldActor *)actor, 6);
-		Engine_ActorSetSpriteFlags((struct FieldActor *)actor, 1);
-		*flags = result;
-		Engine_ActorSetAnimation(10, 7);
-		actor->position_x += 0xffff0000;
-		actor->position_z += 0xffff0000;
-		Engine_TaskWait(2);
-		actor->position_x += 0xffff0000;
-		actor->position_z += 0xffff0000;
-		Engine_TaskWait(10);
-		actor->position_x += 0x10000;
-		actor->position_z += 0x10000;
-		Engine_TaskWait(4);
-		actor->position_x += 0x10000;
-		actor->position_z += 0x10000;
-		*flags = saved;
-		Engine_EventEnd();
-		return 1;
-	}
-	return 0;
-}
-
-static void EV11_TOUCH(void)
-{
-	struct Resource393Position pos;
-#if !EDITION_INTERNATIONAL
-	pos.x = ((struct Resource393Object *)Object_GetById(0))->position_x + 0x1e0000;
-	pos.y = ((struct Resource393Object *)Object_GetById(0))->position_y;
-	pos.z = ((struct Resource393Object *)Object_GetById(0))->position_z;
-#else
-	struct Resource393Object *obj = (void *)Object_GetById(gGameState.selected_actor);
-	u32						  xb = obj->position_x & 0xfff00000;
-
-	pos.x = xb + 0x80000;
-	pos.y = obj->position_y;
-	pos.z = (obj->position_z & 0xfff00000) + 0x80000;
-	pos.x = xb + 0x280000;
-#endif
-	StagedActor_RunStepEffect(&pos);
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korima/jump.c"
 
 u8 *KorimaKawa_GetEvents(void)
 {

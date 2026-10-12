@@ -796,57 +796,32 @@ void BlendTransition_Update(void)
 //   gBlendLayers     : BLDCNT の対象レイヤー（下の 4 つは 0x3e で BG1〜3・OBJ・背景色）
 //   gBlendFramesLeft : 残りフレーム数
 //--------------------------------------------------------------------------
+// BG1〜3・OBJ・背景色を、今の目標の明るさから level まで frames フレームで
+// フェードする
+// brighten : 0 黒へ / 1 白へ
+//--------------------------------------------------------------------------
+#define DEFINE_BLEND_FADE(name, brighten, level) \
+	void name(s32 frames)                        \
+	{                                            \
+		gBlendBrighten = brighten;               \
+		gBlendLayers = 0x3e;                     \
+		gBlendStartLevel = gBlendTargetLevel;    \
+		gBlendTargetLevel = level;               \
+		gBlendDuration = frames;                 \
+		gBlendFramesLeft = gBlendDuration;       \
+	}
+
 // 黒へフェードアウト
-// frames : かけるフレーム数
-//--------------------------------------------------------------------------
-void Blend_SetDarkenTarget16(s32 frames)
-{
-	gBlendBrighten = 0;
-	gBlendLayers = 0x3e;
-	gBlendStartLevel = gBlendTargetLevel;
-	gBlendTargetLevel = 16;
-	gBlendDuration = frames;
-	gBlendFramesLeft = gBlendDuration;
-}
+DEFINE_BLEND_FADE(Blend_SetDarkenTarget16, 0, 16)
 
-//--------------------------------------------------------------------------
 // 黒からフェードイン
-//--------------------------------------------------------------------------
-void Blend_SetDarkenTarget0(s32 frames)
-{
-	gBlendBrighten = 0;
-	gBlendLayers = 0x3e;
-	gBlendStartLevel = gBlendTargetLevel;
-	gBlendTargetLevel = 0;
-	gBlendDuration = frames;
-	gBlendFramesLeft = gBlendDuration;
-}
+DEFINE_BLEND_FADE(Blend_SetDarkenTarget0, 0, 0)
 
-//--------------------------------------------------------------------------
 // 白へフェードアウト
-//--------------------------------------------------------------------------
-void Blend_SetBrightenTarget16(s32 frames)
-{
-	gBlendBrighten = 1;
-	gBlendLayers = 0x3e;
-	gBlendStartLevel = gBlendTargetLevel;
-	gBlendTargetLevel = 16;
-	gBlendDuration = frames;
-	gBlendFramesLeft = gBlendDuration;
-}
+DEFINE_BLEND_FADE(Blend_SetBrightenTarget16, 1, 16)
 
-//--------------------------------------------------------------------------
 // 白からフェードイン
-//--------------------------------------------------------------------------
-void Blend_SetBrightenTarget0(s32 frames)
-{
-	gBlendBrighten = 1;
-	gBlendLayers = 0x3e;
-	gBlendStartLevel = gBlendTargetLevel;
-	gBlendTargetLevel = 0;
-	gBlendDuration = frames;
-	gBlendFramesLeft = gBlendDuration;
-}
+DEFINE_BLEND_FADE(Blend_SetBrightenTarget0, 1, 0)
 
 //--------------------------------------------------------------------------
 // フェードを指定する
@@ -2449,38 +2424,24 @@ void Resource_DecompressHalfwords(const void *source, void *destination)
 	((void (*)(const void *, void *))routine)(source, destination);
 }
 
-s32 Resource_DecodeType01(const void *source, void *destination)
-{
-	s32 (*routine)(const void *, void *);
-	s32 result;
+// 展開ルーチン code を RAM に写して呼び、済んだら解放する
+#define DEFINE_RESOURCE_DECODE(name, code, bytes)   \
+	s32 name(const void *source, void *destination) \
+	{                                               \
+		s32 (*routine)(const void *, void *);       \
+		s32 result;                                 \
+                                                    \
+		RamCode_Load(routine, code, bytes);         \
+		result = routine(source, destination);      \
+		MemFree(routine);                           \
+		return result;                              \
+	}
 
-	RamCode_Load(routine, Resource_DecodeType01Arm, Resource_DecodeType01CodeSize);
-	result = routine(source, destination);
-	MemFree(routine);
-	return result;
-}
-
-s32 Resource_DecodeType2(const void *source, void *destination)
-{
-	s32 (*routine)(const void *, void *);
-	s32 result;
-
-	RamCode_Load(routine, Resource_Decode2, Resource_Decode2CodeSize);
-	result = routine(source, destination);
-	MemFree(routine);
-	return result;
-}
-
-s32 Resource_DecodeByteLz(const void *source, void *destination)
-{
-	s32 (*routine)(const void *, void *);
-	s32 result;
-
-	RamCode_Load(routine, Resource_DecodeByteLzArm, Resource_DecodeByteLzCodeSize);
-	result = routine(source, destination);
-	MemFree(routine);
-	return result;
-}
+DEFINE_RESOURCE_DECODE(Resource_DecodeType01, Resource_DecodeType01Arm,
+	Resource_DecodeType01CodeSize)
+DEFINE_RESOURCE_DECODE(Resource_DecodeType2, Resource_Decode2, Resource_Decode2CodeSize)
+DEFINE_RESOURCE_DECODE(Resource_DecodeByteLz, Resource_DecodeByteLzArm,
+	Resource_DecodeByteLzCodeSize)
 
 void ColorBuffer_BackupAndBrighten(u8 *buffer, u32 amount, u8 *backup, u32 bytes)
 {
@@ -3349,33 +3310,24 @@ s32 SerialRuntime_BeginTransferB(void *destination)
 	return 0;
 }
 
-void SerialRuntime_WaitForTransferA(void)
-{
-	u32 count = 0;
-
-	if (gSerialSendSource != 0)
-	{
-		do
-		{
-			WaitFrames(1);
-			count++;
-		} while (count < 600000 && gSerialSendSource != 0);
+// pending が 0 になるまで 1 フレームずつ待つ。600000 フレームでやめる
+#define DEFINE_SERIAL_WAIT(name, pending)             \
+	void name(void)                                   \
+	{                                                 \
+		u32 count = 0;                                \
+                                                      \
+		if (pending != 0)                             \
+		{                                             \
+			do                                        \
+			{                                         \
+				WaitFrames(1);                        \
+				count++;                              \
+			} while (count < 600000 && pending != 0); \
+		}                                             \
 	}
-}
 
-void SerialRuntime_WaitForTransferB(void)
-{
-	u32 count = 0;
-
-	if (gSerialReceiveDest != 0)
-	{
-		do
-		{
-			WaitFrames(1);
-			count++;
-		} while (count < 600000 && gSerialReceiveDest != 0);
-	}
-}
+DEFINE_SERIAL_WAIT(SerialRuntime_WaitForTransferA, gSerialSendSource)
+DEFINE_SERIAL_WAIT(SerialRuntime_WaitForTransferB, gSerialReceiveDest)
 
 void SerialRuntime_WaitForTransfers(void)
 {

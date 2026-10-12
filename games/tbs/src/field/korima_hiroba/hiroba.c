@@ -4,6 +4,7 @@
 #include "unit/field/korima_hiroba/hiroba.h"
 #include "unit/field/common/korima/palette.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object5.h"
 #include "unit/battle/effect/object6.h"
 #include "unit/battle/effect/object7.h"
 #include "unit/battle/effect/object8.h"

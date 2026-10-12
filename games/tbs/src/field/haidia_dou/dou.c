@@ -4,6 +4,7 @@
 #include "unit/field/haidia_dou/dou.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object5.h"
 #include "unit/battle/effect/object6.h"
 #include "unit/battle/effect/object7.h"
 #include "unit/battle/effect/object8.h"

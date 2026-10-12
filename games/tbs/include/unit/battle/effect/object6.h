@@ -4,6 +4,7 @@
 #include "types.h"
 #include "effect_slot.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object5.h"
 
 struct EfxObj;
 struct FieldActor;

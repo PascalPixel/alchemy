@@ -13,7 +13,7 @@ SECTIONS
         "*/resource_67e_overlay.o"(.text.x0200860c)
         "*/resource_67e_overlay.o"(.text.x020086a4)
         "*/resource_67e_overlay.o"(.text.x02008814)
-        "*/resource_67e_overlay.o"(.text.x02008954)
+        "*/games/tla/src/field/overlay_67e/s0954.o"(.text)
         "*/resource_67e_overlay.o"(.text.x020089d0)
         "*/games/tla/src/field/overlay_67e/prepare.o"(.text)
         "*/games/tla/src/field/overlay_67e/blocks.o"(.text)

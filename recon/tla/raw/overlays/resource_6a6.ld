@@ -16,7 +16,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_6a6/s0d4c.o"(.text)
         "*/games/tla/src/field/overlay_6a6/switch.o"(.text)
         "*/resource_6a6_overlay.o"(.text.x02008e54)
-        "*/resource_6a6_overlay.o"(.text.x02008eec)
+        "*/games/tla/src/field/overlay_6a6/s0eec.o"(.text)
         "*/games/tla/src/field/overlay_6a6/s0f38.o"(.text)
         "*/games/tla/src/field/overlay_6a6/push.o"(.text)
         "*/resource_6a6_overlay.o"(.text.x020090c0)

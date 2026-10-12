@@ -1,9 +1,4 @@
-/*
- * Draft of Func_02000954 (overlay 67E, 02008954). differ 2: the actor id of
- * the message call is loaded before its flags, where ⚓️ loads the flags
- * first. The direct call and call.h's Call2 give the same order.
- */
-#include "../../../../games/tla/src/field/overlay_67e/ov67e.h"
+#include "ov67e.h"
 
 void Func_02000954(void)
 {
@@ -15,7 +10,8 @@ void Func_02000954(void)
         Call3((void (*)())Func_02000d88, 32, 256, 60);
         message = MsgWouldYouBe;
         Func_02000d60(message);
-        Call2((void (*)())UiText_OpenMessageAtObject, 32, 0);
+        /* FAKEMATCH: the native schedules this call as a value-returning one (the flags are loaded before the actor: one reordered pair with the header's void prototype). */
+        ((s32 (*)(s32, s32))UiText_OpenMessageAtObject)(32, 0);
         if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
             Func_02000814();
         } else {

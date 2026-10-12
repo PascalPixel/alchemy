@@ -1,5 +1,3 @@
-/* Near miss (2 instructions differ): the native loads the gPartyState
- * address before the event work pointer; the draft the other way round. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -62,9 +60,13 @@ static __inline__ void Offset_(s32 id, s32 dx, s32 dz)
 
 void Func_02000eec(void)
 {
+    struct PartyState *party = &gPartyState;
     struct EventWork154 *work = Ram_HeapSlots->event_work;
 
-    Object_SetModeById(gPartyState.current_owner, 2);
+    /* FAKEMATCH: a one-pass block loads the party state before the event work (one reordered row). */
+    do {
+    } while (0);
+    Object_SetModeById(party->current_owner, 2);
     ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
     Func_02001448(123);
     Offset_(gPartyState.current_owner, 0, -4);

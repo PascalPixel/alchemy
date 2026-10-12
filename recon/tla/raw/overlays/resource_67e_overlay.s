@@ -618,64 +618,6 @@ Func_02000814:
 	.4byte MsgThisTokenIsn
 .L_02008950:
 	.4byte gPartyState
-	.section .text.x02008954,"ax",%progbits
-	.global Func_02000954
-	.thumb_func
-Func_02000954:
-	push {r5, lr}
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #42
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_020089b8
-	bl Func_02000d00
-	movs r0, #0
-	bl Func_02000dd0
-	movs r1, #128
-	movs r2, #60
-	lsls r1, r1, #1
-	movs r0, #32
-	bl Func_02000d88
-	ldr r5, .L_020089c4
-	adds r0, r5, #0
-	bl Func_02000d60
-	movs r1, #0
-	movs r0, #32
-	bl UiText_OpenMessageAtObject
-	ldr r3, .L_020089c8
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	ldr r0, [r3]
-	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
-	cmp r0, #0
-	bne .L_020089a4
-	bl Func_02000814
-	b .L_020089b2
-.L_020089a4:
-	subs r0, r5, #1
-	bl Func_02000d60
-	movs r0, #32
-	movs r1, #0
-	bl Func_02000d70
-.L_020089b2:
-	bl Func_02000d08
-	b .L_020089c0
-.L_020089b8:
-	ldr r0, .L_020089cc
-	movs r1, #0
-	bl Func_02000d70
-.L_020089c0:
-	pop {r5, pc}
-	.2byte 0x0000
-.L_020089c4:
-	.4byte MsgWouldYouBe
-.L_020089c8:
-	.4byte gPartyState
-.L_020089cc:
-	.4byte MsgTheLegendSays
 	.section .text.x020089d0,"ax",%progbits
 	.global Func_020009d0
 	.thumb_func

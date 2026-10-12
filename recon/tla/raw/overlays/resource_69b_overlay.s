@@ -622,31 +622,6 @@ Func_02000500:
 	.2byte 0x0000
 .L_02008670:
 	.4byte gPartyState
-	.section .text.x020086dc,"ax",%progbits
-	.balign 4
-	.global Func_020006dc
-	.thumb_func
-Func_020006dc:
-	push {lr}
-	ldr r3, .L_02008700
-	movs r2, #128
-	lsls r2, r2, #2
-	adds r2, #18
-	adds r3, r3, r2
-	ldrb r3, [r3]
-	cmp r3, #10
-	bne .L_020086fe
-	movs r0, #168
-	movs r1, #148
-	lsls r0, r0, #17
-	lsls r1, r1, #18
-	movs r2, #0
-	movs r3, #255
-	bl Func_02002304
-.L_020086fe:
-	pop {pc}
-.L_02008700:
-	.4byte gPartyState
 	.section .text.x02008720,"ax",%progbits
 	.global Func_02000720
 	.thumb_func

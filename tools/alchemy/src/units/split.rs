@@ -32,7 +32,9 @@ and inline function written before the cut goes where it is used. Used
 only after the cut, it moves to the tail. Used on both sides, it moves to
 the head's unit header (games/tbs/include/unit/<path>.h), which both
 pieces read. Used only before the cut, it stays. A #if block of such
-items moves whole.
+items moves whole to the tail when only the tail uses it; used on both
+sides it stays and is copied to the tail, because the unit header is read
+before the headers that define what its conditions test.
 The header is read by other files, so it cannot hold everything. An item
 both sides use stays in the head and is copied to the tail when another
 header or C file declares or defines its name too (the file's own view of
@@ -109,6 +111,9 @@ struct Part {
     shows: Vec<(String, usize, usize)>,
     /// It holds code, data or a directive that must stay where it is.
     fixed: bool,
+    /// It is a #if block. What its conditions test is defined by headers the
+    /// file reads before it, and the unit header is read before those.
+    conditional: bool,
 }
 
 impl Part {
@@ -287,7 +292,7 @@ fn cut(text: &str, function: &str, own: &str, elsewhere: &dyn Fn(&str) -> bool, 
         if items[i].kind == Kind::Comment {
             continue;
         }
-        let mut part = Part { start: lead(text, &items, i).max(block_end), end: items[i].end, ..Part::default() };
+        let mut part = Part { start: lead(text, &items, i).max(block_end), end: items[i].end, conditional: items[i].kind == Kind::Conditional, ..Part::default() };
         describe(&items[i], &mut part, 0);
         parts.push(part);
     }
@@ -319,14 +324,17 @@ fn cut(text: &str, function: &str, own: &str, elsewhere: &dyn Fn(&str) -> bool, 
 
     // Where each moving item goes. One both pieces use goes to the header,
     // unless its name is declared elsewhere too: such a declaration is the
-    // file's own view of the name, and each piece keeps a copy.
+    // file's own view of the name, and each piece keeps a copy. So does each
+    // piece of a #if block: in the header its conditions would be tested
+    // before the headers that define what they test (EDITION_INTERNATIONAL)
+    // are read, and the other branch would be taken.
     let names = |part: &Part, reach: &BTreeSet<String>| part.names.iter().any(|name| reach.contains(name));
     let mut places: Vec<Place> = parts
         .iter()
         .map(|part| match (part.moves() && names(part, &tail_reach), names(part, &head_reach)) {
             (false, _) => Place::Head,
             (true, false) => Place::Tail,
-            (true, true) if part.names.iter().any(|name| elsewhere(name)) => Place::Both,
+            (true, true) if part.conditional || part.names.iter().any(|name| elsewhere(name)) => Place::Both,
             (true, true) => Place::Header,
         })
         .collect();
@@ -816,6 +824,18 @@ mod tests {
         let made = cut(text, "B", OWN, &|name| name == "Row", &NEVER).unwrap();
         assert_eq!((made.shared.as_str(), made.moved), ("#define COUNT 2", [[0; 4], [1, 0, 0, 0], [0, 2, 0, 0]]));
         assert!(made.head.contains("struct Table") && made.top.starts_with("#include \"unit/a/file.h\"\n\nstruct Row\n{\n\ts32 a;\n};\n\nstruct Table"), "{}", made.top);
+    }
+
+    #[test]
+    fn a_conditional_block_both_pieces_use_is_copied_not_shared() {
+        // The unit header is read before edition.h: there the block would
+        // take its other branch.
+        let text = "#include \"unit/a/file.h\"\n#include \"edition.h\"\n\n#if EDITION_INTERNATIONAL\n#define NOTE_X 0\n#else\n#define NOTE_X 8\n#endif\n\nvoid A(void)\n{\n\tNOTE_X;\n}\nvoid B(void)\n{\n\tNOTE_X;\n}\n";
+        let made = cut(text, "B", OWN, &NOWHERE, &NEVER).unwrap();
+        let block = "#if EDITION_INTERNATIONAL\n#define NOTE_X 0\n#else\n#define NOTE_X 8\n#endif\n";
+        assert_eq!(made.shared, "");
+        assert!(made.head.contains(block) && made.top.contains(block), "{}\n{}", made.head, made.top);
+        assert_eq!(made.moved, [[0; 4], [0; 4], [2, 0, 0, 0]]);
     }
 
     #[test]

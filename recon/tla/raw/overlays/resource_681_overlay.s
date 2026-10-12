@@ -2858,44 +2858,6 @@ Func_02001ebc:
 	.4byte gPartyState
 .L_02009f64:
 	.4byte 0x000000b1
-	.section .text.x02009fd8,"ax",%progbits
-	.global Func_02001fd8
-	.thumb_func
-Func_02001fd8:
-	push {r5, lr}
-	ldr r5, .L_0200a01c
-	movs r1, #1
-	adds r0, r5, #0
-	bl UiText_ShowPositionedMessageAndWait
-	movs r0, #196
-	adds r0, #255
-	bl PartyInventory_FindOwner
-	movs r3, #1
-	negs r3, r3
-	adds r2, r5, #2
-	cmp r0, r3
-	beq .L_0200a010
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r5, [r3, #108]
-	adds r0, r2, #0
-	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
-	movs r3, #173
-	lsls r3, r3, #1
-	adds r2, r5, r3
-	movs r3, #1
-	strh r3, [r2]
-	b .L_0200a018
-.L_0200a010:
-	adds r0, r2, #0
-	movs r1, #1
-	bl UiText_ShowPositionedMessageAndWait
-.L_0200a018:
-	pop {r5, pc}
-	.2byte 0x0000
-.L_0200a01c:
-	.4byte MsgCheckedTheAltar
 	.section .text.x0200a020,"ax",%progbits
 	.global Func_02002020
 	.thumb_func

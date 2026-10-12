@@ -2,6 +2,7 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/mogoru_mori/mori.h"
+#include "unit/field/common/effect/create.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
@@ -79,61 +80,7 @@ typedef struct OrbitingSceneObject
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
-
-void OverlayObject_SetOwnerMode(u8 *object, s32 mode)
-{
-	struct FieldActor *actor = (struct FieldActor *)object;
-
-	actor->sprite->priority = mode;
-}
-
-u8 *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
-{
-	struct FieldActor *ret;
-	struct FieldActor *obj = Engine_ObjectCreate(kind, x, y, z);
-
-	if (obj != 0)
-	{
-		struct FieldSprite *rec = obj->sprite;
-		rec->priority = 0;
-		obj->motion_flags = 0;
-		obj->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(obj, 0);
-		ObjectGroup_SetChildValue(obj, 14);
-		Engine_ObjectSetBlendMode(obj, 1);
-		ret = obj;
-	}
-	else
-	{
-		ret = 0;
-	}
-	return (u8 *)ret;
-}
-
-u8 *OverlayObject_SpawnConfiguredWithMode15(s32 x, s32 y, s32 z, s32 kind)
-{
-	struct FieldActor *ret;
-	struct FieldActor *obj = Engine_ObjectCreate(kind, x, y, z);
-
-	if (obj != 0)
-	{
-		struct FieldSprite *rec = obj->sprite;
-		rec->priority = 1;
-		obj->motion_flags = 0;
-		obj->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(obj, 0);
-		ObjectGroup_SetChildValue(obj, 15);
-		obj->priority_flags = (obj->priority_flags & 0xfe) | 2;
-		ret = obj;
-	}
-	else
-	{
-		ret = 0;
-	}
-	return (u8 *)ret;
-}
-
-// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 
@@ -1395,8 +1342,8 @@ s32 FieldScene_RunSceneEntryHook(void)
 		case 9:
 		case 10:
 		case 11:
-			OverlayObject_SpawnConfiguredWithMode15(0x2de0000, 0, 0x1720000, 223);
-			OverlayObject_SpawnConfiguredWithMode15(0x2f20000, 0, 0x1720000, 223);
+			OverlayObject_CreateConfiguredObject(0x2de0000, 0, 0x1720000, 223);
+			OverlayObject_CreateConfiguredObject(0x2f20000, 0, 0x1720000, 223);
 			FieldScene_RedrawActorFootprint(10);
 			FieldScene_RedrawActorFootprint(12);
 			if (Engine_GameFlagIsSet(0x312) == 0)

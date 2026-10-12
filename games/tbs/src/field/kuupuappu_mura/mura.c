@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "window.h"
 #include "unit/field/kuupuappu_mura/mura.h"
+#include "unit/field/common/effect/create.h"
 #include "unit/field/common/object/distance.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/kuupuappu_mura/scene_cells.h"
@@ -33,51 +34,8 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-void SceneEffect_SetEffectRecordMode(struct FieldActor *work, s32 mode)
-{
-	work->sprite->priority = mode;
-}
-
-void *OverlayObject_PrepareSceneObject(s32 first, s32 second, s32 third, s32 fourth)
-{
-	struct FieldActor  *obj;
-	struct FieldSprite *rec;
-
-	obj = Engine_ObjectCreate(fourth, first, second, third);
-	if (obj != NULL)
-	{
-		rec = obj->sprite;
-		rec->priority = 0;
-		obj->motion_flags = 0;
-		obj->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(obj, 0);
-		ObjectGroup_SetChildValue(obj, 0xE);
-		Engine_ObjectSetBlendMode(obj, 1);
-		return obj;
-	}
-	return NULL;
-}
-
-void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
-{
-	struct FieldActor *result = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
-
-	if (result != NULL)
-	{
-		struct FieldSprite *object = result->sprite;
-
-		object->priority = 1;
-		result->motion_flags = 0;
-		result->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(result, 0);
-		ObjectGroup_SetChildValue(result, 15);
-		result->priority_flags = (result->priority_flags & 0xfe) | 2;
-		return result;
-	}
-	return NULL;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 

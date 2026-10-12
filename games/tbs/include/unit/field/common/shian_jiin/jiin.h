@@ -9,9 +9,6 @@ struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 
-void SetEffectMode(struct FieldActor *work, u32 mode);
-void *NewEffectObject(s32 first, s32 second, s32 third, s32 fourth);
-void *NewFlippedEffectObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 s32 StopXianActor(void *actor);
 s32 FaceXianActorToPlayer(struct FieldActor *actor);
 const struct SceneEntrance *Scene_GetEntrances(void);

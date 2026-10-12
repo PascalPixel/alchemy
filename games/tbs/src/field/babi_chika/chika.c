@@ -2,6 +2,7 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/babi_chika/chika.h"
+#include "unit/field/common/effect/create.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
@@ -119,59 +120,7 @@ struct Record_02000ec8;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
-
-void OverlayObject_SetOwnerMode(u8 *object, s32 mode)
-{
-	struct FieldActor *actor = (struct FieldActor *)object;
-
-	actor->sprite->priority = mode;
-}
-
-u8 *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 kind)
-{
-	struct FieldActor *ret;
-	struct FieldActor *obj = Engine_ObjectCreate(kind, x, y, z);
-
-	if (obj != 0)
-	{
-		struct FieldSprite *owner = obj->sprite;
-		owner->priority = 0;
-		obj->motion_flags = 0;
-		obj->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(obj, 0);
-		ObjectGroup_SetChildValue(obj, 14);
-		Engine_ObjectSetBlendMode(obj, 1);
-		ret = obj;
-	}
-	else
-	{
-		ret = 0;
-	}
-	return (u8 *)ret;
-}
-
-u8 *OverlayObject_PrepareSpawnedObjectMode4(s32 x, s32 y, s32 z, s32 kind)
-{
-	struct FieldActor *ret;
-	struct FieldActor *obj = Engine_ObjectCreate(kind, x, y, z);
-
-	if (obj != 0)
-	{
-		struct FieldSprite *rec = obj->sprite;
-		rec->priority = 1;
-		obj->motion_flags = 0;
-		obj->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(obj, 0);
-		ObjectGroup_SetChildValue(obj, 15);
-		obj->priority_flags = (obj->priority_flags & 0xfe) | 2;
-		ret = obj;
-	}
-	else
-	{
-		ret = 0;
-	}
-	return (u8 *)ret;
-}
+#include "../common/effect/create.c"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
 extern u8 *gActorEffectWork;
@@ -707,7 +656,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
 	if ((actor->x.fixed >> 20) == 46)
 	{
 		Engine_EventWait(30);
-		rec2 = OverlayObject_CreateAndInitialize(0x2e80000, 0, 0xb80000, 253);
+		rec2 = OverlayObject_PrepareObject(0x2e80000, 0, 0xb80000, 253);
 		frame = slot16;
 		*(s32 *)(frame + 8) = 0x9999;
 		*(s32 *)(frame + 12) = 0x9999;
@@ -793,7 +742,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 		if (GameFlag_IsSet(0x202) != 0)
 		{
 			Engine_EventWait(30);
-			rec2 = OverlayObject_CreateAndInitialize(0x3020000, 0, 0x1120000, 223);
+			rec2 = OverlayObject_PrepareObject(0x3020000, 0, 0x1120000, 223);
 			slot = slot16;
 			*(s32 *)(slot + 8) = 0x9999;
 			*(s32 *)(slot + 12) = 0x9999;

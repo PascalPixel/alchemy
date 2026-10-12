@@ -6,9 +6,6 @@
 
 struct OverlayObject;
 
-void OverlayObject_SetHandleFlagBits2And3(s32 object, u32 value);
-void *OverlayObject_PrepareObject(s32 first, s32 second, s32 third, s32 fourth);
-void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 s32 UpdateOverlayObjectAngle(struct OverlayObject *object);
 s32 *SceneData_GetScriptTable(void);
 s32 SceneData_ReturnZero(void);

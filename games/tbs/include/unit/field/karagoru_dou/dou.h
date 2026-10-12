@@ -11,9 +11,6 @@ struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 
-void SetEffectRecordMode(struct EffectWork *work, s32 mode);
-void *StagedActorPairScene_SpawnPrimaryEffect(s32 x, s32 y, s32 z, s32 kind);
-void *StagedActorPairScene_SpawnSecondaryEffect(s32 x, s32 y, s32 z, s32 kind);
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
 const u32 *Scene_GetExits(void);

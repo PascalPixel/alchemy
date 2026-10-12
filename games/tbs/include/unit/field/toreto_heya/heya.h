@@ -12,9 +12,6 @@ struct ScenePlacement;
 struct SceneRegion;
 struct Swirl;
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode);
-void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind);
-void *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 kind);
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
 const u32 *Scene_GetExits(void);

@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/field/runpa_mura/mura.h"
+#include "unit/field/common/effect/create.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
 #include "types.h"
@@ -17,49 +18,8 @@ enum
 	PALETTE_EFFECT = 15
 };
 
-void Effect_SetPriority(struct FieldEffect *effect, s32 priority)
-{
-	effect->sprite->priority = priority;
-}
-
-struct FieldEffect *Effect_CreateTranslucent(s32 x, s32 y, s32 z, s32 type)
-{
-	struct FieldEffect *effect;
-
-	effect = (struct FieldEffect *)Engine_ObjectCreate(type, x, y, z);
-	if (effect != NULL)
-	{
-		effect->sprite->priority = 0;
-		effect->motion_flags = 0;
-		effect->collision_flags = 8;
-		Engine_ActorSetSpriteFlags((struct FieldActor *)effect, 0);
-		ObjectGroup_SetChildValue((struct FieldActor *)effect, PALETTE_TRANSLUCENT_EFFECT);
-		Engine_ObjectSetBlendMode((struct FieldActor *)effect, OBJECT_BLEND_TRANSLUCENT);
-		return effect;
-	}
-	return NULL;
-}
-
-struct FieldEffect *Effect_Create(s32 x, s32 y, s32 z, s32 type)
-{
-	struct FieldEffect *effect;
-
-	effect = (struct FieldEffect *)Engine_ObjectCreate(type, x, y, z);
-	if (effect != NULL)
-	{
-		effect->sprite->priority = 1;
-		effect->motion_flags = 0;
-		effect->collision_flags = 8;
-		Engine_ActorSetSpriteFlags((struct FieldActor *)effect, 0);
-		ObjectGroup_SetChildValue((struct FieldActor *)effect, PALETTE_EFFECT);
-		effect->priority_flags =
-			(effect->priority_flags & ~ACTOR_PRIORITY_AUTOMATIC) | ACTOR_PRIORITY_UNDERFOOT;
-		return effect;
-	}
-	return NULL;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 

@@ -14,9 +14,6 @@ struct ScenePlacement;
 struct SceneRegion;
 struct V;
 
-void SetEffectOwnerMode(struct FieldActor *object, s32 priority);
-struct FieldActor *SpawnMode14Effect(s32 x, s32 y, s32 z, s32 kind);
-struct FieldActor *SpawnMode15Effect(s32 x, s32 y, s32 z, s32 kind);
 void NoOpEffectCallback(void);
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);

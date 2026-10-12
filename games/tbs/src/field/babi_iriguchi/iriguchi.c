@@ -3,6 +3,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/babi_iriguchi/iriguchi.h"
+#include "unit/field/common/effect/create.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
@@ -76,68 +77,7 @@ static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
-
-void OverlayObject_SetOwnerMode(u8 *object, s32 mode)
-{
-	struct Owner *owner = *(struct Owner **)(object + 80);
-	owner->mode = mode;
-}
-
-u8 *OverlayObject_SpawnConfiguredObject(s32 x, s32 y, s32 z, s32 kind)
-{
-	u8 *result;
-	u8 *object = Engine_ObjectCreate(kind, x, y, z);
-
-	if (object != 0)
-	{
-		u8 *owner = *(u8 **)(object + 80);
-
-		u32 masked = ~12;
-		masked &= owner[9];
-		owner[9] = masked;
-		object[85] = 0;
-		object[89] = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 14);
-		Engine_ObjectSetBlendMode(object, 1);
-		result = object;
-	}
-	else
-	{
-		result = 0;
-	}
-	return result;
-}
-
-u8 *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind)
-{
-	u8 *result;
-	u8 *object = Engine_ObjectCreate(kind, x, y, z);
-
-	if (object != 0)
-	{
-		u8 *owner = *(u8 **)(object + 80);
-		u32 mask = ~12;
-		u32 low;
-		mask &= owner[9];
-		owner[9] = (mask | 4);
-		object[85] = 0;
-		object[89] = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 15);
-		low = 0xfe;
-		low &= object[35];
-		object[35] = (low | 2);
-		result = object;
-	}
-	else
-	{
-		result = 0;
-	}
-	return result;
-}
-
-// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 
@@ -403,7 +343,7 @@ void FieldScene_RunStep11(void)
 void FieldScene_RunStep12WithPosition(void)
 {
 	Engine_EventBegin();
-	OverlayObject_SpawnConfiguredObject(0x1d00000, 0, 0x1220000, 223);
+	OverlayObject_PrepareObject(0x1d00000, 0, 0x1220000, 223);
 	ResetSceneParametersAndFinishSetup();
 	Engine_EventRequestExit(12);
 	Engine_EventEnd();
@@ -412,8 +352,8 @@ void FieldScene_RunStep12WithPosition(void)
 void FieldScene_RunStep13WithTwoPositions(void)
 {
 	Engine_EventBegin();
-	OverlayObject_SpawnConfiguredObject(0x8f0000, 0, 0x1220000, 223);
-	OverlayObject_SpawnConfiguredObject(0x790000, 0, 0x11e0000, 253);
+	OverlayObject_PrepareObject(0x8f0000, 0, 0x1220000, 223);
+	OverlayObject_PrepareObject(0x790000, 0, 0x11e0000, 253);
 	ResetSceneParametersAndFinishSetup();
 	Engine_EventRequestExit(13);
 	Engine_EventEnd();
@@ -1429,17 +1369,17 @@ s32 BabiIriguchi_SetupScene(void)
 			}
 			break;
 		case 14:
-			OverlayObject_SpawnConfiguredObject(0x1b80000, 0, 0x1220000, 223);
+			OverlayObject_PrepareObject(0x1b80000, 0, 0x1220000, 223);
 			Map_CopyCellAttributes(22, 13, 1, 1, 27, 13);
 			FieldScene_RunScene3c5SequenceA(14);
 			break;
 		case 16:
-			OverlayObject_SpawnConfiguredObject(0x1c00000, 0, 0x1220000, 223);
+			OverlayObject_PrepareObject(0x1c00000, 0, 0x1220000, 223);
 			Map_CopyCellAttributes(22, 12, 1, 1, 28, 10);
 			FieldScene_RunScene3c5SequenceA(16);
 			break;
 		case 17:
-			OverlayObject_SpawnConfiguredObject(0xe80000, 0, 0x2520000, 223);
+			OverlayObject_PrepareObject(0xe80000, 0, 0x2520000, 223);
 			Map_CopyCellAttributes(22, 12, 1, 1, 14, 33);
 			FieldScene_RunScene3c5SequenceA(17);
 			break;

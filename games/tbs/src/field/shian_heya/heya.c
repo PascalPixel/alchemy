@@ -1,5 +1,6 @@
 #include "game_state.h"
 #include "unit/field/shian_heya/heya.h"
+#include "unit/field/common/effect/create.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
 #include "types.h"
@@ -19,47 +20,8 @@
 
 #define NULL ((void *)0)
 
-void OverlayObject_SetEntryField(struct FieldActor *object, s32 priority)
-{
-	struct FieldSpritePriority *sprite = (struct FieldSpritePriority *)object->sprite;
-
-	sprite->priority = priority;
-}
-
-void *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 type)
-{
-	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
-
-	if (object != NULL)
-	{
-		((struct FieldSpritePriority *)object->sprite)->priority = 0;
-		object->motion_flags = 0;
-		object->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 14);
-		Engine_ObjectSetBlendMode(object, 1);
-		return object;
-	}
-	return NULL;
-}
-
-void *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 type)
-{
-	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
-
-	if (object != NULL)
-	{
-		((struct FieldSpritePriority *)object->sprite)->priority = 1;
-		object->motion_flags = 0;
-		object->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 15);
-		object->priority_flags =
-			(object->priority_flags & ~ACTOR_PRIORITY_AUTOMATIC) | ACTOR_PRIORITY_UNDERFOOT;
-		return object;
-	}
-	return NULL;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 
 union KanpanSlot
 {
@@ -250,12 +212,12 @@ s32 ShianHeya_PrepareWindowTransition(void)
 	scene = gGameState.entrance;
 	if (scene == 4 || scene == 7)
 	{
-		OverlayObject_CreateConfigured(0x00f80000, 0, 0x01a10000, 20);
+		OverlayObject_CreateConfiguredObject(0x00f80000, 0, 0x01a10000, 20);
 	}
 	else if (scene == 6)
 	{
-		OverlayObject_CreateConfigured(0x01cc0000, 0, 0x02380000, 20);
-		OverlayObject_CreateConfigured(0x01e40000, 0, 0x02380000, 20);
+		OverlayObject_CreateConfiguredObject(0x01cc0000, 0, 0x02380000, 20);
+		OverlayObject_CreateConfiguredObject(0x01e40000, 0, 0x02380000, 20);
 	}
 	else if (scene == 8)
 	{

@@ -11,9 +11,6 @@ struct ScenePlacement;
 struct SceneRegion;
 union FieldObject;
 
-void Effect_SetPriority(struct FieldEffect *effect, s32 priority);
-struct FieldEffect *Effect_CreateTranslucent(s32 x, s32 y, s32 z, s32 type);
-struct FieldEffect *Effect_Create(s32 x, s32 y, s32 z, s32 type);
 extern s32 gShortEffectScript[];
 extern s32 gMediumEffectScript[];
 extern s32 gLongEffectScript[];

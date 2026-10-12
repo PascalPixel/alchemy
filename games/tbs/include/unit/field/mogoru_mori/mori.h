@@ -8,9 +8,6 @@ struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 
-void OverlayObject_SetOwnerMode(u8 *object, s32 mode);
-u8 *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind);
-u8 *OverlayObject_SpawnConfiguredWithMode15(s32 x, s32 y, s32 z, s32 kind);
 void SceneState_SetValue18Mode2(void);
 s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg);
 s32 MogoruMori_CopyTimerToChild(s32 a);

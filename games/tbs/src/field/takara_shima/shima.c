@@ -2,6 +2,7 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/takara_shima/shima.h"
+#include "unit/field/common/effect/create.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
@@ -176,50 +177,7 @@ typedef struct OrbitingSceneObject
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
-
-void SetEffectOwnerMode(struct FieldActor *object, s32 priority)
-{
-	struct FieldSpritePriority *sprite = (struct FieldSpritePriority *)object->sprite;
-
-	sprite->priority = priority;
-}
-
-struct FieldActor *SpawnMode14Effect(s32 x, s32 y, s32 z, s32 kind)
-{
-	struct FieldActor *object = Engine_ObjectCreate(kind, x, y, z);
-
-	if (object != 0)
-	{
-		((struct FieldSpritePriority *)object->sprite)->priority = 0;
-		object->motion_flags = 0;
-		object->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 14);
-		Engine_ObjectSetBlendMode(object, 1);
-		return object;
-	}
-	return 0;
-}
-
-struct FieldActor *SpawnMode15Effect(s32 x, s32 y, s32 z, s32 kind)
-{
-	struct FieldActor *object = Engine_ObjectCreate(kind, x, y, z);
-
-	if (object != 0)
-	{
-		((struct FieldSpritePriority *)object->sprite)->priority = 1;
-		object->motion_flags = 0;
-		object->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 15);
-		object->priority_flags =
-			(object->priority_flags & ~ACTOR_PRIORITY_AUTOMATIC) | ACTOR_PRIORITY_UNDERFOOT;
-		return object;
-	}
-	return 0;
-}
-
-// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 

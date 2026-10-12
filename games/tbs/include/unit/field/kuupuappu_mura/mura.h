@@ -7,9 +7,6 @@
 struct FieldActor;
 struct OverlayEffectMotion;
 
-void SceneEffect_SetEffectRecordMode(struct FieldActor *work, s32 mode);
-void *OverlayObject_PrepareSceneObject(s32 first, s32 second, s32 third, s32 fourth);
-void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 s32 SceneActor_UpdateProximityToLeader(struct FieldActor *self);
 s32 ActorPresentation_UpdateEntityFromLeader(struct FieldActor *entity);
 void *SceneData_GetScriptTable(void);

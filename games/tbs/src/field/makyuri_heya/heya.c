@@ -5,6 +5,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/makyuri_heya/heya.h"
+#include "unit/field/common/effect/create.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/makyuri/palette_cycle.h"
@@ -88,51 +89,8 @@ struct SceneLookupRecord
 	u16 tbl[1];
 };
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
-{
-	work->sprite->priority = mode;
-}
-
-void *OverlayObject_PrepareSpawnedObject(s32 first, s32 second, s32 third, s32 fourth)
-{
-	struct FieldActor  *obj;
-	struct FieldSprite *rec;
-
-	obj = Engine_ObjectCreate(fourth, first, second, third);
-	if (obj != NULL)
-	{
-		rec = obj->sprite;
-		rec->priority = 0;
-		obj->motion_flags = 0;
-		obj->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(obj, 0);
-		ObjectGroup_SetChildValue(obj, 0xE);
-		Engine_ObjectSetBlendMode(obj, 1);
-		return obj;
-	}
-	return NULL;
-}
-
-void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
-{
-	struct FieldActor *result = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
-
-	if (result != NULL)
-	{
-		struct FieldSprite *object = result->sprite;
-
-		object->priority = 1;
-		result->motion_flags = 0;
-		result->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(result, 0);
-		ObjectGroup_SetChildValue(result, 15);
-		result->priority_flags = (result->priority_flags & 0xfe) | 2;
-		return result;
-	}
-	return NULL;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 #include "../common/object/staged_actor.c"
@@ -1151,8 +1109,8 @@ void MakyuriHeya_RunColumnProbeScene(void)
 				MakyuriHeya_StopActorNinePositionCallback();
 				MakyuriHeya_OpenStoneDoor(1);
 				Object_RefreshSelectorById(9);
-				OverlayObject_PrepareSpawnedObject(x, 0, 0x3120000, 223);
-				OverlayObject_PrepareSpawnedObject(x, 0, 0x3320000, 223);
+				OverlayObject_PrepareObject(x, 0, 0x3120000, 223);
+				OverlayObject_PrepareObject(x, 0, 0x3320000, 223);
 				Engine_ActorSetDestination(9, 0x348, 0x2e8);
 				Engine_EventWait(5);
 				Engine_AudioPlayCue(189);
@@ -1533,7 +1491,7 @@ void FieldScene_RunColumnChoreography(void)
 		Actor_WalkTo(3, 0x348, 0x258);
 		Engine_ActorWaitForMove(3);
 		Map_CopyCellAttributes(116, 36, 3, 4, 52, 36);
-		OverlayObject_PrepareSpawnedObject(0x3480000, 0x380000, 0x2600000, 223);
+		OverlayObject_PrepareObject(0x3480000, 0x380000, 0x2600000, 223);
 		Actor_SetSpeed(3, 0xcccc, 0x6666);
 		Actor_WalkToAndWait(3, 0x348, 0x230);
 		Engine_ActorSetPosition(3, 0, 0);
@@ -1940,7 +1898,7 @@ void FieldScene_RunScene39cSequenceB(void)
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
 		Camera_MoveTo(0x1d00000, -1, 0x2900000, 1);
 		Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
-		OverlayObject_PrepareSpawnedObject(
+		OverlayObject_PrepareObject(
 			Object_GetById(ACTOR_PARTY_LEADER)->x.fixed, 0, 0x2be0000, 223);
 		Map_CopyCellsTo(92, 46, 92, 40, 3, 2);
 		Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;

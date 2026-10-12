@@ -9,9 +9,6 @@ struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode);
-void *OverlayObject_CreateAndInitialize(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void SceneState_SendRequest15With45(void);
 s32 SuharaSabaku_ClearActorSpriteAndCollisionFlags(u8 *obj);
 s32 SuharaSabaku_ToggleActorActive(u8 *obj);

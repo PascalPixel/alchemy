@@ -10,9 +10,6 @@ struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode);
-void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void *OverlayObject_CreateConfiguredB(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void SceneState_SetValues8_3_4(void);
 void SceneActor_WaitActorDescent(struct FieldActor *actor);
 s32 SceneActor_FaceActorZero(struct FieldActor *obj);

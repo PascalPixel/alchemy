@@ -2,6 +2,7 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/field/toreto_heya/heya.h"
+#include "unit/field/common/effect/create.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -38,49 +39,8 @@ extern s16 *ToretoHeya_PaletteBuffer;
 extern u8	ToretoHeya_SparkOrigin[];
 extern u8	ToretoHeya_SparkCounter[];
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
-{
-	work->sprite->priority = mode;
-}
-
-void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
-{
-	struct FieldActor  *obj;
-	struct FieldSprite *rec;
-
-	obj = Engine_ObjectCreate(kind, x, y, z);
-	if (obj != NULL)
-	{
-		rec = obj->sprite;
-		rec->priority = 0;
-		obj->motion_flags = 0;
-		obj->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(obj, 0);
-		ObjectGroup_SetChildValue(obj, 0xE);
-		Engine_ObjectSetBlendMode(obj, 1);
-		return obj;
-	}
-	return NULL;
-}
-
-void *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 kind)
-{
-	struct FieldActor *effect = Engine_ObjectCreate(kind, x, y, z);
-
-	if (effect != NULL)
-	{
-		struct FieldSprite *sprite = effect->sprite;
-
-		sprite->priority = 1;
-		effect->motion_flags = 0;
-		effect->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(effect, 0);
-		ObjectGroup_SetChildValue(effect, 15);
-		effect->priority_flags = (effect->priority_flags & 0xfe) | 2;
-		return effect;
-	}
-	return NULL;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 
 struct Vec
 {

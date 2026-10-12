@@ -28,9 +28,6 @@ typedef struct Record
 	s32 w16;
 } Record;
 
-void OverlayObject_SetOwnerMode(u8 *object, s32 mode);
-u8 *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 kind);
-u8 *OverlayObject_PrepareSpawnedObjectMode4(s32 x, s32 y, s32 z, s32 kind);
 s32 SceneState_ApplyArgMode0AndReturnZero(s32 no);
 s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target);
 void SceneActor_PassRaisedPointOfActorZero(void);

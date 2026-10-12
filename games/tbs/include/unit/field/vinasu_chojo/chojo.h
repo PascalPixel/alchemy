@@ -14,9 +14,6 @@ union ChojoOrbitEffect;
 union FieldObject;
 union PairObject;
 
-void VinasuChojo_SetSpritePriority(struct FieldActor *actor, u32 value);
-void *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 kind);
-void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 s32 OverlayObject_StepScaleByCounter(struct FieldActor *actor);
 void Effect_MoveWithDrag(union FieldObject *object);
 void VinasuChojo_StepSpriteRotation(struct FieldActor *actor);

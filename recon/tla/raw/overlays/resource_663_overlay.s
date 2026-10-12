@@ -2533,34 +2533,6 @@ Func_02001560:
 	.4byte gInput
 .L_020098a8:
 	.4byte 0xfff00000
-	.section .text.x020098d8,"ax",%progbits
-	.global Func_020018d8
-	.thumb_func
-Func_020018d8:
-	push {lr}
-	ldmia r1!, {r3}
-	ldmia r0!, {r4}
-	ldr r2, [r1]
-	subs r4, r4, r3
-	ldr r3, [r0]
-	asrs r4, r4, #16
-	subs r3, r3, r2
-	movs r2, #192
-	lsls r2, r2, #11
-	adds r3, r3, r2
-	asrs r3, r3, #16
-	adds r2, r3, #0
-	muls r2, r3
-	adds r0, r4, #0
-	muls r0, r4
-	adds r3, r2, #0
-	adds r0, r0, r3
-	ldr r3, .L_02009904
-	mov lr, r3
-	.2byte 0xf800
-	pop {pc}
-.L_02009904:
-	.4byte IwramFillWords + 0x74
 	.section .text.x02009908,"ax",%progbits
 	.global Func_02001908
 	.thumb_func

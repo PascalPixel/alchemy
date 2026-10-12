@@ -7,7 +7,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_675/s0158.o"(.text)
         "*/resource_675_overlay.o"(.text.x020081d4)
         "*/resource_675_overlay.o"(.text.x020081f8)
-        "*/resource_675_overlay.o"(.text.x02008328)
+        "*/games/tla/src/field/overlay_675/s0328.o"(.text)
         "*/games/tla/src/field/overlay_675/events2.o"(.text)
         "*/games/tla/src/field/overlay_675/s03d4.o"(.text)
         "*/games/tla/src/field/overlay_675/scene_tables.o"(.text)

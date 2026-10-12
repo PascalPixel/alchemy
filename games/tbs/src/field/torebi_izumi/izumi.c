@@ -62,8 +62,6 @@ struct SpringActor
 	u8	unknown_16[2];
 };
 
-extern struct SpringRide TorebiIzumi_Ride;
-
 extern u8 gOamCopyEnabled;
 
 static __inline__ void Io_SetBlendControl(s32 value)
@@ -929,17 +927,17 @@ void TorebiIzumi_SetActorActive(s32 arg0, s32 arg1)
 	}
 }
 
-struct SpringRide TorebiIzumi_Ride = {0};
+static struct SpringRide TorebiIzumi_Ride;
 
-s32 TorebiIzumi_RideSide = 0;
+static s32 TorebiIzumi_RideSide;
 
-s32 TorebiIzumi_RideUnknown[3] = {0};
+static s32 TorebiIzumi_RideUnknown[3];
 
-struct SpringActor TorebiIzumi_ActorRecords[4] = {{0}};
+static struct SpringActor TorebiIzumi_ActorRecords[4];
 
-s32 TorebiIzumi_RideFrame = 0;
-s32 TorebiIzumi_RideEnded = 0;
-s32 TorebiIzumi_RideResult = 0;
+static s32 TorebiIzumi_RideFrame;
+static s32 TorebiIzumi_RideEnded;
+static s32 TorebiIzumi_RideResult;
 
 void FieldScene_RunSecondaryScript(void)
 {

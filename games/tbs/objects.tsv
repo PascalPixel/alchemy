@@ -877,11 +877,10 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3ae	text	games/tbs/src/field/common/karei_torebi/entry
 3ae	text	games/tbs/src/field/common/karei_torebi/torebi
 3ae	text	games/tbs/src/field/common/karei_torebi/import
-3af	text	games/tbs/src/field/fune_kanpan/entry	.text
-3af	text	games/tbs/src/field/fune_kanpan/kanpan	.text
-3af	text	games/tbs/src/field/fune_kanpan/import	.text
-3af	text	games/tbs/src/field/fune_kanpan/kanpan	.rodata
-3af	bss	games/tbs/src/field/fune_kanpan/kanpan	.data .bss COMMON
+3af	text	games/tbs/src/field/fune_kanpan/entry
+3af	text	games/tbs/src/field/fune_kanpan/kanpan
+3af	text	games/tbs/src/field/fune_kanpan/import
+3af	bss	games/tbs/src/field/fune_kanpan/kanpan	.bss COMMON
 3b0	text	games/tbs/src/field/fune_hobashira/entry
 3b0	text	games/tbs/src/field/fune_hobashira/hobashira
 3b0	text	games/tbs/src/field/fune_hobashira/import
@@ -910,12 +909,11 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3b6	text	games/tbs/src/field/torebi_heya/entry
 3b6	text	games/tbs/src/field/torebi_heya/heya
 3b6	text	games/tbs/src/field/torebi_heya/import
-3b7	text	games/tbs/src/field/torebi_izumi/entry	.text
-3b7	text	games/tbs/src/field/torebi_izumi/izumi	.text
-3b7	text	games/tbs/src/field/torebi_izumi/import	.text
-3b7	text	libgcc.a:_call_via_rX	.text
-3b7	text	games/tbs/src/field/torebi_izumi/izumi	.rodata
-3b7	bss	games/tbs/src/field/torebi_izumi/izumi	.data .bss COMMON
+3b7	text	games/tbs/src/field/torebi_izumi/entry
+3b7	text	games/tbs/src/field/torebi_izumi/izumi
+3b7	text	games/tbs/src/field/torebi_izumi/import
+3b7	text	libgcc.a:_call_via_rX
+3b7	bss	games/tbs/src/field/torebi_izumi/izumi	.bss
 3b8	text	games/tbs/src/field/torebi_kyuden/entry
 3b8	text	games/tbs/src/field/torebi_kyuden/kyuden
 3b8	text	games/tbs/src/field/torebi_kyuden/import

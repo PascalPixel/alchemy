@@ -306,19 +306,19 @@ struct MapWork
 	struct MapLayer layers[8];
 };
 
-u16 FuneKanpan_SlotPhase[4] = {0};
+static u16 FuneKanpan_SlotPhase[4];
 
-s32 FuneKanpan_WaveAngleY = 0;
-s32 FuneKanpan_SlotWork = 0;
+static s32 FuneKanpan_WaveAngleY;
+static s32 FuneKanpan_SlotWork;
 
-u16 FuneKanpan_SlotValue[8] = {0};
+static u16 FuneKanpan_SlotValue[8];
 
-s32 FuneKanpan_LayerScroll[2] = {0};
+static s32 FuneKanpan_LayerScroll[2];
 
-s32 FuneKanpan_WaveAngleX = 0;
-s32 FuneKanpan_DeckSpare = 0;
+static s32 FuneKanpan_WaveAngleX;
+static s32 FuneKanpan_DeckSpare;
 
-s32 FuneKanpan_LayerSpeed[2] = {0};
+static s32 FuneKanpan_LayerSpeed[2];
 
 s32 SceneActor_OscillateHeightBetweenLimits(struct FieldActor *actor)
 {

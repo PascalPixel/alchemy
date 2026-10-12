@@ -4,11 +4,3 @@
 	.thumb
 	.balign 4
 	.include "games/common/src/system/overlay.s"
-@ One stub of an overlay's import table: the overlay's code calls NAME, and
-@ the stub goes to TARGET, an entry of the main image.
-	.macro import name, target
-	.global \name
-	.thumb_func
-\name:
-	overlay_veneer \target
-	.endm

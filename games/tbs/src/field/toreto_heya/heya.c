@@ -36,9 +36,9 @@
 #include "text/msg_ids.h"
 #include "heap_state.h"
 
-extern s16 *ToretoHeya_PaletteBuffer;
-extern u8	ToretoHeya_SparkOrigin[];
-extern u8	ToretoHeya_SparkCounter[];
+static u8	 ToretoHeya_SparkOrigin[12];
+static u8	 ToretoHeya_SparkCounter[4];
+static s16 *ToretoHeya_PaletteBuffer;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/create.c"

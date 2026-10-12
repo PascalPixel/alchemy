@@ -53,7 +53,7 @@ struct SceneWork_02000400
 	u16 state_one_marker;
 };
 
-extern u16 gSuharaSabakuShownLevel;
+static u16 gSuharaSabakuShownLevel;
 
 #define ACTOR_ID 13
 

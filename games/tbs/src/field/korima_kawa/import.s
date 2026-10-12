@@ -1,25 +1,2 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
-	.include "games/tbs/src/system/overlay.inc"
-	import __divsi3, IwramSignedDivide
-	import Engine_TaskWait, WaitFramesFar
-	import Object_SetMode, ObjectDispatch_ApplyArgumentToChildrenFar
-	import Engine_ObjectSetPosition, Object_SetMoveTargetFar
-	import Object_CommitPosition, Script_WaitForEventTimeoutFar
-	import Engine_MapCopyCellAttributes, Map_CopyCellAttributeRectFar
-	import Object_CheckMovementCollision, Map_CheckObjectStepFar
-	import Engine_ActorSetSpriteFlags, ObjectDispatch_SetSingleChildFlagsFar
-	import Engine_GameFlagIsSet, GameFlag_TestFar
-	import Engine_GameFlagSet, GameFlag_SetBitFar
-	import Engine_EventWait, Battle_WaitMode0Far
-	import Engine_EventBegin, Battle_ResetFar
-	import Engine_EventEnd, BattleFx_FinishActionFar
-	import Object_GetById, Object_GetByIdFar
-	import Engine_ActorSetSpeed, ObjectMotion_SetSpeedParametersFar
-	import ObjectMotion_SetPositionAndCommit, ObjectMotion_SetPositionAndCommitFar
-	import Engine_ActorSetDestinationOffset, ObjectMotion_OffsetPositionAndResetMotionFar
-	import Engine_ActorWaitForMove, ObjectMotion_CommitCurrentPositionAndActivateFar
-	import Engine_ActorSetAnimation, Object_SetModeByIdFar
-	import Engine_ColorBufferApplyTarget, BattleFx_ApplyColorToTargetBufferFar
-	import Engine_ColorBufferApplySource, BattleFx_ApplyColorToSourceBufferFar
-	import BattleFx_PlayQueuedSound, BattleFx_PlayQueuedSoundFar
-	import Engine_AudioPlayCue, AudioCommand_PlayFar
+	.include "games/tbs/src/system/overlay/import.inc"

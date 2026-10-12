@@ -77,10 +77,8 @@ struct MapState_2
 	struct MapLayer_2 layers[1];
 };
 
-extern u8  TakaraHashira_ShakenScroll[];
 extern u8 *gEffectWork;
 
-extern s32 TakaraHashira_ShakeChance;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/create.c"
@@ -626,6 +624,20 @@ void SceneState_ApplyPlacementResult(void)
 	Engine_EventEnd();
 }
 
+struct PillarSlot
+{
+	s32					 x;
+	s32					 y;
+	s32					 z;
+	struct MapCellFields cell;
+	s32					 flag;
+};
+
+static struct PillarSlot TakaraHashira_PillarSlots[4];
+static s32				 TakaraHashira_ProbePosition[3];
+static u8				 TakaraHashira_ShakenScroll[12];
+static s32				 TakaraHashira_ShakeChance;
+
 void TakaraHashira_JitterBackgroundScroll(void)
 {
 	u32			  line = REG_VCOUNT;
@@ -647,16 +659,6 @@ void TakaraHashira_JitterBackgroundScroll(void)
 
 #define SPRITE_OF(actor) ((struct FieldSprite *)*(s32 *)((u8 *)(actor) + 0x50))
 
-struct PillarSlot
-{
-	s32					 x;
-	s32					 y;
-	s32					 z;
-	struct MapCellFields cell;
-	s32					 flag;
-};
-
-extern struct PillarSlot TakaraHashira_PillarSlots[];
 #define DMA3 ((volatile u32 *)0x040000d4)
 
 static __inline__ void Dma_Wait(volatile u32 *dma)

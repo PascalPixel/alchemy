@@ -1064,7 +1064,7 @@ s32 StageSetup_BuildAndDispatch(void)
 		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
 		((s32 (*)(s32, s32, s32, s32, s32, s32, s32))ColossoLogRollingStage_SetupSceneDescriptor)(
 			0, 8, 6, 1512 << 16, 192 << 16, 39, 40);
-		Map_CopyCellsTo(127, 0, 1, 2, 5, 2);
+		Map_CopyCellsLayered(127, 0, 1, 2, 5, 2);
 		Engine_ActorDestroy(32);
 		Engine_ActorDestroy(33);
 		Engine_ActorDestroy(34);

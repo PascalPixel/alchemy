@@ -2393,6 +2393,9 @@ void FieldScene_RunMultiActorPresentation(void)
 	Actor_ShowEmote(21, 0x103, 40);
 }
 
+static s32 VinasuChojo_TransitionTimer;
+static s32 VinasuChojo_TransitionStep;
+
 void VinasuChojo_RunActorTransition(void)
 {
 	struct FieldActor *lower;

@@ -30,7 +30,8 @@ struct Ov696Object {
     u8 motion_flags;
     u8 unknown_56[3];
     u8 collision_flags;
-    u8 unknown_5a[2];
+    u8 action_flags;
+    u8 unknown_5b;
     u8 field_5c;
     u8 unknown_5d[5];
     u8 timer;
@@ -259,6 +260,18 @@ static inline void Ov696_ObjWalk2(s32 actor, s32 x, s32 z)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     ObjectMotion_ResetAndSetPositionInMode2(actor, x, z);
+}
+
+static inline void Ov696_ObjPlace(s32 actor, s32 x, s32 z)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02004934(actor, x, z);
+}
+
+static inline void Ov696_ObjEmote(s32 actor, s32 emote, s32 frames)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_020049cc(actor, emote, frames);
 }
 
 // ---- this overlay

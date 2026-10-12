@@ -97,7 +97,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gGomaSuiroPlacementsOther;
 }
 
-static void FieldScene_RunActor8AtCell24Sequence(void)
+static void EV08_PSYNERGY(void)
 {
 	struct FieldActor *record;
 	struct FieldActor *target;
@@ -342,7 +342,7 @@ struct SceneEvent gGomaSuiroEventsOther[] = {
 	{ 0x31, 7, CONDITION_ALWAYS, 3 },
 	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 4 },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf28, FIND_ITEM(0xbf) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x864, EVENT_SCRIPT(FieldScene_RunActor8AtCell24Sequence) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x864, EVENT_SCRIPT(EV08_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };
 

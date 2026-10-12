@@ -233,7 +233,7 @@ static void KuupuappuMura_SayFarewellToIvan(void)
 	Engine_EventEnd();
 }
 
-static void KuupuappuMura_InspectWell(void)
+static void EV90_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
@@ -248,7 +248,7 @@ void *KuupuappuMura_SelectEvents(void)
 	return KuupuappuMura_Extras;
 }
 
-static void SceneDialogue_RunActor9LineAndAdvance(void)
+static void EV09_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuWasntEruptionMtAlephIncredible);
@@ -281,7 +281,7 @@ static void ActorPresentation_RunActorThirteenSceneSetup(void)
 	Engine_EventEnd();
 }
 
-static void ActorPresentation_RunActorSeventeenSceneSetup(void)
+static void EV17_TALK(void)
 {
 	struct EventWork *workspace;
 
@@ -375,7 +375,7 @@ static void ActorPresentation_RunActorFifteenDialogue(void)
 	actor->timer &= 1;
 }
 
-static void Villager_LookForRoofer(void)
+static void EV21_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuFixingRoofCant);
@@ -409,7 +409,7 @@ static void SceneActor_RunActorCommandWithFlag91(s32 x)
 	*flag = zero;
 }
 
-static void ActorPresentation_RunActorEightSceneSetup(void)
+static void EV08_TALK(void)
 {
 	struct EventWork *workspace;
 	Engine_EventBegin();
@@ -433,7 +433,7 @@ static void SceneDialogue_RunActor11SecondLine(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor12LineAndAdvance(void)
+static void EV12_TALK(void)
 {
 	struct EventWork *workspace;
 	Engine_EventBegin();
@@ -545,7 +545,7 @@ static void ActorPresentation_RunActorNineteenDialogueAndSetSceneState(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor20Line(void)
+static void EV20_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuThankForOtherDayLeaving);
@@ -556,7 +556,7 @@ static void SceneDialogue_RunActor20Line(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor11FlaggedLine(void)
+static void EV11_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
@@ -567,7 +567,7 @@ static void SceneDialogue_RunActor11FlaggedLine(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor13FlaggedLine(void)
+static void EV13_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
@@ -582,7 +582,7 @@ static void SceneDialogue_RunActor13FlaggedLine(void)
 	Engine_EventEnd();
 }
 
-static void ActorPresentation_RunActorFourteenFlaggedDialogue(void)
+static void EV14_PSYNERGY(void)
 {
 	Object_GetById(14)->timer |= 2;
 	Engine_EventBegin();
@@ -601,7 +601,7 @@ static void ActorPresentation_RunActorFourteenFlaggedDialogue(void)
 	Object_GetById(14)->timer &= 1;
 }
 
-static void ActorPresentation_RunActorFifteenScriptBranch(void)
+static void EV15_PSYNERGY(void)
 {
 	Object_GetById(15)->timer |= 2;
 	Engine_EventBegin();
@@ -614,7 +614,7 @@ static void ActorPresentation_RunActorFifteenScriptBranch(void)
 	Object_GetById(15)->timer &= 1;
 }
 
-static void ActorPresentation_RunActorSixteenScriptBranch(void)
+static void EV16_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
@@ -625,7 +625,7 @@ static void ActorPresentation_RunActorSixteenScriptBranch(void)
 	Engine_EventEnd();
 }
 
-static void ActorPresentation_RunActorNineteenScriptBranch(void)
+static void EV19_PSYNERGY(void)
 {
 	struct FieldActor *actor = Object_GetById(19);
 	actor->paused = 1;
@@ -649,7 +649,7 @@ static void ActorPresentation_RunActorNineteenScriptBranch(void)
 	actor->paused = 0;
 }
 
-static void SceneDialogue_RunActor21Line(void)
+static void EV21_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuSneakWastingTime);
@@ -657,7 +657,7 @@ static void SceneDialogue_RunActor21Line(void)
 	Engine_EventEnd();
 }
 
-static void SceneState_Apply200ThenPlace55_26(void)
+static void EV01_TOUCH(void)
 {
 	Engine_GameFlagSet(0x200);
 	{
@@ -667,7 +667,7 @@ static void SceneState_Apply200ThenPlace55_26(void)
 	}
 }
 
-static void SceneState_Apply200ThenPlace23_23(void)
+static void EV02_TOUCH(void)
 {
 	Engine_GameFlagClear(0x200);
 	{
@@ -685,28 +685,28 @@ static void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 continuation)
 	Engine_EventRequestExit(continuation);
 }
 
-static void FieldScene_SetupScene5At408_320(void)
+static void EV05_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
 	Engine_MapAnimateCells(KuupuappuMura_Scene5Cells, 56, 19);
 	SceneActor_PlaceAndSetSceneDelay(408, 320, 5);
 }
 
-static void FieldScene_SetupScene6At312_304(void)
+static void EV06_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
 	Engine_MapAnimateCells(KuupuappuMura_Scene6Cells, 50, 18);
 	SceneActor_PlaceAndSetSceneDelay(312, 304, 6);
 }
 
-static void FieldScene_SetupScene7At216_288(void)
+static void EV07_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
 	Engine_MapAnimateCells(KuupuappuMura_Scene7Cells, 44, 17);
 	SceneActor_PlaceAndSetSceneDelay(216, 288, 7);
 }
 
-static void ActorPresentation_SetupActorZeroForSceneEightAt376_224(void)
+static void EV08_TOUCH(void)
 {
 	struct FieldActor		   *actor = Object_GetById(ACTOR_PARTY_LEADER);
 	struct FieldSpritePriority *sprite = (struct FieldSpritePriority *)actor->sprite;
@@ -724,7 +724,7 @@ static void ActorPresentation_SetupActorZeroForSceneEightAt376_224(void)
 	SceneActor_PlaceAndSetSceneDelay(376, 224, 8);
 }
 
-static void ActorPresentation_SetupActorZeroForSceneNineAt296_176(void)
+static void EV09_TOUCH(void)
 {
 	struct FieldActor		   *actor = Object_GetById(ACTOR_PARTY_LEADER);
 	struct FieldSpritePriority *sprite = (struct FieldSpritePriority *)actor->sprite;
@@ -742,7 +742,7 @@ static void ActorPresentation_SetupActorZeroForSceneNineAt296_176(void)
 	SceneActor_PlaceAndSetSceneDelay(296, 176, 9);
 }
 
-static void FieldScene_SetupScene10At120_144(void)
+static void EV10_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
 	Engine_MapAnimateCells(KuupuappuMura_Scene10Cells, 38, 6);
@@ -752,7 +752,7 @@ static void FieldScene_SetupScene10At120_144(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "scene_cells.c"
 
-static void ActorPresentation_SetupActorZeroForSceneTwelveAt72_160(void)
+static void EV12_TOUCH(void)
 {
 	struct FieldActor		   *actor = Object_GetById(ACTOR_PARTY_LEADER);
 	struct FieldSpritePriority *sprite = (struct FieldSpritePriority *)actor->sprite;
@@ -770,7 +770,7 @@ static void ActorPresentation_SetupActorZeroForSceneTwelveAt72_160(void)
 	SceneActor_PlaceAndSetSceneDelay(72, 160, 12);
 }
 
-static void FieldScene_SetupScene13At152_264(void)
+static void EV13_TOUCH(void)
 {
 	Engine_AudioPlayCue(123);
 	SceneActor_PlaceAndSetSceneDelay(152, 264, 13);
@@ -797,7 +797,7 @@ static void ActorPresentation_MoveActorToPositionAndWait(int actor, int x, int z
 	record->gravity = 0x10000;
 }
 
-static void FieldScene_RunActor23SequenceOnceByFlag867(void)
+static void EV30_SEARCH(void)
 {
 	Engine_EventBegin();
 	Event_PlayCue(100);
@@ -818,7 +818,7 @@ static void FieldScene_RunActor23SequenceOnceByFlag867(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor19MotionSequence(void)
+static void EV19_SCRIPT(void)
 {
 	PartyInventory_Discard(231);
 	Engine_EventBegin();
@@ -1399,19 +1399,19 @@ struct ScenePlacement KuupuappuMura_ActorsFlag855[] = {
 struct SceneEvent KuupuappuMura_Extras[] = {
 	{ EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(KuupuappuMura_SayFarewellToIvan) },
 	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(KuupuappuMura_SayFarewellToIvan) },
-	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_Apply200ThenPlace55_26) },
-	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_Apply200ThenPlace23_23) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetupScene5At408_320) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetupScene6At312_304) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetupScene7At216_288) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorZeroForSceneEightAt376_224) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorZeroForSceneNineAt296_176) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetupScene10At120_144) },
+	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
+	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EV06_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(ActorDraw_SetupActorSceneCells) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorZeroForSceneTwelveAt72_160) },
-	{ EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetupScene13At152_264) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TOUCH) },
+	{ EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TOUCH) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWelcomeToVaultTheTownAt) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor9LineAndAdvance) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKuupuappuMasterHammetAWealthyLandownerAnd) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor11Line) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKuupuappuMasterHammetsServantCantReturnTo) },
@@ -1419,27 +1419,27 @@ struct SceneEvent KuupuappuMura_Extras[] = {
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RunActorFourteenDialogue) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RunActorFifteenDialogue) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor16Line) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RunActorSeventeenSceneSetup) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RunActorEighteenSceneSetup) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor19Line) },
 	{ EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgKuupuappuAFieryRockBurntAHole) },
-	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Villager_LookForRoofer) },
+	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKuupuappuISupposeTheseChildrenCantGo) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKuupuappuMtAlephsEruptionWasBeyondDescription) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWhyDoesAWealthyManLike) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor11FlaggedLine) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKuupuappuPoorIvanButTheRodMay) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor13FlaggedLine) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RunActorFourteenFlaggedDialogue) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RunActorFifteenScriptBranch) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RunActorSixteenScriptBranch) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKuupuappuHmphItLooksLikeTheyreOnto) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgKuupuappuIWasJustAboutToLeave) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RunActorNineteenScriptBranch) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgKuupuappuFixTheRoofWhyPayFor) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor21Line) },
-	{ SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor23SequenceOnceByFlag867) },
-	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(KuupuappuMura_InspectWell) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_PSYNERGY) },
+	{ SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EV30_SEARCH) },
+	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SEARCH) },
 	{ SEARCH(SEARCH_WOODEN_BOX), 101, 0xf4a, FIND_ITEM(ITEM_NUT) },
 	{ SCENE_EVENTS_END },
 };
@@ -1447,44 +1447,44 @@ struct SceneEvent KuupuappuMura_Extras[] = {
 struct SceneEvent KuupuappuMura_ExtrasFlag855[] = {
 	{ EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(KuupuappuMura_SayFarewellToIvan) },
 	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(KuupuappuMura_SayFarewellToIvan) },
-	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_Apply200ThenPlace55_26) },
-	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_Apply200ThenPlace23_23) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetupScene5At408_320) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetupScene6At312_304) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetupScene7At216_288) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorZeroForSceneEightAt376_224) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorZeroForSceneNineAt296_176) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetupScene10At120_144) },
+	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
+	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EV06_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(ActorDraw_SetupActorSceneCells) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorZeroForSceneTwelveAt72_160) },
-	{ EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetupScene13At152_264) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RunActorEightSceneSetup) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TOUCH) },
+	{ EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TOUCH) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKuupuappuSmokeIsStillRisingFromMt) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKuupuappuMasterHammetTheWealthyMerchantI) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor11SecondLine) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor12LineAndAdvance) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor13Line) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RunActorFourteenDialogueAndAdvanceStory) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RunActorFifteenFollowupDialogue) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RunActorSixteenSceneSetup) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RunActorEighteenFollowupSceneSetup) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RunActorNineteenDialogueAndSetSceneState) },
-	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor20Line) },
+	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKuupuappuYouveMadeOurTownPeacefulAt) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKuupuappuNowMtAlephHasCalmedDown) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKuupuappuOfAllThePlacesWhyWould) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor11FlaggedLine) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKuupuappuNobodyGetsIntoLunpaExceptFor) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor13FlaggedLine) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RunActorFourteenFlaggedDialogue) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RunActorFifteenScriptBranch) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RunActorSixteenScriptBranch) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgKuupuappuThereIsAlwaysAFightWhen) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RunActorNineteenScriptBranch) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgKuupuappuSniffAhTheSmellOfCooking) },
-	{ SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor23SequenceOnceByFlag867) },
-	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(KuupuappuMura_InspectWell) },
-	{ 0xe714, 19, 0x858, EVENT_SCRIPT(FieldScene_RunActor19MotionSequence) },
+	{ SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EV30_SEARCH) },
+	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SEARCH) },
+	{ 0xe714, 19, 0x858, EVENT_SCRIPT(EV19_SCRIPT) },
 	{ SEARCH(SEARCH_WOODEN_BOX), 101, 0xf4a, FIND_ITEM(ITEM_NUT) },
 	{ SCENE_EVENTS_END },
 };

@@ -93,7 +93,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return KorimaHashi_Placements;
 }
 
-static void FieldScene_RunTile10x20Transition(void)
+static void EV10_SCRIPT(void)
 {
 	struct StagedActorProbe res;
 	Engine_EventBegin();
@@ -166,7 +166,7 @@ static s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
 	return 0;
 }
 
-static void SceneActor_PassSubjectOffsetPosition(void)
+static void EV11_TOUCH(void)
 {
 	u32 buf[3];
 #if !EDITION_INTERNATIONAL
@@ -1432,8 +1432,8 @@ struct SceneEntrance KorimaHashi_Placements[] = {
 };
 
 struct SceneEvent KorimaHashi_Events[] = {
-	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunTile10x20Transition) },
-	{ TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_PassSubjectOffsetPosition) },
+	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ SCENE_EVENTS_END },

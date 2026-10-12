@@ -216,7 +216,7 @@ static void FieldScene_RunTwoCallSequence(void)
 	SceneState_ApplyRectsForActorsNineAndTen();
 }
 
-static void SceneState_ApplyRectAndSend303(void)
+static void EV15_PSYNERGY(void)
 {
 	{
 		s32 x = 47;
@@ -227,7 +227,7 @@ static void SceneState_ApplyRectAndSend303(void)
 	Engine_GameFlagSet(0x303);
 }
 
-static void KorosseoKawa_RaisePlatformPair(void)
+static void EV13_PSYNERGY(void)
 {
 	u32 i;
 	u8 *rec7;
@@ -301,7 +301,7 @@ static void StagedActor_PlacePairAtOffsetAndRun(s32 actor_id, s32 dx, s32 dz)
 	Engine_EventEnd();
 }
 
-static void SceneActor_ShiftActorSeventeenByLeaderRow(void)
+static void EV20_TOUCH(void)
 {
 	struct FieldActor *actor;
 	s32				   row;
@@ -321,7 +321,7 @@ static void SceneActor_ShiftActorSeventeenByLeaderRow(void)
 	Engine_MapCopyCellAttributes(64, 24, 3, 1, 64, row);
 }
 
-static void SceneActor_ShiftActorEighteenByInputAndLeaderColumn(void)
+static void EV21_TOUCH(void)
 {
 	struct FieldActor *actor;
 	s32				   column;
@@ -375,7 +375,7 @@ static void SceneActor_ShiftActorEighteenByInputAndLeaderColumn(void)
 	Engine_MapCopyCellAttributes(63, 25, 1, 3, column, 9);
 }
 
-static void KorosseoKawa_RaisePipes(void)
+static void EV12_TOUCH(void)
 {
 	s32				   leader_id;
 	struct FieldActor *leader;
@@ -467,7 +467,7 @@ static void SceneState_ApplyValue768(void)
 	Engine_GameFlagSet(768);
 }
 
-static void KorosseoKawa_RunStageStart(void)
+static void EV50_TOUCH(void)
 {
 	s32 approach;
 	s32 n;
@@ -509,7 +509,7 @@ static void KorosseoKawa_RunStageStart(void)
 	GameFlag_Set(0x11a);
 }
 
-static void FieldScene_RunBranchedStep(void)
+static void EV90_SCRIPT(void)
 {
 
 	if (SceneActor_FindOccupantAheadOfSubject() == 0)
@@ -839,7 +839,7 @@ static void FieldScene_RunCommandSequence(s32 a0)
 	Engine_EventEnd();
 }
 
-static void KorosseoKawa_RunStageIntro(s32 scene)
+static void EV20_TALK(s32 scene)
 {
 	s32 path;
 
@@ -903,7 +903,7 @@ static void KorosseoKawa_RunStageIntro(s32 scene)
 	}
 }
 
-static void Korosseo_RunPipeworksIntro(s32 a0)
+static void EV21_TALK(s32 a0)
 {
 	s32				   rec4;
 	struct FieldActor *second;
@@ -982,7 +982,7 @@ static void Korosseo_RunPipeworksIntro(s32 a0)
 	}
 }
 
-static void Korosseo_RunBrokenBridgeIntro(s32 scene)
+static void EV22_TALK(s32 scene)
 {
 	s32 path;
 
@@ -1028,7 +1028,7 @@ static void Korosseo_RunBrokenBridgeIntro(s32 scene)
 	}
 }
 
-static void Korosseo_RunLumberWaterIntro(s32 scene)
+static void EV23_TALK(s32 scene)
 {
 	s32 path;
 
@@ -1136,7 +1136,7 @@ static void SceneState_RaiseTriggerOnPsynergyTarget(void)
 	}
 }
 
-static void FieldScene_RunNearestActor165Scene(void)
+static void EV99_RAISED(void)
 {
 
 	u8				  *state = (u8 *)gEventWork;
@@ -2198,34 +2198,34 @@ struct ScenePlacement KorosseoKawa_SceneTableC[] = {
 s32 KorosseoKawa_Countdown = 0;
 
 struct SceneEvent KorosseoKawa_SceneTableD[] = {
-	{ 0x202, 90, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunBranchedStep) },
+	{ 0x202, 90, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SCRIPT) },
 	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunTwoCallSequence) },
 	{ 0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunTwoCallSequence) },
-	{ TOUCH_WALKING_INTO(FACING_WEST), 12, 0x302, EVENT_SCRIPT(KorosseoKawa_RaisePipes) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_ShiftActorSeventeenByLeaderRow) },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_ShiftActorSeventeenByLeaderRow) },
-	{ TOUCH_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_ShiftActorEighteenByInputAndLeaderColumn) },
-	{ TOUCH_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_ShiftActorEighteenByInputAndLeaderColumn) },
-	{ EVENT_TOUCH, 50, 0x210, EVENT_SCRIPT(KorosseoKawa_RunStageStart) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 12, 0x302, EVENT_SCRIPT(EV12_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TOUCH) },
+	{ EVENT_TOUCH, 50, 0x210, EVENT_SCRIPT(EV50_TOUCH) },
 	{ SEARCH(SEARCH_CHEST), 100, 0x308, FIND_ITEM(ITEM_NUT) },
 	{ SEARCH(SEARCH_CHEST), 101, 0x309, FIND_ITEM(0xee) },
 	{ 0x8413, 103, 0x30a, FIND_ITEM(ITEM_NUT) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectsForActorsNineAndTen) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectsForActorsNineAndTen) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectsForActorsNineAndTen) },
-	{ PSYNERGY_ON_ACTOR(0xc), 15, 0x303, EVENT_SCRIPT(SceneState_ApplyRectAndSend303) },
-	{ PSYNERGY_ON_ACTOR(0x21), 13, 0x301, EVENT_SCRIPT(KorosseoKawa_RaisePlatformPair) },
+	{ PSYNERGY_ON_ACTOR(0xc), 15, 0x303, EVENT_SCRIPT(EV15_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x21), 13, 0x301, EVENT_SCRIPT(EV13_PSYNERGY) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(RunPartyCountInteraction) },
-	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(KorosseoKawa_RunStageIntro) },
-	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Korosseo_RunPipeworksIntro) },
-	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(Korosseo_RunBrokenBridgeIntro) },
-	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(Korosseo_RunLumberWaterIntro) },
+	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
+	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK) },
+	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgKorosseoKawaThisYearsFinalsAreIncredibleThis) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgKorosseoKawaMovingSuchAHugeRockMust) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgKorosseoKawaTheresOnlyOneFinalAndThis) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgKorosseoKawaDidYouSeeHisMovesOut) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgKorosseoKawaHowManyWarriorsHaveSwallowedTheir) },
-	{ EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunNearestActor165Scene) },
+	{ EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_RAISED) },
 	{ SCENE_EVENTS_END },
 };
 

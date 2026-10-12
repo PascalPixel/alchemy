@@ -30,7 +30,7 @@
 // 前方宣言
 static void FieldScene_RunFourActorPresentation(void);
 static s32 FindNearestF2Actor(void);
-static void SceneActor_SetMode55OnSevenRecords(void);
+static void EV11_TOUCH(void);
 static void RunScene59Sequence(void);
 static void MakyuriChojo_SinkActorPair(void);
 static void MakyuriChojo_RiseActorPair(void);
@@ -375,7 +375,7 @@ static void SceneActor_InitializeMotion(void)
 	if (Object_CheckMovementCollision(actor, position) == 0)
 	{
 		Engine_GameFlagClear(592);
-		SceneActor_SetMode55OnSevenRecords();
+		EV11_TOUCH();
 		Object_SetMode(actor, 6);
 		Engine_TaskWait(6);
 		Engine_AudioPlayCue(152);
@@ -392,7 +392,7 @@ static void SceneActor_InitializeMotion(void)
 	}
 }
 
-static void MakyuriChojo_StepOntoNearestActor(void)
+static void EV10_TOUCH(void)
 {
 	struct FieldActor *leader;
 	struct FieldActor *actor;
@@ -431,7 +431,7 @@ static void MakyuriChojo_StepOntoNearestActor(void)
 	Engine_EventEnd();
 }
 
-static void SceneActor_SetMode55OnSevenRecords(void)
+static void EV11_TOUCH(void)
 {
 	Object_GetById(ACTOR_PARTY_LEADER)->motion_flags = 3;
 	Object_GetById(14)->motion_flags = 4;
@@ -442,7 +442,7 @@ static void SceneActor_SetMode55OnSevenRecords(void)
 	Object_GetById(19)->motion_flags = 4;
 }
 
-static void RunScene58Sequence(void)
+static void EV05_TOUCH(void)
 {
 	struct FieldActor *actor;
 
@@ -1439,7 +1439,7 @@ static void RunScene59Sequence(void)
 	Engine_EventEnd();
 }
 
-static void MakyuriChojo_BringLiftUp(void)
+static void EV06_TOUCH(void)
 {
 	struct MapLayerScroll *lift;
 
@@ -1468,7 +1468,7 @@ static void MakyuriChojo_BringLiftUp(void)
 	Engine_EventEnd();
 }
 
-static void MakyuriChojo_TakeLiftDown(void)
+static void EV12_TOUCH(void)
 {
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -1898,14 +1898,14 @@ struct ScenePlacement gMakyuriChojoPlacements[] = {
 };
 
 struct SceneEvent gMakyuriChojoEvents[] = {
-	{ EVENT_TOUCH, 5, 0x880, EVENT_SCRIPT(RunScene58Sequence) },
-	{ EVENT_TOUCH, 6, 0x251, EVENT_SCRIPT(MakyuriChojo_BringLiftUp) },
+	{ EVENT_TOUCH, 5, 0x880, EVENT_SCRIPT(EV05_TOUCH) },
+	{ EVENT_TOUCH, 6, 0x251, EVENT_SCRIPT(EV06_TOUCH) },
 	{ 0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_InitializeMotion) },
-	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_SetMode55OnSevenRecords) },
+	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
 	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_InitializeMotion) },
-	{ EVENT_TOUCH, 10, 0x250, EVENT_SCRIPT(MakyuriChojo_StepOntoNearestActor) },
+	{ EVENT_TOUCH, 10, 0x250, EVENT_SCRIPT(EV10_TOUCH) },
 	{ SEARCH(SEARCH_UNNAMED), 100, 0x350, FIND_PSYNERGY_STONE },
-	{ EVENT_TOUCH, 12, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriChojo_TakeLiftDown) },
+	{ EVENT_TOUCH, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TOUCH) },
 	{ SCENE_EVENTS_END },
 };
 

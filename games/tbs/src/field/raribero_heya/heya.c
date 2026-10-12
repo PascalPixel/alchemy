@@ -90,7 +90,7 @@ u8 *RariberoHeya_GetPlacements(void)
 	return gRariberoPlacements;
 }
 
-static void RariberoHeya_RunItemShop(s32 keeper)
+static void EV18_TALK(s32 keeper)
 {
 	struct FieldActor *leader = Object_GetById(0);
 	u16				   facing = (leader->facing + 0x2000) & 0xc000;
@@ -123,7 +123,7 @@ static void RariberoHeya_RunItemShop(s32 keeper)
 	}
 }
 
-static void Dialogue_HandleFacingBranch(s32 no)
+static void EV19_TALK(s32 no)
 {
 	u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
 	if (party_facing == 0xc000)
@@ -142,7 +142,7 @@ static void Dialogue_HandleFacingBranch(s32 no)
 	}
 }
 
-static void Dialogue_HandleAlternateFacingBranch(s32 no)
+static void EV20_TALK(s32 no)
 {
 	u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
 	if (party_facing == 0xc000)
@@ -161,7 +161,7 @@ static void Dialogue_HandleAlternateFacingBranch(s32 no)
 	}
 }
 
-static void Dialogue_HandleFacingAction(s32 no)
+static void EV21_TALK(s32 no)
 {
 	u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
 	if (party_facing == 0xc000)
@@ -180,7 +180,7 @@ static void Dialogue_HandleFacingAction(s32 no)
 	}
 }
 
-static void Dialogue_HandleFacingCueBranch(s32 no)
+static void EV13_TALK(s32 no)
 {
 	u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
 	if (party_facing == 0xc000)
@@ -234,7 +234,7 @@ static void RariberoScene_PlayPoseSequence(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunSequenceA(void)
+static void EV51_TOUCH(void)
 {
 
 	Engine_GameFlagSet(0x9BC);
@@ -254,7 +254,7 @@ static void FieldScene_RunSequenceA(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunThreeCallSequence(void)
+static void EV12_TALK(void)
 {
 
 	Engine_GameFlagSet(0x9BC);
@@ -957,10 +957,10 @@ struct SceneEvent gRariberoEvents[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaItsBeenSoLongSinceI) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaIWonderHowActorKnewAbout) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaThoseCavesAreTooDangerousFor) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RunItemShop) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Dialogue_HandleFacingBranch) },
-	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Dialogue_HandleAlternateFacingBranch) },
-	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Dialogue_HandleFacingAction) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
+	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
+	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaTheLaliveransAreATimidPeople) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaICantRescueActorIfI) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaIfAnythingHappensToActorIll) },
@@ -1004,10 +1004,10 @@ struct SceneEvent gRariberoEvents9a7[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaImWorriedThatWeWontGet) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaWeCantPossiblyDigAHole) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaTheMysteryOfTheRuinsShould) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RunItemShop) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Dialogue_HandleFacingBranch) },
-	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Dialogue_HandleAlternateFacingBranch) },
-	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Dialogue_HandleFacingAction) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
+	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
+	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaNoOneCouldPossiblySwimIn) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaWhenWillTheOceanBeCalm) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaTheChampaArePeopleFromA) },
@@ -1039,7 +1039,7 @@ struct SceneEvent gRariberoHeyaEvents[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaThatCoupleRaisedActorAsThough) },
 	{ EVENT_TALK, 14, 0x300, EVENT_SCRIPT(RariberoScene_PlayPoseSequence) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40e, 0x300, EVENT_SCRIPT(RariberoScene_PlayPoseSequence) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Dialogue_HandleFacingCueBranch) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaWorkingLikeThisKeepsMyMind) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaWeMustObeyTolbiThatsWhat) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaWhyDidThisHaveToHappen) },
@@ -1063,8 +1063,8 @@ struct SceneEvent gRariberoHeyaEvents9a7[] = {
 	{ EVENT_TOUCH, 29, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
 	{ EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
 	{ EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoHeya_RequestTouchedExitAndPlayCue) },
-	{ EVENT_TOUCH, 51, 0x9bc, EVENT_SCRIPT(FieldScene_RunSequenceA) },
-	{ EVENT_TALK, 12, 0x9ba, EVENT_SCRIPT(FieldScene_RunThreeCallSequence) },
+	{ EVENT_TOUCH, 51, 0x9bc, EVENT_SCRIPT(EV51_TOUCH) },
+	{ EVENT_TALK, 12, 0x9ba, EVENT_SCRIPT(EV12_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x9ba, MSGNO(MsgRariberoHeyaIMustExplainTheirPromiseTo) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaFaranSaysKnowingHerPowersActor) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaYouAreLeavingAfterAllArent) },
@@ -1076,7 +1076,7 @@ struct SceneEvent gRariberoHeyaEvents9a7[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaTolbiIsToBeBlamedFor) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaSoThereAreSomePeopleLike) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaPleaseUseThatShipToFind) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Dialogue_HandleFacingCueBranch) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaIMustSayItIsNice) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaFishingIsSoDifficultNowadaysBecause) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgRariberoHeyaWhyWouldTheLightingMakeSuch) },

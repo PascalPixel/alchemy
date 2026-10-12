@@ -106,7 +106,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gTorebiIzumiPlacementsOther;
 }
 
-static void TorebiIzumi_AskForLuckyMedal(s32 object)
+static void EV27_TALK(s32 object)
 {
 	s32 question = (s32)MsgTorebiLuckyMedal;
 	Engine_EventSetMessage(question);
@@ -123,7 +123,7 @@ static void TorebiIzumi_AskForLuckyMedal(s32 object)
 	Engine_EventShowMessage(object, 0);
 }
 
-static void TorebiIzumi_AskIfFirstTime(s32 object)
+static void EV11_TALK(s32 object)
 {
 	s32 question = (s32)MsgTorebiYerFirstTime;
 	Engine_EventSetMessage(question);
@@ -140,7 +140,7 @@ static void TorebiIzumi_AskIfFirstTime(s32 object)
 	Engine_EventShowMessage(object, 0);
 }
 
-static void TorebiIzumi_WalkLeaderToSpring(void)
+static void EV80_SEARCH(void)
 {
 	s32 leader = gGameState.selected_actor;
 
@@ -156,7 +156,7 @@ static void TorebiIzumi_WalkLeaderToSpring(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunMessage0e34(void)
+static void EV15_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiLuckyWheelsRulesPullLever);
@@ -164,7 +164,7 @@ static void SceneDialogue_RunMessage0e34(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunMessage0e35(void)
+static void EV14_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiLuckyWheelsPrizesPrizesDetermined);
@@ -172,7 +172,7 @@ static void SceneDialogue_RunMessage0e35(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunIndexedStep0(void)
+static void EV08_TALK(void)
 {
 	TorebiIzumi_OfferLuckyWheels(0);
 }
@@ -510,7 +510,7 @@ play:
 	Party_SetFields1ceAnd1d0((s32)&SceneId_TorebiIzumi1, 12);
 }
 
-static void TorebiIzumi_PayToPlay(void)
+static void EV09_TALK(void)
 {
 	u32 cost;
 	u32 coins;
@@ -1609,11 +1609,11 @@ const struct ScenePlacement gTorebiIzumiPlacementsOther[] = {
 const struct SceneEvent gTorebiIzumiEventsOther[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunIndexedStep0) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiHmmIWonderIfTheseKids) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiIzumi_PayToPlay) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiReadTheSignIfYaDont) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiIzumi_AskIfFirstTime) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiWhoaGettingTripleDigitsIsReal) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiIDontWantToStopPlaying) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiWinningOrLosingIsPureLuck) },
@@ -1621,8 +1621,8 @@ const struct SceneEvent gTorebiIzumiEventsOther[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiSometimesPeopleWhoHaveNeverPlayed) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiThinkingWontHelpYouWinThis) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiMyLuckHasRunOutFor) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunMessage0e35) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunMessage0e34) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiLuckyDiceThrowTheDiceOn) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiLuckyDiceIfTwoNumbersMatch) },
 	{ EVENT_TALK, 17, 0x962, MSGNO(MsgTorebiIzumiYeahThatDiceGameLooksKinda) },
@@ -1638,12 +1638,12 @@ const struct SceneEvent gTorebiIzumiEvents2[] = {
 	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTorebiTossLuckyMedal) },
 	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTorebiFaceAwayTolbi) },
 	{ EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiTolbiSpringHasMysteriousPowersStand) },
-	{ EVENT_TALK, 27, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiIzumi_AskForLuckyMedal) },
+	{ EVENT_TALK, 27, CONDITION_ALWAYS, EVENT_SCRIPT(EV27_TALK) },
 	{ EVENT_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiTooBadIOnlyHaveOne) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiIGetNervousWhenIToss) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiWhyWontAnyoneGiveMeA) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTorebiIzumiThisIsALuckyMedalSo) },
-	{ SEARCH(SEARCH_UNNAMED), 80, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiIzumi_WalkLeaderToSpring) },
+	{ SEARCH(SEARCH_UNNAMED), 80, CONDITION_ALWAYS, EVENT_SCRIPT(EV80_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 

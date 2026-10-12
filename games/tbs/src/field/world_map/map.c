@@ -387,27 +387,27 @@ static void StoryScene_SetBranchValueFromZ(s32 trigger, s32 exit_before, s32 exi
 	Engine_AudioPlayCue(0x7B);
 }
 
-static void SceneState_SetValues130_6_47(void)
+static void EV130_TOUCH(void)
 {
 	StoryScene_SetBranchValueFromX(0x82, 6, 0x2F);
 }
 
-static void SceneState_ApplyValues150And46And11(void)
+static void EV150_TOUCH(void)
 {
 	StoryScene_SetBranchValueFromZ(0x96, 0x2E, 0x0B);
 }
 
-static void SceneState_ApplyValues116And56And21(void)
+static void EV116_TOUCH(void)
 {
 	StoryScene_SetBranchValueFromZ(0x74, 0x38, 0x15);
 }
 
-static void SceneState_ApplyValues151And25And54(void)
+static void EV151_TOUCH(void)
 {
 	StoryScene_SetBranchValueFromZ(0x97, 0x19, 0x36);
 }
 
-static void FieldScene_RunStep7D3B1E(void)
+static void EV125_TOUCH(void)
 {
 
 	StoryScene_SetBranchValueFromZ(0x7D, 0x3B, 0x1E);
@@ -482,7 +482,7 @@ static void MapActor_UpdateContact(void)
 	}
 }
 
-static void SceneState_ApplyFlag85aBranch(void)
+static void EV112_TOUCH(void)
 {
 	if (Engine_GameFlagIsSet(0x85a) == 0)
 	{
@@ -495,7 +495,7 @@ static void SceneState_ApplyFlag85aBranch(void)
 	}
 }
 
-static void FieldScene_RunStep74(void)
+static void EV74_TOUCH(void)
 {
 
 	Engine_EventBegin();
@@ -1235,7 +1235,7 @@ static void WorldMap_ShowDjinnTutorial(void)
 #define DJINNI 8
 #define FLAG_DJINNI_MET 0x16e
 
-static void WorldMap_MeetVenusDjinni(void)
+static void EV90_TOUCH(void)
 {
 	struct FieldActor *djinni;
 	struct FieldActor *leader;
@@ -1657,7 +1657,7 @@ static void WorldMap_StopLeaderLeavingShip(void)
 	Engine_EventEnd();
 }
 
-static void StoryScene_ShowRewardDialogue(void)
+static void EV96_SEARCH(void)
 {
 
 	Engine_EventBegin();
@@ -1680,7 +1680,7 @@ static void StoryScene_ShowRewardDialogue(void)
 #define SITE 55
 #define ITEM_BLACK_ORB 242
 
-static void WorldMap_UseBlackOrb(void)
+static void EV96_SCRIPT(void)
 {
 	struct FieldActor  *site;
 	struct FieldActor  *orb;
@@ -2245,17 +2245,17 @@ static void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
 	}
 }
 
-static void StoryScene_SetReferenceActor(void)
+static void EV95_TOUCH(void)
 {
 	FieldScene_RunOpeningAuxiliarySequence(54);
 }
 
-static void StoryScene_ActivateSharedState(void)
+static void EV54_SCRIPT(void)
 {
 	gEffectWork->active = 1;
 }
 
-static void StoryScene_CompleteActor98(void)
+static void EV54_PSYNERGY(void)
 {
 	struct FieldActor *selected_actor;
 
@@ -2273,7 +2273,7 @@ static void StoryScene_CompleteActor98(void)
 	selected_actor->motion_flags = 2;
 }
 
-static void WorldMap_RaiseActors(void)
+static void EV99_RAISED(void)
 {
 	struct FieldActor *actor = Actor_Get(gGameState.selected_actor);
 	struct FieldActor *other = Actor_Get(54);
@@ -3191,16 +3191,16 @@ struct ScenePlacement gWorldMapPlacements73[] = {
 };
 
 struct SceneEvent gWorldMapEvents[] = {
-	{ EVENT_TOUCH, 90, 0x30, EVENT_SCRIPT(WorldMap_MeetVenusDjinni) },
-	{ EVENT_TOUCH, 95, 0x2f1, EVENT_SCRIPT(StoryScene_SetReferenceActor) },
+	{ EVENT_TOUCH, 90, 0x30, EVENT_SCRIPT(EV90_TOUCH) },
+	{ EVENT_TOUCH, 95, 0x2f1, EVENT_SCRIPT(EV95_TOUCH) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(StoryProgress_TriggerEvent0808) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(StoryProgress_TriggerEvent0809) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(StoryProgress_TriggerEvent080A) },
 	{ EVENT_TOUCH, 92, 0x33, EVENT_SCRIPT(StoryProgress_TriggerEvent0808) },
 	{ EVENT_TOUCH, 91, 0x5a, EVENT_SCRIPT(StoryProgress_TriggerEvent0809) },
 	{ EVENT_TOUCH, 93, 0x48, EVENT_SCRIPT(StoryProgress_TriggerEvent080A) },
-	{ SEARCH(SEARCH_UNNAMED), 96, CONDITION_ALWAYS, EVENT_SCRIPT(StoryScene_ShowRewardDialogue) },
-	{ 0xf204, 96, 0x85d, EVENT_SCRIPT(WorldMap_UseBlackOrb) },
+	{ SEARCH(SEARCH_UNNAMED), 96, CONDITION_ALWAYS, EVENT_SCRIPT(EV96_SEARCH) },
+	{ 0xf204, 96, 0x85d, EVENT_SCRIPT(EV96_SCRIPT) },
 	{ SEARCH(SEARCH_GROUND), 100, 0xfcf, FIND_ITEM(0x103) },
 	{ EVENT_TALK, 55, CONDITION_ALWAYS, EVENT_SCRIPT(WorldMap_PromptBlackOrbUse) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x437, CONDITION_ALWAYS, EVENT_SCRIPT(WorldMap_PromptBlackOrbUse) },
@@ -3217,13 +3217,13 @@ struct SceneEvent gWorldMapEvents[] = {
 	{ EVENT_EXIT, 61, CONDITION_ALWAYS, 61 },
 	{ EVENT_EXIT, 47, CONDITION_ALWAYS, 47 },
 	{ EVENT_EXIT, 111, CONDITION_ALWAYS, 1 },
-	{ EVENT_TOUCH, 112, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyFlag85aBranch) },
+	{ EVENT_TOUCH, 112, CONDITION_ALWAYS, EVENT_SCRIPT(EV112_TOUCH) },
 	{ EVENT_EXIT, 132, CONDITION_ALWAYS, 4 },
 	{ EVENT_EXIT, 133, CONDITION_ALWAYS, 40 },
 	{ EVENT_EXIT, 123, CONDITION_ALWAYS, 5 },
-	{ EVENT_TOUCH, 130, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValues130_6_47) },
+	{ EVENT_TOUCH, 130, CONDITION_ALWAYS, EVENT_SCRIPT(EV130_TOUCH) },
 	{ EVENT_EXIT, 119, CONDITION_ALWAYS, 7 },
-	{ EVENT_TOUCH, 150, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyValues150And46And11) },
+	{ EVENT_TOUCH, 150, CONDITION_ALWAYS, EVENT_SCRIPT(EV150_TOUCH) },
 	{ EVENT_EXIT, 144, CONDITION_ALWAYS, 8 },
 	{ EVENT_EXIT, 139, CONDITION_ALWAYS, 35 },
 	{ EVENT_EXIT, 140, CONDITION_ALWAYS, 48 },
@@ -3240,23 +3240,23 @@ struct SceneEvent gWorldMapEvents[] = {
 	{ EVENT_EXIT, 124, CONDITION_ALWAYS, 20 },
 	{ EVENT_EXIT, 115, CONDITION_ALWAYS, 34 },
 	{ EVENT_EXIT, 141, CONDITION_ALWAYS, 49 },
-	{ EVENT_TOUCH, 116, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyValues116And56And21) },
+	{ EVENT_TOUCH, 116, CONDITION_ALWAYS, EVENT_SCRIPT(EV116_TOUCH) },
 	{ EVENT_EXIT, 117, CONDITION_ALWAYS, 22 },
 	{ EVENT_EXIT, 126, CONDITION_ALWAYS, 23 },
 	{ EVENT_EXIT, 134, CONDITION_ALWAYS, 24 },
-	{ EVENT_TOUCH, 151, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyValues151And25And54) },
+	{ EVENT_TOUCH, 151, CONDITION_ALWAYS, EVENT_SCRIPT(EV151_TOUCH) },
 	{ EVENT_EXIT, 146, CONDITION_ALWAYS, 60 },
 	{ EVENT_EXIT, 135, CONDITION_ALWAYS, 26 },
 	{ EVENT_EXIT, 136, CONDITION_ALWAYS, 41 },
 	{ EVENT_EXIT, 114, CONDITION_ALWAYS, 27 },
 	{ EVENT_EXIT, 138, CONDITION_ALWAYS, 33 },
 	{ EVENT_EXIT, 131, CONDITION_ALWAYS, 31 },
-	{ EVENT_TOUCH, 125, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep7D3B1E) },
-	{ TOUCH_WALKING_INTO(FACING_EAST), 74, IF_FLAG_SET(0x8a0), EVENT_SCRIPT(FieldScene_RunStep74) },
+	{ EVENT_TOUCH, 125, CONDITION_ALWAYS, EVENT_SCRIPT(EV125_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 74, IF_FLAG_SET(0x8a0), EVENT_SCRIPT(EV74_TOUCH) },
 	{ 0xc401, 75, CONDITION_ALWAYS, 75 },
-	{ 0x10002115, 54, IF_FLAG_SET(0x2f0), EVENT_SCRIPT(StoryScene_ActivateSharedState) },
-	{ PSYNERGY_ON_ACTOR(0x21), 54, IF_FLAG_SET(0x2f0), EVENT_SCRIPT(StoryScene_CompleteActor98) },
-	{ EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(WorldMap_RaiseActors) },
+	{ 0x10002115, 54, IF_FLAG_SET(0x2f0), EVENT_SCRIPT(EV54_SCRIPT) },
+	{ PSYNERGY_ON_ACTOR(0x21), 54, IF_FLAG_SET(0x2f0), EVENT_SCRIPT(EV54_PSYNERGY) },
+	{ EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_RAISED) },
 	{ SCENE_EVENTS_END },
 };
 

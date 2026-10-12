@@ -238,7 +238,7 @@ static void SpawnRadialEffectBurst(s32 object_id)
 	}
 }
 
-static void InitializePrologueSceneState(void)
+static void EV10_TOUCH(void)
 {
 
 	u8 *base;
@@ -278,7 +278,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gTakaraShimaEventsOther;
 }
 
-static void StartScriptedSceneMessage(s32 message_id)
+static void EV08_PSYNERGY_1(s32 message_id)
 {
 	((void (*)(s32 arg0))Engine_EventBegin)(message_id);
 	Engine_ActorSetPosition(8, 0, 0);
@@ -432,7 +432,7 @@ static void FieldScene_RunScene3b2SequenceA(void)
 	}
 }
 
-static void FieldScene_HandleEscapeColumn(void)
+static void EV08_PSYNERGY(void)
 {
 	struct FieldActor *entity;
 	s16				  *slot;
@@ -497,22 +497,22 @@ static void FieldScene_HandleEscapeColumn(void)
 	Engine_GameFlagSet(*slot + (0x8d2 - (s32)&SceneId_TakaraShima6));
 }
 
-static void RunPrologueSceneSetup(void)
+static void EV20_SCRIPT(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
 	Engine_EventEnd();
-	FieldScene_HandleEscapeColumn();
+	EV08_PSYNERGY();
 }
 
-static void StartSceneScript37(void)
+static void EV04_TOUCH(void)
 {
 	Engine_MapAnimateCells(TakaraShima_EntranceCells, 37, 7);
 	Engine_AudioPlayCue(183);
 	Engine_EventRequestExit(4);
 }
 
-static void TakaraShima_RunAreaEntry(void)
+static void EV03_TOUCH(void)
 {
 	if (Engine_GameFlagIsSet(gGameState.scene + (0x8c8 - (s32)&SceneId_TakaraShima6)) == 0)
 	{
@@ -574,7 +574,7 @@ static void TakaraShima_LeaveClearedRoom(void)
 	Engine_EventEnd();
 }
 
-static void ConfigureSceneActor11(s32 actor_id)
+static void EV11_PSYNERGY(s32 actor_id)
 {
 	s32				   a = 0x1300000;
 	s32				   b = 0x1700000;
@@ -589,7 +589,7 @@ static void ConfigureSceneActor11(s32 actor_id)
 	Engine_GameFlagSet(576);
 }
 
-static void ConfigureSceneActor12(s32 actor_id)
+static void EV12_PSYNERGY(s32 actor_id)
 {
 	s32				   a = 0x500000;
 	s32				   b = 0x1700000;
@@ -604,7 +604,7 @@ static void ConfigureSceneActor12(s32 actor_id)
 	Engine_GameFlagSet(577);
 }
 
-static void ConfigureSceneActor13(s32 actor_id)
+static void EV13_PSYNERGY(s32 actor_id)
 {
 	s32				   a = 0x600000;
 	s32				   b = 0x1500000;
@@ -619,7 +619,7 @@ static void ConfigureSceneActor13(s32 actor_id)
 	Engine_GameFlagSet(578);
 }
 
-static void ConfigureSceneActor14(s32 actor_id)
+static void EV14_PSYNERGY(s32 actor_id)
 {
 	s32				   a = 0x900000;
 	s32				   b = 0x1400000;
@@ -637,7 +637,7 @@ static void ConfigureSceneActor14(s32 actor_id)
 	Engine_GameFlagSet(579);
 }
 
-static void ShowForgetEverythingMessage(void)
+static void EV15_PSYNERGY(void)
 {
 	Engine_GameFlagSet(2244);
 	{
@@ -647,17 +647,17 @@ static void ShowForgetEverythingMessage(void)
 	}
 }
 
-static void ShowHelpYouForgetMessage(void)
+static void EV16_PSYNERGY(void)
 {
 	Engine_GameFlagSet(2245);
 }
 
-static void ShowDamagedDoorMessage(void)
+static void EV17_PSYNERGY(void)
 {
 	Engine_GameFlagSet(2246);
 }
 
-static void ShowSaveMyLifeMessage(void)
+static void EV18_PSYNERGY(void)
 {
 	Engine_GameFlagSet(2247);
 }
@@ -2749,10 +2749,10 @@ struct ScenePlacement gTakaraShimaPlacements6To14[] = {
 struct SceneEvent gTakaraShimaEventsOther[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraShima_RunAreaEntry) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(StartSceneScript37) },
-	{ 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(RunPrologueSceneSetup) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_HandleEscapeColumn) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
+	{ 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SCRIPT) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_PSYNERGY) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xef4, 0x500004 },
 	{ SCENE_EVENTS_END },
 };
@@ -2764,15 +2764,15 @@ struct SceneEvent gTakaraShimaEvents2[] = {
 };
 
 struct SceneEvent gTakaraShimaEvents1[] = {
-	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 8, 0xfd7, EVENT_SCRIPT(StartScriptedSceneMessage) },
-	{ PSYNERGY_ON_ACTOR(0xc), 11, 0x240, EVENT_SCRIPT(ConfigureSceneActor11) },
-	{ PSYNERGY_ON_ACTOR(0xc), 12, 0x241, EVENT_SCRIPT(ConfigureSceneActor12) },
-	{ PSYNERGY_ON_ACTOR(0xc), 13, 0x242, EVENT_SCRIPT(ConfigureSceneActor13) },
-	{ PSYNERGY_ON_ACTOR(0xc), 14, 0x243, EVENT_SCRIPT(ConfigureSceneActor14) },
-	{ PSYNERGY_ON_ACTOR(0x4e), 15, 0x8c4, EVENT_SCRIPT(ShowForgetEverythingMessage) },
-	{ PSYNERGY_ON_ACTOR(0x4e), 16, 0x8c5, EVENT_SCRIPT(ShowHelpYouForgetMessage) },
-	{ PSYNERGY_ON_ACTOR(0x4e), 17, 0x8c6, EVENT_SCRIPT(ShowDamagedDoorMessage) },
-	{ PSYNERGY_ON_ACTOR(0x4e), 18, 0x8c7, EVENT_SCRIPT(ShowSaveMyLifeMessage) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 8, 0xfd7, EVENT_SCRIPT(EV08_PSYNERGY_1) },
+	{ PSYNERGY_ON_ACTOR(0xc), 11, 0x240, EVENT_SCRIPT(EV11_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0xc), 12, 0x241, EVENT_SCRIPT(EV12_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0xc), 13, 0x242, EVENT_SCRIPT(EV13_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0xc), 14, 0x243, EVENT_SCRIPT(EV14_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x4e), 15, 0x8c4, EVENT_SCRIPT(EV15_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x4e), 16, 0x8c5, EVENT_SCRIPT(EV16_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x4e), 17, 0x8c6, EVENT_SCRIPT(EV17_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x4e), 18, 0x8c7, EVENT_SCRIPT(EV18_PSYNERGY) },
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(RunSceneVectorTransition) },
@@ -2868,7 +2868,7 @@ struct SceneEvent gTakaraShimaEvents4[] = {
 
 struct SceneEvent gTakaraShimaEvents5[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-	{ EVENT_TOUCH, 10, 0x8d1, EVENT_SCRIPT(InitializePrologueSceneState) },
+	{ EVENT_TOUCH, 10, 0x8d1, EVENT_SCRIPT(EV10_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(CheckActorPathNorth) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xee6, FIND_ITEM(0x53) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xef7, 0x500007 },

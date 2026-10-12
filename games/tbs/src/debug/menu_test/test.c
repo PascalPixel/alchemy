@@ -172,7 +172,7 @@ static void DebugMenu_RunMessageTest(void)
 }
 #endif
 
-static void SceneState_ApplyOne(void)
+static void EV12_TALK(void)
 {
 	Battle_ApplyPresetItemsAndFlags(1);
 }
@@ -181,23 +181,23 @@ static void SceneState_NoOp(void)
 {
 }
 
-static void SceneState_QueryTwoValues(void)
+static void EV08_TALK(void)
 {
 	s32 a;
 	s32 b;
 	Shop_PickUnitItem(&a, &b);
 }
 
-static void SceneState_ApplyZero(void)
+static void EV03_TALK(void)
 {
 	NameEntry_EditOwnerName(0);
 }
 
-static void CommandTable_NoOpCallback(void)
+static void EV15_PSYNERGY(void)
 {
 }
 
-static void SceneState_SetRecordFlag53(void)
+static void EV15_SCRIPT(void)
 {
 	gEffectWork->child_mode = 1;
 }
@@ -214,7 +214,7 @@ s32 MenuTest_GetEvents(void)
 	return (s32)MenuTest_Events;
 }
 
-static void MenuTest_RaisePartyLevelTarget(void)
+static void EV01_TALK(void)
 {
 	s32 *p;
 
@@ -231,7 +231,7 @@ static void MenuTest_RaisePartyLevelTarget(void)
 	UnitCalc(2);
 }
 
-static void FieldScene_GrantItemListToSlots(void)
+static void EV02_TALK(void)
 {
 	UiText_ShowPositionedMessageAndWait(MsgDebugGotItem, 1);
 	Inventory_AddItem(0, 187);
@@ -431,7 +431,7 @@ static void FieldScene_GrantItemListToSlots(void)
 	UnitCalc(2);
 }
 
-static void CommandTable_ConfigureCommandGroups(void)
+static void EV09_TALK(void)
 {
 	u8 buf[256];
 #if !EDITION_INTERNATIONAL
@@ -516,7 +516,7 @@ static void CommandTable_ConfigureCommandGroups(void)
 	UnitCalc(2);
 }
 
-static void FieldScene_ApplySlotOffsetsAndFlags(void)
+static void EV10_TALK(void)
 {
 	u8 *record;
 
@@ -542,7 +542,7 @@ static void FieldScene_ApplySlotOffsetsAndFlags(void)
 	UnitCalc(2);
 }
 
-static void FieldScene_AssignCodeSetAToSlots(void)
+static void EV05_TALK(void)
 {
 	UiText_ShowPositionedMessageAndWait(MsgDebugGotSturdyEquipment, 1);
 	Inventory_AddItem(0, 85);
@@ -687,13 +687,13 @@ done:
 	Engine_DebugFinalizeWindow(details, 1);
 }
 
-static void SceneState_RunCall1c00(void)
+static void EV17_TALK(void)
 {
 
 	DebugMenu_SelectItem();
 }
 
-static void FieldScene_AssignCodeSetBToSlots(void)
+static void EV11_TALK(void)
 {
 	UiText_ShowPositionedMessageAndWait(MsgDebugGotTreasure, 1);
 	Inventory_AddItem(ROBIN, 0xb8);
@@ -784,7 +784,7 @@ s32 CommandTable_ConfigureCommandList(void)
 	return 0;
 }
 
-static s32 SceneState_GetFarResult2384(void)
+static s32 EV15_TALK(void)
 {
 	return DebugMenu_BrowseIcons();
 }
@@ -911,15 +911,15 @@ struct ScenePlacement MenuTest_Placements[] = {
 };
 
 struct SceneEvent MenuTest_Events[] = {
-	{EVENT_TALK, 1, CONDITION_ALWAYS, EVENT_SCRIPT(MenuTest_RaisePartyLevelTarget)},
-	{EVENT_TALK, 5, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_AssignCodeSetAToSlots)},
-	{EVENT_TALK, 2, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_GrantItemListToSlots)},
-	{EVENT_TALK, 3, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyZero)},
-	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_QueryTwoValues)},
-	{EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(CommandTable_ConfigureCommandGroups)},
-	{EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_ApplySlotOffsetsAndFlags)},
-	{EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_AssignCodeSetBToSlots)},
-	{EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyOne)},
+	{EVENT_TALK, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TALK)},
+	{EVENT_TALK, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TALK)},
+	{EVENT_TALK, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TALK)},
+	{EVENT_TALK, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TALK)},
+	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK)},
+	{EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK)},
+	{EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK)},
+	{EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK)},
+	{EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK)},
 #if defined(TBS_EDITION_FR)
 	{EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_GiveItemToParty)},
 #elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
@@ -928,10 +928,10 @@ struct SceneEvent MenuTest_Events[] = {
 	{EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_GetFarResult2418)},
 #endif
 	{EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaKyleAbleStop)},
-	{EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_GetFarResult2384)},
+	{EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK)},
 #if !EDITION_INTERNATIONAL
 	{EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_SelectCharacter)},
-	{EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunCall1c00)},
+	{EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK)},
 #elif defined(TBS_EDITION_EN)
 	{0xc400, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockC9b)},
 	{0x8400, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockCc6)},
@@ -950,11 +950,10 @@ struct SceneEvent MenuTest_Events[] = {
 	{0x400, 17, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyBlockDa2)},
 	{0x4400, 17, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_RunMessageTest)},
 #endif
-	{PSYNERGY_ON_ACTOR(0x4e), 15, CONDITION_ALWAYS, EVENT_SCRIPT(CommandTable_NoOpCallback)},
-	{PSYNERGY_ON_ACTOR(0x8e), 15, CONDITION_ALWAYS, EVENT_SCRIPT(CommandTable_NoOpCallback)},
-	{PSYNERGY_ON_ACTOR(ABILITY_CATCH), 15, CONDITION_ALWAYS,
-		EVENT_SCRIPT(CommandTable_NoOpCallback)},
-	{0x10008e15, 15, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetRecordFlag53)},
+	{PSYNERGY_ON_ACTOR(0x4e), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_PSYNERGY)},
+	{PSYNERGY_ON_ACTOR(0x8e), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_PSYNERGY)},
+	{PSYNERGY_ON_ACTOR(ABILITY_CATCH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_PSYNERGY)},
+	{0x10008e15, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_SCRIPT)},
 	{SCENE_EVENTS_END},
 };
 

@@ -76,12 +76,12 @@ LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetX, struct CaveDustOptions, target_scal
 LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetY, struct CaveDustOptions, target_scale_y,
 	(u32) & ((struct EffectOptions *)0)->target_scale_y);
 
-static void SceneState_ApplyValues8And2And1(void)
+static void EV08_TALK(void)
 {
 	BattleFx_RunPageEffectForSlot(8, 2, 1);
 }
 
-static void SceneState_ApplyValues11And62(void)
+static void EV11_TALK(void)
 {
 	BattleFx_SetPhaseRequest(0xB, 0x3E);
 }
@@ -201,7 +201,7 @@ static void SceneActor_PlacePairAtOffset(s32 id, s32 dx, s32 dz)
 	Engine_EventEnd();
 }
 
-static void ActorPresentation_SetupActorEightForFlag301(void)
+static void EV11_TOUCH_2(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -213,7 +213,7 @@ static void ActorPresentation_SetupActorEightForFlag301(void)
 	DialogueLayout_ConfigureGroupOne();
 }
 
-static void SceneState_RunSlot8OffsetStep(void)
+static void EV12_TOUCH_2(void)
 {
 	s32 offset = 112;
 
@@ -227,7 +227,7 @@ static void SceneState_RunSlot8OffsetStep(void)
 	DialogueLayout_ConfigureGroupOne();
 }
 
-static void FieldScene_RunActor9Transition302(void)
+static void EV13_TOUCH_2(void)
 {
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(9, 0, 0x40);
@@ -237,7 +237,7 @@ static void FieldScene_RunActor9Transition302(void)
 	DialogueLayout_ConfigureGroupOne();
 }
 
-static void ActorPresentation_SetupActorNineForFlag302(void)
+static void EV14_TOUCH_2(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -248,7 +248,7 @@ static void ActorPresentation_SetupActorNineForFlag302(void)
 	DialogueLayout_ConfigureGroupOne();
 }
 
-static void ActorPresentation_SetupActorTenForFlag303(void)
+static void EV15_TOUCH_2(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -259,7 +259,7 @@ static void ActorPresentation_SetupActorTenForFlag303(void)
 	DialogueLayout_ConfigureGroupOne();
 }
 
-static void FieldScene_RunActor10Transition303(void)
+static void EV16_TOUCH_2(void)
 {
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(0xA, 0, -64);
@@ -279,7 +279,7 @@ static void FieldScene_RunActor8Transition304(void)
 	DialogueLayout_ConfigureGroupTwo();
 }
 
-static void FieldScene_RunActor8Transition304And305(void)
+static void EV12_TOUCH_3(void)
 {
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(8, -144, 0);
@@ -300,7 +300,7 @@ static void FieldScene_RunActor8Transition305(void)
 	DialogueLayout_ConfigureGroupTwo();
 }
 
-static void FieldScene_RunActor8FlaggedSequence(void)
+static void EV17_TOUCH_3(void)
 {
 	Engine_AudioPlayCue(0xF1);
 
@@ -321,7 +321,7 @@ static void FieldScene_RunActor8FlaggedSequence(void)
 	DialogueLayout_ConfigureGroupTwo();
 }
 
-static void ActorPresentation_SetupActorNineForFlag306(void)
+static void EV13_TOUCH_3(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -332,7 +332,7 @@ static void ActorPresentation_SetupActorNineForFlag306(void)
 	DialogueLayout_ConfigureGroupTwo();
 }
 
-static void FieldScene_RunActor9Flag306Sequence(void)
+static void EV14_TOUCH_3(void)
 {
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(9, 0, -64);
@@ -342,7 +342,7 @@ static void FieldScene_RunActor9Flag306Sequence(void)
 	DialogueLayout_ConfigureGroupTwo();
 }
 
-static void ActorPresentation_SetupActorTenForFlag307(void)
+static void EV15_TOUCH_3(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -354,7 +354,7 @@ static void ActorPresentation_SetupActorTenForFlag307(void)
 	DialogueLayout_ConfigureGroupTwo();
 }
 
-static void FieldScene_RunActorTenDepthSequence(void)
+static void EV16_TOUCH_3(void)
 {
 
 	s32 depth = -96;
@@ -369,7 +369,7 @@ static void FieldScene_RunActorTenDepthSequence(void)
 	DialogueLayout_ConfigureGroupTwo();
 }
 
-static void FieldScene_PlaceActorEightByFlags(void)
+static void EV10_TOUCH_4(void)
 {
 	Engine_AudioPlayCue(0xF1);
 
@@ -425,7 +425,7 @@ static void ActorPresentation_SetupActorEightForFlags308And309Guarded(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-static void ActorPresentation_SetupActorEightForFlags308And309(void)
+static void EV12_TOUCH_4(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -437,7 +437,7 @@ static void ActorPresentation_SetupActorEightForFlags308And309(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-static void ActorPresentation_SetupActorNineForFlag30a(void)
+static void EV14_TOUCH_4(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -448,7 +448,7 @@ static void ActorPresentation_SetupActorNineForFlag30a(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-static void FieldScene_RunActor9Transition30A(void)
+static void EV13_TOUCH_4(void)
 {
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(9, 0x20, 0);
@@ -458,7 +458,7 @@ static void FieldScene_RunActor9Transition30A(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-static void FieldScene_PlaceActorTenByFlags(void)
+static void EV15_TOUCH_4(void)
 {
 	Engine_AudioPlayCue(241);
 	if (Engine_GameFlagIsSet(0x308) != 0)
@@ -482,7 +482,7 @@ static void FieldScene_PlaceActorTenByFlags(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-static void FieldScene_RunFlag308DialogueBranch(void)
+static void EV16_TOUCH_4(void)
 {
 	Engine_AudioPlayCue(0xf1);
 
@@ -620,7 +620,7 @@ static void FieldScene_RunActor10Flags30bTo30eSequenceC(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-static void FieldScene_RunActorElevenFlaggedSteps(void)
+static void EV20_TOUCH(void)
 {
 	Engine_AudioPlayCue(0xf1);
 
@@ -661,7 +661,7 @@ static void FieldScene_RunSteps30FTo312(void)
 	Engine_GameFlagClear(0x312);
 }
 
-static void FieldScene_RunActor11Offset128Sequence(void)
+static void EV21_TOUCH(void)
 {
 	Engine_AudioPlayCue(241);
 	SceneActor_PlacePairAtOffset(11, 0, 128);
@@ -727,7 +727,7 @@ static void FieldScene_RunActor11Transition(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-static void ActorPresentation_SetupActorEightForFlag313(void)
+static void EV11_TOUCH_5(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -738,7 +738,7 @@ static void ActorPresentation_SetupActorEightForFlag313(void)
 	FieldScene_RunFlagBranchedLayoutSteps();
 }
 
-static void FieldScene_RunActor8Transition313(void)
+static void EV12_TOUCH_5(void)
 {
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(8, 0, -112);
@@ -748,7 +748,7 @@ static void FieldScene_RunActor8Transition313(void)
 	FieldScene_RunFlagBranchedLayoutSteps();
 }
 
-static void FieldScene_RunActor9Flag314Sequence(void)
+static void EV13_TOUCH_5(void)
 {
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(9, -128, 0);
@@ -758,7 +758,7 @@ static void FieldScene_RunActor9Flag314Sequence(void)
 	FieldScene_RunFlagBranchedLayoutSteps();
 }
 
-static void ActorPresentation_SetupActorNineForFlag314(void)
+static void EV14_TOUCH_5(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -769,7 +769,7 @@ static void ActorPresentation_SetupActorNineForFlag314(void)
 	FieldScene_RunFlagBranchedLayoutSteps();
 }
 
-static void ActorPresentation_SetupActorTenForFlag315(void)
+static void EV15_TOUCH_5(void)
 {
 
 	Engine_AudioPlayCue(241);
@@ -780,7 +780,7 @@ static void ActorPresentation_SetupActorTenForFlag315(void)
 	FieldScene_RunFlagBranchedLayoutSteps();
 }
 
-static void FieldScene_RunActor10Flag315Sequence(void)
+static void EV16_TOUCH_5(void)
 {
 	Engine_AudioPlayCue(241);
 	SceneActor_PlacePairAtOffset(10, -160, 0);
@@ -868,7 +868,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gImiruFuchinEventsOther;
 }
 
-static void ImiruFuchin_TurnLeaderAndExit(void)
+static void EV01_TOUCH(void)
 {
 	struct FieldActor *work;
 
@@ -881,7 +881,7 @@ static void ImiruFuchin_TurnLeaderAndExit(void)
 	Engine_EventRequestExit(1);
 }
 
-static void FieldScene_RunSingleStep(void)
+static void EV10_TOUCH_1(void)
 {
 	SceneActor_StepSubjectAlongHeading();
 }
@@ -1276,7 +1276,7 @@ static void FieldScene_RunFlagBranchedLayoutSteps(void)
 	}
 }
 
-static void ImiruFuchin_StartTrackingLeader(void)
+static void EV15_TOUCH_7(void)
 {
 	if (ImiruFuchin_TrackLeader != 0)
 	{
@@ -1286,7 +1286,7 @@ static void ImiruFuchin_StartTrackingLeader(void)
 	}
 }
 
-static void ImiruFuchin_StopTrackingLeader(void)
+static void EV16_TOUCH_7(void)
 {
 	if (ImiruFuchin_TrackLeader != 0)
 	{
@@ -1485,7 +1485,7 @@ static void ImiruFuchin_PlaceDragonsEye(void)
 	}
 }
 
-static void ImiruFuchin_TakeDragonsEye(void)
+static void EV30_SEARCH(void)
 {
 
 	Engine_EventBegin();
@@ -1600,7 +1600,7 @@ static void ImiruFuchin_BlowCaveMouthDust(void)
 		(const struct EffectOptions *)&params);
 }
 
-static void FieldScene_RunFourPassCallbackSequence(void)
+static void EV20_SCRIPT(void)
 {
 	u32 pass;
 
@@ -1646,28 +1646,28 @@ static void FieldScene_RunFourPassCallbackSequence(void)
 	Engine_EventEnd();
 }
 
-static void SceneState_SetValue17e1(void)
+static void EV01_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFuchinDragonFlameShowsPath, 1);
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunLine17e2(void)
+static void EV07_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFuchinSecretKiRevealed, 1);
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunScriptedStep17E3(void)
+static void EV19_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFuchinLightRevealsShadows, 1);
 	Engine_EventEnd();
 }
 
-static void SceneState_SetWorkspace370ByFlag820(void)
+static void EV20_SEARCH(void)
 {
 
 	Engine_EventBegin();
@@ -1687,7 +1687,7 @@ static void SceneState_SetWorkspace370ByFlag820(void)
 	Engine_EventEnd();
 }
 
-static void ImiruFuchin_StartFadeIn(void)
+static void EV00_PSYNERGY(void)
 {
 	struct BattleFxScene		  *scene;
 	struct DisplayTransitionState *transition;
@@ -2039,23 +2039,23 @@ struct SceneEvent gImiruFuchinEventsOther[] = {
 };
 
 struct SceneEvent gImiruFuchinEvents1[] = {
-	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruFuchin_TurnLeaderAndExit) },
-	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSingleStep) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyValues8And2And1) },
+	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
+	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH_1) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
 	{ SCENE_EVENTS_END },
 };
 
 struct SceneEvent gImiruFuchinEvents2[] = {
-	{ TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorEightForFlag301) },
-	{ TOUCH_WALKING_INTO(FACING_WEST), 12, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunSlot8OffsetStep) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH_2) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TOUCH_2) },
 	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorEightStates) },
 	{ EVENT_TOUCH, 12, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorEightStates) },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor9Transition302) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorNineForFlag302) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TOUCH_2) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TOUCH_2) },
 	{ EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetActor9Values1And2) },
 	{ EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetActor9Values1And2) },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorTenForFlag303) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor10Transition303) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TOUCH_2) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TOUCH_2) },
 	{ EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorTenStates) },
 	{ EVENT_TOUCH, 16, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorTenStates) },
 	{ EVENT_EXIT, 21, CONDITION_ALWAYS, 1 },
@@ -2066,7 +2066,7 @@ struct SceneEvent gImiruFuchinEvents2[] = {
 	{ EVENT_EXIT, 26, CONDITION_ALWAYS, 6 },
 	{ 0x21, 27, CONDITION_ALWAYS, 7 },
 	{ EVENT_EXIT, 28, CONDITION_ALWAYS, 8 },
-	{ SEARCH(SEARCH_UNNAMED), 1, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue17e1) },
+	{ SEARCH(SEARCH_UNNAMED), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_SEARCH) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xef1, 0x500001 },
 	{ SCENE_EVENTS_END },
 };
@@ -2075,43 +2075,43 @@ struct SceneEvent gImiruFuchinEvents3[] = {
 	{ TOUCH_WALKING_INTO(FACING_EAST), 11, 0x306, EVENT_SCRIPT(FieldScene_RunActor8Transition304) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor8Transition305) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruFuchin_HopOnTrigger) },
-	{ TOUCH_WALKING_INTO(FACING_EAST), 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor8FlaggedSequence) },
-	{ TOUCH_WALKING_INTO(FACING_WEST), 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor8Transition304And305) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TOUCH_3) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TOUCH_3) },
 	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorEightStates) },
 	{ EVENT_TOUCH, 12, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorEightStates) },
 	{ EVENT_TOUCH, 17, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorEightStates) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 13, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruFuchin_HopOnTrigger) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 14, 0x304, EVENT_SCRIPT(ImiruFuchin_HopOnTrigger) },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 13, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorNineForFlag306) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor9Flag306Sequence) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TOUCH_3) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TOUCH_3) },
 	{ EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetActor9Values1And2) },
 	{ EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetActor9Values1And2) },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorTenForFlag307) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorTenDepthSequence) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TOUCH_3) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TOUCH_3) },
 	{ EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorTenStates) },
 	{ EVENT_TOUCH, 16, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorTenStates) },
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyValues11And62) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
 	{ SCENE_EVENTS_END },
 };
 
 struct SceneEvent gImiruFuchinEvents4[] = {
-	{ TOUCH_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_PlaceActorEightByFlags) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH_4) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor8Transition308And309) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorEightForFlags308And309Guarded) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_ApplyOffset0Neg32) },
-	{ TOUCH_WALKING_INTO(FACING_EAST), 12, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorEightForFlags308And309) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TOUCH_4) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 12, IF_FLAG_SET(0x30b), EVENT_SCRIPT(FieldScene_ApplyOffset0Neg32) },
 	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorEightStates) },
 	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorEightStates) },
 	{ EVENT_TOUCH, 12, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorEightStates) },
-	{ TOUCH_WALKING_INTO(FACING_WEST), 14, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorNineForFlag30a) },
-	{ TOUCH_WALKING_INTO(FACING_EAST), 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor9Transition30A) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TOUCH_4) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TOUCH_4) },
 	{ EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetActor9Values1And2) },
 	{ EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetActor9Values1And2) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_PlaceActorTenByFlags) },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFlag308DialogueBranch) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TOUCH_4) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TOUCH_4) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor10Transition30BTo30E) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 17, 0x308, EVENT_SCRIPT(FieldScene_RunFlag311DialogueBranch) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 18, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorTenForFlags30bAnd30d) },
@@ -2123,8 +2123,8 @@ struct SceneEvent gImiruFuchinEvents4[] = {
 	{ EVENT_TOUCH, 17, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorTenStates) },
 	{ EVENT_TOUCH, 18, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorTenStates) },
 	{ EVENT_TOUCH, 19, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorTenStates) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorElevenFlaggedSteps) },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 21, 0x308, EVENT_SCRIPT(FieldScene_RunActor11Offset128Sequence) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 21, 0x308, EVENT_SCRIPT(EV21_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 22, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor11Flags30fTo312Sequence) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 22, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorElevenAt0_112) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 23, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyOffsetMinus32) },
@@ -2142,21 +2142,21 @@ struct SceneEvent gImiruFuchinEvents4[] = {
 	{ 0x31, 3, CONDITION_ALWAYS, 3 },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-	{ SEARCH(SEARCH_UNNAMED), 30, 0xf13, EVENT_SCRIPT(ImiruFuchin_TakeDragonsEye) },
+	{ SEARCH(SEARCH_UNNAMED), 30, 0xf13, EVENT_SCRIPT(EV30_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 
 struct SceneEvent gImiruFuchinEvents5[] = {
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorEightForFlag313) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor8Transition313) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH_5) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TOUCH_5) },
 	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorEightStates) },
 	{ EVENT_TOUCH, 12, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorEightStates) },
-	{ TOUCH_WALKING_INTO(FACING_WEST), 13, 0x313, EVENT_SCRIPT(FieldScene_RunActor9Flag314Sequence) },
-	{ TOUCH_WALKING_INTO(FACING_EAST), 14, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorNineForFlag314) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 13, 0x313, EVENT_SCRIPT(EV13_TOUCH_5) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TOUCH_5) },
 	{ EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetActor9Values1And2) },
 	{ EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetActor9Values1And2) },
-	{ TOUCH_WALKING_INTO(FACING_EAST), 15, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SetupActorTenForFlag315) },
-	{ TOUCH_WALKING_INTO(FACING_WEST), 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor10Flag315Sequence) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TOUCH_5) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TOUCH_5) },
 	{ EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorTenStates) },
 	{ EVENT_TOUCH, 16, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorTenStates) },
 	{ 0x21, 1, CONDITION_ALWAYS, 1 },
@@ -2172,7 +2172,7 @@ struct SceneEvent gImiruFuchinEvents6[] = {
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-	{ SEARCH(SEARCH_UNNAMED), 7, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunLine17e2) },
+	{ SEARCH(SEARCH_UNNAMED), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_SEARCH) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf14, FIND_ITEM(0xc8) },
 	{ SCENE_EVENTS_END },
 };
@@ -2190,12 +2190,12 @@ struct SceneEvent gImiruFuchinEvents7[] = {
 	{ 0x31, 10, CONDITION_ALWAYS, 10 },
 	{ EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
 	{ 0x31, 12, CONDITION_ALWAYS, 12 },
-	{ EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruFuchin_StartTrackingLeader) },
-	{ EVENT_TOUCH, 16, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruFuchin_StopTrackingLeader) },
-	{ SEARCH(SEARCH_UNNAMED), 19, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScriptedStep17E3) },
-	{ 0xe604, 20, 0x820, EVENT_SCRIPT(FieldScene_RunFourPassCallbackSequence) },
-	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetWorkspace370ByFlag820) },
-	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, 0x820, EVENT_SCRIPT(ImiruFuchin_StartFadeIn) },
+	{ EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TOUCH_7) },
+	{ EVENT_TOUCH, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TOUCH_7) },
+	{ SEARCH(SEARCH_UNNAMED), 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_SEARCH) },
+	{ 0xe604, 20, 0x820, EVENT_SCRIPT(EV20_SCRIPT) },
+	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SEARCH) },
+	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, 0x820, EVENT_SCRIPT(EV00_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };
 

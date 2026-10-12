@@ -38,7 +38,7 @@ s32 BiribinoHeya_PreparePlacements(void)
 	return (s32)gBiribinoHeyaPlacements;
 }
 
-static void FieldScene_RunActor16MessageBranch(void)
+static void EV16_TALK(void)
 {
 
 	u32 dir;
@@ -66,7 +66,7 @@ static void FieldScene_RunActor16MessageBranch(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor18MessageBranch(void)
+static void EV18_TALK(void)
 {
 
 	u32 dir;
@@ -99,7 +99,7 @@ u8 *SceneData_GetTertiaryTable(void)
 	return (u8 *)BiribinoHeya_TertiaryTable;
 }
 
-static void FieldScene_RunActor17MessageBranch(void)
+static void EV17_TALK(void)
 {
 	u32 dir;
 
@@ -138,7 +138,7 @@ static void FieldScene_ConfigureActor21Scene(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor24Sequence(void)
+static void EV24_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoGrrr);
@@ -173,7 +173,7 @@ static void FieldScene_RunActor27Sequence(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor8Message(void)
+static void EV08_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoDoKnowIfHolyTree);
@@ -181,7 +181,7 @@ static void FieldScene_RunActor8Message(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor13Message(void)
+static void EV13_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoDoKnowSilk);
@@ -189,7 +189,7 @@ static void FieldScene_RunActor13Message(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor19MessageBranch(void)
+static void EV19_TALK(void)
 {
 
 	u32 dir;
@@ -240,7 +240,7 @@ static void FieldScene_RunActor21SequenceOnFlag300(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_ConfigureActor22Scene(void)
+static void EV22_TALK(void)
 {
 
 	Engine_EventBegin();
@@ -252,7 +252,7 @@ static void FieldScene_ConfigureActor22Scene(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_ConfigureActor23Scene(void)
+static void EV23_TALK(void)
 {
 
 	Engine_EventBegin();
@@ -273,7 +273,7 @@ static void FieldScene_RunActor27Message(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor10MessageBranch(void)
+static void EV10_PSYNERGY(void)
 {
 
 	Engine_EventBegin();
@@ -401,37 +401,37 @@ struct SceneEvent BiribinoHeya_TertiaryTable[] = {
 	{ EVENT_TALK, 13, 0x845, MSGNO(MsgBilibinIKnowThatGuyWhoTurned) },
 	{ EVENT_TALK, 14, 0x845, MSGNO(MsgBilibinLongAgoTheLighthouseNearImil) },
 	{ EVENT_TALK, 15, 0x845, MSGNO(MsgBilibinButEvenTheLegendaryWaterOf) },
-	{ EVENT_TALK, 16, 0x845, EVENT_SCRIPT(FieldScene_RunActor16MessageBranch) },
-	{ EVENT_TALK, 17, 0x845, EVENT_SCRIPT(FieldScene_RunActor17MessageBranch) },
-	{ EVENT_TALK, 18, 0x845, EVENT_SCRIPT(FieldScene_RunActor18MessageBranch) },
-	{ EVENT_TALK, 19, 0x845, EVENT_SCRIPT(FieldScene_RunActor19MessageBranch) },
+	{ EVENT_TALK, 16, 0x845, EVENT_SCRIPT(EV16_TALK) },
+	{ EVENT_TALK, 17, 0x845, EVENT_SCRIPT(EV17_TALK) },
+	{ EVENT_TALK, 18, 0x845, EVENT_SCRIPT(EV18_TALK) },
+	{ EVENT_TALK, 19, 0x845, EVENT_SCRIPT(EV19_TALK) },
 	{ EVENT_TALK, 20, 0x845, MSGNO(MsgBilibinYouCantReachKolimaNoMatter) },
 	{ EVENT_TALK, 21, 0x845, EVENT_SCRIPT(FieldScene_ConfigureActor21Scene) },
 	{ EVENT_TALK, 22, 0x845, MSGNO(MsgBilibinHeyMisterHeadChefAreYou) },
 	{ EVENT_TALK, 23, 0x845, MSGNO(MsgBilibinStartCookingAlready) },
-	{ EVENT_TALK, 24, 0x845, EVENT_SCRIPT(FieldScene_RunActor24Sequence) },
+	{ EVENT_TALK, 24, 0x845, EVENT_SCRIPT(EV24_TALK) },
 	{ EVENT_TALK, 25, 0x845, MSGNO(MsgBilibinWeCameHereBecauseLordMccoy) },
 	{ EVENT_TALK, 26, 0x845, MSGNO(MsgBilibinIThinkThatBigTreeDeep) },
 	{ EVENT_TALK, 27, 0x845, EVENT_SCRIPT(FieldScene_RunActor27Sequence) },
 	{ EVENT_TALK, 28, 0x845, MSGNO(MsgBilibinICantWaitToSeeTodays) },
 	{ EVENT_TALK, 29, 0x845, MSGNO(MsgBilibinIWentToLordMccoyLooking) },
 	{ EVENT_TALK, 30, 0x845, MSGNO(MsgBilibinIveHeardSongsThatTellOf) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor8Message) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgBilibinThankGoodnessTheyStoppedConstructionOf) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBilibinIAlwaysMissAltinInThe) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBilibinMyFatherSaysThatItsWarm) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBilibinTheRoadToKolimaIsOpen) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor13Message) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgBilibinIThoughtISawLightsIn) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgBilibinHisEyesAreRedBecauseHe) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor16MessageBranch) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor17MessageBranch) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor18MessageBranch) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor19MessageBranch) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
 	{ EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgBilibinThereWillBeFewerGuestsNow) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor21SequenceOnFlag300) },
-	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_ConfigureActor22Scene) },
-	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_ConfigureActor23Scene) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK) },
+	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TALK) },
 	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgBilibinImALittleSurprisedThatThe) },
 	{ EVENT_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgBilibinTheresNoBusinessHereSoIm) },
 	{ EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgBilibinTheyServedSoMuchFoodToday) },
@@ -441,7 +441,7 @@ struct SceneEvent BiribinoHeya_TertiaryTable[] = {
 	{ EVENT_TALK, 30, CONDITION_ALWAYS, MSGNO(MsgBilibinIWonderWhatThatEerieHowling) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x845, MSGNO(MsgBilibinThisIsAllLordMccoysFault) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x845, MSGNO(MsgBilibinAhLadyMccoyIWouldJust) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x845, EVENT_SCRIPT(FieldScene_RunActor10MessageBranch) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x845, EVENT_SCRIPT(EV10_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x845, MSGNO(MsgBilibinItMustBeDifficultToLive) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x845, MSGNO(MsgBilibinICantImagineThatEveryoneIn) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x845, MSGNO(MsgBilibinHeSeemedSoHappyAndThen) },

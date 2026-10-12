@@ -7,18 +7,18 @@
 #include "text/msg_ids.h"
 
 // 前方宣言
-static void Innkeeper_Talk(void);
-static void Chef_Talk(void);
-static void Chef_ReadMind(void);
-static void InnClerk_Talk(void);
-static void TemplePriest_Talk(void);
+static void EV17_TALK(void);
+static void EV20_TALK(void);
+static void EV20_PSYNERGY(void);
+static void EV18_TALK(void);
+static void EV21_TALK(void);
 static void ItemMerchant_ReadMind(void);
 static void ItemMerchant_Talk(void);
 static void WeaponMerchant_ReadMind(void);
 static void WeaponMerchant_Talk(void);
 static void ArmorMerchant_ReadMind(void);
 static void ArmorMerchant_Talk(void);
-static void TravelingPriest_Talk(void);
+static void EV22_TALK(void);
 
 const struct SceneEntrance gInteriorEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -111,12 +111,12 @@ const struct SceneEvent gInteriorSealedEvents[] = {
 	{ EVENT_TALK, ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(ArmorMerchant_Talk) },
 	{ EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(ItemMerchant_Talk) },
 	{ EVENT_TALK, ACTOR_ITEM_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(ItemMerchant_Talk) },
-	{ EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Innkeeper_Talk) },
+	{ EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK) },
 	{ EVENT_TALK, ACTOR_INN_CLERK, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsInnClerkSealed) },
 	{ EVENT_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsInnWorkerSealed) },
-	{ EVENT_TALK, ACTOR_CHEF, CONDITION_ALWAYS, EVENT_SCRIPT(Chef_Talk) },
-	{ EVENT_TALK, ACTOR_TEMPLE_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(TemplePriest_Talk) },
-	{ EVENT_TALK, ACTOR_TRAVELING_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(TravelingPriest_Talk) },
+	{ EVENT_TALK, ACTOR_CHEF, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
+	{ EVENT_TALK, ACTOR_TEMPLE_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
+	{ EVENT_TALK, ACTOR_TRAVELING_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_HOME_RESIDENT_A, CONDITION_ALWAYS,
       MSGNO(MsgRunpaInteriorsFirstHomeASealedThoughts) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_HOME_RESIDENT_B, CONDITION_ALWAYS,
@@ -148,7 +148,7 @@ const struct SceneEvent gInteriorSealedEvents[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS,
       MSGNO(MsgRunpaInteriorsInnWorkerSealedThoughts) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHEF, CONDITION_ALWAYS,
-      EVENT_SCRIPT(Chef_ReadMind) },
+      EVENT_SCRIPT(EV20_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TEMPLE_PRIEST, CONDITION_ALWAYS,
       MSGNO(MsgRunpaInteriorsTemplePriestSealedThoughts) },
 	{ SEARCH(SEARCH_WOODEN_BOX), TRIGGER_WOODEN_BOX, FLAG_INTERIOR_WOODEN_BOX,
@@ -180,11 +180,11 @@ const struct SceneEvent gInteriorReopenedEvents[] = {
 	{ EVENT_TALK, ACTOR_ITEM_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(ItemMerchant_Talk) },
 	{ EVENT_TALK, ACTOR_WEAPON_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(WeaponMerchant_Talk) },
 	{ EVENT_TALK, ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(ArmorMerchant_Talk) },
-	{ EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Innkeeper_Talk) },
-	{ EVENT_TALK, ACTOR_INN_CLERK, CONDITION_ALWAYS, EVENT_SCRIPT(InnClerk_Talk) },
+	{ EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK) },
+	{ EVENT_TALK, ACTOR_INN_CLERK, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK) },
 	{ EVENT_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsInnWorkerReopened) },
 	{ EVENT_TALK, ACTOR_CHEF, CONDITION_ALWAYS, MSGNO(MsgRunpaInteriorsChefReopened) },
-	{ EVENT_TALK, ACTOR_TEMPLE_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(TemplePriest_Talk) },
+	{ EVENT_TALK, ACTOR_TEMPLE_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_HOME_RESIDENT_A, CONDITION_ALWAYS,
       MSGNO(MsgRunpaInteriorsFirstHomeAReopenedThoughts) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_HOME_RESIDENT_B, CONDITION_ALWAYS,
@@ -229,7 +229,7 @@ const struct SceneEvent gInteriorReopenedEvents[] = {
 
 const struct SceneEvent gSuharaGateHouseEvents[] = {
 	ROOM_DOOR(ROOM_SUHARA_GATE_HOUSE),
-	{ EVENT_TALK, ACTOR_TRAVELING_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(TravelingPriest_Talk) },
+	{ EVENT_TALK, ACTOR_TRAVELING_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELING_PRIEST, CONDITION_ALWAYS,
       MSGNO(MsgRunpaInteriorsTravelingPriestThoughts) },
 	{ SCENE_EVENTS_END },
@@ -268,7 +268,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gInteriorSealedEvents;
 }
 
-static void Innkeeper_Talk(void)
+static void EV17_TALK(void)
 {
 	struct FieldActor *leader;
 
@@ -295,7 +295,7 @@ static void Innkeeper_Talk(void)
 	Engine_EventEnd();
 }
 
-static void Chef_Talk(void)
+static void EV20_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgRunpaChefOffersStory);
@@ -304,7 +304,7 @@ static void Chef_Talk(void)
 	Engine_EventEnd();
 }
 
-static void Chef_ReadMind(void)
+static void EV20_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgRunpaChefThinksOfPrisoner);
@@ -313,7 +313,7 @@ static void Chef_ReadMind(void)
 	Engine_EventEnd();
 }
 
-static void InnClerk_Talk(void)
+static void EV18_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgRunpaInnClerkAsksAboutGuest);
@@ -321,7 +321,7 @@ static void InnClerk_Talk(void)
 	Engine_EventEnd();
 }
 
-static void TemplePriest_Talk(void)
+static void EV21_TALK(void)
 {
 	struct FieldActor *leader;
 
@@ -491,7 +491,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-static void TravelingPriest_Talk(void)
+static void EV22_TALK(void)
 {
 	struct FieldActor *leader;
 

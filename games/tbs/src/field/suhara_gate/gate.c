@@ -19,7 +19,7 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-static void Scene_SetActor13Value1A(void)
+static void EV13_TALK(void)
 {
 	BattleFx_SetPhaseRequest(0xD, 0x1A);
 }
@@ -150,7 +150,7 @@ s32 SuharaGate_EnterScene(void)
 	return 0;
 }
 
-static void Scene_RunScene3c3SequenceC(void)
+static void EV03_TOUCH(void)
 {
 	s32 arg;
 	s32 v5;
@@ -306,7 +306,7 @@ static void Scene_RunScene3c3SequenceA(void)
 	Engine_EventEnd();
 }
 
-static void Scene_RunActorNinePromptDialogue(void)
+static void EV09_TALK(void)
 {
 	u8 *work;
 
@@ -517,12 +517,12 @@ struct SceneEvent gSuharaGateEventsOther[] = {
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Dialogue_ShowMessages8fbAnd8fc) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunScene3c3SequenceC) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
 	{ EVENT_TOUCH, 10, 0x96f, EVENT_SCRIPT(Scene_RunPrimarySequence) },
 	{ EVENT_TOUCH, 10, 0x89f, EVENT_SCRIPT(Scene_RunScene3c3SequenceA) },
 	{ EVENT_TALK, 8, 0x89f, MSGNO(MsgSuharaTravelPapersRequired) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSuharaSendHelpFromTower) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunActorNinePromptDialogue) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x89f, MSGNO(MsgSuharaObeyBabiOrders) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSuharaAshamedBeforeYodemu) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x89f, MSGNO(MsgSuharaSeeKorosseoNextYear) },
@@ -538,7 +538,7 @@ struct SceneEvent gSuharaGateEvents2[] = {
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_SetActor13Value1A) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
 	{ 0xc413, 100, 0xfb4, FIND_ITEM(0xc3) },
 	{ 0x413, 100, 0xfb4, FIND_ITEM(0xc3) },
 	{ 0x8413, 100, 0xfb4, FIND_ITEM(0xc3) },

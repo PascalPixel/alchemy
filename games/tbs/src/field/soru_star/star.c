@@ -182,7 +182,7 @@ s32 *SceneData_GetEffectTable(void)
 	return (s32 *)Placement_Effects;
 }
 
-static void Scene_BagVenusStar(void)
+static void EV02_SEARCH(void)
 {
 	u32 i;
 	s32 obj;
@@ -281,7 +281,7 @@ static void Scene_BagVenusStar(void)
 	Engine_EventEnd();
 }
 
-static void Scene_BagMercuryStar(void)
+static void EV03_SEARCH(void)
 {
 	u32 i;
 	s32 obj;
@@ -381,7 +381,7 @@ static void Scene_BagMercuryStar(void)
 	Engine_EventEnd();
 }
 
-static void Scene_HandOverStars(void)
+static void EV04_SEARCH(void)
 {
 	Engine_EventBegin();
 	Scene_BagJupiterStar();
@@ -1258,7 +1258,7 @@ struct EffectParams
 	u8	pad1c[12];
 };
 
-static void Scene_BagMarsStar(void)
+static void EV05_SEARCH(void)
 {
 	u8				   pass;
 	s32				   star;
@@ -1333,7 +1333,7 @@ static void Scene_BagMarsStar(void)
 	Engine_EventRequestExit(2);
 }
 
-static void Sukureta_Talk(void)
+static void EV09_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(FLAG_STARS_GIVEN_TO_ALEX))
@@ -1354,7 +1354,7 @@ static void Sukureta_Talk(void)
 	Engine_EventEnd();
 }
 
-static void Jasmine_Talk(void)
+static void EV05_SCRIPT(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(FLAG_STARS_GIVEN_TO_ALEX))
@@ -1375,7 +1375,7 @@ static void Jasmine_Talk(void)
 	Engine_EventEnd();
 }
 
-static void Saturos_Talk(void)
+static void EV10_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgSoruSaturosBringTheFinalStar);
@@ -1383,7 +1383,7 @@ static void Saturos_Talk(void)
 	Engine_EventEnd();
 }
 
-static void Menardi_Talk(void)
+static void EV11_SCRIPT(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgSoruMenardiBringTheFinalGem);
@@ -1391,7 +1391,7 @@ static void Menardi_Talk(void)
 	Engine_EventEnd();
 }
 
-static void Garcia_Talk(void)
+static void EV13_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgSoruGarciaSilence);
@@ -1399,7 +1399,7 @@ static void Garcia_Talk(void)
 	Engine_EventEnd();
 }
 
-static void Alex_Talk(void)
+static void EV14_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgSoruAlexOnlyOneLeft);
@@ -1407,7 +1407,7 @@ static void Alex_Talk(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunLine1072WithPair9And10(void)
+static void EV01_TOUCH(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgSoruNoStarsOutThere);
@@ -2413,24 +2413,24 @@ struct ScenePlacement Placement_Actors[] = {
 };
 
 struct SceneEvent Placement_Effects[] = {
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Sukureta_Talk) },
-	{ EVENT_TALK, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Jasmine_Talk) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Saturos_Talk) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Menardi_Talk) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Garcia_Talk) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Alex_Talk) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
+	{ EVENT_TALK, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_SCRIPT) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_SCRIPT) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSoruSukuretaIAmResponsible) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Jasmine_Talk) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_SCRIPT) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgSoruSaturosBringTheFinalStar) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Menardi_Talk) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_SCRIPT) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgSoruAlexOnlyOneLeft) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunLine1072WithPair9And10) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(SoruStar_CheckLeaderAhead) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(SoruStar_CheckLeaderAhead) },
-	{ SEARCH(SEARCH_UNNAMED), 2, 0x83c, EVENT_SCRIPT(Scene_BagVenusStar) },
-	{ SEARCH(SEARCH_UNNAMED), 3, 0x83d, EVENT_SCRIPT(Scene_BagMercuryStar) },
-	{ SEARCH(SEARCH_UNNAMED), 4, 0x83e, EVENT_SCRIPT(Scene_HandOverStars) },
-	{ SEARCH(SEARCH_UNNAMED), 5, 0x83f, EVENT_SCRIPT(Scene_BagMarsStar) },
+	{ SEARCH(SEARCH_UNNAMED), 2, 0x83c, EVENT_SCRIPT(EV02_SEARCH) },
+	{ SEARCH(SEARCH_UNNAMED), 3, 0x83d, EVENT_SCRIPT(EV03_SEARCH) },
+	{ SEARCH(SEARCH_UNNAMED), 4, 0x83e, EVENT_SCRIPT(EV04_SEARCH) },
+	{ SEARCH(SEARCH_UNNAMED), 5, 0x83f, EVENT_SCRIPT(EV05_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 

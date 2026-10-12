@@ -76,7 +76,7 @@ u8 *SceneData_GetPreparedRecords(void)
 	return buf;
 }
 
-static void FieldScene_RunActor16MessageBranch(void)
+static void EV16_TALK(void)
 {
 
 	u32 dir = Object_GetById(0)->facing;
@@ -96,7 +96,7 @@ static void FieldScene_RunActor16MessageBranch(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor17MessageBranch(void)
+static void EV17_TALK(void)
 {
 
 	u32 dir = Object_GetById(0)->facing;
@@ -116,7 +116,7 @@ static void FieldScene_RunActor17MessageBranch(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor18MessageBranch(void)
+static void EV18_TALK(void)
 {
 
 	u32 dir = Object_GetById(0)->facing;
@@ -136,7 +136,7 @@ static void FieldScene_RunActor18MessageBranch(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor19MessageBranch(void)
+static void EV19_TALK(void)
 {
 
 	u32 dir = Object_GetById(0)->facing;
@@ -310,10 +310,10 @@ struct SceneEvent EntryLayout_FourthTable[] = {
 	{ EVENT_TALK, 13, IF_FLAG_SET(0x845), MSGNO(MsgKorimaHeyaImNeverGoingToUseAn) },
 	{ EVENT_TALK, 14, IF_FLAG_SET(0x845), MSGNO(MsgKorimaHeyaDadWillYouPleaseGoBack) },
 	{ EVENT_TALK, 15, IF_FLAG_SET(0x845), MSGNO(MsgKorimaHeyaDadHowAreWeGoingTo) },
-	{ EVENT_TALK, 16, IF_FLAG_SET(0x845), EVENT_SCRIPT(FieldScene_RunActor16MessageBranch) },
-	{ EVENT_TALK, 17, IF_FLAG_SET(0x845), EVENT_SCRIPT(FieldScene_RunActor17MessageBranch) },
-	{ EVENT_TALK, 18, IF_FLAG_SET(0x845), EVENT_SCRIPT(FieldScene_RunActor18MessageBranch) },
-	{ EVENT_TALK, 19, IF_FLAG_SET(0x845), EVENT_SCRIPT(FieldScene_RunActor19MessageBranch) },
+	{ EVENT_TALK, 16, IF_FLAG_SET(0x845), EVENT_SCRIPT(EV16_TALK) },
+	{ EVENT_TALK, 17, IF_FLAG_SET(0x845), EVENT_SCRIPT(EV17_TALK) },
+	{ EVENT_TALK, 18, IF_FLAG_SET(0x845), EVENT_SCRIPT(EV18_TALK) },
+	{ EVENT_TALK, 19, IF_FLAG_SET(0x845), EVENT_SCRIPT(EV19_TALK) },
 	{ EVENT_TALK, 20, IF_FLAG_SET(0x845), MSGNO(MsgKorimaHeyaWithNoMoreWorkHereKolima) },
 	{ EVENT_TALK, 21, IF_FLAG_SET(0x845), MSGNO(MsgKorimaHeyaIveBeenALumberjackForYears) },
 	{ EVENT_TALK, 22, IF_FLAG_SET(0x845), MSGNO(MsgKorimaHeyaImOnlyAMerchantButI) },

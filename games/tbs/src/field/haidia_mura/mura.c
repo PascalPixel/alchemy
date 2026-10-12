@@ -145,7 +145,7 @@ s32 MapStagedScene_SelectTertiaryData(void)
 	return (s32)gHaidiaMuraPlacements;
 }
 
-static void SceneDialogue_RunActor181Scene(void)
+static void EV26_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetPosition(26, 0, 0);
@@ -155,7 +155,7 @@ static void SceneDialogue_RunActor181Scene(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor181Scene(void)
+static void EV20_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetPosition(20, 0, 0);
@@ -174,7 +174,7 @@ s32 MapStagedScene_SelectQuaternaryData(void)
 	return (s32)gHaidiaMuraEvents;
 }
 
-static void SceneDialogue_RunActorTenFlaggedDialogue(void)
+static void EV10_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
@@ -191,7 +191,7 @@ static void SceneDialogue_RunActorTenFlaggedDialogue(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActorFourteenTalk(void)
+static void EV14_TALK(void)
 {
 	s32 flag = 0x806;
 	Engine_EventBegin();
@@ -216,7 +216,7 @@ static void SceneDialogue_RunActorFourteenTalk(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunFlag807BranchSequence(void)
+static void EV18_TALK(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x807) == 0)
@@ -243,7 +243,7 @@ static void FieldScene_RunFlag807BranchSequence(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor21FlaggedLine(void)
+static void EV21_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x202) != 0)
@@ -268,7 +268,7 @@ static void SceneDialogue_RunActor10LineAndFlag81f(void)
 	Engine_EventEnd();
 }
 
-static void HaidiaMura_ReactToTremor(void)
+static void EV17_TALK(void)
 {
 	Engine_EventBegin();
 	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
@@ -293,7 +293,7 @@ static void SceneDialogue_RunActorNineteenDialogue(void)
 	Engine_EventEnd();
 }
 
-static void SceneState_Send210AndApplyRectAt40x84(void)
+static void EV15_TOUCH(void)
 {
 	s32 m, n;
 	Engine_GameFlagSet(0x210);
@@ -302,7 +302,7 @@ static void SceneState_Send210AndApplyRectAt40x84(void)
 	Engine_MapCopyCellAttributes(40, 84, 7, 4, m, n);
 }
 
-static void SceneState_Send210AndApplyRect(void)
+static void EV14_TOUCH(void)
 {
 	s32 m, n;
 	Engine_GameFlagClear(0x210);
@@ -311,7 +311,7 @@ static void SceneState_Send210AndApplyRect(void)
 	Engine_MapCopyCellAttributes(40, 89, 7, 4, m, n);
 }
 
-static void HaidiaMura_OpenExitEleven(void)
+static void EV01_TOUCH(void)
 {
 	Event_PlayCue(188);
 	Map_AnimateCells((s32)gHaidiaMuraCellAnimC, 45, 11);
@@ -319,7 +319,7 @@ static void HaidiaMura_OpenExitEleven(void)
 	Engine_EventRequestExit(11);
 }
 
-static void SceneState_ApplyFlag801Branch(void)
+static void EV02_TOUCH(void)
 {
 	if (Engine_GameFlagIsSet(0x801) == 0)
 	{
@@ -332,25 +332,25 @@ static void SceneState_ApplyFlag801Branch(void)
 	}
 }
 
-static void SceneState_SetValue123Mode3(void)
+static void EV03_TOUCH(void)
 {
 	Engine_AudioPlayCue(123);
 	Engine_EventRequestExit(3);
 }
 
-static void SceneState_SetValue123Mode4(void)
+static void EV04_TOUCH(void)
 {
 	Engine_AudioPlayCue(123);
 	Engine_EventRequestExit(4);
 }
 
-static void SceneState_ApplyValues123And2(void)
+static void EV05_TOUCH(void)
 {
 	Engine_AudioPlayCue(123);
 	Engine_EventRequestExit(2);
 }
 
-static void HaidiaMura_OpenExitFive(void)
+static void EV06_TOUCH(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells((u32)gHaidiaMuraCellAnimA, 54, 32);
@@ -358,7 +358,7 @@ static void HaidiaMura_OpenExitFive(void)
 	Engine_EventRequestExit(5);
 }
 
-static void HaidiaMura_OpenExitSix(void)
+static void EV07_TOUCH(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells((u32)gHaidiaMuraCellAnimB, 45, 39);
@@ -366,7 +366,7 @@ static void HaidiaMura_OpenExitSix(void)
 	Engine_EventRequestExit(6);
 }
 
-static void SceneDialogue_RunFlag815GatedStep(void)
+static void EV08_TOUCH(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0 && Engine_GameFlagIsSet(0x87a) == 0)
 	{
@@ -397,7 +397,7 @@ static void SceneDialogue_RunFlag815GatedStep(void)
 	}
 }
 
-static void FieldScene_RunPrimarySequence(void)
+static void EV09_TOUCH(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)gHaidiaMuraCellAnimB, 49, 69);
@@ -405,7 +405,7 @@ static void FieldScene_RunPrimarySequence(void)
 	Engine_EventRequestExit(8);
 }
 
-static void FieldScene_RunScene373SequenceA(void)
+static void EV10_TOUCH(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)gHaidiaMuraCellAnimD, 52, 76);
@@ -413,7 +413,7 @@ static void FieldScene_RunScene373SequenceA(void)
 	Engine_EventRequestExit(9);
 }
 
-static void FieldScene_RunPrimarySequenceSecond(void)
+static void EV11_TOUCH(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)gHaidiaMuraCellAnimA, 35, 74);
@@ -467,7 +467,7 @@ static void FieldScene_RunScene373SequenceC(void)
 	Engine_EventEnd();
 }
 
-static void HaidiaMura_RunCameraRiseScene(void)
+static void EV20_TOUCH(void)
 {
 	s32 **cam;
 	s32	 *saved;
@@ -517,7 +517,7 @@ static void HaidiaMura_RunCameraRiseScene(void)
 	}
 }
 
-static void FieldScene_RunPuppyBarks(void)
+static void EV21_TOUCH(void)
 {
 	s32 msg;
 
@@ -536,7 +536,7 @@ static void FieldScene_RunPuppyBarks(void)
 	}
 }
 
-static void SceneState_RunFlag204Step(void)
+static void EV100_TOUCH(void)
 {
 	s32 m, n;
 	Engine_EventBegin();
@@ -548,7 +548,7 @@ static void SceneState_RunFlag204Step(void)
 	Engine_EventEnd();
 }
 
-static void SceneState_SetFlag204AndConfigureRegion49_46(void)
+static void EV101_TOUCH(void)
 {
 	s32 p5, p6;
 	Engine_EventBegin();
@@ -560,7 +560,7 @@ static void SceneState_SetFlag204AndConfigureRegion49_46(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunScene373SequenceE(void)
+static void EV50_TOUCH(void)
 {
 	struct FieldActor *rec7;
 	struct FieldActor *record;
@@ -607,7 +607,7 @@ static void FieldScene_RunScene373SequenceE(void)
 	Engine_EventEnd();
 }
 
-static void SceneState_RunTablePairWhenActor22State1(void)
+static void EV51_TOUCH(void)
 {
 	u8 *p = Object_GetById(22);
 	if (Engine_GameFlagIsSet(0x823) != 0)
@@ -655,7 +655,7 @@ static void HaidiaMura_AskAboutSneakingToAleph(s32 a0, s32 a1)
 	Engine_EventEnd();
 }
 
-static void SceneState_RunTablePairWhenActor22State2(void)
+static void EV52_TOUCH(void)
 {
 	u8 *p = Object_GetById(22);
 	if (Engine_GameFlagIsSet(0x823) != 0)
@@ -670,7 +670,7 @@ static void SceneState_RunTablePairWhenActor22State2(void)
 	}
 }
 
-static void SceneState_RunTablePairByActor22State(void)
+static void EV53_TOUCH(void)
 {
 	u8 *rec = Object_GetById(22);
 	if (Engine_GameFlagIsSet(0x823) != 0)
@@ -1297,7 +1297,7 @@ s32 HaidiaMura_ApplyEntryState(void)
 				}
 				if (Engine_GameFlagIsSet(0x210))
 				{
-					SceneState_Send210AndApplyRectAt40x84();
+					EV15_TOUCH();
 				}
 			}
 		}
@@ -1356,7 +1356,7 @@ s32 HaidiaMura_ApplyEntryState(void)
 				}
 				if (Engine_GameFlagIsSet(0x210))
 				{
-					SceneState_Send210AndApplyRectAt40x84();
+					EV15_TOUCH();
 				}
 			}
 			{
@@ -1382,7 +1382,7 @@ s32 HaidiaMura_ApplyEntryState(void)
 			}
 			if (Engine_GameFlagIsSet(0x210))
 			{
-				SceneState_Send210AndApplyRectAt40x84();
+				EV15_TOUCH();
 			}
 		}
 #endif
@@ -2893,7 +2893,7 @@ static void Effect_PlayStepSound(void)
 		Engine_AudioPlayCue(0x83);
 }
 
-static void FieldScene_RunScriptedStepEE4(void)
+static void EV24_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgHaidiaDoorWontOpen, 1);
@@ -3452,52 +3452,52 @@ struct ScenePlacement gHaidiaMuraPlacements4[] = {
 struct SceneEvent gHaidiaMuraEvents[] = {
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgHaidiaMtAlephLooksBeautifulTodayIts) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgHaidiaValeStaysPristineBecauseOfMt) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorTenFlaggedDialogue) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaThisPlaceLooksJustLikeIt) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaRobinWatchOutDontGetToo) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaValeMustRemainHiddenPsynergysSecrets) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorFourteenTalk) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFlag807BranchSequence) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgHaidiaYoureInTroubleNowGeraldYour) },
-	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor21FlaggedLine) },
+	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
 	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgHaidiaMtAlephIsASacredPeak) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaMura_OpenExitEleven) },
-	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyFlag801Branch) },
-	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue123Mode3) },
-	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue123Mode4) },
-	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyValues123And2) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaMura_OpenExitFive) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaMura_OpenExitSix) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFlag815GatedStep) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPrimarySequence) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene373SequenceA) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPrimarySequenceSecond) },
-	{ EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_Send210AndApplyRectAt40x84) },
-	{ EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_Send210AndApplyRect) },
-	{ EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaMura_RunCameraRiseScene) },
-	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPuppyBarks) },
-	{ EVENT_TOUCH, 50, 0x823, EVENT_SCRIPT(FieldScene_RunScene373SequenceE) },
-	{ EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunTablePairWhenActor22State1) },
-	{ EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunTablePairWhenActor22State2) },
-	{ EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunTablePairByActor22State) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunFlag204Step) },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetFlag204AndConfigureRegion49_46) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 26, 0xfd0, EVENT_SCRIPT(SceneDialogue_RunActor181Scene) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
+	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
+	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
+	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
+	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EV06_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
+	{ EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TOUCH) },
+	{ EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TOUCH) },
+	{ EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TOUCH) },
+	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TOUCH) },
+	{ EVENT_TOUCH, 50, 0x823, EVENT_SCRIPT(EV50_TOUCH) },
+	{ EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(EV51_TOUCH) },
+	{ EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(EV52_TOUCH) },
+	{ EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(EV53_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EV100_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(EV101_TOUCH) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 26, 0xfd0, EVENT_SCRIPT(EV26_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 20, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaMura_OpenVillagerLane) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndRunTwo) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndRunTwo) },
-	{ SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScriptedStepEE4) },
+	{ SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 
 struct SceneEvent gHaidiaMuraEvents2[] = {
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgHaidiaValeIsSavedThanksToThe) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgHaidiaEverSinceTheTremorsStartedMt) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorTenFlaggedDialogue) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaSighNoLongerWillISee) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaIDontBlameGarsiaIfOnly) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaTheMayorWasTooKindTo) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorFourteenTalk) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgHaidiaYouGuysAreSoLuckyGerald) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgHaidiaPleaseTakeCareOfMyBrother) },
 	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgHaidiaItIsVeryDangerousToGo) },
@@ -3511,32 +3511,32 @@ struct SceneEvent gHaidiaMuraEvents2[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgHaidiaICantBelieveAnyoneWouldClimb) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgHaidiaIJustDontFeelSafeKnowing) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaThePeopleOfValeWillNever) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaMura_OpenExitEleven) },
-	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyFlag801Branch) },
-	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue123Mode3) },
-	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue123Mode4) },
-	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyValues123And2) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaMura_OpenExitFive) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaMura_OpenExitSix) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFlag815GatedStep) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPrimarySequence) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene373SequenceA) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPrimarySequenceSecond) },
-	{ EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_Send210AndApplyRectAt40x84) },
-	{ EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_Send210AndApplyRect) },
-	{ EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaMura_RunCameraRiseScene) },
-	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPuppyBarks) },
-	{ EVENT_TOUCH, 50, 0x823, EVENT_SCRIPT(FieldScene_RunScene373SequenceE) },
-	{ EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunTablePairWhenActor22State1) },
-	{ EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunTablePairWhenActor22State2) },
-	{ EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunTablePairByActor22State) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunFlag204Step) },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetFlag204AndConfigureRegion49_46) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 26, 0xfd0, EVENT_SCRIPT(SceneDialogue_RunActor181Scene) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
+	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
+	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
+	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
+	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EV06_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
+	{ EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TOUCH) },
+	{ EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TOUCH) },
+	{ EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TOUCH) },
+	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TOUCH) },
+	{ EVENT_TOUCH, 50, 0x823, EVENT_SCRIPT(EV50_TOUCH) },
+	{ EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(EV51_TOUCH) },
+	{ EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(EV52_TOUCH) },
+	{ EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(EV53_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EV100_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(EV101_TOUCH) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 26, 0xfd0, EVENT_SCRIPT(EV26_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 20, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaMura_OpenVillagerLane) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndRunTwo) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndRunTwo) },
-	{ SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScriptedStepEE4) },
+	{ SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 
@@ -3549,7 +3549,7 @@ struct SceneEvent gHaidiaMuraEvents3[] = {
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgHaidiaPromiseMeRobinPromiseMeYoull) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaIUsedToPlayHere) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgHaidiaMtAlephsEruptionWasSoPowerful) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaMura_ReactToTremor) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgHaidiaTheySayTheDangerIsGone) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorNineteenDialogue) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, 0x303, EVENT_SCRIPT(FieldScene_RunSecondaryActorSequence) },
@@ -3564,26 +3564,26 @@ struct SceneEvent gHaidiaMuraEvents3[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgHaidiaTheSmokeFromMtAlephIsnt) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x413, 0x307, EVENT_SCRIPT(SceneDialogue_RunActorNineteenDialogue) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgHaidiaHavingNoTravelersIsNoFun) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaMura_OpenExitEleven) },
-	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyFlag801Branch) },
-	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue123Mode3) },
-	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue123Mode4) },
-	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyValues123And2) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaMura_OpenExitFive) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaMura_OpenExitSix) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFlag815GatedStep) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPrimarySequence) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene373SequenceA) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPrimarySequenceSecond) },
-	{ EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_Send210AndApplyRectAt40x84) },
-	{ EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_Send210AndApplyRect) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunFlag204Step) },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetFlag204AndConfigureRegion49_46) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 20, 0xfd0, EVENT_SCRIPT(FieldScene_RunActor181Scene) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
+	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
+	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
+	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
+	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EV06_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
+	{ EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TOUCH) },
+	{ EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EV100_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(EV101_TOUCH) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 20, 0xfd0, EVENT_SCRIPT(EV20_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 21, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaMura_OpenVillagerLane) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndRunTwo) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndRunTwo) },
-	{ SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScriptedStepEE4) },
+	{ SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 

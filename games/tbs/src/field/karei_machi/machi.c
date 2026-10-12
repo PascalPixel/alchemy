@@ -103,7 +103,7 @@ static __inline__ void ClearStep(struct FieldActor *a)
 	a->timer = z;
 }
 
-static void SceneState_ApplyValues12And2And3(void)
+static void EV12_TALK(void)
 {
 	BattleFx_RunPageEffectForSlot(0xC, 2, 3);
 }
@@ -230,7 +230,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gKareiMachiPlacementsOther;
 }
 
-static void FieldScene_RunStepWithValue29df(void)
+static void EV90_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
@@ -238,7 +238,7 @@ static void FieldScene_RunStepWithValue29df(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunStepWithValueFd6(void)
+static void EV12_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetPosition(12, 0, 0);
@@ -279,7 +279,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gKareiMachiEventsOther;
 }
 
-static void SceneDialogue_RunActorNineteenDialogue(void)
+static void EV19_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKareiCameKalayBecauseDidntLike);
@@ -287,7 +287,7 @@ static void SceneDialogue_RunActorNineteenDialogue(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunSlotZeroFacingSequence(void)
+static void EV08_TALK(void)
 {
 	struct FieldActor *leader;
 	u32				   v;
@@ -318,7 +318,7 @@ static void FieldScene_RunSlotZeroFacingSequence(void)
 	}
 }
 
-static void SceneDialogue_RunActorTenDialogue(void)
+static void EV10_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKareiLayanaWasVeryHardOn);
@@ -326,7 +326,7 @@ static void SceneDialogue_RunActorTenDialogue(void)
 	Engine_EventEnd();
 }
 
-static void SceneState_BranchOnSlotZeroFacing(void)
+static void EV22_TALK(void)
 {
 	struct FieldActor *o;
 	u32				   v;
@@ -346,7 +346,7 @@ static void SceneState_BranchOnSlotZeroFacing(void)
 	}
 }
 
-static void SceneDialogue_RunActorTwentyThreeByLeaderHeading(void)
+static void EV23_TALK(void)
 {
 	struct FieldActor *o;
 	u32				   v;
@@ -366,7 +366,7 @@ static void SceneDialogue_RunActorTwentyThreeByLeaderHeading(void)
 	}
 }
 
-static void FieldScene_RunActorTwentyFourAngleDialogue(void)
+static void EV24_TALK(void)
 {
 	struct FieldActor *o;
 	u32				   v;
@@ -424,7 +424,7 @@ static void KareiMachi_RunExitDoor(void)
 	Engine_EventEnd();
 }
 
-static void RunSceneArrivalSetup(void)
+static void EV02_TOUCH(void)
 {
 	s32 two = 2;
 
@@ -911,7 +911,7 @@ static void FieldScene_RunStagedGroupSequence(void)
 	Engine_EventEnd();
 }
 
-static void KareiMachi_ReleaseEffectLeader(void)
+static void EV10_TOUCH(void)
 {
 	if (GameFlag_IsSet(0x200) != 0)
 	{
@@ -920,7 +920,7 @@ static void KareiMachi_ReleaseEffectLeader(void)
 	}
 }
 
-static void SceneState_LinkRecordZeroWhenFlag200Clear(void)
+static void EV11_TOUCH(void)
 {
 	u8 *work;
 
@@ -932,7 +932,7 @@ static void SceneState_LinkRecordZeroWhenFlag200Clear(void)
 	}
 }
 
-static void SceneActor_SetLeaderPriorityAutomatic(void)
+static void EV19_TOUCH(void)
 {
 	u8 *p;
 	s32 v;
@@ -943,7 +943,7 @@ static void SceneActor_SetLeaderPriorityAutomatic(void)
 	*p = v;
 }
 
-static void SceneState_ClearLeaderPriorityAutomatic(void)
+static void EV18_TOUCH(void)
 {
 	u8 *p;
 	s32 v;
@@ -954,7 +954,7 @@ static void SceneState_ClearLeaderPriorityAutomatic(void)
 	*p = v;
 }
 
-static void SceneDialogue_RunActor181Line916(void)
+static void EV26_PSYNERGY(void)
 {
 	Scheduler_RemoveCallback((u32)SceneEffect_UpdateLobeOrbitEffect26);
 	Engine_TaskWait(1);
@@ -1980,7 +1980,7 @@ static void FieldScene_RunScene3a8SequenceB(void)
 		v5 = 44;
 		Map_CopyCellAttributes(6, 13, 12, 12, 6, v5);
 		Engine_EventWait(40);
-		SceneState_LinkRecordZeroWhenFlag200Clear();
+		EV11_TOUCH();
 		Map_CopyCellAttributes(0, 1, 1, 1, 7, v5);
 		Engine_EventEnd();
 	}
@@ -2033,7 +2033,7 @@ static void FieldScene_RunScene3a8SequenceB(void)
 		Map_CopyCellsTo(102, 14, 102, 44, v5, 12);
 		Map_CopyCellAttributes(37, 13, 10, 12, 37, 43);
 		Engine_EventWait(40);
-		SceneState_LinkRecordZeroWhenFlag200Clear();
+		EV11_TOUCH();
 		Engine_EventEnd();
 	}
 }
@@ -2163,7 +2163,7 @@ static void SceneEffect_UpdateLobeOrbitEffect26(void)
 	effect->angle += ((u32)(first << 9) >> 16) + ((u32)(Engine_RandomNext() << 9) >> 16) + 0x400;
 }
 
-static void FieldScene_DrawTilesAndRaiseActor11(void)
+static void EV11_PSYNERGY(void)
 {
 	struct FieldActor *effect = Object_GetById(11);
 
@@ -2668,12 +2668,12 @@ struct SceneEvent gKareiMachiEvents1[] = {
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgKareiChildWantsFestival) },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgKareiTraderTownNews) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgKareiHammetBusinessSkill) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorNineteenDialogue) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
 	{ EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgKareiHammetCapturedRumor) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgKareiHammetWentNorth) },
-	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_BranchOnSlotZeroFacing) },
-	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorTwentyThreeByLeaderHeading) },
-	{ EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorTwentyFourAngleDialogue) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK) },
+	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TALK) },
+	{ EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiWarriorHonestEyes) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKareiGuardsJudgeVisitors) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKareiHammetPeaceAndLiberty) },
@@ -2692,16 +2692,16 @@ struct SceneEvent gKareiMachiEvents1[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgKareiWeaponsHaveSoul) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgKareiPalaceWaterSupply) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 25, CONDITION_ALWAYS, 0 },
-	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 26, 0x916, EVENT_SCRIPT(SceneDialogue_RunActor181Line916) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 26, 0x916, EVENT_SCRIPT(EV26_PSYNERGY) },
 	{ SEARCH(SEARCH_JAR), 100, 0xf81, FIND_ITEM(ITEM_SLEEP_BOMB) },
 	{ SEARCH(SEARCH_JAR), 101, 0xf82, FIND_ITEM(ITEM_VIAL) },
-	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStepWithValue29df) },
+	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 
 struct SceneEvent gKareiMachiEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(RunSceneArrivalSetup) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKareiSoldiersHandleAffairs) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKareiSoldiersRescueHammet) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiPrayForHammetSafety) },
@@ -2712,9 +2712,9 @@ struct SceneEvent gKareiMachiEvents2[] = {
 struct SceneEvent gKareiMachiEvents3[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSlotZeroFacingSequence) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiPassageClosedByOrders) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 12, 0xfd6, EVENT_SCRIPT(FieldScene_RunStepWithValueFd6) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 12, 0xfd6, EVENT_SCRIPT(EV12_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };
 
@@ -2739,7 +2739,7 @@ struct SceneEvent gKareiMachiEvents6[] = {
 	{ 0x21, 2, CONDITION_ALWAYS, 2 },
 	{ 0x21, 3, CONDITION_ALWAYS, 3 },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorTenDialogue) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKareiTreasureBeyondDoors) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x302, EVENT_SCRIPT(FieldScene_RunScene3a8SequenceB) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x303, EVENT_SCRIPT(FieldScene_RunScene3a8SequenceB) },
@@ -2748,13 +2748,13 @@ struct SceneEvent gKareiMachiEvents6[] = {
 	{ TOUCH_WALKING_INTO(FACING_WEST), 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunLateSequence) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunLateSequence) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunLateSequence) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x201, EVENT_SCRIPT(FieldScene_DrawTilesAndRaiseActor11) },
-	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(KareiMachi_ReleaseEffectLeader) },
-	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_LinkRecordZeroWhenFlag200Clear) },
-	{ EVENT_TOUCH, 18, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ClearLeaderPriorityAutomatic) },
-	{ EVENT_TOUCH, 19, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_SetLeaderPriorityAutomatic) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x201, EVENT_SCRIPT(EV11_PSYNERGY) },
+	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
+	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
+	{ EVENT_TOUCH, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TOUCH) },
+	{ EVENT_TOUCH, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TOUCH) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf1c, FIND_ITEM(0x84) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyValues12And2And3) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
 	{ SEARCH(SEARCH_CHEST), 102, 0xf1e, FIND_ITEM(ITEM_SLEEP_BOMB) },
 	{ SEARCH(SEARCH_CHEST), 103, 0xf1f, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SEARCH(SEARCH_CHEST), 104, 0xf20, FIND_COINS(200) },

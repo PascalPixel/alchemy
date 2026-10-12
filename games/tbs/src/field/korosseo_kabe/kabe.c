@@ -178,7 +178,7 @@ static void FieldScene_RunSingleStep(void)
 	StagedActor_PushActorAhead();
 }
 
-static void SceneState_ConfigureRegionByActorElevenColumn(void)
+static void EV11_PSYNERGY(void)
 {
 	struct FieldActor *work;
 	s32				   v0;
@@ -204,7 +204,7 @@ static void SceneState_ConfigureRegionByActorElevenColumn(void)
 static void FieldScene_RunTwoStepSequence(void)
 {
 	StagedActor_PushActorAhead();
-	SceneState_ConfigureRegionByActorElevenColumn();
+	EV11_PSYNERGY();
 }
 
 static void SceneState_StoreSlotTileXToWork832To848(void)
@@ -233,14 +233,14 @@ static void SceneState_StoreSlotTileXToWork832To848(void)
 	Engine_MapCopyCellAttributes(71, 16, 1, 1, value, 16);
 }
 
-static void KorosseoKabe_EnableEffectChildMode(void)
+static void EV18_SCRIPT(void)
 {
 	u8 *record = *(u8 **)gEffectWork;
 
 	((struct BattleFxScene *)record)->child_mode = 1;
 }
 
-static void KorosseoKabe_SpinActorAway(void)
+static void EV18_PSYNERGY(void)
 {
 	struct FieldActor *rec2;
 	s32				   frames;
@@ -287,7 +287,7 @@ static void KorosseoKabe_SpinActorAway(void)
 	Map_CopyCellAttributes(20, 80, 1, 1, 21, 80);
 }
 
-static void SceneState_SetFlag331AndConfigureRegion46_17(void)
+static void EV20_SCRIPT(void)
 {
 	u8 *p;
 
@@ -317,7 +317,7 @@ static void FieldScene_SetFlag332AndDrawTiles(void)
 	}
 }
 
-static void FieldScene_SetFlag333AndDrawTiles(void)
+static void EV19_PSYNERGY(void)
 {
 	Engine_GameFlagSet(0x333);
 	{
@@ -381,7 +381,7 @@ static void SceneActor_MovePairByTileOffset(s32 a0, s32 a1, s32 a2)
 	Engine_EventEnd();
 }
 
-static void KorosseoKabe_PushAlignedWall(void)
+static void EV22_SCRIPT(void)
 {
 	struct FieldActor *leader = Object_GetById(gGameState.selected_actor);
 	s32				   x = leader->x.fixed >> 20;
@@ -481,25 +481,25 @@ static void SceneState_ApplyRectsForActors15To17(void)
 	Engine_MapCopyCellAttributes(13, 28, 4, 1, 18, field);
 }
 
-static void FieldScene_RunStep15At29By26(void)
+static void EV24_TOUCH(void)
 {
 	KorosseoKabe_RollLogToCell(15, 29, 26);
 	SceneState_ApplyRectsForActors15To17();
 }
 
-static void FieldScene_RunStep15At33By26(void)
+static void EV25_TOUCH(void)
 {
 	KorosseoKabe_RollLogToCell(15, 33, 26);
 	SceneState_ApplyRectsForActors15To17();
 }
 
-static void FieldScene_RunStep16At45By26(void)
+static void EV28_TOUCH(void)
 {
 	KorosseoKabe_RollLogToCell(16, 45, 26);
 	SceneState_ApplyRectsForActors15To17();
 }
 
-static void FieldScene_RunStep16At49By26(void)
+static void EV27_TOUCH(void)
 {
 	KorosseoKabe_RollLogToCell(16, 49, 26);
 	SceneState_ApplyRectsForActors15To17();
@@ -673,7 +673,7 @@ static void SceneState_WaitForStatusWords(void)
 	}
 }
 
-static void KorosseoKabe_StopSpectatorCallbackAndRestoreCells(void)
+static void EV31_PSYNERGY(void)
 {
 	BattleEffect_PauseObject(31);
 	Engine_GameFlagSet(820);
@@ -692,7 +692,7 @@ static void KorosseoKabe_StopSpectatorCallbackAndRestoreCells(void)
 	Engine_MapCopyCellAttributes(57, 11, 1, 1, 58, 11);
 }
 
-static void KorosseoKabe_RunStageStart(void)
+static void EV50_TOUCH(void)
 {
 	s32 rec8;
 	s32 v5;
@@ -1027,7 +1027,7 @@ static void Korosseo_RunGreetScene(s32 a0)
 	Engine_EventEnd();
 }
 
-static void KorosseoKabe_RunStageIntro(s32 speaker)
+static void EV35_TALK(s32 speaker)
 {
 	s32				   result;
 	struct FieldActor *actor;
@@ -1076,7 +1076,7 @@ static void KorosseoKabe_RunStageIntro(s32 speaker)
 	}
 }
 
-static void FieldScene_RunSecondActorInteraction(s32 a0)
+static void EV36_TALK(s32 a0)
 {
 	u32 i;
 	s32 rec;
@@ -1127,7 +1127,7 @@ static void FieldScene_RunSecondActorInteraction(s32 a0)
 	}
 }
 
-static void FieldScene_RunSceneThreeCoordinator(s32 a0)
+static void EV37_TALK(s32 a0)
 {
 	u32 i;
 	s32 rec2;
@@ -1190,7 +1190,7 @@ static void FieldScene_RunSceneThreeCoordinator(s32 a0)
 	}
 }
 
-static void FieldScene_RunLiftedActorCoordinator(s32 speaker)
+static void EV38_TALK(s32 speaker)
 {
 	s32				   z;
 	struct FieldActor *actor;
@@ -1291,7 +1291,7 @@ static void KorosseoKabe_PushBlockToCell(s32 id, s32 column, s32 row)
 	Engine_EventWait(15);
 }
 
-static void KorosseoKabe_RunGuideTalk(s32 speaker)
+static void EV39_TALK(s32 speaker)
 {
 	s32 result;
 
@@ -1390,7 +1390,7 @@ static void KorosseoKabe_MarkSceneProgress(void)
 	}
 }
 
-static void KorosseoKabe_SelectNearestActor(void)
+static void EV99_RAISED(void)
 {
 	struct EventWork *state = gEventWork;
 	s32				  best = 8;
@@ -2489,43 +2489,43 @@ s32 KorosseoKabe_SpectatorTimer = 0;
 struct SceneEvent gKorosseoKabeEvents[] = {
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(KorosseoKabe_RunSelectedActorRisingEffect) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(KorosseoKabe_CheckLeaderAhead) },
-	{ TOUCH_WALKING_INTO(FACING_WEST), 28, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep16At45By26) },
-	{ TOUCH_WALKING_INTO(FACING_EAST), 27, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep16At49By26) },
-	{ TOUCH_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep15At29By26) },
-	{ TOUCH_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep15At33By26) },
-	{ 0x202, 22, CONDITION_ALWAYS, EVENT_SCRIPT(KorosseoKabe_PushAlignedWall) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 28, CONDITION_ALWAYS, EVENT_SCRIPT(EV28_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 27, CONDITION_ALWAYS, EVENT_SCRIPT(EV27_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_TOUCH) },
+	{ 0x202, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_SCRIPT) },
 	{ 0x202, 21, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSingleStep) },
 	{ 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunTwoStepSequence) },
 	{ 0x202, 26, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunTwoStepSequence) },
-	{ EVENT_TOUCH, 50, 0x210, EVENT_SCRIPT(KorosseoKabe_RunStageStart) },
+	{ EVENT_TOUCH, 50, 0x210, EVENT_SCRIPT(EV50_TOUCH) },
 	{ SEARCH(SEARCH_CHEST), 101, 0x338, FIND_ITEM(ITEM_NUT) },
 	{ 0x8413, 102, 0x339, FIND_ITEM(ITEM_SMOKE_BOMB) },
 	{ SEARCH(SEARCH_CHEST), 104, 0x33b, FIND_ITEM(ITEM_NUT) },
-	{ 0x50001815, 20, 0x331, EVENT_SCRIPT(SceneState_SetFlag331AndConfigureRegion46_17) },
+	{ 0x50001815, 20, 0x331, EVENT_SCRIPT(EV20_SCRIPT) },
 	{ 0x50001815, 21, 0x332, EVENT_SCRIPT(FieldScene_SetFlag332AndDrawTiles) },
-	{ 0x10008e15, 18, 0x330, EVENT_SCRIPT(KorosseoKabe_EnableEffectChildMode) },
-	{ PSYNERGY_ON_ACTOR(0x8e), 18, 0x330, EVENT_SCRIPT(KorosseoKabe_SpinActorAway) },
-	{ PSYNERGY_ON_ACTOR(0xc), 19, 0x333, EVENT_SCRIPT(FieldScene_SetFlag333AndDrawTiles) },
+	{ 0x10008e15, 18, 0x330, EVENT_SCRIPT(EV18_SCRIPT) },
+	{ PSYNERGY_ON_ACTOR(0x8e), 18, 0x330, EVENT_SCRIPT(EV18_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0xc), 19, 0x333, EVENT_SCRIPT(EV19_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneData_NoOpHandler) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneData_NoOpHandler) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ConfigureRegionByActorElevenColumn) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_StoreSlotTileXToWork832To848) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_StoreSlotTileXToWork832To848) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_StoreSlotTileXToWork832To848) },
-	{ PSYNERGY_ON_ACTOR(0x91), 31, 0x334, EVENT_SCRIPT(KorosseoKabe_StopSpectatorCallbackAndRestoreCells) },
+	{ PSYNERGY_ON_ACTOR(0x91), 31, 0x334, EVENT_SCRIPT(EV31_PSYNERGY) },
 	{ EVENT_TALK, 34, CONDITION_ALWAYS, EVENT_SCRIPT(RunPartyCountInteraction) },
-	{ EVENT_TALK, 35, CONDITION_ALWAYS, EVENT_SCRIPT(KorosseoKabe_RunStageIntro) },
-	{ EVENT_TALK, 36, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSecondActorInteraction) },
-	{ EVENT_TALK, 37, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSceneThreeCoordinator) },
-	{ EVENT_TALK, 38, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunLiftedActorCoordinator) },
-	{ EVENT_TALK, 39, CONDITION_ALWAYS, EVENT_SCRIPT(KorosseoKabe_RunGuideTalk) },
+	{ EVENT_TALK, 35, CONDITION_ALWAYS, EVENT_SCRIPT(EV35_TALK) },
+	{ EVENT_TALK, 36, CONDITION_ALWAYS, EVENT_SCRIPT(EV36_TALK) },
+	{ EVENT_TALK, 37, CONDITION_ALWAYS, EVENT_SCRIPT(EV37_TALK) },
+	{ EVENT_TALK, 38, CONDITION_ALWAYS, EVENT_SCRIPT(EV38_TALK) },
+	{ EVENT_TALK, 39, CONDITION_ALWAYS, EVENT_SCRIPT(EV39_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 34, CONDITION_ALWAYS, MSGNO(MsgKorosseoKawaThisYearsFinalsAreIncredibleThis) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS, MSGNO(MsgKorosseoKabeICantBelieveAnybodyEverGets) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 36, CONDITION_ALWAYS, MSGNO(MsgKorosseoKabeHowDoTheyMakeThatFloor) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 37, CONDITION_ALWAYS, MSGNO(MsgKorosseoKabeImAmazedPeopleCanActuallyCross) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 38, CONDITION_ALWAYS, MSGNO(MsgKorosseoKabeBoyThatBitOverThereMust) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 39, CONDITION_ALWAYS, MSGNO(MsgKorosseoKabeIHeardBabiGotTheLog) },
-	{ EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(KorosseoKabe_SelectNearestActor) },
+	{ EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_RAISED) },
 	{ SCENE_EVENTS_END },
 };
 

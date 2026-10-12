@@ -73,7 +73,7 @@ enum
 extern s32 ArutinYama_LeafMode;
 extern s32 ArutinYama_LeafOrigin[3];
 
-static void SceneState_SetValue14Mode23(void)
+static void EV14_TALK(void)
 {
 
 	BattleFx_SetPhaseRequest(0xE, 0x17);
@@ -250,7 +250,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gArutinYamaPlacementsOther;
 }
 
-static void ArutinYama_BeginRollingRide(s32 a0)
+static void EV08_TALK(s32 a0)
 {
 	struct FieldActor *rec7;
 	struct FieldActor *rec8;
@@ -303,7 +303,7 @@ static void ArutinYama_StartAreaFiveEncounter(void)
 	BattleFx_SetWeightedResult(53, 2);
 }
 
-static void SceneActor_UpdateSlot10ByTileX(void)
+static void EV10_PSYNERGY(void)
 {
 	struct FieldActor *a = Object_GetById(10);
 
@@ -330,7 +330,7 @@ static void SceneActor_UpdateSlot10ByTileX(void)
 	}
 }
 
-static void ActorPresentation_SetCellAndLowerActorEight(void)
+static void EV08_PSYNERGY(void)
 {
 
 	struct FieldActor *p;
@@ -350,7 +350,7 @@ static void ActorPresentation_SetCellAndLowerActorEight(void)
 	Engine_GameFlagSet(0x200);
 }
 
-static void ArutinYama_RestoreFallingActorNine(void)
+static void EV09_PSYNERGY(void)
 {
 
 	struct FieldActor *p;
@@ -368,7 +368,7 @@ static void ArutinYama_RestoreFallingActorNine(void)
 	Engine_GameFlagSet(0x201);
 }
 
-static void SceneActor_RaiseSlot9StepA(void)
+static void EV09_PSYNERGY_7(void)
 {
 	struct FieldActor *p;
 	s32				   s0;
@@ -385,7 +385,7 @@ static void SceneActor_RaiseSlot9StepA(void)
 	Engine_GameFlagSet(0x200);
 }
 
-static void SceneActor_RaiseSlot9StepB(void)
+static void EV09_PSYNERGY_5(void)
 {
 	struct FieldActor *p;
 	s32				   s0;
@@ -404,7 +404,7 @@ static void SceneActor_RaiseSlot9StepB(void)
 	Engine_GameFlagSet(0x200);
 }
 
-static void SceneState_ApplyRectAndLowerActor9(void)
+static void EV09_PSYNERGY_6(void)
 {
 
 	struct FieldActor *rec;
@@ -424,7 +424,7 @@ static void SceneState_ApplyRectAndLowerActor9(void)
 	Engine_GameFlagSet(0x200);
 }
 
-static void SceneActor_RaiseSlot11AndSetFlag201(void)
+static void EV11_PSYNERGY_7(void)
 {
 	struct FieldActor *p;
 	s32				   s0;
@@ -443,7 +443,7 @@ static void SceneActor_RaiseSlot11AndSetFlag201(void)
 	Engine_GameFlagSet(0x201);
 }
 
-static void SceneActor_AdjustSlot12AndSetFlag204(void)
+static void EV12_PSYNERGY(void)
 {
 
 	struct FieldActor *p;
@@ -632,7 +632,7 @@ static void FieldScene_RunScene3a4SequenceB(void)
 	}
 }
 
-static void FieldScene_RunValue1528Scene(void)
+static void EV83_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
@@ -661,7 +661,7 @@ static void FieldScene_RunScene3a4SequenceA(void)
 	}
 }
 
-static void FieldScene_RunLine1528Sequence(void)
+static void EV50_SEARCH_5(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -674,7 +674,7 @@ static void FieldScene_RunLine1528Sequence(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunScene3a4SequenceC(void)
+static void EV50_SEARCH_6(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -698,7 +698,7 @@ static void FieldScene_RunScene3a4SequenceC(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunScene3a4SequenceD(void)
+static void EV50_SEARCH_7(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -722,19 +722,19 @@ static void FieldScene_RunScene3a4SequenceD(void)
 	Engine_EventEnd();
 }
 
-static void ArutinYama_SetActorTenUnderfootPriority(void)
+static void EV10_TOUCH_7(void)
 {
 
 	Object_GetById(10)->priority_flags = 3;
 }
 
-static void ArutinYama_SetActorTenAutomaticPriority(void)
+static void EV11_TOUCH_7(void)
 {
 
 	Object_GetById(10)->priority_flags = 1;
 }
 
-static void ArutinYama_PushMovableObject(void)
+static void EV12_TOUCH(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -749,11 +749,11 @@ static void ArutinYama_PushMovableObject(void)
 	Actor_SetDestination(10, 0x198, 0x1a8);
 	Engine_ActorWaitForMove(10);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	SceneActor_UpdateSlot10ByTileX();
+	EV10_PSYNERGY();
 	Engine_EventEnd();
 }
 
-static void ArutinYama_SwingActorIntoSetPiece(void)
+static void EV11_PSYNERGY_9(void)
 {
 	struct FieldActor  *actor;
 	struct FieldSprite *sprite;
@@ -984,7 +984,7 @@ static void FieldScene_RunSharedSetPiece(s32 a0)
 	GameFlag_Set(0x908);
 }
 
-static void FieldScene_RunFallingRocksWarning(void)
+static void EV12_SEARCH(void)
 {
 	struct FieldActor *record;
 	s32				   msg;
@@ -1167,7 +1167,7 @@ static void SceneMotion_UpdateTimedActor(struct SceneMotion *work)
 		work->timer = 0;
 }
 
-static void FieldScene_BuildMultiPhasePresentation(void)
+static void EV10_TOUCH_1(void)
 {
 	struct Half		   p10;
 	s32				   p8;
@@ -1308,7 +1308,7 @@ static void FieldScene_BuildMultiPhasePresentation(void)
 	Engine_EventEnd();
 }
 
-static void ArutinYama_RunLeapSequence(void)
+static void EV11_TOUCH_1(void)
 {
 	union TimedActor  *actor;
 	struct FieldActor *record;
@@ -1701,7 +1701,7 @@ static void ArutinYama_RestoreAreaSeven(void)
 
 	record = Actor_Get(9);
 	Engine_ActorSetSpriteFlags((s32)record, 0);
-	SceneActor_UpdateSlot10ByTileX();
+	EV10_PSYNERGY();
 	SceneActor_ClearCollisionFlagAndPlaceMarker(9);
 	if (GameFlag_IsSet(0x200) != 0)
 	{
@@ -2067,7 +2067,7 @@ static void SceneAudio_PlayCue183EverySixtyTicks(void)
 	}
 }
 
-static void FieldScene_RunLateAuxiliarySequence(void)
+static void EV10_TOUCH_10(void)
 {
 	Engine_EventBegin();
 	Camera_SetSpeed(0x9999, 0x1333);
@@ -3043,8 +3043,8 @@ struct SceneEvent gArutinYamaEventsOther[] = {
 
 struct SceneEvent gArutinYamaEvents1[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
-	{EVENT_TOUCH, 10, 0x904, EVENT_SCRIPT(FieldScene_BuildMultiPhasePresentation)},
-	{EVENT_TOUCH, 11, 0x905, EVENT_SCRIPT(ArutinYama_RunLeapSequence)},
+	{EVENT_TOUCH, 10, 0x904, EVENT_SCRIPT(EV10_TOUCH_1)},
+	{EVENT_TOUCH, 11, 0x905, EVENT_SCRIPT(EV11_TOUCH_1)},
 	{EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_StartAreaOneEncounter)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40a, CONDITION_ALWAYS,
 		EVENT_SCRIPT(ArutinYama_StartAreaOneEncounter)},
@@ -3054,8 +3054,8 @@ struct SceneEvent gArutinYamaEvents1[] = {
 struct SceneEvent ArutinYama_OpenedAreaScript[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x200,
-		EVENT_SCRIPT(ActorPresentation_SetCellAndLowerActorEight)},
-	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x201, EVENT_SCRIPT(ArutinYama_RestoreFallingActorNine)},
+		EVENT_SCRIPT(EV08_PSYNERGY)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x201, EVENT_SCRIPT(EV09_PSYNERGY)},
 	{SCENE_EVENTS_END},
 };
 
@@ -3069,12 +3069,12 @@ struct SceneEvent gArutinYamaEvents3[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
-	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_BeginRollingRide)},
+	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK)},
 	{EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_StartAreaThreeEncounter)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x409, CONDITION_ALWAYS,
 		EVENT_SCRIPT(ArutinYama_StartAreaThreeEncounter)},
 	{PSYNERGY_ON_ACTOR(0x8f), 10, CONDITION_ALWAYS, 0},
-	{SEARCH(SEARCH_UNNAMED), 83, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunValue1528Scene)},
+	{SEARCH(SEARCH_UNNAMED), 83, CONDITION_ALWAYS, EVENT_SCRIPT(EV83_SEARCH)},
 	{SEARCH(SEARCH_CHEST), 100, 0xf76, FIND_ITEM(0xc0)},
 	{SCENE_EVENTS_END},
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3095,12 +3095,12 @@ struct SceneEvent gArutinYamaEvents4[] = {
 
 struct SceneEvent gArutinYamaEvents5[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
-	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x200, EVENT_SCRIPT(SceneActor_RaiseSlot9StepB)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x200, EVENT_SCRIPT(EV09_PSYNERGY_5)},
 	{EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_StartAreaFiveEncounter)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40a, CONDITION_ALWAYS,
 		EVENT_SCRIPT(ArutinYama_StartAreaFiveEncounter)},
-	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_BeginRollingRide)},
-	{SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunLine1528Sequence)},
+	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK)},
+	{SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_SEARCH_5)},
 	{0x2413, 100, 0xf77, FIND_ITEM(0x7b)},
 	{0x413, 100, 0xf77, FIND_ITEM(0x7b)},
 	{0xe413, 100, 0xf77, FIND_ITEM(0x7b)},
@@ -3114,9 +3114,9 @@ struct SceneEvent gArutinYamaEvents6[] = {
 	{EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
 	{EVENT_EXIT, 5, CONDITION_ALWAYS, 5},
 	{EVENT_EXIT, 6, CONDITION_ALWAYS, 6},
-	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x200, EVENT_SCRIPT(SceneState_ApplyRectAndLowerActor9)},
-	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_BeginRollingRide)},
-	{SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3a4SequenceC)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x200, EVENT_SCRIPT(EV09_PSYNERGY_6)},
+	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK)},
+	{SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_SEARCH_6)},
 	{SEARCH(SEARCH_CHEST), 100, 0xef2, 0x500002},
 	{SCENE_EVENTS_END},
 };
@@ -3126,19 +3126,19 @@ struct SceneEvent gArutinYamaEvents7[] = {
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
 	{SEARCH(SEARCH_CHEST), 101, 0xf07, FIND_ITEM(0xba)},
-	{EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue14Mode23)},
-	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_BeginRollingRide)},
-	{SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3a4SequenceD)},
-	{EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_SetActorTenUnderfootPriority)},
-	{EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(ArutinYama_SetActorTenAutomaticPriority)},
-	{PSYNERGY_ON_ACTOR(0x8c), 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_UpdateSlot10ByTileX)},
+	{EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK)},
+	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK)},
+	{SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_SEARCH_7)},
+	{EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH_7)},
+	{EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH_7)},
+	{PSYNERGY_ON_ACTOR(0x8c), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_PSYNERGY)},
 	{TOUCH_WALKING_INTO(FACING_EAST), 12, CONDITION_ALWAYS,
-		EVENT_SCRIPT(ArutinYama_PushMovableObject)},
-	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x200, EVENT_SCRIPT(SceneActor_RaiseSlot9StepA)},
+		EVENT_SCRIPT(EV12_TOUCH)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x200, EVENT_SCRIPT(EV09_PSYNERGY_7)},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x201,
-		EVENT_SCRIPT(SceneActor_RaiseSlot11AndSetFlag201)},
+		EVENT_SCRIPT(EV11_PSYNERGY_7)},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, 0x204,
-		EVENT_SCRIPT(SceneActor_AdjustSlot12AndSetFlag204)},
+		EVENT_SCRIPT(EV12_PSYNERGY)},
 	{SCENE_EVENTS_END},
 };
 
@@ -3159,13 +3159,13 @@ struct SceneEvent gArutinYamaEvents9[] = {
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
 	{EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
 	{EVENT_EXIT, 5, CONDITION_ALWAYS, 5},
-	{SEARCH(SEARCH_UNNAMED), 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFallingRocksWarning)},
-	{PSYNERGY_ON_ACTOR(0x8e), 11, 0x908, EVENT_SCRIPT(ArutinYama_SwingActorIntoSetPiece)},
+	{SEARCH(SEARCH_UNNAMED), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_SEARCH)},
+	{PSYNERGY_ON_ACTOR(0x8e), 11, 0x908, EVENT_SCRIPT(EV11_PSYNERGY_9)},
 	{SCENE_EVENTS_END},
 };
 
 struct SceneEvent gArutinYamaEvents10[] = {
-	{EVENT_TOUCH, 10, 0x909, EVENT_SCRIPT(FieldScene_RunLateAuxiliarySequence)},
+	{EVENT_TOUCH, 10, 0x909, EVENT_SCRIPT(EV10_TOUCH_10)},
 	{SEARCH(SEARCH_CHEST), 100, 0xf08, FIND_ITEM(0xcb)},
 	{SCENE_EVENTS_END},
 };

@@ -459,7 +459,7 @@ u8 *SceneData_SelectAndApplyTableBySceneId(void)
 	return tbl;
 }
 
-static void SceneState_RunRect73x38Step(void)
+static void EV24_SCRIPT(void)
 {
 	Engine_EventBegin();
 	Map_CopyCellAttributes(73, 38, 5, 5, 9, 38);
@@ -479,7 +479,7 @@ static void SceneActor_ApplyPointLeftOfActorZero(void)
 	SceneActor_MoveActorZeroToTarget(point);
 }
 
-static void FieldScene_RunLayoutAt93By30(void)
+static void EV26_SCRIPT(void)
 {
 	Engine_EventBegin();
 	Map_CopyCellAttributes(93, 30, 6, 5, 29, 30);
@@ -504,7 +504,7 @@ static void SceneActor_PassPointTwoRightOfActorZero(void)
 	SceneActor_MoveActorZeroToTarget(pos);
 }
 
-static void SceneState_ApplyTwoRectsAndRunThree(void)
+static void EV28_SCRIPT(void)
 {
 	Engine_EventBegin();
 	Engine_MapCopyCellAttributes(89, 49, 3, 2, 25, 49);
@@ -514,7 +514,7 @@ static void SceneState_ApplyTwoRectsAndRunThree(void)
 	Engine_EventEnd();
 }
 
-static void SceneActor_CheckTwoUnitsAboveActorZero(void)
+static void EV28_TOUCH(void)
 {
 	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 	s32				   target[3];
@@ -524,11 +524,11 @@ static void SceneActor_CheckTwoUnitsAboveActorZero(void)
 	target[2] = actor->z.fixed + 0x00200000;
 	if (SceneActor_MoveActorZeroToTarget(target) != 0)
 	{
-		SceneState_ApplyTwoRectsAndRunThree();
+		EV28_SCRIPT();
 	}
 }
 
-static void SceneActor_MirrorFlag201IntoSlot14(void)
+static void EV15_PSYNERGY(void)
 {
 	u8 *flags;
 	u8	value;
@@ -550,7 +550,7 @@ static void SceneActor_MirrorFlag201IntoSlot14(void)
 	}
 }
 
-static void BabiChika_ConfigureActorFourteenRise(void)
+static void EV16_PSYNERGY(void)
 {
 	u8 *p;
 	u8	val;
@@ -572,7 +572,7 @@ static void BabiChika_ConfigureActorFourteenRise(void)
 	}
 }
 
-static void SceneState_ApplyFlag970(void)
+static void EV17_PSYNERGY(void)
 {
 	Engine_GameFlagSet(0x970);
 }
@@ -597,7 +597,7 @@ static void SceneState_RunUnlessActorZeroAt30_52(void)
 	}
 }
 
-static void FieldScene_RunSupplementalSequenceTwo(void)
+static void EV18_PSYNERGY(void)
 {
 	u32					  i;
 	s32					  rec2;
@@ -656,15 +656,15 @@ static void FieldScene_RunSupplementalSequenceTwo(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunFourCallSequenceB(void)
+static void EV29_SCRIPT(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
 	Engine_EventEnd();
-	FieldScene_RunSupplementalSequenceTwo();
+	EV18_PSYNERGY();
 }
 
-static void ActorPresentation_ConfigureActorTwentyAndFlag200(void)
+static void EV20_PSYNERGY(void)
 {
 	u8 *flags;
 
@@ -748,7 +748,7 @@ static void FieldScene_RunFourStepSequenceA(void)
 	FieldScene_RunSupplementalSequenceOne();
 }
 
-static void BabiChika_InstallActorNineteenFlicker(void)
+static void EV19_SCRIPT(void)
 {
 	Engine_ActorEnableActionCallback(19, BabiChika_FlickerScript);
 }
@@ -759,7 +759,7 @@ static void SceneState_SetValue202ThenCall(void)
 	FieldScene_RunSupplementalSequenceOne();
 }
 
-static void SceneActor_ConfigureSlot21AndSetFlag201(void)
+static void EV21_PSYNERGY(void)
 {
 	u8 *flags;
 
@@ -771,7 +771,7 @@ static void SceneActor_ConfigureSlot21AndSetFlag201(void)
 	Engine_GameFlagSet(0x201);
 }
 
-static void SceneDialogue_RunFlag982Or983Dialogue(void)
+static void EV40_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -786,21 +786,21 @@ static void SceneDialogue_RunFlag982Or983Dialogue(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunTwoStepSequence(void)
+static void EV08_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunFourStepSequenceB(void)
+static void EV25_SCRIPT(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
 	Engine_EventEnd();
-	FieldScene_RunTwoStepSequence();
+	EV08_PSYNERGY();
 }
 
-static void SceneActor_InstallSlotNineHandler(void)
+static void EV08_SCRIPT(void)
 {
 	struct FieldActor *owner;
 
@@ -810,7 +810,7 @@ static void SceneActor_InstallSlotNineHandler(void)
 	owner->update = (void (*)(union FieldObject *))SceneActor_CopyActor8PositionWhenAtRow10;
 }
 
-static void SceneActor_SetupSlotNineAndInstallHandler(void)
+static void EV09_PSYNERGY(void)
 {
 	struct FieldActor *desc;
 	s32				   col;
@@ -1031,7 +1031,7 @@ static void SceneState_SetSlot17And18Selectors(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunFourCallSequence(void)
+static void EV29_TOUCH(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
@@ -1182,7 +1182,7 @@ static void FieldScene_RunScene3c4SequenceA(void)
 done:;
 }
 
-static void FieldScene_RunLayoutAt83By45(void)
+static void EV41_SCRIPT(void)
 {
 	Engine_EventBegin();
 	{
@@ -1196,7 +1196,7 @@ static void FieldScene_RunLayoutAt83By45(void)
 	Engine_EventEnd();
 }
 
-static void SceneState_SetValue268bInScene(void)
+static void EV42_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -1204,7 +1204,7 @@ static void SceneState_SetValue268bInScene(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunScriptedStep953(void)
+static void EV20_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
@@ -1996,10 +1996,10 @@ struct SceneEvent Data_0200bc0c[] = {
 	{TOUCH_WALKING_INTO(FACING_SOUTH), 23, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStepWith6)},
 	{TOUCH_WALKING_INTO(FACING_WEST), 23, CONDITION_ALWAYS,
 		EVENT_SCRIPT(SceneActor_ApplyPointLeftOfActorZero)},
-	{0x202, 24, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunRect73x38Step)},
+	{0x202, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_SCRIPT)},
 	{TOUCH_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS,
 		EVENT_SCRIPT(BabiChika_RunLeaderSpray)},
-	{0x202, 26, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunLayoutAt93By30)},
+	{0x202, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EV26_SCRIPT)},
 	{TOUCH_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStepWith6)},
 	{TOUCH_WALKING_INTO(FACING_EAST), 27, CONDITION_ALWAYS,
 		EVENT_SCRIPT(SceneActor_PassPointTwoRightOfActorZero)},
@@ -2011,10 +2011,9 @@ struct SceneEvent Data_0200bc0c[] = {
 		EVENT_SCRIPT(SceneState_RunUnlessActorZeroAt30_52)},
 	{TOUCH_WALKING_INTO(FACING_SOUTH), 50, CONDITION_ALWAYS,
 		EVENT_SCRIPT(SceneActor_PassRaisedPointOfActorZero)},
-	{TOUCH_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS,
-		EVENT_SCRIPT(SceneActor_CheckTwoUnitsAboveActorZero)},
-	{0x202, 28, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyTwoRectsAndRunThree)},
-	{0x202, 29, 0x971, EVENT_SCRIPT(FieldScene_RunFourCallSequenceB)},
+	{TOUCH_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(EV28_TOUCH)},
+	{0x202, 28, CONDITION_ALWAYS, EVENT_SCRIPT(EV28_SCRIPT)},
+	{0x202, 29, 0x971, EVENT_SCRIPT(EV29_SCRIPT)},
 	{TOUCH_WALKING_INTO(FACING_EAST), 29, 0x200,
 		EVENT_SCRIPT(SceneActor_PassPointTwoRightOfActorZero)},
 	{TOUCH_WALKING_INTO(FACING_SOUTH), 29, 0x200,
@@ -2037,8 +2036,7 @@ struct SceneEvent Data_0200bc0c[] = {
 		EVENT_SCRIPT(SceneActor_PassPointTwoRightOfActorZero)},
 	{TOUCH_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS,
 		EVENT_SCRIPT(SceneActor_ApplyPointLeftOfActorZero)},
-	{SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS,
-		EVENT_SCRIPT(SceneDialogue_RunFlag982Or983Dialogue)},
+	{SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS, EVENT_SCRIPT(EV40_SEARCH)},
 	{PSYNERGY_ON_ACTOR(0x8c), 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_PlaceAndPinSlots8And9)},
 	{PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_PlaceAndPinSlots8And9)},
 	{PSYNERGY_ON_ACTOR(0x8c), 10, CONDITION_ALWAYS,
@@ -2048,16 +2046,14 @@ struct SceneEvent Data_0200bc0c[] = {
 	{PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(BabiChika_RestorePlatformCells)},
 	{PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, EVENT_SCRIPT(BabiChika_RestorePlatformCells)},
 	{PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, EVENT_SCRIPT(BabiChika_RestorePlatformCells)},
-	{PSYNERGY_ON_ACTOR(0x4e), 15, 0x200, EVENT_SCRIPT(SceneActor_MirrorFlag201IntoSlot14)},
-	{PSYNERGY_ON_ACTOR(0x4e), 16, 0x201, EVENT_SCRIPT(BabiChika_ConfigureActorFourteenRise)},
-	{PSYNERGY_ON_ACTOR(0x4e), 17, 0x970, EVENT_SCRIPT(SceneState_ApplyFlag970)},
-	{PSYNERGY_ON_ACTOR(0x8c), 18, 0x971, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceTwo)},
-	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 20, 0x200,
-		EVENT_SCRIPT(ActorPresentation_ConfigureActorTwentyAndFlag200)},
+	{PSYNERGY_ON_ACTOR(0x4e), 15, 0x200, EVENT_SCRIPT(EV15_PSYNERGY)},
+	{PSYNERGY_ON_ACTOR(0x4e), 16, 0x201, EVENT_SCRIPT(EV16_PSYNERGY)},
+	{PSYNERGY_ON_ACTOR(0x4e), 17, 0x970, EVENT_SCRIPT(EV17_PSYNERGY)},
+	{PSYNERGY_ON_ACTOR(0x8c), 18, 0x971, EVENT_SCRIPT(EV18_PSYNERGY)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 20, 0x200, EVENT_SCRIPT(EV20_PSYNERGY)},
 	{PSYNERGY_ON_ACTOR(0x8c), 19, 0x972, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceOne)},
-	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 21, 0x201,
-		EVENT_SCRIPT(SceneActor_ConfigureSlot21AndSetFlag201)},
-	{0x10002115, 19, 0x202, EVENT_SCRIPT(BabiChika_InstallActorNineteenFlicker)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 21, 0x201, EVENT_SCRIPT(EV21_PSYNERGY)},
+	{0x10002115, 19, 0x202, EVENT_SCRIPT(EV19_SCRIPT)},
 	{PSYNERGY_ON_ACTOR(0x21), 19, 0x202, EVENT_SCRIPT(SceneState_SetValue202ThenCall)},
 	{SCENE_EVENTS_END},
 };
@@ -2077,7 +2073,7 @@ struct SceneEvent Data_0200bef4[] = {
 	{EVENT_EXIT, 12, CONDITION_ALWAYS, 12},
 	{EVENT_EXIT, 13, CONDITION_ALWAYS, 13},
 	{0x21, 14, CONDITION_ALWAYS, 14},
-	{0x202, 25, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFourStepSequenceB)},
+	{0x202, 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_SCRIPT)},
 	{TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStepWith6)},
 	{TOUCH_WALKING_INTO(FACING_WEST), 26, CONDITION_ALWAYS,
 		EVENT_SCRIPT(SceneActor_ApplyPointLeftOfActorZero)},
@@ -2089,21 +2085,19 @@ struct SceneEvent Data_0200bef4[] = {
 	{TOUCH_WALKING_INTO(FACING_WEST), 30, CONDITION_ALWAYS,
 		EVENT_SCRIPT(SceneActor_ApplyPointLeftOfActorZero)},
 	{0x202, 30, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunThreeStepSequence)},
-	{TOUCH_WALKING_INTO(FACING_EAST), 29, CONDITION_ALWAYS,
-		EVENT_SCRIPT(FieldScene_RunFourCallSequence)},
+	{TOUCH_WALKING_INTO(FACING_EAST), 29, CONDITION_ALWAYS, EVENT_SCRIPT(EV29_TOUCH)},
 	{TOUCH_WALKING_INTO(FACING_SOUTH), 29, CONDITION_ALWAYS,
 		EVENT_SCRIPT(SceneActor_PassRaisedPointOfActorZero)},
 	{TOUCH_WALKING_INTO(FACING_NORTH), 29, CONDITION_ALWAYS,
 		EVENT_SCRIPT(SceneActor_PassActorZeroOffsetPoint)},
-	{0x202, 41, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunLayoutAt83By45)},
-	{SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScriptedStep953)},
-	{SEARCH(SEARCH_UNNAMED), 42, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue268bInScene)},
+	{0x202, 41, CONDITION_ALWAYS, EVENT_SCRIPT(EV41_SCRIPT)},
+	{SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SEARCH)},
+	{SEARCH(SEARCH_UNNAMED), 42, CONDITION_ALWAYS, EVENT_SCRIPT(EV42_SEARCH)},
 	{SEARCH(SEARCH_CHEST), 100, 0xf32, FIND_ITEM(0x71)},
 	{SEARCH(SEARCH_CHEST), 101, 0xf33, FIND_ITEM(0x54)},
-	{PSYNERGY_ON_ACTOR(0x8c), 8, 0x204, EVENT_SCRIPT(FieldScene_RunTwoStepSequence)},
-	{0x10002115, 8, 0x203, EVENT_SCRIPT(SceneActor_InstallSlotNineHandler)},
-	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x204,
-		EVENT_SCRIPT(SceneActor_SetupSlotNineAndInstallHandler)},
+	{PSYNERGY_ON_ACTOR(0x8c), 8, 0x204, EVENT_SCRIPT(EV08_PSYNERGY)},
+	{0x10002115, 8, 0x203, EVENT_SCRIPT(EV08_SCRIPT)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x204, EVENT_SCRIPT(EV09_PSYNERGY)},
 	{PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, 0},
 	{PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, 0},
 	{PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, 0},

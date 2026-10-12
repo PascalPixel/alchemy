@@ -139,7 +139,7 @@ u8 *HaidiaArashi_GetEvents(void)
 	return HaidiaArashi_SceneTable3;
 }
 
-static void SceneState_SetFlag210AndConfigureRegion40_84(void)
+static void EV15_TOUCH(void)
 {
 	s32 a;
 	s32 b;
@@ -150,7 +150,7 @@ static void SceneState_SetFlag210AndConfigureRegion40_84(void)
 	Engine_MapCopyCellAttributes(40, 84, 7, 4, a, b);
 }
 
-static void SceneState_SetFlag210AndConfigureRegion40_89(void)
+static void EV14_TOUCH(void)
 {
 
 	s32 a;
@@ -186,28 +186,28 @@ static void HaidiaArashi_OpenBackdropExit11(void)
 	HaidiaArashi_RequestBackdropExit(11);
 }
 
-static void SceneState_SetValue123Mode1(void)
+static void EV02_TOUCH(void)
 {
 
 	Engine_AudioPlayCue(0x7B);
 	HaidiaArashi_RequestBackdropExit(1);
 }
 
-static void SceneState_ApplyValues123And3(void)
+static void EV03_TOUCH(void)
 {
 
 	Engine_AudioPlayCue(0x7B);
 	HaidiaArashi_RequestBackdropExit(3);
 }
 
-static void SceneState_SetValue123Mode4(void)
+static void EV04_TOUCH(void)
 {
 
 	Engine_AudioPlayCue(0x7B);
 	HaidiaArashi_RequestBackdropExit(4);
 }
 
-static void FieldScene_RunStep7BAndCheckFlags841And842(void)
+static void EV05_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x7B);
 	if (Engine_GameFlagIsSet(0x841) != 0 && Engine_GameFlagIsSet(0x842) == 0)
@@ -217,7 +217,7 @@ static void FieldScene_RunStep7BAndCheckFlags841And842(void)
 	HaidiaArashi_RequestBackdropExit(2);
 }
 
-static void HaidiaArashi_OpenBackdropExit5(void)
+static void EV06_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x9E);
 	Engine_MapAnimateCells(HaidiaArashi_CellSteps1, 54, 32);
@@ -226,7 +226,7 @@ static void HaidiaArashi_OpenBackdropExit5(void)
 	HaidiaArashi_RequestBackdropExit(5);
 }
 
-static void HaidiaArashi_OpenGateRoute(void)
+static void EV07_TOUCH(void)
 {
 	s32 record;
 
@@ -254,7 +254,7 @@ static void HaidiaArashi_OpenGateRoute(void)
 	}
 }
 
-static void HaidiaArashi_OpenBackdropExit7(void)
+static void EV08_TOUCH(void)
 {
 	if (Engine_GameFlagIsSet(0x205) == 0)
 	{
@@ -266,7 +266,7 @@ static void HaidiaArashi_OpenBackdropExit7(void)
 	HaidiaArashi_RequestBackdropExit(7);
 }
 
-static void HaidiaArashi_OpenBackdropExit8(void)
+static void EV09_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
 	Engine_MapAnimateCells(HaidiaArashi_CellSteps2, 49, 69);
@@ -275,7 +275,7 @@ static void HaidiaArashi_OpenBackdropExit8(void)
 	HaidiaArashi_RequestBackdropExit(8);
 }
 
-static void HaidiaArashi_OpenBackdropExit9(void)
+static void EV10_TOUCH(void)
 {
 	Engine_AudioPlayCue(158);
 	Engine_MapAnimateCells(HaidiaArashi_CellSteps3, 52, 76);
@@ -284,7 +284,7 @@ static void HaidiaArashi_OpenBackdropExit9(void)
 	HaidiaArashi_RequestBackdropExit(9);
 }
 
-static void HaidiaArashi_OpenRouteTen(void)
+static void EV11_TOUCH(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 74);
@@ -293,7 +293,7 @@ static void HaidiaArashi_OpenRouteTen(void)
 	HaidiaArashi_RequestBackdropExit(10);
 }
 
-static void HaidiaArashi_OpenRouteTwelve(void)
+static void EV12_TOUCH(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 73);
@@ -302,7 +302,7 @@ static void HaidiaArashi_OpenRouteTwelve(void)
 	HaidiaArashi_RequestBackdropExit(12);
 }
 
-static void HaidiaArashi_OpenRouteThirteen(void)
+static void EV13_TOUCH(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells(HaidiaArashi_CellSteps2, 38, 72);
@@ -480,7 +480,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 	}
 	if (Engine_GameFlagIsSet(0x210) != 0)
 	{
-		SceneState_SetFlag210AndConfigureRegion40_84();
+		EV15_TOUCH();
 	}
 	Engine_GameFlagSet(0x834);
 	Engine_MapCopyCellAttributes(29, 24, 1, 2, 26, 46);
@@ -625,7 +625,7 @@ static void Scene_DoraSendsRobinToThePlaza(void)
 	Engine_EventEnd();
 }
 
-static void HaidiaArashi_RunStormTriggerScene(void)
+static void EV41_TOUCH(void)
 {
 	struct FieldActor *rec7;
 	struct FieldActor *record;
@@ -702,7 +702,7 @@ static void HaidiaArashi_SetStormCellAttributes(void)
 	Map_CopyCellAttributes(28, 20, 1, 1, 20, 57);
 }
 
-static void HaidiaArashi_RunEventSequence(void)
+static void EV42_TOUCH(void)
 {
 	struct FieldActor *rec7;
 	struct FieldActor *record;
@@ -790,7 +790,7 @@ static void ActorPresentation_SetEightSceneCells(void)
 	Engine_MapCopyCellAttributes(13, 0x37, 1, 1, a, f);
 }
 
-static void FieldScene_RunOpeningAuxiliarySequence(void)
+static void EV43_TOUCH(void)
 {
 	if (GameFlag_IsSet(0x312) == 0)
 	{
@@ -864,7 +864,7 @@ static void SceneState_ApplyFourRects(void)
 	Engine_MapCopyCellAttributes(23, 20, 3, 1, b, 0x2b);
 }
 
-static void HaidiaArashi_RunSecondEventSequence(void)
+static void EV44_TOUCH(void)
 {
 	struct FieldActor *rec7;
 	struct FieldActor *record;
@@ -972,7 +972,7 @@ static void FieldScene_RunScene372SequenceA(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunScene372SequenceB(void)
+static void EV30_TOUCH(void)
 {
 	if (GameFlag_IsSet(0x836) == 0)
 	{
@@ -993,7 +993,7 @@ static void FieldScene_RunScene372SequenceB(void)
 	}
 }
 
-static void FieldScene_RunActor22SceneWhenFlag836Only(void)
+static void EV31_TOUCH(void)
 {
 	if (Engine_GameFlagIsSet(0x837) == 0 && Engine_GameFlagIsSet(0x836) != 0)
 	{
@@ -1006,7 +1006,7 @@ static void FieldScene_RunActor22SceneWhenFlag836Only(void)
 	}
 }
 
-static void FieldScene_RunScene372SequenceC(void)
+static void EV22_TALK(void)
 {
 	if (GameFlag_IsSet(0x841) != 0)
 	{
@@ -1078,7 +1078,7 @@ static void HaidiaArashi_RunCallOutSequence(void)
 	Engine_GameFlagSet(0x837);
 }
 
-static void FieldScene_RunScene372SequenceE(void)
+static void EV32_TOUCH(void)
 {
 	struct FieldActor *record;
 	s32				   base;
@@ -1128,7 +1128,7 @@ static void FieldScene_RunScene372SequenceE(void)
 	}
 }
 
-static void FieldScene_RunScene372SequenceD(void)
+static void EV33_TOUCH(void)
 {
 	struct FieldActor *record;
 	struct FieldActor *actor;
@@ -1196,7 +1196,7 @@ static void SceneActor_RunActor22PlacementSequence(s32 x, s32 y)
 	Engine_ActorSetPosition(22, 0, 0);
 }
 
-static void Scene_BoulderFalls(void)
+static void EV34_TOUCH(void)
 {
 	u32				   i;
 	struct FieldActor *record;
@@ -1420,7 +1420,7 @@ static void ActorPresentation_SetFourActorsModeByBit(void)
 	}
 }
 
-static void FieldScene_RunFlagGatedActorSequence(void)
+static void EV35_TOUCH(void)
 {
 	u8 *tbl;
 
@@ -1809,7 +1809,7 @@ static void HaidiaArashi_RunRiverSearch(void)
 	Actor_SetPosition(22, 0, 0);
 }
 
-static void SceneDialogue_RunActorTenFlag30dDialogue(void)
+static void EV10_TALK(void)
 {
 	s32 v2000 = 0x2000;
 	u8 *tbl;
@@ -1848,7 +1848,7 @@ static void SceneDialogue_RunActorTenFlag30dDialogue(void)
 	Engine_EventEnd();
 }
 
-static void HaidiaArashi_RunReunionAndDeparture(void)
+static void EV36_TOUCH(void)
 {
 	struct FieldActor *rec;
 	struct FieldActor *record;
@@ -2016,7 +2016,7 @@ static void Scene_RunActorGroupDepartureSequence(void)
 	BattleFx_SetBlock30ValuesMaxZero();
 	Actor_EnableActionCallback(22, entryActions);
 	Event_Wait(128);
-	SceneState_SetFlag210AndConfigureRegion40_89();
+	EV14_TOUCH();
 	Camera_MoveTo(0xae0000, -1, 0x5940000, 1);
 	Event_Wait(104);
 	Camera_MoveTo(0x990000, -1, 0x52d0000, 1);
@@ -2485,7 +2485,7 @@ static void ActorPresentation_SelectActorTwentySevenState(void)
 	}
 }
 
-static void HaidiaArashi_TryToFreeActorEight(void)
+static void EV08_TALK(void)
 {
 	struct FieldActor *rec7;
 	struct FieldActor *rec8;
@@ -2610,7 +2610,7 @@ static void FieldScene_BuildPlacementGrid(void)
 	Engine_MapRedraw();
 }
 
-static void SceneState_SetWords1c0And1c8AndRun(void)
+static void EV16_TOUCH(void)
 {
 
 	struct EventWork *state;
@@ -2625,7 +2625,7 @@ static void SceneState_SetWords1c0And1c8AndRun(void)
 	Engine_EventEnd();
 }
 
-static void SceneState_SetWorkWordsAndFlag87f(void)
+static void EV17_TOUCH(void)
 {
 
 	struct EventWork *state;
@@ -2842,7 +2842,7 @@ static void HaidiaArashi_CopyLeaderSpritePriority(void)
 #endif
 }
 
-static void SceneState_SetValueEe4(void)
+static void EV24_SEARCH(void)
 {
 
 	Engine_EventBegin();
@@ -2850,7 +2850,7 @@ static void SceneState_SetValueEe4(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_ShowChestValuables(void)
+static void EV19_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgHaidiaSChestValuables, 1);
@@ -3242,25 +3242,25 @@ struct ScenePlacement HaidiaArashi_LastObjectCall[] = {
 };
 
 struct SceneEvent HaidiaArashi_SceneTable3[] = {
-	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue123Mode1) },
-	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyValues123And3) },
-	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue123Mode4) },
-	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep7BAndCheckFlags841And842) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaArashi_OpenBackdropExit5) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaArashi_OpenGateRoute) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaArashi_OpenBackdropExit7) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaArashi_OpenBackdropExit8) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaArashi_OpenBackdropExit9) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaArashi_OpenRouteTen) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaArashi_OpenRouteTwelve) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaArashi_OpenRouteThirteen) },
-	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene372SequenceC) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorTenFlag30dDialogue) },
+	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
+	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
+	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
+	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EV06_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TOUCH) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
 	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgHaidiaHangOnGarsiaHelpIsOn) },
 	{ EVENT_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgHaidiaDontLetGoGarsia) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgHaidiaNoItCantBeKairuIt) },
 	{ EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgHaidiaMomDadGarsiaPleaseDontLeave) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaArashi_TryToFreeActorEight) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaRockCannotBeMoved) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaRockCannotBeMoved) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaRockCannotBeMoved) },
@@ -3269,23 +3269,23 @@ struct SceneEvent HaidiaArashi_SceneTable3[] = {
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgHaidiaRockCannotBeMoved) },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgHaidiaRockCannotBeMoved) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgHaidiaRockCannotBeMoved) },
-	{ EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetFlag210AndConfigureRegion40_84) },
-	{ EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetFlag210AndConfigureRegion40_89) },
-	{ EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaArashi_RunStormTriggerScene) },
-	{ EVENT_TOUCH, 42, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaArashi_RunEventSequence) },
-	{ EVENT_TOUCH, 43, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunOpeningAuxiliarySequence) },
-	{ EVENT_TOUCH, 44, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaArashi_RunSecondEventSequence) },
-	{ EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene372SequenceB) },
-	{ EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor22SceneWhenFlag836Only) },
-	{ EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene372SequenceE) },
-	{ EVENT_TOUCH, 33, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene372SequenceD) },
-	{ EVENT_TOUCH, 34, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_BoulderFalls) },
-	{ EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFlagGatedActorSequence) },
-	{ EVENT_TOUCH, 36, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaArashi_RunReunionAndDeparture) },
-	{ EVENT_TOUCH, 16, 0x87c, EVENT_SCRIPT(SceneState_SetWords1c0And1c8AndRun) },
-	{ EVENT_TOUCH, 17, 0x87f, EVENT_SCRIPT(SceneState_SetWorkWordsAndFlag87f) },
-	{ SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValueEe4) },
-	{ SEARCH(SEARCH_UNNAMED), 19, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_ShowChestValuables) },
+	{ EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TOUCH) },
+	{ EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TOUCH) },
+	{ EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(EV41_TOUCH) },
+	{ EVENT_TOUCH, 42, CONDITION_ALWAYS, EVENT_SCRIPT(EV42_TOUCH) },
+	{ EVENT_TOUCH, 43, CONDITION_ALWAYS, EVENT_SCRIPT(EV43_TOUCH) },
+	{ EVENT_TOUCH, 44, CONDITION_ALWAYS, EVENT_SCRIPT(EV44_TOUCH) },
+	{ EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(EV30_TOUCH) },
+	{ EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EV31_TOUCH) },
+	{ EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(EV32_TOUCH) },
+	{ EVENT_TOUCH, 33, CONDITION_ALWAYS, EVENT_SCRIPT(EV33_TOUCH) },
+	{ EVENT_TOUCH, 34, CONDITION_ALWAYS, EVENT_SCRIPT(EV34_TOUCH) },
+	{ EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(EV35_TOUCH) },
+	{ EVENT_TOUCH, 36, CONDITION_ALWAYS, EVENT_SCRIPT(EV36_TOUCH) },
+	{ EVENT_TOUCH, 16, 0x87c, EVENT_SCRIPT(EV16_TOUCH) },
+	{ EVENT_TOUCH, 17, 0x87f, EVENT_SCRIPT(EV17_TOUCH) },
+	{ SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_SEARCH) },
+	{ SEARCH(SEARCH_UNNAMED), 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 

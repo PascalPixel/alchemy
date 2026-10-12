@@ -91,7 +91,7 @@ static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 #include "../common/effect/move.c"
 #include "../common/effect/spawn.c"
 
-static void SceneState_SetValue8Mode66(void)
+static void EV08_TALK(void)
 {
 	BattleFx_SetPhaseRequest(8, 66);
 }
@@ -292,7 +292,7 @@ done:;
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunFourCallSequence(void)
+static void EV10_SCRIPT(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
@@ -300,7 +300,7 @@ static void FieldScene_RunFourCallSequence(void)
 	Engine_EventEnd();
 }
 
-static void SceneState_BranchOnActorEightOrNineTile(void)
+static void EV11_TOUCH(void)
 {
 	struct FieldActor *p = Object_GetById(9);
 
@@ -311,7 +311,7 @@ static void SceneState_BranchOnActorEightOrNineTile(void)
 		{
 			if ((p->z.fixed >> 20) == 20)
 			{
-				FieldScene_RunFourCallSequence();
+				EV10_SCRIPT();
 				return;
 			}
 		}
@@ -322,7 +322,7 @@ static void SceneState_BranchOnActorEightOrNineTile(void)
 		{
 			if ((p->z.fixed >> 20) == 20)
 			{
-				FieldScene_RunFourCallSequence();
+				EV10_SCRIPT();
 				return;
 			}
 		}
@@ -338,7 +338,7 @@ static void ResetSceneParametersAndFinishSetup(void)
 	Engine_EventWaitForScreen();
 }
 
-static void FieldScene_RunStep11(void)
+static void EV25_TOUCH(void)
 {
 	Engine_EventBegin();
 	ResetSceneParametersAndFinishSetup();
@@ -346,7 +346,7 @@ static void FieldScene_RunStep11(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunStep12WithPosition(void)
+static void EV26_TOUCH(void)
 {
 	Engine_EventBegin();
 	OverlayObject_PrepareObject(0x1d00000, 0, 0x1220000, 223);
@@ -355,7 +355,7 @@ static void FieldScene_RunStep12WithPosition(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunStep13WithTwoPositions(void)
+static void EV27_TOUCH(void)
 {
 	Engine_EventBegin();
 	OverlayObject_PrepareObject(0x8f0000, 0, 0x1220000, 223);
@@ -365,7 +365,7 @@ static void FieldScene_RunStep13WithTwoPositions(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunStep15(void)
+static void EV28_TOUCH(void)
 {
 	Engine_EventBegin();
 	ResetSceneParametersAndFinishSetup();
@@ -373,7 +373,7 @@ static void FieldScene_RunStep15(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunStepWithValue2693(void)
+static void EV20_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -381,7 +381,7 @@ static void FieldScene_RunStepWithValue2693(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunBranchingActorSequence(void)
+static void EV10_TOUCH(void)
 {
 	struct FieldActor *record;
 
@@ -977,7 +977,7 @@ static void SceneState_ApplyRectAt32x78(void)
 	Map_CopyCellsLayered(32, 78, 1, 2, 17, 78);
 }
 
-static void BabiIriguchi_OpenTruthDoor(void)
+static void EV22_TOUCH(void)
 {
 	if (GameFlag_IsSet(0x985) == 0)
 	{
@@ -1021,7 +1021,7 @@ static void BabiIriguchi_CloseTruthDoor(void)
 	}
 }
 
-static void BabiIriguchi_FlipTruthDoorSwitch(void)
+static void EV60_SEARCH(void)
 {
 	u8	*work = (u8 *)gEventWork;
 	s16 *seeing;
@@ -1039,7 +1039,7 @@ static void BabiIriguchi_FlipTruthDoorSwitch(void)
 			Engine_EventWait(10);
 			Map_CopyCellsLayered(34, 78, 1, 2, 17, 78);
 			Engine_EventWait(10);
-			BabiIriguchi_OpenTruthDoor();
+			EV22_TOUCH();
 		}
 	}
 	else
@@ -1069,12 +1069,12 @@ static struct StagedActor *BabiIriguchi_FindActorAhead(struct StagedActor *actor
 	return StagedActor_FindAtTile(p, actor);
 }
 
-static void BabiIriguchi_EnableEffectChildOption(void)
+static void EV12_SCRIPT(void)
 {
 	((struct BattleFxScene *)*(void **)gEffectWork)->child_option = 1;
 }
 
-static void ActorPresentation_PlaceActorTwelveAtTile20And12(void)
+static void EV12_PSYNERGY(void)
 {
 	struct FieldActor *p = Object_GetById(12);
 	s32				   a = p->x.fixed >> 20;
@@ -1097,7 +1097,7 @@ static void ActorPresentation_PlaceActorTwelveAtTile20And12(void)
 	}
 }
 
-static void SceneActor_PushObjectAheadIfLevel(void)
+static void EV50_SCRIPT(void)
 {
 	struct StagedActor *p = (struct StagedActor *)Object_GetById(ACTOR_PARTY_LEADER);
 	struct StagedActor *q = BabiIriguchi_FindActorAhead(p);
@@ -1129,7 +1129,7 @@ static void SceneActor_PushObjectAheadIfLevel(void)
 	StagedActor_AdvancePair();
 }
 
-static void SceneActor_RunSlotZeroFacingCheck(void)
+static void EV51_SCRIPT(void)
 {
 	struct StagedActor *p = (struct StagedActor *)Object_GetById(0);
 	struct StagedActor *ahead = BabiIriguchi_FindActorAhead(p);
@@ -1151,7 +1151,7 @@ static void SceneActor_RunSlotZeroFacingCheck(void)
 	{
 		if (gGameState.movement_mode != 1)
 		{
-			SceneActor_PushObjectAheadIfLevel();
+			EV50_SCRIPT();
 		}
 	}
 }
@@ -1175,7 +1175,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gBabiIriguchiEventsOther;
 }
 
-static void SceneState_ConfigureRegion82_7AndApply768(void)
+static void EV10_PSYNERGY(void)
 {
 
 	s32 a = 18;
@@ -1325,7 +1325,7 @@ s32 BabiIriguchi_SetupScene(void)
 		{
 			Engine_ActorSetAnimation(10, 4);
 			Object_GetById(10)->collision_flags = 0xfe;
-			SceneState_ConfigureRegion82_7AndApply768();
+			EV10_PSYNERGY();
 		}
 		row = (struct RowActor *)Object_GetById(11);
 		row->collision_flags = 0;
@@ -1769,9 +1769,8 @@ struct SceneEvent gBabiIriguchiEvents3[] = {
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
-	{0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFourCallSequence)},
-	{TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS,
-		EVENT_SCRIPT(SceneState_BranchOnActorEightOrNineTile)},
+	{0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT)},
+	{TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH)},
 	{EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely)},
 	{EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiOnlyTwoOfThoseSixEver)},
 	{EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiTheyJustKickedUsOutOf)},
@@ -1786,7 +1785,7 @@ struct SceneEvent gBabiIriguchiEvents3[] = {
 		MSGNO(MsgBabiIriguchiNoneOfThemHadAnyTorches)},
 	{PSYNERGY_ON_ACTOR(0x8c), 8, CONDITION_ALWAYS, EVENT_SCRIPT(BabiIriguchi_JumpFromLedge)},
 	{PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(BabiIriguchi_JumpFromLedge)},
-	{PSYNERGY_ON_ACTOR(0xc), 10, 0x300, EVENT_SCRIPT(SceneState_ConfigureRegion82_7AndApply768)},
+	{PSYNERGY_ON_ACTOR(0xc), 10, 0x300, EVENT_SCRIPT(EV10_PSYNERGY)},
 	{SCENE_EVENTS_END},
 };
 
@@ -1802,24 +1801,22 @@ struct SceneEvent gBabiIriguchiEvents2[] = {
 	{0x31, 9, CONDITION_ALWAYS, 9},
 	{0x21, 10, CONDITION_ALWAYS, 10},
 	{EVENT_EXIT, 11, CONDITION_ALWAYS, 18},
-	{TOUCH_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep11)},
-	{TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS,
-		EVENT_SCRIPT(FieldScene_RunStep12WithPosition)},
-	{TOUCH_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS,
-		EVENT_SCRIPT(FieldScene_RunStep13WithTwoPositions)},
-	{TOUCH_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep15)},
-	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue8Mode66)},
-	{SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStepWithValue2693)},
+	{TOUCH_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_TOUCH)},
+	{TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(EV26_TOUCH)},
+	{TOUCH_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT_SCRIPT(EV27_TOUCH)},
+	{TOUCH_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(EV28_TOUCH)},
+	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK)},
+	{SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SEARCH)},
 	{SCENE_EVENTS_END},
 };
 
 struct SceneEvent gBabiIriguchiEvents1[] = {
 	{0x31, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-	{EVENT_TOUCH, 10, 0x988, EVENT_SCRIPT(FieldScene_RunBranchingActorSequence)},
+	{EVENT_TOUCH, 10, 0x988, EVENT_SCRIPT(EV10_TOUCH)},
 	{EVENT_TOUCH, 20, IF_FLAG_SET(0x301), EVENT_SCRIPT(BabiIriguchi_CloseTruthDoor)},
 	{EVENT_TOUCH, 21, 0x301, EVENT_SCRIPT(BabiIriguchi_CloseTruthDoor)},
-	{EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(BabiIriguchi_OpenTruthDoor)},
+	{EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TOUCH)},
 	{EVENT_TALK, 10, 0x989, MSGNO(MsgBabiIriguchiIAmCountingOnYouRobin)},
 	{EVENT_TALK, 11, 0x989, MSGNO(MsgBabiIriguchiWhenISawThemTheyHad)},
 	{EVENT_TALK, 12, 0x989, MSGNO(MsgBabiIriguchiIAmSorryButNotEven)},
@@ -1847,7 +1844,7 @@ struct SceneEvent gBabiIriguchiEvents1[] = {
 		MSGNO(MsgBabiIriguchiThisIsABigWasteOf)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
 		MSGNO(MsgBabiIriguchiIDontWantToHinderActors)},
-	{SEARCH(SEARCH_UNNAMED), 60, CONDITION_ALWAYS, EVENT_SCRIPT(BabiIriguchi_FlipTruthDoorSwitch)},
+	{SEARCH(SEARCH_UNNAMED), 60, CONDITION_ALWAYS, EVENT_SCRIPT(EV60_SEARCH)},
 	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
 		EVENT_SCRIPT(ActorPresentation_SetSceneCellByFlag985)},
 	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
@@ -1856,13 +1853,11 @@ struct SceneEvent gBabiIriguchiEvents1[] = {
 };
 
 struct SceneEvent gBabiIriguchiEventsOther[] = {
-	{0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_PushObjectAheadIfLevel)},
-	{0x202, 51, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_RunSlotZeroFacingCheck)},
-	{PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS,
-		EVENT_SCRIPT(ActorPresentation_PlaceActorTwelveAtTile20And12)},
-	{0x10009315, 12, CONDITION_ALWAYS, EVENT_SCRIPT(BabiIriguchi_EnableEffectChildOption)},
-	{PSYNERGY_ON_ACTOR(0x93), 12, CONDITION_ALWAYS,
-		EVENT_SCRIPT(ActorPresentation_PlaceActorTwelveAtTile20And12)},
+	{0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_SCRIPT)},
+	{0x202, 51, CONDITION_ALWAYS, EVENT_SCRIPT(EV51_SCRIPT)},
+	{PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_PSYNERGY)},
+	{0x10009315, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_SCRIPT)},
+	{PSYNERGY_ON_ACTOR(0x93), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_PSYNERGY)},
 	{EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBabiIriguchiWeHaventBeenOrderedToStart)},

@@ -114,7 +114,7 @@ struct FieldGlobals
 
 void QueueSceneSound(s32 cue);
 
-static void SceneState_SendRequest15With45(void)
+static void EV15_TALK(void)
 {
 	BattleFx_SetPhaseRequest(15, 45);
 }
@@ -381,17 +381,17 @@ static void FieldScene_RunLateActor10Step(void)
 	SuharaSabaku_RestoreActorScaleAndBlend(10);
 }
 
-static void FieldScene_RunLateActor11Step(void)
+static void EV64_TOUCH(void)
 {
 	SuharaSabaku_RestoreActorScaleAndBlend(11);
 }
 
-static void FieldScene_RunLateActor12Step(void)
+static void EV65_TOUCH(void)
 {
 	SuharaSabaku_RestoreActorScaleAndBlend(12);
 }
 
-static void FieldScene_RunActorThirteenRestoration(void)
+static void EV09_TOUCH(void)
 {
 	struct FieldActor *record;
 
@@ -515,7 +515,7 @@ static s32 SuharaSabaku_FollowLeaderWithSparks(struct FieldActor *actor)
 	return 1;
 }
 
-static void PlaceActorTwelveWhenFlagClear(void)
+static void EV81_TOUCH(void)
 {
 	if (GameFlag_IsSet(2487) == 0)
 	{
@@ -574,7 +574,7 @@ static void SuharaSabaku_MeetActor(s32 a0, s32 actor)
 	Object_GetById(gGameState.selected_actor)->motion_flags = 3;
 }
 
-static void SuharaSabaku_DropAndLeave(void)
+static void EV99_RAISED(void)
 {
 	s32				   other;
 	struct FieldActor *leader;
@@ -960,7 +960,7 @@ struct SceneEvent gSuharaSabakuEventsOther[] = {
 #else
 	{ 0xc401, 4, CONDITION_ALWAYS, 4 },
 #endif
-	{ EVENT_TOUCH, 9, 0x9b5, EVENT_SCRIPT(FieldScene_RunActorThirteenRestoration) },
+	{ EVENT_TOUCH, 9, 0x9b5, EVENT_SCRIPT(EV09_TOUCH) },
 	{ EVENT_TOUCH, 41, 0x301, EVENT_SCRIPT(FieldScene_RunActor8Step) },
 	{ EVENT_TOUCH, 42, 0x302, EVENT_SCRIPT(FieldScene_RunActor9Step) },
 	{ EVENT_TOUCH, 43, 0x303, EVENT_SCRIPT(FieldScene_RunActor10Step) },
@@ -972,14 +972,14 @@ struct SceneEvent gSuharaSabakuEventsOther[] = {
 	{ EVENT_TOUCH, 61, 0x206, EVENT_SCRIPT(FieldScene_RunLateActor8Step) },
 	{ EVENT_TOUCH, 62, 0x207, EVENT_SCRIPT(FieldScene_RunLateActor9Step) },
 	{ EVENT_TOUCH, 63, 0x208, EVENT_SCRIPT(FieldScene_RunLateActor10Step) },
-	{ EVENT_TOUCH, 64, 0x209, EVENT_SCRIPT(FieldScene_RunLateActor11Step) },
-	{ EVENT_TOUCH, 65, 0x20a, EVENT_SCRIPT(FieldScene_RunLateActor12Step) },
+	{ EVENT_TOUCH, 64, 0x209, EVENT_SCRIPT(EV64_TOUCH) },
+	{ EVENT_TOUCH, 65, 0x20a, EVENT_SCRIPT(EV65_TOUCH) },
 	{ EVENT_TOUCH, 71, 0x206, EVENT_SCRIPT(FieldScene_RunLateActor8Step) },
 	{ EVENT_TOUCH, 72, 0x207, EVENT_SCRIPT(FieldScene_RunLateActor9Step) },
 	{ EVENT_TOUCH, 73, 0x208, EVENT_SCRIPT(FieldScene_RunLateActor10Step) },
 	{ EVENT_TOUCH, 54, 0x314, EVENT_SCRIPT(FieldScene_RunActor11Step) },
-	{ EVENT_TOUCH, 81, 0x20e, EVENT_SCRIPT(PlaceActorTwelveWhenFlagClear) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SendRequest15With45) },
+	{ EVENT_TOUCH, 81, 0x20e, EVENT_SCRIPT(EV81_TOUCH) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
 	{ SEARCH(SEARCH_UNNAMED), 100, 0x351, FIND_PSYNERGY_STONE },
 	{ SEARCH(SEARCH_CHEST), 103, 0xfb1, FIND_ITEM(0x8d) },
 	{ SEARCH(SEARCH_CHEST), 104, 0xfb2, FIND_ITEM(ITEM_LUCKY_MEDAL) },
@@ -997,7 +997,7 @@ struct SceneEvent gSuharaSabakuEventsOther[] = {
 	{ PSYNERGY_ON_ACTOR(0x21), 12, IF_FLAG_SET(0x20f), EVENT_SCRIPT(SuharaSabaku_MeetActor) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3c0SequenceA) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunOpeningAuxiliarySequence) },
-	{ EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaSabaku_DropAndLeave) },
+	{ EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_RAISED) },
 	{ EVENT_RAISED, 55, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor12Step) },
 	{ SCENE_EVENTS_END },
 };

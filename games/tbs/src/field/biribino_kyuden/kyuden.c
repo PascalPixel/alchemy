@@ -124,7 +124,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gBiribinoKyudenEventsOther;
 }
 
-static void Kyuden_AskAboutKolima(void)
+static void EV10_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoYouWillingGoKolimaForest);
@@ -132,7 +132,7 @@ static void Kyuden_AskAboutKolima(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunStartledGuard(void)
+static void EV14_TALK(void)
 {
 	Engine_EventBegin();
 	Actor_ShowEmote(14, 0x102, 0);
@@ -147,7 +147,7 @@ static void FieldScene_RunStartledGuard(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunScene38dSequenceA(void)
+static void EV15_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoFineWarrior);
@@ -160,7 +160,7 @@ static void FieldScene_RunScene38dSequenceA(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor16Message1769(void)
+static void EV16_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoWasWatchingFromHereAfter);
@@ -168,7 +168,7 @@ static void SceneDialogue_RunActor16Message1769(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActorSeventeenFlaggedDialogue(void)
+static void EV17_TALK(void)
 {
 	Engine_EventBegin();
 
@@ -193,7 +193,7 @@ static void FieldScene_RunActorSeventeenFlaggedDialogue(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor15Flag303Scene(void)
+static void EV15_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoSometimesWeNeedChildrenRemind);
@@ -206,7 +206,7 @@ static void SceneDialogue_RunActor15Flag303Scene(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActorSeventeenFlagDialogue(void)
+static void EV17_PSYNERGY(void)
 {
 	Engine_EventBegin();
 
@@ -297,7 +297,7 @@ static void FieldScene_RunChestStep(s32 flag)
 	}
 }
 
-static void FieldScene_RunStep210ByFlag84e(void)
+static void EV100_SEARCH(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0)
 	{
@@ -309,7 +309,7 @@ static void FieldScene_RunStep210ByFlag84e(void)
 	}
 }
 
-static void FieldScene_RunStep211ByFlag84e(void)
+static void EV101_SEARCH(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0)
 	{
@@ -321,7 +321,7 @@ static void FieldScene_RunStep211ByFlag84e(void)
 	}
 }
 
-static void FieldScene_RunStep212ByFlag84e(void)
+static void EV102_SEARCH(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0)
 	{
@@ -333,7 +333,7 @@ static void FieldScene_RunStep212ByFlag84e(void)
 	}
 }
 
-static void FieldScene_RunStep213ByFlag84e(void)
+static void EV103_SEARCH(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0)
 	{
@@ -371,7 +371,7 @@ static void FieldScene_RunSlotSubjectBranch(s32 actor, s32 item, s32 flag)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunRewardReminder(void)
+static void EV51_TOUCH(void)
 {
 	if (GameFlag_IsSet(FLAG_REWARD_TAKEN) == 0)
 	{
@@ -392,7 +392,7 @@ static void FieldScene_RunRewardReminder(void)
 	}
 }
 
-static void FieldScene_RunPalaceFarewell(void)
+static void EV50_TOUCH(void)
 {
 	if (GameFlag_IsSet(FLAG_REWARD_TAKEN) != 0)
 	{
@@ -1591,7 +1591,7 @@ struct SceneEvent gBiribinoKyudenEvents[] = {
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBilibinThePeopleOfBilibinWillNever) },
 	{ EVENT_TALK, 9, 0x84e, MSGNO(MsgBilibinMakeSureYouDontOffendLord) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgBilibinIHeardYouReceivedASpectacular) },
-	{ EVENT_TALK, 10, 0x84e, EVENT_SCRIPT(Kyuden_AskAboutKolima) },
+	{ EVENT_TALK, 10, 0x84e, EVENT_SCRIPT(EV10_TALK) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBilibinLadyMccoyIsQuiteUpsetThat) },
 	{ EVENT_TALK, 11, 0x84e, MSGNO(MsgBilibinIAlwaysBelievedThatTheOld) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBilibinThingsAreLookingGrimSouthOf) },
@@ -1600,14 +1600,14 @@ struct SceneEvent gBiribinoKyudenEvents[] = {
 	{ EVENT_TALK, 13, 0x84e, MSGNO(MsgBilibinMiladyWasRenownedFarAndWide) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBilibinForOnceMilordDidntLetLady) },
 	{ EVENT_TALK, 14, 0x84e, MSGNO(MsgBilibinOhSomedayIWantToSleep) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStartledGuard) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
 	{ EVENT_TALK, 15, 0x84f, MSGNO(MsgBilibinYouCanSeeKolimaPrettyWell) },
 	{ EVENT_TALK, 15, 0x84e, MSGNO(MsgBilibinHeyIfYouCantDoThe) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene38dSequenceA) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
 	{ EVENT_TALK, 16, 0x84e, MSGNO(MsgBilibinHmmItSeemsTheCurseOf) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor16Message1769) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgBilibinYouMaySelectASingleItem) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorSeventeenFlaggedDialogue) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK) },
 	{ EVENT_TALK, 18, 0x84e, MSGNO(MsgBilibinSorryLadsButKolimasFutureIs) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgBilibinYehveTaughtMeThatICannae) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x84e, MSGNO(MsgBilibinHowManyTimesDoIHave) },
@@ -1626,19 +1626,19 @@ struct SceneEvent gBiribinoKyudenEvents[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgBilibinTheHoleInThisNightgownIs) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x84f, MSGNO(MsgBilibinLordMccoyHasntComeHereFor) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x84e, MSGNO(MsgBilibinItsAToughThingBeingSo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor15Flag303Scene) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x84e, MSGNO(MsgBilibinKolimaForestUsedToBeSo) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgBilibinACourageousWarriorWouldntThinkTwice) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgBilibinTheseCourageousWarriorsDeserveToReceive) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorSeventeenFlagDialogue) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x84e, MSGNO(MsgBilibinThereIsNothingMoreToTalk) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgBilibinButICannaeFiggerOutHow) },
-	{ SEARCH(SEARCH_UNNAMED), 100, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep210ByFlag84e) },
-	{ SEARCH(SEARCH_UNNAMED), 101, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep211ByFlag84e) },
-	{ SEARCH(SEARCH_UNNAMED), 102, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep212ByFlag84e) },
-	{ SEARCH(SEARCH_UNNAMED), 103, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep213ByFlag84e) },
-	{ EVENT_TOUCH, 50, 0x333, EVENT_SCRIPT(FieldScene_RunPalaceFarewell) },
-	{ EVENT_TOUCH, 51, 0x333, EVENT_SCRIPT(FieldScene_RunRewardReminder) },
+	{ SEARCH(SEARCH_UNNAMED), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EV100_SEARCH) },
+	{ SEARCH(SEARCH_UNNAMED), 101, CONDITION_ALWAYS, EVENT_SCRIPT(EV101_SEARCH) },
+	{ SEARCH(SEARCH_UNNAMED), 102, CONDITION_ALWAYS, EVENT_SCRIPT(EV102_SEARCH) },
+	{ SEARCH(SEARCH_UNNAMED), 103, CONDITION_ALWAYS, EVENT_SCRIPT(EV103_SEARCH) },
+	{ EVENT_TOUCH, 50, 0x333, EVENT_SCRIPT(EV50_TOUCH) },
+	{ EVENT_TOUCH, 51, 0x333, EVENT_SCRIPT(EV51_TOUCH) },
 	{ SEARCH(SEARCH_BARREL), 120, 0xf55, FIND_ITEM(ITEM_ELIXIR) },
 	{ SEARCH(SEARCH_BARREL), 121, 0xf56, FIND_ITEM(ITEM_SMOKE_BOMB) },
 	{ SEARCH(SEARCH_WARDROBE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBilibinTheresASilkNegligeeRobinPut)) },

@@ -35,7 +35,7 @@ static void FieldScene_PlaceSlots14And15(void);
 static void SceneActor_SetMode3AndFlagBit1(s32 no);
 static void FieldScene_RunScene3aeSequenceA(void);
 
-static void SceneState_ApplyValues14And0And5(void)
+static void EV14_TALK(void)
 {
 	BattleFx_RunPageEffectForSlot(0xE, 0, 5);
 }
@@ -107,7 +107,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gKareiTorebiPlacementsOther;
 }
 
-static void KareiTorebi_MoveGuardAside(void)
+static void EV20_TOUCH(void)
 {
 	Engine_EventBegin();
 	GameFlag_Set(0x8aa);
@@ -157,7 +157,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gKareiTorebiEventsOther;
 }
 
-static void KareiTorebi_AskGoToTolbi(void)
+static void EV08_TALK_1(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKareiWantGoToTolbi);
@@ -165,7 +165,7 @@ static void KareiTorebi_AskGoToTolbi(void)
 	Engine_EventEnd();
 }
 
-static void KareiTorebi_AskCarryMessage(void)
+static void EV11_TALK(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x8a6) == 0)
@@ -281,7 +281,7 @@ done:
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActorThirteenFlagDialogue(void)
+static void EV13_TALK(void)
 {
 	Engine_EventBegin();
 
@@ -304,7 +304,7 @@ static void FieldScene_RunActorThirteenFlagDialogue(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunOpeningAuxiliarySequence(void)
+static void EV08_TALK_2(void)
 {
 	s32				  rec7;
 	struct GameState *state;
@@ -387,7 +387,7 @@ static void FieldScene_RunOpeningAuxiliarySequence(void)
 	}
 }
 
-static void KareiTorebi_TalkScaryTrip(void)
+static void EV08_TALK_3(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKareiHearScaryTrip);
@@ -395,7 +395,7 @@ static void KareiTorebi_TalkScaryTrip(void)
 	Engine_EventEnd();
 }
 
-static void KareiTorebi_TalkSeasickTourists(void)
+static void EV10_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKareiTouristsLookUpset);
@@ -452,7 +452,7 @@ static void KareiTorebi_DeliverParentsMessage(void)
 	}
 }
 
-static void KareiTorebi_LeaveScene(void)
+static void EV10_TOUCH(void)
 {
 	Engine_EventBegin();
 	Event_PlayCue(158);
@@ -702,7 +702,7 @@ static void FieldScene_RunScene3aeSequenceA(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunScene3aeSequenceB(void)
+static void EV50_TOUCH(void)
 {
 	struct FieldActor *actor;
 
@@ -1098,12 +1098,12 @@ struct SceneEvent gKareiTorebiEventsOther[] = {
 struct SceneEvent gKareiTorebiEvents1[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KareiTorebi_LeaveScene) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(KareiTorebi_AskGoToTolbi) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK_1) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiWeCantTakeSilkRoadSo) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiYouCantTakeSilkRoadMuch) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(KareiTorebi_AskCarryMessage) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
 	{ EVENT_TALK, 12, 0x911, MSGNO(MsgKareiTorebiTodayThereAreSupposedToBe) },
 	{ EVENT_TALK, 13, 0x911, MSGNO(MsgKareiTorebiTheShipWillBeOpenUntil) },
 	{ 0x400, 12, 0x8a9, EVENT_SCRIPT(SceneDialogue_RunActor12Event) },
@@ -1113,7 +1113,7 @@ struct SceneEvent gKareiTorebiEvents1[] = {
 #else
 	{ 0xc400, 12, IF_FLAG_SET(0x8a9), EVENT_SCRIPT(KareiTorebi_RemindBoardShip) },
 #endif
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorThirteenFlagDialogue) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiWithSilkRoadClosedEveryoneWill) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiICantBelieveHowExpensiveTickets) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiWellIsntThisGreatWeCant) },
@@ -1122,31 +1122,31 @@ struct SceneEvent gKareiTorebiEvents1[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x911, MSGNO(MsgKareiTorebiTheCaptainsInAGoodMoodThats) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiSilkRoadIsBlockedSoThe) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiTheReplacementShipHasntArrivedSo) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyValues14And0And5) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
 	{ SCENE_EVENTS_END },
 };
 
 struct SceneEvent gKareiTorebiEvents1Flag93e[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KareiTorebi_LeaveScene) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiTheShipHasntReturnedSoWe) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiOhHoHoWithoutAShip) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiImGladIOnlyWorkOn) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiIWonderIfMonstersGotEveryone) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyValues14And0And5) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
 	{ SCENE_EVENTS_END },
 };
 
 struct SceneEvent gKareiTorebiEvents3[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KareiTorebi_LeaveScene) },
-	{ EVENT_TOUCH, 20, 0x8aa, EVENT_SCRIPT(KareiTorebi_MoveGuardAside) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(KareiTorebi_TalkScaryTrip) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
+	{ EVENT_TOUCH, 20, 0x8aa, EVENT_SCRIPT(EV20_TOUCH) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK_3) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiSighIThinkWereDoneSailing) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(KareiTorebi_TalkSeasickTourists) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(KareiTorebi_DeliverParentsMessage) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiIfYoureGoingToTolbiKeep) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiItsBeenQuiteSomeTimeSince) },
@@ -1167,8 +1167,8 @@ struct SceneEvent gKareiTorebiEvents3[] = {
 struct SceneEvent gKareiTorebiEvents3Flag950[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KareiTorebi_LeaveScene) },
-	{ EVENT_TOUCH, 50, 0x8ab, EVENT_SCRIPT(FieldScene_RunScene3aeSequenceB) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
+	{ EVENT_TOUCH, 50, 0x8ab, EVENT_SCRIPT(EV50_TOUCH) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiThereAreManyHereWhoWant) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiHangingAroundHereLikeThisAnd) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiIfBothTheCaptainAndKaja) },
@@ -1195,7 +1195,7 @@ struct SceneEvent gKareiTorebiEvents3Flag950[] = {
 struct SceneEvent gKareiTorebiEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunOpeningAuxiliarySequence) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK_2) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiHmmmThatsStrangeIsntTheReplacement) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKareiTorebiOnceWeveCrossedTheKaragolWell) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8a5, MSGNO(MsgKareiTorebiIFeelSortOfBadThat) },

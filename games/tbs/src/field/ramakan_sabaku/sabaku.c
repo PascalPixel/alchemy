@@ -86,7 +86,7 @@ static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 #include "../common/effect/move.c"
 #include "../common/effect/spawn.c"
 
-static void FieldScene_ApplyActor13Values3And3(void)
+static void EV13_TALK(void)
 {
 	BattleFx_RunPageEffectForSlot(13, 3, 3);
 }
@@ -186,7 +186,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gRamakanSabakuPlacementsOther;
 }
 
-static void FieldScene_RunFlags8B2And8B3Steps(void)
+static void EV09_TOUCH(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x8b2) == 0)
@@ -367,7 +367,7 @@ reset_objects:;
 	}
 }
 
-static void RamakanSabaku_ReturnToArea3(void)
+static void EV08_TALK(void)
 {
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Party_SetFields1ceAnd1d0((s32)&SceneId_RamakanSabaku3, 5);
@@ -465,7 +465,7 @@ struct SafePoint
 	s32 z;
 };
 
-static void RamakanSabaku_SweepBack(void)
+static void EV20_TOUCH(void)
 {
 	u8		  *work;
 	s32		   frames;
@@ -657,7 +657,7 @@ static void RamakanSabaku_UpdateTravelDust(void)
 	}
 }
 
-static void RamakanSabaku_FaceNearestActor(void)
+static void EV22_TOUCH(void)
 {
 	struct FieldActor *target;
 	struct FieldActor *actor;
@@ -730,7 +730,7 @@ static void RamakanSabaku_FaceNearestActor(void)
 	BattleFx_SetWeightedResult(53, 4);
 }
 
-static void RamakanSabaku_UpdateDustAndProbe(void)
+static void EV30_TOUCH(void)
 {
 	struct FieldActor	*center;
 	s32					 id;
@@ -803,7 +803,7 @@ static void RamakanSabaku_UpdateDustAndProbe(void)
 	actor->z.fixed += 0x18000;
 }
 
-static void RamakanSabaku_PlayStartledRetreat(void)
+static void EV40_TOUCH(void)
 {
 	s32				   rec8;
 	struct FieldActor *record;
@@ -1285,14 +1285,14 @@ struct SceneEvent RamakanSabaku_Events[] = {
 	{ EVENT_EXIT, 6, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 7, CONDITION_ALWAYS, 3 },
 	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 4 },
-	{ EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFlags8B2And8B3Steps) },
-	{ EVENT_TOUCH, 20, 0x200, EVENT_SCRIPT(RamakanSabaku_SweepBack) },
+	{ EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TOUCH) },
+	{ EVENT_TOUCH, 20, 0x200, EVENT_SCRIPT(EV20_TOUCH) },
 	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(RamakanSabaku_UpdateTravelDust) },
-	{ EVENT_TOUCH, 22, 0x200, EVENT_SCRIPT(RamakanSabaku_FaceNearestActor) },
-	{ EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(RamakanSabaku_UpdateDustAndProbe) },
-	{ EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(RamakanSabaku_PlayStartledRetreat) },
-	{ EVENT_TALK, 8, 0x90a, EVENT_SCRIPT(RamakanSabaku_ReturnToArea3) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_ApplyActor13Values3And3) },
+	{ EVENT_TOUCH, 22, 0x200, EVENT_SCRIPT(EV22_TOUCH) },
+	{ EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(EV30_TOUCH) },
+	{ EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(EV40_TOUCH) },
+	{ EVENT_TALK, 8, 0x90a, EVENT_SCRIPT(EV08_TALK) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf7b, FIND_ITEM(0x24) },
 	{ SEARCH(SEARCH_UNNAMED), 101, 0x350, FIND_PSYNERGY_STONE },
 	{ SEARCH(SEARCH_CHEST), 102, 0xf7c, FIND_ITEM(0xc4) },

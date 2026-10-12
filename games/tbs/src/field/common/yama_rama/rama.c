@@ -103,7 +103,7 @@ static void SceneDialogue_RunMessage1958Step(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor11Message195d(void)
+static void EV11_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgYamaDoKnowMeditation);
@@ -111,7 +111,7 @@ static void SceneDialogue_RunActor11Message195d(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor13Message1961(void)
+static void EV13_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgYamaDidKnowMasterHamaGreatest);
@@ -119,7 +119,7 @@ static void SceneDialogue_RunActor13Message1961(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunPrimaryScript(void)
+static void EV02_TOUCH(void)
 {
 	Event_PlayCue(188);
 	Map_AnimateCells(YamaRama_BoulderCells, 67, 6);
@@ -319,7 +319,7 @@ static void FieldScene_RunScene3a2SequenceA(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunLine1956(void)
+static void EV05_SEARCH(void)
 {
 
 	Engine_EventBegin();
@@ -344,7 +344,7 @@ static void YamaRama_ClearActorPlacement(void)
 	Actor_SetPosition(14, 0, 0);
 }
 
-static void SceneDialogue_RunActorFifteenByLeaderHeading(void)
+static void EV15_TALK(void)
 {
 
 	u32 heading = Object_GetById(0)->facing;
@@ -362,7 +362,7 @@ static void SceneDialogue_RunActorFifteenByLeaderHeading(void)
 	Engine_EventEnd();
 }
 
-static void Scene_RunEventTransition(void)
+static void EV10_TOUCH(void)
 {
 	struct FieldActor *record;
 	s32				   none;
@@ -478,7 +478,7 @@ static void Scene_RunActorExchange(void)
 	GameFlag_Set(0x8b1);
 }
 
-static void Scene_RunActorSequence(void)
+static void EV11_PSYNERGY(void)
 {
 
 	s32 mask;
@@ -595,7 +595,7 @@ static void Scene_RunActorSequence(void)
 	Engine_EventRequestExit(6);
 }
 
-static void FieldScene_RunScriptedSteps0And1A12(void)
+static void EV07_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -649,7 +649,7 @@ static s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct FieldActor *actor)
 	}
 }
 
-static void SceneActor_UpdateActorFourteenByDepth(void)
+static void EV14_SCRIPT(void)
 {
 	struct FieldActor *current = Object_GetById(0);
 	struct FieldActor *other = Object_GetById(14);
@@ -660,7 +660,7 @@ static void SceneActor_UpdateActorFourteenByDepth(void)
 	}
 }
 
-static void ActorPresentation_PrepareActorFourteenWithCallback(void)
+static void EV14_PSYNERGY(void)
 {
 	u8 zero;
 
@@ -682,7 +682,7 @@ static void ActorPresentation_PrepareActorFourteenWithCallback(void)
 	Engine_EventEnd();
 }
 
-static void YamaRama_DisableActorCollision(void)
+static void EV15_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	{
@@ -740,12 +740,12 @@ s32 YamaRama_ApplyEntryState(void)
 		if (Engine_GameFlagIsSet(0x200))
 		{
 			Engine_ActorSetAnimation(14, 5);
-			ActorPresentation_PrepareActorFourteenWithCallback();
+			EV14_PSYNERGY();
 		}
 		if (Engine_GameFlagIsSet(0x201))
 		{
 			Engine_ActorSetAnimation(15, 4);
-			YamaRama_DisableActorCollision();
+			EV15_PSYNERGY();
 		}
 		if (gGameState.entrance == 4 || gGameState.entrance == 5)
 		{
@@ -939,18 +939,18 @@ struct ScenePlacement YamaRama_TemplePlacements[] = {
 
 struct SceneEvent YamaRama_Events[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPrimaryScript) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TALK, 9, 0x8b2, MSGNO(MsgYamaRamaThisIsLamaTempleWelcomeTravelers) },
 	{ EVENT_TALK, 10, 0x8b2, EVENT_SCRIPT(SceneDialogue_RunMessage1958Step) },
-	{ EVENT_TALK, 11, 0x8b2, EVENT_SCRIPT(SceneDialogue_RunActor11Message195d) },
+	{ EVENT_TALK, 11, 0x8b2, EVENT_SCRIPT(EV11_TALK) },
 	{ EVENT_TALK, 12, 0x8b2, MSGNO(MsgYamaRamaYouWhoSpeakToMeI) },
-	{ EVENT_TALK, 13, 0x8b2, EVENT_SCRIPT(SceneDialogue_RunActor13Message1961) },
+	{ EVENT_TALK, 13, 0x8b2, EVENT_SCRIPT(EV13_TALK) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgYamaRamaItIsVeryDangerousToCross) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgYamaRamaTheEvilDesertIsHotterThan) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgYamaRamaIBelieveItIsPossibleTo) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgYamaRamaIWillBeMostThankfulOnce) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgYamaRamaWhenYourTemperatureReachesItsMaximum) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorFifteenByLeaderHeading) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x8b2, MSGNO(MsgYamaRamaTheySeemToBeAnxiousThey) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x8b2, MSGNO(MsgYamaRamaTheySayAPersonCanOvercome) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x8b2, MSGNO(MsgYamaRamaIAmHungry) },
@@ -964,7 +964,7 @@ struct SceneEvent YamaRama_Events[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgYamaRamaForSomeReasonThesePeopleGive) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(YamaRama_ClearActorPlacement) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(ConfigureAndPlaceActorFourteen) },
-	{ SEARCH(SEARCH_UNNAMED), 5, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunLine1956) },
+	{ SEARCH(SEARCH_UNNAMED), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_SEARCH) },
 	{ 0xc403, 110, 0x350, FIND_PSYNERGY_STONE },
 	{ 0xe403, 110, 0x350, FIND_PSYNERGY_STONE },
 	{ 0xa403, 110, 0x350, FIND_PSYNERGY_STONE },
@@ -979,14 +979,14 @@ struct SceneEvent YamaRama_TempleEvents[] = {
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 4 },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 5 },
-	{ EVENT_TOUCH, 10, 0x8b0, EVENT_SCRIPT(Scene_RunEventTransition) },
+	{ EVENT_TOUCH, 10, 0x8b0, EVENT_SCRIPT(EV10_TOUCH) },
 	{ EVENT_TALK, 10, 0x895, EVENT_SCRIPT(Scene_RunActorCue) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgYamaRamaWellRobinAdeptsYouCameTo) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgYamaRamaIAmTrappedBetweenTheseTwo) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgYamaRamaBeStrongHsuWeWillHelp) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgYamaRamaWeMovedTheRocksNowPeople) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgYamaRamaManyPeopleFromXianHelpedMove) },
-	{ PSYNERGY_ON_ACTOR(0x8f), 11, 0x8b2, EVENT_SCRIPT(Scene_RunActorSequence) },
+	{ PSYNERGY_ON_ACTOR(0x8f), 11, 0x8b2, EVENT_SCRIPT(EV11_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x895, MSGNO(MsgYamaRamaHsuIsInDangerICan) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgYamaRamaHowShouldWeMoveTheBoulders) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgYamaRamaIWantToScreamButFeizhi) },
@@ -995,10 +995,10 @@ struct SceneEvent YamaRama_TempleEvents[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgYamaRamaIAlmostHurtMyBackIt) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPairedLayoutStepsThenSetOne) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunRect6x28Step) },
-	{ 0x10001815, 14, 0x200, EVENT_SCRIPT(SceneActor_UpdateActorFourteenByDepth) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 14, 0x200, EVENT_SCRIPT(ActorPresentation_PrepareActorFourteenWithCallback) },
-	{ PSYNERGY_ON_ACTOR(0xc), 15, 0x201, EVENT_SCRIPT(YamaRama_DisableActorCollision) },
-	{ SEARCH(SEARCH_UNNAMED), 7, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScriptedSteps0And1A12) },
+	{ 0x10001815, 14, 0x200, EVENT_SCRIPT(EV14_SCRIPT) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 14, 0x200, EVENT_SCRIPT(EV14_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0xc), 15, 0x201, EVENT_SCRIPT(EV15_PSYNERGY) },
+	{ SEARCH(SEARCH_UNNAMED), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_SEARCH) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf71, FIND_ITEM(0xbf) },
 	{ SCENE_EVENTS_END },
 };

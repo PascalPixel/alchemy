@@ -230,7 +230,7 @@ static s32 LinkLobby_PollPeerReady(void)
 u32 gLinkLobbyCallFrames;
 #define gLinkStatus (*(volatile u16(*)) & gLinkStatus)
 
-static s32 LinkLobby_CallIntoCircle(void)
+static s32 EV01_RAISED(void)
 {
 	s32 set;
 
@@ -257,7 +257,7 @@ static s32 LinkLobby_CallIntoCircle(void)
 	Engine_EventEnd();
 }
 
-static s32 Scene_ClearFlagsAndPlayCue2927(void)
+static s32 EV02_RAISED(void)
 {
 	struct EventWork *work = gEventWork;
 
@@ -649,7 +649,7 @@ check:
 	return result;
 }
 
-static s32 LinkLobby_RunConnectionSequence(void)
+static s32 EV10_TOUCH(void)
 {
 	struct EventWork *work;
 	s32				  failed;
@@ -796,7 +796,7 @@ done:
 	Engine_EventEnd();
 }
 
-static s32 LinkLobby_RunBattleApplication(void)
+static s32 EV08_TALK(void)
 {
 	/* Returns no value: r0 is whatever the last call left. */
 
@@ -915,7 +915,7 @@ done:
 	Engine_EventEnd();
 }
 
-static s32 LinkLobby_TalkLinkedWins(s32 actor)
+static s32 EV09_TALK(s32 actor)
 {
 	u32	 facing = Object_GetById(0)->facing;
 	u16 *count;
@@ -954,7 +954,7 @@ done:;
 
 extern u8 gOptionMirror;
 
-static s32 LinkLobby_RunChoicePrompt(s32 id)
+static s32 EV15_TALK(s32 id)
 {
 	s32 window;
 	s32 choice;
@@ -1030,7 +1030,7 @@ static s32 LinkLobby_RunChoicePrompt(s32 id)
 	Engine_EventEnd();
 }
 
-static s32 State_ApplyValueAndGetResult(s32 arg0)
+static s32 EV10_TALK(s32 arg0)
 {
 	Engine_EventBegin();
 	Engine_SanctumOpen(arg0);
@@ -1113,7 +1113,7 @@ static s32 LinkLobby_TalkByProgress(s32 actor)
 	Engine_EventEnd();
 }
 
-static s32 LinkLobby_StartExchange(void)
+static s32 EV01_TOUCH(void)
 {
 	SerialRuntime_RemoveIrqHandlers();
 	Sound_LoadPresetParameters(2);
@@ -1149,7 +1149,7 @@ static s32 LinkLobby_TalkToAttendant(s32 actor)
 	Engine_EventEnd();
 }
 
-static s32 LinkLobby_TalkAlternating(s32 actor)
+static s32 EV16_TALK(s32 actor)
 {
 	s32 message;
 
@@ -1173,7 +1173,7 @@ static s32 LinkLobby_TalkAlternating(s32 actor)
 	Engine_EventEnd();
 }
 
-static s32 LinkLobby_ShowCountMessage(s32 id)
+static s32 EV22_TALK(s32 id)
 {
 	struct GameState *gs;
 
@@ -1584,26 +1584,26 @@ struct SceneEvent gLinkLobbyEvents[] = {
 	{ EVENT_TALK, 2, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_TalkByProgress) },
 	{ EVENT_TALK, 3, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_TalkByProgress) },
 	{ EVENT_TALK, 5, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_TalkByProgress) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_RunBattleApplication) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_TalkLinkedWins) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(State_ApplyValueAndGetResult) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgFieldWelcomeToBattleArenaWherePeople) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_TalkToAttendant) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_TalkToAttendant) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_TalkToAttendant) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_RunChoicePrompt) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_TalkAlternating) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgFieldInTheLinkedFinalsYouCant) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgFieldToUseSummonQuicklyDjinnMust) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgFieldDoYouPutDjinnOnStandby) },
 	{ EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgFieldRemoveDjinnYouRarelyUseSo) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgFieldMonsterBattleRulesSayYouAll) },
-	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_ShowCountMessage) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK) },
 	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgFieldAllTheWarriorsAreImpressiveSo) },
 	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgFieldICouldEnterButIdJust) },
-	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_RunConnectionSequence) },
-	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_StartExchange) },
-	{ EVENT_RAISED, 1, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_CallIntoCircle) },
-	{ EVENT_RAISED, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_ClearFlagsAndPlayCue2927) },
+	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
+	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
+	{ EVENT_RAISED, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_RAISED) },
+	{ EVENT_RAISED, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_RAISED) },
 	{ SCENE_EVENTS_END },
 };

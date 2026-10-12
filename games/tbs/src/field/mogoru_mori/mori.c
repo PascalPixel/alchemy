@@ -136,7 +136,7 @@ struct Vec
 
 extern struct EventWork *gEventWork;
 
-static void SceneState_SetValue18Mode2(void)
+static void EV18_TALK(void)
 {
 	BattleFx_SetPhaseRequest(18, 2);
 }
@@ -295,7 +295,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gMogoruMoriPlacementsOther;
 }
 
-static void MogoruMori_RunProbedActorNineScene(void)
+static void EV20_SCRIPT_1(void)
 {
 	struct StagedActorProbe probe;
 	s32						fifth;
@@ -324,7 +324,7 @@ static void MogoruMori_RunProbedActorNineScene(void)
 	Engine_EventEnd();
 }
 
-static void SceneActor_PassOffsetPointOfActorZero(void)
+static void EV25_TOUCH_1(void)
 {
 	s32 v[3];
 #if EDITION_INTERNATIONAL
@@ -341,7 +341,7 @@ static void SceneActor_PassOffsetPointOfActorZero(void)
 	SceneActor_TryRunSlotZeroMoveStep(v);
 }
 
-static void SceneActor_BobActorZeroWhenAheadClear(void)
+static void EV26_TOUCH(void)
 {
 	s32				   pos[3];
 	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -378,7 +378,7 @@ static void SceneActor_BobActorZeroWhenAheadClear(void)
 	}
 }
 
-static void FieldScene_RunScriptedSteps0And17E6(void)
+static void EV27_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -386,7 +386,7 @@ static void FieldScene_RunScriptedSteps0And17E6(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor10WaypointSequence(void)
+static void EV13_PSYNERGY_1(void)
 {
 	struct FieldActor *slot;
 
@@ -425,7 +425,7 @@ static void FieldScene_RunActor10WaypointSequence(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActorElevenPresentationBeat(void)
+static void EV14_PSYNERGY_1(void)
 {
 	struct FieldActor *slot;
 
@@ -460,7 +460,7 @@ static void FieldScene_RunActorElevenPresentationBeat(void)
 	Engine_EventEnd();
 }
 
-static void SceneActor_RunActorTwelveThreeWaypointMotion(void)
+static void EV15_PSYNERGY_1(void)
 {
 	struct FieldActor *slot;
 
@@ -498,7 +498,7 @@ static void SceneActor_RunActorTwelveThreeWaypointMotion(void)
 	Engine_EventEnd();
 }
 
-static void MogoruMori_AwardHiddenNut(s32 a)
+static void EV16_PSYNERGY_1(s32 a)
 {
 	Engine_EventBegin();
 	Engine_ActorSetPosition(16, 0, 0);
@@ -508,7 +508,7 @@ static void MogoruMori_AwardHiddenNut(s32 a)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunProbedActorEightOrTenScene(void)
+static void EV20_SCRIPT_2(void)
 {
 	struct StagedActorProbe probe;
 	s32						fifth;
@@ -552,7 +552,7 @@ static void FieldScene_RunProbedActorEightOrTenScene(void)
 	Engine_EventEnd();
 }
 
-static void SceneState_ApplyCrossRectsAroundActor11(void)
+static void EV11_PSYNERGY(void)
 {
 	s32 x;
 	s32 z;
@@ -580,7 +580,7 @@ static void SceneState_ApplyCrossRectsAroundActor11(void)
 	Engine_EventEnd();
 }
 
-static void MogoruMori_RunBranchHopScene(void)
+static void EV15_PSYNERGY_2(void)
 {
 	struct FieldActor *rec7;
 
@@ -614,7 +614,7 @@ static void MogoruMori_RunBranchHopScene(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActorThirteenPresentationBeat(void)
+static void EV16_PSYNERGY_2(void)
 {
 	struct FieldActor *slot;
 
@@ -722,7 +722,7 @@ static void SceneActor_RunActorFourteenFourWaypointMotion(void)
 	Engine_EventEnd();
 }
 
-static void MogoruMori_RunProbedLandingScene(void)
+static void EV20_SCRIPT_3(void)
 {
 	struct StagedActorProbe probe;
 	s32						landed;
@@ -776,7 +776,7 @@ end:
 	Engine_EventEnd();
 }
 
-static void SceneActor_BobActorZeroWhenTargetClear(void)
+static void EV25_TOUCH_3(void)
 {
 	struct FieldActor *record;
 	u8				  *mode;
@@ -819,7 +819,7 @@ static void SceneActor_BobActorZeroWhenTargetClear(void)
 	}
 }
 
-static void SceneActor_MarkActorThirteenTileAndPark(void)
+static void EV13_PSYNERGY_3(void)
 {
 	s32 x;
 	s32 z;
@@ -847,7 +847,7 @@ static void SceneActor_MarkActorThirteenTileAndPark(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunSupplementalSequenceOne(void)
+static void EV14_PSYNERGY_3(void)
 {
 
 	s32				   x;
@@ -879,7 +879,7 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunScene39fSequenceA(void)
+static void EV19_PSYNERGY(void)
 {
 
 	struct FieldActor *rec7;
@@ -913,7 +913,7 @@ static void FieldScene_RunScene39fSequenceA(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunSlot16WaypointSequence(void)
+static void EV20_PSYNERGY(void)
 {
 	struct FieldActor *slot;
 
@@ -955,7 +955,7 @@ static void FieldScene_RunSlot16WaypointSequence(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor17CameraSequence(void)
+static void EV21_PSYNERGY(void)
 {
 	struct FieldActor *slot;
 
@@ -1060,7 +1060,7 @@ static void FieldScene_RunActorEighteenEffectSequence(void)
 	Engine_EventEnd();
 }
 
-static void MogoruMori_RunActorEighteenEscape(void)
+static void EV22_TOUCH(void)
 {
 	struct FieldActor *rec7;
 
@@ -1091,7 +1091,7 @@ static void MogoruMori_RunActorEighteenEscape(void)
 	Engine_EventEnd();
 }
 
-static void MogoruMori_RunClosingChoreography(void)
+static void EV23_TOUCH(void)
 {
 	struct Vec		   dir;
 	struct Vec		  *v;
@@ -1438,7 +1438,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 				Engine_ActorSetPosition(18, 0, 0);
 #endif
 			}
-			FieldScene_RunSupplementalSequenceOne();
+			EV14_PSYNERGY_3();
 			break;
 
 		case 12:
@@ -1840,14 +1840,14 @@ struct SceneEvent gMogoruMoriEvents1[] = {
 	{ EVENT_EXIT, 7, CONDITION_ALWAYS, 7 },
 	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
 	{ EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
-	{ 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(MogoruMori_RunProbedActorNineScene) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_PassOffsetPointOfActorZero) },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_BobActorZeroWhenAheadClear) },
-	{ SEARCH(SEARCH_UNNAMED), 27, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScriptedSteps0And17E6) },
-	{ PSYNERGY_ON_ACTOR(0x8e), 13, 0x300, EVENT_SCRIPT(FieldScene_RunActor10WaypointSequence) },
-	{ PSYNERGY_ON_ACTOR(0x8e), 14, 0x301, EVENT_SCRIPT(FieldScene_RunActorElevenPresentationBeat) },
-	{ PSYNERGY_ON_ACTOR(0x8e), 15, 0x302, EVENT_SCRIPT(SceneActor_RunActorTwelveThreeWaypointMotion) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 16, 0xfd4, EVENT_SCRIPT(MogoruMori_AwardHiddenNut) },
+	{ 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SCRIPT_1) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_TOUCH_1) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(EV26_TOUCH) },
+	{ SEARCH(SEARCH_UNNAMED), 27, CONDITION_ALWAYS, EVENT_SCRIPT(EV27_SEARCH) },
+	{ PSYNERGY_ON_ACTOR(0x8e), 13, 0x300, EVENT_SCRIPT(EV13_PSYNERGY_1) },
+	{ PSYNERGY_ON_ACTOR(0x8e), 14, 0x301, EVENT_SCRIPT(EV14_PSYNERGY_1) },
+	{ PSYNERGY_ON_ACTOR(0x8e), 15, 0x302, EVENT_SCRIPT(EV15_PSYNERGY_1) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 16, 0xfd4, EVENT_SCRIPT(EV16_PSYNERGY_1) },
 	{ SCENE_EVENTS_END },
 };
 
@@ -1864,14 +1864,14 @@ struct SceneEvent gMogoruMoriEvents2[] = {
 	{ EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
 	{ EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
 	{ EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
-	{ 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunProbedActorEightOrTenScene) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyCrossRectsAroundActor11) },
-	{ PSYNERGY_ON_ACTOR(0x8e), 15, 0x303, EVENT_SCRIPT(MogoruMori_RunBranchHopScene) },
-	{ PSYNERGY_ON_ACTOR(0x8e), 16, 0x304, EVENT_SCRIPT(FieldScene_RunActorThirteenPresentationBeat) },
+	{ 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SCRIPT_2) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8e), 15, 0x303, EVENT_SCRIPT(EV15_PSYNERGY_2) },
+	{ PSYNERGY_ON_ACTOR(0x8e), 16, 0x304, EVENT_SCRIPT(EV16_PSYNERGY_2) },
 	{ PSYNERGY_ON_ACTOR(0x8e), 17, 0x305, EVENT_SCRIPT(MogoruMori_TransferActorFourteen) },
 	{ PSYNERGY_ON_ACTOR(0x8e), 17, 0x306, EVENT_SCRIPT(SceneActor_RunActorFourteenFourWaypointMotion) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf1b, FIND_ITEM(0xc1) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue18Mode2) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK) },
 	{ SCENE_EVENTS_END },
 };
 
@@ -1889,15 +1889,15 @@ struct SceneEvent gMogoruMoriEvents3[] = {
 	{ EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
 	{ EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
 	{ EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
-	{ 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(MogoruMori_RunProbedLandingScene) },
-	{ TOUCH_WALKING_INTO(FACING_WEST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_BobActorZeroWhenTargetClear) },
-	{ EVENT_TOUCH, 22, 0x89d, EVENT_SCRIPT(MogoruMori_RunActorEighteenEscape) },
-	{ EVENT_TOUCH, 23, 0x89e, EVENT_SCRIPT(MogoruMori_RunClosingChoreography) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_MarkActorThirteenTileAndPark) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 14, 0x214, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceOne) },
-	{ PSYNERGY_ON_ACTOR(0x8e), 19, 0x307, EVENT_SCRIPT(FieldScene_RunScene39fSequenceA) },
-	{ PSYNERGY_ON_ACTOR(0x8e), 20, 0x308, EVENT_SCRIPT(FieldScene_RunSlot16WaypointSequence) },
-	{ PSYNERGY_ON_ACTOR(0x8e), 21, 0x309, EVENT_SCRIPT(FieldScene_RunActor17CameraSequence) },
+	{ 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SCRIPT_3) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_TOUCH_3) },
+	{ EVENT_TOUCH, 22, 0x89d, EVENT_SCRIPT(EV22_TOUCH) },
+	{ EVENT_TOUCH, 23, 0x89e, EVENT_SCRIPT(EV23_TOUCH) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_PSYNERGY_3) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 14, 0x214, EVENT_SCRIPT(EV14_PSYNERGY_3) },
+	{ PSYNERGY_ON_ACTOR(0x8e), 19, 0x307, EVENT_SCRIPT(EV19_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8e), 20, 0x308, EVENT_SCRIPT(EV20_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8e), 21, 0x309, EVENT_SCRIPT(EV21_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(0x8e), 22, 0x30a, EVENT_SCRIPT(MogoruMori_TransferActorEighteen) },
 	{ PSYNERGY_ON_ACTOR(0x8e), 22, 0x30b, EVENT_SCRIPT(FieldScene_RunActorEighteenEffectSequence) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf1a, FIND_ITEM(0x5d) },

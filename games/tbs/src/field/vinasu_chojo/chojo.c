@@ -47,7 +47,7 @@
 
 // 前方宣言
 union PairObject;
-static void VinasuChojo_ConfigureGroupMotion(void);
+static void EV11_TOUCH(void);
 static void Scene_RunScriptedActorPresentation(void);
 static void VinasuChojo_ShowPartyMember(s32 actor, s32 shown);
 static void SceneEffect_UpdateObjectByFrameParity(s32 a);
@@ -342,7 +342,7 @@ static void InitializeActorZeroMotion(void)
 	if (Object_CheckMovementCollision(actor, position) == 0)
 	{
 		Engine_GameFlagClear(592);
-		VinasuChojo_ConfigureGroupMotion();
+		EV11_TOUCH();
 		Object_SetMode(actor, 6);
 		Engine_TaskWait(6);
 		Object_SetMode(actor, 7);
@@ -359,7 +359,7 @@ static void InitializeActorZeroMotion(void)
 	}
 }
 
-static void SceneEffect_SpawnAndBobWithActorZero(void)
+static void EV10_TOUCH(void)
 {
 	struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 	struct FieldActor *pillar;
@@ -399,7 +399,7 @@ static void SceneEffect_SpawnAndBobWithActorZero(void)
 	Engine_EventEnd();
 }
 
-static void VinasuChojo_ConfigureGroupMotion(void)
+static void EV11_TOUCH(void)
 {
 	s32 flags;
 
@@ -816,7 +816,7 @@ static void VinasuChojo_ShowPartyMember(s32 actor, s32 shown)
 	}
 }
 
-static void Scene_RunActorEntrySequence(void)
+static void EV05_TOUCH(void)
 {
 	s32				   owner;
 	struct FieldActor *object;
@@ -3579,10 +3579,10 @@ s32 VinasuChojo_NearestActor = 0;
 
 struct SceneEvent gVinasuChojoEvents[] = {
 	{ 0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(InitializeActorZeroMotion) },
-	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuChojo_ConfigureGroupMotion) },
+	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
 	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(InitializeActorZeroMotion) },
-	{ EVENT_TOUCH, 10, 0x250, EVENT_SCRIPT(SceneEffect_SpawnAndBobWithActorZero) },
-	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunActorEntrySequence) },
+	{ EVENT_TOUCH, 10, 0x250, EVENT_SCRIPT(EV10_TOUCH) },
+	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH) },
 	{ SCENE_EVENTS_END },
 };
 

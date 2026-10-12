@@ -25,7 +25,7 @@
 #include "fieldobj.h"
 
 // 前方宣言
-static void ActorPresentation_RunActorNineThresholdScene(void);
+static void EV09_PSYNERGY_3(void);
 static void StagedActorPairScene_RunSpinningLeap(s32 id);
 
 static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
@@ -156,7 +156,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gKaragoruDouEventsOther;
 }
 
-static void FieldScene_RunScene3beSequenceB(void)
+static void EV10_TOUCH(void)
 {
 	struct FieldActor *leader;
 
@@ -208,7 +208,7 @@ static void FieldScene_RunScene3beSequenceB(void)
 	}
 }
 
-static void ActorPresentation_RunActorElevenRecoveryScene(void)
+static void EV11_SCRIPT(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceActor(11, ACTOR_PARTY_LEADER, 0);
@@ -232,7 +232,7 @@ static void ActorPresentation_RunActorElevenRecoveryScene(void)
 	Engine_EventEnd();
 }
 
-static void KaragoruDou_AskToCross(void)
+static void EV08_TALK(void)
 {
 	s32 base;
 
@@ -257,7 +257,7 @@ static void KaragoruDou_AskToCross(void)
 	}
 }
 
-static void ActorPresentation_SelectActorNineScript(void)
+static void EV09_PSYNERGY_1(void)
 {
 	if (Engine_GameFlagIsSet(2384) != 0 && Engine_GameFlagIsSet(2415) == 0)
 		Engine_EventSetMessage((s32)MsgKaragoruWeMissedColossoBecauseWe);
@@ -266,7 +266,7 @@ static void ActorPresentation_SelectActorNineScript(void)
 	Engine_EventShowMessage(9, 0);
 }
 
-static void KaragoruDou_LeaveArena(void)
+static void EV01_TOUCH(void)
 {
 	struct EventWork *work;
 
@@ -292,7 +292,7 @@ static void StagedActorPairScene_RunStep(void)
 	Engine_LeaderCheckAhead();
 }
 
-static void ActorPresentation_RunActorEightThresholdScene(void)
+static void EV08_PSYNERGY(void)
 {
 	Object_GetById(8);
 	Engine_EventBegin();
@@ -314,13 +314,13 @@ static void ActorPresentation_RunActorEightThresholdScene(void)
 	Engine_EventEnd();
 }
 
-static void StagedActorPairScene_RunUpdate(void)
+static void EV50_SCRIPT(void)
 {
 	StagedActor_AdvancePair();
-	ActorPresentation_RunActorNineThresholdScene();
+	EV09_PSYNERGY_3();
 }
 
-static void ActorPresentation_RunActorNineThresholdScene(void)
+static void EV09_PSYNERGY_3(void)
 {
 	Engine_EventBegin();
 	if ((Object_GetById(9)->x.fixed >> 20) > 42)
@@ -419,7 +419,7 @@ static void StagedActorPairScene_NoopSceneCallback(void)
 {
 }
 
-static void StagedActorPairScene_RunActorTwelveCommand(void)
+static void EV11_PSYNERGY(void)
 {
 	Engine_ActorSetPosition(12, 0, 0);
 }
@@ -633,11 +633,11 @@ struct SceneEvent gKaragoruDouEventsOther[] = {
 struct SceneEvent gKaragoruDouEvents1[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(KaragoruDou_AskToCross) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouUsWereTheSoldiersWhoGuard) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouEvenIfYouHeadEastYou) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouThoseWhoGoToGondowanRarely) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_SelectActorNineScript) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_PSYNERGY_1) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouYoudThinkYouCouldGetThrough) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(0xc1) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xfa1, FIND_ITEM(ITEM_LUCKY_MEDAL) },
@@ -647,12 +647,12 @@ struct SceneEvent gKaragoruDouEvents1[] = {
 struct SceneEvent gKaragoruDouEvents1Flag96f[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3beSequenceB) },
-	{ EVENT_TOUCH, 11, 0x9a0, EVENT_SCRIPT(ActorPresentation_RunActorElevenRecoveryScene) },
+	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
+	{ EVENT_TOUCH, 11, 0x9a0, EVENT_SCRIPT(EV11_SCRIPT) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouWhyWouldIodemChooseToWait) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouWeHaventSeenAnybodyUnusualCrossing) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouEvenIfYouGoEastFrom) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_RunActorElevenRecoveryScene) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_SCRIPT) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouIodemIsGoingToBabiLighthouse) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouItsALotOfStressBut) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKaragoruDouEveryoneComesDownThisWayWhen) },
@@ -674,18 +674,18 @@ struct SceneEvent gKaragoruDouEvents2[] = {
 };
 
 struct SceneEvent gKaragoruDouEvents3[] = {
-	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(KaragoruDou_LeaveArena) },
+	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
 	{ EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-	{ PSYNERGY_ON_ACTOR(0x8f), 11, CONDITION_ALWAYS, EVENT_SCRIPT(StagedActorPairScene_RunActorTwelveCommand) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x9a2, EVENT_SCRIPT(ActorPresentation_RunActorEightThresholdScene) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x205, EVENT_SCRIPT(ActorPresentation_RunActorNineThresholdScene) },
+	{ PSYNERGY_ON_ACTOR(0x8f), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x9a2, EVENT_SCRIPT(EV08_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x205, EVENT_SCRIPT(EV09_PSYNERGY_3) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(StagedActorPairScene_RunStep) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(StagedActorPairScene_RunStep) },
-	{ 0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(StagedActorPairScene_RunUpdate) },
+	{ 0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_SCRIPT) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(0xc1) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xfa1, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SCENE_EVENTS_END },

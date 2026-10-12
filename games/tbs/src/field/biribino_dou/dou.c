@@ -101,7 +101,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gBiribinoDouEventsOther;
 }
 
-static void SceneState_ConfigureRegion1_0_21x14(void)
+static void EV10_TOUCH(void)
 {
 	s32 w = 21;
 	s32 h = 14;
@@ -109,7 +109,7 @@ static void SceneState_ConfigureRegion1_0_21x14(void)
 	Engine_MapCopyCellAttributes(1, 0, 1, 1, w, h);
 }
 
-static void SceneState_ConfigureRegion0_0_21x14(void)
+static void EV11_TOUCH(void)
 {
 	s32 w = 21;
 	s32 h = 14;
@@ -149,7 +149,7 @@ static void FieldScene_RunTwoLayoutSteps(void)
 	}
 }
 
-static void FieldScene_RunActor9Flag882Scene(void)
+static void EV09_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetPosition(9, 0, 0);
@@ -157,7 +157,7 @@ static void FieldScene_RunActor9Flag882Scene(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunScene398SequenceA(void)
+static void EV08_PSYNERGY_1(void)
 {
 	Engine_EventBegin();
 	Actor_SetPosition(8, 0, 0);
@@ -171,7 +171,7 @@ static void FieldScene_RunScene398SequenceA(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActorFifteenScene(void)
+static void EV15_PSYNERGY(void)
 {
 
 	Engine_EventBegin();
@@ -182,7 +182,7 @@ static void FieldScene_RunActorFifteenScene(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActorSixteenScene(void)
+static void EV16_PSYNERGY(void)
 {
 
 	Engine_EventBegin();
@@ -193,7 +193,7 @@ static void FieldScene_RunActorSixteenScene(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor17Steps28AndD2(void)
+static void EV17_PSYNERGY(void)
 {
 
 	Engine_EventBegin();
@@ -276,7 +276,7 @@ L_020003c2:;
 L_02000414:;
 }
 
-static void ActorPresentation_SetSceneCell31AndFlag305(void)
+static void EV08_PSYNERGY_3(void)
 {
 	s32 width = 8;
 	s32 height = 13;
@@ -285,12 +285,12 @@ static void ActorPresentation_SetSceneCell31AndFlag305(void)
 	Engine_GameFlagSet(0x305);
 }
 
-static void BiribinoDou_SetMapWorkFlag(void)
+static void EV20_TOUCH(void)
 {
 	FIELD_AT_OFFSET(gMapWork[0], s8 *, 0x17) = 1;
 }
 
-static void BiribinoDou_ClearMapWorkFlag(void)
+static void EV21_TOUCH(void)
 {
 	FIELD_AT_OFFSET(gMapWork[0], s8 *, 0x17) = 0;
 }
@@ -648,9 +648,9 @@ struct SceneEvent gBiribinoDouEvents3[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
-	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ConfigureRegion1_0_21x14) },
-	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ConfigureRegion0_0_21x14) },
-	{ PSYNERGY_ON_ACTOR(0xc), 8, 0x305, EVENT_SCRIPT(ActorPresentation_SetSceneCell31AndFlag305) },
+	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
+	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
+	{ PSYNERGY_ON_ACTOR(0xc), 8, 0x305, EVENT_SCRIPT(EV08_PSYNERGY_3) },
 	{ SCENE_EVENTS_END },
 };
 
@@ -664,7 +664,7 @@ struct SceneEvent gBiribinoDouEvents2[] = {
 	{ SEARCH(SEARCH_CHEST), 100, 0xf5d, FIND_ITEM(0x16) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyTwoRects) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunTwoLayoutSteps) },
-	{ PSYNERGY_ON_ACTOR(0x21), 9, 0x882, EVENT_SCRIPT(FieldScene_RunActor9Flag882Scene) },
+	{ PSYNERGY_ON_ACTOR(0x21), 9, 0x882, EVENT_SCRIPT(EV09_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };
 
@@ -674,12 +674,12 @@ struct SceneEvent gBiribinoDouEvents1[] = {
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-	{ EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(BiribinoDou_SetMapWorkFlag) },
-	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(BiribinoDou_ClearMapWorkFlag) },
-	{ PSYNERGY_ON_ACTOR(0x21), 8, 0x883, EVENT_SCRIPT(FieldScene_RunScene398SequenceA) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 15, 0x883, EVENT_SCRIPT(FieldScene_RunActorFifteenScene) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorSixteenScene) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 17, IF_FLAG_SET(0x302), EVENT_SCRIPT(FieldScene_RunActor17Steps28AndD2) },
+	{ EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TOUCH) },
+	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TOUCH) },
+	{ PSYNERGY_ON_ACTOR(0x21), 8, 0x883, EVENT_SCRIPT(EV08_PSYNERGY_1) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 15, 0x883, EVENT_SCRIPT(EV15_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 17, IF_FLAG_SET(0x302), EVENT_SCRIPT(EV17_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene398SequenceB) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene398SequenceB) },
 	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(StagedActor_PushActorAhead) },

@@ -203,7 +203,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gKorimaMuraPlacements;
 }
 
-static void FieldScene_RunActor16MessageBranch(void)
+static void EV16_TALK(void)
 {
 	struct FieldActor *q = Object_GetById(0);
 	s32				   v = q->facing;
@@ -220,7 +220,7 @@ static void FieldScene_RunActor16MessageBranch(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor27Step(void)
+static void EV27_TALK(void)
 {
 	BattleFx_RunPageEffectForSlot(27, 0, 1);
 }
@@ -284,7 +284,7 @@ static void KorimaMura_AnimateSwitchOrExit(void)
 	Engine_EventEnd();
 }
 
-static void KorimaMura_RunObjectSpreadScene(void)
+static void EV10_TOUCH(void)
 {
 	u32 i;
 	s32 v5;
@@ -1881,8 +1881,8 @@ struct SceneEvent gKorimaMuraEvents[] = {
 	{ EVENT_TALK, 13, IF_FLAG_SET(0x845), MSGNO(MsgKorimaMuraWhoWouldTryToUseThe) },
 	{ EVENT_TALK, 14, IF_FLAG_SET(0x845), MSGNO(MsgKorimaMuraIDidntMindBeingATree) },
 	{ EVENT_TALK, 15, IF_FLAG_SET(0x845), MSGNO(MsgKorimaMuraYawnTreesAreSoSleepy) },
-	{ EVENT_TALK, 16, IF_FLAG_SET(0x845), EVENT_SCRIPT(FieldScene_RunActor16MessageBranch) },
-	{ EVENT_TALK, 27, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor27Step) },
+	{ EVENT_TALK, 16, IF_FLAG_SET(0x845), EVENT_SCRIPT(EV16_TALK) },
+	{ EVENT_TALK, 27, CONDITION_ALWAYS, EVENT_SCRIPT(EV27_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x845), MSGNO(MsgKorimaMuraForAWhileIThoughtId) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x845), MSGNO(MsgKorimaMuraTheForestTreesAreAliveJust) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x845), MSGNO(MsgKorimaMuraIWonderIfIdLiveLonger) },
@@ -1909,7 +1909,7 @@ struct SceneEvent gKorimaMuraEvents[] = {
 struct SceneEvent gKorimaMuraEvents3[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ EVENT_TOUCH, 10, 0x847, EVENT_SCRIPT(KorimaMura_RunObjectSpreadScene) },
+	{ EVENT_TOUCH, 10, 0x847, EVENT_SCRIPT(EV10_TOUCH) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKorimaMuraForAWhileIThoughtNo) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKorimaMuraYouWouldntUnderstandButItsTruly) },
 	{ SCENE_EVENTS_END },

@@ -17,9 +17,9 @@
 #include "objcmd.h"
 
 // 前方宣言
-static void FieldScene_ResetActor9AndDrawTiles(void);
+static void EV09_PSYNERGY(void);
 
-static void SceneState_SetValues31_2_4(void)
+static void EV31_TALK(void)
 {
 	BattleFx_RunPageEffectForSlot(0x1F, 2, 4);
 }
@@ -133,7 +133,7 @@ u8 *TorebiMachi_GetPlacements(void)
 	return (u8 *)gTorebiMachiPlacements;
 }
 
-static void TorebiMachi_OpenActorEightPassage(void)
+static void EV08_PSYNERGY(void)
 {
 
 	struct FieldActor *record;
@@ -163,19 +163,19 @@ static void HideActorOneHundredTwo(void)
 	MapObject_SetPosition(102, -1, -1);
 }
 
-static void SceneDialogue_RunMessage0e36(void)
+static void EV30_SEARCH(void)
 {
 	Engine_EventSetMessage((s32)MsgTorebiFaceAwayTolbi);
 	Engine_EventShowMessage(-1, 0);
 }
 
-static void SceneDialogue_RunMessage0e37(void)
+static void EV31_SEARCH(void)
 {
 	Engine_EventSetMessage((s32)MsgTorebiTossLuckyMedal);
 	Engine_EventShowMessage(-1, 0);
 }
 
-static void FieldScene_RunSupplementalSequenceTwo(void)
+static void EV16_SCRIPT(void)
 {
 	struct EventWork  *work = gEventWork;
 	struct SceneActor *actor;
@@ -226,7 +226,7 @@ static void FieldScene_RunSupplementalSequenceTwo(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunSiblingsTalk(void)
+static void EV17_SCRIPT(void)
 {
 	struct EventWork  *work = gEventWork;
 	struct SceneActor *actor;
@@ -290,7 +290,7 @@ u8 *TorebiMachi_SelectEvents(void)
 	return (u8 *)gTorebiMachiEvents;
 }
 
-static void SceneDialogue_RunActor15Message1f92(void)
+static void EV15_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiSomeoneLiveMore);
@@ -298,7 +298,7 @@ static void SceneDialogue_RunActor15Message1f92(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor24Message1f9d(void)
+static void EV24_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiChildrenLoveSouvenirs);
@@ -306,7 +306,7 @@ static void SceneDialogue_RunActor24Message1f9d(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunPatientTalk(void)
+static void EV25_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiPatientLittleGuy);
@@ -317,7 +317,7 @@ static void FieldScene_RunPatientTalk(void)
 	Engine_EventEnd();
 }
 
-static void TorebiMachi_AskForSweets(void)
+static void EV26_TALK(void)
 {
 	Engine_EventBegin();
 	Actor_FaceDirection(26, 0x4000, 0);
@@ -327,7 +327,7 @@ static void TorebiMachi_AskForSweets(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor27Message1fa3(void)
+static void EV27_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiInnsFullStaying);
@@ -335,7 +335,7 @@ static void SceneDialogue_RunActor27Message1fa3(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor24Message235f(void)
+static void EV12_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiFinalsWerent);
@@ -343,7 +343,7 @@ static void SceneDialogue_RunActor24Message235f(void)
 	Engine_EventEnd();
 }
 
-static void TorebiMachi_ReceiveLeftovers(void)
+static void EV19_TALK(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x8bf) == 0)
@@ -438,11 +438,11 @@ s32 TorebiMachi_ApplyEntryState(s32 a0)
 	}
 	if (Engine_GameFlagIsSet(0x201) != 0)
 	{
-		FieldScene_ResetActor9AndDrawTiles();
+		EV09_PSYNERGY();
 	}
 	if (Engine_GameFlagIsSet(0x200) != 0)
 	{
-		TorebiMachi_OpenActorEightPassage();
+		EV08_PSYNERGY();
 		Engine_ActorSetAnimation(8, 4);
 	}
 	if (Engine_GameFlagIsSet(0x950) != 0)
@@ -467,7 +467,7 @@ s32 TorebiMachi_ApplyEntryState(s32 a0)
 	return 0;
 }
 
-static void FieldScene_RunScene3b5SequenceA(void)
+static void EV28_TALK(void)
 {
 	Engine_EventBegin();
 	Actor_WalkToAndWait(0, 0x130, 0x138);
@@ -493,7 +493,7 @@ static void FieldScene_RunScene3b5SequenceA(void)
 	Engine_EventEnd();
 }
 
-static void SceneState_SetValue30ThenCall(void)
+static void EV239_SCRIPT(void)
 {
 	Engine_EventRequestExit(30);
 	Engine_EventEnd();
@@ -507,7 +507,7 @@ static void TorebiMachi_RequestTouchedExit(void)
 	Engine_EventRequestExit(*cnt);
 }
 
-static void FieldScene_RunPrimarySequence(void)
+static void EV20_TOUCH(void)
 {
 	s32 base;
 
@@ -605,7 +605,7 @@ static void FieldScene_RunPrimarySequence(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_ResetActor9AndDrawTiles(void)
+static void EV09_PSYNERGY(void)
 {
 	struct Actor *actor = Object_GetById(9);
 	if (actor != 0)
@@ -771,7 +771,7 @@ struct ScenePlacement gTorebiMachiPlacements[] = {
 };
 
 struct SceneEvent gTorebiMachiEvents[] = {
-	{ PSYNERGY_ON_ACTOR(0xc), 8, 0x200, EVENT_SCRIPT(TorebiMachi_OpenActorEightPassage) },
+	{ PSYNERGY_ON_ACTOR(0xc), 8, 0x200, EVENT_SCRIPT(EV08_PSYNERGY) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(SceneScript_SetupActors) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(SceneScript_SetupActors) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(SceneScript_SetupActors) },
@@ -786,26 +786,26 @@ struct SceneEvent gTorebiMachiEvents[] = {
 	{ EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiMachi_RequestTouchedExit) },
 	{ 0xc402, 13, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiMachi_RequestTouchedExit) },
-	{ EVENT_TOUCH, 20, 0x8c0, EVENT_SCRIPT(FieldScene_RunPrimarySequence) },
-	{ 0xc402, 239, IF_FLAG_SET(0x8c1), EVENT_SCRIPT(SceneState_SetValue30ThenCall) },
+	{ EVENT_TOUCH, 20, 0x8c0, EVENT_SCRIPT(EV20_TOUCH) },
+	{ 0xc402, 239, IF_FLAG_SET(0x8c1), EVENT_SCRIPT(EV239_SCRIPT) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiTolbisAlwaysReallyBustlingDuringColosso) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiColossoIsHeldInTheColosseum) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiTryoutsStartedAtTheColosseumToday) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiColossoShouldHaveStartedTodayWhat) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiBabiWasAlreadyPrettyOldBack) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor15Message1f92) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceTwo) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSiblingsTalk) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_SCRIPT) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_SCRIPT) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiGetYourColossoSouvenirsTheyMake) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiGetYourSnacksAndDrinksBefore) },
 	{ EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiIveDecidedNotToFightAt) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiWowTolbisFestivalIsHumongousJust) },
 	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiRatsWeOversleptAndNowThe) },
-	{ EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor24Message1f9d) },
-	{ EVENT_TALK, 25, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPatientTalk) },
-	{ EVENT_TALK, 26, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiMachi_AskForSweets) },
-	{ EVENT_TALK, 27, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor27Message1fa3) },
-	{ EVENT_TALK, 28, 0x8c1, EVENT_SCRIPT(FieldScene_RunScene3b5SequenceA) },
+	{ EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_TALK) },
+	{ EVENT_TALK, 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_TALK) },
+	{ EVENT_TALK, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EV26_TALK) },
+	{ EVENT_TALK, 27, CONDITION_ALWAYS, EVENT_SCRIPT(EV27_TALK) },
+	{ EVENT_TALK, 28, 0x8c1, EVENT_SCRIPT(EV28_TALK) },
 	{ EVENT_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiAhIGuessIJustDont) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiTouristsArentTheOnlyOnesWho) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiTheTrialsAreStartingAtThe) },
@@ -813,8 +813,8 @@ struct SceneEvent gTorebiMachiEvents[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiItsNotLikeThereHaveBeen) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiEveryYearIGetOlderAnd) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiWhatIfBabiIsActuallyA) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceTwo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSiblingsTalk) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_SCRIPT) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_SCRIPT) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiWeHaveToSellAllOf) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiTheyreSellingTheseAtTheColosseum) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiISawThePeopleWhoAre) },
@@ -825,9 +825,9 @@ struct SceneEvent gTorebiMachiEvents[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiThoseSweetsSmellGreatImNot) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiIveBeenGuardingOurSpotBut) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiIKeepLosingCoinsButI) },
-	{ EVENT_TALK, 31, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValues31_2_4) },
-	{ SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunMessage0e36) },
-	{ SEARCH(SEARCH_UNNAMED), 31, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunMessage0e37) },
+	{ EVENT_TALK, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EV31_TALK) },
+	{ SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EV30_SEARCH) },
+	{ SEARCH(SEARCH_UNNAMED), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EV31_SEARCH) },
 	{ SEARCH(SEARCH_BARREL), 100, 0xf97, FIND_COINS(9) },
 #if !EDITION_INTERNATIONAL
 	{ SEARCH(SEARCH_JAR), 101, 0xf98, FIND_ITEM(ITEM_LUCKY_MEDAL) },
@@ -835,14 +835,14 @@ struct SceneEvent gTorebiMachiEvents[] = {
 	{ 0xc423, 101, 0xf98, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 #endif
 	{ SEARCH(SEARCH_CHEST), 102, 0xf99, FIND_ITEM(0xbf) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x201, EVENT_SCRIPT(FieldScene_ResetActor9AndDrawTiles) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x201, EVENT_SCRIPT(EV09_PSYNERGY) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(ConfigureAndPlaceActorOneHundredTwo) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(HideActorOneHundredTwo) },
 	{ SCENE_EVENTS_END },
 };
 
 struct SceneEvent gTorebiMachiEvents2[] = {
-	{ PSYNERGY_ON_ACTOR(0xc), 8, 0x200, EVENT_SCRIPT(TorebiMachi_OpenActorEightPassage) },
+	{ PSYNERGY_ON_ACTOR(0xc), 8, 0x200, EVENT_SCRIPT(EV08_PSYNERGY) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(SceneScript_SetupActors) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(SceneScript_SetupActors) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(SceneScript_SetupActors) },
@@ -857,25 +857,25 @@ struct SceneEvent gTorebiMachiEvents2[] = {
 	{ EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiMachi_RequestTouchedExit) },
 	{ 0xc402, 13, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiMachi_RequestTouchedExit) },
-	{ 0xc402, 239, IF_FLAG_SET(0x8c1), EVENT_SCRIPT(SceneState_SetValue30ThenCall) },
+	{ 0xc402, 239, IF_FLAG_SET(0x8c1), EVENT_SCRIPT(EV239_SCRIPT) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiColossoWillReachItsApexAny) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiAreYouPlanningToWatchThe) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiMyFamilySavedMeASeat) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiIThoughtSomethingHappenedToBabi) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiTheColosseumWasSoFullThat) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiNobodyElseHasNoticedButThis) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceTwo) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSiblingsTalk) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_SCRIPT) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_SCRIPT) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiHowAboutSomeColossoSouvenirsThis) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiTheFinalsAreSoLongIts) },
 	{ EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiTheTrialsWereSoRivetingThe) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiIHaveSeatsToTheFinals) },
 	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiIOversleptAgainSoICant) },
-	{ EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor24Message1f9d) },
-	{ EVENT_TALK, 25, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPatientTalk) },
-	{ EVENT_TALK, 26, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiMachi_AskForSweets) },
+	{ EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_TALK) },
+	{ EVENT_TALK, 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_TALK) },
+	{ EVENT_TALK, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EV26_TALK) },
 	{ EVENT_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiTheFinalsStartTodayIWonder) },
-	{ EVENT_TALK, 28, 0x8c1, EVENT_SCRIPT(FieldScene_RunScene3b5SequenceA) },
+	{ EVENT_TALK, 28, 0x8c1, EVENT_SCRIPT(EV28_TALK) },
 	{ EVENT_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiAhIGuessIJustDont) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiIveGotToGetToThe) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiABattleToTheDeathWith) },
@@ -883,8 +883,8 @@ struct SceneEvent gTorebiMachiEvents2[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiSoWhyWereTheSoldiersAll) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiICouldStillBuySeatsFrom) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiNoMatterHowIAddIt) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceTwo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSiblingsTalk) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_SCRIPT) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_SCRIPT) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiWeCantSellAnythingOnceThe) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiThisIsTheFinalPushAnything) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiFightingInColossoRequiresALot) },
@@ -895,20 +895,20 @@ struct SceneEvent gTorebiMachiEvents2[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiMomYouSaidYouWereAll) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiTodayIsABigDayFor) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiIKeepLosingCoinsButI) },
-	{ EVENT_TALK, 31, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValues31_2_4) },
-	{ SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunMessage0e36) },
-	{ SEARCH(SEARCH_UNNAMED), 31, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunMessage0e37) },
+	{ EVENT_TALK, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EV31_TALK) },
+	{ SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EV30_SEARCH) },
+	{ SEARCH(SEARCH_UNNAMED), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EV31_SEARCH) },
 	{ SEARCH(SEARCH_BARREL), 100, 0xf97, FIND_COINS(9) },
 	{ SEARCH(SEARCH_JAR), 101, 0xf98, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SEARCH(SEARCH_CHEST), 102, 0xf99, FIND_ITEM(0xbf) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x201, EVENT_SCRIPT(FieldScene_ResetActor9AndDrawTiles) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x201, EVENT_SCRIPT(EV09_PSYNERGY) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(ConfigureAndPlaceActorOneHundredTwo) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(HideActorOneHundredTwo) },
 	{ SCENE_EVENTS_END },
 };
 
 struct SceneEvent gTorebiMachiEvents3[] = {
-	{ PSYNERGY_ON_ACTOR(0xc), 8, 0x200, EVENT_SCRIPT(TorebiMachi_OpenActorEightPassage) },
+	{ PSYNERGY_ON_ACTOR(0xc), 8, 0x200, EVENT_SCRIPT(EV08_PSYNERGY) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(SceneScript_SetupActors) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(SceneScript_SetupActors) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(SceneScript_SetupActors) },
@@ -923,18 +923,18 @@ struct SceneEvent gTorebiMachiEvents3[] = {
 	{ EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiMachi_RequestTouchedExit) },
 	{ 0xc402, 13, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiMachi_RequestTouchedExit) },
-	{ 0xc402, 239, IF_FLAG_SET(0x8c1), EVENT_SCRIPT(SceneState_SetValue30ThenCall) },
+	{ 0xc402, 239, IF_FLAG_SET(0x8c1), EVENT_SCRIPT(EV239_SCRIPT) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiWellThisYearsColossoHasEnded) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiItsBackToOurNormalQuiet) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor24Message235f) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiWithAllThoseRevelersGoneThe) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiIHadNoLuckInThe) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiItsSoQuietTheHustleAnd) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceTwo) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSiblingsTalk) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_SCRIPT) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_SCRIPT) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiIllBeBackToDoBusiness) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiMachi_ReceiveLeftovers) },
-	{ EVENT_TALK, 28, 0x8c1, EVENT_SCRIPT(FieldScene_RunScene3b5SequenceA) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
+	{ EVENT_TALK, 28, 0x8c1, EVENT_SCRIPT(EV28_TALK) },
 	{ EVENT_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiAhIGuessIJustDont) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiTheSpectatorsHaveAllLeftSo) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiThinkHowFunItWouldBe) },
@@ -942,18 +942,18 @@ struct SceneEvent gTorebiMachiEvents3[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiComeToThinkOfItNo) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiHmmSinceColossoEndedSoDramatically) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiTheCalmAfterTheStormIs) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceTwo) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSiblingsTalk) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_SCRIPT) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_SCRIPT) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiEveryYearITryToSell) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiHowCanWeGetHomeIf) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTorebiMachiIKeepLosingCoinsButI) },
-	{ EVENT_TALK, 31, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValues31_2_4) },
-	{ SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunMessage0e36) },
-	{ SEARCH(SEARCH_UNNAMED), 31, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunMessage0e37) },
+	{ EVENT_TALK, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EV31_TALK) },
+	{ SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EV30_SEARCH) },
+	{ SEARCH(SEARCH_UNNAMED), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EV31_SEARCH) },
 	{ SEARCH(SEARCH_BARREL), 100, 0xf97, FIND_COINS(9) },
 	{ SEARCH(SEARCH_JAR), 101, 0xf98, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SEARCH(SEARCH_CHEST), 102, 0xf99, FIND_ITEM(0xbf) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x201, EVENT_SCRIPT(FieldScene_ResetActor9AndDrawTiles) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x201, EVENT_SCRIPT(EV09_PSYNERGY) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(ConfigureAndPlaceActorOneHundredTwo) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(HideActorOneHundredTwo) },
 	{ SCENE_EVENTS_END },

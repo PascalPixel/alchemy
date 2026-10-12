@@ -403,12 +403,12 @@ static void FieldScene_RunOpeningAuxiliarySequence(void)
 	}
 }
 
-static void VinasuHeya_AttachEffectLeader(void)
+static void EV32_TOUCH_3(void)
 {
 	*(s32 *)(gActorEffectWork + 24) = Object_GetById(ACTOR_PARTY_LEADER);
 }
 
-static void VinasuHeya_ReleaseEffectLeader(void)
+static void EV31_TOUCH_3(void)
 {
 	*(s32 *)(gActorEffectWork + 24) = 0;
 }
@@ -779,7 +779,7 @@ no_match:
 	return gVinasuHeyaPlacementsOther;
 }
 
-static void VinasuHeya_ShowLockedDoorMessage(void)
+static void EV25_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
@@ -819,7 +819,7 @@ static void FieldScene_RunActorEightTenStepLoop(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActorElevenDialogue(void)
+static void EV11_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgVinasuIveWaitedLongSeeIts);
@@ -908,7 +908,7 @@ static void SceneState_ApplySixRectsAfterFlag161(void)
 	Engine_MapCopyCellsTo(117, 55, 110, 55, a, a);
 }
 
-static void FieldScene_RunLeaderSurpriseApproach(void)
+static void EV45_TOUCH(void)
 {
 	struct FieldActor *actor;
 	s32				   z;
@@ -943,7 +943,7 @@ static void FieldScene_RunLeaderSurpriseApproach(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunStatueDialogueSequence(void)
+static void EV41_SEARCH(void)
 {
 	struct EventWorkState *work;
 
@@ -1083,7 +1083,7 @@ static void FieldScene_RunFlag986ActorOneScene(void)
 	}
 }
 
-static void FieldScene_RunFiveCallSequence(void)
+static void EV50_SCRIPT(void)
 {
 
 	Engine_EventBegin();
@@ -1093,7 +1093,7 @@ static void FieldScene_RunFiveCallSequence(void)
 	FieldScene_RunFlag986ActorOneScene();
 }
 
-static void SceneState_RunActor13AtColumn42Setup(void)
+static void EV13_PSYNERGY(void)
 {
 	struct FieldActor *obj;
 	s32				   val;
@@ -1118,7 +1118,7 @@ static void SceneState_RunActor13AtColumn42Setup(void)
 	Engine_EventEnd();
 }
 
-static void VinasuHeya_UpdateFloorSwitch(void)
+static void EV46_TOUCH(void)
 {
 	struct FieldActor *leader = Object_GetById(0);
 	s32				   x = leader->x.part.pixel;
@@ -1148,7 +1148,7 @@ static void VinasuHeya_UpdateFloorSwitch(void)
 	}
 }
 
-static void FieldScene_SetupActorTenCamera(void)
+static void EV10_TALK(void)
 {
 	struct EventWorkState *work;
 
@@ -1168,7 +1168,7 @@ static void FieldScene_SetupActorTenCamera(void)
 	Engine_EventEnd();
 }
 
-static void Scene_RunActorLeapSequence(void)
+static void EV35_TOUCH_3(void)
 {
 	struct FieldActor *rec7;
 	s32				   record;
@@ -1308,7 +1308,7 @@ static void SceneActor_ApplyPositionsOfActors11And12(void)
 	} while (i <= 1);
 }
 
-static void FieldScene_RunGuardedThreeStepSetup(void)
+static void EV45_SCRIPT_3(void)
 {
 
 	Engine_EventBegin();
@@ -1400,7 +1400,7 @@ struct MapWork
 	struct ScrollLayer layer;
 };
 
-static void VinasuHeya_ShiftBridge(void)
+static void EV35_TOUCH_4(void)
 {
 	struct EffectOptions options;
 	struct ScrollLayer	*layer;
@@ -1477,7 +1477,7 @@ static void VinasuHeya_ShiftBridge(void)
 	}
 }
 
-static void VinasuHeya_RunCellPushScene(void)
+static void EV09_PSYNERGY(void)
 {
 	u8				  *flags;
 	s32				   z;
@@ -1565,7 +1565,7 @@ static void VinasuHeya_RunCellPushScene(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunGuardedRectStep(void)
+static void EV36_SCRIPT(void)
 {
 	s32 x;
 	s32 y;
@@ -1579,7 +1579,7 @@ static void FieldScene_RunGuardedRectStep(void)
 		RunStagedActorTransition();
 	}
 	Engine_EventEnd();
-	VinasuHeya_RunCellPushScene();
+	EV09_PSYNERGY();
 }
 
 static void VinasuHeya_SettlePushedBlocks(void)
@@ -1712,7 +1712,7 @@ static void VinasuHeya_SettlePushedBlocks(void)
 	Engine_EventEnd();
 }
 
-static void SceneState_RunConditionalStep(void)
+static void EV35_SCRIPT(void)
 {
 	Engine_EventBegin();
 	if (SceneActor_TryMoveActorZeroTwoTilesAhead() == 0)
@@ -1925,7 +1925,7 @@ static void FieldScene_RunThreeCallSequence(void)
 	Engine_EventEnd();
 }
 
-static void VinasuHeya_RetractBridge(void)
+static void EV40_TOUCH(void)
 {
 	struct EffectOptions options;
 	struct ScrollLayer	*layer;
@@ -1993,7 +1993,7 @@ static void VinasuHeya_RetractBridge(void)
 	}
 }
 
-static void VinasuHeya_ExtendBridge(void)
+static void EV41_TOUCH(void)
 {
 	struct EffectOptions options;
 	struct ScrollLayer	*layer;
@@ -2205,7 +2205,7 @@ static void Scene_RunScene3c8SequenceA(void)
 	Event_End();
 }
 
-static void FieldScene_DrawTilesWhenCheckClear(void)
+static void EV45_SCRIPT_6(void)
 {
 
 	Engine_EventBegin();
@@ -2225,7 +2225,7 @@ static void FieldScene_DrawTilesWhenCheckClear(void)
 	Scene_RunScene3c8SequenceA();
 }
 
-static void FieldScene_RunApproachAndSpawnEffect(void)
+static void EV18_TOUCH(void)
 {
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -2512,7 +2512,7 @@ s32 Scene_RunEntrySetup(void)
 				actor->update = (void (*)(
 					union FieldObject *))SceneEffect_SpawnRandomizedParticleEveryFourFrames;
 			}
-			VinasuHeya_RunCellPushScene();
+			EV09_PSYNERGY();
 			break;
 		case 11:
 			gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
@@ -2814,7 +2814,7 @@ end:
 	return 0;
 }
 
-static void SceneState_PassZeroAndMinusOneRecord(void)
+static void EV31_TOUCH_6(void)
 {
 	struct DirXZ args;
 
@@ -2832,7 +2832,7 @@ static void SceneState_PassRange0To1(void)
 	VinasuHeya_StepActorWithDust(&args);
 }
 
-static void SceneState_PassRangeNeg1To0(void)
+static void EV32_TOUCH_6(void)
 {
 	struct DirXZ args;
 
@@ -2841,7 +2841,7 @@ static void SceneState_PassRangeNeg1To0(void)
 	VinasuHeya_StepActorWithDust(&args);
 }
 
-static void SceneState_CallHandlerWithFlagPair(void)
+static void EV33_TOUCH(void)
 {
 	struct DirXZ args;
 
@@ -4265,7 +4265,7 @@ struct SceneEvent gVinasuHeyaEvents1[] = {
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorEightTenStepLoop) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaIodemBeHappyTheEntranceTo) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaOhhhHowCouldTheyAttackMere) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorElevenDialogue) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaHowHowDidTheyOpenThe) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaTheyAreAlreadyHeadedForBabi) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaBabisSoldiersAreAllColossoVictors) },
@@ -4304,12 +4304,12 @@ struct SceneEvent gVinasuHeyaEvents2[] = {
 	{ 0x21, 30, CONDITION_ALWAYS, 30 },
 	{ 0x21, 31, CONDITION_ALWAYS, 31 },
 	{ 0x21, 32, CONDITION_ALWAYS, 32 },
-	{ EVENT_TOUCH, 45, 0x200, EVENT_SCRIPT(FieldScene_RunLeaderSurpriseApproach) },
-	{ EVENT_TOUCH, 46, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuHeya_UpdateFloorSwitch) },
-	{ 0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFiveCallSequence) },
+	{ EVENT_TOUCH, 45, 0x200, EVENT_SCRIPT(EV45_TOUCH) },
+	{ EVENT_TOUCH, 46, CONDITION_ALWAYS, EVENT_SCRIPT(EV46_TOUCH) },
+	{ 0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_SCRIPT) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaKradenToldThemToStopBut) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaKradenWentInsideButThenCame) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetupActorTenCamera) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaIfKradenHadntBeenThereWe) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaKradenSaidSomethingAboutThisBeing) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVinasuHeyaIWonderWhatMysteriesTheStatue) },
@@ -4323,11 +4323,11 @@ struct SceneEvent gVinasuHeyaEvents2[] = {
 #elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 	{ SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
 #endif
-	{ SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStatueDialogueSequence) },
+	{ SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(EV41_SEARCH) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf37, FIND_ITEM(0xa1) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xf38, FIND_ITEM(0xce) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFlag986ActorOneScene) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 13, 0x200, EVENT_SCRIPT(SceneState_RunActor13AtColumn42Setup) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 13, 0x200, EVENT_SCRIPT(EV13_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(0x93), 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetFlag987AtActorTwelveTile) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplySixRectsAfterFlag161) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplySixRectsAfter161) },
@@ -4355,12 +4355,12 @@ struct SceneEvent gVinasuHeyaEvents3[] = {
 	{ 0x31, 18, CONDITION_ALWAYS, 18 },
 	{ 0x21, 19, CONDITION_ALWAYS, 19 },
 	{ EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_PassRange0To1) },
-	{ EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunActorLeapSequence) },
+	{ EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(EV35_TOUCH_3) },
 	{ 0x202, 31, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAt19_44AndRunThree) },
 	{ 0x202, 32, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAt19_44AndRunThree) },
-	{ EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuHeya_ReleaseEffectLeader) },
-	{ EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuHeya_AttachEffectLeader) },
-	{ 0x202, 45, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunGuardedThreeStepSetup) },
+	{ EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EV31_TOUCH_3) },
+	{ EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(EV32_TOUCH_3) },
+	{ 0x202, 45, CONDITION_ALWAYS, EVENT_SCRIPT(EV45_SCRIPT_3) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf34, FIND_ITEM(0xa2) },
 	{ SEARCH(SEARCH_UNNAMED), 110, 0x350, FIND_PSYNERGY_STONE },
 	{ PSYNERGY_ON_ACTOR(0x8c), 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_PlaceAndPinSlots8To10) },
@@ -4388,10 +4388,10 @@ struct SceneEvent gVinasuHeyaEvents4[] = {
 	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
 	{ EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
 	{ EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
-	{ EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuHeya_ShiftBridge) },
-	{ 0x202, 36, 0x301, EVENT_SCRIPT(FieldScene_RunGuardedRectStep) },
-	{ SEARCH(SEARCH_UNNAMED), 25, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuHeya_ShowLockedDoorMessage) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x301, EVENT_SCRIPT(VinasuHeya_RunCellPushScene) },
+	{ EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(EV35_TOUCH_4) },
+	{ 0x202, 36, 0x301, EVENT_SCRIPT(EV36_SCRIPT) },
+	{ SEARCH(SEARCH_UNNAMED), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_SEARCH) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x301, EVENT_SCRIPT(EV09_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };
 
@@ -4416,8 +4416,8 @@ struct SceneEvent gVinasuHeyaEvents5[] = {
 	{ EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
 	{ EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_PassRange0To1) },
 	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_PassRange0To1) },
-	{ 0x202, 35, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunConditionalStep) },
-	{ SEARCH(SEARCH_UNNAMED), 25, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuHeya_ShowLockedDoorMessage) },
+	{ 0x202, 35, CONDITION_ALWAYS, EVENT_SCRIPT(EV35_SCRIPT) },
+	{ SEARCH(SEARCH_UNNAMED), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_SEARCH) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf35, FIND_ITEM(0x52) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuHeya_SettlePushedBlocks) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 10, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuHeya_SettlePushedBlocks) },
@@ -4443,21 +4443,21 @@ struct SceneEvent gVinasuHeyaEvents6[] = {
 	{ EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
 	{ EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
 	{ 0x31, 17, CONDITION_ALWAYS, 17 },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 18, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunApproachAndSpawnEffect) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TOUCH) },
 	{ 0x202, 35, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunThreeCallSequence) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_TryMoveActorZeroTwoTilesAhead) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_TryMoveActorZeroTwoTilesAhead) },
 	{ 0x202, 36, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunThreeCallSequence) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 37, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_TryMoveActorZeroTwoTilesAhead) },
 	{ 0x202, 37, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunThreeCallSequence) },
-	{ EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuHeya_RetractBridge) },
-	{ EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuHeya_ExtendBridge) },
+	{ EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(EV40_TOUCH) },
+	{ EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(EV41_TOUCH) },
 	{ EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_PassRange0To1) },
-	{ EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_PassZeroAndMinusOneRecord) },
-	{ EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_PassRangeNeg1To0) },
-	{ EVENT_TOUCH, 33, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_CallHandlerWithFlagPair) },
-	{ 0x202, 45, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DrawTilesWhenCheckClear) },
-	{ SEARCH(SEARCH_UNNAMED), 25, CONDITION_ALWAYS, EVENT_SCRIPT(VinasuHeya_ShowLockedDoorMessage) },
+	{ EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EV31_TOUCH_6) },
+	{ EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(EV32_TOUCH_6) },
+	{ EVENT_TOUCH, 33, CONDITION_ALWAYS, EVENT_SCRIPT(EV33_TOUCH) },
+	{ 0x202, 45, CONDITION_ALWAYS, EVENT_SCRIPT(EV45_SCRIPT_6) },
+	{ SEARCH(SEARCH_UNNAMED), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_SEARCH) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf36, FIND_ITEM(0x9) },
 	{ SEARCH(SEARCH_UNNAMED), 110, 0x351, FIND_PSYNERGY_STONE },
 	{ PSYNERGY_ON_ACTOR(0x8c), 10, CONDITION_ALWAYS, 0 },

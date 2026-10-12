@@ -89,7 +89,7 @@ s32 ShianHeya_SelectPlacements(void)
 	return (s32)ShianHeya_SceneTable2;
 }
 
-static void SceneDialogue_RunActor14FlaggedDialogue(void)
+static void EV14_TALK(void)
 {
 	u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
 	u32	 value = state[3];
@@ -114,7 +114,7 @@ static void SceneDialogue_RunActor14FlaggedDialogue(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor15FlaggedDialogue(void)
+static void EV15_TALK(void)
 {
 	u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
 	u32	 value = state[3];
@@ -139,7 +139,7 @@ static void SceneDialogue_RunActor15FlaggedDialogue(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor16FlaggedDialogue(void)
+static void EV16_TALK(void)
 {
 
 	u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
@@ -163,7 +163,7 @@ static void SceneDialogue_RunActor16FlaggedDialogue(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor17FlaggedDialogue(void)
+static void EV17_TALK(void)
 {
 
 	u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
@@ -189,7 +189,7 @@ static void SceneDialogue_RunActor17FlaggedDialogue(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor10Dialogue(void)
+static void EV10_TALK(void)
 {
 
 	Engine_EventBegin();
@@ -198,7 +198,7 @@ static void SceneDialogue_RunActor10Dialogue(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor12Dialogue(void)
+static void EV12_TALK(void)
 {
 
 	Engine_EventBegin();
@@ -207,7 +207,7 @@ static void SceneDialogue_RunActor12Dialogue(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor9MotionDialogue(void)
+static void EV09_TALK(void)
 {
 
 	Engine_EventBegin();
@@ -365,22 +365,22 @@ struct SceneEvent ShianHeya_SceneTable3[] = {
 	{ EVENT_TALK, 11, 0x895, MSGNO(MsgShianHeyaSilkRoadEndsInTolbiIt) },
 	{ EVENT_TALK, 12, 0x895, MSGNO(MsgShianHeyaFollowSilkRoadWhenYouSee) },
 	{ EVENT_TALK, 13, 0x895, MSGNO(MsgShianHeyaThereIsAMineInAltin) },
-	{ EVENT_TALK, 14, 0x895, EVENT_SCRIPT(SceneDialogue_RunActor14FlaggedDialogue) },
-	{ EVENT_TALK, 15, 0x895, EVENT_SCRIPT(SceneDialogue_RunActor15FlaggedDialogue) },
-	{ EVENT_TALK, 16, 0x895, EVENT_SCRIPT(SceneDialogue_RunActor16FlaggedDialogue) },
-	{ EVENT_TALK, 17, 0x895, EVENT_SCRIPT(SceneDialogue_RunActor17FlaggedDialogue) },
+	{ EVENT_TALK, 14, 0x895, EVENT_SCRIPT(EV14_TALK) },
+	{ EVENT_TALK, 15, 0x895, EVENT_SCRIPT(EV15_TALK) },
+	{ EVENT_TALK, 16, 0x895, EVENT_SCRIPT(EV16_TALK) },
+	{ EVENT_TALK, 17, 0x895, EVENT_SCRIPT(EV17_TALK) },
 	{ EVENT_TALK, 18, 0x895, MSGNO(MsgShianHeyaNormallyManyMerchantsComeToThe) },
 	{ EVENT_TALK, 19, 0x895, MSGNO(MsgShianHeyaAllThePeopleWhoCameTo) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgShianMuraWhereAreTheMerchantsNoOne) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShianHeyaMerchantsBringUsCoinsTheyMust) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor10Dialogue) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgShianHeyaNoneCanPassThroughLamakanThis) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor12Dialogue) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgShianHeyaTheMineInAltinFilledWith) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor14FlaggedDialogue) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor15FlaggedDialogue) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor16FlaggedDialogue) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor17FlaggedDialogue) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgShianHeyaWhenLamakanDesertBurnsItIs) },
 	{ EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgShianHeyaHotFoodIsGoodForCrossing) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x895, MSGNO(MsgShianHeyaSoonMasterHammetWillComeHe) },
@@ -424,7 +424,7 @@ struct SceneEvent ShianHeya_SceneTable3[] = {
 struct SceneEvent ShianHeya_SceneTable3Entrance8[] = {
 	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
 	{ EVENT_TALK, 8, 0x8b3, MSGNO(MsgShianHeyaFeizhisPredictionCameTrueNowI) },
-	{ EVENT_TALK, 9, 0x8b3, EVENT_SCRIPT(SceneDialogue_RunActor9MotionDialogue) },
+	{ EVENT_TALK, 9, 0x8b3, EVENT_SCRIPT(EV09_TALK) },
 	{ EVENT_TALK, 10, 0x8b3, MSGNO(MsgShianHeyaIWasInjuredByRocksOn) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8b3, MSGNO(MsgShianHeyaFeizhisAbilityToSenseTroubleIs) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x8b3, MSGNO(MsgShianHeyaMasterHamaHasGreatPowerYou) },

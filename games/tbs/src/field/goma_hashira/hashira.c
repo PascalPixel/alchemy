@@ -63,7 +63,7 @@ enum PillarEffectPlane
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
 
-static void ConfigureActorThirteenSceneParameters(void)
+static void EV12_TALK(void)
 {
 	Actor_ShowEmote(13, 256, 0);
 	Engine_ActorJump(13, 2, 0);
@@ -162,7 +162,7 @@ u8 *SceneData_GetActorTable(void)
 	return GomaHashira_Actors;
 }
 
-static void ConfigureSceneForActorEightColumn(void)
+static void EV08_PSYNERGY(void)
 {
 	struct FieldActor *actor;
 	s32				   x;
@@ -253,7 +253,7 @@ static void FieldScene_RunPrimarySequence(void)
 
 s32 GomaHashira_Actor13Frames;
 
-static void FieldScene_RunPillarSequence(void)
+static void EV09_PSYNERGY(void)
 {
 	s32				   kind;
 	s32				   zero;
@@ -365,14 +365,14 @@ static void FieldScene_RunPillarBurst(void)
 	}
 }
 
-static void FieldScene_RunThreeCallSequence(void)
+static void EV10_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	FieldScene_RunPillarBurst();
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunFourStepSequence(void)
+static void EV10_SCRIPT(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
@@ -380,7 +380,7 @@ static void FieldScene_RunFourStepSequence(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_TryJumpForward(void)
+static void EV20_TOUCH(void)
 {
 #if EDITION_INTERNATIONAL
 	Field_TryJumpForward();
@@ -452,7 +452,7 @@ static void GomaHashira_DriveActor13Idle(void)
 		work->raised_trigger = 99;
 }
 
-static void FieldScene_RunActor13Departure(void)
+static void EV99_RAISED(void)
 {
 	Engine_TaskRemoveCallback(GomaHashira_DriveActor13Idle);
 	Engine_EventBegin();
@@ -518,7 +518,7 @@ s32 FieldScene_SetupPillarsOnEntry(void)
 		Object_GetById(9)->terrain_id = 2;
 		Actor_MoveToAndWait(9, 0x198, 192);
 		Engine_EventWait(60);
-		FieldScene_RunPillarSequence();
+		EV09_PSYNERGY();
 	}
 	if (gGameState.pending_djinn_event != 0)
 	{
@@ -630,17 +630,17 @@ struct SceneEvent GomaHashira_Extras[] = {
 	{ 0x31, 7, CONDITION_ALWAYS, 3 },
 	{ 0x31, 8, CONDITION_ALWAYS, 4 },
 	{ 0x21, 9, CONDITION_ALWAYS, 5 },
-	{ 0x202, 10, 0x301, EVENT_SCRIPT(FieldScene_RunFourStepSequence) },
-	{ TOUCH_WALKING_INTO(FACING_WEST), 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_TryJumpForward) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(ConfigureActorThirteenSceneParameters) },
+	{ 0x202, 10, 0x301, EVENT_SCRIPT(EV10_SCRIPT) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TOUCH) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
 	{ EVENT_TALK, 13, 0xa8, MSGNO(MsgKuupuappuDidYouSeeSomethingStrangeOver) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKuupuappuHmmmItMustBeHidingSomewhere) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0xa8, MSGNO(MsgKuupuappuItJustWhackedMeInThe) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKuupuappuIKnowitsKindItllBeBack) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 8, CONDITION_ALWAYS, EVENT_SCRIPT(ConfigureSceneForActorEightColumn) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x300, EVENT_SCRIPT(FieldScene_RunPillarSequence) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x301, EVENT_SCRIPT(FieldScene_RunThreeCallSequence) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x300, EVENT_SCRIPT(EV09_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x301, EVENT_SCRIPT(EV10_PSYNERGY) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xf4f, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-	{ EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor13Departure) },
+	{ EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_RAISED) },
 	{ SCENE_EVENTS_END },
 };

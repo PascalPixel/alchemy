@@ -75,7 +75,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gKareiKyudenEventsOther;
 }
 
-static void SceneDialogue_RunActor13Message1b83(void)
+static void EV13_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKareiLordHammetWillReleasedSoon);
@@ -83,7 +83,7 @@ static void SceneDialogue_RunActor13Message1b83(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor16Message1b88(void)
+static void EV16_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKareiHasLegacyLordHammetsSilk);
@@ -91,7 +91,7 @@ static void SceneDialogue_RunActor16Message1b88(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActorEightTurnDialogue(void)
+static void EV08_TALK(void)
 {
 
 	Engine_EventBegin();
@@ -999,19 +999,19 @@ struct SceneEvent gKareiKyudenEvents[] = {
 	{ EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(KareiKyuden_LeaveThroughDoor) },
 	{ EVENT_TALK, 8, 0x321, MSGNO(MsgKareiKyudenDodonpaIsAVeryShrewdMan) },
-	{ EVENT_TALK, 8, 0x913, EVENT_SCRIPT(FieldScene_RunActorEightTurnDialogue) },
+	{ EVENT_TALK, 8, 0x913, EVENT_SCRIPT(EV08_TALK) },
 	{ EVENT_TALK, 8, 0x941, MSGNO(MsgKareiKyudenDodonpaPlansToUseHammetTo) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenNoOneInKalayKnowsHammet) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenTakeYourShamansRodAndSet) },
 	{ EVENT_TALK, 12, 0x941, MSGNO(MsgKareiKyudenTheTownsfolkDontKnowAboutLord) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenIHearHammetWasSavedBy) },
-	{ EVENT_TALK, 13, 0x941, EVENT_SCRIPT(SceneDialogue_RunActor13Message1b83) },
+	{ EVENT_TALK, 13, 0x941, EVENT_SCRIPT(EV13_TALK) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenTheySayHammetsReturnIsSupposed) },
 	{ EVENT_TALK, 14, 0x941, MSGNO(MsgKareiKyudenLayanaIsPuttingUpAStrong) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenILeftTheDoorToThe) },
 	{ EVENT_TALK, 15, 0x941, MSGNO(MsgKareiKyudenMerchantsAreSupposedToBeProtected) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenIWonderIfAnyOfDodonpas) },
-	{ EVENT_TALK, 16, 0x941, EVENT_SCRIPT(SceneDialogue_RunActor16Message1b88) },
+	{ EVENT_TALK, 16, 0x941, EVENT_SCRIPT(EV16_TALK) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgKareiKyudenTheSecretPassageIsLockedBecause) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x913, MSGNO(MsgKareiKyudenIsThisTheRightDecisionHammet) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x941, MSGNO(MsgKareiKyudenIDontCareAboutTheMoney) },

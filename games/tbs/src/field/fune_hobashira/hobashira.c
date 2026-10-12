@@ -213,12 +213,12 @@ u8 *FuneHobashira_GetEvents(void)
 	return (u8 *)FuneHobashira_SceneTableE;
 }
 
-static void FuneHobashira_UpdateGridPlacement(void)
+static void EV10_TOUCH(void)
 {
 	FieldEffect_UpdateGridPlacement();
 }
 
-static void FieldScene_RunActor232SceneWhenFlag923Or922(void)
+static void EV11_SEARCH(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_MAST_923) != 0 || Engine_GameFlagIsSet(FLAG_MAST_922) != 0)
 	{
@@ -962,14 +962,14 @@ struct ScenePlacement FuneHobashira_LandingObjects[] = {
 };
 
 struct SceneEvent FuneHobashira_SceneTableE[] = {
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(FuneHobashira_UpdateGridPlacement) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
 	{ EVENT_TALK, 8, 0x928, MSGNO(MsgFuneWatchSeasHelpKaja) },
 	{ EVENT_TALK, 8, 0x8a0, MSGNO(MsgFuneLookoutCannotRow) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgFuneIslandMonstersUnknown) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x928, MSGNO(MsgFuneHiddenAnchorDiscovered) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8a0, MSGNO(MsgFuneSeaTooVast) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFuneIslandTreasures) },
-	{ SEARCH(SEARCH_UNNAMED), 11, 0x924, EVENT_SCRIPT(FieldScene_RunActor232SceneWhenFlag923Or922) },
+	{ SEARCH(SEARCH_UNNAMED), 11, 0x924, EVENT_SCRIPT(EV11_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 

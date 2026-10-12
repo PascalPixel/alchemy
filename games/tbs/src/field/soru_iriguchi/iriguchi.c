@@ -123,7 +123,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gSoruIriguchiEventsOther;
 }
 
-static void FieldScene_RunScene37fSequenceA(void)
+static void EV02_TOUCH(void)
 {
 	s32 v5;
 	s32 v6;
@@ -150,7 +150,7 @@ static void FieldScene_RunScene37fSequenceA(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunFlag81aMessageBranch(void)
+static void EV20_SEARCH(void)
 {
 
 	Engine_EventBegin();
@@ -173,7 +173,7 @@ static void SceneDialogue_RunFlag81aMessageBranch(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunOpeningAuxiliarySequence(void)
+static void EV1044_SCRIPT(void)
 {
 	s32 id;
 	s32 v5;
@@ -226,7 +226,7 @@ static void FieldScene_RunOpeningAuxiliarySequence(void)
 	}
 }
 
-static void FieldScene_RunFlag821Dialogue(void)
+static void EV21_SEARCH(void)
 {
 
 	struct EventWork *work;
@@ -256,7 +256,7 @@ static void FieldScene_RunFlag821Dialogue(void)
 	Engine_EventEnd();
 }
 
-static void SoruIriguchi_SetSmallGem(void)
+static void EV1045_SCRIPT(void)
 {
 	s32 message;
 
@@ -385,7 +385,7 @@ static void Scene_UpdateFormationActor10Flags(void)
 	Scene_RunActorFormation(0);
 }
 
-static void Scene_UpdateFormationActor11Flags(void)
+static void EV11_PSYNERGY(void)
 {
 	s32 *work = Object_GetById(11);
 	s32	 pos;
@@ -408,7 +408,7 @@ static void Scene_UpdateFormationActor11Flags(void)
 	Scene_RunActorFormation(0);
 }
 
-static void Scene_UpdateFormationActor12Flags(void)
+static void EV12_PSYNERGY(void)
 {
 	s32 *work = Object_GetById(12);
 	s32	 pos;
@@ -431,7 +431,7 @@ static void Scene_UpdateFormationActor12Flags(void)
 	Scene_RunActorFormation(0);
 }
 
-static void Scene_UpdateFormationActor13Flags(void)
+static void EV13_PSYNERGY(void)
 {
 	s32 *work = Object_GetById(13);
 	s32	 pos;
@@ -454,7 +454,7 @@ static void Scene_UpdateFormationActor13Flags(void)
 	Scene_RunActorFormation(0);
 }
 
-static void Scene_UpdateFormationActor14Flags(void)
+static void EV14_PSYNERGY(void)
 {
 	s32 *work = Object_GetById(14);
 	s32	 pos;
@@ -545,10 +545,10 @@ static void SoruIriguchi_PushFacedBlock(void)
 			case 16:
 				Scene_UpdateFormationActor9Flags();
 				Scene_UpdateFormationActor10Flags();
-				Scene_UpdateFormationActor11Flags();
-				Scene_UpdateFormationActor12Flags();
-				Scene_UpdateFormationActor13Flags();
-				Scene_UpdateFormationActor14Flags();
+				EV11_PSYNERGY();
+				EV12_PSYNERGY();
+				EV13_PSYNERGY();
+				EV14_PSYNERGY();
 				break;
 			}
 		}
@@ -1157,7 +1157,7 @@ L_02001a1c:;
 L_02001a7e:;
 }
 
-static void FieldScene_RunScriptedStep953(void)
+static void EV10_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
@@ -1335,8 +1335,8 @@ struct SceneEvent gSoruIriguchiEventsOther[] = {
 
 struct SceneEvent gSoruIriguchiEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene37fSequenceA) },
-	{ SEARCH(SEARCH_UNNAMED), 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScriptedStep953) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
+	{ SEARCH(SEARCH_UNNAMED), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SEARCH) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgHaidiaItIsVeryDangerousToGo) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgHaidiaIAmAllAloneInThis) },
 	{ SCENE_EVENTS_END },
@@ -1360,8 +1360,8 @@ struct SceneEvent gSoruIriguchiEvents1[] = {
 	{ EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
 	{ EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf01, FIND_ITEM(0xe1) },
-	{ 0xe104, 0x414, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunOpeningAuxiliarySequence) },
-	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFlag81aMessageBranch) },
+	{ 0xe104, 0x414, CONDITION_ALWAYS, EVENT_SCRIPT(EV1044_SCRIPT) },
+	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 
@@ -1409,13 +1409,13 @@ struct SceneEvent gSoruIriguchiEvents1Entrances14To16[] = {
 	{ EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
 	{ PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_UpdateFormationActor9Flags) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_UpdateFormationActor10Flags) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_UpdateFormationActor11Flags) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_UpdateFormationActor12Flags) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_UpdateFormationActor13Flags) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_UpdateFormationActor14Flags) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_PSYNERGY) },
 	{ 0x202, 24, CONDITION_ALWAYS, EVENT_SCRIPT(SoruIriguchi_PushFacedBlock) },
-	{ 0xe104, 0x415, CONDITION_ALWAYS, EVENT_SCRIPT(SoruIriguchi_SetSmallGem) },
-	{ SEARCH(SEARCH_UNNAMED), 21, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFlag821Dialogue) },
+	{ 0xe104, 0x415, CONDITION_ALWAYS, EVENT_SCRIPT(EV1045_SCRIPT) },
+	{ SEARCH(SEARCH_UNNAMED), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 

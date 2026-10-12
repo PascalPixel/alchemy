@@ -90,7 +90,7 @@ u8 *SceneData_SelectEffectTable(void)
 	return (u8 *)Placement_Effects;
 }
 
-static void Scene_RunActorTwelveDialogue(void)
+static void EV12_TALK(void)
 {
 	s32 base;
 
@@ -123,7 +123,7 @@ static void Scene_RunActorTwelveDialogue(void)
 	Engine_EventEnd();
 }
 
-static void Scene_PlanSanctumVisit(void)
+static void EV13_TALK(void)
 {
 	struct FieldActor *record;
 	s32				   x, y;
@@ -444,7 +444,7 @@ static void Scene_LeaveForMtAleph(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_SetupWithDescriptorA0ACWhenFlag242Clear(void)
+static void EV03_TOUCH(void)
 {
 	if (Engine_GameFlagIsSet(0x242) == 0)
 	{
@@ -455,7 +455,7 @@ static void FieldScene_SetupWithDescriptorA0ACWhenFlag242Clear(void)
 	Engine_EventRequestExit(3);
 }
 
-static void Scene_OverhearSaturosAndMenardi(void)
+static void EV07_TOUCH(void)
 {
 	struct FieldActor *record;
 	s32				   x, z;
@@ -674,7 +674,7 @@ static void Scene_OverhearSaturosAndMenardi(void)
 	Engine_EventEnd();
 }
 
-static void HaidiaSukureta_RunArrivalScene(void)
+static void EV05_TOUCH(void)
 {
 	struct FieldActor *record;
 
@@ -935,7 +935,7 @@ static void HaidiaSukureta_RunActorSequence(void)
 	}
 }
 
-static void SceneState_SetWorkAndFlag87d(void)
+static void EV10_TOUCH(void)
 {
 	struct EventWork *work;
 
@@ -951,7 +951,7 @@ static void SceneState_SetWorkAndFlag87d(void)
 	Engine_EventEnd();
 }
 
-static void SceneState_SetWorkAndFlag87e(void)
+static void EV11_TOUCH(void)
 {
 	struct EventWork *work;
 
@@ -967,7 +967,7 @@ static void SceneState_SetWorkAndFlag87e(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActorSixteenDialogue(void)
+static void EV16_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgHaidiaMemoriesOfThisCottage);
@@ -1062,18 +1062,18 @@ struct ScenePlacement Placement_Actors[] = {
 };
 
 struct SceneEvent Placement_Effects[] = {
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_PlanSanctumVisit) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunActorTwelveDialogue) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaDoNotKeepSukuretaWaiting) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgHaidiaLeaveBeforeWeChangeMinds) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaCuriousBeyondFence) },
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetupWithDescriptorA0ACWhenFlag242Clear) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaSukureta_RunArrivalScene) },
-	{ EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_OverhearSaturosAndMenardi) },
+	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH) },
+	{ EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
 	{ PSYNERGY_ON_ACTOR(0x8f), 8, CONDITION_ALWAYS, 0 },
 	{ SEARCH(SEARCH_JAR), 100, 0xf41, FIND_ITEM(ITEM_ELIXIR) },
 	{ SCENE_EVENTS_END },
@@ -1086,8 +1086,8 @@ struct SceneEvent Placement_Effects834[] = {
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgHaidiaRockCannotBeMoved) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaSukureta_RunActorSequence) },
 	{ EVENT_TOUCH, 20, 0x82f, EVENT_SCRIPT(HaidiaSukureta_RunActorSequence) },
-	{ EVENT_TOUCH, 10, 0x87d, EVENT_SCRIPT(SceneState_SetWorkAndFlag87d) },
-	{ EVENT_TOUCH, 11, 0x87e, EVENT_SCRIPT(SceneState_SetWorkAndFlag87e) },
+	{ EVENT_TOUCH, 10, 0x87d, EVENT_SCRIPT(EV10_TOUCH) },
+	{ EVENT_TOUCH, 11, 0x87e, EVENT_SCRIPT(EV11_TOUCH) },
 	{ SEARCH(SEARCH_JAR), 100, CONDITION_ALWAYS, 0 },
 	{ SCENE_EVENTS_END },
 };
@@ -1095,11 +1095,11 @@ struct SceneEvent Placement_Effects834[] = {
 struct SceneEvent Placement_Effects87a[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetupWithDescriptorA0ACWhenFlag242Clear) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaWonderBeyondFence) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorSixteenDialogue) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaAdventuresBeyondFence) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgHaidiaLonelyWithoutSukureta) },
 	{ PSYNERGY_ON_ACTOR(0x8f), 8, CONDITION_ALWAYS, 0 },

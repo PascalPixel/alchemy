@@ -58,7 +58,7 @@ u8 *KorimaMagari_GetEvents(void)
 	return gKorimaMagariEvents;
 }
 
-static void KorimaMagari_RedrawBoard(void)
+static void EV11_SCRIPT(void)
 {
 	Scene_PushBlockAlongRun(gKorimaMagariRecords);
 	Engine_MapCopyCellAttributes(0, 0x40, 0x20, 0x20, 0, 0);
@@ -66,7 +66,7 @@ static void KorimaMagari_RedrawBoard(void)
 	State_ApplyRectByLayoutSelector();
 }
 
-static void KorimaMagari_TryJumpForward(void)
+static void EV10_TOUCH(void)
 {
 	Field_TryJumpForward();
 }
@@ -223,7 +223,7 @@ static void KorimaMagari_CaptureShakeScroll(void)
 	p[5] += 0xb0;
 }
 
-static void Scene_RunKorimaMagariSequence(void)
+static void EV09_SEARCH(void)
 {
 	s32 v5;
 	s32 v3;
@@ -333,7 +333,7 @@ L_02000626:;
 	Engine_EventEnd();
 }
 
-static void KorimaMagari_RunReturnSequence(void)
+static void EV13_TOUCH(void)
 {
 	s32 v5;
 
@@ -361,7 +361,7 @@ static void KorimaMagari_RunReturnSequence(void)
 	Engine_EventEnd();
 }
 
-static void KorimaMagari_RunDepartSequence(void)
+static void EV12_TOUCH(void)
 {
 	s32 v5;
 
@@ -644,12 +644,12 @@ struct ScenePlacement gKorimaMagariPlacements[] = {
 struct SceneEvent gKorimaMagariEvents[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KorimaMagari_TryJumpForward) },
-	{ 0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(KorimaMagari_RedrawBoard) },
-	{ TOUCH_WALKING_INTO(FACING_WEST), 13, CONDITION_ALWAYS, EVENT_SCRIPT(KorimaMagari_RunReturnSequence) },
-	{ TOUCH_WALKING_INTO(FACING_EAST), 12, CONDITION_ALWAYS, EVENT_SCRIPT(KorimaMagari_RunDepartSequence) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
+	{ 0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_SCRIPT) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TOUCH) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKorimaDoNotTouchFloodgate) },
-	{ SEARCH(SEARCH_UNNAMED), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunKorimaMagariSequence) },
+	{ SEARCH(SEARCH_UNNAMED), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_SEARCH) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf00, FIND_ITEM(0x5b) },
 	{ SCENE_EVENTS_END },
 };

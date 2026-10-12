@@ -70,7 +70,7 @@ static __inline__ void LiftBlock(s32 column, u8 lowered)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
 
-static void SceneActor_SetActor15ModeZero(void)
+static void EV15_SCRIPT(void)
 {
 	BattleFx_RunPageEffectForSlot(15, 0, 6);
 }
@@ -139,7 +139,7 @@ static s32 SceneActor_FaceTowardActorZero(struct FieldActor *actor)
 	return 0;
 }
 
-static void TakaraAshiba_StartActorFifteenJump(void)
+static void EV20_TOUCH(void)
 {
 	struct FieldActor *record;
 
@@ -164,7 +164,7 @@ static void TakaraAshiba_StartActorFifteenJump(void)
 	}
 }
 
-static void TakaraAshiba_RunActorFifteenSprint(void)
+static void EV21_TOUCH(void)
 {
 	struct FieldActor *rec7;
 	s32				   rec8;
@@ -213,7 +213,7 @@ static void TakaraAshiba_RunActorFifteenSprint(void)
 	}
 }
 
-static void TakaraAshiba_ReturnActorFifteen(void)
+static void EV22_TOUCH(void)
 {
 	struct FieldActor *record;
 
@@ -288,7 +288,7 @@ static void FieldScene_CopyActorPosition(void)
 	}
 }
 
-static void FieldScene_RunActor15ZeroStep(void)
+static void EV15_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(15, 0);
@@ -353,7 +353,7 @@ static void TakaraAshiba_OpenPlatformPassage(s32 a0)
 	Map_CopyCellAttributes(6, 49, 1, 1, 6, 51);
 }
 
-static void FieldScene_RunScene3b4SequenceC(void)
+static void EV50_TOUCH(void)
 {
 	struct FieldActor *record;
 
@@ -395,17 +395,17 @@ static void SceneState_SetSelectorFlagWhenFacingC000(s32 selector)
 	PartyInventory_Remove(244);
 }
 
-static void FieldScene_RunIndexedStep0(void)
+static void EV51_TOUCH(void)
 {
 	SceneState_SetSelectorFlagWhenFacingC000(0);
 }
 
-static void FieldScene_RunIndexedStep1(void)
+static void EV52_TOUCH(void)
 {
 	SceneState_SetSelectorFlagWhenFacingC000(1);
 }
 
-static void TakaraAshiba_ResetBlockedStepsForSelectorTwo(void)
+static void EV53_TOUCH_1(void)
 {
 	struct FieldActor *slot;
 	s16				  *cnt;
@@ -425,7 +425,7 @@ static void TakaraAshiba_ResetBlockedStepsForSelectorTwo(void)
 	}
 }
 
-static void TakaraAshiba_ResetBlockedStepsForSelectorThree(void)
+static void EV54_TOUCH_1(void)
 {
 	struct FieldActor *p;
 	s16				  *cnt;
@@ -466,7 +466,7 @@ static void ConfigureAndPlaceActorTwelve(void)
 	Actor_SetPosition(12, 0x00080000, 0x00080000);
 }
 
-static void FieldScene_RunStep8ValueEe7(void)
+static void EV08_PSYNERGY_1(void)
 {
 	Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -475,7 +475,7 @@ static void FieldScene_RunStep8ValueEe7(void)
 	Engine_GameFlagSet(0xEE7);
 }
 
-static void FieldScene_RunStep9ValueEe8(void)
+static void EV09_PSYNERGY_1(void)
 {
 	Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -484,7 +484,7 @@ static void FieldScene_RunStep9ValueEe8(void)
 	Engine_GameFlagSet(0xEE8);
 }
 
-static void FieldScene_RunStep10ValueEe9(void)
+static void EV10_PSYNERGY_1(void)
 {
 	Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -493,7 +493,7 @@ static void FieldScene_RunStep10ValueEe9(void)
 	Engine_GameFlagSet(0xEE9);
 }
 
-static void FieldScene_RunStep11ValueEea(void)
+static void EV11_PSYNERGY_1(void)
 {
 	Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -502,7 +502,7 @@ static void FieldScene_RunStep11ValueEea(void)
 	Engine_GameFlagSet(0xEEA);
 }
 
-static void FieldScene_RunStep12ValueEeb(void)
+static void EV12_PSYNERGY_1(void)
 {
 	Engine_ItemShowFound(ITEM_RED_KEY, 3);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -526,7 +526,7 @@ static void TakaraAshiba_RaiseTriggerOnStand(void)
 	}
 }
 
-static void FieldScene_RunSupplementalSequenceOne(void)
+static void EV91_RAISED(void)
 {
 	struct FieldActor *record;
 
@@ -570,7 +570,7 @@ static void SceneState_TriggerColumnTen(void)
 	}
 }
 
-static void FieldScene_RunScene3b4SequenceA(void)
+static void EV92_RAISED(void)
 {
 	struct FieldActor *record;
 
@@ -625,12 +625,12 @@ static void SceneActor_TrackOriginColumnForSlot(s32 no)
 	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 }
 
-static void FieldScene_RunLateIndexedStep0(void)
+static void EV53_TOUCH_2(void)
 {
 	SceneActor_TrackOriginColumnForSlot(0);
 }
 
-static void FieldScene_RunLateIndexedStep1(void)
+static void EV54_TOUCH_2(void)
 {
 	SceneActor_TrackOriginColumnForSlot(1);
 }
@@ -640,7 +640,7 @@ static void FieldScene_RunLateIndexedStep2(void)
 	SceneActor_TrackOriginColumnForSlot(2);
 }
 
-static void FieldScene_RunPrimarySequence(void)
+static void EV61_TOUCH(void)
 {
 	struct FieldActor *record;
 
@@ -672,7 +672,7 @@ static void FieldScene_RunPrimarySequence(void)
 	}
 }
 
-static void TakaraAshiba_RunActorElevenFollowScene(void)
+static void EV62_TOUCH(void)
 {
 	struct FieldActor *record;
 	s32				   v3;
@@ -732,7 +732,7 @@ static void SceneState_TriggerColumnNineteen(void)
 	}
 }
 
-static void FieldScene_RunScene3b4SequenceB(void)
+static void EV96_RAISED(void)
 {
 	struct FieldActor *record;
 
@@ -775,7 +775,7 @@ static void SceneEffect_SetBlendAlpha0607(void)
 	REG_BLDALPHA = value;
 }
 
-static void FieldScene_DispatchBySlotZeroFacing(void)
+static void EV60_SCRIPT(void)
 {
 	struct FieldActor *slot = Object_GetById(ACTOR_PARTY_LEADER);
 	u16				   facing = slot->facing;
@@ -827,7 +827,7 @@ static void FieldScene_NoOpCallback(void)
 {
 }
 
-static void SceneActor_MarkSlot13AndSetFlag200(void)
+static void EV13_PSYNERGY(void)
 {
 	struct FieldActor *slot = Object_GetById(13);
 	s32				   fifth = 40;
@@ -845,7 +845,7 @@ static void SceneActor_MarkSlot13AndSetFlag200(void)
 	Engine_GameFlagSet(512);
 }
 
-static void SceneState_BranchOnActorZeroFacing(void)
+static void EV70_SCRIPT(void)
 {
 	struct Slot *slot = Object_GetById(0);
 
@@ -895,7 +895,7 @@ static void TakaraAshiba_RestoreLeftUnderfootCell(void)
 	Object_GetById(8)->priority_flags = 2;
 }
 
-static void TakaraAshiba_DispatchByActorEightColumn(void)
+static void EV08_PSYNERGY_3(void)
 {
 	struct FieldActor *actor = Object_GetById(8);
 	s32				   x = actor->x.fixed;
@@ -961,7 +961,7 @@ static void SceneActor_BranchOnSlotZeroAtTile38(void)
 
 	TakaraAshiba_RestoreActorEightTerrain();
 	StagedActor_AdvancePair();
-	TakaraAshiba_DispatchByActorEightColumn();
+	EV08_PSYNERGY_3();
 }
 
 static void TakaraAshiba_ReleaseActorNinePlatform(void)
@@ -980,7 +980,7 @@ static void TakaraAshiba_ReleaseActorNinePlatform(void)
 	GameFlag_Set(0x206);
 }
 
-static void SceneActor_RunWhenActor9AtTile45x43(void)
+static void EV09_PSYNERGY_3(void)
 {
 	s32 *slot = Object_GetById(9);
 	s32	 x = slot[2] / 0x100000;
@@ -992,10 +992,10 @@ static void SceneActor_RunWhenActor9AtTile45x43(void)
 	}
 }
 
-static void FieldScene_RunTwoStepSequence(void)
+static void EV52_SCRIPT(void)
 {
 	StagedActor_AdvancePair();
-	SceneActor_RunWhenActor9AtTile45x43();
+	EV09_PSYNERGY_3();
 }
 
 static void SceneState_ApplyTwoRectsAtRow56(void)
@@ -1024,7 +1024,7 @@ static void TakaraAshiba_RestoreActorTenRightCell(void)
 	Object_GetById(10)->motion_flags = 0;
 }
 
-static void TakaraAshiba_UpdateBlockRects(void)
+static void EV10_PSYNERGY_3(void)
 {
 	struct FieldActor *block = Object_GetById(10);
 	s32				   y = block->y.fixed / 0x100000;
@@ -1053,14 +1053,14 @@ static void TakaraAshiba_UpdateBlockRects(void)
 	}
 }
 
-static void FieldScene_RunThreeCallSequenceB(void)
+static void EV50_SCRIPT(void)
 {
 	SceneState_ApplyTwoRectsAtRow56();
 	StagedActor_AdvancePair();
-	TakaraAshiba_UpdateBlockRects();
+	EV10_PSYNERGY_3();
 }
 
-static void FieldScene_DispatchByActorZeroFacing(void)
+static void EV54_SCRIPT(void)
 {
 	struct Slot *slot = Object_GetById(0);
 
@@ -1070,7 +1070,7 @@ static void FieldScene_DispatchByActorZeroFacing(void)
 	}
 	else
 	{
-		FieldScene_RunThreeCallSequenceB();
+		EV50_SCRIPT();
 	}
 }
 
@@ -1099,19 +1099,19 @@ static void ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void)
 	Engine_MapCopyCellAttributes(53, 55, 1, 1, tile, 55);
 }
 
-static void FieldScene_RunSingleStep(void)
+static void EV11_PSYNERGY_3(void)
 {
 	ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
 }
 
-static void FieldScene_RunThreeCallSequence(void)
+static void EV53_SCRIPT(void)
 {
 	SceneState_ApplyFourRectsAt48_55();
 	StagedActor_AdvancePair();
-	FieldScene_RunSingleStep();
+	EV11_PSYNERGY_3();
 }
 
-static void TakaraAshiba_RepaintActorCells(void)
+static void EV12_PSYNERGY_3(void)
 {
 	ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
 }
@@ -1120,7 +1120,7 @@ static void FieldScene_RunThreeStepSequence(void)
 {
 	SceneState_ApplyFourRectsAt48_55();
 	StagedActor_AdvancePair();
-	TakaraAshiba_RepaintActorCells();
+	EV12_PSYNERGY_3();
 }
 
 static void ActorPresentation_PlaceActorFourteenOnActorNine(void)
@@ -1311,11 +1311,11 @@ static void TakaraAshiba_InitializeScene3(void)
 	{
 		Engine_ActorSetAnimation(14, 2);
 	}
-	TakaraAshiba_DispatchByActorEightColumn();
-	SceneActor_RunWhenActor9AtTile45x43();
-	TakaraAshiba_UpdateBlockRects();
-	FieldScene_RunSingleStep();
-	TakaraAshiba_RepaintActorCells();
+	EV08_PSYNERGY_3();
+	EV09_PSYNERGY_3();
+	EV10_PSYNERGY_3();
+	EV11_PSYNERGY_3();
+	EV12_PSYNERGY_3();
 #if EDITION_INTERNATIONAL
 	Engine_ActorSetSpritePriority(8, 3);
 #endif
@@ -1324,7 +1324,7 @@ static void TakaraAshiba_InitializeScene3(void)
 	ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
 	if (GameFlag_IsSet(0x200) != 0)
 	{
-		SceneActor_MarkSlot13AndSetFlag200();
+		EV13_PSYNERGY();
 		Engine_ActorSetAnimation(13, 5);
 	}
 	if (GameFlag_IsSet(0x109) == 0)
@@ -1528,16 +1528,16 @@ struct SceneEvent gTakaraAshibaEvents1[] = {
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndPlaceSlot12) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(ConfigureAndPlaceActorTwelve) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep8ValueEe7) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep9ValueEe8) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep10ValueEe9) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep11ValueEea) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep12ValueEeb) },
-	{ EVENT_TOUCH, 50, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3b4SequenceC) },
-	{ EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunIndexedStep0) },
-	{ EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunIndexedStep1) },
-	{ EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraAshiba_ResetBlockedStepsForSelectorTwo) },
-	{ EVENT_TOUCH, 54, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraAshiba_ResetBlockedStepsForSelectorThree) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_PSYNERGY_1) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_PSYNERGY_1) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_PSYNERGY_1) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_PSYNERGY_1) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_PSYNERGY_1) },
+	{ EVENT_TOUCH, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_TOUCH) },
+	{ EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(EV51_TOUCH) },
+	{ EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(EV52_TOUCH) },
+	{ EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(EV53_TOUCH_1) },
+	{ EVENT_TOUCH, 54, CONDITION_ALWAYS, EVENT_SCRIPT(EV54_TOUCH_1) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraAshiba_CheckLeaderAhead) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 54, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraAshiba_CheckLeaderAhead) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xeca, FIND_COINS(333) },
@@ -1550,13 +1550,13 @@ struct SceneEvent gTakaraAshibaEvents1[] = {
 struct SceneEvent gTakaraAshibaEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunLateIndexedStep0) },
-	{ EVENT_TOUCH, 54, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunLateIndexedStep1) },
-	{ EVENT_TOUCH, 61, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPrimarySequence) },
-	{ EVENT_TOUCH, 62, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraAshiba_RunActorElevenFollowScene) },
-	{ EVENT_RAISED, 96, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3b4SequenceB) },
-	{ EVENT_RAISED, 92, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3b4SequenceA) },
-	{ EVENT_RAISED, 91, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceOne) },
+	{ EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(EV53_TOUCH_2) },
+	{ EVENT_TOUCH, 54, CONDITION_ALWAYS, EVENT_SCRIPT(EV54_TOUCH_2) },
+	{ EVENT_TOUCH, 61, CONDITION_ALWAYS, EVENT_SCRIPT(EV61_TOUCH) },
+	{ EVENT_TOUCH, 62, CONDITION_ALWAYS, EVENT_SCRIPT(EV62_TOUCH) },
+	{ EVENT_RAISED, 96, CONDITION_ALWAYS, EVENT_SCRIPT(EV96_RAISED) },
+	{ EVENT_RAISED, 92, CONDITION_ALWAYS, EVENT_SCRIPT(EV92_RAISED) },
+	{ EVENT_RAISED, 91, CONDITION_ALWAYS, EVENT_SCRIPT(EV91_RAISED) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SetBlendAlphaCoefficients) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneEffect_SetBlendAlpha0607) },
 	{ PSYNERGY_ON_ACTOR(0x91), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Resource3b4_EmptyHookB) },
@@ -1574,19 +1574,19 @@ struct SceneEvent gTakaraAshibaEvents2[] = {
 struct SceneEvent gTakaraAshibaEvents3[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ 0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunThreeCallSequenceB) },
+	{ 0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_SCRIPT) },
 	{ 0x202, 51, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_BranchOnSlotZeroAtTile38) },
-	{ 0x202, 52, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunTwoStepSequence) },
-	{ 0x202, 53, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunThreeCallSequence) },
+	{ 0x202, 52, CONDITION_ALWAYS, EVENT_SCRIPT(EV52_SCRIPT) },
+	{ 0x202, 53, CONDITION_ALWAYS, EVENT_SCRIPT(EV53_SCRIPT) },
 #if EDITION_INTERNATIONAL
 	{ 0x202, 61, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_BranchOnSlotZeroAtTile38) },
 #endif
-	{ 0x202, 54, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchByActorZeroFacing) },
-	{ 0x202, 60, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchBySlotZeroFacing) },
-	{ 0x202, 70, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_BranchOnActorZeroFacing) },
-	{ EVENT_TOUCH, 20, 0x36, EVENT_SCRIPT(TakaraAshiba_StartActorFifteenJump) },
-	{ EVENT_TOUCH, 21, 0x36, EVENT_SCRIPT(TakaraAshiba_RunActorFifteenSprint) },
-	{ EVENT_TOUCH, 22, 0x36, EVENT_SCRIPT(TakaraAshiba_ReturnActorFifteen) },
+	{ 0x202, 54, CONDITION_ALWAYS, EVENT_SCRIPT(EV54_SCRIPT) },
+	{ 0x202, 60, CONDITION_ALWAYS, EVENT_SCRIPT(EV60_SCRIPT) },
+	{ 0x202, 70, CONDITION_ALWAYS, EVENT_SCRIPT(EV70_SCRIPT) },
+	{ EVENT_TOUCH, 20, 0x36, EVENT_SCRIPT(EV20_TOUCH) },
+	{ EVENT_TOUCH, 21, 0x36, EVENT_SCRIPT(EV21_TOUCH) },
+	{ EVENT_TOUCH, 22, 0x36, EVENT_SCRIPT(EV22_TOUCH) },
 	{ EVENT_TOUCH, 30, 0x36, EVENT_SCRIPT(FieldScene_CopyActorPosition) },
 	{ EVENT_TOUCH, 31, 0x36, EVENT_SCRIPT(FieldScene_CopyActorPosition) },
 	{ EVENT_TOUCH, 32, 0x36, EVENT_SCRIPT(FieldScene_CopyActorPosition) },
@@ -1599,14 +1599,14 @@ struct SceneEvent gTakaraAshibaEvents3[] = {
 	{ EVENT_TOUCH, 39, 0x36, EVENT_SCRIPT(FieldScene_CopyActorPosition) },
 	{ EVENT_TOUCH, 40, 0x36, EVENT_SCRIPT(FieldScene_CopyActorPosition) },
 	{ EVENT_TOUCH, 41, 0x36, EVENT_SCRIPT(FieldScene_CopyActorPosition) },
-	{ 0x7, 15, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_SetActor15ModeZero) },
-	{ PSYNERGY_ON_ACTOR(0x91), 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor15ZeroStep) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x200, EVENT_SCRIPT(SceneActor_MarkSlot13AndSetFlag200) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x201, EVENT_SCRIPT(TakaraAshiba_DispatchByActorEightColumn) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x206, EVENT_SCRIPT(SceneActor_RunWhenActor9AtTile45x43) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x203, EVENT_SCRIPT(TakaraAshiba_UpdateBlockRects) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 11, 0x204, EVENT_SCRIPT(FieldScene_RunSingleStep) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 12, 0x205, EVENT_SCRIPT(TakaraAshiba_RepaintActorCells) },
+	{ 0x7, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_SCRIPT) },
+	{ PSYNERGY_ON_ACTOR(0x91), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x200, EVENT_SCRIPT(EV13_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x201, EVENT_SCRIPT(EV08_PSYNERGY_3) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x206, EVENT_SCRIPT(EV09_PSYNERGY_3) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x203, EVENT_SCRIPT(EV10_PSYNERGY_3) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 11, 0x204, EVENT_SCRIPT(EV11_PSYNERGY_3) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 12, 0x205, EVENT_SCRIPT(EV12_PSYNERGY_3) },
 	{ SEARCH(SEARCH_CHEST), 104, 0xed6, FIND_COINS(666) },
 	{ SEARCH(SEARCH_CHEST), 105, 0xed7, FIND_ITEM(ITEM_WATER_OF_LIFE) },
 	{ SEARCH(SEARCH_CHEST), 106, 0xed8, FIND_ITEM(ITEM_ELIXIR) },

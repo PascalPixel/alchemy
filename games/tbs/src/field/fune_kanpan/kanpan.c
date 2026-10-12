@@ -684,7 +684,7 @@ static void FieldScene_RunOpeningAuxiliarySequence(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunScene3afSequenceA(void)
+static void EV24_TALK(void)
 {
 	struct FieldActor *rec7;
 	s32				   record;
@@ -795,7 +795,7 @@ static void FuneKanpan_RunDeckStateEventFromEntry(void)
 }
 #endif
 
-static void FieldScene_RunActorAndEffectPresentationSetup(void)
+static void EV10_TOUCH(void)
 {
 	struct FieldActor *record;
 
@@ -910,7 +910,7 @@ static void FieldScene_RunActorAndEffectPresentationSetup(void)
 	}
 }
 
-static void FuneKanpan_WatchCrewmanLeaveRight(void)
+static void EV11_TOUCH(void)
 {
 	u8 bits;
 
@@ -957,7 +957,7 @@ static void FuneKanpan_WatchCrewmanLeaveRight(void)
 	}
 }
 
-static void FuneKanpan_WatchCrewmanLeaveLeft(void)
+static void EV12_TOUCH(void)
 {
 	u8 bits;
 
@@ -3351,7 +3351,7 @@ const struct SceneEvent gFuneKanpanEvents[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgFuneKanpanIHidTheAnchorCharmNo) },
 	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgFuneKanpanWeApologizeForAnyTroubleThat) },
 	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunOpeningAuxiliarySequence) },
-	{ EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3afSequenceA) },
+	{ EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_TALK) },
 	{ EVENT_TALK, 25, 0x922, MSGNO(MsgFuneKanpanIWonderWhatsGoingOnWeve) },
 	{ EVENT_TALK, 25, 0x925, MSGNO(MsgFuneKanpanThoseWarriorsGotTiredOfWaiting) },
 	{ EVENT_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgFuneKanpanIfWeJustPromiseToHelp) },
@@ -3377,9 +3377,9 @@ const struct SceneEvent gFuneKanpanEvents[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, 0x922, MSGNO(MsgFuneKanpanTheKaragolSeaIsPrettyFoggy) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, 0x925, MSGNO(MsgFuneKanpanThoseGuysSeemPrettySureOf) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgFuneKanpanUsHelpWithTheRowingGet) },
-	{ EVENT_TOUCH, 10, 0x920, EVENT_SCRIPT(FieldScene_RunActorAndEffectPresentationSetup) },
-	{ EVENT_TOUCH, 11, 0x923, EVENT_SCRIPT(FuneKanpan_WatchCrewmanLeaveRight) },
-	{ EVENT_TOUCH, 12, 0x923, EVENT_SCRIPT(FuneKanpan_WatchCrewmanLeaveLeft) },
+	{ EVENT_TOUCH, 10, 0x920, EVENT_SCRIPT(EV10_TOUCH) },
+	{ EVENT_TOUCH, 11, 0x923, EVENT_SCRIPT(EV11_TOUCH) },
+	{ EVENT_TOUCH, 12, 0x923, EVENT_SCRIPT(EV12_TOUCH) },
 	{ SCENE_EVENTS_END },
 };
 

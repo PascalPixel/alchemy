@@ -57,7 +57,7 @@ static s32 sSplitLine;
 static u16 sHofsAbove;
 static u16 sHofsBelow;
 
-static void State_SetActorEightValue3d(void)
+static void EV08_TALK(void)
 {
 	BattleFx_SetPhaseRequest(8, 0x3D);
 }
@@ -114,32 +114,32 @@ static void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
 	}
 }
 
-static void Scene_ApplyOffset0Pos5(void)
+static void EV10_TOUCH(void)
 {
 	Actor_ShiftObjectsByBlock(0, 5);
 }
 
-static void Scene_ApplyOffset0Neg5(void)
+static void EV11_TOUCH(void)
 {
 	Actor_ShiftObjectsByBlock(0, -5);
 }
 
-static void Scene_ApplyOffset0Pos5Second(void)
+static void EV12_TOUCH(void)
 {
 	Actor_ShiftObjectsByBlock(0, 5);
 }
 
-static void Scene_ApplyOffset0Neg5Second(void)
+static void EV13_TOUCH(void)
 {
 	Actor_ShiftObjectsByBlock(0, -5);
 }
 
-static void Scene_ApplyOffset0Pos6(void)
+static void EV14_TOUCH(void)
 {
 	Actor_ShiftObjectsByBlock(0, 6);
 }
 
-static void Scene_ApplyOffset0Neg6(void)
+static void EV15_TOUCH(void)
 {
 	Actor_ShiftObjectsByBlock(0, -6);
 }
@@ -154,7 +154,7 @@ static void ToretoEda_PlayCueAndSelectTouchedExit(void)
 	Engine_EventRequestExit(*cnt);
 }
 
-static void Effect_SetAlphaBlendForScene9(void)
+static void EV00_PSYNERGY(void)
 {
 	u8 *disp;
 
@@ -323,14 +323,14 @@ struct SceneEvent ToretoEda_SceneTable3[] = {
 	{ 0xa02, 6, CONDITION_ALWAYS, EVENT_SCRIPT(ToretoEda_PlayCueAndSelectTouchedExit) },
 	{ 0xa02, 7, CONDITION_ALWAYS, EVENT_SCRIPT(ToretoEda_PlayCueAndSelectTouchedExit) },
 	{ 0xa02, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ToretoEda_PlayCueAndSelectTouchedExit) },
-	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_ApplyOffset0Pos5) },
-	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_ApplyOffset0Neg5) },
-	{ EVENT_TOUCH, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_ApplyOffset0Pos5Second) },
-	{ EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_ApplyOffset0Neg5Second) },
-	{ EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_ApplyOffset0Pos6) },
-	{ EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_ApplyOffset0Neg6) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(State_SetActorEightValue3d) },
-	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 2), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Effect_SetAlphaBlendForScene9) },
+	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
+	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
+	{ EVENT_TOUCH, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TOUCH) },
+	{ EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TOUCH) },
+	{ EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TOUCH) },
+	{ EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TOUCH) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
+	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 2), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EV00_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };
 

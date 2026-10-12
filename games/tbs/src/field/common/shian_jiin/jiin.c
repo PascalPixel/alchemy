@@ -136,7 +136,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gShianJiinPlacements;
 }
 
-static void ShianJiin_AskBridgeCrossing(void)
+static void EV08_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgShianHowDidGetHereBridge);
@@ -157,7 +157,7 @@ static void ShianJiin_AskBridgeCrossing(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunFlag88FBranch(void)
+static void EV12_TALK_1(void)
 {
 
 	Engine_EventBegin();
@@ -187,7 +187,7 @@ static void FieldScene_RunFlag88FBranch(void)
 	}
 }
 
-static void ShianJiin_RunTempleWalkScene(void)
+static void EV09_TALK_1(void)
 {
 	s32				  *p8;
 	struct FieldActor *master;
@@ -227,7 +227,7 @@ static void ShianJiin_RunTempleWalkScene(void)
 	Engine_EventEnd();
 }
 
-static void Scene_RunActorNineTransition(void)
+static void EV05_TOUCH(void)
 {
 	Engine_EventBegin();
 	Engine_GameFlagSet(2196);
@@ -389,7 +389,7 @@ static void Scene_RunScene39eSequenceB(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_ShowDialogue17B1(void)
+static void EV1032_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgShianEnjoyReadingMindsOthersDo);
@@ -397,7 +397,7 @@ static void FieldScene_ShowDialogue17B1(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_ShowDialogue1825(void)
+static void EV09_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgShianMasterFehsSchoolCameWatch);
@@ -405,7 +405,7 @@ static void FieldScene_ShowDialogue1825(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunRoofSceneExit(void)
+static void EV12_TALK(void)
 {
 	Engine_EventBegin();
 
@@ -453,7 +453,7 @@ testPendingWork:
 	Engine_EventEnd();
 }
 
-static void FieldScene_ShowDialogue182D(void)
+static void EV15_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgShianMasterFehVeryBusyDo);
@@ -704,7 +704,7 @@ static void ShianJiin_RunGatheringScene(void)
 	Engine_GameFlagSet(0x301);
 }
 
-static void FieldScene_DispatchApproachByFacing(void)
+static void EV19_PSYNERGY(void)
 {
 	Engine_EventBegin();
 
@@ -762,7 +762,7 @@ static void FieldScene_DispatchByFacing(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_DispatchByFacingAndFlags(void)
+static void EV20_PSYNERGY(void)
 {
 	struct FieldActor *record = Object_GetById(ACTOR_PARTY_LEADER);
 	u16				   facing;
@@ -1093,7 +1093,7 @@ finish:
 	Engine_ActorEnableActionCallback(12, ShianJiin_ActorTwelveScript);
 }
 
-static void FieldScene_RunSkippableStoryBeat(void)
+static void EV18_TALK(void)
 {
 
 	Engine_EventBegin();
@@ -1321,7 +1321,7 @@ static void FieldScene_RunEnsembleStoryBeat(void)
 	GameFlag_Set(0x89b);
 }
 
-static void FieldScene_ShowDialogue1A58(void)
+static void EV11_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgShianWaterMonstersFloodedAltinDid);
@@ -1329,7 +1329,7 @@ static void FieldScene_ShowDialogue1A58(void)
 	Engine_EventEnd();
 }
 
-static void StartSchoolDoorEvent(void)
+static void EV03_TOUCH(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(2202) == 0 && GameFlag_IsSet(2197) == 0)
@@ -1350,7 +1350,7 @@ static void StartSchoolDoorEvent(void)
 	}
 }
 
-static void FieldScene_DispatchByRange(void)
+static void EV13_TALK(void)
 {
 	struct FieldActor *record;
 	u32				   biased;
@@ -1373,7 +1373,7 @@ static void FieldScene_DispatchByRange(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_ShowDialogue17DF(void)
+static void EV08_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(8, 2);
@@ -1450,7 +1450,7 @@ static void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunScene39eSequenceA(void)
+static void EV03_TOUCH_1(void)
 {
 	struct FieldActor *record;
 	s32				   base5_200a5b9;
@@ -1474,13 +1474,13 @@ static void FieldScene_RunScene39eSequenceA(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_PlaySound123AndEnable(void)
+static void EV01_SCRIPT(void)
 {
 	Engine_AudioPlayCue(123);
 	Engine_EventRequestExit(1);
 }
 
-static void ShianJiin_RunExitTransition(void)
+static void EV02_TOUCH(void)
 {
 	Engine_EventBegin();
 	Event_PlayCue(188);
@@ -2536,24 +2536,24 @@ struct ScenePlacement gShianJiinPlacementsEntrance3[] = {
 
 struct SceneEvent gShianJiinEvents1[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(ShianJiin_RunExitTransition) },
-	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene39eSequenceA) },
-	{ EVENT_TOUCH, 5, 0x894, EVENT_SCRIPT(Scene_RunActorNineTransition) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
+	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH_1) },
+	{ EVENT_TOUCH, 5, 0x894, EVENT_SCRIPT(EV05_TOUCH) },
 	{ EVENT_TALK, 8, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinTheFuchinTempleIsAPleasant) },
 	{ EVENT_TALK, 9, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinOhRobinWhatTookYouSo) },
 	{ EVENT_TALK, 10, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinAhhhMasterNyunpaHeHasPassed) },
 	{ EVENT_TALK, 11, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinMasterNyunpaHasWastedAwayAt) },
-	{ EVENT_TALK, 12, IF_FLAG_SET(0x88f), EVENT_SCRIPT(FieldScene_RunFlag88FBranch) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ShianJiin_AskBridgeCrossing) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ShianJiin_AskBridgeCrossing) },
+	{ EVENT_TALK, 12, IF_FLAG_SET(0x88f), EVENT_SCRIPT(EV12_TALK_1) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
 	{ EVENT_TALK, 9, 0x891, MSGNO(MsgShianJiinOmOmBlueLightsInThe) },
-	{ EVENT_TALK, 9, 0x892, EVENT_SCRIPT(ShianJiin_RunTempleWalkScene) },
+	{ EVENT_TALK, 9, 0x892, EVENT_SCRIPT(EV09_TALK_1) },
 	{ EVENT_TALK, 9, 0xf14, MSGNO(MsgShianJiinTheTestOfFuchinFallsIs) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShianJiinMasterNyunpaIsWaitingForYou) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgShianJiinGemsFromTheSkyBlueLights) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgShianJiinNyunpaHasNotEatenInDays) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFlag88FBranch) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchByRange) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK_1) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
 	{ SEARCH(SEARCH_UNNAMED), 110, 0x350, FIND_PSYNERGY_STONE },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinGemsFallingFromTheSkyMountains) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiinIKnewMasterNyunpaWasFasting) },
@@ -2574,29 +2574,29 @@ struct SceneEvent gShianJiinEvents1[] = {
 };
 
 struct SceneEvent gShianJiinEvents[] = {
-	{ 0x4402, 1, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_PlaySound123AndEnable) },
+	{ 0x4402, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_SCRIPT) },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(StartSchoolDoorEvent) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
 	{ EVENT_TALK, 8, IF_FLAG_SET(0x88f), MSGNO(MsgShianJiin) },
 	{ EVENT_TALK, 8, IF_FLAG_SET(0x893), MSGNO(MsgShianJiinUseThisEnergyToFindThe) },
 	{ EVENT_TALK, 8, IF_FLAG_SET(0x891), MSGNO(MsgShianJiinSpeakToTheMonkStandingBeneath) },
 	{ EVENT_TALK, 8, IF_FLAG_SET(0x300), EVENT_SCRIPT(Scene_RunScene39eSequenceB) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgShianNyunpaMeditates) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x88f), EVENT_SCRIPT(FieldScene_ShowDialogue17DF) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x88f), EVENT_SCRIPT(EV08_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x893), MSGNO(MsgShianJiinNowThatIHavePassedMy) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, IF_FLAG_SET(0x891), EVENT_SCRIPT(FieldScene_ShowDialogue17B1) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, IF_FLAG_SET(0x891), EVENT_SCRIPT(EV1032_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunScene39eSequenceB) },
 	{ EVENT_TALK, 9, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinThisIsMasterFehsKungFu) },
 	{ EVENT_TALK, 10, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinBouldersOvercameHsuKungFuShould) },
-	{ EVENT_TALK, 11, IF_FLAG_SET(0x895), EVENT_SCRIPT(FieldScene_ShowDialogue1A58) },
-	{ EVENT_TALK, 12, IF_FLAG_SET(0x895), EVENT_SCRIPT(FieldScene_RunRoofSceneExit) },
+	{ EVENT_TALK, 11, IF_FLAG_SET(0x895), EVENT_SCRIPT(EV11_TALK) },
+	{ EVENT_TALK, 12, IF_FLAG_SET(0x895), EVENT_SCRIPT(EV12_TALK) },
 	{ EVENT_TALK, 14, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinFeizhiPredictedHsusDangerHerProphecy) },
 	{ EVENT_TALK, 16, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinHsuIsRestingFeizhiIsWatching) },
 	{ EVENT_TALK, 18, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinPracticeEveryoneChiHasItsLimits) },
 	{ EVENT_TALK, 9, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinWarriorYouAreGreatYouHave) },
 	{ EVENT_TALK, 10, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinEveryoneWantsToLearnTheChi) },
 	{ EVENT_TALK, 11, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinConcentrateEnergyIntoTheHandsAnd) },
-	{ EVENT_TALK, 12, IF_FLAG_SET(0x89b), EVENT_SCRIPT(FieldScene_RunRoofSceneExit) },
+	{ EVENT_TALK, 12, IF_FLAG_SET(0x89b), EVENT_SCRIPT(EV12_TALK) },
 	{ EVENT_TALK, 13, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinIDidNotThinkMuchOf) },
 	{ EVENT_TALK, 14, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinWhereDidFeizhiGoIAm) },
 	{ EVENT_TALK, 15, IF_FLAG_SET(0x89b), MSGNO(MsgShianJiinMasterHsuIsLateICan) },
@@ -2608,18 +2608,18 @@ struct SceneEvent gShianJiinEvents[] = {
 	{ EVENT_TALK, 14, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinFeizhiIsStrongerThanSheLooks) },
 	{ EVENT_TALK, 15, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinWarriorShowUsYourChiLike) },
 	{ EVENT_TALK, 16, IF_FLAG_SET(0x898), MSGNO(MsgShianJiinWarriorThatWasGreatButMaster) },
-	{ EVENT_TALK, 18, IF_FLAG_SET(0x899), EVENT_SCRIPT(FieldScene_RunSkippableStoryBeat) },
+	{ EVENT_TALK, 18, IF_FLAG_SET(0x899), EVENT_SCRIPT(EV18_TALK) },
 	{ EVENT_TALK, 13, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinFeizhiIsGoneItIsDangerousOutside) },
 	{ EVENT_TALK, 14, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinFeizhiIsStrongerThanSheLooksShe) },
 	{ EVENT_TALK, 15, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinIKnowWhyYouCanUse) },
 	{ EVENT_TALK, 16, IF_FLAG_SET(0x899), MSGNO(MsgShianJiinWarriorChiIsAGreatPower) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_ShowDialogue1825) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgShianJiinStrongKicksAreVeryImportantKick) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgShianJiinIWantToLearnSoI) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunRoofSceneExit) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgShianJiinEveryoneInXianCanDoMartial) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgShianJiinJustListeningDoesNotMakeOne) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_ShowDialogue182D) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgShianJiinMasterFehIsVeryBusyHe) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinPeaceHasReturnedToXianBut) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x895), MSGNO(MsgShianJiinNoMatterHowMuchYouPractice) },
@@ -2660,8 +2660,8 @@ struct SceneEvent gShianJiinEvents[] = {
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchByFacing) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchByFacing) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchByFacing) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 19, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchApproachByFacing) },
-	{ PSYNERGY_ON_ACTOR(0x8e), 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchByFacingAndFlags) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8e), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_PSYNERGY) },
 	{ SEARCH(SEARCH_BARREL), 100, 0xf69, FIND_ITEM(ITEM_ANTIDOTE) },
 	{ SEARCH(SEARCH_JAR), 101, 0xf68, FIND_ITEM(0x10a) },
 	{ SCENE_EVENTS_END },

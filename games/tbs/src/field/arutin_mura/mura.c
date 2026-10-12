@@ -90,7 +90,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gArutinMuraEventsOther;
 }
 
-static void FieldScene_RunActorEightPromptDialogue(void)
+static void EV08_TALK(void)
 {
 	struct EventWork *work;
 
@@ -113,7 +113,7 @@ static void FieldScene_RunActorEightPromptDialogue(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_ShowLine1918(void)
+static void EV09_TALK_1(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgArutinDidSeeWaterGushingOut);
@@ -121,7 +121,7 @@ static void SceneDialogue_ShowLine1918(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunOpeningAuxiliarySequence(void)
+static void EV14_TALK_1(void)
 {
 
 	struct FieldActor *rec18;
@@ -160,7 +160,7 @@ static void FieldScene_RunOpeningAuxiliarySequence(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor17Message1924(void)
+static void EV17_TALK(void)
 {
 
 	Engine_EventBegin();
@@ -169,7 +169,7 @@ static void SceneDialogue_RunActor17Message1924(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor9Message1932(void)
+static void EV09_TALK_2(void)
 {
 
 	Engine_EventBegin();
@@ -178,7 +178,7 @@ static void SceneDialogue_RunActor9Message1932(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor10Message18d9(void)
+static void EV10_TALK(void)
 {
 
 	Engine_EventBegin();
@@ -187,7 +187,7 @@ static void SceneDialogue_RunActor10Message18d9(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor14Message18e1(void)
+static void EV14_TALK_2(void)
 {
 
 	Engine_EventBegin();
@@ -196,7 +196,7 @@ static void SceneDialogue_RunActor14Message18e1(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor21Message194a(void)
+static void EV21_TALK(void)
 {
 
 	Engine_EventBegin();
@@ -216,7 +216,7 @@ static s32 SceneActor_IsSlotZeroAngleInRange(void)
 	return 0;
 }
 
-static void FieldScene_RunActorFifteenFlagBranch(void)
+static void EV15_TALK(void)
 {
 
 	if (Engine_GameFlagIsSet(0x242) == 0)
@@ -300,7 +300,7 @@ static void FieldScene_RunActorTwentyOneFlagBranch(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunFacingGatedDialogue18(void)
+static void EV18_TALK(void)
 {
 	struct FieldActor *rec;
 
@@ -479,7 +479,7 @@ static void FieldScene_RunScene3a3SequenceC(void)
 	Engine_ActorSetAnimation(18, 1);
 }
 
-static void SceneState_SetFlag906ByActorNineteenX(void)
+static void EV19_PSYNERGY(void)
 {
 	struct Actor *p = (struct Actor *)Object_GetById(19);
 
@@ -722,7 +722,7 @@ static void SceneEffect_SpawnDriftingParticle(void)
 	}
 }
 
-static void ArutinMura_RunDriftEndScene(void)
+static void EV20_TOUCH(void)
 {
 	Engine_EventBegin();
 	Camera_SetSpeed(0x6666, 0xccc);
@@ -949,10 +949,10 @@ struct SceneEvent gArutinMuraEvents1[] = {
 		EVENT_SCRIPT(FieldScene_RunEarlySequence)},
 	{TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS,
 		EVENT_SCRIPT(FieldScene_RunEarlySequence)},
-	{EVENT_TALK, 8, 0x909, EVENT_SCRIPT(FieldScene_RunActorEightPromptDialogue)},
+	{EVENT_TALK, 8, 0x909, EVENT_SCRIPT(EV08_TALK)},
 	{EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgArutinMuraThankYouSoMuchForDefeating)},
 	{EVENT_TALK, 9, 0x909, MSGNO(MsgArutinMuraHowCanThoseCreaturesSpitUp)},
-	{EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowLine1918)},
+	{EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK_1)},
 	{EVENT_TALK, 10, 0x909, MSGNO(MsgArutinMuraHowHorribleMyHouseIsTotally)},
 	{EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgArutinMuraOnceTheMineOpensAgainWell)},
 	{EVENT_TALK, 11, 0x909, MSGNO(MsgArutinMuraEvenTheMineIsSubmergedNo)},
@@ -961,13 +961,13 @@ struct SceneEvent gArutinMuraEvents1[] = {
 	{EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgArutinMuraTheWaterDrainedOutOfThe)},
 	{EVENT_TALK, 13, 0x909, MSGNO(MsgArutinMuraAltinAlwaysUsedToRunShort)},
 	{EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgArutinMuraThankGoodnessTheVillageIsFree)},
-	{EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunOpeningAuxiliarySequence)},
+	{EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK_1)},
 	{EVENT_TALK, 15, 0x909, MSGNO(MsgArutinMuraTheWatersAroundHereHaveSubsided)},
 	{EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgArutinMuraTheVillageWentRightBackTo)},
 	{EVENT_TALK, 16, 0x909, MSGNO(MsgArutinMuraTheWaterBeastsLookedExactlyLike)},
 	{EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgArutinMuraSoThoseHydrosCreaturesReallyWere)},
 	{EVENT_TALK, 17, 0x909, MSGNO(MsgArutinMuraTheWatersHaveFlushedOutTons)},
-	{EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor17Message1924)},
+	{EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK)},
 	{EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorTwentyFlagBranch)},
 	{EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorTwentyOneFlagBranch)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x909, MSGNO(MsgArutinMuraYouCameToAltinAtA)},
@@ -1009,9 +1009,8 @@ struct SceneEvent gArutinMuraEvents1[] = {
 		MSGNO(MsgArutinMuraAllMyArmorInventoryIsRusting)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
 		MSGNO(MsgArutinMuraIfMyGoodsAreWetIll)},
-	{PSYNERGY_ON_ACTOR(0x8c), 19, CONDITION_ALWAYS,
-		EVENT_SCRIPT(SceneState_SetFlag906ByActorNineteenX)},
-	{EVENT_TOUCH, 20, 0x8ff, EVENT_SCRIPT(ArutinMura_RunDriftEndScene)},
+	{PSYNERGY_ON_ACTOR(0x8c), 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_PSYNERGY)},
+	{EVENT_TOUCH, 20, 0x8ff, EVENT_SCRIPT(EV20_TOUCH)},
 	{SCENE_EVENTS_END},
 };
 
@@ -1030,9 +1029,9 @@ struct SceneEvent gArutinMuraEvents2[] = {
 	{EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgArutinMuraIHearThatSilkRoadIs)},
 	{EVENT_TALK, 9, 0x240, MSGNO(MsgArutinMuraOfCourseOurHouseWillBe)},
 	{EVENT_TALK, 9, 0x909, MSGNO(MsgArutinMuraIfTheMonsterThatDidThis)},
-	{EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor9Message1932)},
+	{EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK_2)},
 	{EVENT_TALK, 10, 0x241, MSGNO(MsgArutinMuraNotManyPeopleComeUpSilk)},
-	{EVENT_TALK, 10, 0x909, EVENT_SCRIPT(SceneDialogue_RunActor10Message18d9)},
+	{EVENT_TALK, 10, 0x909, EVENT_SCRIPT(EV10_TALK)},
 	{EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgArutinMuraAncientRuinsAndTreasureDefinitelyGo)},
 	{EVENT_TALK, 11, 0x241, MSGNO(MsgArutinMuraItsBeenALongTimeSince)},
 	{EVENT_TALK, 11, 0x909, MSGNO(MsgArutinMuraDontBeTooHarshOnThose)},
@@ -1041,12 +1040,12 @@ struct SceneEvent gArutinMuraEvents2[] = {
 	{EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgArutinMuraReallyAncientRuinsAtTheBottom)},
 	{EVENT_TALK, 13, 0x909, MSGNO(MsgArutinMuraIHeardSomeoneKilledTheWater)},
 	{EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgArutinMuraThereProbablyIsntMuchTreasureIn)},
-	{EVENT_TALK, 14, 0x909, EVENT_SCRIPT(SceneDialogue_RunActor14Message18e1)},
+	{EVENT_TALK, 14, 0x909, EVENT_SCRIPT(EV14_TALK_2)},
 	{EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgArutinMuraSomethingsWrongWithMomAndPop)},
-	{EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorFifteenFlagBranch)},
+	{EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK)},
 	{EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorTwentyFlagBranch)},
 	{EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorTwentyOneFlagBranch)},
-	{EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFacingGatedDialogue18)},
+	{EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK)},
 	{EVENT_TALK, 19, 0x909, MSGNO(MsgArutinMuraIdGiveAnythingForSomeoneTo)},
 	{EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgArutinMuraThereIsAnEndlessDesertWest)},
 	{EVENT_TALK, 20, 0x909, MSGNO(MsgArutinMuraICameFromXianICook)},
@@ -1054,7 +1053,7 @@ struct SceneEvent gArutinMuraEvents2[] = {
 	{EVENT_TALK, 21, 0x240, MSGNO(MsgArutinMuraNoneOfUsCanGoHome)},
 	{EVENT_TALK, 21, 0x241, MSGNO(MsgArutinMuraTheGuestsInRoomOneMoved)},
 	{EVENT_TALK, 21, 0x909, MSGNO(MsgArutinMuraTheGuestsInRoomTwoAlso)},
-	{EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor21Message194a)},
+	{EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x240,
 		MSGNO(MsgArutinMuraLeavingAltinForTolbiWellThats)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x909, MSGNO(MsgArutinMuraItsGoingToTakeALot)},

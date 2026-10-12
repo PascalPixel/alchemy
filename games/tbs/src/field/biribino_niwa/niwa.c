@@ -135,7 +135,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gBiribinoNiwaPlacementsOther;
 }
 
-static void FieldScene_RunStepWithValueFd2(void)
+static void EV13_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetPosition(0xD, 0, 0);
@@ -145,7 +145,7 @@ static void FieldScene_RunStepWithValueFd2(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunStepWithValue29de(void)
+static void EV90_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
@@ -162,7 +162,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gBiribinoNiwaEventsOther;
 }
 
-static void SceneDialogue_AskAboutBarricade(void)
+static void EV09_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoHaveYouSeenBarricadeWe);
@@ -170,7 +170,7 @@ static void SceneDialogue_AskAboutBarricade(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_AskIfResponsible(void)
+static void EV10_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoTellingMeImResponsibleFor);
@@ -178,7 +178,7 @@ static void SceneDialogue_AskIfResponsible(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_AskIfFineWarrior(void)
+static void EV11_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoDoThinkCanBecomeAs);
@@ -186,7 +186,7 @@ static void SceneDialogue_AskIfFineWarrior(void)
 	Engine_EventEnd();
 }
 
-static void BiribinoNiwa_RunGardenEvent(void)
+static void EV12_TALK(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x84a) != 0)
@@ -269,7 +269,7 @@ done:
 	Engine_EventEnd();
 }
 
-static void BiribinoNiwa_LeaveThroughGate(void)
+static void EV02_TOUCH(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x200) == 0)
@@ -540,17 +540,17 @@ struct SceneEvent gBiribinoNiwaEventsOther[] = {
 
 struct SceneEvent gBiribinoNiwaEvents[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(BiribinoNiwa_LeaveThroughGate) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TALK, 8, 0x845, MSGNO(MsgBilibinTheLumberIOrderedFromKolima) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBilibinNowThatTheCurseIsBroken) },
-	{ EVENT_TALK, 9, 0x845, EVENT_SCRIPT(SceneDialogue_AskAboutBarricade) },
+	{ EVENT_TALK, 9, 0x845, EVENT_SCRIPT(EV09_TALK) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgBilibinItsOverOverMilordDecidedNot) },
-	{ EVENT_TALK, 10, 0x845, EVENT_SCRIPT(SceneDialogue_AskIfResponsible) },
+	{ EVENT_TALK, 10, 0x845, EVENT_SCRIPT(EV10_TALK) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBilibinHmphMyPalaceIsNotFinished) },
 	{ EVENT_TALK, 11, 0x84f, MSGNO(MsgBilibinLordMccoyIsSoUpsetAbout) },
 	{ EVENT_TALK, 11, 0x84e, MSGNO(MsgBilibinICantTellYouAnythingElse) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_AskIfFineWarrior) },
-	{ EVENT_TALK, 12, 0x84f, EVENT_SCRIPT(BiribinoNiwa_RunGardenEvent) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
+	{ EVENT_TALK, 12, 0x84f, EVENT_SCRIPT(EV12_TALK) },
 	{ EVENT_TALK, 12, 0x84e, MSGNO(MsgBilibinWhatAShameHuhIGuess) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBilibinICouldNeverHaveGoneTo) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x845, MSGNO(MsgBilibinIfThingsLikeThisAreGoing) },
@@ -566,7 +566,7 @@ struct SceneEvent gBiribinoNiwaEvents[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x84f, MSGNO(MsgBilibinLordMccoyWouldNeverHireAnyone) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x84e, MSGNO(MsgBilibinIDidntThinkTheydLetYou) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBilibinDontLeaveRobinBeMyMentor) },
-	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStepWithValue29de) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 13, 0xfd2, EVENT_SCRIPT(FieldScene_RunStepWithValueFd2) },
+	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SEARCH) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 13, 0xfd2, EVENT_SCRIPT(EV13_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };

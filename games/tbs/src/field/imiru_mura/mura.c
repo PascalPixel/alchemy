@@ -36,7 +36,7 @@ static void FieldScene_RunPrimaryScriptChoreography(void);
 static void ImiruMura_CastPsynergyAtActorNine(void);
 static void FieldScene_RunScene399SequenceA(void);
 static void SceneState_UpdateZoneFlagsFromActorZero(void);
-static void SceneState_UpdateActor11WithFlag203(void);
+static void EV11_PSYNERGY(void);
 static void RunEventScript02(void);
 static void FieldScene_RunThreeActorChoreography(void);
 static void StagedActor_RunHeadingProbeStep(void);
@@ -179,7 +179,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gImiruMuraPlacements;
 }
 
-static void ImiruMura_RunHeadingProbe(void)
+static void EV90_TOUCH(void)
 {
 	StagedActor_RunHeadingProbeStep();
 }
@@ -193,7 +193,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gImiruMuraEventsOther;
 }
 
-static void SceneDialogue_RunActorEightFlagGatedDialogue(void)
+static void EV08_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(3) != 0)
@@ -212,7 +212,7 @@ static void SceneDialogue_RunActorEightFlagGatedDialogue(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_ShowLine1571Or152F(void)
+static void EV08_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(3) != 0)
@@ -227,7 +227,7 @@ static void SceneDialogue_ShowLine1571Or152F(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor9Line(void)
+static void EV09_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceActor(9, ACTOR_PARTY_LEADER, 10);
@@ -236,7 +236,7 @@ static void SceneDialogue_RunActor9Line(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActorTenFlag881Dialogue(void)
+static void EV10_TALK(void)
 {
 	Engine_EventBegin();
 
@@ -331,7 +331,7 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 	}
 }
 
-static void SceneDialogue_RunActor12Line(void)
+static void EV12_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage(MSGNO(MsgImiruDoWantWeapons));
@@ -339,7 +339,7 @@ static void SceneDialogue_RunActor12Line(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor18Line(void)
+static void EV18_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage(MSGNO(MsgImiruDoWantSeeRestaurantMenu));
@@ -347,7 +347,7 @@ static void SceneDialogue_RunActor18Line(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor20BranchScene(void)
+static void EV20_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(3) != 0)
@@ -365,7 +365,7 @@ static void SceneDialogue_RunActor20BranchScene(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor20FlaggedLine(void)
+static void EV20_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(3) != 0)
@@ -380,7 +380,7 @@ static void SceneDialogue_RunActor20FlaggedLine(void)
 	Engine_EventEnd();
 }
 
-static void ImiruMura_TalkAboutLighthouse(void)
+static void EV08_TALK_2(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage(MSGNO(MsgImiruHappenedInLighthouseNortheast));
@@ -389,7 +389,7 @@ static void ImiruMura_TalkAboutLighthouse(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActorEightBranchedDialogue(void)
+static void EV08_PSYNERGY_2(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x82b) != 0)
@@ -408,12 +408,12 @@ static void SceneDialogue_RunActorEightBranchedDialogue(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunSingleStep(void)
+static void EV10_TALK_2(void)
 {
 	FieldScene_RunSupplementalSequenceOne();
 }
 
-static void SceneDialogue_ShowLine156E(void)
+static void EV10_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage(MSGNO(MsgImiruMuraMaryIsAGoodGirlI));
@@ -421,7 +421,7 @@ static void SceneDialogue_ShowLine156E(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_ShowLine1573Or155A(void)
+static void EV19_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(3) != 0)
@@ -604,7 +604,7 @@ static void ImiruMura_RunItemShop(void)
 	}
 }
 
-static void ImiruMura_OpenInn(void)
+static void EV16_TALK(void)
 {
 	struct FieldActor *leader;
 
@@ -632,7 +632,7 @@ static void ImiruMura_OpenInn(void)
 	}
 }
 
-static void ImiruMura_OpenSanctum(void)
+static void EV19_TALK(void)
 {
 	struct FieldActor *leader;
 
@@ -694,7 +694,7 @@ s32 ImiruMura_ApplyEntryState(void)
 		Engine_ActorSetSpritePriority(11, 1);
 		if (Engine_GameFlagIsSet(0x203))
 		{
-			SceneState_UpdateActor11WithFlag203();
+			EV11_PSYNERGY();
 		}
 		if (!Engine_GameFlagIsSet(0x109) && gGameState.entrance == 9)
 		{
@@ -1219,7 +1219,7 @@ rest:
 	return;
 }
 
-static void SceneState_UpdateActor11WithFlag203(void)
+static void EV11_PSYNERGY(void)
 {
 	s32 a;
 	s32 b;
@@ -1244,7 +1244,7 @@ static void SceneState_UpdateActor11WithFlag203(void)
 	Engine_MapCopyCellAttributes(15, 6, 1, 1, a, b);
 }
 
-static void SceneActor_SetActorZeroFacingC000AndRun(void)
+static void EV04_TOUCH(void)
 {
 	struct FieldActor *work;
 
@@ -1787,21 +1787,21 @@ struct ScenePlacement gImiruMuraPlacements2[] = {
 struct SceneEvent gImiruMuraEventsOther[] = {
 	{ EVENT_EXIT, 60, CONDITION_ALWAYS, 11 },
 	{ EVENT_EXIT, 61, CONDITION_ALWAYS, 12 },
-	{ PSYNERGY_ON_ACTOR(0x8c), 11, 0x200, EVENT_SCRIPT(SceneState_UpdateActor11WithFlag203) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 11, 0x200, EVENT_SCRIPT(EV11_PSYNERGY) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 51, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunExitDoor) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 52, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunExitDoor) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunExitDoor) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 54, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunExitDoor) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 55, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunExitDoor) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 56, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunExitDoor) },
-	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_SetActorZeroFacingC000AndRun) },
-	{ EVENT_TOUCH, 90, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunHeadingProbe) },
-	{ EVENT_TALK, 8, 0x881, EVENT_SCRIPT(SceneDialogue_RunActorEightFlagGatedDialogue) },
+	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
+	{ EVENT_TOUCH, 90, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_TOUCH) },
+	{ EVENT_TALK, 8, 0x881, EVENT_SCRIPT(EV08_TALK) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgImiruMuraTheMercuryLighthouseIsShiningMary) },
-	{ EVENT_TALK, 9, 0x881, EVENT_SCRIPT(SceneDialogue_RunActor9Line) },
+	{ EVENT_TALK, 9, 0x881, EVENT_SCRIPT(EV09_TALK) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgImiruMuraImilWillBeFineDiseaseIs) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorTenFlag881Dialogue) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x881, EVENT_SCRIPT(SceneDialogue_ShowLine1571Or152F) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x881, EVENT_SCRIPT(EV08_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgImiruMuraMaryWasOnlyInImilTo) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x881, MSGNO(MsgImiruMuraWeveHadALotOfStrangers) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgImiruMuraDontWorryAboutUsMaryWell) },
@@ -1816,15 +1816,15 @@ struct SceneEvent gImiruMuraEventsOther[] = {
 struct SceneEvent gImiruMuraEvents2[] = {
 	{ EVENT_TALK, 8, 0x82c, MSGNO(MsgImiruMuraTheresBeenAnEpidemicGoingAround) },
 	{ EVENT_TALK, 8, 0x82b, MSGNO(MsgImiruMuraGetMaryHurry) },
-	{ EVENT_TALK, 8, 0x881, EVENT_SCRIPT(ImiruMura_TalkAboutLighthouse) },
+	{ EVENT_TALK, 8, 0x881, EVENT_SCRIPT(EV08_TALK_2) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgImiruMuraThatFountainWaterReallyMadeGrandpa) },
 	{ EVENT_TALK, 9, 0x82c, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceOne) },
 	{ EVENT_TALK, 9, 0x82b, MSGNO(MsgImiruMuraItHurts) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceOne) },
-	{ EVENT_TALK, 10, IF_FLAG_SET(0x82b), EVENT_SCRIPT(FieldScene_RunSingleStep) },
+	{ EVENT_TALK, 10, IF_FLAG_SET(0x82b), EVENT_SCRIPT(EV10_TALK_2) },
 	{ EVENT_TALK, 11, 0x881, MSGNO(MsgImiruMuraCoughTheEpidemicHasHitAlmost) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgImiruMuraItsNiceThatTheFountainCan) },
-	{ EVENT_TALK, 12, 0x881, EVENT_SCRIPT(SceneDialogue_RunActor12Line) },
+	{ EVENT_TALK, 12, 0x881, EVENT_SCRIPT(EV12_TALK) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunWeaponShop) },
 	{ EVENT_TALK, 13, 0x881, MSGNO(MsgImiruMuraWereClosedSorryIGetA) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunArmorShop) },
@@ -1832,21 +1832,21 @@ struct SceneEvent gImiruMuraEvents2[] = {
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_RunItemShop) },
 	{ EVENT_TALK, 14, 0x881, EVENT_SCRIPT(ImiruMura_RunItemShop) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgImiruMuraImSoHappyThatMommyIs) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_OpenInn) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
 	{ EVENT_TALK, 17, 0x881, MSGNO(MsgImiruMuraWereTheOnlyInnThatStays) },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgImiruMuraThankGoodnessTheTownIsBack) },
-	{ EVENT_TALK, 18, 0x881, EVENT_SCRIPT(SceneDialogue_RunActor18Line) },
+	{ EVENT_TALK, 18, 0x881, EVENT_SCRIPT(EV18_TALK) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgImiruMuraImGladTheBeaconHasBeen) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(ImiruMura_OpenSanctum) },
-	{ EVENT_TALK, 20, 0x881, EVENT_SCRIPT(SceneDialogue_RunActor20BranchScene) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
+	{ EVENT_TALK, 20, 0x881, EVENT_SCRIPT(EV20_TALK) },
 	{ EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgImiruMuraIWillBeAKindGirl) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x881, EVENT_SCRIPT(SceneDialogue_RunActorEightBranchedDialogue) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x881, EVENT_SCRIPT(EV08_PSYNERGY_2) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgImiruMuraGrandpasAllBetterNowThanksTo) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x409, 0x82c, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceOne) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x82b, MSGNO(MsgImiruMuraOoohIDontFeelSoGood) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x881, MSGNO(MsgImiruMuraMaryIsAGoodGirlI) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgImiruMuraNowMaryCanLeaveTheVillage) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x82b), EVENT_SCRIPT(SceneDialogue_ShowLine156E) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x82b), EVENT_SCRIPT(EV10_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x881, MSGNO(MsgImiruMuraHerPalmsShineWithABlue) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgImiruMuraThatBlueLightFromHerHands) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x881, MSGNO(MsgImiruMuraWhoAreThesePeopleTheyMust) },
@@ -1863,9 +1863,9 @@ struct SceneEvent gImiruMuraEvents2[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgImiruMuraTheyCameToOurVillageAnd) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x881, MSGNO(MsgImiruMuraWeDontGetToEatMany) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgImiruMuraINeverToldMaryThatI) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x881, EVENT_SCRIPT(SceneDialogue_ShowLine1573Or155A) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x881, EVENT_SCRIPT(EV19_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgImiruMuraMarysGoingToDefendTheHonor) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x881, EVENT_SCRIPT(SceneDialogue_RunActor20FlaggedLine) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x881, EVENT_SCRIPT(EV20_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgImiruMuraImSorryMaryButICant) },
 	{ 0xc403, 10, 0x881, EVENT_SCRIPT(ImiruMura_RunWeaponShop) },
 	{ 0xc403, 11, 0x881, EVENT_SCRIPT(ImiruMura_RunArmorShop) },

@@ -125,7 +125,7 @@ s32 HaidiaBabi_SelectPlacements(void)
 	return (s32)tbl;
 }
 
-static void HaidiaBabi_AskAboutKraden(s32 object)
+static void EV09_TALK(s32 object)
 {
 	s32 msg = (s32)MsgHaidiaFolksSeemKnow;
 
@@ -169,7 +169,7 @@ s32 HaidiaBabi_SelectEvents(void)
 	return (s32)gHaidiaBabiEvents;
 }
 
-static void HaidiaBabi_RunHeyBoyScene(void)
+static void EV16_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorStartRepeatedMotion(16, 2);
@@ -193,7 +193,7 @@ static void HaidiaBabi_RunHeyBoyScene(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActorFourteenDialogue11AA(void)
+static void EV14_TALK(void)
 {
 	struct EventWork *work;
 
@@ -226,67 +226,67 @@ static void HaidiaBabi_CloseScreenAndExit(s32 object)
 	Engine_EventRequestExit(object);
 }
 
-static void SceneState_SetValue123Mode1(void)
+static void EV01_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x7B);
 	HaidiaBabi_CloseScreenAndExit(1);
 }
 
-static void FieldScene_RunStep7BThen2(void)
+static void EV02_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x7B);
 	HaidiaBabi_CloseScreenAndExit(2);
 }
 
-static void SceneState_SetValue123Mode3(void)
+static void EV03_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x7B);
 	HaidiaBabi_CloseScreenAndExit(3);
 }
 
-static void FieldScene_RunStep7BThen4(void)
+static void EV04_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x7B);
 	HaidiaBabi_CloseScreenAndExit(4);
 }
 
-static void FieldScene_RunStep80Then5(void)
+static void EV05_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x80);
 	HaidiaBabi_CloseScreenAndExit(5);
 }
 
-static void FieldScene_RunStep7BThen6(void)
+static void EV06_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x7B);
 	HaidiaBabi_CloseScreenAndExit(6);
 }
 
-static void FieldScene_RunStep80Then7(void)
+static void EV07_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x80);
 	HaidiaBabi_CloseScreenAndExit(7);
 }
 
-static void SceneState_SetValue129Mode8(void)
+static void EV08_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x81);
 	HaidiaBabi_CloseScreenAndExit(8);
 }
 
-static void SceneState_SetValue129Mode9(void)
+static void EV09_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x81);
 	HaidiaBabi_CloseScreenAndExit(9);
 }
 
-static void FieldScene_RunStep7BThen10(void)
+static void EV10_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x7B);
 	HaidiaBabi_CloseScreenAndExit(10);
 }
 
-static void SceneState_ApplyValues123And11(void)
+static void EV11_TOUCH(void)
 {
 	Engine_AudioPlayCue(0x7B);
 	HaidiaBabi_CloseScreenAndExit(11);
@@ -737,7 +737,7 @@ static void SceneDialogue_ShowLine1C13WithActor16Steps(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActorThirteenDialogue(void)
+static void EV13_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgHaidiaDoraWouldntLetHimStay);
@@ -746,7 +746,7 @@ static void SceneDialogue_RunActorThirteenDialogue(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor16LineAndFlag81c(void)
+static void EV16_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgHaidiaDoraWasStruckWithIllness);
@@ -865,7 +865,7 @@ static void HaidiaBabi_RunSickbedVisit(void)
 	Engine_EventEnd();
 }
 
-static void HaidiaBabi_RunActorEightMessageScene(void)
+static void EV08_TALK(void)
 {
 	s32 message;
 
@@ -1441,17 +1441,17 @@ struct ScenePlacement gHaidiaBabiPlacements4[] = {
 };
 
 struct SceneEvent gHaidiaBabiEvents4[] = {
-	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue123Mode1) },
-	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep7BThen2) },
-	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue123Mode3) },
-	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep7BThen4) },
-	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep80Then5) },
-	{ EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep7BThen6) },
-	{ EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep80Then7) },
-	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue129Mode8) },
-	{ EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue129Mode9) },
-	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep7BThen10) },
-	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyValues123And11) },
+	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
+	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
+	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
+	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
+	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH) },
+	{ EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EV06_TOUCH) },
+	{ EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
+	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TOUCH) },
+	{ EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TOUCH) },
+	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
+	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
 	{ SEARCH(SEARCH_WOODEN_BOX), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaWoodenBoxEmpty)) },
 	{ SEARCH(SEARCH_JAR), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgHaidiaJarEmpty)) },
 	{ SEARCH(SEARCH_BARREL), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKuupuappuButDidntFindAnything)) },
@@ -1470,19 +1470,19 @@ struct SceneEvent gHaidiaBabiEvents[] = {
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaMySonIsStillYoungSo) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaOneOfTheMenFromThat) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgHaidiaTwoOfThoseThreeGuestsStaying) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaBabi_RunHeyBoyScene) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaBabi_RunInnkeeperTalk) },
-	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue123Mode1) },
-	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep7BThen2) },
-	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue123Mode3) },
-	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep7BThen4) },
-	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep80Then5) },
-	{ EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep7BThen6) },
-	{ EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep80Then7) },
-	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue129Mode8) },
-	{ EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue129Mode9) },
-	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep7BThen10) },
-	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyValues123And11) },
+	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
+	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
+	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
+	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
+	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH) },
+	{ EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EV06_TOUCH) },
+	{ EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
+	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TOUCH) },
+	{ EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TOUCH) },
+	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
+	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
 	{ SEARCH(SEARCH_WOODEN_BOX), 100, 0xf47, FIND_ITEM(0xb4) },
 	{ SEARCH(SEARCH_JAR), 101, 0xf48, FIND_COINS(5) },
 	{ SEARCH(SEARCH_BARREL), 102, 0xf49, FIND_COINS(1) },
@@ -1499,7 +1499,7 @@ struct SceneEvent gHaidiaBabiEvents[] = {
 struct SceneEvent gHaidiaBabiEvents2[] = {
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaComeBackAsAStrongWarrior) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHaidiaIWantedJasminToBeMy) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorFourteenDialogue11AA) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgHaidiaWereASmallHotelAndWe) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaBabi_RunInnkeeperTalk) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgHaidiaIWillThinkOfJasminAs) },
@@ -1507,17 +1507,17 @@ struct SceneEvent gHaidiaBabiEvents2[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaIWonderIfGarsiaChangedMuch) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgHaidiaGarsiaAndHisGangMustHave) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgHaidiaWhoCouldHaveKnownThatMasked) },
-	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue123Mode1) },
-	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep7BThen2) },
-	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue123Mode3) },
-	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep7BThen4) },
-	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep80Then5) },
-	{ EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep7BThen6) },
-	{ EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep80Then7) },
-	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue129Mode8) },
-	{ EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue129Mode9) },
-	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep7BThen10) },
-	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyValues123And11) },
+	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
+	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
+	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
+	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
+	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH) },
+	{ EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EV06_TOUCH) },
+	{ EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
+	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TOUCH) },
+	{ EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TOUCH) },
+	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
+	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
 	{ SEARCH(SEARCH_WOODEN_BOX), 100, 0xf47, FIND_ITEM(0xb4) },
 	{ SEARCH(SEARCH_JAR), 101, 0xf48, FIND_COINS(5) },
 	{ SEARCH(SEARCH_BARREL), 102, 0xf49, FIND_COINS(1) },
@@ -1544,25 +1544,25 @@ struct SceneEvent gHaidiaBabiEvents3[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgHaidiaIWonderIfRobinWillContinue) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgHaidiaValeWillNeverChangeSoYou) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40d, 0x300, EVENT_SCRIPT(HaidiaBabi_RunInnkeeperTalk) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorThirteenDialogue) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x410, 0x301, EVENT_SCRIPT(SceneDialogue_ShowLine1C13WithActor16Steps) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor16LineAndFlag81c) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_PSYNERGY) },
 	{ EVENT_TALK, 8, 0x81e, EVENT_SCRIPT(HaidiaBabi_RunSickbedVisit) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaBabi_RunActorEightMessageScene) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, 0x81e, EVENT_SCRIPT(HaidiaBabi_RunSickbedVisit) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x203, MSGNO(MsgHaidiaKairuWatchOutTheBoulderThe) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgHaidiaImSorryISeemedSoHarsh) },
-	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue123Mode1) },
-	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep7BThen2) },
-	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue123Mode3) },
-	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep7BThen4) },
-	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep80Then5) },
-	{ EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep7BThen6) },
-	{ EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep80Then7) },
-	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue129Mode8) },
-	{ EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValue129Mode9) },
-	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep7BThen10) },
-	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyValues123And11) },
+	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
+	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
+	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EV03_TOUCH) },
+	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
+	{ EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_TOUCH) },
+	{ EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EV06_TOUCH) },
+	{ EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EV07_TOUCH) },
+	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TOUCH) },
+	{ EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TOUCH) },
+	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
+	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
 	{ SEARCH(SEARCH_WOODEN_BOX), 100, 0xf47, FIND_ITEM(0xb4) },
 	{ SEARCH(SEARCH_JAR), 101, 0xf48, FIND_COINS(5) },
 	{ SEARCH(SEARCH_BARREL), 102, 0xf49, FIND_COINS(1) },
@@ -1600,7 +1600,7 @@ struct SceneEvent gHaidiaBabiEvents5[] = {
 
 struct SceneEvent gHaidiaBabiEvents6[] = {
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBabiOnceBabiLighthouseIsCompleteId) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaBabi_AskAboutKraden) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBabiAlchemyTeachesThatTheFourElements) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBabiIfTheRiddleOfTheVenus) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBabiImSureKradenWouldStopBy) },

@@ -50,7 +50,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gCaveEvents;
 }
 
-static void HiddenPuddle_Freeze(void)
+static void EV08_PSYNERGY(void)
 {
 	struct FieldActor *puddle;
 
@@ -61,7 +61,7 @@ static void HiddenPuddle_Freeze(void)
 	}
 }
 
-static void SouthPuddle_Freeze(void)
+static void EV09_PSYNERGY(void)
 {
 	struct FieldActor *puddle;
 
@@ -100,7 +100,7 @@ static void Gate_DrawPropped(void)
 	Map_CopyCellAttributes(19, 17, 1, 1, 21, 14);
 }
 
-static void GatePuddle_Freeze(void)
+static void EV10_PSYNERGY(void)
 {
 	struct FieldActor *pillar;
 
@@ -120,7 +120,7 @@ static void GatePuddle_Freeze(void)
 	}
 }
 
-static void NorthPuddle_Freeze(void)
+static void EV11_PSYNERGY(void)
 {
 	Engine_GameFlagSet(FLAG_CAVE_NORTH_PILLAR);
 }
@@ -150,7 +150,7 @@ static void Gate_Lower(void)
 	Map_CopyCellAttributes(19, 17, 1, 1, 22, 15);
 }
 
-static void LoweringSwitch_Flip(void)
+static void EV03_SEARCH(void)
 {
 	if (GameFlag_IsSet(FLAG_CAVE_GATE_LOWERED) == 0)
 	{
@@ -180,7 +180,7 @@ static void Gate_Raise(void)
 	Map_CopyCellAttributes(19, 17, 1, 1, 21, 14);
 }
 
-static void RaisingSwitch_Flip(void)
+static void EV04_SEARCH(void)
 {
 	if (GameFlag_IsSet(FLAG_CAVE_GATE_PROPPED) == 0)
 	{
@@ -195,7 +195,7 @@ static void RaisingSwitch_Flip(void)
 	}
 }
 
-static void Reunion_Begin(void)
+static void EV10_TOUCH(void)
 {
 	struct FieldActor *leader;
 	s32				   sighting;
@@ -1046,18 +1046,18 @@ const struct SceneEvent gCaveEvents[] = {
 	{ EVENT_EXIT, TRIGGER_WORLD_MAP_PASSAGE, CONDITION_ALWAYS, CAVE_EXIT_TO_WORLD_MAP },
 	{ EVENT_EXIT, TRIGGER_LUNPA_PASSAGE, CONDITION_ALWAYS, CAVE_EXIT_TO_LUNPA },
 	{ EVENT_TOUCH, TRIGGER_BUNZA_HIDING_PLACE, FLAG_LUNPA_CAVE_REUNION_SEEN,
-      EVENT_SCRIPT(Reunion_Begin) },
+      EVENT_SCRIPT(EV10_TOUCH) },
 	{ SEARCH(SEARCH_UNNAMED), TRIGGER_LOWERING_SWITCH, CONDITION_ALWAYS,
-      EVENT_SCRIPT(LoweringSwitch_Flip) },
+      EVENT_SCRIPT(EV03_SEARCH) },
 	{ SEARCH(SEARCH_UNNAMED), TRIGGER_RAISING_SWITCH, CONDITION_ALWAYS,
-      EVENT_SCRIPT(RaisingSwitch_Flip) },
+      EVENT_SCRIPT(EV04_SEARCH) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_HIDDEN_PUDDLE, CONDITION_ALWAYS,
-      EVENT_SCRIPT(HiddenPuddle_Freeze) },
+      EVENT_SCRIPT(EV08_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SOUTH_PUDDLE, CONDITION_ALWAYS,
-      EVENT_SCRIPT(SouthPuddle_Freeze) },
+      EVENT_SCRIPT(EV09_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_GATE_PUDDLE, CONDITION_ALWAYS,
-      EVENT_SCRIPT(GatePuddle_Freeze) },
+      EVENT_SCRIPT(EV10_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_NORTH_PUDDLE, CONDITION_ALWAYS,
-      EVENT_SCRIPT(NorthPuddle_Freeze) },
+      EVENT_SCRIPT(EV11_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };

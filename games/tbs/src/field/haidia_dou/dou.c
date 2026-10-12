@@ -78,7 +78,7 @@ static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 #include "../common/effect/spawn.c"
 #include "../common/object/staged_actor.c"
 
-static void SceneState_SetValues8_3_4(void)
+static void EV08_SCRIPT(void)
 {
 	BattleFx_RunPageEffectForSlot(8, 3, 4);
 }
@@ -165,7 +165,7 @@ static void FieldScene_ConfigureRegionAtRow17(void)
 	Engine_MapCopyCells(16, 17, 1, 1, 15, 15);
 }
 
-static void HaidiaDou_SinkPillarColumn23(void)
+static void EV09_PSYNERGY(void)
 {
 	struct EffectOptions  options;
 	struct EffectOptions *o;
@@ -210,7 +210,7 @@ static void HaidiaDou_SinkPillarColumn23(void)
 	Engine_EventEnd();
 }
 
-static void HaidiaDou_SinkPillarColumn27(void)
+static void EV10_PSYNERGY(void)
 {
 	struct EffectOptions  options;
 	struct EffectOptions *o;
@@ -252,12 +252,12 @@ static void HaidiaDou_SinkPillarColumn27(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunInitBracketThenSequence(void)
+static void EV24_SCRIPT(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
 	Engine_EventEnd();
-	HaidiaDou_SinkPillarColumn27();
+	EV10_PSYNERGY();
 }
 
 static s32 FieldScene_RunPrimarySequence(s32 a0)
@@ -302,7 +302,7 @@ static s32 FieldScene_RunPrimarySequence(s32 a0)
 	return 0;
 }
 
-static void FieldScene_RunScene3a6SequenceA(void)
+static void EV40_TOUCH(void)
 {
 
 	struct FieldActor *record;
@@ -332,7 +332,7 @@ static void FieldScene_RunScene3a6SequenceA(void)
 	}
 }
 
-static void FieldScene_RunScene3a6SequenceB(void)
+static void EV41_TOUCH(void)
 {
 
 	struct FieldActor *record;
@@ -393,14 +393,14 @@ static void FieldScene_RunScene3a6SequenceC(void)
 	}
 }
 
-static void FieldScene_RunActor8ZeroStep(void)
+static void EV08_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(8, 0);
 	Engine_EventEnd();
 }
 
-static void HaidiaDou_RunProbedColumnScene(void)
+static void EV20_SCRIPT(void)
 {
 	struct FieldActor	   *record;
 	s32						v6;
@@ -447,7 +447,7 @@ static void HaidiaDou_RunProbedColumnScene(void)
 	Engine_EventEnd();
 }
 
-static void HaidiaDou_ToppleActorNine(void)
+static void EV21_TOUCH_3(void)
 {
 
 	struct FieldActor *record;
@@ -488,7 +488,7 @@ static void HaidiaDou_ToppleActorNine(void)
 	Engine_EventEnd();
 }
 
-static void HaidiaDou_RunLoweredActorScene(void)
+static void EV22_SCRIPT(void)
 {
 	struct StagedActorProbe probe;
 
@@ -629,7 +629,7 @@ static void SceneActor_PositionPair(s32 a0, s32 a1, s32 a2)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunShiftAndSetFlag301(void)
+static void EV20_TOUCH(void)
 {
 
 	Engine_AudioPlayCue(241);
@@ -990,14 +990,14 @@ struct SceneEvent gHaidiaDouEvents2[] = {
 	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
 	{ EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
 	{ EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
-	{ TOUCH_WALKING_INTO(FACING_EAST), 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunShiftAndSetFlag301) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor11Transition301) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 21, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPrimarySequence) },
 	{ EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorElevenStates) },
 	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(ActorPresentation_AdvanceActorElevenStates) },
-	{ 0x202, 24, 0x201, EVENT_SCRIPT(FieldScene_RunInitBracketThenSequence) },
-	{ EVENT_TOUCH, 40, 0x70, EVENT_SCRIPT(FieldScene_RunScene3a6SequenceA) },
-	{ EVENT_TOUCH, 41, 0x70, EVENT_SCRIPT(FieldScene_RunScene3a6SequenceB) },
+	{ 0x202, 24, 0x201, EVENT_SCRIPT(EV24_SCRIPT) },
+	{ EVENT_TOUCH, 40, 0x70, EVENT_SCRIPT(EV40_TOUCH) },
+	{ EVENT_TOUCH, 41, 0x70, EVENT_SCRIPT(EV41_TOUCH) },
 	{ EVENT_TOUCH, 45, 0x70, EVENT_SCRIPT(FieldScene_RunScene3a6SequenceC) },
 	{ EVENT_TOUCH, 46, 0x70, EVENT_SCRIPT(FieldScene_RunScene3a6SequenceC) },
 	{ EVENT_TOUCH, 47, 0x70, EVENT_SCRIPT(FieldScene_RunScene3a6SequenceC) },
@@ -1010,14 +1010,14 @@ struct SceneEvent gHaidiaDouEvents2[] = {
 	{ EVENT_TOUCH, 54, 0x70, EVENT_SCRIPT(FieldScene_RunScene3a6SequenceC) },
 	{ EVENT_TOUCH, 55, 0x70, EVENT_SCRIPT(FieldScene_RunScene3a6SequenceC) },
 	{ EVENT_TOUCH, 56, 0x70, EVENT_SCRIPT(FieldScene_RunScene3a6SequenceC) },
-	{ 0x7, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetValues8_3_4) },
+	{ 0x7, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_SCRIPT) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xfc2, FIND_ITEM(0xcc) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xfc3, FIND_ITEM(ITEM_NUT) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_ConfigureRegionAtRow17) },
 	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_ConfigureRegionAtRow15) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x200, EVENT_SCRIPT(HaidiaDou_SinkPillarColumn23) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x201, EVENT_SCRIPT(HaidiaDou_SinkPillarColumn27) },
-	{ PSYNERGY_ON_ACTOR(0x91), 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor8ZeroStep) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x200, EVENT_SCRIPT(EV09_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x201, EVENT_SCRIPT(EV10_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x91), 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };
 
@@ -1027,8 +1027,8 @@ struct SceneEvent gHaidiaDouEvents3[] = {
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-	{ 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaDou_RunProbedColumnScene) },
-	{ TOUCH_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaDou_ToppleActorNine) },
-	{ 0x202, 22, CONDITION_ALWAYS, EVENT_SCRIPT(HaidiaDou_RunLoweredActorScene) },
+	{ 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SCRIPT) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TOUCH_3) },
+	{ 0x202, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_SCRIPT) },
 	{ SCENE_EVENTS_END },
 };

@@ -101,7 +101,7 @@ static void Scene_AddToListedRecordCounts(s32 amount)
 	}
 }
 
-static void FieldScene_RunCountAdjustPanel(void)
+static void EV11_TALK(void)
 {
 	u8 *record;
 	s32 win;
@@ -161,7 +161,7 @@ static void FieldScene_RunCountAdjustPanel(void)
 	}
 }
 
-static void ItemLevel_SelectItem(void)
+static void EV08_TALK(void)
 {
 	struct RenderInput *window;
 	struct RenderInput *details;
@@ -464,19 +464,19 @@ static void FieldScene_DrawThreeCaptionWindow(void)
 }
 #endif
 
-static void SceneState_SetRecordFlag53(void)
+static void EV10_SCRIPT(void)
 {
 	u8 *record = *(u8 **)gEffectWork;
 
 	record[53] = 1;
 }
 
-static int SceneState_GetFarResult100c(void)
+static int EV09_TALK(void)
 {
 	return DebugMenu_BrowseIcons();
 }
 
-static int SceneState_GetFarResult1020(void)
+static int EV10_TALK(void)
 {
 	return DebugMenu_BrowseEntryGlyphs();
 }
@@ -551,10 +551,10 @@ struct ScenePlacement gItemLevelPlacements[] = {
 };
 
 struct SceneEvent gItemLevelEvents[] = {
-	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ItemLevel_SelectItem)},
-	{EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_GetFarResult100c)},
-	{EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_GetFarResult1020)},
-	{EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunCountAdjustPanel)},
+	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK)},
+	{EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK)},
+	{EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK)},
+	{EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK)},
 #if !EDITION_INTERNATIONAL
 	{PSYNERGY_ON_ACTOR(0x8e), 10, CONDITION_ALWAYS, EVENT_SCRIPT(ItemLevel_RunMotionTest)},
 #elif defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
@@ -569,6 +569,6 @@ struct SceneEvent gItemLevelEvents[] = {
 	{PSYNERGY_ON_ACTOR(0x8e), 10, CONDITION_ALWAYS,
 		EVENT_SCRIPT(FieldScene_DrawThreeCaptionWindow)},
 #endif
-	{0x10008e15, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_SetRecordFlag53)},
+	{0x10008e15, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT)},
 	{SCENE_EVENTS_END},
 };

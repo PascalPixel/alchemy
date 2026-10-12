@@ -66,7 +66,7 @@ enum
 	ITEM_ICON_TILE_BYTES = 128
 };
 
-static void SceneActor_SetActor23Params2And6(void)
+static void EV23_TALK(void)
 {
 	BattleFx_RunPageEffectForSlot(0x17, 2, 6);
 }
@@ -95,7 +95,7 @@ s32 SceneData_SelectTableByFlag9a7(void)
 	return (s32)Placement_Actors;
 }
 
-static void SceneActor_StartLament(s32 actor)
+static void EV10_TALK(s32 actor)
 {
 	void Actor_FaceDirection();
 
@@ -112,7 +112,7 @@ static void SceneActor_StartLament(s32 actor)
 	Engine_ActorEnableActionCallback(actor, (const u8 *)RariberoMachi_LamentActions);
 }
 
-static void RariberoMachi_AskLeaving(s32 obj)
+static void EV11_TALK(s32 obj)
 {
 	s32 msg = (s32)MsgRariberoLeavingLalivero;
 	Engine_EventSetMessage(msg);
@@ -360,7 +360,7 @@ static void Scene_RunPrimarySequence(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunSecondarySequence(void)
+static void EV50_TOUCH(void)
 {
 	struct FieldActor *record;
 
@@ -691,7 +691,7 @@ static void FieldScene_RunScene3c6SequenceA(void)
 	Event_ShowMessage(IWAN, 0);
 }
 
-static void FieldScene_RunSequenceB(void)
+static void EV51_TOUCH(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgRariberoWhereGoingArentWeTaking);
@@ -976,7 +976,7 @@ struct SceneEvent Placement_Effects[] = {
 	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoMachi_RequestTouchedExit) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiUhhnnWeWereTakenBySurprise) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiTheyWereTerribleWeWereNo) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_StartLament) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiActorIsOurOnlyHopeIf) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiThisAllHappenedBecauseTolbiTook) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiFaranFollowedActorImSureHell) },
@@ -996,7 +996,7 @@ struct SceneEvent Placement_Effects[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiITriedToStepInFront) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiTheyAllHaveALessonComing) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiIWonderWhatBabisMostPrecious) },
-	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_SetActor23Params2And6) },
+	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TALK) },
 	{ SEARCH(SEARCH_JAR), 100, 0xfb6, FIND_ITEM(ITEM_WATER_OF_LIFE) },
 	{ SEARCH(SEARCH_STONE_PILLAR), 101, 0xfb7, FIND_ITEM(0xba) },
 	{ 0x8413, 102, 0xfb8, FIND_ITEM(0x97) },
@@ -1004,8 +1004,8 @@ struct SceneEvent Placement_Effects[] = {
 };
 
 struct SceneEvent Placement_Effects9a7[] = {
-	{ EVENT_TOUCH, 50, 0x9ba, EVENT_SCRIPT(FieldScene_RunSecondarySequence) },
-	{ EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSequenceB) },
+	{ EVENT_TOUCH, 50, 0x9ba, EVENT_SCRIPT(EV50_TOUCH) },
+	{ EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(EV51_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunTableTransition) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunTableTransition) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunTableTransition) },
@@ -1022,7 +1022,7 @@ struct SceneEvent Placement_Effects9a7[] = {
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiHaHaIThoughtTheyHad) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiIWillNeverLetMyGuard) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiWhereCouldActorBeNowIm) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(RariberoMachi_AskLeaving) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiISawTheBeaconOfVenus) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiTheExplosionInTheVenusRuins) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiThePeninsulaBehindVenusLighthouseIs) },
@@ -1042,7 +1042,7 @@ struct SceneEvent Placement_Effects9a7[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiYouMustBeGreatWarriorsTo) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiActorWouldBeFineEvenAfter) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgRariberoMachiThisSureSeemsLikeAStrange) },
-	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_SetActor23Params2And6) },
+	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TALK) },
 	{ SEARCH(SEARCH_JAR), 100, 0xfb6, FIND_ITEM(ITEM_WATER_OF_LIFE) },
 	{ SEARCH(SEARCH_STONE_PILLAR), 101, 0xfb7, FIND_ITEM(0xba) },
 	{ SEARCH(SEARCH_CHEST), 102, 0xfb8, FIND_ITEM(0x97) },

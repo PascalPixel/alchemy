@@ -242,7 +242,7 @@ s32 Scene_InitFacingActors(void)
 	return 0;
 }
 
-static void SceneDialogue_RunFacingPrompt(s32 no)
+static void EV21_TALK(s32 no)
 {
 	struct FieldActor *actor = Object_GetById(0);
 	s32				   msg;
@@ -278,7 +278,7 @@ static void SceneDialogue_RunFacingPrompt(s32 no)
 	}
 }
 
-static void SceneDialogue_RunFacingActionPrompt(s32 no)
+static void EV19_TALK(s32 no)
 {
 	struct FieldActor *actor = Object_GetById(0);
 	s32				   msg;
@@ -317,7 +317,7 @@ static void SceneDialogue_RunFacingActionPrompt(s32 no)
 	}
 }
 
-static void SceneDialogue_RunFacingAction(s32 no)
+static void EV20_TALK(s32 no)
 {
 	struct FieldActor *actor = Object_GetById(0);
 	if ((u16)((actor->facing + 0x2000) & ~0x3fff) == 0xc000)
@@ -344,7 +344,7 @@ static void SceneDialogue_RunFacingAction(s32 no)
 	}
 }
 
-static void SceneDialogue_AskWatchingColosso(s32 subject)
+static void EV26_TALK(s32 subject)
 {
 	s32 message;
 
@@ -367,7 +367,7 @@ static void SceneDialogue_AskWatchingColosso(s32 subject)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActorLine23a1(s32 no)
+static void EV27_TALK(s32 no)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiGrrrChefInBadMood);
@@ -375,7 +375,7 @@ static void SceneDialogue_RunActorLine23a1(s32 no)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_AskStay(s32 subject)
+static void EV09_TALK(s32 subject)
 {
 	s32 msg;
 
@@ -398,7 +398,7 @@ static void SceneDialogue_AskStay(s32 subject)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunExcitedLines(s32 a0)
+static void EV25_TALK(s32 a0)
 {
 	s32 msg;
 
@@ -436,7 +436,7 @@ static void SceneDialogue_RunExcitedLines(s32 a0)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor25FlaggedLine(void)
+static void EV25_PSYNERGY(void)
 {
 
 	Engine_EventBegin();
@@ -452,7 +452,7 @@ static void SceneDialogue_RunActor25FlaggedLine(void)
 	Engine_EventEnd();
 }
 
-static void TorebiHeya_ComplainAboutScam(s32 a0)
+static void EV31_TALK(s32 a0)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiGrrrScamWhyWontThey);
@@ -461,7 +461,7 @@ static void TorebiHeya_ComplainAboutScam(s32 a0)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_AskRememberWarrior(s32 subject)
+static void EV35_TALK(s32 subject)
 {
 	s32 message;
 
@@ -484,7 +484,7 @@ static void SceneDialogue_AskRememberWarrior(s32 subject)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunFacingMessage(s32 no)
+static void EV30_TALK(s32 no)
 {
 
 	struct FieldActor *actor = Object_GetById(0);
@@ -735,7 +735,7 @@ struct SceneEvent Data_02009310[] = {
 	{ EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
 	{ EVENT_EXIT, 19, CONDITION_ALWAYS, 19 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTolbiIsPackedWithTouristsDuring) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_AskStay) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaICouldntSleepAtAllLast) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheCrowdsAtTheColosseumMade) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaWePaidGoodMoneyToRent) },
@@ -745,9 +745,9 @@ struct SceneEvent Data_02009310[] = {
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaBabiWasntAtColossoAccordingTo) },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaWereGoingToMakeSomeMoney) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIHeardBabiIsUsingThe) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFacingActionPrompt) },
-	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFacingPrompt) },
-	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFacingAction) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
+	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
+	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
 	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaWereFullyBookedWithReservationsDuring) },
 	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaColossoIsTheBusiestTimeOf) },
 	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaWereSoBusyRunningTheInn) },
@@ -778,7 +778,7 @@ struct SceneEvent Data_02009310[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIHaveAHeadacheJustThinking) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaEvenThoughICantEnterColosso) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIfWeCouldHaveEnteredColosso) },
-	{ EVENT_TALK, 30, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFacingMessage) },
+	{ EVENT_TALK, 30, CONDITION_ALWAYS, EVENT_SCRIPT(EV30_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIWonderHowTheTryoutsAre) },
 	{ SEARCH(SEARCH_BARREL), 100, 0xf9a, FIND_ITEM(ITEM_VIAL) },
 	{ SEARCH(SEARCH_BARREL), 101, 0xf9b, FIND_ITEM(ITEM_LUCKY_MEDAL) },
@@ -825,9 +825,9 @@ struct SceneEvent Data_02009670[] = {
 #endif
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaBabiApparentlyHasSomeReasonFor) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIHeardBabiIsSearchingFor) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFacingActionPrompt) },
-	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFacingPrompt) },
-	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFacingAction) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
+	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
+	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
 	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaOnceTheFinalsBeginEveryoneTries) },
 	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaThisYearImNotLettingAnyone) },
 	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheWifeHasACloseEye) },
@@ -858,7 +858,7 @@ struct SceneEvent Data_02009670[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIDontHaveAnyParticularInterest) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIWantToSeeTheFinals) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheTrialBattlesWerentQuiteLike) },
-	{ EVENT_TALK, 30, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFacingMessage) },
+	{ EVENT_TALK, 30, CONDITION_ALWAYS, EVENT_SCRIPT(EV30_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIfYoureNotInterestedInThe) },
 	{ SEARCH(SEARCH_BARREL), 100, 0xf9a, FIND_ITEM(ITEM_VIAL) },
 	{ SEARCH(SEARCH_BARREL), 101, 0xf9b, FIND_ITEM(ITEM_LUCKY_MEDAL) },
@@ -899,15 +899,15 @@ struct SceneEvent Data_020099d0[] = {
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaMaybeAlephsEruptionCausedThoseSea) },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheWarriorsSaidTheyWouldRush) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaThereWontBeManyCustomersUntil) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFacingActionPrompt) },
-	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFacingPrompt) },
-	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFacingAction) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
+	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
+	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
 	{ EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIThoughtWedHaveSomeFree) },
 	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheSpectatorsFromTheEastCant) },
 	{ EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaItsBusyAllDayEveryDay) },
-	{ EVENT_TALK, 25, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunExcitedLines) },
-	{ EVENT_TALK, 26, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_AskWatchingColosso) },
-	{ EVENT_TALK, 27, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorLine23a1) },
+	{ EVENT_TALK, 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_TALK) },
+	{ EVENT_TALK, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EV26_TALK) },
+	{ EVENT_TALK, 27, CONDITION_ALWAYS, EVENT_SCRIPT(EV27_TALK) },
 	{ EVENT_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIWentToThePortBut) },
 	{ EVENT_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaColossoHasEndedButWeStill) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaSighMakingTheBedsHasWorn) },
@@ -926,14 +926,14 @@ struct SceneEvent Data_020099d0[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaSinceTheShipsArentSailingThe) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaHeeHeeItsGreatTheInns) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaEveryoneIsWorkingOnBabiLighthouse) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor25FlaggedLine) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaGrrrIDidntGetToSee) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaHeyChefSoWhatIfYou) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaITriedGoingToTheEastern) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaYoudThinkYouCouldGetThrough) },
-	{ EVENT_TALK, 30, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunFacingMessage) },
+	{ EVENT_TALK, 30, CONDITION_ALWAYS, EVENT_SCRIPT(EV30_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaYouAllGotToSeeColosso) },
-	{ EVENT_TALK, 31, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiHeya_ComplainAboutScam) },
+	{ EVENT_TALK, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EV31_TALK) },
 	{ EVENT_TALK, 32, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaOnceThisGuyGetsMadTheres) },
 	{ EVENT_TALK, 33, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIWonderIfThisReallyIs) },
 	{ EVENT_TALK, 34, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTolbiGetsSoBoringOnceThe) },
@@ -941,7 +941,7 @@ struct SceneEvent Data_020099d0[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 32, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaTheCrewIsSayingThatIf) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 33, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaImSickOfStayingAtThis) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 34, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIfMomHadJustBoughtMe) },
-	{ EVENT_TALK, 35, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_AskRememberWarrior) },
+	{ EVENT_TALK, 35, CONDITION_ALWAYS, EVENT_SCRIPT(EV35_TALK) },
 	{ EVENT_TALK, 36, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaIGotToSeeColossoSo) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaThatVoyageAcrossTheSeaWas) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 36, CONDITION_ALWAYS, MSGNO(MsgTorebiHeyaNoMatterWhatHappensImComing) },

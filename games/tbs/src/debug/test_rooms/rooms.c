@@ -34,25 +34,25 @@ u8 *TestRooms_GetPlacements(void)
 	return (u8 *)TestRooms_Placements;
 }
 
-static void State_ApplyValues8And0And0Then30(void)
+static void EV08_TALK(void)
 {
 	BattleFx_RunPageEffectForSlot(8, 0, 0);
 	Engine_GameFlagClear(0x30);
 }
 
-static void State_ApplyValues9And1And0Then44(void)
+static void EV09_TALK(void)
 {
 	BattleFx_RunPageEffectForSlot(9, 1, 0);
 	Engine_GameFlagClear(0x44);
 }
 
-static void State_ApplyValues10And2And0Then58(void)
+static void EV10_TALK(void)
 {
 	BattleFx_RunPageEffectForSlot(0xA, 2, 0);
 	Engine_GameFlagClear(0x58);
 }
 
-static void State_ApplyValues11And3And0Then6c(void)
+static void EV11_TALK(void)
 {
 	BattleFx_RunPageEffectForSlot(0xB, 3, 0);
 	Engine_GameFlagClear(0x6C);
@@ -149,9 +149,9 @@ struct ScenePlacement TestRooms_Placements[] = {
 };
 
 struct SceneEvent TestRooms_Events[] = {
-	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(State_ApplyValues8And0And0Then30)},
-	{EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(State_ApplyValues9And1And0Then44)},
-	{EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(State_ApplyValues10And2And0Then58)},
-	{EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(State_ApplyValues11And3And0Then6c)},
+	{EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK)},
+	{EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK)},
+	{EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK)},
+	{EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK)},
 	{SCENE_EVENTS_END},
 };

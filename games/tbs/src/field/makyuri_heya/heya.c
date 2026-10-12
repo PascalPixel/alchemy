@@ -48,8 +48,8 @@
 #include "iowrite.h"
 
 // 前方宣言
-static void FieldScene_RunActorElevenAtTile5And13(void);
-static void SceneState_RunWhenActor8AtTile10x23(void);
+static void EV11_PSYNERGY(void);
+static void EV08_PSYNERGY_3(void);
 static void MakyuriHeya_SyncBlockFlags(void);
 static void SceneEffect_SpawnParticleRowsAndDrawTiles(void);
 static void MakyuriHeya_OpenThreeStepStair(void);
@@ -145,7 +145,7 @@ static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 #include "../common/effect/spawn.c"
 #include "../common/object/staged_actor.c"
 
-static void SceneState_ApplyPair12And21(void)
+static void EV12_TALK(void)
 {
 	BattleFx_SetPhaseRequest(12, 21);
 }
@@ -244,7 +244,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gMakyuriHeyaPlacementsOther;
 }
 
-static void MakyuriHeya_TickSpawnTimer(void)
+static void EV21_TOUCH(void)
 {
 	Makyuri_TickSpawnTimer();
 }
@@ -259,12 +259,12 @@ static void FieldScene_RunSingleStep(void)
 	Makyuri_RunActorMove();
 }
 
-static void MakyuriHeya_TriggerPillarRise(void)
+static void EV11_TOUCH(void)
 {
 	MakyuriIriguchi_RaisePillar();
 }
 
-static void SceneDialogue_RunLine1637(void)
+static void EV10_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgMakyuriHeyaStrangeForcesBlockWay, 1);
@@ -331,17 +331,17 @@ static void MakyuriHeya_DropLeaderToColumn(s32 a0)
 	Engine_EventWait(30);
 }
 
-static void MakyuriHeya_RunExitThreeScene(void)
+static void EV53_TOUCH(void)
 {
 	SceneActor_RunActorZeroHandledMotion(gEventWork->touched_trigger - 50);
 }
 
-static void MakyuriHeya_RunExitThirteenScene(void)
+static void EV63_TOUCH(void)
 {
 	SceneActor_RunActorZeroHandledMotion(gEventWork->touched_trigger - 50);
 }
 
-static void MakyuriHeya_RunExitFiveScene(void)
+static void EV55_TOUCH(void)
 {
 	SceneActor_RunActorZeroHandledMotion(gEventWork->touched_trigger - 50);
 }
@@ -369,7 +369,7 @@ static void MakyuriHeya_ExitWhenChannelsOpen(void)
 	}
 }
 
-static void MakyuriHeya_RunPushedBlockScene(void)
+static void EV25_SCRIPT(void)
 {
 	struct BlockProbe probe;
 	s32				  x;
@@ -485,15 +485,15 @@ static void MakyuriHeya_WalkLeaderIn(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunFourCallSequence(void)
+static void EV10_SCRIPT(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
 	Engine_EventEnd();
-	FieldScene_RunActorElevenAtTile5And13();
+	EV11_PSYNERGY();
 }
 
-static void FieldScene_RunActorElevenAtTile5And13(void)
+static void EV11_PSYNERGY(void)
 {
 	s32				   x;
 	s32				   y;
@@ -520,7 +520,7 @@ static void FieldScene_RunActorElevenAtTile5And13(void)
 	Engine_EventEnd();
 }
 
-static void MakyuriHeya_TriggerSmallFloorSwitch(void)
+static void EV12_TOUCH_2(void)
 {
 	s32				   x;
 	s32				   z;
@@ -833,10 +833,10 @@ static void FieldScene_RunFourSteps(void)
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
 	Engine_EventEnd();
-	SceneState_RunWhenActor8AtTile10x23();
+	EV08_PSYNERGY_3();
 }
 
-static void SceneState_RunWhenActor8AtTile10x23(void)
+static void EV08_PSYNERGY_3(void)
 {
 	s32 x = Object_GetById(8)->x.fixed / 0x100000;
 	s32 y = Object_GetById(8)->z.fixed / 0x100000;
@@ -857,7 +857,7 @@ static void SceneState_RunWhenActor8AtTile10x23(void)
 	Engine_EventEnd();
 }
 
-static void MakyuriHeya_TriggerFloorSwitch(void)
+static void EV12_TOUCH_3(void)
 {
 	s32 x;
 	s32 z;
@@ -883,7 +883,7 @@ static void MakyuriHeya_TriggerFloorSwitch(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunScene39cSequenceA(void)
+static void EV10_TOUCH(void)
 {
 	struct FieldActor *actor;
 
@@ -1097,7 +1097,7 @@ static s32 MakyuriHeya_StopActorNinePositionCallback(void)
 	return 0;
 }
 
-static void MakyuriHeya_RunColumnProbeScene(void)
+static void EV40_SCRIPT(void)
 {
 	struct BlockProbe probe;
 	s32				  column;
@@ -1195,7 +1195,7 @@ end:
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunFourStepSequence(void)
+static void EV47_SCRIPT(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
@@ -1251,7 +1251,7 @@ static void MakyuriHeya_SyncBlockFlags(void)
 	Engine_EventEnd();
 }
 
-static void SceneState_ApplyRectWhenActor20AtColumn28(void)
+static void EV20_PSYNERGY(void)
 {
 	s32 col;
 
@@ -1348,7 +1348,7 @@ static void FieldScene_RunActorThreeBranchSequence(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor3TimedLine(void)
+static void EV03_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimationAndWait(3, 4);
@@ -1396,7 +1396,7 @@ static void MakyuriHeya_FadePaletteToWhite(void)
 	} while (done <= 7);
 }
 
-static void FieldScene_RunColumnChoreography(void)
+static void EV10_PSYNERGY(void)
 {
 	struct FieldActor *record;
 	s32				   pos;
@@ -1657,7 +1657,7 @@ static void MakyuriHeya_SinkActorWithSparks(s32 actor)
 	}
 }
 
-static void FieldScene_RunRandomEffectActorSequence(void)
+static void EV12_PSYNERGY(void)
 {
 	struct ConfiguredEffectOptions *effect;
 	s32								row_offset;
@@ -1877,7 +1877,7 @@ static void FieldScene_RunRandomEffectActorSequence(void)
 	}
 }
 
-static void FieldScene_RunScriptedSteps0And1576(void)
+static void EV42_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(0, 1);
@@ -1885,7 +1885,7 @@ static void FieldScene_RunScriptedSteps0And1576(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunScriptedSteps0And953(void)
+static void EV20_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(0, 1);
@@ -1893,7 +1893,7 @@ static void FieldScene_RunScriptedSteps0And953(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunFlag881Dialogue(void)
+static void EV05_SEARCH(void)
 {
 
 	Engine_EventBegin();
@@ -1912,7 +1912,7 @@ static void FieldScene_RunFlag881Dialogue(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor184Sequence(void)
+static void EV05_SCRIPT(void)
 {
 	Engine_EventBegin();
 	Engine_AudioPlayCue(0x53);
@@ -1925,7 +1925,7 @@ static void FieldScene_RunActor184Sequence(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunScene39cSequenceB(void)
+static void EV15_TOUCH(void)
 {
 	Engine_EventBegin();
 	if (gGameState.scene == (s32)&SceneId_MakyuriHeya1)
@@ -2573,7 +2573,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-static void MakyuriHeya_RunPartyScene(void)
+static void EV08_PSYNERGY_1(void)
 {
 	s32				   base;
 	s32				   position;
@@ -3234,15 +3234,15 @@ struct SceneEvent gMakyuriHeyaEvents1[] = {
 	{ 0x202, 31, IF_FLAG_SET(0x875), EVENT_SCRIPT(FieldScene_RunSingleStep) },
 	{ EVENT_TOUCH, 31, IF_FLAG_SET(0x875), EVENT_SCRIPT(MakyuriHeya_ClearSceneRecordAndTarget) },
 	{ 0xa02, 21, IF_FLAG_SET(0x875), EVENT_SCRIPT(FieldScene_RunSingleStep) },
-	{ EVENT_TOUCH, 21, IF_FLAG_SET(0x875), EVENT_SCRIPT(MakyuriHeya_TickSpawnTimer) },
+	{ EVENT_TOUCH, 21, IF_FLAG_SET(0x875), EVENT_SCRIPT(EV21_TOUCH) },
 	{ 0x202, 11, IF_FLAG_SET(0x875), EVENT_SCRIPT(FieldScene_RunSingleStep) },
-	{ EVENT_TOUCH, 11, IF_FLAG_SET(0x875), EVENT_SCRIPT(MakyuriHeya_TriggerPillarRise) },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene39cSequenceB) },
-	{ 0x202, 25, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_RunPushedBlockScene) },
+	{ EVENT_TOUCH, 11, IF_FLAG_SET(0x875), EVENT_SCRIPT(EV11_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TOUCH) },
+	{ 0x202, 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_SCRIPT) },
 	{ EVENT_TALK, 3, 0x873, MSGNO(MsgMakyuriHeyaThePathIsBlockedAgainWhat) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 3, 0x873, MSGNO(MsgMakyuriHeyaThisStatueWasntHereBeforeI) },
 	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x873, EVENT_SCRIPT(MakyuriHeya_RunPartyScene) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x873, EVENT_SCRIPT(EV08_PSYNERGY_1) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf64, FIND_ITEM(ITEM_SLEEP_BOMB) },
 	{ SCENE_EVENTS_END },
 };
@@ -3258,21 +3258,21 @@ struct SceneEvent gMakyuriHeyaEvents2[] = {
 	{ EVENT_EXIT, 58, CONDITION_ALWAYS, 8 },
 	{ EVENT_EXIT, 59, CONDITION_ALWAYS, 9 },
 	{ EVENT_EXIT, 60, CONDITION_ALWAYS, 10 },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene39cSequenceB) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TOUCH) },
 	{ 0x202, 1, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_RunSequenceE) },
 	{ EVENT_TOUCH, 2, IF_FLAG_SET(0x302), EVENT_SCRIPT(MakyuriHeya_WalkLeaderIn) },
 	{ EVENT_TOUCH, 3, IF_FLAG_SET(0x302), EVENT_SCRIPT(MakyuriHeya_WalkLeaderIn) },
 	{ EVENT_TOUCH, 4, IF_FLAG_SET(0x302), EVENT_SCRIPT(MakyuriHeya_WalkLeaderIn) },
-	{ 0x202, 10, 0x874, EVENT_SCRIPT(FieldScene_RunFourCallSequence) },
-	{ EVENT_TOUCH, 12, 0x874, EVENT_SCRIPT(MakyuriHeya_TriggerSmallFloorSwitch) },
+	{ 0x202, 10, 0x874, EVENT_SCRIPT(EV10_SCRIPT) },
+	{ EVENT_TOUCH, 12, 0x874, EVENT_SCRIPT(EV12_TOUCH_2) },
 	{ EVENT_TOUCH, 10, 0x874, EVENT_SCRIPT(MakyuriHeya_CloseFloorSwitch) },
 	{ EVENT_TOUCH, 13, 0x874, EVENT_SCRIPT(MakyuriHeya_CloseFloorSwitch) },
 	{ 0x202, 45, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_RunSequenceE) },
 	{ EVENT_TOUCH, 46, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_WalkLeaderIn) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyPair12And21) },
-	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScriptedSteps0And953) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
+	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SEARCH) },
 	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 11, 0x874, EVENT_SCRIPT(FieldScene_RunActorElevenAtTile5And13) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 11, 0x874, EVENT_SCRIPT(EV11_PSYNERGY) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xf66, FIND_ITEM(0xba) },
 	{ SEARCH(SEARCH_CHEST), 102, 0xf67, FIND_ITEM(ITEM_NUT) },
 	{ SCENE_EVENTS_END },
@@ -3281,33 +3281,33 @@ struct SceneEvent gMakyuriHeyaEvents2[] = {
 struct SceneEvent gMakyuriHeyaEvents3[] = {
 	{ EVENT_EXIT, 51, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 52, CONDITION_ALWAYS, 2 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_RunExitThreeScene) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(EV53_TOUCH) },
 	{ 0x31, 57, CONDITION_ALWAYS, 7 },
 	{ EVENT_EXIT, 59, CONDITION_ALWAYS, 9 },
 	{ 0x21, 58, CONDITION_ALWAYS, 8 },
 	{ EVENT_EXIT, 61, CONDITION_ALWAYS, 11 },
 	{ 0x21, 60, CONDITION_ALWAYS, 10 },
 	{ EVENT_EXIT, 62, CONDITION_ALWAYS, 12 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 63, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_RunExitThirteenScene) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 63, CONDITION_ALWAYS, EVENT_SCRIPT(EV63_TOUCH) },
 	{ EVENT_EXIT, 54, CONDITION_ALWAYS, 4 },
 	{ EVENT_EXIT, 55, CONDITION_ALWAYS, 5 },
 	{ EVENT_EXIT, 56, CONDITION_ALWAYS, 6 },
 	{ 0x31, 64, CONDITION_ALWAYS, 14 },
 	{ 0x202, 10, 0x878, EVENT_SCRIPT(FieldScene_RunFourSteps) },
 	{ 0x202, 12, 0x878, EVENT_SCRIPT(FieldScene_RunFourSteps) },
-	{ EVENT_TOUCH, 12, 0x878, EVENT_SCRIPT(MakyuriHeya_TriggerFloorSwitch) },
-	{ EVENT_TOUCH, 10, 0x878, EVENT_SCRIPT(FieldScene_RunScene39cSequenceA) },
-	{ 0x202, 40, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_RunColumnProbeScene) },
-	{ 0x202, 47, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFourStepSequence) },
-	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScriptedSteps0And953) },
+	{ EVENT_TOUCH, 12, 0x878, EVENT_SCRIPT(EV12_TOUCH_3) },
+	{ EVENT_TOUCH, 10, 0x878, EVENT_SCRIPT(EV10_TOUCH) },
+	{ 0x202, 40, CONDITION_ALWAYS, EVENT_SCRIPT(EV40_SCRIPT) },
+	{ 0x202, 47, CONDITION_ALWAYS, EVENT_SCRIPT(EV47_SCRIPT) },
+	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SEARCH) },
 	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x878, EVENT_SCRIPT(SceneState_RunWhenActor8AtTile10x23) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x878, EVENT_SCRIPT(EV08_PSYNERGY_3) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 15, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_SyncBlockFlags) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 16, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_SyncBlockFlags) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 17, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_SyncBlockFlags) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 18, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_SyncBlockFlags) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 19, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_SyncBlockFlags) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 20, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectWhenActor20AtColumn28) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };
 
@@ -3318,10 +3318,10 @@ struct SceneEvent gMakyuriHeyaEventsOther[] = {
 	{ EVENT_EXIT, 52, CONDITION_ALWAYS, 2 },
 	{ 0x31, 53, CONDITION_ALWAYS, 3 },
 	{ EVENT_EXIT, 54, CONDITION_ALWAYS, 4 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 55, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_RunExitFiveScene) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 55, CONDITION_ALWAYS, EVENT_SCRIPT(EV55_TOUCH) },
 	{ EVENT_TALK, 3, 0x870, EVENT_SCRIPT(FieldScene_RunActorThreeBranchSequence) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x403, 0x870, EVENT_SCRIPT(FieldScene_RunActorThreeBranchSequence) },
-	{ EVENT_TALK, 3, 0x871, EVENT_SCRIPT(SceneDialogue_RunActor3TimedLine) },
+	{ EVENT_TALK, 3, 0x871, EVENT_SCRIPT(EV03_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 3, 0x871, MSGNO(MsgMakyuriHeyaSomeoneDoesntWantMeToGet) },
 	{ EVENT_TALK, 14, IF_FLAG_SET(0x881), MSGNO(MsgMakyuriHeyaTheLegendsSaidThatIfThe) },
 	{ EVENT_TALK, 15, IF_FLAG_SET(0x881), MSGNO(MsgMakyuriHeyaOurFountainIsBackTheySay) },
@@ -3331,13 +3331,13 @@ struct SceneEvent gMakyuriHeyaEventsOther[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(0x881), MSGNO(MsgMakyuriHeyaAllThatLivesThatMeansIt) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(0x881), MSGNO(MsgMakyuriHeyaIKnewItWouldWorkBut) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, IF_FLAG_SET(0x881), MSGNO(MsgMakyuriHeyaINeverBelievedThoseStoriesBut) },
-	{ SEARCH(SEARCH_UNNAMED), 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunLine1637) },
-	{ SEARCH(SEARCH_UNNAMED), 42, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScriptedSteps0And1576) },
-	{ SEARCH(SEARCH_UNNAMED), 5, 0x200, EVENT_SCRIPT(FieldScene_RunFlag881Dialogue) },
+	{ SEARCH(SEARCH_UNNAMED), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SEARCH) },
+	{ SEARCH(SEARCH_UNNAMED), 42, CONDITION_ALWAYS, EVENT_SCRIPT(EV42_SEARCH) },
+	{ SEARCH(SEARCH_UNNAMED), 5, 0x200, EVENT_SCRIPT(EV05_SEARCH) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x82b, 0 },
-	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x871, EVENT_SCRIPT(FieldScene_RunColumnChoreography) },
-	{ PSYNERGY_ON_ACTOR(0x5d), 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunRandomEffectActorSequence) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x871, EVENT_SCRIPT(EV10_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x5d), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_PSYNERGY) },
 	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
-	{ 0xb904, 5, IF_FLAG_SET(0x881), EVENT_SCRIPT(FieldScene_RunActor184Sequence) },
+	{ 0xb904, 5, IF_FLAG_SET(0x881), EVENT_SCRIPT(EV05_SCRIPT) },
 	{ SCENE_EVENTS_END },
 };

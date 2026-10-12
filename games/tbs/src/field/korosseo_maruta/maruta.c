@@ -303,7 +303,7 @@ static void ColossoLogRollingStage_WaitForSceneTask(void)
 	}
 }
 
-static void ColossoLogRollingStage_NudgeActorsLeft(void)
+static void EV11_TOUCH(void)
 {
 	u8				   *workspace = (u8 *)gEventWork;
 	s16				   *table = (s16 *)&gGameState;
@@ -320,7 +320,7 @@ static void ColossoLogRollingStage_NudgeActorsLeft(void)
 	}
 }
 
-static void ColossoLogRollingStage_ConfigureGridRegion(void)
+static void EV29_PSYNERGY(void)
 {
 	Engine_GameFlagSet(0x360);
 	{
@@ -331,7 +331,7 @@ static void ColossoLogRollingStage_ConfigureGridRegion(void)
 	}
 }
 
-static void ColossoLogRollingStage_ConfigurePrimaryObjects(void)
+static void EV09_SCRIPT(void)
 {
 	PrimaryStageObject *object;
 
@@ -354,7 +354,7 @@ static void ColossoLogRollingStage_ConfigurePrimaryObjects(void)
 	Engine_MapCopyCellAttributes(14, 12, 1, 1, 9, 12);
 }
 
-static void FieldScene_RunClosingAuxiliarySequence(void)
+static void EV15_TOUCH(void)
 {
 
 	s32				   actor;
@@ -400,7 +400,7 @@ static void FieldScene_RunClosingAuxiliarySequence(void)
 	}
 }
 
-static void ColossoLogRollingStage_ConfigureSecondaryObjects(void)
+static void EV16_TOUCH(void)
 {
 
 	s16					 *table;
@@ -432,7 +432,7 @@ static void ColossoLogRollingStage_ConfigureSecondaryObjects(void)
 	Engine_GameFlagClear(0x367);
 }
 
-static void FieldScene_RunFinalAuxiliarySequence(void)
+static void EV12_PSYNERGY(void)
 {
 
 	struct FieldActor *probe;
@@ -472,13 +472,13 @@ static void FieldScene_RunFinalAuxiliarySequence(void)
 	}
 }
 
-static void ColossoLogRollingStage_RunSetupCompletionHooks(void)
+static void EV20_SCRIPT(void)
 {
 	ColossoLogRollingStage_PushStagedActor();
-	FieldScene_RunFinalAuxiliarySequence();
+	EV12_PSYNERGY();
 }
 
-static void ColossoLogRollingStage_ConfigureActorThirteen(void)
+static void EV13_PSYNERGY(void)
 {
 
 	StageObstacleActor *actor;
@@ -491,11 +491,11 @@ static void ColossoLogRollingStage_ConfigureActorThirteen(void)
 	Engine_MapCopyCellAttributes(17, 11, 1, 1, x, 11);
 }
 
-static void ColossoLogRollingStage_NoopSetupHook(void)
+static void EV14_PSYNERGY(void)
 {
 }
 
-static void ColossoLogRollingStage_RunSetupHook(void)
+static void EV22_SCRIPT(void)
 {
 	ColossoLogRollingStage_PushStagedActor();
 }
@@ -593,7 +593,7 @@ static s32 ColossoLogRollingStage_CheckPathClearance(s32 x, s32 y)
 	return 0;
 }
 
-static void FieldScene_RunEarlySequence(void)
+static void EV23_SCRIPT(void)
 {
 
 	struct FieldActor *rider;
@@ -722,7 +722,7 @@ static s32 ColossoLogRollingStage_SetSceneEventValues(void)
 	return 0;
 }
 
-static void ColossoLogRollingStage_ConfigureSceneEventEffect(void)
+static void EV30_SCRIPT(void)
 {
 	StageMotionEffect *effect;
 	s32				   move_rate;
@@ -737,7 +737,7 @@ static void ColossoLogRollingStage_ConfigureSceneEventEffect(void)
 	Engine_GameFlagSet(0x363);
 }
 
-static void ColossoLogRollingStage_WaitForSceneEventTask(void)
+static void EV28_PSYNERGY(void)
 {
 
 	BattleEffect_PauseObject(28);
@@ -749,7 +749,7 @@ static void ColossoLogRollingStage_WaitForSceneEventTask(void)
 	Engine_TaskRemoveCallback(ColossoLogRollingStage_SceneTask);
 }
 
-static void ColossoLogRollingStage_OffsetActiveActor(void)
+static void EV04_RAISED(void)
 {
 
 	StageObstacleActor *actor;
@@ -769,7 +769,7 @@ static void ColossoLogRollingStage_OffsetActiveActor(void)
 	Object_CommitPosition(actor);
 }
 
-static void ColossoLogRollingStage_ClampAndOffsetActiveActor(void)
+static void EV05_RAISED(void)
 {
 
 	StageObstacleActor *actor;
@@ -835,7 +835,7 @@ static void KorosseoMaruta_RunCompetitorTalk(s32 a0)
 	}
 }
 
-static void KorosseoMaruta_RunStageStart(void)
+static void EV50_TOUCH(void)
 {
 	s32 place;
 	s32 i;
@@ -875,7 +875,7 @@ static void KorosseoMaruta_RunStageStart(void)
 	Engine_GameFlagSet(0x11a);
 }
 
-static void ColossoLogRollingStage_RunSceneEventIfReady(void)
+static void EV90_SCRIPT(void)
 {
 	if (SceneActor_FindOccupantAheadOfSubject() == 0)
 	{
@@ -883,7 +883,7 @@ static void ColossoLogRollingStage_RunSceneEventIfReady(void)
 	}
 }
 
-static void ColossoLogRollingStage_FinishOrContinueSceneEvent(void)
+static void EV91_SCRIPT(void)
 {
 	if (SceneActor_FindOccupantAheadOfSubject() == 0)
 	{
@@ -891,7 +891,7 @@ static void ColossoLogRollingStage_FinishOrContinueSceneEvent(void)
 	}
 	else
 	{
-		ColossoLogRollingStage_RunSetupCompletionHooks();
+		EV20_SCRIPT();
 	}
 }
 
@@ -1472,7 +1472,7 @@ static void Korosseo_RunGreetScene(s32 a0)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunDualArrivalSequence(s32 scene)
+static void EV33_TALK(s32 scene)
 {
 	struct FieldActor *pan1;
 	struct FieldActor *pan2;
@@ -1548,7 +1548,7 @@ static void FieldScene_RunDualArrivalSequence(s32 scene)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunSecondArrivalSequence(s32 scene)
+static void EV34_TALK(s32 scene)
 {
 	s32 state;
 	s32 x;
@@ -1606,7 +1606,7 @@ static void FieldScene_RunSecondArrivalSequence(s32 scene)
 	Engine_EventEnd();
 }
 
-static void KorosseoMaruta_RunStageIntro(s32 scene)
+static void EV35_TALK(s32 scene)
 {
 	struct EventWork *work;
 	s32				  state;
@@ -1649,7 +1649,7 @@ static void KorosseoMaruta_RunStageIntro(s32 scene)
 					}
 				} while (work->raised_trigger != 5);
 			}
-			ColossoLogRollingStage_ClampAndOffsetActiveActor();
+			EV05_RAISED();
 			Actor_FaceDirection(0, 0xc000, 20);
 			Actor_ShowEmote(0, 0x103, 60);
 			Engine_EventShowMessage(scene, 0);
@@ -1668,7 +1668,7 @@ static void KorosseoMaruta_RunStageIntro(s32 scene)
 	}
 }
 
-static void FieldScene_RunFourStepActorMotion(s32 event)
+static void EV36_TALK(s32 event)
 {
 
 	s32				   result;
@@ -1766,7 +1766,7 @@ static void ColossoLogRollingStage_PositionAndActivateActor(s32 selector, s32 x,
 	}
 }
 
-static void FieldScene_RunOpeningAuxiliarySequence(s32 event)
+static void EV37_TALK(s32 event)
 {
 
 	s32				   i;
@@ -1832,7 +1832,7 @@ static void FieldScene_RunOpeningAuxiliarySequence(s32 event)
 	}
 }
 
-static void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor)
+static void EV38_TALK(s32 actor)
 {
 
 	s32 state;
@@ -1942,7 +1942,7 @@ static void ColossoLogRollingStage_MarkSceneProgress(void)
 	}
 }
 
-static void ColossoLogRollingStage_SelectNearestObstacle(void)
+static void EV99_RAISED(void)
 {
 
 	struct EventWork *state;
@@ -3105,37 +3105,37 @@ s32 gColossoSceneTaskStatus = 0;
 s32 gColossoSceneTaskState = 0;
 
 struct SceneEvent gKorosseoMarutaEvents[] = {
-	{ 0x202, 90, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLogRollingStage_RunSceneEventIfReady) },
-	{ 0x202, 91, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLogRollingStage_FinishOrContinueSceneEvent) },
-	{ EVENT_TOUCH, 11, 0x363, EVENT_SCRIPT(ColossoLogRollingStage_NudgeActorsLeft) },
-	{ 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLogRollingStage_RunSetupCompletionHooks) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFinalAuxiliarySequence) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLogRollingStage_ConfigureActorThirteen) },
-	{ 0x202, 22, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLogRollingStage_RunSetupHook) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLogRollingStage_NoopSetupHook) },
-	{ 0x202, 23, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunEarlySequence) },
+	{ 0x202, 90, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SCRIPT) },
+	{ 0x202, 91, CONDITION_ALWAYS, EVENT_SCRIPT(EV91_SCRIPT) },
+	{ EVENT_TOUCH, 11, 0x363, EVENT_SCRIPT(EV11_TOUCH) },
+	{ 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SCRIPT) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_PSYNERGY) },
+	{ 0x202, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_SCRIPT) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_PSYNERGY) },
+	{ 0x202, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_SCRIPT) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 15, 0x214, EVENT_SCRIPT(ColossoLogRollingStage_ActivateClearObstacleActors) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 16, 0x215, EVENT_SCRIPT(ColossoLogRollingStage_ActivateClearObstacleActors) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 17, 0x216, EVENT_SCRIPT(ColossoLogRollingStage_ActivateClearObstacleActors) },
-	{ EVENT_TOUCH, 15, 0x367, EVENT_SCRIPT(FieldScene_RunClosingAuxiliarySequence) },
-	{ EVENT_TOUCH, 16, IF_FLAG_SET(0x367), EVENT_SCRIPT(ColossoLogRollingStage_ConfigureSecondaryObjects) },
-	{ EVENT_TOUCH, 50, 0x210, EVENT_SCRIPT(KorosseoMaruta_RunStageStart) },
+	{ EVENT_TOUCH, 15, 0x367, EVENT_SCRIPT(EV15_TOUCH) },
+	{ EVENT_TOUCH, 16, IF_FLAG_SET(0x367), EVENT_SCRIPT(EV16_TOUCH) },
+	{ EVENT_TOUCH, 50, 0x210, EVENT_SCRIPT(EV50_TOUCH) },
 	{ SEARCH(SEARCH_CHEST), 101, 0x36a, FIND_ITEM(ITEM_SMOKE_BOMB) },
 	{ SEARCH(SEARCH_CHEST), 102, 0x36b, FIND_ITEM(ITEM_NUT) },
 	{ 0x8413, 103, 0x36c, FIND_ITEM(ITEM_SLEEP_BOMB) },
-	{ 0x50001815, 9, 0x362, EVENT_SCRIPT(ColossoLogRollingStage_ConfigurePrimaryObjects) },
-	{ PSYNERGY_ON_ACTOR(0xc), 29, 0x360, EVENT_SCRIPT(ColossoLogRollingStage_ConfigureGridRegion) },
-	{ PSYNERGY_ON_ACTOR(0x91), 28, 0x361, EVENT_SCRIPT(ColossoLogRollingStage_WaitForSceneEventTask) },
-	{ 0x50008e15, 30, 0x363, EVENT_SCRIPT(ColossoLogRollingStage_ConfigureSceneEventEffect) },
-	{ EVENT_RAISED, 4, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLogRollingStage_OffsetActiveActor) },
-	{ EVENT_RAISED, 5, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLogRollingStage_ClampAndOffsetActiveActor) },
+	{ 0x50001815, 9, 0x362, EVENT_SCRIPT(EV09_SCRIPT) },
+	{ PSYNERGY_ON_ACTOR(0xc), 29, 0x360, EVENT_SCRIPT(EV29_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x91), 28, 0x361, EVENT_SCRIPT(EV28_PSYNERGY) },
+	{ 0x50008e15, 30, 0x363, EVENT_SCRIPT(EV30_SCRIPT) },
+	{ EVENT_RAISED, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_RAISED) },
+	{ EVENT_RAISED, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EV05_RAISED) },
 	{ EVENT_TALK, 32, CONDITION_ALWAYS, EVENT_SCRIPT(RunPartyCountInteraction) },
-	{ EVENT_TALK, 33, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunDualArrivalSequence) },
-	{ EVENT_TALK, 34, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSecondArrivalSequence) },
-	{ EVENT_TALK, 35, CONDITION_ALWAYS, EVENT_SCRIPT(KorosseoMaruta_RunStageIntro) },
-	{ EVENT_TALK, 36, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFourStepActorMotion) },
-	{ EVENT_TALK, 37, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunOpeningAuxiliarySequence) },
-	{ EVENT_TALK, 38, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLogRollingStage_RunLogRollingInteraction) },
+	{ EVENT_TALK, 33, CONDITION_ALWAYS, EVENT_SCRIPT(EV33_TALK) },
+	{ EVENT_TALK, 34, CONDITION_ALWAYS, EVENT_SCRIPT(EV34_TALK) },
+	{ EVENT_TALK, 35, CONDITION_ALWAYS, EVENT_SCRIPT(EV35_TALK) },
+	{ EVENT_TALK, 36, CONDITION_ALWAYS, EVENT_SCRIPT(EV36_TALK) },
+	{ EVENT_TALK, 37, CONDITION_ALWAYS, EVENT_SCRIPT(EV37_TALK) },
+	{ EVENT_TALK, 38, CONDITION_ALWAYS, EVENT_SCRIPT(EV38_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 32, CONDITION_ALWAYS, MSGNO(MsgKorosseoKawaThisYearsFinalsAreIncredibleThis) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 33, CONDITION_ALWAYS, MSGNO(MsgKorosseoMarutaTheStreetVendorsCornOnThe) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 34, CONDITION_ALWAYS, MSGNO(MsgKorosseoMarutaICantSeeAnythingWhenIm) },
@@ -3143,7 +3143,7 @@ struct SceneEvent gKorosseoMarutaEvents[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 36, CONDITION_ALWAYS, MSGNO(MsgKorosseoMarutaStandingForLongPeriodsOfTime) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 37, CONDITION_ALWAYS, MSGNO(MsgKorosseoMarutaIWasUpAllNightTrying) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 38, CONDITION_ALWAYS, MSGNO(MsgKorosseoMarutaSomeTouristToldMeILook) },
-	{ EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLogRollingStage_SelectNearestObstacle) },
+	{ EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_RAISED) },
 	{ SCENE_EVENTS_END },
 };
 

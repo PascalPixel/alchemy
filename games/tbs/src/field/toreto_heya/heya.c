@@ -204,107 +204,107 @@ static void ToretoHeya_HandleFloorSwitch(s32 flag, s32 src_x, s32 src_y, s32 ent
 		Engine_GameFlagSet(0x122);
 }
 
-static void FieldScene_RunStep200(void)
+static void EV21_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x200, 64, 35, 21);
 }
 
-static void FieldScene_RunStep201(void)
+static void EV22_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x201, 65, 35, 22);
 }
 
-static void FieldScene_RunStep202(void)
+static void EV23_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x202, 66, 35, 23);
 }
 
-static void FieldScene_RunStep203(void)
+static void EV24_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x203, 67, 35, 24);
 }
 
-static void FieldScene_RunStep204(void)
+static void EV25_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x204, 68, 35, 25);
 }
 
-static void FieldScene_RunStep205(void)
+static void EV26_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x205, 69, 35, 26);
 }
 
-static void FieldScene_RunStep206(void)
+static void EV27_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x206, 70, 35, 27);
 }
 
-static void FieldScene_RunStep207(void)
+static void EV28_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x207, 71, 35, 28);
 }
 
-static void FieldScene_RunStep208(void)
+static void EV29_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x208, 72, 35, 29);
 }
 
-static void FieldScene_RunStep209(void)
+static void EV31_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x209, 73, 35, 31);
 }
 
-static void FieldScene_RunStep20a(void)
+static void EV32_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x20a, 74, 35, 32);
 }
 
-static void FieldScene_RunStep20b(void)
+static void EV50_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x20b, 79, 35, 50);
 }
 
-static void FieldScene_RunStep20c(void)
+static void EV51_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x20c, 75, 35, 51);
 }
 
-static void FieldScene_RunStep20d(void)
+static void EV52_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x20d, 76, 35, 52);
 }
 
-static void FieldScene_RunStep20e(void)
+static void EV53_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x20e, 77, 35, 53);
 }
 
-static void FieldScene_RunStep20f(void)
+static void EV54_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x20f, 78, 35, 54);
 }
 
-static void FieldScene_RunStep210(void)
+static void EV55_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x210, 80, 35, 55);
 }
 
-static void FieldScene_RunStep211(void)
+static void EV56_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x211, 81, 35, 56);
 }
 
-static void FieldScene_RunStep212(void)
+static void EV57_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x212, 82, 35, 57);
 }
 
-static void FieldScene_RunStep213(void)
+static void EV58_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x213, 83, 35, 58);
 }
 
-static void FieldScene_RunStep214(void)
+static void EV59_TOUCH(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x214, 84, 35, 59);
 }
@@ -320,7 +320,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gToretoHeyaEvents;
 }
 
-static void ToretoHeya_RunTableScene(void)
+static void EV40_TOUCH(void)
 {
 	s32				   rec8;
 	struct FieldActor *leader;
@@ -957,7 +957,7 @@ static void ToretoHeya_ApplyFlaggedMapPatches(void)
 	}
 }
 
-static void SceneEffect_RegisterPaletteFadeCallback(void)
+static void EV00_PSYNERGY(void)
 {
 	Engine_TaskRemoveCallback(ToretoPalette_ApplyTint);
 }
@@ -1327,29 +1327,29 @@ struct SceneEvent gToretoHeyaEvents[] = {
 	{ 0x202, 57, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle) },
 	{ 0x202, 58, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle) },
 	{ 0x202, 59, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ClearStoryVariantWhenIdle) },
-	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep200) },
-	{ EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep201) },
-	{ EVENT_TOUCH, 23, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep202) },
-	{ EVENT_TOUCH, 24, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep203) },
-	{ EVENT_TOUCH, 25, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep204) },
-	{ EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep205) },
-	{ EVENT_TOUCH, 27, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep206) },
-	{ EVENT_TOUCH, 28, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep207) },
-	{ EVENT_TOUCH, 29, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep208) },
-	{ EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep209) },
-	{ EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep20a) },
-	{ EVENT_TOUCH, 50, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep20b) },
-	{ EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep20c) },
-	{ EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep20d) },
-	{ EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep20e) },
-	{ EVENT_TOUCH, 54, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep20f) },
-	{ EVENT_TOUCH, 55, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep210) },
-	{ EVENT_TOUCH, 56, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep211) },
-	{ EVENT_TOUCH, 57, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep212) },
-	{ EVENT_TOUCH, 58, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep213) },
-	{ EVENT_TOUCH, 59, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStep214) },
-	{ EVENT_TOUCH, 40, 0x844, EVENT_SCRIPT(ToretoHeya_RunTableScene) },
-	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(SceneEffect_RegisterPaletteFadeCallback) },
+	{ EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TOUCH) },
+	{ EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TOUCH) },
+	{ EVENT_TOUCH, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TOUCH) },
+	{ EVENT_TOUCH, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_TOUCH) },
+	{ EVENT_TOUCH, 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_TOUCH) },
+	{ EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EV26_TOUCH) },
+	{ EVENT_TOUCH, 27, CONDITION_ALWAYS, EVENT_SCRIPT(EV27_TOUCH) },
+	{ EVENT_TOUCH, 28, CONDITION_ALWAYS, EVENT_SCRIPT(EV28_TOUCH) },
+	{ EVENT_TOUCH, 29, CONDITION_ALWAYS, EVENT_SCRIPT(EV29_TOUCH) },
+	{ EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EV31_TOUCH) },
+	{ EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(EV32_TOUCH) },
+	{ EVENT_TOUCH, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_TOUCH) },
+	{ EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(EV51_TOUCH) },
+	{ EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(EV52_TOUCH) },
+	{ EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(EV53_TOUCH) },
+	{ EVENT_TOUCH, 54, CONDITION_ALWAYS, EVENT_SCRIPT(EV54_TOUCH) },
+	{ EVENT_TOUCH, 55, CONDITION_ALWAYS, EVENT_SCRIPT(EV55_TOUCH) },
+	{ EVENT_TOUCH, 56, CONDITION_ALWAYS, EVENT_SCRIPT(EV56_TOUCH) },
+	{ EVENT_TOUCH, 57, CONDITION_ALWAYS, EVENT_SCRIPT(EV57_TOUCH) },
+	{ EVENT_TOUCH, 58, CONDITION_ALWAYS, EVENT_SCRIPT(EV58_TOUCH) },
+	{ EVENT_TOUCH, 59, CONDITION_ALWAYS, EVENT_SCRIPT(EV59_TOUCH) },
+	{ EVENT_TOUCH, 40, 0x844, EVENT_SCRIPT(EV40_TOUCH) },
+	{ PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EV00_PSYNERGY) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf5b, FIND_ITEM(0x109) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xf5c, FIND_ITEM(ITEM_NUT) },
 	{ SEARCH(SEARCH_UNNAMED), 102, 0x350, FIND_PSYNERGY_STONE },

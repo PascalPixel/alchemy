@@ -123,7 +123,7 @@ struct SpawnParams
 	u8	unknown_22[6];
 };
 
-static void SceneEffect_RequestFixedEffect(void)
+static void EV22_TALK(void)
 {
 	BattleFx_RunPageEffectForSlot(22, 1, 2);
 }
@@ -271,7 +271,7 @@ s32 SceneEffect_PrepareState(void)
 	return (s32)gShianMuraPlacements;
 }
 
-static void SceneEffect_ShowActorSetupMessage(void)
+static void EV09_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgShianYoungWarriorsVeryGallantCame);
@@ -279,7 +279,7 @@ static void SceneEffect_ShowActorSetupMessage(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunPrimarySequence(void)
+static void EV18_TALK(void)
 {
 	struct FieldActor *puddle;
 	struct FieldActor *record;
@@ -416,14 +416,14 @@ static void FieldScene_RunPrimarySequence(void)
 	Engine_EventEnd();
 }
 
-static void SceneEffect_ActivateNearbyActor(void)
+static void EV20_SCRIPT(void)
 {
 	struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 	if ((leader->z.fixed >> 20) <= 13)
 		Engine_ActorSetSpritePriority(20, 1);
 }
 
-static void ShianMura_ActivateActorTwentyPlatform(void)
+static void EV20_PSYNERGY(void)
 {
 	struct FieldActor *record;
 	s32				   v5;
@@ -443,7 +443,7 @@ static void ShianMura_ActivateActorTwentyPlatform(void)
 	Engine_EventEnd();
 }
 
-static void ShianMura_RunNpcMeetScene(void)
+static void EV14_TALK(void)
 {
 	s32				   flag;
 	struct FieldActor *leader;
@@ -526,7 +526,7 @@ static void ShianMura_RunNpcMeetScene(void)
 	}
 }
 
-static void SceneEffect_RunActorSceneMessage(void)
+static void EV17_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgShianWarriorsFromSchoolStrongWarriors);
@@ -640,7 +640,7 @@ static void SceneEffect_DispatchStep(void)
 	Engine_EventEnd();
 }
 
-static void Scene_RunActorNineteenScript(void)
+static void EV21_PSYNERGY(void)
 {
 	s32 cb;
 
@@ -671,7 +671,7 @@ static void Scene_RunActorNineteenScript(void)
 	Engine_EventEnd();
 }
 
-static void ShianMura_EscortActorEighteen(void)
+static void EV200_RAISED(void)
 {
 	s32 record;
 
@@ -973,16 +973,16 @@ struct SceneEvent gShianMuraEvents[] = {
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 2, 0x201, EVENT_SCRIPT(ShianMura_HopLeaderAhead) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 3, 0x201, EVENT_SCRIPT(ShianMura_HopLeaderAhead) },
 	{ EVENT_TALK, 8, 0x895, MSGNO(MsgShianMuraThisIsXianTravelersAreWelcome) },
-	{ EVENT_TALK, 9, 0x895, EVENT_SCRIPT(SceneEffect_ShowActorSetupMessage) },
+	{ EVENT_TALK, 9, 0x895, EVENT_SCRIPT(EV09_TALK) },
 	{ EVENT_TALK, 10, 0x895, MSGNO(MsgShianMuraXianIsTheVillageOfKinu) },
 	{ EVENT_TALK, 11, 0x895, MSGNO(MsgShianMuraMartialArtsAreVeryPopularIn) },
 	{ EVENT_TALK, 12, 0x895, MSGNO(MsgShianMuraYouWarriorsShouldVisitMasterFehs) },
 	{ EVENT_TALK, 13, 0x895, MSGNO(MsgShianMuraMyClothesAreNotSilkSilk) },
-	{ EVENT_TALK, 14, 0x895, EVENT_SCRIPT(ShianMura_RunNpcMeetScene) },
+	{ EVENT_TALK, 14, 0x895, EVENT_SCRIPT(EV14_TALK) },
 	{ EVENT_TALK, 15, 0x895, MSGNO(MsgShianMuraDisastersFromTheSkyManyMany) },
 	{ EVENT_TALK, 16, 0x895, MSGNO(MsgShianMuraThisIsTheMulberryOrchardWhen) },
-	{ EVENT_TALK, 17, 0x895, EVENT_SCRIPT(SceneEffect_RunActorSceneMessage) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunPrimarySequence) },
+	{ EVENT_TALK, 17, 0x895, EVENT_SCRIPT(EV17_TALK) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgShianMuraXianIsAPeacefulVillageBut) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShianMuraThereWasARockslideOnSilk) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgShianMuraIWentToHelpMoveBoulders) },
@@ -992,9 +992,9 @@ struct SceneEvent gShianMuraEvents[] = {
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgShianMuraAltinWasFloodedWithWaterBut) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgShianMuraWeClearedTheRocksFromSilk) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgShianMuraManyStrangeThingsHappenedAllAt) },
-	{ 0x10001815, 20, 0x201, EVENT_SCRIPT(SceneEffect_ActivateNearbyActor) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 20, 0x201, EVENT_SCRIPT(ShianMura_ActivateActorTwentyPlatform) },
-	{ PSYNERGY_ON_ACTOR(0x8e), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_RunActorNineteenScript) },
+	{ 0x10001815, 20, 0x201, EVENT_SCRIPT(EV20_SCRIPT) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 20, 0x201, EVENT_SCRIPT(EV20_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8e), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x895, MSGNO(MsgShianMuraTheseChildrenMustHaveComeTo) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x895, MSGNO(MsgShianMuraYouYoungWarriorsLookStrongBut) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x895, MSGNO(MsgShianMuraIHopeManyPeopleComeTo) },
@@ -1017,7 +1017,7 @@ struct SceneEvent gShianMuraEvents[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgShianMuraIWasHappyToSeeGems) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgShianMuraWhereAreTheMerchantsNoOne) },
 	{ SEARCH(SEARCH_JAR), 101, 0xf6e, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(SceneEffect_RequestFixedEffect) },
-	{ EVENT_RAISED, 200, CONDITION_ALWAYS, EVENT_SCRIPT(ShianMura_EscortActorEighteen) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK) },
+	{ EVENT_RAISED, 200, CONDITION_ALWAYS, EVENT_SCRIPT(EV200_RAISED) },
 	{ SCENE_EVENTS_END },
 };

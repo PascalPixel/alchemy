@@ -272,7 +272,7 @@ static void RunMiddleAuxiliarySequence(s32 a)
 	Event_End();
 }
 
-static void TorebiKyuden_ReactToPalaceEscape(s32 unused0, s32 a1)
+static void EV06_PSYNERGY(s32 unused0, s32 a1)
 {
 	Event_Begin();
 	Event_SetMessage((s32)MsgTorebiEvenIfEscapedBabiPalace);
@@ -320,7 +320,7 @@ static void SceneDialogue_RunChoiceSequence22ab(s32 no)
 	Engine_EventShowMessage(no, 0);
 }
 
-static void SceneDialogue_RunChoiceSequence2352(void)
+static void EV16_TALK(void)
 {
 	s32 msg;
 
@@ -508,7 +508,7 @@ static void FieldScene_RunScene3b8SequenceB(void)
 	Event_End();
 }
 
-static void FieldScene_RunScene3b8SequenceA(void)
+static void EV70_SEARCH(void)
 {
 	struct FieldActor *record;
 	s16				   dir;
@@ -695,7 +695,7 @@ static void FieldScene_RunScene3b8SequenceA(void)
 L_02000fe2:;
 }
 
-static void RunPrimaryEffectSequence(void)
+static void EV60_TOUCH(void)
 {
 	GameFlag_Set(2411);
 	Event_Begin();
@@ -2211,7 +2211,7 @@ static void TorebiKyuden_LeaveThroughDoor(void)
 	Event_End();
 }
 
-static void RunSceneEffectSetup(void)
+static void EV02_TOUCH(void)
 {
 	Event_Begin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384);
@@ -2305,7 +2305,7 @@ static void SceneDialogue_AskIfLeavingPalace(s32 a)
 	}
 }
 
-static void FieldScene_RunStepWithValue29e0(void)
+static void EV90_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
@@ -2696,7 +2696,7 @@ struct SceneEvent gTorebiKyudenEventsOther[] = {
 	{ EVENT_EXIT, 43, CONDITION_ALWAYS, 43 },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 44, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_LeaveThroughDoor) },
 	{ EVENT_EXIT, 45, CONDITION_ALWAYS, 45 },
-	{ EVENT_TOUCH, 60, 0x96b, EVENT_SCRIPT(RunPrimaryEffectSequence) },
+	{ EVENT_TOUCH, 60, 0x96b, EVENT_SCRIPT(EV60_TOUCH) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunBranchedSteps1FF1) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIfYoureEnteringColossoHurryAlong) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIWonderHowDiligentlyBabisSoldiers) },
@@ -2722,8 +2722,8 @@ struct SceneEvent gTorebiKyudenEventsOther[] = {
 	{ EVENT_TALK, 6, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenBabiIsHoldingMeHostageIn) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenActorWasTakenHostageToForce) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenActorIsNotPermittedToLeave) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 6, CONDITION_ALWAYS, EVENT_SCRIPT(TorebiKyuden_ReactToPalaceEscape) },
-	{ SEARCH(SEARCH_UNNAMED), 70, IF_FLAG_SET(0x969), EVENT_SCRIPT(FieldScene_RunScene3b8SequenceA) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EV06_PSYNERGY) },
+	{ SEARCH(SEARCH_UNNAMED), 70, IF_FLAG_SET(0x969), EVENT_SCRIPT(EV70_SEARCH) },
 	{ SEARCH(SEARCH_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheArmorLooksHeavyItLooks)) },
 	{ SEARCH(SEARCH_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresNothingInThereItsCompletely)) },
 	{ SEARCH(SEARCH_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresAHeadbandItSaysNever)) },
@@ -2789,7 +2789,7 @@ struct SceneEvent gTorebiKyudenEventsColosso[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenASmileOnAPrettyGirl) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenActorIsAGoodGirlBut) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 6, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIDontHaveTheLeastInterest) },
-	{ SEARCH(SEARCH_UNNAMED), 70, IF_FLAG_SET(0x967), EVENT_SCRIPT(FieldScene_RunScene3b8SequenceA) },
+	{ SEARCH(SEARCH_UNNAMED), 70, IF_FLAG_SET(0x967), EVENT_SCRIPT(EV70_SEARCH) },
 	{ SEARCH(SEARCH_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheArmorLooksHeavyItLooks)) },
 	{ SEARCH(SEARCH_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresNothingInThereItsCompletely)) },
 	{ SEARCH(SEARCH_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresAHeadbandItSaysNever)) },
@@ -2859,12 +2859,12 @@ struct SceneEvent gTorebiKyudenEventsAfterColosso[] = {
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenBabisFaceIsVeryPaleLike) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIWishIHadMetYou) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIfSomethingHappensToBabiWhat) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunChoiceSequence2352) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenTheGirlFromLaliveroIsNo) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIAmSurprisedActorWasAllowed) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenItSeemedOnlyNaturalThatActor) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIAmSoRelievedActorHas) },
-	{ SEARCH(SEARCH_UNNAMED), 70, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3b8SequenceA) },
+	{ SEARCH(SEARCH_UNNAMED), 70, CONDITION_ALWAYS, EVENT_SCRIPT(EV70_SEARCH) },
 	{ SEARCH(SEARCH_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheArmorLooksHeavyItLooks)) },
 	{ SEARCH(SEARCH_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresNothingInThereItsCompletely)) },
 	{ SEARCH(SEARCH_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTorebiKyudenTheresAHeadbandItSaysNever)) },
@@ -2878,18 +2878,18 @@ struct SceneEvent gTorebiKyudenEventsAfterColosso[] = {
 
 struct SceneEvent gTorebiKyudenEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(RunSceneEffectSetup) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenNormallyNoOnesAllowedIntoBabis) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenSomeOfTheRoomsInThe) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenShouldThePalaceReallyBeOpen) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIWonderHowManyPeopleWill) },
-	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStepWithValue29e0) },
+	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 
 struct SceneEvent gTorebiKyudenEvents2Colosso[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(RunSceneEffectSetup) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TALK, 8, 0x96c, EVENT_SCRIPT(RunSupplementalSequenceOne) },
 	{ EVENT_TALK, 9, 0x96c, EVENT_SCRIPT(RunSupplementalSequenceOne) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, 0x96c, EVENT_SCRIPT(RunSupplementalSequenceOne) },
@@ -2898,17 +2898,17 @@ struct SceneEvent gTorebiKyudenEvents2Colosso[] = {
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ThankForSavingBabi) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenSureTheySavedBabiButIm) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenBabiIsADeliberateManHe) },
-	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStepWithValue29e0) },
+	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 
 struct SceneEvent gTorebiKyudenEvents2AfterColosso[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(RunSceneEffectSetup) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenIveLostAllMyEnthusiasmSince) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_AskIfLeavingPalace) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenTheEndOfAFestivalIs) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTorebiKyudenAllTheHeroicWarriorsWhoTook) },
-	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStepWithValue29e0) },
+	{ SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SEARCH) },
 	{ SCENE_EVENTS_END },
 };

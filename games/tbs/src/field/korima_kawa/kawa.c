@@ -53,7 +53,7 @@ u8 *MapStagedScene_SelectTertiaryData(void)
 	return Data_02009038;
 }
 
-static void FieldScene_RunActorTenPlacementScene(void)
+static void EV10_SCRIPT(void)
 {
 	struct StagedActorProbe result;
 	Engine_EventBegin();
@@ -122,7 +122,7 @@ static s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
 	return 0;
 }
 
-static void SceneActor_ApplyOffsetObjectPosition(void)
+static void EV11_TOUCH(void)
 {
 	struct Resource393Position pos;
 #if !EDITION_INTERNATIONAL
@@ -236,8 +236,8 @@ struct ScenePlacement Data_02009038[] = {
 struct SceneEvent Data_02009098[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorTenPlacementScene) },
-	{ TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_ApplyOffsetObjectPosition) },
+	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
 	{ SCENE_EVENTS_END },
 };
 

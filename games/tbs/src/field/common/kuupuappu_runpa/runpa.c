@@ -113,7 +113,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gJailThiefEvents;
 }
 
-static void ThiefLeader_Talk(void)
+static void EV08_TALK(void)
 {
 	Engine_EventBegin();
 
@@ -141,7 +141,7 @@ static void ThiefLeader_Talk(void)
 	Engine_EventEnd();
 }
 
-static void LeftThief_Talk(void)
+static void EV09_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
@@ -151,7 +151,7 @@ static void LeftThief_Talk(void)
 	Engine_EventEnd();
 }
 
-static void RightThief_Talk(void)
+static void EV10_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
@@ -161,7 +161,7 @@ static void RightThief_Talk(void)
 	Engine_EventEnd();
 }
 
-static void ThiefLeader_ReadMind(void)
+static void EV08_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuThiefLeaderThoughts);
@@ -169,7 +169,7 @@ static void ThiefLeader_ReadMind(void)
 	Engine_EventEnd();
 }
 
-static void LeftThief_ReadMind(void)
+static void EV09_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuLeftThiefThoughts);
@@ -177,7 +177,7 @@ static void LeftThief_ReadMind(void)
 	Engine_EventEnd();
 }
 
-static void RightThief_ReadMind(void)
+static void EV10_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuRightThiefThoughts);
@@ -185,7 +185,7 @@ static void RightThief_ReadMind(void)
 	Engine_EventEnd();
 }
 
-static void VaultDoor_Leave(void)
+static void EV01_TOUCH(void)
 {
 	Engine_AudioPlayCue(SOUND_MAP_EXIT);
 	Engine_EventRequestExit(JAIL_EXIT_TO_VAULT);
@@ -249,20 +249,20 @@ const struct ScenePlacement gJailPrisonerPlacements[] = {
 };
 
 const struct SceneEvent gJailThiefEvents[] = {
-	{ EVENT_TOUCH, TRIGGER_VAULT_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(VaultDoor_Leave) },
+	{ EVENT_TOUCH, TRIGGER_VAULT_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
 	{ EVENT_EXIT, TRIGGER_LUNPA_DOOR, CONDITION_ALWAYS, JAIL_EXIT_TO_LUNPA },
 	{ EVENT_TALK, ACTOR_THIEF_LEADER, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
-      EVENT_SCRIPT(ThiefLeader_Talk) },
+      EVENT_SCRIPT(EV08_TALK) },
 	{ EVENT_TALK, ACTOR_LEFT_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
-      EVENT_SCRIPT(LeftThief_Talk) },
+      EVENT_SCRIPT(EV09_TALK) },
 	{ EVENT_TALK, ACTOR_RIGHT_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
-      EVENT_SCRIPT(RightThief_Talk) },
+      EVENT_SCRIPT(EV10_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIEF_LEADER,
-      IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(ThiefLeader_ReadMind) },
+      IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(EV08_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LEFT_THIEF,
-      IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(LeftThief_ReadMind) },
+      IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(EV09_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RIGHT_THIEF,
-      IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(RightThief_ReadMind) },
+      IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(EV10_PSYNERGY) },
 	{ SEARCH(SEARCH_CHEST), TRIGGER_CHEST_WATER_OF_LIFE, FLAG_JAIL_CHEST_WATER_OF_LIFE,
       FIND_ITEM(ITEM_WATER_OF_LIFE) },
 	{ SEARCH(SEARCH_CHEST), TRIGGER_CHEST_SMOKE_BOMB, FLAG_JAIL_CHEST_SMOKE_BOMB,

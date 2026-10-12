@@ -77,7 +77,7 @@ u8 *KorimaKi_GetEvents(void)
 	return gKorimaKiEvents;
 }
 
-static void KorimaKi_RunMessageScene(void)
+static void EV13_TALK(void)
 {
 	Engine_EventBegin();
 	KorimaKi_PlayGesture(11, 1);
@@ -164,7 +164,7 @@ L_02000220:;
 	Engine_EventEnd();
 }
 
-static void PaletteScene_RunActorNineBranch(void)
+static void EV13_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x845) != 0)
@@ -179,7 +179,7 @@ static void PaletteScene_RunActorNineBranch(void)
 	Engine_EventEnd();
 }
 
-static void PaletteScene_RunActorEightBranch(void)
+static void EV12_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x845) != 0)
@@ -194,7 +194,7 @@ static void PaletteScene_RunActorEightBranch(void)
 	Engine_EventEnd();
 }
 
-static void PaletteScene_RunFlaggedBranch(void)
+static void EV12_SCRIPT(void)
 {
 	Engine_EventBegin();
 	Battle_ResetEffectCounter();
@@ -1076,12 +1076,12 @@ struct ScenePlacement gKorimaKiPlacements[] = {
 
 struct SceneEvent gKorimaKiEvents[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-	{ 0xb814, 12, 0x845, EVENT_SCRIPT(PaletteScene_RunFlaggedBranch) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(KorimaKi_RunMessageScene) },
+	{ 0xb814, 12, 0x845, EVENT_SCRIPT(EV12_SCRIPT) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(KorimaKi_TalkToToreto) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT_SCRIPT(PaletteScene_RunActorNineBranch) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40c, 0x844, EVENT_SCRIPT(KorimaKi_TalkToToreto) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, EVENT_SCRIPT(PaletteScene_RunActorEightBranch) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };
 

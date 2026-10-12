@@ -168,7 +168,7 @@ static void FieldScene_RunActorNineFlagDialogueA(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActorNineFlagDialogueB(void)
+static void EV09_PSYNERGY(void)
 {
 
 	Engine_EventBegin();
@@ -282,7 +282,7 @@ static void FieldScene_RunScene378SequenceB(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActorTenCountStep(void)
+static void EV10_TALK(void)
 {
 
 	Engine_EventBegin();
@@ -341,7 +341,7 @@ s32 ShindenHeya_ApplyEntryState(void)
 	return 0;
 }
 
-static void FieldScene_RunActorEightResetSequence(void)
+static void EV02_TOUCH(void)
 {
 	Engine_EventBegin();
 	Engine_CameraSetSpeed(0x10000, 0x2000);
@@ -358,7 +358,7 @@ static void FieldScene_RunActorEightResetSequence(void)
 	Engine_EventEnd();
 }
 
-static void ShindenHeya_RunAltarScene(void)
+static void EV01_TOUCH(void)
 {
 	struct ShrineWork *work;
 
@@ -2163,7 +2163,7 @@ struct SceneEvent ShindenHeya_SceneTableB[] = {
 	{ EVENT_TALK, 9, 0x855, EVENT_SCRIPT(FieldScene_RunActorNineFlagDialogueA) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorNineFlagDialogueA) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShindenGoOnIfThatEasesThe) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorNineFlagDialogueB) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_PSYNERGY) },
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 10 },
 	{ SCENE_EVENTS_END },
 };
@@ -2173,7 +2173,7 @@ struct SceneEvent ShindenHeya_SceneTableC[] = {
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_DispatchBySceneId) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorNineFlagDialogueA) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShindenIHopeTheEarthquakesArentA) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorNineFlagDialogueB) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };
 
@@ -2184,8 +2184,8 @@ struct SceneEvent ShindenHeya_SceneTableD[] = {
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgShindenIDontBlameYouICouldnt) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShindenWasItRightToRefuseWhen) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgShindenItsClearThatTheGreatHealer) },
-	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(ShindenHeya_RunAltarScene) },
-	{ EVENT_TOUCH, 2, 0x200, EVENT_SCRIPT(FieldScene_RunActorEightResetSequence) },
+	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
+	{ EVENT_TOUCH, 2, 0x200, EVENT_SCRIPT(EV02_TOUCH) },
 	{ SCENE_EVENTS_END },
 };
 
@@ -2193,7 +2193,7 @@ struct SceneEvent ShindenHeya_SceneTableE[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorEightFacingDialogue) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShindenThePowerOfMtAlephStems) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorTenCountStep) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShindenThePowerOfMyPsynergyHas) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgShindenTheAngaranContinentWillCertainlySee) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgShindenMyPsynergyHasntChangedAtAll) },

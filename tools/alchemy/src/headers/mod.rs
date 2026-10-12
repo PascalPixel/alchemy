@@ -2,6 +2,7 @@
 //! file that defines it; none for a function the bytes show was called
 //! before its definition with no prototype in scope.
 
+mod events;
 mod expand;
 mod generate;
 mod internal;
@@ -78,7 +79,27 @@ const USAGE: &str = "usage: alchemy headers apply [--dry-run] [--functions] [--l
          makes a symbol local and changes nothing else, and a unit whose\n\
          objects differ otherwise is left as it was, with the first part\n\
          that differs printed. --leave FILE names C files, one a line, to\n\
-         leave as they are; --report writes one row per function.";
+         leave as they are; --report writes one row per function.\n\
+       alchemy headers events [--dry-run] [--report FILE]\n\
+  events  an overlay's C file holds its scene's event tables, and a row\n\
+         names the function it runs under a trigger kind and an id. A\n\
+         static function of the file that every row reaches under one id\n\
+         is named EV<id>_<WORD> (S3): the id in decimal as the table gives\n\
+         it, and the subject the function has when it is an EV name\n\
+         already, else the kind its rows spell (EVENT_TOUCH, or a macro\n\
+         that builds its control from it, gives TOUCH), else SCRIPT where\n\
+         the kind is a bare number or the rows spell several. Two\n\
+         functions of one id and kind are told apart by the ordinal the\n\
+         name of the first table that reaches each carries (..Events2\n\
+         gives _2), and keep their names where that tells nothing. A\n\
+         function reached under several ids keeps its name, and so does\n\
+         one that is not static, one a shared C file defines, and one\n\
+         another file of the unit names. The rows are read from the six\n\
+         editions' preprocessed text; the name is written anew wherever\n\
+         the file's code and comments spell it, and each unit is compiled\n\
+         before and after: its objects are the same under the new names,\n\
+         or the unit is left as it was. --report writes one row per\n\
+         function the tables reach.";
 
 fn write(root: &Path, file: &str, text: &str) -> Result<(), String> {
     let path = root.join(file);
@@ -341,6 +362,10 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             apply(root(), arguments.iter().any(|a| a == "--dry-run"), arguments.iter().any(|a| a == "--functions"), leave, report)
         }
         Some("units") => units(root(), arguments.get(1).ok_or(USAGE)?, arguments.get(2).ok_or(USAGE)?),
+        Some("events") => {
+            let report = arguments.iter().position(|a| a == "--report").and_then(|at| arguments.get(at + 1));
+            events::run(root(), arguments.iter().any(|a| a == "--dry-run"), report.map(String::as_str))
+        }
         Some("static") => {
             let after = |flag: &str| arguments.iter().position(|a| a == flag).and_then(|at| arguments.get(at + 1));
             let leave = match after("--leave") {

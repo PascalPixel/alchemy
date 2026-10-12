@@ -71,7 +71,7 @@ u16 gArutamiraActorWheelWork[6] __attribute__((nocommon, aligned(4)));
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
 
-static void FieldScene_SetActor13Value41(void)
+static void EV13_TALK(void)
 {
 	BattleFx_SetPhaseRequest(13, 0x41);
 }
@@ -166,32 +166,32 @@ static void ArutamiraDou_SetFadeLevel(s32 level)
 	}
 }
 
-static void FieldScene_RunIndexedStep0(void)
+static void EV60_TOUCH(void)
 {
 	ArutamiraDou_SetFadeLevel(0);
 }
 
-static void FieldScene_RunIndexedStep1(void)
+static void EV61_TOUCH(void)
 {
 	ArutamiraDou_SetFadeLevel(1);
 }
 
-static void FieldScene_RunIndexedStep2(void)
+static void EV62_TOUCH(void)
 {
 	ArutamiraDou_SetFadeLevel(2);
 }
 
-static void FieldScene_RunIndexedStep3(void)
+static void EV63_TOUCH(void)
 {
 	ArutamiraDou_SetFadeLevel(3);
 }
 
-static void FieldScene_RunIndexedStep4(void)
+static void EV64_TOUCH(void)
 {
 	ArutamiraDou_SetFadeLevel(4);
 }
 
-static void FieldScene_RunIndexedStep5(void)
+static void EV65_TOUCH(void)
 {
 	ArutamiraDou_SetFadeLevel(5);
 }
@@ -312,7 +312,7 @@ static void ArutamiraDou_RespawnActorObject(void)
 	}
 }
 
-static void ArutamiraDou_SettleActorOnCell(void)
+static void EV12_PSYNERGY(void)
 {
 	struct FieldActor *actor = Object_GetById(12);
 
@@ -328,13 +328,13 @@ static void ArutamiraDou_SettleActorOnCell(void)
 	}
 }
 
-static void FieldScene_RunTwoCallSequence(void)
+static void EV77_TOUCH(void)
 {
 	StagedActor_AdvancePair();
-	ArutamiraDou_SettleActorOnCell();
+	EV12_PSYNERGY();
 }
 
-static void SceneState_MarkObjectWhenActorElevenAhead(void)
+static void EV11_SCRIPT(void)
 {
 	extern u8		  *gEffectWork;
 	u8				  *obj = gEffectWork;
@@ -351,7 +351,7 @@ static void SceneState_MarkObjectWhenActorElevenAhead(void)
 	}
 }
 
-static void FieldScene_RunActorElevenCellSetup(void)
+static void EV11_PSYNERGY(void)
 {
 	extern u8		  *gEffectWork;
 	u8				  *obj = gEffectWork;
@@ -1776,7 +1776,7 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 	Engine_EventEnd();
 }
 
-static void ArutamiraDou_AskAboutRockOrder(void)
+static void EV08_TALK(void)
 {
 	s32 question;
 
@@ -1799,7 +1799,7 @@ static void ArutamiraDou_AskAboutRockOrder(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunFlagGatedActorEightDialogue(void)
+static void EV19_TOUCH(void)
 {
 	if (Engine_GameFlagIsSet(0x960) == 0)
 		return;
@@ -2350,12 +2350,12 @@ struct SceneEvent gArutamiraDouEventsOther[] = {
 	{EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
 	{EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
 	{0x31, 4, CONDITION_ALWAYS, 4},
-	{EVENT_TOUCH, 60, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunIndexedStep0)},
-	{EVENT_TOUCH, 61, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunIndexedStep1)},
-	{EVENT_TOUCH, 62, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunIndexedStep2)},
-	{EVENT_TOUCH, 63, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunIndexedStep3)},
-	{EVENT_TOUCH, 64, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunIndexedStep4)},
-	{EVENT_TOUCH, 65, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunIndexedStep5)},
+	{EVENT_TOUCH, 60, CONDITION_ALWAYS, EVENT_SCRIPT(EV60_TOUCH)},
+	{EVENT_TOUCH, 61, CONDITION_ALWAYS, EVENT_SCRIPT(EV61_TOUCH)},
+	{EVENT_TOUCH, 62, CONDITION_ALWAYS, EVENT_SCRIPT(EV62_TOUCH)},
+	{EVENT_TOUCH, 63, CONDITION_ALWAYS, EVENT_SCRIPT(EV63_TOUCH)},
+	{EVENT_TOUCH, 64, CONDITION_ALWAYS, EVENT_SCRIPT(EV64_TOUCH)},
+	{EVENT_TOUCH, 65, CONDITION_ALWAYS, EVENT_SCRIPT(EV65_TOUCH)},
 	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
 		EVENT_SCRIPT(ArutamiraDou_ApplyRoomVisuals)},
 	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
@@ -2368,9 +2368,9 @@ struct SceneEvent gArutamiraDouEvents2[] = {
 	{0x21, 10, CONDITION_ALWAYS, 10},
 	{0x31, 11, CONDITION_ALWAYS, 11},
 	{EVENT_TALK, 8, 0x960, EVENT_SCRIPT(FieldScene_RunBranchingCutsceneSequence)},
-	{EVENT_TALK, 8, 0xf30, EVENT_SCRIPT(ArutamiraDou_AskAboutRockOrder)},
+	{EVENT_TALK, 8, 0xf30, EVENT_SCRIPT(EV08_TALK)},
 	{EVENT_TALK, 8, 0x962, EVENT_SCRIPT(FieldScene_RunExtendedActorPresentation)},
-	{EVENT_TOUCH, 19, 0x961, EVENT_SCRIPT(FieldScene_RunFlagGatedActorEightDialogue)},
+	{EVENT_TOUCH, 19, 0x961, EVENT_SCRIPT(EV19_TOUCH)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, 0x960,
 		EVENT_SCRIPT(FieldScene_RunBranchingCutsceneSequence)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xf30, MSGNO(MsgArutamiraNeedDraught)},
@@ -2401,12 +2401,11 @@ struct SceneEvent gArutamiraDouEvents4[] = {
 	{TOUCH_WALKING_INTO(FACING_NORTH), 74, 0x211, EVENT_SCRIPT(ArutamiraDou_HopSelectedActor)},
 	{TOUCH_WALKING_INTO(FACING_EAST), 75, 0x211, EVENT_SCRIPT(ArutamiraDou_HopSelectedActor)},
 	{0x202, 71, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunGuardedSixWordStep)},
-	{TOUCH_WALKING_INTO(FACING_EAST), 77, CONDITION_ALWAYS,
-		EVENT_SCRIPT(FieldScene_RunTwoCallSequence)},
-	{PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(ArutamiraDou_SettleActorOnCell)},
-	{0x10001815, 11, 0x211, EVENT_SCRIPT(SceneState_MarkObjectWhenActorElevenAhead)},
-	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x211, EVENT_SCRIPT(FieldScene_RunActorElevenCellSetup)},
-	{EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_SetActor13Value41)},
+	{TOUCH_WALKING_INTO(FACING_EAST), 77, CONDITION_ALWAYS, EVENT_SCRIPT(EV77_TOUCH)},
+	{PSYNERGY_ON_ACTOR(0x8c), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_PSYNERGY)},
+	{0x10001815, 11, 0x211, EVENT_SCRIPT(EV11_SCRIPT)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x211, EVENT_SCRIPT(EV11_PSYNERGY)},
+	{EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK)},
 	{SCENE_EVENTS_END},
 };
 

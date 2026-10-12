@@ -623,7 +623,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gTakaraHashiraPlacementsOther;
 }
 
-static void FieldScene_RunTransitionOrFallback(void)
+static void EV10_SCRIPT_1(void)
 {
 	Engine_EventBegin();
 	if (FieldScene_RunScene3b3SequenceD() == 0)
@@ -631,7 +631,7 @@ static void FieldScene_RunTransitionOrFallback(void)
 	Engine_EventEnd();
 }
 
-static void SceneState_ApplyPlacementResult(void)
+static void EV10_SCRIPT_2(void)
 {
 	struct StagedActorProbe out;
 
@@ -747,7 +747,7 @@ static void FieldScene_RunScene3b3SequenceA(void)
 	Engine_TaskWait(30);
 }
 
-static void FieldScene_RunFlaggedDisplayScene(void)
+static void EV20_SEARCH(void)
 {
 	u8				  *queried;
 	struct FieldActor *record;
@@ -1108,14 +1108,14 @@ static void TakaraHashira_RunStagedCellScene(void)
 	}
 }
 
-static void TakaraHashira_AttachPillarRider(void)
+static void EV40_TOUCH(void)
 {
 	struct FieldActor *obj = Object_GetById(ACTOR_PARTY_LEADER);
 	PILLAR_WORK->rider = obj;
 	obj->rise_counter = 1;
 }
 
-static void TakaraHashira_ReleasePillarRider(void)
+static void EV41_TOUCH(void)
 {
 	struct FieldActor *obj = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -1150,12 +1150,12 @@ static void TakaraHashira_RunActorAction(s32 id)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor11Step(void)
+static void EV11_PSYNERGY(void)
 {
 	TakaraHashira_RunActorAction(11);
 }
 
-static void FieldScene_RunActor12Step(void)
+static void EV12_PSYNERGY(void)
 {
 	TakaraHashira_RunActorAction(12);
 }
@@ -1262,7 +1262,7 @@ static s32 SceneEffect_SpawnRandomEffectEveryEightFrames(struct FieldActor *acto
 	return 0;
 }
 
-static void TakaraHashira_RunMapShiftScene(void)
+static void EV13_PSYNERGY(void)
 {
 	s32 set;
 
@@ -1318,7 +1318,7 @@ static void StagedActor_PlaceAtObjectTenCell(void)
 	Engine_EventEnd();
 }
 
-static void TakaraHashira_DropActorTen(void)
+static void EV10_PSYNERGY(void)
 {
 	struct FieldActor *rec7;
 	s32				   rec8;
@@ -1356,7 +1356,7 @@ static void TakaraHashira_RunPushScene(void)
 	{
 		StagedActor_PlaceAtObjectTenCell();
 		StagedActor_AdvancePair();
-		TakaraHashira_DropActorTen();
+		EV10_PSYNERGY();
 	}
 	Engine_EventEnd();
 }
@@ -1503,7 +1503,7 @@ s32 TakaraHashira_SetupArea(void)
 		BattleFx_StartFadeOverlay(0);
 		if (Object_GetById(ACTOR_PARTY_LEADER)->rise_counter == 0)
 		{
-			TakaraHashira_ReleasePillarRider();
+			EV41_TOUCH();
 		}
 		OverlayObject_SetCallbackAndMode2(8);
 		OverlayObject_SetCallbackAndMode2(9);
@@ -1552,7 +1552,7 @@ s32 TakaraHashira_SetupArea(void)
 		Object_GetById(8)->motion_flags = 0;
 		Object_GetById(9)->motion_flags = 0;
 #endif
-		TakaraHashira_DropActorTen();
+		EV10_PSYNERGY();
 		TakaraHashira_PrepLoweredActor(11);
 		TakaraHashira_PrepLoweredActor(12);
 		TakaraHashira_PrepLoweredActor(13);
@@ -1816,7 +1816,7 @@ struct SceneEvent gTakaraHashiraEventsOther[] = {
 struct SceneEvent gTakaraHashiraEvents1[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunTransitionOrFallback) },
+	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT_1) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xec2, FIND_ITEM(ITEM_ANTIDOTE) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xec3, FIND_ITEM(ITEM_NUT) },
 	{ SEARCH(SEARCH_CHEST), 102, 0xec4, FIND_COINS(111) },
@@ -1831,7 +1831,7 @@ struct SceneEvent gTakaraHashiraEvents1[] = {
 struct SceneEvent gTakaraHashiraEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyPlacementResult) },
+	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT_2) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xec6, FIND_ITEM(0xc4) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xec7, FIND_ITEM(0x18) },
 	{ SEARCH(SEARCH_CHEST), 102, 0xec8, FIND_COINS(222) },
@@ -1842,14 +1842,14 @@ struct SceneEvent gTakaraHashiraEvents2[] = {
 struct SceneEvent gTakaraHashiraEvents3[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyPlacementResult) },
+	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT_2) },
 	{ 0x413, 100, 0xed2, FIND_COINS(555) },
 	{ 0xc413, 100, 0xed2, FIND_COINS(555) },
 	{ 0x413, 101, 0xed3, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ 0xe413, 101, 0xed3, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SEARCH(SEARCH_CHEST), 102, 0xed4, FIND_ITEM(0xb7) },
 	{ SEARCH(SEARCH_CHEST), 103, 0xed5, FIND_ITEM(0x62) },
-	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFlaggedDisplayScene) },
+	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 
@@ -1860,8 +1860,8 @@ struct SceneEvent gTakaraHashiraEvents4[] = {
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSingleStep) },
 	{ TOUCH_WALKING_INTO(FACING_SOUTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraHashira_RunStagedCellScene) },
 	{ 0x202, 31, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraHashira_PushPillar) },
-	{ EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraHashira_AttachPillarRider) },
-	{ EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(TakaraHashira_ReleasePillarRider) },
+	{ EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(EV40_TOUCH) },
+	{ EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(EV41_TOUCH) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xeda, FIND_COINS(777) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xedb, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ 0x413, 102, 0xedc, FIND_ITEM(0xba) },
@@ -1886,11 +1886,11 @@ struct SceneEvent gTakaraHashiraEvents5[] = {
 	{ SEARCH(SEARCH_CHEST), 102, 0xee0, FIND_ITEM(0x10c) },
 	{ SEARCH(SEARCH_CHEST), 103, 0xee1, FIND_ITEM(ITEM_SMOKE_BOMB) },
 	{ 0x10008c15, 10, 0x204, EVENT_SCRIPT(StagedActor_PlaceAtObjectTenCell) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x204, EVENT_SCRIPT(TakaraHashira_DropActorTen) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x200, EVENT_SCRIPT(FieldScene_RunActor11Step) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, 0x201, EVENT_SCRIPT(FieldScene_RunActor12Step) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x204, EVENT_SCRIPT(EV10_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x200, EVENT_SCRIPT(EV11_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, 0x201, EVENT_SCRIPT(EV12_PSYNERGY) },
 	{ 0x10001815, 13, 0x202, EVENT_SCRIPT(TakaraHashira_CheckLeaderOnPillar) },
 	{ 0x50001815, 13, 0x202, EVENT_SCRIPT(TakaraHashira_RaiseActorFourteen) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x202, EVENT_SCRIPT(TakaraHashira_RunMapShiftScene) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x202, EVENT_SCRIPT(EV13_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };

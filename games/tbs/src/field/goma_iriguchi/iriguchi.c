@@ -146,7 +146,7 @@ void *GomaIriguchi_GetPlacements(void)
 	return GomaIriguchi_SceneTableC;
 }
 
-static void FieldScene_RunOpeningAuxiliarySequence(void)
+static void EV09_PSYNERGY(void)
 {
 	struct FieldActor *record;
 	s32				   v3;
@@ -171,7 +171,7 @@ static void FieldScene_RunOpeningAuxiliarySequence(void)
 	}
 }
 
-static void FieldScene_RunScene387SequenceC(void)
+static void EV10_PSYNERGY(void)
 {
 	struct FieldActor *actor;
 	s32				   tile_x;
@@ -208,7 +208,7 @@ static void FieldScene_RunScene387SequenceD(void)
 	Engine_ActorWaitForMove(9);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	FieldScene_RunOpeningAuxiliarySequence();
+	EV09_PSYNERGY();
 	BattleFx_PlayQueuedSound();
 	Engine_EventEnd();
 }
@@ -221,7 +221,7 @@ static void Resource387_NoOpCallbackB(void)
 {
 }
 
-static void FieldScene_RunStepWithValue866(void)
+static void EV16_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_GameFlagSet(0x866);
@@ -774,8 +774,8 @@ struct SceneEvent GomaIriguchi_SceneTableD[] = {
 	{ TOUCH_WALKING_INTO(FACING_WEST), 6, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene387SequenceD) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x865, EVENT_SCRIPT(FieldScene_RunScene387SequenceA) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x860, EVENT_SCRIPT(Overlay387_ConfigureActorEightAtDepth) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunOpeningAuxiliarySequence) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x863, EVENT_SCRIPT(FieldScene_RunScene387SequenceC) },
-	{ PSYNERGY_ON_ACTOR(0x4e), 16, 0x866, EVENT_SCRIPT(FieldScene_RunStepWithValue866) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x863, EVENT_SCRIPT(EV10_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x4e), 16, 0x866, EVENT_SCRIPT(EV16_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };

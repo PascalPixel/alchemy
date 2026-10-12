@@ -468,7 +468,7 @@ u8 *SceneData_SelectTableBySceneIndexAndFlags(void)
 	return FuneHeya_SceneTable04;
 }
 
-static void FuneHeya_AskToSeeCaptain(void)
+static void EV10_TALK_08(void)
 {
 	Engine_EventBegin();
 	Battle_ResetEffectCounter();
@@ -502,7 +502,7 @@ L_020006ea:;
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor12Line(void)
+static void EV12_TALK_08(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgFuneYouCameAskCaptainSet);
@@ -510,7 +510,7 @@ static void SceneDialogue_RunActor12Line(void)
 	Engine_EventEnd();
 }
 
-static void FuneHeya_TalkCaptainStatus(void)
+static void EV08_TALK_08(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x928) != 0)
@@ -544,7 +544,7 @@ static void FuneHeya_TalkCaptainStatus(void)
 	Engine_EventEnd();
 }
 
-static void FuneHeya_AskAboutWarriors(void)
+static void EV08_TALK_05(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x925) != 0)
@@ -575,7 +575,7 @@ L_0200088e:;
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_ShowLine1E19Or1D50(void)
+static void EV10_TALK_05(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x925) != 0)
@@ -591,7 +591,7 @@ static void SceneDialogue_ShowLine1E19Or1D50(void)
 	Engine_EventEnd();
 }
 
-static void SceneState_RunFlagBranchedActor8Setup(void)
+static void EV08_TALK_06(void)
 {
 	if (Engine_GameFlagIsSet(0x300) != 0)
 	{
@@ -630,7 +630,7 @@ static void SceneState_RunFlagBranchedActor8Setup(void)
 	}
 }
 
-static void SceneDialogue_RunActorTenFlaggedDialogue(void)
+static void EV10_TALK_06(void)
 {
 	if (Engine_GameFlagIsSet(0x300) != 0)
 	{
@@ -669,7 +669,7 @@ static void SceneDialogue_RunActorTenFlaggedDialogue(void)
 	}
 }
 
-static void FieldScene_RunActor11FlagDialogue(void)
+static void EV11_TALK(void)
 {
 	if (Engine_GameFlagIsSet(0x8A0) != 0)
 	{
@@ -717,7 +717,7 @@ static void FieldScene_RunActor11FlagDialogue(void)
 	}
 }
 
-static void FieldScene_RunScene3b1SequenceA(void)
+static void EV12_TALK_06(void)
 {
 	s32				   rec7;
 	struct FieldActor *record;
@@ -783,7 +783,7 @@ L_02000c9a:;
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunScene3b1SequenceB(void)
+static void EV09_TALK(void)
 {
 	s32				   rec7;
 	struct FieldActor *record;
@@ -849,7 +849,7 @@ L_02000de0:;
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActorThirteenFlag300Branch(void)
+static void EV13_TALK(void)
 {
 	if (Engine_GameFlagIsSet(0x300) != 0)
 	{
@@ -888,7 +888,7 @@ static void SceneDialogue_RunActorThirteenFlag300Branch(void)
 	}
 }
 
-static void FieldScene_RunFlag300BranchDialogue(void)
+static void EV14_TALK(void)
 {
 	if (Engine_GameFlagIsSet(0x300) != 0)
 	{
@@ -927,7 +927,7 @@ static void FieldScene_RunFlag300BranchDialogue(void)
 	}
 }
 
-static void FieldScene_RunActor15FlagDialogue(void)
+static void EV15_TALK(void)
 {
 	if (Engine_GameFlagIsSet(0x300) != 0)
 	{
@@ -966,7 +966,7 @@ static void FieldScene_RunActor15FlagDialogue(void)
 	}
 }
 
-static void FieldScene_RunActor16FlagDialogue(void)
+static void EV16_TALK(void)
 {
 	s32				   obj;
 	struct FieldActor *actor;
@@ -1167,7 +1167,7 @@ static s32 SceneState_ApplyLevelFromFlags(void)
 	return FuneHeya_FindFirstSetFlag(ret, 1);
 }
 
-static void SceneDialogue_ShowLine1ECETo1ED0(void)
+static void EV18_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92c))
@@ -1180,7 +1180,7 @@ static void SceneDialogue_ShowLine1ECETo1ED0(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor19TwoFlagLineA(void)
+static void EV19_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92d))
@@ -1193,7 +1193,7 @@ static void SceneDialogue_RunActor19TwoFlagLineA(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor20TwoFlagLine(void)
+static void EV20_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92e))
@@ -1206,7 +1206,7 @@ static void SceneDialogue_RunActor20TwoFlagLine(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_ShowLine1ED1Or1ED2(void)
+static void EV21_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92f))
@@ -1217,7 +1217,7 @@ static void SceneDialogue_ShowLine1ED1Or1ED2(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor22TwoFlagLine(void)
+static void EV22_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x930))
@@ -1230,7 +1230,7 @@ static void SceneDialogue_RunActor22TwoFlagLine(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor23BranchedDialogue(void)
+static void EV23_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x931))
@@ -1243,7 +1243,7 @@ static void SceneDialogue_RunActor23BranchedDialogue(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor24BranchedDialogue(void)
+static void EV24_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x932))
@@ -1256,7 +1256,7 @@ static void SceneDialogue_RunActor24BranchedDialogue(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor25FlaggedLine(void)
+static void EV25_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x933))
@@ -1267,7 +1267,7 @@ static void SceneDialogue_RunActor25FlaggedLine(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor18TwoFlagLine(void)
+static void EV18_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92c))
@@ -1280,7 +1280,7 @@ static void SceneDialogue_RunActor18TwoFlagLine(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor19TwoFlagLineB(void)
+static void EV19_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92d))
@@ -1293,7 +1293,7 @@ static void SceneDialogue_RunActor19TwoFlagLineB(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_ShowLine1EDBTo1EDDActor20(void)
+static void EV20_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92e))
@@ -1306,7 +1306,7 @@ static void SceneDialogue_ShowLine1EDBTo1EDDActor20(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor21FlaggedLine(void)
+static void EV21_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92f))
@@ -1317,7 +1317,7 @@ static void SceneDialogue_RunActor21FlaggedLine(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor22BranchedDialogue(void)
+static void EV22_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x930))
@@ -1330,7 +1330,7 @@ static void SceneDialogue_RunActor22BranchedDialogue(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_ShowLine1EDBTo1EDDActor23(void)
+static void EV23_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x931))
@@ -1343,7 +1343,7 @@ static void SceneDialogue_ShowLine1EDBTo1EDDActor23(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_ShowLine1EDBTo1EDDActor24(void)
+static void EV24_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x932))
@@ -1356,7 +1356,7 @@ static void SceneDialogue_ShowLine1EDBTo1EDDActor24(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_ShowLine1EDEOr1EDF(void)
+static void EV25_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x933))
@@ -1478,7 +1478,7 @@ static void FuneHeya_RunFlagBranchSequence(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunScene3b1SequenceD(void)
+static void EV04_TOUCH(void)
 {
 	if (GameFlag_IsSet(0x301) != 0)
 	{
@@ -1492,7 +1492,7 @@ static void FieldScene_RunScene3b1SequenceD(void)
 	}
 }
 
-static void FieldScene_RunFlagGatedThreeActorSetup(void)
+static void EV10_TOUCH(void)
 {
 	if (Engine_GameFlagIsSet(0x922) == 0)
 		return;
@@ -1525,7 +1525,7 @@ static void FieldScene_RunFlagGatedThreeActorSetup(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunThreeActorPresentation(void)
+static void EV11_TOUCH(void)
 {
 	s32 request_a;
 	s32 request_b;
@@ -1892,7 +1892,7 @@ static void FieldScene_RunExtendedActorChoreography(void)
 	GameFlag_Set(0x921);
 }
 
-static void FieldScene_RunBranchingActorPresentation(void)
+static void EV08_SCRIPT(void)
 {
 	struct FieldActor *record;
 	s32				   request_a;
@@ -4550,11 +4550,11 @@ struct SceneEvent FuneHeya_SceneTable04[] = {
 struct SceneEvent FuneHeya_SceneTable05[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ EVENT_TOUCH, 11, 0x922, EVENT_SCRIPT(FieldScene_RunThreeActorPresentation) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FuneHeya_AskAboutWarriors) },
+	{ EVENT_TOUCH, 11, 0x922, EVENT_SCRIPT(EV11_TOUCH) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK_05) },
 	{ EVENT_TALK, 9, 0x925, MSGNO(MsgFuneHeyaApparentlyWeCantTakeSilkRoad) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaAllThatMoneyOnTicketsAnd) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowLine1E19Or1D50) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK_05) },
 	{ EVENT_TALK, 11, 0x925, MSGNO(MsgFuneHeyaYoureGoingToTolbiToSee) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaINeverThoughtIdGetTo) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaYouAllAgreedToHelpOf) },
@@ -4580,15 +4580,15 @@ struct SceneEvent FuneHeya_SceneTable06[] = {
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3b1SequenceC) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIsThisCruelOrdealPartOf) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunFlagBranchedActor8Setup) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorTenFlaggedDialogue) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor11FlagDialogue) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3b1SequenceA) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3b1SequenceB) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActorThirteenFlag300Branch) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFlag300BranchDialogue) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor15FlagDialogue) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor16FlagDialogue) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK_06) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK_06) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK_06) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x300, MSGNO(MsgFuneHeyaNobodyWouldChooseMeAfterAll) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaYouMakeMeNervousJustStanding) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x300, MSGNO(MsgFuneHeyaHeyLooksLikeTheyNeedSomeone) },
@@ -4624,7 +4624,7 @@ struct SceneEvent FuneHeya_SceneTable07[] = {
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWhyShouldWeHaveToWait) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIfThereAreMonstersImNot) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIDontHearThePassengersScreaming) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor11FlagDialogue) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWhatToDoImWorriedAbout) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaButWhyShouldWeStayOnboard) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaImSickOfThisShipIm) },
@@ -4640,13 +4640,13 @@ struct SceneEvent FuneHeya_SceneTable07[] = {
 
 struct SceneEvent FuneHeya_SceneTable08[] = {
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(FuneHeya_TalkCaptainStatus) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FuneHeya_AskToSeeCaptain) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK_08) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK_08) },
 	{ EVENT_TALK, 9, 0x921, MSGNO(MsgFuneHeyaIWonderIfThereAreAny) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaRightWhenWeFoundSomeWarriors) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaICantBelieveHimRefusingTo) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIHadNoIdeaHeWas) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor12Line) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK_08) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x921, MSGNO(MsgFuneHeyaThisIsAChanceToMake) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x925, MSGNO(MsgFuneHeyaTheShipWontLeaveDockUntil) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x928, MSGNO(MsgFuneHeyaAsLongAsWeHaveThe) },
@@ -4658,8 +4658,8 @@ struct SceneEvent FuneHeya_SceneTable08[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaThatThingCouldntHaveGottenLost) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIDontThinkAnyoneWouldSteal) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIfTheShipDoesntLeaveSoon) },
-	{ EVENT_TOUCH, 10, 0x920, EVENT_SCRIPT(FieldScene_RunFlagGatedThreeActorSetup) },
-	{ 0xe814, 8, 0x925, EVENT_SCRIPT(FieldScene_RunBranchingActorPresentation) },
+	{ EVENT_TOUCH, 10, 0x920, EVENT_SCRIPT(EV10_TOUCH) },
+	{ 0xe814, 8, 0x925, EVENT_SCRIPT(EV08_SCRIPT) },
 	{ 0xc423, 102, 0xf94, FIND_ITEM(ITEM_NUT) },
 	{ SCENE_EVENTS_END },
 };
@@ -4720,7 +4720,7 @@ struct SceneEvent FuneHeya_SceneTable11[] = {
 };
 
 struct SceneEvent FuneHeya_SceneTable12[] = {
-	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3b1SequenceD) },
+	{ EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EV04_TOUCH) },
 	{ EVENT_TALK, 36, CONDITION_ALWAYS, EVENT_SCRIPT(FuneHeya_RunFlagBranchSequence) },
 	{ EVENT_TALK, 37, CONDITION_ALWAYS, EVENT_SCRIPT(FuneHeya_RunFlagBranchSequence) },
 	{ EVENT_TALK, 38, CONDITION_ALWAYS, EVENT_SCRIPT(FuneHeya_RunFlagBranchSequence) },
@@ -4772,14 +4772,14 @@ struct SceneEvent FuneHeya_SceneTable13[] = {
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaTheWholeShipIsRockingThat) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWereOkayWithYouHereWe) },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIfTheShipSinksWereFinished) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowLine1ECETo1ED0) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor19TwoFlagLineA) },
-	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor20TwoFlagLine) },
-	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowLine1ED1Or1ED2) },
-	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor22TwoFlagLine) },
-	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor23BranchedDialogue) },
-	{ EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor24BranchedDialogue) },
-	{ EVENT_TALK, 25, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor25FlaggedLine) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
+	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
+	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK) },
+	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TALK) },
+	{ EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_TALK) },
+	{ EVENT_TALK, 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_TALK) },
 	{ EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaOwwwMyHandsAreRawFrom) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWhyIsHeDownHereShouldnt) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaWhatTheHowManyMonstersDoes) },
@@ -4788,14 +4788,14 @@ struct SceneEvent FuneHeya_SceneTable13[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaImTakingALittleBreakUntil) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaGoodThingWeHaveSomeStrong) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIWonderIfTheMonsterIs) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor18TwoFlagLine) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor19TwoFlagLineB) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowLine1EDBTo1EDDActor20) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor21FlaggedLine) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor22BranchedDialogue) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowLine1EDBTo1EDDActor23) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowLine1EDBTo1EDDActor24) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowLine1EDEOr1EDF) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EV24_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EV25_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgFuneHeyaIWonderIfTheyllMakeUs) },
 	{ SCENE_EVENTS_END },
 };

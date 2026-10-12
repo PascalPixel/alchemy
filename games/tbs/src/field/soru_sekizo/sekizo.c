@@ -25,7 +25,7 @@
 
 // 前方宣言
 static void Scene_RunGuardSequenceC(void);
-static void SoruSekizo_RunStatueDropScene(void);
+static void EV17_PSYNERGY(void);
 static void SoruSekizo_RunEventSequence(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4);
 static s32 SceneActor_IsActorAtTile(s32 no, s32 x, s32 z);
 static void SoruSekizo_OpenNorthwestSeal(void);
@@ -191,7 +191,7 @@ static void Scene_OpenTheHole(void)
 		Engine_MapCopyCellAttributes(0, 0, 2, 1, k5, k6);
 	}
 	Engine_GameFlagSet(0x207);
-	SoruSekizo_RunStatueDropScene();
+	EV17_PSYNERGY();
 }
 
 static void FieldScene_SetupStagedActors(void)
@@ -684,7 +684,7 @@ static void SceneState_RunWhenSlotZeroFacingC000(void)
 	}
 }
 
-static void SceneState_RunWhenActorZeroFacing4000(void)
+static void EV11_SCRIPT(void)
 {
 	u16 *p = Object_GetById(0);
 	if (p[3] == 0x4000)
@@ -877,7 +877,7 @@ static void Scene_RunGuardSequenceC(void)
 	}
 }
 
-static void FieldScene_CallWhenCheck9_31_9(void)
+static void EV09_PSYNERGY(void)
 {
 	if (SceneActor_IsActorAtTile(9, 31, 9) != 0)
 	{
@@ -885,7 +885,7 @@ static void FieldScene_CallWhenCheck9_31_9(void)
 	}
 }
 
-static void FieldScene_RunGuardedStep11(void)
+static void EV11_PSYNERGY(void)
 {
 	if (SceneActor_IsActorAtTile(11, 40, 9) != 0)
 	{
@@ -893,7 +893,7 @@ static void FieldScene_RunGuardedStep11(void)
 	}
 }
 
-static void FieldScene_RunGuardedStep13(void)
+static void EV13_PSYNERGY(void)
 {
 	if (SceneActor_IsActorAtTile(13, 31, 12) != 0)
 	{
@@ -901,7 +901,7 @@ static void FieldScene_RunGuardedStep13(void)
 	}
 }
 
-static void FieldScene_RunGuardedStep15(void)
+static void EV15_PSYNERGY(void)
 {
 	if (SceneActor_IsActorAtTile(15, 40, 12) != 0)
 	{
@@ -909,7 +909,7 @@ static void FieldScene_RunGuardedStep15(void)
 	}
 }
 
-static void ConfigureSceneAndCheckActors(void)
+static void EV10_PSYNERGY(void)
 {
 	Field_SetMapCellCollision(2, 0x00d00000, 0x00700000, 0);
 	if (SceneActor_IsActorAtTile(10, 14, 7) != 0)
@@ -918,7 +918,7 @@ static void ConfigureSceneAndCheckActors(void)
 	}
 }
 
-static void ConfigureAlternateSceneAndCheckActors(void)
+static void EV12_PSYNERGY(void)
 {
 	Field_SetMapCellCollision(2, 23068672, 7340032, 0);
 	if (SceneActor_IsActorAtTile(12, 21, 7) != 0)
@@ -927,7 +927,7 @@ static void ConfigureAlternateSceneAndCheckActors(void)
 	}
 }
 
-static void FieldScene_RunClosingSequence(void)
+static void EV17_SCRIPT(void)
 {
 	struct FieldActor *first;
 	s32				   kind;
@@ -957,7 +957,7 @@ static void SoruSekizo_BlockLeftTriggerCell(void)
 	}
 }
 
-static void SoruSekizo_BlockRightTriggerCell(void)
+static void EV12_SCRIPT(void)
 {
 	s32 x = Object_GetById(0)->x.fixed >> 20;
 	s32 y = Object_GetById(0)->z.fixed >> 20;
@@ -968,7 +968,7 @@ static void SoruSekizo_BlockRightTriggerCell(void)
 	}
 }
 
-static void SoruSekizo_RunStatueDropScene(void)
+static void EV17_PSYNERGY(void)
 {
 	struct FieldActor *statue;
 	struct FieldActor *leader;
@@ -1051,7 +1051,7 @@ static void SoruSekizo_RunStatueDropScene(void)
 	}
 }
 
-static void FieldScene_RunScene37bSequenceA(void)
+static void EV32_TOUCH(void)
 {
 	struct FieldActor *record;
 
@@ -1076,25 +1076,25 @@ static void FieldScene_RunScene37bSequenceA(void)
 	}
 }
 
-static void FieldScene_RunFiveValueStep9(void)
+static void EV05_TOUCH(void)
 {
 	SoruSekizo_RunEventSequence(9, 31, 9, 30, 9);
 	SoruSekizo_OpenNorthwestSeal();
 }
 
-static void FieldScene_RunFiveValueStep11(void)
+static void EV06_TOUCH(void)
 {
 	SoruSekizo_RunEventSequence(11, 40, 9, 41, 9);
 	SoruSekizo_OpenNortheastSeal();
 }
 
-static void FieldScene_ApplyRect13_31_12_30_12(void)
+static void EV07_TOUCH(void)
 {
 	SoruSekizo_RunEventSequence(13, 31, 12, 30, 12);
 	SoruSekizo_OpenSouthwestSeal();
 }
 
-static void FieldScene_RunFiveValueStep15(void)
+static void EV08_TOUCH(void)
 {
 	SoruSekizo_RunEventSequence(15, 40, 12, 41, 12);
 	SoruSekizo_OpenSoutheastSeal();
@@ -1106,7 +1106,7 @@ static void FieldScene_ApplyRect10_14_7_13_7(void)
 	Scene_ShineLeftBeam();
 }
 
-static void SceneActor_UseActorTenCellAndNext(void)
+static void EV21_TOUCH(void)
 {
 	struct FieldActor *record = Object_GetById(10);
 	s32				   cell;
@@ -1136,7 +1136,7 @@ static void FieldScene_ApplyRect12_21_7_22_7(void)
 	Scene_ShineRightBeam();
 }
 
-static void SceneActor_ApplyActorTwelveZCellPair(void)
+static void EV26_TOUCH(void)
 {
 	s32 *p = Object_GetById(12);
 	if (p != NULL)
@@ -1619,32 +1619,32 @@ struct SceneEvent SceneEventRuntime_EffectData[] = {
 	{ 0x31, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunWhenSlotZeroFacingC000) },
-	{ 0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_RunWhenActorZeroFacing4000) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x80b, EVENT_SCRIPT(FieldScene_CallWhenCheck9_31_9) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 11, 0x80c, EVENT_SCRIPT(FieldScene_RunGuardedStep11) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 13, 0x80d, EVENT_SCRIPT(FieldScene_RunGuardedStep13) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 15, 0x80e, EVENT_SCRIPT(FieldScene_RunGuardedStep15) },
-	{ TOUCH_WALKING_INTO(FACING_EAST), 5, 0x80b, EVENT_SCRIPT(FieldScene_RunFiveValueStep9) },
-	{ TOUCH_WALKING_INTO(FACING_WEST), 6, 0x80c, EVENT_SCRIPT(FieldScene_RunFiveValueStep11) },
-	{ TOUCH_WALKING_INTO(FACING_EAST), 7, 0x80d, EVENT_SCRIPT(FieldScene_ApplyRect13_31_12_30_12) },
-	{ TOUCH_WALKING_INTO(FACING_WEST), 8, 0x80e, EVENT_SCRIPT(FieldScene_RunFiveValueStep15) },
+	{ 0x202, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_SCRIPT) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x80b, EVENT_SCRIPT(EV09_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 11, 0x80c, EVENT_SCRIPT(EV11_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 13, 0x80d, EVENT_SCRIPT(EV13_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 15, 0x80e, EVENT_SCRIPT(EV15_PSYNERGY) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 5, 0x80b, EVENT_SCRIPT(EV05_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 6, 0x80c, EVENT_SCRIPT(EV06_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_EAST), 7, 0x80d, EVENT_SCRIPT(EV07_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_WEST), 8, 0x80e, EVENT_SCRIPT(EV08_TOUCH) },
 	{ 0x10008c15, 10, 0x816, EVENT_SCRIPT(SoruSekizo_BlockLeftTriggerCell) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x816, EVENT_SCRIPT(ConfigureSceneAndCheckActors) },
-	{ 0x10008c15, 12, 0x817, EVENT_SCRIPT(SoruSekizo_BlockRightTriggerCell) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 12, 0x817, EVENT_SCRIPT(ConfigureAlternateSceneAndCheckActors) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x816, EVENT_SCRIPT(EV10_PSYNERGY) },
+	{ 0x10008c15, 12, 0x817, EVENT_SCRIPT(EV12_SCRIPT) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 12, 0x817, EVENT_SCRIPT(EV12_PSYNERGY) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 20, 0x816, EVENT_SCRIPT(FieldScene_ApplyRect10_14_7_13_7) },
 	{ TOUCH_WALKING_INTO(FACING_EAST), 21, 0x816, EVENT_SCRIPT(FieldScene_ApplyRect10_14_7_13_7) },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 21, 0x816, EVENT_SCRIPT(SceneActor_UseActorTenCellAndNext) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 21, 0x816, EVENT_SCRIPT(EV21_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 23, 0x816, EVENT_SCRIPT(SceneActor_MoveActor10ByRow) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 24, 0x816, EVENT_SCRIPT(SceneActor_MoveActor10ByRow) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 25, 0x817, EVENT_SCRIPT(FieldScene_ApplyRect12_21_7_22_7) },
 	{ TOUCH_WALKING_INTO(FACING_WEST), 26, 0x817, EVENT_SCRIPT(FieldScene_ApplyRect12_21_7_22_7) },
-	{ TOUCH_WALKING_INTO(FACING_SOUTH), 26, 0x817, EVENT_SCRIPT(SceneActor_ApplyActorTwelveZCellPair) },
+	{ TOUCH_WALKING_INTO(FACING_SOUTH), 26, 0x817, EVENT_SCRIPT(EV26_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 28, 0x817, EVENT_SCRIPT(SceneActor_RunSlot12ColumnStep) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 29, 0x817, EVENT_SCRIPT(SceneActor_RunSlot12ColumnStep) },
-	{ 0x10008c15, 17, 0x818, EVENT_SCRIPT(FieldScene_RunClosingSequence) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 17, 0x818, EVENT_SCRIPT(SoruSekizo_RunStatueDropScene) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 32, 0x818, EVENT_SCRIPT(FieldScene_RunScene37bSequenceA) },
+	{ 0x10008c15, 17, 0x818, EVENT_SCRIPT(EV17_SCRIPT) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 17, 0x818, EVENT_SCRIPT(EV17_PSYNERGY) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 32, 0x818, EVENT_SCRIPT(EV32_TOUCH) },
 	{ SCENE_EVENTS_END },
 };
 

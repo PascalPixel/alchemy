@@ -145,7 +145,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gKorashiamuIriguchiEventsOther;
 }
 
-static void SceneDialogue_RunActor10MessageByFlag962(void)
+static void EV10_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x962))
@@ -161,7 +161,7 @@ static void SceneDialogue_RunActor10MessageByFlag962(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor13MessageByFlag962(void)
+static void EV13_TALK_3(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x962))
@@ -178,7 +178,7 @@ static void SceneDialogue_RunActor13MessageByFlag962(void)
 	Engine_EventEnd();
 }
 
-static void KorashiamuIriguchi_TalkToActorFourteen(void)
+static void EV14_TALK_3(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x962) != 0)
@@ -199,7 +199,7 @@ static void KorashiamuIriguchi_TalkToActorFourteen(void)
 	Engine_EventEnd();
 }
 
-static void KorashiamuIriguchi_TryLuckyGuess(void)
+static void EV16_TALK_3(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x962) != 0)
@@ -238,7 +238,7 @@ L_02000448:;
 	Engine_EventEnd();
 }
 
-static void KorashiamuIriguchi_IntroduceSecondSeed(void)
+static void EV13_TALK(void)
 {
 	struct FieldActor *rec7;
 
@@ -266,7 +266,7 @@ static void KorashiamuIriguchi_IntroduceSecondSeed(void)
 	Engine_EventEnd();
 }
 
-static void KorashiamuIriguchi_FrightenActorFourteen(void)
+static void EV14_TALK(void)
 {
 	Engine_EventBegin();
 	Actor_SetAttachedEffect(14, 0x102);
@@ -278,7 +278,7 @@ static void KorashiamuIriguchi_FrightenActorFourteen(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_ShowLine2118WithActor15Steps(void)
+static void EV15_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKorashiamuWhoHaveComeQuestionMe);
@@ -292,7 +292,7 @@ static void SceneDialogue_ShowLine2118WithActor15Steps(void)
 	Engine_EventEnd();
 }
 
-static void KorashiamuIriguchi_CheerForDekka(void)
+static void EV16_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(16, 2);
@@ -318,7 +318,7 @@ static void KorashiamuIriguchi_CheerForDekka(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActorSeventeenDialogueSteps(void)
+static void EV17_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceEachOther(17, ACTOR_PARTY_LEADER, 20);
@@ -333,7 +333,7 @@ static void FieldScene_RunActorSeventeenDialogueSteps(void)
 	Engine_EventEnd();
 }
 
-static void KorashiamuIriguchi_IntroduceSeventhSeed(void)
+static void EV18_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 20);
@@ -350,7 +350,7 @@ static void KorashiamuIriguchi_IntroduceSeventhSeed(void)
 	Engine_EventEnd();
 }
 
-static void KorashiamuIriguchi_AskReadyForFinals(void)
+static void EV08_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceEachOther(8, ACTOR_PARTY_LEADER, 20);
@@ -362,7 +362,7 @@ static void KorashiamuIriguchi_AskReadyForFinals(void)
 	Engine_EventEnd();
 }
 
-static void Scene_RunBranchingActorPresentation(void)
+static void EV10_TOUCH(void)
 {
 	s32 record;
 
@@ -582,7 +582,7 @@ static void Scene_RunBranchingActorPresentation(void)
 	Engine_EventEnd();
 }
 
-static void KorashiamuIriguchi_RunGatherScene(void)
+static void EV12_TOUCH(void)
 {
 	struct FieldActor *actor;
 	s32				   script;
@@ -708,13 +708,13 @@ static void KorashiamuIriguchi_RunGatherScene(void)
 	}
 }
 
-static void SceneState_ApplyFlags565And564(void)
+static void EV13_TOUCH(void)
 {
 	Engine_GameFlagClear(0x235);
 	Engine_GameFlagSet(564);
 }
 
-static void FieldScene_RunConditionalSceneSetup(void)
+static void EV17_TALK_1(void)
 {
 	s32 flag_8a4;
 
@@ -2051,7 +2051,7 @@ struct SceneEvent gKorashiamuIriguchiEvents1[] = {
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgKorashiamuIriguchiWatchingTheTrialsMakesMeReally) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKorashiamuIriguchiWatchingSuchProudSkilledWarriorsIn) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgKorashiamuIriguchiIveWaitedAWholeYearTo) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunConditionalSceneSetup) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK_1) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKorashiamuIriguchiEvenTheSmallerWarriorsCanWin) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKorashiamuIriguchiTheseTrialsAreBasedOnPersonal) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgKorashiamuIriguchiWhatFantasticPhysiquesWhyIfI) },
@@ -2070,14 +2070,14 @@ struct SceneEvent gKorashiamuIriguchiEvents3[] = {
 	{ EVENT_TALK, 9, 0x962, MSGNO(MsgKorashiamuIriguchiSighTheColosseumIsPackedWith) },
 	{ EVENT_TALK, 9, 0x950, MSGNO(MsgKorashiamuIriguchiIHeardBabiHasPickedSome) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKorashiamuIriguchiTheColosseumIsClosedUntilNext) },
-	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor10MessageByFlag962) },
+	{ EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TALK) },
 	{ EVENT_TALK, 11, 0x962, MSGNO(MsgKorashiamuIriguchiIfYouHitItBigIn) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKorashiamuIriguchiAWarriorNamedRobinWasSelected) },
 	{ EVENT_TALK, 12, 0x962, MSGNO(MsgKorashiamuIriguchiIveBeenBettingOnTheLucky) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKorashiamuIriguchiHavingAWarriorWhoWasntIn) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor13MessageByFlag962) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(KorashiamuIriguchi_TalkToActorFourteen) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(KorashiamuIriguchi_TryLuckyGuess) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK_3) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK_3) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK_3) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x962, MSGNO(MsgKorashiamuIriguchiIWonderWhichWarriorWillBe) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x950, MSGNO(MsgKorashiamuIriguchiTheRealBattlesAreAboutTo) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKorashiamuIriguchiWhenTheColosseumGatesFinallyShut) },
@@ -2096,23 +2096,23 @@ struct SceneEvent gKorashiamuIriguchiEvents3[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKorashiamuIriguchiImGoingToBeInTrouble) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x962, MSGNO(MsgKorashiamuIriguchiOnceTheTrialsAreOverIts) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKorashiamuIriguchiAllOfTheProfitsFromThe) },
-	{ EVENT_TOUCH, 10, 0x950, EVENT_SCRIPT(Scene_RunBranchingActorPresentation) },
+	{ EVENT_TOUCH, 10, 0x950, EVENT_SCRIPT(EV10_TOUCH) },
 	{ SCENE_EVENTS_END },
 };
 
 struct SceneEvent gKorashiamuIriguchiEvents1Entrance12[] = {
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKorashiamuIriguchiIAmMorganIAmThe) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(KorashiamuIriguchi_IntroduceSecondSeed) },
-	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(KorashiamuIriguchi_FrightenActorFourteen) },
-	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ShowLine2118WithActor15Steps) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(KorashiamuIriguchi_CheerForDekka) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActorSeventeenDialogueSteps) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(KorashiamuIriguchi_IntroduceSeventhSeed) },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(KorashiamuIriguchi_AskReadyForFinals) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
+	{ EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TALK) },
+	{ EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TALK) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKorashiamuIriguchiYouCannotLeaveUntilTheFinals) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKorashiamuIriguchiIFeelWeveBeenWaitingForever) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKorashiamuIriguchiWhenTheGongSoundsTheFinals) },
-	{ EVENT_TOUCH, 12, 0x235, EVENT_SCRIPT(KorashiamuIriguchi_RunGatherScene) },
-	{ EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyFlags565And564) },
+	{ EVENT_TOUCH, 12, 0x235, EVENT_SCRIPT(EV12_TOUCH) },
+	{ EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TOUCH) },
 	{ SCENE_EVENTS_END },
 };

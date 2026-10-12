@@ -205,12 +205,12 @@ static void KuupuappuDou_PushBlockAhead(void)
 	Object_SetMode(leader, 1);
 }
 
-static void SceneState_ApplyFlag300(void)
+static void EV22_PSYNERGY(void)
 {
 	Engine_GameFlagSet(0x300);
 }
 
-static void KuupuappuDou_ShowLockedDoorMessage(void)
+static void EV99_SEARCH(void)
 {
 	Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
 }
@@ -260,7 +260,7 @@ static s32 IsActor9AtTile15x54(void)
 	return 0;
 }
 
-static void FieldScene_RunFlag9a9GuardedScene(void)
+static void EV60_SCRIPT(void)
 {
 	if (GameFlag_IsSet(0x9a9) == 0)
 	{
@@ -288,7 +288,7 @@ static void SceneState_ApplyThreeRects(void)
 	Engine_MapCopyCellAttributes(16, 52, 1, 1, strip, 53);
 }
 
-static void FieldScene_RunScene3a7SequenceA(void)
+static void EV09_PSYNERGY_2(void)
 {
 	if (GameFlag_IsSet(0x9a9) == 0)
 	{
@@ -345,7 +345,7 @@ static s32 SceneActor_IsActor10AtTile16x12(void)
 	return 0;
 }
 
-static void FieldScene_RunGuardedStep9AAAfterSetup(void)
+static void EV50_SCRIPT(void)
 {
 	KuupuappuDou_PushBlockAhead();
 	if (GameFlag_IsSet(0x9aa) == 0)
@@ -362,11 +362,11 @@ static void FieldScene_RunGuardedStep9AAAfterSetup(void)
 	}
 }
 
-static void Resource3a7_NoOpCallback(void)
+static void EV09_PSYNERGY_3(void)
 {
 }
 
-static void FieldScene_RunGuardedStep9AA(void)
+static void EV10_PSYNERGY(void)
 {
 	if (GameFlag_IsSet(0x9aa) == 0)
 	{
@@ -382,7 +382,7 @@ static void FieldScene_RunGuardedStep9AA(void)
 	}
 }
 
-static void SceneState_ApplyRectAndMarkActor16(void)
+static void EV16_PSYNERGY(void)
 {
 	struct FieldActor *rec = Object_GetById(16);
 
@@ -401,7 +401,7 @@ static void SceneState_ApplyRectAndMarkActor16(void)
 	Engine_GameFlagSet(0x200);
 }
 
-static void SceneState_ConfigureRegion26_30AndMarkActor17(void)
+static void EV17_PSYNERGY(void)
 {
 	struct FieldActor *rec = Object_GetById(17);
 
@@ -420,7 +420,7 @@ static void SceneState_ConfigureRegion26_30AndMarkActor17(void)
 	Engine_GameFlagSet(0x201);
 }
 
-static void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
+static void EV18_PSYNERGY(void)
 {
 	struct FieldActor *record = Object_GetById(18);
 
@@ -439,7 +439,7 @@ static void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
 	Engine_GameFlagSet(0x202);
 }
 
-static void SceneState_ApplyRectAndSetupActor19(void)
+static void EV19_PSYNERGY(void)
 {
 	struct FieldActor *p = Object_GetById(19);
 
@@ -459,7 +459,7 @@ static void SceneState_ApplyRectAndSetupActor19(void)
 	Engine_GameFlagSet(0x203);
 }
 
-static void SceneActor_SetupSlotTwenty(void)
+static void EV20_PSYNERGY(void)
 {
 	struct FieldActor *rec = Object_GetById(20);
 
@@ -479,7 +479,7 @@ static void SceneActor_SetupSlotTwenty(void)
 	Engine_GameFlagSet(0x204);
 }
 
-static void SceneActor_MarkSlot21AndSetFlag205(void)
+static void EV21_PSYNERGY(void)
 {
 	struct FieldActor *record = Object_GetById(21);
 
@@ -593,7 +593,7 @@ static void KuupuappuDou_RunRumble(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunScene3a7SequenceB(void)
+static void EV20_SEARCH(void)
 {
 	s32 v5;
 	s32 v6;
@@ -922,32 +922,32 @@ s32 KuupuappuDou_ApplyEntryState(void)
 			if (Engine_GameFlagIsSet(0x200) != 0)
 			{
 				Engine_ActorSetAnimation(16, 5);
-				SceneState_ApplyRectAndMarkActor16();
+				EV16_PSYNERGY();
 			}
 			if (Engine_GameFlagIsSet(0x201) != 0)
 			{
 				Engine_ActorSetAnimation(17, 5);
-				SceneState_ConfigureRegion26_30AndMarkActor17();
+				EV17_PSYNERGY();
 			}
 			if (Engine_GameFlagIsSet(0x202) != 0)
 			{
 				Engine_ActorSetAnimation(18, 5);
-				SceneState_ConfigureRegion26_30AndClearActor18Mode();
+				EV18_PSYNERGY();
 			}
 			if (Engine_GameFlagIsSet(0x203) != 0)
 			{
 				Engine_ActorSetAnimation(19, 5);
-				SceneState_ApplyRectAndSetupActor19();
+				EV19_PSYNERGY();
 			}
 			if (Engine_GameFlagIsSet(0x204) != 0)
 			{
 				Engine_ActorSetAnimation(20, 5);
-				SceneActor_SetupSlotTwenty();
+				EV20_PSYNERGY();
 			}
 			if (Engine_GameFlagIsSet(0x205) != 0)
 			{
 				Engine_ActorSetAnimation(21, 5);
-				SceneActor_MarkSlot21AndSetFlag205();
+				EV21_PSYNERGY();
 			}
 			Engine_TaskAddCallback((s32)SceneState_DispatchByActorZeroDepth, 0xc80);
 			break;
@@ -1214,8 +1214,8 @@ struct SceneEvent gKuupuappuDouEvents1[] = {
 	{ EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
 	{ EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
 	{ EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
-	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene3a7SequenceB) },
-	{ SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(KuupuappuDou_ShowLockedDoorMessage) },
+	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SEARCH) },
+	{ SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_SEARCH) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xef3, 0x500003 },
 	{ SCENE_EVENTS_END },
 };
@@ -1235,16 +1235,16 @@ struct SceneEvent gKuupuappuDouEvents2[] = {
 	{ EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
 	{ EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
 	{ SEARCH(SEARCH_CHEST), 100, 0xfc4, FIND_ITEM(0x82) },
-	{ SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(KuupuappuDou_ShowLockedDoorMessage) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x9a9, EVENT_SCRIPT(FieldScene_RunScene3a7SequenceA) },
-	{ 0x202, 60, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFlag9a9GuardedScene) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, 0x200, EVENT_SCRIPT(SceneState_ApplyRectAndMarkActor16) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 17, 0x201, EVENT_SCRIPT(SceneState_ConfigureRegion26_30AndMarkActor17) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 18, 0x202, EVENT_SCRIPT(SceneState_ConfigureRegion26_30AndClearActor18Mode) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 19, 0x203, EVENT_SCRIPT(SceneState_ApplyRectAndSetupActor19) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 20, 0x204, EVENT_SCRIPT(SceneActor_SetupSlotTwenty) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 21, 0x205, EVENT_SCRIPT(SceneActor_MarkSlot21AndSetFlag205) },
-	{ PSYNERGY_ON_ACTOR(0x4e), 22, 0x300, EVENT_SCRIPT(SceneState_ApplyFlag300) },
+	{ SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_SEARCH) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 9, 0x9a9, EVENT_SCRIPT(EV09_PSYNERGY_2) },
+	{ 0x202, 60, CONDITION_ALWAYS, EVENT_SCRIPT(EV60_SCRIPT) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, 0x200, EVENT_SCRIPT(EV16_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 17, 0x201, EVENT_SCRIPT(EV17_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 18, 0x202, EVENT_SCRIPT(EV18_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 19, 0x203, EVENT_SCRIPT(EV19_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 20, 0x204, EVENT_SCRIPT(EV20_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_FROST), 21, 0x205, EVENT_SCRIPT(EV21_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x4e), 22, 0x300, EVENT_SCRIPT(EV22_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };
 
@@ -1255,10 +1255,10 @@ struct SceneEvent gKuupuappuDouEvents3[] = {
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
 	{ 0x21, 6, CONDITION_ALWAYS, 6 },
-	{ 0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunGuardedStep9AAAfterSetup) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x9aa, EVENT_SCRIPT(FieldScene_RunGuardedStep9AA) },
-	{ PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Resource3a7_NoOpCallback) },
-	{ SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(KuupuappuDou_ShowLockedDoorMessage) },
+	{ 0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(EV50_SCRIPT) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x9aa, EVENT_SCRIPT(EV10_PSYNERGY) },
+	{ PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_PSYNERGY_3) },
+	{ SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(EV99_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 

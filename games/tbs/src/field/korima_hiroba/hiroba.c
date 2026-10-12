@@ -104,7 +104,7 @@ u8 *SceneData_GetActorTable(void)
 	return KorimaHiroba_Actors;
 }
 
-static void SceneActor_RunPlacementQuery(void)
+static void EV10_SCRIPT(void)
 {
 	struct StagedActorProbe result;
 	Engine_EventBegin();
@@ -113,7 +113,7 @@ static void SceneActor_RunPlacementQuery(void)
 	Engine_EventEnd();
 }
 
-static void KorimaHiroba_AwardHiddenNut(void)
+static void EV11_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetPosition(11, 0, 0);
@@ -273,8 +273,8 @@ struct ScenePlacement KorimaHiroba_Actors[] = {
 struct SceneEvent KorimaHiroba_Extras[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(SceneActor_RunPlacementQuery) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 11, 0xfd3, EVENT_SCRIPT(KorimaHiroba_AwardHiddenNut) },
+	{ 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), 11, 0xfd3, EVENT_SCRIPT(EV11_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };
 

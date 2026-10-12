@@ -41,7 +41,7 @@ s32 SceneData_SelectActorTableByFlag96f(void)
 	return (s32)SuharaMura_Actors;
 }
 
-static void SuharaMura_TalkLalivero(s32 obj)
+static void EV09_TALK(s32 obj)
 {
 	s32 cue = (s32)MsgSuharaTryingGetLalivero;
 	Engine_EventSetMessage(cue);
@@ -58,7 +58,7 @@ static void SuharaMura_TalkLalivero(s32 obj)
 	Engine_EventShowMessage(obj, 0);
 }
 
-static void SuharaMura_TalkSandstorm(s32 obj)
+static void EV13_TALK(s32 obj)
 {
 	s32 cue = (s32)MsgSuharaBroughtSuhallaSandstorm;
 	Engine_EventSetMessage(cue);
@@ -75,7 +75,7 @@ static void SuharaMura_TalkSandstorm(s32 obj)
 	Engine_EventShowMessage(obj, 0);
 }
 
-static void FieldScene_RunLayoutStepThenSet201(void)
+static void EV16_PSYNERGY(void)
 {
 	s32 width = 4;
 	s32 height = 9;
@@ -98,7 +98,7 @@ static void SuharaMura_AnimateCells0(void)
 	Engine_EventRequestExit(no);
 }
 
-static void SuharaMura_AnimateCells1(void)
+static void EV02_TOUCH(void)
 {
 	struct EventWork *work = gEventWork;
 	s32				  no = work->touched_trigger;
@@ -136,7 +136,7 @@ s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
 
 	if (Engine_GameFlagIsSet(0x201) != 0)
 	{
-		FieldScene_RunLayoutStepThenSet201();
+		EV16_PSYNERGY();
 		Engine_ActorSetAnimation(16, 4);
 	}
 	return 0;
@@ -226,7 +226,7 @@ u16 SuharaMura_CellSteps1[] = {
 
 struct SceneEvent SuharaMura_Extras[] = {
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_AnimateCells0) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_AnimateCells1) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_AnimateCells0) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_AnimateCells0) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_AnimateCells0) },
@@ -234,7 +234,7 @@ struct SceneEvent SuharaMura_Extras[] = {
 	{ EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
 	{ EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraThisIsSuhallaDontTryCrossing) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_TalkLalivero) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraWeGondowansWillNeverTrustAnyone) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraItHasBeenSaidForAges) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraYouCantGetToSouthernGondowan) },
@@ -250,13 +250,13 @@ struct SceneEvent SuharaMura_Extras[] = {
 	{ SEARCH(SEARCH_CHEST), 100, 0xfad, FIND_ITEM(0xc2) },
 	{ SEARCH(SEARCH_JAR), 101, 0xfae, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SEARCH(SEARCH_JAR), 102, 0xfaf, FIND_COINS(5) },
-	{ PSYNERGY_ON_ACTOR(0xc), 16, 0x201, EVENT_SCRIPT(FieldScene_RunLayoutStepThenSet201) },
+	{ PSYNERGY_ON_ACTOR(0xc), 16, 0x201, EVENT_SCRIPT(EV16_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };
 
 struct SceneEvent SuharaMura_ExtrasFlag96f[] = {
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_AnimateCells0) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_AnimateCells1) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EV02_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_AnimateCells0) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_AnimateCells0) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_AnimateCells0) },
@@ -268,7 +268,7 @@ struct SceneEvent SuharaMura_ExtrasFlag96f[] = {
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraSoldiersFromTolbiWereCaughtIn) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraWeWereBroughtHereByThe) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraThisSandstormIsTheFaultOf) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaMura_TalkSandstorm) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraWhyAreTheSandstormsAttackingHumans) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraThoseSoldiersKeptMumblingAboutMonsters) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSuharaMuraIBetTheseWarriorsWereBrought) },
@@ -282,6 +282,6 @@ struct SceneEvent SuharaMura_ExtrasFlag96f[] = {
 	{ SEARCH(SEARCH_CHEST), 100, 0xfad, FIND_ITEM(0xc2) },
 	{ SEARCH(SEARCH_JAR), 101, 0xfae, FIND_ITEM(ITEM_LUCKY_MEDAL) },
 	{ SEARCH(SEARCH_JAR), 102, 0xfaf, FIND_COINS(5) },
-	{ PSYNERGY_ON_ACTOR(0xc), 16, 0x201, EVENT_SCRIPT(FieldScene_RunLayoutStepThenSet201) },
+	{ PSYNERGY_ON_ACTOR(0xc), 16, 0x201, EVENT_SCRIPT(EV16_PSYNERGY) },
 	{ SCENE_EVENTS_END },
 };

@@ -191,7 +191,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gLunpaPlacements;
 }
 
-static void FloatingNut_Catch(void)
+static void EV20_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetPosition(ACTOR_FLOATING_NUT, 0, 0);
@@ -307,7 +307,7 @@ static void Reveal_HideSecrets(void)
 	GameFlag_Set(FLAG_LUNPA_SECRETS_HIDDEN);
 }
 
-static void Well_Search(void)
+static void EV90_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
@@ -331,7 +331,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gLunpaSealedEvents;
 }
 
-static void WestGuard_Talk(void)
+static void EV17_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | 2, 60);
@@ -340,7 +340,7 @@ static void WestGuard_Talk(void)
 	Engine_EventEnd();
 }
 
-static void EastGuard_Talk(void)
+static void EV18_TALK(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY) == 0)
@@ -366,7 +366,7 @@ static void EastGuard_Talk(void)
 	Engine_EventEnd();
 }
 
-static void EastGuard_MindRead(void)
+static void EV18_PSYNERGY(void)
 {
 	s32 thoughts;
 
@@ -399,7 +399,7 @@ static void VillagerA_Talk(void)
 	Engine_EventEnd();
 }
 
-static void VillagerC_Talk(void)
+static void EV11_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgRunpaVillagerCAsksAboutKidnapping);
@@ -407,7 +407,7 @@ static void VillagerC_Talk(void)
 	Engine_EventEnd();
 }
 
-static void VillagerG_Talk(void)
+static void EV15_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgRunpaVillagerGAsksAboutDonpa);
@@ -415,7 +415,7 @@ static void VillagerG_Talk(void)
 	Engine_EventEnd();
 }
 
-static void VillagerB_Shivers(void)
+static void EV10_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_B, 3);
@@ -424,7 +424,7 @@ static void VillagerB_Shivers(void)
 	Engine_EventEnd();
 }
 
-static void VillagerD_Talk(void)
+static void EV12_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgRunpaVillagerDAsksAboutCommotion);
@@ -432,7 +432,7 @@ static void VillagerD_Talk(void)
 	Engine_EventEnd();
 }
 
-static void LeftGuard_Talk(void)
+static void EV08_TALK(void)
 {
 	s32 recognition;
 
@@ -507,7 +507,7 @@ static void LeftGuard_MindRead(void)
 	Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 }
 
-static void RightGuard_MindRead(void)
+static void EV09_PSYNERGY(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0)
 	{
@@ -531,7 +531,7 @@ static void Party_WatchForFortress(void)
 	}
 }
 
-static void Gerald_RefusesToReturn(void)
+static void EV20_TOUCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -580,7 +580,7 @@ static void Door_Enter(void)
 	Engine_EventEnd();
 }
 
-static void HiddenPassage_Enter(void)
+static void EV12_TOUCH(void)
 {
 	if (GameFlag_IsSet(FLAG_LUNPA_PASSAGE_OPEN) != 0)
 	{
@@ -596,7 +596,7 @@ static void HiddenPassage_Enter(void)
 	}
 }
 
-static void FortressGate_Enter(void)
+static void EV01_TOUCH(void)
 {
 	GameFlag_Set(FLAG_GATE_FORTRESS_ENTERED);
 	Engine_EventBegin();
@@ -628,7 +628,7 @@ static void Reveal_PlayTreasureCue(void)
 	}
 }
 
-static void HiddenSwitch_Pull(void)
+static void EV20_SEARCH(void)
 {
 	if (GameFlag_IsSet(FLAG_LUNPA_SECRETS_HIDDEN) != 0)
 	{
@@ -664,7 +664,7 @@ static void HiddenSwitch_Pull(void)
 	GameFlag_Set(FLAG_LUNPA_PASSAGE_OPEN);
 }
 
-static void Guards_BlockGate(void)
+static void EV10_TOUCH(void)
 {
 	if (gGameState.cloaked == 0)
 	{
@@ -704,7 +704,7 @@ static void Cloak_Begin(void)
 	Engine_GameFlagSet(FLAG_GATE_CLOAK_CAST);
 }
 
-static void Guards_CatchParty(void)
+static void EV91_RAISED(void)
 {
 	struct FieldActor *leader;
 	s32				   warning;
@@ -783,7 +783,7 @@ static void Cloak_End(void)
 #if EDITION_INTERNATIONAL
 		work->raised_trigger = TRIGGER_PARTY_SPOTTED;
 #else
-		Guards_CatchParty();
+		EV91_RAISED();
 #endif
 	}
 	Gateway_Reopen();
@@ -1152,7 +1152,7 @@ struct ScenePlacement gGatePlacements[] = {
 		DOOR(TRIGGER_INN_DOOR), DOOR(TRIGGER_TEMPLE_DOOR), DOOR(TRIGGER_EIGHTH_ROOM_DOOR),         \
 	{                                                                                              \
 		TOUCH_WALKING_INTO(FACING_NORTH), TRIGGER_HIDDEN_PASSAGE, CONDITION_ALWAYS,                \
-			EVENT_SCRIPT(HiddenPassage_Enter)                                                      \
+			EVENT_SCRIPT(EV12_TOUCH)                                                      \
 	}
 
 #define LUNPA_SECRETS                                                                            \
@@ -1163,15 +1163,15 @@ struct ScenePlacement gGatePlacements[] = {
 		{PSYNERGY_IN_AREA(ABILITY_REVEAL, REVEAL_FADED), 0, CONDITION_ALWAYS,                    \
 			EVENT_SCRIPT(Reveal_HideSecrets)},                                                   \
 		{SEARCH(SEARCH_UNNAMED), TRIGGER_HIDDEN_SWITCH, FLAG_LUNPA_SECRETS_HIDDEN,               \
-			EVENT_SCRIPT(HiddenSwitch_Pull)},                                                    \
+			EVENT_SCRIPT(EV20_SEARCH)},                                                    \
 		{SEARCH(SEARCH_UNNAMED), TRIGGER_PSYNERGY_STONE, FLAG_LUNPA_PSYNERGY_STONE,              \
 			FIND_PSYNERGY_STONE},                                                                \
 		{SEARCH(SEARCH_GRAVE), TRIGGER_GRAVE_SLEEP_BOMB, FLAG_LUNPA_GRAVE_SLEEP_BOMB,            \
 			FIND_ITEM(ITEM_SLEEP_BOMB)},                                                         \
 		{SEARCH(SEARCH_BARREL), TRIGGER_BARREL_NUT, FLAG_LUNPA_BARREL_NUT, FIND_ITEM(ITEM_NUT)}, \
 		{PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_FLOATING_NUT, FLAG_LUNPA_NUT_CAUGHT,            \
-			EVENT_SCRIPT(FloatingNut_Catch)},                                                    \
-		{SEARCH(SEARCH_UNNAMED), TRIGGER_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(Well_Search)},     \
+			EVENT_SCRIPT(EV20_PSYNERGY)},                                                    \
+		{SEARCH(SEARCH_UNNAMED), TRIGGER_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SEARCH)},     \
 	{                                                                                            \
 		SCENE_EVENTS_END                                                                         \
 	}
@@ -1180,14 +1180,14 @@ struct SceneEvent gLunpaSealedEvents[] = {
 	LUNPA_ROADS_AND_DOORS,
 	TALK(ACTOR_VILLAGER_A, EVENT_SCRIPT(VillagerA_Talk)),
 	TALK(ACTOR_VILLAGER_B, MSGNO(MsgRunpaVillageVillagerBSealed)),
-	TALK(ACTOR_VILLAGER_C, EVENT_SCRIPT(VillagerC_Talk)),
+	TALK(ACTOR_VILLAGER_C, EVENT_SCRIPT(EV11_TALK)),
 	TALK(ACTOR_VILLAGER_D, MSGNO(MsgRunpaVillageVillagerDSealed)),
 	TALK(ACTOR_VILLAGER_E, MSGNO(MsgRunpaVillageVillagerESealed)),
 	TALK(ACTOR_VILLAGER_F, MSGNO(MsgRunpaVillageVillagerFSealed)),
-	TALK(ACTOR_VILLAGER_G, EVENT_SCRIPT(VillagerG_Talk)),
+	TALK(ACTOR_VILLAGER_G, EVENT_SCRIPT(EV15_TALK)),
 	TALK(ACTOR_VILLAGER_H, MSGNO(MsgRunpaVillageVillagerHSealed)),
-	TALK(ACTOR_WEST_GUARD, EVENT_SCRIPT(WestGuard_Talk)),
-	TALK(ACTOR_EAST_GUARD, EVENT_SCRIPT(EastGuard_Talk)),
+	TALK(ACTOR_WEST_GUARD, EVENT_SCRIPT(EV17_TALK)),
+	TALK(ACTOR_EAST_GUARD, EVENT_SCRIPT(EV18_TALK)),
 	MIND_READ(ACTOR_VILLAGER_A, MSGNO(MsgRunpaVillageVillagerASealedThoughts)),
 	MIND_READ(ACTOR_VILLAGER_B, MSGNO(MsgRunpaVillageVillagerBSealedThoughts)),
 	MIND_READ(ACTOR_VILLAGER_C, MSGNO(MsgRunpaVillageVillagerCSealedThoughts)),
@@ -1197,16 +1197,16 @@ struct SceneEvent gLunpaSealedEvents[] = {
 	MIND_READ(ACTOR_VILLAGER_G, MSGNO(MsgRunpaVillageVillagerGSealedThoughts)),
 	MIND_READ(ACTOR_VILLAGER_H, MSGNO(MsgRunpaVillageVillagerHSealedThoughts)),
 	MIND_READ(ACTOR_WEST_GUARD, MSGNO(MsgRunpaVillageWestGuardSealedThoughts)),
-	MIND_READ(ACTOR_EAST_GUARD, EVENT_SCRIPT(EastGuard_MindRead)),
+	MIND_READ(ACTOR_EAST_GUARD, EVENT_SCRIPT(EV18_PSYNERGY)),
 	LUNPA_SECRETS,
 };
 
 struct SceneEvent gLunpaReopenedEvents[] = {
 	LUNPA_ROADS_AND_DOORS,
 	TALK(ACTOR_VILLAGER_A, MSGNO(MsgRunpaVillageVillagerAReopened)),
-	TALK(ACTOR_VILLAGER_B, EVENT_SCRIPT(VillagerB_Shivers)),
+	TALK(ACTOR_VILLAGER_B, EVENT_SCRIPT(EV10_TALK)),
 	TALK(ACTOR_VILLAGER_C, MSGNO(MsgRunpaVillageVillagerCReopened)),
-	TALK(ACTOR_VILLAGER_D, EVENT_SCRIPT(VillagerD_Talk)),
+	TALK(ACTOR_VILLAGER_D, EVENT_SCRIPT(EV12_TALK)),
 	TALK(ACTOR_VILLAGER_E, MSGNO(MsgRunpaVillageVillagerEReopened)),
 	TALK(ACTOR_VILLAGER_F, MSGNO(MsgRunpaVillageVillagerFReopened)),
 	TALK(ACTOR_VILLAGER_G, MSGNO(MsgRunpaVillageVillagerGReopened)),
@@ -1222,7 +1222,7 @@ struct SceneEvent gLunpaReopenedEvents[] = {
 	MIND_READ(ACTOR_VILLAGER_G, MSGNO(MsgRunpaVillageVillagerGReopenedThoughts)),
 	MIND_READ(ACTOR_VILLAGER_H, MSGNO(MsgRunpaVillageVillagerHReopenedThoughts)),
 	MIND_READ(ACTOR_WEST_GUARD, MSGNO(MsgRunpaVillageWestGuardReopenedThoughts)),
-	MIND_READ(ACTOR_EAST_GUARD, EVENT_SCRIPT(EastGuard_MindRead)),
+	MIND_READ(ACTOR_EAST_GUARD, EVENT_SCRIPT(EV18_PSYNERGY)),
 	LUNPA_SECRETS,
 };
 
@@ -1232,17 +1232,17 @@ struct SceneEvent gGateEvents[] = {
 	{ PSYNERGY_IN_AREA(ABILITY_CLOAK, CLOAK_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Cloak_Begin) },
 	{ PSYNERGY_IN_AREA(ABILITY_CLOAK, CLOAK_FADED), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Cloak_End) },
 	{ EVENT_TOUCH, TRIGGER_FORTRESS_DOOR, FLAG_GATE_FORTRESS_ENTERED,
-      EVENT_SCRIPT(FortressGate_Enter) },
+      EVENT_SCRIPT(EV01_TOUCH) },
 	{ EVENT_TOUCH, TRIGGER_GUARDED_GROUND, FLAG_GATE_GUARDS_BLOCKING,
-      EVENT_SCRIPT(Guards_BlockGate) },
+      EVENT_SCRIPT(EV10_TOUCH) },
 	{ EVENT_TOUCH, TRIGGER_FORTRESS_APPROACH, CONDITION_ALWAYS,
-      EVENT_SCRIPT(Gerald_RefusesToReturn) },
-	{ EVENT_RAISED, TRIGGER_PARTY_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(Guards_CatchParty) },
-	TALK(ACTOR_LEFT_GUARD, EVENT_SCRIPT(LeftGuard_Talk)),
+      EVENT_SCRIPT(EV20_TOUCH) },
+	{ EVENT_RAISED, TRIGGER_PARTY_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(EV91_RAISED) },
+	TALK(ACTOR_LEFT_GUARD, EVENT_SCRIPT(EV08_TALK)),
 	TALK(ACTOR_RIGHT_GUARD, EVENT_SCRIPT(RightGuard_Talk)),
 	MIND_READ(ACTOR_LEFT_GUARD, EVENT_SCRIPT(LeftGuard_MindRead)),
-	MIND_READ(ACTOR_RIGHT_GUARD, EVENT_SCRIPT(RightGuard_MindRead)),
-	{ SEARCH(SEARCH_UNNAMED), TRIGGER_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(Well_Search) },
+	MIND_READ(ACTOR_RIGHT_GUARD, EVENT_SCRIPT(EV09_PSYNERGY)),
+	{ SEARCH(SEARCH_UNNAMED), TRIGGER_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EV90_SEARCH) },
 	{ SCENE_EVENTS_END },
 };
 

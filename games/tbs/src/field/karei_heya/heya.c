@@ -112,7 +112,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gKareiHeyaEventsOther;
 }
 
-static void SceneDialogue_RunActor12DialogueAndSetFlag910(void)
+static void EV12_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKareiPleaseFinishEatingIfTaking);
@@ -121,7 +121,7 @@ static void SceneDialogue_RunActor12DialogueAndSetFlag910(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor16Dialogue(void)
+static void EV16_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKareiDoKnowAboutContinentSouth);
@@ -129,7 +129,7 @@ static void SceneDialogue_RunActor16Dialogue(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor8FlaggedDialogue(void)
+static void EV08_TALK(void)
 {
 	struct FieldActor *p = Object_GetById(0);
 
@@ -157,7 +157,7 @@ static void SceneDialogue_RunActor8FlaggedDialogue(void)
 	}
 }
 
-static void SceneDialogue_RunActor8FacingDialogue(void)
+static void EV08_TALK_2(void)
 {
 
 	struct FieldActor *p = Object_GetById(0);
@@ -452,7 +452,7 @@ struct SceneEvent gKareiHeyaEvents1[] = {
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaIDoNotWantMySon) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaTheMostImportantSkillForA) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaMySonReceivedHisKnackFor) },
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor16Dialogue) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaIBetterGetReadyTheColosso) },
 	{ EVENT_TALK, 18, 0x911, MSGNO(MsgKareiHeyaWeFledFromGondowanToThe) },
 	{ EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaWeCameHereToEscapeThe) },
@@ -492,12 +492,12 @@ struct SceneEvent gKareiHeyaEvents1Entrance9[] = {
 	{ EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
 	{ EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
 	{ EVENT_EXIT, 17, CONDITION_ALWAYS, 17 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor8FlaggedDialogue) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK) },
 	{ EVENT_TALK, 9, 0x911, MSGNO(MsgKareiHeyaEveryoneIsGoingToTolbiTo) },
 	{ EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaEvenOurChefLeftSoWe) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaIveSignedOnForATour) },
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaTheColossoGladiatorsAreAllStrong) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor12DialogueAndSetFlag910) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaEveryoneLooksForwardToGoingTo) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaSurelyLordHammetWillPopUp) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaIWouldHaveEnteredColossoIf) },
@@ -534,7 +534,7 @@ struct SceneEvent gKareiHeyaEvents1Entrance9[] = {
 
 struct SceneEvent gKareiHeyaEvents2[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor8FacingDialogue) },
+	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TALK_2) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKareiHeyaICameHereToSpreadGood) },
 	{ SCENE_EVENTS_END },
 };

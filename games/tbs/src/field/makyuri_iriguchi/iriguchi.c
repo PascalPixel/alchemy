@@ -142,12 +142,12 @@ static s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/makyuri/palette_cycle.c"
 
-static void MakyuriIriguchi_TickSpawnTimer(void)
+static void EV21_TOUCH(void)
 {
 	Makyuri_TickSpawnTimer();
 }
 
-static void MakyuriIriguchi_ClearCurrentRecordAndReleaseTarget(void)
+static void EV31_TOUCH(void)
 {
 	SceneState_ClearCurrentRecordAndReleaseTarget();
 }
@@ -157,7 +157,7 @@ static void FieldScene_RunSingleStep(void)
 	Makyuri_RunActorMove();
 }
 
-static void MakyuriIriguchi_TriggerPillarRise(void)
+static void EV11_TOUCH(void)
 {
 	MakyuriIriguchi_RaisePillar();
 }
@@ -182,7 +182,7 @@ void *SceneData_GetSceneTableC(void)
 	return MakyuriIriguchi_SceneTableC;
 }
 
-static void FieldScene_RunStepWithValue1632(void)
+static void EV01_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -226,17 +226,17 @@ static void MakyuriIriguchi_DropLeaderToColumn(s32 a0)
 	Engine_EventWait(30);
 }
 
-static void FieldScene_RunIndexedStep17(void)
+static void EV67_TOUCH(void)
 {
 	SceneActor_RunActorZeroHandledMotion(17);
 }
 
-static void FieldScene_RunIndexedStep18(void)
+static void EV68_TOUCH(void)
 {
 	SceneActor_RunActorZeroHandledMotion(18);
 }
 
-static void FieldScene_RunIndexedStep19(void)
+static void EV69_TOUCH(void)
 {
 	SceneActor_RunActorZeroHandledMotion(19);
 }
@@ -246,7 +246,7 @@ void *SceneData_GetSceneTableD(void)
 	return MakyuriIriguchi_SceneTableD;
 }
 
-static void FieldScene_RunSupplementalSequenceTwo(void)
+static void EV16_PSYNERGY(void)
 {
 	s32 a;
 	s32 b;
@@ -304,7 +304,7 @@ static void FieldScene_RunSupplementalSequenceTwo(void)
 	}
 }
 
-static void FieldScene_RunIndexedStep63(void)
+static void EV10_TOUCH(void)
 {
 	Engine_EventRequestExit(63);
 }
@@ -315,7 +315,7 @@ static void MakyuriIriguchi_InstallActorEightPath(void)
 	Engine_ActorEnableActionCallback(8, MakyuriIriguchi_Actor8Path1);
 }
 
-static void MakyuriIriguchi_SendActor8ByLeaderColumn(void)
+static void EV41_TOUCH(void)
 {
 	struct FieldActor *record;
 	s32				   field8;
@@ -859,20 +859,20 @@ struct SceneEntrance MakyuriIriguchi_SceneTableC[] = {
 
 struct SceneEvent MakyuriIriguchi_SceneTableD[] = {
 	{ 0x202, 31, IF_FLAG_SET(0x875), EVENT_SCRIPT(FieldScene_RunSingleStep) },
-	{ EVENT_TOUCH, 31, IF_FLAG_SET(0x875), EVENT_SCRIPT(MakyuriIriguchi_ClearCurrentRecordAndReleaseTarget) },
+	{ EVENT_TOUCH, 31, IF_FLAG_SET(0x875), EVENT_SCRIPT(EV31_TOUCH) },
 	{ 0xa02, 21, IF_FLAG_SET(0x875), EVENT_SCRIPT(FieldScene_RunSingleStep) },
-	{ EVENT_TOUCH, 21, IF_FLAG_SET(0x875), EVENT_SCRIPT(MakyuriIriguchi_TickSpawnTimer) },
+	{ EVENT_TOUCH, 21, IF_FLAG_SET(0x875), EVENT_SCRIPT(EV21_TOUCH) },
 	{ 0x202, 11, IF_FLAG_SET(0x875), EVENT_SCRIPT(FieldScene_RunSingleStep) },
-	{ EVENT_TOUCH, 11, IF_FLAG_SET(0x875), EVENT_SCRIPT(MakyuriIriguchi_TriggerPillarRise) },
-	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunIndexedStep63) },
+	{ EVENT_TOUCH, 11, IF_FLAG_SET(0x875), EVENT_SCRIPT(EV11_TOUCH) },
+	{ EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_TOUCH) },
 	{ EVENT_TOUCH, 40, IF_FLAG_SET(0x205), EVENT_SCRIPT(MakyuriIriguchi_InstallActorEightPath) },
 	{ EVENT_TOUCH, 42, IF_FLAG_SET(0x205), EVENT_SCRIPT(MakyuriIriguchi_InstallActorEightPath) },
-	{ EVENT_TOUCH, 41, 0x205, EVENT_SCRIPT(MakyuriIriguchi_SendActor8ByLeaderColumn) },
+	{ EVENT_TOUCH, 41, 0x205, EVENT_SCRIPT(EV41_TOUCH) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 40, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriIriguchi_OpenEntrance) },
 	{ TOUCH_WALKING_INTO(FACING_NORTH), 41, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriIriguchi_OpenEntrance) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 67, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunIndexedStep17) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 68, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunIndexedStep18) },
-	{ TOUCH_WALKING_INTO(FACING_NORTH), 69, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunIndexedStep19) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 67, CONDITION_ALWAYS, EVENT_SCRIPT(EV67_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 68, CONDITION_ALWAYS, EVENT_SCRIPT(EV68_TOUCH) },
+	{ TOUCH_WALKING_INTO(FACING_NORTH), 69, CONDITION_ALWAYS, EVENT_SCRIPT(EV69_TOUCH) },
 	{ EVENT_EXIT, 51, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 52, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 53, CONDITION_ALWAYS, 3 },
@@ -893,8 +893,8 @@ struct SceneEvent MakyuriIriguchi_SceneTableD[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 3, CONDITION_ALWAYS, MSGNO(MsgMakyuriLetMePass) },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriIriguchi_OpenEntrance) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriIriguchi_OpenEntrance) },
-	{ SEARCH(SEARCH_UNNAMED), 1, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunStepWithValue1632) },
-	{ PSYNERGY_ON_ACTOR(0x5d), 16, 0x875, EVENT_SCRIPT(FieldScene_RunSupplementalSequenceTwo) },
+	{ SEARCH(SEARCH_UNNAMED), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_SEARCH) },
+	{ PSYNERGY_ON_ACTOR(0x5d), 16, 0x875, EVENT_SCRIPT(EV16_PSYNERGY) },
 	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf65, FIND_ITEM(0x4c) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xef0, 0x500000 },

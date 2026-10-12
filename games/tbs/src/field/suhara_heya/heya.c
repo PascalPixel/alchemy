@@ -36,7 +36,7 @@ s32 SuharaHeya_SelectPlacements(void)
 	return (s32)gSuharaHeyaPlacements;
 }
 
-static void Dialogue_HandleFacingChoice(s32 no)
+static void EV12_TALK(s32 no)
 {
 	u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
 	if (facing == 0xc000)
@@ -66,7 +66,7 @@ static void Dialogue_HandleFacingChoice(s32 no)
 	}
 }
 
-static void Dialogue_HandleFacingBranch(s32 no)
+static void EV13_TALK(s32 no)
 {
 	u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
 	if (facing == 0xc000)
@@ -85,7 +85,7 @@ static void Dialogue_HandleFacingBranch(s32 no)
 	}
 }
 
-static void Dialogue_HandleFacingAction(s32 no)
+static void EV18_TALK(s32 no)
 {
 	u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
 	if (facing == 0xc000)
@@ -104,7 +104,7 @@ static void Dialogue_HandleFacingAction(s32 no)
 	}
 }
 
-static void SuharaHeya_AskBlownHere(s32 obj)
+static void EV17_TALK(s32 obj)
 {
 	s32 msg = (s32)MsgSuharaSupposeFolkBlown;
 	Engine_EventSetMessage(msg);
@@ -130,7 +130,7 @@ static void SuharaHeya_PlayCueAndRequestTouchedExit(void)
 	Engine_AudioPlayCue(0x7B);
 }
 
-static void Scene_RunPrimaryScript(void)
+static void EV50_TOUCH(void)
 {
 	struct FieldActor *record;
 	GameFlag_Set(2480);
@@ -551,13 +551,13 @@ struct SceneEvent gSuharaHeyaEvents[] = {
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaIfYouHeadEastAcrossSuhalla) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaSuhallaIsADesertVillageI) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaGoodThingItsNotEasyTo) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Dialogue_HandleFacingChoice) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaAVillageThisSmallCantSupport) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Dialogue_HandleFacingBranch) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaIWonderIfAnyCustomersCan) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaOnceTheFestivalEndsTheTravelers) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaForSomeReasonAnyoneWhoGets) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(Dialogue_HandleFacingAction) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaTheHolyChildActorWillSave) },
 	{ SEARCH(SEARCH_OVEN), 100, 0xfb0, FIND_ITEM(ITEM_SMOKE_BOMB) },
 	{ SEARCH(SEARCH_OVEN), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuharaHeyaItsACactusSteakIWonder)) },
@@ -566,7 +566,7 @@ struct SceneEvent gSuharaHeyaEvents[] = {
 };
 
 struct SceneEvent gSuharaHeyaEvents96f[] = {
-	{ EVENT_TOUCH, 50, 0x9b0, EVENT_SCRIPT(Scene_RunPrimaryScript) },
+	{ EVENT_TOUCH, 50, 0x9b0, EVENT_SCRIPT(EV50_TOUCH) },
 	{ EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaHeya_PlayCueAndRequestTouchedExit) },
 	{ EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaHeya_PlayCueAndRequestTouchedExit) },
 	{ EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaHeya_PlayCueAndRequestTouchedExit) },
@@ -588,19 +588,19 @@ struct SceneEvent gSuharaHeyaEvents96f[] = {
 	{ EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaDeathStormsHuhThereWasA) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaOnceYouGetSweptUpIn) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaYeWhoSeekSomethingAboutEyes) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Dialogue_HandleFacingChoice) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaWeveHadMoreCustomersLatelyBecause) },
-	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Dialogue_HandleFacingBranch) },
+	{ EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TALK) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaItWillTakeTimeForThe) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaTheSandstormsAreSendingCustomersOur) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaPleaseGreatSandstormsSendUsMore) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaWeWentIntoTheSuhallaTo) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaTheSandstormsAreSoBadWeve) },
-	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(SuharaHeya_AskBlownHere) },
+	{ EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(EV17_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaEvenIfWeCantGoIt) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaSoShallWeGiveUpOn) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaWhenThatCycloneThrewUsInto) },
-	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(Dialogue_HandleFacingAction) },
+	{ EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgSuharaHeyaIShudderToThinkSandstormsWill) },
 	{ SEARCH(SEARCH_OVEN), 100, 0xfb0, FIND_ITEM(ITEM_SMOKE_BOMB) },
 	{ SEARCH(SEARCH_OVEN), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuharaHeyaItsACactusSteakIWonder)) },

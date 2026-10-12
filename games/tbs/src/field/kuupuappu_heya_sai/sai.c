@@ -70,21 +70,21 @@ static void SceneActor_RunActorStep(s32 arg0)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor9Line(void)
+static void EV09_TALK(void)
 {
 	Engine_EventSetMessage((s32)MsgKuupuappuThoughtSawCatGetUp);
 	Engine_ActorFaceEachOther(9, ACTOR_PARTY_LEADER, 2);
 	SceneActor_RunActorStep(9);
 }
 
-static void SceneDialogue_RunActor11Line(void)
+static void EV11_TALK(void)
 {
 	Engine_EventSetMessage((s32)MsgKuupuappuDodonpasHenchmenNeverAttackedUs);
 	Engine_ActorFaceEachOther(11, ACTOR_PARTY_LEADER, 2);
 	SceneActor_RunActorStep(11);
 }
 
-static void SceneDialogue_RunActor12Line(void)
+static void EV12_TALK(void)
 {
 	Engine_EventSetMessage((s32)MsgKuupuappuItsNearTimeForColosso);
 	Engine_ActorFaceEachOther(12, ACTOR_PARTY_LEADER, 2);
@@ -121,14 +121,14 @@ static void SceneDialogue_RunActor16Line(void)
 	SceneActor_RunActorStep(16);
 }
 
-static void SceneDialogue_RunActor23Line(void)
+static void EV23_TALK(void)
 {
 	Engine_EventSetMessage((s32)MsgKuupuappuDidSomeCookingNowIve);
 	Engine_ActorFaceEachOther(23, ACTOR_PARTY_LEADER, 2);
 	SceneActor_RunActorStep(23);
 }
 
-static void FieldScene_RunActor18FlaggedSequence(void)
+static void EV18_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 0);
@@ -174,7 +174,7 @@ L_020002d4:;
 	Engine_EventEnd();
 }
 
-static void SceneActor_RunActor16StepWithFlag91(void)
+static void EV1040_PSYNERGY(void)
 {
 	u8 *slot;
 	u8	clear = 0;
@@ -190,7 +190,7 @@ static void SceneActor_RunActor16StepWithFlag91(void)
 	Engine_ActorEnableActionCallback(16, 2);
 }
 
-static void FieldScene_RunActor18ConditionalCue(void)
+static void EV41_SEARCH(void)
 {
 	Engine_EventBegin();
 
@@ -210,7 +210,7 @@ static void FieldScene_RunActor18ConditionalCue(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor19StepByPlace(void)
+static void EV19_TALK(void)
 {
 	u32 place;
 
@@ -230,7 +230,7 @@ static void FieldScene_RunActor19StepByPlace(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor20StepByPlace(void)
+static void EV20_TALK(void)
 {
 	u32 place;
 
@@ -250,7 +250,7 @@ static void FieldScene_RunActor20StepByPlace(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor21StepByPlace(void)
+static void EV21_TALK(void)
 {
 	u32 place;
 
@@ -270,7 +270,7 @@ static void FieldScene_RunActor21StepByPlace(void)
 	Engine_EventEnd();
 }
 
-static void FieldScene_RunActor22StepByPlace(void)
+static void EV22_TALK(void)
 {
 	u32 place;
 
@@ -290,7 +290,7 @@ static void FieldScene_RunActor22StepByPlace(void)
 	Engine_EventEnd();
 }
 
-static void SceneDialogue_RunActor18FlaggedLine(void)
+static void EV18_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x85B) == 0)
@@ -442,30 +442,30 @@ struct SceneEvent Placement_Effects[] = {
 	{ EVENT_EXIT, 7, CONDITION_ALWAYS, 11 },
 	{ EVENT_EXIT, 8, CONDITION_ALWAYS, 12 },
 	{ EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWaahACatAteMyPrecious) },
-	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor9Line) },
+	{ EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TALK) },
 	{ EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKuupuappuThePrisonersSaidTheyWantedTo) },
-	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor11Line) },
-	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor12Line) },
+	{ EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TALK) },
+	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TALK) },
 	{ EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKuupuappuTheWarriorsISawFightingAt) },
 	{ EVENT_TALK, 16, 0x300, EVENT_SCRIPT(FieldScene_RunActor16Sequence) },
 	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor16Line) },
 	{ EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgKuupuappuTheMayorsFamilyUrnIsOn) },
 	{ EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgKuupuappuThoseThievesYouGoToAll) },
 	{ EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKuupuappuIHearThatABigFestival) },
-	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor19StepByPlace) },
-	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor20StepByPlace) },
-	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor21StepByPlace) },
-	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor22StepByPlace) },
+	{ EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TALK) },
+	{ EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_TALK) },
+	{ EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EV21_TALK) },
+	{ EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EV22_TALK) },
 	{ EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWeDontGetALotOf) },
-	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor23Line) },
-	{ EVENT_TALK, 18, 0x250, EVENT_SCRIPT(FieldScene_RunActor18FlaggedSequence) },
+	{ EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(EV23_TALK) },
+	{ EVENT_TALK, 18, 0x250, EVENT_SCRIPT(EV18_TALK) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKuupuappuIfIdKnownThisWasGoing) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKuupuappuMyHusbandSaysMyCatAte) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWhyDoYouSupposeThoseThieves) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKuupuappuDaddyHasntBeenPayingAttentionSince) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWheneverMyWifeUsedToGo) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKuupuappuLatelyMyHusbandsBeenGoingOn) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x410, 0x300, EVENT_SCRIPT(SceneActor_RunActor16StepWithFlag91) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x410, 0x300, EVENT_SCRIPT(EV1040_PSYNERGY) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKuupuappuAsLongAsWeStayAlert) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWellBeSecuringItInA) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKuupuappuItsJustEmbarrassingThatWeLet) },
@@ -475,8 +475,8 @@ struct SceneEvent Placement_Effects[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWhyKeepTheStoreOpenIf) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgKuupuappuWontAnyoneComeStayTheNight) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgKuupuappuAfterYouveBeenInThisBusiness) },
-	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_RunActor18FlaggedLine) },
-	{ SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunActor18ConditionalCue) },
+	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT_SCRIPT(EV18_PSYNERGY) },
+	{ SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(EV41_SEARCH) },
 	{ SEARCH(SEARCH_JAR), 100, 0xf4b, FIND_COINS(7) },
 	{ SEARCH(SEARCH_BARREL), 101, 0xf4c, FIND_COINS(4) },
 	{ SEARCH(SEARCH_BARREL), 102, 0xf4d, FIND_ITEM(ITEM_SLEEP_BOMB) },

@@ -65,7 +65,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gSoruNichigetsuEvents;
 }
 
-static void FieldScene_RunScene37aSequenceA(void)
+static void EV13_TOUCH(void)
 {
 	s32 record;
 
@@ -111,7 +111,7 @@ static void FieldScene_RunScene37aSequenceA(void)
 L_020000f0:;
 }
 
-static void FieldScene_RunScene37aSequenceB(void)
+static void EV15_TOUCH(void)
 {
 	if (GameFlag_IsSet(0x200) == 0)
 	{
@@ -125,7 +125,7 @@ static void FieldScene_RunScene37aSequenceB(void)
 	}
 }
 
-static void FieldScene_RunScene37aSequenceC(void)
+static void EV14_TOUCH(void)
 {
 	s32 record;
 
@@ -164,7 +164,7 @@ static void FieldScene_RunScene37aSequenceC(void)
 L_020001d6:;
 }
 
-static void FieldScene_RunScene37aSequenceD(void)
+static void EV12_TOUCH(void)
 {
 	if (GameFlag_IsSet(0x202) == 0)
 	{
@@ -176,7 +176,7 @@ static void FieldScene_RunScene37aSequenceD(void)
 	}
 }
 
-static void ClearSolShindenBackdrop(void)
+static void EV19_TOUCH(void)
 {
 	s32	 black = 0;
 	u16 *backdrop_color = (u16 *)0x5000000;
@@ -295,13 +295,13 @@ static void SetStatueLightGroup4(void)
 	}
 }
 
-static void FieldScene_RunScene37aSequenceF(void)
+static void EV11_TOUCH(void)
 {
 	struct FieldActor *rec;
 
 	if (Engine_GameFlagIsSet(0x814) != 0)
 	{
-		FieldScene_RunScene37aSequenceA();
+		EV13_TOUCH();
 	}
 	if (Engine_GameFlagIsSet(0x809) == 0)
 	{
@@ -538,7 +538,7 @@ static void Scene_EnterInnerSanctum(void)
 	GameFlag_Set(FLAG_INNER_SANCTUM_ENTERED);
 }
 
-static void UpdateStatueTrapActor(void)
+static void EV09_TOUCH(void)
 {
 	EntA *scene_actor;
 	EntA *target_actor;
@@ -551,7 +551,7 @@ static void UpdateStatueTrapActor(void)
 	}
 	if (GameFlag_IsSet(0x814) != 0)
 	{
-		FieldScene_RunScene37aSequenceB();
+		EV15_TOUCH();
 		return;
 	}
 	if (GameFlag_IsSet(0x819) != 0)
@@ -1087,7 +1087,7 @@ static void FieldScene_RunFlaggedSequence(void)
 	Engine_EventRequestExit(5);
 }
 
-static void Scene_ChangeLunaPictureToSol(void)
+static void EV08_TOUCH(void)
 {
 	struct FieldActor *record;
 
@@ -1172,7 +1172,7 @@ static void FieldScene_RunActorPositionTransition(void)
 	Engine_GameFlagSet(0x811);
 }
 
-static void FieldScene_RunSanctumRiseAndShrink(void)
+static void EV20_SEARCH(void)
 {
 	struct FieldActor  *actor;
 	s32					base5_8010;
@@ -1631,7 +1631,7 @@ static void SoruNichigetsu_RunLightScene(void)
 	Engine_EventEnd();
 }
 
-static void Sukureta_Talk(void)
+static void EV16_TALK(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(FLAG_ROBIN_SEARCHING_FOR_SUKURETA) != 0)
@@ -1700,18 +1700,18 @@ struct ScenePlacement gSoruNichigetsuPlacements[] = {
 };
 
 struct SceneEvent gSoruNichigetsuEvents[] = {
-	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Sukureta_Talk) },
-	{ EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene37aSequenceC) },
-	{ EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene37aSequenceA) },
-	{ EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene37aSequenceB) },
-	{ EVENT_TOUCH, 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene37aSequenceD) },
-	{ EVENT_TOUCH, 19, CONDITION_ALWAYS, EVENT_SCRIPT(ClearSolShindenBackdrop) },
-	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSanctumRiseAndShrink) },
-	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Scene_ChangeLunaPictureToSol) },
+	{ EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(EV16_TALK) },
+	{ EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EV14_TOUCH) },
+	{ EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EV13_TOUCH) },
+	{ EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EV15_TOUCH) },
+	{ EVENT_TOUCH, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EV12_TOUCH) },
+	{ EVENT_TOUCH, 19, CONDITION_ALWAYS, EVENT_SCRIPT(EV19_TOUCH) },
+	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EV20_SEARCH) },
+	{ EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EV08_TOUCH) },
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ 0x21, 2, CONDITION_ALWAYS, 2 },
-	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScene37aSequenceF) },
-	{ EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(UpdateStatueTrapActor) },
+	{ EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EV11_TOUCH) },
+	{ EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EV09_TOUCH) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf40, FIND_ITEM(0xb4) },
 	{ SCENE_EVENTS_END },
 };

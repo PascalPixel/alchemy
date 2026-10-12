@@ -67,7 +67,7 @@ u8 *BabiFune_GetPlacements(void)
 	return BabiFune_SceneTableC;
 }
 
-static void PlayWorkspaceCueAndClearPaletteZero(void)
+static void EV01_TOUCH(void)
 {
 	Engine_EventRequestExit(gEventWork->touched_trigger);
 	Io_Write16(0, &PLTT_BACKDROP);
@@ -540,7 +540,7 @@ static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base)
 	return (u16)(Iwram_MulQ16(BabiFune_WaveSine[(angle >> 16) & 0xff], amplitude) / 256) + base;
 }
 
-static void BabiFune_RunDeparture(void)
+static void EV10_SCRIPT(void)
 {
 	struct WaveMap *map;
 	s32				i;
@@ -932,12 +932,12 @@ struct ScenePlacement BabiFune_SceneTableC[] = {
 };
 
 struct SceneEvent BabiFune_SceneTableD[] = {
-	{EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(PlayWorkspaceCueAndClearPaletteZero)},
+	{EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH)},
 	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
 		EVENT_SCRIPT(BabiFune_LoadTablesAndStopDma)},
 	{PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
 		EVENT_SCRIPT(FieldScene_ConfigureFixedPointValues)},
-	{0xf204, 10, CONDITION_ALWAYS, EVENT_SCRIPT(BabiFune_RunDeparture)},
+	{0xf204, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EV10_SCRIPT)},
 	{SCENE_EVENTS_END},
 };
 

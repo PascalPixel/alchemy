@@ -115,4 +115,10 @@ static __inline__ void Func_02005a50_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, 
     Func_02005a50(a, b, c, d, e, f, g);
 }
 
+/* The store-flag form of a logical not: the equality tests of this stage return 1 - (difference != 0) with no branch, which the compiler emits only for !value on a register (as plain comparisons they compile to a compare and branch). */
+static __inline__ s32 IsZero(s32 value)
+{
+    return !value;
+}
+
 #endif

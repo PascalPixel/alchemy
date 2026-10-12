@@ -14,3 +14,19 @@ void Func_02000d70(void)
     if (GameFlag_Test(0x254))
         Map_CopyCells(0, 48, 1, 3, 19, 26);
 }
+
+s32 Func_02000df8(s32 x, s32 z)
+{
+    struct ObjectRuntime *object = Object_GetById(15);
+    struct Ov697MapWork *map = (struct Ov697MapWork *)Ram_HeapSlots->map_work;
+    u8 *cells;
+    u8 *cell;
+    s32 value;
+
+    if (object->x >> 20 == x && object->z >> 20 == z)
+        return 1;
+    cells = map->layers[0].cells;
+    cell = cells + ((x + (z << 7)) << 2);
+    value = cell[2];
+    return IsZero(value ^ 0xff);
+}

@@ -871,48 +871,6 @@ Func_02000cf8:
 	pop {r5, r6, pc}
 .L_02008d6c:
 	.4byte 0xfffffe00
-	.section .text.x02008df8,"ax",%progbits
-	.balign 4
-	.global Func_02000df8
-	.thumb_func
-Func_02000df8:
-	push {r5, r6, lr}
-	adds r6, r0, #0
-	movs r0, #15
-	adds r5, r1, #0
-	bl Object_GetById
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r2, [r3, #32]
-	ldr r3, [r0, #8]
-	asrs r3, r3, #20
-	cmp r3, r6
-	bne .L_02008e1c
-	ldr r3, [r0, #16]
-	movs r0, #1
-	asrs r3, r3, #20
-	cmp r3, r5
-	beq .L_02008e3c
-.L_02008e1c:
-	movs r1, #156
-	lsls r1, r1, #1
-	adds r3, r2, r1
-	ldr r2, [r3]
-	lsls r3, r5, #7
-	adds r3, r6, r3
-	lsls r3, r3, #2
-	adds r2, r2, r3
-	ldrb r2, [r2, #2]
-	movs r3, #255
-	eors r2, r3
-	negs r3, r2
-	orrs r3, r2
-	lsrs r3, r3, #31
-	movs r0, #1
-	subs r0, r0, r3
-.L_02008e3c:
-	pop {r5, r6, pc}
-	.2byte 0x0000
 	.section .text.x02008e40,"ax",%progbits
 	.balign 4
 	.global Func_02000e40
@@ -8312,26 +8270,6 @@ Func_020055c4:
 	.4byte Data_020062d4
 .L_0200d684:
 	.4byte Func_020051a0
-	.section .text.x0200d6e8,"ax",%progbits
-	.balign 4
-	.global Func_020056e8
-	.thumb_func
-Func_020056e8:
-	ldr r3, .L_0200d700
-	movs r0, #1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	movs r3, #9
-	eors r2, r3
-	negs r3, r2
-	orrs r3, r2
-	lsrs r3, r3, #31
-	subs r0, r0, r3
-	bx lr
-	.2byte 0x0000
-.L_0200d700:
-	.4byte gSceneState
-	.4byte 0x00004770
 	.section .rodata.x0200dfa0,"a",%progbits
 	.global Data_02005fa0
 Data_02005fa0:

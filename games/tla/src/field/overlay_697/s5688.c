@@ -47,3 +47,14 @@ void Func_020056c4(s32 a)
     control->state = 1;
     Func_02004ddc();
 }
+
+s32 Func_020056e8(void)
+{
+    s32 state = *(s16 *)gSceneState;
+
+    return IsZero(state ^ 9);
+}
+
+void Func_02005704(void)
+{
+}

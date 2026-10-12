@@ -306,10 +306,6 @@ Func_08022b80Far:
 	.incbin "baserom.gba", 0x00020038, 0x00000008
 	.section .rom.00020060, "ax"
 	.incbin "baserom.gba", 0x00020060, 0x00000008
-	.global Func_08020038
-	.type Func_08020038, %function
-	.thumb_func
-Func_08020038:
 	.global ResourceMetadata_ReleaseSlotFar
 	.type ResourceMetadata_ReleaseSlotFar, %function
 	.thumb_func

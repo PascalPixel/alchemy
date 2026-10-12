@@ -3,7 +3,7 @@
 @ デバッグ用の仲間 (owner -1 で区切り)
 	.global Debug_PartyPresets
 Debug_PartyPresets:
-	.incbin "debug/presets.table"
+	.incbin "battle/presets.table"
 	.global BattlePres_ActorObjectScript
 BattlePres_ActorObjectScript:
 	.4byte 16

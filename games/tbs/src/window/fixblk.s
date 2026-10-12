@@ -5,11 +5,11 @@ Resource_FixedBlockBTiles:
 	.incbin "window/fixblkb.4bpp16x16"
 	.global DjinnMenu_ArrowUpTiles
 DjinnMenu_ArrowUpTiles:
-	.incbin "menu/djinn/arrowup.4bpp16x16"
+	.incbin "window/arrowup.4bpp16x16"
 	.global DjinnMenu_ArrowDownTiles
 DjinnMenu_ArrowDownTiles:
-	.incbin "menu/djinn/arrowdn.4bpp16x16"
-	.incbin "menu/djinn/glyphbar.4bpp"
+	.incbin "window/arrowdn.4bpp16x16"
+	.incbin "window/glyphbar.4bpp"
 	.global Resource_FixedBlockATiles
 Resource_FixedBlockATiles:
 	.incbin "window/fixblka.4bpp16x16"

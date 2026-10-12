@@ -30,168 +30,168 @@ Tile_Decompress4bpp:
 .syntax unified
 	.section .text.decompress_4bpp_loop,"ax",%progbits
 	.arm
-.L_08015b38:
+.Lpush_front:
 	orr	r2, r4, r3, lsr #28
 	orr	r3, r6, r3, lsl #4
-.L_08015b40:
+.Lfront:
 	and	r6, r3, r5
-.L_08015b44:
+.Lput:
 	strb	r6, [r1], #1
 	lsrs	ip, ip, #1
-	bcs .L_08015b5c
+	bcs .Lcode
 	strb	r6, [r1], #1
 	.global Tile_Decompress4bppLoop
 Tile_Decompress4bppLoop:
 	lsrs	ip, ip, #1
-	bcc .L_08015b40
-.L_08015b5c:
+	bcc .Lfront
+.Lcode:
 	ldreq	ip, [r0], #4
 	rrxseq	ip, ip
-	bcc .L_08015b40
+	bcc .Lfront
 	lsrs	ip, ip, #1
 	ldreq	ip, [r0], #4
 	rrxseq	ip, ip
-	bcc .L_08015d10
+	bcc .Lcode_1_3
 	lsrs	ip, ip, #1
 	ldreq	ip, [r0], #4
 	rrxseq	ip, ip
-	bcc .L_08015cd8
+	bcc .Lcode_4_5
 	lsrs	ip, ip, #1
 	ldreq	ip, [r0], #4
 	rrxseq	ip, ip
-	bcs .L_08015bac
+	bcs .Lcode_7_up
 	lsr	r4, r3, #28
 	orr	r4, r4, r3, lsl #8
 	and	r6, r5, r3, lsr #24
 	orr	r3, r6, r4, ror #4
-	b .L_08015b44
-.L_08015bac:
+	b .Lput
+.Lcode_7_up:
 	lsrs	ip, ip, #1
 	ldreq	ip, [r0], #4
 	rrxseq	ip, ip
-	bcs .L_08015be4
+	bcs .Lcode_9_up
 	lsrs	ip, ip, #1
 	ldreq	ip, [r0], #4
 	rrxseq	ip, ip
-	bcs .L_08015bd8
+	bcs .Ltake_8
 	ror	r3, r3, #28
 	and	r6, r5, r3
-	b .L_08015b44
-.L_08015bd8:
+	b .Lput
+.Ltake_8:
 	and	r6, r5, r2
 	bic	r4, r2, #15
-	b .L_08015b38
-.L_08015be4:
+	b .Lpush_front
+.Lcode_9_up:
 	lsrs	ip, ip, #1
 	ldreq	ip, [r0], #4
 	rrxseq	ip, ip
-	bcs .L_08015c08
+	bcs .Lcode_10_up
 	and	r6, r5, r2, lsr #4
 	lsr	r4, r2, #8
 	orr	r4, r4, r2, lsl #28
 	ror	r4, r4, #24
-	b .L_08015b38
-.L_08015c08:
+	b .Lpush_front
+.Lcode_10_up:
 	lsrs	ip, ip, #1
 	ldreq	ip, [r0], #4
 	rrxseq	ip, ip
-	bcs .L_08015c50
+	bcs .Lcode_12_up
 	lsrs	ip, ip, #1
 	ldreq	ip, [r0], #4
 	rrxseq	ip, ip
-	bcs .L_08015c3c
+	bcs .Ltake_11
 	and	r6, r5, r2, lsr #8
 	lsr	r4, r2, #12
 	orr	r4, r4, r2, lsl #24
 	ror	r4, r4, #20
-	b .L_08015b38
-.L_08015c3c:
+	b .Lpush_front
+.Ltake_11:
 	and	r6, r5, r2, lsr #12
 	lsr	r4, r2, #16
 	orr	r4, r4, r2, lsl #20
 	ror	r4, r4, #16
-	b .L_08015b38
-.L_08015c50:
+	b .Lpush_front
+.Lcode_12_up:
 	lsrs	ip, ip, #1
 	ldreq	ip, [r0], #4
 	rrxseq	ip, ip
-	bcs .L_08015c74
+	bcs .Lcode_13_up
 	and	r6, r5, r2, lsr #16
 	lsr	r4, r2, #20
 	orr	r4, r4, r2, lsl #16
 	ror	r4, r4, #12
-	b .L_08015b38
-.L_08015c74:
+	b .Lpush_front
+.Lcode_13_up:
 	lsrs	ip, ip, #1
 	ldreq	ip, [r0], #4
 	rrxseq	ip, ip
-	bcs .L_08015cbc
+	bcs .Lcode_15_end
 	lsrs	ip, ip, #1
 	ldreq	ip, [r0], #4
 	rrxseq	ip, ip
-	bcs .L_08015ca8
+	bcs .Ltake_14
 	and	r6, r5, r2, lsr #20
 	lsr	r4, r2, #24
 	orr	r4, r4, r2, lsl #12
 	ror	r4, r4, #8
-	b .L_08015b38
-.L_08015ca8:
+	b .Lpush_front
+.Ltake_14:
 	and	r6, r5, r2, lsr #24
 	lsr	r4, r2, #28
 	orr	r4, r4, r2, lsl #8
 	ror	r4, r4, #4
-	b .L_08015b38
-.L_08015cbc:
+	b .Lpush_front
+.Lcode_15_end:
 	lsrs	ip, ip, #1
 	ldreq	ip, [r0], #4
 	rrxseq	ip, ip
-	bcs .L_08015d6c
+	bcs .Ldone
 	and	r6, r5, r2, lsr #28
 	lsl	r4, r2, #4
-	b .L_08015b38
-.L_08015cd8:
+	b .Lpush_front
+.Lcode_4_5:
 	lsrs	ip, ip, #1
 	ldreq	ip, [r0], #4
 	rrxseq	ip, ip
-	bcc .L_08015cfc
+	bcc .Ltake_4
 	lsr	r4, r3, #24
 	orr	r4, r4, r3, lsl #12
 	and	r6, r5, r3, lsr #20
 	orr	r3, r6, r4, ror #8
-	b .L_08015b44
-.L_08015cfc:
+	b .Lput
+.Ltake_4:
 	lsr	r4, r3, #20
 	orr	r4, r4, r3, lsl #16
 	and	r6, r5, r3, lsr #16
 	orr	r3, r6, r4, ror #12
-	b .L_08015b44
-.L_08015d10:
+	b .Lput
+.Lcode_1_3:
 	lsrs	ip, ip, #1
 	ldreq	ip, [r0], #4
 	rrxseq	ip, ip
-	bcc .L_08015d58
+	bcc .Ltake_1
 	lsrs	ip, ip, #1
 	ldreq	ip, [r0], #4
 	rrxseq	ip, ip
-	bcs .L_08015d44
+	bcs .Ltake_3
 	lsr	r4, r3, #12
 	orr	r4, r4, r3, lsl #24
 	and	r6, r5, r3, lsr #8
 	orr	r3, r6, r4, ror #20
-	b .L_08015b44
-.L_08015d44:
+	b .Lput
+.Ltake_3:
 	lsr	r4, r3, #16
 	orr	r4, r4, r3, lsl #20
 	and	r6, r5, r3, lsr #12
 	orr	r3, r6, r4, ror #16
-	b .L_08015b44
-.L_08015d58:
+	b .Lput
+.Ltake_1:
 	lsr	r4, r3, #8
 	orr	r4, r4, r3, lsl #28
 	and	r6, r5, r3, lsr #4
 	orr	r3, r6, r4, ror #24
-	b .L_08015b44
-.L_08015d6c:
+	b .Lput
+.Ldone:
 	pop	{r5, r6}
 	bx	lr
 .syntax unified
@@ -202,11 +202,11 @@ Tile_ExpandMasked:
 	push	{r5, r6, r7, r8, r9, sl}
 	add	sl, pc, #132
 	ldm	sl, {r4, r6, r7}
-.L_08015d80:
+.Lline:
 	add	sl, r0, r2, lsl #3
-.L_08015d84:
+.Ltile:
 	add	r9, r1, #32
-.L_08015d88:
+.Lrow:
 	ldm	r0, {r5, ip}
 	orr	r5, r5, r5, lsr #4
 	and	r5, r5, r4
@@ -227,14 +227,14 @@ Tile_ExpandMasked:
 	str	ip, [r1], #4
 	add	r0, r0, r2, lsl #3
 	cmp	r1, r9
-	bne .L_08015d88
+	bne .Lrow
 	sub	r0, r0, r2, lsl #6
 	add	r0, r0, #8
 	cmp	r0, sl
-	bne .L_08015d84
+	bne .Ltile
 	add	r0, r0, r2, lsl #6
 	sub	r0, r0, r2, lsl #3
 	subs	r3, r3, #1
-	bne .L_08015d80
+	bne .Lline
 	pop	{r5, r6, r7, r8, r9, sl}
 	bx	lr

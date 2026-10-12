@@ -32,13 +32,13 @@
 	.global Resource_DecodeByteLzArm
 Resource_DecodeByteLzArm:
 	push	{r1, r5, r6, r7, lr}
-.L_08001b74:
+.Lbyte_flags:
 	ldrb	lr, [r0], #1
 	lsls	lr, lr, #24
-	bne	.L_08001c2c
+	bne	.Lbyte_mixed
 	ands	r2, r0, #3
 	ldmeq	r0!, {r4, r5}
-	beq	.L_08001bac
+	beq	.Lbyte_literals_8
 	ldm	r0, {r4, r5, r6}
 	lsl	r2, r2, #3
 	rsb	r7, r2, #32
@@ -47,7 +47,7 @@ Resource_DecodeByteLzArm:
 	lsr	r5, r5, r2
 	orr	r5, r5, r6, lsl r7
 	add	r0, r0, #8
-.L_08001bac:
+.Lbyte_literals_8:
 	strb	r4, [r1], #1
 	lsr	r4, r4, #8
 	strb	r4, [r1], #1
@@ -62,7 +62,7 @@ Resource_DecodeByteLzArm:
 	strb	r5, [r1], #1
 	lsr	r5, r5, #8
 	strb	r5, [r1], #1
-	b	.L_08001b74
+	b	.Lbyte_flags
 	ldrb	r3, [r0], #1
 	strb	r3, [r1], #1
 	ldrb	r2, [r0], #1
@@ -79,25 +79,25 @@ Resource_DecodeByteLzArm:
 	strb	r3, [r1], #1
 	ldrb	r2, [r0], #1
 	strb	r2, [r1], #1
-	b	.L_08001b74
-.L_08001c2c:
+	b	.Lbyte_flags
+.Lbyte_mixed:
 	orr	lr, lr, #0x800000
 	lsls	lr, lr, #1
-	bcs	.L_08001c4c
-.L_08001c38:
+	bcs	.Lbyte_match
+.Lbyte_literal:
 	ldrb	r3, [r0], #1
 	strb	r3, [r1], #1
 	lsls	lr, lr, #1
-	bcc	.L_08001c38
-	beq	.L_08001b74
-.L_08001c4c:
+	bcc	.Lbyte_literal
+	beq	.Lbyte_flags
+.Lbyte_match:
 	ldrb	ip, [r0], #1
 	ldrb	r3, [r0], #1
 	and	r2, ip, #240
 	rsb	r3, r3, r1
 	sub	r4, r3, r2, lsl #4
 	ands	ip, ip, #15
-	beq	.L_08001d04
+	beq	.Lbyte_match_long
 	rsb	ip, ip, #15
 	add	pc, pc, ip, lsl #3
 AlchemyUncredited_08001c70:
@@ -136,12 +136,12 @@ AlchemyUncreditedEnd_08001c70:
 	ldrb	r3, [r4], #1
 	strb	r3, [r1], #1
 	lsls	lr, lr, #1
-	bcc	.L_08001c38
-	beq	.L_08001b74
-	b	.L_08001c4c
-.L_08001d04:
+	bcc	.Lbyte_literal
+	beq	.Lbyte_flags
+	b	.Lbyte_match
+.Lbyte_match_long:
 	cmp	r4, r1
-	beq	.L_08001dbc
+	beq	.Lbyte_done
 	ldrb	r3, [r0], #1
 	add	r3, r3, #16
 	and	ip, r3, #15
@@ -149,7 +149,7 @@ AlchemyUncreditedEnd_08001c70:
 	add	pc, pc, ip, lsl #3
 AlchemyUncredited_08001d20:
 	nop
-.L_08001d24:
+.Lbyte_match_block:
 AlchemyUncreditedEnd_08001d20:
 	ldrb	r2, [r4], #1
 	strb	r2, [r1], #1
@@ -184,12 +184,12 @@ AlchemyUncreditedEnd_08001d20:
 	ldrb	r2, [r4], #1
 	strb	r2, [r1], #1
 	subs	r3, r3, #16
-	bge	.L_08001d24
+	bge	.Lbyte_match_block
 	lsls	lr, lr, #1
-	bcc	.L_08001c38
-	beq	.L_08001b74
-	b	.L_08001c4c
-.L_08001dbc:
+	bcc	.Lbyte_literal
+	beq	.Lbyte_flags
+	b	.Lbyte_match
+.Lbyte_done:
 	pop	{r0, r5, r6, r7, ip}
 	sub	r0, r1, r0
 	bx	ip
@@ -204,46 +204,46 @@ Render_BuildOamListKernel:
 	mov	ip, #64
 	mov	r1, #128
 	mov	r9, r0
-.L_08001ddc:
+.Loam_bucket:
 	ldmdb	r2!, {r3, r4, r5, r6}
 	movs	r6, r6
-	blne	.L_08001e20
+	blne	.Loam_chain
 	movs	r6, r5
-	blne	.L_08001e20
+	blne	.Loam_chain
 	movs	r6, r4
-	blne	.L_08001e20
+	blne	.Loam_chain
 	movs	r6, r3
-	blne	.L_08001e20
+	blne	.Loam_chain
 	subs	ip, ip, #1
-	bne	.L_08001ddc
+	bne	.Loam_bucket
 	mov	r2, #192
 	orr	r2, r2, #0xc00000
 	lsl	r1, r1, #3
 	ldr	r4, [pc, #128]
 	add	lr, pc, #52
 	bx	r4
-.L_08001e20:
+.Loam_chain:
 	ldm	r6, {r6, r7, r8}
 	stmia	r0!, {r7, r8}
 	subs	r1, r1, #1
-	beq	.L_08001e54
+	beq	.Loam_affine
 	cmp	r6, #0
 	bxeq	lr
 	ldm	r6, {r6, r7, r8}
 	stmia	r0!, {r7, r8}
 	subs	r1, r1, #1
-	beq	.L_08001e54
+	beq	.Loam_affine
 	cmp	r6, #0
 	bxeq	lr
-	b	.L_08001e20
-.L_08001e54:
+	b	.Loam_chain
+.Loam_affine:
 	add	r0, r9, #6
 	ldr	r2, [pc, #64]
 	ldrb	r4, [r2]
 	ldr	r1, [pc, #60]
 	cmp	r4, #0
-	beq	.L_08001e90
-.L_08001e6c:
+	beq	.Loam_done
+.Loam_affine_next:
 	ldm	r1!, {r2, r3}
 	strh	r2, [r0], #32
 	lsr	r2, r2, #16
@@ -252,8 +252,8 @@ Render_BuildOamListKernel:
 	lsr	r3, r3, #16
 	strh	r3, [r0, #-8]
 	subs	r4, r4, #1
-	bne	.L_08001e6c
-.L_08001e90:
+	bne	.Loam_affine_next
+.Loam_done:
 	pop	{r5, r6, r7, r8, r9, lr}
 	bx	lr
 	.4byte	gFrameTick
@@ -271,7 +271,7 @@ ColorBuffer_ScaleThreeQuartersKernel:
 	mov	ip, #0x3f00
 	add	ip, ip, #63
 	orr	ip, ip, ip, lsl #16
-.L_08001ebc:
+.Lthree_quarters_next:
 	ldm	r0, {r3, r4, r5, r6}
 	stmia	r1!, {r3, r4, r5, r6}
 	adds	r3, r3, r3, lsl #1
@@ -284,7 +284,7 @@ ColorBuffer_ScaleThreeQuartersKernel:
 	andne	r6, ip, r6, lsr #2
 	stmia	r0!, {r3, r4, r5, r6}
 	cmp	r0, r2
-	bne	.L_08001ebc
+	bne	.Lthree_quarters_next
 	pop	{r5, r6}
 	bx	lr
 	.global ColorBuffer_HalveKernel
@@ -294,7 +294,7 @@ ColorBuffer_HalveKernel:
 	mov	ip, #0x3f00
 	add	ip, ip, #63
 	orr	ip, ip, ip, lsl #16
-.L_08001f0c:
+.Lhalve_next:
 	ldm	r0, {r3, r4, r5, r6}
 	stmia	r1!, {r3, r4, r5, r6}
 	and	r3, ip, r3, lsr #1
@@ -303,7 +303,7 @@ ColorBuffer_HalveKernel:
 	and	r6, ip, r6, lsr #1
 	stmia	r0!, {r3, r4, r5, r6}
 	cmp	r0, r2
-	bne	.L_08001f0c
+	bne	.Lhalve_next
 	pop	{r5, r6}
 	bx	lr
 .L_halve_end:
@@ -324,7 +324,7 @@ ColorBuffer_DarkenKernel:
 	orr	r1, r1, r1, lsl #16
 	push	{r5, r6, r7, r8, lr}
 	add	lr, r0, r3
-.L_08001f5c:
+.Ldarken_next:
 	ldm	r0, {r4, r5, r6, r7}
 	stmia	r2!, {r4, r5, r6, r7}
 	add	r8, r4, ip
@@ -345,7 +345,7 @@ ColorBuffer_DarkenKernel:
 	and	r7, r8, r3
 	stmia	r0!, {r4, r5, r6, r7}
 	cmp	r0, lr
-	bne	.L_08001f5c
+	bne	.Ldarken_next
 	pop	{r5, r6, r7, r8, ip}
 	bx	ip
 ColorBuffer_BackupKernelsEnd:
@@ -361,7 +361,7 @@ ColorBuffer_BrightenKernel:
 	orr	r8, r8, r8, lsl #16
 	sub	ip, r8, r8, lsr #6
 	add	r3, r0, r3
-.L_08001fd0:
+.Lbrighten_next:
 	ldm	r0, {r4, r5, r6, r7}
 	stmia	r2!, {r4, r5, r6, r7}
 	add	r4, r4, r1
@@ -386,7 +386,7 @@ ColorBuffer_BrightenKernel:
 	orr	r7, r7, r9
 	stmia	r0!, {r4, r5, r6, r7}
 	cmp	r0, r3
-	bne	.L_08001fd0
+	bne	.Lbrighten_next
 	pop	{r5, r6, r7, r8, r9}
 	bx	lr
 	.global ColorBuffer_ScaleNonzeroThreeQuartersKernel
@@ -396,7 +396,7 @@ ColorBuffer_ScaleNonzeroThreeQuartersKernel:
 	mov	ip, #0x3f00
 	add	ip, ip, #63
 	orr	ip, ip, ip, lsl #16
-.L_08002050:
+.Lnonzero_three_quarters_next:
 	ldm	r0!, {r3, r4, r5, r6}
 	stmia	r1!, {r3, r4, r5, r6}
 	adds	r3, r3, r3, lsl #1
@@ -412,7 +412,7 @@ ColorBuffer_ScaleNonzeroThreeQuartersKernel:
 	andne	r6, ip, r6, lsr #2
 	strne	r6, [r0, #-4]
 	cmp	r0, r2
-	bne	.L_08002050
+	bne	.Lnonzero_three_quarters_next
 	pop	{r5, r6}
 	bx	lr
 	.global ColorBuffer_HalveNonzeroKernel
@@ -422,7 +422,7 @@ ColorBuffer_HalveNonzeroKernel:
 	mov	ip, #0x3f00
 	add	ip, ip, #63
 	orr	ip, ip, ip, lsl #16
-.L_080020ac:
+.Lnonzero_halve_next:
 	ldm	r0!, {r3, r4, r5, r6}
 	stmia	r1!, {r3, r4, r5, r6}
 	cmp	r3, #0
@@ -438,7 +438,7 @@ ColorBuffer_HalveNonzeroKernel:
 	andne	r6, ip, r6, lsr #1
 	strne	r6, [r0, #-4]
 	cmp	r0, r2
-	bne	.L_080020ac
+	bne	.Lnonzero_halve_next
 	pop	{r5, r6}
 	bx	lr
 .L_halve_nonzero_end:
@@ -461,56 +461,56 @@ ColorBuffer_DarkenPartialKernel:
 	orr	r1, r1, r1, lsl #16
 	push	{r5, r6, r7, r8, lr}
 	add	lr, r0, r3
-.L_08002118:
+.Ldarken_partial_next:
 	ldm	r0!, {r4, r5, r6, r7}
 	stmia	r2!, {r4, r5, r6, r7}
 	cmp	r4, #0
-	bne	.L_0800214c
+	bne	.Ldarken_word0
 	cmp	r5, #0
-	bne	.L_08002168
+	bne	.Ldarken_word1
 	cmp	r6, #0
-	bne	.L_08002184
+	bne	.Ldarken_word2
 	cmp	r7, #0
-	bne	.L_080021a0
+	bne	.Ldarken_word3
 	cmp	r0, lr
-	bne	.L_08002118
-	b	.L_080021bc
-.L_0800214c:
+	bne	.Ldarken_partial_next
+	b	.Ldarken_partial_done
+.Ldarken_word0:
 	add	r8, r4, ip
 	and	r3, r1, r8, lsr #7
 	rsb	r3, r3, r3, lsl #7
 	and	r3, r8, r3
 	strne	r3, [r0, #-16]
 	cmp	r5, #0
-	beq	.L_0800217c
-.L_08002168:
+	beq	.Ldarken_check2
+.Ldarken_word1:
 	add	r8, r5, ip
 	and	r3, r1, r8, lsr #7
 	rsb	r3, r3, r3, lsl #7
 	and	r3, r8, r3
 	strne	r3, [r0, #-12]
-.L_0800217c:
+.Ldarken_check2:
 	cmp	r6, #0
-	beq	.L_08002198
-.L_08002184:
+	beq	.Ldarken_check3
+.Ldarken_word2:
 	add	r8, r6, ip
 	and	r3, r1, r8, lsr #7
 	rsb	r3, r3, r3, lsl #7
 	and	r3, r8, r3
 	strne	r3, [r0, #-8]
-.L_08002198:
+.Ldarken_check3:
 	cmp	r7, #0
-	beq	.L_080021b4
-.L_080021a0:
+	beq	.Ldarken_partial_loop
+.Ldarken_word3:
 	add	r8, r7, ip
 	and	r3, r1, r8, lsr #7
 	rsb	r3, r3, r3, lsl #7
 	and	r3, r8, r3
 	strne	r3, [r0, #-4]
-.L_080021b4:
+.Ldarken_partial_loop:
 	cmp	r0, lr
-	bne	.L_08002118
-.L_080021bc:
+	bne	.Ldarken_partial_next
+.Ldarken_partial_done:
 	pop	{r5, r6, r7, r8, ip}
 	bx	ip
 .L_darken_partial_end:
@@ -526,21 +526,21 @@ ColorBuffer_BrightenPartialKernel:
 	orr	r8, r8, r8, lsl #16
 	sub	ip, r8, r8, lsr #6
 	add	r3, r0, r3
-.L_080021dc:
+.Lbrighten_partial_next:
 	ldm	r0!, {r4, r5, r6, r7}
 	stmia	r2!, {r4, r5, r6, r7}
 	cmp	r4, ip
-	bne	.L_08002210
+	bne	.Lbrighten_word0
 	cmp	r5, ip
-	bne	.L_08002230
+	bne	.Lbrighten_word1
 	cmp	r6, ip
-	bne	.L_08002250
+	bne	.Lbrighten_word2
 	cmp	r7, ip
-	bne	.L_08002270
+	bne	.Lbrighten_word3
 	cmp	r0, r3
-	bne	.L_080021dc
-	b	.L_08002290
-.L_08002210:
+	bne	.Lbrighten_partial_next
+	b	.Lbrighten_partial_done
+.Lbrighten_word0:
 	add	r4, r4, r1
 	and	r9, r4, r8
 	bic	r4, r4, r9
@@ -548,38 +548,38 @@ ColorBuffer_BrightenPartialKernel:
 	orr	r4, r4, r9
 	str	r4, [r0, #-16]
 	cmp	r5, ip
-	beq	.L_08002248
-.L_08002230:
+	beq	.Lbrighten_check2
+.Lbrighten_word1:
 	add	r5, r5, r1
 	and	r9, r5, r8
 	bic	r5, r5, r9
 	sub	r9, r9, r9, lsr #6
 	orr	r5, r5, r9
 	str	r5, [r0, #-12]
-.L_08002248:
+.Lbrighten_check2:
 	cmp	r6, ip
-	beq	.L_08002268
-.L_08002250:
+	beq	.Lbrighten_check3
+.Lbrighten_word2:
 	add	r6, r6, r1
 	and	r9, r6, r8
 	bic	r6, r6, r9
 	sub	r9, r9, r9, lsr #6
 	orr	r6, r6, r9
 	str	r6, [r0, #-8]
-.L_08002268:
+.Lbrighten_check3:
 	cmp	r7, ip
-	beq	.L_08002288
-.L_08002270:
+	beq	.Lbrighten_partial_loop
+.Lbrighten_word3:
 	add	r7, r7, r1
 	and	r9, r7, r8
 	bic	r7, r7, r9
 	sub	r9, r9, r9, lsr #6
 	orr	r7, r7, r9
 	str	r7, [r0, #-4]
-.L_08002288:
+.Lbrighten_partial_loop:
 	cmp	r0, r3
-	bne	.L_080021dc
-.L_08002290:
+	bne	.Lbrighten_partial_next
+.Lbrighten_partial_done:
 	pop	{r5, r6, r7, r8, r9}
 	bx	lr
 ColorBuffer_KernelsEnd:
@@ -590,30 +590,30 @@ ColorBuffer_KernelsEnd:
 	.global Resource_DecodeHalfwordLz
 Resource_DecodeHalfwordLz:
 	mov	r3, #0x80000000
-	b	.L_080022a4
-.L_080022a0:
+	b	.Lhalfword_next_flag
+.Lhalfword_literal:
 	strh	r2, [r1], #2
-.L_080022a4:
+.Lhalfword_next_flag:
 	lsls	r3, r3, #1
-.L_080022a8:
+.Lhalfword_read:
 	ldrh	r2, [r0], #2
-	bcc	.L_080022a0
-	bne	.L_080022c0
+	bcc	.Lhalfword_literal
+	bne	.Lhalfword_match
 	adc	r3, r2, r2
 	lsls	r3, r3, #16
-	b	.L_080022a8
-.L_080022c0:
+	b	.Lhalfword_read
+.Lhalfword_match:
 	cmp	r2, #0
 	bxeq	lr
 	sub	ip, r1, r2, lsr #5
 	sub	ip, ip, r2, lsr #5
 	and	r2, r2, #31
 	add	r2, r2, #2
-.L_080022d8:
+.Lhalfword_copy:
 	ldrh	r4, [ip], #2
 	strh	r4, [r1], #2
 	subs	r2, r2, #1
-	bne	.L_080022d8
-	b	.L_080022a4
+	bne	.Lhalfword_copy
+	b	.Lhalfword_next_flag
 	.global Resource_DecompressHalfwordsCodeSize
 	.set Resource_DecompressHalfwordsCodeSize, . - Resource_DecodeHalfwordLz

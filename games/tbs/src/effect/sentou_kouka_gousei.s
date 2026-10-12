@@ -171,9 +171,9 @@ SentouKouka_Gousei:
 	cmp	ip, #0
 	rsbgt	r5, r3, #0
 	cmp	r5, #0
-	ble .L_080edd28
+	ble .Lclip_x
 	and	r2, r2, #0
-.L_080edd28:
+.Lclip_x:
 	rsbs	ip, r2, #0
 	addpl	r4, r4, r2
 	addpl	r6, r6, r2
@@ -187,15 +187,15 @@ SentouKouka_Gousei:
 	addgt	r6, r6, ip
 	rsbgt	r4, r2, #0
 	cmp	r4, #0
-	ble .L_080edd64
+	ble .Llead_count
 	ands	r7, r2, #7
-.L_080edd64:
-	beq .L_080edd78
+.Llead_count:
+	beq .Lrow_setup
 	rsb	r7, r7, #8
 	subs	r4, r4, r7
 	addlt	r7, r4, r7
 	movlt	r4, #0
-.L_080edd78:
+.Lrow_setup:
 	lsr	ip, r2, #3
 	rsb	fp, ip, #16
 	and	r2, r2, #7
@@ -209,24 +209,24 @@ SentouKouka_Gousei:
 	add	r9, r0, ip
 	mov	lr, fp
 	cmp	r7, #0
-	beq .L_080eddb4
+	beq .Llead
 	sub	ip, r1, r7
-.L_080eddb4:
+.Llead:
 	add	ip, r1, r7
 	ldrb	r5, [r1], #-1
 	ldrb	r5, [r1], #1
 	cmp	r5, #0
 	strb	r5, [r9], #1
 	cmp	r1, ip
-	bne .L_080eddd4
+	bne .Lblocks
 	add	r9, r9, #56
-.L_080eddd4:
+.Lblocks:
 	subs	lr, lr, #1
 	subeq	r9, r9, #1024
 	lsrs	ip, r4, #3
-	beq .L_080edde8
+	beq .Lblock
 	ldrb	r5, [r1], #-1
-.L_080edde8:
+.Lblock:
 	ldrb	r5, [r1], #1
 	cmp	r5, #0
 	strb	r5, [r9], #1
@@ -234,24 +234,24 @@ SentouKouka_Gousei:
 	subs	lr, lr, #1
 	subeq	r9, r9, #1024
 	subs	ip, ip, #1
-	bne .L_080ede0c
+	bne .Ltail_count
 	ands	ip, r4, #7
-.L_080ede0c:
-	beq .L_080ede14
+.Ltail_count:
+	beq .Ltail
 	sub	ip, r1, ip
-.L_080ede14:
+.Ltail:
 	add	ip, r1, ip
 	ldrb	r5, [r1], #-1
 	ldrb	r5, [r1], #1
 	cmp	r5, #0
 	strb	r5, [r9], #1
 	cmp	r1, ip
-	bne .L_080ede34
+	bne .Lrow_end
 	add	r1, r1, r6
-.L_080ede34:
+.Lrow_end:
 	add	r3, r3, #8
 	cmp	r3, r2
-	bne .L_080ede44
+	bne .Lreturn
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
-.L_080ede44:
+.Lreturn:
 	bx	lr

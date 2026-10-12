@@ -73,23 +73,23 @@ AlchemyUncreditedEnd_080f9a2e:
 SoundNote_Detach:
 	ldr	r3, [r0, #44]
 	cmp	r3, #0
-	beq.n	.L_080f9a4e
+	beq.n	.Ldetach_done
 	ldr	r1, [r0, #52]
 	ldr	r2, [r0, #48]
 	cmp	r2, #0
-	beq.n	.L_080f9a42
+	beq.n	.Ldetach_head
 	str	r1, [r2, #52]
-	b.n	.L_080f9a44
-.L_080f9a42:
+	b.n	.Ldetach_next
+.Ldetach_head:
 	str	r1, [r3, #32]
-.L_080f9a44:
+.Ldetach_next:
 	cmp	r1, #0
-	beq.n	.L_080f9a4a
+	beq.n	.Ldetach_clear
 	str	r2, [r1, #48]
-.L_080f9a4a:
+.Ldetach_clear:
 	movs	r1, #0
 	str	r1, [r0, #44]
-.L_080f9a4e:
+.Ldetach_done:
 	bx	lr
 	.global MusicTrack_FinishSequence
 	.thumb_func
@@ -98,22 +98,22 @@ MusicTrack_FinishSequence:
 	adds	r5, r1, #0
 	ldr	r4, [r5, #32]
 	cmp	r4, #0
-	beq.n	.L_080f9a74
-.L_080f9a5a:
+	beq.n	.Lfinish_done
+.Lfinish_note:
 	ldrb	r1, [r4, #0]
 	movs	r0, #199
 	tst	r0, r1
-	beq.n	.L_080f9a68
+	beq.n	.Lfinish_detach
 	movs	r0, #64
 	orrs	r1, r0
 	strb	r1, [r4, #0]
-.L_080f9a68:
+.Lfinish_detach:
 	adds	r0, r4, #0
 	bl	SoundNote_Detach
 	ldr	r4, [r4, #52]
 	cmp	r4, #0
-	bne.n	.L_080f9a5a
-.L_080f9a74:
+	bne.n	.Lfinish_note
+.Lfinish_done:
 	movs	r0, #0
 	strb	r0, [r5, #0]
 	pop	{r4, r5}
@@ -129,14 +129,14 @@ AlchemyUncreditedEnd_080f9a7e:
 Sound_LoadCommandTable:
 	mov	ip, lr
 	movs	r1, #36
-	ldr	r2, .L_080f9a80_source
-.L_080f9a80_loop:
+	ldr	r2, .Lcommand_table_source
+.Lload_entry:
 	ldr	r3, [r2, #0]
 	bl	Sound_CheckReadAddress
 	stmia	r0!, {r3}
 	adds	r2, #4
 	subs	r1, #1
-	bgt.n	.L_080f9a80_loop
+	bgt.n	.Lload_entry
 	bx	ip
 AlchemyUncredited_080f9a96:
 	.2byte 0
@@ -151,19 +151,19 @@ AlchemyUncreditedEnd_080f9a96:
 Sound_CheckReadAddress:
 	push	{r0}
 	lsrs	r0, r2, #25
-	bne.n	.L_080f9a80_return
-	ldr	r0, .L_080f9a80_source
+	bne.n	.Lcheck_return
+	ldr	r0, .Lcommand_table_source
 	cmp	r2, r0
-	bcc.n	.L_080f9a80_clear
+	bcc.n	.Lcheck_clear
 	lsrs	r0, r2, #14
-	beq.n	.L_080f9a80_return
-.L_080f9a80_clear:
+	beq.n	.Lcheck_return
+.Lcheck_clear:
 	movs	r3, #0
-.L_080f9a80_return:
+.Lcheck_return:
 	pop	{r0}
 	bx	lr
 	.align 2
-.L_080f9a80_source:
+.Lcommand_table_source:
 	.4byte Sound_CommandTableTemplate
 
 	.global MusicTrack_ReadCheckedCommandByte
@@ -185,7 +185,7 @@ AlchemyUncredited_080f9abe:
 MusicTrack_Goto:
 AlchemyUncreditedEnd_080f9abe:
 	push	{lr}
-.L_080f9ac0_jump:
+.Lgoto_jump:
 	ldr	r2, [r1, #64]
 	ldrb	r0, [r2, #3]
 	lsls	r0, r0, #8
@@ -206,7 +206,7 @@ AlchemyUncreditedEnd_080f9abe:
 MusicTrack_CallPattern:
 	ldrb	r2, [r1, #2]
 	cmp	r2, #3
-	bcs.n	.L_080f9ae0_full
+	bcs.n	.Lpattern_full
 	lsls	r2, r2, #2
 	adds	r3, r1, r2
 	ldr	r2, [r1, #64]
@@ -216,7 +216,7 @@ MusicTrack_CallPattern:
 	adds	r2, #1
 	strb	r2, [r1, #2]
 	b.n	MusicTrack_Goto
-.L_080f9ae0_full:
+.Lpattern_full:
 	b.n	MusicTrack_FinishSequence
 AlchemyUncredited_080f9afa:
 	.2byte 0
@@ -227,14 +227,14 @@ MusicTrack_ReturnFromPattern:
 AlchemyUncreditedEnd_080f9afa:
 	ldrb	r2, [r1, #2]
 	cmp	r2, #0
-	beq.n	.L_080f9afc_0
+	beq.n	.Lpattern_return
 	subs	r2, #1
 	strb	r2, [r1, #2]
 	lsls	r2, r2, #2
 	adds	r3, r1, r2
 	ldr	r2, [r3, #68]
 	str	r2, [r1, #64]
-.L_080f9afc_0:
+.Lpattern_return:
 	bx	lr
 
 	.global MusicTrack_Repeat
@@ -244,20 +244,20 @@ MusicTrack_Repeat:
 	ldr	r2, [r1, #64]
 	ldrb	r3, [r2, #0]
 	cmp	r3, #0
-	bne.n	.L_080f9b10_repeat
+	bne.n	.Lrepeat_count
 	adds	r2, #1
 	str	r2, [r1, #64]
-	b.n	.L_080f9ac0_jump
-.L_080f9b10_repeat:
+	b.n	.Lgoto_jump
+.Lrepeat_count:
 	ldrb	r3, [r1, #3]
 	adds	r3, #1
 	strb	r3, [r1, #3]
 	mov	ip, r3
 	bl	MusicTrack_ReadCheckedCommandByte
 	cmp	ip, r3
-	bcs.n	.L_080f9b10_advance
-	b.n	.L_080f9ac0_jump
-.L_080f9b10_advance:
+	bcs.n	.Lrepeat_done
+	b.n	.Lgoto_jump
+.Lrepeat_done:
 	movs	r3, #0
 	strb	r3, [r1, #3]
 	adds	r2, #5
@@ -408,13 +408,13 @@ AlchemyUncreditedEnd_080f9bfe:
 	bl	MusicTrack_ReadCheckedCommandByte
 	ldrb	r0, [r1, #24]
 	cmp	r0, r3
-	beq.n	.L_080f9c00_0
+	beq.n	.Ltarget_same
 	strb	r3, [r1, #24]
 	ldrb	r3, [r1, #0]
 	movs	r2, #15
 	orrs	r3, r2
 	strb	r3, [r1, #0]
-.L_080f9c00_0:
+.Ltarget_same:
 	bx	ip
 
 .global MusicTrack_SetTuneFromCommand
@@ -454,26 +454,26 @@ Sound_TickDmaRestartTimer:
 	ldr r3, [r0, #0]
 	subs r3, r3, r2
 	cmp r3, #1
-	bhi .L_080f9c84
+	bhi .Ltimer_done
 	ldrb r1, [r0, #4]
 	subs r1, #1
 	strb r1, [r0, #4]
-	bgt .L_080f9c84
+	bgt .Ltimer_done
 	ldrb r1, [r0, #11]
 	strb r1, [r0, #4]
 	ldr r2, [pc, #40]
 	ldr r1, [r2, #8]
 	lsls r1, r1, #7
-	bcc .L_080f9c6a
+	bcc .Ltimer_second
 	ldr r1, [pc, #36]
 	str r1, [r2, #8]
-.L_080f9c6a:
+.Ltimer_second:
 	ldr r1, [r2, #20]
 	lsls r1, r1, #7
-	bcc .L_080f9c74
+	bcc .Ltimer_restart
 	ldr r1, [pc, #24]
 	str r1, [r2, #20]
-.L_080f9c74:
+.Ltimer_restart:
 	movs r1, #4
 	lsls r1, r1, #8
 	strh r1, [r2, #10]
@@ -482,7 +482,7 @@ Sound_TickDmaRestartTimer:
 	lsls r1, r1, #8
 	strh r1, [r2, #10]
 	strh r1, [r2, #22]
-.L_080f9c84:
+.Ltimer_done:
 	bx lr
 AlchemyUncredited_080f9c86:
 	.balign 4, 0
@@ -499,9 +499,9 @@ MusicPlayer_Tick:
 	ldr	r2, [pc, #608]
 	ldr	r3, [r0, #52]
 	cmp	r2, r3
-	beq.n	.L_080f9c9a
+	beq.n	.Ltick_owned
 	bx	lr
-.L_080f9c9a:
+.Ltick_owned:
 	adds	r3, #1
 	str	r3, [r0, #52]
 	push	{r0, lr}
@@ -843,33 +843,33 @@ MusicTrack_Stop:
 	ldrb	r1, [r5, #0]
 	movs	r0, #128
 	tst	r0, r1
-	beq.n	.L_080f9f30
+	beq.n	.Lstop_done
 	ldr	r4, [r5, #32]
 	cmp	r4, #0
-	beq.n	.L_080f9f2e
+	beq.n	.Lstop_clear_list
 	movs	r6, #0
-.L_080f9f0c:
+.Lstop_note:
 	ldrb	r0, [r4, #0]
 	cmp	r0, #0
-	beq.n	.L_080f9f26
+	beq.n	.Lstop_unlink
 	ldrb	r0, [r4, #1]
 	movs	r3, #7
 	ands	r0, r3
-	beq.n	.L_080f9f24
+	beq.n	.Lstop_note_off
 	ldr	r3, [pc, #28]
 	ldr	r3, [r3, #0]
 	ldr	r3, [r3, #44]
 	bl	SoundDriver_CallViaR3
-.L_080f9f24:
+.Lstop_note_off:
 	strb	r6, [r4, #0]
-.L_080f9f26:
+.Lstop_unlink:
 	str	r6, [r4, #44]
 	ldr	r4, [r4, #52]
 	cmp	r4, #0
-	bne.n	.L_080f9f0c
-.L_080f9f2e:
+	bne.n	.Lstop_note
+.Lstop_clear_list:
 	str	r4, [r5, #32]
-.L_080f9f30:
+.Lstop_done:
 	pop	{r4, r5, r6}
 	pop	{r0}
 	bx	r0
@@ -932,24 +932,24 @@ MusicTrack_HandleNote:
 	ldr	r3, [r5, #64]
 	ldrb	r0, [r3, #0]
 	cmp	r0, #128
-	bcs.n	.L_080f9fb2
+	bcs.n	.Lnote_args_done
 	strb	r0, [r5, #5]
 	adds	r3, #1
 	ldrb	r0, [r3, #0]
 	cmp	r0, #128
-	bcs.n	.L_080f9fb0
+	bcs.n	.Lnote_store_pointer
 	strb	r0, [r5, #6]
 	adds	r3, #1
 	ldrb	r0, [r3, #0]
 	cmp	r0, #128
-	bcs.n	.L_080f9fb0
+	bcs.n	.Lnote_store_pointer
 	ldrb	r1, [r5, #4]
 	adds	r1, r1, r0
 	strb	r1, [r5, #4]
 	adds	r3, #1
-.L_080f9fb0:
+.Lnote_store_pointer:
 	str	r3, [r5, #64]
-.L_080f9fb2:
+.Lnote_args_done:
 	movs	r0, #0
 	str	r0, [sp, #20]
 	adds	r4, r5, #0
@@ -957,18 +957,18 @@ MusicTrack_HandleNote:
 	ldrb	r2, [r4, #0]
 	movs	r0, #192
 	tst	r0, r2
-	beq.n	.L_080fa004
+	beq.n	.Lnote_plain_voice
 	ldrb	r3, [r5, #5]
 	movs	r0, #64
 	tst	r0, r2
-	beq.n	.L_080f9fd2
+	beq.n	.Lnote_key_index
 	ldr	r1, [r5, #44]
 	adds	r1, r1, r3
 	ldrb	r0, [r1, #0]
-	b.n	.L_080f9fd4
-.L_080f9fd2:
+	b.n	.Lnote_subvoice
+.Lnote_key_index:
 	adds	r0, r3, #0
-.L_080f9fd4:
+.Lnote_subvoice:
 	lsls	r1, r0, #1
 	adds	r1, r1, r0
 	lsls	r1, r1, #2
@@ -979,70 +979,70 @@ MusicTrack_HandleNote:
 	ldrb	r1, [r6, #0]
 	movs	r0, #192
 	tst	r0, r1
-	beq.n	.L_080f9fec
-	b.n	.L_080fa152
-.L_080f9fec:
+	beq.n	.Lnote_subvoice_ok
+	b.n	.Lnote_done
+.Lnote_subvoice_ok:
 	movs	r0, #128
 	tst	r0, r2
-	beq.n	.L_080fa008
+	beq.n	.Lnote_key_known
 	ldrb	r1, [r6, #3]
 	movs	r0, #128
 	tst	r0, r1
-	beq.n	.L_080fa000
+	beq.n	.Lnote_voice_key
 	subs	r1, #192
 	lsls	r1, r1, #1
 	str	r1, [sp, #20]
-.L_080fa000:
+.Lnote_voice_key:
 	ldrb	r3, [r6, #1]
-	b.n	.L_080fa008
-.L_080fa004:
+	b.n	.Lnote_key_known
+.Lnote_plain_voice:
 	mov	r9, r4
 	ldrb	r3, [r5, #5]
-.L_080fa008:
+.Lnote_key_known:
 	str	r3, [sp, #8]
 	ldr	r6, [sp, #0]
 	ldrb	r1, [r6, #9]
 	ldrb	r0, [r5, #29]
 	adds	r0, r0, r1
 	cmp	r0, #255
-	bls.n	.L_080fa018
+	bls.n	.Lnote_priority_known
 	movs	r0, #255
-.L_080fa018:
+.Lnote_priority_known:
 	str	r0, [sp, #16]
 	mov	r6, r9
 	ldrb	r0, [r6, #0]
 	movs	r6, #7
 	ands	r6, r0
 	str	r6, [sp, #12]
-	beq.n	.L_080fa058
+	beq.n	.Lnote_find_pcm
 	ldr	r0, [sp, #4]
 	ldr	r4, [r0, #28]
 	cmp	r4, #0
-	bne.n	.L_080fa030
-	b.n	.L_080fa152
-.L_080fa030:
+	bne.n	.Lnote_cgb
+	b.n	.Lnote_done
+.Lnote_cgb:
 	subs	r6, #1
 	lsls	r0, r6, #6
 	adds	r4, r4, r0
 	ldrb	r1, [r4, #0]
 	movs	r0, #199
 	tst	r0, r1
-	beq.n	.L_080fa0ac
+	beq.n	.Lnote_take
 	movs	r0, #64
 	tst	r0, r1
-	bne.n	.L_080fa0ac
+	bne.n	.Lnote_take
 	ldrb	r1, [r4, #19]
 	ldr	r0, [sp, #16]
 	cmp	r1, r0
-	bcc.n	.L_080fa0ac
-	beq.n	.L_080fa050
-	b.n	.L_080fa152
-.L_080fa050:
+	bcc.n	.Lnote_take
+	beq.n	.Lnote_cgb_tie
+	b.n	.Lnote_done
+.Lnote_cgb_tie:
 	ldr	r0, [r4, #44]
 	cmp	r0, r5
-	bcs.n	.L_080fa0ac
-	b.n	.L_080fa152
-.L_080fa058:
+	bcs.n	.Lnote_take
+	b.n	.Lnote_done
+.Lnote_find_pcm:
 	ldr	r6, [sp, #16]
 	adds	r7, r5, #0
 	movs	r2, #0
@@ -1050,49 +1050,49 @@ MusicTrack_HandleNote:
 	ldr	r4, [sp, #4]
 	ldrb	r3, [r4, #6]
 	adds	r4, #80
-.L_080fa066:
+.Lnote_scan:
 	ldrb	r1, [r4, #0]
 	movs	r0, #199
 	tst	r0, r1
-	beq.n	.L_080fa0ac
+	beq.n	.Lnote_take
 	movs	r0, #64
 	tst	r0, r1
-	beq.n	.L_080fa080
+	beq.n	.Lnote_scan_active
 	cmp	r2, #0
-	bne.n	.L_080fa084
+	bne.n	.Lnote_scan_compare
 	adds	r2, #1
 	ldrb	r6, [r4, #19]
 	ldr	r7, [r4, #44]
-	b.n	.L_080fa09e
-.L_080fa080:
+	b.n	.Lnote_scan_take
+.Lnote_scan_active:
 	cmp	r2, #0
-	bne.n	.L_080fa0a0
-.L_080fa084:
+	bne.n	.Lnote_scan_next
+.Lnote_scan_compare:
 	ldrb	r0, [r4, #19]
 	cmp	r0, r6
-	bcs.n	.L_080fa090
+	bcs.n	.Lnote_scan_tie
 	adds	r6, r0, #0
 	ldr	r7, [r4, #44]
-	b.n	.L_080fa09e
-.L_080fa090:
-	bhi.n	.L_080fa0a0
+	b.n	.Lnote_scan_take
+.Lnote_scan_tie:
+	bhi.n	.Lnote_scan_next
 	ldr	r0, [r4, #44]
 	cmp	r0, r7
-	bls.n	.L_080fa09c
+	bls.n	.Lnote_scan_same
 	adds	r7, r0, #0
-	b.n	.L_080fa09e
-.L_080fa09c:
-	bcc.n	.L_080fa0a0
-.L_080fa09e:
+	b.n	.Lnote_scan_take
+.Lnote_scan_same:
+	bcc.n	.Lnote_scan_next
+.Lnote_scan_take:
 	mov	r8, r4
-.L_080fa0a0:
+.Lnote_scan_next:
 	adds	r4, #64
 	subs	r3, #1
-	bgt.n	.L_080fa066
+	bgt.n	.Lnote_scan
 	mov	r4, r8
 	cmp	r4, #0
-	beq.n	.L_080fa152
-.L_080fa0ac:
+	beq.n	.Lnote_done
+.Lnote_take:
 	adds	r0, r4, #0
 	bl	AudioCommand_InvokeSlot34
 	movs	r1, #0
@@ -1100,18 +1100,18 @@ MusicTrack_HandleNote:
 	ldr	r3, [r5, #32]
 	str	r3, [r4, #52]
 	cmp	r3, #0
-	beq.n	.L_080fa0c0
+	beq.n	.Lnote_linked
 	str	r4, [r3, #48]
-.L_080fa0c0:
+.Lnote_linked:
 	str	r4, [r5, #32]
 	str	r5, [r4, #44]
 	ldrb	r0, [r5, #27]
 	strb	r0, [r5, #28]
 	cmp	r0, r1
-	beq.n	.L_080fa0d2
+	beq.n	.Lnote_output
 	adds	r1, r5, #0
 	bl	MusicTrack_ClearModulationState
-.L_080fa0d2:
+.Lnote_output:
 	ldr	r0, [sp, #0]
 	adds	r1, r5, #0
 	bl	MusicTrack_CalcOutput
@@ -1137,25 +1137,25 @@ MusicTrack_HandleNote:
 	movs	r0, #8
 	ldrsb	r0, [r5, r0]
 	adds	r3, r1, r0
-	bpl.n	.L_080fa10c
+	bpl.n	.Lnote_key_clamped
 	movs	r3, #0
-.L_080fa10c:
+.Lnote_key_clamped:
 	ldr	r6, [sp, #12]
 	cmp	r6, #0
-	beq.n	.L_080fa13a
+	beq.n	.Lnote_pcm_frequency
 	mov	r6, r9
 	ldrb	r0, [r6, #2]
 	strb	r0, [r4, #30]
 	ldrb	r1, [r6, #3]
 	movs	r0, #128
 	tst	r0, r1
-	bne.n	.L_080fa126
+	bne.n	.Lnote_sweep_default
 	movs	r0, #112
 	tst	r0, r1
-	bne.n	.L_080fa128
-.L_080fa126:
+	bne.n	.Lnote_sweep_store
+.Lnote_sweep_default:
 	movs	r1, #8
-.L_080fa128:
+.Lnote_sweep_store:
 	strb	r1, [r4, #31]
 	ldrb	r2, [r5, #9]
 	adds	r1, r3, #0
@@ -1163,13 +1163,13 @@ MusicTrack_HandleNote:
 	ldr	r3, [sp, #4]
 	ldr	r3, [r3, #48]
 	bl	SoundDriver_CallViaR3
-	b.n	.L_080fa144
-.L_080fa13a:
+	b.n	.Lnote_start
+.Lnote_pcm_frequency:
 	ldrb	r2, [r5, #9]
 	adds	r1, r3, #0
 	adds	r0, r7, #0
 	bl	Pcm_KeyToFrequency
-.L_080fa144:
+.Lnote_start:
 	str	r0, [r4, #32]
 	movs	r0, #128
 	strb	r0, [r4, #0]
@@ -1177,7 +1177,7 @@ MusicTrack_HandleNote:
 	movs	r0, #240
 	ands	r0, r1
 	strb	r0, [r5, #0]
-.L_080fa152:
+.Lnote_done:
 	add	sp, #24
 	pop	{r0, r1, r2, r3, r4, r5, r6, r7}
 	mov	r8, r0
@@ -1200,37 +1200,37 @@ MusicTrack_ReleaseKey:
 	ldr	r2, [r1, #64]
 	ldrb	r3, [r2, #0]
 	cmp	r3, #128
-	bcs.n	.L_080fa17e
+	bcs.n	.Lrelease_same_key
 	strb	r3, [r1, #5]
 	adds	r2, #1
 	str	r2, [r1, #64]
-	b.n	.L_080fa180
-.L_080fa17e:
+	b.n	.Lrelease_key_known
+.Lrelease_same_key:
 	ldrb	r3, [r1, #5]
-.L_080fa180:
+.Lrelease_key_known:
 	ldr	r1, [r1, #32]
 	cmp	r1, #0
-	beq.n	.L_080fa1a8
+	beq.n	.Lrelease_done
 	movs	r4, #131
 	movs	r5, #64
-.L_080fa18a:
+.Lrelease_note:
 	ldrb	r2, [r1, #0]
 	tst	r2, r4
-	beq.n	.L_080fa1a2
+	beq.n	.Lrelease_next
 	tst	r2, r5
-	bne.n	.L_080fa1a2
+	bne.n	.Lrelease_next
 	ldrb	r0, [r1, #17]
 	cmp	r0, r3
-	bne.n	.L_080fa1a2
+	bne.n	.Lrelease_next
 	movs	r0, #64
 	orrs	r2, r0
 	strb	r2, [r1, #0]
-	b.n	.L_080fa1a8
-.L_080fa1a2:
+	b.n	.Lrelease_done
+.Lrelease_next:
 	ldr	r1, [r1, #52]
 	cmp	r1, #0
-	bne.n	.L_080fa18a
-.L_080fa1a8:
+	bne.n	.Lrelease_note
+.Lrelease_done:
 	pop	{r4, r5}
 	bx	lr
 .syntax unified
@@ -1243,12 +1243,12 @@ MusicTrack_ClearModulationState:
 	strb	r2, [r1, #26]
 	ldrb	r2, [r1, #24]
 	cmp	r2, #0
-	bne.n	.L_080fa1bc
+	bne.n	.Lclear_mod_volume
 	movs	r2, #12
-	b.n	.L_080fa1be
-.L_080fa1bc:
+	b.n	.Lclear_mod_flags
+.Lclear_mod_volume:
 	movs	r2, #3
-.L_080fa1be:
+.Lclear_mod_flags:
 	ldrb	r3, [r1, #0]
 	orrs	r3, r2
 	strb	r3, [r1, #0]
@@ -1279,9 +1279,9 @@ MusicTrack_SetLfoSpeedFromCommand:
 	bl	MusicTrack_ReadCommandByte
 	strb	r3, [r1, #25]
 	cmp	r3, #0
-	bne.n	.L_080fa1d4_0
+	bne.n	.Llfo_speed_done
 	bl	MusicTrack_ClearModulationState
-.L_080fa1d4_0:
+.Llfo_speed_done:
 	bx	ip
 AlchemyUncredited_080fa1e6:
 	.balign 4, 0
@@ -1294,9 +1294,9 @@ MusicTrack_SetModulationFromCommand:
 	bl	MusicTrack_ReadCommandByte
 	strb	r3, [r1, #23]
 	cmp	r3, #0
-	bne.n	.L_080fa1e8_0
+	bne.n	.Lmodulation_done
 	bl	MusicTrack_ClearModulationState
-.L_080fa1e8_0:
+.Lmodulation_done:
 	bx	ip
 AlchemyUncredited_080fa1fa:
 	.2byte 0

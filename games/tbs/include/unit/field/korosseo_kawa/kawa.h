@@ -47,18 +47,18 @@ void FieldScene_RunNearestActor165Scene(void);
 void FieldScene_RunSixSteps380To3A8(void);
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor);
 void SceneState_SendIdBySceneId(s32 speaker, s32 competitor);
-void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
+/* FieldScene_RunMiddleSequence is called before its definition with no prototype in scope. */
 void SceneActor_ApplyValueAndMatchingSlots(s32 a, s32 b);
 void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param);
 void FieldScene_RunTwoArmSequence(s32 a);
 void FieldScene_RunLateSequence(s32 a0);
 void OverlayObject_ResetMotionFields(s32 actor);
 void KorosseoKawa_EnsureMarkerSlot(void);
-void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style);
+/* SceneState_StoreParamsAndInitTable is called before its definition with no prototype in scope. */
 void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration);
 void KorosseoKawa_ReleaseMarker(void);
 void SceneActor_StartMode5MoveToTile(s32 a, s32 b, s32 c);
-void OverlayObject_PlaceWithScale14000(s32 a, s32 b, s32 c);
+/* OverlayObject_PlaceWithScale14000 is called before its definition with no prototype in scope. */
 void Text_WriteU32AsHex(u8 *buf, u32 value);
 void Resource3ba_NoOpCallback(void);
 void KorosseoKawa_MarkStageReady(void);
@@ -66,7 +66,7 @@ void KorosseoKawa_WaitForStageReady(void);
 void SceneEffect_SpawnKind285AtRandomChance(struct FieldActor *a);
 s32 SceneActor_PlaceLinkedActorAbove(struct FieldActor *a);
 s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b);
-void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre, s32 extra, s32 third, s32 fourth);
+/* FieldScene_BuildSceneDescriptorAndInstallTask is called before its definition with no prototype in scope. */
 void SceneState_InitControlWhenFlag109Clear(s32 resource);
 void StagedActor_PushActorAhead(void);
 extern const u8 Korosseo_PortraitPaletteOffsets[];

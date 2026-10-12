@@ -894,16 +894,13 @@ s32 KorosseoKabe_ApplyEntryState(void)
 	}
 	Engine_ActorSetAnimation(8, 9);
 	gGameState.movement_mode = 0;
-	/* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
-	((s32 (*)())Korosseo_ShowItemIcon)(41, 89);
-	((s32 (*)())Korosseo_ShowItemIcon)(40, 77);
+	Korosseo_ShowItemIcon(41, 89);
+	Korosseo_ShowItemIcon(40, 77);
 	Engine_ActorSetChildValue(8, 1);
 	switch (gGameState.entrance)
 	{
 	case 1:
-		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-		((s32 (*)(s32, s32, s32, s32, s32, s32, s32))FieldScene_BuildDescriptorAndInstallTask)(
-			0, 8, 5, 0x680000, 0x1000000, 40, 41);
+		FieldScene_BuildDescriptorAndInstallTask(0, 8, 5, 0x680000, 0x1000000, 40, 41);
 		Map_CopyCellsLayered(127, 0, 1, 2, 79, 6);
 		Engine_ActorDestroy(34);
 		Engine_ActorDestroy(35);
@@ -1040,19 +1037,13 @@ void KorosseoKabe_RunStageIntro(s32 speaker)
 			Engine_CameraMoveTo(0x4c80000, -1, 0xb80000, 1);
 			Engine_CameraWaitForMove();
 			Engine_EventShowMessage(speaker, 0);
-			/* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
-			((s32 (*)())Korosseo_FadeInCompetitor)(ACTOR_PARTY_LEADER, 0x4f8, 168);
+			Korosseo_FadeInCompetitor(ACTOR_PARTY_LEADER, 0x4f8, 168);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-			/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-			((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(
-				ACTOR_PARTY_LEADER, 0x508, 184);
-			((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(
-				ACTOR_PARTY_LEADER, 0x508, 216);
-			((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(
-				ACTOR_PARTY_LEADER, 0x4c8, 216);
+			SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x508, 184);
+			SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x508, 216);
+			SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x4c8, 216);
 			Engine_EventShowMessage(speaker, 0);
-			((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(
-				ACTOR_PARTY_LEADER, 0x4c8, 248);
+			SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x4c8, 248);
 			SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x4a8, 248);
 			Engine_EventWait(3);
 			actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -1070,7 +1061,7 @@ void KorosseoKabe_RunStageIntro(s32 speaker)
 			Engine_EventSetMessage((s32)MsgKorosseoMainThingStage);
 			Engine_EventShowMessage(speaker, 0);
 		}
-		((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(result, speaker, 1);
+		FieldScene_RunMiddleSequence(result, speaker, 1);
 		Engine_EventEnd();
 	}
 }
@@ -1103,8 +1094,7 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
 			Korosseo_FadeInCompetitor(0, 0x438, 0x108);
 			Engine_EventWait(15);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-			/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-			((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(0, 0x438, 216);
+			SceneActor_PlaceWithScale14000(0, 0x438, 216);
 			SceneActor_PlaceWithScale14000(0, 0x428, 216);
 			SceneState_WaitForStatusWords();
 			Engine_LeaderCheckAhead();
@@ -1122,7 +1112,7 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
 				Event_ShowMessage(a0, 0);
 			}
 		}
-		((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(rec, a0, 2);
+		FieldScene_RunMiddleSequence(rec, a0, 2);
 		Engine_EventEnd();
 	}
 }
@@ -1158,9 +1148,8 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
 			Korosseo_FadeInCompetitor(0, 0x358, 0x108);
 			Engine_EventWait(10);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-			/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-			((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(0, 0x358, 0x108);
-			((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(0, 0x358, 232);
+			SceneActor_PlaceWithScale14000(0, 0x358, 0x108);
+			SceneActor_PlaceWithScale14000(0, 0x358, 232);
 			Event_ShowMessage(a0, 0);
 			SceneActor_PlaceWithScale14000(0, 0x348, 232);
 			Engine_EventWait(10);
@@ -1186,7 +1175,7 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
 			Event_ShowMessage(a0, 0);
 		}
 	L_020016b0:;
-		((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(rec2, a0, 3);
+		FieldScene_RunMiddleSequence(rec2, a0, 3);
 		Engine_EventEnd();
 	}
 }
@@ -1216,8 +1205,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 speaker)
 		z = 264;
 		Engine_CameraWaitForMove();
 		Engine_EventShowMessage(speaker, 0);
-		/* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
-		((s32 (*)())Korosseo_FadeInCompetitor)(ACTOR_PARTY_LEADER, 632, z);
+		Korosseo_FadeInCompetitor(ACTOR_PARTY_LEADER, 632, z);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 		Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, z);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 20);
@@ -1233,8 +1221,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 speaker)
 		Camera_MoveTo(-1, -1, -1, 0);
 		Event_ShowMessage(speaker, 0);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-		((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(ACTOR_PARTY_LEADER, 488, 248);
+		SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 488, 248);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 20);
 		BattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, 0);
 		Engine_CameraMoveTo(0x2180000, -1, 0xa00000, 1);
@@ -1248,7 +1235,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 speaker)
 		Engine_EventSetMessage((s32)MsgKorosseoScalingWallQuickly);
 		Engine_EventShowMessage(speaker, 0);
 	}
-	((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(result, speaker, 4);
+	FieldScene_RunMiddleSequence(result, speaker, 4);
 	Engine_EventEnd();
 }
 
@@ -1316,18 +1303,16 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
 		Camera_MoveTo(0x1380000, -1, 0xb00000, 1);
 		Engine_CameraWaitForMove();
 		Engine_EventShowMessage(speaker, 0);
-		/* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
-		((s32 (*)())Korosseo_FadeInCompetitor)(ACTOR_PARTY_LEADER, 408, 264);
+		Korosseo_FadeInCompetitor(ACTOR_PARTY_LEADER, 408, 264);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-		((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(ACTOR_PARTY_LEADER, 408, 216);
+		SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 408, 216);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 10);
 		Engine_EventShowMessage(speaker, 0);
 		KorosseoKabe_PushBlockToCell(16, 360, 208);
 		Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 264, 45);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-		((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(ACTOR_PARTY_LEADER, 376, 216);
-		((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(ACTOR_PARTY_LEADER, 376, 248);
+		SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 376, 216);
+		SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 376, 248);
 		SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 312, 248);
 		Engine_EventShowMessage(speaker, 0);
 		Korosseo_RestoreCompetitor(ACTOR_PARTY_LEADER);
@@ -1340,7 +1325,7 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
 		Engine_EventSetMessage((s32)MsgKorosseoFocusRollingLogs);
 		Engine_EventShowMessage(speaker, 0);
 	}
-	((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(result, speaker, 5);
+	FieldScene_RunMiddleSequence(result, speaker, 5);
 	Engine_EventEnd();
 }
 

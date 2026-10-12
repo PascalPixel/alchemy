@@ -1,6 +1,8 @@
 //! alchemy check headers: a ☀️ C file declares nothing another file
-//! defines, and no name is declared twice. What is still there is counted
-//! by kind against a tracked baseline, and a count may only fall.
+//! defines, no name is declared twice, and a function defined for other
+//! code is declared in its file's header or left out there for a stated
+//! cause. What is still there is counted by kind against a tracked
+//! baseline, and a count may only fall.
 
 use super::model::{Model, COMMON, INCLUDE, UNIT};
 use super::scan::{bodies, What};
@@ -17,11 +19,18 @@ allows and is not counted), and macros that cast a name to another type\n\
 under the name itself. Counts, in the headers those files read, each\n\
 declaration of a name some other header already declares (a line under\n\
 #if GAME_TLA is ⚓️'s and not counted; unit headers declare what their own\n\
-file defines, so the same name in two of them is two functions). Fails\n\
-when a count rises above tools/alchemy/headers.tsv. --update writes the\n\
-current counts there; --list prints every finding.";
+file defines, so the same name in two of them is two functions). Counts\n\
+each function a C file defines for other code that no header declares,\n\
+unless its file's header holds, in the prototype's place, the comment\n\
+that the function is called before its definition with no prototype in\n\
+scope; and each such comment that is not true of its file: the file does\n\
+not define the function, the header declares it too, another file names\n\
+it, or nothing calls it above its definition (alchemy headers undeclared\n\
+measures which functions the bytes need left out). Fails when a count\n\
+rises above tools/alchemy/headers.tsv. --update writes the current\n\
+counts there; --list prints every finding.";
 
-pub(crate) const KINDS: [&str; 4] = ["prototype", "extern", "cast-macro", "second-declaration"];
+pub(crate) const KINDS: [&str; 5] = ["prototype", "extern", "cast-macro", "second-declaration", "undeclared"];
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub(crate) struct Finding {
@@ -103,12 +112,127 @@ pub(crate) fn second_declarations(headers: &[(&str, &str)]) -> Vec<Finding> {
     found
 }
 
+/// Where a C file of a unit stands in the unit's text: the unit's own
+/// offset, or the unit's line that includes the file and the offset in it.
+fn place(model: &Model, unit: &str, file: &str, offset: usize) -> Option<(usize, usize)> {
+    if file == unit {
+        return Some((offset, 0));
+    }
+    let folder = unit.rsplit_once('/').map_or("", |(folder, _)| folder);
+    let mut at = 0;
+    for row in model.text[unit].split_inclusive('\n') {
+        let name = row.trim_start().strip_prefix("#include").and_then(|rest| rest.trim_start().strip_prefix('"')).and_then(|rest| rest.split('"').next());
+        if name.is_some_and(|name| super::model::normalize(&format!("{folder}/{name}")) == file) {
+            return Some((at, offset + 1));
+        }
+        at += row.len();
+    }
+    None
+}
+
+/// Whether some unit that compiles the file calls the function above its
+/// definition.
+fn called_above(model: &Model, home: &str, name: &str) -> bool {
+    let Some(defined) = model.entries[home].iter().filter(|entry| entry.name == name && matches!(entry.what, What::Definition { .. })).map(|entry| entry.start).min() else {
+        return false;
+    };
+    model.users(home).iter().any(|unit| {
+        let Some(definition) = place(model, unit, home, defined) else {
+            return false;
+        };
+        model.parts(unit).any(|part| {
+            let calls = super::undeclared::sites(&model.text[part], &|word| word == name);
+            calls.iter().any(|call| place(model, unit, part, call.at).is_some_and(|call| call < definition))
+        })
+    })
+}
+
+/// The other file that names a function of `home`: a unit that does not
+/// compile the file and means its definition, or a far-call bank's list.
+fn named_elsewhere(model: &Model, home: &str, name: &str) -> Option<String> {
+    let definitions = model.definitions();
+    let users = model.users(home);
+    let unit = model.units.iter().find(|unit| {
+        !users.contains(&unit.as_str())
+            && model.home(&definitions, unit, name).is_some_and(|(file, _)| file == home)
+            && model.parts(unit).any(|part| super::plan::identifiers(&model.text[part]).contains(name))
+    });
+    unit.cloned().or_else(|| model.far.values().find(|far| far.target == name && model.in_main(home)).map(|far| far.file.clone()))
+}
+
+/// What the unit headers leave undeclared without cause. A function a C
+/// file defines for other code has its prototype in the file's header,
+/// or a comment there in its place: the function is called before its
+/// definition with no prototype in scope. Counted: such a function with
+/// neither, and a comment that is not true of its file (the file does not
+/// define the function, its header declares it too, another file names
+/// it, or nothing calls it above its definition). `headers` gives each
+/// unit header's text.
+pub(crate) fn undeclared(model: &Model, headers: &BTreeMap<String, String>) -> Vec<Finding> {
+    let unit = format!("{INCLUDE}{UNIT}");
+    // What the other headers declare: a function one of them declares is
+    // declared, if not where it should be.
+    let elsewhere: std::collections::BTreeSet<&str> = model
+        .headers
+        .iter()
+        .filter(|header| !header.starts_with(&unit))
+        .flat_map(|header| model.entries[header].iter())
+        .filter(|entry| entry.what == What::Prototype)
+        .map(|entry| entry.name.as_str())
+        .collect();
+    let mut found = Vec::new();
+    for home in model.units.iter().chain(&model.fragments) {
+        let Some(header) = super::model::unit_header(home) else {
+            continue;
+        };
+        let text = headers.get(&header).map_or("", String::as_str);
+        let declared: std::collections::BTreeSet<String> = super::scan::entries(text).into_iter().filter(|entry| entry.what == What::Prototype).map(|entry| entry.name).collect();
+        let out = super::undeclared::left_out(text);
+        let source = &model.text[home];
+        let defined: Vec<&super::scan::Entry> = model.entries[home].iter().filter(|entry| matches!(entry.what, What::Definition { .. }) && !entry.local).collect();
+        // A prototype in the file itself is counted as that.
+        let own: std::collections::BTreeSet<&str> = model.entries[home].iter().filter(|entry| entry.what == What::Prototype).map(|entry| entry.name.as_str()).collect();
+        let mut told = std::collections::BTreeSet::new();
+        for entry in &defined {
+            let known = declared.contains(&entry.name) || out.iter().any(|(name, _, _)| *name == entry.name) || elsewhere.contains(entry.name.as_str()) || own.contains(entry.name.as_str());
+            if !known && told.insert(&entry.name) {
+                found.push(Finding { kind: "undeclared", file: home.clone(), line: line(source, entry.start), name: format!("{}: its header has no prototype of it and no comment in its place", entry.name) });
+            }
+        }
+        for (name, start, _) in &out {
+            let why = if !defined.iter().any(|entry| entry.name == *name) {
+                Some("its file does not define it for other code".to_string())
+            } else if declared.contains(*name) {
+                Some("its header declares it too".to_string())
+            } else if let Some(other) = named_elsewhere(model, home, name) {
+                Some(format!("{other} names it too"))
+            } else if !called_above(model, home, name) {
+                Some("nothing calls it above its definition".to_string())
+            } else {
+                None
+            };
+            if let Some(why) = why {
+                found.push(Finding { kind: "undeclared", file: header.clone(), line: line(text, *start), name: format!("{name}: {why}") });
+            }
+        }
+    }
+    found
+}
+
 pub(crate) fn findings(root: &Path) -> Result<Vec<Finding>, String> {
     let model = Model::read(root)?;
     let mut found = Vec::new();
     for file in model.units.iter().chain(&model.fragments) {
         found.extend(in_source(file, &model.text[file]));
     }
+    let own: BTreeMap<String, String> = model
+        .units
+        .iter()
+        .chain(&model.fragments)
+        .filter_map(|file| super::model::unit_header(file))
+        .filter_map(|header| std::fs::read_to_string(root.join(&header)).ok().map(|text| (header, text)))
+        .collect();
+    found.extend(undeclared(&model, &own));
     // Unit headers first: a name's own header is its first declaration.
     let unit = format!("{INCLUDE}{UNIT}");
     let mut headers: Vec<(&str, &str)> = model.headers.iter().filter(|h| h.ends_with(".h")).map(|h| (h.as_str(), model.text[h].as_str())).collect();
@@ -236,6 +360,46 @@ mod tests {
                 ("games/tbs/include/old.h".to_string(), 2, "gTable".to_string()),
             ]
         );
+    }
+
+    #[test]
+    fn a_function_is_declared_or_left_out_with_cause() {
+        let unit = "games/tbs/src/main/a.c";
+        let part = "games/tbs/src/main/f.c";
+        let other = "games/tbs/src/o/b.c";
+        let header = "games/tbs/include/unit/main/a.h";
+        let said = |name: &str| format!("/* {name} is called before its definition with no prototype in scope. */\n");
+        let source = "void Run(void)\n{\n\tLate(1);\n\tShared(2);\n\tPart();\n}\nvoid Late(s32 a)\n{\n}\nvoid Never(s32 a)\n{\n}\nvoid User(void)\n{\n\tNever(1);\n}\nvoid Shared(s32 a)\n{\n}\nvoid Bare(void)\n{\n}\nvoid Both(void)\n{\n}\nstatic void Hidden(void)\n{\n}\nvoid Elsewhere(void)\n{\n}\n#include \"f.c\"\n";
+        let own = format!("void Run(void);\n{}{}void User(void);\n{}{}void Both(void);\n{}", said("Late"), said("Never"), said("Shared"), said("Both"), said("Gone"));
+        let files = [
+            (unit, source),
+            (part, "void Part(void)\n{\n}\n"),
+            (other, "void Scene(void)\n{\n\tShared(1);\n}\n"),
+            ("games/tbs/include/old.h", "void Elsewhere(void);\n"),
+        ];
+        let model = Model::of(&files, &[(unit, &[part, "games/tbs/include/old.h"]), (other, &[])]);
+        let headers: BTreeMap<String, String> = [
+            (header.to_string(), own),
+            ("games/tbs/include/unit/main/f.h".to_string(), said("Part")),
+            ("games/tbs/include/unit/o/b.h".to_string(), "void Scene(void);\n".to_string()),
+        ]
+        .into();
+        let all = undeclared(&model, &headers);
+        let found: Vec<(&str, usize, &str)> = all.iter().map(|f| (f.file.as_str(), f.line, f.name.as_str())).collect();
+        // Late is called above its definition, and Part above the line that
+        // includes its file: their comments are true. Elsewhere has a
+        // prototype in another header, which is counted as that.
+        assert_eq!(
+            found,
+            vec![
+                (unit, 20, "Bare: its header has no prototype of it and no comment in its place"),
+                (header, 3, "Never: nothing calls it above its definition"),
+                (header, 5, "Shared: games/tbs/src/o/b.c names it too"),
+                (header, 6, "Both: its header declares it too"),
+                (header, 8, "Gone: its file does not define it for other code"),
+            ]
+        );
+        assert!(all.iter().all(|f| f.kind == "undeclared"));
     }
 
     #[test]

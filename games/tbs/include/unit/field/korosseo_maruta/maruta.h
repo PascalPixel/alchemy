@@ -101,18 +101,18 @@ void ColossoLogRollingStage_SelectNearestObstacle(void);
 void ColossoLogRollingStage_ClearSavedActorPositions(void);
 s32 ColossoLogRollingStage_RunStateInteraction(s32 actor, s32 flags);
 void ColossoLogRollingStage_InitializeStateInteraction(s32 actor, s32 flags);
-void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
+/* FieldScene_RunMiddleSequence is called before its definition with no prototype in scope. */
 void ColossoLogRollingStage_ApplyItemToMatchingSlots(s32 handle, s32 item);
 void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter);
 void ColossoLogRollingStage_RunScriptedTransition(s32 mode);
 void FieldScene_RunScene3bcSequenceA(s32 a0);
 void ColossoLogRollingStage_ResetActorMotion(s32 selector);
 void ColossoLogRollingStage_EnsurePaletteHandle(void);
-void ColossoLogRollingStage_StartPaletteTask(u32 first_value, u32 second_value, u32 mode);
+/* ColossoLogRollingStage_StartPaletteTask is called before its definition with no prototype in scope. */
 void ColossoLogRollingStage_StartPaletteTaskFromState(u32 first_value, u32 second_value, u32 mode);
 void ColossoLogRollingStage_StopPaletteTask(void);
 void ColossoLogRollingStage_PositionScaledObject(s32 id, s32 x, s32 z);
-void ColossoLogRollingStage_SpawnPositionedObject(s32 object_id, s32 x, s32 z);
+/* ColossoLogRollingStage_SpawnPositionedObject is called before its definition with no prototype in scope. */
 void WriteU32AsHex(u8 *hex_text, u32 value);
 void ColossoLogRollingStage_NoopSceneHook(void);
 void ColossoLogRollingStage_SetBalanceStateReady(void);
@@ -120,7 +120,7 @@ void ColossoLogRollingStage_WaitForBalanceState(void);
 void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source);
 s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(StageEffect_02003d88 *source);
 s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_handle);
-void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_actor, s32 mode, s32 centre, s32 extra, s32 third_actor, s32 fourth_actor);
+/* ColossoLogRollingStage_SetupSceneDescriptor is called before its definition with no prototype in scope. */
 void ColossoLogRollingStage_InitializeSceneControl(s32 resource);
 void ColossoLogRollingStage_PushStagedActor(void);
 extern const s32 KorosseoMaruta_Record30Script[];

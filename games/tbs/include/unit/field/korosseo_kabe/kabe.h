@@ -83,7 +83,7 @@ void KorosseoKabe_SelectNearestActor(void);
 void FieldScene_RunSixSteps896To936(void);
 s32 KorosseoKabe_RunStateInteraction(s32 a, s32 b);
 void KorosseoKabe_ShowFollowUpPrompt(s32 a, s32 b);
-void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
+/* FieldScene_RunMiddleSequence is called before its definition with no prototype in scope. */
 void OverlayObject_NotifyMatchingEntries(s32 no, s32 val);
 void KorosseoKabe_InitializeModeTask(u32 mode, u32 param);
 void KorosseoKabe_RunScriptedTransition(s32 mode);
@@ -94,7 +94,7 @@ void SceneEffect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style);
 void SceneState_StartMarkerMove(u32 x, u32 y, u32 duration);
 void SceneEffect_RemoveMarkerTask(void);
 void SceneActor_PlaceWithScale20000(s32 selector, s32 x, s32 z);
-void SceneActor_PlaceWithScale14000(s32 no, s32 x, s32 z);
+/* SceneActor_PlaceWithScale14000 is called before its definition with no prototype in scope. */
 void Text_WriteU32AsHex(u8 *buf, u32 value);
 void SceneState_EmptyHook(void);
 void KorosseoKabe_MarkStageReady(void);
@@ -102,7 +102,7 @@ void SceneState_WaitUntilStatusNine(void);
 void KorosseoKabe_SpawnRandomSceneEffect(SparkSource *a);
 s32 KorosseoKabe_RaiseLinkedSceneEffect(RaisedEffect *a);
 s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB);
-void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre, s32 extra, s32 third, s32 fourth);
+/* FieldScene_BuildDescriptorAndInstallTask is called before its definition with no prototype in scope. */
 void SceneState_InitControlRecordAndStartTask(s32 resource);
 void StagedActor_PushActorAhead(void);
 extern const u8 KorosseoKabe_RollLogScript[];

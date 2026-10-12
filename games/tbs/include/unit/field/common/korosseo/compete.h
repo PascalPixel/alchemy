@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z);
+/* Korosseo_FadeInCompetitor is called before its definition with no prototype in scope. */
 void Korosseo_RestoreCompetitor(s32 id);
 
 #endif

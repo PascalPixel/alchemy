@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void Korosseo_ShowItemIcon(s32 id, s32 item);
+/* Korosseo_ShowItemIcon is called before its definition with no prototype in scope. */
 
 #endif

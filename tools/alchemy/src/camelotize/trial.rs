@@ -153,13 +153,56 @@ impl Build {
 
     /// The object file itself and the messages as the tools gave them.
     fn assemble(&self, root: &Path, file: &Path, text: &str) -> Result<(Vec<u8>, String), String> {
+        self.assemble_among(root, file, text, &[])
+    }
+
+    /// As `assemble`, with other files of the tree read as these texts:
+    /// each is a path under the root and what stands in its place. The
+    /// file and the others are laid out in a copy of the tree's folders,
+    /// so an include beside the file finds a replaced neighbour first, and
+    /// each folder of the search path that holds a replaced file is
+    /// searched in the copy before the tree.
+    fn assemble_among(&self, root: &Path, file: &Path, text: &str, others: &[(String, String)]) -> Result<(Vec<u8>, String), String> {
         let name = file.file_name().and_then(|n| n.to_str()).unwrap_or("source.c");
-        let source = self.directory.path().join(name);
         let assembly = self.directory.path().join("out.s");
         let object = self.directory.path().join("OUT.O");
+        let flags = cflags_for_target_source(self.target.compiler, name);
+        let mut arguments = Vec::new();
+        let source = if others.is_empty() {
+            self.directory.path().join(name)
+        } else {
+            let copy = self.directory.path().join("tree");
+            if copy.exists() {
+                std::fs::remove_dir_all(&copy).map_err(|e| e.to_string())?;
+            }
+            let place = |path: &Path, text: &str| -> Result<std::path::PathBuf, String> {
+                let to = copy.join(path.strip_prefix(root).unwrap_or(path));
+                std::fs::create_dir_all(to.parent().unwrap_or(&copy)).map_err(|e| e.to_string())?;
+                std::fs::write(&to, text).map_err(|e| e.to_string())?;
+                Ok(to)
+            };
+            for (path, text) in others {
+                place(Path::new(path), text)?;
+            }
+            for flag in &flags {
+                let shadow = flag.strip_prefix("-I").and_then(|folder| Path::new(folder).strip_prefix(root).ok()).map(|folder| copy.join(folder));
+                if let Some(shadow) = shadow.filter(|shadow| shadow.is_dir()) {
+                    arguments.push(format!("-I{}", shadow.display()));
+                }
+            }
+            place(file, "")?
+        };
         std::fs::write(&source, text).map_err(|e| e.to_string())?;
-        let mut arguments = vec![format!("-I{}", file.parent().unwrap_or(root).display())];
-        arguments.extend(cflags_for_target_source(self.target.compiler, name));
+        arguments.push(format!("-I{}", file.parent().unwrap_or(root).display()));
+        arguments.extend(flags);
+        // What a replaced C file includes beside itself is still found
+        // beside it, after everything the search path offers.
+        for (path, _) in others.iter().filter(|(path, _)| path.ends_with(".c")) {
+            let beside = format!("-I{}", root.join(path).parent().unwrap_or(root).display());
+            if !arguments.contains(&beside) {
+                arguments.push(beside);
+            }
+        }
         arguments.push(format!("-D{}=1", self.target.edition_define));
         if let Some(imports) = &self.imports {
             arguments.push(format!("-I{}", imports.path().display()));
@@ -240,6 +283,13 @@ impl Compiler {
     /// compiler's messages when it does not compile.
     pub(crate) fn object(&self, root: &Path, file: &Path, text: &str) -> Result<Vec<u8>, String> {
         self.build.assemble(root, file, text).map(|(object, _)| object)
+    }
+
+    /// The object file of this text in place of the file, compiled among
+    /// other replaced files of the tree: each a path under the root and
+    /// the text read in its place.
+    pub(crate) fn object_among(&self, root: &Path, file: &Path, text: &str, others: &[(String, String)]) -> Result<Vec<u8>, String> {
+        self.build.assemble_among(root, file, text, others).map(|(object, _)| object)
     }
 }
 

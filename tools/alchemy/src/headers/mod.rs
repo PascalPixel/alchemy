@@ -1,5 +1,6 @@
 //! alchemy headers: one declaration per function, in the header of the C
-//! file that defines it.
+//! file that defines it; none for a function the bytes show was called
+//! before its definition with no prototype in scope.
 
 mod expand;
 mod generate;
@@ -9,6 +10,7 @@ mod objects;
 mod plan;
 mod scan;
 mod settle;
+mod undeclared;
 
 use crate::compiler::preprocess::Expansion;
 use crate::compiler::routing::root;
@@ -21,7 +23,10 @@ use std::sync::Mutex;
 
 const USAGE: &str = "usage: alchemy headers apply [--dry-run] [--functions] [--leave FILE] [--report FILE]\n\
   apply  write games/tbs/include/unit/<unit>.h for every ☀️ C file: the\n\
-         prototype of each function it defines for other code. Take those\n\
+         prototype of each function it defines for other code (a function\n\
+         the header leaves out, under its comment that the function is\n\
+         called before its definition with no prototype in scope, stays\n\
+         out: see undeclared). Take those\n\
          functions' prototypes and their function-shape cast macros out of\n\
          ☀️'s C files and headers, and make each file include the unit\n\
          headers of what it calls. Put a shared header's prototype that\n\
@@ -37,7 +42,24 @@ const USAGE: &str = "usage: alchemy headers apply [--dry-run] [--functions] [--l
        alchemy headers units save|same FILE\n\
   units  save writes every Thumb unit's objects in the six editions to\n\
          FILE, part by part; same builds them again and prints each part\n\
-         that differs from FILE: the trial of an edit by hand.";
+         that differs from FILE: the trial of an edit by hand.\n\
+       alchemy headers undeclared [--dry-run] [--report FILE] [FILE.c]...\n\
+  undeclared  a call with no prototype in scope is C89's implicit\n\
+         `int name()`, and some callers match only as that: a function's\n\
+         callers above its definition, written as a cast of the function\n\
+         or through a ValueN or CallN helper, each a device. For\n\
+         each such function no other file names, try what the source had:\n\
+         the function left out of its file's header, a comment in the\n\
+         prototype's place saying it is called before its definition with\n\
+         no prototype in scope, and those callers plain calls. Where every\n\
+         unit that compiles the file gives the same objects in the six\n\
+         editions, write that, and take out each tag that stood on those\n\
+         calls alone. A function already left out whose callers match with\n\
+         its prototype in scope is declared again. Prints one row per\n\
+         function: its file, its calls above the definition under another\n\
+         shape, its plain calls there, and the verdict. FILE.c limits the\n\
+         pass to the functions those files define; --dry-run writes\n\
+         nothing (the trials read the tree and compile in a copy).";
 
 fn write(root: &Path, file: &str, text: &str) -> Result<(), String> {
     let path = root.join(file);
@@ -300,6 +322,11 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             apply(root(), arguments.iter().any(|a| a == "--dry-run"), arguments.iter().any(|a| a == "--functions"), leave, report)
         }
         Some("units") => units(root(), arguments.get(1).ok_or(USAGE)?, arguments.get(2).ok_or(USAGE)?),
+        Some("undeclared") => {
+            let report = arguments.iter().position(|a| a == "--report").and_then(|at| arguments.get(at + 1));
+            let files: Vec<String> = arguments[1..].iter().filter(|a| !a.starts_with("--") && Some(*a) != report).cloned().collect();
+            undeclared::run(root(), arguments.iter().any(|a| a == "--dry-run"), &files, report.map(String::as_str))
+        }
         // What one unit's expansions say of one name: for looking into a
         // call the pass judged otherwise than the compiler does.
         Some("sights") => {

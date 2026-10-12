@@ -1,3 +1,7 @@
+/* Draft, differ 24 of 38: the native takes the sprite half of the output through a pointer at
+ * +16 (adds r1, r4; adds r1, #16; [r1, #4], [r1, #6]) and reads its x after the stores to the
+ * output's x and y, with the next link loaded right after; this form reads the sprite's x before
+ * those stores. Direct oam fields address it at +20 and +22 from a copy of the output (differ 25). */
 #include "types.h"
 #include "render_input.h"
 

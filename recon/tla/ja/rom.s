@@ -3816,6 +3816,10 @@ ColorBuffer_FadeStep3Map:
 UiIcon_PrepareObject:
 	.incbin "baserom.gba", 0x000f8830, 0x0000003c
 	.section .rom.000f8878, "ax"
+	.global Func_080f88d0
+	.type Func_080f88d0, %function
+	.thumb_func
+Func_080f88d0:
 	.incbin "baserom.gba", 0x000f8878, 0x000002ec
 	.section .rom.000f8b74, "ax"
 	.balign 4
@@ -3883,7 +3887,9 @@ Func_080fe184:
 	.type Func_080fe274, %function
 	.thumb_func
 Func_080fe274:
-	.incbin "baserom.gba", 0x000fe2a8, 0x00000f80
+	.incbin "baserom.gba", 0x000fe2a8, 0x00000b90
+	.section .rom.000fee74, "ax"
+	.incbin "baserom.gba", 0x000fee74, 0x000003b4
 	.section .rom.000ff3a4, "ax"
 	.incbin "baserom.gba", 0x000ff3a4, 0x00000570
 	.section .rom.000ff980, "ax"
@@ -4875,7 +4881,11 @@ Func_081a0d78:
 DisplayScroll_DrawLine:
 	.incbin "baserom.gba", 0x001a1008, 0x0000026c
 	.section .rom.001a1280, "ax"
-	.incbin "baserom.gba", 0x001a1280, 0x00000fd4
+	.incbin "baserom.gba", 0x001a1280, 0x0000053c
+	.section .rom.001a181c, "ax"
+	.incbin "baserom.gba", 0x001a181c, 0x000000c8
+	.section .rom.001a1914, "ax"
+	.incbin "baserom.gba", 0x001a1914, 0x00000940
 	.global DisplayScroll_LineTable
 DisplayScroll_LineTable:
 	.incbin "baserom.gba", 0x001a2254, 0x0000068c

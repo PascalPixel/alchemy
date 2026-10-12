@@ -3221,6 +3221,10 @@ Menu_UpdateEntryObjectTransformsFar:
 UiIcon_PrepareObject:
 	.incbin "baserom.gba", 0x00102888, 0x0000003c
 	.section .rom.001028d0, "ax"
+	.global Func_080f88d0
+	.type Func_080f88d0, %function
+	.thumb_func
+Func_080f88d0:
 	.incbin "baserom.gba", 0x001028d0, 0x000002ec
 	.section .rom.00102bcc, "ax"
 	.balign 4
@@ -3276,7 +3280,9 @@ Func_080fe184:
 	.type Func_080fe274, %function
 	.thumb_func
 Func_080fe274:
-	.incbin "baserom.gba", 0x00108420, 0x00000f80
+	.incbin "baserom.gba", 0x00108420, 0x00000b90
+	.section .rom.00108fec, "ax"
+	.incbin "baserom.gba", 0x00108fec, 0x000003b4
 	.section .rom.0010951c, "ax"
 	.incbin "baserom.gba", 0x0010951c, 0x00000570
 	.section .rom.00109af8, "ax"
@@ -3328,7 +3334,12 @@ UiIcon_CreateStatChangeArrow:
 	.type Menu_UpdateEntryObjectTransforms, %function
 	.thumb_func
 Menu_UpdateEntryObjectTransforms:
-	.incbin "baserom.gba", 0x0010ef74, 0x000002e4
+	.incbin "baserom.gba", 0x0010ef74, 0x00000238
+	.global Func_08104fe0
+	.type Func_08104fe0, %function
+	.thumb_func
+Func_08104fe0:
+	.incbin "baserom.gba", 0x0010f1ac, 0x000000ac
 	.section .rom.0010f298, "ax"
 	.global MenuIcon_UpdateTransforms
 	.type MenuIcon_UpdateTransforms, %function
@@ -4383,7 +4394,11 @@ Func_081a0d78:
 DisplayScroll_DrawLine:
 	.incbin "baserom.gba", 0x001a101c, 0x0000026c
 	.section .rom.001a1294, "ax"
-	.incbin "baserom.gba", 0x001a1294, 0x00000ef8
+	.incbin "baserom.gba", 0x001a1294, 0x0000053c
+	.section .rom.001a1830, "ax"
+	.incbin "baserom.gba", 0x001a1830, 0x000000c8
+	.section .rom.001a1928, "ax"
+	.incbin "baserom.gba", 0x001a1928, 0x00000864
 	.global DisplayScroll_LineTable
 DisplayScroll_LineTable:
 	.incbin "baserom.gba", 0x001a218c, 0x000006a4

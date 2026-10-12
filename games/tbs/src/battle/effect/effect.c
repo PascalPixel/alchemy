@@ -14298,17 +14298,25 @@ void BattleFx_RunMode4(void *effect)
 }
 
 //--------------------------------------------------------------------------
-// 型 5 : 使う者を mode 2 にし、アニメを速めているあいだに放つ
+// 使う者を mode 2 にし、アニメを速めているあいだに型 mode の弾を放つ
 //--------------------------------------------------------------------------
-void BattleEffect_RunMode5WithAction(void *effect)
+static __inline__ void RunVolleyWithAction(void *effect, s32 mode)
 {
 	s32 obj;
 
 	obj = (s32)GetBattleObjectSlotFar(ARG(effect)->actor)->object;
 	ObjectDispatch_ApplyArgumentToChildrenFar(obj, 2);
 	ObjectDispatch_ApplyValueToChildrenFar(obj, STEP_HAYAI);
-	BattleFx_RunProjectileVolley(effect, 5);
+	BattleFx_RunProjectileVolley(effect, mode);
 	ObjectDispatch_ApplyValueToChildrenFar(obj, STEP_FUTSU);
+}
+
+//--------------------------------------------------------------------------
+// 型 5 : 使う者を mode 2 にし、アニメを速めているあいだに放つ
+//--------------------------------------------------------------------------
+void BattleEffect_RunMode5WithAction(void *effect)
+{
+	RunVolleyWithAction(effect, 5);
 }
 
 //--------------------------------------------------------------------------
@@ -14316,13 +14324,7 @@ void BattleEffect_RunMode5WithAction(void *effect)
 //--------------------------------------------------------------------------
 void BattleFx_RunMode6WithAction(void *effect)
 {
-	s32 obj;
-
-	obj = (s32)GetBattleObjectSlotFar(ARG(effect)->actor)->object;
-	ObjectDispatch_ApplyArgumentToChildrenFar(obj, 2);
-	ObjectDispatch_ApplyValueToChildrenFar(obj, STEP_HAYAI);
-	BattleFx_RunProjectileVolley(effect, 6);
-	ObjectDispatch_ApplyValueToChildrenFar(obj, STEP_FUTSU);
+	RunVolleyWithAction(effect, 6);
 }
 
 void BattleFx_RunMode7(void *effect)
@@ -14340,13 +14342,7 @@ void BattleFx_RunMode10(void *effect)
 //--------------------------------------------------------------------------
 void BattleFx_RunMode9WithAction(void *effect)
 {
-	s32 obj;
-
-	obj = (s32)GetBattleObjectSlotFar(ARG(effect)->actor)->object;
-	ObjectDispatch_ApplyArgumentToChildrenFar(obj, 2);
-	ObjectDispatch_ApplyValueToChildrenFar(obj, STEP_HAYAI);
-	BattleFx_RunProjectileVolley(effect, 9);
-	ObjectDispatch_ApplyValueToChildrenFar(obj, STEP_FUTSU);
+	RunVolleyWithAction(effect, 9);
 }
 
 //--------------------------------------------------------------------------

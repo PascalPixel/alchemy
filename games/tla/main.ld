@@ -1097,6 +1097,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000ea818)
     "*/games/tla/src/field/common/map/cell_index.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000eaadc)
+    "*/games/tla/src/field/common/object/objfind.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.000eaedc)
     "*/recon/tla/ja/rom.o"(.rom.000eaf60)
     "*/games/tla/src/battle/effect/screen_sprite.o"(.text)
     "*/games/tla/src/battle/effect/step_vector.o"(.text)

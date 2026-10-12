@@ -1111,7 +1111,7 @@
     "*/recon/tla/fr/rom.o"(.rom.000efcdc)
     "*/recon/tla/fr/rom.o"(.rom.000efdf0)
     "*/recon/tla/fr/rom.o"(.rom.000efea8)
-    "*/recon/tla/fr/rom.o"(.rom.000eff1c)
+    "*/games/tla/src/field/common/object/objfind.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000eff8c)
     "*/recon/tla/fr/rom.o"(.rom.000f0010)
     "*/games/tla/src/battle/effect/screen_sprite.o"(.text)

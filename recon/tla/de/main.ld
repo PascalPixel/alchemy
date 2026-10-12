@@ -1115,7 +1115,7 @@
     "*/recon/tla/de/rom.o"(.rom.000f7ce8)
     "*/recon/tla/de/rom.o"(.rom.000f7dfc)
     "*/recon/tla/de/rom.o"(.rom.000f7eb4)
-    "*/recon/tla/de/rom.o"(.rom.000f7f28)
+    "*/games/tla/src/field/common/object/objfind.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000f7f98)
     "*/recon/tla/de/rom.o"(.rom.000f801c)
     "*/games/tla/src/battle/effect/screen_sprite.o"(.text)

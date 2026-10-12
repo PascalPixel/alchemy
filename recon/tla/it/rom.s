@@ -2831,10 +2831,10 @@ Func_080cdac0:
 Func_080eab98:
 	.incbin "baserom.gba", 0x000cdc74, 0x0000010c
 	.section .rom.000cdd80, "ax"
-	.global Func_080eaf28
-	.type Func_080eaf28, %function
+	.global Func_080cdd80
+	.type Func_080cdd80, %function
 	.thumb_func
-Func_080eaf28:
+Func_080cdd80:
 	.incbin "baserom.gba", 0x000cdd80, 0x00000128
 	.section .rom.000cdfb0, "ax"
 	.global Event_FindFacingTrigger
@@ -3894,12 +3894,6 @@ Func_080eabd0:
 	.thumb_func
 Func_080cdc74:
 	.incbin "baserom.gba", 0x000eaea8, 0x00000074
-	.section .rom.000eaf1c, "ax"
-	.global Func_080eadfc
-	.type Func_080eadfc, %function
-	.thumb_func
-Func_080eadfc:
-	.incbin "baserom.gba", 0x000eaf1c, 0x00000070
 	.section .rom.000eaf8c, "ax"
 	.global Func_080d3940
 	.type Func_080d3940, %function
@@ -4739,7 +4733,7 @@ Func_08123574:
 	.type Func_0812628c, %function
 	.thumb_func
 Func_0812628c:
-	.incbin "baserom.gba", 0x001262a4, 0x00000164
+	.incbin "baserom.gba", 0x001262a4, 0x00000138
 	.section .rom.00126414, "ax"
 	.balign 4
 	.global Func_081263fc

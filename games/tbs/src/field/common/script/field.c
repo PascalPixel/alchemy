@@ -3647,7 +3647,7 @@ static __inline__ void StoreHalfword(s16 *address, s32 value)
 		state->comparison_result = state->field == value;             \
 	}
 
-// スクリプト内の位置を指す項目: 加算は命令語 (4 バイト) 単位
+// アドレスの項目: 加算は value の 4 倍 (4 バイト単位)
 #define DEFINE_OPERAND_ADDRESS(name, field)                           \
 	void name(struct ScriptOperands *state, s32 operation, s32 value) \
 	{                                                                 \
@@ -7687,7 +7687,7 @@ struct Vec2
 	s32 y;
 };
 
-// 10 個のオブジェクトの slot 番の絵の field を value にする
+// gSpriteObjects の 10 個それぞれについて、slot 番のエントリの field を value にする
 #define DEFINE_SET_GRID_COLUMN(name, field)              \
 	void name(s32 slot, s32 value)                       \
 	{                                                    \

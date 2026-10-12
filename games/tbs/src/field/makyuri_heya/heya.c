@@ -15,7 +15,7 @@
 #include "unit/field/common/script/field.h"
 #include "unit/game/character/chara.h"
 #include "unit/graphics/window/window.h"
-#include "unit/system/scheduler/callback.h"
+#include "unit/system/scheduler/runtime.h"
 #include "fieldobj.h"
 #include "mem.h"
 #include "makyuri.h"

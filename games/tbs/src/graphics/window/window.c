@@ -12,7 +12,7 @@
 #include "unit/graphics/window/window.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/graphics/text/moji.h"
-#include "unit/system/scheduler/callback.h"
+#include "unit/system/scheduler/runtime.h"
 #include "types.h"
 #include "edition.h"
 #include "window.h"

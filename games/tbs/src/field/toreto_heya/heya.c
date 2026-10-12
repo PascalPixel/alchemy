@@ -6,7 +6,7 @@
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/field.h"
 #include "unit/game/character/chara.h"
-#include "unit/system/scheduler/callback.h"
+#include "unit/system/scheduler/runtime.h"
 
 #define NULL ((void *)0)
 #include "fieldobj.h"

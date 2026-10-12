@@ -19,7 +19,7 @@
 #include "unit/graphics/window/window.h"
 #include "unit/menu/item/menu.h"
 #include "unit/sound/sound.h"
-#include "unit/system/scheduler/callback.h"
+#include "unit/system/scheduler/runtime.h"
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"

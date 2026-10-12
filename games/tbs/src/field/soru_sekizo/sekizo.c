@@ -2,7 +2,7 @@
 #include "unit/field/soru_sekizo/sekizo.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/field.h"
-#include "unit/system/scheduler/callback.h"
+#include "unit/system/scheduler/runtime.h"
 #include "callback_scheduler.h"
 #include "resource.h"
 #include "mem.h"

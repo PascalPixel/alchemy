@@ -5,7 +5,7 @@
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
-#include "unit/system/scheduler/callback.h"
+#include "unit/system/scheduler/runtime.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "fieldobj.h"

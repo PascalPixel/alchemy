@@ -6,7 +6,7 @@
 #include "unit/battle/effect/slots.h"
 #include "unit/battle/tgtexec.h"
 #include "unit/game/character/chara.h"
-#include "unit/system/scheduler/callback.h"
+#include "unit/system/scheduler/runtime.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"

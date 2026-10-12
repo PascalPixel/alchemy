@@ -18,7 +18,7 @@
 #include "unit/graphics/window/window.h"
 #include "unit/menu/item/menu.h"
 #include "unit/sound/sound.h"
-#include "unit/system/scheduler/callback.h"
+#include "unit/system/scheduler/runtime.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

@@ -1,7 +1,7 @@
 #include "unit/system/save/savedata.h"
 #include "unit/system/scheduler/mathtbl.h"
 #include "unit/system/scheduler/numtext.h"
-#include "unit/system/scheduler/callback.h"
+#include "unit/system/scheduler/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

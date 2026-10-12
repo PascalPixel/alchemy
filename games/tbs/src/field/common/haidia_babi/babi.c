@@ -9,7 +9,7 @@
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/field.h"
 #include "unit/graphics/window/window.h"
-#include "unit/system/scheduler/callback.h"
+#include "unit/system/scheduler/runtime.h"
 #include "types.h"
 #include "facing_object.h"
 #include "battle.h"

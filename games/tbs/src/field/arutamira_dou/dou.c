@@ -6,7 +6,7 @@
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/field.h"
 #include "unit/menu/shop/sell.h"
-#include "unit/system/scheduler/callback.h"
+#include "unit/system/scheduler/runtime.h"
 #include "iowrite.h"
 
 #include "battle.h"

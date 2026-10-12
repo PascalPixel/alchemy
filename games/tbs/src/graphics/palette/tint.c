@@ -1,6 +1,6 @@
 #include "battle_effect_runtime.h"
 #include "unit/graphics/palette/tint.h"
-#include "unit/system/scheduler/callback.h"
+#include "unit/system/scheduler/runtime.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

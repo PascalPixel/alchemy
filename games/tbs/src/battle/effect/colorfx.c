@@ -1,6 +1,6 @@
 #include "audio_engine_symbols.h"
 #include "unit/battle/effect/colorfx.h"
-#include "unit/system/scheduler/callback.h"
+#include "unit/system/scheduler/runtime.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

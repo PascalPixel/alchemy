@@ -1,5 +1,5 @@
 #include "unit/field/common/camera/camera.h"
-#include "unit/system/scheduler/callback.h"
+#include "unit/system/scheduler/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

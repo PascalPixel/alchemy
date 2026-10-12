@@ -8,7 +8,7 @@
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/field.h"
 #include "unit/game/character/chara.h"
-#include "unit/system/scheduler/callback.h"
+#include "unit/system/scheduler/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

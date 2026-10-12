@@ -4,7 +4,7 @@
 //--------------------------------------------------------------------------
 
 #include "unit/graphics/tile/slides.h"
-#include "unit/system/scheduler/callback.h"
+#include "unit/system/scheduler/runtime.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "types.h"

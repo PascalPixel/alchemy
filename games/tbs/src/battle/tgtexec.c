@@ -2,7 +2,7 @@
 #include "window.h"
 #include "unit/battle/tgtexec.h"
 #include "unit/battle/effect/slots.h"
-#include "unit/system/scheduler/callback.h"
+#include "unit/system/scheduler/runtime.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

@@ -4,7 +4,7 @@
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/graphics/display/scroll_initialize_hblank_dma.h"
-#include "unit/system/scheduler/callback.h"
+#include "unit/system/scheduler/runtime.h"
 #include "types.h"
 #include "scene.h"
 #include "btltype.h"

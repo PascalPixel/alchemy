@@ -205,26 +205,18 @@ static void EV06_TOUCH(void)
 
 static void EV07_TOUCH(void)
 {
-	s32 record;
-
 	if (GameFlag_IsSet(0x206) == 0)
 	{
 		Event_PlayCue(158);
 		Map_AnimateCells(HaidiaArashi_CellSteps2, 45, 39);
 	}
-	if (GameFlag_IsSet(0x835) == 0)
+	if (GameFlag_IsSet(0x835) == 0 && GameFlag_IsSet(0x831) == 0)
 	{
-		record = GameFlag_IsSet(0x831);
-		if (record != 0)
-		{
-			goto leave;
-		}
 		FieldScene_RunScene372SequenceA();
 		GameFlag_Set(0x206);
 	}
 	else
 	{
-	leave:;
 		Actor_WalkTo(ACTOR_PARTY_LEADER, 0x106, 0x325);
 		Engine_EventWait(3);
 		Haidia_RequestBackdropExit(6);

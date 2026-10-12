@@ -24,7 +24,9 @@ const TREES: [&str; 3] = ["games/tbs/src", "games/tbs/include", "games/common/in
 
 /// The names a header gives the files that read it.
 fn gives(text: &str) -> BTreeSet<String> {
-    c_items::flat(text).iter().flat_map(|piece| c_items::names(&piece.item)).map(|name| name.name).collect()
+    // Its include guard is no name a reader uses.
+    let guard = |name: &str| name.starts_with("ALCHEMY_") && name.ends_with("_H");
+    c_items::flat(text).iter().flat_map(|piece| c_items::names(&piece.item)).map(|name| name.name).filter(|name| !guard(name)).collect()
 }
 
 /// The unit header an include line names: `#include "unit/a/b.h"`.
@@ -42,7 +44,9 @@ fn narrowed(text: &str, named: &BTreeSet<String>, own: Option<&str>, given: &dyn
     let mut gone = 0;
     for line in text.split_inclusive('\n') {
         let needless = unit_include(line).is_some_and(|name| {
-            Some(name) != own && given(name).is_some_and(|names| !names.iter().any(|name| named.contains(name)))
+            // A header that gives nothing holds only the note of a function left
+            // out of it; it is read for that note and stays.
+            Some(name) != own && given(name).is_some_and(|names| !names.is_empty() && !names.iter().any(|name| named.contains(name)))
         });
         if needless {
             gone += 1;
@@ -154,7 +158,10 @@ pub(crate) fn run(root: &Path, dry_run: bool) -> Result<(), String> {
     let mut by_name: BTreeMap<String, Vec<String>> = BTreeMap::new();
     for file in &files {
         texts.insert(file.clone(), fs::read_to_string(root.join(file)).map_err(|error| format!("{file}: {error}"))?);
-        by_name.entry(file.rsplit('/').next().unwrap_or(file).to_owned()).or_default().push(file.clone());
+        // A plain include never means a unit header of the same last name.
+        if !file.starts_with(&format!("{INCLUDE}{UNIT}")) {
+            by_name.entry(file.rsplit('/').next().unwrap_or(file).to_owned()).or_default().push(file.clone());
+        }
     }
     // What each C file's unit header gives; another header under unit/ (the
     // overlays' import list) gives its names through macros and is not judged.
@@ -244,6 +251,8 @@ mod tests {
         let typed = "#include \"unit/a/idle.h\"\nstruct Idle gIdle;\n";
         let (_, gone) = narrowed(typed, &named(typed), None, &given);
         assert_eq!(gone, 0);
+        // A header that gives nothing is kept: it holds a note, not names.
+        assert_eq!(narrowed("#include \"unit/a/note.h\"\n", &BTreeSet::new(), None, &|_| Some(BTreeSet::new())).1, 0);
         // Without a name of its own header, a file still keeps that header.
         assert_eq!(narrowed("#include \"unit/a/own.h\"\n", &BTreeSet::new(), Some("unit/a/own.h"), &given).1, 0);
         // A name the file reaches through a fragment or a macro header it

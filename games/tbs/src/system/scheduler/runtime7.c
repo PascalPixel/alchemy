@@ -1,5 +1,4 @@
 #include "unit/system/scheduler/mathtbl.h"
-#include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime7.h"
 #include "unit/system/scheduler/runtime9.h"
 #include "battle.h"

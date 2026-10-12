@@ -5,7 +5,6 @@
 #include "unit/battle/effect/object2.h"
 #include "unit/battle/effect/object9.h"
 #include "unit/battle/effect/object10.h"
-#include "unit/field/common/script/field.h"
 #include "unit/game/character/chara.h"
 #include "unit/graphics/palette/palette.h"
 #include "unit/graphics/window/window.h"

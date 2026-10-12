@@ -9,7 +9,6 @@
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
 #include "unit/battle/effect/object10.h"
-#include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime9.h"
 #include "battle.h"
 #include "keystate.h"

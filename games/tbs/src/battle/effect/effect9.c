@@ -13,7 +13,6 @@
 #include "unit/battle/effect/object4.h"
 #include "unit/battle/effect/object14.h"
 #include "unit/battle/effect/object16.h"
-#include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtim10.h"
 #include "battle.h"
 #include "debug.h"

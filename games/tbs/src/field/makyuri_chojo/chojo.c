@@ -13,7 +13,6 @@
 #include "unit/battle/effect/object15.h"
 #include "unit/battle/effect/object16.h"
 #include "unit/game/character/chara.h"
-#include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime7.h"
 #include "types.h"
 #include "field_event.h"

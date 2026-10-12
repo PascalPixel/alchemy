@@ -3,7 +3,6 @@
 #include "unit/battle/effect/effect6.h"
 #include "unit/battle/effect/effect8.h"
 #include "unit/battle/effect/effect9.h"
-#include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
 #include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime6.h"

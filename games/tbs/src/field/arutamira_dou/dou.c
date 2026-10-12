@@ -22,7 +22,6 @@
 #include "unit/field/common/script/field10.h"
 #include "unit/menu/shop/shop.h"
 #include "unit/menu/shop/shop4.h"
-#include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime7.h"
 #include "iowrite.h"
 

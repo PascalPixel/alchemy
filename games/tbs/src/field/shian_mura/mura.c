@@ -13,7 +13,6 @@
 #include "unit/battle/effect/object16.h"
 #include "unit/field/common/script/field.h"
 #include "unit/field/common/script/field10.h"
-#include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime7.h"
 
 #define NULL ((void *)0)

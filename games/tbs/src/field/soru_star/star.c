@@ -26,7 +26,6 @@
 #include "unit/graphics/window/window9.h"
 #include "unit/menu/shop/shop.h"
 #include "unit/menu/shop/shop6.h"
-#include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime7.h"
 #include "unit/system/scheduler/runtime9.h"
 #include "fieldobj.h"

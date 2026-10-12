@@ -13,7 +13,6 @@
 #include "unit/battle/effect/object14.h"
 #include "unit/battle/effect/object15.h"
 #include "unit/battle/effect/object16.h"
-#include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime7.h"
 
 #include "fieldobj.h"

@@ -3,7 +3,6 @@
 #include "unit/menu/item/menu3.h"
 #include "unit/menu/item/menu4.h"
 #include "unit/menu/item/menu5.h"
-#include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime7.h"
 #include "battle.h"
 #include "debug.h"

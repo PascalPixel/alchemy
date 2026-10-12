@@ -2,7 +2,6 @@
 #include "unit/field/common/script/field3.h"
 #include "unit/field/common/script/field4.h"
 #include "unit/field/common/script/field8.h"
-#include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime6.h"
 #include "unit/system/scheduler/runtime9.h"
 #include "battle.h"

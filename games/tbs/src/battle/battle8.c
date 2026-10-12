@@ -3,7 +3,6 @@
 #include "unit/battle/battle.h"
 #include "unit/battle/battle2.h"
 #include "unit/battle/battle5.h"
-#include "unit/battle/battle6.h"
 #include "unit/battle/battle8.h"
 #include "unit/battle/battle9.h"
 #include "unit/battle/effect/object.h"

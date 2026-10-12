@@ -2,7 +2,6 @@
 #include "unit/graphics/window/window2.h"
 #include "unit/graphics/window/window7.h"
 #include "unit/graphics/window/window9.h"
-#include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
 #include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime5.h"

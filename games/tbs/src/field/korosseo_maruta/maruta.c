@@ -44,6 +44,7 @@
 #include "unit/system/scheduler/runtime5.h"
 #include "unit/system/scheduler/runtime7.h"
 #include "unit/system/scheduler/runtime9.h"
+#include "unit/field/common/korosseo/item_icon.h"
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"

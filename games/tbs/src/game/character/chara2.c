@@ -4,7 +4,6 @@
 #include "unit/game/character/chara4.h"
 #include "unit/game/character/chara5.h"
 #include "unit/game/character/chara6.h"
-#include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime7.h"
 #include "unit/system/scheduler/runtime9.h"
 #include "battle.h"

@@ -1,9 +1,6 @@
 #ifndef ALCHEMY_BATTLE_COMMAND_H
 #define ALCHEMY_BATTLE_COMMAND_H
 
-#include "unit/battle/battle.h"
-#include "unit/battle/battle6.h"
-#include "unit/battle/battle8.h"
 #include "btlsys.h"
 #include "item.h"
 #include "keystate.h"

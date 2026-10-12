@@ -5,7 +5,6 @@
 #include "unit/battle/effect/object2.h"
 #include "unit/battle/effect/object9.h"
 #include "unit/battle/effect/object10.h"
-#include "unit/game/character/chara.h"
 #include "unit/game/character/chara2.h"
 #include "battle.h"
 #include "debug.h"

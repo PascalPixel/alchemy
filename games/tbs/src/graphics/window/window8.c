@@ -10,7 +10,6 @@
 #include "unit/battle/effect/object2.h"
 #include "unit/battle/effect/object11.h"
 #include "unit/graphics/text/moji.h"
-#include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime8.h"
 #include "unit/system/scheduler/runtime9.h"
 #include "types.h"

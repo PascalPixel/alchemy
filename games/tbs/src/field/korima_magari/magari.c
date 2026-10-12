@@ -11,7 +11,6 @@
 #include "unit/battle/effect/object14.h"
 #include "unit/battle/effect/object15.h"
 #include "unit/battle/effect/object16.h"
-#include "unit/field/common/script/field.h"
 #include "unit/field/common/script/field2.h"
 #include "unit/field/common/script/field10.h"
 #include "unit/system/scheduler/runtime.h"

@@ -1,7 +1,6 @@
 #ifndef ALCHEMY_INVENTORY_H
 #define ALCHEMY_INVENTORY_H
 
-#include "unit/game/character/chara.h"
 #include "item.h"
 #include "owner_state.h"
 #include "party_state.h"

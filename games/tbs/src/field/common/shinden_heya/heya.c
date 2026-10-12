@@ -18,7 +18,6 @@
 #include "unit/graphics/window/window7.h"
 #include "unit/graphics/window/window9.h"
 #include "unit/sound/sound.h"
-#include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime9.h"
 #include "battle.h"
 #include "keystate.h"

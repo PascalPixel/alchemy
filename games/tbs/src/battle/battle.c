@@ -10,7 +10,6 @@
 #include "unit/battle/battle8.h"
 #include "unit/battle/battle10.h"
 #include "unit/battle/battle12.h"
-#include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
 #include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime3.h"

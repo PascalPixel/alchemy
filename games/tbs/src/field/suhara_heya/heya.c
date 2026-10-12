@@ -11,8 +11,6 @@
 #include "unit/battle/effect/object14.h"
 #include "unit/battle/effect/object15.h"
 #include "unit/battle/effect/object16.h"
-#include "unit/field/common/script/field.h"
-#include "unit/system/scheduler/runtime.h"
 #include "suhara.h"
 #include "text/msg_ids.h"
 #include "types.h"

@@ -1,10 +1,5 @@
 	.section .rodata
 	.balign 2
-@ 贈り物の品物 (0 で終わり)
-	.global Shop_GiftItemIds
-Shop_GiftItemIds:
-	.2byte 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-	.2byte 16, 195, 38, 84, 89, 90, 180, 181, 190, 0
 @ 店ごとの品物 (0 で終わり), 特別な品物, 種類
 	.global Shop_StockTable
 Shop_StockTable:

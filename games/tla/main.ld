@@ -914,6 +914,7 @@ SECTIONS
     "*/games/tla/src/field/common/camera/bounds.o"(.text)
     "*/games/tla/src/battle/effect/copy_linked_object_position.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d4794)
+    "*/games/tla/src/battle/effect/anim108.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d487c)
     "*/games/tla/src/field/common/object/action.o"(.text)
     "*/games/common/src/field/common/object/facing.o"(.text)

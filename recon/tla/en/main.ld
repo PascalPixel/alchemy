@@ -1058,7 +1058,7 @@
         "*/games/tla/src/field/common/camera/bounds.o"(.text)
         "*/games/tla/src/battle/effect/copy_linked_object_position.o"(.text)
         "*/recon/tla/raw/080d47b4.o"(.text)
-        "*/recon/tla/raw/080d4868.o"(.text)
+        "*/games/tla/src/battle/effect/anim108.o"(.text)
         "*/recon/tla/raw/080d489c.o"(.text)
         "*/games/tla/src/field/common/object/action.o"(.text)
         "*/games/common/src/field/common/object/facing.o"(.text)

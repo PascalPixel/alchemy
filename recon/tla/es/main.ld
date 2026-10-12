@@ -916,6 +916,8 @@
     "*/games/tla/src/field/common/camera/bounds.o"(.text)
     "*/games/tla/src/battle/effect/copy_linked_object_position.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000dd7a8)
+    "*/games/tla/src/battle/effect/anim108.o"(.text)
+    "*/recon/tla/es/rom.o"(.rom.000dd890)
     "*/games/tla/src/field/common/object/action.o"(.text)
     "*/games/common/src/field/common/object/facing.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000dda9c)

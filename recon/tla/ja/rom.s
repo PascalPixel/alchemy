@@ -2883,8 +2883,9 @@ Motion_CamBounds:
 	.type Func_080d47b4, %function
 	.thumb_func
 Func_080d47b4:
-	.incbin "baserom.gba", 0x000d4794, 0x000000e8
+	.incbin "baserom.gba", 0x000d4794, 0x000000b4
 	.section .rom.000d487c, "ax"
+	.balign 4
 	.global Func_080d489c
 	.type Func_080d489c, %function
 	.thumb_func

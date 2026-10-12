@@ -3191,7 +3191,10 @@ Func_080d4330:
 Motion_CamBounds:
 	.incbin "baserom.gba", 0x000dd400, 0x00000100
 	.section .rom.000dd7a8, "ax"
-	.incbin "baserom.gba", 0x000dd7a8, 0x000001d8
+	.incbin "baserom.gba", 0x000dd7a8, 0x000000b4
+	.section .rom.000dd890, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000dd890, 0x000000f0
 	.section .rom.000dda9c, "ax"
 	.incbin "baserom.gba", 0x000dda9c, 0x0000000c
 	.section .rom.000ddaa8, "ax"

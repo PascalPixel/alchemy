@@ -2,7 +2,7 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/scene/korima_hashi.h"
-#include "unit/scene/korima_hashi_falling_effect.h"
+#include "unit/scene/common/korima_hashi_falling_effect.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/marker.h"
@@ -1148,7 +1148,7 @@ hit:
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "korima_hashi_falling_effect.c"
+#include "common/korima_hashi_falling_effect.c"
 s32 KorimaHashi_TriggerPending __attribute__((section(".bss")));
 s32 KorimaHashi_PartyFlag __attribute__((section(".bss")));
 s32 KorimaHashi_SparkleSound __attribute__((section(".bss")));

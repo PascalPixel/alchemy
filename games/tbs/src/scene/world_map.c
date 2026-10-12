@@ -2,7 +2,7 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/scene/world_map.h"
-#include "unit/scene/world_map_linked_effects.h"
+#include "unit/scene/common/world_map_linked_effects.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/fldmain.h"
@@ -2477,7 +2477,7 @@ static void SceneState_RunSlotStepOnOddFrames(s32 arg0)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect/vertical.c"
-#include "world_map_linked_effects.c"
+#include "common/world_map_linked_effects.c"
 
 s32 gTransferArrive10[] = {
 	SC_POS(PIXELS(5848), 0, PIXELS(1576)),

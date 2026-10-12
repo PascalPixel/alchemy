@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "unit/scene/soru_funka.h"
 #include "unit/scene/common/effect/psynergy.h"
-#include "unit/scene/soru_star_ring_setup.h"
+#include "unit/scene/common/soru_star_ring_setup.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"
@@ -1875,7 +1875,7 @@ static void FieldScene_RunActor15TwoStep(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "soru_star_ring_setup.c"
+#include "common/soru_star_ring_setup.c"
 
 s32 Funka_ArcOriginsHead[] = {
 	SC_SET(SW_VELOCITY_Y, 0x60000),

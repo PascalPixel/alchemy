@@ -2,7 +2,7 @@
 #include "unit/import.h"
 #include "unit/scene/soru_star.h"
 #include "unit/scene/common/effect_spawn.h"
-#include "unit/scene/soru_star_ring_setup.h"
+#include "unit/scene/common/soru_star_ring_setup.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/marker.h"
@@ -2225,7 +2225,7 @@ static void SoruStar_RiseActorFourteenSparks(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "soru_star_ring_setup.c"
+#include "common/soru_star_ring_setup.c"
 
 s32 gEffectScript0[] = {
 	SC_WAIT(1),

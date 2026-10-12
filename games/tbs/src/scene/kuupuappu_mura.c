@@ -650,7 +650,7 @@ static void EV10_TOUCH(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "kuupuappu_mura_scene_cells.c"
+#include "common/kuupuappu_mura_scene_cells.c"
 
 static void EV12_TOUCH(void)
 {

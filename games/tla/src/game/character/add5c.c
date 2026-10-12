@@ -7,12 +7,7 @@ void Func_080add5c(s32 count)
 {
     s32 i;
 
-    if (count > 0) {
-        i = count;
-        do {
-            i--;
-            Func_080adcec();
-        } while (i != 0);
-    }
+    for (i = 0; i < count; i++)
+        Func_080adcec();
     Func_080adc90();
 }

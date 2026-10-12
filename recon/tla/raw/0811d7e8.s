@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Func_0811d7e8
 	.thumb_func
 Func_0811d7e8:

@@ -1,3 +1,10 @@
+/*
+ * Draft of overlay 6a5 Func_0200045c. 2 instructions differ: the listing
+ * sets r0 before r1 for Object_SetModeById(27, 3), the draft r1 first.
+ * Tried: a direct call, a typed inline wrapper (u32 id), a wrapper with its
+ * parameters reversed, three minutes of permuter: no change, or the next
+ * call (27, 0) swaps as well (4).
+ */
 #include "types.h"
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 

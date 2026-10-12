@@ -77,12 +77,6 @@ Func_080132c4:
 	.thumb_func
 Func_080132c8:
 	.incbin "baserom.gba", 0x000132f4, 0x00000004
-	.section .rom.000132fc, "ax"
-	.global Func_080132d0
-	.type Func_080132d0, %function
-	.thumb_func
-Func_080132d0:
-	.incbin "baserom.gba", 0x000132fc, 0x0000002c
 	.section .rom.000133f0, "ax"
 	.balign 4
 	.global Runtime_InstallIwramAndIrqs
@@ -2018,12 +2012,12 @@ GameFlag_RefreshLureCap:
 	.type Func_080adc90, %function
 	.thumb_func
 Func_080adc90:
-	.incbin "baserom.gba", 0x000adc90, 0x000000cc
-	.global Func_080add5c
-	.type Func_080add5c, %function
+	.incbin "baserom.gba", 0x000adc90, 0x0000005c
+	.global Func_080adcec
+	.type Func_080adcec, %function
 	.thumb_func
-Func_080add5c:
-	.incbin "baserom.gba", 0x000add5c, 0x00000018
+Func_080adcec:
+	.incbin "baserom.gba", 0x000adcec, 0x00000070
 	.section .rom.000addf0, "ax"
 	.global Func_080addf0
 	.type Func_080addf0, %function
@@ -3249,6 +3243,10 @@ Func_080d1ae4:
 	.type Func_080e70f8, %function
 	.thumb_func
 Func_080e70f8:
+	.global Func_080d1d54
+	.type Func_080d1d54, %function
+	.thumb_func
+Func_080d1d54:
 	.incbin "baserom.gba", 0x000d1d54, 0x00000058
 	.section .rom.000d1dac, "ax"
 	.global Func_080d2cc4
@@ -3256,13 +3254,8 @@ Func_080e70f8:
 	.thumb_func
 Func_080d2cc4:
 	.incbin "baserom.gba", 0x000d1dac, 0x00000044
-	.section .rom.000d1df0, "ax"
-	.global Func_080d1d54
-	.type Func_080d1d54, %function
-	.thumb_func
-Func_080d1d54:
-	.incbin "baserom.gba", 0x000d1df0, 0x00000028
 	.section .rom.000d1e18, "ax"
+	.balign 4
 	.global Func_080d1dac
 	.type Func_080d1dac, %function
 	.thumb_func
@@ -3684,10 +3677,10 @@ BattleFx_ClearChildValueOnMismatch:
 FieldEvent_RunTypeHandler:
 	.incbin "baserom.gba", 0x000db878, 0x00000098
 	.section .rom.000db910, "ax"
-	.global Func_080d1df0
-	.type Func_080d1df0, %function
+	.global Func_080db91c
+	.type Func_080db91c, %function
 	.thumb_func
-Func_080d1df0:
+Func_080db91c:
 	.incbin "baserom.gba", 0x000db910, 0x00000058
 	.section .rom.000db99a, "ax"
 	.incbin "baserom.gba", 0x000db99a, 0x00000002
@@ -4835,7 +4828,12 @@ BattleQueue_SortByPriority:
 BattlePresentation_AppendLinkedActions:
 	.incbin "baserom.gba", 0x0011d42c, 0x0000018c
 	.section .rom.0011d7b4, "ax"
-	.incbin "baserom.gba", 0x0011d7b4, 0x00000bd0
+	.incbin "baserom.gba", 0x0011d7b4, 0x00000048
+	.section .rom.0011d800, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0011d800, 0x000001bc
+	.section .rom.0011d9e4, "ax"
+	.incbin "baserom.gba", 0x0011d9e4, 0x000009a0
 	.section .rom.0011e3c2, "ax"
 	.incbin "baserom.gba", 0x0011e3c2, 0x00000c86
 	.section .rom.0011f048, "ax"

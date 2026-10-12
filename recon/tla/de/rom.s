@@ -77,12 +77,6 @@ Func_080132c4:
 	.thumb_func
 Func_080132c8:
 	.incbin "baserom.gba", 0x000132f4, 0x00000004
-	.section .rom.000132fc, "ax"
-	.global Func_080132d0
-	.type Func_080132d0, %function
-	.thumb_func
-Func_080132d0:
-	.incbin "baserom.gba", 0x000132fc, 0x0000002c
 	.section .rom.000133f0, "ax"
 	.balign 4
 	.global Runtime_InstallIwramAndIrqs
@@ -1655,13 +1649,12 @@ GameFlag_RefreshLureCap:
 	.type Func_080adc90, %function
 	.thumb_func
 Func_080adc90:
-	.incbin "baserom.gba", 0x000bac90, 0x000000cc
-	.section .rom.000bad5c, "ax"
-	.global Func_080add5c
-	.type Func_080add5c, %function
+	.incbin "baserom.gba", 0x000bac90, 0x0000005c
+	.global Func_080adcec
+	.type Func_080adcec, %function
 	.thumb_func
-Func_080add5c:
-	.incbin "baserom.gba", 0x000bad5c, 0x00000018
+Func_080adcec:
+	.incbin "baserom.gba", 0x000bacec, 0x00000070
 	.section .rom.000badf0, "ax"
 	.global Func_080addf0
 	.type Func_080addf0, %function
@@ -2232,13 +2225,8 @@ Func_080d1d54:
 	.thumb_func
 Func_080d1dac:
 	.incbin "baserom.gba", 0x000dedac, 0x00000044
-	.section .rom.000dedf0, "ax"
-	.global Func_080d1df0
-	.type Func_080d1df0, %function
-	.thumb_func
-Func_080d1df0:
-	.incbin "baserom.gba", 0x000dedf0, 0x00000028
 	.section .rom.000dee18, "ax"
+	.balign 4
 	.global Func_080d1e18
 	.type Func_080d1e18, %function
 	.thumb_func
@@ -3868,7 +3856,12 @@ BattleQueue_SortByPriority:
 BattlePresentation_AppendLinkedActions:
 	.incbin "baserom.gba", 0x0011d42c, 0x0000018c
 	.section .rom.0011d7b4, "ax"
-	.incbin "baserom.gba", 0x0011d7b4, 0x00000bd0
+	.incbin "baserom.gba", 0x0011d7b4, 0x00000048
+	.section .rom.0011d800, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0011d800, 0x000001bc
+	.section .rom.0011d9e4, "ax"
+	.incbin "baserom.gba", 0x0011d9e4, 0x000009a0
 	.section .rom.0011e3c2, "ax"
 	.incbin "baserom.gba", 0x0011e3c2, 0x00000c86
 	.section .rom.0011f048, "ax"

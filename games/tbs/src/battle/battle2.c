@@ -423,13 +423,14 @@ s32 Resource_FindFreeSlot(s32 key)
 			/* FAKEMATCH: the volatile array member preserves the native second ldrh [table, index]. A scalar pointer needs an extra address add; a nonvolatile member reuses the first load. */
 			value = ((struct SlotAssignmentView *)Resource_SlotAssignments)->entries[index];
 			result = value >> 9;
-			goto done;
+			break;
 		}
 		if ((s16)entry == -1)
+		{
+			result = 6;
 			break;
+		}
 	}
-	result = 6;
-done:
 	return result;
 }
 
@@ -1095,7 +1096,7 @@ s32 BattleStatusIcon_Cycle(struct BtlObj *slot)
 		goto update;
 wait:
 	if (slot->cycle_timer != 0)
-		goto done;
+		return;
 
 update:
 	anim = -1;
@@ -1125,7 +1126,7 @@ update:
 
 	rec = GetMotionRecord(owner, 0);
 	if (rec == 0)
-		goto done;
+		return;
 
 	// アイコンのアニメ番号は、幅 32 のキャラと他とで別の並び
 	if (anim >= 0)
@@ -1162,8 +1163,6 @@ update:
 		slot->animation = anim;
 	else
 		slot->animation = 0;
-
-done:;
 }
 
 //--------------------------------------------------------------------------

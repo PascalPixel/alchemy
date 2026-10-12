@@ -590,17 +590,8 @@ static void GomaIriguchi_RunSpinningLeap(s32 id)
 	Engine_MapWaitWorkValuesBelow256();
 }
 
-static void SceneActor_ApplyValueAndMatchingSlots(s32 group, s32 value)
-{
-	u8 *work = UnitGet(group);
-	s32 i;
-	Inventory_AddItem(group, value);
-	for (i = 0; i < 15; i++)
-	{
-		if (*(u16 *)(work + 216 + i * 2) == value)
-			Inventory_Equip(group, i);
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/item/addequip.c"
 
 static void GomaIriguchi_GiveShamansRod(void)
 {

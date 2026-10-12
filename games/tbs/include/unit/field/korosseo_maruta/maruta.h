@@ -54,7 +54,6 @@ u8 *ColossoLogRollingStage_GetActorData(void);
 u8 *ColossoLogRollingStage_GetEffectData(void);
 s32 ColossoLogRollingStage_GetSceneEventState(void);
 s32 StageSetup_BuildAndDispatch(void);
-/* FieldScene_RunMiddleSequence is called before its definition with no prototype in scope. */
 extern const s32 KorosseoMaruta_Record30Script[];
 extern const s8 KorosseoMaruta_LogPattern[][6];
 extern const u16 gColossoEarlySequenceData[];

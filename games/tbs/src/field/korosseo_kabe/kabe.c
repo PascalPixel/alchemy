@@ -4,12 +4,15 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/korosseo_kabe/kabe.h"
+#include "unit/field/common/korosseo/saved.h"
 #include "unit/field/common/korosseo/solo_competitor.h"
+#include "unit/field/common/korosseo/raised.h"
 #include "unit/field/common/korosseo/solo_round.h"
+#include "unit/field/common/korosseo/cheer.h"
 #include "unit/field/common/korosseo/compete.h"
-#include "unit/field/common/korosseo/occupant.h"
 #include "unit/field/common/korosseo/markslot.h"
 #include "unit/field/common/korosseo/markmove.h"
+#include "unit/field/common/korosseo/occupant.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
 #include "unit/battle/effect/object4.h"
@@ -80,11 +83,6 @@
 
 // 前方宣言
 static void Korosseo_RunGreetScene(s32 a0);
-static void SceneActor_PlacePartyAtSavedTiles(void);
-static void KorosseoKabe_MarkSceneProgress(void);
-static void FieldScene_RunSixSteps896To936(void);
-static s32 KorosseoKabe_RunStateInteraction(s32 a, s32 b);
-static void KorosseoKabe_ShowFollowUpPrompt(s32 a, s32 b);
 static void KorosseoKabe_RunScriptedTransition(s32 mode);
 static void FieldScene_RunLateSequence(s32 a0);
 static void SceneState_EmptyHook(void);
@@ -94,24 +92,6 @@ static void SceneState_InitControlRecordAndStartTask(s32 resource);
 static void StagedActor_PushActorAhead(void);
 
 #define WORK_SLOT_STAGE 59
-
-typedef struct Sub
-{
-	u8	 pad00[0x28];
-	s16 *f28;
-} Sub;
-
-typedef struct Obj
-{
-	s32	 f00;
-	s32	 f04;
-	s32	 f08;
-	s32	 f0c;
-	s32	 f10;
-	u8	 pad14[0x3c];
-	Sub *f50;
-	u8	 f54;
-} Obj;
 
 typedef struct MovedObject
 {
@@ -963,7 +943,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 		SceneState_InitControlRecordAndStartTask((s32)&ResourceId_RivalPathB);
 		break;
 	case 2:
-		Engine_TaskAddCallback(KorosseoKabe_MarkSceneProgress, 0xc80);
+		Engine_TaskAddCallback(SceneState_RaiseTriggerOnPsynergyTarget, 0xc80);
 		Engine_ActorDestroy(40);
 		Engine_ActorDestroy(41);
 		if (!Engine_GameFlagIsSet(0x109))
@@ -977,7 +957,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 		if (!Engine_GameFlagIsSet(0x109))
 		{
 			Korosseo_RunGreetScene(34);
-			FieldScene_RunSixSteps896To936();
+			Korosseo_ClearSavedActorPositions();
 		}
 		break;
 	case 4:
@@ -1071,7 +1051,7 @@ static void EV35_TALK(s32 speaker)
 	else
 	{
 		Engine_EventBegin();
-		result = KorosseoKabe_RunStateInteraction(speaker, 1);
+		result = SceneDialogue_RunFlagGatedPromptInteraction(speaker, 1);
 		if (result == 0)
 		{
 			Engine_EventSetMessage((s32)MsgKorosseoStageDubbedMini);
@@ -1096,7 +1076,7 @@ static void EV35_TALK(s32 speaker)
 			Engine_EventShowMessage(speaker, 0);
 			Korosseo_RestoreCompetitor(ACTOR_PARTY_LEADER);
 			Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-			KorosseoKabe_ShowFollowUpPrompt(speaker, 1);
+			Korosseo_ShowFollowUpPrompt(speaker, 1);
 		}
 		else if (result == 1)
 		{
@@ -1121,7 +1101,7 @@ static void EV36_TALK(s32 a0)
 	else
 	{
 		Engine_EventBegin();
-		rec = KorosseoKabe_RunStateInteraction(a0, 2);
+		rec = SceneDialogue_RunFlagGatedPromptInteraction(a0, 2);
 		if (rec == 0)
 		{
 			Engine_EventSetMessage((s32)MsgKorosseoShiftingFloorStage);
@@ -1144,7 +1124,7 @@ static void EV36_TALK(s32 a0)
 			Event_ShowMessage(a0, 0);
 			Korosseo_RestoreCompetitor(0);
 			Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-			KorosseoKabe_ShowFollowUpPrompt(a0, 2);
+			Korosseo_ShowFollowUpPrompt(a0, 2);
 		}
 		else
 		{
@@ -1172,7 +1152,7 @@ static void EV37_TALK(s32 a0)
 	else
 	{
 		Engine_EventBegin();
-		rec2 = KorosseoKabe_RunStateInteraction(a0, 3);
+		rec2 = SceneDialogue_RunFlagGatedPromptInteraction(a0, 3);
 		if (rec2 != 0)
 		{
 		}
@@ -1208,7 +1188,7 @@ static void EV37_TALK(s32 a0)
 			Korosseo_RestoreCompetitor(0);
 			Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
 			Actor_SetPosition(33, 0x3480000, 0xe80000);
-			KorosseoKabe_ShowFollowUpPrompt(a0, 3);
+			Korosseo_ShowFollowUpPrompt(a0, 3);
 			goto L_020016b0;
 		}
 		if (rec2 == 1)
@@ -1234,7 +1214,7 @@ static void EV38_TALK(s32 speaker)
 		return;
 	}
 	Engine_EventBegin();
-	result = KorosseoKabe_RunStateInteraction(speaker, 4);
+	result = SceneDialogue_RunFlagGatedPromptInteraction(speaker, 4);
 	if (result == 0)
 	{
 		Engine_EventSetMessage((s32)MsgKorosseoFansJustCallWall);
@@ -1270,7 +1250,7 @@ static void EV38_TALK(s32 speaker)
 		Engine_EventShowMessage(speaker, 0);
 		Korosseo_RestoreCompetitor(ACTOR_PARTY_LEADER);
 		Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-		KorosseoKabe_ShowFollowUpPrompt(speaker, 4);
+		Korosseo_ShowFollowUpPrompt(speaker, 4);
 	}
 	else if (result == 1)
 	{
@@ -1333,7 +1313,7 @@ static void EV39_TALK(s32 speaker)
 		return;
 	}
 	Engine_EventBegin();
-	result = KorosseoKabe_RunStateInteraction(speaker, 5);
+	result = SceneDialogue_RunFlagGatedPromptInteraction(speaker, 5);
 	if (result == 0)
 	{
 		Engine_EventSetMessage((s32)MsgKorosseoPlaceCalledBoard);
@@ -1360,7 +1340,7 @@ static void EV39_TALK(s32 speaker)
 		Korosseo_RestoreCompetitor(ACTOR_PARTY_LEADER);
 		Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
 		Actor_SetPosition(16, 0x1880000, 0xd00000);
-		KorosseoKabe_ShowFollowUpPrompt(speaker, 5);
+		Korosseo_ShowFollowUpPrompt(speaker, 5);
 	}
 	else if (result == 1)
 	{
@@ -1371,349 +1351,13 @@ static void EV39_TALK(s32 speaker)
 	Engine_EventEnd();
 }
 
-static void SceneActor_PlacePartyAtSavedTiles(void)
-{
-	{
-		s32 x = GameFlag_GetByte(896);
-		s32 y = GameFlag_GetByte(904);
-
-		x <<= 20;
-		x += 0x80000;
-		y <<= 20;
-		y += 0x80000;
-		Engine_ActorSetPosition(GERALD, x, y);
-	}
-	{
-		s32 x = GameFlag_GetByte(912);
-		s32 y = GameFlag_GetByte(920);
-
-		x <<= 20;
-		x += 0x80000;
-		y <<= 20;
-		y += 0x80000;
-		Engine_ActorSetPosition(IWAN, x, y);
-	}
-	{
-		s32 x = GameFlag_GetByte(928);
-		s32 y = GameFlag_GetByte(936);
-
-		x <<= 20;
-		x += 0x80000;
-		y <<= 20;
-		y += 0x80000;
-		Engine_ActorSetPosition(MEARI, x, y);
-	}
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/saved.c"
 #include "../common/korosseo/solo_competitor.c"
-
-static void KorosseoKabe_MarkSceneProgress(void)
-{
-	struct EventWork *work = gEventWork;
-	s32				  v = gGameState.selected_actor;
-
-	if (v != 0 && (work->psynergy_request >> 10) == v && Engine_GameFlagIsSet(321) != 0)
-	{
-		u16 *p = (u16 *)&work->raised_trigger;
-		s32	 t = 99;
-
-		*p = t;
-	}
-}
-
-static void EV99_RAISED(void)
-{
-	struct EventWork *state = gEventWork;
-	s32				  best = 8;
-	s32				  bestd = 0x100000;
-	s32				  n = gGameState.selected_actor;
-	Obj				 *p = (Obj *)Object_GetById(n);
-	s32				  i;
-	s32				 *q;
-	s32				  base;
-
-	Engine_EventBegin();
-	for (i = 8; i <= 66; i++)
-	{
-		Obj *o = (Obj *)Object_GetById(i);
-
-		if (o != 0 && o->f54 == 1 && *o->f50->f28 == 165)
-		{
-			s32 dx = (p->f08 - o->f08) / 65536;
-			s32 dy = (p->f10 - o->f10) / 65536;
-
-			if (dy <= 0)
-			{
-				s32 a = dx;
-				s32 d;
-
-				if (a < 0)
-					a = -a;
-				if (dy < 0)
-					dy = -dy;
-				d = a + dy;
-				if (d < bestd)
-				{
-					best = i;
-					bestd = d;
-				}
-			}
-		}
-	}
-	Engine_EventSetMessage((s32)MsgKorosseoMatchAboutBeginPleaseTake);
-	Engine_EventShowMessage(best, 0);
-	q = (s32 *)&state->start_transition;
-	*q = 512;
-	state->transition_frames = 15;
-	Engine_EventWait(20);
-	Engine_EventCloseScreen();
-	Engine_EventWaitForScreen();
-	base = n << 4;
-	GameFlag_SetByte(base + 880, p->f08 >> 20);
-	{
-		s32 v = p->f10 >> 20;
-
-		GameFlag_SetByte(base + 888, v);
-	}
-	n++;
-	if (n > 3)
-	{
-		Engine_EventRequestExit(10);
-		Engine_GameFlagSet(282);
-	}
-	else
-	{
-		Korosseo_SelectSoloCompetitor(n);
-		Engine_EventOpenScreen();
-		Engine_EventWaitForScreen();
-		*q = 0;
-	}
-	Engine_EventEnd();
-}
-
-// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/raised.c"
 #include "../common/korosseo/solo_round.c"
-
-static void FieldScene_RunSixSteps896To936(void)
-{
-	GameFlag_SetByte(896, 0);
-	GameFlag_SetByte(904, 0);
-	GameFlag_SetByte(912, 0);
-	GameFlag_SetByte(920, 0);
-	GameFlag_SetByte(928, 0);
-	GameFlag_SetByte(936, 0);
-}
-
-static s32 KorosseoKabe_RunStateInteraction(s32 a, s32 b)
-{
-	s32 v;
-	s32 id;
-	s32 r;
-
-	Battle_ResetEffectCounter();
-	UiWork_PushValueSlot(b, 5);
-	v = gGameState.scene;
-	if (v == (s32)&SceneId_KorosseoKawa)
-	{
-		id = (s32)MsgKorosseoStageFirstFinalsMatch;
-	}
-	else if (v == (s32)&SceneId_KorosseoKabe)
-	{
-		id = (s32)MsgKorosseoStageSecondFinalsMatch;
-	}
-	else
-	{
-		id = (s32)MsgKorosseoStageThirdFinalsMatch;
-	}
-	Engine_EventSetMessage(id);
-	Engine_EventShowMessage(a, 0);
-	if (Engine_GameFlagIsSet(b + 512) != 0)
-	{
-		return 2;
-	}
-	if (Engine_GameFlagIsSet(b + 520) != 0)
-	{
-		r = PartyTalkMenu_Choose(0);
-		if (r == 1)
-		{
-			return 2;
-		}
-		if (r == 2 || r == -1)
-		{
-			return 3;
-		}
-		return r;
-	}
-	Engine_GameFlagSet(b + 520);
-	Engine_EventSetMessage((s32)MsgKorosseoWouldYouLikeHearDescription);
-	Engine_EventOpenMessage(a, 0);
-	return Engine_EventChooseYesNo(0, 0);
-}
-
-static void KorosseoKabe_ShowFollowUpPrompt(s32 a, s32 b)
-{
-	s32 v;
-	s32 id;
-
-	UiWork_PushValueSlot(b, 5);
-	v = gGameState.scene;
-	if (v == (s32)&SceneId_KorosseoKawa)
-	{
-		id = (s32)MsgKorosseoStageFirstFinalsMatch;
-	}
-	else if (v == (s32)&SceneId_KorosseoKabe)
-	{
-		id = (s32)MsgKorosseoStageSecondFinalsMatch;
-	}
-	else
-	{
-		id = (s32)MsgKorosseoStageThirdFinalsMatch;
-	}
-	Engine_EventSetMessage(id + 1);
-	Engine_EventShowMessage(a, 0);
-}
-
-void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
-{
-	struct FieldActor *rec;
-	struct FieldActor *record;
-	s32				   p9;
-	s32				   p11;
-	s32				   count;
-	s32				   state;
-	s32				   obj;
-	s32				   hi;
-	s32				   lo;
-	s32				   tail;
-	s32				   sx;
-	s32				   sy;
-	s32				   i;
-	u8				   buf[8];
-
-	rec = Object_GetById(owner);
-	p9 = rec->x.part.pixel;
-	p11 = rec->z.part.pixel;
-	if (mode != 3)
-	{
-		count = GetPartyMemberCount();
-		for (i = 0; i < count; i++)
-		{
-			buf[i] = gGameState.active_owners[i];
-		}
-		if (count <= 1)
-		{
-			Engine_EventSetMessage((s32)MsgKorosseoDoYourBest);
-			Event_ShowMessage(owner, 0);
-			return;
-		}
-		if (GameFlag_IsSet(base + 512) != 0)
-		{
-			Engine_EventSetMessage((s32)MsgKorosseoUnfortunatelyWeHaveFullHouse);
-			Event_ShowMessage(owner, 0);
-			return;
-		}
-		if (mode == 2)
-		{
-			state = 0;
-			Engine_TaskWait(6);
-		}
-		else
-		{
-			Engine_EventSetMessage((s32)MsgKorosseoWouldLikeFriendCheerFor);
-			Event_OpenMessage(owner, 0);
-			state = Engine_EventChooseYesNo(0, 0);
-		}
-		if (state == 0)
-		{
-			if (state < count)
-			{
-				for (i = 0; i < count; i++)
-				{
-					Party_RemoveActiveOwner((s8)buf[i]);
-				}
-			}
-			for (i = 0; i < count; i++)
-			{
-				if ((s8)buf[i] != 0)
-				{
-					Party_AddActiveOwner((s8)buf[i]);
-				}
-			}
-			obj = Menu_OpenCharacterSelector();
-			for (i = 0; i < count; i++)
-			{
-				Party_RemoveActiveOwner((s8)buf[i]);
-			}
-			for (i = 0; i < count; i++)
-			{
-				Party_AddActiveOwner((s8)buf[i]);
-			}
-			if (obj != -1)
-			{
-				goto L_main;
-			}
-		}
-	}
-	Engine_EventSetMessage((s32)MsgKorosseoIfKnowWhoWantCheer);
-	Event_ShowMessage(owner, 0);
-	return;
-L_main:
-	UiWork_PushValueSlot(obj, 1);
-	Engine_EventSetMessage((s32)MsgKorosseoRobinWillCheerForWay);
-	Event_ShowMessage(owner, 0);
-	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-	Actor_SetSpeed(obj, 0x10000, 0x8000);
-	Actor_SetSpeed(owner, 0x10000, 0x8000);
-	record = Object_GetById(0);
-	if (record != 0)
-	{
-		Actor_SetPosition(obj, record->x.fixed, record->z.fixed);
-	}
-	hi = p11 + 16;
-	Actor_WalkToAndWait(obj, p9, hi);
-	lo = p9 + 16;
-	Engine_ActorWalkToAndWait(0, lo, hi);
-	Engine_ActorFaceEachOther(obj, ACTOR_PARTY_LEADER, 30);
-	Engine_ActorSetAnimation(obj, 3);
-	tail = hi - 32;
-	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-	Actor_WalkToAndWait(owner, p9, tail);
-	Engine_ActorWalkTo(owner, lo, tail);
-	Object_LinkObjectAndSetCallback(0, obj);
-	Actor_WalkToAndWait(obj, p9, tail);
-	Engine_ActorSetAnimation(owner, 1);
-	Actor_FaceDirection(owner, 0x8000, 0);
-	Actor_WalkToAndWait(obj, p9, p11 - 48);
-	Actor_WalkToAndWait(owner, p9, tail);
-	Actor_WalkToAndWait(owner, p9, p11);
-	Party_RemoveActiveOwner(obj);
-	GameFlag_Set(base + 512);
-	rec = Object_GetById(obj);
-	sx = rec->x.fixed >> 20;
-	GameFlag_SetByte((obj << 4) + 880, sx);
-	sy = rec->z.fixed >> 20;
-	GameFlag_SetByte((obj << 4) + 888, sy);
-}
-
-static void OverlayObject_NotifyMatchingEntries(s32 no, s32 val)
-{
-	u16 *tbl = UnitGet(no);
-	s32	 i;
-
-	Inventory_AddItem(no, val);
-
-	tbl = ((struct BtlUnit *)tbl)->inventory;
-	for (i = 0; i <= 14; i++)
-	{
-		if (tbl[i] == val)
-		{
-			Inventory_Equip(no, i);
-		}
-	}
-}
-
-// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/cheer.c"
+#include "../common/item/addequip.c"
 #include "../common/korosseo/korosseo.c"
 
 static void KorosseoKabe_InitializeModeTask(u32 mode, u32 param)
@@ -2001,12 +1645,12 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
 	if (flag == 0)
 	{
 		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-		((s32 (*)())OverlayObject_NotifyMatchingEntries)(0, handleA);
+		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, handleA);
 		UiWork_PushValueSlot(handleA, 2);
 	}
 	else
 	{
-		((s32 (*)())OverlayObject_NotifyMatchingEntries)(0, handleB);
+		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, handleB);
 		UiWork_PushValueSlot(handleB, 2);
 	}
 

@@ -17,7 +17,6 @@ u8 *KorosseoKawa_GetExits(void);
 u8 *KorosseoKawa_GetPlacements(void);
 u8 *KorosseoKawa_GetEvents(void);
 s32 KorosseoKawa_ApplyEntryState(void);
-/* FieldScene_RunMiddleSequence is called before its definition with no prototype in scope. */
 extern const u8 Korosseo_PortraitPaletteOffsets[];
 extern const s16 KorosseoKawa_ModeRecordTwo[];
 extern const s16 KorosseoKawa_SpanB[];

@@ -1103,19 +1103,8 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void)
 	Engine_ObjectSetScript(obj, KorimaHashi_Object26Script);
 }
 
-static s32 OverlayObject_SelectValueByFrameBit1(s32 obj)
-{
-
-	if (((gFrameCount >> 1) & 1) != 0)
-	{
-		ObjectGroup_SetChildValue(obj, 10);
-	}
-	else
-	{
-		ObjectGroup_SetChildValue(obj, 7);
-	}
-	return 0;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korima/blink.c"
 
 static s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0)
 {
@@ -1396,15 +1385,15 @@ s32 KorimaHashi_TriggerScript[] = {
 
 s32 gFallingEffectScript[] = {
 	SC_ADD(SW_Y, PIXELS(-2)),
-	SC_CALL(OverlayObject_SelectValueByFrameBit1),
+	SC_CALL(SceneEffect_SetModeByFrameBit1),
 	SC_WAIT(1),
 	SC_ADD(SW_Y, PIXELS(-2)),
-	SC_CALL(OverlayObject_SelectValueByFrameBit1),
+	SC_CALL(SceneEffect_SetModeByFrameBit1),
 	SC_WAIT(1),
 	SC_LOOP(30, SC_TOP),
 	SC_LABEL(1),
 	SC_ADD(SW_Y, PIXELS(-1)),
-	SC_CALL(OverlayObject_SelectValueByFrameBit1),
+	SC_CALL(SceneEffect_SetModeByFrameBit1),
 	SC_WAIT(1),
 	SC_LOOP(40, SC_TO(1)),
 	SC_CALL(SceneActor_CheckRegionTrigger),

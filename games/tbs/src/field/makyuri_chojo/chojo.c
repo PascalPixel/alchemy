@@ -3,6 +3,7 @@
 #include "unit/import.h"
 #include "unit/field/makyuri_chojo/chojo.h"
 #include "unit/field/common/effect/move.h"
+#include "unit/field/common/object/nearest.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
 #include "unit/battle/effect/object6.h"
@@ -37,7 +38,6 @@
 
 // 前方宣言
 static void FieldScene_RunFourActorPresentation(void);
-static s32 FindNearestF2Actor(void);
 static void EV11_TOUCH(void);
 static void RunScene59Sequence(void);
 static void MakyuriChojo_SinkActorPair(void);
@@ -138,7 +138,7 @@ s32 Scene_Initialize(void)
 			Object_GetById(i)->priority_flags |= 2;
 			Object_GetById(i)->y.fixed = -0x328000;
 		}
-		if (Engine_GameFlagIsSet(0x109) && (actor = FindNearestF2Actor()) != 0
+		if (Engine_GameFlagIsSet(0x109) && (actor = SceneActor_FindNearestSlotOfKindF2()) != 0
 			&& (obj = Object_GetById(actor)) != NULL)
 		{
 			obj->motion_flags = 0;
@@ -281,45 +281,7 @@ static void FieldScene_RunFourActorPresentation(void)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/distance.c"
-
-struct SpriteNumber
-{
-	u8		   unknown_00[0x28];
-	const s16 *number;
-};
-
-static s32 FindNearestF2Actor(void)
-{
-	struct EventWork   *work = gEventWork;
-	struct FieldActor **slot;
-	struct FieldActor  *origin;
-	s32					nearest_actor = 0;
-	s32					min_dist;
-	u32					actor_id;
-
-	min_dist = 640;
-	origin = Object_GetById(ACTOR_PARTY_LEADER);
-	actor_id = ACTOR_FIRST_PLACED;
-	slot = work->placed_actors;
-	do
-	{
-		struct FieldActor *actor = *slot++;
-		if (actor != 0)
-		{
-			if (*((struct SpriteNumber *)actor->sprite)->number == 0xf2)
-			{
-				s32 dist = FixedPoint_Distance(&origin->x.fixed, &actor->x.fixed);
-				if (dist < min_dist)
-				{
-					min_dist = dist;
-					nearest_actor = actor_id;
-				}
-			}
-		}
-		actor_id++;
-	} while (actor_id <= 65);
-	return nearest_actor;
-}
+#include "../common/object/nearest.c"
 
 static void SceneActor_InitializeMotion(void)
 {
@@ -363,7 +325,7 @@ static void EV10_TOUCH(void)
 
 	leader = Object_GetById(ACTOR_PARTY_LEADER);
 	Engine_EventBegin();
-	id = FindNearestF2Actor();
+	id = SceneActor_FindNearestSlotOfKindF2();
 	MakyuriChojo_NearestActor = id;
 	if (id != 0)
 	{

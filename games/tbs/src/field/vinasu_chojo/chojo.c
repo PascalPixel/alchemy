@@ -3,6 +3,7 @@
 #include "unit/import.h"
 #include "unit/field/vinasu_chojo/chojo.h"
 #include "unit/field/common/effect/move.h"
+#include "unit/field/common/object/nearest.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
 #include "unit/battle/effect/object6.h"
@@ -87,18 +88,6 @@ static void VinasuChojo_RunTransitionStep(void);
 static void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor);
 static void SceneEffect_SpawnParticlesBesideActor(void);
 static void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object);
-
-typedef struct
-{
-	u8	 filler0[0x28];
-	s16 *unk28;
-} Obj_020004bc;
-
-typedef struct
-{
-	u8			  filler0[0x50];
-	Obj_020004bc *obj;
-} Spr_020004bc;
 
 s32 Math_RemainderUnsigned(s32, s32);
 
@@ -207,32 +196,8 @@ static void VinasuChojo_StepSpriteRotation(struct FieldActor *actor)
 	}
 }
 
-static s32 OverlayObject_UpdateHeadingTimer(struct FieldActor *actor)
-{
-	u16 *q = &actor->work;
-	s32	 c = *q;
-	s16	 v = *(s16 *)q;
-
-	if (v == 0)
-	{
-		{
-			s32 t = ((u32)(Engine_RandomNext() << 15)) >> 16;
-			actor->facing += t;
-		}
-		{
-			s32 n = ((u32)(Engine_RandomNext() * 80)) >> 16;
-			*q = n;
-			if (n == 0)
-			{
-				goto out;
-			}
-			c = n;
-		}
-	}
-	*q = c - 1;
-out:
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/heading.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -256,39 +221,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/distance.c"
-
-static s32 SceneActor_FindNearestSlotOfKindF2(void)
-{
-	struct EventWork   *work = gEventWork;
-	struct FieldActor **p;
-	s32					best = 0;
-	struct FieldActor  *ref;
-	s32					limit;
-	u32					i;
-
-	limit = 640;
-	ref = Object_GetById(ACTOR_PARTY_LEADER);
-	i = ACTOR_FIRST_PLACED;
-	p = work->placed_actors;
-	do
-	{
-		struct FieldActor *actor = *p++;
-		if (actor != 0)
-		{
-			if (*((Spr_020004bc *)actor)->obj->unk28 == 0xf2)
-			{
-				s32 dist = FixedPoint_Distance(&ref->x.fixed, &actor->x.fixed);
-				if (dist < limit)
-				{
-					limit = dist;
-					best = i;
-				}
-			}
-		}
-		i++;
-	} while (i <= 65);
-	return best;
-}
+#include "../common/object/nearest.c"
 
 static void InitializeActorZeroMotion(void)
 {

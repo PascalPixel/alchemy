@@ -113,27 +113,8 @@ static s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect)
 	return 1;
 }
 
-static s32 OverlayObject_AdvanceXWhenCounterExpires(struct FieldActor *obj)
-{
-	s32 cnt = obj->work;
-	s32 loaded = (s16)obj->work;
-	s32 amount;
-
-	if (loaded == 0)
-	{
-		obj->facing += (u32)(Engine_RandomNext() << 15) >> 16;
-		amount = (u32)(Engine_RandomNext() * 80) >> 16;
-		obj->work = amount;
-		if (amount == 0)
-		{
-			goto done;
-		}
-		cnt = amount;
-	}
-	obj->work = cnt - 1;
-done:
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/heading.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -2303,7 +2284,7 @@ s32 KareiMachi_DanceScriptF[] = {
 };
 
 s32 KareiMachi_Data02[] = {
-	SC_CALL(OverlayObject_AdvanceXWhenCounterExpires),
+	SC_CALL(OverlayObject_UpdateHeadingTimer),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

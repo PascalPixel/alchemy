@@ -102,7 +102,7 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
 	s32						 angle;
 	s32						*line;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	work = *heap_cache++;
 	canvas = *heap_cache;
 	work->effect = effect;
@@ -216,7 +216,7 @@ void ObjectGroup_StoreObjectAndRunStep7(s32 a0, s32 a1, s32 a2)
 	u8						 slot12[4];
 	u8						 slot8[4];
 
-	work = *(struct BattleEffectWork **)gBattleFxWork;
+	work = gBattleFxWork[0];
 	work->effect = (struct BattleEffectArgument *)a0;
 	BattleFx_BeginCanvasLayer(0);
 	BattleFx_PrepareCanvasEffect(a0, 7, work->effect->side ^ 1, 0, slot12, slot8);
@@ -239,7 +239,7 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
 	s32				   frame;
 	s32				   i;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -384,7 +384,7 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
 //--------------------------------------------------------------------------
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 {
-	struct BattleEffectWork *work = *(void **)gBattleFxWork;
+	struct BattleEffectWork *work = gBattleFxWork[0];
 	struct Scale			 normal = (*(const struct Scale *)&Formation_NormalScale);
 	struct Scale			 big = (*(const struct Scale *)&Formation_SmallScale);
 	struct Placement		 pos;
@@ -452,7 +452,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 	s32						 i;
 
 	// ワーク、キャンバス、BG2 は横 2 倍で BG1・BG2 を半透明に
-	heap = (void **)gBattleFxWork;
+	heap = gBattleFxWork;
 	cursor = heap;
 	work = *cursor++;
 	canvas = *cursor;
@@ -626,7 +626,7 @@ void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta)
 
 void BattleFx_ArmPaletteHBlankDma(void)
 {
-	struct BattleEffectWork *work = *(struct BattleEffectWork **)gBattleFxWork;
+	struct BattleEffectWork *work = gBattleFxWork[0];
 	volatile u16			*channel = REG_DMA0;
 	channel[5] &= 0xc5ff;
 	channel[5] &= 0x7fff;
@@ -720,7 +720,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 	s32					   frame;
 	s32					   i;
 
-	cache = &((void **)gBattleFxWork)[1];
+	cache = &gBattleFxWork[1];
 	canvas = cache[0];
 	work = cache[-1];
 
@@ -1241,7 +1241,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
 	s32						 i;
 	s32						 k;
 
-	cache = &((void **)gBattleFxWork)[1];
+	cache = &gBattleFxWork[1];
 	canvas = cache[0];
 	work = cache[-1];
 	sheet = cache[1];
@@ -1507,7 +1507,7 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
 	s32						 i;
 	s32						 j;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -1778,7 +1778,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
 	s32						 size;
 	u8						*burst;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -1932,7 +1932,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 	s32						 frame;
 	s32						 i;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -2210,7 +2210,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 	s32						 origin;
 	s32						 i;
 
-	heap = (void **)gBattleFxWork;
+	heap = gBattleFxWork;
 	p = heap;
 	work = *p++;
 	canvas = *p;
@@ -2666,7 +2666,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 	DrawRectangle				   blit;
 	volatile u16				  *ime;
 
-	cache = &((void **)gBattleFxWork)[1];
+	cache = &gBattleFxWork[1];
 	ime = (u16 *)0x04000208;
 	canvas = cache[0];
 	work = cache[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
@@ -3572,7 +3572,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 	s32							 frame;
 	s32							 i;
 
-	cursor = &((void **)gBattleFxWork)[1];
+	cursor = &gBattleFxWork[1];
 	canvas = cursor[0];
 	work = cursor[-1];
 	sheet = cursor[1];
@@ -4638,7 +4638,7 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
 	DrawRectangle			 draw[2];
 	s32						 frame;
 
-	heap = (void **)gBattleFxWork;
+	heap = gBattleFxWork;
 	work = *heap++;
 	canvas = *heap;
 	work->effect = effect;
@@ -4733,7 +4733,7 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *effect)
 	s32						 cell;
 	s32						 size;
 
-	heap = (void **)gBattleFxWork;
+	heap = gBattleFxWork;
 	cursor = heap;
 	work = *cursor++;
 	canvas = *cursor;

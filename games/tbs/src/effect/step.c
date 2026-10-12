@@ -127,7 +127,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen)
 
 void BattleFx_ProbeKeysForExtendedActor(void)
 {
-	struct BattleEffectWork		*work = *(struct BattleEffectWork **)gBattleFxWork;
+	struct BattleEffectWork		*work = gBattleFxWork[0];
 	struct BattleEffectArgument *effect = work->effect;
 
 	if (effect->actors[0] > 0x7f)

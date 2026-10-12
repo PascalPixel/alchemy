@@ -117,7 +117,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
 	s32						 frame;
 	s32						 i;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -348,7 +348,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
 	s32						 frame;
 	s32						 i;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;

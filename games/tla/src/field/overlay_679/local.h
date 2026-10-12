@@ -118,7 +118,7 @@ extern u16 Data_02002a9e;
 extern u16 Data_02002aa0[];
 extern const u8 Data_02001ee8[];
 extern const u8 Data_02001ef4[];
-extern const u8 Data_02002890[];
+extern const u8 Field_Tiles679[];
 extern u32 gFrameCount;
 
 extern u8 MsgWhatWhatJust;

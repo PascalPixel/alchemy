@@ -142,7 +142,11 @@ Map_GetTerrainHeight:
 	.ifdef TLA_EDITION_FR
 	overlay_veneer Func_08020190
 	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_08020190
+	.else
 	overlay_veneer Map_GetTerrainHeightFar
+	.endif
 	.endif
 	.endif
 	.endif
@@ -440,7 +444,11 @@ Func_020059c0:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c82d0
 	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c82d0
+	.else
 	overlay_veneer Func_080c82e0
+	.endif
 	.endif
 	.global Func_020059c8
 	.thumb_func
@@ -448,7 +456,11 @@ Func_020059c8:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer BattleFx_FindNearestObjectFar
 	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_FindNearestObjectFar
+	.else
 	overlay_veneer Func_080c82e8
+	.endif
 	.endif
 	.global Event_StartScreenTransition
 	.thumb_func
@@ -492,7 +504,11 @@ Func_020059e8:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	.endif
 	.endif
 	.global Func_020059f0
 	.thumb_func
@@ -520,7 +536,11 @@ Func_02005a08:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c86c0
 	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c86c0
+	.else
 	overlay_veneer Func_080c86d0
+	.endif
 	.endif
 	.global Func_02005a10
 	.thumb_func
@@ -528,7 +548,11 @@ Func_02005a10:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c86c8
 	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c86c8
+	.else
 	overlay_veneer Func_080c86d8
+	.endif
 	.endif
 	.global Func_02005a18
 	.thumb_func
@@ -572,7 +596,11 @@ Func_02005a30:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c8730
 	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8730
+	.else
 	overlay_veneer Func_080c8740
+	.endif
 	.endif
 	.global Func_02005a38
 	.thumb_func
@@ -580,7 +608,11 @@ Func_02005a38:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c8738
 	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8738
+	.else
 	overlay_veneer Func_080c8748
+	.endif
 	.endif
 	.global Func_02005a40
 	.thumb_func
@@ -612,7 +644,11 @@ Func_02005a50:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer ObjectGroup_ApplyRandomChildValuesFar
 	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer ObjectGroup_ApplyRandomChildValuesFar
+	.else
 	overlay_veneer Func_080c88d0
+	.endif
 	.endif
 	.global ObjectEffect_BeginContextEffect26
 	.thumb_func
@@ -620,7 +656,11 @@ ObjectEffect_BeginContextEffect26:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080c88f0
 	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c88f0
+	.else
 	overlay_veneer ObjectEffect_BeginContextEffect26Far
+	.endif
 	.endif
 	.global Func_02005a60
 	.thumb_func

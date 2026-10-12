@@ -1,18 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008080,"ax",%progbits
-	.global Func_02000080
-	.thumb_func
-Func_02000080:
-	push {lr}
-	bl Object_GetById
-	ldr r2, [r0, #80]
-	movs r3, #0
-	str r3, [r0, #108]
-	adds r0, #100
-	strh r3, [r0]
-	strh r3, [r2, #18]
-	pop {pc}
 	.section .text.x02008110,"ax",%progbits
 	.balign 4
 	.global Func_02000110
@@ -693,79 +680,6 @@ Func_020006bc:
 	.4byte gPartyState
 .L_020087a0:
 	.4byte Func_02000048
-	.section .text.x020087a4,"ax",%progbits
-	.global Func_020007a4
-	.thumb_func
-Func_020007a4:
-	push {r5, r6, lr}
-	ldr r3, .L_0200882c
-	movs r2, #241
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	sub sp, #8
-	cmp r3, #1
-	beq .L_020087ce
-	cmp r3, #2
-	beq .L_020087c0
-	cmp r3, #3
-	bne .L_020087ca
-.L_020087c0:
-	movs r0, #150
-	lsls r0, r0, #4
-	bl GameFlag_ClearBit
-	b .L_020087e4
-.L_020087ca:
-	cmp r3, #4
-	bne .L_020087d8
-.L_020087ce:
-	movs r0, #150
-	lsls r0, r0, #4
-	bl GameFlag_SetBit
-	b .L_020087e4
-.L_020087d8:
-	cmp r3, #5
-	bne .L_020087e4
-	movs r0, #150
-	lsls r0, r0, #4
-	bl GameFlag_SetBit
-.L_020087e4:
-	movs r0, #150
-	lsls r0, r0, #4
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02008826
-	movs r5, #47
-	movs r6, #8
-	movs r0, #38
-	movs r1, #47
-	movs r2, #26
-	movs r3, #12
-	str r6, [sp, #0]
-	str r5, [sp, #4]
-	bl Func_020018f4
-	movs r3, #72
-	str r3, [sp, #0]
-	movs r0, #102
-	movs r1, #47
-	movs r2, #26
-	movs r3, #12
-	str r5, [sp, #4]
-	bl Func_020018f4
-	movs r0, #38
-	movs r1, #47
-	movs r2, #26
-	movs r3, #12
-	str r6, [sp, #0]
-	str r5, [sp, #4]
-	bl Func_020018ec
-.L_02008826:
-	movs r0, #0
-	add sp, #8
-	pop {r5, r6, pc}
-.L_0200882c:
-	.4byte gPartyState
 	.section .text.x02008838,"ax",%progbits
 	.balign 4
 	.global Func_02000838

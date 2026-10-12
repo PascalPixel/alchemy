@@ -335,89 +335,6 @@ Func_02000358:
 	.4byte Data_020027ac
 .L_02008400:
 	.4byte Data_020024ac
-	.section .text.x02008404,"ax",%progbits
-	.global Func_02000404
-	.thumb_func
-Func_02000404:
-	push {lr}
-	bl Func_02002068
-	movs r0, #0
-	bl Func_02002150
-	movs r2, #0
-	movs r1, #0
-	movs r0, #11
-	bl Func_020020c0
-	movs r0, #240
-	lsls r0, r0, #4
-	adds r0, #93
-	bl GameFlag_SetBit
-	movs r0, #193
-	movs r1, #3
-	bl Func_02002130
-	movs r1, #0
-	movs r0, #193
-	bl PartyInventory_GiveItem
-	bl Func_02002070
-	pop {pc}
-	.2byte 0x0000
-	.section .text.x020085cc,"ax",%progbits
-	.global Func_020005cc
-	.thumb_func
-Func_020005cc:
-	push {lr}
-	bl Func_02002068
-	movs r0, #0
-	bl Func_02002150
-	movs r2, #14
-	movs r0, #4
-	movs r1, #0
-	negs r2, r2
-	bl ObjectMotion_CommitPositionAndActivate
-	movs r0, #4
-	movs r1, #16
-	movs r2, #0
-	bl ObjectMotion_CommitPositionAndActivate
-	bl Func_0200052c
-	pop {pc}
-	.section .text.x020085f4,"ax",%progbits
-	.global Func_020005f4
-	.thumb_func
-Func_020005f4:
-	push {lr}
-	bl Func_02002068
-	movs r0, #0
-	bl Func_02002150
-	movs r1, #2
-	movs r2, #6
-	movs r0, #4
-	negs r1, r1
-	negs r2, r2
-	bl ObjectMotion_CommitPositionAndActivate
-	movs r1, #14
-	movs r2, #8
-	movs r0, #4
-	negs r1, r1
-	negs r2, r2
-	bl ObjectMotion_CommitPositionAndActivate
-	bl Func_0200052c
-	pop {pc}
-	.2byte 0x0000
-	.section .text.x02008624,"ax",%progbits
-	.global Func_02000624
-	.thumb_func
-Func_02000624:
-	push {lr}
-	bl Func_02002068
-	movs r0, #0
-	bl Func_02002150
-	movs r1, #192
-	movs r0, #4
-	lsls r1, r1, #8
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	bl Func_0200052c
-	pop {pc}
-	.2byte 0x0000
 	.section .text.x02008668,"ax",%progbits
 	.global Func_02000668
 	.thumb_func
@@ -1145,20 +1062,6 @@ Func_02000c44:
 	.4byte gPartyState
 .L_02008cf8:
 	.4byte 0x000000d8
-	.section .text.x02008cfc,"ax",%progbits
-	.global Func_02000cfc
-	.thumb_func
-Func_02000cfc:
-	push {lr}
-	movs r1, #8
-	movs r2, #9
-	movs r0, #1
-	bl Func_02002178
-	movs r0, #130
-	lsls r0, r0, #1
-	adds r0, #255
-	bl GameFlag_SetBit
-	pop {pc}
 	.section .text.x02008d14,"ax",%progbits
 	.global Func_02000d14
 	.thumb_func
@@ -1380,24 +1283,6 @@ Func_02000e90:
 	.4byte Data_02002ce6
 .L_02008ecc:
 	.4byte gFrameCount
-	.section .text.x02008ed0,"ax",%progbits
-	.global Func_02000ed0
-	.thumb_func
-Func_02000ed0:
-	push {lr}
-	ldr r2, .L_02008ee8
-	movs r0, #1
-	movs r1, #0
-	bl Func_02001fa8
-	movs r1, #200
-	lsls r1, r1, #4
-	ldr r0, .L_02008eec
-	bl Scheduler_AddOrUpdateCallback
-	pop {pc}
-.L_02008ee8:
-	.4byte Func_02000e30
-.L_02008eec:
-	.4byte Func_02000e90
 	.section .text.x02008f2c,"ax",%progbits
 	.global Func_02000f2c
 	.thumb_func

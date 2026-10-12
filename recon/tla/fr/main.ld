@@ -1157,7 +1157,6 @@
     "*/recon/tla/fr/rom.o"(.rom.00107224)
     "*/recon/tla/fr/rom.o"(.rom.00107300)
     "*/games/tla/src/menu/iconobj.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.001074a8)
     "*/games/tla/src/menu/iconslot.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00107500)
     "*/games/tla/src/menu/iconrel.o"(.text)

@@ -138,4 +138,18 @@ void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *script);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 
+void Func_02001f58(void);
+void Func_02001278(struct ObjectRuntime *object);
+void Func_02000df8(struct ObjectRuntime *object);
+void Func_020034d8(void);
+void Func_02003eec(s32 actor, s32 target);
+void Func_02003fac(s32 actor, s32 target);
+void Func_02003fb4(void);
+void Scheduler_RemoveCallbackFar(void (*callback)(void));
+void ObjectMotion_EnableActionAndResetMotion(s32 actor);
+void ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);
+void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
+void ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
+void Event_StartScreenTransition(void);
+
 #endif

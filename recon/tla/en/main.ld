@@ -1637,7 +1637,6 @@
         "*/recon/tla/raw/081050cc.o"(.text)
         "*/recon/tla/raw/081051a8.o"(.text)
         "*/games/tla/src/menu/iconobj.o"(.text)
-        "*/recon/tla/raw/08105350.o"(.text)
         "*/games/tla/src/menu/iconslot.o"(.text)
         "*/recon/tla/raw/081053a8.o"(.text)
         "*/games/tla/src/menu/iconrel.o"(.text)

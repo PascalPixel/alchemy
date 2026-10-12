@@ -1110,7 +1110,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.001050a4)
     "*/recon/tla/ja/rom.o"(.rom.00105180)
     "*/games/tla/src/menu/iconobj.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.00105328)
     "*/games/tla/src/menu/iconslot.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00105380)
     "*/games/tla/src/menu/iconrel.o"(.text)

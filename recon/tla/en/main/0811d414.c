@@ -1,6 +1,12 @@
 /* Near miss (12 of 384 instructions differ, all load scheduling): the
  * Broken Seal link exchange with its two nested transfers, ported with
- * TLA names; four loads sit one slot from the native. */
+ * TLA names; four loads sit one slot from the native. 2026-10-12: the first
+ * pair is in BattleLink_SendActions' prologue (the native stores the
+ * static chain as sub sp; mov r3, sp; mov r2, r9; str; adds r7, r2). An
+ * empty asm barrier as the function's first statement leaves one row there
+ * (mov r2, r9 ahead of mov r3, sp: sched2 ranks the two equal and takes the
+ * one with more dependents); a one-pass block changes nothing. The three
+ * functions adopt together, so the prologue blocks all 852 bytes. */
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

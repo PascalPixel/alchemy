@@ -20499,7 +20499,7 @@ msgctxt "MsgPiece"
 msgid "05122"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgYourCoins"
 msgid "05123"
 msgstr "Vos pièces:"
 

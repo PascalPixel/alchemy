@@ -1,48 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x020084e0,"ax",%progbits
-	.balign 4
-	.global Func_020004e0
-	.thumb_func
-Func_020004e0:
-	push {r5, lr}
-	movs r5, #174
-	adds r5, #255
-.L_020084e6:
-	adds r0, r5, #0
-	bl PartyInventory_FindOwner
-	movs r3, #1
-	negs r3, r3
-	cmp r0, r3
-	bne .L_02008510
-	movs r3, #182
-	adds r5, #1
-	adds r3, #255
-	cmp r5, r3
-	ble .L_020084e6
-	movs r5, #162
-	adds r5, #255
-.L_02008502:
-	adds r0, r5, #0
-	bl PartyInventory_FindOwner
-	movs r3, #1
-	negs r3, r3
-	cmp r0, r3
-	beq .L_02008514
-.L_02008510:
-	movs r0, #1
-	b .L_02008520
-.L_02008514:
-	movs r3, #172
-	adds r5, #1
-	adds r3, #255
-	cmp r5, r3
-	ble .L_02008502
-	movs r0, #0
-.L_02008520:
-	pop {r5, pc}
-	.2byte 0x0000
 	.section .text.x02008524,"ax",%progbits
+	.balign 4
 	.global Func_02000524
 	.thumb_func
 Func_02000524:

@@ -272,7 +272,7 @@ Func_0812561c:
 	ble .L_0812587a
 	bl BattleEventRuntime_Reset
 	movs r0, #25
-	bl Func_08122c88
+	bl BattleEventRuntime_SchedulePhase
 	movs r0, #0
 	mov r1, r8
 	bl BtlEvPush

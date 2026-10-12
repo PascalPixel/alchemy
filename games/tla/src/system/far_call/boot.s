@@ -220,7 +220,7 @@ Render_ProjectPointFar:
 	.global Camera_SetAngleParametersFar
 	.thumb_func
 Camera_SetAngleParametersFar:
-	overlay_veneer Func_08015714
+	overlay_veneer Camera_SetAngleParameters
 	.global Camera_StoreSceneParametersFar
 	.thumb_func
 Camera_StoreSceneParametersFar:

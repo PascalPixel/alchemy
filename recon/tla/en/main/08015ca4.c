@@ -1,14 +1,13 @@
+/* Near miss, differ 6 of 194: three loads sit one row earlier in the native
+ * (the workspace before sub sp; the sequence between the two halves of
+ * 0xfde8; the sequence before the slot is scaled). A split-limit temporary
+ * with two barriers orders the middle one but takes r3 and r2 where the
+ * native has r1 and r3, and a barrier at the top moves three more rows. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "save_state.h"
 #include "dma.h"
 #include "flash.h"
-
-struct DmaRegisters {
-    u32 source;
-    u32 destination;
-    u32 control;
-};
 
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
 #define DMA3_BUSY 0x80000000

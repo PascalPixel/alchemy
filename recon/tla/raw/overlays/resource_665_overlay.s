@@ -212,50 +212,6 @@ Func_0200066c:
 	.4byte MsgScene665No92
 .L_0200875c:
 	.4byte gPartyState
-	.section .text.x02008788,"ax",%progbits
-	.balign 4
-	.global Func_02000788
-	.thumb_func
-Func_02000788:
-	push {lr}
-	movs r0, #245
-	lsls r0, r0, #3
-	adds r0, #255
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_020087ae
-	movs r0, #129
-	lsls r0, r0, #4
-	adds r0, #255
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_020087aa
-	ldr r0, .L_020087c4
-	b .L_020087c2
-.L_020087aa:
-	ldr r0, .L_020087c8
-	b .L_020087c2
-.L_020087ae:
-	movs r0, #128
-	lsls r0, r0, #4
-	adds r0, #171
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_020087c0
-	ldr r0, .L_020087cc
-	b .L_020087c2
-.L_020087c0:
-	ldr r0, .L_020087d0
-.L_020087c2:
-	pop {pc}
-.L_020087c4:
-	.4byte Data_02003154
-.L_020087c8:
-	.4byte Data_02002e48
-.L_020087cc:
-	.4byte Data_02002ad0
-.L_020087d0:
-	.4byte Data_020027f4
 	.section .text.x020087d4,"ax",%progbits
 	.global Func_020007d4
 	.thumb_func

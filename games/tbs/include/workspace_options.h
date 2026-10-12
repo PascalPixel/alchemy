@@ -2,6 +2,7 @@
 #define ALCHEMY_WORKSPACE_OPTIONS_H
 
 #include "unit/graphics/window/window.h"
+#include "unit/graphics/window/window6.h"
 #include "unit/graphics/window/window7.h"
 #include "unit/graphics/window/window8.h"
 #include "unit/graphics/window/window9.h"

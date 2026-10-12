@@ -23,6 +23,14 @@ struct Ov664MapWork {
 };
 
 extern char SceneId_Ov664Room1;
+extern char SceneId_Ov664Room2;
+extern char SceneId_Ov664Room3;
+extern char SceneId_Ov664Room4;
+extern char SceneId_Ov664Room5;
+extern char SceneId_Ov664Room6;
+extern char SceneId_Ov664Room7;
+extern char SceneId_Ov664Room8;
+extern char SceneId_Ov664Room9;
 extern u8 gMapCellBuffer[];
 extern u32 gFrameCount;
 

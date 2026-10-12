@@ -379,26 +379,26 @@ main	rom_tail_02	@games/tbs/src/system/resource/directory
 3ab	unit	games/tbs/src/scene/runpa_mura
 3ac	unit	games/tbs/src/scene/runpa_suhara
 3ad	unit	games/tbs/src/scene/runpa_dou
-3ae	unit	games/tbs/src/field/common/karei_torebi/torebi
-3af	unit	games/tbs/src/field/fune_kanpan/kanpan
-3af	bss	games/tbs/src/field/fune_kanpan/kanpan	.bss COMMON
-3b0	unit	games/tbs/src/field/fune_hobashira/hobashira
-3b0	bss	games/tbs/src/field/fune_hobashira/hobashira	.bss
-3b1	unit	games/tbs/src/field/fune_heya/heya
-3b1	bss	games/tbs/src/field/fune_heya/heya	.bss COMMON
-3b2	unit	games/tbs/src/field/takara_shima/shima
+3ae	unit	games/tbs/src/scene/karei_torebi
+3af	unit	games/tbs/src/scene/fune_kanpan
+3af	bss	games/tbs/src/scene/fune_kanpan	.bss COMMON
+3b0	unit	games/tbs/src/scene/fune_hobashira
+3b0	bss	games/tbs/src/scene/fune_hobashira	.bss
+3b1	unit	games/tbs/src/scene/fune_heya
+3b1	bss	games/tbs/src/scene/fune_heya	.bss COMMON
+3b2	unit	games/tbs/src/scene/takara_shima
 3b2	text	libgcc.a:_call_via_rX
-3b3	unit	games/tbs/src/field/takara_hashira/hashira
+3b3	unit	games/tbs/src/scene/takara_hashira
 3b3	text	libgcc.a:_call_via_rX
-3b3	bss	games/tbs/src/field/takara_hashira/hashira	.bss
-3b4	unit	games/tbs/src/field/takara_ashiba/ashiba
+3b3	bss	games/tbs/src/scene/takara_hashira	.bss
+3b4	unit	games/tbs/src/scene/takara_ashiba
 3b4	text	libgcc.a:_call_via_rX
-3b5	unit	games/tbs/src/field/torebi_machi/machi
+3b5	unit	games/tbs/src/scene/torebi_machi
 3b5	text	libgcc.a:_call_via_rX
-3b6	unit	games/tbs/src/field/torebi_heya/heya
-3b7	unit	games/tbs/src/field/torebi_izumi/izumi
+3b6	unit	games/tbs/src/scene/torebi_heya
+3b7	unit	games/tbs/src/scene/torebi_izumi
 3b7	text	libgcc.a:_call_via_rX
-3b7	bss	games/tbs/src/field/torebi_izumi/izumi	.bss
+3b7	bss	games/tbs/src/scene/torebi_izumi	.bss
 3b8	unit	games/tbs/src/field/torebi_kyuden/kyuden
 3b9	unit	games/tbs/src/field/korashiamu_iriguchi/iriguchi
 3ba	unit	games/tbs/src/field/korosseo_kawa/kawa

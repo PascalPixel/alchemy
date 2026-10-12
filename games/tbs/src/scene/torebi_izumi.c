@@ -1,5 +1,5 @@
 #include "keystate.h"
-#include "unit/field/torebi_izumi/izumi.h"
+#include "unit/scene/torebi_izumi.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/evtable.h"

@@ -2,7 +2,7 @@
 #include "map_scroll.h"
 #include "scene_ids.h"
 #include "unit/import.h"
-#include "unit/field/takara_hashira/hashira.h"
+#include "unit/scene/takara_hashira.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
@@ -81,13 +81,13 @@ struct MapLayer_2
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/create.c"
-#include "../common/effect/move.c"
-#include "../common/effect/spawn.c"
-#include "../common/object/staged_actor.c"
+#include "../field/common/effect/create.c"
+#include "../field/common/effect/move.c"
+#include "../field/common/effect/spawn.c"
+#include "../field/common/object/staged_actor.c"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/map/panel.c"
+#include "../field/common/map/panel.c"
 
 static void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
 {

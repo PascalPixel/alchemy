@@ -2,7 +2,7 @@
 #include "global_cells.h"
 #include "scene_ids.h"
 #include "unit/import.h"
-#include "unit/field/takara_ashiba/ashiba.h"
+#include "unit/scene/takara_ashiba.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/marker.h"
@@ -83,7 +83,7 @@ static __inline__ void LiftBlock(s32 column, u8 lowered)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/staged_actor.c"
+#include "../field/common/object/staged_actor.c"
 
 static void EV15_SCRIPT(void)
 {
@@ -1248,7 +1248,7 @@ static void TakaraAshiba_UpdateItemIcons(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/korosseo/item_icon.c"
+#include "../field/common/korosseo/item_icon.c"
 
 static void TakaraAshiba_InitializeScene1(void)
 {

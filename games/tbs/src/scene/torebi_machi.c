@@ -1,4 +1,4 @@
-#include "unit/field/torebi_machi/machi.h"
+#include "unit/scene/torebi_machi.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"
@@ -12,7 +12,7 @@
 #include "unit/graphics/window/output.h"
 #include "unit/graphics/window/save.h"
 #include "unit/system/scheduler/math.h"
-#include "machi.h"
+#include "torebi_machi.h"
 #include "iwram_call.h"
 #include "call.h"
 #include "field_event.h"
@@ -34,7 +34,7 @@ static void EV31_TALK(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/distance.c"
+#include "../field/common/object/distance.c"
 
 static s32 SceneActor_UpdatePlayerProximity(
 	struct SceneActor *actor, struct SceneActor *target, s32 range, s32 force)

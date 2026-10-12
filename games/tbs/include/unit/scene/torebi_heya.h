@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_FIELD_TOREBI_HEYA_HEYA_H
-#define ALCHEMY_UNIT_FIELD_TOREBI_HEYA_HEYA_H
+#ifndef ALCHEMY_UNIT_SCENE_TOREBI_HEYA_H
+#define ALCHEMY_UNIT_SCENE_TOREBI_HEYA_H
 
 #include "types.h"
 #include "field_event.h"

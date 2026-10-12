@@ -1,5 +1,5 @@
 #include "game_state.h"
-#include "unit/field/fune_kanpan/kanpan.h"
+#include "unit/scene/fune_kanpan.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/evtable.h"
@@ -78,7 +78,7 @@ static void FuneKanpan_PlaceLeaderOnDeck(void);
 s32 Math_RemainderUnsigned(s32, s16);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/pulse.c"
+#include "../field/common/object/pulse.c"
 
 static s32 SceneState_ApplyArgMode1AndReturnZero(s32 a)
 {

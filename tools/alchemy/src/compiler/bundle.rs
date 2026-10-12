@@ -14,6 +14,15 @@ struct SharedBundleLock {
     _file: File,
 }
 static SHARED_BUNDLE_LOCK: OnceLock<Result<SharedBundleLock>> = OnceLock::new();
+/// The lock file of the toolchain installed at `installation`: beside the
+/// real directory. A worktree links its main checkout's toolchain, so its
+/// builds hold the lock an installation there takes, not a file of their
+/// own that no installation ever asks for. A toolchain not installed yet has
+/// its lock beside where it will be.
+pub(crate) fn lock_path(installation: &Path) -> PathBuf {
+    let real = fs::canonicalize(installation).unwrap_or_else(|_| installation.to_path_buf());
+    real.parent().unwrap_or(Path::new("")).join(".compiler.lock")
+}
 pub fn acquire_compiler_bundle_shared_lock() -> Result<()> {
     let result = SHARED_BUNDLE_LOCK.get_or_init(|| {
         if !bundle().is_dir() {
@@ -22,13 +31,19 @@ pub fn acquire_compiler_bundle_shared_lock() -> Result<()> {
                 bundle().display()
             ));
         }
-        let path = bundle().parent().unwrap().join(".compiler.lock");
-        let file = OpenOptions::new()
-            .create(true)
-            .read(true)
-            .write(true)
-            .truncate(false)
-            .open(&path)
+        let path = lock_path(&bundle());
+        // Opened for reading where the file is there, which is all a shared
+        // lock needs: a worktree's build then writes nothing in the checkout
+        // whose toolchain it links.
+        let file = File::open(&path)
+            .or_else(|_| {
+                OpenOptions::new()
+                    .create(true)
+                    .read(true)
+                    .write(true)
+                    .truncate(false)
+                    .open(&path)
+            })
             .map_err(|error| {
                 format!(
                     "cannot open compiler bundle lock {}: {error}",
@@ -422,4 +437,28 @@ pub fn compiler_command(arguments: &[String]) -> Result<Vec<String>> {
     ];
     argv.extend(arguments.iter().cloned());
     Ok(argv)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_worktree_holds_the_lock_of_the_toolchain_it_links() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = fs::canonicalize(directory.path()).unwrap();
+        let installed = root.join("main/tools/out/compilers");
+        let linked = root.join("worktree/tools/out/compilers");
+        fs::create_dir_all(&installed).unwrap();
+        fs::create_dir_all(linked.parent().unwrap()).unwrap();
+        std::os::unix::fs::symlink(&installed, &linked).unwrap();
+        // The installation and every build that runs its compilers meet on
+        // one file, from whichever checkout they name the toolchain.
+        let lock = root.join("main/tools/out/.compiler.lock");
+        assert_eq!(lock_path(&installed), lock);
+        assert_eq!(lock_path(&linked), lock);
+        // Before the first installation the lock is beside where it will be.
+        let absent = root.join("fresh/tools/out/compilers");
+        assert_eq!(lock_path(&absent), root.join("fresh/tools/out/.compiler.lock"));
+    }
 }

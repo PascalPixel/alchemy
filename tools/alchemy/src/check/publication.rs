@@ -1071,6 +1071,7 @@ fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Opti
     let table = (asset_game(path).is_some() && listed(extension(path), DATA_TABLE_EXTENSIONS))
         || (path.starts_with("recon/") && listed(extension(path), &["s", "inc"]));
     data_uri_reason(text)
+        .or_else(|| compiler_source_reason(text))
         .or_else(|| encoded_reason(text, !table))
         .or_else(|| calculated_bookkeeping_reason(text))
         .or_else(|| included_bytes_reason(path, text))
@@ -1984,6 +1985,10 @@ struct Entry {
     path: String,
     object: String,
     listing_reason: Option<&'static str>,
+    /// A file version of an outgoing commit, held to history's rules
+    /// (`outgoing`); otherwise a staged, tracked or pushed-tip file, held to
+    /// every rule.
+    history: bool,
 }
 fn inspected(scope: &str, path: String, object: String, gitlink: bool) -> Option<Entry> {
     let listing_reason = if gitlink {
@@ -1999,6 +2004,7 @@ fn inspected(scope: &str, path: String, object: String, gitlink: bool) -> Option
         path,
         object,
         listing_reason,
+        history: false,
     })
 }
 fn blobs(
@@ -2059,7 +2065,12 @@ fn scan(root: &Path, entries: Vec<Entry>) -> Result<(), String> {
     let objects = readable.iter().map(|entry| entry.object.clone()).collect();
     blobs(root, objects, |index, data| {
         let entry = &readable[index];
-        if let Some(reason) = publication_data_reason(&entry.path, data, logo.as_deref()) {
+        let reason = if entry.history {
+            history_data_reason(&entry.path, data, logo.as_deref())
+        } else {
+            publication_data_reason(&entry.path, data, logo.as_deref())
+        };
+        if let Some(reason) = reason {
             failures.push(format!("{} {}: {reason}", entry.scope, entry.path));
         }
     })?;
@@ -2170,6 +2181,208 @@ fn revisions(root: &Path, local: &str, remote: &str) -> Result<Vec<String>, Stri
             .collect()
     })
 }
+const DIFF_REASON: &str =
+    "unified diff: a stored patch carries the source it changes; change the source itself";
+const GCC_REASON: &str =
+    "GCC source: compiler source and machine descriptions live only in the agscc submodule";
+/// Compiler source is content wherever it is written (Pascal, 2026-10-12:
+/// "Nothing can contain gcc code. At some point there was a unidiff file for
+/// our gcc and that was also bad."), so the tip and history both refuse it:
+/// a unified diff in any file (a `diff --git` line, or `---` and `+++` file
+/// headers over a hunk line), a file that opens with GCC's licence notice
+/// (its part-of line beside the FSF's name), and a machine description's
+/// insn or expand pattern written as code. A diff is read on real line
+/// starts and a pattern at the head of a line, so prose that names a pass or
+/// a file, and a toy diff escaped into a string literal or a table cell, do
+/// not trip them; the notice is read as words, so comment leaders and line
+/// breaks do not hide it.
+fn compiler_source_reason(text: &str) -> Option<&'static str> {
+    static DIFF: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    static OWNER: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    static NOTICE: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    static PATTERN: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    let diff = DIFF.get_or_init(|| {
+        regex::Regex::new(
+            r"(?m)^diff --git \S+ \S+|^--- \S[^\n]*\n\+\+\+ \S[^\n]*\n@@ -\d+(?:,\d+)? \+\d+(?:,\d+)? @@",
+        )
+        .expect("unified diff pattern")
+    });
+    if diff.is_match(text) {
+        return Some(DIFF_REASON);
+    }
+    let owner = OWNER.get_or_init(|| {
+        regex::Regex::new(r"(?i)\bfree\W+software\W+foundation\b").expect("FSF name pattern")
+    });
+    let notice = NOTICE.get_or_init(|| {
+        regex::Regex::new(
+            r"(?i)\bthis\W+file\W+is\W+part\W+of\W+gnu\W+cc\b|\bpart\W+of\W+gcc\b",
+        )
+        .expect("GCC notice pattern")
+    });
+    let pattern = PATTERN.get_or_init(|| {
+        regex::Regex::new(r#"(?m)^[ \t]*\(define_(?:insn|expand)\w*[ \t]*(?:"|\r?$)"#)
+            .expect("machine description pattern")
+    });
+    ((owner.is_match(text) && notice.is_match(text)) || pattern.is_match(text))
+        .then_some(GCC_REASON)
+}
+
+// What a push is held to (Pascal, 2026-10-12): "Old commits are refused only
+// for what cannot be unpublished: ROMs and game bytes, private inputs, stored
+// tokens, byte dumps in messages. Naming, folder layout and bookkeeping rules
+// judge only the tree being pushed."
+//
+// So `check_push` reads two rule sets. Each pushed tip tree is held to every
+// rule, as the staged and tree checks are (`inspected`,
+// `publication_data_reason`). A file version of an outgoing commit is held to
+// CONTENT alone, and the three functions below are the whole of it:
+// `history_listing_reason` for what Git lists, `history_data_reason` for what
+// a version holds, `history_binary_reason` for a binary. Each names the FORM
+// rules it leaves to the tip. The house rules for names and folders changed
+// over the project's life, so history takes an editable asset for what it
+// is, wherever it lay and whatever the case of its name, and refuses every
+// other binary as the tip does. `commit_message_reason` judges every
+// outgoing message.
+
+/// What Git lists for a version in an outgoing commit.
+///
+/// CONTENT, refused: every reason of `publication_path_reason`, none of
+/// which asks where today's layout puts a file (an invalid path; a JSON
+/// name, where stored tokens and private-input ledgers lived; private,
+/// generated and compiler directories; token tables; generated ledgers;
+/// unidentified asset dumps; private ROM names; private, generated, patch
+/// and presentation file types; PREVIEW renders; private analysis reports),
+/// and an unapproved gitlink, since a submodule may point anywhere.
+///
+/// FORM, the tip only: every reason of `native_path_reason` (the case of a
+/// name, the games/common and recon layouts, and "game material must be an
+/// editable native game input", which says a file sits in a folder or under
+/// an extension the tip no longer uses; what such a file holds is still read
+/// by `history_data_reason`).
+fn history_listing_reason(path: &str, gitlink: bool) -> Option<&'static str> {
+    publication_path_reason(path).or_else(|| {
+        (gitlink && !APPROVED_GITLINKS.contains(&path))
+            .then_some("unapproved gitlink: only the agscc toolchain submodule is approved")
+    })
+}
+/// A version in an outgoing commit, held to history's rules.
+fn outgoing(scope: &str, path: String, object: String, gitlink: bool) -> Option<Entry> {
+    if gitlink && APPROVED_GITLINKS.contains(&path.as_str()) {
+        return None;
+    }
+    Some(Entry {
+        scope: scope.to_string(),
+        listing_reason: history_listing_reason(&path, gitlink),
+        path,
+        object,
+        history: true,
+    })
+}
+const INEXACT_PNG: &str =
+    "PNG is not an exact indexed build input: standard chunks, one exact stream";
+/// A binary in an outgoing commit must be a recognisable editable asset: an
+/// exact indexed PNG without the logo, a canonical WAV, a clean MIDI or a
+/// small PCM4 wave, by its extension in any case and in any folder. Anything
+/// else is unregistered, as on the tip.
+///
+/// FORM, the tip only: the folder an asset kind belongs in, and the grey
+/// sheet rule (A3), which asks whether the tip's build writes the palette.
+fn history_binary_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'static str> {
+    if data.is_empty() {
+        return None;
+    }
+    match extension(path).to_ascii_lowercase().as_str() {
+        "pcm4" => (data.len() > 64).then_some(UNREGISTERED),
+        "png" => match indexed_png_bytes(data) {
+            None => Some(INEXACT_PNG),
+            Some(pixels) => logo
+                .is_some_and(|logo| contains(&pixels, logo))
+                .then_some(LOGO_REASON),
+        },
+        "wav" => wav_pcm8(data)
+            .is_err()
+            .then_some("WAV is not a canonical mono 8-bit PCM build input"),
+        "mid" => midi_reason(data),
+        _ => Some(UNREGISTERED),
+    }
+}
+/// A TOML file that opens with a table header (`[package]`) and closes an
+/// array is not JSON; any other text that reads as JSON is.
+fn toml_tables(path: &str, text: &str) -> bool {
+    static HEADER: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    let header = HEADER.get_or_init(|| {
+        regex::Regex::new(r"^\[\[?[A-Za-z0-9_.-]+\]\]?[ \t]*(?:#.*)?$").expect("TOML table header")
+    });
+    extension(path).eq_ignore_ascii_case("toml")
+        && text
+            .trim()
+            .lines()
+            .next()
+            .is_some_and(|line| header.is_match(line.trim_end()))
+}
+/// What a version in an outgoing commit may not hold.
+///
+/// CONTENT, refused, in the order read: JSON by name or by text; the logo,
+/// raw, in pixels or spelled in numbers (L1); a Git LFS pointer, whose bytes
+/// pass no gate; ROM images and header fragments, ELF files, archives and
+/// native executables; fonts, pictures and other presentation material by
+/// their magic, which may be rips; any binary that is not a recognisable
+/// editable asset (`history_binary_reason`); a post-pack patch that carries
+/// bytes (W3); data URIs; compiler source and diffs; encoded runs and numeric
+/// arrays outside tables and disassembly; `include_bytes!` of game, ROM or
+/// output bytes; and a Git filter attribute, which would store content
+/// outside the gate.
+///
+/// FORM, the tip only: calculated bookkeeping; address and edition equates,
+/// linker assignments, GCC alias attributes, numeric addresses and raw
+/// encodings in assembly and uncredited spans, which say how today's source
+/// names and counts its bytes (O2, C2); and which build products an assembly
+/// source may `.incbin`, a rule of the tip's build (O1) that names no bytes
+/// itself: a payload such a line could read is a committed file, and history
+/// refuses that file here, as a private file type or an unregistered binary.
+fn history_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'static str> {
+    if json_path(path) {
+        return Some(JSON_REASON);
+    }
+    let logo = logo.filter(|_| path != LOGO_SOURCE);
+    if logo.is_some_and(|logo| contains(data, logo) || (!binary(data) && spells(data, logo))) {
+        return Some(LOGO_REASON);
+    }
+    if data.starts_with(b"version https://git-lfs") || data.starts_with(b"version https://hawser") {
+        return Some("Git LFS pointer: content stored outside Git bypasses the publication gate");
+    }
+    if let Some(reason) =
+        publication_content_reason(data).or_else(|| presentation_magic_reason(data))
+    {
+        return Some(reason);
+    }
+    if binary(data) || extension(path).eq_ignore_ascii_case("pcm4") {
+        return history_binary_reason(path, data, logo);
+    }
+    let text = std::str::from_utf8(data).unwrap_or("");
+    // (a) A Cargo.toml that ends its last array reads as JSON to
+    // `json_text`; no other file kind is spared.
+    if json_text(text) && !toml_tables(path, text) {
+        return Some(JSON_REASON);
+    }
+    if let Some(reason) = patch_reason(path, data) {
+        return Some(reason);
+    }
+    // (c) A long run of numbers is a table or a listing a reader could edit
+    // only where the tip takes it so: a game's TSV tables, which
+    // `asset_game` finds under every name and case a game folder had, and
+    // scaffold assembly under recon. No old commit needs more (measured over
+    // the whole history), so history opens no other kind or folder: rows of
+    // numbers anywhere else are a stored stream. Encoded runs are refused in
+    // every kind, as on the tip.
+    let table = (asset_game(path).is_some() && listed(extension(path), DATA_TABLE_EXTENSIONS))
+        || (path.starts_with("recon/") && listed(extension(path), &["s", "inc"]));
+    data_uri_reason(text)
+        .or_else(|| compiler_source_reason(text))
+        .or_else(|| encoded_reason(text, !table))
+        .or_else(|| included_bytes_reason(path, text))
+        .or_else(|| attributes_reason(path, text))
+}
 fn check_push(root: &Path, updates: &str) -> Result<(), String> {
     let updates: Vec<_> = updates
         .lines()
@@ -2236,7 +2449,7 @@ fn check_push(root: &Path, updates: &str) -> Result<(), String> {
         let (_, changes) = raw_changes(&output)?;
         let scope = &commit[..12.min(commit.len())];
         entries.extend(changes.into_iter().filter_map(|(path, gitlink)| {
-            inspected(scope, path.clone(), format!("{commit}:{path}"), gitlink)
+            outgoing(scope, path.clone(), format!("{commit}:{path}"), gitlink)
         }));
     }
     for tip in tips {
@@ -2244,7 +2457,7 @@ fn check_push(root: &Path, updates: &str) -> Result<(), String> {
     }
     scan(root, entries)
 }
-const USAGE: &str = "usage: check publication [--staged | --pre-push | --tree [REV]]\n\nModes:\n  --staged       Check staged files before committing.\n  --pre-push     Check commits absent from remotes and each pushed tree using update lines on stdin.\n  --tree [REV]   Check every file tracked in the index, or in revision REV.\n  -h, --help     Show this help.";
+const USAGE: &str = "usage: check publication [--staged | --pre-push | --tree [REV]]\n\nModes:\n  --staged       Check staged files before committing.\n  --pre-push     Check each pushed tree by every rule, and each commit absent from the\n                 remotes for what cannot be unpublished, using update lines on stdin.\n                 An old commit is refused for ROM and game bytes (ROM images, the logo,\n                 build products, binaries that are not editable assets, encoded runs,\n                 numeric arrays outside tables and disassembly, data URIs), JSON and\n                 stored tokens, private inputs and directories, presentation material,\n                 compiler source and diffs, unapproved gitlinks and byte dumps in its\n                 message. Names, folder layout, bookkeeping and the rules for how source\n                 names its bytes judge only the pushed trees.\n  --tree [REV]   Check every file tracked in the index, or in revision REV.\n  -h, --help     Show this help.";
 fn fail(message: &str) -> ExitCode {
     eprintln!("error: {message}");
     ExitCode::FAILURE
@@ -4045,6 +4258,531 @@ mod tests {
         assert!(check_push(root, &update)
             .unwrap_err()
             .contains("raw byte dump"));
+    }
+
+    /// A cartridge header as `nintendo_logo` reads it from the user's own
+    /// ROM, around a fixture logo.
+    fn header_fixture(logo: &[u8]) -> Vec<u8> {
+        let mut header = vec![0u8; 0xc0];
+        header[..4].copy_from_slice(&[0x2e, 0, 0, 0xea]);
+        header[LOGO].copy_from_slice(logo);
+        header[0xb2] = 0x96;
+        let sum = header[0xa0..=0xbc]
+            .iter()
+            .fold(0u8, |sum, byte| sum.wrapping_add(*byte));
+        header[0xbd] = 0u8.wrapping_sub(sum).wrapping_sub(0x19);
+        header
+    }
+    /// Pushes everything a remote lacks: `files` in one commit and, when
+    /// `deleted`, their removal in the next, so that only history holds
+    /// them. The fixture root has a ROM header to read the fixture logo
+    /// from, written after the last commit and never tracked.
+    fn pushed(files: &[(&str, Vec<u8>)], deleted: bool) -> Result<(), String> {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        git(root, &["init", "--quiet"], "fixture git").unwrap();
+        let published = commit(root, &[("README.md", b"Project\n".to_vec())]);
+        git(
+            root,
+            &["update-ref", "refs/remotes/origin/main", &published],
+            "fixture remote",
+        )
+        .unwrap();
+        let mut tip = commit(root, files);
+        if deleted {
+            for (path, _) in files {
+                git(root, &["rm", "--quiet", "--", path], "fixture git").unwrap();
+            }
+            tip = commit(root, &[]);
+            assert!(check_tree(root, Some(&tip)).is_ok());
+        }
+        std::fs::create_dir_all(root.join("roms")).unwrap();
+        std::fs::write(root.join("roms/tbs-en.gba"), header_fixture(&logo_fixture())).unwrap();
+        let update = format!(
+            "refs/heads/topic {tip} refs/heads/topic {}\n",
+            "0".repeat(40)
+        );
+        check_push(root, &update)
+    }
+    /// Whether a refusal names `path` for `reason`, in the pushed tree or
+    /// in an outgoing commit.
+    fn refuses(error: &str, tree: bool, path: &str, reason: &str) -> bool {
+        error.lines().any(|line| {
+            line.starts_with("tree ") == tree
+                && line.contains(&format!(" {path}: "))
+                && line.contains(reason)
+        })
+    }
+
+    #[test]
+    fn push_leaves_names_layout_and_bookkeeping_to_the_tip() {
+        let scaffold = "\t.section .rom.000158dc, \"ax\"\nFunc_080158e8:\n\t.incbin \"baserom.gba\", 0x000158dc, 0x000001f4\n";
+        let text = |value: &str| value.as_bytes().to_vec();
+        // Each form rule, by a file that breaks only it: what the tip is
+        // refused for, and history is not.
+        let form: Vec<(&str, Vec<u8>, &str)> = vec![
+            (
+                "games/THE BROKEN SEAL/SRC/BATTLE/START.C",
+                text("void Start(void) {}\n"),
+                "lower case",
+            ),
+            (
+                "games/gs1/asm/08000100.s",
+                text("\t.thumb\nFunc_08000100:\n\tbx lr\n"),
+                "editable native game input",
+            ),
+            (
+                "games/common/src/start.c",
+                text("void Start(void) {}\n"),
+                "games/common holds only",
+            ),
+            (
+                "recon/tbs/floor_evidence.tsv",
+                text("function\tfloor\nStart\t4\n"),
+                "recon/<game> holds only",
+            ),
+            (
+                "docs/full-c-history.csv",
+                text("commit,full_c_bytes,executable_bytes\nfirst,0,1347336\n"),
+                "calculated bookkeeping",
+            ),
+            (
+                "games/tbs/src/battle/effect/tables.s",
+                text("\t.syntax unified\n\t.set .L_case_2, 0x080f0144\n"),
+                "assembler equate of a full address",
+            ),
+            (
+                "recon/tbs/ja/rom.s",
+                format!("{scaffold}\t.set Object_UpdateAllCodeSize, 0x4e8\n").into_bytes(),
+                "equate in an edition scaffold",
+            ),
+            (
+                "games/tbs/main.ld",
+                text("Alias = Defined;\n"),
+                "linker alias or stored number",
+            ),
+            (
+                "games/tla/src/system/a.c",
+                text("extern void Public(void) __attribute__((alias(\"Target\")));\n"),
+                "GCC alias attribute",
+            ),
+            (
+                "recon/tla/raw/routine.s",
+                text("bl 0x08000101\n"),
+                "numeric call target",
+            ),
+            (
+                "games/tbs/src/sound/hook.s",
+                text(".syntax unified\n\t.thumb\nHook:\n\t.inst.n 0x4718\n"),
+                "credited assembly spelled as an encoding",
+            ),
+            (
+                "games/tbs/src/sound/pad.s",
+                text("\tbx lr\nAlchemyUncredited_08001000:\n\tmovs r0, #1\n\tbx lr\nAlchemyUncreditedEnd_08001000:\n"),
+                "AlchemyUncredited span",
+            ),
+            (
+                "games/tbs/src/system/data.s",
+                text(scaffold),
+                "committed incbin payload",
+            ),
+            (
+                "games/tbs/src/graphics/tile/ui_tile.4bpp.png",
+                grey_fixture(4),
+                "grey sheet",
+            ),
+        ];
+        let files: Vec<(&str, Vec<u8>)> = form
+            .iter()
+            .map(|(path, data, _)| (*path, data.clone()))
+            .collect();
+        assert_eq!(pushed(&files, true), Ok(()));
+        let error = pushed(&files, false).unwrap_err();
+        for (path, _, reason) in &form {
+            assert!(refuses(&error, true, path, reason), "{path}: {error}");
+        }
+        assert_eq!(error.lines().count(), form.len() + 1, "{error}");
+    }
+
+    #[test]
+    fn push_refuses_what_cannot_be_unpublished_though_the_tip_deleted_it() {
+        let logo = logo_fixture();
+        let spelled = logo
+            .iter()
+            .map(|byte| format!("0x{byte:02x}"))
+            .collect::<Vec<_>>()
+            .join(", ");
+        let mut image = vec![0u8; 0x8000];
+        image[..0xc0].copy_from_slice(&header_fixture(&[0; 156]));
+        let tokens = [b"ALCHTOK1".as_slice(), &[9, 0xd0, 0x01, 0, 5, 8, 3, 7]].concat();
+        let ledger = br#"{"codec":"golden-sun-kind2-lz","frames":[{"tokens":[2],"lookahead":"00"}]}"#;
+        let stream = fdeflate::compress_to_vec(&scanlines(16, 8));
+        let base64: Vec<u8> = (b'A'..=b'Z')
+            .chain(b'a'..=b'z')
+            .chain(b'0'..=b'9')
+            .chain(*b"+/")
+            .collect();
+        let uri = format!(
+            "<img src=\"data{}image/png;base64,{}\"/>\n",
+            ':',
+            encoded_fixture(&base64, 24, 7)
+        );
+        let table = fixture_bytes(4096, 6)
+            .iter()
+            .map(|byte| byte.to_string())
+            .collect::<Vec<_>>()
+            .join(", ");
+        let diff = "diff --git a/gcc/loop.c b/gcc/loop.c\n--- a/gcc/loop.c\n+++ b/gcc/loop.c\n@@ -1,3 +1,4 @@\n context\n+added\n";
+        let notice = format!(
+            "/* Loop optimizations.\n   Copyright (C) 2000 Free Software\n   Foun{}, Inc.\n\nThis file is part of GNU C{}.  */\nint loop;\n",
+            "dation", "C"
+        );
+        // Each kind of content, by a file an old commit added and a later
+        // one deleted: history is refused for it all the same.
+        let content: Vec<(&str, Vec<u8>, &str)> = vec![
+            ("tools/fixture/image.dat", image.clone(), "GBA ROM image"),
+            ("tools/fixture/game.gba", image, "private or generated file type"),
+            (
+                "games/THE BROKEN SEAL/SRC/BATTLE/EFFECT_TAIL.JSON",
+                ledger.to_vec(),
+                "JSON is banned",
+            ),
+            (
+                "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.TOKENS",
+                tokens,
+                "stored compression token table",
+            ),
+            ("recon/tbs/private-inputs.json", b"{}\n".to_vec(), "JSON is banned"),
+            ("recon/tbs/renamed.inc", ledger.to_vec(), "JSON is banned"),
+            (
+                "tools/gbafix/src/logo.rs",
+                format!("const LOGO: [u8; 156] = [{spelled}];\n").into_bytes(),
+                "Nintendo logo",
+            ),
+            (
+                "games/gs1/data/table.dat",
+                b"\x01\x02\0\x03".to_vec(),
+                "unregistered binary",
+            ),
+            (
+                "games/gs1/data/stream.bin",
+                fixture_bytes(64, 5),
+                "private or generated file type",
+            ),
+            (
+                "roms/notes.txt",
+                b"notes\n".to_vec(),
+                "private or generated directory",
+            ),
+            (
+                "docs/shot.png",
+                png_fixture(16, 8, 6, &stream, &[]),
+                "truecolour",
+            ),
+            ("docs/chart.svg", b"<svg/>\n".to_vec(), "presentation material"),
+            ("docs/page.html", uri.into_bytes(), "data URI"),
+            (
+                "games/gs1/src/table.c",
+                format!("const u8 table[] = {{{table}}};\n").into_bytes(),
+                "numeric array",
+            ),
+            (
+                "tools/alchemy_gcc.ts",
+                format!("export const PATCH = `\n{diff}`;\n").into_bytes(),
+                "unified diff",
+            ),
+            ("tools/compiler/loop.c", notice.into_bytes(), "GCC source"),
+        ];
+        let files: Vec<(&str, Vec<u8>)> = content
+            .iter()
+            .map(|(path, data, _)| (*path, data.clone()))
+            .collect();
+        let error = pushed(&files, true).unwrap_err();
+        for (path, _, reason) in &content {
+            assert!(refuses(&error, false, path, reason), "{path}: {error}");
+        }
+        assert_eq!(error.lines().count(), content.len() + 1, "{error}");
+    }
+
+    #[test]
+    fn history_takes_an_editable_asset_wherever_it_lay_and_refuses_other_binaries() {
+        let wave = ags::assets::wav::pcm8_wav(&[0; 64], 8000).unwrap();
+        let stream = fdeflate::compress_to_vec(&scanlines(16, 4));
+        let assets: Vec<(&str, Vec<u8>)> = vec![
+            (
+                "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/UI_TILE.4BPP.PNG",
+                indexed_fixture(4),
+            ),
+            ("assets/graphics/title.png", indexed_fixture(8)),
+            // A3 asks whether the tip's build writes the palette.
+            ("games/gs1/graphics/font.png", grey_fixture(4)),
+            ("PROGRESS.png", indexed_fixture(2)),
+            (
+                "games/THE BROKEN SEAL/SOUND/SAMPLE/WAVE_00.PCM8.WAV",
+                wave.clone(),
+            ),
+            (
+                "games/THE BROKEN SEAL/SOUND/SEQUENCE/THEME.MID",
+                midi_fixture(&[], true),
+            ),
+            (
+                "games/THE BROKEN SEAL/SOUND/SAMPLE/WAVE_00.PCM4",
+                vec![0x5a; 16],
+            ),
+        ];
+        assert_eq!(pushed(&assets, true), Ok(()));
+        let logo = logo_fixture();
+        for (path, data) in &assets {
+            assert_eq!(history_data_reason(path, data, Some(&logo)), None, "{path}");
+        }
+        // The tip still asks for today's folders and names.
+        let error = pushed(&assets[..3], false).unwrap_err();
+        assert_eq!(error.lines().count(), 4, "{error}");
+        let refused: Vec<(&str, Vec<u8>, &str)> = vec![
+            (
+                "games/gs1/graphics/shot.png",
+                png_fixture(16, 8, 6, &stream, &[]),
+                "truecolour",
+            ),
+            (
+                "games/gs1/graphics/text.png",
+                png_fixture(16, 4, 3, &stream, &[(b"tEXt", b"Comment\0payload")]),
+                "exact indexed build input",
+            ),
+            (
+                "games/gs1/sound/long.wav",
+                [wave.as_slice(), &[0]].concat(),
+                "canonical mono 8-bit PCM",
+            ),
+            (
+                "games/gs1/sound/open.mid",
+                midi_fixture(&[], false),
+                "exact sequence build input",
+            ),
+            ("games/gs1/sound/wave.pcm4", vec![0x5a; 65], "unregistered binary"),
+            (
+                "games/gs1/graphics/title.tilemap",
+                b"\x01\x02\0\x03".to_vec(),
+                "unregistered binary",
+            ),
+            // An asset is known by its extension, as on the tip.
+            (
+                "games/gs1/graphics/title.dat",
+                indexed_fixture(4),
+                "unregistered binary",
+            ),
+        ];
+        for (path, data, reason) in &refused {
+            let actual = history_data_reason(path, data, Some(&logo));
+            assert!(
+                actual.is_some_and(|actual| actual.contains(reason)),
+                "{path}: {actual:?}"
+            );
+        }
+        let (_, hidden, _) = binary_fixtures()
+            .into_iter()
+            .find(|(path, ..)| path.ends_with("/logo.indexed.png"))
+            .unwrap();
+        let old = "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/LOGO.PNG";
+        assert_eq!(history_data_reason(old, &hidden, None), None);
+        assert_eq!(
+            history_data_reason(old, &hidden, Some(&logo)),
+            Some(LOGO_REASON)
+        );
+    }
+
+    #[test]
+    fn a_cargo_manifest_that_closes_an_array_is_not_json_in_history() {
+        let manifest =
+            b"[workspace]\nresolver = \"2\"\nmembers = [\n    \"alchemy\",\n    \"ags\",\n]\n".to_vec();
+        assert!(json_text(std::str::from_utf8(&manifest).unwrap()));
+        assert_eq!(pushed(&[("tools/Cargo.toml", manifest.clone())], true), Ok(()));
+        for path in ["tools/Cargo.toml", "tools/alchemy/CARGO.TOML"] {
+            assert_eq!(history_data_reason(path, &manifest, None), None, "{path}");
+        }
+        // No other kind is spared, and JSON under a TOML name is still JSON.
+        for path in ["tools/Cargo.txt", "tools/manifest.inc", "recon/tbs/part.tsv"] {
+            assert_eq!(
+                history_data_reason(path, &manifest, None),
+                Some(JSON_REASON),
+                "{path}"
+            );
+        }
+        for json in [
+            "[\n  {\"tokens\": [2], \"lookahead\": \"00\"}\n]\n",
+            "[{\"tokens\": [2]}]",
+            "{\"members\": [\"alchemy\"]}",
+            "[\"alchemy\", \"ags\"]",
+        ] {
+            assert_eq!(
+                history_data_reason("tools/Cargo.toml", json.as_bytes(), None),
+                Some(JSON_REASON),
+                "{json}"
+            );
+        }
+    }
+
+    #[test]
+    fn history_holds_numbers_only_where_the_tip_holds_tables() {
+        let numbers = fixture_bytes(4096, 6)
+            .iter()
+            .map(|byte| byte.to_string())
+            .collect::<Vec<_>>();
+        let rows = numbers
+            .chunks(32)
+            .map(|row| format!("{}\n", row.join("\t")))
+            .collect::<String>();
+        let words = numbers
+            .chunks(16)
+            .map(|row| format!("\t.byte {}\n", row.join(", ")))
+            .collect::<String>();
+        assert!(numeric_elements(rows.as_bytes()) > NUMERIC_ELEMENTS_MAX);
+        assert!(numeric_elements(words.as_bytes()) > NUMERIC_ELEMENTS_MAX);
+        // A game's tables, under every name its folders had, and scaffold
+        // assembly: the kinds and places the tip takes numbers in.
+        for (path, text) in [
+            ("games/tbs/src/map/m/cells.tsv", &rows),
+            ("games/THE BROKEN SEAL/SRC/MAP/M/CELLS.TSV", &rows),
+            ("games/gs1/src/map/m/cells.tsv", &rows),
+            ("recon/tbs/raw/table.s", &words),
+            ("recon/tla/en/data.inc", &words),
+        ] {
+            assert_eq!(history_data_reason(path, text.as_bytes(), None), None, "{path}");
+        }
+        // Rows of numbers anywhere else are a stored stream, whatever the
+        // file is called.
+        for (path, text) in [
+            ("games/gs1/recon/cells.tsv", &rows),
+            ("recon/tbs/metrics/cells.tsv", &rows),
+            ("tools/alchemy/cells.tsv", &rows),
+            ("assets/graphics/title.tilemap", &rows),
+            ("docs/cells.csv", &rows),
+            ("games/THE BROKEN SEAL/SRC/MAP/M/CELLS.S", &words),
+            ("games/tbs/src/map/m/cells.s", &words),
+            ("asm/08000100.s", &words),
+            ("games/gs1/src/table.c", &words),
+            ("tools/alchemy/src/rom_table.rs", &words),
+        ] {
+            let actual = history_data_reason(path, text.as_bytes(), None);
+            assert!(
+                actual.is_some_and(|reason| reason.contains("numeric array")),
+                "{path}: {actual:?}"
+            );
+        }
+        // An encoded run is refused in every kind and place.
+        let base64: Vec<u8> = (b'A'..=b'Z')
+            .chain(b'a'..=b'z')
+            .chain(b'0'..=b'9')
+            .chain(*b"+/")
+            .collect();
+        let encoded = (0..5)
+            .map(|seed| format!("  {}\n", encoded_fixture(&base64, 76, seed)))
+            .collect::<String>();
+        for path in [
+            "games/THE BROKEN SEAL/SRC/MAP/M/CELLS.TSV",
+            "recon/tbs/raw/table.s",
+            "asm/08000100.s",
+            "docs/notes.md",
+        ] {
+            let actual = history_data_reason(path, encoded.as_bytes(), None);
+            assert!(
+                actual.is_some_and(|reason| reason.contains("encoded payload")),
+                "{path}: {actual:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn compiler_source_and_diffs_are_refused_on_the_tip_and_in_history() {
+        let diff = "diff --git a/gcc/loop.c b/gcc/loop.c\nindex 1a2b..3c4d 100644\n--- a/gcc/loop.c\n+++ b/gcc/loop.c\n@@ -1,3 +1,4 @@\n context\n+added\n";
+        let plain = "--- gcc/loop.c\t2000-07-31\n+++ gcc/loop.c\t2000-08-01\n@@ -10 +10,2 @@\n-old\n+new\n";
+        let created = "Notes first.\r\n--- /dev/null\r\n+++ b/gcc/thumb.md\r\n@@ -0,0 +1,2 @@\r\n+one\r\n";
+        // GCC's notice, in halves so that this file does not carry it.
+        let notice = format!(
+            "/* Loop optimizations.\n   Copyright (C) 1987, 88, 89, 91-99, 2000 Free Software\n   Foun{}, Inc.\n\nThis file is part of GNU C{}.  */\nint loop;\n",
+            "dation", "C"
+        );
+        let later = format!(
+            ";; Machine description.\n;; Copyright (C) 2004 Free Software Foun{}, Inc.\n;;\n;; This file is\n;; part of GC{}.\n",
+            "dation", "C"
+        );
+        let pattern = "(define_insn \"*thumb_movhi_insn\"\n  [(set (match_operand:HI 0 \"nonimmediate_operand\" \"=l\")\n";
+        let expand = "\t(define_expand \"movhi\"\n";
+        let split = "(define_insn_and_split \"\"\n";
+        let refused = [
+            (diff, DIFF_REASON),
+            (plain, DIFF_REASON),
+            (created, DIFF_REASON),
+            (notice.as_str(), GCC_REASON),
+            (later.as_str(), GCC_REASON),
+            (pattern, GCC_REASON),
+            (expand, GCC_REASON),
+            (split, GCC_REASON),
+        ];
+        for (text, reason) in refused {
+            for path in [
+                "tools/alchemy/src/compiler/notes.md",
+                "tools/alchemy_gcc.ts",
+                "games/tbs/src/system/loop.c",
+                "recon/tbs/raw/loop.s",
+                "agscc.txt",
+            ] {
+                let tip = publication_data_reason(path, text.as_bytes(), None);
+                assert_eq!(tip, Some(reason), "{path}: {text}");
+                let history = history_data_reason(path, text.as_bytes(), None);
+                assert_eq!(history, Some(reason), "{path}: {text}");
+            }
+        }
+        // Prose that names a pass, a file or a form is not source.
+        let owner = format!("GCC is the Free Software Foun{}'s compiler.\n", "dation");
+        let part = "regmove, the pass that copies operand 1, is part of GCC 2.96.\n";
+        for prose in [
+            "loop.c moves an invariant when threshold * savings * life reaches the loop's insn count.\n",
+            "Thumb movhi lists its alternatives in one (define_insn pattern; (define_expand \"movhi\" calls it.\n",
+            "Never store `diff --git` output; a line of --- dashes and +++ pluses is no hunk.\n",
+            "--- a/x\n+++ b/x\nno hunk follows\n",
+            "@@ -1,7 +1,7 @@ is how a hunk opens.\n",
+            // A toy diff our own tools spell: escaped into a Rust string
+            // literal, and into a cell of a fixture table.
+            "        assert_eq!(diff, \"--- x.c\\n+++ x.c\\n@@ -1,7 +1,7 @@\\n a\\n-d\\n+D\\n e\\n\");\n",
+            "a\tb\t--- before\\n+++ after\\n@@ -1 +1 @@\\n-a\\n+b\\n\n",
+            owner.as_str(),
+            part,
+        ] {
+            assert_eq!(compiler_source_reason(prose), None, "{prose}");
+            for path in ["tools/alchemy/src/permute/mod.rs", "tools/fixtures/output-diffs.tsv"] {
+                assert_eq!(publication_data_reason(path, prose.as_bytes(), None), None);
+                assert_eq!(history_data_reason(path, prose.as_bytes(), None), None);
+            }
+        }
+        let prose = [owner.as_str(), part].concat();
+        assert_eq!(compiler_source_reason(&prose), Some(GCC_REASON));
+        // The documents that discuss the compilers pass, as does this file.
+        let root = crate::compiler::routing::root();
+        let study = root.join("tools/alchemy/src/compiler");
+        let mut documents = vec![
+            root.join("AGENTS.md"),
+            root.join("tools/alchemy/src/check/publication.rs"),
+            root.join("tools/alchemy/src/permute/mod.rs"),
+            root.join("tools/alchemy/src/permute/c/fixtures/output-diffs.tsv"),
+        ];
+        documents.extend(
+            std::fs::read_dir(study)
+                .unwrap()
+                .flatten()
+                .map(|entry| entry.path())
+                .filter(|path| path.extension().is_some_and(|extension| extension == "md")),
+        );
+        assert!(documents.len() > 3);
+        for document in documents {
+            let text = std::fs::read_to_string(&document).unwrap();
+            assert_eq!(compiler_source_reason(&text), None, "{}", document.display());
+        }
+        // A diff an old commit added is refused though the tip deleted it.
+        let error = pushed(&[("tools/agscc.txt", diff.as_bytes().to_vec())], true).unwrap_err();
+        assert!(refuses(&error, false, "tools/agscc.txt", "unified diff"), "{error}");
+        let notes = "agscc keeps GCC's loop.c as it was on 2000-07-31.\n";
+        assert_eq!(pushed(&[("docs/notes.md", notes.as_bytes().to_vec())], false), Ok(()));
     }
     #[test]
     fn tree_mode_passes_pret_style_inputs_and_reports_only_presentation_material() {

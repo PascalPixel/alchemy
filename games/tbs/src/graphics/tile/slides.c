@@ -4,10 +4,10 @@
 //--------------------------------------------------------------------------
 
 #include "unit/graphics/tile/slides.h"
-#include "unit/system/scheduler/runtime.h"
-#include "unit/system/scheduler/sched.h"
-#include "unit/system/scheduler/basepal.h"
-#include "unit/system/scheduler/heap.h"
+#include "unit/runtime/runtime.h"
+#include "unit/runtime/sched.h"
+#include "unit/runtime/basepal.h"
+#include "unit/runtime/heap.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "types.h"

@@ -17,7 +17,7 @@
 #include "unit/graphics/window/window.h"
 #include "unit/graphics/window/output.h"
 #include "unit/graphics/window/save.h"
-#include "unit/system/scheduler/sched.h"
+#include "unit/runtime/sched.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

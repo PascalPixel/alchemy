@@ -1,5 +1,5 @@
-#include "unit/system/scheduler/objvram.h"
-#include "unit/system/scheduler/heap.h"
+#include "unit/runtime/objvram.h"
+#include "unit/runtime/heap.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

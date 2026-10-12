@@ -18,18 +18,18 @@ main	rom_main_00	games/tbs/src/system/iwram_entry	.text
 main	rom_main_00	games/tbs/src/lib/trig
 main	rom_main_00	games/tbs/src/system/resource/decode_01	.text .rodata .text.decode_2_loop
 main	rom_main_00	games/tbs/src/system/heapfree	.text .text.* .rodata .data .padding
-main	rom_main_00	games/tbs/src/system/scheduler/runtime	.text
-main	rom_main_00	games/tbs/src/system/scheduler/ioqueue	.text
-main	rom_main_00	games/tbs/src/system/scheduler/fade	.text
-main	rom_main_00	games/tbs/src/system/scheduler/oamlist	.text
-main	rom_main_00	games/tbs/src/system/scheduler/objvram	.text
-main	rom_main_00	games/tbs/src/system/scheduler/sched	.text
-main	rom_main_00	games/tbs/src/system/scheduler/math	.text
-main	rom_main_00	games/tbs/src/system/scheduler/basepal	.text
-main	rom_main_00	games/tbs/src/system/scheduler/heap	.text
-main	rom_main_00	games/tbs/src/system/scheduler/matrix	.text
-main	rom_main_00	games/tbs/src/system/scheduler/ramcode	.text
-main	rom_main_00	games/tbs/src/system/scheduler/serial	.text
+main	rom_main_00	games/tbs/src/runtime/runtime	.text
+main	rom_main_00	games/tbs/src/runtime/ioqueue	.text
+main	rom_main_00	games/tbs/src/runtime/fade	.text
+main	rom_main_00	games/tbs/src/runtime/oamlist	.text
+main	rom_main_00	games/tbs/src/runtime/objvram	.text
+main	rom_main_00	games/tbs/src/runtime/sched	.text
+main	rom_main_00	games/tbs/src/runtime/math	.text
+main	rom_main_00	games/tbs/src/runtime/basepal	.text
+main	rom_main_00	games/tbs/src/runtime/heap	.text
+main	rom_main_00	games/tbs/src/runtime/matrix	.text
+main	rom_main_00	games/tbs/src/runtime/ramcode	.text
+main	rom_main_00	games/tbs/src/runtime/serial	.text
 main	rom_main_00	games/tbs/src/system/cpu_set	.text .padding .text.sound_vsync_on
 main	rom_main_00	games/common/src/system/save/flash	.text
 main	rom_main_00	games/common/src/system/save/sst	.text
@@ -37,9 +37,9 @@ main	rom_main_00	games/common/src/system/save/program_flash_sector	.text
 main	rom_main_00	games/common/src/system/save/atmel	.text
 main	rom_main_00	libgcc.a:_call_via_rX	.text
 main	rom_main_00	games/tbs/src/system/runtime_irq_table	.rodata.irq_head .rodata.irq_middle .text.irq_halt .rodata.irq_tail
-main	rom_main_00	games/tbs/src/system/scheduler/mathtbl	.rodata
+main	rom_main_00	games/tbs/src/runtime/mathtbl	.rodata
 main	rom_main_00	games/tbs/src/system/memory/syspal	.rodata
-main	rom_main_00	games/tbs/src/system/scheduler/numtext	.rodata
+main	rom_main_00	games/tbs/src/runtime/numtext	.rodata
 main	rom_main_00	games/tbs/src/lib/q16_dot_product
 main	rom_main_00	games/tbs/src/system/save/savedata	.rodata
 main	rom_main_00	games/tbs/src/system/link/testdata	.rodata

@@ -13,8 +13,8 @@
 #include "unit/battle/effect/psydisp.h"
 #include "unit/battle/effect/psyfx.h"
 #include "unit/game/character/item.h"
-#include "unit/system/scheduler/objvram.h"
-#include "unit/system/scheduler/math.h"
+#include "unit/runtime/objvram.h"
+#include "unit/runtime/math.h"
 
 #define NULL ((void *)0)
 #include "fieldobj.h"

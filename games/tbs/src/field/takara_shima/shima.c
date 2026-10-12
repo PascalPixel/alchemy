@@ -19,7 +19,7 @@
 #include "unit/field/common/script/script.h"
 #include "unit/field/common/script/player.h"
 #include "unit/field/common/script/mapcell.h"
-#include "unit/system/scheduler/math.h"
+#include "unit/runtime/math.h"
 #include "battle.h"
 #include "field.h"
 #include "menu.h"

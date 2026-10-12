@@ -8,7 +8,7 @@
 #include "unit/battle/effect/djinnev.h"
 #include "unit/battle/effect/psydisp.h"
 #include "unit/battle/effect/psyfx.h"
-#include "unit/system/scheduler/runtime.h"
+#include "unit/runtime/runtime.h"
 #include "types.h"
 #include "scene.h"
 #include "btltype.h"

@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_SYSTEM_SCHEDULER_BASEPAL_H
-#define ALCHEMY_UNIT_SYSTEM_SCHEDULER_BASEPAL_H
+#ifndef ALCHEMY_UNIT_RUNTIME_BASEPAL_H
+#define ALCHEMY_UNIT_RUNTIME_BASEPAL_H
 
 #include "types.h"
 #include "callback_scheduler.h"

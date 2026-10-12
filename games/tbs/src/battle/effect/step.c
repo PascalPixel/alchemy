@@ -13,7 +13,7 @@
 #include "unit/battle/effect/evtable.h"
 #include "unit/battle/effect/djinnev.h"
 #include "unit/battle/effect/psyfx.h"
-#include "unit/system/scheduler/matrix.h"
+#include "unit/runtime/matrix.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

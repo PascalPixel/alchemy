@@ -2,7 +2,7 @@
 #include "unit/menu/item/item.h"
 #include "unit/menu/item/status.h"
 #include "unit/menu/item/fourobj.h"
-#include "unit/system/scheduler/sched.h"
+#include "unit/runtime/sched.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

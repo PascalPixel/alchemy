@@ -5,7 +5,7 @@
 #include "unit/battle/effect/djinnev.h"
 #include "unit/battle/effect/psyfx.h"
 #include "unit/battle/effect/fxslot.h"
-#include "unit/system/scheduler/math.h"
+#include "unit/runtime/math.h"
 #include "types.h"
 #include "scene.h"
 #include "btltype.h"

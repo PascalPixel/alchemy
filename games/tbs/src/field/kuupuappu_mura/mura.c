@@ -18,7 +18,7 @@
 #include "unit/game/character/chara.h"
 #include "unit/game/character/item.h"
 #include "unit/game/character/djinn.h"
-#include "unit/system/scheduler/math.h"
+#include "unit/runtime/math.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"

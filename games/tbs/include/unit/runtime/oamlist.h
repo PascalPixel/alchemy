@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_SYSTEM_SCHEDULER_OAMLIST_H
-#define ALCHEMY_UNIT_SYSTEM_SCHEDULER_OAMLIST_H
+#ifndef ALCHEMY_UNIT_RUNTIME_OAMLIST_H
+#define ALCHEMY_UNIT_RUNTIME_OAMLIST_H
 
 #include "types.h"
 #include "callback_scheduler.h"

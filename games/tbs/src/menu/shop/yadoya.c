@@ -1,7 +1,7 @@
 #include "unit/menu/shop/shop.h"
 #include "unit/menu/shop/buysell.h"
 #include "unit/menu/shop/yadoya.h"
-#include "unit/system/scheduler/runtime.h"
+#include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

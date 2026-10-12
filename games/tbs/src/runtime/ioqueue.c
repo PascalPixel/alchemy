@@ -1,5 +1,5 @@
-#include "unit/system/scheduler/ioqueue.h"
-#include "unit/system/scheduler/heap.h"
+#include "unit/runtime/ioqueue.h"
+#include "unit/runtime/heap.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

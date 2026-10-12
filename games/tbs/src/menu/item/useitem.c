@@ -3,7 +3,7 @@
 #include "unit/menu/item/psynergy.h"
 #include "unit/menu/item/status.h"
 #include "unit/menu/item/useitem.h"
-#include "unit/system/scheduler/math.h"
+#include "unit/runtime/math.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

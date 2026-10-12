@@ -4,7 +4,7 @@
 #include "unit/battle/unit.h"
 #include "unit/battle/smnentry.h"
 #include "unit/battle/effect/objtable.h"
-#include "unit/system/scheduler/heap.h"
+#include "unit/runtime/heap.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

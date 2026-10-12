@@ -11,7 +11,7 @@
 #include "unit/graphics/window/window.h"
 #include "unit/graphics/window/output.h"
 #include "unit/graphics/window/save.h"
-#include "unit/system/scheduler/math.h"
+#include "unit/runtime/math.h"
 #include "machi.h"
 #include "iwram_call.h"
 #include "call.h"

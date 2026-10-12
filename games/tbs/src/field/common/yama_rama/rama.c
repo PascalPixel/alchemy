@@ -9,7 +9,7 @@
 #include "unit/battle/effect/djinnev.h"
 #include "unit/battle/effect/psydisp.h"
 #include "unit/battle/effect/psyfx.h"
-#include "unit/system/scheduler/math.h"
+#include "unit/runtime/math.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

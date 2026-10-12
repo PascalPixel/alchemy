@@ -9,7 +9,7 @@
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/evactor.h"
-#include "unit/system/scheduler/heap.h"
+#include "unit/runtime/heap.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

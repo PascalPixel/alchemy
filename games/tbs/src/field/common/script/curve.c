@@ -3,7 +3,7 @@
 #include "unit/field/common/script/script.h"
 #include "unit/field/common/script/operands.h"
 #include "unit/field/common/script/curve.h"
-#include "unit/system/scheduler/heap.h"
+#include "unit/runtime/heap.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

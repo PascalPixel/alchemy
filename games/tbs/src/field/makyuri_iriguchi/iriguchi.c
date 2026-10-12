@@ -27,8 +27,8 @@
 #include "unit/graphics/window/window.h"
 #include "unit/graphics/window/output.h"
 #include "unit/graphics/window/save.h"
-#include "unit/system/scheduler/math.h"
-#include "unit/system/scheduler/heap.h"
+#include "unit/runtime/math.h"
+#include "unit/runtime/heap.h"
 #include "iowrite.h"
 
 #define NULL ((void *)0)

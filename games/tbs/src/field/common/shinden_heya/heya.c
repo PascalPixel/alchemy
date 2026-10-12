@@ -18,7 +18,7 @@
 #include "unit/graphics/window/output.h"
 #include "unit/graphics/window/save.h"
 #include "unit/sound/sound.h"
-#include "unit/system/scheduler/heap.h"
+#include "unit/runtime/heap.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

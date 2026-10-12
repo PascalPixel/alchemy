@@ -13,7 +13,7 @@
 #include "unit/battle/effect/psyfx.h"
 #include "unit/field/common/script/field.h"
 #include "unit/field/common/script/mapcell.h"
-#include "unit/system/scheduler/math.h"
+#include "unit/runtime/math.h"
 
 #define NULL ((void *)0)
 #include "fieldobj.h"

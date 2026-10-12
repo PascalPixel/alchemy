@@ -22,7 +22,7 @@
 #include "unit/field/common/script/mapcell.h"
 #include "unit/menu/shop/shop.h"
 #include "unit/menu/shop/seido.h"
-#include "unit/system/scheduler/math.h"
+#include "unit/runtime/math.h"
 #include "iowrite.h"
 
 #include "battle.h"

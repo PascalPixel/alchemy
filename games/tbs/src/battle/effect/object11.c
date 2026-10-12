@@ -119,25 +119,17 @@ s32 ObjectTable_FindActiveByValue(s32 value)
 {
 	struct FieldStepWork *state = (struct FieldStepWork *)gEventWork;
 	s32					  result = -1;
-	s32					  index = 8;
-	struct ObjectRuntime *object = state->actors[index];
+	s32					  index;
+	struct ObjectRuntime *object;
 
-	if (object != 0 && object->animation_kind == 1
-		&& ((struct AnimationObject *)object->animation)->entries[0]->anim_id == value)
+	for (index = 8; index <= 65; index++)
 	{
-		result = index;
-	}
-	else
-	{
-	next:
-		index++;
-		if (index <= 65)
+		object = state->actors[index];
+		if (object != 0 && object->animation_kind == 1
+			&& ((struct AnimationObject *)object->animation)->entries[0]->anim_id == value)
 		{
-			object = state->actors[index];
-			if (object == 0 || object->animation_kind != 1
-				|| ((struct AnimationObject *)object->animation)->entries[0]->anim_id != value)
-				goto next;
 			result = index;
+			break;
 		}
 	}
 	return result;

@@ -582,14 +582,18 @@ static void FieldScene_RunScene38bSequenceA(void)
 		Map_CopyCellAttributes(26, 15, 1, 3, 10, 15);
 		if (GameFlag_IsSet(0x849) == 0)
 		{
-			if (GameFlag_IsSet(0x848) != 0)
+			if (GameFlag_IsSet(0x848) == 0)
 			{
-				goto run_event;
+				Engine_ActorSetPosition(14, 0, 0);
+				Actor_FaceDirection(12, 0xd000, 0);
+				Actor_FaceDirection(13, 0xb000, 0);
 			}
-			Engine_ActorSetPosition(14, 0, 0);
 		}
-		Actor_FaceDirection(12, 0xd000, 0);
-		Actor_FaceDirection(13, 0xb000, 0);
+		else
+		{
+			Actor_FaceDirection(12, 0xd000, 0);
+			Actor_FaceDirection(13, 0xb000, 0);
+		}
 	}
 	else
 	{
@@ -633,7 +637,6 @@ static void FieldScene_RunScene38bSequenceA(void)
 			rec->y.fixed = 0x300000;
 		}
 	}
-run_event:;
 	EV08_PSYNERGY_3();
 }
 

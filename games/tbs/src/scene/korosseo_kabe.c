@@ -3,7 +3,7 @@
 #include "scene_ids.h"
 #include "vram_tab.h"
 #include "unit/import.h"
-#include "unit/field/korosseo_kabe/kabe.h"
+#include "unit/scene/korosseo_kabe.h"
 #include "unit/field/common/korosseo/saved.h"
 #include "unit/field/common/korosseo/solo_competitor.h"
 #include "unit/field/common/korosseo/raised.h"
@@ -1352,13 +1352,13 @@ static void EV39_TALK(s32 speaker)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/korosseo/saved.c"
-#include "../common/korosseo/solo_competitor.c"
-#include "../common/korosseo/raised.c"
-#include "../common/korosseo/solo_round.c"
-#include "../common/korosseo/cheer.c"
-#include "../common/item/addequip.c"
-#include "../common/korosseo/korosseo.c"
+#include "../field/common/korosseo/saved.c"
+#include "../field/common/korosseo/solo_competitor.c"
+#include "../field/common/korosseo/raised.c"
+#include "../field/common/korosseo/solo_round.c"
+#include "../field/common/korosseo/cheer.c"
+#include "../field/common/item/addequip.c"
+#include "../field/common/korosseo/korosseo.c"
 
 static void KorosseoKabe_InitializeModeTask(u32 mode, u32 param)
 {
@@ -1500,11 +1500,11 @@ static void FieldScene_RunLateSequence(s32 a0)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/korosseo/compete.c"
-#include "../common/korosseo/markslot.c"
-#include "../common/korosseo/marker.c"
-#include "../common/korosseo/markmove.c"
-#include "../common/korosseo/item_icon.c"
+#include "../field/common/korosseo/compete.c"
+#include "../field/common/korosseo/markslot.c"
+#include "../field/common/korosseo/marker.c"
+#include "../field/common/korosseo/markmove.c"
+#include "../field/common/korosseo/item_icon.c"
 
 static void Text_WriteU32AsHex(u8 *buf, u32 value)
 {
@@ -1663,7 +1663,7 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/korosseo/path_rival.c"
+#include "../field/common/korosseo/path_rival.c"
 
 void FieldScene_BuildDescriptorAndInstallTask(
 	s32 first, s32 second, s32 mode, s32 centre, s32 extra, s32 third, s32 fourth)
@@ -1726,8 +1726,8 @@ static void SceneState_InitControlRecordAndStartTask(s32 resource)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/korosseo/scene_state.c"
-#include "../common/object/findslot.c"
+#include "../field/common/korosseo/scene_state.c"
+#include "../field/common/object/findslot.c"
 
 static void StagedActor_PushActorAhead(void)
 {
@@ -1819,7 +1819,7 @@ static void StagedActor_PushActorAhead(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/korosseo/occupant.c"
+#include "../field/common/korosseo/occupant.c"
 
 const u8 KorosseoKabe_RollLogScript[] = {2, 2, 3, 3};
 

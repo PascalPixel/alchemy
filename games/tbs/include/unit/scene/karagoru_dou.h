@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_FIELD_KARAGORU_DOU_DOU_H
-#define ALCHEMY_UNIT_FIELD_KARAGORU_DOU_DOU_H
+#ifndef ALCHEMY_UNIT_SCENE_KARAGORU_DOU_H
+#define ALCHEMY_UNIT_SCENE_KARAGORU_DOU_H
 
 #include "types.h"
 #include "field_scene.h"

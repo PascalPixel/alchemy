@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/import.h"
-#include "unit/field/korashiamu_iriguchi/iriguchi.h"
+#include "unit/scene/korashiamu_iriguchi.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"

@@ -4,7 +4,7 @@
 #include "game_state.h"
 #include "field_event.h"
 #include "unit/import.h"
-#include "unit/field/runpa_jo/runpa_jo.h"
+#include "unit/scene/runpa_jo.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/marker.h"
@@ -31,7 +31,7 @@
 #include "system.h"
 #include "global_cells.h"
 #include "edition.h"
-#include "fortress.h"
+#include "runpa_jo_fortress.h"
 #include "event.h"
 #include "scene_ids.h"
 #include "tbs_edition.h"
@@ -63,7 +63,7 @@ static void FieldScene_ActivateAlternateActorGroup(void);
 static void ActivateFiveActorGroupFromFlags(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/staged_actor.c"
+#include "../field/common/object/staged_actor.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "global_cells.h"
 #include "unit/import.h"
-#include "unit/field/arutamira_dou/dou.h"
+#include "unit/scene/arutamira_dou.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/evtable.h"
@@ -87,7 +87,7 @@ struct RockPuzzle
 u16 gArutamiraActorWheelWork[6] __attribute__((nocommon, aligned(4)));
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/staged_actor.c"
+#include "../field/common/object/staged_actor.c"
 
 static void EV13_TALK(void)
 {

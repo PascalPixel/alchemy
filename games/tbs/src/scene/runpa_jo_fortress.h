@@ -2,7 +2,7 @@
 #define RUNPA_JO_FORTRESS_H
 
 #include "types.h"
-#include "jo.h"
+#include "runpa_jo.h"
 #include "field_scene.h"
 #include "item_ids.h"
 

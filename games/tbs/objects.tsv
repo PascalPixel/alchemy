@@ -399,25 +399,25 @@ main	rom_tail_02	@games/tbs/src/system/resource/directory
 3b7	unit	games/tbs/src/scene/torebi_izumi
 3b7	text	libgcc.a:_call_via_rX
 3b7	bss	games/tbs/src/scene/torebi_izumi	.bss
-3b8	unit	games/tbs/src/field/torebi_kyuden/kyuden
-3b9	unit	games/tbs/src/field/korashiamu_iriguchi/iriguchi
-3ba	unit	games/tbs/src/field/korosseo_kawa/kawa
+3b8	unit	games/tbs/src/scene/torebi_kyuden
+3b9	unit	games/tbs/src/scene/korashiamu_iriguchi
+3ba	unit	games/tbs/src/scene/korosseo_kawa
 3ba	text	libgcc.a:_call_via_rX
 3ba	text	games/tbs/src/graphics/korosseo/gauge
 3ba	bss	resource_3ba_overlay	.bss
-3bb	unit	games/tbs/src/field/korosseo_kabe/kabe
+3bb	unit	games/tbs/src/scene/korosseo_kabe
 3bb	text	games/tbs/src/graphics/korosseo/gauge
 3bb	bss	resource_3bb_overlay	.bss
-3bc	unit	games/tbs/src/field/korosseo_maruta/maruta
+3bc	unit	games/tbs/src/scene/korosseo_maruta
 3bc	text	libgcc.a:_call_via_rX
 3bc	text	games/tbs/src/graphics/korosseo/gauge
 3bc	bss	resource_3bc_overlay	.bss
-3bd	unit	games/tbs/src/field/arutamira_dou/dou
+3bd	unit	games/tbs/src/scene/arutamira_dou
 3bd	text	libgcc.a:_call_via_rX
-3bd	bss	games/tbs/src/field/arutamira_dou/dou	.bss COMMON
-3be	unit	games/tbs/src/field/karagoru_dou/dou
+3bd	bss	games/tbs/src/scene/arutamira_dou	.bss COMMON
+3be	unit	games/tbs/src/scene/karagoru_dou
 3be	text	libgcc.a:_call_via_rX
-3bf	unit	games/tbs/src/field/runpa_jo/runpa_jo
+3bf	unit	games/tbs/src/scene/runpa_jo
 3bf	text	libgcc.a:_call_via_rX
 3bf	text	libgcc.a:_addsub_df
 3bf	text	libgcc.a:_si_to_df
@@ -426,9 +426,9 @@ main	rom_tail_02	@games/tbs/src/system/resource/directory
 3bf	text	libgcc.a:_pack_df
 3bf	text	libgcc.a:_unpack_df
 3bf	text	libgcc.a:_thenan_df
-3c0	unit	games/tbs/src/field/suhara_sabaku/sabaku
-3c0	bss	games/tbs/src/field/suhara_sabaku/sabaku	.bss
-3c1	unit	games/tbs/src/field/suhara_mura/mura
+3c0	unit	games/tbs/src/scene/suhara_sabaku
+3c0	bss	games/tbs/src/scene/suhara_sabaku	.bss
+3c1	unit	games/tbs/src/scene/suhara_mura
 3c2	unit	games/tbs/src/field/suhara_heya/heya
 3c3	unit	games/tbs/src/field/suhara_gate/gate
 3c4	unit	games/tbs/src/field/babi_chika/chika

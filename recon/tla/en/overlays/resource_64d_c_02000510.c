@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 
 void Func_020023a4();
 void Func_020026f4();
@@ -43,6 +44,8 @@ void Func_02002a4c();
 void Func_02002a54();
 void Func_02002a5c();
 void Engine_AudioPlayCue();
+extern u8 MsgThereTheyAre[];
+void VinasuIriguchi_UpdateSparkTrail(void);
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -88,11 +91,12 @@ void Scene_RunSoldierInterception(void)
     u8 *record;
     s32 v5;
     s32 v2;
+    s32 callback;
 
     Call1(Func_02002854, 0x890);
     Func_020028b4();
     Func_020029cc(0);
-    Call1(Func_0200293c, 0x15b7);
+    Call1(Func_0200293c, (s32)MsgThereTheyAre);
     Call3(Func_020028d4, 12, 0x10000, 0x8000);
     Call3(Func_020028d4, 13, 0x10000, 0x8000);
     Func_0200294c(12, 0, 0);
@@ -236,13 +240,13 @@ void Scene_RunSoldierInterception(void)
         Call3(Func_02002954, 8, 0x2000, 0);
         Func_020028ac(20);
         Func_0200294c(8, 0, 10);
-        *(u16 *)((*(s32 *)0x0300006c + 0x1c4)) += 1;
+        *(u16 *)(((s32)Ram_HeapSlots->event_work + 0x1c4)) += 1;
     } else {
         Func_020028ac(30);
         Func_02002954(8, 0, 0);
         Func_020028ac(10);
         Func_0200291c(8, 4);
-        *(u16 *)((*(s32 *)0x0300006c + 0x1c4)) += 1;
+        *(u16 *)(((s32)Ram_HeapSlots->event_work + 0x1c4)) += 1;
         Func_0200294c(8, 0, 10);
         Call3(Func_02002954, 8, 0x2000, 0);
     }
@@ -444,15 +448,36 @@ void Scene_RunSoldierInterception(void)
     Call3(Func_020028d4, 17, 0x1cccc, 0xe666);
     v5 = 0;
     rec = Func_020028cc(20);
+    callback = (s32)VinasuIriguchi_UpdateSparkTrail;
+    /* FAKEMATCH: the barrier loads the spark callback right after the actor lookup, where the native loads it; without it the load follows the timer address (differ 2). */
+    __asm__("" : "+l"(callback));
     *(u16 *)(rec + 100) = v5;
-    *(s32 *)(rec + 108) = 0x200809d;
-    rec = Value1(Func_020028cc, 19);
+    {
+        s32 next = 19;
+
+        /* FAKEMATCH: the native loads the next actor id before it stores the spark callback; the plain order stores first (one reordered pair, differ 2). */
+        asm volatile("" : "+l"(next));
+        *(s32 *)(rec + 108) = callback;
+        rec = (s32)Func_020028cc(next);
+    }
     *(u16 *)(rec + 100) = v5;
-    *(s32 *)(rec + 108) = 0x200809d;
-    rec = Value1(Func_020028cc, 18);
+    {
+        s32 next = 18;
+
+        /* FAKEMATCH: the native loads the next actor id before it stores the spark callback; the plain order stores first (one reordered pair, differ 2). */
+        asm volatile("" : "+l"(next));
+        *(s32 *)(rec + 108) = callback;
+        rec = (s32)Func_020028cc(next);
+    }
     *(u16 *)(rec + 100) = v5;
-    *(s32 *)(rec + 108) = 0x200809d;
-    Func_02002914(20, 10);
+    {
+        s32 next = 20;
+
+        /* FAKEMATCH: the native loads the next actor id before it stores the spark callback; the plain order stores first (one reordered pair, differ 2). */
+        asm volatile("" : "+l"(next));
+        *(s32 *)(rec + 108) = callback;
+        Func_02002914(next, 10);
+    }
     Func_02002914(19, 10);
     Func_02002914(18, 10);
     Call3(Func_020028fc, 20, -24, 24);
@@ -462,11 +487,11 @@ void Scene_RunSoldierInterception(void)
     Call3(Func_020028dc, 20, 224, 0x1e0);
     Call3(Func_020028dc, 19, 224, 0x1e0);
     Call3(Func_020028e4, 18, 224, 0x1e0);
-    rec = Value1(Func_020028cc, 20);
+    rec = (s32)Func_020028cc(20);
     *(s32 *)(rec + 108) = v5;
-    rec = Value1(Func_020028cc, 19);
+    rec = (s32)Func_020028cc(19);
     *(s32 *)(rec + 108) = v5;
-    rec = Value1(Func_020028cc, 18);
+    rec = (s32)Func_020028cc(18);
     *(s32 *)(rec + 108) = v5;
     Func_020028ac(1);
     Func_02002924(17, 6, 15);
@@ -474,8 +499,14 @@ void Scene_RunSoldierInterception(void)
     rec = Func_020028cc(17);
     p10 = rec + 100;
     *(u16 *)p10 = v5;
-    *(s32 *)(rec + 108) = 0x200809d;
-    Func_02002914(17, 10);
+    {
+        s32 next = 17;
+
+        /* FAKEMATCH: the native loads the next actor id before it stores the spark callback; the plain order stores first (one reordered pair, differ 2). */
+        asm volatile("" : "+l"(next));
+        *(s32 *)(rec + 108) = callback;
+        Func_02002914(next, 10);
+    }
     Call3(Func_020028fc, 17, -20, 20);
     Func_02002904(17);
     Func_02002924(17, 4, 0);
@@ -518,8 +549,14 @@ void Scene_RunSoldierInterception(void)
     Func_020028ac(14);
     Func_020028ac(20);
     *(u16 *)p10 = v5;
-    *(s32 *)(rec + 108) = 0x200809d;
-    Func_02002914(17, 10);
+    {
+        s32 next = 17;
+
+        /* FAKEMATCH: the native loads the next actor id before it stores the spark callback; the plain order stores first (one reordered pair, differ 2). */
+        asm volatile("" : "+l"(next));
+        *(s32 *)(rec + 108) = callback;
+        Func_02002914(next, 10);
+    }
     Call3(Func_020028e4, 17, 224, 0x1d8);
     Func_020028ac(30);
     *(s32 *)(rec + 108) = v5;
@@ -663,10 +700,10 @@ void Scene_RunSoldierInterception(void)
     if (Value2(Func_020028c4, 5, 0) == 0) {
         Func_020028ac(20);
         Func_0200294c(8, 0, 10);
-        *(u16 *)((*(s32 *)0x0300006c + 0x1c4)) += 1;
+        *(u16 *)(((s32)Ram_HeapSlots->event_work + 0x1c4)) += 1;
     } else {
         Func_020028ac(40);
-        *(u16 *)((*(s32 *)0x0300006c + 0x1c4)) += 1;
+        *(u16 *)(((s32)Ram_HeapSlots->event_work + 0x1c4)) += 1;
         Func_0200294c(8, 0, 10);
     }
     Func_0200291c(5, 3);

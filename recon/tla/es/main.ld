@@ -1345,7 +1345,6 @@
     "*/recon/tla/es/rom.o"(.rom.00118eb0)
     "*/recon/tla/es/rom.o"(.rom.00118f6c)
     "*/games/tla/src/game/party/update_name_entries.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.0011915e)
     "*/games/tla/src/graphics/text/copy_five_chars.o"(.text)
     "*/games/common/src/battle/presentation/wait_sync.o"(.text)
     "*/games/tla/src/battle/party/assign_member_slots.o"(.text)

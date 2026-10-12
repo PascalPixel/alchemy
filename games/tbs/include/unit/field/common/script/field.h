@@ -205,11 +205,6 @@ void DisplayBlend_RunScript(void);
 void DisplayBlend_StartScript(u16 *script);
 void DisplayBlend_EnableRunScript(void);
 void DisplayBlend_DisableRunScript(void);
-void Runtime_AllocateAndClearQueue(void);
-s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count);
-void Runtime_ScheduleCallbackAndReleaseBlock28(void);
-void Scheduler_ScheduleCallbackBAfterFrames(void);
-void PaletteQueue_StepCycles(void);
 void Ui_SetGridColumnParameter(s32 slot, s32 value);
 void Ui_SetGridColumnPriority(s32 slot, s32 value);
 

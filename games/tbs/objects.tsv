@@ -59,6 +59,7 @@ main	rom_main_01	games/tbs/src/graphics/tile/convert_map
 main	rom_main_01	games/tbs/src/field/common/object/update
 main	rom_main_01	games/tbs/src/system/updfar
 main	rom_main_01	games/tbs/src/field/common/script/field
+main	rom_main_01	games/tbs/src/field/common/script/field8
 main	rom_main_01	games/tbs/src/field/common/script/field9
 main	rom_main_01	games/tbs/src/field/common/script/field10
 main	rom_main_01	games/tbs/src/field/common/script/field11

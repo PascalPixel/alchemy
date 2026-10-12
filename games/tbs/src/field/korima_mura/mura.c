@@ -5,6 +5,7 @@
 #include "unit/field/korima_hashi/falling_effect.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
+#include "unit/field/common/script/field8.h"
 #include "unit/field/common/script/field9.h"
 #include "unit/field/common/script/field10.h"
 #include "unit/field/common/script/field11.h"

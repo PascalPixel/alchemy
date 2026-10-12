@@ -169,10 +169,8 @@ s32 BattleFx_UpdateStarField(void)
 				}
 			}
 			life = spark->life;
-			if (life != 0)
-				goto draw_spark;
 		}
-		if (work->frames <= 24)
+		if (life == 0 && work->frames <= 24)
 		{
 			angle = Random16();
 			radius = Random16() + 0x10000;
@@ -191,7 +189,6 @@ s32 BattleFx_UpdateStarField(void)
 		}
 		if (life != 0)
 		{
-		draw_spark:
 			x = (spark->pos[0] >> 10) + 64;
 			y = (spark->pos[1] >> 10) + 64;
 			frame = life;

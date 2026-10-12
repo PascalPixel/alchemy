@@ -63,7 +63,7 @@ static void FieldScene_ActivateAlternateActorGroup(void);
 static void ActivateFiveActorGroupFromFlags(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/staged_actor.c"
+#include "common/object_staged_actor.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

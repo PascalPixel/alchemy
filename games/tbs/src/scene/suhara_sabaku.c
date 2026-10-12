@@ -67,7 +67,7 @@ static u16 gSuharaSabakuShownLevel;
 #define EncounterPalette (*(volatile u16 *)0x0500019e)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
+#include "common/effect_create.c"
 #include "common/effect_spawn.c"
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)

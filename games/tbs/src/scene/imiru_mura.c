@@ -111,7 +111,7 @@ static s32 OverlayObject_UpdateWobbleByCounter(struct FieldActor *obj)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/facing.c"
+#include "common/object_facing.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

@@ -35,7 +35,7 @@
 static void SceneEffect_RunActorBurst(s32 no);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
+#include "common/effect_create.c"
 #include "common/effect_spawn.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
@@ -130,7 +130,7 @@ static void SceneEffect_RotateRecord(RotatingEffectWork *work)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/waitdown.c"
+#include "common/object_waitdown.c"
 
 union SceneActor
 {

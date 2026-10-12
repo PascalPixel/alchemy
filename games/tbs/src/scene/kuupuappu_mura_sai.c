@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "window.h"
 #include "unit/scene/kuupuappu_mura_sai.h"
-#include "unit/scene/common/kuupuappu/range.h"
+#include "unit/scene/common/kuupuappu_range.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
@@ -35,11 +35,11 @@
 #include "call.h"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
+#include "common/effect_create.c"
 #include "common/effect_spawn.c"
-#include "common/object/distance.c"
-#include "common/kuupuappu/range.c"
-#include "common/kuupuappu/nearby.c"
+#include "common/object_distance.c"
+#include "common/kuupuappu_range.c"
+#include "common/kuupuappu_nearby.c"
 
 const void *SceneData_GetScriptTable(void)
 {
@@ -431,7 +431,7 @@ static void EV12_TOUCH(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu/toggle.c"
+#include "common/kuupuappu_toggle.c"
 
 static void EV21_TALK(void)
 {

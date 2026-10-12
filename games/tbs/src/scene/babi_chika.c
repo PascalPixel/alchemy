@@ -56,10 +56,10 @@ struct Vec
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/staged_actor.c"
+#include "common/object_staged_actor.c"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
+#include "common/effect_create.c"
 #include "common/effect_spawn.c"
 
 static s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
@@ -183,7 +183,7 @@ static void BabiChika_UpdateTrackedActor(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/depth.c"
+#include "common/object_depth.c"
 
 static s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object)
 {
@@ -255,7 +255,7 @@ static void SceneActor_WaitValueBelowLimit(struct FieldActor *track)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/advance.c"
+#include "common/effect_advance.c"
 
 static void BabiChika_RunLeaderSpray(void)
 {
@@ -301,7 +301,7 @@ static void BabiChika_RunLeaderSpray(void)
 #define ACTOR_UPDATE_PANEL ((void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/radial.c"
+#include "common/effect_radial.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

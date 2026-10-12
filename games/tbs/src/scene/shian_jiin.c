@@ -43,7 +43,7 @@ static void FieldScene_SpawnEightShots(void);
 static void FieldScene_RunParticleRain(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
+#include "common/effect_create.c"
 #include "common/effect_spawn.c"
 
 static s32 StopXianActor(void *actor)

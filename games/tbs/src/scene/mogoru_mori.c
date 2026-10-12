@@ -2,7 +2,7 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/scene/mogoru_mori.h"
-#include "unit/scene/common/object/orbit.h"
+#include "unit/scene/common/object_orbit.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
@@ -46,10 +46,10 @@ enum
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/staged_actor.c"
+#include "common/object_staged_actor.c"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
+#include "common/effect_create.c"
 #include "common/effect_spawn.c"
 
 struct Vec
@@ -1387,7 +1387,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/orbit.c"
+#include "common/object_orbit.c"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

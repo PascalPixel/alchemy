@@ -55,7 +55,7 @@ static u8	ToretoHeya_SparkCounter[4];
 static s16 *ToretoHeya_PaletteBuffer;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
+#include "common/effect_create.c"
 
 struct Vec
 {
@@ -934,7 +934,7 @@ static void EV00_PSYNERGY(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/advance.c"
+#include "common/effect_advance.c"
 
 static void ToretoHeya_RunLandingDustScene(void)
 {

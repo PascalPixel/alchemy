@@ -81,12 +81,12 @@ struct MapLayer_2
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
+#include "common/effect_create.c"
 #include "common/effect_spawn.c"
-#include "common/object/staged_actor.c"
+#include "common/object_staged_actor.c"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/map/panel.c"
+#include "common/map.c"
 
 static void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
 {

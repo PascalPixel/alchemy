@@ -3,7 +3,7 @@
 #include "unit/import.h"
 #include "unit/scene/makyuri_chojo.h"
 #include "unit/scene/common/effect_spawn.h"
-#include "unit/scene/common/object/nearest.h"
+#include "unit/scene/common/object_nearest.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"
@@ -49,7 +49,7 @@ static void MakyuriChojo_FlickerActorEight(void);
 #define NULL ((void *)0)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
+#include "common/effect_create.c"
 
 struct EffectParams
 {
@@ -279,8 +279,8 @@ static void FieldScene_RunFourActorPresentation(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/distance.c"
-#include "common/object/nearest.c"
+#include "common/object_distance.c"
+#include "common/object_nearest.c"
 
 static void SceneActor_InitializeMotion(void)
 {

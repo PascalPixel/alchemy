@@ -53,7 +53,7 @@ extern s32 KorimaHashi_PartyFlag;
 extern s32 KorimaHashi_SparkleSound;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/staged_actor.c"
+#include "common/object_staged_actor.c"
 
 static s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object)
 {
@@ -134,7 +134,7 @@ static void EV10_SCRIPT(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima/jump.c"
+#include "common/korima_jump.c"
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
@@ -1062,7 +1062,7 @@ static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima/grow.c"
+#include "common/korima_grow.c"
 
 static void SceneEffect_SpawnObject26EveryEightFrames(void)
 {
@@ -1104,7 +1104,7 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima/blink.c"
+#include "common/korima_blink.c"
 
 static s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0)
 {

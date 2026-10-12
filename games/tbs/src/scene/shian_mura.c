@@ -52,7 +52,7 @@ struct PeriodicEffectConfig
 void Effect_Spawn();
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
+#include "common/effect_create.c"
 #include "common/effect_spawn.c"
 
 #define FLAG_SHIAN_WATER_SPILLED 0x200
@@ -135,7 +135,7 @@ static void SceneEffect_SpawnPeriodicEffect(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/distance.c"
+#include "common/object_distance.c"
 
 static s32 SceneActor_UpdateTracking(
 	struct MapActor *actor, struct MapActor *target, s32 distance_limit, s32 force_tracking)

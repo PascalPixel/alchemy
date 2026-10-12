@@ -7,8 +7,8 @@
 #include "unit/scene/korosseo_maruta.h"
 #include "unit/scene/common/korosseo_solo.h"
 #include "unit/scene/common/korosseo_marker.h"
-#include "unit/scene/common/korosseo/setup.h"
-#include "unit/scene/common/korosseo/occupant.h"
+#include "unit/scene/common/korosseo_setup.h"
+#include "unit/scene/common/korosseo_occupant.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evtable.h"
@@ -45,7 +45,7 @@
 #include "unit/runtime/objvram.h"
 #include "unit/runtime/math.h"
 #include "unit/runtime/heap.h"
-#include "unit/scene/common/korosseo/item_icon.h"
+#include "unit/scene/common/korosseo_item_icon.h"
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"
@@ -193,7 +193,7 @@ static inline void InitializeSelectedActor(s32 actorId)
 
 extern s32 gColossoParticleCount;
 
-// コロッセオ共通 (scene/common/korosseo)
+// コロッセオ共通 (scene/common/korosseo_*.c)
 
 u8 *ColossoLogRollingStage_GetScriptData(void)
 {
@@ -1872,8 +1872,8 @@ static void EV38_TALK(s32 actor)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/korosseo_solo.c"
-#include "common/item/addequip.c"
-#include "common/korosseo/korosseo.c"
+#include "common/item.c"
+#include "common/korosseo_task.c"
 
 static void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
 {
@@ -2018,7 +2018,7 @@ static void FieldScene_RunScene3bcSequenceA(s32 a0)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/korosseo_marker.c"
-#include "common/korosseo/item_icon.c"
+#include "common/korosseo_item_icon.c"
 
 static void WriteU32AsHex(u8 *hex_text, u32 value)
 {
@@ -2169,10 +2169,10 @@ static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 seco
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo/path_rival.c"
-#include "common/korosseo/setup.c"
-#include "common/korosseo/scene_state.c"
-#include "common/object/findslot.c"
+#include "common/korosseo_path_rival.c"
+#include "common/korosseo_setup.c"
+#include "common/korosseo_scene_state.c"
+#include "common/object_findslot.c"
 
 static void ColossoLogRollingStage_PushStagedActor(void)
 {
@@ -2264,7 +2264,7 @@ static void ColossoLogRollingStage_PushStagedActor(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo/occupant.c"
+#include "common/korosseo_occupant.c"
 
 const s32 KorosseoMaruta_Record30Script[] = {
 	SC_SET(SW_Y, PIXELS(1)),

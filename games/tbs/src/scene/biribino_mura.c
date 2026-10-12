@@ -52,7 +52,7 @@ struct SpawnCounter
 struct SpawnCounter gCornerSpawnCounter;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/facing.c"
+#include "common/object_facing.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -683,7 +683,7 @@ static void BiribinoMura_RestoreRaisedEntrance(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/findcell.c"
+#include "common/object_findcell.c"
 
 static void BiribinoMura_PushFacedBlock(void)
 {

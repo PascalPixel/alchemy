@@ -1,7 +1,7 @@
 #include "battle_effect_runtime.h"
 #include "unit/import.h"
 #include "unit/scene/korima_magari.h"
-#include "unit/scene/common/korima/palette.h"
+#include "unit/scene/common/korima_palette.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"
@@ -107,7 +107,7 @@ struct TileRun2
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/map/panel.c"
+#include "common/map.c"
 
 static void State_ApplyRectByLayoutSelector(void)
 {
@@ -616,7 +616,7 @@ static void Scene_PushBlockAlongRun(struct TileRun2 *runs)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima/palette.c"
+#include "common/korima_palette.c"
 
 u32 KorimaMagari_DefaultRecords[] = {
 	0xb00cd, 0x10009, 0, 0xc00cf, 12, 0, 0x1100cf, 12,

@@ -449,7 +449,7 @@ static void FieldScene_RunScene398SequenceC(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/findcell.c"
+#include "common/object_findcell.c"
 
 static void StagedActor_PushActorAhead(void)
 {

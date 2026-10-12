@@ -612,7 +612,7 @@ Func_081811d4:
 	movs r1, #1
 	lsls r3, r3, #12
 	str r2, [sp, #0]
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	movs r0, #133
 	bl Audio_PlayCue
 .L_0818165c:

@@ -636,7 +636,7 @@ Func_08171bb0:
 	movs r3, #128
 	lsls r2, r2, #10
 	lsls r3, r3, #12
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	b .L_0817223e
 .L_0817209e:
 	ldr r5, [sp, #68]
@@ -1293,7 +1293,7 @@ Func_08171bb0:
 	movs r1, #1
 	movs r2, #0
 	movs r3, #0
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	movs r4, #238
 	ldr r2, [sp, #84]
 	lsls r4, r4, #7
@@ -1649,7 +1649,7 @@ Func_08171bb0:
 	movs r1, #1
 	movs r2, #0
 	movs r3, #0
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	ldr r3, [sp, #92]
 	movs r1, #7
 	ldrsh r0, [r5, r3]

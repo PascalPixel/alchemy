@@ -18259,7 +18259,7 @@ msgctxt "message"
 msgid "04562"
 msgstr "¿Equipar?"
 
-msgctxt "message"
+msgctxt "MsgItemMenuEmpty"
 msgid "04563"
 msgstr "No tienes objetos."
 
@@ -19275,11 +19275,11 @@ msgctxt "message"
 msgid "04816"
 msgstr "Djinn preparado.{line_break}{argument_actor_name:1} es ahora {argument_class_name:1}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgStatusNameNormal"
 msgid "04817"
 msgstr "Normal"
 
-msgctxt "message"
+msgctxt "MsgStatusNameDown"
 msgid "04818"
 msgstr "Cayó"
 
@@ -19619,7 +19619,7 @@ msgctxt "message"
 msgid "04902"
 msgstr "Empezar partida"
 
-msgctxt "message"
+msgctxt "MsgFullPpAndMoney"
 msgid "04903"
 msgstr "PP y monedas al máximo"
 
@@ -19707,7 +19707,7 @@ msgctxt "message"
 msgid "04924"
 msgstr "Psinerg."
 
-msgctxt "message"
+msgctxt "MsgPasswordTransferHelp"
 msgid "04925"
 msgstr "Transfiere una partida"
 
@@ -19715,7 +19715,7 @@ msgctxt "message"
 msgid "04926"
 msgstr "acabada por contraseña."
 
-msgctxt "message"
+msgctxt "MsgCableTransferHelp"
 msgid "04927"
 msgstr "Conecta dos Game Boy Advance"
 
@@ -19727,7 +19727,7 @@ msgctxt "message"
 msgid "04929"
 msgstr "transferir tu partida acabada."
 
-msgctxt "message"
+msgctxt "MsgClearDataTransferHelp"
 msgid "04930"
 msgstr "Partida acabada guardada."
 

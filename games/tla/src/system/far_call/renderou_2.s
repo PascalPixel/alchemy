@@ -36,7 +36,7 @@ Menu_RunSelectionWithCursorObjectFar:
 	.global Func_08038288
 	.thumb_func
 Func_08038288:
-	overlay_veneer Func_0803f234
+	overlay_veneer Resource_LoadByModeIntoSlot
 	.global Func_08038290
 	.thumb_func
 Func_08038290:

@@ -1,4 +1,52 @@
 #include "ov65f.h"
+#include "party_state.h"
+
+extern struct PartyState gPartyState;
+
+struct Ov65fEventWork {
+    u8 unknown_000[0xca4];
+    s8 fade_lock;
+};
+
+void Func_02000eb0(void)
+{
+    struct ObjectRuntime *object = Object_GetById(8);
+    s32 x = object->x >> 20;
+    s32 raw;
+    s32 z;
+    s32 flag = 129;
+
+    raw = object->z;
+    /* FAKEMATCH: the native starts the flag id 0x201, loads z and then finishes the id; without the barrier and the id built in two steps the id is shifted before the load (one reordered pair, differ 2). */
+    __asm__ volatile("" : "+r"(flag));
+    z = raw >> 20;
+    flag <<= 1;
+    flag += 255;
+    if (!Flag_IsSet(flag) && x == 10 && z == 29) {
+        Func_02000e78(8, object);
+        Flag_Set(0x201);
+    }
+}
+
+void Func_02000eec(void)
+{
+    struct ObjectRuntime *object = Object_GetById(9);
+    s32 x = object->x >> 20;
+    s32 raw;
+    s32 z;
+    s32 flag = 128;
+
+    raw = object->z;
+    /* FAKEMATCH: the native starts the flag id 0x202, loads z and then finishes the id; without the barrier and the id built in two steps the id is shifted before the load (one reordered pair, differ 2). */
+    __asm__ volatile("" : "+r"(flag));
+    z = raw >> 20;
+    flag <<= 2;
+    flag += 2;
+    if (!Flag_IsSet(flag) && x == 15 && z == 28) {
+        Func_02000e78(9, object);
+        Flag_Set(0x202);
+    }
+}
 
 void Func_02000f28(void)
 {
@@ -115,4 +163,50 @@ void Func_02001104(void)
     CopyRect(39, 5, 19, 5, 3, 3);
     CopyRect(103, 5, 83, 5, 3, 2);
     BlendRect(39, 5, 3, 3, 19, 5);
+}
+
+void Func_02001144(void)
+{
+    struct Ov65fEventWork *work;
+
+    if (!Flag_IsSet(0x91b)) {
+        Flag_Set(0x210);
+        if (gPartyState.entrance == 1) {
+            Func_020052cc(0x10003, 1);
+            Flag_Set(0x310);
+            Flag_Set(0x318);
+        } else {
+            Func_020052cc(0x10000, 1);
+            Flag_Clear(0x310);
+            Flag_Clear(0x318);
+        }
+        work = Ram_HeapSlots->event_work;
+        /* FAKEMATCH: the native loads the event work before it starts the field offset 0xca4; without the barrier the offset is started first (one reordered pair, differ 2). */
+        __asm__ volatile("" : "+r"(work));
+        if (work->fade_lock == 0)
+            Func_020052d4(120);
+    }
+}
+
+void Func_020011c8(void)
+{
+    struct Ov65fEventWork *work;
+
+    if (!Flag_IsSet(0x91b)) {
+        Flag_Set(0x211);
+        if (gPartyState.entrance == 2) {
+            Func_020052cc(0x10003, 1);
+            Flag_Set(0x310);
+            Flag_Set(0x318);
+        } else {
+            Func_020052cc(0x10007, 1);
+            Flag_Set(0x310);
+            Flag_Clear(0x318);
+        }
+        work = Ram_HeapSlots->event_work;
+        /* FAKEMATCH: the native loads the event work before it starts the field offset 0xca4; without the barrier the offset is started first (one reordered pair, differ 2). */
+        __asm__ volatile("" : "+r"(work));
+        if (work->fade_lock == 0)
+            Func_020052d4(120);
+    }
 }

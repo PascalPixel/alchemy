@@ -45,8 +45,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_67b/events_h.o"(.text)
         "*/games/tla/src/field/overlay_67b/s1f90.o"(.text)
         "*/resource_67b_overlay.o"(.text.x0200a030)
-        "*/resource_67b_overlay.o"(.text.x0200a0bc)
-        "*/resource_67b_overlay.o"(.text.x0200a158)
+        "*/games/tla/src/field/overlay_67b/s20bc.o"(.text)
         "*/resource_67b_overlay.o"(.text.x0200a250)
         "*/resource_67b_overlay.o"(.text.x0200a3c0)
         "*/games/tla/src/field/overlay_67b/events_i.o"(.text)
@@ -59,7 +58,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_67b/data.o"(.data)
         "*/games/tla/src/field/overlay_67b/tiles.o"(.rodata)
         "*/games/tla/src/field/overlay_67b/data2.o"(.data)
-        "*/resource_67b_overlay.o"(.rodata.x0200b388)
+        "*/games/tla/src/graphics/field/tiles679.o"(.rodata)
     }
     .bss : { "*/resource_67b_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

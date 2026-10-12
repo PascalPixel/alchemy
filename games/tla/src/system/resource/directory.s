@@ -471,7 +471,7 @@ Resource_DirectoryTable:
 	resource , Field_WalkPathI
 	resource , Field_WalkPathJ
 	resource , Lettering_Banner
-	resource , Shop_CursorFrameA
+	resource ShopCursorFrames, Shop_CursorFrameA
 	resource , Shop_CursorFrameB
 	resource , Shop_CursorFrameC
 	resource , Shop_CursorFrameD

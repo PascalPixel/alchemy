@@ -1,4 +1,4 @@
-/* differ 2: for the first Func_020057f8 the native loads object->y before it starts 0x580000; here the start of the constant comes first (the load waits on the flags pointer in r2). Otherwise as Func_0200322c, with the position setter forwarded and the speed limit stored before the acceleration. */
+/* differ 2: for the first Func_020057f8 the native loads object->y before it starts 0x580000; here the start of the constant comes first (the load waits on the flags pointer in r2). Otherwise as Func_0200322c, with the position setter forwarded and the speed limit  stored before the acceleration. Tried 2026-10-12: a temporary y with an empty asm barrier after its load orders that pair but moves mov r8, r0 above the load and lsls r6 below lsls r0 (differ 4); the temporary alone changes nothing; a one-pass block around the load reorders six rows. */
 #include "../../../../../games/tla/src/field/overlay_697/ov697.h"
 #include "text/msg_ids.h"
 

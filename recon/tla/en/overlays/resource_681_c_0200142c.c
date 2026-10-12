@@ -1,36 +1,55 @@
+/* Near miss, differ 2 of 75 (was 67): the native loads the multiply
+ * routine's address (ldr r6) after the cosine call, beside the radius; this
+ * draft loads it before the call, in the free cycle after the angle is
+ * read. Measured: a volatile barrier after the cosine call keeps the load
+ * below the call but then the angle is read before the speed (differ 2 at
+ * another place); reading the speed into a local first changes the load
+ * (ldrsh, or r0 for the pointer); an in-out asm on the cosine result does
+ * not hold the load. */
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#include "iwram_call.h"
+#include "frame.h"
 
-#include "call.h"
-s32 Math_Cosine();
-s32 Math_Sine();
-extern u8 IwramMulQ16[];
-extern u8 gFrameCount[];
+struct Ov681Orbit {
+    u8 unknown_00[8];
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 unknown_14[0x30];
+    s32 centre_x;
+    s32 centre_z;
+    s32 radius;
+    u8 unknown_50[0x12];
+    u8 phase;
+    u8 growth;
+    s16 angle;
+    s16 speed;
+};
 
-s32 Func_0200142c(s32 a0)
+s32 Math_Cosine(s32 angle);
+s32 Math_Sine(s32 angle);
+
+// 円を描いて回る
+s32 Func_0200142c(struct Ov681Orbit *object)
 {
-    s32 t1;
-    s32 t3;
-    s32 t4;
+    s16 *speed = &object->speed;
+    s16 *angle = &object->angle;
+    u8 *growth;
+    s32 z;
 
-    FIELD_AT((a0 + 0x64), u16, 0) = (FIELD_AT((a0 + 0x64), u16, 0) + FIELD_AT((0x66 + a0), u16, 0));
-    t1 = ((s32 (*)())(s32)IwramMulQ16)(Value1(Math_Cosine, (((FIELD_AT((a0 + 0x64), u16, 0) + FIELD_AT((0x66 + a0), u16, 0)) << 16) >> 16)), FIELD_AT(a0, s32, 76));
-    FIELD_AT(a0, s32, 8) = t1;
-    t3 = ((s32 (*)())(s32)IwramMulQ16)(Value1(Math_Sine, FIELD_AT((a0 + 0x64), u16, 0)), FIELD_AT(a0, s32, 76));
-    FIELD_AT(a0, s32, 8) = (FIELD_AT(a0, s32, 8) + FIELD_AT(a0, s32, 68));
-    FIELD_AT(a0, s32, 16) = ((t3 >> 1) + FIELD_AT(a0, s32, 72));
-    if (FIELD_AT(((a0 + 0x64) - 1), u8, 0) != 0x8d) {
-        if ((FIELD_AT(gFrameCount, s32, 0) & 1) != 0) {
-            t4 = Value1(Math_Sine, (FIELD_AT((a0 + 0x62), u8, 0) << 10));
-            FIELD_AT(a0, s32, 76) = (FIELD_AT(((a0 + 0x64) - 1), u8, 0) * t4);
-            FIELD_AT(((a0 + 0x64) - 1), u8, 0) = (FIELD_AT(((a0 + 0x64) - 1), u8, 0) + 0xa);
-        }
+    *angle += *speed;
+    object->x = Iwram_MulQ16(Math_Cosine(*angle), object->radius);
+    z = Iwram_MulQ16(Math_Sine(*angle), object->radius);
+    object->x += object->centre_x;
+    growth = (u8 *)angle - 1;
+    object->z = (z >> 1) + object->centre_z;
+    if (*growth != 141 && (gFrameCount & 1)) {
+        object->radius = *growth * Math_Sine(object->phase << 10);
+        *growth += 10;
     }
-    if (FIELD_AT((0x66 + a0), u16, 0) != 0) {
-        if (FIELD_AT(((a0 + 0x64) - 1), u8, 0) == 0x8d) {
-            FIELD_AT((0x66 + a0), s16, 0) = (FIELD_AT((0x66 + a0), s16, 0) - 0x80);
-        }
-    }
+    if (*speed == 0)
+        return 0;
+    if (*growth == 141)
+        *speed -= 128;
     return 1;
 }
-

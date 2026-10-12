@@ -894,46 +894,8 @@ Func_020009b8:
 	.2byte 0x0000
 .L_02008a74:
 	.4byte Data_02003584
-	.section .text.x02008a78,"ax",%progbits
-	.global Func_02000a78
-	.thumb_func
-Func_02000a78:
-	push {r5, r6, lr}
-	adds r3, r1, #0
-	adds r3, #3
-	adds r4, r0, #0
-	lsls r3, r3, #16
-	lsls r4, r4, #16
-	lsls r5, r2, #16
-	movs r0, #168
-	adds r2, r3, #0
-	movs r3, #152
-	adds r1, r4, #0
-	lsls r3, r3, #16
-	lsls r0, r0, #2
-	bl Engine_ObjectCreate
-	asrs r5, r5, #16
-	adds r6, r0, #0
-	adds r2, r6, #0
-	lsls r5, r5, #16
-	adds r2, #85
-	movs r3, #4
-	lsrs r5, r5, #16
-	strb r3, [r2]
-	adds r1, r5, #0
-	bl Object_SetPartAttribute
-	adds r0, r6, #0
-	movs r1, #2
-	bl Object_SetSpritePriority
-	adds r0, r6, #0
-	movs r1, #7
-	bl Func_020032e0
-	adds r0, r6, #0
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	pop {r5, r6, pc}
-	.2byte 0x0000
 	.section .text.x02008ac8,"ax",%progbits
+	.balign 4
 	.global Func_02000ac8
 	.thumb_func
 Func_02000ac8:

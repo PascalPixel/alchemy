@@ -184,5 +184,7 @@ Func_081a76f8:
 .L_081a7868:
 	.4byte gInput
 	.global Data_081a786c
+	.type Data_081a786c, %function
+	.thumb_func
 Data_081a786c:
 	.4byte 0x00004770

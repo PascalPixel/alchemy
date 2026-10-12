@@ -1,6 +1,9 @@
-/* Near miss, differ 6 of 194: three loads sit one row earlier in the native
+/* Near miss, differ 4 of 194: two loads sit one row earlier in the native
  * (the workspace before sub sp; the sequence between the two halves of
- * 0xfde8; the sequence before the slot is scaled). A split-limit temporary
+ * 0xfde8). The third, the sequence before the slot is scaled, is ordered by
+ * an empty one-pass block after a sequence temporary (round 5); a forced
+ * half of the limit with the same block loads the sequence first and takes
+ * r2 and r3. A split-limit temporary
  * with two barriers orders the middle one but takes r3 and r2 where the
  * native has r1 and r3, and a barrier at the top moves three more rows. */
 #include "types.h"
@@ -80,6 +83,13 @@ s32 SaveState_WriteRecord(s32 record_id, void *source)
     }
     work->occupied[slot] = 1;
     work->record_id[slot] = record_id;
-    work->sequence[slot] = header.sequence;
+    {
+        u32 sequence = header.sequence;
+
+        /* FAKEMATCH: the empty one-pass block ends the scheduling region, so the sequence loads before the slot is scaled as in the native (one reordered pair without it). */
+        do {
+        } while (0);
+        work->sequence[slot] = sequence;
+    }
     return 0;
 }

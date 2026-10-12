@@ -18259,7 +18259,7 @@ msgctxt "message"
 msgid "04562"
 msgstr "Item anlegen?"
 
-msgctxt "message"
+msgctxt "MsgItemMenuEmpty"
 msgid "04563"
 msgstr "Du hast keine Items."
 
@@ -19291,11 +19291,11 @@ msgctxt "message"
 msgid "04820"
 msgstr "Dschinn ist auf Standby.{line_break}{argument_actor_name:1} ist nun {argument_class_name:2}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgStatusNameNormal"
 msgid "04821"
 msgstr "Normal"
 
-msgctxt "message"
+msgctxt "MsgStatusNameDown"
 msgid "04822"
 msgstr "K.O."
 
@@ -19635,7 +19635,7 @@ msgctxt "message"
 msgid "04906"
 msgstr "Neustart"
 
-msgctxt "message"
+msgctxt "MsgFullPpAndMoney"
 msgid "04907"
 msgstr "Volle PP und Geld"
 
@@ -19723,7 +19723,7 @@ msgctxt "message"
 msgid "04928"
 msgstr "Psynergy"
 
-msgctxt "message"
+msgctxt "MsgPasswordTransferHelp"
 msgid "04929"
 msgstr "Benutze ein Passwort, um"
 
@@ -19731,7 +19731,7 @@ msgctxt "message"
 msgid "04930"
 msgstr "dein Abenteuer fortzusetzen."
 
-msgctxt "message"
+msgctxt "MsgCableTransferHelp"
 msgid "04931"
 msgstr "Verbinde zwei GBA-Systeme"
 
@@ -19743,7 +19743,7 @@ msgctxt "message"
 msgid "04933"
 msgstr "Setze dein Abenteuer fort."
 
-msgctxt "message"
+msgctxt "MsgClearDataTransferHelp"
 msgid "04934"
 msgstr "Daten werden übernommen"
 

@@ -1,28 +1,23 @@
-/* Pin-free trial (tla-en): listing 42 instructions, draft 40, common 24, differ 34.
- * Earlier register-allocation notes describe the prior pinned form.
- */
+/* Near miss, differ 26 of 42 (2026-10-12; 34 before): this game reads the two arrow resources at 0x4ee and 0x4f0 of the menu runtime slot. Same instructions; the registers differ: the native copies variant from r3 to r5 so that the runtime pointer takes r3 and y stays in r2 until it is stored for the call; this draft leaves variant in r3, puts the pointer in r2 and moves y to r4. */
 #include "types.h"
 #include "render_input.h"
 
-extern u8 *gMenuWork;
+#include "ram_buffer.h"
 
 s32 UiIcon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y, s32 variant)
 {
     struct RenderOutput *object;
     u32 resource;
-    s32 v = variant; /* Earlier pinned trial: keeps the variant in r5 */
-    struct RenderInput *w = window; /* Earlier pinned trial: keeps the window in r4 */
-    s32 xx = x; /* Earlier pinned trial: keeps x in r6 */
-    u8 *data = gMenuWork;
+    u8 *data = Ram_HeapSlots->menu_runtime;
 
-    if (v == 0) {
-        resource = *(u16 *)(data + 0x392);
+    if (variant == 0) {
+        resource = *(u16 *)(data + 0x4ee);
         y -= 3;
     } else {
-        resource = *(u16 *)(data + 0x394);
+        resource = *(u16 *)(data + 0x4f0);
         y -= 4;
     }
-    object = RenderOutput_CreateFar(resource, 0x40000000, w, xx, y);
+    object = RenderOutput_CreateFar(resource, 0x40000000, window, x, y);
     if (object == 0)
         return -1;
     object->kind = 0;

@@ -25,7 +25,7 @@ void Func_0803dd98(u32);
 void Func_0803e7ac(void);
 void Menu_OpenSelectionWindow(u32, u32);
 void Func_0803df00(void);
-u32 Func_0803e998(u32);
+u32 Menu_WaitForSelectionInput(u32);
 void Resource_ResetOwnerEntries(void);
 
 u32 Menu_RunSelectionForValue(u32 value)
@@ -41,7 +41,7 @@ u32 Menu_RunSelectionForValue(u32 value)
     Func_0803e7ac();
     Menu_OpenSelectionWindow(0, 5);
     Func_0803df00();
-    result = Func_0803e998(1);
+    result = Menu_WaitForSelectionInput(1);
     Resource_ResetOwnerEntries();
     return result;
 }

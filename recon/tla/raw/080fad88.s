@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global ItemMenu_Collect
 	.thumb_func
 ItemMenu_Collect:

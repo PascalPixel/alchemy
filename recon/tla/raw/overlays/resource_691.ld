@@ -14,7 +14,7 @@ SECTIONS
         "*/games/tla/src/field/vinasu_chojo/distance.o"(.text)
         "*/resource_691_overlay.o"(.text.x02008374)
         "*/resource_691_overlay.o"(.text.x020083b4)
-        "*/resource_691_overlay.o"(.text.x02008538)
+        "*/games/tla/src/field/common/map/cellfilb.o"(.text)
         "*/games/tla/src/field/overlay_691/distance.o"(.text)
         "*/resource_691_overlay.o"(.text.x020085cc)
         "*/games/tla/src/field/common/map/cellget.o"(.text)

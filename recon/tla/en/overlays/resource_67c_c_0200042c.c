@@ -1,20 +1,15 @@
 // Near misses of overlay 67c, each with its remaining difference
 // (alchemy diff, instructions that differ):
 //   Func_0200042c: differ 4: the listing loads the pool word -0x10000 before object->y, twice
-//   Func_02000574: differ 2: the listing saves id (adds r5, r1) after the map_work load; Func_020005f4, the empty function in the same listing section, waits with it
-//   Func_020005f4: empty function inside Func_02000574's listing section (label Data_020005f4)
-//   Func_0200071c: differ 2: the listing finishes the split constant 0x480 before the pool load of the callback; direct and inline calls give the same
 //   Func_02000a98: differ 2: the listing loads r0 (16) last for the first Func_02003688 call
 //   Func_02000bd4: differ 2: the listing loads r1 (38) before r0 (12) for Func_02000b24
 //   Func_0200107c: differ 20: the listing keeps 0 in r5 and 34 in r6, the draft the other way round, and loads object->x after movs r1
 //   Func_02001170: differ 2: the listing loads r1 (37) before r0 (15) for the third Func_02000b24 call
-//   Func_020011d4: differ 2: the listing saves id (adds r5, r1) after the map_work load
 //   Func_02001520: differ 2: for the y step the listing loads object->y before target->y
 //   Func_0200156c: differ 2: the listing stores the decremented byte before it zero-extends it; storing first reloads the byte or branches
 //   Func_02001ea0: differ 2: the listing loads the sprite attribute byte before lsls of 0x4000; with rotation stored first the zero for next_frame comes from the pool
 //   Func_02001fcc: differ 4: the listing loads r1 before r0 (0) for the first Func_02003bb8 call of each case
 //   Func_0200349c: differ 42: the listing keeps height in r4 and reuses r0 for the entry, no r5/r6 saved
-//   Func_02003628: differ 4: the split constant 0x400 and the pool load of the callback sit one instruction off
 //   Func_02003994: differ 4: the listing loads the sprite and its attribute byte one instruction later, around movs r3, #3 and ands
 //   Func_02003a70: differ 5: the listing keeps the work pointer in r3 and copies it to r5 after loading the hook
 //   Func_02003ba4: differ 2: the listing loads the pool base before lsls of the index; the permuter matches all three only with base and row temporaries inside a one-pass block (not adopted)
@@ -43,50 +38,6 @@ void Func_0200042c(s32 unused, s32 id)
             GameFlag_SetBit(0x95b);
         }
     }
-}
-
-void Func_02000574(s32 unused, s32 id)
-{
-    struct MapWork *map = Ram_HeapSlots->map_work;
-    s32 *layer = (s32 *)((u8 *)map + 0x140);
-    s32 i;
-
-    Object_SetPartAttribute(Object_GetById(id), 0);
-    Func_02001e78(id);
-    Object_SetModeById(id, 3);
-    layer[3] -= 0x200000;
-    Func_02003d54();
-    Func_02003cdc();
-    Func_02003d7c();
-    Func_02003eac(0);
-    Func_02003ef4(0x22c);
-    for (i = 0; i < 32; i++) {
-        Func_02003460(i << 16);
-        layer[3] += 0x10000;
-        WaitFrames(4);
-    }
-    Func_02003d84();
-    GameFlag_SetBit(0x231);
-}
-
-void Func_020005f4(void)
-{
-}
-
-void Func_0200071c(void)
-{
-    Func_02003d7c();
-    Func_02003eac(0);
-    ObjectMotion_ArmCallback_(gPartyState.current_owner, 0x4000, 0);
-    Func_02003ef4(0x22d);
-    Scheduler_AddOrUpdateCallback_(Func_020006d0, 0x480);
-    Func_02003e44_(0x28000, 0x4000);
-    Motion_CamBounds(0x3080000, -1, 0x2880000, 1);
-    Func_02003e54();
-    Battle_WaitMode0(30);
-    Func_02003d84();
-    GameFlag_SetBit(0x240);
-    Func_02003d1c_(59, 16, 5, 32, 46, 16);
 }
 
 void Func_02000a98(void)
@@ -150,28 +101,6 @@ void Func_02001170(void)
         if (result == 1)
             GameFlag_SetBit(0xa65);
     }
-}
-
-void Func_020011d4(s32 unused, s32 id)
-{
-    s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->map_work + 0x140);
-    s32 i;
-
-    Object_SetPartAttribute(Object_GetById(id), 5);
-    Func_02001e78(id);
-    Object_SetModeById(id, 3);
-    layer[3] -= 0x200000;
-    Func_02003d54();
-    Func_02003cdc();
-    Func_02003d7c();
-    Func_02003eac(0);
-    Func_02003ef4(0x22c);
-    for (i = 31; i >= 0; i--) {
-        layer[3] += 0x10000;
-        WaitFrames(4);
-    }
-    Func_02003d84();
-    GameFlag_SetBit(0x24b);
 }
 
 s32 Func_02001520(struct ObjectRuntime *object)
@@ -255,21 +184,6 @@ void Func_0200349c(u32 index, s32 height)
             entry->height = height;
         }
     }
-}
-
-void Func_02003628(void)
-{
-    struct BeamWork *work = &Data_02005970;
-    void *buffer;
-
-    Iwram_ClearWords(work, 0x3a4);
-    buffer = MemAlloc_(0x400);
-    Func_02003c7c(Data_02004350 + 1, buffer);
-    work->vram_entry = Resource_FindFreeEntry();
-    VramBlock_LoadCached_(work->vram_entry, 0x400, buffer);
-    MemFree(buffer);
-    Scheduler_AddOrUpdateCallback(Func_020034fc, 0x41c);
-    Func_02003ef4(220);
 }
 
 void Func_02003994(struct ObjectRuntime *object, s32 priority)

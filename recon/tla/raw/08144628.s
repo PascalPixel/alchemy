@@ -487,7 +487,7 @@ Func_08144628:
 	movs r1, #1
 	adds r2, r3, #0
 	str r3, [sp, #0]
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	movs r3, #1
 	ands r3, r7
 	cmp r3, #0

@@ -22,7 +22,7 @@ SECTIONS
         "*/resource_64a_overlay.o"(.text.x0200a17c)
         "*/games/tla/src/field/overlay_64a/import.o"(.text)
         "*/games/tla/src/field/overlay_64a/data.o"(.data)
-        "*/resource_64a_overlay.o"(.rodata.x0200a500)
+        "*/games/tla/src/field/overlay_64a/tilemap.o"(.rodata)
         "*/games/tla/src/field/overlay_64a/data2.o"(.data)
     }
     .bss : { "*/resource_64a_overlay.o"(.bss) }

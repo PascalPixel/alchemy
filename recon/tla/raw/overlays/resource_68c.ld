@@ -10,7 +10,7 @@ SECTIONS
         "*/resource_68c_overlay.o"(.text.x02008284)
         "*/games/tla/src/field/overlay_68c/prepare.o"(.text)
         "*/resource_68c_overlay.o"(.text.x02008a5c)
-        "*/resource_68c_overlay.o"(.text.x0200928c)
+        "*/games/tla/src/field/overlay_68c/s128c.o"(.text)
         "*/resource_68c_overlay.o"(.text.x020092dc)
         "*/games/tla/src/field/overlay_68c/s1398.o"(.text)
         "*/games/tla/src/field/overlay_68c/s13f0.o"(.text)

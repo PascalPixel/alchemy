@@ -708,69 +708,8 @@ Func_02000734:
 	.4byte 0xfff40000
 .L_0200880c:
 	.4byte 0xfffc0000
-	.section .text.x02008810,"ax",%progbits
-	.global Func_02000810
-	.thumb_func
-Func_02000810:
-	push {r5, r6, r7, lr}
-	adds r7, r0, #0
-	adds r6, r1, #0
-	bl Func_02002a00
-	adds r0, r7, #0
-	bl Object_GetById
-	movs r1, #2
-	bl Func_02002a18
-	movs r0, #201
-	bl Func_02002a40
-	movs r0, #50
-	bl WaitFrames
-	movs r0, #82
-	bl Func_02002a40
-	movs r5, #0
-.L_0200883a:
-	adds r0, r6, #0
-	bl Object_GetById
-	ldrh r3, [r0, #6]
-	movs r2, #128
-	lsls r2, r2, #5
-	adds r3, r3, r2
-	strh r3, [r0, #6]
-	adds r0, r6, #0
-	bl Object_GetById
-	movs r3, #4
-	ands r3, r5
-	movs r1, #7
-	cmp r3, #0
-	bne .L_0200885c
-	movs r1, #0
-.L_0200885c:
-	bl Object_SetPartAttribute
-	adds r5, #1
-	movs r0, #1
-	bl WaitFrames
-	cmp r5, #119
-	ble .L_0200883a
-	adds r0, r6, #0
-	bl Object_GetById
-	movs r3, #192
-	lsls r3, r3, #8
-	strh r3, [r0, #6]
-	adds r0, r6, #0
-	bl Object_GetById
-	movs r1, #0
-	bl Object_SetPartAttribute
-	adds r0, r7, #0
-	bl Object_GetById
-	movs r1, #0
-	bl Func_02002a18
-	bl Func_02002a10
-	bl Func_02002a08
-	adds r0, r6, #0
-	movs r1, #1
-	bl Object_SetModeById
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
 	.section .text.x020088a4,"ax",%progbits
+	.balign 4
 	.global Func_020008a4
 	.thumb_func
 Func_020008a4:

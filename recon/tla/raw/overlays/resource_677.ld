@@ -15,12 +15,11 @@ SECTIONS
         "*/games/tla/src/field/overlay_677/s0204.o"(.text)
         "*/games/tla/src/field/overlay_677/s04e0.o"(.text)
         "*/resource_677_overlay.o"(.text.x02008524)
-        "*/resource_677_overlay.o"(.text.x0200877c)
+        "*/games/tla/src/field/overlay_677/s077c.o"(.text)
         "*/resource_677_overlay.o"(.text.x0200886c)
         "*/games/tla/src/field/overlay_677/prepare.o"(.text)
         "*/games/tla/src/field/overlay_677/import.o"(.text)
         "*/games/tla/src/field/overlay_677/data.o"(.data)
-        "*/resource_677_overlay.o"(.rodata.x02008ca4)
         "*/games/tla/src/field/overlay_677/data2.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

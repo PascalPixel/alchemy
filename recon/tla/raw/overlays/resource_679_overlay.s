@@ -2177,66 +2177,13 @@ Func_02001ad8:
 .L_02009b8c:
 	.4byte 0x85000205
 .L_02009b90:
-	.4byte Data_02002890
+	.4byte Field_Tiles679
 .L_02009b94:
 	.4byte 0x40000400
 .L_02009b98:
 	.4byte Func_02001940
 .L_02009b9c:
 	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-	.section .rodata.x0200a890,"a",%progbits
-	.global Data_02002890
-Data_02002890:
-	.4byte 0x01000057
-	.4byte 0x04061011
-	.4byte 0x0e040501
-	.4byte 0x0f01000f
-	.4byte 0x0406205d
-	.4byte 0x0e040502
-	.4byte 0x3001030f
-	.4byte 0x03750406
-	.4byte 0x0f0e0405
-	.4byte 0x400f0100
-	.4byte 0x05040406
-	.4byte 0x0f0ef504
-	.4byte 0x031e0100
-	.4byte 0x0397049a
-	.4byte 0x06300702
-	.4byte 0x0109f54b
-	.4byte 0x1d03f30a
-	.4byte 0x0a400a06
-	.4byte 0x100240ad
-	.4byte 0x0802445d
-	.4byte 0x021f0843
-	.4byte 0x2049044e
-	.4byte 0x03b92205
-	.4byte 0xd700341d
-	.4byte 0x106b1612
-	.4byte 0x02021261
-	.4byte 0x30555e02
-	.4byte 0x02245a02
-	.4byte 0x561644bf
-	.4byte 0x531f0833
-	.4byte 0x0f46160f
-	.4byte 0x00237919
-	.4byte 0x0016f610
-	.4byte 0x22621527
-	.4byte 0x63010302
-	.4byte 0x04302010
-	.4byte 0x03ea11f8
-	.4byte 0x0b1302ef
-	.4byte 0x7b031205
-	.4byte 0x30901411
-	.4byte 0x12d303b5
-	.4byte 0x01001806
-	.4byte 0x8f261134
-	.4byte 0xdbc31820
-	.4byte 0x3c14bb04
-	.4byte 0x161f0401
-	.4byte 0x712701b5
-	.4byte 0x01701d02
-	.4byte 0x07012c05
 	.2byte 0x0000
 	.section .bss,"aw",%nobits
 	.space 0x00000002

@@ -16423,7 +16423,7 @@ msgctxt "message"
 msgid "04103"
 msgstr "そうびしますか?"
 
-msgctxt "message"
+msgctxt "MsgItemMenuEmpty"
 msgid "04104"
 msgstr "アイテムをもっていません"
 
@@ -17423,11 +17423,11 @@ msgctxt "message"
 msgid "04353"
 msgstr "スタンバイにしました{line_break}{argument_actor_name:234}{argument_class_name:230}なりました{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgStatusNameNormal"
 msgid "04354"
 msgstr "せいじょう"
 
-msgctxt "message"
+msgctxt "MsgStatusNameDown"
 msgid "04355"
 msgstr "せんとうふのう"
 
@@ -17759,7 +17759,7 @@ msgctxt "message"
 msgid "04437"
 msgstr "ぼうけんをさいかい"
 
-msgctxt "message"
+msgctxt "MsgFullPpAndMoney"
 msgid "04438"
 msgstr "EPまんたん&かねもち"
 
@@ -17847,7 +17847,7 @@ msgctxt "message"
 msgid "04459"
 msgstr "・エナジー"
 
-msgctxt "message"
+msgctxt "MsgPasswordTransferHelp"
 msgid "04460"
 msgstr "パスワードで"
 
@@ -17855,7 +17855,7 @@ msgctxt "message"
 msgid "04461"
 msgstr "ぼうけんのきろくをひきつぎます"
 
-msgctxt "message"
+msgctxt "MsgCableTransferHelp"
 msgid "04462"
 msgstr "つうしんケーブルと"
 
@@ -17867,7 +17867,7 @@ msgctxt "message"
 msgid "04464"
 msgstr "ぼうけんのきろくをひきつぎます"
 
-msgctxt "message"
+msgctxt "MsgClearDataTransferHelp"
 msgid "04465"
 msgstr "クリアデータのじょうほうを"
 

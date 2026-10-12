@@ -1,4 +1,4 @@
-/* Draft, differ 12 of 63. Two places: the native reads the entry's two halfwords through base + (index * 8 + 4) and its word through base + index * 8, this form through three indexed loads; and for the (owner, 0, -4) call it clears r1 between the halves of -4, this form after them (657's Func_02000078 matches the same call with 2 for 0). */
+/* Draft, differ 10 of 63. Two places: the native keeps the table in r0, reads the first halfword as table[index * 8 + 4], adds the table to that offset for the second and reads the word last as table[index * 8]; this form, an entry pointer and a pointer to its pair, adds the table to the entry first (three indexed loads from the struct: differ 12; the byte offsets written out: differ 12 to 14); and for the (owner, 0, -4) call it clears r1 between the halves of -4, this form after them (657's Func_02000078 matches the same call with 2 for 0). */
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"
@@ -47,7 +47,12 @@ loop:
     index = *(s16 *)(work + 0x154) - 1;
     Func_02001344(158);
     index >>= 1;
-    Func_0200122c(Data_020019ec[index].value, Data_020019ec[index].position[0], Data_020019ec[index].position[1]);
+    {
+        const struct Ov675Entry *entry = &Data_020019ec[index];
+        const u16 *position = entry->position;
+
+        Func_0200122c(entry->value, position[0], position[1]);
+    }
     Object_SetModeById(gPartyState.current_owner, 2);
     ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
     ObjectMotion_OffsetPositionAndResetMotion(gPartyState.current_owner, 0, -4);

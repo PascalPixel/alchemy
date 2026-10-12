@@ -337,7 +337,7 @@ Func_0818cb74:
 	lsls r2, r2, #10
 	str r6, [sp, #0]
 	str r7, [sp, #4]
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	ldr r4, [sp, #56]
 	movs r3, #1
 	add r9, r3

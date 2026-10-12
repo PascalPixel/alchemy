@@ -1,4 +1,19 @@
 #include "ov65f.h"
+#include "party_state.h"
+
+extern char SceneId_Ov65FRoom1;
+extern char SceneId_Ov65FRoom2;
+extern char SceneId_Ov65FRoom3;
+extern char SceneId_Ov65FRoom4;
+extern char SceneId_Ov65FRoom5;
+
+extern s32 Data_02005e10[];
+extern s32 Data_02005e34[];
+extern s32 Data_02005f78[];
+extern s32 Data_020060d4[];
+extern s32 Data_0200611c[];
+extern s32 Data_020061d0[];
+extern s32 Data_02006278[];
 
 struct EventWork {
     u8 unknown_000[0x154];
@@ -40,4 +55,25 @@ void Func_020009a4(void)
         if (!Flag_IsSet(0x91f))
             Func_02003878();
     }
+}
+
+// 部屋ごとの表を返す
+const void *Func_020009dc(void)
+{
+    s16 scene = gPartyState.scene;
+
+    if (scene == (s32)&SceneId_Ov65FRoom1) {
+        if (Flag_IsSet(0x91b))
+            return Data_02005f78;
+        return Data_02005e34;
+    }
+    if (scene == (s32)&SceneId_Ov65FRoom2)
+        return Data_020060d4;
+    if (scene == (s32)&SceneId_Ov65FRoom3)
+        return Data_0200611c;
+    if (scene == (s32)&SceneId_Ov65FRoom4)
+        return Data_020061d0;
+    if (scene == (s32)&SceneId_Ov65FRoom5)
+        return Data_02006278;
+    return Data_02005e10;
 }

@@ -982,48 +982,6 @@ Func_02000a5c:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
-	.section .text.x0200928c,"ax",%progbits
-	.global Func_0200128c
-	.thumb_func
-Func_0200128c:
-	push {r5, r6, r7, lr}
-	adds r4, r0, #0
-	adds r6, r2, #0
-	adds r5, r1, #0
-	lsls r3, r3, #16
-	movs r0, #244
-	asrs r7, r3, #16
-	lsls r0, r0, #1
-	adds r3, r6, #0
-	adds r1, r4, #0
-	adds r2, r5, #0
-	bl Func_02002804
-	adds r6, r0, #0
-	cmp r6, #0
-	beq .L_020092d0
-	movs r1, #1
-	ldr r5, [r6, #80]
-	bl Func_020027f4
-	ldr r1, .L_020092d8
-	adds r0, r6, #0
-	bl Func_020027fc
-	adds r2, r6, #0
-	adds r2, #85
-	movs r3, #0
-	strb r3, [r2]
-	ldr r3, [sp, #16]
-	ldr r1, .L_020092d4
-	adds r2, #9
-	strh r3, [r2]
-	strb r1, [r5, #26]
-	strh r7, [r5, #18]
-.L_020092d0:
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_020092d4:
-	.4byte 0x00000000
-.L_020092d8:
-	.4byte Data_02002dec
 	.section .text.x020092dc,"ax",%progbits
 	.global Func_020012dc
 	.thumb_func

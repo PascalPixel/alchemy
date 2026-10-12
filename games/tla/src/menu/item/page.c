@@ -47,7 +47,7 @@ struct MenuResult {
 };
 
 s32 UnitGet(s32 owner);
-s32 Func_080fad1c(s32 owner);
+s32 ItemMenu_Count(s32 owner);
 
 // index 番目の欄の持ち主のどうぐを 5 行ずつのページに割る
 s32 ItemMenu_PageResult(struct MenuResult *result, s32 index)
@@ -60,7 +60,7 @@ s32 ItemMenu_PageResult(struct MenuResult *result, s32 index)
     s32 groups;
     s32 value;
 
-    limit = Func_080fad1c(menu->pane_owner[index]);
+    limit = ItemMenu_Count(menu->pane_owner[index]);
     encoded = UnitGet(menu->pane_owner[index]);
     value = menu->selected_index_by_owner[menu->pane_owner[index]];
     if ((value + 1) > limit) {

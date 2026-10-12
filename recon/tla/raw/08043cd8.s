@@ -463,7 +463,7 @@ Func_08043cd8:
 	bl UiWindow_Create
 	str r0, [sp, #28]
 .L_0804404c:
-	bl Func_08043b34
+	bl Menu_ClearFirstObjectRowAndScheduleUpdate
 	movs r1, #0
 	ldr r0, [sp, #28]
 	movs r2, #0
@@ -533,7 +533,7 @@ Func_08043cd8:
 	bl Func_0803f9c0
 	movs r0, #0
 	bl Func_080f8080
-	bl Func_08043b34
+	bl Menu_ClearFirstObjectRowAndScheduleUpdate
 	movs r1, #2
 	ldr r0, [sp, #24]
 	bl UiWork_Finalize
@@ -790,7 +790,7 @@ Func_08043cd8:
 	mov r5, r8
 .L_080442de:
 	bl Func_080f8078
-	bl Func_08043b34
+	bl Menu_ClearFirstObjectRowAndScheduleUpdate
 	movs r1, #2
 	ldr r0, [sp, #24]
 	bl UiWork_Finalize

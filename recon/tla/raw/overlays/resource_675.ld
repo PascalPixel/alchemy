@@ -22,7 +22,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_675/events.o"(.text)
         "*/resource_675_overlay.o"(.text.x020089f8)
         "*/games/tla/src/field/overlay_675/events3.o"(.text)
-        "*/resource_675_overlay.o"(.text.x020090ac)
+        "*/games/tla/src/field/overlay_675/s10ac.o"(.text)
         "*/games/tla/src/field/overlay_675/s115c.o"(.text)
         "*/games/tla/src/field/overlay_675/import.o"(.text)
         "*/games/tla/src/field/overlay_675/data.o"(.data)

@@ -1,3 +1,4 @@
+/* Near miss, differ 2 of 172 (4 without the two barriers). The two barriers put each flag store ahead of the next call's arguments, as the native has them, but the first one moves an earlier pair: where the 1 for the first byte store is also kept in r8, the native copies it before stepping to the field (mov r8, r3; adds r0, #34) and this form after. One-pass blocks in their place end the CSE block and the 1 is rebuilt later (differ 6 to 8); a third barrier before that store moves another pair (differ 4). */
 #include "types.h"
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
@@ -40,10 +41,14 @@ void Func_020015d0(void)
     Call2(ObjectMotion_SetActionVariant, 0x14, 3);
     t6 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));
     FIELD_AT((t6 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t6 + 0x5a), u8, 0));
+    /* FAKEMATCH: the barrier keeps the flag store ahead of the next call's arguments; without it the store follows the first two (one reordered row). */
+    asm volatile("");
     Call3(ObjectMotion_SetPositionAndReset, FIELD_AT(gPartyState, s32, 532), 0x198, 0x146);
     Call1(Battle_WaitMode0, 1);
     t9 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));
     FIELD_AT((t9 + 0x5a), u8, 0) = (FIELD_AT((t9 + 0x5a), u8, 0) | 1);
+    /* FAKEMATCH: the barrier keeps the flag store ahead of the next call's arguments; without it the store follows the first (one reordered row). */
+    asm volatile("");
     Call3(ObjectMotion_ArmCallback, FIELD_AT(gPartyState, s32, 532), 0xc000, 0);
     Call1(Func_0200463c, 0xa1);
     t12 = Func_02004584();

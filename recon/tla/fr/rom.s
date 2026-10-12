@@ -644,8 +644,6 @@ MapAnimation_Update:
 	.incbin "baserom.gba", 0x0002d088, 0x000001b4
 	.section .rom.0002d36e, "ax"
 	.incbin "baserom.gba", 0x0002d36e, 0x00000002
-	.section .rom.0002d400, "ax"
-	.incbin "baserom.gba", 0x0002d400, 0x00000014
 	.section .rom.0002d45c, "ax"
 	.global Func_0802d45c
 	.type Func_0802d45c, %function
@@ -1202,7 +1200,13 @@ Func_08043690:
 	.incbin "baserom.gba", 0x000436e0, 0x000000e4
 	.section .rom.00043ab4, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x00043ab4, 0x00000188
+	.incbin "baserom.gba", 0x00043ab4, 0x000000d0
+	.section .rom.00043bc0, "ax"
+	.global Func_08043b70
+	.type Func_08043b70, %function
+	.thumb_func
+Func_08043b70:
+	.incbin "baserom.gba", 0x00043bc0, 0x0000007c
 	.section .rom.00043d40, "ax"
 	.global Func_08043cd8
 	.type Func_08043cd8, %function
@@ -1897,13 +1901,8 @@ Func_080afb80:
 	.incbin "baserom.gba", 0x000b4bec, 0x000001d0
 	.section .rom.000b4f28, "ax"
 	.incbin "baserom.gba", 0x000b4f28, 0x00000054
-	.section .rom.000b4f94, "ax"
-	.global Func_080aff94
-	.type Func_080aff94, %function
-	.thumb_func
-Func_080aff94:
-	.incbin "baserom.gba", 0x000b4f94, 0x00000018
 	.section .rom.000b4fac, "ax"
+	.balign 4
 	.global Owner_GetDigitValues
 	.type Owner_GetDigitValues, %function
 	.thumb_func
@@ -4008,7 +4007,10 @@ BattlePlacement_StepPairs:
 	.section .rom.001380ac, "ax"
 	.incbin "baserom.gba", 0x001380ac, 0x00000f1c
 	.section .rom.0013ba50, "ax"
-	.incbin "baserom.gba", 0x0013ba50, 0x00000b5c
+	.incbin "baserom.gba", 0x0013ba50, 0x000000e8
+	.section .rom.0013bba0, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0013bba0, 0x00000a0c
 	.section .rom.0013c5f4, "ax"
 	.balign 4
 	.global Func_0813c5f4
@@ -4352,7 +4354,14 @@ Func_08181ed4:
 	.balign 4
 	.global Func_081823a8
 Func_081823a8:
-	.incbin "baserom.gba", 0x001823a8, 0x00007e48
+	.incbin "baserom.gba", 0x001823a8, 0x000004a4
+	.section .rom.00182898, "ax"
+	.balign 4
+	.global Func_08182898
+	.type Func_08182898, %function
+	.thumb_func
+Func_08182898:
+	.incbin "baserom.gba", 0x00182898, 0x00007958
 	.section .rom.0018a220, "ax"
 	.balign 4
 	.global Func_0818a220

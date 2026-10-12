@@ -338,22 +338,20 @@ static s32 SceneActor_OscillateHeightBetweenLimits(struct FieldActor *actor)
 	{
 		val = actor->y.fixed - (((u32)(Engine_RandomNext() << 15)) >> 16) - 0x8000;
 		actor->y.fixed = val;
-		if (val < 0x40000)
-		{
-			tmp = 0;
-			*flag = tmp;
-		}
+		if (val >= 0x40000)
+			goto done;
+		tmp = 0;
 	}
 	else
 	{
 		val = actor->y.fixed + (((u32)(Engine_RandomNext() << 15)) >> 16) + 0x8000;
 		actor->y.fixed = val;
-		if (val > 0xC0000)
-		{
-			tmp = 1;
-			*flag = tmp;
-		}
+		if (val <= 0xC0000)
+			goto done;
+		tmp = 1;
 	}
+	*flag = tmp;
+done:
 	return 1;
 }
 

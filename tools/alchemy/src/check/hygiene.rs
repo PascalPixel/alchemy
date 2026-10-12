@@ -269,7 +269,7 @@ mod tests {
             assert!(reasons(path, b"x\n").is_empty(), "{path}");
         }
         // Eight letters fit anywhere, as they did.
-        for path in ["games/tbs/src/menu/title/title.c", "games/tbs/src/system/rom_head.s", "games/tbs/src/scene/common/effect/psynergy.c", "a/window2.c", "window2.c"] {
+        for path in ["games/tbs/src/menu/title.c", "games/tbs/src/system/rom_head.s", "games/tbs/src/scene/common/effect/psynergy.c", "a/window2.c", "window2.c"] {
             assert!(name_length_fits(path), "{path}");
         }
         // A long name is refused everywhere else: another folder, a folder

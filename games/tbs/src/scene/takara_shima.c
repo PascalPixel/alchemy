@@ -2,8 +2,8 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/scene/takara_shima.h"
-#include "unit/scene/common/object/orbit.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/object_orbit.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/marker.h"
@@ -57,12 +57,11 @@ struct Vec
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/staged_actor.c"
+#include "common/object_staged_actor.c"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
+#include "common/effect_create.c"
+#include "common/effect_spawn.c"
 
 union GameStateRows
 {
@@ -130,7 +129,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/advance.c"
+#include "common/effect_advance.c"
 
 static void SpawnRadialEffectBurst(s32 object_id)
 {
@@ -2364,7 +2363,7 @@ static void AdvanceActor16AlongEscapeRoute(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/orbit.c"
+#include "common/object_orbit.c"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

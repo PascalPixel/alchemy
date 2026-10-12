@@ -3,7 +3,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/babi_iriguchi.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evtable.h"
@@ -57,12 +57,11 @@ static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/staged_actor.c"
+#include "common/object_staged_actor.c"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
+#include "common/effect_create.c"
+#include "common/effect_spawn.c"
 
 static void EV08_TALK(void)
 {
@@ -70,8 +69,8 @@ static void EV08_TALK(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/waitidle.c"
-#include "common/effect/advance.c"
+#include "common/object_waitidle.c"
+#include "common/effect_advance.c"
 
 static void FieldScene_RunSupplementalSequenceOne(void)
 {

@@ -1,7 +1,7 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/scene/ramakan_sabaku.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"
@@ -57,9 +57,8 @@ static void RamakanSabaku_SetSandPhase(u16 value);
 #define NULL ((void *)0)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
+#include "common/effect_create.c"
+#include "common/effect_spawn.c"
 
 static void EV13_TALK(void)
 {
@@ -67,7 +66,7 @@ static void EV13_TALK(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/waitdown.c"
+#include "common/object_waitdown.c"
 
 static s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor)
 {

@@ -31,7 +31,7 @@ static void FieldScene_RunLongPresentationSequence(void);
 static void Scene_UpdateTimedActor(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/facing.c"
+#include "common/object_facing.c"
 
 static s32 AdvancePositionScaleAndVelocity(ScaledMotion *motion)
 {

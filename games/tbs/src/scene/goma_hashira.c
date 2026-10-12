@@ -73,7 +73,7 @@ enum PillarEffectPlane
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/staged_actor.c"
+#include "common/object_staged_actor.c"
 
 static void EV12_TALK(void)
 {

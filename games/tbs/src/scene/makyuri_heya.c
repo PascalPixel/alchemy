@@ -5,11 +5,10 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/makyuri_heya.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "staged_actor.h"
-#include "unit/scene/common/makyuri/lights.h"
-#include "unit/scene/makyuri_iriguchi_pillar.h"
-#include "unit/scene/common/makyuri/makyuri.h"
+#include "unit/scene/common/makyuri_lights.h"
+#include "unit/scene/common/makyuri_pillar.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/marker.h"
@@ -120,10 +119,9 @@ struct SceneLookupRecord
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
-#include "common/object/staged_actor.c"
+#include "common/effect_create.c"
+#include "common/effect_spawn.c"
+#include "common/object_staged_actor.c"
 
 static void EV12_TALK(void)
 {
@@ -150,8 +148,8 @@ static void MakyuriHeya_UpdateLeaderEffectTarget(void)
 #endif
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/makyuri/sparks.c"
-#include "common/makyuri/palette_cycle.c"
+#include "common/makyuri_sparks.c"
+#include "common/makyuri_palette_cycle.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -257,7 +255,7 @@ struct BlockProbe
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/makyuri/risedrop.c"
+#include "common/makyuri_risedrop.c"
 
 static void EV53_TOUCH(void)
 {
@@ -1879,7 +1877,7 @@ static void EV15_TOUCH(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/makyuri/arrive.c"
+#include "common/makyuri_arrive.c"
 
 static void SceneEffect_SpawnParticleRowsAndDrawTiles(void)
 {
@@ -2685,7 +2683,7 @@ static void SceneState_SetRecordTableValue(s32 key, s32 value)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/makyuri/lights.c"
+#include "common/makyuri_lights.c"
 
 static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 {
@@ -2714,8 +2712,7 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "makyuri_iriguchi_pillar.c"
-#include "common/makyuri/makyuri.c"
+#include "common/makyuri_pillar.c"
 
 s32 gEffectScript0[] = {
 	SC_WAIT(1),

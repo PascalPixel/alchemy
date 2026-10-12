@@ -1,5 +1,5 @@
-#include "unit/field/common/object/objdata.h"
-#include "unit/graphics/render/facing.h"
+#include "unit/field/objdata.h"
+#include "unit/field/facing.h"
 #include "unit/field/field.h"
 #include "unit/field/script.h"
 #include "unit/field/operands.h"

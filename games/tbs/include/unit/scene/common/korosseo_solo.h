@@ -1,0 +1,19 @@
+#ifndef ALCHEMY_UNIT_SCENE_COMMON_KOROSSEO_SOLO_H
+#define ALCHEMY_UNIT_SCENE_COMMON_KOROSSEO_SOLO_H
+
+#include "types.h"
+
+void SceneActor_PlacePartyAtSavedTiles(void);
+
+void Korosseo_SelectSoloCompetitor(s32 id);
+
+void SceneState_RaiseTriggerOnPsynergyTarget(void);
+
+void Korosseo_FinishSoloRound(s32 id);
+
+void Korosseo_ClearSavedActorPositions(void);
+s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor);
+void Korosseo_ShowFollowUpPrompt(s32 speaker, s32 competitor);
+/* FieldScene_RunMiddleSequence is called before its definition with no prototype in scope. */
+
+#endif

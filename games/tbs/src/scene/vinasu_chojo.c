@@ -2,9 +2,9 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/scene/vinasu_chojo.h"
-#include "unit/field/common/effect/move.h"
-#include "unit/scene/common/object/nearest.h"
-#include "unit/scene/common/effect/psynergy.h"
+#include "unit/scene/common/effect_spawn.h"
+#include "unit/scene/common/object_nearest.h"
+#include "unit/scene/common/effect_psynergy.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"
@@ -91,9 +91,8 @@ static void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object);
 s32 Math_RemainderUnsigned(s32, s32);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
+#include "common/effect_create.c"
+#include "common/effect_spawn.c"
 
 struct PairDetail
 {
@@ -196,7 +195,7 @@ static void VinasuChojo_StepSpriteRotation(struct FieldActor *actor)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/heading.c"
+#include "common/object_heading.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -219,8 +218,8 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/distance.c"
-#include "common/object/nearest.c"
+#include "common/object_distance.c"
+#include "common/object_nearest.c"
 
 static void InitializeActorZeroMotion(void)
 {
@@ -1162,7 +1161,7 @@ static void SceneState_ForwardByRuntimeWordBits(s32 a)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/vertical.c"
+#include "common/effect_vertical.c"
 
 static void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
 {
@@ -1220,7 +1219,7 @@ static void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/psynergy.c"
+#include "common/effect_psynergy.c"
 
 static void FieldScene_RunStep6(void)
 {

@@ -1,8 +1,8 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/scene/soru_star.h"
-#include "unit/field/common/effect/move.h"
-#include "unit/scene/soru_star_ring_setup.h"
+#include "unit/scene/common/effect_spawn.h"
+#include "unit/scene/common/soru_star_ring_setup.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/marker.h"
@@ -95,9 +95,8 @@ struct ObjectRuntime;
 extern struct SceneEvent Placement_Effects[];
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
+#include "common/effect_create.c"
+#include "common/effect_spawn.c"
 
 static __inline__ void SkipMessage(s32 amount)
 {
@@ -105,7 +104,7 @@ static __inline__ void SkipMessage(s32 amount)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/facing.c"
+#include "common/object_facing.c"
 
 s32 *SceneData_GetScriptTable(void)
 {
@@ -2226,7 +2225,7 @@ static void SoruStar_RiseActorFourteenSparks(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "soru_star_ring_setup.c"
+#include "common/soru_star_ring_setup.c"
 
 s32 gEffectScript0[] = {
 	SC_WAIT(1),

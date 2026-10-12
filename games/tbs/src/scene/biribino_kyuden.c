@@ -54,7 +54,7 @@ struct KyudenSceneRecord
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/facing.c"
+#include "common/object_facing.c"
 
 u8 *SceneData_GetScriptTable(void)
 {

@@ -87,7 +87,7 @@ struct RockPuzzle
 u16 gArutamiraActorWheelWork[6] __attribute__((nocommon, aligned(4)));
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/staged_actor.c"
+#include "common/object_staged_actor.c"
 
 static void EV13_TALK(void)
 {

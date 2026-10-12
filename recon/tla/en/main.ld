@@ -291,7 +291,6 @@
         "*/recon/tla/raw/08025698.o"(.text)
         "*/recon/tla/raw/08025830.o"(.text)
         "*/games/tla/src/field/common/script/operands.o"(.text)
-        "*/recon/tla/raw/08025bb4.o"(.text)
         "*/games/tla/src/field/common/script/argbase.o"(.text)
         "*/games/tla/src/field/common/script/argwork.o"(.text)
         "*/games/tla/src/field/common/script/argops.o"(.text)

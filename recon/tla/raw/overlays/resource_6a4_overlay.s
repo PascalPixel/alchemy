@@ -1511,50 +1511,6 @@ Func_02000e80:
 	.4byte 0x00199900
 .L_0200900c:
 	.4byte 0x001b8480
-	.section .text.x02009010,"ax",%progbits
-	.global Func_02001010
-	.thumb_func
-Func_02001010:
-	push {r5, lr}
-	adds r5, r0, #0
-	adds r5, #99
-	ldrb r3, [r5]
-	ldr r2, .L_02009058
-	movs r1, #3
-	ands r1, r3
-	movs r3, #2
-	strb r3, [r2]
-	cmp r1, #1
-	beq .L_0200903a
-	cmp r1, #1
-	bgt .L_02009030
-	cmp r1, #0
-	beq .L_02009042
-	b .L_02009050
-.L_02009030:
-	cmp r1, #2
-	beq .L_02009042
-	cmp r1, #3
-	beq .L_0200904a
-	b .L_02009050
-.L_0200903a:
-	movs r1, #13
-	bl Animation_ApplyChildValues
-	b .L_02009050
-.L_02009042:
-	movs r1, #4
-	bl Animation_ApplyChildValues
-	b .L_02009050
-.L_0200904a:
-	movs r1, #4
-	bl Animation_ApplyChildValues
-.L_02009050:
-	ldrb r3, [r5]
-	adds r3, #1
-	strb r3, [r5]
-	pop {r5, pc}
-.L_02009058:
-	.4byte gDecodeFillByte
 	.section .text.x02009080,"ax",%progbits
 	.balign 4
 	.global Func_02001080

@@ -260,7 +260,6 @@
     "*/games/tla/src/field/common/script/offset.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00025160)
     "*/games/tla/src/field/common/script/operands.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.00025bb4)
     "*/games/tla/src/field/common/script/argbase.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00025c8a)
     "*/games/tla/src/field/common/script/argwork.o"(.text)

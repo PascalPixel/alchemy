@@ -6023,29 +6023,6 @@ Func_020038e4:
 	.4byte gIoWriteQueue
 .L_0200b95c:
 	.4byte 0x04000208
-	.section .text.x0200b960,"ax",%progbits
-	.global Func_02003960
-	.thumb_func
-Func_02003960:
-	push {lr}
-	movs r1, #128
-	ldr r3, .L_0200b97c
-	lsls r1, r1, #2
-	ldr r0, .L_0200b980
-	mov lr, r3
-	.2byte 0xf800
-	movs r1, #144
-	lsls r1, r1, #3
-	ldr r0, .L_0200b984
-	bl Scheduler_AddOrUpdateCallback
-	pop {pc}
-	.2byte 0x0000
-.L_0200b97c:
-	.4byte IwramClearWords
-.L_0200b980:
-	.4byte Data_02006c08
-.L_0200b984:
-	.4byte Func_020036a8
 	.section .text.x0200b9a8,"ax",%progbits
 	.balign 4
 	.global Func_020039a8
@@ -6252,47 +6229,6 @@ Func_02003aac:
 	.4byte IwramMulQ16
 .L_0200bb34:
 	.4byte Data_02004f9c
-	.section .text.x0200bb70,"ax",%progbits
-	.balign 4
-	.global Func_02003b70
-	.thumb_func
-Func_02003b70:
-	push {r5, r6, r7, lr}
-	ldr r7, .L_0200bbac
-	movs r2, #1
-	ldr r3, [r7]
-	adds r6, r0, #0
-	ands r3, r2
-	cmp r3, #0
-	beq .L_0200bb98
-	ldr r5, .L_0200bbb0
-	ldr r2, .L_0200bbb4
-	ldr r3, [r5]
-	lsls r3, r3, #2
-	ldr r1, [r2, r3]
-	bl Animation_ApplyChildValues
-	ldr r3, [r5]
-	movs r2, #3
-	adds r3, #1
-	ands r3, r2
-	str r3, [r5]
-.L_0200bb98:
-	ldr r3, [r7]
-	movs r2, #3
-	ands r3, r2
-	cmp r3, #0
-	bne .L_0200bba8
-	adds r0, r6, #0
-	bl Func_02003aac
-.L_0200bba8:
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_0200bbac:
-	.4byte gFrameCount
-.L_0200bbb0:
-	.4byte Data_02006be4
-.L_0200bbb4:
-	.4byte Data_02004fc8
 	.section .text.x0200bc50,"ax",%progbits
 	.balign 4
 	.global Func_02003c50
@@ -7380,38 +7316,6 @@ Func_020042e0:
 	.4byte gBgScroll
 .L_0200c4fc:
 	.4byte gPartyState
-	.section .text.x0200c538,"ax",%progbits
-	.balign 4
-	.global Func_02004538
-	.thumb_func
-Func_02004538:
-	push {r5, r6, lr}
-	ldr r6, .L_0200c56c
-	adds r5, r0, #0
-	ldr r0, [r6]
-	movs r3, #1
-	ands r3, r0
-	cmp r3, #0
-	beq .L_0200c558
-	movs r1, #6
-	lsrs r0, r0, #1
-	bl __umodsi3
-	adds r1, r0, #0
-	adds r0, r5, #0
-	bl Animation_ApplyChildValues
-.L_0200c558:
-	ldr r3, [r6]
-	movs r2, #15
-	ands r3, r2
-	cmp r3, #0
-	bne .L_0200c568
-	adds r0, r5, #0
-	bl Func_02004634
-.L_0200c568:
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_0200c56c:
-	.4byte gFrameCount
 	.section .text.x0200c634,"ax",%progbits
 	.balign 4
 	.global Func_02004634

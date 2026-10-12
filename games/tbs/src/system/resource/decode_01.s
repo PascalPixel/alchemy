@@ -451,7 +451,7 @@ Resource_RefillType2Bits:
 .Ltake_0:
 	and	r8, ip, fp
 	bx	lr
-AlchemyUncredited_08002b10:
+AlchemyUncredited_decode_01_1:
 	nop
 	nop
 	nop
@@ -459,162 +459,162 @@ AlchemyUncredited_08002b10:
 	nop
 	nop
 .Ltake_1:
-AlchemyUncreditedEnd_08002b10:
+AlchemyUncreditedEnd_decode_01_1:
 	lsr	r9, fp, #8
 	orr	r9, r9, fp, lsl #28
 	and	r8, ip, fp, lsr #4
 	orr	fp, r8, r9, ror #24
 	bx	lr
-AlchemyUncredited_08002b3c:
+AlchemyUncredited_decode_01_2:
 	nop
 	nop
 	nop
 .Ltake_2:
-AlchemyUncreditedEnd_08002b3c:
+AlchemyUncreditedEnd_decode_01_2:
 	lsr	r9, fp, #12
 	orr	r9, r9, fp, lsl #24
 	and	r8, ip, fp, lsr #8
 	orr	fp, r8, r9, ror #20
 	bx	lr
-AlchemyUncredited_08002b5c:
+AlchemyUncredited_decode_01_3:
 	nop
 	nop
 	nop
 .Ltake_3:
-AlchemyUncreditedEnd_08002b5c:
+AlchemyUncreditedEnd_decode_01_3:
 	lsr	r9, fp, #16
 	orr	r9, r9, fp, lsl #20
 	and	r8, ip, fp, lsr #12
 	orr	fp, r8, r9, ror #16
 	bx	lr
-AlchemyUncredited_08002b7c:
+AlchemyUncredited_decode_01_4:
 	nop
 	nop
 	nop
 .Ltake_4:
-AlchemyUncreditedEnd_08002b7c:
+AlchemyUncreditedEnd_decode_01_4:
 	lsr	r9, fp, #20
 	orr	r9, r9, fp, lsl #16
 	and	r8, ip, fp, lsr #16
 	orr	fp, r8, r9, ror #12
 	bx	lr
-AlchemyUncredited_08002b9c:
+AlchemyUncredited_decode_01_5:
 	nop
 	nop
 	nop
 .Ltake_5:
-AlchemyUncreditedEnd_08002b9c:
+AlchemyUncreditedEnd_decode_01_5:
 	lsr	r9, fp, #24
 	orr	r9, r9, fp, lsl #12
 	and	r8, ip, fp, lsr #20
 	orr	fp, r8, r9, ror #8
 	bx	lr
-AlchemyUncredited_08002bbc:
+AlchemyUncredited_decode_01_6:
 	nop
 	nop
 	nop
 .Ltake_6:
-AlchemyUncreditedEnd_08002bbc:
+AlchemyUncreditedEnd_decode_01_6:
 	lsr	r9, fp, #28
 	orr	r9, r9, fp, lsl #8
 	and	r8, ip, fp, lsr #24
 	orr	fp, r8, r9, ror #4
 	bx	lr
-AlchemyUncredited_08002bdc:
+AlchemyUncredited_decode_01_7:
 	nop
 	nop
 	nop
 .Ltake_7:
-AlchemyUncreditedEnd_08002bdc:
+AlchemyUncreditedEnd_decode_01_7:
 	ror	fp, fp, #28
 	and	r8, ip, fp
 	bx	lr
-AlchemyUncredited_08002bf4:
+AlchemyUncredited_decode_01_8:
 	nop
 	nop
 	nop
 	nop
 	nop
 .Ltake_8:
-AlchemyUncreditedEnd_08002bf4:
+AlchemyUncreditedEnd_decode_01_8:
 	and	r8, ip, sl
 	bic	r9, sl, #15
 .Lpush_front:
 	orr	sl, r9, fp, lsr #28
 	orr	fp, r8, fp, lsl #4
 	bx	lr
-AlchemyUncredited_08002c1c:
+AlchemyUncredited_decode_01_9:
 	nop
 	nop
 	nop
 .Ltake_9:
-AlchemyUncreditedEnd_08002c1c:
+AlchemyUncreditedEnd_decode_01_9:
 	and	r8, ip, sl, lsr #4
 	lsr	r9, sl, #8
 	orr	r9, r9, sl, lsl #28
 	ror	r9, r9, #24
 	b	.Lpush_front
-AlchemyUncredited_08002c3c:
+AlchemyUncredited_decode_01_10:
 	nop
 	nop
 	nop
 .Ltake_10:
-AlchemyUncreditedEnd_08002c3c:
+AlchemyUncreditedEnd_decode_01_10:
 	and	r8, ip, sl, lsr #8
 	lsr	r9, sl, #12
 	orr	r9, r9, sl, lsl #24
 	ror	r9, r9, #20
 	b	.Lpush_front
-AlchemyUncredited_08002c5c:
+AlchemyUncredited_decode_01_11:
 	nop
 	nop
 	nop
 .Ltake_11:
-AlchemyUncreditedEnd_08002c5c:
+AlchemyUncreditedEnd_decode_01_11:
 	and	r8, ip, sl, lsr #12
 	lsr	r9, sl, #16
 	orr	r9, r9, sl, lsl #20
 	ror	r9, r9, #16
 	b	.Lpush_front
-AlchemyUncredited_08002c7c:
+AlchemyUncredited_decode_01_12:
 	nop
 	nop
 	nop
 .Ltake_12:
-AlchemyUncreditedEnd_08002c7c:
+AlchemyUncreditedEnd_decode_01_12:
 	and	r8, ip, sl, lsr #16
 	lsr	r9, sl, #20
 	orr	r9, r9, sl, lsl #16
 	ror	r9, r9, #12
 	b	.Lpush_front
-AlchemyUncredited_08002c9c:
+AlchemyUncredited_decode_01_13:
 	nop
 	nop
 	nop
 .Ltake_13:
-AlchemyUncreditedEnd_08002c9c:
+AlchemyUncreditedEnd_decode_01_13:
 	and	r8, ip, sl, lsr #20
 	lsr	r9, sl, #24
 	orr	r9, r9, sl, lsl #12
 	ror	r9, r9, #8
 	b	.Lpush_front
-AlchemyUncredited_08002cbc:
+AlchemyUncredited_decode_01_14:
 	nop
 	nop
 	nop
 .Ltake_14:
-AlchemyUncreditedEnd_08002cbc:
+AlchemyUncreditedEnd_decode_01_14:
 	and	r8, ip, sl, lsr #24
 	lsr	r9, sl, #28
 	orr	r9, r9, sl, lsl #8
 	ror	r9, r9, #4
 	b	.Lpush_front
-AlchemyUncredited_08002cdc:
+AlchemyUncredited_decode_01_15:
 	nop
 	nop
 	nop
 .Ltake_15:
-AlchemyUncreditedEnd_08002cdc:
+AlchemyUncreditedEnd_decode_01_15:
 	and	r8, ip, sl, lsr #28
 	lsl	r9, sl, #4
 	b	.Lpush_front

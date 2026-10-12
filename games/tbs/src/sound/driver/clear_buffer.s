@@ -63,9 +63,9 @@ SoundDriver_ClearBuffer:
 	stmia	r0!, {r1, r2, r3, r4}
 	mov	r4, ip
 	bx	lr
-AlchemyUncredited_080f9a2e:
+AlchemyUncredited_clear_buffer_1:
 	.2byte	0x0000
-AlchemyUncreditedEnd_080f9a2e:
+AlchemyUncreditedEnd_clear_buffer_1:
 .syntax unified
 	.thumb
 	.global SoundNote_Detach
@@ -119,9 +119,9 @@ MusicTrack_FinishSequence:
 	pop	{r4, r5}
 	pop	{r0}
 	bx	r0
-AlchemyUncredited_080f9a7e:
+AlchemyUncredited_clear_buffer_2:
 	.2byte	0x0000
-AlchemyUncreditedEnd_080f9a7e:
+AlchemyUncreditedEnd_clear_buffer_2:
 .syntax unified
 	.thumb
 	.global Sound_LoadCommandTable
@@ -138,13 +138,13 @@ Sound_LoadCommandTable:
 	subs	r1, #1
 	bgt.n	.Lload_entry
 	bx	ip
-AlchemyUncredited_080f9a96:
+AlchemyUncredited_clear_buffer_3:
 	.2byte 0
 
 	.global Sound_ReadCheckedByte
 	.thumb_func
 Sound_ReadCheckedByte:
-AlchemyUncreditedEnd_080f9a96:
+AlchemyUncreditedEnd_clear_buffer_3:
 	ldrb	r3, [r2, #0]
 	.global Sound_CheckReadAddress
 	.thumb_func
@@ -177,13 +177,13 @@ MusicTrack_ReadCheckedByteAt:
 	str	r3, [r1, #64]
 	ldrb	r3, [r2, #0]
 	b.n	Sound_CheckReadAddress
-AlchemyUncredited_080f9abe:
+AlchemyUncredited_clear_buffer_4:
 	.2byte 0
 
 .global MusicTrack_Goto
 	.thumb_func
 MusicTrack_Goto:
-AlchemyUncreditedEnd_080f9abe:
+AlchemyUncreditedEnd_clear_buffer_4:
 	push	{lr}
 .Lgoto_jump:
 	ldr	r2, [r1, #64]
@@ -218,13 +218,13 @@ MusicTrack_CallPattern:
 	b.n	MusicTrack_Goto
 .Lpattern_full:
 	b.n	MusicTrack_FinishSequence
-AlchemyUncredited_080f9afa:
+AlchemyUncredited_clear_buffer_5:
 	.2byte 0
 
 .global MusicTrack_ReturnFromPattern
 	.thumb_func
 MusicTrack_ReturnFromPattern:
-AlchemyUncreditedEnd_080f9afa:
+AlchemyUncreditedEnd_clear_buffer_5:
 	ldrb	r2, [r1, #2]
 	cmp	r2, #0
 	beq.n	.Lpattern_return
@@ -264,24 +264,24 @@ MusicTrack_Repeat:
 	str	r2, [r1, #64]
 	pop	{r0}
 	bx	r0
-AlchemyUncredited_080f9b3e:
+AlchemyUncredited_clear_buffer_6:
 	.2byte 0
 
 .global MusicTrack_SetPriorityFromCommand
 	.thumb_func
 MusicTrack_SetPriorityFromCommand:
-AlchemyUncreditedEnd_080f9b3e:
+AlchemyUncreditedEnd_clear_buffer_6:
 	mov	ip, lr
 	bl	MusicTrack_ReadCheckedCommandByte
 	strb	r3, [r1, #29]
 	bx	ip
 
-AlchemyUncredited_080f9b4a:
+AlchemyUncredited_clear_buffer_7:
 	.balign 4, 0
 .global MusicPlayer_SetTempoFromCommand
 	.thumb_func
 MusicPlayer_SetTempoFromCommand:
-AlchemyUncreditedEnd_080f9b4a:
+AlchemyUncreditedEnd_clear_buffer_7:
 	mov	ip, lr
 	bl	MusicTrack_ReadCheckedCommandByte
 	lsls	r3, r3, #1
@@ -304,12 +304,12 @@ MusicTrack_SetKeyOffsetFromCommand:
 	strb	r3, [r1, #0]
 	bx	ip
 
-AlchemyUncredited_080f9b72:
+AlchemyUncredited_clear_buffer_8:
 	.balign 4, 0
 .global MusicTrack_SetVoiceFromCommand
 	.thumb_func
 MusicTrack_SetVoiceFromCommand:
-AlchemyUncreditedEnd_080f9b72:
+AlchemyUncreditedEnd_clear_buffer_8:
 	mov	ip, lr
 	ldr	r2, [r1, #64]
 	ldrb	r3, [r2, #0]
@@ -331,12 +331,12 @@ AlchemyUncreditedEnd_080f9b72:
 	str	r3, [r1, #44]
 	bx	ip
 
-AlchemyUncredited_080f9ba2:
+AlchemyUncredited_clear_buffer_9:
 	.balign 4, 0
 .global MusicTrack_SetVolumeFromCommand
 	.thumb_func
 MusicTrack_SetVolumeFromCommand:
-AlchemyUncreditedEnd_080f9ba2:
+AlchemyUncreditedEnd_clear_buffer_9:
 	mov	ip, lr
 	bl	MusicTrack_ReadCheckedCommandByte
 	strb	r3, [r1, #18]
@@ -346,12 +346,12 @@ AlchemyUncreditedEnd_080f9ba2:
 	strb	r3, [r1, #0]
 	bx	ip
 
-AlchemyUncredited_080f9bb6:
+AlchemyUncredited_clear_buffer_10:
 	.balign 4, 0
 .global MusicTrack_SetPanFromCommand
 	.thumb_func
 MusicTrack_SetPanFromCommand:
-AlchemyUncreditedEnd_080f9bb6:
+AlchemyUncreditedEnd_clear_buffer_10:
 	mov	ip, lr
 	bl	MusicTrack_ReadCheckedCommandByte
 	subs	r3, #64
@@ -387,23 +387,23 @@ MusicTrack_SetBendRangeFromCommand:
 	strb	r3, [r1, #0]
 	bx	ip
 
-AlchemyUncredited_080f9bf2:
+AlchemyUncredited_clear_buffer_11:
 	.balign 4, 0
 .global MusicTrack_SetLfoDelayFromCommand
 	.thumb_func
 MusicTrack_SetLfoDelayFromCommand:
-AlchemyUncreditedEnd_080f9bf2:
+AlchemyUncreditedEnd_clear_buffer_11:
 	mov	ip, lr
 	bl	MusicTrack_ReadCheckedCommandByte
 	strb	r3, [r1, #27]
 	bx	ip
 
-AlchemyUncredited_080f9bfe:
+AlchemyUncredited_clear_buffer_12:
 	.balign 4, 0
 .global MusicTrack_SetModulationTargetFromCommand
 	.thumb_func
 MusicTrack_SetModulationTargetFromCommand:
-AlchemyUncreditedEnd_080f9bfe:
+AlchemyUncreditedEnd_clear_buffer_12:
 	mov	ip, lr
 	bl	MusicTrack_ReadCheckedCommandByte
 	ldrb	r0, [r1, #24]
@@ -484,11 +484,11 @@ Sound_TickDmaRestartTimer:
 	strh r1, [r2, #22]
 .Ltimer_done:
 	bx lr
-AlchemyUncredited_080f9c86:
+AlchemyUncredited_clear_buffer_13:
 	.balign 4, 0
 	.global Update_Pool1
 Update_Pool1:
-AlchemyUncreditedEnd_080f9c86:
+AlchemyUncreditedEnd_clear_buffer_13:
 	.4byte 0x040000bc
 	.4byte 0x84400004
 .syntax unified
@@ -827,9 +827,9 @@ MusicPlayer_Tick:
 	.global SoundDriver_CallViaR3
 SoundDriver_CallViaR3:
 	bx	r3
-AlchemyUncredited_080f9eea:
+AlchemyUncredited_clear_buffer_14:
 	.2byte	0x0000
-AlchemyUncreditedEnd_080f9eea:
+AlchemyUncreditedEnd_clear_buffer_14:
 	.4byte Sound_ClockLengths
 	.4byte 0x03007ff0
 	.4byte 0x68736d53
@@ -873,9 +873,9 @@ MusicTrack_Stop:
 	pop	{r4, r5, r6}
 	pop	{r0}
 	bx	r0
-AlchemyUncredited_080f9f36:
+AlchemyUncredited_clear_buffer_15:
 	.2byte	0x0000
-AlchemyUncreditedEnd_080f9f36:
+AlchemyUncreditedEnd_clear_buffer_15:
 	.4byte	0x03007ff0
 .syntax unified
 	.thumb
@@ -1186,9 +1186,9 @@ MusicTrack_HandleNote:
 	mov	fp, r3
 	pop	{r0}
 	bx	r0
-AlchemyUncredited_080fa162:
+AlchemyUncredited_clear_buffer_16:
 	.2byte	0x0000
-AlchemyUncreditedEnd_080fa162:
+AlchemyUncreditedEnd_clear_buffer_16:
 	.4byte	0x03007ff0
 	.4byte	Sound_ClockLengths
 .syntax unified
@@ -1253,9 +1253,9 @@ MusicTrack_ClearModulationState:
 	orrs	r3, r2
 	strb	r3, [r1, #0]
 	bx	lr
-AlchemyUncredited_080fa1c6:
+AlchemyUncredited_clear_buffer_17:
 	.2byte	0x0000
-AlchemyUncreditedEnd_080fa1c6:
+AlchemyUncreditedEnd_clear_buffer_17:
 .syntax unified
 	.section .text.command_byte_reader,"ax",%progbits
 	.thumb
@@ -1283,10 +1283,10 @@ MusicTrack_SetLfoSpeedFromCommand:
 	bl	MusicTrack_ClearModulationState
 .Llfo_speed_done:
 	bx	ip
-AlchemyUncredited_080fa1e6:
+AlchemyUncredited_clear_buffer_18:
 	.balign 4, 0
 
-AlchemyUncreditedEnd_080fa1e6:
+AlchemyUncreditedEnd_clear_buffer_18:
 	.global MusicTrack_SetModulationFromCommand
 	.thumb_func
 MusicTrack_SetModulationFromCommand:
@@ -1298,6 +1298,6 @@ MusicTrack_SetModulationFromCommand:
 	bl	MusicTrack_ClearModulationState
 .Lmodulation_done:
 	bx	ip
-AlchemyUncredited_080fa1fa:
+AlchemyUncredited_clear_buffer_19:
 	.2byte 0
-AlchemyUncreditedEnd_080fa1fa:
+AlchemyUncreditedEnd_clear_buffer_19:

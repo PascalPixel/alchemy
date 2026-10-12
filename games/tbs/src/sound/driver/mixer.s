@@ -10,9 +10,9 @@ SoundDriver_Mixer:
 	beq .Lclear
 	add	r1, pc, #4
 	bx	r1
-AlchemyUncredited_080f967e:
+AlchemyUncredited_mixer_1:
 	.arm
-AlchemyUncreditedEnd_080f967e:
+AlchemyUncreditedEnd_mixer_1:
 	cmp	r4, #2
 	addeq	r7, r0, #848
 	addne	r7, r5, r8
@@ -82,9 +82,9 @@ AlchemyUncreditedEnd_080f967e:
 	cmp	r1, r0
 	bcc .Lchannel_status
 	b .Lexit
-AlchemyUncredited_080f9726:
+AlchemyUncredited_mixer_2:
 	.2byte	0x0000
-AlchemyUncreditedEnd_080f9726:
+AlchemyUncreditedEnd_mixer_2:
 	.4byte	0x04000006
 .Lchannel_status:
 	ldrb	r6, [r4, #0]
@@ -208,9 +208,9 @@ AlchemyUncreditedEnd_080f9726:
 	ldr	r3, [r4, #40]
 	add	r0, pc, #4
 	bx	r0
-AlchemyUncredited_080f980a:
+AlchemyUncredited_mixer_3:
 	.arm
-AlchemyUncreditedEnd_080f980a:
+AlchemyUncreditedEnd_mixer_3:
 	str	r8, [sp]
 	ldrb	sl, [r4, #10]
 	ldrb	fp, [r4, #11]

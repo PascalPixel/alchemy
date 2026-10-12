@@ -20,10 +20,10 @@ Render_DecodeFrame:
 	ldm	r0!, {r3}
 	add	r2, r2, r2, lsl #2
 	add	pc, pc, r2, lsl #2
-AlchemyUncredited_08009bd4:
+AlchemyUncredited_render_decode_1:
 	nop
 .Lcopy_checked:
-AlchemyUncreditedEnd_08009bd4:
+AlchemyUncreditedEnd_render_decode_1:
 	ands	r2, r4, r3
 	bxeq	lr
 	subs	ip, r2, #223

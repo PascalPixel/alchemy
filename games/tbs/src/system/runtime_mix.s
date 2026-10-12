@@ -116,10 +116,10 @@ IwramSoundMixEntry:
 	lsrs	r1, r0, #4
 	add	r1, pc, #8
 	bx	r1
-AlchemyUncredited_08000e86:
+AlchemyUncredited_runtime_mix_1:
 	.2byte	0x0000
 .L_audio_workspace_pointer:
-AlchemyUncreditedEnd_08000e86:
+AlchemyUncreditedEnd_runtime_mix_1:
 	.4byte IwramSoundMixWorkspace
 
 	.global IwramSoundMixArm
@@ -198,56 +198,56 @@ IwramSoundMixArm:
 .L_audio_mix_four:
 	ldm	r5, {r0, r1, sl, lr}
 	mul	r9, r7, ip
-AlchemyUncredited_08000f98:
+AlchemyUncredited_runtime_mix_2:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_08000f98:
+AlchemyUncreditedEnd_runtime_mix_2:
 	mlane	r0, fp, r9, r0
-AlchemyUncredited_08000fa4:
+AlchemyUncredited_runtime_mix_3:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_08000fa4:
+AlchemyUncreditedEnd_runtime_mix_3:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
-AlchemyUncredited_08000fbc:
+AlchemyUncredited_runtime_mix_4:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_08000fbc:
+AlchemyUncreditedEnd_runtime_mix_4:
 	mlane	r1, fp, r9, r1
-AlchemyUncredited_08000fc8:
+AlchemyUncredited_runtime_mix_5:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_08000fc8:
+AlchemyUncreditedEnd_runtime_mix_5:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
-AlchemyUncredited_08000fe0:
+AlchemyUncredited_runtime_mix_6:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_08000fe0:
+AlchemyUncreditedEnd_runtime_mix_6:
 	mlane	sl, fp, r9, sl
-AlchemyUncredited_08000fec:
+AlchemyUncredited_runtime_mix_7:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_08000fec:
+AlchemyUncreditedEnd_runtime_mix_7:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
-AlchemyUncredited_08001004:
+AlchemyUncredited_runtime_mix_8:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_08001004:
+AlchemyUncreditedEnd_runtime_mix_8:
 	mlane	lr, fp, r9, lr
-AlchemyUncredited_08001010:
+AlchemyUncredited_runtime_mix_9:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_08001010:
+AlchemyUncreditedEnd_runtime_mix_9:
 	bic	r7, r7, r2, asr #1
 	stmia	r5!, {r0, r1, sl, lr}
 	subs	r8, r8, #4, 0

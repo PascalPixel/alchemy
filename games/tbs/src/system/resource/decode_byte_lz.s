@@ -100,9 +100,9 @@ Resource_DecodeByteLzArm:
 	beq	.Lbyte_match_long
 	rsb	ip, ip, #15
 	add	pc, pc, ip, lsl #3
-AlchemyUncredited_08001c70:
+AlchemyUncredited_decode_byte_lz_1:
 	nop
-AlchemyUncreditedEnd_08001c70:
+AlchemyUncreditedEnd_decode_byte_lz_1:
 	ldrb	r3, [r4], #1
 	strb	r3, [r1], #1
 	ldrb	r3, [r4], #1
@@ -147,10 +147,10 @@ AlchemyUncreditedEnd_08001c70:
 	and	ip, r3, #15
 	rsb	ip, ip, #15
 	add	pc, pc, ip, lsl #3
-AlchemyUncredited_08001d20:
+AlchemyUncredited_decode_byte_lz_2:
 	nop
 .Lbyte_match_block:
-AlchemyUncreditedEnd_08001d20:
+AlchemyUncreditedEnd_decode_byte_lz_2:
 	ldrb	r2, [r4], #1
 	strb	r2, [r1], #1
 	ldrb	r2, [r4], #1

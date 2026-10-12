@@ -2457,7 +2457,7 @@
     "*/games/tla/src/graphics/summon/green_haired_maiden.o"(.rodata)
     "*/games/tla/src/graphics/summon/sea_serpent.o"(.rodata)
     "*/recon/tla/es/rom.o"(.rom.0085e73b)
-    "*/games/tla/src/graphics/summon/pink_cloud.o"(.rodata)
+    "*/games/tla/src/graphics/summon/pink_petals.o"(.rodata)
     "*/recon/tla/es/rom.o"(.rom.0085eeb6)
     "*/games/tla/src/graphics/summon/crimson_beast.o"(.rodata)
     "*/recon/tla/es/rom.o"(.rom.008604fb)

@@ -2455,7 +2455,7 @@ SECTIONS
     "*/games/tla/src/graphics/summon/green_haired_maiden.o"(.rodata)
     "*/games/tla/src/graphics/summon/sea_serpent.o"(.rodata)
     "*/recon/tla/ja/rom.o"(.rom.0085e32f)
-    "*/games/tla/src/graphics/summon/pink_cloud.o"(.rodata)
+    "*/games/tla/src/graphics/summon/pink_petals.o"(.rodata)
     "*/recon/tla/ja/rom.o"(.rom.0085eaaa)
     "*/games/tla/src/graphics/summon/crimson_beast.o"(.rodata)
     "*/recon/tla/ja/rom.o"(.rom.008600ef)

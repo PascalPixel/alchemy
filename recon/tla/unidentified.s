@@ -888,43 +888,6 @@ Data_08129828:
 	.global Data_08129830
 Data_08129830:
 	.incbin "baserom.gba", 0x00129830, 0x0000013c
-	.section .unidentified.0812a16c,"a"
-	.global Data_0812a16c
-Data_0812a16c:
-	.incbin "baserom.gba", 0x0012a16c, 0x00000008
-	.global Data_0812a174
-Data_0812a174:
-	.incbin "baserom.gba", 0x0012a174, 0x00000002
-	.global Data_0812a176
-Data_0812a176:
-	.incbin "baserom.gba", 0x0012a176, 0x00002956
-	.global Data_0812cacc
-Data_0812cacc:
-	.incbin "baserom.gba", 0x0012cacc, 0x00000004
-	.global Resource_SlotAssignments
-Resource_SlotAssignments:
-	.incbin "baserom.gba", 0x0012cad0, 0x000000e0
-	.global Data_0812cbb0
-Data_0812cbb0:
-	.incbin "baserom.gba", 0x0012cbb0, 0x00000028
-	.global Data_0812cbd8
-Data_0812cbd8:
-	.incbin "baserom.gba", 0x0012cbd8, 0x00000028
-	.global Data_0812cc00
-Data_0812cc00:
-	.incbin "baserom.gba", 0x0012cc00, 0x00000028
-	.global Data_0812cc28
-Data_0812cc28:
-	.incbin "baserom.gba", 0x0012cc28, 0x00000034
-	.global Data_0812cc5c
-Data_0812cc5c:
-	.incbin "baserom.gba", 0x0012cc5c, 0x00000008
-	.global Data_0812cc64
-Data_0812cc64:
-	.incbin "baserom.gba", 0x0012cc64, 0x00000008
-	.global Data_0812cc6c
-Data_0812cc6c:
-	.incbin "baserom.gba", 0x0012cc6c, 0x00000008
 	.section .unidentified.0812ce54,"a"
 	.global Data_0812ce54
 Data_0812ce54:

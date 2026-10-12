@@ -4396,11 +4396,6 @@ Data_08128868:
 	.incbin "baserom.gba", 0x00128864, 0x00000f5c
 	.section .rom.00129824, "ax"
 	.incbin "baserom.gba", 0x00129824, 0x00000144
-	.section .rom.0012a168, "ax"
-	.incbin "baserom.gba", 0x0012a168, 0x00002964
-	.global Resource_SlotAssignments
-Resource_SlotAssignments:
-	.incbin "baserom.gba", 0x0012cacc, 0x000001a4
 	.section .rom.0012ce50, "ax"
 	.incbin "baserom.gba", 0x0012ce50, 0x00000028
 	.section .rom.001380ac, "ax"

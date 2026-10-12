@@ -17,7 +17,6 @@ tbs	FarCall_WindowTable,UiWork_InitializeWithResourceCountersFar	far-call bank t
 tbs	IwramCodeRecordsEnd,SoundDriver_EnterMixer	end of the IWRAM code records, which is where the mixer entry starts
 tla	AudioCommand_InvokeSlot35,Func_081c2328	⚓️ scaffold, pending
 tla	AudioEngine_RunMixerFar,Resource_FarCall010	⚓️ scaffold, pending
-tla	Audio_AreaCueTable,Scene_CueRuleTable	⚓️ scaffold, pending
 tla	BattleFx_DecodeFrame,BattleFx_DecodeFrameCode	⚓️ scaffold, pending
 tla	BattleFx_PatchTemplate,BattleFx_PatchTemplateCode	⚓️ scaffold, pending
 tla	BattleUnit_Recalculate,UnitCalcFar	⚓️ scaffold, pending
@@ -41,7 +40,6 @@ tla	Data_0813ae14,Func_0813ae14	⚓️ scaffold, pending
 tla	Data_0813b2ec,Func_0813b2ec	⚓️ scaffold, pending
 tla	Data_0813b7a0,Func_0813b7a0	⚓️ scaffold, pending
 tla	Data_0813b9a0,Func_0813b9a0	⚓️ scaffold, pending
-tla	Func_0200061c,Func_02000644	⚓️ scaffold, pending
 tla	Func_0802b7e0,GetWorldMapCollision	⚓️ scaffold, pending
 tla	Func_080c8000,Resource_FarCall006	⚓️ scaffold, pending
 tla	Func_080ccd78,SceneEvent_FindActiveRecord	⚓️ scaffold, pending

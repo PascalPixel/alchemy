@@ -2916,10 +2916,6 @@ Event_SelectSpawnObjectMode:
 	.thumb_func
 Event_SpawnObjectTable:
 	.incbin "baserom.gba", 0x000d36e8, 0x000002e4
-	.global Event_ReadSpawnCoordinates
-	.type Event_ReadSpawnCoordinates, %function
-	.thumb_func
-Event_ReadSpawnCoordinates:
 	.global Func_080ca9cc
 	.type Func_080ca9cc, %function
 	.thumb_func
@@ -3109,10 +3105,6 @@ Func_080d0c50:
 	.type BattleFx_ApplyColorToTargetBuffer, %function
 	.thumb_func
 BattleFx_ApplyColorToTargetBuffer:
-	.global Func_080ccec8
-	.type Func_080ccec8, %function
-	.thumb_func
-Func_080ccec8:
 	.incbin "baserom.gba", 0x000da70c, 0x00000020
 	.section .rom.000da72c, "ax"
 	.global BattleFx_ApplyColorToSourceBuffer

@@ -4,6 +4,7 @@
 #include "unit/field/common/korima/palette.h"
 #include "unit/battle/effect/object.h"
 #include "unit/game/character/chara.h"
+#include "unit/game/character/chara5.h"
 #include "unit/game/character/chara6.h"
 #include "unit/game/character/chara7.h"
 #include "unit/game/character/chara8.h"

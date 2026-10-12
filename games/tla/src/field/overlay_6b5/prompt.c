@@ -54,6 +54,7 @@ s32 Func_02000e4c(s32 id)
         if (choice < 0) {
             choice = 0;
         }
+        /* FAKEMATCH: the listing reads the pressed keys once for each test; InputState declares only repeat volatile, and a plain read is loaded once (differ 19). */
         if (((volatile struct InputState *)&gInput)->pressed & 1) {
             break;
         }

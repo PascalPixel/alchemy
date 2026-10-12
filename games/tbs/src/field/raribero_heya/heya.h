@@ -5,6 +5,6 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-extern struct SceneEvent	 gRariberoHeyaEvents9a7[];
+extern struct SceneEvent gRariberoHeyaEvents9a7[];
 
 #endif

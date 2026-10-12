@@ -44,8 +44,8 @@ union SceneField
 	u8	bytes[2];
 } __attribute__((packed, aligned(2)));
 
-extern struct SceneEvent	 gValeHouseEvents[];
-extern struct SceneEvent	 gValeHouseEventsAfterLeaving[];
-extern struct SceneEvent	 gValeHouseReturnEvents[];
+extern struct SceneEvent gValeHouseEvents[];
+extern struct SceneEvent gValeHouseEventsAfterLeaving[];
+extern struct SceneEvent gValeHouseReturnEvents[];
 
 #endif

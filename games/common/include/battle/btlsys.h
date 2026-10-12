@@ -8,7 +8,7 @@
 #include "farcall.h"
 #endif
 
-void		   BattleUnit_Recalculate(s32 unit_id);
+void BattleUnit_Recalculate(s32 unit_id);
 #if GAME_TLA
 struct BtlAct *BattleAction_GetDirect(s32 action_id);
 #endif

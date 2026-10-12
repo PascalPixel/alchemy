@@ -26,7 +26,7 @@ LAYOUT_OFFSET_GUARD(InputState_RepeatTimer, struct InputState, repeat_timer, 32)
 
 extern struct InputState gInput;
 #if GAME_TLA
-void					 Input_UpdateKeyRepeatAndDirection(void);
+void Input_UpdateKeyRepeatAndDirection(void);
 #endif
 
 #endif

@@ -88,8 +88,8 @@ void SuharaMura_AnimateCells0(void)
 {
 	struct EventWork *work = gEventWork;
 	s32				  no = work->touched_trigger;
-	u16 x = SuharaMura_CellAnimationOrigins[no][0];
-	u16 y = SuharaMura_CellAnimationOrigins[no][1];
+	u16				  x = SuharaMura_CellAnimationOrigins[no][0];
+	u16				  y = SuharaMura_CellAnimationOrigins[no][1];
 
 	Event_PlayCue(158);
 	Map_AnimateCells(SuharaMura_CellSteps0, x, y);
@@ -102,8 +102,8 @@ void SuharaMura_AnimateCells1(void)
 {
 	struct EventWork *work = gEventWork;
 	s32				  no = work->touched_trigger;
-	u16 x = SuharaMura_CellAnimationOrigins[no][0];
-	u16 y = SuharaMura_CellAnimationOrigins[no][1];
+	u16				  x = SuharaMura_CellAnimationOrigins[no][0];
+	u16				  y = SuharaMura_CellAnimationOrigins[no][1];
 
 	Event_PlayCue(158);
 	Map_AnimateCells(SuharaMura_CellSteps1, x, y);

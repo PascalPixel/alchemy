@@ -28,7 +28,6 @@
 #include "text/msg_ids.h"
 #include "field_scene.h"
 
-
 u8 *KorimaMagari_GetEntrances(void)
 {
 	return gKorimaMagariEntrances;
@@ -397,8 +396,8 @@ s32 KorimaMagari_SetupBoard(void)
 	Engine_MapCopyCellAttributes(32, 0, 32, 32, 0, 32);
 	if (Engine_GameFlagIsSet(0x109) == 0)
 	{
-		Dma_Set(KorimaMagari_DefaultRecords, gKorimaMagariRecords,
-			DMA_ENABLE32 | DMA_32BIT | 0x12, REG_DMA3);
+		Dma_Set(KorimaMagari_DefaultRecords, gKorimaMagariRecords, DMA_ENABLE32 | DMA_32BIT | 0x12,
+			REG_DMA3);
 		*gKorimaMagariReturned = 0;
 		*(*(u16 **)&gKorimaMagariLayout) = 1;
 	}
@@ -607,11 +606,11 @@ u32 KorimaMagari_DefaultRecords[] = {
 	0, 0,
 };
 
-u8 KorimaMagari_PushAnimations[] = { 2, 2, 3, 3 };
+u8 KorimaMagari_PushAnimations[] = {2, 2, 3, 3};
 
-s8 KorimaMagari_PushStepX[] = { 8, 0, -8, 0 };
+s8 KorimaMagari_PushStepX[] = {8, 0, -8, 0};
 
-s8 KorimaMagari_PushStepZ[] = { 0, 8, 0, -8 };
+s8 KorimaMagari_PushStepZ[] = {0, 8, 0, -8};
 
 struct SceneEntrance gKorimaMagariEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 407, 0, 276, FACING_WEST, 0, -1, -1, -1, -1, 0 },

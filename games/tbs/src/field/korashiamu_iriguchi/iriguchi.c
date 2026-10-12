@@ -349,7 +349,7 @@ void KorashiamuIriguchi_AskReadyForFinals(void)
 
 void Scene_RunBranchingActorPresentation(void)
 {
-	s32	 record;
+	s32 record;
 
 	if (Engine_GameFlagIsSet(0x962) == 0)
 	{

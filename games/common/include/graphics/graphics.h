@@ -33,7 +33,7 @@ extern u8		  *UiIcon_MiscIconPointers[];
 extern u8		  *UiIcon_PsynergyIconPointers[];
 extern u8		  *UiIcon_PsynergyIconPointersEnd[];
 #if GAME_TLA
-void			   Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse);
+void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse);
 #endif
 #ifndef OWN_BattleLayout_HighlightPartyPanels
 #if GAME_TLA
@@ -90,22 +90,22 @@ struct UiWindow;
 struct Vec2;
 struct WorkspaceWork;
 
-extern u8		   ColorBuffer_BackupAndBrightenCodeSize[];
-extern u8		   ColorBuffer_BackupAndBrightenPartialCodeSize[];
-extern u8		   ColorBuffer_BackupAndDarkenCodeSize[];
-extern u8		   ColorBuffer_BackupAndDarkenPartialCodeSize[];
-extern u8		   ColorBuffer_BackupAndHalveCodeSize[];
-extern u8		   ColorBuffer_BackupAndHalveNonzeroCodeSize[];
-extern u8		   ColorBuffer_BackupAndScaleNonzeroThreeQuartersCodeSize[];
-extern u8		   ColorBuffer_BackupAndScaleThreeQuartersCodeSize[];
-extern const u8	   ColorBuffer_BrightenKernel[];
-extern const u8	   ColorBuffer_BrightenPartialKernel[];
-extern const u8	   ColorBuffer_DarkenKernel[];
-extern const u8	   ColorBuffer_DarkenPartialKernel[];
-extern const u8	   ColorBuffer_HalveKernel[];
-extern const u8	   ColorBuffer_HalveNonzeroKernel[];
-extern const u8	   ColorBuffer_ScaleNonzeroThreeQuartersKernel[];
-extern const u8	   ColorBuffer_ScaleThreeQuartersKernel[];
+extern u8		ColorBuffer_BackupAndBrightenCodeSize[];
+extern u8		ColorBuffer_BackupAndBrightenPartialCodeSize[];
+extern u8		ColorBuffer_BackupAndDarkenCodeSize[];
+extern u8		ColorBuffer_BackupAndDarkenPartialCodeSize[];
+extern u8		ColorBuffer_BackupAndHalveCodeSize[];
+extern u8		ColorBuffer_BackupAndHalveNonzeroCodeSize[];
+extern u8		ColorBuffer_BackupAndScaleNonzeroThreeQuartersCodeSize[];
+extern u8		ColorBuffer_BackupAndScaleThreeQuartersCodeSize[];
+extern const u8 ColorBuffer_BrightenKernel[];
+extern const u8 ColorBuffer_BrightenPartialKernel[];
+extern const u8 ColorBuffer_DarkenKernel[];
+extern const u8 ColorBuffer_DarkenPartialKernel[];
+extern const u8 ColorBuffer_HalveKernel[];
+extern const u8 ColorBuffer_HalveNonzeroKernel[];
+extern const u8 ColorBuffer_ScaleNonzeroThreeQuartersKernel[];
+extern const u8 ColorBuffer_ScaleThreeQuartersKernel[];
 #ifndef OWN_gRenderSlotHeads
 extern u8 gRenderSlotHeads[];
 #endif

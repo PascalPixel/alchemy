@@ -3791,7 +3791,8 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 m
 		s32 mark;
 
 		font = NULL;
-		if (((struct BattleDisplayWork *)gWindowWork[HEAP_SLOT_BATTLE_DISPLAY - HEAP_SLOT_WINDOW])->window
+		if (((struct BattleDisplayWork *)gWindowWork[HEAP_SLOT_BATTLE_DISPLAY - HEAP_SLOT_WINDOW])
+				->window
 			== window)
 		{
 			font = Resource_GetTableEntry((s32)&ResourceId_SmallFont);
@@ -3805,7 +3806,8 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 m
 		if (character == ' ')
 			goto done;
 #else
-		if (((struct BattleDisplayWork *)gWindowWork[HEAP_SLOT_BATTLE_DISPLAY - HEAP_SLOT_WINDOW])->window
+		if (((struct BattleDisplayWork *)gWindowWork[HEAP_SLOT_BATTLE_DISPLAY - HEAP_SLOT_WINDOW])
+				->window
 			== window)
 		{
 			Resource_GetTableEntry((s32)&ResourceId_SmallFont);
@@ -3841,7 +3843,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 m
 	{
 		u32					 tiles[32];
 		struct RenderOutput *output;
-		struct CursorSprite	*sprite;
+		struct CursorSprite *sprite;
 		s32					 index;
 
 		output = RenderOutput_AcquireFree();
@@ -6939,7 +6941,7 @@ void Debug_SelectAbilityPair(void)
 	s32						 slot;
 	s32						 y;
 	s32						 cost;
-	s32						  ability;
+	s32						 ability;
 
 	cursor = NULL;
 	redraw = 1;
@@ -9166,7 +9168,7 @@ s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y, s32 va
 	}
 }
 
-s32	 __divsi3(s32, s32);
+s32 __divsi3(s32, s32);
 
 void PtyStDraw(s32 flags)
 {
@@ -10169,12 +10171,10 @@ void StatusMenu_DrawCharacterSummary(s32 win, struct SaveSummary *rec)
 		UiText_DrawNumberInWindow(rec->coins, 6, win, 24, y);
 		UiText_DrawCharacterAtOffset((s32)MsgCoins, win, 72, 32);
 		UiText_DrawCharacterAtOffset((s32)MsgStatusLabel, win, 0, 48);
-		UiText_DrawStringInWindow(
-			(s32)Text_FormatPlayTime(rec->play_time, (u8 *)buf), win, 48, 48);
+		UiText_DrawStringInWindow((s32)Text_FormatPlayTime(rec->play_time, (u8 *)buf), win, 48, 48);
 #else
 		UiText_DrawCharacterAtOffset((s32)MsgStatusLabel, win, 0, 32);
-		UiText_DrawStringInWindow(
-			(s32)Text_FormatPlayTime(rec->play_time, (u8 *)buf), win, 48, 40);
+		UiText_DrawStringInWindow((s32)Text_FormatPlayTime(rec->play_time, (u8 *)buf), win, 48, 40);
 		y = 48;
 		UiText_DrawNumberInWindow(rec->coins, 6, win, 0, y);
 #if defined(TBS_EDITION_FR) || defined(TLA_EDITION_FR)
@@ -12855,28 +12855,28 @@ s32 Ui_CreateOutputFromResourceSlot(struct RenderInput *input, s32 x, s32 y, s32
 struct RenderInput *DjinnMenu_ShowChangePreview(
 	struct RenderInput *win, s32 owner, s32 code, s32 page, s32 *pageCount)
 {
-	struct BtlUnit			*unit;
-	struct BtlUnit			*snap;
-	struct BtlAct			*info;
-	s16						*buf;
-	s32						 oldHp;
-	s32						 oldPp;
-	s32						 oldAtk;
-	s32						 oldDef;
-	s32						 oldAgi;
-	u16						*list;
-	s32						 total;
-	s32						 n;
-	s32						 marks;
-	s32						 rows;
-	s32						 col;
-	s32						 row;
-	s32						 pages;
-	s32						 gained;
-	s32						 lost;
-	s32						 tile;
-	s32						 val;
-	s32						 i;
+	struct BtlUnit *unit;
+	struct BtlUnit *snap;
+	struct BtlAct  *info;
+	s16			   *buf;
+	s32				oldHp;
+	s32				oldPp;
+	s32				oldAtk;
+	s32				oldDef;
+	s32				oldAgi;
+	u16			   *list;
+	s32				total;
+	s32				n;
+	s32				marks;
+	s32				rows;
+	s32				col;
+	s32				row;
+	s32				pages;
+	s32				gained;
+	s32				lost;
+	s32				tile;
+	s32				val;
+	s32				i;
 
 	void DjinnMenu_DrawStatArrow(s32 x, s32 y, s32 rising)
 	{
@@ -12935,7 +12935,8 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 		Djinn_ActivateFar(owner, col, row);
 	UnitCalcFar(owner);
 
-	total = DjinnMenu_ListChangedDjinn(snap->action_slots, unit->action_slots, list, &gained, &lost);
+	total =
+		DjinnMenu_ListChangedDjinn(snap->action_slots, unit->action_slots, list, &gained, &lost);
 	pages = __divsi3(total - 1, 5) + 1;
 	*pageCount = pages;
 	if (page * 5 - 5 >= total)
@@ -14004,45 +14005,45 @@ extern const u8 DjinnMenu_ElementYOffsets[4];
 
 s32 Battle_SelectAbility(s32 owner, s32 unused)
 {
-	struct CursorSprite			slot;
-	u16							buf[64];
-	struct UiRenderWork		   *ctx;
-	struct UiWindow			   *detail_win;
-	s32							prev_row;
-	s32							res;
-	u32						   *tbl;
-	s32							cnt;
-	s32							prev_page;
-	struct UiWindow			   *msg_win;
-	s32							mask;
-	s32							saved_row;
-	s32							sub_sel;
-	s32							redraw;
-	s32							is_used;
-	s32							sub_cnt;
-	struct MenuCell			   *menu;
-	struct BtlUnit			   *unit;
-	struct DjinnRecoveryList   *list;
-	struct UiWindow			   *list_win;
-	struct UiWindow			   *icon_win;
-	struct PartyStatusWindow   *cursor;
-	u32						   *pos;
-	u32							cur;
-	u32							blink;
-	s32							page;
-	s32							row;
-	u32							code;
-	s32							pages;
-	s32							pal;
-	struct MenuPoint			cursor_pos;
-	s32							trig;
-	s32							rep;
-	s32							opts;
-	s32							x;
-	s32							y;
-	s32							i;
-	s32							j;
-	struct CursorSprite		   *cur_spr;
+	struct CursorSprite		  slot;
+	u16						  buf[64];
+	struct UiRenderWork		 *ctx;
+	struct UiWindow			 *detail_win;
+	s32						  prev_row;
+	s32						  res;
+	u32						 *tbl;
+	s32						  cnt;
+	s32						  prev_page;
+	struct UiWindow			 *msg_win;
+	s32						  mask;
+	s32						  saved_row;
+	s32						  sub_sel;
+	s32						  redraw;
+	s32						  is_used;
+	s32						  sub_cnt;
+	struct MenuCell			 *menu;
+	struct BtlUnit			 *unit;
+	struct DjinnRecoveryList *list;
+	struct UiWindow			 *list_win;
+	struct UiWindow			 *icon_win;
+	struct PartyStatusWindow *cursor;
+	u32						 *pos;
+	u32						  cur;
+	u32						  blink;
+	s32						  page;
+	s32						  row;
+	u32						  code;
+	s32						  pages;
+	s32						  pal;
+	struct MenuPoint		  cursor_pos;
+	s32						  trig;
+	s32						  rep;
+	s32						  opts;
+	s32						  x;
+	s32						  y;
+	s32						  i;
+	s32						  j;
+	struct CursorSprite		 *cur_spr;
 
 	ctx = UI_WORK;
 	detail_win = 0;
@@ -14077,7 +14078,9 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 			{
 				u32 v;
 				s32 k;
-				list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar((u32)owner > 7 ? 1 : 0))->list;
+				list =
+					&((struct DjinnRecoveryTable *)Trade_GetOfferStateFar((u32)owner > 7 ? 1 : 0))
+						 ->list;
 				for (k = 0; k < list->count; k++)
 				{
 					if (list->entries[k].unit_id == owner && list->entries[k].element == x
@@ -16547,11 +16550,11 @@ void UpdateLinkSessionCountdown(void)
 	s32							current;
 	s32							difference;
 	s32							step;
-	s32							  newOffset;
-	s32							  timer;
-	s32							  nextTimer;
-	s32							  seconds;
-	s32							  i;
+	s32							newOffset;
+	s32							timer;
+	s32							nextTimer;
+	s32							seconds;
+	s32							i;
 
 	if (state != 0)
 	{
@@ -16739,27 +16742,27 @@ extern volatile u16 gLinkStatus;
 s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 count)
 {
 	extern struct LinkSignature gLinkPeerSignatures[];
-	struct LinkRoundState	  *state;
-	struct BtlWork			  *link;
-	struct BtlWork			  *session;
-	u16						  *peer;
-	u16						  *sync;
-	struct BattleActionRecord *ent;
-	struct BtlUnit			  *actor;
-	struct UiWindow			  *win;
-	struct MenuSprite		  *slot;
-	u16						   hdr[2];
-	s32						   aux;
-	s32						   actorId;
-	s32						   mode;
-	s32						   kind;
-	s32						   param;
-	s32						   res1024;
-	s32						   res512;
-	s32						   miss;
-	s32						   i;
-	s32						   k;
-	s32						   order;
+	struct LinkRoundState	   *state;
+	struct BtlWork			   *link;
+	struct BtlWork			   *session;
+	u16						   *peer;
+	u16						   *sync;
+	struct BattleActionRecord  *ent;
+	struct BtlUnit			   *actor;
+	struct UiWindow			   *win;
+	struct MenuSprite		   *slot;
+	u16							hdr[2];
+	s32							aux;
+	s32							actorId;
+	s32							mode;
+	s32							kind;
+	s32							param;
+	s32							res1024;
+	s32							res512;
+	s32							miss;
+	s32							i;
+	s32							k;
+	s32							order;
 
 	void DrawPartyPanels(void)
 	{
@@ -17600,10 +17603,10 @@ void AffineEffect_UpdateFrame(void)
 	s32						  matrix;
 	s32						  edge;
 
-	s32	 y;
-	u32	 end;
-	u32	 i;
-	u16 *line;
+	s32							   y;
+	u32							   end;
+	u32							   i;
+	u16							  *line;
 	struct DisplayTransitionState *buffers;
 
 	work = gMenuSelectWork;

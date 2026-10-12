@@ -88,10 +88,10 @@ struct WorldMapOam
 	u16 size : 2;
 };
 
-extern struct PairWork		*gEffectWork;
+extern struct PairWork *gEffectWork;
 
-s32				   Math_RemainderUnsigned();
-void			   Engine_ActorSetSpriteFlags();
+s32	 Math_RemainderUnsigned();
+void Engine_ActorSetSpriteFlags();
 
 LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
 

@@ -791,7 +791,7 @@ s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)
 {
 	const struct SceneAreaNameRule *p = Scene_AreaNameRules;
 	s32								name = 0;
-	s32 grp = BattleFx_GetResourceGroup(scene);
+	s32								grp = BattleFx_GetResourceGroup(scene);
 
 	while (p->id != -1)
 	{
@@ -1013,8 +1013,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
 		object = ObjectTable_Get(index);
 		if (object == 0)
 		{
-			object =
-				Object_CreateFar(character, entry->x, entry->y, entry->z);
+			object = Object_CreateFar(character, entry->x, entry->y, entry->z);
 			if (entry->flags & 1)
 			{
 				previous = ObjectTable_Get(index - 1);
@@ -1039,8 +1038,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
 		if (object)
 		{
 			ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
-			if (object->animation_kind == 1
-				&& (sprite = object->animation) != 0)
+			if (object->animation_kind == 1 && (sprite = object->animation) != 0)
 				sprite->last_no = __umodsi3(Random16(), 30);
 			object->angle = entry->facing;
 			object->unknown_59 = 1;
@@ -2882,7 +2880,7 @@ s32 BattleFx_FindDescriptorWithOverride(s32 id)
 //--------------------------------------------------------------------------
 s32 BattleFx_RunDescriptorAction(s32 id)
 {
-	extern const u8		   ObjectMotion_StepAngleScript[];
+	extern const u8			   ObjectMotion_StepAngleScript[];
 	struct BattleEffectAction *place = (struct BattleEffectAction *)BattleAction_FindDescriptor(id);
 	s32						   ret = -1;
 	struct ObjectRuntime	  *obj = (struct ObjectRuntime *)Object_GetById(id);
@@ -6375,9 +6373,9 @@ void Object_EffectSpawnCallback(void)
 
 void BattleFx_StartFadeOverlay(void *object)
 {
-	u32			 *work;
-	u8			 *tiles;
-	volatile u32  fill;
+	u32			*work;
+	u8			*tiles;
+	volatile u32 fill;
 
 	work = Runtime_AllocateBlock(36, 28);
 	tiles = Runtime_AllocateHeapBlock(14, 0x400);
@@ -8086,8 +8084,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg, s32 unused)
 		{
 			WaitFrames(8);
 			if (extra != 0)
-				handle = UiText_OpenMessageWindowFar(
-					message, left, top + extra - 1, 18);
+				handle = UiText_OpenMessageWindowFar(message, left, top + extra - 1, 18);
 			else
 				handle = UiText_OpenMessageWindowFar(message, left, top, 2);
 		}
@@ -8096,11 +8093,10 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg, s32 unused)
 			s32 icon = BattleFx_GetResourceId(speaker);
 
 			if (extra != 0)
-				handle = UiText_OpenMessageWindowFar(
-					message, left, top + extra - 1, (icon << 16) | 17);
+				handle =
+					UiText_OpenMessageWindowFar(message, left, top + extra - 1, (icon << 16) | 17);
 			else
-				handle = UiText_OpenMessageWindowFar(
-					message, left, top, (icon << 16) | 1);
+				handle = UiText_OpenMessageWindowFar(message, left, top, (icon << 16) | 1);
 		}
 		if (win->mode != 0)
 			side = UiWindow_CreateWithSideObjectFar(speaker, 0, column, tail);
@@ -8119,9 +8115,9 @@ void BattleEv_RunWait(s32 action, s32 flag)
 {
 	s32					 masked_action;
 	struct EventRuntime *runtime = (struct EventRuntime *)gEventWork;
-	struct UiWindow *window = UiText_OpenMessageAtObject(action, flag);
-	s32 message_id;
-	u32 frames;
+	struct UiWindow		*window = UiText_OpenMessageAtObject(action, flag);
+	s32					 message_id;
+	u32					 frames;
 
 	frames = 0;
 	WaitFrames(1);
@@ -8459,8 +8455,7 @@ void Object_PlaceCurrentWithinCameraBounds(s32 arg0, s32 arg1)
 void BattleFx_CommitObjectPositionAndWait(void)
 {
 	Script_WaitForEventTimeoutFar(
-		((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))
-			->view_center);
+		((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))->view_center);
 	Battle_WaitMode0(2);
 }
 

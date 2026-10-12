@@ -258,7 +258,7 @@ void SceneState_ApplyValues123And11(void)
 
 s32 HaidiaBabi_RestoreEntryState(void)
 {
-	s32	 record;
+	s32 record;
 
 	if (gGameState.entrance == 19)
 	{

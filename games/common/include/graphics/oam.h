@@ -16,7 +16,7 @@ LAYOUT_OFFSET_GUARD(OamUsage_Limit, struct OamUsage, limit, 2);
 
 extern struct OamUsage gOamUsage;
 #if GAME_TLA
-void				   Render_BuildOamList(void *work);
+void Render_BuildOamList(void *work);
 #endif
 
 #endif

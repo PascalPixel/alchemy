@@ -673,8 +673,7 @@ void SceneActor_ResetStateAndSpan(struct Actor02000c0c *actor)
 
 void SceneEffect_UpdateDriftingParticle(struct SceneMotion *work)
 {
-	work->x += (work->timer << 12)
-			   + ((s16)((s32)(((u32)Engine_RandomNext() * 2) >> 16) - 1) << 15);
+	work->x += (work->timer << 12) + ((s16)((s32)(((u32)Engine_RandomNext() * 2) >> 16) - 1) << 15);
 	if (work->timer <= 3)
 	{
 		work->z += -(((u32)Engine_RandomNext() * 0x8000) >> 16) - 0x10000;

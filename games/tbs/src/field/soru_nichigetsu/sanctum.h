@@ -56,4 +56,3 @@ extern u16 SoruNichigetsu_Light4Timer;
 #include "types.h"
 
 #include "types.h"
-

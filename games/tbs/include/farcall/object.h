@@ -69,11 +69,12 @@ FAR_CALL(Object_LinkPairFar, Object_LinkPair, void, (s32 first_id, s32 second_id
 FAR_CALL(ObjectGroup_ConfigureChildValueFar, ObjectGroup_ConfigureChildValue, void,
 	(s32 object_id, s32 value))
 FAR_CALL(ObjectGroup_SetChildValueFar, ObjectGroup_SetChildValue, void,
-	(struct FieldActor *actor, s32 value))
+	(struct FieldActor * actor, s32 value))
 FAR_CALL(Object_SetTargetAndCallbackFar, Object_SetTargetAndCallback, void,
 	(u32 object_id, s32 target_id, const void *callback))
 FAR_CALL(Event_SetMessageIdFar, Event_SetMessageId, void, (s32 value))
-FAR_CALL(UiText_OpenMessageAtObjectFar, UiText_OpenMessageAtObject, struct UiWindow *, (s32 arg, s32 unused))
+FAR_CALL(UiText_OpenMessageAtObjectFar, UiText_OpenMessageAtObject, struct UiWindow *,
+	(s32 arg, s32 unused))
 FAR_CALL(BattleEv_RunWaitFar, BattleEv_RunWait, void, (s32 action, s32 flag))
 FAR_CALL(BattlePres_RunActionThenWaitIfModeZeroFar, BattlePres_RunActionThenWaitIfModeZero, void,
 	(s32 first, s32 second, s32 value))
@@ -149,8 +150,8 @@ FAR_CALL(BattleFx_ApplyColorToTargetBufferFar, BattleFx_ApplyColorToTargetBuffer
 FAR_CALL(BattleFx_ApplyColorToSourceBufferFar, BattleFx_ApplyColorToSourceBuffer, void,
 	(s32 mode, s32 half))
 FAR_SLOT(BattleFx_InterpolateBuffers)
-FAR_CALL(BattleFx_StartBufferInterpolationFar, BattleFx_StartBufferInterpolation, void,
-	(s32 frames))
+FAR_CALL(
+	BattleFx_StartBufferInterpolationFar, BattleFx_StartBufferInterpolation, void, (s32 frames))
 FAR_SLOT(Runtime_ScheduleCallbackAndReleaseBlock32B)
 FAR_SLOT(BattleFx_SetPrimaryBufferValue)
 FAR_CALL(Event_StartScreenTransitionFar, Event_StartScreenTransition, void, (void))
@@ -215,17 +216,17 @@ FAR_SLOT(BattleFx_GetPhaseResult)
 FAR_CALL(Audio_PlayCueFromEventWorkFar, Audio_PlayCueFromEventWork, void, (void))
 FAR_CALL(BattleFx_RunPageEffectForSlotFar, BattleFx_RunPageEffectForSlot, void,
 	(s32 slot, s32 elm, void *djinn))
-FAR_CALL(EffectSlot_UpdateFar, EffectSlot_Update, void, (struct EffectSlot *effect))
-FAR_CALL(BattleFx_HasReachedTargetFar, BattleFx_HasReachedTarget, u32, (struct EffectSlot *effect))
+FAR_CALL(EffectSlot_UpdateFar, EffectSlot_Update, void, (struct EffectSlot * effect))
+FAR_CALL(BattleFx_HasReachedTargetFar, BattleFx_HasReachedTarget, u32, (struct EffectSlot * effect))
 FAR_CALL(EffectSlot_SetPositionFar, EffectSlot_SetPosition, void,
-	(struct EffectSlot *effect, s32 x, s32 z))
+	(struct EffectSlot * effect, s32 x, s32 z))
 FAR_CALL(EffectSlot_SetObjectModeFar, EffectSlot_SetObjectMode, void,
-	(struct EffectSlot *effect, s32 mode))
+	(struct EffectSlot * effect, s32 mode))
 FAR_CALL(EffectSlot_SetCallbackFar, EffectSlot_SetCallback, void,
-	(struct EffectSlot *effect, EffectCallback callback))
+	(struct EffectSlot * effect, EffectCallback callback))
 FAR_CALL(EffectSlot_InitializeFar, EffectSlot_Initialize, void,
-	(struct EffectSlot *effect, s32 kind, s32 x, s32 z))
-FAR_CALL(BattleFx_ClearOwnedSlotFar, BattleFx_ClearOwnedSlot, void, (struct EffectSlot *slot))
+	(struct EffectSlot * effect, s32 kind, s32 x, s32 z))
+FAR_CALL(BattleFx_ClearOwnedSlotFar, BattleFx_ClearOwnedSlot, void, (struct EffectSlot * slot))
 FAR_CALL(Camera_WorldToScreenFar, Camera_WorldToScreen, void, (struct EffectVector * position))
 FAR_CALL(BattleFx_GetResourceIdFar, BattleFx_GetResourceId, s32, (u32 id))
 FAR_CALL(Event_ClearInvalidPackedValuesFar, Event_ClearInvalidPackedValues, void, (void))
@@ -256,8 +257,8 @@ FAR_CALL(ObjectMotion_SetActionCallbackFar, ObjectMotion_SetActionCallback, void
 	(struct ObjectRuntime * object, s32 kind))
 FAR_CALL(BattleFx_SetQueuedSoundAndPlayFar, BattleFx_SetQueuedSoundAndPlay, void, (s32 sound_id))
 FAR_CALL(BattleFx_PlayQueuedSoundFar, BattleFx_PlayQueuedSound, void, (void))
-FAR_CALL(Party_RemapCharacterIdIfEnabledFar, Party_RemapCharacterIdIfEnabled, s32,
-	(s32 arg0, s32 arg1))
+FAR_CALL(
+	Party_RemapCharacterIdIfEnabledFar, Party_RemapCharacterIdIfEnabled, s32, (s32 arg0, s32 arg1))
 #if EDITION_INTERNATIONAL && !defined(TBS_EDITION_EN)
 FAR_CALL(BattleFx_ClearRandomParticlesFar, BattleFx_ClearRandomParticles, void, (void))
 #endif

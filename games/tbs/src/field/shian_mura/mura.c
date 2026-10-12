@@ -142,8 +142,7 @@ s32 SceneActor_UpdateTracking(
 		return 1;
 	}
 
-	if (FixedPoint_Distance(&target->x, &actor->x) < distance_limit
-		|| force_tracking != 0)
+	if (FixedPoint_Distance(&target->x, &actor->x) < distance_limit || force_tracking != 0)
 	{
 		u16 angle = ArcTan2(target->z - actor->z, target->x - actor->x);
 		s32 prev = (angle - 0x1000) & 0xf000;
@@ -382,8 +381,8 @@ void SceneEffect_ActivateNearbyActor(void)
 void ShianMura_ActivateActorTwentyPlatform(void)
 {
 	struct FieldActor *record;
-	s32 v5;
-	s32 x;
+	s32				   v5;
+	s32				   x;
 
 	Engine_EventBegin();
 	Object_GetById(20)->priority_flags &= 253;

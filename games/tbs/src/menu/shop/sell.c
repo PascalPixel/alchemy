@@ -142,7 +142,10 @@ s32 Shop_Run(s32 row, s32 keeper_id)
 	if (row == 18)
 		shop->warrior_shop = 1;
 	shop->keeper_resource =
-		((struct AnimationObject *)((struct ObjectRuntime *)Object_GetByIdFar(keeper_id))->animation)->entries[0]->anim_id;
+		((struct AnimationObject *)((struct ObjectRuntime *)Object_GetByIdFar(keeper_id))
+				->animation)
+			->entries[0]
+			->anim_id;
 	window = UiWindow_CreateWithSideObjectFar(shop->keeper_resource, 0, 0, 0);
 	if (window == 0)
 		window = UiWindow_CreateFar(-5, 0, 5, 5, 2);
@@ -2234,9 +2237,11 @@ s32 Shop_ConfirmAct(s32 unit_id)
 	shop->party_action = list_window;
 
 	{
-		s32 shown = (u16)((struct AnimationObject *)((struct ObjectRuntime *)Object_GetByIdFar(unit_id))->animation)
-						->entries[0]
-						->anim_id;
+		s32 shown =
+			(u16)((struct AnimationObject *)((struct ObjectRuntime *)Object_GetByIdFar(unit_id))
+					  ->animation)
+				->entries[0]
+				->anim_id;
 		shop->keeper_resource = shown;
 	}
 
@@ -2558,7 +2563,6 @@ void BattleFx_UpdateRadialMotion(struct EffectSlot *effect)
 			BattleFx_ClearOwnedSlotFar(effect);
 	}
 }
-
 
 enum InnMessageId
 {

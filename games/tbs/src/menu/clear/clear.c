@@ -163,7 +163,8 @@ void Clear_CheckButtonCodes(void)
 		}
 		else if (gKeysHeld != 0)
 		{
-			if (gKeysHeld == ((struct { u16 key[1]; } *)Clear_CodeSequence)->key[Clear_CodeProgress])
+			if (gKeysHeld
+				== ((struct { u16 key[1]; } *)Clear_CodeSequence)->key[Clear_CodeProgress])
 			{
 				Clear_CodeProgress++;
 				Clear_CodeHeld = 1;
@@ -188,11 +189,15 @@ void Clear_CheckButtonCodes(void)
 		}
 		else if (gKeysHeld != 0)
 		{
-			if (gKeysHeld == ((struct { u16 key[1]; } *)Clear_ExtraCodeSequence)->key[Clear_ExtraCodeProgress])
+			if (gKeysHeld
+				== ((struct { u16 key[1]; } *)Clear_ExtraCodeSequence)
+					->key[Clear_ExtraCodeProgress])
 			{
 				Clear_ExtraCodeProgress++;
 				*(s16 *)&Clear_ExtraCodeHeld = 1;
-				if (((struct { u16 key[1]; } *)Clear_ExtraCodeSequence)->key[Clear_ExtraCodeProgress] == 0)
+				if (((struct { u16 key[1]; } *)Clear_ExtraCodeSequence)
+						->key[Clear_ExtraCodeProgress]
+					== 0)
 				{
 					Clear_ExtraCodeUnlocked = 1;
 					Engine_AudioPlayCue(110);
@@ -297,9 +302,9 @@ extern u8 MsgClearSaveLabel[];
 
 extern volatile u16 gLinkStatus;
 
-extern u8  gSleepDisabled;
-extern u8  gDebugMode;
-extern u8  gOptionMirror;
+extern u8 gSleepDisabled;
+extern u8 gDebugMode;
+extern u8 gOptionMirror;
 struct SaveLinkGreeting
 {
 	u16 code[4];
@@ -845,8 +850,8 @@ L_020009cc:;
 					v5 = 0;
 					UiWindow_SetTilemapEntry(page_window, 0xf128, (17 - (s32)page_count), -1, 0);
 					UiWindow_SetTilemapEntry(page_window, 0xf129, 18, -1, 0);
-					UiRender_MarkRow((struct UiRenderWork *)gWindowWork[0],
-						((struct UiWindow *)page_window)->y);
+					UiRender_MarkRow(
+						(struct UiRenderWork *)gWindowWork[0], ((struct UiWindow *)page_window)->y);
 				}
 				v6 = page * 50 + 50;
 				if (v6 > encoded_size)
@@ -1037,7 +1042,8 @@ s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 
 	for (i = 0; i != 4; i++)
 	{
-		struct PasswordOwner *owner = UnitGet(((const struct { s32 id[4]; } *)Clear_PasswordMembers)->id[i]);
+		struct PasswordOwner *owner =
+			UnitGet(((const struct { s32 id[4]; } *)Clear_PasswordMembers)->id[i]);
 		struct PasswordStats *stats = &owner->stats;
 
 		if (stats->value_10 > 1999)
@@ -1107,7 +1113,8 @@ s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 		bit = 0;
 		for (i = 0; i != 4; i++)
 		{
-			struct PasswordOwner *owner = UnitGet(((const struct { s32 id[4]; } *)Clear_PasswordMembers)->id[i]);
+			struct PasswordOwner *owner =
+				UnitGet(((const struct { s32 id[4]; } *)Clear_PasswordMembers)->id[i]);
 
 			for (n = 0; n != 15; n++)
 			{
@@ -1131,8 +1138,9 @@ s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 		bit = -1;
 		for (i = 0; i != 4; i++)
 		{
-			struct PasswordOwner *owner = UnitGet(((const struct { s32 id[4]; } *)Clear_PasswordMembers)->id[i]);
-			s32					  m;
+			struct PasswordOwner *owner =
+				UnitGet(((const struct { s32 id[4]; } *)Clear_PasswordMembers)->id[i]);
+			s32 m;
 
 			for (m = 0; m != 23; m++)
 			{

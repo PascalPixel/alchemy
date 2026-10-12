@@ -964,8 +964,8 @@ void SceneEffect_SpawnParticleRowsByMode(s32 mode)
 				else if (mode == 1)
 				{
 					Effect_Spawn((((j << 2) + i) << 17) + 0x03120000, 0,
-						((((u32)Engine_RandomNext() * 5) >> 16) << 16) + 0x2e80000,
-						0x4000, 0, 0, 0x90000, buf);
+						((((u32)Engine_RandomNext() * 5) >> 16) << 16) + 0x2e80000, 0x4000, 0, 0,
+						0x90000, buf);
 				}
 				else
 				{
@@ -1052,8 +1052,8 @@ s32 MakyuriHeya_StopActorNinePositionCallback(void)
 void MakyuriHeya_RunColumnProbeScene(void)
 {
 	struct BlockProbe probe;
-	s32				   column;
-	s32				   start;
+	s32				  column;
+	s32				  start;
 
 	Engine_EventBegin();
 	if (StagedActor_FindClearPosition(&probe) == 0)
@@ -1886,8 +1886,7 @@ void FieldScene_RunScene39cSequenceB(void)
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
 		Camera_MoveTo(0x1d00000, -1, 0x2900000, 1);
 		Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
-		OverlayObject_PrepareObject(
-			Object_GetById(ACTOR_PARTY_LEADER)->x.fixed, 0, 0x2be0000, 223);
+		OverlayObject_PrepareObject(Object_GetById(ACTOR_PARTY_LEADER)->x.fixed, 0, 0x2be0000, 223);
 		Map_CopyCellsTo(92, 46, 92, 40, 3, 2);
 		Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
 		Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
@@ -2099,10 +2098,10 @@ void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 w)
 
 s32 Scene_Initialize(void)
 {
-	u32				   i;
-	s32				   flag;
-	s32				   x;
-	s32				   set;
+	u32 i;
+	s32 flag;
+	s32 x;
+	s32 set;
 
 	Engine_GameFlagSet(0x111);
 	gGameState.retreat_entrance = 11;

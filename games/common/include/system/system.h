@@ -9,16 +9,16 @@
 #endif
 
 #if GAME_TLA
-void	   WaitFrames(s32 frames);
+void WaitFrames(s32 frames);
 #endif
-void	   System_WaitForFrameInterrupt(void);
+void System_WaitForFrameInterrupt(void);
 #if GAME_TLA
-void	   Graphics_ResetFrameState(void);
+void Graphics_ResetFrameState(void);
 #endif
-void	   Bios_SoundBiasOff(void);
-void	   Bios_SoundBiasOn(void);
+void Bios_SoundBiasOff(void);
+void Bios_SoundBiasOn(void);
 #if GAME_TLA
-u32		   Random16(void);
+u32 Random16(void);
 #endif
 extern u32 gRandomState;
 
@@ -68,7 +68,7 @@ extern u8		   Resource_PatchThumbBranchCodeSize[];
 extern u8		   ResourceSlot_ConversionTables[][256];
 extern const u16   Ui_WindowPalette[];
 #if GAME_TLA
-s32				   Animation_LookupValueByKey(s32 key);
+s32 Animation_LookupValueByKey(s32 key);
 #endif
 #ifndef OWN_CountRemainingErasedFlashBytes
 s32 CountRemainingErasedFlashBytes(u8 *ptr);
@@ -77,7 +77,7 @@ s32 CountRemainingErasedFlashBytes(u8 *ptr);
 s32 Map_DisableUpdateCallbackFar(void);
 s32 Map_EnableUpdateCallbackFar(void);
 #endif
-s32	 RunFlashEraseVerifier(u8 *, u8 *);
+s32 RunFlashEraseVerifier(u8 *, u8 *);
 #if GAME_TLA
 void Runtime_WriteDebugTextTiles(const u8 *src);
 #endif
@@ -151,7 +151,7 @@ extern u8		 TransferCommandExecutor_Size[];
 void			 _call_via_r2(s32 arg0, s32 arg1, s32 target);
 #ifndef OWN_Animation_SetWorkEntry
 #endif
-void				   IwramHalt(void);
+void IwramHalt(void);
 #ifndef OWN_Runtime_GetLowTableAddress
 #endif
 #ifndef OWN_Runtime_GetRemainingEwram
@@ -160,7 +160,7 @@ void				   IwramHalt(void);
 #endif
 #ifndef OWN_RuntimeDispatch_NoOpHook
 #endif
-void  SoundDriver_EnterMixer(void);
+void SoundDriver_EnterMixer(void);
 #endif
 
 #if GAME_TLA

@@ -24,7 +24,7 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-s32	 Math_RemainderUnsigned();
+s32 Math_RemainderUnsigned();
 
 struct MapShake
 {

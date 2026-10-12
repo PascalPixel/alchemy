@@ -233,9 +233,9 @@ void FieldScene_RunActor12Step(void)
 
 void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
 {
-	s32 i;
-	s32 next_frame;
-	s32 p10;
+	s32				   i;
+	s32				   next_frame;
+	s32				   p10;
 	s32				   p9;
 	s32				   p11;
 	struct FieldActor *rec;

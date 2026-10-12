@@ -1354,9 +1354,9 @@ const struct SceneEvent *Scene_GetEvents(void)
 void FieldScene_SpawnRandomizedParticle(void)
 {
 	struct EffectOptions params;
-	struct FieldActor *record;
-	s32				   draw;
-	s32				   offset;
+	struct FieldActor	*record;
+	s32					 draw;
+	s32					 offset;
 
 	record = Object_GetById(ACTOR_PARTY_LEADER);
 

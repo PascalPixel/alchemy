@@ -3118,8 +3118,6 @@ s32 StagedActor_FootprintBounds[] __attribute__((section(".rodata"))) = {
 	-8, -32, 8, 32,
 };
 
-
-
 s32 gRunpaJoRandomPick = 0;
 
 s32 gRunpaJoPlacements2_1[] = {

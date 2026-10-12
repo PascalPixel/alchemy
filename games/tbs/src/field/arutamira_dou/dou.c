@@ -700,7 +700,7 @@ extern u8 gDisplayTransition[];
 
 extern u8 gFrameTick[];
 
-s32	 Math_DivideUnsigned(s32 value, s32 divisor);
+s32 Math_DivideUnsigned(s32 value, s32 divisor);
 
 void FieldScene_RunExtendedActorPresentation(void)
 {

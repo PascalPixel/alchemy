@@ -67,7 +67,7 @@ void RamakanSabaku_WaitForActorHeight(u8 *o, s32 limit)
 s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor)
 {
 	struct EffectOptions params;
-	s32					phase;
+	s32					 phase;
 
 	if ((gFrameCount & 7) == 0)
 	{
@@ -562,12 +562,12 @@ extern struct EventWork *gEventWork;
 
 void RamakanSabaku_UpdateTravelDust(void)
 {
-	struct FieldActor *actor;
-	struct EventWork  *event;
+	struct FieldActor	*actor;
+	struct EventWork	*event;
 	struct EffectOptions params;
-	s32				   dx;
-	s32				   z;
-	s32				   phase;
+	s32					 dx;
+	s32					 z;
+	s32					 phase;
 	actor = Object_GetById(gGameState.selected_actor);
 	event = gEventWork;
 	if (actor->target_x == 0x80000000)
@@ -692,14 +692,14 @@ void RamakanSabaku_FaceNearestActor(void)
 
 void RamakanSabaku_UpdateDustAndProbe(void)
 {
-	struct FieldActor *center;
-	s32				   id;
-	struct FieldActor *actor;
-	s32				   pos[3];
+	struct FieldActor	*center;
+	s32					 id;
+	struct FieldActor	*actor;
+	s32					 pos[3];
 	struct EffectOptions params;
-	s32				   hit;
-	s32				   phase;
-	s32				   x;
+	s32					 hit;
+	s32					 phase;
+	s32					 x;
 
 	RamakanSabaku_UpdateTravelDust();
 	{
@@ -826,7 +826,7 @@ void RamakanSabaku_PlayStartledRetreat(void)
 
 s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
 {
-	s32	 v5;
+	s32 v5;
 
 	gGameState.hazard_limit = 0x258;
 	gGameState.hazard_mode = 0;
@@ -1134,8 +1134,6 @@ const s32 RamakanSabaku_SafePointsOther[] = {
 	PIXELS(192), PIXELS(224),
 	PIXELS(192), PIXELS(352),
 };
-
-
 
 const s32 *gEffectScripts[] = {
 	gEffectScript0,

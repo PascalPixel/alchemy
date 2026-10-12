@@ -60,7 +60,7 @@
 
 extern u8 IwramCopyWords[];
 
-s32	 _call_via_r3(void *, void *, s32, void *);
+s32 _call_via_r3(void *, void *, s32, void *);
 
 s32 Scheduler_DisableOverlayCallbacksWithFlags(void)
 {
@@ -1982,7 +1982,8 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
 			break;
 
 		case ITEM_STEP_REMOVE:
-			UnitGetFar(menu->pane_owner[0])->inventory[menu->selected_slots[0]] &= ~INVENTORY_EQUIPPED;
+			UnitGetFar(menu->pane_owner[0])->inventory[menu->selected_slots[0]] &=
+				~INVENTORY_EQUIPPED;
 			UnitCalcFar(menu->pane_owner[0]);
 			Owner_RefreshClassActionsFar(menu->pane_owner[0]);
 			menu->pane_icons[0]->active = 13;
@@ -2909,7 +2910,8 @@ s32 ItemMenu_ChooseCmd(void)
 		ItemMenu_DrawCmd(command_states, message_window);
 #if EDITION_INTERNATIONAL
 		RenderOutput_RedrawSavedRectFar((void *)menu->info_window);
-		UiText_DrawCharacterAtOffsetFar((menu->selected_items[0] & ITEM_ID_MASK) + (s32)MsgItemPlainName,
+		UiText_DrawCharacterAtOffsetFar(
+			(menu->selected_items[0] & ITEM_ID_MASK) + (s32)MsgItemPlainName,
 			(s32)menu->info_window, 0, 0);
 #else
 		RenderOutput_ClearListFar((void *)menu->info_window);
@@ -3700,9 +3702,10 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
 	ItemMenu_SetMsgWin7();
 	RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
 	if (single == 0)
-		other_count =
-			InventoryMenu_GetItemQuantity(menu->pane_owner[1], menu->selected_items[0] & ITEM_ID_MASK);
-	count = InventoryMenu_GetItemQuantity(menu->pane_owner[0], menu->selected_items[0] & ITEM_ID_MASK);
+		other_count = InventoryMenu_GetItemQuantity(
+			menu->pane_owner[1], menu->selected_items[0] & ITEM_ID_MASK);
+	count =
+		InventoryMenu_GetItemQuantity(menu->pane_owner[0], menu->selected_items[0] & ITEM_ID_MASK);
 	slot = Resource_FindFreeEntry();
 	if (slot != 96)
 	{
@@ -4567,7 +4570,8 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void)
 	s32			   diff;
 	s32			   ret;
 
-	psynergy = BtlActGet(OWNER_ACTION_ID_MASK & ((struct PsynergyMenuState *)gMenuWork)->pane_action[0]);
+	psynergy =
+		BtlActGet(OWNER_ACTION_ID_MASK & ((struct PsynergyMenuState *)gMenuWork)->pane_action[0]);
 	if (BattleFx_HasMatchingEvent5Far(psynergy->type_0c) != 0)
 	{
 		return 0;
@@ -5130,7 +5134,8 @@ s32 PsynergyMenu_CollectActions(struct BtlUnit *owner, u16 *actions, s32 mode)
 		{
 			if (owner->action_slots[i].encoded_action != 0)
 			{
-				if (BtlActGet(owner->action_slots[i].encoded_action & OWNER_ACTION_ID_MASK)->type_0c != 0)
+				if (BtlActGet(owner->action_slots[i].encoded_action & OWNER_ACTION_ID_MASK)->type_0c
+					!= 0)
 				{
 					actions[count] = owner->action_slots[i].encoded_action;
 					count++;
@@ -5328,7 +5333,9 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
 			{
 				UiWork_SetParamNibbleFar(2);
 			}
-			else if (PsynergyMenu_IsActionRestricted(OWNER_ACTION_ID_MASK & menu->psynergies[cursor]) != 0)
+			else if (PsynergyMenu_IsActionRestricted(
+						 OWNER_ACTION_ID_MASK & menu->psynergies[cursor])
+					 != 0)
 			{
 				UiWork_SetParamNibbleFar(4);
 			}
@@ -5469,7 +5476,8 @@ s32 PsynergyMenu_RunList(s32 pane)
 			{
 				if ((gKeyState & KEY_SELECT) != 0 && prompt == 0)
 				{
-					ability = BtlActGet(menu->psynergies[state.selected_index] & OWNER_ACTION_ID_MASK);
+					ability =
+						BtlActGet(menu->psynergies[state.selected_index] & OWNER_ACTION_ID_MASK);
 					if (ability->type_0c == 0)
 					{
 						AudioCommand_PlayFar(114);
@@ -6865,7 +6873,8 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 #else
 		UiText_DrawResourceFar(
 #endif
-			(menu->psynergies[state->selected_index] & OWNER_ACTION_ID_MASK) + (s32)MsgAbilityDescription,
+			(menu->psynergies[state->selected_index] & OWNER_ACTION_ID_MASK)
+				+ (s32)MsgAbilityDescription,
 			(s32)menu->info_window, 0, 0);
 		ability = BtlActGet(menu->psynergies[state->selected_index] & OWNER_ACTION_ID_MASK);
 #if EDITION_INTERNATIONAL
@@ -7315,8 +7324,8 @@ s32 Shop_DrawItemPage(s32 window, s32 unused, struct MenuResult *state)
 			item = &menu->items[first];
 			do
 			{
-				UiText_DrawCharacterAtOffsetFar(
-					(*item & ITEM_ID_MASK) + (s32)MsgItemName, window, SHOP_ITEM_NAME_X, (row << 4) + 8);
+				UiText_DrawCharacterAtOffsetFar((*item & ITEM_ID_MASK) + (s32)MsgItemName, window,
+					SHOP_ITEM_NAME_X, (row << 4) + 8);
 				row = (u8)(row + 1);
 				item++;
 			} while (count > row);
@@ -7864,7 +7873,8 @@ s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
 	work = gMenuWork;
 	item_id = ITEM_ID_MASK & owner->inventory[slot];
 	item = Item_GetDirectFar(item_id);
-	result = BattleEffect_ApplyToTargets(OWNER_ACTION_ID_MASK & item->action_id, owner_id, target_id, 1);
+	result =
+		BattleEffect_ApplyToTargets(OWNER_ACTION_ID_MASK & item->action_id, owner_id, target_id, 1);
 	if (result != -1)
 	{
 		item = Item_GetDirectFar(owner->inventory[slot]);
@@ -10111,8 +10121,9 @@ s32 DjinnMenu_DrawStatPreview(
 				UiWork_SetParamNibbleFar(2);
 			else
 				UiWork_SetParamNibbleFar(15);
-			UiText_DrawCharacterAtOffsetFar((s32)MsgAbilityName + (actions[first] & OWNER_ACTION_ID_MASK), window,
-				x * 8 + 16, (y + line * 2) * 8 + 8);
+			UiText_DrawCharacterAtOffsetFar(
+				(s32)MsgAbilityName + (actions[first] & OWNER_ACTION_ID_MASK), window, x * 8 + 16,
+				(y + line * 2) * 8 + 8);
 			UiText_DrawNumberAtOffsetFar(
 				BtlActGet(actions[first])->pp_cost, 2, window, x * 8 + 88, (y + line * 2) * 8 + 8);
 			line++;

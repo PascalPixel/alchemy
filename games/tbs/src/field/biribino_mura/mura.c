@@ -678,7 +678,8 @@ void BiribinoMura_PushFacedBlock(void)
 
 	leader = Object_GetById(0);
 	dir = leader->facing >> 12;
-	block = SceneActor_FindActorAtCell((leader->x.part.pixel + (BiribinoMura_FacingCellSteps[dir] >> 16)) >> 4,
+	block = SceneActor_FindActorAtCell(
+		(leader->x.part.pixel + (BiribinoMura_FacingCellSteps[dir] >> 16)) >> 4,
 		(leader->z.part.pixel + (s16)BiribinoMura_FacingCellSteps[dir]) >> 4);
 	if (block != NULL)
 	{

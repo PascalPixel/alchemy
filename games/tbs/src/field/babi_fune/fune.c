@@ -41,7 +41,6 @@
 #include "field_scene.h"
 #include "objcmd.h"
 
-
 s32 Math_DivideUnsigned();
 
 u8 *BabiFune_GetEntrances(void)
@@ -590,7 +589,8 @@ void BabiFune_RunDeparture(void)
 	Event_Wait(60);
 	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
 	BabiFune_CountTicks = 0;
-	Value2(Scheduler_AddOrUpdateCallback, (s32)SceneState_CountDownEveryFortyTicks, TASK_PRIORITY_SCENE);
+	Value2(Scheduler_AddOrUpdateCallback, (s32)SceneState_CountDownEveryFortyTicks,
+		TASK_PRIORITY_SCENE);
 	sunk = 0;
 	do
 	{

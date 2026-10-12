@@ -60,7 +60,7 @@ typedef struct
 	Obj_020004bc *obj;
 } Spr_020004bc;
 
-s32	 Math_RemainderUnsigned(s32, s32);
+s32 Math_RemainderUnsigned(s32, s32);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/create.c"
@@ -347,10 +347,10 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 s32 Scene_Initialize(void)
 {
-	s32			  v;
-	u32			  i;
-	s32			  z;
-	s16			  mode;
+	s32				   v;
+	u32				   i;
+	s32				   z;
+	s16				   mode;
 	struct FieldActor *obj;
 
 	Engine_GameFlagSet(324);

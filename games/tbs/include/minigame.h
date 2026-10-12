@@ -8,7 +8,7 @@
 #include "edition.h"
 #include "farcall.h"
 
-extern const u8	 ReelGame_TitleLetterTiles[];
-extern const u8	 ReelGame_TitleLetterWidths[];
+extern const u8 ReelGame_TitleLetterTiles[];
+extern const u8 ReelGame_TitleLetterWidths[];
 
 #endif

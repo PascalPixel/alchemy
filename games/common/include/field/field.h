@@ -21,21 +21,21 @@ struct EffectPosition;
 #if GAME_TLA
 extern const s32 Camera_FixedViewMatrix[];
 #endif
-extern s32		 Iwram_Data1;
-extern s32		 Iwram_Data2;
+extern s32 Iwram_Data1;
+extern s32 Iwram_Data2;
 #if GAME_TLA
-extern u8		 Map_TileDissolveOrder[];
+extern u8 Map_TileDissolveOrder[];
 #endif
 extern const u32 ObjectDispatch_DefaultScript[];
 extern u8		 Render_DecodeFrameCodeSize[];
 extern u8		 Runtime_ByteRemapTable[];
 #if GAME_TLA
-s32				 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
-s32				 Event_ValidatePackedId(u32 packed_id);
-void			 Map_RenderAnimatedTileFrame(u8 *object, u32 position);
-void			 Object_AttachWorkTargetToObject(s32 id, s32 flag);
-void			 Object_UpdateAllMotion(void);
-void			 Object_UpdateAllThumb(void);
+s32	 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
+s32	 Event_ValidatePackedId(u32 packed_id);
+void Map_RenderAnimatedTileFrame(u8 *object, u32 position);
+void Object_AttachWorkTargetToObject(s32 id, s32 flag);
+void Object_UpdateAllMotion(void);
+void Object_UpdateAllThumb(void);
 #endif
 #ifndef OWN_ObjectDispatch_SetSingleChildFlags
 #if GAME_TLA
@@ -283,8 +283,8 @@ struct WorldMapVramBlock
 };
 #ifndef OWN_ArutinYama_ActorScript
 #endif
-extern s16		 ArutinYama_PaletteHold;
-extern s16		 ArutinYama_PaletteStep;
+extern s16 ArutinYama_PaletteHold;
+extern s16 ArutinYama_PaletteStep;
 #ifndef OWN_BabiFune_CountTicks
 #endif
 #ifndef OWN_BabiFune_DriftActive
@@ -299,70 +299,70 @@ extern s16		 ArutinYama_PaletteStep;
 #endif
 #ifndef OWN_BabiFune_SwellLayerSixY
 #endif
-extern const u8				 BattleFx_BurstParticleScriptA[];
-extern const u8				 BattleFx_BurstParticleScriptB[];
-extern u32					 WorldMap_GraphicsResources[][6];
-extern const u8				 ObjectMotion_WaitScript[];
-extern const u8				 FieldFx_SparkleTiles[];
-extern const u8				 Field_TileMessageOffsets[];
-extern const u8				 FieldFx_MoteTiles[];
-extern s32					 FourObjectMotion_ResourceIds[];
-extern s32					 FuneHeya_CueTimer;
+extern const u8 BattleFx_BurstParticleScriptA[];
+extern const u8 BattleFx_BurstParticleScriptB[];
+extern u32		WorldMap_GraphicsResources[][6];
+extern const u8 ObjectMotion_WaitScript[];
+extern const u8 FieldFx_SparkleTiles[];
+extern const u8 Field_TileMessageOffsets[];
+extern const u8 FieldFx_MoteTiles[];
+extern s32		FourObjectMotion_ResourceIds[];
+extern s32		FuneHeya_CueTimer;
 #ifndef OWN_FuneHeya_TurnSteps
 #endif
-extern s16						  *gKorimaMagariLayout;
-extern s16						  *gKorimaMagariRecords;
-extern u16						  *gKorimaMagariReturned;
+extern s16 *gKorimaMagariLayout;
+extern s16 *gKorimaMagariRecords;
+extern u16 *gKorimaMagariReturned;
 #ifndef OWN_gObjectSlots
 extern struct ObjectRuntime *gObjectSlots;
 #endif
-extern u32						   gScanlineAngle;
+extern u32 gScanlineAngle;
 #ifndef OWN_gScanlinePitch
 extern u32 gScanlinePitch;
 #endif
-extern struct SceneEvent		   gTorebiKyudenEvents2AfterColosso[];
-extern const u8					   gWorldMapPackedFrames[];
-extern const u8					   gWorldMapPackedTiles[];
-extern const u8					   gWorldMapPalettes[];
-extern s32						   KareiMachi_DanceStep;
-extern u32						   KorimaMagari_ShakeChance;
-extern u32						   KorimaMagari_ShakeScroll[];
-extern u8						   KorimaPalette_First[];
-extern u8						   KorimaPalette_Second[];
-extern s32						   Korosseo_CompetitorStartAngle;
-extern s32						   Korosseo_CompetitorStartX;
-extern s32						   Korosseo_CompetitorStartZ;
-extern u16						   Korosseo_GaugePalette[];
-extern s32						   Korosseo_MarkerOam[3];
-extern s16						   Korosseo_ModeBlendDuration;
-extern s16						   Korosseo_ModeBlendStart;
-extern s16						   Korosseo_ModeBlendStep;
-extern s16						   Korosseo_ModeBlendTarget;
-extern s16						   Korosseo_ModeMoveStart;
-extern s16						   Korosseo_ModeMoveStep;
-extern s16						   Korosseo_ModeScaleDuration;
-extern s16						   Korosseo_ModeScaleStart;
-extern s16						   Korosseo_ModeScaleStep;
-extern s16						   Korosseo_ModeScaleTarget;
-extern u32						   Korosseo_ModeTaskSprites[];
+extern struct SceneEvent gTorebiKyudenEvents2AfterColosso[];
+extern const u8			 gWorldMapPackedFrames[];
+extern const u8			 gWorldMapPackedTiles[];
+extern const u8			 gWorldMapPalettes[];
+extern s32				 KareiMachi_DanceStep;
+extern u32				 KorimaMagari_ShakeChance;
+extern u32				 KorimaMagari_ShakeScroll[];
+extern u8				 KorimaPalette_First[];
+extern u8				 KorimaPalette_Second[];
+extern s32				 Korosseo_CompetitorStartAngle;
+extern s32				 Korosseo_CompetitorStartX;
+extern s32				 Korosseo_CompetitorStartZ;
+extern u16				 Korosseo_GaugePalette[];
+extern s32				 Korosseo_MarkerOam[3];
+extern s16				 Korosseo_ModeBlendDuration;
+extern s16				 Korosseo_ModeBlendStart;
+extern s16				 Korosseo_ModeBlendStep;
+extern s16				 Korosseo_ModeBlendTarget;
+extern s16				 Korosseo_ModeMoveStart;
+extern s16				 Korosseo_ModeMoveStep;
+extern s16				 Korosseo_ModeScaleDuration;
+extern s16				 Korosseo_ModeScaleStart;
+extern s16				 Korosseo_ModeScaleStep;
+extern s16				 Korosseo_ModeScaleTarget;
+extern u32				 Korosseo_ModeTaskSprites[];
 #ifndef OWN_KuupuappuHeya_PairScriptP
 #endif
 #ifndef OWN_KuupuappuHeya_PairScriptR
 #endif
-extern u16					 KuupuappuHeya_StopTimer;
+extern u16 KuupuappuHeya_StopTimer;
 #ifndef OWN_Makyuri_PillarScript
 #endif
-extern u8					   Object_UpdateAllCodeSize[];
-extern u8					   ObjectGroup_BlinkChildValues[];
-extern const u8				   ObjectMotion_ActionKind1Script[];
-extern const u8				   ObjectMotion_ActionKind2Script[];
-extern const u8				   ObjectMotion_ActionKind3Script[];
-extern const u8				   ObjectMotion_ActionKind4Script[];
-extern u8					   ObjectMotion_LaunchScript;
-extern const u8				   ObjectMotion_MoveTowardTargetScript[];
-extern const u8				   ObjectMotion_ResetActionScript[];
-extern const u8				   ObjectMotion_TurnTowardLinkedScript[];
-extern const u8				   ObjectMotion_VariantScripts[];
+extern u8		Object_UpdateAllCodeSize[];
+extern u8		ObjectGroup_BlinkChildValues[];
+extern const u8 ObjectMotion_ActionKind1Script[];
+extern const u8 ObjectMotion_ActionKind2Script[];
+extern const u8 ObjectMotion_ActionKind3Script[];
+extern const u8 ObjectMotion_ActionKind4Script[];
+extern u8		ObjectMotion_LaunchScript;
+extern const u8 ObjectMotion_MoveTowardTargetScript[];
+extern const u8 ObjectMotion_ResetActionScript[];
+extern const u8 ObjectMotion_TurnTowardLinkedScript[];
+extern const u8 ObjectMotion_VariantScripts[];
 #ifndef OWN_RamakanSabaku_SandCounter
 #endif
 extern u8		 RamakanSabaku_SandEffectTiles[];
@@ -378,18 +378,18 @@ extern struct MenuSprite RamakanSabaku_SandWork[];
 #ifndef OWN_Render_DecodeFrame
 extern u8 Render_DecodeFrame[];
 #endif
-extern u32					 StagedActor_FootprintKinds[];
-extern const u8				 TileMap_DrawRows[];
-extern u8					 TileMap_DrawRowsCodeSize[];
-extern u8					 Transform_UpdateVerticesSize;
+extern u32		StagedActor_FootprintKinds[];
+extern const u8 TileMap_DrawRows[];
+extern u8		TileMap_DrawRowsCodeSize[];
+extern u8		Transform_UpdateVerticesSize;
 #ifndef OWN_VinasuChojo_BeamOpenAction
 #endif
 #ifndef OWN_VinasuChojo_ScaleStepAction
 #endif
-extern const u8					   WorldMap_FootprintActions[];
-extern const s16				   WorldMap_KeyHeadings[16];
-extern u8						   WorldMap_TerrainBehaviorTable[];
-s32	 CalculateFacingAngle(s32, s32);
+extern const u8	 WorldMap_FootprintActions[];
+extern const s16 WorldMap_KeyHeadings[16];
+extern u8		 WorldMap_TerrainBehaviorTable[];
+s32				 CalculateFacingAngle(s32, s32);
 #ifndef OWN_Camera_ApplyShake
 #endif
 #ifndef OWN_EffectPosition_ApplyAlternateStepAndYOffset
@@ -403,8 +403,8 @@ void Engine_EventClearInvalidPackedValues(void);
 s32	 Engine_PartyRemoveItem(s32 item);
 #ifndef OWN_Event_RequestDestination
 #endif
-s32	 FarCall_BlankLoadTable(s32 entrance);
-s32	 FarCall_BlankRunTable(s32 entrance);
+s32 FarCall_BlankLoadTable(s32 entrance);
+s32 FarCall_BlankRunTable(s32 entrance);
 #ifndef OWN_Field_RunTileAction
 #endif
 #ifndef OWN_Field_TryJumpForward
@@ -424,7 +424,7 @@ s32 GameFlag_IsSet(s32 flag);
 void Map_ResumeAnimation(void);
 #ifndef OWN_MapGroupTable_SelectEntry
 #endif
-s32	 Math_Atan2(s32 dy, s32 dx);
+s32 Math_Atan2(s32 dy, s32 dx);
 #ifndef OWN_Menu_FindShortcutEntries
 #endif
 #ifndef OWN_Object_CollectResources

@@ -268,16 +268,16 @@ s32 SceneEffect_SpawnTwoRandomizedParticles(struct FieldActor *obj)
 	speed = ((u32)(Engine_RandomNext() * 8) >> 16) * 0x3333;
 	phase = gFrameCount & 15;
 
-	Effect_Spawn(obj->x.fixed + ((8 - phase) << 16), obj->y.fixed + 0x001a0000, obj->z.fixed, 0, -speed, 0,
-		0x000a0000, &params);
+	Effect_Spawn(obj->x.fixed + ((8 - phase) << 16), obj->y.fixed + 0x001a0000, obj->z.fixed, 0,
+		-speed, 0, 0x000a0000, &params);
 
 	phase = gFrameCount & 15;
 	if (phase == 0)
 	{
 		params.start_scale_x = 0x00008000;
 		params.start_scale_y = 0x00008000;
-		Effect_Spawn(obj->x.fixed + ((((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16), obj->y.fixed, obj->z.fixed,
-			0, 0, 0, 0x000a0000, &params);
+		Effect_Spawn(obj->x.fixed + ((((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16),
+			obj->y.fixed, obj->z.fixed, 0, 0, 0, 0x000a0000, &params);
 	}
 
 	return 0;
@@ -469,7 +469,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 
 void SceneEffect_SpawnNineRadialEffects(s32 actor)
 {
-	struct FieldActor	   *object;
+	struct FieldActor	*object;
 	struct Vec			 vec;
 	struct EffectOptions params;
 	u32					 i;
@@ -491,7 +491,8 @@ void SceneEffect_SpawnNineRadialEffects(s32 actor)
 		vec.z = z;
 		x += Math_Divide(x, 3);
 		vec.x = x;
-		Effect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y, z, 0x01030001, &params);
+		Effect_Spawn(
+			object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y, z, 0x01030001, &params);
 	}
 }
 
@@ -531,8 +532,8 @@ s32 SceneEffect_SpawnRandomizedParticleEveryFourFrames(struct FieldActor *obj)
 struct FieldActor *SceneEffect_SpawnEffect284AtCell(s32 x, s32 z, s32 arg2)
 {
 	struct FieldActor *obj;
-	s32							  sx;
-	s32							  sz;
+	s32				   sx;
+	s32				   sz;
 
 	sx = x << 16;
 	sz = z << 16;

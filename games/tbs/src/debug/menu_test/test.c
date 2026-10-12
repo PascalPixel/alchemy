@@ -33,7 +33,7 @@
 
 void Engine_EventSetMessage(s16 message);
 
-void				Engine_AudioPlayCue(s32 cue);
+void Engine_AudioPlayCue(s32 cue);
 
 u8 *MenuTest_GetEntrances(void)
 {

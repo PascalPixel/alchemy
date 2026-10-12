@@ -742,10 +742,10 @@ void SoruFunka_StepEmbers(void)
 			ember->z = Iwram_MulQ16(Engine_MathSin((u16)angle),
 						   (((u32)(Engine_RandomNext() << 8) >> 16) << 16) + 0x1000000)
 					   + 0x12e0000;
-			x = Iwram_MulQ16(Engine_MathCos((u16)angle),
-				((Engine_RandomNext() & 63) << 16) + 0x80000);
-			z = Iwram_MulQ16(Engine_MathSin((u16)angle),
-				((Engine_RandomNext() & 63) << 16) + 0x80000);
+			x = Iwram_MulQ16(
+				Engine_MathCos((u16)angle), ((Engine_RandomNext() & 63) << 16) + 0x80000);
+			z = Iwram_MulQ16(
+				Engine_MathSin((u16)angle), ((Engine_RandomNext() & 63) << 16) + 0x80000);
 			Engine_ObjectSetPosition(ember, x + 0x1450000, 0, z + 0x11e0000);
 			ObjectGroup_SetChildValue(ember, 0);
 			gEmberTimer = 30;

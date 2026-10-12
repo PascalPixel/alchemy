@@ -86,7 +86,7 @@ LAYOUT_OFFSET_GUARD(
 	UiRenderWork_SpacingAfter, struct UiRenderWork, spacing_after, RENDER_BUSY_OFS + 2);
 LAYOUT_SIZE_GUARD(UiRenderWork_Size, struct UiRenderWork, RENDER_WORK_SIZE);
 
-extern u8		*gWindowWork[];
+extern u8 *gWindowWork[];
 
 #if EDITION_INTERNATIONAL
 #else

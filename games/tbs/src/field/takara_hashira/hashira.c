@@ -73,7 +73,6 @@ struct MapLayer_2
 
 extern u8 *gEffectWork;
 
-
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/create.c"
 #include "../common/effect/move.c"

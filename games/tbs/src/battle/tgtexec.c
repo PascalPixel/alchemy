@@ -366,11 +366,11 @@ void BattlePresentation_UpdateCamera(void)
 	struct BattleCamera					*state = slot[0];
 	struct BattlePresentationTransition *transition =
 		slot[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
-	struct BtlWork						*work = slot[HEAP_SLOT_BATTLE - HEAP_SLOT_CAMERA];
-	struct FixedPointPosition			 local;
-	s32									*pos;
-	s16									 delta;
-	u32									 id;
+	struct BtlWork			 *work = slot[HEAP_SLOT_BATTLE - HEAP_SLOT_CAMERA];
+	struct FixedPointPosition local;
+	s32						 *pos;
+	s16						  delta;
+	u32						  id;
 
 	if (work->two_sided != 0)
 	{
@@ -610,7 +610,9 @@ s32 BattleParty_ReconcileDjinnRecovery(void)
 				if (Trade_CanOfferDjinnFar(owner, element, index) != 0)
 				{
 					struct DjinnRecoveryList *list =
-						&((struct DjinnRecoveryTable *)Trade_GetOfferStateFar((owner < 0 || owner > 7) ? 1 : 0))->list;
+						&((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(
+							  (owner < 0 || owner > 7) ? 1 : 0))
+							 ->list;
 					s32 j;
 
 					for (j = 0; j < list->count; j++)
@@ -629,7 +631,8 @@ s32 BattleParty_ReconcileDjinnRecovery(void)
 		return;
 
 	{
-		struct DjinnRecoveryList  *list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(0))->list;
+		struct DjinnRecoveryList *list =
+			&((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(0))->list;
 		struct DjinnRecoveryEntry *entry;
 
 		i = 0;
@@ -1652,7 +1655,7 @@ s32 EnmChk(s32 summon)
 
 s32 SummonSlot_RegisterActorSprites(s32 unit)
 {
-	s32 pass;
+	s32				pass;
 	struct BtlWork *table = BtlWk;
 	struct BtlUnit *actor = UnitGetFar(unit);
 	s32				single_slot = Summon_IsEntryFlagged(actor->class_id);
@@ -3785,8 +3788,8 @@ void Camera_ConfigureScene(s32 pos)
 	struct BattleCamera					*state = slots[0];
 	struct BattlePresentationTransition *secondary =
 		slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
-	struct FixedPointPosition			 local;
-	u32									 result;
+	struct FixedPointPosition local;
+	u32						  result;
 
 	state->pos[1] = 160 << 11;
 	state->pos[0] = 0;
@@ -5836,7 +5839,9 @@ scan_complete:
 		return -1;
 
 	if (action->target_mode == 1 && action->rng == 1
-		&& ((struct EnemyDefinition *)Owner_GetRecordFar(UnitGetFar(actor_id)->class_id))->target_strategy != 2
+		&& ((struct EnemyDefinition *)Owner_GetRecordFar(UnitGetFar(actor_id)->class_id))
+				   ->target_strategy
+			   != 2
 		&& (u32)((action->tgt_flg & 0x0f) - 3) <= 2)
 	{
 		selected = -1;
@@ -5846,7 +5851,9 @@ scan_complete:
 			{
 				this_unit = UnitGetFar(unit_ids[inner_index]);
 				next_unit = UnitGetFar(unit_ids[inner_index + 1]);
-				if (((struct EnemyDefinition *)Owner_GetRecordFar(UnitGetFar(actor_id)->class_id))->target_strategy == 0)
+				if (((struct EnemyDefinition *)Owner_GetRecordFar(UnitGetFar(actor_id)->class_id))
+						->target_strategy
+					== 0)
 				{
 					value = this_unit->hp;
 					next_value = next_unit->hp;
@@ -9274,8 +9281,7 @@ s32 Battle_ProcessRoundEnd(void)
 						Djinn_ActivateFar(id, element, expired_entry->index);
 						Trade_RemoveOfferFar(id, expired_entry->element, expired_entry->index);
 						UnitCalcFar(id);
-						BattleFx_PlayUnitElementEffect(
-							id, element, 3, 0);
+						BattleFx_PlayUnitElementEffect(id, element, 3, 0);
 						BattleEventRuntime_WaitForReady();
 					}
 				}
@@ -9882,22 +9888,22 @@ struct DisplayRegisters
 
 void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 {
-	volatile u32				 fill;
+	volatile u32				  fill;
 	struct BattlePresentationWork list;
-	u16							 party[14];
-	u16							 actors[14];
-	struct BattleBackgroundView *work;
-	s32							*timer;
-	u16							*map;
-	s32							 tile;
-	u32							 i;
-	u32							 j;
-	s32							 count;
-	s32							 id;
-	struct BtlObj				*object;
-	struct BtlWork				*session;
-	u16							*ids;
-	s32							 n;
+	u16							  party[14];
+	u16							  actors[14];
+	struct BattleBackgroundView	 *work;
+	s32							 *timer;
+	u16							 *map;
+	s32							  tile;
+	u32							  i;
+	u32							  j;
+	s32							  count;
+	s32							  id;
+	struct BtlObj				 *object;
+	struct BtlWork				 *session;
+	u16							 *ids;
+	s32							  n;
 
 	work = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
 	timer = Runtime_AllocateHeapBlock(42, 4);
@@ -10095,9 +10101,9 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 value, s32 fade)
 	}
 	else if (fade != 0)
 	{
-		u16		   *source = BtlWk->palette;
-		u16		   *destination = (u16 *)0x050000c0;
-		s32			i;
+		u16 *source = BtlWk->palette;
+		u16 *destination = (u16 *)0x050000c0;
+		s32	 i;
 
 		for (i = 0; i != 128; i++)
 		{
@@ -10269,10 +10275,10 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
 	s32					 render_bounds[3];
 	s32					 measured_bounds[3];
 	s32					 source_bounds[3];
-	s32 alpha;
-	s32 half;
-	s32 width;
-	u32 result;
+	s32					 alpha;
+	s32					 half;
+	s32					 width;
+	u32					 result;
 
 	pos[0] = x;
 	pos[1] = depth;
@@ -10315,10 +10321,10 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom)
 	s32					 measured_bounds[3];
 	s32					 source_bounds[3];
 	s32					 span = 0x01fe0000;
-	s32 alpha;
-	s32 half;
-	s32 width;
-	u32 result;
+	s32					 alpha;
+	s32					 half;
+	s32					 width;
+	u32					 result;
 
 	pos[0] = x;
 	pos[1] = depth;
@@ -10902,9 +10908,9 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 co
 void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 {
 	/* FAKEMATCH: needed to match: an unread ten-word launch tail, the native frame's 40 extra bytes. */
-	s32					  spare[10];
-	struct EffectPosition position;
-	struct EffectPosition position2;
+	s32							  spare[10];
+	struct EffectPosition		  position;
+	struct EffectPosition		  position2;
 	struct BattlePresentationWork launch;
 	struct BattlePresentationWork launch2;
 	/* FAKEMATCH: needed to match: one variable, assigned twice, holds slot 12's address and later the IME address, as the bytes do; the session is slot 9, three words below. */
@@ -11966,4 +11972,3 @@ void Battle_AwardSpoils(void)
 void Battle_ReservedNoOp2A08(void)
 {
 }
-

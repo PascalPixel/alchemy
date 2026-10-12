@@ -1809,7 +1809,7 @@ s32 __umodsi3(u32 value, s32 divisor);
 extern u32 gFrameCount;
 #endif
 
-u16	 gWorldMapBlend;
+u16 gWorldMapBlend;
 
 #define QueueFrame(buffer, offset) \
 	IO_WRITE_QUEUE_PUSH(0x06002000, (u32)((buffer) + (offset)), 0x84000140)

@@ -21,12 +21,12 @@ extern s8 Menu_TopEntryPositionByCommand[];
 extern u8 Shop_GlyphBytes[];
 extern u8 StatusMenu_LevelLetterString[];
 #if GAME_TLA
-void	 *AffineEffect_InitializeWork(void);
-void	  ItemMenu_PosCategory(void);
-void	  Menu_AppendResourceEntry(s32 no);
-void	  Menu_EndResourceSelection(void);
-void	  Resource_ResetPendingTransfer(void);
-s32		  Shop_CanServe(s32 entry_no, s32 kind);
+void *AffineEffect_InitializeWork(void);
+void  ItemMenu_PosCategory(void);
+void  Menu_AppendResourceEntry(s32 no);
+void  Menu_EndResourceSelection(void);
+void  Resource_ResetPendingTransfer(void);
+s32	  Shop_CanServe(s32 entry_no, s32 kind);
 #endif
 #if GAME_TLA
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
@@ -70,11 +70,11 @@ extern struct SelectionScreen *gResQueueWork;
 #ifndef OWN_gTitleExtraOptionEnabled
 extern u8 gTitleExtraOptionEnabled[];
 #endif
-extern s8					 Inn_PriceMultipliers[];
-extern u8					 ItemMenu_ArrangeKeysString[];
-extern s32					 ItemMenu_CommandColumnXTable[];
-extern u8					 ItemMenu_EquipmentKeyString[];
-extern const u8				 Menu_BackdropFrameTile[];
+extern s8		Inn_PriceMultipliers[];
+extern u8		ItemMenu_ArrangeKeysString[];
+extern s32		ItemMenu_CommandColumnXTable[];
+extern u8		ItemMenu_EquipmentKeyString[];
+extern const u8 Menu_BackdropFrameTile[];
 #ifndef OWN_Menu_ColonString
 extern const u8 Menu_ColonString[];
 #endif
@@ -126,7 +126,7 @@ struct BtlAct *Ability_GetData(s32 action_id);
 #endif
 #ifndef OWN_InventoryMenu_ShowModalMessage
 #endif
-s32	 Item_FindSlot(s32 unit_id, s32 item_id);
+s32 Item_FindSlot(s32 unit_id, s32 item_id);
 #ifndef OWN_LinkLobby_PollPeerReady
 #endif
 #ifndef OWN_Menu_DrawPageIndicator

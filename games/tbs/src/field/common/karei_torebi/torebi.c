@@ -298,9 +298,9 @@ void FieldScene_RunActorThirteenFlagDialogue(void)
 
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
-	s32 rec7;
+	s32				  rec7;
 	struct GameState *state;
-	s32 six00;
+	s32				  six00;
 
 #if !EDITION_INTERNATIONAL
 	/* FAKEMATCH: needed to match: one coin-label selector preserves its saved register; separate arguments shorten the Japanese callback by twelve bytes. Measured again: differ 72 in tbs-ja. */

@@ -4,7 +4,7 @@
 #include "edition.h"
 #include "types.h"
 
-extern const u8	 UiText_KanjiGlyphs[];
+extern const u8 UiText_KanjiGlyphs[];
 #if GAME_TLA
 extern const u16 UiText_MarkGlyphCodes[];
 #endif

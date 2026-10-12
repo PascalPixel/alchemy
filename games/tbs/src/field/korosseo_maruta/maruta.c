@@ -184,7 +184,7 @@ static inline void InitializeSelectedActor(s32 actorId)
 	Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
 }
 
-extern s32					 gColossoParticleCount;
+extern s32 gColossoParticleCount;
 
 // コロッセオ共通 (field/common/korosseo)
 

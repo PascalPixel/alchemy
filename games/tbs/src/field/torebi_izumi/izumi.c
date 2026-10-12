@@ -413,9 +413,9 @@ void TorebiIzumi_RevealPrize(s32 item)
 
 void TorebiIzumi_RiseAndFadeIn(void)
 {
-	u8 *p = gMapWork[0];
+	u8		  *p = gMapWork[0];
 	const u16 *step;
-	s32 i;
+	s32		   i;
 
 	Engine_AudioPlayCue(216);
 	p += 356;

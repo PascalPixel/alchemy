@@ -171,9 +171,10 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 	s32						 tile;
 
 	changed = 0;
-	ctx = (*(void *(*)[])&gMenuCtrlWork)[0];
+	ctx = (*(void *(*)[]) & gMenuCtrlWork)[0];
 	held = 1;
-	draw = (DrawFn)(*(void *(*)[])&gMenuCtrlWork)[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
+	draw =
+		(DrawFn)(*(void *(*)[]) & gMenuCtrlWork)[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
 	if (draw == 0)
 	{
 		block = Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_DECODER, (s32)Render_DecodeFrameCodeSize);
@@ -181,7 +182,8 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 			(((u32)Render_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2)
 				| (DMA_ENABLE32 | DMA_32BIT),
 			REG_DMA3);
-		draw = (DrawFn)(*(void *(*)[])&gMenuCtrlWork)[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
+		draw = (DrawFn)(*(void *(*)[])
+						& gMenuCtrlWork)[HEAP_SLOT_FRAME_DECODER - HEAP_SLOT_MENU_CONTROL];
 		held = 0;
 	}
 
@@ -2098,24 +2100,24 @@ struct FixedCamera
 void ObjectSystem_UpdateCamera(void)
 {
 	/* FAKEMATCH: needed to match: unused; the native frame keeps room for three points above the position. */
-	struct CameraPoint	 spare[3];
-	s32					 cnt;
-	struct CameraState	*map;
-	s32					 cam_x;
-	s32					 cam_z;
+	struct CameraPoint		 spare[3];
+	s32						 cnt;
+	struct CameraState		*map;
+	s32						 cam_x;
+	s32						 cam_z;
 	struct ObjectSystemWork *sync;
-	struct CameraObject *obj;
-	struct CameraSprite *spr;
-	s32					*cam;
-	u32					 kind;
-	s32					 dx;
-	s32					 dz;
-	s32					 top;
-	struct CameraTile	*tile;
-	u32					 bits;
-	s32					 scale[2];
-	s32					 pos[4];
-	u32					 bits_val;
+	struct CameraObject		*obj;
+	struct CameraSprite		*spr;
+	s32						*cam;
+	u32						 kind;
+	s32						 dx;
+	s32						 dz;
+	s32						 top;
+	struct CameraTile		*tile;
+	u32						 bits;
+	s32						 scale[2];
+	s32						 pos[4];
+	u32						 bits_val;
 
 	map = *(struct CameraState **)(((u8 *)&gObjectSlots) + 12);
 	cam = &map->x;
@@ -2225,21 +2227,21 @@ s32 ObjectCamera_ReturnTrue(void)
 //--------------------------------------------------------------------------
 void ObjectSystem_UpdateCameraFixed(void)
 {
-	s32					 cnt;
-	struct FixedCamera	*cam;
+	s32						 cnt;
+	struct FixedCamera		*cam;
 	struct ObjectSystemWork *sync;
-	struct CameraPoint	*eye;
-	struct CameraPoint	*tgt;
-	struct CameraObject *obj;
-	s32					 angle;
-	s32					 part;
-	s32					 kind;
-	s32					*pos;
-	s32					 one;
-	void			   **parts;
-	void				*spr;
-	s32					 scale2[2];
-	s32					 scale[2];
+	struct CameraPoint		*eye;
+	struct CameraPoint		*tgt;
+	struct CameraObject		*obj;
+	s32						 angle;
+	s32						 part;
+	s32						 kind;
+	s32						*pos;
+	s32						 one;
+	void				   **parts;
+	void					*spr;
+	s32						 scale2[2];
+	s32						 scale[2];
 	/* FAKEMATCH: needed to match: unused; the native frame keeps room for two points above the scales. */
 	struct CameraPoint spare[2];
 
@@ -5159,7 +5161,7 @@ void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
 
 //--------------------------------------------------------------------------
 
-extern u8  gMapCellBuffer[];
+extern u8 gMapCellBuffer[];
 
 //--------------------------------------------------------------------------
 // 展開バッファの [1] が方式、[2] からが 16 ビットのデータ
@@ -5703,14 +5705,14 @@ struct TilePos
 void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y, u32 dst_x, u32 dst_y, u32 width, u32 height)
 {
 	/* FAKEMATCH: needed to match: temporary sharing preserves register allocation and scheduling without changing the frame or instructions. Measured 2026-10-11, before the volatile casts on the two word copies were dropped as unneeded: i = 0 after the offset differs 59, at the top of the body 32; a fresh bytes = cell * 8 is hoisted by loop.c, 158; the scale before the first destination, 4; address expressions without scr and blk, 113-153. A plain body differs 214. */
-	u32							   *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
-	u32							   *dst = (u32 *)Ram_MapCellBuffer + (dst_y * 128 + dst_x);
-	struct MapLayerScroll		   *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
-	struct TilePos					tile[3];
-	s32								i;
-	struct TilePos				   *pos = tile;
-	u32								y;
-	u32								x;
+	u32					  *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
+	u32					  *dst = (u32 *)Ram_MapCellBuffer + (dst_y * 128 + dst_x);
+	struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
+	struct TilePos		   tile[3];
+	s32					   i;
+	struct TilePos		  *pos = tile;
+	u32					   y;
+	u32					   x;
 
 	for (i = 2; i >= 0; i--)
 	{
@@ -5888,16 +5890,16 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 
 		{
 			for (x = dst_x; x < dst_x + width; x++)
 			{
-				u32			  val = *src++;
-				u32			  cell;
-				u32			  offset;
-				u32			  tmp3;
-				u32			 *dest;
-				u32			  n;
-				u32			 *tiles;
-				u32			  tmp6;
-				u32			  tmp12;
-				u32			  tmp13;
+				u32	 val = *src++;
+				u32	 cell;
+				u32	 offset;
+				u32	 tmp3;
+				u32 *dest;
+				u32	 n;
+				u32 *tiles;
+				u32	 tmp6;
+				u32	 tmp12;
+				u32	 tmp13;
 
 				dst[0] = val;
 				cell = val & 0xfff;
@@ -5930,9 +5932,9 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 
 						/* FAKEMATCH: restoring the unscaled cell keeps loop.c's
 						 * shift inside the successful layer branch. The restoration
 						 * folds away, preserving the native 36-byte frame and registers. */
-						u32			 bytes = cell * 8;
-						u32			 tmp8;
-						u32			 tmp17;
+						u32 bytes = cell * 8;
+						u32 tmp8;
+						u32 tmp17;
 
 						cell = bytes / 8;
 						tmp = (u32 *)Ram_MapBlocks;
@@ -6044,14 +6046,14 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 		{
 			for (x = dst_x; x < dst_x + width; x++)
 			{
-				u32			 val = *src++;
-				u32			 cell;
-				u32			 offset;
-				u32			 tmp3;
-				u32			 n;
-				u32			 tmp6;
-				u32			 tmp12;
-				u32			 tmp13;
+				u32 val = *src++;
+				u32 cell;
+				u32 offset;
+				u32 tmp3;
+				u32 n;
+				u32 tmp6;
+				u32 tmp12;
+				u32 tmp13;
 
 				cell = val & MAP_CELL_TILE_MASK;
 				dst[0] = (dst[0] & MAP_CELL_ATTRIBUTE_MASK) | cell;
@@ -6702,8 +6704,7 @@ extern u8 gDecodeBuffer[];
 void MapAnimation_PresentFrame(void)
 {
 	Io_Write16(0x682, &REG_BG1CNT);
-	Dma_Set(gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00,
-		DMA_ENABLE32 | DMA_32BIT | 0x2580, REG_DMA3);
+	Dma_Set(gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00, DMA_ENABLE32 | DMA_32BIT | 0x2580, REG_DMA3);
 }
 
 void MapAnimation_Start(void)
@@ -7631,21 +7632,21 @@ void Resource_RunCopiedDecoder(s32 a, s32 b)
 
 void WorldMap_BuildScanlineTable(s32 depth, s32 *position, struct MapScanline *row)
 {
-	s32			 ground[3];
-	s32			 viewed[3];
-	s32			 horizon;
-	s32			 focus;
-	s32			*view;
-	s32			 line;
-	s32			 distance;
-	s32			 difference;
-	s32			 scale;
-	s32			 x;
-	s32			 y;
-	s32			 diagonal;
-	s32			 vertical;
-	s32			 zero;
-	s32			 horizontal;
+	s32	 ground[3];
+	s32	 viewed[3];
+	s32	 horizon;
+	s32	 focus;
+	s32 *view;
+	s32	 line;
+	s32	 distance;
+	s32	 difference;
+	s32	 scale;
+	s32	 x;
+	s32	 y;
+	s32	 diagonal;
+	s32	 vertical;
+	s32	 zero;
+	s32	 horizontal;
 
 	zero = 0;
 	ground[0] = position[0];
@@ -8024,11 +8025,13 @@ next:
 			Scheduler_ResetTaskTable();
 			if ((*held & KEY_B) != 0)
 			{
-				RuntimeDispatch_ReturnZero((s32)&ResourceId_ResourceFarCalls, FarCall_ResourceTable);
+				RuntimeDispatch_ReturnZero(
+					(s32)&ResourceId_ResourceFarCalls, FarCall_ResourceTable);
 			}
 			else
 			{
-				RuntimeDispatch_ReturnZero((s32)&ResourceId_ResourceFarCallsAlternate, FarCall_ResourceTable);
+				RuntimeDispatch_ReturnZero(
+					(s32)&ResourceId_ResourceFarCallsAlternate, FarCall_ResourceTable);
 			}
 			goto restart;
 		}
@@ -8309,4 +8312,3 @@ void Battle_PlaceActorsByFormationKind(void)
 			angle += odd;
 	}
 }
-

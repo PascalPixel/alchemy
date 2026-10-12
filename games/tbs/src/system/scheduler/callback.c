@@ -892,7 +892,7 @@ s32 _call_via_r3(s32, s32, s32, s32);
 
 void Graphics_ResetFrameState(void)
 {
-	(*(u8 (*)[])&gObjAffineCount)[0] = 0;
+	(*(u8(*)[]) & gObjAffineCount)[0] = 0;
 	_call_via_r3(((u32)&gRenderSlotHeads), 0x400, ((u32)&gObjAffineCount), (u32)IwramClearWords);
 }
 
@@ -958,7 +958,7 @@ void Runtime_PushSlotEntry(void *slot_entry, s32 slot)
 		slot = 0xFF;
 	if (slot < 0)
 		slot = 0;
-	head = &(*(void *(*)[])&gRenderSlotHeads)[slot];
+	head = &(*(void *(*)[]) & gRenderSlotHeads)[slot];
 	previous_head = *head;
 	*head = slot_entry;
 	*(void **)slot_entry = previous_head;
@@ -1901,7 +1901,7 @@ s32 Runtime_GetRemainingIwram(void)
 {
 	union HeapState *work = (union HeapState *)gWorkSlot;
 
-	return (s32)(*(u8 (*)[])&gCartridgeResetMarker) - (s32)work->heap.next_iwram;
+	return (s32)(*(u8(*)[]) & gCartridgeResetMarker) - (s32)work->heap.next_iwram;
 }
 
 s32 Runtime_GetRemainingEwram(void)

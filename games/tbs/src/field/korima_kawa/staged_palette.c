@@ -33,7 +33,6 @@
 // implicit int declaration of a u16 function
 #endif
 
-
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
 

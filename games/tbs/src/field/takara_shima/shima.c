@@ -117,7 +117,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 void SpawnRadialEffectBurst(s32 object_id)
 {
-	struct FieldActor	   *object;
+	struct FieldActor	*object;
 	struct Vec			 vec;
 	struct EffectOptions params;
 	u32					 angle_step;
@@ -137,7 +137,8 @@ void SpawnRadialEffectBurst(s32 object_id)
 		vec.z = z;
 		x += Math_Divide(x, 3);
 		vec.x = x;
-		Effect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y, z, 0x01000001, &params);
+		Effect_Spawn(
+			object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y, z, 0x01000001, &params);
 	}
 }
 

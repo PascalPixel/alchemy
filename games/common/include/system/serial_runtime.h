@@ -87,23 +87,23 @@ LAYOUT_OFFSET_GUARD(SerialTransferState_Payload, struct SerialTransferState, pay
 	} while (0)
 
 #if GAME_TLA
-s32								  SerialRuntime_PollStatus(void);
-s32								  SerialRuntime_ExchangePayloads(void *send, void *receive);
-void							  SerialRuntime_PrepareSendPacket(void *payload);
-u8								  SerialRuntime_CollectReceivedPayloads(void *payload);
-void							  SerialRuntime_StepBlockTransfer(void);
-void							  SerialRuntime_EnableTransferTimer(void);
-void							  SerialRuntime_DisableTransfer(void);
-s32								  SerialRuntime_BeginTransferA(void *source, s32 size);
-s32								  SerialRuntime_BeginTransferB(void *destination);
-void							  SerialRuntime_WaitForTransferA(void);
-void							  SerialRuntime_WaitForTransferB(void);
-void							  SerialRuntime_WaitForTransfers(void);
-s32								  SerialRuntime_GetActiveTransfers(void);
-void							  BattleLink_ResetTransferState(void);
-void							  SerialRuntime_HandleTransferInterrupt(void);
-void							  SerialRuntime_RemoveIrqHandlers(void);
-u32								  SerialRuntime_WaitForStatusMask(s32 mask);
+s32	 SerialRuntime_PollStatus(void);
+s32	 SerialRuntime_ExchangePayloads(void *send, void *receive);
+void SerialRuntime_PrepareSendPacket(void *payload);
+u8	 SerialRuntime_CollectReceivedPayloads(void *payload);
+void SerialRuntime_StepBlockTransfer(void);
+void SerialRuntime_EnableTransferTimer(void);
+void SerialRuntime_DisableTransfer(void);
+s32	 SerialRuntime_BeginTransferA(void *source, s32 size);
+s32	 SerialRuntime_BeginTransferB(void *destination);
+void SerialRuntime_WaitForTransferA(void);
+void SerialRuntime_WaitForTransferB(void);
+void SerialRuntime_WaitForTransfers(void);
+s32	 SerialRuntime_GetActiveTransfers(void);
+void BattleLink_ResetTransferState(void);
+void SerialRuntime_HandleTransferInterrupt(void);
+void SerialRuntime_RemoveIrqHandlers(void);
+u32	 SerialRuntime_WaitForStatusMask(s32 mask);
 #endif
 extern struct SerialTransferState gSerialTransfer;
 extern struct SerialRuntime		  gSerialRuntime;

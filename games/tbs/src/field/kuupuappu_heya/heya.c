@@ -1783,8 +1783,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 			}
 			Object_GetById(24)->timer = 5;
 			Object_GetById(25)->timer = 4;
-			Engine_TaskAddCallback(
-				(s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
+			Engine_TaskAddCallback((s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
 		}
 		break;
 	case 13:

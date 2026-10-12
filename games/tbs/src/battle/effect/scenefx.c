@@ -22068,7 +22068,8 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 		}
 	}
 
-	Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet), 128);
+	Iwram_CopyWords(
+		(void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet), 128);
 
 	for (i = 0; i != 128; i++)
 	{

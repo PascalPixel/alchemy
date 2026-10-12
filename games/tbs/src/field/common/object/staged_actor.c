@@ -305,7 +305,8 @@ found:
 	{
 		return 0;
 	}
-	probe->position_x = actor->x.value + (StagedActor_DirectionSteps[direction] & 0xffff0000) * steps;
+	probe->position_x =
+		actor->x.value + (StagedActor_DirectionSteps[direction] & 0xffff0000) * steps;
 	probe->position_y = actor->y;
 	probe->position_z = actor->z.value + (StagedActor_DirectionSteps[direction] << 16) * steps;
 	return 1;

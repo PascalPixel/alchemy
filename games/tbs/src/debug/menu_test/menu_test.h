@@ -14,6 +14,6 @@
 
 extern struct BattleFxScene *gEffectWork;
 
-u8	 Engine_TaskWait();
+u8 Engine_TaskWait();
 
 #endif

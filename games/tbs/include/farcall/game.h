@@ -16,8 +16,8 @@ FAR_CALL(Inventory_RemoveFar, Inventory_Remove, s32, (s32 owner, s32 slot))
 FAR_CALL(Inventory_BreakFar, Inventory_Break, s32, (s32 owner, s32 slot))
 FAR_CALL(Inventory_RepairFar, Inventory_Repair, s32, (s32 owner, s32 slot))
 FAR_SLOT(Item_GetTargetMode)
-FAR_CALL(Inventory_GetEquippedItemFar, Inventory_GetEquippedItem, s32,
-	(struct BtlUnit *inv, s32 type))
+FAR_CALL(
+	Inventory_GetEquippedItemFar, Inventory_GetEquippedItem, s32, (struct BtlUnit * inv, s32 type))
 FAR_CALL(BtlActGet, BattleAction_GetDirect, struct BtlAct *, (s32 action_id))
 FAR_CALL(OwnerAction_AddFar, OwnerAction_Add, s32, (s32 state_index, s32 value))
 FAR_CALL(Equipment_HasValueFar, Equipment_HasValue, s32, (s32 owner, s32 value))
@@ -25,8 +25,8 @@ FAR_CALL(GameState_InitDefaultsFar, GameState_InitDefaults, void, (void))
 FAR_SLOT(OwnerAction_CheckLevelThreshold)
 FAR_SLOT(Owner_InitRecords)
 FAR_SLOT(Owner_LevelNoOp)
-FAR_CALL(Owner_GetValueIfLevelThresholdReachedFar, Owner_GetValueIfLevelThresholdReached, struct LevelUpResult *,
-	(s32 owner_no, struct LevelUpResult *value))
+FAR_CALL(Owner_GetValueIfLevelThresholdReachedFar, Owner_GetValueIfLevelThresholdReached,
+	struct LevelUpResult *, (s32 owner_no, struct LevelUpResult *value))
 FAR_CALL(GameFlag_TestFar, GameFlag_Test, s32, (s32 flag))
 FAR_CALL(GameFlag_SetBitFar, GameFlag_SetBit, s32, (s32 flag))
 FAR_CALL(GameFlag_ClearBitFar, GameFlag_ClearBit, void, (s32 flag))
@@ -41,12 +41,12 @@ FAR_SLOT(Owner_RefreshAndResetZero)
 FAR_CALL(Owner_AdjustFirstValueFar, Owner_AdjustFirstValue, s32, (s32 owner, s32 delta))
 FAR_CALL(UnitEpAddFar, UnitEpAdd, s16, (s32 owner, s32 delta))
 FAR_CALL(UnitRatioFar, UnitRatio, void, (s32 owner_no))
-FAR_CALL(Owner_UpdateRatioPairFar, Owner_UpdateRatioPair, void, (struct BtlUnit *state, s32 input))
+FAR_CALL(Owner_UpdateRatioPairFar, Owner_UpdateRatioPair, void, (struct BtlUnit * state, s32 input))
 FAR_SLOT(Owner_UpdateSecondInputAndRatios)
 FAR_CALL(BtlUnitSetFar, BtlUnitSet, s32, (s32 unit_id, s32 enemy_id, s32 suffix))
 FAR_CALL(Party_CountActiveOwnersFar, Party_CountActiveOwners, s32, (void))
 FAR_CALL(Party_AddActiveOwnerFar, Party_AddActiveOwner, s32, (s32 value))
-FAR_CALL(Party_ListActiveOwnersFar, Party_ListActiveOwners, s32, (s16 *owners))
+FAR_CALL(Party_ListActiveOwnersFar, Party_ListActiveOwners, s32, (s16 * owners))
 FAR_CALL(RollWeaponUnleashFar, RollWeaponUnleash, s32, (struct BtlUnit * owner))
 FAR_CALL(Party_RemoveActiveOwnerFar, Party_RemoveActiveOwner, s32, (s32 value))
 FAR_CALL(Item_GetEquippedElementFar, Item_GetEquippedElement, s32, (s32 id))
@@ -67,8 +67,8 @@ FAR_CALL(Trade_ListFlaggedEntriesFar, Trade_ListFlaggedEntries, s32, (u8 * outpu
 FAR_CALL(SummonDefinition_Get, SummonDefinition_GetNear, const struct SummonDefinition *,
 	(u32 summon_id))
 FAR_CALL(Djinn_GetDefinitionHeaderFar, Djinn_GetDefinitionHeader, s32, (u32 group, u32 index))
-FAR_CALL(Party_AdvanceOwnerCountToTargetFar, Party_AdvanceOwnerCountToTarget, void,
-	(s32 unit, s32 lv))
+FAR_CALL(
+	Party_AdvanceOwnerCountToTargetFar, Party_AdvanceOwnerCountToTarget, void, (s32 unit, s32 lv))
 FAR_CALL(Owner_GetResistanceValueFar, Owner_GetResistanceValue, s32, (s32 owner, s32 index))
 FAR_SLOT(Trade_CountPendingOffers)
 FAR_CALL(Djinn_IsActiveFar, Djinn_IsActive, u32, (s32 owner, s32 index, s32 bit))
@@ -101,8 +101,8 @@ FAR_CALL(Inventory_CountItemFar, Inventory_CountItem, s32, (s32 owner, s32 item_
 FAR_CALL(PartyInventory_CountItemFar, PartyInventory_CountItem, s32, (s32 item_id))
 FAR_CALL(PartyInventory_DiscardFar, PartyInventory_Discard, s32, (s32 item_id))
 FAR_CALL(GameFlag_RefreshLureCapFar, GameFlag_RefreshLureCap, void, (void))
-FAR_CALL(Equipment_GetUnleashRateBonusFar, Equipment_GetUnleashRateBonus, s32,
-	(struct BtlUnit *owner))
+FAR_CALL(
+	Equipment_GetUnleashRateBonusFar, Equipment_GetUnleashRateBonus, s32, (struct BtlUnit * owner))
 FAR_CALL(Runtime_GetBuildStampTimeFar, Runtime_GetBuildStampTime, u32, (void))
 FAR_CALL(PartyInventory_CountFreeSlotsFar, PartyInventory_CountFreeSlots, s32, (void))
 FAR_CALL(InventorySnapshot_SaveFar, InventorySnapshot_Save, void, (void))

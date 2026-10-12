@@ -8,7 +8,7 @@
 #include "field_effect.h"
 #include "field_scene.h"
 
-extern const s32  *gEffectScripts[];
+extern const s32 *gEffectScripts[];
 
 enum
 {

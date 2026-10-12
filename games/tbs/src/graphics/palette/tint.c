@@ -673,12 +673,12 @@ void Graphics_InterpolatePaletteBuffers(s16 *src, s16 *dst, s16 *step, s32 frame
 void TitlePalette_UpdateFade(void)
 {
 	struct TitlePaletteWork *work = gPaletteBufferWork;
-	u16 *delta = work->delta;
-	u16 *current;
-	u16 *packed;
-	s32	 i;
-	u16 *bank;
-	s32	 blue;
+	u16						*delta = work->delta;
+	u16						*current;
+	u16						*packed;
+	s32						 i;
+	u16						*bank;
+	s32						 blue;
 
 	if (work->duration == 0)
 		return;

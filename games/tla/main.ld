@@ -132,7 +132,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00016180)
     "*/games/tla/src/system/link/sio_time.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00016346)
-    "*/recon/tla/ja/rom.o"(.rom.00016348)
     "*/games/tla/src/system/link/serial_poll_status.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000164e6)
     "*/games/tla/src/system/link/sio_xchg.o"(.text)

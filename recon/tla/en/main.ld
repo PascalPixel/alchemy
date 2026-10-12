@@ -129,7 +129,6 @@
         "*/recon/tla/raw/08016180.o"(.text)
         "*/games/tla/src/system/link/sio_time.o"(.text)
         "*/recon/tla/raw/08016346.o"(.text)
-        "*/recon/tla/raw/08016348.o"(.text)
         "*/games/tla/src/system/link/serial_poll_status.o"(.text)
         "*/recon/tla/raw/080164e6.o"(.text)
         "*/games/tla/src/system/link/sio_xchg.o"(.text)

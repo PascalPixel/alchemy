@@ -296,7 +296,7 @@ SerialRuntime_InitializeFar:
 	.global SerialRuntime_PollAndTransferFar
 	.thumb_func
 SerialRuntime_PollAndTransferFar:
-	overlay_veneer Func_08016348
+	overlay_veneer SerialRuntime_PollAndTransfer
 	.global QueueIoWriteDelay1Far
 	.thumb_func
 QueueIoWriteDelay1Far:

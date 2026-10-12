@@ -11,7 +11,7 @@ SECTIONS
         "*/resource_6a5_overlay.o"(.text.x020080ec)
         "*/games/tla/src/field/common/object/step_angle.o"(.text)
         "*/resource_6a5_overlay.o"(.text.x02008198)
-        "*/resource_6a5_overlay.o"(.text.x0200845c)
+        "*/games/tla/src/field/overlay_6a5/s045c.o"(.text)
         "*/resource_6a5_overlay.o"(.text.x020084c8)
         "*/resource_6a5_overlay.o"(.text.x020085b8)
         "*/resource_6a5_overlay.o"(.text.x0200865c)

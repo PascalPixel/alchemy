@@ -121,7 +121,6 @@
     "*/recon/tla/fr/rom.o"(.rom.000161ac)
     "*/games/tla/src/system/link/sio_time.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00016372)
-    "*/recon/tla/fr/rom.o"(.rom.00016374)
     "*/games/tla/src/system/link/serial_poll_status.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00016512)
     "*/games/tla/src/system/link/sio_xchg.o"(.text)

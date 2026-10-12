@@ -1900,72 +1900,6 @@ Func_02001178:
 	bl GameFlag_ClearBit
 	pop {pc}
 	.2byte 0x0000
-	.section .text.x02009188,"ax",%progbits
-	.global Func_02001188
-	.thumb_func
-Func_02001188:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	sub sp, #12
-	movs r3, #180
-	movs r7, #128
-	movs r6, #212
-	mov r5, sp
-	lsls r3, r3, #17
-	lsls r7, r7, #15
-	lsls r6, r6, #17
-	str r3, [r5]
-	str r7, [r5, #4]
-	str r6, [r5, #8]
-	mov r8, r3
-	bl Random16Far
-	adds r1, r0, #0
-	movs r0, #128
-	adds r2, r5, #0
-	lsls r0, r0, #14
-	bl Vector_AddPolarOffsetFar
-	movs r0, #128
-	lsls r0, r0, #2
-	ldr r1, [r5]
-	ldr r2, [r5, #4]
-	ldr r3, [r5, #8]
-	adds r0, #162
-	bl Func_02001f0c
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_02009202
-	adds r2, r5, #0
-	adds r2, #85
-	movs r3, #0
-	strb r3, [r2]
-	movs r3, #128
-	lsls r3, r3, #10
-	str r3, [r5, #48]
-	movs r3, #128
-	lsls r3, r3, #8
-	str r3, [r5, #52]
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	adds r0, r5, #0
-	movs r1, #0
-	bl Func_02001efc
-	adds r0, r5, #0
-	mov r1, r8
-	adds r2, r7, #0
-	adds r3, r6, #0
-	bl Func_02001f24
-	ldr r1, .L_0200920c
-	adds r0, r5, #0
-	bl Func_02001f04
-.L_02009202:
-	add sp, #12
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_0200920c:
-	.4byte Data_0200247c
 	.section .text.x02009210,"ax",%progbits
 	.global Func_02001210
 	.thumb_func
@@ -3170,39 +3104,6 @@ Func_020014c0:
 	.4byte 0x00013333
 .L_02009d5c:
 	.4byte Data_020020e4
-	.section .text.x02009d60,"ax",%progbits
-	.global Func_02001d60
-	.thumb_func
-Func_02001d60:
-	push {r5, lr}
-	ldr r3, .L_02009d98
-	movs r2, #7
-	ldr r3, [r3]
-	ands r3, r2
-	cmp r3, #0
-	bne .L_02009d96
-	ldr r1, [r0, #8]
-	ldr r2, [r0, #12]
-	ldr r3, [r0, #16]
-	movs r0, #14
-	bl Func_02001f0c
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_02009d96
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	adds r0, r5, #0
-	movs r1, #1
-	bl Func_02001efc
-	ldr r1, .L_02009d9c
-	adds r0, r5, #0
-	bl Func_02001f04
-.L_02009d96:
-	pop {r5, pc}
-.L_02009d98:
-	.4byte gFrameCount
-.L_02009d9c:
-	.4byte Data_02002498
 	.section .text.x02009da0,"ax",%progbits
 	.global Func_02001da0
 	.thumb_func

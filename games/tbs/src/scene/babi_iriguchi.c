@@ -207,14 +207,7 @@ static void BabiIriguchi_JumpFromLedge(void)
 
 	rec7 = Object_GetById(0);
 	Engine_EventBegin();
-	if ((rec7->x.fixed >> 20) != 6)
-	{
-		if ((rec7->x.fixed >> 20) != 18)
-		{
-			goto done;
-		}
-	}
-	if ((rec7->z.fixed >> 20) == 20)
+	if (((rec7->x.fixed >> 20) == 6 || (rec7->x.fixed >> 20) == 18) && (rec7->z.fixed >> 20) == 20)
 	{
 		rec7->target_x = -0x80000000;
 		rec7->target_z = -0x80000000;
@@ -223,19 +216,20 @@ static void BabiIriguchi_JumpFromLedge(void)
 		Engine_ActorJump(0, 4, 0);
 		{
 			u16 dir = rec7->facing;
-			if ((u16)(dir + 0x4fff) > 0x1fff && (u16)(dir - 0x3001) > 0x1fff)
-				goto step_down;
+			if ((u16)(dir + 0x4fff) <= 0x1fff || (u16)(dir - 0x3001) <= 0x1fff)
+			{
+				Engine_ActorSetDestinationOffset(0, 16, 0);
+				Engine_ActorWaitForMove(0);
+				Actor_FaceDirection(0, FACING_WEST, 20);
+			}
+			else
+			{
+				FieldObjectMotion_OffsetPositionAndResetMotion(0, 0, -16);
+				Engine_ActorWaitForMove(0);
+				Actor_FaceDirection(0, FACING_SOUTH, 20);
+			}
 		}
-		Engine_ActorSetDestinationOffset(0, 16, 0);
-		Engine_ActorWaitForMove(0);
-		Actor_FaceDirection(0, FACING_WEST, 20);
-		goto done;
-	step_down:;
-		FieldObjectMotion_OffsetPositionAndResetMotion(0, 0, -16);
-		Engine_ActorWaitForMove(0);
-		Actor_FaceDirection(0, FACING_SOUTH, 20);
 	}
-done:;
 	SceneState_ApplyRectsAtActors8And9();
 	Engine_EventEnd();
 }

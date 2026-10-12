@@ -3861,7 +3861,7 @@ Func_08192c9c:
 	lsls r2, r2, #3
 	orrs r3, r2
 	str r3, [sp, #216]
-	bl Func_08014ee0
+	bl SceneTransform_ResetMatrix
 	movs r3, #4
 	str r3, [r6]
 	ldr r3, .L_08194b20
@@ -5068,7 +5068,7 @@ Func_08192c9c:
 	add r7, sp, #208
 	str r3, [r7, #4]
 	adds r5, r0, #0
-	bl Func_08014ee0
+	bl SceneTransform_ResetMatrix
 	movs r3, #128
 	add r0, sp, #252
 	lsls r3, r3, #14

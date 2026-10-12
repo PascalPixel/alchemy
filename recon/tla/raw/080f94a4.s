@@ -58,7 +58,7 @@ Func_080f94a4:
 	movs r3, #7
 	movs r0, #0
 	bl Func_080fa368
-	bl Func_080fc480
+	bl Resource_LoadPairedBlocks
 	movs r0, #14
 	bl Palette_LightenBankHighlight
 	ldr r0, .L_080f95f0

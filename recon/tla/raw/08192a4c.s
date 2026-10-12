@@ -153,7 +153,7 @@ Func_08192a4c:
 	adds r3, r1, r2
 	adds r3, r3, r5
 	str r3, [r0, #4]
-	bl Func_08014ee0
+	bl SceneTransform_ResetMatrix
 	mov r2, r9
 	ldr r5, [sp, #12]
 	ldr r1, [r2]

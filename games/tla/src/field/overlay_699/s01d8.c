@@ -1,4 +1,3 @@
-/* Draft, differ 2 of 56: the native loads the leader x and z before it copies the leader to r10 (ldr r5; ldr r6; mov r10, r0); this form copies first. A one-pass block after the two loads moves the owner reload instead (differ 4). */
 #include "types.h"
 
 #include "ram_buffer.h"
@@ -42,18 +41,28 @@ void Func_02001d4c(s32 cue);
 
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
-void Func_020015cc(void)
+void Func_020001d8(struct ObjectRuntime *object)
 {
-    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
-    s32 x = leader->x;
-    s32 z = leader->z;
+    u8 *work = Ram_HeapSlots->event_work;
 
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x40000, 0x20000);
-    x >>= 20;
-    z >>= 20;
-    ObjectMotion_SetPositionAndCommit(gPartyState.current_owner, (x << 4) + 8, (z << 4) + 8);
-    WaitFrames(1);
-    Object_SetPositionAndResetMotion(leader, (x << 20) + 0x80000, leader->y, (z << 20) + 0x80000);
-    Battle_WaitMode0(4);
-    Func_02001cdc()->y -= 0x80000;
+    if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 || *(s16 *)(work + 350) != 0
+        || *(s16 *)(work + 360) != 0) {
+        ObjectDispatch_ApplyValueToChildren(object, 0);
+        Map_EnableUpdateCallback();
+        return;
+    }
+    ObjectDispatch_ApplyValueToChildren(object, 16);
+    Map_DisableUpdateCallback();
+    if (OBJECT_BYTE(object, 99) != 0) {
+        if ((gFrameCount & 7) == 0)
+            OBJECT_BYTE(object, 99)--;
+        return;
+    }
+    if (*(s16 *)((u8 *)object + 102) == 0)
+        Func_0200015c(object);
+    do { } while (0); /* FAKEMATCH: the loop note keeps the timer load after the reset call (stated plainly it is loaded before the test as well, 13 differ). */
+    (*(s16 *)((u8 *)object + 102))--;
+    do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: the native stores the timer before it loads z (2 differ without it). */
+    object->x += Math_Cosine(((object->z >> 14) + (object->y >> 15)) << 8) / 2;
+    object->y += object->speed_limit;
 }

@@ -120,29 +120,13 @@ Input_HandleKeyInterrupt:
 	.incbin "baserom.gba", 0x00013b6c, 0x00000028
 	.section .rom.00013db0, "ax"
 	.incbin "baserom.gba", 0x00013db0, 0x000000ec
-	.section .rom.00014028, "ax"
-	.global Graphics_ResetFrameState
-	.type Graphics_ResetFrameState, %function
-	.thumb_func
-Graphics_ResetFrameState:
-	.incbin "baserom.gba", 0x00014028, 0x00000020
 	.section .rom.00014048, "ax"
 	.global AffineMatrix_BuildForEffect
 	.type AffineMatrix_BuildForEffect, %function
 	.thumb_func
 AffineMatrix_BuildForEffect:
 	.incbin "baserom.gba", 0x00014048, 0x000000bc
-	.section .rom.00014104, "ax"
-	.global Func_080140d8
-	.type Func_080140d8, %function
-	.thumb_func
-Func_080140d8:
-	.incbin "baserom.gba", 0x00014104, 0x00000050
-	.global Runtime_PushSlotEntry
-	.type Runtime_PushSlotEntry, %function
-	.thumb_func
-Runtime_PushSlotEntry:
-	.incbin "baserom.gba", 0x00014154, 0x0000004c
+	.section .rom.000141a0, "ax"
 	.global ResourceTable_AllocateBlocks
 	.type ResourceTable_AllocateBlocks, %function
 	.thumb_func
@@ -324,18 +308,6 @@ UnitGet:
 	.thumb_func
 Func_08016d34:
 	.incbin "baserom.gba", 0x00016d60, 0x00000028
-	.section .rom.00016da8, "ax"
-	.global Func_08016d7c
-	.type Func_08016d7c, %function
-	.thumb_func
-Func_08016d7c:
-	.incbin "baserom.gba", 0x00016da8, 0x0000001c
-	.section .rom.00016dc4, "ax"
-	.global Func_08016d98
-	.type Func_08016d98, %function
-	.thumb_func
-Func_08016d98:
-	.incbin "baserom.gba", 0x00016dc4, 0x0000001c
 	.section .rom.00016dfc, "ax"
 	.global Func_08016dd0
 	.type Func_08016dd0, %function

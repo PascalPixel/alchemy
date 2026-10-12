@@ -15,6 +15,7 @@
 #include "system.h"
 #include "types.h"
 #include "fixed_math.h"
+#include "iwram_call.h"
 
 // フェードは VBlank ごとに BlendTransition_Update が進める。
 // 明るさ（BLDY）は 0 で元のまま、16 で真っ白または真っ黒。
@@ -111,4 +112,13 @@ void Blend_WaitForTransition(void)
 			WaitFrames(1);
 		} while (gBlendDuration != 0);
 	}
+}
+
+extern u8 gObjAffineCount;
+extern u8 gOamBucketMasks[];
+
+void Graphics_ResetFrameState(void)
+{
+    gObjAffineCount = 0;
+    Iwram_ClearWords(gOamBucketMasks, 32);
 }

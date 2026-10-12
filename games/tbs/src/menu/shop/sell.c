@@ -2417,23 +2417,20 @@ s32 Sanctum_RunPartyService(void)
 			AudioCommand_PlayFar(SOUND_MENU_CANCEL);
 			break;
 		}
-		else
+		if ((gKeysRepeat & KEY_LEFT) != 0)
 		{
-			if ((gKeysRepeat & KEY_LEFT) != 0)
-			{
-				AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-				redraw = 1;
-				selection -= 1;
-			}
-			if ((gKeysRepeat & KEY_RIGHT) != 0)
-			{
-				AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-				redraw = 1;
-				selection += 1;
-			}
-			WaitFrames(1);
-			continue;
+			AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+			redraw = 1;
+			selection -= 1;
 		}
+		if ((gKeysRepeat & KEY_RIGHT) != 0)
+		{
+			AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+			redraw = 1;
+			selection += 1;
+		}
+		WaitFrames(1);
+		continue;
 	}
 
 	Menu_ReleaseEntryObjectsFar();
@@ -2601,7 +2598,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
 	s32						  callback_flags;
 	s32						  i;
 
-	shop = (gMenuWork);
+	shop = gMenuWork;
 	saved_kind = shop->cursor.anchor->active;
 	shop->burst_member = 0xff;
 	shop->cursor.anchor->active = 13;

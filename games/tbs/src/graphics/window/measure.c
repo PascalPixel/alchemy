@@ -4786,7 +4786,7 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
 	hi = code >> 8;
 	code &= 0xff;
 	base = Text_MessageContexts[hi][0];
-	base = base + ((const u16 *)Text_MessageContexts[hi][1])[code];
+	base += ((const u16 *)Text_MessageContexts[hi][1])[code];
 	tree = base;
 	leaves = base - 1;
 	rank = 0;
@@ -5515,7 +5515,7 @@ void MenuSelection_DrawFrame(void)
 				}
 				else
 				{
-					node->x = node->x + node->dx;
+					node->x += node->dx;
 				}
 			}
 			else
@@ -5526,7 +5526,7 @@ void MenuSelection_DrawFrame(void)
 				}
 				else
 				{
-					node->x = node->x + node->dx;
+					node->x += node->dx;
 				}
 			}
 			e->x = node->x;
@@ -5593,9 +5593,9 @@ void MenuSelection_DrawFrame(void)
 			state->matrix[2] = 0;
 			te->param = AffineMatrix_BuildForEffect((struct AffineTransform *)state->matrix);
 			te->affine = 3;
-			te->x = te->x + 0xfff0;
-			te->y = te->y + 0xf0;
-			transfer->scale = transfer->scale + transfer->scale_step;
+			te->x += 0xfff0;
+			te->y += 0xf0;
+			transfer->scale += transfer->scale_step;
 		}
 		if (GameFlag_TestFar(0x103) != 0)
 		{
@@ -5611,24 +5611,24 @@ void MenuSelection_DrawFrame(void)
 		e = &node->sprite;
 		if (node->x != node->target_x)
 		{
-			node->x = node->x + node->dx;
+			node->x += node->dx;
 		}
 		if (node->y != node->target_y)
 		{
-			node->y = node->y + node->dy;
+			node->y += node->dy;
 		}
 		e->x = node->x;
 		e->y = node->y;
 		if (node->scale != node->scale_end)
 		{
-			node->scale = node->scale + node->scale_step;
+			node->scale += node->scale_step;
 			state->matrix[0] = node->scale;
 			state->matrix[1] = node->scale;
 			state->matrix[2] = 0;
 			e->param = AffineMatrix_BuildForEffect((struct AffineTransform *)state->matrix);
 			e->affine = 3;
-			e->x = e->x + 0xfff8;
-			e->y = e->y + 0xf8;
+			e->x += 0xfff8;
+			e->y += 0xf8;
 		}
 		else
 		{
@@ -5666,7 +5666,7 @@ void MenuSelection_DrawFrame(void)
 			tmp = (cursor->target_x - cursor->x) >> 1;
 			if (tmp != 0)
 			{
-				cursor->x = cursor->x + tmp;
+				cursor->x += tmp;
 			}
 			else
 			{
@@ -5677,7 +5677,7 @@ void MenuSelection_DrawFrame(void)
 		{
 			if ((tmp = (cursor->target_y - cursor->y) >> 1) != 0)
 			{
-				cursor->y = cursor->y + tmp;
+				cursor->y += tmp;
 			}
 			else
 			{
@@ -12067,7 +12067,7 @@ void Link_DrawShiftedTilePair(s32 offset)
 	{
 		phase = 1;
 	}
-	phase = phase + 1;
+	phase++;
 	Graphics_MergeShiftedTileRows(
 		(u32 *)0x06000220, (u32 *)gRomShiftedTilePair, (u32 *)offset, -phase);
 	Graphics_MergeShiftedTileRows(
@@ -14310,7 +14310,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 			}
 			else
 			{
-				menu->auto_delay = menu->auto_delay - 1;
+				menu->auto_delay--;
 			}
 		}
 		menu = gLinkCountdownWork;
@@ -14468,7 +14468,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 				}
 				else
 				{
-					page = page + 5;
+					page += 5;
 					row = saved_row;
 					if (page == ((cnt - 1) / 5) * 5)
 					{
@@ -17868,7 +17868,7 @@ s32 Menu_SelectResource(s32 start, s32 goal)
 		if (pos == goal)
 			break;
 
-		state->selection = state->selection + step;
+		state->selection += step;
 		AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
 		delay = 0;
 		pos += step;
@@ -17902,7 +17902,7 @@ void Menu_AppendResourceEntry(s32 no)
 	index = work->count;
 	if (index <= 5)
 	{
-		work->count = work->count + 1;
+		work->count++;
 		entry = &work->entries[index];
 		slot = Resource_FindFreeEntry();
 		Menu_LoadResourceSlot(slot, no);
@@ -17916,7 +17916,7 @@ void Menu_AppendResourceEntry(s32 no)
 
 void Menu_CenterResourceEntries(s32 row, s32 width, s32 resource_base)
 {
-	struct ResourceMenuWork *menu = (gMenuSelectWork);
+	struct ResourceMenuWork *menu = gMenuSelectWork;
 	s32						 x;
 	s32						 i;
 	s32						 count;

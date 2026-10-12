@@ -1692,8 +1692,8 @@ void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b)
 	Ent_02002c1c *p;
 
 	p = (Ent_02002c1c *)Engine_EventGetViewCenter();
-	b = b << 16;
-	a = a << 16;
+	b <<= 16;
+	a <<= 16;
 	Engine_CameraMoveTo(a, -1, b, 1);
 	Engine_ColorBufferApplyTarget(0, 0);
 	Engine_ColorBufferInterpolate(20);

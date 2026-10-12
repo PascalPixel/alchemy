@@ -8984,7 +8984,7 @@ s32 DjinnMenu_ShowHelp(void)
 				AudioCommand_PlayFar(111);
 				break;
 			}
-			else if (gKeysRepeat & (KEY_LEFT | KEY_UP))
+			if (gKeysRepeat & (KEY_LEFT | KEY_UP))
 			{
 				selection--;
 				selection = Menu_GetModuloOfSum(selection, 7);
@@ -9012,10 +9012,7 @@ s32 DjinnMenu_ShowHelp(void)
 					AudioCommand_PlayFar(112);
 					break;
 				}
-				else
-				{
-					AudioCommand_PlayFar(111);
-				}
+				AudioCommand_PlayFar(111);
 			}
 		}
 		if (work->glyph_resource != 99)
@@ -10842,7 +10839,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 			}
 		}
 
-		frame = frame + 1;
+		frame++;
 		step = (frame % 60) - 5;
 		if (step < 0)
 		{
@@ -10916,7 +10913,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 			result = -1;
 			break;
 		}
-		else if ((input_edge & 8) != 0)
+		if ((input_edge & 8) != 0)
 		{
 			AudioCommand_PlayFar(113);
 			result = -2;
@@ -10941,7 +10938,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 		{
 			if (page <= 1)
 			{
-				cursor[page] = cursor[page] - 1;
+				cursor[page]--;
 				cursor[page] = Menu_GetModuloOfSum(cursor[page], count[page]);
 				AudioCommand_PlayFar(111);
 				Runtime_SetMainState19();
@@ -10954,7 +10951,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 			{
 				AudioCommand_PlayFar(111);
 				Runtime_SetMainState19();
-				cursor[page] = cursor[page] + 1;
+				cursor[page]++;
 				dirty = 1;
 				cursor[page] = Menu_GetModuloOfSum(cursor[page], count[page]);
 			}

@@ -471,7 +471,7 @@ void TakaraShima_LeaveClearedRoom(void)
 	GameFlag_Set((((union GameStateRows *)&gGameState)->halves[224][0]
 				  + (0x8c8 - (s32)&SceneId_TakaraShima6)));
 	Engine_EventWait(30);
-	Map_AnimateCells((TakaraShima_EntranceCells), 44, 7);
+	Map_AnimateCells(TakaraShima_EntranceCells, 44, 7);
 	Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
 	Engine_EventRequestExit(3);
 	Engine_EventEnd();

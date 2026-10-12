@@ -1118,7 +1118,7 @@ void MakyuriHeya_RunColumnProbeScene(void)
 			MakyuriHeya_OpenStoneDoor(1);
 			goto wait;
 		}
-		else if (column == 53)
+		if (column == 53)
 		{
 			Engine_GameFlagSet(0x31b);
 			Engine_GameFlagClear(0x319);

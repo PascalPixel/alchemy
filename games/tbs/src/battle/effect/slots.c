@@ -10021,7 +10021,7 @@ void EventActor_RunHopAndLeapSequence(s32 id)
 
 	// 選択中のオブジェクトの向きを 90 度単位に丸める
 	actor = Object_GetById(id);
-	dir = ((Object_GetById(gGameState.selected_actor))->facing + 0x2000) & 0xc000;
+	dir = (Object_GetById(gGameState.selected_actor)->facing + 0x2000) & 0xc000;
 	Battle_Reset();
 	WaitFrames(10);
 	AudioCommand_PlayFar(173);
@@ -10034,7 +10034,7 @@ void EventActor_RunHopAndLeapSequence(s32 id)
 	WaitFrames(10);
 	actor->sprite->priority = 0;
 	actor->facing = back;
-	(Object_GetById(id))->steering_flags &= ~1;
+	Object_GetById(id)->steering_flags &= ~1;
 	actor->motion_flags = 2;
 
 	// 向いた方の逆へ 16 ドットずつ 3 回跳ねる
@@ -12655,7 +12655,7 @@ void BattleFx_SteerPushedTarget(s32 target_id)
 		Object_SetMoveTargetFar(pusher, position.x, position.y + (16 << 16), position.z);
 		if (moved == 1)
 		{
-			(Object_GetById(work->first_object_id))->steering_flags &= 0xfe;
+			Object_GetById(work->first_object_id)->steering_flags &= 0xfe;
 			user->speed = 0x3333;
 			user->acceleration = 0x3333;
 			Object_SetMoveTargetFar(user, beyond.x, beyond.y, beyond.z);
@@ -15272,7 +15272,7 @@ top:
 		*st = *st + 1;
 		return;
 	}
-	else if (state == 3)
+	if (state == 3)
 	{
 		if (BattleFx_HasReachedTarget(effect) == 0)
 			BattleFx_ClearOwnedSlot(effect);

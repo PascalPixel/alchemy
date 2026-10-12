@@ -890,7 +890,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 			actor->acceleration = 0x3333;
 		}
 		Engine_TaskAddCallback(FieldScene_RunSupplementalSequenceOne, 0xc85);
-		Scheduler_SetCallbackMask((u32)(FieldScene_RunSupplementalSequenceOne), 1);
+		Scheduler_SetCallbackMask((u32)FieldScene_RunSupplementalSequenceOne, 1);
 	}
 	Engine_ActorSetAnimation(8, 9);
 	gGameState.movement_mode = 0;

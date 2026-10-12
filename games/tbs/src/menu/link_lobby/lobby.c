@@ -831,14 +831,11 @@ s32 LinkLobby_RunBattleApplication(void)
 				gGameState.link_tallies[3] = answer;
 				goto message;
 			}
-			else
-			{
-				Engine_GameFlagClear(0x173);
-				Engine_GameFlagSet(0x16c);
-				LinkLobby_WriteSlotValue(0);
-				line = msg + 6;
-				goto message;
-			}
+			Engine_GameFlagClear(0x173);
+			Engine_GameFlagSet(0x16c);
+			LinkLobby_WriteSlotValue(0);
+			line = msg + 6;
+			goto message;
 		}
 		else
 		{

@@ -312,9 +312,16 @@ pub struct Options {
 /// Single-line declarations inside an `#if` block, with their names.
 fn conditional_declarations(item: &Item) -> Vec<(String, Vec<crate::c_items::Name>)> {
     let mut out = Vec::new();
+    // A statement inside a function body of the block is no declaration.
+    let mut depth = 0i32;
     for line in item.text.lines() {
         let trimmed = line.trim();
-        if trimmed.starts_with('#') || !trimmed.ends_with(';') {
+        let before = depth;
+        if !trimmed.starts_with('#') {
+            let code = strip_line_comments(trimmed);
+            depth += code.matches('{').count() as i32 - code.matches('}').count() as i32;
+        }
+        if trimmed.starts_with('#') || !trimmed.ends_with(';') || before > 0 || depth > 0 {
             continue;
         }
         let list = items(trimmed);
@@ -967,6 +974,15 @@ mod tests {
             assert!(!merged.text.contains("#define PsynergyMenu_Draw"), "{}", merged.text);
             assert!(!merged.notes.iter().any(|n| n.contains("dropped")), "{:?}", merged.notes);
         }
+    }
+
+    #[test]
+    fn a_statement_in_a_conditional_function_is_no_declaration() {
+        // name.c: whole functions inside `#if`; a call taking a call is a statement.
+        let block = "#if EDITION_INTERNATIONAL\ns32 Edit(s32 entry)\n{\n    Create(Lookup(entry), 0, 3, 1);\n    return 0;\n}\n#endif";
+        assert!(items(block).iter().all(|item| conditional_declarations(item).is_empty()));
+        let plain = "#if EDITION_INTERNATIONAL\ns32 Lookup(s32);\n#endif";
+        assert_eq!(items(plain).iter().map(|item| conditional_declarations(item).len()).sum::<usize>(), 1);
     }
 
     #[test]

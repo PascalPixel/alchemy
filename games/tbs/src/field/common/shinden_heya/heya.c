@@ -30,6 +30,7 @@
 #include "unit/field/common/script/field10.h"
 #include "unit/field/common/script/field11.h"
 #include "unit/graphics/window/window.h"
+#include "unit/graphics/window/window10.h"
 #include "unit/graphics/window/window11.h"
 #include "unit/graphics/window/window12.h"
 #include "unit/sound/sound.h"

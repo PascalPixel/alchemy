@@ -87,6 +87,7 @@ main	rom_main_02	games/tbs/src/graphics/tile/expand_masked_masks	.rodata
 main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque
 main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque_masks	.rodata
 main	rom_main_02	games/tbs/src/graphics/window/window	.text
+main	rom_main_02	games/tbs/src/graphics/window/window10	.text
 main	rom_main_02	games/tbs/src/graphics/window/window11	.text
 main	rom_main_02	games/tbs/src/graphics/window/window12	.text
 main	rom_main_02	games/tbs/src/menu/slider	.rodata

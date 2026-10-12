@@ -2,6 +2,7 @@
 #define ALCHEMY_CHARACTER_MENU_H
 
 #include "unit/graphics/window/window.h"
+#include "unit/graphics/window/window10.h"
 #include "unit/graphics/window/window11.h"
 #include "unit/graphics/window/window12.h"
 #include "unit/menu/item/menu.h"

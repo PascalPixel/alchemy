@@ -187,17 +187,18 @@ static void EV11_TALK(void)
 		{
 			Event_ShowMessage(11, 0);
 			GameFlag_Set(0x8a6);
-			goto end_event;
 		}
-		gEventWork->message++;
-		Event_ShowMessage(11, 0);
+		else
+		{
+			gEventWork->message++;
+			Event_ShowMessage(11, 0);
+		}
 	}
 	else
 	{
 		Engine_EventSetMessage((s32)MsgKareiPassMessageDaughter);
 		Event_ShowMessage(11, 0);
 	}
-end_event:;
 	Engine_EventEnd();
 }
 
@@ -240,23 +241,27 @@ static void SceneDialogue_RunActor12Event(void)
 		{
 			Engine_EventSetMessage((s32)MsgKareiFinishedOutHereBoardShip);
 			Event_OpenMessage(12, 0);
-			goto done;
 		}
-		Engine_EventSetMessage((s32)MsgKareiWantGoAshore);
-		Event_OpenMessage(12, 0);
-		if (Engine_EventChooseYesNo(0, 0) == 0)
+		else
 		{
-			Engine_EventWait(10);
-			Engine_EventSetMessage((s32)MsgKareiWantGoAshore + 1);
-			Event_ShowMessage(12, 0);
-			Actor_WalkToAndWait(12, 88, 0x508);
-			Actor_FaceDirection(12, 0x4000, 0);
-			Engine_EventWait(20);
-			GameFlag_Set(0x8a9);
-			goto done;
+			Engine_EventSetMessage((s32)MsgKareiWantGoAshore);
+			Event_OpenMessage(12, 0);
+			if (Engine_EventChooseYesNo(0, 0) == 0)
+			{
+				Engine_EventWait(10);
+				Engine_EventSetMessage((s32)MsgKareiWantGoAshore + 1);
+				Event_ShowMessage(12, 0);
+				Actor_WalkToAndWait(12, 88, 0x508);
+				Actor_FaceDirection(12, 0x4000, 0);
+				Engine_EventWait(20);
+				GameFlag_Set(0x8a9);
+			}
+			else
+			{
+				Engine_EventSetMessage((s32)MsgKareiWantGoAshore + 2);
+				Event_ShowMessage(12, 0);
+			}
 		}
-		Engine_EventSetMessage((s32)MsgKareiWantGoAshore + 2);
-		Event_ShowMessage(12, 0);
 	}
 	else
 	{
@@ -288,7 +293,6 @@ static void SceneDialogue_RunActor12Event(void)
 			Event_ShowMessage(12, 0);
 		}
 	}
-done:
 	Engine_EventEnd();
 }
 
@@ -367,33 +371,28 @@ static void EV08_TALK_2(void)
 				Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 4);
 				Engine_EventWait(10);
 				Event_ShowMessage(8, 0);
-				goto end_event;
 			}
-			else
+			else if ((u32)six00 > (u32)state->coins)
 			{
-				if ((u32)six00 <= (u32)state->coins)
-				{
-					goto pay;
-				}
 				UiWork_Finalize(rec7, 2);
 				Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 				Engine_EventWait(10);
 				gEventWork->message++;
 				Event_PlayCue(113);
 				Event_ShowMessage(8, 0);
-				goto end_event;
 			}
-		pay:;
-			UiWork_Finalize(rec7, 2);
-			Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-			Engine_EventWait(10);
-			gEventWork->message += 3;
-			Event_ShowMessage(8, 0);
-			Engine_PartyGiveItem(235, 0);
-			GameFlag_Set(0x8a5);
-			Party_AdjustCoins(-six00);
+			else
+			{
+				UiWork_Finalize(rec7, 2);
+				Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+				Engine_EventWait(10);
+				gEventWork->message += 3;
+				Event_ShowMessage(8, 0);
+				Engine_PartyGiveItem(235, 0);
+				GameFlag_Set(0x8a5);
+				Party_AdjustCoins(-six00);
+			}
 		}
-	end_event:;
 		Engine_EventEnd();
 	}
 }
@@ -443,14 +442,16 @@ static void KareiTorebi_DeliverParentsMessage(void)
 				Engine_EventWait(20);
 				Event_ShowMessage(11, 0);
 				GameFlag_Set(0x8a8);
-				goto end_event;
 			}
-			Engine_EventWait(10);
-			gEventWork->message++;
-			Event_ShowMessage(11, 0);
-			Engine_EventWait(10);
-			Actor_FaceDirection(11, 0, 0);
-			Engine_EventWait(30);
+			else
+			{
+				Engine_EventWait(10);
+				gEventWork->message++;
+				Event_ShowMessage(11, 0);
+				Engine_EventWait(10);
+				Actor_FaceDirection(11, 0, 0);
+				Engine_EventWait(30);
+			}
 		}
 		else
 		{
@@ -458,7 +459,6 @@ static void KareiTorebi_DeliverParentsMessage(void)
 			Actor_FaceDirection(11, 0, 0);
 			Engine_EventWait(30);
 		}
-	end_event:;
 		Engine_EventEnd();
 	}
 }

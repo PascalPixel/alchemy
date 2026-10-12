@@ -2,6 +2,7 @@
 #include "global_cells.h"
 #include "scene_ids.h"
 #include "unit/field/korima_mura/mura.h"
+#include "unit/field/common/object/facing.h"
 #include "unit/field/korima_hashi/falling_effect.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -150,41 +151,8 @@ s32 SceneEffect_UpdateFallingObject(struct Obj *p)
 	return 1;
 }
 
-s32 SceneActor_TurnTowardTarget(struct Ent *p)
-{
-	struct Ent *q;
-	u16			h;
-	s32			t;
-	s32			v;
-	u8		   *b;
-
-	q = p->f68;
-	if (q != 0)
-	{
-		b = &p->f5a;
-		v = 0xfe;
-		v &= *b;
-		*b = v;
-		h = ArcTan2(q->f10 - p->f10, q->f08 - p->f08);
-		t = h;
-		t -= p->f06;
-		t <<= 16;
-		t >>= 16;
-		if (t != 0)
-		{
-			if (t > 0x1000)
-			{
-				t = 0x1000;
-			}
-			if (t < -0x1000)
-			{
-				t = -0x1000;
-			}
-			p->f06 += t;
-		}
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/facing.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -1761,7 +1729,7 @@ s32 KorimaMura_DebrisScript[] = {
 };
 
 s32 KorimaMura_Actor8Path[] = {
-	SC_CALL(SceneActor_TurnTowardTarget),
+	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

@@ -4,16 +4,11 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct FieldEffect;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
-union FieldObject;
 
-void Effect_SetPriority(struct FieldEffect *effect, s32 priority);
-struct FieldEffect *Effect_CreateTranslucent(s32 x, s32 y, s32 z, s32 type);
-struct FieldEffect *Effect_Create(s32 x, s32 y, s32 z, s32 type);
 extern s32 gShortEffectScript[];
 extern s32 gMediumEffectScript[];
 extern s32 gLongEffectScript[];
@@ -60,8 +55,6 @@ void Leader_KickUpDust(void);
 void Party_ThrownOut(void);
 void Leader_SneaksOut(void);
 s32 Scene_Initialize(void);
-s32 FloatingNut_Update(union FieldObject *object);
-void FloatingNut_Initialize(s32 actor);
 extern struct SceneEntrance gLunpaEntrances[];
 extern struct SceneEntrance gGateEntrances[];
 extern u32 gLunpaExits[];

@@ -5,6 +5,8 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/korosseo_maruta/maruta.h"
+#include "unit/field/common/korosseo/occupant.h"
+#include "unit/field/common/object/findslot.h"
 #include "unit/field/common/korosseo/solo_competitor.h"
 #include "unit/field/common/korosseo/solo_round.h"
 #include "unit/field/common/korosseo/korosseo.h"
@@ -860,7 +862,7 @@ void KorosseoMaruta_RunStageStart(void)
 
 void ColossoLogRollingStage_RunSceneEventIfReady(void)
 {
-	if (ColossoLogRollingStage_FindActorAhead() == 0)
+	if (SceneActor_FindOccupantAheadOfSubject() == 0)
 	{
 		Engine_LeaderCheckAhead();
 	}
@@ -868,7 +870,7 @@ void ColossoLogRollingStage_RunSceneEventIfReady(void)
 
 void ColossoLogRollingStage_FinishOrContinueSceneEvent(void)
 {
-	if (ColossoLogRollingStage_FindActorAhead() == 0)
+	if (SceneActor_FindOccupantAheadOfSubject() == 0)
 	{
 		Engine_LeaderCheckAhead();
 	}
@@ -2030,42 +2032,6 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/solo_round.c"
 
-void RunPartyCountInteractionCopyB(s32 actorId)
-{
-	PartyInteractionRecord *record;
-	s32						x;
-	s32						y;
-
-	record = (PartyInteractionRecord *)Object_GetById(actorId);
-	x = record->x;
-	y = record->y;
-	Engine_EventBegin();
-
-	if (GetPartyMemberCount() <= 1)
-	{
-		Engine_EventSetMessage((s32)MsgKorosseoRobinDidGetGoodLook);
-		if (Engine_EventAskYesNo(actorId, 0) == 0)
-		{
-			InitializeActorZero();
-			InitializeSelectedActor(actorId);
-			Engine_ActorWalkTo(actorId, x, y + 0x40);
-			Engine_EventWait(15);
-			Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y);
-			Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y + 0x20);
-			Engine_EventCloseScreen();
-			Engine_EventWaitForScreen();
-			Engine_EventRequestExit(11);
-		}
-	}
-	else
-	{
-		Engine_EventSetMessage((s32)MsgKorosseoWaitShouldntDecideWhereBest);
-		Engine_EventShowMessage(actorId, 0);
-	}
-
-	Engine_EventEnd();
-}
-
 void ColossoLogRollingStage_ClearSavedActorPositions(void)
 {
 
@@ -2767,24 +2733,7 @@ void ColossoLogRollingStage_InitializeSceneControl(s32 resource)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/scene_state.c"
-
-s32 *FindActorAtWholeTilePosition(s32 *position, void *mover)
-{
-	s32 **slots = (s32 **)((u8 *)gEventWork + 0x14);
-	u32	  actor_index;
-
-	for (actor_index = 8; actor_index <= 65; actor_index++)
-	{
-		s32 *actor = slots[actor_index];
-
-		if ((position[0] >> 20) == (actor[2] >> 20) && (position[1] >> 20) == (actor[3] >> 20)
-			&& (position[2] >> 20) == (actor[4] >> 20))
-		{
-			return actor;
-		}
-	}
-	return 0;
-}
+#include "../common/object/findslot.c"
 
 void ColossoLogRollingStage_PushStagedActor(void)
 {
@@ -2810,7 +2759,7 @@ void ColossoLogRollingStage_PushStagedActor(void)
 	step <<= 16;
 	position.z = subject->z + step;
 
-	target = FindActorAtWholeTilePosition(&position, subject);
+	target = SceneData_FindSlotAtPosition(&position, subject);
 	if (target == 0)
 	{
 		return;
@@ -2822,7 +2771,7 @@ void ColossoLogRollingStage_PushStagedActor(void)
 	step <<= 16;
 	position.z = target->z + step;
 
-	blocker = FindActorAtWholeTilePosition(&position, target);
+	blocker = SceneData_FindSlotAtPosition(&position, target);
 	if (blocker != 0 && (blocker->flags & 1) != 0)
 	{
 		return;
@@ -2832,7 +2781,7 @@ void ColossoLogRollingStage_PushStagedActor(void)
 	position.y = target->y + 0x100000;
 	position.z = target->z;
 
-	blocker = FindActorAtWholeTilePosition(&position, target);
+	blocker = SceneData_FindSlotAtPosition(&position, target);
 	if (blocker != 0 && (blocker->flags & 1) != 0)
 	{
 		return;
@@ -2875,36 +2824,8 @@ void ColossoLogRollingStage_PushStagedActor(void)
 	Object_SetMode(subject, 1);
 }
 
-s32 *ColossoLogRollingStage_FindActorAhead(void)
-{
-
-	struct FieldActor *record;
-	s32				   facing;
-	s32				   position[3];
-	s32				  *occupant;
-
-	record = Object_GetById(gGameState.selected_actor);
-
-	facing = (record->facing + 0x2000) & 0xc000;
-
-	position[0] = (record->x.fixed & 0xfff00000) + 0x80000;
-	position[1] = record->y.fixed;
-	position[2] = (record->z.fixed & 0xfff00000) + 0x80000;
-	Vector_AddPolarOffset(0x100000, facing, position);
-
-	occupant = FindActorAtWholeTilePosition(position, record);
-	if (occupant == 0)
-	{
-		position[0] = (record->x.fixed & 0xfff00000) + 0x80000;
-		position[1] = record->y.fixed;
-		position[2] = (record->z.fixed & 0xfff00000) + 0x80000;
-		Vector_AddPolarOffset(0x200000, facing, position);
-
-		occupant = FindActorAtWholeTilePosition(position, record);
-	}
-
-	return occupant;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/occupant.c"
 
 const s32 KorosseoMaruta_Record30Script[] = {
 	SC_SET(SW_Y, PIXELS(1)),
@@ -3161,7 +3082,7 @@ struct SceneEvent gKorosseoMarutaEvents[] = {
 	{ 0x50008e15, 30, 0x363, EVENT_SCRIPT(ColossoLogRollingStage_ConfigureSceneEventEffect) },
 	{ EVENT_RAISED, 4, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLogRollingStage_OffsetActiveActor) },
 	{ EVENT_RAISED, 5, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLogRollingStage_ClampAndOffsetActiveActor) },
-	{ EVENT_TALK, 32, CONDITION_ALWAYS, EVENT_SCRIPT(RunPartyCountInteractionCopyB) },
+	{ EVENT_TALK, 32, CONDITION_ALWAYS, EVENT_SCRIPT(RunPartyCountInteraction) },
 	{ EVENT_TALK, 33, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunDualArrivalSequence) },
 	{ EVENT_TALK, 34, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSecondArrivalSequence) },
 	{ EVENT_TALK, 35, CONDITION_ALWAYS, EVENT_SCRIPT(KorosseoMaruta_RunStageIntro) },

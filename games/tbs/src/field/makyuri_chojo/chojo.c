@@ -2,6 +2,8 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/makyuri_chojo/chojo.h"
+#include "unit/field/common/effect/create.h"
+#include "unit/field/common/object/distance.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/game/character/chara.h"
@@ -28,36 +30,8 @@
 
 #define NULL ((void *)0)
 
-void MakyuriChojo_SetSpritePriority(struct OverlayObject *object, s32 priority)
-{
-	struct FieldSpritePriority *sprite;
-
-	sprite = (struct FieldSpritePriority *)object->record;
-	sprite->priority = priority;
-}
-
-void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 type)
-{
-	struct FieldActor *object;
-
-	object = Engine_ObjectCreate(type, x, y, z);
-	if (object != NULL)
-	{
-		((struct FieldSpritePriority *)object->sprite)->priority = 0;
-		object->motion_flags = 0;
-		object->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 14);
-		RunOverlayObjectCommand1(object, 1);
-		return object;
-	}
-	return NULL;
-}
-
-void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
-{
-#include "create_configured_overlay_object_body.inc"
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 
 struct EffectParams
 {
@@ -287,17 +261,8 @@ void FieldScene_RunFourActorPresentation(void)
 	Engine_EventEnd();
 }
 
-s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
-{
-	s32 delta_x = (*first_position++ - *second_position++) >> 16;
-	s32 delta_y = (*first_position++ - *second_position++) >> 16;
-	s32 delta_z = (*first_position - *second_position) >> 16;
-	s32 delta_x_squared = delta_x * delta_x;
-	s32 delta_y_squared = delta_y * delta_y;
-	s32 delta_z_squared = delta_z * delta_z;
-
-	return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/distance.c"
 
 struct SpriteNumber
 {

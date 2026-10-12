@@ -4,8 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct Particle_02000c4c;
-
 u8 *SceneData_GetScriptTable(void);
 s32 SceneData_ReturnZero(void);
 u8 *SceneData_GetMessageTable(void);
@@ -14,10 +12,6 @@ void SceneActor_RunPlacementQuery(void);
 void KorimaHiroba_AwardHiddenNut(void);
 u8 *SceneData_GetExtraTable(void);
 s32 FieldScene_SetupEntryActors8To11(void);
-void SceneEffect_AdjustPaletteWindow(s32 adj);
-u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj);
-s32 SceneEffect_UpdateOrbitingParticle(struct Particle_02000c4c *record);
-void SceneEffect_InitOrbitingParticle(s32 id);
 extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];

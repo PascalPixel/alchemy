@@ -5,8 +5,11 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/makyuri_heya/heya.h"
+#include "unit/field/common/effect/create.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/object/distance.h"
+#include "unit/field/common/object/fillgrid.h"
 #include "unit/field/common/makyuri/palette_cycle.h"
 #include "unit/field/common/makyuri/lights.h"
 #include "unit/field/makyuri_iriguchi/pillar.h"
@@ -83,80 +86,14 @@ typedef struct
 	s32 t1;
 } SceneEvent;
 
-struct EffectAnchor
-{
-	u8	pad00[8];
-	s32 f8;
-	u8	pad0c[4];
-	s32 f16;
-};
-
-struct AnchoredEffect
-{
-	u8					 pad00[8];
-	s32					 f8;
-	s32					 f12;
-	s32					 f16;
-	u8					 pad14[4];
-	s32					 f24;
-	s32					 f28;
-	u8					 pad20[68];
-	s16					 f100;
-	u8					 pad66[2];
-	struct EffectAnchor *f104;
-};
-
 struct SceneLookupRecord
 {
 	u8	pad00[216];
 	u16 tbl[1];
 };
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
-{
-	work->sprite->priority = mode;
-}
-
-void *OverlayObject_PrepareSpawnedObject(s32 first, s32 second, s32 third, s32 fourth)
-{
-	struct FieldActor  *obj;
-	struct FieldSprite *rec;
-
-	obj = Engine_ObjectCreate(fourth, first, second, third);
-	if (obj != NULL)
-	{
-		rec = obj->sprite;
-		rec->priority = 0;
-		obj->motion_flags = 0;
-		obj->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(obj, 0);
-		ObjectGroup_SetChildValue(obj, 0xE);
-		Engine_ObjectSetBlendMode(obj, 1);
-		return obj;
-	}
-	return NULL;
-}
-
-void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
-{
-	struct FieldActor *result = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
-
-	if (result != NULL)
-	{
-		struct FieldSprite *object = result->sprite;
-
-		object->priority = 1;
-		result->motion_flags = 0;
-		result->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(result, 0);
-		ObjectGroup_SetChildValue(result, 15);
-		result->priority_flags = (result->priority_flags & 0xfe) | 2;
-		return result;
-	}
-	return NULL;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 #include "../common/object/staged_actor.c"
@@ -1175,8 +1112,8 @@ void MakyuriHeya_RunColumnProbeScene(void)
 				MakyuriHeya_StopActorNinePositionCallback();
 				MakyuriHeya_OpenStoneDoor(1);
 				Object_RefreshSelectorById(9);
-				OverlayObject_PrepareSpawnedObject(x, 0, 0x3120000, 223);
-				OverlayObject_PrepareSpawnedObject(x, 0, 0x3320000, 223);
+				OverlayObject_PrepareObject(x, 0, 0x3120000, 223);
+				OverlayObject_PrepareObject(x, 0, 0x3320000, 223);
 				Engine_ActorSetDestination(9, 0x348, 0x2e8);
 				Engine_EventWait(5);
 				Engine_AudioPlayCue(189);
@@ -1557,7 +1494,7 @@ void FieldScene_RunColumnChoreography(void)
 		Actor_WalkTo(3, 0x348, 0x258);
 		Engine_ActorWaitForMove(3);
 		Map_CopyCellAttributes(116, 36, 3, 4, 52, 36);
-		OverlayObject_PrepareSpawnedObject(0x3480000, 0x380000, 0x2600000, 223);
+		OverlayObject_PrepareObject(0x3480000, 0x380000, 0x2600000, 223);
 		Actor_SetSpeed(3, 0xcccc, 0x6666);
 		Actor_WalkToAndWait(3, 0x348, 0x230);
 		Engine_ActorSetPosition(3, 0, 0);
@@ -1964,7 +1901,7 @@ void FieldScene_RunScene39cSequenceB(void)
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
 		Camera_MoveTo(0x1d00000, -1, 0x2900000, 1);
 		Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
-		OverlayObject_PrepareSpawnedObject(
+		OverlayObject_PrepareObject(
 			Object_GetById(ACTOR_PARTY_LEADER)->x.fixed, 0, 0x2be0000, 223);
 		Map_CopyCellsTo(92, 46, 92, 40, 3, 2);
 		Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
@@ -2847,104 +2784,9 @@ void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 	}
 }
 
-s32 SceneEffect_AdvanceAnchoredRiseFrame(struct AnchoredEffect *work)
-{
-	struct EffectAnchor *src = work->f104;
-	s16					 step = ++work->f100;
-	s32					 seed;
-
-	if (step > 31)
-	{
-		return 0;
-	}
-
-	seed = Engine_MathSin(step << 10);
-	work->f24 = seed;
-	work->f28 = seed;
-	work->f8 = src->f8;
-	work->f12 += 0x10000;
-	work->f16 = src->f16;
-	return 1;
-}
-
-s32 SceneEffect_AdvanceScaleOverSixteenFrames(struct FieldActor *o)
-{
-	u16 *c = &o->timer;
-	s16	 n;
-
-	*c = *c + 1;
-	n = *c;
-	if (n > 16)
-	{
-		return 0;
-	}
-	o->scale_x = (n * 3) << 10;
-	o->scale_y = (n * 3) << 10;
-	return 1;
-}
-
-s32 OverlayObject_StepScaleUpSixteenFrames(struct FieldActor *o)
-{
-	u16 *c = &o->timer;
-	s16	 n;
-
-	*c = *c + 1;
-	n = *c;
-	if (n > 16)
-	{
-		return 0;
-	}
-	o->scale_x = (n << 11) + 0x10000;
-	o->scale_y = (n << 11) + 0x10000;
-	return 1;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../makyuri_iriguchi/pillar.c"
-
-void SceneState_ClearCurrentRecordAndReleaseTarget(void)
-{
-	s32 *rec = **(s32 ***)&((struct WorkPointers *)&gEventWork)->scene;
-	s32 *target;
-
-	if (rec[0] == 0)
-	{
-		return;
-	}
-
-	rec[0] = 0;
-	Engine_GameFlagClear(0x161);
-
-	target = (s32 *)rec[5];
-	if (target != 0)
-	{
-		*(short *)((u8 *)target + 0x64) = 0;
-		Engine_ObjectSetScript(target, (s32)Makyuri_ScaleCounterScript);
-		Object_SetMode(target, 7);
-		rec[5] = 0;
-	}
-}
-
-// ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/makyuri/makyuri.c"
-
-void OverlayObject_ReleasePublishedAttachmentB(void)
-{
-	u8 **slot = Runtime_AllocateBlock(35, 4);
-	u8	*state;
-	u8	*obj;
-
-	if (slot == 0)
-		return;
-
-	state = *slot;
-	obj = *(u8 **)(state + 20);
-	if (obj == 0)
-		return;
-
-	Engine_ObjectDispatchRelease(obj);
-	*(u8 **)(state + 20) = 0;
-}
 
 s32 gEffectScript0[] = {
 	SC_WAIT(1),
@@ -3019,12 +2861,12 @@ s32 MakyuriHeya_SparkScript[] = {
 };
 
 s32 Makyuri_RampScript[] = {
-	SC_CALL(SceneEffect_AdvanceScaleOverSixteenFrames),
+	SC_CALL(OverlayObject_RampWords24And28Over16Frames),
 	SC_END,
 };
 
 s32 Makyuri_ScaleCounterScript[] = {
-	SC_CALL(OverlayObject_StepScaleUpSixteenFrames),
+	SC_CALL(OverlayObject_AdvanceScaleCounter),
 	SC_FREE,
 };
 
@@ -3368,7 +3210,7 @@ struct SceneEvent gMakyuriHeyaEvents1[] = {
 	{ 0x202, 25, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_RunPushedBlockScene) },
 	{ EVENT_TALK, 3, 0x873, MSGNO(MsgMakyuriHeyaThePathIsBlockedAgainWhat) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 3, 0x873, MSGNO(MsgMakyuriHeyaThisStatueWasntHereBeforeI) },
-	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachmentB) },
+	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x873, EVENT_SCRIPT(MakyuriHeya_RunPartyScene) },
 	{ SEARCH(SEARCH_CHEST), 100, 0xf64, FIND_ITEM(ITEM_SLEEP_BOMB) },
 	{ SCENE_EVENTS_END },
@@ -3398,7 +3240,7 @@ struct SceneEvent gMakyuriHeyaEvents2[] = {
 	{ EVENT_TOUCH, 46, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_WalkLeaderIn) },
 	{ EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyPair12And21) },
 	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScriptedSteps0And953) },
-	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachmentB) },
+	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 11, 0x874, EVENT_SCRIPT(FieldScene_RunActorElevenAtTile5And13) },
 	{ SEARCH(SEARCH_CHEST), 101, 0xf66, FIND_ITEM(0xba) },
 	{ SEARCH(SEARCH_CHEST), 102, 0xf67, FIND_ITEM(ITEM_NUT) },
@@ -3427,7 +3269,7 @@ struct SceneEvent gMakyuriHeyaEvents3[] = {
 	{ 0x202, 40, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_RunColumnProbeScene) },
 	{ 0x202, 47, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunFourStepSequence) },
 	{ SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunScriptedSteps0And953) },
-	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachmentB) },
+	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 8, 0x878, EVENT_SCRIPT(SceneState_RunWhenActor8AtTile10x23) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 15, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_SyncBlockFlags) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 16, CONDITION_ALWAYS, EVENT_SCRIPT(MakyuriHeya_SyncBlockFlags) },
@@ -3464,7 +3306,7 @@ struct SceneEvent gMakyuriHeyaEventsOther[] = {
 	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x82b, 0 },
 	{ PSYNERGY_ON_ACTOR(0x8c), 10, 0x871, EVENT_SCRIPT(FieldScene_RunColumnChoreography) },
 	{ PSYNERGY_ON_ACTOR(0x5d), 12, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunRandomEffectActorSequence) },
-	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachmentB) },
+	{ PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(OverlayObject_ReleasePublishedAttachment) },
 	{ 0xb904, 5, IF_FLAG_SET(0x881), EVENT_SCRIPT(FieldScene_RunActor184Sequence) },
 	{ SCENE_EVENTS_END },
 };

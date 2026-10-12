@@ -2,7 +2,11 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/haidia_mura/mura.h"
+#include "unit/field/common/effect/vertical.h"
+#include "unit/field/common/object/orbit.h"
 #include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/object/distance.h"
+#include "unit/field/common/object/fillgrid.h"
 #include "unit/field/world_map/linked_effects.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -2895,60 +2899,8 @@ void SceneActor_SetFlagByteBySlotZeroPosition(void)
 	}
 }
 
-s32 SceneEffect_UpdateOrbitPosition(s32 *p)
-{
-	s16 *q = (s16 *)p[20];
-	s32	 a, b;
-	s32	 d = Engine_MathSin(p[12]) * 2;
-	if (d > 0)
-		d = -d;
-	p[2] = p[14] + Engine_MathCos(p[12]) * 2;
-	p[3] = p[15] + d;
-	q[15] = Engine_MathCos(p[12] + 0x8000) / 8;
-	a = Engine_RandomNext();
-	b = Engine_RandomNext();
-	p[12] = p[12] + ((((u32)a << 9) >> 16) + (((u32)b << 9) >> 16)) + 0x400;
-	return 0;
-}
-
-void InitializeStagedActorSceneOrbitingEffect(s32 id)
-{
-	OrbitingSceneObject		  *actor;
-	OrbitingSceneObjectSprite *sprite;
-	u8						  *transfer;
-	s32						   zero;
-
-	actor = (OrbitingSceneObject *)Object_GetById(id);
-	sprite = actor->sprite;
-	sprite->flags_09_mode = 1;
-	sprite->flags_05_bit_5 = 0;
-	sprite->flags_09_high = 0;
-
-	zero = 0;
-	sprite->state = zero;
-	Engine_ActorSetSpriteFlags(actor, zero);
-	actor->active = zero;
-	actor->mode = zero;
-
-	if (Engine_GameFlagIsSet(0x109) == 0)
-		actor->y += 0x200000;
-
-	actor->flags_23 &= 0xfe;
-	actor->visible = 1;
-
-	transfer = Runtime_AllocateHeapBlock(17, 0x608);
-	Engine_ItemLoadIcon(ITEM_NUT);
-	transfer += 0x400;
-	Engine_VramLoad(sprite->palette, 128, transfer);
-	Engine_HeapRelease(17);
-
-	actor->orbit_center_x = actor->x;
-	actor->orbit_angle = zero;
-	actor->orbit_center_y = actor->y;
-	actor->active = 1;
-	actor->callback = (u32)SceneEffect_UpdateOrbitPosition;
-	actor->state = zero;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/orbit.c"
 
 void OverlayObject_UpdateOnFrameBit1(s32 p)
 {
@@ -2975,49 +2927,8 @@ void SceneEffect_UpdateObjectOnOddFramesOnly(s32 p)
 		Engine_ObjectSetPartPalettes(p, (gFrameCount >> 1) % 6);
 }
 
-void Effect_AnimateVerticalPositive(struct StagedVerticalEffect *effect)
-{
-	s32 *anchor = effect->f68;
-	s32	 frame = ++effect->f64;
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease((s32)effect);
-	}
-	else
-	{
-		s32 amplitude = Engine_MathSin(frame << 10);
-		s32 offset;
-		effect->f18 = amplitude;
-		effect->f1c = amplitude;
-		effect->f8 = anchor[2];
-		effect->fc += 0x10000;
-		offset = 0x10000 - amplitude;
-		effect->f10 = anchor[4] + offset * 5 + 0x80000;
-	}
-}
-
-void Effect_AnimateVerticalNegative(struct StagedVerticalEffect *effect)
-{
-	s32 *anchor = effect->f68;
-	s32	 frame = ++effect->f64;
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease((s32)effect);
-	}
-	else
-	{
-		s32 amplitude = Engine_MathSin(frame << 10);
-		s32 offset;
-		effect->f18 = amplitude;
-		effect->f1c = -amplitude;
-		effect->f8 = anchor[2];
-		effect->fc += 0x10000;
-		offset = 0x10000 - amplitude;
-		effect->f10 = anchor[4] - offset * 5 + 0x100000;
-	}
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/vertical.c"
 #include "../world_map/linked_effects.c"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)

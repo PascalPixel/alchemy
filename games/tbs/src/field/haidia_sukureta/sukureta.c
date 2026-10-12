@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/haidia_sukureta/sukureta.h"
+#include "unit/field/common/object/facing.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
 #include "unit/system/scheduler/callback.h"
@@ -24,36 +25,8 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object)
-{
-	s32					 delta;
-	u16					 old;
-	s32					 ang;
-	struct FacingObject *target;
-
-	target = object->facing_target;
-	if (target != NULL)
-	{
-		object->facing_flags = (0xFE & object->facing_flags);
-		ang = (u16)ArcTan2(
-			target->position_z - object->position_z, target->position_x - object->position_x);
-		old = object->facing;
-		delta = (s16)(ang - old);
-		if (delta != 0)
-		{
-			if (delta > 0x1000)
-			{
-				delta = 0x1000;
-			}
-			if (delta < -0x1000)
-			{
-				delta = -0x1000;
-			}
-			object->facing = (old + delta);
-		}
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/facing.c"
 
 u8 *SceneData_GetScriptTable(void)
 {

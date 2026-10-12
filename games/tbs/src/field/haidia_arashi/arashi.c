@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/haidia_arashi/arashi.h"
+#include "unit/field/common/effect/vertical.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
 #include "unit/system/scheduler/callback.h"
@@ -2765,63 +2766,8 @@ void HaidiaArashi_CycleObjectPalettes(s32 o)
 	}
 }
 
-void SceneEffect_UpdateArcOverAnchor(union FieldObject *object)
-{
-	Obj *o = (Obj *)object;
-	Obj *b;
-	s32	 t;
-	s32	 d;
-	s32	 k;
-
-	b = o->f68;
-	o->f64++;
-	t = (s16)o->f64;
-	t = (s16)o->f64;
-	if (t > 31)
-	{
-		Engine_ObjectDispatchRelease(o);
-	}
-	else
-	{
-		d = Engine_MathSin(t << 10);
-		o->f18 = d;
-		o->f1c = d;
-		o->f08 = b->f08;
-		k = 0x10000;
-		o->f0c += k;
-		k -= d;
-		o->f10 = b->f10 + ((k << 2) + k) + 0x80000;
-	}
-}
-
-void OverlayObject_UpdateArcFromParent(union FieldObject *object)
-{
-	Obj *o = (Obj *)object;
-	Obj *b;
-	s32	 t;
-	s32	 d;
-	s32	 k;
-
-	b = o->f68;
-	o->f64++;
-	t = (s16)o->f64;
-	t = (s16)o->f64;
-	if (t > 31)
-	{
-		Engine_ObjectDispatchRelease(o);
-	}
-	else
-	{
-		d = Engine_MathSin(t << 10);
-		o->f18 = d;
-		o->f1c = -d;
-		o->f08 = b->f08;
-		k = 0x10000;
-		o->f0c += k;
-		k -= d;
-		o->f10 = b->f10 - ((k << 2) + k) + 0x100000;
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/vertical.c"
 
 void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
 {
@@ -2865,7 +2811,7 @@ void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
 		union PairObject   *p = pair[0];
 		struct FieldSprite *sp = p->object.actor.sprite;
 
-		p->object.actor.update = OverlayObject_UpdateArcFromParent;
+		p->object.actor.update = Effect_AnimateVerticalNegative;
 		sp->priority = parent->object.actor.sprite->priority;
 	}
 	{
@@ -2873,7 +2819,7 @@ void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
 		struct FieldSprite *sp = p->sprite;
 
 		sp->priority = parent->object.actor.sprite->priority;
-		p->update = SceneEffect_UpdateArcOverAnchor;
+		p->update = Effect_AnimateVerticalPositive;
 		p->priority_flags = 2;
 	}
 }

@@ -5,7 +5,7 @@
 	import Engine_TaskWait, WaitFramesFar
 	import Engine_TaskAddCallback, Scheduler_AddOrUpdateCallbackFar
 	import Engine_RandomNext, Random16Far
-	import CalculateAngleFromCoordinateDelta, ArcTan2Far
+	import ArcTan2, ArcTan2Far
 	import Engine_MathSin, Trig_SinFar
 	import Engine_MathCos, Trig_CosFar
 	import Engine_HeapAllocate, Runtime_AllocateHeapBlockFar

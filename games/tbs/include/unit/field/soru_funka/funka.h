@@ -4,8 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct Actor_02002e0c;
-struct Actor_02002e5c;
 union PairObject;
 
 u8 *SceneData_GetScriptTable(void);
@@ -35,8 +33,6 @@ void SceneState_ConfigureEightCornerRegions(void);
 void FieldScene_RunVariantStep(s32 a, s32 b, s32 c);
 void FieldScene_RunStepByRuntimeBits(s32 a);
 void SceneState_ForwardByRuntimeWordBits(s32 a);
-void SceneEffect_UpdateArcOverAnchor(struct Actor_02002e0c *self);
-void SceneEffect_UpdateAnchoredRiseArc(struct Actor_02002e5c *obj);
 void SoruFunka_SpawnEffectPair(union PairObject *parent);
 void SceneState_SetValue140Mode0(void);
 void SoruFunka_CleanupSceneObjects(void);

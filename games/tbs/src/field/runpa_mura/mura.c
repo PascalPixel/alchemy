@@ -1,6 +1,8 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/field/runpa_mura/mura.h"
+#include "unit/field/common/object/orbit.h"
+#include "unit/field/common/effect/create.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
 #include "types.h"
@@ -17,49 +19,8 @@ enum
 	PALETTE_EFFECT = 15
 };
 
-void Effect_SetPriority(struct FieldEffect *effect, s32 priority)
-{
-	effect->sprite->priority = priority;
-}
-
-struct FieldEffect *Effect_CreateTranslucent(s32 x, s32 y, s32 z, s32 type)
-{
-	struct FieldEffect *effect;
-
-	effect = (struct FieldEffect *)Engine_ObjectCreate(type, x, y, z);
-	if (effect != NULL)
-	{
-		effect->sprite->priority = 0;
-		effect->motion_flags = 0;
-		effect->collision_flags = 8;
-		Engine_ActorSetSpriteFlags((struct FieldActor *)effect, 0);
-		ObjectGroup_SetChildValue((struct FieldActor *)effect, PALETTE_TRANSLUCENT_EFFECT);
-		Engine_ObjectSetBlendMode((struct FieldActor *)effect, OBJECT_BLEND_TRANSLUCENT);
-		return effect;
-	}
-	return NULL;
-}
-
-struct FieldEffect *Effect_Create(s32 x, s32 y, s32 z, s32 type)
-{
-	struct FieldEffect *effect;
-
-	effect = (struct FieldEffect *)Engine_ObjectCreate(type, x, y, z);
-	if (effect != NULL)
-	{
-		effect->sprite->priority = 1;
-		effect->motion_flags = 0;
-		effect->collision_flags = 8;
-		Engine_ActorSetSpriteFlags((struct FieldActor *)effect, 0);
-		ObjectGroup_SetChildValue((struct FieldActor *)effect, PALETTE_EFFECT);
-		effect->priority_flags =
-			(effect->priority_flags & ~ACTOR_PRIORITY_AUTOMATIC) | ACTOR_PRIORITY_UNDERFOOT;
-		return effect;
-	}
-	return NULL;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 
@@ -893,7 +854,7 @@ s32 Scene_Initialize(void)
 		Reveal_HideSecrets();
 		if (Engine_GameFlagIsSet(FLAG_LUNPA_NUT_CAUGHT) == 0)
 		{
-			FloatingNut_Initialize(ACTOR_FLOATING_NUT);
+			InitializeStagedActorSceneOrbitingEffect(ACTOR_FLOATING_NUT);
 		}
 		puddle = Object_GetById(ACTOR_HIDDEN_PUDDLE);
 		if (puddle != NULL)
@@ -940,60 +901,8 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-s32 FloatingNut_Update(union FieldObject *object)
-{
-	struct FloatingNut *nut = (struct FloatingNut *)object;
-	struct FieldSprite *sprite = nut->sprite;
-	s32					bob;
-	s32					first;
-	s32					second;
-
-	bob = Engine_MathSin(nut->angle) * 2;
-	if (bob > 0)
-	{
-		bob = -bob;
-	}
-	nut->x = nut->rest_x + Engine_MathCos(nut->angle) * 2;
-	nut->y = nut->rest_y + bob;
-	sprite->rotation = Engine_MathCos(nut->angle + 0x8000) / 8;
-	first = Engine_RandomNext();
-	second = Engine_RandomNext();
-	nut->angle = nut->angle + (((u32)first << 9 >> 16) + ((u32)second << 9 >> 16)) + 0x400;
-	return 0;
-}
-
-void FloatingNut_Initialize(s32 actor)
-{
-	struct FloatingNut *nut;
-	struct FieldSprite *sprite;
-	u8				   *icon;
-
-	nut = (struct FloatingNut *)Object_GetById(actor);
-	sprite = nut->sprite;
-	sprite->priority = 1;
-	sprite->full_color = 0;
-	sprite->palette = 0;
-	sprite->part_count = 0;
-	Engine_ActorSetSpriteFlags((struct FieldActor *)nut, 0);
-	nut->ready = 0;
-	nut->motion_flags = 0;
-	if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0)
-	{
-		nut->y += PIXELS(32);
-	}
-	nut->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
-	nut->free_motion = 1;
-	icon = Engine_HeapAllocate(HEAP_ITEM_ICON, ITEM_ICON_BUFFER_SIZE);
-	Engine_ItemLoadIcon(ITEM_NUT);
-	Engine_VramLoad(sprite->vram_block, ITEM_ICON_TILE_BYTES, &icon[ITEM_ICON_TILES]);
-	Engine_HeapRelease(HEAP_ITEM_ICON);
-	nut->rest_x = nut->x;
-	nut->angle = 0;
-	nut->rest_y = nut->y;
-	nut->ready = 1;
-	nut->update = FloatingNut_Update;
-	nut->status = 0;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/orbit.c"
 
 #define LUNPA_ENTRANCE(entrance, x, z, facing) \
 	{(entrance), CONDITION_ALWAYS, (x), 0, (z), (facing), 0, -1, -1, -1, -1, 0}

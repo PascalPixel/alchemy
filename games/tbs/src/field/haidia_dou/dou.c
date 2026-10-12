@@ -2,8 +2,11 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/haidia_dou/dou.h"
+#include "unit/field/common/effect/create.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/object/distance.h"
+#include "unit/field/common/object/fillgrid.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/system/scheduler/callback.h"
 
@@ -55,50 +58,8 @@ struct Rec_3a6
 	u8	f35;
 };
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
-{
-	work->sprite->priority = mode;
-}
-
-void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
-{
-	struct FieldActor *obj = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
-
-	if (obj != NULL)
-	{
-		struct FieldSprite *object = obj->sprite;
-
-		object->priority = 0;
-		obj->motion_flags = 0;
-		obj->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(obj, 0);
-		ObjectGroup_SetChildValue(obj, 14);
-		Engine_ObjectSetBlendMode(obj, 1);
-		return obj;
-	}
-	return NULL;
-}
-
-void *OverlayObject_CreateConfiguredB(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
-{
-	struct FieldActor *result = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
-
-	if (result != NULL)
-	{
-		struct FieldSprite *object = result->sprite;
-
-		object->priority = 1;
-		result->motion_flags = 0;
-		result->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(result, 0);
-		ObjectGroup_SetChildValue(result, 15);
-		result->priority_flags = (result->priority_flags & 0xfe) | 2;
-		return result;
-	}
-	return NULL;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 #include "../common/object/staged_actor.c"
@@ -204,9 +165,9 @@ void HaidiaDou_SinkPillarColumn23(void)
 		Actor_MoveToAndWait(0, 360, 664);
 		Engine_ActorFaceDirection(0, 0xe000, 10);
 		Object_GetById(9)->x.fixed += 0x20000;
-		left = OverlayObject_CreateConfigured(
+		left = OverlayObject_PrepareObject(
 			Object_GetById(9)->x.fixed, 0, Object_GetById(9)->z.fixed + 0x340000, 241);
-		right = OverlayObject_CreateConfigured(
+		right = OverlayObject_PrepareObject(
 			Object_GetById(9)->x.fixed + 0x100000, 0, Object_GetById(9)->z.fixed + 0x340000, 241);
 		Object_GetById(9)->motion_flags = 0;
 		o = &options;
@@ -246,9 +207,9 @@ void HaidiaDou_SinkPillarColumn27(void)
 	Engine_EventBegin();
 	if (Object_GetById(10)->x.fixed >> 20 == 27)
 	{
-		left = OverlayObject_CreateConfigured(
+		left = OverlayObject_PrepareObject(
 			Object_GetById(10)->x.fixed - 0x80000, 0, Object_GetById(10)->z.fixed + 0x340000, 241);
-		right = OverlayObject_CreateConfigured(
+		right = OverlayObject_PrepareObject(
 			Object_GetById(10)->x.fixed + 0x80000, 0, Object_GetById(10)->z.fixed + 0x340000, 241);
 		Object_GetById(9)->motion_flags = 0;
 		o = &options;
@@ -710,7 +671,7 @@ void HaidiaDou_ApplyEntryState(void)
 		case 4:
 			Engine_ActorSetSpritePriority(15, 3);
 			Engine_ActorSetSpritePriority(13, 3);
-			OverlayObject_CreateConfiguredB(0x780000, 0, 0xe80000, 223);
+			OverlayObject_CreateConfiguredObject(0x780000, 0, 0xe80000, 223);
 			break;
 		case 5:
 		case 6:
@@ -739,7 +700,7 @@ void HaidiaDou_ApplyEntryState(void)
 		case 8:
 		case 9:
 		case 10:
-			OverlayObject_CreateConfiguredB(0x2820000, 0, 0x2280000, 20);
+			OverlayObject_CreateConfiguredObject(0x2820000, 0, 0x2280000, 20);
 			Map_CopyCellAttributes(23, 34, 13, 3, 0, 34);
 			DialogueLayout_ConfigureRowsByFlag301();
 			if (Engine_GameFlagIsSet(0x200) != 0)

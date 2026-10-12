@@ -2,6 +2,8 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/field/toreto_heya/heya.h"
+#include "unit/field/common/effect/advance.h"
+#include "unit/field/common/effect/create.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -38,49 +40,8 @@ extern s16 *ToretoHeya_PaletteBuffer;
 extern u8	ToretoHeya_SparkOrigin[];
 extern u8	ToretoHeya_SparkCounter[];
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
-{
-	work->sprite->priority = mode;
-}
-
-void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
-{
-	struct FieldActor  *obj;
-	struct FieldSprite *rec;
-
-	obj = Engine_ObjectCreate(kind, x, y, z);
-	if (obj != NULL)
-	{
-		rec = obj->sprite;
-		rec->priority = 0;
-		obj->motion_flags = 0;
-		obj->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(obj, 0);
-		ObjectGroup_SetChildValue(obj, 0xE);
-		Engine_ObjectSetBlendMode(obj, 1);
-		return obj;
-	}
-	return NULL;
-}
-
-void *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 kind)
-{
-	struct FieldActor *effect = Engine_ObjectCreate(kind, x, y, z);
-
-	if (effect != NULL)
-	{
-		struct FieldSprite *sprite = effect->sprite;
-
-		sprite->priority = 1;
-		effect->motion_flags = 0;
-		effect->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(effect, 0);
-		ObjectGroup_SetChildValue(effect, 15);
-		effect->priority_flags = (effect->priority_flags & 0xfe) | 2;
-		return effect;
-	}
-	return NULL;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 
 struct Vec
 {
@@ -968,23 +929,8 @@ void SceneEffect_RegisterPaletteFadeCallback(void)
 	Engine_TaskRemoveCallback(ToretoPalette_ApplyTint);
 }
 
-void ToretoHeya_AdvanceEffectMotion(struct Effect *effect)
-{
-	struct Sprite *sprite;
-
-	effect->position[0] += effect->velocity_x;
-	effect->position[1] += effect->velocity_y;
-	effect->position[2] += effect->velocity_z;
-
-	effect->velocity_x -= effect->velocity_x / 18;
-	effect->velocity_z -= effect->velocity_z / 16;
-
-	effect->accum18 += effect->rate30;
-	effect->accum1c += effect->rate34;
-
-	sprite = effect->sprite;
-	sprite->angle += effect->step64;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/advance.c"
 
 void ToretoHeya_RunLandingDustScene(void)
 {
@@ -1013,7 +959,7 @@ void ToretoHeya_RunLandingDustScene(void)
 	leader = Object_GetById(0);
 	p = &params;
 	p->kind = 7;
-	p->script = (s32)ToretoHeya_AdvanceEffectMotion;
+	p->script = (s32)Effect_AdvanceMotion;
 	p->spread = 0xcccc;
 	p->rise = 0xcccc;
 	for (i = 0; i <= 16; i++)

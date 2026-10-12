@@ -4,6 +4,8 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/korosseo_kawa/kawa.h"
+#include "unit/field/common/korosseo/occupant.h"
+#include "unit/field/common/object/findslot.h"
 #include "unit/field/common/korosseo/solo_competitor.h"
 #include "unit/field/common/korosseo/solo_round.h"
 #include "unit/field/common/korosseo/korosseo.h"
@@ -1219,42 +1221,6 @@ static __inline__ void AdvanceMessage(s32 amount)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/solo_round.c"
 
-void RunPartyCountInteraction(s32 actorId)
-{
-	PartyInteractionRecord *record;
-	s32						x;
-	s32						y;
-
-	record = (PartyInteractionRecord *)Object_GetById(actorId);
-	x = record->x;
-	y = record->y;
-	Engine_EventBegin();
-
-	if (GetPartyMemberCount() <= 1)
-	{
-		Engine_EventSetMessage((s32)MsgKorosseoRobinDidGetGoodLook);
-		if (Engine_EventAskYesNo(actorId, 0) == 0)
-		{
-			InitializeActorZero();
-			InitializeSelectedActor(actorId);
-			Engine_ActorWalkTo(actorId, x, y + 0x40);
-			Engine_EventWait(15);
-			Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y);
-			Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y + 0x20);
-			Engine_EventCloseScreen();
-			Engine_EventWaitForScreen();
-			Engine_EventRequestExit(11);
-		}
-	}
-	else
-	{
-		Engine_EventSetMessage((s32)MsgKorosseoWaitShouldntDecideWhereBest);
-		Engine_EventShowMessage(actorId, 0);
-	}
-
-	Engine_EventEnd();
-}
-
 void FieldScene_RunSixSteps380To3A8(void)
 {
 	GameFlag_SetByte(896, 0);
@@ -1931,24 +1897,7 @@ void SceneState_InitControlWhenFlag109Clear(s32 resource)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/scene_state.c"
-
-struct FieldActor *SceneActor_FindSlotAtTilePosition(Position3 *pos, struct FieldActor *subject)
-{
-	struct FieldActor **slots = gEventWork->placed_actors - 8;
-	u32					i;
-
-	for (i = 8; i <= 65; i++)
-	{
-		struct FieldActor *p = slots[i];
-
-		if ((pos->x >> 20) == (p->x.fixed >> 20) && (pos->y >> 20) == (p->y.fixed >> 20)
-			&& (pos->z >> 20) == (p->z.fixed >> 20))
-		{
-			return p;
-		}
-	}
-	return 0;
-}
+#include "../common/object/findslot.c"
 
 void StagedActor_PushActorAhead(void)
 {
@@ -1974,7 +1923,7 @@ void StagedActor_PushActorAhead(void)
 	step <<= 16;
 	pos.z = subject->z.fixed + step;
 
-	target = SceneActor_FindSlotAtTilePosition(&pos, subject);
+	target = SceneData_FindSlotAtPosition(&pos, subject);
 	if (target == 0)
 	{
 		return;
@@ -1986,7 +1935,7 @@ void StagedActor_PushActorAhead(void)
 	step <<= 16;
 	pos.z = target->z.fixed + step;
 
-	blocker = SceneActor_FindSlotAtTilePosition(&pos, target);
+	blocker = SceneData_FindSlotAtPosition(&pos, target);
 	if (blocker != 0 && (blocker->collision_flags & 1) != 0)
 	{
 		return;
@@ -1996,7 +1945,7 @@ void StagedActor_PushActorAhead(void)
 	pos.y = target->y.fixed + 0x100000;
 	pos.z = target->z.fixed;
 
-	blocker = SceneActor_FindSlotAtTilePosition(&pos, target);
+	blocker = SceneData_FindSlotAtPosition(&pos, target);
 	if (blocker != 0 && (blocker->collision_flags & 1) != 0)
 	{
 		return;
@@ -2039,36 +1988,8 @@ void StagedActor_PushActorAhead(void)
 	Object_SetMode(subject, 1);
 }
 
-struct FieldActor *SceneActor_FindOccupantAheadOfSubject(void)
-{
-
-	struct FieldActor *rec;
-	s32				   facing;
-	Position3		   pos;
-	struct FieldActor *hit;
-
-	rec = Object_GetById(gGameState.selected_actor);
-
-	facing = (rec->facing + 0x2000) & 0xc000;
-
-	pos.x = (rec->x.fixed & 0xfff00000) + 0x80000;
-	pos.y = rec->y.fixed;
-	pos.z = (rec->z.fixed & 0xfff00000) + 0x80000;
-	Vector_AddPolarOffset(0x100000, facing, &pos);
-
-	hit = SceneActor_FindSlotAtTilePosition(&pos, rec);
-	if (hit == 0)
-	{
-		pos.x = (rec->x.fixed & 0xfff00000) + 0x80000;
-		pos.y = rec->y.fixed;
-		pos.z = (rec->z.fixed & 0xfff00000) + 0x80000;
-		Vector_AddPolarOffset(0x200000, facing, &pos);
-
-		hit = SceneActor_FindSlotAtTilePosition(&pos, rec);
-	}
-
-	return hit;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/occupant.c"
 
 const u8 Korosseo_PortraitPaletteOffsets[] = {
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)

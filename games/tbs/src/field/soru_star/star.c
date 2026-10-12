@@ -1,6 +1,8 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/soru_star/star.h"
+#include "unit/field/common/object/facing.h"
+#include "unit/field/common/effect/create.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/soru_star/ring_setup.h"
 #include "unit/battle/effect/slots.h"
@@ -81,53 +83,8 @@ struct ObjectRuntime;
 
 extern struct SceneEvent Placement_Effects[];
 
-void OverlayObject_SetHandleFlagBits2And3(s32 object, u32 value)
-{
-	struct FieldActor *actor = (struct FieldActor *)object;
-
-	actor->sprite->priority = value;
-}
-
-void *OverlayObject_PrepareObject(s32 first, s32 second, s32 third, s32 fourth)
-{
-	struct FieldActor  *obj;
-	struct FieldSprite *rec;
-
-	obj = Engine_ObjectCreate(fourth, first, second, third);
-	if (obj != NULL)
-	{
-		rec = obj->sprite;
-		rec->priority = 0;
-		obj->motion_flags = 0;
-		obj->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(obj, 0);
-		ObjectGroup_SetChildValue(obj, 0xE);
-		Engine_ObjectSetBlendMode(obj, 1);
-		return obj;
-	}
-	return NULL;
-}
-
-void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
-{
-	struct FieldActor *result = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
-
-	if (result != NULL)
-	{
-		struct FieldSprite *object = result->sprite;
-
-		object->priority = 1;
-		result->motion_flags = 0;
-		result->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(result, 0);
-		ObjectGroup_SetChildValue(result, 15);
-		result->priority_flags = (result->priority_flags & 0xfe) | 2;
-		return result;
-	}
-	return NULL;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 
@@ -138,36 +95,8 @@ static __inline__ void SkipMessage(s32 amount)
 	gEventWork->message += amount;
 }
 
-s32 UpdateOverlayObjectAngle(struct OverlayObject *object)
-{
-	struct OverlayObject *linked_object = object->linked_object;
-	if (linked_object != NULL)
-	{
-		s32 angle_delta;
-		u16 angle;
-		object->steering_flags &= 0xFE;
-		angle_delta = (u16)CalculateAngleFromCoordinateDelta(
-			linked_object->coordinate_10 - object->coordinate_10,
-			linked_object->coordinate_08 - object->coordinate_08);
-		angle = object->angle;
-		angle_delta -= angle;
-		angle_delta <<= 16;
-		angle_delta >>= 16;
-		if (angle_delta != 0)
-		{
-			if (angle_delta > 0x1000)
-			{
-				angle_delta = 0x1000;
-			}
-			if (angle_delta < -0x1000)
-			{
-				angle_delta = -0x1000;
-			}
-			object->angle = angle + angle_delta;
-		}
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/facing.c"
 
 s32 *SceneData_GetScriptTable(void)
 {
@@ -2332,7 +2261,7 @@ const s32 *gEffectScripts[] = {
 };
 
 s32 SoruStar_AngleScript[] = {
-	SC_CALL(UpdateOverlayObjectAngle),
+	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

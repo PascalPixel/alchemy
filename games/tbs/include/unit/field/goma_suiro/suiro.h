@@ -4,7 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct FieldActor;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
@@ -22,9 +21,6 @@ typedef struct
 	EffectRecord_020004c4 *record;
 } EffectWork_020004c4;
 
-void SceneEffect_SetRecordMode(struct FieldActor *work, s32 mode);
-void *OverlayObject_PrepareObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
 const u32 *Scene_GetExits(void);

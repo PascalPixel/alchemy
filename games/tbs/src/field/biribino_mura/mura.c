@@ -2,6 +2,8 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/biribino_mura/mura.h"
+#include "unit/field/common/object/findcell.h"
+#include "unit/field/common/object/facing.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
 #include "unit/system/scheduler/callback.h"
@@ -31,37 +33,8 @@ struct SpawnCounter
 
 struct SpawnCounter gCornerSpawnCounter;
 
-s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
-{
-	s32					 delta;
-	u16					 old;
-	s32					 tgt;
-	struct FacingObject *target;
-
-	target = object->facing_target;
-	if (target != NULL)
-	{
-		object->facing_flags = (0xFE & object->facing_flags);
-		tgt = (u16)ArcTan2(
-			target->position_z - object->position_z, target->position_x - object->position_x);
-		old = object->facing;
-		delta = (s16)(tgt - old);
-		if (delta != 0)
-		{
-			if (delta > 0x1000)
-			{
-				delta = 0x1000;
-			}
-
-			if (delta < -0x1000)
-			{
-				delta = -0x1000;
-			}
-			object->facing = (old + delta);
-		}
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/facing.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -693,22 +666,8 @@ void BiribinoMura_RestoreRaisedEntrance(void)
 	}
 }
 
-struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
-{
-	struct FieldActor **actors = gEventWork->placed_actors - 8;
-	u32					i;
-
-	for (i = 8; i <= 65; i++)
-	{
-		struct FieldActor *actor = actors[i];
-
-		if (x == actor->x.fixed >> 20 && z == actor->z.fixed >> 20)
-		{
-			return actor;
-		}
-	}
-	return 0;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/findcell.c"
 
 void BiribinoMura_PushFacedBlock(void)
 {
@@ -823,7 +782,7 @@ void FieldScene_DrawTilesByActor8Row(void)
 }
 
 s32 Mura_VillagerActions[] = {
-	SC_CALL(SceneActor_UpdateFacingTowardTarget),
+	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

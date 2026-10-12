@@ -5,7 +5,6 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-struct FieldActor;
 struct Obj_020036f8;
 struct Object;
 struct Resource3a8Effect;
@@ -69,7 +68,6 @@ void KareiMachi_SpeedUpActors(void);
 void KareiMachi_AlternateDance(void);
 void FieldScene_RunTwoActorCutsceneSequence(void);
 void FieldScene_RunSecondaryGroupSequence(void);
-struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z);
 void FieldScene_RunLateSequence(void);
 void FieldScene_RunScene3a8SequenceB(void);
 void SceneEffect_UpdateMotionWithDamping(struct Obj_020036f8 *p);
@@ -77,8 +75,6 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0);
 void FieldScene_RunScene3a8SequenceA(s32 a0, s32 a1, s32 a2);
 void SceneEffect_UpdateLobeOrbitEffect26(void);
 void FieldScene_DrawTilesAndRaiseActor11(void);
-s32 SceneEffect_UpdateOrbitingEffect(Effect_0200390c *effect);
-void InitializeOrbitingRenderEffect(s32 id);
 extern s32 KareiMachi_Data01[];
 extern s32 SceneAction_GroupMotion[];
 extern s32 SceneAction_GroupOffsetMotion[];

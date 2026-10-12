@@ -4,11 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct FieldActor;
-
-void OverlayObject_SetEntryField(struct FieldActor *object, s32 priority);
-void *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 type);
-void *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 type);
 s32 ShianHeya_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
 s32 ShianHeya_GetExits(void);

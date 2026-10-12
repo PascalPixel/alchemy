@@ -3,14 +3,11 @@
 
 #include "types.h"
 
-struct DispatchObject;
 struct FieldPosition;
 struct ObjectRuntime;
 struct SceneRegionEntry;
 struct UiWindow;
 
-void *AllocateEffectTransfer(s32 kind, s32 size);
-s32 CalculateAngleFromCoordinateDelta(s32 x, s32 y);
 void Effect_SoundAndFlash(void);
 s32 Engine_BattleFxPlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode);
 void Engine_BattleFxRunPageEffectForSlot(s32 slot, s32 elm, void *djinn);
@@ -34,8 +31,6 @@ void InventorySnapshot_Take(void);
 s32 ItemMenu_Open(void);
 s32 Object_CheckMovementCollision(struct ObjectRuntime *object, struct FieldPosition *position);
 void Object_CommitPosition(s32 arg0);
-void OverlayObject_SetValue1(struct DispatchObject *obj, u32 mode);
-void RunOverlayObjectCommand1(struct DispatchObject *obj, u32 mode);
 void SceneEvents_UpdateInView(struct SceneRegionEntry *entry);
 void UiText_DrawQuantity(u32 value, u32 kind);
 

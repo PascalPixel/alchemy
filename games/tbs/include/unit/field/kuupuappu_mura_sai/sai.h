@@ -4,13 +4,8 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct FieldActor;
 struct SceneActor_02000350;
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode);
-void *OverlayObject_CreateConfigured(s32 first, s32 second, s32 third, s32 fourth);
-void *OverlayObject_CreateConfiguredObjectB(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-s32 SceneActor_GetPositionDistance(s32 *first_position, s32 *second_position);
 s32 SceneActor_UpdateProximity(struct SceneActor_02000350 *actor, struct SceneActor_02000350 *target, s32 range, s32 force);
 s32 UpdateActorProximity(u8 *actor);
 const void *SceneData_GetScriptTable(void);

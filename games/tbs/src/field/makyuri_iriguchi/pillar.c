@@ -74,6 +74,81 @@ struct PillarState
 	u8 *pillar;
 };
 
+struct EffectAnchor
+{
+	u8	pad00[8];
+	s32 f8;
+	u8	pad0c[4];
+	s32 f16;
+};
+
+struct AnchoredEffect
+{
+	u8					 pad00[8];
+	s32					 f8;
+	s32					 f12;
+	s32					 f16;
+	u8					 pad14[4];
+	s32					 f24;
+	s32					 f28;
+	u8					 pad20[68];
+	s16					 f100;
+	u8					 pad66[2];
+	struct EffectAnchor *f104;
+};
+
+s32 SceneEffect_AdvanceAnchoredRiseFrame(struct AnchoredEffect *work)
+{
+	struct EffectAnchor *src = work->f104;
+	s16					 step = ++work->f100;
+	s32					 seed;
+
+	if (step > 31)
+	{
+		return 0;
+	}
+
+	seed = Engine_MathSin(step << 10);
+	work->f24 = seed;
+	work->f28 = seed;
+	work->f8 = src->f8;
+	work->f12 += 0x10000;
+	work->f16 = src->f16;
+	return 1;
+}
+
+s32 OverlayObject_RampWords24And28Over16Frames(struct FieldActor *o)
+{
+	u16 *c = &o->timer;
+	s16	 n;
+
+	*c = *c + 1;
+	n = *c;
+	if (n > 16)
+	{
+		return 0;
+	}
+	o->scale_x = (n * 3) << 10;
+	o->scale_y = (n * 3) << 10;
+	return 1;
+}
+
+s32 OverlayObject_AdvanceScaleCounter(struct FieldActor *o)
+{
+	u16 *c = &o->timer;
+	s16	 n;
+
+	*c = *c + 1;
+	n = *c;
+	if (n > 16)
+	{
+		return 0;
+	}
+	o->scale_x = (n << 11) + 0x10000;
+	o->scale_y = (n << 11) + 0x10000;
+	return 1;
+}
+
 s32 Makyuri_FollowLeader(struct FieldActor *actor)
 {
 	struct FieldActor	*leader;

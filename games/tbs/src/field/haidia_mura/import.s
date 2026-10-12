@@ -9,7 +9,7 @@
 	import Engine_MathSin, Trig_SinFar
 	import Engine_MathCos, Trig_CosFar
 	import Vector_AddPolarOffset, Vector_AddPolarOffsetFar
-	import Runtime_AllocateHeapBlock, Runtime_AllocateHeapBlockFar
+	import Engine_HeapAllocate, Runtime_AllocateHeapBlockFar
 	import Engine_HeapRelease, Runtime_ReleaseHeapBlockFar
 	import Resource_ResetEntry, Resource_ResetEntryFar
 	import Engine_VramLoad, VramBlock_LoadCachedFar

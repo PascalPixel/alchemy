@@ -2,7 +2,12 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/takara_shima/shima.h"
+#include "unit/field/common/effect/advance.h"
+#include "unit/field/common/object/orbit.h"
+#include "unit/field/common/effect/create.h"
 #include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/object/distance.h"
+#include "unit/field/common/object/fillgrid.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -133,93 +138,9 @@ struct S_02001b14
 	s32 f10;
 };
 
-typedef struct OrbitingSceneObjectSprite
-{
-	u8 padding_00[5];
-	u8 flags_05_low : 5;
-	u8 flags_05_bit_5 : 1;
-	u8 flags_05_high : 2;
-	u8 padding_06[3];
-	u8 flags_09_low : 2;
-	u8 flags_09_mode : 2;
-	u8 flags_09_high : 4;
-	u8 padding_0a[18];
-	u8 palette;
-	u8 padding_1d[10];
-	u8 state;
-} OrbitingSceneObjectSprite;
-
-typedef struct OrbitingSceneObject
-{
-	u8						   padding_00[8];
-	s32						   x;
-	s32						   y;
-	u8						   padding_10[19];
-	u8						   flags_23;
-	u8						   padding_24[12];
-	s32						   orbit_angle;
-	u8						   padding_34[4];
-	s32						   orbit_center_x;
-	s32						   orbit_center_y;
-	u8						   padding_40[16];
-	OrbitingSceneObjectSprite *sprite;
-	u8						   padding_54;
-	u8						   mode;
-	u8						   state;
-	u8						   padding_57[5];
-	u8						   active;
-	u8						   padding_5d[4];
-	u8						   visible;
-	u8						   padding_62[10];
-	u32						   callback;
-} OrbitingSceneObject;
-
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
-
-void SetEffectOwnerMode(struct FieldActor *object, s32 priority)
-{
-	struct FieldSpritePriority *sprite = (struct FieldSpritePriority *)object->sprite;
-
-	sprite->priority = priority;
-}
-
-struct FieldActor *SpawnMode14Effect(s32 x, s32 y, s32 z, s32 kind)
-{
-	struct FieldActor *object = Engine_ObjectCreate(kind, x, y, z);
-
-	if (object != 0)
-	{
-		((struct FieldSpritePriority *)object->sprite)->priority = 0;
-		object->motion_flags = 0;
-		object->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 14);
-		Engine_ObjectSetBlendMode(object, 1);
-		return object;
-	}
-	return 0;
-}
-
-struct FieldActor *SpawnMode15Effect(s32 x, s32 y, s32 z, s32 kind)
-{
-	struct FieldActor *object = Engine_ObjectCreate(kind, x, y, z);
-
-	if (object != 0)
-	{
-		((struct FieldSpritePriority *)object->sprite)->priority = 1;
-		object->motion_flags = 0;
-		object->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(object, 0);
-		ObjectGroup_SetChildValue(object, 15);
-		object->priority_flags =
-			(object->priority_flags & ~ACTOR_PRIORITY_AUTOMATIC) | ACTOR_PRIORITY_UNDERFOOT;
-		return object;
-	}
-	return 0;
-}
-
-// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 
@@ -296,24 +217,8 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gTakaraShimaPlacementsOther;
 }
 
-void AdvanceEffectMotion(struct Effect *effect)
-{
-
-	struct Sprite *sprite;
-
-	effect->position[0] += effect->velocity[0];
-	effect->position[1] += effect->velocity[1];
-	effect->position[2] += effect->velocity[2];
-
-	effect->velocity[0] -= effect->velocity[0] / 18;
-	effect->velocity[2] -= effect->velocity[2] / 16;
-
-	effect->accum18 += effect->rate30;
-	effect->accum1c += effect->rate34;
-
-	sprite = effect->sprite;
-	sprite->angle += effect->step64;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/advance.c"
 
 void SpawnRadialEffectBurst(s32 object_id)
 {
@@ -326,7 +231,7 @@ void SpawnRadialEffectBurst(s32 object_id)
 	s32					z;
 
 	object = (struct SceneObject *)Object_GetById(object_id);
-	params.callback = (s32)AdvanceEffectMotion;
+	params.callback = (s32)Effect_AdvanceMotion;
 	for (angle_step = 0; angle_step <= 16; angle_step += 2)
 	{
 		angle = angle_step << 12;
@@ -484,7 +389,7 @@ s32 Scene_Initialize(void)
 		{
 			return 0;
 		}
-		InitializeSwayingSceneObject(8);
+		InitializeStagedActorSceneOrbitingEffect(8);
 		return 0;
 	}
 	first = (s32)&SceneId_TakaraShima6;
@@ -2548,65 +2453,8 @@ void AdvanceActor16AlongEscapeRoute(void)
 	Engine_MapCopyCellAttributes(0, 0, 1, 3, column, row);
 }
 
-s32 UpdateSwayingSceneObject(struct S *object)
-{
-
-	struct T *sprite = object->f50;
-	s32		  vertical_offset = Engine_MathSin(object->f30) * 2;
-	s32		  random_b;
-	s32		  random_a;
-
-	if (vertical_offset > 0)
-	{
-		vertical_offset = -vertical_offset;
-	}
-	object->f08 = object->f38 + Engine_MathCos(object->f30) * 2;
-	object->f0c = object->f3c + vertical_offset;
-	sprite->f1e = (Engine_MathCos(object->f30 + 0x8000) / 8);
-	random_a = Engine_RandomNext();
-	random_b = Engine_RandomNext();
-	object->f30 += (((u32)(random_a << 9)) >> 16) + (((u32)(random_b << 9)) >> 16) + 0x400;
-	return 0;
-}
-
-void InitializeSwayingSceneObject(s32 object_id)
-{
-	OrbitingSceneObject		  *actor;
-	OrbitingSceneObjectSprite *sprite;
-	u8						  *transfer;
-	s32						   zero;
-
-	actor = (OrbitingSceneObject *)Object_GetById(object_id);
-	sprite = actor->sprite;
-	sprite->flags_09_mode = 1;
-	sprite->flags_05_bit_5 = 0;
-	sprite->flags_09_high = 0;
-
-	zero = 0;
-	sprite->state = zero;
-	Engine_ActorSetSpriteFlags(actor, zero);
-	actor->active = zero;
-	actor->mode = zero;
-
-	if (Engine_GameFlagIsSet(0x109) == 0)
-		actor->y += 0x200000;
-
-	actor->flags_23 &= 0xfe;
-	actor->visible = 1;
-
-	transfer = AllocateEffectTransfer(17, 0x608);
-	Engine_ItemLoadIcon(ITEM_NUT);
-	transfer += 0x400;
-	Engine_VramLoad(sprite->palette, 128, transfer);
-	Engine_HeapRelease(17);
-
-	actor->orbit_center_x = actor->x;
-	actor->orbit_angle = zero;
-	actor->orbit_center_y = actor->y;
-	actor->active = 1;
-	actor->callback = (u32)UpdateSwayingSceneObject;
-	actor->state = zero;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/orbit.c"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

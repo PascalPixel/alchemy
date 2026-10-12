@@ -4,8 +4,11 @@
 #include "keystate.h"
 #include "unit/import.h"
 #include "unit/field/makyuri_iriguchi/iriguchi.h"
+#include "unit/field/common/effect/create.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/object/distance.h"
+#include "unit/field/common/object/fillgrid.h"
 #include "unit/field/common/makyuri/palette_cycle.h"
 #include "unit/field/common/makyuri/lights.h"
 #include "unit/field/makyuri_iriguchi/pillar.h"
@@ -46,29 +49,6 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-struct Src_39c
-{
-	u8	pad00[8];
-	s32 f8;
-	u8	pad0c[4];
-	s32 f16;
-};
-
-struct Work_39c
-{
-	u8				pad00[8];
-	s32				f8;
-	s32				f12;
-	s32				f16;
-	u8				pad14[4];
-	s32				f24;
-	s32				f28;
-	u8				pad20[68];
-	s16				f100;
-	u8				pad66[2];
-	struct Src_39c *f104;
-};
-
 struct WorkPointers
 {
 	u8 *event;
@@ -76,51 +56,8 @@ struct WorkPointers
 	u8 *scene;
 };
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
-{
-	work->sprite->priority = mode;
-}
-
-void *OverlayObject_CreateConfigured(s32 first, s32 second, s32 third, s32 fourth)
-{
-	struct FieldActor  *obj;
-	struct FieldSprite *rec;
-
-	obj = Engine_ObjectCreate(fourth, first, second, third);
-	if (obj != NULL)
-	{
-		rec = obj->sprite;
-		rec->priority = 0;
-		obj->motion_flags = 0;
-		obj->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(obj, 0);
-		ObjectGroup_SetChildValue(obj, 0xE);
-		Engine_ObjectSetBlendMode(obj, 1);
-		return obj;
-	}
-	return NULL;
-}
-
-void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
-{
-	struct FieldActor *result = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
-
-	if (result != NULL)
-	{
-		struct FieldSprite *object = result->sprite;
-
-		object->priority = 1;
-		result->motion_flags = 0;
-		result->collision_flags = 8;
-		Engine_ActorSetSpriteFlags(result, 0);
-		ObjectGroup_SetChildValue(result, 15);
-		result->priority_flags = (result->priority_flags & 0xfe) | 2;
-		return result;
-	}
-	return NULL;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 #include "../common/object/staged_actor.c"
@@ -690,103 +627,9 @@ void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 	}
 }
 
-s32 SceneEffect_AdvanceAnchoredRiseFrame(struct Work_39c *work)
-{
-	struct Src_39c *source = work->f104;
-	s16				step = ++work->f100;
-	s32				seed;
-
-	if (step > 31)
-	{
-		return 0;
-	}
-
-	seed = Engine_MathSin(step << 10);
-	work->f24 = seed;
-	work->f28 = seed;
-	work->f8 = source->f8;
-	work->f12 += 0x10000;
-	work->f16 = source->f16;
-	return 1;
-}
-
-s32 OverlayObject_RampWords24And28Over16Frames(struct FieldActor *o)
-{
-	u16 *c = &o->timer;
-	s16	 n;
-
-	*c = *c + 1;
-	n = *c;
-	if (n > 16)
-	{
-		return 0;
-	}
-	o->scale_x = (n * 3) << 10;
-	o->scale_y = (n * 3) << 10;
-	return 1;
-}
-
-s32 OverlayObject_AdvanceScaleCounter(struct FieldActor *o)
-{
-	u16 *c = &o->timer;
-	s16	 n;
-
-	*c = *c + 1;
-	n = *c;
-	if (n > 16)
-	{
-		return 0;
-	}
-	o->scale_x = (n << 11) + 0x10000;
-	o->scale_y = (n << 11) + 0x10000;
-	return 1;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
-
 #include "pillar.c"
-
-void SceneState_ClearCurrentRecordAndReleaseTarget(void)
-{
-	s32 *record = **(s32 ***)&((struct WorkPointers *)&gEventWork)->scene;
-	s32 *target;
-
-	if (record[0] == 0)
-	{
-		return;
-	}
-
-	record[0] = 0;
-	Engine_GameFlagClear(0x161);
-
-	target = (s32 *)record[5];
-	if (target != 0)
-	{
-		*(short *)((u8 *)target + 0x64) = 0;
-		Engine_ObjectSetScript(target, (s32)Makyuri_ScaleCounterScript);
-		Object_SetMode(target, 7);
-		record[5] = 0;
-	}
-}
-
-// ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/makyuri/makyuri.c"
-
-void OverlayObject_ReleasePublishedAttachment(void)
-{
-	u8 **pub = Runtime_AllocateBlock(35, 4);
-	u8	*state;
-	u8	*obj;
-
-	if (pub == 0)
-		return;
-	state = *pub;
-	obj = *(u8 **)(state + 20);
-	if (obj == 0)
-		return;
-	Engine_ObjectDispatchRelease(obj);
-	*(u8 **)(state + 20) = 0;
-}
 
 s32 gEffectScript0[] = {
 	SC_WAIT(1),

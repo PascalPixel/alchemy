@@ -2,6 +2,8 @@
 #include "scene_ids.h"
 #include "vram_tab.h"
 #include "unit/field/haidia_ie/ie.h"
+#include "unit/field/common/effect/vertical.h"
+#include "unit/field/common/object/facing.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
 #include "unit/game/character/chara.h"
@@ -29,37 +31,8 @@
 #include "field_scene.h"
 #include "objcmd.h"
 
-s32 Object_UpdateFacingTowardTarget(struct FacingObject *object)
-{
-	s32					 facing_delta;
-	u16					 old_facing;
-	s32					 target_facing;
-	struct FacingObject *target;
-
-	target = object->facing_target;
-	if (target != NULL)
-	{
-		object->facing_flags = (0xFE & object->facing_flags);
-		target_facing = (u16)ArcTan2(
-			target->position_z - object->position_z, target->position_x - object->position_x);
-		old_facing = object->facing;
-		facing_delta = (s16)(target_facing - old_facing);
-		if (facing_delta != 0)
-		{
-			if (facing_delta > 0x1000)
-			{
-				facing_delta = 0x1000;
-			}
-
-			if (facing_delta < -0x1000)
-			{
-				facing_delta = -0x1000;
-			}
-			object->facing = (old_facing + facing_delta);
-		}
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/facing.c"
 
 u8 *HaidiaIe_GetEntrances(void)
 {
@@ -1402,55 +1375,8 @@ void SceneEffect_UpdateByFrameBit(s32 no)
 	}
 }
 
-void SceneEffect_AnimateVerticalPositive(struct SceneVerticalEffect *effect)
-{
-	struct VerticalEffectAnchor *anchor;
-	s32							 frame;
-	s32							 amplitude;
-	s32							 offset;
-
-	anchor = effect->anchor;
-	effect->frame++;
-	frame = (s16)effect->frame;
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease(effect);
-		return;
-	}
-	amplitude = Engine_MathSin(frame << 10);
-	effect->amplitude_x = amplitude;
-	effect->amplitude_y = amplitude;
-	effect->x = anchor->x;
-	offset = 0x10000;
-	effect->y += offset;
-	offset -= amplitude;
-	effect->z = anchor->z + (offset * 4 + offset) + 0x80000;
-}
-
-void SceneEffect_AnimateVerticalNegative(struct SceneVerticalEffect *effect)
-{
-	struct VerticalEffectAnchor *anchor;
-	s32							 frame;
-	s32							 amplitude;
-	s32							 offset;
-
-	anchor = effect->anchor;
-	effect->frame++;
-	frame = (s16)effect->frame;
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease(effect);
-		return;
-	}
-	amplitude = Engine_MathSin(frame << 10);
-	effect->amplitude_x = amplitude;
-	effect->amplitude_y = -amplitude;
-	effect->x = anchor->x;
-	offset = 0x10000;
-	effect->y += offset;
-	offset -= amplitude;
-	effect->z = anchor->z - (offset * 4 + offset) + 0x100000;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/vertical.c"
 
 void HaidiaIe_SpawnEffectPair(union PairObject *parent)
 {
@@ -1494,7 +1420,7 @@ void HaidiaIe_SpawnEffectPair(union PairObject *parent)
 		union PairObject   *p = pair[0];
 		struct FieldSprite *sp = p->object.actor.sprite;
 
-		p->object.actor.update = (void (*)(union FieldObject *))SceneEffect_AnimateVerticalNegative;
+		p->object.actor.update = (void (*)(union FieldObject *))Effect_AnimateVerticalNegative;
 		sp->priority = 2;
 	}
 	{
@@ -1502,7 +1428,7 @@ void HaidiaIe_SpawnEffectPair(union PairObject *parent)
 		struct FieldSprite *sp = p->sprite;
 
 		sp->priority = 2;
-		p->update = (void (*)(union FieldObject *))SceneEffect_AnimateVerticalPositive;
+		p->update = (void (*)(union FieldObject *))Effect_AnimateVerticalPositive;
 		p->priority_flags = 2;
 	}
 }
@@ -1716,7 +1642,7 @@ s32 Data_0200ab2c[] = {
 };
 
 s32 HaidiaIe_FaceTargetActions[] = {
-	SC_CALL(Object_UpdateFacingTowardTarget),
+	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

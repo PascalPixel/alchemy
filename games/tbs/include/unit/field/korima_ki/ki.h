@@ -28,8 +28,6 @@ void KorimaKi_PlayGesture(s32 actor, s32 gesture);
 void PaletteScene_AdvanceOrbit(struct OrbitingPaletteEffect *effect);
 void KorimaKi_SpawnOrbitSparks(void);
 void PaletteScene_SetRecordValue(s32 key, s32 value);
-void PaletteScene_AdjustPaletteWindow(s32 adjustment);
-u16 PaletteScene_AdjustColor(u16 color, s32 adjustment);
 extern s32 SceneAction_ActorOneEntry[];
 extern s32 SceneAction_ActorTwoEntry[];
 extern s32 SceneAction_ActorThreeEntry[];

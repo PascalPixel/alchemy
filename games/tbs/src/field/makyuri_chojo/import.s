@@ -14,7 +14,7 @@
 	import Engine_MapCopyCellsTo, Map_CopyMetatileIndicesRectFar
 	import Object_CheckMovementCollision, Map_CheckObjectStepFar
 	import Engine_ActorSetSpriteFlags, ObjectDispatch_SetSingleChildFlagsFar
-	import RunOverlayObjectCommand1, ObjectDispatch_SetChildBlendModeFar
+	import Engine_ObjectSetBlendMode, ObjectDispatch_SetChildBlendModeFar
 	import Engine_WorkSetValuesIfNonNegative, Runtime_SetWorkTripleIfNonNegativeFar
 	import Engine_MapRenderWaitForValues, Map_WaitWorkValuesBelow256Far
 	import Engine_GameFlagIsSet, GameFlag_TestFar

@@ -1,6 +1,8 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/field/biribino_niwa/niwa.h"
+#include "unit/field/common/object/orbit.h"
+#include "unit/field/common/object/facing.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
 #include "unit/system/scheduler/callback.h"
@@ -25,36 +27,8 @@
 
 extern struct EventWork *gEventWork;
 
-s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
-{
-	s32					 delta;
-	u16					 old;
-	s32					 tgt;
-	struct FacingObject *target;
-
-	target = object->facing_target;
-	if (target != NULL)
-	{
-		object->facing_flags = (0xFE & object->facing_flags);
-		tgt = (u16)ArcTan2(
-			target->position_z - object->position_z, target->position_x - object->position_x);
-		old = object->facing;
-		delta = (s16)(tgt - old);
-		if (delta != 0)
-		{
-			if (delta > 0x1000)
-			{
-				delta = 0x1000;
-			}
-			if (delta < -0x1000)
-			{
-				delta = -0x1000;
-			}
-			object->facing = (old + delta);
-		}
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/facing.c"
 
 u8 *SceneData_GetScriptTable(void)
 {
@@ -264,7 +238,7 @@ void BiribinoNiwa_ApplyEntryState(void)
 	}
 	if (Engine_GameFlagIsSet(0xfd2) == 0)
 	{
-		InitializeOrbitingSceneEntity(13);
+		InitializeStagedActorSceneOrbitingEffect(13);
 	}
 	if (Engine_GameFlagIsSet(0x84a) != 0)
 	{
@@ -384,76 +358,15 @@ void FieldScene_OpenGate(void)
 	Engine_GameFlagSet(0x200);
 }
 
-s32 SceneEffect_UpdateLobeOrbitEntity(struct SceneEntity_0200090c *entity)
-{
-	struct SceneHandle_0200090c *handle = entity->handle;
-	s32							 vertical;
-	s32							 tilt;
-	s32							 step;
-
-	vertical = Engine_MathSin(entity->phase) * 2;
-	if (vertical > 0)
-		vertical = -vertical;
-
-	entity->x = entity->origin_x + Engine_MathCos(entity->phase) * 2;
-	entity->y = entity->origin_y + vertical;
-
-	tilt = Engine_MathCos(entity->phase + 0x8000);
-	if (tilt < 0)
-		tilt += 7;
-	handle->field1e = (tilt >> 3);
-
-	step = (((u32)Engine_RandomNext() << 9) >> 16) + (((u32)Engine_RandomNext() << 9) >> 16);
-	entity->phase = entity->phase + step + 1024;
-
-	return 0;
-}
-
-void InitializeOrbitingSceneEntity(s32 id)
-{
-	OrbitingSceneObject		  *actor;
-	OrbitingSceneObjectSprite *sprite;
-	u8						  *transfer;
-	s32						   zero;
-
-	actor = (OrbitingSceneObject *)Object_GetById(id);
-	sprite = actor->sprite;
-	sprite->flags_09_mode = 1;
-	sprite->flags_05_bit_5 = 0;
-	sprite->flags_09_high = 0;
-
-	zero = 0;
-	sprite->state = zero;
-	Engine_ActorSetSpriteFlags(actor, zero);
-	actor->active = zero;
-	actor->mode = zero;
-
-	if (Engine_GameFlagIsSet(0x109) == 0)
-		actor->y += 0x200000;
-
-	actor->flags_23 &= 0xfe;
-	actor->visible = 1;
-
-	transfer = Engine_HeapAllocate(17, 0x608);
-	Engine_ItemLoadIcon(ITEM_NUT);
-	transfer += 0x400;
-	Engine_VramLoad(sprite->palette, 128, transfer);
-	Engine_HeapRelease(17);
-
-	actor->orbit_center_x = actor->x;
-	actor->orbit_angle = zero;
-	actor->orbit_center_y = actor->y;
-	actor->active = 1;
-	actor->callback = (u32)SceneEffect_UpdateLobeOrbitEntity;
-	actor->state = zero;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/orbit.c"
 
 u16 Niwa_GateCells[] = {
 	MAP_CELL_STEP(34, 25, 1, 3, 5), MAP_CELL_STEP(35, 25, 1, 3, 5), MAP_CELL_STEP(36, 25, 1, 3, 5), MAP_CELL_STEPS_END,
 };
 
 s32 BiribinoNiwa_GuardScript[] = {
-	SC_CALL(SceneActor_UpdateFacingTowardTarget),
+	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

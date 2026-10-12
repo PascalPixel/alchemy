@@ -4,10 +4,8 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct FacingObject;
 union FieldObject;
 
-s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *obj);
 s32 *HaidiaBabi_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
 s32 HaidiaBabi_SelectExits(void);
@@ -42,8 +40,6 @@ void FieldScene_RunSupplementalSequenceOne(void);
 void SceneEffect_UpdateObjectByFrameParity(union FieldObject *object);
 void OverlayObject_UpdateOnFrameParity(union FieldObject *object);
 void OverlayObject_ApplyRandomSlotOnOddFrames(union FieldObject *object);
-void SceneEffect_UpdateAnchoredRiseFrame(union FieldObject *object);
-void OverlayObject_UpdateArcFromAnchor(union FieldObject *object);
 void HaidiaBabi_SpawnEffectPair(union FieldObject *object);
 void SceneState_SetValue140Mode0(void);
 void FieldScene_RunSingleStep(void);

@@ -7,9 +7,6 @@
 struct FieldActor;
 struct OverlayEffectMotion;
 
-void SceneEffect_SetEffectRecordMode(struct FieldActor *work, s32 mode);
-void *OverlayObject_PrepareSceneObject(s32 first, s32 second, s32 third, s32 fourth);
-void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 s32 SceneActor_UpdateProximityToLeader(struct FieldActor *self);
 s32 ActorPresentation_UpdateEntityFromLeader(struct FieldActor *entity);
 void *SceneData_GetScriptTable(void);
@@ -65,7 +62,6 @@ void ActorPresentation_MoveActorToPositionAndWait(int actor, int x, int z, int f
 void FieldScene_RunActor23SequenceOnceByFlag867(void);
 void FieldScene_RunActor19MotionSequence(void);
 s32 KuupuappuMura_RestoreEntryState(void);
-s32 SceneActor_GetPositionDistance(s32 *a, s32 *b);
 s32 SceneActor_CheckFacingAndRange(struct FieldActor *actor, struct FieldActor *target, s32 range, s32 force);
 void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay);
 void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay);

@@ -24,17 +24,8 @@ extern u8 gMapCellBuffer[];
 extern s32 StagedActor_DirectionSteps[];
 extern s32 StagedActor_FootprintBounds[];
 
-s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
-{
-	s32 delta_x = (*first_position++ - *second_position++) >> 16;
-	s32 delta_y = (*first_position++ - *second_position++) >> 16;
-	s32 delta_z = (*first_position - *second_position) >> 16;
-	s32 delta_x_squared = delta_x * delta_x;
-	s32 delta_y_squared = delta_y * delta_y;
-	s32 delta_z_squared = delta_z * delta_z;
-
-	return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "distance.c"
 
 struct StagedActor *StagedActor_FindAtTile(s32 *position, struct StagedActor *origin)
 {
@@ -130,38 +121,8 @@ void StagedActor_AdvancePair(void)
 	Object_SetMode((struct FieldActor *)lead, 1);
 }
 
-s32 StagedActor_FillGridAttributeRectangle(
-	u32 layer, s32 x, s32 z, u32 width, u32 height, s32 value)
-{
-	struct MapState *map = gMapWork[0];
-	struct MapCell	*cells;
-	u32				 row;
-	u32				 column;
-
-	if (map != 0)
-	{
-		if (layer <= 2)
-		{
-			cells = map->layers[layer].cells;
-		}
-		else
-		{
-			cells = (struct MapCell *)gMapCellBuffer;
-		}
-		cells += x + (z << 7);
-		for (row = 0; row < height; row++)
-		{
-			struct MapCell *cell = cells + (row << 7);
-
-			for (column = 0; column < width; column++)
-			{
-				cell->collision_code = value;
-				cell++;
-			}
-		}
-	}
-	return 0;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "fillgrid.c"
 
 s32 StagedActor_StopBlockedMotion(struct StagedActor *actor)
 {

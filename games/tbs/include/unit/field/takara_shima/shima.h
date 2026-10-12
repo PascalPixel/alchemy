@@ -4,9 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct Effect;
-struct FieldActor;
-struct S;
 struct S_02000474;
 struct SceneEntrance;
 struct SceneEvent;
@@ -14,15 +11,11 @@ struct ScenePlacement;
 struct SceneRegion;
 struct V;
 
-void SetEffectOwnerMode(struct FieldActor *object, s32 priority);
-struct FieldActor *SpawnMode14Effect(s32 x, s32 y, s32 z, s32 kind);
-struct FieldActor *SpawnMode15Effect(s32 x, s32 y, s32 z, s32 kind);
 void NoOpEffectCallback(void);
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
-void AdvanceEffectMotion(struct Effect *effect);
 void SpawnRadialEffectBurst(s32 object_id);
 void InitializePrologueSceneState(void);
 const struct SceneEvent *Scene_GetEvents(void);
@@ -90,8 +83,6 @@ void RetreatActor14AlongEscapeRoute(void);
 void AdvanceActor14AlongEscapeRoute(void);
 void RetreatActor16AlongEscapeRoute(void);
 void AdvanceActor16AlongEscapeRoute(void);
-s32 UpdateSwayingSceneObject(struct S *object);
-void InitializeSwayingSceneObject(s32 object_id);
 extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];

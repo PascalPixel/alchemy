@@ -59,36 +59,6 @@ typedef struct
 	s32 unk40;
 } Ent_02002c1c;
 
-struct Actor_02002e0c
-{
-	u8					   filler00[8];
-	s32					   x;
-	s32					   y;
-	s32					   z;
-	u8					   filler14[4];
-	s32					   amplitude_x;
-	s32					   amplitude_y;
-	u8					   filler20[0x44];
-	u16					   frame;
-	u8					   filler66[2];
-	struct Actor_02002e0c *anchor;
-};
-
-struct Actor_02002e5c
-{
-	u8					   filler00[8];
-	s32					   x;
-	s32					   y;
-	s32					   z;
-	u8					   filler14[4];
-	s32					   amplitude_x;
-	s32					   amplitude_y;
-	u8					   filler20[0x44];
-	u16					   frame;
-	u8					   filler66[2];
-	struct Actor_02002e5c *anchor;
-};
-
 extern u8 *gParticleWork[];
 
 extern s32 gEmberState[16];

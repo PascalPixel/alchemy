@@ -28,8 +28,6 @@ void State_StampRecordCells(s16 *records, s32 value);
 const struct TileRun *SceneData_FindTileRunAt(const struct TileRun *run, s32 x, s32 y);
 s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode);
 void Scene_PushBlockAlongRun(struct TileRun2 *runs);
-void Effect_AdjustPaletteColors(s32 amount);
-u16 Effect_AdjustColorChannels(u16 color, s32 adj);
 extern u32 KorimaMagari_DefaultRecords[];
 extern u8 KorimaMagari_PushAnimations[];
 extern s8 KorimaMagari_PushStepX[];

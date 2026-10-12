@@ -4,7 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct Ent;
 struct FieldActor;
 struct Obj;
 struct Obj_020025d8;
@@ -17,7 +16,6 @@ s32 KorimaMura_ApplyPendingPose(s32 arg0);
 s32 SceneEffect_AdvanceCounterAndSwitchMode(struct Obj *p);
 void SceneData_InitRecordTable(u8 *o);
 s32 SceneEffect_UpdateFallingObject(struct Obj *p);
-s32 SceneActor_TurnTowardTarget(struct Ent *p);
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
 const u32 *Scene_GetExits(void);

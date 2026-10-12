@@ -1,5 +1,6 @@
 #include "game_state.h"
 #include "unit/field/soru_funka/funka.h"
+#include "unit/field/common/effect/vertical.h"
 #include "unit/field/soru_star/ring_setup.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -1782,53 +1783,8 @@ void SceneState_ForwardByRuntimeWordBits(s32 a)
 	}
 }
 
-void SceneEffect_UpdateArcOverAnchor(struct Actor_02002e0c *self)
-{
-	struct Actor_02002e0c *anchor;
-	s32					   frame;
-	s32					   amplitude;
-
-	anchor = self->anchor;
-	self->frame = (self->frame + 1);
-	frame = (s16)self->frame;
-
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease(self);
-		return;
-	}
-
-	amplitude = Engine_MathSin(frame << 10);
-	self->amplitude_x = amplitude;
-	self->amplitude_y = amplitude;
-	self->x = anchor->x;
-	self->y += 0x10000;
-	self->z = anchor->z + (0x10000 - amplitude) * 5 + 0x80000;
-}
-
-void SceneEffect_UpdateAnchoredRiseArc(struct Actor_02002e5c *obj)
-{
-	struct Actor_02002e5c *anchor;
-	s32					   frame;
-	s32					   amp;
-
-	anchor = obj->anchor;
-	obj->frame = (obj->frame + 1);
-	frame = (s16)obj->frame;
-
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease(obj);
-		return;
-	}
-
-	amp = Engine_MathSin(frame << 10);
-	obj->amplitude_x = amp;
-	obj->amplitude_y = -amp;
-	obj->x = anchor->x;
-	obj->y += 0x10000;
-	obj->z = anchor->z - (0x10000 - amp) * 5 + 0x100000;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/vertical.c"
 
 void SoruFunka_SpawnEffectPair(union PairObject *parent)
 {
@@ -1868,14 +1824,14 @@ void SoruFunka_SpawnEffectPair(union PairObject *parent)
 			}
 		}
 	}
-	pair[0]->object.actor.update = (void (*)(union FieldObject *))SceneEffect_UpdateAnchoredRiseArc;
+	pair[0]->object.actor.update = (void (*)(union FieldObject *))Effect_AnimateVerticalNegative;
 	pair[0]->object.actor.sprite->priority = Object_GetById(15)->sprite->priority;
 	{
 		struct FieldActor *q = Object_GetById(15);
 		struct FieldActor *p = &pair[1]->object.actor;
 
 		p->sprite->priority = q->sprite->priority;
-		p->update = (void (*)(union FieldObject *))SceneEffect_UpdateArcOverAnchor;
+		p->update = (void (*)(union FieldObject *))Effect_AnimateVerticalPositive;
 		p->priority_flags = 2;
 	}
 }

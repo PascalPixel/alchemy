@@ -3,8 +3,11 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/karagoru_dou/dou.h"
+#include "unit/field/common/effect/create.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/object/distance.h"
+#include "unit/field/common/object/fillgrid.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
 #include "battle.h"
@@ -42,59 +45,8 @@ struct EffectRecord
 	u8 flags_hi : 4;
 };
 
-void SetEffectRecordMode(struct EffectWork *work, s32 mode)
-{
-	work->record->mode = mode;
-}
-
-void *StagedActorPairScene_SpawnPrimaryEffect(s32 x, s32 y, s32 z, s32 kind)
-{
-	u8 *effect = Engine_ObjectCreate(kind, x, y, z);
-
-	if (effect != NULL)
-	{
-		u8 *sprite = *(u8 **)(effect + 0x50);
-		s32 sprite_flags;
-		s32 flag_mask = 13;
-
-		sprite_flags = sprite[9];
-		flag_mask = -flag_mask;
-		flag_mask &= sprite_flags;
-		sprite[9] = flag_mask;
-		effect[0x55] = 0;
-		effect[0x59] = 8;
-		Engine_ActorSetSpriteFlags(effect, 0);
-		ObjectGroup_SetChildValue(effect, 14);
-		Engine_ObjectSetBlendMode(effect, 1);
-		return effect;
-	}
-	return NULL;
-}
-
-void *StagedActorPairScene_SpawnSecondaryEffect(s32 x, s32 y, s32 z, s32 kind)
-{
-	u8 *effect = Engine_ObjectCreate(kind, x, y, z);
-
-	if (effect != NULL)
-	{
-		u8 *sprite = *(u8 **)(effect + 0x50);
-		s32 sprite_flags;
-		s32 flag_mask = 13;
-
-		sprite_flags = sprite[9];
-		flag_mask = -flag_mask;
-		flag_mask &= sprite_flags;
-		flag_mask |= 4;
-		sprite[9] = flag_mask;
-		effect[0x55] = 0;
-		effect[0x59] = 8;
-		Engine_ActorSetSpriteFlags(effect, 0);
-		ObjectGroup_SetChildValue(effect, 15);
-		effect[0x23] = (effect[0x23] & 0xfe) | 2;
-		return effect;
-	}
-	return NULL;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/create.c"
 
 union SpinningActor
 {

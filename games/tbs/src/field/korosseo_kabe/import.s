@@ -47,7 +47,7 @@
 	import Engine_GameFlagClear, GameFlag_ClearBitFar
 	import GameFlag_GetByte, GameFlag_GetByteFar
 	import GameFlag_SetByte, GameFlag_SetByteFar
-	import Party_CountActiveOwners, Party_CountActiveOwnersFar
+	import GetPartyMemberCount, Party_CountActiveOwnersFar
 	import Party_AddActiveOwner, Party_AddActiveOwnerFar
 	import Party_RemoveActiveOwner, Party_RemoveActiveOwnerFar
 	import Owner_RefreshActiveRatios, Owner_RefreshActiveRatiosFar

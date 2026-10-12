@@ -682,7 +682,7 @@ s32 KorimaKi_PrepareActors(void)
 	gGameState.retreat_scene = (s32)&SceneId_KorimaHashi;
 	gGameState.retreat_entrance = 4;
 	if (!Engine_GameFlagIsSet(0x845))
-		PaletteScene_AdjustPaletteWindow(3);
+		SceneEffect_AdjustPaletteColors(3);
 	Object_GetById(8)->radius = 6;
 	Object_GetById(9)->radius = 6;
 	Object_GetById(12)->radius = 6;
@@ -987,51 +987,6 @@ void PaletteScene_SetRecordValue(s32 key, s32 value)
 			((struct PaletteSceneRecord *)UnitGet(slot))->values[index] = value;
 		}
 	}
-}
-
-void PaletteScene_AdjustPaletteWindow(s32 adjustment)
-{
-	volatile u16 *palette = BG_PLTT;
-	u32			  phase;
-	u32			  next_phase;
-	KorimaPalette_SaveFirst();
-	phase = 0;
-	do
-	{
-		u32 index = phase >> 16;
-		u32 second_window;
-
-		if ((phase + 0xffef0000) > 0x60000)
-		{
-			second_window = (index + 0xff3f) << 16;
-			if (second_window > 0x70000)
-				palette[index] = PaletteScene_AdjustColor(palette[index], adjustment);
-		}
-		next_phase = phase + 0x10000;
-		phase = next_phase;
-	} while (next_phase <= 0x00df0000);
-	KorimaPalette_Capture();
-	KorimaPalette_SaveSecond();
-	Engine_ColorBufferApplyTarget(0x10000, 0);
-}
-
-u16 PaletteScene_AdjustColor(u16 color, s32 adjustment)
-{
-	s16 green = ((color >> 5) & 31);
-	s16 red = (color & 31);
-	s16 blue = ((color >> 10) & 31);
-	u32 packed;
-
-	red = (red + Math_Divide(red, (adjustment << 2)));
-	green = (green - Math_Divide(green, adjustment));
-	blue = (blue - Math_Divide(blue, adjustment));
-
-	if (red > 31)
-		red = 31;
-
-	packed = (s32)red;
-	packed |= ((s32)blue << 10) | ((s32)green << 5);
-	return packed;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）

@@ -1,6 +1,6 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.include "games/tbs/src/system/overlay.inc"
-	import Math_DivideSigned, IwramSignedDivide
+	import __divsi3, IwramSignedDivide
 	import Engine_TaskWait, WaitFramesFar
 	import Engine_TaskAddCallback, Scheduler_AddOrUpdateCallbackFar
 	import Engine_TaskRemoveCallback, Scheduler_RemoveCallbackFar

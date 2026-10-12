@@ -3,6 +3,8 @@
 #include "scene.h"
 #include "system.h"
 #include "layout_guard.h"
+#include "ram_buffer.h"
+#include "input.h"
 
 #define SELECTION_FIXED 999
 
@@ -41,9 +43,6 @@ LAYOUT_OFFSET_GUARD(SelectionScreen_DownArrow, struct SelectionScreen, downArrow
 LAYOUT_OFFSET_GUARD(SelectionScreen_Node, struct SelectionScreen, node, 0x348);
 LAYOUT_OFFSET_GUARD(SelectionScreen_Status, struct SelectionScreen, status, 0x3a2);
 
-extern struct SelectionScreen *gResQueueWork;
-extern u32 gKeyState;
-extern volatile u32 gKeysRepeat;
 void Audio_PlayCue(u32);
 void Menu_LoadSelectionNodeResource(struct SelectionScreen *screen, u32 index);
 void Menu_StepRight(struct SelectionScreen *screen);
@@ -55,7 +54,7 @@ void Menu_OpenSelectionWindow(u16 type, u32 value);
 
 s32 Menu_SelectionLoop(s32 mode)
 {
-    struct SelectionScreen *screen = gResQueueWork;
+    struct SelectionScreen *screen = Ram_HeapSlots->menu_work;
 
     Menu_LoadSelectionNodeResource(screen, 0);
     for (;;) {
@@ -64,15 +63,60 @@ s32 Menu_SelectionLoop(s32 mode)
             continue;
         }
         if (mode != SELECTION_FIXED) {
-            if (gKeysRepeat & KEY_RIGHT) {
+            if (gInput.repeat & KEY_RIGHT) {
                 Menu_StepRight(screen);
-            } else if (gKeysRepeat & KEY_LEFT) {
+            } else if (gInput.repeat & KEY_LEFT) {
                 Menu_StepLeft(screen);
-            } else if (gKeyState & KEY_A) {
+            } else if (gInput.pressed & KEY_A) {
                 return Menu_ConfirmSelection(screen);
             }
         }
-        if (mode != 0 && (gKeyState & KEY_B)) {
+        if (mode != 0 && (gInput.pressed & KEY_B)) {
+            return -1;
+        }
+    }
+}
+
+#define SOUND_MENU_CURSOR_MOVE 111
+#define SOUND_MENU_CONFIRM 112
+#define SOUND_MENU_CANCEL 113
+
+u32 Menu_WaitForSelectionInput(u32 mode)
+{
+    struct SelectionScreen *screen = Ram_HeapSlots->menu_work;
+    u32 result;
+
+    for (;;) {
+        WaitFrames(1);
+        if (screen->busy != 0) {
+            continue;
+        }
+
+        if (mode != SELECTION_FIXED) {
+            if (gInput.repeat & KEY_RIGHT) {
+                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+                Menu_StepRight(screen);
+            } else if (gInput.repeat & KEY_LEFT) {
+                Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+                Menu_StepLeft(screen);
+            }
+
+            if (gInput.pressed & KEY_A) {
+                result = screen->top + screen->cursor;
+                if (screen->node->kind == NODE_KIND_YES_NO) {
+                    if (result == 0)
+                        Audio_PlayCue(SOUND_MENU_CONFIRM);
+                    else
+                        Audio_PlayCue(SOUND_MENU_CANCEL);
+                } else {
+                    Audio_PlayCue(SOUND_MENU_CONFIRM);
+                }
+                return result;
+            }
+        }
+
+        if (mode != 0 && (gInput.pressed & KEY_B)) {
+            Audio_PlayCue(SOUND_MENU_CANCEL);
             return -1;
         }
     }

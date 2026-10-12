@@ -529,8 +529,8 @@ MapAnimation_Update:
 	.incbin "baserom.gba", 0x0002cae0, 0x00000110
 	.section .rom.0002cc18, "ax"
 	.incbin "baserom.gba", 0x0002cc18, 0x000000b0
-	.section .rom.0002ce8c, "ax"
-	.incbin "baserom.gba", 0x0002ce8c, 0x0000032c
+	.section .rom.0002d004, "ax"
+	.incbin "baserom.gba", 0x0002d004, 0x000001b4
 	.section .rom.0002d2ea, "ax"
 	.incbin "baserom.gba", 0x0002d2ea, 0x00000002
 	.section .rom.0002d37c, "ax"
@@ -851,20 +851,18 @@ Func_0803df24:
 	.thumb_func
 Func_0803e7c8:
 	.incbin "baserom.gba", 0x0003e8fc, 0x00000124
-	.section .rom.0003ea4a, "ax"
-	.incbin "baserom.gba", 0x0003ea4a, 0x00000002
-	.section .rom.0003ea4c, "ax"
-	.global Func_0803e918
-	.type Func_0803e918, %function
+	.section .rom.0003eb88, "ax"
+	.incbin "baserom.gba", 0x0003eb88, 0x00000188
+	.global Menu_StepRight
+	.type Menu_StepRight, %function
 	.thumb_func
-Func_0803e918:
-	.incbin "baserom.gba", 0x0003ea4c, 0x00000080
-	.section .rom.0003eacc, "ax"
-	.global Func_0803e998
-	.type Func_0803e998, %function
+Menu_StepRight:
+	.incbin "baserom.gba", 0x0003ed10, 0x000001bc
+	.global Menu_StepLeft
+	.type Menu_StepLeft, %function
 	.thumb_func
-Func_0803e998:
-	.incbin "baserom.gba", 0x0003eacc, 0x000005b0
+Menu_StepLeft:
+	.incbin "baserom.gba", 0x0003eecc, 0x000001b0
 	.section .rom.0003f138, "ax"
 	.incbin "baserom.gba", 0x0003f138, 0x000001d0
 	.section .rom.0003f308, "ax"
@@ -878,7 +876,12 @@ Resource_LoadByMode:
 	.type Func_0803f234, %function
 	.thumb_func
 Func_0803f234:
-	.incbin "baserom.gba", 0x0003f368, 0x000003dc
+	.incbin "baserom.gba", 0x0003f368, 0x00000194
+	.global Menu_ConfirmSelection
+	.type Menu_ConfirmSelection, %function
+	.thumb_func
+Menu_ConfirmSelection:
+	.incbin "baserom.gba", 0x0003f4fc, 0x00000248
 	.section .rom.0003f758, "ax"
 	.balign 4
 	.global UiTextResource_Initialize
@@ -1135,8 +1138,6 @@ Func_080450fc:
 	.thumb_func
 Graphics_MergeShiftedTileRows:
 	.incbin "baserom.gba", 0x000454b8, 0x00000074
-	.section .rom.00045578, "ax"
-	.incbin "baserom.gba", 0x00045578, 0x00000054
 	.section .rom.00045722, "ax"
 	.incbin "baserom.gba", 0x00045722, 0x00000002
 	.section .rom.00045760, "ax"
@@ -3715,11 +3716,7 @@ Func_080fcab8:
 	.incbin "baserom.gba", 0x000fd2a8, 0x00000244
 	.section .rom.000fd51c, "ax"
 	.incbin "baserom.gba", 0x000fd51c, 0x000001c8
-	.global Func_080fd6b0
-	.type Func_080fd6b0, %function
-	.thumb_func
-Func_080fd6b0:
-	.incbin "baserom.gba", 0x000fd6e4, 0x00000040
+	.section .rom.000fd724, "ax"
 	.global Func_080fd6f0
 	.type Func_080fd6f0, %function
 	.thumb_func
@@ -4198,7 +4195,10 @@ BattlePresentation_AppendLinkedActions:
 	.section .rom.0011d9c8, "ax"
 	.incbin "baserom.gba", 0x0011d9c8, 0x000009a0
 	.section .rom.0011e3a6, "ax"
-	.incbin "baserom.gba", 0x0011e3a6, 0x00000c86
+	.incbin "baserom.gba", 0x0011e3a6, 0x00000432
+	.section .rom.0011e82c, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0011e82c, 0x00000800
 	.section .rom.0011f02c, "ax"
 	.global BattleMotion_SetRecordChildValues
 	.type BattleMotion_SetRecordChildValues, %function
@@ -4859,8 +4859,6 @@ Func_081b2008:
 	.incbin "baserom.gba", 0x001b20a0, 0x000000b0
 	.section .rom.001b21ec, "ax"
 	.incbin "baserom.gba", 0x001b21ec, 0x00001b00
-	.section .rom.001b3d28, "ax"
-	.incbin "baserom.gba", 0x001b3d28, 0x00000040
 	.section .rom.001b3d90, "ax"
 	.incbin "baserom.gba", 0x001b3d90, 0x000009f8
 	.section .rom.001b8020, "ax"

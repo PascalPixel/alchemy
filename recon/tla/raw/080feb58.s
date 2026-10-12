@@ -98,7 +98,7 @@ Func_080feb58:
 	adds r3, r7, r1
 	strb r0, [r3]
 	adds r0, r5, #0
-	bl Func_080fd6b0
+	bl PsynergyMenu_DrawPsynergyIcons
 	movs r2, #8
 	movs r0, #96
 	movs r1, #96

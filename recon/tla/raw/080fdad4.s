@@ -143,7 +143,7 @@ Func_080fdad4:
 	lsls r2, r2, #1
 	adds r0, r7, r2
 	str r4, [sp, #8]
-	bl Func_080fd6b0
+	bl PsynergyMenu_DrawPsynergyIcons
 	ldr r4, [sp, #8]
 	ldr r1, [sp, #52]
 	adds r0, r4, #0

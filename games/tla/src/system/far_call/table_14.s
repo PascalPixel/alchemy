@@ -80,11 +80,11 @@ Func_08038188:
 	.global Func_08038190
 	.thumb_func
 Func_08038190:
-	overlay_veneer Func_0803e918
+	overlay_veneer Menu_SelectionLoop
 	.global Func_08038198
 	.thumb_func
 Func_08038198:
-	overlay_veneer Func_0803e998
+	overlay_veneer Menu_WaitForSelectionInput
 	.global Func_080381a0
 	.thumb_func
 Func_080381a0:

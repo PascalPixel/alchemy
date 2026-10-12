@@ -1,9 +1,8 @@
-/* Near miss of overlay 662's Func_02000754: two places. The native builds the turn through alternating
- * registers (ldrh r3; lsrs r1, r3, #12; adds r3, r1, #2; ands r3, r2; lsls r1, r3, #12) where the draft
- * works in r1, and inside the six-entry loop it reloads hit->animation, its value pointer, the value and
- * the table's address on every pass and indexes the table (lsls r3, r4, #1; ldrh r3, [r2, r3]); the draft
- * hoists them all and walks the table. Tried: the turn inline in the call and staged through three locals,
- * a one-pass block around the test, the loop written with a goto. */
+/* Near miss of overlay 662 Func_02000754: the six-entry loop only. Inside it the native reloads
+ * hit->animation, its value pointer, the value and the table address on every pass and indexes the table
+ * (lsls r3, r4, #1; ldrh r3, [r2, r3]); the draft hoists them all and walks the table. Tried: a one-pass
+ * block around the test, the loop written with a goto. The quarter turn needs one variable assigned
+ * twice (the shifted angle, then the rounded turn): as one expression or three locals it stays in r1. */
 #include "types.h"
 #include "object_runtime.h"
 
@@ -18,8 +17,9 @@ void Func_02000754(struct ObjectRuntime *object)
     s32 position[3];
     struct ObjectRuntime *hit;
     u32 i;
-    s32 angle = (((object->angle >> 12) + 2) & 12) << 12;
+    s32 angle = object->angle >> 12;
 
+    angle = ((angle + 2) & 12) << 12;
     position[0] = object->x;
     position[1] = object->y;
     position[2] = object->z;

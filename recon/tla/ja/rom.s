@@ -3527,11 +3527,6 @@ EffectSlot_Initialize:
 	.incbin "baserom.gba", 0x000ec200, 0x00001494
 	.section .rom.000ed918, "ax"
 	.incbin "baserom.gba", 0x000ed918, 0x000000c0
-	.section .rom.000ee5e0, "ax"
-	.incbin "baserom.gba", 0x000ee5e0, 0x00000880
-	.global Encounter_AreaEntryTable
-Encounter_AreaEntryTable:
-	.incbin "baserom.gba", 0x000eee60, 0x00000140
 	.section .rom.000ef728, "ax"
 	.incbin "baserom.gba", 0x000ef728, 0x00000554
 	.section .rom.000efe2e, "ax"
@@ -3587,7 +3582,7 @@ BattleFx_RandomChildValues:
 Data_080f1140:
 	.incbin "baserom.gba", 0x000f104c, 0x00000668
 	.section .rom.000f20dc, "ax"
-	.incbin "baserom.gba", 0x000f20dc, 0x00000ccc
+	.incbin "baserom.gba", 0x000f20dc, 0x00000034
 	.section .rom.000f3128, "ax"
 	.incbin "baserom.gba", 0x000f3128, 0x000000b4
 	.global Object_OffsetMotionScript

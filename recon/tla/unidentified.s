@@ -400,19 +400,6 @@ Battle_Effect91Classes:
 	.global Data_080eda0c
 Data_080eda0c:
 	.incbin "baserom.gba", 0x000eda0c, 0x000000c0
-	.section .unidentified.080ee6d4,"a"
-	.global Data_080ee6d4
-Data_080ee6d4:
-	.incbin "baserom.gba", 0x000ee6d4, 0x000006e8
-	.global Data_080eedbc
-Data_080eedbc:
-	.incbin "baserom.gba", 0x000eedbc, 0x00000178
-	.global Data_080eef34
-Data_080eef34:
-	.incbin "baserom.gba", 0x000eef34, 0x00000020
-	.global Encounter_AreaEntryTable
-Encounter_AreaEntryTable:
-	.incbin "baserom.gba", 0x000eef54, 0x00000140
 	.section .unidentified.080ef824,"a"
 	.global Party_PairResolveRules
 Party_PairResolveRules:
@@ -558,9 +545,6 @@ Data_080f1140:
 	.global Data_080f21d4
 Data_080f21d4:
 	.incbin "baserom.gba", 0x000f21d4, 0x00000030
-	.global Data_080f2204
-Data_080f2204:
-	.incbin "baserom.gba", 0x000f2204, 0x00000c98
 	.section .unidentified.080f321c,"a"
 	.incbin "baserom.gba", 0x000f321c, 0x0000000c
 	.global Data_080f3228

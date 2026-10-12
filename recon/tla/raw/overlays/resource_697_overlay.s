@@ -3677,21 +3677,6 @@ Func_02002c30:
 	.4byte Data_02005be0
 .L_0200ace4:
 	.4byte gRandomState
-	.section .text.x0200ace8,"ax",%progbits
-	.balign 4
-	.global Func_02002ce8
-	.thumb_func
-Func_02002ce8:
-	ldr r2, .L_0200acf8
-	movs r3, #1
-	ands r3, r0
-	lsls r3, r3, #1
-	adds r2, r2, r3
-	movs r3, #22
-	ldrsh r0, [r2, r3]
-	bx lr
-.L_0200acf8:
-	.4byte Data_020023c4 + 0x88
 	.section .text.x0200adec,"ax",%progbits
 	.balign 4
 	.global Func_02002dec

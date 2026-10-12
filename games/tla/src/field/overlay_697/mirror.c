@@ -1,5 +1,16 @@
 #include "ov697.h"
 
+s32 Func_02002ce8(s32 side)
+{
+    struct Ov697State *state;
+
+    /* FAKEMATCH: the one-pass block loads the state address before the index is built; with the address as a constant in the indexed read the compiler stops with an internal error. */
+    do {
+        state = gOv697State;
+    } while (0);
+    return state->field_16[side & 1];
+}
+
 s32 Func_02002cfc(void)
 {
     return gOv697State->mirrored;

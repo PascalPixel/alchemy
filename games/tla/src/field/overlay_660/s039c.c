@@ -1,5 +1,32 @@
 #include "ov660.h"
 
+/* FAKEMATCH: the arguments are set up as for a call whose value is used (flags before speaker); the opener is declared void in scene_call.h for the scenes that match with that. */
+#define Message_Open(speaker, flags) ((s32 (*)(s32, s32))UiText_OpenMessageAtObject)(speaker, flags)
+
+void Func_02000318(s32 actor)
+{
+    s32 message;
+
+    Func_020007f4();
+    Func_02000884(0);
+    message = (s32)MsgScene660No01;
+    Func_02000844(message);
+    Message_Open(actor, 0);
+    if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
+        Func_02000844(message + 2);
+        Message_Open(actor, 0);
+        if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
+            Func_0200085c(actor, 0);
+        } else {
+            ((struct EventWork1c4 *)Ram_HeapSlots->event_work)->count++;
+            Func_0200085c(actor, 0);
+        }
+    } else {
+        Func_0200085c(actor, 0);
+    }
+    Func_020007fc();
+}
+
 void Func_0200039c(void)
 {
     Func_020007f4();

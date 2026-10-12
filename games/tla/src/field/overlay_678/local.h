@@ -362,4 +362,16 @@ static __inline__ void Func_02001ff0_(s32 x, s32 z)
     Func_02001ff0(x, z);
 }
 
+static __inline__ void Func_0200271c_(s32 index, s32 active)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_0200271c(index, active);
+}
+
+static __inline__ void Func_020029a8_(s32 a, s32 b, s32 c)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_020029a8(a, b, c);
+}
+
 #endif

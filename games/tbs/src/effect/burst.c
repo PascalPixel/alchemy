@@ -77,7 +77,7 @@ typedef struct Scale
 
 void BattleFx_SpawnObjects(s32 entry_count, s32 kind, u32 variant)
 {
-	struct BattleEffectWork *work = *(struct BattleEffectWork **)gBattleFxWork;
+	struct BattleEffectWork *work = gBattleFxWork[0];
 	s32						 entry_index = 0;
 
 	if (entry_count == 0)
@@ -107,7 +107,7 @@ void BattleFx_RunNoEffect(void)
 
 void BattleFx_ArmBg2AffineHBlankDma(void)
 {
-	struct BattleEffectWork *work = *(void **)gBattleFxWork;
+	struct BattleEffectWork *work = gBattleFxWork[0];
 	volatile u16			*channel = REG_DMA0;
 	channel[5] &= 0xc5ff;
 	channel[5] &= 0x7fff;
@@ -452,7 +452,7 @@ void BattleFx_RunSwirlingStars(void *object)
 	s32						 i;
 	s32						 frame;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -661,7 +661,7 @@ void BattleFx_RunTargetBursts(void *object)
 	struct EffectPosition	 screen;
 	s32						 record[3];
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -1159,7 +1159,7 @@ void BattleFx_RunDualTable(struct BattleEffectArgument *effect, s32 mode)
 	s32				   puff_age;
 	s32				   image;
 
-	heap = (void **)gBattleFxWork;
+	heap = gBattleFxWork;
 	cursor = heap;
 	work = *cursor++;
 	canvas = *cursor;
@@ -1699,7 +1699,7 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
 	struct EffectPosition	 pos;
 	s32						 j;
 
-	heap = (void **)gBattleFxWork;
+	heap = gBattleFxWork;
 	cursor = heap;
 	work = *cursor++;
 	canvas = *cursor;
@@ -1856,7 +1856,7 @@ void BattleFx_PrepareCanvasEffect(
 	s32						 frame;
 	s32						 i;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -2228,7 +2228,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 	s32						 x;
 
 	// ワーク、キャンバス、カメラ
-	heap = (void **)gBattleFxWork;
+	heap = gBattleFxWork;
 	cursor = heap;
 	work = *cursor++;
 	canvas = *cursor;
@@ -2890,7 +2890,7 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect, s32 v
 
 	// ワーク、キャンバス、カメラ
 	cells = Ram_MapCellBuffer;
-	heap = (void **)gBattleFxWork;
+	heap = gBattleFxWork;
 	cursor = heap;
 	work = *cursor++;
 	canvas = *cursor;
@@ -3078,7 +3078,7 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
 	s32						 i;
 	s32						 j;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -3222,7 +3222,7 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect)
 	s32						 j;
 	s32						 angle;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -3363,7 +3363,7 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
 	s32						 j;
 	s32						 angle;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -3479,7 +3479,7 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
 	s32						 i;
 	s32						 curtain_y;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -3628,7 +3628,7 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
 	s32						 frame;
 	s32						 rise;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -3915,7 +3915,7 @@ void Camera_ApplyShake(s32 random_mask, u32 shake_range)
 	struct BgScroll			*disp_p;
 	struct Projection		*center_p;
 
-	work = *(struct BattleEffectWork **)gBattleFxWork;
+	work = gBattleFxWork[0];
 	remaining_frames = &work->shake_frames;
 	if (*remaining_frames > 0)
 	{
@@ -4555,7 +4555,7 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
 	u32						 width;
 	u32						 height;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -4975,7 +4975,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 	s32						 j;
 	s32						 k;
 
-	heap = (void **)gBattleFxWork;
+	heap = gBattleFxWork;
 	cursor = heap;
 	work = *cursor++;
 	canvas = *cursor;

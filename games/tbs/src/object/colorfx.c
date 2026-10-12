@@ -115,10 +115,10 @@ void BattlePres_ProcessPendingTileTransfer(void)
 	struct BattleEffectWork *work;
 	u8						*buf;
 
-	work = *(void **)gBattleFxWork;
+	work = gBattleFxWork[0];
 	if (work->transfer_pending == 1)
 	{
-		buf = (*(u8 * (*)[]) & gBattleFxWork)[1];
+		buf = gBattleFxWork[1];
 		switch (work->transfer_mode)
 		{
 		case 1: // 送ったあと transfer_value で塗りつぶす
@@ -240,7 +240,7 @@ void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
 	s32 dx = x1 - x0;
 	s32 dy = y1 - y0;
 	s32 frac = 0x80; // 8bit 小数の 0.5
-	u8 *canvas = *((*(u8 * (*)[]) & gBattleFxWork) + 1);
+	u8 *canvas = ((u8 **)gBattleFxWork)[1];
 	s32 step;
 	s32 i;
 	s32 x;
@@ -418,7 +418,7 @@ void ReelGame_RunFrame(void)
 	s32						 i;
 
 	work = ((struct ReelWork **)gBattleFxWork)[6];
-	fx = ((struct BattleEffectWork **)gBattleFxWork)[0];
+	fx = gBattleFxWork[0];
 	n = 0;
 	blend = 0x400;
 
@@ -1041,7 +1041,7 @@ void ReelGame_InitTitle(void)
 	s32						 message;
 
 	state = ((struct ReelWork **)gBattleFxWork)[6];
-	work = ((struct BattleEffectWork **)gBattleFxWork)[0];
+	work = gBattleFxWork[0];
 	left = 0;
 	for (i = 0; i != 0x800; i++)
 		SPARKS[i].variant = 0;

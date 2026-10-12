@@ -1267,7 +1267,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 	return result;
 }
 
-s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
+void *BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
 {
 	struct FieldStepWork	*runtime = (struct FieldStepWork *)gEventWork;
 	const struct SceneEvent *event = runtime->events;
@@ -1293,20 +1293,20 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
 			&& (ignore_flags || (event->control & 0x7000000f) == requested_flags))
 		{
 			if ((event->control & 0x80) != 0)
-				return (s32)event;
+				return (void *)event;
 			if ((event->control & 0x10) != 0)
 			{
 				if (low_value == selected)
-					return (s32)event;
+					return (void *)event;
 			}
 			else if (low_value == alternate)
 			{
-				return (s32)event;
+				return (void *)event;
 			}
 		}
 		event++;
 	}
-	return 0;
+	return NULL;
 }
 
 s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
@@ -1323,8 +1323,8 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
 	object = BtlActGet(index)->type_0c;
 	// The object is looked up and the result is not used.
 	ObjectTable_Get(gGameState.selected_actor);
-	first = (void *)BattleFx_FindMatchingEvent(0x30000005, object, &output);
-	second = (void *)BattleFx_FindMatchingEvent(0x20000005, object, &output);
+	first = BattleFx_FindMatchingEvent(0x30000005, object, &output);
+	second = BattleFx_FindMatchingEvent(0x20000005, object, &output);
 	BattleFx_LoadActionEffectResources(index, 0);
 	BattleFx_SetupObjectPair(gGameState.selected_actor, output);
 	BattleFx_RunEventAction(first, mode, output);
@@ -1451,9 +1451,9 @@ s32 BattleCommand_ExecuteSelectedAction(u32 code)
 	}
 
 	// マップのイベントを探し、演出の方法を決める
-	pre = (const struct SceneEvent *)BattleFx_FindMatchingEvent(ENA_EV(1), group, &tid);
-	post = (const struct SceneEvent *)BattleFx_FindMatchingEvent(ENA_EV(0), group, &tid);
-	mid = (const struct SceneEvent *)BattleFx_FindMatchingEvent(ENA_EV(5), group, &tid);
+	pre = BattleFx_FindMatchingEvent(ENA_EV(1), group, &tid);
+	post = BattleFx_FindMatchingEvent(ENA_EV(0), group, &tid);
+	mid = BattleFx_FindMatchingEvent(ENA_EV(5), group, &tid);
 	tid = -1;
 	GameFlag_SetBitFar(FLG_ENA_EFX);
 	GameFlag_SetBitFar(FLG_ENA_TGT);
@@ -1504,7 +1504,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 code)
 s32 BattleFx_HasMatchingEvent5(s32 group)
 {
 	s32 tid;
-	s32 ev = BattleFx_FindMatchingEvent(ENA_EV_ANY, (u16)group, &tid);
+	s32 ev = (s32)BattleFx_FindMatchingEvent(ENA_EV_ANY, (u16)group, &tid);
 	return (u32)((-ev) | ev) >> 31;
 }
 

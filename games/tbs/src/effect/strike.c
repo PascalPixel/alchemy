@@ -103,7 +103,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
 	s32						 frame;
 	s32						 i;
 
-	heap = (void **)gBattleFxWork;
+	heap = gBattleFxWork;
 	cursor = heap;
 	work = *cursor++;
 	canvas = *cursor;
@@ -290,7 +290,7 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
 	s32						 i;
 	s32						 k;
 
-	heap = (void **)gBattleFxWork;
+	heap = gBattleFxWork;
 	cursor = heap;
 	work = *cursor++;
 	canvas = *cursor;
@@ -414,7 +414,7 @@ void BattleFx_RunMemberOrbit(void *effect)
 	s32						 ofs_x;
 	s32						 frame;
 
-	heap = (void **)gBattleFxWork;
+	heap = gBattleFxWork;
 	cursor = heap;
 	work = *cursor++;
 	canvas = *cursor;
@@ -559,7 +559,7 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
 	s32						 pal;
 	s32						 i;
 
-	heap = (void **)gBattleFxWork;
+	heap = gBattleFxWork;
 	cursor = heap;
 	work = *cursor++;
 	canvas = *cursor;
@@ -745,7 +745,7 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
 	s32						 frame;
 	s32						 cell;
 
-	cursor = (void **)gBattleFxWork;
+	cursor = gBattleFxWork;
 	work = *cursor++;
 	canvas = *cursor;
 	work->effect = effect;
@@ -897,7 +897,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
 	s32						 i;
 	s32						 k;
 
-	cursor = (void **)gBattleFxWork;
+	cursor = gBattleFxWork;
 	work = *cursor++;
 	canvas = *cursor;
 	work->effect = effect;
@@ -1390,7 +1390,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
 	s32					  zero_val;
 	s32					  frame;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -2324,7 +2324,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 	struct Placement		 place;
 	struct Scale			 scale;
 
-	cells = (void **)(gBattleFxWork + 4);
+	cells = &gBattleFxWork[1];
 	draw_destination = cells[0];
 	view = *(void **)((u8 *)cells - 112);
 	runtime = cells[-1];
@@ -2887,7 +2887,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 	s32						 i;
 
 	// cursor は gWorkSlot[HEAP_SLOT_BATTLE_CANVAS] (キャンバス) を指す
-	cursor = (void **)(gBattleFxWork + 4);
+	cursor = &gBattleFxWork[1];
 	canvas = cursor[0];
 	camera = cursor[-28]; // [12] カメラ
 	work = cursor[-1];	  // [39] 作業領域
@@ -4685,7 +4685,7 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
 	s32						*row;
 	s32						 i;
 
-	cursor = (void **)gBattleFxWork;
+	cursor = gBattleFxWork;
 	work = *cursor++;
 	canvas = *cursor;
 	count = 16;
@@ -4931,7 +4931,7 @@ void BattleFx_RunBouncingSheep(void *object)
 	s32				   member;
 
 	sheep = PARTICLES;
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -5120,7 +5120,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
 	struct EffectPosition	 view;
 	DrawRectangle			 callbacks[2];
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;

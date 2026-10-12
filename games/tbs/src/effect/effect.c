@@ -82,7 +82,7 @@ void BattlePres_ConfigureEffectDisplay(void)
 
 void BattleFx_AdvanceScrollOnInterval(void)
 {
-	struct BattleEffectWork *work = *(struct BattleEffectWork **)gBattleFxWork;
+	struct BattleEffectWork *work = gBattleFxWork[0];
 	u32						*counter = (u32 *)&work->scroll_timer;
 
 	(*counter)++;
@@ -99,7 +99,7 @@ void Camera_AdvanceBg2Reference(void)
 	s32						 count;
 	struct BattleEffectWork *work;
 
-	work = *(struct BattleEffectWork **)gBattleFxWork;
+	work = gBattleFxWork[0];
 	count = work->scroll_timer + 1;
 	work->scroll_timer = count;
 	if (count == work->scroll_interval)
@@ -136,7 +136,7 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
 	s32						 i;
 	s32						 k;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -335,7 +335,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
 	s32						 i;
 	s32						 k;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -577,7 +577,7 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
 	s32						 streaks = SUJI_MAX;
 	s32						 lift = 20 << 16;
 
-	slots = (void **)gBattleFxWork;
+	slots = gBattleFxWork;
 	cursor = slots;
 	work = *cursor++;
 	canvas = *cursor;
@@ -971,7 +971,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 	s32						 wisp_sheet = 0x3200;
 	DrawRectangle			*lower = &gBlitters[HEAP_SLOT_BLITTER_ALTERNATE];
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -1365,7 +1365,7 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 	s32					  frame;
 	s32					  percent;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
@@ -1504,7 +1504,7 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect)
 	s32						 frame;
 	s32						 i;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;

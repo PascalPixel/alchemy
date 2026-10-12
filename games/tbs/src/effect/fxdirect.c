@@ -720,7 +720,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
 
 void BattlePresentation_DrawStreaks(void)
 {
-	struct BattleEffectWork *work = *(void **)gBattleFxWork;
+	struct BattleEffectWork *work = gBattleFxWork[0];
 	s32						 frame;
 	s32						 i;
 	struct Streak			*streak;

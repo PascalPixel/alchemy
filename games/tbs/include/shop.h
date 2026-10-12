@@ -9,17 +9,7 @@
 #include "render_input.h"
 #include "effect_slot.h"
 #include "animspr.h"
-
-struct ShopCursor
-{
-	struct RenderOutput *anchor;
-	u16					 x;
-	u16					 y;
-	s16					 target_x;
-	s16					 target_y;
-	s8					 active;
-	s8					 kind;
-};
+#include "cursor.h"
 
 struct ShopRuntime
 {
@@ -57,9 +47,6 @@ struct ShopRuntime
 	struct EffectSlot		effects[24];
 };
 
-LAYOUT_SIZE_GUARD(ShopCursor_Size, struct ShopCursor, 0x10);
-LAYOUT_OFFSET_GUARD(ShopCursor_TargetX, struct ShopCursor, target_x, 0x08);
-LAYOUT_OFFSET_GUARD(ShopCursor_Active, struct ShopCursor, active, 0x0c);
 LAYOUT_SIZE_GUARD(ShopRuntime_Size, struct ShopRuntime, 0xa70);
 LAYOUT_OFFSET_GUARD(ShopRuntime_MoneyWindow, struct ShopRuntime, money_window, 0x00c);
 LAYOUT_OFFSET_GUARD(ShopRuntime_ItemWindow, struct ShopRuntime, item_window, 0x020);

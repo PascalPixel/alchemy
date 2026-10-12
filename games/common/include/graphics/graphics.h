@@ -109,7 +109,7 @@ extern const u8 ColorBuffer_HalveNonzeroKernel[];
 extern const u8 ColorBuffer_ScaleNonzeroThreeQuartersKernel[];
 extern const u8 ColorBuffer_ScaleThreeQuartersKernel[];
 #ifndef OWN_gRenderSlotHeads
-extern u8 gRenderSlotHeads[];
+extern void *gRenderSlotHeads[];
 #endif
 extern u8						 gPartyStatusWork[];
 extern u8						 gSelectionWorkspace[];

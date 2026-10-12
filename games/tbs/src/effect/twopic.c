@@ -87,7 +87,7 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
 	void		**heap;
 	void		**p;
 
-	heap = (void **)gBattleFxWork;
+	heap = gBattleFxWork;
 	p = heap;
 	work = *p++;
 	canvas = *p;

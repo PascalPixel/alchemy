@@ -653,7 +653,7 @@ fn plan(root: &Path, objects: &[String], judged: &[super::Judged], target: Decom
         .collect::<Vec<_>>()
         .join("\n");
     let headers = crate::adopt_into::header_names(root, target, &root.join(&destination), &format!("{include_text}\n"))?;
-    let merged = cmerge::merge(&inputs, &headers, &cmerge::Options { views: views > 0, unprototyped: views > 1 }).map_err(|e| format!("cannot merge:\n  {}", e.join("\n  ")))?;
+    let merged = cmerge::merge(&inputs, &headers, &cmerge::Options { views: views > 0, unprototyped: views > 1, every: views > 2 }).map_err(|e| format!("cannot merge:\n  {}", e.join("\n  ")))?;
     let mut notes = merged.notes;
     notes.extend(forced_notes);
     Ok(Plan { objects: objects.to_vec(), sources, destination, text: merged.text, notes, headers: expanded })
@@ -894,7 +894,10 @@ fn flatten_one(root: &Path, options: &Options, judged: &[super::Judged], target:
             Err(first) => {
                 let mut found = None;
                 let mut tried: Vec<(Option<Plan>, String)> = vec![(None, first)];
-                for level in [1, 2] {
+                // Levels 1 and 2 cast only shapes a caller could tell from
+                // the governing one; 3 casts every differing shape, so no
+                // run the merge took before is refused now.
+                for level in [1, 2, 3] {
                     match plan_views(root, objects, judged, target, options.name.as_deref(), level, options.force) {
                         Ok(second) => match verify(root, &second, &second.text, cache) {
                             Ok(lines) => {
@@ -919,7 +922,13 @@ fn flatten_one(root: &Path, options: &Options, judged: &[super::Judged], target:
                     None => {
                         if !options.force {
                             let reasons: Vec<&str> = tried.iter().map(|(_, r)| r.as_str()).collect();
-                            return Err(format!("{}\nwith each file's own prototyped shapes as casts, {}\nwith all its own shapes as casts, {}", reasons[0], reasons.get(1).unwrap_or(&""), reasons.get(2).unwrap_or(&"")));
+                            return Err(format!(
+                                "{}\nwith each file's own prototyped shapes as casts, {}\nwith all its own shapes as casts, {}\nwith even the shapes that say the same as casts, {}",
+                                reasons[0],
+                                reasons.get(1).unwrap_or(&""),
+                                reasons.get(2).unwrap_or(&""),
+                                reasons.get(3).unwrap_or(&"")
+                            ));
                         }
                         // The plain merge, unless only a view with casts compiles.
                         let compiles = |reason: &str| reason.lines().skip(1).all(|l| l.trim().split('\t').nth(2) == Some("differ"));

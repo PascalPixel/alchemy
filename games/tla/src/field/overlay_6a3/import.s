@@ -542,10 +542,12 @@ Func_02004954:
 	overlay_veneer Func_080c85c0
 	.endif
 	.endif
+	.ifndef TLA_EDITION_JA
 	.global Event_ClearInvalidPackedValues
 	.thumb_func
 Event_ClearInvalidPackedValues:
 	overlay_veneer Event_ClearInvalidPackedValuesFar
+	.endif
 	.global Func_02004964
 	.thumb_func
 Func_02004964:

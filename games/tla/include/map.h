@@ -25,7 +25,8 @@ struct MapCell {
 };
 
 struct MapLayer {
-    u8 unknown_00[0x30];
+    s32 x, y;
+    u8 unknown_08[0x28];
     struct MapCell *cells;
     u8 *terrain_ids;
 };

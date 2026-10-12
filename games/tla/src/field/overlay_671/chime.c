@@ -12,6 +12,25 @@ extern u8 Data_020023c4[];
 void Func_02005854(s32 sound);
 s32 Math_Cosine(s32 angle);
 
+// 残り時間 (フレーム) を "MM:SS:T" の数字にする
+void Func_02004f84(s32 time, u8 *text)
+{
+    if (time < 0)
+        time = 0;
+    *text = time / 36000 + '0';
+    time %= 36000;
+    *++text = time / 3600 + '0';
+    time %= 3600;
+    *++text = ':';
+    *++text = time / 600 + '0';
+    time %= 600;
+    *++text = time / 60 + '0';
+    time %= 60;
+    *++text = ':';
+    *++text = time / 6 + '0';
+    text[1] = 0;
+}
+
 s32 Func_02005020(s32 time)
 {
     struct ClockWork *clock = (struct ClockWork *)(Data_020023c4 + 0x288);

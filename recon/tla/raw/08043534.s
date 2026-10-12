@@ -55,7 +55,7 @@ Func_08043534:
 	mov lr, r3
 	.2byte 0xf800
 	movs r0, #0
-	bl Func_08042e28
+	bl SaveProgress_Open
 	mov r3, r8
 	adds r5, r0, #0
 	adds r1, r7, #0
@@ -64,7 +64,7 @@ Func_08043534:
 	bl Func_08042f10
 	adds r6, r0, #0
 	adds r0, r5, #0
-	bl Func_08042eec
+	bl SaveProgress_Close
 	cmp r6, #0
 	beq .L_080435ce
 	ldr r0, .L_080435ec

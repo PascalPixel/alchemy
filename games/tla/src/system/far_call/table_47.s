@@ -10,7 +10,7 @@ Func_08138000:
 	.global Func_08138008
 	.thumb_func
 Func_08138008:
-	overlay_veneer Func_0815e320
+	overlay_veneer BattleFx_DispatchByIdRange
 	.global BattleFx_InitializeModeFar
 	.thumb_func
 BattleFx_InitializeModeFar:

@@ -414,6 +414,7 @@ Func_02003fe4:
 	overlay_veneer Func_080c8748
 	.endif
 	.endif
+	.ifndef TLA_EDITION_JA
 	.global Func_02003fec
 	.thumb_func
 Func_02003fec:
@@ -424,6 +425,7 @@ Func_02003fec:
 	overlay_veneer Func_080c8750
 	.else
 	overlay_veneer Func_080c8760
+	.endif
 	.endif
 	.endif
 	.global Func_02003ff4

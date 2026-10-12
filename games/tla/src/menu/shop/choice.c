@@ -33,6 +33,31 @@ struct Record_080b06c0 {
 s32 UiWork_IsCompleteFar(void);
 void UiWork_FinalizePendingCoreFar(void);
 
+void Func_081084f4(s32 first)
+{
+    struct ShopRuntime *state = Ram_HeapSlots->menu_runtime;
+    s32 message;
+    s32 value;
+    s8 mode;
+
+    /* FAKEMATCH: the native loads the shop work before it builds the keeper offset, and saves the message after; the barrier and the copy after it give that order (differ 2 without them). */
+    asm volatile("");
+    message = first;
+    value = BattleFx_GetResourceIdFar(state->keeper_resource);
+    UiWork_FinalizePendingCoreFar();
+    mode = state->shop_type;
+    if (mode == 3)
+        message += MsgGeneralStoreWelcome - MsgWeaponShopWelcome;
+    if (mode == 2)
+        message += MsgArmorShopWelcome - MsgWeaponShopWelcome;
+    if (mode == 0)
+        message += MsgItemShopWelcome - MsgWeaponShopWelcome;
+    UiText_OpenMessageWindowFar(message, 5, 0, (value << 16) | 0x22);
+    while (UiWork_IsCompleteFar() == 0)
+        WaitFrames(1);
+    WaitFrames(1);
+}
+
 void Func_0810857c(s32 message_id)
 {
     s32 variant;

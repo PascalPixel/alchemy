@@ -302,6 +302,7 @@ Func_02001200:
 	overlay_veneer Func_080c8860
 	.endif
 	.endif
+	.ifndef TLA_EDITION_JA
 	.global Func_02001208
 	.thumb_func
 Func_02001208:
@@ -312,6 +313,7 @@ Func_02001208:
 	overlay_veneer Func_080c8930
 	.else
 	overlay_veneer Func_080c8940
+	.endif
 	.endif
 	.endif
 	.global Func_02001210

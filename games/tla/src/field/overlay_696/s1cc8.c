@@ -1,0 +1,89 @@
+#include "ov696.h"
+
+void Func_02001cc8(void)
+{
+    struct Ov696Object *object = Object_GetById(14);
+
+    if (object->x >> 20 == 32 && object->z >> 20 == 11) {
+        Func_020048c4();
+        Func_02004a24(0);
+        object->motion_flags = 3;
+        do {
+            WaitFrames(1);
+            /* FAKEMATCH: one more use of the object inside the loop ranks it ahead of the speed it reads, so the object takes r5 and the speed r6 as the native has; plain, the two trade registers (differ 14, with or without a named speed and a flags pointer). */
+            __asm__("" : : "l"(object));
+        } while (object->velocity_y != 0);
+        Engine_AudioPlayCue(188);
+        WaitFrames(10);
+        object->motion_flags = 0;
+        Ov696_BlendStart(30, 11, 1, 1, 32, 11);
+        WaitFrames(1);
+        GameFlag_SetBit(0x94e);
+        Func_020048cc();
+    }
+}
+
+void Func_02001d3c(void)
+{
+    Func_020048c4();
+    Func_02004a24(0);
+    Engine_AudioPlayCue(158);
+    Ov696_MapCopy(43, 40, 7, 6, 1, 2);
+    Battle_WaitMode0(20);
+    Ov696_ObjPlace(15, 0x780000, 0xc20000);
+    Ov696_ObjSpeed(gPartyState.current_owner, 0x26666, 0x13333);
+    ObjectMotion_Launch(gPartyState.current_owner, 4, 0);
+    Object_GetById(gPartyState.current_owner)->action_flags &= ~1;
+    Ov696_ObjWalk(gPartyState.current_owner, 120, 220);
+    Battle_WaitMode0(1);
+    {
+        u8 *flags = &Object_GetById(gPartyState.current_owner)->action_flags;
+
+        u32 value = *flags;
+
+        /* FAKEMATCH: the barrier keeps the bit out of r2 until the flags are read, as the native has; as a plain |= the bit is built first (one reordered row). */
+        __asm__("" : "+l"(value) : : "r2");
+        *flags = value | 1;
+    }
+    Ov696_ObjSpeed(15, 0x6666, 0x3333);
+    Ov696_ObjWalk(15, 120, 208);
+    Func_02004944(16, 15);
+    Func_02004944(17, 15);
+    WaitFrames(1);
+    Ov696_ObjSpeed(16, 0xcccc, 0x6666);
+    Ov696_ObjSpeed(17, 0xcccc, 0x6666);
+    ObjectMotion_ResetAndSetPositionInMode2(16, 104, 212);
+    Ov696_ObjWalk(17, 136, 212);
+    Object_SetModeById(16, 1);
+    Ov696_ObjArm(16, 0x4000, 0);
+    Ov696_ObjArm(17, 0x4000, 0);
+    ObjectMotion_SetVariantCallback(15, 1);
+    Func_0200498c((s32)MsgShamanMoapaGiveMeRoom);
+    Ov696_MesPut(15, 0);
+    Ov696_CamSpeed(0xcccc, 0x1999);
+    Func_020049fc()->motion_flags = 0;
+    Ov696_CamMove(0x780000, 0x320000, 0xe00000, 1);
+    Ov696_ObjSpeed(gPartyState.current_owner, 0x19999, 0xcccc);
+    Ov696_ObjWalk(gPartyState.current_owner, 120, 256);
+    Ov696_ObjTurn(gPartyState.current_owner, 0xc000);
+    Ov696_ObjSpeed(gPartyState.current_owner, 0x6666, 0x3333);
+    Object_GetById(gPartyState.current_owner)->action_flags &= ~1;
+    Ov696_ObjWalk(gPartyState.current_owner, 120, 264);
+    Battle_WaitMode0(1);
+    Object_GetById(gPartyState.current_owner)->action_flags |= 1;
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
+    OV696_EMOTE(15, 259, 20)
+    Ov696_MesPut(0x800f, 0);
+    ObjectMotion_SetVariantCallback(17, 1);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
+    OV696_EMOTE(17, 259, 0)
+    Ov696_MesPut(0x8011, 0);
+    ObjectMotion_SetVariantCallback(16, 1);
+    /* FAKEMATCH: the emote and the frames are loaded before the actor; see OV696_EMOTE. */
+    OV696_EMOTE(16, 259, 0)
+    Ov696_MesPut(0x8010, 0);
+    Motion_SetModeAndWaitAnimation(15, 3);
+    Ov696_MesPut(0x800f, 0);
+    GameFlag_SetBit(0x94f);
+    Func_020048cc();
+}

@@ -346,7 +346,7 @@ Func_0816aeec:
 	str r3, [sp, #4]
 	movs r2, #0
 	movs r3, #0
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	movs r3, #16
 	movs r7, #36
 	ldrsh r0, [r5, r7]
@@ -425,7 +425,7 @@ Func_0816aeec:
 	movs r2, #0
 	movs r3, #0
 	str r4, [sp, #16]
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	ldr r3, [sp, #96]
 	ldr r4, [sp, #16]
 	ldrsh r0, [r5, r3]

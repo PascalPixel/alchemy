@@ -118,7 +118,7 @@ extern u16 Data_02002a9e;
 extern u16 Data_02002aa0[];
 extern const u8 Data_02001ee8[];
 extern const u8 Data_02001ef4[];
-extern const u8 Data_02002890[];
+extern const u8 Field_Tiles679[];
 extern u32 gFrameCount;
 
 extern u8 MsgWhatWhatJust;
@@ -348,6 +348,30 @@ static __inline__ void Func_02001e0c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, 
 {
     /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     Func_02001e0c(a, b, c, d, e, f, g);
+}
+
+static __inline__ s32 VramBlock_LoadCached_(s32 entry, s32 size, void *data)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    return VramBlock_LoadCached(entry, size, data);
+}
+
+static __inline__ void Scheduler_AddOrUpdateCallback_(void *callback, s32 priority)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Scheduler_AddOrUpdateCallback(callback, priority);
+}
+
+static __inline__ void Func_02001e04_(s32 a, s32 b, s32 c, s32 d)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02001e04(a, b, c, d);
+}
+
+static __inline__ void Func_02001c74_(struct ObjectRuntime *object, const void *data)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02001c74(object, data);
 }
 
 #endif

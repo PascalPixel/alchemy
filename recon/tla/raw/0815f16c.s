@@ -6125,7 +6125,7 @@ Func_0815f16c:
 	str r1, [sp, #4]
 	lsls r2, r2, #10
 	movs r1, #1
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	ldr r5, .L_081622b0
 	ldr r6, .L_081622b4
 	movs r3, #0
@@ -6352,7 +6352,7 @@ Func_0815f16c:
 	lsls r3, r3, #12
 	str r1, [sp, #4]
 	movs r1, #1
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	movs r0, #134
 	bl Audio_PlayCue
 	movs r5, #238
@@ -8553,7 +8553,7 @@ Func_0815f16c:
 	str r3, [sp, #4]
 	movs r2, #0
 	movs r3, #0
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	ldr r1, [sp, #128]
 	movs r3, #4
 	movs r5, #36

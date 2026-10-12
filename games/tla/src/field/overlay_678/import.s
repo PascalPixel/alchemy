@@ -302,6 +302,7 @@ Func_02002938:
 	.thumb_func
 Func_02002940:
 	overlay_veneer Func_080c8288
+	.ifndef TLA_EDITION_JA
 	.global Func_02002948
 	.thumb_func
 Func_02002948:
@@ -312,6 +313,7 @@ Func_02002948:
 	overlay_veneer Func_080c82d0
 	.else
 	overlay_veneer Func_080c82e0
+	.endif
 	.endif
 	.endif
 	.global Object_SetWideSprite

@@ -13,7 +13,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_686/places.o"(.text)
         "*/games/tla/src/field/overlay_686/exits.o"(.text)
         "*/games/tla/src/field/overlay_686/events_a.o"(.text)
-        "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
+        "*/games/tla/src/field/overlay_686/effadv.o"(.text)
         "*/resource_686_overlay.o"(.text.x02008416)
         "*/resource_686_overlay.o"(.text.x02008418)
         "*/resource_686_overlay.o"(.text.x020085c0)

@@ -7833,6 +7833,8 @@ Func_02004c94:
 .L_0200cd10:
 	.4byte gPartyState
 	.section .text.x0200cd50,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.else
 	.balign 4
 	.global Func_02004d50
 	.thumb_func
@@ -7875,7 +7877,11 @@ Func_02004d50:
 .L_0200cd9c:
 	pop {r5, r6, pc}
 	.2byte 0x0000
+	.endif
 	.section .text.x0200ce80,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.balign 4
+	.else
 	.balign 4
 	.global Func_02004e80
 	.thumb_func
@@ -7910,6 +7916,7 @@ Func_02004e80:
 	.2byte 0x0000
 .L_0200cebc:
 	.4byte gPartyState
+	.endif
 	.section .text.x0200cef0,"ax",%progbits
 	.balign 4
 	.global Func_02004ef0
@@ -8524,7 +8531,7 @@ Func_020053e4:
 .L_0200d4e0:
 	.4byte 0x80004000
 	.section .bss,"aw",%nobits
-	.space 0x00000004
+	.balign 16
 	.global Data_0200eb60
 Data_0200eb60:
 	.space 0x00000004

@@ -889,7 +889,7 @@ Func_0815cde8:
 	movs r1, #1
 	movs r3, #0
 	movs r2, #0
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	movs r3, #0
 	str r3, [r5, #72]
 	movs r3, #1
@@ -1594,7 +1594,7 @@ Func_0815cde8:
 	movs r1, #1
 	movs r2, #0
 	movs r3, #0
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	mov r4, r9
 	str r6, [r4, #72]
 .L_0815d9fa:

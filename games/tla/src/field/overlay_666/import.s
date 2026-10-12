@@ -10,10 +10,12 @@ GameFlag_Test:
 	.thumb_func
 GameFlag_SetBit:
 	overlay_veneer GameFlag_SetBitFar
+	.ifndef TLA_EDITION_JA
 	.global GameFlag_ClearBit
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
+	.endif
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:

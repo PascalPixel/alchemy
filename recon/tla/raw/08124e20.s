@@ -94,7 +94,7 @@ Func_08124e20:
 	beq .L_08124f84
 	bl BattleEventRuntime_Reset
 	movs r0, #30
-	bl Func_08122c88
+	bl BattleEventRuntime_SchedulePhase
 	movs r0, #0
 	adds r1, r5, #0
 	bl BtlEvPush

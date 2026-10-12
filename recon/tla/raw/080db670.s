@@ -80,7 +80,7 @@ BattleFx_DispatchRequestKind:
 .L_080db706:
 	cmp r1, #16
 	bne .L_080db710
-	bl Func_080e1214
+	bl BattleFx_RunEffect16
 	b .L_080db840
 .L_080db710:
 	cmp r1, #17
@@ -96,7 +96,7 @@ BattleFx_DispatchRequestKind:
 .L_080db726:
 	cmp r1, #15
 	bne .L_080db730
-	bl Func_080e0dd4
+	bl BattleFx_RunEffect15
 	b .L_080db840
 .L_080db730:
 	cmp r1, #8

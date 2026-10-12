@@ -1313,7 +1313,7 @@ Func_0818bc98:
 	movs r1, #1
 	lsls r2, r2, #9
 	lsls r3, r3, #11
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	mov r1, r11
 	ldr r0, [r1, #20]
 .L_0818c6b4:

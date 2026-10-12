@@ -35,7 +35,9 @@ void Func_02000bdc(void)
     ObjectMotion_OffsetPositionAndResetMotion(4, 0, 4);
     ObjectMotion_CommitCurrentPositionAndActivate(4);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(4), 0);
+#if !defined(TLA_EDITION_JA) /* 日本版にはない */
     Func_02000e08(129);
+#endif
     ObjectMotion_OffsetPositionAndResetMotion(4, 0, 16);
     ObjectMotion_CommitCurrentPositionAndActivate(4);
     Object_SetModeById(4, 13);

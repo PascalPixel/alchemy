@@ -4,7 +4,15 @@
 	.global Func_08020328
 	.thumb_func
 Func_08020328:
+.ifdef TLA_EDITION_JA
+	overlay_veneer Map_GetHeaderSize
+.else
+.ifdef TLA_EDITION_EN
+	overlay_veneer Map_GetHeaderSize
+.else
 	overlay_veneer Func_0802b7e0
+.endif
+.endif
 	.global Func_08020330
 	.thumb_func
 Func_08020330:

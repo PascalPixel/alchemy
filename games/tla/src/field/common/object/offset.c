@@ -1,5 +1,6 @@
 #include "object_runtime.h"
 #include "objdisp.h"
+#include "party_state.h"
 
 void ObjectMotion_CenterOnColumn(u32 object_id, s32 action, s32 z_offset)
 {
@@ -70,5 +71,26 @@ void ObjectMotion_CommitPositionAndActivate(u32 object_id, s32 x_offset, s32 z_o
     if (object != NULL) {
         Object_CommitPosition(object);
         Object_SetMode(object, 1);
+    }
+}
+
+void ObjectMotion_SetSpeedParameters(u32 object_id, s32 speed_limit, s32 acceleration);
+void ObjectMotion_MoveToObject(u32 object_id, s32 target_id);
+void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+extern const s32 Data_080f32e0[];
+
+void Func_080d3070(u32 object_id, s32 x_offset, s32 z_offset, s32 action)
+{
+    struct ObjectRuntime *object = ObjectTable_Get(object_id);
+
+    if (object != NULL) {
+        ObjectMotion_SetSpeedParameters(object_id, 0xcccc, 0x6666);
+        ObjectMotion_MoveToObject(object_id, gPartyState.current_owner);
+        Object_SetPositionAndResetMotionFar(object, object->x, object->y, object->z - 0x10000);
+        object->movement_state = 0;
+        Object_SetMode(object, 2);
+        ObjectMotion_OffsetPositionAndResetMotion(object_id, x_offset, z_offset);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, Data_080f32e0);
+        object->action = action;
     }
 }

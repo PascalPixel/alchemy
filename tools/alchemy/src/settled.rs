@@ -216,8 +216,9 @@ mod tests {
     #[test]
     fn nothing_is_recorded_for_inputs_still_settling_or_changed_during_the_build() {
         let (_directory, root, output) = built();
-        // The files of this test are a moment old: inside the real margin.
-        record(&root, &output, "tbs-en", &inputs(&root), "steps=0\n", SETTLING);
+        // The files of this test are minutes old at most, however loaded the
+        // machine: inside an hour's margin.
+        record(&root, &output, "tbs-en", &inputs(&root), "steps=0\n", Duration::from_secs(3600));
         assert!(!output.join(FILE).exists());
         let before = inputs(&root);
         fs::write(root.join("games/tbs/src/a.c"), "int b;\n").unwrap();

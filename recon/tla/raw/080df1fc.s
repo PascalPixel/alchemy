@@ -573,7 +573,7 @@ Func_080df1fc:
 	blt .L_080df6b2
 .L_080df6c8:
 	adds r0, r7, #0
-	bl Func_080dfb0c
+	bl BattleFx_SpawnRadialParticleRing
 	bl BattleFx_PrepareBufferInterpolation
 	movs r0, #30
 	bl WaitFrames

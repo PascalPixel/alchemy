@@ -1,6 +1,19 @@
 /* Near miss (12 of 384 instructions differ, all load scheduling): the
  * Broken Seal link exchange with its two nested transfers, ported with
- * TLA names; four loads sit one slot from the native. */
+ * TLA names; four loads sit one slot from the native. 2026-10-12: the first
+ * pair is in BattleLink_SendActions' prologue (the native stores the
+ * static chain as sub sp; mov r3, sp; mov r2, r9; str; adds r7, r2). An
+ * empty asm barrier as the function's first statement leaves one row there
+ * (mov r2, r9 ahead of mov r3, sp: sched2 ranks the two equal and takes the
+ * one with more dependents); a one-pass block changes nothing. The three
+ * functions adopt together, so the prologue blocks all 852 bytes.
+ * 2026-10-12, queue 7: sched2's dump of that block (alchemy diff --rtl, 0811d414.c.23.sched2)
+ * gives the chain's copy (r7 = r2) priority 36 and its store 35, because the copy leads to
+ * subs r3, r7, #4 and the load of state (cost 2) while the store reaches that load directly;
+ * the native order needs the two equal, which is the order flow2 already has them in. The
+ * other three pairs (state's count load at the second transfer, two in the parent) were not
+ * tried with barriers. BattleQueue_SortByPriority, their neighbour, is adopted in
+ * games/tla/src/battle/turn.c, where these three belong. */
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

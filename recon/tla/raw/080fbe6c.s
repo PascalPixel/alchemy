@@ -52,7 +52,7 @@ Func_080fbe6c:
 	lsls r1, r1, #1
 	adds r1, #255
 	ands r1, r3
-	bl Func_080fad48
+	bl InventoryMenu_GetItemQuantity
 	str r0, [sp, #8]
 .L_080fbed8:
 	movs r3, #128
@@ -68,7 +68,7 @@ Func_080fbe6c:
 	lsls r1, r1, #1
 	adds r1, #255
 	ands r1, r3
-	bl Func_080fad48
+	bl InventoryMenu_GetItemQuantity
 	str r0, [sp, #4]
 	bl Resource_FindFreeEntry
 	str r0, [sp, #16]

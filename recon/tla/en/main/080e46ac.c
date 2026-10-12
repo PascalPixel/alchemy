@@ -1,4 +1,4 @@
-/* Near miss: listing 58 instructions, draft 58, common 55, differ 6; the rest differs in instruction order. */
+/* Near miss, differ 2 with two barriers (6 without): the native loads the tile mask from the pool before it scales the frame (ldr r3; lsls r2, r2, #3); here the shift comes first, and no barrier can hoist a pool constant. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -53,9 +53,16 @@ void Func_080e46ac(struct EffectSprite *sprite, struct EffectParticle *particle,
 {
     s32 position[3];
     s32 scale;
+    s32 n;
 
     if ((u32)particle->timer <= 31) {
-        sprite->tile = tiles + ((particle->timer >> 2) & 7) * 8;
+        n = (particle->timer >> 2) & 7;
+        /* FAKEMATCH: draft barrier; the header gives the measured difference. */
+        __asm__("");
+        n <<= 3;
+        sprite->tile = tiles + n;
+        /* FAKEMATCH: draft barrier; the header gives the measured difference. */
+        __asm__("");
         scale = sprite->scale_x + 0x1999;
         sprite->scale_x = scale;
         if (scale > 0x10000)

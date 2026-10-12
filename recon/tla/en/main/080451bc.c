@@ -1,43 +1,27 @@
+/* Near miss: differ 2 of 63 (one reordered row). In the set loop the native loads the tile address between the two halves of set * 3 (lsls; ldr; adds); the draft finishes the multiply first. Tried: every operand order of the address sum, the address as a local or in place, array indexing (all differ 2); a one-pass block in the loop stops the strength reduction (differ 55). */
 #include "types.h"
 #include "iwram_call.h"
-#include "scene.h"
-void UiWindow_SetTilemapEntry(s32, s32, s32, s32, s32);
 
-struct Effect {
-    unsigned x : 16;
-    unsigned y : 16;
-    unsigned z : 16;
-    unsigned unk : 16;
+struct BarPatternRow {
+    u32 word0;
+    u32 word1;
 };
 
-struct Object {
-    u8 filler0[6];
-    u16 src_6;
-    u8 src_8;
-    u8 filler9[6];
-    u8 out_15;
-    u8 filler16[4];
-    u8 out_20;
-    u8 mode_21 : 2;
-    u8 rest_21 : 6;
-    u16 pos_22 : 9;
-    u16 affine_22 : 5;
-    u16 rest_22 : 2;
-};
+extern const struct BarPatternRow Data_0805f700[];
 
-extern u32 gFrameTick;
-extern s32 Ui_ObjectPulseScales[];
-s32 AffineMatrix_BuildForEffect(struct Effect *efx);
+static __inline__ u32 XorWord(u32 word, u32 mask)
+{
+    return word ^ mask;
+}
 
 s32 Menu_BuildLocalizedPatternTiles(void)
 {
-    u32 *vram = (u32 *)0x06006280;
     s32 set;
     s32 n;
 
     for (set = 0; set < 2; set++) {
         for (n = 0; n < 6; n++) {
-            u32 *tile = vram + set * 0x60 + n * 0x10;
+            u32 *tile = (u32 *)(set * 0x180 + n * 0x40 + 0x06006280);
             s32 x;
 
             Iwram_FillWords(tile, 64, 0x44444444);
@@ -53,8 +37,8 @@ s32 Menu_BuildLocalizedPatternTiles(void)
                         mi = 0;
                     }
                 }
-                tile[x] = XorWord(tile[x], Data_08037250[mi].word0);
-                tile[x + 8] = XorWord(tile[x + 8], Data_08037250[mi].word1);
+                tile[x] = XorWord(tile[x], Data_0805f700[mi].word0);
+                tile[x + 8] = XorWord(tile[x + 8], Data_0805f700[mi].word1);
             }
         }
     }

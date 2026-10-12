@@ -1,3 +1,4 @@
+/* Near miss: differ 2 of 188. Ahead of the first loop the native loads the mask 0xfffffeff from the pool before it builds 0x100; both invariants have priority 3 and one dependent, and loop.c emits 0x100 first. Hand-hoisting the mask into a one-pass block after the entry test orders the pair but gives the mask lr and 0x100 r8, swapped (differ 12). */
 #include "types.h"
 
 #include "ram_buffer.h"

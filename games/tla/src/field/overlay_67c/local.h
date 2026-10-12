@@ -165,6 +165,11 @@ void Func_02003eb4(s32 a, s32 b);
 void Func_02003ecc(s32 a);
 void Func_02003eec(s32 a, s32 b);
 void Func_02003ef4(s32 cue);
+void Func_02002bd4(struct ObjectRuntime *object);
+s32 Func_02002ed4(struct ObjectRuntime *object);
+void Func_02003ddc(s32 id, s32 x, s32 z);
+void Func_02003e5c(s32 a);
+void Func_02003ed4(void);
 
 void Func_020006d0(void);
 s32 Func_02000b24(s32 id, s32 value);
@@ -192,7 +197,7 @@ extern const u8 Data_020040dc[];
 extern const u8 Data_0200411c[];
 extern const u8 Data_02004128[];
 extern const u8 Data_0200414c[];
-extern const u8 Data_02004350[];
+extern const u8 Data_02004351[];
 extern const u8 Data_020044c8[];
 
 extern const u8 MsgCheckedTheColumn[];

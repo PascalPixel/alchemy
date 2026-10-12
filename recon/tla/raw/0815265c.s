@@ -2362,7 +2362,7 @@ BattleFx_RunProjectileVolleyB:
 	lsls r2, r2, #9
 	movs r1, #1
 	lsls r3, r3, #11
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	b .L_08153828
 .L_08153820:
 	ldr r3, [sp, #84]

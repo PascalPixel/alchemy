@@ -36,3 +36,5 @@ AlchemyUncreditedEnd_08001ffe:
 	subs	r2, r2, #1
 	bne	.L_08002040
 	b	.L_0800200c
+	.global Resource_DecompressHalfwordsCodeSize
+	.set Resource_DecompressHalfwordsCodeSize, . - Resource_DecodeHalfwordLzCode

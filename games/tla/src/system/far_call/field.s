@@ -140,7 +140,7 @@ Func_080c87f8:
 .ifdef TLA_EDITION_IT
 	overlay_veneer BattleFx_StartArcEffect
 .else
-	overlay_veneer Func_080dc1b0
+	overlay_veneer Field_BeginColorTransition
 .endif
 .endif
 	.ifdef TLA_EDITION_ES

@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Func_080fe274
 	.thumb_func
 Func_080fe274:
@@ -205,7 +206,7 @@ Func_080fe274:
 	ldr r2, [r3, #60]
 	ldr r3, .L_080fe470
 	strb r3, [r2, #6]
-	bl Func_080fa478
+	bl ItemMenu_Close
 	movs r1, #0
 	movs r2, #30
 	movs r3, #20

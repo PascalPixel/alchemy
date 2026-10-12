@@ -3,7 +3,10 @@
 #include "iwram_call.h"
 
 struct ClockWork {
-    u8 unknown_00[132];
+    u8 *tiles;
+    u8 *digits;
+    u8 unknown_08[120];
+    s32 tile_entry;
     s32 timer;
     u8 ringing;
     u8 mode;
@@ -19,6 +22,36 @@ void Func_02005210(void);
 void Func_0200525c(void);
 s32 __divsi3(s32 numerator, s32 denominator);
 s32 __modsi3(s32 numerator, s32 denominator);
+void *Runtime_BumpAllocateAlternatePool(s32 size);
+void *Resource_GetTableEntry(s32 index);
+void Func_020055cc(const void *data, void *buffer);
+s32 Resource_FindFreeEntry(void);
+void VramBlock_LoadCached(s32 handle, s32 size, void *source);
+s32 GameFlag_Test(s32 flag);
+extern char ResourceId_Data015;
+
+void Func_020052a4(s32 mode)
+{
+    struct ClockWork *clock = (struct ClockWork *)(Data_020023c4 + 0x288);
+    u8 *tiles;
+
+    if (!GameFlag_Test(0x109)) {
+        Iwram_ClearWords(clock, sizeof(struct ClockWork));
+        clock->timer = 3600;
+        clock->ringing = 1;
+    }
+    tiles = Runtime_BumpAllocateAlternatePool(0x400);
+    Func_020055cc(Resource_GetTableEntry((s32)&ResourceId_Data015), tiles);
+    clock->tiles = tiles;
+    clock->digits = tiles + 0x2c0;
+    clock->tile_entry = Resource_FindFreeEntry();
+    VramBlock_LoadCached(clock->tile_entry, 320, NULL);
+    clock->mode = mode;
+    if (mode)
+        Scheduler_AddOrUpdateCallback(Func_02005210, 1152);
+    else
+        Scheduler_AddOrUpdateCallback(Func_0200525c, 1152);
+}
 
 void Func_0200533c(void)
 {

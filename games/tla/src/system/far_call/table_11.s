@@ -8,4 +8,4 @@ Func_08020370:
 	.global Func_08020378
 	.thumb_func
 Func_08020378:
-	overlay_veneer Func_0802b828
+	overlay_veneer Map_LoadCellsAndShapes

@@ -12,7 +12,6 @@ SECTIONS
         "*/games/tla/src/field/deri_heya/touchaku.o"(.text)
         "*/games/tla/src/field/deri_heya/import.o"(.text)
         "*/games/tla/src/field/deri_heya/data.o"(.data)
-        "*/resource_652_overlay.o"(.rodata.x02008e14)
         "*/games/tla/src/field/deri_heya/data2.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

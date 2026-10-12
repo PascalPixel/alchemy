@@ -84,7 +84,7 @@ Func_080ffcd4:
 	bl Func_080ff7b4
 	bl ItemMenu_HideAllIcons
 	mov r0, r9
-	bl Func_080fd6b0
+	bl PsynergyMenu_DrawPsynergyIcons
 	movs r3, #1
 	movs r0, #1
 	mov r11, r3

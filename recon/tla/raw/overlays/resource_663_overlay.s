@@ -4835,67 +4835,6 @@ Func_02002b88:
 	.2byte 0x0000
 .L_0200ac20:
 	.4byte Data_02004698
-	.section .text.x0200ac24,"ax",%progbits
-	.global Func_02002c24
-	.thumb_func
-Func_02002c24:
-	push {r5, r6, r7, lr}
-	mov r7, r10
-	mov r6, r8
-	push {r6, r7}
-	ldr r3, .L_0200ac9c
-	adds r7, r0, #0
-	mov r8, r3
-	movs r3, #133
-	lsls r3, r3, #2
-	add r3, r8
-	ldr r0, [r3]
-	mov r10, r3
-	bl Object_GetById
-	adds r5, r0, #0
-	movs r0, #10
-	adds r0, #255
-	bl GameFlag_Test
-	adds r6, r0, #0
-	cmp r6, #0
-	bne .L_0200ac94
-	adds r3, r5, #0
-	adds r3, #85
-	strb r6, [r3]
-	adds r0, r5, #0
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildFlags
-	ldr r3, [r5, #12]
-	movs r2, #128
-	adds r3, r3, r7
-	str r3, [r5, #12]
-	lsls r2, r2, #2
-	movs r3, #128
-	lsls r3, r3, #9
-	adds r2, #18
-	str r3, [r5, #48]
-	add r2, r8
-	movs r3, #2
-	str r6, [r5, #40]
-	strb r3, [r2]
-	adds r2, r5, #0
-	adds r2, #90
-	movs r3, #1
-	strb r3, [r2]
-	mov r3, r10
-	ldr r0, [r3]
-	movs r1, #0
-	bl Object_AttachWorkTargetToObject
-	bl Func_02003b50
-	movs r0, #1
-	bl WaitFrames
-.L_0200ac94:
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, r7, pc}
-.L_0200ac9c:
-	.4byte gPartyState
 	.section .text.x0200aca0,"ax",%progbits
 	.global Func_02002ca0
 	.thumb_func

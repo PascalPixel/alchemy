@@ -252,7 +252,7 @@ Func_0814db04:
 .L_0814dd08:
 	.4byte Data_02010002
 .L_0814dd0c:
-	.4byte Func_0814cbcc
+	.4byte BattleFx_BuildWindowEdgeTable
 .L_0814dd10:
 	ldr r6, [sp, #40]
 	cmp r6, #103

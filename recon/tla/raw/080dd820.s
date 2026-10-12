@@ -17,7 +17,7 @@ Func_080dd820:
 	bl Func_080dd748
 	movs r0, #8
 	ldr r6, [r5, #108]
-	bl Func_080d00f8
+	bl DisplayTransition_InitializeBattleEffectState
 	ldr r2, [r7, #16]
 	ldr r5, [r5, #124]
 	movs r0, #160

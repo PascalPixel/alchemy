@@ -52,7 +52,7 @@ BattlePres_SetActorModesFar:
 	.global Func_081180e8
 	.thumb_func
 Func_081180e8:
-	overlay_veneer Func_08122c4c
+	overlay_veneer BattleEventRuntime_BeginPhase
 	.global ColorBuffer_ScaleFar
 	.thumb_func
 ColorBuffer_ScaleFar:

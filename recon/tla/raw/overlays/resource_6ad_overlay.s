@@ -1,6 +1,15 @@
 .syntax unified
 	.thumb
 	.section .text.x02008170,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.balign 4
+	.global Func_02000170
+	.thumb_func
+Func_02000170:
+	push {lr}
+	bl Func_02005688
+	pop {pc}
+	.else
 	.balign 4
 	.global Func_02000170
 	.thumb_func
@@ -67,6 +76,7 @@ Func_02000170:
 	.4byte gPartyState
 .L_020081f0:
 	.4byte 0xfff80000
+	.endif
 	.section .text.x02008280,"ax",%progbits
 	.balign 4
 	.global Func_02000280
@@ -128,6 +138,8 @@ Func_020002b8:
 .L_020082e8:
 	.4byte Data_02005b5c
 	.section .text.x020082ec,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.else
 	.global Func_020002ec
 	.thumb_func
 Func_020002ec:
@@ -227,6 +239,7 @@ Func_020002ec:
 .L_020083b0:
 	add sp, #8
 	pop {r5, pc}
+	.endif
 	.section .text.x0200855c,"ax",%progbits
 	.balign 4
 	.global Func_0200055c
@@ -649,6 +662,659 @@ Func_02000cb8:
 	strb r3, [r0]
 	pop {r5, pc}
 	.section .text.x02008e7c,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.balign 4
+	.global Func_02000e7c
+	.thumb_func
+Func_02000e7c:
+	push {r5, r6, r7, lr}
+	mov r7, r10
+	mov r6, r8
+	push {r6, r7}
+	ldr r2, .L_ja_020090ac
+	movs r3, #240
+	mov r10, r2
+	lsls r3, r3, #1
+	add r3, r10
+	movs r2, #0
+	ldrsh r5, [r3, r2]
+	movs r3, #241
+	lsls r3, r3, #1
+	movs r6, #192
+	add r3, r10
+	lsls r6, r6, #18
+	movs r2, #0
+	ldrsh r7, [r3, r2]
+	ldr r3, [r6, #108]
+	movs r2, #214
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	movs r0, #137
+	adds r2, #88
+	str r2, [r3]
+	lsls r0, r0, #1
+	sub sp, #8
+	mov r8, r2
+	bl GameFlag_SetBit
+	bl Func_020025b0
+	ldr r3, .L_ja_020090b0
+	cmp r5, r3
+	bne .L_ja_02008e46
+	movs r0, #0
+	bl Func_02005638
+	ldr r3, [r6, #108]
+	movs r2, #214
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	mov r2, r8
+	str r2, [r3]
+	subs r3, r7, #1
+	cmp r3, #1
+	bhi .L_ja_02008e1c
+	ldr r0, .L_ja_020090b4
+	ldr r1, .L_ja_020090b8
+	ldr r2, .L_ja_020090bc
+	movs r3, #88
+	bl Func_02002624
+	movs r0, #160
+	lsls r0, r0, #4
+	adds r0, #66
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_02008db8
+	movs r0, #10
+	movs r1, #0
+	movs r2, #0
+	bl Func_02005598
+	b .L_ja_02008dc2
+.L_ja_02008db8:
+	movs r0, #9
+	movs r1, #0
+	movs r2, #0
+	bl Func_02005598
+.L_ja_02008dc2:
+	movs r0, #160
+	lsls r0, r0, #4
+	adds r0, #67
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_02008dd6
+	movs r0, #0
+	bl Func_020006f4
+.L_ja_02008dd6:
+	movs r0, #160
+	lsls r0, r0, #4
+	adds r0, #68
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_02008dec
+	movs r0, #1
+	movs r1, #0
+	bl Func_02000444
+.L_ja_02008dec:
+	movs r0, #160
+	lsls r0, r0, #4
+	adds r0, #69
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_02008e02
+	movs r0, #1
+	movs r1, #0
+	bl Func_02000480
+.L_ja_02008e02:
+	movs r0, #160
+	lsls r0, r0, #4
+	adds r0, #70
+	bl GameFlag_Test
+	cmp r0, #0
+	bne .L_ja_02008e12
+	b .L_ja_02009294
+.L_ja_02008e12:
+	movs r0, #1
+	movs r1, #0
+	bl Func_020004bc
+	b .L_ja_02009294
+.L_ja_02008e1c:
+	ldr r1, .L_ja_020090c0
+	movs r2, #0
+	movs r3, #88
+	ldr r0, .L_ja_020090c4
+	bl Func_02002624
+	movs r0, #15
+	bl Func_020055b8
+	movs r0, #16
+	bl Func_020055b8
+	movs r0, #15
+	bl Func_02004938
+	movs r0, #16
+	bl Func_02004938
+	bl Func_020003b4
+	b .L_ja_02009294
+.L_ja_02008e46:
+	ldr r3, .L_ja_020090c8
+	cmp r5, r3
+	beq .L_ja_02008e4e
+	b .L_ja_02008ff4
+.L_ja_02008e4e:
+	movs r0, #0
+	bl Func_02005638
+	ldr r3, [r6, #108]
+	movs r2, #214
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	mov r2, r8
+	str r2, [r3]
+	ldr r1, .L_ja_020090cc
+	ldr r0, .L_ja_020090d0
+	ldr r2, .L_ja_020090d4
+	movs r3, #88
+	bl Func_02002624
+	movs r0, #3
+	movs r1, #1
+	bl Func_020027cc
+	cmp r7, #2
+	bne .L_ja_02008e7c
+	bl Func_02002604
+.L_ja_02008e7c:
+	cmp r7, #9
+	bne .L_ja_02008f02
+	movs r0, #192
+	lsls r0, r0, #2
+	adds r0, #81
+	bl GameFlag_SetBit
+	bl Func_02005560
+	movs r0, #0
+	bl Func_02005648
+	movs r0, #1
+	movs r1, #1
+	movs r2, #1
+	negs r0, r0
+	negs r1, r1
+	negs r2, r2
+	movs r3, #0
+	bl Motion_CamBounds
+	movs r3, #133
+	lsls r3, r3, #2
+	add r3, r10
+	ldr r0, [r3]
+	movs r1, #0
+	movs r2, #0
+	bl Func_02005598
+	movs r1, #0
+	movs r2, #0
+	movs r0, #17
+	bl Func_02005598
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
+	movs r0, #30
+	bl Battle_WaitMode0
+	movs r0, #18
+	movs r1, #0
+	movs r2, #0
+	bl Func_02005598
+	movs r1, #132
+	movs r2, #130
+	lsls r1, r1, #17
+	lsls r2, r2, #18
+	movs r0, #17
+	bl Func_02005598
+	movs r0, #136
+	bl Func_020056c0
+	movs r0, #60
+	bl Battle_WaitMode0
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_SetBit
+	movs r0, #3
+	bl Func_020055f0
+	b .L_ja_02009296
+.L_ja_02008f02:
+	movs r0, #212
+	lsls r0, r0, #2
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_02008f4a
+	movs r1, #150
+	movs r2, #144
+	movs r0, #8
+	lsls r1, r1, #18
+	lsls r2, r2, #16
+	bl Func_02005598
+	movs r1, #136
+	movs r2, #208
+	movs r0, #9
+	lsls r1, r1, #18
+	lsls r2, r2, #16
+	bl Func_02005598
+	movs r1, #136
+	movs r2, #240
+	movs r0, #10
+	lsls r1, r1, #18
+	lsls r2, r2, #16
+	bl Func_02005598
+	movs r0, #136
+	lsls r0, r0, #2
+	bl GameFlag_SetBit
+	movs r0, #145
+	lsls r0, r0, #1
+	adds r0, #255
+	bl GameFlag_SetBit
+.L_ja_02008f4a:
+	movs r0, #8
+	bl Func_020055b8
+	movs r0, #9
+	bl Func_020055b8
+	movs r0, #10
+	bl Func_020055b8
+	movs r0, #8
+	bl Func_02004938
+	movs r0, #9
+	bl Func_02004938
+	movs r0, #10
+	bl Func_02004938
+	movs r0, #11
+	bl Object_GetById
+	adds r0, #35
+	ldrb r3, [r0]
+	movs r5, #2
+	orrs r3, r5
+	strb r3, [r0]
+	movs r0, #12
+	bl Object_GetById
+	adds r0, #35
+	ldrb r3, [r0]
+	orrs r5, r3
+	strb r5, [r0]
+	movs r0, #136
+	lsls r0, r0, #2
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_02008f9e
+	movs r0, #11
+	bl Func_02000c80
+.L_ja_02008f9e:
+	movs r0, #145
+	lsls r0, r0, #1
+	adds r0, #255
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_02008fb2
+	movs r0, #12
+	bl Func_02000c80
+.L_ja_02008fb2:
+	bl Func_020009ec
+	movs r0, #212
+	lsls r0, r0, #2
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_02008fce
+	movs r0, #18
+	movs r1, #0
+	movs r2, #0
+	bl Func_02005598
+	b .L_ja_02008fd8
+.L_ja_02008fce:
+	movs r0, #17
+	movs r1, #0
+	movs r2, #0
+	bl Func_02005598
+.L_ja_02008fd8:
+	movs r0, #164
+	lsls r0, r0, #4
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_02008fe8
+	bl Func_02000d80
+.L_ja_02008fe8:
+	movs r1, #144
+	ldr r0, .L_ja_020090d8
+	lsls r1, r1, #3
+	bl Scheduler_AddOrUpdateCallback
+	b .L_ja_02009294
+.L_ja_02008ff4:
+	ldr r3, .L_ja_020090dc
+	cmp r5, r3
+	beq .L_ja_02008ffc
+	b .L_ja_02009170
+.L_ja_02008ffc:
+	movs r0, #0
+	bl Func_02005638
+	ldr r3, [r6, #108]
+	movs r2, #214
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	mov r2, r8
+	str r2, [r3]
+	movs r0, #1
+	bl Func_020015a4
+	bl Func_02005284
+	movs r0, #2
+	bl Func_020053bc
+	movs r0, #11
+	movs r1, #6
+	bl Func_0200538c
+	movs r0, #214
+	lsls r0, r0, #2
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_02009072
+	movs r3, #5
+	str r3, [sp, #4]
+	movs r5, #71
+	movs r0, #71
+	movs r1, #24
+	movs r2, #7
+	movs r3, #1
+	str r5, [sp, #0]
+	bl Func_020054f0
+	movs r6, #7
+	movs r0, #7
+	movs r1, #24
+	movs r2, #7
+	movs r3, #1
+	str r6, [sp, #0]
+	str r6, [sp, #4]
+	bl Func_020054e8
+	movs r0, #7
+	movs r1, #88
+	movs r2, #7
+	movs r3, #1
+	str r6, [sp, #0]
+	str r5, [sp, #4]
+	bl Func_020054e8
+	movs r0, #11
+	movs r1, #0
+	movs r2, #0
+	bl Func_02005598
+.L_ja_02009072:
+	movs r0, #160
+	lsls r0, r0, #4
+	adds r0, #55
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_0200908e
+	movs r1, #240
+	movs r2, #148
+	movs r0, #12
+	lsls r1, r1, #15
+	lsls r2, r2, #17
+	bl Func_02005598
+.L_ja_0200908e:
+	adds r3, r7, #0
+	subs r3, #14
+	cmp r3, #1
+	bhi .L_ja_020090ec
+	ldr r1, .L_ja_020090e0
+	ldr r0, .L_ja_020090e4
+	ldr r2, .L_ja_020090e8
+	movs r3, #88
+	bl Func_02002624
+	movs r0, #0
+	movs r1, #1
+	bl Func_020027cc
+	b .L_ja_020090f8
+.L_ja_020090ac:
+	.4byte gPartyState
+.L_ja_020090b0:
+	.4byte 0x00000124
+.L_ja_020090b4:
+	.4byte Data_02005bf0
+.L_ja_020090b8:
+	.4byte Data_02005bf6
+.L_ja_020090bc:
+	.4byte Func_02000514
+.L_ja_020090c0:
+	.4byte Data_02005c0e
+.L_ja_020090c4:
+	.4byte Data_02005bfc
+.L_ja_020090c8:
+	.4byte 0x00000125
+.L_ja_020090cc:
+	.4byte Data_02005c26
+.L_ja_020090d0:
+	.4byte Data_02005c14
+.L_ja_020090d4:
+	.4byte Func_02001468
+.L_ja_020090d8:
+	.4byte Func_02000e68
+.L_ja_020090dc:
+	.4byte 0x00000126
+.L_ja_020090e0:
+	.4byte Data_02005c32
+.L_ja_020090e4:
+	.4byte Data_02005c2c
+.L_ja_020090e8:
+	.4byte Func_02001490
+.L_ja_020090ec:
+	ldr r0, .L_ja_020092a0
+	ldr r1, .L_ja_020092a4
+	movs r2, #0
+	movs r3, #88
+	bl Func_02002624
+.L_ja_020090f8:
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_02009106
+	b .L_ja_02009294
+.L_ja_02009106:
+	cmp r7, #2
+	beq .L_ja_02009126
+	cmp r7, #4
+	beq .L_ja_02009126
+	cmp r7, #6
+	beq .L_ja_02009126
+	cmp r7, #7
+	beq .L_ja_02009126
+	cmp r7, #8
+	beq .L_ja_02009126
+	cmp r7, #10
+	beq .L_ja_02009126
+	cmp r7, #11
+	beq .L_ja_02009126
+	cmp r7, #13
+	bne .L_ja_02009134
+.L_ja_02009126:
+	ldr r3, .L_ja_020092a8
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r3, r3, r2
+	ldr r0, [r3]
+	bl Func_020056b0
+.L_ja_02009134:
+	cmp r7, #3
+	beq .L_ja_02009148
+	cmp r7, #5
+	beq .L_ja_02009148
+	cmp r7, #9
+	beq .L_ja_02009148
+	cmp r7, #12
+	beq .L_ja_02009148
+	cmp r7, #14
+	bne .L_ja_02009156
+.L_ja_02009148:
+	ldr r3, .L_ja_020092a8
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r3, r3, r2
+	ldr r0, [r3]
+	bl Func_020056b8
+.L_ja_02009156:
+	cmp r7, #16
+	beq .L_ja_0200915c
+	b .L_ja_02009294
+.L_ja_0200915c:
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_0200916a
+	b .L_ja_02009294
+.L_ja_0200916a:
+	bl Func_02003d80
+	b .L_ja_02009294
+.L_ja_02009170:
+	ldr r3, .L_ja_020092ac
+	cmp r5, r3
+	beq .L_ja_02009178
+	b .L_ja_02009294
+.L_ja_02009178:
+	movs r0, #0
+	bl Func_02005638
+	ldr r3, [r6, #108]
+	movs r2, #214
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	mov r2, r8
+	str r2, [r3]
+	bl Func_02005670
+	movs r1, #8
+	movs r2, #9
+	movs r0, #0
+	bl Func_02005678
+	movs r0, #8
+	bl Object_GetById
+	movs r5, #1
+	adds r0, #98
+	strb r5, [r0]
+	movs r0, #9
+	bl Object_GetById
+	subs r3, r7, #5
+	adds r0, #98
+	strb r5, [r0]
+	cmp r3, #1
+	bls .L_ja_020091b8
+	cmp r7, #8
+	bne .L_ja_020091c6
+.L_ja_020091b8:
+	ldr r0, .L_ja_020092b0
+	ldr r1, .L_ja_020092b4
+	movs r2, #0
+	movs r3, #88
+	bl Func_02002624
+	b .L_ja_020091e6
+.L_ja_020091c6:
+	cmp r7, #11
+	beq .L_ja_020091da
+	cmp r7, #13
+	beq .L_ja_020091da
+	cmp r7, #14
+	beq .L_ja_020091da
+	cmp r7, #1
+	beq .L_ja_020091da
+	cmp r7, #15
+	bne .L_ja_020091e6
+.L_ja_020091da:
+	ldr r0, .L_ja_020092b8
+	ldr r1, .L_ja_020092bc
+	movs r2, #0
+	movs r3, #88
+	bl Func_02002624
+.L_ja_020091e6:
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_Test
+	cmp r0, #0
+	bne .L_ja_02009216
+	cmp r7, #15
+	bne .L_ja_02009204
+	movs r1, #166
+	movs r2, #178
+	movs r0, #23
+	lsls r1, r1, #18
+	lsls r2, r2, #18
+	bl Func_02005598
+.L_ja_02009204:
+	cmp r7, #11
+	bne .L_ja_02009216
+	movs r1, #134
+	movs r2, #138
+	movs r0, #17
+	lsls r1, r1, #18
+	lsls r2, r2, #18
+	bl Func_02005598
+.L_ja_02009216:
+	movs r0, #16
+	bl Object_GetById
+	movs r5, #0
+	adds r0, #85
+	strb r5, [r0]
+	movs r0, #160
+	lsls r0, r0, #4
+	adds r0, #56
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_0200924e
+	movs r1, #202
+	movs r2, #156
+	lsls r1, r1, #18
+	lsls r2, r2, #17
+	movs r0, #16
+	bl Func_02005598
+	movs r0, #16
+	bl Object_GetById
+	str r5, [r0, #12]
+	movs r0, #16
+	bl Object_GetById
+	str r5, [r0, #20]
+.L_ja_0200924e:
+	ldr r3, .L_ja_020092a8
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r3, r3, r2
+	ldr r0, [r3]
+	bl Object_GetById
+	adds r0, #35
+	ldrb r3, [r0]
+	movs r2, #64
+	orrs r3, r2
+	strb r3, [r0]
+	movs r0, #10
+	bl Object_GetById
+	adds r0, #35
+	ldrb r3, [r0]
+	movs r2, #192
+	orrs r3, r2
+	strb r3, [r0]
+	movs r0, #11
+	bl Object_GetById
+	adds r0, #35
+	ldrb r3, [r0]
+	movs r5, #128
+	orrs r3, r5
+	strb r3, [r0]
+	movs r0, #12
+	bl Object_GetById
+	adds r0, #35
+	ldrb r3, [r0]
+	orrs r3, r5
+	strb r3, [r0]
+.L_ja_02009294:
+	movs r0, #0
+.L_ja_02009296:
+	add sp, #8
+	pop {r3, r5}
+	mov r8, r3
+	mov r10, r5
+	pop {r5, r6, r7, pc}
+.L_ja_020092a0:
+	.4byte Data_02005c38
+.L_ja_020092a4:
+	.4byte Data_02005c46
+.L_ja_020092a8:
+	.4byte gPartyState
+.L_ja_020092ac:
+	.4byte 0x00000127
+.L_ja_020092b0:
+	.4byte Data_02005c4c
+.L_ja_020092b4:
+	.4byte Data_02005c5a
+.L_ja_020092b8:
+	.4byte Data_02005c60
+.L_ja_020092bc:
+	.4byte Data_02005c6e
+	.else
 	.balign 4
 	.global Func_02000e7c
 	.thumb_func
@@ -1301,6 +1967,7 @@ Func_02000e7c:
 	.4byte Data_02005c60
 .L_02009408:
 	.4byte Data_02005c6e
+	.endif
 	.section .text.x020094da,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x020094e8,"ax",%progbits
@@ -3200,6 +3867,222 @@ Func_020028ec:
 .L_0200a950:
 	.4byte gPartyState
 	.section .text.x0200a97c,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.balign 4
+	.global Func_0200297c
+	.thumb_func
+Func_0200297c:
+	push {r5, r6, r7, lr}
+	mov r7, r10
+	mov r6, r8
+	push {r6, r7}
+	ldr r5, .L_ja_0200a9bc
+	movs r0, #128
+	lsls r0, r0, #2
+	adds r0, #18
+	adds r3, r5, r0
+	ldrb r3, [r3]
+	sub sp, #12
+	cmp r3, #0
+	beq .L_ja_0200a84c
+	b .L_ja_0200a9ac
+.L_ja_0200a84c:
+	movs r0, #10
+	movs r1, #0
+	negs r0, r0
+	bl Func_02002800
+	movs r1, #133
+	lsls r1, r1, #2
+	adds r3, r5, r1
+	ldr r0, [r3]
+	bl Object_GetById
+	ldr r2, .L_ja_0200a9c0
+	adds r5, r0, #0
+	mov r10, r2
+	bl Func_02005560
+	movs r0, #0
+	bl Func_02005648
+	ldr r3, .L_ja_0200a9c4
+	adds r0, r5, #0
+	str r3, [r5, #108]
+	movs r3, #128
+	lsls r3, r3, #7
+	strh r3, [r5, #6]
+	movs r1, #49
+	bl Func_02005480
+.L_ja_0200a884:
+	adds r3, r5, #0
+	adds r3, #34
+	ldr r1, [r5, #8]
+	ldrb r0, [r3]
+	ldr r2, [r5, #16]
+	bl Func_020054d8
+	mov r6, r10
+	mov r7, r10
+	adds r6, #104
+	adds r7, #106
+	mov r1, sp
+	cmp r0, #7
+	bne .L_ja_0200a8fc
+	movs r0, #0
+	ldrsh r3, [r6, r0]
+	movs r2, #0
+	lsls r3, r3, #17
+	str r3, [r5, #36]
+	mov r8, r2
+	movs r1, #0
+	ldrsh r3, [r7, r1]
+	lsls r3, r3, #17
+	str r3, [r5, #44]
+	movs r3, #128
+	lsls r3, r3, #5
+	str r3, [r5, #52]
+.L_ja_0200a8ba:
+	movs r3, #0
+	ldrsh r2, [r6, r3]
+	ldr r3, [r5, #8]
+	lsls r2, r2, #19
+	mov r1, sp
+	adds r3, r3, r2
+	str r3, [r1]
+	ldr r3, [r5, #12]
+	str r3, [r1, #4]
+	movs r0, #0
+	ldrsh r2, [r7, r0]
+	ldr r3, [r5, #16]
+	lsls r2, r2, #19
+	adds r3, r3, r2
+	str r3, [r1, #8]
+	adds r0, r5, #0
+	bl Func_020054f8
+	cmp r0, #0
+	beq .L_ja_0200a8ea
+	movs r3, #0
+	str r3, [r5, #36]
+	str r3, [r5, #44]
+	b .L_ja_0200a9a0
+.L_ja_0200a8ea:
+	movs r0, #1
+	bl WaitFrames
+	movs r1, #1
+	add r8, r1
+	mov r2, r8
+	cmp r2, #9
+	ble .L_ja_0200a8ba
+	b .L_ja_0200a9a0
+.L_ja_0200a8fc:
+	movs r3, #0
+	ldrsh r2, [r6, r3]
+	ldr r3, [r5, #8]
+	lsls r2, r2, #19
+	adds r3, r3, r2
+	str r3, [r1]
+	ldr r3, [r5, #12]
+	str r3, [r1, #4]
+	movs r0, #0
+	ldrsh r2, [r7, r0]
+	ldr r3, [r5, #16]
+	lsls r2, r2, #19
+	adds r3, r3, r2
+	str r3, [r1, #8]
+	adds r0, r5, #0
+	bl Func_020054f8
+	cmp r0, #0
+	bgt .L_ja_0200a9a0
+	cmp r0, #0
+	bge .L_ja_0200a942
+	movs r3, #128
+	lsls r3, r3, #7
+	strh r3, [r5, #6]
+	ldr r3, .L_ja_0200a9bc
+	movs r1, #133
+	lsls r1, r1, #2
+	adds r3, r3, r1
+	movs r2, #1
+	ldr r0, [r3]
+	movs r1, #6
+	negs r2, r2
+	bl Func_020055a8
+	b .L_ja_0200a9a0
+.L_ja_0200a942:
+	movs r2, #0
+	ldrsh r3, [r6, r2]
+	ldr r2, [r5, #8]
+	lsls r3, r3, #17
+	adds r1, r2, r3
+	str r1, [r5, #8]
+	ldr r2, [r5, #16]
+	movs r0, #0
+	ldrsh r3, [r7, r0]
+	ldr r7, .L_ja_0200a9c8
+	lsls r3, r3, #17
+	ldr r0, .L_ja_0200a9cc
+	adds r6, r2, r3
+	adds r3, r1, #0
+	ands r3, r7
+	movs r4, #128
+	adds r2, r3, r0
+	lsls r4, r4, #9
+	str r6, [r5, #16]
+	cmp r2, r4
+	ble .L_ja_0200a96e
+	adds r2, r4, #0
+.L_ja_0200a96e:
+	ldr r0, .L_ja_0200a9d0
+	cmp r2, r0
+	bge .L_ja_0200a976
+	adds r2, r0, #0
+.L_ja_0200a976:
+	subs r3, r1, r2
+	ldr r1, .L_ja_0200a9cc
+	str r3, [r5, #8]
+	adds r3, r6, #0
+	ands r3, r7
+	adds r2, r3, r1
+	cmp r2, r4
+	ble .L_ja_0200a988
+	adds r2, r4, #0
+.L_ja_0200a988:
+	cmp r2, r0
+	bge .L_ja_0200a98e
+	adds r2, r0, #0
+.L_ja_0200a98e:
+	subs r3, r6, r2
+	str r3, [r5, #16]
+	mov r2, r10
+	movs r3, #0
+	strh r3, [r2, #4]
+	movs r0, #1
+	bl WaitFrames
+	b .L_ja_0200a884
+.L_ja_0200a9a0:
+	movs r3, #0
+	str r3, [r5, #108]
+	adds r0, r5, #0
+	movs r1, #0
+	bl Animation_ApplyChildValues
+.L_ja_0200a9ac:
+	mov r0, r10
+	movs r3, #0
+	strh r3, [r0, #4]
+	add sp, #12
+	pop {r3, r5}
+	mov r8, r3
+	mov r10, r5
+	pop {r5, r6, r7, pc}
+.L_ja_0200a9bc:
+	.4byte gPartyState
+.L_ja_0200a9c0:
+	.4byte Data_020023c4 + 0x188
+.L_ja_0200a9c4:
+	.4byte Func_02002954
+.L_ja_0200a9c8:
+	.4byte 0x000fffff
+.L_ja_0200a9cc:
+	.4byte 0xfff80000
+.L_ja_0200a9d0:
+	.4byte 0xffff0000
+	.else
 	.balign 4
 	.global Func_0200297c
 	.thumb_func
@@ -3466,6 +4349,7 @@ Func_0200297c:
 	.4byte 0xfff80000
 .L_0200ab84:
 	.4byte 0xffff0000
+	.endif
 	.section .text.x0200aba0,"ax",%progbits
 	.balign 4
 	.global Func_02002ba0
@@ -4413,175 +5297,6 @@ Func_02003304:
 	mov r9, r5
 	mov r10, r6
 	mov r11, r7
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-	.section .text.x0200b3cc,"ax",%progbits
-	.global Func_020033cc
-	.thumb_func
-Func_020033cc:
-	push {r5, r6, r7, lr}
-	adds r5, r0, #0
-	adds r7, r5, #0
-	adds r7, #100
-	movs r3, #0
-	ldrsh r6, [r7, r3]
-	cmp r6, #0
-	bne .L_0200b404
-	ldr r1, [r5, #8]
-	ldr r2, [r5, #16]
-	movs r0, #0
-	bl Map_GetTerrainHeight
-	movs r3, #128
-	lsls r3, r3, #13
-	adds r0, r0, r3
-	movs r3, #128
-	lsls r3, r3, #9
-	str r0, [r5, #12]
-	movs r1, #1
-	adds r0, r5, #0
-	str r6, [r5, #24]
-	str r6, [r5, #28]
-	str r3, [r5, #48]
-	str r3, [r5, #52]
-	bl Func_02005528
-	b .L_0200b46c
-.L_0200b404:
-	cmp r6, #30
-	bgt .L_0200b41c
-	cmp r6, #30
-	bne .L_0200b46c
-	movs r0, #136
-	bl Func_020056c0
-	ldr r0, [r5, #104]
-	movs r1, #2
-	bl Func_02005480
-	b .L_0200b46c
-.L_0200b41c:
-	cmp r6, #60
-	bgt .L_0200b444
-	movs r3, #128
-	lsls r3, r3, #9
-	str r3, [r5, #24]
-	str r3, [r5, #28]
-	ldrh r3, [r7]
-	ldr r0, [r5, #104]
-	lsls r3, r3, #16
-	asrs r2, r3, #16
-	lsrs r3, r3, #31
-	adds r2, r2, r3
-	ldr r3, .L_0200b468
-	asrs r2, r2, #1
-	ands r2, r3
-	lsls r1, r2, #3
-	subs r1, r1, r2
-	bl Animation_ApplyChildValues
-	b .L_0200b46c
-.L_0200b444:
-	movs r1, #1
-	ldr r0, [r5, #104]
-	bl Func_02005480
-	movs r0, #184
-	bl Func_020056c0
-	ldr r1, [r5, #8]
-	ldr r2, [r5, #16]
-	movs r0, #0
-	bl Map_GetTerrainHeight
-	movs r3, #0
-	str r0, [r5, #12]
-	str r3, [r5, #104]
-	movs r0, #0
-	b .L_0200b474
-	.2byte 0x0000
-.L_0200b468:
-	.4byte 0x00000001
-.L_0200b46c:
-	ldrh r3, [r7]
-	movs r0, #1
-	adds r3, #1
-	strh r3, [r7]
-.L_0200b474:
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-	.section .text.x0200b478,"ax",%progbits
-	.global Func_02003478
-	.thumb_func
-Func_02003478:
-	push {r5, r6, r7, lr}
-	adds r5, r0, #0
-	adds r7, r5, #0
-	adds r7, #100
-	movs r3, #0
-	ldrsh r6, [r7, r3]
-	cmp r6, #0
-	bne .L_0200b4c2
-	movs r0, #136
-	bl Func_020056c0
-	ldr r0, [r5, #104]
-	movs r1, #2
-	bl Func_02005480
-	ldr r1, [r5, #8]
-	ldr r2, [r5, #16]
-	movs r0, #0
-	bl Map_GetTerrainHeight
-	movs r3, #128
-	lsls r3, r3, #13
-	adds r0, r0, r3
-	movs r3, #128
-	lsls r3, r3, #9
-	str r3, [r5, #48]
-	movs r3, #128
-	str r0, [r5, #12]
-	lsls r3, r3, #8
-	adds r0, r5, #0
-	movs r1, #1
-	str r6, [r5, #24]
-	str r6, [r5, #28]
-	str r3, [r5, #52]
-	bl Func_02005528
-	b .L_0200b510
-.L_0200b4c2:
-	cmp r6, #32
-	bgt .L_0200b4ea
-	movs r3, #128
-	lsls r3, r3, #9
-	str r3, [r5, #24]
-	str r3, [r5, #28]
-	ldrh r3, [r7]
-	ldr r0, [r5, #104]
-	lsls r3, r3, #16
-	asrs r2, r3, #16
-	lsrs r3, r3, #31
-	adds r2, r2, r3
-	ldr r3, .L_0200b50c
-	asrs r2, r2, #1
-	ands r2, r3
-	lsls r1, r2, #3
-	subs r1, r1, r2
-	bl Animation_ApplyChildValues
-	b .L_0200b510
-.L_0200b4ea:
-	movs r1, #1
-	ldr r0, [r5, #104]
-	bl Func_02005480
-	movs r0, #184
-	bl Func_020056c0
-	ldr r1, [r5, #8]
-	ldr r2, [r5, #16]
-	movs r0, #0
-	bl Map_GetTerrainHeight
-	movs r3, #0
-	str r0, [r5, #12]
-	str r3, [r5, #104]
-	movs r0, #0
-	b .L_0200b518
-.L_0200b50c:
-	.4byte 0x00000001
-.L_0200b510:
-	ldrh r3, [r7]
-	movs r0, #1
-	adds r3, #1
-	strh r3, [r7]
-.L_0200b518:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 	.section .text.x0200b57e,"ax",%progbits
@@ -6181,6 +6896,382 @@ Func_02004140:
 .L_0200c3e8:
 	.4byte Func_02004080
 	.section .text.x0200c3ec,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.global Func_020043ec
+	.thumb_func
+Func_020043ec:
+	push {r5, r6, r7, lr}
+	mov r7, r11
+	mov r6, r10
+	mov r5, r9
+	push {r5, r6, r7}
+	mov r7, r8
+	push {r7}
+	ldr r3, .L_ja_0200c298
+	movs r0, #133
+	lsls r0, r0, #2
+	adds r3, r3, r0
+	ldr r0, [r3]
+	sub sp, #40
+	bl ObjectTable_Get
+	ldr r2, .L_ja_0200c29c
+	ldr r3, .L_ja_0200c294
+	adds r7, r0, #0
+	strh r3, [r2]
+.L_ja_0200c25e:
+	bl Func_0200410c
+	movs r3, #128
+	lsls r3, r3, #9
+	str r3, [r7, #48]
+	movs r3, #128
+	lsls r3, r3, #8
+	str r3, [r7, #52]
+	movs r3, #128
+	lsls r3, r3, #24
+	str r3, [r7, #56]
+	str r3, [r7, #64]
+	movs r3, #0
+	str r3, [r7, #36]
+	str r3, [r7, #44]
+	ldr r1, .L_ja_0200c2a0
+	ldr r3, [r7, #8]
+	add r2, sp, #28
+	mov r10, r2
+	movs r2, #128
+	lsls r2, r2, #12
+	ands r3, r1
+	adds r3, r3, r2
+	mov r0, r10
+	str r3, [sp, #12]
+	str r3, [r0]
+	b .L_ja_0200c2a4
+.L_ja_0200c294:
+	.4byte 0x00000000
+.L_ja_0200c298:
+	.4byte gPartyState
+.L_ja_0200c29c:
+	.4byte Data_020074c8
+.L_ja_0200c2a0:
+	.4byte 0xfff00000
+.L_ja_0200c2a4:
+	ldr r3, [r7, #12]
+	str r3, [r0, #4]
+	ldr r3, [r7, #16]
+	ands r3, r1
+	adds r3, r3, r2
+	str r3, [sp, #8]
+	str r3, [r0, #8]
+	ldr r2, [sp, #12]
+	str r3, [sp, #16]
+	adds r3, r7, #0
+	adds r3, #34
+	str r2, [sp, #20]
+	str r3, [sp, #4]
+	adds r1, r2, #0
+	ldrb r0, [r3]
+	ldr r2, [sp, #16]
+	bl Func_020054d0
+	str r0, [sp, #24]
+	ldr r2, [sp, #20]
+	ldr r1, [r7, #8]
+	ldr r0, [sp, #16]
+	ldr r3, .L_ja_0200c310
+	ldr r6, [r7, #16]
+	subs r1, r2, r1
+	subs r6, r0, r6
+	mov r8, r3
+	adds r0, r1, #0
+	mov lr, r8
+	.2byte 0xf800
+	adds r1, r6, #0
+	adds r5, r0, #0
+	adds r0, r6, #0
+	mov lr, r8
+	.2byte 0xf800
+	adds r5, r5, r0
+	movs r0, #128
+	lsls r0, r0, #11
+	cmp r5, r0
+	bge .L_ja_0200c320
+	ldr r3, .L_ja_0200c314
+	movs r2, #15
+	ldr r3, [r3]
+	ldr r1, .L_ja_0200c318
+	lsrs r3, r3, #4
+	ands r3, r2
+	lsls r3, r3, #1
+	ldrsh r2, [r1, r3]
+	mov r9, r2
+	lsls r3, r2, #16
+	ldr r2, .L_ja_0200c31c
+	cmp r3, r2
+	bne .L_ja_0200c34c
+	b .L_ja_0200c514
+.L_ja_0200c310:
+	.4byte IwramMulQ16
+.L_ja_0200c314:
+	.4byte gInput
+.L_ja_0200c318:
+	.4byte Data_02005f38
+.L_ja_0200c31c:
+	.4byte 0xffff0000
+.L_ja_0200c320:
+	ldr r3, [sp, #16]
+	ldr r2, [sp, #20]
+	ldr r0, [r7, #16]
+	ldr r1, [r7, #8]
+	subs r0, r3, r0
+	subs r1, r2, r1
+	bl ArcTan2
+	lsls r0, r0, #16
+	asrs r0, r0, #16
+	movs r3, #128
+	ldr r2, .L_ja_0200c348
+	mov r9, r0
+	lsls r3, r3, #6
+	add r3, r9
+	ands r3, r2
+	lsls r3, r3, #16
+	asrs r3, r3, #16
+	mov r9, r3
+	b .L_ja_0200c34c
+.L_ja_0200c348:
+	.4byte 0xffffc000
+.L_ja_0200c34c:
+	movs r0, #128
+	add r2, sp, #28
+	lsls r0, r0, #13
+	mov r1, r9
+	bl Vector_AddPolarOffsetFar
+	ldr r3, [sp, #4]
+	mov r2, r10
+	ldr r1, [r2]
+	ldrb r0, [r3]
+	ldr r2, [r2, #8]
+	bl Func_020054d0
+	mov r11, r0
+	cmp r0, #255
+	beq .L_ja_0200c3ce
+	ldr r3, [sp, #4]
+	mov r2, r10
+	ldrb r0, [r3]
+	ldr r1, [r2]
+	ldr r2, [r2, #8]
+	bl Map_GetTerrainHeight
+	ldr r3, [r7, #12]
+	subs r0, r0, r3
+	movs r3, #128
+	lsls r3, r3, #12
+	cmp r0, r3
+	bgt .L_ja_0200c3ce
+	ldr r0, [sp, #12]
+	mov r2, r10
+	str r0, [r2]
+	ldr r3, [sp, #8]
+	adds r0, r7, #0
+	str r3, [r2, #8]
+	movs r3, #128
+	lsls r3, r3, #10
+	str r3, [r7, #48]
+	movs r3, #200
+	lsls r3, r3, #5
+	adds r3, #153
+	adds r2, r7, #0
+	str r3, [r7, #52]
+	adds r2, #100
+	movs r3, #0
+	strh r3, [r2]
+	ldr r1, [sp, #12]
+	ldr r3, [sp, #8]
+	ldr r2, [r7, #12]
+	bl Func_020054b8
+	adds r0, r7, #0
+	movs r1, #2
+	bl Func_02005480
+	adds r0, r7, #0
+	movs r1, #48
+	bl ObjectDispatch_ApplyValueToChildren
+	adds r0, r7, #0
+	bl Func_020054c0
+	ldr r3, .L_ja_0200c524
+	str r3, [r7, #108]
+	b .L_ja_0200c4aa
+.L_ja_0200c3ce:
+	movs r3, #0
+	mov r0, r9
+	strh r0, [r7, #6]
+	str r3, [r7, #36]
+	str r3, [r7, #44]
+	ldr r2, [sp, #12]
+	str r2, [r7, #8]
+	ldr r3, [sp, #8]
+	str r3, [r7, #16]
+	b .L_ja_0200c4f6
+.L_ja_0200c3e2:
+	ldr r2, [sp, #4]
+	ldr r1, [r6]
+	ldrb r0, [r2]
+	ldr r2, [r6, #8]
+	bl Map_GetTerrainHeight
+	ldr r3, [r7, #12]
+	subs r0, r0, r3
+	movs r3, #128
+	lsls r3, r3, #12
+	cmp r0, r3
+	bgt .L_ja_0200c4ca
+	ldr r3, .L_ja_0200c528
+	ldrh r3, [r3]
+	lsls r3, r3, #16
+	cmp r3, #0
+	bne .L_ja_0200c4ca
+	ldrh r3, [r7, #32]
+	movs r2, #89
+	subs r3, #2
+	str r3, [sp, #0]
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r5, [r3, #20]
+	movs r0, #0
+	adds r2, r2, r5
+	mov r10, r0
+	mov r8, r2
+.L_ja_0200c41a:
+	ldr r3, [r5]
+	cmp r3, #0
+	beq .L_ja_0200c444
+	mov r3, r8
+	ldrb r2, [r3]
+	movs r3, #1
+	ands r3, r2
+	cmp r3, #0
+	beq .L_ja_0200c444
+	cmp r5, r7
+	beq .L_ja_0200c444
+	ldrh r3, [r5, #32]
+	adds r0, r5, #0
+	adds r0, #8
+	subs r3, #2
+	ldr r1, [sp, #0]
+	add r2, sp, #28
+	bl Func_02005538
+	cmp r0, #0
+	bge .L_ja_0200c4ca
+.L_ja_0200c444:
+	movs r0, #1
+	add r10, r0
+	movs r2, #128
+	mov r3, r10
+	add r8, r2
+	adds r5, #128
+	cmp r3, #63
+	ble .L_ja_0200c41a
+	ldr r0, [r6]
+	movs r3, #128
+	str r0, [sp, #20]
+	lsls r3, r3, #10
+	ldr r2, [r6, #8]
+	adds r0, r7, #0
+	str r2, [sp, #16]
+	str r3, [r7, #48]
+	movs r3, #200
+	lsls r3, r3, #5
+	adds r3, #153
+	str r3, [r7, #52]
+	movs r5, #0
+	ldr r1, [r6]
+	ldr r2, [r6, #4]
+	ldr r3, [r6, #8]
+	bl Func_020054b8
+	b .L_ja_0200c482
+.L_ja_0200c47a:
+	movs r0, #1
+	bl WaitFrames
+	adds r5, #1
+.L_ja_0200c482:
+	cmp r5, #179
+	bgt .L_ja_0200c49a
+	adds r0, r7, #0
+	bl Func_02005530
+	cmp r0, #0
+	bne .L_ja_0200c49a
+	ldr r3, .L_ja_0200c528
+	ldrh r3, [r3]
+	lsls r3, r3, #16
+	cmp r3, #0
+	beq .L_ja_0200c47a
+.L_ja_0200c49a:
+	ldr r3, .L_ja_0200c528
+	ldrh r3, [r3]
+	lsls r3, r3, #16
+	cmp r3, #0
+	bne .L_ja_0200c4f6
+	ldr r3, [sp, #24]
+	cmp r11, r3
+	bne .L_ja_0200c4f0
+.L_ja_0200c4aa:
+	movs r0, #128
+	add r2, sp, #28
+	lsls r0, r0, #13
+	mov r1, r9
+	bl Vector_AddPolarOffsetFar
+	ldr r2, [sp, #4]
+	add r6, sp, #28
+	ldrb r0, [r2]
+	ldr r1, [r6]
+	ldr r2, [r6, #8]
+	bl Func_020054d0
+	mov r11, r0
+	cmp r0, #255
+	bne .L_ja_0200c3e2
+.L_ja_0200c4ca:
+	movs r3, #128
+	lsls r3, r3, #10
+	str r3, [r7, #48]
+	movs r3, #128
+	lsls r3, r3, #9
+	str r3, [r7, #52]
+	ldr r2, [r7, #12]
+	adds r0, r7, #0
+	ldr r1, [sp, #20]
+	ldr r3, [sp, #16]
+	bl Func_020054b8
+	adds r0, r7, #0
+	bl Func_020054c0
+	movs r0, #2
+	bl WaitFrames
+	b .L_ja_0200c25e
+.L_ja_0200c4f0:
+	movs r0, #10
+	bl WaitFrames
+.L_ja_0200c4f6:
+	movs r3, #0
+	str r3, [r7, #108]
+	adds r1, r7, #0
+	adds r1, #90
+	ldrb r2, [r1]
+	movs r3, #1
+	orrs r3, r2
+	strb r3, [r1]
+	movs r3, #128
+	lsls r3, r3, #7
+	str r3, [r7, #52]
+	adds r0, r7, #0
+	movs r1, #1
+	bl Func_02005480
+.L_ja_0200c514:
+	add sp, #40
+	pop {r3, r5, r6, r7}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	mov r11, r7
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
+.L_ja_0200c524:
+	.4byte Func_02004080
+.L_ja_0200c528:
+	.4byte Data_020074c8
+	.else
 	.global Func_020043ec
 	.thumb_func
 Func_020043ec:
@@ -6573,6 +7664,7 @@ Func_020043ec:
 	.4byte Data_020074c8
 .L_0200c6fc:
 	.4byte Func_02004080
+	.endif
 	.section .text.x0200c70c,"ax",%progbits
 	.balign 4
 	.global Func_0200470c

@@ -13,3 +13,36 @@ void Func_02002e04(s32 id)
         Func_02003cc4(object, 2);
     }
 }
+
+void Func_02002e34(s32 entrance)
+{
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    s32 i;
+
+    Func_02003d7c();
+    Func_02003eac(0);
+    ObjectMotion_SetActionVariant(gPartyState.current_owner, 1);
+    leader->motion_flags = 0;
+    /* FAKEMATCH: the native clears the motion flags before it addresses the priority flags (differ 2 without the barrier). */
+    __asm__("" : "+r"(leader), "+m"(leader->motion_flags));
+    leader->priority_flags |= 0x20;
+    Func_02003ef4(215);
+    Func_02003cc4(leader, 18);
+    Func_02003ef4(612);
+    for (i = 0; i < 60; i++) {
+        s32 angle;
+
+        if (i == 30)
+            Event_FinishScreenTransition();
+        leader->y -= 0x4000;
+        angle = leader->angle;
+        /* FAKEMATCH: the native loads the angle before it builds the turn (differ 2 without the barrier). */
+        __asm__ volatile("" : "+r"(angle));
+        leader->angle = angle + 0x1000;
+        if ((i & 7) == 0)
+            Func_02002bd4(Object_GetById(15));
+        WaitFrames(1);
+    }
+    Func_02003d84();
+    Func_02003e5c(entrance);
+}

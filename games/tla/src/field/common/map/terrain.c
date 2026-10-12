@@ -10,6 +10,10 @@
 #include "ram_buffer.h"
 #include "map.h"
 #include "scene.h"
+#include "dma.h"
+#include "mem.h"
+#include "io_reg.h"
+#include "ramcode.h"
 
 extern u32 gMapBlocks[];
 
@@ -90,4 +94,19 @@ body:
     }
 done:
     work[3] = 0;
+}
+
+extern const u8 Render_DrawMapCode[];
+extern u8 Render_DrawMapCodeSize[];
+extern u8 Data_0201c000[];
+extern u8 Data_0203c000[];
+
+void Func_0802dd08(s32 arg0, s32 arg1)
+{
+    void (*routine)(s32, s32, u8 *, u8 *);
+    u8 *tiles = Data_0201c000;
+
+    RamCode_Load(routine, Render_DrawMapCode, Render_DrawMapCodeSize);
+    routine(arg0, arg1, Data_0203c000, tiles + 0x1000);
+    MemFree(routine);
 }

@@ -48,4 +48,20 @@ Func_08020318:
 	.global Func_08020320
 	.thumb_func
 Func_08020320:
+.ifdef TLA_EDITION_DE
+	overlay_veneer Func_0802da88
+.else
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_0802da88
+.else
+.ifdef TLA_EDITION_FR
+	overlay_veneer Func_0802da88
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_0802da88
+.else
 	overlay_veneer Func_0802db88
+.endif
+.endif
+.endif
+.endif

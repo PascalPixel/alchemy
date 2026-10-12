@@ -20,7 +20,7 @@ void UiIcon_PrepareObject(struct MenuPageIcon *icon);
 
 void Menu_SetPageIcons(s32 page_size, s32 first, s32 window, s32 x, s32 y)
 {
-    struct MenuPageWork *menu = Ram_HeapSlots->menu_page_work;
+    struct MenuPageWork *menu = Ram_HeapSlots->menu_runtime;
     struct MenuPageIcon *icon;
     s32 i;
 

@@ -1,4 +1,4 @@
-/* differ 4: ported from ☀️ radpart.c; native loads the scale constant first */
+/* differ 2: ported from ☀️ radpart.c. The native loads the step constant before the two scales (ldr r1; ldr r3; ldr r2); with the tagged barrier that puts the second add after the angle load, the constant is loaded between them. Without the barrier the second add and the first half of the turn come one step early (differ 4, the ☀️ source as it stands); the barrier before the angle load, or a step local, give the same differ 2; a "+r" barrier on the step swaps the registers (differ 18). */
 #include "types.h"
 #include "system.h"
 #include "animspr.h"
@@ -141,12 +141,20 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg);
 
 void BattleFx_ShrinkObjectAndDestroyFast(void *obj)
 {
+    struct MotionObject *o = obj;
     s32 scale;
+    s32 scale_y;
+    u32 angle;
 
-    scale = ((struct MotionObject *)obj)->scale_x + 0xFFFFFC00;
-    ((struct MotionObject *)obj)->scale_y = ((struct MotionObject *)obj)->scale_y + 0xFFFFFC00;
-    ((struct MotionObject *)obj)->angle = ((struct MotionObject *)obj)->angle + 0x2000;
-    ((struct MotionObject *)obj)->scale_x = scale;
+    scale_y = o->scale_y + 0xFFFFFC00;
+    scale = o->scale_x;
+    o->scale_y = scale_y;
+    angle = o->angle;
+    /* FAKEMATCH: the native adds the step to the second scale after it loads the angle; without the barrier the add comes before the first store (differ 4). */
+    __asm__("");
+    scale += 0xFFFFFC00;
+    o->angle = angle + 0x2000;
+    o->scale_x = scale;
     if (scale < 0x3000) {
         ObjectDispatch_ReleaseFar();
     }

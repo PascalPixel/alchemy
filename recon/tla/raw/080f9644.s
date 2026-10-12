@@ -73,7 +73,7 @@ Func_080f9644:
 	ldr r0, [r1, #48]
 	bl UiText_DrawWorkValueWithLabel
 	movs r0, #0
-	bl Func_080fa50c
+	bl ItemMenu_PrepOwner
 	movs r3, #1
 	adds r7, r0, #0
 	negs r3, r3
@@ -96,7 +96,7 @@ Func_080f9644:
 	adds r3, #22
 	add r3, r9
 	ldrb r0, [r3]
-	bl Func_080fad1c
+	bl ItemMenu_Count
 	movs r3, #0
 	mov r8, r3
 	cmp r0, #0
@@ -580,7 +580,7 @@ Func_080f9644:
 	add r3, r9
 	ldrb r0, [r3]
 	movs r1, #0
-	bl Func_080fae2c
+	bl ItemMenu_RefreshOwner
 	movs r3, #134
 	lsls r3, r3, #2
 	add r3, r9
@@ -650,7 +650,7 @@ Func_080f9644:
 	adds r1, r7, #0
 	ldrb r0, [r6]
 	ands r1, r3
-	bl Func_080fad48
+	bl InventoryMenu_GetItemQuantity
 	adds r5, r0, #0
 	cmp r5, #30
 	bne .L_080f9bd8
@@ -658,7 +658,7 @@ Func_080f9644:
 	mov r10, r2
 .L_080f9bd8:
 	ldrb r0, [r6]
-	bl Func_080fad1c
+	bl ItemMenu_Count
 	cmp r0, #15
 	bne .L_080f9be6
 	cmp r5, #0
@@ -842,7 +842,7 @@ Func_080f9644:
 .L_080f9d46:
 	movs r1, #1
 	ldrb r0, [r7]
-	bl Func_080fae2c
+	bl ItemMenu_RefreshOwner
 	mov r3, r9
 	ldr r2, [r3, #20]
 	movs r3, #13
@@ -1206,7 +1206,7 @@ Func_080f9644:
 	bl ItemMenu_SetItemWin5
 	ldrb r0, [r7]
 	movs r1, #1
-	bl Func_080fae2c
+	bl ItemMenu_RefreshOwner
 	cmp r6, #0
 	bne .L_080fa090
 	ldrb r3, [r7]

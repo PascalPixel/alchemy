@@ -122,7 +122,7 @@ BattleEffect_InitializeSharedScene:
 	lsls r2, r5, #2
 	ldr r1, [r3, r2]
 	movs r0, #8
-	bl Func_080dc1b0
+	bl Field_BeginColorTransition
 	pop {r5, pc}
 	.2byte 0x0000
 .L_080dc374:

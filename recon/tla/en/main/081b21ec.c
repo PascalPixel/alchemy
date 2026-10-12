@@ -1,3 +1,4 @@
+/* Near miss: differ 2 of 97 (one reordered row). After the DMA the native loads the halfword mask 0x1f from the pool (ldr r7) before i = 0 and the word 31 are built; the draft builds those two first. All three have priority 2 in sched2. The twin in The Broken Seal needs no device. Tried 2026-10-12: the target components read before the colour components (differ 66); a barrier between i = 0 and the loop moves only the zero copy (differ 4); three permuter minutes. */
 #include "resource.h"
 #include "dma.h"
 

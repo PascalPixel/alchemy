@@ -1,14 +1,16 @@
+/* Near miss, differ 4 of 194: two loads sit one row earlier in the native
+ * (the workspace before sub sp; the sequence between the two halves of
+ * 0xfde8). The third, the sequence before the slot is scaled, is ordered by
+ * an empty one-pass block after a sequence temporary (round 5); a forced
+ * half of the limit with the same block loads the sequence first and takes
+ * r2 and r3. A split-limit temporary
+ * with two barriers orders the middle one but takes r3 and r2 where the
+ * native has r1 and r3, and a barrier at the top moves three more rows. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "save_state.h"
 #include "dma.h"
 #include "flash.h"
-
-struct DmaRegisters {
-    u32 source;
-    u32 destination;
-    u32 control;
-};
 
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
 #define DMA3_BUSY 0x80000000
@@ -35,7 +37,7 @@ u32 SaveState_WriteWorkspaceSlot(s32 sector);
 s32 SaveState_InvalidateSlot(s32 index);
 
 u32 SaveState_SelectWriteSlot(s32 record_id);
-u32 Func_0801601c(s32 record_id);
+u32 SaveState_FindLatestSequence(s32 record_id);
 
 s32 SaveState_WriteRecord(s32 record_id, void *source)
 {
@@ -58,7 +60,7 @@ s32 SaveState_WriteRecord(s32 record_id, void *source)
     WAIT_DMA();
     header.record_id = record_id;
     header.checksum = SaveState_ChecksumWorkspace();
-    header.sequence = Func_0801601c(record_id) + 1;
+    header.sequence = SaveState_FindLatestSequence(record_id) + 1;
     START_DMA(&header, work->slot, 0x84000004);
     WAIT_DMA();
     work->sector_count = 0;
@@ -81,6 +83,13 @@ s32 SaveState_WriteRecord(s32 record_id, void *source)
     }
     work->occupied[slot] = 1;
     work->record_id[slot] = record_id;
-    work->sequence[slot] = header.sequence;
+    {
+        u32 sequence = header.sequence;
+
+        /* FAKEMATCH: the empty one-pass block ends the scheduling region, so the sequence loads before the slot is scaled as in the native (one reordered pair without it). */
+        do {
+        } while (0);
+        work->sequence[slot] = sequence;
+    }
     return 0;
 }

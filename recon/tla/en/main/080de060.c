@@ -1,3 +1,7 @@
+/* Near miss, differ 12 of 113 (was 20): the effect work comes from its heap
+ * slot and the angle is a halfword. What is left is scheduling: the work load
+ * against the argument copy, the three position loads against the two
+ * constants, and the state pointer copy. */
 #include "fixed_math.h"
 #include "types.h"
 
@@ -15,8 +19,8 @@ struct EffectTarget {
 };
 
 struct EffectRuntime {
-    s32 angle;
-    u8 unknown_04[12];
+    u16 angle;
+    u8 unknown_02[14];
     struct EffectTarget *target;
 };
 
@@ -37,7 +41,7 @@ struct RadialBurstEffect {
     u8 enabled;
 };
 
-extern struct EffectRuntime *gEffectWork;
+#include "ram_buffer.h"
 
 s32 Random16(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectPosition *output);
@@ -47,7 +51,7 @@ void BattleFx_ClearOwnedSlot(struct RadialBurstEffect *effect);
 
 void BattleFx_UpdateRadialBurst(struct RadialBurstEffect *effect)
 {
-    struct EffectRuntime *runtime = gEffectWork;
+    struct EffectRuntime *runtime = Ram_HeapSlots->effect_work;
     struct EffectPosition value;
     s32 state;
 

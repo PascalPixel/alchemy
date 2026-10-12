@@ -98,13 +98,13 @@ Func_080feb58:
 	adds r3, r7, r1
 	strb r0, [r3]
 	adds r0, r5, #0
-	bl Func_080fd6b0
+	bl PsynergyMenu_DrawPsynergyIcons
 	movs r2, #8
 	movs r0, #96
 	movs r1, #96
 	bl Func_081005e4
 	adds r0, r5, #0
-	bl Func_080facd8
+	bl Menu_HideEmptyEntryIcons
 	mov r2, r11
 	cmp r2, #2
 	bne .L_080fec5a

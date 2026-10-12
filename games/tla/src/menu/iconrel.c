@@ -21,3 +21,21 @@ void MenuIcon_ReleaseSlots(void)
     for (i = 4; i >= 0; i--)
         Resource_ResetEntry(*resource++);
 }
+
+struct MenuSlotAttr {
+    u8 mode;
+    u8 unknown_01;
+    u16 x : 9;
+    u8 unknown_04[8];
+};
+
+void MenuIcon_SetSlot(s32 index, u32 x, s32 mode)
+{
+    u8 *menu = Ram_HeapSlots->menu_runtime;
+    /* FAKEMATCH: the offset as its own value adds the row and the field offset before the work pointer, as in Func_0810be70 (itemico2.c). */
+    s32 offset = index * sizeof(struct MenuSlotAttr) + 0xbd0; /* slots[index] + 4 */
+    struct MenuSlotAttr *slot = (struct MenuSlotAttr *)(menu + offset);
+
+    slot->x = x;
+    slot->mode = mode;
+}

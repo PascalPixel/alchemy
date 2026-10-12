@@ -3,17 +3,7 @@
 #include "ram_buffer.h"
 #include "btlpty.h"
 #include "b5_context.h"
-
-struct SaveSummary {
-    u8 unknown_00[0x1c];
-    u8 level;
-    u8 unknown_1d[0x23];
-};
-
-struct SaveWorkspace {
-    u8 unknown_0000[0x303c];
-    struct SaveSummary summary[3];
-};
+#include "save_state.h"
 
 u32 SaveState_FindFreeSummarySlot(void)
 {
@@ -29,4 +19,34 @@ u32 SaveState_FindFreeSummarySlot(void)
             return i;
     }
     return 999;
+}
+
+s32 Func_0801596c(void);
+s32 Func_08016054(void);
+void SaveState_ReleaseWorkspace(void);
+
+s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
+{
+    s32 i;
+    s32 cnt;
+    struct SaveSummary *summary;
+    struct SaveWorkspace *work;
+
+    if (Func_0801596c() != 0) {
+        cnt = -9;
+    } else {
+        cnt = Func_08016054();
+        if (flag != 0) {
+            work = Ram_HeapSlots->serial_work;
+            /* FAKEMATCH: Without it the summary offset starts before the workspace loads (differ 2). */
+            __asm__("" : : "r"(work));
+            summary = work->summary;
+            for (i = 0; i < 3; i++) {
+                if (summary[i].send_flag != 0)
+                    cnt--;
+            }
+        }
+    }
+    SaveState_ReleaseWorkspace();
+    return cnt;
 }

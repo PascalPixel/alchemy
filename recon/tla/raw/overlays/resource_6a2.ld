@@ -27,7 +27,7 @@ SECTIONS
         "*/resource_6a2_overlay.o"(.text.x02009018)
         "*/resource_6a2_overlay.o"(.text.x020091e0)
         "*/resource_6a2_overlay.o"(.text.x0200930c)
-        "*/resource_6a2_overlay.o"(.text.x02009550)
+        "*/games/tla/src/field/overlay_6a2/s1550.o"(.text)
         "*/resource_6a2_overlay.o"(.text.x020095d8)
         "*/resource_6a2_overlay.o"(.text.x02009648)
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)

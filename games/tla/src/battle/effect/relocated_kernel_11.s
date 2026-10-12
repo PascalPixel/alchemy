@@ -204,3 +204,5 @@ AlchemyUncreditedEnd_0813b9a2:
 	pop	{r5, r6, r7, r8, r9, sl, fp}
 	bx	lr
 	.4byte	gTransformTranslation
+	.global Data_0813b9a0CodeSize
+	.set Data_0813b9a0CodeSize, . - Data_0813b9a0

@@ -1,5 +1,22 @@
 #include "local.h"
 
+void Func_02000088(void)
+{
+    u8 *work = Ram_HeapSlots->event_work;
+    struct PartyState *party;
+    u8 *flag;
+
+    /* FAKEMATCH: ⚓️ loads the event work before it builds the flag's offset; without the barrier the offset's first half is scheduled ahead of the load (differ 2). */
+    asm volatile("");
+    flag = work + 0xd38;
+    *flag = 1;
+    party = &gPartyState;
+    /* FAKEMATCH: ⚓️ loads the party state's address before it builds the entrance's offset; read as a plain field the offset's first half is scheduled ahead of the load (differ 2). */
+    asm volatile("" : "+l"(party));
+    if (party->entrance != 10)
+        *flag = 0;
+}
+
 const u8 *Func_020000b8(void)
 {
     if (GameFlag_Test(0x8ff))

@@ -1405,7 +1405,7 @@ Func_0815b764:
 	lsls r2, r2, #10
 	lsls r3, r3, #12
 	str r5, [sp, #0]
-	bl Func_0815f000
+	bl BattleFx_StartActorMotion
 	ldr r3, [sp, #100]
 	movs r2, #1
 	ldrsh r0, [r7, r3]

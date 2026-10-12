@@ -35,7 +35,7 @@ Func_080ea14c:
 	lsls r3, r3, #2
 	ldr r1, [r1, r3]
 	movs r0, #8
-	bl Func_080dc1b0
+	bl Field_BeginColorTransition
 	ldr r2, [sp, #44]
 	add r5, sp, #52
 	ldr r3, [r2, #8]

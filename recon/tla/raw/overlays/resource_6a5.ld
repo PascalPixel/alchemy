@@ -11,7 +11,7 @@ SECTIONS
         "*/resource_6a5_overlay.o"(.text.x020080ec)
         "*/games/tla/src/field/common/object/step_angle.o"(.text)
         "*/resource_6a5_overlay.o"(.text.x02008198)
-        "*/resource_6a5_overlay.o"(.text.x0200845c)
+        "*/games/tla/src/field/overlay_6a5/s045c.o"(.text)
         "*/resource_6a5_overlay.o"(.text.x020084c8)
         "*/resource_6a5_overlay.o"(.text.x020085b8)
         "*/resource_6a5_overlay.o"(.text.x0200865c)
@@ -63,7 +63,6 @@ SECTIONS
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
         "*/games/tla/src/field/overlay_6a5/data2.o"(.data)
-        "*/resource_6a5_overlay.o"(.rodata.x0200e520)
         "*/games/tla/src/field/overlay_6a5/data3.o"(.data)
     }
     .bss : { "*/resource_6a5_overlay.o"(.bss) }

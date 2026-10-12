@@ -190,10 +190,12 @@ PartyInventory_HasSpace:
 	.thumb_func
 Func_02000db0:
 	overlay_veneer Func_080ad240
+	.ifndef TLA_EDITION_JA
 	.global Djinn_AddToLeastLoadedOwner
 	.thumb_func
 Djinn_AddToLeastLoadedOwner:
 	overlay_veneer Djinn_AddToLeastLoadedOwnerFar
+	.endif
 	.global Func_02000dc0
 	.thumb_func
 Func_02000dc0:

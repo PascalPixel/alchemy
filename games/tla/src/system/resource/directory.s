@@ -31,7 +31,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data012
 	resource WindowTiles, Ui_WindowTiles
 	resource , UiText_SmallFont
-	resource , Resource_Data015
+	resource Data015, Resource_Data015
 	resource , Title_ScreenPicture
 	resource , Title_IntroGraphicsC
 	resource , Resource_Data018
@@ -43,7 +43,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data01E
 	resource , Resource_Data01F
 	resource , Title_NintendoLogo
-	resource , Resource_Data021
+	resource , Title_CamelotLogo
 	resource , Title_LogoOnBlackPicture
 	resource , Resource_Data023
 	resource , Resource_Data024
@@ -471,7 +471,7 @@ Resource_DirectoryTable:
 	resource , Field_WalkPathI
 	resource , Field_WalkPathJ
 	resource , Lettering_Banner
-	resource , Shop_CursorFrameA
+	resource ShopCursorFrames, Shop_CursorFrameA
 	resource , Shop_CursorFrameB
 	resource , Shop_CursorFrameC
 	resource , Shop_CursorFrameD
@@ -479,7 +479,7 @@ Resource_DirectoryTable:
 	resource , Shop_CursorFrameF
 	resource , Shop_CursorFrameG
 	resource , Shop_CursorFrameH
-	resource , Resource_Data1D5
+	resource Data1D5, Resource_Data1D5
 	resource Icons, Ui_Icons
 	resource CommandIcons, Ui_CommandIcons
 	resource , Resource_Data1D8
@@ -518,8 +518,8 @@ Resource_DirectoryTable:
 	resource , Resource_Data1F9
 	resource UiIconTiles, Resource_Data1FA
 	resource , Resource_Data1FB
-	resource , Resource_Data1FC
-	resource , Resource_Data1FD
+	resource MenuSmallDownArrowTiles, Resource_Data1FC
+	resource MenuArrowTiles, Resource_Data1FD
 	resource , Resource_Data1FE
 	resource , Resource_Data1FF
 	resource ItemMenuTilesA, Resource_Data200
@@ -642,7 +642,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set00TilesB
 	resource , Tileset_Set00TilesC
 	resource , Tileset_Set00TilesD
-	resource , Resource_Data278
+	resource , Field_Map002
 	resource , Tileset_Set01Palette
 	resource , Tileset_Set01TilesA
 	resource , Tileset_Set01TilesB
@@ -761,7 +761,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set18TilesB
 	resource , Tileset_Set18TilesC
 	resource , Tileset_Set18TilesD
-	resource , Resource_Data2EF
+	resource , Field_Map036
 	resource , Tileset_Set19Palette
 	resource , Tileset_Set19TilesA
 	resource , Tileset_Set19TilesB
@@ -1413,7 +1413,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set103TilesB
 	resource , Tileset_Set103TilesC
 	resource , Tileset_Set103TilesD
-	resource , Resource_Data57B
+	resource , Field_Map238
 	resource , Tileset_Palette54
 	resource , Field_Map239
 	resource , Field_Map240

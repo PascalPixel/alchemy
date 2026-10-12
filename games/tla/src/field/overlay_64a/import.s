@@ -106,10 +106,12 @@ UiText_DrawResource:
 	.thumb_func
 UiText_DrawCharacterAtOffset:
 	overlay_veneer UiText_DrawCharacterAtOffsetFar
+	.ifndef TLA_EDITION_JA
 	.global UiText_DrawStringInWindow
 	.thumb_func
 UiText_DrawStringInWindow:
 	overlay_veneer UiText_DrawStringInWindowFar
+	.endif
 	.global RenderOutput_Create
 	.thumb_func
 RenderOutput_Create:
@@ -214,10 +216,12 @@ Party_AddActiveOwner:
 	.thumb_func
 Party_RemoveActiveOwner:
 	overlay_veneer Party_RemoveActiveOwnerFar
+	.ifndef TLA_EDITION_JA
 	.global Owner_GetLevelThreshold
 	.thumb_func
 Owner_GetLevelThreshold:
 	overlay_veneer Owner_GetLevelThresholdFar
+	.endif
 	.global Func_02002370
 	.thumb_func
 Func_02002370:
@@ -315,11 +319,7 @@ Func_020023e0:
 	.ifdef TLA_EDITION_IT
 	overlay_veneer Func_080c8930
 	.else
-	.ifdef TLA_EDITION_JA
-	overlay_veneer Party_AddActiveOwnerFar
-	.else
 	overlay_veneer Func_080c8940
-	.endif
 	.endif
 	.endif
 	.global Func_020023e8

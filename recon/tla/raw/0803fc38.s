@@ -110,4 +110,4 @@ Func_0803fc38:
 .L_0803fd0c:
 	.4byte gPartyState
 .L_0803fd10:
-	.4byte Func_0803fb60
+	.4byte GraphicsPalette_LoadSelectionResourcesAndAdvance

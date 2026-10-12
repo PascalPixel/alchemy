@@ -51,19 +51,19 @@ msgctxt "MsgStatusLabel"
 msgid "00010"
 msgstr "Tiempo jugado:"
 
-msgctxt "message"
+msgctxt "MsgNoBackupMemory"
 msgid "00011"
 msgstr "No se ha detectado la{line_break}{text_color:5}memoria interna{reset_text_style}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSaveFailed"
 msgid "00012"
 msgstr "{text_color:5}No se pudo guardar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLoadFailed"
 msgid "00013"
 msgstr "{text_color:5}No se pudo cargar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEraseFailed"
 msgid "00014"
 msgstr "{text_color:5}No se pudo borrar.{end_wait}"
 
@@ -91,7 +91,7 @@ msgctxt "message"
 msgid "00020"
 msgstr "¿Qué partida quieres borrar?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOverwriteConfirm"
 msgid "00021"
 msgstr "¿Sobrescribir esta partida?{end_now}"
 
@@ -99,7 +99,7 @@ msgctxt "message"
 msgid "00022"
 msgstr "¿Quieres sobrescribir la{line_break}partida con la que empezaste?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgEraseConfirm"
 msgid "00023"
 msgstr "¿Quieres borrarla?{end_now}"
 
@@ -107,15 +107,15 @@ msgctxt "message"
 msgid "00024"
 msgstr "¿Quieres transferirla?"
 
-msgctxt "message"
+msgctxt "MsgGameSaved"
 msgid "00025"
 msgstr "Partida guardada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFileErased"
 msgid "00026"
 msgstr "Partida borrada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFileCopied"
 msgid "00027"
 msgstr "Partida copiada.{end_wait}"
 
@@ -123,19 +123,19 @@ msgctxt "message"
 msgid "00028"
 msgstr "Partida transferida.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSaving"
 msgid "00029"
 msgstr "Guardando..."
 
-msgctxt "message"
+msgctxt "MsgErasing"
 msgid "00030"
 msgstr "Borrando..."
 
-msgctxt "message"
+msgctxt "MsgCopying"
 msgid "00031"
 msgstr "Copiando..."
 
-msgctxt "message"
+msgctxt "MsgDoNotTurnThePower"
 msgid "00032"
 msgstr "No apagues (OFF)"
 
@@ -959,7 +959,7 @@ msgctxt "message"
 msgid "00237"
 msgstr "Ropa. Resiste el agua."
 
-msgctxt "MsgScene694No01"
+msgctxt "message"
 msgid "00238"
 msgstr "Ropa. Recupera los PP."
 
@@ -14747,7 +14747,7 @@ msgctxt "message"
 msgid "03684"
 msgstr "¡{argument_ability_name} de {argument_actor_name:1} está preparado!"
 
-msgctxt "message"
+msgctxt "MsgPartyFlees"
 msgid "03685"
 msgstr "¡{protagonist_name} y sus amigos huyen!"
 
@@ -15923,11 +15923,11 @@ msgctxt "message"
 msgid "03978"
 msgstr "{argument_ability_name}...{page_break}Aquí no funciona.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMonstersAttackLess"
 msgid "03979"
 msgstr "Los monstruos atacarán{line_break}con menos frecuencia.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAbilityWoreOff"
 msgid "03980"
 msgstr "Cesó el efecto de {argument_ability_name}.{end_wait}"
 
@@ -15935,7 +15935,7 @@ msgctxt "message"
 msgid "03981"
 msgstr "¿Usar {argument_item_name:2}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgItemWoreOff"
 msgid "03982"
 msgstr "Cesó el efecto de {argument_item_name:2}.{end_wait}"
 
@@ -16339,7 +16339,7 @@ msgctxt "message"
 msgid "04082"
 msgstr "¡{argument_item_name:2} tiene mucho valor!{line_break}¡Tiene que ser para ti!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPartyCannotCarry"
 msgid "04083"
 msgstr "El equipo de {protagonist_name} no puede{line_break}llevar más {argument_item_name:5}.{page_break}"
 
@@ -16375,19 +16375,19 @@ msgctxt "message"
 msgid "04091"
 msgstr "Perdido - {end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChooseYourParameters"
 msgid "04092"
 msgstr "Cambia aquí la configuración.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhatIsThis"
 msgid "04093"
 msgstr "¿Qué es esto, una broma?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgThereSNoSuch"
 msgid "04094"
 msgstr "No hay dicha opción.{line_break}Pregúntale al Sr. Sugimoto.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheSettingsAre"
 msgid "04095"
 msgstr "Las opciones están fijadas.{line_break}El resto depende de ti.{end_wait}"
 
@@ -16539,7 +16539,7 @@ msgctxt "message"
 msgid "04132"
 msgstr "Juntos"
 
-msgctxt "message"
+msgctxt "MsgDebugEntryName"
 msgid "04133"
 msgstr "Pantalla de título"
 
@@ -16931,7 +16931,7 @@ msgctxt "message"
 msgid "04230"
 msgstr "Shop Test"
 
-msgctxt "message"
+msgctxt "MsgDebugCategoryName"
 msgid "04231"
 msgstr "TITLE"
 
@@ -18231,7 +18231,7 @@ msgctxt "message"
 msgid "04555"
 msgstr "SHOPTEST"
 
-msgctxt "message"
+msgctxt "MsgBecameCursed"
 msgid "04556"
 msgstr "¡Te han maldecido!{end_wait}"
 
@@ -18259,7 +18259,7 @@ msgctxt "message"
 msgid "04562"
 msgstr "¿Equipar?"
 
-msgctxt "message"
+msgctxt "MsgItemMenuEmpty"
 msgid "04563"
 msgstr "No tienes objetos."
 
@@ -18367,7 +18367,7 @@ msgctxt "message"
 msgid "04589"
 msgstr "{button_icon:3}:¿Qué Psinergía?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyMenuEmpty"
 msgid "04590"
 msgstr "Sin Psinergía."
 
@@ -18963,7 +18963,7 @@ msgctxt "message"
 msgid "04738"
 msgstr "¡Tiene muchos!"
 
-msgctxt "message"
+msgctxt "MsgItBroke"
 msgid "04739"
 msgstr "¡Se rompió!"
 
@@ -19275,11 +19275,11 @@ msgctxt "message"
 msgid "04816"
 msgstr "Djinn preparado.{line_break}{argument_actor_name:1} es ahora {argument_class_name:1}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgStatusNameNormal"
 msgid "04817"
 msgstr "Normal"
 
-msgctxt "message"
+msgctxt "MsgStatusNameDown"
 msgid "04818"
 msgstr "Cayó"
 
@@ -19619,7 +19619,7 @@ msgctxt "message"
 msgid "04902"
 msgstr "Empezar partida"
 
-msgctxt "message"
+msgctxt "MsgFullPpAndMoney"
 msgid "04903"
 msgstr "PP y monedas al máximo"
 
@@ -19707,7 +19707,7 @@ msgctxt "message"
 msgid "04924"
 msgstr "Psinerg."
 
-msgctxt "message"
+msgctxt "MsgPasswordTransferHelp"
 msgid "04925"
 msgstr "Transfiere una partida"
 
@@ -19715,7 +19715,7 @@ msgctxt "message"
 msgid "04926"
 msgstr "acabada por contraseña."
 
-msgctxt "message"
+msgctxt "MsgCableTransferHelp"
 msgid "04927"
 msgstr "Conecta dos Game Boy Advance"
 
@@ -19727,7 +19727,7 @@ msgctxt "message"
 msgid "04929"
 msgstr "transferir tu partida acabada."
 
-msgctxt "message"
+msgctxt "MsgClearDataTransferHelp"
 msgid "04930"
 msgstr "Partida acabada guardada."
 
@@ -20527,7 +20527,7 @@ msgctxt "MsgPiece"
 msgid "05129"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgYourCoins"
 msgid "05130"
 msgstr "Tus monedas:"
 
@@ -20631,19 +20631,19 @@ msgctxt "message"
 msgid "05155"
 msgstr "{argument_actor_name:1} no puede equiparlo.{line_break}Aun así, ¿lo quieres?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHowManyToBuy"
 msgid "05156"
 msgstr "¿Qué cantidad quieres?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHereYouGo"
 msgid "05157"
 msgstr "¡Pues aquí tienes!{page_break}"
 
-msgctxt "message"
+msgctxt "MsgEquipNowPrompt"
 msgid "05158"
 msgstr "¿Quieres equiparlo{line_break}ahora, {argument_actor_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgLookBolder"
 msgid "05159"
 msgstr "¡Ahora pareces más fuerte!{page_break}"
 
@@ -21159,7 +21159,7 @@ msgctxt "message"
 msgid "05287"
 msgstr "Volved cuando necesitéis{line_break}alguna otra cura.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgReviveService"
 msgid "05288"
 msgstr "Mmm... Caíste en la{line_break}batalla y necesitas{line_break}resucitar, ¿no?{page_break}"
 
@@ -21199,7 +21199,7 @@ msgctxt "message"
 msgid "05297"
 msgstr "No necesita cura."
 
-msgctxt "message"
+msgctxt "MsgCurePoisonService"
 msgid "05298"
 msgstr "Mmm... ¿Así que{line_break}necesitas un antídoto{line_break}para curar el veneno?{page_break}"
 
@@ -21239,7 +21239,7 @@ msgctxt "message"
 msgid "05307"
 msgstr "No tiene veneno."
 
-msgctxt "message"
+msgctxt "MsgExorcismService"
 msgid "05308"
 msgstr "¿Quieres que espante{line_break}a los malos espíritus?{page_break}"
 
@@ -21279,7 +21279,7 @@ msgctxt "message"
 msgid "05317"
 msgstr "El aliado no está poseído."
 
-msgctxt "message"
+msgctxt "MsgRemoveCurseService"
 msgid "05318"
 msgstr "Mmm... Así que queréis{line_break}despojaros de los objetos{line_break}malditos, ¿no?{page_break}"
 
@@ -21851,7 +21851,7 @@ msgctxt "message"
 msgid "05460"
 msgstr "...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No01"
 msgid "05461"
 msgstr "¡Eh, tú! ¿Quieres{line_break}probar suerte con{line_break}los dados?{page_break}Vale {argument_signed_number} moneda{control:13}.{end_now}"
 
@@ -21863,11 +21863,11 @@ msgctxt "message"
 msgid "05463"
 msgstr "¿No? Pues bueno.{line_break}¿El siguiente...?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No02"
 msgid "05464"
 msgstr "Lee el cartel si no{line_break}conoces las reglas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No03"
 msgid "05465"
 msgstr "¡Eh, tú! ¡No tienes{line_break}suficientes monedas! ¡Si no{line_break}hay monedas, no hay juego!{end_wait}"
 
@@ -21947,11 +21947,11 @@ msgctxt "message"
 msgid "05484"
 msgstr "No puedo dejar de jugar a{line_break}los Dados de la Suerte, ¡pero{line_break}tampoco puedo gastar más!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No08"
 msgid "05485"
 msgstr "Ganar o perder es{line_break}pura suerte. Yo no hago{line_break}trampas a nadie.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No09"
 msgid "05486"
 msgstr "Las reglas de los Dados de la{line_break}Suerte tampoco son complicadas.{page_break}Puedes aprenderlas{line_break}mientras juegas.{end_wait}"
 
@@ -21967,7 +21967,7 @@ msgctxt "message"
 msgid "05489"
 msgstr "Mi suerte se ha acabado{line_break}por hoy. Será mejor que{line_break}deje de jugar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No10"
 msgid "05490"
 msgstr "¡Colócate ahí y{line_break}prueba tu suerte{line_break}con las tragaperras!{end_wait}"
 
@@ -21991,7 +21991,7 @@ msgctxt "message"
 msgid "05495"
 msgstr "Si tienes demasiados{line_break}objetos, no podrás{line_break}llevar contigo lo que{page_break}ganes. ¿Vale?{end_now}"
 
-msgctxt "MsgScene694No10"
+msgctxt "message"
 msgid "05496"
 msgstr "Entonces suelta{line_break}algunos objetos{line_break}y vuelve de nuevo.{end_wait}"
 
@@ -22059,7 +22059,7 @@ msgctxt "message"
 msgid "05512"
 msgstr "5 líneas, 3 tickets;{line_break}y 7 líneas, 4 tickets.{page_break}¡Invierte todos{line_break}tus tickets en{line_break}la Tragaperras!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No21"
 msgid "05513"
 msgstr "Premios de la Tragaperras{page_break}"
 
@@ -22139,11 +22139,11 @@ msgctxt "message"
 msgid "05532"
 msgstr "Esto es una Medalla Suerte,{line_break}así que no debería pasar nada{line_break}si fallo un poquito.{page_break}Necesito toda la buena{line_break}suerte que pueda conseguir.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No22"
 msgid "05533"
 msgstr "Mmm... Me pregunto si{line_break}estos chicos se quedarán{line_break}con los mejores objetos...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No23"
 msgid "05534"
 msgstr "¡Bienvenidos, bienvenidos!{line_break}¿Queréis jugar una ronda a{line_break}los Dados de la Supersuerte?{end_now}"
 
@@ -22155,7 +22155,7 @@ msgctxt "message"
 msgid "05536"
 msgstr "¿De veras?{line_break}¡Qué pena!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No24"
 msgid "05537"
 msgstr "Si quieres saber las reglas de{line_break}los Dados de la Supersuerte,{line_break}lee el cartel.{end_wait}"
 
@@ -22207,47 +22207,47 @@ msgctxt "message"
 msgid "05549"
 msgstr "Éste es un juego simple,{line_break}pero es mi favorito.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No27"
 msgid "05550"
 msgstr "Si pierdes en el mayor o menor,{line_break}lo pierdes todo... ¡La pregunta{line_break}es: cuándo parar!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No28"
 msgid "05551"
 msgstr "¡Casi siempre llego a hacer{line_break}una pareja, pero luego lo pierdo{line_break}todo en el mayor o menor!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No29"
 msgid "05552"
 msgstr "Cuando pierden, me llaman{line_break}tramposo. Si ganan, lo llaman{line_break}destreza. Sólo es suerte.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No30"
 msgid "05553"
 msgstr "No es un juego difícil de{line_break}jugar. A medida que pruebas,{line_break}aprendes las reglas...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No31"
 msgid "05554"
 msgstr "Este tipo lleva la palabra{line_break}\"desafortunado\" escrita{line_break}en la frente.{page_break}Los desafortunados siempre{line_break}lo arruinan todo... Espero que{line_break}no se acabe mi buena racha.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No32"
 msgid "05555"
 msgstr "Es difícil saber cuándo{line_break}seguir y cuándo recoger{line_break}beneficios.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No33"
 msgid "05556"
 msgstr "¡Voy a ganar, voy a ganar!{line_break}¡Aaaah! Voy a perder...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No34"
 msgid "05557"
 msgstr "Lo siento, chaval, pero necesitarás{line_break}más monedas para jugar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTheLinkWas"
 msgid "05558"
 msgstr "Se perdió{line_break}la conexión.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAwaitingYourOpponent"
 msgid "05559"
 msgstr "Esperando al oponente...{end_now}"
 
-msgctxt "message"
+msgctxt "MsgNoteYouCan"
 msgid "05560"
 msgstr "Nota: no puedes usar{line_break}el salvapantallas en{line_break}las fases de batalla.{end_wait}"
 
@@ -22255,7 +22255,7 @@ msgctxt "message"
 msgid "05561"
 msgstr "Guardando resultados.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBattleResultsWere"
 msgid "05562"
 msgstr "Resultados guardados.{end_wait}"
 
@@ -22263,19 +22263,19 @@ msgctxt "message"
 msgid "05563"
 msgstr "Guardando resultados de la{line_break}Batalla contra monstruo.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgMonsterBattleResults"
 msgid "05564"
 msgstr "Resultados de la Batalla{line_break}contra monstruo guardados.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIfYouWantToParticipate"
 msgid "05565"
 msgstr "¡Si quieres participar,{line_break}por favor, colócate{line_break}sobre el círculo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWelcomeToBattle"
 msgid "05566"
 msgstr "¡Bienvenido al recinto de{line_break}batalla, donde se reúnen{line_break}los que quieren luchar!{page_break}¡Comprueba tus habilidades{line_break}en una Batalla Link o en una{line_break}Batalla contra monstruo!{page_break}¡Habla con la chica del{line_break}mostrador si quieres{line_break}luchar!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPleaseSpeakTo"
 msgid "05567"
 msgstr "Por favor, dirígete{line_break}a mí cuando quieras{line_break}luchar.{end_wait}"
 
@@ -22311,27 +22311,27 @@ msgctxt "message"
 msgid "05575"
 msgstr "El monstruo ha acabado{line_break}de calentar.{page_break}Por favor, termina tus{line_break}calentamientos y{line_break}sitúate sobre el círculo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWonBattlePlease"
 msgid "05576"
 msgstr "Has ganado {argument_signed_number} batalla{control:13}.{page_break}Por favor, cuando{line_break}quieras volver a{line_break}luchar, dímelo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWonBattleI"
 msgid "05577"
 msgstr "Has ganado {argument_signed_number} batalla{control:13}.{page_break}¡Te dije que nuestros{line_break}monstruos eran fuertes!{line_break}Inténtalo de nuevo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGoodLuck2"
 msgid "05578"
 msgstr "¡Buena suerte!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWonBattle"
 msgid "05579"
 msgstr "Has ganado {argument_signed_number} batalla{control:13}.{line_break}¡Has batido el récord!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYourOpponentHas"
 msgid "05580"
 msgstr "¡Tu oponente{line_break}ha llegado!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNotBadWould"
 msgid "05581"
 msgstr "¡No está nada mal!{line_break}¿Quieres luchar contra{line_break}el próximo monstruo?{end_now}"
 
@@ -22395,7 +22395,7 @@ msgctxt "message"
 msgid "05596"
 msgstr "¡¡Increíble!! ¡El próximo{line_break}monstruo está más allá de{line_break}lo que puedas imaginar!{page_break}Te enfrentarás a él,{line_break}¿verdad?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgItSOur"
 msgid "05597"
 msgstr "Es nuestro turno.{line_break}Vamos, {actor_name:5}.{end_wait}"
 
@@ -22427,7 +22427,7 @@ msgctxt "message"
 msgid "05604"
 msgstr "¡Muy bien, {actor_name:5}, los{line_break}dos estamos en ello!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOkWeRe"
 msgid "05605"
 msgstr "Muy bien, estamos listos, {actor_name:5}.{line_break}Pero recuerda, tú te llevas{line_break}los golpes, ¿vale?{end_wait}"
 
@@ -22459,7 +22459,7 @@ msgctxt "message"
 msgid "05612"
 msgstr "¿Intentas decirme{line_break}algo, {actor_name:5}?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgILlFight"
 msgid "05613"
 msgstr "Lucharé lo mejor{line_break}que pueda...{end_wait}"
 
@@ -22555,7 +22555,7 @@ msgctxt "message"
 msgid "05636"
 msgstr "Sólo espero que no{line_break}te falle la puntería...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEverybodyDeservesA"
 msgid "05637"
 msgstr "¡Todos merecen un poco{line_break}de crédito por esta victoria!{end_wait}"
 
@@ -22587,7 +22587,7 @@ msgctxt "message"
 msgid "05644"
 msgstr "Puse todo mi esfuerzo, como{line_break}te habrás dado cuenta.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEverybodyDidGreat"
 msgid "05645"
 msgstr "¡Todos estuvieron geniales!{line_break}¡No me preocupé ni un instante!{end_wait}"
 
@@ -22619,7 +22619,7 @@ msgctxt "message"
 msgid "05652"
 msgstr "Qué combate tan impresionante.{line_break}Estuve todo el rato saltando.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDonTBlame"
 msgid "05653"
 msgstr "No te culpes. Sólo fue{line_break}una mala estrategia.{end_wait}"
 
@@ -22651,7 +22651,7 @@ msgctxt "message"
 msgid "05660"
 msgstr "Quizás hubiera sido mejor{line_break}que no hubiera venido...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouWinSome"
 msgid "05661"
 msgstr "A veces ganas, a veces pierdes.{line_break}Así es la competición.{end_wait}"
 
@@ -22687,7 +22687,7 @@ msgctxt "message"
 msgid "05669"
 msgstr "Sólo voy a mirar. Pero{line_break}parece que vosotros{line_break}vais a luchar, ¿verdad?{page_break}Bueno, dad lo mejor de vosotros.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIDonTHaveThe"
 msgid "05670"
 msgstr "{text_effect:4}No tengo lo que hay que tener{line_break}para luchar en el ring. Me{line_break}sentaré por aquí si no molesto.{end_wait}"
 
@@ -22731,7 +22731,7 @@ msgctxt "message"
 msgid "05680"
 msgstr "¿Entro o no? Todo esto{line_break}me tiene estresado...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItLooksLikeThisIs"
 msgid "05681"
 msgstr "Parece que es tu{line_break}primera vez aquí.{page_break}Te enseñaré lo que es{line_break}luchar en una batalla.{end_wait}"
 
@@ -22739,7 +22739,7 @@ msgctxt "message"
 msgid "05682"
 msgstr "Has ganado {argument_signed_number} Batalla{control:13}{line_break}Link. ¡Sigue así!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItLooksLikeThisIsYour"
 msgid "05683"
 msgstr "Parece que es tu{line_break}primera vez aquí.{page_break}Puedes preguntarme{line_break}sobre los resultados{line_break}de tu batalla, ¿vale?{end_wait}"
 
@@ -22771,7 +22771,7 @@ msgctxt "message"
 msgid "05690"
 msgstr "Chicos, ¿qué ha pasado?{line_break}Debéis seguir intentándolo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouLookA"
 msgid "05691"
 msgstr "Parecéis un poco flacos,{line_break}pero los que son como{line_break}vosotros son siempre fuertes...{end_wait}"
 
@@ -22779,15 +22779,15 @@ msgctxt "message"
 msgid "05692"
 msgstr "¡Luchar contra un tipo así{line_break}me desgastaría! ¡Guau!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgILlBe"
 msgid "05693"
 msgstr "¡Te estaré observando!{line_break}¡Hazlo como mejor puedas!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgILikeMy"
 msgid "05694"
 msgstr "Me gustan los machotes.{line_break}Vosotros no tenéis tal pinta.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHmItComes"
 msgid "05695"
 msgstr "Mm... Empiezas así...{line_break}después haces esto y...{line_break}¡Ey, eso no vale!...{end_wait}"
 
@@ -22811,55 +22811,55 @@ msgctxt "message"
 msgid "05700"
 msgstr "Tienes que seguir entrenándote.{page_break}Pon todo tu empeño cuando{line_break}estés luchando.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWillTell"
 msgid "05701"
 msgstr "Te diré tus estadísticas{line_break}cuando acabes las finales{line_break}de la Batalla Link.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIWillTellYou"
 msgid "05702"
 msgstr "Te diré las victorias{line_break}consecutivas cuando{line_break}acabes las finales.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouVeWon"
 msgid "05703"
 msgstr "Has ganado {argument_signed_number} Batalla{control:13}{line_break}contra monstruo consecutiva{control:13}.{page_break}¡Sigue así!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgICanTWaitTo"
 msgid "05704"
 msgstr "Tengo ganas de ver cuántas{line_break}Batallas contra monstruo{line_break}puedes ganar.{page_break}¡Iré contando{line_break}tus victorias!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUpToThreeAlliesCan"
 msgid "05705"
 msgstr "En las finales de la Batalla{line_break}Link pueden luchar hasta tres{line_break}aliados.{page_break}Hay cuatro en tu equipo,{line_break}así que el cuarto aliado{line_break}tendrá que esperar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUpToThreeAllies"
 msgid "05706"
 msgstr "En las finales de la Batalla{line_break}Link pueden luchar hasta tres{line_break}aliados.{page_break}¡Así que podéis luchar todos!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouCanChange"
 msgid "05707"
 msgstr "Puedes cambiar el orden de{line_break}los miembros de tu equipo{line_break}en la pantalla de estado.{page_break}Pero ya lo sabías, ¿verdad?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUpToThree"
 msgid "05708"
 msgstr "Puedes llevar hasta tres{line_break}aliados en los combates{line_break}del modo enlace.{page_break}Tu equipo tiene ocho aliados{line_break}en total, así que sólo los tres{line_break}de la izquierda lucharán.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgInTheLinked"
 msgid "05709"
 msgstr "En las finales de la Batalla{line_break}Link no puedes tardar mucho{line_break}si tu oponente ya ha elegido.{page_break}Si no eliges qué hacer en{line_break}15 segundos, el personaje se{line_break}defenderá automáticamente.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMonsterBattleRules"
 msgid "05710"
 msgstr "Las reglas de la Batalla{line_break}contra monstruo dicen que{line_break}debéis luchar como equipo.{page_break}Si lo hacéis así, podéis{line_break}usar las mismas tácticas{line_break}que usasteis en los viajes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoYouWin"
 msgid "05711"
 msgstr "Así que has ganado contra{line_break}uno, pero has perdido contra{line_break}el siguiente.{page_break}Dependiendo del enemigo,{line_break}tienes que cambiar de{line_break}táctica.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouCouldUse"
 msgid "05712"
 msgstr "¡Puedes usar Psinergías, Djinn e,{line_break}incluso, invocaciones y objetos!{line_break}Hay muchas estrategias...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShouldIEnter"
 msgid "05713"
 msgstr "¿Entro o no? Todo esto{line_break}me tiene estresado...{end_wait}"
 
@@ -22875,7 +22875,7 @@ msgctxt "message"
 msgid "05716"
 msgstr "Libera los Djinn que{line_break}no uses normalmente{line_break}para invocar más rápido.{page_break}Soy muy impaciente,{line_break}por eso prefiero{line_break}los combates cortos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSometimesYourClass"
 msgid "05717"
 msgstr "A veces, tu clase cambia{line_break}cuando liberas un Djinn.{page_break}No lo olvides, porque podrías{line_break}meterte en problemas si no{line_break}tienes cuidado.{end_wait}"
 
@@ -22887,11 +22887,11 @@ msgctxt "message"
 msgid "05719"
 msgstr "Podría participar, pero seguro{line_break}que me hago daño si lo hago...{line_break}Sería una estupidez.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYouHaveA"
 msgid "05720"
 msgstr "¿Qué canción quieres{line_break}que te pinche?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgComeBackWhen"
 msgid "05721"
 msgstr "¡Vuelve cuando quieras{line_break}mover el esqueleto!{end_wait}"
 
@@ -43655,115 +43655,115 @@ msgctxt "message"
 msgid "10911"
 msgstr "Fue la tribu de Anemos.{line_break}¡Incluso podían volar!{page_break}Los habitantes de Mitdir{line_break}heredamos algo de su poder y{line_break}ahora gobernamos Atteka.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No36"
 msgid "10912"
 msgstr "Pronto se prenderá{line_break}el Faro de Júpiter.{page_break}Lo sé porque tuve una{line_break}extraña premonición{line_break}hace tres años.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No37"
 msgid "10913"
 msgstr "Me da la impresión de que{line_break}los habitantes de Mitdir{page_break}perdieron el poder que{line_break}heredaron de los Anemos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No38"
 msgid "10914"
 msgstr "La gente de Anemos poseía un{line_break}poder sobre el viento. También{line_break}podían ver el futuro.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No39"
 msgid "10915"
 msgstr "\"Cuando se pierda el poder de{line_break}Anemos, un grupo iluminará{line_break}el faro frente a la oscuridad\".{page_break}Creíamos que no era más{line_break}que una leyenda, pero se{line_break}está haciendo realidad.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No40"
 msgid "10916"
 msgstr "Los geoglifos anemos muestran{line_break}un barco con alas en el casco...{page_break}La leyenda cuenta que estas{line_break}alas lo hacían volar...{end_wait}"
 
-msgctxt "MsgScene694No203"
+msgctxt "MsgScene694No41"
 msgid "10917"
 msgstr "Si quieres ver los geoglifos{line_break}anemos, tienes que ir a las{line_break}ruinas...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No42"
 msgid "10918"
 msgstr "Nuestra gente ha trabajado{line_break}para construir las Alas de{line_break}Anemos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No43"
 msgid "10919"
 msgstr "La sangre anema que corre{line_break}por nuestras venas hace que{line_break}ocurran extraños milagros.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No44"
 msgid "10920"
 msgstr "Pronto vendrá alguien para{line_break}encender el faro.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No45"
 msgid "10921"
 msgstr "El poder del viento no es todo{line_break}lo que hemos perdido.{page_break}También gran parte de nuestra{line_break}cultura, así como la tecnología{line_break}para reconstruir las ruinas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No46"
 msgid "10922"
 msgstr "Dos hermanos nacieron en{line_break}Mitdir. El mayor tenía un gran{line_break}poder. Ambos se fueron...{page_break}El más joven se fue cuando sólo{line_break}era un bebé. No sé lo fuerte que{line_break}se ha hecho.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No47"
 msgid "10923"
 msgstr "Creo que el Faro de Júpiter será{line_break}prendido pronto. No sé cuándo,{line_break}pero ocurrirá pronto.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No48"
 msgid "10924"
 msgstr "Es difícil de creer, pero los{line_break}anemos tenían el poder de{line_break}construir barcos voladores.{end_wait}"
 
-msgctxt "MsgScene694No205"
+msgctxt "MsgScene694No49"
 msgid "10925"
 msgstr "Los geoglifos anemos son{line_break}las tallas más increíbles{line_break}que jamás he visto...{end_wait}"
 
-msgctxt "MsgScene694No42"
+msgctxt "MsgScene694No50"
 msgid "10926"
 msgstr "Construimos las Alas de Anemos{line_break}con los materiales encontrados en{line_break}las ruinas del Templo de Anemos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No51"
 msgid "10927"
 msgstr "Los hermanos que heredaron los{line_break}poderes de los anemos ya no{line_break}están en Mitdir.{page_break}El más joven era sólo un bebé{line_break}cuando un mercader conocido{line_break}como Hammet se lo llevó.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No52"
 msgid "10928"
 msgstr "Estoy segura de que el más joven,{line_break}{actor_name:3}, ya tiene que haber{line_break}crecido... ¿Seguirá con Hammet?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No53"
 msgid "10929"
 msgstr "Mi padre no aprueba la forma{line_break}en la que miro a Yegelos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No54"
 msgid "10930"
 msgstr "Las familias con hijos que{line_break}heredaron esos poderes viven{line_break}en constante sufrimiento.{page_break}Poco a poco, dejaron Mitdir{line_break}para probar fortuna en otros{line_break}lugares.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No55"
 msgid "10931"
 msgstr "La madre de {actor_name:3} lo dejó al{line_break}cuidado de un amable mercader.{line_break}Murió poco después.{page_break}Creo que murió de pena por{line_break}entregar a {actor_name:3}. Ella sólo{line_break}quería una vida mejor para él.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No56"
 msgid "10932"
 msgstr "Ojalá hubiera heredado el{line_break}poder de los anemos. Me{line_break}convertiría en un héroe.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No57"
 msgid "10933"
 msgstr "Hace mucho, la gente de Hesperia{line_break}atacó Atteka. Nuestros bisabuelos{line_break}no tuvieron miedo.{page_break}Con la ayuda del gran Yegelos,{line_break}los expulsamos y no nos han{line_break}vuelto a invadir desde entonces.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No58"
 msgid "10934"
 msgstr "Hace mucho tiempo, las tribus{line_break}de Aldea Chamán y Mitdir{line_break}estuvieron en constante guerra.{page_break}A través de tantas batallas,{line_break}los guerreros Yegelos y{line_break}Hoabna forjaron una amistad.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No59"
 msgid "10935"
 msgstr "Mitdir no tiene un héroe desde{line_break}hace mucho tiempo. Creo que eso{line_break}deprime a nuestros jóvenes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No60"
 msgid "10936"
 msgstr "Todos creen que los mitdirenses{line_break}son fuertes, pero odiamos{line_break}luchar.{page_break}Es extraño, porque a Yegelos le{line_break}encantaba luchar, y Hoabna{line_break}era el más fuerte de los dos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No61"
 msgid "10937"
 msgstr "Los hermanos del poder de los{line_break}anemos volverán pronto para{line_break}hacer realidad la leyenda.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No62"
 msgid "10938"
 msgstr "El poder de los anemos ha{line_break}desaparecido de Mitdir.{page_break}Aunque a veces ocurre que{line_break}un recién nacido demuestra{line_break}tener poder sobre el viento.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No63"
 msgid "10939"
 msgstr "No tengo poderes como los{line_break}anemos, pero mi hermana,{line_break}Ahri, es otro cantar.{end_wait}"
 
@@ -43783,19 +43783,19 @@ msgctxt "message"
 msgid "10943"
 msgstr "¡Cuando terminemos las Alas de{line_break}Anemos, arreglaremos la casa!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No66"
 msgid "10944"
 msgstr "Sólo sé que {actor_name:3} se hizo{line_break}mayor y varonil, como Yegelos.{line_break}Sé que volverá...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No67"
 msgid "10945"
 msgstr "Una horrible desgracia cayó{line_break}en la familia de los hermanos...{line_break}Es una historia sobrecogedora.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No68"
 msgid "10946"
 msgstr "Siempre que mi hermana arruga{line_break}la frente, como ahora, ocurren{line_break}cosas raras por aquí.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No69"
 msgid "10947"
 msgstr "Hace calor... Quiero sentir{line_break}el fresco viento.{end_wait}"
 
@@ -43803,7 +43803,7 @@ msgctxt "MsgScene694No70"
 msgid "10948"
 msgstr "Es una tradición ancestral que{line_break}los attekos lleven a un mago{line_break}peregrino al Templo de Anemos.{page_break}Desde que comenzamos la{line_break}construcción de las alas, todos{line_break}llegan a Mitdir para ayudar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No71"
 msgid "10949"
 msgstr "Por supuesto, están aquí para{line_break}trabajar, no para luchar. Así que{line_break}lo de las armas no se lleva ahora.{end_wait}"
 
@@ -43811,7 +43811,7 @@ msgctxt "MsgScene694No72"
 msgid "10950"
 msgstr "Extraer los materiales de las{line_break}ruinas es peligroso, así que mis{line_break}armaduras se venden bien.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No73"
 msgid "10951"
 msgstr "Las ventas de todo en general son{line_break}patéticas, pero al menos no estoy{line_break}saliendo tan perjudicado.{end_wait}"
 
@@ -43819,7 +43819,7 @@ msgctxt "MsgScene694No74"
 msgid "10952"
 msgstr "Los aldeanos están trabajando{line_break}todo lo que pueden para terminar{line_break}las alas y cumplir la profecía.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No75"
 msgid "10953"
 msgstr "¡Qué ganas tengo de ver la{line_break}luz del sol brillando a través{line_break}de estas alas en el cielo!{end_wait}"
 
@@ -43827,47 +43827,47 @@ msgctxt "MsgScene694No76"
 msgid "10954"
 msgstr "¡Hemos atendido a tanta{line_break}gente últimamente que{line_break}estoy rendido!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No77"
 msgid "10955"
 msgstr "¡La construcción de las alas{line_break}nos asegura un lleno total!{line_break}¡Corren buenos tiempos!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No78"
 msgid "10956"
 msgstr "Tengo que hacer todas las{line_break}camas antes de que vuelvan{line_break}del Templo de Anemos...{page_break}¡Tengo que preparar todo{line_break}para la cena antes de que{line_break}bajen a comer!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No79"
 msgid "10957"
 msgstr "¡Si no preparo la cena ahora,{line_break}no estará a punto para cuando{line_break}lleguen nuestros clientes!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No80"
 msgid "10958"
 msgstr "¿Acabáis de llegar a Mitdir?{page_break}¿Tenéis relación con la profecía{line_break}o simplemente ayudáis en la{line_break}construcción de las alas?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No81"
 msgid "10959"
 msgstr "Las profecías de los anemos{line_break}dicen que, en un día venidero,{line_break}ocurrirá un milagro...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No82"
 msgid "10960"
 msgstr "Ayer trabajé hasta la extenuación.{line_break}Me siento fatal, pero mañana haré{line_break}la misma operación.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No83"
 msgid "10961"
 msgstr "Las Alas de Anemos casi están{line_break}terminadas... Creo que mañana{line_break}me tomaré el día libre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No84"
 msgid "10962"
 msgstr "Creo que estoy demasiado viejo{line_break}para ayudar con las alas, pero{line_break}también quiero verlas volar...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No85"
 msgid "10963"
 msgstr "¡¿Cuándo va a ocurrir el milagro{line_break}de los anemos?! ¡No puedo{line_break}esperar para siempre!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No86"
 msgid "10964"
 msgstr "Me he destrozado la espalda con{line_break}las alas. No me llego a los pies.{line_break}Ni siquiera a las rodillas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No87"
 msgid "10965"
 msgstr "Quiero ver el barco cuando{line_break}navegue por el aire con{line_break}nuestras alas.{page_break}Pero, aún más, quiero ver al{line_break}héroe de la profecía... ¿Será tan{line_break}apuesto como Yegelos?{end_wait}"
 
@@ -43875,59 +43875,59 @@ msgctxt "MsgScene694No88"
 msgid "10966"
 msgstr "El verdadero milagro ocurrirá{line_break}cuando estas alas hagan volar{line_break}un barco.{page_break}De todas formas, prefiero estar{line_break}libre de prejuicios. ¡Ojalá ocurra{line_break}pronto el milagro de Anemos!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No89"
 msgid "10967"
 msgstr "Cuando vea las Alas de Anemos{line_break}batiéndose en el aire, yo también{line_break}seré un creyente.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No90"
 msgid "10968"
 msgstr "He venido desde lejos para ver{line_break}el barco volador. ¡Espero que{line_break}la profecía sea cierta!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No91"
 msgid "10969"
 msgstr "Las alas ya casi están listas.{line_break}Sólo tenemos que llevarlas a{line_break}la bahía y esperar al barco.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No92"
 msgid "10970"
 msgstr "Las alas estarán terminadas muy{line_break}pronto. ¿Dónde está el barco al{line_break}que se las van a colocar?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No93"
 msgid "10971"
 msgstr "¿Qué parte va aquí? ¿Irá esta{line_break}pluma de metal conectada al{line_break}poste de madera?{page_break}Es como un rompecabezas y{line_break}cada vez se complica más.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No94"
 msgid "10972"
 msgstr "Ten cuidado, no vayas a{line_break}estropear algo... ¿No ves{line_break}que es un trabajo artesanal?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No95"
 msgid "10973"
 msgstr "Unos cuantos toques más y{line_break}las alas estarán listas. ¡Sólo{line_break}queda ensamblarlas!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No96"
 msgid "10974"
 msgstr "¡Los que llevaban la otra ala no{line_break}han vuelto todavía y ya estamos{line_break}listos para enviar ésta!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No97"
 msgid "10975"
 msgstr "Últimamente no he parado ni un{line_break}instante. La segunda está casi{line_break}acabada. Menuda siesta me espera.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No98"
 msgid "10976"
 msgstr "¿Qué haremos si después de crear{line_break}estas alas no apareciera un barco{line_break}en el que colocarlas?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No99"
 msgid "10977"
 msgstr "¡Hay demasiadas piezas!{line_break}¡Me voy a volver loco{line_break}con tanta pieza!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No100"
 msgid "10978"
 msgstr "Cuando me pongo de los nervios,{line_break}pierdo el control. Tengo que{line_break}evitar perder los estribos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No101"
 msgid "10979"
 msgstr "¿Cuánto llevamos trabajando{line_break}en estas malditas alas?{page_break}Cuando vea el barco{line_break}surcando los cielos,{line_break}lloraré de felicidad.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No102"
 msgid "10980"
 msgstr "¿Has examinado bien los{line_break}geoglifos de los anemos?{end_now}"
 
@@ -43939,31 +43939,31 @@ msgctxt "message"
 msgid "10982"
 msgstr "Mal hecho. La imagen del{line_break}barco volador es lo más.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No103"
 msgid "10983"
 msgstr "Ese cartel tiene la traducción{line_break}de los escritos del muro.{page_break}Si estás interesado en estudiar{line_break}el templo, no dejes de leerlo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No104"
 msgid "10984"
 msgstr "Quiero echar un buen vistazo{line_break}al interior del templo, pero{line_break}no consigo abrir la puerta.{page_break}Espero que al descifrar las{line_break}escrituras del muro consiga{line_break}la pista que necesito.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No105"
 msgid "10985"
 msgstr "El mercader Hammet se llevó{line_break}el oro de esta sala cuando se{line_break}marchó de Mitdir.{page_break}Prometió que lo usaría para{line_break}cuidar de {actor_name:3} y para darle{line_break}lo mejor para su aprendizaje.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No106"
 msgid "10986"
 msgstr "No me hago a la idea de lo{line_break}bonito que sería un barco{line_break}como el que hay en el geoglifo.{page_break}¡Pero es inmenso! ¡Dudo que{line_break}exista un barco de esas{line_break}dimensiones!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No107"
 msgid "10987"
 msgstr "No sé si en Mitdir se{line_break}habrán percatado de la{line_break}importancia de lo que hago.{page_break}Aunque sé que los devotos{line_break}peregrinos me darán las{line_break}gracias por esta traducción.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No108"
 msgid "10988"
 msgstr "No quiero imaginarme lo que{line_break}haría si abriera la puerta y no{line_break}hubiera nada al otro lado.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No109"
 msgid "10989"
 msgstr "Me dijeron que Hammet fue a{line_break}una aldea llamada Kalay y que{line_break}le fue bastante bien.{end_wait}"
 
@@ -43987,19 +43987,19 @@ msgctxt "MsgScene694No114"
 msgid "10994"
 msgstr "¡Estos dados están locos!{line_break}¡Atrévete a probarlos!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No115"
 msgid "10995"
 msgstr "Es un placer hacer negocios{line_break}ahora, pero ¿qué ocurrirá{line_break}cuando terminen las alas?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No116"
 msgid "10996"
 msgstr "Cuando acaben las alas, se irán{line_break}todos los clientes. Hasta entonces,{line_break}trabajaré sin descanso.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No117"
 msgid "10997"
 msgstr "¡Estoy tan ocupada que no{line_break}tengo tiempo para comer!{line_break}¡¡Las tripas me rugen!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No118"
 msgid "10998"
 msgstr "¡En la cocina no tengo rival!{line_break}¡Mira todos estos platos!{line_break}¡Ni yo me lo creo!{end_wait}"
 
@@ -46211,39 +46211,39 @@ msgctxt "MsgWeShouldnT"
 msgid "11550"
 msgstr "No deberíamos escapar de {actor_name:1}{line_break}nunca más, {actor_name:5}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No119"
 msgid "11551"
 msgstr "¿Buscas a {actor_name:1}?{line_break}Él y sus amigos están en{line_break}la casa de la colina.{page_break}¿Te están{line_break}esperando?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No120"
 msgid "11552"
 msgstr "Ya se han ido todos de la{line_break}ciudad. Están transportando{line_break}las alas...{page_break}A decir verdad, ya las habrán{line_break}colocado en el barco.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No121"
 msgid "11553"
 msgstr "¿Es ése tu barco? Parece{line_break}exactamente el mismo que{line_break}el de los geoglifos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No122"
 msgid "11554"
 msgstr "El Faro de Júpiter está encendido{line_break}por primera vez en años...{line_break}¿Sentiste ese temblor?{page_break}¡Si eso es lo que ocurriría al{line_break}encender el faro, me hubiese{line_break}gustado que siguiera apagado!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No123"
 msgid "11555"
 msgstr "Parece como si hubieran{line_break}tenido problemas. Pero bueno...{line_break}Tampoco pienso ayudarlos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No124"
 msgid "11556"
 msgstr "Todas las profecías se están{line_break}haciendo realidad... Vivimos{line_break}tiempos de incertidumbre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No125"
 msgid "11557"
 msgstr "Es como cuentan las leyendas...{line_break}El barco de los geoglifos ha{line_break}llegado finalmente a Mitdir.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No126"
 msgid "11558"
 msgstr "¿Qué ocurre cuando las{line_break}leyendas arcaicas se{line_break}hacen realidad?{page_break}Sólo quiero que el mundo{line_break}vuelva a ser como antes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGladYouKeptYourPromise"
 msgid "11559"
 msgstr "Me alegro de que mantuvieras{line_break}tu promesa, {actor_name:5}.{end_wait}"
 
@@ -46571,31 +46571,31 @@ msgctxt "MsgScene694No128"
 msgid "11640"
 msgstr "¡Daos prisa! ¡Creo que el barco{line_break}de los geoglifos va a levar ancla{line_break}dentro de poco!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No129"
 msgid "11641"
 msgstr "¡Primero se enciende el faro{line_break}y ahora veremos un barco{line_break}volador! ¡Es como una feria!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No130"
 msgid "11642"
 msgstr "El jefe dijo que podíamos ir{line_break}a la ensenada cuando todos{line_break}los clientes se fueran.{page_break}¡Así que date prisa{line_break}para que podamos{line_break}ver el barco!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No131"
 msgid "11643"
 msgstr "Han terminado de colocar las{line_break}alas en el barco, pero no veo{line_break}a qué viene tanta expectación.{page_break}¡Son sólo unas alas,{line_break}no es necesaria la feria{line_break}que están montando!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No132"
 msgid "11644"
 msgstr "Cuando todos los clientes{line_break}se vayan, libraré. ¡Así que{line_break}ya te estás dando prisa!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No133"
 msgid "11645"
 msgstr "No puedo creerlo... ¡Todas las{line_break}esperanzas de los attekos se han{line_break}hecho realidad aquí, en Mitdir!{page_break}¡Es un milagro, un sueño{line_break}hecho realidad! ¡Esto se{line_break}merece una celebración!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No134"
 msgid "11646"
 msgstr "Todos estos años pensé que{line_break}sólo eran historias de niños,{line_break}pero se han hecho realidad...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No135"
 msgid "11647"
 msgstr "Me impresionó ver la procesión{line_break}que se formó para llevar las{line_break}alas...{end_wait}"
 
@@ -46603,7 +46603,7 @@ msgctxt "MsgScene694No136"
 msgid "11648"
 msgstr "Un barco volador... Tiene que{line_break}ser un milagro. Haré un{line_break}estudio detallado.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No137"
 msgid "11649"
 msgstr "Quizás si veo un milagro con{line_break}mis propios ojos, vuelva a{line_break}recuperar la fe...{end_wait}"
 
@@ -46783,103 +46783,103 @@ msgctxt "MsgTravelSafelyThe"
 msgid "11693"
 msgstr "Viaja con cuidado, {actor_name:3}...{line_break}El mundo depende de ti.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No138"
 msgid "11694"
 msgstr "Nos quedamos en casa con{line_break}los cánticos y me perdí la{line_break}salida del barco.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No139"
 msgid "11695"
 msgstr "Todo el mundo ha estado{line_break}relatando lo increíble que{line_break}fue ver el barco volando...{page_break}Ojalá hubiera estado ahí{line_break}para verlo. Seguro que{line_break}fue conmovedor.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No140"
 msgid "11696"
 msgstr "Tiene que ser excitante{line_break}viajar por el mundo en{line_break}un barco volador.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No141"
 msgid "11697"
 msgstr "Hama nos dijo que el mundo{line_break}era un lugar peligroso. ¿Qué{line_break}habrá querido decir con ello?{page_break}Creo que está preocupada{line_break}por el desequilibrio de los{line_break}elementos...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No142"
 msgid "11698"
 msgstr "¡Vi el barco volando!{line_break}¡Y ahora quiero ver cómo{line_break}se vive desde cubierta!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No143"
 msgid "11699"
 msgstr "No fue lo que esperaba,{line_break}pero verlo despegar fue{line_break}increíble.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No144"
 msgid "11700"
 msgstr "No llegué a ver el despegue{line_break}del barco, pero no estoy muy{line_break}disgustado.{page_break}He oído que tampoco{line_break}fue nada del otro mundo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No145"
 msgid "11701"
 msgstr "Algunos dijeron que el{line_break}barco tampoco era nada{line_break}del otro mundo.{page_break}¿Por qué pensarán eso?{line_break}¡Era un barco volando!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No146"
 msgid "11702"
 msgstr "Yo no podría navegar por los{line_break}aires. Si me mareo con sólo{line_break}caminar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No147"
 msgid "11703"
 msgstr "He oído que el mundo podría{line_break}congelarse pronto... Espero que{line_break}{actor_name:3} cumpla su cometido.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No148"
 msgid "11704"
 msgstr "Parecía que el barco tenía{line_break}problemas al despegar.{page_break}Creo que fue porque la{line_break}tripulación nunca había{line_break}controlado un barco volador.{end_wait}"
 
-msgctxt "MsgScene694No143"
+msgctxt "MsgScene694No149"
 msgid "11705"
 msgstr "Todas esas leyendas sólo{line_break}hicieron crecer las expectativas{line_break}de la gente.{page_break}Me alegro de que el barco{line_break}pudiera volar...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No150"
 msgid "11706"
 msgstr "Creo que el faro fue encendido{line_break}porque {actor_name:3} y Hama volvieron{line_break}finalmente a Mitdir.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No151"
 msgid "11707"
 msgstr "{actor_name:3} no recuerda a su madre{line_break}porque se lo llevaron cuando{line_break}sólo era un bebé.{page_break}Pero yo vi los ojos de ella cuando{line_break}se lo llevaron. Las lágrimas{line_break}recorrían sus mejillas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No152"
 msgid "11708"
 msgstr "A juzgar por la cara de {actor_name:3},{line_break}lo que haya ocurrido en el faro{line_break}no debe de ser nada bueno.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No153"
 msgid "11709"
 msgstr "Hama se quedará con nosotros,{line_break}pero {actor_name:3} se va de nuevo.{page_break}El poder de los anemos es una{line_break}responsabilidad tremenda para{line_break}un chico tan joven.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No154"
 msgid "11710"
 msgstr "Me pregunto cómo se sentirá{line_break}{actor_name:3} ahora que sabe lo que{line_break}le sucedió a su madre.{page_break}Hama parece tan ajena...{line_break}Me pregunto si le hablará{line_break}de ello...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No155"
 msgid "11711"
 msgstr "¡Algún día lucharé contra {actor_name:3}{line_break}y me convertiré en el héroe{line_break}legendario de Mitdir!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No156"
 msgid "11712"
 msgstr "{text_effect:4}¡Hace un frío de{line_break}espanto desde que{line_break}se encendió el faro!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No157"
 msgid "11713"
 msgstr "El invierno acaba de terminar,{line_break}pero sigue haciendo frío. ¿Qué{line_break}está ocurriendo?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No158"
 msgid "11714"
 msgstr "Todos conocen el Faro de Júpiter{line_break}como el faro del viento... ¿Será{line_break}por eso que sopla un viento frío?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No159"
 msgid "11715"
 msgstr "Hama dice que, si {actor_name:3}{line_break}fracasa, cada vez hará{line_break}más frío.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No160"
 msgid "11716"
 msgstr "El faro ha sido encendido y{line_break}el barco ha volado... ¡Nuestras{line_break}leyendas se han hecho realidad!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No161"
 msgid "11717"
 msgstr "De los mitdirenses depende{line_break}que nuestras leyendas{line_break}sobrevivan.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No162"
 msgid "11718"
 msgstr "Mamá y papá han estado{line_break}aturdidos desde que el{line_break}barco despegó.{end_wait}"
 
@@ -46899,23 +46899,23 @@ msgctxt "message"
 msgid "11722"
 msgstr "Ahora que hemos terminado las{line_break}alas, arreglaremos la casa.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No165"
 msgid "11723"
 msgstr "¡{actor_name:3} tiene el poder de{line_break}profetizar, pero seguro que{line_break}no vio venir esto!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No166"
 msgid "11724"
 msgstr "¡Ahora que lo pienso, este día{line_break}se convertirá probablemente{line_break}en leyenda también!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No167"
 msgid "11725"
 msgstr "¡Es hora de arreglar esos{line_break}huecos ahora que las alas{line_break}están terminadas!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No168"
 msgid "11726"
 msgstr "Hace frío... Quiero{line_break}una manta...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgReturnedToMyNewHome"
 msgid "11727"
 msgstr "¡Ah, habéis regresado! ¿Qué{line_break}os trae a mi nueva casa?{end_wait}"
 
@@ -47107,11 +47107,11 @@ msgctxt "message"
 msgid "11774"
 msgstr "¡Bueno, {actor_name:5}!{line_break}¡Al Faro de Marte!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No170"
 msgid "11775"
 msgstr "¡Pase lo que pase, debéis{line_break}encender el Faro de Marte!{page_break}Espero vuestro regreso.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No171"
 msgid "11776"
 msgstr "Mi corazón siempre estará contigo,{line_break}{actor_name:3}. Nunca lo olvides.{end_wait}"
 
@@ -47119,7 +47119,7 @@ msgctxt "MsgScene694No172"
 msgid "11777"
 msgstr "¿Un cañón? Sí, creo que oí{line_break}algo sobre una aldea al oeste{line_break}de Angara que tenía uno...{page_break}Un disparo de ese cañón podría{line_break}romper cualquier bloque de hielo,{line_break}por grande que sea.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No173"
 msgid "11778"
 msgstr "Me encantaría ver el cañón{line_break}algún día. Suena como un{line_break}arma muy poderosa...{end_wait}"
 
@@ -47127,7 +47127,7 @@ msgctxt "MsgScene694No174"
 msgid "11779"
 msgstr "Ahora que las alas están{line_break}terminadas, dudo que sigan{line_break}comprándome armaduras.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No175"
 msgid "11780"
 msgstr "Bueno, si no voy a tener clientes{line_break}por un tiempo, por fin podré{line_break}tomarme unos días de vacaciones.{end_wait}"
 
@@ -47135,7 +47135,7 @@ msgctxt "MsgScene694No176"
 msgid "11781"
 msgstr "Siempre nos decepcionamos cuando{line_break}terminamos una gran tarea como{line_break}cumplir una antigua profecía.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No177"
 msgid "11782"
 msgstr "Ahora que las alas están{line_break}acabadas, nos iremos a{line_break}ayudar a la aldea...{end_wait}"
 
@@ -47143,31 +47143,31 @@ msgctxt "MsgScene694No178"
 msgid "11783"
 msgstr "Todo el esfuerzo y la celebración{line_break}han llegado a su fin.{page_break}Creo que Mitdir se va a{line_break}convertir en un lugar{line_break}tranquilo de nuevo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No179"
 msgid "11784"
 msgstr "La posada se ha quedado{line_break}sola porque todos se han{line_break}ido a sus casas.{page_break}¡Deberíamos tener una{line_break}fiesta anual en Mitdir para{line_break}conmemorar este día!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No180"
 msgid "11785"
 msgstr "Hay que ver... Tanto esfuerzo{line_break}y ¿qué nos ha quedado? Nada.{line_break}¡No podemos estar más ociosos!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No181"
 msgid "11786"
 msgstr "¡Ahora podré experimentar{line_break}con algunos nuevos platos!{line_break}¿Por cuál empiezo?...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No182"
 msgid "11787"
 msgstr "Las cosas van a paralizarse{line_break}por un tiempo, pero no puedo{line_break}quejarme, ¿no crees?{page_break}¡Después de todo, el faro{line_break}está prendido de nuevo y{line_break}he visto un barco volador!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No183"
 msgid "11788"
 msgstr "La posada va a estar paralizada{line_break}por una temporada, pero el{line_break}negocio volverá pronto.{page_break}Los testigos de los{line_break}últimos acontecimientos{line_break}querrán volver pronto.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No184"
 msgid "11789"
 msgstr "¿Qué vamos a hacer? ¡Todo{line_break}el alboroto ha cesado y me{line_break}voy a aburrir!{page_break}¡Empezaba a gustarme ser{line_break}el centro de atención!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No185"
 msgid "11790"
 msgstr "Ver cómo ese barco despegaba{line_break}fue lo más conmovedor que he{line_break}visto en mi vida...{page_break}Creo que lo preservaré{line_break}en el tiempo... ¡en forma{line_break}de tarta!{end_wait}"
 
@@ -47175,47 +47175,47 @@ msgctxt "MsgScene694No186"
 msgid "11791"
 msgstr "Fue un milagro que todas{line_break}las leyendas de los anemos{line_break}se hicieran realidad...{page_break}¡No estoy muy seguro,{line_break}pero creo que he{line_break}recuperado mi fe!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No187"
 msgid "11792"
 msgstr "Me chocó ver un barco{line_break}tan grande volando.{page_break}Me hizo darme cuenta{line_break}de lo insignificantes{line_break}que somos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No188"
 msgid "11793"
 msgstr "No puedo creer que existiera{line_break}un barco idéntico al de los{line_break}geoglifos.{page_break}¡Y creo que todos están{line_break}contentos de haber ayudado en{line_break}la realización de la leyenda!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No189"
 msgid "11794"
 msgstr "Ese barco volador me parecía{line_break}de mentira... No era como me{line_break}lo imaginaba.{page_break}Nadie más se quejó, pero no{line_break}prestaban atención a los{line_break}detalles, como yo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No190"
 msgid "11795"
 msgstr "Mira de cerca los{line_break}geoglifos. Estúdialos,{line_break}examina los detalles...{page_break}Cuanto más los miras, más{line_break}cosas descubres de la{line_break}grandeza de los anemos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No191"
 msgid "11796"
 msgstr "Estoy seguro de que hay algo{line_break}escondido en el templo.{page_break}Sólo sé que en el muro{line_break}se hace referencia a ello.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No192"
 msgid "11797"
 msgstr "Todas las cosas asombrosas que{line_break}hemos visto y hecho, las leyendas{line_break}se han hecho realidad...{page_break}¡¡Y yo sigo sin poder entrar{line_break}en las cámaras secretas del{line_break}Templo de Anemos!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No193"
 msgid "11798"
 msgstr "Es un chico raro, pero me alegro{line_break}de que {actor_name:3} haya vuelto{line_break}a Mitdir al fin...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No194"
 msgid "11799"
 msgstr "Todos juntos pudimos{line_break}hacer las leyendas{line_break}realidad...{page_break}Es estimulante... De hecho,{line_break}me pone la carne de gallina...{line_break}{text_effect:4}Brrrr...{reset_text_style}{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No195"
 msgid "11800"
 msgstr "¡Vaya, seguimos las indicaciones{line_break}del muro y {text_effect:2}seguimos{reset_text_style} sin{line_break}poder entrar!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No196"
 msgid "11801"
 msgstr "Si golpeas el suelo o los muros,{line_break}puedes oír un sonido hueco.{page_break}¡Estoy convencido de que{line_break}ocultan algo tras de sí!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No197"
 msgid "11802"
 msgstr "Se suponía que {actor_name:3} iba a ser{line_break}un guerrero grande y varonil...{page_break}Quizás no todas las{line_break}leyendas sean ciertas...{end_wait}"
 
@@ -47251,35 +47251,35 @@ msgctxt "MsgIVeDecided"
 msgid "11810"
 msgstr "¡He decidido convertirme...{line_break}en un aventurero!{page_break}¡Un día, cuando {actor_name:3} y sus{line_break}compañeros regresen, me{line_break}enrolaré con ellos!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No198"
 msgid "11811"
 msgstr "Las leyendas nos cuentan el{line_break}gran desastre que provocó la{line_break}desaparición de los anemos...{page_break}Tenía algo que ver con la luz{line_break}de los faros al extinguirse...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No199"
 msgid "11812"
 msgstr "El cráter que hay fuera del{line_break}poblado es donde solía estar{line_break}la ciudad de Anemos.{page_break}¡Las leyendas cuentan que, un día,{line_break}el terreno se separó y salió{line_break}volando!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No200"
 msgid "11813"
 msgstr "La antigua ciudad de Anemos{line_break}estaba situada cerca de las{line_break}ruinas.{page_break}El cráter que hay junto a ellas{line_break}es lo que queda de la ciudad.{end_wait}"
 
-msgctxt "MsgScene694No41"
+msgctxt "MsgScene694No201"
 msgid "11814"
 msgstr "¿Ciudades que salen volando?{line_break}¡Eso no se lo traga nadie!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No202"
 msgid "11815"
 msgstr "Si un barco puede elevarse{line_break}del mar, ¿por qué no una{line_break}ciudad?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No203"
 msgid "11816"
 msgstr "He visto muchas cosas extrañas{line_break}últimamente... Quizás deba prestar{line_break}atención a esas leyendas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No204"
 msgid "11817"
 msgstr "La ciudad de Anemos subió{line_break}a los cielos y se convirtió en{line_break}lo que ahora llamamos la Luna.{end_wait}"
 
-msgctxt "MsgScene694No199"
+msgctxt "MsgScene694No205"
 msgid "11818"
 msgstr "Un momento... ¿Que la ciudad{line_break}de Anemos subió a los cielos?{page_break}¡Bueno, pero si parece inventado!{end_wait}"
 
@@ -51343,15 +51343,15 @@ msgctxt "MsgScene65ENo38"
 msgid "12833"
 msgstr "Hay pescado que nunca he{line_break}visto antes cociéndose a{line_break}fuego lento.{page_break}¿A qué sabrá esta pestilente{line_break}sopa?... No estoy seguro de{line_break}querer averiguarlo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No206"
 msgid "12834"
 msgstr "Hay una sopa rojiza llena{line_break}de alubias y tomates cociendo{line_break}a fuego lento.{page_break}Ese olor a especias dice mucho{line_break}de su sabor, pero no quiero{line_break}quemarme la lengua.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No207"
 msgid "12835"
 msgstr "¡Ah, el olor del pan de{line_break}maíz fresco horneándose!{page_break}¡Sólo con olerlo me{line_break}pongo a babear!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgScene694No208"
 msgid "12836"
 msgstr "Los mitdirenses son famosos por{line_break}las galletas que preparan...{page_break}He oído que, aunque tengas{line_break}la receta, necesitarías años{line_break}para aprender a hornearlas.{end_wait}"
 

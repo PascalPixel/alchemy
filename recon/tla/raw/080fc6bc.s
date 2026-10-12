@@ -439,7 +439,7 @@ Func_080fc6bc:
 	strb r3, [r2, #5]
 	mov r1, r11
 	mov r0, r8
-	bl Func_080fc4c0
+	bl ItemMenu_PageResult
 	mov r2, r8
 	ldr r1, [r2, #24]
 	movs r0, #98

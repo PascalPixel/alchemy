@@ -1,5 +1,16 @@
 #include "trackbuf.h"
 
+void AudioTrack_InsertSlotNode(s32 index)
+{
+    struct AudioTrackSlotWork *work = Flash_Handler3;
+
+    work->nodes[index].prev = (struct AudioSlotNode *)&work->bucket[work->bucket_by_slot[index]];
+    work->nodes[index].next = work->bucket[work->bucket_by_slot[index]];
+    work->bucket[work->bucket_by_slot[index]] = &work->nodes[index];
+    if (work->nodes[index].next != NULL)
+        work->nodes[index].next->prev = &work->nodes[index];
+}
+
 void AudioTrack_RemoveSlotNode(s32 slot)
 {
     if (Flash_Handler3->nodes[slot].prev != NULL) {

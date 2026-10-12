@@ -153,25 +153,19 @@ u8 *SceneEventRuntime_GetEffectData(void)
 
 static s32 SceneEventRuntime_SelectInitialSceneByFlags(void)
 {
-	s32 no;
-
 	if (Engine_GameFlagIsSet(0x818) != 0)
 	{
 		if (Engine_GameFlagIsSet(FLAG_STATUE_TRAP_SPRUNG) == 0)
 		{
-			no = 3;
-			goto apply;
+			Engine_EventRequestExit(3);
+			return 1;
 		}
-		goto fail;
 	}
-	if (Engine_GameFlagIsSet(0x812) == 0)
+	else if (Engine_GameFlagIsSet(0x812) == 0)
 	{
-		no = 4;
-	apply:
-		Engine_EventRequestExit(no);
+		Engine_EventRequestExit(4);
 		return 1;
 	}
-fail:
 	return -1;
 }
 

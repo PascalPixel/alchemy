@@ -36,6 +36,7 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "ram_buffer.h"
+#include "frame.h"
 
 // 前方宣言
 static void ArutamiraDou_ReleaseWallBurst(void);
@@ -693,8 +694,6 @@ static void ArutamiraDou_TurnRock(s32 action)
 }
 
 extern u8 gDisplayTransition[];
-
-extern u8 gFrameTick[];
 
 s32 Math_DivideUnsigned(s32 value, s32 divisor);
 
@@ -2039,7 +2038,7 @@ static void OverlayObject_UpdateThreeStateMotion(struct EffectSlot *obj)
 		obj->max_speed = 0x50000;
 		obj->flag42 = state;
 		(*p)++;
-		if ((*(s32 *)gFrameTick & 3) == 0)
+		if ((gFrameTick & 3) == 0)
 			Engine_AudioPlayCue(0x86);
 	}
 	else if (state == 1)

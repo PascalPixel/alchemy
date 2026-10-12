@@ -36,6 +36,7 @@
 #include "uiwindow.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "frame.h"
 
 // 前方宣言
 static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out);
@@ -298,9 +299,6 @@ struct SaveMenuSceneState
 	s32 word_100;
 };
 
-extern u8 gSleepDisabled;
-extern u8 gDebugMode;
-extern u8 gOptionMirror;
 struct SaveLinkGreeting
 {
 	u16 code[4];

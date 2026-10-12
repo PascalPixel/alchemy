@@ -27,6 +27,7 @@
 #include "heap_state.h"
 #include "scene.h"
 #include "global_cells.h"
+#include "frame.h"
 
 struct IntroSprite
 {
@@ -56,8 +57,6 @@ struct IntroWork
 		} prompt;
 	} area;
 };
-
-extern u8 gDebugPaused;
 
 // 六列のスプライトの x
 const u8 Title_IntroSpriteColumns[] = {96, 136, 140, 160, 168, 184};
@@ -264,9 +263,6 @@ void Title_LoadIntroBackgrounds(void)
 #define PROMPT_X 80
 #define PROMPT_Y 124
 #endif
-
-extern u8		   gOamCopyEnabled;
-extern volatile u8 gCpuLoadDisplayEnabled;
 
 s32 Title_ShowIntro(s32 prompt)
 {

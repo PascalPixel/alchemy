@@ -79,6 +79,7 @@
 #include "iowrite.h"
 #include "battle_formation.h"
 #include "b5_context.h"
+#include "frame.h"
 
 struct DebugPartyEntry
 {
@@ -1115,7 +1116,6 @@ s32 Battle_ClearSerialTransferPayload(void)
 		gBattleRandomSeed = 0;   \
 	} while (0)
 extern u8 gActorSpriteSlots[];
-extern u8 gCpuLoadDisplayEnabled;
 
 s32 Battle_RunEncounter(s32 enemy_group)
 {
@@ -3734,7 +3734,6 @@ s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
 	return (s16)living_units[(Random16() * living_count) >> 0x10];
 }
 
-extern volatile s32 gFrameTick;
 extern s32		   *gDisp; // 切り替えのタイマー（ワークのスロット 42）
 
 void Palette_UpdatePulseBrightness(void)

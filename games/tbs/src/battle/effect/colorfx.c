@@ -31,6 +31,7 @@
 #include "tbs_edition.h"
 #include "text/msg_ids.h"
 #include "trackbuf.h"
+#include "frame.h"
 
 //--------------------------------------------------------------------------
 // colorfx.c
@@ -358,8 +359,6 @@ struct ReelSave
 	u8 unknown_000[0x120];
 	s8 won_prizes[16];
 };
-
-extern u8 gDebugPaused;
 
 // 火花のセル（一辺 2..20 ピクセルの正方形）の位置
 const u16 ReelGame_SparkCellOffsets[] = {0, 4, 20, 56, 120, 220, 364, 560, 816, 1140};
@@ -1079,8 +1078,6 @@ void ReelGame_InitTitle(void)
 	UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
 	UiText_DrawCharacterAtOffsetFar(message - 1, state->sub_window, 0, 0);
 }
-
-extern u8 gOamCopyEnabled;
 
 void ReelGame_Run(void)
 {

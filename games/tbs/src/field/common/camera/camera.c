@@ -19,6 +19,7 @@
 #include "edition.h"
 #include "callback_scheduler.h"
 #include "call.h"
+#include "frame.h"
 
 s32 Runtime_BlankDisplayAndRun(void)
 {
@@ -175,7 +176,6 @@ struct LuckyDiceSprites
 };
 
 #include "keystate.h"
-extern u8 gOamCopyEnabled;
 // どこからも参照されない符号の表
 const s32 LuckyDice_UnusedSigns[] = {-1, 1, -1, 1, -1, -1, 1, 1};
 

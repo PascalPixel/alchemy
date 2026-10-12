@@ -35,6 +35,7 @@
 #include "object_dispatch.h"
 #include "ability_ids.h"
 #include "objcmd.h"
+#include "frame.h"
 
 // 前方宣言
 static void FieldScene_RunScriptedSceneSequence(void);
@@ -1475,8 +1476,6 @@ struct TextCursor
 {
 	u8 storage[12];
 };
-
-extern volatile u32 gFrameTick;
 
 #if EDITION_INTERNATIONAL
 #define QUESTION_X 2

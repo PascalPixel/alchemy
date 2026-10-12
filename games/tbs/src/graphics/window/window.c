@@ -89,6 +89,7 @@
 #include "battle_effect_work.h"
 #include "shop.h"
 #include "disptran.h"
+#include "frame.h"
 
 #define UI_WORK ((struct UiRenderWork *)gWindowWork[0])
 
@@ -833,8 +834,6 @@ void UiWork_ProcessRenderChannels(void)
 		channel++;
 	} while (channel_no != 3);
 }
-
-extern volatile u16 gLagFramesShown;
 
 enum
 {
@@ -4198,8 +4197,6 @@ void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output)
 	}
 }
 
-extern u32 gFrameTick;
-
 void UiWork_AnimateSpriteSlots(void)
 {
 	struct UiRenderWork	  *work = UI_WORK;
@@ -7474,9 +7471,6 @@ void Runtime_ScheduleCallbackAndReleaseBlock20B(void)
 #define SLIDER_PALETTE 14
 #define RESOURCE_SLOTS 96
 
-extern u8 gSleepDisabled;
-extern u8 gOptionMirror;
-
 struct RenderInput *Menu_OpenWorkspaceOptions(void)
 {
 	/* FAKEMATCH: the shared cursor union keeps pointer stores before window reads; an equal-size struct reorders these moves in all six editions. */
@@ -7764,8 +7758,6 @@ s32 Menu_RunWorkspaceOptions(void)
 #define WORKSPACE_DEBUG_ROWS 3
 #define WORKSPACE_ROW_HEIGHT 24
 #define WORKSPACE_TEXT_X 48
-
-extern u8 gDebugMode;
 
 void Menu_RunSelectedWorkspaceEntry(void)
 {
@@ -9487,7 +9479,6 @@ s32 SaveState_ScanRecordFlags(void)
 
 u32 SaveState_BuildSummaryHeader(void)
 {
-	extern u32			gLoadedStateWord;
 	u16					owners[14];
 	struct SaveSummary *summary;
 	struct BtlUnit	   *owner;
@@ -10188,8 +10179,6 @@ void StatusMenu_DrawCharacterSummary(s32 win, struct SaveSummary *rec)
 	}
 }
 
-extern s16 gPostLoadCounter;
-
 #if EDITION_INTERNATIONAL
 
 s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
@@ -10742,7 +10731,6 @@ skip:
 
 s32 SaveState_LoadRecordIntoWork(s32 arg)
 {
-	extern u32 gLoadedStateWord;
 	s32		   ret = 0;
 	s32		   err = SaveState_InitializeWorkspace();
 
@@ -18796,8 +18784,6 @@ void Djinn_SetFoundFlagAndAdd(s32 owner, s32 element, s32 index)
 	GameFlag_SetBitFar((element * 0x14) + index + 0x30);
 	Djinn_AddToOwnerFar(owner, element, index);
 }
-
-extern u8 gSleepRequested;
 
 s32 Menu_RunWorkspaceResultLoop(void)
 {

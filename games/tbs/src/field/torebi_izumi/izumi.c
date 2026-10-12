@@ -31,6 +31,7 @@
 #include "iwram_call.h"
 #include "ability_ids.h"
 #include "iowrite.h"
+#include "frame.h"
 
 // 前方宣言
 static void TorebiIzumi_RiseAndFadeIn(void);
@@ -69,8 +70,6 @@ struct SpringActor
 	s16 cool;
 	u8	unknown_16[2];
 };
-
-extern u8 gOamCopyEnabled;
 
 static __inline__ void Io_SetBlendControl(s32 value)
 {

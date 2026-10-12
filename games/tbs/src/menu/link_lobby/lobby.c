@@ -33,6 +33,7 @@
 #include "game_state.h"
 #include "irqlock.h"
 #include "field_scene.h"
+#include "frame.h"
 
 extern u16 gLinkStatus;
 
@@ -951,8 +952,6 @@ none:
 	Engine_EventShowMessage(actor, 0);
 done:;
 }
-
-extern u8 gOptionMirror;
 
 static s32 EV15_TALK(s32 id)
 {

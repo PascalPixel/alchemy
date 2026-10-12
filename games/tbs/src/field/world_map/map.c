@@ -40,6 +40,7 @@
 #include "objcmd.h"
 #include "fieldobj.h"
 #include "ram_buffer.h"
+#include "frame.h"
 
 // 前方宣言
 static s32 StoryActor_ApplyMapRotation(struct FieldActor *actor);
@@ -107,8 +108,6 @@ enum
 	FLAG_CONTACT_PAUSED = 0x163,
 	FLAG_CONTACT_BLOCKED = 0x104
 };
-
-extern u8 gDebugMode[];
 
 static void StoryProgress_TriggerEvent0808(void)
 {
@@ -459,7 +458,7 @@ static void MapActor_UpdateContact(void)
 			continue;
 		}
 		actor->active = 1;
-		if (gDebugMode[0] != 0 && Engine_GameFlagIsSet(FLAG_CONTACT_PAUSED) != 0)
+		if (gDebugMode != 0 && Engine_GameFlagIsSet(FLAG_CONTACT_PAUSED) != 0)
 		{
 			continue;
 		}

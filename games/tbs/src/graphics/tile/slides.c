@@ -31,6 +31,7 @@
 #include "layout_guard.h"
 #include "btlpty.h"
 #include "btlsys.h"
+#include "frame.h"
 
 //--------------------------------------------------------------------------
 // 256 色のキャラクター 30K バイトを色 1 で埋め、パレット 128 色を 0 にする
@@ -65,8 +66,6 @@ void Graphics_ClearCharacterBlockAndPalette(s32 alt)
 }
 
 typedef s32 (*PackedDecoder)(u8 *source, u32 destination, u32 fill);
-
-extern u32 gFrameTick;
 
 // スタッフロールで順に映す戦闘背景（0 で消す）
 const u32 DisplayScroll_SlideResources[] = {
@@ -181,10 +180,6 @@ void DisplayScroll_StepPositionEveryFourFrames(void)
 		gBgScroll[3].x += decrement;
 	}
 }
-
-extern u8 gOamCopyEnabled;
-extern u8 gCpuLoadDisplayEnabled;
-extern u8 gOptionMirror;
 
 s32 DisplayScroll_RunSlideshow(void)
 {

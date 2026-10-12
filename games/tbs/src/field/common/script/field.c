@@ -4393,7 +4393,6 @@ struct WorldMapSprite
 	u8				   unknown_28[4];
 	u8				  *shadow;
 };
-#define gDebugMode (*(volatile u8(*)) & gDebugMode)
 
 s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 {
@@ -4428,7 +4427,7 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 		if (free - 136 < 0)
 			AudioCommand_PlayFar(135);
 	}
-	if (gDebugMode != 0)
+	if (*(volatile u8 *)&gDebugMode != 0)
 	{
 		s32 mask;
 
@@ -5150,8 +5149,6 @@ void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
 		} while (n != -1);
 	}
 }
-
-#undef gDebugMode
 
 //--------------------------------------------------------------------------
 

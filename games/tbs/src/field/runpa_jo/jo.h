@@ -13,8 +13,4 @@
 #include "field_event.h"
 #include "field_service.h"
 
-#ifndef MODERN // modern GCC keeps the headers' volatile declaration
-extern u32 gFrameCount;
-#endif
-
 #endif

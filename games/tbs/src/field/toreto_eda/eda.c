@@ -46,10 +46,6 @@ union SceneCell
 	s16 h[2];
 };
 
-#ifndef MODERN // modern GCC keeps the headers' volatile declaration
-extern u32 gFrameCount;
-#endif
-
 static u16 sTransferHeader[16];
 static u8  sTransferData[0x60];
 static s32 sSplitLine;

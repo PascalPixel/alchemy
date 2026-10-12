@@ -34,8 +34,7 @@
 #include "irqlock.h"
 #include "field_scene.h"
 #include "frame.h"
-
-extern u16 gLinkStatus;
+#include "ram_buffer.h"
 
 #define PEER_TAG(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 
@@ -229,7 +228,6 @@ static s32 LinkLobby_PollPeerReady(void)
 }
 
 u32 gLinkLobbyCallFrames;
-#define gLinkStatus (*(volatile u16(*)) & gLinkStatus)
 
 static s32 EV01_RAISED(void)
 {
@@ -600,8 +598,6 @@ done:
 	Runtime_BumpFree(heap);
 	return result;
 }
-
-#undef gLinkStatus
 
 extern u8 gMapCellBuffer[];
 

@@ -3559,10 +3559,6 @@ s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode)
 	return ret;
 }
 
-#ifndef MODERN // modern GCC keeps the headers' volatile declaration
-#define gFrameCount (*(u32(*)) & gFrameCount)
-#endif
-
 typedef s32 (*BattleItemCallback)(s32 item, s32 actor, s32 slot);
 
 void Animation_ApplyChildPalette(struct MotionObject *obj, s32 palette)
@@ -3851,8 +3847,6 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
 	BattleEffect_CleanupSceneObjects();
 	return 0;
 }
-
-#undef gFrameCount
 
 //--------------------------------------------------------------------------
 // action.c
@@ -5388,8 +5382,6 @@ struct DisplayTransitionState *DisplayTransition_AllocateAndClearState(void)
 	Dma_Set((const void *)&clear_value, state, 0x85000000 | (sizeof(*state) / 4), REG_DMA3);
 	return state;
 }
-
-extern volatile u32 gFrameCount;
 
 void DisplayTransition_Start(s32 mode, s32 frames)
 {
@@ -11172,8 +11164,6 @@ void Field_DispatchTypeHandler(s32 kind)
 // フィールド効果：種類ごとの振り分けと、効果のイベント処理
 //--------------------------------------------------------------------------
 
-#define gFrameCount (*(volatile s32 *)&gFrameCount)
-
 #define HEAP_SLOT_FX 56 // エナジー演出のワーク (gWorkSlot[56] は gEffectWork)
 
 void _call_via_r3(s32, s32);
@@ -11442,7 +11432,7 @@ void ObjectGroup_ApplyRandomChildValues(void *owner)
 			initial_count = ((struct AnimationObject *)anim)->count;
 			if (initial_count != 0)
 			{
-				frame_count = &gFrameCount;
+				frame_count = (volatile s32 *)&gFrameCount;
 				entry = (void **)((struct AnimationObject *)anim)->entries;
 				cnt = initial_count;
 				do
@@ -11626,8 +11616,6 @@ void BattleFx_UpdateScaledArcObjectB(struct FieldActor *obj)
 // actsetup.c
 // エナジー演出：ワークの準備、使う者と対象の記録、ふくらむ弧の物体
 //--------------------------------------------------------------------------
-
-#undef gFrameCount
 
 // スプライト：OAM の三つの属性と管理情報
 struct ArcSprite

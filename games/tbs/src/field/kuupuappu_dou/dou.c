@@ -41,9 +41,6 @@ struct MapShake
 	s32 scroll;
 };
 
-#ifndef MODERN // modern GCC keeps the headers' volatile declaration
-extern u32 gFrameCount;
-#endif
 void QueueIoWriteDelay2(u32 address, s32 value);
 
 #define TILE(position) ((position) / 0x100000)

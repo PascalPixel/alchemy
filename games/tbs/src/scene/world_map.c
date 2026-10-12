@@ -1432,20 +1432,21 @@ static void EV90_TOUCH(void)
 	Actor_FaceActor(DJINNI, 0, 0);
 	Event_ShowMessage(DJINNI, 0);
 	Event_OpenMessage(DJINNI, 0);
-	if (Event_ChooseYesNo(0, 0) != 1)
-		goto learn;
-	Actor_SetAnimation(0, 22);
-	Actor_RunRepeatedMotion(DJINNI, 2);
-	Event_SetMessage((s32)MsgWorldMapHmmmmExplainAgain);
-	Event_OpenMessage(DJINNI, 0);
 	if (Event_ChooseYesNo(0, 0) == 1)
-		goto learn;
-	Event_ShowMessage(DJINNI, 0);
-	Actor_WalkToAndWait(DJINNI, x >> 16, z >> 16);
-	WorldMap_ShowDjinnTutorial();
-	Battle_ClearObjectFlag5bWhenMode3();
-	return;
-learn:
+	{
+		Actor_SetAnimation(0, 22);
+		Actor_RunRepeatedMotion(DJINNI, 2);
+		Event_SetMessage((s32)MsgWorldMapHmmmmExplainAgain);
+		Event_OpenMessage(DJINNI, 0);
+		if (Event_ChooseYesNo(0, 0) != 1)
+		{
+			Event_ShowMessage(DJINNI, 0);
+			Actor_WalkToAndWait(DJINNI, x >> 16, z >> 16);
+			WorldMap_ShowDjinnTutorial();
+			Battle_ClearObjectFlag5bWhenMode3();
+			return;
+		}
+	}
 	Actor_SetAnimation(0, 22);
 	Event_SetMessage((s32)MsgWorldMapYeahWantLearn);
 	Actor_Jump(DJINNI, 2, 20);

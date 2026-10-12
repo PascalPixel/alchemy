@@ -1662,14 +1662,17 @@ static void AdvanceActor18AlongEscapeRoute(void)
 	{
 		if ((u32)(companion14Column - 6) <= 2)
 		{
-			goto transition32;
+			PositionSceneActorPair(18, 0, 32);
 		}
-		if ((u32)(companion19Column - 6) <= 2)
+		else if ((u32)(companion19Column - 6) <= 2)
 		{
-			goto transition80;
+			PositionSceneActorPair(18, 0, 80);
 		}
-		PositionSceneActorPair(18, 0, 64);
-		PositionSceneActorPair(18, 0, 96);
+		else
+		{
+			PositionSceneActorPair(18, 0, 64);
+			PositionSceneActorPair(18, 0, 96);
+		}
 	}
 	else if (row == 11)
 	{
@@ -1690,7 +1693,6 @@ static void AdvanceActor18AlongEscapeRoute(void)
 	{
 		if ((u32)(companion19Column - 6) <= 2)
 		{
-		transition32:
 			PositionSceneActorPair(18, 0, 32);
 		}
 		else
@@ -1704,7 +1706,6 @@ static void AdvanceActor18AlongEscapeRoute(void)
 		{
 			return;
 		}
-	transition80:
 		PositionSceneActorPair(18, 0, 80);
 	}
 	else if (row == 15)
@@ -1865,13 +1866,16 @@ static void AdvanceActor9AlongEscapeRoute(void)
 		}
 		if ((u32)(companion14Column - 9) <= 2)
 		{
-			goto transition48;
+			PositionSceneActorPair(9, 0, 48);
 		}
-		if ((u32)(companion19Column - 9) > 2)
+		else
 		{
-			PositionSceneActorPair(9, 0, 80);
+			if ((u32)(companion19Column - 9) > 2)
+			{
+				PositionSceneActorPair(9, 0, 80);
+			}
+			PositionSceneActorPair(9, 0, 96);
 		}
-		PositionSceneActorPair(9, 0, 96);
 	}
 	else if (row == 11)
 	{
@@ -1881,7 +1885,6 @@ static void AdvanceActor9AlongEscapeRoute(void)
 		}
 		if ((u32)(companion19Column - 9) <= 2)
 		{
-		transition48:
 			PositionSceneActorPair(9, 0, 48);
 		}
 		else

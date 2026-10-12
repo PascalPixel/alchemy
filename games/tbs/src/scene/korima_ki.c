@@ -151,10 +151,7 @@ static void KorimaKi_TalkToToreto(void)
 			Event_ShowMessage(8, 0);
 			KorimaKi_PlayGesture(10, 0);
 			record = PartyInventory_FindOwner(184);
-			if (record == -1)
-			{
-				goto end_event;
-			}
+			if (record != -1)
 			{
 				u16 *target = &gEventWork->unknown_172;
 				u16	 shown = 1;
@@ -177,7 +174,6 @@ static void KorimaKi_TalkToToreto(void)
 			Engine_TaskWait(40);
 		}
 	}
-end_event:;
 	Engine_EventEnd();
 }
 

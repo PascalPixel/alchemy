@@ -1991,72 +1991,76 @@ static void FieldScene_RunPartyRosterScene(void)
 			break;
 		}
 	}
-	if (found == 4)
-		goto scene;
-	member = 28;
-	for (index = 0; index <= 3; index++)
+	if (found != 4)
 	{
-		if (roster[index] == member)
+		member = 28;
+		for (index = 0; index <= 3; index++)
 		{
-			matched[found] = member;
-			category[found] = found;
-			found++;
-			break;
+			if (roster[index] == member)
+			{
+				matched[found] = member;
+				category[found] = found;
+				found++;
+				break;
+			}
 		}
-	}
-	if (found == 4)
-		goto scene;
-	member = 29;
-	for (index = 0; index <= 3; index++)
-	{
-		if (roster[index] == member)
+		if (found != 4)
 		{
-			matched[found] = member;
-			category[found] = found;
-			found++;
-			break;
-		}
-	}
-	if (found == 4)
-		goto scene;
-	member = 26;
-	for (index = 0; index <= 3; index++)
-	{
-		if (roster[index] == member)
-		{
-			matched[found] = member;
-			category[found] = 10;
-			found++;
-			break;
-		}
-	}
-	if (found == 4)
-		goto scene;
-	member = 30;
-	for (index = 0; index <= 3; index++)
-	{
-		if (roster[index] == member)
-		{
-			matched[found] = member;
-			category[found] = 11;
-			found++;
-			break;
-		}
-	}
-	if (found == 4)
-		goto scene;
-	member = 31;
-	for (index = 0; index <= 3; index++)
-	{
-		if (roster[index] == member)
-		{
-			matched[found] = member;
-			category[found] = 20;
-			break;
+			member = 29;
+			for (index = 0; index <= 3; index++)
+			{
+				if (roster[index] == member)
+				{
+					matched[found] = member;
+					category[found] = found;
+					found++;
+					break;
+				}
+			}
+			if (found != 4)
+			{
+				member = 26;
+				for (index = 0; index <= 3; index++)
+				{
+					if (roster[index] == member)
+					{
+						matched[found] = member;
+						category[found] = 10;
+						found++;
+						break;
+					}
+				}
+				if (found != 4)
+				{
+					member = 30;
+					for (index = 0; index <= 3; index++)
+					{
+						if (roster[index] == member)
+						{
+							matched[found] = member;
+							category[found] = 11;
+							found++;
+							break;
+						}
+					}
+					if (found != 4)
+					{
+						member = 31;
+						for (index = 0; index <= 3; index++)
+						{
+							if (roster[index] == member)
+							{
+								matched[found] = member;
+								category[found] = 20;
+								break;
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
-scene:
 	Engine_EventBegin();
 	Engine_ActorSetChildValue(0, 15);
 	Engine_ActorSetSpriteFlags(Object_GetById(0), 0);

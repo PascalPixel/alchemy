@@ -20,6 +20,7 @@
 #include "unit/menu/shop/shop6.h"
 #include "unit/sound/sound.h"
 #include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtime3.h"
 #include "unit/system/scheduler/runtime4.h"
 #include "unit/system/scheduler/runtime5.h"
 #include "unit/system/scheduler/runtime6.h"

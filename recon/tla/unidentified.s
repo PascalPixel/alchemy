@@ -376,16 +376,6 @@ Data_080b1284:
 	.global Data_080b1290
 Data_080b1290:
 	.incbin "baserom.gba", 0x000b1290, 0x00000038
-	.section .unidentified.080b1f2c,"a"
-	.global Data_080b1f2c
-Data_080b1f2c:
-	.incbin "baserom.gba", 0x000b1f2c, 0x00000014
-	.global Data_080b1f40
-Data_080b1f40:
-	.incbin "baserom.gba", 0x000b1f40, 0x00000400
-	.global Data_080b2340
-Data_080b2340:
-	.incbin "baserom.gba", 0x000b2340, 0x00000024
 	.section .unidentified.080c6b04,"a"
 	.global Data_080c6b04
 Data_080c6b04:
@@ -400,16 +390,6 @@ Battle_Effect91Classes:
 	.global Data_080eda0c
 Data_080eda0c:
 	.incbin "baserom.gba", 0x000eda0c, 0x000000c0
-	.section .unidentified.080ef824,"a"
-	.global Party_PairResolveRules
-Party_PairResolveRules:
-	.incbin "baserom.gba", 0x000ef824, 0x00000160
-	.global Data_080ef984
-Data_080ef984:
-	.incbin "baserom.gba", 0x000ef984, 0x00000398
-	.global Data_080efd1c
-Data_080efd1c:
-	.incbin "baserom.gba", 0x000efd1c, 0x00000054
 	.section .unidentified.080eff22,"a"
 	.global Data_080eff22
 Data_080eff22:
@@ -431,21 +411,6 @@ Data_080f01b8:
 	.incbin "baserom.gba", 0x000f01b8, 0x0000000c
 	.section .unidentified.080f0306,"a"
 	.incbin "baserom.gba", 0x000f0306, 0x00000002
-	.global Data_080f0308
-Data_080f0308:
-	.incbin "baserom.gba", 0x000f0308, 0x000003d0
-	.global Object_VariantMotionScripts
-Object_VariantMotionScripts:
-	.incbin "baserom.gba", 0x000f06d8, 0x00000184
-	.global Data_080f085c
-Data_080f085c:
-	.incbin "baserom.gba", 0x000f085c, 0x00000018
-	.global Data_080f0874
-Data_080f0874:
-	.incbin "baserom.gba", 0x000f0874, 0x00000018
-	.global ObjectGroup_BlinkChildValues
-ObjectGroup_BlinkChildValues:
-	.incbin "baserom.gba", 0x000f088c, 0x00000004
 	.section .unidentified.080f0b50,"a"
 	.global Data_080f0b50
 Data_080f0b50:

@@ -1963,10 +1963,7 @@ Func_080b11f8:
 Data_080b127c:
 	.incbin "baserom.gba", 0x000b1288, 0x0000004c
 	.section .rom.000b1f34, "ax"
-	.incbin "baserom.gba", 0x000b1f34, 0x00000018
-	.global Data_080b1f40
-Data_080b1f40:
-	.incbin "baserom.gba", 0x000b1f4c, 0x00000424
+	.incbin "baserom.gba", 0x000b1f34, 0x00000004
 	.section .rom.000c6b10, "ax"
 	.global Data_080c6b04
 Data_080c6b04:
@@ -3986,7 +3983,7 @@ EffectSlot_Initialize:
 	.section .rom.000eda00, "ax"
 	.incbin "baserom.gba", 0x000eda00, 0x000000c0
 	.section .rom.000ef810, "ax"
-	.incbin "baserom.gba", 0x000ef810, 0x00000554
+	.incbin "baserom.gba", 0x000ef810, 0x00000008
 	.section .rom.000eff16, "ax"
 	.incbin "baserom.gba", 0x000eff16, 0x00000006
 	.global Data_080eff28
@@ -3999,13 +3996,7 @@ Data_080effd8:
 BattleFx_ParticleScript:
 	.incbin "baserom.gba", 0x000f0188, 0x00000030
 	.section .rom.000f02fa, "ax"
-	.incbin "baserom.gba", 0x000f02fa, 0x000003d2
-	.global Object_VariantMotionScripts
-Object_VariantMotionScripts:
-	.incbin "baserom.gba", 0x000f06cc, 0x000001b4
-	.global ObjectGroup_BlinkChildValues
-ObjectGroup_BlinkChildValues:
-	.incbin "baserom.gba", 0x000f0880, 0x00000004
+	.incbin "baserom.gba", 0x000f02fa, 0x00000002
 	.section .rom.000f0b44, "ax"
 	.incbin "baserom.gba", 0x000f0b44, 0x0000002c
 	.section .rom.000f0bf0, "ax"

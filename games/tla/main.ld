@@ -1035,6 +1035,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000e097c)
     "*/games/tla/src/battle/effect/advance_angle_with_ramp.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000e0c68)
+    "*/games/tla/src/battle/effect/launch.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.000e0efc)
     "*/games/tla/src/battle/effect/arcmsg.o"(.text)
     "*/games/tla/src/battle/effect/flicker_object_and_tick.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000e1404)

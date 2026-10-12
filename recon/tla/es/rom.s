@@ -3835,7 +3835,18 @@ Func_080e03cc:
 Func_080e09c0:
 	.incbin "baserom.gba", 0x000e99b4, 0x000002c4
 	.section .rom.000e9ca0, "ax"
-	.incbin "baserom.gba", 0x000e9ca0, 0x000004a8
+	.global Func_080e0cac
+	.type Func_080e0cac, %function
+	.thumb_func
+Func_080e0cac:
+	.incbin "baserom.gba", 0x000e9ca0, 0x00000040
+	.global Func_080e0cec
+	.type Func_080e0cec, %function
+	.thumb_func
+Func_080e0cec:
+	.incbin "baserom.gba", 0x000e9ce0, 0x000000e8
+	.section .rom.000e9f34, "ax"
+	.incbin "baserom.gba", 0x000e9f34, 0x00000214
 	.global Func_080e1154
 	.type Func_080e1154, %function
 	.thumb_func
@@ -4049,6 +4060,10 @@ Func_080db0b0:
 EffectSlot_UpdateMotion:
 	.incbin "baserom.gba", 0x000f4d18, 0x0000014c
 	.section .rom.000f4ebc, "ax"
+	.global EffectSlot_Initialize
+	.type EffectSlot_Initialize, %function
+	.thumb_func
+EffectSlot_Initialize:
 	.incbin "baserom.gba", 0x000f4ebc, 0x000000a0
 	.section .rom.000f4f88, "ax"
 	.incbin "baserom.gba", 0x000f4f88, 0x000001b8

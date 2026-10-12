@@ -1303,7 +1303,7 @@
         "*/games/tla/src/battle/effect/advance_angle_with_ramp.o"(.text)
         "*/recon/tla/raw/080e0cac.o"(.text)
         "*/recon/tla/raw/080e0cec.o"(.text)
-        "*/recon/tla/raw/080e0dd4.o"(.text)
+        "*/games/tla/src/battle/effect/launch.o"(.text)
         "*/recon/tla/raw/080e0f40.o"(.text)
         "*/recon/tla/raw/080e0fb0.o"(.text)
         "*/recon/tla/raw/080e1024.o"(.text)

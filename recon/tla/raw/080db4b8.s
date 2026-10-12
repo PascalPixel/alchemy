@@ -66,7 +66,7 @@ BattleFx_Run:
 .L_080db532:
 	cmp r2, #15
 	bne .L_080db53c
-	bl Func_080e0dd4
+	bl BattleFx_RunEffect15
 	b .L_080db668
 .L_080db53c:
 	cmp r2, #16

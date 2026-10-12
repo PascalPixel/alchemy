@@ -3672,11 +3672,20 @@ Func_0811c120:
 	.incbin "baserom.gba", 0x0011c138, 0x000000d8
 	.section .rom.0011c3d4, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x0011c3d4, 0x00000294
+	.incbin "baserom.gba", 0x0011c3d4, 0x000001d8
 	.section .rom.0011c682, "ax"
 	.incbin "baserom.gba", 0x0011c682, 0x00000002
 	.section .rom.0011c728, "ax"
-	.incbin "baserom.gba", 0x0011c728, 0x000004d8
+	.global Func_0811c710
+	.type Func_0811c710, %function
+	.thumb_func
+Func_0811c710:
+	.incbin "baserom.gba", 0x0011c728, 0x00000344
+	.global Func_0811ca54
+	.type Func_0811ca54, %function
+	.thumb_func
+Func_0811ca54:
+	.incbin "baserom.gba", 0x0011ca6c, 0x00000194
 	.section .rom.0011cd94, "ax"
 	.balign 4
 	.global Camera_ConfigureScene

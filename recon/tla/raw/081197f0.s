@@ -529,7 +529,7 @@ Func_081197f0:
 	add r0, r9
 	adds r0, r0, r3
 	str r4, [sp, #4]
-	bl Func_0811c594
+	bl BattlePres_RunAction
 	ldr r4, [sp, #4]
 	cmp r0, #1
 	bne .L_08119c5e

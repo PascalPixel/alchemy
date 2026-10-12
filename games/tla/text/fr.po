@@ -14747,7 +14747,7 @@ msgctxt "message"
 msgid "03684"
 msgstr "{argument_ability_name} de {argument_actor_name:1} est en attente!"
 
-msgctxt "message"
+msgctxt "MsgPartyFlees"
 msgid "03685"
 msgstr "{protagonist_name} et ses amis fuient!"
 

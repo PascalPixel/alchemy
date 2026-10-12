@@ -1806,7 +1806,6 @@
         "*/games/tla/src/battle/motion/summon_scale.o"(.text)
         "*/recon/tla/raw/0811c3bc.o"(.text)
         "*/recon/tla/raw/0811c538.o"(.text)
-        "*/recon/tla/raw/0811c594.o"(.text)
         "*/games/tla/src/battle/presentation/adjust_camera_by_shoulder_keys.o"(.text)
         "*/recon/tla/raw/0811c66a.o"(.text)
         "*/games/tla/src/battle/presentation/escape.o"(.text)

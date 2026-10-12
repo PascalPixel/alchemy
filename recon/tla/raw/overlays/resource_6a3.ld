@@ -44,7 +44,7 @@ SECTIONS
         "*/resource_6a3_overlay.o"(.text.x0200bb7c)
         "*/resource_6a3_overlay.o"(.text.x0200bd44)
         "*/resource_6a3_overlay.o"(.text.x0200be70)
-        "*/resource_6a3_overlay.o"(.text.x0200c0b4)
+        "*/games/tla/src/field/overlay_6a3/s40b4.o"(.text)
         "*/resource_6a3_overlay.o"(.text.x0200c13c)
         "*/resource_6a3_overlay.o"(.text.x0200c1ac)
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)

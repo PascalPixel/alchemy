@@ -53,7 +53,7 @@ Func_080eb318:
 	mov r2, r11
 	str r3, [sp, #4]
 	str r4, [sp, #0]
-	bl Func_080eb2d8
+	bl BattleFx_PlotHalfCanvasPixel
 	ldr r3, [sp, #4]
 	ldr r4, [sp, #0]
 	adds r3, r3, r7
@@ -78,7 +78,7 @@ Func_080eb318:
 	mov r2, r11
 	str r3, [sp, #4]
 	str r4, [sp, #0]
-	bl Func_080eb2d8
+	bl BattleFx_PlotHalfCanvasPixel
 	ldr r3, [sp, #4]
 	ldr r4, [sp, #0]
 	adds r3, r3, r4

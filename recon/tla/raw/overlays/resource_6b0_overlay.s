@@ -4403,71 +4403,6 @@ Func_02002a74:
 	.4byte 0x11111111
 .L_0200acb4:
 	.4byte Func_02002948
-	.section .text.x0200acb8,"ax",%progbits
-	.global Func_02002cb8
-	.thumb_func
-Func_02002cb8:
-	push {r5, r6, lr}
-	mov r6, r10
-	mov r5, r8
-	push {r5, r6}
-	ldr r1, .L_0200ad38
-	movs r2, #133
-	mov r8, r1
-	lsls r2, r2, #2
-	add r8, r2
-	mov r3, r8
-	ldr r0, [r3]
-	bl Object_GetById
-	mov r1, r8
-	ldr r5, [r0, #8]
-	ldr r6, [r0, #16]
-	mov r10, r0
-	movs r2, #128
-	ldr r0, [r1]
-	movs r1, #128
-	lsls r1, r1, #11
-	lsls r2, r2, #10
-	bl ObjectMotion_SetSpeedParameters
-	asrs r5, r5, #20
-	mov r2, r8
-	asrs r6, r6, #20
-	ldr r0, [r2]
-	lsls r1, r5, #4
-	lsls r2, r6, #4
-	adds r1, #8
-	adds r2, #8
-	bl ObjectMotion_SetPositionAndCommit
-	movs r0, #1
-	bl WaitFrames
-	movs r3, #128
-	lsls r3, r3, #12
-	lsls r5, r5, #20
-	lsls r6, r6, #20
-	adds r5, r5, r3
-	mov r1, r10
-	adds r6, r6, r3
-	ldr r2, [r1, #12]
-	adds r3, r6, #0
-	adds r1, r5, #0
-	mov r0, r10
-	bl Object_SetPositionAndResetMotion
-	movs r0, #4
-	bl Battle_WaitMode0
-	bl Func_02003440
-	ldr r2, .L_0200ad3c
-	ldr r3, [r0, #12]
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_0200ad38:
-	.4byte gPartyState
-.L_0200ad3c:
-	.4byte 0xfff80000
 	.section .text.x0200ad40,"ax",%progbits
 	.global Func_02002d40
 	.thumb_func
@@ -4953,6 +4888,7 @@ Func_020030e0:
 .L_0200b18c:
 	.4byte Data_02004458
 	.section .text.x0200b190,"ax",%progbits
+	.balign 4
 	.global Func_02003190
 	.thumb_func
 Func_02003190:

@@ -80,7 +80,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_661/s3910.o"(.text)
         "*/resource_661_overlay.o"(.text.x0200b9b8)
         "*/resource_661_overlay.o"(.text.x0200bb80)
-        "*/resource_661_overlay.o"(.text.x0200bda0)
+        "*/games/tla/src/field/overlay_661/s3da0.o"(.text)
         "*/resource_661_overlay.o"(.text.x0200be3c)
         "*/games/tla/src/field/overlay_661/import.o"(.text)
         "*/games/tla/src/field/overlay_661/data.o"(.data)

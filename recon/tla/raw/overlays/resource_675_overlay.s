@@ -289,67 +289,6 @@ Func_020001f8:
 .L_02008324:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
-	.section .text.x02008328,"ax",%progbits
-	.global Func_02000328
-	.thumb_func
-Func_02000328:
-	push {r5, r6, lr}
-	mov r6, r10
-	mov r5, r8
-	push {r5, r6}
-	movs r6, #192
-	lsls r6, r6, #18
-	ldr r5, [r6, #108]
-	movs r1, #214
-	lsls r1, r1, #1
-	mov r8, r1
-	add r5, r8
-	ldr r2, [r5]
-	ldr r0, .L_020083a8
-	movs r1, #1
-	mov r10, r2
-	bl Func_020012ec
-	movs r0, #128
-	lsls r0, r0, #9
-	movs r1, #2
-	bl Func_020012ec
-	ldr r2, [r6, #108]
-	movs r3, #128
-	lsls r3, r3, #1
-	mov r1, r8
-	str r3, [r2, r1]
-	bl Event_StartScreenTransition
-	bl Event_WaitTransitionFrames
-	bl Func_02000178
-	bl Func_0200132c
-	movs r0, #40
-	bl WaitFrames
-	bl Func_02000158
-	movs r0, #128
-	movs r1, #1
-	lsls r0, r0, #9
-	bl Func_020012ec
-	movs r0, #16
-	bl Func_020012fc
-	movs r0, #16
-	bl WaitFrames
-	ldr r3, .L_020083ac
-	movs r2, #128
-	lsls r2, r2, #2
-	adds r2, #194
-	adds r3, r3, r2
-	movs r2, #0
-	strb r2, [r3]
-	mov r3, r10
-	str r3, [r5]
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, pc}
-.L_020083a8:
-	.4byte 0x00202108
-.L_020083ac:
-	.4byte gPartyState
 	.section .text.x02008580,"ax",%progbits
 	.balign 4
 	.global Func_02000580

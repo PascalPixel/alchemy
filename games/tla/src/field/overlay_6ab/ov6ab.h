@@ -19,7 +19,7 @@ void Func_02004444(void);
 void Func_020041cc(struct ObjectRuntime *object, s32 mode);
 struct ObjectRuntime *Func_020041e4();
 void Func_020017c8(void);
-void Func_02001a9c(void);
+void Func_02001a9c();
 void Func_02001928(struct ObjectRuntime *object, s32 priority);
 void Func_02001b38(struct ObjectRuntime *object, s32 priority);
 

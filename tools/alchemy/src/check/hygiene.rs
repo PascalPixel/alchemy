@@ -109,6 +109,26 @@ pub(crate) fn name_case_reason(path: &str) -> Option<&'static str> {
     (!(leaf_fits && folders.iter().all(|folder| lower(folder)))).then_some(NAME_CASE_REASON)
 }
 
+/// The length rule for a source file a tool names (S3): lower-case
+/// letters, digits and underscores, eight at most before the extension. A
+/// scene's file takes its place's full name and may be longer: a file
+/// directly in its game's scene folder (games/<game>/src/scene), its entry
+/// and import tables in that folder's `entry` and `import`, and its unit
+/// header (games/<game>/include/unit/scene). `alchemy unit` holds the files
+/// it names to this; the check reads the case of tracked files and not
+/// their length, which pictures, sounds and older sources exceed.
+pub(crate) fn name_length_fits(path: &str) -> bool {
+    let (folder, leaf) = path.rsplit_once('/').unwrap_or(("", path));
+    let stem = leaf.rsplit_once('.').map_or(leaf, |(stem, _)| stem);
+    let plain = !stem.is_empty()
+        && stem.bytes().all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'_');
+    let scene = matches!(
+        folder.split('/').collect::<Vec<_>>().as_slice(),
+        ["games", _, "src", "scene"] | ["games", _, "src", "scene", "entry" | "import"] | ["games", _, "include", "unit", "scene"]
+    );
+    plain && (stem.len() <= 8 || scene)
+}
+
 fn content_reasons(path: &str, bytes: &[u8]) -> Vec<&'static str> {
     let name = path.rsplit('/').next().unwrap_or(path);
     let extension = name.rsplit_once('.').map_or("", |(_, e)| e);
@@ -229,6 +249,53 @@ mod tests {
         ] {
             assert_eq!(name_case_reason(path), Some(NAME_CASE_REASON), "{path}");
         }
+    }
+
+    #[test]
+    fn a_scenes_file_takes_its_places_full_name_and_no_other_file_a_long_one() {
+        // A scene's file directly in its game's scene folder, its tables
+        // and its headers.
+        for path in [
+            "games/tbs/src/scene/korashiamu_iriguchi.c",
+            "games/tbs/src/scene/korashiamu_iriguchi.h",
+            "games/tbs/src/scene/runpa_jo_fortress.h",
+            "games/tbs/src/scene/korima_hashi_falling_effect.c",
+            "games/tbs/src/scene/entry/korashiamu_iriguchi.s",
+            "games/tbs/src/scene/import/korashiamu_iriguchi.s",
+            "games/tbs/include/unit/scene/korashiamu_iriguchi.h",
+            "games/tla/src/scene/korashiamu_iriguchi.c",
+        ] {
+            assert!(name_length_fits(path), "{path}");
+            assert!(reasons(path, b"x\n").is_empty(), "{path}");
+        }
+        // Eight letters fit anywhere, as they did.
+        for path in ["games/tbs/src/menu/title/title.c", "games/tbs/src/system/rom_head.s", "games/tbs/src/scene/common/effect/psynergy.c", "a/window2.c", "window2.c"] {
+            assert!(name_length_fits(path), "{path}");
+        }
+        // A long name is refused everywhere else: another folder, a folder
+        // under the scenes', a folder that only looks like it, and outside
+        // a game's sources.
+        for path in [
+            "games/tbs/src/menu/title/titlescreen.c",
+            "games/tbs/src/field/haidia_mura/haidia_mura.c",
+            "games/tbs/src/scene/common/effect/psynergy_fx.c",
+            "games/tbs/src/scene/entry/more/haidia_mura.s",
+            "games/tbs/src/scenes/haidia_mura.c",
+            "games/tbs/src/menu/scene/haidia_mura.c",
+            "games/tbs/include/unit/menu/haidia_mura.h",
+            "games/tbs/include/scene/haidia_mura.h",
+            "recon/tbs/src/scene/haidia_mura.c",
+            "tools/src/scene/haidia_mura.c",
+            "src/scene/haidia_mura.c",
+            "a/windowing2.c",
+        ] {
+            assert!(!name_length_fits(path), "{path}");
+        }
+        // Length is no licence for capitals, there or anywhere.
+        for path in ["games/tbs/src/scene/Haidia_Mura.c", "games/tbs/src/scene/HAIDIA.c", "a/Window.c", "games/tbs/src/scene/.c"] {
+            assert!(!name_length_fits(path), "{path}");
+        }
+        assert_eq!(reasons("games/tbs/src/scene/Haidia_Mura.c", b"x\n"), [NAME_CASE_REASON]);
     }
 
     #[test]

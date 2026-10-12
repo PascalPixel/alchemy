@@ -529,10 +529,9 @@ fn placeholder(file: &str, exists: &dyn Fn(&str) -> bool) -> Result<String, Stri
     Ok(format!("{folder}/{found}.c"))
 }
 
+/// Eight letters, or in a game's scene folder a scene's full name (S3).
 fn eight_three(file: &str) -> Result<(), String> {
-    let stem = file.rsplit_once('/').map_or(file, |(_, name)| name).trim_end_matches(".c");
-    let fits = !stem.is_empty() && stem.len() <= 8 && stem.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_');
-    if fits && file.ends_with(".c") {
+    if file.ends_with(".c") && crate::check::hygiene::name_length_fits(file) {
         Ok(())
     } else {
         Err(format!("{file}: not a lower-case 8.3 C file name; pass --name"))
@@ -941,5 +940,8 @@ mod tests {
         assert_eq!(placeholder("a/window.c", &files(&["a/window.c", "a/window2.h"])).unwrap(), "a/window3.c");
         assert_eq!(placeholder("a/b5.c", &files(&["a/b5.c"])).unwrap(), "a/b52.c");
         assert!(eight_three("a/window2.c").is_ok() && eight_three("a/windowing2.c").is_err() && eight_three("a/Window.c").is_err());
+        // A scene's file may be longer, in its game's scene folder and nowhere else.
+        assert!(eight_three("games/tbs/src/scene/haidia_mura2.c").is_ok() && eight_three("games/tbs/src/scene/haidia_mura2.h").is_err());
+        assert!(eight_three("games/tbs/src/scene/common/haidia_mura2.c").is_err() && eight_three("games/tbs/src/menu/haidia_mura2.c").is_err());
     }
 }

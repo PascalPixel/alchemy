@@ -37,10 +37,12 @@ flatten merges the runs of one proposed unit (IMAGE:UNIT as in the units
 TSV; main is the main image), or the named sources, into one C file in ROM
 order, in the folder holding most of their functions and named after its
 main module file (the largest 8.3-named one), else after the folder;
---name chooses. Every linker script under games/ and recon/ and every
-game's object list (games/<game>/objects.tsv) that names the objects, and
-the compiler routing tables, follow; the old files and local
-headers only they include are removed. Every edition that links the
+--name chooses. A scene's file (directly in games/<game>/src/scene) keeps
+its place's full name, the one name that may be longer than 8.3. Every
+linker script under games/ and recon/ and every game's object list
+(games/<game>/objects.tsv) that names the objects, and the compiler
+routing tables, follow; the old files and local headers only they
+include are removed. Every edition that links the
 objects is compiled and compared first, from today's builds; --dry-run
 stops there. --static also makes functions no other file names static,
 kept only when the bytes stay identical. Build every edition first.
@@ -428,10 +430,11 @@ fn destination(root: &Path, objects: &[String], judged: &[super::Judged], name: 
             }
         },
     };
-    if !is_eight_three(&file) {
+    let path = format!("{folder}/{file}.c");
+    // Eight letters, or a scene's own file under its place's full name (S3).
+    if !crate::check::hygiene::name_length_fits(&path) {
         return Err(format!("{file}: not a lower-case 8.3 name; pass --name"));
     }
-    let path = format!("{folder}/{file}.c");
     let theirs = objects.iter().any(|o| format!("{}.c", stem(o)) == path);
     if !theirs {
         for extension in ["c", "s", "S", "mid", "h"] {

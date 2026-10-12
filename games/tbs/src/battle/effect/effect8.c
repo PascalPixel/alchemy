@@ -2,6 +2,7 @@
 #include "unit/battle/effect/koukabit.h"
 #include "unit/battle/effect/koukatbl.h"
 #include "unit/battle/effect/effect.h"
+#include "unit/battle/effect/effect7.h"
 #include "unit/battle/effect/effect8.h"
 #include "unit/battle/effect/effect9.h"
 #include "unit/battle/effect/effect10.h"

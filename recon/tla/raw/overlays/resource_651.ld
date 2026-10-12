@@ -7,7 +7,7 @@ SECTIONS
         "*/games/tla/src/field/deri_mura/places.o"(.text)
         "*/games/tla/src/field/deri_mura/talk.o"(.text)
         "*/games/tla/src/field/deri_mura/hip.o"(.text)
-        "*/resource_651_overlay.o"(.text.x020083a0)
+        "*/games/tla/src/field/deri_mura/s03a0.o"(.text)
         "*/games/tla/src/field/deri_mura/events.o"(.text)
         "*/games/tla/src/field/deri_mura/scene.o"(.text)
         "*/games/tla/src/field/deri_mura/import.o"(.text)

@@ -1,3 +1,5 @@
+/* Func_02000148: differ 2, the native loads the step 0xfffff800 from the pool before it reads the timer (same priority; the scheduler prefers the read, which has one more dependent). The step through a "+l" asm operand or a one-pass block, a pointer to the timer and every statement order were tried.
+   Func_020001a4: differ 20, the native shares one tail between the two Random16Far branches (cross-jump from the lsrs on), each branch loading center->y before its shift. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"
@@ -46,27 +48,6 @@ struct AnimatedSprite {
 void Func_02000054(void)
 {
     Func_020029d0(Data_02002fb8);
-}
-
-void Func_02000064(s32 unused, s32 id)
-{
-    struct FieldActor *object;
-    s32 i;
-
-    object = Object_GetById(id);
-    if (id == 11) {
-        if (!GameFlag_Test(0xa00) || object->x >> 20 != 13 || object->z >> 20 != 34)
-            return;
-        object->motion_flags = 0;
-        for (i = 15; i >= 0; i--) {
-            object->y += 0x20000;
-            WaitFrames(1);
-        }
-        Func_02000e04(id);
-        GameFlag_SetBit(0xa09);
-    } else {
-        Func_020029d8();
-    }
 }
 
 void Func_020000c8(struct FieldActor *object)
@@ -118,14 +99,15 @@ void Func_02000148(struct FieldActor *object)
         s32 sine = Math_Sine(angle);
         s32 z = center->z;
         s32 x = object->x;
-        s32 step;
 
+        /* FAKEMATCH: the barrier keeps both loads before the doubling (differ 4 without it). */
+        __asm__("");
         object->z = z + sine * 2;
+        /* FAKEMATCH: and the height store before the target store. */
+        __asm__("");
         object->target_x = x;
         object->target_z = object->z;
-        step = -0x800;
-        asm volatile("" : "+l"(step)); /* FAKEMATCH: ⚓️ loads the step before the angle */
-        object->timer += step;
+        object->timer -= 0x800;
     }
 }
 
@@ -146,23 +128,23 @@ void Func_020001a4(void)
     struct FieldActor *center;
     struct FieldActor *spark;
     struct FieldSprite *sprite;
-    s32 y;
+    s32 angle;
 
     if (!FlagChk(0x201) && gFrameCount % 3 != 0)
         return;
     center = Object_GetById(23);
     if (FlagChk(0x201))
-        y = (Rand(256) << 16) + center->y;
+        spark = Func_02002828(672, center->x, (s32)((u32)(Random16Far() << 8) >> 16 << 16) + center->y - 0x1c0000, center->z);
     else
-        y = (Rand(64) << 16) + center->y;
-    spark = Func_02002828(672, center->x, y - 0x1c0000, center->z);
+        spark = Func_02002828(672, center->x, (s32)((u32)(Random16Far() << 6) >> 16 << 16) + center->y - 0x1c0000, center->z);
     if (spark == NULL)
         return;
     sprite = spark->sprite;
     Func_02002820(spark, Data_02003214);
     Object_SetPartAttribute(spark, 1);
     spark->motion_flags = 0;
-    spark->timer = ((Random16Far() << 4) >> 16) << 12;
+    angle = Random16Far() & 0xffff000;
+    spark->timer = angle;
     HALF_AT(spark, 102) = 0;
     WORD_AT(spark, 108) = (s32)Func_02000148;
     spark->speed = (Math_Sine((Random16Far() * 0xffff) >> 20) * 24) >> 16;

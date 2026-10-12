@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "window.h"
 #include "unit/field/kuupuappu_mura_sai/sai.h"
+#include "unit/field/common/kuupuappu/range.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
@@ -38,75 +39,8 @@
 #include "../common/effect/move.c"
 #include "../common/effect/spawn.c"
 #include "../common/object/distance.c"
-
-static s32 SceneActor_UpdateProximity(
-	struct FieldActor *actor, struct FieldActor *target, s32 range, s32 force)
-{
-	s32	 result = 0;
-	s32 *targetPos = &target->x.fixed;
-	s32 *actorPos = &actor->x.fixed;
-
-	if (FixedPoint_Distance(targetPos, actorPos) < range || force != 0)
-	{
-		u32 angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed, *targetPos - *actorPos);
-		u32 left = (angle - 0x1000) & 0xf000;
-		u32 right = (angle + 0x1000) & 0xf000;
-		u32 forward = angle & 0xf000;
-		u32 facing = actor->facing & 0xf000;
-
-		if (forward == facing || right == facing || left == facing || force != 0)
-		{
-			actor->paused = 1;
-			Object_SetMode(actor, 1);
-			result = 1;
-		}
-	}
-	else
-	{
-		actor->paused = 0;
-		Object_SetMode(actor, 2);
-	}
-	return result;
-}
-
-static s32 UpdateActorProximity(struct FieldActor *actor)
-{
-	u8				 **globals = gWindowWork;
-	u8				  *scene = globals[0];
-	u8				  *work = globals[12];
-	u16				  *flags = (u16 *)&actor->timer;
-	s32				   force = 0;
-	s32				   range = 18;
-	struct FieldActor *partner;
-	struct FieldActor *player;
-
-	if ((*flags & 1) != 0)
-	{
-		partner = Object_GetById(15);
-	}
-	else
-	{
-		partner = Object_GetById(14);
-	}
-	if (SceneActor_UpdateProximity(actor, partner, 32, 0) != 0)
-	{
-		return 0;
-	}
-
-	player = Object_GetById(ACTOR_PARTY_LEADER);
-
-	if (*(s16 *)(work + 376) != 0 || scene[RENDER_MODE_OFS] != 0)
-	{
-		range = 26;
-		if ((*flags & 2) != 0)
-		{
-			force = 1;
-		}
-	}
-
-	SceneActor_UpdateProximity(actor, player, range, force);
-	return 0;
-}
+#include "../common/kuupuappu/range.c"
+#include "../common/kuupuappu/nearby.c"
 
 const void *SceneData_GetScriptTable(void)
 {
@@ -607,7 +541,7 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
 	Engine_MapCopyCellsTo(45, 41, 8, 45, 3, 3);
 	Engine_TaskWait(1);
 	actor = Object_GetById(14);
-	actor->update = (void (*)(union FieldObject *))UpdateActorProximity;
+	actor->update = (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
 	{
 		struct FieldActor *actor = Object_GetById(14);
 		s32				   mode = 1;
@@ -615,7 +549,7 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
 	}
 	mode = 0;
 	actor = Object_GetById(15);
-	actor->update = (void (*)(union FieldObject *))UpdateActorProximity;
+	actor->update = (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
 	Object_GetById(15)->timer = mode;
 	if (Engine_GameFlagIsSet(0x858))
 		Actor_SetPosition(18, 0xd80000, 0x1880000);

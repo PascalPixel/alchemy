@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "window.h"
 #include "unit/field/kuupuappu_mura/mura.h"
+#include "unit/field/common/kuupuappu/range.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
@@ -45,7 +46,6 @@
 
 // 前方宣言
 static void SceneActor_RunActorStep(s32 actor);
-static s32 SceneActor_CheckFacingAndRange(struct FieldActor *actor, struct FieldActor *target, s32 range, s32 force);
 static void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay);
 static void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay);
 
@@ -60,44 +60,8 @@ union DriftingObject
 	struct OverlayEffectMotion motion;
 };
 
-static s32 SceneActor_UpdateProximityToLeader(struct FieldActor *self)
-{
-	u8				 **globals = gWindowWork;
-	u8				  *scene = globals[0];
-	u8				  *workspace = globals[12];
-	s16				  *flags = &self->timer;
-	s32				   force = 0;
-	s32				   range = 18;
-	struct FieldActor *partner;
-	struct FieldActor *player;
-
-	if ((*flags & 1) != 0)
-	{
-		partner = Object_GetById(15);
-	}
-	else
-	{
-		partner = Object_GetById(14);
-	}
-	if (SceneActor_CheckFacingAndRange(self, partner, 32, 0) != 0)
-	{
-		return 0;
-	}
-
-	player = Object_GetById(ACTOR_PARTY_LEADER);
-
-	if (*(s16 *)(workspace + 376) != 0 || scene[RENDER_MODE_OFS] != 0)
-	{
-		range = 26;
-		if ((*flags & 2) != 0)
-		{
-			force = 1;
-		}
-	}
-
-	SceneActor_CheckFacingAndRange(self, player, range, force);
-	return 0;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/kuupuappu/nearby.c"
 
 static s32 ActorPresentation_UpdateEntityFromLeader(struct FieldActor *entity)
 {
@@ -952,34 +916,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/distance.c"
-
-static s32 SceneActor_CheckFacingAndRange(
-	struct FieldActor *actor, struct FieldActor *target, s32 range, s32 force)
-{
-	s32	 result = 0;
-	s32 *target_pos = &target->x.fixed;
-	s32 *actor_pos = &actor->x.fixed;
-	if (FixedPoint_Distance(target_pos, actor_pos) < range || force != 0)
-	{
-		u32 angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed, *target_pos - *actor_pos);
-		u32 left = (angle - 0x1000) & 0xf000;
-		u32 right = (angle + 0x1000) & 0xf000;
-		u32 forward = angle & 0xf000;
-		u32 facing = actor->facing & 0xf000;
-		if (forward == facing || right == facing || left == facing || force != 0)
-		{
-			actor->paused = 1;
-			Object_SetMode(actor, 1);
-			result = 1;
-		}
-	}
-	else
-	{
-		actor->paused = 0;
-		Object_SetMode(actor, 2);
-	}
-	return result;
-}
+#include "../common/kuupuappu/range.c"
 
 static void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay)
 {

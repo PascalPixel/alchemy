@@ -213,5 +213,11 @@ void Func_020030e4(void)
     }
     Func_02001820();
     Func_02001f94();
-    Scheduler_AddOrUpdateCallback(Func_020030c0, 0x480);
+    {
+        s32 priority = 0x480;
+
+        /* FAKEMATCH: ⚓️ builds the priority before it loads the callback; the plain call loads the callback between its two halves (one instruction moved). */
+        __asm__ volatile("" : "+l"(priority));
+        Scheduler_AddOrUpdateCallback(Func_020030c0, priority);
+    }
 }

@@ -88,8 +88,12 @@ void Func_0200200c(struct ObjectRuntime *object);
 
 void Func_02002124(void)
 {
-    struct ObjectRuntime *active = ((struct EventWorkCbc *)Ram_HeapSlots->event_work)->active;
+    struct EventWorkCbc *work = Ram_HeapSlots->event_work;
+    struct ObjectRuntime *active;
 
+    /* FAKEMATCH: ⚓️ loads the event work before it builds the field offset; the plain load starts the offset first (one pair of instructions swapped). */
+    __asm__ volatile("");
+    active = work->active;
     if (active != 0)
         Func_0200200c(active);
 }

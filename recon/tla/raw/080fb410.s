@@ -47,7 +47,7 @@ Func_080fb410:
 	ldrb r0, [r3]
 	adds r3, r7, r1
 	ldrh r1, [r3]
-	bl Func_080fb638
+	bl Item_ClassifyUseMode
 	movs r2, #1
 	negs r2, r2
 	cmp r0, r2

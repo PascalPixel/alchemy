@@ -194,16 +194,22 @@ static __inline__ struct ObjectRuntime *Actor_Get(s32 id)
     return Object_GetById(id);
 }
 
+static __inline__ void Actor_SetAngle(s32 id, s32 angle)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02003cb0(id, angle);
+}
+
 void Func_02002f08(void)
 {
     Func_02003c28();
     Func_02003d78(0);
     Actor_FaceToward(16, gPartyState.current_owner, 0);
-    Actor_SetTurn(16, 0x100, 40);
+    Func_02003cc8(16, 0x100, 40);
     Func_02003cb0(16, 0);
     Pause(20);
     Motion_SetVarCbAndRefresh(16, 3);
-    Func_02003cb0(16, 0x8000);
+    Actor_SetAngle(16, 0x8000);
     Object_LinkObjectAndSetCallback(16, gPartyState.current_owner);
     Func_02003cd0(16, 0x102);
     Pause(40);

@@ -1,3 +1,8 @@
+/* Near miss, differ 2 of 42 (2026-10-12): the listing loads the effect work
+ * (ldr r3, [r3]) before it starts the 0x7c4 offset; this draft starts the offset
+ * first. A barrier after the load fixes that pair but then the frame setup
+ * (sub sp, #8) stays ahead of the barrier, where the listing has it last in the
+ * block; a one-pass block changes nothing. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"

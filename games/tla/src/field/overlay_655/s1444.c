@@ -63,12 +63,14 @@ static __inline__ void Wait(s32 frames)
     WaitFrames(frames);
 }
 
-void Func_02001368(void)
+void Func_02001444(void)
 {
-    Func_02000708(Data_02003f52);
-    Func_020012d8();
-    if (Object_GetById(gPartyState.current_owner)->y < 0x80000) {
-        ObjectMotion_SetActionVariant(gPartyState.current_owner, 2);
-        Object_GetById(gPartyState.current_owner)->priority_flags |= 1;
-    }
+    s32 y;
+
+    Func_020002f8(Data_02003f92);
+    y = Object_GetById(gPartyState.current_owner)->y;
+    /* FAKEMATCH: ⚓️ loads the height before it builds the limit; the plain test starts the constant first (one pair of instructions swapped). */
+    __asm__ volatile("");
+    if (y < 0x180000)
+        Func_02002180();
 }

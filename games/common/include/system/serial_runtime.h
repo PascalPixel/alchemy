@@ -151,7 +151,7 @@ static __inline__ void SerialRuntime_ResetTransferState(void)
 	gSerialSendSize = zero;
 	gSerialReceiveDest = zero;
 	*(u8 *)&state->peer_flags = zero;
-	*(volatile u8 *)&state->flags = zero;
+	*(u8 *)&state->flags = zero;
 	gSerialReceivedSize = zero;
 	*ime = saved;
 }

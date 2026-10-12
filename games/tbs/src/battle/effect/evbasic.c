@@ -165,7 +165,7 @@ void Battle_UpdateModeFromShoulderButtons(void)
 {
 	struct BattleRuntime *runtime = (struct BattleRuntime *)gEventWork;
 
-	if (*(volatile u8 *)&gDebugMode != 0)
+	if (gDebugMode != 0)
 	{
 		if (gKeyState & KEY_L)
 		{

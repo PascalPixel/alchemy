@@ -882,7 +882,7 @@ s32 Field_RunScene(s32 entrance)
 				AudioCommand_PlayFar(111);
 				Battle_SetObjectFlag5bWhenMode3();
 				GameFlag_SetBitFar(0x106);
-				if (*(volatile u8 *)&gDebugMode != 0 && (gKeysHeld & KEY_B) != 0
+				if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0
 					&& (gKeysHeld & KEY_SELECT) != 0)
 				{
 					Menu_RunSelectionWithCursorObjectFar();
@@ -937,7 +937,7 @@ s32 Field_RunScene(s32 entrance)
 				Battle_InitializeRenderObject();
 				Battle_SetObjectFlag5bWhenMode3();
 				GameFlag_SetBitFar(0x106);
-				if (*(volatile u8 *)&gDebugMode != 0 && (gKeysHeld & KEY_B) != 0)
+				if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0)
 				{
 					Menu_RunSelectionFar();
 				}
@@ -1003,7 +1003,7 @@ s32 Field_RunScene(s32 entrance)
 		{
 			WaitFrames(1);
 			actor = work->actors[gGameState.selected_actor];
-			if (*(volatile u8 *)&gDebugMode == 0 || GameFlag_TestFar(0x163) == 0)
+			if (gDebugMode == 0 || GameFlag_TestFar(0x163) == 0)
 				Field_ProcessStep(
 					actor->terrain_id, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 		} while (BattleFx_SumCounters() == 0);

@@ -80,9 +80,9 @@ s32 IdentifyFlash(void)
 }
 
 extern volatile u16 gFlashTimerCount;
-extern volatile u8 gFlashTimeoutFlag;
+extern u8 gFlashTimeoutFlag;
 extern u8 gFlashTimerNum;
-extern u16 *volatile gFlashTimerReg;
+extern u16 *gFlashTimerReg;
 
 void FlashTimerIntr(void)
 {
@@ -132,7 +132,7 @@ void StartFlashTimer(u8 index)
 
 void StopFlashTimer(void)
 {
-    u16 *volatile *cursor = &gFlashTimerReg;
+    u16 **cursor = &gFlashTimerReg;
     u16 *record = *cursor;
 
     *record = 0;

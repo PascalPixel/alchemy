@@ -1,34 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008088,"ax",%progbits
-	.global Func_02000088
-	.thumb_func
-Func_02000088:
-	push {lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r1, #208
-	lsls r1, r1, #4
-	adds r1, #56
-	adds r2, r3, r1
-	movs r3, #1
-	strb r3, [r2]
-	ldr r3, .L_020080b4
-	movs r1, #241
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r3, [r3, r1]
-	cmp r3, #10
-	beq .L_020080b0
-	movs r3, #0
-	strb r3, [r2]
-.L_020080b0:
-	pop {pc}
-	.2byte 0x0000
-.L_020080b4:
-	.4byte gPartyState
 	.section .text.x02008368,"ax",%progbits
 	.global Func_02000368
 	.thumb_func

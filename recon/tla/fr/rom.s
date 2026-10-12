@@ -1889,12 +1889,7 @@ Inventory_Remove:
 Owner_UpdateClassActions:
 	.incbin "baserom.gba", 0x000b44e4, 0x00000210
 	.section .rom.000b47ac, "ax"
-	.incbin "baserom.gba", 0x000b47ac, 0x00000124
-	.global Owner_GetLevelThreshold
-	.type Owner_GetLevelThreshold, %function
-	.thumb_func
-Owner_GetLevelThreshold:
-	.incbin "baserom.gba", 0x000b48d0, 0x0000004c
+	.incbin "baserom.gba", 0x000b47ac, 0x00000120
 	.section .rom.000b491c, "ax"
 	.global Owner_LevelUp
 	.type Owner_LevelUp, %function
@@ -3950,12 +3945,6 @@ Func_08123574:
 	.section .rom.00125d8c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00125d8c, 0x000004a4
-	.section .rom.00126230, "ax"
-	.global Func_08126218
-	.type Func_08126218, %function
-	.thumb_func
-Func_08126218:
-	.incbin "baserom.gba", 0x00126230, 0x00000074
 	.section .rom.001262a4, "ax"
 	.global Func_0812628c
 	.type Func_0812628c, %function
@@ -4425,7 +4414,7 @@ Func_0818f620:
 Func_08196404:
 	.incbin "baserom.gba", 0x00196404, 0x000005a8
 	.section .rom.00196a7c, "ax"
-	.incbin "baserom.gba", 0x00196a7c, 0x000007b4
+	.incbin "baserom.gba", 0x00196a7c, 0x00000560
 	.section .rom.001973f0, "ax"
 	.incbin "baserom.gba", 0x001973f0, 0x0000025c
 	.section .rom.00197690, "ax"

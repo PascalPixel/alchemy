@@ -173,6 +173,12 @@ static inline void Ov672_ObjWalk(s32 actor, s32 x, s32 z)
     ObjectMotion_SetPositionAndReset(actor, x, z);
 }
 
+static inline void Ov672_ObjPosSet(s32 actor, s32 x, s32 z)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02001e10(actor, x, z);
+}
+
 static inline void Ov672_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */

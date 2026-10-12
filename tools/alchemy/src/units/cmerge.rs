@@ -1,8 +1,9 @@
 //! One translation unit from several of today's C files, in ROM order.
 //!
 //! Each file keeps its own region, in order, so every function still sees
-//! what it saw alone: includes are gathered once at the top, an item another
-//! file already wrote identically appears once, and the rest is reconciled
+//! what it saw alone: includes are gathered once at the top (one written
+//! after code stays where it is: it brings in a shared source file), an item
+//! another file already wrote identically appears once, and the rest is reconciled
 //! name by name:
 //! - an external declaration two files (or a file and the merged headers or
 //!   definitions) give different shapes stays at block scope inside the
@@ -58,7 +59,9 @@ fn parse<'a>(source: &'a Source, list: &'a [Item<'a>]) -> Parsed<'a> {
     let mut pending: Vec<&Item> = Vec::new();
     for (n, item) in list.iter().enumerate() {
         match &item.kind {
-            Kind::Include(_) => parsed.includes.push(item),
+            // An include after the first code is code itself (a shared source
+            // file the unit takes in at that place) and keeps its position.
+            Kind::Include(_) if n < first_code => parsed.includes.push(item),
             Kind::Comment if n < first_other && first_other < list.len() && !matches!(list[first_other].kind, Kind::Function { .. } | Kind::Declaration) => parsed.lead.push(item),
             Kind::Directive if is_define(item) && last_top_include.is_some_and(|l| n < l) => parsed.pre_defines.push(item),
             Kind::Comment => pending.push(item),
@@ -983,6 +986,18 @@ mod tests {
         assert!(items(block).iter().all(|item| conditional_declarations(item).is_empty()));
         let plain = "#if EDITION_INTERNATIONAL\ns32 Lookup(s32);\n#endif";
         assert_eq!(items(plain).iter().map(|item| conditional_declarations(item).len()).sum::<usize>(), 1);
+    }
+
+    #[test]
+    fn an_include_after_code_keeps_its_place() {
+        // A unit takes in a shared source file where the ROM has its code.
+        let a = source("a.c", "#include \"types.h\"\n\nvoid f(void)\n{\n}\n\n#include \"../common/part.c\"\n");
+        let b = source("b.c", "#include \"types.h\"\n#include \"b.h\"\n\nvoid g(void)\n{\n}\n");
+        let merged = merge(&[a, b], &Known::default(), &Options::default()).unwrap();
+        let part = merged.text.find("#include \"../common/part.c\"").unwrap();
+        assert!(merged.text.find("void f(void)").unwrap() < part, "{}", merged.text);
+        assert!(part < merged.text.find("void g(void)").unwrap(), "{}", merged.text);
+        assert!(merged.text.find("#include \"b.h\"").unwrap() < merged.text.find("void f(void)").unwrap(), "{}", merged.text);
     }
 
     #[test]

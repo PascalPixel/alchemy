@@ -628,12 +628,8 @@ Func_0802d71c:
 	.thumb_func
 Object_IsTargetUnset:
 	.incbin "baserom.gba", 0x00023f64, 0x00000030
-	.section .rom.00023f94, "ax"
-	.global Func_08023f94
-	.type Func_08023f94, %function
-	.thumb_func
-Func_08023f94:
-	.incbin "baserom.gba", 0x00023f94, 0x00000788
+	.section .rom.00023f9c, "ax"
+	.incbin "baserom.gba", 0x00023f9c, 0x00000780
 	.section .rom.00024736, "ax"
 	.incbin "baserom.gba", 0x00024736, 0x00000002
 	.section .rom.00024738, "ax"
@@ -3947,7 +3943,13 @@ BattleFx_SpawnScaledArcObjects:
 BattleFx_UpdateArcEffect:
 	.incbin "baserom.gba", 0x000e1500, 0x000000f0
 	.section .rom.000e166c, "ax"
-	.incbin "baserom.gba", 0x000e166c, 0x00000f70
+	.incbin "baserom.gba", 0x000e166c, 0x000008ac
+	.section .rom.000e1f20, "ax"
+	.global Func_080e1f2c
+	.type Func_080e1f2c, %function
+	.thumb_func
+Func_080e1f2c:
+	.incbin "baserom.gba", 0x000e1f20, 0x000006bc
 	.section .rom.000e25dc, "ax"
 	.global Func_080eaeb4
 	.type Func_080eaeb4, %function
@@ -3959,7 +3961,14 @@ Func_080eaeb4:
 	.type ObjectGroup_ApplyRandomChildValues, %function
 	.thumb_func
 ObjectGroup_ApplyRandomChildValues:
-	.incbin "baserom.gba", 0x000e2768, 0x000008ec
+	.incbin "baserom.gba", 0x000e2768, 0x000004c4
+	.global Func_080e2c38
+	.type Func_080e2c38, %function
+	.thumb_func
+Func_080e2c38:
+	.incbin "baserom.gba", 0x000e2c2c, 0x00000108
+	.section .rom.000e2d58, "ax"
+	.incbin "baserom.gba", 0x000e2d58, 0x000002fc
 	.section .rom.000e3068, "ax"
 	.global Func_080e3074
 	.type Func_080e3074, %function
@@ -5175,7 +5184,9 @@ Func_08157530:
 	.type BattlePres_RunBurstScene, %function
 	.thumb_func
 BattlePres_RunBurstScene:
-	.incbin "baserom.gba", 0x0015a110, 0x00002848
+	.incbin "baserom.gba", 0x0015a110, 0x00001300
+	.section .rom.0015b434, "ax"
+	.incbin "baserom.gba", 0x0015b434, 0x00001524
 	.section .rom.0015c970, "ax"
 	.balign 4
 	.global Func_0815c970

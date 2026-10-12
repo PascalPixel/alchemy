@@ -17,6 +17,12 @@
 //!   object its own way) is dropped unless every file has it; that file's
 //!   own declaration then stays at block scope by the first rule.
 //!
+//! Two declarations no caller in the unit can tell apart are one: other
+//! parameter names, one integer type spelled two ways (`int` and `s32`), or
+//! an unprototyped `T f()` beside the unit's own definition of `f` with the
+//! same return type and only one-word parameters. The later one is dropped
+//! and nothing is cast.
+//!
 //! Anything else that cannot be reconciled is reported, never guessed.
 
 use crate::adopt_into::Known;
@@ -310,6 +316,94 @@ pub struct Options {
     pub views: bool,
     /// With views, also keep unprototyped `T f()` declarations as casts.
     pub unprototyped: bool,
+    /// With views, cast even a shape that says the same to every caller
+    /// (`says_the_same`), as the merge did before it could tell.
+    pub every: bool,
+}
+
+/// A signature with each integer type in one spelling: `int`, `signed` and
+/// `signed int` are types.h's `s32`, `unsigned short` its `u16`, and so on.
+/// `char` and `long` are types of their own and stay.
+pub(crate) fn canonical(signature: &str) -> String {
+    let words: Vec<&str> = signature.split_whitespace().collect();
+    let mut out: Vec<&str> = Vec::with_capacity(words.len());
+    let mut k = 0;
+    while k < words.len() {
+        let mut end = k;
+        let (mut signed, mut unsigned, mut base) = (false, false, None);
+        while let Some(&word) = words.get(end) {
+            match word {
+                "signed" if !signed && !unsigned && base.is_none() => signed = true,
+                "unsigned" if !signed && !unsigned && base.is_none() => unsigned = true,
+                "char" | "short" | "int" | "long" if base.is_none() => base = Some(word),
+                "int" if base == Some("short") => {}
+                _ => break,
+            }
+            end += 1;
+        }
+        let name = match (unsigned, signed, base) {
+            (true, _, None | Some("int")) => Some("u32"),
+            (false, _, Some("int")) | (false, true, None) => Some("s32"),
+            (true, _, Some("short")) => Some("u16"),
+            (false, _, Some("short")) => Some("s16"),
+            (true, _, Some("char")) => Some("u8"),
+            (false, true, Some("char")) => Some("s8"),
+            _ => None,
+        };
+        match name {
+            Some(name) => {
+                out.push(name);
+                k = end;
+            }
+            None => {
+                out.push(words[k]);
+                k += 1;
+            }
+        }
+    }
+    out.join(" ")
+}
+
+/// Whether a parameter is passed as one word whatever the caller knows of
+/// it: a pointer, an array, or a 32-bit integer.
+fn one_word(parameter: &str) -> bool {
+    let words: Vec<&str> = parameter.split_whitespace().filter(|w| !matches!(*w, "const" | "volatile" | "register")).collect();
+    (words.iter().any(|w| matches!(*w, "*" | "[")) && !words.contains(&"...")) || matches!(words.as_slice(), ["s32"] | ["u32"] | ["long"] | ["unsigned", "long"])
+}
+
+/// Whether no caller in the merged unit can tell `own` from `governing`,
+/// two signatures of one name: they are one type spelled two ways, or `own`
+/// is the unprototyped `T f()` of a function the unit itself defines
+/// (`defined`) with the same return type and only one-word parameters, so
+/// that default promotion passes what the prototype passes.
+pub(crate) fn says_the_same(own: &str, governing: &str, defined: bool) -> bool {
+    let (own, governing) = (canonical(own), canonical(governing));
+    if own == governing {
+        return true;
+    }
+    let Some(parameters) = own.strip_suffix("( )").filter(|_| defined).and_then(|head| governing.strip_prefix(head)) else {
+        return false;
+    };
+    let Some(inner) = parameters.strip_prefix('(').and_then(|rest| rest.strip_suffix(')')) else {
+        return false;
+    };
+    let (mut depth, mut from, mut list) = (0usize, 0, Vec::new());
+    for (at, c) in inner.char_indices() {
+        match c {
+            '(' | '[' => depth += 1,
+            ')' | ']' => match depth.checked_sub(1) {
+                Some(less) => depth = less,
+                None => return false,
+            },
+            ',' if depth == 0 => {
+                list.push(&inner[from..at]);
+                from = at + 1;
+            }
+            _ => {}
+        }
+    }
+    list.push(&inner[from..]);
+    depth == 0 && (matches!(list.as_slice(), [only] if only.trim() == "void") || list.iter().all(|p| one_word(p)))
 }
 
 /// Single-line declarations inside an `#if` block, with their names.
@@ -379,6 +473,9 @@ pub fn view(declaration: &str, name: &str) -> Option<String> {
 
 pub fn merge(sources: &[Source], headers: &Known, options: &Options) -> Result<Merged, Vec<String>> {
     let mut notes = Vec::new();
+    // What two signatures are compared by: one type spelled two ways is one
+    // shape, unless every difference is to be kept.
+    let shape = |signature: &str| if options.every { signature.to_string() } else { canonical(signature) };
     let owned = shared_enumerators(sources, &mut notes);
     let sources = &owned[..];
     let lists: Vec<Vec<Item>> = sources.iter().map(|s| items(&s.text)).collect();
@@ -548,9 +645,10 @@ pub fn merge(sources: &[Source], headers: &Known, options: &Options) -> Result<M
         }
         let header = headers.declared.get(&(Space::Ordinary, name.clone())).cloned();
         let definition = usage.defined.as_ref().filter(|(k, _, _)| !renames[*k].contains_key(name)).map(|(_, s, _)| s.clone());
-        let mut shapes: BTreeSet<&String> = usage.declared.values().collect();
-        shapes.extend(header.iter());
-        shapes.extend(definition.iter());
+        // One type spelled two ways is one shape.
+        let mut shapes: BTreeSet<String> = usage.declared.values().map(|s| shape(s)).collect();
+        shapes.extend(header.iter().map(|s| shape(s)));
+        shapes.extend(definition.iter().map(|s| shape(s)));
         if shapes.len() <= 1 {
             continue;
         }
@@ -597,11 +695,19 @@ pub fn merge(sources: &[Source], headers: &Known, options: &Options) -> Result<M
             }
         }
         for (&k, signature) in &usage.declared {
-            if renames[k].contains_key(name) || Some(signature) == governing.as_ref() {
+            if renames[k].contains_key(name) || governing.as_ref().is_some_and(|g| shape(g) == shape(signature)) {
                 continue;
             }
             let text = declaration_text.get(&(k, name.clone())).map(|(t, _)| t.clone()).unwrap_or_default();
             let defining_here = usage.defined.as_ref().is_some_and(|(d, _, _)| *d == k);
+            // A shape no caller can tell from the governing one needs no
+            // cast: the unit keeps one declaration.
+            let defined = usage.defined.as_ref().is_some_and(|(d, _, function)| *function && !renames[*d].contains_key(name));
+            if options.views && !options.every && governing.as_ref().is_some_and(|g| says_the_same(signature, g, defined)) {
+                notes.push(format!("{}: {name} is declared once ({signature} says the same to every caller)", files[k].path));
+                dropped.insert((k, name.clone()), (text, false));
+                continue;
+            }
             // A header's static inline wrapper is called, never cast: a cast call
             // would not inline.
             let header_static = header.as_ref().is_some_and(|h| h.split_whitespace().any(|w| w == "static"));
@@ -664,6 +770,8 @@ pub fn merge(sources: &[Source], headers: &Known, options: &Options) -> Result<M
         }
     }
     let mut emitted: BTreeSet<String> = BTreeSet::new();
+    // Plain declarations already written: name and canonical signature.
+    let mut declared_once: BTreeSet<(String, String)> = BTreeSet::new();
     // Private macros live from their region on: name -> definition.
     let mut active: BTreeMap<String, String> = BTreeMap::new();
     let mut shadows: BTreeSet<String> = BTreeSet::new();
@@ -724,6 +832,13 @@ pub fn merge(sources: &[Source], headers: &Known, options: &Options) -> Result<M
                         continue;
                     }
                     let earlier = ordinary.get(&name).is_some_and(|u| u.declared.keys().any(|&j| j < k) || u.defined.as_ref().is_some_and(|(j, _, _)| *j < k));
+                    // Implicit `int f()` beside the unit's own definition
+                    // returning int with one-word parameters: the same call.
+                    let definition = ordinary.get(&name).and_then(|u| u.defined.as_ref()).filter(|(d, _, function)| *function && !renames[*d].contains_key(&name));
+                    if !options.every && definition.is_some_and(|(_, signature, _)| says_the_same(&format!("int {name} ( )"), signature, true)) {
+                        notes.push(format!("{}: {name} needs no cast for its implicit `int {name}()`: the unit's definition says the same to every caller", f.path));
+                        continue;
+                    }
                     if headers.declared.contains_key(&(Space::Ordinary, name.clone())) || earlier || hoisted_names.contains(&name) {
                         lines.push_str(&format!("#define {name} ((int (*)()){name})\n"));
                         notes.push(format!("{}: {name} keeps its implicit `int {name}()` as a cast", f.path));
@@ -772,6 +887,18 @@ pub fn merge(sources: &[Source], headers: &Known, options: &Options) -> Result<M
                     first_in_region = false;
                     out.push_str(&defines);
                     continue;
+                }
+                // A declaration that only repeats what the unit already
+                // declared (other parameter names, another spelling of one
+                // type) appears once.
+                let all = names(item);
+                let shapes: Vec<(String, String)> = all.iter().map(|n| (n.name.clone(), shape(&n.signature))).collect();
+                if !options.every && !declared.is_empty() && declared.len() == all.len() && rename_all(item.text) == item.text {
+                    if shapes.iter().all(|shape| declared_once.contains(shape)) {
+                        notes.push(format!("{}: {} is declared once (an earlier file declares the same)", f.path, declared.join(", ")));
+                        continue;
+                    }
+                    declared_once.extend(shapes);
                 }
             }
             if !first_in_region {
@@ -940,7 +1067,7 @@ mod tests {
         let d = || source("d.c", "void p(s32 a)\n{\n}\n");
         let plain = merge(&[e(), d()], &Known::default(), &Options::default()).unwrap();
         assert!(plain.text.contains("void p(s32 a);\n") && !plain.text.contains("u8 a"), "{}", plain.text);
-        let cast = merge(&[e(), d()], &Known::default(), &Options { views: true, unprototyped: false }).unwrap();
+        let cast = merge(&[e(), d()], &Known::default(), &Options { views: true, unprototyped: false, every: false }).unwrap();
         assert!(cast.text.contains("#define p ((void (*)(u8 a))p)\nvoid q(void)"), "{}", cast.text);
         assert!(cast.text.contains("#undef p\n"), "{}", cast.text);
         assert_eq!(merged.text.matches("void h(u32 a);").count(), 1);
@@ -968,7 +1095,7 @@ mod tests {
         headers.declared.insert((Space::Ordinary, "PsynergyMenu_DrawRangePage".into()), "s32 PsynergyMenu_DrawRangePage ( s32 , s32 , struct MenuResult * )".into());
         headers.declared.insert((Space::Ordinary, "PsynergyMenu_DrawListPage".into()), "s32 PsynergyMenu_DrawListPage ( s32 , s32 , const struct MenuResult * )".into());
 
-        for options in [Options::default(), Options { views: true, unprototyped: false }, Options { views: true, unprototyped: true }] {
+        for options in [Options::default(), Options { views: true, unprototyped: false, every: false }, Options { views: true, unprototyped: true, every: false }] {
             let merged = merge(&[source("range_page.c", &text)], &headers, &options).unwrap();
             assert!(merged.text.contains(range), "{}", merged.text);
             assert!(merged.text.contains(list), "{}", merged.text);
@@ -1072,12 +1199,88 @@ mod tests {
         assert_eq!(view("void Run();", "Run").unwrap(), "#define Run ((void (*)())Run)");
     }
 
+    const LEAN: Options = Options { views: true, unprototyped: true, every: false };
+    const EVERY: Options = Options { views: true, unprototyped: true, every: true };
+
+    #[test]
+    fn parameter_names_alone_leave_one_declaration() {
+        let a = source("a.c", "void h(s32 id, u8 *text);\nvoid f(void)\n{\n\th(1, 0);\n}\n");
+        let b = source("b.c", "void h(s32 index, u8 *message);\nextern u8 gA[];\nvoid k(void)\n{\n\th(2, gA);\n}\n");
+        for options in [Options::default(), LEAN] {
+            let merged = merge(&[source("a.c", &a.text), source("b.c", &b.text)], &Known::default(), &options).unwrap();
+            assert_eq!(merged.text.matches("void h(").count(), 1, "{}", merged.text);
+            assert!(merged.text.contains("void h(s32 id, u8 *text);") && merged.text.contains("extern u8 gA[];"), "{}", merged.text);
+            assert!(!merged.text.contains("#define"), "{}", merged.text);
+        }
+        // Asked for every difference, both stay, as before.
+        assert_eq!(merge(&[a, b], &Known::default(), &EVERY).unwrap().text.matches("void h(").count(), 2);
+    }
+
+    #[test]
+    fn an_unprototyped_declaration_beside_the_units_definition_needs_no_cast() {
+        let caller = || source("a.c", "s32 Get();\ns32 Wide();\ns32 Other();\nvoid f(void)\n{\n\tGet(1, 0);\n\tWide(1);\n\tOther(1);\n\tLater(2);\n}\n");
+        let definer = || source("b.c", "s32 Get(s32 id, const u8 *text)\n{\n\treturn id;\n}\ns32 Wide(u8 id)\n{\n\treturn id;\n}\nint Later(u32 id)\n{\n\treturn id;\n}\n");
+        let mut headers = Known::default();
+        headers.declared.insert((Space::Ordinary, "Other".into()), "s32 Other ( s32 )".into());
+        let own = || Source { own: Some(Known::default()), ..caller() };
+        let merged = merge(&[own(), definer()], &headers, &LEAN).unwrap();
+        // Get: same return type, one-word parameters, defined here: no cast.
+        assert!(!merged.text.contains("#define Get"), "{}", merged.text);
+        assert!(merged.text.contains("s32 Get(s32 id, const u8 *text);\n"), "{}", merged.text);
+        assert!(!merged.text.contains("s32 Get();"), "{}", merged.text);
+        assert!(merged.notes.iter().any(|n| n.contains("Get is declared once")), "{:?}", merged.notes);
+        // Wide takes a byte, which a prototype narrows at the call; Other is
+        // defined elsewhere: both keep their casts.
+        assert!(merged.text.contains("#define Wide ((s32 (*)())Wide)"), "{}", merged.text);
+        assert!(merged.text.contains("#define Other ((s32 (*)())Other)"), "{}", merged.text);
+        // What the merge did before, on request.
+        let every = merge(&[own(), definer()], &headers, &EVERY).unwrap();
+        assert!(every.text.contains("#define Get ((s32 (*)())Get)"), "{}", every.text);
+        // An implicit call of a function the unit defines later stays implicit.
+        assert!(!merged.text.contains("#define Later") && !every.text.contains("#define Later"));
+        // Defined earlier, the implicit `int Later()` is the definition's call.
+        let after = Source { path: "c.c".into(), text: "void m(void)\n{\n\tLater(3);\n\tGet(1);\n}\n".into(), own: Some(Known::default()) };
+        let after_text = after.text.clone();
+        let lean = merge(&[definer(), after], &headers, &LEAN).unwrap();
+        assert!(!lean.text.contains("#define"), "{}", lean.text);
+        let after = Source { path: "c.c".into(), text: after_text, own: Some(Known::default()) };
+        let every = merge(&[definer(), after], &headers, &EVERY).unwrap();
+        assert!(every.text.contains("#define Later ((int (*)())Later)") && every.text.contains("#define Get ((int (*)())Get)"), "{}", every.text);
+    }
+
+    #[test]
+    fn one_type_spelled_two_ways_is_one_declaration() {
+        assert_eq!(canonical("unsigned int f ( int , unsigned short * , signed char , long , unsigned )"), "u32 f ( s32 , u16 * , s8 , long , u32 )");
+        assert_eq!(canonical("struct A * g ( char * , unsigned long , short int )"), "struct A * g ( char * , unsigned long , s16 )");
+        let a = || source("a.c", "extern int gCount;\nu32 Next(unsigned int seed);\nvoid f(void)\n{\n\tgCount = Next(1);\n}\nvoid f2(void)\n{\n\tgCount = 2;\n}\n");
+        let b = || source("b.c", "extern s32 gCount;\nunsigned int Next(u32 seed);\nextern char gName[];\nvoid k(void)\n{\n\tgCount = Next(2);\n}\nvoid k2(void)\n{\n\tgCount = gName[0];\n}\n");
+        for options in [Options::default(), LEAN] {
+            let merged = merge(&[a(), b()], &Known::default(), &options).unwrap();
+            assert_eq!(merged.text.matches("gCount;").count(), 1, "{}", merged.text);
+            assert!(merged.text.contains("extern int gCount;\nu32 Next(unsigned int seed);"), "{}", merged.text);
+            assert!(!merged.text.contains("unsigned int Next(u32 seed);") && !merged.text.contains("#define"), "{}", merged.text);
+        }
+        // Asked for every difference, each spelling stays with its own file.
+        let every = merge(&[a(), b()], &Known::default(), &EVERY).unwrap();
+        assert!(every.text.contains("u32 Next(unsigned int seed);") && every.text.contains("unsigned int Next(u32 seed);"), "{}", every.text);
+        // Types that differ still differ.
+        assert!(!says_the_same("char * f ( void )", "u8 * f ( void )", true));
+        assert!(!says_the_same("long f ( void )", "s32 f ( void )", true));
+        assert!(!says_the_same("s32 f ( )", "s32 f ( s32 )", false));
+        assert!(!says_the_same("void f ( )", "s32 f ( s32 )", true));
+        assert!(!says_the_same("s32 f ( )", "s32 f ( s32 , ... )", true));
+        assert!(!says_the_same("s32 f ( )", "s32 f ( struct P )", true));
+        assert!(!says_the_same("s32 f ( )", "s32 f ( SceneId )", true));
+        assert!(says_the_same("s32 f ( )", "int f ( void ( * ) ( s32 , u8 ) , const struct P * , u32 )", true));
+        assert!(says_the_same("void f ( )", "void f ( void )", true));
+    }
+
     #[test]
     fn implicit_calls_keep_their_unprototyped_shape_under_views() {
         let mut headers = Known::default();
         headers.declared.insert((Space::Ordinary, "Run".into()), "void Run ( s32 )".into());
         let a = Source { path: "a.c".into(), text: "void f(void)\n{\n\tRun(1);\n}\n".into(), own: Some(Known::default()) };
-        let views = merge(&[a], &headers, &Options { views: true, unprototyped: false }).unwrap();
+        let views = merge(&[a], &headers, &Options { views: true, unprototyped: false, every: false }).unwrap();
         assert!(views.text.contains("#define Run ((int (*)())Run)\n"), "{}", views.text);
         let a = Source { path: "a.c".into(), text: "void f(void)\n{\n\tRun(1);\n}\n".into(), own: Some(Known::default()) };
         assert!(!merge(&[a], &headers, &Options::default()).unwrap().text.contains("#define"));

@@ -1,5 +1,6 @@
 #include "unit/debug/test_rooms/rooms.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"
 #include "battle.h"
 #include "debug.h"

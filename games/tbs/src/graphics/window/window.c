@@ -11,6 +11,7 @@
 #include "unit/menu/optdata.h"
 #include "unit/graphics/window/window.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"
 #include "unit/graphics/text/moji.h"
 #include "unit/system/scheduler/runtime.h"

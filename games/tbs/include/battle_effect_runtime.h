@@ -2,6 +2,7 @@
 #define ALCHEMY_BATTLE_EFFECT_RUNTIME_H
 
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"
 #include "object_lookup.h"
 #include "types.h"

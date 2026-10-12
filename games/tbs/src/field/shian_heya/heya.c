@@ -2,6 +2,7 @@
 #include "unit/field/shian_heya/heya.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"
 #include "types.h"
 #include "field_event.h"

@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "unit/field/suhara_mura/mura.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"
 #include "battle.h"
 #include "debug.h"

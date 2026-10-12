@@ -5,6 +5,7 @@
 
 #include "unit/graphics/window/sideobjt.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"
 #include "unit/battle/battle.h"
 #include "unit/battle/battle2.h"

@@ -3,6 +3,7 @@
 #include "unit/import.h"
 #include "unit/field/biribino_dou/dou.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"
 #include "battle.h"
 #include "debug.h"

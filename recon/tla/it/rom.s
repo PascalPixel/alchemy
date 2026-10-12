@@ -3566,7 +3566,12 @@ Func_080d2c9c:
 	.type Func_080ca6e4, %function
 	.thumb_func
 Func_080ca6e4:
-	.incbin "baserom.gba", 0x000d8d5c, 0x0000039c
+	.incbin "baserom.gba", 0x000d8d5c, 0x00000240
+	.global Func_080d8fa8
+	.type Func_080d8fa8, %function
+	.thumb_func
+Func_080d8fa8:
+	.incbin "baserom.gba", 0x000d8f9c, 0x0000015c
 	.section .rom.000d90f8, "ax"
 	.global Func_080d897c
 	.type Func_080d897c, %function
@@ -3608,7 +3613,12 @@ Func_080d92d4:
 	.type Func_080d9710, %function
 	.thumb_func
 Func_080d9710:
-	.incbin "baserom.gba", 0x000d9e8c, 0x00000a70
+	.incbin "baserom.gba", 0x000d9e8c, 0x000001c8
+	.global Func_080da060
+	.type Func_080da060, %function
+	.thumb_func
+Func_080da060:
+	.incbin "baserom.gba", 0x000da054, 0x000008a8
 	.section .rom.000da8fc, "ax"
 	.global Func_080dbe44
 	.type Func_080dbe44, %function
@@ -4233,7 +4243,10 @@ BattleFx_EightWayHeadingWords:
 	.incbin "baserom.gba", 0x000f0eb8, 0x00000068
 	.global BattleFx_RandomChildValues
 BattleFx_RandomChildValues:
-	.incbin "baserom.gba", 0x000f0f20, 0x0000087c
+	.incbin "baserom.gba", 0x000f0f20, 0x00000214
+	.global Data_080f1140
+Data_080f1140:
+	.incbin "baserom.gba", 0x000f1134, 0x00000668
 	.section .rom.000f21c4, "ax"
 	.incbin "baserom.gba", 0x000f21c4, 0x00001100
 	.global Object_OffsetMotionScript
@@ -4244,7 +4257,13 @@ ObjectMotion_StepAngleScript:
 	.incbin "baserom.gba", 0x000f32f4, 0x00000480
 	.global Object_LinkedMotionScript
 Object_LinkedMotionScript:
-	.incbin "baserom.gba", 0x000f3774, 0x000001f4
+	.incbin "baserom.gba", 0x000f3774, 0x000001c4
+	.global Data_080f3944
+Data_080f3944:
+	.incbin "baserom.gba", 0x000f3938, 0x0000000c
+	.global Data_080f3950
+Data_080f3950:
+	.incbin "baserom.gba", 0x000f3944, 0x00000024
 	.global BattleFx_UntargetedObjectScript
 BattleFx_UntargetedObjectScript:
 	.incbin "baserom.gba", 0x000f3968, 0x00000268
@@ -4955,7 +4974,10 @@ Data_08128868:
 	.incbin "baserom.gba", 0x0012a184, 0x00002964
 	.global Resource_SlotAssignments
 Resource_SlotAssignments:
-	.incbin "baserom.gba", 0x0012cae8, 0x000003ac
+	.incbin "baserom.gba", 0x0012cae8, 0x000001a4
+	.global Data_0812cc74
+Data_0812cc74:
+	.incbin "baserom.gba", 0x0012cc8c, 0x00000208
 	.section .rom.001380ac, "ax"
 	.incbin "baserom.gba", 0x001380ac, 0x00000f1c
 	.section .rom.0013ba50, "ax"

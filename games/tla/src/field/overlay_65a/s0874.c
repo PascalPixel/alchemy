@@ -69,68 +69,53 @@ void Func_02000cf4(void);
 
 static __inline__ s32 Flag_Test(s32 flag)
 {
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     return GameFlag_Test(flag);
 }
 
 static __inline__ void Flag_Set(s32 flag)
 {
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     GameFlag_SetBit(flag);
-}
-
-static __inline__ void Flag_Clear(s32 flag)
-{
-    GameFlag_ClearBit(flag);
-}
-
-static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
-{
-    Func_020010cc(a, b, c, d, e, f);
-}
-
-static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
-{
-    Func_020010dc(a, b, c, d, e, f);
 }
 
 static __inline__ void Actor_Place(s32 id, s32 x, s32 z)
 {
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     Func_02001134(id, x, z);
 }
 
 static __inline__ void Wait(s32 frames)
 {
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     WaitFrames(frames);
 }
 
 static __inline__ void Cue(s32 cue)
 {
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
     Func_02001214(cue);
 }
 
-static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d)
+void Func_02000874(void)
 {
-    Motion_CamBounds(a, b, c, d);
-}
+    struct ObjectRuntime *object;
+    s32 x;
 
-void Func_02000a88(void)
-{
-    struct EventWork154 *work = Ram_HeapSlots->event_work;
-    struct ObjectRuntime *object = Object_GetById(gPartyState.current_owner);
-    s32 cell;
-
-    Func_0200110c();
-    Func_020011ac(0);
-    Camera_SetBounds(-1, -1, -1, 0);
-    Object_SetModeById(gPartyState.current_owner, 2);
-    ObjectMotion_SetSpeedParameters(gPartyState.current_owner, 0x8000, 0x4000);
-    cell = object->x >> 16;
-    Func_020010bc(object, ((8 - cell % 16) << 16) + object->x, object->y, object->z);
-    Func_020010c4(object);
-    object->angle = 0xc000;
-    ObjectMotion_EnableActionAndSetCallback(gPartyState.current_owner, Data_0200121c);
-    Wait(12);
-    Cue(123);
-    Event_FinishScreenTransition();
-    Event_WaitTransitionFrames();
-    Func_0200117c(work->return_entrance);
+    if (Flag_Test(0x8cc) == 0) {
+        object = Object_GetById(64);
+        x = object->x;
+        /* FAKEMATCH: ⚓️ loads x before it builds the limit */
+        asm volatile("" : "+l"(x));
+        if (x < (186 << 16)) {
+            Func_0200110c();
+            Func_020011ac(0);
+            Cue(204);
+            object->motion_flags = 3;
+            Wait(10);
+            Actor_Place(64, 0, 0);
+            Flag_Set(0x8cc);
+            Func_02001114();
+        }
+    }
 }

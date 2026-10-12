@@ -57,10 +57,10 @@ static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/staged_actor.c"
+#include "common/object/staged_actor.c"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/create.c"
+#include "common/effect/create.c"
 #include "../field/common/effect/move.c"
 #include "../field/common/effect/spawn.c"
 
@@ -70,8 +70,8 @@ static void EV08_TALK(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/waitidle.c"
-#include "../field/common/effect/advance.c"
+#include "common/object/waitidle.c"
+#include "common/effect/advance.c"
 
 static void FieldScene_RunSupplementalSequenceOne(void)
 {

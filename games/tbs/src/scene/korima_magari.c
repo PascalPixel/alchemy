@@ -1,7 +1,7 @@
 #include "battle_effect_runtime.h"
 #include "unit/import.h"
 #include "unit/scene/korima_magari.h"
-#include "unit/field/common/korima/palette.h"
+#include "unit/scene/common/korima/palette.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"
@@ -616,7 +616,7 @@ static void Scene_PushBlockAlongRun(struct TileRun2 *runs)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/korima/palette.c"
+#include "common/korima/palette.c"
 
 u32 KorimaMagari_DefaultRecords[] = {
 	0xb00cd, 0x10009, 0, 0xc00cf, 12, 0, 0x1100cf, 12,

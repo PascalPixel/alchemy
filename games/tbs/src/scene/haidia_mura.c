@@ -2,8 +2,8 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/scene/haidia_mura.h"
-#include "unit/field/common/object/orbit.h"
-#include "unit/field/common/effect/psynergy.h"
+#include "unit/scene/common/object/orbit.h"
+#include "unit/scene/common/effect/psynergy.h"
 #include "unit/scene/world_map_linked_effects.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
@@ -90,7 +90,7 @@ enum
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/staged_actor.c"
+#include "common/object/staged_actor.c"
 
 s32 MapStagedScene_SelectPrimaryData(void)
 {
@@ -2606,7 +2606,7 @@ static void Scene_RepairTheHouse(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/psynergy.c"
+#include "common/effect/psynergy.c"
 
 static void SceneState_SetValue1ThenCall(void)
 {
@@ -2910,7 +2910,7 @@ static void SceneActor_SetFlagByteBySlotZeroPosition(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/orbit.c"
+#include "common/object/orbit.c"
 
 static void OverlayObject_UpdateOnFrameBit1(s32 p)
 {
@@ -2938,7 +2938,7 @@ static void SceneEffect_UpdateObjectOnOddFramesOnly(s32 p)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/vertical.c"
+#include "common/effect/vertical.c"
 #include "world_map_linked_effects.c"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)

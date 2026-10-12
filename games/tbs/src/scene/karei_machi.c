@@ -2,7 +2,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/karei_machi.h"
-#include "unit/field/common/object/orbit.h"
+#include "unit/scene/common/object/orbit.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"
@@ -114,7 +114,7 @@ static s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/heading.c"
+#include "common/object/heading.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -1787,7 +1787,7 @@ static void FieldScene_RunSecondaryGroupSequence(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/findcell.c"
+#include "common/object/findcell.c"
 
 static void FieldScene_RunLateSequence(void)
 {
@@ -2115,7 +2115,7 @@ static void EV11_PSYNERGY(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/orbit.c"
+#include "common/object/orbit.c"
 
 // 向きごとの 1 マス先: 上位 16 ビットが x、下位 16 ビットが z
 #define FACING_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

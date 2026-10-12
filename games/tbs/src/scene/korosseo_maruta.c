@@ -5,16 +5,16 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/scene/korosseo_maruta.h"
-#include "unit/field/common/korosseo/saved.h"
-#include "unit/field/common/korosseo/solo_competitor.h"
-#include "unit/field/common/korosseo/raised.h"
-#include "unit/field/common/korosseo/solo_round.h"
-#include "unit/field/common/korosseo/cheer.h"
-#include "unit/field/common/korosseo/compete.h"
-#include "unit/field/common/korosseo/markslot.h"
-#include "unit/field/common/korosseo/markmove.h"
-#include "unit/field/common/korosseo/setup.h"
-#include "unit/field/common/korosseo/occupant.h"
+#include "unit/scene/common/korosseo/saved.h"
+#include "unit/scene/common/korosseo/solo_competitor.h"
+#include "unit/scene/common/korosseo/raised.h"
+#include "unit/scene/common/korosseo/solo_round.h"
+#include "unit/scene/common/korosseo/cheer.h"
+#include "unit/scene/common/korosseo/compete.h"
+#include "unit/scene/common/korosseo/markslot.h"
+#include "unit/scene/common/korosseo/markmove.h"
+#include "unit/scene/common/korosseo/setup.h"
+#include "unit/scene/common/korosseo/occupant.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/evtable.h"
@@ -51,7 +51,7 @@
 #include "unit/system/scheduler/objvram.h"
 #include "unit/system/scheduler/math.h"
 #include "unit/system/scheduler/heap.h"
-#include "unit/field/common/korosseo/item_icon.h"
+#include "unit/scene/common/korosseo/item_icon.h"
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"
@@ -1877,13 +1877,13 @@ static void EV38_TALK(s32 actor)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/korosseo/saved.c"
-#include "../field/common/korosseo/solo_competitor.c"
-#include "../field/common/korosseo/raised.c"
-#include "../field/common/korosseo/solo_round.c"
-#include "../field/common/korosseo/cheer.c"
-#include "../field/common/item/addequip.c"
-#include "../field/common/korosseo/korosseo.c"
+#include "common/korosseo/saved.c"
+#include "common/korosseo/solo_competitor.c"
+#include "common/korosseo/raised.c"
+#include "common/korosseo/solo_round.c"
+#include "common/korosseo/cheer.c"
+#include "common/item/addequip.c"
+#include "common/korosseo/korosseo.c"
 
 static void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
 {
@@ -2027,11 +2027,11 @@ static void FieldScene_RunScene3bcSequenceA(s32 a0)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/korosseo/compete.c"
-#include "../field/common/korosseo/markslot.c"
-#include "../field/common/korosseo/marker.c"
-#include "../field/common/korosseo/markmove.c"
-#include "../field/common/korosseo/item_icon.c"
+#include "common/korosseo/compete.c"
+#include "common/korosseo/markslot.c"
+#include "common/korosseo/marker.c"
+#include "common/korosseo/markmove.c"
+#include "common/korosseo/item_icon.c"
 
 static void WriteU32AsHex(u8 *hex_text, u32 value)
 {
@@ -2182,10 +2182,10 @@ static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 seco
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/korosseo/path_rival.c"
-#include "../field/common/korosseo/setup.c"
-#include "../field/common/korosseo/scene_state.c"
-#include "../field/common/object/findslot.c"
+#include "common/korosseo/path_rival.c"
+#include "common/korosseo/setup.c"
+#include "common/korosseo/scene_state.c"
+#include "common/object/findslot.c"
 
 static void ColossoLogRollingStage_PushStagedActor(void)
 {
@@ -2277,7 +2277,7 @@ static void ColossoLogRollingStage_PushStagedActor(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/korosseo/occupant.c"
+#include "common/korosseo/occupant.c"
 
 const s32 KorosseoMaruta_Record30Script[] = {
 	SC_SET(SW_Y, PIXELS(1)),

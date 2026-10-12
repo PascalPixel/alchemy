@@ -43,7 +43,7 @@ static void FieldScene_SpawnEightShots(void);
 static void FieldScene_RunParticleRain(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/create.c"
+#include "common/effect/create.c"
 #include "../field/common/effect/move.c"
 #include "../field/common/effect/spawn.c"
 

@@ -40,7 +40,7 @@ static void GomaIriguchi_RunSpinningLeap(s32 id);
 static void GomaIriguchi_GiveShamansRod(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/create.c"
+#include "common/effect/create.c"
 #include "../field/common/effect/move.c"
 #include "../field/common/effect/spawn.c"
 
@@ -519,7 +519,7 @@ static void OverlayObject_TurnStateByEighth(struct FieldActor *obj)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/waitdown.c"
+#include "common/object/waitdown.c"
 
 static void GomaIriguchi_RunSpinningLeap(s32 id)
 {
@@ -582,7 +582,7 @@ static void GomaIriguchi_RunSpinningLeap(s32 id)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/item/addequip.c"
+#include "common/item/addequip.c"
 
 static void GomaIriguchi_GiveShamansRod(void)
 {

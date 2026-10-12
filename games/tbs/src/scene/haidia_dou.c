@@ -44,10 +44,10 @@ static void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y);
 static void HaidiaDou_ApplyEntryState(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/create.c"
+#include "common/effect/create.c"
 #include "../field/common/effect/move.c"
 #include "../field/common/effect/spawn.c"
-#include "../field/common/object/staged_actor.c"
+#include "common/object/staged_actor.c"
 
 static void EV08_SCRIPT(void)
 {
@@ -561,7 +561,7 @@ static void DialogueLayout_ConfigureRowsByFlag301(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/pairmove.c"
+#include "common/object/pairmove.c"
 
 static void EV20_TOUCH(void)
 {

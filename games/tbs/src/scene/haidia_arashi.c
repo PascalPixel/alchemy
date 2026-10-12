@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/scene/haidia_arashi.h"
-#include "unit/field/common/effect/psynergy.h"
+#include "unit/scene/common/effect/psynergy.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"
@@ -101,7 +101,7 @@ static s32 HaidiaArashi_RerollHeadingOnCountdown(struct FieldActor *object)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/pulse.c"
+#include "common/object/pulse.c"
 
 u8 *HaidiaArashi_GetEntrances(void)
 {
@@ -152,7 +152,7 @@ static void EV14_TOUCH(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/haidia/exit.c"
+#include "common/haidia/exit.c"
 
 static void HaidiaArashi_OpenBackdropExit11(void)
 {
@@ -2665,7 +2665,7 @@ static void HaidiaArashi_CycleObjectPalettes(s32 o)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/vertical.c"
+#include "common/effect/vertical.c"
 
 static void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
 {
@@ -2723,7 +2723,7 @@ static void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/psynergy.c"
+#include "common/effect/psynergy.c"
 
 static void FieldScene_RunFourPairedSteps(void)
 {

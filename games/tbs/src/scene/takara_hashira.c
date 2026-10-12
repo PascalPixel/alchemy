@@ -81,10 +81,10 @@ struct MapLayer_2
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/create.c"
+#include "common/effect/create.c"
 #include "../field/common/effect/move.c"
 #include "../field/common/effect/spawn.c"
-#include "../field/common/object/staged_actor.c"
+#include "common/object/staged_actor.c"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../field/common/map/panel.c"

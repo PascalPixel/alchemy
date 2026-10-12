@@ -22,7 +22,7 @@
 #include "unit/system/scheduler/sched.h"
 #include "unit/system/scheduler/math.h"
 #include "unit/system/scheduler/heap.h"
-#include "unit/field/common/korosseo/item_icon.h"
+#include "unit/scene/common/korosseo/item_icon.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -83,7 +83,7 @@ static __inline__ void LiftBlock(s32 column, u8 lowered)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/staged_actor.c"
+#include "common/object/staged_actor.c"
 
 static void EV15_SCRIPT(void)
 {
@@ -1248,7 +1248,7 @@ static void TakaraAshiba_UpdateItemIcons(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/korosseo/item_icon.c"
+#include "common/korosseo/item_icon.c"
 
 static void TakaraAshiba_InitializeScene1(void)
 {

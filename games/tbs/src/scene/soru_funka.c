@@ -1,6 +1,6 @@
 #include "game_state.h"
 #include "unit/scene/soru_funka.h"
-#include "unit/field/common/effect/psynergy.h"
+#include "unit/scene/common/effect/psynergy.h"
 #include "unit/scene/soru_star_ring_setup.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
@@ -1814,7 +1814,7 @@ static void SceneState_ForwardByRuntimeWordBits(s32 a)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/vertical.c"
+#include "common/effect/vertical.c"
 
 static void SoruFunka_SpawnEffectPair(union PairObject *parent)
 {
@@ -1867,7 +1867,7 @@ static void SoruFunka_SpawnEffectPair(union PairObject *parent)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/psynergy.c"
+#include "common/effect/psynergy.c"
 
 static void FieldScene_RunActor15TwoStep(void)
 {

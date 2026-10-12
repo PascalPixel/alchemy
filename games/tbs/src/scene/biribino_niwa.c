@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/scene/biribino_niwa.h"
-#include "unit/field/common/object/orbit.h"
+#include "unit/scene/common/object/orbit.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"
@@ -38,7 +38,7 @@ static void BiribinoNiwa_RunGardenScene(void);
 static void FieldScene_OpenGate(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/facing.c"
+#include "common/object/facing.c"
 
 u8 *SceneData_GetScriptTable(void)
 {
@@ -366,7 +366,7 @@ static void FieldScene_OpenGate(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/orbit.c"
+#include "common/object/orbit.c"
 
 u16 Niwa_GateCells[] = {
 	MAP_CELL_STEP(34, 25, 1, 3, 5), MAP_CELL_STEP(35, 25, 1, 3, 5), MAP_CELL_STEP(36, 25, 1, 3, 5), MAP_CELL_STEPS_END,

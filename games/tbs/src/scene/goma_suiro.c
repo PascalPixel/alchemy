@@ -35,7 +35,7 @@
 static void SceneEffect_RunActorBurst(s32 no);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/create.c"
+#include "common/effect/create.c"
 #include "../field/common/effect/move.c"
 #include "../field/common/effect/spawn.c"
 
@@ -131,7 +131,7 @@ static void SceneEffect_RotateRecord(EffectWork_020004c4 *work)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/waitdown.c"
+#include "common/object/waitdown.c"
 
 union SceneActor
 {

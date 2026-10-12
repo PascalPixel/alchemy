@@ -78,7 +78,7 @@ static void FuneKanpan_PlaceLeaderOnDeck(void);
 s32 Math_RemainderUnsigned(s32, s16);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/pulse.c"
+#include "common/object/pulse.c"
 
 static s32 SceneState_ApplyArgMode1AndReturnZero(s32 a)
 {

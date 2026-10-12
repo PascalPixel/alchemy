@@ -95,7 +95,7 @@ struct ObjectRuntime;
 extern struct SceneEvent Placement_Effects[];
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/create.c"
+#include "common/effect/create.c"
 #include "../field/common/effect/move.c"
 #include "../field/common/effect/spawn.c"
 
@@ -105,7 +105,7 @@ static __inline__ void SkipMessage(s32 amount)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/facing.c"
+#include "common/object/facing.c"
 
 s32 *SceneData_GetScriptTable(void)
 {

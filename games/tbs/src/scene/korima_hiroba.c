@@ -2,8 +2,8 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/scene/korima_hiroba.h"
-#include "unit/field/common/object/orbit.h"
-#include "unit/field/common/korima/palette.h"
+#include "unit/scene/common/object/orbit.h"
+#include "unit/scene/common/korima/palette.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/marker.h"
@@ -46,7 +46,7 @@ typedef struct
 } Pair;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/staged_actor.c"
+#include "common/object/staged_actor.c"
 
 u8 *SceneData_GetScriptTable(void)
 {
@@ -111,8 +111,8 @@ s32 FieldScene_SetupEntryActors8To11(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/korima/palette.c"
-#include "../field/common/object/orbit.c"
+#include "common/korima/palette.c"
+#include "common/object/orbit.c"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

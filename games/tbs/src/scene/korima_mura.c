@@ -137,7 +137,7 @@ static s32 SceneEffect_UpdateFallingObject(struct Obj *p)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/facing.c"
+#include "common/object/facing.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -1485,7 +1485,7 @@ static void FieldScene_RunPairedStepB(s32 arg0, s32 arg1, s32 arg2)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/korima/grow.c"
+#include "common/korima/grow.c"
 
 static void SceneEffect_SpawnObject26EveryEightFrames(void)
 {
@@ -1532,7 +1532,7 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/korima/blink.c"
+#include "common/korima/blink.c"
 
 static s32 KorimaMura_TriggerRegionScript(struct FieldActor *actor)
 {

@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "window.h"
 #include "unit/scene/kuupuappu_mura.h"
-#include "unit/field/common/kuupuappu/range.h"
+#include "unit/scene/common/kuupuappu/range.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
@@ -50,7 +50,7 @@ static void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay);
 static void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/create.c"
+#include "common/effect/create.c"
 #include "../field/common/effect/move.c"
 #include "../field/common/effect/spawn.c"
 
@@ -61,7 +61,7 @@ union DriftingObject
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/kuupuappu/nearby.c"
+#include "common/kuupuappu/nearby.c"
 
 static s32 ActorPresentation_UpdateEntityFromLeader(struct FieldActor *entity)
 {
@@ -112,7 +112,7 @@ static int KuupuappuMura_GetIwanVenusDjinnCount(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/kuupuappu/djinn.c"
+#include "common/kuupuappu/djinn.c"
 
 static void KuupuappuMura_SayFarewellToIvan(void)
 {
@@ -325,7 +325,7 @@ static void SceneActor_RunActorStep(s32 actor)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/kuupuappu/talk.c"
+#include "common/kuupuappu/talk.c"
 
 static void EV08_TALK(void)
 {
@@ -576,7 +576,7 @@ static void EV21_PSYNERGY(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/kuupuappu/toggle.c"
+#include "common/kuupuappu/toggle.c"
 
 static void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 continuation)
 {
@@ -878,8 +878,8 @@ s32 KuupuappuMura_RestoreEntryState(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/distance.c"
-#include "../field/common/kuupuappu/range.c"
+#include "common/object/distance.c"
+#include "common/kuupuappu/range.c"
 
 static void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay)
 {

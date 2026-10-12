@@ -6,7 +6,7 @@
 #include "game_state.h"
 #include "vram_tab.h"
 #include "unit/scene/haidia_babi.h"
-#include "unit/field/common/effect/psynergy.h"
+#include "unit/scene/common/effect/psynergy.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"
@@ -67,7 +67,7 @@ static void HaidiaBabi_SpawnEffectPair(union FieldObject *object);
 static void FieldScene_RunSixStepSequence17e4(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/facing.c"
+#include "common/object/facing.c"
 
 enum
 {
@@ -971,7 +971,7 @@ static void OverlayObject_ApplyRandomSlotOnOddFrames(union FieldObject *object)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/vertical.c"
+#include "common/effect/vertical.c"
 
 static void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
 {
@@ -1029,7 +1029,7 @@ static void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/psynergy.c"
+#include "common/effect/psynergy.c"
 
 static void FieldScene_RunActor8TwoStep(void)
 {

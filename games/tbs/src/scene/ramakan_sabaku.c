@@ -57,7 +57,7 @@ static void RamakanSabaku_SetSandPhase(u16 value);
 #define NULL ((void *)0)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/create.c"
+#include "common/effect/create.c"
 #include "../field/common/effect/move.c"
 #include "../field/common/effect/spawn.c"
 
@@ -67,7 +67,7 @@ static void EV13_TALK(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/waitdown.c"
+#include "common/object/waitdown.c"
 
 static s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor)
 {

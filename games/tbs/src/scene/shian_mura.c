@@ -52,7 +52,7 @@ struct PeriodicEffectConfig
 void Effect_Spawn();
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/create.c"
+#include "common/effect/create.c"
 #include "../field/common/effect/move.c"
 #include "../field/common/effect/spawn.c"
 
@@ -136,7 +136,7 @@ static void SceneEffect_SpawnPeriodicEffect(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/distance.c"
+#include "common/object/distance.c"
 
 static s32 SceneActor_UpdateTracking(
 	struct MapActor *actor, struct MapActor *target, s32 distance_limit, s32 force_tracking)

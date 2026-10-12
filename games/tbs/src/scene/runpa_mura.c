@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/scene/runpa_mura.h"
-#include "unit/field/common/object/orbit.h"
+#include "unit/scene/common/object/orbit.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
@@ -31,7 +31,7 @@ enum
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/create.c"
+#include "common/effect/create.c"
 #include "../field/common/effect/move.c"
 #include "../field/common/effect/spawn.c"
 
@@ -913,7 +913,7 @@ s32 Scene_Initialize(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/object/orbit.c"
+#include "common/object/orbit.c"
 
 #define LUNPA_ENTRANCE(entrance, x, z, facing) \
 	{(entrance), CONDITION_ALWAYS, (x), 0, (z), (facing), 0, -1, -1, -1, -1, 0}

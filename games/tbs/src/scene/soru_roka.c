@@ -1,7 +1,7 @@
 
 
 #include "unit/scene/soru_roka.h"
-#include "unit/field/common/soru/initzoom.h"
+#include "unit/scene/common/soru/initzoom.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -48,7 +48,7 @@ u8 *SceneData_GetEffectTable(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/soru/initzoom.c"
+#include "common/soru/initzoom.c"
 
 struct SceneEntrance SoruRoka_SceneTable0[] = {
 	{ 0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },

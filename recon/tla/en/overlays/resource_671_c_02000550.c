@@ -1,4 +1,4 @@
-/* Drafts of Func_02000550 (differ 43 of 40) and Func_02000624 (differ 47 of 63), the
+/* Drafts of Func_02000550 (differ 30 of 40) and Func_02000624 (differ 47 of 63), the
  * neighbours of find_near.c.
  * Func_02000550: the native keeps the loop plain: every pass loads the table's address,
  * builds the phase's address (adds r1, r7; adds r1, #98) and counts i to 24; this form
@@ -8,7 +8,10 @@
  * (mov r4, sp, a copy from a hard register, which loop.c never moves) and keeps only i and
  * the id in r5 and r6; this form keeps the address in r5 across the loop, with the
  * position read directly, through one pointer, or through a pointer declared in the
- * innermost block. */
+ * innermost block.
+ * Known now from Func_02000a20 (s0a20.c): a pseudo set twice inside a loop is never moved by
+ * loop.c. A byte pointer set twice here (the table, then the phase) keeps the table's address
+ * and the index in the loop (differ 30), but gcse still computes the phase's address above it. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"
@@ -55,7 +58,13 @@ void Func_02000550(void)
         GameFlag_SetBit(515);
         *(u16 *)((u8 *)Ram_HeapSlots->event_work + 0x166) = 0;
         for (i = 0; i <= 24; i++) {
-            actor->phase += direction * Data_02006b38[i];
+            u8 *p;
+            s32 step;
+
+            p = (u8 *)Data_02006b38;
+            step = (s8)p[i];
+            p = &actor->phase;
+            *p += direction * step;
             WaitFrames(1);
         }
     }

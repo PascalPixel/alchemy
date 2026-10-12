@@ -31,3 +31,31 @@ void Func_020034ec(void)
 {
     Func_02001b38();
 }
+
+static __inline__ void Map_CopyBlock(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_02005674(a, b, c, d, e, f);
+}
+
+static __inline__ void Exit_Set(s32 index, s32 flag, s32 a, s32 b)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    Func_0200583c(index, flag, a, b);
+}
+
+void Func_020034f4(void)
+{
+    if ((u16)(gPartyState.entrance - 3) <= 1) {
+        ObjectMotion_EnableActionAndSetCallback(27, Data_02005944);
+        ObjectMotion_EnableActionAndSetCallback(28, Data_02005944);
+        Map_CopyBlock(33, 24, 3, 3, 27, 29);
+    }
+    Func_020053bc(Data_02005d7c);
+    if (!GameFlag_Test(0x8ce) || !GameFlag_Test(0x8cf))
+        Object_GetById(26)->y = 0x100000;
+    Func_02005824();
+    Exit_Set(0, 513, 8, 9);
+    Exit_Set(1, 514, 10, 11);
+    Func_02001b68();
+}

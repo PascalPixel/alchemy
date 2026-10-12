@@ -1,6 +1,7 @@
 #include "scene_ids.h"
 #include "unit/menu/clear/clear.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object4.h"
 #include "unit/battle/effect/object5.h"
 #include "unit/battle/effect/object6.h"
 #include "unit/battle/effect/object7.h"

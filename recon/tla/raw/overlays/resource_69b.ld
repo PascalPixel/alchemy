@@ -37,7 +37,7 @@ SECTIONS
         "*/resource_69b_overlay.o"(.text.x020090cc)
         "*/resource_69b_overlay.o"(.text.x0200925c)
         "*/games/tla/src/field/overlay_69b/s1418.o"(.text)
-        "*/resource_69b_overlay.o"(.text.x020095a0)
+        "*/games/tla/src/field/overlay_69b/s15a0.o"(.text)
         "*/games/tla/src/field/overlay_69b/s15d0.o"(.text)
         "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
         "*/resource_69b_overlay.o"(.text.x02009622)

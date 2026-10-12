@@ -2150,35 +2150,6 @@ Func_0200125c:
 	.4byte 0xc000a000
 .L_02009414:
 	.4byte Data_02002cde
-	.section .text.x020095a0,"ax",%progbits
-	.balign 4
-	.global Func_020015a0
-	.thumb_func
-Func_020015a0:
-	push {r5, lr}
-	adds r5, r1, #0
-	bl Object_GetById
-	adds r4, r0, #0
-	cmp r4, #0
-	beq .L_020095c6
-	adds r3, r4, #0
-	adds r3, #100
-	strh r5, [r3]
-	ldr r1, .L_020095c8
-	ldr r0, .L_020095cc
-	ldrh r2, [r1]
-	movs r5, #0
-	ldrsh r3, [r1, r5]
-	adds r2, #1
-	lsls r3, r3, #2
-	str r4, [r0, r3]
-	strh r2, [r1]
-.L_020095c6:
-	pop {r5, pc}
-.L_020095c8:
-	.4byte Data_02002bda
-.L_020095cc:
-	.4byte Data_02002bdc
 	.section .text.x02009622,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200965a,"ax",%progbits

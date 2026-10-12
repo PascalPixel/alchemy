@@ -85,6 +85,26 @@ void Func_02003fc8(struct FieldActor *object);
 void Func_020041f8(s32 cue);
 extern struct FieldActor *Data_0200480c;
 extern s32 gInput;
+extern u32 gFrameCount;
+void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void ObjectDispatch_SetSingleChildFlags(struct FieldActor *object, s32 flags);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+void Func_02003fe0(struct FieldActor *object, s32 x, s32 y, s32 z);
+void Func_02003fe8(struct FieldActor *object);
+void Func_020040e8(s32 actor, s32 angle);
+void Func_02004138(s32 mode);
+void Func_02004118(s32 a, s32 b);
+void Motion_CamBounds(s32 x, s32 a, s32 z, s32 b);
+void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void ObjectMotion_EnableActionAndResetMotion(s32 id);
+void Func_020021d4(void);
+void Func_02002180(void);
+void Func_02002318(void);
+void Func_02003338(s32 id);
+void Func_020020a8(void);
+void Func_02003fa8(struct FieldActor *object, s32 mode);
+void Func_02003910(s32 id, u32 kind, s32 flag, s32 layer);
 
 static inline void Scene_TaskAdd(void (*callback)(void), s32 priority)
 {
@@ -120,6 +140,24 @@ static inline void Scene_Call4090(s32 actor, s32 x, s32 z)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     Func_02004090(actor, x, z);
+}
+
+static inline void Scene_SetSpeed(s32 id, s32 speed, s32 acceleration)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    ObjectMotion_SetSpeedParameters(id, speed, acceleration);
+}
+
+static inline void Scene_CamBounds(s32 x, s32 a, s32 z, s32 b)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Motion_CamBounds(x, a, z, b);
+}
+
+static inline void Scene_SetPositionAndCommit(s32 id, s32 x, s32 z)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    ObjectMotion_SetPositionAndCommit(id, x, z);
 }
 
 static inline void Scene_Call4178(s32 a, s32 b, s32 c)

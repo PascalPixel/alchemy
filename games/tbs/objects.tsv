@@ -1,9 +1,9 @@
 image	place	object	sections	editions
-main	ewram	games/tbs/src/system/ram/ewram	.sym_ewram
+main	ewram	games/tbs/src/system/ewram	.sym_ewram
 main	rom_start	games/tbs/src/system/rom_head
 main	rom_start	games/tbs/src/system/far_call/RUNTIME
 main	rom_start	games/tbs/src/system/entry	.text .padding .text.resampler_kernels_1 .padding.resampler_kernels_pad_1 .text.resampler_kernels_2
-main	rom_start	games/tbs/src/sound/driver/channel_update_entry
+main	rom_start	games/tbs/src/sound/channel_update_entry
 main	iwram_runtime	games/tbs/src/system/runtime
 main	iwram_runtime	games/tbs/src/system/runtime_irq_table
 main	iwram_runtime	games/tbs/src/system/runtime_mul_q16_ip	.text .data .text.runtime_divide
@@ -12,10 +12,10 @@ main	iwram_runtime	games/tbs/src/system/runtime_mix_state
 main	iwram_runtime	games/tbs/src/system/runtime_mix_interpolate	.text .data .text.runtime_mix_channel
 main	iwram_runtime	games/tbs/src/system/runtime_mix_mask
 main	iwram_runtime	games/tbs/src/system/runtime_mix_render	.text .data .text.runtime_copy_words
-main	iwram	games/tbs/src/system/ram/iwram	.sym_iwram
+main	iwram	games/tbs/src/system/iwram	.sym_iwram
 main	rom_main_00	games/tbs/src/system/resource/decode_byte_lz
 main	rom_main_00	games/tbs/src/system/iwram_entry	.text
-main	rom_main_00	games/tbs/src/lib/trig
+main	rom_main_00	games/tbs/src/runtime/trig
 main	rom_main_00	games/tbs/src/system/resource/decode_01	.text .rodata .text.decode_2_loop
 main	rom_main_00	games/tbs/src/system/heapfree	.text .text.* .rodata .data .padding
 main	rom_main_00	games/tbs/src/runtime/runtime	.text
@@ -38,9 +38,9 @@ main	rom_main_00	games/common/src/system/save/atmel	.text
 main	rom_main_00	libgcc.a:_call_via_rX	.text
 main	rom_main_00	games/tbs/src/system/runtime_irq_table	.rodata.irq_head .rodata.irq_middle .text.irq_halt .rodata.irq_tail
 main	rom_main_00	games/tbs/src/runtime/mathtbl	.rodata
-main	rom_main_00	games/tbs/src/system/memory/syspal	.rodata
+main	rom_main_00	games/tbs/src/system/syspal	.rodata
 main	rom_main_00	games/tbs/src/runtime/numtext	.rodata
-main	rom_main_00	games/tbs/src/lib/q16_dot_product
+main	rom_main_00	games/tbs/src/runtime/q16_dot_product
 main	rom_main_00	games/tbs/src/runtime/savedata	.rodata
 main	rom_main_00	games/tbs/src/runtime/testdata	.rodata
 main	rom_main_00	games/common/src/system/save/flashtab	.rodata
@@ -242,10 +242,10 @@ main	rom_main_12	games/tbs/src/system/far_call/BLANK_LOAD
 main	rom_main_12	games/tbs/src/object/colorfx
 main	rom_main_13	games/tbs/src/system/far_call/SOUND
 main	rom_main_13	games/tbs/src/sound/sound	.text
-main	rom_main_13	games/tbs/src/sound/driver/umul_high	.text .padding
-main	iwram_mixer	games/tbs/src/sound/driver/mixer
-main	iwram_high	games/tbs/src/system/ram/iwram_hi	.sym_iwram_high
-main	rom_tail_00	games/tbs/src/sound/driver/clear_buffer	.text .text.command_byte_reader .text.command_byte_setters
+main	rom_main_13	games/tbs/src/sound/umul_high	.text .padding
+main	iwram_mixer	games/tbs/src/sound/mixer
+main	iwram_high	games/tbs/src/system/iwram_hi	.sym_iwram_high
+main	rom_tail_00	games/tbs/src/sound/clear_buffer	.text .text.command_byte_reader .text.command_byte_setters
 main	rom_tail_00	games/common/src/sound/sound	.text
 main	rom_tail_00	games/tbs/src/system/sound_get_jump_list
 main	rom_tail_00	games/tbs/src/sound/engine	.text

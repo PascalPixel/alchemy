@@ -12,7 +12,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_66a/s1220.o"(.text)
         "*/resource_66a_overlay.o"(.text.x02009230)
         "*/resource_66a_overlay.o"(.text.x0200929c)
-        "*/resource_66a_overlay.o"(.text.x02009320)
+        "*/games/tla/src/field/overlay_66a/s1320.o"(.text)
         "*/games/tla/src/field/overlay_66a/import.o"(.text)
         "*/games/tla/src/field/overlay_66a/data.o"(.data)
     }

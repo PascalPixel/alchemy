@@ -49,7 +49,7 @@ SECTIONS
         "*/resource_6a5_overlay.o"(.text.x0200cbd4)
         "*/resource_6a5_overlay.o"(.text.x0200cd9c)
         "*/resource_6a5_overlay.o"(.text.x0200cec8)
-        "*/resource_6a5_overlay.o"(.text.x0200d10c)
+        "*/games/tla/src/field/overlay_6a5/s510c.o"(.text)
         "*/resource_6a5_overlay.o"(.text.x0200d194)
         "*/resource_6a5_overlay.o"(.text.x0200d204)
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)

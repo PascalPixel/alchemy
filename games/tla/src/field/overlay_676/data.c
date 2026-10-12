@@ -210,10 +210,17 @@ s32 Data_02002ac4[] = {
 	0xe80000,
 	0x14000,
 	(s32)0xffff0072,
+#if defined(TLA_EDITION_JA)
+	2,
+	0x2280000,
+	0,
+	0xe80000,
+#else
 	3,
 	0x2280000,
 	0,
 	0xf80000,
+#endif
 	0x16000,
 	(s32)0xffff0080,
 	2,

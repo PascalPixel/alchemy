@@ -5,6 +5,7 @@
 #include "unit/graphics/window/textspd.h"
 #include "unit/menu/optdata.h"
 #include "unit/graphics/window/window.h"
+#include "unit/graphics/window/window2.h"
 #include "unit/graphics/window/window3.h"
 #include "unit/graphics/window/window4.h"
 #include "unit/graphics/window/window5.h"

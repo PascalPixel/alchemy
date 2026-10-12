@@ -2,6 +2,7 @@
 #define ALCHEMY_WINDOW_H
 
 #include "unit/graphics/window/window.h"
+#include "unit/graphics/window/window2.h"
 #include "unit/graphics/window/window3.h"
 #include "unit/graphics/window/window4.h"
 #include "unit/graphics/window/window5.h"

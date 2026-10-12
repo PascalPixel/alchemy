@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
 	.section .text.x0200806c,"ax",%progbits
+	.balign 4
 	.global Func_0200006c
 	.thumb_func
 Func_0200006c:
@@ -71,54 +72,8 @@ Func_0200006c:
 	.4byte Data_02003308
 .L_02008104:
 	.4byte gPartyState
-	.section .text.x020082bc,"ax",%progbits
-	.global Func_020002bc
-	.thumb_func
-Func_020002bc:
-	push {lr}
-	ldr r0, .L_0200831c
-	bl Func_02002bd0
-	movs r1, #0
-	movs r0, #33
-	bl UiText_OpenMessageAtObject
-	movs r0, #4
-	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
-	cmp r0, #0
-	bne .L_02008316
-	movs r1, #4
-	adds r1, #255
-	movs r2, #30
-	movs r0, #33
-	bl Func_02002c08
-	movs r1, #0
-	movs r0, #33
-	bl UiText_OpenMessageAtObject
-	movs r0, #4
-	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
-	cmp r0, #0
-	bne .L_02008310
-	movs r1, #4
-	adds r1, #255
-	movs r2, #30
-	movs r0, #33
-	bl Func_02002c08
-	movs r0, #33
-	movs r1, #0
-	movs r2, #10
-	bl Func_02002be0
-	b .L_0200831a
-.L_02008310:
-	bl Func_02000294
-	b .L_0200831a
-.L_02008316:
-	bl Func_02000294
-.L_0200831a:
-	pop {pc}
-.L_0200831c:
-	.4byte MsgHaveYouBy
 	.section .text.x0200851c,"ax",%progbits
+	.balign 4
 	.global Func_0200051c
 	.thumb_func
 Func_0200051c:
@@ -244,25 +199,8 @@ Func_020005b8:
 .L_02008634:
 	pop {pc}
 	.2byte 0x0000
-	.section .text.x0200868c,"ax",%progbits
-	.global Func_0200068c
-	.thumb_func
-Func_0200068c:
-	push {lr}
-	sub sp, #8
-	movs r3, #45
-	movs r2, #10
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #51
-	movs r1, #10
-	movs r2, #3
-	movs r3, #3
-	bl Func_02002af8
-	bl Func_02000670
-	add sp, #8
-	pop {pc}
 	.section .text.x020086ac,"ax",%progbits
+	.balign 4
 	.global Func_020006ac
 	.thumb_func
 Func_020006ac:
@@ -443,6 +381,7 @@ Func_020006ac:
 .L_02008834:
 	.4byte gPartyState
 	.section .text.x02008ac4,"ax",%progbits
+	.balign 4
 	.global Func_02000ac4
 	.thumb_func
 Func_02000ac4:

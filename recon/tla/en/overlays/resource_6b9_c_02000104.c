@@ -1,6 +1,9 @@
 /* Near miss of Func_02000104 (36 instructions, 2 differ): the native loads the pool address of
  * gPartyState before the second byte store, the draft after it. Struct fields, cast pointers and
- * a chained store measured the same or worse; three minutes of permute found nothing better. */
+ * a chained store measured the same or worse; three minutes of permute found nothing better.
+ * Round two: a one-pass block before the party store changes nothing; a "+l"/"+r" barrier on a
+ * party pointer (before the second store, with or without a flag pointer) takes other registers
+ * (17 and 31 differ). */
 #include "types.h"
 #include "field_scene.h"
 #include "ram_buffer.h"

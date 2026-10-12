@@ -1052,12 +1052,6 @@ Func_0803dc1c:
 	.thumb_func
 Func_0803dd98:
 	.incbin "baserom.gba", 0x0003ddf0, 0x00000110
-	.section .rom.0003df58, "ax"
-	.global Func_0803df00
-	.type Func_0803df00, %function
-	.thumb_func
-Func_0803df00:
-	.incbin "baserom.gba", 0x0003df58, 0x00000014
 	.section .rom.0003df7c, "ax"
 	.global Func_0803df24
 	.type Func_0803df24, %function
@@ -1474,7 +1468,9 @@ Menu_SelectSaveSlotAction:
 Func_0804d7fc:
 	.incbin "baserom.gba", 0x0004d9c8, 0x0000016c
 	.section .rom.0004dc86, "ax"
-	.incbin "baserom.gba", 0x0004dc86, 0x000000ba
+	.incbin "baserom.gba", 0x0004dc86, 0x00000002
+	.section .rom.0004dc9c, "ax"
+	.incbin "baserom.gba", 0x0004dc9c, 0x000000a4
 	.section .rom.0004dd40, "ax"
 	.global Menu_RunSelection
 	.type Menu_RunSelection, %function
@@ -3209,12 +3205,9 @@ Func_080c8950_Target:
 	.thumb_func
 Inventory_PromptAndSetObjectMode:
 	.incbin "baserom.gba", 0x000d2834, 0x0000011c
-	.section .rom.000d2950, "ax"
-	.global Menu_RunDefaultConfirmation
-	.type Menu_RunDefaultConfirmation, %function
-	.thumb_func
-Menu_RunDefaultConfirmation:
-	.incbin "baserom.gba", 0x000d2950, 0x000000b0
+	.section .rom.000d2960, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000d2960, 0x000000a0
 	.section .rom.000d2b40, "ax"
 	.global Func_080d2b4c
 	.type Func_080d2b4c, %function
@@ -4333,7 +4326,14 @@ ItemMenu_DrawEquippedItemNames:
 	.type ItemMenu_PosCategory, %function
 	.thumb_func
 ItemMenu_PosCategory:
-	.incbin "baserom.gba", 0x0010081c, 0x00000728
+	.incbin "baserom.gba", 0x0010081c, 0x00000640
+	.section .rom.00100e74, "ax"
+	.balign 4
+	.global Func_08100d58
+	.type Func_08100d58, %function
+	.thumb_func
+Func_08100d58:
+	.incbin "baserom.gba", 0x00100e74, 0x000000d0
 	.section .rom.00100f98, "ax"
 	.global Func_08100e7c
 	.type Func_08100e7c, %function
@@ -4918,7 +4918,12 @@ BattlePres_SetActorRecordMode:
 	.type BattlePres_SetActorModes, %function
 	.thumb_func
 BattlePres_SetActorModes:
-	.incbin "baserom.gba", 0x00126d14, 0x00000ea4
+	.incbin "baserom.gba", 0x00126d14, 0x0000033c
+	.section .rom.00127080, "ax"
+	.incbin "baserom.gba", 0x00127080, 0x00000504
+	.section .rom.001275a0, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x001275a0, 0x00000618
 	.section .rom.00127c96, "ax"
 	.incbin "baserom.gba", 0x00127c96, 0x00000002
 	.section .rom.00127cec, "ax"

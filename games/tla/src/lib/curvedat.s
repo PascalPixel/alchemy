@@ -1,7 +1,7 @@
 	.section .rodata
 @ The Broken Seal's Curve_LerpWeightTable, byte for byte
-	.global Data_0802edc4
-Data_0802edc4:
+	.global Curve_LerpWeightTable
+Curve_LerpWeightTable:
 	.byte 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0
 	.byte 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0
 	.byte 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0

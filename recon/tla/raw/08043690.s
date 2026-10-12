@@ -66,16 +66,16 @@ Func_08043690:
 	ldr r3, .L_08043760
 	movs r0, #0
 	strh r5, [r3]
-	bl Func_08042e28
+	bl SaveProgress_Open
 	adds r6, r0, #0
-	bl Func_08043358
+	bl SaveState_BuildSummaryHeader
 	bl ObjectTable_SnapshotFar
 	ldr r1, .L_08043768
 	adds r0, r5, #0
 	bl Func_08042f10
 	adds r5, r0, #0
 	adds r0, r6, #0
-	bl Func_08042eec
+	bl SaveProgress_Close
 	bl UiWork_FinalizePendingCore
 	cmp r5, #0
 	beq .L_0804374a

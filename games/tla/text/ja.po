@@ -51,11 +51,11 @@ msgctxt "MsgStatusLabel"
 msgid "00010"
 msgstr "プレイじかん"
 
-msgctxt "message"
+msgctxt "MsgNoBackupMemory"
 msgid "00011"
 msgstr "{text_color:5}バックアップメモリを{line_break}にんしきできません{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSaveFailed"
 msgid "00012"
 msgstr "{text_color:5}かきこみにしっぱいしました{end_wait}"
 
@@ -63,7 +63,7 @@ msgctxt "message"
 msgid "00013"
 msgstr "{text_color:5}よみこみにしっぱいしました{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEraseFailed"
 msgid "00014"
 msgstr "{text_color:5}さくじょにしっぱいしました{end_wait}"
 
@@ -91,7 +91,7 @@ msgctxt "message"
 msgid "00020"
 msgstr "けすきろくを えらんでください{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOverwriteConfirm"
 msgid "00021"
 msgstr "うわがきして いいですか?{end_now}"
 
@@ -99,7 +99,7 @@ msgctxt "message"
 msgid "00022"
 msgstr "はじめたきろくに うわがきしますか?"
 
-msgctxt "message"
+msgctxt "MsgEraseConfirm"
 msgid "00023"
 msgstr "けしてもいいですか?{end_now}"
 
@@ -107,15 +107,15 @@ msgctxt "message"
 msgid "00024"
 msgstr "このデータをひきついでいいですか?"
 
-msgctxt "message"
+msgctxt "MsgGameSaved"
 msgid "00025"
 msgstr "きろくしました{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFileErased"
 msgid "00026"
 msgstr "けしました{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFileCopied"
 msgid "00027"
 msgstr "うつしました{end_wait}"
 
@@ -123,19 +123,19 @@ msgctxt "message"
 msgid "00028"
 msgstr "ひきつぎました{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSaving"
 msgid "00029"
 msgstr "きろくしています"
 
-msgctxt "message"
+msgctxt "MsgErasing"
 msgid "00030"
 msgstr "けしています"
 
-msgctxt "message"
+msgctxt "MsgCopying"
 msgid "00031"
 msgstr "うつしています"
 
-msgctxt "message"
+msgctxt "MsgDoNotTurnThePower"
 msgid "00032"
 msgstr "しょりがおわるまで でんげんを"
 
@@ -14703,7 +14703,7 @@ msgctxt "message"
 msgid "03673"
 msgstr "みんなで"
 
-msgctxt "message"
+msgctxt "MsgAreaTitleScreen"
 msgid "03674"
 msgstr "タイトルがめん"
 

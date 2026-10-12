@@ -6,7 +6,7 @@ u8 *UiText_FormatNumber(u8 *, s32, s32);
 
 void *Text_FormatPlayTime(s32 value, u8 *out)
 {
-    u8 buf[64];
+    u8 buf[16];
     u32 time;
     u32 minutes;
     s32 seconds;

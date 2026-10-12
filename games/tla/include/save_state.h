@@ -5,7 +5,21 @@
 #include "layout_guard.h"
 
 struct SaveSummary {
-    u8 unknown_00[0x38];
+    u8 slot_header[16];
+    u8 name[12];
+    u8 level;
+    u8 class_id;
+    u16 area;
+    u32 play_time;
+    u32 coins;
+    u8 djinn[4];
+    s8 party[5];
+    s8 send_flag;
+    s8 flag_count;
+    s8 has_flag_34;
+    u8 palette_glow;
+    u8 palette_glow_sub;
+    u16 frames;
     u8 unknown_38[4];
     u32 checksum;
 };

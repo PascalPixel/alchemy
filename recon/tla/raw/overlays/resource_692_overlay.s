@@ -4601,45 +4601,6 @@ Func_02002b2c:
 	.4byte IwramMulQ16
 .L_0200abcc:
 	.4byte gFrameCount
-	.section .text.x0200abd0,"ax",%progbits
-	.global Func_02002bd0
-	.thumb_func
-Func_02002bd0:
-	push {r5, r6, lr}
-	mov r6, r8
-	push {r6}
-	adds r5, r0, #0
-	ldr r6, [r5, #104]
-	ldr r3, [r5, #8]
-	ldr r0, [r6, #8]
-	movs r1, #10
-	subs r0, r0, r3
-	movs r3, #10
-	mov r8, r3
-	bl __divsi3
-	str r0, [r5, #68]
-	ldr r3, [r5, #12]
-	ldr r0, [r6, #12]
-	movs r1, #10
-	subs r0, r0, r3
-	movs r3, #128
-	lsls r3, r3, #13
-	adds r0, r0, r3
-	bl __divsi3
-	str r0, [r5, #76]
-	ldr r3, [r5, #16]
-	ldr r0, [r6, #16]
-	movs r1, #10
-	subs r0, r0, r3
-	bl __divsi3
-	mov r3, r8
-	str r0, [r5, #72]
-	adds r5, #98
-	strb r3, [r5]
-	movs r0, #0
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, pc}
 	.section .text.x0200ac48,"ax",%progbits
 	.balign 4
 	.global Func_02002c48

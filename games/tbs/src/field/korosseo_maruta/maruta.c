@@ -1061,9 +1061,7 @@ s32 StageSetup_BuildAndDispatch(void)
 	switch (gGameState.entrance)
 	{
 	case 1:
-		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-		((s32 (*)(s32, s32, s32, s32, s32, s32, s32))ColossoLogRollingStage_SetupSceneDescriptor)(
-			0, 8, 6, 1512 << 16, 192 << 16, 39, 40);
+		ColossoLogRollingStage_SetupSceneDescriptor(0, 8, 6, 1512 << 16, 192 << 16, 39, 40);
 		Map_CopyCellsLayered(127, 0, 1, 2, 5, 2);
 		Engine_ActorDestroy(32);
 		Engine_ActorDestroy(33);
@@ -1532,8 +1530,7 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
 		Engine_EventSetMessage((s32)MsgKorosseoObjectiveGetAcross);
 		Engine_EventShowMessage(scene, 0);
 	}
-	/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-	((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(state, scene, 1);
+	FieldScene_RunMiddleSequence(state, scene, 1);
 	Engine_EventEnd();
 }
 
@@ -1561,8 +1558,7 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
 		/* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
 		((s32 (*)())Korosseo_FadeInCompetitor)(0, x, 200);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-		((s32 (*)(s32, s32, s32))ColossoLogRollingStage_SpawnPositionedObject)(0, x, 152);
+		ColossoLogRollingStage_SpawnPositionedObject(0, x, 152);
 		ColossoLogRollingStage_SpawnPositionedObject(0, 296, 152);
 		Engine_EventWait(10);
 		Engine_LeaderCheckAhead();
@@ -1575,7 +1571,7 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
 		Camera_MoveTo(-1, -1, -1, 0);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 15);
 		Event_ShowMessage(scene, 0);
-		((s32 (*)(s32, s32, s32))ColossoLogRollingStage_StartPaletteTask)(96, 40, 0);
+		ColossoLogRollingStage_StartPaletteTask(96, 40, 0);
 		ColossoLogRollingStage_StartPaletteTaskFromState(128, 40, 10);
 		Engine_EventWait(30);
 		ColossoLogRollingStage_StartPaletteTaskFromState(160, 40, 10);
@@ -1593,7 +1589,7 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
 		Engine_EventSetMessage((s32)MsgKorosseoYourGoalInStageSimple);
 		Event_ShowMessage(scene, 0);
 	}
-	((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(state, scene, 2);
+	FieldScene_RunMiddleSequence(state, scene, 2);
 	Engine_EventEnd();
 }
 
@@ -1655,8 +1651,7 @@ void KorosseoMaruta_RunStageIntro(s32 scene)
 			Engine_EventSetMessage((s32)MsgKorosseoOperatorWallsCheer);
 			Engine_EventShowMessage(scene, 0);
 		}
-		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-		((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(state, scene, 3);
+		FieldScene_RunMiddleSequence(state, scene, 3);
 		Engine_EventEnd();
 	}
 }
@@ -1725,8 +1720,7 @@ void FieldScene_RunFourStepActorMotion(s32 event)
 			Engine_EventSetMessage((s32)MsgKorosseoClearStageMustAbleChange);
 			Event_ShowMessage(event, 0);
 		}
-		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-		((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(result, event, 4);
+		FieldScene_RunMiddleSequence(result, event, 4);
 		Engine_EventEnd();
 	}
 }
@@ -1823,8 +1817,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 event)
 			Engine_EventSetMessage((s32)MsgKorosseoInStageMustTryOutpace);
 			Event_ShowMessage(event, 0);
 		}
-		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-		((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(result, event, 5);
+		FieldScene_RunMiddleSequence(result, event, 5);
 		Engine_EventEnd();
 	}
 }
@@ -1871,8 +1864,7 @@ void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor)
 		Engine_EventShowMessage(actor, 0);
 	}
 
-	/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-	((s32 (*)(s32, s32, s32))FieldScene_RunMiddleSequence)(state, actor, 6);
+	FieldScene_RunMiddleSequence(state, actor, 6);
 	Engine_EventEnd();
 }
 

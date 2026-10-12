@@ -4560,7 +4560,7 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 de
 	BattleMotion_DestroyAllSlotObjects();
 	BattleUnit_ProcessTurnEnd(&battle->plan);
 	BtlObjPut();
-	count = BattleParty_ListActorIds(3, (u16 *)ids);
+	count = BattleParty_ListActorIds(3, ids);
 	for (i = 0; i < count; i++)
 		ObjMotRst(ids[i]);
 	request->unit_id = 0xff;
@@ -4779,7 +4779,7 @@ s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
 			}
 		}
 		units[kept] = BATTLE_UNIT_LIST_END;
-		BattleActor_SpawnObjectsForList((s16 *)units, 0);
+		BattleActor_SpawnObjectsForList(units, 0);
 		for (n = 0; n < plan->target_count; n++)
 			units[n] = plan->tgt_no[n];
 		units[n] = BATTLE_UNIT_LIST_END;
@@ -5528,10 +5528,10 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 		slot = (u32) & ((struct BtlWork *)0)->enm_no / sizeof(s16) - 1;
 		tail = (u32) & ((struct BtlWork *)0)->enm_no / sizeof(s16) - 1;
 		offset = tail * 2;
-		entry = (s16 *)(order->items + 1);
+		entry = (order->items + 1);
 		if (*(s16 *)((char *)entry + offset) != 255)
 		{
-			cursor = (u16 *)entry;
+			cursor = entry;
 			do
 			{
 				if ((s16)cursor[slot] != 254)
@@ -10488,7 +10488,7 @@ void BattlePres_SetActorRecordMode(s32 actor_id, s32 mode)
 	}
 	case 2:
 	{
-		records = (struct AnimationObject **)object->records;
+		records = object->records;
 		i = 0;
 		do
 		{
@@ -10601,7 +10601,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
 		REG_BLDY = 0;
 		Io_Write16(16, &REG_BLDALPHA);
 
-		count = BattleParty_ListActorIds(3, (u16 *)active_actors);
+		count = BattleParty_ListActorIds(3, active_actors);
 		for (i = 0; i < count; i++)
 			BattlePres_SetActorRecordMode(active_actors[i], mode & 1);
 

@@ -1153,7 +1153,7 @@ void SceneEffect_SpawnObject26EveryEightFrames(void)
 	obj->motion_flags = phase;
 	Object_SetMode(obj, 2);
 	Engine_ObjectSetPosition(obj, c3, 0, c4);
-	Engine_ObjectSetScript(obj, (const s32 *)KorimaHashi_Object26Script);
+	Engine_ObjectSetScript(obj, KorimaHashi_Object26Script);
 }
 
 s32 OverlayObject_SelectValueByFrameBit1(s32 obj)

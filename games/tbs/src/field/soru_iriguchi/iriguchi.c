@@ -481,7 +481,7 @@ void SoruIriguchi_PushFacedBlock(void)
 
 	leader = Object_GetById(0);
 	dir = leader->facing >> 12;
-	block = (struct FieldActor *)SceneActor_FindActorAtCell(
+	block = SceneActor_FindActorAtCell(
 		(leader->x.part.pixel + (gSoruPushSteps[dir] >> 16)) >> 4,
 		(leader->z.part.pixel + (s16)gSoruPushSteps[dir]) >> 4);
 	if (block != NULL)

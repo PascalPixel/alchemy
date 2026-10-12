@@ -2887,7 +2887,7 @@ s32 RollWeaponUnleash(struct BtlUnit *owner)
 		return 1;
 	}
 	rate = ((Equipment_GetUnleashRateBonus(owner) + (item->secondary_flags * 5)) << 0x10) / 100;
-	if (rate > (s32)(BtlRnd() & 0xFFFF))
+	if (rate > (BtlRnd() & 0xFFFF))
 	{
 		return item->description_message;
 	}

@@ -244,7 +244,7 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
 		backup = MemAlloc(0x14c);
 		Owner_Copy(backup, unit);
 		if (state->equip_preview)
-			unit->inventory[slot] &= (u16)~INVENTORY_EQUIPPED;
+			unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
 		else
 			Inventory_EquipFar(owner, slot);
 		UnitCalcFar(owner);
@@ -1291,7 +1291,7 @@ s32 RunAssetSelectionScreen(void)
 	Resource_LoadPairedBlocks();
 	Palette_LightenBankHighlight(14);
 	Link_DrawShiftedTilePairFar(0x06002500);
-	screen->message_window = (struct UiWindow *)UiWindow_CreateFar(13, 0, 17, 3, 2);
+	screen->message_window = UiWindow_CreateFar(13, 0, 17, 3, 2);
 #if EDITION_INTERNATIONAL
 	Scheduler_EnableOverlayCallbacksWithFlags();
 	Iwram_CopyWords(backup, (void *)0x06004000, size);
@@ -1982,7 +1982,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
 			break;
 
 		case ITEM_STEP_REMOVE:
-			UnitGetFar(menu->pane_owner[0])->inventory[menu->selected_slots[0]] &= (u16)~INVENTORY_EQUIPPED;
+			UnitGetFar(menu->pane_owner[0])->inventory[menu->selected_slots[0]] &= ~INVENTORY_EQUIPPED;
 			UnitCalcFar(menu->pane_owner[0]);
 			Owner_RefreshClassActionsFar(menu->pane_owner[0]);
 			menu->pane_icons[0]->active = 13;
@@ -2076,7 +2076,7 @@ void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns)
 		menu->help_window = NULL;
 		menu->status_window = NULL;
 		style = 2;
-		menu->info_window = (struct UiWindow *)UiWindow_CreateFar(0, 17, 30, 3, style);
+		menu->info_window = UiWindow_CreateFar(0, 17, 30, 3, style);
 		menu->item_window = NULL;
 		menu->selected_column = zero;
 		menu->selected_row = zero;
@@ -4655,7 +4655,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
 	s32						  action_count;
 	s8						  found;
 
-	menu = (struct PsynergyMenuState *)gMenuWork;
+	menu = gMenuWork;
 	selection = menu->tab_index[0];
 	count = menu->tab_counts[0];
 	pending = 1;
@@ -5661,7 +5661,7 @@ s32 Menu_OpenCharacterSelector(void)
 
 	state->party_count = Party_ListActiveOwnersFar(state->owner_ids);
 	Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
-	state->selector_window = (struct UiWindow *)UiWindow_CreateFar(13, 0, 17, 5, 2);
+	state->selector_window = UiWindow_CreateFar(13, 0, 17, 5, 2);
 	for (index = 0; index < ROW_CNT; index++)
 		state->owner_y[index] = 30;
 	state->page = 3;
@@ -5729,7 +5729,7 @@ s32 ActionMenu_Open(void)
 	Iwram_FillWords((void *)0x06004000, SAVED_TILE_BYTES, 0x33333333);
 	UiWork_SetAltFlagAndClearTableFar(1);
 #endif
-	state->selector_window = (struct UiWindow *)UiWindow_CreateFar(13, 0, 17, 5, 2);
+	state->selector_window = UiWindow_CreateFar(13, 0, 17, 5, 2);
 	for (index = 0; index < MENU_ROW_COUNT; index++)
 		state->owner_y[index] = 30;
 	if (Party_SumDjinnCountsFar(-1) != 0)
@@ -10852,8 +10852,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 		{
 			step = 29;
 		}
-		FourObjectMotion_SetSlotPhase(0, (s32)0xffff4000);
-		FourObjectMotion_SetSlotPhase(1, (s32)0xffff4000);
+		FourObjectMotion_SetSlotPhase(0, 0xffff4000);
+		FourObjectMotion_SetSlotPhase(1, 0xffff4000);
 
 		if (mode <= 1)
 		{

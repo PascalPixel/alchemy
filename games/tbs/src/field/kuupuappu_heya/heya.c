@@ -1973,7 +1973,7 @@ void KuupuappuHeya_RunVaultEvent(void)
 
 s32 KuupuappuHeya_GetIwanVenusDjinnCount(void)
 {
-	return ((struct BtlUnit *)UnitGet(2))->djinn_owned_counts[0];
+	return UnitGet(2)->djinn_owned_counts[0];
 }
 
 s32 OverlayObject_RunObjectTwoWhenFlagged(void)

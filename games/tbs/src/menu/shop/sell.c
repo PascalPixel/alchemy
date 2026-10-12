@@ -2601,7 +2601,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
 	s32						  callback_flags;
 	s32						  i;
 
-	shop = ((struct ShopRuntime *)gMenuWork);
+	shop = (gMenuWork);
 	saved_kind = shop->cursor.anchor->active;
 	shop->burst_member = 0xff;
 	shop->cursor.anchor->active = 13;

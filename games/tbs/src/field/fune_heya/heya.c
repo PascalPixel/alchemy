@@ -3382,7 +3382,7 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 		Engine_TaskWait(1);
 		if (arg != 0)
 		{
-			((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
+			Battle_GetWorkObject1e0()->motion_flags = 0;
 		}
 		break;
 	case 25:

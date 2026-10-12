@@ -129,7 +129,7 @@ void *SceneData_SelectActorTableByFlag855(void)
 
 int KuupuappuMura_GetIwanVenusDjinnCount(void)
 {
-	return ((struct BtlUnit *)UnitGet(2))->djinn_owned_counts[0];
+	return UnitGet(2)->djinn_owned_counts[0];
 }
 
 s32 OverlayObject_RunObject2WhenFlagged(void)

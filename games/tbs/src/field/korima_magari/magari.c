@@ -397,12 +397,12 @@ s32 KorimaMagari_SetupBoard(void)
 	Engine_MapCopyCellAttributes(32, 0, 32, 32, 0, 32);
 	if (Engine_GameFlagIsSet(0x109) == 0)
 	{
-		Dma_Set(KorimaMagari_DefaultRecords, ((u16 *)gKorimaMagariRecords),
+		Dma_Set(KorimaMagari_DefaultRecords, (gKorimaMagariRecords),
 			DMA_ENABLE32 | DMA_32BIT | 0x12, REG_DMA3);
 		*gKorimaMagariReturned = 0;
 		*(*(u16 **)&gKorimaMagariLayout) = 1;
 	}
-	KorimaMagari_PlaceObjects(((u16 *)gKorimaMagariRecords));
+	KorimaMagari_PlaceObjects((gKorimaMagariRecords));
 	State_StampRecordCells(KorimaMagari_DefaultRecords, 255);
 	Scene_RepaintBoardRecords();
 	Engine_ActorSetAnimation(9, 0);

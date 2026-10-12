@@ -5863,7 +5863,7 @@ void Menu_SetupSelectionBothSides(void)
 {
 	struct SelectionScreen *state;
 
-	state = (struct SelectionScreen *)gResQueueWork;
+	state = gResQueueWork;
 	Menu_SetupSelectionSide(state, 0);
 	Menu_SetupSelectionSide(state, 1);
 }
@@ -6697,7 +6697,7 @@ void Menu_LoadSelectedResource(void)
 	if (selection->kind != 1 && selection->kind != 6)
 		return;
 
-	buffer = (GlyphTransfer *)Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
+	buffer = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
 	transfer = &state->records[15];
 	no = selection->base;
 	tbl = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
@@ -7447,7 +7447,7 @@ void OptionMenu_InitializeWork(void)
 	struct WorkspaceWork *work;
 	volatile u32		  zero;
 
-	work = (struct WorkspaceWork *)Runtime_AllocateBlock(20, 0x628);
+	work = Runtime_AllocateBlock(20, 0x628);
 	zero = 0;
 	Dma_Set((const void *)&zero, work, 0x8500018a, REG_DMA3);
 	work->option[0] = gGameState.palette_glow[0];
@@ -11860,7 +11860,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
 
 void RenderResource_LoadPair(s32 group_index, s32 resource_index)
 {
-	void	 *staging_buffer = (void *)Runtime_AllocateBlock(14, 0x400);
+	void	 *staging_buffer = Runtime_AllocateBlock(14, 0x400);
 	const u8 *resource = RenderResource_PairSourceTable[group_index];
 
 	if (resource_index <= 0x5F)
@@ -11899,7 +11899,7 @@ void Ui_ApplyTableOffsetToPair(struct RenderOutput *obj)
 {
 	s32 value;
 
-	value = (u8)obj->y + Ui_PairBobOffsets[(*(u32 *)&gFrameTick >> 2) & 7];
+	value = (u8)obj->y + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
 	obj->oam.y = value;
 	obj = obj->next;
 	value = (u8)obj->y + Ui_PairBobOffsets[(*(volatile u32 *)&gFrameTick >> 2) & 7];
@@ -12255,7 +12255,7 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
 	s32			   i;
 	u32			   index;
 
-	decoded = (GlyphTransfer *)Runtime_AllocateHeapBlock(17, sizeof(*decoded));
+	decoded = Runtime_AllocateHeapBlock(17, sizeof(*decoded));
 	font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
 	decoded->encoded = font + ((u16 *)font)[glyph];
 	Resource_DecodeByteLz(decoded->encoded, decoded);
@@ -12922,9 +12922,9 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 	if (win == 0)
 		return 0;
 
-	buf = (s16 *)MemAlloc(128);
-	snap = (struct BtlUnit *)MemAlloc(332);
-	list = (u16 *)Runtime_BumpAllocateAlternatePool(96);
+	buf = MemAlloc(128);
+	snap = MemAlloc(332);
+	list = Runtime_BumpAllocateAlternatePool(96);
 	Iwram_CopyWords(snap, unit, 332);
 
 	col = (code >> 8) & 15;
@@ -13258,8 +13258,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
 	pix.x = 0;
 	pix.y = 0;
-	winMain = (struct UiWindow *)UiWindow_Create(0, 0, 30, 20, 6);
-	winDesc = (struct UiWindow *)UiWindow_Create(0, 14, 30, 6, 10);
+	winMain = UiWindow_Create(0, 0, 30, 20, 6);
+	winDesc = UiWindow_Create(0, 14, 30, 6, 10);
 	UiWindow_MarkVisibleTileAttributes();
 
 	for (;;)
@@ -14048,7 +14048,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 	detail_win = 0;
 	prev_row = -1;
 	res = Resource_LoadIntoFreeSlot(0x80);
-	tbl = (u32 *)Runtime_BumpAllocateAlternatePool(0xa8 * 2);
+	tbl = Runtime_BumpAllocateAlternatePool(0xa8 * 2);
 	cnt = 0;
 	prev_page = -1;
 	code = 0;
@@ -14057,9 +14057,9 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 	sub_cnt = 0;
 	redraw = 0;
 	is_used = 0;
-	msg_win = (struct UiWindow *)UiWindow_Create(0, 4, 30, 4, 42);
+	msg_win = UiWindow_Create(0, 4, 30, 4, 42);
 	UiWork_SetAltFlagAndClearTable(1);
-	list_win = (struct UiWindow *)UiWindow_Create(21, 9, 9, 11, 6);
+	list_win = UiWindow_Create(21, 9, 9, 11, 6);
 	MenuCell_GetCursor(page, row, saved_row);
 	unit = UnitGetFar(owner);
 
@@ -14114,7 +14114,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 			if (sub_sel != 0)
 			{
 				UiWork_Finalize(msg_win, 1);
-				msg_win = (struct UiWindow *)UiWindow_Create(0, 4, 30, 4, 42);
+				msg_win = UiWindow_Create(0, 4, 30, 4, 42);
 				Ui_FillVramBlockPattern();
 			}
 			redraw = 0;
@@ -14204,7 +14204,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 			{
 				ctx->menu_busy = 1;
 				UiWork_Finalize(msg_win, 1);
-				msg_win = (struct UiWindow *)UiWindow_Create(0, 4, 30, 4, 42);
+				msg_win = UiWindow_Create(0, 4, 30, 4, 42);
 				ctx->menu_busy = (u8)sub_sel;
 			}
 			UiText_RenderWideStringAtOffset(buf, msg_win, 0, 4);
@@ -14295,7 +14295,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 
 		trig = gKeyState;
 		rep = gKeysRepeat;
-		opts = (s32)gKeysHeld;
+		opts = gKeysHeld;
 		menu = gLinkCountdownWork;
 		if (menu->auto_enabled != 0)
 		{
@@ -14317,7 +14317,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 		if (menu->active == 0 || (trig & 2))
 		{
 			AudioCommand_PlayFar(0x71);
-			code = (u32)-1;
+			code = -1;
 			break;
 		}
 		if (trig & 1)
@@ -14351,7 +14351,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 			}
 			else
 			{
-				code = (u32)-1;
+				code = -1;
 				break;
 			}
 		}
@@ -16774,7 +16774,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 	param = 0;
 	res1024 = Resource_LoadIntoFreeSlot(1024);
 	res512 = Resource_LoadIntoFreeSlot(512);
-	state = (struct LinkRoundState *)Runtime_AllocateBlock(57, 260);
+	state = Runtime_AllocateBlock(57, 260);
 	Resource_LoadIndexedIntoBuffer(res1024, 0);
 	Graphics_ExpandVramTilesByColorTable(0x06006000);
 	Link_DrawShiftedTilePair(0x06006680);
@@ -17882,7 +17882,7 @@ s32 Menu_SelectResource(s32 start, s32 goal)
 void Menu_LoadResourceSlot(s32 slot, s32 index)
 {
 	s32	  size = 1024;
-	void *buffer = (void *)MemAlloc(size);
+	void *buffer = MemAlloc(size);
 	u16	 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
 	Resource_DecodeByteLz((void *)((u32)base + base[index]), buffer);
@@ -17916,7 +17916,7 @@ void Menu_AppendResourceEntry(s32 no)
 
 void Menu_CenterResourceEntries(s32 row, s32 width, s32 resource_base)
 {
-	struct ResourceMenuWork *menu = ((struct ResourceMenuWork *)gMenuSelectWork);
+	struct ResourceMenuWork *menu = (gMenuSelectWork);
 	s32						 x;
 	s32						 i;
 	s32						 count;

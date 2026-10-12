@@ -3215,7 +3215,7 @@ s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values)
 {
 	s32					  index;
 	u8					 *flags;
-	struct ObjectRuntime *entry = (struct ObjectRuntime *)gObjectSlots;
+	struct ObjectRuntime *entry = gObjectSlots;
 
 	flags = &entry->unknown_59;
 	for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry))
@@ -3236,7 +3236,7 @@ struct ScriptObjectEntry *ScriptObject_FindOverlappingEntry(
 {
 	s32					  index;
 	u8					 *flags;
-	struct ObjectRuntime *entry = (struct ObjectRuntime *)gObjectSlots;
+	struct ObjectRuntime *entry = gObjectSlots;
 
 	flags = &entry->unknown_59;
 	for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry))
@@ -3685,7 +3685,7 @@ void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation, s32 
 	}
 	else if (operation == SCRIPT_OPERAND_ADD)
 	{
-		state->cursor = ((s32)(s16)state->cursor + value);
+		state->cursor = ((s16)state->cursor + value);
 	}
 	else
 	{
@@ -5250,7 +5250,7 @@ void Tilemap_ConvertBuffer(void)
 	u32		  size;
 
 	size = 0x8000;
-	saved = (u8 *)Runtime_BumpAllocateAlternatePool(size);
+	saved = Runtime_BumpAllocateAlternatePool(size);
 	Iwram_CopyWords(saved, Ram_MapCellBuffer, size);
 	RamCode_Load(routine, Tile_ConvertMap, Tile_ConvertMapCodeSize);
 	routine((gMapCellBuffer + 0x8000), Ram_MapCellBuffer, saved);
@@ -6702,7 +6702,7 @@ extern u8 gDecodeBuffer[];
 void MapAnimation_PresentFrame(void)
 {
 	Io_Write16(0x682, &REG_BG1CNT);
-	Dma_Set((const void *)gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00,
+	Dma_Set(gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00,
 		DMA_ENABLE32 | DMA_32BIT | 0x2580, REG_DMA3);
 }
 
@@ -6725,7 +6725,7 @@ void MapAnimation_Start(void)
 void Map_ShowBg1FromBuffer(void)
 {
 	Io_Write16(0x501, &REG_BG1CNT);
-	Dma_Set((const void *)gBgTileBuffer, BG_CHAR_BLOCK(2), 0x84002000, REG_DMA3);
+	Dma_Set(gBgTileBuffer, BG_CHAR_BLOCK(2), 0x84002000, REG_DMA3);
 }
 
 void Map_LoadAreaGraphics(void)

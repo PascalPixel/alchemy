@@ -90,7 +90,7 @@ s32 SceneData_ReturnZero(void)
 
 s32 *SceneData_GetMessageTable(void)
 {
-	return (s32 *)Placement_Messages;
+	return Placement_Messages;
 }
 
 s32 *SceneData_GetActorTable(void)
@@ -812,7 +812,7 @@ void Scene_UnmaskGarcia(void)
 	Engine_ActorSetAnimationAndWait(GERALD, 4);
 	Engine_EventWait(20);
 	cnt = 0;
-	tbl = ((struct BtlUnit *)UnitGet(1))->inventory;
+	tbl = UnitGet(1)->inventory;
 	left = 14;
 	do
 	{

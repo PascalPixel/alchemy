@@ -1008,7 +1008,7 @@ void TurnActorToSceneDirection(s32 actor_id)
 
 	OBJ_FACE(actor_id, ACTOR_PARTY_LEADER, 0);
 	OBJ_FACE(ACTOR_PARTY_LEADER, actor_id, 0);
-	switch ((s32)gRunpaJoRandomPick & 3)
+	switch (gRunpaJoRandomPick & 3)
 	{
 	case 0:
 		RunActorScriptedSequenceB(actor_id);

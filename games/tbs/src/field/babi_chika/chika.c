@@ -922,7 +922,7 @@ void FieldScene_RunMiddleSequence(void)
 			Actor_Get(found + 12)->motion_flags = 0;
 			Object_GetById(found + 12)->timer = 0;
 			Engine_CameraSetSpeed(0x30000, 0x6000);
-			((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
+			Battle_GetWorkObject1e0()->motion_flags = 0;
 			Camera_MoveTo(0xa80000, 0x80000, 0xb80000, 1);
 			Engine_CameraWaitForMove();
 			SceneActor_LandOnHighestPlatform(found + 12);

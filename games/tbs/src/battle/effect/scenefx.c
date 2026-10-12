@@ -5700,7 +5700,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 			for (index = 0; index != runtime->effect->count; index++)
 			{
 				context = GetBattleObjectSlotFar(runtime->effect->actors[index]);
-				object = (struct MotionObject *)context->object;
+				object = context->object;
 				object->y = ((Random16() & 15) + 8) << 16;
 			}
 
@@ -5713,7 +5713,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 				angle = (Random16() & 0x7fff) + 0x9fff;
 				runtime->particles[index].x = Trig_Sin(angle) * speed;
 				runtime->particles[index].y = Trig_Cos(angle) * speed;
-				runtime->particles[index].z = ((u32)Random16() % 200 - 100) << 16;
+				runtime->particles[index].z = (Random16() % 200 - 100) << 16;
 				runtime->particles[index].variant = 0;
 				index++;
 			} while (index != 32);
@@ -6432,7 +6432,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 	{
 		BattleEffect_RunImpactBurst(3, focus.x, focus.y);
 		for (i = 0; i != 8; i++)
-			ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
+			ResourceObject_ReleaseFar(work->objects[i]);
 	}
 	BattleFx_EndCanvasLayer();
 }
@@ -20826,7 +20826,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
 	BattleEventRuntime_BeginPhaseFar(134);
 	BattleEffect_SetupBlendedDisplay();
 	for (i = 0; i != 15; i++)
-		ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
+		ResourceObject_ReleaseFar(work->objects[i]);
 	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
@@ -22320,7 +22320,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 
 	for (i = 0; i != 16; i++)
 	{
-		ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
+		ResourceObject_ReleaseFar(work->objects[i]);
 	}
 
 	for (i = 0; i != 16; i++)
@@ -22878,7 +22878,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 
 	for (i = 0; i != 16; i++)
 	{
-		ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
+		ResourceObject_ReleaseFar(work->objects[i]);
 	}
 
 	Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);

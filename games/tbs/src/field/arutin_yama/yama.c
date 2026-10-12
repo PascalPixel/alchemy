@@ -1954,7 +1954,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 	Engine_EventWait(20);
 	Engine_ItemShowFound(ITEM_FROST_JEWEL, 3);
 	Engine_PartyGiveItem(ITEM_FROST_JEWEL, 0);
-	((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
+	Battle_GetWorkObject1e0()->motion_flags = 0;
 	Camera_SetSpeed(0x19999, 0x3333);
 	Camera_MoveTo(0x640000, 0, 0xf90000, 1);
 	Engine_CameraWaitForMove();

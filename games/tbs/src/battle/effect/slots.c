@@ -1014,16 +1014,16 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
 		if (object == 0)
 		{
 			object =
-				(struct ObjectRuntime *)Object_CreateFar(character, entry->x, entry->y, entry->z);
+				Object_CreateFar(character, entry->x, entry->y, entry->z);
 			if (entry->flags & 1)
 			{
 				previous = ObjectTable_Get(index - 1);
 				if (previous->animation_kind == 1 && object->animation_kind == 1)
 				{
-					sprite = (struct AnimationObject *)previous->animation;
+					sprite = previous->animation;
 					sprite->display_flags |= 1;
 					resource = sprite->slot;
-					sprite = (struct AnimationObject *)object->animation;
+					sprite = object->animation;
 					sprite->display_flags |= 1;
 					Resource_ResetEntry(sprite->slot);
 					sprite->slot = resource;
@@ -1040,7 +1040,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
 		{
 			ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
 			if (object->animation_kind == 1
-				&& (sprite = (struct AnimationObject *)object->animation) != 0)
+				&& (sprite = object->animation) != 0)
 				sprite->last_no = __umodsi3(Random16(), 30);
 			object->angle = entry->facing;
 			object->unknown_59 = 1;
@@ -1131,7 +1131,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table)
 		gGameState.movement_mode = 0;
 	}
 
-	camera = (struct ObjectRuntime *)Object_CreateFar(0x8000, object->x, object->y, object->z);
+	camera = Object_CreateFar(0x8000, object->x, object->y, object->z);
 	camera->terrain_height = object->terrain_height;
 	ObjectDispatch_InitFromTable4WithArgumentFar((struct DispatchObject *)camera, (s32)object);
 	if (work->mode == 3)
@@ -1979,7 +1979,7 @@ s32 Field_RunScene(s32 entrance)
 	gGameState.defeat_entrance = -1;
 	Scheduler_ResetTaskTable();
 	Djinn_ResolvePendingEvent(0);
-	if ((s16)gGameState.map == (s32)&SceneId_Clear)
+	if (gGameState.map == (s32)&SceneId_Clear)
 	{
 		Map_InitializePerspectiveSceneFar();
 		gGameState.perspective_scene = 1;
@@ -1988,7 +1988,7 @@ s32 Field_RunScene(s32 entrance)
 	}
 	else
 	{
-		Map_LoadLayeredSceneFar((s16)gGameState.map);
+		Map_LoadLayeredSceneFar(gGameState.map);
 		mode = 2;
 		BattleFx_SelectLocationRule(1);
 	}
@@ -3210,7 +3210,7 @@ s32 Field_RunTileAction(s32 tile)
 						{
 							void *object;
 
-							if (((s32)descriptor->control & 0x1ff) == 19)
+							if ((descriptor->control & 0x1ff) == 19)
 								EffectRuntime_SetMode2(tile);
 							object = EffectRuntime_GetCurrentObject(tile);
 							EffectRuntime_PrepareRisingObject(object);
@@ -3234,7 +3234,7 @@ s32 Field_RunTileAction(s32 tile)
 						{
 							struct EventRuntime *work = (struct EventRuntime *)gEventWork;
 
-							if (((s32)descriptor->control & 0x1ff) == 19)
+							if ((descriptor->control & 0x1ff) == 19)
 								EffectRuntime_SetMode7AndLaunch(tile);
 							if (condition != -1)
 							{
@@ -3254,7 +3254,7 @@ s32 Field_RunTileAction(s32 tile)
 							object =
 								BattleFx_StartRandomParticleEmitter(gGameState.selected_actor, 0);
 							WaitFrames(30);
-							if (((s32)descriptor->control & 0x1ff) == 19)
+							if ((descriptor->control & 0x1ff) == 19)
 								EffectRuntime_SetMode2(tile);
 							EffectRuntime_PrepareRisingObject(object);
 							AudioCommand_PlayFar(83);
@@ -3281,12 +3281,12 @@ s32 Field_RunTileAction(s32 tile)
 								UiText_ShowPositionedMessageAndWaitFar((s32)MsgFoundItem, 1);
 								UiText_ShowPositionedMessageAndWaitFar((s32)MsgFoundItem + 4, 1);
 								Object_DestroyIfPresent(object);
-								if (((s32)descriptor->control & 0x1ff) == 19)
+								if ((descriptor->control & 0x1ff) == 19)
 									EffectRuntime_SetMode5AndPlayCue(tile);
 							}
 							else
 							{
-								if (((s32)descriptor->control & 0x1ff) == 19)
+								if ((descriptor->control & 0x1ff) == 19)
 									EffectRuntime_SetMode2(tile);
 								EffectRuntime_PrepareRisingObject(object);
 								AudioCommand_PlayFar(83);
@@ -6379,7 +6379,7 @@ void BattleFx_StartFadeOverlay(void *object)
 	u8			 *tiles;
 	volatile u32  fill;
 
-	work = (u32 *)Runtime_AllocateBlock(36, 28);
+	work = Runtime_AllocateBlock(36, 28);
 	tiles = Runtime_AllocateHeapBlock(14, 0x400);
 	fill = 0x11111111;
 	Dma_Set((const void *)&fill, tiles, 0x85000080, REG_DMA3);
@@ -7498,7 +7498,7 @@ void BattleFx_SpawnBurstParticle(struct FieldActor *source, s32 optional)
 		}
 
 		if (optional != 0)
-			ObjectGroup_SetChildValue((struct FieldActor *)object, optional);
+			ObjectGroup_SetChildValue(object, optional);
 
 		object->motion_flags = 0;
 		value = Random16() % 10 + 5;
@@ -8086,20 +8086,20 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg, s32 unused)
 		{
 			WaitFrames(8);
 			if (extra != 0)
-				handle = (struct UiWindow *)UiText_OpenMessageWindowFar(
+				handle = UiText_OpenMessageWindowFar(
 					message, left, top + extra - 1, 18);
 			else
-				handle = (struct UiWindow *)UiText_OpenMessageWindowFar(message, left, top, 2);
+				handle = UiText_OpenMessageWindowFar(message, left, top, 2);
 		}
 		else
 		{
 			s32 icon = BattleFx_GetResourceId(speaker);
 
 			if (extra != 0)
-				handle = (struct UiWindow *)UiText_OpenMessageWindowFar(
+				handle = UiText_OpenMessageWindowFar(
 					message, left, top + extra - 1, (icon << 16) | 17);
 			else
-				handle = (struct UiWindow *)UiText_OpenMessageWindowFar(
+				handle = UiText_OpenMessageWindowFar(
 					message, left, top, (icon << 16) | 1);
 		}
 		if (win->mode != 0)
@@ -8459,7 +8459,7 @@ void Object_PlaceCurrentWithinCameraBounds(s32 arg0, s32 arg1)
 void BattleFx_CommitObjectPositionAndWait(void)
 {
 	Script_WaitForEventTimeoutFar(
-		(struct ObjectRuntime *)((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))
+		((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))
 			->view_center);
 	Battle_WaitMode0(2);
 }
@@ -10427,8 +10427,8 @@ void BattleFx_FinishHeavyImpact(s32 jin_id)
 		EffectSlot_Initialize(slot, 284, pos.x, pos.z);
 		EffectSlot_SetCallback(slot, BattleFx_RunAngledApproachPhases); // 回ってから操作キャラへ
 		EffectSlot_SetObjectMode(slot, 7);
-		ObjectGroup_SetChildValueUnlessFifteenFar(slot->object, (u32)(Random16() * 7) >> 16);
-		scale = (u32)Random16() / 3 + 0x10000; // 1.0〜1.33 倍
+		ObjectGroup_SetChildValueUnlessFifteenFar(slot->object, (Random16() * 7) >> 16);
+		scale = Random16() / 3 + 0x10000; // 1.0〜1.33 倍
 		slot->scale_y = scale;
 		slot->scale_x = scale;
 		cnt--;

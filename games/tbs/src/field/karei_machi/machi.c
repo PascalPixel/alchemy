@@ -1714,7 +1714,7 @@ void FieldScene_RunSecondaryGroupSequence(void)
 	Engine_EventWait(20);
 	Actor_WalkToAndWait(8, 246, 198);
 	Actor_FaceDirection(8, 0, 20);
-	((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
+	Battle_GetWorkObject1e0()->motion_flags = 0;
 	Camera_SetSpeed(0x9999, 0x1333);
 	Camera_MoveTo(0xf80000, -1, 0xaa0000, 1);
 	Actor_WalkToAndWait(10, 0x10e, 198);

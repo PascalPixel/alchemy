@@ -51,7 +51,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 {
 	if (gGameState.scene == (s32)&SceneId_KareiKyuden)
 	{
-		FieldScene_PrepareActors((u8 *)gKareiKyudenPlacements);
+		FieldScene_PrepareActors(gKareiKyudenPlacements);
 		return gKareiKyudenPlacements;
 	}
 	return gKareiKyudenPlacementsOther;

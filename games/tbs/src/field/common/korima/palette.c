@@ -44,8 +44,8 @@ u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
 	if (red > 31)
 		red = 31;
 
-	packed = (s32)red;
-	packed |= ((s32)blue << 10) | ((s32)green << 5);
+	packed = red;
+	packed |= (blue << 10) | (green << 5);
 	return packed;
 }
 

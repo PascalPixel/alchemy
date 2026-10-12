@@ -288,7 +288,7 @@ void FuneHobashira_SetupHiddenLeaderLookout(void)
 	Engine_EventBegin();
 	Camera_MoveTo(-1, -1, -1, 0);
 	Engine_TaskWait(1);
-	((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
+	Battle_GetWorkObject1e0()->motion_flags = 0;
 	Camera_MoveTo(0xa40000, 0x400000, 0x1410000, 0);
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
@@ -522,13 +522,13 @@ void OverlayObject_InitWithRandomFields(s32 a)
 	obj->motion_flags = 0;
 	obj->timer = (u32)Engine_RandomNext() >> 15;
 	obj->work = (u32)Engine_RandomNext() >> 15;
-	x = (u32)Engine_RandomNext();
+	x = Engine_RandomNext();
 	x <<= 2;
 	x >>= 16;
 	x <<= 16;
 	x += 0x60000;
 	obj->y.fixed = x;
-	x = (u32)Engine_RandomNext();
+	x = Engine_RandomNext();
 	obj->rise_base_y = ((x * 3 << 13) >> 16) - 0x3000;
 	obj->scale_x = 0x14000;
 	obj->scale_y = 0x14000;

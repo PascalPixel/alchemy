@@ -1239,7 +1239,7 @@ void FieldScene_RunThreeActorChoreography(void)
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
 	Engine_ActorWalkTo(0, 0x2b2, 200);
 
-	((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
+	Battle_GetWorkObject1e0()->motion_flags = 0;
 	Engine_CameraSetSpeed(0xcccc, 0x1999);
 	Camera_MoveTo(0x2b20000, 0, 0xa40000, 1);
 	work = gEventWork;
@@ -1439,14 +1439,14 @@ void StagedActor_RunHeadingProbeStep(void)
 		x = probe.x;
 		p = (u8 *)subject;
 		p += 34;
-		goal = GetMapCellCollision((s32)*p, x, z);
+		goal = GetMapCellCollision(*p, x, z);
 		Vector_AddPolarOffset(0x100000, heading, &probe);
 
-		marker = GetMapCellCollision((s32)*p, probe.x, probe.z);
+		marker = GetMapCellCollision(*p, probe.x, probe.z);
 		if (marker == 255
-			|| Map_GetTerrainHeight((s32)*p, probe.x, probe.z) - subject->y.fixed > 0x80000)
+			|| Map_GetTerrainHeight(*p, probe.x, probe.z) - subject->y.fixed > 0x80000)
 		{
-			subject->facing = (u16)heading;
+			subject->facing = heading;
 			goto tail;
 		}
 
@@ -1463,7 +1463,7 @@ void StagedActor_RunHeadingProbeStep(void)
 
 		goto advanceProbe;
 	continueProbe:
-		if (Map_GetTerrainHeight((s32)*p, probe.x, probe.z) - subject->y.fixed > 0x80000)
+		if (Map_GetTerrainHeight(*p, probe.x, probe.z) - subject->y.fixed > 0x80000)
 		{
 			goto finishProbe;
 		}
@@ -1480,7 +1480,7 @@ void StagedActor_RunHeadingProbeStep(void)
 
 	advanceProbe:
 		FieldVector_AddPolarOffset(0x100000, heading, &probe);
-		marker = GetMapCellCollision((s32)*p, probe.x, probe.z);
+		marker = GetMapCellCollision(*p, probe.x, probe.z);
 		if (marker != 255)
 		{
 			goto continueProbe;

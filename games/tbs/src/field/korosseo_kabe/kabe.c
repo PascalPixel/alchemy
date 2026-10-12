@@ -2171,7 +2171,7 @@ void StagedActor_PushActorAhead(void)
 	step <<= 16;
 	pos.z = subject->z + step;
 
-	target = (KabeSceneRecord *)SceneData_FindSlotAtPosition((s32 *)&pos, subject);
+	target = SceneData_FindSlotAtPosition((s32 *)&pos, subject);
 	if (target == 0)
 	{
 		return;
@@ -2183,7 +2183,7 @@ void StagedActor_PushActorAhead(void)
 	step <<= 16;
 	pos.z = target->z + step;
 
-	blocker = (KabeSceneRecord *)SceneData_FindSlotAtPosition((s32 *)&pos, target);
+	blocker = SceneData_FindSlotAtPosition((s32 *)&pos, target);
 	if (blocker != 0 && (blocker->flags & 1) != 0)
 	{
 		return;
@@ -2193,7 +2193,7 @@ void StagedActor_PushActorAhead(void)
 	pos.y = target->y + 0x100000;
 	pos.z = target->z;
 
-	blocker = (KabeSceneRecord *)SceneData_FindSlotAtPosition((s32 *)&pos, target);
+	blocker = SceneData_FindSlotAtPosition((s32 *)&pos, target);
 	if (blocker != 0 && (blocker->flags & 1) != 0)
 	{
 		return;

@@ -14499,7 +14499,7 @@ msgctxt "message"
 msgid "03622"
 msgstr "{argument_item_name:234} たいせつなものです{line_break}手に 入れなければなりません!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPartyCannotCarry"
 msgid "03623"
 msgstr "{protagonist_name}たちは これ以上{line_break}{argument_item_name:134} もてない・・・{page_break}"
 

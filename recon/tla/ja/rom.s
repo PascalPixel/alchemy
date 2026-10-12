@@ -195,7 +195,7 @@ Func_08015714:
 	.type Render_ProjectPoint, %function
 	.thumb_func
 Render_ProjectPoint:
-	.incbin "baserom.gba", 0x00015778, 0x00000104
+	.incbin "baserom.gba", 0x00015778, 0x000000b8
 	.section .rom.0001596c, "ax"
 	.incbin "baserom.gba", 0x0001596c, 0x000001b8
 	.section .rom.00015ca4, "ax"
@@ -635,13 +635,8 @@ Func_0802d87c:
 	.thumb_func
 Func_0802da88:
 	.incbin "baserom.gba", 0x0002da04, 0x00000038
-	.section .rom.0002dc84, "ax"
-	.balign 4
-	.global Func_0802dd08
-	.type Func_0802dd08, %function
-	.thumb_func
-Func_0802dd08:
-	.incbin "baserom.gba", 0x0002dc84, 0x00000184
+	.section .rom.0002dcec, "ax"
+	.incbin "baserom.gba", 0x0002dcec, 0x0000011c
 	.section .rom.0002de08, "ax"
 	.global Func_0802de8c
 	.type Func_0802de8c, %function
@@ -2887,12 +2882,7 @@ Func_080d1f20:
 	.thumb_func
 Func_080d20fc:
 	.incbin "baserom.gba", 0x000d20dc, 0x000000f8
-	.section .rom.000d25a8, "ax"
-	.global Func_080d25c8
-	.type Func_080d25c8, %function
-	.thumb_func
-Func_080d25c8:
-	.incbin "baserom.gba", 0x000d25a8, 0x00000044
+	.section .rom.000d25ec, "ax"
 	.global PartyInventory_GiveItem
 	.type PartyInventory_GiveItem, %function
 	.thumb_func
@@ -2918,12 +2908,6 @@ Func_080d296c:
 	.align 2, 0
 Func_080d2b4c:
 	.incbin "baserom.gba", 0x000d2b2c, 0x000000b8
-	.section .rom.000d3050, "ax"
-	.global Func_080d3070
-	.type Func_080d3070, %function
-	.thumb_func
-Func_080d3070:
-	.incbin "baserom.gba", 0x000d3050, 0x0000008c
 	.section .rom.000d3248, "ax"
 	.global ObjectMotion_WaitForAnimationChange
 	.type ObjectMotion_WaitForAnimationChange, %function
@@ -3692,7 +3676,10 @@ Data_080f1140:
 	.incbin "baserom.gba", 0x000f3128, 0x000000b4
 	.global Object_OffsetMotionScript
 Object_OffsetMotionScript:
-	.incbin "baserom.gba", 0x000f31dc, 0x00000030
+	.incbin "baserom.gba", 0x000f31dc, 0x00000010
+	.global Data_080f32e0
+Data_080f32e0:
+	.incbin "baserom.gba", 0x000f31ec, 0x00000020
 	.global ObjectMotion_StepAngleScript
 ObjectMotion_StepAngleScript:
 	.incbin "baserom.gba", 0x000f320c, 0x00000480

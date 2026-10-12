@@ -14495,7 +14495,7 @@ msgctxt "message"
 msgid "03621"
 msgstr "That {argument_item_name:1}'s valuable!{line_break}You must get it!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPartyCannotCarry"
 msgid "03622"
 msgstr "{protagonist_name}'s party cannot{line_break}carry any more {argument_item_name:1}{plural_suffix}...{page_break}"
 

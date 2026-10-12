@@ -165,3 +165,5 @@ AlchemyUncreditedEnd_08021072:
 	bne	.L_08021084
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
+	.global Render_DrawMapCodeSize
+	.set Render_DrawMapCodeSize, . - Render_DrawMapCode

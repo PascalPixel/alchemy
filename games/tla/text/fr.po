@@ -16339,7 +16339,7 @@ msgctxt "message"
 msgid "04082"
 msgstr "{argument_item_name:1} est très utile!{line_break}Prenez cet objet!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPartyCannotCarry"
 msgid "04083"
 msgstr "Le groupe de {protagonist_name} ne{line_break}peut plus rien porter.{page_break}"
 

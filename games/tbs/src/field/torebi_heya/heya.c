@@ -22,7 +22,7 @@
 
 u8 *TorebiHeya_GetEntrances(void)
 {
-	return Data_02008bb4;
+	return gTorebiHeyaEntrances;
 }
 
 s32 TorebiHeya_GetDefaultResult(void)
@@ -32,16 +32,16 @@ s32 TorebiHeya_GetDefaultResult(void)
 
 u8 *TorebiHeya_GetExits(void)
 {
-	return Data_02008dac;
+	return gTorebiHeyaExits;
 }
 
 s32 TorebiHeya_SelectPlacements(void)
 {
 	if (Engine_GameFlagIsSet(0x950) != 0)
 	{
-		return (s32)Data_02009040;
+		return (s32)gTorebiHeyaPlacementsFlag950;
 	}
-	return (s32)Data_02008e00;
+	return (s32)gTorebiHeyaPlacements;
 }
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
@@ -69,13 +69,13 @@ u8 *TorebiHeya_SelectEvents(void)
 {
 	if (Engine_GameFlagIsSet(0x950) != 0)
 	{
-		return Data_020099d0;
+		return gTorebiHeyaEventsFlag950;
 	}
 	if (Engine_GameFlagIsSet(0x962) != 0)
 	{
-		return Data_02009670;
+		return gTorebiHeyaEventsFlag962;
 	}
-	return Data_02009310;
+	return gTorebiHeyaEvents;
 }
 
 static void TorebiHeya_StartWindowTransition(void)
@@ -106,7 +106,7 @@ static void FieldScene_RunPrimarySequence(void)
 	p6 += 0x16c;
 	n = *(s16 *)p6 - 14;
 	Engine_AudioPlayCue(158);
-	Map_AnimateCells(Data_02009dcc[n].steps, Data_02009dcc[n].x, Data_02009dcc[n].y);
+	Map_AnimateCells(TorebiHeya_ExitCells[n].steps, TorebiHeya_ExitCells[n].x, TorebiHeya_ExitCells[n].y);
 	Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
 	Object_GetById(0)->motion_flags = 0;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
@@ -520,7 +520,7 @@ static void EV30_TALK(s32 no)
 	}
 }
 
-s32 Data_02009040_Data[] = {
+s32 TorebiHeya_ScaleBounceScript[] = {
 	SC_SET(SW_SCALE_X, 0x10000),
 	SC_SET(SW_SCALE_Y, 0x10000),
 	SC_ADD(SW_SCALE_X, -0x5000),
@@ -550,7 +550,7 @@ s32 Data_02009040_Data[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct SceneEntrance Data_02008bb4[] = {
+struct SceneEntrance gTorebiHeyaEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ 1, CONDITION_ALWAYS, 160, 0, 216, FACING_NORTH, 0, 0, 0, 256, 256, 0 },
 	{ 2, CONDITION_ALWAYS, 336, 0, 200, FACING_NORTH, 0, 248, 64, 488, 216, 0 },
@@ -586,7 +586,7 @@ struct SceneEntrance Data_02008bb4[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 Data_02008dac[] = {
+u32 gTorebiHeyaExits[] = {
 	SCENE_EXITS(136),
 	SCENE_EXIT(1, 135, 2),
 	SCENE_EXIT(2, 135, 3),
@@ -610,7 +610,7 @@ u32 Data_02008dac[] = {
 	SCENE_EXITS_END,
 };
 
-struct ScenePlacement Data_02008e00[] = {
+struct ScenePlacement gTorebiHeyaPlacements[] = {
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(200), 0, PIXELS(168), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x6a, CONDITION_ALWAYS, ACTOR_WANDER,
@@ -660,7 +660,7 @@ struct ScenePlacement Data_02008e00[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct ScenePlacement Data_02009040[] = {
+struct ScenePlacement gTorebiHeyaPlacementsFlag950[] = {
 	{ 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(200), 0, PIXELS(168), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x6a, CONDITION_ALWAYS, ACTOR_WANDER,
@@ -699,7 +699,7 @@ struct ScenePlacement Data_02009040[] = {
 		PIXELS(568), 0, PIXELS(848), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
 	{ 0x84, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(232), 0, PIXELS(592), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-	{ 0x94, CONDITION_ALWAYS, (s32)Data_02009040_Data,
+	{ 0x94, CONDITION_ALWAYS, (s32)TorebiHeya_ScaleBounceScript,
 		PIXELS(230), 0, PIXELS(648), FACING_NORTH, TALK_KEEP_FACING, 0 },
 	{ 0x42, CONDITION_ALWAYS, ACTOR_STAND,
 		PIXELS(864), 0, PIXELS(848), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -722,7 +722,7 @@ struct ScenePlacement Data_02009040[] = {
 	{ SCENE_TABLE_END },
 };
 
-struct SceneEvent Data_02009310[] = {
+struct SceneEvent gTorebiHeyaEvents[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -797,7 +797,7 @@ struct SceneEvent Data_02009310[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent Data_02009670[] = {
+struct SceneEvent gTorebiHeyaEventsFlag962[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -877,7 +877,7 @@ struct SceneEvent Data_02009670[] = {
 	{ SCENE_EVENTS_END },
 };
 
-struct SceneEvent Data_020099d0[] = {
+struct SceneEvent gTorebiHeyaEventsFlag950[] = {
 	{ EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
 	{ EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
 	{ EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -963,13 +963,13 @@ struct SceneEvent Data_020099d0[] = {
 	{ SCENE_EVENTS_END },
 };
 
-u16 Data_02009dccData[] = {
+u16 TorebiHeya_ExitCellSteps[] = {
 	MAP_CELL_STEP(2, 123, 1, 2, 6), MAP_CELL_STEP(4, 123, 1, 2, 6), MAP_CELL_STEPS_END,
 };
 
-struct MapCellAnim Data_02009dcc[] = {
-	{ Data_02009dccData, 24, 100 },
-	{ Data_02009dccData, 33, 100 },
-	{ Data_02009dccData, 50, 99 },
-	{ Data_02009dccData, 52, 109 },
+struct MapCellAnim TorebiHeya_ExitCells[] = {
+	{ TorebiHeya_ExitCellSteps, 24, 100 },
+	{ TorebiHeya_ExitCellSteps, 33, 100 },
+	{ TorebiHeya_ExitCellSteps, 50, 99 },
+	{ TorebiHeya_ExitCellSteps, 52, 109 },
 };

@@ -128,7 +128,7 @@ extern const u8	 Render_BuildOamListKernel[];
 extern const u8	 Resource_ExecuteTransfer[];
 extern const u8	 Resource_PatchThumbBranch[];
 extern const u8	 Rom_LanguageCode;
-extern u8		 RomBytes_080308a0[];
+extern u8		 Rom_UnknownBytes[];
 extern const u32 SentouKouka_Hikaku4Gyaku[];
 extern const u32 SentouKouka_Hikaku4Jun[];
 extern const u32 SentouKouka_HikakuGyaku[];

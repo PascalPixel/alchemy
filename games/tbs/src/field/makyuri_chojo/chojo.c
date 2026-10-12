@@ -1714,7 +1714,7 @@ static void MakyuriChojo_FlickerActorEight(void)
 		return;
 	}
 	sprite = spark->sprite;
-	Engine_ObjectSetScript((struct FieldActor *)spark, Data_02003c54);
+	Engine_ObjectSetScript((struct FieldActor *)spark, MakyuriChojo_SparkScript);
 	ObjectGroup_SetChildValue((struct FieldActor *)spark, 3);
 	spark->motion_flags = tick;
 	angle = Engine_RandomNext() & 0x0ffff000;
@@ -1836,7 +1836,7 @@ struct SceneEvent gMakyuriChojoEvents[] = {
 
 s32 MakyuriChojo_NearestActor = 0;
 
-s32 Data_02003c54[] = {
+s32 MakyuriChojo_SparkScript[] = {
 	SC_SET(SW_SCALE_Y, 0x16666),
 	SC_SET(SW_SCALE_X, 0x16666),
 	SC_ARG(4),

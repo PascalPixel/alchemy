@@ -780,9 +780,9 @@ play:
 	{
 		if (result != 4)
 		{
-			Party_AdjustCoins(((struct { u16 coins[1]; } *)Data_0200200c)->coins[result]);
+			Party_AdjustCoins(((struct { u16 coins[1]; } *)TorebiIzumi_CoinPrizes)->coins[result]);
 			Event_PlayCue(91);
-			UiWork_PushValueSlot(((struct { u16 coins[1]; } *)Data_0200200c)->coins[result], 5);
+			UiWork_PushValueSlot(((struct { u16 coins[1]; } *)TorebiIzumi_CoinPrizes)->coins[result], 5);
 			Event_SetMessage((s32)MsgTorebiWonNumberCoin);
 			Event_ShowMessage(-1, 0);
 		}
@@ -818,7 +818,7 @@ play:
 		{
 			i = 14;
 		}
-		TorebiIzumi_RevealPrize(((struct { s32 prize[1]; } *)Data_02001fd0)->prize[i]);
+		TorebiIzumi_RevealPrize(((struct { s32 prize[1]; } *)TorebiIzumi_PrizeItems)->prize[i]);
 
 #if EDITION_INTERNATIONAL
 		/* FAKEMATCH: the pointer pair keeps the native prize-weight base
@@ -1668,12 +1668,12 @@ const u16 TorebiIzumi_AlphaSteps[] = {
 	0x90a, 0xa08, 0xb06, 0xc04, 0xd03, 0xe02, 0xf01, 0x1000,
 };
 
-const u32 Data_02001fd0[] = {
+const u32 TorebiIzumi_PrizeItems[] = {
 	23, 124, 81, 152, 37, 108, 171, 142,
 	48, 160, 133, 97, 183, 186, 189,
 };
 
-const u32 Data_0200200c[] = {
+const u32 TorebiIzumi_CoinPrizes[] = {
 	0xa0014, 0x10002, 0,
 };
 

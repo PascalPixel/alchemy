@@ -11,15 +11,15 @@ u8 *TorebiHeya_GetExits(void);
 s32 TorebiHeya_SelectPlacements(void);
 u8 *TorebiHeya_SelectEvents(void);
 s32 Scene_InitFacingActors(void);
-extern s32 Data_02009040_Data[];
-extern struct SceneEntrance Data_02008bb4[];
-extern u32 Data_02008dac[];
-extern struct ScenePlacement Data_02008e00[];
-extern struct ScenePlacement Data_02009040[];
-extern struct SceneEvent Data_02009310[];
-extern struct SceneEvent Data_02009670[];
-extern struct SceneEvent Data_020099d0[];
-extern u16 Data_02009dccData[];
-extern struct MapCellAnim Data_02009dcc[];
+extern s32 TorebiHeya_ScaleBounceScript[];
+extern struct SceneEntrance gTorebiHeyaEntrances[];
+extern u32 gTorebiHeyaExits[];
+extern struct ScenePlacement gTorebiHeyaPlacements[];
+extern struct ScenePlacement gTorebiHeyaPlacementsFlag950[];
+extern struct SceneEvent gTorebiHeyaEvents[];
+extern struct SceneEvent gTorebiHeyaEventsFlag962[];
+extern struct SceneEvent gTorebiHeyaEventsFlag950[];
+extern u16 TorebiHeya_ExitCellSteps[];
+extern struct MapCellAnim TorebiHeya_ExitCells[];
 
 #endif

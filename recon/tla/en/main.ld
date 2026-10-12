@@ -1006,7 +1006,7 @@
         "*/games/tla/src/graphics/display/m80d0184.o"(.text)
         "*/recon/tla/raw/080d01cc.o"(.text)
         "*/recon/tla/raw/080d0520.o"(.text)
-        "*/recon/tla/raw/080d072c.o"(.text)
+        "*/games/tla/src/graphics/display/m80d072c.o"(.text)
         "*/recon/tla/raw/080d0748.o"(.text)
         "*/recon/tla/raw/080d0788.o"(.text)
         "*/recon/tla/raw/080d085c.o"(.text)

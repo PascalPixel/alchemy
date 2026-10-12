@@ -3174,13 +3174,18 @@ DisplayTransition_Start:
 	.type DisplayTransition_Finish, %function
 	.thumb_func
 DisplayTransition_Finish:
-	.incbin "baserom.gba", 0x000d0520, 0x00000228
+	.incbin "baserom.gba", 0x000d0520, 0x0000020c
 	.section .rom.000d0748, "ax"
 	.global Func_080d01cc
 	.type Func_080d01cc, %function
 	.thumb_func
 Func_080d01cc:
-	.incbin "baserom.gba", 0x000d0748, 0x000002e0
+	.incbin "baserom.gba", 0x000d0748, 0x0000020c
+	.global Func_080d0954
+	.type Func_080d0954, %function
+	.thumb_func
+Func_080d0954:
+	.incbin "baserom.gba", 0x000d0954, 0x000000d4
 	.global DisplayTransition_UpdateFrame
 	.type DisplayTransition_UpdateFrame, %function
 	.thumb_func
@@ -3296,10 +3301,10 @@ Func_080d1ee8:
 EventRuntime_UpdateWaitMode:
 	.incbin "baserom.gba", 0x000d21f4, 0x0000004c
 	.section .rom.000d25c8, "ax"
-	.global Func_080d072c
-	.type Func_080d072c, %function
+	.global Func_080c8950_Target
+	.type Func_080c8950_Target, %function
 	.thumb_func
-Func_080d072c:
+Func_080c8950_Target:
 	.incbin "baserom.gba", 0x000d25c8, 0x00000218
 	.section .rom.000d2834, "ax"
 	.global Inventory_PromptAndSetObjectMode

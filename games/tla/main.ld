@@ -801,7 +801,7 @@ SECTIONS
     "*/games/tla/src/graphics/display/m80d0184.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d01ac)
     "*/recon/tla/ja/rom.o"(.rom.000d0500)
-    "*/recon/tla/ja/rom.o"(.rom.000d070c)
+    "*/games/tla/src/graphics/display/m80d072c.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d0728)
     "*/games/tla/src/graphics/palette/blend.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d0c80)

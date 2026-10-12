@@ -1,3 +1,4 @@
+/* First draft, differ 48: the argument copies and the three masked angles take other registers, and the left and right tests come in the other order. */
 #include "types.h"
 #include "object_runtime.h"
 

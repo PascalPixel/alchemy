@@ -1,3 +1,4 @@
+/* First draft, differ 58: the listing rebuilds the palette address on every pass and indexes it (lsls r3, r1, #1; adds r2, r3, r4; subs r4, #2); this draft walks two pointers. A volatile palette did not stop the strength reduction. */
 #include "types.h"
 #include "frame.h"
 

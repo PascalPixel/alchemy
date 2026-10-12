@@ -800,7 +800,7 @@
     "*/games/tla/src/graphics/display/m80d0184.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000d51cc)
     "*/recon/tla/fr/rom.o"(.rom.000d5520)
-    "*/recon/tla/fr/rom.o"(.rom.000d572c)
+    "*/games/tla/src/graphics/display/m80d072c.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000d5748)
     "*/games/tla/src/graphics/palette/blend.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000d5ca0)

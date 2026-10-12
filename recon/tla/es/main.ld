@@ -783,6 +783,7 @@
     "*/games/tla/src/graphics/display/m80d0184.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000d91cc)
     "*/recon/tla/es/rom.o"(.rom.000d9520)
+    "*/games/tla/src/graphics/display/m80d072c.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000d9748)
     "*/games/tla/src/graphics/palette/blend.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000d9ca0)

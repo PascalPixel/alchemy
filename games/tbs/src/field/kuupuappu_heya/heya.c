@@ -4,6 +4,7 @@
 #include "unit/field/kuupuappu_heya/heya.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/battle.h"
+#include "unit/battle/battle2.h"
 #include "unit/battle/battle3.h"
 #include "unit/battle/battle4.h"
 #include "unit/battle/battle5.h"

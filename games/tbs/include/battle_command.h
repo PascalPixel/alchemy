@@ -2,6 +2,7 @@
 #define ALCHEMY_BATTLE_COMMAND_H
 
 #include "unit/battle/battle.h"
+#include "unit/battle/battle2.h"
 #include "unit/battle/battle3.h"
 #include "unit/battle/battle4.h"
 #include "unit/battle/battle5.h"

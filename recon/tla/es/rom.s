@@ -2093,8 +2093,6 @@ Func_080af0e4:
 	.thumb_func
 Inventory_Remove:
 	.incbin "baserom.gba", 0x000b8154, 0x00000080
-	.section .rom.000b8206, "ax"
-	.incbin "baserom.gba", 0x000b8206, 0x0000009e
 	.section .rom.000b8384, "ax"
 	.global Item_AdjustCounter
 	.type Item_AdjustCounter, %function
@@ -4273,7 +4271,10 @@ UiIcon_PrepareObject:
 Func_080f94a4:
 	.incbin "baserom.gba", 0x000ff498, 0x00000f3c
 	.section .rom.00100478, "ax"
-	.incbin "baserom.gba", 0x00100478, 0x00000864
+	.incbin "baserom.gba", 0x00100478, 0x00000410
+	.section .rom.001008ac, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x001008ac, 0x00000430
 	.section .rom.00100d12, "ax"
 	.incbin "baserom.gba", 0x00100d12, 0x000000fa
 	.global ItemMenu_DrawIcons
@@ -4931,7 +4932,9 @@ Func_0813fd40:
 	.type Func_08142944, %function
 	.thumb_func
 Func_08142944:
-	.incbin "baserom.gba", 0x00142944, 0x00000c9c
+	.incbin "baserom.gba", 0x00142944, 0x00000b94
+	.section .rom.001434f8, "ax"
+	.incbin "baserom.gba", 0x001434f8, 0x000000e8
 	.section .rom.001435e0, "ax"
 	.global BattleFx_BeginCanvasLayer
 	.type BattleFx_BeginCanvasLayer, %function

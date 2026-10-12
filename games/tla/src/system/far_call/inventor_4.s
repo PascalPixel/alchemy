@@ -20,11 +20,11 @@ Party_AdjustCounterCappedAt28Far:
 	.global Func_080ad268
 	.thumb_func
 Func_080ad268:
-	overlay_veneer Func_080af244
+	overlay_veneer Inventory_CheckDiscard
 	.global Func_080ad270
 	.thumb_func
 Func_080ad270:
-	overlay_veneer Func_080af1fc
+	overlay_veneer Inventory_CheckUnequip
 	.global Inventory_DiscardFar
 	.thumb_func
 Inventory_DiscardFar:

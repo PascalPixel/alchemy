@@ -1737,20 +1737,6 @@ Func_080af0e4:
 	.thumb_func
 Inventory_Remove:
 	.incbin "baserom.gba", 0x000bc148, 0x00000080
-	.section .rom.000bc1fa, "ax"
-	.incbin "baserom.gba", 0x000bc1fa, 0x00000002
-	.section .rom.000bc1fc, "ax"
-	.global Func_080af1fc
-	.type Func_080af1fc, %function
-	.thumb_func
-Func_080af1fc:
-	.incbin "baserom.gba", 0x000bc1fc, 0x00000048
-	.section .rom.000bc244, "ax"
-	.global Func_080af244
-	.type Func_080af244, %function
-	.thumb_func
-Func_080af244:
-	.incbin "baserom.gba", 0x000bc244, 0x00000054
 	.section .rom.000bc378, "ax"
 	.global Item_AdjustCounter
 	.type Item_AdjustCounter, %function
@@ -1949,13 +1935,8 @@ BattleFx_SelectBattleCue:
 	.thumb_func
 Func_080ca6a4:
 	.incbin "baserom.gba", 0x000d76a4, 0x00000040
-	.section .rom.000d76e4, "ax"
-	.global Func_080ca6e4
-	.type Func_080ca6e4, %function
-	.thumb_func
-Func_080ca6e4:
-	.incbin "baserom.gba", 0x000d76e4, 0x00000004
 	.section .rom.000d76e8, "ax"
+	.balign 4
 	.global Event_SpawnObjectTable
 	.type Event_SpawnObjectTable, %function
 	.thumb_func
@@ -3287,7 +3268,10 @@ UiIcon_PrepareObject:
 Func_080f94a4:
 	.incbin "baserom.gba", 0x001034a4, 0x00000f3c
 	.section .rom.00104484, "ax"
-	.incbin "baserom.gba", 0x00104484, 0x00000864
+	.incbin "baserom.gba", 0x00104484, 0x00000410
+	.section .rom.001048b8, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x001048b8, 0x00000430
 	.section .rom.00104d1e, "ax"
 	.incbin "baserom.gba", 0x00104d1e, 0x000000fa
 	.global ItemMenu_DrawIcons
@@ -4065,7 +4049,9 @@ Func_0813fd40:
 	.type Func_08142944, %function
 	.thumb_func
 Func_08142944:
-	.incbin "baserom.gba", 0x00142944, 0x00000c9c
+	.incbin "baserom.gba", 0x00142944, 0x00000b94
+	.section .rom.001434f8, "ax"
+	.incbin "baserom.gba", 0x001434f8, 0x000000e8
 	.section .rom.001435e0, "ax"
 	.global BattleFx_BeginCanvasLayer
 	.type BattleFx_BeginCanvasLayer, %function

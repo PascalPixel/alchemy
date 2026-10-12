@@ -167,7 +167,7 @@ void Func_02003eec(s32 a, s32 b);
 void Func_02003ef4(s32 cue);
 
 void Func_020006d0(void);
-void Func_02000b24(s32 id, s32 value);
+s32 Func_02000b24(s32 id, s32 value);
 void Func_02000b5c(void);
 void Func_02001a1c(void);
 void Func_02001e78(s32 id);
@@ -175,12 +175,12 @@ void Func_020030f4(void);
 void Func_02003460(s32 value);
 void Func_020034fc(void);
 void Func_02003628(void);
-void Func_02003688(s32 x, s32 y, s32 z, s32 kind);
+s32 Func_02003688(s32 x, s32 y, s32 z, s32 kind);
 s32 Func_020036b8(s32 a, s32 b);
 void Func_0200389c(void);
 void Func_02003994(struct ObjectRuntime *object, s32 priority);
 void Func_020039f0(s32 *position, s32 base);
-void Func_02003bb8(s32 index, s32 value);
+s32 Func_02003bb8(s32 index, s32 value);
 s32 Func_02003bcc(void);
 s32 Func_02003bd8(s32 limit);
 

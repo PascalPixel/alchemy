@@ -2059,48 +2059,6 @@ Func_02001f08:
 	.4byte Data_02007e24
 .L_02009fc0:
 	.4byte Data_02007e28
-	.section .text.x02009fc4,"ax",%progbits
-	.balign 4
-	.global Func_02001fc4
-	.thumb_func
-Func_02001fc4:
-	push {r5, lr}
-	ldr r2, .L_02009ff8
-	movs r3, #1
-	adds r5, r0, #0
-	str r3, [r2]
-	cmp r5, #2
-	beq .L_02009fe2
-	movs r1, #160
-	lsls r1, r1, #19
-	ldr r0, .L_02009ffc
-	ldr r3, .L_0200a000
-	adds r1, #160
-	movs r2, #32
-	mov lr, r3
-	.2byte 0xf800
-.L_02009fe2:
-	cmp r5, #1
-	bne .L_02009ff6
-	ldr r3, .L_0200a004
-	movs r2, #0
-	movs r1, #144
-	str r2, [r3]
-	ldr r0, .L_0200a008
-	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
-.L_02009ff6:
-	pop {r5, pc}
-.L_02009ff8:
-	.4byte Data_02007e24
-.L_02009ffc:
-	.4byte Data_02007e28
-.L_0200a000:
-	.4byte IwramCopyWords
-.L_0200a004:
-	.4byte Data_02007e20
-.L_0200a008:
-	.4byte Func_02001f08
 	.section .text.x0200a00c,"ax",%progbits
 	.balign 4
 	.global Func_0200200c

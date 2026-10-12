@@ -1,4 +1,7 @@
 #include "types.h"
+#include "ram_buffer.h"
+#include "battle.h"
+#include "btlwork.h"
 
 struct BattleFxRequest {
     s32 field_00;
@@ -14,6 +17,35 @@ struct BattleFxRequest {
 };
 
 void Func_08138050(struct BattleFxRequest *request, s32 value);
+
+s32 ActivateBattleObjectSlot(s32 object_id);
+s32 EnmCntDec(s32 class_id, s32 n);
+s32 BtlUnitSetFar(s32 slot, s32 unit, s32 mask);
+s32 EnmUpd(void);
+struct BtlObj *BtlObjGet(s32 object_id);
+void BtlObjPut(void);
+
+void Func_08119734(s32 id)
+{
+    struct BtlWork *work = Ram_HeapSlots->battle_work;
+    s32 unit;
+    s32 *object;
+
+    if (id == 78)
+        unit = 373;
+    else
+        unit = 376;
+    ActivateBattleObjectSlot(128);
+    BattleMotion_DestroyAllSlotObjects();
+    EnmCntDec(unit, 1);
+    BtlUnitSetFar(128, unit, 255);
+    work->enm_no[0] = 128;
+    work->enm_no[1] = 255;
+    EnmUpd();
+    object = (s32 *)BtlObjGet(128);
+    BtlObjMake((struct BtlObj *)object, 128, object[3] / 0x10000, object[4] / 0x10000);
+    BtlObjPut();
+}
 
 void Func_081197a8(s32 value)
 {

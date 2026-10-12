@@ -23,6 +23,54 @@ struct PlacementTable {
 };
 
 
+extern char MsgHpRecover;
+extern char MsgHpFull;
+
+u32 BattleEventRuntime_Reset(void);
+
+s32 sub_08124af8(s32 id)
+{
+    struct BtlUnit *unit = UnitGet(id);
+    u8 *count = &unit->refrain;
+
+    if (*count != 0) {
+        s32 max;
+        s32 before;
+        s32 hp;
+        s32 gain;
+
+        BattleEventRuntime_Reset();
+        hp = unit->hp;
+        max = unit->max_hp;
+        before = hp;
+        hp += max * (*count + 1) / 10;
+        if (hp > max)
+            hp = max;
+        gain = hp - before;
+        if (gain != 0) {
+            BtlEvPush(0, id);
+            if (hp == unit->max_hp) {
+                BtlEvPush(4, (u32)&MsgHpFull);
+            } else {
+                {
+                    u32 opcode = 1;
+
+                    /* FAKEMATCH: the barrier builds the opcode before the gain is copied to its argument register, as the native does; plain, the copy comes first (one reordered pair, differ 2). */
+                    asm volatile("" : "+l"(opcode));
+                    BtlEvPush(opcode, gain);
+                }
+                BtlEvPush(4, (u32)&MsgHpRecover);
+            }
+            unit->hp = hp;
+            UnitRatioFar(id);
+        }
+        BattleEv_DispatchQueued();
+        if (--unit->refrain == 0)
+            return 1;
+    }
+    return 0;
+}
+
 s32 BattleUnit_TickReflect(s32 id)
 {
     u8 *value = (u8 *)&((struct BtlUnit *)UnitGet(id))->reflect;

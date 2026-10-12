@@ -18979,7 +18979,7 @@ msgctxt "message"
 msgid "04742"
 msgstr "Kein Platz mehr."
 
-msgctxt "message"
+msgctxt "MsgItBroke"
 msgid "04743"
 msgstr "Es ist kaputt!"
 

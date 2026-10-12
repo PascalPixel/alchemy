@@ -35,7 +35,7 @@ u32 SaveState_WriteWorkspaceSlot(s32 sector);
 s32 SaveState_InvalidateSlot(s32 index);
 
 u32 SaveState_SelectWriteSlot(s32 record_id);
-u32 Func_0801601c(s32 record_id);
+u32 SaveState_FindLatestSequence(s32 record_id);
 
 s32 SaveState_WriteRecord(s32 record_id, void *source)
 {
@@ -58,7 +58,7 @@ s32 SaveState_WriteRecord(s32 record_id, void *source)
     WAIT_DMA();
     header.record_id = record_id;
     header.checksum = SaveState_ChecksumWorkspace();
-    header.sequence = Func_0801601c(record_id) + 1;
+    header.sequence = SaveState_FindLatestSequence(record_id) + 1;
     START_DMA(&header, work->slot, 0x84000004);
     WAIT_DMA();
     work->sector_count = 0;

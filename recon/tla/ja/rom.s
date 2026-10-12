@@ -201,8 +201,9 @@ Render_ProjectPoint:
 	.section .rom.00015ca4, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00015ca4, 0x000001a0
-	.section .rom.0001601c, "ax"
-	.incbin "baserom.gba", 0x0001601c, 0x000000b8
+	.section .rom.00016054, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00016054, 0x00000080
 	.section .rom.00016180, "ax"
 	.global Func_08016180
 	.type Func_08016180, %function
@@ -248,7 +249,10 @@ Func_080168f8:
 	.type Func_08016990, %function
 	.thumb_func
 Func_08016990:
-	.incbin "baserom.gba", 0x00016990, 0x00000314
+	.incbin "baserom.gba", 0x00016990, 0x00000248
+	.section .rom.00016bdc, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00016bdc, 0x000000c8
 	.section .rom.00016ca4, "ax"
 	.global UnitGet
 	.type UnitGet, %function
@@ -773,6 +777,10 @@ UiText_ShowPositionedMessageAndWait:
 	.incbin "baserom.gba", 0x0003a740, 0x0000011c
 	.section .rom.0003a890, "ax"
 	.balign 4
+	.global Func_0803a8fc
+	.type Func_0803a8fc, %function
+	.thumb_func
+Func_0803a8fc:
 	.incbin "baserom.gba", 0x0003a890, 0x000001b4
 	.section .rom.0003aa84, "ax"
 	.global UiText_RenderWideStringAtOffset
@@ -815,13 +823,8 @@ UiText_MeasureEntryDimensions:
 	.thumb_func
 Func_0803c068:
 	.incbin "baserom.gba", 0x0003c0dc, 0x00000100
-	.section .rom.0003c1dc, "ax"
-	.global Func_0803c170
-	.type Func_0803c170, %function
-	.thumb_func
-Func_0803c170:
-	.incbin "baserom.gba", 0x0003c1dc, 0x00000028
 	.section .rom.0003c204, "ax"
+	.balign 4
 	.global Func_0803c198
 	.type Func_0803c198, %function
 	.thumb_func
@@ -3748,7 +3751,12 @@ UiIcon_PrepareObject:
 Func_080f88d0:
 	.incbin "baserom.gba", 0x000f8878, 0x000002ec
 	.section .rom.000f8c8e, "ax"
-	.incbin "baserom.gba", 0x000f8c8e, 0x0000022a
+	.incbin "baserom.gba", 0x000f8c8e, 0x00000002
+	.global Func_080f8ce8
+	.type Func_080f8ce8, %function
+	.thumb_func
+Func_080f8ce8:
+	.incbin "baserom.gba", 0x000f8c90, 0x00000228
 	.section .rom.000f8f14, "ax"
 	.incbin "baserom.gba", 0x000f8f14, 0x0000016c
 	.section .rom.000f9254, "ax"
@@ -3777,9 +3785,6 @@ ItemMenu_DrawIcons:
 	.incbin "baserom.gba", 0x000fad08, 0x000002d4
 	.section .rom.000fb03c, "ax"
 	.incbin "baserom.gba", 0x000fb03c, 0x00000534
-	.section .rom.000fb60c, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x000fb60c, 0x00000064
 	.section .rom.000fb6b8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000fb6b8, 0x00000114

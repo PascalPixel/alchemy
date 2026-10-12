@@ -15,7 +15,7 @@ SECTIONS
         "*/resource_67b_overlay.o"(.text.x02008344)
         "*/games/tla/src/field/overlay_67b/exits.o"(.text)
         "*/resource_67b_overlay.o"(.text.x02008384)
-        "*/resource_67b_overlay.o"(.text.x02008468)
+        "*/games/tla/src/field/overlay_67b/s0468.o"(.text)
         "*/games/tla/src/field/overlay_67b/events_a.o"(.text)
         "*/resource_67b_overlay.o"(.text.x0200852c)
         "*/resource_67b_overlay.o"(.text.x02008580)

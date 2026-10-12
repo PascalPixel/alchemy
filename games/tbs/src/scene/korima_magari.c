@@ -247,10 +247,7 @@ static void EV09_SEARCH(void)
 	Engine_CameraWaitForMove();
 	Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
 	Engine_AudioPlayCue(232);
-	if (*gKorimaMagariLayout != 0)
-	{
-	}
-	else
+	if (*gKorimaMagariLayout == 0)
 	{
 		Actor_SetPosition(9, 0x1000000, 0x1ce0000);
 		Engine_MapCopyCells(77, 34, 1, 2, 83, 25);
@@ -277,27 +274,28 @@ static void EV09_SEARCH(void)
 		Engine_TaskWait(8);
 		Engine_MapCopyCells(65, 53, 2, 1, v5, 29);
 		Map_CopyCells(65, 40, 2, 4, 15, 28);
-		goto draw_panels;
 	}
-	Actor_SetPosition(9, 0x1000000, 0x1e00000);
-	Engine_MapCopyCells(78, 34, 1, 2, 83, 25);
-	Engine_TaskWait(3);
-	Engine_MapCopyCells(77, 34, 1, 2, 83, 25);
-	Engine_TaskWait(3);
-	Engine_MapCopyCells(76, 34, 1, 2, 83, 25);
-	Engine_TaskWait(30);
-	Map_CopyCells(65, 45, 2, 4, 15, 28);
-	Engine_MapCopyCells(71, 50, 2, 5, 79, 25);
-	Engine_ActorSetAnimation(9, 2);
-	Engine_AudioPlayCue(230);
-	Engine_TaskWait(6);
-	Engine_MapCopyCells(69, 50, 2, 5, 79, 25);
-	Engine_TaskWait(6);
-	Engine_MapCopyCells(67, 50, 2, 5, 79, 25);
-	Engine_TaskWait(6);
-	Engine_MapCopyCells(65, 50, 2, 5, 79, 25);
-	Engine_TaskWait(30);
-draw_panels:;
+	else
+	{
+		Actor_SetPosition(9, 0x1000000, 0x1e00000);
+		Engine_MapCopyCells(78, 34, 1, 2, 83, 25);
+		Engine_TaskWait(3);
+		Engine_MapCopyCells(77, 34, 1, 2, 83, 25);
+		Engine_TaskWait(3);
+		Engine_MapCopyCells(76, 34, 1, 2, 83, 25);
+		Engine_TaskWait(30);
+		Map_CopyCells(65, 45, 2, 4, 15, 28);
+		Engine_MapCopyCells(71, 50, 2, 5, 79, 25);
+		Engine_ActorSetAnimation(9, 2);
+		Engine_AudioPlayCue(230);
+		Engine_TaskWait(6);
+		Engine_MapCopyCells(69, 50, 2, 5, 79, 25);
+		Engine_TaskWait(6);
+		Engine_MapCopyCells(67, 50, 2, 5, 79, 25);
+		Engine_TaskWait(6);
+		Engine_MapCopyCells(65, 50, 2, 5, 79, 25);
+		Engine_TaskWait(30);
+	}
 	if (*gKorimaMagariLayout == 0)
 	{
 		Map_DrawCellPanel(9, 19, 16, 5, *gKorimaMagariLayout, 9, 30);

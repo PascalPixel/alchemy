@@ -1,6 +1,7 @@
 #include "battle_effect_runtime.h"
 #include "unit/graphics/palette/palette.h"
 #include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtim11.h"
 #include "unit/system/scheduler/runtim13.h"
 #include "battle.h"
 #include "keystate.h"

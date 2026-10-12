@@ -7,6 +7,7 @@
 #include "unit/field/common/object/update.h"
 #include "unit/graphics/tile/vertices.h"
 #include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtim11.h"
 #include "unit/system/scheduler/runtim13.h"
 #include "battle.h"
 #include "debug.h"

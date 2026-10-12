@@ -12,6 +12,7 @@
 #include "unit/game/character/chara7.h"
 #include "unit/game/character/chara8.h"
 #include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtim11.h"
 #include "unit/system/scheduler/runtim13.h"
 #include "fieldobj.h"
 #include "types.h"

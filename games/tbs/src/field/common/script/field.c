@@ -1722,43 +1722,43 @@ void ObjectDispatch_Initialize(struct DispatchObject *obj, const s32 *script)
 //--------------------------------------------------------------------------
 // 絵がひとつならその絵に、絵の組ならある絵すべてに apply(絵, value) を呼ぶ
 //--------------------------------------------------------------------------
-#define DISPATCH_APPLY_TO_CHILDREN(name, object_type, apply) \
-	void name(object_type raw, s32 value)                    \
-	{                                                        \
-		struct DispatchObject *obj;                          \
-		void				 **list;                         \
-		s32					   n;                            \
-		void				  *spr;                          \
-                                                             \
-		obj = raw;                                           \
-		if (obj != 0)                                        \
-		{                                                    \
-			switch (obj->kind & 0xf)                         \
-			{                                                \
-			case 1:                                          \
-				apply(obj->target.child, value);             \
-				break;                                       \
-			case 2:                                          \
-				list = obj->target.children;                 \
-				n = 3;                                       \
-				do                                           \
-				{                                            \
-					spr = *list++;                           \
-					if (spr != 0)                            \
-						apply(spr, value);                   \
-					n--;                                     \
-				} while (n >= 0);                            \
-				break;                                       \
-			}                                                \
-		}                                                    \
+#define DEFINE_APPLY_TO_CHILDREN(name, object_type, apply) \
+	void name(object_type raw, s32 value)                  \
+	{                                                      \
+		struct DispatchObject *obj;                        \
+		void				 **list;                       \
+		s32					   n;                          \
+		void				  *spr;                        \
+                                                           \
+		obj = raw;                                         \
+		if (obj != 0)                                      \
+		{                                                  \
+			switch (obj->kind & 0xf)                       \
+			{                                              \
+			case 1:                                        \
+				apply(obj->target.child, value);           \
+				break;                                     \
+			case 2:                                        \
+				list = obj->target.children;               \
+				n = 3;                                     \
+				do                                         \
+				{                                          \
+					spr = *list++;                         \
+					if (spr != 0)                          \
+						apply(spr, value);                 \
+					n--;                                   \
+				} while (n >= 0);                          \
+				break;                                     \
+			}                                              \
+		}                                                  \
 	}
 
 // オブジェクトの絵（すべて）のアニメを no にする
-DISPATCH_APPLY_TO_CHILDREN(ObjectDispatch_ApplyArgumentToChildren, void *,
+DEFINE_APPLY_TO_CHILDREN(ObjectDispatch_ApplyArgumentToChildren, void *,
 	AnimationObjects_SelectAnimation)
 
 // オブジェクトの絵（すべて）の AnimationObjects_SetActiveTimerSteps を呼ぶ
-DISPATCH_APPLY_TO_CHILDREN(ObjectDispatch_ApplyValueToChildren, struct DispatchObject *,
+DEFINE_APPLY_TO_CHILDREN(ObjectDispatch_ApplyValueToChildren, struct DispatchObject *,
 	AnimationObjects_SetActiveTimerSteps)
 
 //--------------------------------------------------------------------------
@@ -3123,7 +3123,7 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter)
 }
 
 // フラグの今の値を condition_result に入れてから、change でフラグを書き換える
-#define SCRIPT_FLAG_AND_TEST(name, change)                       \
+#define DEFINE_FLAG_AND_TEST(name, change)                       \
 	s32 name(struct ScriptInterpreter *interpreter)              \
 	{                                                            \
 		s32 value;                                               \
@@ -3135,8 +3135,8 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter)
 		return 1;                                                \
 	}
 
-SCRIPT_FLAG_AND_TEST(Script_SetFlagAndTest, GameFlag_SetBitFar)
-SCRIPT_FLAG_AND_TEST(Script_ClearFlagAndTest, GameFlag_ClearBitFar)
+DEFINE_FLAG_AND_TEST(Script_SetFlagAndTest, GameFlag_SetBitFar)
+DEFINE_FLAG_AND_TEST(Script_ClearFlagAndTest, GameFlag_ClearBitFar)
 
 s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter)
 {
@@ -3631,7 +3631,7 @@ static __inline__ void StoreHalfword(s16 *address, s32 value)
 
 // 作業領域の 1 項目を命令の値で書き換える: 代入、加算、または比較 (結果は comparison_result)
 // 32 ビットの項目
-#define SCRIPT_OPERAND_WORD(name, field)                              \
+#define DEFINE_OPERAND_WORD(name, field)                              \
 	void name(struct ScriptOperands *state, s32 operation, s32 value) \
 	{                                                                 \
 		if (operation == SCRIPT_OPERAND_SET)                          \
@@ -3648,7 +3648,7 @@ static __inline__ void StoreHalfword(s16 *address, s32 value)
 	}
 
 // スクリプト内の位置を指す項目: 加算は命令語 (4 バイト) 単位
-#define SCRIPT_OPERAND_ADDRESS(name, field)                           \
+#define DEFINE_OPERAND_ADDRESS(name, field)                           \
 	void name(struct ScriptOperands *state, s32 operation, s32 value) \
 	{                                                                 \
 		if (operation == SCRIPT_OPERAND_SET)                          \
@@ -3665,7 +3665,7 @@ static __inline__ void StoreHalfword(s16 *address, s32 value)
 	}
 
 // 8 ビット、16 ビットの項目: 比較は項目の型に切り詰めた値と行う
-#define SCRIPT_OPERAND_NARROW(name, field, type)                      \
+#define DEFINE_OPERAND_NARROW(name, field, type)                      \
 	void name(struct ScriptOperands *state, s32 operation, s32 value) \
 	{                                                                 \
 		if (operation == SCRIPT_OPERAND_SET)                          \
@@ -3682,7 +3682,7 @@ static __inline__ void StoreHalfword(s16 *address, s32 value)
 		}                                                             \
 	}
 
-SCRIPT_OPERAND_ADDRESS(Script_SetOrCompareAddress, script_address)
+DEFINE_OPERAND_ADDRESS(Script_SetOrCompareAddress, script_address)
 
 void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation, s32 value)
 {
@@ -3700,10 +3700,10 @@ void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation, s32 
 	}
 }
 
-SCRIPT_OPERAND_NARROW(Script_SetOrCompareUnsignedHalfword, unsigned_halfword, u16)
-SCRIPT_OPERAND_WORD(Script_SetOrCompareX, word_08)
-SCRIPT_OPERAND_WORD(Script_SetOrCompareY, word_0c)
-SCRIPT_OPERAND_WORD(Script_SetOrCompareZ, word_10)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareUnsignedHalfword, unsigned_halfword, u16)
+DEFINE_OPERAND_WORD(Script_SetOrCompareX, word_08)
+DEFINE_OPERAND_WORD(Script_SetOrCompareY, word_0c)
+DEFINE_OPERAND_WORD(Script_SetOrCompareZ, word_10)
 
 void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation, s32 value)
 {
@@ -3720,30 +3720,30 @@ void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation, s32 
 	state->comparison_result = state->halfword_20 == (s16)value;
 }
 
-SCRIPT_OPERAND_WORD(Script_SetOrCompareScaleX, word_18)
-SCRIPT_OPERAND_WORD(Script_SetOrCompareScaleY, word_1c)
-SCRIPT_OPERAND_WORD(Script_SetOrCompareVelocityX, word_24)
-SCRIPT_OPERAND_WORD(Script_SetOrCompareVelocityY, word_28)
-SCRIPT_OPERAND_WORD(Script_SetOrCompareVelocityZ, word_2c)
-SCRIPT_OPERAND_WORD(Script_SetOrCompareSpeedLimit, word_30)
-SCRIPT_OPERAND_WORD(Script_SetOrCompareAcceleration, word_34)
-SCRIPT_OPERAND_WORD(Script_SetOrCompareTargetX, word_38)
-SCRIPT_OPERAND_WORD(Script_SetOrCompareTargetY, word_3c)
-SCRIPT_OPERAND_WORD(Script_SetOrCompareTargetZ, word_40)
-SCRIPT_OPERAND_WORD(Script_SetOrCompareVerticalMotion, word_44)
-SCRIPT_OPERAND_WORD(Script_SetOrCompareGravity, word_48)
-SCRIPT_OPERAND_WORD(Script_SetOrCompareTerrainHeight, word_14)
-SCRIPT_OPERAND_WORD(Script_SetOrCompareWord4c, word_4c)
-SCRIPT_OPERAND_ADDRESS(Script_SetOrCompareAddress50, address_50)
-SCRIPT_OPERAND_NARROW(Script_SetOrCompareByte54, byte_54, u8)
-SCRIPT_OPERAND_NARROW(Script_SetOrCompareMotionFlags, byte_55, u8)
-SCRIPT_OPERAND_NARROW(Script_SetOrCompareArrivalAxis, byte_56, u8)
-SCRIPT_OPERAND_NARROW(Script_SetOrCompareComparisonResult, comparison_result, u8)
-SCRIPT_OPERAND_NARROW(Script_SetOrCompareSnapToTarget, byte_58, u8)
-SCRIPT_OPERAND_NARROW(Script_SetOrCompareCollisionFlags, byte_59, u8)
-SCRIPT_OPERAND_NARROW(Script_SetOrCompareSteeringFlags, byte_5a, u8)
-SCRIPT_OPERAND_NARROW(Script_SetOrComparePaused, byte_5b, u8)
-SCRIPT_OPERAND_NARROW(Script_SetOrCompareRepeatCount, byte_5d, u8)
+DEFINE_OPERAND_WORD(Script_SetOrCompareScaleX, word_18)
+DEFINE_OPERAND_WORD(Script_SetOrCompareScaleY, word_1c)
+DEFINE_OPERAND_WORD(Script_SetOrCompareVelocityX, word_24)
+DEFINE_OPERAND_WORD(Script_SetOrCompareVelocityY, word_28)
+DEFINE_OPERAND_WORD(Script_SetOrCompareVelocityZ, word_2c)
+DEFINE_OPERAND_WORD(Script_SetOrCompareSpeedLimit, word_30)
+DEFINE_OPERAND_WORD(Script_SetOrCompareAcceleration, word_34)
+DEFINE_OPERAND_WORD(Script_SetOrCompareTargetX, word_38)
+DEFINE_OPERAND_WORD(Script_SetOrCompareTargetY, word_3c)
+DEFINE_OPERAND_WORD(Script_SetOrCompareTargetZ, word_40)
+DEFINE_OPERAND_WORD(Script_SetOrCompareVerticalMotion, word_44)
+DEFINE_OPERAND_WORD(Script_SetOrCompareGravity, word_48)
+DEFINE_OPERAND_WORD(Script_SetOrCompareTerrainHeight, word_14)
+DEFINE_OPERAND_WORD(Script_SetOrCompareWord4c, word_4c)
+DEFINE_OPERAND_ADDRESS(Script_SetOrCompareAddress50, address_50)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareByte54, byte_54, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareMotionFlags, byte_55, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareArrivalAxis, byte_56, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareComparisonResult, comparison_result, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareSnapToTarget, byte_58, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareCollisionFlags, byte_59, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareSteeringFlags, byte_5a, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrComparePaused, byte_5b, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareRepeatCount, byte_5d, u8)
 
 void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation, s32 value)
 {
@@ -3760,12 +3760,12 @@ void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation, s
 	work->comparison_result = (s16)work->halfword_5e == (s16)value;
 }
 
-SCRIPT_OPERAND_NARROW(Script_SetOrCompareSignedHalfword64, signed_halfword_64, s16)
-SCRIPT_OPERAND_NARROW(Script_SetOrCompareSignedHalfword66, signed_halfword_66, s16)
-SCRIPT_OPERAND_WORD(Script_SetOrCompareWord68, word_68)
-SCRIPT_OPERAND_WORD(Script_SetOrCompareUpdateAddress, word_6c)
-SCRIPT_OPERAND_NARROW(Script_SetOrCompareByte62, byte_62, u8)
-SCRIPT_OPERAND_NARROW(Script_SetOrCompareByte63, byte_63, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareSignedHalfword64, signed_halfword_64, s16)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareSignedHalfword66, signed_halfword_66, s16)
+DEFINE_OPERAND_WORD(Script_SetOrCompareWord68, word_68)
+DEFINE_OPERAND_WORD(Script_SetOrCompareUpdateAddress, word_6c)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareByte62, byte_62, u8)
+DEFINE_OPERAND_NARROW(Script_SetOrCompareByte63, byte_63, u8)
 
 // 命令語の次の 2 語 (項目の番号と値) を読み、項目の関数に operation をわたす
 static __inline__ s32 ApplyOperand(struct ScriptOperands *work, s32 operation)
@@ -7688,7 +7688,7 @@ struct Vec2
 };
 
 // 10 個のオブジェクトの slot 番の絵の field を value にする
-#define UI_SET_GRID_COLUMN(name, field)                  \
+#define DEFINE_SET_GRID_COLUMN(name, field)              \
 	void name(s32 slot, s32 value)                       \
 	{                                                    \
 		struct AnimationObject *object = gSpriteObjects; \
@@ -7702,8 +7702,8 @@ struct Vec2
 		}                                                \
 	}
 
-UI_SET_GRID_COLUMN(Ui_SetGridColumnParameter, param)
-UI_SET_GRID_COLUMN(Ui_SetGridColumnPriority, priority)
+DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnParameter, param)
+DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnPriority, priority)
 
 void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
 {

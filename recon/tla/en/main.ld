@@ -1683,7 +1683,7 @@
         "*/games/tla/src/menu/shop/selofs.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0810c384)
         "*/games/tla/src/menu/shop/d010c38e.o"(.rodata)
-        "*/recon/tla/unidentified.o"(.unidentified.0810c3ca)
+        "*/games/tla/src/menu/shop/shopdata.o"(.rodata)
         . = ABSOLUTE(0x08118000);
         "*/recon/tla/raw/08118000.o"(.text)
         "*/recon/tla/raw/08118008.o"(.text)

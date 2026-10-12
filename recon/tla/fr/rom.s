@@ -3683,11 +3683,6 @@ Shop_PriceTiles:
 	.global Shop_GlyphRowOffsets
 Shop_GlyphRowOffsets:
 	.incbin "baserom.gba", 0x0010c388, 0x0000000a
-	.section .rom.0010c3ce, "ax"
-	.incbin "baserom.gba", 0x0010c3ce, 0x0000002a
-	.global Data_0810c3f4
-Data_0810c3f4:
-	.incbin "baserom.gba", 0x0010c3f8, 0x00000b48
 	.section .rom.00118000, "ax"
 	.global Resource_FarCall009
 Resource_FarCall009:

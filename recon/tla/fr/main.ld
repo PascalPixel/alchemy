@@ -1339,7 +1339,7 @@
     "*/games/tla/src/menu/shop/selofs.o"(.rodata)
     "*/recon/tla/fr/rom.o"(.rom.0010c388)
     "*/games/tla/src/menu/shop/d010c38e.o"(.rodata)
-    "*/recon/tla/fr/rom.o"(.rom.0010c3ce)
+    "*/games/tla/src/menu/shop/shopdata.o"(.rodata)
     . = ABSOLUTE(0x08118000);
     "*/recon/tla/fr/rom.o"(.rom.00118000)
     "*/games/tla/src/system/far_call/table_43.o"(.text .rodata .data .padding)

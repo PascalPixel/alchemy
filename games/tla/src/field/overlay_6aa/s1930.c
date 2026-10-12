@@ -1,0 +1,130 @@
+#include "room.h"
+
+extern char SceneId_Ov6a8Room2;
+extern char SceneId_Ov6acRoom3;
+extern char SceneId_Ov6aaRoom1;
+extern char SceneId_Ov6aaRoom2;
+extern char SceneId_Ov6aaRoom3;
+extern char SceneId_Ov6aaRoom4;
+extern char SceneId_Ov6aaRoom5;
+extern char SceneId_Ov6aaRoom6;
+extern char SceneId_Ov6aaRoom7;
+extern const u8 Data_0200503c[];
+extern const u8 Data_0200547c[];
+extern const u8 Data_020054cc[];
+extern const u8 Data_02005528[];
+extern const u8 Data_02005578[];
+extern const u8 Data_020055d4[];
+extern const u8 Data_02005644[];
+extern const u8 Data_0200610c[];
+extern const u8 Data_02006118[];
+extern const u8 Data_0200613c[];
+extern const u8 Data_02006250[];
+extern const u8 Data_020063b8[];
+extern const u8 Data_020064fc[];
+extern const u8 Data_02006628[];
+extern const u8 Data_02006778[];
+extern s16 Data_02006868;
+extern s16 Data_020068a0;
+extern u16 Data_020068a2;
+extern u8 gMapCellBuffer[];
+
+void *MemAlloc(s32 size);
+void MemFree(void *block);
+s32 Resource_FindFreeEntry(void);
+void VramBlock_LoadCached(s32 entry, s32 size, void *source);
+void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
+void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
+void Func_02000d18(void);
+void Func_02000fe0(u8 *cell);
+void Func_020012e4(struct ObjectRuntime *object);
+void Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
+void Func_02002c2c(void);
+void Func_02004c88(s32 scene, s32 a1);
+void Func_02004d98(void);
+
+s32 Func_02001930(void)
+{
+    if (Flag_IsSet(0xa30))
+        Func_02004c88(gPartyState.map + ((s32)&SceneId_Ov6acRoom3 - (s32)&SceneId_Ov6a8Room2), 0x5000000);
+    return 0;
+}
+
+void Func_0200196c(void)
+{
+    s32 id = 10;
+
+    /* FAKEMATCH: ⚓️ builds the id after the other arguments */
+    asm("" : "+l"(id));
+    Func_02002f4c(id, 19, 20, 0, Data_0200547c);
+}
+
+void Func_02001988(void)
+{
+    s32 id = 12;
+
+    /* FAKEMATCH: ⚓️ builds the id after the other arguments */
+    asm("" : "+l"(id));
+    Func_02002f4c(id, 19, 20, 0, Data_020054cc);
+}
+
+void Func_020019a4(void)
+{
+    s32 id = 9;
+
+    /* FAKEMATCH: ⚓️ builds the id after the other arguments */
+    asm("" : "+l"(id));
+    Func_02002f4c(id, 18, 20, 0x4000, Data_02005528);
+}
+
+void Func_020019c4(void)
+{
+    s32 id = 9;
+
+    /* FAKEMATCH: ⚓️ builds the id after the other arguments */
+    asm("" : "+l"(id));
+    Func_02002f4c(id, 13, 14, 0, Data_02005578);
+}
+
+void Func_020019e0(void)
+{
+    s32 id = 11;
+
+    /* FAKEMATCH: ⚓️ builds the id after the other arguments */
+    asm("" : "+l"(id));
+    Func_02002f4c(id, 13, 14, 0x4000, Data_020055d4);
+}
+
+void Func_02001a00(void)
+{
+    s32 id = 13;
+
+    /* FAKEMATCH: ⚓️ builds the id after the other arguments */
+    asm("" : "+l"(id));
+    Func_02002f4c(id, 21, 22, 0, Data_02005644);
+}
+
+extern const u8 Data_020056a0[];
+
+void Func_02001ae0(void);
+void Func_02001cbc(void);
+void Func_02001f90(struct ObjectRuntime *object);
+
+s32 Func_02001a1c(struct ObjectRuntime *a, struct ObjectRuntime *b)
+{
+    if (ABS(a->x - b->x) < 0x80000 && ABS(a->y - b->y) < 0x80000 && ABS(a->z - b->z) < 0x80000)
+        return 1;
+    return 0;
+}
+
+s32 Func_02001a80(struct ObjectRuntime *a, struct ObjectRuntime *b)
+{
+    s32 dy;
+
+    if (ABS(a->x - b->x) < 0xc0000) {
+        dy = a->y - b->y;
+        if (dy > -0x80000 && dy < 0x180000 && ABS(a->z - b->z) < 0xc0000)
+            return 1;
+    }
+    return 0;
+}

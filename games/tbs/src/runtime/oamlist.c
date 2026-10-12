@@ -56,7 +56,7 @@ s32 _call_via_r3(s32, s32, s32, s32);
 
 void Graphics_ResetFrameState(void)
 {
-	(*(u8(*)[]) & gObjAffineCount)[0] = 0;
+	gObjAffineCount = 0;
 	_call_via_r3(((u32)&gRenderSlotHeads), 0x400, ((u32)&gObjAffineCount), (u32)IwramClearWords);
 }
 
@@ -122,7 +122,7 @@ void Runtime_PushSlotEntry(void *slot_entry, s32 slot)
 		slot = 0xFF;
 	if (slot < 0)
 		slot = 0;
-	head = &(*(void *(*)[]) & gRenderSlotHeads)[slot];
+	head = &gRenderSlotHeads[slot];
 	previous_head = *head;
 	*head = slot_entry;
 	*(void **)slot_entry = previous_head;

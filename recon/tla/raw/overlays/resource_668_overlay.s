@@ -5120,29 +5120,6 @@ Func_02004004:
 	.4byte 0x000001f0
 .L_0200c0bc:
 	.4byte Func_02003ec4
-	.section .text.x0200c0c0,"ax",%progbits
-	.global Func_020040c0
-	.thumb_func
-Func_020040c0:
-	push {r5, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	adds r3, #220
-	ldr r0, .L_0200c0e8
-	ldr r5, [r3]
-	bl Scheduler_RemoveCallbackFar
-	movs r3, #176
-	lsls r3, r3, #5
-	adds r3, #4
-	adds r5, r5, r3
-	movs r3, #0
-	ldrsh r0, [r5, r3]
-	bl Resource_ResetEntry
-	movs r0, #220
-	bl Runtime_ReleaseHeapBlock
-	pop {r5, pc}
-.L_0200c0e8:
-	.4byte Func_02003ec4
 	.section .text.x0200c0ec,"ax",%progbits
 	.global Func_020040ec
 	.thumb_func

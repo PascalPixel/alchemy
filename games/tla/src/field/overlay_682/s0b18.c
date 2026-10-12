@@ -34,7 +34,13 @@ s32 Func_02000b18(void)
     t8 = Value1(Object_GetById, 0x17);
     FIELD_AT(t8, s32, 28) = 0x8000;
     Func_02002ba4();
-    Call3(Func_02002bac, 0, 8, 9);
+    {
+        s32 first = 8;
+        s32 second = 9;
+        /* FAKEMATCH: ⚓️ loads the second and third arguments before the first; the plain call loads them in order (one instruction moved). */
+        __asm__ volatile("" : "+l"(first), "+l"(second));
+        Call3(Func_02002bac, 0, first, second);
+    }
     Call1(Func_020029fc, 3);
     t12 = Value1(GameFlag_Test, 0x97f);
     if (t12 != 0) {

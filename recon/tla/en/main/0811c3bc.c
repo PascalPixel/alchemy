@@ -1,3 +1,4 @@
+/* Near miss: differ 4 of 181 (two reordered rows). Twice the native reloads the entries pointer from its stack slot (ldr r2, [sp, #12]) before a register copy that reload also made (mov r1, r8; mov r8, r1); the draft copies first. Both are reload insns with equal priority, so no source statement stands between them: a one-pass block on a copy of the pointer moves other rows instead (differ 8). */
 #include "types.h"
 #include "scene.h"
 #include "btlmes.h"
@@ -8,8 +9,9 @@
 #include "btlpty.h"
 #include "system.h"
 #include "btlsys.h"
+#include "dma.h"
+void *UnitGet(s32 owner);
 
-#if defined(TBS_EDITION_EN)
 
 struct BattleSortedUnitEntry {
     u16 unit_id;
@@ -36,11 +38,11 @@ s32 BattlePresentation_BuildSortedUnitEntries(
 
     first_count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unit_ids);
     for (index = 0; index != 4; index++)
-        UnitGetFar(index);
+        UnitGet(index);
     for (index = 0; index < first_count; index++) {
         s32 unit_id = unit_ids[index];
 
-        unit = UnitGetFar(unit_id);
+        unit = UnitGet(unit_id);
         entry = &entries[index];
         entry->unit_id = unit_id;
         entry->value = unit->agi;
@@ -55,7 +57,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(
     for (index = 0; index < second_count; index++) {
         s32 unit_id = unit_ids[index];
 
-        unit = UnitGetFar(unit_id);
+        unit = UnitGet(unit_id);
         entry->unit_id = unit_id;
         entry->value = unit->agi >> 1;
         if (entry->value != 0)

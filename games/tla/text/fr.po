@@ -21131,7 +21131,7 @@ msgctxt "message"
 msgid "05280"
 msgstr "Rendez-nous visite si vous{line_break}avez besoin d'autre chose.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgReviveService"
 msgid "05281"
 msgstr "Vous avez été vaincu{line_break}en combat et avez besoin{line_break}d'une résurrection, hum?{page_break}"
 
@@ -21171,7 +21171,7 @@ msgctxt "message"
 msgid "05290"
 msgstr "Cet allié va bien."
 
-msgctxt "message"
+msgctxt "MsgCurePoisonService"
 msgid "05291"
 msgstr "Alors vous avez besoin{line_break}d'un antidote pour{line_break}poison ou venin?{page_break}"
 
@@ -21211,7 +21211,7 @@ msgctxt "message"
 msgid "05300"
 msgstr "Cet allié va bien."
 
-msgctxt "message"
+msgctxt "MsgExorcismService"
 msgid "05301"
 msgstr "Vous avez besoin{line_break}d'un exorciste?{page_break}"
 
@@ -21251,7 +21251,7 @@ msgctxt "message"
 msgid "05310"
 msgstr "Cet allié n'est pas hanté."
 
-msgctxt "message"
+msgctxt "MsgRemoveCurseService"
 msgid "05311"
 msgstr "Alors vous voulez enlever{line_break}un objet maudit, c'est{line_break}bien ça?{page_break}"
 

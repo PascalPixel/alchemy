@@ -19235,7 +19235,7 @@ msgctxt "message"
 msgid "04806"
 msgstr "またなにかあれば おたちよりなさい{line_break}くれぐれも むりをなさらぬように{line_break}神は いつでもみまもっておりますぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgReviveService"
 msgid "04807"
 msgstr "ふむ せんとうふのうから{line_break}かいふくしたいのですな{page_break}"
 
@@ -19275,7 +19275,7 @@ msgctxt "message"
 msgid "04816"
 msgstr "だいじょうぶです"
 
-msgctxt "message"
+msgctxt "MsgCurePoisonService"
 msgid "04817"
 msgstr "ふむ どくやもうどくの{line_break}ちりょうをしたいのですな{page_break}"
 
@@ -19315,7 +19315,7 @@ msgctxt "message"
 msgid "04826"
 msgstr "だいじょうぶです"
 
-msgctxt "message"
+msgctxt "MsgExorcismService"
 msgid "04827"
 msgstr "とりついている あくりょうを{line_break}はらいたいと いうのですな{page_break}"
 
@@ -19355,7 +19355,7 @@ msgctxt "message"
 msgid "04836"
 msgstr "だいじょうぶです"
 
-msgctxt "message"
+msgctxt "MsgRemoveCurseService"
 msgid "04837"
 msgstr "ふむ 呪われたそうび品を{line_break}はずしたいと いうのですな{page_break}"
 

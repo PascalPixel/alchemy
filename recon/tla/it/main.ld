@@ -1293,6 +1293,8 @@
     "*/games/tla/src/menu/shop/forge.o"(.text)
     "*/games/tla/src/menu/shop/service.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0010a8f0)
+    "*/games/tla/src/menu/shop/f10a960.o"(.text)
+    "*/recon/tla/it/rom.o"(.rom.0010a9b0)
     "*/games/tla/src/menu/shop/reset_state_by_mode.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0010af08)
     "*/games/tla/src/menu/shop/run_room_price.o"(.text)

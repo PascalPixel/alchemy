@@ -1302,6 +1302,8 @@
     "*/games/tla/src/menu/shop/forge.o"(.text)
     "*/games/tla/src/menu/shop/service.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.001128f0)
+    "*/games/tla/src/menu/shop/f10a960.o"(.text)
+    "*/recon/tla/de/rom.o"(.rom.001129b0)
     "*/games/tla/src/menu/shop/reset_state_by_mode.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00112f28)
     "*/games/tla/src/menu/shop/radial_motion.o"(.text)

@@ -1271,6 +1271,8 @@ SECTIONS
     "*/games/tla/src/menu/shop/forge.o"(.text)
     "*/games/tla/src/menu/shop/service.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0010a8fc)
+    "*/games/tla/src/menu/shop/f10a960.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.0010a9bc)
     "*/games/tla/src/menu/shop/reset_state_by_mode.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0010af34)
     "*/recon/tla/ja/rom.o"(.rom.0010b0cc)

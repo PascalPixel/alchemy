@@ -3687,7 +3687,9 @@ Func_08109cac:
 Forge_FindRecipe:
 	.incbin "baserom.gba", 0x0010a710, 0x0000003c
 	.section .rom.0010a8f0, "ax"
-	.incbin "baserom.gba", 0x0010a8f0, 0x00000194
+	.incbin "baserom.gba", 0x0010a8f0, 0x00000074
+	.section .rom.0010a9b0, "ax"
+	.incbin "baserom.gba", 0x0010a9b0, 0x000000d4
 	.global Func_0810aa80
 	.type Func_0810aa80, %function
 	.thumb_func

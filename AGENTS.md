@@ -112,8 +112,10 @@ A game is finished when all six hold (Pascal, 2026-10-08):
   `effect`, `object`), and in `scene`: each scene overlay is
   `scene/<place>.c` with its entry table `scene/entry/<place>.s` and its
   import table `scene/import/<place>.s`, and text several scenes include is
-  under `scene/common`. Unit headers follow the same paths under
-  `include/unit`.
+  under `scene/common`. The six overlays that are not scenes sit the same
+  way in `menu` and `debug`. Unit headers follow the same paths under
+  `include/unit`. `games/common/src` has the same bank folders: a shared
+  file sits under the bank that links it.
 - `games/tbs/objects.tsv` is ☀️'s object list: the object order of the main
   image and of each overlay, with the editions that link each row. A row is
   one linker statement, or stands for several: a `unit` row for an

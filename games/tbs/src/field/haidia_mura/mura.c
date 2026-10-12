@@ -32,6 +32,7 @@
 #include "unit/field/common/script/field10.h"
 #include "unit/field/common/script/field11.h"
 #include "unit/graphics/window/window.h"
+#include "unit/graphics/window/window12.h"
 #include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime3.h"
 #include "unit/system/scheduler/runtime4.h"

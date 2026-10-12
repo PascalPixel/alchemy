@@ -21,6 +21,7 @@
 #include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"
 #include "unit/graphics/window/window.h"
+#include "unit/graphics/window/window12.h"
 #include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime3.h"
 #include "unit/system/scheduler/runtime4.h"

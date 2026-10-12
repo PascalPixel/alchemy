@@ -27,6 +27,7 @@
 #include "unit/game/character/chara7.h"
 #include "unit/game/character/chara8.h"
 #include "unit/graphics/window/window.h"
+#include "unit/graphics/window/window12.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

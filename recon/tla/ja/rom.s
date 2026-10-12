@@ -4598,13 +4598,24 @@ Func_0815c970:
 	.incbin "baserom.gba", 0x0015e22c, 0x0000005c
 	.global BattleUnit_ProjectToScreen
 BattleUnit_ProjectToScreen:
-	.incbin "baserom.gba", 0x0015e288, 0x00000098
-	.section .rom.0015e320, "ax"
-	.global Func_0815e320
-	.type Func_0815e320, %function
+	.incbin "baserom.gba", 0x0015e288, 0x00000074
+	.section .rom.0015e3ac, "ax"
+	.balign 4
+	.global Func_0815e3ac
+	.type Func_0815e3ac, %function
 	.thumb_func
-Func_0815e320:
-	.incbin "baserom.gba", 0x0015e320, 0x000058e0
+Func_0815e3ac:
+	.incbin "baserom.gba", 0x0015e3ac, 0x00000648
+	.global Func_0815e9f4
+	.type Func_0815e9f4, %function
+	.thumb_func
+Func_0815e9f4:
+	.incbin "baserom.gba", 0x0015e9f4, 0x00000778
+	.global Func_0815f16c
+	.type Func_0815f16c, %function
+	.thumb_func
+Func_0815f16c:
+	.incbin "baserom.gba", 0x0015f16c, 0x00004a94
 	.section .rom.00163c2c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00163c2c, 0x00000fc8

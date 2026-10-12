@@ -96,8 +96,8 @@ Data_0802ed28:
 	.global Data_0802ed34
 Data_0802ed34:
 	.incbin "baserom.gba", 0x0002ed34, 0x00000090
-	.global Data_0802edc4
-Data_0802edc4:
+	.global Curve_LerpWeightTable
+Curve_LerpWeightTable:
 	.incbin "baserom.gba", 0x0002edc4, 0x00000100
 	.global Curve_SampleIndexTable
 Curve_SampleIndexTable:

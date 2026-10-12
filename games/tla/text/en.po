@@ -51,19 +51,19 @@ msgctxt "MsgStatusLabel"
 msgid "00010"
 msgstr "Play Time:"
 
-msgctxt "message"
+msgctxt "MsgNoBackupMemory"
 msgid "00011"
 msgstr "Unable to detect{line_break}{text_color:5}backup memory{reset_text_style}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSaveFailed"
 msgid "00012"
 msgstr "{text_color:5}Failed to save.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLoadFailed"
 msgid "00013"
 msgstr "{text_color:5}Failed to load.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEraseFailed"
 msgid "00014"
 msgstr "{text_color:5}Failed to erase.{end_wait}"
 
@@ -91,7 +91,7 @@ msgctxt "message"
 msgid "00020"
 msgstr "Choose a file to erase.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOverwriteConfirm"
 msgid "00021"
 msgstr "OK to save over this file?{end_now}"
 
@@ -99,7 +99,7 @@ msgctxt "message"
 msgid "00022"
 msgstr "Is it OK to save over the{line_break}file you started with?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgEraseConfirm"
 msgid "00023"
 msgstr "OK to erase this?{end_now}"
 
@@ -107,15 +107,15 @@ msgctxt "message"
 msgid "00024"
 msgstr "Transfer this data?"
 
-msgctxt "message"
+msgctxt "MsgGameSaved"
 msgid "00025"
 msgstr "Your game was saved.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFileErased"
 msgid "00026"
 msgstr "The file was erased.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFileCopied"
 msgid "00027"
 msgstr "The file was copied.{end_wait}"
 
@@ -123,7 +123,7 @@ msgctxt "message"
 msgid "00028"
 msgstr "Carried over{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSaving"
 msgid "00029"
 msgstr "Saving..."
 

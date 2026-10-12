@@ -68,7 +68,7 @@ Func_08043690:
 	strh r5, [r3]
 	bl Func_08042e28
 	adds r6, r0, #0
-	bl Func_08043358
+	bl SaveState_BuildSummaryHeader
 	bl ObjectTable_SnapshotFar
 	ldr r1, .L_08043768
 	adds r0, r5, #0

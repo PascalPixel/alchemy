@@ -3,6 +3,7 @@
 
 #include "types.h"
 
+extern u8 Curve_LerpWeightTable[];
 extern u8 Curve_SampleIndexTable[];
 
 enum {

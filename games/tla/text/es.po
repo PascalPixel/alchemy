@@ -51,19 +51,19 @@ msgctxt "MsgStatusLabel"
 msgid "00010"
 msgstr "Tiempo jugado:"
 
-msgctxt "message"
+msgctxt "MsgNoBackupMemory"
 msgid "00011"
 msgstr "No se ha detectado la{line_break}{text_color:5}memoria interna{reset_text_style}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSaveFailed"
 msgid "00012"
 msgstr "{text_color:5}No se pudo guardar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLoadFailed"
 msgid "00013"
 msgstr "{text_color:5}No se pudo cargar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEraseFailed"
 msgid "00014"
 msgstr "{text_color:5}No se pudo borrar.{end_wait}"
 
@@ -91,7 +91,7 @@ msgctxt "message"
 msgid "00020"
 msgstr "¿Qué partida quieres borrar?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOverwriteConfirm"
 msgid "00021"
 msgstr "¿Sobrescribir esta partida?{end_now}"
 
@@ -99,7 +99,7 @@ msgctxt "message"
 msgid "00022"
 msgstr "¿Quieres sobrescribir la{line_break}partida con la que empezaste?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgEraseConfirm"
 msgid "00023"
 msgstr "¿Quieres borrarla?{end_now}"
 
@@ -107,15 +107,15 @@ msgctxt "message"
 msgid "00024"
 msgstr "¿Quieres transferirla?"
 
-msgctxt "message"
+msgctxt "MsgGameSaved"
 msgid "00025"
 msgstr "Partida guardada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFileErased"
 msgid "00026"
 msgstr "Partida borrada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFileCopied"
 msgid "00027"
 msgstr "Partida copiada.{end_wait}"
 
@@ -123,7 +123,7 @@ msgctxt "message"
 msgid "00028"
 msgstr "Partida transferida.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSaving"
 msgid "00029"
 msgstr "Guardando..."
 

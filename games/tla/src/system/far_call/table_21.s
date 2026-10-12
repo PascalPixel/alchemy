@@ -20,4 +20,4 @@ Func_08038400:
 	.global Func_08038408
 	.thumb_func
 Func_08038408:
-	overlay_veneer Func_080435fc
+	overlay_veneer SaveState_SaveToSlot

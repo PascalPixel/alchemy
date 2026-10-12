@@ -448,7 +448,7 @@ Func_08108b70:
 	ldrh r1, [r5]
 	adds r0, r6, #0
 	ldr r2, [sp, #16]
-	bl Func_081098c0
+	bl Shop_BuyDone
 	adds r0, r7, #0
 	mov r1, r8
 	bl Func_0810a490

@@ -16395,7 +16395,7 @@ msgctxt "message"
 msgid "04096"
 msgstr "SHOPTEST"
 
-msgctxt "message"
+msgctxt "MsgBecameCursed"
 msgid "04097"
 msgstr "呪われてしまった!{end_wait}"
 
@@ -18711,15 +18711,15 @@ msgctxt "message"
 msgid "04675"
 msgstr "いくつ ほしいんだい?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHereYouGo"
 msgid "04676"
 msgstr "それじゃ わたすぜ{page_break}"
 
-msgctxt "message"
+msgctxt "MsgEquipNowPrompt"
 msgid "04677"
 msgstr "{argument_actor_name:155}んは{line_break}さっそく そうびするかい?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgLookBolder"
 msgid "04678"
 msgstr "いちだんと いさましくなったぜ{page_break}"
 

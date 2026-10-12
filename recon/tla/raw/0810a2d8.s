@@ -165,12 +165,12 @@ Func_0810a2d8:
 	bl Func_0810857c
 	adds r0, r7, #0
 	ldr r1, [sp, #12]
-	bl Func_0810993c
+	bl Shop_ConfirmEquip
 	cmp r0, #0
 	beq .L_0810a468
 	adds r0, r7, #0
 	ldr r1, [sp, #0]
-	bl Func_08109a3c
+	bl Shop_SellOld
 .L_0810a468:
 	add sp, #16
 	pop {r3, r5, r6, r7}

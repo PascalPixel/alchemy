@@ -18231,7 +18231,7 @@ msgctxt "message"
 msgid "04555"
 msgstr "SHOPTEST"
 
-msgctxt "message"
+msgctxt "MsgBecameCursed"
 msgid "04556"
 msgstr "¡Te han maldecido!{end_wait}"
 
@@ -20635,15 +20635,15 @@ msgctxt "message"
 msgid "05156"
 msgstr "¿Qué cantidad quieres?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHereYouGo"
 msgid "05157"
 msgstr "¡Pues aquí tienes!{page_break}"
 
-msgctxt "message"
+msgctxt "MsgEquipNowPrompt"
 msgid "05158"
 msgstr "¿Quieres equiparlo{line_break}ahora, {argument_actor_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgLookBolder"
 msgid "05159"
 msgstr "¡Ahora pareces más fuerte!{page_break}"
 

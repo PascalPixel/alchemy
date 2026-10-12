@@ -18231,7 +18231,7 @@ msgctxt "message"
 msgid "04555"
 msgstr "SHOPTEST"
 
-msgctxt "message"
+msgctxt "MsgBecameCursed"
 msgid "04556"
 msgstr "Malédiction!{end_wait}"
 
@@ -20607,15 +20607,15 @@ msgctxt "message"
 msgid "05149"
 msgstr "Combien en voulez-vous?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHereYouGo"
 msgid "05150"
 msgstr "Voilà, voilà!{page_break}"
 
-msgctxt "message"
+msgctxt "MsgEquipNowPrompt"
 msgid "05151"
 msgstr "Voulez-vous l'équiper{line_break}maintenant, {argument_actor_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgLookBolder"
 msgid "05152"
 msgstr "Cette arme vous sied!{page_break}"
 

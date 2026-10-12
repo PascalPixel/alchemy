@@ -16387,7 +16387,7 @@ msgctxt "message"
 msgid "04094"
 msgstr "SHOPTEST"
 
-msgctxt "message"
+msgctxt "MsgBecameCursed"
 msgid "04095"
 msgstr "You've been cursed!{end_wait}"
 
@@ -18767,15 +18767,15 @@ msgctxt "message"
 msgid "04689"
 msgstr "How many do you want?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHereYouGo"
 msgid "04690"
 msgstr "Then here you go!{page_break}"
 
-msgctxt "message"
+msgctxt "MsgEquipNowPrompt"
 msgid "04691"
 msgstr "Would you like to equip{line_break}it now, {argument_actor_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgLookBolder"
 msgid "04692"
 msgstr "You look bolder already!{page_break}"
 

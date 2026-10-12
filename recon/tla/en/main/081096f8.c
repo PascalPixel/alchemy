@@ -1,11 +1,23 @@
-#include "io_reg.h"
-#include "mem.h"
-#include "render_input.h"
-#include "fixed_math.h"
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
+#include "types.h"
+#include "dma.h"
 #include "resource.h"
+#include "render_input.h"
+#include "mem.h"
+#include "ram_buffer.h"
+#include "io_reg.h"
+#include "input.h"
 
-extern u8 gKeyState[];
-extern u8 gKeysRepeat[];
+extern volatile struct InputState gInput;
+extern const u8 Data_0810c248[];
 extern u8 MsgCoins[];
 
 struct UiSprite {
@@ -14,15 +26,9 @@ struct UiSprite {
     u16 flags : 6;
 };
 
-void Audio_PlayCue(s32 cue);
-void Shop_FillSelector(s32 value, s32 x, void *buffer);
-void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
-s32 WaitFrames(s32 frames);
-void UiWork_FinalizeFar(s32 window, s32 mode);
-
-s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
+s32 Func_081096f8(s32 minimum, s32 maximum, s32 price)
 {
-    void *buffer;
+    u8 *buffer;
     s32 window;
     s32 changed;
     s32 slot;
@@ -30,7 +36,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
     s32 result;
     struct UiSprite *sprite;
 
-    buffer = Runtime_AllocateBlock(14, 0x400);
+    buffer = Runtime_AllocateBlock(56, 0x400);
     changed = 1;
     maximum -= minimum;
     result = -1;
@@ -44,22 +50,22 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
             sprite = (struct UiSprite *)RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 32, 0);
             sprite->tile += 4;
             for (;;) {
-                if (*(volatile u32 *)gKeyState & KEY_A) {
+                if (gInput.pressed & 1) {
                     Audio_PlayCue(112);
                     result = count + 1;
                     break;
                 }
-                if (*(volatile u32 *)gKeyState & KEY_B) {
+                if (gInput.pressed & 2) {
                     Audio_PlayCue(113);
                     result = -1;
                     break;
                 }
-                if (*(volatile u32 *)gKeysRepeat & KEY_LEFT) {
+                if (gInput.repeat & 0x20) {
                     Audio_PlayCue(111);
                     changed = 1;
                     count--;
                 }
-                if (*(volatile u32 *)gKeysRepeat & KEY_RIGHT) {
+                if (gInput.repeat & 0x10) {
                     Audio_PlayCue(111);
                     changed = 1;
                     count++;
@@ -67,7 +73,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
                 if (changed) {
                     changed = 0;
                     count = __modsi3(count + maximum, maximum);
-                    Dma_Set(Shop_QuantityTiles, buffer, 0x84000040, (volatile u32 *)0x040000d4);
+                    Dma_Set(Data_0810c248, buffer, 0x84000040, REG_DMA3);
                     Shop_FillSelector(30, 14, buffer);
                     Shop_FillSelector(minimum + maximum, 0, buffer);
                     Shop_FillSelector(minimum + count + 1, 10, buffer);
@@ -84,6 +90,6 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
             UiWork_FinalizeFar(window, 2);
         }
     }
-    Runtime_ReleaseHeapBlock(14);
+    Runtime_ReleaseHeapBlock(56);
     return result;
 }

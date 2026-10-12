@@ -6,6 +6,7 @@
 #include "unit/import.h"
 #include "unit/field/runpa_jo/runpa_jo.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object14.h"
 #include "unit/battle/effect/object15.h"
 #include "unit/battle/effect/object16.h"
 #include "unit/battle/effect/object17.h"

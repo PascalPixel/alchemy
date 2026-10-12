@@ -3770,24 +3770,24 @@ Func_0810b418:
 	.type Func_0810b5c4, %function
 	.thumb_func
 Func_0810b5c4:
-	.incbin "baserom.gba", 0x0010b5c8, 0x000001d8
-	.section .rom.0010b7a0, "ax"
-	.global Func_0810b79c
-	.type Func_0810b79c, %function
+	.incbin "baserom.gba", 0x0010b5c8, 0x000000f8
+	.section .rom.0010b6d0, "ax"
+	.incbin "baserom.gba", 0x0010b6d0, 0x000000d0
+	.section .rom.0010b7b8, "ax"
+	.balign 4
+	.global Func_0810b7b4
+	.type Func_0810b7b4, %function
 	.thumb_func
-Func_0810b79c:
-	.incbin "baserom.gba", 0x0010b7a0, 0x0000000c
-	.section .rom.0010b7ac, "ax"
-	.global Func_0810b7a8
-	.type Func_0810b7a8, %function
+Func_0810b7b4:
+	.incbin "baserom.gba", 0x0010b7b8, 0x000005fc
+	.section .rom.0010bdf8, "ax"
+	.incbin "baserom.gba", 0x0010bdf8, 0x00000048
+	.section .rom.0010bec0, "ax"
+	.global Func_0810bebc
+	.type Func_0810bebc, %function
 	.thumb_func
-Func_0810b7a8:
-	.incbin "baserom.gba", 0x0010b7ac, 0x000007f0
-	.global Func_0810bf98
-	.type Func_0810bf98, %function
-	.thumb_func
-Func_0810bf98:
-	.incbin "baserom.gba", 0x0010bf9c, 0x00000070
+Func_0810bebc:
+	.incbin "baserom.gba", 0x0010bec0, 0x000000dc
 	.section .rom.0010c00c, "ax"
 	.global Shop_GlyphBytes
 Shop_GlyphBytes:

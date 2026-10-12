@@ -4589,12 +4589,24 @@ Func_0810b378:
 	.balign 4
 	.incbin "baserom.gba", 0x0010b3fc, 0x00000108
 	.section .rom.0010b5a8, "ax"
-	.incbin "baserom.gba", 0x0010b5a8, 0x000009e4
-	.global Func_0810bf98
-	.type Func_0810bf98, %function
+	.incbin "baserom.gba", 0x0010b5a8, 0x000000f8
+	.section .rom.0010b6b0, "ax"
+	.incbin "baserom.gba", 0x0010b6b0, 0x000000d0
+	.section .rom.0010b798, "ax"
+	.balign 4
+	.global Func_0810b7b4
+	.type Func_0810b7b4, %function
 	.thumb_func
-Func_0810bf98:
-	.incbin "baserom.gba", 0x0010bf8c, 0x00000070
+Func_0810b7b4:
+	.incbin "baserom.gba", 0x0010b798, 0x0000060c
+	.section .rom.0010bde8, "ax"
+	.incbin "baserom.gba", 0x0010bde8, 0x00000048
+	.section .rom.0010beb0, "ax"
+	.global Func_0810bebc
+	.type Func_0810bebc, %function
+	.thumb_func
+Func_0810bebc:
+	.incbin "baserom.gba", 0x0010beb0, 0x000000dc
 	.section .rom.0010bffc, "ax"
 	.global Shop_GlyphBytes
 Shop_GlyphBytes:

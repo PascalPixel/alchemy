@@ -177,16 +177,6 @@ void UiWindow_OpenMode1AndWaitFrame(void);
 /* UiWork_CloseAndRelease is called before its definition with no prototype in scope. */
 void Ui_ClearWorkStateAndWaitFrame(void);
 u32 Menu_RunSelectionForValue(u32 value);
-void UiTimedNotice_Create(void);
-void UiTimedNotice_Tick(void);
-void UiTimedNotice_CloseIfActive(void);
-s32 Item_CallHandler48(s32 arg0, s32 arg1);
-s32 Item_ReturnTrue(void);
-void Party_AdjustPaletteGlowPhase(s32 arg0);
-void Debug_SelectAbilityPair(void);
-s32 Object_CollectResources(struct AbilityListEntry *output);
-void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index, const struct AbilityListEntry *entries);
-void Menu_RunSelectionHook(void);
 
 #define UI_WORK ((struct UiRenderWork *)gWindowWork[0])
 

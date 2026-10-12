@@ -21,6 +21,7 @@
 #include "unit/battle/effect/object17.h"
 #include "unit/battle/effect/object18.h"
 #include "unit/graphics/window/window.h"
+#include "unit/graphics/window/window4.h"
 #include "unit/graphics/window/window5.h"
 #include "unit/graphics/window/window6.h"
 #include "unit/graphics/window/window7.h"

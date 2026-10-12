@@ -97,20 +97,7 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action);
 void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_message, u8 *context);
 void BattleMotion_SetMode5AndActivateSlot(s32 unit_id);
 s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action);
-void Palette_UpdatePulseBrightness(void);
-void Camera_ConfigureScene(s32 pos);
-void BattleUnit_ResetGuardLevels(void);
-s32 BattleEscape_CheckSuccess(void);
-s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries);
-s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries);
-void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count);
-s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s32 count);
-void Palette_CopyBanksWithBrightnessOffset(s32 ofs);
-s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts);
-s32 Battle_GetTaggedSlotValue(s32 slot);
-s32 Battle_FindTaggedSlotByValue(u32 id);
 void BattlePres_AdjustCameraByShoulderKeysAlt(void);
-void Battle_ReservedNoOp9B2C(void);
 s32 BattleUnit_TickDefenseModifier(s32 unit_id);
 s32 BattleUnit_TickResistanceModifier(s32 unit_id);
 s32 BattleUnit_TickDelusion(s32 unit_id);
@@ -119,5 +106,26 @@ s32 BattleUnit_TickStun(s32 unit_id);
 s32 BattleUnit_TickSleep(s32 unit_id);
 
 #define MES_PUSH(m) BtlEvPush(BEV_MES, (u32)(m))
+
+// L・R を押しているあいだカメラの yaw を 512 ずつ動かす。同じ関数がふたつある
+#define DEFINE_ADJUST_CAMERA(name)                                                           \
+	void name(void)                                                                          \
+	{                                                                                        \
+		struct BattleCamera					*cam = WORK_SLOT(HEAP_SLOT_CAMERA);              \
+		struct BattlePresentationTransition *trans = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND); \
+                                                                                             \
+		if ((gKeysHeld & KEY_L) != 0)                                                        \
+		{                                                                                    \
+			cam->yaw += 512;                                                                 \
+		}                                                                                    \
+		if ((gKeysHeld & KEY_R) != 0)                                                        \
+		{                                                                                    \
+			cam->yaw -= 512;                                                                 \
+		}                                                                                    \
+		if (trans->flag == 0)                                                                \
+		{                                                                                    \
+			BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);                        \
+		}                                                                                    \
+	}
 
 #endif

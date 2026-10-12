@@ -13,6 +13,7 @@
 #include "unit/battle/effect/effect10.h"
 #include "unit/battle/effect/effect11.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object3.h"
 #include "unit/battle/effect/object4.h"
 #include "unit/battle/effect/object5.h"
 #include "unit/battle/effect/object6.h"

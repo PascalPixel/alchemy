@@ -7,6 +7,7 @@
 #include "vram_tab.h"
 #include "unit/field/common/haidia_babi/babi.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object3.h"
 #include "unit/battle/effect/object4.h"
 #include "unit/battle/effect/object5.h"
 #include "unit/battle/effect/object6.h"

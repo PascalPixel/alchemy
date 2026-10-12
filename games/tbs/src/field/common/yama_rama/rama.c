@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "unit/field/common/yama_rama/rama.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object3.h"
 #include "unit/battle/effect/object4.h"
 #include "unit/battle/effect/object5.h"
 #include "unit/battle/effect/object6.h"

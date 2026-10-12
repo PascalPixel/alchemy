@@ -21,7 +21,8 @@ struct WorkA0Slot {
 };
 
 struct WorkA0 {
-    u8 unknown_000[12];
+    u8 unknown_000[8];
+    s32 vram_entry;
     struct WorkA0Slot slots[8];
     struct WorkA0Node items[128];
 };

@@ -3305,11 +3305,17 @@ Func_080d7430:
 	.incbin "baserom.gba", 0x000d7d4c, 0x0000097c
 	.section .rom.000d86fc, "ax"
 	.incbin "baserom.gba", 0x000d86fc, 0x0000023c
-	.global Func_080d897c
-	.type Func_080d897c, %function
+	.section .rom.000d89bc, "ax"
+	.global Func_080d8a00
+	.type Func_080d8a00, %function
 	.thumb_func
-Func_080d897c:
-	.incbin "baserom.gba", 0x000d8938, 0x000003c4
+Func_080d8a00:
+	.incbin "baserom.gba", 0x000d89bc, 0x00000210
+	.global Func_080d8c10
+	.type Func_080d8c10, %function
+	.thumb_func
+Func_080d8c10:
+	.incbin "baserom.gba", 0x000d8bcc, 0x00000130
 	.section .rom.000d8d24, "ax"
 	.balign 4
 	.global Func_080d8d68
@@ -3347,12 +3353,17 @@ Func_080d9710:
 	.thumb_func
 Func_080d9ab0:
 	.incbin "baserom.gba", 0x000d9a6c, 0x00000020
-	.section .rom.000d9ac4, "ax"
-	.global Func_080d9b08
-	.type Func_080d9b08, %function
+	.section .rom.000d9b3c, "ax"
+	.global Func_080d9b80
+	.type Func_080d9b80, %function
 	.thumb_func
-Func_080d9b08:
-	.incbin "baserom.gba", 0x000d9ac4, 0x0000036c
+Func_080d9b80:
+	.incbin "baserom.gba", 0x000d9b3c, 0x000001c0
+	.global Func_080d9d40
+	.type Func_080d9d40, %function
+	.thumb_func
+Func_080d9d40:
+	.incbin "baserom.gba", 0x000d9cfc, 0x00000134
 	.section .rom.000d9e54, "ax"
 	.global Func_080d9e98
 	.type Func_080d9e98, %function
@@ -3775,10 +3786,10 @@ EffectSlot_Initialize:
 	.incbin "baserom.gba", 0x000ebe0c, 0x000000a0
 	.section .rom.000ebed8, "ax"
 	.incbin "baserom.gba", 0x000ebed8, 0x000001b8
-	.section .rom.000ec0b0, "ax"
-	.incbin "baserom.gba", 0x000ec0b0, 0x00000130
+	.section .rom.000ec114, "ax"
+	.incbin "baserom.gba", 0x000ec114, 0x000000cc
 	.section .rom.000ec200, "ax"
-	.incbin "baserom.gba", 0x000ec200, 0x00001510
+	.incbin "baserom.gba", 0x000ec200, 0x00001494
 	.section .rom.000ed718, "ax"
 	.global BattleFx_ArcTiles
 BattleFx_ArcTiles:
@@ -3808,7 +3819,10 @@ ObjectGroup_BlinkChildValues:
 	.incbin "baserom.gba", 0x000f0798, 0x00000370
 	.global Data_080f0bfc
 Data_080f0bfc:
-	.incbin "baserom.gba", 0x000f0b08, 0x00000258
+	.incbin "baserom.gba", 0x000f0b08, 0x00000008
+	.global Data_080f0c04
+Data_080f0c04:
+	.incbin "baserom.gba", 0x000f0b10, 0x00000250
 	.global BattleFx_CommonParticleScript
 BattleFx_CommonParticleScript:
 	.incbin "baserom.gba", 0x000f0d60, 0x00000024
@@ -4232,8 +4246,8 @@ ColorBuffer_Scale:
 	.thumb_func
 DebugParty_LoadPreset:
 	.incbin "baserom.gba", 0x00118738, 0x000005f4
-	.section .rom.00118e64, "ax"
-	.incbin "baserom.gba", 0x00118e64, 0x00000108
+	.section .rom.00118eb0, "ax"
+	.incbin "baserom.gba", 0x00118eb0, 0x000000bc
 	.section .rom.00118f6c, "ax"
 	.global Func_08118f6c
 	.type Func_08118f6c, %function

@@ -30,7 +30,8 @@ struct Work9cItem {
 };
 
 struct Work9c {
-    u8 unknown_000[12];
+    u8 unknown_000[8];
+    s32 vram_entry;
     struct Work9cSlot slots[8];
     struct Work9cItem items[128];
 };

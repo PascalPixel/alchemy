@@ -2,6 +2,7 @@
 #define ALCHEMY_OWNER_STATE_H
 
 #include "unit/game/character/chara.h"
+#include "unit/game/character/chara7.h"
 #include "unit/game/character/chara8.h"
 #include "btlsys.h"
 

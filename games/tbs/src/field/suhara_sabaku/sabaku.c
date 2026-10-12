@@ -3,6 +3,7 @@
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/game/character/chara.h"
+#include "unit/game/character/chara7.h"
 #include "unit/game/character/chara8.h"
 #include "fieldobj.h"
 #include "types.h"

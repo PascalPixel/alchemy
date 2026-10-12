@@ -2,6 +2,7 @@
 #include "unit/debug/item_level/level.h"
 #include "unit/battle/effect/object.h"
 #include "unit/game/character/chara.h"
+#include "unit/game/character/chara7.h"
 #include "unit/game/character/chara8.h"
 #include "unit/graphics/window/window.h"
 #include "battle.h"

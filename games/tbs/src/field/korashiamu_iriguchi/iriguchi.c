@@ -4,6 +4,7 @@
 #include "unit/field/korashiamu_iriguchi/iriguchi.h"
 #include "unit/battle/effect/object.h"
 #include "unit/game/character/chara.h"
+#include "unit/game/character/chara7.h"
 #include "unit/game/character/chara8.h"
 #include "battle.h"
 #include "debug.h"

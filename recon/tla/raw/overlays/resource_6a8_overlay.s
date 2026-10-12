@@ -1620,60 +1620,6 @@ Func_020015d0:
 	pop {r5, r6, pc}
 .L_0200976c:
 	.4byte gPartyState
-	.section .text.x02009770,"ax",%progbits
-	.global Func_02001770
-	.thumb_func
-Func_02001770:
-	push {r5, lr}
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #61
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_020097dc
-	movs r0, #64
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_020097dc
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r5, [r3, #108]
-	bl Func_02004464
-	movs r0, #1
-	bl Func_020045ec
-	movs r3, #128
-	movs r1, #204
-	movs r2, #145
-	lsls r3, r3, #7
-	lsls r1, r1, #17
-	lsls r2, r2, #16
-	movs r0, #20
-	bl Func_020044d4
-	movs r0, #1
-	bl WaitFrames
-	movs r0, #20
-	movs r1, #4
-	movs r2, #20
-	bl ObjectMotion_Launch
-	ldr r3, .L_020097e0
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	ldr r1, [r3]
-	movs r2, #0
-	movs r0, #20
-	bl ObjectMotion_SetAngleToward
-	movs r3, #181
-	lsls r3, r3, #1
-	adds r2, r5, r3
-	movs r3, #200
-	strh r3, [r2]
-	bl Func_0200446c
-.L_020097dc:
-	pop {r5, pc}
-	.2byte 0x0000
-.L_020097e0:
-	.4byte gPartyState
 	.section .text.x020098e0,"ax",%progbits
 	.global Func_020018e0
 	.thumb_func

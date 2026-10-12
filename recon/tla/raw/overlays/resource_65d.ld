@@ -9,7 +9,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_65d/events_a.o"(.text)
         "*/games/tla/src/field/overlay_65d/events_b.o"(.text)
         "*/resource_65d_overlay.o"(.text.x0200830c)
-        "*/resource_65d_overlay.o"(.text.x02008438)
+        "*/games/tla/src/field/overlay_65d/s0438.o"(.text)
         "*/games/tla/src/field/overlay_65d/events_c.o"(.text)
         "*/games/tla/src/field/overlay_65d/import.o"(.text)
         "*/games/tla/src/field/overlay_65d/data.o"(.data)

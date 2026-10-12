@@ -1,17 +1,21 @@
-/* Near miss, differ 8 of 75: where the flag is set the listing loads the priority byte into
- * r2 before it clears the cell and ORs it into the constant's register; this draft clears the cell
- * first and uses r2 and r3 the other way round. */
-#include "../../../../games/tla/src/field/overlay_67f/ov67f.h"
+#include "ov67f.h"
+#include "map.h"
 
 void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer)
 {
     struct ObjectRuntime *object = Object_GetById(id);
-    u8 *cell = ((struct Ov67fMapWork *)Ram_HeapSlots->map_work)->layers[layer].cells;
+    struct MapCell *cell = Ram_HeapSlots->map_work->layers[layer].cells;
 
-    cell += Func_02001508(object) * 4;
+    cell += Func_02001508(object);
     if (GameFlag_Test(flag)) {
-        cell[2] = 0;
-        object->priority_flags |= 2;
+        /* FAKEMATCH: the flags are read before the cell store and ORed into the register that holds 2, as the native does; as one |= the 0 for the cell is built before the read */
+        u8 flags = object->priority_flags;
+        s32 bits;
+
+        cell->collision_code = 0;
+        bits = 2;
+        bits |= flags;
+        object->priority_flags = bits;
         switch (kind) {
         case 0:
             Func_02001428(object, 2);
@@ -24,7 +28,7 @@ void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer)
             break;
         }
     } else {
-        cell[2] = 255;
+        cell->collision_code = 255;
         switch (kind) {
         case 0:
             Func_02001428(object, 1);

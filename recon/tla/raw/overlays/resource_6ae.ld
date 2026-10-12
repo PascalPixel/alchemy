@@ -39,7 +39,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_6ae/stop.o"(.text)
         "*/resource_6ae_overlay.o"(.text.x0200d08c)
         "*/resource_6ae_overlay.o"(.text.x0200d0b0)
-        "*/resource_6ae_overlay.o"(.text.x0200d1e0)
+        "*/games/tla/src/field/overlay_6ae/s51e0.o"(.text)
         "*/resource_6ae_overlay.o"(.text.x0200d268)
         "*/resource_6ae_overlay.o"(.text.x0200d3e4)
         "*/games/tla/src/field/overlay_6ae/mark.o"(.text)

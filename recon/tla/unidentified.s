@@ -449,12 +449,6 @@ Data_080eef34:
 	.global Encounter_AreaEntryTable
 Encounter_AreaEntryTable:
 	.incbin "baserom.gba", 0x000eef54, 0x00000140
-	.global Scene_CueRuleTable
-Scene_CueRuleTable:
-	.incbin "baserom.gba", 0x000ef094, 0x00000410
-	.global Scene_AreaNameRules
-Scene_AreaNameRules:
-	.incbin "baserom.gba", 0x000ef4a4, 0x00000378
 	.section .unidentified.080ef824,"a"
 	.global Party_PairResolveRules
 Party_PairResolveRules:
@@ -3321,13 +3315,10 @@ Resource_Data104:
 	.incbin "baserom.gba", 0x008c3069, 0x00000003
 	.section .unidentified.088c3896,"a"
 	.incbin "baserom.gba", 0x008c3896, 0x00000002
-	.section .unidentified.088c3c88,"a"
-	.global Resource_Data134
-Resource_Data134:
-	.incbin "baserom.gba", 0x008c3c88, 0x000001bc
-	.global Resource_Data135
-Resource_Data135:
-	.incbin "baserom.gba", 0x008c3e44, 0x000001bc
+	.section .unidentified.088c3e42,"a"
+	.incbin "baserom.gba", 0x008c3e42, 0x00000002
+	.section .unidentified.088c3fff,"a"
+	.incbin "baserom.gba", 0x008c3fff, 0x00000001
 	.section .unidentified.088c4d57,"a"
 	.incbin "baserom.gba", 0x008c4d57, 0x00000001
 	.section .unidentified.088c56c9,"a"

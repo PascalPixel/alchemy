@@ -3523,12 +3523,8 @@ Func_080ed804:
 	.global Encounter_AreaEntryTable
 Encounter_AreaEntryTable:
 	.incbin "baserom.gba", 0x000f3f48, 0x00000140
-	.global Scene_CueRuleTable
-Scene_CueRuleTable:
-	.incbin "baserom.gba", 0x000f4088, 0x00000410
-	.global Scene_AreaNameRules
-Scene_AreaNameRules:
-	.incbin "baserom.gba", 0x000f4498, 0x000008cc
+	.section .rom.000f4810, "ax"
+	.incbin "baserom.gba", 0x000f4810, 0x00000554
 	.section .rom.000f4f16, "ax"
 	.incbin "baserom.gba", 0x000f4f16, 0x00000006
 	.global Data_080eff28
@@ -5396,13 +5392,10 @@ Resource_Data104:
 	.incbin "baserom.gba", 0x008c31d9, 0x00000003
 	.section .rom.008c3a06, "ax"
 	.incbin "baserom.gba", 0x008c3a06, 0x00000002
-	.section .rom.008c3df8, "ax"
-	.global Resource_Data134
-Resource_Data134:
-	.incbin "baserom.gba", 0x008c3df8, 0x000001bc
-	.global Resource_Data135
-Resource_Data135:
-	.incbin "baserom.gba", 0x008c3fb4, 0x000001bc
+	.section .rom.008c3fb2, "ax"
+	.incbin "baserom.gba", 0x008c3fb2, 0x00000002
+	.section .rom.008c416f, "ax"
+	.incbin "baserom.gba", 0x008c416f, 0x00000001
 	.section .rom.008c4ec7, "ax"
 	.incbin "baserom.gba", 0x008c4ec7, 0x00000001
 	.section .rom.008c5839, "ax"

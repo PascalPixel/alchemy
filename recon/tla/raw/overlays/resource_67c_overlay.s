@@ -4392,50 +4392,6 @@ Func_020030f4:
 	.4byte ResourceTableEntries
 .L_0200b274:
 	.4byte 0x40002000
-	.section .text.x0200b278,"ax",%progbits
-	.global Func_02003278
-	.thumb_func
-Func_02003278:
-	push {r5, r6, lr}
-	ldr r6, .L_0200b2c4
-	movs r1, #192
-	lsls r1, r1, #3
-	ldr r3, .L_0200b2c8
-	adds r1, #4
-	adds r0, r6, #0
-	mov lr, r3
-	.2byte 0xf800
-	movs r0, #200
-	lsls r0, r0, #4
-	bl MemAlloc
-	adds r5, r0, #0
-	adds r1, r5, #0
-	ldr r0, .L_0200b2cc
-	bl Func_02003c7c
-	bl Resource_FindFreeEntry
-	strh r0, [r6]
-	movs r1, #200
-	lsls r1, r1, #4
-	adds r2, r5, #0
-	ldrh r0, [r6]
-	bl VramBlock_LoadCached
-	adds r0, r5, #0
-	bl MemFree
-	movs r1, #128
-	lsls r1, r1, #3
-	adds r1, #28
-	ldr r0, .L_0200b2d0
-	bl Scheduler_AddOrUpdateCallback
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_0200b2c4:
-	.4byte Data_0200536c
-.L_0200b2c8:
-	.4byte IwramClearWords
-.L_0200b2cc:
-	.4byte Data_0200414c
-.L_0200b2d0:
-	.4byte Func_020030f4
 	.section .text.x0200b2d4,"ax",%progbits
 	.global Func_020032d4
 	.thumb_func
@@ -4817,51 +4773,6 @@ Func_020034fc:
 	.4byte ResourceTableEntries
 .L_0200b624:
 	.4byte 0x40002000
-	.section .text.x0200b628,"ax",%progbits
-	.global Func_02003628
-	.thumb_func
-Func_02003628:
-	push {r5, r6, lr}
-	ldr r6, .L_0200b678
-	movs r1, #233
-	ldr r3, .L_0200b67c
-	lsls r1, r1, #2
-	adds r0, r6, #0
-	mov lr, r3
-	.2byte 0xf800
-	movs r0, #128
-	lsls r0, r0, #3
-	bl MemAlloc
-	adds r5, r0, #0
-	adds r1, r5, #0
-	ldr r0, .L_0200b680
-	bl Func_02003c7c
-	bl Resource_FindFreeEntry
-	strh r0, [r6]
-	movs r1, #128
-	adds r2, r5, #0
-	lsls r1, r1, #3
-	ldrh r0, [r6]
-	bl VramBlock_LoadCached
-	adds r0, r5, #0
-	bl MemFree
-	movs r1, #128
-	lsls r1, r1, #3
-	adds r1, #28
-	ldr r0, .L_0200b684
-	bl Scheduler_AddOrUpdateCallback
-	movs r0, #220
-	bl Func_02003ef4
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_0200b678:
-	.4byte Data_02005970
-.L_0200b67c:
-	.4byte IwramClearWords
-.L_0200b680:
-	.4byte Data_02004351
-.L_0200b684:
-	.4byte Func_020034fc
 	.section .text.x0200b6b8,"ax",%progbits
 	.global Func_020036b8
 	.thumb_func

@@ -3,7 +3,7 @@
 #include "unit/import.h"
 #include "unit/scene/mogoru_mori.h"
 #include "unit/scene/common/object/orbit.h"
-#include "unit/scene/common/effect/move.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/marker.h"
@@ -50,8 +50,7 @@ enum
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect/create.c"
-#include "common/effect/move.c"
-#include "common/effect/spawn.c"
+#include "common/effect_spawn.c"
 
 struct Vec
 {

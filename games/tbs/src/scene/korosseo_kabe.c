@@ -4,14 +4,8 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/scene/korosseo_kabe.h"
-#include "unit/scene/common/korosseo/saved.h"
-#include "unit/scene/common/korosseo/solo_competitor.h"
-#include "unit/scene/common/korosseo/raised.h"
-#include "unit/scene/common/korosseo/solo_round.h"
-#include "unit/scene/common/korosseo/cheer.h"
-#include "unit/scene/common/korosseo/compete.h"
-#include "unit/scene/common/korosseo/markslot.h"
-#include "unit/scene/common/korosseo/markmove.h"
+#include "unit/scene/common/korosseo_solo.h"
+#include "unit/scene/common/korosseo_marker.h"
 #include "unit/scene/common/korosseo/occupant.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
@@ -1352,11 +1346,7 @@ static void EV39_TALK(s32 speaker)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo/saved.c"
-#include "common/korosseo/solo_competitor.c"
-#include "common/korosseo/raised.c"
-#include "common/korosseo/solo_round.c"
-#include "common/korosseo/cheer.c"
+#include "common/korosseo_solo.c"
 #include "common/item/addequip.c"
 #include "common/korosseo/korosseo.c"
 
@@ -1500,10 +1490,7 @@ static void FieldScene_RunLateSequence(s32 a0)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo/compete.c"
-#include "common/korosseo/markslot.c"
-#include "common/korosseo/marker.c"
-#include "common/korosseo/markmove.c"
+#include "common/korosseo_marker.c"
 #include "common/korosseo/item_icon.c"
 
 static void Text_WriteU32AsHex(u8 *buf, u32 value)

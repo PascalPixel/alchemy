@@ -11,7 +11,7 @@
 #include "unit/object/djinnev.h"
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
-#include "unit/scene/common/effect/move.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/runtime/runtime.h"
 #include "unit/runtime/sched.h"
 #include "unit/runtime/math.h"

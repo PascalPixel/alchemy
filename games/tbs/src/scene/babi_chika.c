@@ -2,7 +2,7 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/scene/babi_chika.h"
-#include "unit/scene/common/effect/move.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/marker.h"
@@ -60,8 +60,7 @@ struct Vec
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect/create.c"
-#include "common/effect/move.c"
-#include "common/effect/spawn.c"
+#include "common/effect_spawn.c"
 
 static s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 {

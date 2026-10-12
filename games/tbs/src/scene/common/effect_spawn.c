@@ -1,9 +1,20 @@
+#include "types.h"
+#include "field_effect.h"
+#include "objdisp.h"
+#include "field_scene.h"
+
+void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object)
+{
+	object->effect.x += object->effect.velocity_x;
+	object->effect.y += object->effect.velocity_y;
+	object->effect.z += object->effect.velocity_z;
+	object->effect.scale_x += object->effect.scale_rate_x;
+	object->effect.scale_y += object->effect.scale_rate_y;
+	object->effect.sprite->rotation += object->effect.spin;
+}
+
 // 効果オブジェクトを出す関数の本体。常駐側（遠隔呼び出し）とオーバーレイ側（直接呼び出し）で
 // 同じ本体を 1 回ずつコンパイルする
-#include "types.h"
-#include "objdisp.h"
-#include "field_effect.h"
-#include "field_scene.h"
 
 extern const s32 *gEffectScripts[];
 

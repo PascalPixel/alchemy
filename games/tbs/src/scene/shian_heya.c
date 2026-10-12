@@ -1,6 +1,6 @@
 #include "game_state.h"
 #include "unit/scene/shian_heya.h"
-#include "unit/scene/common/effect/move.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"
@@ -28,8 +28,7 @@
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect/create.c"
-#include "common/effect/move.c"
-#include "common/effect/spawn.c"
+#include "common/effect_spawn.c"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"

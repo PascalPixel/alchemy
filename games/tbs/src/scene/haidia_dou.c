@@ -2,7 +2,7 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/scene/haidia_dou.h"
-#include "unit/scene/common/effect/move.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/marker.h"
@@ -45,8 +45,7 @@ static void HaidiaDou_ApplyEntryState(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect/create.c"
-#include "common/effect/move.c"
-#include "common/effect/spawn.c"
+#include "common/effect_spawn.c"
 #include "common/object/staged_actor.c"
 
 static void EV08_SCRIPT(void)

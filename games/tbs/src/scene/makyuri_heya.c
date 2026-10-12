@@ -5,11 +5,10 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/makyuri_heya.h"
-#include "unit/scene/common/effect/move.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "staged_actor.h"
 #include "unit/scene/common/makyuri/lights.h"
-#include "unit/scene/makyuri_iriguchi_pillar.h"
-#include "unit/scene/common/makyuri/makyuri.h"
+#include "unit/scene/common/makyuri_pillar.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/marker.h"
@@ -121,8 +120,7 @@ struct SceneLookupRecord
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect/create.c"
-#include "common/effect/move.c"
-#include "common/effect/spawn.c"
+#include "common/effect_spawn.c"
 #include "common/object/staged_actor.c"
 
 static void EV12_TALK(void)
@@ -2714,8 +2712,7 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "makyuri_iriguchi_pillar.c"
-#include "common/makyuri/makyuri.c"
+#include "common/makyuri_pillar.c"
 
 s32 gEffectScript0[] = {
 	SC_WAIT(1),

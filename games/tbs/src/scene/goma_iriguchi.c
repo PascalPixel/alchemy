@@ -1,5 +1,5 @@
 #include "unit/scene/goma_iriguchi.h"
-#include "unit/scene/common/effect/move.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"
@@ -41,8 +41,7 @@ static void GomaIriguchi_GiveShamansRod(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect/create.c"
-#include "common/effect/move.c"
-#include "common/effect/spawn.c"
+#include "common/effect_spawn.c"
 
 // struct FieldActor の別の見方: sprite の先の角度を符号付き 16 ビットで読む
 struct Actor

@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/scene/vinasu_heya.h"
-#include "unit/scene/common/effect/move.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evtable.h"
@@ -128,8 +128,7 @@ static void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 t
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/move.c"
-#include "common/effect/spawn.c"
+#include "common/effect_spawn.c"
 #include "ability_ids.h"
 #include "objcmd.h"
 

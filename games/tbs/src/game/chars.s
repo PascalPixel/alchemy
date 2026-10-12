@@ -3,4 +3,4 @@
 @ 仲間 8 人
 	.global Character_DefinitionTable
 Character_DefinitionTable:
-	.incbin "game/character/chars.table"
+	.incbin "game/chars.table"

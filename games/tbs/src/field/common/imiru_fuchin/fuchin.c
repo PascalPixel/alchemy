@@ -17,7 +17,7 @@
 #include "unit/battle/effect/psyfx.h"
 #include "unit/field/field.h"
 #include "unit/field/mapcell.h"
-#include "unit/game/character/item.h"
+#include "unit/game/item.h"
 #include "battle.h"
 #include "field_service.h"
 #include "debug.h"

@@ -18,7 +18,7 @@
 #include "unit/field/script.h"
 #include "unit/field/player.h"
 #include "unit/field/mapcell.h"
-#include "unit/game/character/item.h"
+#include "unit/game/item.h"
 #include "unit/runtime/sched.h"
 #include "unit/runtime/math.h"
 #include "unit/runtime/heap.h"

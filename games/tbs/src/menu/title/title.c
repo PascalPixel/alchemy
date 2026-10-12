@@ -5,7 +5,7 @@
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/evbasic.h"
 #include "unit/battle/effect/evactor.h"
-#include "unit/game/character/chara.h"
+#include "unit/game/chara.h"
 #include "unit/graphics/palette/palette.h"
 #include "unit/window/window.h"
 #include "unit/window/output.h"

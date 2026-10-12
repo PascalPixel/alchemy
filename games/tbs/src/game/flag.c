@@ -1,4 +1,4 @@
-#include "unit/game/character/flag.h"
+#include "unit/game/flag.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

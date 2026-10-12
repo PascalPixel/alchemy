@@ -11,7 +11,7 @@
 #include "unit/battle/effect/djinnev.h"
 #include "unit/battle/effect/psydisp.h"
 #include "unit/battle/effect/psyfx.h"
-#include "unit/game/character/chara.h"
+#include "unit/game/chara.h"
 #include "unit/menu/shop/shop.h"
 #include "unit/menu/shop/seido.h"
 #include "unit/menu/shop/yadoya.h"

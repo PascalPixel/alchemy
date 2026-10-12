@@ -15,7 +15,7 @@
 #include "unit/battle/effect/psydisp.h"
 #include "unit/battle/effect/psyfx.h"
 #include "unit/field/field.h"
-#include "unit/game/character/chara.h"
+#include "unit/game/chara.h"
 #include "unit/window/window.h"
 #include "unit/window/output.h"
 #include "unit/window/save.h"

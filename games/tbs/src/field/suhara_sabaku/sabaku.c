@@ -10,7 +10,7 @@
 #include "unit/battle/effect/djinnev.h"
 #include "unit/battle/effect/psydisp.h"
 #include "unit/battle/effect/psyfx.h"
-#include "unit/game/character/flag.h"
+#include "unit/game/flag.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"

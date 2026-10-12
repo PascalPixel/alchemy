@@ -6,7 +6,7 @@
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/evbasic.h"
 #include "unit/battle/effect/evactor.h"
-#include "unit/game/character/item.h"
+#include "unit/game/item.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

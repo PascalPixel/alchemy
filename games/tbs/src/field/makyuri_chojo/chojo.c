@@ -13,7 +13,7 @@
 #include "unit/battle/effect/djinnev.h"
 #include "unit/battle/effect/psydisp.h"
 #include "unit/battle/effect/psyfx.h"
-#include "unit/game/character/chara.h"
+#include "unit/game/chara.h"
 #include "unit/runtime/math.h"
 #include "types.h"
 #include "field_event.h"

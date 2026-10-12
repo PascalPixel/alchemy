@@ -14,7 +14,7 @@
 #include "unit/battle/effect/djinnev.h"
 #include "unit/battle/effect/psydisp.h"
 #include "unit/battle/effect/psyfx.h"
-#include "unit/game/character/item.h"
+#include "unit/game/item.h"
 #include "unit/menu/shop/shop.h"
 #include "unit/sound/sound.h"
 #include "unit/runtime/oamlist.h"

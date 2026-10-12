@@ -1,4 +1,4 @@
-#include "unit/game/character/starteq.h"
+#include "unit/game/starteq.h"
 #include "types.h"
 
 // 初期装備を持つ者 (-1 で終わり)

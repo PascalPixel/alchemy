@@ -18,7 +18,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half);
 void TitlePalette_InitializeBuffers(void);
 void Runtime_ScheduleCallbackAndReleaseBlock32A(void);
 void Graphics_TransformLargePalette(s32 index, s32 transform);
-void Graphics_TransformSmallPalette(s32 index, s32 transform);
+/* Graphics_TransformSmallPalette is called before its definition with no prototype in scope. */
 void Graphics_SetPaletteTransformValue(s32 value);
 void Graphics_UpdatePaletteInterpolation(s32 value);
 s32 Graphics_ClampRgb555Channel(s32 val);

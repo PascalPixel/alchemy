@@ -538,8 +538,7 @@ void UiWindow_ClearInteriorTiles(
 	top = y + 1;
 	width = right - x;
 	height = bottom - y;
-	/* FAKEMATCH: UiWindow_ClearTileAttributesInRect is called as s32 (*)(); as void (*)(s32, s32, u32, u32), its prototype, UiWindow_ClearInteriorTiles has 3 of 150 bytes different */
-	((s32 (*)())UiWindow_ClearTileAttributesInRect)(left, top, width, height);
+	UiWindow_ClearTileAttributesInRect(left, top, width, height);
 	tiles = work->tilemap + top * 32 + left;
 	for (row = 0; row < height; row++)
 	{
@@ -2177,8 +2176,7 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x, 
 			}
 			else
 			{
-				/* FAKEMATCH: UiWindow_PutGlyph is called as s32 (*)(); as void (*)(struct UiWindow *, u32, u32, u32, s32), its prototype, UiText_RenderWideStringInWindow has 4 of 324 bytes different */
-				((s32 (*)())UiWindow_PutGlyph)(window, c, x, y, 0);
+				UiWindow_PutGlyph(window, c, x, y, 0);
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
 				x++;
@@ -6758,8 +6756,7 @@ loop:
 		WaitFrames(1);
 	}
 #endif
-	/* FAKEMATCH: UiWork_CloseAndRelease is called as s32 (*)(void); as void (*)(void), its prototype, Menu_RunTopSelection does not compile */
-	ret = ((s32 (*)(void))UiWork_CloseAndRelease)();
+	ret = UiWork_CloseAndRelease();
 
 	switch (sel)
 	{

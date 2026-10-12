@@ -190,7 +190,7 @@ void Graphics_AdjustPaletteBank(s32 d);
 s32 Menu_OpenBackdropScreen(void);
 s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b, u16 *out, s32 *first_count, s32 *second_count);
 s32 Menu_ComputeEntryValues(void *tbl);
-void DjinnMenu_DrawElementList(struct DjinnListTable *tbl);
+/* DjinnMenu_DrawElementList is called before its definition with no prototype in scope. */
 s32 Menu_DrawAtWindowOffset(void *win, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette);
 void UiWindow_ApplyRectAtObjectOrigin(void *obj, s32 x, s32 y, s32 width, s32 height, s32 palette);

@@ -58,7 +58,7 @@ void KorimaMagari_RedrawBoard(void)
 {
 	Scene_PushBlockAlongRun(gKorimaMagariRecords);
 	Engine_MapCopyCellAttributes(0, 0x40, 0x20, 0x20, 0, 0);
-	((s32 (*)())State_StampRecordCells)((s32)gKorimaMagariRecords, 0xff);
+	State_StampRecordCells((s32)gKorimaMagariRecords, 0xff);
 	State_ApplyRectByLayoutSelector();
 }
 
@@ -403,7 +403,7 @@ s32 KorimaMagari_SetupBoard(void)
 		*(*(u16 **)&gKorimaMagariLayout) = 1;
 	}
 	KorimaMagari_PlaceObjects(((u16 *)gKorimaMagariRecords));
-	((s32 (*)(u16 *, s32))State_StampRecordCells)(KorimaMagari_DefaultRecords, 255);
+	State_StampRecordCells(KorimaMagari_DefaultRecords, 255);
 	Scene_RepaintBoardRecords();
 	Engine_ActorSetAnimation(9, 0);
 	Object_GetById(9)->motion_flags = 0;

@@ -24,7 +24,7 @@ void KorimaMagari_RunReturnSequence(void);
 void KorimaMagari_RunDepartSequence(void);
 s32 KorimaMagari_SetupBoard(void);
 void KorimaMagari_PlaceObjects(struct IcePlacement *entry);
-void State_StampRecordCells(s16 *records, s32 value);
+/* State_StampRecordCells is called before its definition with no prototype in scope. */
 const struct TileRun *SceneData_FindTileRunAt(const struct TileRun *run, s32 x, s32 y);
 s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode);
 void Scene_PushBlockAlongRun(struct TileRun2 *runs);

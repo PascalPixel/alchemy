@@ -299,7 +299,7 @@ void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj);
 void EventActor_RunHopAndLeapSequence(s32 id);
 void BattleFx_RunPageEffectForSlot(s32 slot, s32 elm, void *djinn);
 void FieldObject_PlaceSceneActors(void);
-void Djinn_ResolvePendingEvent(s32 capture);
+/* Djinn_ResolvePendingEvent is called before its definition with no prototype in scope. */
 void BattleFx_UpdateAllSlots(void);
 void BattleFx_InitializeSlots(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);

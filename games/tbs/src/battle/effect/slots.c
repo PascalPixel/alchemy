@@ -2064,7 +2064,7 @@ s32 Field_RunScene(s32 entrance)
 		}
 		if (gGameState.pending_djinn_event != 0)
 		{
-			((void (*)())Djinn_ResolvePendingEvent)(gGameState.pending_djinn_event, 1) /* FAKEMATCH: called with a second argument the function does not take */;
+			Djinn_ResolvePendingEvent(gGameState.pending_djinn_event, 1);
 			gGameState.pending_djinn_event = 0;
 		}
 		if (gGameState.pending_item != 0)

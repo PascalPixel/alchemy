@@ -294,8 +294,7 @@ s32 Title_ShowIntro(s32 prompt)
 	gCpuLoadDisplayEnabled = result;
 	Title_LoadIntroBackgrounds();
 	TitlePalette_InitializeBuffers();
-	/* FAKEMATCH: Graphics_TransformSmallPalette is called as s32 (*)(); as void (*)(s32, s32), its prototype, Title_ShowIntro has 4 of 1152 bytes different */
-	((s32 (*)())Graphics_TransformSmallPalette)(2, 0);
+	Graphics_TransformSmallPalette(2, 0);
 	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0xf740, 0x20000);
 	Graphics_UpdatePaletteInterpolation(60);
 	Scheduler_AddOrUpdateCallback(Title_PlaceIntroSprites, 0x480);

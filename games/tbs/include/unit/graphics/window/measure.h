@@ -91,7 +91,7 @@ s32 UiText_GetResourceDimensionsAlt(s32 no, s32 *x, s32 *y, u32 *width, u32 *hei
 void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16 *spacing);
 void UiText_MeasureStringVariant(s32 start, u32 *out_width, u32 *out_height, u16 *spacing);
 s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 mode);
-void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode);
+/* UiWindow_PutGlyph is called before its definition with no prototype in scope. */
 void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y, u32 mode);
 void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output);
 void UiWork_AnimateSpriteSlots(void);
@@ -174,7 +174,7 @@ void Menu_LoadSelectedResource(void);
 void Resource_ResetPendingTransfer(void);
 s32 Menu_RunTopSelection(void);
 void UiWindow_OpenMode1AndWaitFrame(void);
-void UiWork_CloseAndRelease(void);
+/* UiWork_CloseAndRelease is called before its definition with no prototype in scope. */
 void Ui_ClearWorkStateAndWaitFrame(void);
 u32 Menu_RunSelectionForValue(u32 value);
 void UiTimedNotice_Create(void);
@@ -215,7 +215,7 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void);
 s32 Menu_RunWorkspaceSelectionLoop(void);
 void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern, u8 *remap);
 s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x);
-void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
+/* UiWindow_ClearTileAttributesInRect is called before its definition with no prototype in scope. */
 void UiWindow_MarkVisibleTileAttributes(void);
 void UiWork_SetAltFlagAndClearTable(s32 flag);
 void UiRender_ReservedNoOp(void);

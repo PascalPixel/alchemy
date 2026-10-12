@@ -4740,8 +4740,7 @@ s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
 		}
 	}
 	AudioCommand_PlayFar(0x9a);
-	/* FAKEMATCH: the void effect is called as returning s32; called as void, the load of plan->elm moves one instruction (differ 2). */
-	((s32 (*)(s32, s32, s32, s32))BattleFx_PlayUnitElementEffect)(work.actor, plan->elm, 0, 0);
+	BattleFx_PlayUnitElementEffect(work.actor, plan->elm, 0, 0);
 	if (mode & 1)
 		BattlePres_SetActorRecordMode(actor, 1);
 	for (i = 0; i != 16; i++)
@@ -9275,8 +9274,7 @@ s32 Battle_ProcessRoundEnd(void)
 						Djinn_ActivateFar(id, element, expired_entry->index);
 						Trade_RemoveOfferFar(id, expired_entry->element, expired_entry->index);
 						UnitCalcFar(id);
-						/* FAKEMATCH: the void effect is called as returning s32; called as void, the move of its first argument is scheduled three instructions earlier (differ 2). */
-						((s32 (*)(s32, s32, s32, s32))BattleFx_PlayUnitElementEffect)(
+						BattleFx_PlayUnitElementEffect(
 							id, element, 3, 0);
 						BattleEventRuntime_WaitForReady();
 					}
@@ -9566,8 +9564,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 				ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(id)->object, 3);
 				ObjectDispatch_ApplyValueToChildrenFar(
 					(struct DispatchObject *)BtlObjGet(id)->object, 32);
-				/* FAKEMATCH: the void effect is called as returning s32; called as void, the move of its first argument is scheduled three instructions earlier (differ 2). */
-				((s32 (*)(s32, s32, s32, s32))BattleFx_PlayUnitElementEffect)(id, i, 2, most - 1);
+				BattleFx_PlayUnitElementEffect(id, i, 2, most - 1);
 				BattleEventRuntime_WaitForReady();
 			}
 		}

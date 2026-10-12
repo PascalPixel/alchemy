@@ -673,33 +673,6 @@ Func_020008ac:
 	.4byte IwramMulQ16
 .L_02008928:
 	.4byte gFrameCount
-	.section .text.x0200892c,"ax",%progbits
-	.global Func_0200092c
-	.thumb_func
-Func_0200092c:
-	push {lr}
-	ldr r3, .L_02008958
-	movs r2, #3
-	ldr r3, [r3]
-	ands r3, r2
-	adds r2, r0, #0
-	adds r2, #99
-	ldrb r2, [r2]
-	lsrs r3, r2
-	movs r2, #1
-	ands r3, r2
-	adds r2, r0, #0
-	adds r2, #98
-	ldrb r2, [r2]
-	adds r1, r2, #0
-	muls r1, r3
-	lsls r1, r1, #24
-	lsrs r1, r1, #24
-	bl Object_SetPartAttribute
-	pop {pc}
-	.2byte 0x0000
-.L_02008958:
-	.4byte gFrameCount
 	.section .text.x0200895c,"ax",%progbits
 	.global Func_0200095c
 	.thumb_func

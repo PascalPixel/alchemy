@@ -5918,10 +5918,8 @@ Resource_Data202:
 	.incbin "baserom.gba", 0x009b8c42, 0x00000002
 	.section .rom.009ba732, "ax"
 	.incbin "baserom.gba", 0x009ba732, 0x00000002
-	.section .rom.009bd048, "ax"
-	.global Resource_Data21F
-Resource_Data21F:
-	.incbin "baserom.gba", 0x009bd048, 0x00003440
+	.section .rom.009c0487, "ax"
+	.incbin "baserom.gba", 0x009c0487, 0x00000001
 	.section .rom.009c4e2e, "ax"
 	.incbin "baserom.gba", 0x009c4e2e, 0x00000002
 	.section .rom.009c5dca, "ax"

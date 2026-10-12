@@ -450,6 +450,16 @@ fn collect_warnings(root: &Path, targets: &[DecompTarget]) -> Result<Report, Str
     let mut texts: BTreeMap<String, BTreeMap<String, Vec<String>>> = BTreeMap::new();
     for target in targets {
         let output = root.join(OUTPUT).join(target.id.as_str());
+        // What this edition links now: an object it built once and links no
+        // more (a file since merged into another, or renamed) left its
+        // warnings behind.
+        let mut linked = BTreeSet::new();
+        let mut images = vec![crate::edition::Image::Main];
+        let ids = crate::edition::overlay_ids(root, *target)?;
+        images.extend(ids.iter().map(|id| crate::edition::Image::Overlay(id)));
+        for image in images {
+            linked.extend(crate::edition::built_objects(&crate::edition::linked_statements(root, *target, image)?));
+        }
         let mut files = Vec::new();
         walk(&output.join("obj"), &mut files);
         let link = output.join(format!("{}.link-warnings", target.id));
@@ -474,7 +484,7 @@ fn collect_warnings(root: &Path, targets: &[DecompTarget]) -> Result<Report, Str
                 .into_owned();
             // An object whose source was renamed or removed is built no more:
             // its warnings are a stale file's, not the tree's.
-            if stale(root, &name) {
+            if stale(root, &name) || (name.starts_with("games/") && !linked.contains(&name)) {
                 let _ = fs::remove_file(&path);
                 continue;
             }

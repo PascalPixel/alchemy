@@ -2,8 +2,8 @@
 
 In Golden Sun, lighting the four Elemental Lighthouses releases Alchemy upon
 the world. I’m doing the same thing to the games themselves. **The Broken
-Seal** ☀️ and **The Lost Age** ⚓️ are being rewritten, piece by piece, into a
-form people can read, change and build on.
+Seal** ☀️ and **The Lost Age** ⚓️ are being rebuilt from readable source, piece
+by piece.
 
 ## Progress
 
@@ -17,9 +17,8 @@ rewritten so that it rebuilds the original exactly, in all six languages
 everything else on the cartridge (pictures, music, text, tables) is built from
 our own source files rather than copied from the original. A piece only counts
 once every language that uses it comes out byte for byte identical, and a
-game is only 100% done when both numbers are. The Broken Seal comes first;
-The Lost Age has just started. Both pictures redraw themselves after every
-change.
+game is only 100% done when both numbers are. Both pictures redraw themselves
+after every change.
 
 The chart shows that climb day by day: code as the bright line and data,
 measured since 8 October 2026, as the darker one. The colours along the bottom
@@ -27,21 +26,6 @@ show which AI models did the work. Sudden drops are honesty checks: when we find
 something that only looked finished, it comes back off the count until it’s
 done properly. The map below it shows the whole project by size: everything
 in light rose is still waiting to be rewritten.
-
-## Why Alchemy?
-
-When Camelot made Golden Sun, they wrote it as instructions a person can read
-and then turned those into the unreadable code that sits on the cartridge. The
-readable version was never released.
-
-I do this with AI, and a lot of it. The AI does the heavy lifting, and the
-original game is the judge.
-
-Once a game can be read, it can be changed. That opens the door to things fans
-have wanted for years: Golden Sun running natively on PC, phones and modern
-consoles, widescreen and smoother frame rates, quality-of-life fixes, new
-translations, and new storylines, quests and Djinn. Alchemy doesn’t do these
-things itself. It lays the foundation, and then all of us get to build on it.
 
 ## Acknowledgements
 

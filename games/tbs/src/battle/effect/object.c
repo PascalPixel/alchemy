@@ -301,25 +301,22 @@ void Game_ResetForNewGame(s32 mode)
 	s32						  entrance;
 
 	table = Field_SceneTable;
-	if (gDebugMode)
+	if (gDebugMode && mode == 1)
 	{
-		if (mode == 1)
-		{
-			gGameState.scene = (s32)&SceneId_HaidiaIe;
-			gGameState.entrance = mode;
-			goto start;
-		}
-		if (mode == 2)
-		{
-			gGameState.scene = (s32)&SceneId_Clear;
-			gGameState.entrance = 1;
-			goto start;
-		}
+		gGameState.scene = (s32)&SceneId_HaidiaIe;
+		gGameState.entrance = mode;
 	}
-	GameState_InitDefaultsFar();
-	gGameState.scene = (s32)&SceneId_Title;
-	gGameState.entrance = 2;
-start:
+	else if (gDebugMode && mode == 2)
+	{
+		gGameState.scene = (s32)&SceneId_Clear;
+		gGameState.entrance = 1;
+	}
+	else
+	{
+		GameState_InitDefaultsFar();
+		gGameState.scene = (s32)&SceneId_Title;
+		gGameState.entrance = 2;
+	}
 	PaletteGlow_UpdateFar(gGameState.palette_glow[0], gGameState.palette_glow[1]);
 	Resource_InitializeTable();
 	Scheduler_ResetTaskTable();
@@ -583,54 +580,54 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps)
 	s32					  i;
 
 	work = gEventWork;
-	if (GameFlag_TestFar(351) != 0)
-		goto encounter;
-	if (GameFlag_TestFar(352) != 0 || GameFlag_TestFar(353) != 0)
-		return 0;
-	if (zone == 0)
-		return 0;
-	if (gGameState.cloaked != 0)
-		return 0;
-	entry = (struct EncounterZone *)Encounter_EnemyGroupTable + zone;
-	rate = entry->rate;
-	if (rate == 0)
-		return 0;
-	if (GameFlag_TestFar(5) != 0)
+	if (GameFlag_TestFar(351) == 0)
 	{
-		level = UnitGetFar(5)->experience;
-		if (level > 130)
+		if (GameFlag_TestFar(352) != 0 || GameFlag_TestFar(353) != 0)
+			return 0;
+		if (zone == 0)
+			return 0;
+		if (gGameState.cloaked != 0)
+			return 0;
+		entry = (struct EncounterZone *)Encounter_EnemyGroupTable + zone;
+		rate = entry->rate;
+		if (rate == 0)
+			return 0;
+		if (GameFlag_TestFar(5) != 0)
+		{
+			level = UnitGetFar(5)->experience;
+			if (level > 130)
+				return 0;
+		}
+
+		// 平均レベルが想定を上回る分 (0〜5) だけ出現率を 5 ずつ上げる
+		// その分があるとき encounters_off なら出ない
+		level = Party_GetAverageLevelFar() - entry->level;
+		if (level < 0)
+			level = 0;
+		if (level > 5)
+			level = 5;
+		if (level > 0 && gGameState.avoid_distance != 0)
+			return 0;
+		rate += level * 5;
+
+		// 4 つの乱数で作るばらつきを、出現のたびに選び直す
+		bias = work->encounter_bias;
+		if (bias == 0)
+		{
+			s32 a = Random16();
+			s32 b = Random16();
+			s32 c = Random16();
+
+			bias = (a - b + c - (s32)Random16()) / 2;
+			work->encounter_bias = bias;
+		}
+		step = Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 0x100000);
+		total = gGameState.encounter_steps += Iwram_MulQ16(step, steps);
+		if (total < work->encounter_threshold)
 			return 0;
 	}
 
-	// 平均レベルが想定を上回る分 (0〜5) だけ出現率を 5 ずつ上げる
-	// その分があるとき encounters_off なら出ない
-	level = Party_GetAverageLevelFar() - entry->level;
-	if (level < 0)
-		level = 0;
-	if (level > 5)
-		level = 5;
-	if (level > 0 && gGameState.avoid_distance != 0)
-		return 0;
-	rate += level * 5;
-
-	// 4 つの乱数で作るばらつきを、出現のたびに選び直す
-	bias = work->encounter_bias;
-	if (bias == 0)
-	{
-		s32 a = Random16();
-		s32 b = Random16();
-		s32 c = Random16();
-
-		bias = (a - b + c - (s32)Random16()) / 2;
-		work->encounter_bias = bias;
-	}
-	step = Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 0x100000);
-	total = gGameState.encounter_steps += Iwram_MulQ16(step, steps);
-	if (total < work->encounter_threshold)
-		return 0;
-
 	// 重みに従って 8 つのグループから 1 つ選ぶ
-encounter:
 	work->encounter_bias = 0;
 	sum = 0;
 	for (i = 0; i < 8; i++)

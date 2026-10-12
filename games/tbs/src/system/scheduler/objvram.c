@@ -72,7 +72,7 @@ s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
 		ret = -1;
 		if (pos >= VRAM_BLOCK_COUNT)
 		{
-			goto done;
+			return ret;
 		}
 		if (ResourceBlockOwners[pos] != VRAM_BLOCK_OWNER_FREE)
 		{
@@ -92,14 +92,12 @@ s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
 		{
 			ResourceBlockOwners[ret + i] = id;
 		}
-		goto found;
+		break;
 	occupied:
 		// 使っているブロックは、持ち主の大きさの分だけとばす
 		pos += gVramBlockCache[ResourceBlockOwners[pos]].size / VRAM_BLOCK_BYTES;
 	}
-found:
 	ret *= VRAM_BLOCK_BYTES;
-done:
 	return ret;
 }
 

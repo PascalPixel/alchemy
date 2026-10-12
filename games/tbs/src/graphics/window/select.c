@@ -1550,48 +1550,51 @@ s32 Menu_RunTopSelection(void)
 	state = (u8 *)gEventWork;
 	sel = 0;
 
-loop:
-	UiWindow_OpenMode1AndWaitFrame();
-	sel = Menu_SelectTopEntry(sel);
+	for (;;)
+	{
+		UiWindow_OpenMode1AndWaitFrame();
+		sel = Menu_SelectTopEntry(sel);
 #if defined(HAS_LOCALIZED_MENU_GUARD)
-	state[0xcca] = 1;
-	if (*(s16 *)(state + 0xcb8) != 0)
-	{
-		BattleFx_ClearRandomParticlesFar();
-		WaitFrames(1);
-	}
+		state[0xcca] = 1;
+		if (*(s16 *)(state + 0xcb8) != 0)
+		{
+			BattleFx_ClearRandomParticlesFar();
+			WaitFrames(1);
+		}
 #endif
-	ret = UiWork_CloseAndRelease();
+		ret = UiWork_CloseAndRelease();
 
-	switch (sel)
-	{
-	case 0:
-		ret = Object_GetTriggerTileAheadOfCurrentFar();
-		if (ret == 0)
-			ret = 0xff;
-		((struct EventWork *)state)->facing_trigger = ret;
-		break;
-	case 1:
-		ret = Menu_OpenConfirmPromptFar();
-		if (ret == -1)
-			goto loop;
-		break;
-	case 2:
-		ret = ItemMenu_RunFar();
-		if (ret != 0)
-			goto loop;
-		break;
-	case 3:
-		ret = RunAssetSelectionScreenFar();
-		if (ret == -1)
-			goto loop;
-		break;
-	case 4:
-		ret = Menu_OpenActionFlow();
-		if (ret == -1)
-			goto loop;
-		break;
-	default:
+		switch (sel)
+		{
+		case 0:
+			ret = Object_GetTriggerTileAheadOfCurrentFar();
+			if (ret == 0)
+				ret = 0xff;
+			((struct EventWork *)state)->facing_trigger = ret;
+			break;
+		case 1:
+			ret = Menu_OpenConfirmPromptFar();
+			if (ret == -1)
+				continue;
+			break;
+		case 2:
+			ret = ItemMenu_RunFar();
+			if (ret != 0)
+				continue;
+			break;
+		case 3:
+			ret = RunAssetSelectionScreenFar();
+			if (ret == -1)
+				continue;
+			break;
+		case 4:
+			ret = Menu_OpenActionFlow();
+			if (ret == -1)
+				continue;
+			break;
+		default:
+			break;
+		}
 		break;
 	}
 

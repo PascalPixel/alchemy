@@ -161,10 +161,11 @@ void *MemAlloc(s32 size)
 			return NULL;
 		}
 		work->heap.next_ewram = (void *)next_address;
-		goto done;
 	}
-	work->heap.next_iwram = (void *)next;
-done:
+	else
+	{
+		work->heap.next_iwram = (void *)next;
+	}
 	return (void *)allocation_address;
 }
 
@@ -188,10 +189,11 @@ void *Runtime_BumpAllocateAlternatePool(s32 size)
 			return NULL;
 		}
 		work->heap.next_iwram = (void *)alternate_next_address;
-		goto done;
 	}
-	work->heap.next_ewram = (void *)primary_next_address;
-done:
+	else
+	{
+		work->heap.next_ewram = (void *)primary_next_address;
+	}
 	return (void *)allocation_address;
 }
 

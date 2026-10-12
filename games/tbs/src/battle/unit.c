@@ -423,13 +423,14 @@ s32 Resource_FindFreeSlot(s32 key)
 			/* FAKEMATCH: the volatile array member preserves the native second ldrh [table, index]. A scalar pointer needs an extra address add; a nonvolatile member reuses the first load. */
 			value = ((struct SlotAssignmentView *)Resource_SlotAssignments)->entries[index];
 			result = value >> 9;
-			goto done;
+			break;
 		}
 		if ((s16)entry == -1)
+		{
+			result = 6;
 			break;
+		}
 	}
-	result = 6;
-done:
 	return result;
 }
 
@@ -1124,44 +1125,44 @@ update:
 	}
 
 	rec = GetMotionRecord(owner, 0);
-	if (rec == 0)
-		goto done;
-
-	// アイコンのアニメ番号は、幅 32 のキャラと他とで別の並び
-	if (anim >= 0)
+	if (rec != 0)
 	{
-		if (rec->width == 32)
-			anim += 340;
-		else
-			anim += 355;
-	}
-
-	if (slot->animation_entry != 0 && changed != 0)
-	{
-		ResourceMetadata_UnregisterFar(rec, (s32)slot->animation_entry);
-		slot->animation_entry = 0;
-	}
-
-	if (anim >= 0 && changed != 0)
-	{
-		// The handle is stored first and cleared again when registration fails.
-		handle = ResourceMetadata_RegisterFar(rec, anim);
-		slot->animation_entry = (struct SpriteEntry *)handle;
-		if (handle == -1)
-			slot->animation_entry = 0;
-		icon = (struct AnimationEntry *)slot->animation_entry;
-		if (icon != 0)
+		// アイコンのアニメ番号は、幅 32 のキャラと他とで別の並び
+		if (anim >= 0)
 		{
-			icon->priority = 3;
-			Animation_SetWorkEntryFar(icon, 0);
+			if (rec->width == 32)
+				anim += 340;
+			else
+				anim += 355;
 		}
-	}
 
-	rec->dirty = 1;
-	if (anim >= 0)
-		slot->animation = anim;
-	else
-		slot->animation = 0;
+		if (slot->animation_entry != 0 && changed != 0)
+		{
+			ResourceMetadata_UnregisterFar(rec, (s32)slot->animation_entry);
+			slot->animation_entry = 0;
+		}
+
+		if (anim >= 0 && changed != 0)
+		{
+			// The handle is stored first and cleared again when registration fails.
+			handle = ResourceMetadata_RegisterFar(rec, anim);
+			slot->animation_entry = (struct SpriteEntry *)handle;
+			if (handle == -1)
+				slot->animation_entry = 0;
+			icon = (struct AnimationEntry *)slot->animation_entry;
+			if (icon != 0)
+			{
+				icon->priority = 3;
+				Animation_SetWorkEntryFar(icon, 0);
+			}
+		}
+
+		rec->dirty = 1;
+		if (anim >= 0)
+			slot->animation = anim;
+		else
+			slot->animation = 0;
+	}
 
 done:;
 }

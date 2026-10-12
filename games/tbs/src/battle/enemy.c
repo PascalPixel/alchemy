@@ -410,34 +410,33 @@ s32 EnmCntClr(s32 class_id)
 
 	object_index = 0;
 	marker = LIST_MARKER_CHAR;
-scan_objects:
-	summon = UnitGetFar(object_index + 0x80);
-	occupied = summon->side;
-	if (occupied != 1)
-		goto next_object;
-	if (summon->class_id != class_id)
-		goto next_object;
-	slot = 0;
-	if (summon->name[0] != 0)
-		goto scan_slots;
-	summon->name[0] = marker;
-	summon->name[occupied] = slot;
-	return;
-scan_slots:
-	slot++;
-	if (slot > 13)
+	for (; object_index <= 5; object_index++)
+	{
+		summon = UnitGetFar(object_index + 0x80);
+		occupied = summon->side;
+		if (occupied != 1)
+			continue;
+		if (summon->class_id != class_id)
+			continue;
+		slot = 0;
+		if (summon->name[0] == 0)
+		{
+			summon->name[0] = marker;
+			summon->name[occupied] = slot;
+			return;
+		}
+	scan_slots:
+		slot++;
+		if (slot > 13)
+			return;
+		occupied = summon->name[slot];
+		if (occupied != 0)
+			goto scan_slots;
+		next_slot = slot + 1;
+		summon->name[slot] = marker;
+		summon->name[next_slot] = occupied;
 		return;
-	occupied = summon->name[slot];
-	if (occupied != 0)
-		goto scan_slots;
-	next_slot = slot + 1;
-	summon->name[slot] = marker;
-	summon->name[next_slot] = occupied;
-	return;
-next_object:
-	object_index++;
-	if (object_index <= 5)
-		goto scan_objects;
+	}
 }
 
 s32 BtlGrpRnd(s32 record_id)

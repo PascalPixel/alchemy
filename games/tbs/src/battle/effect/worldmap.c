@@ -268,10 +268,11 @@ void Map_UpdateWorldMapMarkers(void)
 	{
 		// L・R：現在地
 		obj = ObjectTable_Get(gGameState.selected_actor);
-		if (obj == NULL)
-			goto markers;
-		cursor_x = ((obj->x.fixed - 0x10000000) >> 16) * 240 / 4096;
-		cursor_y = obj->z.part.pixel * 160 / 4096;
+		if (obj != NULL)
+		{
+			cursor_x = ((obj->x.fixed - 0x10000000) >> 16) * 240 / 4096;
+			cursor_y = obj->z.part.pixel * 160 / 4096;
+		}
 	}
 	else
 	{
@@ -308,7 +309,6 @@ void Map_UpdateWorldMapMarkers(void)
 	// 印：0 番は現在地、11〜65 番は WorldMap_PlaceMarkers の場所
 	// 表は（フラグ, 地名）の組で、フラグの上位 16bit はキャラクタ番号
 	//------------------------------------------------------------------
-markers:
 	for (i = 0; i <= 65; i++)
 	{
 		if (i != leader && i <= 10)

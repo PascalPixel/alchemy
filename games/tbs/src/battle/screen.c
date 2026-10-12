@@ -881,12 +881,13 @@ s32 Runtime_AdjustDebugValueWithButtons(s32 ret)
 		if (gKeyState & KEY_A)
 		{
 			ret = battle->debug_value;
-			goto done;
 		}
-		WaitFrames(1);
-		goto loop;
+		else
+		{
+			WaitFrames(1);
+			goto loop;
+		}
 	}
-done:
 	if (gKeysHeld & KEY_SELECT)
 		ret = DEBUG_SELECT_VALUE;
 	return ret;

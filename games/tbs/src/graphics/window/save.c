@@ -320,7 +320,6 @@ s16 SaveState_WriteCurrentSlotPair(void)
 	s16 value;
 	s16 result;
 	s32 found;
-	s32 error;
 
 	result = 0;
 	value = gSaveSlot;
@@ -330,24 +329,24 @@ s16 SaveState_WriteCurrentSlotPair(void)
 		if (found != 0)
 		{
 			UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
-			error = 9;
-			goto set_error;
+			result = -9;
 		}
-		SaveState_BuildSummaryHeader();
+		else
 		{
-			void *base = &gSaveBuffer;
-			s32	  next;
-
-			found = SaveState_WriteRecord(gSaveSlot, base);
-			next = gSaveSlot;
-			base = (char *)base + 0x1000;
-			found |= SaveState_WriteRecord(next + 3, base);
-			if (found != 0)
+			SaveState_BuildSummaryHeader();
 			{
-				UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
-				error = 3;
-			set_error:
-				result = 0 - error;
+				void *base = &gSaveBuffer;
+				s32	  next;
+
+				found = SaveState_WriteRecord(gSaveSlot, base);
+				next = gSaveSlot;
+				base = (char *)base + 0x1000;
+				found |= SaveState_WriteRecord(next + 3, base);
+				if (found != 0)
+				{
+					UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
+					result = -3;
+				}
 			}
 		}
 		SaveState_ReleaseWorkspace();

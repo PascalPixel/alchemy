@@ -275,7 +275,7 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 					index++;
 				} while (entry[slot] != 255);
 			}
-			goto pick;
+			break;
 		}
 	}
 	else
@@ -302,7 +302,6 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 		}
 	}
 
-pick:
 	if (count == 0)
 		return 0;
 	return positions[(Random16() * count) >> 16];
@@ -761,33 +760,32 @@ s32 BattlePresentation_WaitForAdvance(void)
 		WaitFrames(1);
 	spr = &sprite;
 	slot = Resource_LoadIntoFreeSlot(128);
-	frame = 0;
-loop:
-	// 4 フレームごとに 8 枚のパターンを回す
-	pat = ((gFrameCount >> 2) & 7) * 128 + (s32)BattlePres_AdvanceArrowTiles;
-	window = gBattleDisplayWork->window;
-	offset = gBattleDisplayWork->offset;
-	QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
-	QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
-	Io_Write16(16, &REG_BLDALPHA);
-	*(u32 *)&spr->attr0 = 0xa400;
-	*(u32 *)&spr->attr2 = 0;
-	tile = Resource_GetBuffer(slot, pat) & 0x3ff;
-	attr2 = spr->attr2;
-	spr->attr2 = (attr2 & ~0x3ff) | tile;
-	// ウィンドウの位置はキャラ単位、オフセットは 1/256 ドット
-	x = (u16)((window->x * 8 + (offset->x >> 8) + 4) & 0x1ff);
-	attr1 = spr->attr1;
-	spr->attr1 = (attr1 & ~0x1ff) | x;
-	// 上下に 2 ドットまでゆれる
-	*(u8 *)&spr->attr0 = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 + (offset->y >> 8) + 6;
-	Runtime_PushSlotEntry(spr, 240);
-	if (!(gKeysHeld & KEY_B) && !(gKeyState & KEY_OKURI)
-		&& (frame <= 15 || !(gKeysHeld & KEY_OKURI)))
+	for (frame = 0;; frame++)
 	{
+		// 4 フレームごとに 8 枚のパターンを回す
+		pat = ((gFrameCount >> 2) & 7) * 128 + (s32)BattlePres_AdvanceArrowTiles;
+		window = gBattleDisplayWork->window;
+		offset = gBattleDisplayWork->offset;
+		QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
+		QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
+		Io_Write16(16, &REG_BLDALPHA);
+		*(u32 *)&spr->attr0 = 0xa400;
+		*(u32 *)&spr->attr2 = 0;
+		tile = Resource_GetBuffer(slot, pat) & 0x3ff;
+		attr2 = spr->attr2;
+		spr->attr2 = (attr2 & ~0x3ff) | tile;
+		// ウィンドウの位置はキャラ単位、オフセットは 1/256 ドット
+		x = (u16)((window->x * 8 + (offset->x >> 8) + 4) & 0x1ff);
+		attr1 = spr->attr1;
+		spr->attr1 = (attr1 & ~0x1ff) | x;
+		// 上下に 2 ドットまでゆれる
+		*(u8 *)&spr->attr0 =
+			Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 + (offset->y >> 8) + 6;
+		Runtime_PushSlotEntry(spr, 240);
+		if ((gKeysHeld & KEY_B) || (gKeyState & KEY_OKURI)
+			|| (frame > 15 && (gKeysHeld & KEY_OKURI)))
+			break;
 		WaitFrames(1);
-		frame++;
-		goto loop;
 	}
 	AudioCommand_PlayFar(111);
 	Resource_ResetEntry(slot);
@@ -1114,19 +1112,11 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			aff = 1;
 	}
 
-	if (plan->elm >= 0 && plan->elm <= 3)
-	{
-		cmd = &plan->cmd;
-		if (*cmd != 2)
-		{
-			pow = actor->elm[plan->elm].pow;
-			goto pow_end;
-		}
-	}
+	if (plan->elm >= 0 && plan->elm <= 3 && plan->cmd != 2)
+		pow = actor->elm[plan->elm].pow;
 	else
-		cmd = &plan->cmd;
-	pow = 100;
-pow_end:
+		pow = 100;
+	cmd = &plan->cmd;
 
 	if (plan->cmd == 5 && (plan->elm >= 0 && plan->elm <= 3) && aff > 0)
 	{
@@ -2265,15 +2255,14 @@ select_again:
 			memo->selection = BtlRndFar();
 			memo->initialized = 1;
 		}
-	read_saved_selection:
+		// fall through
+	case 4: // 記録した番号から順に進む
 		sel = memo->selection;
 		if (retry != 0)
 		{
 			memo->selection = sel + 1;
 		}
 		break;
-	case 4: // 記録した番号から順に進む
-		goto read_saved_selection;
 	case 5: // 選び直すたびに次へ
 		sel++;
 		break;
@@ -2312,126 +2301,124 @@ select_again:
 				{
 				case 1:
 				case 2:
-					goto item_checked;
+					break;
+				default:
+					use_item = 0;
+					break;
 				}
 			}
-			use_item = 0;
-		item_checked:
-			if (use_item == 0)
-				goto disable_item;
+			else
+			{
+				use_item = 0;
+			}
 		}
-		else
-		{
-		disable_item:
+		if (use_item == 0)
 			item_ok = 0;
-		}
 	}
 
-	if (keep_going == 0)
-		goto finish_target;
-
-	// ぼうぎょ・にげるのわざは、自分を対象にする
-	act = BtlActGet(act_no);
-	efx = act->efx;
-	switch (efx)
+	if (keep_going != 0)
 	{
-	case 46:
-		req->command = CMD_BOUGYO;
-		req->target = Battle_FindTaggedSlotByValue(req->unit_id);
-		break;
-	case 47:
-		req->command = CMD_BOUGYO2;
-		req->target = Battle_FindTaggedSlotByValue(req->unit_id);
-		break;
-	case 49:
-		req->command = CMD_NIGERU;
-		req->target = Battle_FindTaggedSlotByValue(req->unit_id);
-		break;
-	}
-
-	if (retry == 0)
-	{
-		switch (req->command)
+		// ぼうぎょ・にげるのわざは、自分を対象にする
+		act = BtlActGet(act_no);
+		efx = act->efx;
+		switch (efx)
 		{
-		case CMD_BOUGYO:
-		case CMD_BOUGYO2:
+		case 46:
+			req->command = CMD_BOUGYO;
+			req->target = Battle_FindTaggedSlotByValue(req->unit_id);
+			break;
+		case 47:
+			req->command = CMD_BOUGYO2;
+			req->target = Battle_FindTaggedSlotByValue(req->unit_id);
+			break;
+		case 49:
+			req->command = CMD_NIGERU;
+			req->target = Battle_FindTaggedSlotByValue(req->unit_id);
+			break;
+		}
+
+		if (retry == 0)
+		{
+			switch (req->command)
+			{
+			case CMD_BOUGYO:
+			case CMD_BOUGYO2:
+				break;
+			default:
+				goto done;
+			}
+		}
+
+		// エナジーならEPとふうじを確かめる
+		// target_strategy が 0 でなければEP不足を、2 ならふうじも避ける
+		if (req->command != CMD_ITEM && Ability_CheckStatusOrSpecialId(act_no) != 0)
+		{
+			req->command = CMD_ENA;
+			req->parameter = act_no;
+			if (act->pp_cost > unit->ep && enm->target_strategy != 0)
+				goto next_candidate;
+			if (unit->fuuji != 0 && enm->target_strategy == 2)
+				goto next_candidate;
+		}
+		cmd = req->command;
+		if (cmd == CMD_NIGERU && (u8)unit->chouhatsu != 0)
+			goto next_candidate;
+		if (retry != 0 && (cmd == CMD_BOUGYO || cmd == CMD_BOUGYO2))
+			goto next_candidate;
+
+		if (cmd == CMD_WAZA)
+		{
+			req->parameter = act_no;
+			if (act_no == WAZA_KOUGEKI)
+				req->command = CMD_KOUGEKI;
+		}
+
+		// 対象を選ぶ
+		req->rng = act->rng;
+		tgt_mode = act->target_mode;
+		switch (tgt_mode)
+		{
+		case 2:
+		case 4:
+			tgt = BattleTarget_SelectForAction(req->unit_id, act);
+			if (tgt == -2)
+			{
+				side = 0;
+				if (req->unit_id <= (u32)MIKATA_MAX)
+					side = 1;
+				tgt = BattleTarget_SelectRandomPosition(side);
+			}
+			if (tgt != -1)
+			{
+				req->target = tgt;
+				keep_going = 0;
+			}
+			break;
+		case 1:
+			tgt2 = BattleTarget_SelectForAction(req->unit_id, act);
+			if (tgt2 == -2)
+			{
+				side2 = 0;
+				if (req->unit_id <= (u32)MIKATA_MAX)
+					side2 = 1;
+				tgt2 = BattleTarget_SelectRandomPosition(side2);
+			}
+			if (tgt2 != -1)
+			{
+				req->target = tgt2;
+				keep_going = 0;
+			}
+			break;
+		case 3:
+			req->target = Battle_FindTaggedSlotByValue(req->unit_id);
 			break;
 		default:
-			goto done;
-		}
-	}
-
-	// エナジーならEPとふうじを確かめる
-	// target_strategy が 0 でなければEP不足を、2 ならふうじも避ける
-	if (req->command != CMD_ITEM && Ability_CheckStatusOrSpecialId(act_no) != 0)
-	{
-		req->command = CMD_ENA;
-		req->parameter = act_no;
-		if (act->pp_cost > unit->ep && enm->target_strategy != 0)
-			goto next_candidate;
-		if (unit->fuuji != 0 && enm->target_strategy == 2)
-			goto next_candidate;
-	}
-	cmd = req->command;
-	if (cmd == CMD_NIGERU && (u8)unit->chouhatsu != 0)
-		goto next_candidate;
-	if (retry != 0 && (cmd == CMD_BOUGYO || cmd == CMD_BOUGYO2))
-		goto next_candidate;
-
-	if (cmd == CMD_WAZA)
-	{
-		req->parameter = act_no;
-		if (act_no == WAZA_KOUGEKI)
-			req->command = CMD_KOUGEKI;
-	}
-
-	// 対象を選ぶ
-	req->rng = act->rng;
-	tgt_mode = act->target_mode;
-	switch (tgt_mode)
-	{
-	case 2:
-	case 4:
-		tgt = BattleTarget_SelectForAction(req->unit_id, act);
-		if (tgt == -2)
-		{
-			side = 0;
-			if (req->unit_id <= (u32)MIKATA_MAX)
-				side = 1;
-			tgt = BattleTarget_SelectRandomPosition(side);
-		}
-		if (tgt != -1)
-		{
-			req->target = tgt;
-			keep_going = 0;
-		}
-		break;
-	case 1:
-		tgt2 = BattleTarget_SelectForAction(req->unit_id, act);
-		if (tgt2 == -2)
-		{
-			side2 = 0;
-			if (req->unit_id <= (u32)MIKATA_MAX)
-				side2 = 1;
-			tgt2 = BattleTarget_SelectRandomPosition(side2);
-		}
-		if (tgt2 != -1)
-		{
+			tgt2 = Battle_FindTaggedSlotByValue(req->unit_id);
 			req->target = tgt2;
 			keep_going = 0;
+			break;
 		}
-		break;
-	case 3:
-		req->target = Battle_FindTaggedSlotByValue(req->unit_id);
-		break;
-	default:
-		tgt2 = Battle_FindTaggedSlotByValue(req->unit_id);
-		req->target = tgt2;
-		keep_going = 0;
-		break;
 	}
-
-finish_target:
 	if (retry == 0)
 		keep_going = 0;
 next_candidate:

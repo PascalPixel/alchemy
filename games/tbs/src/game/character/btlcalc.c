@@ -288,10 +288,10 @@ s32 BattleFx_GetBaseSuccessRate(s32 effect_id)
 		return 0x32;
 	case 48:
 		battle_result = 0x3C;
-		goto block_18;
+		break;
 	case 49:
 		battle_result = 0x5A;
-		goto block_18;
+		break;
 	case 0:
 	case 1:
 	case 20:
@@ -301,7 +301,6 @@ s32 BattleFx_GetBaseSuccessRate(s32 effect_id)
 		battle_result = 0x64;
 		break;
 	}
-block_18:
 	return 0 - battle_result;
 }
 
@@ -364,7 +363,7 @@ s32 BattleFx_RollSuccess(
 
 	if (effect_id == 3 && *(s8 *)(state + (u32) & ((struct BtlUnit *)0)->doku) == 0)
 	{
-		goto fail;
+		return 0;
 	}
 
 	goto action4_check;
@@ -374,7 +373,7 @@ action4_tail:
 		&& state[(u32) & ((struct BtlUnit *)0)->fuuji] == 0
 		&& state[(u32) & ((struct BtlUnit *)0)->shiryo] == 0)
 	{
-		goto fail;
+		return 0;
 	}
 	goto action4_done;
 action4_check:
@@ -437,6 +436,5 @@ action4_done:
 			return 1;
 		}
 	}
-fail:
 	return 0;
 }

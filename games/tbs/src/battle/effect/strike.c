@@ -1643,24 +1643,23 @@ void Graphics_ConvertBackgroundToBlueRamp(void)
 			do
 			{
 				y = row - delays[x];
-				if (y < 0)
-					goto next_pixel;
-				if (y > 119)
-					goto next_pixel;
+				if (y >= 0)
 				{
-					pixel = PIXEL_BUFFER
-							+ ((x & 7) + ((x / 8) << 6) + ((y & 7) << 3) + ((y / 8) << 11));
-					color = ((s16 *)0x05000000)[*pixel];
-					red = color & 31;
-					green = (color >> 5) & 31;
-					blue = (color >> 10) & 31;
-					if (red < green)
-						red = green;
-					if (red < blue)
-						red = blue;
-					*pixel = 63 - red;
+					if (y <= 119)
+					{
+						pixel = PIXEL_BUFFER
+								+ ((x & 7) + ((x / 8) << 6) + ((y & 7) << 3) + ((y / 8) << 11));
+						color = ((s16 *)0x05000000)[*pixel];
+						red = color & 31;
+						green = (color >> 5) & 31;
+						blue = (color >> 10) & 31;
+						if (red < green)
+							red = green;
+						if (red < blue)
+							red = blue;
+						*pixel = 63 - red;
+					}
 				}
-			next_pixel:
 				x++;
 			} while (x != 256);
 			row++;
@@ -5070,29 +5069,22 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
 				{
 					AudioCommand_PlayFar(143);
 				}
-				if (frame < start)
+				if (frame >= start && frame < start + 72)
 				{
-					goto next;
+					EffectPosition_ApplyStepAndYOffset(work->effect->actors[i], &pos);
+					if (work->effect->side == 1)
+					{
+						pos.x -= 112;
+					}
+					y = pos.y;
+					pos.y = y - 16;
+					draw[0](canvas, work->sheet + 1728, pos.x - 8, y - 20, 16, 20);
+					if (frame >= start)
+					{
+						cel = ((frame - start) + marker->variant) / 6 % 9;
+						draw[0](canvas, work->sheet + cel * 192, pos.x - 8, pos.y - 16, 16, 12);
+					}
 				}
-				if (frame >= start + 72)
-				{
-					goto next;
-				}
-				EffectPosition_ApplyStepAndYOffset(work->effect->actors[i], &pos);
-				if (work->effect->side == 1)
-				{
-					pos.x -= 112;
-				}
-				y = pos.y;
-				pos.y = y - 16;
-				draw[0](canvas, work->sheet + 1728, pos.x - 8, y - 20, 16, 20);
-				if (frame < start)
-				{
-					goto next;
-				}
-				cel = ((frame - start) + marker->variant) / 6 % 9;
-				draw[0](canvas, work->sheet + cel * 192, pos.x - 8, pos.y - 16, 16, 12);
-			next:
 				marker++;
 				i++;
 			} while (i != work->effect->count);

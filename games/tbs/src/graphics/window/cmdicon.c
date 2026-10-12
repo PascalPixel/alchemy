@@ -626,26 +626,21 @@ void Menu_DrawModeLabel(void)
 		state->previous_mode = state->selection;
 		UiWindow_ClearInteriorTiles(state->lower_window, 8, 40, MODE_LABEL_RIGHT, 80);
 
-		if (state->selection != 1)
+		switch (state->selection)
 		{
-			if (state->selection > 1)
-				goto mode_other;
-			if (state->selection != 0)
-				goto mode_other;
+		case 0:
+		{
+			s32 text = (s32)MsgPasswordLevel;
 
-			{
-				s32 text = (s32)MsgPasswordLevel;
-
-				UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 40);
-				UiText_DrawCharacterAtOffset(text + 1, state->lower_window, MODE_LABEL_X, 48);
-				UiText_DrawCharacterAtOffset(text + 2, state->lower_window, MODE_LABEL_X, 56);
-				UiText_DrawCharacterAtOffset(text + 3, state->lower_window, MODE_LABEL_X, 64);
-				text += 4;
-				UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 72);
-				goto done;
-			}
+			UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 40);
+			UiText_DrawCharacterAtOffset(text + 1, state->lower_window, MODE_LABEL_X, 48);
+			UiText_DrawCharacterAtOffset(text + 2, state->lower_window, MODE_LABEL_X, 56);
+			UiText_DrawCharacterAtOffset(text + 3, state->lower_window, MODE_LABEL_X, 64);
+			text += 4;
+			UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 72);
+			break;
 		}
-
+		case 1:
 		{
 			s32 text = (s32)MsgPasswordLevel;
 
@@ -653,17 +648,18 @@ void Menu_DrawModeLabel(void)
 			UiText_DrawCharacterAtOffset(text + 1, state->lower_window, MODE_LABEL_X, 48);
 			text += 2;
 			UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 56);
-			goto done;
+			break;
 		}
-
-	mode_other:
+		case 2:
+		default:
 		{
 			s32 text = (s32)MsgPasswordLevel;
 
 			UiText_DrawCharacterAtOffset(text++, state->lower_window, MODE_LABEL_X, 40);
 			UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 48);
+			break;
 		}
-	done:;
+		}
 	}
 }
 

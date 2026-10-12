@@ -94,7 +94,7 @@
     "*/games/tla/src/system/memory/debugnum.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00014b9c)
     "*/games/tla/src/system/memory/memory.o"(.text)
-    "*/games/common/src/graphics/render/render.o"(.text)
+    "*/games/common/src/runtime/render.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00015050)
     "*/recon/tla/de/rom.o"(.rom.00015094)
     "*/recon/tla/de/rom.o"(.rom.00015110)

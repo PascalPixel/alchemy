@@ -1,23 +1,36 @@
-#include "resource.h"
-#include "vram_block.h"
+/* Near miss, differ 2 of 50 (one reordered pair): the twin of The Broken Seal's
+ * BattleFx_UpdateDescendingParticleNegativeArc, on object_runtime.h's fields; 080e0f40 with
+ * the signs turned. The listing loads the 0xfffe0000 literal before source->x
+ * (ldr r4, =-0x20000; ldr r3, [r6, #8]); this loads source->x first. Measured: without the
+ * party pointer and its one-pass block, differ 4 (particle->terrain_height is also loaded
+ * after 0x1fa is built); the floor in a local, the -0x20000 in a local, and a one-pass block
+ * before the x store, each the same 2. */
 #include "types.h"
+#include "object_runtime.h"
+#include "party_state.h"
 #include "scene_ids.h"
 
-void BattleFx_UpdateDescendingParticleNegativeArc(struct ArcParticle *particle)
+void Object_Destroy(struct ObjectRuntime *object);
+
+void BattleFx_UpdateDescendingParticleNegativeArc(struct ObjectRuntime *particle)
 {
-    struct ArcParticle *source;
+    struct ObjectRuntime *source;
     s32 y;
     s32 limit;
     s32 scale;
+    struct PartyState *party = &gPartyState;
 
-    limit = particle->floor + 0xA0000;
-    source = particle->source;
-    if (gGameState.scene == (s32)&SceneId_Clear)
-        limit = particle->floor + 0x40000;
+    /* FAKEMATCH: the one-pass block after the party pointer loads the particle's floor before 0x1fa is built (one reordered pair, differ 2 more without it). */
+    do { } while (0);
+
+    limit = particle->terrain_height + 0xA0000;
+    source = particle->linked_object;
+    if (party->map == (s32)&SceneId_Ov64a)
+        limit = particle->terrain_height + 0x40000;
 
     y = particle->y;
     if (y <= limit) {
-        Object_Destroy();
+        Object_Destroy(particle);
         return;
     }
 

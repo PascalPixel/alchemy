@@ -1,5 +1,17 @@
 #include "audio_engine.h"
 
+void SoundDriver_Update(void);
+
+void Func_081c0f3c(void)
+{
+    SoundDriver_Update();
+}
+
+void MusicCommand_SetPitchAndUpdateFrequency(u16 scale)
+{
+    MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, scale);
+}
+
 void MusicCommand_SetPitch(s16 pitch)
 {
     s32 player;

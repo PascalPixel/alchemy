@@ -1,4 +1,3 @@
-/* Near miss: listing 56 instructions, draft 56, common 53, differ 6; the rest differs in instruction order. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -10,10 +9,10 @@ struct EventWork {
 
 struct ObjectRuntime *Func_080eaf28(s32 *position, s32 check_y)
 {
-    struct EventWork *event = Ram_HeapSlots->event_work;
     u32 i;
 
     for (i = 8; i < 64; i++) {
+        struct EventWork *event = Ram_HeapSlots->event_work;
         struct ObjectRuntime *object = event->objects[i];
 
         if (check_y) {

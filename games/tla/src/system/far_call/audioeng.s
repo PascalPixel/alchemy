@@ -22,7 +22,7 @@ Func_081c0018:
 	.global Func_081c0020
 	.thumb_func
 Func_081c0020:
-	overlay_veneer Func_081c0f44
+	overlay_veneer MusicCommand_SetPitchAndUpdateFrequency
 	.global MusicCommand_SetPitchFar
 	.thumb_func
 MusicCommand_SetPitchFar:

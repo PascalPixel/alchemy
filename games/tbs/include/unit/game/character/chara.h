@@ -71,16 +71,6 @@ u32 Owner_GetLevelThreshold(s32 owner, s32 level);
 struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res);
 struct LevelUpResult *Owner_GetValueIfLevelThresholdReached(s32 owner_no, struct LevelUpResult *value);
 void Party_AdvanceOwnerCountToTarget(s32 unit, s32 lv);
-s32 GameFlag_Test(s32 flag);
-s32 GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-u32 GameFlag_Toggle(s32 flag);
-s32 GameFlag_GetByte(s32 flag);
-void GameFlag_SetByte(s32 flag, s32 value);
-u8 GameFlag_IncrementByte(s32 flag);
-u8 GameFlag_DecrementByte(s32 flag);
-s32 GameFlag_GetNibble(u32 flag);
-void GameFlag_SetNibble(s32 flag, s32 value);
 s32 Party_AdjustSixDigitCounterB(s32 amount);
 s32 Party_AdjustCounterCappedAt28(s32 amount);
 

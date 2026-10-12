@@ -14,6 +14,8 @@
 #include "serial_runtime.h"
 #include "tla_edition.h"
 #include "text/msg_ids.h"
+#include "btlwork.h"
+#include "iwram_call.h"
 
 
 
@@ -74,4 +76,99 @@ s32 UpdateNameEntries(void)
     }
     MemFree(buffer);
     return named_count;
+}
+
+#define LINK_PARTY_UNIT_BYTES  340
+#define LINK_PARTY_OFFER_BYTES 340
+
+struct LinkOfferEntry
+{
+	u8 unknown_00[2];
+	u8 unit_id;
+	u8 unknown_03;
+};
+
+struct LinkOfferList
+{
+	struct LinkOfferEntry entries[72];
+	s32					  count;
+};
+
+struct LinkOfferTable
+{
+	u8					 unknown_00[8];
+	struct LinkOfferList list;
+};
+
+struct LinkUnit
+{
+	u8 unknown_000[0x12a];
+	u8 side;
+};
+
+s32	  BattleParty_PrepareActiveOwners(u16 *unit_ids);
+s32	  Func_0801680c(void *source, s32 size);
+
+s32 LinkBattle_SendParty(void)
+{
+	u8					  *buffer;
+	struct BtlWork		  *work;
+	s32					   j;
+	struct LinkOfferList *list;
+	s32					   size;
+	s32					   count;
+	s32					   i;
+	s32					   mark;
+	u16					   owners[8];
+
+	size = LINK_PARTY_UNIT_BYTES;
+	buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
+	mark = 0xff;
+	work = Ram_HeapSlots->battle_work;
+	for (i = 7; i >= 0; i--)
+		work->owner_slots[i] = mark;
+	count = BattleParty_PrepareActiveOwners(owners);
+	for (i = 0; i < count; i++)
+	{
+		Iwram_CopyWords(buffer, UnitGet(owners[i]), size);
+		((struct LinkUnit *)buffer)->side = 2;
+		work->owner_slots[owners[i]] = i - 128;
+		if (Func_0801680c(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+			break;
+		SerialRuntime_WaitForTransferA();
+		WaitFrames(2);
+	}
+	for (; i <= 2; i++)
+	{
+		((struct LinkUnit *)buffer)->side = 0;
+		if (Func_0801680c(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+			break;
+		SerialRuntime_WaitForTransferA();
+		WaitFrames(2);
+	}
+	size = LINK_PARTY_OFFER_BYTES;
+	MemFree(buffer);
+	buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
+	/* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's copy is emitted before the count's address as in the reference (differ 4 without it), as The Broken Seal's LinkBattle_SendParty. */
+	do
+	{
+		Iwram_CopyWords(buffer, Trade_GetOfferStateFar(0), size);
+	} while (0);
+	list = &((struct LinkOfferTable *)buffer)->list;
+	for (j = 0; j < list->count;)
+	{
+		list->entries[j].unit_id = work->owner_slots[list->entries[j].unit_id];
+		/* FAKEMATCH: the empty one-pass block ends the scheduling region after the step, so the entry pointer advances before the count is reloaded as in the reference (differ 2 without it). */
+		j++;
+		do
+		{
+		} while (0);
+	}
+	if (Func_0801680c(buffer, LINK_PARTY_OFFER_BYTES) != -1)
+	{
+		SerialRuntime_WaitForTransferA();
+		WaitFrames(1);
+		WaitFrames(2);
+	}
+	MemFree(buffer);
 }

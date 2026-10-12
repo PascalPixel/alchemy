@@ -1345,7 +1345,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00118eb0)
     "*/recon/tla/ja/rom.o"(.rom.00118f6c)
     "*/games/tla/src/game/party/update_name_entries.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.00119148)
     "*/games/tla/src/graphics/text/copy_five_chars.o"(.text)
     "*/games/common/src/battle/presentation/wait_sync.o"(.text)
     "*/games/tla/src/battle/party/assign_member_slots.o"(.text)

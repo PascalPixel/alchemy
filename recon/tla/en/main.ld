@@ -1702,7 +1702,6 @@
         "*/recon/tla/raw/08118eb0.o"(.text)
         "*/recon/tla/raw/08118f6c.o"(.text)
         "*/games/tla/src/game/party/update_name_entries.o"(.text)
-        "*/recon/tla/raw/08119148.o"(.text)
         "*/games/tla/src/graphics/text/copy_five_chars.o"(.text)
         "*/games/common/src/battle/presentation/wait_sync.o"(.text)
         "*/games/tla/src/battle/party/assign_member_slots.o"(.text)

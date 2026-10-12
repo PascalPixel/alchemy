@@ -60,7 +60,6 @@ extern u8		  Menu_PairSpriteBTiles[];
 extern const u8	  Menu_QuantityTiles[];
 extern const char DjinnMenu_TextLevel[];
 extern const char DjinnMenu_TextSlash[];
-extern s16		  Shop_StockTable[][33];
 #ifndef OWN_gMenuCtrlWork
 extern struct ObjectSystemWork *gMenuCtrlWork;
 #endif

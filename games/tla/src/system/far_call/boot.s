@@ -404,7 +404,7 @@ GameFlag_ClearBitFar:
 	.global GameFlag_ToggleFar
 	.thumb_func
 GameFlag_ToggleFar:
-	overlay_veneer Func_08016d34
+	overlay_veneer GameFlag_Toggle
 	.global GameFlag_GetByteFar
 	.thumb_func
 GameFlag_GetByteFar:

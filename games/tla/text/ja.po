@@ -14703,7 +14703,7 @@ msgctxt "message"
 msgid "03673"
 msgstr "みんなで"
 
-msgctxt "message"
+msgctxt "MsgAreaTitleScreen"
 msgid "03674"
 msgstr "タイトルがめん"
 

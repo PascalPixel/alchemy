@@ -14695,7 +14695,7 @@ msgctxt "message"
 msgid "03671"
 msgstr "Together"
 
-msgctxt "message"
+msgctxt "MsgAreaTitleScreen"
 msgid "03672"
 msgstr "Title screen"
 

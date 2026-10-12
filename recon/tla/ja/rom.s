@@ -261,12 +261,6 @@ Func_08016990:
 	.thumb_func
 UnitGet:
 	.incbin "baserom.gba", 0x00016ca4, 0x00000040
-	.section .rom.00016d34, "ax"
-	.global Func_08016d34
-	.type Func_08016d34, %function
-	.thumb_func
-Func_08016d34:
-	.incbin "baserom.gba", 0x00016d34, 0x00000028
 	.section .rom.00016dd0, "ax"
 	.global Func_08016dd0
 	.type Func_08016dd0, %function
@@ -996,18 +990,6 @@ Menu_RunTopSelection:
 	.thumb_func
 UiWindow_OpenMode1AndWaitFrame:
 	.incbin "baserom.gba", 0x0003f934, 0x00000010
-	.section .rom.0003f9a0, "ax"
-	.global Func_0803f86c
-	.type Func_0803f86c, %function
-	.thumb_func
-Func_0803f86c:
-	.incbin "baserom.gba", 0x0003f9a0, 0x000000d0
-	.section .rom.0003fa70, "ax"
-	.global UiTimedNotice_CloseIfActive
-	.type UiTimedNotice_CloseIfActive, %function
-	.thumb_func
-UiTimedNotice_CloseIfActive:
-	.incbin "baserom.gba", 0x0003fa70, 0x0000002c
 	.section .rom.0003faf4, "ax"
 	.global Func_0803f9c0
 	.type Func_0803f9c0, %function
@@ -2314,6 +2296,10 @@ Object_LinkObjectAndSetCallbackFar:
 ObjectTable_ReadActiveValueFar:
 	.incbin "baserom.gba", 0x000c8620, 0x00000008
 	.section .rom.000c8648, "ax"
+	.global Scene_GetAreaNameIndexFar
+	.type Scene_GetAreaNameIndexFar, %function
+	.thumb_func
+Scene_GetAreaNameIndexFar:
 	.incbin "baserom.gba", 0x000c8648, 0x00000038
 	.global Object_SetActionCallbackFar
 	.type Object_SetActionCallbackFar, %function

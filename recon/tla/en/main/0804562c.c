@@ -1,16 +1,19 @@
+#include "types.h"
+#include "graphics.h"
+#include "system.h"
 #include "resource.h"
 #include "mem.h"
+#include "glyph.h"
+#include "dma.h"
+#include "io_reg.h"
 
-struct GlyphPalette {
-    u8 slot[256];
-    s32 count;
-};
+#define Resource_DecodeByteLzInRam ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
 
-s32 Resource_DecodeByteLz(const void *source, void *destination);
+extern char ResourceId_CommandIcons;
 
 void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
 {
-    u8 *decoded;
+    GlyphTransfer *decoded;
     u8 *font;
     u8 *remapped;
     u8 *src;
@@ -18,12 +21,12 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
     s32 i;
     u32 index;
 
-    decoded = Runtime_AllocateHeapBlock(17, 0x608);
+    decoded = (GlyphTransfer *)Runtime_AllocateHeapBlock(68, sizeof(*decoded));
     font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
-    *(u8 **)(decoded + 0x604) = font + ((u16 *)font)[glyph];
-    Resource_DecodeByteLz(*(u8 **)(decoded + 0x604), decoded);
+    decoded->encoded = font + ((u16 *)font)[glyph];
+    Resource_DecodeByteLzInRam(decoded->encoded, decoded);
     remapped = MemAlloc(0x400);
-    src = decoded;
+    src = decoded->input;
     dst = remapped;
     for (i = 0; i < 0x400; i++) {
         index = *src++;
@@ -36,7 +39,7 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
         }
         *dst++ = palette->slot[index];
     }
-    Dma_Set(remapped, (void *)(0x06004000 + tile * 64), 0x84000100, (volatile u32 *)0x040000d4);
+    Dma_Set(remapped, (void *)(0x06004000 + tile * 64), 0x84000100, REG_DMA3);
     MemFree(remapped);
-    Runtime_ReleaseHeapBlock(17);
+    Runtime_ReleaseHeapBlock(68);
 }

@@ -16539,7 +16539,7 @@ msgctxt "message"
 msgid "04132"
 msgstr "Ensemble"
 
-msgctxt "message"
+msgctxt "MsgAreaTitleScreen"
 msgid "04133"
 msgstr "Ecran titre"
 

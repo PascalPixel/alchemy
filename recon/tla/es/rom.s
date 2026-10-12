@@ -291,12 +291,6 @@ Func_08016990:
 	.thumb_func
 UnitGet:
 	.incbin "baserom.gba", 0x00016cd0, 0x00000040
-	.section .rom.00016d60, "ax"
-	.global Func_08016d34
-	.type Func_08016d34, %function
-	.thumb_func
-Func_08016d34:
-	.incbin "baserom.gba", 0x00016d60, 0x00000028
 	.section .rom.00016dfc, "ax"
 	.global Func_08016dd0
 	.type Func_08016dd0, %function
@@ -1103,18 +1097,6 @@ Menu_RunTopSelection:
 	.thumb_func
 UiWindow_OpenMode1AndWaitFrame:
 	.incbin "baserom.gba", 0x0003f860, 0x00000010
-	.section .rom.0003f8cc, "ax"
-	.global Func_0803f86c
-	.type Func_0803f86c, %function
-	.thumb_func
-Func_0803f86c:
-	.incbin "baserom.gba", 0x0003f8cc, 0x000000d0
-	.section .rom.0003f99c, "ax"
-	.global UiTimedNotice_CloseIfActive
-	.type UiTimedNotice_CloseIfActive, %function
-	.thumb_func
-UiTimedNotice_CloseIfActive:
-	.incbin "baserom.gba", 0x0003f99c, 0x0000002c
 	.section .rom.0003fa20, "ax"
 	.global Func_0803f9c0
 	.type Func_0803f9c0, %function

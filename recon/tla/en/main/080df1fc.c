@@ -73,7 +73,7 @@ s32 Func_08020210(struct FxObject *object, struct FxPosition *position);
 struct FxObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct FxObject *object, s32 magnitude, s32 angle);
 void Object_Destroy(struct FxObject *object);
-void Func_080dfb0c(struct FxObject *object);
+void BattleFx_SpawnRadialParticleRing(struct FxObject *object);
 
 static __inline__ s32 Object_ProbeRaised(struct FxObject *object, struct FxPosition *position)
 {
@@ -273,7 +273,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
         WaitFrames(1);
         for (i = 0; i < 90 && target->velocity_y < 0; i++)
             WaitFrames(1);
-        Func_080dfb0c(target);
+        BattleFx_SpawnRadialParticleRing(target);
         BattleFx_PrepareBufferInterpolation();
         WaitFrames(30);
     } else {

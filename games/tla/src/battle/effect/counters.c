@@ -31,3 +31,26 @@ void BattleFx_ResetCounters(void)
     state->counters[10] = 0;
     state->counters[11] = 0;
 }
+
+s32 BattleFx_SumCounters(void)
+{
+    struct BattleEffectCounterState *state = Ram_HeapSlots->event_work;
+
+    return state->counters[0] + state->counters[1] + state->counters[2]
+        + state->counters[3] + state->counters[4] + state->counters[5]
+        + state->counters[6] + state->counters[7] + state->counters[8]
+        + state->counters[9] + state->counters[10] + state->counters[11];
+}
+
+s32 GameFlag_Test(s32 flag);
+s32 Party_FindOwnerWithActionFar(s32 action);
+
+void Func_080cb05c(void)
+{
+    u8 *work = Ram_HeapSlots->event_work;
+
+    if (GameFlag_Test(0x8df) && Party_FindOwnerWithActionFar(153) != -1)
+        work[0xd39] = 1;
+    else
+        work[0xd39] = 0;
+}

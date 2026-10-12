@@ -121,6 +121,63 @@ static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d)
     Motion_CamBounds(a, b, c, d);
 }
 
+void ObjectMotion_SetActionVariant(u32 id, s32 variant);
+void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+
+void Func_02000dcc(void)
+{
+    s32 a;
+    s32 b;
+    s32 x;
+    s32 y;
+    s32 z;
+    struct ObjectRuntime *object;
+
+    Flag_Clear(0x203);
+    ObjectMotion_SetActionVariant(64, 3);
+    Func_020011b4();
+    b = 0x102;
+    a = 1;
+    /* FAKEMATCH: the native sets the first argument before it finishes the second (differ 2 without the barrier). */
+    __asm__("" : "+r"(a), "+r"(b));
+    Func_020011bc(a, b + 255, 9, 10);
+    Func_0200115c(11);
+    if (Flag_Test(0x8c8) != 0) {
+        Map_CopyAttributes(41, 13, 2, 1, 39, 13);
+        object = Object_GetById(11);
+        x = 162;
+        z = 216;
+        /* FAKEMATCH: the native starts z before it shifts x; the two barriers keep movs r1, movs r3, lsls r1, movs r2, lsls r3 in that order (differ 2 without them). */
+        __asm__("" : "+r"(x), "+r"(z));
+        x <<= 18;
+        y = 0;
+        /* FAKEMATCH: second barrier of the pair above: y is cleared before z is shifted. */
+        __asm__("" : "+r"(x), "+r"(y), "+r"(z));
+        Object_SetPositionAndResetMotion(object, x, y, z << 16);
+    }
+    if (Flag_Test(0x8ca) != 0)
+        Actor_Place(12, 712 << 16, 424 << 16);
+    Func_020011dc(Data_020013c0);
+    if (Flag_Test(0x9ef) != 0)
+        Actor_Place(8, 568 << 16, 280 << 16);
+    Object_GetById(8)->priority_flags &= 0xfe;
+    Func_02000038(Data_020013ca);
+    Func_020011c4(Data_020013c4);
+    if (Flag_Test(0x8cb) != 0) {
+        Map_CopyCells(75, 66, 97, 39, 2, 2);
+        Map_CopyAttributes(33, 37, 2, 2, 33, 39);
+        Wait(1);
+    }
+    if (Flag_Test(0x8ab) != 0) {
+        Map_CopyCells(82, 74, 116, 16, 5, 3);
+        Map_CopyAttributes(52, 11, 5, 1, 52, 18);
+        if (gPartyState.entrance == 3)
+            Func_02000c94();
+        else
+            Wait(10);
+    }
+}
+
 void Func_02000f2c(void)
 {
     Func_020011b4();

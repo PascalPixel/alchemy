@@ -1,6 +1,6 @@
 #include "game_state.h"
 #include "scene_ids.h"
-#include "unit/field/karei_kyuden/kyuden.h"
+#include "unit/scene/karei_kyuden.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"

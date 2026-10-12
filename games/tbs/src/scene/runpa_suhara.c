@@ -1,6 +1,6 @@
 #include "game_state.h"
 #include "field_event.h"
-#include "unit/field/common/runpa_suhara/suhara.h"
+#include "unit/scene/runpa_suhara.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"
@@ -10,7 +10,7 @@
 #include "unit/battle/effect/djinnev.h"
 #include "unit/battle/effect/psydisp.h"
 #include "unit/battle/effect/psyfx.h"
-#include "interiors.h"
+#include "runpa_suhara.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 

@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/import.h"
-#include "unit/field/arutin_yama/yama.h"
+#include "unit/scene/arutin_yama.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/evtable.h"
@@ -91,7 +91,7 @@ static void EV14_TALK(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/facing.c"
+#include "../field/common/object/facing.c"
 
 static s32 SceneActor_CopyActor8PositionWithFixedY(struct FieldActor *dst)
 {

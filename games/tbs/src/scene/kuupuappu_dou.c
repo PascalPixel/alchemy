@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/import.h"
-#include "unit/field/kuupuappu_dou/dou.h"
+#include "unit/scene/kuupuappu_dou.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"

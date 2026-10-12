@@ -356,15 +356,15 @@ main	rom_tail_02	@games/tbs/src/system/resource/directory
 3a1	unit	games/tbs/src/scene/shian_heya
 3a2	unit	games/tbs/src/scene/yama_rama
 3a3	unit	games/tbs/src/scene/arutin_mura
-3a4	unit	games/tbs/src/field/arutin_yama/yama
+3a4	unit	games/tbs/src/scene/arutin_yama
 3a4	bss	resource_3a4_overlay	.bss
-3a5	unit	games/tbs/src/field/ramakan_sabaku/sabaku
+3a5	unit	games/tbs/src/scene/ramakan_sabaku
 3a5	text	libgcc.a:_call_via_rX
 3a5	text	games/tbs/src/graphics/ramakan/sand
 3a5	bss	resource_3a5_overlay	.bss
-3a6	unit	games/tbs/src/field/haidia_dou/dou
+3a6	unit	games/tbs/src/scene/haidia_dou
 3a6	text	libgcc.a:_call_via_rX
-3a7	unit	games/tbs/src/field/kuupuappu_dou/dou
+3a7	unit	games/tbs/src/scene/kuupuappu_dou
 3a7	text	libgcc.a:_addsub_df
 3a7	text	libgcc.a:_si_to_df
 3a7	text	libgcc.a:_df_to_si
@@ -372,13 +372,13 @@ main	rom_tail_02	@games/tbs/src/system/resource/directory
 3a7	text	libgcc.a:_pack_df
 3a7	text	libgcc.a:_unpack_df
 3a7	text	libgcc.a:_thenan_df
-3a8	unit	games/tbs/src/field/karei_machi/machi
+3a8	unit	games/tbs/src/scene/karei_machi
 3a8	bss	resource_3a8_overlay	.bss
-3a9	unit	games/tbs/src/field/karei_heya/heya
-3aa	unit	games/tbs/src/field/karei_kyuden/kyuden
-3ab	unit	games/tbs/src/field/runpa_mura/mura
-3ac	unit	games/tbs/src/field/common/runpa_suhara/suhara
-3ad	unit	games/tbs/src/field/runpa_dou/dou
+3a9	unit	games/tbs/src/scene/karei_heya
+3aa	unit	games/tbs/src/scene/karei_kyuden
+3ab	unit	games/tbs/src/scene/runpa_mura
+3ac	unit	games/tbs/src/scene/runpa_suhara
+3ad	unit	games/tbs/src/scene/runpa_dou
 3ae	unit	games/tbs/src/field/common/karei_torebi/torebi
 3af	unit	games/tbs/src/field/fune_kanpan/kanpan
 3af	bss	games/tbs/src/field/fune_kanpan/kanpan	.bss COMMON

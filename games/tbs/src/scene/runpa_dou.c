@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "field_event.h"
-#include "unit/field/runpa_dou/dou.h"
+#include "unit/scene/runpa_dou.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"
@@ -11,7 +11,7 @@
 #include "unit/battle/effect/djinnev.h"
 #include "unit/battle/effect/psydisp.h"
 #include "unit/battle/effect/psyfx.h"
-#include "cave.h"
+#include "runpa_dou.h"
 #include "text/msg_ids.h"
 
 // 前方宣言

@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_FIELD_ARUTIN_YAMA_YAMA_H
-#define ALCHEMY_UNIT_FIELD_ARUTIN_YAMA_YAMA_H
+#ifndef ALCHEMY_UNIT_SCENE_ARUTIN_YAMA_H
+#define ALCHEMY_UNIT_SCENE_ARUTIN_YAMA_H
 
 #include "types.h"
 #include "field_scene.h"

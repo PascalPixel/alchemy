@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_FIELD_KAREI_MACHI_MACHI_H
-#define ALCHEMY_UNIT_FIELD_KAREI_MACHI_MACHI_H
+#ifndef ALCHEMY_UNIT_SCENE_KAREI_MACHI_H
+#define ALCHEMY_UNIT_SCENE_KAREI_MACHI_H
 
 #include "types.h"
 #include "field_event.h"

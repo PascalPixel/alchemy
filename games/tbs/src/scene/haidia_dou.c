@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "global_cells.h"
 #include "unit/import.h"
-#include "unit/field/haidia_dou/dou.h"
+#include "unit/scene/haidia_dou.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
@@ -44,10 +44,10 @@ static void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y);
 static void HaidiaDou_ApplyEntryState(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/create.c"
-#include "../common/effect/move.c"
-#include "../common/effect/spawn.c"
-#include "../common/object/staged_actor.c"
+#include "../field/common/effect/create.c"
+#include "../field/common/effect/move.c"
+#include "../field/common/effect/spawn.c"
+#include "../field/common/object/staged_actor.c"
 
 static void EV08_SCRIPT(void)
 {
@@ -561,7 +561,7 @@ static void DialogueLayout_ConfigureRowsByFlag301(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/pairmove.c"
+#include "../field/common/object/pairmove.c"
 
 static void EV20_TOUCH(void)
 {

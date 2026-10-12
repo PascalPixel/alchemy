@@ -1,6 +1,6 @@
 #include "game_state.h"
 #include "scene_ids.h"
-#include "unit/field/karei_heya/heya.h"
+#include "unit/scene/karei_heya.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"

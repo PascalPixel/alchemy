@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_FIELD_RUNPA_DOU_DOU_H
-#define ALCHEMY_UNIT_FIELD_RUNPA_DOU_DOU_H
+#ifndef ALCHEMY_UNIT_SCENE_RUNPA_SUHARA_H
+#define ALCHEMY_UNIT_SCENE_RUNPA_SUHARA_H
 
 #include "types.h"
 #include "field_scene.h"
@@ -9,17 +9,17 @@ struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 
+extern const struct SceneEntrance gInteriorEntrances[];
+extern const u32 gInteriorExits[];
+extern const struct ScenePlacement gInteriorPlacements[];
+extern const struct SceneEvent gInteriorSealedEvents[];
+extern const struct SceneEvent gInteriorReopenedEvents[];
+extern const struct SceneEvent gSuharaGateHouseEvents[];
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
-extern const struct SceneEntrance gCaveEntrances[];
-extern const u32 gCaveExits[];
-extern const struct ScenePlacement gCaveNoPlacements[];
-extern const struct ScenePlacement gCavePlacements[];
-extern const struct SceneEvent gCaveNoEvents[];
-extern const struct SceneEvent gCaveEvents[];
 
 #endif

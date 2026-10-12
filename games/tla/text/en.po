@@ -14083,7 +14083,7 @@ msgctxt "message"
 msgid "03518"
 msgstr "Monsters won't attack{line_break}so often now.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAbilityWoreOff"
 msgid "03519"
 msgstr "{argument_ability_name}'s effects wore off.{end_wait}"
 
@@ -14091,7 +14091,7 @@ msgctxt "message"
 msgid "03520"
 msgstr "Use {argument_item_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgItemWoreOff"
 msgid "03521"
 msgstr "{argument_item_name:1}'s effects wore off.{end_wait}"
 

@@ -14087,7 +14087,7 @@ msgctxt "message"
 msgid "03519"
 msgstr "モンスターが おそってきにくくなった{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAbilityWoreOff"
 msgid "03520"
 msgstr "{argument_ability_name}の こうかがきれた。{end_wait}"
 
@@ -14095,7 +14095,7 @@ msgctxt "message"
 msgid "03521"
 msgstr "{argument_item_name:134} 使いますか?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgItemWoreOff"
 msgid "03522"
 msgstr "{argument_item_name:233} こうかがきれた{end_wait}"
 

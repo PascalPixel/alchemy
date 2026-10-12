@@ -9,7 +9,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_669/scene_events.o"(.text)
         "*/resource_669_overlay.o"(.text.x02008250)
         "*/games/tla/src/field/overlay_669/prepare.o"(.text)
-        "*/resource_669_overlay.o"(.text.x020083e8)
+        "*/games/tla/src/field/overlay_669/spawn.o"(.text)
         "*/resource_669_overlay.o"(.text.x02008438)
         "*/games/tla/src/field/overlay_669/cutscene.o"(.text)
         "*/games/tla/src/field/overlay_669/import.o"(.text)

@@ -1657,7 +1657,6 @@
         "*/recon/tla/raw/081082c4.o"(.text)
         "*/games/tla/src/menu/shop/preset.o"(.text)
         "*/games/tla/src/sound/command_wait_for_state_byte_clear.o"(.text)
-        "*/recon/tla/raw/081084f4.o"(.text)
         "*/games/tla/src/menu/shop/choice.o"(.text)
         "*/recon/tla/raw/08108690.o"(.text)
         "*/games/tla/src/menu/shop/shop.o"(.text)

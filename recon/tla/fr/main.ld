@@ -1279,7 +1279,6 @@
     "*/recon/tla/fr/rom.o"(.rom.00108148)
     "*/games/tla/src/menu/shop/preset.o"(.text)
     "*/games/tla/src/sound/command_wait_for_state_byte_clear.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.001084f4)
     "*/games/tla/src/menu/shop/choice.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00108690)
     "*/games/tla/src/menu/shop/shop.o"(.text)

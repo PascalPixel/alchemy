@@ -2908,12 +2908,9 @@ DisplayTransition_Start:
 	.thumb_func
 DisplayTransition_Finish:
 	.incbin "baserom.gba", 0x000d0520, 0x0000020c
-	.section .rom.000d0748, "ax"
-	.global Func_080d01cc
-	.type Func_080d01cc, %function
-	.thumb_func
-Func_080d01cc:
-	.incbin "baserom.gba", 0x000d0748, 0x0000020c
+	.section .rom.000d0788, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x000d0788, 0x000001cc
 	.global Func_080d0954
 	.type Func_080d0954, %function
 	.thumb_func
@@ -2937,10 +2934,10 @@ DisplayTransition_FillTilemapAndSolidTile:
 BattleFx_BuildColorBuffers:
 	.incbin "baserom.gba", 0x000d0e1c, 0x00000868
 	.section .rom.000d1684, "ax"
-	.global Func_080d0748
-	.type Func_080d0748, %function
+	.global BattleEffect_InitializeBuffers
+	.type BattleEffect_InitializeBuffers, %function
 	.thumb_func
-Func_080d0748:
+BattleEffect_InitializeBuffers:
 	.incbin "baserom.gba", 0x000d1684, 0x00000074
 	.section .rom.000d16f8, "ax"
 	.global Func_080d0c50
@@ -4824,9 +4821,8 @@ BattlePlacement_StepPairs:
 	.incbin "baserom.gba", 0x001380ac, 0x00000f1c
 	.section .rom.0013ba50, "ax"
 	.incbin "baserom.gba", 0x0013ba50, 0x000000e8
-	.section .rom.0013bba0, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x0013bba0, 0x00000a0c
+	.section .rom.0013bbd8, "ax"
+	.incbin "baserom.gba", 0x0013bbd8, 0x000009d4
 	.section .rom.0013c5f4, "ax"
 	.balign 4
 	.global Func_0813c5f4

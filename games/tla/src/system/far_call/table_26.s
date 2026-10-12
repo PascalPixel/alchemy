@@ -201,10 +201,10 @@ DisplayTransition_InitializeStateFar:
 	.thumb_func
 DisplayTransition_StartFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Func_080d01cc
+	overlay_veneer Map_ClearLayerFlags
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Func_080d01cc
+	overlay_veneer Map_ClearLayerFlags
 .else
 	overlay_veneer DisplayTransition_Start
 .endif
@@ -224,7 +224,15 @@ DisplayTransition_FinishFar:
 	.global Func_080c8360
 	.thumb_func
 Func_080c8360:
-	overlay_veneer Func_080d0748
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_InitializeBuffers
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_InitializeBuffers
+.else
+	overlay_veneer Map_ClearLayerFlags
+.endif
+.endif
 	.global Func_080c8368
 	.thumb_func
 Func_080c8368:

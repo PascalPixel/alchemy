@@ -3,7 +3,7 @@
 #include "unit/battle/battle.h"
 #include "unit/battle/unit.h"
 #include "unit/battle/smnentry.h"
-#include "unit/battle/effect/objtable.h"
+#include "unit/object/objtable.h"
 #include "unit/runtime/heap.h"
 #include "battle.h"
 #include "keystate.h"

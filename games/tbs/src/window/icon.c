@@ -2,7 +2,7 @@
 #include "unit/window/icon.h"
 #include "unit/window/output.h"
 #include "unit/window/save.h"
-#include "unit/battle/effect/objtable.h"
+#include "unit/object/objtable.h"
 #include "unit/runtime/runtime.h"
 #include "unit/runtime/objvram.h"
 #include "unit/runtime/heap.h"

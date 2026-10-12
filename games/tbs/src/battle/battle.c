@@ -10,7 +10,7 @@
 #include "unit/battle/screen.h"
 #include "unit/battle/enemy.h"
 #include "unit/battle/spoils.h"
-#include "unit/battle/effect/objtable.h"
+#include "unit/object/objtable.h"
 #include "unit/runtime/runtime.h"
 #include "unit/runtime/fade.h"
 #include "unit/runtime/objvram.h"

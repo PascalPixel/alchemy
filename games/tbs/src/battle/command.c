@@ -7,7 +7,7 @@
 #include "unit/battle/action.h"
 #include "unit/battle/tgtexec.h"
 #include "unit/battle/screen.h"
-#include "unit/battle/effect/objtable.h"
+#include "unit/object/objtable.h"
 #include "unit/runtime/runtime.h"
 #include "unit/runtime/math.h"
 #include "unit/runtime/heap.h"

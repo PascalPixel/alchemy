@@ -3,7 +3,7 @@
 #include "unit/battle/effect/dispatch.h"
 #include "unit/battle/effect/burst.h"
 #include "unit/battle/effect/step.h"
-#include "unit/battle/effect/objtable.h"
+#include "unit/object/objtable.h"
 #include "unit/runtime/runtime.h"
 #include "unit/runtime/sched.h"
 #include "unit/runtime/math.h"

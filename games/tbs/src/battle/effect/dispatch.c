@@ -9,7 +9,7 @@
 #include "unit/battle/effect/step.h"
 #include "unit/battle/effect/djinnfx.h"
 #include "unit/battle/effect/swirl.h"
-#include "unit/battle/effect/objtable.h"
+#include "unit/object/objtable.h"
 #include "unit/runtime/runtime.h"
 #include "unit/runtime/heap.h"
 #include "battle.h"

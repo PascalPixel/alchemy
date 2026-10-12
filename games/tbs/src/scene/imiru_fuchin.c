@@ -2,7 +2,7 @@
 #include "keystate.h"
 #include "scene_ids.h"
 #include "unit/import.h"
-#include "unit/field/common/imiru_fuchin/fuchin.h"
+#include "unit/scene/imiru_fuchin.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/evtable.h"
@@ -174,7 +174,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../object/pairmove.c"
+#include "../field/common/object/pairmove.c"
 
 static void EV11_TOUCH_2(void)
 {

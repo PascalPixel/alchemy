@@ -1,5 +1,5 @@
 #include "game_state.h"
-#include "unit/field/shian_heya/heya.h"
+#include "unit/scene/shian_heya.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
@@ -27,9 +27,9 @@
 #include "fieldobj.h"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/create.c"
-#include "../common/effect/move.c"
-#include "../common/effect/spawn.c"
+#include "../field/common/effect/create.c"
+#include "../field/common/effect/move.c"
+#include "../field/common/effect/spawn.c"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"

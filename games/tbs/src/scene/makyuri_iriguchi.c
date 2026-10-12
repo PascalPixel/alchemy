@@ -3,10 +3,10 @@
 #include "heap_state.h"
 #include "keystate.h"
 #include "unit/import.h"
-#include "unit/field/makyuri_iriguchi/iriguchi.h"
+#include "unit/scene/makyuri_iriguchi.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/common/makyuri/lights.h"
-#include "unit/field/makyuri_iriguchi/pillar.h"
+#include "unit/scene/makyuri_iriguchi_pillar.h"
 #include "unit/field/common/makyuri/makyuri.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
@@ -70,11 +70,11 @@ struct WorkPointers
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/create.c"
-#include "../common/effect/move.c"
-#include "../common/effect/spawn.c"
-#include "../common/object/staged_actor.c"
-#include "../common/makyuri/sparks.c"
+#include "../field/common/effect/create.c"
+#include "../field/common/effect/move.c"
+#include "../field/common/effect/spawn.c"
+#include "../field/common/object/staged_actor.c"
+#include "../field/common/makyuri/sparks.c"
 
 static s32 SceneAudio_PlayCue118AndReturnZero(void)
 {
@@ -99,7 +99,7 @@ static s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/makyuri/palette_cycle.c"
+#include "../field/common/makyuri/palette_cycle.c"
 
 static void EV21_TOUCH(void)
 {
@@ -150,7 +150,7 @@ static void EV01_SEARCH(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/makyuri/risedrop.c"
+#include "../field/common/makyuri/risedrop.c"
 
 static void EV67_TOUCH(void)
 {
@@ -274,7 +274,7 @@ static void MakyuriIriguchi_OpenEntrance(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/makyuri/arrive.c"
+#include "../field/common/makyuri/arrive.c"
 
 s32 MakyuriIriguchi_ApplyEntryState(void)
 {
@@ -529,7 +529,7 @@ static void MakyuriIriguchi_RunDoorScene(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/makyuri/lights.c"
+#include "../field/common/makyuri/lights.c"
 
 static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 {
@@ -553,8 +553,8 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "pillar.c"
-#include "../common/makyuri/makyuri.c"
+#include "makyuri_iriguchi_pillar.c"
+#include "../field/common/makyuri/makyuri.c"
 
 s32 gEffectScript0[] = {
 	SC_WAIT(1),

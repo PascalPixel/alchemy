@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "global_cells.h"
 #include "unit/import.h"
-#include "unit/field/mogoru_mori/mori.h"
+#include "unit/scene/mogoru_mori.h"
 #include "unit/field/common/object/orbit.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
@@ -46,12 +46,12 @@ enum
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/staged_actor.c"
+#include "../field/common/object/staged_actor.c"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/create.c"
-#include "../common/effect/move.c"
-#include "../common/effect/spawn.c"
+#include "../field/common/effect/create.c"
+#include "../field/common/effect/move.c"
+#include "../field/common/effect/spawn.c"
 
 struct Vec
 {
@@ -1388,7 +1388,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/orbit.c"
+#include "../field/common/object/orbit.c"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

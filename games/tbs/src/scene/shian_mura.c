@@ -1,6 +1,6 @@
 #include "game_state.h"
 #include "unit/import.h"
-#include "unit/field/shian_mura/mura.h"
+#include "unit/scene/shian_mura.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
@@ -52,9 +52,9 @@ struct PeriodicEffectConfig
 void Effect_Spawn();
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/create.c"
-#include "../common/effect/move.c"
-#include "../common/effect/spawn.c"
+#include "../field/common/effect/create.c"
+#include "../field/common/effect/move.c"
+#include "../field/common/effect/spawn.c"
 
 #define FLAG_SHIAN_WATER_SPILLED 0x200
 
@@ -136,7 +136,7 @@ static void SceneEffect_SpawnPeriodicEffect(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/distance.c"
+#include "../field/common/object/distance.c"
 
 static s32 SceneActor_UpdateTracking(
 	struct MapActor *actor, struct MapActor *target, s32 distance_limit, s32 force_tracking)

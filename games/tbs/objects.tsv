@@ -340,22 +340,22 @@ main	rom_tail_02	@games/tbs/src/system/resource/directory
 398	unit	games/tbs/src/scene/biribino_dou
 399	unit	games/tbs/src/scene/imiru_mura
 399	bss	games/tbs/src/scene/imiru_mura	.bss COMMON
-39a	unit	games/tbs/src/field/common/imiru_fuchin/fuchin
-39a	bss	games/tbs/src/field/common/imiru_fuchin/fuchin	.bss COMMON
-39b	unit	games/tbs/src/field/makyuri_iriguchi/iriguchi
+39a	unit	games/tbs/src/scene/imiru_fuchin
+39a	bss	games/tbs/src/scene/imiru_fuchin	.bss COMMON
+39b	unit	games/tbs/src/scene/makyuri_iriguchi
 39b	text	libgcc.a:_call_via_rX
-39c	unit	games/tbs/src/field/makyuri_heya/heya
+39c	unit	games/tbs/src/scene/makyuri_heya
 39c	text	libgcc.a:_call_via_rX
-39d	unit	games/tbs/src/field/makyuri_chojo/chojo
+39d	unit	games/tbs/src/scene/makyuri_chojo
 39d	text	libgcc.a:_call_via_rX
-39e	unit	games/tbs/src/field/common/shian_jiin/jiin
-39f	unit	games/tbs/src/field/mogoru_mori/mori
+39e	unit	games/tbs/src/scene/shian_jiin
+39f	unit	games/tbs/src/scene/mogoru_mori
 39f	text	libgcc.a:_call_via_rX
-3a0	unit	games/tbs/src/field/shian_mura/mura
+3a0	unit	games/tbs/src/scene/shian_mura
 3a0	text	libgcc.a:_call_via_rX
-3a1	unit	games/tbs/src/field/shian_heya/heya
-3a2	unit	games/tbs/src/field/common/yama_rama/rama
-3a3	unit	games/tbs/src/field/arutin_mura/mura
+3a1	unit	games/tbs/src/scene/shian_heya
+3a2	unit	games/tbs/src/scene/yama_rama
+3a3	unit	games/tbs/src/scene/arutin_mura
 3a4	unit	games/tbs/src/field/arutin_yama/yama
 3a4	bss	resource_3a4_overlay	.bss
 3a5	unit	games/tbs/src/field/ramakan_sabaku/sabaku

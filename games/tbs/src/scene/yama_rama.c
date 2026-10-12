@@ -1,5 +1,5 @@
 #include "game_state.h"
-#include "unit/field/common/yama_rama/rama.h"
+#include "unit/scene/yama_rama.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"

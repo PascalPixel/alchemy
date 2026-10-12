@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/import.h"
-#include "unit/field/makyuri_chojo/chojo.h"
+#include "unit/scene/makyuri_chojo.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/common/object/nearest.h"
 #include "unit/battle/effect/object.h"
@@ -49,7 +49,7 @@ static void MakyuriChojo_FlickerActorEight(void);
 #define NULL ((void *)0)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/create.c"
+#include "../field/common/effect/create.c"
 
 struct EffectParams
 {
@@ -70,8 +70,8 @@ struct ActorTable
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/move.c"
-#include "../common/effect/spawn.c"
+#include "../field/common/effect/move.c"
+#include "../field/common/effect/spawn.c"
 #include "objcmd.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
@@ -280,8 +280,8 @@ static void FieldScene_RunFourActorPresentation(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/distance.c"
-#include "../common/object/nearest.c"
+#include "../field/common/object/distance.c"
+#include "../field/common/object/nearest.c"
 
 static void SceneActor_InitializeMotion(void)
 {

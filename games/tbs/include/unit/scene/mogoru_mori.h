@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_FIELD_MOGORU_MORI_MORI_H
-#define ALCHEMY_UNIT_FIELD_MOGORU_MORI_MORI_H
+#ifndef ALCHEMY_UNIT_SCENE_MOGORU_MORI_H
+#define ALCHEMY_UNIT_SCENE_MOGORU_MORI_H
 
 #include "types.h"
 #include "field_scene.h"

@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_FIELD_COMMON_YAMA_RAMA_RAMA_H
-#define ALCHEMY_UNIT_FIELD_COMMON_YAMA_RAMA_RAMA_H
+#ifndef ALCHEMY_UNIT_SCENE_YAMA_RAMA_H
+#define ALCHEMY_UNIT_SCENE_YAMA_RAMA_H
 
 #include "types.h"
 #include "field_scene.h"

@@ -1,6 +1,6 @@
 #include "game_state.h"
 #include "scene_ids.h"
-#include "unit/field/common/shian_jiin/jiin.h"
+#include "unit/scene/shian_jiin.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
@@ -43,9 +43,9 @@ static void FieldScene_SpawnEightShots(void);
 static void FieldScene_RunParticleRain(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../effect/create.c"
-#include "../effect/move.c"
-#include "../effect/spawn.c"
+#include "../field/common/effect/create.c"
+#include "../field/common/effect/move.c"
+#include "../field/common/effect/spawn.c"
 
 static s32 StopXianActor(void *actor)
 {

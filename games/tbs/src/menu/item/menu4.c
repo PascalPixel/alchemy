@@ -1920,12 +1920,11 @@ s32 Menu_MoveGridCursor(s32 *arg0, s32 *arg1, s32 arg2)
 				}
 				else
 				{
-					goto set_one;
+					col = 1;
 				}
 			}
 			else if (col > 1)
 			{
-			set_one:
 				col = 1;
 			}
 			if ((row == 3) && (col == 1))
@@ -1946,7 +1945,7 @@ s32 Menu_MoveGridCursor(s32 *arg0, s32 *arg1, s32 arg2)
 		}
 		if (row == 4)
 		{
-			goto set_zero;
+			col = 0;
 		}
 		break;
 	case 0x20:
@@ -1977,16 +1976,13 @@ s32 Menu_MoveGridCursor(s32 *arg0, s32 *arg1, s32 arg2)
 		{
 			if (col > 7)
 			{
-				goto set_zero;
+				col = 0;
 			}
 		}
 		else if (col > 1)
 		{
-			goto set_zero;
+			col = 0;
 		}
-		break;
-	set_zero:
-		col = 0;
 		break;
 	}
 	*arg0 = col;

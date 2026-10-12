@@ -334,24 +334,21 @@ static void EV09_TALK(void)
 		Engine_EventOpenMessage(no, mode);
 	}
 
-	if (Engine_EventChooseYesNo(0, 0) != 0)
+	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		goto skip;
+		Engine_EventShowMessage(9, 0);
+		Engine_ActorSetAnimationAndWait(9, 4);
+
+	close:
+		Engine_EventShowMessage(9, 0);
+	}
+	else
+	{
+		work = (u8 *)gEventWork;
+		*(u16 *)(work + 472) += 2;
+		Engine_EventShowMessage(9, 0);
 	}
 
-	Engine_EventShowMessage(9, 0);
-	Engine_ActorSetAnimationAndWait(9, 4);
-
-close:
-	Engine_EventShowMessage(9, 0);
-	goto done;
-
-skip:
-	work = (u8 *)gEventWork;
-	*(u16 *)(work + 472) += 2;
-	Engine_EventShowMessage(9, 0);
-
-done:
 	Engine_EventEnd();
 }
 

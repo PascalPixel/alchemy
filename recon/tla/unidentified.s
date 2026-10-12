@@ -178,9 +178,6 @@ Data_0802f204:
 	.global Script_OperandHandlerTable
 Script_OperandHandlerTable:
 	.incbin "baserom.gba", 0x0002f2dc, 0x000000a4
-	.global Data_0802f380
-Data_0802f380:
-	.incbin "baserom.gba", 0x0002f380, 0x00000f90
 	.section .unidentified.0804e684,"a"
 	.global UiIcon_BaseGlyphPointers
 UiIcon_BaseGlyphPointers:
@@ -4700,19 +4697,10 @@ Resource_Data2EF:
 	.incbin "baserom.gba", 0x00d3fb37, 0x00000001
 	.section .unidentified.08d43c26,"a"
 	.incbin "baserom.gba", 0x00d43c26, 0x00000002
-	.section .unidentified.08d479d8,"a"
-	.global Resource_Data4C8
-Resource_Data4C8:
-	.incbin "baserom.gba", 0x00d479d8, 0x00001f0c
-	.global Resource_Data4C9
-Resource_Data4C9:
-	.incbin "baserom.gba", 0x00d498e4, 0x00002364
-	.global Resource_Data4CA
-Resource_Data4CA:
-	.incbin "baserom.gba", 0x00d4bc48, 0x0000202c
-	.global Resource_Data4CB
-Resource_Data4CB:
-	.incbin "baserom.gba", 0x00d4dc74, 0x0000180c
+	.section .unidentified.08d498e2,"a"
+	.incbin "baserom.gba", 0x00d498e2, 0x00000002
+	.section .unidentified.08d4bc47,"a"
+	.incbin "baserom.gba", 0x00d4bc47, 0x00000001
 	.section .unidentified.08d50bcd,"a"
 	.incbin "baserom.gba", 0x00d50bcd, 0x00000003
 	.section .unidentified.08d50cfa,"a"
@@ -5078,9 +5066,8 @@ Resource_Data57B:
 	.incbin "baserom.gba", 0x00e687ba, 0x00000002
 	.section .unidentified.08e693a6,"a"
 	.incbin "baserom.gba", 0x00e693a6, 0x00000002
-	.global Resource_Data5BC
-Resource_Data5BC:
-	.incbin "baserom.gba", 0x00e693a8, 0x00000ac4
+	.section .unidentified.08e69e6a,"a"
+	.incbin "baserom.gba", 0x00e69e6a, 0x00000002
 	.section .unidentified.08e6b41b,"a"
 	.incbin "baserom.gba", 0x00e6b41b, 0x00000001
 	.section .unidentified.08e6b5ce,"a"
@@ -5099,10 +5086,8 @@ Resource_Data5BC:
 	.incbin "baserom.gba", 0x00e7698d, 0x00000003
 	.section .unidentified.08e77f49,"a"
 	.incbin "baserom.gba", 0x00e77f49, 0x00000003
-	.section .unidentified.08e78dc4,"a"
-	.global Resource_Data5C9
-Resource_Data5C9:
-	.incbin "baserom.gba", 0x00e78dc4, 0x000007d0
+	.section .unidentified.08e79591,"a"
+	.incbin "baserom.gba", 0x00e79591, 0x00000003
 	.section .unidentified.08e7a433,"a"
 	.incbin "baserom.gba", 0x00e7a433, 0x00000001
 	.section .unidentified.08e7b28b,"a"

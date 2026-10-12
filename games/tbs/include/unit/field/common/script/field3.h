@@ -46,11 +46,5 @@ s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj);
 s32 Object_ApproachLinkedObject(struct ObjectRuntime *object);
 s32 Object_Wander(struct ScriptObjectRuntime *object);
 s32 ScriptObject_WanderNearHome(struct ScriptObjectRuntime *object);
-void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation, s32 value);
-void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation, s32 value);
-s32 Script_ApplyOperandSet(struct ScriptOperands *work);
-s32 Script_ApplyOperandAdd(struct ScriptOperands *work);
-s32 Script_ApplyOperandCompare(struct ScriptOperands *work);
 
 #endif

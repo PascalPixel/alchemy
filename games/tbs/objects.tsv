@@ -62,6 +62,7 @@ main	rom_main_01	games/tbs/src/system/updfar
 main	rom_main_01	games/tbs/src/field/common/script/field
 main	rom_main_01	games/tbs/src/field/common/script/field2
 main	rom_main_01	games/tbs/src/field/common/script/field3
+main	rom_main_01	games/tbs/src/field/common/script/field4
 main	rom_main_01	games/tbs/src/field/common/script/field5
 main	rom_main_01	games/tbs/src/field/common/script/field6
 main	rom_main_01	games/tbs/src/field/common/script/field7

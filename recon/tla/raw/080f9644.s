@@ -73,7 +73,7 @@ Func_080f9644:
 	ldr r0, [r1, #48]
 	bl UiText_DrawWorkValueWithLabel
 	movs r0, #0
-	bl Func_080fa50c
+	bl ItemMenu_PrepOwner
 	movs r3, #1
 	adds r7, r0, #0
 	negs r3, r3

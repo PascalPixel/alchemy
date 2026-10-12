@@ -16,7 +16,7 @@ struct TimedNoticeWork {
 
 void UiTimedNotice_Tick(void);
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
-extern u8 MsgAreaTitleScreen;
+extern u8 MsgDebugEntryName;
 
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
 // スペイン語版とイタリア語版の far call 表では、Scene_GetAreaNameIndex へ届く口の名前が違う
@@ -45,7 +45,7 @@ void UiTimedNotice_Create(void)
     y = 8;
     /* FAKEMATCH: Without it the scene's offset is built before the two stores of 8 (differ 4); keep it after them. */
     __asm__("" : : "r"(state));
-    resource = Scene_GetAreaNameIndexFar(state->scene, state->entrance) + (s32)&MsgAreaTitleScreen;
+    resource = Scene_GetAreaNameIndexFar(state->scene, state->entrance) + (s32)&MsgDebugEntryName;
     UiText_GetResourceDimensions(resource, &x, &y, &width, &height);
     x = (30 - width) >> 1;
     y = (10 - height) >> 1;

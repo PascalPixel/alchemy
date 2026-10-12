@@ -1,98 +1,31 @@
+/* Near miss, differ 4: the native loads the menu work before it starts the 0x504 count
+ * offset, and loads the multiplier table address one instruction earlier; this draft
+ * starts the offset first. An empty asm barrier after the work load gives both orders
+ * but then keeps sub sp, #4 above it (the native schedules it after the count test is
+ * built); a one-pass block does the same. */
 #include "types.h"
-#include "system.h"
+#include "ram_buffer.h"
 
-struct FieldEffectState {
-    u8 padding0[0x1C0];
-    s32 effect;
-    u8 padding1C4[4];
-    s32 delay;
+struct InnWork {
+    u8 unknown_000[0x4ca];
+    s16 members[29];
+    s8 member_count;
 };
 
-struct FieldObject {
-    u8 padding0[0x34];
-    u16 saved_x;
-    u16 saved_y;
-    s16 x;
-    u16 y;
-};
+void *UnitGet(s32 unit_id);
+extern const s8 Data_0810cf2c[];
 
-extern struct FieldEffectState *gEventWork;
-
-s32 Party_ListActiveOwnersFar(s16 *);
-void Party_AdjustCoinsFar(s32);
-struct FieldObject *UnitGetFar(s32);
-void UnitRatioFar(s32);
-void Event_FinishScreenTransitionFar(void);
-void Event_WaitTransitionFramesFar(void);
-void Audio_PlayCue(s32);
-void AudioCommand_WaitForStateByteClear(void);
-void Event_StartScreenTransitionFar(void);
-
-extern s8 Inn_PriceMultipliers[];
-
-#if defined(TBS_EDITION_JA)
-#define MESSAGE_WINDOW_ROWS 11
-#else
-#define MESSAGE_WINDOW_ROWS 12
-#endif
-
-enum InnMessageId {
-    INN_MESSAGE_WELCOME = 0xd1c,
-    INN_MESSAGE_STAY_COMPLETE,
-    INN_MESSAGE_NOT_ENOUGH_COINS,
-    INN_MESSAGE_GOODBYE,
-    INN_MESSAGE_REST_COMPLETE,
-};
-
-struct InnGlobalState {
-    u8 padding_00[0x10];
-    u32 limit;
-};
-
-struct InnObjectComponent {
-    u8 padding_00[0x28];
-    u16 *resource_id;
-};
-
-struct InnObject {
-    u8 padding_00[0x50];
-    struct InnObjectComponent *component;
-};
-
-extern struct InnGlobalState gGameState;
-extern char MsgInnWelcome;
-
-void Shop_InitializeCursorWork(void);
-void Inn_Cleanup(void);
-void UiMessage_ShowAndWait(s32 message_id);
-s32 UiMessage_ShowChoice(s32);
-s32 Inn_RoomPrice(s32);
-void Inn_PlaySleep(s32);
-void UiWork_FinalizeFar(s32, s32);
-s32 UiWindow_CreateWithSideObjectFar(u16, s32, s32, s32);
-void UiWork_PushValueSlotFar(s32, s32);
-struct InnObject *Object_GetByIdFar(s32);
-
-s32 Inn_RoomPrice(s32 mode)
+s32 Func_0810b378(s32 mode)
 {
-    u8 *global = (u8 *)gMenuWork;
-    u8 *base;
+    struct InnWork *work = Ram_HeapSlots->menu_runtime;
     s32 active = 0;
-    s32 factor = Inn_PriceMultipliers[mode];
-    s32 index = 0;
-    s32 offset;
+    s32 factor = Data_0810cf2c[mode];
+    s32 index;
 
-    if (active < *(s8 *)(global + 0x3A7)) {
-        base = global + 2;
-        offset = 0x36C;
-        do {
-            if (*(s16 *)((u8 *)UnitGetFar(
-                    *(s16 *)(base + offset)) + 56) != 0)
-                active++;
-            index++;
-            offset += 2;
-        } while (index < *(s8 *)(global + 0x3A7));
+    for (index = 0; index < work->member_count; index++) {
+        if (*(s16 *)((u8 *)UnitGet(work->members[index]) + 56) != 0)
+            active++;
     }
 
-    return factor *active;
+    return factor * active;
 }

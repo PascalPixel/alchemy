@@ -16539,7 +16539,7 @@ msgctxt "message"
 msgid "04132"
 msgstr "Insieme"
 
-msgctxt "MsgAreaTitleScreen"
+msgctxt "MsgDebugEntryName"
 msgid "04133"
 msgstr "Schermo del titolo"
 
@@ -16931,7 +16931,7 @@ msgctxt "message"
 msgid "04230"
 msgstr "Shop Test"
 
-msgctxt "message"
+msgctxt "MsgDebugCategoryName"
 msgid "04231"
 msgstr "TITLE"
 
@@ -18231,7 +18231,7 @@ msgctxt "message"
 msgid "04555"
 msgstr "SHOPTEST"
 
-msgctxt "message"
+msgctxt "MsgBecameCursed"
 msgid "04556"
 msgstr "Hai una maledizione!{end_wait}"
 
@@ -20603,19 +20603,19 @@ msgctxt "message"
 msgid "05148"
 msgstr "Non potrai metterlo in{line_break}uso, {argument_actor_name:1}. Va bene?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHowManyToBuy"
 msgid "05149"
 msgstr "Quantità?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHereYouGo"
 msgid "05150"
 msgstr "Ecco a te!{page_break}"
 
-msgctxt "message"
+msgctxt "MsgEquipNowPrompt"
 msgid "05151"
 msgstr "Vuoi mettere in uso ora{line_break}lo strumento, {argument_actor_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgLookBolder"
 msgid "05152"
 msgstr "Sembri già più forte!{page_break}"
 

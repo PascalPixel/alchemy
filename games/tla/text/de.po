@@ -16539,7 +16539,7 @@ msgctxt "message"
 msgid "04132"
 msgstr "Zusammen"
 
-msgctxt "MsgAreaTitleScreen"
+msgctxt "MsgDebugEntryName"
 msgid "04133"
 msgstr "Titelbildschirm"
 
@@ -16931,7 +16931,7 @@ msgctxt "message"
 msgid "04230"
 msgstr "Laden-Test"
 
-msgctxt "message"
+msgctxt "MsgDebugCategoryName"
 msgid "04231"
 msgstr "TITEL"
 
@@ -18231,7 +18231,7 @@ msgctxt "message"
 msgid "04555"
 msgstr "SHOPTEST"
 
-msgctxt "message"
+msgctxt "MsgBecameCursed"
 msgid "04556"
 msgstr "Verflucht!{end_wait}"
 
@@ -20775,19 +20775,19 @@ msgctxt "message"
 msgid "05191"
 msgstr "Du kannst das nicht{line_break}anlegen. Willst du es{page_break}trotzdem haben?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHowManyToBuy"
 msgid "05192"
 msgstr "Wie viele willst du?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHereYouGo"
 msgid "05193"
 msgstr "Hier, bitte schön!{page_break}"
 
-msgctxt "message"
+msgctxt "MsgEquipNowPrompt"
 msgid "05194"
 msgstr "Möchtest du es gleich{line_break}anlegen, {argument_actor_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgLookBolder"
 msgid "05195"
 msgstr "Du siehst schon viel{line_break}verwegener aus!{page_break}"
 

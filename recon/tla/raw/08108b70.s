@@ -435,7 +435,7 @@ Func_08108b70:
 	bl WaitFrames
 	ldrh r1, [r5]
 	adds r0, r6, #0
-	bl Func_08109624
+	bl Shop_SelBuyNum
 	movs r1, #1
 	movs r3, #1
 	negs r1, r1
@@ -448,7 +448,7 @@ Func_08108b70:
 	ldrh r1, [r5]
 	adds r0, r6, #0
 	ldr r2, [sp, #16]
-	bl Func_081098c0
+	bl Shop_BuyDone
 	adds r0, r7, #0
 	mov r1, r8
 	bl Func_0810a490

@@ -273,8 +273,7 @@ void DebugBattle_ViewMessages(void)
 					break;
 				WaitFrames(1);
 			}
-			/* FAKEMATCH: UiWork_DrainPendingFar is called as void (*)(s32); as void (*)(void), its prototype, DebugBattle_ViewMessages does not compile */
-			((void (*)(s32))UiWork_DrainPendingFar)(1);
+			UiWork_DrainPendingFar(1);
 			UiWork_FinalizeFar(window, 1);
 			(*(u8 **)&gWindowWork)[WINDOW_WORK_MESSAGE_BUSY] = 0;
 		}

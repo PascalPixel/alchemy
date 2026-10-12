@@ -19619,7 +19619,7 @@ msgctxt "message"
 msgid "04902"
 msgstr "Empezar partida"
 
-msgctxt "message"
+msgctxt "MsgFullPpAndMoney"
 msgid "04903"
 msgstr "PP y monedas al máximo"
 

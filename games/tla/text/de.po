@@ -19635,7 +19635,7 @@ msgctxt "message"
 msgid "04906"
 msgstr "Neustart"
 
-msgctxt "message"
+msgctxt "MsgFullPpAndMoney"
 msgid "04907"
 msgstr "Volle PP und Geld"
 

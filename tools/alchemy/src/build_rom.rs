@@ -1821,33 +1821,45 @@ fn build_overlay_streams(
     Ok(objects)
 }
 
-/// A game's import list, games/<game>/src/system/overlay/import.inc: the
-/// stubs its overlays import, one `import NAME, TARGET` row each, in the
-/// order every overlay keeps them. An overlay's import table is the
-/// assembler source that includes the list. The assembler writes the stub
-/// of a row when it is told the symbol `import.NAME`, and the build tells
-/// it the names the overlay's other objects call and none of them defines:
-/// what a linker takes from a library of stubs. A game without the file
-/// writes its tables by hand.
+/// A game's import list, in games/<game>/src/system/overlay.inc after the
+/// head of its stub tables: the stubs its overlays import, one
+/// `import NAME, TARGET` row each, in the order every overlay keeps them;
+/// every other line of the file is skipped. An overlay's import table is
+/// the assembler source that sets `overlay_imports` and includes the file:
+/// an entry table includes it too and, not setting the symbol, reads no
+/// row. The assembler writes the stub of a row when it is told the symbol
+/// `import.NAME`, and the build tells it the names the overlay's other
+/// objects call and none of them defines: what a linker takes from a
+/// library of stubs. A game whose file has no row, or no such file, writes
+/// its tables by hand.
 struct ImportList {
     path: String,
     names: BTreeSet<String>,
 }
 
+/// The symbol an import table sets before it includes the file: the
+/// assembler reads the list's rows only where it is set.
+const IMPORT_TABLE: &str = "overlay_imports";
+
 impl ImportList {
     fn read(root: &Path, target: DecompTarget) -> Result<Option<Self>, String> {
-        let path = format!("{}/src/system/overlay/import.inc", target.game_dir());
+        let path = format!("{}/src/system/overlay.inc", target.game_dir());
         match fs::read_to_string(root.join(&path)) {
-            Ok(text) => Ok(Some(Self { names: import_names(&text), path })),
+            Ok(text) => {
+                let names = import_names(&text);
+                Ok((!names.is_empty()).then_some(Self { names, path }))
+            }
             Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
             Err(error) => Err(format!("{path}: {error}")),
         }
     }
 
-    /// Whether an assembler source is an import table: it includes the list.
+    /// Whether an assembler source is an import table: it sets the list's
+    /// symbol and includes the list.
     fn read_by(&self, root: &Path, source: &Path) -> bool {
         source.extension().is_some_and(|extension| extension == "s")
-            && fs::read_to_string(root.join(source)).is_ok_and(|text| includes(&text, &self.path))
+            && fs::read_to_string(root.join(source))
+                .is_ok_and(|text| sets(&text, IMPORT_TABLE) && includes(&text, &self.path))
     }
 
     /// The symbols the assembler is told for the table of an overlay with
@@ -1877,6 +1889,17 @@ fn includes(text: &str, path: &str) -> bool {
         line.trim()
             .strip_prefix(".include")
             .is_some_and(|rest| rest.trim().trim_matches('"') == path)
+    })
+}
+
+/// Whether an assembler source's text sets this symbol with `.set`.
+fn sets(text: &str, symbol: &str) -> bool {
+    text.lines().any(|line| {
+        line.trim()
+            .strip_prefix(".set")
+            .and_then(|rest| rest.strip_prefix(char::is_whitespace))
+            .and_then(|rest| rest.split(',').next())
+            .is_some_and(|name| name.trim() == symbol)
     })
 }
 
@@ -2434,26 +2457,34 @@ mod tests {
     #[test]
     fn an_import_table_is_told_the_stubs_its_overlay_calls() {
         let root = tempfile::tempdir().unwrap();
-        let folder = root.path().join("games/tbs/src/system/overlay");
+        let folder = root.path().join("games/tbs/src/system");
         fs::create_dir_all(&folder).unwrap();
         fs::create_dir_all(root.path().join("games/tbs/src/field/mura")).unwrap();
         let target = decomp_target(Some("tbs-en")).unwrap();
-        // A game without the list writes its tables by hand.
+        // A game without the list writes its tables by hand: it has no
+        // such file, or the file is the head of its stub tables alone.
         assert!(ImportList::read(root.path(), target).unwrap().is_none());
-        fs::write(
-            folder.join("import.inc"),
-            "@ the list\n\t.macro import name, target\n\t.ifdef import.\\name\n\\name:\n\toverlay_veneer \\target\n\t.endif\n\t.endm\n\
-             \timport __divsi3, IwramSignedDivide\n\timport Engine_TaskWait, WaitFramesFar\n\timport Object_GetById, Object_GetByIdFar\n",
-        )
-        .unwrap();
+        let head = "@ the head\n\t.thumb\n\t.balign 4\n\t.include \"games/common/src/system/overlay.s\"\n";
+        fs::write(folder.join("overlay.inc"), head).unwrap();
+        assert!(ImportList::read(root.path(), target).unwrap().is_none());
+        // The list follows the head; a line that is not a row is skipped.
+        let rows = "@ the list: a row is `import NAME, TARGET`\n\
+             \t.macro import name, target\n\t.ifdef import.\\name\n\\name:\n\toverlay_veneer \\target\n\t.endif\n\t.endm\n\t.ifdef overlay_imports\n\
+             \timport __divsi3, IwramSignedDivide\n\timport Engine_TaskWait, WaitFramesFar\n\timport Object_GetById, Object_GetByIdFar\n\
+             \t.endif\n";
+        fs::write(folder.join("overlay.inc"), format!("{head}{rows}")).unwrap();
         let list = ImportList::read(root.path(), target).unwrap().unwrap();
         assert_eq!(list.names.iter().map(String::as_str).collect::<Vec<_>>(), ["Engine_TaskWait", "Object_GetById", "__divsi3"]);
-        // The table is the assembler source that includes the list.
-        let table = "@ C2: veneers\n\t.include \"games/tbs/src/system/overlay/import.inc\"\n";
+        // The table is the assembler source that sets the list's symbol
+        // and includes the file; an entry table includes the same file.
+        let include = "\t.include \"games/tbs/src/system/overlay.inc\"\n";
+        let table = format!("@ C2: veneers\n\t.set overlay_imports, 1\n{include}");
         fs::write(root.path().join("games/tbs/src/field/mura/import.s"), table).unwrap();
-        fs::write(root.path().join("games/tbs/src/field/mura/entry.s"), "\t.include \"games/tbs/src/system/overlay.inc\"\n").unwrap();
+        fs::write(root.path().join("games/tbs/src/field/mura/entry.s"), format!("{include}\toverlay_veneer Scene_Initialize\n")).unwrap();
+        fs::write(root.path().join("games/tbs/src/field/mura/other.s"), "\t.set overlay_imports, 1\n").unwrap();
         assert!(list.read_by(root.path(), Path::new("games/tbs/src/field/mura/import.s")));
         assert!(!list.read_by(root.path(), Path::new("games/tbs/src/field/mura/entry.s")));
+        assert!(!list.read_by(root.path(), Path::new("games/tbs/src/field/mura/other.s")));
         assert!(!list.read_by(root.path(), Path::new("games/tbs/src/field/mura/mura.c")));
         // Told: what the other objects call of the list, less what one of
         // them defines; a name the list does not bind is the linker's.

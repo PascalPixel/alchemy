@@ -835,7 +835,6 @@ SECTIONS
     "*/games/tla/src/battle/effect/rising.o"(.text)
     "*/games/tla/src/battle/effect/spawn.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000cf534)
-    "*/recon/tla/ja/rom.o"(.rom.000d00d8)
     "*/games/tla/src/graphics/display/m80d0184.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d01ac)
     "*/recon/tla/ja/rom.o"(.rom.000d0500)

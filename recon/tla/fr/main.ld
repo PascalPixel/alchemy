@@ -837,7 +837,6 @@
     "*/games/tla/src/battle/effect/rising.o"(.text)
     "*/games/tla/src/battle/effect/spawn.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000d4554)
-    "*/recon/tla/fr/rom.o"(.rom.000d50f8)
     "*/games/tla/src/graphics/display/m80d0184.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000d51cc)
     "*/recon/tla/fr/rom.o"(.rom.000d5520)

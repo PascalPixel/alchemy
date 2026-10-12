@@ -966,7 +966,6 @@
         "*/recon/tla/raw/080cf554.o"(.text)
         "*/recon/tla/raw/080cf6fc.o"(.text)
         "*/recon/tla/raw/080cf78c.o"(.text)
-        "*/recon/tla/raw/080d00f8.o"(.text)
         "*/games/tla/src/graphics/display/m80d0184.o"(.text)
         "*/recon/tla/raw/080d01cc.o"(.text)
         "*/recon/tla/raw/080d0520.o"(.text)

@@ -2199,12 +2199,6 @@ Func_080cf6fc:
 	.thumb_func
 Func_080cf78c:
 	.incbin "baserom.gba", 0x000d478c, 0x0000096c
-	.section .rom.000d50f8, "ax"
-	.global Func_080d00f8
-	.type Func_080d00f8, %function
-	.thumb_func
-Func_080d00f8:
-	.incbin "baserom.gba", 0x000d50f8, 0x0000008c
 	.section .rom.000d51cc, "ax"
 	.global DisplayTransition_Start
 	.type DisplayTransition_Start, %function

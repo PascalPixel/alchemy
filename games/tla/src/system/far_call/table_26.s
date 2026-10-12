@@ -182,7 +182,7 @@ Func_080c8340:
 .ifdef TLA_EDITION_IT
 	overlay_veneer DisplayTransition_Start
 .else
-	overlay_veneer Func_080d00f8
+	overlay_veneer DisplayTransition_InitializeBattleEffectState
 .endif
 .endif
 	.global DisplayTransition_InitializeStateFar

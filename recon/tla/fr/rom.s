@@ -499,10 +499,6 @@ Animation_SetDisplayFlagFar:
 	.thumb_func
 Func_0802db64Far:
 	.incbin "baserom.gba", 0x00020318, 0x00000020
-	.section .rom.000208a8, "ax"
-	.global Runtime_ByteRemapTable
-Runtime_ByteRemapTable:
-	.incbin "baserom.gba", 0x000208a8, 0x00000500
 	.section .rom.000212d8, "ax"
 	.incbin "baserom.gba", 0x000212d8, 0x0000042c
 	.section .rom.00021824, "ax"
@@ -1588,8 +1584,7 @@ Func_0804e3f4:
 	.incbin "baserom.gba", 0x0004e8a8, 0x000004d4
 	.section .rom.00059a14, "ax"
 	.incbin "baserom.gba", 0x00059a14, 0x00000084
-	.section .rom.00059b18, "ax"
-	.incbin "baserom.gba", 0x00059b18, 0x00000080
+	.section .rom.00059b98, "ax"
 	.global RenderResource_PairSourceTable
 RenderResource_PairSourceTable:
 	.incbin "baserom.gba", 0x00059b98, 0x00000c50
@@ -2231,8 +2226,6 @@ Resource_FarCall006:
 	.thumb_func
 Func_080c85c0:
 	.incbin "baserom.gba", 0x000cd5c0, 0x00000008
-	.section .rom.000cd9cc, "ax"
-	.incbin "baserom.gba", 0x000cd9cc, 0x00000a00
 	.section .rom.000ce694, "ax"
 	.incbin "baserom.gba", 0x000ce694, 0x0000028c
 	.section .rom.000ce944, "ax"

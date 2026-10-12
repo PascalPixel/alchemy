@@ -373,10 +373,6 @@ Flash_ChipAtmel:
 	.global Flash_ChipAtmelLayout
 Flash_ChipAtmelLayout:
 	.incbin "baserom.gba", 0x00017f68, 0x0000002c
-	.section .rom.000208a8, "ax"
-	.global Runtime_ByteRemapTable
-Runtime_ByteRemapTable:
-	.incbin "baserom.gba", 0x000208a8, 0x00000500
 	.section .rom.000212d8, "ax"
 	.incbin "baserom.gba", 0x000212d8, 0x0000042c
 	.section .rom.00021824, "ax"
@@ -1508,8 +1504,7 @@ Func_0804e3f4:
 	.incbin "baserom.gba", 0x0004e884, 0x000004d4
 	.section .rom.000599f0, "ax"
 	.incbin "baserom.gba", 0x000599f0, 0x00000084
-	.section .rom.00059af4, "ax"
-	.incbin "baserom.gba", 0x00059af4, 0x00000080
+	.section .rom.00059b74, "ax"
 	.global RenderResource_PairSourceTable
 RenderResource_PairSourceTable:
 	.incbin "baserom.gba", 0x00059b74, 0x00000d58
@@ -2737,8 +2732,6 @@ Func_080c8930:
 	.thumb_func
 Func_080c8948:
 	.incbin "baserom.gba", 0x000c8948, 0x00000008
-	.section .rom.000c89cc, "ax"
-	.incbin "baserom.gba", 0x000c89cc, 0x00000a00
 	.section .rom.000c9694, "ax"
 	.incbin "baserom.gba", 0x000c9694, 0x0000028c
 	.section .rom.000c9944, "ax"

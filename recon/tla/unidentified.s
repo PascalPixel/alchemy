@@ -35,13 +35,6 @@ Flash_ChipAtmel:
 	.global Flash_ChipAtmelLayout
 Flash_ChipAtmelLayout:
 	.incbin "baserom.gba", 0x00017f68, 0x0000002c
-	.section .unidentified.080208a8,"a"
-	.global Runtime_ByteRemapTable
-Runtime_ByteRemapTable:
-	.incbin "baserom.gba", 0x000208a8, 0x00000100
-	.global Data_080209a8
-Data_080209a8:
-	.incbin "baserom.gba", 0x000209a8, 0x00000400
 	.section .unidentified.0802e91c,"a"
 	.global ResourceSlot_NumberTable
 ResourceSlot_NumberTable:
@@ -196,10 +189,7 @@ UiIcon_OverlayPointerTable:
 	.global Data_080597f8
 Data_080597f8:
 	.incbin "baserom.gba", 0x000597f8, 0x00000080
-	.section .unidentified.080598f8,"a"
-	.global Data_080598f8
-Data_080598f8:
-	.incbin "baserom.gba", 0x000598f8, 0x00000080
+	.section .unidentified.08059978,"a"
 	.global RenderResource_PairSourceTable
 RenderResource_PairSourceTable:
 	.incbin "baserom.gba", 0x00059978, 0x00000768
@@ -430,8 +420,6 @@ Battle_Effect90Classes:
 	.global Battle_Effect91Classes
 Battle_Effect91Classes:
 	.incbin "baserom.gba", 0x000c6b76, 0x0000003a
-	.section .unidentified.080c89cc,"a"
-	.incbin "baserom.gba", 0x000c89cc, 0x00000a00
 	.section .unidentified.080eda0c,"a"
 	.global Data_080eda0c
 Data_080eda0c:

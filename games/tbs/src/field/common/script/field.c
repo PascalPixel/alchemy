@@ -1720,68 +1720,46 @@ void ObjectDispatch_Initialize(struct DispatchObject *obj, const s32 *script)
 }
 
 //--------------------------------------------------------------------------
+// 絵がひとつならその絵に、絵の組ならある絵すべてに apply(絵, value) を呼ぶ
+//--------------------------------------------------------------------------
+#define DISPATCH_APPLY_TO_CHILDREN(name, object_type, apply) \
+	void name(object_type raw, s32 value)                    \
+	{                                                        \
+		struct DispatchObject *obj;                          \
+		void				 **list;                         \
+		s32					   n;                            \
+		void				  *spr;                          \
+                                                             \
+		obj = raw;                                           \
+		if (obj != 0)                                        \
+		{                                                    \
+			switch (obj->kind & 0xf)                         \
+			{                                                \
+			case 1:                                          \
+				apply(obj->target.child, value);             \
+				break;                                       \
+			case 2:                                          \
+				list = obj->target.children;                 \
+				n = 3;                                       \
+				do                                           \
+				{                                            \
+					spr = *list++;                           \
+					if (spr != 0)                            \
+						apply(spr, value);                   \
+					n--;                                     \
+				} while (n >= 0);                            \
+				break;                                       \
+			}                                                \
+		}                                                    \
+	}
+
 // オブジェクトの絵（すべて）のアニメを no にする
-//--------------------------------------------------------------------------
-void ObjectDispatch_ApplyArgumentToChildren(void *raw, s32 no)
-{
-	struct DispatchObject *obj;
-	void				 **list;
-	s32					   n;
-	void				  *spr;
+DISPATCH_APPLY_TO_CHILDREN(ObjectDispatch_ApplyArgumentToChildren, void *,
+	AnimationObjects_SelectAnimation)
 
-	obj = raw;
-	if (obj != 0)
-	{
-		switch (obj->kind & 0xf)
-		{
-		case 1:
-			AnimationObjects_SelectAnimation(obj->target.child, no);
-			break;
-		case 2:
-			list = obj->target.children;
-			n = 3;
-			do
-			{
-				spr = *list++;
-				if (spr != 0)
-					AnimationObjects_SelectAnimation(spr, no);
-				n--;
-			} while (n >= 0);
-			break;
-		}
-	}
-}
-
-//--------------------------------------------------------------------------
 // オブジェクトの絵（すべて）の AnimationObjects_SetActiveTimerSteps を呼ぶ
-//--------------------------------------------------------------------------
-void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *obj, s32 val)
-{
-	s32	   n;
-	void  *spr;
-	void **list;
-
-	if (obj != 0)
-	{
-		switch (obj->kind & 0xf)
-		{
-		case 1:
-			AnimationObjects_SetActiveTimerSteps(obj->target.child, val);
-			return;
-		case 2:
-			list = obj->target.children;
-			n = 3;
-			do
-			{
-				spr = *list++;
-				if (spr != 0)
-					AnimationObjects_SetActiveTimerSteps(spr, val);
-				n--;
-			} while (n >= 0);
-			break;
-		}
-	}
-}
+DISPATCH_APPLY_TO_CHILDREN(ObjectDispatch_ApplyValueToChildren, struct DispatchObject *,
+	AnimationObjects_SetActiveTimerSteps)
 
 //--------------------------------------------------------------------------
 // 上のふたつをいっしょに：アニメを no にし、steps をわたす
@@ -3144,27 +3122,21 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter)
 	return 1;
 }
 
-s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter)
-{
-	s32 value;
+// フラグの今の値を condition_result に入れてから、change でフラグを書き換える
+#define SCRIPT_FLAG_AND_TEST(name, change)                       \
+	s32 name(struct ScriptInterpreter *interpreter)              \
+	{                                                            \
+		s32 value;                                               \
+                                                                 \
+		value = interpreter->script[interpreter->cursor + 1];    \
+		interpreter->condition_result = GameFlag_TestFar(value); \
+		change(value);                                           \
+		interpreter->cursor += 2;                                \
+		return 1;                                                \
+	}
 
-	value = interpreter->script[interpreter->cursor + 1];
-	interpreter->condition_result = GameFlag_TestFar(value);
-	GameFlag_SetBitFar(value);
-	interpreter->cursor += 2;
-	return 1;
-}
-
-s32 Script_ClearFlagAndTest(struct ScriptInterpreter *interpreter)
-{
-	s32 value;
-
-	value = interpreter->script[interpreter->cursor + 1];
-	interpreter->condition_result = GameFlag_TestFar(value);
-	GameFlag_ClearBitFar(value);
-	interpreter->cursor += 2;
-	return 1;
-}
+SCRIPT_FLAG_AND_TEST(Script_SetFlagAndTest, GameFlag_SetBitFar)
+SCRIPT_FLAG_AND_TEST(Script_ClearFlagAndTest, GameFlag_ClearBitFar)
 
 s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter)
 {
@@ -3254,7 +3226,9 @@ struct ScriptObjectEntry *ScriptObject_FindOverlappingEntry(
 	return NULL;
 }
 
-s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter)
+// 命令語の次の 3 語を座標として place にわたす
+static __inline__ s32 ApplyPosition(struct ScriptInterpreter *interpreter,
+	void (*place)(struct ObjectRuntime *object, s32 x, s32 y, s32 z))
 {
 	s32		   first;
 	s32		   second;
@@ -3268,28 +3242,19 @@ s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter)
 	second = *argument;
 	argument++;
 	third = *argument;
-	Object_SetPositionAndResetMotion((struct ObjectRuntime *)interpreter, first, second, third);
+	place((struct ObjectRuntime *)interpreter, first, second, third);
 	interpreter->cursor += 4;
 	return 1;
 }
 
+s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter)
+{
+	return ApplyPosition(interpreter, Object_SetPositionAndResetMotion);
+}
+
 s32 Script_ApplyAbsolutePosition(struct ScriptInterpreter *interpreter)
 {
-	s32		   first;
-	s32		   second;
-	s32		   third;
-	const s32 *argument;
-
-	argument = interpreter->script + interpreter->cursor;
-	argument++;
-	first = *argument;
-	argument++;
-	second = *argument;
-	argument++;
-	third = *argument;
-	Object_SetMoveTarget((struct ObjectRuntime *)interpreter, first, second, third);
-	interpreter->cursor += 4;
-	return 1;
+	return ApplyPosition(interpreter, Object_SetMoveTarget);
 }
 
 s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object)
@@ -3664,20 +3629,60 @@ static __inline__ void StoreHalfword(s16 *address, s32 value)
 	*address = value;
 }
 
-void Script_SetOrCompareAddress(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->script_address = value;
-		return;
+// 作業領域の 1 項目を命令の値で書き換える: 代入、加算、または比較 (結果は comparison_result)
+// 32 ビットの項目
+#define SCRIPT_OPERAND_WORD(name, field)                              \
+	void name(struct ScriptOperands *state, s32 operation, s32 value) \
+	{                                                                 \
+		if (operation == SCRIPT_OPERAND_SET)                          \
+		{                                                             \
+			state->field = value;                                     \
+			return;                                                   \
+		}                                                             \
+		if (operation == SCRIPT_OPERAND_ADD)                          \
+		{                                                             \
+			state->field += value;                                    \
+			return;                                                   \
+		}                                                             \
+		state->comparison_result = state->field == value;             \
 	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->script_address += value * 4;
-		return;
+
+// スクリプト内の位置を指す項目: 加算は命令語 (4 バイト) 単位
+#define SCRIPT_OPERAND_ADDRESS(name, field)                           \
+	void name(struct ScriptOperands *state, s32 operation, s32 value) \
+	{                                                                 \
+		if (operation == SCRIPT_OPERAND_SET)                          \
+		{                                                             \
+			state->field = value;                                     \
+			return;                                                   \
+		}                                                             \
+		if (operation == SCRIPT_OPERAND_ADD)                          \
+		{                                                             \
+			state->field += value * 4;                                \
+			return;                                                   \
+		}                                                             \
+		state->comparison_result = state->field == value;             \
 	}
-	state->comparison_result = state->script_address == value;
-}
+
+// 8 ビット、16 ビットの項目: 比較は項目の型に切り詰めた値と行う
+#define SCRIPT_OPERAND_NARROW(name, field, type)                      \
+	void name(struct ScriptOperands *state, s32 operation, s32 value) \
+	{                                                                 \
+		if (operation == SCRIPT_OPERAND_SET)                          \
+		{                                                             \
+			state->field = value;                                     \
+		}                                                             \
+		else if (operation == SCRIPT_OPERAND_ADD)                     \
+		{                                                             \
+			state->field += value;                                    \
+		}                                                             \
+		else                                                          \
+		{                                                             \
+			state->comparison_result = state->field == (type)value;   \
+		}                                                             \
+	}
+
+SCRIPT_OPERAND_ADDRESS(Script_SetOrCompareAddress, script_address)
 
 void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation, s32 value)
 {
@@ -3695,66 +3700,10 @@ void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation, s32 
 	}
 }
 
-void Script_SetOrCompareUnsignedHalfword(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->unsigned_halfword = value;
-	}
-	else if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->unsigned_halfword = (state->unsigned_halfword + value);
-	}
-	else
-	{
-		state->comparison_result = state->unsigned_halfword == (u16)value;
-	}
-}
-
-void Script_SetOrCompareX(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->word_08 = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->word_08 += value;
-		return;
-	}
-	state->comparison_result = state->word_08 == value;
-}
-
-void Script_SetOrCompareY(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->word_0c = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->word_0c += value;
-		return;
-	}
-	state->comparison_result = state->word_0c == value;
-}
-
-void Script_SetOrCompareZ(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->word_10 = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->word_10 += value;
-		return;
-	}
-	state->comparison_result = state->word_10 == value;
-}
+SCRIPT_OPERAND_NARROW(Script_SetOrCompareUnsignedHalfword, unsigned_halfword, u16)
+SCRIPT_OPERAND_WORD(Script_SetOrCompareX, word_08)
+SCRIPT_OPERAND_WORD(Script_SetOrCompareY, word_0c)
+SCRIPT_OPERAND_WORD(Script_SetOrCompareZ, word_10)
 
 void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation, s32 value)
 {
@@ -3771,374 +3720,30 @@ void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation, s32 
 	state->comparison_result = state->halfword_20 == (s16)value;
 }
 
-void Script_SetOrCompareScaleX(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->word_18 = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->word_18 += value;
-		return;
-	}
-	state->comparison_result = state->word_18 == value;
-}
-
-void Script_SetOrCompareScaleY(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->word_1c = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->word_1c += value;
-		return;
-	}
-	state->comparison_result = state->word_1c == value;
-}
-
-void Script_SetOrCompareVelocityX(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->word_24 = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->word_24 += value;
-		return;
-	}
-	state->comparison_result = state->word_24 == value;
-}
-
-void Script_SetOrCompareVelocityY(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->word_28 = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->word_28 += value;
-		return;
-	}
-	state->comparison_result = state->word_28 == value;
-}
-
-void Script_SetOrCompareVelocityZ(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->word_2c = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->word_2c += value;
-		return;
-	}
-	state->comparison_result = state->word_2c == value;
-}
-
-void Script_SetOrCompareSpeedLimit(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->word_30 = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->word_30 += value;
-		return;
-	}
-	state->comparison_result = state->word_30 == value;
-}
-
-void Script_SetOrCompareAcceleration(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->word_34 = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->word_34 += value;
-		return;
-	}
-	state->comparison_result = state->word_34 == value;
-}
-
-void Script_SetOrCompareTargetX(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->word_38 = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->word_38 += value;
-		return;
-	}
-	state->comparison_result = state->word_38 == value;
-}
-
-void Script_SetOrCompareTargetY(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->word_3c = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->word_3c += value;
-		return;
-	}
-	state->comparison_result = state->word_3c == value;
-}
-
-void Script_SetOrCompareTargetZ(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->word_40 = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->word_40 += value;
-		return;
-	}
-	state->comparison_result = state->word_40 == value;
-}
-
-void Script_SetOrCompareVerticalMotion(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->word_44 = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->word_44 += value;
-		return;
-	}
-	state->comparison_result = state->word_44 == value;
-}
-
-void Script_SetOrCompareGravity(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->word_48 = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->word_48 += value;
-		return;
-	}
-	state->comparison_result = state->word_48 == value;
-}
-
-void Script_SetOrCompareTerrainHeight(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->word_14 = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->word_14 += value;
-		return;
-	}
-	state->comparison_result = state->word_14 == value;
-}
-
-void Script_SetOrCompareWord4c(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->word_4c = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->word_4c += value;
-		return;
-	}
-	state->comparison_result = state->word_4c == value;
-}
-
-void Script_SetOrCompareAddress50(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->address_50 = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->address_50 += value * 4;
-		return;
-	}
-	state->comparison_result = state->address_50 == value;
-}
-
-void Script_SetOrCompareByte54(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->byte_54 = value;
-	}
-	else if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->byte_54 = (state->byte_54 + value);
-	}
-	else
-	{
-		state->comparison_result = state->byte_54 == (u8)value;
-	}
-}
-
-void Script_SetOrCompareMotionFlags(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->byte_55 = value;
-	}
-	else if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->byte_55 = (state->byte_55 + value);
-	}
-	else
-	{
-		state->comparison_result = state->byte_55 == (u8)value;
-	}
-}
-
-void Script_SetOrCompareArrivalAxis(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->byte_56 = value;
-	}
-	else if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->byte_56 = (state->byte_56 + value);
-	}
-	else
-	{
-		state->comparison_result = state->byte_56 == (u8)value;
-	}
-}
-
-void Script_SetOrCompareComparisonResult(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->comparison_result = value;
-	}
-	else if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->comparison_result = (state->comparison_result + value);
-	}
-	else
-	{
-		state->comparison_result = state->comparison_result == (u8)value;
-	}
-}
-
-void Script_SetOrCompareSnapToTarget(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->byte_58 = value;
-	}
-	else if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->byte_58 = (state->byte_58 + value);
-	}
-	else
-	{
-		state->comparison_result = state->byte_58 == (u8)value;
-	}
-}
-
-void Script_SetOrCompareCollisionFlags(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->byte_59 = value;
-	}
-	else if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->byte_59 = (state->byte_59 + value);
-	}
-	else
-	{
-		state->comparison_result = state->byte_59 == (u8)value;
-	}
-}
-
-void Script_SetOrCompareSteeringFlags(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->byte_5a = value;
-	}
-	else if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->byte_5a = (state->byte_5a + value);
-	}
-	else
-	{
-		state->comparison_result = state->byte_5a == (u8)value;
-	}
-}
-
-void Script_SetOrComparePaused(struct ScriptOperands *state, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		state->byte_5b = value;
-	}
-	else if (operation == SCRIPT_OPERAND_ADD)
-	{
-		state->byte_5b = (state->byte_5b + value);
-	}
-	else
-	{
-		state->comparison_result = state->byte_5b == (u8)value;
-	}
-}
-
-void Script_SetOrCompareRepeatCount(struct ScriptOperands *work, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		work->byte_5d = value;
-	}
-	else if (operation == SCRIPT_OPERAND_ADD)
-	{
-		work->byte_5d += value;
-	}
-	else
-	{
-		work->comparison_result = work->byte_5d == (u8)value;
-	}
-}
+SCRIPT_OPERAND_WORD(Script_SetOrCompareScaleX, word_18)
+SCRIPT_OPERAND_WORD(Script_SetOrCompareScaleY, word_1c)
+SCRIPT_OPERAND_WORD(Script_SetOrCompareVelocityX, word_24)
+SCRIPT_OPERAND_WORD(Script_SetOrCompareVelocityY, word_28)
+SCRIPT_OPERAND_WORD(Script_SetOrCompareVelocityZ, word_2c)
+SCRIPT_OPERAND_WORD(Script_SetOrCompareSpeedLimit, word_30)
+SCRIPT_OPERAND_WORD(Script_SetOrCompareAcceleration, word_34)
+SCRIPT_OPERAND_WORD(Script_SetOrCompareTargetX, word_38)
+SCRIPT_OPERAND_WORD(Script_SetOrCompareTargetY, word_3c)
+SCRIPT_OPERAND_WORD(Script_SetOrCompareTargetZ, word_40)
+SCRIPT_OPERAND_WORD(Script_SetOrCompareVerticalMotion, word_44)
+SCRIPT_OPERAND_WORD(Script_SetOrCompareGravity, word_48)
+SCRIPT_OPERAND_WORD(Script_SetOrCompareTerrainHeight, word_14)
+SCRIPT_OPERAND_WORD(Script_SetOrCompareWord4c, word_4c)
+SCRIPT_OPERAND_ADDRESS(Script_SetOrCompareAddress50, address_50)
+SCRIPT_OPERAND_NARROW(Script_SetOrCompareByte54, byte_54, u8)
+SCRIPT_OPERAND_NARROW(Script_SetOrCompareMotionFlags, byte_55, u8)
+SCRIPT_OPERAND_NARROW(Script_SetOrCompareArrivalAxis, byte_56, u8)
+SCRIPT_OPERAND_NARROW(Script_SetOrCompareComparisonResult, comparison_result, u8)
+SCRIPT_OPERAND_NARROW(Script_SetOrCompareSnapToTarget, byte_58, u8)
+SCRIPT_OPERAND_NARROW(Script_SetOrCompareCollisionFlags, byte_59, u8)
+SCRIPT_OPERAND_NARROW(Script_SetOrCompareSteeringFlags, byte_5a, u8)
+SCRIPT_OPERAND_NARROW(Script_SetOrComparePaused, byte_5b, u8)
+SCRIPT_OPERAND_NARROW(Script_SetOrCompareRepeatCount, byte_5d, u8)
 
 void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation, s32 value)
 {
@@ -4155,134 +3760,39 @@ void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation, s
 	work->comparison_result = (s16)work->halfword_5e == (s16)value;
 }
 
-void Script_SetOrCompareSignedHalfword64(struct ScriptOperands *work, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		work->signed_halfword_64 = value;
-	}
-	else if (operation == SCRIPT_OPERAND_ADD)
-	{
-		work->signed_halfword_64 += value;
-	}
-	else
-	{
-		work->comparison_result = work->signed_halfword_64 == (s16)value;
-	}
-}
+SCRIPT_OPERAND_NARROW(Script_SetOrCompareSignedHalfword64, signed_halfword_64, s16)
+SCRIPT_OPERAND_NARROW(Script_SetOrCompareSignedHalfword66, signed_halfword_66, s16)
+SCRIPT_OPERAND_WORD(Script_SetOrCompareWord68, word_68)
+SCRIPT_OPERAND_WORD(Script_SetOrCompareUpdateAddress, word_6c)
+SCRIPT_OPERAND_NARROW(Script_SetOrCompareByte62, byte_62, u8)
+SCRIPT_OPERAND_NARROW(Script_SetOrCompareByte63, byte_63, u8)
 
-void Script_SetOrCompareSignedHalfword66(struct ScriptOperands *work, s32 operation, s32 value)
+// 命令語の次の 2 語 (項目の番号と値) を読み、項目の関数に operation をわたす
+static __inline__ s32 ApplyOperand(struct ScriptOperands *work, s32 operation)
 {
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		work->signed_halfword_66 = value;
-	}
-	else if (operation == SCRIPT_OPERAND_ADD)
-	{
-		work->signed_halfword_66 += value;
-	}
-	else
-	{
-		work->comparison_result = work->signed_halfword_66 == (s16)value;
-	}
-}
+	s16			index = work->cursor;
+	const s32  *command = (const s32 *)work->script_address + index + 1;
+	OperandFunc handler = Script_OperandHandlerTable[command[0]];
 
-void Script_SetOrCompareWord68(struct ScriptOperands *work, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		work->word_68 = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		work->word_68 += value;
-		return;
-	}
-	work->comparison_result = work->word_68 == value;
-}
-
-void Script_SetOrCompareUpdateAddress(struct ScriptOperands *work, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		work->word_6c = value;
-		return;
-	}
-	if (operation == SCRIPT_OPERAND_ADD)
-	{
-		work->word_6c += value;
-		return;
-	}
-	work->comparison_result = work->word_6c == value;
-}
-
-void Script_SetOrCompareByte62(struct ScriptOperands *work, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		work->byte_62 = value;
-	}
-	else if (operation == SCRIPT_OPERAND_ADD)
-	{
-		work->byte_62 += value;
-	}
-	else
-	{
-		work->comparison_result = work->byte_62 == (u8)value;
-	}
-}
-
-void Script_SetOrCompareByte63(struct ScriptOperands *work, s32 operation, s32 value)
-{
-	if (operation == SCRIPT_OPERAND_SET)
-	{
-		work->byte_63 = value;
-	}
-	else if (operation == SCRIPT_OPERAND_ADD)
-	{
-		work->byte_63 += value;
-	}
-	else
-	{
-		work->comparison_result = work->byte_63 == (u8)value;
-	}
+	if (handler != 0)
+		handler(work, operation, command[1]);
+	work->cursor += 3;
+	return 1;
 }
 
 s32 Script_ApplyOperandSet(struct ScriptOperands *work)
 {
-	s16			index = work->cursor;
-	const s32  *command = (const s32 *)work->script_address + index + 1;
-	OperandFunc handler = Script_OperandHandlerTable[command[0]];
-
-	if (handler != 0)
-		handler(work, SCRIPT_OPERAND_SET, command[1]);
-	work->cursor += 3;
-	return 1;
+	return ApplyOperand(work, SCRIPT_OPERAND_SET);
 }
 
 s32 Script_ApplyOperandAdd(struct ScriptOperands *work)
 {
-	s16			index = work->cursor;
-	const s32  *command = (const s32 *)work->script_address + index + 1;
-	OperandFunc handler = Script_OperandHandlerTable[command[0]];
-
-	if (handler != 0)
-		handler(work, SCRIPT_OPERAND_ADD, command[1]);
-	work->cursor += 3;
-	return 1;
+	return ApplyOperand(work, SCRIPT_OPERAND_ADD);
 }
 
 s32 Script_ApplyOperandCompare(struct ScriptOperands *work)
 {
-	s16			index = work->cursor;
-	const s32  *command = (const s32 *)work->script_address + index + 1;
-	OperandFunc handler = Script_OperandHandlerTable[command[0]];
-
-	if (handler != 0)
-		handler(work, SCRIPT_OPERAND_COMPARE, command[1]);
-	work->cursor += 3;
-	return 1;
+	return ApplyOperand(work, SCRIPT_OPERAND_COMPARE);
 }
 
 void ObjectDispatch_SetUpdateValue(void *raw, s32 value)
@@ -8177,31 +7687,23 @@ struct Vec2
 	s32 y;
 };
 
-void Ui_SetGridColumnParameter(s32 slot, s32 value)
-{
-	struct AnimationObject *object = gSpriteObjects;
-	s32						i;
-
-	slot &= 3;
-	for (i = 0; i < 10; i++)
-	{
-		object->entries[slot]->param = value;
-		object++;
+// 10 個のオブジェクトの slot 番の絵の field を value にする
+#define UI_SET_GRID_COLUMN(name, field)                  \
+	void name(s32 slot, s32 value)                       \
+	{                                                    \
+		struct AnimationObject *object = gSpriteObjects; \
+		s32						i;                       \
+                                                         \
+		slot &= 3;                                       \
+		for (i = 0; i < 10; i++)                         \
+		{                                                \
+			object->entries[slot]->field = value;        \
+			object++;                                    \
+		}                                                \
 	}
-}
 
-void Ui_SetGridColumnPriority(s32 slot, s32 value)
-{
-	struct AnimationObject *object = gSpriteObjects;
-	s32						i;
-
-	slot &= 3;
-	for (i = 0; i < 10; i++)
-	{
-		object->entries[slot]->priority = value;
-		object++;
-	}
-}
+UI_SET_GRID_COLUMN(Ui_SetGridColumnParameter, param)
+UI_SET_GRID_COLUMN(Ui_SetGridColumnPriority, priority)
 
 void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
 {

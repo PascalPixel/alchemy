@@ -123,7 +123,7 @@ struct EffectParams
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/move.c"
-#include "../common/effect/spawnov.c"
+#include "../common/effect/spawn.c"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"

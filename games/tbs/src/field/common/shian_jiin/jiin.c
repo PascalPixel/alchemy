@@ -68,7 +68,7 @@ extern u8 gEffectWork[];
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../effect/move.c"
-#include "../effect/spawnov.c"
+#include "../effect/spawn.c"
 
 s32 StopXianActor(void *actor)
 {

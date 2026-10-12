@@ -14987,7 +14987,9 @@ struct OrbitEffect
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
+#define EFFECT_SPAWN_RESIDENT
 #include "../../field/common/effect/spawn.c"
+#undef EFFECT_SPAWN_RESIDENT
 
 //--------------------------------------------------------------------------
 // 粒子の毎フレーム処理

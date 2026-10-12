@@ -88,7 +88,7 @@ struct ActorTable
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/move.c"
-#include "../common/effect/spawnov.c"
+#include "../common/effect/spawn.c"
 #include "objcmd.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void)

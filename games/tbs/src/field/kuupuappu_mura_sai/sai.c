@@ -67,7 +67,7 @@ void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/move.c"
-#include "../common/effect/spawnov.c"
+#include "../common/effect/spawn.c"
 
 s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 {

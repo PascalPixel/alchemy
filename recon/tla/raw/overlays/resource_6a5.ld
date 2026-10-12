@@ -63,7 +63,6 @@ SECTIONS
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
         "*/games/tla/src/field/overlay_6a5/data2.o"(.data)
-        "*/resource_6a5_overlay.o"(.rodata.x0200e520)
         "*/games/tla/src/field/overlay_6a5/data3.o"(.data)
     }
     .bss : { "*/resource_6a5_overlay.o"(.bss) }

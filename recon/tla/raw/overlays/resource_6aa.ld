@@ -102,7 +102,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_6aa/s4a60.o"(.text)
         "*/games/tla/src/field/overlay_6aa/import.o"(.text)
         "*/games/tla/src/field/overlay_6aa/data.o"(.data)
-        "*/resource_6aa_overlay.o"(.rodata.x0200db54)
         "*/games/tla/src/field/overlay_6aa/data2.o"(.data)
     }
     .bss : { "*/resource_6aa_overlay.o"(.bss) }

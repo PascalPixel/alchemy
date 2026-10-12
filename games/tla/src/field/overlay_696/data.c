@@ -35,3 +35,13 @@ s16 Data_02004b80[] = {
 	336, 6, 0x7fff, 6, 0x1000, 192, 6, 0x7fff,
 	6, 0x1000, 320, 6, 0x7fff, 6, -1,
 };
+
+#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#define SHAMAN_GRAPHIC7_PALETTE (5 * 32)
+#else
+#define SHAMAN_GRAPHIC7_PALETTE (2 * 32)
+#endif
+
+u8 Data_02004bfe[] = {
+	0, 32, 32, 32, 96, 64, 64, SHAMAN_GRAPHIC7_PALETTE, 128, 0,
+};

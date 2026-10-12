@@ -2,6 +2,7 @@
 #include "unit/field/common/karei_torebi/torebi.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
+#include "unit/field/common/script/field10.h"
 #include "unit/field/common/script/field11.h"
 #include "unit/game/character/chara.h"
 #include "unit/game/character/chara2.h"

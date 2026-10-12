@@ -3,6 +3,7 @@
 #include "unit/field/common/shinden_heya/heya.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
+#include "unit/field/common/script/field10.h"
 #include "unit/field/common/script/field11.h"
 #include "unit/graphics/window/window.h"
 #include "unit/sound/sound.h"

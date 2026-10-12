@@ -3,6 +3,7 @@
 #include "unit/field/haidia_sukureta/sukureta.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
+#include "unit/field/common/script/field10.h"
 #include "unit/field/common/script/field11.h"
 #include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime3.h"

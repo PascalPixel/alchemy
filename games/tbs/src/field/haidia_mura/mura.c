@@ -5,6 +5,7 @@
 #include "unit/field/world_map/linked_effects.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
+#include "unit/field/common/script/field10.h"
 #include "unit/field/common/script/field11.h"
 #include "unit/graphics/window/window.h"
 #include "unit/system/scheduler/runtime.h"

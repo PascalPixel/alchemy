@@ -2,6 +2,7 @@
 #define ALCHEMY_OBJECT_RUNTIME_H
 
 #include "unit/field/common/script/field.h"
+#include "unit/field/common/script/field10.h"
 #include "unit/field/common/script/field11.h"
 #include "object_lookup.h"
 #include "types.h"

@@ -11,6 +11,7 @@
 #include "unit/field/common/korosseo/item_icon.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
+#include "unit/field/common/script/field10.h"
 #include "unit/field/common/script/field11.h"
 #include "unit/game/character/chara.h"
 #include "unit/game/character/chara2.h"

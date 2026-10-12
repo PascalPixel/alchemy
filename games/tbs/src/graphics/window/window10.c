@@ -4125,411 +4125,411 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 		efx.angle = 0;
 #endif
 		matrix = AffineMatrix_BuildForEffect(&efx);
-		if ((redraw & 1) == 0)
-			goto frame_end;
-		cnt = 0;
-		for (i = 0; i < 6; i++)
-			tbl[i].flags &= (u8)~2;
-		for (i = 0; (u32)i < spread; i++)
+		if (redraw & 1)
 		{
+			cnt = 0;
+			for (i = 0; i < 6; i++)
+				tbl[i].flags &= (u8)~2;
+			for (i = 0; (u32)i < spread; i++)
 			{
-				n = cursor + i;
-				if (n < total && ids[n] != 0xFE)
 				{
-					selIds[cnt] = ids[n];
-					tbl[i].flags |= 2;
-					if (tbl[i].index != i)
+					n = cursor + i;
+					if (n < total && ids[n] != 0xFE)
 					{
-						tbl[i].flags &= (u8)~1;
-						tbl[i].index = (s8)i;
+						selIds[cnt] = ids[n];
+						tbl[i].flags |= 2;
+						if (tbl[i].index != i)
+						{
+							tbl[i].flags &= (u8)~1;
+							tbl[i].index = (s8)i;
+						}
+						selSlot[cnt] = (u8)i;
+						cnt++;
 					}
-					selSlot[cnt] = (u8)i;
-					cnt++;
-				}
-				if (i != 0 && (n = cursor - i) >= 0 && ids[n] != 0xFE)
-				{
-					selIds[cnt] = ids[n];
-					tbl[6 - i].flags |= 2;
-					if (tbl[6 - i].index != -i)
+					if (i != 0 && (n = cursor - i) >= 0 && ids[n] != 0xFE)
 					{
-						tbl[6 - i].flags &= (u8)~1;
-						tbl[6 - i].index = (s8)-i;
+						selIds[cnt] = ids[n];
+						tbl[6 - i].flags |= 2;
+						if (tbl[6 - i].index != -i)
+						{
+							tbl[6 - i].flags &= (u8)~1;
+							tbl[6 - i].index = (s8)-i;
+						}
+						selSlot[cnt] = (u8)(6 - i);
+						cnt++;
 					}
-					selSlot[cnt] = (u8)(6 - i);
-					cnt++;
 				}
 			}
-		}
-		for (i = 0; i < 6; i++)
-		{
-			if ((tbl[i].flags & 2) == 0)
-				tbl[i].index = 6;
-		}
-		selIds[cnt] = 0xFF;
-		BattlePres_SetActorModesFar(selIds, 1);
-		if (ids[cursor] > 7)
-			goto draw_name;
-		if (spread == 0xFF)
-			goto frame_tail;
-		if (kind == 0)
-			goto frame_tail;
-		unit = UnitGetFar(ids[cursor]);
-		BattleMotion_ProjectConditionalPositionFar(ids[cursor], (s32 *)&pos);
-		if (infoWin != 0)
-			UiWork_Finalize(infoWin, 1);
-		switch (kind)
-		{
-		case 7:
-		{
-			s32 anchor;
+			for (i = 0; i < 6; i++)
+			{
+				if ((tbl[i].flags & 2) == 0)
+					tbl[i].index = 6;
+			}
+			selIds[cnt] = 0xFF;
+			BattlePres_SetActorModesFar(selIds, 1);
+			if (ids[cursor] <= 7)
+			{
+				if (spread != 0xFF && kind != 0)
+				{
+					unit = UnitGetFar(ids[cursor]);
+					BattleMotion_ProjectConditionalPositionFar(ids[cursor], (s32 *)&pos);
+					if (infoWin != 0)
+						UiWork_Finalize(infoWin, 1);
+					switch (kind)
+					{
+					case 7:
+					{
+						s32 anchor;
 
-			anchor = pos.x / 8;
-			column = anchor - 4;
+						anchor = pos.x / 8;
+						column = anchor - 4;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-			if (System_GetLanguage() == 4)
-			{
-				if (anchor + 6 > 29)
-					column = 20;
-				infoWin = UiWindow_Create(column, 8, 10, 3, 6);
-			}
-			else if (System_GetLanguage() == 3)
-			{
-				if (anchor + 7 > 29)
-					column = 19;
-				infoWin = UiWindow_Create(column, 8, 11, 3, 6);
-			}
-			else
-			{
-				if (anchor + 5 > 29)
-					column = 21;
-				infoWin = UiWindow_Create(column, 8, 9, 3, 6);
-			}
+						if (System_GetLanguage() == 4)
+						{
+							if (anchor + 6 > 29)
+								column = 20;
+							infoWin = UiWindow_Create(column, 8, 10, 3, 6);
+						}
+						else if (System_GetLanguage() == 3)
+						{
+							if (anchor + 7 > 29)
+								column = 19;
+							infoWin = UiWindow_Create(column, 8, 11, 3, 6);
+						}
+						else
+						{
+							if (anchor + 5 > 29)
+								column = 21;
+							infoWin = UiWindow_Create(column, 8, 9, 3, 6);
+						}
 #elif defined(TBS_EDITION_FR)
-			if (anchor + 5 > 29)
-				column = 21;
-			infoWin = UiWindow_Create(column, 8, 9, 3, 6);
+						if (anchor + 5 > 29)
+							column = 21;
+						infoWin = UiWindow_Create(column, 8, 9, 3, 6);
 #elif defined(TBS_EDITION_JA)
-			if (anchor + 4 > 29)
-				column = 22;
-			infoWin = UiWindow_Create(column, 8, 8, 3, 6);
+						if (anchor + 4 > 29)
+							column = 22;
+						infoWin = UiWindow_Create(column, 8, 8, 3, 6);
 #else
-			if (anchor + 4 > 29)
-				column = 22;
-			infoWin = UiWindow_Create(column, 8, 9, 3, 6);
+						if (anchor + 4 > 29)
+							column = 22;
+						infoWin = UiWindow_Create(column, 8, 9, 3, 6);
 #endif
-		}
-			UiWork_SetParamNibble(2);
-			UiText_DrawCharacterAtOffset(
-				(s32)MsgTargetSetDjinni, (struct RenderInput *)infoWin, 0, 0);
-			UiWork_SetParamNibble(15);
-			goto frame_tail;
-		case 1:
-		{
-			s32 anchor;
+					}
+						UiWork_SetParamNibble(2);
+						UiText_DrawCharacterAtOffset(
+							(s32)MsgTargetSetDjinni, (struct RenderInput *)infoWin, 0, 0);
+						UiWork_SetParamNibble(15);
+						break;
+					case 1:
+					{
+						s32 anchor;
 
-			anchor = pos.x / 8;
-			column = anchor - 7;
-			if (anchor + 6 > 29)
-				column = 17;
-			infoWin = UiWindow_Create(column, 8, 13, 3, 6);
-		}
+						anchor = pos.x / 8;
+						column = anchor - 7;
+						if (anchor + 6 > 29)
+							column = 17;
+						infoWin = UiWindow_Create(column, 8, 13, 3, 6);
+					}
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-			switch (System_GetLanguage())
-			{
-			case 1:
-				UiText_DrawStringAtOffset(
-					(u8 *)OwnerStatus_KpString, (struct RenderInput *)infoWin, 0, 0);
-				break;
-			case 2:
-				UiText_DrawStringAtOffset(
-					(u8 *)OwnerStatus_PvString, (struct RenderInput *)infoWin, 0, 0);
-				break;
-			case 3:
-				UiText_DrawStringAtOffset(
-					(u8 *)OwnerStatus_PvString, (struct RenderInput *)infoWin, 0, 0);
-				break;
-			case 4:
-				UiText_DrawStringAtOffset(
-					(u8 *)OwnerStatus_HpString, (struct RenderInput *)infoWin, 0, 0);
-				break;
-			}
+						switch (System_GetLanguage())
+						{
+						case 1:
+							UiText_DrawStringAtOffset(
+								(u8 *)OwnerStatus_KpString, (struct RenderInput *)infoWin, 0, 0);
+							break;
+						case 2:
+							UiText_DrawStringAtOffset(
+								(u8 *)OwnerStatus_PvString, (struct RenderInput *)infoWin, 0, 0);
+							break;
+						case 3:
+							UiText_DrawStringAtOffset(
+								(u8 *)OwnerStatus_PvString, (struct RenderInput *)infoWin, 0, 0);
+							break;
+						case 4:
+							UiText_DrawStringAtOffset(
+								(u8 *)OwnerStatus_HpString, (struct RenderInput *)infoWin, 0, 0);
+							break;
+						}
 #else
-			UiText_DrawStringAtOffset(
-				(u8 *)OwnerStatus_HpString, (struct RenderInput *)infoWin, 0, 0);
+						UiText_DrawStringAtOffset(
+							(u8 *)OwnerStatus_HpString, (struct RenderInput *)infoWin, 0, 0);
 #endif
-			UiText_DrawNumberInWindow(unit->hp, 4, (s32)infoWin, 16, 0);
-			UiText_DrawStringAtOffset(
-				(u8 *)OwnerStatus_SlashString, (struct RenderInput *)infoWin, 48, 0);
-			UiText_DrawNumberInWindow(unit->max_hp, 4, (s32)infoWin, 56, 0);
-			goto frame_tail;
-		case 2:
-		{
-			s32 anchor;
+						UiText_DrawNumberInWindow(unit->hp, 4, (s32)infoWin, 16, 0);
+						UiText_DrawStringAtOffset(
+							(u8 *)OwnerStatus_SlashString, (struct RenderInput *)infoWin, 48, 0);
+						UiText_DrawNumberInWindow(unit->max_hp, 4, (s32)infoWin, 56, 0);
+						break;
+					case 2:
+					{
+						s32 anchor;
 
-			anchor = pos.x / 8;
-			column = anchor - 7;
-			if (anchor + 6 > 29)
-				column = 17;
-			infoWin = UiWindow_Create(column, 8, 13, 3, 6);
-		}
-			UiText_DrawStringAtOffset(
-				(u8 *)OwnerStatus_PpString, (struct RenderInput *)infoWin, 0, 0);
-			UiText_DrawNumberInWindow(unit->ep, 4, (s32)infoWin, 16, 0);
-			UiText_DrawStringAtOffset(
-				(u8 *)OwnerStatus_SlashString, (struct RenderInput *)infoWin, 48, 0);
-			UiText_DrawNumberInWindow(unit->max_ep, 4, (s32)infoWin, 56, 0);
-			goto frame_tail;
-		case 5:
-		{
-			s32 anchor;
+						anchor = pos.x / 8;
+						column = anchor - 7;
+						if (anchor + 6 > 29)
+							column = 17;
+						infoWin = UiWindow_Create(column, 8, 13, 3, 6);
+					}
+						UiText_DrawStringAtOffset(
+							(u8 *)OwnerStatus_PpString, (struct RenderInput *)infoWin, 0, 0);
+						UiText_DrawNumberInWindow(unit->ep, 4, (s32)infoWin, 16, 0);
+						UiText_DrawStringAtOffset(
+							(u8 *)OwnerStatus_SlashString, (struct RenderInput *)infoWin, 48, 0);
+						UiText_DrawNumberInWindow(unit->max_ep, 4, (s32)infoWin, 56, 0);
+						break;
+					case 5:
+					{
+						s32 anchor;
 
-			anchor = pos.x / 8;
-			column = anchor - 7;
-			if (anchor + 5 > 29)
-				column = 18;
-			infoWin = UiWindow_Create(column, 8, 12, 3, 6);
-		}
-			if (unit->hp != 0)
-				goto no_condition;
-			UiText_DrawCharacterAtOffset((s32)MsgTargetDowned, (struct RenderInput *)infoWin, 0, 0);
-			goto frame_tail;
-		case 3:
-		{
-			s32 anchor;
+						anchor = pos.x / 8;
+						column = anchor - 7;
+						if (anchor + 5 > 29)
+							column = 18;
+						infoWin = UiWindow_Create(column, 8, 12, 3, 6);
+					}
+						if (unit->hp != 0)
+							goto no_condition;
+						UiText_DrawCharacterAtOffset(
+							(s32)MsgTargetDowned, (struct RenderInput *)infoWin, 0, 0);
+						break;
+					case 3:
+					{
+						s32 anchor;
 
-			anchor = pos.x / 8;
-			column = anchor - 7;
-			if (anchor + 5 > 29)
-				column = 18;
-			infoWin = UiWindow_Create(column, 8, 12, 3, 6);
-		}
-			if (unit->doku == 0)
-				goto no_condition;
-			UiText_DrawCharacterAtOffset(
-				(s32)MsgTargetCurePoison, (struct RenderInput *)infoWin, 0, 0);
-			goto frame_tail;
-		case 4:
-			count = 0;
-			if (unit->maboroshi != 0)
-				count = 1;
-			if (unit->shibire != 0)
-				count++;
-			if (unit->nemuri != 0)
-				count++;
-			if (unit->fuuji != 0)
-				count++;
-			if (unit->shiryo != 0)
-				count++;
-			if (count == 0)
-				count = 1;
-			rows = 9 - count;
-			if (rows <= 3)
-				rows = 4;
-			{
-				s32 anchor;
+						anchor = pos.x / 8;
+						column = anchor - 7;
+						if (anchor + 5 > 29)
+							column = 18;
+						infoWin = UiWindow_Create(column, 8, 12, 3, 6);
+					}
+						if (unit->doku == 0)
+							goto no_condition;
+						UiText_DrawCharacterAtOffset(
+							(s32)MsgTargetCurePoison, (struct RenderInput *)infoWin, 0, 0);
+						break;
+					case 4:
+						count = 0;
+						if (unit->maboroshi != 0)
+							count = 1;
+						if (unit->shibire != 0)
+							count++;
+						if (unit->nemuri != 0)
+							count++;
+						if (unit->fuuji != 0)
+							count++;
+						if (unit->shiryo != 0)
+							count++;
+						if (count == 0)
+							count = 1;
+						rows = 9 - count;
+						if (rows <= 3)
+							rows = 4;
+						{
+							s32 anchor;
 
-				anchor = pos.x / 8;
-				column = anchor - 7;
+							anchor = pos.x / 8;
+							column = anchor - 7;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-				if (System_GetLanguage() == 3)
-				{
-					if (anchor + 10 > 29)
-						column = 13;
-					infoWin = UiWindow_Create(column, rows, 17, count + 2, 6);
-				}
-				else
-				{
-					if (anchor + 9 > 29)
-						column = 14;
-					infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
-				}
+							if (System_GetLanguage() == 3)
+							{
+								if (anchor + 10 > 29)
+									column = 13;
+								infoWin = UiWindow_Create(column, rows, 17, count + 2, 6);
+							}
+							else
+							{
+								if (anchor + 9 > 29)
+									column = 14;
+								infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
+							}
 #elif defined(TBS_EDITION_JA)
-				if (anchor + 7 > 29)
-					column = 16;
-				infoWin = UiWindow_Create(column, rows, 14, count + 2, 6);
+							if (anchor + 7 > 29)
+								column = 16;
+							infoWin = UiWindow_Create(column, rows, 14, count + 2, 6);
 #else
-				if (anchor + 9 > 29)
-					column = 14;
-				infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
+							if (anchor + 9 > 29)
+								column = 14;
+							infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
 #endif
-			}
-			count = 0;
-			if (unit->maboroshi != 0)
-			{
-				UiText_DrawCharacterAtOffset(
-					(s32)MsgTargetCureDelusion, (struct RenderInput *)infoWin, 0, 0);
-				count = 1;
-			}
-			if (unit->shibire != 0)
-			{
-				UiText_DrawCharacterAtOffset(
-					(s32)MsgTargetCureStun, (struct RenderInput *)infoWin, 0, count * 8);
-				count++;
-			}
-			if (unit->nemuri != 0)
-			{
-				UiText_DrawCharacterAtOffset(
-					(s32)MsgTargetCureSleep, (struct RenderInput *)infoWin, 0, count * 8);
-				count++;
-			}
-			if (unit->fuuji != 0)
-			{
-				UiText_DrawCharacterAtOffset(
-					(s32)MsgTargetCureSeal, (struct RenderInput *)infoWin, 0, count * 8);
-				++count;
-			}
-			if (unit->shiryo != 0)
-			{
-				UiText_DrawCharacterAtOffset(
-					(s32)MsgTargetCureCurse, (struct RenderInput *)infoWin, 0, count * 8);
-				count++;
-			}
-			if (count == 0)
-				goto no_condition;
-			goto frame_tail;
-		case 6:
-			count = 0;
-			if (unit->doku != 0)
-				count = 1;
-			if (unit->maboroshi != 0)
-				count++;
-			if (unit->shibire != 0)
-				count++;
-			if (unit->nemuri != 0)
-				count++;
-			if (unit->fuuji != 0)
-				count++;
-			if (unit->shiryo != 0)
-				count++;
-			if (unit->akuryo != 0)
-				count++;
-			if (count == 0)
-				count = 1;
-			rows = 9 - count;
-			if (rows <= 3)
-				rows = 4;
-			{
-				s32 anchor;
+						}
+						count = 0;
+						if (unit->maboroshi != 0)
+						{
+							UiText_DrawCharacterAtOffset(
+								(s32)MsgTargetCureDelusion, (struct RenderInput *)infoWin, 0, 0);
+							count = 1;
+						}
+						if (unit->shibire != 0)
+						{
+							UiText_DrawCharacterAtOffset((s32)MsgTargetCureStun,
+								(struct RenderInput *)infoWin, 0, count * 8);
+							count++;
+						}
+						if (unit->nemuri != 0)
+						{
+							UiText_DrawCharacterAtOffset((s32)MsgTargetCureSleep,
+								(struct RenderInput *)infoWin, 0, count * 8);
+							count++;
+						}
+						if (unit->fuuji != 0)
+						{
+							UiText_DrawCharacterAtOffset((s32)MsgTargetCureSeal,
+								(struct RenderInput *)infoWin, 0, count * 8);
+							++count;
+						}
+						if (unit->shiryo != 0)
+						{
+							UiText_DrawCharacterAtOffset((s32)MsgTargetCureCurse,
+								(struct RenderInput *)infoWin, 0, count * 8);
+							count++;
+						}
+						if (count == 0)
+							goto no_condition;
+						break;
+					case 6:
+						count = 0;
+						if (unit->doku != 0)
+							count = 1;
+						if (unit->maboroshi != 0)
+							count++;
+						if (unit->shibire != 0)
+							count++;
+						if (unit->nemuri != 0)
+							count++;
+						if (unit->fuuji != 0)
+							count++;
+						if (unit->shiryo != 0)
+							count++;
+						if (unit->akuryo != 0)
+							count++;
+						if (count == 0)
+							count = 1;
+						rows = 9 - count;
+						if (rows <= 3)
+							rows = 4;
+						{
+							s32 anchor;
 
-				anchor = pos.x / 8;
-				column = anchor - 7;
+							anchor = pos.x / 8;
+							column = anchor - 7;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-				if (System_GetLanguage() == 3)
-				{
-					if (anchor + 10 > 29)
-						column = 13;
-					infoWin = UiWindow_Create(column, rows, 17, count + 2, 6);
-				}
-				else
-				{
-					if (anchor + 9 > 29)
-						column = 14;
-					infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
-				}
+							if (System_GetLanguage() == 3)
+							{
+								if (anchor + 10 > 29)
+									column = 13;
+								infoWin = UiWindow_Create(column, rows, 17, count + 2, 6);
+							}
+							else
+							{
+								if (anchor + 9 > 29)
+									column = 14;
+								infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
+							}
 #elif defined(TBS_EDITION_JA)
-				if (anchor + 7 > 29)
-					column = 16;
-				infoWin = UiWindow_Create(column, rows, 14, count + 2, 6);
+							if (anchor + 7 > 29)
+								column = 16;
+							infoWin = UiWindow_Create(column, rows, 14, count + 2, 6);
 #else
-				if (anchor + 9 > 29)
-					column = 14;
-				infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
+							if (anchor + 9 > 29)
+								column = 14;
+							infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
 #endif
+						}
+						count = 0;
+						if (unit->doku != 0)
+						{
+							UiText_DrawCharacterAtOffset(
+								(s32)MsgTargetCurePoison, (struct RenderInput *)infoWin, 0, 0);
+							count = 1;
+						}
+						if (unit->maboroshi != 0)
+						{
+							UiText_DrawCharacterAtOffset((s32)MsgTargetCureDelusion,
+								(struct RenderInput *)infoWin, 0, count * 8);
+							count++;
+						}
+						if (unit->shibire != 0)
+						{
+							UiText_DrawCharacterAtOffset((s32)MsgTargetCureStun,
+								(struct RenderInput *)infoWin, 0, count * 8);
+							count++;
+						}
+						if (unit->nemuri != 0)
+						{
+							UiText_DrawCharacterAtOffset((s32)MsgTargetCureSleep,
+								(struct RenderInput *)infoWin, 0, count * 8);
+							count++;
+						}
+						if (unit->fuuji != 0)
+						{
+							UiText_DrawCharacterAtOffset((s32)MsgTargetCureSeal,
+								(struct RenderInput *)infoWin, 0, count * 8);
+							count++;
+						}
+						if (unit->shiryo != 0)
+						{
+							UiText_DrawCharacterAtOffset((s32)MsgTargetCureCurse,
+								(struct RenderInput *)infoWin, 0, count * 8);
+							count++;
+						}
+						if (unit->akuryo != 0)
+						{
+							UiText_DrawCharacterAtOffset((s32)MsgTargetCureHaunt,
+								(struct RenderInput *)infoWin, 0, 8 * count);
+							count++;
+						}
+						if (count == 0)
+							goto no_condition;
+						break;
+					default:
+						break;
+					no_condition:
+						UiWork_SetParamNibble(2);
+						UiText_DrawCharacterAtOffset(
+							(s32)MsgTargetNoEffect, (struct RenderInput *)infoWin, 0, 0);
+						UiWork_SetParamNibble(15);
+						break;
+					}
+				}
 			}
-			count = 0;
-			if (unit->doku != 0)
+			else if (spread != 0xFF)
 			{
-				UiText_DrawCharacterAtOffset(
-					(s32)MsgTargetCurePoison, (struct RenderInput *)infoWin, 0, 0);
-				count = 1;
-			}
-			if (unit->maboroshi != 0)
-			{
-				UiText_DrawCharacterAtOffset(
-					(s32)MsgTargetCureDelusion, (struct RenderInput *)infoWin, 0, count * 8);
-				count++;
-			}
-			if (unit->shibire != 0)
-			{
-				UiText_DrawCharacterAtOffset(
-					(s32)MsgTargetCureStun, (struct RenderInput *)infoWin, 0, count * 8);
-				count++;
-			}
-			if (unit->nemuri != 0)
-			{
-				UiText_DrawCharacterAtOffset(
-					(s32)MsgTargetCureSleep, (struct RenderInput *)infoWin, 0, count * 8);
-				count++;
-			}
-			if (unit->fuuji != 0)
-			{
-				UiText_DrawCharacterAtOffset(
-					(s32)MsgTargetCureSeal, (struct RenderInput *)infoWin, 0, count * 8);
-				count++;
-			}
-			if (unit->shiryo != 0)
-			{
-				UiText_DrawCharacterAtOffset(
-					(s32)MsgTargetCureCurse, (struct RenderInput *)infoWin, 0, count * 8);
-				count++;
-			}
-			if (unit->akuryo != 0)
-			{
-				UiText_DrawCharacterAtOffset(
-					(s32)MsgTargetCureHaunt, (struct RenderInput *)infoWin, 0, 8 * count);
-				count++;
-			}
-			if (count == 0)
-				goto no_condition;
-			goto frame_tail;
-		default:
-			break;
-		}
-		goto frame_tail;
-	no_condition:
-		UiWork_SetParamNibble(2);
-		UiText_DrawCharacterAtOffset((s32)MsgTargetNoEffect, (struct RenderInput *)infoWin, 0, 0);
-		UiWork_SetParamNibble(15);
-		goto frame_tail;
-	draw_name:
-		if (spread == 0xFF)
-			goto frame_tail;
-		who = UnitGetFar(ids[cursor]);
-		BattleMotion_ProjectConditionalPositionFar(ids[cursor], (s32 *)&namePos);
-		namePos.y += Trig_Sin(gFrameCount << 12) / 32768;
-		if (who->class_id == 125 || who->class_id == 122)
-		{
-			width = (s32)MsgMysteryPersonName;
-			if (who->class_id == 125)
-				width++;
+				who = UnitGetFar(ids[cursor]);
+				BattleMotion_ProjectConditionalPositionFar(ids[cursor], (s32 *)&namePos);
+				namePos.y += Trig_Sin(gFrameCount << 12) / 32768;
+				if (who->class_id == 125 || who->class_id == 122)
+				{
+					width = (s32)MsgMysteryPersonName;
+					if (who->class_id == 125)
+						width++;
 #if defined(TBS_EDITION_JA)
-			UiText_DecodeMessage(width, name, 10);
+					UiText_DecodeMessage(width, name, 10);
 #else
-			UiText_CopyMessageString(width, name, 14);
+					UiText_CopyMessageString(width, name, 14);
 #endif
-		}
-		else
-		{
-			for (i = 0; i <= 13; i++)
-			{
-				name[i] = n = who->name[i];
-				if (!n)
-					break;
+				}
+				else
+				{
+					for (i = 0; i <= 13; i++)
+					{
+						name[i] = n = who->name[i];
+						if (!n)
+							break;
+					}
+					name[i] = 0;
+				}
+				width = UiText_GetWideStringWidth(name);
+				namePos.x -= width / 2;
+				namePos.x -= 8;
+				if (namePos.x + width > 224)
+					namePos.x = 224 - width;
+				if (namePos.x < 0)
+					namePos.x = 0;
+				Ui_ClearVramBlock();
+				UiText_RenderWideStringAtOffset(name, window, namePos.x, 4);
 			}
-			name[i] = 0;
+			redraw &= ~1;
 		}
-		width = UiText_GetWideStringWidth(name);
-		namePos.x -= width / 2;
-		namePos.x -= 8;
-		if (namePos.x + width > 224)
-			namePos.x = 224 - width;
-		if (namePos.x < 0)
-			namePos.x = 0;
-		Ui_ClearVramBlock();
-		UiText_RenderWideStringAtOffset(name, window, namePos.x, 4);
-	frame_tail:
-		redraw &= ~1;
-	frame_end:
 		if (pending != 0)
 		{
 			for (i = 1; i < cnt; i++)
@@ -4723,13 +4723,13 @@ void UpdateLinkSessionCountdown(void)
 		Link_DrawShiftedTilePair(0x06006680);
 
 		if (state->enabled == 0)
-			goto done;
+			return;
 
 		runtime = BtlWk;
 		if (runtime->link_paused == 0)
 			goto load_timer;
 		state->timer = 0;
-		goto done;
+		return;
 
 	signature_tail:
 		if (signature->v != 'V')
@@ -4752,7 +4752,7 @@ void UpdateLinkSessionCountdown(void)
 
 	signature_done:
 		if (timer < 0)
-			goto done;
+			return;
 
 	timer_ready:
 		if (state->displayHandle == 0 && state->secondaryHandle == 0)
@@ -4768,7 +4768,7 @@ void UpdateLinkSessionCountdown(void)
 			timer = nextTimer;
 		}
 		if (timer < 0)
-			goto done;
+			return;
 
 		seconds = (timer + FRAMES_PER_SECOND - 1) / FRAMES_PER_SECOND;
 		if (seconds != 0 && seconds * FRAMES_PER_SECOND == timer)
@@ -4777,9 +4777,6 @@ void UpdateLinkSessionCountdown(void)
 		if (state->displayHandle != 0)
 			UiText_DrawNumberInWindow(seconds, 2, state->displayHandle, 16, 8);
 	}
-
-done:
-	return;
 }
 
 s32 UiText_ShowLocalizedMessageAndWait(void)
@@ -4802,14 +4799,9 @@ s32 UiText_ShowLocalizedMessageAndWait(void)
 		{
 			result = 1;
 		}
-		if (result != 0)
-		{
-			goto active;
-		}
 	}
-	else
+	if (result != 0)
 	{
-	active:
 		work = UiWindow_Create(0, 7, 30, 4, 42);
 		Ui_FillVramBlockPattern();
 		TEXT_LOAD((s32)MsgNoTimeToRun, buffer, TEXT_COUNT);
@@ -4927,22 +4919,22 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 		sync[6] = 'S';
 		sync[7] = 'T';
 		miss = 0;
-		/* FAKEMATCH: instruction order only: the one-pass block's loop
-           notes before the jump end the schedule there, so miss = 0 and the
-           'T' store go out before the copies of the side and pause
-           pointers that PRE puts before the jump, as native; its LOOP_CONT
-           note keeps jump from copying the check in front (differ 4). */
-		do
+		for (;;)
 		{
-			goto handshake_check;
-		handshake_loop:
+			peer = (u16 *)&gLinkPeerSignatures[link->link_side ^ 1];
+			if (link->link_paused != 0)
+			{
+				count = -1;
+				state->enabled = 0;
+				break;
+			}
 			if ((gLinkStatus & 3) != 3)
 			{
 				if (++miss > 24)
 				{
 					count = -1;
 					state->enabled = 0;
-					goto handshake_done;
+					break;
 				}
 			}
 			else
@@ -4950,31 +4942,22 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 				miss = 0;
 				if (peer[4] == 'V' && peer[5] == 'S' && peer[6] == 'S' && peer[7] == 'T')
 				{
-					goto handshake_done;
+					break;
 				}
 				if (peer[4] == 'E' && peer[5] == 'D' && peer[6] == 'V' && peer[7] == 'S')
 				{
-					goto handshake_done;
+					break;
 				}
 				if (!(peer[0] == 'E' && peer[1] == 'X' && peer[2] == 'E' && peer[3] == 'C'))
 				{
 					count = -1;
 					state->enabled = 0;
-					goto handshake_done;
+					break;
 				}
 			}
 			WaitFrames(1);
-		handshake_check:
-			peer = (u16 *)&gLinkPeerSignatures[link->link_side ^ 1];
-			if (link->link_paused == 0)
-			{
-				goto handshake_loop;
-			}
-		} while (0);
-		count = -1;
-		state->enabled = 0;
+		}
 	}
-handshake_done:
 	Scheduler_AddOrUpdateCallback(UpdateLinkSessionCountdown, 3200);
 
 	for (;;)
@@ -5137,7 +5120,7 @@ handshake_done:
 			{
 				if (i == 0)
 				{
-					goto next_round;
+					break;
 				}
 				i--;
 				continue;
@@ -5627,7 +5610,6 @@ handshake_done:
 			break;
 		}
 
-	next_round:
 		if (i < count)
 		{
 			continue;

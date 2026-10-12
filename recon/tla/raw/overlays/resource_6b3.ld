@@ -11,7 +11,7 @@ SECTIONS
         "*/resource_6b3_overlay.o"(.text.x02008318)
         "*/games/tla/src/field/overlay_6b3/prepare.o"(.text)
         "*/games/tla/src/field/overlay_6b3/import.o"(.text)
-        "*/resource_6b3_overlay.o"(.rodata.x02008874)
+        "*/games/tla/src/field/overlay_6b3/pal.o"(.rodata)
         "*/games/tla/src/field/overlay_6b3/data.o"(.data)
     }
     .bss : { "*/resource_6b3_overlay.o"(.bss) }

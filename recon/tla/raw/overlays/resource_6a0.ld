@@ -58,7 +58,9 @@ SECTIONS
         "*/resource_6a0_overlay.o"(.text.x0200a984)
         "*/games/tla/src/field/overlay_6a0/import.o"(.text)
         "*/games/tla/src/field/overlay_6a0/data.o"(.data)
-        "*/resource_6a0_overlay.o"(.rodata.x0200ac9c)
+        "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
+        "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
+        "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
         "*/games/tla/src/field/overlay_6a0/data2.o"(.data)
     }
     .bss : { "*/resource_6a0_overlay.o"(.bss) }

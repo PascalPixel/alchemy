@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_6a7/s0680.o"(.text)
         "*/resource_6a7_overlay.o"(.text.x020086b0)
         "*/games/tla/src/field/overlay_6a7/import.o"(.text)
-        "*/resource_6a7_overlay.o"(.rodata.x02008b60)
+        "*/games/tla/src/graphics/field/pal685.o"(.rodata)
         "*/games/tla/src/field/overlay_6a7/data.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

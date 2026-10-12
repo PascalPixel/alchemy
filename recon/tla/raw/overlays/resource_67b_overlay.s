@@ -4357,33 +4357,6 @@ Func_0200276c:
 .L_0200a830:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
-	.section .rodata.x0200ac74,"a",%progbits
-	.global Data_02002c74
-Data_02002c74:
-	.4byte 0x7e080100
-	.4byte 0x82e00afd
-	.4byte 0xd35d1389
-	.4byte 0x855a6d2b
-	.4byte 0xfda62705
-	.4byte 0xc4ed21f0
-	.4byte 0xa9eea465
-	.4byte 0xa82af7e3
-	.4byte 0xa5e3d158
-	.4byte 0xfc79e5e9
-	.4byte 0xfe9e5e82
-	.4byte 0x3ccb0e0c
-	.4byte 0xdcbf3bae
-	.4byte 0x5eaee6e3
-	.4byte 0x80a3af17
-	.4byte 0x5e3e0a7c
-	.4byte 0x100fcf2f
-	.4byte 0x4401362e
-	.4byte 0x5cfd9b8f
-	.4byte 0x71f039f8
-	.4byte 0xe6075e04
-	.4byte 0xf3783dc2
-	.4byte 0x3ec75e86
-	.4byte 0x0007c083
 	.section .rodata.x0200b388,"a",%progbits
 	.global Data_02003388
 Data_02003388:

@@ -84,7 +84,7 @@ SECTIONS
         "*/resource_661_overlay.o"(.text.x0200be3c)
         "*/games/tla/src/field/overlay_661/import.o"(.text)
         "*/games/tla/src/field/overlay_661/data.o"(.data)
-        "*/resource_661_overlay.o"(.rodata.x0200c314)
+        "*/games/tla/src/graphics/field/tiles64d.o"(.rodata)
         "*/games/tla/src/field/overlay_661/data2.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

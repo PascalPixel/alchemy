@@ -803,17 +803,6 @@ Func_02000318:
 	.4byte gRenderOamEnabled
 .L_02008784:
 	.4byte 0x00000001
-	.section .rodata.x02008874,"a",%progbits
-	.global Data_02000874
-Data_02000874:
-	.4byte 0x7fff44e0
-	.4byte 0x0000318c
-	.4byte 0x01400180
-	.4byte 0x00c00100
-	.4byte 0x020001c0
-	.4byte 0x294a0240
-	.4byte 0x001f5294
-	.4byte 0x7c0003ff
 	.section .bss,"aw",%nobits
 	.space 0x00000004
 	.global Data_020008f0

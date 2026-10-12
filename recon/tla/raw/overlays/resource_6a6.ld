@@ -22,7 +22,7 @@ SECTIONS
         "*/resource_6a6_overlay.o"(.text.x020090c0)
         "*/games/tla/src/field/overlay_6a6/s11ec.o"(.text)
         "*/games/tla/src/field/overlay_6a6/import.o"(.text)
-        "*/resource_6a6_overlay.o"(.rodata.x02009450)
+        "*/games/tla/src/graphics/field/pal685.o"(.rodata)
         "*/games/tla/src/field/overlay_6a6/data.o"(.data)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

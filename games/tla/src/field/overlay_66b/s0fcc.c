@@ -11,7 +11,7 @@ struct Ov66bWork {
 };
 
 extern u8 Data_020023c4[];
-extern const u8 Data_020013d8[];
+extern const u8 Field_Tiles64D[];
 
 s32 GameFlag_Test(s32 flag);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
@@ -33,7 +33,7 @@ void Func_02000fcc(s32 unused, s32 value)
     if (!GameFlag_Test(0x109))
         Call2((void (*)())Iwram_ClearWordsEntry, (s32)work, 456);
     buffer = (void *)Value1((s32 (*)())Runtime_BumpAllocateAlternatePool, 0x800);
-    Func_02001184(Data_020013d8, buffer);
+    Func_02001184(Field_Tiles64D, buffer);
     work->entry = Resource_FindFreeEntry();
     Call3((void (*)())VramBlock_LoadCached, work->entry, 0x800, (s32)buffer);
     MemFree(buffer);

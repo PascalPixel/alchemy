@@ -9,7 +9,7 @@ struct Ov697Gauge {
     void *buffer;
 };
 
-extern const u8 Data_02005fa0[];
+extern const u8 Field_Tiles64D[];
 
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 s32 Resource_FindFreeEntry(void);
@@ -40,7 +40,7 @@ void Func_02004188(s32 a, s32 b)
     if (!GameFlag_Test(0x109))
         Words_Clear(gauge, 0x1c8);
     buffer = Pool_Alloc(0x800);
-    Func_02005770(Data_02005fa0, buffer);
+    Func_02005770(Field_Tiles64D, buffer);
     gauge->handle = Resource_FindFreeEntry();
     VramBlock_LoadCached((s16)gauge->handle, 0x800, buffer);
     MemFree(buffer);

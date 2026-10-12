@@ -803,7 +803,7 @@ Func_020006b0:
 .L_02008900:
 	.4byte 0x000001e8
 .L_02008904:
-	.4byte Data_02000b60
+	.4byte Field_Palette685
 .L_02008908:
 	.4byte 0x050003e0
 .L_0200890c:
@@ -879,14 +879,3 @@ Func_020006b0:
 	mov r10, r6
 	mov r11, r7
 	pop {r5, r6, r7, pc}
-	.section .rodata.x02008b60,"a",%progbits
-	.global Data_02000b60
-Data_02000b60:
-	.4byte 0x575a0260
-	.4byte 0x46754ad7
-	.4byte 0x31cf3a32
-	.4byte 0x28ea294c
-	.4byte 0x00750009
-	.4byte 0x01bf011f
-	.4byte 0x031f027f
-	.4byte 0x7fff03ff

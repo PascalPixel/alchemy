@@ -4562,7 +4562,7 @@ Func_020029f8:
 .L_0200ac14:
 	.4byte 0x000003ff
 .L_0200ac18:
-	.4byte Data_02003640
+	.4byte Field_Palette685
 .L_0200ac1c:
 	.4byte 0x050003e0
 .L_0200ac20:
@@ -5548,14 +5548,3 @@ Func_020032a4:
 	.4byte 0xfffff000
 .L_0200b3a0:
 	.4byte Func_02002de4
-	.section .rodata.x0200b640,"a",%progbits
-	.global Data_02003640
-Data_02003640:
-	.4byte 0x575a0260
-	.4byte 0x46754ad7
-	.4byte 0x31cf3a32
-	.4byte 0x28ea294c
-	.4byte 0x00750009
-	.4byte 0x01bf011f
-	.4byte 0x031f027f
-	.4byte 0x7fff03ff

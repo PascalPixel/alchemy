@@ -12,7 +12,13 @@ void Func_080d64b8(void)
     {
         volatile u16 *dma = REG_DMA0;
 
-        dma[5] &= 0xc5ff; // 開始タイミングとリピートを消す
+        u16 control;
+
+        /* FAKEMATCH: the one-pass block reads the control word before its mask is built (one reordered pair, differ 2 without it). */
+        do {
+            control = dma[5];
+        } while (0);
+        dma[5] = control & 0xc5ff; // 開始タイミングとリピートを消す
         dma[5] &= 0x7fff; // 止める
         (void)dma[5];
     }

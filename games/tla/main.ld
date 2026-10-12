@@ -925,6 +925,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000d5e58)
     "*/games/tla/src/field/common/object/run_pending_flag_event.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d5fd8)
+    "*/games/tla/src/field/common/effect/dmafx.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.000d64d0)
     "*/games/tla/src/field/common/effect/sparkoff.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d7014)
     "*/games/tla/src/field/common/effect/fieldgfx.o"(.text)

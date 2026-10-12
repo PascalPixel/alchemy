@@ -1087,7 +1087,7 @@
         "*/recon/tla/raw/080d5ff8.o"(.text)
         "*/recon/tla/raw/080d607c.o"(.text)
         "*/recon/tla/raw/080d6408.o"(.text)
-        "*/recon/tla/raw/080d64b8.o"(.text)
+        "*/games/tla/src/field/common/effect/dmafx.o"(.text)
         "*/recon/tla/raw/080d64f0.o"(.text)
         "*/recon/tla/raw/080d6674.o"(.text)
         "*/recon/tla/raw/080d67e8.o"(.text)

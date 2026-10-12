@@ -929,6 +929,8 @@
     "*/recon/tla/es/rom.o"(.rom.000dee6c)
     "*/games/tla/src/field/common/object/run_pending_flag_event.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000defec)
+    "*/games/tla/src/field/common/effect/dmafx.o"(.text)
+    "*/recon/tla/es/rom.o"(.rom.000df4e4)
     "*/recon/tla/es/rom.o"(.rom.000df900)
     "*/recon/tla/es/rom.o"(.rom.000dfb84)
     "*/games/tla/src/field/common/effect/sparkoff.o"(.text)

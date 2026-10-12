@@ -1,5 +1,21 @@
 #include "local.h"
 
+void Func_02000714(struct ObjectRuntime *object)
+{
+    s32 step;
+
+    object->x += object->action << 8;
+    do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: the native loads y before it builds 0x8000 (2 differ without it). */
+    object->y += 0x8000;
+    do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: the native stores y before it starts the step, and loads scale_x between the step's first byte and its shift (4 differ without it; the step as a local alone changes nothing). */
+    step = 0x51e;
+    object->scale_x += step;
+    object->scale_y += step;
+    object->action += 2;
+    if (--*(s32 *)&object->linked_object == 0)
+        Func_02002000(object);
+}
+
 void Func_02000758(s32 x, s32 y, s32 z)
 {
     struct ObjectRuntime *object = Func_02001ff8(0x11d, x, y, z);

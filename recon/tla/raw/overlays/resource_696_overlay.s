@@ -483,34 +483,8 @@ Func_02000420:
 	pop {pc}
 .L_02008454:
 	.4byte 0xfffe0000
-	.section .text.x02008458,"ax",%progbits
-	.global Func_02000458
-	.thumb_func
-Func_02000458:
-	push {lr}
-	ldr r3, .L_02008484
-	movs r2, #3
-	ldr r3, [r3]
-	ands r3, r2
-	adds r2, r0, #0
-	adds r2, #99
-	ldrb r2, [r2]
-	lsrs r3, r2
-	movs r2, #1
-	ands r3, r2
-	adds r2, r0, #0
-	adds r2, #98
-	ldrb r2, [r2]
-	adds r1, r2, #0
-	muls r1, r3
-	lsls r1, r1, #24
-	lsrs r1, r1, #24
-	bl Object_SetPartAttribute
-	pop {pc}
-	.2byte 0x0000
-.L_02008484:
-	.4byte gFrameCount
 	.section .text.x02008488,"ax",%progbits
+	.balign 4
 	.global Func_02000488
 	.thumb_func
 Func_02000488:
@@ -2448,6 +2422,7 @@ Func_02001d3c:
 .L_02009f9c:
 	.4byte 0x00019999
 	.section .text.x02009fec,"ax",%progbits
+	.balign 4
 	.global Func_02001fec
 	.thumb_func
 Func_02001fec:
@@ -5815,6 +5790,7 @@ Func_02003ff8:
 .L_0200c058:
 	.4byte 0x000000f6
 	.section .text.x0200c060,"ax",%progbits
+	.balign 4
 	.global Func_02004060
 	.thumb_func
 Func_02004060:

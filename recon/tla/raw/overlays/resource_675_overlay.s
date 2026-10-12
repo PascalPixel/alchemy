@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
 	.section .text.x02008038,"ax",%progbits
+	.balign 4
 	.global Func_02000038
 	.thumb_func
 Func_02000038:
@@ -100,109 +101,8 @@ Func_02000038:
 	.4byte 0x05000200
 .L_020080f0:
 	.4byte gPartyState
-	.section .text.x020080f4,"ax",%progbits
-	.global Func_020000f4
-	.thumb_func
-Func_020000f4:
-	push {r5, lr}
-	ldr r2, .L_02008138
-	ldr r3, .L_02008128
-	ldr r5, .L_0200813c
-	strh r3, [r2]
-	ldr r3, .L_02008140
-	ldr r0, [r3]
-	bl Func_020001d4
-	ldr r2, .L_02008144
-	ldr r3, .L_0200812c
-	strh r0, [r5]
-	strh r3, [r2]
-	ldr r2, .L_02008148
-	ldr r3, .L_02008130
-	movs r1, #144
-	strh r3, [r2]
-	ldr r2, .L_0200814c
-	ldr r3, .L_02008134
-	lsls r1, r1, #3
-	strh r3, [r2]
-	ldr r0, .L_02008150
-	bl Scheduler_AddOrUpdateCallback
-	b .L_02008154
-	.2byte 0x0000
-.L_02008128:
-	.4byte 0x00000000
-.L_0200812c:
-	.4byte 0x0000000f
-.L_02008130:
-	.4byte 0x00000010
-.L_02008134:
-	.4byte 0x00000001
-.L_02008138:
-	.4byte Data_02001a34
-.L_0200813c:
-	.4byte Data_02001a30
-.L_02008140:
-	.4byte Data_02001a24
-.L_02008144:
-	.4byte Data_02001a20
-.L_02008148:
-	.4byte Data_02001a1c
-.L_0200814c:
-	.4byte Data_02001a14
-.L_02008150:
-	.4byte Func_020001f8
-.L_02008154:
-	pop {r5, pc}
-	.2byte 0x0000
-	.section .text.x02008178,"ax",%progbits
-	.global Func_02000178
-	.thumb_func
-Func_02000178:
-	push {r5, lr}
-	ldr r2, .L_020081b4
-	ldr r3, .L_020081a8
-	ldr r5, .L_020081b8
-	strh r3, [r2]
-	ldr r3, .L_020081bc
-	ldr r0, [r3]
-	bl Func_020001d4
-	ldr r2, .L_020081ac
-	ldr r3, .L_020081c0
-	strh r0, [r5]
-	strh r2, [r3]
-	ldr r3, .L_020081c4
-	movs r1, #144
-	strh r2, [r3]
-	ldr r2, .L_020081c8
-	ldr r3, .L_020081b0
-	lsls r1, r1, #3
-	strh r3, [r2]
-	ldr r0, .L_020081cc
-	bl Scheduler_AddOrUpdateCallback
-	b .L_020081d0
-.L_020081a8:
-	.4byte 0x00000000
-.L_020081ac:
-	.4byte 0x00000002
-.L_020081b0:
-	.4byte 0x00000001
-.L_020081b4:
-	.4byte Data_02001a34
-.L_020081b8:
-	.4byte Data_02001a30
-.L_020081bc:
-	.4byte Data_02001a24
-.L_020081c0:
-	.4byte Data_02001a20
-.L_020081c4:
-	.4byte Data_02001a1c
-.L_020081c8:
-	.4byte Data_02001a14
-.L_020081cc:
-	.4byte Func_020001f8
-.L_020081d0:
-	pop {r5, pc}
-	.2byte 0x0000
 	.section .text.x020081d4,"ax",%progbits
+	.balign 4
 	.global Func_020001d4
 	.thumb_func
 Func_020001d4:
@@ -492,6 +392,7 @@ Func_020003d4:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 	.section .text.x020084ac,"ax",%progbits
+	.balign 4
 	.global Func_020004ac
 	.thumb_func
 Func_020004ac:
@@ -890,6 +791,7 @@ Func_0200069c:
 .L_020087d4:
 	.4byte Data_02001454
 	.section .text.x020087dc,"ax",%progbits
+	.balign 4
 	.global Func_020007dc
 	.thumb_func
 Func_020007dc:

@@ -20,7 +20,6 @@ SECTIONS
         "*/resource_6ba_overlay.o"(.text.x02008748)
         "*/resource_6ba_overlay.o"(.text.x02008848)
         "*/games/tla/src/field/overlay_6ba/forward.o"(.text)
-        "*/resource_6ba_overlay.o"(.text.x02008ae0)
         "*/games/tla/src/field/overlay_6ba/drop.o"(.text)
         "*/resource_6ba_overlay.o"(.text.x02008ba0)
         "*/games/tla/src/field/overlay_6ba/import.o"(.text)

@@ -1790,38 +1790,8 @@ Func_020015ac:
 	.4byte 0x02ba0000
 .L_02009720:
 	.4byte gPartyState
-	.section .text.x020097bc,"ax",%progbits
-	.balign 4
-	.global Func_020017bc
-	.thumb_func
-Func_020017bc:
-	push {r5, r6, lr}
-	adds r5, r0, #0
-	bl Object_GetById
-	movs r1, #3
-	adds r6, r0, #0
-	adds r0, r5, #0
-	bl ObjectMotion_SetActionVariant
-	adds r2, r6, #0
-	adds r2, #89
-	movs r3, #8
-	strb r3, [r2]
-	adds r0, r6, #0
-	adds r0, #35
-	ldrb r2, [r0]
-	movs r3, #2
-	orrs r3, r2
-	strb r3, [r0]
-	adds r3, r6, #0
-	movs r1, #0
-	adds r3, #85
-	strb r1, [r3]
-	movs r3, #128
-	lsls r3, r3, #15
-	str r3, [r6, #12]
-	pop {r5, r6, pc}
-	.2byte 0x0000
 	.section .text.x020097f4,"ax",%progbits
+	.balign 4
 	.global Func_020017f4
 	.thumb_func
 Func_020017f4:

@@ -13,7 +13,7 @@ SECTIONS
         "*/resource_696_overlay.o"(.text.x020082dc)
         "*/resource_696_overlay.o"(.text.x02008378)
         "*/resource_696_overlay.o"(.text.x02008420)
-        "*/resource_696_overlay.o"(.text.x02008458)
+        "*/games/tla/src/field/overlay_696/s0458.o"(.text)
         "*/resource_696_overlay.o"(.text.x02008488)
         "*/resource_696_overlay.o"(.text.x02008508)
         "*/resource_696_overlay.o"(.text.x0200857c)

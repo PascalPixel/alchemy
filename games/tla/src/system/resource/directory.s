@@ -640,7 +640,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set00Palette
 	resource , Tileset_Set00TilesA
 	resource , Tileset_Set00TilesB
-	resource , Resource_Data276
+	resource , Tileset_Set00TilesC
 	resource , Tileset_Set00TilesD
 	resource , Resource_Data278
 	resource , Tileset_Set01Palette

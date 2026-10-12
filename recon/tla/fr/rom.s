@@ -767,13 +767,14 @@ ResourceSlot_NumberTable:
 	.incbin "baserom.gba", 0x0002e91c, 0x00000230
 	.global Map_TileDissolveOrder
 Map_TileDissolveOrder:
-	.incbin "baserom.gba", 0x0002eb4c, 0x000000fc
+	.incbin "baserom.gba", 0x0002eb4c, 0x0000004c
+	.section .rom.0002ec48, "ax"
 	.global Script_MainScript
 Script_MainScript:
-	.incbin "baserom.gba", 0x0002ec48, 0x0000027c
-	.global Curve_SampleIndexTable
-Curve_SampleIndexTable:
-	.incbin "baserom.gba", 0x0002eec4, 0x00000100
+	.incbin "baserom.gba", 0x0002ec48, 0x00000058
+	.section .rom.0002ece0, "ax"
+	.incbin "baserom.gba", 0x0002ece0, 0x000000e4
+	.section .rom.0002efc4, "ax"
 	.global Map_TerrainHeightHandlers
 Map_TerrainHeightHandlers:
 	.incbin "baserom.gba", 0x0002efc4, 0x00000040
@@ -1494,7 +1495,9 @@ Func_0804e3f4:
 RenderResource_PairSourceTable:
 	.incbin "baserom.gba", 0x00059b98, 0x00000c50
 	.section .rom.0005c3e8, "ax"
-	.incbin "baserom.gba", 0x0005c3e8, 0x00000104
+	.incbin "baserom.gba", 0x0005c3e8, 0x0000006a
+	.section .rom.0005c4da, "ax"
+	.incbin "baserom.gba", 0x0005c4da, 0x00000012
 	.section .rom.0005ecec, "ax"
 	.incbin "baserom.gba", 0x0005ecec, 0x0000018c
 	.global Data_0805eb50
@@ -4088,9 +4091,8 @@ BattlePres_SetActorModes:
 	.global BattlePlacement_StepPairs
 BattlePlacement_StepPairs:
 	.incbin "baserom.gba", 0x0012885c, 0x00000024
-	.global Data_08128868
-Data_08128868:
-	.incbin "baserom.gba", 0x00128880, 0x00000f5c
+	.section .rom.001288b0, "ax"
+	.incbin "baserom.gba", 0x001288b0, 0x00000f2c
 	.section .rom.00129840, "ax"
 	.incbin "baserom.gba", 0x00129840, 0x00000144
 	.section .rom.0012ce6c, "ax"
@@ -4480,7 +4482,13 @@ Func_08196404:
 	.section .rom.00196a7c, "ax"
 	.incbin "baserom.gba", 0x00196a7c, 0x000007b4
 	.section .rom.001973f0, "ax"
-	.incbin "baserom.gba", 0x001973f0, 0x00002db8
+	.incbin "baserom.gba", 0x001973f0, 0x0000025c
+	.section .rom.00197690, "ax"
+	.incbin "baserom.gba", 0x00197690, 0x000001a4
+	.section .rom.00197864, "ax"
+	.incbin "baserom.gba", 0x00197864, 0x00000d02
+	.section .rom.001985a6, "ax"
+	.incbin "baserom.gba", 0x001985a6, 0x00001c02
 	.section .rom.001a0000, "ax"
 	.global Resource_FarCall00A
 Resource_FarCall00A:
@@ -4577,7 +4585,7 @@ TitlePalette_UpdateFade:
 Graphics_TransformPaletteBuffer:
 	.incbin "baserom.gba", 0x001a7a28, 0x00000724
 	.section .rom.001a8286, "ax"
-	.incbin "baserom.gba", 0x001a8286, 0x000004ea
+	.incbin "baserom.gba", 0x001a8286, 0x000004ae
 	.section .rom.001ac026, "ax"
 	.incbin "baserom.gba", 0x001ac026, 0x0000008a
 	.section .rom.001ac15c, "ax"

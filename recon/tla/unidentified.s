@@ -63,12 +63,7 @@ Map_TileDissolveOrder:
 	.global Data_0802eb90
 Data_0802eb90:
 	.incbin "baserom.gba", 0x0002eb90, 0x00000008
-	.global Data_0802eb98
-Data_0802eb98:
-	.incbin "baserom.gba", 0x0002eb98, 0x00000030
-	.global Data_0802ebc8
-Data_0802ebc8:
-	.incbin "baserom.gba", 0x0002ebc8, 0x00000080
+	.section .unidentified.0802ec48,"a"
 	.global Script_MainScript
 Script_MainScript:
 	.incbin "baserom.gba", 0x0002ec48, 0x00000014
@@ -84,9 +79,7 @@ Data_0802ec88:
 	.global Data_0802ec94
 Data_0802ec94:
 	.incbin "baserom.gba", 0x0002ec94, 0x0000000c
-	.global Data_0802eca0
-Data_0802eca0:
-	.incbin "baserom.gba", 0x0002eca0, 0x00000040
+	.section .unidentified.0802ece0,"a"
 	.global Data_0802ece0
 Data_0802ece0:
 	.incbin "baserom.gba", 0x0002ece0, 0x00000048
@@ -96,12 +89,7 @@ Data_0802ed28:
 	.global Data_0802ed34
 Data_0802ed34:
 	.incbin "baserom.gba", 0x0002ed34, 0x00000090
-	.global Data_0802edc4
-Data_0802edc4:
-	.incbin "baserom.gba", 0x0002edc4, 0x00000100
-	.global Curve_SampleIndexTable
-Curve_SampleIndexTable:
-	.incbin "baserom.gba", 0x0002eec4, 0x00000100
+	.section .unidentified.0802efc4,"a"
 	.global Map_TerrainHeightHandlers
 Map_TerrainHeightHandlers:
 	.incbin "baserom.gba", 0x0002efc4, 0x00000040
@@ -201,12 +189,7 @@ Data_0805a0e0:
 	.global Data_0805c10c
 Data_0805c10c:
 	.incbin "baserom.gba", 0x0005c10c, 0x00000020
-	.global Data_0805c12c
-Data_0805c12c:
-	.incbin "baserom.gba", 0x0005c12c, 0x00000050
-	.global Data_0805c17c
-Data_0805c17c:
-	.incbin "baserom.gba", 0x0005c17c, 0x00000038
+	.section .unidentified.0805c1b4,"a"
 	.global Data_0805c1b4
 Data_0805c1b4:
 	.incbin "baserom.gba", 0x0005c1b4, 0x00000010
@@ -838,9 +821,7 @@ Data_08128836:
 	.global BattlePlacement_StepPairs
 BattlePlacement_StepPairs:
 	.incbin "baserom.gba", 0x00128844, 0x00000024
-	.global Data_08128868
-Data_08128868:
-	.incbin "baserom.gba", 0x00128868, 0x00000030
+	.section .unidentified.08128898,"a"
 	.global HitTbl
 HitTbl:
 	.incbin "baserom.gba", 0x00128898, 0x00000008
@@ -1125,9 +1106,7 @@ Data_08197609:
 	.global Data_0819762a
 Data_0819762a:
 	.incbin "baserom.gba", 0x0019762a, 0x00000022
-	.global Data_0819764c
-Data_0819764c:
-	.incbin "baserom.gba", 0x0019764c, 0x00000044
+	.section .unidentified.08197690,"a"
 	.global Data_08197690
 Data_08197690:
 	.incbin "baserom.gba", 0x00197690, 0x00000021
@@ -1233,9 +1212,7 @@ Data_0819781a:
 	.global Data_08197826
 Data_08197826:
 	.incbin "baserom.gba", 0x00197826, 0x0000000e
-	.global Data_08197834
-Data_08197834:
-	.incbin "baserom.gba", 0x00197834, 0x00000030
+	.section .unidentified.08197864,"a"
 	.global Data_08197864
 Data_08197864:
 	.incbin "baserom.gba", 0x00197864, 0x00000008
@@ -1674,9 +1651,7 @@ Data_0819855e:
 	.global Data_08198562
 Data_08198562:
 	.incbin "baserom.gba", 0x00198562, 0x00000004
-	.global Data_08198566
-Data_08198566:
-	.incbin "baserom.gba", 0x00198566, 0x00000040
+	.section .unidentified.081985a6,"a"
 	.global Data_081985a6
 Data_081985a6:
 	.incbin "baserom.gba", 0x001985a6, 0x00000005
@@ -2690,9 +2665,6 @@ Data_081a2059:
 	.global DisplayScroll_LineTable
 DisplayScroll_LineTable:
 	.incbin "baserom.gba", 0x001a20bc, 0x00000344
-	.global Data_081a2400
-Data_081a2400:
-	.incbin "baserom.gba", 0x001a2400, 0x000002f4
 	.section .unidentified.081a8288,"a"
 	.global Data_081a8288
 Data_081a8288:
@@ -2703,9 +2675,6 @@ Data_081a8378:
 	.global Data_081a84e6
 Data_081a84e6:
 	.incbin "baserom.gba", 0x001a84e6, 0x00000258
-	.global Data_081a873e
-Data_081a873e:
-	.incbin "baserom.gba", 0x001a873e, 0x0000003c
 	.section .unidentified.081a883a,"a"
 	.incbin "baserom.gba", 0x001a883a, 0x00000002
 	.section .unidentified.081ad348,"a"

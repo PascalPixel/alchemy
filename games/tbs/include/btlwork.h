@@ -2,6 +2,7 @@
 #define ALCHEMY_BATTLE_WORK_H
 
 #include "unit/battle/battle.h"
+#include "unit/battle/battle9.h"
 #include "unit/battle/battle10.h"
 #include "unit/battle/battle11.h"
 #include "unit/battle/battle12.h"

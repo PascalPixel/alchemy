@@ -297,14 +297,13 @@ next:
 			{
 				goto restart;
 			}
-			if (ent[slot].on == 0)
+			if (ent[slot].on != 0)
 			{
-				goto next;
+				Ui_SetGridColumnNumber(slot, ent[slot].no);
+				Ui_SetGridColumnPriority(slot, ent[slot].priority);
+				Ui_SetGridColumnParameter(slot, ent[slot].param);
+				Ui_FillGridColumnFromMetadata(slot, ent[slot].animation);
 			}
-			Ui_SetGridColumnNumber(slot, ent[slot].no);
-			Ui_SetGridColumnPriority(slot, ent[slot].priority);
-			Ui_SetGridColumnParameter(slot, ent[slot].param);
-			Ui_FillGridColumnFromMetadata(slot, ent[slot].animation);
 			goto next;
 
 		case 2:
@@ -331,11 +330,10 @@ next:
 			{
 				break;
 			}
-			if (ent[slot].on == 0)
+			if (ent[slot].on != 0)
 			{
-				goto next;
+				Ui_SetGridColumnPriority(slot, ent[slot].priority);
 			}
-			Ui_SetGridColumnPriority(slot, ent[slot].priority);
 			goto next;
 
 		case 3:
@@ -362,11 +360,10 @@ next:
 			{
 				break;
 			}
-			if (ent[slot].on == 0)
+			if (ent[slot].on != 0)
 			{
-				goto next;
+				Ui_SetGridColumnParameter(slot, ent[slot].param);
 			}
-			Ui_SetGridColumnParameter(slot, ent[slot].param);
 			goto next;
 
 		default:
@@ -379,16 +376,14 @@ next:
 			{
 				if (slot != 1)
 				{
-					if (ent[slot].on == 0)
+					if (ent[slot].on != 0)
 					{
-						goto next;
+						Ui_FillGridColumnFromMetadata(slot, ent[slot].animation);
+						if (slot == 0)
+						{
+							Ui_FillGridColumnFromMetadata(1, ent[1].animation);
+						}
 					}
-					Ui_FillGridColumnFromMetadata(slot, ent[slot].animation);
-					if (slot != 0)
-					{
-						goto next;
-					}
-					Ui_FillGridColumnFromMetadata(1, ent[1].animation);
 					goto next;
 				}
 			}

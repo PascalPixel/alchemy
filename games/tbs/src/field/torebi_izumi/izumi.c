@@ -22,7 +22,7 @@
 #include "unit/window/btlcmd.h"
 #include "unit/window/cmdicon.h"
 #include "unit/window/debug.h"
-#include "unit/menu/shop/shop.h"
+#include "unit/shop/shop.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

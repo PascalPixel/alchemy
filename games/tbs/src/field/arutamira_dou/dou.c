@@ -20,8 +20,8 @@
 #include "unit/field/script.h"
 #include "unit/field/player.h"
 #include "unit/field/mapcell.h"
-#include "unit/menu/shop/shop.h"
-#include "unit/menu/shop/seido.h"
+#include "unit/shop/shop.h"
+#include "unit/shop/seido.h"
 #include "unit/runtime/math.h"
 #include "iowrite.h"
 

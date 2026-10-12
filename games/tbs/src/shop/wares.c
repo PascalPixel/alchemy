@@ -1,5 +1,5 @@
-#include "unit/menu/shop/shop.h"
-#include "unit/menu/shop/wares.h"
+#include "unit/shop/shop.h"
+#include "unit/shop/wares.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

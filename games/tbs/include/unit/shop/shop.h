@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_MENU_SHOP_SHOP_H
-#define ALCHEMY_UNIT_MENU_SHOP_SHOP_H
+#ifndef ALCHEMY_UNIT_SHOP_SHOP_H
+#define ALCHEMY_UNIT_SHOP_SHOP_H
 
 #include "types.h"
 

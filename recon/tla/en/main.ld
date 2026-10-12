@@ -2300,7 +2300,6 @@
         "*/recon/tla/raw/0819690c.o"(.text)
         "*/recon/tla/raw/08196958.o"(.text)
         "*/games/tla/src/battle/effect/project_vertices.o"(.text)
-        "*/recon/tla/raw/08196a28.o"(.text)
         "*/recon/tla/raw/08196a7c.o"(.text)
         "*/recon/tla/unidentified.o"(.unidentified.08196dd8)
         "*/recon/tla/raw/08196fdc.o"(.text)

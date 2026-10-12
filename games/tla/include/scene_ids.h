@@ -115,6 +115,7 @@ extern char SceneId_Kibonbo3;
 extern char SceneId_Kibonbo4;
 extern char SceneId_Kibonbo5;
 extern char SceneId_Kibonbo6;
+extern char SceneId_Ov695;
 extern char SceneId_Shaman1;
 extern char SceneId_Shaman2;
 extern char SceneId_Shaman3;

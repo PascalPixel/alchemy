@@ -545,7 +545,7 @@ s32 BattleAction_RunDescriptor(s32 value)
 		else
 		{
 			((void (*)(s32))touch->result)(value);
-			goto done;
+			ret = 0;
 		}
 	}
 	else
@@ -569,7 +569,6 @@ s32 BattleAction_RunDescriptor(s32 value)
 				break;
 			}
 			work->queued_result = exit->result;
-		done:
 			ret = 0;
 		}
 	}

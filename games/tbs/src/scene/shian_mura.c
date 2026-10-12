@@ -554,8 +554,6 @@ static void ShianMura_WalkThroughExit(s32 a0)
 static void SceneEffect_DispatchStep(void)
 {
 	s16 *scene = (s16 *)gEventWork;
-	u8	*shared0;
-	s32	 shared1;
 
 	Engine_EventBegin();
 
@@ -567,14 +565,12 @@ static void SceneEffect_DispatchStep(void)
 		break;
 	case 2:
 		Engine_AudioPlayCue(158);
-		shared0 = ShianMura_GateSteps2;
-		shared1 = 83;
-		goto shared;
+		Engine_MapAnimateCells(ShianMura_GateSteps2, 83, 11);
+		break;
 	case 3:
 		Engine_AudioPlayCue(158);
-		shared0 = ShianMura_GateSteps2;
-		shared1 = 86;
-		goto shared;
+		Engine_MapAnimateCells(ShianMura_GateSteps2, 86, 11);
+		break;
 	case 4:
 		Engine_AudioPlayCue(158);
 		Engine_MapAnimateCells(ShianMura_GateSteps3, 84, 24);
@@ -585,10 +581,7 @@ static void SceneEffect_DispatchStep(void)
 		break;
 	case 6:
 		Engine_AudioPlayCue(188);
-		shared0 = ShianMura_GateSteps4;
-		shared1 = 69;
-	shared:
-		Engine_MapAnimateCells(shared0, shared1, 11);
+		Engine_MapAnimateCells(ShianMura_GateSteps4, 69, 11);
 		break;
 	case 7:
 		Engine_AudioPlayCue(158);

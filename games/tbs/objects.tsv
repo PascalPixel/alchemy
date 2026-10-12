@@ -898,7 +898,7 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3b3	text	games/tbs/src/field/takara_hashira/hashira
 3b3	text	games/tbs/src/field/takara_hashira/import
 3b3	text	libgcc.a:_call_via_rX
-3b3	bss	resource_3b3_overlay	.bss
+3b3	bss	games/tbs/src/field/takara_hashira/hashira	.bss
 3b4	text	games/tbs/src/field/takara_ashiba/entry
 3b4	text	games/tbs/src/field/takara_ashiba/ashiba
 3b4	text	games/tbs/src/field/takara_ashiba/import
@@ -994,11 +994,11 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3c9	text	games/tbs/src/field/vinasu_chojo/chojo
 3c9	text	games/tbs/src/field/vinasu_chojo/import
 3c9	text	libgcc.a:_call_via_rX
-3c9	bss	resource_3c9_overlay	.bss
+3c9	bss	games/tbs/src/field/vinasu_chojo/chojo	.bss
 3ca	text	games/tbs/src/field/babi_fune/entry
 3ca	text	games/tbs/src/field/babi_fune/fune
 3ca	text	games/tbs/src/field/babi_fune/import
-3ca	bss	resource_3ca_overlay	.bss
+3ca	bss	games/tbs/src/field/babi_fune/fune	.bss
 3cb	text	games/tbs/src/menu/link_lobby/entry
 3cb	text	games/tbs/src/menu/link_lobby/lobby
 3cb	text	games/tbs/src/menu/link_lobby/import

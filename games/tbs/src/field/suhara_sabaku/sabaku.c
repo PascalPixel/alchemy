@@ -51,7 +51,7 @@ struct SceneWork_02000400
 	u16 state_one_marker;
 };
 
-extern u16 gSuharaSabakuShownLevel;
+static u16 gSuharaSabakuShownLevel;
 
 #define ACTOR_ID 13
 
@@ -1028,5 +1028,3 @@ struct SceneEvent gSuharaSabakuEvents3[] = {
 	{ EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 	{ SCENE_EVENTS_END },
 };
-
-u16 gSuharaSabakuShownLevel __attribute__((section(".bss")));

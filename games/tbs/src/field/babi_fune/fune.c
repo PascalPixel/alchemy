@@ -849,7 +849,9 @@ struct FadeSprite
 	u32 tile;
 };
 
-extern struct FadeSprite BabiFune_FadeSprites[24];
+static struct FadeSprite BabiFune_FadeSprites[24];
+static s16				 BabiFune_FadeStep;
+static s16				 BabiFune_FadeSlot;
 
 void BabiFune_StepFade(void)
 {

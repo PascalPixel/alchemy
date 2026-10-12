@@ -25,7 +25,7 @@ overlay	bss
 3af	.bss ALIGN(16) (NOLOAD)
 3b0	.bss ALIGN(16) (NOLOAD)
 3b1	.bss
-3b3	.bss
+3b3	.bss ALIGN(16)
 3b7	.bss ALIGN(16) (NOLOAD)
 3ba	.bss
 3bb	.bss

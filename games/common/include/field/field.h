@@ -302,8 +302,6 @@ extern s16		 ArutinYama_PaletteStep;
 #endif
 #ifndef OWN_BabiFune_DriftActive
 #endif
-extern s16		 BabiFune_FadeSlot;
-extern s16		 BabiFune_FadeStep;
 #ifndef OWN_BabiFune_ShimmerActive
 #endif
 #ifndef OWN_BabiFune_ShimmerPhase
@@ -394,7 +392,6 @@ extern struct MenuSprite RamakanSabaku_SandWork[];
 extern u8 Render_DecodeFrame[];
 #endif
 extern u32					 StagedActor_FootprintKinds[];
-extern s32					 TakaraHashira_ProbePosition[];
 extern const u8				 TileMap_DrawRows[];
 extern u8					 TileMap_DrawRowsCodeSize[];
 extern u8					 Transform_UpdateVerticesSize;
@@ -402,8 +399,6 @@ extern u8					 Transform_UpdateVerticesSize;
 #endif
 #ifndef OWN_VinasuChojo_ScaleStepAction
 #endif
-extern s32						   VinasuChojo_TransitionStep;
-extern s32						   VinasuChojo_TransitionTimer;
 extern const u8					   WorldMap_FootprintActions[];
 extern const s16				   WorldMap_KeyHeadings[16];
 extern u8						   WorldMap_TerrainBehaviorTable[];

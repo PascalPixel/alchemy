@@ -395,25 +395,15 @@ static void Scene_PsynergyStoneIsGone(void)
 	Engine_EventEnd();
 }
 
-static void HaidiaIe_RequestBackdropExit(s32 no)
-{
-	struct EventWork *p;
-	if (Engine_GameFlagIsSet(0x834) != 0)
-	{
-		BattleFx_SetBlock30ValuesMaxZero();
-	}
-	p = gEventWork;
-	p->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	p->transition_frames = 16;
-	Engine_EventRequestExit(no);
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/haidia/exit.c"
 
 static void EV01_TOUCH(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)&Value_0200beb4, 44, 7);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 0x117);
-	HaidiaIe_RequestBackdropExit(1);
+	Haidia_RequestBackdropExit(1);
 }
 
 static void EV02_TOUCH(void)
@@ -426,7 +416,7 @@ static void EV02_TOUCH(void)
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 306);
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 296);
-	HaidiaIe_RequestBackdropExit(2);
+	Haidia_RequestBackdropExit(2);
 }
 
 static void EV03_TOUCH(void)
@@ -434,7 +424,7 @@ static void EV03_TOUCH(void)
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)&Value_0200beb4, 43, 15);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 230, 0x197);
-	HaidiaIe_RequestBackdropExit(3);
+	Haidia_RequestBackdropExit(3);
 }
 
 static void EV04_TOUCH(void)
@@ -442,7 +432,7 @@ static void EV04_TOUCH(void)
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)&Value_0200beb4, 52, 18);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 374, 0x1a3);
-	HaidiaIe_RequestBackdropExit(4);
+	Haidia_RequestBackdropExit(4);
 }
 
 static void EV05_TOUCH(void)
@@ -450,7 +440,7 @@ static void EV05_TOUCH(void)
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)&Value_0200beb4, 41, 32);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 200, 0x222);
-	HaidiaIe_RequestBackdropExit(5);
+	Haidia_RequestBackdropExit(5);
 }
 
 static void EV06_TOUCH(void)
@@ -458,7 +448,7 @@ static void EV06_TOUCH(void)
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)&Value_0200beb4, 35, 36);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x263);
-	HaidiaIe_RequestBackdropExit(6);
+	Haidia_RequestBackdropExit(6);
 }
 
 static void EV07_TOUCH(void)
@@ -466,13 +456,13 @@ static void EV07_TOUCH(void)
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)&Value_0200beb4, 51, 39);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 358, 0x29e);
-	HaidiaIe_RequestBackdropExit(7);
+	Haidia_RequestBackdropExit(7);
 }
 
 static void EV09_TOUCH(void)
 {
 	Engine_AudioPlayCue(123);
-	HaidiaIe_RequestBackdropExit(8);
+	Haidia_RequestBackdropExit(8);
 }
 
 static void EV08_TOUCH(void)
@@ -480,7 +470,7 @@ static void EV08_TOUCH(void)
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 	{
 		Engine_AudioPlayCue(123);
-		HaidiaIe_RequestBackdropExit(10);
+		Haidia_RequestBackdropExit(10);
 	}
 }
 

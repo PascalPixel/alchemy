@@ -152,20 +152,8 @@ static void EV14_TOUCH(void)
 	Engine_MapCopyCellAttributes(40, 89, 7, 4, a, b);
 }
 
-static void HaidiaArashi_RequestBackdropExit(u8 *o)
-{
-
-	struct EventWork *state;
-
-	if (Engine_GameFlagIsSet(0x834) != 0)
-	{
-		BattleFx_SetBlock30ValuesMaxZero();
-	}
-	state = gEventWork;
-	state->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	state->transition_frames = 16;
-	Engine_EventRequestExit(o);
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/haidia/exit.c"
 
 static void HaidiaArashi_OpenBackdropExit11(void)
 {
@@ -173,28 +161,28 @@ static void HaidiaArashi_OpenBackdropExit11(void)
 	Engine_MapAnimateCells(HaidiaArashi_CellSteps0, 45, 11);
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x101, 0x1A4);
 	Engine_EventWait(3);
-	HaidiaArashi_RequestBackdropExit(11);
+	Haidia_RequestBackdropExit(11);
 }
 
 static void EV02_TOUCH(void)
 {
 
 	Engine_AudioPlayCue(0x7B);
-	HaidiaArashi_RequestBackdropExit(1);
+	Haidia_RequestBackdropExit(1);
 }
 
 static void EV03_TOUCH(void)
 {
 
 	Engine_AudioPlayCue(0x7B);
-	HaidiaArashi_RequestBackdropExit(3);
+	Haidia_RequestBackdropExit(3);
 }
 
 static void EV04_TOUCH(void)
 {
 
 	Engine_AudioPlayCue(0x7B);
-	HaidiaArashi_RequestBackdropExit(4);
+	Haidia_RequestBackdropExit(4);
 }
 
 static void EV05_TOUCH(void)
@@ -204,7 +192,7 @@ static void EV05_TOUCH(void)
 	{
 		FieldScene_ConfigureActorTwentyTwoScene();
 	}
-	HaidiaArashi_RequestBackdropExit(2);
+	Haidia_RequestBackdropExit(2);
 }
 
 static void EV06_TOUCH(void)
@@ -213,7 +201,7 @@ static void EV06_TOUCH(void)
 	Engine_MapAnimateCells(HaidiaArashi_CellSteps1, 54, 32);
 	Engine_ActorWalkTo(0, 0x196, 0x2d7);
 	Engine_EventWait(3);
-	HaidiaArashi_RequestBackdropExit(5);
+	Haidia_RequestBackdropExit(5);
 }
 
 static void EV07_TOUCH(void)
@@ -240,7 +228,7 @@ static void EV07_TOUCH(void)
 	L_020002b4:;
 		Actor_WalkTo(ACTOR_PARTY_LEADER, 0x106, 0x325);
 		Engine_EventWait(3);
-		HaidiaArashi_RequestBackdropExit(6);
+		Haidia_RequestBackdropExit(6);
 	}
 }
 
@@ -253,7 +241,7 @@ static void EV08_TOUCH(void)
 	}
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x154, 0x378);
 	Engine_EventWait(3);
-	HaidiaArashi_RequestBackdropExit(7);
+	Haidia_RequestBackdropExit(7);
 }
 
 static void EV09_TOUCH(void)
@@ -262,7 +250,7 @@ static void EV09_TOUCH(void)
 	Engine_MapAnimateCells(HaidiaArashi_CellSteps2, 49, 69);
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x146, 0x466);
 	Engine_EventWait(3);
-	HaidiaArashi_RequestBackdropExit(8);
+	Haidia_RequestBackdropExit(8);
 }
 
 static void EV10_TOUCH(void)
@@ -271,7 +259,7 @@ static void EV10_TOUCH(void)
 	Engine_MapAnimateCells(HaidiaArashi_CellSteps3, 52, 76);
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x176, 0x4d6);
 	Engine_EventWait(3);
-	HaidiaArashi_RequestBackdropExit(9);
+	Haidia_RequestBackdropExit(9);
 }
 
 static void EV11_TOUCH(void)
@@ -280,7 +268,7 @@ static void EV11_TOUCH(void)
 	Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 74);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
 	Engine_EventWait(3);
-	HaidiaArashi_RequestBackdropExit(10);
+	Haidia_RequestBackdropExit(10);
 }
 
 static void EV12_TOUCH(void)
@@ -289,7 +277,7 @@ static void EV12_TOUCH(void)
 	Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 73);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
 	Engine_EventWait(3);
-	HaidiaArashi_RequestBackdropExit(12);
+	Haidia_RequestBackdropExit(12);
 }
 
 static void EV13_TOUCH(void)
@@ -298,7 +286,7 @@ static void EV13_TOUCH(void)
 	Map_AnimateCells(HaidiaArashi_CellSteps2, 38, 72);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 146, 0x49e);
 	Engine_EventWait(3);
-	HaidiaArashi_RequestBackdropExit(13);
+	Haidia_RequestBackdropExit(13);
 }
 
 s32 FieldScene_RunFlagGatedActorSetup(void)

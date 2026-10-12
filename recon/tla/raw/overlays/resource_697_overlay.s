@@ -438,69 +438,6 @@ Func_02000748:
 	.2byte 0x0000
 .L_02008764:
 	.4byte gPartyState
-	.section .text.x0200882c,"ax",%progbits
-	.balign 4
-	.global Func_0200082c
-	.thumb_func
-Func_0200082c:
-	push {r5, r6, r7, lr}
-	adds r5, r1, #0
-	adds r3, r5, #0
-	subs r3, #15
-	cmp r3, #1
-	bhi .L_02008840
-	adds r0, r5, #0
-	bl Func_0200062c
-	b .L_020088a2
-.L_02008840:
-	adds r0, r5, #0
-	bl Object_GetById
-	ldr r3, [r0, #8]
-	movs r5, #0
-	asrs r0, r3, #20
-	cmp r0, #13
-	bne .L_02008852
-	movs r5, #17
-.L_02008852:
-	cmp r0, #15
-	bne .L_02008858
-	movs r5, #18
-.L_02008858:
-	cmp r0, #17
-	bne .L_0200885e
-	movs r5, #19
-.L_0200885e:
-	cmp r0, #19
-	bne .L_02008864
-	movs r5, #20
-.L_02008864:
-	cmp r5, #0
-	beq .L_020088a2
-	movs r3, #130
-	lsls r3, r3, #1
-	adds r3, #255
-	adds r7, r5, r3
-	adds r0, r7, #0
-	bl GameFlag_Test
-	adds r6, r0, #0
-	cmp r6, #0
-	bne .L_020088a2
-	adds r0, r5, #0
-	bl Object_GetById
-	movs r1, #0
-	str r6, [r0, #108]
-	bl Animation_ApplyChildValues
-	adds r0, r5, #0
-	movs r1, #6
-	bl Object_SetModeById
-	movs r1, #16
-	adds r0, r5, #0
-	negs r1, r1
-	bl Func_0200070c
-	adds r0, r7, #0
-	bl GameFlag_SetBit
-.L_020088a2:
-	pop {r5, r6, r7, pc}
 	.section .text.x02008a18,"ax",%progbits
 	.balign 4
 	.global Func_02000a18

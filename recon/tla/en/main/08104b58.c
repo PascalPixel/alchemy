@@ -1,4 +1,4 @@
-/* Near miss, differ 20 of 38 (2026-10-12; 28 before): this game reads the two arrow resources at 0x4ee and 0x4f0 of the menu runtime slot. Same instructions; the registers differ as in 08104ba8: the native copies variant to r5, keeps the runtime pointer in r3 and y in r2; this draft leaves variant in r3, puts the pointer in r2 and moves y to r4. */
+/* Near miss, differ 20 of 38 (2026-10-12; 28 before): this game reads the two arrow resources at 0x4ee and 0x4f0 of the menu runtime slot. Same instructions; the registers differ as in 08104ba8: the native copies variant to r5, keeps the runtime pointer in r3 and y in r2; this draft leaves variant in r3, puts the pointer in r2 and moves y to r4. Tried 2026-10-12: variant copied to a local and the parameter reused for the pointer (no change), a local copy of y (no change). */
 #include "types.h"
 #include "render_input.h"
 

@@ -1,13 +1,4 @@
-/* Draft, differ 10 of 52: the native keeps the cell column in r0 (asrs r0 r3 #20) for the four compares; this form keeps it in r3. The id parameter is reused for the target, as the native does. */
-#include "../../../../games/tla/src/field/overlay_697/ov697.h"
-
-extern const u8 Data_02005a7c[];
-
-static __inline__ void Shadow_SetHeight(s32 id, s32 value)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_0200070c(id, value);
-}
+#include "ov697.h"
 
 void Func_0200082c(s32 a, s32 id)
 {
@@ -17,8 +8,9 @@ void Func_0200082c(s32 a, s32 id)
         Func_0200062c(id);
         return;
     }
-    x = Object_GetById(id)->x;
-    x >>= 20;
+    /* FAKEMATCH: one variable holds the object and then its cell column, so the column stays in r0 as in the native (differ 10 with a separate object). */
+    x = (s32)Object_GetById(id);
+    x = ((struct ObjectRuntime *)x)->x >> 20;
     id = 0;
     if (x == 13)
         id = 17;

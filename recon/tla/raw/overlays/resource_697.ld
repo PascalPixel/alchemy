@@ -18,7 +18,7 @@ SECTIONS
         "*/resource_697_overlay.o"(.text.x02008748)
         "*/games/tla/src/field/overlay_697/events_e.o"(.text)
         "*/games/tla/src/field/overlay_697/events_l.o"(.text)
-        "*/resource_697_overlay.o"(.text.x0200882c)
+        "*/games/tla/src/field/overlay_697/s082c.o"(.text)
         "*/games/tla/src/field/overlay_697/events_f.o"(.text)
         "*/games/tla/src/field/overlay_697/events_g.o"(.text)
         "*/games/tla/src/field/overlay_697/s09ac.o"(.text)

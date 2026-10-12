@@ -141,7 +141,7 @@ Func_080fcbd8:
 	bne .L_080fcd08
 	movs r2, #0
 	ldrb r0, [r6]
-	bl Func_080fd52c
+	bl Party_SetPackedEvent
 	ldr r0, [r7, #48]
 	bl RenderOutput_ClearListFar
 	ldr r0, .L_080fcd8c
@@ -154,7 +154,7 @@ Func_080fcbd8:
 .L_080fcd08:
 	movs r2, #1
 	ldrb r0, [r6]
-	bl Func_080fd52c
+	bl Party_SetPackedEvent
 	ldr r0, [r7, #48]
 	bl RenderOutput_ClearListFar
 	ldr r0, .L_080fcd90

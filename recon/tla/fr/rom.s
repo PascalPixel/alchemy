@@ -1040,8 +1040,9 @@ UiWork_SetTwoEntriesTo999:
 	.type Ui_BuildPairedPatternsToSlot, %function
 	.thumb_func
 Ui_BuildPairedPatternsToSlot:
-	.incbin "baserom.gba", 0x0003d528, 0x000000e0
+	.incbin "baserom.gba", 0x0003d528, 0x000000b0
 	.section .rom.0003d608, "ax"
+	.balign 4
 	.global Func_0803d5c4
 	.type Func_0803d5c4, %function
 	.thumb_func
@@ -2514,14 +2515,6 @@ Func_080d1e18:
 	.thumb_func
 Func_080d1e60:
 	.incbin "baserom.gba", 0x000d6e60, 0x00000024
-	.section .rom.000d6eaa, "ax"
-	.incbin "baserom.gba", 0x000d6eaa, 0x00000002
-	.section .rom.000d6eac, "ax"
-	.global Func_080d1eac
-	.type Func_080d1eac, %function
-	.thumb_func
-Func_080d1eac:
-	.incbin "baserom.gba", 0x000d6eac, 0x0000002c
 	.section .rom.000d6ee8, "ax"
 	.balign 4
 	.global Func_080d1ee8
@@ -3619,7 +3612,9 @@ Func_080fb8b8:
 	.type Func_080fcab8, %function
 	.thumb_func
 Func_080fcab8:
-	.incbin "baserom.gba", 0x000feb58, 0x0000175c
+	.incbin "baserom.gba", 0x000feb58, 0x00000aec
+	.section .rom.000ff674, "ax"
+	.incbin "baserom.gba", 0x000ff674, 0x00000c40
 	.section .rom.001002d4, "ax"
 	.global Func_080fe184
 	.type Func_080fe184, %function
@@ -3928,8 +3923,6 @@ Func_08118f6c:
 	.incbin "baserom.gba", 0x00118f6c, 0x000000e8
 	.section .rom.0011915e, "ax"
 	.incbin "baserom.gba", 0x0011915e, 0x0000015a
-	.section .rom.001195b8, "ax"
-	.incbin "baserom.gba", 0x001195b8, 0x00000034
 	.section .rom.00119604, "ax"
 	.incbin "baserom.gba", 0x00119604, 0x00000148
 	.section .rom.0011974c, "ax"

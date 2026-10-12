@@ -1185,43 +1185,6 @@ Func_02000e54:
 	.4byte Data_02001f14
 .L_02008ee8:
 	.4byte gPartyState
-	.section .text.x02008eec,"ax",%progbits
-	.global Func_02000eec
-	.thumb_func
-Func_02000eec:
-	push {r5, r6, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r5, .L_02008f34
-	ldr r6, [r3, #108]
-	movs r3, #133
-	lsls r3, r3, #2
-	adds r5, r5, r3
-	ldr r0, [r5]
-	movs r1, #2
-	bl Object_SetModeById
-	movs r1, #128
-	movs r2, #128
-	ldr r0, [r5]
-	lsls r1, r1, #8
-	lsls r2, r2, #7
-	bl ObjectMotion_SetSpeedParameters
-	movs r0, #123
-	bl Func_02001448
-	movs r2, #4
-	ldr r0, [r5]
-	movs r1, #0
-	negs r2, r2
-	bl ObjectMotion_OffsetPositionAndResetMotion
-	movs r3, #170
-	lsls r3, r3, #1
-	adds r6, r6, r3
-	movs r3, #0
-	ldrsh r0, [r6, r3]
-	bl Func_020013d0
-	pop {r5, r6, pc}
-.L_02008f34:
-	.4byte gPartyState
 	.section .text.x020090c0,"ax",%progbits
 	.global Func_020010c0
 	.thumb_func

@@ -7,6 +7,9 @@
 #include "unit/field/common/korosseo/solo_competitor.h"
 #include "unit/field/common/korosseo/solo_round.h"
 #include "unit/field/common/korosseo/compete.h"
+#include "unit/field/common/korosseo/occupant.h"
+#include "unit/field/common/korosseo/markslot.h"
+#include "unit/field/common/korosseo/markmove.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/object2.h"
 #include "unit/battle/effect/object4.h"
@@ -1078,12 +1081,12 @@ static void EV35_TALK(s32 speaker)
 			Engine_EventShowMessage(speaker, 0);
 			Korosseo_FadeInCompetitor(ACTOR_PARTY_LEADER, 0x4f8, 168);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-			SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x508, 184);
-			SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x508, 216);
-			SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x4c8, 216);
+			OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x508, 184);
+			OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x508, 216);
+			OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x4c8, 216);
 			Engine_EventShowMessage(speaker, 0);
-			SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x4c8, 248);
-			SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x4a8, 248);
+			OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x4c8, 248);
+			OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x4a8, 248);
 			Engine_EventWait(3);
 			actor = Object_GetById(ACTOR_PARTY_LEADER);
 			actor->velocity_y = 0x40000;
@@ -1133,8 +1136,8 @@ static void EV36_TALK(s32 a0)
 			Korosseo_FadeInCompetitor(0, 0x438, 0x108);
 			Engine_EventWait(15);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-			SceneActor_PlaceWithScale14000(0, 0x438, 216);
-			SceneActor_PlaceWithScale14000(0, 0x428, 216);
+			OverlayObject_PlaceWithScale14000(0, 0x438, 216);
+			OverlayObject_PlaceWithScale14000(0, 0x428, 216);
 			SceneState_WaitForStatusWords();
 			Engine_LeaderCheckAhead();
 			Camera_MoveTo(-1, -1, -1, 0);
@@ -1187,10 +1190,10 @@ static void EV37_TALK(s32 a0)
 			Korosseo_FadeInCompetitor(0, 0x358, 0x108);
 			Engine_EventWait(10);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-			SceneActor_PlaceWithScale14000(0, 0x358, 0x108);
-			SceneActor_PlaceWithScale14000(0, 0x358, 232);
+			OverlayObject_PlaceWithScale14000(0, 0x358, 0x108);
+			OverlayObject_PlaceWithScale14000(0, 0x358, 232);
 			Event_ShowMessage(a0, 0);
-			SceneActor_PlaceWithScale14000(0, 0x348, 232);
+			OverlayObject_PlaceWithScale14000(0, 0x348, 232);
 			Engine_EventWait(10);
 			/* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
 			Value3(SceneActor_MovePairByTileOffset, 33, -64, 0);
@@ -1260,7 +1263,7 @@ static void EV38_TALK(s32 speaker)
 		Camera_MoveTo(-1, -1, -1, 0);
 		Event_ShowMessage(speaker, 0);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-		SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 488, 248);
+		OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 488, 248);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 20);
 		BattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, 0);
 		Engine_CameraMoveTo(0x2180000, -1, 0xa00000, 1);
@@ -1344,15 +1347,15 @@ static void EV39_TALK(s32 speaker)
 		Engine_EventShowMessage(speaker, 0);
 		Korosseo_FadeInCompetitor(ACTOR_PARTY_LEADER, 408, 264);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-		SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 408, 216);
+		OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 408, 216);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 10);
 		Engine_EventShowMessage(speaker, 0);
 		KorosseoKabe_PushBlockToCell(16, 360, 208);
 		Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 264, 45);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-		SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 376, 216);
-		SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 376, 248);
-		SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 312, 248);
+		OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 376, 216);
+		OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 376, 248);
+		OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 312, 248);
 		Engine_EventShowMessage(speaker, 0);
 		Korosseo_RestoreCompetitor(ACTOR_PARTY_LEADER);
 		Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
@@ -1854,113 +1857,9 @@ static void FieldScene_RunLateSequence(s32 a0)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/compete.c"
-
-static void StagedActor_ResetMotionAfterRefresh(s32 slot)
-{
-	struct FieldActor *actor = Object_GetById(slot);
-	ObjectDispatch_InitFromTable6(actor);
-	actor->velocity_x = 0;
-	actor->velocity_z = 0;
-	actor->target_x = 0x80000000;
-	actor->target_z = 0x80000000;
-}
-
-static void SceneState_InitCursorWhenUnset(void)
-{
-	if (Korosseo_MarkerSlot == -1)
-	{
-		Korosseo_MarkerSlot = Resource_LoadFixedBlockBIntoFreeSlot();
-	}
-}
-
-// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/markslot.c"
 #include "../common/korosseo/marker.c"
-
-static void SceneEffect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style)
-{
-	SceneState_InitCursorWhenUnset();
-
-	Korosseo_MarkerX = x;
-	Korosseo_MarkerY = y;
-	Korosseo_MarkerPriority = (style & 3);
-	Korosseo_MarkerBlink = 0;
-	Korosseo_MarkerSteps = 0;
-
-	{
-		s32 budget = 0xc80;
-		Engine_TaskAddCallback(Korosseo_UpdateMarker, budget);
-	}
-}
-
-static void SceneState_StartMarkerMove(u32 x, u32 y, u32 duration)
-{
-	Korosseo_MarkerEndX = x;
-	Korosseo_MarkerEndY = y;
-	*(u16 *)&Korosseo_MarkerStartX = Korosseo_MarkerX;
-	*(u16 *)&Korosseo_MarkerStartY = Korosseo_MarkerY;
-	Korosseo_MarkerSteps = duration;
-	Korosseo_MarkerStep = 0;
-
-	{
-		s32 frame_budget = 0xc80;
-		Engine_TaskAddCallback(Korosseo_UpdateMarker, frame_budget);
-	}
-}
-
-static void SceneEffect_RemoveMarkerTask(void)
-{
-	Engine_TaskRemoveCallback(Korosseo_UpdateMarker);
-	Resource_ResetEntry(Korosseo_MarkerSlot);
-	Korosseo_MarkerSlot = -1;
-}
-
-static void SceneActor_PlaceWithScale20000(s32 selector, s32 x, s32 z)
-{
-	s32 *actor = (s32 *)Engine_ActorLookup(selector);
-
-	if (actor != 0)
-	{
-		s32 scale = 0x20000;
-		u8 *p = (u8 *)actor;
-		u8	zero = 0;
-		((struct FieldActor *)actor)->speed = scale;
-		((struct FieldActor *)actor)->acceleration = scale >> 1;
-		p = &((struct FieldActor *)actor)->paused;
-		*p = zero;
-
-		ObjectDispatch_InitFromTable6(actor);
-		Object_SetMode(actor, 5);
-		Engine_ObjectSetPosition(actor, x << 16, ((struct FieldActor *)actor)->y.fixed, z << 16);
-	}
-}
-
-void SceneActor_PlaceWithScale14000(s32 no, s32 x, s32 z)
-{
-	struct FieldActor *obj = Engine_ActorLookup(no);
-
-	if (obj == 0)
-	{
-		return;
-	}
-
-	{
-		s32 scale = 0x14000;
-		u8 *p = obj;
-		u8	zero = 0;
-		obj->speed = scale;
-		obj->acceleration = scale >> 1;
-		p += 0x5b;
-		*p = zero;
-	}
-
-	ObjectDispatch_InitFromTable6(obj);
-	Object_SetMode(obj, 5);
-	Engine_ObjectSetPosition(obj, x << 16, obj->y.fixed, z << 16);
-	Object_CommitPosition(obj);
-	Object_SetMode(obj, 1);
-}
-
-// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/markmove.c"
 #include "../common/korosseo/item_icon.c"
 
 static void Text_WriteU32AsHex(u8 *buf, u32 value)
@@ -2275,35 +2174,8 @@ static void StagedActor_PushActorAhead(void)
 	Object_SetMode(subject, 1);
 }
 
-static void *SceneActor_FindOccupantAheadOfSubject(void)
-{
-	struct FieldActor *record;
-	s32				   facing;
-	s32				   position[3];
-	s32				  *occupant;
-
-	record = Object_GetById(gGameState.selected_actor);
-
-	facing = (record->facing + 0x2000) & 0xc000;
-
-	position[0] = (record->x.fixed & 0xfff00000) + 0x80000;
-	position[1] = record->y.fixed;
-	position[2] = (record->z.fixed & 0xfff00000) + 0x80000;
-	Vector_AddPolarOffset(0x100000, facing, position);
-
-	occupant = SceneData_FindSlotAtPosition(position, record);
-	if (occupant == 0)
-	{
-		position[0] = (record->x.fixed & 0xfff00000) + 0x80000;
-		position[1] = record->y.fixed;
-		position[2] = (record->z.fixed & 0xfff00000) + 0x80000;
-		Vector_AddPolarOffset(0x200000, facing, position);
-
-		occupant = SceneData_FindSlotAtPosition(position, record);
-	}
-
-	return occupant;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/occupant.c"
 
 const u8 KorosseoKabe_RollLogScript[] = {2, 2, 3, 3};
 

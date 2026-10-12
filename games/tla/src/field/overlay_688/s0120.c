@@ -57,24 +57,6 @@ static __inline__ s32 Flag_Test(s32 flag)
     return GameFlag_Test(flag);
 }
 
-static __inline__ void Flag_Set(s32 flag)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    GameFlag_SetBit(flag);
-}
-
-static __inline__ void Flag_Clear(s32 flag)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    GameFlag_ClearBit(flag);
-}
-
-static __inline__ void Show(s32 kind, s32 frames)
-{
-    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
-    Func_02000310(kind, frames);
-}
-
 void Func_02000120(void)
 {
     if (Flag_Test(0x800) != 0) {
@@ -82,13 +64,25 @@ void Func_02000120(void)
         Func_020005cc(0);
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
-        gPartyState.render_mode = 6;
-        gPartyState.owner_override = 1;
+        {
+            struct PartyState *state = &gPartyState;
+
+            /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
+            do {
+            } while (0);
+            state->render_mode = 6;
+            state->owner_override = 1;
+        }
         Object_SetModeById(8, 7);
         Func_02000564();
     } else {
-        gPartyState.current_owner = 4;
-        gPartyState.render_mode = 0;
-        gPartyState.owner_override = 0;
+        struct PartyState *party = &gPartyState;
+
+        /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
+        do {
+        } while (0);
+        party->current_owner = 4;
+        party->render_mode = 0;
+        party->owner_override = 0;
     }
 }

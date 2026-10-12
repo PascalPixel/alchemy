@@ -24,6 +24,8 @@ void Func_0200093c(void)
 {
     struct EventWorkCbc *work = Ram_HeapSlots->event_work;
 
+    /* FAKEMATCH: ⚓️ loads the event work before it builds the offset */
+    asm volatile("");
     if (work->active != 0)
         Func_020008d0(work->active);
 }

@@ -450,39 +450,6 @@ Func_02000378:
 	.4byte IwramMulQ16
 .L_0200841c:
 	.4byte 0xa2600001
-	.section .text.x02008420,"ax",%progbits
-	.global Func_02000420
-	.thumb_func
-Func_02000420:
-	push {lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #32]
-	movs r1, #188
-	lsls r1, r1, #1
-	adds r2, r3, r1
-	ldr r3, [r2, #8]
-	ldr r1, .L_02008454
-	adds r3, r3, r1
-	str r3, [r2, #8]
-	ldr r3, [r2, #12]
-	movs r1, #128
-	lsls r1, r1, #10
-	adds r3, r3, r1
-	movs r1, #130
-	lsls r1, r1, #19
-	str r3, [r2, #12]
-	cmp r3, r1
-	ble .L_02008452
-	movs r3, #0
-	str r3, [r2, #8]
-	movs r3, #128
-	lsls r3, r3, #19
-	str r3, [r2, #12]
-.L_02008452:
-	pop {pc}
-.L_02008454:
-	.4byte 0xfffe0000
 	.section .text.x02008488,"ax",%progbits
 	.balign 4
 	.global Func_02000488
@@ -4269,56 +4236,8 @@ Func_02002fb0:
 	.4byte 0x000001cc
 .L_0200b03c:
 	.4byte 0x050003e0
-	.section .text.x0200b040,"ax",%progbits
-	.global Func_02003040
-	.thumb_func
-Func_02003040:
-	push {lr}
-	ldr r2, .L_0200b0b8
-	movs r3, #180
-	strh r3, [r2, #30]
-	movs r0, #30
-	bl Battle_WaitMode0
-	movs r0, #78
-	bl Engine_AudioPlayCue
-	movs r0, #5
-	bl Func_02002fb0
-	movs r1, #0
-	movs r0, #2
-	bl Func_02002f20
-	movs r0, #236
-	bl Engine_AudioPlayCue
-	movs r0, #60
-	bl Battle_WaitMode0
-	movs r1, #1
-	movs r0, #2
-	bl Func_02002f20
-	movs r0, #236
-	bl Engine_AudioPlayCue
-	movs r0, #60
-	bl Battle_WaitMode0
-	movs r0, #6
-	bl Func_02002fb0
-	movs r1, #0
-	movs r0, #2
-	bl Func_02002f20
-	movs r0, #236
-	bl Engine_AudioPlayCue
-	movs r0, #60
-	bl Battle_WaitMode0
-	movs r0, #7
-	bl Func_02002fb0
-	movs r1, #0
-	movs r0, #4
-	bl Func_02002f20
-	movs r0, #237
-	bl Engine_AudioPlayCue
-	movs r0, #76
-	bl Engine_AudioPlayCue
-	pop {pc}
-.L_0200b0b8:
-	.4byte Data_0200515a
 	.section .text.x0200b0bc,"ax",%progbits
+	.balign 4
 	.global Func_020030bc
 	.thumb_func
 Func_020030bc:
@@ -5396,44 +5315,8 @@ Func_020030bc:
 	.4byte 0x0004cccc
 .L_0200bb20:
 	.4byte Data_020050bc
-	.section .text.x0200bce4,"ax",%progbits
-	.balign 4
-	.global Func_02003ce4
-	.thumb_func
-Func_02003ce4:
-	push {lr}
-	movs r0, #128
-	lsls r0, r0, #2
-	adds r0, #2
-	sub sp, #8
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_0200bd16
-	bl Func_020048c4
-	movs r0, #0
-	bl Func_02004a24
-	movs r0, #123
-	bl Engine_AudioPlayCue
-	bl Event_FinishScreenTransition
-	bl Event_WaitTransitionFrames
-	movs r0, #13
-	bl Func_02004a04
-	b .L_0200bd2a
-.L_0200bd16:
-	movs r3, #1
-	str r3, [sp, #0]
-	movs r3, #2
-	str r3, [sp, #4]
-	movs r0, #43
-	movs r1, #40
-	movs r2, #7
-	movs r3, #6
-	bl Func_02003b6c
-.L_0200bd2a:
-	add sp, #8
-	pop {pc}
-	.2byte 0x0000
 	.section .text.x0200bd30,"ax",%progbits
+	.balign 4
 	.global Func_02003d30
 	.thumb_func
 Func_02003d30:
@@ -6067,45 +5950,8 @@ Func_020041b8:
 	add sp, #8
 	pop {pc}
 	.2byte 0x0000
-	.section .text.x0200c2c8,"ax",%progbits
-	.global Func_020042c8
-	.thumb_func
-Func_020042c8:
-	push {lr}
-	adds r1, r0, #0
-	adds r1, #100
-	movs r3, #0
-	ldrsh r2, [r1, r3]
-	ldr r3, [r0, #8]
-	lsls r2, r2, #8
-	adds r3, r3, r2
-	str r3, [r0, #8]
-	ldr r3, [r0, #12]
-	movs r2, #128
-	lsls r2, r2, #8
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	movs r2, #160
-	ldr r3, [r0, #24]
-	lsls r2, r2, #3
-	adds r2, #30
-	adds r3, r3, r2
-	str r3, [r0, #24]
-	ldr r3, [r0, #28]
-	adds r3, r3, r2
-	str r3, [r0, #28]
-	ldrh r3, [r1]
-	adds r3, #2
-	strh r3, [r1]
-	ldr r3, [r0, #104]
-	subs r3, #1
-	str r3, [r0, #104]
-	cmp r3, #0
-	bne .L_0200c30a
-	bl Func_0200481c
-.L_0200c30a:
-	pop {pc}
 	.section .text.x0200c30c,"ax",%progbits
+	.balign 4
 	.global Func_0200430c
 	.thumb_func
 Func_0200430c:
@@ -6173,35 +6019,6 @@ Func_0200430c:
 	.2byte 0x0000
 .L_0200c390:
 	.4byte Func_020042c8
-	.section .text.x0200c394,"ax",%progbits
-	.global Func_02004394
-	.thumb_func
-Func_02004394:
-	push {lr}
-	ldr r3, .L_0200c3c4
-	movs r2, #63
-	ldr r3, [r3]
-	ands r3, r2
-	cmp r3, #0
-	bne .L_0200c3c2
-	movs r0, #144
-	movs r1, #132
-	movs r2, #188
-	lsls r0, r0, #15
-	lsls r1, r1, #15
-	lsls r2, r2, #17
-	bl Func_0200430c
-	movs r0, #208
-	movs r1, #196
-	movs r2, #152
-	lsls r0, r0, #15
-	lsls r1, r1, #15
-	lsls r2, r2, #16
-	bl Func_0200430c
-.L_0200c3c2:
-	pop {pc}
-.L_0200c3c4:
-	.4byte gFrameCount
 	.section .text.x0200c3f8,"ax",%progbits
 	.balign 4
 	.global Func_020043f8
@@ -6528,45 +6345,6 @@ Func_02004534:
 	.4byte gInput
 .L_0200c6b8:
 	.4byte 0x00019999
-	.section .text.x0200c6ec,"ax",%progbits
-	.balign 4
-	.global Func_020046ec
-	.thumb_func
-Func_020046ec:
-	push {lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r2, #214
-	lsls r2, r2, #1
-	movs r0, #144
-	adds r3, r3, r2
-	lsls r0, r0, #4
-	adds r2, #93
-	str r2, [r3]
-	adds r0, #254
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_0200c718
-	movs r1, #144
-	ldr r0, .L_0200c730
-	lsls r1, r1, #3
-	bl Scheduler_AddOrUpdateCallback
-	b .L_0200c72c
-.L_0200c718:
-	movs r0, #9
-	movs r1, #0
-	movs r2, #0
-	bl Func_02004934
-	movs r0, #10
-	movs r1, #0
-	movs r2, #0
-	bl Func_02004934
-.L_0200c72c:
-	pop {pc}
-	.2byte 0x0000
-.L_0200c730:
-	.4byte Func_020046bc
 	.section .rodata.x0200cbfe,"a",%progbits
 	.global Data_02004bfe
 Data_02004bfe:

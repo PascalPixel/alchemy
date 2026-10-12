@@ -149,27 +149,8 @@ static void MakyuriHeya_UpdateLeaderEffectTarget(void)
 }
 #endif
 
-static s32 MakyuriHeya_TrailSparks(struct FieldActor *actor)
-{
-	struct EffectOptions options;
-	s32					 velocity_y;
-
-	options.palette = 7;
-	if ((gFrameCount & 1) == 0)
-	{
-		options.palette = 5;
-	}
-	options.start_scale_x = 0xcccc;
-	options.start_scale_y = 0xcccc;
-	options.priority = 0;
-	velocity_y = -((((u32)Engine_RandomNext() * 8) >> 16) * 0x3333);
-	Effect_Spawn(actor->x.fixed + ((8 - (gFrameCount & 15)) << 16), actor->y.fixed + 0x1a0000,
-		actor->z.fixed, 0, velocity_y, 0,
-		EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
-	return 0;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/makyuri/sparks.c"
 #include "../common/makyuri/palette_cycle.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
@@ -275,41 +256,8 @@ struct BlockProbe
 	s32 word[6];
 };
 
-static void SceneActor_RunActorZeroHandledMotion(s32 a)
-{
-	struct FieldActor *v = Object_GetById(0);
-	Engine_EventBegin();
-	Engine_AudioPlayCue(0xe4);
-	v->update = (void (*)(union FieldObject *))MakyuriHeya_TrailSparks;
-	v->speed = 0x3333;
-	Engine_ActorSetAnimation(0, 2);
-	Engine_ActorSetDestinationOffset(0, 0, -6);
-	Engine_ActorWaitForMove(0);
-	Engine_ActorSetChildValue(0, 15);
-	Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
-	v->update = 0;
-	Engine_EventWait(30);
-	Engine_EventCloseScreen();
-	Engine_EventWaitForScreen();
-	Engine_EventRequestExit(a);
-	Engine_EventEnd();
-}
-
-static void MakyuriHeya_DropLeaderToColumn(s32 a0)
-{
-	s32 record;
-
-	Engine_EventBegin();
-	Engine_AudioPlayCue(228);
-	Actor_SetSpeed(0, 0x6666, 0x3333);
-	Engine_ActorSetSpritePriority(0, 2);
-	Engine_ActorSetDestinationOffset(0, 0, -8);
-	record = Object_GetById(0);
-	Engine_ActorSetSpriteFlags(record, 0);
-	Engine_EventWait(8);
-	Actor_SetPosition(0, ((a0 << 19) + 0x80000), 0);
-	Engine_EventWait(30);
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/makyuri/risedrop.c"
 
 static void EV53_TOUCH(void)
 {
@@ -1930,38 +1878,8 @@ static void EV15_TOUCH(void)
 	Engine_EventEnd();
 }
 
-static void MakyuriHeya_ArriveWithSparks(void)
-{
-	struct FieldActor *actor;
-	s32				   done;
-
-	actor = Actor_Get(0);
-	done = GameFlag_IsSet(0x109);
-	if (done == 0)
-	{
-		Engine_EventBegin();
-		Camera_MoveTo(-1, -1, -1, 0);
-		actor->motion_flags = 0;
-		Engine_ActorSetPosition(
-			0, actor->x.part.pixel << 16, (actor->z.part.pixel << 16) - 0x100000);
-		Actor_SetChildValue(0, 15);
-		Engine_ActorSetSpriteFlags(Actor_Get(0), 0);
-		Engine_EventOpenScreen();
-		Engine_EventWaitForScreen();
-		Engine_AudioPlayCue(228);
-		actor->update = (void (*)(union FieldObject *))MakyuriHeya_TrailSparks;
-		Actor_SetSpeed(0, 0x6666, 0x3333);
-		Engine_ActorWalkByAndWait(0, 0, 8);
-		Actor_SetChildValue(0, 0);
-		Engine_ActorSetSpriteFlags(Actor_Get(0), 1);
-		actor->sprite->priority = 1;
-		Actor_WalkByAndWait(0, 0, 10);
-		actor->motion_flags = 3;
-		actor->update = NULL;
-		BattleFx_PlayQueuedSound();
-		Engine_EventEnd();
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/makyuri/arrive.c"
 
 static void SceneEffect_SpawnParticleRowsAndDrawTiles(void)
 {
@@ -2315,7 +2233,7 @@ s32 Scene_Initialize(void)
 			break;
 		case 3:
 		case 13:
-			MakyuriHeya_ArriveWithSparks();
+			Makyuri_ArriveWithSparks();
 		case 1:
 		case 2:
 		case 12:
@@ -2451,7 +2369,7 @@ s32 Scene_Initialize(void)
 			Engine_TaskAddCallback(SceneEffect_RotatePaletteEntries97To103, 0xc80);
 			if (Engine_GameFlagIsSet(0x109))
 				break;
-			MakyuriHeya_ArriveWithSparks();
+			Makyuri_ArriveWithSparks();
 			BattleFx_SetQueuedSoundAndPlay(170);
 			ColorBuffer_ApplySource(128 << 9, 0);
 			Engine_ColorBufferApplyTarget(0x10003, 1);

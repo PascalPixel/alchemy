@@ -74,27 +74,7 @@ struct WorkPointers
 #include "../common/effect/move.c"
 #include "../common/effect/spawn.c"
 #include "../common/object/staged_actor.c"
-
-static s32 MakyuriIriguchi_TrailSparks(struct FieldActor *a0)
-{
-	s32					 value;
-	s32					 magic;
-	struct EffectOptions options;
-
-	options.palette = 7;
-	if ((gFrameCount & 1) == 0)
-	{
-		options.palette = 5;
-	}
-	options.start_scale_x = 0xcccc;
-	options.start_scale_y = 0xcccc;
-	options.priority = 0;
-	value = Engine_RandomNext();
-	magic = -(((u32)(value << 3) >> 16) * 0x3333);
-	Effect_Spawn((a0->x.fixed + ((8 - (gFrameCount & 15)) << 16)), (a0->y.fixed + 0x1a0000),
-		a0->z.fixed, 0, magic, 0, 0xb0000, &options);
-	return 0;
-}
+#include "../common/makyuri/sparks.c"
 
 static s32 SceneAudio_PlayCue118AndReturnZero(void)
 {
@@ -169,41 +149,8 @@ static void EV01_SEARCH(void)
 	Engine_EventEnd();
 }
 
-static void SceneActor_RunActorZeroHandledMotion(s32 a)
-{
-	struct FieldActor *v = Object_GetById(ACTOR_PARTY_LEADER);
-	Engine_EventBegin();
-	Engine_AudioPlayCue(0xe4);
-	v->update = (void (*)(union FieldObject *))MakyuriIriguchi_TrailSparks;
-	v->speed = 0x3333;
-	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
-	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-	Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
-	Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
-	v->update = 0;
-	Engine_EventWait(30);
-	Engine_EventCloseScreen();
-	Engine_EventWaitForScreen();
-	Engine_EventRequestExit(a);
-	Engine_EventEnd();
-}
-
-static void MakyuriIriguchi_DropLeaderToColumn(s32 a0)
-{
-	s32 record;
-
-	Engine_EventBegin();
-	Engine_AudioPlayCue(228);
-	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
-	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
-	Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
-	record = Actor_Get(ACTOR_PARTY_LEADER);
-	Engine_ActorSetSpriteFlags(record, 0);
-	Engine_EventWait(8);
-	Actor_SetPosition(ACTOR_PARTY_LEADER, ((a0 << 19) + 0x80000), 0);
-	Engine_EventWait(30);
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/makyuri/risedrop.c"
 
 static void EV67_TOUCH(void)
 {
@@ -326,41 +273,8 @@ static void MakyuriIriguchi_OpenEntrance(void)
 	Engine_EventEnd();
 }
 
-static void MakyuriIriguchi_ArriveWithSparks(void)
-{
-	struct FieldActor *actor;
-	s32				   flag;
-	s32				   record;
-
-	actor = Object_GetById(ACTOR_PARTY_LEADER);
-	flag = GameFlag_IsSet(0x109);
-	if (flag == 0)
-	{
-		Engine_EventBegin();
-		Camera_MoveTo(-1, -1, -1, 0);
-		actor->motion_flags = 0;
-		Engine_ActorSetPosition(
-			0, actor->x.part.pixel << 16, (actor->z.part.pixel << 16) + -0x100000);
-		Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
-		record = Actor_Get(ACTOR_PARTY_LEADER);
-		Engine_ActorSetSpriteFlags(record, 0);
-		Engine_EventOpenScreen();
-		Engine_EventWaitForScreen();
-		Engine_AudioPlayCue(228);
-		actor->update = (void (*)(union FieldObject *))MakyuriIriguchi_TrailSparks;
-		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
-		Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
-		Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
-		record = Actor_Get(ACTOR_PARTY_LEADER);
-		Engine_ActorSetSpriteFlags(record, 1);
-		actor->sprite->priority = 1;
-		Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 10);
-		actor->motion_flags = 3;
-		actor->update = NULL;
-		BattleFx_PlayQueuedSound();
-		Engine_EventEnd();
-	}
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/makyuri/arrive.c"
 
 s32 MakyuriIriguchi_ApplyEntryState(void)
 {
@@ -480,7 +394,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
 	case 18:
 	case 19:
 	case 20:
-		MakyuriIriguchi_ArriveWithSparks();
+		Makyuri_ArriveWithSparks();
 	case 17:
 		BattleFx_SetQueuedSoundAndPlay(170);
 		break;

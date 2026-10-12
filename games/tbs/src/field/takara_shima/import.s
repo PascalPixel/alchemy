@@ -9,7 +9,7 @@
 	.if EDITION_INTERNATIONAL
 	import Vector_AddPolarOffset, Vector_AddPolarOffsetFar
 	.endif
-	import AllocateEffectTransfer, Runtime_AllocateHeapBlockFar
+	import Engine_HeapAllocate, Runtime_AllocateHeapBlockFar
 	import Engine_HeapRelease, Runtime_ReleaseHeapBlockFar
 	import Engine_VramLoad, VramBlock_LoadCachedFar
 	import Object_SetMode, ObjectDispatch_ApplyArgumentToChildrenFar

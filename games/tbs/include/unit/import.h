@@ -3,14 +3,11 @@
 
 #include "types.h"
 
-struct DispatchObject;
 struct FieldPosition;
 struct ObjectRuntime;
 struct SceneRegionEntry;
 struct UiWindow;
 
-void *AllocateEffectTransfer(s32 kind, s32 size);
-s32 CalculateAngleFromCoordinateDelta(s32 x, s32 y);
 void Effect_SoundAndFlash(void);
 s32 Engine_BattleFxPlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode);
 void Engine_BattleFxRunPageEffectForSlot(s32 slot, s32 elm, void *djinn);

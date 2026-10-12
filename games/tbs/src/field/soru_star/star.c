@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/soru_star/star.h"
+#include "unit/field/common/object/facing.h"
 #include "unit/field/common/effect/create.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/soru_star/ring_setup.h"
@@ -94,36 +95,8 @@ static __inline__ void SkipMessage(s32 amount)
 	gEventWork->message += amount;
 }
 
-s32 UpdateOverlayObjectAngle(struct OverlayObject *object)
-{
-	struct OverlayObject *linked_object = object->linked_object;
-	if (linked_object != NULL)
-	{
-		s32 angle_delta;
-		u16 angle;
-		object->steering_flags &= 0xFE;
-		angle_delta = (u16)CalculateAngleFromCoordinateDelta(
-			linked_object->coordinate_10 - object->coordinate_10,
-			linked_object->coordinate_08 - object->coordinate_08);
-		angle = object->angle;
-		angle_delta -= angle;
-		angle_delta <<= 16;
-		angle_delta >>= 16;
-		if (angle_delta != 0)
-		{
-			if (angle_delta > 0x1000)
-			{
-				angle_delta = 0x1000;
-			}
-			if (angle_delta < -0x1000)
-			{
-				angle_delta = -0x1000;
-			}
-			object->angle = angle + angle_delta;
-		}
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/facing.c"
 
 s32 *SceneData_GetScriptTable(void)
 {
@@ -2288,7 +2261,7 @@ const s32 *gEffectScripts[] = {
 };
 
 s32 SoruStar_AngleScript[] = {
-	SC_CALL(UpdateOverlayObjectAngle),
+	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

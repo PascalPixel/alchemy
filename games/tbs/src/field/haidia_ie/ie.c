@@ -2,6 +2,7 @@
 #include "scene_ids.h"
 #include "vram_tab.h"
 #include "unit/field/haidia_ie/ie.h"
+#include "unit/field/common/object/facing.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
 #include "unit/game/character/chara.h"
@@ -29,37 +30,8 @@
 #include "field_scene.h"
 #include "objcmd.h"
 
-s32 Object_UpdateFacingTowardTarget(struct FacingObject *object)
-{
-	s32					 facing_delta;
-	u16					 old_facing;
-	s32					 target_facing;
-	struct FacingObject *target;
-
-	target = object->facing_target;
-	if (target != NULL)
-	{
-		object->facing_flags = (0xFE & object->facing_flags);
-		target_facing = (u16)ArcTan2(
-			target->position_z - object->position_z, target->position_x - object->position_x);
-		old_facing = object->facing;
-		facing_delta = (s16)(target_facing - old_facing);
-		if (facing_delta != 0)
-		{
-			if (facing_delta > 0x1000)
-			{
-				facing_delta = 0x1000;
-			}
-
-			if (facing_delta < -0x1000)
-			{
-				facing_delta = -0x1000;
-			}
-			object->facing = (old_facing + facing_delta);
-		}
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/facing.c"
 
 u8 *HaidiaIe_GetEntrances(void)
 {
@@ -1716,7 +1688,7 @@ s32 Data_0200ab2c[] = {
 };
 
 s32 HaidiaIe_FaceTargetActions[] = {
-	SC_CALL(Object_UpdateFacingTowardTarget),
+	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

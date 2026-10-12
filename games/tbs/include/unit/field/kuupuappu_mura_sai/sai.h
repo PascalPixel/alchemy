@@ -4,7 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct FieldActor;
 struct SceneActor_02000350;
 
 s32 SceneActor_UpdateProximity(struct SceneActor_02000350 *actor, struct SceneActor_02000350 *target, s32 range, s32 force);

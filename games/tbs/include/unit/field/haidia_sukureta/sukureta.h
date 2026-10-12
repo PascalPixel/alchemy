@@ -4,9 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct FacingObject;
-
-s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object);
 u8 *SceneData_GetScriptTable(void);
 s32 SceneData_ReturnZero(void);
 u8 *SceneData_GetMessageTable(void);

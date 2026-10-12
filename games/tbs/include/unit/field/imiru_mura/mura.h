@@ -4,7 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct FacingObject;
 struct FieldActor;
 struct Object;
 struct SceneEntrance;
@@ -25,7 +24,6 @@ typedef struct
 } T_0200154c;
 
 s32 OverlayObject_UpdateWobbleByCounter(struct Object *obj);
-s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj);
 const struct SceneEntrance *Scene_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
 u8 *ImiruMura_GetExits(void);

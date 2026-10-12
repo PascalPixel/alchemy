@@ -4,8 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct FieldActor;
-
 s32 ShianHeya_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
 s32 ShianHeya_GetExits(void);

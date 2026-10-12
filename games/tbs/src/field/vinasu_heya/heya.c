@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/vinasu_heya/heya.h"
+#include "unit/field/common/effect/advance.h"
 #include "unit/field/common/object/distance.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
@@ -764,23 +765,8 @@ void OverlayObject_WaitUntilIdle(struct BusyObject *obj)
 	}
 }
 
-void Effect_AdvanceMotion(struct Effect_0200096c *effect)
-{
-	struct Sprite_0200096c *sprite;
-
-	effect->position[0] += effect->velocity[0];
-	effect->position[1] += effect->velocity[1];
-	effect->position[2] += effect->velocity[2];
-
-	effect->velocity[0] -= effect->velocity[0] / 18;
-	effect->velocity[2] -= effect->velocity[2] / 16;
-
-	effect->accum18 += effect->rate30;
-	effect->accum1c += effect->rate34;
-
-	sprite = effect->sprite;
-	sprite->angle += effect->step64;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/advance.c"
 
 void FieldScene_RunSupplementalSequenceOne(void)
 {

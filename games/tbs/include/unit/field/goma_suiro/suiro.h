@@ -4,7 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct FieldActor;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;

@@ -4,12 +4,10 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct FieldEffect;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
-union FieldObject;
 
 extern s32 gShortEffectScript[];
 extern s32 gMediumEffectScript[];
@@ -57,8 +55,6 @@ void Leader_KickUpDust(void);
 void Party_ThrownOut(void);
 void Leader_SneaksOut(void);
 s32 Scene_Initialize(void);
-s32 FloatingNut_Update(union FieldObject *object);
-void FloatingNut_Initialize(s32 actor);
 extern struct SceneEntrance gLunpaEntrances[];
 extern struct SceneEntrance gGateEntrances[];
 extern u32 gLunpaExits[];

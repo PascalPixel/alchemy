@@ -4,10 +4,8 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct FacingObject;
 union FieldObject;
 
-s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *obj);
 s32 *HaidiaBabi_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
 s32 HaidiaBabi_SelectExits(void);

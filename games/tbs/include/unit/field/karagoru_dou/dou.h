@@ -4,7 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct EffectWork;
 struct HeightTrackedObject;
 struct SceneEntrance;
 struct SceneEvent;

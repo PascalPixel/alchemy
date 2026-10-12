@@ -5,7 +5,7 @@
 	import Engine_RandomNext, Random16Far
 	import Engine_MathSin, Trig_SinFar
 	import Engine_MathCos, Trig_CosFar
-	import AllocateEffectTransfer, Runtime_AllocateHeapBlockFar
+	import Engine_HeapAllocate, Runtime_AllocateHeapBlockFar
 	import Engine_HeapRelease, Runtime_ReleaseHeapBlockFar
 	import Engine_VramLoad, VramBlock_LoadCachedFar
 	import Object_SetMode, ObjectDispatch_ApplyArgumentToChildrenFar

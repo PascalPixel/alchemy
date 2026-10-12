@@ -6,6 +6,7 @@
 #include "game_state.h"
 #include "vram_tab.h"
 #include "unit/field/common/haidia_babi/babi.h"
+#include "unit/field/common/object/facing.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
 #include "unit/graphics/window/measure.h"
@@ -40,35 +41,8 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-//--------------------------------------------------------------------------
-// 向く相手がいれば、その方向へ 1 回に 0x1000（22.5 度）まで向きを変える
-// obj : 向きを変えるオブジェクト
-//--------------------------------------------------------------------------
-s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *obj)
-{
-	s32					 turn;
-	u16					 old;
-	s32					 dir;
-	struct FacingObject *tgt;
-
-	tgt = obj->facing_target;
-	if (tgt != NULL)
-	{
-		obj->facing_flags = 0xfe & obj->facing_flags;
-		dir = (u16)ArcTan2(tgt->position_z - obj->position_z, tgt->position_x - obj->position_x);
-		old = obj->facing;
-		turn = (s16)(dir - old);
-		if (turn != 0)
-		{
-			if (turn > 0x1000)
-				turn = 0x1000;
-			if (turn < -0x1000)
-				turn = -0x1000;
-			obj->facing = old + turn;
-		}
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../object/facing.c"
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -1254,7 +1228,7 @@ s32 gHaidiaBabiRampActor10ActionB[] = {
 };
 
 s32 gHaidiaBabiActor8Departure[] = {
-	SC_CALL(SceneActor_UpdateFacingTowardTarget),
+	SC_CALL(OverlayObject_UpdateFacingTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 	SC_MOVE(PIXELS(567), 0, PIXELS(690)),
 	SC_SYNC,

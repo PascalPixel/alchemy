@@ -2,6 +2,7 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/field/toreto_heya/heya.h"
+#include "unit/field/common/effect/advance.h"
 #include "unit/field/common/effect/create.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
@@ -928,23 +929,8 @@ void SceneEffect_RegisterPaletteFadeCallback(void)
 	Engine_TaskRemoveCallback(ToretoPalette_ApplyTint);
 }
 
-void ToretoHeya_AdvanceEffectMotion(struct Effect *effect)
-{
-	struct Sprite *sprite;
-
-	effect->position[0] += effect->velocity_x;
-	effect->position[1] += effect->velocity_y;
-	effect->position[2] += effect->velocity_z;
-
-	effect->velocity_x -= effect->velocity_x / 18;
-	effect->velocity_z -= effect->velocity_z / 16;
-
-	effect->accum18 += effect->rate30;
-	effect->accum1c += effect->rate34;
-
-	sprite = effect->sprite;
-	sprite->angle += effect->step64;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/advance.c"
 
 void ToretoHeya_RunLandingDustScene(void)
 {
@@ -973,7 +959,7 @@ void ToretoHeya_RunLandingDustScene(void)
 	leader = Object_GetById(0);
 	p = &params;
 	p->kind = 7;
-	p->script = (s32)ToretoHeya_AdvanceEffectMotion;
+	p->script = (s32)Effect_AdvanceMotion;
 	p->spread = 0xcccc;
 	p->rise = 0xcccc;
 	for (i = 0; i <= 16; i++)

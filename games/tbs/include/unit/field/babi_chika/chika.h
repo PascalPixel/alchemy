@@ -7,7 +7,6 @@
 
 struct Actor_02000ec8;
 struct FieldActor;
-struct MotionEffect;
 struct SceneEntrance;
 struct SceneRegion;
 struct Track02001038;
@@ -38,7 +37,6 @@ void SceneState_SwapSlotPairByRank(s32 first, s32 second);
 s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object);
 s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record);
 void SceneActor_WaitValueBelowLimit(struct Track02001038 *track);
-void Effect_AdvanceMotion(struct MotionEffect *effect);
 void BabiChika_RunLeaderSpray(void);
 void SceneEffect_SpawnNineRadialEffects(s32 actor);
 const struct SceneEntrance *Scene_GetEntrances(void);

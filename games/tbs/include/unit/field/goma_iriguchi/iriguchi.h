@@ -4,8 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct FieldActor;
-
 void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames);
 void *GomaIriguchi_GetEntrances(void);
 int SceneData_ReturnZero(void);

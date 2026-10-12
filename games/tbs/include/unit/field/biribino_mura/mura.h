@@ -4,14 +4,12 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct FacingObject;
 struct FieldActor;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 
-s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object);
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
 u8 *SceneData_GetMessageTable(void);

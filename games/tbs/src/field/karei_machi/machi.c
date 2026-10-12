@@ -2,6 +2,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/karei_machi/machi.h"
+#include "unit/field/common/object/orbit.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/graphics/window/measure.h"
 #include "unit/system/scheduler/callback.h"
@@ -88,48 +89,7 @@ struct Obj_020036f8
 	s16 f64;
 };
 
-typedef struct OrbitingSceneObjectSprite
-{
-	u8 padding_00[5];
-	u8 flags_05_low : 5;
-	u8 flags_05_bit_5 : 1;
-	u8 flags_05_high : 2;
-	u8 padding_06[3];
-	u8 flags_09_low : 2;
-	u8 flags_09_mode : 2;
-	u8 flags_09_high : 4;
-	u8 padding_0a[18];
-	u8 palette;
-	u8 padding_1d[10];
-	u8 state;
-} OrbitingSceneObjectSprite;
-
-typedef struct OrbitingSceneObject
-{
-	u8						   padding_00[8];
-	s32						   x;
-	s32						   y;
-	s32						   z;
-	u8						   padding_14[15];
-	u8						   flags_23;
-	u8						   padding_24[12];
-	s32						   orbit_angle;
-	u8						   padding_34[4];
-	s32						   orbit_center_x;
-	s32						   orbit_center_y;
-	s32						   orbit_center_z;
-	u8						   padding_44[12];
-	OrbitingSceneObjectSprite *sprite;
-	u8						   padding_54;
-	u8						   mode;
-	u8						   state;
-	u8						   padding_57[5];
-	u8						   active;
-	u8						   padding_5d[4];
-	u8						   visible;
-	u8						   padding_62[10];
-	u32						   callback;
-} OrbitingSceneObject;
+#include "../common/object/orbit.h"
 
 extern u8 *gActorEffectWork;
 
@@ -1127,7 +1087,7 @@ void SceneState_ApplyFlagGatedActorEightSetup(void)
 
 	if (Engine_GameFlagIsSet(0xfd6) == 0)
 	{
-		InitializeOrbitingRenderEffect(12);
+		InitializeStagedActorSceneOrbitingEffect(12);
 	}
 	if (Engine_GameFlagIsSet(0x915) != 0)
 	{
@@ -2234,62 +2194,8 @@ void FieldScene_DrawTilesAndRaiseActor11(void)
 	Engine_GameFlagSet(0x201);
 }
 
-s32 SceneEffect_UpdateOrbitingEffect(Effect_0200390c *effect)
-{
-	RenderData *render = effect->render;
-	s32			ofs = Engine_MathSin(effect->angle) * 2;
-	s32			first;
-
-	if (ofs > 0)
-	{
-		ofs = -ofs;
-	}
-	effect->x = effect->base_x + Engine_MathCos(effect->angle) * 2;
-	effect->y = effect->base_y + ofs;
-	render->rotation = Engine_MathCos(effect->angle + 0x8000) / 8;
-	first = Engine_RandomNext();
-	effect->angle += ((u32)(first << 9) >> 16) + ((u32)(Engine_RandomNext() << 9) >> 16) + 0x400;
-	return 0;
-}
-
-void InitializeOrbitingRenderEffect(s32 id)
-{
-	OrbitingSceneObject		  *actor;
-	OrbitingSceneObjectSprite *sprite;
-	u8						  *transfer;
-	s32						   zero;
-
-	actor = (OrbitingSceneObject *)Object_GetById(id);
-	sprite = actor->sprite;
-	sprite->flags_09_mode = 1;
-	sprite->flags_05_bit_5 = 0;
-	sprite->flags_09_high = 0;
-
-	zero = 0;
-	sprite->state = zero;
-	Engine_ActorSetSpriteFlags(actor, zero);
-	actor->active = zero;
-	actor->mode = zero;
-
-	if (Engine_GameFlagIsSet(0x109) == 0)
-		actor->y += 0x200000;
-
-	actor->flags_23 &= 0xfe;
-	actor->visible = 1;
-
-	transfer = Engine_HeapAllocate(17, 0x608);
-	Engine_ItemLoadIcon(ITEM_NUT);
-	transfer += 0x400;
-	Engine_VramLoad(sprite->palette, 128, transfer);
-	Engine_HeapRelease(17);
-
-	actor->orbit_center_x = actor->x;
-	actor->orbit_angle = zero;
-	actor->orbit_center_y = actor->y;
-	actor->active = 1;
-	actor->callback = (u32)SceneEffect_UpdateOrbitingEffect;
-	actor->state = zero;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/orbit.c"
 
 // 向きごとの 1 マス先: 上位 16 ビットが x、下位 16 ビットが z
 #define FACING_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

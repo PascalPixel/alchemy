@@ -77,8 +77,6 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0);
 void FieldScene_RunScene3a8SequenceA(s32 a0, s32 a1, s32 a2);
 void SceneEffect_UpdateLobeOrbitEffect26(void);
 void FieldScene_DrawTilesAndRaiseActor11(void);
-s32 SceneEffect_UpdateOrbitingEffect(Effect_0200390c *effect);
-void InitializeOrbitingRenderEffect(s32 id);
 extern s32 KareiMachi_Data01[];
 extern s32 SceneAction_GroupMotion[];
 extern s32 SceneAction_GroupOffsetMotion[];

@@ -2,6 +2,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/arutin_yama/yama.h"
+#include "unit/field/common/object/facing.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
 #include "unit/system/scheduler/callback.h"
@@ -66,37 +67,8 @@ void SceneState_SetValue14Mode23(void)
 	BattleFx_SetPhaseRequest(0xE, 0x17);
 }
 
-s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *object)
-{
-	s32					 delta;
-	u16					 old;
-	s32					 angle;
-	struct FacingObject *target;
-
-	target = object->facing_target;
-	if (target != NULL)
-	{
-		object->facing_flags = (0xFE & object->facing_flags);
-		angle = (u16)ArcTan2(
-			target->position_z - object->position_z, target->position_x - object->position_x);
-		old = object->facing;
-		delta = (s16)(angle - old);
-		if (delta != 0)
-		{
-			if (delta > 0x1000)
-			{
-				delta = 0x1000;
-			}
-
-			if (delta < -0x1000)
-			{
-				delta = -0x1000;
-			}
-			object->facing = (old + delta);
-		}
-	}
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/facing.c"
 
 s32 SceneActor_CopyActor8PositionWithFixedY(struct Frame *dst)
 {

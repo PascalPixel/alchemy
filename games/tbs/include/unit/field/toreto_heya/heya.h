@@ -4,8 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct Effect;
-struct FieldActor;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
@@ -51,7 +49,6 @@ void ToretoHeya_UpdateSwirlObject(struct Swirl *obj);
 void ToretoHeya_SpawnSwirlSparks(void);
 void ToretoHeya_ApplyFlaggedMapPatches(void);
 void SceneEffect_RegisterPaletteFadeCallback(void);
-void ToretoHeya_AdvanceEffectMotion(struct Effect *effect);
 void ToretoHeya_RunLandingDustScene(void);
 extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];

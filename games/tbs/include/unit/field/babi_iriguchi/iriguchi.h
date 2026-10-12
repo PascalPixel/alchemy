@@ -4,7 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct MotionEffect;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
@@ -13,7 +12,6 @@ struct StagedActor;
 
 void SceneState_SetValue8Mode66(void);
 void OverlayObject_WaitUntilIdle(s32 *obj);
-void Effect_AdvanceMotion(struct MotionEffect *effect);
 void FieldScene_RunSupplementalSequenceOne(void);
 void FieldScene_RunScene3c5SequenceA(s32 exit);
 const struct SceneEntrance *Scene_GetEntrances(void);

@@ -4,11 +4,9 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct FacingObject;
 struct SceneVerticalEffect;
 union PairObject;
 
-s32 Object_UpdateFacingTowardTarget(struct FacingObject *object);
 u8 *HaidiaIe_GetEntrances(void);
 s32 HaidiaIe_GetDefaultResult(void);
 void *SceneData_SelectTableByFlag834(void);

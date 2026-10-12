@@ -76,8 +76,6 @@ void Effect_PlayStepSound(void);
 void FieldScene_RunScriptedStepEE4(void);
 void FieldScene_RunScene373SequenceB(void);
 void SceneActor_SetFlagByteBySlotZeroPosition(void);
-s32 SceneEffect_UpdateOrbitPosition(s32 *p);
-void InitializeStagedActorSceneOrbitingEffect(s32 id);
 void OverlayObject_UpdateOnFrameBit1(s32 p);
 void SceneEffect_UpdateObjectOnOddFrames(s32 p);
 void SceneEffect_UpdateObjectOnOddFramesOnly(s32 p);

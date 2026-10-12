@@ -805,7 +805,7 @@ Func_080ccec8:
 	adds r5, r5, r1
 	movs r2, #0
 	ldrsh r0, [r5, r2]
-	bl Func_080e035c
+	bl BattleFx_ResumeObject
 	movs r3, #255
 	lsls r3, r3, #8
 	adds r3, #255

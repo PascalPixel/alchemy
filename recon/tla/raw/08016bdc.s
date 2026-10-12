@@ -41,7 +41,7 @@ Func_08016bdc:
 	movs r1, #160
 	lsls r0, r0, #20
 	lsls r1, r1, #2
-	bl Func_0801680c
+	bl SerialRuntime_BeginTransferA
 .L_08016c2e:
 	ldr r3, [r6]
 	movs r2, #2
@@ -51,7 +51,7 @@ Func_08016bdc:
 	movs r1, #160
 	ldr r0, .L_08016c98
 	lsls r1, r1, #2
-	bl Func_0801680c
+	bl SerialRuntime_BeginTransferA
 .L_08016c42:
 	ldr r3, [r6]
 	movs r2, #8

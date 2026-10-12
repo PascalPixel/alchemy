@@ -3,7 +3,6 @@
 
 /* MINIGAME */
 
-#include "unit/battle/effect/colorfx.h"
 #include "types.h"
 #include "edition.h"
 #include "farcall.h"

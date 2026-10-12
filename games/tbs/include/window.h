@@ -2,16 +2,9 @@
 #define ALCHEMY_WINDOW_H
 
 #include "unit/graphics/window/window.h"
-#include "unit/graphics/window/window2.h"
-#include "unit/graphics/window/window3.h"
-#include "unit/graphics/window/window4.h"
-#include "unit/graphics/window/window5.h"
-#include "unit/graphics/window/window6.h"
 #include "unit/graphics/window/window7.h"
-#include "unit/graphics/window/window8.h"
 #include "unit/graphics/window/window9.h"
 #include "unit/graphics/window/window10.h"
-#include "unit/graphics/window/window11.h"
 #include "unit/graphics/window/window12.h"
 #include "types.h"
 #include "tbs_edition.h"

@@ -3,8 +3,6 @@
 
 #include "types.h"
 #include "effect_slot.h"
-#include "unit/battle/effect/object.h"
-#include "unit/battle/effect/object2.h"
 
 void BattleFx_ResetCounters(void);
 s32 BattleFx_SumCounters(void);

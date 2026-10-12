@@ -5,8 +5,6 @@
 #include "battle_effect_work.h"
 #include "battle_efx.h"
 #include "unit/battle/effect/effect.h"
-#include "unit/battle/effect/effect2.h"
-#include "unit/battle/effect/effect3.h"
 
 void BattleEffect_WipeCanvas(s32 mode, s32 value);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);

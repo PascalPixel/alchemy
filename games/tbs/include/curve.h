@@ -1,7 +1,6 @@
 #ifndef ALCHEMY_CURVE_H
 #define ALCHEMY_CURVE_H
 
-#include "unit/lib/curvedat.h"
 #include "types.h"
 
 enum

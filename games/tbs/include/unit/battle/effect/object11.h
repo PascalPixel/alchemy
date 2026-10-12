@@ -4,15 +4,6 @@
 #include "types.h"
 #include "effect_slot.h"
 #include "unit/battle/effect/object.h"
-#include "unit/battle/effect/object2.h"
-#include "unit/battle/effect/object3.h"
-#include "unit/battle/effect/object4.h"
-#include "unit/battle/effect/object5.h"
-#include "unit/battle/effect/object6.h"
-#include "unit/battle/effect/object7.h"
-#include "unit/battle/effect/object8.h"
-#include "unit/battle/effect/object9.h"
-#include "unit/battle/effect/object10.h"
 
 struct UiWindow;
 

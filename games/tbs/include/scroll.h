@@ -1,25 +1,6 @@
 #ifndef ALCHEMY_SCROLL_H
 #define ALCHEMY_SCROLL_H
 
-#include "unit/battle/effect/object.h"
-#include "unit/battle/effect/object2.h"
-#include "unit/battle/effect/object3.h"
-#include "unit/battle/effect/object4.h"
-#include "unit/battle/effect/object5.h"
-#include "unit/battle/effect/object6.h"
-#include "unit/battle/effect/object7.h"
-#include "unit/battle/effect/object8.h"
-#include "unit/battle/effect/object9.h"
-#include "unit/battle/effect/object10.h"
-#include "unit/battle/effect/object11.h"
-#include "unit/battle/effect/object12.h"
-#include "unit/battle/effect/object13.h"
-#include "unit/battle/effect/object14.h"
-#include "unit/battle/effect/object15.h"
-#include "unit/battle/effect/object16.h"
-#include "unit/battle/effect/object17.h"
-#include "unit/battle/effect/object18.h"
-#include "unit/graphics/display/scroll_initialize_hblank_dma.h"
 #include "map_scroll.h"
 #include "layout_guard.h"
 

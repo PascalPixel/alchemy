@@ -7,6 +7,7 @@ pub(crate) mod expand;
 pub(crate) mod generate;
 mod internal;
 pub(crate) mod lint;
+mod narrow;
 pub(crate) mod model;
 pub(crate) mod objects;
 pub(crate) mod plan;
@@ -366,6 +367,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             let report = arguments.iter().position(|a| a == "--report").and_then(|at| arguments.get(at + 1));
             events::run(root(), arguments.iter().any(|a| a == "--dry-run"), report.map(String::as_str))
         }
+        Some("narrow") => narrow::run(root(), arguments.get(1).is_some_and(|flag| flag == "--dry-run")),
         Some("static") => {
             let after = |flag: &str| arguments.iter().position(|a| a == flag).and_then(|at| arguments.get(at + 1));
             let leave = match after("--leave") {

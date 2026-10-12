@@ -156,14 +156,6 @@ void Script_SetOrCompareByte63(struct ScriptOperands *work, s32 operation, s32 v
 s32 Script_ApplyOperandSet(struct ScriptOperands *work);
 s32 Script_ApplyOperandAdd(struct ScriptOperands *work);
 s32 Script_ApplyOperandCompare(struct ScriptOperands *work);
-void ObjectDispatch_SetUpdateValue(void *raw, s32 value);
-u32 Field_StoreAssignedKeyValue(u32 value);
-s32 Field_CheckConfiguredKeys(void);
-s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
-s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object);
-s32 Object_MoveOnWorldMap(struct ObjectRuntime *object);
-s32 Field_CheckConfiguredKeysAndCount(void *work);
-s32 Object_MoveByKeys(struct ObjectRuntime *object);
 void Ui_SetGridColumnParameter(s32 slot, s32 value);
 void Ui_SetGridColumnPriority(s32 slot, s32 value);
 

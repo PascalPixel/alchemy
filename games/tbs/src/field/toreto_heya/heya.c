@@ -5,6 +5,7 @@
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
+#include "unit/field/common/script/field5.h"
 #include "unit/field/common/script/field6.h"
 #include "unit/field/common/script/field7.h"
 #include "unit/field/common/script/field8.h"

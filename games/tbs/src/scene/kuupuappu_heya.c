@@ -464,7 +464,12 @@ static void SceneActor_StepActor24AnimationByFacing(void)
 		{
 			Engine_ActorEnableActionCallback(24, KuupuappuHeya_StepActions[v]);
 			*(u16 *)q = *(u16 *)q + 1;
-			goto clamp;
+		}
+		else
+		{
+			Engine_ActorEnableActionCallback(24, KuupuappuHeya_IdleActions[v]);
+			n = *(u16 *)q - 1;
+			*(u16 *)q = n;
 		}
 	}
 	else
@@ -475,13 +480,14 @@ static void SceneActor_StepActor24AnimationByFacing(void)
 		{
 			Engine_ActorEnableActionCallback(24, KuupuappuHeya_StepActions[v]);
 			*(u16 *)q = *(u16 *)q + 1;
-			goto clamp;
+		}
+		else
+		{
+			Engine_ActorEnableActionCallback(24, KuupuappuHeya_IdleActions[v]);
+			n = *(u16 *)q - 1;
+			*(u16 *)q = n;
 		}
 	}
-	Engine_ActorEnableActionCallback(24, KuupuappuHeya_IdleActions[v]);
-	n = *(u16 *)q - 1;
-	*(u16 *)q = n;
-clamp:
 	if (*q > 5)
 	{
 		n = 0;

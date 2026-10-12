@@ -506,7 +506,7 @@ SECTIONS
     "*/games/tla/src/graphics/text/abilname.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000413b0)
     "*/recon/tla/ja/rom.o"(.rom.00041cac)
-    "*/recon/tla/ja/rom.o"(.rom.00041d50)
+    "*/games/tla/src/graphics/text/altflag.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00041d98)
     "*/recon/tla/ja/rom.o"(.rom.000420b4)
     "*/games/tla/src/graphics/text/tileword.o"(.text)

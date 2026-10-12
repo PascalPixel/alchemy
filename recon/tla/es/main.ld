@@ -488,7 +488,7 @@
     "*/games/tla/src/graphics/text/abilname.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.000412ec)
     "*/recon/tla/es/rom.o"(.rom.00041bd4)
-    "*/recon/tla/es/rom.o"(.rom.00041c78)
+    "*/games/tla/src/graphics/text/altflag.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.00041cc0)
     "*/recon/tla/es/rom.o"(.rom.00041fdc)
     "*/games/tla/src/graphics/text/tileword.o"(.text)

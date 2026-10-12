@@ -1161,13 +1161,8 @@ UiWindow_ClearTileAttributesInRect:
 	.thumb_func
 Func_08041b68:
 	.incbin "baserom.gba", 0x00041bb8, 0x000000a4
-	.section .rom.00041c5c, "ax"
-	.global UiWork_SetAltFlagAndClearTable
-	.type UiWork_SetAltFlagAndClearTable, %function
-	.thumb_func
-UiWork_SetAltFlagAndClearTable:
-	.incbin "baserom.gba", 0x00041c5c, 0x00000048
 	.section .rom.00041ca4, "ax"
+	.balign 4
 	.global UiWindow_DrawDividerLine
 	.type UiWindow_DrawDividerLine, %function
 	.thumb_func

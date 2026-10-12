@@ -5795,7 +5795,7 @@ msgctxt "message"
 msgid "01446"
 msgstr "Thief"
 
-msgctxt "message"
+msgctxt "MsgAbilityNothing"
 msgid "01447"
 msgstr "Nothing"
 

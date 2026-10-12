@@ -3,7 +3,7 @@
  * differ 2 of 32: the listing loads the stack argument before the pooled
  * zero for next_frame; this draft loads the zero first. Storing next_frame
  * before the argument differs 9. */
-#include "ov65f.h"
+#include "../../../../games/tla/src/field/overlay_65f/ov65f.h"
 #include "field_sprite.h"
 
 struct SpawnObject {

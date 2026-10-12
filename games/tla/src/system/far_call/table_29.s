@@ -17,10 +17,10 @@ EventRuntime_ResolveAllPendingActionsFar:
 	.thumb_func
 EventRuntime_ResolvePendingActionsFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Func_080cded4
+	overlay_veneer Func_080dca50
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Func_080cded4
+	overlay_veneer Func_080dca50
 .else
 	overlay_veneer EventRuntime_ResolvePendingActions
 .endif
@@ -28,11 +28,27 @@ EventRuntime_ResolvePendingActionsFar:
 	.global Func_080c84e8
 	.thumb_func
 Func_080c84e8:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080dca84
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080dca84
+.else
 	overlay_veneer Func_080dc978
+.endif
+.endif
 	.global Func_080c84f0
 	.thumb_func
 Func_080c84f0:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080dcadc
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080dcadc
+.else
 	overlay_veneer Func_080dca50
+.endif
+.endif
 	.global Func_080c84f8
 	.thumb_func
 Func_080c84f8:

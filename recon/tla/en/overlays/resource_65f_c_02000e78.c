@@ -4,7 +4,7 @@
  * listing shifts the flag id (lsls r0) after it loads z, this draft before.
  * Func_02000f3c, the same shape with a two-instruction flag id, matches in
  * lift.c. */
-#include "ov65f.h"
+#include "../../../../games/tla/src/field/overlay_65f/ov65f.h"
 
 void Func_02000e78(s32 id, struct ObjectRuntime *object)
 {

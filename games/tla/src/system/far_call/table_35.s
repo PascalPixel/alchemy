@@ -89,10 +89,10 @@ Func_080c88a8:
 	.thumb_func
 Func_080c88b0:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080db91c
+	overlay_veneer ObjectGroup_ApplyRandomChildValues
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080db91c
+	overlay_veneer ObjectGroup_ApplyRandomChildValues
 	.else
 	overlay_veneer Func_080d1df0
 	.endif
@@ -114,4 +114,12 @@ BattleFx_DecodeFrameTranslationBase:
 	.global ObjectGroup_ApplyRandomChildValuesFar
 	.thumb_func
 ObjectGroup_ApplyRandomChildValuesFar:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080e2774
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080e2774
+.else
 	overlay_veneer ObjectGroup_ApplyRandomChildValues
+.endif
+.endif

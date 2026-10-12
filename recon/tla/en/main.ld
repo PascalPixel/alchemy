@@ -541,7 +541,7 @@
         "*/games/tla/src/graphics/window/dropitem.o"(.text)
         "*/games/tla/src/graphics/window/rgbscale.o"(.text)
         "*/recon/tla/raw/0803f9c0.o"(.text)
-        "*/recon/tla/raw/0803fb60.o"(.text)
+        "*/games/tla/src/graphics/window/optcur.o"(.text)
         "*/recon/tla/raw/0803fc38.o"(.text)
         "*/games/tla/src/graphics/window/optend.o"(.text)
         "*/recon/tla/raw/0803fd28.o"(.text)

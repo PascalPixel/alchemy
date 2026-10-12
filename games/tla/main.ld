@@ -485,7 +485,7 @@ SECTIONS
     "*/games/tla/src/graphics/window/dropitem.o"(.text)
     "*/games/tla/src/graphics/window/rgbscale.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0003faf4)
-    "*/recon/tla/ja/rom.o"(.rom.0003fc94)
+    "*/games/tla/src/graphics/window/optcur.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0003fd6c)
     "*/games/tla/src/graphics/window/optend.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0003fe5c)

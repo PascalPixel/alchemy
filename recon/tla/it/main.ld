@@ -469,7 +469,7 @@
     "*/games/tla/src/graphics/window/dropitem.o"(.text)
     "*/games/tla/src/graphics/window/rgbscale.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0003fa18)
-    "*/recon/tla/it/rom.o"(.rom.0003fbb8)
+    "*/games/tla/src/graphics/window/optcur.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0003fc90)
     "*/games/tla/src/graphics/window/optend.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0003fd80)

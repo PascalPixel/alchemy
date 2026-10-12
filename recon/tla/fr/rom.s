@@ -1018,12 +1018,6 @@ UiWindow_OpenMode1AndWaitFrame:
 	.thumb_func
 Func_0803f9c0:
 	.incbin "baserom.gba", 0x0003fa04, 0x000001a0
-	.section .rom.0003fba4, "ax"
-	.global Func_0803fb60
-	.type Func_0803fb60, %function
-	.thumb_func
-Func_0803fb60:
-	.incbin "baserom.gba", 0x0003fba4, 0x000000d8
 	.section .rom.0003fc7c, "ax"
 	.incbin "baserom.gba", 0x0003fc7c, 0x000000dc
 	.section .rom.0003fd6c, "ax"

@@ -41,3 +41,22 @@ void Func_020019e0(void)
         Func_02002c70();
     }
 }
+
+void Func_02001a04(void)
+{
+    struct Ov656Object *object = Object_GetById(9);
+
+    Func_02002d40(9, 0x100, 0);
+    Motion_SetVarCbAndRefresh(9, 2);
+    object->field_48 = 0x8000;
+    ObjectMotion_SetActionVariant(9, 1);
+    Ov656_ObjSpeed(9, 0xcccc, 0x6666);
+    ObjectMotion_Launch(9, 6, 0);
+    Ov656_ObjCommit(9, 0x340, 88);
+    Battle_WaitMode0(20);
+    Ov656_ObjSpeed(9, 0x19999, 0xcccc);
+    ObjectMotion_SetActionVariant(9, 3);
+    Ov656_ObjCommit(9, 0x338, 72);
+    Ov656_ObjArm(9, 0x3000, 40);
+    GameFlag_SetBit(0x201);
+}

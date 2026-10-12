@@ -6,6 +6,7 @@
 #include "unit/field/common/script/field.h"
 #include "unit/game/character/chara.h"
 #include "unit/menu/shop/shop.h"
+#include "unit/menu/shop/shop5.h"
 #include "unit/menu/shop/shop6.h"
 #include "unit/system/scheduler/runtime.h"
 #include "battle.h"

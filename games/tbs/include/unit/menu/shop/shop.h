@@ -73,8 +73,5 @@ void Shop_DrawSelMsg(s32 target, s32 selection);
 void BattleFx_UpdateRadialMotion(struct EffectSlot *effect);
 void Shop_ResetEffects(void);
 void Shop_RunPartyMemberIconBurst(s32 member);
-s32 Inn_RoomPrice(s32 mode);
-s32 Inn_CheckIn(s32 mode, s32 object_id);
-void Inn_PlaySleep(s32 room_price);
 
 #endif

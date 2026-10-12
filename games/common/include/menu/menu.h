@@ -58,7 +58,6 @@ extern u8		  Menu_ArrowTiles[];
 extern u8		  Menu_PairSpriteATiles[];
 extern u8		  Menu_PairSpriteBTiles[];
 extern const u8	  Menu_QuantityTiles[];
-extern s8		  Shop_PartyActionCues[];
 extern const char DjinnMenu_TextLevel[];
 extern const char DjinnMenu_TextSlash[];
 extern s16		  Shop_StockTable[][33];

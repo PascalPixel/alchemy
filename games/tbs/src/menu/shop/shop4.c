@@ -508,6 +508,12 @@ void Shop_ResetEffects(void)
 			shop->party_member_icons[member], (Random16() * 7) >> 16);
 }
 
+// 仲間の動作ごとの効果音
+static const s8 Shop_PartyActionCues[4] =
+{
+	0x52, 0x54, 0x58, 0x57,
+};
+
 void Shop_RunPartyMemberIconBurst(s32 member)
 {
 

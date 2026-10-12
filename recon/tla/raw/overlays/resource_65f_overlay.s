@@ -1190,63 +1190,6 @@ Func_020012a8:
 	.2byte 0x0000
 .L_02009328:
 	.4byte Effect_AdvanceMotion
-	.section .text.x0200932c,"ax",%progbits
-	.global Func_0200132c
-	.thumb_func
-Func_0200132c:
-	push {lr}
-	movs r1, #10
-	movs r2, #11
-	movs r0, #1
-	bl Func_02005354
-	movs r0, #130
-	lsls r0, r0, #1
-	adds r0, #255
-	bl GameFlag_SetBit
-	pop {pc}
-	.section .text.x02009360,"ax",%progbits
-	.balign 4
-	.global Func_02001360
-	.thumb_func
-Func_02001360:
-	push {r5, r6, r7, lr}
-	adds r4, r0, #0
-	adds r6, r2, #0
-	adds r5, r1, #0
-	lsls r3, r3, #16
-	movs r0, #244
-	asrs r7, r3, #16
-	lsls r0, r0, #1
-	adds r3, r6, #0
-	adds r1, r4, #0
-	adds r2, r5, #0
-	bl Func_02005174
-	adds r6, r0, #0
-	cmp r6, #0
-	beq .L_020093a4
-	movs r1, #1
-	ldr r5, [r6, #80]
-	bl Func_02005164
-	ldr r1, .L_020093ac
-	adds r0, r6, #0
-	bl Func_0200516c
-	adds r2, r6, #0
-	adds r2, #85
-	movs r3, #0
-	strb r3, [r2]
-	ldr r3, [sp, #16]
-	ldr r1, .L_020093a8
-	adds r2, #9
-	strh r3, [r2]
-	strb r1, [r5, #26]
-	strh r7, [r5, #18]
-.L_020093a4:
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_020093a8:
-	.4byte 0x00000000
-.L_020093ac:
-	.4byte Data_02006330
 	.section .text.x020093b0,"ax",%progbits
 	.global Func_020013b0
 	.thumb_func

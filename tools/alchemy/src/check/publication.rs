@@ -1080,6 +1080,7 @@ fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Opti
         .or_else(|| edition_equate_reason(path, text))
         .or_else(|| linker_assignment_reason(path, text))
         .or_else(|| c_alias_reason(path, text))
+        .or_else(|| packed_numbers_reason(path, text))
         .or_else(|| raw_address_reason(path, text))
         .or_else(|| raw_encoding_reason(path, text))
         .or_else(|| uncredited_code_reason(path, text))
@@ -4971,5 +4972,78 @@ mod patch_tests {
             ));
         }
         assert!(patch_reason("map/x/grid_patch.tsv", many.as_bytes()).is_some());
+    }
+}
+
+/// A decoder reads an asset the build packed, never a C object written as
+/// numbers (S1, A1). `packed` reads the calls and definitions of the C under
+/// games/ for it, across files. FORM, the tip only: the rule asks how today's
+/// source hands data to a decoder, so an old commit is held to it on the
+/// pushed tree and not version by version.
+fn packed_numbers_reason(path: &str, text: &str) -> Option<&'static str> {
+    if !path.starts_with("games/") || !listed(extension(path), &["c", "h"]) {
+        return None;
+    }
+    super::packed::reason(crate::compiler::routing::root(), path, text)
+}
+
+#[cfg(test)]
+mod packed_numbers_tests {
+    use super::{packed_numbers_reason, publication_data_reason};
+    use crate::check::packed::REASON;
+
+    /// The statue hall's sprite rows as staging held them on 2026-10-12, in
+    /// the scene's own C: the loader's lines as written, and the array in
+    /// its place and notation, 21 words on three lines after the last
+    /// function. The words are stand-ins: the stream itself is game data
+    /// and stays out of this file (L1, S1).
+    const STATUE_HALL: &str = "\
+static void Scene_RunGuardSequenceC(void)
+{
+	u32	 i;
+	s32	 value;
+	s32 *p;
+	s32	 buf;
+
+	p = (s32 *)SoruSekizo_SpriteRows;
+	buf = (s32)Runtime_AllocateBlock(14, 0x400);
+	Resource_DecodeByteLz((s32)SoruSekizo_SpriteRowsGfx, buf);
+	value = Engine_VramLoad(Resource_FindFreeEntry(), 128, buf);
+	Engine_HeapRelease(14);
+}
+
+static void Event_SayThenWait(s32 speaker, s32 frames)
+{
+	Engine_EventShowMessage(speaker, 0);
+	Engine_EventWait(frames);
+}
+
+s32 SoruSekizo_SpriteRowsGfx[] = { 0 };
+
+struct SceneEntrance SceneEventRuntime_ScriptData[] = {
+	{ 0, CONDITION_ALWAYS, 287, 0, 176, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+	{ SCENE_TABLE_END },
+};
+";
+
+    #[test]
+    fn the_statue_halls_packed_rows_are_refused_as_numbers_and_pass_as_an_asset() {
+        let scene = "games/tbs/src/scene/soru_sekizo.c";
+        assert_eq!(packed_numbers_reason(scene, STATUE_HALL), Some(REASON));
+        assert_eq!(publication_data_reason(scene, STATUE_HALL.as_bytes(), None), Some(REASON));
+        // Built from a picture: the array is gone and the header declares
+        // the asset's symbol.
+        let (before, after) = STATUE_HALL.split_once("s32 SoruSekizo_SpriteRowsGfx[] = {").unwrap();
+        let built = format!(
+            "extern u8 SoruSekizo_SpriteRowsGfx[];\n{before}{}",
+            after.split_once("};\n\n").unwrap().1
+        );
+        assert_eq!(packed_numbers_reason(scene, &built), None);
+        assert_eq!(publication_data_reason(scene, built.as_bytes(), None), None);
+        // The rule is maintained C's: a draft under recon/ and a tool's own
+        // source are other rules' to judge.
+        for path in ["recon/tbs/en/overlays/soru_sekizo.c", "tools/alchemy/src/a.c", "games/tbs/src/scene/soru_sekizo.s"] {
+            assert_eq!(packed_numbers_reason(path, STATUE_HALL), None, "{path}");
+        }
     }
 }

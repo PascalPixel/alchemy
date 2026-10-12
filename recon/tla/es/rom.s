@@ -3788,35 +3788,31 @@ BattleFx_SetupObjectPair:
 	.type BattleEffect_CleanupSceneObjects, %function
 	.thumb_func
 BattleEffect_CleanupSceneObjects:
-	.incbin "baserom.gba", 0x000e57dc, 0x00000190
+	.incbin "baserom.gba", 0x000e57dc, 0x0000016c
 	.section .rom.000e596c, "ax"
+	.balign 4
 	.global Func_080cdec8
 	.type Func_080cdec8, %function
 	.thumb_func
 Func_080cdec8:
 	.incbin "baserom.gba", 0x000e596c, 0x000000d8
-	.section .rom.000e5a44, "ax"
-	.global Func_080cded4
-	.type Func_080cded4, %function
-	.thumb_func
-Func_080cded4:
-	.global Func_080dca50
-	.type Func_080dca50, %function
-	.thumb_func
-Func_080dca50:
-	.incbin "baserom.gba", 0x000e5a44, 0x00000034
-	.section .rom.000e5a78, "ax"
-	.global Func_080dca84
-	.type Func_080dca84, %function
-	.thumb_func
-Func_080dca84:
-	.incbin "baserom.gba", 0x000e5a78, 0x00000058
 	.section .rom.000e5ad0, "ax"
+	.balign 4
 	.global Func_080dcadc
 	.type Func_080dcadc, %function
 	.thumb_func
 Func_080dcadc:
-	.incbin "baserom.gba", 0x000e5ad0, 0x0000042c
+	.incbin "baserom.gba", 0x000e5ad0, 0x00000068
+	.global Func_080dcb44
+	.type Func_080dcb44, %function
+	.thumb_func
+Func_080dcb44:
+	.incbin "baserom.gba", 0x000e5b38, 0x00000284
+	.global Func_080dcdc8
+	.type Func_080dcdc8, %function
+	.thumb_func
+Func_080dcdc8:
+	.incbin "baserom.gba", 0x000e5dbc, 0x00000058
 	.section .rom.000e6048, "ax"
 	.global Func_080ca6a4
 	.type Func_080ca6a4, %function

@@ -76,8 +76,5 @@ void Shop_RunPartyMemberIconBurst(s32 member);
 s32 Inn_RoomPrice(s32 mode);
 s32 Inn_CheckIn(s32 mode, s32 object_id);
 void Inn_PlaySleep(s32 room_price);
-s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item);
-s32 Shop_SelUse(s32 actor);
-void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id);
 
 #endif

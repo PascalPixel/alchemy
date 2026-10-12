@@ -6,6 +6,7 @@
 #include "unit/graphics/window/window.h"
 #include "unit/menu/item/menu.h"
 #include "unit/menu/shop/shop.h"
+#include "unit/menu/shop/shop6.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

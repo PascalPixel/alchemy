@@ -2,6 +2,7 @@
 #define ALCHEMY_SHOP_H
 
 #include "unit/menu/shop/shop.h"
+#include "unit/menu/shop/shop6.h"
 #include "global_cells.h"
 #include "item.h"
 #include "layout_guard.h"

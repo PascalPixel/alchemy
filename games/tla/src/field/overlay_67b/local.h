@@ -76,6 +76,14 @@ void Func_02002918(struct ObjectRuntime *object, const void *data);
 void Func_02002928(struct ObjectRuntime *object);
 void Func_02002960(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 s32 Func_02002a68(void);
+void Func_02002998(void);
+void Func_020029a0(void);
+void Func_020029d8(s32 id, s32 x, s32 z);
+void Func_02002a18(s32 a);
+void Func_02002a48(s32 a);
+void Func_02002a60(void);
+void Func_02002a70(s32 cue);
+s32 Func_02002030(struct ObjectRuntime *object);
 
 void Func_02000468(struct ObjectRuntime *object);
 void Func_020004e4(struct ObjectRuntime *object);

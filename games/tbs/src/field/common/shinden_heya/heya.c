@@ -43,6 +43,7 @@
 #include "unit/graphics/window/window12.h"
 #include "unit/sound/sound.h"
 #include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtime2.h"
 #include "unit/system/scheduler/runtime3.h"
 #include "unit/system/scheduler/runtime4.h"
 #include "unit/system/scheduler/runtime5.h"

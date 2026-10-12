@@ -32,7 +32,6 @@ s32 Sound_LoadPresetParameters(s32 preset);
 void Sound_ReservedNoOpA(void);
 void Sound_ReservedNoOpB(void);
 void Input_HandleKeyInterrupt(void);
-void IoWriteQueue_FlushPending(void);
 void Blend_SetDarkenTarget16(s32 frames);
 void Blend_SetDarkenTarget0(s32 frames);
 void Blend_SetBrightenTarget16(s32 frames);

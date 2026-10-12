@@ -1,6 +1,7 @@
 #include "battle_effect_runtime.h"
 #include "unit/graphics/palette/palette.h"
 #include "unit/system/scheduler/runtime.h"
+#include "unit/system/scheduler/runtime2.h"
 #include "unit/system/scheduler/runtime3.h"
 #include "unit/system/scheduler/runtime4.h"
 #include "unit/system/scheduler/runtime5.h"

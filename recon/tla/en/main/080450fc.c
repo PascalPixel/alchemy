@@ -1,3 +1,4 @@
+/* Near miss: differ 6 of 68 (three reordered rows; differ 8 before). The empty asm on the two addresses and the one-pass block on the source fix the table load and the position add. Left: the packed-field store masks the matrix index (movs r3, #31) before it reads the byte at 23, where the native reads first, as in Animation_SetStateFlags (the bitfield store emits the mask of the value before the read; an explicit byte expression uses another mask, 193 for -63); and with the one-pass block in the same basic block two more pairs move (ands r3, r4 / lsrs r1; lsls r0 / ands r3, r2). */
 #include "types.h"
 #include "iwram_call.h"
 #include "scene.h"
@@ -31,8 +32,15 @@ s32 AffineMatrix_BuildForEffect(struct Effect *efx);
 
 void Ui_ApplyTableScaleToObject(struct Object *obj)
 {
-    s32 v = Ui_ObjectPulseScales[(gFrameTick >> 1) & 7];
+    s32 v;
+    u32 *tick = &gFrameTick;
+    u32 source;
     struct Effect efx;
+
+    v = (s32)Ui_ObjectPulseScales;
+    /* FAKEMATCH: the empty asm holds both addresses: the native loads the tick address and the table before it reads the tick and builds the mask 7 (two reordered rows). */
+    __asm__("" : "+l"(tick), "+l"(v));
+    v = *(s32 *)(v + (((*tick >> 1) & 7) << 2));
 
     if (v < 0)
         v += 255;
@@ -44,7 +52,11 @@ void Ui_ApplyTableScaleToObject(struct Object *obj)
         efx.z = 0;
         obj->affine_22 = AffineMatrix_BuildForEffect(&efx);
         obj->mode_21 = 3;
-        obj->pos_22 = obj->src_6 + 0xfff0;
+        /* FAKEMATCH: the one-pass block ends the scheduling block: the source is read before 0xfff0 is built (one reordered row). */
+        do {
+            source = obj->src_6;
+        } while (0);
+        obj->pos_22 = source + 0xfff0;
         obj->out_20 = obj->src_8 + 0xf0;
         obj->out_15 = 0xfc;
     }

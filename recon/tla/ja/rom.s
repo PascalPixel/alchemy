@@ -475,6 +475,10 @@ Func_08026fc8:
 	.section .rom.000297b4, "ax"
 	.incbin "baserom.gba", 0x000297b4, 0x00000cf4
 	.section .rom.0002a560, "ax"
+	.global Func_0802a5e4
+	.type Func_0802a5e4, %function
+	.thumb_func
+Func_0802a5e4:
 	.incbin "baserom.gba", 0x0002a560, 0x0000006c
 	.section .rom.0002a5cc, "ax"
 	.global Func_0802a650
@@ -524,18 +528,7 @@ Func_0802b450:
 	.thumb_func
 Func_0802b590:
 	.incbin "baserom.gba", 0x0002b50c, 0x00000090
-	.section .rom.0002b75c, "ax"
-	.global Func_0802b7e0
-	.type Func_0802b7e0, %function
-	.thumb_func
-Func_0802b7e0:
-	.incbin "baserom.gba", 0x0002b75c, 0x00000048
-	.section .rom.0002b7a4, "ax"
-	.global Func_0802b828
-	.type Func_0802b828, %function
-	.thumb_func
-Func_0802b828:
-	.incbin "baserom.gba", 0x0002b7a4, 0x00000050
+	.section .rom.0002b7f4, "ax"
 	.global Map_WriteLayerCellTile
 	.type Map_WriteLayerCellTile, %function
 	.thumb_func
@@ -752,12 +745,6 @@ Func_0803a60c:
 	.thumb_func
 UiText_OpenMessageWindow:
 	.incbin "baserom.gba", 0x0003a630, 0x00000110
-	.section .rom.0003a740, "ax"
-	.global UiText_ShowPositionedMessageAndWait
-	.type UiText_ShowPositionedMessageAndWait, %function
-	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	.incbin "baserom.gba", 0x0003a740, 0x0000011c
 	.section .rom.0003a890, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0003a890, 0x000001b4
@@ -2039,6 +2026,10 @@ Func_080c8078:
 UiText_DrawQuantityPairWithCueFar:
 	.incbin "baserom.gba", 0x000c8080, 0x00000008
 	.section .rom.000c82a8, "ax"
+	.global Func_080c82a8
+	.type Func_080c82a8, %function
+	.thumb_func
+Func_080c82a8:
 	.incbin "baserom.gba", 0x000c82a8, 0x00000018
 	.global Func_080c82c0
 	.type Func_080c82c0, %function

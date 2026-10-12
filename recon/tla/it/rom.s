@@ -641,14 +641,7 @@ Func_0802b450:
 	.thumb_func
 Func_0802b590:
 	.incbin "baserom.gba", 0x0002b590, 0x00000090
-	.section .rom.0002b7e0, "ax"
-	.incbin "baserom.gba", 0x0002b7e0, 0x00000048
-	.section .rom.0002b828, "ax"
-	.global Func_0802b828
-	.type Func_0802b828, %function
-	.thumb_func
-Func_0802b828:
-	.incbin "baserom.gba", 0x0002b828, 0x00000050
+	.section .rom.0002b878, "ax"
 	.global Map_WriteLayerCellTile
 	.type Map_WriteLayerCellTile, %function
 	.thumb_func
@@ -2462,7 +2455,8 @@ Func_080c8258:
 Func_080c8260:
 	.incbin "baserom.gba", 0x000c8260, 0x00000008
 	.section .rom.000c82a8, "ax"
-	.incbin "baserom.gba", 0x000c82a8, 0x00000010
+	.incbin "baserom.gba", 0x000c82a8, 0x00000008
+	.incbin "baserom.gba", 0x000c82b0, 0x00000008
 	.section .rom.000c83b8, "ax"
 	.global Event_DelayEffectFramesFar
 	.type Event_DelayEffectFramesFar, %function

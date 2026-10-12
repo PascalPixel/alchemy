@@ -639,14 +639,7 @@ Func_0802b450:
 	.thumb_func
 Func_0802b590:
 	.incbin "baserom.gba", 0x0002b590, 0x00000090
-	.section .rom.0002b7e0, "ax"
-	.incbin "baserom.gba", 0x0002b7e0, 0x00000048
-	.section .rom.0002b828, "ax"
-	.global Func_0802b828
-	.type Func_0802b828, %function
-	.thumb_func
-Func_0802b828:
-	.incbin "baserom.gba", 0x0002b828, 0x00000050
+	.section .rom.0002b878, "ax"
 	.global Map_WriteLayerCellTile
 	.type Map_WriteLayerCellTile, %function
 	.thumb_func
@@ -847,12 +840,6 @@ Func_0803a60c:
 	.thumb_func
 UiText_OpenMessageWindow:
 	.incbin "baserom.gba", 0x0003a668, 0x00000110
-	.section .rom.0003a778, "ax"
-	.global UiText_ShowPositionedMessageAndWait
-	.type UiText_ShowPositionedMessageAndWait, %function
-	.thumb_func
-UiText_ShowPositionedMessageAndWait:
-	.incbin "baserom.gba", 0x0003a778, 0x0000011c
 	.section .rom.0003a8c8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0003a8c8, 0x000001a8

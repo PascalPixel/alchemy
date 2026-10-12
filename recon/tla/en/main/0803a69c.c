@@ -1,3 +1,4 @@
+/* Near miss: differ 2 of 130 with y as long (differ 4 as s32: the permuter found it). Left: sub sp, #36 comes before lsls r3, r3, #18 where the native has the shift first; a one-pass block on the work load forces both parameter stores ahead (differ 10). The permuter (8 minutes in all) found nothing nearer. */
 #include "render_input.h"
 
 struct MessageWindowWork {

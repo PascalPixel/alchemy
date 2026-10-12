@@ -19275,11 +19275,11 @@ msgctxt "message"
 msgid "04816"
 msgstr "Djinn en attente.{line_break}{argument_actor_name:1} est {argument_class_name:2}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgStatusNameNormal"
 msgid "04817"
 msgstr "Normal"
 
-msgctxt "message"
+msgctxt "MsgStatusNameDown"
 msgid "04818"
 msgstr "KO"
 
@@ -19707,7 +19707,7 @@ msgctxt "message"
 msgid "04924"
 msgstr "Psy."
 
-msgctxt "message"
+msgctxt "MsgPasswordTransferHelp"
 msgid "04925"
 msgstr "Utiliser un mot de passe pour"
 
@@ -19715,7 +19715,7 @@ msgctxt "message"
 msgid "04926"
 msgstr "transférer votre quête (Vierge)."
 
-msgctxt "message"
+msgctxt "MsgCableTransferHelp"
 msgid "04927"
 msgstr "Avec un câble Game Link, reliez"
 
@@ -19727,7 +19727,7 @@ msgctxt "message"
 msgid "04929"
 msgstr "transférer votre quête (Vierge)."
 
-msgctxt "message"
+msgctxt "MsgClearDataTransferHelp"
 msgid "04930"
 msgstr "Jeu terminé"
 

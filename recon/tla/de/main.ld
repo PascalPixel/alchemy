@@ -583,6 +583,7 @@
     "*/recon/tla/de/rom.o"(.rom.0004d690)
     "*/games/tla/src/menu/selection.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0004d7b8)
+    "*/games/tla/src/menu/resmode.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0004da08)
     "*/games/common/src/menu/menu.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0004dcc6)

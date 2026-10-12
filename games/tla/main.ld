@@ -600,6 +600,7 @@ SECTIONS
     "*/games/tla/src/menu/selection.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0004d764)
     "*/recon/tla/ja/rom.o"(.rom.0004d7ac)
+    "*/games/tla/src/menu/resmode.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0004d9fc)
     "*/games/common/src/menu/menu.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0004dcba)

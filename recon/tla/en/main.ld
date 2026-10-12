@@ -686,7 +686,7 @@
         "*/games/tla/src/menu/selection.o"(.text)
         "*/recon/tla/raw/0804d5ac.o"(.text)
         "*/recon/tla/raw/0804d678.o"(.text)
-        "*/recon/tla/raw/0804d754.o"(.text)
+        "*/games/tla/src/menu/resmode.o"(.text)
         "*/recon/tla/raw/0804d7fc.o"(.text)
         "*/games/common/src/menu/menu.o"(.text)
         "*/recon/tla/raw/0804daba.o"(.text)

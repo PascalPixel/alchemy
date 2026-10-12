@@ -17435,11 +17435,11 @@ msgctxt "message"
 msgid "04356"
 msgstr "Djinni is on standby.{line_break}{argument_actor_name:1} is now {argument_class_name:2}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgStatusNameNormal"
 msgid "04357"
 msgstr "Normal"
 
-msgctxt "message"
+msgctxt "MsgStatusNameDown"
 msgid "04358"
 msgstr "Down"
 
@@ -17867,7 +17867,7 @@ msgctxt "message"
 msgid "04464"
 msgstr "Psynergy"
 
-msgctxt "message"
+msgctxt "MsgPasswordTransferHelp"
 msgid "04465"
 msgstr "Use a password to"
 
@@ -17875,7 +17875,7 @@ msgctxt "message"
 msgid "04466"
 msgstr "transfer Clear Data."
 
-msgctxt "message"
+msgctxt "MsgCableTransferHelp"
 msgid "04467"
 msgstr "Use two linked Game"
 
@@ -17887,7 +17887,7 @@ msgctxt "message"
 msgid "04469"
 msgstr "to transfer Clear Data."
 
-msgctxt "message"
+msgctxt "MsgClearDataTransferHelp"
 msgid "04470"
 msgstr "Saved Clear Data"
 

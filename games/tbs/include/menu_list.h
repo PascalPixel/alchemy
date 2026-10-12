@@ -1,12 +1,12 @@
 #ifndef ALCHEMY_MENU_LIST_H
 #define ALCHEMY_MENU_LIST_H
 
-#include "unit/graphics/window/window.h"
-#include "unit/graphics/window/select.h"
-#include "unit/graphics/window/output.h"
-#include "unit/graphics/window/save.h"
-#include "unit/graphics/window/btlcmd.h"
-#include "unit/graphics/window/debug.h"
+#include "unit/window/window.h"
+#include "unit/window/select.h"
+#include "unit/window/output.h"
+#include "unit/window/save.h"
+#include "unit/window/btlcmd.h"
+#include "unit/window/debug.h"
 #include "types.h"
 #include "resource.h"
 #include "callback_scheduler.h"

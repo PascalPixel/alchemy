@@ -1,11 +1,11 @@
 #ifndef ALCHEMY_WINDOW_H
 #define ALCHEMY_WINDOW_H
 
-#include "unit/graphics/window/window.h"
-#include "unit/graphics/window/output.h"
-#include "unit/graphics/window/save.h"
-#include "unit/graphics/window/btlcmd.h"
-#include "unit/graphics/window/debug.h"
+#include "unit/window/window.h"
+#include "unit/window/output.h"
+#include "unit/window/save.h"
+#include "unit/window/btlcmd.h"
+#include "unit/window/debug.h"
 #include "types.h"
 #include "tbs_edition.h"
 #include "layout_guard.h"

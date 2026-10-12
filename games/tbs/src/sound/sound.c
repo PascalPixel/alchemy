@@ -1,5 +1,5 @@
 #include "unit/sound/sound.h"
-#include "unit/system/scheduler/runtime.h"
+#include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

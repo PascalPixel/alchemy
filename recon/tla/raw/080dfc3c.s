@@ -76,4 +76,4 @@ Func_080dfc3c:
 .L_080dfccc:
 	.4byte IwramMulQ16
 .L_080dfcd0:
-	.4byte Func_080dfb88
+	.4byte BattleFx_WanderAroundAnchor

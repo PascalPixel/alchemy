@@ -1007,6 +1007,8 @@
     "*/recon/tla/fr/rom.o"(.rom.000e48d2)
     "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000e4afe)
+    "*/games/tla/src/battle/effect/radial.o"(.text)
+    "*/recon/tla/fr/rom.o"(.rom.000e4c30)
     "*/games/tla/src/battle/effect/shrink_object_scale_until_half.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000e4cf4)
     "*/games/tla/src/battle/effect/age_and_cue.o"(.text)

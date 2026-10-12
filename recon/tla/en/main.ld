@@ -1310,7 +1310,7 @@
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
         "*/recon/tla/raw/080dfb0a.o"(.text)
         "*/recon/tla/raw/080dfb0c.o"(.text)
-        "*/recon/tla/raw/080dfb88.o"(.text)
+        "*/games/tla/src/battle/effect/radial.o"(.text)
         "*/recon/tla/raw/080dfc3c.o"(.text)
         "*/games/tla/src/battle/effect/shrink_object_scale_until_half.o"(.text)
         "*/recon/tla/raw/080dfd00.o"(.text)

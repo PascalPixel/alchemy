@@ -3228,7 +3228,9 @@ RunBattleEffect05:
 	.section .rom.000e48d2, "ax"
 	.incbin "baserom.gba", 0x000e48d2, 0x000001d6
 	.section .rom.000e4afe, "ax"
-	.incbin "baserom.gba", 0x000e4afe, 0x000001ca
+	.incbin "baserom.gba", 0x000e4afe, 0x0000007e
+	.section .rom.000e4c30, "ax"
+	.incbin "baserom.gba", 0x000e4c30, 0x00000098
 	.section .rom.000e4cf4, "ax"
 	.global RunBattleEffect14
 RunBattleEffect14:

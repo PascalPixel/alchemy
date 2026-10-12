@@ -3569,7 +3569,9 @@ RunBattleEffect05:
 	.section .rom.000df89a, "ax"
 	.incbin "baserom.gba", 0x000df89a, 0x000001d6
 	.section .rom.000dfac6, "ax"
-	.incbin "baserom.gba", 0x000dfac6, 0x000001ca
+	.incbin "baserom.gba", 0x000dfac6, 0x0000007e
+	.section .rom.000dfbf8, "ax"
+	.incbin "baserom.gba", 0x000dfbf8, 0x00000098
 	.section .rom.000dfcbc, "ax"
 	.global RunBattleEffect14
 RunBattleEffect14:

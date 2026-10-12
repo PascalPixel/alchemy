@@ -4,7 +4,7 @@
 #include "unit/field/common/script/field.h"
 #include "unit/game/character/chara.h"
 #include "unit/graphics/window/window.h"
-#include "unit/menu/shop/sell.h"
+#include "unit/menu/shop/shop.h"
 #include "unit/system/scheduler/runtime.h"
 #include "battle.h"
 #include "debug.h"

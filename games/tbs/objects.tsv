@@ -119,7 +119,7 @@ main	rom_main_05	games/tbs/src/graphics/ui/menuspr
 main	rom_main_05	games/tbs/src/menu/menustr
 main	rom_main_05	games/tbs/src/menu/menudata
 main	rom_main_06	games/tbs/src/system/far_call/SHOP
-main	rom_main_06	games/tbs/src/menu/shop/sell
+main	rom_main_06	games/tbs/src/menu/shop/shop
 main	rom_main_06	games/tbs/src/menu/shop/shopspr
 main	rom_main_06	games/tbs/src/menu/shop/shopdata
 main	rom_main_07	games/tbs/src/system/far_call/BATTLE

@@ -2181,8 +2181,8 @@ Trade_CanOfferDjinn:
 	.thumb_func
 Trade_RemoveOffer:
 	.incbin "baserom.gba", 0x000b0d64, 0x000000ac
-	.section .rom.000b1078, "ax"
-	.incbin "baserom.gba", 0x000b1078, 0x0000001c
+	.section .rom.000b1094, "ax"
+	.balign 4
 	.global Func_080b1088
 	.type Func_080b1088, %function
 	.thumb_func
@@ -3021,6 +3021,10 @@ Event_SpawnObjectTable:
 	.type Event_ReadSpawnCoordinates, %function
 	.thumb_func
 Event_ReadSpawnCoordinates:
+	.global Func_080ca9cc
+	.type Func_080ca9cc, %function
+	.thumb_func
+Func_080ca9cc:
 	.incbin "baserom.gba", 0x000ca9cc, 0x00000060
 	.global Func_080caa2c
 Func_080caa2c:
@@ -3126,7 +3130,9 @@ Func_080ce458:
 	.section .rom.000ce61c, "ax"
 	.incbin "baserom.gba", 0x000ce61c, 0x000004e0
 	.section .rom.000ceba8, "ax"
-	.incbin "baserom.gba", 0x000ceba8, 0x00000298
+	.incbin "baserom.gba", 0x000ceba8, 0x0000007c
+	.section .rom.000cec34, "ax"
+	.incbin "baserom.gba", 0x000cec34, 0x0000020c
 	.section .rom.000cee80, "ax"
 	.incbin "baserom.gba", 0x000cee80, 0x000000e8
 	.section .rom.000cf050, "ax"
@@ -3140,13 +3146,23 @@ Func_080ce458:
 BattleFx_StartRandomParticleEmitter:
 	.incbin "baserom.gba", 0x000cf17c, 0x00000364
 	.section .rom.000cf554, "ax"
-	.incbin "baserom.gba", 0x000cf554, 0x00000ba4
+	.incbin "baserom.gba", 0x000cf554, 0x000001a8
+	.global Func_080cf6fc
+	.type Func_080cf6fc, %function
+	.thumb_func
+Func_080cf6fc:
+	.incbin "baserom.gba", 0x000cf6fc, 0x00000090
+	.global Func_080cf78c
+	.type Func_080cf78c, %function
+	.thumb_func
+Func_080cf78c:
+	.incbin "baserom.gba", 0x000cf78c, 0x0000096c
 	.section .rom.000d00f8, "ax"
 	.global Func_080d6b90
 	.type Func_080d6b90, %function
 	.thumb_func
 Func_080d6b90:
-	.incbin "baserom.gba", 0x000d00f8, 0x000000d4
+	.incbin "baserom.gba", 0x000d00f8, 0x0000008c
 	.section .rom.000d01cc, "ax"
 	.global DisplayTransition_Start
 	.type DisplayTransition_Start, %function
@@ -4680,13 +4696,19 @@ BattleMotion_ApproachTargetFar:
 	.type ColorBuffer_Scale, %function
 	.thumb_func
 ColorBuffer_Scale:
-	.incbin "baserom.gba", 0x00118410, 0x00000328
+	.incbin "baserom.gba", 0x00118410, 0x00000020
+	.section .rom.0011843c, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0011843c, 0x000002fc
 	.section .rom.00118738, "ax"
 	.global DebugParty_LoadPreset
 	.type DebugParty_LoadPreset, %function
 	.thumb_func
 DebugParty_LoadPreset:
-	.incbin "baserom.gba", 0x00118738, 0x000005f4
+	.incbin "baserom.gba", 0x00118738, 0x0000021c
+	.section .rom.00118958, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00118958, 0x000003d4
 	.section .rom.00118e64, "ax"
 	.incbin "baserom.gba", 0x00118e64, 0x00000108
 	.section .rom.00118f6c, "ax"
@@ -4874,8 +4896,9 @@ Func_08123574:
 	.incbin "baserom.gba", 0x0012358c, 0x0000129c
 	.section .rom.00124b10, "ax"
 	.incbin "baserom.gba", 0x00124b10, 0x000000b0
-	.section .rom.00124cd6, "ax"
-	.incbin "baserom.gba", 0x00124cd6, 0x00000eba
+	.section .rom.00124cdc, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00124cdc, 0x00000eb4
 	.section .rom.00125bd0, "ax"
 	.incbin "baserom.gba", 0x00125bd0, 0x000001b0
 	.section .rom.00125d8c, "ax"
@@ -5148,7 +5171,12 @@ BattleFx_RunProjectileVolleyB:
 Func_081548d0:
 	.incbin "baserom.gba", 0x001548d0, 0x0000048c
 	.section .rom.00154d5c, "ax"
-	.incbin "baserom.gba", 0x00154d5c, 0x00001234
+	.incbin "baserom.gba", 0x00154d5c, 0x00000b00
+	.global Func_0815585c
+	.type Func_0815585c, %function
+	.thumb_func
+Func_0815585c:
+	.incbin "baserom.gba", 0x0015585c, 0x00000734
 	.section .rom.0015613e, "ax"
 	.incbin "baserom.gba", 0x0015613e, 0x00000002
 	.section .rom.00156140, "ax"
@@ -5195,7 +5223,10 @@ BattleUnit_ProjectToScreen:
 	.type Func_0815e320, %function
 	.thumb_func
 Func_0815e320:
-	.incbin "baserom.gba", 0x0015e320, 0x000068d4
+	.incbin "baserom.gba", 0x0015e320, 0x000058e0
+	.section .rom.00163c2c, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x00163c2c, 0x00000fc8
 	.section .rom.00164c0a, "ax"
 	.incbin "baserom.gba", 0x00164c0a, 0x000000ba
 	.global BattleEffect_RunParticleStreams

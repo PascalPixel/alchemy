@@ -4,6 +4,7 @@
 #include "unit/graphics/tile/griddata.h"
 #include "unit/lib/curvedat.h"
 #include "unit/field/common/script/field.h"
+#include "unit/field/common/script/field9.h"
 #include "unit/field/common/script/field10.h"
 #include "unit/field/common/script/field11.h"
 #include "unit/field/common/object/update.h"

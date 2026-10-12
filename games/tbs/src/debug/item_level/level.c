@@ -441,7 +441,6 @@ s32 FieldScene_RunEntrySetup(void)
 #if !EDITION_INTERNATIONAL
 void ItemLevel_RunMotionTest(void)
 {
-	/* FAKEMATCH: Call3 places the actor argument before the coordinate shifts; the ordinary direct call schedules it after both shifts. Direct call or Actor_SetPosition: differ 2. */
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(10, 2);
 	Engine_ActorSetAnimation(11, 4);

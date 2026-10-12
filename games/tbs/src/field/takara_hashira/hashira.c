@@ -507,7 +507,7 @@ s32 FieldScene_RunScene3b3SequenceD(void)
 	Vector_AddPolarOffset(0x100000, mode, p);
 #else
 	mode = leader->facing >> 12;
-	step = DIRECTION_STEP(mode);
+	step = StagedActor_DirectionSteps[mode];
 	p[0] = leader->x.fixed + (step & 0xffff0000);
 	p[1] = leader->y.fixed;
 	step <<= 16;
@@ -527,7 +527,7 @@ s32 FieldScene_RunScene3b3SequenceD(void)
 	p[2] = (leader->z.fixed & -0x100000) + 0x80000;
 	Vector_AddPolarOffset(0x200000, mode, p);
 #else
-	step = DIRECTION_STEP(mode);
+	step = StagedActor_DirectionSteps[mode];
 	p[0] = leader->x.fixed + ((step & 0xffff0000) * 2);
 	p[1] = leader->y.fixed;
 	step <<= 17;
@@ -1623,23 +1623,26 @@ s32 gEffectScript2[] = {
 	SC_FREE,
 };
 
-s16 StagedActor_DirectionSteps[] = {
-	0, 16,
-	0, 16,
-	0, 16,
-	16, 0,
-	16, 0,
-	16, 0,
-	16, 0,
-	0, -16,
-	0, -16,
-	0, -16,
-	0, -16,
-	-16, 0,
-	-16, 0,
-	-16, 0,
-	-16, 0,
-	0, 16,
+// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
+
+s32 StagedActor_DirectionSteps[] = {
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(16, 0),
 };
 
 u32 StagedActor_FootprintKinds[] = {

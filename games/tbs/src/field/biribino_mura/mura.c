@@ -31,15 +31,6 @@ struct SpawnCounter
 
 struct SpawnCounter gCornerSpawnCounter;
 
-// 向きごとの一歩: 表は s16 の (z, x) 組、コードは一語で読む
-struct FacingCellStepWords
-{
-	s32 step[16];
-};
-
-#define FACING_CELL_STEP(dir) \
-	(((struct FacingCellStepWords *)BiribinoMura_FacingCellSteps)->step[dir])
-
 s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
 {
 	s32					 delta;
@@ -728,17 +719,16 @@ void BiribinoMura_PushFacedBlock(void)
 	union FieldCoordinate  pos[3];
 	union FieldCoordinate *p;
 
-	/* FAKEMATCH: the step table is s16 pairs read as one word each; only an array member view keeps its base and index apart, a plain s32 pointer cast adds them first (59 instructions differ, measured). */
 	leader = Object_GetById(0);
 	dir = leader->facing >> 12;
-	block = SceneActor_FindActorAtCell((leader->x.part.pixel + (FACING_CELL_STEP(dir) >> 16)) >> 4,
-		(leader->z.part.pixel + (s16)FACING_CELL_STEP(dir)) >> 4);
+	block = SceneActor_FindActorAtCell((leader->x.part.pixel + (BiribinoMura_FacingCellSteps[dir] >> 16)) >> 4,
+		(leader->z.part.pixel + (s16)BiribinoMura_FacingCellSteps[dir]) >> 4);
 	if (block != NULL)
 	{
 		block->terrain_id = 2;
 		/* FAKEMATCH: the probe is filled through a pointer to it; indexing pos directly drops a saved register and moves the step table address (measured). */
 		p = pos;
-		step = FACING_CELL_STEP(dir);
+		step = BiribinoMura_FacingCellSteps[dir];
 		p[0].fixed = block->x.fixed + (step & -0x10000);
 		p[1].fixed = block->y.fixed;
 		p[2].fixed = block->z.fixed + (step << 16);
@@ -1135,23 +1125,26 @@ u32 Mura_RepaintCells[] = {
 	0x12091208, 0x1308120a, 0x130a1309, 0x1409130b, 0x140b140a,
 };
 
-s16 BiribinoMura_FacingCellSteps[] = {
-	0, 16,
-	0, 16,
-	0, 16,
-	16, 0,
-	16, 0,
-	16, 0,
-	16, 0,
-	0, -16,
-	0, -16,
-	0, -16,
-	0, -16,
-	-16, 0,
-	-16, 0,
-	-16, 0,
-	-16, 0,
-	0, 16,
+// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
+
+s32 BiribinoMura_FacingCellSteps[] = {
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(16, 0),
 };
 
 s32 Mura_SpawnScript[] = {

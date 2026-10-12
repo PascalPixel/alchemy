@@ -28,6 +28,7 @@
 #include "scene_ids.h"
 #include "call.h"
 #include "fieldobj.h"
+#include "iowrite.h"
 #include "map_scroll.h"
 #include "field_service.h"
 #include "text/msg_ids.h"
@@ -66,13 +67,7 @@ u8 *BabiFune_GetPlacements(void)
 void PlayWorkspaceCueAndClearPaletteZero(void)
 {
 	Engine_EventRequestExit(gEventWork->touched_trigger);
-	/* FAKEMATCH: removing this one-pass block changes instruction scheduling: the zero is loaded before the register address (without the block differ 2; a plain PLTT_BACKDROP = 0 loads the halfword zero from the literal pool, differ 10). */
-	do
-	{
-		u16 color = 0;
-
-		PLTT_BACKDROP = color;
-	} while (0);
+	Io_Write16(0, &PLTT_BACKDROP);
 }
 
 void BabiFune_LoadTablesAndStopDma(void)
@@ -176,15 +171,7 @@ void BabiFune_UpdateWaves(void)
 	{
 		swell = Iwram_MulQ16(Engine_MathSin(BabiFune_ShimmerPhase << 9), 3);
 		blend = BabiFune_Count + ((swell + 8) << 8);
-		{
-			u32 value = blend;
-
-			/* FAKEMATCH: outside a one-pass block the register's address is formed before the halfword is read back. */
-			do
-			{
-				REG_BLDALPHA = value;
-			} while (0);
-		}
+		Io_Write16(blend, &REG_BLDALPHA);
 		BabiFune_ShimmerPhase++;
 	}
 	if (BabiFune_SwellActive != 0)
@@ -297,7 +284,6 @@ void Scene_RunExtendedPresentationSequence(void)
 	struct MapScrollWork *scroll;
 	struct FieldActor	 *ship;
 	struct EventWork	 *event;
-	s32					  blank;
 
 	Engine_EventBegin();
 	Camera_MoveTo(-1, -1, -1, 0);
@@ -514,12 +500,7 @@ void Scene_RunExtendedPresentationSequence(void)
 	Engine_EventWait(300);
 	event = gMapWork[19];
 	event->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	/* FAKEMATCH: keep the backdrop zero before its address calculation. */
-	do
-	{
-		blank = 0;
-	} while (0);
-	PLTT_BACKDROP = blank;
+	Io_Write16(0, &PLTT_BACKDROP);
 	event->transition_frames = 96;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
@@ -557,12 +538,6 @@ static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base)
 	return (u16)(Iwram_MulQ16(BabiFune_WaveSine[(angle >> 16) & 0xff], amplitude) / 256) + base;
 }
 
-static inline void BabiFune_AddTask(void (*task)(void), s32 order)
-{
-	/* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
-	Scheduler_AddOrUpdateCallback((s32)task, order);
-}
-
 void BabiFune_RunDeparture(void)
 {
 	struct WaveMap *map;
@@ -583,11 +558,7 @@ void BabiFune_RunDeparture(void)
 	Event_PlayCue(140);
 	for (i = 0; i <= 15; i++)
 	{
-		/* FAKEMATCH: the one-pass block keeps the colour's two shifts in source order. */
-		do
-		{
-			PLTT_BACKDROP = (i << 11) | (i << 5);
-		} while (0);
+		Io_Write16((i << 11) | (i << 5), &PLTT_BACKDROP);
 		Event_Wait(10);
 	}
 	{
@@ -597,24 +568,19 @@ void BabiFune_RunDeparture(void)
 	}
 	{
 		u16 bright = 0x1010;
-		u16 dim = 0x810;
 
 		for (flash = 0; flash < 3; flash++)
 		{
 			Event_PlayCue(212);
 			REG_BLDALPHA = bright;
 			Event_Wait(3);
-			/* FAKEMATCH: the one-pass block places the counter step after the wait's argument. */
-			do
-			{
-				REG_BLDALPHA = dim;
-			} while (0);
+			Io_Write16(0x810, &REG_BLDALPHA);
 			Event_Wait(65);
 		}
 	}
 	BabiFune_ShimmerActive = 1;
 	BabiFune_ShimmerPhase = 0;
-	BabiFune_AddTask(BabiFune_UpdateWaves, TASK_PRIORITY_SCENE);
+	Value2(Scheduler_AddOrUpdateCallback, (s32)BabiFune_UpdateWaves, TASK_PRIORITY_SCENE);
 	BabiFune_DriftActive = 1;
 	Event_Wait(20);
 	Event_PlayCue(163);
@@ -625,7 +591,7 @@ void BabiFune_RunDeparture(void)
 	Event_Wait(60);
 	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
 	BabiFune_CountTicks = 0;
-	BabiFune_AddTask(SceneState_CountDownEveryFortyTicks, TASK_PRIORITY_SCENE);
+	Value2(Scheduler_AddOrUpdateCallback, (s32)SceneState_CountDownEveryFortyTicks, TASK_PRIORITY_SCENE);
 	sunk = 0;
 	do
 	{
@@ -666,7 +632,7 @@ void BabiFune_RunDeparture(void)
 		REG_BLDY = dark;
 		Event_Wait(8);
 	}
-	BabiFune_AddTask(BabiFune_CyclePalette, TASK_PRIORITY_SCENE);
+	Value2(Scheduler_AddOrUpdateCallback, (s32)BabiFune_CyclePalette, TASK_PRIORITY_SCENE);
 	Event_PlayCue(80);
 	AudioCommand_WaitForStateByteClear();
 	Event_Wait(20);
@@ -741,17 +707,8 @@ s32 BabiFune_SetupScene(void)
 		cnt = (REG_BG1CNT & 0xfffc) | three.v;
 		REG_BG1CNT = cnt;
 	}
-	{
-		s32 v = 0x2648;
-
-		/* FAKEMATCH: a do-while(0) keeps the BG1CNT store ahead of the BLDCNT address load, as in the reference */
-		do
-		{
-			REG_BLDCNT = v;
-			v = 0x810;
-		} while (0);
-		REG_BLDALPHA = v;
-	}
+	Io_Write16(0x2648, &REG_BLDCNT);
+	Io_Write16(0x810, &REG_BLDALPHA);
 	{
 		struct WaveMapLayer *layer = map->layers + 6;
 

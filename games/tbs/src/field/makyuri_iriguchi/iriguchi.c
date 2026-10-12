@@ -14,6 +14,7 @@
 #include "unit/field/common/script/script.h"
 #include "unit/graphics/window/measure.h"
 #include "unit/system/scheduler/callback.h"
+#include "iowrite.h"
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -422,12 +423,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
 	s32					 angle;
 	s32					 flag;
 
-	/* FAKEMATCH: the do/while and the held values keep the blend constants in registers ahead of their address loads, as in MAKYURI_HEYA. Plain stores: differ 76; without the do/while alone: differ 4. */
-	do
-	{
-		s32 blend = 0x3f40;
-		REG_BLDCNT = blend;
-	} while (0);
+	Io_Write16(0x3f40, &REG_BLDCNT);
 	{
 		s32 alpha = 0x1010;
 		REG_BLDALPHA = alpha;
@@ -819,23 +815,26 @@ s32 gEffectScript2[] = {
 	SC_FREE,
 };
 
-s16 StagedActor_DirectionSteps[] = {
-	0, 16,
-	0, 16,
-	0, 16,
-	16, 0,
-	16, 0,
-	16, 0,
-	16, 0,
-	0, -16,
-	0, -16,
-	0, -16,
-	0, -16,
-	-16, 0,
-	-16, 0,
-	-16, 0,
-	-16, 0,
-	0, 16,
+// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
+
+s32 StagedActor_DirectionSteps[] = {
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(16, 0),
 };
 
 u32 StagedActor_FootprintKinds[] = {

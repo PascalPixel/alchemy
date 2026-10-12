@@ -46,7 +46,7 @@ void ArutamiraDou_MatchLeaderPriority(struct FieldActor *actor);
 s32 ArutamiraDou_ApplyEntryState(void);
 void OverlayObject_UpdateThreeStateMotion(void *obj);
 void ArutamiraDou_ReleaseWallBurst(void);
-extern s16 StagedActor_DirectionSteps[];
+extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];
 extern u16 *ArutamiraDou_ClearTarget;

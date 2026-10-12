@@ -20,7 +20,8 @@
 
 extern u8 gMapCellBuffer[];
 
-extern s16 StagedActor_DirectionSteps[];
+// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+extern s32 StagedActor_DirectionSteps[];
 extern s32 StagedActor_FootprintBounds[];
 
 s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
@@ -55,19 +56,8 @@ struct StagedActor *StagedActor_FindAtTile(s32 *position, struct StagedActor *or
 	return 0;
 }
 
-// 向きごとの歩幅の表は s16 の組。ここでは向き一つを一語 (上位が x、下位が z) として読む
-struct DirectionSteps
-{
-	s32 xz[16];
-};
-
-#define DIRECTION_STEP(heading) (((struct DirectionSteps *)StagedActor_DirectionSteps)->xz[heading])
-
 void StagedActor_AdvancePair(void)
 {
-	/* FAKEMATCH: DIRECTION_STEP reads the s16 pair table as one word per heading through an
-	   array reference; through a plain s32 pointer cast the address is summed once into a
-	   register and 41 instructions differ. */
 	s32					dst[3];
 	struct StagedActor *lead;
 	struct StagedActor *next;
@@ -78,7 +68,7 @@ void StagedActor_AdvancePair(void)
 
 	lead = (struct StagedActor *)Object_GetById(0);
 	dir = lead->direction_and_kind >> 12;
-	step = DIRECTION_STEP(dir);
+	step = StagedActor_DirectionSteps[dir];
 	dst[0] = lead->x.value + (step & 0xffff0000);
 	dst[1] = lead->y;
 	step <<= 16;
@@ -87,7 +77,7 @@ void StagedActor_AdvancePair(void)
 	if (next == 0)
 		return;
 
-	step = DIRECTION_STEP(dir);
+	step = StagedActor_DirectionSteps[dir];
 	dst[0] = next->x.value + (step & 0xffff0000);
 	dst[1] = next->y;
 	step <<= 16;
@@ -104,7 +94,7 @@ void StagedActor_AdvancePair(void)
 		return;
 
 	next->transition_mode = 2;
-	step = DIRECTION_STEP(dir);
+	step = StagedActor_DirectionSteps[dir];
 	dst[0] = next->x.value + (step & 0xffff0000);
 	dst[1] = next->y;
 	step <<= 16;
@@ -175,16 +165,13 @@ s32 StagedActor_FillGridAttributeRectangle(
 
 s32 StagedActor_StopBlockedMotion(struct StagedActor *actor)
 {
-	/* FAKEMATCH: DIRECTION_STEP reads the s16 pair table as one word per heading through an
-	   array reference; through a plain s32 pointer cast the address is summed once into a
-	   register and 6 instructions differ. */
 	struct StagedActorProbePoint probe;
 	u32							 dir;
 	s32							 step;
 	struct StagedActor			*target;
 
 	dir = actor->direction_and_kind >> 12;
-	step = DIRECTION_STEP(dir);
+	step = StagedActor_DirectionSteps[dir];
 	probe.x = actor->x.value + (step & 0xffff0000);
 	probe.y = actor->y;
 	step <<= 16;
@@ -207,7 +194,7 @@ s32 StagedActor_StopBlockedMotion(struct StagedActor *actor)
 		actor->target_x = 0x80000000;
 		actor->target_z = 0x80000000;
 	}
-	step = DIRECTION_STEP(dir);
+	step = StagedActor_DirectionSteps[dir];
 	probe.x = actor->x.value + (step & 0xffff0000);
 	probe.y = actor->y;
 	step <<= 16;
@@ -225,9 +212,6 @@ done:
 
 u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot, s32 *footprint)
 {
-	/* FAKEMATCH: DIRECTION_STEP reads the s16 pair table as one word per heading through an
-	   array reference; through a plain s32 pointer cast the address is summed once into a
-	   register and 33 instructions differ. */
 	struct FieldStepWork  *work = (struct FieldStepWork *)gEventWork;
 	struct StagedActor	  *player = (struct StagedActor *)Object_GetById(0);
 	struct ObjectRuntime **list;
@@ -247,8 +231,8 @@ u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot, s32 *footprint)
 			{
 				s32 x, z, left, top, right, bottom;
 				*footprint = j;
-				x = ((player->x.value >> 16) + (DIRECTION_STEP(*direction) >> 16)) >> 4;
-				z = ((player->z.value >> 16) + (s16)DIRECTION_STEP(*direction)) >> 4;
+				x = ((player->x.value >> 16) + (StagedActor_DirectionSteps[*direction] >> 16)) >> 4;
+				z = ((player->z.value >> 16) + (s16)StagedActor_DirectionSteps[*direction]) >> 4;
 				left = (actor->x.parts.cell + StagedActor_FootprintBounds[j * 4 + 0]) >> 4;
 				top = (actor->z.parts.cell + StagedActor_FootprintBounds[j * 4 + 1]) >> 4;
 				right = (actor->x.parts.cell + StagedActor_FootprintBounds[j * 4 + 2]) >> 4;
@@ -277,9 +261,6 @@ u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot, s32 *footprint)
 
 s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe)
 {
-	/* FAKEMATCH: DIRECTION_STEP reads the s16 pair table as one word per heading through an
-	   array reference; through a plain s32 pointer cast the address is summed once into a
-	   register and 47 instructions differ. */
 	s32					direction;
 	s32					position[3];
 	struct StagedActor *actor;
@@ -327,12 +308,12 @@ s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe)
 		}
 		width = (near_edge + far_edge) >> 4;
 	}
-	position[0] = actor->x.value + (DIRECTION_STEP(direction) & 0xffff0000);
+	position[0] = actor->x.value + (StagedActor_DirectionSteps[direction] & 0xffff0000);
 	{
 		s32 y = actor->y;
 
 		position[1] = y;
-		position[2] = actor->z.value + (DIRECTION_STEP(direction) << 16);
+		position[2] = actor->z.value + (StagedActor_DirectionSteps[direction] << 16);
 		probe->position_y = y;
 	}
 	for (;;)
@@ -354,8 +335,8 @@ s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe)
 			probe->position_z += 0x100000;
 		}
 		steps++;
-		position[0] += DIRECTION_STEP(direction) & 0xffff0000;
-		position[2] += DIRECTION_STEP(direction) << 16;
+		position[0] += StagedActor_DirectionSteps[direction] & 0xffff0000;
+		position[2] += StagedActor_DirectionSteps[direction] << 16;
 	}
 found:
 	*mode = 0;
@@ -363,17 +344,14 @@ found:
 	{
 		return 0;
 	}
-	probe->position_x = actor->x.value + (DIRECTION_STEP(direction) & 0xffff0000) * steps;
+	probe->position_x = actor->x.value + (StagedActor_DirectionSteps[direction] & 0xffff0000) * steps;
 	probe->position_y = actor->y;
-	probe->position_z = actor->z.value + (DIRECTION_STEP(direction) << 16) * steps;
+	probe->position_z = actor->z.value + (StagedActor_DirectionSteps[direction] << 16) * steps;
 	return 1;
 }
 
 void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 {
-	/* FAKEMATCH: DIRECTION_STEP reads the s16 pair table as one word per heading through an
-	   array reference; through a plain s32 pointer cast the address is summed once into a
-	   register and 4 instructions differ. */
 	/* FAKEMATCH: needed to match: the integer cell read keeps incoming probe spills before the cache load. */
 	struct MapScrollWork		   *workspace;
 	struct StagedActor			   *actor;
@@ -456,7 +434,7 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 	Actor_SetSpeed(0, 0x4ccc, 0x1999);
 
 	{
-		s32 packed_orientation = DIRECTION_STEP(direction);
+		s32 packed_orientation = StagedActor_DirectionSteps[direction];
 		Engine_ActorSetDestinationOffset(
 			0, ((s16)(packed_orientation >> 16)) / 2, ((s16)packed_orientation) / 2);
 	}

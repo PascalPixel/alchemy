@@ -176,13 +176,8 @@ void MakyuriIriguchi_RaisePillar(void)
 	struct Sprite39b   *spr;
 	s32					step;
 
-	/* FAKEMATCH: the event work pointer is read as globals - 8, so the pool holds the scene pointer's address and the base is derived from it. */
-	{
-		u8 **globals = &((struct WorkPointers *)&gEventWork)->scene;
-
-		state = *(struct PillarState **)globals[0];
-		leader = (*(struct Work **)(globals - 8))->actors[gGameState.selected_actor];
-	}
+	state = *(struct PillarState **)WORK_SLOT(35);
+	leader = ((struct Work *)WORK_SLOT(HEAP_SLOT_EVENT))->actors[gGameState.selected_actor];
 	if ((u32)state->step > 2)
 		return;
 	Engine_EventBegin();

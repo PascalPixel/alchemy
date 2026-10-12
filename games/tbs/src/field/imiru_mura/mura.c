@@ -135,16 +135,6 @@ struct Subject_02001fa4
 };
 
 // 表を符号付き半語で読む見方
-struct HeadingWords
-{
-	s16 heading[32];
-};
-
-struct ExitCellPointHalves
-{
-	s16 point[6][2]; // (x, y)
-};
-
 extern s32 ImiruMura_ArcOrigin[];
 
 s32 OverlayObject_UpdateWobbleByCounter(struct Object *obj)
@@ -538,9 +528,8 @@ void ImiruMura_RunExitDoor(void)
 		Engine_AudioPlayCue(158);
 	}
 	{
-		/* FAKEMATCH: the exit points are words read as halfword pairs; only an array member view keeps the table address apart from the index (14 instructions differ with a plain pointer cast, measured). */
-		s32 x = ((struct ExitCellPointHalves *)ImiruMura_ExitCellPoints)->point[exit - 1][0];
-		s32 y = ((struct ExitCellPointHalves *)ImiruMura_ExitCellPoints)->point[exit - 1][1];
+		s32 x = ImiruMura_ExitCellPoints[exit - 1][0];
+		s32 y = ImiruMura_ExitCellPoints[exit - 1][1];
 
 		Engine_MapAnimateCells(ImiruMura_ExitCellSteps[exit - 1], x, y);
 	}
@@ -1507,8 +1496,7 @@ void SceneActor_TurnTowardTableAngle(s32 z)
 	}
 	o->unk5A = t;
 	z = 1;
-	/* FAKEMATCH: the heading table is u16 and read signed; only an array member view keeps the table address apart from the index, a plain s16 pointer cast adds them first (10 instructions differ, measured). */
-	d = ((struct HeadingWords *)ImiruMura_KeyHeadings)->heading[(gKeysHeld >> 4) & 0xF];
+	d = ImiruMura_KeyHeadings[(gKeysHeld >> 4) & 0xF];
 	z = -z;
 	if (d == z)
 	{
@@ -1542,8 +1530,7 @@ void StagedActor_RunHeadingProbeStep(void)
 
 	for (;;)
 	{
-		/* FAKEMATCH: as above, the u16 heading table read signed through an array member view (52 instructions differ with a plain s16 pointer cast, measured). */
-		heading = ((struct HeadingWords *)ImiruMura_SwayHeadings)->heading[(gKeysHeld >> 4) & 15];
+		heading = ImiruMura_SwayHeadings[(gKeysHeld >> 4) & 15];
 		if ((heading << 16) == -0x10000)
 		{
 			return;
@@ -1623,16 +1610,16 @@ tail:
 	Engine_EventEnd();
 }
 
-u16 ImiruMura_KeyHeadings[] = {
-	0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, FACING_NORTHEAST, FACING_NORTHWEST, FACING_NORTH,
-	FACING_SOUTH, FACING_SOUTHEAST, FACING_SOUTHWEST, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
-	0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, 0xffff, 0xffff, FACING_NORTH,
-	FACING_SOUTH, 0xffff, 0xffff, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
+s16 ImiruMura_KeyHeadings[] = {
+	-1, FACING_EAST, FACING_WEST, -1, FACING_NORTH, FACING_NORTHEAST, FACING_NORTHWEST, FACING_NORTH,
+	FACING_SOUTH, FACING_SOUTHEAST, FACING_SOUTHWEST, FACING_SOUTH, -1, FACING_EAST, FACING_WEST, -1,
+	-1, FACING_EAST, FACING_WEST, -1, FACING_NORTH, -1, -1, FACING_NORTH,
+	FACING_SOUTH, -1, -1, FACING_SOUTH, -1, FACING_EAST, FACING_WEST, -1,
 };
 
-u16 ImiruMura_SwayHeadings[] = {
-	0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, FACING_EAST, FACING_WEST, FACING_NORTH,
-	FACING_SOUTH, FACING_EAST, FACING_WEST, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
+s16 ImiruMura_SwayHeadings[] = {
+	-1, FACING_EAST, FACING_WEST, -1, FACING_NORTH, FACING_EAST, FACING_WEST, FACING_NORTH,
+	FACING_SOUTH, FACING_EAST, FACING_WEST, FACING_SOUTH, -1, FACING_EAST, FACING_WEST, -1,
 };
 
 s32 gImiruMuraPlacementData[] = {
@@ -1999,8 +1986,9 @@ u16 *ImiruMura_ExitCellSteps[] = {
 	ImiruMura_ExitCellStep5,
 };
 
-u32 ImiruMura_ExitCellPoints[] = {
-	0x180032, 0x160039, 0xd003b, 0xa0036, 0x80026, 0x130022,
+// 出口ごとのセル位置 (x, y)
+s16 ImiruMura_ExitCellPoints[][2] = {
+	{ 50, 24 }, { 57, 22 }, { 59, 13 }, { 54, 10 }, { 38, 8 }, { 34, 19 },
 };
 
 u16 ImiruMura_CellStepsA[] = {

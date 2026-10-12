@@ -92,7 +92,7 @@ void RetreatActor16AlongEscapeRoute(void);
 void AdvanceActor16AlongEscapeRoute(void);
 s32 UpdateSwayingSceneObject(struct S *object);
 void InitializeSwayingSceneObject(s32 object_id);
-extern s16 StagedActor_DirectionSteps[];
+extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];
 extern s32 gEffectScript0[];

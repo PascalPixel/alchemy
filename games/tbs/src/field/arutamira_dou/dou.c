@@ -7,6 +7,7 @@
 #include "unit/field/common/script/script.h"
 #include "unit/menu/shop/sell.h"
 #include "unit/system/scheduler/callback.h"
+#include "iowrite.h"
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #include "battle.h"
@@ -121,13 +122,7 @@ void ArutamiraDou_ApplyFadeBlend(void)
 {
 	s8 level = ((s8 *)gSceneState)[4];
 
-	/* FAKEMATCH: the do-while wrap keeps the level's sign extension after the BLDCNT store. */
-	do
-	{
-		s32 blend = 0x3f42;
-
-		REG_BLDCNT = blend;
-	} while (0);
+	Io_Write16(0x3f42, &REG_BLDCNT);
 	if (level == 0)
 	{
 		s32 alpha = 0x1000;
@@ -1380,20 +1375,10 @@ void FieldScene_RunExtendedActorPresentation(void)
 		*slot = value;
 	}
 	Engine_TaskWait(1);
-	{
-		s32 value;
-
-		value = 0x3f42;
-		REG_BLDCNT = value;
-		value = 0xc04;
-		REG_BLDALPHA = value;
-	}
-	/* FAKEMATCH: the reference loads r0 before r1 for this Camera_MoveToActor call; ordinary C loads them the other way (2 halfwords). The do/while block is a scheduling construct, not recovered source. */
-	do
-	{
-		Engine_CameraMoveToActor(0, 1);
-		Engine_CameraWaitForMove();
-	} while (0);
+	Io_Write16(0x3f42, &REG_BLDCNT);
+	Io_Write16(0xc04, &REG_BLDALPHA);
+	Engine_CameraMoveToActor(0, 1);
+	Engine_CameraWaitForMove();
 	Engine_EventWait(10);
 	Engine_ActorRunRepeatedMotion(GERALD, 2);
 	Engine_EventWait(20);
@@ -2142,39 +2127,26 @@ void ArutamiraDou_ReleaseWallBurst(void)
 	BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 
-s16 StagedActor_DirectionSteps[] = {
-	0,
-	16,
-	0,
-	16,
-	0,
-	16,
-	16,
-	0,
-	16,
-	0,
-	16,
-	0,
-	16,
-	0,
-	0,
-	-16,
-	0,
-	-16,
-	0,
-	-16,
-	0,
-	-16,
-	-16,
-	0,
-	-16,
-	0,
-	-16,
-	0,
-	-16,
-	0,
-	0,
-	16,
+// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
+
+s32 StagedActor_DirectionSteps[] = {
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(16, 0),
 };
 
 u32 StagedActor_FootprintKinds[] = {

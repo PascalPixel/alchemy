@@ -1008,9 +1008,6 @@ void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
 	s32					   i;
 	s32					   without[4];
 	s32					   with[4];
-	/* FAKEMATCH: this block-scope redeclaration of the header prototype keeps
-       the divider call's width load after its window move; without it
-       `movs r3, #13` is scheduled one instruction early (differ 2). */
 
 	if (window == 0)
 		return;

@@ -17,12 +17,6 @@
 #include "field_scene.h"
 #include "item_ids.h"
 
-// 表は一語ずつ、コードは (x, y) の半語で読む
-struct CellOriginHalves
-{
-	s16 half[12];
-};
-
 u8 *SceneData_GetScriptTable(void)
 {
 	return (u8 *)SuharaMura_Scripts;
@@ -94,9 +88,8 @@ void SuharaMura_AnimateCells0(void)
 {
 	struct EventWork *work = gEventWork;
 	s32				  no = work->touched_trigger;
-	/* FAKEMATCH: the origins are words read as halfword pairs; an array member view keeps the table address in r2 where a plain s16 pointer cast takes r3 (4 instructions differ, measured). */
-	u16 x = ((struct CellOriginHalves *)SuharaMura_CellAnimationOrigins)->half[no * 2];
-	u16 y = ((struct CellOriginHalves *)SuharaMura_CellAnimationOrigins)->half[no * 2 + 1];
+	u16 x = SuharaMura_CellAnimationOrigins[no][0];
+	u16 y = SuharaMura_CellAnimationOrigins[no][1];
 
 	Event_PlayCue(158);
 	Map_AnimateCells(SuharaMura_CellSteps0, x, y);
@@ -109,9 +102,8 @@ void SuharaMura_AnimateCells1(void)
 {
 	struct EventWork *work = gEventWork;
 	s32				  no = work->touched_trigger;
-	/* FAKEMATCH: the origins are words read as halfword pairs; an array member view keeps the table address in r2 where a plain s16 pointer cast takes r3 (4 instructions differ, measured). */
-	u16 x = ((struct CellOriginHalves *)SuharaMura_CellAnimationOrigins)->half[no * 2];
-	u16 y = ((struct CellOriginHalves *)SuharaMura_CellAnimationOrigins)->half[no * 2 + 1];
+	u16 x = SuharaMura_CellAnimationOrigins[no][0];
+	u16 y = SuharaMura_CellAnimationOrigins[no][1];
 
 	Event_PlayCue(158);
 	Map_AnimateCells(SuharaMura_CellSteps1, x, y);
@@ -219,8 +211,9 @@ struct ScenePlacement SuharaMura_ActorsFlag96f[] = {
 	{ SCENE_TABLE_END },
 };
 
-u32 SuharaMura_CellAnimationOrigins[] = {
-	0, 0x70008, 0x5000f, 0x100005, 0xf000d, 0x100012,
+// セルアニメの原点 (x, y)
+s16 SuharaMura_CellAnimationOrigins[][2] = {
+	{ 0, 0 }, { 8, 7 }, { 15, 5 }, { 5, 16 }, { 13, 15 }, { 18, 16 },
 };
 
 u16 SuharaMura_CellSteps0[] = {

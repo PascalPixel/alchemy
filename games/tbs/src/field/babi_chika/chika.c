@@ -196,8 +196,7 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 	probe[1] = actor->y;
 	probe[2] = (actor->z & 0xfff00000) + 0x00080000;
 
-	/* FAKEMATCH: Vector_AddPolarOffset is called as s32 (*)(); as void (*)(s32, s32, s32 *), its prototype, SceneActor_MoveActorZeroToTarget has 4 of 240 bytes different */
-	((s32 (*)())Vector_AddPolarOffset)(0x00100000, (actor->tag + 0x2000) & 0xc000, probe);
+	Call3(Vector_AddPolarOffset, 0x00100000, (actor->tag + 0x2000) & 0xc000, (s32)probe);
 
 	if (Object_CheckMovementCollision(actor, probe) == 1)
 	{
@@ -1690,39 +1689,26 @@ s32 FieldScene_InitializeActorGroups(void)
 	return 0;
 }
 
-s16 StagedActor_DirectionSteps[] = {
-	0,
-	16,
-	0,
-	16,
-	0,
-	16,
-	16,
-	0,
-	16,
-	0,
-	16,
-	0,
-	16,
-	0,
-	0,
-	-16,
-	0,
-	-16,
-	0,
-	-16,
-	0,
-	-16,
-	-16,
-	0,
-	-16,
-	0,
-	-16,
-	0,
-	-16,
-	0,
-	0,
-	16,
+// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
+
+s32 StagedActor_DirectionSteps[] = {
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(16, 0),
 };
 
 u32 StagedActor_FootprintKinds[] = {

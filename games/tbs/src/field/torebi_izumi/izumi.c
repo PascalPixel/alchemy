@@ -30,6 +30,7 @@
 #include "menu_list.h"
 #include "iwram_call.h"
 #include "ability_ids.h"
+#include "iowrite.h"
 
 struct SpringPoint
 {
@@ -189,11 +190,8 @@ s32 TorebiIzumi_OpenScene(void)
 	if (gGameState.scene == (s32)&SceneId_TorebiIzumi2)
 	{
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-		do { Io_SetBlendControl(0x3f42); } while (0); /* FAKEMATCH: each do/while loads the value before the register address */
-		do
-		{
-			Io_SetBlendAlpha(0x80c);
-		} while (0);
+		Io_Write16(0x3f42, &REG_BLDCNT);
+		Io_Write16(0x80c, &REG_BLDALPHA);
 		Engine_ActorSetAnimation(24, 2);
 		Engine_ActorSetAnimation(25, 2);
 		Object_GetById(24)->scale_x = -0x10000;
@@ -424,6 +422,7 @@ struct Workspace
 void TorebiIzumi_RiseAndFadeIn(void)
 {
 	u8 *p = gMapWork[0];
+	const u16 *step;
 	s32 i;
 
 	Engine_AudioPlayCue(216);
@@ -433,20 +432,11 @@ void TorebiIzumi_RiseAndFadeIn(void)
 		((struct FieldActor *)p)->y.fixed -= 0x10000;
 		Engine_TaskWait(4);
 	}
-	p = (u8 *)TorebiIzumi_AlphaSteps;
+	step = TorebiIzumi_AlphaSteps;
 	for (i = 0; i < 8; i++)
 	{
-		{
-			s32 mode = 0x3f42;
-
-			REG_BLDCNT = mode;
-		}
-		REG_BLDALPHA = *(u16 *)p;
-		p += 2;
-		/* FAKEMATCH: the empty do/while keeps the step pointer's advance ahead of the wait's argument. */
-		do
-		{
-		} while (0);
+		Io_Write16(0x3f42, &REG_BLDCNT);
+		Io_Write16(*step++, &REG_BLDALPHA);
 		Engine_TaskWait(8);
 	}
 }
@@ -1657,8 +1647,9 @@ const struct SceneEvent gTorebiIzumiEvents2[] = {
 	{ SCENE_EVENTS_END },
 };
 
-const u32 TorebiIzumi_AlphaSteps[] = {
-	0xa08090a, 0xc040b06, 0xe020d03, 0x10000f01,
+// BLDALPHA の段階
+const u16 TorebiIzumi_AlphaSteps[] = {
+	0x90a, 0xa08, 0xb06, 0xc04, 0xd03, 0xe02, 0xf01, 0x1000,
 };
 
 const u32 Data_02001fd0[] = {

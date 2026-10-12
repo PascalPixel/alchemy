@@ -1526,18 +1526,6 @@ struct TextCursor
 
 extern volatile u32 gFrameTick;
 
-static inline void TextCursor_Initialize(struct TextCursor *cursor, s32 *slot)
-{
-	/* FAKEMATCH: needed to match: a direct call lets GCC 2.96 keep the cursor's address in a register across the calls. */
-	UiTextResource_Initialize(cursor, slot);
-}
-
-static inline void TextCursor_SetPosition(struct TextCursor *cursor, s32 x, s32 y)
-{
-	/* FAKEMATCH: needed to match: a direct call lets GCC 2.96 keep the cursor's address in a register across the calls. */
-	UiTextResource_SetPosition(cursor, x, y);
-}
-
 #if EDITION_INTERNATIONAL
 #define QUESTION_X 2
 #define QUESTION_WIDTH 25
@@ -1577,8 +1565,8 @@ s32 ShindenHeya_ChooseRestartOption(void)
 	{
 		UiText_DrawResource(text + 1, window, 16, 16);
 	}
-	TextCursor_Initialize(&cursor, &slot);
-	TextCursor_SetPosition(&cursor, 72, 60);
+	Call2(UiTextResource_Initialize, (s32)&cursor, (s32)&slot);
+	Call3(UiTextResource_SetPosition, (s32)&cursor, 72, 60);
 	choice = 0;
 	while ((gKeyState & KEY_A) == 0)
 	{
@@ -1589,7 +1577,7 @@ s32 ShindenHeya_ChooseRestartOption(void)
 			choice ^= 1;
 		}
 		x = ShindenHeya_CursorBob[(gFrameTick >> 1) & 15] + CURSOR_X;
-		TextCursor_SetPosition(&cursor, x, (choice << 4) + 60);
+		Call3(UiTextResource_SetPosition, (s32)&cursor, x, (choice << 4) + 60);
 		Engine_EventWait(1);
 	}
 	UiTextResource_Release(slot);

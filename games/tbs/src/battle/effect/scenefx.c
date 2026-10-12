@@ -1938,7 +1938,6 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 			ObjectGroup_UpdateMembers(work->effect->actors[0], -1, 3, -1, 0);
 		if (frame == 32)
 			AudioCommand_PlayFar(149);
-		/* FAKEMATCH: keep the frame-5 cue and background restore in separate CSE blocks; a combined block loads the saved-bg offset before reloading work. */
 		if (frame == 5)
 			AudioCommand_PlayFar(145);
 		if (frame == 5)
@@ -3910,9 +3909,8 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
 	u8						*palette;
 	s32						 x;
 	struct EffectPosition	 pos;
-	DrawRectangle			 draw_r;
-	DrawRectangle			 draw_l;
-	u8						*state;
+	DrawRectangle			 draw[2];
+	void				   **slots;
 	s32						 frame;
 	s32						 cell;
 
@@ -3952,16 +3950,13 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
 
 	// 左半分はそのまま、右半分は左右反転して比較合成で描く
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
-	state = (u8 *)gWorkSlot;
-	draw_l = *(DrawRectangle *)(state + HEAP_SLOT_BLITTER * 4);
+	slots = gWorkSlot;
+	draw[0] = slots[HEAP_SLOT_BLITTER];
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
 		GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+	draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE];
 	work->transfer_mode = 2;
-	/* FAKEMATCH: needed to match: reading the second blitter through the slot pointer's own variable keeps it in that register between the two transfer stores 2026-10-11: a plain read of the second slot after the two stores differs 4 (ldr r5 falls behind movs r3, #50); before or between them 10 to 14. */
-	state += 188; // gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE]
-	state = *(u8 **)state;
 	work->transfer_value = 50; // 転送のたびに半分へ減らして残像にする
-	draw_r = (DrawRectangle)state;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
 	if (mode == 2)
@@ -4001,10 +3996,10 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
 				cell = (cell & 1) + 1;
 			if (frame <= 27)
 			{
-				draw_l(canvas, work->sheet + EarthWall_CellSourceOffsets[cell],
+				draw[0](canvas, work->sheet + EarthWall_CellSourceOffsets[cell],
 					64 - EarthWall_CellWidths[cell], (pos.y - EarthWall_CellHeights[cell]) + 8,
 					EarthWall_CellWidths[cell], EarthWall_CellHeights[cell]);
-				draw_r(canvas, work->sheet + EarthWall_CellSourceOffsets[cell], 64,
+				draw[1](canvas, work->sheet + EarthWall_CellSourceOffsets[cell], 64,
 					(pos.y - EarthWall_CellHeights[cell]) + 8, EarthWall_CellWidths[cell],
 					EarthWall_CellHeights[cell]);
 			}
@@ -17717,8 +17712,7 @@ void BattleFx_DispatchByIdRange(s32 *arg0)
 	value = kind - 100;
 	if ((u32)value <= 35)
 	{
-		/* FAKEMATCH: needed to match: the native call passes the command alone and leaves the kind register unset */
-		((void (*)(s32 *))BattleFx_RunCastingImpact)(arg0);
+		BattleFx_RunCastingImpact((struct BattleEffectArgument *)arg0, value);
 	}
 	else if (kind > 199)
 	{

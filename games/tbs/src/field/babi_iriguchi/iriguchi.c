@@ -1108,7 +1108,7 @@ struct StagedActor *BabiIriguchi_FindActorAhead(struct StagedActor *actor)
 {
 	s32	 pos[3];
 	s32 *p = pos;
-	s32	 step = ((struct { s32 word[1]; } *)StagedActor_DirectionSteps)->word[actor->direction_and_kind >> 12];
+	s32	 step = StagedActor_DirectionSteps[actor->direction_and_kind >> 12];
 
 	{
 		s32 x = actor->x.value;
@@ -1516,39 +1516,26 @@ s32 BabiIriguchi_SetupScene(void)
 	return 0;
 }
 
-s16 StagedActor_DirectionSteps[] = {
-	0,
-	16,
-	0,
-	16,
-	0,
-	16,
-	16,
-	0,
-	16,
-	0,
-	16,
-	0,
-	16,
-	0,
-	0,
-	-16,
-	0,
-	-16,
-	0,
-	-16,
-	0,
-	-16,
-	-16,
-	0,
-	-16,
-	0,
-	-16,
-	0,
-	-16,
-	0,
-	0,
-	16,
+// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
+
+s32 StagedActor_DirectionSteps[] = {
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(16, 0),
 };
 
 u32 StagedActor_FootprintKinds[] = {

@@ -50,7 +50,7 @@ void Scene_ResolveInteractionResult(void);
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance);
 void Party_ResolveTablePair(void);
 s16 Event_GetSpecialValue(void);
-void BattleFx_SetSpecialFromTable(s32 arg0, s32 arg1);
+void BattleFx_SetSpecialFromTable(void);
 void BattleFx_SelectResultPointer(s32 arg0);
 void BattleFx_SelectBattleCue(s32 first, s32 second);
 s32 Party_RemapCharacterIdByFlags(s32 arg0);

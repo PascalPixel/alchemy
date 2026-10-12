@@ -31,13 +31,6 @@ struct PushState
 
 #define MAP_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 
-static __inline__ s32 CheckMove(struct FieldActor *actor, union FieldCoordinate *pos)
-{
-	/* FAKEMATCH: needed to match: the inline boundary rematerializes pos for the collision call. */
-	/* FAKEMATCH: needed to match: the inline call keeps add r1, sp, #16 instead of mov r1, fp. */
-	return Object_CheckMovementCollision(actor, pos);
-}
-
 struct SceneTimer
 {
 	u8	unknown_00[8];
@@ -83,7 +76,7 @@ void Makyuri_RunActorMove(void)
 		return;
 
 	Engine_EventBegin();
-	if (CheckMove(actor, pos) != 0)
+	if (Value2(Object_CheckMovementCollision, (s32)actor, (s32)pos) != 0)
 		return;
 	obj = state->effect;
 	if (obj != NULL)

@@ -34,14 +34,9 @@
 #include "item.h"
 #include "game_state.h"
 #include "uiwindow.h"
+#include "call.h"
 
 extern u16 gBgScroll[];
-
-static __inline__ void DecodeBackground(const u8 *res)
-{
-	/* FAKEMATCH: an inline call wrapper keeps the decode's source in r4 and reloads the cell buffer's address after it, as the game does. */
-	Resource_DecodeType01(res, (void *)Ram_MapCellBuffer);
-}
 
 struct ClearWork
 {
@@ -96,7 +91,7 @@ void Clear_LoadBackground(void)
 	res = Engine_ResourceGetTableEntry(id);
 	Dma_Set(res, (void *)0x05000000, 0x84000070, DMA3);
 	res += 0x1c0;
-	DecodeBackground(res);
+	Value2(Resource_DecodeType01, (s32)res, (s32)Ram_MapCellBuffer);
 	Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, DMA3);
 	map = (u16 *)0x06003000;
 	tile = 0x1a0;

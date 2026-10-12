@@ -67,8 +67,7 @@ s32 Scheduler_DisableOverlayCallbacksWithFlags(void)
 	Scheduler_DisableOverlayCallbacks();
 	Map_DisableUpdateCallbackFar();
 	GameFlag_ClearBitFar(0x166);
-	/* FAKEMATCH: GameFlag_ClearBitFar is called as s32 (*)(s32); as void (*)(s32), its prototype, Scheduler_DisableOverlayCallbacksWithFlags does not compile */
-	return ((s32 (*)(s32))GameFlag_ClearBitFar)(0x152);
+	GameFlag_ClearBitFar(0x152);
 }
 
 s32 Scheduler_EnableOverlayCallbacksWithFlags(void)
@@ -605,16 +604,16 @@ void Menu_UpdateEntryObjectTransforms(void)
 	for (i = 0; i < cnt; i++)
 	{
 		struct AnimationObject *obj = menu->tab_objects[i];
-		s32						top = 0x01e20000 - ((s16)menu->row_positions[i] << 16);
+		s32						top = 0x01e20000 - (menu->row_positions[i] << 16);
 
 		if (obj != 0)
 		{
 			obj->part[0].priority = 0;
 			pos[0] = menu->owner_scale[i];
 			pos[1] = menu->owner_scale[i];
-			trans[0] = (s16)menu->tab_x[i] << 16;
+			trans[0] = menu->tab_x[i] << 16;
 			trans[1] = top;
-			trans[2] = ((s16)menu->row_positions[i] << 16) + top;
+			trans[2] = (menu->row_positions[i] << 16) + top;
 			trans[3] = 0;
 			Object_ApplyProjectedPlacementFar(obj, trans, pos, 0x4000);
 		}
@@ -1697,14 +1696,13 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
 				stack = (menu->selected_items[0] >> INVENTORY_QUANTITY_SHIFT) + 1;
 				if (aborted == 0)
 				{
-					/* FAKEMATCH: the loop only places a label between the count and its sign-extended use. */
-					do
-					{
-						amount = stack;
-					} while (0);
-					if (qty + amount > 30)
+					if (qty + stack > 30)
 					{
 						amount = 30 - qty;
+					}
+					else
+					{
+						amount = stack;
 					}
 					if (stack > 1)
 					{
@@ -4655,7 +4653,6 @@ s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
 
 s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
 {
-	/* FAKEMATCH: the low-byte CollectActions result keeps adds r5,r0,#0; explicit narrowing of s32 selects mov r5,r0. */
 	struct PsynergyMenuState *menu;
 	s32						  selection;
 	s32						  count;
@@ -4667,11 +4664,11 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
 	s32						  i;
 	u16						 *actions;
 	s32						  action_count;
-	u8						  found;
+	s8						  found;
 
 	menu = (struct PsynergyMenuState *)gMenuWork;
 	selection = menu->tab_index[0];
-	count = (s8)menu->tab_counts[0];
+	count = menu->tab_counts[0];
 	pending = 1;
 	result = 0;
 	shown = 0;
@@ -4736,7 +4733,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
 			actions = MemAlloc(64);
 			found = PsynergyMenu_CollectActions((struct BtlUnit *)owner, actions, 1);
 			MemFree(actions);
-			action_count = (s8)found;
+			action_count = found;
 			if (action_count == 0)
 			{
 				menu->mode = action_count;
@@ -6078,7 +6075,7 @@ s32 PsynergyMenu_SelectOwner(void)
 {
 	struct PsynergyMenuState *menu = gMenuWork;
 	s32						  selection = menu->tab_index[0];
-	s32						  count = (s8)menu->tab_counts[0];
+	s32						  count = menu->tab_counts[0];
 	s32						  pending = 1;
 	s32						  frame = menu->flags;
 	s32						  result;
@@ -8889,9 +8886,8 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
 	s32					  usable;
 	u16					 *list;
 
-	menu = gMenuWork;
-	ui = *(
-		struct UiWork **)((u8 *)&gMenuWork + (HEAP_SLOT_WINDOW - HEAP_SLOT_MENU) * sizeof(void *));
+	menu = WORK_SLOT(HEAP_SLOT_MENU);
+	ui = WORK_SLOT(HEAP_SLOT_WINDOW);
 	ui->menu_busy = 1;
 	i = 0;
 	if (menu->owner_count != 0)
@@ -8936,8 +8932,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
 		}
 	}
 	UiWindow_DrawDividerLineFar(menu->list_window, 0, 10, 28, 10);
-	(*(struct UiWork **)((u8 *)&gMenuWork + (HEAP_SLOT_WINDOW - HEAP_SLOT_MENU) * sizeof(void *)))
-		->dirty = 1;
+	((struct UiWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->dirty = 1;
 	ui->menu_busy = 0;
 }
 

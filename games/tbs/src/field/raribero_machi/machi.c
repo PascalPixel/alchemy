@@ -28,13 +28,13 @@
 
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
-
+	/* FAKEMATCH: forwarding inline: with this and SetOffset called directly, SceneActor_SetupActor18Event has 4 instructions different (argument load order) */
 	Engine_ActorSetSpeed(actor, x, y);
 }
 
 static __inline__ void SetOffset(s32 actor, s32 offset, s32 zero)
 {
-
+	/* FAKEMATCH: forwarding inline: with this and PlaceActor called directly, SceneActor_SetupActor18Event has 4 instructions different (argument load order) */
 	Engine_ActorWalkByAndWait(actor, offset, zero);
 }
 

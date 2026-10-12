@@ -20,7 +20,7 @@ struct PsynergyMenuState
 	s32						auxiliary_window;
 	struct RenderOutput	   *pane_icon[2];
 	s8						tab_index[2];
-	u8						tab_counts[2];
+	s8						tab_counts[2];
 	s32						psynergy_window;
 	s32						status_window;
 	s32						shortcut_window;
@@ -37,8 +37,8 @@ struct PsynergyMenuState
 	u8						column_count;
 	u8						row_count;
 	struct AnimationObject *tab_objects[8];
-	u16						tab_x[8];
-	u16						row_positions[8];
+	s16						tab_x[8];
+	s16						row_positions[8];
 	s32						owner_scale[8];
 	u16						pane_row[2];
 	u16						pane_action[2];

@@ -46,6 +46,7 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
+#include "iowrite.h"
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -2186,12 +2187,7 @@ s32 Scene_Initialize(void)
 	gGameState.retreat_entrance = 11;
 	gGameState.retreat_scene = (s32)&SceneId_MakyuriHeya4;
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-	/* FAKEMATCH: the do/while and the held value keep the blend constant in a register ahead of its address load. */
-	do
-	{
-		s32 blend = 0x3f40;
-		REG_BLDCNT = blend;
-	} while (0);
+	Io_Write16(0x3f40, &REG_BLDCNT);
 	{
 		s32 alpha = 0x1010;
 		REG_BLDALPHA = alpha;
@@ -2522,12 +2518,7 @@ s32 Scene_Initialize(void)
 		case 15:
 			Engine_ActorSetPosition(3, 0, 0);
 			DisplayBlend_EnableRunScript();
-			/* FAKEMATCH: the do/while keeps this zero from being shared, as a pool halfword, with the later zero stores. */
-			do
-			{
-				s32 z = 0;
-				REG_BLDCNT = z;
-			} while (0);
+			Io_Write16(0, &REG_BLDCNT);
 			Object_GetById(9)->scale_x = -0x10000;
 			Engine_ActorSetSpritePriority(14, 1);
 			Engine_ActorSetSpritePriority(15, 1);
@@ -2982,23 +2973,26 @@ s32 gEffectScript2[] = {
 	SC_FREE,
 };
 
-s16 StagedActor_DirectionSteps[] = {
-	0, 16,
-	0, 16,
-	0, 16,
-	16, 0,
-	16, 0,
-	16, 0,
-	16, 0,
-	0, -16,
-	0, -16,
-	0, -16,
-	0, -16,
-	-16, 0,
-	-16, 0,
-	-16, 0,
-	-16, 0,
-	0, 16,
+// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
+
+s32 StagedActor_DirectionSteps[] = {
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(16, 0),
 };
 
 u32 StagedActor_FootprintKinds[] = {

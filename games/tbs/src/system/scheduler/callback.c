@@ -345,26 +345,12 @@ void WaitFrames(s32 frames)
 	if (base < Ram_FrameWaitStackTop)
 	{
 		u8 *top = Ram_FrameWaitStackTop;
-		u8 *next;
 
 		gSavedStackSize = top - base;
 		Dma_Set(base, gSavedStack, (gSavedStackSize >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
-		/* FAKEMATCH: needed to match: XOR cancellation defers the top-copy
-         * guard until after allocation, retaining top in r4 across DMA.
-         * Without this lifetime boundary, top and the DMA control constant
-         * exchange r4/r5 (12 aligned differences, same 0x434-byte extent).
-         * The redundant guard emits no extra comparison or copy. */
-		next = (u8 *)((u32)top ^ (u32)base);
-		next = (u8 *)((u32)next ^ (u32)base);
 		/* FAKEMATCH: the tied top operand retains its DMA lifetime; an input-only operand adds a copy through ip. */
 		CAMELOT_ASM("the stack switch, a write to sp no C can express")
 		__asm__ volatile("mov sp, %0" : "+r"(top) : : "sp", "memory");
-		do
-		{
-			if (top == next)
-				break;
-			top = next;
-		} while (0);
 	}
 	for (i = 0; i < frames; i++)
 	{
@@ -508,45 +494,14 @@ void WaitFrames(s32 frames)
 
 		if (*size)
 		{
-			/* FAKEMATCH: needed to match: XOR cancellation keeps the initial base
-             * live across the frame loop. A plain sp assignment shrinks the frame
-             * from eight bytes to four (65 aligned differences); the one-pass
-             * boundary retains the restore copy's order. */
-			u8 *restore;
-
 			/* FAKEMATCH: tying the old base to the hardware read keeps the eight-byte frame and removes an extra copy through ip. */
 			CAMELOT_ASM("read the hardware stack pointer for its restore copy")
 			__asm__ volatile("mov %0, sp" : "+r"(base));
-			sp = base;
-			restore = (u8 *)((u32)sp ^ (u32)base);
-
-			restore = (u8 *)((u32)restore ^ (u32)base);
-			do
-			{
-				base = restore;
-			} while (0);
-			/* FAKEMATCH: needed to match: the one-pass copy guard retains the
-             * current-SP copy in sl. A plain restore loses that copy and differs
-             * by five aligned instructions (403 native, 402 built, 400 common),
-             * shrinking 0x434 bytes to 0x430. The redundant guard ends CSE at the
-             * copy without emitting an extra comparison. */
-			do
-			{
-				if (base == sp)
-					break;
-				base = sp;
-			} while (0);
 			/* FAKEMATCH: needed to match: the volatile reread keeps this saved-size
              * load separate from the conditional read (7 aligned differences
              * without this qualification). */
 			base -= *(volatile u32 *)size;
-			/* FAKEMATCH: needed to match: the cancelling restore identity keeps
-             * the result in base before installing sp. A direct assignment swaps
-             * the native high-register copy pair (4 aligned differences, same
-             * 0x434-byte extent); the identity restores both without a binding. */
-			restore = (u8 *)((u32)base ^ (u32)sp);
-			restore = (u8 *)((u32)restore ^ (u32)sp);
-			sp = restore;
+			sp = base;
 			CAMELOT_ASM("restore the hardware stack pointer after the proven stack copy")
 			__asm__ volatile("mov sp, %0" : : "r"(sp) : "sp", "memory");
 			/* FAKEMATCH: clearing the old address and restoring a separate
@@ -3076,25 +3031,13 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
 			{
 				u32 ie;
 
-				/* FAKEMATCH: the do/while blocks and the separate enable variable are meaningless, as in SerialRuntime_PollStatus. */
-				do
-				{
-					REG_IME = serial_error;
-				} while (0);
+				Io_Write16(0, &REG_IME);
 				ie = REG_IE;
-				do
-				{
-					ie &= ~0x80;
-					ie |= 0x40;
-					REG_IE = ie;
-					{
-						u8 enable = 1;
-						REG_IME = enable;
-					}
-					*((volatile s8 *)siocnt + 1) &= ~0x40;
-					REG_IF = 0xc0;
-					REG_TM3CNT = 0xc963;
-				} while (0);
+				Io_Write16((ie & ~0x80) | 0x40, &REG_IE);
+				Io_Write16(1, &REG_IME);
+				*((volatile s8 *)siocnt + 1) &= ~0x40;
+				REG_IF = 0xc0;
+				REG_TM3CNT = 0xc963;
 				gSerialRuntime.mode = mode;
 			}
 		}
@@ -3141,25 +3084,13 @@ s32 SerialRuntime_PollStatus(void)
 			{
 				u32 ie;
 
-				/* FAKEMATCH: one-pass scopes place IE after the IME write and the mask after the IE read; fresh enable reuses r3 for ~0x40. */
-				do
-				{
-					REG_IME = serial_error;
-				} while (0);
+				Io_Write16(0, &REG_IME);
 				ie = REG_IE;
-				do
-				{
-					ie &= ~0x80;
-					ie |= 0x40;
-					REG_IE = ie;
-					{
-						u8 enable = 1;
-						REG_IME = enable;
-					}
-					*((volatile s8 *)siocnt + 1) &= ~0x40;
-					REG_IF = 0xc0;
-					REG_TM3CNT = 0xc963;
-				} while (0);
+				Io_Write16((ie & ~0x80) | 0x40, &REG_IE);
+				Io_Write16(1, &REG_IME);
+				*((volatile s8 *)siocnt + 1) &= ~0x40;
+				REG_IF = 0xc0;
+				REG_TM3CNT = 0xc963;
 				gSerialRuntime.mode = mode;
 			}
 			gSerialRuntime.phase = 1;
@@ -3403,41 +3334,19 @@ u32 SerialRuntime_WaitForStatusMask(s32 mask)
 
 s32 SerialRuntime_BeginTransferA(void *source, s32 transfer_value)
 {
-	volatile s32			   *active;
-	struct SerialTransferState *state;
+	struct SerialTransferState *state = &gSerialTransfer;
 	u32							saved_interrupt_master;
-	s32							busy;
-	s32							value;
-	s32							transfer;
 
-	/* FAKEMATCH: sharing the integer address carrier with the result keeps the source in r0 through the busy check. A separate result is hoisted into r0 and moves the source to another register. */
-	value = (s32)source;
-	active = &gSerialSendSource;
-	busy = *active;
-	transfer = transfer_value;
-	/* FAKEMATCH: assigning active twice selects r5 for active and r6 for transfer; one-pass blocks preserve store order. */
-	do
-	{
-		state = &gSerialTransfer;
-	} while (0);
-	active = &gSerialSendSource;
-	if (busy == 0)
-		goto begin_transfer;
-	value = -1;
-	goto transfer_complete;
-
-begin_transfer:
+	if (gSerialSendSource != 0)
+		return -1;
 	IRQ_LOCK(saved_interrupt_master);
 	state->status = 0x80;
-	gSerialSendSize = transfer;
+	gSerialSendSource = (s32)source;
+	gSerialSendSize = transfer_value;
 	gSerialBlockSequence = 0;
-	*active = value;
 	state->active = 1;
 	IRQ_UNLOCK(saved_interrupt_master);
-	value = 0;
-
-transfer_complete:
-	return value;
+	return 0;
 }
 
 s32 SerialRuntime_BeginTransferB(void *destination)

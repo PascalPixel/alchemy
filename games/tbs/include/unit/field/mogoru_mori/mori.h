@@ -51,7 +51,7 @@ const struct SceneEvent *Scene_GetEvents(void);
 s32 FieldScene_RunSceneEntryHook(void);
 s32 UpdateOrbitingSceneObject(s32 *p);
 void InitializeOrbitingEffect(s32 id);
-extern s16 StagedActor_DirectionSteps[];
+extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];
 extern s32 gEffectScript0[];

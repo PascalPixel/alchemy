@@ -9,8 +9,9 @@ struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
+union FieldObject;
 
-s32 EventScript_PrepareActorRenderFlags(struct FieldActor *actor);
+s32 EventScript_PrepareActorRenderFlags(union FieldObject *object);
 s32 OverlayObject_SetFacingTowardObject10(void *self);
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);

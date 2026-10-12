@@ -86,7 +86,7 @@ void TakaraAshiba_UpdateItemIcons(void);
 void TakaraAshiba_InitializeScene1(void);
 void TakaraAshiba_InitializeScene2(void);
 void TakaraAshiba_InitializeScene3(void);
-extern s16 StagedActor_DirectionSteps[];
+extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];
 extern s32 TakaraAshiba_ActorFifteenMotionScript[];

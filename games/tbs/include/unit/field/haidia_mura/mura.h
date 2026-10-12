@@ -83,7 +83,7 @@ void SceneEffect_UpdateObjectOnOddFrames(s32 p);
 void SceneEffect_UpdateObjectOnOddFramesOnly(s32 p);
 void Effect_AnimateVerticalPositive(struct StagedVerticalEffect *effect);
 void Effect_AnimateVerticalNegative(struct StagedVerticalEffect *effect);
-extern s16 StagedActor_DirectionSteps[];
+extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];
 extern s32 gHaidiaMuraActor22Actions[];

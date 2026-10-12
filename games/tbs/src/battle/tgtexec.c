@@ -7450,7 +7450,7 @@ struct BattleAutomaticState
 //--------------------------------------------------------------------------
 s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *req, s32 retry)
 {
-	register u32				 sel;
+	u32							 sel;
 	struct BattleAutomaticState *memo;
 	struct EnemyDefinition		*enm;
 	s32							 item_ok;
@@ -7795,7 +7795,6 @@ void BattleEvent_Playback(void)
 	// キャラのタイルを消す
 	void ClrRecTiles(struct AnimationObject * rec, s32 value)
 	{
-		/* FAKEMATCH: needed to match: the address held in a local is added before the size is multiplied; written inside the Iwram_ClearWords call the multiply comes first (5 instructions reordered). */
 		u8 *tiles = (u8 *)OBJ_VRAM + gVramBlockCache[rec->slot].offset;
 
 		Iwram_ClearWords(tiles, rec->width * rec->height);
@@ -10812,7 +10811,6 @@ s32 BattleFx_InitializeStarField(s32 mode)
 	struct Ring		 *ring;
 	s32				  i;
 	u8				 *data;
-	s32				  scale;
 	s32				  zero;
 	/* FAKEMATCH: needed to match: an unused Spark, the 28 bytes the native frame reserves. */
 	struct Spark unused;
@@ -10880,21 +10878,17 @@ s32 BattleFx_InitializeStarField(s32 mode)
 		break;
 	}
 	Dma_Set(data, BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 32, REG_DMA3);
-	/* FAKEMATCH: needed to match: the two one-pass blocks keep the BG2 origin and matrix writes in source order, the zero loaded first. */
+	/* FAKEMATCH: needed to match: the one-pass block keeps the BG2 origin writes in source order, the zero loaded first. */
 	do
 	{
 		zero = 0;
 		REG_BG2X = zero;
 		REG_BG2Y = zero;
 	} while (0);
-	do
-	{
-		scale = 0x100;
-		REG_BG2PA = scale;
-		REG_BG2PB = zero;
-		REG_BG2PC = zero;
-		REG_BG2PD = scale;
-	} while (0);
+	Io_Write16(0x100, &REG_BG2PA);
+	Io_Write16(0, &REG_BG2PB);
+	Io_Write16(0, &REG_BG2PC);
+	Io_Write16(0x100, &REG_BG2PD);
 	BattleEffect_LoadWorkFar(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
 	BattleEffect_LoadWorkFar(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
 	Scheduler_AddOrUpdateCallback((SchedulerCallback)BattleFx_UpdateStarField, 0xc80);

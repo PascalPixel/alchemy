@@ -5,6 +5,7 @@
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
 #include "unit/system/scheduler/callback.h"
+#include "iowrite.h"
 
 #define NULL ((void *)0)
 #include "global_cells.h"
@@ -3050,11 +3051,7 @@ s32 Scene_RunEntrySetup(void)
 			Object_GetById(20)->priority_flags |= 2;
 			Object_GetById(20)->y.fixed = -0x108000;
 			DisplayBlend_EnableRunScript();
-			/* FAKEMATCH: the do/while keeps the zero ahead of the register address. */
-			do
-			{
-				REG_BLDCNT = 0;
-			} while (0);
+			Io_Write16(0, &REG_BLDCNT);
 			if (Engine_GameFlagIsSet(0x306))
 			{
 				BattleFx_SetQueuedSoundAndPlay(170);

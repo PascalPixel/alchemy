@@ -25,6 +25,7 @@
 #include "ramcode.h"
 #include "iwram_call.h"
 #include "io_reg.h"
+#include "iowrite.h"
 #include "heap_state.h"
 #include "affine.h"
 #include "callback_scheduler.h"
@@ -5451,17 +5452,10 @@ s32 Map_LoadLayeredScene(s32 index)
 		work->flags |= DISPCNT_BG1_ON;
 	cnt = work->enabled[0] | BGCNT_CHAR_BASE(header->char_base[0]) | BGCNT_SCREEN_BASE(5);
 	REG_BG3CNT = cnt;
-	/* FAKEMATCH: needed to match: one-pass loops keep the second and third background-control writes in source order. */
-	do
-	{
-		cnt = work->enabled[1] | BGCNT_CHAR_BASE(header->char_base[1]) | BGCNT_SCREEN_BASE(6);
-		REG_BG2CNT = cnt;
-	} while (0);
-	do
-	{
-		cnt = work->enabled[2] | BGCNT_CHAR_BASE(header->char_base[2]) | BGCNT_SCREEN_BASE(7);
-		REG_BG1CNT = cnt;
-	} while (0);
+	Io_Write16(work->enabled[1] | BGCNT_CHAR_BASE(header->char_base[1]) | BGCNT_SCREEN_BASE(6),
+		&REG_BG2CNT);
+	Io_Write16(work->enabled[2] | BGCNT_CHAR_BASE(header->char_base[2]) | BGCNT_SCREEN_BASE(7),
+		&REG_BG1CNT);
 	if (GameFlag_TestFar(FLAG_KEEP_LAYER_GRAPHICS) != 0)
 	{
 		GameFlag_ClearBitFar(FLAG_KEEP_LAYER_GRAPHICS);
@@ -5748,12 +5742,12 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y, u32 dst_x, u32 dst_y, u32
 	/* FAKEMATCH: needed to match: temporary sharing preserves register allocation and scheduling without changing the frame or instructions. Measured 2026-10-11, before the volatile casts on the two word copies were dropped as unneeded: i = 0 after the offset differs 59, at the top of the body 32; a fresh bytes = cell * 8 is hoisted by loop.c, 158; the scale before the first destination, 4; address expressions without scr and blk, 113-153. A plain body differs 214. */
 	u32							   *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
 	u32							   *dst = (u32 *)Ram_MapCellBuffer + (dst_y * 128 + dst_x);
-	register struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
+	struct MapLayerScroll		   *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
 	struct TilePos					tile[3];
 	s32								i;
 	struct TilePos				   *pos = tile;
 	u32								y;
-	register u32					x;
+	u32								x;
 
 	for (i = 2; i >= 0; i--)
 	{
@@ -5920,13 +5914,13 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 
 	struct TilePos_2	   view[3];
 	s32					   i;
 	struct TilePos_2	  *pos = view;
-	register s32		   x;
+	s32					   x;
 
 	// 3 つのレイヤーの表示範囲（スクロール位置をセル単位に）
 	i = 2;
 	while (i >= 0)
 	{
-		register s32 tmp5;
+		s32 tmp5;
 
 		tmp5 = layer->x >> 20;
 		pos->x = tmp5;
@@ -5944,11 +5938,11 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 
 			{
 				u32			  val = *src++;
 				u32			  cell;
-				register u32  offset;
+				u32			  offset;
 				u32			  tmp3;
 				u32			 *dest;
 				u32			  n;
-				register u32 *tiles;
+				u32			 *tiles;
 				u32			  tmp6;
 				u32			  tmp12;
 				u32			  tmp13;
@@ -5984,9 +5978,9 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 
 						/* FAKEMATCH: restoring the unscaled cell keeps loop.c's
 						 * shift inside the successful layer branch. The restoration
 						 * folds away, preserving the native 36-byte frame and registers. */
-						register u32 bytes = cell * 8;
+						u32			 bytes = cell * 8;
 						u32			 tmp8;
-						register u32 tmp17;
+						u32			 tmp17;
 
 						cell = bytes / 8;
 						tmp = (u32 *)Ram_MapBlocks;
@@ -6075,13 +6069,13 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 	struct TilePos_2	   view[3];
 	s32					   i;
 	struct TilePos_2	  *pos = view;
-	register s32		   x;
+	s32					   x;
 
 	// 3 つのレイヤーの表示範囲（スクロール位置をセル単位に）
 	i = 2;
 	while (i >= 0)
 	{
-		register s32 tmp5;
+		s32 tmp5;
 
 		tmp5 = layer->x >> 20;
 		pos->x = tmp5;
@@ -6100,7 +6094,7 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 			{
 				u32			 val = *src++;
 				u32			 cell;
-				register u32 offset;
+				u32			 offset;
 				u32			 tmp3;
 				u32			 n;
 				u32			 tmp6;
@@ -6302,13 +6296,9 @@ s32 Map_InitializePerspectiveScene(void)
 	Io_Set16(0xa80a, &REG_BG3CNT);
 	Io_Set16(0xaa0e, &REG_BG2CNT);
 	Io_Set16(0x0501, &REG_BG1CNT);
-	/* FAKEMATCH: needed to match: loop note keeps BG2PA's constant after its address */
-	do
-	{
-		Io_Put16(&REG_BG2PA, 0x100);
-		REG_BG2PB = 0;
-		REG_BG2PC = 0;
-	} while (0);
+	Io_Write16(0x100, &REG_BG2PA);
+	REG_BG2PB = 0;
+	REG_BG2PC = 0;
 	/* FAKEMATCH: needed to match: loop notes keep BG2PD's constant late and r0 first below */
 	do
 	{
@@ -6375,11 +6365,7 @@ s32 Map_InitializePerspectiveScene(void)
 	vector.z = *distance + 0x10000;
 	Iwram_TransformVector((s32 *)&vector, camera->eye);
 	REG_MOSAIC = 0;
-	/* FAKEMATCH: needed to match: loop notes keep the display writes in source order */
-	do
-	{
-		Io_Put16(&REG_DISPCNT, 0x42);
-	} while (0);
+	Io_Write16(0x42, &REG_DISPCNT);
 	gBgScroll[1].x = 0;
 	gBgScroll[1].y = 0;
 	gBgScroll[2].x = 0;
@@ -6767,13 +6753,7 @@ extern u8 gDecodeBuffer[];
 
 void MapAnimation_PresentFrame(void)
 {
-	s32 control = 0x682;
-
-	/* FAKEMATCH: needed to match: the do-while keeps the BG1CNT store before the DMA source and destination loads. */
-	do
-	{
-		REG_BG1CNT = control;
-	} while (0);
+	Io_Write16(0x682, &REG_BG1CNT);
 	Dma_Set((const void *)gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00,
 		DMA_ENABLE32 | DMA_32BIT | 0x2580, REG_DMA3);
 }
@@ -6796,10 +6776,7 @@ void MapAnimation_Start(void)
 
 void Map_ShowBg1FromBuffer(void)
 {
-	u32	 mode = 0x501;
-	u16 *bg1cnt = (u16 *)&REG_BG1CNT;
-
-	do { *bg1cnt = mode; } while (0); /* FAKEMATCH: needed to match: the wrap orders the store before the DMA operands. */
+	Io_Write16(0x501, &REG_BG1CNT);
 	Dma_Set((const void *)gBgTileBuffer, BG_CHAR_BLOCK(2), 0x84002000, REG_DMA3);
 }
 
@@ -7711,7 +7688,7 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position, struct MapScanline *r
 	s32			 horizon;
 	s32			 focus;
 	s32			*view;
-	register s32 line;
+	s32			 line;
 	s32			 distance;
 	s32			 difference;
 	s32			 scale;

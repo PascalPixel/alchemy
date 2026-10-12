@@ -41,7 +41,7 @@ extern const struct ScenePlacement gTorebiIzumiPlacements2[];
 extern const struct ScenePlacement gTorebiIzumiPlacementsOther[];
 extern const struct SceneEvent gTorebiIzumiEventsOther[];
 extern const struct SceneEvent gTorebiIzumiEvents2[];
-extern const u32 TorebiIzumi_AlphaSteps[];
+extern const u16 TorebiIzumi_AlphaSteps[];
 extern const u32 Data_02001fd0[];
 extern const u32 Data_0200200c[];
 extern const u32 TorebiIzumi_TopicIds[];

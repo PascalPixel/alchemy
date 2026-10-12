@@ -2104,8 +2104,7 @@ void SceneEffect_UpdateMotionWithDamping(struct Obj_020036f8 *p)
 	v = *h;
 	if (v == 0)
 	{
-		/* FAKEMATCH: Object_Destroy is called as void (*)(void); as void (*)(struct DispatchObject *), its prototype, SceneEffect_UpdateMotionWithDamping does not compile */
-		((void (*)(void))Object_Destroy)();
+		Object_Destroy((struct DispatchObject *)p);
 	}
 	else if (v == 1)
 	{

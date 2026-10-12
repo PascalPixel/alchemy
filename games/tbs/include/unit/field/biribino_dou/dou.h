@@ -49,6 +49,6 @@ extern struct SceneEvent gBiribinoDouEventsOther[];
 extern struct SceneEvent gBiribinoDouEvents3[];
 extern struct SceneEvent gBiribinoDouEvents2[];
 extern struct SceneEvent gBiribinoDouEvents1[];
-extern s16 StagedActor_DirectionSteps[];
+extern s32 StagedActor_DirectionSteps[];
 
 #endif

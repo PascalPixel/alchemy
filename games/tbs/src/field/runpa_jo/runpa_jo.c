@@ -1176,8 +1176,7 @@ void EV31_BANPEI(void)
 	MES_SET((line + 6));
 	MES_PUT(12, 0);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-	/* FAKEMATCH: Engine_PartySetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, EV31_BANPEI is 4 bytes longer */
-	((void (*)(s32, s32))Engine_PartySetFields1ceAnd1d0)((s32)&SceneId_RunpaJo2, 31);
+	Engine_PartySetFields1ceAnd1d0((s32)&SceneId_RunpaJo2, 31);
 	Battle_SetStart(3);
 	Engine_BattleFxSetWeightedResult(98, 3);
 	OBJ_POS_SET(12, 0, 0);
@@ -1522,8 +1521,7 @@ void EV20_DEMO(void)
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 		WAIT(1);
 		Battle_SetStart(3);
-		/* FAKEMATCH: Engine_PartySetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, EV20_DEMO has 23 of 2212 bytes different */
-		((void (*)(s32, s32))Engine_PartySetFields1ceAnd1d0)((s32)&SceneId_RunpaJo4, 4);
+		Engine_PartySetFields1ceAnd1d0((s32)&SceneId_RunpaJo4, 4);
 		Engine_BattleFxSetWeightedResult(98, 4);
 	}
 	else
@@ -1722,8 +1720,7 @@ void EV20_DEMO(void)
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 		WAIT(1);
 		Battle_SetStart(3);
-		/* FAKEMATCH: Engine_PartySetFields1ceAnd1d0 is called as void (*)(s32, s32); as void (*)(u16, u16), its prototype, EV20_DEMO is 2 bytes longer */
-		((void (*)(s32, s32))Engine_PartySetFields1ceAnd1d0)((s32)&SceneId_RunpaJo4, 4);
+		Engine_PartySetFields1ceAnd1d0((s32)&SceneId_RunpaJo4, 4);
 		Engine_BattleFxSetWeightedResult(98, 4);
 	}
 	EV_END();
@@ -3102,23 +3099,26 @@ void ActivateFiveActorGroupFromFlags(void)
 }
 
 // 共通ソースと field.h の宣言は const でないが、この三つの表は ROM では .rodata にある
-s16 StagedActor_DirectionSteps[] __attribute__((section(".rodata"))) = {
-	0, 16,
-	0, 16,
-	0, 16,
-	16, 0,
-	16, 0,
-	16, 0,
-	16, 0,
-	0, -16,
-	0, -16,
-	0, -16,
-	0, -16,
-	-16, 0,
-	-16, 0,
-	-16, 0,
-	-16, 0,
-	0, 16,
+// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
+
+s32 StagedActor_DirectionSteps[] __attribute__((section(".rodata"))) = {
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(16, 0),
 };
 
 u32 StagedActor_FootprintKinds[] __attribute__((section(".rodata"))) = {

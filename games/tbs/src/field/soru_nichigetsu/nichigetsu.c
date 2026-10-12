@@ -20,6 +20,7 @@
 #include "types.h"
 #include "io_reg.h"
 #include "text/msg_ids.h"
+#include "iowrite.h"
 
 extern struct EventWork *gEventWork;
 
@@ -1636,11 +1637,7 @@ void SoruNichigetsu_RunLightScene(void)
 	field[0x2a01] = 1;
 	field[0x2a02] = 1;
 	field[0x2a03] = 1;
-	/* FAKEMATCH: the do/while keeps the backdrop-colour clear ahead of the event-work load. */
-	do
-	{
-		PLTT_BACKDROP = 0;
-	} while (0);
+	Io_Write16(0, &PLTT_BACKDROP);
 	((struct EventGlobals *)&gEventWork)->event->start_transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	((struct EventGlobals *)&gEventWork)->event->transition_frames = 16;

@@ -20,10 +20,11 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
+#include "field_effect.h"
 
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
-
+	/* FAKEMATCH: forwarding inline: called directly, ConfigureAndPlaceActorFourteen has 2 instructions different (argument load order) */
 	Engine_ActorSetPosition(actor, x, y);
 }
 
@@ -32,12 +33,11 @@ static __inline__ void Scene_AdvanceStep(s32 amount)
 	gEventWork->message += amount;
 }
 
-s32 EventScript_PrepareActorRenderFlags(struct FieldActor *actor)
+s32 EventScript_PrepareActorRenderFlags(union FieldObject *object)
 {
-	actor->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
-	/* FAKEMATCH: needed to match: packed byte accesses avoid caching the sprite, preserving the 34-byte callback. Bitfield stores (priority = 3, second_priority = 3): differ 1, the second sprite load is missing; they match when the actor is read through union FieldObject. */
-	((u8 *)actor->sprite)[9] |= 0xc;
-	((u8 *)actor->sprite)[21] |= 0xc;
+	object->actor.priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	object->actor.sprite->priority = 3;
+	object->actor.sprite->second_priority = 3;
 	return 0;
 }
 

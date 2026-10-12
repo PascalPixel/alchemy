@@ -18,6 +18,7 @@
 #include "scene.h"
 #include "edition.h"
 #include "callback_scheduler.h"
+#include "call.h"
 
 s32 Runtime_BlankDisplayAndRun(void)
 {
@@ -245,12 +246,6 @@ s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale, s32 cou
 }
 
 #if !GAME_TLA
-static __inline__ void LuckyDice_Decode(void *source, void *destination)
-{
-	/* FAKEMATCH: the map-cell decodes go through this inline wrapper, so the call gets no precomputed destination pseudo and CSE keeps no register holding 0x02010000: native's four pool loads (a direct call keeps it in r5, 55) */
-	Resource_DecodeType01(source, destination);
-}
-
 void LuckyDice_Run(void)
 {
 	u16 palette[256];
@@ -336,13 +331,13 @@ void LuckyDice_Run(void)
 	Dma_Set((void *)base, (void *)0x05000000, 0x84000070, REG_DMA3);
 	Dma_Set((void *)0x05000000, palette, 0x84000080, REG_DMA3);
 	base += 0x1c0;
-	LuckyDice_Decode((void *)base, Ram_MapCellBuffer);
+	Value2(Resource_DecodeType01, base, (s32)Ram_MapCellBuffer);
 	Dma_Set(Ram_MapCellBuffer, (void *)0x06004000, 0x84002580, REG_DMA3);
 	base = (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
 	Dma_Set((void *)base, obj_palette, 0x84000080, REG_DMA3);
 	Dma_Set((void *)base, (void *)0x05000200, 0x84000080, REG_DMA3);
 	base += 0x200;
-	LuckyDice_Decode((void *)base, Ram_MapCellBuffer);
+	Value2(Resource_DecodeType01, base, (s32)Ram_MapCellBuffer);
 	Dma_Set(Ram_MapCellBuffer, (void *)0x06010000, 0x84001f00, REG_DMA3);
 	Graphics_ScaleRgb555Buffer(obj_palette, (u16 *)0x05000200, 0, 256);
 	Graphics_ScaleRgb555Buffer(palette, (u16 *)0x05000000, 0, 256);

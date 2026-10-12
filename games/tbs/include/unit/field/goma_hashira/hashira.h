@@ -26,7 +26,7 @@ u8 *SceneData_GetExtraTable(void);
 void GomaHashira_DriveActor13Idle(void);
 void FieldScene_RunActor13Departure(void);
 s32 FieldScene_SetupPillarsOnEntry(void);
-extern s16 StagedActor_DirectionSteps[];
+extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];
 extern s32 *GomaHashira_PillarScripts[];

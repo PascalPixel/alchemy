@@ -49,7 +49,7 @@ void SceneState_ConfigureRegion82_7AndApply768(void);
 void SceneState_ApplyRectsAtActors8And9(void);
 void BabiIriguchi_MatchLeaderPriority(void);
 s32 BabiIriguchi_SetupScene(void);
-extern s16 StagedActor_DirectionSteps[];
+extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];
 extern s32 gEffectScript0[];

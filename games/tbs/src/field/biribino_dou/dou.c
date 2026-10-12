@@ -452,19 +452,8 @@ struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
 	return 0;
 }
 
-struct DirectionSteps
-{
-	s32 xz[16];
-};
-
-#define DIRECTION_STEP(heading) (((struct DirectionSteps *)StagedActor_DirectionSteps)->xz[heading])
-
 void StagedActor_PushActorAhead(void)
 {
-	/* FAKEMATCH: the table is s16 pairs, read here as one word per heading
-	   (x in the high half, z in the low). The read must stay an array
-	   reference: through a plain s32 pointer cast the address is summed once
-	   into a register and 68 instructions differ. */
 	struct FieldActor *player;
 	struct FieldActor *target;
 	struct FieldActor *blocker;
@@ -476,23 +465,23 @@ void StagedActor_PushActorAhead(void)
 	player = Object_GetById(ACTOR_PARTY_LEADER);
 	heading = player->facing >> 12;
 
-	tx = (player->x.part.pixel + (DIRECTION_STEP(heading) >> 16)) >> 4;
-	tz = (player->z.part.pixel + ((DIRECTION_STEP(heading) << 16) >> 16)) >> 4;
+	tx = (player->x.part.pixel + (StagedActor_DirectionSteps[heading] >> 16)) >> 4;
+	tz = (player->z.part.pixel + ((StagedActor_DirectionSteps[heading] << 16) >> 16)) >> 4;
 	target = SceneActor_FindActorAtCell(tx, tz);
 	if (target == 0)
 		return;
 
-	tx = (target->x.part.pixel + (DIRECTION_STEP(heading) >> 16)) >> 4;
-	tz = (target->z.part.pixel + ((DIRECTION_STEP(heading) << 16) >> 16)) >> 4;
+	tx = (target->x.part.pixel + (StagedActor_DirectionSteps[heading] >> 16)) >> 4;
+	tz = (target->z.part.pixel + ((StagedActor_DirectionSteps[heading] << 16) >> 16)) >> 4;
 	blocker = SceneActor_FindActorAtCell(tx, tz);
 	if (blocker != 0)
 		return;
 
 	target->terrain_id = 2;
 
-	pos[0] = target->x.fixed + (DIRECTION_STEP(heading) & 0xffff0000);
+	pos[0] = target->x.fixed + (StagedActor_DirectionSteps[heading] & 0xffff0000);
 	pos[1] = target->y.fixed;
-	pos[2] = target->z.fixed + (DIRECTION_STEP(heading) << 16);
+	pos[2] = target->z.fixed + (StagedActor_DirectionSteps[heading] << 16);
 
 	if (Object_CheckMovementCollision(target, pos) > 0)
 		return;
@@ -696,21 +685,24 @@ struct SceneEvent gBiribinoDouEvents1[] = {
 	{ SCENE_EVENTS_END },
 };
 
-s16 StagedActor_DirectionSteps[] = {
-	0, 16,
-	0, 16,
-	0, 16,
-	16, 0,
-	16, 0,
-	16, 0,
-	16, 0,
-	0, -16,
-	0, -16,
-	0, -16,
-	0, -16,
-	-16, 0,
-	-16, 0,
-	-16, 0,
-	-16, 0,
-	0, 16,
+// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
+
+s32 StagedActor_DirectionSteps[] = {
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(16, 0),
 };

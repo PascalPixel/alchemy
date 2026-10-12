@@ -24,6 +24,7 @@
 #include "dma.h"
 #include "scene_ids.h"
 #include "io_reg.h"
+#include "iowrite.h"
 #include "irq.h"
 #include "callback_scheduler.h"
 #include "flag_ids.h"
@@ -160,14 +161,14 @@ void MapGroupTable_SelectEntry(s32 kind)
 static __inline__ s32 Vitals_Ratio(s32 value, s32 max)
 {
 	s32 ratio = (value << 14) / max;
-	s32 clamped = 0x4000;
+	s32 clamped;
 
-	if (ratio <= 0x4000)
-	{
+	if (ratio > 0x4000)
+		clamped = 0x4000;
+	else if (ratio < 0)
 		clamped = 0;
-		if (ratio >= 0)
-			clamped = ratio;
-	}
+	else
+		clamped = ratio;
 	return clamped;
 }
 
@@ -544,8 +545,7 @@ void BattleFx_SelectLocationRule(s32 use_rules)
 	}
 	work->encounter_bias = 0;
 	work->encounter_threshold = 0x100000;
-	/* FAKEMATCH: needed to match: the call leaves out the function's two arguments */
-	((void (*)(void))BattleFx_SetSpecialFromTable)();
+	BattleFx_SetSpecialFromTable();
 }
 
 //--------------------------------------------------------------------------
@@ -828,12 +828,12 @@ s16 Event_GetSpecialValue(void)
 	return gGameState.special;
 }
 
-void BattleFx_SetSpecialFromTable(s32 arg0, s32 arg1)
+void BattleFx_SetSpecialFromTable(void)
 {
 	s32	 target = gGameState.scene;
 	s32 *table = Battle_BackdropScenes;
 	s32	 entry = *table++;
-	s32	 result = arg1;
+	s32	 result; // 初期化しない：該当する行がなければ不定の値がそのまま入る
 
 	if (entry != 0 && entry != target)
 	{
@@ -5010,27 +5010,17 @@ void BattleFx_StartWindowHBlankDma(void)
 	struct DisplayTransitionState *work = gDisplayTransition;
 	u16							  *src = work->pages[work->page];
 	volatile u16				  *channel = REG_DMA0;
-	s32							   value;
-	s32							   other;
 
 	channel[5] &= 0xc5ff;
 	channel[5] &= 0x7fff;
 	(void)channel[5];
 	REG_DISPCNT |= DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
-	/* FAKEMATCH: needed to match: a do-while(0) around the WININ copy makes the reference load the value before the WININ address */
-	do
-	{
-		value = *src++;
-		REG_WININ = value;
-	} while (0);
-	value = *src++;
-	REG_WINOUT = value;
-	REG_WIN0H = *src++;
-	other = *src++;
-	REG_WIN1H = other;
-	other = 160;
-	REG_WIN0V = other;
-	REG_WIN1V = other;
+	Io_Write16(*src++, &REG_WININ);
+	Io_Write16(*src++, &REG_WINOUT);
+	Io_Write16(*src++, &REG_WIN0H);
+	Io_Write16(*src++, &REG_WIN1H);
+	Io_Write16(160, &REG_WIN0V);
+	Io_Write16(160, &REG_WIN1V);
 	Dma_Set(src, (void *)&REG_WIN0H, 0xa6600001, (volatile u32 *)channel);
 }
 
@@ -6536,8 +6526,6 @@ void BattleFx_StartFadeOverlay(void *object)
 	u32			 *work;
 	u8			 *tiles;
 	volatile u32  fill;
-	volatile u16 *blend;
-	s32			  value;
 
 	work = (u32 *)Runtime_AllocateBlock(36, 28);
 	tiles = Runtime_AllocateHeapBlock(14, 0x400);
@@ -6546,14 +6534,9 @@ void BattleFx_StartFadeOverlay(void *object)
 	VramBlock_LoadCached(94, 0x200, tiles);
 	Runtime_ReleaseHeapBlock(14);
 	Scheduler_AddOrUpdateCallback(Object_EffectSpawnCallback, 0xc80);
-	/* FAKEMATCH: needed to match: the blend values pass through an int and one register pointer so GCC builds them with mov and steps the address */
-	value = 0x3f9e;
-	blend = &REG_BLDCNT;
-	*blend = value;
-	value = 16;
-	*++blend = value;
-	value = 31;
-	*++blend = value;
+	Io_Write16(0x3f9e, &REG_BLDCNT);
+	Io_Write16(16, &REG_BLDALPHA);
+	Io_Write16(31, &REG_BLDY);
 	fill = 0;
 	Dma_Set((const void *)&fill, work, 0x85000007, REG_DMA3);
 	if (object == NULL)
@@ -9428,37 +9411,27 @@ s32 Scene_FadeColorFromWhite(s32 unused)
 	AudioCommand_PlayFar(147);
 	if (work->mode_19e == 3)
 	{
-		s32 color = 0x7fff;
-
-		do
-		{
-			/* FAKEMATCH: needed to match: the one-pass loop keeps the store before the call's arguments. */
-			*(u16 *)0x050001e6 = color;
-		} while (0);
+		Io_Write16(0x7fff, (u16 *)0x050001e6);
 		DisplayTransition_Finish(0x401, 16);
 		work->status_1c6 = 0;
 		WaitFrames(16);
 		for (i = 0; i < 16; i++)
 		{
 			c = 30 - i * 2;
-			color = (c << 10) | (c << 5) | c;
-			*(u16 *)0x050001e6 = color;
+			Io_Write16((c << 10) | (c << 5) | c, (u16 *)0x050001e6);
 			WaitFrames(1);
 		}
 	}
 	else
 	{
-		s32 color = 0x7fff;
-
-		PLTT_BACKDROP = color;
+		Io_Write16(0x7fff, &PLTT_BACKDROP);
 		DisplayTransition_Finish(0x207, 16);
 		work->status_1c6 = 0;
 		WaitFrames(16);
 		for (i = 0; i < 16; i++)
 		{
 			c = 30 - i * 2;
-			color = (c << 10) | (c << 5) | c;
-			PLTT_BACKDROP = color;
+			Io_Write16((c << 10) | (c << 5) | c, &PLTT_BACKDROP);
 			WaitFrames(1);
 		}
 	}
@@ -9833,9 +9806,7 @@ void FieldFx_StartGroundParticles(void)
 	struct GroundParticle	  *particle;
 	u32						  *words;
 	volatile u32			   fill;
-	volatile u16			  *blend;
 	u32						   i;
-	s32						   value;
 
 	/* FAKEMATCH: needed to match: reusing the cursor preserves its register */
 	work = Runtime_AllocateBlock(29, sizeof(struct GroundParticleWork));
@@ -9868,15 +9839,9 @@ void FieldFx_StartGroundParticles(void)
 		particle->timer = (i & 15) + 1;
 		particle++;
 	}
-	do
-	{
-		blend = &REG_BLDCNT;
-		value = 0x3f00;
-		*blend = value;
-		value = 0x1008;
-		*++blend = value;
-		*++blend = 0;
-	} while (0);
+	Io_Write16(0x3f00, &REG_BLDCNT);
+	Io_Write16(0x1008, &REG_BLDALPHA);
+	Io_Write16(0, &REG_BLDY);
 	Scheduler_AddOrUpdateCallback(FieldFx_UpdateGroundParticles, 0xc80);
 }
 
@@ -10053,7 +10018,6 @@ void FieldMotes_Start(void)
 	u32				 i;
 	u32				 size;
 	volatile u32	 zero;
-	volatile u16	*reg;
 
 	size = 0x410;
 	work = Runtime_AllocateBlock(29, size);
@@ -10086,18 +10050,9 @@ void FieldMotes_Start(void)
 		mote->phase = (i & 15) + 1;
 		mote++;
 	}
-	do
-	{
-		s32 v;
-		v = 0x3f00;
-		reg = &REG_BLDCNT;
-		*reg = v;
-		v = 0x1008;
-		reg++;
-		*reg = v;
-		reg++;
-		*reg = 0;
-	} while (0);
+	Io_Write16(0x3f00, &REG_BLDCNT);
+	Io_Write16(0x1008, &REG_BLDALPHA);
+	Io_Write16(0, &REG_BLDY);
 	Scheduler_AddOrUpdateCallback((s32)(FieldMotes_Update), 0xc80);
 }
 
@@ -17321,7 +17276,6 @@ markers:
 
 void Map_ShowWorldMap(s32 picture)
 {
-	/* FAKEMATCH: needed to match: one-pass loops order display-control setup and the spilled layer load. The layer load now matches as a plain statement. */
 	struct MapState			*map = WORK_SLOT(8);
 	struct EventWork		*field = Runtime_AllocateBlock(27, 0xccc);
 	struct ObjectSystemWork *menu = WORK_SLOT(HEAP_SLOT_MENU_CONTROL);
@@ -17356,13 +17310,8 @@ void Map_ShowWorldMap(s32 picture)
 	Resource_DecodeType01(graphics + 448, gMapCellBuffer);
 	Dma_Set(gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00, DMA_ENABLE32 | DMA_32BIT | (240 * 160 / 4),
 		REG_DMA3);
-	{
-		/* FAKEMATCH: needed to match: a word temporary keeps the halfword values as word constants; direct stores load them by halfword from the pool. */
-		s32 v = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) | 2;
-		REG_BG1CNT = v;
-		v = DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
-		REG_DISPCNT = v;
-	}
+	Io_Write16(BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) | 2, &REG_BG1CNT);
+	Io_Write16(DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
 	BattleFx_SetupResourcesAndWindow();
 	Scheduler_AddOrUpdateCallback(Map_UpdateWorldMapMarkers, 0xc80);
 	if (GameFlag_TestFar(284))
@@ -17373,15 +17322,7 @@ void Map_ShowWorldMap(s32 picture)
 	} while ((gKeysRepeat & (KEY_A | KEY_B)) == 0);
 	Scheduler_RemoveCallback(Map_UpdateWorldMapMarkers);
 	BattleFx_CleanupResourcesAndWindow();
-	{
-		s32 v;
-		/* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling. */
-		do
-		{
-			v = DISPCNT_OBJ_1D_MAP;
-		} while (0);
-		REG_DISPCNT = v;
-	}
+	Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
 	Map_LoadAreaGraphicsFar();
 	IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, (u16)blend, 0x20000);
 	layer = map->anim;

@@ -39,6 +39,7 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
+#include "iowrite.h"
 
 //--------------------------------------------------------------------------
 // 向く相手がいれば、その方向へ 1 回に 0x1000（22.5 度）まで向きを変える
@@ -598,13 +599,7 @@ void FieldScene_RunPaletteRampSequence(void)
 	Engine_MapCopyCellsTo(65, 53, 88, 24, 2, 2);
 	DisplayBlend_EnableRunScript();
 	SetBlendTarget(0x3f42);
-	/* FAKEMATCH: needed to match: keep the initial value/port publication boundary. SetBlendAlpha(0x100c) alone: differ 10. */
-	do
-	{
-		s32 value = 0x100c;
-
-		SetBlendAlpha(value);
-	} while (0);
+	Io_Write16(0x100c, &REG_BLDALPHA);
 	BattleFx_StartTwelveFrameBlend();
 	((struct FieldBlendWork *)WORK_SLOT(30))->loud = 1;
 	BattleFx_SetBlock30Values12Zero();

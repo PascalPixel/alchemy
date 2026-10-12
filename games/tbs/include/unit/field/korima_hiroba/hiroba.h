@@ -18,7 +18,7 @@ void SceneEffect_AdjustPaletteWindow(s32 adj);
 u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj);
 s32 SceneEffect_UpdateOrbitingParticle(struct Particle_02000c4c *record);
 void SceneEffect_InitOrbitingParticle(s32 id);
-extern s16 StagedActor_DirectionSteps[];
+extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];
 extern struct SceneEntrance KorimaHiroba_Scripts[];

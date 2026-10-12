@@ -36,6 +36,7 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
+#include "iowrite.h"
 
 enum
 {
@@ -1318,15 +1319,8 @@ void TakaraAshiba_InitializeScene2(void)
 	FieldScheduler_AddOrUpdateCallback((s32)SceneState_TriggerColumnNineteen, 0xc80);
 	FieldScheduler_AddOrUpdateCallback((s32)SceneState_TriggerColumnTen, 0xc80);
 	Engine_TaskAddCallback((s32)TakaraAshiba_RaiseTriggerOnStand, 0xc80);
-	{
-		/* FAKEMATCH: each blend value is loaded before its register address. Plain stores: differ 20; inline setters like HAIDIA_BABI's SetBlendTarget and SetBlendAlpha match. */
-		u16 value;
-
-		value = 0x3f42;
-		REG_BLDCNT = value;
-		value = 0x607;
-		REG_BLDALPHA = value;
-	}
+	Io_Write16(0x3f42, &REG_BLDCNT);
+	Io_Write16(0x607, &REG_BLDALPHA);
 }
 
 void TakaraAshiba_InitializeScene3(void)
@@ -1383,23 +1377,26 @@ void TakaraAshiba_InitializeScene3(void)
 	}
 }
 
-s16 StagedActor_DirectionSteps[] = {
-	0, 16,
-	0, 16,
-	0, 16,
-	16, 0,
-	16, 0,
-	16, 0,
-	16, 0,
-	0, -16,
-	0, -16,
-	0, -16,
-	0, -16,
-	-16, 0,
-	-16, 0,
-	-16, 0,
-	-16, 0,
-	0, 16,
+// 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
+#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
+
+s32 StagedActor_DirectionSteps[] = {
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(16, 0),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(0, 16),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(-16, 0),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(0, -16),
+	DIRECTION_STEP(16, 0),
 };
 
 u32 StagedActor_FootprintKinds[] = {

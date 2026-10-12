@@ -40,12 +40,6 @@
 
 extern u16 gBgScroll[];
 
-static __inline__ void DecodeBackground(const u8 *res)
-{
-	/* FAKEMATCH: this call boundary keeps the source in r4 and reloads the map-cell buffer after the decode; a direct call retains r5 and changes the DMA literal pool. */
-	Resource_DecodeType01(res, (void *)Ram_MapCellBuffer);
-}
-
 struct TitleWork
 {
 	u8	unknown_00[20];
@@ -297,7 +291,7 @@ void Title_LoadBackground(void)
 	res = Resource_GetTableEntry(id);
 	Dma_Set(res, (void *)0x05000000, 0x84000070, DMA3);
 	res += 0x1c0;
-	DecodeBackground(res);
+	Value2(Resource_DecodeType01, (s32)res, (s32)Ram_MapCellBuffer);
 	Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, DMA3);
 	map = (u16 *)0x06003000;
 	tile = 0x1a0;

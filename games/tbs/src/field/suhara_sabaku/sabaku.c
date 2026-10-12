@@ -28,6 +28,7 @@
 #include "edition.h"
 #include "item_ids.h"
 #include "objcmd.h"
+#include "iowrite.h"
 
 #define NULL ((void *)0)
 
@@ -646,19 +647,9 @@ s32 FieldScene_RunOpeningAuxiliarySequence(void)
 		Map_CopyCellAttributes(16, 44, 1, 1, 15, 44);
 		MapObject_SetPosition(100, 0, 0);
 		Map_CopyCellAttributes(12, 71, 1, 1, 127, 127);
-		/* FAKEMATCH: the void result is discarded; Call6 changes argument allocation. */
-		Value6(Engine_MapCopyCellAttributes, 11, 71, 1, 1, 12, 71);
-		/* FAKEMATCH: an empty scheduling barrier after the third cell copy gives the game's argument order r1, r2, r3, r0. */
-		do
-		{
-		} while (0);
+		Map_CopyCellAttributes(11, 71, 1, 1, 12, 71);
 		record = Engine_TaskRemoveCallback(EncounterPalette_Pulse);
-		{
-			/* FAKEMATCH: a forced temporary gives the game's load order. */
-			s32 shown = gSuharaSabakuShownLevel;
-
-			EncounterPalette = shown;
-		}
+		Io_Write16(gSuharaSabakuShownLevel, &EncounterPalette);
 		return record;
 	}
 }

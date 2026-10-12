@@ -31,7 +31,7 @@ void SceneEffect_SpawnObject26EveryEightFrames(void);
 s32 OverlayObject_SelectValueByFrameBit1(s32 obj);
 s32 SceneActor_CheckRegionTrigger(struct Struct288c *arg0);
 void KorimaHashi_AlternateBridgePostHeights(void);
-extern s16 StagedActor_DirectionSteps[];
+extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];
 extern s32 KorimaHashi_GeraldAction[];

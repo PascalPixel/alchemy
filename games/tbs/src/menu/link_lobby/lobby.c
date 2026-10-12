@@ -951,8 +951,8 @@ s32 LinkLobby_TalkLinkedWins(s32 actor)
 		if (*count == 0)
 		{
 			Engine_EventSetMessage((s32)MsgLobbyTellTotalWins);
-			/* FAKEMATCH: Engine_EventShowMessage is called as s32 (*)(s32, s32); as void (*)(s32, s32), its prototype, LinkLobby_TalkLinkedWins does not compile */
-			return ((s32 (*)(s32, s32))Engine_EventShowMessage)(actor, 0);
+			Engine_EventShowMessage(actor, 0);
+			goto done;
 		}
 	}
 	else
@@ -965,12 +965,12 @@ s32 LinkLobby_TalkLinkedWins(s32 actor)
 	UiWork_ClearValueNameTables();
 	UiText_DrawQuantity(*count, 5);
 	Engine_EventSetMessage(base + 1);
-	/* FAKEMATCH: Engine_EventShowMessage is called as s32 (*)(s32, s32); as void (*)(s32, s32), its prototype, LinkLobby_TalkLinkedWins does not compile */
-	return ((s32 (*)(s32, s32))Engine_EventShowMessage)(actor, 0);
+	Engine_EventShowMessage(actor, 0);
+	goto done;
 none:
 	Engine_EventSetMessage((s32)MsgLobbyTellConsecutiveWins);
-	/* FAKEMATCH: Engine_EventShowMessage is called as s32 (*)(s32, s32); as void (*)(s32, s32), its prototype, LinkLobby_TalkLinkedWins does not compile */
-	return ((s32 (*)(s32, s32))Engine_EventShowMessage)(actor, 0);
+	Engine_EventShowMessage(actor, 0);
+done:;
 }
 
 extern u8 gOptionMirror;

@@ -92,7 +92,7 @@ void FieldScene_PlaceAndPinSlots10And11(void);
 void BabiChika_RestorePlatformCells(void);
 void BabiChika_MarkActorCells(void);
 s32 FieldScene_InitializeActorGroups(void);
-extern s16 StagedActor_DirectionSteps[];
+extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];
 extern s32 gEffectScript0[];

@@ -19,7 +19,7 @@ extern struct SceneEntrance SuharaMura_Scripts[];
 extern u32 SuharaMura_Messages[];
 extern struct ScenePlacement SuharaMura_Actors[];
 extern struct ScenePlacement SuharaMura_ActorsFlag96f[];
-extern u32 SuharaMura_CellAnimationOrigins[];
+extern s16 SuharaMura_CellAnimationOrigins[][2];
 extern u16 SuharaMura_CellSteps0[];
 extern u16 SuharaMura_CellSteps1[];
 extern struct SceneEvent SuharaMura_Extras[];

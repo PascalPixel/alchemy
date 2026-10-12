@@ -500,7 +500,7 @@ SECTIONS
     "*/games/tla/src/graphics/text/tileword.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000420e8)
     "*/recon/tla/ja/rom.o"(.rom.00042154)
-    "*/recon/tla/ja/rom.o"(.rom.000421ec)
+    "*/games/tla/src/graphics/text/drawstr.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00042240)
     "*/games/tla/src/graphics/text/render.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00042328)

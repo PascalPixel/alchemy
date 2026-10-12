@@ -601,7 +601,7 @@
         "*/games/tla/src/graphics/text/tileword.o"(.text)
         "*/recon/tla/raw/08041fa4.o"(.text)
         "*/recon/tla/raw/08042010.o"(.text)
-        "*/recon/tla/raw/080420a8.o"(.text)
+        "*/games/tla/src/graphics/text/drawstr.o"(.text)
         "*/recon/tla/raw/080420fc.o"(.text)
         "*/games/tla/src/graphics/text/render.o"(.text)
         "*/recon/tla/raw/080421e4.o"(.text)

@@ -5,19 +5,15 @@ void UiText_RenderWideStringAtOffset(void *text, s32 work, s32 x, s32 y);
 
 void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3)
 {
-    s16 *buffer;
-    s16 *output;
-    u8 *input;
+    u16 *buffer = Runtime_BumpAllocateAlternatePool(0x200);
+    u16 *output = buffer;
 
-    input = text;
-    buffer = Runtime_BumpAllocateAlternatePool(0x200);
-    output = buffer;
-    if (*input != 0) {
-        do {
-            *output = (s16)*input;
-            input++;
-            output++;
-        } while (*input != 0);
+    while (*text != 0) {
+        *output = *text;
+        text++;
+        output++;
+        /* FAKEMATCH: ⚓️ steps the output before it reads the next byte. */
+        __asm__("");
     }
     *output = 0;
     UiText_RenderWideStringAtOffset(buffer, arg1, arg2, arg3);

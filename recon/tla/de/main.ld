@@ -477,7 +477,7 @@
     "*/games/tla/src/graphics/text/tileword.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00041ff8)
     "*/recon/tla/de/rom.o"(.rom.00042064)
-    "*/recon/tla/de/rom.o"(.rom.000420fc)
+    "*/games/tla/src/graphics/text/drawstr.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00042150)
     "*/games/tla/src/graphics/text/render.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00042238)

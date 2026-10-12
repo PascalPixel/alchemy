@@ -651,19 +651,9 @@ UiWork_ProcessRenderChannels:
 	.thumb_func
 UiWork_ProcessDirectWork:
 	.incbin "baserom.gba", 0x00039e64, 0x00000184
-	.section .rom.0003a016, "ax"
-	.incbin "baserom.gba", 0x0003a016, 0x00000002
-	.section .rom.0003a018, "ax"
-	.global UiWindow_DrawFrame
-	.type UiWindow_DrawFrame, %function
-	.thumb_func
-UiWindow_DrawFrame:
-	.incbin "baserom.gba", 0x0003a018, 0x0000013c
-	.global Func_0803a1c0
-	.type Func_0803a1c0, %function
-	.thumb_func
-Func_0803a1c0:
-	.incbin "baserom.gba", 0x0003a154, 0x000001f8
+	.section .rom.0003a244, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0003a244, 0x00000108
 	.section .rom.0003a3da, "ax"
 	.incbin "baserom.gba", 0x0003a3da, 0x00000002
 	.section .rom.0003a4e0, "ax"
@@ -867,18 +857,8 @@ Func_0803e998:
 	.incbin "baserom.gba", 0x0003eacc, 0x000005b0
 	.section .rom.0003f138, "ax"
 	.incbin "baserom.gba", 0x0003f138, 0x000001d0
-	.section .rom.0003f308, "ax"
-	.global Resource_LoadByMode
-	.type Resource_LoadByMode, %function
-	.thumb_func
-Resource_LoadByMode:
-	.incbin "baserom.gba", 0x0003f308, 0x00000060
-	.section .rom.0003f368, "ax"
-	.global Func_0803f234
-	.type Func_0803f234, %function
-	.thumb_func
-Func_0803f234:
-	.incbin "baserom.gba", 0x0003f368, 0x000003dc
+	.section .rom.0003f418, "ax"
+	.incbin "baserom.gba", 0x0003f418, 0x0000032c
 	.section .rom.0003f758, "ax"
 	.balign 4
 	.global UiTextResource_Initialize

@@ -2,6 +2,7 @@
 #include "scene_ids.h"
 #include "vram_tab.h"
 #include "unit/field/haidia_ie/ie.h"
+#include "unit/field/common/effect/vertical.h"
 #include "unit/field/common/object/facing.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -1374,55 +1375,8 @@ void SceneEffect_UpdateByFrameBit(s32 no)
 	}
 }
 
-void SceneEffect_AnimateVerticalPositive(struct SceneVerticalEffect *effect)
-{
-	struct VerticalEffectAnchor *anchor;
-	s32							 frame;
-	s32							 amplitude;
-	s32							 offset;
-
-	anchor = effect->anchor;
-	effect->frame++;
-	frame = (s16)effect->frame;
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease(effect);
-		return;
-	}
-	amplitude = Engine_MathSin(frame << 10);
-	effect->amplitude_x = amplitude;
-	effect->amplitude_y = amplitude;
-	effect->x = anchor->x;
-	offset = 0x10000;
-	effect->y += offset;
-	offset -= amplitude;
-	effect->z = anchor->z + (offset * 4 + offset) + 0x80000;
-}
-
-void SceneEffect_AnimateVerticalNegative(struct SceneVerticalEffect *effect)
-{
-	struct VerticalEffectAnchor *anchor;
-	s32							 frame;
-	s32							 amplitude;
-	s32							 offset;
-
-	anchor = effect->anchor;
-	effect->frame++;
-	frame = (s16)effect->frame;
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease(effect);
-		return;
-	}
-	amplitude = Engine_MathSin(frame << 10);
-	effect->amplitude_x = amplitude;
-	effect->amplitude_y = -amplitude;
-	effect->x = anchor->x;
-	offset = 0x10000;
-	effect->y += offset;
-	offset -= amplitude;
-	effect->z = anchor->z - (offset * 4 + offset) + 0x100000;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/vertical.c"
 
 void HaidiaIe_SpawnEffectPair(union PairObject *parent)
 {
@@ -1466,7 +1420,7 @@ void HaidiaIe_SpawnEffectPair(union PairObject *parent)
 		union PairObject   *p = pair[0];
 		struct FieldSprite *sp = p->object.actor.sprite;
 
-		p->object.actor.update = (void (*)(union FieldObject *))SceneEffect_AnimateVerticalNegative;
+		p->object.actor.update = (void (*)(union FieldObject *))Effect_AnimateVerticalNegative;
 		sp->priority = 2;
 	}
 	{
@@ -1474,7 +1428,7 @@ void HaidiaIe_SpawnEffectPair(union PairObject *parent)
 		struct FieldSprite *sp = p->sprite;
 
 		sp->priority = 2;
-		p->update = (void (*)(union FieldObject *))SceneEffect_AnimateVerticalPositive;
+		p->update = (void (*)(union FieldObject *))Effect_AnimateVerticalPositive;
 		p->priority_flags = 2;
 	}
 }

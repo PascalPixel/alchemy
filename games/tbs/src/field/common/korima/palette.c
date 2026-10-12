@@ -12,6 +12,43 @@
 #include "io_reg.h"
 #include "battle_effect_runtime.h"
 
+void SceneEffect_AdjustPaletteColors(s32 a)
+{
+	u16 i;
+
+	KorimaPalette_SaveFirst();
+	for (i = 0; i < 224; i++)
+	{
+		if ((i < 17 || i > 23) && (i < 193 || i > 200))
+		{
+			u16 *pal = (u16 *)(0x5000000 + i * 2);
+			*pal = SceneEffect_AdjustColorChannels(*pal, a);
+		}
+	}
+	KorimaPalette_Capture();
+	KorimaPalette_SaveSecond();
+	Engine_ColorBufferApplyTarget(0x10000, 0);
+}
+
+u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
+{
+	s16 green = ((color >> 5) & 31);
+	s16 red = (color & 31);
+	s16 blue = ((color >> 10) & 31);
+	u32 packed;
+
+	red = (red + Math_Divide(red, (adj << 2)));
+	green = (green - Math_Divide(green, adj));
+	blue = (blue - Math_Divide(blue, adj));
+
+	if (red > 31)
+		red = 31;
+
+	packed = (s32)red;
+	packed |= ((s32)blue << 10) | ((s32)green << 5);
+	return packed;
+}
+
 void KorimaPalette_SaveFirst(void)
 {
 	Dma_Set(gPaletteBufferWork->palette, KorimaPalette_First, DMA_ENABLE32 | DMA_32BIT | 0xe0,

@@ -103,54 +103,9 @@ s32 FieldScene_SetupEntryActors8To11(void)
 	FieldScene_RedrawActorFootprint(10);
 	if (Engine_GameFlagIsSet(0x845) == 0)
 	{
-		SceneEffect_AdjustPaletteWindow(11);
+		SceneEffect_AdjustPaletteColors(11);
 	}
 	return 0;
-}
-
-void SceneEffect_AdjustPaletteWindow(s32 adj)
-{
-	volatile u16 *pal = BG_PLTT;
-	u32			  phase;
-	u32			  next;
-	KorimaPalette_SaveFirst();
-	phase = 0;
-	do
-	{
-		u32 idx = phase >> 16;
-		u32 win;
-
-		if ((phase + 0xffef0000) > 0x60000)
-		{
-			win = (idx + 0xff3f) << 16;
-			if (win > 0x70000)
-				pal[idx] = SceneEffect_AdjustColorChannels(pal[idx], adj);
-		}
-		next = phase + 0x10000;
-		phase = next;
-	} while (next <= 0x00df0000);
-	KorimaPalette_Capture();
-	KorimaPalette_SaveSecond();
-	Engine_ColorBufferApplyTarget(0x10000, 0);
-}
-
-u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
-{
-	s16 green = ((color >> 5) & 31);
-	s16 red = (color & 31);
-	s16 blue = ((color >> 10) & 31);
-	u32 packed;
-
-	red = (red + Math_Divide(red, (adj << 2)));
-	green = (green - Math_Divide(green, adj));
-	blue = (blue - Math_Divide(blue, adj));
-
-	if (red > 31)
-		red = 31;
-
-	packed = (s32)red;
-	packed |= ((s32)blue << 10) | ((s32)green << 5);
-	return packed;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）

@@ -40,8 +40,6 @@ void FieldScene_RunSupplementalSequenceOne(void);
 void SceneEffect_UpdateObjectByFrameParity(union FieldObject *object);
 void OverlayObject_UpdateOnFrameParity(union FieldObject *object);
 void OverlayObject_ApplyRandomSlotOnOddFrames(union FieldObject *object);
-void SceneEffect_UpdateAnchoredRiseFrame(union FieldObject *object);
-void OverlayObject_UpdateArcFromAnchor(union FieldObject *object);
 void HaidiaBabi_SpawnEffectPair(union FieldObject *object);
 void SceneState_SetValue140Mode0(void);
 void FieldScene_RunSingleStep(void);

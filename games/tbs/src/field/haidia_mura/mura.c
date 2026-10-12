@@ -2,6 +2,7 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/haidia_mura/mura.h"
+#include "unit/field/common/effect/vertical.h"
 #include "unit/field/common/object/orbit.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/world_map/linked_effects.h"
@@ -2924,49 +2925,8 @@ void SceneEffect_UpdateObjectOnOddFramesOnly(s32 p)
 		Engine_ObjectSetPartPalettes(p, (gFrameCount >> 1) % 6);
 }
 
-void Effect_AnimateVerticalPositive(struct StagedVerticalEffect *effect)
-{
-	s32 *anchor = effect->f68;
-	s32	 frame = ++effect->f64;
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease((s32)effect);
-	}
-	else
-	{
-		s32 amplitude = Engine_MathSin(frame << 10);
-		s32 offset;
-		effect->f18 = amplitude;
-		effect->f1c = amplitude;
-		effect->f8 = anchor[2];
-		effect->fc += 0x10000;
-		offset = 0x10000 - amplitude;
-		effect->f10 = anchor[4] + offset * 5 + 0x80000;
-	}
-}
-
-void Effect_AnimateVerticalNegative(struct StagedVerticalEffect *effect)
-{
-	s32 *anchor = effect->f68;
-	s32	 frame = ++effect->f64;
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease((s32)effect);
-	}
-	else
-	{
-		s32 amplitude = Engine_MathSin(frame << 10);
-		s32 offset;
-		effect->f18 = amplitude;
-		effect->f1c = -amplitude;
-		effect->f8 = anchor[2];
-		effect->fc += 0x10000;
-		offset = 0x10000 - amplitude;
-		effect->f10 = anchor[4] - offset * 5 + 0x100000;
-	}
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/vertical.c"
 #include "../world_map/linked_effects.c"
 
 s16 StagedActor_DirectionSteps[] = {

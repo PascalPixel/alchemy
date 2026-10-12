@@ -6,6 +6,7 @@
 #include "game_state.h"
 #include "vram_tab.h"
 #include "unit/field/common/haidia_babi/babi.h"
+#include "unit/field/common/effect/vertical.h"
 #include "unit/field/common/object/facing.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -962,55 +963,8 @@ void OverlayObject_ApplyRandomSlotOnOddFrames(union FieldObject *object)
 	}
 }
 
-void SceneEffect_UpdateAnchoredRiseFrame(union FieldObject *object)
-{
-	struct FieldActor *self = &object->actor;
-	struct FieldActor *anchor;
-	s32				   frame;
-	s32				   amplitude;
-
-	anchor = &((union PairObject *)object)->link.parent->object.actor;
-	self->timer = (self->timer + 1);
-	frame = self->timer;
-
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease(self);
-		return;
-	}
-
-	amplitude = Engine_MathSin(frame << 10);
-	self->scale_x = amplitude;
-	self->scale_y = amplitude;
-	self->x.fixed = anchor->x.fixed;
-	self->y.fixed += 0x10000;
-	self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
-}
-
-void OverlayObject_UpdateArcFromAnchor(union FieldObject *object)
-{
-	struct FieldActor *obj = &object->actor;
-	struct FieldActor *anchor;
-	s32				   frame;
-	s32				   amp;
-
-	anchor = &((union PairObject *)object)->link.parent->object.actor;
-	obj->timer = (obj->timer + 1);
-	frame = obj->timer;
-
-	if (frame > 31)
-	{
-		Engine_ObjectDispatchRelease(obj);
-		return;
-	}
-
-	amp = Engine_MathSin(frame << 10);
-	obj->scale_x = amp;
-	obj->scale_y = -amp;
-	obj->x.fixed = anchor->x.fixed;
-	obj->y.fixed += 0x10000;
-	obj->z.fixed = anchor->z.fixed - (0x10000 - amp) * 5 + 0x100000;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../effect/vertical.c"
 
 void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
 {
@@ -1054,7 +1008,7 @@ void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
 		union PairObject   *p = pair[0];
 		struct FieldSprite *sp = p->object.actor.sprite;
 
-		p->object.actor.update = OverlayObject_UpdateArcFromAnchor;
+		p->object.actor.update = Effect_AnimateVerticalNegative;
 		sp->priority = 2;
 	}
 	{
@@ -1062,7 +1016,7 @@ void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
 		struct FieldSprite *sp = p->sprite;
 
 		sp->priority = 2;
-		p->update = SceneEffect_UpdateAnchoredRiseFrame;
+		p->update = Effect_AnimateVerticalPositive;
 		p->priority_flags = 2;
 	}
 }

@@ -31,7 +31,6 @@
 // implicit int declaration of a u16 function
 #endif
 
-s32 Math_DivideSigned();
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
@@ -172,44 +171,6 @@ s32 KorimaKawa_PrepareWindowTransition(void)
 		SceneEffect_AdjustPaletteColors(6);
 	}
 	return 0;
-}
-
-void SceneEffect_AdjustPaletteColors(s32 a)
-{
-	u16 i;
-
-	KorimaPalette_SaveFirst();
-	for (i = 0; i < 224; i++)
-	{
-		if ((i < 17 || i > 23) && (i < 193 || i > 200))
-		{
-			u16 *pal = (u16 *)(0x5000000 + i * 2);
-			*pal = SceneEffect_AdjustColorChannels(*pal, a);
-		}
-	}
-	KorimaPalette_Capture();
-	KorimaPalette_SaveSecond();
-	Engine_ColorBufferApplyTarget(0x10000, 0);
-}
-
-u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
-{
-
-	s16 green = ((color >> 5) & 31);
-	s16 red = (color & 31);
-	s16 blue = ((color >> 10) & 31);
-	u32 packed;
-
-	red = (red + Math_DivideSigned(red, (adj << 2)));
-	green = (green - Math_DivideSigned(green, adj));
-	blue = (blue - Math_DivideSigned(blue, adj));
-
-	if (red > 31)
-		red = 31;
-
-	packed = (s32)red;
-	packed |= ((s32)blue << 10) | ((s32)green << 5);
-	return packed;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）

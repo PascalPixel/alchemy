@@ -7,7 +7,6 @@
 struct FieldActor;
 struct Resource373Emitter;
 struct SourceEntity;
-struct StagedVerticalEffect;
 
 s32 MapStagedScene_SelectPrimaryData(void);
 s32 MapStagedScene_GetEmptyData(void);
@@ -79,8 +78,6 @@ void SceneActor_SetFlagByteBySlotZeroPosition(void);
 void OverlayObject_UpdateOnFrameBit1(s32 p);
 void SceneEffect_UpdateObjectOnOddFrames(s32 p);
 void SceneEffect_UpdateObjectOnOddFramesOnly(s32 p);
-void Effect_AnimateVerticalPositive(struct StagedVerticalEffect *effect);
-void Effect_AnimateVerticalNegative(struct StagedVerticalEffect *effect);
 extern s16 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];

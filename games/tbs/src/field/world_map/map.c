@@ -2,6 +2,7 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/world_map/map.h"
+#include "unit/field/common/effect/vertical.h"
 #include "unit/field/world_map/linked_effects.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
@@ -2443,55 +2444,8 @@ void SceneState_RunSlotStepOnOddFrames(s32 arg0)
 	}
 }
 
-void Effect_AnimateVerticalPositive(struct StoryVerticalEffectActor *effect)
-{
-	struct StoryVerticalEffectActor *anchor_actor;
-	s32								 animation_frame;
-	s32								 vertical_amplitude;
-
-	anchor_actor = effect->anchor;
-	effect->frame = (effect->frame + 1);
-	animation_frame = (s16)effect->frame;
-
-	if (animation_frame > 31)
-	{
-		Engine_ObjectDispatchRelease(effect);
-		return;
-	}
-
-	vertical_amplitude = Engine_MathSin(animation_frame << 10);
-	effect->amplitude_x = vertical_amplitude;
-	effect->amplitude_y = vertical_amplitude;
-	effect->x = anchor_actor->x;
-	effect->y += 0x10000;
-	effect->z = anchor_actor->z + (0x10000 - vertical_amplitude) * 5 + 0x80000;
-}
-
-void Effect_AnimateVerticalNegative(struct StoryVerticalEffectActor *effect)
-{
-	struct StoryVerticalEffectActor *anchor_actor;
-	s32								 animation_frame;
-	s32								 vertical_amplitude;
-
-	anchor_actor = effect->anchor;
-	effect->frame = (effect->frame + 1);
-	animation_frame = (s16)effect->frame;
-
-	if (animation_frame > 31)
-	{
-		Engine_ObjectDispatchRelease(effect);
-		return;
-	}
-
-	vertical_amplitude = Engine_MathSin(animation_frame << 10);
-	effect->amplitude_x = vertical_amplitude;
-	effect->amplitude_y = -vertical_amplitude;
-	effect->x = anchor_actor->x;
-	effect->y += 0x10000;
-	effect->z = anchor_actor->z - (0x10000 - vertical_amplitude) * 5 + 0x100000;
-}
-
 // ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/effect/vertical.c"
 #include "linked_effects.c"
 
 s32 gTransferArrive10[] = {

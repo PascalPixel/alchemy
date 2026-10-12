@@ -12,8 +12,6 @@ void SceneActor_RunPlacementQuery(void);
 void KorimaHiroba_AwardHiddenNut(void);
 u8 *SceneData_GetExtraTable(void);
 s32 FieldScene_SetupEntryActors8To11(void);
-void SceneEffect_AdjustPaletteWindow(s32 adj);
-u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj);
 extern s16 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];

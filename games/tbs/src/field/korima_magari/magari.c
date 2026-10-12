@@ -28,7 +28,6 @@
 #include "text/msg_ids.h"
 #include "field_scene.h"
 
-s32 Math_DivideSigned();
 
 u8 *KorimaMagari_GetEntrances(void)
 {
@@ -417,7 +416,7 @@ s32 KorimaMagari_SetupBoard(void)
 	actor->scale_y = 0xc000;
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	if (Engine_GameFlagIsSet(0x845) == 0)
-		Effect_AdjustPaletteColors(4);
+		SceneEffect_AdjustPaletteColors(4);
 	return 0;
 }
 
@@ -600,43 +599,6 @@ void Scene_PushBlockAlongRun(struct TileRun2 *runs)
 	Event_PlayCue(213);
 	Engine_EventWait(15);
 	Engine_EventEnd();
-}
-
-void Effect_AdjustPaletteColors(s32 amount)
-{
-	u16 i;
-
-	KorimaPalette_SaveFirst();
-	for (i = 0; i < 224; i++)
-	{
-		if ((i < 17 || i > 23) && (i < 193 || i > 200))
-		{
-			u16 *pal = (u16 *)(0x5000000 + i * 2);
-			*pal = Effect_AdjustColorChannels(*pal, amount);
-		}
-	}
-	KorimaPalette_Capture();
-	KorimaPalette_SaveSecond();
-	Engine_ColorBufferApplyTarget(0x10000, 0);
-}
-
-u16 Effect_AdjustColorChannels(u16 color, s32 adj)
-{
-	s16 green = ((color >> 5) & 31);
-	s16 red = (color & 31);
-	s16 blue = ((color >> 10) & 31);
-	u32 packed;
-
-	red = (red + Math_DivideSigned(red, (adj << 2)));
-	green = (green - Math_DivideSigned(green, adj));
-	blue = (blue - Math_DivideSigned(blue, adj));
-
-	if (red > 31)
-		red = 31;
-
-	packed = (s32)red;
-	packed |= ((s32)blue << 10) | ((s32)green << 5);
-	return packed;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）

@@ -56,7 +56,6 @@ typedef struct
 void ConfigureOverlayObject(struct FieldActor *object, s32 palette);
 void *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 type);
 void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 type);
-struct FieldActor *SceneData_FindSlotAtPosition(s32 *pos, struct FieldActor *self);
 void RunStagedActorTransition(void);
 s32 VinasuHeya_FillCellCollisionCodes(u32 no, s32 x, s32 y, u32 w, u32 h, s32 val);
 void SceneActor_ApplySlotsMatchingKind212(void);

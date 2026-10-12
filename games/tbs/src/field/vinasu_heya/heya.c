@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/vinasu_heya/heya.h"
+#include "unit/field/common/object/findslot.h"
 #include "unit/field/common/effect/advance.h"
 #include "unit/field/common/object/distance.h"
 #include "unit/field/common/effect/move.h"
@@ -421,24 +422,7 @@ extern u8 *gActorEffectWork;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/distance.c"
-
-struct FieldActor *SceneData_FindSlotAtPosition(s32 *pos, struct FieldActor *self)
-{
-	struct FieldActor **actors = gEventWork->placed_actors;
-	struct FieldActor  *actor;
-	u32					i;
-
-	for (i = 8; i <= 65; i++)
-	{
-		actor = actors[i - 8];
-		if (pos[0] >> 20 == actor->x.fixed >> 20 && pos[1] >> 20 == actor->y.fixed >> 20
-			&& pos[2] >> 20 == actor->z.fixed >> 20)
-		{
-			return actor;
-		}
-	}
-	return 0;
-}
+#include "../common/object/findslot.c"
 
 void RunStagedActorTransition(void)
 {

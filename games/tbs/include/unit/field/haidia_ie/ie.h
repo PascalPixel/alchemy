@@ -4,7 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct SceneVerticalEffect;
 union PairObject;
 
 u8 *HaidiaIe_GetEntrances(void);
@@ -47,8 +46,6 @@ void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
 void OverlayObject_UpdateOnFrameBit1(s32 obj);
 void SceneEffect_UpdateByFrameBits(s32 no);
 void SceneEffect_UpdateByFrameBit(s32 no);
-void SceneEffect_AnimateVerticalPositive(struct SceneVerticalEffect *effect);
-void SceneEffect_AnimateVerticalNegative(struct SceneVerticalEffect *effect);
 void HaidiaIe_SpawnEffectPair(union PairObject *parent);
 void SceneState_ApplyPair140And0(void);
 void HaidiaIe_CleanupSceneObjects(void);

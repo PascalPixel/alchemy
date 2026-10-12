@@ -4,6 +4,8 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/korosseo_kabe/kabe.h"
+#include "unit/field/common/korosseo/occupant.h"
+#include "unit/field/common/object/findslot.h"
 #include "unit/field/common/korosseo/solo_competitor.h"
 #include "unit/field/common/korosseo/solo_round.h"
 #include "unit/field/common/korosseo/korosseo.h"
@@ -2194,24 +2196,7 @@ void SceneState_InitControlRecordAndStartTask(s32 resource)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/scene_state.c"
-
-s32 *SceneData_FindSlotAtPosition(s32 *pos, void *self)
-{
-	s32 **slots = (s32 **)((u8 *)gEventWork + 0x14);
-	u32	  i;
-
-	for (i = 8; i <= 65; i++)
-	{
-		s32 *p = slots[i];
-
-		if ((pos[0] >> 20) == (p[2] >> 20) && (pos[1] >> 20) == (p[3] >> 20)
-			&& (pos[2] >> 20) == (p[4] >> 20))
-		{
-			return p;
-		}
-	}
-	return 0;
-}
+#include "../common/object/findslot.c"
 
 void StagedActor_PushActorAhead(void)
 {
@@ -2302,36 +2287,8 @@ void StagedActor_PushActorAhead(void)
 	Object_SetMode(subject, 1);
 }
 
-s32 *SceneActor_FindOccupantAheadOfSubject(void)
-{
-
-	struct FieldActor *record;
-	s32				   facing;
-	s32				   position[3];
-	s32				  *occupant;
-
-	record = Object_GetById(gGameState.selected_actor);
-
-	facing = (record->facing + 0x2000) & 0xc000;
-
-	position[0] = (record->x.fixed & 0xfff00000) + 0x80000;
-	position[1] = record->y.fixed;
-	position[2] = (record->z.fixed & 0xfff00000) + 0x80000;
-	Vector_AddPolarOffset(0x100000, facing, position);
-
-	occupant = SceneData_FindSlotAtPosition(position, record);
-	if (occupant == 0)
-	{
-		position[0] = (record->x.fixed & 0xfff00000) + 0x80000;
-		position[1] = record->y.fixed;
-		position[2] = (record->z.fixed & 0xfff00000) + 0x80000;
-		Vector_AddPolarOffset(0x200000, facing, position);
-
-		occupant = SceneData_FindSlotAtPosition(position, record);
-	}
-
-	return occupant;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/korosseo/occupant.c"
 
 const u8 KorosseoKabe_RollLogScript[] = {2, 2, 3, 3};
 

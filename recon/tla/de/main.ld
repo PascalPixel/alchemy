@@ -1552,6 +1552,7 @@
     "*/recon/tla/de/rom.o"(.rom.0014c992)
     "*/recon/tla/de/rom.o"(.rom.0014c994)
     "*/recon/tla/de/rom.o"(.rom.0014cb60)
+    "*/games/tla/src/battle/effect/window_edge_table.o"(.text)
     "*/games/tla/src/battle/effect/spawn_living.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.0014cca8)
     "*/games/tla/src/battle/effect/tiled_canvas_begin.o"(.text)
@@ -1666,7 +1667,7 @@
     "*/games/tla/src/battle/effect/d0198566.o"(.rodata)
     "*/recon/tla/de/rom.o"(.rom.001985a6)
     . = ABSOLUTE(0x081a0000);
-    "*/recon/tla/de/rom.o"(.rom.001a0000)
+    "*/games/tla/src/system/far_call/resource_a.o"(.text)
     "*/games/tla/src/battle/effect/sentou_kouka_sekiwa.o"(.text .rodata .data .padding)
     "*/games/tla/src/battle/effect/sentou_kouka_tenkai.o"(.text .rodata .data .padding)
     "*/games/tla/src/battle/effect/sentou_kouka_tenkai_link.o"(.text .rodata .data .padding)
@@ -1697,7 +1698,8 @@
     "*/recon/tla/de/rom.o"(.rom.001a1928)
     "*/games/tla/src/graphics/display/staffrol.o"(.rodata)
     . = ABSOLUTE(0x081a6000);
-    "*/recon/tla/de/rom.o"(.rom.001a6000)
+    "*/games/tla/src/system/far_call/resource_b.o"(.text)
+    "*/recon/tla/de/rom.o"(.rom.001a6030)
     "*/games/tla/src/graphics/display/title_wait.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.001a6154)
     "*/games/tla/src/graphics/display/title_logo_piece.o"(.text)

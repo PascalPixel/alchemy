@@ -312,5 +312,7 @@ Func_081a729c:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 	.global Data_081a7514
+	.type Data_081a7514, %function
+	.thumb_func
 Data_081a7514:
 	.4byte 0x00004770

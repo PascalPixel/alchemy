@@ -1,6 +1,6 @@
-/* Draft, differ 2 of 51 (was 4): the native reads the DMA control word back (ldrh r2) after it starts the window address (movs r1, #128; lsls r1, #19); this form reads first. A one-pass block around the window constant pins the read instead, as the constant is not emitted there. */
 #include "ram_buffer.h"
 #include "dma.h"
+
 extern u8 gMapCellBuffer[];
 
 void BattleFx_BuildWindowEdgeTable(void)
@@ -36,6 +36,8 @@ void BattleFx_BuildWindowEdgeTable(void)
         } while (0);
         channel[5] = control & 0xc5ff;
         channel[5] &= 0x7fff;
+        /* FAKEMATCH: the native stores the control word before it starts the window address (differ 2 without the barrier). */
+        __asm__("");
         (void)channel[5];
         Dma_Set(gMapCellBuffer + 0x82, (void *)0x04000040, 0xa2600001, (volatile u32 *)channel);
     }

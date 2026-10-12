@@ -43,7 +43,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_65f/push.o"(.text)
         "*/resource_65f_overlay.o"(.text.x02009490)
         "*/games/tla/src/field/overlay_65f/s22f4.o"(.text)
-        "*/resource_65f_overlay.o"(.text.x0200a694)
+        "*/games/tla/src/field/overlay_65f/s2694.o"(.text)
         "*/resource_65f_overlay.o"(.text.x0200b878)
         "*/games/tla/src/field/overlay_65f/import.o"(.text)
         "*/games/tla/src/field/overlay_65f/data.o"(.data)

@@ -5,6 +5,7 @@
 #include "battle_effect_work.h"
 #include "battle_efx.h"
 #include "unit/battle/effect/effect.h"
+#include "unit/battle/effect/effect4.h"
 #include "unit/battle/effect/effect5.h"
 
 struct BattleEffectArgument;

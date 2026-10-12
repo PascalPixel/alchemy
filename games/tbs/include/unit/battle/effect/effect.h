@@ -60,21 +60,6 @@ void BattleFx_RunTwoResourceMode0(struct BattleEffectArgument *efx);
 void BattleFx_RunTwoResourceMode1(struct BattleEffectArgument *efx);
 void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode);
 void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx);
-void BattleEffect_WipeCanvas(s32 mode, s32 value);
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_FlushPendingGraphicsTransfer(void);
-void Graphics_ApplyWindowBlendRegisters(void);
-void Display_ApplyBg2Reference(void);
-void Palette_StepFadeTransfer(void);
-void BattleFx_ClearActorTimers(void);
-void ObjectGroup_TickMemberTimers(void);
-void BattleFx_BeginCanvasLayer(s32 bg_control);
-void BattleFx_OpenCanvasLayer(s32 bg_control);
-void BattleFx_BeginTiledCanvas(s32 bg_control);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_SetTransitionFlagAndDisplay(void);
-void BattleFx_SetupCanvasTileMap(void);
-void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 
 // 粒の置き場：Ram_MapCellBuffer を struct EffectStep の並びとして使う
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)

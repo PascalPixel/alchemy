@@ -2,7 +2,7 @@
 #include "global_cells.h"
 #include "scene_ids.h"
 #include "unit/import.h"
-#include "unit/field/babi_iriguchi/iriguchi.h"
+#include "unit/scene/babi_iriguchi.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
@@ -57,12 +57,12 @@ static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/staged_actor.c"
+#include "../field/common/object/staged_actor.c"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/create.c"
-#include "../common/effect/move.c"
-#include "../common/effect/spawn.c"
+#include "../field/common/effect/create.c"
+#include "../field/common/effect/move.c"
+#include "../field/common/effect/spawn.c"
 
 static void EV08_TALK(void)
 {
@@ -70,8 +70,8 @@ static void EV08_TALK(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/waitidle.c"
-#include "../common/effect/advance.c"
+#include "../field/common/object/waitidle.c"
+#include "../field/common/effect/advance.c"
 
 static void FieldScene_RunSupplementalSequenceOne(void)
 {

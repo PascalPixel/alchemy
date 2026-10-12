@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "global_cells.h"
 #include "unit/import.h"
-#include "unit/field/babi_chika/chika.h"
+#include "unit/scene/babi_chika.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
@@ -56,12 +56,12 @@ struct Vec
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/staged_actor.c"
+#include "../field/common/object/staged_actor.c"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/create.c"
-#include "../common/effect/move.c"
-#include "../common/effect/spawn.c"
+#include "../field/common/effect/create.c"
+#include "../field/common/effect/move.c"
+#include "../field/common/effect/spawn.c"
 
 static s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 {
@@ -184,7 +184,7 @@ static void BabiChika_UpdateTrackedActor(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/object/depth.c"
+#include "../field/common/object/depth.c"
 
 static s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object)
 {
@@ -256,7 +256,7 @@ static void SceneActor_WaitValueBelowLimit(struct FieldActor *track)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/advance.c"
+#include "../field/common/effect/advance.c"
 
 static void BabiChika_RunLeaderSpray(void)
 {
@@ -302,7 +302,7 @@ static void BabiChika_RunLeaderSpray(void)
 #define ACTOR_UPDATE_PANEL ((void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../common/effect/radial.c"
+#include "../field/common/effect/radial.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

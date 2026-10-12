@@ -429,21 +429,21 @@ main	rom_tail_02	@games/tbs/src/system/resource/directory
 3c0	unit	games/tbs/src/scene/suhara_sabaku
 3c0	bss	games/tbs/src/scene/suhara_sabaku	.bss
 3c1	unit	games/tbs/src/scene/suhara_mura
-3c2	unit	games/tbs/src/field/suhara_heya/heya
-3c3	unit	games/tbs/src/field/suhara_gate/gate
-3c4	unit	games/tbs/src/field/babi_chika/chika
+3c2	unit	games/tbs/src/scene/suhara_heya
+3c3	unit	games/tbs/src/scene/suhara_gate
+3c4	unit	games/tbs/src/scene/babi_chika
 3c4	text	libgcc.a:_call_via_rX
-3c5	unit	games/tbs/src/field/babi_iriguchi/iriguchi
+3c5	unit	games/tbs/src/scene/babi_iriguchi
 3c5	text	libgcc.a:_call_via_rX
-3c6	unit	games/tbs/src/field/raribero_machi/machi
-3c7	unit	games/tbs/src/field/raribero_heya/heya
-3c8	unit	games/tbs/src/field/vinasu_heya/heya
+3c6	unit	games/tbs/src/scene/raribero_machi
+3c7	unit	games/tbs/src/scene/raribero_heya
+3c8	unit	games/tbs/src/scene/vinasu_heya
 3c8	text	libgcc.a:_call_via_rX
-3c9	unit	games/tbs/src/field/vinasu_chojo/chojo
+3c9	unit	games/tbs/src/scene/vinasu_chojo
 3c9	text	libgcc.a:_call_via_rX
-3c9	bss	games/tbs/src/field/vinasu_chojo/chojo	.bss
-3ca	unit	games/tbs/src/field/babi_fune/fune
-3ca	bss	games/tbs/src/field/babi_fune/fune	.bss
+3c9	bss	games/tbs/src/scene/vinasu_chojo	.bss
+3ca	unit	games/tbs/src/scene/babi_fune
+3ca	bss	games/tbs/src/scene/babi_fune	.bss
 3cb	unit	games/tbs/src/menu/link_lobby/lobby
 3cb	text	libgcc.a:_call_via_rX
 3cb	bss	games/tbs/src/menu/link_lobby/lobby	.bss

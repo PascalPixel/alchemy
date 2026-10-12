@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_FIELD_BABI_CHIKA_CHIKA_H
-#define ALCHEMY_UNIT_FIELD_BABI_CHIKA_CHIKA_H
+#ifndef ALCHEMY_UNIT_SCENE_BABI_CHIKA_H
+#define ALCHEMY_UNIT_SCENE_BABI_CHIKA_H
 
 #include "types.h"
 #include "field_scene.h"

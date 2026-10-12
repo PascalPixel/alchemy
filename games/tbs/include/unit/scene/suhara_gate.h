@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_FIELD_SUHARA_GATE_GATE_H
-#define ALCHEMY_UNIT_FIELD_SUHARA_GATE_GATE_H
+#ifndef ALCHEMY_UNIT_SCENE_SUHARA_GATE_H
+#define ALCHEMY_UNIT_SCENE_SUHARA_GATE_H
 
 #include "types.h"
 #include "field_scene.h"

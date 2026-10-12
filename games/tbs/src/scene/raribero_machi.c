@@ -1,5 +1,5 @@
 #include "game_state.h"
-#include "unit/field/raribero_machi/machi.h"
+#include "unit/scene/raribero_machi.h"
 #include "unit/battle/effect/object.h"
 #include "unit/battle/effect/objtable.h"
 #include "unit/battle/effect/sparkle.h"

@@ -888,8 +888,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000db472)
     "*/recon/tla/ja/rom.o"(.rom.000db474)
     "*/recon/tla/ja/rom.o"(.rom.000db62c)
-    "*/recon/tla/ja/rom.o"(.rom.000db804)
-    "*/recon/tla/ja/rom.o"(.rom.000db840)
     "*/games/tla/src/battle/effect/polar_target.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000db962)
     "*/games/tla/src/battle/effect/depth.o"(.text)

@@ -100,7 +100,7 @@ Func_080fd000:
 	lsls r3, r3, #1
 	mov r11, r0
 	ldrh r0, [r3, r2]
-	bl Func_080fd294
+	bl PsynergyMenu_RefreshOwnerPsynergy
 	ldr r3, [sp, #20]
 	mov r2, r8
 	lsls r3, r3, #1

@@ -1,7 +1,3 @@
-/* Near miss, differ 4 of 17: the native loads the table address after the id
-   is scaled by 4 and before the add (lsls r0, r2, #2; ldr r3; adds r0, r0,
-   r2); with the table in a local the load moves above the compare, without it
-   below the add. */
 #include "types.h"
 
 struct ResourceMetadataRecord {

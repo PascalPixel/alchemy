@@ -16523,7 +16523,7 @@ msgctxt "message"
 msgid "04128"
 msgstr "{button_icon:3}:Which Psynergy?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyMenuEmpty"
 msgid "04129"
 msgstr "No usable Psynergy."
 

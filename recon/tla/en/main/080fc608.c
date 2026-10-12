@@ -1,14 +1,29 @@
-extern u8 Data_03001f2c[];
+#include "types.h"
+#include "ram_buffer.h"
 
-#if defined(TBS_EDITION_JA)
-#define PAGE_X  120
-#define ENTRY_X 32
-#else
+struct MenuResult {
+    s32 owner_state;
+    s32 unknown_04;
+    s32 page;
+    s32 page_count;
+    s32 row;
+    s32 entry_count;
+    s32 selected_index;
+};
+
+struct InventoryMenuState {
+    u8 unknown_000[0x24];
+    s32 item_window;
+    u8 unknown_028[8];
+    s32 info_window;
+    u8 unknown_034[0x190];
+    u16 items[32];
+};
+
 #define PAGE_X  116
 #define ENTRY_X 24
-#endif
 
-extern u8 MsgItemName;
+extern char MsgItemName[];
 
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height, s32 style);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
@@ -16,20 +31,15 @@ void RenderOutput_RedrawSavedRectFar(s32 window);
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);
 void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y);
 
-s32 ItemMenu_DrawNamePage(
-    s32 window,
-    s32 unused,
-    const struct MenuResult *state)
+// どうぐ一覧の 1 ページ（5 行）の名前を描く
+s32 ItemMenu_DrawNamePage(s32 window, s32 unused, const struct MenuResult *state)
 {
-    struct InventoryMenuState *menu =
-        *(struct InventoryMenuState **)((u32)&Data_03001f2c);
+    struct InventoryMenuState *menu = Ram_HeapSlots->menu_runtime;
     u32 page;
     u32 first_entry;
     u32 visible_count;
     u8 row;
     const u16 *item_id;
-
-    (void)unused;
 
     RenderOutput_RedrawSavedRectFar(window);
     UiWindow_DrawDividerLineFar(window, 0, 11, 16, 11);
@@ -49,11 +59,10 @@ s32 ItemMenu_DrawNamePage(
         item_id = &menu->items[first_entry];
         do {
             UiText_DrawCharacterAtOffsetFar(
-                (item_id[0] & 0x1ff) + (s32)&MsgItemName,
+                (item_id[0] & 0x1ff) + (s32)MsgItemName,
                 menu->item_window,
                 ENTRY_X,
-                row * 16 + 8
-            );
+                row * 16 + 8);
             row++;
             item_id++;
         } while (visible_count > row);

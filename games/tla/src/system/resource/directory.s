@@ -518,8 +518,8 @@ Resource_DirectoryTable:
 	resource , Resource_Data1F9
 	resource UiIconTiles, Resource_Data1FA
 	resource , Resource_Data1FB
-	resource , Resource_Data1FC
-	resource , Resource_Data1FD
+	resource MenuSmallDownArrowTiles, Resource_Data1FC
+	resource MenuArrowTiles, Resource_Data1FD
 	resource , Resource_Data1FE
 	resource , Resource_Data1FF
 	resource ItemMenuTilesA, Resource_Data200

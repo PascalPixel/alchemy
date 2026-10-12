@@ -284,12 +284,6 @@ Flash_ChipAtmelLayout:
 	.incbin "baserom.gba", 0x000212d8, 0x0000042c
 	.section .rom.00021824, "ax"
 	.incbin "baserom.gba", 0x00021824, 0x000000f4
-	.section .rom.00021918, "ax"
-	.global Resource_GetMetadataRecordFar
-	.type Resource_GetMetadataRecordFar, %function
-	.thumb_func
-Resource_GetMetadataRecordFar:
-	.incbin "baserom.gba", 0x00021918, 0x00000028
 	.section .rom.000219cc, "ax"
 	.balign 4
 	.global Func_080219cc
@@ -3746,7 +3740,12 @@ Func_080f94a4:
 	.balign 4
 	.incbin "baserom.gba", 0x000fa7a8, 0x00000430
 	.section .rom.000fac0e, "ax"
-	.incbin "baserom.gba", 0x000fac0e, 0x000000fa
+	.incbin "baserom.gba", 0x000fac0e, 0x00000046
+	.global Func_080fad1c
+	.type Func_080fad1c, %function
+	.thumb_func
+Func_080fad1c:
+	.incbin "baserom.gba", 0x000fac54, 0x000000b4
 	.global ItemMenu_DrawIcons
 	.type ItemMenu_DrawIcons, %function
 	.thumb_func
@@ -3768,15 +3767,29 @@ Func_080fb8b8:
 	.incbin "baserom.gba", 0x000fb7d8, 0x00000500
 	.section .rom.000fbe10, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x000fbe10, 0x00000c6c
+	.incbin "baserom.gba", 0x000fbe10, 0x00000634
+	.section .rom.000fc51c, "ax"
+	.incbin "baserom.gba", 0x000fc51c, 0x00000560
 	.section .rom.000fca7c, "ax"
 	.global Func_080fcab8
 	.type Func_080fcab8, %function
 	.thumb_func
 Func_080fcab8:
-	.incbin "baserom.gba", 0x000fca7c, 0x00000a70
+	.incbin "baserom.gba", 0x000fca7c, 0x000007d8
+	.section .rom.000fd2a8, "ax"
+	.incbin "baserom.gba", 0x000fd2a8, 0x00000244
 	.section .rom.000fd51c, "ax"
-	.incbin "baserom.gba", 0x000fd51c, 0x00000c7c
+	.incbin "baserom.gba", 0x000fd51c, 0x000001c8
+	.global Func_080fd6b0
+	.type Func_080fd6b0, %function
+	.thumb_func
+Func_080fd6b0:
+	.incbin "baserom.gba", 0x000fd6e4, 0x00000040
+	.global Func_080fd6f0
+	.type Func_080fd6f0, %function
+	.thumb_func
+Func_080fd6f0:
+	.incbin "baserom.gba", 0x000fd724, 0x00000a74
 	.section .rom.000fe1b8, "ax"
 	.global Func_080fe184
 	.type Func_080fe184, %function

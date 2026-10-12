@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "unit/field/torebi_heya/heya.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object18.h"
 #include "torebi.h"
 #include "call.h"
 #include "field_event.h"

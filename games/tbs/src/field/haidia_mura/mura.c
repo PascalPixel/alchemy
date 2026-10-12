@@ -4,6 +4,7 @@
 #include "unit/field/haidia_mura/mura.h"
 #include "unit/field/world_map/linked_effects.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object18.h"
 #include "unit/field/common/script/field.h"
 #include "unit/field/common/script/field2.h"
 #include "unit/field/common/script/field3.h"

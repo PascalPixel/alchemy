@@ -436,11 +436,5 @@ void EffectSlot_SetObjectMode(struct EffectSlot *effect, s32 mode);
 void EffectSlot_SetCallback(struct EffectSlot *effect, EffectCallback callback);
 void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z);
 void BattleFx_ClearOwnedSlot(struct EffectSlot *slot);
-void BattleFx_SetupResourcesAndWindow(void);
-void BattleFx_CleanupResourcesAndWindow(void);
-void Map_UpdateWorldMapMarkers(void);
-void Map_ShowWorldMap(s32 picture);
-void BattleFx_UpdateObjectVisibilityBounds(void);
-void BattleFx_RunVisibilityTransition(void);
 
 #endif

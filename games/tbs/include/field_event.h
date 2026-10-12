@@ -2,6 +2,7 @@
 #define ALCHEMY_FIELD_EVENT_H
 
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object18.h"
 #include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime3.h"
 #include "unit/system/scheduler/runtime4.h"

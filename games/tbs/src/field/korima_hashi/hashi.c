@@ -4,6 +4,7 @@
 #include "unit/field/korima_hashi/hashi.h"
 #include "unit/field/korima_hashi/falling_effect.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object18.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

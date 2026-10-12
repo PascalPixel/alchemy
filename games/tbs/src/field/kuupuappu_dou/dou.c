@@ -3,6 +3,7 @@
 #include "unit/import.h"
 #include "unit/field/kuupuappu_dou/dou.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object18.h"
 #include "unit/system/scheduler/runtime.h"
 #include "unit/system/scheduler/runtime3.h"
 #include "unit/system/scheduler/runtime4.h"

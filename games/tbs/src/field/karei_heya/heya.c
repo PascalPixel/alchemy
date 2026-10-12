@@ -2,6 +2,7 @@
 #include "scene_ids.h"
 #include "unit/field/karei_heya/heya.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object18.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

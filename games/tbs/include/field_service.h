@@ -2,6 +2,7 @@
 #define FIELD_SERVICE_H
 
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object18.h"
 #include "unit/field/common/script/field.h"
 #include "unit/field/common/script/field2.h"
 #include "unit/field/common/script/field3.h"

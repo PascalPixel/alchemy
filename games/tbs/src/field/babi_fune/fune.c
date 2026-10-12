@@ -3,6 +3,7 @@
 #include "unit/field/babi_fune/fune.h"
 #include "unit/graphics/display/scroll_initialize_hblank_dma.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object18.h"
 #include "unit/field/common/script/field.h"
 #include "unit/field/common/script/field2.h"
 #include "unit/field/common/script/field3.h"

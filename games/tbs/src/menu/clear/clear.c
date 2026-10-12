@@ -1,6 +1,7 @@
 #include "scene_ids.h"
 #include "unit/menu/clear/clear.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object18.h"
 #include "unit/game/character/chara.h"
 #include "unit/game/character/chara2.h"
 #include "unit/game/character/chara3.h"

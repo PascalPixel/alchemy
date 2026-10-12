@@ -3,6 +3,7 @@
 #include "unit/field/kuupuappu_mura/mura.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object18.h"
 #include "unit/battle/battle.h"
 #include "unit/battle/battle2.h"
 #include "unit/battle/battle3.h"

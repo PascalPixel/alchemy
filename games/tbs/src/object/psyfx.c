@@ -1034,14 +1034,6 @@ void FieldEffect_WatchLeaderDistance(void)
 // markers.c
 // 戦闘エフェクト 8 番：選択中のオブジェクトを中心に画面を切りかえ、印を出す
 //--------------------------------------------------------------------------
-// gEventWork から並ぶワークのポインタ
-struct EffectGlobals
-{
-	struct FieldWork			  *scene; // イベントのワーク
-	u8							   unknown_04[12];
-	struct DisplayTransitionState *work; // 画面切りかえのワーク
-};
-
 //--------------------------------------------------------------------------
 // 戦闘エフェクト 8 番
 // 選択中のオブジェクトの位置を中心に画面切りかえを始め、
@@ -1056,10 +1048,10 @@ void RunBattleEffect08(void)
 	s32							   ev;
 	s32							   frame;
 
-	scene = ((struct EffectGlobals *)&gEventWork)->scene;
+	scene = WORK_SLOT(HEAP_SLOT_EVENT);
 	ObjectDispatch_ApplyValueToKind200Children(6);
 	DisplayTransition_InitializeBattleEffectState(8);
-	work = ((struct EffectGlobals *)&gEventWork)->work;
+	work = WORK_SLOT(HEAP_SLOT_TRANSITION);
 	target = ObjectTable_Get(gGameState.selected_actor);
 	work->centre_x = target->x.fixed;
 	work->centre_y = target->z.fixed - target->y.fixed;

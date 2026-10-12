@@ -1,3 +1,8 @@
+/* Draft, differ 76 of 76: the logic is right. The native keeps the table in r6 and the index in r7
+ * and reads the count twice, signed for the first test and unsigned into r2 for the loop-end test
+ * (ldrsh r3, [r6, r1]; ldrh r2, [r6, #10]; ... lsls r3, r2, #16; asrs r3, r3, #16); this form
+ * keeps the table in r7, the index in r6 and the count in ip. An s16 count local is differ 47, an
+ * s16 index 68. Overlay 69a has the same function at 0200189c. */
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"

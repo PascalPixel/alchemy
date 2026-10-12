@@ -141,6 +141,7 @@ main	rom_main_04	games/tbs/src/field/scenes
 main	rom_main_04	games/tbs/src/field/common/object/scripts
 main	rom_main_05	games/tbs/src/system/far_call/MENU
 main	rom_main_05	games/tbs/src/menu/item/menu
+main	rom_main_05	games/tbs/src/menu/item/menu4
 main	rom_main_05	games/tbs/src/menu/item/menu5
 main	rom_main_05	games/tbs/src/menu/item/menu6
 main	rom_main_05	games/tbs/src/menu/item/menu7

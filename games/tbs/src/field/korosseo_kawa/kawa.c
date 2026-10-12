@@ -29,6 +29,7 @@
 #include "unit/game/character/chara8.h"
 #include "unit/graphics/window/window.h"
 #include "unit/menu/item/menu.h"
+#include "unit/menu/item/menu4.h"
 #include "unit/menu/item/menu5.h"
 #include "unit/menu/item/menu6.h"
 #include "unit/menu/item/menu7.h"

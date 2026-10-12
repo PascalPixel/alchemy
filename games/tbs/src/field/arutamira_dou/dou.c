@@ -35,7 +35,6 @@
 #include "effect_slot.h"
 #include "item_ids.h"
 #include "objcmd.h"
-#include "ram_buffer.h"
 #include "frame.h"
 
 // 前方宣言
@@ -693,8 +692,6 @@ static void ArutamiraDou_TurnRock(s32 action)
 	}
 }
 
-extern u8 gDisplayTransition[];
-
 s32 Math_DivideUnsigned(s32 value, s32 divisor);
 
 static void FieldScene_RunExtendedActorPresentation(void)
@@ -1018,7 +1015,7 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Event_OpenMessage(9, 0);
 	Engine_EventSetMessage((s32)MsgArutamiraBabi);
 	Engine_EventChooseYesNo(0, 0);
-	display = *(u8 **)gDisplayTransition;
+	display = (u8 *)gDisplayTransition;
 	{
 		u16 *slot = (u16 *)(display + 0x52a);
 		s32	 value = 32;

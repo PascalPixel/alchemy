@@ -39,7 +39,6 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 #include "fieldobj.h"
-#include "ram_buffer.h"
 #include "frame.h"
 
 // 前方宣言

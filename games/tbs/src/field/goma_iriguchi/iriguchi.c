@@ -23,7 +23,7 @@
 #include "inventory.h"
 #include "text/msg_ids.h"
 #include "objcmd.h"
-#include "ram_buffer.h"
+#include "global_cells.h"
 
 // 前方宣言
 static void GomaIriguchi_SetEntranceFlag(void);

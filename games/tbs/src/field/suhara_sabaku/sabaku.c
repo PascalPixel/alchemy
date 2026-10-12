@@ -29,7 +29,6 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "iowrite.h"
-#include "ram_buffer.h"
 
 // 前方宣言
 static void SuharaSabaku_ApplyVisitFlagBlend(void);

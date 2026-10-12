@@ -27,8 +27,6 @@
 // 前方宣言
 static void ToretoEda_StartBg3Split(void);
 
-extern u8				 gDisplayTransition[];
-
 struct SceneObject
 {
 	u8	unknown_00[8];
@@ -158,7 +156,7 @@ static void EV00_PSYNERGY(void)
 	REG_BLDCNT = 0x3f42;
 	REG_BLDALPHA = 0x0c04;
 
-	disp = *(u8 **)gDisplayTransition;
+	disp = (u8 *)gDisplayTransition;
 	{
 		u16 *slot = (u16 *)(disp + 0x534);
 		int	 value = 0x3f3f;

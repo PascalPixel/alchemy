@@ -34,7 +34,7 @@
 #include "irqlock.h"
 #include "field_scene.h"
 #include "frame.h"
-#include "ram_buffer.h"
+#include "global_cells.h"
 
 #define PEER_TAG(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 
@@ -73,8 +73,6 @@ struct LinkPeer
 {
 	s32 values[6];
 };
-
-extern struct LinkPeer gLinkPeerSignatures[2];
 
 static s32 gLinkLobbyWaitFrames;
 
@@ -139,7 +137,7 @@ static s32 LinkLobby_PeerSlotMatches(s32 slot)
 		else
 			Engine_GameFlagClear(0x302);
 		{
-			struct LinkPeer *row = &gLinkPeerSignatures[Engine_GameFlagIsSet(0x302) ^ 1];
+			struct LinkPeer *row = (struct LinkPeer *)gLinkPeerSignatures[Engine_GameFlagIsSet(0x302) ^ 1];
 
 			if (row->values[LinkLobby_SlotColumns[slot]] == *expected)
 				return 1;
@@ -599,8 +597,6 @@ done:
 	return result;
 }
 
-extern u8 gMapCellBuffer[];
-
 static s32 LinkLobby_ExchangePartyRecords(void)
 {
 	s32 result;
@@ -781,7 +777,7 @@ static s32 EV10_TOUCH(void)
 		tbl[3] = 0x43;
 		i = 0;
 		src = buf;
-		dst = gMapCellBuffer + 0x8000;
+		dst = (u8 *)gMapCellBuffer + 0x8000;
 		do
 		{
 			i++;

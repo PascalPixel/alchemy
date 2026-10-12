@@ -45,6 +45,8 @@ struct ObjectRuntime
 	u8					  unknown_6c[0x04];
 };
 
+extern struct ObjectRuntime gObjectSnapshots[32];
+
 typedef char ObjectRuntime_size[sizeof(struct ObjectRuntime) == 0x70 ? 1 : -1];
 
 typedef char ObjectRuntime_arrival_axis_offset

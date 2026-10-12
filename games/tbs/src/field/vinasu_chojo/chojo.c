@@ -8,7 +8,6 @@
 #include "unit/game/character/chara.h"
 #include "unit/graphics/window/window.h"
 #include "unit/system/scheduler/runtime.h"
-#include "ram_buffer.h"
 
 #define NULL ((void *)0)
 #include "fieldobj.h"

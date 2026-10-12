@@ -43,6 +43,7 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "fieldobj.h"
+#include "heap_state.h"
 
 // 前方宣言
 static void FieldScene_RunMultiPhaseActorSequence(s32 a0);

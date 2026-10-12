@@ -19,8 +19,6 @@
 #include "field_event.h"
 #include "types.h"
 
-extern u8 gMapCellBuffer[];
-
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 extern s32 StagedActor_DirectionSteps[];
 extern s32 StagedActor_FootprintBounds[];

@@ -30,7 +30,6 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
-#include "ram_buffer.h"
 
 // 前方宣言
 static void FieldScene_RunPrimaryScriptChoreography(void);

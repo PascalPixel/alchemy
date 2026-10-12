@@ -896,8 +896,6 @@ u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source)
 // バトル：通信対戦の合図あわせ
 //--------------------------------------------------------------------------
 
-extern u16 gLinkPeerSignatures[][12];
-
 //--------------------------------------------------------------------------
 // 通信対戦なら、相手と "EXEC" の合図をそろえる
 // 30 フレームのうちにそろえば 0、通信が切れたりそろわなければ -1
@@ -1115,7 +1113,6 @@ s32 Battle_ClearSerialTransferPayload(void)
 	{                            \
 		gBattleRandomSeed = 0;   \
 	} while (0)
-extern u8 gActorSpriteSlots[];
 
 s32 Battle_RunEncounter(s32 enemy_group)
 {
@@ -3733,8 +3730,6 @@ s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
 
 	return (s16)living_units[(Random16() * living_count) >> 0x10];
 }
-
-extern s32		   *gDisp; // 切り替えのタイマー（ワークのスロット 42）
 
 void Palette_UpdatePulseBrightness(void)
 {

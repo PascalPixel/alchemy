@@ -1312,8 +1312,6 @@ void BattleEffect_ClearAllObjects(void)
 		Event_SpawnObjectTable(table, ObjectTable_FindLastActiveId());
 }
 
-extern struct ObjectRuntime gObjectSnapshots[32];
-
 void ObjectTable_ClearBattleSlots(void)
 {
 	s32 *current;
@@ -1448,8 +1446,6 @@ void ObjectTable_Restore(void)
 }
 
 #define REGION_FIXED(value) ((s32)((u32)(s32)(value) << 16))
-
-extern u8 gMapCellBuffer[];
 
 struct StepOwner
 {
@@ -4399,8 +4395,6 @@ struct MapEventEntry
 	s16 flag;
 	s32 position;
 };
-
-extern struct DisplayTransitionState *gDisplayTransition;
 
 //--------------------------------------------------------------------------
 // 操作キャラが印のマスの中心から 16 ドット以内にいれば、
@@ -9430,8 +9424,6 @@ void DisplayScroll_DisarmHBlankDma(void)
 	dma0[5] = 0x7FFF & dma0[5];
 	(void)dma0[5];
 }
-
-extern void *gFieldBlendWork[];
 
 struct GroundParticle
 {

@@ -43,8 +43,4 @@
 
 #define Ram_SceneMapStateOffset FIXED_OFFSET(0xc, gFieldBlendWork, gEventWork)
 
-// RAM の名前：置き場はリンカが決め、上の固定アドレスと照らし合わせる
-extern void *gEffectWork; // ワークのスロット 56：場面ごとに別の構造体を指す
-extern volatile u16 gLinkStatus;
-
 #endif

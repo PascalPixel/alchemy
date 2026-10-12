@@ -26,6 +26,7 @@
 #include "irq.h"
 #include "text/msg_ids.h"
 #include "field_scene.h"
+#include "map_scroll.h"
 
 // 前方宣言
 struct IcePlacement;
@@ -71,8 +72,6 @@ static void EV10_TOUCH(void)
 	Field_TryJumpForward();
 }
 
-extern u8 gBgScroll[];
-
 struct IcePlacement
 {
 	s16				   type;
@@ -81,8 +80,6 @@ struct IcePlacement
 	s16				   turned;
 	struct FieldActor *actor;
 };
-
-extern struct MapCell gMapCellBuffer[];
 
 struct TileRun2
 {
@@ -189,7 +186,7 @@ static void State_UpdateScrollRegistersWithPreset(void)
 	volatile u32 *destination;
 
 	line = REG_VCOUNT;
-	source = (u32 *)(gBgScroll + 4);
+	source = (u32 *)((u8 *)gBgScroll + 4);
 	destination = (volatile u32 *)0x04000014;
 
 	if (line == 227 || line <= 52)
@@ -212,7 +209,7 @@ static void KorimaMagari_CaptureShakeScroll(void)
 	const u32 *src;
 	u16		  *p;
 
-	src = (const u32 *)(gBgScroll + 4);
+	src = (const u32 *)((u8 *)gBgScroll + 4);
 	dst = KorimaMagari_ShakeScroll;
 	*dst++ = *src++;
 	*dst++ = *src++;
@@ -508,7 +505,7 @@ static s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode)
 
 	for (i = 0; i <= 3; i++)
 	{
-		struct MapCell *cell = &gMapCellBuffer[x + (z << 7)];
+		struct MapCell *cell = &((struct MapCell *)gMapCellBuffer)[x + (z << 7)];
 
 		if (cell->collision_code == 0xff
 			|| *(u8 *)((cell->attribute_b << 2) + (s32)gMapCollision) != 0)

@@ -1537,8 +1537,6 @@ void AudioTrack_CopyBufferedBytes(u8 *destination)
 	}
 }
 
-extern u8 gMapCellBuffer[];
-
 #define WINDOW_MASK 0x3ff
 #define MATCH_MAX 272
 #define DIST_MAX 63

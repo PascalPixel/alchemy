@@ -51,8 +51,6 @@
 #include "fixed_point_position.h"
 #include "irq.h"
 
-extern struct EffectStep gMapCellBuffer[];
-
 // 粒の置き場：Ram_MapCellBuffer を struct EffectStep の並びとして使う
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
@@ -7196,7 +7194,7 @@ void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
 		*var = 0;
 		var += 7;
 	}
-	sparks = (struct EffectStep *)gMapCellBuffer;
+	sparks = gMapCellBuffer;
 	work->transfer_mode = 2;
 	work->transfer_value = 50;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);

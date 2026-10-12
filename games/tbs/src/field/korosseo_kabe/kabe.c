@@ -43,7 +43,8 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "fieldobj.h"
-#include "ram_buffer.h"
+#include "global_cells.h"
+#include "heap_state.h"
 
 // 前方宣言
 static void Korosseo_RunGreetScene(s32 a0);
@@ -60,7 +61,6 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB);
 static void SceneState_InitControlRecordAndStartTask(s32 resource);
 static void StagedActor_PushActorAhead(void);
 
-extern u8 gWorkSlot[];
 #define WORK_SLOT_STAGE 59
 
 typedef struct Sub
@@ -2022,7 +2022,7 @@ static s32 KorosseoKabe_RaiseLinkedSceneEffect(RaisedEffect *a)
 
 static s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
 {
-	u8				  *workspace = *(u8 **)(gWorkSlot + WORK_SLOT_STAGE * 4);
+	u8				  *workspace = *(u8 **)((u8 *)gWorkSlot + WORK_SLOT_STAGE * 4);
 	u8				  *shared;
 	struct FieldActor *record;
 	s32				   flag;
@@ -2138,7 +2138,7 @@ void FieldScene_BuildDescriptorAndInstallTask(
 
 static void SceneState_InitControlRecordAndStartTask(s32 resource)
 {
-	u8					*state = *(u8 **)(gWorkSlot + WORK_SLOT_STAGE * 4);
+	u8					*state = *(u8 **)((u8 *)gWorkSlot + WORK_SLOT_STAGE * 4);
 	struct StageControl *m = (struct StageControl *)gSceneState;
 
 	Resource_DecodeType01(Resource_GetTableEntry(resource), state + 240);

@@ -37,13 +37,12 @@
 #include "call.h"
 #include "text/msg_ids.h"
 #include "frame.h"
+#include "map_scroll.h"
 
 // 前方宣言
 static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out);
 static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 SceneData_GetBufferCrc16(u32 count, u8 *p);
-
-extern u16 gBgScroll[];
 
 struct ClearWork
 {
@@ -90,7 +89,7 @@ static void Clear_LoadBackground(void)
 	id = (s32)&ResourceId_GoldenSunLogo;
 	Engine_BlendSetDarkenTarget16(0);
 	REG_BG2CNT = 0x681;
-	gBgScroll[5] = 0;
+	gBgScroll[2].y = 0;
 	blank = 0x1ff;
 	res = Engine_ResourceGetTableEntry(id);
 	Dma_Set(res, (void *)0x05000000, 0x84000070, REG_DMA3);
@@ -305,7 +304,6 @@ struct SaveLinkGreeting
 	u8	reserved[16];
 };
 
-extern struct SaveLinkGreeting gLinkPeerSignatures[4];
 s32							   __divsi3(s32, s32);
 s32							   __modsi3();
 
@@ -578,7 +576,7 @@ L_0200057a:;
 		v5 = 3;
 		for (v1 = 0; v1 != 4; v1++)
 		{
-			u16 *greeting = gLinkPeerSignatures[v1].code;
+			u16 *greeting = ((struct SaveLinkGreeting *)gLinkPeerSignatures)[v1].code;
 
 			greeting[0] = 0x30;
 			greeting[1] = 0x30;
@@ -591,7 +589,7 @@ L_0200057a:;
 			{
 				u32	 control = REG_SIOCNT;
 				u32	 peer = ((control << 26) >> 30) ^ 1;
-				u16 *received = gLinkPeerSignatures[peer].code;
+				u16 *received = ((struct SaveLinkGreeting *)gLinkPeerSignatures)[peer].code;
 
 #if defined(TBS_EDITION_DE)
 				if (received[0] == 69)

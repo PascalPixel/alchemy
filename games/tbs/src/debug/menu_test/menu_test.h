@@ -12,7 +12,7 @@
 
 #include "character.h"
 
-#include "ram_buffer.h"
+#include "global_cells.h"
 
 u8 Engine_TaskWait();
 

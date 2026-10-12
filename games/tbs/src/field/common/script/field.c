@@ -5158,8 +5158,6 @@ void Runtime_RemapBytesByTable(u8 *buf, s32 cnt)
 
 //--------------------------------------------------------------------------
 
-extern u8 gMapCellBuffer[];
-
 //--------------------------------------------------------------------------
 // 展開バッファの [1] が方式、[2] からが 16 ビットのデータ
 // size : 方式のバイトを含む長さ（偶数ならデータなし）
@@ -5252,7 +5250,7 @@ void Tilemap_ConvertBuffer(void)
 	saved = Runtime_BumpAllocateAlternatePool(size);
 	Iwram_CopyWords(saved, Ram_MapCellBuffer, size);
 	RamCode_Load(routine, Tile_ConvertMap, Tile_ConvertMapCodeSize);
-	routine((gMapCellBuffer + 0x8000), Ram_MapCellBuffer, saved);
+	routine(((u8 *)gMapCellBuffer + 0x8000), Ram_MapCellBuffer, saved);
 	MemFree(routine);
 	MemFree(saved);
 }
@@ -6696,8 +6694,6 @@ void Map_UpdateCurrentTileBlockUntilBlocked(void)
 	}
 }
 
-extern u8 gDecodeBuffer[];
-
 void MapAnimation_PresentFrame(void)
 {
 	Io_Write16(0x682, &REG_BG1CNT);
@@ -6734,7 +6730,7 @@ void Map_LoadAreaGraphics(void)
 	s16						value;
 
 	state = gMapWork[0];
-	buffer = gMapCellBuffer;
+	buffer = (u8 *)gMapCellBuffer;
 	resources = state->resources;
 	value = *(s16 *)BG_PLTT;
 	Resource_DecodeByteLz(Resource_GetTableEntry(resources[0]), buffer);

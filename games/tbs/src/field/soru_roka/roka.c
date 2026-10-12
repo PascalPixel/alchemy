@@ -12,10 +12,10 @@
 #include "system.h"
 #include "types.h"
 #include "scene.h"
-extern struct Resource37deSceneRuntime *gEventWork;
 
 #include "resource_37de_scene.h"
 #include "field_scene.h"
+#include "fieldobj.h"
 
 s32 Engine_GameFlagIsSet(s32);
 
@@ -54,7 +54,7 @@ s32 Scene_InitSceneRequestAndCameraZoom(void)
 	s32 zoom_y = 0x10000;
 	s32 zoom_z = 0x10000;
 
-	runtime = gEventWork;
+	runtime = (struct Resource37deSceneRuntime *)gEventWork;
 	runtime->scene_request_1c0 = 0x204;
 	runtime->scene_setup_word_1c8 = 0x10;
 	if (Engine_GameFlagIsSet(0x814) != 0)

@@ -13,10 +13,10 @@
 #include "system.h"
 #include "types.h"
 #include "scene.h"
-extern struct Resource388Runtime *gEventWork;
 
 #include "resource_388_runtime.h"
 #include "field_scene.h"
+#include "fieldobj.h"
 
 s32 Engine_GameFlagIsSet(s32);
 
@@ -63,7 +63,7 @@ s32 Scene_PlaceActor8OnGate300(void)
 	s32 pos_x = 0xD80000;
 	s32 pos_z = 0x880000;
 
-	work = gEventWork;
+	work = (struct Resource388Runtime *)gEventWork;
 	work->setup_request_1c0 = 0x204;
 	work->setup_value_1c8 = 0x18;
 	if (Engine_GameFlagIsSet(0x300) != 0)

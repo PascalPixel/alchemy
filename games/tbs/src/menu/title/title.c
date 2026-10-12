@@ -35,12 +35,11 @@
 #include "ram_buffer.h"
 #include "call.h"
 #include "field_scene.h"
+#include "map_scroll.h"
 
 // 前方宣言
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
-
-extern u16 gBgScroll[];
 
 struct TitleWork
 {
@@ -288,7 +287,7 @@ static void Title_LoadBackground(void)
 	id = (s32)&ResourceId_GoldenSunLogo;
 	Blend_SetDarkenTarget16(0);
 	REG_BG2CNT = 0x681;
-	gBgScroll[5] = 0;
+	gBgScroll[2].y = 0;
 	blank = 0x1ff;
 	res = Resource_GetTableEntry(id);
 	Dma_Set(res, (void *)0x05000000, 0x84000070, REG_DMA3);

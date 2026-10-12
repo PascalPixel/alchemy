@@ -16526,7 +16526,6 @@ struct LinkSignature
 
 void UpdateLinkSessionCountdown(void)
 {
-	extern struct LinkSignature gLinkPeerSignatures[];
 	struct LinkRoundState	   *state = COUNTDOWN;
 	struct BtlWork			   *runtime;
 	struct MenuSprite		   *entry;
@@ -16595,7 +16594,7 @@ void UpdateLinkSessionCountdown(void)
 		timer = state->timer;
 		if (timer >= 0)
 			goto timer_ready;
-		signature = &gLinkPeerSignatures[runtime->link_side ^ 1];
+		signature = (struct LinkSignature *)gLinkPeerSignatures[runtime->link_side ^ 1];
 		if (signature->e != 'E')
 			goto signature_done;
 		if (signature->d == 'D')
@@ -16721,11 +16720,9 @@ struct WindowBuffer
 	u8				  unknown_000[4];
 	struct WindowLine lines[160];
 };
-extern u8 *gDisplayTransition;
 
 s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 count)
 {
-	extern struct LinkSignature gLinkPeerSignatures[];
 	struct LinkRoundState	   *state;
 	struct BtlWork			   *link;
 	struct BtlWork			   *session;

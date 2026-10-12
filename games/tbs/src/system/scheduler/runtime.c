@@ -3540,7 +3540,6 @@ void SerialRuntime_StepBlockTransfer(void)
 	}
 }
 
-extern u8		gMapCellBuffer[];
 extern const u8 Rom_Start[];
 
 void RuntimeWait_BusyLoopTick(void)

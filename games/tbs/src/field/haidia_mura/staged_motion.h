@@ -97,6 +97,6 @@ struct Resource373Particle
 extern struct SceneEvent gHaidiaMuraEvents3[];
 extern s32				 gJasmineAction[];
 
-#include "ram_buffer.h"
+#include "global_cells.h"
 
 #endif

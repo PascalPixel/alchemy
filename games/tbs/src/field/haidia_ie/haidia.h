@@ -88,7 +88,7 @@ struct WorldMapOam
 	u16 size : 2;
 };
 
-#include "ram_buffer.h"
+#include "global_cells.h"
 
 s32	 Math_RemainderUnsigned();
 void Engine_ActorSetSpriteFlags();

@@ -7,7 +7,7 @@
 #include "window.h"
 
 extern struct EventWork *gEventWork;
-#include "ram_buffer.h"
+#include "global_cells.h"
 
 void Engine_ActorSetAnimation();
 void Engine_ActorShowEmote();

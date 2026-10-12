@@ -2763,29 +2763,12 @@ Func_080dbd5c:
 	.thumb_func
 Func_080dc1b0:
 	.incbin "baserom.gba", 0x000e91b0, 0x00000094
-	.section .rom.000e9244, "ax"
-	.global Field_BeginPaletteTransition
-	.type Field_BeginPaletteTransition, %function
-	.thumb_func
-Field_BeginPaletteTransition:
-	.incbin "baserom.gba", 0x000e9244, 0x00000050
 	.section .rom.000e9294, "ax"
 	.global BattleEffect_InitializeSharedScene
 	.type BattleEffect_InitializeSharedScene, %function
 	.thumb_func
 BattleEffect_InitializeSharedScene:
-	.incbin "baserom.gba", 0x000e9294, 0x000000f0
-	.section .rom.000e9384, "ax"
-	.global BattleFx_PrepareBufferInterpolation
-	.type BattleFx_PrepareBufferInterpolation, %function
-	.thumb_func
-BattleFx_PrepareBufferInterpolation:
-	.incbin "baserom.gba", 0x000e9384, 0x0000000c
-	.global Camera_WorldToScreen
-	.type Camera_WorldToScreen, %function
-	.thumb_func
-Camera_WorldToScreen:
-	.incbin "baserom.gba", 0x000e9390, 0x00000080
+	.incbin "baserom.gba", 0x000e9294, 0x000000e8
 	.section .rom.000e9410, "ax"
 	.global BattleFx_LoadActionEffectResources
 	.type BattleFx_LoadActionEffectResources, %function

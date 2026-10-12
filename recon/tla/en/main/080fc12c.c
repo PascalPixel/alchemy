@@ -1,3 +1,10 @@
+/* Draft, differ 8 of 57: The Broken Seal's ItemMenu_DrawItemHead (the icon must be the shared
+ * struct RenderOutput for the native's reloads of the icon pointer after each store). Four rows
+ * are scheduled the other way round: the icon load before the item offset 0x16c is started (ldr
+ * r3, [r5]; movs r2, #182), the 112 and the 8 before the icon reloads (movs r3, #112; ldr r2,
+ * [r5]; strh), and the item load before 0x1ff is started (ldrh r3, [r2]; movs r0, #128). One-pass
+ * blocks at each of the three places measured 8 to 17. MsgItemName is not named in the catalogs
+ * yet. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "render_input.h"

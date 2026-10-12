@@ -1,3 +1,7 @@
+/* Draft, differ 2 of 34: The Broken Seal's PsynergyMenu_ClassifySelectedPsynergy. The native loads
+ * the selected action before it starts the 0x3fff mask (ldrh r3, [r3]; movs r0, #252); this form
+ * starts the mask first. The mask on the other side of the and is the same; a temporary with a
+ * one-pass block or an empty asm after the load is differ 8. */
 #include "types.h"
 #include "ram_buffer.h"
 

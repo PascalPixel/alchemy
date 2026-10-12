@@ -1,3 +1,7 @@
+/* Draft, differ 4 of 32: The Broken Seal's Map_RenderPaletteMappedColumn with the colour table as
+ * the fixed address Ram_MapCellBuffer; the loop matches. Left, as in Map_RenderPaletteMappedRow
+ * (0802c174): the native loads 0x06004000 into r5 before the map address is added (ldr r5; adds
+ * r4, r3, r2; ... adds r1, r3, r5), this form into r2 two rows later. */
 #include "types.h"
 #include "ram_buffer.h"
 

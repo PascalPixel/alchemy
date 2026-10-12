@@ -1,3 +1,9 @@
+/* Draft, differ 6 of 72 (differ 2 with the coins in a temporary before the store): the native
+ * loads the scene state's address into r3 before it loads the coins into r2 (ldr r3, =gSceneState;
+ * ldr r2, [r6, #16]; str r2, [r3]); written plainly the registers swap, and with a temporary the
+ * two loads come in the other order. A pointer local, a struct, inline accessors on either side
+ * and one-pass blocks measured 2 or 6. Func_02001b84 is the same function for speaker 8,
+ * destination 0x1fb and entrance 18. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "party_state.h"

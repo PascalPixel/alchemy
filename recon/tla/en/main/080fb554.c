@@ -1,3 +1,9 @@
+/* Draft, differ 2 of 92 (English and Japanese; the other four editions place the commands at other
+ * columns and need their own branch): The Broken Seal's ItemMenu_DrawCmd. The native builds the
+ * disabled marker -1 around the first state load (movs r2, #1; movs r3, #0; ldrsb r3, [r5, r3];
+ * negs r2, r2); this form negates before the load. Assigning the marker first, a one-pass block or
+ * an empty asm between the load and the marker, and comparing with -1 directly measured 2 or 6;
+ * three minutes of alchemy permute found nothing better. */
 #include "types.h"
 
 extern char MsgItemCommandUse[];

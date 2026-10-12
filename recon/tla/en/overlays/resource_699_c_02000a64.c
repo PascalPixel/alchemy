@@ -1,3 +1,8 @@
+/* Draft, differ 4 of 72: the native copies the object pointer out of r10 before it scales the
+ * first random number (mov r2, sl; lsls r3, r0, #3; ldr r2, [r2, #8]; adds r3, r3, r0); this form
+ * scales first. The offset in a temporary, the object's x read first, and a one-pass block after
+ * the call measured 4 to 12; adding in the other order is 41. Overlay 69a's Func_0200090c is the
+ * same function. */
 #include "types.h"
 
 #include "object_runtime.h"

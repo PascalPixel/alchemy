@@ -92,7 +92,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_671/clock.o"(.text)
         "*/resource_671_overlay.o"(.text.x0200d3bc)
         "*/resource_671_overlay.o"(.text.x0200d428)
-        "*/resource_671_overlay.o"(.text.x0200d4ac)
+        "*/games/tla/src/field/overlay_671/s54ac.o"(.text)
         "*/games/tla/src/field/overlay_671/import.o"(.text)
         "*/games/tla/src/field/overlay_671/data.o"(.data)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)

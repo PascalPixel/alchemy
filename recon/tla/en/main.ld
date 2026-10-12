@@ -228,7 +228,6 @@
         "*/games/tla/src/system/resource/childval.o"(.text)
         "*/recon/tla/raw/08022bd8.o"(.text)
         "*/games/tla/src/graphics/tile/vram_block_93.o"(.text)
-        "*/recon/tla/raw/08022c84.o"(.text)
         "*/recon/tla/raw/08022c98.o"(.text)
         "*/games/tla/src/system/resource/object.o"(.text)
         "*/recon/tla/raw/08022d40.o"(.text)

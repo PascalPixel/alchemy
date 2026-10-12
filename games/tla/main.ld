@@ -224,7 +224,7 @@ SECTIONS
     "*/games/tla/src/system/resource/childval.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00022bd8)
     "*/games/tla/src/graphics/tile/vram_block_93.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.00022c84)
+    "*/recon/tla/ja/rom.o"(.rom.00022c98)
     "*/games/tla/src/system/resource/object.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00022d40)
     "*/games/tla/src/system/resource/resobj.o"(.text)

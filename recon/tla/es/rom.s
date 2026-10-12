@@ -477,13 +477,7 @@ InitializeAnimationObjects:
 	.thumb_func
 Func_08022bd8:
 	.incbin "baserom.gba", 0x00022bd8, 0x000000a0
-	.section .rom.00022c84, "ax"
-	.balign 4
-	.global Func_08022c78
-	.type Func_08022c78, %function
-	.thumb_func
-Func_08022c78:
-	.incbin "baserom.gba", 0x00022c84, 0x00000014
+	.section .rom.00022c98, "ax"
 	.global AnimationObject_Allocate
 	.type AnimationObject_Allocate, %function
 	.thumb_func

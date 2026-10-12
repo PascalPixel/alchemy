@@ -4,5 +4,6 @@
 #include "types.h"
 
 void Korosseo_FinishSoloRound(s32 id);
+void RunPartyCountInteraction(s32 actorId);
 
 #endif

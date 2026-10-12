@@ -36,7 +36,6 @@ void Scene_UpdatePuzzleActors(void);
 void FieldScene_RunScene38bSequenceA(void);
 void ActorPresentation_RepaintTenCellsAndActorEightCell(void);
 void BiribinoMura_RestoreRaisedEntrance(void);
-struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z);
 void BiribinoMura_PushFacedBlock(void);
 void BiribinoMura_UpdateCornerSpawn(void);
 void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor);

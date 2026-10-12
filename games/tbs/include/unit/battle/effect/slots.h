@@ -406,7 +406,6 @@ void BattleFx_SpawnFallingParticles(void);
 void BattleFx_SteerLiftedTarget(s32 id);
 void RunBattleEffect11(void);
 struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
-void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object);
 void BattleFx_UpdateParticleMotionAndScale(union FieldObject *object);
 void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin);
 void BattleFx_WanderAroundAnchor(struct OrbitEffect *efx);

@@ -98,7 +98,6 @@ void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor);
 void ColossoLogRollingStage_RestoreActorPositions(void);
 void ColossoLogRollingStage_MarkSceneProgress(void);
 void ColossoLogRollingStage_SelectNearestObstacle(void);
-void RunPartyCountInteractionCopyB(s32 actorId);
 void ColossoLogRollingStage_ClearSavedActorPositions(void);
 s32 ColossoLogRollingStage_RunStateInteraction(s32 actor, s32 flags);
 void ColossoLogRollingStage_InitializeStateInteraction(s32 actor, s32 flags);

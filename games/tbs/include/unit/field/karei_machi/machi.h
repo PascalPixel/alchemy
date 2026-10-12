@@ -5,7 +5,6 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-struct FieldActor;
 struct Obj_020036f8;
 struct Object;
 struct Resource3a8Effect;
@@ -69,7 +68,6 @@ void KareiMachi_SpeedUpActors(void);
 void KareiMachi_AlternateDance(void);
 void FieldScene_RunTwoActorCutsceneSequence(void);
 void FieldScene_RunSecondaryGroupSequence(void);
-struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z);
 void FieldScene_RunLateSequence(void);
 void FieldScene_RunScene3a8SequenceB(void);
 void SceneEffect_UpdateMotionWithDamping(struct Obj_020036f8 *p);

@@ -2,6 +2,7 @@
 #include "unit/battle/effect/zonedata.h"
 #include "vram_tab.h"
 #include "unit/battle/effect/slots.h"
+#include "unit/field/common/effect/move.h"
 #include "unit/graphics/display/scroll_initialize_hblank_dma.h"
 #include "unit/system/scheduler/callback.h"
 #include "types.h"
@@ -15619,15 +15620,8 @@ struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle
 	return obj;
 }
 
-void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object)
-{
-	object->effect.x += object->effect.velocity_x;
-	object->effect.y += object->effect.velocity_y;
-	object->effect.z += object->effect.velocity_z;
-	object->effect.scale_x += object->effect.scale_rate_x;
-	object->effect.scale_y += object->effect.scale_rate_y;
-	object->effect.sprite->rotation += object->effect.spin;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../../field/common/effect/move.c"
 
 struct OrbitEffect
 {

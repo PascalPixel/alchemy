@@ -7,6 +7,7 @@
 #include "unit/field/common/effect/create.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/object/distance.h"
 #include "unit/field/common/makyuri/palette_cycle.h"
 #include "unit/field/common/makyuri/lights.h"
 #include "unit/field/makyuri_iriguchi/pillar.h"

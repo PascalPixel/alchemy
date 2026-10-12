@@ -4,7 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct FieldActor;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
@@ -32,7 +31,6 @@ s32 Scene_Initialize(void);
 void RunGuardedSceneSetup(void);
 void BiribinoDou_PrepareWindowTransition(void);
 void FieldScene_RunScene398SequenceC(void);
-struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z);
 void StagedActor_PushActorAhead(void);
 void Resource398_ImportBankNoOp(s32 unused);
 extern s32 gBiribinoDouPlacements1_Data[];

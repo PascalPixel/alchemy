@@ -1468,42 +1468,6 @@ void KorosseoKabe_SelectNearestActor(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/solo_round.c"
 
-void RunPartyCountInteractionCopyA(s32 actorId)
-{
-	PartyInteractionRecord *record;
-	s32						x;
-	s32						y;
-
-	record = (PartyInteractionRecord *)Object_GetById(actorId);
-	x = record->x;
-	y = record->y;
-	Engine_EventBegin();
-
-	if (Party_CountActiveOwners() <= 1)
-	{
-		Engine_EventSetMessage((s32)MsgKorosseoRobinDidGetGoodLook);
-		if (Engine_EventAskYesNo(actorId, 0) == 0)
-		{
-			InitializeActorZero();
-			InitializeSelectedActor(actorId);
-			Engine_ActorWalkTo(actorId, x, y + 0x40);
-			Engine_EventWait(15);
-			Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y);
-			Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y + 0x20);
-			Engine_EventCloseScreen();
-			Engine_EventWaitForScreen();
-			Engine_EventRequestExit(11);
-		}
-	}
-	else
-	{
-		Engine_EventSetMessage((s32)MsgKorosseoWaitShouldntDecideWhereBest);
-		Engine_EventShowMessage(actorId, 0);
-	}
-
-	Engine_EventEnd();
-}
-
 void FieldScene_RunSixSteps896To936(void)
 {
 	GameFlag_SetByte(896, 0);
@@ -1605,7 +1569,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 	p11 = rec->z.part.pixel;
 	if (mode != 3)
 	{
-		count = Party_CountActiveOwners();
+		count = GetPartyMemberCount();
 		for (i = 0; i < count; i++)
 		{
 			buf[i] = gGameState.active_owners[i];
@@ -2509,7 +2473,7 @@ struct SceneEvent gKorosseoKabeEvents[] = {
 	{ PSYNERGY_ON_ACTOR(0x8c), 13, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_StoreSlotTileXToWork832To848) },
 	{ PSYNERGY_ON_ACTOR(0x8c), 14, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_StoreSlotTileXToWork832To848) },
 	{ PSYNERGY_ON_ACTOR(0x91), 31, 0x334, EVENT_SCRIPT(KorosseoKabe_StopSpectatorCallbackAndRestoreCells) },
-	{ EVENT_TALK, 34, CONDITION_ALWAYS, EVENT_SCRIPT(RunPartyCountInteractionCopyA) },
+	{ EVENT_TALK, 34, CONDITION_ALWAYS, EVENT_SCRIPT(RunPartyCountInteraction) },
 	{ EVENT_TALK, 35, CONDITION_ALWAYS, EVENT_SCRIPT(KorosseoKabe_RunStageIntro) },
 	{ EVENT_TALK, 36, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSecondActorInteraction) },
 	{ EVENT_TALK, 37, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSceneThreeCoordinator) },

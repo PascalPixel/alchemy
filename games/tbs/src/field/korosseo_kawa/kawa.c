@@ -1221,42 +1221,6 @@ static __inline__ void AdvanceMessage(s32 amount)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/solo_round.c"
 
-void RunPartyCountInteraction(s32 actorId)
-{
-	PartyInteractionRecord *record;
-	s32						x;
-	s32						y;
-
-	record = (PartyInteractionRecord *)Object_GetById(actorId);
-	x = record->x;
-	y = record->y;
-	Engine_EventBegin();
-
-	if (GetPartyMemberCount() <= 1)
-	{
-		Engine_EventSetMessage((s32)MsgKorosseoRobinDidGetGoodLook);
-		if (Engine_EventAskYesNo(actorId, 0) == 0)
-		{
-			InitializeActorZero();
-			InitializeSelectedActor(actorId);
-			Engine_ActorWalkTo(actorId, x, y + 0x40);
-			Engine_EventWait(15);
-			Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y);
-			Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y + 0x20);
-			Engine_EventCloseScreen();
-			Engine_EventWaitForScreen();
-			Engine_EventRequestExit(11);
-		}
-	}
-	else
-	{
-		Engine_EventSetMessage((s32)MsgKorosseoWaitShouldntDecideWhereBest);
-		Engine_EventShowMessage(actorId, 0);
-	}
-
-	Engine_EventEnd();
-}
-
 void FieldScene_RunSixSteps380To3A8(void)
 {
 	GameFlag_SetByte(896, 0);

@@ -57,3 +57,39 @@ void Korosseo_FinishSoloRound(s32 id)
 	}
 	Engine_EventEnd();
 }
+
+void RunPartyCountInteraction(s32 actorId)
+{
+	PartyInteractionRecord *record;
+	s32						x;
+	s32						y;
+
+	record = (PartyInteractionRecord *)Object_GetById(actorId);
+	x = record->x;
+	y = record->y;
+	Engine_EventBegin();
+
+	if (GetPartyMemberCount() <= 1)
+	{
+		Engine_EventSetMessage((s32)MsgKorosseoRobinDidGetGoodLook);
+		if (Engine_EventAskYesNo(actorId, 0) == 0)
+		{
+			InitializeActorZero();
+			InitializeSelectedActor(actorId);
+			Engine_ActorWalkTo(actorId, x, y + 0x40);
+			Engine_EventWait(15);
+			Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y);
+			Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y + 0x20);
+			Engine_EventCloseScreen();
+			Engine_EventWaitForScreen();
+			Engine_EventRequestExit(11);
+		}
+	}
+	else
+	{
+		Engine_EventSetMessage((s32)MsgKorosseoWaitShouldntDecideWhereBest);
+		Engine_EventShowMessage(actorId, 0);
+	}
+
+	Engine_EventEnd();
+}

@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/soru_iriguchi/iriguchi.h"
+#include "unit/field/common/object/findcell.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
 #include "unit/system/scheduler/callback.h"
@@ -467,23 +468,8 @@ void Scene_UpdateFormationActor14Flags(void)
 	Scene_RunActorFormation(0);
 }
 
-s32 *SceneActor_FindSlotByTilePosition(s32 x, s32 z)
-{
-
-	s32 **slots = (s32 **)((u8 *)gEventWork + 0x14);
-	u32	  i;
-
-	for (i = 8; i <= 65; i++)
-	{
-		s32 *p = slots[i];
-
-		if (x == (p[2] >> 20) && z == (p[4] >> 20))
-		{
-			return p;
-		}
-	}
-	return 0;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/findcell.c"
 
 void SoruIriguchi_PushFacedBlock(void)
 {
@@ -497,7 +483,7 @@ void SoruIriguchi_PushFacedBlock(void)
 
 	leader = Object_GetById(0);
 	dir = leader->facing >> 12;
-	block = (struct FieldActor *)SceneActor_FindSlotByTilePosition(
+	block = (struct FieldActor *)SceneActor_FindActorAtCell(
 		(leader->x.part.pixel + (gSoruPushSteps[dir] >> 16)) >> 4,
 		(leader->z.part.pixel + (s16)gSoruPushSteps[dir]) >> 4);
 	if (block != NULL)

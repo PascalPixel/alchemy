@@ -44,7 +44,6 @@ void Korosseo_RunLumberWaterIntro(s32 scene);
 void SceneActor_PlaceSlots1To3FromWork(void);
 void SceneState_RaiseTriggerOnPsynergyTarget(void);
 void FieldScene_RunNearestActor165Scene(void);
-void RunPartyCountInteraction(s32 actorId);
 void FieldScene_RunSixSteps380To3A8(void);
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor);
 void SceneState_SendIdBySceneId(s32 speaker, s32 competitor);

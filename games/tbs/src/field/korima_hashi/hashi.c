@@ -3,6 +3,7 @@
 #include "unit/import.h"
 #include "unit/field/korima_hashi/hashi.h"
 #include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/object/distance.h"
 #include "unit/field/korima_hashi/falling_effect.h"
 #include "unit/battle/effect/slots.h"
 #include "battle.h"

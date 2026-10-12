@@ -2032,42 +2032,6 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/solo_round.c"
 
-void RunPartyCountInteractionCopyB(s32 actorId)
-{
-	PartyInteractionRecord *record;
-	s32						x;
-	s32						y;
-
-	record = (PartyInteractionRecord *)Object_GetById(actorId);
-	x = record->x;
-	y = record->y;
-	Engine_EventBegin();
-
-	if (GetPartyMemberCount() <= 1)
-	{
-		Engine_EventSetMessage((s32)MsgKorosseoRobinDidGetGoodLook);
-		if (Engine_EventAskYesNo(actorId, 0) == 0)
-		{
-			InitializeActorZero();
-			InitializeSelectedActor(actorId);
-			Engine_ActorWalkTo(actorId, x, y + 0x40);
-			Engine_EventWait(15);
-			Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y);
-			Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y + 0x20);
-			Engine_EventCloseScreen();
-			Engine_EventWaitForScreen();
-			Engine_EventRequestExit(11);
-		}
-	}
-	else
-	{
-		Engine_EventSetMessage((s32)MsgKorosseoWaitShouldntDecideWhereBest);
-		Engine_EventShowMessage(actorId, 0);
-	}
-
-	Engine_EventEnd();
-}
-
 void ColossoLogRollingStage_ClearSavedActorPositions(void)
 {
 
@@ -3118,7 +3082,7 @@ struct SceneEvent gKorosseoMarutaEvents[] = {
 	{ 0x50008e15, 30, 0x363, EVENT_SCRIPT(ColossoLogRollingStage_ConfigureSceneEventEffect) },
 	{ EVENT_RAISED, 4, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLogRollingStage_OffsetActiveActor) },
 	{ EVENT_RAISED, 5, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLogRollingStage_ClampAndOffsetActiveActor) },
-	{ EVENT_TALK, 32, CONDITION_ALWAYS, EVENT_SCRIPT(RunPartyCountInteractionCopyB) },
+	{ EVENT_TALK, 32, CONDITION_ALWAYS, EVENT_SCRIPT(RunPartyCountInteraction) },
 	{ EVENT_TALK, 33, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunDualArrivalSequence) },
 	{ EVENT_TALK, 34, CONDITION_ALWAYS, EVENT_SCRIPT(FieldScene_RunSecondArrivalSequence) },
 	{ EVENT_TALK, 35, CONDITION_ALWAYS, EVENT_SCRIPT(KorosseoMaruta_RunStageIntro) },

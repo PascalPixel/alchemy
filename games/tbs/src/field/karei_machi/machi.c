@@ -2,6 +2,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/karei_machi/machi.h"
+#include "unit/field/common/object/findcell.h"
 #include "unit/field/common/object/orbit.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/graphics/window/measure.h"
@@ -1851,22 +1852,8 @@ void FieldScene_RunSecondaryGroupSequence(void)
 	Engine_EventEnd();
 }
 
-struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
-{
-	struct FieldActor **actors = gEventWork->placed_actors - 8;
-	u32					i;
-
-	for (i = 8; i <= 65; i++)
-	{
-		struct FieldActor *actor = actors[i];
-
-		if (x == actor->x.fixed >> 20 && z == actor->z.fixed >> 20)
-		{
-			return actor;
-		}
-	}
-	return 0;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/findcell.c"
 
 void FieldScene_RunLateSequence(void)
 {

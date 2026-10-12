@@ -27,7 +27,6 @@ void Scene_UpdateFormationActor11Flags(void);
 void Scene_UpdateFormationActor12Flags(void);
 void Scene_UpdateFormationActor13Flags(void);
 void Scene_UpdateFormationActor14Flags(void);
-s32 *SceneActor_FindSlotByTilePosition(s32 x, s32 z);
 void SoruIriguchi_PushFacedBlock(void);
 s32 Scene_Initialize(void);
 void SoruIriguchi_ApplyEntryState(void);

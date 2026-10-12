@@ -80,7 +80,6 @@ void KorosseoKabe_RunGuideTalk(s32 speaker);
 void SceneActor_PlacePartyAtSavedTiles(void);
 void KorosseoKabe_MarkSceneProgress(void);
 void KorosseoKabe_SelectNearestActor(void);
-void RunPartyCountInteractionCopyA(s32 actorId);
 void FieldScene_RunSixSteps896To936(void);
 s32 KorosseoKabe_RunStateInteraction(s32 a, s32 b);
 void KorosseoKabe_ShowFollowUpPrompt(s32 a, s32 b);

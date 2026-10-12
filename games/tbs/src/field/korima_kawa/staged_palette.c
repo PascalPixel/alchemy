@@ -3,6 +3,7 @@
 #include "unit/import.h"
 #include "unit/field/korima_kawa/staged_palette.h"
 #include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/object/distance.h"
 #include "unit/field/common/korima/palette.h"
 #include "unit/battle/effect/slots.h"
 #include "battle.h"

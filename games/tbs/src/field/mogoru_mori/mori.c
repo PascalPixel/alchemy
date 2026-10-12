@@ -5,6 +5,7 @@
 #include "unit/field/common/object/orbit.h"
 #include "unit/field/common/effect/create.h"
 #include "unit/field/common/object/staged_actor.h"
+#include "unit/field/common/object/distance.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
 

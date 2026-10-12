@@ -2,6 +2,7 @@
 #include "game_state.h"
 #include "unit/field/common/shinden_heya/heya.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object13.h"
 #include "unit/battle/effect/object14.h"
 #include "unit/battle/effect/object15.h"
 #include "unit/battle/effect/object16.h"

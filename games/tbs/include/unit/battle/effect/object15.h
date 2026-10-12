@@ -4,6 +4,7 @@
 #include "types.h"
 #include "effect_slot.h"
 #include "unit/battle/effect/object.h"
+#include "unit/battle/effect/object13.h"
 #include "unit/battle/effect/object14.h"
 
 struct EffectVector;

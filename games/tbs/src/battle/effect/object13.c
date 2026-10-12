@@ -641,7 +641,7 @@ void FieldEffect_InitSparkles(void)
 	Runtime_ReleaseHeapBlock(14);
 	i = 0;
 	clear = 0;
-loop:
+	do
 	{
 		struct MapScrollWork *view = gMapWork[0];
 		s32					 *leader;
@@ -662,11 +662,9 @@ loop:
 		p->pos_z = clear;
 		p->pos_y = Map_GetTerrainHeightFar(0, (s32)attr >> 16, z >> 16) << 16;
 		p->timer = (i & 15) + 1;
-	}
-	i++;
-	p++;
-	if (i < 32)
-		goto loop;
+		i++;
+		p++;
+	} while (i < 32);
 	Scheduler_AddOrUpdateCallback((s32)(FieldEffect_UpdateSparkles), 0xc80);
 }
 

@@ -622,19 +622,10 @@ void BattleFx_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s32 o
 		object->velocity_y = 0x30000;
 		Object_SetMoveTargetFar(object, object->x, object->y, base_z + 0x100000);
 		Script_WaitForEventTimeoutFar(object);
-		mode_or_frame = 0;
-		if (object->y > object->terrain_height)
+		for (mode_or_frame = 0;
+			(u32)mode_or_frame <= 0xB3 && object->y > object->terrain_height; mode_or_frame++)
 		{
-		wait_for_target_y:
 			WaitFrames(1);
-			mode_or_frame++;
-			if ((u32)mode_or_frame <= 0xB3)
-			{
-				if (object->y > object->terrain_height)
-				{
-					goto wait_for_target_y;
-				}
-			}
 		}
 		WaitFrames(2);
 		BattleFx_PlayQueuedSound();

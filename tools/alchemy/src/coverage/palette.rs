@@ -12,6 +12,9 @@ pub(crate) const SHADOW: &str = "#000000";
 pub(crate) const MUTED: &str = "#b4ccd2";
 pub(crate) const GOLD: &str = "#f4c84f";
 pub(crate) const BLUE: &str = "#a8c4f8";
+/// DONE data's line: each game's colour, darker.
+pub(crate) const DARK_GOLD: &str = "#b98a1c";
+pub(crate) const DARK_BLUE: &str = "#5078c8";
 
 pub(crate) fn cut(across: i32, down: i32, corner: i32) -> bool {
     if across < 0 || down < 0 {

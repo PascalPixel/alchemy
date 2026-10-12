@@ -5,7 +5,7 @@ use super::history::{day_number, Day, History, Measure, UNTAGGED};
 use super::jsnum::commas;
 use super::letters::{Letters, LINE};
 use super::model::{treemap, Rect, Tile};
-use super::palette::{BLUE, DARK, FACE, GOLD, GRID, INK, MUTED, SHADOW, WELL};
+use super::palette::{BLUE, DARK, DARK_BLUE, DARK_GOLD, FACE, GOLD, GRID, INK, MUTED, SHADOW, WELL};
 use super::raster::{Canvas, Relief};
 use super::sessions::{family, Family};
 use std::path::Path;
@@ -175,14 +175,20 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
         &x_of,
     );
     let mut ends = Vec::new();
-    // Code is the thick line and DONE data, from 2026-10-08, the thin one.
+    // DONE data, from 2026-10-08, is a line of its own in the game's darker
+    // colour, drawn first so that the code line lies over it where they meet.
+    let data_inks = [DARK_GOLD, DARK_BLUE];
     let lines = series
         .iter()
-        .zip(&latest)
-        .map(|((key, _, ink), label)| (super::history::points(history, key), 2, ink, label))
-        .chain(series.iter().zip(&latest_data).map(|((key, _, ink), label)| {
-            (super::history::data_points(history, key), 1, ink, label)
-        }));
+        .zip(&latest_data)
+        .zip(&data_inks)
+        .map(|(((key, _, _), label), ink)| (super::history::data_points(history, key), 2, ink, label))
+        .chain(
+            series
+                .iter()
+                .zip(&latest)
+                .map(|((key, _, ink), label)| (super::history::points(history, key), 2, ink, label)),
+        );
     for (points, width, ink, label) in lines {
         let points = points
             .into_iter()
@@ -795,5 +801,9 @@ mod tests {
         assert_eq!(latest_data_label(&history, "tbs").as_deref(), Some("data 50.00%"));
         let drawn = chart(&fixture(), &history);
         assert_ne!(code_only.rgba(1), drawn.rgba(1));
+        // The data line has the game's darker colour, which code alone never draws.
+        let dark = super::super::raster::rgb(DARK_GOLD);
+        let has = |canvas: &Canvas| (0..WIDTH).any(|x| (32..399).any(|y| canvas.get(x, y) == Some(dark)));
+        assert!(has(&drawn) && !has(&code_only));
     }
 }

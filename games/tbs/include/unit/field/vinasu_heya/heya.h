@@ -57,7 +57,6 @@ void ConfigureOverlayObject(struct FieldActor *object, s32 palette);
 void *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 type);
 void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 type);
 void RunStagedActorTransition(void);
-s32 VinasuHeya_FillCellCollisionCodes(u32 no, s32 x, s32 y, u32 w, u32 h, s32 val);
 void SceneActor_ApplySlotsMatchingKind212(void);
 s32 VinasuHeya_UpdateChildFromTimer(struct FieldActor *obj);
 s32 OverlayObject_UpdateEveryFourFrames(void *obj);

@@ -6,6 +6,7 @@
 #include "unit/field/common/object/orbit.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/object/distance.h"
+#include "unit/field/common/object/fillgrid.h"
 #include "unit/field/world_map/linked_effects.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"

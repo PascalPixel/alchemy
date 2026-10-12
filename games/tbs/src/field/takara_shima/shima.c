@@ -7,6 +7,7 @@
 #include "unit/field/common/effect/create.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/object/distance.h"
+#include "unit/field/common/object/fillgrid.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"

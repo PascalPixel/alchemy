@@ -3,6 +3,7 @@
 #include "unit/field/goma_hashira/hashira.h"
 #include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/object/distance.h"
+#include "unit/field/common/object/fillgrid.h"
 #include "unit/battle/effect/slots.h"
 #include "unit/field/common/script/script.h"
 #include "unit/system/scheduler/callback.h"

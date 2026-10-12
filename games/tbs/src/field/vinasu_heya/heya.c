@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/field/vinasu_heya/heya.h"
+#include "unit/field/common/object/fillgrid.h"
 #include "unit/field/common/object/findslot.h"
 #include "unit/field/common/effect/advance.h"
 #include "unit/field/common/object/distance.h"
@@ -354,7 +355,6 @@ typedef struct
 	s32 unk10;
 } Struct_18f8;
 
-extern u8  gMapCellBuffer[];
 #ifndef MODERN // modern GCC keeps the headers' volatile declaration
 #endif
 
@@ -500,39 +500,8 @@ void RunStagedActorTransition(void)
 	Object_SetMode(leader, 1);
 }
 
-s32 VinasuHeya_FillCellCollisionCodes(u32 no, s32 x, s32 y, u32 w, u32 h, s32 val)
-{
-	u8 *g = gMapWork[0];
-	u8 *base;
-	u32 i;
-	u32 j;
-
-	if (g != 0)
-	{
-		if (no <= 2)
-		{
-			u32 off = no * 48 + 304;
-
-			base = *(u8 **)(g + off);
-		}
-		else
-		{
-			base = gMapCellBuffer;
-		}
-		base += (x + (y << 7)) * 4;
-		for (i = 0; i < h; i++)
-		{
-			u8 *p = base + (i << 9);
-
-			for (j = 0; j < w; j++)
-			{
-				p[2] = val;
-				p += 4;
-			}
-		}
-	}
-	return 0;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/fillgrid.c"
 
 void SceneActor_ApplySlotsMatchingKind212(void)
 {

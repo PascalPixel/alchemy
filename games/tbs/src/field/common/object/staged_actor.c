@@ -18,8 +18,6 @@
 #include "map_scroll.h"
 #include "field_event.h"
 
-extern u8 gMapCellBuffer[];
-
 extern s16 StagedActor_DirectionSteps[];
 extern s32 StagedActor_FootprintBounds[];
 
@@ -131,38 +129,8 @@ void StagedActor_AdvancePair(void)
 	Object_SetMode((struct FieldActor *)lead, 1);
 }
 
-s32 StagedActor_FillGridAttributeRectangle(
-	u32 layer, s32 x, s32 z, u32 width, u32 height, s32 value)
-{
-	struct MapState *map = gMapWork[0];
-	struct MapCell	*cells;
-	u32				 row;
-	u32				 column;
-
-	if (map != 0)
-	{
-		if (layer <= 2)
-		{
-			cells = map->layers[layer].cells;
-		}
-		else
-		{
-			cells = (struct MapCell *)gMapCellBuffer;
-		}
-		cells += x + (z << 7);
-		for (row = 0; row < height; row++)
-		{
-			struct MapCell *cell = cells + (row << 7);
-
-			for (column = 0; column < width; column++)
-			{
-				cell->collision_code = value;
-				cell++;
-			}
-		}
-	}
-	return 0;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "fillgrid.c"
 
 s32 StagedActor_StopBlockedMotion(struct StagedActor *actor)
 {

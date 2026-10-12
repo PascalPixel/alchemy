@@ -50,12 +50,6 @@ void BattleFx_RunTwelveModeMode11(struct BattleEffectArgument *effect);
 void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode);
 void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect);
 void BattleFx_RunBladeRain(struct BattleEffectArgument *effect);
-void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect);
-void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect);
-void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect);
-void BattlePresentation_DrawStreaks(void);
-void BattlePresentation_PrepareScene(s32 kind);
-void BattleFx_ScheduleCallbacksAndReleaseBlocks(void);
 
 // 粒の置き場：Ram_MapCellBuffer を struct EffectStep の並びとして使う
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)

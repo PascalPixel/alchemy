@@ -180,6 +180,7 @@ main	rom_main_07	games/tbs/src/battle/presentation/advarrow
 main	rom_main_07	games/tbs/src/battle/btlvars
 main	rom_main_08	games/tbs/src/system/far_call/EFFECT
 main	rom_main_08	games/tbs/src/battle/effect/effect	.text
+main	rom_main_08	games/tbs/src/battle/effect/effect2	.text
 main	rom_main_08	games/tbs/src/battle/effect/effect3	.text
 main	rom_main_08	games/tbs/src/battle/effect/effect4	.text
 main	rom_main_08	games/tbs/src/battle/effect/effect5	.text

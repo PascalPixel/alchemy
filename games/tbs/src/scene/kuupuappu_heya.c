@@ -464,7 +464,12 @@ static void SceneActor_StepActor24AnimationByFacing(void)
 		{
 			Engine_ActorEnableActionCallback(24, KuupuappuHeya_StepActions[v]);
 			*(u16 *)q = *(u16 *)q + 1;
-			goto clamp;
+		}
+		else
+		{
+			Engine_ActorEnableActionCallback(24, KuupuappuHeya_IdleActions[v]);
+			n = *(u16 *)q - 1;
+			*(u16 *)q = n;
 		}
 	}
 	else
@@ -475,13 +480,14 @@ static void SceneActor_StepActor24AnimationByFacing(void)
 		{
 			Engine_ActorEnableActionCallback(24, KuupuappuHeya_StepActions[v]);
 			*(u16 *)q = *(u16 *)q + 1;
-			goto clamp;
+		}
+		else
+		{
+			Engine_ActorEnableActionCallback(24, KuupuappuHeya_IdleActions[v]);
+			n = *(u16 *)q - 1;
+			*(u16 *)q = n;
 		}
 	}
-	Engine_ActorEnableActionCallback(24, KuupuappuHeya_IdleActions[v]);
-	n = *(u16 *)q - 1;
-	*(u16 *)q = n;
-clamp:
 	if (*q > 5)
 	{
 		n = 0;
@@ -624,7 +630,7 @@ static void FieldScene_RunScene383SequenceC(void)
 			Engine_EventSetMessage(((s32)MsgKuupuappuYouWereSuchGreatHelp + 3));
 			SceneActor_SetModeZeroAndValue(16, 20);
 			Engine_EventEnd();
-			goto done;
+			return;
 		}
 		GameFlag_Set(0x857);
 		Engine_PartyGiveItem(ITEM_WATER_OF_LIFE, 0);
@@ -638,7 +644,6 @@ static void FieldScene_RunScene383SequenceC(void)
 	}
 	Event_ShowMessage(16, 0);
 	Engine_EventEnd();
-done:;
 }
 
 static void KuupuappuHeya_OfferBone(void)
@@ -668,11 +673,13 @@ static void KuupuappuHeya_OfferBone(void)
 			Engine_EventWait(20);
 			Engine_EventSetMessage((s32)MsgKuupuappuWowHaveManyThingsArent);
 			Event_ShowMessage(18, 0);
-			goto turn_back;
 		}
-		Engine_ItemShowFound(ITEM_BONE, 3);
-		Engine_PartyGiveItem(ITEM_BONE, 0);
-		GameFlag_Set(0x85b);
+		else
+		{
+			Engine_ItemShowFound(ITEM_BONE, 3);
+			Engine_PartyGiveItem(ITEM_BONE, 0);
+			GameFlag_Set(0x85b);
+		}
 	}
 	else
 	{
@@ -682,7 +689,6 @@ static void KuupuappuHeya_OfferBone(void)
 		Engine_EventWait(20);
 		Event_ShowMessage(18, 0);
 	}
-turn_back:;
 	Actor_FaceDirection(18, 0x4000, 0);
 	Engine_EventEnd();
 }
@@ -781,10 +787,7 @@ static void EV02_TALK(void)
 	Actor_SetPosition(GERALD, 0x1800000, 0x1980000);
 	Actor_WalkToAndWait(GERALD, 0x170, 0x198);
 	Actor_FaceDirection(GERALD, 0xd000, 20);
-	if (GameFlag_IsSet(0x850) != 0)
-	{
-	}
-	else
+	if (GameFlag_IsSet(0x850) == 0)
 	{
 		GameFlag_Set(0x850);
 		SceneEffect_ApplyPairWithValue141(2, 0);
@@ -831,12 +834,13 @@ static void EV02_TALK(void)
 		Engine_EventWait(10);
 		Event_ShowMessage(IWAN, 0);
 		Event_OpenMessage(IWAN, 0);
-		goto L_join_setup_paths;
 	}
-	Event_PlayCue(60);
-	Engine_EventSetMessage((s32)MsgKuupuappuWouldReallyWouldHelpMe);
-	Event_OpenMessage(IWAN, 0);
-L_join_setup_paths:;
+	else
+	{
+		Event_PlayCue(60);
+		Engine_EventSetMessage((s32)MsgKuupuappuWouldReallyWouldHelpMe);
+		Event_OpenMessage(IWAN, 0);
+	}
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Scene_JoinRodSearch();

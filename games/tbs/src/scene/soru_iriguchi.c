@@ -79,15 +79,16 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 		{
 			if (gGameState.entrance > 13)
 			{
-				if (gGameState.entrance > 16)
+				if (gGameState.entrance <= 16)
 				{
-					goto other_entrance;
+					return gSoruIriguchiPlacements1Entrances14To16;
 				}
-				return gSoruIriguchiPlacements1Entrances14To16;
 			}
-			return gSoruIriguchiPlacements1Entrances11To13;
+			else
+			{
+				return gSoruIriguchiPlacements1Entrances11To13;
+			}
 		}
-	other_entrance:;
 		table = (s32)gSoruIriguchiPlacements1;
 		FieldScene_PrepareActors(table);
 		return (const struct ScenePlacement *)table;
@@ -113,15 +114,16 @@ const struct SceneEvent *Scene_GetEvents(void)
 		{
 			if (gGameState.entrance > 13)
 			{
-				if (gGameState.entrance > 16)
+				if (gGameState.entrance <= 16)
 				{
-					goto other_entrance;
+					return gSoruIriguchiEvents1Entrances14To16;
 				}
-				return gSoruIriguchiEvents1Entrances14To16;
 			}
-			return gSoruIriguchiEvents1Entrances11To13;
+			else
+			{
+				return gSoruIriguchiEvents1Entrances11To13;
+			}
 		}
-	other_entrance:;
 		return gSoruIriguchiEvents1;
 	}
 	else
@@ -1025,11 +1027,10 @@ static void Scene_RunActorFormation(s32 a0)
 	if (GameFlag_IsSet(0x311) != 0)
 	{
 		Map_CopyCellAttributes(121, 20, 1, 1, 100, 32);
-		if (a0 == 0)
+		if (a0 != 0)
 		{
-			goto actor10;
+			Actor_SetPosition(9, 0x6380000, 0x2080000);
 		}
-		Actor_SetPosition(9, 0x6380000, 0x2080000);
 	}
 	else
 	{
@@ -1042,15 +1043,13 @@ static void Scene_RunActorFormation(s32 a0)
 			}
 		}
 	}
-actor10:;
 	if (GameFlag_IsSet(0x313) != 0)
 	{
 		Map_CopyCellAttributes(121, 20, 1, 1, 104, 32);
-		if (a0 == 0)
+		if (a0 != 0)
 		{
-			goto actor11;
+			Actor_SetPosition(10, 0x6780000, 0x2080000);
 		}
-		Actor_SetPosition(10, 0x6780000, 0x2080000);
 	}
 	else
 	{
@@ -1063,15 +1062,13 @@ actor10:;
 			}
 		}
 	}
-actor11:;
 	if (GameFlag_IsSet(0x315) != 0)
 	{
 		Map_CopyCellAttributes(121, 20, 1, 1, 108, 32);
-		if (a0 == 0)
+		if (a0 != 0)
 		{
-			goto actor12;
+			Actor_SetPosition(11, 0x6b80000, 0x2080000);
 		}
-		Actor_SetPosition(11, 0x6b80000, 0x2080000);
 	}
 	else
 	{
@@ -1084,15 +1081,13 @@ actor11:;
 			}
 		}
 	}
-actor12:;
 	if (GameFlag_IsSet(0x317) != 0)
 	{
 		Map_CopyCellAttributes(121, 20, 1, 1, 112, 32);
-		if (a0 == 0)
+		if (a0 != 0)
 		{
-			goto actor13;
+			Actor_SetPosition(12, 0x6f80000, 0x2080000);
 		}
-		Actor_SetPosition(12, 0x6f80000, 0x2080000);
 	}
 	else
 	{
@@ -1105,15 +1100,13 @@ actor12:;
 			}
 		}
 	}
-actor13:;
 	if (GameFlag_IsSet(0x319) != 0)
 	{
 		Map_CopyCellAttributes(121, 20, 1, 1, 116, 32);
-		if (a0 == 0)
+		if (a0 != 0)
 		{
-			goto actor14;
+			Actor_SetPosition(13, 0x7380000, 0x2080000);
 		}
-		Actor_SetPosition(13, 0x7380000, 0x2080000);
 	}
 	else
 	{
@@ -1126,15 +1119,13 @@ actor13:;
 			}
 		}
 	}
-actor14:;
 	if (GameFlag_IsSet(0x31b) != 0)
 	{
 		Map_CopyCellAttributes(121, 20, 1, 1, 120, 32);
-		if (a0 == 0)
+		if (a0 != 0)
 		{
-			goto done;
+			Actor_SetPosition(14, 0x7780000, 0x2080000);
 		}
-		Actor_SetPosition(14, 0x7780000, 0x2080000);
 	}
 	else
 	{
@@ -1147,7 +1138,6 @@ actor14:;
 			}
 		}
 	}
-done:;
 }
 
 static void EV10_SEARCH(void)
@@ -1168,11 +1158,10 @@ static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
 	{
 		v3 = (*timer - 1);
 		*timer = (*timer - 1);
-		if (v3 != 40)
+		if (v3 == 40)
 		{
-			goto done;
+			Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 		}
-		Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	}
 	else
 	{
@@ -1184,7 +1173,6 @@ static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
 			*timer = 80;
 		}
 	}
-done:;
 }
 
 struct SceneEntrance gSoruIriguchiEntrancesOther[] = {

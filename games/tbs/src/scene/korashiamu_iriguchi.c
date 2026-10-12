@@ -215,6 +215,7 @@ static void EV16_TALK_3(void)
 		if (GameFlag_IsSet(0x3c0) != 0)
 		{
 			Engine_EventSetMessage((s32)MsgKorashiamuLookImSorryButWe);
+			Event_ShowMessage(16, 0);
 		}
 		else
 		{
@@ -232,17 +233,18 @@ static void EV16_TALK_3(void)
 				Engine_EventWait(40);
 				Event_ShowMessage(16, 0);
 				GameFlag_Set(0x3c0);
-				goto end_event;
+			}
+			else
+			{
+				Event_ShowMessage(16, 0);
 			}
 		}
-		Event_ShowMessage(16, 0);
 	}
 	else
 	{
 		Engine_EventSetMessage((s32)MsgKorashiamuDoKnowLuckyGuess);
 		Event_AskYesNo(16, 0);
 	}
-end_event:;
 	Engine_EventEnd();
 }
 

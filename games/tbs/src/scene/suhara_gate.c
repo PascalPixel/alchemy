@@ -323,35 +323,32 @@ static void EV09_TALK(void)
 	if (Engine_GameFlagIsSet(0x89f) != 0)
 	{
 		Engine_EventSetMessage((s32)MsgSuharaPityColossoVictor);
-		goto close;
+		Engine_EventShowMessage(9, 0);
 	}
-
-	Engine_EventSetMessage((s32)MsgSuharaWantGoBabi);
+	else
 	{
-		s32 mode = 0;
-		s32 no = 9;
+		Engine_EventSetMessage((s32)MsgSuharaWantGoBabi);
+		{
+			s32 mode = 0;
+			s32 no = 9;
 
-		Engine_EventOpenMessage(no, mode);
+			Engine_EventOpenMessage(no, mode);
+		}
+
+		if (Engine_EventChooseYesNo(0, 0) == 0)
+		{
+			Engine_EventShowMessage(9, 0);
+			Engine_ActorSetAnimationAndWait(9, 4);
+			Engine_EventShowMessage(9, 0);
+		}
+		else
+		{
+			work = (u8 *)gEventWork;
+			*(u16 *)(work + 472) += 2;
+			Engine_EventShowMessage(9, 0);
+		}
 	}
 
-	if (Engine_EventChooseYesNo(0, 0) != 0)
-	{
-		goto skip;
-	}
-
-	Engine_EventShowMessage(9, 0);
-	Engine_ActorSetAnimationAndWait(9, 4);
-
-close:
-	Engine_EventShowMessage(9, 0);
-	goto done;
-
-skip:
-	work = (u8 *)gEventWork;
-	*(u16 *)(work + 472) += 2;
-	Engine_EventShowMessage(9, 0);
-
-done:
 	Engine_EventEnd();
 }
 

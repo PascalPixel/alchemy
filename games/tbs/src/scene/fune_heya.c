@@ -112,7 +112,7 @@ static s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor)
 		if (descending_y < 0)
 		{
 			vertical_motion_direction = 0;
-			goto block_5;
+			actor->vertical_motion_direction = vertical_motion_direction;
 		}
 	}
 	else
@@ -122,7 +122,6 @@ static s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor)
 		if (ascending_y > 0x80000)
 		{
 			vertical_motion_direction = 1;
-		block_5:
 			actor->vertical_motion_direction = vertical_motion_direction;
 		}
 	}
@@ -496,11 +495,13 @@ static void EV10_TALK_08(void)
 			if (Engine_EventChooseYesNo(0, 0) == 0)
 			{
 				FieldScene_RunExtendedActorChoreography();
-				goto end_event;
 			}
-			Engine_ActorStartRepeatedMotion(10, 2);
-			Event_ShowMessage(10, 0);
-			Actor_FaceDirection(10, 0xd000, 0);
+			else
+			{
+				Engine_ActorStartRepeatedMotion(10, 2);
+				Event_ShowMessage(10, 0);
+				Actor_FaceDirection(10, 0xd000, 0);
+			}
 		}
 		else
 		{
@@ -508,7 +509,6 @@ static void EV10_TALK_08(void)
 			Event_ShowMessage(10, 0);
 		}
 	}
-end_event:;
 	Engine_EventEnd();
 }
 
@@ -570,18 +570,19 @@ static void EV08_TALK_05(void)
 			FieldScene_RunStepThen10(8);
 			FieldScene_CallPairWith10(8, 0x3000);
 			Event_ShowMessage(8, 0);
-			goto end_event;
 		}
-		gEventWork->message += 2;
-		Event_ShowMessage(8, 0);
-		Actor_FaceDirection(8, 0x3000, 0);
+		else
+		{
+			gEventWork->message += 2;
+			Event_ShowMessage(8, 0);
+			Actor_FaceDirection(8, 0x3000, 0);
+		}
 	}
 	else
 	{
 		Engine_EventSetMessage((s32)MsgFuneLongerWeSitHereMore);
 		Event_ShowMessage(8, 0);
 	}
-end_event:;
 	Engine_EventEnd();
 }
 
@@ -769,19 +770,19 @@ static void EV12_TALK_06(void)
 			if (GameFlag_IsSet(0x92b) != 0)
 			{
 				GameFlag_Set(0x994);
-				goto end_event;
 			}
-			if (GameFlag_IsSet(0x92a) != 0)
+			else if (GameFlag_IsSet(0x92a) != 0)
 			{
 				GameFlag_Set(0x91b);
-				goto end_event;
 			}
-			if (GameFlag_IsSet(0x929) != 0)
+			else if (GameFlag_IsSet(0x929) != 0)
 			{
 				GameFlag_Set(0x939);
-				goto end_event;
 			}
-			GameFlag_Set(0x930);
+			else
+			{
+				GameFlag_Set(0x930);
+			}
 		}
 		else
 		{
@@ -789,7 +790,6 @@ static void EV12_TALK_06(void)
 			FieldScene_RunStepThen10(12);
 		}
 	}
-end_event:;
 	Engine_EventEnd();
 }
 
@@ -835,19 +835,19 @@ static void EV09_TALK(void)
 			if (GameFlag_IsSet(0x92b) != 0)
 			{
 				GameFlag_Set(0x991);
-				goto end_event;
 			}
-			if (GameFlag_IsSet(0x92a) != 0)
+			else if (GameFlag_IsSet(0x92a) != 0)
 			{
 				GameFlag_Set(0x918);
-				goto end_event;
 			}
-			if (GameFlag_IsSet(0x929) != 0)
+			else if (GameFlag_IsSet(0x929) != 0)
 			{
 				GameFlag_Set(0x936);
-				goto end_event;
 			}
-			GameFlag_Set(0x92d);
+			else
+			{
+				GameFlag_Set(0x92d);
+			}
 		}
 		else
 		{
@@ -855,7 +855,6 @@ static void EV09_TALK(void)
 			FieldScene_RunStepThen10(9);
 		}
 	}
-end_event:;
 	Engine_EventEnd();
 }
 
@@ -2920,10 +2919,7 @@ static void Scene_RunConditionalActorPresentation(s32 a0)
 	Engine_ActorRunRepeatedMotion(27, 1);
 	Engine_EventWait(20);
 	Engine_ActorFaceEachOther(27, 0, 10);
-	if (Engine_GameFlagIsSet(0x300) == 0)
-	{
-	}
-	else
+	if (Engine_GameFlagIsSet(0x300) != 0)
 	{
 		rec7 = FuneHeya_FindFirstSetFlag(a0, 0);
 		Engine_ActorRunRepeatedMotion(27, 1);
@@ -2998,25 +2994,26 @@ static void Scene_RunConditionalActorPresentation(s32 a0)
 		Engine_ActorWalkTo(27, 0x1b8, 134);
 		Engine_EventWait(40);
 		FieldScene_RunSceneStep(9, 10, 0);
-		goto done;
 	}
-	Engine_EventSetMessage((s32)MsgFuneBack);
-	Event_ShowMessageAndWait(CabinSpeakerRequest, 0, 40);
-	Engine_ActorShowEmote(27, 0x101, 60);
-	FieldScene_RunStepThen10(CabinSpeakerRequest);
-	Engine_ActorSetAttachedEffect(0, 0x102);
-	Engine_EventWait(60);
-	Actor_ShowEmote(27, 0x103, 40);
-	Engine_ActorStartRepeatedMotion(27, 2);
-	FieldScene_RunStepThen10(CabinSpeakerRequest);
-	Engine_ActorShowEmote(27, 0x105, 40);
-	FieldScene_RunStepThen10(CabinSpeakerRequest);
-	Engine_ActorSetAnimationAndWait(27, 4);
-	FieldScene_RunStepThen10(CabinSpeakerRequest);
-	Engine_ActorSetAnimationAndWait(0, 3);
-	Engine_EventWait(20);
-	Engine_EventRequestExit(4);
-done:;
+	else
+	{
+		Engine_EventSetMessage((s32)MsgFuneBack);
+		Event_ShowMessageAndWait(CabinSpeakerRequest, 0, 40);
+		Engine_ActorShowEmote(27, 0x101, 60);
+		FieldScene_RunStepThen10(CabinSpeakerRequest);
+		Engine_ActorSetAttachedEffect(0, 0x102);
+		Engine_EventWait(60);
+		Actor_ShowEmote(27, 0x103, 40);
+		Engine_ActorStartRepeatedMotion(27, 2);
+		FieldScene_RunStepThen10(CabinSpeakerRequest);
+		Engine_ActorShowEmote(27, 0x105, 40);
+		FieldScene_RunStepThen10(CabinSpeakerRequest);
+		Engine_ActorSetAnimationAndWait(27, 4);
+		FieldScene_RunStepThen10(CabinSpeakerRequest);
+		Engine_ActorSetAnimationAndWait(0, 3);
+		Engine_EventWait(20);
+		Engine_EventRequestExit(4);
+	}
 }
 
 static struct FieldActor *FuneHeya_PlaceAnchorCharm(void)

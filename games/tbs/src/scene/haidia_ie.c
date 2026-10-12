@@ -541,13 +541,12 @@ s32 HaidiaIe_RestoreEntryState(void)
 			BattleFx_StartTwelveFrameBlend();
 			Map_CopyCellAttributes(21, 38, 1, 1, 18, 41);
 			record = Engine_GameFlagIsSet(0x840);
-			if (record == 0)
+			if (record != 0)
 			{
-				goto check_entrance;
+				Engine_ActorSetPosition(17, 0, 0);
+				Engine_ActorSetPosition(18, 0, 0);
+				FieldObject_SetTargetAndCallback(19, 0x10000, HaidiaIe_FaceTargetActions);
 			}
-			Engine_ActorSetPosition(17, 0, 0);
-			Engine_ActorSetPosition(18, 0, 0);
-			FieldObject_SetTargetAndCallback(19, 0x10000, HaidiaIe_FaceTargetActions);
 		}
 		else
 		{
@@ -560,7 +559,6 @@ s32 HaidiaIe_RestoreEntryState(void)
 				Engine_TaskWait(1);
 			}
 		}
-	check_entrance:;
 		if (gGameState.entrance == 12)
 		{
 			Scene_RunExtendedActorSequence();
@@ -599,18 +597,12 @@ s32 HaidiaIe_RestoreEntryState(void)
 			}
 			else
 			{
-				if (Engine_GameFlagIsSet(0x834) != 0)
+				if (Engine_GameFlagIsSet(0x834) != 0 && (record = Engine_GameFlagIsSet(0x842)) != 0)
 				{
-					record = Engine_GameFlagIsSet(0x842);
-					if (record == 0)
-					{
-						goto open_screen;
-					}
 					HaidiaIe_RunScriptScene();
 				}
 				else
 				{
-				open_screen:;
 					if (Engine_GameFlagIsSet(0x834) != 0)
 					{
 						Engine_EventOpenScreen();
@@ -621,7 +613,6 @@ s32 HaidiaIe_RestoreEntryState(void)
 			}
 		}
 	}
-done:;
 	return 0;
 }
 

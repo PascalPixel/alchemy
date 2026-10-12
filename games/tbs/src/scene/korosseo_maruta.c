@@ -626,27 +626,39 @@ static void EV23_SCRIPT(void)
 		for (;;)
 		{
 			next_x = x - 0x100000;
-			if (ColossoLogRollingStage_CheckPathClearance(next_x, z) != 0)
-				goto moved;
-			steps++;
-			x = next_x;
+			if (ColossoLogRollingStage_CheckPathClearance(next_x, z) == 0)
+			{
+				steps++;
+				x = next_x;
+			}
+			else
+			{
+				break;
+			}
 		}
 	}
-	if (!(gKeysHeld & KEY_RIGHT))
+	else
 	{
-		return;
+		if (!(gKeysHeld & KEY_RIGHT))
+		{
+			return;
+		}
+		mode = 3;
+		step = 8;
+		for (;;)
+		{
+			next_x = x + 0x100000;
+			if (ColossoLogRollingStage_CheckPathClearance(next_x, z) == 0)
+			{
+				steps++;
+				x = next_x;
+			}
+			else
+			{
+				break;
+			}
+		}
 	}
-	mode = 3;
-	step = 8;
-	for (;;)
-	{
-		next_x = x + 0x100000;
-		if (ColossoLogRollingStage_CheckPathClearance(next_x, z) != 0)
-			goto moved;
-		steps++;
-		x = next_x;
-	}
-moved:
 	if (steps == 0)
 	{
 		return;
@@ -1947,12 +1959,10 @@ static void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
 	ColossoLogRollingStage_InitializeModeTask(1, 0);
 	Engine_EventWait(120);
 
-	goto check_transition;
-wait_transition:
-	Engine_TaskWait(1);
-check_transition:
-	if (AudioCommand_GetStateByte() != 0)
-		goto wait_transition;
+	while (AudioCommand_GetStateByte() != 0)
+	{
+		Engine_TaskWait(1);
+	}
 
 	Engine_AudioPlayCue(0x121);
 	Korosseo_LoadPortrait(5);

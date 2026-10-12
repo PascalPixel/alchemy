@@ -1025,7 +1025,7 @@ Func_0812381c:
 	bl UnitCalcFar
 	bl BattleEventRuntime_Reset
 	movs r0, #30
-	bl Func_08122c88
+	bl BattleEventRuntime_SchedulePhase
 	mov r0, r10
 	ldr r3, [r0]
 	movs r0, #0

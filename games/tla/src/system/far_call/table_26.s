@@ -77,10 +77,10 @@ Func_080c82f0:
 	.thumb_func
 EventRuntime_PrepareCurrentObjectFar:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Func_080d2260
+	overlay_veneer BattleFx_StartTwelveFrameBlend
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Func_080d2260
+	overlay_veneer BattleFx_StartTwelveFrameBlend
 .else
 	overlay_veneer EventRuntime_PrepareCurrentObject
 .endif
@@ -88,27 +88,75 @@ EventRuntime_PrepareCurrentObjectFar:
 	.global Func_080c8300
 	.thumb_func
 Func_080c8300:
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_SetBlock30ValuesMaxZero
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_SetBlock30ValuesMaxZero
+.else
 	overlay_veneer Func_080d690c
+.endif
+.endif
 	.global Func_080c8308
 	.thumb_func
 Func_080c8308:
-	overlay_veneer Func_080d7304
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_SetBlock30Values12Zero
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_SetBlock30Values12Zero
+.else
+	overlay_veneer BattleFx_StartTwelveFrameBlend
+.endif
+.endif
 	.global Func_080c8310
 	.thumb_func
 Func_080c8310:
-	overlay_veneer Func_080d73b4
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_SetBlock30Values128One
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_SetBlock30Values128One
+.else
+	overlay_veneer BattleFx_SetBlock30ValuesMaxZero
+.endif
+.endif
 	.global Func_080c8318
 	.thumb_func
 Func_080c8318:
-	overlay_veneer Func_080d73e0
+.ifdef TLA_EDITION_ES
+	overlay_veneer BattleFx_StartBufferBlend
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer BattleFx_StartBufferBlend
+.else
+	overlay_veneer BattleFx_SetBlock30Values12Zero
+.endif
+.endif
 	.global Func_080c8320
 	.thumb_func
 Func_080c8320:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080d7408
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080d7408
+.else
+	overlay_veneer BattleFx_SetBlock30Values128One
+.endif
+.endif
 	.global Func_080c8328
 	.thumb_func
 Func_080c8328:
-	overlay_veneer Func_080d7430
+.ifdef TLA_EDITION_ES
+	overlay_veneer FieldEffect_InitSparkles
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer FieldEffect_InitSparkles
+.else
+	overlay_veneer BattleFx_StartBufferBlend
+.endif
+.endif
 	.global Func_080c8330
 	.thumb_func
 Func_080c8330:
@@ -122,7 +170,7 @@ Func_080c8338:
 .ifdef TLA_EDITION_IT
 	overlay_veneer DisplayTransition_InitializeState
 .else
-	overlay_veneer Func_080d7240
+	overlay_veneer FieldEffect_InitSparkles
 .endif
 .endif
 	.global Func_080c8340

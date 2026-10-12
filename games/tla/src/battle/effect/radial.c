@@ -2,6 +2,10 @@
 #include "objdisp.h"
 #include "system.h"
 #include "fixed_math.h"
+#include "types.h"
+#include "motobj.h"
+#include "field_scene.h"
+#include "field_effect.h"
 
 extern const u8 BattleFx_CommonParticleScript[];
 
@@ -21,6 +25,36 @@ struct OrbitEffect {
     struct OrbitEffect *anchor;
     void (*update)(struct OrbitEffect *);
 };
+
+void Effect_AdvanceMotion(struct FieldEffect *effect);
+void Func_080df8e0(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z,
+	u32 flags, const struct EffectOptions *options);
+
+void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin)
+{
+    struct EffectOptions options;
+    s32 velocity[3];
+    s32 sine;
+    s32 angle;
+    u32 i;
+
+    options.palette = 0;
+    options.update = Effect_AdvanceMotion;
+    options.start_scale_x = 0xCCCC;
+    options.start_scale_y = 0xCCCC;
+    i = 0;
+    do {
+        angle = i << 12;
+        velocity[0] = Trig_Cos(angle) * 3 / 2;
+        velocity[1] = 0;
+        sine = Trig_Sin(angle);
+        velocity[2] = sine;
+        /* FAKEMATCH: the native stores the sine before it reloads the origin (differ 2 without the barrier). */
+        __asm__("");
+        Func_080df8e0(origin->x, origin->y, origin->z, velocity[0], velocity[1], sine, 0x01090001, &options);
+        i++;
+    } while (i <= 16);
+}
 
 void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect)
 {

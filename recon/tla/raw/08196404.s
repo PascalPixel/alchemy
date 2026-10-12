@@ -459,35 +459,35 @@ Func_08196404:
 .L_0819674c:
 	.4byte BattleFx_PatchTemplateCode
 .L_08196750:
-	.4byte Data_08197224
+	.4byte SentouKouka_Mask
 .L_08196754:
 	.4byte Data_081973f0
 .L_08196758:
-	.4byte Data_08196fdc
+	.4byte SentouKouka_YomiGyaku
 .L_0819675c:
-	.4byte Data_08196fe4
+	.4byte SentouKouka_YomiJun
 .L_08196760:
-	.4byte Data_0819707c
+	.4byte SentouKouka_NuriGyaku
 .L_08196764:
-	.4byte Data_0819706c
+	.4byte SentouKouka_NuriJun
 .L_08196768:
-	.4byte Data_08197164
+	.4byte SentouKouka_HikakuGyaku
 .L_0819676c:
-	.4byte Data_08197154
+	.4byte SentouKouka_HikakuJun
 .L_08196770:
-	.4byte Data_0819720c
+	.4byte SentouKouka_KasanGyaku
 .L_08196774:
-	.4byte Data_081971f4
+	.4byte SentouKouka_KasanJun
 .L_08196778:
 	.4byte 0x00ffffff
 .L_0819677c:
-	.4byte Data_0819702c
+	.4byte SentouKouka_Yomi8Gyaku
 .L_08196780:
-	.4byte Data_08196fec
+	.4byte SentouKouka_Yomi8Jun
 .L_08196784:
-	.4byte Data_081970f0
+	.4byte SentouKouka_Nuri8Gyaku
 .L_08196788:
-	.4byte Data_0819708c
+	.4byte SentouKouka_Nuri8Jun
 .L_0819678c:
 	movs r3, #4
 	mov r1, r8
@@ -681,9 +681,9 @@ Func_08196404:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_081968f4:
-	.4byte Data_081971b4
+	.4byte SentouKouka_Hikaku4Gyaku
 .L_081968f8:
-	.4byte Data_08197174
+	.4byte SentouKouka_Hikaku4Jun
 .L_081968fc:
 	.4byte SentouKouka_IroGyaku
 .L_08196900:

@@ -592,7 +592,7 @@ Func_02000c4c:
 .L_02008d48:
 	.4byte 0x80004000
 	.section .bss,"aw",%nobits
-	.space 0x0000000c
+	.balign 16
 	.global Data_020017b0
 Data_020017b0:
 	.space 0x000000b0

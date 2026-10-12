@@ -51,19 +51,19 @@ msgctxt "MsgStatusLabel"
 msgid "00010"
 msgstr "Play Time:"
 
-msgctxt "message"
+msgctxt "MsgNoBackupMemory"
 msgid "00011"
 msgstr "Unable to detect{line_break}{text_color:5}backup memory{reset_text_style}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSaveFailed"
 msgid "00012"
 msgstr "{text_color:5}Failed to save.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLoadFailed"
 msgid "00013"
 msgstr "{text_color:5}Failed to load.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEraseFailed"
 msgid "00014"
 msgstr "{text_color:5}Failed to erase.{end_wait}"
 
@@ -91,7 +91,7 @@ msgctxt "message"
 msgid "00020"
 msgstr "Choose a file to erase.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOverwriteConfirm"
 msgid "00021"
 msgstr "OK to save over this file?{end_now}"
 
@@ -99,7 +99,7 @@ msgctxt "message"
 msgid "00022"
 msgstr "Is it OK to save over the{line_break}file you started with?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgEraseConfirm"
 msgid "00023"
 msgstr "OK to erase this?{end_now}"
 
@@ -107,15 +107,15 @@ msgctxt "message"
 msgid "00024"
 msgstr "Transfer this data?"
 
-msgctxt "message"
+msgctxt "MsgGameSaved"
 msgid "00025"
 msgstr "Your game was saved.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFileErased"
 msgid "00026"
 msgstr "The file was erased.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFileCopied"
 msgid "00027"
 msgstr "The file was copied.{end_wait}"
 
@@ -123,19 +123,19 @@ msgctxt "message"
 msgid "00028"
 msgstr "Carried over{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSaving"
 msgid "00029"
 msgstr "Saving..."
 
-msgctxt "message"
+msgctxt "MsgErasing"
 msgid "00030"
 msgstr "Erasing..."
 
-msgctxt "message"
+msgctxt "MsgCopying"
 msgid "00031"
 msgstr "Copying..."
 
-msgctxt "message"
+msgctxt "MsgDoNotTurnThePower"
 msgid "00032"
 msgstr "Do not turn the power"
 
@@ -12903,7 +12903,7 @@ msgctxt "message"
 msgid "03223"
 msgstr "{argument_actor_name:1}'s {argument_ability_name} is on standby!"
 
-msgctxt "message"
+msgctxt "MsgPartyFlees"
 msgid "03224"
 msgstr "{protagonist_name} and friends run!"
 
@@ -14079,11 +14079,11 @@ msgctxt "message"
 msgid "03517"
 msgstr "{argument_ability_name}...{page_break}It doesn't work here.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMonstersAttackLess"
 msgid "03518"
 msgstr "Monsters won't attack{line_break}so often now.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAbilityWoreOff"
 msgid "03519"
 msgstr "{argument_ability_name}'s effects wore off.{end_wait}"
 
@@ -14091,7 +14091,7 @@ msgctxt "message"
 msgid "03520"
 msgstr "Use {argument_item_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgItemWoreOff"
 msgid "03521"
 msgstr "{argument_item_name:1}'s effects wore off.{end_wait}"
 
@@ -14495,7 +14495,7 @@ msgctxt "message"
 msgid "03621"
 msgstr "That {argument_item_name:1}'s valuable!{line_break}You must get it!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPartyCannotCarry"
 msgid "03622"
 msgstr "{protagonist_name}'s party cannot{line_break}carry any more {argument_item_name:1}{plural_suffix}...{page_break}"
 
@@ -14695,7 +14695,7 @@ msgctxt "message"
 msgid "03671"
 msgstr "Together"
 
-msgctxt "message"
+msgctxt "MsgDebugEntryName"
 msgid "03672"
 msgstr "Title screen"
 
@@ -15087,7 +15087,7 @@ msgctxt "message"
 msgid "03769"
 msgstr "Shop Test"
 
-msgctxt "message"
+msgctxt "MsgDebugCategoryName"
 msgid "03770"
 msgstr "TITLE"
 
@@ -16387,7 +16387,7 @@ msgctxt "message"
 msgid "04094"
 msgstr "SHOPTEST"
 
-msgctxt "message"
+msgctxt "MsgBecameCursed"
 msgid "04095"
 msgstr "You've been cursed!{end_wait}"
 
@@ -16523,7 +16523,7 @@ msgctxt "message"
 msgid "04128"
 msgstr "{button_icon:3}:Which Psynergy?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyMenuEmpty"
 msgid "04129"
 msgstr "No usable Psynergy."
 
@@ -17123,7 +17123,7 @@ msgctxt "message"
 msgid "04278"
 msgstr "Can't hold more!"
 
-msgctxt "message"
+msgctxt "MsgItBroke"
 msgid "04279"
 msgstr "It broke!"
 
@@ -18659,7 +18659,7 @@ msgctxt "MsgPiece"
 msgid "04662"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgYourCoins"
 msgid "04663"
 msgstr "Your Coins:"
 
@@ -18763,19 +18763,19 @@ msgctxt "message"
 msgid "04688"
 msgstr "You can't equip this, {argument_actor_name:1}.{line_break}Do you still want it?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHowManyToBuy"
 msgid "04689"
 msgstr "How many do you want?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHereYouGo"
 msgid "04690"
 msgstr "Then here you go!{page_break}"
 
-msgctxt "message"
+msgctxt "MsgEquipNowPrompt"
 msgid "04691"
 msgstr "Would you like to equip{line_break}it now, {argument_actor_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgLookBolder"
 msgid "04692"
 msgstr "You look bolder already!{page_break}"
 
@@ -19291,7 +19291,7 @@ msgctxt "message"
 msgid "04820"
 msgstr "Visit us again anytime{line_break}you need healing.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgReviveService"
 msgid "04821"
 msgstr "Hmm, you were downed{line_break}in battle and need{line_break}reviving, do you?{page_break}"
 
@@ -19331,7 +19331,7 @@ msgctxt "message"
 msgid "04830"
 msgstr "This ally needs no healing."
 
-msgctxt "message"
+msgctxt "MsgCurePoisonService"
 msgid "04831"
 msgstr "Hmm, so you need an{line_break}antidote to poison or{line_break}deadly poison?{page_break}"
 
@@ -19371,7 +19371,7 @@ msgctxt "message"
 msgid "04840"
 msgstr "This ally is not poisoned."
 
-msgctxt "message"
+msgctxt "MsgExorcismService"
 msgid "04841"
 msgstr "You wish me to drive{line_break}evil spirits away?{page_break}"
 
@@ -19411,7 +19411,7 @@ msgctxt "message"
 msgid "04850"
 msgstr "This ally is not haunted."
 
-msgctxt "message"
+msgctxt "MsgRemoveCurseService"
 msgid "04851"
 msgstr "Hmm, so you wish to have{line_break}the cursed equipment{line_break}removed, do you?{page_break}"
 

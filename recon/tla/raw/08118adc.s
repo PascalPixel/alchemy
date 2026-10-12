@@ -93,7 +93,7 @@ Func_08118adc:
 	ldrsh r0, [r5, r2]
 	bl SceneTransform_ApplyPitch
 	adds r0, r6, #0
-	bl Func_08015198
+	bl SceneTransform_SetPosition
 	movs r3, #0
 	add r0, sp, #4
 	str r3, [r0]

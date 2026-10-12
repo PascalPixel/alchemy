@@ -1,24 +1,36 @@
-#include "object_lookup.h"
+/* Near miss, differ 4 (one reordered row): the twin of The Broken Seal's
+ * BattleFx_UpdatePairedArcSpawner. The listing loads the gPartyState literal
+ * before it stores the advanced step; this source stores first. */
 #include "types.h"
-#include "fixed_math.h"
+#include "party_state.h"
 #include "scene_ids.h"
-#include "scene.h"
 
-void BattleFx_UpdatePairedArcSpawner(void *object)
+struct ArcEffectObject {
+    u8 unknown_00[6];
+    u16 angle;
+    u8 unknown_08[0x5c];
+    s16 phase;
+    u16 step;
+};
+
+s32 __modsi3(s32, s32);
+void Func_080e1024(struct ArcEffectObject *source);
+
+void Func_080e1154(struct ArcEffectObject *obj)
 {
-    s16 field64;
-    s16 counter;
+    s16 phase;
+    s16 cnt;
 
-    field64 = *(s16 *)((u8 *)object + 0x64);
-    counter = (*(u16 *)((u8 *)object + 0x66))++;
+    phase = obj->phase;
+    cnt = obj->step++;
 
-    if (gGameState.scene == (s32)&SceneId_Clear) {
-        if (__modsi3(counter, 7) == 0)
-            BattleFx_SpawnDescendingArcParticles(object);
-    } else if (__modsi3(counter, 5) == 0) {
-        BattleFx_SpawnDescendingArcParticles(object);
+    if (gPartyState.map == (s32)&SceneId_Ov64a) {
+        if (__modsi3(cnt, 7) == 0)
+            Func_080e1024(obj);
+    } else if (__modsi3(cnt, 5) == 0) {
+        Func_080e1024(obj);
     }
 
-    if (field64 == 1)
-        *(u16 *)((u8 *)object + 6) += 0xC00;
+    if (phase == 1)
+        obj->angle += 0xc00;
 }

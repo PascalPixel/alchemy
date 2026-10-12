@@ -1,0 +1,68 @@
+#include "types.h"
+
+#include "ram_buffer.h"
+#include "object_runtime.h"
+#include "party_state.h"
+#include "scene_ids.h"
+#include "frame.h"
+#include "field_sprite.h"
+
+struct EventWork1ac {
+    u8 unknown_000[0x1ac];
+    s32 value;
+};
+
+struct CellTarget {
+    u8 unknown_00[6];
+    s16 x;
+    s16 z;
+};
+
+s32 GameFlag_Test(s32 flag);
+void WaitFrames(s32 frames);
+void Battle_WaitMode0(s32 frames);
+struct ObjectRuntime *Object_GetById(s32 id);
+s32 Math_Cosine(s32 angle);
+void ObjectDispatch_ApplyValueToChildren(struct ObjectRuntime *object, s32 value);
+void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object, s32 flags);
+void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
+void Animation_SetStateFlags(struct ObjectRuntime *object, s32 flags);
+void Map_EnableUpdateCallback(void);
+void Map_DisableUpdateCallback(void);
+void ObjectMotion_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void Func_0200015c(struct ObjectRuntime *object);
+void Func_020004dc(s32 mode);
+struct ObjectRuntime *Func_02001c04(s32 type, s32 x, s32 y, s32 z);
+void Func_02001c34(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+struct ObjectRuntime *Func_02001cdc(void);
+void Func_02001d3c(s32 id);
+void Func_02001d4c(s32 cue);
+
+#define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
+
+void Func_020001d8(struct ObjectRuntime *object)
+{
+    u8 *work = Ram_HeapSlots->event_work;
+
+    if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 || *(s16 *)(work + 350) != 0
+        || *(s16 *)(work + 360) != 0) {
+        ObjectDispatch_ApplyValueToChildren(object, 0);
+        Map_EnableUpdateCallback();
+        return;
+    }
+    ObjectDispatch_ApplyValueToChildren(object, 16);
+    Map_DisableUpdateCallback();
+    if (OBJECT_BYTE(object, 99) != 0) {
+        if ((gFrameCount & 7) == 0)
+            OBJECT_BYTE(object, 99)--;
+        return;
+    }
+    if (*(s16 *)((u8 *)object + 102) == 0)
+        Func_0200015c(object);
+    do { } while (0); /* FAKEMATCH: the loop note keeps the timer load after the reset call (stated plainly it is loaded before the test as well, 13 differ). */
+    (*(s16 *)((u8 *)object + 102))--;
+    do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: the native stores the timer before it loads z (2 differ without it). */
+    object->x += Math_Cosine(((object->z >> 14) + (object->y >> 15)) << 8) / 2;
+    object->y += object->speed_limit;
+}

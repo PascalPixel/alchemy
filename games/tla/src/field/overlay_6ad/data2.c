@@ -12,6 +12,11 @@ void Func_0200025c(void);
 void Func_02000280(void);
 void Func_020002b8(void);
 void Func_020002ec(void);
+#if defined(TLA_EDITION_JA) /* 日本版には Func_020002ec がなく、表は 0 を持つ */
+#define OV6AD_FUNC_020002EC 0
+#else
+#define OV6AD_FUNC_020002EC ((s32)Func_020002ec)
+#endif
 void Func_02000418(void);
 void Func_02000444(void);
 void Func_02000480(void);
@@ -577,19 +582,19 @@ s32 Data_02006b98[] = {
 	(s32)Func_0200025c,
 	0x8c15,
 	(s32)0xffff000b,
-	(s32)Func_020002ec,
+	OV6AD_FUNC_020002EC,
 	0x8c15,
 	(s32)0xffff000c,
-	(s32)Func_020002ec,
+	OV6AD_FUNC_020002EC,
 	0x9315,
 	(s32)0xffff000a,
-	(s32)Func_020002ec,
+	OV6AD_FUNC_020002EC,
 	0x9315,
 	(s32)0xffff000b,
-	(s32)Func_020002ec,
+	OV6AD_FUNC_020002EC,
 	0x9315,
 	(s32)0xffff000c,
-	(s32)Func_020002ec,
+	OV6AD_FUNC_020002EC,
 	0x602,
 	0xa380021,
 	(s32)Func_0200021c,

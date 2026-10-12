@@ -79,7 +79,7 @@ Func_08124cc4:
 	mov r9, r2
 	bl BattleEventRuntime_Reset
 	movs r0, #30
-	bl Func_08122c88
+	bl BattleEventRuntime_SchedulePhase
 	movs r0, #0
 	adds r1, r5, #0
 	bl BtlEvPush

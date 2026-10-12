@@ -128,7 +128,11 @@ struct SceneEvent gSceneEvents[] = {
 };
 
 u32 Data_02005524[] = {
+#if defined(TLA_EDITION_JA)
+	39, 14, 22, 26, 0, 23,
+#else
 	39, 14, 22, 26, 0, 22,
+#endif
 	6, 0xc0000, 17,
 };
 

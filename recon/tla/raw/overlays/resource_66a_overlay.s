@@ -1677,6 +1677,7 @@ Func_0200129c:
 .L_0200931c:
 	.4byte 0xffffe100
 	.section .bss,"aw",%nobits
+	.balign 16
 	.global Data_02001be0
 Data_02001be0:
 	.space 0x00000028

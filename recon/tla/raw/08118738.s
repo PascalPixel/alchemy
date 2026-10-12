@@ -272,4 +272,4 @@ DebugParty_LoadPreset:
 .L_0811894c:
 	.4byte Data_0812a174
 .L_08118950:
-	.4byte Data_0812a176
+	.4byte Data_0812a174 + 2

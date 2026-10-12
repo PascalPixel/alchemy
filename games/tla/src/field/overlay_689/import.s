@@ -98,10 +98,12 @@ Func_020004ec:
 	.thumb_func
 Func_020004f4:
 	overlay_veneer ObjectMotion_ArmCallbackAndRefreshFar
+	.ifndef TLA_EDITION_JA
 	.global ObjectMotion_SetActionVariant
 	.thumb_func
 ObjectMotion_SetActionVariant:
 	overlay_veneer ObjectMotion_SetActionVariantFar
+	.endif
 	.global Func_02000504
 	.thumb_func
 Func_02000504:

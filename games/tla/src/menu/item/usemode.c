@@ -1,4 +1,5 @@
 #include "types.h"
+#include "ram_buffer.h"
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -65,4 +66,28 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
     }
 
     return result;
+}
+
+u32 Random16(void);
+void Inventory_BreakFar(s32 owner, s32 slot);
+void Audio_PlayCue(s32 cue);
+void Func_080f8ce8(const u8 *message, s32 a, s32 b);
+extern const u8 MsgItBroke[];
+void RenderOutput_RedrawSavedRectFar(void *window);
+
+void Func_080fb6d4(void)
+{
+    u8 *work = Ram_HeapSlots->menu_runtime;
+    u32 item = *(u16 *)(work + 0x16c);
+    u32 mask;
+
+    asm(""); /* FAKEMATCH: the barrier keeps the item load ahead of the 0x1ff mask, and the mask variable keeps the mask in r0 and the item in r3; without the barrier the mask is started before the load (differ 2). */
+    mask = 0x1ff;
+    mask &= item;
+    if (((u8 *)Item_Get(mask))[12] == 2 && Random16() < 0x2000) {
+        Inventory_BreakFar(work[0x216], *(u16 *)(work + 0x168));
+        Audio_PlayCue(138);
+        Func_080f8ce8(MsgItBroke, 0, -1);
+        RenderOutput_RedrawSavedRectFar(*(void **)(work + 0x30));
+    }
 }

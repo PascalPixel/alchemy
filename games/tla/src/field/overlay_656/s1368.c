@@ -18,6 +18,8 @@ void Func_02001380(s32 id)
     object->timer = 1;
 }
 
+// 日本版にはない: 日本版では 10 番と 11 番も動作 1 を使う
+#if !defined(TLA_EDITION_JA)
 void Func_020013b8(s32 id)
 {
     struct Ov656Object *object = Object_GetById(id);
@@ -27,6 +29,7 @@ void Func_020013b8(s32 id)
     object->priority_flags &= ~2;
     object->timer = 1;
 }
+#endif
 
 void Func_020013f0(void)
 {
@@ -52,8 +55,13 @@ void Func_0200143c(void)
 
 void Func_02001464(void)
 {
+#if defined(TLA_EDITION_JA)
+    Func_02001380(10);
+    Func_02001380(11);
+#else
     Func_020013b8(10);
     Func_020013b8(11);
+#endif
 }
 
 void Func_02001474(void)

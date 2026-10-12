@@ -1,48 +1,65 @@
+/* Draft, differ 2 of 92 (English and Japanese; the other four editions place the commands at other
+ * columns and need their own branch): The Broken Seal's ItemMenu_DrawCmd. The native builds the
+ * disabled marker -1 around the first state load (movs r2, #1; movs r3, #0; ldrsb r3, [r5, r3];
+ * negs r2, r2); this form negates before the load. Assigning the marker first, a one-pass block or
+ * an empty asm between the load and the marker, and comparing with -1 directly measured 2 or 6;
+ * three minutes of alchemy permute found nothing better. */
 #include "types.h"
-#include "item.h"
 
-#define COMMAND_DISABLED (-1)
-#define COMMAND_AVAILABLE 1
+extern char MsgItemCommandUse[];
 
-s32 Item_ClassifyUseMode(s32 owner, s32 item);
-s32 BattleFx_HasTriggerFar(s32 item);
+s32 UiWork_SetParamNibbleFar(s32 color);
+void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 
-void ItemMenu_DrawCmd(void *command_states, s32 window)
+// コマンドの並び（command_states の添字）
+enum {
+    ITEM_COMMAND_USE,
+    ITEM_COMMAND_EQUIP,
+    ITEM_COMMAND_INSPECT,
+    ITEM_COMMAND_GIVE,
+    ITEM_COMMAND_REMOVE,
+    ITEM_COMMAND_DROP
+};
+
+#define ITEM_TEXT_X 40
+
+// どうぐのコマンド 6 つを描く。使えないものは色 14
+void ItemMenu_DrawCmd(const s8 *command_states, s32 window)
 {
     s32 disabled;
     s32 value;
     u32 message;
 
     UiWork_SetParamNibbleFar(0xf);
-    value = FIELD(command_states, s8 *, 0);
+    value = command_states[ITEM_COMMAND_USE];
     disabled = -1;
     if (value == disabled)
         UiWork_SetParamNibbleFar(0xe);
 
-    message = (u32)&MsgItemCommandUse;
+    message = (u32)MsgItemCommandUse;
     UiText_DrawCharacterAtOffsetFar(message, window, 0, 0x18);
     UiWork_SetParamNibbleFar(0xf);
-    if (FIELD(command_states, s8 *, 1) == disabled)
+    if (command_states[ITEM_COMMAND_EQUIP] == disabled)
         UiWork_SetParamNibbleFar(0xe);
 
     UiText_DrawCharacterAtOffsetFar(message + 1, window, ITEM_TEXT_X, 0x18);
     UiWork_SetParamNibbleFar(0xf);
-    if (FIELD(command_states, s8 *, 3) == disabled)
+    if (command_states[ITEM_COMMAND_GIVE] == disabled)
         UiWork_SetParamNibbleFar(0xe);
 
     UiText_DrawCharacterAtOffsetFar(message + 2, window, 0, 0x20);
     UiWork_SetParamNibbleFar(0xf);
-    if (FIELD(command_states, s8 *, 5) == disabled)
+    if (command_states[ITEM_COMMAND_DROP] == disabled)
         UiWork_SetParamNibbleFar(0xe);
 
     UiText_DrawCharacterAtOffsetFar(message + 3, window, 0x50, 0x20);
     UiWork_SetParamNibbleFar(0xf);
-    if (FIELD(command_states, s8 *, 2) == disabled)
+    if (command_states[ITEM_COMMAND_INSPECT] == disabled)
         UiWork_SetParamNibbleFar(0xe);
 
     UiText_DrawCharacterAtOffsetFar(message + 4, window, 0x50, 0x18);
     UiWork_SetParamNibbleFar(0xf);
-    if (FIELD(command_states, s8 *, 4) == disabled)
+    if (command_states[ITEM_COMMAND_REMOVE] == disabled)
         UiWork_SetParamNibbleFar(0xe);
 
     UiText_DrawCharacterAtOffsetFar(message + 5, window, ITEM_TEXT_X, 0x20);

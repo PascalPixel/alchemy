@@ -96,7 +96,6 @@ struct StatWork {
     s32 unused_5c;
 };
 
-struct ClassRecord *Owner_GetRecordStride84(s32 class_id);
 s32 __divsi3(s32 numerator, s32 denominator);
 
 #define STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
@@ -251,7 +250,7 @@ void UnitCalc(s32 owner)
         }
 
         {
-            struct ClassRecord *class = Owner_GetRecordStride84(st->class_id);
+            struct ClassRecord *class = (struct ClassRecord *)Owner_GetRecordStride84(st->class_id);
 
             work->hp = __divsi3(work->hp * class->hp, 10);
             work->ep = __divsi3(work->ep * class->ep, 10);

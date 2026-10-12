@@ -22,14 +22,18 @@ Scheduler_RemoveCallbackFar:
 	.thumb_func
 Random16Far:
 	overlay_veneer Func_080000f8
+	.ifndef TLA_EDITION_JA
 	.global Math_Sine
 	.thumb_func
 Math_Sine:
 	overlay_veneer Math_SineFar
+	.endif
+	.ifndef TLA_EDITION_JA
 	.global Math_Cosine
 	.thumb_func
 Math_Cosine:
 	overlay_veneer Math_CosineFar
+	.endif
 	.global MemAlloc
 	.thumb_func
 MemAlloc:
@@ -158,10 +162,12 @@ Animation_SetStateFlags:
 	.thumb_func
 Func_02002e24:
 	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
+	.ifndef TLA_EDITION_JA
 	.global Func_02002e2c
 	.thumb_func
 Func_02002e2c:
 	overlay_veneer Func_08020230
+	.endif
 	.global Func_02002e34
 	.thumb_func
 Func_02002e34:
@@ -237,31 +243,65 @@ Func_02002ebc:
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Runtime_ScheduleCallbackAndReleaseBlock32BFar
+	.else
 	overlay_veneer Event_StartScreenTransitionFar
+	.endif
+	.endif
+	.ifndef TLA_EDITION_JA
 	.global Event_WaitTransitionFrames
 	.thumb_func
 Event_WaitTransitionFrames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_StartScreenTransitionFar
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_StartScreenTransitionFar
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	overlay_veneer Event_WaitTransitionFramesFar
+	.endif
 	.endif
 	.endif
 	.global Func_02002ed4
 	.thumb_func
 Func_02002ed4:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8470
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8470
+	.else
 	overlay_veneer Func_080c8480
+	.endif
+	.endif
 	.global Func_02002edc
 	.thumb_func
 Func_02002edc:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
 	overlay_veneer EventRuntime_ResolvePendingActionsFar
+	.endif
+	.endif
 	.global Func_02002ee4
 	.thumb_func
 Func_02002ee4:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Object_BuildRecordSnapshotFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Object_BuildRecordSnapshotFar
+	.else
 	overlay_veneer ObjectTable_SnapshotFar
+	.endif
+	.endif
 	.global Func_02002eec
 	.thumb_func
 Func_02002eec:

@@ -32,7 +32,7 @@ SECTIONS
         "*/resource_69f_overlay.o"(.text.x02008f5c)
         "*/resource_69f_overlay.o"(.text.x02009124)
         "*/resource_69f_overlay.o"(.text.x02009250)
-        "*/resource_69f_overlay.o"(.text.x02009494)
+        "*/games/tla/src/field/overlay_69f/s1494.o"(.text)
         "*/resource_69f_overlay.o"(.text.x0200951c)
         "*/resource_69f_overlay.o"(.text.x0200958c)
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)

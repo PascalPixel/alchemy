@@ -21,7 +21,7 @@ struct CompositeAnimation {
 
 void Func_080dd950(void);
 void Func_080debd8(void);
-void Func_080e11bc(void);
+void FieldEvent_ShowStatusMessage(void);
 void Func_080e4730(void);
 void Func_080e9db4(void);
 void Func_080e87c4(void);
@@ -62,7 +62,7 @@ void FieldEvent_RunTypeHandler(void)
         Func_080debd8();
         break;
     case 16:
-        Func_080e11bc();
+        FieldEvent_ShowStatusMessage();
         break;
     case 23:
         Func_080e4730();

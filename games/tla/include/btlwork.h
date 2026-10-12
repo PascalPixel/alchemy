@@ -46,7 +46,9 @@ struct BtlWork {
     u8 queued_charges[2];
     s8 queue_head;
     s8 queue_count;
-    u8 unknown_56c[0x178];
+    u16 palette[128];
+    s32 brightness;
+    u8 unknown_670[0x74];
     struct BattleEventState events;
     u8 unknown_854[4];
     s32 unknown_858;

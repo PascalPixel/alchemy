@@ -341,6 +341,1774 @@ Func_020001f4:
 .L_020082de:
 	pop {r5, r6, r7, pc}
 	.section .text.x02008328,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.global Func_02000328
+	.thumb_func
+Func_02000328:
+	push {r5, r6, r7, lr}
+	mov r7, r10
+	mov r6, r8
+	push {r6, r7}
+	movs r1, #0
+	mov r10, r1
+	bl Func_0200005c
+	movs r1, #144
+	lsls r1, r1, #3
+	ldr r0, .L_ja_020086a8
+	bl Scheduler_AddOrUpdateCallback
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r3, [r3, #108]
+	movs r2, #214
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	mov r1, r10
+	str r1, [r3]
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
+	ldr r3, .L_ja_020086ac
+	movs r2, #241
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	movs r1, #0
+	ldrsh r3, [r3, r1]
+	cmp r3, #2
+	bne .L_ja_020083ee
+.L_ja_0200836a:
+	ldr r5, .L_ja_020086b0
+	movs r1, #5
+	adds r0, r5, #0
+	bl UiText_ShowPositionedMessageAndWait
+	movs r0, #1
+	bl Func_020023d8
+	adds r6, r0, #0
+	bl UiWork_FinalizePendingCore
+	cmp r6, #0
+	bne .L_ja_020083cc
+	movs r1, #1
+	adds r0, r5, #1
+	bl UiText_ShowPositionedMessageAndWait
+	ldr r3, .L_ja_020086ac
+	movs r2, #152
+	lsls r2, r2, #1
+	adds r2, #255
+	adds r3, r3, r2
+	movs r2, #1
+	strb r2, [r3]
+	movs r0, #5
+	bl Party_AddActiveOwner
+	movs r0, #6
+	bl Party_AddActiveOwner
+	movs r0, #7
+	bl Party_AddActiveOwner
+	movs r0, #1
+	bl Party_AddActiveOwner
+	movs r0, #2
+	bl Party_AddActiveOwner
+	movs r0, #3
+	bl Party_AddActiveOwner
+	bl Func_020022d0
+	movs r3, #1
+	adds r6, r0, #0
+	negs r3, r3
+	cmp r6, r3
+	beq .L_ja_0200836a
+.L_ja_020083cc:
+	movs r0, #60
+	bl Battle_WaitMode0
+	bl Event_FinishScreenTransition
+	movs r0, #78
+	bl Func_02002408
+	movs r0, #150
+	lsls r0, r0, #1
+	bl Battle_WaitMode0
+	ldr r0, .L_ja_020086b4
+	movs r1, #1
+	bl Func_020023b8
+	b .L_ja_02008a24
+.L_ja_020083ee:
+	ldr r3, .L_ja_020086b8
+	mov r1, r10
+	strb r1, [r3]
+.L_ja_020083f4:
+	bl Func_020022f0
+	adds r5, r0, #0
+	cmp r5, #0
+	bge .L_ja_02008422
+	ldr r3, .L_ja_020086bc
+	ldrb r3, [r3]
+	cmp r3, #0
+	beq .L_ja_02008422
+	ldr r3, .L_ja_020086ac
+	movs r2, #128
+	lsls r2, r2, #2
+	adds r2, #74
+	adds r3, r3, r2
+	movs r2, #1
+	strb r2, [r3]
+	ldr r3, .L_ja_020086c0
+	ldr r0, .L_ja_020086c4
+	strb r2, [r3]
+	movs r1, #1
+	movs r2, #8
+	bl Func_020022b8
+.L_ja_02008422:
+	cmp r5, #0
+	bne .L_ja_02008446
+	mov r3, r10
+	cmp r3, #0
+	bne .L_ja_02008446
+	movs r0, #30
+	bl WaitFrames
+	movs r1, #144
+	lsls r1, r1, #3
+	ldr r0, .L_ja_020086c8
+	bl Scheduler_AddOrUpdateCallback
+	movs r0, #1
+	bl WaitFrames
+	movs r1, #1
+	mov r10, r1
+.L_ja_02008446:
+	cmp r5, #0
+	ble .L_ja_02008452
+	bl Menu_SelectSaveSlotAction
+	adds r5, r0, #0
+	b .L_ja_02008454
+.L_ja_02008452:
+	movs r5, #0
+.L_ja_02008454:
+	cmp r5, #0
+	beq .L_ja_0200845a
+	b .L_ja_020086fc
+.L_ja_0200845a:
+	bl Func_02002350
+	ldr r3, .L_ja_020086ac
+	movs r1, #147
+	lsls r1, r1, #1
+	adds r1, #255
+	adds r2, r3, r1
+	ldrb r0, [r2]
+	movs r2, #128
+	lsls r2, r2, #2
+	adds r2, #38
+	adds r3, r3, r2
+	ldrb r1, [r3]
+	bl Func_02002310
+	movs r6, #4
+	movs r7, #5
+.L_ja_0200847c:
+	movs r0, #6
+	bl WaitFrames
+	adds r0, r6, #0
+	bl Func_020022f8
+	movs r3, #1
+	adds r5, r0, #0
+	negs r3, r3
+	cmp r5, r3
+	bne .L_ja_0200849a
+	cmp r6, #4
+	beq .L_ja_020083f4
+	subs r6, #1
+	b .L_ja_0200847c
+.L_ja_0200849a:
+	ldr r3, .L_ja_020086cc
+	movs r1, #0
+	ldrsh r3, [r3, r1]
+	cmp r3, #0
+	bne .L_ja_020084ae
+	ldr r3, .L_ja_020086d0
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	cmp r3, #0
+	beq .L_ja_020084b0
+.L_ja_020084ae:
+	movs r7, #8
+.L_ja_020084b0:
+	adds r6, #1
+	cmp r6, r7
+	blt .L_ja_0200847c
+.L_ja_020084b6:
+	ldr r0, .L_ja_020086d4
+	movs r1, #13
+	bl UiText_ShowPositionedMessageAndWait
+	movs r0, #1
+	movs r1, #0
+	movs r2, #0
+	movs r3, #0
+	bl Menu_RunConfirmSelection
+	adds r5, r0, #0
+	bl UiWork_FinalizePendingCore
+	cmp r5, #0
+	bne .L_ja_02008570
+.L_ja_020084d4:
+	movs r0, #0
+	bl Func_020022b0
+	movs r3, #1
+	negs r3, r3
+	adds r5, r0, #0
+	mov r8, r3
+	cmp r5, r8
+	beq .L_ja_020083f4
+	cmp r5, #1
+	bne .L_ja_0200852a
+	ldr r5, .L_ja_020086d8
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r6, .L_ja_020086dc
+	ldr r0, .L_ja_020086e0
+	mov lr, r6
+	.2byte 0xf800
+	bl Func_02000b24
+	adds r7, r0, #0
+	cmp r7, r8
+	beq .L_ja_02008508
+	bl Func_020023e8
+.L_ja_02008508:
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r0, .L_ja_020086e4
+	mov lr, r6
+	.2byte 0xf800
+	movs r2, #192
+	adds r0, r5, #0
+	ldr r1, .L_ja_020086e0
+	lsls r2, r2, #6
+	mov lr, r6
+	.2byte 0xf800
+	cmp r7, r8
+	beq .L_ja_020084d4
+	ldr r0, .L_ja_020086e4
+	movs r1, #0
+	b .L_ja_02008568
+.L_ja_0200852a:
+	cmp r5, #0
+	bne .L_ja_02008574
+	ldr r5, .L_ja_020086d8
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r6, .L_ja_020086dc
+	ldr r0, .L_ja_020086e0
+	mov lr, r6
+	.2byte 0xf800
+	bl Func_02002350
+	bl Func_02000e44
+	movs r2, #192
+	adds r7, r0, #0
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r0, .L_ja_020086e4
+	mov lr, r6
+	.2byte 0xf800
+	movs r2, #192
+	adds r0, r5, #0
+	ldr r1, .L_ja_020086e0
+	lsls r2, r2, #6
+	mov lr, r6
+	.2byte 0xf800
+	cmp r7, r8
+	beq .L_ja_020084d4
+	ldr r0, .L_ja_020086e4
+	movs r1, #1
+.L_ja_02008568:
+	movs r2, #0
+	bl Func_02002370
+	b .L_ja_02008574
+.L_ja_02008570:
+	bl Func_02002398
+.L_ja_02008574:
+	movs r6, #0
+	movs r7, #1
+.L_ja_02008578:
+	movs r0, #6
+	bl WaitFrames
+	adds r0, r6, #0
+	bl Func_020022f8
+	movs r1, #1
+	adds r5, r0, #0
+	negs r1, r1
+	cmp r5, r1
+	bne .L_ja_02008596
+	cmp r6, #0
+	beq .L_ja_020084b6
+	subs r6, #1
+	b .L_ja_02008578
+.L_ja_02008596:
+	ldr r3, .L_ja_020086d0
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	cmp r3, #0
+	beq .L_ja_020085a2
+	movs r7, #4
+.L_ja_020085a2:
+	adds r6, #1
+	cmp r6, r7
+	blt .L_ja_02008578
+	ldr r3, .L_ja_020086e8
+	movs r1, #0
+	ldrsh r3, [r3, r1]
+	cmp r3, #0
+	beq .L_ja_0200869c
+.L_ja_020085b2:
+	ldr r5, .L_ja_020086ec
+	movs r1, #13
+	adds r0, r5, #0
+	bl UiText_ShowPositionedMessageAndWait
+	ldr r1, .L_ja_020086f0
+	movs r0, #1
+	movs r2, #6
+	movs r3, #0
+	bl Menu_RunConfirmSelection
+	adds r6, r0, #0
+	bl UiWork_FinalizePendingCore
+	cmp r6, #0
+	bne .L_ja_02008648
+	ldr r3, .L_ja_020086e8
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	cmp r3, #0
+	bne .L_ja_020085e6
+	adds r0, r5, #1
+	movs r1, #1
+	bl UiText_ShowPositionedMessageAndWait
+	b .L_ja_02008648
+.L_ja_020085e6:
+	ldr r6, .L_ja_020086d8
+	movs r2, #192
+	adds r1, r6, #0
+	lsls r2, r2, #6
+	ldr r7, .L_ja_020086dc
+	ldr r0, .L_ja_020086e0
+	mov lr, r7
+	.2byte 0xf800
+	movs r0, #5
+	bl Func_020022d8
+	adds r5, r0, #0
+	cmp r5, #0
+	bne .L_ja_020085b2
+	ldr r5, .L_ja_020086ac
+	movs r1, #147
+	lsls r1, r1, #1
+	movs r2, #128
+	adds r1, #255
+	lsls r2, r2, #2
+	adds r3, r5, r1
+	adds r2, #38
+	ldrb r0, [r3]
+	adds r3, r5, r2
+	ldrb r1, [r3]
+	bl Func_02002310
+	movs r2, #192
+	adds r1, r6, #0
+	lsls r2, r2, #6
+	ldr r0, .L_ja_020086e4
+	mov lr, r7
+	.2byte 0xf800
+	movs r2, #192
+	ldr r1, .L_ja_020086e0
+	lsls r2, r2, #6
+	adds r0, r6, #0
+	mov lr, r7
+	.2byte 0xf800
+	ldr r0, .L_ja_020086e4
+	bl Func_020023a0
+	movs r3, #196
+	lsls r3, r3, #1
+	adds r3, #255
+	adds r5, r5, r3
+	movs r3, #1
+	strb r3, [r5]
+	b .L_ja_0200869c
+.L_ja_02008648:
+	ldr r0, .L_ja_020086f4
+	movs r1, #13
+	bl UiText_ShowPositionedMessageAndWait
+	ldr r5, .L_ja_020086f0
+	movs r0, #1
+	adds r1, r5, #0
+	movs r2, #6
+	movs r3, #0
+	bl Menu_RunConfirmSelection
+	adds r6, r0, #0
+	bl UiWork_FinalizePendingCore
+	cmp r6, #0
+	bne .L_ja_0200867e
+	movs r0, #46
+	bl GameFlag_SetBit
+	ldr r3, .L_ja_020086ac
+	movs r1, #196
+	lsls r1, r1, #1
+	adds r1, #255
+	adds r3, r3, r1
+	movs r2, #2
+	strb r2, [r3]
+	b .L_ja_0200869c
+.L_ja_0200867e:
+	ldr r0, .L_ja_020086f8
+	movs r1, #13
+	bl UiText_ShowPositionedMessageAndWait
+	movs r0, #1
+	adds r1, r5, #0
+	movs r2, #6
+	movs r3, #0
+	bl Menu_RunConfirmSelection
+	adds r6, r0, #0
+	bl UiWork_FinalizePendingCore
+	cmp r6, #0
+	bne .L_ja_020085b2
+.L_ja_0200869c:
+	ldr r0, .L_ja_020086b4
+	movs r1, #8
+	bl Func_020023b8
+	b .L_ja_020089f6
+	.2byte 0x0000
+.L_ja_020086a8:
+	.4byte Func_020001f4
+.L_ja_020086ac:
+	.4byte gPartyState
+.L_ja_020086b0:
+	.4byte 0x00000008
+.L_ja_020086b4:
+	.4byte 0x00000000
+.L_ja_020086b8:
+	.4byte gSleepDisabled
+.L_ja_020086bc:
+	.4byte gDebugMode
+.L_ja_020086c0:
+	.4byte gAutoSleepEnabled
+.L_ja_020086c4:
+	.4byte 0x0000000b
+.L_ja_020086c8:
+	.4byte Func_0200015c
+.L_ja_020086cc:
+	.4byte Data_020024f6
+.L_ja_020086d0:
+	.4byte Data_020024f8
+.L_ja_020086d4:
+	.4byte 0x00000024
+.L_ja_020086d8:
+	.4byte Data_02000000
+.L_ja_020086dc:
+	.4byte IwramCopyWords
+.L_ja_020086e0:
+	.4byte gMapCellBuffer
+.L_ja_020086e4:
+	.4byte Data_02012f94 + 0x6c
+.L_ja_020086e8:
+	.4byte Data_02003860
+.L_ja_020086ec:
+	.4byte 0x00000025
+.L_ja_020086f0:
+	.4byte 0x00000029
+.L_ja_020086f4:
+	.4byte 0x00000027
+.L_ja_020086f8:
+	.4byte 0x00000028
+.L_ja_020086fc:
+	cmp r5, #1
+	beq .L_ja_02008702
+	b .L_ja_02008850
+.L_ja_02008702:
+	movs r0, #1
+	bl Func_020022d8
+	movs r2, #1
+	adds r5, r0, #0
+	negs r2, r2
+	cmp r5, r2
+	bne .L_ja_02008714
+	b .L_ja_020083f4
+.L_ja_02008714:
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_SetBit
+	ldr r5, .L_ja_02008a30
+	movs r1, #147
+	lsls r1, r1, #1
+	movs r2, #128
+	adds r1, #255
+	lsls r2, r2, #2
+	adds r3, r5, r1
+	adds r2, #38
+	ldrb r0, [r3]
+	adds r3, r5, r2
+	ldrb r1, [r3]
+	bl Func_02002310
+	bl Func_02002388
+	ldr r3, [r5]
+	cmp r3, r0
+	beq .L_ja_02008772
+	movs r1, #242
+	lsls r1, r1, #1
+	adds r3, r5, r1
+	ldrh r0, [r3]
+	movs r2, #240
+	lsls r2, r2, #1
+	adds r3, r5, r2
+	strh r0, [r3]
+	adds r1, #2
+	adds r3, r5, r1
+	ldrh r1, [r3]
+	adds r2, #2
+	adds r3, r5, r2
+	strh r1, [r3]
+	lsls r0, r0, #16
+	lsls r1, r1, #16
+	asrs r0, r0, #16
+	asrs r1, r1, #16
+	bl Func_020023e0
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_ClearBit
+	b .L_ja_02008846
+.L_ja_02008772:
+	ldr r3, .L_ja_02008a34
+	movs r2, #130
+	ldr r3, [r3]
+	lsls r2, r2, #2
+	ands r3, r2
+	cmp r3, r2
+	bne .L_ja_020087c6
+	bl Func_020002e0
+	cmp r0, #0
+	beq .L_ja_0200878c
+	ldr r0, .L_ja_02008a38
+	b .L_ja_02008806
+.L_ja_0200878c:
+	movs r1, #242
+	lsls r1, r1, #1
+	adds r3, r5, r1
+	ldrh r0, [r3]
+	movs r2, #240
+	lsls r2, r2, #1
+	adds r3, r5, r2
+	strh r0, [r3]
+	adds r1, #2
+	adds r3, r5, r1
+	ldrh r1, [r3]
+	adds r2, #2
+	adds r3, r5, r2
+	strh r1, [r3]
+	lsls r0, r0, #16
+	lsls r1, r1, #16
+	asrs r0, r0, #16
+	asrs r1, r1, #16
+	bl Func_020023e0
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_ClearBit
+	movs r0, #159
+	lsls r0, r0, #1
+	bl GameFlag_SetBit
+	b .L_ja_02008846
+.L_ja_020087c6:
+	ldr r3, .L_ja_02008a3c
+	ldr r2, [r5, #4]
+	ldr r3, [r3]
+	cmp r2, r3
+	beq .L_ja_02008846
+	ldr r6, .L_ja_02008a40
+	movs r1, #9
+	adds r0, r6, #0
+	bl UiText_ShowPositionedMessageAndWait
+	adds r0, r6, #1
+	movs r1, #13
+	bl UiText_ShowPositionedMessageAndWait
+	movs r0, #1
+	movs r1, #0
+	movs r2, #0
+	movs r3, #0
+	bl Menu_RunConfirmSelection
+	cmp r0, #0
+	beq .L_ja_020087f8
+	bl UiWork_FinalizePendingCore
+	b .L_ja_020083f4
+.L_ja_020087f8:
+	bl UiWork_FinalizePendingCore
+	bl Func_020002e0
+	cmp r0, #0
+	beq .L_ja_0200880e
+	adds r0, r6, #2
+.L_ja_02008806:
+	movs r1, #9
+	bl UiText_ShowPositionedMessageAndWait
+	b .L_ja_020083f4
+.L_ja_0200880e:
+	movs r1, #242
+	lsls r1, r1, #1
+	adds r3, r5, r1
+	ldrh r0, [r3]
+	movs r2, #240
+	lsls r2, r2, #1
+	adds r3, r5, r2
+	strh r0, [r3]
+	adds r1, #2
+	adds r3, r5, r1
+	ldrh r1, [r3]
+	adds r2, #2
+	adds r3, r5, r2
+	strh r1, [r3]
+	lsls r0, r0, #16
+	lsls r1, r1, #16
+	asrs r0, r0, #16
+	asrs r1, r1, #16
+	bl Func_020023e0
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_ClearBit
+	movs r0, #64
+	adds r0, #255
+	bl GameFlag_SetBit
+.L_ja_02008846:
+	movs r0, #131
+	lsls r0, r0, #1
+	bl GameFlag_ClearBit
+	b .L_ja_020089f6
+.L_ja_02008850:
+	cmp r5, #2
+	bne .L_ja_0200885a
+	bl Func_020022e0
+	b .L_ja_020083f4
+.L_ja_0200885a:
+	cmp r5, #3
+	bne .L_ja_02008864
+	bl Func_020022e8
+	b .L_ja_020083f4
+.L_ja_02008864:
+	cmp r5, #4
+	bne .L_ja_020088dc
+	movs r0, #4
+	bl Func_020022d8
+	movs r3, #1
+	adds r5, r0, #0
+	negs r3, r3
+	cmp r5, r3
+	bne .L_ja_0200887a
+	b .L_ja_020083f4
+.L_ja_0200887a:
+	ldr r5, .L_ja_02008a30
+	movs r1, #133
+	lsls r1, r1, #2
+	movs r0, #144
+	adds r3, r5, r1
+	movs r2, #4
+	lsls r0, r0, #4
+	str r2, [r3]
+	adds r0, #255
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_02008898
+	bl Func_02002390
+.L_ja_02008898:
+	movs r2, #147
+	lsls r2, r2, #1
+	movs r1, #128
+	adds r2, #255
+	lsls r1, r1, #2
+	adds r3, r5, r2
+	adds r1, #38
+	ldrb r0, [r3]
+	adds r3, r5, r1
+	ldrb r1, [r3]
+	bl Func_02002310
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_ClearBit
+	movs r0, #131
+	lsls r0, r0, #1
+	bl GameFlag_ClearBit
+	movs r3, #128
+	lsls r3, r3, #2
+	adds r3, #118
+	adds r2, r5, r3
+	movs r3, #0
+	strh r3, [r2]
+	ldr r2, .L_ja_02008a44
+	movs r3, #1
+	strb r3, [r2]
+	ldr r0, .L_ja_02008a48
+	movs r1, #1
+	bl Func_020023b8
+	b .L_ja_020089f6
+.L_ja_020088dc:
+	cmp r5, #5
+	beq .L_ja_020088e2
+	b .L_ja_020083f4
+.L_ja_020088e2:
+	movs r0, #6
+	bl Func_020022d8
+	movs r1, #1
+	adds r5, r0, #0
+	negs r1, r1
+	cmp r5, r1
+	bne .L_ja_020088f4
+	b .L_ja_020083f4
+.L_ja_020088f4:
+	ldr r3, .L_ja_02008a30
+	movs r1, #147
+	lsls r1, r1, #1
+	adds r1, #255
+	adds r2, r3, r1
+	ldrb r0, [r2]
+	movs r2, #128
+	lsls r2, r2, #2
+	adds r2, #38
+	adds r3, r3, r2
+	ldrb r1, [r3]
+	bl Func_02002310
+.L_ja_0200890e:
+	movs r0, #2
+	bl Func_020022b0
+	movs r3, #1
+	negs r3, r3
+	adds r5, r0, #0
+	mov r8, r3
+	cmp r5, r8
+	beq .L_ja_020088e2
+	cmp r5, #1
+	bne .L_ja_0200896a
+	ldr r5, .L_ja_02008a4c
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r6, .L_ja_02008a50
+	ldr r0, .L_ja_02008a54
+	mov lr, r6
+	.2byte 0xf800
+	bl Func_02000b24
+	adds r7, r0, #0
+	cmp r7, r8
+	beq .L_ja_02008942
+	bl Func_020023e8
+.L_ja_02008942:
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r0, .L_ja_02008a58
+	mov lr, r6
+	.2byte 0xf800
+	movs r2, #192
+	adds r0, r5, #0
+	ldr r1, .L_ja_02008a54
+	lsls r2, r2, #6
+	mov lr, r6
+	.2byte 0xf800
+	cmp r7, r8
+	beq .L_ja_0200890e
+	ldr r0, .L_ja_02008a58
+	movs r1, #0
+	movs r2, #1
+	bl Func_02002370
+	b .L_ja_020089ae
+.L_ja_0200896a:
+	cmp r5, #0
+	bne .L_ja_020089ae
+	ldr r5, .L_ja_02008a4c
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r6, .L_ja_02008a50
+	ldr r0, .L_ja_02008a54
+	mov lr, r6
+	.2byte 0xf800
+	bl Func_02002350
+	bl Func_02000e44
+	movs r2, #192
+	adds r7, r0, #0
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r0, .L_ja_02008a58
+	mov lr, r6
+	.2byte 0xf800
+	movs r2, #192
+	adds r0, r5, #0
+	ldr r1, .L_ja_02008a54
+	lsls r2, r2, #6
+	mov lr, r6
+	.2byte 0xf800
+	cmp r7, r8
+	beq .L_ja_0200890e
+	ldr r0, .L_ja_02008a58
+	movs r1, #1
+	movs r2, #1
+	bl Func_02002370
+.L_ja_020089ae:
+	ldr r3, .L_ja_02008a5c
+	movs r1, #0
+	ldrsh r3, [r3, r1]
+	cmp r3, #0
+	bne .L_ja_020089c2
+	ldr r3, .L_ja_02008a60
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	cmp r3, #0
+	beq .L_ja_020089f6
+.L_ja_020089c2:
+	movs r6, #0
+	movs r7, #1
+.L_ja_020089c6:
+	movs r0, #6
+	bl WaitFrames
+	adds r0, r6, #0
+	bl Func_020022f8
+	movs r3, #1
+	adds r5, r0, #0
+	negs r3, r3
+	cmp r5, r3
+	bne .L_ja_020089e4
+	cmp r6, #0
+	beq .L_ja_020088e2
+	subs r6, #1
+	b .L_ja_020089c6
+.L_ja_020089e4:
+	ldr r3, .L_ja_02008a60
+	movs r1, #0
+	ldrsh r3, [r3, r1]
+	cmp r3, #0
+	beq .L_ja_020089f0
+	movs r7, #4
+.L_ja_020089f0:
+	adds r6, #1
+	cmp r6, r7
+	blt .L_ja_020089c6
+.L_ja_020089f6:
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r3, [r3, #108]
+	movs r2, #172
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	movs r2, #186
+	lsls r2, r2, #2
+	adds r2, #255
+	strh r2, [r3]
+	movs r0, #30
+	bl Battle_WaitMode0
+	movs r0, #78
+	bl Func_02002408
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
+	movs r0, #60
+	bl Battle_WaitMode0
+.L_ja_02008a24:
+	movs r0, #0
+	pop {r3, r5}
+	mov r8, r3
+	mov r10, r5
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
+.L_ja_02008a30:
+	.4byte gPartyState
+.L_ja_02008a34:
+	.4byte gInput
+.L_ja_02008a38:
+	.4byte 0x00000007
+.L_ja_02008a3c:
+	.4byte Data_02001000
+.L_ja_02008a40:
+	.4byte 0x00000005
+.L_ja_02008a44:
+	.4byte gSleepDisabled
+.L_ja_02008a48:
+	.4byte 0x00000138
+.L_ja_02008a4c:
+	.4byte Data_02000000
+.L_ja_02008a50:
+	.4byte IwramCopyWords
+.L_ja_02008a54:
+	.4byte gMapCellBuffer
+.L_ja_02008a58:
+	.4byte Data_02012f94 + 0x6c
+.L_ja_02008a5c:
+	.4byte Data_020024f6
+.L_ja_02008a60:
+	.4byte Data_020024f8
+	.else
+	.ifdef TLA_EDITION_FR
+	.global Func_02000328
+	.thumb_func
+Func_02000328:
+	push {r5, r6, r7, lr}
+	mov r7, r10
+	mov r6, r8
+	push {r6, r7}
+	movs r1, #0
+	mov r10, r1
+	bl Func_0200005c
+	movs r1, #144
+	lsls r1, r1, #3
+	ldr r0, .L_fr_020086a0
+	bl Scheduler_AddOrUpdateCallback
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r3, [r3, #108]
+	movs r2, #214
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	mov r1, r10
+	str r1, [r3]
+	bl Event_StartScreenTransition
+	bl Event_WaitTransitionFrames
+	ldr r3, .L_fr_020086a4
+	movs r2, #241
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	movs r1, #0
+	ldrsh r3, [r3, r1]
+	cmp r3, #2
+	bne .L_fr_020083ee
+.L_fr_0200836a:
+	ldr r5, .L_fr_020086a8
+	movs r1, #5
+	adds r0, r5, #0
+	bl UiText_ShowPositionedMessageAndWait
+	movs r0, #1
+	bl Func_020023d8
+	adds r6, r0, #0
+	bl UiWork_FinalizePendingCore
+	cmp r6, #0
+	bne .L_fr_020083cc
+	movs r1, #1
+	adds r0, r5, #1
+	bl UiText_ShowPositionedMessageAndWait
+	ldr r3, .L_fr_020086a4
+	movs r2, #152
+	lsls r2, r2, #1
+	adds r2, #255
+	adds r3, r3, r2
+	movs r2, #1
+	strb r2, [r3]
+	movs r0, #5
+	bl Party_AddActiveOwner
+	movs r0, #6
+	bl Party_AddActiveOwner
+	movs r0, #7
+	bl Party_AddActiveOwner
+	movs r0, #1
+	bl Party_AddActiveOwner
+	movs r0, #2
+	bl Party_AddActiveOwner
+	movs r0, #3
+	bl Party_AddActiveOwner
+	bl Func_020022d0
+	movs r3, #1
+	adds r6, r0, #0
+	negs r3, r3
+	cmp r6, r3
+	beq .L_fr_0200836a
+.L_fr_020083cc:
+	movs r0, #60
+	bl Battle_WaitMode0
+	bl Event_FinishScreenTransition
+	movs r0, #78
+	bl Func_02002408
+	movs r0, #150
+	lsls r0, r0, #1
+	bl Battle_WaitMode0
+	ldr r0, .L_fr_020086ac
+	movs r1, #1
+	bl Func_020023b8
+	b .L_fr_02008a24
+.L_fr_020083ee:
+	ldr r3, .L_fr_020086b0
+	mov r1, r10
+	strb r1, [r3]
+.L_fr_020083f4:
+	bl Func_020022f0
+	adds r5, r0, #0
+	cmp r5, #0
+	bge .L_fr_02008422
+	ldr r3, .L_fr_020086b4
+	ldrb r3, [r3]
+	cmp r3, #0
+	beq .L_fr_02008422
+	ldr r3, .L_fr_020086a4
+	movs r2, #128
+	lsls r2, r2, #2
+	adds r2, #74
+	adds r3, r3, r2
+	movs r2, #1
+	strb r2, [r3]
+	ldr r3, .L_fr_020086b8
+	ldr r0, .L_fr_020086bc
+	strb r2, [r3]
+	movs r1, #1
+	movs r2, #8
+	bl Func_020022b8
+.L_fr_02008422:
+	cmp r5, #0
+	bne .L_fr_02008446
+	mov r3, r10
+	cmp r3, #0
+	bne .L_fr_02008446
+	movs r0, #30
+	bl WaitFrames
+	movs r1, #144
+	lsls r1, r1, #3
+	ldr r0, .L_fr_020086c0
+	bl Scheduler_AddOrUpdateCallback
+	movs r0, #1
+	bl WaitFrames
+	movs r1, #1
+	mov r10, r1
+.L_fr_02008446:
+	cmp r5, #0
+	ble .L_fr_02008452
+	bl Menu_SelectSaveSlotAction
+	adds r5, r0, #0
+	b .L_fr_02008454
+.L_fr_02008452:
+	movs r5, #0
+.L_fr_02008454:
+	cmp r5, #0
+	beq .L_fr_0200845a
+	b .L_fr_020086f4
+.L_fr_0200845a:
+	bl Func_02002350
+	ldr r3, .L_fr_020086a4
+	movs r1, #147
+	lsls r1, r1, #1
+	adds r1, #255
+	adds r2, r3, r1
+	ldrb r0, [r2]
+	movs r2, #128
+	lsls r2, r2, #2
+	adds r2, #38
+	adds r3, r3, r2
+	ldrb r1, [r3]
+	bl Func_02002310
+	movs r6, #4
+	movs r7, #5
+.L_fr_0200847c:
+	movs r0, #6
+	bl WaitFrames
+	adds r0, r6, #0
+	bl Func_020022f8
+	movs r3, #1
+	adds r5, r0, #0
+	negs r3, r3
+	cmp r5, r3
+	bne .L_fr_0200849a
+	cmp r6, #4
+	beq .L_fr_020083f4
+	subs r6, #1
+	b .L_fr_0200847c
+.L_fr_0200849a:
+	ldr r3, .L_fr_020086c4
+	movs r1, #0
+	ldrsh r3, [r3, r1]
+	cmp r3, #0
+	bne .L_fr_020084ae
+	ldr r3, .L_fr_020086c8
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	cmp r3, #0
+	beq .L_fr_020084b0
+.L_fr_020084ae:
+	movs r7, #8
+.L_fr_020084b0:
+	adds r6, #1
+	cmp r6, r7
+	blt .L_fr_0200847c
+.L_fr_020084b6:
+	ldr r0, .L_fr_020086cc
+	movs r1, #13
+	bl UiText_ShowPositionedMessageAndWait
+	movs r0, #1
+	movs r1, #0
+	movs r2, #0
+	movs r3, #0
+	bl Menu_RunConfirmSelection
+	adds r5, r0, #0
+	bl UiWork_FinalizePendingCore
+	cmp r5, #0
+	bne .L_fr_0200856a
+.L_fr_020084d4:
+	movs r0, #0
+	bl Func_020022b0
+	movs r3, #1
+	negs r3, r3
+	adds r5, r0, #0
+	mov r8, r3
+	cmp r5, r8
+	beq .L_fr_020083f4
+	cmp r5, #1
+	bne .L_fr_0200852a
+	ldr r5, .L_fr_020086d0
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r6, .L_fr_020086d4
+	ldr r0, .L_fr_020086d8
+	mov lr, r6
+	.2byte 0xf800
+	bl Func_02000b24
+	adds r7, r0, #0
+	cmp r7, r8
+	beq .L_fr_02008508
+	bl Func_020023e8
+.L_fr_02008508:
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r0, .L_fr_020086dc
+	mov lr, r6
+	.2byte 0xf800
+	movs r2, #192
+	adds r0, r5, #0
+	ldr r1, .L_fr_020086d8
+	lsls r2, r2, #6
+	mov lr, r6
+	.2byte 0xf800
+	cmp r7, r8
+	beq .L_fr_020084d4
+	ldr r0, .L_fr_020086dc
+	movs r1, #0
+	b .L_fr_02008562
+.L_fr_0200852a:
+	cmp r5, #0
+	bne .L_fr_0200856e
+	ldr r5, .L_fr_020086d0
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r6, .L_fr_020086d4
+	ldr r0, .L_fr_020086d8
+	mov lr, r6
+	.2byte 0xf800
+	bl Func_02002350
+	bl Func_02000e44
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r0, .L_fr_020086dc
+	mov lr, r6
+	.2byte 0xf800
+	movs r2, #192
+	ldr r1, .L_fr_020086d8
+	lsls r2, r2, #6
+	adds r0, r5, #0
+	mov lr, r6
+	.2byte 0xf800
+	ldr r0, .L_fr_020086dc
+	movs r1, #1
+.L_fr_02008562:
+	movs r2, #0
+	bl Func_02002370
+	b .L_fr_0200856e
+.L_fr_0200856a:
+	bl Func_02002398
+.L_fr_0200856e:
+	movs r6, #0
+	movs r7, #1
+.L_fr_02008572:
+	movs r0, #6
+	bl WaitFrames
+	adds r0, r6, #0
+	bl Func_020022f8
+	movs r1, #1
+	adds r5, r0, #0
+	negs r1, r1
+	cmp r5, r1
+	bne .L_fr_02008590
+	cmp r6, #0
+	beq .L_fr_020084b6
+	subs r6, #1
+	b .L_fr_02008572
+.L_fr_02008590:
+	ldr r3, .L_fr_020086c8
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	cmp r3, #0
+	beq .L_fr_0200859c
+	movs r7, #4
+.L_fr_0200859c:
+	adds r6, #1
+	cmp r6, r7
+	blt .L_fr_02008572
+	ldr r3, .L_fr_020086e0
+	movs r1, #0
+	ldrsh r3, [r3, r1]
+	cmp r3, #0
+	beq .L_fr_02008696
+.L_fr_020085ac:
+	ldr r5, .L_fr_020086e4
+	movs r1, #13
+	adds r0, r5, #0
+	bl UiText_ShowPositionedMessageAndWait
+	ldr r1, .L_fr_020086e8
+	movs r0, #1
+	movs r2, #8
+	movs r3, #0
+	bl Menu_RunConfirmSelection
+	adds r6, r0, #0
+	bl UiWork_FinalizePendingCore
+	cmp r6, #0
+	bne .L_fr_02008642
+	ldr r3, .L_fr_020086e0
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	cmp r3, #0
+	bne .L_fr_020085e0
+	adds r0, r5, #1
+	movs r1, #1
+	bl UiText_ShowPositionedMessageAndWait
+	b .L_fr_02008642
+.L_fr_020085e0:
+	ldr r6, .L_fr_020086d0
+	movs r2, #192
+	adds r1, r6, #0
+	lsls r2, r2, #6
+	ldr r7, .L_fr_020086d4
+	ldr r0, .L_fr_020086d8
+	mov lr, r7
+	.2byte 0xf800
+	movs r0, #5
+	bl Func_020022d8
+	adds r5, r0, #0
+	cmp r5, #0
+	bne .L_fr_020085ac
+	ldr r5, .L_fr_020086a4
+	movs r1, #147
+	lsls r1, r1, #1
+	movs r2, #128
+	adds r1, #255
+	lsls r2, r2, #2
+	adds r3, r5, r1
+	adds r2, #38
+	ldrb r0, [r3]
+	adds r3, r5, r2
+	ldrb r1, [r3]
+	bl Func_02002310
+	movs r2, #192
+	adds r1, r6, #0
+	lsls r2, r2, #6
+	ldr r0, .L_fr_020086dc
+	mov lr, r7
+	.2byte 0xf800
+	movs r2, #192
+	ldr r1, .L_fr_020086d8
+	lsls r2, r2, #6
+	adds r0, r6, #0
+	mov lr, r7
+	.2byte 0xf800
+	ldr r0, .L_fr_020086dc
+	bl Func_020023a0
+	movs r3, #196
+	lsls r3, r3, #1
+	adds r3, #255
+	adds r5, r5, r3
+	movs r3, #1
+	strb r3, [r5]
+	b .L_fr_02008696
+.L_fr_02008642:
+	ldr r0, .L_fr_020086ec
+	movs r1, #13
+	bl UiText_ShowPositionedMessageAndWait
+	ldr r5, .L_fr_020086e8
+	movs r0, #1
+	adds r1, r5, #0
+	movs r2, #8
+	movs r3, #0
+	bl Menu_RunConfirmSelection
+	adds r6, r0, #0
+	bl UiWork_FinalizePendingCore
+	cmp r6, #0
+	bne .L_fr_02008678
+	movs r0, #46
+	bl GameFlag_SetBit
+	ldr r3, .L_fr_020086a4
+	movs r1, #196
+	lsls r1, r1, #1
+	adds r1, #255
+	adds r3, r3, r1
+	movs r2, #2
+	strb r2, [r3]
+	b .L_fr_02008696
+.L_fr_02008678:
+	ldr r0, .L_fr_020086f0
+	movs r1, #13
+	bl UiText_ShowPositionedMessageAndWait
+	movs r0, #1
+	adds r1, r5, #0
+	movs r2, #8
+	movs r3, #0
+	bl Menu_RunConfirmSelection
+	adds r6, r0, #0
+	bl UiWork_FinalizePendingCore
+	cmp r6, #0
+	bne .L_fr_020085ac
+.L_fr_02008696:
+	ldr r0, .L_fr_020086ac
+	movs r1, #8
+	bl Func_020023b8
+	b .L_fr_020089f6
+.L_fr_020086a0:
+	.4byte Func_020001f4
+.L_fr_020086a4:
+	.4byte gPartyState
+.L_fr_020086a8:
+	.4byte 0x00000008
+.L_fr_020086ac:
+	.4byte 0x00000000
+.L_fr_020086b0:
+	.4byte gSleepDisabled
+.L_fr_020086b4:
+	.4byte gDebugMode
+.L_fr_020086b8:
+	.4byte gAutoSleepEnabled
+.L_fr_020086bc:
+	.4byte 0x0000000b
+.L_fr_020086c0:
+	.4byte Func_0200015c
+.L_fr_020086c4:
+	.4byte Data_020024f6
+.L_fr_020086c8:
+	.4byte Data_020024f8
+.L_fr_020086cc:
+	.4byte 0x00000024
+.L_fr_020086d0:
+	.4byte Data_02000000
+.L_fr_020086d4:
+	.4byte IwramCopyWords
+.L_fr_020086d8:
+	.4byte gMapCellBuffer
+.L_fr_020086dc:
+	.4byte 0x02013000
+.L_fr_020086e0:
+	.4byte Data_02003860
+.L_fr_020086e4:
+	.4byte 0x00000025
+.L_fr_020086e8:
+	.4byte 0x00000029
+.L_fr_020086ec:
+	.4byte 0x00000027
+.L_fr_020086f0:
+	.4byte 0x00000028
+.L_fr_020086f4:
+	cmp r5, #1
+	beq .L_fr_020086fa
+	b .L_fr_02008848
+.L_fr_020086fa:
+	movs r0, #1
+	bl Func_020022d8
+	movs r2, #1
+	adds r5, r0, #0
+	negs r2, r2
+	cmp r5, r2
+	bne .L_fr_0200870c
+	b .L_fr_020083f4
+.L_fr_0200870c:
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_SetBit
+	ldr r5, .L_fr_02008a30
+	movs r1, #147
+	lsls r1, r1, #1
+	movs r2, #128
+	adds r1, #255
+	lsls r2, r2, #2
+	adds r3, r5, r1
+	adds r2, #38
+	ldrb r0, [r3]
+	adds r3, r5, r2
+	ldrb r1, [r3]
+	bl Func_02002310
+	bl Func_02002388
+	ldr r3, [r5]
+	cmp r3, r0
+	beq .L_fr_0200876a
+	movs r1, #242
+	lsls r1, r1, #1
+	adds r3, r5, r1
+	ldrh r0, [r3]
+	movs r2, #240
+	lsls r2, r2, #1
+	adds r3, r5, r2
+	strh r0, [r3]
+	adds r1, #2
+	adds r3, r5, r1
+	ldrh r1, [r3]
+	adds r2, #2
+	adds r3, r5, r2
+	strh r1, [r3]
+	lsls r0, r0, #16
+	lsls r1, r1, #16
+	asrs r0, r0, #16
+	asrs r1, r1, #16
+	bl Func_020023e0
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_ClearBit
+	b .L_fr_0200883e
+.L_fr_0200876a:
+	ldr r3, .L_fr_02008a34
+	movs r2, #130
+	ldr r3, [r3]
+	lsls r2, r2, #2
+	ands r3, r2
+	cmp r3, r2
+	bne .L_fr_020087be
+	bl Func_020002e0
+	cmp r0, #0
+	beq .L_fr_02008784
+	ldr r0, .L_fr_02008a38
+	b .L_fr_020087fe
+.L_fr_02008784:
+	movs r1, #242
+	lsls r1, r1, #1
+	adds r3, r5, r1
+	ldrh r0, [r3]
+	movs r2, #240
+	lsls r2, r2, #1
+	adds r3, r5, r2
+	strh r0, [r3]
+	adds r1, #2
+	adds r3, r5, r1
+	ldrh r1, [r3]
+	adds r2, #2
+	adds r3, r5, r2
+	strh r1, [r3]
+	lsls r0, r0, #16
+	lsls r1, r1, #16
+	asrs r0, r0, #16
+	asrs r1, r1, #16
+	bl Func_020023e0
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_ClearBit
+	movs r0, #159
+	lsls r0, r0, #1
+	bl GameFlag_SetBit
+	b .L_fr_0200883e
+.L_fr_020087be:
+	ldr r3, .L_fr_02008a3c
+	ldr r2, [r5, #4]
+	ldr r3, [r3]
+	cmp r2, r3
+	beq .L_fr_0200883e
+	ldr r6, .L_fr_02008a40
+	movs r1, #9
+	adds r0, r6, #0
+	bl UiText_ShowPositionedMessageAndWait
+	adds r0, r6, #1
+	movs r1, #13
+	bl UiText_ShowPositionedMessageAndWait
+	movs r0, #1
+	movs r1, #0
+	movs r2, #0
+	movs r3, #0
+	bl Menu_RunConfirmSelection
+	cmp r0, #0
+	beq .L_fr_020087f0
+	bl UiWork_FinalizePendingCore
+	b .L_fr_020083f4
+.L_fr_020087f0:
+	bl UiWork_FinalizePendingCore
+	bl Func_020002e0
+	cmp r0, #0
+	beq .L_fr_02008806
+	adds r0, r6, #2
+.L_fr_020087fe:
+	movs r1, #9
+	bl UiText_ShowPositionedMessageAndWait
+	b .L_fr_020083f4
+.L_fr_02008806:
+	movs r1, #242
+	lsls r1, r1, #1
+	adds r3, r5, r1
+	ldrh r0, [r3]
+	movs r2, #240
+	lsls r2, r2, #1
+	adds r3, r5, r2
+	strh r0, [r3]
+	adds r1, #2
+	adds r3, r5, r1
+	ldrh r1, [r3]
+	adds r2, #2
+	adds r3, r5, r2
+	strh r1, [r3]
+	lsls r0, r0, #16
+	lsls r1, r1, #16
+	asrs r0, r0, #16
+	asrs r1, r1, #16
+	bl Func_020023e0
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_ClearBit
+	movs r0, #64
+	adds r0, #255
+	bl GameFlag_SetBit
+.L_fr_0200883e:
+	movs r0, #131
+	lsls r0, r0, #1
+	bl GameFlag_ClearBit
+	b .L_fr_020089f6
+.L_fr_02008848:
+	cmp r5, #2
+	bne .L_fr_02008852
+	bl Func_020022e0
+	b .L_fr_020083f4
+.L_fr_02008852:
+	cmp r5, #3
+	bne .L_fr_0200885c
+	bl Func_020022e8
+	b .L_fr_020083f4
+.L_fr_0200885c:
+	cmp r5, #4
+	bne .L_fr_020088d4
+	movs r0, #4
+	bl Func_020022d8
+	movs r3, #1
+	adds r5, r0, #0
+	negs r3, r3
+	cmp r5, r3
+	bne .L_fr_02008872
+	b .L_fr_020083f4
+.L_fr_02008872:
+	ldr r5, .L_fr_02008a30
+	movs r1, #133
+	lsls r1, r1, #2
+	movs r0, #144
+	adds r3, r5, r1
+	movs r2, #4
+	lsls r0, r0, #4
+	str r2, [r3]
+	adds r0, #255
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_fr_02008890
+	bl Func_02002390
+.L_fr_02008890:
+	movs r2, #147
+	lsls r2, r2, #1
+	movs r1, #128
+	adds r2, #255
+	lsls r1, r1, #2
+	adds r3, r5, r2
+	adds r1, #38
+	ldrb r0, [r3]
+	adds r3, r5, r1
+	ldrb r1, [r3]
+	bl Func_02002310
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_ClearBit
+	movs r0, #131
+	lsls r0, r0, #1
+	bl GameFlag_ClearBit
+	movs r3, #128
+	lsls r3, r3, #2
+	adds r3, #118
+	adds r2, r5, r3
+	movs r3, #0
+	strh r3, [r2]
+	ldr r2, .L_fr_02008a44
+	movs r3, #1
+	strb r3, [r2]
+	ldr r0, .L_fr_02008a48
+	movs r1, #1
+	bl Func_020023b8
+	b .L_fr_020089f6
+.L_fr_020088d4:
+	cmp r5, #5
+	beq .L_fr_020088da
+	b .L_fr_020083f4
+.L_fr_020088da:
+	movs r0, #6
+	bl Func_020022d8
+	movs r1, #1
+	adds r5, r0, #0
+	negs r1, r1
+	cmp r5, r1
+	bne .L_fr_020088ec
+	b .L_fr_020083f4
+.L_fr_020088ec:
+	ldr r3, .L_fr_02008a30
+	movs r1, #147
+	lsls r1, r1, #1
+	adds r1, #255
+	adds r2, r3, r1
+	ldrb r0, [r2]
+	movs r2, #128
+	lsls r2, r2, #2
+	adds r2, #38
+	adds r3, r3, r2
+	ldrb r1, [r3]
+	bl Func_02002310
+.L_fr_02008906:
+	movs r0, #2
+	bl Func_020022b0
+	movs r3, #1
+	negs r3, r3
+	adds r5, r0, #0
+	mov r8, r3
+	cmp r5, r8
+	beq .L_fr_020088da
+	cmp r5, #1
+	bne .L_fr_02008962
+	ldr r5, .L_fr_02008a4c
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r6, .L_fr_02008a50
+	ldr r0, .L_fr_02008a54
+	mov lr, r6
+	.2byte 0xf800
+	bl Func_02000b24
+	adds r7, r0, #0
+	cmp r7, r8
+	beq .L_fr_0200893a
+	bl Func_020023e8
+.L_fr_0200893a:
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r0, .L_fr_02008a58
+	mov lr, r6
+	.2byte 0xf800
+	movs r2, #192
+	adds r0, r5, #0
+	ldr r1, .L_fr_02008a54
+	lsls r2, r2, #6
+	mov lr, r6
+	.2byte 0xf800
+	cmp r7, r8
+	beq .L_fr_02008906
+	ldr r0, .L_fr_02008a58
+	movs r1, #0
+	movs r2, #1
+	bl Func_02002370
+	b .L_fr_020089a6
+.L_fr_02008962:
+	cmp r5, #0
+	bne .L_fr_020089a6
+	ldr r5, .L_fr_02008a4c
+	movs r2, #192
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r6, .L_fr_02008a50
+	ldr r0, .L_fr_02008a54
+	mov lr, r6
+	.2byte 0xf800
+	bl Func_02002350
+	bl Func_02000e44
+	movs r2, #192
+	adds r7, r0, #0
+	adds r1, r5, #0
+	lsls r2, r2, #6
+	ldr r0, .L_fr_02008a58
+	mov lr, r6
+	.2byte 0xf800
+	movs r2, #192
+	adds r0, r5, #0
+	ldr r1, .L_fr_02008a54
+	lsls r2, r2, #6
+	mov lr, r6
+	.2byte 0xf800
+	cmp r7, r8
+	beq .L_fr_02008906
+	ldr r0, .L_fr_02008a58
+	movs r1, #1
+	movs r2, #1
+	bl Func_02002370
+.L_fr_020089a6:
+	ldr r3, .L_fr_02008a5c
+	movs r1, #0
+	ldrsh r3, [r3, r1]
+	cmp r3, #0
+	bne .L_fr_020089ba
+	ldr r3, .L_fr_02008a60
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	cmp r3, #0
+	beq .L_fr_020089ee
+.L_fr_020089ba:
+	movs r6, #0
+	movs r7, #1
+.L_fr_020089be:
+	movs r0, #6
+	bl WaitFrames
+	adds r0, r6, #0
+	bl Func_020022f8
+	movs r3, #1
+	adds r5, r0, #0
+	negs r3, r3
+	cmp r5, r3
+	bne .L_fr_020089dc
+	cmp r6, #0
+	beq .L_fr_020088da
+	subs r6, #1
+	b .L_fr_020089be
+.L_fr_020089dc:
+	ldr r3, .L_fr_02008a60
+	movs r1, #0
+	ldrsh r3, [r3, r1]
+	cmp r3, #0
+	beq .L_fr_020089e8
+	movs r7, #4
+.L_fr_020089e8:
+	adds r6, #1
+	cmp r6, r7
+	blt .L_fr_020089be
+.L_fr_020089ee:
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_SetBit
+.L_fr_020089f6:
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r3, [r3, #108]
+	movs r2, #172
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	movs r2, #186
+	lsls r2, r2, #2
+	adds r2, #255
+	strh r2, [r3]
+	movs r0, #30
+	bl Battle_WaitMode0
+	movs r0, #78
+	bl Func_02002408
+	bl Event_FinishScreenTransition
+	bl Event_WaitTransitionFrames
+	movs r0, #60
+	bl Battle_WaitMode0
+.L_fr_02008a24:
+	movs r0, #0
+	pop {r3, r5}
+	mov r8, r3
+	mov r10, r5
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
+.L_fr_02008a30:
+	.4byte gPartyState
+.L_fr_02008a34:
+	.4byte gInput
+.L_fr_02008a38:
+	.4byte 0x00000007
+.L_fr_02008a3c:
+	.4byte Data_02001000
+.L_fr_02008a40:
+	.4byte 0x00000005
+.L_fr_02008a44:
+	.4byte gSleepDisabled
+.L_fr_02008a48:
+	.4byte 0x00000138
+.L_fr_02008a4c:
+	.4byte Data_02000000
+.L_fr_02008a50:
+	.4byte IwramCopyWords
+.L_fr_02008a54:
+	.4byte gMapCellBuffer
+.L_fr_02008a58:
+	.4byte 0x02013000
+.L_fr_02008a5c:
+	.4byte Data_020024f6
+.L_fr_02008a60:
+	.4byte Data_020024f8
+	.else
 	.global Func_02000328
 	.thumb_func
 Func_02000328:
@@ -3873,7 +5641,86 @@ Func_02000328:
 	.endif
 	.endif
 	.endif
+	.endif
+	.endif
 	.section .text.x02008a70,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.global Func_02000a70
+	.thumb_func
+Func_02000a70:
+	push {lr}
+	ldr r3, .L_ja_02008a8c
+	strh r3, [r1, #2]
+	strh r3, [r1, #4]
+	cmp r0, #14
+	bgt .L_ja_02008a7a
+	adds r3, r0, #0
+	adds r3, #145
+	b .L_ja_02008adc
+.L_ja_02008a7a:
+	cmp r0, #43
+	bgt .L_ja_02008a84
+	adds r3, r0, #0
+	adds r3, #209
+	b .L_ja_02008adc
+.L_ja_02008a84:
+	cmp r0, #45
+	bne .L_ja_02008a94
+	ldr r3, .L_ja_02008a90
+	b .L_ja_02008adc
+.L_ja_02008a8c:
+	.4byte 0x00000000
+.L_ja_02008a90:
+	.4byte 0x00000086
+.L_ja_02008a94:
+	cmp r0, #44
+	bne .L_ja_02008a9c
+	ldr r3, .L_ja_02008ab8
+	b .L_ja_02008adc
+.L_ja_02008a9c:
+	cmp r0, #55
+	bgt .L_ja_02008aa8
+	ldr r2, .L_ja_02008abc
+	adds r3, r0, #0
+	adds r3, #104
+	b .L_ja_02008ada
+.L_ja_02008aa8:
+	cmp r0, #56
+	bne .L_ja_02008ab0
+	ldr r3, .L_ja_02008ac0
+	b .L_ja_02008adc
+.L_ja_02008ab0:
+	cmp r0, #57
+	bne .L_ja_02008ac8
+	ldr r3, .L_ja_02008ac4
+	b .L_ja_02008adc
+.L_ja_02008ab8:
+	.4byte 0x000000fd
+.L_ja_02008abc:
+	.4byte 0x00004000
+.L_ja_02008ac0:
+	.4byte 0x000040e0
+.L_ja_02008ac4:
+	.4byte 0x000040e3
+.L_ja_02008ac8:
+	cmp r0, #58
+	bne .L_ja_02008ad4
+	ldr r3, .L_ja_02008ad0
+	b .L_ja_02008adc
+.L_ja_02008ad0:
+	.4byte 0x000040e4
+.L_ja_02008ad4:
+	ldr r2, .L_ja_02008ae0
+	adds r3, r0, #0
+	adds r3, #175
+.L_ja_02008ada:
+	orrs r3, r2
+.L_ja_02008adc:
+	strh r3, [r1]
+	pop {pc}
+.L_ja_02008ae0:
+	.4byte 0x00004000
+	.else
 	.global Func_02000a70
 	.thumb_func
 Func_02000a70:
@@ -3982,7 +5829,324 @@ Func_02000a70:
 	.2byte 0x0000
 .L_02008b20:
 	.4byte 0x0000003d
+	.endif
 	.section .text.x02008b24,"ax",%progbits
+	.ifdef TLA_EDITION_FR
+	.global Func_02000b24
+	.thumb_func
+Func_02000b24:
+	push {r5, r6, r7, lr}
+	mov r7, r10
+	mov r6, r9
+	mov r5, r8
+	push {r5, r6, r7}
+	sub sp, #4
+	movs r3, #2
+	str r3, [sp, #0]
+	movs r1, #5
+	movs r2, #26
+	movs r3, #8
+	movs r0, #2
+	bl UiWindow_Create
+	ldr r5, .L_fr_02008be8
+	adds r6, r0, #0
+	adds r1, r6, #0
+	adds r0, r5, #0
+	movs r2, #0
+	movs r3, #4
+	bl UiText_DrawResource
+	adds r0, r5, #1
+	adds r1, r6, #0
+	movs r2, #0
+	movs r3, #16
+	adds r5, #3
+	bl UiText_DrawResource
+	adds r0, r5, #0
+	adds r1, r6, #0
+	movs r2, #0
+	movs r3, #36
+	bl UiText_DrawResource
+	bl Func_02002220
+	movs r0, #10
+	bl WaitFrames
+.L_fr_02008b6c:
+	movs r5, #3
+	b .L_fr_02008bc4
+.L_fr_02008b70:
+	ldr r3, .L_fr_02008bec
+	ldrh r2, [r3]
+	adds r3, r5, #0
+	ands r3, r2
+	cmp r3, r5
+	bne .L_fr_02008bbe
+	ldr r3, .L_fr_02008bf0
+	movs r2, #1
+	ldr r3, [r3]
+	lsls r3, r3, #26
+	lsrs r3, r3, #30
+	eors r3, r2
+	lsls r2, r3, #1
+	adds r2, r2, r3
+	ldr r3, .L_fr_02008bf4
+	lsls r2, r2, #3
+	adds r2, r2, r3
+	ldrh r3, [r2]
+	cmp r3, #48
+	bne .L_fr_02008bbe
+	ldrh r3, [r2, #2]
+	cmp r3, #48
+	bne .L_fr_02008bbe
+	ldrh r3, [r2, #4]
+	cmp r3, #48
+	bne .L_fr_02008bbe
+	ldrh r3, [r2, #6]
+	cmp r3, #48
+	bne .L_fr_02008bbe
+	ldr r2, .L_fr_02008bf8
+	ldr r3, .L_fr_02008bd8
+	strh r3, [r2]
+	ldr r3, .L_fr_02008bdc
+	strh r3, [r2, #2]
+	ldr r3, .L_fr_02008be0
+	strh r3, [r2, #4]
+	ldr r3, .L_fr_02008be4
+	strh r3, [r2, #6]
+	b .L_fr_02008c00
+.L_fr_02008bbe:
+	movs r0, #1
+	bl WaitFrames
+.L_fr_02008bc4:
+	ldr r3, .L_fr_02008bfc
+	movs r2, #2
+	ldr r3, [r3, #4]
+	ands r3, r2
+	cmp r3, #0
+	beq .L_fr_02008b70
+	movs r0, #113
+	bl Func_02002408
+	b .L_fr_02008ce0
+.L_fr_02008bd8:
+	.4byte 0x00000046
+.L_fr_02008bdc:
+	.4byte 0x00000056
+.L_fr_02008be0:
+	.4byte 0x00000054
+.L_fr_02008be4:
+	.4byte 0x00000053
+.L_fr_02008be8:
+	.4byte 0x00001350
+.L_fr_02008bec:
+	.4byte gLinkStatus
+.L_fr_02008bf0:
+	.4byte 0x04000128
+.L_fr_02008bf4:
+	.4byte gLinkPeerSignatures
+.L_fr_02008bf8:
+	.4byte Data_02003a74
+.L_fr_02008bfc:
+	.4byte gInput
+.L_fr_02008c00:
+	movs r0, #10
+	bl WaitFrames
+	ldr r0, .L_fr_02008d74
+	bl SerialRuntime_BeginTransferB
+	movs r0, #10
+	bl WaitFrames
+	movs r1, #3
+	movs r2, #1
+	movs r3, #0
+	mov r10, r1
+	movs r7, #0
+	mov r9, r2
+	mov r8, r3
+	movs r5, #0
+.L_fr_02008c22:
+	mov r1, r8
+	cmp r1, #0
+	bne .L_fr_02008c5a
+	ldr r3, .L_fr_02008d78
+	ldrh r3, [r3]
+	cmp r3, #0
+	beq .L_fr_02008c5a
+	movs r2, #1
+	adds r0, r6, #0
+	movs r1, #2
+	mov r8, r2
+	bl UiWork_Finalize
+	movs r3, #2
+	str r3, [sp, #0]
+	movs r1, #10
+	movs r2, #26
+	movs r3, #4
+	movs r0, #2
+	bl UiWindow_Create
+	adds r6, r0, #0
+	adds r1, r6, #0
+	ldr r0, .L_fr_02008d7c
+	movs r2, #0
+	movs r3, #4
+	bl UiText_DrawResource
+.L_fr_02008c5a:
+	cmp r5, #9
+	bne .L_fr_02008c86
+	ldr r3, .L_fr_02008d78
+	ldrh r3, [r3]
+	cmp r3, #0
+	bne .L_fr_02008c86
+	ldr r2, .L_fr_02008d80
+	strh r3, [r2]
+	strh r3, [r2, #2]
+	strh r3, [r2, #4]
+	strh r3, [r2, #6]
+	bl Func_02002228
+	movs r0, #10
+	bl WaitFrames
+	bl Func_02002220
+	movs r0, #10
+	bl WaitFrames
+	b .L_fr_02008b6c
+.L_fr_02008c86:
+	ldr r3, .L_fr_02008d84
+	adds r7, #1
+	ldrh r2, [r3]
+	mov r3, r10
+	ands r3, r2
+	cmp r3, r10
+	bne .L_fr_02008c96
+	movs r7, #0
+.L_fr_02008c96:
+	cmp r7, #10
+	bne .L_fr_02008ca0
+	movs r3, #0
+	mov r9, r3
+	b .L_fr_02008cb6
+.L_fr_02008ca0:
+	ldr r3, .L_fr_02008d88
+	ldr r3, [r3]
+	cmp r3, #0
+	beq .L_fr_02008cb6
+	movs r0, #1
+	bl WaitFrames
+	ldr r1, .L_fr_02008d8c
+	adds r5, #1
+	cmp r5, r1
+	ble .L_fr_02008c22
+.L_fr_02008cb6:
+	mov r2, r9
+	cmp r2, #0
+	bne .L_fr_02008cee
+	adds r0, r6, #0
+	bl RenderOutput_PrepareForRedraw
+	ldr r0, .L_fr_02008d90
+	adds r1, r6, #0
+	movs r2, #0
+	movs r3, #4
+	bl UiText_DrawResource
+.L_fr_02008cce:
+	movs r0, #1
+	bl WaitFrames
+	ldr r3, .L_fr_02008d94
+	movs r2, #1
+	ldr r3, [r3, #4]
+	ands r3, r2
+	cmp r3, #0
+	beq .L_fr_02008cce
+.L_fr_02008ce0:
+	adds r0, r6, #0
+	movs r1, #2
+	bl UiWork_Finalize
+	movs r0, #1
+	negs r0, r0
+	b .L_fr_02008d66
+.L_fr_02008cee:
+	movs r0, #10
+	bl WaitFrames
+	bl Func_02002228
+	movs r0, #10
+	bl WaitFrames
+	adds r0, r6, #0
+	movs r1, #2
+	bl UiWork_Finalize
+	ldr r5, .L_fr_02008d98
+	movs r2, #133
+	ldr r6, .L_fr_02008d9c
+	ldr r1, .L_fr_02008da0
+	lsls r2, r2, #2
+	adds r0, r5, #0
+	mov lr, r6
+	.2byte 0xf800
+	movs r3, #136
+	lsls r3, r3, #2
+	movs r2, #210
+	adds r0, r5, r3
+	ldr r1, .L_fr_02008da4
+	lsls r2, r2, #4
+	mov lr, r6
+	.2byte 0xf800
+	movs r0, #0
+	bl UnitCalc
+	movs r0, #1
+	bl UnitCalc
+	movs r0, #2
+	bl UnitCalc
+	movs r0, #3
+	bl UnitCalc
+	movs r2, #244
+	adds r1, r5, #0
+	lsls r2, r2, #4
+	ldr r0, .L_fr_02008da0
+	mov lr, r6
+	.2byte 0xf800
+	ldr r3, .L_fr_02008da8
+	movs r1, #147
+	lsls r1, r1, #1
+	adds r1, #255
+	adds r2, r3, r1
+	ldrb r0, [r2]
+	movs r2, #128
+	lsls r2, r2, #2
+	adds r2, #38
+	adds r3, r3, r2
+	ldrb r1, [r3]
+	bl Func_02002310
+	movs r0, #1
+.L_fr_02008d66:
+	sub sp, #-4
+	pop {r3, r5, r6}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
+.L_fr_02008d74:
+	.4byte 0x02013000
+.L_fr_02008d78:
+	.4byte gSerialReceivedSize
+.L_fr_02008d7c:
+	.4byte 0x00001352
+.L_fr_02008d80:
+	.4byte Data_02003a74
+.L_fr_02008d84:
+	.4byte gLinkStatus
+.L_fr_02008d88:
+	.4byte gSerialReceiveDest
+.L_fr_02008d8c:
+	.4byte 0x000927bf
+.L_fr_02008d90:
+	.4byte 0x00001354
+.L_fr_02008d94:
+	.4byte gInput
+.L_fr_02008d98:
+	.4byte GameFlagBytes
+.L_fr_02008d9c:
+	.4byte IwramCopyWords
+.L_fr_02008da0:
+	.4byte 0x02013040
+.L_fr_02008da4:
+	.4byte 0x02013240
+.L_fr_02008da8:
+	.4byte gPartyState
+	.else
 	.global Func_02000b24
 	.thumb_func
 Func_02000b24:
@@ -4617,6 +6781,7 @@ Func_02000b24:
 .L_02008db0:
 	.4byte gPartyState
 	.endif
+	.endif
 	.section .text.x02008db4,"ax",%progbits
 	.global Func_02000db4
 	.thumb_func
@@ -4702,6 +6867,2550 @@ Func_02000db4:
 .L_02008e40:
 	.4byte 0xffffefff
 	.section .text.x02008e44,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.global Func_02000e44
+	.thumb_func
+Func_02000e44:
+	push {r5, r6, r7, lr}
+	mov r7, r11
+	mov r6, r10
+	mov r5, r9
+	push {r5, r6, r7}
+	mov r7, r8
+	push {r7}
+	sub sp, #124
+	bl Func_02002208
+	ldr r3, .L_ja_02008e8c
+	movs r0, #147
+	movs r1, #128
+	lsls r0, r0, #1
+	lsls r1, r1, #2
+	adds r0, #255
+	adds r1, #38
+	adds r2, r3, r0
+	adds r3, r3, r1
+	ldrb r0, [r2]
+	ldrb r1, [r3]
+	bl Func_02002310
+	ldr r4, .L_ja_02008e90
+	movs r3, #128
+	movs r2, #132
+	lsls r3, r3, #19
+	lsls r2, r2, #24
+	adds r3, #212
+	ldr r0, .L_ja_02008e94
+	adds r1, r4, #0
+	adds r2, #8
+	stmia r3!, {r0, r1, r2}
+	subs r3, #12
+	ldr r3, .L_ja_02008e88
+	movs r0, #1
+	strh r3, [r4, #8]
+	bl Func_020022b0
+	movs r2, #1
+	negs r2, r2
+	str r0, [sp, #64]
+	cmp r0, r2
+	bne .L_ja_02008e60
+	.2byte 0xf000, 0xfd1a @ bl 0x02009894
+.L_ja_02008e60:
+	movs r0, #71
+	bl Func_02002408
+	movs r0, #238
+	movs r3, #0
+	lsls r0, r0, #1
+	str r3, [sp, #60]
+	str r3, [sp, #52]
+	str r3, [sp, #48]
+	bl Runtime_BumpAllocateAlternatePool
+	movs r4, #0
+	str r0, [sp, #36]
+	ldr r0, .L_ja_02008e98
+	str r4, [sp, #8]
+	bl Func_02002320
+	ldr r1, [sp, #64]
+	b .L_ja_02008e9c
+	.2byte 0x0000
+.L_ja_02008e88:
+	.4byte 0x00006318
+.L_ja_02008e8c:
+	.4byte gPartyState
+.L_ja_02008e90:
+	.4byte 0x050001c0
+.L_ja_02008e94:
+	.4byte 0x050001e0
+.L_ja_02008e98:
+	.4byte 0x06006000
+.L_ja_02008e9c:
+	movs r0, #130
+	lsls r0, r0, #1
+	str r0, [sp, #44]
+	cmp r1, #0
+	beq .L_ja_02008eb4
+	ldr r3, [sp, #64]
+	movs r2, #61
+	str r2, [sp, #44]
+	cmp r3, #1
+	beq .L_ja_02008eb4
+	movs r4, #16
+	str r4, [sp, #44]
+.L_ja_02008eb4:
+	ldr r0, [sp, #44]
+	movs r1, #50
+	bl __divsi3
+	adds r0, #1
+	str r0, [sp, #40]
+	movs r5, #2
+	movs r1, #13
+	movs r2, #29
+	movs r3, #6
+	movs r0, #1
+	str r5, [sp, #0]
+	bl UiWindow_Create
+	ldr r6, .L_ja_02009190
+	mov r10, r0
+	mov r1, r10
+	adds r0, r6, #0
+	movs r2, #0
+	adds r6, #1
+	movs r3, #0
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #0
+	movs r3, #8
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #0
+	movs r3, #16
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #0
+	movs r3, #24
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #48
+	movs r3, #0
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #48
+	movs r3, #8
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #48
+	movs r3, #16
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #48
+	movs r3, #24
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #96
+	movs r3, #0
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #96
+	movs r3, #8
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #96
+	movs r3, #16
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #96
+	movs r3, #24
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #144
+	movs r3, #0
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	movs r2, #144
+	movs r3, #8
+	bl UiText_DrawCharacterAtOffset
+	movs r3, #5
+	str r3, [sp, #0]
+	adds r6, #1
+	mov r0, r10
+	movs r1, #24
+	movs r2, #0
+	movs r3, #24
+	bl UiWindow_DrawDividerLine
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #192
+	movs r3, #0
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #192
+	movs r3, #8
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	movs r2, #192
+	movs r3, #24
+	bl UiText_DrawCharacterAtOffset
+	movs r0, #5
+	movs r1, #1
+	movs r2, #20
+	movs r3, #12
+	str r5, [sp, #0]
+	bl UiWindow_Create
+	str r0, [sp, #56]
+	movs r6, #0
+.L_ja_02008fe2:
+	ldr r2, [sp, #36]
+	movs r0, #224
+	lsls r0, r0, #1
+	adds r1, r6, r0
+	adds r2, #2
+	movs r3, #0
+	adds r6, #1
+	strb r3, [r2, r1]
+	cmp r6, #26
+	bne .L_ja_02008fe2
+	ldr r2, .L_ja_02009194
+	movs r6, #0
+.L_ja_02008ffa:
+	movs r1, #130
+	movs r3, #99
+	adds r6, #1
+	lsls r1, r1, #1
+	strb r3, [r2]
+	adds r2, #1
+	cmp r6, r1
+	bne .L_ja_02008ffa
+	ldr r2, [sp, #36]
+	movs r3, #200
+	lsls r3, r3, #1
+	movs r6, #0
+	adds r2, r2, r3
+	mov r9, r2
+	mov r11, r6
+.L_ja_02009018:
+	movs r1, #10
+	adds r0, r6, #0
+	bl __modsi3
+	adds r5, r0, #0
+	lsls r3, r5, #1
+	adds r3, r3, r5
+	lsls r7, r3, #2
+	movs r4, #8
+	adds r4, r4, r7
+	adds r0, r6, #0
+	movs r1, #10
+	mov r8, r4
+	bl __divsi3
+	lsls r0, r0, #4
+	adds r3, r0, #2
+	cmp r5, #4
+	ble .L_ja_02009042
+	adds r7, #18
+	mov r8, r7
+.L_ja_02009042:
+	ldr r2, [sp, #36]
+	mov r0, r11
+	ldr r1, [r0, r2]
+	ldr r0, [sp, #56]
+	mov r2, r8
+	bl Func_02002330
+	ldr r3, [sp, #36]
+	mov r2, r11
+	adds r2, #200
+	str r0, [r2, r3]
+	mov r4, r9
+	movs r3, #99
+	strb r3, [r4]
+	ldr r1, [sp, #36]
+	movs r0, #1
+	add r9, r0
+	ldr r3, .L_ja_02009198
+	ldr r0, [r2, r1]
+	movs r1, #128
+	mov lr, r3
+	.2byte 0xf800
+	adds r6, #1
+	movs r2, #4
+	add r11, r2
+	cmp r6, #50
+	bne .L_ja_02009018
+	bl Resource_FindFreeEntry
+	adds r5, r0, #0
+	cmp r5, #95
+	bgt .L_ja_020090b2
+	bl Func_02002300
+	movs r1, #128
+	movs r3, #0
+	lsls r1, r1, #23
+	mov r2, r10
+	adds r0, r5, #0
+	str r3, [sp, #0]
+	bl RenderOutput_Create
+	adds r1, r0, #0
+	add r0, sp, #108
+	str r1, [r0]
+	mov r4, r10
+	movs r3, #12
+	ldrsh r1, [r4, r3]
+	movs r3, #14
+	ldrsh r2, [r4, r3]
+	lsls r1, r1, #3
+	lsls r2, r2, #3
+	subs r1, #2
+	adds r2, #12
+	bl Func_02002400
+.L_ja_020090b2:
+	bl Resource_FindFreeEntry
+	adds r5, r0, #0
+	cmp r5, #95
+	bgt .L_ja_020090fa
+	bl Func_02002308
+	movs r1, #128
+	movs r3, #0
+	lsls r1, r1, #23
+	mov r2, r10
+	adds r0, r5, #0
+	str r3, [sp, #0]
+	bl RenderOutput_Create
+	adds r1, r0, #0
+	add r0, sp, #92
+	str r1, [r0]
+	movs r3, #255
+	ldrb r2, [r1, #25]
+	strb r3, [r1, #15]
+	movs r3, #13
+	negs r3, r3
+	ands r3, r2
+	strb r3, [r1, #25]
+	ldr r2, [sp, #56]
+	movs r4, #12
+	ldrsh r1, [r2, r4]
+	movs r3, #14
+	ldrsh r2, [r2, r3]
+	lsls r1, r1, #3
+	lsls r2, r2, #3
+	subs r1, #4
+	adds r2, #12
+	bl Func_02002400
+.L_ja_020090fa:
+	movs r4, #0
+	movs r0, #1
+	str r0, [sp, #24]
+	str r4, [sp, #32]
+	str r4, [sp, #28]
+	mov r2, r10
+	movs r1, #12
+	ldrsh r3, [r2, r1]
+	movs r0, #0
+	lsls r3, r3, #3
+	subs r3, #8
+	str r3, [sp, #20]
+	movs r4, #14
+	ldrsh r3, [r2, r4]
+	str r0, [sp, #12]
+	lsls r3, r3, #3
+	adds r3, #11
+	str r3, [sp, #16]
+.L_ja_0200911e:
+	ldr r2, [sp, #12]
+	movs r1, #1
+	negs r1, r1
+	mov r9, r1
+	cmp r2, #2
+	bne .L_ja_0200912e
+	movs r3, #1
+	str r3, [sp, #12]
+.L_ja_0200912e:
+	movs r3, #15
+	movs r4, #1
+	str r3, [sp, #4]
+	mov r0, r10
+	ldr r1, [sp, #32]
+	ldr r2, [sp, #28]
+	ldr r3, [sp, #24]
+	str r4, [sp, #0]
+	bl Func_02000db4
+	ldr r0, [sp, #12]
+	cmp r0, #0
+	bne .L_ja_0200921c
+	ldr r3, .L_ja_0200919c
+	movs r2, #16
+	ldr r3, [r3, #12]
+	ands r3, r2
+	cmp r3, #0
+	beq .L_ja_02009170
+	movs r0, #111
+	bl Func_02002408
+	ldr r0, [sp, #52]
+	ldr r1, [sp, #48]
+	adds r0, #1
+	cmp r1, #2
+	bne .L_ja_02009168
+	movs r1, #20
+	b .L_ja_0200916a
+.L_ja_02009168:
+	movs r1, #21
+.L_ja_0200916a:
+	bl __modsi3
+	str r0, [sp, #52]
+.L_ja_02009170:
+	ldr r3, .L_ja_0200919c
+	movs r2, #32
+	ldr r3, [r3, #12]
+	ands r3, r2
+	cmp r3, #0
+	beq .L_ja_020091ac
+	movs r0, #111
+	bl Func_02002408
+	ldr r2, [sp, #48]
+	cmp r2, #2
+	bne .L_ja_020091a0
+	ldr r0, [sp, #52]
+	movs r1, #20
+	adds r0, #19
+	b .L_ja_020091a6
+.L_ja_02009190:
+	.4byte 0x00000d80
+.L_ja_02009194:
+	.4byte Data_0200274a
+.L_ja_02009198:
+	.4byte IwramClearWords
+.L_ja_0200919c:
+	.4byte gInput
+.L_ja_020091a0:
+	ldr r0, [sp, #52]
+	movs r1, #21
+	adds r0, #20
+.L_ja_020091a6:
+	bl __modsi3
+	str r0, [sp, #52]
+.L_ja_020091ac:
+	ldr r3, .L_ja_02009424
+	movs r2, #128
+	ldr r3, [r3, #12]
+	ands r3, r2
+	cmp r3, #0
+	beq .L_ja_020091e4
+	movs r0, #111
+	bl Func_02002408
+	ldr r1, [sp, #48]
+	adds r1, #1
+	adds r3, r1, #0
+	cmp r1, #0
+	bge .L_ja_020091cc
+	ldr r3, [sp, #48]
+	adds r3, #4
+.L_ja_020091cc:
+	asrs r3, r3, #2
+	str r3, [sp, #48]
+	lsls r3, r3, #2
+	subs r1, r1, r3
+	ldr r3, [sp, #52]
+	str r1, [sp, #48]
+	cmp r3, #20
+	bne .L_ja_020091e4
+	cmp r1, #2
+	bne .L_ja_020091e4
+	movs r4, #3
+	str r4, [sp, #48]
+.L_ja_020091e4:
+	ldr r3, .L_ja_02009424
+	movs r2, #64
+	ldr r3, [r3, #12]
+	ands r3, r2
+	cmp r3, #0
+	beq .L_ja_0200921c
+	movs r0, #111
+	bl Func_02002408
+	ldr r1, [sp, #48]
+	adds r1, #3
+	adds r3, r1, #0
+	cmp r1, #0
+	bge .L_ja_02009204
+	ldr r3, [sp, #48]
+	adds r3, #6
+.L_ja_02009204:
+	asrs r3, r3, #2
+	ldr r0, [sp, #52]
+	str r3, [sp, #48]
+	lsls r3, r3, #2
+	subs r1, r1, r3
+	str r1, [sp, #48]
+	cmp r0, #20
+	bne .L_ja_02009226
+	cmp r1, #2
+	bne .L_ja_0200921c
+	movs r1, #1
+	str r1, [sp, #48]
+.L_ja_0200921c:
+	ldr r3, [sp, #52]
+	movs r2, #3
+	str r2, [sp, #24]
+	cmp r3, #20
+	beq .L_ja_0200922a
+.L_ja_02009226:
+	movs r4, #1
+	str r4, [sp, #24]
+.L_ja_0200922a:
+	ldr r0, [sp, #52]
+	ldr r1, [sp, #48]
+	str r0, [sp, #32]
+	str r1, [sp, #28]
+	cmp r0, #4
+	ble .L_ja_0200923c
+	adds r2, r0, #0
+	adds r2, #1
+	str r2, [sp, #32]
+.L_ja_0200923c:
+	ldr r3, [sp, #52]
+	cmp r3, #9
+	ble .L_ja_02009248
+	ldr r4, [sp, #32]
+	adds r4, #1
+	str r4, [sp, #32]
+.L_ja_02009248:
+	ldr r0, [sp, #52]
+	cmp r0, #14
+	ble .L_ja_02009254
+	ldr r1, [sp, #32]
+	adds r1, #1
+	str r1, [sp, #32]
+.L_ja_02009254:
+	ldr r2, [sp, #52]
+	cmp r2, #19
+	ble .L_ja_02009260
+	ldr r3, [sp, #32]
+	adds r3, #1
+	str r3, [sp, #32]
+.L_ja_02009260:
+	movs r3, #14
+	movs r4, #1
+	mov r0, r10
+	str r3, [sp, #4]
+	ldr r1, [sp, #32]
+	ldr r2, [sp, #48]
+	ldr r3, [sp, #24]
+	str r4, [sp, #0]
+	bl Func_02000db4
+	mov r1, r10
+	movs r0, #12
+	ldrsh r3, [r1, r0]
+	ldr r2, [sp, #52]
+	mov r0, r10
+	adds r3, r3, r2
+	lsls r1, r3, #3
+	movs r4, #14
+	ldrsh r3, [r0, r4]
+	ldr r4, [sp, #48]
+	adds r2, r1, #0
+	adds r3, r3, r4
+	lsls r3, r3, #3
+	adds r0, r3, #0
+	ldr r3, [sp, #52]
+	subs r2, #8
+	adds r0, #11
+	cmp r3, #4
+	ble .L_ja_0200929c
+	adds r2, r1, #0
+.L_ja_0200929c:
+	ldr r4, [sp, #52]
+	cmp r4, #9
+	ble .L_ja_020092a4
+	adds r2, #8
+.L_ja_020092a4:
+	ldr r1, [sp, #52]
+	cmp r1, #14
+	ble .L_ja_020092ac
+	adds r2, #8
+.L_ja_020092ac:
+	ldr r3, [sp, #52]
+	cmp r3, #20
+	bne .L_ja_020092b4
+	adds r2, #8
+.L_ja_020092b4:
+	ldr r4, [sp, #20]
+	ldr r1, [sp, #16]
+	subs r3, r2, r4
+	lsrs r2, r3, #31
+	adds r3, r3, r2
+	asrs r3, r3, #1
+	adds r4, r4, r3
+	subs r3, r0, r1
+	lsrs r2, r3, #31
+	adds r3, r3, r2
+	asrs r3, r3, #1
+	adds r1, r1, r3
+	str r1, [sp, #16]
+	ldr r2, [sp, #16]
+	add r0, sp, #108
+	adds r1, r4, #0
+	movs r3, #1
+	str r4, [sp, #20]
+	bl Func_020023f8
+	add r0, sp, #108
+	bl Func_020023f0
+	movs r1, #50
+	ldr r0, [sp, #60]
+	bl __modsi3
+	movs r1, #10
+	adds r5, r0, #0
+	bl __divsi3
+	ldr r4, [sp, #56]
+	lsls r0, r0, #1
+	movs r2, #14
+	ldrsh r3, [r4, r2]
+	movs r1, #10
+	adds r0, r0, r3
+	ldr r3, .L_ja_02009428
+	lsls r0, r0, #3
+	ldr r3, [r3]
+	subs r7, r0, #2
+	lsrs r6, r3, #1
+	movs r0, #7
+	mov r8, r0
+	ands r6, r0
+	adds r0, r5, #0
+	bl __modsi3
+	ldr r4, [sp, #56]
+	lsls r2, r0, #1
+	movs r1, #12
+	ldrsh r3, [r4, r1]
+	adds r2, r2, r0
+	lsls r2, r2, #2
+	lsls r3, r3, #3
+	adds r2, r2, r3
+	adds r1, r2, #0
+	adds r1, #16
+	cmp r0, #4
+	ble .L_ja_0200932e
+	adds r1, #10
+.L_ja_0200932e:
+	ldr r2, .L_ja_0200942c
+	mov r0, r8
+	ldrsb r3, [r2, r6]
+	adds r1, r1, r3
+	adds r3, r6, #5
+	ands r3, r0
+	ldrsb r3, [r2, r3]
+	add r0, sp, #92
+	adds r7, r7, r3
+	adds r2, r7, #0
+	movs r3, #1
+	bl Func_020023f8
+	add r0, sp, #92
+	bl Func_020023f0
+	ldr r1, [sp, #8]
+	cmp r1, #0
+	ble .L_ja_02009366
+	adds r1, #1
+	str r1, [sp, #8]
+	cmp r1, #8
+	bne .L_ja_02009366
+	ldr r3, [sp, #60]
+	movs r2, #0
+	adds r3, #1
+	str r2, [sp, #8]
+	str r3, [sp, #60]
+.L_ja_02009366:
+	ldr r4, [sp, #8]
+	cmp r4, #0
+	beq .L_ja_0200936e
+	b .L_ja_0200974a
+.L_ja_0200936e:
+	ldr r0, [sp, #52]
+	ldr r3, .L_ja_02009424
+	cmp r0, #20
+	bne .L_ja_0200938a
+	ldr r1, [sp, #48]
+	cmp r1, #0
+	bne .L_ja_02009380
+	ldr r3, [r3, #12]
+	b .L_ja_0200938c
+.L_ja_02009380:
+	ldr r2, [sp, #48]
+	cmp r2, #1
+	bne .L_ja_0200938a
+	ldr r3, [r3, #12]
+	b .L_ja_0200938c
+.L_ja_0200938a:
+	ldr r3, [r3, #4]
+.L_ja_0200938c:
+	lsls r3, r3, #16
+	asrs r2, r3, #16
+	movs r3, #128
+	lsls r2, r2, #16
+	lsls r3, r3, #9
+	ands r3, r2
+	cmp r3, #0
+	beq .L_ja_0200943c
+	ldr r3, [sp, #12]
+	cmp r3, #0
+	bne .L_ja_0200943c
+	ldr r0, [sp, #52]
+	movs r4, #0
+	mov r9, r4
+	cmp r0, #20
+	bne .L_ja_020093d0
+	ldr r1, [sp, #48]
+	cmp r1, #0
+	bne .L_ja_020093b8
+	movs r2, #1
+	mov r9, r2
+	b .L_ja_0200943c
+.L_ja_020093b8:
+	ldr r3, [sp, #48]
+	cmp r3, #1
+	bne .L_ja_020093c4
+	movs r4, #2
+	mov r9, r4
+	b .L_ja_0200943c
+.L_ja_020093c4:
+	ldr r0, [sp, #48]
+	cmp r0, #3
+	bne .L_ja_0200943c
+	movs r1, #3
+	mov r9, r1
+	b .L_ja_0200943c
+.L_ja_020093d0:
+	ldr r2, [sp, #60]
+	ldr r3, [sp, #44]
+	cmp r2, r3
+	bge .L_ja_0200943c
+	ldr r4, [sp, #48]
+	ldr r0, [sp, #52]
+	lsls r3, r4, #2
+	ldr r2, .L_ja_02009430
+	adds r3, r3, r4
+	lsls r3, r3, #2
+	adds r3, r0, r3
+	ldrb r5, [r2, r3]
+	cmp r5, #63
+	bgt .L_ja_0200943c
+	movs r0, #112
+	bl Func_02002408
+	ldr r3, .L_ja_02009434
+	ldr r1, [sp, #60]
+	strb r5, [r3, r1]
+	ldr r0, [sp, #60]
+	movs r1, #10
+	bl __modsi3
+	ldr r3, [sp, #44]
+	ldr r2, [sp, #60]
+	subs r3, #1
+	cmp r2, r3
+	bge .L_ja_02009438
+	adds r0, r2, #0
+	movs r1, #50
+	bl __modsi3
+	cmp r0, #49
+	bne .L_ja_0200941c
+	movs r3, #1
+	str r3, [sp, #8]
+	b .L_ja_0200943c
+.L_ja_0200941c:
+	ldr r4, [sp, #60]
+	adds r4, #1
+	str r4, [sp, #60]
+	b .L_ja_0200943c
+.L_ja_02009424:
+	.4byte gInput
+.L_ja_02009428:
+	.4byte gFrameTick
+.L_ja_0200942c:
+	.4byte Data_02002438
+.L_ja_02009430:
+	.4byte Data_0200265e
+.L_ja_02009434:
+	.4byte Data_0200274a
+.L_ja_02009438:
+	movs r0, #2
+	str r0, [sp, #12]
+.L_ja_0200943c:
+	mov r1, r9
+	cmp r1, #0
+	bne .L_ja_0200944a
+	ldr r2, [sp, #12]
+	cmp r2, #1
+	beq .L_ja_0200944a
+	b .L_ja_0200974a
+.L_ja_0200944a:
+	ldr r1, .L_ja_020097cc
+	movs r2, #8
+	ldr r3, [r1, #4]
+	ands r3, r2
+	cmp r3, #0
+	bne .L_ja_02009464
+	mov r3, r9
+	cmp r3, #3
+	beq .L_ja_02009464
+	ldr r4, [sp, #12]
+	cmp r4, #1
+	beq .L_ja_02009464
+	b .L_ja_020096ba
+.L_ja_02009464:
+	ldr r7, .L_ja_020097d0
+	ldr r1, [sp, #44]
+	adds r2, r7, #0
+	ldr r0, .L_ja_020097d4
+	bl Func_02002068
+	mov r9, r0
+	mov r6, r9
+	subs r6, #2
+	adds r1, r7, #0
+	adds r0, r6, #0
+	bl Func_0200217c
+	movs r3, #2
+	adds r5, r0, #0
+	movs r0, #0
+	str r0, [sp, #12]
+	str r3, [sp, #0]
+	movs r1, #12
+	movs r3, #3
+	movs r0, #8
+	movs r2, #14
+	bl UiWindow_Create
+	lsls r5, r5, #16
+	asrs r5, r5, #16
+	ldrb r3, [r7, r6]
+	lsls r5, r5, #16
+	lsrs r1, r5, #16
+	lsrs r5, r5, #24
+	mov r8, r0
+	cmp r3, r5
+	bne .L_ja_0200957e
+	mov r3, r9
+	subs r3, #1
+	ldrb r3, [r7, r3]
+	movs r2, #255
+	ands r2, r1
+	cmp r3, r2
+	bne .L_ja_0200957e
+	ldr r0, .L_ja_020097d8
+	mov r1, r8
+	movs r2, #0
+	movs r3, #0
+	bl UiText_DrawCharacterAtOffset
+	movs r0, #112
+	bl Func_02002408
+.L_ja_020094c6:
+	movs r0, #1
+	bl WaitFrames
+	ldr r3, .L_ja_020097cc
+	movs r2, #1
+	ldr r3, [r3, #4]
+	ands r3, r2
+	cmp r3, #0
+	beq .L_ja_020094c6
+	movs r0, #112
+	bl Func_02002408
+	bl Func_02002350
+	ldr r5, .L_ja_020097dc
+	movs r1, #133
+	lsls r1, r1, #2
+	adds r2, r5, r1
+	movs r3, #0
+	str r3, [r2]
+	movs r0, #4
+	bl Party_RemoveActiveOwner
+	movs r0, #5
+	bl Party_RemoveActiveOwner
+	movs r0, #6
+	bl Party_RemoveActiveOwner
+	movs r0, #7
+	bl Party_RemoveActiveOwner
+	movs r0, #0
+	bl Party_AddActiveOwner
+	movs r0, #1
+	bl Party_AddActiveOwner
+	movs r0, #2
+	bl Party_AddActiveOwner
+	movs r0, #3
+	bl Party_AddActiveOwner
+	ldr r1, .L_ja_020097d0
+	ldr r0, [sp, #64]
+	bl Func_020018e0
+	mov r0, r8
+	movs r1, #2
+	bl UiWork_Finalize
+	movs r1, #2
+	ldr r0, [sp, #56]
+	bl UiWork_Finalize
+	mov r0, r10
+	movs r1, #2
+	bl UiWork_Finalize
+	movs r2, #147
+	lsls r2, r2, #1
+	adds r2, #255
+	adds r3, r5, r2
+	ldrb r0, [r3]
+	movs r3, #128
+	lsls r3, r3, #2
+	adds r3, #38
+	adds r5, r5, r3
+	ldrb r1, [r5]
+	bl Func_02002310
+	movs r0, #74
+	bl Func_02002408
+	movs r0, #6
+	bl WaitFrames
+	movs r0, #0
+	bl Func_020022f8
+	bl Func_020023e8
+	movs r2, #244
+	ldr r3, .L_ja_020097e0
+	ldr r0, .L_ja_020097e4
+	ldr r1, .L_ja_020097e8
+	lsls r2, r2, #4
+	mov lr, r3
+	.2byte 0xf800
+	movs r0, #0
+	b .L_ja_02009894
+.L_ja_0200957e:
+	movs r0, #113
+	bl Func_02002408
+	ldr r0, .L_ja_020097ec
+	mov r1, r8
+	movs r2, #0
+	movs r3, #0
+	bl UiText_DrawCharacterAtOffset
+.L_ja_02009590:
+	movs r0, #1
+	bl WaitFrames
+	ldr r1, .L_ja_020097cc
+	movs r2, #1
+	ldr r3, [r1, #4]
+	ands r3, r2
+	cmp r3, #0
+	bne .L_ja_020095ac
+	ldr r3, [r1, #4]
+	movs r2, #2
+	ands r3, r2
+	cmp r3, #0
+	beq .L_ja_02009590
+.L_ja_020095ac:
+	movs r1, #2
+	mov r0, r8
+	bl UiWork_Finalize
+	mov r0, r10
+	bl RenderOutput_RedrawSavedRect
+	ldr r6, .L_ja_020097f0
+	mov r1, r10
+	adds r0, r6, #0
+	movs r2, #0
+	adds r6, #1
+	movs r3, #0
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #0
+	movs r3, #8
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #0
+	movs r3, #16
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #0
+	movs r3, #24
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #48
+	movs r3, #0
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #48
+	movs r3, #8
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #48
+	movs r3, #16
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #48
+	movs r3, #24
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #96
+	movs r3, #0
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #96
+	movs r3, #8
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #96
+	movs r3, #16
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #96
+	movs r3, #24
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #144
+	movs r3, #0
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	movs r2, #144
+	movs r3, #8
+	bl UiText_DrawCharacterAtOffset
+	movs r3, #5
+	str r3, [sp, #0]
+	adds r6, #1
+	mov r0, r10
+	movs r1, #24
+	movs r2, #0
+	movs r3, #24
+	bl UiWindow_DrawDividerLine
+	adds r0, r6, #0
+	mov r1, r10
+	adds r6, #1
+	movs r2, #192
+	movs r3, #0
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	movs r2, #192
+	movs r3, #8
+	adds r6, #1
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r10
+	movs r2, #192
+	movs r3, #24
+	bl UiText_DrawCharacterAtOffset
+	b .L_ja_0200974a
+.L_ja_020096ba:
+	ldr r3, [r1, #12]
+	movs r2, #128
+	lsls r2, r2, #2
+	ands r3, r2
+	cmp r3, #0
+	bne .L_ja_020096cc
+	mov r4, r9
+	cmp r4, #2
+	bne .L_ja_020096e0
+.L_ja_020096cc:
+	ldr r0, [sp, #60]
+	cmp r0, #0
+	ble .L_ja_0200974a
+	movs r0, #111
+	bl Func_02002408
+	ldr r1, [sp, #60]
+	subs r1, #1
+	str r1, [sp, #60]
+	b .L_ja_0200974a
+.L_ja_020096e0:
+	ldr r3, [r1, #12]
+	movs r2, #128
+	lsls r2, r2, #1
+	ands r3, r2
+	cmp r3, #0
+	bne .L_ja_020096f2
+	mov r2, r9
+	cmp r2, #1
+	bne .L_ja_0200970a
+.L_ja_020096f2:
+	ldr r3, [sp, #44]
+	ldr r4, [sp, #60]
+	subs r3, #1
+	cmp r4, r3
+	bge .L_ja_0200974a
+	movs r0, #111
+	bl Func_02002408
+	ldr r0, [sp, #60]
+	adds r0, #1
+	str r0, [sp, #60]
+	b .L_ja_0200974a
+.L_ja_0200970a:
+	ldr r3, [r1, #4]
+	movs r2, #2
+	ands r3, r2
+	cmp r3, #0
+	beq .L_ja_0200974a
+	ldr r1, [sp, #60]
+	cmp r1, #0
+	ble .L_ja_02009728
+	movs r0, #111
+	bl Func_02002408
+	ldr r2, [sp, #60]
+	subs r2, #1
+	str r2, [sp, #60]
+	b .L_ja_0200974a
+.L_ja_02009728:
+	movs r0, #113
+	bl Func_02002408
+	movs r1, #2
+	ldr r0, [sp, #56]
+	bl UiWork_Finalize
+	mov r0, r10
+	movs r1, #2
+	bl UiWork_Finalize
+	movs r0, #74
+	bl Func_02002408
+	movs r0, #1
+	negs r0, r0
+	b .L_ja_02009894
+.L_ja_0200974a:
+	ldr r0, [sp, #60]
+	movs r1, #50
+	bl __divsi3
+	mov r11, r0
+	ldr r0, [sp, #56]
+	bl RenderOutput_RedrawSavedRect
+	movs r6, #0
+	movs r5, #2
+.L_ja_0200975e:
+	adds r2, r5, #0
+	ldr r0, [sp, #56]
+	movs r1, #0
+	movs r3, #18
+	adds r6, #1
+	str r5, [sp, #0]
+	bl UiWindow_DrawDividerLine
+	adds r5, #2
+	cmp r6, #4
+	bne .L_ja_0200975e
+	ldr r3, [sp, #40]
+	movs r6, #0
+	cmp r3, #0
+	beq .L_ja_020097ae
+	negs r3, r3
+	adds r5, r3, #0
+	adds r5, #18
+.L_ja_02009782:
+	movs r4, #243
+	lsls r4, r4, #8
+	adds r4, #1
+	adds r1, r6, r4
+	cmp r6, r11
+	bne .L_ja_02009796
+	movs r0, #243
+	lsls r0, r0, #8
+	adds r0, #11
+	adds r1, r6, r0
+.L_ja_02009796:
+	movs r3, #0
+	str r3, [sp, #0]
+	adds r2, r5, #0
+	ldr r0, [sp, #56]
+	movs r3, #10
+	bl UiWindow_SetTilemapEntry
+	ldr r1, [sp, #40]
+	adds r6, #1
+	adds r5, #1
+	cmp r6, r1
+	bne .L_ja_02009782
+.L_ja_020097ae:
+	ldr r2, [sp, #44]
+	mov r9, r2
+	cmp r2, #49
+	ble .L_ja_020097f8
+	ldr r3, [sp, #40]
+	subs r3, #1
+	cmp r3, r11
+	bne .L_ja_020097f4
+	ldr r0, [sp, #44]
+	movs r1, #50
+	bl __modsi3
+	mov r9, r0
+	b .L_ja_020097f8
+	.2byte 0x0000
+.L_ja_020097cc:
+	.4byte gInput
+.L_ja_020097d0:
+	.4byte Data_0200274a + 0x104
+.L_ja_020097d4:
+	.4byte Data_0200274a
+.L_ja_020097d8:
+	.4byte 0x00000d92
+.L_ja_020097dc:
+	.4byte gPartyState
+.L_ja_020097e0:
+	.4byte IwramCopyWords
+.L_ja_020097e4:
+	.4byte Data_02012f94 + 0xac
+.L_ja_020097e8:
+	.4byte GameFlagBytes
+.L_ja_020097ec:
+	.4byte 0x00000d91
+.L_ja_020097f0:
+	.4byte 0x00000d80
+.L_ja_020097f4:
+	movs r3, #50
+	mov r9, r3
+.L_ja_020097f8:
+	mov r4, r9
+	movs r6, #0
+	cmp r4, #0
+	beq .L_ja_02009858
+	ldr r0, [sp, #36]
+	ldr r1, [sp, #36]
+	movs r2, #200
+	adds r0, #200
+	lsls r2, r2, #1
+	mov r8, r0
+	adds r7, r1, r2
+.L_ja_0200980e:
+	movs r3, #50
+	mov r0, r11
+	muls r0, r3
+	ldr r4, .L_ja_020098a4
+	adds r3, r0, #0
+	adds r0, r6, r3
+	ldrb r2, [r4, r0]
+	ldrb r3, [r7]
+	adds r1, r2, #0
+	cmp r1, r3
+	beq .L_ja_0200984c
+	strb r2, [r7]
+	cmp r1, #99
+	bne .L_ja_02009838
+	mov r1, r8
+	ldr r0, [r1]
+	ldr r3, .L_ja_020098a8
+	movs r1, #128
+	mov lr, r3
+	.2byte 0xf800
+	b .L_ja_0200984c
+.L_ja_02009838:
+	add r5, sp, #68
+	ldrb r0, [r4, r0]
+	adds r1, r5, #0
+	bl Func_02000a70
+	mov r2, r8
+	ldrh r0, [r5]
+	ldr r1, [r2]
+	bl Func_02002328
+.L_ja_0200984c:
+	movs r3, #4
+	adds r6, #1
+	add r8, r3
+	adds r7, #1
+	cmp r6, r9
+	bne .L_ja_0200980e
+.L_ja_02009858:
+	cmp r6, #50
+	beq .L_ja_0200988c
+	ldr r4, [sp, #36]
+	lsls r3, r6, #2
+	movs r0, #200
+	adds r3, r3, r4
+	lsls r0, r0, #1
+	adds r7, r3, #0
+	adds r3, r6, r0
+	adds r7, #200
+	adds r5, r3, r4
+.L_ja_0200986e:
+	ldrb r3, [r5]
+	cmp r3, #99
+	beq .L_ja_02009882
+	movs r3, #99
+	strb r3, [r5]
+	ldr r0, [r7]
+	ldr r3, .L_ja_020098a8
+	movs r1, #128
+	mov lr, r3
+	.2byte 0xf800
+.L_ja_02009882:
+	adds r6, #1
+	adds r7, #4
+	adds r5, #1
+	cmp r6, #50
+	bne .L_ja_0200986e
+.L_ja_0200988c:
+	movs r0, #1
+	bl WaitFrames
+	b .L_ja_0200911e
+.L_ja_02009894:
+	add sp, #124
+	pop {r3, r5, r6, r7}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	mov r11, r7
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
+.L_ja_020098a4:
+	.4byte Data_0200274a
+.L_ja_020098a8:
+	.4byte IwramClearWords
+	.else
+	.ifdef TLA_EDITION_FR
+	.global Func_02000e44
+	.thumb_func
+Func_02000e44:
+	push {r5, r6, r7, lr}
+	mov r7, r11
+	mov r6, r10
+	mov r5, r9
+	push {r5, r6, r7}
+	mov r7, r8
+	push {r7}
+	sub sp, #124
+	bl Func_02002208
+	ldr r3, .L_fr_02008ec4
+	movs r0, #147
+	movs r1, #128
+	lsls r0, r0, #1
+	lsls r1, r1, #2
+	adds r0, #255
+	adds r1, #38
+	adds r2, r3, r0
+	adds r3, r3, r1
+	ldrb r0, [r2]
+	ldrb r1, [r3]
+	bl Func_02002310
+	ldr r4, .L_fr_02008ec8
+	movs r3, #128
+	movs r2, #132
+	lsls r3, r3, #19
+	lsls r2, r2, #24
+	adds r3, #212
+	ldr r0, .L_fr_02008ecc
+	adds r1, r4, #0
+	adds r2, #8
+	stmia r3!, {r0, r1, r2}
+	subs r3, #12
+	ldr r3, .L_fr_02008ec0
+	movs r0, #1
+	strh r3, [r4, #8]
+	bl Func_020022b0
+	movs r2, #1
+	negs r2, r2
+	str r0, [sp, #64]
+	cmp r0, r2
+	bne .L_fr_02008e98
+	.2byte 0xf000, 0xfca8 @ bl 0x020097e8
+.L_fr_02008e98:
+	movs r0, #71
+	bl Func_02002408
+	movs r0, #238
+	movs r3, #0
+	lsls r0, r0, #1
+	str r3, [sp, #60]
+	str r3, [sp, #52]
+	str r3, [sp, #48]
+	bl Runtime_BumpAllocateAlternatePool
+	movs r4, #0
+	str r0, [sp, #36]
+	ldr r0, .L_fr_02008ed0
+	str r4, [sp, #8]
+	bl Func_02002320
+	ldr r1, [sp, #64]
+	b .L_fr_02008ed4
+	.2byte 0x0000
+.L_fr_02008ec0:
+	.4byte 0x00006318
+.L_fr_02008ec4:
+	.4byte gPartyState
+.L_fr_02008ec8:
+	.4byte 0x050001c0
+.L_fr_02008ecc:
+	.4byte 0x050001e0
+.L_fr_02008ed0:
+	.4byte 0x06006000
+.L_fr_02008ed4:
+	movs r0, #130
+	lsls r0, r0, #1
+	str r0, [sp, #44]
+	cmp r1, #0
+	beq .L_fr_02008eec
+	ldr r3, [sp, #64]
+	movs r2, #61
+	str r2, [sp, #44]
+	cmp r3, #1
+	beq .L_fr_02008eec
+	movs r4, #16
+	str r4, [sp, #44]
+.L_fr_02008eec:
+	ldr r0, [sp, #44]
+	movs r1, #50
+	bl __divsi3
+	adds r0, #1
+	str r0, [sp, #40]
+	movs r5, #2
+	movs r1, #13
+	movs r2, #29
+	movs r3, #6
+	movs r0, #1
+	str r5, [sp, #0]
+	bl UiWindow_Create
+	mov r9, r0
+	mov r1, r9
+	ldr r0, .L_fr_02009158
+	movs r2, #0
+	movs r3, #0
+	bl UiText_DrawStringInWindow
+	ldr r0, .L_fr_0200915c
+	mov r1, r9
+	movs r2, #0
+	movs r3, #8
+	bl UiText_DrawStringInWindow
+	ldr r0, .L_fr_02009160
+	mov r1, r9
+	movs r2, #0
+	movs r3, #16
+	bl UiText_DrawStringInWindow
+	ldr r0, .L_fr_02009164
+	mov r1, r9
+	movs r2, #0
+	movs r3, #24
+	bl UiText_DrawStringInWindow
+	ldr r6, .L_fr_02009168
+	movs r3, #5
+	str r3, [sp, #0]
+	mov r0, r9
+	movs r1, #20
+	movs r2, #0
+	movs r3, #20
+	bl UiWindow_DrawDividerLine
+	adds r0, r6, #0
+	mov r1, r9
+	adds r6, #1
+	movs r2, #160
+	movs r3, #0
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r9
+	adds r6, #1
+	movs r2, #160
+	movs r3, #8
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r9
+	movs r2, #160
+	movs r3, #24
+	bl UiText_DrawCharacterAtOffset
+	movs r0, #5
+	movs r1, #1
+	movs r2, #20
+	movs r3, #12
+	str r5, [sp, #0]
+	bl UiWindow_Create
+	str r0, [sp, #56]
+	movs r6, #0
+.L_fr_02008f86:
+	ldr r2, [sp, #36]
+	movs r0, #224
+	lsls r0, r0, #1
+	adds r1, r6, r0
+	adds r2, #2
+	movs r3, #0
+	adds r6, #1
+	strb r3, [r2, r1]
+	cmp r6, #26
+	bne .L_fr_02008f86
+	ldr r2, .L_fr_0200916c
+	movs r6, #0
+.L_fr_02008f9e:
+	movs r1, #130
+	movs r3, #99
+	adds r6, #1
+	lsls r1, r1, #1
+	strb r3, [r2]
+	adds r2, #1
+	cmp r6, r1
+	bne .L_fr_02008f9e
+	ldr r2, [sp, #36]
+	movs r3, #200
+	lsls r3, r3, #1
+	movs r6, #0
+	adds r2, r2, r3
+	mov r10, r2
+	mov r11, r6
+.L_fr_02008fbc:
+	movs r1, #10
+	adds r0, r6, #0
+	bl __modsi3
+	adds r5, r0, #0
+	lsls r3, r5, #1
+	adds r3, r3, r5
+	lsls r7, r3, #2
+	movs r4, #8
+	adds r4, r4, r7
+	adds r0, r6, #0
+	movs r1, #10
+	mov r8, r4
+	bl __divsi3
+	lsls r0, r0, #4
+	adds r3, r0, #2
+	cmp r5, #4
+	ble .L_fr_02008fe6
+	adds r7, #18
+	mov r8, r7
+.L_fr_02008fe6:
+	ldr r2, [sp, #36]
+	mov r0, r11
+	ldr r1, [r0, r2]
+	ldr r0, [sp, #56]
+	mov r2, r8
+	bl Func_02002330
+	ldr r3, [sp, #36]
+	mov r2, r11
+	adds r2, #200
+	str r0, [r2, r3]
+	mov r4, r10
+	movs r3, #99
+	strb r3, [r4]
+	ldr r1, [sp, #36]
+	movs r0, #1
+	add r10, r0
+	ldr r3, .L_fr_02009170
+	ldr r0, [r2, r1]
+	movs r1, #128
+	mov lr, r3
+	.2byte 0xf800
+	adds r6, #1
+	movs r2, #4
+	add r11, r2
+	cmp r6, #50
+	bne .L_fr_02008fbc
+	bl Resource_FindFreeEntry
+	adds r5, r0, #0
+	cmp r5, #95
+	bgt .L_fr_02009056
+	bl Func_02002300
+	movs r1, #128
+	movs r3, #0
+	lsls r1, r1, #23
+	mov r2, r9
+	adds r0, r5, #0
+	str r3, [sp, #0]
+	bl RenderOutput_Create
+	adds r1, r0, #0
+	add r0, sp, #108
+	str r1, [r0]
+	mov r4, r9
+	movs r3, #12
+	ldrsh r1, [r4, r3]
+	movs r3, #14
+	ldrsh r2, [r4, r3]
+	lsls r1, r1, #3
+	lsls r2, r2, #3
+	subs r1, #2
+	adds r2, #12
+	bl Func_02002400
+.L_fr_02009056:
+	bl Resource_FindFreeEntry
+	adds r5, r0, #0
+	cmp r5, #95
+	bgt .L_fr_0200909e
+	bl Func_02002308
+	movs r1, #128
+	movs r3, #0
+	lsls r1, r1, #23
+	mov r2, r9
+	adds r0, r5, #0
+	str r3, [sp, #0]
+	bl RenderOutput_Create
+	adds r1, r0, #0
+	add r0, sp, #92
+	str r1, [r0]
+	movs r3, #255
+	ldrb r2, [r1, #25]
+	strb r3, [r1, #15]
+	movs r3, #13
+	negs r3, r3
+	ands r3, r2
+	strb r3, [r1, #25]
+	ldr r2, [sp, #56]
+	movs r4, #12
+	ldrsh r1, [r2, r4]
+	movs r3, #14
+	ldrsh r2, [r2, r3]
+	lsls r1, r1, #3
+	lsls r2, r2, #3
+	subs r1, #4
+	adds r2, #12
+	bl Func_02002400
+.L_fr_0200909e:
+	movs r4, #0
+	movs r0, #1
+	str r0, [sp, #24]
+	str r4, [sp, #32]
+	str r4, [sp, #28]
+	mov r2, r9
+	movs r1, #12
+	ldrsh r3, [r2, r1]
+	movs r0, #0
+	lsls r3, r3, #3
+	subs r3, #8
+	str r3, [sp, #20]
+	movs r4, #14
+	ldrsh r3, [r2, r4]
+	str r0, [sp, #12]
+	lsls r3, r3, #3
+	adds r3, #11
+	str r3, [sp, #16]
+.L_fr_020090c2:
+	ldr r2, [sp, #12]
+	movs r1, #1
+	negs r1, r1
+	mov r10, r1
+	cmp r2, #2
+	bne .L_fr_020090d2
+	movs r3, #1
+	str r3, [sp, #12]
+.L_fr_020090d2:
+	movs r3, #15
+	movs r4, #1
+	str r3, [sp, #4]
+	mov r0, r9
+	ldr r1, [sp, #32]
+	ldr r2, [sp, #28]
+	ldr r3, [sp, #24]
+	str r4, [sp, #0]
+	bl Func_02000db4
+	ldr r0, [sp, #12]
+	cmp r0, #0
+	beq .L_fr_020090ee
+	b .L_fr_020091f4
+.L_fr_020090ee:
+	ldr r3, .L_fr_02009174
+	movs r2, #16
+	ldr r3, [r3, #12]
+	ands r3, r2
+	cmp r3, #0
+	beq .L_fr_02009126
+	movs r0, #111
+	bl Func_02002408
+	ldr r0, [sp, #52]
+	ldr r1, [sp, #48]
+	adds r0, #1
+	cmp r1, #2
+	bne .L_fr_0200911e
+	adds r3, r0, #0
+	cmp r0, #0
+	bge .L_fr_02009114
+	ldr r3, [sp, #52]
+	adds r3, #16
+.L_fr_02009114:
+	asrs r3, r3, #4
+	str r3, [sp, #52]
+	lsls r3, r3, #4
+	subs r0, r0, r3
+	b .L_fr_02009124
+.L_fr_0200911e:
+	movs r1, #17
+	bl __modsi3
+.L_fr_02009124:
+	str r0, [sp, #52]
+.L_fr_02009126:
+	ldr r3, .L_fr_02009174
+	movs r2, #32
+	ldr r3, [r3, #12]
+	ands r3, r2
+	cmp r3, #0
+	beq .L_fr_02009184
+	movs r0, #111
+	bl Func_02002408
+	ldr r2, [sp, #48]
+	cmp r2, #2
+	bne .L_fr_02009178
+	ldr r2, [sp, #52]
+	adds r2, #15
+	adds r3, r2, #0
+	cmp r2, #0
+	bge .L_fr_0200914c
+	ldr r3, [sp, #52]
+	adds r3, #30
+.L_fr_0200914c:
+	asrs r3, r3, #4
+	str r3, [sp, #52]
+	lsls r3, r3, #4
+	subs r2, r2, r3
+	str r2, [sp, #52]
+	b .L_fr_02009184
+.L_fr_02009158:
+	.4byte Data_02002440
+.L_fr_0200915c:
+	.4byte Data_02002454
+.L_fr_02009160:
+	.4byte Data_02002468
+.L_fr_02009164:
+	.4byte Data_0200247c
+.L_fr_02009168:
+	.4byte 0x00000f5a
+.L_fr_0200916c:
+	.4byte Data_0200274a
+.L_fr_02009170:
+	.4byte IwramClearWords
+.L_fr_02009174:
+	.4byte gInput
+.L_fr_02009178:
+	ldr r0, [sp, #52]
+	movs r1, #17
+	adds r0, #16
+	bl __modsi3
+	str r0, [sp, #52]
+.L_fr_02009184:
+	ldr r3, .L_fr_020093f8
+	movs r2, #128
+	ldr r3, [r3, #12]
+	ands r3, r2
+	cmp r3, #0
+	beq .L_fr_020091bc
+	movs r0, #111
+	bl Func_02002408
+	ldr r1, [sp, #48]
+	adds r1, #1
+	adds r3, r1, #0
+	cmp r1, #0
+	bge .L_fr_020091a4
+	ldr r3, [sp, #48]
+	adds r3, #4
+.L_fr_020091a4:
+	asrs r3, r3, #2
+	str r3, [sp, #48]
+	lsls r3, r3, #2
+	subs r1, r1, r3
+	ldr r3, [sp, #52]
+	str r1, [sp, #48]
+	cmp r3, #16
+	bne .L_fr_020091bc
+	cmp r1, #2
+	bne .L_fr_020091bc
+	movs r4, #3
+	str r4, [sp, #48]
+.L_fr_020091bc:
+	ldr r3, .L_fr_020093f8
+	movs r2, #64
+	ldr r3, [r3, #12]
+	ands r3, r2
+	cmp r3, #0
+	beq .L_fr_020091f4
+	movs r0, #111
+	bl Func_02002408
+	ldr r1, [sp, #48]
+	adds r1, #3
+	adds r3, r1, #0
+	cmp r1, #0
+	bge .L_fr_020091dc
+	ldr r3, [sp, #48]
+	adds r3, #6
+.L_fr_020091dc:
+	asrs r3, r3, #2
+	ldr r0, [sp, #52]
+	str r3, [sp, #48]
+	lsls r3, r3, #2
+	subs r1, r1, r3
+	str r1, [sp, #48]
+	cmp r0, #16
+	bne .L_fr_020091fe
+	cmp r1, #2
+	bne .L_fr_020091f4
+	movs r1, #1
+	str r1, [sp, #48]
+.L_fr_020091f4:
+	ldr r3, [sp, #52]
+	movs r2, #6
+	str r2, [sp, #24]
+	cmp r3, #16
+	beq .L_fr_02009202
+.L_fr_020091fe:
+	movs r4, #1
+	str r4, [sp, #24]
+.L_fr_02009202:
+	ldr r0, [sp, #52]
+	ldr r1, [sp, #48]
+	str r0, [sp, #32]
+	str r1, [sp, #28]
+	cmp r0, #4
+	ble .L_fr_02009214
+	adds r2, r0, #0
+	adds r2, #1
+	str r2, [sp, #32]
+.L_fr_02009214:
+	ldr r3, [sp, #52]
+	cmp r3, #9
+	ble .L_fr_02009220
+	ldr r4, [sp, #32]
+	adds r4, #1
+	str r4, [sp, #32]
+.L_fr_02009220:
+	ldr r0, [sp, #52]
+	cmp r0, #14
+	ble .L_fr_0200922c
+	ldr r1, [sp, #32]
+	adds r1, #1
+	str r1, [sp, #32]
+.L_fr_0200922c:
+	ldr r2, [sp, #52]
+	cmp r2, #15
+	ble .L_fr_02009238
+	ldr r3, [sp, #32]
+	adds r3, #1
+	str r3, [sp, #32]
+.L_fr_02009238:
+	movs r3, #14
+	movs r4, #1
+	mov r0, r9
+	str r3, [sp, #4]
+	ldr r1, [sp, #32]
+	ldr r2, [sp, #48]
+	ldr r3, [sp, #24]
+	str r4, [sp, #0]
+	bl Func_02000db4
+	mov r1, r9
+	movs r0, #12
+	ldrsh r3, [r1, r0]
+	ldr r2, [sp, #52]
+	mov r0, r9
+	adds r3, r3, r2
+	lsls r1, r3, #3
+	movs r4, #14
+	ldrsh r3, [r0, r4]
+	ldr r4, [sp, #48]
+	adds r2, r1, #0
+	adds r3, r3, r4
+	lsls r3, r3, #3
+	adds r0, r3, #0
+	ldr r3, [sp, #52]
+	subs r2, #8
+	adds r0, #11
+	cmp r3, #4
+	ble .L_fr_02009274
+	adds r2, r1, #0
+.L_fr_02009274:
+	ldr r4, [sp, #52]
+	cmp r4, #9
+	ble .L_fr_0200927c
+	adds r2, #8
+.L_fr_0200927c:
+	ldr r1, [sp, #52]
+	cmp r1, #14
+	ble .L_fr_02009284
+	adds r2, #8
+.L_fr_02009284:
+	ldr r3, [sp, #52]
+	cmp r3, #15
+	ble .L_fr_0200928c
+	adds r2, #8
+.L_fr_0200928c:
+	ldr r4, [sp, #20]
+	ldr r1, [sp, #16]
+	subs r3, r2, r4
+	lsrs r2, r3, #31
+	adds r3, r3, r2
+	asrs r3, r3, #1
+	adds r4, r4, r3
+	subs r3, r0, r1
+	lsrs r2, r3, #31
+	adds r3, r3, r2
+	asrs r3, r3, #1
+	adds r1, r1, r3
+	str r1, [sp, #16]
+	ldr r2, [sp, #16]
+	add r0, sp, #108
+	adds r1, r4, #0
+	movs r3, #1
+	str r4, [sp, #20]
+	bl Func_020023f8
+	add r0, sp, #108
+	bl Func_020023f0
+	movs r1, #50
+	ldr r0, [sp, #60]
+	bl __modsi3
+	movs r1, #10
+	adds r5, r0, #0
+	bl __divsi3
+	ldr r4, [sp, #56]
+	lsls r0, r0, #1
+	movs r2, #14
+	ldrsh r3, [r4, r2]
+	movs r1, #10
+	adds r0, r0, r3
+	ldr r3, .L_fr_020093fc
+	lsls r0, r0, #3
+	ldr r3, [r3]
+	subs r7, r0, #2
+	lsrs r6, r3, #1
+	movs r0, #7
+	mov r8, r0
+	ands r6, r0
+	adds r0, r5, #0
+	bl __modsi3
+	ldr r4, [sp, #56]
+	lsls r2, r0, #1
+	movs r1, #12
+	ldrsh r3, [r4, r1]
+	adds r2, r2, r0
+	lsls r2, r2, #2
+	lsls r3, r3, #3
+	adds r2, r2, r3
+	adds r1, r2, #0
+	adds r1, #16
+	cmp r0, #4
+	ble .L_fr_02009306
+	adds r1, #10
+.L_fr_02009306:
+	ldr r2, .L_fr_02009400
+	mov r0, r8
+	ldrsb r3, [r2, r6]
+	adds r1, r1, r3
+	adds r3, r6, #5
+	ands r3, r0
+	ldrsb r3, [r2, r3]
+	add r0, sp, #92
+	adds r7, r7, r3
+	adds r2, r7, #0
+	movs r3, #1
+	bl Func_020023f8
+	add r0, sp, #92
+	bl Func_020023f0
+	ldr r1, [sp, #8]
+	cmp r1, #0
+	ble .L_fr_0200933e
+	adds r1, #1
+	str r1, [sp, #8]
+	cmp r1, #8
+	bne .L_fr_0200933e
+	ldr r3, [sp, #60]
+	movs r2, #0
+	adds r3, #1
+	str r2, [sp, #8]
+	str r3, [sp, #60]
+.L_fr_0200933e:
+	ldr r4, [sp, #8]
+	cmp r4, #0
+	beq .L_fr_02009346
+	b .L_fr_0200968a
+.L_fr_02009346:
+	ldr r0, [sp, #52]
+	ldr r3, .L_fr_020093f8
+	cmp r0, #16
+	bne .L_fr_02009362
+	ldr r1, [sp, #48]
+	cmp r1, #0
+	bne .L_fr_02009358
+	ldr r3, [r3, #12]
+	b .L_fr_02009364
+.L_fr_02009358:
+	ldr r2, [sp, #48]
+	cmp r2, #1
+	bne .L_fr_02009362
+	ldr r3, [r3, #12]
+	b .L_fr_02009364
+.L_fr_02009362:
+	ldr r3, [r3, #4]
+.L_fr_02009364:
+	lsls r3, r3, #16
+	asrs r2, r3, #16
+	movs r3, #128
+	lsls r2, r2, #16
+	lsls r3, r3, #9
+	ands r3, r2
+	cmp r3, #0
+	beq .L_fr_02009410
+	ldr r3, [sp, #12]
+	cmp r3, #0
+	bne .L_fr_02009410
+	ldr r0, [sp, #52]
+	movs r4, #0
+	mov r10, r4
+	cmp r0, #16
+	bne .L_fr_020093a8
+	ldr r1, [sp, #48]
+	cmp r1, #0
+	bne .L_fr_02009390
+	movs r2, #1
+	mov r10, r2
+	b .L_fr_02009410
+.L_fr_02009390:
+	ldr r3, [sp, #48]
+	cmp r3, #1
+	bne .L_fr_0200939c
+	movs r4, #2
+	mov r10, r4
+	b .L_fr_02009410
+.L_fr_0200939c:
+	ldr r0, [sp, #48]
+	cmp r0, #3
+	bne .L_fr_02009410
+	movs r1, #3
+	mov r10, r1
+	b .L_fr_02009410
+.L_fr_020093a8:
+	ldr r2, [sp, #60]
+	ldr r3, [sp, #44]
+	cmp r2, r3
+	bge .L_fr_02009410
+	ldr r4, [sp, #48]
+	ldr r0, [sp, #52]
+	ldr r2, .L_fr_02009404
+	lsls r3, r4, #4
+	adds r3, r0, r3
+	ldrb r5, [r2, r3]
+	cmp r5, #63
+	bgt .L_fr_02009410
+	movs r0, #112
+	bl Func_02002408
+	ldr r3, .L_fr_02009408
+	ldr r1, [sp, #60]
+	strb r5, [r3, r1]
+	ldr r0, [sp, #60]
+	movs r1, #10
+	bl __modsi3
+	ldr r3, [sp, #44]
+	ldr r2, [sp, #60]
+	subs r3, #1
+	cmp r2, r3
+	bge .L_fr_0200940c
+	adds r0, r2, #0
+	movs r1, #50
+	bl __modsi3
+	cmp r0, #49
+	bne .L_fr_020093f0
+	movs r3, #1
+	str r3, [sp, #8]
+	b .L_fr_02009410
+.L_fr_020093f0:
+	ldr r4, [sp, #60]
+	adds r4, #1
+	str r4, [sp, #60]
+	b .L_fr_02009410
+.L_fr_020093f8:
+	.4byte gInput
+.L_fr_020093fc:
+	.4byte gFrameTick
+.L_fr_02009400:
+	.4byte Data_02002438
+.L_fr_02009404:
+	.4byte Data_0200265e
+.L_fr_02009408:
+	.4byte Data_0200274a
+.L_fr_0200940c:
+	movs r0, #2
+	str r0, [sp, #12]
+.L_fr_02009410:
+	mov r1, r10
+	cmp r1, #0
+	bne .L_fr_0200941e
+	ldr r2, [sp, #12]
+	cmp r2, #1
+	beq .L_fr_0200941e
+	b .L_fr_0200968a
+.L_fr_0200941e:
+	ldr r1, .L_fr_02009750
+	movs r2, #8
+	ldr r3, [r1, #4]
+	ands r3, r2
+	cmp r3, #0
+	bne .L_fr_02009438
+	mov r3, r10
+	cmp r3, #3
+	beq .L_fr_02009438
+	ldr r4, [sp, #12]
+	cmp r4, #1
+	beq .L_fr_02009438
+	b .L_fr_020095fa
+.L_fr_02009438:
+	ldr r7, .L_fr_02009754
+	ldr r1, [sp, #44]
+	adds r2, r7, #0
+	ldr r0, .L_fr_02009758
+	bl Func_02002068
+	mov r10, r0
+	mov r6, r10
+	subs r6, #2
+	adds r1, r7, #0
+	adds r0, r6, #0
+	bl Func_0200217c
+	movs r3, #2
+	adds r5, r0, #0
+	movs r0, #0
+	str r0, [sp, #12]
+	str r3, [sp, #0]
+	movs r1, #12
+	movs r3, #3
+	movs r0, #5
+	movs r2, #20
+	bl UiWindow_Create
+	lsls r5, r5, #16
+	asrs r5, r5, #16
+	ldrb r3, [r7, r6]
+	lsls r5, r5, #16
+	lsrs r1, r5, #16
+	lsrs r5, r5, #24
+	mov r8, r0
+	cmp r3, r5
+	bne .L_fr_02009552
+	mov r3, r10
+	subs r3, #1
+	ldrb r3, [r7, r3]
+	movs r2, #255
+	ands r2, r1
+	cmp r3, r2
+	bne .L_fr_02009552
+	ldr r0, .L_fr_0200975c
+	mov r1, r8
+	movs r2, #0
+	movs r3, #0
+	bl UiText_DrawCharacterAtOffset
+	movs r0, #112
+	bl Func_02002408
+.L_fr_0200949a:
+	movs r0, #1
+	bl WaitFrames
+	ldr r3, .L_fr_02009750
+	movs r2, #1
+	ldr r3, [r3, #4]
+	ands r3, r2
+	cmp r3, #0
+	beq .L_fr_0200949a
+	movs r0, #112
+	bl Func_02002408
+	bl Func_02002350
+	ldr r5, .L_fr_02009760
+	movs r1, #133
+	lsls r1, r1, #2
+	adds r2, r5, r1
+	movs r3, #0
+	str r3, [r2]
+	movs r0, #4
+	bl Party_RemoveActiveOwner
+	movs r0, #5
+	bl Party_RemoveActiveOwner
+	movs r0, #6
+	bl Party_RemoveActiveOwner
+	movs r0, #7
+	bl Party_RemoveActiveOwner
+	movs r0, #0
+	bl Party_AddActiveOwner
+	movs r0, #1
+	bl Party_AddActiveOwner
+	movs r0, #2
+	bl Party_AddActiveOwner
+	movs r0, #3
+	bl Party_AddActiveOwner
+	ldr r1, .L_fr_02009754
+	ldr r0, [sp, #64]
+	bl Func_020018e0
+	mov r0, r8
+	movs r1, #2
+	bl UiWork_Finalize
+	movs r1, #2
+	ldr r0, [sp, #56]
+	bl UiWork_Finalize
+	mov r0, r9
+	movs r1, #2
+	bl UiWork_Finalize
+	movs r2, #147
+	lsls r2, r2, #1
+	adds r2, #255
+	adds r3, r5, r2
+	ldrb r0, [r3]
+	movs r3, #128
+	lsls r3, r3, #2
+	adds r3, #38
+	adds r5, r5, r3
+	ldrb r1, [r5]
+	bl Func_02002310
+	movs r0, #74
+	bl Func_02002408
+	movs r0, #6
+	bl WaitFrames
+	movs r0, #0
+	bl Func_020022f8
+	bl Func_020023e8
+	movs r2, #244
+	ldr r3, .L_fr_02009764
+	ldr r0, .L_fr_02009768
+	ldr r1, .L_fr_0200976c
+	lsls r2, r2, #4
+	mov lr, r3
+	.2byte 0xf800
+	movs r0, #0
+	b .L_fr_020097e8
+.L_fr_02009552:
+	movs r0, #113
+	bl Func_02002408
+	ldr r0, .L_fr_02009770
+	mov r1, r8
+	movs r2, #0
+	movs r3, #0
+	bl UiText_DrawCharacterAtOffset
+.L_fr_02009564:
+	movs r0, #1
+	bl WaitFrames
+	ldr r1, .L_fr_02009750
+	movs r2, #1
+	ldr r3, [r1, #4]
+	ands r3, r2
+	cmp r3, #0
+	bne .L_fr_02009580
+	ldr r3, [r1, #4]
+	movs r2, #2
+	ands r3, r2
+	cmp r3, #0
+	beq .L_fr_02009564
+.L_fr_02009580:
+	movs r1, #2
+	mov r0, r8
+	bl UiWork_Finalize
+	mov r0, r9
+	bl RenderOutput_RedrawSavedRect
+	ldr r0, .L_fr_02009774
+	mov r1, r9
+	movs r2, #0
+	movs r3, #0
+	bl UiText_DrawStringInWindow
+	ldr r0, .L_fr_02009778
+	mov r1, r9
+	movs r2, #0
+	movs r3, #8
+	bl UiText_DrawStringInWindow
+	ldr r0, .L_fr_0200977c
+	mov r1, r9
+	movs r2, #0
+	movs r3, #16
+	bl UiText_DrawStringInWindow
+	ldr r0, .L_fr_02009780
+	mov r1, r9
+	movs r2, #0
+	movs r3, #24
+	bl UiText_DrawStringInWindow
+	ldr r6, .L_fr_02009784
+	movs r3, #5
+	str r3, [sp, #0]
+	mov r0, r9
+	movs r1, #20
+	movs r2, #0
+	movs r3, #20
+	bl UiWindow_DrawDividerLine
+	adds r0, r6, #0
+	mov r1, r9
+	adds r6, #1
+	movs r2, #160
+	movs r3, #0
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r9
+	movs r2, #160
+	movs r3, #8
+	adds r6, #1
+	bl UiText_DrawCharacterAtOffset
+	adds r0, r6, #0
+	mov r1, r9
+	movs r2, #160
+	movs r3, #24
+	bl UiText_DrawCharacterAtOffset
+	b .L_fr_0200968a
+.L_fr_020095fa:
+	ldr r3, [r1, #12]
+	movs r2, #128
+	lsls r2, r2, #2
+	ands r3, r2
+	cmp r3, #0
+	bne .L_fr_0200960c
+	mov r4, r10
+	cmp r4, #2
+	bne .L_fr_02009620
+.L_fr_0200960c:
+	ldr r0, [sp, #60]
+	cmp r0, #0
+	ble .L_fr_0200968a
+	movs r0, #111
+	bl Func_02002408
+	ldr r1, [sp, #60]
+	subs r1, #1
+	str r1, [sp, #60]
+	b .L_fr_0200968a
+.L_fr_02009620:
+	ldr r3, [r1, #12]
+	movs r2, #128
+	lsls r2, r2, #1
+	ands r3, r2
+	cmp r3, #0
+	bne .L_fr_02009632
+	mov r2, r10
+	cmp r2, #1
+	bne .L_fr_0200964a
+.L_fr_02009632:
+	ldr r3, [sp, #44]
+	ldr r4, [sp, #60]
+	subs r3, #1
+	cmp r4, r3
+	bge .L_fr_0200968a
+	movs r0, #111
+	bl Func_02002408
+	ldr r0, [sp, #60]
+	adds r0, #1
+	str r0, [sp, #60]
+	b .L_fr_0200968a
+.L_fr_0200964a:
+	ldr r3, [r1, #4]
+	movs r2, #2
+	ands r3, r2
+	cmp r3, #0
+	beq .L_fr_0200968a
+	ldr r1, [sp, #60]
+	cmp r1, #0
+	ble .L_fr_02009668
+	movs r0, #111
+	bl Func_02002408
+	ldr r2, [sp, #60]
+	subs r2, #1
+	str r2, [sp, #60]
+	b .L_fr_0200968a
+.L_fr_02009668:
+	movs r0, #113
+	bl Func_02002408
+	movs r1, #2
+	ldr r0, [sp, #56]
+	bl UiWork_Finalize
+	mov r0, r9
+	movs r1, #2
+	bl UiWork_Finalize
+	movs r0, #74
+	bl Func_02002408
+	movs r0, #1
+	negs r0, r0
+	b .L_fr_020097e8
+.L_fr_0200968a:
+	ldr r0, [sp, #60]
+	movs r1, #50
+	bl __divsi3
+	mov r11, r0
+	ldr r0, [sp, #56]
+	bl RenderOutput_RedrawSavedRect
+	movs r6, #0
+	movs r5, #2
+.L_fr_0200969e:
+	adds r2, r5, #0
+	ldr r0, [sp, #56]
+	movs r1, #0
+	movs r3, #18
+	adds r6, #1
+	str r5, [sp, #0]
+	bl UiWindow_DrawDividerLine
+	adds r5, #2
+	cmp r6, #4
+	bne .L_fr_0200969e
+	ldr r3, [sp, #40]
+	movs r6, #0
+	cmp r3, #0
+	beq .L_fr_020096ee
+	negs r3, r3
+	adds r5, r3, #0
+	adds r5, #18
+.L_fr_020096c2:
+	movs r4, #243
+	lsls r4, r4, #8
+	adds r4, #1
+	adds r1, r6, r4
+	cmp r6, r11
+	bne .L_fr_020096d6
+	movs r0, #243
+	lsls r0, r0, #8
+	adds r0, #11
+	adds r1, r6, r0
+.L_fr_020096d6:
+	movs r3, #0
+	str r3, [sp, #0]
+	adds r2, r5, #0
+	ldr r0, [sp, #56]
+	movs r3, #10
+	bl UiWindow_SetTilemapEntry
+	ldr r1, [sp, #40]
+	adds r6, #1
+	adds r5, #1
+	cmp r6, r1
+	bne .L_fr_020096c2
+.L_fr_020096ee:
+	ldr r2, [sp, #44]
+	mov r10, r2
+	cmp r2, #49
+	ble .L_fr_0200970e
+	ldr r3, [sp, #40]
+	subs r3, #1
+	cmp r3, r11
+	bne .L_fr_0200970a
+	ldr r0, [sp, #44]
+	movs r1, #50
+	bl __modsi3
+	mov r10, r0
+	b .L_fr_0200970e
+.L_fr_0200970a:
+	movs r3, #50
+	mov r10, r3
+.L_fr_0200970e:
+	mov r4, r10
+	movs r6, #0
+	cmp r4, #0
+	beq .L_fr_020097ac
+	ldr r0, [sp, #36]
+	ldr r1, [sp, #36]
+	movs r2, #200
+	adds r0, #200
+	lsls r2, r2, #1
+	mov r8, r0
+	adds r7, r1, r2
+.L_fr_02009724:
+	movs r3, #50
+	mov r0, r11
+	muls r0, r3
+	ldr r4, .L_fr_02009758
+	adds r3, r0, #0
+	adds r0, r6, r3
+	ldrb r2, [r4, r0]
+	ldrb r3, [r7]
+	adds r1, r2, #0
+	cmp r1, r3
+	beq .L_fr_020097a0
+	strb r2, [r7]
+	cmp r1, #99
+	bne .L_fr_0200978c
+	mov r1, r8
+	ldr r0, [r1]
+	ldr r3, .L_fr_02009788
+	movs r1, #128
+	mov lr, r3
+	.2byte 0xf800
+	b .L_fr_020097a0
+	.2byte 0x0000
+.L_fr_02009750:
+	.4byte gInput
+.L_fr_02009754:
+	.4byte Data_0200288a
+.L_fr_02009758:
+	.4byte Data_0200274a
+.L_fr_0200975c:
+	.4byte 0x00000f5e
+.L_fr_02009760:
+	.4byte gPartyState
+.L_fr_02009764:
+	.4byte IwramCopyWords
+.L_fr_02009768:
+	.4byte 0x02013040
+.L_fr_0200976c:
+	.4byte GameFlagBytes
+.L_fr_02009770:
+	.4byte 0x00000f5d
+.L_fr_02009774:
+	.4byte Data_02002440
+.L_fr_02009778:
+	.4byte Data_02002454
+.L_fr_0200977c:
+	.4byte Data_02002468
+.L_fr_02009780:
+	.4byte Data_0200247c
+.L_fr_02009784:
+	.4byte 0x00000f5a
+.L_fr_02009788:
+	.4byte IwramClearWords
+.L_fr_0200978c:
+	add r5, sp, #68
+	ldrb r0, [r4, r0]
+	adds r1, r5, #0
+	bl Func_02000a70
+	mov r2, r8
+	ldrh r0, [r5]
+	ldr r1, [r2]
+	bl Func_02002328
+.L_fr_020097a0:
+	movs r3, #4
+	adds r6, #1
+	add r8, r3
+	adds r7, #1
+	cmp r6, r10
+	bne .L_fr_02009724
+.L_fr_020097ac:
+	cmp r6, #50
+	beq .L_fr_020097e0
+	ldr r4, [sp, #36]
+	lsls r3, r6, #2
+	movs r0, #200
+	adds r3, r3, r4
+	lsls r0, r0, #1
+	adds r7, r3, #0
+	adds r3, r6, r0
+	adds r7, #200
+	adds r5, r3, r4
+.L_fr_020097c2:
+	ldrb r3, [r5]
+	cmp r3, #99
+	beq .L_fr_020097d6
+	movs r3, #99
+	strb r3, [r5]
+	ldr r0, [r7]
+	ldr r3, .L_fr_020097f8
+	movs r1, #128
+	mov lr, r3
+	.2byte 0xf800
+.L_fr_020097d6:
+	adds r6, #1
+	adds r7, #4
+	adds r5, #1
+	cmp r6, #50
+	bne .L_fr_020097c2
+.L_fr_020097e0:
+	movs r0, #1
+	bl WaitFrames
+	b .L_fr_020090c2
+.L_fr_020097e8:
+	sub sp, #-124
+	pop {r3, r5, r6, r7}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	mov r11, r7
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
+.L_fr_020097f8:
+	.4byte IwramClearWords
+	.else
 	.global Func_02000e44
 	.thumb_func
 Func_02000e44:
@@ -5925,6 +10634,8 @@ Func_02000e44:
 	.2byte 0x0000
 .L_02009800:
 	.4byte IwramClearWords
+	.endif
+	.endif
 	.section .text.x02009804,"ax",%progbits
 	.global Func_02001804
 	.thumb_func
@@ -6045,6 +10756,469 @@ Func_0200187c:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 	.section .text.x020098e0,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.global Func_020018e0
+	.thumb_func
+Func_020018e0:
+	push {r5, r6, r7, lr}
+	mov r7, r11
+	mov r6, r10
+	mov r5, r9
+	push {r5, r6, r7}
+	mov r7, r8
+	push {r7}
+	ldrb r3, [r1, #1]
+	ldrb r6, [r1]
+	lsls r3, r3, #8
+	orrs r6, r3
+	ldrb r3, [r1, #2]
+	ldrb r2, [r1, #3]
+	lsls r3, r3, #16
+	orrs r6, r3
+	movs r3, #240
+	ands r3, r2
+	lsls r3, r3, #20
+	orrs r6, r3
+	movs r3, #15
+	ands r3, r2
+	mov r8, r3
+	ldrb r3, [r1, #4]
+	mov r2, r8
+	lsls r3, r3, #4
+	orrs r2, r3
+	ldrb r3, [r1, #5]
+	sub sp, #40
+	lsls r3, r3, #12
+	orrs r2, r3
+	ldrb r3, [r1, #6]
+	mov r9, r0
+	lsls r3, r3, #20
+	orrs r2, r3
+	mov r8, r2
+	ldrb r3, [r1, #7]
+	ldrb r2, [r1, #8]
+	mov r10, r1
+	mov r11, r3
+	str r2, [sp, #4]
+	cmp r0, #2
+	beq .L_ja_02009aa2
+	negs r3, r0
+	orrs r3, r0
+	lsrs r3, r3, #31
+	adds r3, #8
+	movs r7, #0
+	movs r4, #4
+	adds r0, r3, r1
+.L_ja_020099ea:
+	ldrb r2, [r0]
+	ldrb r3, [r0, #1]
+	lsls r2, r2, #24
+	lsls r3, r3, #16
+	orrs r2, r3
+	ldrb r3, [r0, #2]
+	add r5, sp, #8
+	lsls r3, r3, #8
+	orrs r2, r3
+	ldrb r3, [r0, #3]
+	lsls r1, r7, #4
+	orrs r2, r3
+	str r2, [r5, r1]
+	adds r7, #1
+	ldrb r2, [r0, #4]
+	ldrb r3, [r0, #5]
+	lsls r2, r2, #24
+	lsls r3, r3, #16
+	orrs r2, r3
+	ldrb r3, [r0, #6]
+	ldrb r1, [r0, #7]
+	lsls r3, r3, #8
+	orrs r2, r3
+	orrs r2, r1
+	str r2, [r5, r4]
+	lsls r1, r1, #28
+	ldrb r3, [r0, #8]
+	adds r2, r4, #4
+	lsls r3, r3, #20
+	orrs r1, r3
+	ldrb r3, [r0, #9]
+	lsls r3, r3, #12
+	orrs r1, r3
+	ldrb r3, [r0, #10]
+	lsls r3, r3, #4
+	orrs r1, r3
+	ldrb r3, [r0, #11]
+	lsrs r3, r3, #4
+	orrs r1, r3
+	str r1, [r5, r2]
+	adds r1, r4, #0
+	ldrb r2, [r0, #11]
+	ldrb r3, [r0, #12]
+	lsls r2, r2, #28
+	lsls r3, r3, #20
+	orrs r2, r3
+	ldrb r3, [r0, #13]
+	adds r1, #8
+	lsls r3, r3, #12
+	orrs r2, r3
+	ldrb r3, [r0, #14]
+	adds r4, #16
+	lsls r3, r3, #4
+	orrs r2, r3
+	str r2, [r5, r1]
+	adds r0, #15
+	cmp r7, #2
+	bne .L_ja_020099ea
+	movs r7, #0
+.L_ja_02009a60:
+	ldr r2, .L_ja_02009ac0
+	lsls r3, r7, #2
+	ldr r0, [r2, r3]
+	bl UnitGet
+	lsls r1, r7, #3
+	ldr r2, [r5, r1]
+	movs r4, #128
+	lsls r4, r4, #1
+	adds r0, #16
+	lsrs r3, r2, #21
+	adds r4, #255
+	strh r3, [r0]
+	adds r1, #4
+	lsls r3, r2, #11
+	ands r2, r4
+	strh r2, [r0, #8]
+	ldr r2, [r5, r1]
+	lsrs r3, r3, #21
+	strh r3, [r0, #2]
+	lsrs r3, r2, #22
+	ands r3, r4
+	strh r3, [r0, #10]
+	lsrs r3, r2, #12
+	ands r3, r4
+	strh r3, [r0, #12]
+	lsrs r2, r2, #4
+	movs r3, #127
+	ands r2, r3
+	adds r7, #1
+	strb r2, [r0, #14]
+	cmp r7, #4
+	bne .L_ja_02009a60
+.L_ja_02009aa2:
+	movs r7, #0
+.L_ja_02009aa4:
+	mov r2, r11
+	movs r3, #1
+	asrs r2, r7
+	ands r2, r3
+	adds r5, r7, #1
+	ldr r3, .L_ja_02009ac4
+	lsls r0, r7, #1
+	cmp r2, #0
+	beq .L_ja_02009ac8
+	ldrh r0, [r3, r0]
+	bl GameFlag_SetBit
+	b .L_ja_02009ace
+	.2byte 0x0000
+.L_ja_02009ac0:
+	.4byte Data_020026a0
+.L_ja_02009ac4:
+	.4byte Data_02002490
+.L_ja_02009ac8:
+	ldrh r0, [r3, r0]
+	bl GameFlag_ClearBit
+.L_ja_02009ace:
+	adds r7, r5, #0
+	cmp r7, #6
+	bne .L_ja_02009aa4
+	movs r7, #0
+	movs r5, #0
+.L_ja_02009ad8:
+	ldr r2, .L_ja_02009c08
+	lsls r3, r7, #2
+	ldr r0, [r2, r3]
+	bl UnitGet
+	adds r3, r6, #0
+	lsrs r3, r5
+	movs r2, #127
+	ands r3, r2
+	adds r7, #1
+	strb r3, [r0, #15]
+	adds r5, #7
+	cmp r7, #4
+	bne .L_ja_02009ad8
+	movs r0, #0
+	bl Trade_GetOfferState
+	movs r3, #148
+	lsls r3, r3, #1
+	adds r0, r0, r3
+	movs r3, #0
+	str r3, [r0]
+	movs r7, #0
+.L_ja_02009b06:
+	ldr r3, .L_ja_02009c08
+	lsls r2, r7, #2
+	ldr r0, [r3, r2]
+	bl UnitGet
+	movs r6, #0
+	adds r5, r0, #0
+.L_ja_02009b14:
+	adds r0, r5, #0
+	ldr r3, .L_ja_02009c0c
+	adds r0, #248
+	movs r1, #40
+	adds r6, #1
+	mov lr, r3
+	.2byte 0xf800
+	cmp r6, #4
+	bne .L_ja_02009b14
+	adds r7, #1
+	cmp r7, #4
+	bne .L_ja_02009b06
+	movs r7, #0
+.L_ja_02009b2e:
+	adds r0, r7, #0
+	movs r1, #7
+	bl __divsi3
+	movs r1, #7
+	adds r5, r0, #0
+	adds r0, r7, #0
+	bl __modsi3
+	adds r3, r0, #0
+	lsls r0, r5, #2
+	adds r0, r0, r5
+	lsls r0, r0, #2
+	adds r0, r0, r3
+	adds r0, #48
+	adds r7, #1
+	bl GameFlag_ClearBit
+	cmp r7, #28
+	bne .L_ja_02009b2e
+	movs r7, #0
+.L_ja_02009b58:
+	mov r3, r8
+	lsrs r3, r7
+	movs r2, #1
+	ands r3, r2
+	cmp r3, #0
+	beq .L_ja_02009b7e
+	movs r1, #7
+	adds r0, r7, #0
+	bl __divsi3
+	movs r1, #7
+	adds r5, r0, #0
+	adds r0, r7, #0
+	bl __modsi3
+	adds r1, r0, #0
+	adds r0, r5, #0
+	bl Djinn_AddToLeastLoadedOwner
+.L_ja_02009b7e:
+	adds r7, #1
+	cmp r7, #28
+	bne .L_ja_02009b58
+	mov r2, r9
+	cmp r2, #0
+	beq .L_ja_02009bb8
+	ldr r3, .L_ja_02009c08
+	movs r7, #0
+	ldr r0, [r3]
+	bl UnitGet
+.L_ja_02009b94:
+	ldr r3, [sp, #4]
+	movs r2, #1
+	asrs r3, r7
+	ands r3, r2
+	cmp r3, #0
+	beq .L_ja_02009baa
+	ldr r3, .L_ja_02009c10
+	lsls r2, r7, #1
+	ldrh r0, [r3, r2]
+	bl PartyInventory_Add
+.L_ja_02009baa:
+	adds r7, #1
+	cmp r7, #8
+	bne .L_ja_02009b94
+	mov r3, r9
+	cmp r3, #0
+	beq .L_ja_02009bb8
+	b .L_ja_02009cda
+.L_ja_02009bb8:
+	movs r2, #39
+	mov r8, r2
+	movs r5, #0
+	movs r7, #0
+.L_ja_02009bc0:
+	ldr r2, .L_ja_02009c08
+	lsls r3, r7, #2
+	ldr r0, [r2, r3]
+	bl UnitGet
+	mov r4, r8
+	adds r0, #216
+	movs r6, #0
+	mov r12, r0
+	add r4, r10
+.L_ja_02009bd4:
+	ldrb r1, [r4, #1]
+	ldrb r2, [r4]
+	movs r3, #7
+	subs r3, r3, r5
+	adds r0, r5, #1
+	asrs r1, r3
+	ldr r3, .L_ja_02009c04
+	lsls r2, r0
+	orrs r2, r1
+	ands r2, r3
+	mov r3, r12
+	strh r2, [r3]
+	adds r5, r0, #0
+	movs r2, #2
+	movs r3, #1
+	add r12, r2
+	adds r4, #1
+	add r8, r3
+	cmp r5, #7
+	bne .L_ja_02009c14
+	movs r5, #0
+	adds r4, #1
+	add r8, r3
+	b .L_ja_02009c14
+.L_ja_02009c04:
+	.4byte 0x000001ff
+.L_ja_02009c08:
+	.4byte Data_020026a0
+.L_ja_02009c0c:
+	.4byte IwramClearWords
+.L_ja_02009c10:
+	.4byte Data_020026b0
+.L_ja_02009c14:
+	adds r6, #1
+	cmp r6, #15
+	bne .L_ja_02009bd4
+	adds r7, #1
+	cmp r7, #4
+	bne .L_ja_02009bc0
+	movs r2, #107
+	movs r5, #1
+	mov r8, r2
+	negs r5, r5
+	movs r7, #0
+.L_ja_02009c2a:
+	ldr r3, .L_ja_02009d00
+	lsls r2, r7, #2
+	ldr r0, [r3, r2]
+	bl UnitGet
+	mov r2, r8
+	movs r3, #0
+	add r2, r10
+	mov r11, r0
+	mov r9, r3
+	mov r12, r2
+.L_ja_02009c40:
+	movs r1, #0
+	cmp r5, #0
+	bge .L_ja_02009c5a
+	mov r3, r12
+	ldrb r1, [r3]
+	negs r3, r5
+	lsls r1, r3
+	movs r2, #1
+	movs r3, #31
+	ands r1, r3
+	add r12, r2
+	add r8, r2
+	adds r5, #8
+.L_ja_02009c5a:
+	mov r2, r12
+	ldrb r3, [r2]
+	movs r2, #31
+	asrs r3, r5
+	ands r3, r2
+	adds r1, r1, r3
+	movs r3, #5
+	subs r5, #5
+	negs r3, r3
+	cmp r5, r3
+	bne .L_ja_02009c78
+	movs r3, #1
+	add r12, r3
+	add r8, r3
+	movs r5, #3
+.L_ja_02009c78:
+	ands r1, r2
+	ldr r2, .L_ja_02009d04
+	movs r6, #0
+	mov lr, r2
+	movs r0, #216
+.L_ja_02009c82:
+	mov r3, r11
+	ldrh r4, [r0, r3]
+	mov r3, r9
+	lsls r2, r3, #1
+	movs r3, #128
+	lsls r3, r3, #1
+	adds r3, #255
+	ands r3, r4
+	str r3, [sp, #0]
+	mov r3, lr
+	ldrh r2, [r3, r2]
+	ldr r3, [sp, #0]
+	cmp r3, r2
+	bne .L_ja_02009ca6
+	lsls r3, r1, #11
+	orrs r3, r4
+	mov r2, r11
+	strh r3, [r0, r2]
+.L_ja_02009ca6:
+	adds r6, #1
+	adds r0, #2
+	cmp r6, #15
+	bne .L_ja_02009c82
+	movs r3, #1
+	add r9, r3
+	mov r2, r9
+	cmp r2, #23
+	bne .L_ja_02009c40
+	adds r7, #1
+	cmp r7, #4
+	bne .L_ja_02009c2a
+	mov r3, r10
+	adds r3, #165
+	ldrb r2, [r3]
+	adds r3, #1
+	ldrb r3, [r3]
+	lsls r2, r2, #16
+	lsls r3, r3, #8
+	orrs r2, r3
+	mov r3, r10
+	adds r3, #167
+	ldrb r3, [r3]
+	ldr r1, .L_ja_02009d08
+	orrs r2, r3
+	str r2, [r1, #16]
+.L_ja_02009cda:
+	movs r7, #0
+.L_ja_02009cdc:
+	ldr r6, .L_ja_02009d00
+	lsls r5, r7, #2
+	ldr r0, [r6, r5]
+	bl Owner_RefreshDerivedData
+	adds r7, #1
+	ldr r0, [r6, r5]
+	bl UnitCalc
+	cmp r7, #4
+	bne .L_ja_02009cdc
+	add sp, #40
+	pop {r3, r5, r6, r7}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	mov r11, r7
+	pop {r5, r6, r7, pc}
+.L_ja_02009d00:
+	.4byte Data_020026a0
+.L_ja_02009d04:
+	.4byte Data_020026c0
+.L_ja_02009d08:
+	.4byte gPartyState
+	.else
 	.global Func_020018e0
 	.thumb_func
 Func_020018e0:
@@ -6517,6 +11691,7 @@ Func_020018e0:
 	.4byte Data_020026c0
 .L_02009c78:
 	.4byte gPartyState
+	.endif
 	.section .text.x02009c7c,"ax",%progbits
 	.global Func_02001c7c
 	.thumb_func
@@ -7353,6 +12528,13 @@ Data_02002500:
 	.2byte 0x0000
 	.global Data_0200265e
 Data_0200265e:
+	.ifdef TLA_EDITION_JA
+	.byte 0x00, 0x01, 0x02, 0x03, 0x04, 0x14, 0x15, 0x16, 0x17, 0x18, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x38, 0x63, 0x63, 0x39, 0x3a
+	.byte 0x05, 0x06, 0x07, 0x08, 0x09, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x2b, 0x63, 0x2d, 0x63, 0x2c, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f
+	.byte 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x2e, 0x2f, 0x30, 0x31, 0x32, 0x63, 0x63, 0x63, 0x63, 0x63
+	.byte 0x0f, 0x10, 0x11, 0x12, 0x13, 0x23, 0x63, 0x24, 0x63, 0x25, 0x33, 0x34, 0x35, 0x36, 0x37, 0x63, 0x63, 0x63, 0x63, 0x63
+	.2byte 0x0000
+	.else
 	.2byte 0x0100
 	.4byte 0x05040302
 	.4byte 0x09080706
@@ -7370,6 +12552,7 @@ Data_0200265e:
 	.4byte 0x39383736
 	.4byte 0x3d3c3b3a
 	.4byte 0x00003f3e
+	.endif
 	.section .bss,"aw",%nobits
 	.global Data_0200274a
 Data_0200274a:

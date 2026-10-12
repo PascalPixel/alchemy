@@ -73,7 +73,7 @@ Func_080fe184:
 	adds r6, r0, #0
 	ldr r0, [r7, #40]
 	bl RenderOutput_ClearListFar
-	bl Func_080fa478
+	bl ItemMenu_Close
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #24]

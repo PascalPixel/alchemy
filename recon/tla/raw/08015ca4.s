@@ -94,7 +94,7 @@ Func_08015ca4:
 	bl SaveState_ChecksumWorkspace
 	strh r0, [r5, #8]
 	mov r0, r10
-	bl Func_0801601c
+	bl SaveState_FindLatestSequence
 	movs r3, #128
 	movs r2, #132
 	adds r0, #1

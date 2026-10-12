@@ -626,6 +626,7 @@ ObjectMotion_ResetTargetsAndVelocity:
 	overlay_veneer ObjectMotion_ResetTargetsAndVelocityFar
 	.endif
 	.endif
+	.ifndef TLA_EDITION_JA
 	.global Func_02005004
 	.thumb_func
 Func_02005004:
@@ -636,6 +637,7 @@ Func_02005004:
 	overlay_veneer Func_080c8930
 	.else
 	overlay_veneer Func_080c8940
+	.endif
 	.endif
 	.endif
 	.global Func_0200500c

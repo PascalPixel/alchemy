@@ -12,15 +12,15 @@ Func_080382c0:
 	.global Func_080382c8
 	.thumb_func
 Func_080382c8:
-	overlay_veneer Func_08043774
+	overlay_veneer SaveState_SelectAndLoad
 	.global Func_080382d0
 	.thumb_func
 Func_080382d0:
-	overlay_veneer Func_0804380c
+	overlay_veneer SaveState_CopySlot
 	.global Func_080382d8
 	.thumb_func
 Func_080382d8:
-	overlay_veneer Func_080438c8
+	overlay_veneer SaveState_DeleteSelectedSlot
 	.global Func_080382e0
 	.thumb_func
 Func_080382e0:
@@ -28,7 +28,7 @@ Func_080382e0:
 	.global Func_080382e8
 	.thumb_func
 Func_080382e8:
-	overlay_veneer Func_080434ec
+	overlay_veneer SaveState_WriteSlot
 	.global Func_080382f0
 	.thumb_func
 Func_080382f0:
@@ -48,7 +48,7 @@ Resource_CopyFixedBlockAFar:
 	.global Func_08038310
 	.thumb_func
 Func_08038310:
-	overlay_veneer Func_0803e774
+	overlay_veneer Menu_SetNodeCoordinates
 	.global Func_08038318
 	.thumb_func
 Func_08038318:

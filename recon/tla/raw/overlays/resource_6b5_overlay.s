@@ -1,3 +1,16 @@
+	.set OVERLAY_6B5_DE_ES_FR_IT, 0
+	.ifdef TLA_EDITION_DE
+	.set OVERLAY_6B5_DE_ES_FR_IT, 1
+	.endif
+	.ifdef TLA_EDITION_ES
+	.set OVERLAY_6B5_DE_ES_FR_IT, 1
+	.endif
+	.ifdef TLA_EDITION_FR
+	.set OVERLAY_6B5_DE_ES_FR_IT, 1
+	.endif
+	.ifdef TLA_EDITION_IT
+	.set OVERLAY_6B5_DE_ES_FR_IT, 1
+	.endif
 .syntax unified
 	.thumb
 	.section .text.x02008134,"ax",%progbits
@@ -204,6 +217,235 @@ Func_02000134:
 .L_020082d4:
 	.4byte IwramClearWords
 	.section .text.x0200839c,"ax",%progbits
+	.if OVERLAY_6B5_DE_ES_FR_IT
+	.global Func_0200039c
+	.thumb_func
+Func_0200039c:
+	push {r5, r6, r7, lr}
+	mov r7, r11
+	mov r6, r10
+	mov r5, r9
+	push {r5, r6, r7}
+	mov r7, r8
+	push {r7}
+	movs r2, #170
+	lsls r2, r2, #1
+	mov r11, r2
+	mov r0, r11
+	sub sp, #48
+	bl Runtime_BumpAllocateAlternatePool
+	movs r3, #225
+	lsls r3, r3, #2
+	movs r2, #0
+	mov r9, r0
+	movs r7, #0
+	mov r10, r3
+	mov r8, r2
+	b .L_de_02008496
+.L_de_020083c8:
+	ldrh r3, [r3]
+	cmp r3, r11
+	bls .L_de_020083d0
+	b .L_de_020084fa
+.L_de_020083d0:
+	movs r0, #1
+	bl WaitFrames
+	movs r3, #1
+	negs r3, r3
+	add r10, r3
+	mov r2, r10
+	cmp r2, #0
+	blt .L_de_020083ee
+	ldr r3, .L_de_0200846c
+	ldrh r2, [r3]
+	movs r3, #3
+	ands r3, r2
+	cmp r3, #3
+	beq .L_de_020083f6
+.L_de_020083ee:
+	adds r5, #1
+	cmp r5, #24
+	ble .L_de_020083f6
+	b .L_de_020084fa
+.L_de_020083f6:
+	bl Func_0200193c
+	ldr r3, .L_de_02008470
+	cmp r0, #0
+	bne .L_de_020083c8
+	ldrh r3, [r3]
+	mov r12, r3
+	cmp r12, r11
+	beq .L_de_0200840a
+	b .L_de_020084fa
+.L_de_0200840a:
+	movs r2, #149
+	lsls r2, r2, #1
+	adds r3, r6, r2
+	ldrb r3, [r3]
+	cmp r3, #0
+	beq .L_de_02008418
+	adds r7, #1
+.L_de_02008418:
+	movs r0, #2
+	bl WaitFrames
+	ldr r0, .L_de_02008474
+	mov r1, sp
+	bl Ui_AdjustValueWithoutLimit
+	movs r1, #0
+	mov r2, sp
+	ldrh r3, [r2, r1]
+	cmp r3, #0
+	beq .L_de_0200843e
+.L_de_02008430:
+	adds r1, #1
+	cmp r1, #7
+	bgt .L_de_0200843e
+	lsls r3, r1, #1
+	ldrh r3, [r2, r3]
+	cmp r3, #0
+	bne .L_de_02008430
+.L_de_0200843e:
+	ldr r3, .L_de_02008468
+	lsls r2, r1, #1
+	mov r5, sp
+	adds r4, r1, #1
+	movs r1, #14
+	strh r3, [r5, r2]
+	cmp r1, r4
+	blt .L_de_02008478
+	subs r3, r6, r4
+	adds r0, r6, #0
+	adds r2, r3, #0
+	adds r0, #14
+	adds r2, #14
+.L_de_02008458:
+	ldrb r3, [r2]
+	subs r1, #1
+	strb r3, [r0]
+	subs r2, #1
+	subs r0, #1
+	cmp r1, r4
+	bge .L_de_02008458
+	b .L_de_02008478
+.L_de_02008468:
+	.4byte 0x00000020
+.L_de_0200846c:
+	.4byte gLinkStatus
+.L_de_02008470:
+	.4byte gSerialReceivedSize
+.L_de_02008474:
+	.4byte 0x00000e25
+.L_de_02008478:
+	movs r1, #0
+	cmp r1, r4
+	bge .L_de_0200848e
+	adds r2, r6, #0
+.L_de_02008480:
+	lsls r3, r1, #1
+	ldrh r3, [r5, r3]
+	adds r1, #1
+	strb r3, [r2]
+	adds r2, #1
+	cmp r1, r4
+	blt .L_de_02008480
+.L_de_0200848e:
+	movs r3, #0
+	strb r3, [r6, #14]
+	movs r3, #1
+	add r8, r3
+.L_de_02008496:
+	mov r2, r8
+	cmp r2, #2
+	bgt .L_de_02008508
+	mov r0, r8
+	adds r0, #128
+	bl UnitGet
+	adds r6, r0, #0
+	bl SerialRuntime_BeginTransferB
+	movs r3, #1
+	negs r3, r3
+	movs r5, #0
+	cmp r0, r3
+	bne .L_de_020083f6
+	b .L_de_02008530
+.L_de_020084b6:
+	ldrh r3, [r3]
+	movs r2, #170
+	lsls r2, r2, #1
+	cmp r3, r2
+	bgt .L_de_020084fa
+	movs r0, #1
+	bl WaitFrames
+	movs r3, #1
+	negs r3, r3
+	add r10, r3
+	mov r2, r10
+	cmp r2, #0
+	blt .L_de_020084de
+	ldr r3, .L_de_02008548
+	ldrh r2, [r3]
+	movs r3, #3
+	ands r3, r2
+	cmp r3, #3
+	beq .L_de_020084e4
+.L_de_020084de:
+	adds r5, #1
+	cmp r5, #24
+	bgt .L_de_020084fa
+.L_de_020084e4:
+	bl Func_0200193c
+	ldr r3, .L_de_0200854c
+	cmp r0, #0
+	bne .L_de_020084b6
+	ldrh r3, [r3]
+	mov r12, r3
+	movs r3, #170
+	lsls r3, r3, #1
+	cmp r12, r3
+	beq .L_de_02008500
+.L_de_020084fa:
+	movs r7, #1
+	negs r7, r7
+	b .L_de_02008532
+.L_de_02008500:
+	movs r0, #2
+	bl WaitFrames
+	b .L_de_02008532
+.L_de_02008508:
+	mov r0, r9
+	bl MemFree
+	movs r2, #170
+	lsls r2, r2, #1
+	mov r11, r2
+	mov r0, r11
+	bl Runtime_BumpAllocateAlternatePool
+	mov r9, r0
+	movs r0, #1
+	bl Trade_GetOfferState
+	bl SerialRuntime_BeginTransferB
+	movs r3, #1
+	negs r3, r3
+	movs r5, #0
+	cmp r0, r3
+	bne .L_de_020084e4
+.L_de_02008530:
+	adds r7, r0, #0
+.L_de_02008532:
+	mov r0, r9
+	bl MemFree
+	adds r0, r7, #0
+	sub sp, #-48
+	pop {r3, r5, r6, r7}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	mov r11, r7
+	pop {r5, r6, r7, pc}
+.L_de_02008548:
+	.4byte gLinkStatus
+.L_de_0200854c:
+	.4byte gSerialReceivedSize
+	.else
 	.global Func_0200039c
 	.thumb_func
 Func_0200039c:
@@ -418,6 +660,7 @@ Func_0200039c:
 	.4byte gSerialReceivedSize
 .L_02008534:
 	.4byte 0x00000c58
+	.endif
 	.section .text.x02008538,"ax",%progbits
 	.global Func_02000538
 	.thumb_func

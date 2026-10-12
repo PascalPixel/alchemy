@@ -6,10 +6,10 @@
 	.thumb_func
 Func_080c8950:
 .ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c8950_Target
+	overlay_veneer Func_080d25c8
 .else
 .ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c8950_Target
+	overlay_veneer Func_080d25c8
 .else
 	overlay_veneer Func_080d072c
 .endif
@@ -17,7 +17,15 @@ Func_080c8950:
 	.global Func_080c8958
 	.thumb_func
 Func_080c8958:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8958_Target
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8958_Target
+.else
 	overlay_veneer Func_080d25c8
+.endif
+.endif
 	.global SceneEvent_FindActiveRecordFar
 	.thumb_func
 SceneEvent_FindActiveRecordFar:

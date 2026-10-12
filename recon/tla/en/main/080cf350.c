@@ -1,28 +1,31 @@
-#include "object_lookup.h"
-#include "objdisp.h"
+/* Near miss, differ 2: the native copies the owner out of r0 after the motion_flags
+ * byte store; this draft copies it one instruction earlier. Tried: store order, a result
+ * temporary, empty and "+l"/"+r" asm barriers after the stores, a one-pass block,
+ * two minutes of permute. */
 #include "types.h"
-#include "scene.h"
-#include "fixed_math.h"
+#include "object_runtime.h"
 
+s32 EventRuntime_GetControlledOwner(void);
 void WaitFrames(s32);
+void ObjectDispatch_SetSpritePriorityFar(struct ObjectRuntime *object, s32 priority);
+void ObjectDispatch_InitializeFar(struct ObjectRuntime *object, const u8 *script);
+extern const u8 Data_080f0074[];
 
-struct EffectObject_0808f1c0;
-void Object_Destroy(struct EffectObject_0808f1c0 *);
-
-void EffectRuntime_PrepareRisingObject(struct Object_0808f0d8 *object)
+void Func_080cf350(struct ObjectRuntime *object)
 {
-    struct Entity_0808f0d8 *entity;
+    struct ObjectRuntime *owner;
 
     if (object == 0)
         return;
 
-    entity = ObjectTable_Get(gGameState.object_index);
-    object->field34 = 0x10000;
-    object->field30 = 0x20000;
-    object->field55 = 0;
-    Object_SetPosition(object, entity->x, entity->y + 0x240000, entity->z);
+    owner = ObjectTable_Get(EventRuntime_GetControlledOwner());
+    object->acceleration = 0x10000;
+    object->speed_limit = 0x20000;
+    object->motion_flags = 0;
+    Object_SetPosition(object, owner->x, owner->y + 0x240000, owner->z);
+    ObjectDispatch_SetSpritePriorityFar(object, 1);
     WaitFrames(3);
-    Object_SetMode(entity, 28);
-    ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)RomBytes_0809e75c);
-    entity->angle = 0x4000;
+    Object_SetMode(owner, 28);
+    ObjectDispatch_InitializeFar(object, Data_080f0074);
+    owner->angle = 0x4000;
 }

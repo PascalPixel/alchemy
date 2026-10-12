@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global UiWindow_DrawDividerLine
 	.thumb_func
 UiWindow_DrawDividerLine:

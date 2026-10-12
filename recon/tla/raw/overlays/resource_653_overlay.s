@@ -2979,6 +2979,182 @@ Func_0200290c:
 .L_0200aa58:
 	.4byte Func_02001b50
 	.section .text.x0200aa84,"ax",%progbits
+	.balign 4
+	.ifdef TLA_EDITION_JA
+	.global Func_02002a84
+	.thumb_func
+Func_02002a84:
+	push {r5, r6, lr}
+	movs r0, #9
+	sub sp, #8
+	bl Object_GetById
+	adds r6, r0, #0
+	movs r0, #9
+	bl Func_020052c0
+	adds r1, r6, #0
+	adds r1, #35
+	ldrb r2, [r1]
+	movs r3, #2
+	orrs r3, r2
+	strb r3, [r1]
+	movs r0, #9
+	movs r1, #2
+	bl Object_SetModeById
+	movs r0, #8
+	bl Object_GetById
+	adds r6, r0, #0
+	adds r3, r6, #0
+	movs r0, #192
+	movs r5, #0
+	adds r3, #85
+	lsls r0, r0, #2
+	strb r5, [r3]
+	adds r0, #2
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_0200aad8
+	movs r0, #8
+	bl Object_GetById
+	movs r1, #156
+	movs r2, #128
+	movs r3, #236
+	lsls r1, r1, #17
+	lsls r2, r2, #14
+	lsls r3, r3, #17
+	bl Object_SetPositionAndResetMotion
+	movs r3, #19
+	movs r2, #28
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r0, #0
+	movs r1, #0
+	movs r2, #3
+	movs r3, #3
+	bl Func_02005178
+	b .L_ja_0200ab10
+.L_ja_0200aad8:
+	movs r0, #129
+	lsls r0, r0, #2
+	adds r0, #255
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_0200ab10
+	movs r0, #8
+	bl Object_GetById
+	movs r1, #172
+	movs r2, #128
+	movs r3, #236
+	lsls r1, r1, #17
+	lsls r2, r2, #14
+	lsls r3, r3, #17
+	bl Object_SetPositionAndResetMotion
+	movs r3, #19
+	movs r2, #28
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r0, #0
+	movs r1, #4
+	movs r2, #3
+	movs r3, #3
+	bl Func_02005178
+.L_ja_0200ab10:
+	ldr r0, .L_ja_0200abe0
+	bl Func_020053b8
+	movs r0, #10
+	bl Object_GetById
+	movs r3, #179
+	adds r6, r0, #0
+	lsls r3, r3, #8
+	adds r3, #51
+	adds r2, r6, #0
+	str r3, [r6, #24]
+	str r3, [r6, #28]
+	adds r2, #89
+	movs r3, #0
+	movs r0, #0
+	strb r3, [r2]
+	bl Func_02005338
+	movs r0, #144
+	lsls r0, r0, #4
+	adds r0, #45
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_0200ab76
+	movs r3, #1
+	movs r2, #4
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r3, #0
+	movs r0, #41
+	movs r1, #0
+	movs r2, #20
+	bl Func_02005170
+	movs r0, #11
+	movs r1, #0
+	movs r2, #0
+	bl Func_02005230
+	movs r0, #12
+	movs r1, #0
+	movs r2, #0
+	bl Func_02005230
+	movs r0, #13
+	movs r1, #0
+	movs r2, #0
+	bl Func_02005230
+.L_ja_0200ab76:
+	movs r0, #10
+	adds r0, #255
+	bl GameFlag_Test
+	cmp r0, #0
+	bne .L_ja_0200abda
+	ldr r2, .L_ja_0200abe4
+	movs r1, #241
+	lsls r1, r1, #1
+	adds r3, r2, r1
+	movs r1, #0
+	ldrsh r3, [r3, r1]
+	cmp r3, #2
+	bne .L_ja_0200aba6
+	movs r1, #133
+	lsls r1, r1, #2
+	adds r3, r2, r1
+	ldr r0, [r3]
+	bl Object_GetById
+	movs r3, #128
+	lsls r3, r3, #15
+	str r3, [r0, #12]
+	b .L_ja_0200abda
+.L_ja_0200aba6:
+	cmp r3, #3
+	bne .L_ja_0200abda
+	movs r0, #144
+	lsls r0, r0, #4
+	adds r0, #45
+	bl GameFlag_Test
+	cmp r0, #0
+	bne .L_ja_0200abda
+	movs r0, #11
+	movs r1, #0
+	movs r2, #0
+	bl Func_02005230
+	movs r0, #12
+	movs r1, #0
+	movs r2, #0
+	bl Func_02005230
+	movs r0, #13
+	movs r1, #0
+	movs r2, #0
+	bl Func_02005230
+	bl Func_02005028
+.L_ja_0200abda:
+	sub sp, #-8
+	pop {r5, r6, pc}
+	.2byte 0x0000
+.L_ja_0200abe0:
+	.4byte Data_020054e0
+.L_ja_0200abe4:
+	.4byte gPartyState
+	.else
 	.global Func_02002a84
 	.thumb_func
 Func_02002a84:
@@ -3164,6 +3340,7 @@ Func_02002a84:
 	.4byte Data_020054e0
 .L_0200ac18:
 	.4byte gPartyState
+	.endif
 	.section .text.x0200ac1c,"ax",%progbits
 	.global Func_02002c1c
 	.thumb_func
@@ -4663,6 +4840,30 @@ Func_020039a8:
 .L_0200ba10:
 	.4byte 0xffec0000
 	.section .text.x0200ba14,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.global Func_02003a14
+	.thumb_func
+Func_02003a14:
+	push {lr}
+	ldr r2, .L_ja_0200ba04
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r1, [r3, #32]
+	movs r3, #0
+	str r3, [r2]
+	subs r3, #13
+	ldrb r2, [r1, #23]
+	movs r0, #0
+	ands r3, r2
+	movs r2, #4
+	orrs r3, r2
+	strb r3, [r1, #23]
+	bl Func_02005338
+	pop {pc}
+	.2byte 0x0000
+.L_ja_0200ba04:
+	.4byte Data_02006294
+	.else
 	.global Func_02003a14
 	.thumb_func
 Func_02003a14:
@@ -4701,7 +4902,194 @@ Func_02003a14:
 	.4byte Data_02006294
 .L_0200ba58:
 	.4byte gPartyState
+	.endif
 	.section .text.x0200bc8c,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.global Func_02003c8c
+	.thumb_func
+Func_02003c8c:
+	push {lr}
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r3, [r3, #108]
+	movs r1, #214
+	movs r2, #133
+	lsls r1, r1, #1
+	lsls r2, r2, #1
+	adds r3, r3, r1
+	adds r2, #255
+	str r2, [r3]
+	bl Func_02005390
+	movs r1, #136
+	lsls r1, r1, #1
+	movs r0, #0
+	adds r1, #255
+	movs r2, #8
+	movs r3, #9
+	bl Func_020053a8
+	movs r1, #132
+	movs r0, #1
+	lsls r1, r1, #2
+	movs r2, #10
+	movs r3, #11
+	bl Func_020053a8
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #73
+	bl GameFlag_Test
+	cmp r0, #0
+	bne .L_ja_0200bc6e
+	movs r0, #13
+	movs r1, #5
+	bl Object_SetModeById
+	movs r0, #15
+	movs r1, #5
+	bl Object_SetModeById
+.L_ja_0200bc6e:
+	movs r0, #14
+	movs r1, #5
+	bl Object_SetModeById
+	movs r1, #144
+	lsls r1, r1, #3
+	ldr r0, .L_ja_0200bd98
+	bl Scheduler_AddOrUpdateCallback
+	ldr r3, .L_ja_0200bd9c
+	movs r2, #241
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	ldrh r2, [r3]
+	movs r1, #128
+	subs r3, r2, #4
+	lsls r3, r3, #16
+	lsls r1, r1, #10
+	cmp r3, r1
+	bls .L_ja_0200bca0
+	lsls r3, r2, #16
+	movs r2, #224
+	lsls r2, r2, #12
+	cmp r3, r2
+	bne .L_ja_0200bcd8
+.L_ja_0200bca0:
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #74
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_0200bcc2
+	movs r3, #160
+	movs r1, #216
+	movs r2, #197
+	lsls r3, r3, #7
+	movs r0, #12
+	lsls r1, r1, #17
+	lsls r2, r2, #17
+	bl Func_02005238
+	b .L_ja_0200bcd8
+.L_ja_0200bcc2:
+	bl Func_02004fb4
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #73
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_0200bcd8
+	bl Func_02003c54
+.L_ja_0200bcd8:
+	ldr r3, .L_ja_0200bd9c
+	movs r1, #241
+	lsls r1, r1, #1
+	adds r3, r3, r1
+	ldrh r2, [r3]
+	movs r1, #128
+	subs r3, r2, #1
+	lsls r3, r3, #16
+	lsls r1, r1, #10
+	cmp r3, r1
+	bls .L_ja_0200bcf6
+	lsls r3, r2, #16
+	asrs r3, r3, #16
+	cmp r3, #9
+	bne .L_ja_0200bd5e
+.L_ja_0200bcf6:
+	movs r0, #128
+	lsls r0, r0, #2
+	adds r0, #18
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_0200bd08
+	bl Func_02001f3c
+.L_ja_0200bd08:
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #73
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_0200bd34
+	movs r0, #12
+	movs r1, #0
+	movs r2, #0
+	bl Func_02005230
+	movs r3, #176
+	movs r1, #204
+	movs r2, #166
+	lsls r3, r3, #8
+	movs r0, #15
+	lsls r1, r1, #17
+	lsls r2, r2, #18
+	bl Func_02005238
+	b .L_ja_0200bd96
+.L_ja_0200bd34:
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #72
+	bl GameFlag_Test
+	cmp r0, #0
+	beq .L_ja_0200bd58
+	movs r0, #12
+	movs r1, #0
+	movs r2, #0
+	bl Func_02005230
+	movs r0, #15
+	movs r1, #0
+	movs r2, #0
+	bl Func_02005230
+	b .L_ja_0200bd96
+.L_ja_0200bd58:
+	bl Func_02003e8c
+	b .L_ja_0200bd96
+.L_ja_0200bd5e:
+	cmp r3, #6
+	bne .L_ja_0200bd76
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #73
+	bl GameFlag_Test
+	cmp r0, #0
+	bne .L_ja_0200bd96
+	bl Func_020044d4
+	b .L_ja_0200bd96
+.L_ja_0200bd76:
+	cmp r3, #13
+	bne .L_ja_0200bd80
+	bl Func_020046d8
+	b .L_ja_0200bd96
+.L_ja_0200bd80:
+	cmp r3, #14
+	bne .L_ja_0200bd96
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #73
+	bl GameFlag_Test
+	cmp r0, #0
+	bne .L_ja_0200bd96
+	bl Func_0200482c
+.L_ja_0200bd96:
+	pop {pc}
+.L_ja_0200bd98:
+	.4byte Func_02001c8c
+.L_ja_0200bd9c:
+	.4byte gPartyState
+	.else
 	.global Func_02003c8c
 	.thumb_func
 Func_02003c8c:
@@ -4902,6 +5290,7 @@ Func_02003c8c:
 	.4byte Func_02001c8c
 .L_0200be30:
 	.4byte gPartyState
+	.endif
 	.section .text.x0200be34,"ax",%progbits
 	.global Func_02003e34
 	.thumb_func
@@ -5956,6 +6345,821 @@ Func_020046d8:
 .L_0200c7ec:
 	.4byte MsgScene653No06
 	.section .text.x0200c82c,"ax",%progbits
+	.ifdef TLA_EDITION_JA
+	.global Func_0200482c
+	.thumb_func
+Func_0200482c:
+	push {r5, r6, r7, lr}
+	mov r7, r10
+	mov r6, r8
+	push {r6, r7}
+	bl Func_020051c0
+	movs r0, #0
+	bl Func_02005370
+	movs r0, #1
+	movs r1, #1
+	movs r2, #1
+	negs r1, r1
+	negs r2, r2
+	movs r3, #0
+	negs r0, r0
+	bl Motion_CamBounds
+	bl Func_020052f0
+	movs r3, #0
+	adds r0, #85
+	strb r3, [r0]
+	movs r0, #1
+	bl WaitFrames
+	movs r1, #188
+	movs r2, #196
+	movs r0, #16
+	lsls r1, r1, #17
+	lsls r2, r2, #17
+	movs r3, #0
+	bl Func_02005238
+	ldr r6, .L_ja_0200cabc
+	movs r1, #133
+	lsls r1, r1, #2
+	adds r6, r6, r1
+	movs r2, #204
+	movs r1, #188
+	ldr r0, [r6]
+	lsls r1, r1, #17
+	lsls r2, r2, #17
+	movs r3, #0
+	bl Func_02005238
+	movs r7, #192
+	movs r3, #176
+	movs r1, #236
+	movs r2, #227
+	movs r0, #12
+	lsls r1, r1, #17
+	lsls r3, r3, #8
+	lsls r2, r2, #17
+	lsls r7, r7, #18
+	bl Func_02005238
+	ldr r2, [r7, #108]
+	movs r3, #128
+	movs r5, #214
+	lsls r3, r3, #2
+	adds r3, #2
+	lsls r5, r5, #1
+	str r3, [r2, r5]
+	bl Event_StartScreenTransition
+	movs r2, #153
+	lsls r2, r2, #8
+	movs r0, #12
+	ldr r1, .L_ja_0200cac0
+	adds r2, #153
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #232
+	movs r0, #12
+	lsls r1, r1, #1
+	adds r2, r5, #0
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #216
+	movs r2, #204
+	movs r0, #12
+	lsls r1, r1, #1
+	lsls r2, r2, #1
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #128
+	movs r2, #0
+	movs r0, #12
+	lsls r1, r1, #8
+	bl ObjectMotion_ArmCallback
+	movs r1, #129
+	lsls r1, r1, #1
+	movs r0, #12
+	bl Func_020052d0
+	ldr r0, .L_ja_0200cac4
+	bl Func_02005280
+	movs r0, #12
+	movs r1, #0
+	bl Func_02005298
+	movs r1, #6
+	movs r2, #40
+	adds r1, #255
+	movs r0, #12
+	bl Func_020052c8
+	movs r0, #12
+	movs r1, #0
+	bl Func_02005298
+	movs r2, #40
+	movs r0, #12
+	movs r1, #0
+	bl ObjectMotion_ArmCallback
+	movs r0, #12
+	movs r1, #0
+	bl Func_02005298
+	movs r0, #16
+	movs r1, #0
+	bl Func_02005298
+	movs r0, #12
+	movs r1, #2
+	bl Motion_SetVarCbAndRefresh
+	movs r1, #128
+	movs r2, #20
+	movs r0, #12
+	lsls r1, r1, #8
+	bl ObjectMotion_ArmCallback
+	movs r0, #12
+	movs r1, #4
+	bl Object_SetModeById
+	movs r0, #12
+	movs r1, #0
+	bl Func_02005298
+	movs r1, #192
+	movs r0, #16
+	lsls r1, r1, #6
+	movs r2, #10
+	bl ObjectMotion_ArmCallback
+	movs r1, #192
+	ldr r0, [r6]
+	lsls r1, r1, #8
+	movs r2, #0
+	bl ObjectMotion_ArmCallback
+	movs r1, #0
+	movs r0, #16
+	bl UiText_OpenMessageAtObject
+	ldr r0, [r6]
+	movs r1, #0
+	bl Inventory_PromptAndSetObjectMode
+	cmp r0, #0
+	bne .L_ja_0200c906
+	movs r0, #12
+	movs r1, #4
+	bl Object_SetModeById
+	movs r0, #12
+	movs r1, #0
+	bl Func_02005298
+	ldr r2, [r7, #108]
+	movs r3, #226
+	lsls r3, r3, #1
+	adds r2, r2, r3
+	ldrh r3, [r2]
+	adds r3, #1
+	strh r3, [r2]
+	b .L_ja_0200c924
+.L_ja_0200c906:
+	ldr r2, [r7, #108]
+	movs r1, #226
+	lsls r1, r1, #1
+	adds r2, r2, r1
+	ldrh r3, [r2]
+	movs r0, #12
+	adds r3, #1
+	movs r1, #3
+	strh r3, [r2]
+	bl Object_SetModeById
+	movs r0, #12
+	movs r1, #0
+	bl Func_02005298
+.L_ja_0200c924:
+	ldr r5, .L_ja_0200cabc
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r5, r5, r2
+	ldr r0, [r5]
+	movs r1, #0
+	movs r2, #0
+	bl ObjectMotion_ArmCallback
+	movs r0, #16
+	movs r1, #0
+	movs r2, #0
+	bl ObjectMotion_ArmCallback
+	movs r1, #2
+	movs r2, #20
+	adds r1, #255
+	movs r0, #16
+	bl Func_020052c8
+	movs r0, #16
+	movs r1, #0
+	bl Func_02005298
+	movs r1, #129
+	movs r0, #12
+	lsls r1, r1, #1
+	bl Func_020052d0
+	movs r0, #12
+	movs r1, #0
+	bl Func_02005298
+	movs r0, #16
+	movs r1, #3
+	bl Object_SetModeById
+	movs r0, #16
+	movs r1, #0
+	movs r2, #40
+	bl Func_02005290
+	movs r1, #160
+	movs r2, #40
+	movs r0, #12
+	lsls r1, r1, #7
+	bl ObjectMotion_ArmCallback
+	movs r0, #12
+	movs r1, #0
+	bl Func_02005298
+	movs r1, #192
+	movs r0, #16
+	lsls r1, r1, #6
+	movs r2, #0
+	bl ObjectMotion_ArmCallback
+	movs r1, #192
+	ldr r0, [r5]
+	lsls r1, r1, #8
+	movs r2, #40
+	bl ObjectMotion_ArmCallback
+	movs r1, #128
+	movs r2, #20
+	movs r0, #12
+	lsls r1, r1, #8
+	bl ObjectMotion_ArmCallback
+	movs r0, #12
+	movs r1, #3
+	bl Object_SetModeById
+	movs r0, #12
+	movs r1, #0
+	bl Func_02005298
+	movs r0, #16
+	movs r1, #0
+	movs r2, #0
+	bl ObjectMotion_ArmCallback
+	ldr r0, [r5]
+	movs r1, #0
+	movs r2, #0
+	bl ObjectMotion_ArmCallback
+	movs r1, #2
+	movs r2, #0
+	adds r1, #255
+	movs r0, #16
+	bl Func_020052c8
+	movs r0, #16
+	movs r1, #0
+	bl Func_02005298
+	movs r0, #12
+	movs r1, #3
+	bl Object_SetModeById
+	movs r0, #12
+	movs r1, #0
+	bl Func_02005298
+	movs r0, #204
+	movs r1, #200
+	lsls r0, r0, #8
+	lsls r1, r1, #5
+	adds r0, #204
+	adds r1, #153
+	bl Func_020052d8
+	movs r0, #212
+	movs r1, #128
+	movs r2, #192
+	movs r3, #1
+	lsls r0, r0, #17
+	lsls r1, r1, #13
+	lsls r2, r2, #17
+	bl Motion_CamBounds
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	ldr r0, [r5]
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	movs r0, #16
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	adds r2, #102
+	movs r0, #12
+	adds r1, #204
+	bl ObjectMotion_SetSpeedParameters
+	ldr r0, [r5]
+	ldr r1, .L_ja_0200cac8
+	bl ObjectMotion_EnableActionAndSetCallback
+	ldr r1, .L_ja_0200cacc
+	movs r0, #16
+	bl ObjectMotion_EnableActionAndSetCallback
+	ldr r1, .L_ja_0200cad0
+	movs r0, #12
+	bl Object_SetActionCallbackAndRefreshById
+	movs r0, #40
+	bl Battle_WaitMode0
+	bl Func_02000bcc
+	movs r1, #192
+	movs r0, #16
+	lsls r1, r1, #6
+	movs r2, #0
+	bl ObjectMotion_ArmCallback
+	movs r1, #160
+	ldr r0, [r5]
+	lsls r1, r1, #8
+	movs r2, #20
+	bl ObjectMotion_ArmCallback
+	movs r0, #160
+	lsls r0, r0, #7
+	movs r1, #0
+	adds r0, #16
+	bl UiText_OpenMessageAtObject
+	ldr r0, [r5]
+	movs r1, #0
+	bl Inventory_PromptAndSetObjectMode
+	cmp r0, #0
+	bne .L_ja_0200cad4
+	bl Func_020047f0
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r2, [r3, #108]
+	movs r3, #226
+	lsls r3, r3, #1
+	adds r2, r2, r3
+	ldrh r3, [r2]
+	adds r3, #1
+	strh r3, [r2]
+	b .L_ja_0200caea
+	.2byte 0x0000
+.L_ja_0200cabc:
+	.4byte gPartyState
+.L_ja_0200cac0:
+	.4byte 0x00013333
+.L_ja_0200cac4:
+	.4byte 0x00001892
+.L_ja_0200cac8:
+	.4byte Data_02005564
+.L_ja_0200cacc:
+	.4byte Data_020055a0
+.L_ja_0200cad0:
+	.4byte Data_020055e4
+.L_ja_0200cad4:
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r2, [r3, #108]
+	movs r1, #226
+	lsls r1, r1, #1
+	adds r2, r2, r1
+	ldrh r3, [r2]
+	adds r3, #1
+	strh r3, [r2]
+	bl Func_020047f0
+.L_ja_0200caea:
+	movs r0, #16
+	movs r1, #0
+	movs r2, #0
+	bl ObjectMotion_ArmCallback
+	ldr r5, .L_ja_0200cbdc
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r5, r5, r2
+	ldr r0, [r5]
+	movs r2, #0
+	movs r1, #0
+	bl ObjectMotion_ArmCallback
+	movs r0, #12
+	movs r1, #3
+	bl Object_SetModeById
+	movs r0, #128
+	lsls r0, r0, #7
+	adds r0, #12
+	movs r1, #0
+	bl Func_02005298
+	ldr r0, [r5]
+	movs r1, #3
+	bl Object_SetModeById
+	movs r0, #16
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #128
+	lsls r0, r0, #7
+	adds r0, #12
+	movs r1, #0
+	bl Func_02005298
+	movs r1, #128
+	movs r2, #40
+	lsls r1, r1, #1
+	movs r0, #16
+	bl Func_020052c8
+	movs r0, #160
+	lsls r0, r0, #7
+	adds r0, #16
+	movs r1, #0
+	bl Func_02005298
+	movs r0, #12
+	movs r1, #3
+	bl Object_SetModeById
+	movs r0, #128
+	lsls r0, r0, #7
+	adds r0, #12
+	movs r1, #0
+	bl Func_02005298
+	movs r1, #192
+	movs r0, #16
+	lsls r1, r1, #6
+	movs r2, #0
+	bl ObjectMotion_ArmCallback
+	movs r1, #160
+	ldr r0, [r5]
+	lsls r1, r1, #8
+	movs r2, #0
+	bl ObjectMotion_ArmCallback
+	movs r0, #160
+	lsls r0, r0, #7
+	movs r1, #0
+	adds r0, #16
+	bl UiText_OpenMessageAtObject
+	ldr r0, [r5]
+	movs r1, #0
+	bl Inventory_PromptAndSetObjectMode
+	cmp r0, #0
+	bne .L_ja_0200cbe0
+	movs r0, #12
+	movs r1, #3
+	bl Object_SetModeById
+	movs r0, #128
+	lsls r0, r0, #7
+	adds r0, #12
+	movs r1, #0
+	bl Func_02005298
+	movs r0, #16
+	movs r1, #0
+	movs r2, #0
+	bl ObjectMotion_ArmCallback
+	movs r1, #8
+	movs r2, #20
+	adds r1, #255
+	movs r0, #16
+	bl Func_020052c8
+	movs r0, #160
+	lsls r0, r0, #7
+	adds r0, #16
+	movs r1, #0
+	bl Func_02005298
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r2, [r3, #108]
+	movs r3, #226
+	lsls r3, r3, #1
+	adds r2, r2, r3
+	ldrh r3, [r2]
+	adds r3, #2
+	strh r3, [r2]
+	b .L_ja_0200cc28
+.L_ja_0200cbdc:
+	.4byte gPartyState
+.L_ja_0200cbe0:
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r2, [r3, #108]
+	movs r1, #226
+	lsls r1, r1, #1
+	adds r2, r2, r1
+	ldrh r3, [r2]
+	movs r0, #12
+	adds r3, #2
+	strh r3, [r2]
+	movs r1, #4
+	bl Object_SetModeById
+	movs r0, #128
+	lsls r0, r0, #7
+	adds r0, #12
+	movs r1, #0
+	bl Func_02005298
+	movs r0, #16
+	movs r1, #0
+	movs r2, #0
+	bl ObjectMotion_ArmCallback
+	movs r1, #8
+	adds r1, #255
+	movs r0, #16
+	movs r2, #20
+	bl Func_020052c8
+	movs r0, #160
+	lsls r0, r0, #7
+	adds r0, #16
+	movs r1, #0
+	bl Func_02005298
+.L_ja_0200cc28:
+	ldr r6, .L_ja_0200cdc4
+	movs r2, #133
+	lsls r2, r2, #2
+	adds r6, r6, r2
+	ldr r0, [r6]
+	movs r1, #0
+	movs r2, #0
+	bl ObjectMotion_ArmCallback
+	movs r0, #212
+	movs r2, #200
+	movs r3, #1
+	lsls r2, r2, #17
+	lsls r0, r0, #17
+	movs r1, #0
+	bl Motion_CamBounds
+	movs r0, #153
+	movs r1, #152
+	lsls r0, r0, #8
+	lsls r1, r1, #5
+	adds r0, #153
+	adds r1, #51
+	bl Func_020052d8
+	movs r1, #153
+	movs r2, #152
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	adds r2, #204
+	movs r0, #12
+	adds r1, #153
+	bl ObjectMotion_SetSpeedParameters
+	ldr r0, [r6]
+	movs r1, #12
+	bl Object_LinkObjectAndSetCallback
+	movs r0, #16
+	movs r1, #12
+	bl Object_LinkObjectAndSetCallback
+	movs r1, #244
+	movs r2, #208
+	movs r0, #12
+	lsls r1, r1, #1
+	lsls r2, r2, #1
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #236
+	movs r2, #216
+	movs r0, #12
+	lsls r1, r1, #1
+	lsls r2, r2, #1
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #160
+	movs r2, #0
+	movs r0, #12
+	lsls r1, r1, #7
+	bl ObjectMotion_ArmCallback
+	movs r0, #128
+	lsls r0, r0, #7
+	adds r0, #12
+	movs r1, #0
+	bl Func_02005298
+	movs r0, #128
+	lsls r0, r0, #5
+	adds r0, #16
+	movs r1, #0
+	movs r2, #80
+	bl Func_02005290
+	movs r1, #132
+	lsls r1, r1, #1
+	movs r2, #0
+	movs r0, #12
+	bl Func_020052c8
+	movs r1, #176
+	movs r2, #20
+	movs r0, #12
+	lsls r1, r1, #8
+	bl ObjectMotion_ArmCallback
+	movs r0, #128
+	lsls r0, r0, #7
+	adds r0, #12
+	movs r1, #0
+	bl Func_02005298
+	movs r0, #12
+	movs r1, #3
+	bl Object_SetModeById
+	movs r0, #128
+	lsls r0, r0, #7
+	adds r0, #12
+	movs r1, #0
+	bl Func_02005298
+	movs r0, #212
+	movs r1, #128
+	movs r2, #192
+	movs r3, #1
+	lsls r0, r0, #17
+	lsls r1, r1, #13
+	lsls r2, r2, #17
+	bl Motion_CamBounds
+	movs r2, #153
+	lsls r2, r2, #8
+	movs r0, #12
+	ldr r1, .L_ja_0200cdc8
+	adds r2, #153
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #244
+	movs r2, #208
+	movs r0, #12
+	lsls r1, r1, #1
+	lsls r2, r2, #1
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #252
+	movs r2, #188
+	movs r0, #12
+	lsls r1, r1, #1
+	lsls r2, r2, #1
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #128
+	movs r2, #20
+	lsls r1, r1, #8
+	movs r0, #12
+	bl ObjectMotion_ArmCallback
+	movs r0, #12
+	bl Object_GetById
+	adds r5, r0, #0
+	ldr r3, [r5, #80]
+	movs r0, #12
+	movs r1, #1
+	mov r10, r3
+	bl ObjectMotion_SetActionVariant
+	movs r2, #204
+	lsls r2, r2, #8
+	movs r0, #12
+	ldr r1, .L_ja_0200cdcc
+	adds r2, #204
+	bl ObjectMotion_SetSpeedParameters
+	movs r0, #12
+	movs r1, #4
+	movs r2, #0
+	bl ObjectMotion_Launch
+	movs r1, #246
+	movs r2, #188
+	lsls r2, r2, #1
+	movs r0, #12
+	lsls r1, r1, #1
+	bl ObjectMotion_SetPositionAndCommit
+	movs r0, #12
+	movs r1, #7
+	bl Object_SetModeById
+	ldr r3, .L_ja_0200cdd0
+	ldr r2, .L_ja_0200cdc0
+	str r3, [r5, #24]
+	movs r1, #0
+	movs r3, #224
+	adds r7, r5, #0
+	mov r8, r1
+	lsls r3, r3, #8
+	mov r1, r10
+	adds r7, #85
+	strh r3, [r1, #18]
+	strb r2, [r7]
+	movs r2, #128
+	ldr r3, [r5, #12]
+	lsls r2, r2, #11
+	adds r3, r3, r2
+	str r3, [r5, #12]
+	movs r0, #12
+	bl Object_GetById
+	movs r1, #0
+	bl ObjectDispatch_SetSingleChildFlags
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #7
+	lsls r2, r2, #6
+	movs r0, #12
+	adds r1, #102
+	adds r2, #51
+	b .L_ja_0200cdd4
+	.2byte 0x0000
+.L_ja_0200cdc0:
+	.4byte 0x00000000
+.L_ja_0200cdc4:
+	.4byte gPartyState
+.L_ja_0200cdc8:
+	.4byte 0x00013333
+.L_ja_0200cdcc:
+	.4byte 0x00019999
+.L_ja_0200cdd0:
+	.4byte 0xffff0000
+.L_ja_0200cdd4:
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #222
+	movs r2, #160
+	movs r3, #188
+	lsls r2, r2, #14
+	lsls r1, r1, #17
+	lsls r3, r3, #17
+	adds r0, r5, #0
+	bl Func_02005160
+	movs r0, #12
+	bl ObjectMotion_CommitCurrentPositionAndActivate
+	movs r3, #3
+	strb r3, [r7]
+	movs r0, #12
+	bl Object_GetById
+	movs r1, #1
+	bl ObjectDispatch_SetSingleChildFlags
+	mov r3, r8
+	mov r1, r10
+	strh r3, [r1, #18]
+	movs r3, #128
+	lsls r3, r3, #9
+	str r3, [r5, #24]
+	movs r3, #128
+	lsls r3, r3, #14
+	str r3, [r5, #20]
+	movs r0, #12
+	movs r1, #1
+	bl Object_SetModeById
+	movs r2, #204
+	lsls r2, r2, #8
+	movs r0, #12
+	ldr r1, .L_ja_0200cf08
+	adds r2, #204
+	bl ObjectMotion_SetSpeedParameters
+	movs r0, #12
+	movs r1, #4
+	movs r2, #0
+	bl ObjectMotion_Launch
+	movs r1, #212
+	movs r2, #188
+	movs r0, #12
+	lsls r1, r1, #1
+	lsls r2, r2, #1
+	bl ObjectMotion_SetPositionAndCommit
+	movs r0, #204
+	movs r1, #128
+	movs r2, #200
+	movs r3, #1
+	lsls r0, r0, #17
+	lsls r1, r1, #13
+	lsls r2, r2, #17
+	bl Motion_CamBounds
+	movs r1, #204
+	movs r2, #204
+	lsls r1, r1, #8
+	lsls r2, r2, #7
+	movs r0, #12
+	adds r1, #204
+	adds r2, #102
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #196
+	movs r2, #180
+	movs r0, #12
+	lsls r1, r1, #1
+	lsls r2, r2, #1
+	bl ObjectMotion_SetPositionAndReset
+	movs r1, #192
+	movs r2, #0
+	movs r0, #12
+	lsls r1, r1, #6
+	bl ObjectMotion_ArmCallback
+	movs r1, #2
+	movs r0, #12
+	bl ObjectMotion_SetActionVariant
+	movs r0, #16
+	bl ObjectMotion_EnableActionAndResetMotion
+	ldr r0, [r6]
+	bl ObjectMotion_EnableActionAndResetMotion
+	movs r0, #1
+	bl WaitFrames
+	movs r1, #192
+	movs r0, #16
+	lsls r1, r1, #6
+	movs r2, #0
+	bl ObjectMotion_ArmCallback
+	movs r1, #160
+	movs r2, #10
+	ldr r0, [r6]
+	lsls r1, r1, #8
+	bl ObjectMotion_ArmCallback
+	ldr r0, [r6]
+	movs r1, #3
+	bl Object_SetModeById
+	movs r0, #16
+	movs r1, #3
+	bl Motion_SetModeAndWaitAnimation
+	movs r0, #16
+	movs r1, #2
+	bl Object_SetModeById
+	ldr r0, [r6]
+	bl Object_GetById
+	cmp r0, #0
+	beq .L_ja_0200cee0
+	movs r2, #10
+	ldrsh r1, [r0, r2]
+	movs r3, #18
+	ldrsh r2, [r0, r3]
+	movs r0, #16
+	bl ObjectMotion_ResetAndSetPosition
+.L_ja_0200cee0:
+	movs r0, #16
+	bl ObjectMotion_CommitCurrentPositionAndActivate
+	movs r1, #0
+	movs r2, #0
+	movs r0, #16
+	bl Func_02005230
+	movs r0, #128
+	lsls r0, r0, #4
+	adds r0, #73
+	bl GameFlag_SetBit
+	bl Func_020051c8
+	pop {r3, r5}
+	mov r8, r3
+	mov r10, r5
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
+.L_ja_0200cf08:
+	.4byte 0x00019999
+	.else
 	.global Func_0200482c
 	.thumb_func
 Func_0200482c:
@@ -6779,6 +7983,7 @@ Func_0200482c:
 	.2byte 0x0000
 .L_0200cfb0:
 	.4byte 0x00019999
+	.endif
 	.section .text.x0200cfb4,"ax",%progbits
 	.global Func_02004fb4
 	.thumb_func

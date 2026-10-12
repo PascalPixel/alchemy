@@ -3,6 +3,8 @@
 #include "map.h"
 #include "mapcopy.h"
 #include "game_flags.h"
+#include "resource.h"
+#include "party_state.h"
 
 void Map_SetWorkFlagBits9To11(u32 v)
 {
@@ -102,4 +104,47 @@ next:
         cursor += 6;
     }
     goto next;
+}
+
+extern const u16 Data_0802f380[][6];
+extern char ResourceId_Map000;
+
+void Map_GetHeaderSize(s32 map, s32 *size)
+{
+    u8 *header;
+    /* FAKEMATCH: the table address is a word local added after the row offset: the native reads the row as [offset, table] and loads the table between the offset's two halves; indexed as an array the operands are [table, offset] (differ 2), and without the local the table is loaded after the offset (differ 2). */
+    u32 table = (u32)Data_0802f380;
+
+    header = Resource_GetTableEntry(*(const u16 *)(map * 12 + table) + (u32)&ResourceId_Map000);
+    size[0] = header[0];
+    if (header[2] == 0)
+        size[1] = 256;
+    else
+        size[1] = header[2];
+    size[2] = header[1];
+    if (header[3] == 0)
+        size[3] = 256;
+    else
+        size[3] = header[3];
+}
+
+struct MapHeader {
+    u8 unknown_00[44];
+    s32 cells;
+    s32 shapes;
+};
+extern u8 gMapShapeGrid[];
+void Func_0802a5e4(void);
+
+void Map_LoadCellsAndShapes(void)
+{
+    u8 *source;
+    struct MapHeader *header = Resource_GetTableEntry(
+        *(const u16 *)(gPartyState.map * 12 + (u32)Data_0802f380) + (u32)&ResourceId_Map000);
+
+    source = (u8 *)header + header->cells;
+    Resource_DecodeType01(source, Ram_MapCellBuffer);
+    Func_0802a5e4();
+    source = (u8 *)header + header->shapes;
+    Resource_DecodeType01(source, gMapShapeGrid);
 }

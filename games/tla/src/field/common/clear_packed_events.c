@@ -10,6 +10,7 @@
 #include "types.h"
 #include "party_state.h"
 #include "owner_state.h"
+#include "text/msg_ids.h"
 
 struct OwnerVitals {
     u8 unknown_000[20];
@@ -85,4 +86,20 @@ void Party_RemoveOwnerRestored(s32 owner)
         if (vitals->pp_ratio == 0 && vitals->ep != 0)
             vitals->pp_ratio = 1;
     }
+}
+
+s32 PartyInventory_FindRoomFar(s32 item);
+void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
+
+s32 Func_080d25c8(s32 item)
+{
+    Party_CountActiveOwnersFar();
+    if (PartyInventory_FindRoomFar(item) < 0) {
+        UiText_DrawQuantity(item, 2);
+        UiText_ShowPositionedMessageAndWaitFar((s32)MsgPartyCannotCarry, 1);
+        UiText_DrawQuantity(item, 2);
+        UiText_ShowPositionedMessageAndWaitFar((s32)MsgPartyCannotCarry + 1, 1);
+        return -1;
+    }
+    return 0;
 }

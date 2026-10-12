@@ -23,7 +23,7 @@ struct ScatterPosition {
     s32 z;
 };
 
-extern struct BattleEffectScene *gEffectWork;
+#include "ram_buffer.h"
 
 void BattleEffect_InitializeSharedScene(void);
 void *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
@@ -46,7 +46,7 @@ void RunBattleEffect07(void)
     s32 index;
     s32 magnitude;
 
-    scene = gEffectWork;
+    scene = Ram_HeapSlots->effect_work;
     BattleEffect_InitializeSharedScene();
     position.x = scene->x;
     position.y = scene->y + 0x100000;

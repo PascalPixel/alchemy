@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08043358
+	.global SaveState_BuildSummaryHeader
 	.thumb_func
-Func_08043358:
+SaveState_BuildSummaryHeader:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}

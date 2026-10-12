@@ -57,7 +57,7 @@ SECTIONS
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
         "*/resource_691_overlay.o"(.text.x0200a2aa)
         "*/resource_691_overlay.o"(.text.x0200a2ac)
-        "*/resource_691_overlay.o"(.text.x0200a44c)
+        "*/games/tla/src/field/overlay_691/s244c.o"(.text)
         "*/resource_691_overlay.o"(.text.x0200a4c8)
         "*/resource_691_overlay.o"(.text.x0200a518)
         "*/resource_691_overlay.o"(.text.x0200a618)

@@ -1,11 +1,16 @@
-/* FAKEMATCH: each queued write is QueueIoWriteDelay-style inline code with
+/* Near miss, differ 14 on this game's heap slot (block_32): the remaining pairs are
+ * scheduling ties (a load or shift one instruction early or late around a constant).
+ * FAKEMATCH: each queued write is QueueIoWriteDelay-style inline code with
    function-level queue and IME pointers and the one-pass loop around the
    IME read (as in system/io_write_queue.c); the front bank address passes
    through a block local, and the packing loop counts down from an explicit
    512 set before the source pointer. */
 #include "types.h"
+#include "io_reg.h"
+#include "dma.h"
+#include "io_write_queue.h"
 
-extern u8 gWorkSlot[];
+#include "ram_buffer.h"
 
 #define QUEUE_PALETTE(source, destination) {                                \
         u32 saved;                                                          \
@@ -29,7 +34,7 @@ extern u8 gWorkSlot[];
 
 void TitlePalette_UpdateFade(void)
 {
-    u8 *buffer = *(u8 **)(gWorkSlot + 32 * 4);
+    u8 *buffer = Ram_HeapSlots->block_32;
     u16 *delta = (u16 *)(buffer + 0x1c00);
     u16 *current;
     u16 *packed;

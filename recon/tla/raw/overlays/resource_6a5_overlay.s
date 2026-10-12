@@ -404,53 +404,6 @@ Func_02000198:
 	pop {r5, r6, r7, pc}
 .L_02008458:
 	.4byte Data_02006a24
-	.section .text.x0200845c,"ax",%progbits
-	.global Func_0200045c
-	.thumb_func
-Func_0200045c:
-	push {lr}
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #35
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_020084c0
-	movs r0, #128
-	lsls r0, r0, #2
-	bl GameFlag_SetBit
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #33
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_020084c0
-	bl Func_02005814
-	movs r0, #0
-	bl Func_02005984
-	ldr r0, .L_020084c4
-	bl Func_020058c4
-	movs r1, #4
-	movs r2, #30
-	adds r1, #255
-	movs r0, #28
-	bl Func_020058fc
-	movs r0, #28
-	movs r1, #0
-	bl Func_020058dc
-	movs r0, #27
-	movs r1, #3
-	bl Object_SetModeById
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r0, #27
-	movs r1, #0
-	bl Func_020058dc
-	bl Func_0200581c
-.L_020084c0:
-	pop {pc}
-	.2byte 0x0000
-.L_020084c4:
-	.4byte MsgYouReLate
 	.section .text.x020084c8,"ax",%progbits
 	.global Func_020004c8
 	.thumb_func

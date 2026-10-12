@@ -41,7 +41,7 @@ Func_081054e0:
 	ldr r1, [sp, #0]
 	adds r2, r7, #0
 	adds r0, r5, #0
-	bl Func_08105498
+	bl MenuIcon_SetSlot
 	ldr r0, .L_08105578
 	mov r2, r10
 	adds r2, #16
@@ -58,7 +58,7 @@ Func_081054e0:
 	adds r0, r5, #0
 	mov r1, r9
 	mov r2, r9
-	bl Func_08105498
+	bl MenuIcon_SetSlot
 .L_08105552:
 	adds r5, #1
 	cmp r5, #4

@@ -24,3 +24,15 @@ void Func_0200078c(s32 id)
     if (object != NULL)
         Map_Stamp(14, 27, 1, 1, object->x >> 20, object->z >> 20);
 }
+
+void Func_020007b4(void)
+{
+    s32 y = Object_GetById(gPartyState.current_owner)->y;
+
+    /* FAKEMATCH: loads the leader height before it builds the threshold (differ 2 without it; an object pointer, a limit temporary, a const height, a height inline and a subtraction measured the same). */
+    __asm__("");
+    if (y == 0x200000)
+        GameFlag_SetBit(0x208);
+    else
+        GameFlag_ClearBit(0x208);
+}

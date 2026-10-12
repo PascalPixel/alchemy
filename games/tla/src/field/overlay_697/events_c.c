@@ -37,3 +37,33 @@ s32 Func_02000694(struct ObjectRuntime *object)
     object->terrain_height = owner->terrain_height;
     return 1;
 }
+
+extern const u8 Data_02005a7c[];
+
+static __inline__ struct ObjectRuntime *Object_Create(s32 type, s32 x, s32 y, s32 z)
+{
+    /* FAKEMATCH: forwarding through the inline keeps each call's own constants, as ☀️'s scene layer does. */
+    return Func_020057d8(type, x, y, z);
+}
+
+void Func_020006b4(s32 id)
+{
+    struct ObjectRuntime *owner = Object_GetById(id);
+    struct ObjectRuntime *object;
+
+    if (owner != NULL) {
+        object = Object_Create(489, owner->x, owner->y, owner->z);
+        if (object != NULL) {
+            ObjectDispatch_SetSingleChildFlags(object, 0);
+            Func_020057d0(object, Data_02005a7c);
+            object->linked_object = owner;
+            /* FAKEMATCH: stores the owner link before it copies the object for the priority flags (differ 2 without it; an explicit flag pointer is differ 27). */
+            __asm__("");
+            object->priority_flags |= 0x80;
+            object->motion_flags = 0;
+            object->collision_flags = 0;
+            OBJECT_BYTE(object, 99) = 16;
+            owner->linked_object = object;
+        }
+    }
+}

@@ -84,12 +84,7 @@ Func_080132c8:
 	.thumb_func
 Runtime_InstallIwramAndIrqs:
 	.incbin "baserom.gba", 0x000133f0, 0x00000074
-	.section .rom.00013464, "ax"
-	.global Runtime_SetIrqHandler
-	.type Runtime_SetIrqHandler, %function
-	.thumb_func
-Runtime_SetIrqHandler:
-	.incbin "baserom.gba", 0x00013464, 0x00000078
+	.section .rom.000134dc, "ax"
 	.global System_WaitForFrameInterrupt
 	.type System_WaitForFrameInterrupt, %function
 	.thumb_func
@@ -2308,15 +2303,8 @@ Func_080cae5c:
 	.incbin "baserom.gba", 0x000cfe5c, 0x00000110
 	.section .rom.000cffc4, "ax"
 	.incbin "baserom.gba", 0x000cffc4, 0x00000704
-	.section .rom.000d082c, "ax"
-	.global Func_080cb82c
-	.type Func_080cb82c, %function
-	.thumb_func
-Func_080cb82c:
-	.incbin "baserom.gba", 0x000d082c, 0x00000078
-	.section .rom.000d08e8, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x000d08e8, 0x00000c64
+	.section .rom.000d091c, "ax"
+	.incbin "baserom.gba", 0x000d091c, 0x00000c30
 	.section .rom.000d154c, "ax"
 	.global Func_080cc54c
 	.type Func_080cc54c, %function
@@ -4591,11 +4579,7 @@ Func_081a0028:
 	.thumb_func
 DisplayScroll_DrawMessageLine:
 	.incbin "baserom.gba", 0x001a0be8, 0x000000c4
-	.global Func_081a0cac
-	.type Func_081a0cac, %function
-	.thumb_func
-Func_081a0cac:
-	.incbin "baserom.gba", 0x001a0cac, 0x000000cc
+	.section .rom.001a0d78, "ax"
 	.global Func_081a0d78
 	.type Func_081a0d78, %function
 	.thumb_func

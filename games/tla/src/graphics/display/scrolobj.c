@@ -10,7 +10,7 @@ extern u16 DisplayScroll_Position;
 extern struct DisplayScrollObject *DisplayScroll_Objects;
 extern u32 gFrameTick;
 
-void DisplayScroll_UpdateObjects(void)
+void Func_081a0cac(void)
 {
     u32 frame = DisplayScroll_Position;
     u32 fine = frame & 7;
@@ -25,9 +25,12 @@ void DisplayScroll_UpdateObjects(void)
             u32 *q = entry;
 
             *q++ = (row * 8 + 16 - fine) | ((col * 32 + 24) << 16) | 0x40004000;
+            entry += 2;
+            /* FAKEMATCH: a one-pass block keeps the entry step ahead of the tile store; as plain statements, in either order, the step falls behind the tile step (2 differ). */
+            do {
+            } while (0);
             *q = tile;
             tile += 4;
-            entry += 2;
             if (tile == 0x300)
                 tile = 0;
         }

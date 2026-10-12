@@ -11,6 +11,10 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler)
         u32 ie;
 
         ime = *ime_reg;
+        /* FAKEMATCH: the empty do-while keeps the saved IME copy ahead of
+           the IME store; without it the store comes first (2 differ). */
+        do {
+        } while (0);
         /* FAKEMATCH: writing the IME register address keeps its disabled
            low bit while emitting the measured register store; literal zero
            scored 340 and an ordinary word zero temporary scored 260. */

@@ -1,3 +1,10 @@
+/*
+ * Draft of overlay 6a3 Func_02000a78. 2 instructions differ: the listing
+ * begins the angle step (movs r3, #182) before it loads the frame count and
+ * finishes it after (lsls r3), the draft loads the count first. Tried: both
+ * operand orders, Value1 for the sine call (same 2), a barrier on the frame
+ * count (10). The cue call goes through Call2 (direct: 4 differ).
+ */
 #include "types.h"
 #include "field_event.h"
 #include "call.h"

@@ -7776,51 +7776,6 @@ Func_020049dc:
 	pop {r5, r6, r7, pc}
 .L_0200ca5c:
 	.4byte 0xffffe100
-	.section .rodata.x0200db54,"a",%progbits
-	.global Data_02005b54
-Data_02005b54:
-	.4byte 0xffff0196
-	.4byte Data_02005ae8
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00024000
-	.4byte 0xffff0196
-	.4byte Data_02005ae8
-	.4byte 0x00880000
-	.4byte 0x00000000
-	.4byte 0x01a80000
-	.4byte 0x00024000
-	.4byte 0x032001e9
-	.4byte 0x00000001
-	.4byte 0x02880000
-	.4byte 0x00000000
-	.4byte 0x01780000
-	.4byte 0x00024000
-	.4byte 0x006900f5
-	.4byte 0x00000001
-	.ifdef TLA_EDITION_JA
-	.4byte 0x02980000
-	.else
-	.4byte 0x02d80000
-	.endif
-	.4byte 0x00000000
-	.ifdef TLA_EDITION_JA
-	.4byte 0x01a80000
-	.else
-	.4byte 0x01980000
-	.endif
-	.ifdef TLA_EDITION_JA
-	.4byte 0x00004000
-	.else
-	.4byte 0x0000a000
-	.endif
-	.4byte 0x0000ffff
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
 	.section .bss,"aw",%nobits
 	.global Data_02006878
 Data_02006878:

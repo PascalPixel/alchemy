@@ -2427,61 +2427,6 @@ Func_02002fb0:
 	.4byte 0x000001cc
 .L_0200b03c:
 	.4byte 0x050003e0
-	.section .rodata.x0200cbfe,"a",%progbits
-	.global Data_02004bfe
-Data_02004bfe:
-	.2byte 0x2000
-	.4byte 0x40602020
-	.byte 64, SHAMAN_GRAPHIC7_PALETTE, 128, 0
-	.section .rodata.x0200d15a,"a",%progbits
-	.global Data_0200515a
-Data_0200515a:
-	.2byte 0x4000
-	.4byte 0x0800ff44
-	.4byte ((SHAMAN_GRAPHIC1_SCALE << 16) | 0x1000)
-	.4byte 0x20000001
-	.4byte 0x00010010
-	.4byte 0x000e7fff
-	.4byte 0x00003000
-	.4byte 0x7fff0014
-	.4byte 0x3000003c
-	.4byte 0x00140800
-	.4byte 0x003c7fff
-	.2byte 0xffff
-	.global Data_02005186
-Data_02005186:
-	.2byte 0x1000
-	.4byte ((1 << 16) | SHAMAN_GRAPHIC4_START_SCALE)
-	.4byte 0x00002000
-	.4byte 0x10000001
-	.4byte ((6 << 16) | SHAMAN_GRAPHIC4_SMALL_SCALE)
-	.4byte 0x00102000
-	.4byte 0x7fff0006
-	.4byte 0x10000006
-	.4byte ((6 << 16) | SHAMAN_GRAPHIC4_LARGE_SCALE)
-	.4byte 0x00067fff
-	.4byte ((SHAMAN_GRAPHIC4_SMALL_SCALE << 16) | 0x1000)
-	.4byte 0x7fff0006
-	.4byte 0x10000006
-	.4byte ((6 << 16) | SHAMAN_GRAPHIC4_LARGE_SCALE)
-	.4byte 0x00067fff
-	.4byte ((SHAMAN_GRAPHIC4_SMALL_SCALE << 16) | 0x1000)
-	.4byte 0x7fff0006
-	.4byte 0x20000006
-	.4byte 0x001e0000
-	.4byte ((SHAMAN_GRAPHIC4_LARGE_SCALE << 16) | 0x1000)
-	.4byte 0x7fff0006
-	.4byte 0x10000006
-	.4byte ((6 << 16) | SHAMAN_GRAPHIC4_SMALL_SCALE)
-	.4byte 0x00067fff
-	.4byte ((SHAMAN_GRAPHIC4_LARGE_SCALE << 16) | 0x1000)
-	.4byte 0x7fff0006
-	.4byte 0x10000006
-	.4byte ((6 << 16) | SHAMAN_GRAPHIC4_SMALL_SCALE)
-	.4byte 0x00067fff
-	.4byte ((SHAMAN_GRAPHIC4_LARGE_SCALE << 16) | 0x1000)
-	.4byte 0x7fff0006
-	.4byte 0xffff0006
 	.section .bss,"aw",%nobits
 	.space 0x00000004
 	.global Data_02006350

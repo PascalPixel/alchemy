@@ -58,7 +58,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_67b/data.o"(.data)
         "*/games/tla/src/field/overlay_67b/tiles.o"(.rodata)
         "*/games/tla/src/field/overlay_67b/data2.o"(.data)
-        "*/resource_67b_overlay.o"(.rodata.x0200b388)
+        "*/games/tla/src/graphics/field/tiles679.o"(.rodata)
     }
     .bss : { "*/resource_67b_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

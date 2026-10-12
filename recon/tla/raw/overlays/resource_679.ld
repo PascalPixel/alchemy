@@ -43,7 +43,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_679/events_j.o"(.text)
         "*/games/tla/src/field/overlay_679/import.o"(.text)
         "*/games/tla/src/field/overlay_679/data.o"(.data)
-        "*/resource_679_overlay.o"(.rodata.x0200a890)
+        "*/games/tla/src/graphics/field/tiles679.o"(.rodata)
     }
     .bss : { "*/resource_679_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

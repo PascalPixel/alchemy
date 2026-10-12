@@ -100,14 +100,9 @@ static s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect)
 		}
 		next_timer = (u32)(Engine_RandomNext() * 0x50) >> 0x10;
 		effect->action_timer = next_timer;
-		if (next_timer != 0)
-		{
-			goto decrement_timer;
-		}
 	}
-	else
+	if (effect->action_timer != 0)
 	{
-	decrement_timer:
 		--effect->action_timer;
 	}
 	return 1;
@@ -1145,10 +1140,7 @@ static void FieldScene_RunMiddleSequence(void)
 		Map_CopyCellsTo(25, 42, 25, 47, 1, 1);
 		Map_CopyCellAttributes(22, 50, 2, 1, 24, 49);
 	}
-	if (GameFlag_IsSet(0x302) == 0)
-	{
-	}
-	else
+	if (GameFlag_IsSet(0x302) != 0)
 	{
 		Actor_SetPosition(8, 0xe80000, 0x2dc0000);
 		Map_CopyCellAttributes(7, 44, 1, 1, 0, 1);
@@ -1180,20 +1172,18 @@ static void FieldScene_RunMiddleSequence(void)
 		Map_CopyCellsTo(71, 12, 71, 43, 10, 13);
 		Map_CopyCellAttributes(6, 13, 12, 12, 6, 44);
 		Map_CopyCellAttributes(0, 1, 1, 1, 7, 44);
-		goto second_half;
-	}
-	switch (((union GameStateRows *)&gGameState)->halves[225][0])
-	{
-	case 1:
-	case 2:
-		BattleFx_SetQueuedSoundAndPlay(170);
-		break;
-	}
-second_half:;
-	if (GameFlag_IsSet(0x303) == 0)
-	{
 	}
 	else
+	{
+		switch (((union GameStateRows *)&gGameState)->halves[225][0])
+		{
+		case 1:
+		case 2:
+			BattleFx_SetQueuedSoundAndPlay(170);
+			break;
+		}
+	}
+	if (GameFlag_IsSet(0x303) != 0)
 	{
 		Actor_SetPosition(9, 0x2b80000, 0x2dc0000);
 		Map_CopyCellsTo(74, 58, 107, 41, 1, 5);
@@ -1217,16 +1207,17 @@ second_half:;
 		Map_CopyCellsTo(38, 14, 38, 44, 8, 4);
 		Map_CopyCellsTo(102, 14, 102, 44, 8, 12);
 		Map_CopyCellAttributes(37, 13, 10, 12, 37, 43);
-		goto done;
 	}
-	switch (((union GameStateRows *)&gGameState)->halves[225][0])
+	else
 	{
-	case 3:
-	case 4:
-		BattleFx_SetQueuedSoundAndPlay(170);
-		break;
+		switch (((union GameStateRows *)&gGameState)->halves[225][0])
+		{
+		case 3:
+		case 4:
+			BattleFx_SetQueuedSoundAndPlay(170);
+			break;
+		}
 	}
-done:;
 }
 
 static void SceneState_SetValues27Through34(void)

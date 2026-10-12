@@ -697,7 +697,7 @@ void BattleFx_SetPhaseRequest(s32 flag, s32 no)
 
 		BattleFx_LookupResult((u8 *)obj + 8); // 位置
 	}
-	((s32 (*)())BattleFx_SelectBattleCue)(0, 0); /* FAKEMATCH: called as an undeclared function (int result, no prototype) */
+	BattleFx_SelectBattleCue(0, 0);
 }
 
 void Party_SetFields1ceAnd1d0(s32 first, s32 second)

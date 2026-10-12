@@ -115,8 +115,7 @@ struct RenderOutput *RenderOutput_Create(
 	output->index = slot;
 	output->kind = 1;
 	output->active = 1;
-	/* FAKEMATCH: RenderOutput_AppendToList is called as s32 (*)(); as void (*)(struct RenderOutputList *, struct RenderOutput *), its prototype, RenderOutput_Create has 9 of 136 bytes different */
-	((s32 (*)())RenderOutput_AppendToList)(input, output);
+	RenderOutput_AppendToList(input, output);
 	return output;
 }
 

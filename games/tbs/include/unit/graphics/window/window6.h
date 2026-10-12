@@ -24,6 +24,6 @@ void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y);
 void UiText_DrawNumber(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 void UiText_DrawNumberAtOffset(s32 arg0, s32 arg1, struct RenderInput *arg2, s32 arg3, s32 arg4);
 void UiText_DrawNumberInWindow(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
-void UiText_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work, s32 offset_x, s32 offset_y, s32 variant);
+/* UiText_DrawPrefixedNumberAtOffset is called before its definition with no prototype in scope. */
 
 #endif

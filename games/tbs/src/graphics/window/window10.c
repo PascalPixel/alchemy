@@ -105,8 +105,6 @@ static __inline__ u32 XorWord(u32 word, u32 mask)
 	return word ^ mask;
 }
 
-void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode);
-
 s32 Menu_BuildLocalizedPatternTiles(void)
 {
 	u32 *vram = (u32 *)0x06006280;
@@ -1103,14 +1101,12 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 #if !EDITION_INTERNATIONAL
 		UiText_RenderWideStringInWindow(buf + 7, win, 4, 1);
 #else
-		/* FAKEMATCH: UiText_RenderWideStringInWindow is called as s32 (*)(s16 *, void *, s32, s32); as void (*)(s16 *, struct UiWindow *, s32, s32), its prototype, DjinnMenu_ShowChangePreview has 4 of 1588 bytes different */
-		((s32 (*)(s16 *, void *, s32, s32))UiText_RenderWideStringInWindow)(buf + 7, win, 5, 1);
+		UiText_RenderWideStringInWindow(buf + 7, win, 5, 1);
 #endif
 		oldPp = snap->ep;
 		UiText_FormatNumberToHalfwords(buf, oldPp);
 #if !EDITION_INTERNATIONAL
-		/* FAKEMATCH: UiText_RenderWideStringInWindow is called as s32 (*)(s16 *, void *, s32, s32); as void (*)(s16 *, struct UiWindow *, s32, s32), its prototype, DjinnMenu_ShowChangePreview has 4 of 1584 bytes different */
-		((s32 (*)(s16 *, void *, s32, s32))UiText_RenderWideStringInWindow)(buf + 7, win, 4, 2);
+		UiText_RenderWideStringInWindow(buf + 7, win, 4, 2);
 #else
 		UiText_RenderWideStringInWindow(buf + 7, win, 5, 2);
 #endif
@@ -1124,24 +1120,19 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 		oldDef = snap->def;
 		UiText_FormatNumberToHalfwords(buf, oldDef);
 #if !EDITION_INTERNATIONAL
-		/* FAKEMATCH: UiText_RenderWideStringInWindow is called as s32 (*)(s16 *, void *, s32, s32); as void (*)(s16 *, struct UiWindow *, s32, s32), its prototype, DjinnMenu_ShowChangePreview has 4 of 1584 bytes different */
-		((s32 (*)(s16 *, void *, s32, s32))UiText_RenderWideStringInWindow)(buf + 7, win, 4, 4);
+		UiText_RenderWideStringInWindow(buf + 7, win, 4, 4);
 #else
-		/* FAKEMATCH: UiText_RenderWideStringInWindow is called as s32 (*)(s16 *, void *, s32, s32); as void (*)(s16 *, struct UiWindow *, s32, s32), its prototype, DjinnMenu_ShowChangePreview has 4 of 1588 bytes different */
-		((s32 (*)(s16 *, void *, s32, s32))UiText_RenderWideStringInWindow)(buf + 8, win, 6, 4);
+		UiText_RenderWideStringInWindow(buf + 8, win, 6, 4);
 #endif
 		oldAgi = snap->agi;
 		UiText_FormatNumberToHalfwords(buf, oldAgi);
 #if !EDITION_INTERNATIONAL
-		/* FAKEMATCH: UiText_RenderWideStringInWindow is called as s32 (*)(s16 *, void *, s32, s32); as void (*)(s16 *, struct UiWindow *, s32, s32), its prototype, DjinnMenu_ShowChangePreview has 4 of 1584 bytes different */
-		((s32 (*)(s16 *, void *, s32, s32))UiText_RenderWideStringInWindow)(buf + 7, win, 4, 5);
+		UiText_RenderWideStringInWindow(buf + 7, win, 4, 5);
 #else
-		/* FAKEMATCH: UiText_RenderWideStringInWindow is called as s32 (*)(s16 *, void *, s32, s32); as void (*)(s16 *, struct UiWindow *, s32, s32), its prototype, DjinnMenu_ShowChangePreview has 4 of 1588 bytes different */
-		((s32 (*)(s16 *, void *, s32, s32))UiText_RenderWideStringInWindow)(buf + 8, win, 6, 5);
+		UiText_RenderWideStringInWindow(buf + 8, win, 6, 5);
 #endif
 		UiText_FormatNumberToHalfwords(buf, snap->luck);
-		/* FAKEMATCH: UiText_RenderWideStringInWindow is called as s32 (*)(s16 *, void *, s32, s32); as void (*)(s16 *, struct UiWindow *, s32, s32), its prototype, DjinnMenu_ShowChangePreview has 6 of 1584 bytes different */
-		((s32 (*)(s16 *, void *, s32, s32))UiText_RenderWideStringInWindow)(buf + 8, win, 5, 6);
+		UiText_RenderWideStringInWindow(buf + 8, win, 5, 6);
 
 		UiWindow_DrawDividerLine(win, 0, 8, 19, 8);
 		if (gained != 0 || lost != 0)

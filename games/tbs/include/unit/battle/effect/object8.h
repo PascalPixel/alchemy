@@ -9,7 +9,7 @@ struct BattleEffectEntry;
 
 void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames);
 void BattlePalette_UpdateBlend(void);
-void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half);
+/* BattleFx_BuildBuffer is called before its definition with no prototype in scope. */
 void BattleEffect_InitializeBuffers(void);
 void Runtime_ScheduleCallbackAndReleaseBlock32B(void);
 void BattleFx_ApplyColorToTargetBuffer(s32 mode, s32 half);

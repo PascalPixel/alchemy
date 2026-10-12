@@ -2461,7 +2461,7 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
 
 		text = UiText_BuildRenderEntriesMode1(element + (s32)MsgVenusDjinnJoined);
 
-		((struct UiChannelSlot *(*)())UiText_QueueRenderEntries)(window, text, 36, 2, zero); /* FAKEMATCH: needed to match: called without the flags argument. */
+		UiText_QueueRenderEntries(window, text, 36, 2, zero);
 
 		AudioCommand_PlayFar(81);
 
@@ -2515,7 +2515,7 @@ void Party_ShowJoinedMessage(s32 member)
 		work->result[0] = 0;
 		work->result[1] = 0;
 		UiWork_PushValueSlot(member, 1);
-		((struct UiChannelSlot *(*)())UiText_QueueRenderEntries)(window, UiText_BuildRenderEntriesMode1((s32)MsgJoinedParty), 36, 2, 0); /* FAKEMATCH: needed to match: called without the flags argument. */
+		UiText_QueueRenderEntries(window, UiText_BuildRenderEntriesMode1((s32)MsgJoinedParty), 36, 2, 0);
 		AudioCommand_PlayFar(81);
 		do
 		{
@@ -2576,7 +2576,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
 		UiWork_PushValueSlot(first, 1);
 		UiWork_PushValueSlot(second, 1);
 
-		((struct UiChannelSlot *(*)())UiText_QueueRenderEntries)(window, UiText_BuildRenderEntriesMode1((s32)MsgPairJoinedParty), 68, 2, zero); /* FAKEMATCH: needed to match: called without the flags argument. */
+		UiText_QueueRenderEntries(window, UiText_BuildRenderEntriesMode1((s32)MsgPairJoinedParty), 68, 2, zero);
 
 		AudioCommand_PlayFar(81);
 

@@ -46,7 +46,7 @@ void Party_ResolveTablePair(void);
 s16 Event_GetSpecialValue(void);
 void BattleFx_SetSpecialFromTable(void);
 void BattleFx_SelectResultPointer(s32 arg0);
-void BattleFx_SelectBattleCue(s32 first, s32 second);
+/* BattleFx_SelectBattleCue is called before its definition with no prototype in scope. */
 void BattleFx_ShrinkObjectAndDestroySlow(void *obj);
 void BattleFx_ShrinkObjectAndDestroyFast(void *obj);
 void RunBattleEffect07(void);

@@ -41,9 +41,9 @@ void RenderOutput_RedrawSavedRect(struct UiWindow *window);
 void RenderOutput_ClearList(void *work);
 void UiWindow_ClearInteriorTiles(const struct RenderInput *window, u32 left, u32 top, u32 right, u32 bottom);
 void UiWork_UpdateListTail(struct RenderOutputList *list);
-void RenderOutput_AppendToList(struct RenderOutputList *list, struct RenderOutput *node);
+/* RenderOutput_AppendToList is called before its definition with no prototype in scope. */
 void RenderOutput_Release(struct RenderOutput *entry);
-struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, u16 *spacing, s32 flags);
+/* UiText_QueueRenderEntries is called before its definition with no prototype in scope. */
 struct UiChannelSlot *UiWork_ActivateChannel(struct UiWindow *work, s32 value, s32 preserve);
 s32 Ui_ClearVramBlock(void);
 s32 Ui_FillVramBlockPattern(void);
@@ -80,7 +80,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out);
 s32 UiText_GetWideStringWidth(u16 *text);
 void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, s32 y);
 void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer, const struct RenderInput *work, s32 offset_x, s32 offset_y);
-void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x, s32 y);
+/* UiText_RenderWideStringInWindow is called before its definition with no prototype in scope. */
 u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width);
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no, s32 plural, s32 *suffix);
 s32 UiText_BuildRenderEntries(s32 script, s32 clear);

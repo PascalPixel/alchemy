@@ -681,10 +681,10 @@ void BattleFx_StartTwelveFrameBlend(void)
 	zero = 0;
 	Dma_Set(
 		(const void *)&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x7e2, REG_DMA3);
-	((s32 (*)())BattleFx_BuildBuffer)(0x10003, buffers, work, 1); /* FAKEMATCH: called as an undeclared function (int result, no prototype) */
-	((s32 (*)())BattleFx_BuildBuffer)(0x10005, buffers, work->to, 1); /* FAKEMATCH: called as an undeclared function (int result, no prototype) */
+	BattleFx_BuildBuffer(0x10003, buffers, work, 1);
+	BattleFx_BuildBuffer(0x10005, buffers, work->to, 1);
 	BattleFx_InterpolateBuffers(work->to, work->from, work->delta, 12);
-	((s32 (*)())BattleFx_BuildBuffer)((s32)work, 0, buffers->target, 1); /* FAKEMATCH: called as an undeclared function (int result, no prototype) */
+	BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
 	work->timer = 600;
 	work->enabled = 1;
 	Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateStormFlash), 0xc80);
@@ -723,11 +723,11 @@ void BattleFx_StartBufferBlend(s32 from, s32 to)
 	zero = 0;
 	Dma_Set(
 		(const void *)&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x7e2, REG_DMA3);
-	((s32 (*)())BattleFx_BuildBuffer)(from, buffers, work, 1); /* FAKEMATCH: called as an undeclared function (int result, no prototype) */
+	BattleFx_BuildBuffer(from, buffers, work, 1);
 	target = work->to;
-	((s32 (*)())BattleFx_BuildBuffer)(to, buffers, target, 1); /* FAKEMATCH: called as an undeclared function (int result, no prototype) */
+	BattleFx_BuildBuffer(to, buffers, target, 1);
 	BattleFx_InterpolateBuffers(target, work->from, work->delta, 12);
-	((s32 (*)())BattleFx_BuildBuffer)((s32)work, 0, buffers->target, 1); /* FAKEMATCH: called as an undeclared function (int result, no prototype) */
+	BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
 	work->timer = 120;
 	work->enabled = 0;
 	Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateStormFlash), 0xc80);

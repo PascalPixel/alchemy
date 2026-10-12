@@ -92,8 +92,6 @@
 
 #define TILE_ROW_FROM_BOTTOM(tile, up) ((u32 *)((tile) * 32 - (up) * 4 + 0x0600001c))
 
-void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode);
-
 void UiWindow_BuildLayoutBounds(s32 flags)
 {
 	void					**slot = (void **)&gPartyStatusWork;
@@ -345,8 +343,7 @@ void PtyStDraw(s32 flags)
 		work->level = 14;
 		if (work->menu_state != 0)
 			work->level = 5;
-		/* FAKEMATCH: UiText_DrawPrefixedNumberAtOffset is called as s32 (*)(); as void (*)(s32, struct RenderInput *, s32, s32, s32), its prototype, PtyStDraw has 7 of 980 bytes different */
-		((s32 (*)())UiText_DrawPrefixedNumberAtOffset)(hp, window, (x + i * 6) * 8, y * 8 + 8, 0);
+		UiText_DrawPrefixedNumberAtOffset(hp, window, (x + i * 6) * 8, y * 8 + 8, 0);
 		work->level = 15;
 		UiText_DrawStringAtOffset(unit->name, window, (x + i * 6) * 8, y * 8);
 		UiWork_SetParamNibble(15);
@@ -386,11 +383,10 @@ void PtyStDraw(s32 flags)
 		UiWindow_SetTilemapEntry((struct UiWindow *)window, 0x5002, 2, row, 0);
 		UiWindow_SetTilemapEntry((struct UiWindow *)window, 0x5003, 0, row + 1, 0);
 		UiWindow_SetTilemapEntry((struct UiWindow *)window, 0x5004, 2, row + 1, 0);
-		/* FAKEMATCH: needed to match: these four calls pass no mode argument (an unprototyped call of the five-argument function). */
-		((s32 (*)())UiWindow_PutGlyph)(window, djinn[0] + '0', 1, row);
-		((s32 (*)())UiWindow_PutGlyph)(window, djinn[1] + '0', 3, row);
-		((s32 (*)())UiWindow_PutGlyph)(window, djinn[2] + '0', 1, row + 1);
-		((s32 (*)())UiWindow_PutGlyph)(window, djinn[3] + '0', 3, row + 1);
+		UiWindow_PutGlyph(window, djinn[0] + '0', 1, row);
+		UiWindow_PutGlyph(window, djinn[1] + '0', 3, row);
+		UiWindow_PutGlyph(window, djinn[2] + '0', 1, row + 1);
+		UiWindow_PutGlyph(window, djinn[3] + '0', 3, row + 1);
 	}
 	work->menu_busy = 0;
 }

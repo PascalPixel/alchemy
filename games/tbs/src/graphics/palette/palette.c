@@ -1,12 +1,12 @@
 #include "battle_effect_runtime.h"
 #include "unit/graphics/palette/palette.h"
-#include "unit/system/scheduler/runtime.h"
-#include "unit/system/scheduler/runtime3.h"
-#include "unit/system/scheduler/runtime4.h"
-#include "unit/system/scheduler/runtime5.h"
-#include "unit/system/scheduler/runtime6.h"
-#include "unit/system/scheduler/runtime8.h"
-#include "unit/system/scheduler/runtime9.h"
+#include "unit/runtime/runtime.h"
+#include "unit/runtime/fade.h"
+#include "unit/runtime/oamlist.h"
+#include "unit/runtime/objvram.h"
+#include "unit/runtime/sched.h"
+#include "unit/runtime/basepal.h"
+#include "unit/runtime/heap.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -100,6 +100,7 @@ const u8 Title_PromptBlendLevels[60] = {
 
 void Title_PlaceIntroSprites(void)
 {
+	/* FAKEMATCH: the OAM shadow words (area.objects of struct IntroWork, written through ENTRY) are volatile, as LuckyDice_Run's in camera.c. Without the qualifier differ 205, 471 instructions for 496. */
 	struct IntroWork *work;
 	u32				  n;
 	s32				  base;

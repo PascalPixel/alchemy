@@ -1,12 +1,12 @@
 #ifndef ALCHEMY_MENU_LIST_H
 #define ALCHEMY_MENU_LIST_H
 
-#include "unit/graphics/window/window.h"
-#include "unit/graphics/window/window3.h"
-#include "unit/graphics/window/window7.h"
-#include "unit/graphics/window/window9.h"
-#include "unit/graphics/window/window10.h"
-#include "unit/graphics/window/window12.h"
+#include "unit/window/window.h"
+#include "unit/window/select.h"
+#include "unit/window/output.h"
+#include "unit/window/save.h"
+#include "unit/window/btlcmd.h"
+#include "unit/window/debug.h"
 #include "types.h"
 #include "resource.h"
 #include "callback_scheduler.h"
@@ -137,6 +137,7 @@ LAYOUT_OFFSET_GUARD(MenuCell_AutoMode, struct MenuCell, auto_mode, 0xe0);
 	} while (0)
 
 extern struct MenuCell *gLinkCountdownWork;
+// volatile: gFrameCount carries its tag where frame.h declares it
 extern volatile u32		gFrameCount;
 extern u8				Resource_FixedBlockBTiles[];
 extern const u8			Menu_AnimatedCursorTiles[];

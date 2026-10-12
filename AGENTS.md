@@ -107,6 +107,13 @@ A game is finished when all six hold (Pascal, 2026-10-08):
 
 - `games/<game>/src`, `include`, `sound`, `text` and `games/common` hold the
   source; `<game>` is `tbs` or `tla`.
+- ☀️'s code sits in one folder for each bank of the main image, named for
+  the bank (`runtime`, `field`, `window`, `game`, `menu`, `shop`, `battle`,
+  `effect`, `object`), and in `scene`: each scene overlay is
+  `scene/<place>.c` with its entry table `scene/entry/<place>.s` and its
+  import table `scene/import/<place>.s`, and text several scenes include is
+  under `scene/common`. Unit headers follow the same paths under
+  `include/unit`.
 - `games/tbs/objects.tsv` is ☀️'s object list: the object order of the main
   image and of each overlay, with the editions that link each row. A row is
   one linker statement, or stands for several: a `unit` row for an
@@ -263,7 +270,12 @@ or functions is exactly this cheating.
   one standing: `alchemy check devices` counts pins, barriers, inline asm and
   volatiles, and a count may only fall; trading one device for another is
   not progress unless the new form is the source's, and a device that stays
-  records in its tag the plain forms measured against it (S4). A device is
+  records in its tag the plain forms measured against it (S4). The same
+  check counts `goto` statements, and that count may only fall too. A `goto`
+  is ordinary C and no FAKEMATCH device: it carries no tag and is outside
+  the FAKEMATCH figures. But one that only forces a layout is not how the
+  function was written, and it goes when its loop or branch is found
+  (Pascal, 2026-10-12). A device is
   for a difference of instruction order or register choice, an unused
   local of a real type whose size exactly explains the native stack frame,
   or a form the bytes prove the source had (a CSE block that ended where
@@ -290,7 +302,7 @@ or functions is exactly this cheating.
   `Transform_UpdateVertices`, which are compiled C around it. A layer that
   explains a habit of the whole game is source, not a device: the ☀️ scene
   script layer (inline helpers forwarding to the engine services in
-  `field_event.h`, `field_service.h` and `runpa_jo/jo.h`) matches every scene
+  `field_event.h`, `field_service.h` and `scene/runpa_jo.h`) matches every scene
   where direct calls break 642 functions (Pascal, 2026-10-05). So is the ☀️
   IWRAM call layer (one inline per resident routine in `iwram_call.h`,
   calling its checked fixed entry): 360 call sites match through it, and
@@ -320,7 +332,8 @@ or functions is exactly this cheating.
   - Layout: `games/<game>/src`, `include`, `sound`, `text`, the same folders
     in both games (`games/tbs`, `games/tla`) and `games/common`; lowercase
     8.3 file and folder names, `.c` and `.h` (Pascal, 2026-10-08: no evidence
-    for the uppercase style). The one exception follows the GNU convention:
+    for the uppercase style). A scene's file takes its place's full name
+    and may be longer than eight letters (Pascal, 2026-10-12). The one exception follows the GNU convention:
     an assembly file the C preprocessor reads (`#include`, `#define`, `#if`)
     is all capitals, name and extension (`NAME.S`); plain assembly such as
     `rom_head.s` is lowercase. The build chooses preprocessing by the
@@ -388,7 +401,7 @@ or functions is exactly this cheating.
     comments, organization and byte identity, preserving necessary casts,
     hardware `volatile`, `goto`, work arrays and S2 devices with their reasons.
   - The showcase is `BtlTgtExec` in
-    `games/tbs/src/battle/battle6.c`.
+    `games/tbs/src/battle/tgtexec.c`.
 - **S4** Never throw work away: commit each adoption and attempt, and keep a
   near miss as a draft with the remaining difference in its header. One draft
   per listing, overwritten as it improves: a trial is a commit or a line in
@@ -709,7 +722,7 @@ alchemy adopt-data OBJECT PIECE...     # a data block's object into all six edit
 alchemy objects EDITION...             # what differs from the ROM, object or placement
 alchemy dead [--apply PATH]            # what no edition links, includes or selects
 make progress                          # DONE code and data, one line per edition (alchemy progress)
-alchemy check devices [--update]       # register pins, asm barriers, inline asm, volatile: may only fall
+alchemy check devices [--update]       # register pins, asm barriers, inline asm, volatile, goto: may only fall
 alchemy fakematch [--show N]           # every FAKEMATCH tag by device and family, weighed by the bytes it steers
 # Camelotize
 make worst                             # maintained C ranked by how mechanical it reads

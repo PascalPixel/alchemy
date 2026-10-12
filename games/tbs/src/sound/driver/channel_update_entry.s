@@ -65,8 +65,8 @@ SoundDriver_StartMixFrame:
 	bx	r3
 	.4byte IwramSoundMixEntry
 	.4byte 0x00000350
-AlchemyUncredited_08000764:
+AlchemyUncredited_channel_update_entry_1:
 	.4byte 0x04000006
-AlchemyUncreditedEnd_08000764:
+AlchemyUncreditedEnd_channel_update_entry_1:
 	.4byte 0x68736d53
 	.4byte 0x03007ff0

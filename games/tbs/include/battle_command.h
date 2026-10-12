@@ -7,7 +7,7 @@
 #include "frame.h"
 #include "btlwork.h"
 
-#define BATTLE_AUTO_MODE (*(volatile u8 *)&gDebugMode)
+#define BATTLE_AUTO_MODE gDebugMode
 #define BATTLE_OPTIONS gKeysHeld
 
 extern const u32 Battle_ActionFlags[];

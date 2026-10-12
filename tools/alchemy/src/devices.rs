@@ -14,11 +14,12 @@ pub(crate) const BASELINE: &str = "tools/alchemy/devices.tsv";
 const USAGE: &str = "usage: alchemy check devices [--update]\n\
 Counts, for each game, register pins (register ... asm(\"rN\")), empty asm\n\
 barriers, instruction-emitting inline asm other than swi (directly or through\n\
-a macro), and volatile on objects that are not hardware (a heuristic), and\n\
+a macro), volatile on objects that are not hardware (a heuristic), and\n\
+goto statements (a device that needs no tag; library C apart), and\n\
 fails when a count rises above tools/alchemy/devices.tsv. --update writes\n\
 the current counts there; lower them whenever a device goes.";
 
-pub(crate) const KINDS: [&str; 4] = ["register-pin", "asm-barrier", "inline-asm", "volatile"];
+pub(crate) const KINDS: [&str; 5] = ["register-pin", "asm-barrier", "inline-asm", "volatile", "goto"];
 
 pub(crate) type Counts = BTreeMap<(String, String), usize>;
 
@@ -100,11 +101,12 @@ fn ratchet(baseline: &Counts, counts: &Counts) -> Vec<String> {
 pub(crate) fn summary(counts: &Counts, game: &str) -> String {
     let get = |kind: &str| counts.get(&(game.to_string(), kind.to_string())).copied().unwrap_or(0);
     format!(
-        "; devices: {} register pins, {} asm barriers, {} inline asm, {} volatile",
+        "; devices: {} register pins, {} asm barriers, {} inline asm, {} volatile, {} goto",
         get("register-pin"),
         get("asm-barrier"),
         get("inline-asm"),
-        get("volatile")
+        get("volatile"),
+        get("goto")
     )
 }
 
@@ -247,7 +249,7 @@ fn instruction(template: &str) -> bool {
 
 /// Counts in KINDS order over one file, outside #define bodies (a macro's
 /// devices count where it is used).
-fn devices(code: &str, emitting: &BTreeSet<String>) -> [usize; 4] {
+fn devices(code: &str, emitting: &BTreeSet<String>) -> [usize; 5] {
     let mut plain = String::with_capacity(code.len());
     let mut lines = code.lines();
     while let Some(line) = lines.next() {
@@ -273,10 +275,14 @@ fn devices(code: &str, emitting: &BTreeSet<String>) -> [usize; 4] {
     let mut inline = templates.iter().filter(|t| instruction(t)).count();
     let word = regex::Regex::new(r"[A-Za-z_][A-Za-z0-9_]*").expect("static pattern");
     let mut volatile = 0;
+    let mut gotos = 0;
     for line in plain.lines() {
         for found in word.find_iter(line) {
             if emitting.contains(found.as_str()) {
                 inline += 1;
+            }
+            if found.as_str() == "goto" {
+                gotos += 1;
             }
         }
         if line.contains("volatile") && !hardware(line) {
@@ -287,7 +293,7 @@ fn devices(code: &str, emitting: &BTreeSet<String>) -> [usize; 4] {
                 - line.matches("__asm__ __volatile__").count();
         }
     }
-    [pins, barriers, inline, volatile]
+    [pins, barriers, inline, volatile, gotos]
 }
 
 /// A line about the hardware: registers, I/O or video memory addresses.
@@ -307,7 +313,7 @@ mod tests {
         assert!(instruction("swi 2; mov r0, r1"));
         assert!(instruction("nop"));
         assert!(!instruction("Resource_Table"));
-        assert_eq!(devices("asm(\"swi 2; mov r0, r1\"); asm(\"nop\");", &BTreeSet::new()), [0, 0, 2, 0]);
+        assert_eq!(devices("asm(\"swi 2; mov r0, r1\"); asm(\"nop\");", &BTreeSet::new()), [0, 0, 2, 0, 0]);
     }
 
     #[test]
@@ -323,7 +329,7 @@ mod tests {
              STEER(a);\n",
         );
         let emitting = BTreeSet::from(["STEER".to_string()]);
-        assert_eq!(devices(&code, &emitting), [1, 2, 3, 1]);
+        assert_eq!(devices(&code, &emitting), [1, 2, 3, 1, 0]);
     }
 
     #[test]
@@ -332,7 +338,7 @@ mod tests {
         let bodies = macro_bodies(&code);
         assert_eq!(bodies[0].0, "STEER");
         assert!(asm_statements(&bodies[0].1).iter().any(|t| instruction(t)));
-        assert_eq!(devices(&code, &BTreeSet::new()), [0, 0, 0, 0]);
+        assert_eq!(devices(&code, &BTreeSet::new()), [0, 0, 0, 0, 0]);
     }
 
     #[test]
@@ -341,7 +347,7 @@ mod tests {
             "__asm__ __volatile__(\"\" : : \"r\"(value));\n\
              volatile s32 counter; __asm__ __volatile__(\"\" : : \"r\"(counter));\n",
         );
-        assert_eq!(devices(&code, &BTreeSet::new()), [0, 2, 0, 1]);
+        assert_eq!(devices(&code, &BTreeSet::new()), [0, 2, 0, 1, 0]);
     }
 
     #[test]
@@ -354,7 +360,7 @@ mod tests {
         );
         assert!(!proven_macros(&code).contains("IDENT"));
         assert_eq!(without_proven(&code), code);
-        assert_eq!(devices(&without_proven(&code), &BTreeSet::new()), [2, 1, 1, 0]);
+        assert_eq!(devices(&without_proven(&code), &BTreeSet::new()), [2, 1, 1, 0, 0]);
     }
 
     #[test]
@@ -365,5 +371,11 @@ mod tests {
         assert!(ratchet(&baseline, &Counts::from([(key.clone(), 2)])).is_empty());
         assert_eq!(ratchet(&baseline, &Counts::from([(key, 4)])).len(), 1);
         assert_eq!(parse(&render(&baseline)).unwrap(), baseline);
+    }
+
+    #[test]
+    fn gotos_are_counted_where_code_jumps_not_where_a_comment_or_macro_names_them() {
+        let code = code_only("void f(void)\n{\n\tif (x)\n\t\tgoto done; // goto in a comment\n\tgoto done;\ndone:\n\treturn;\n}\n#define LEAVE goto done\n");
+        assert_eq!(devices(&code, &BTreeSet::new()), [0, 0, 0, 0, 2]);
     }
 }

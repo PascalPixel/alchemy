@@ -1,8 +1,8 @@
 #ifndef ALCHEMY_MAP_H
 #define ALCHEMY_MAP_H
 
-#include "unit/field/common/script/field.h"
-#include "unit/field/common/script/field10.h"
+#include "unit/field/field.h"
+#include "unit/field/mapcell.h"
 #include "types.h"
 #include "layout_guard.h"
 

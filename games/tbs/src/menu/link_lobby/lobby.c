@@ -1,23 +1,23 @@
 #include "unit/import.h"
 #include "unit/menu/link_lobby/lobby.h"
-#include "unit/battle/effect/object.h"
-#include "unit/battle/effect/object2.h"
-#include "unit/battle/effect/object9.h"
-#include "unit/battle/effect/object10.h"
+#include "unit/object/object.h"
+#include "unit/object/objtable.h"
+#include "unit/object/evbasic.h"
+#include "unit/object/evactor.h"
 #include "unit/battle/battle.h"
-#include "unit/battle/battle7.h"
-#include "unit/field/common/script/field7.h"
-#include "unit/game/character/chara.h"
-#include "unit/game/character/chara3.h"
-#include "unit/game/character/chara4.h"
-#include "unit/graphics/window/window.h"
-#include "unit/graphics/window/window6.h"
-#include "unit/graphics/window/window7.h"
-#include "unit/graphics/window/window9.h"
-#include "unit/system/scheduler/runtime.h"
-#include "unit/system/scheduler/runtime6.h"
-#include "unit/system/scheduler/runtime9.h"
-#include "unit/system/scheduler/runtim12.h"
+#include "unit/battle/turnend.h"
+#include "unit/field/mapview.h"
+#include "unit/game/chara.h"
+#include "unit/game/flag.h"
+#include "unit/game/party.h"
+#include "unit/window/window.h"
+#include "unit/window/wintile.h"
+#include "unit/window/output.h"
+#include "unit/window/save.h"
+#include "unit/runtime/runtime.h"
+#include "unit/runtime/sched.h"
+#include "unit/runtime/heap.h"
+#include "unit/runtime/serial.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"
@@ -283,6 +283,7 @@ static s32 EV02_RAISED(void)
 
 static s32 LinkLobby_ReceivePartyRecords(void)
 {
+	/* FAKEMATCH: gSerialReceivedSize is volatile (serial_runtime.h), so every read here is a load of its own. Measured on tbs-en: without the qualifier differ 69, 186 instructions for 189. */
 	u16 buf[24];
 	u32 size;
 	s32 heap;

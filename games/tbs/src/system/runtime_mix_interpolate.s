@@ -28,7 +28,7 @@
 	.global IwramSoundMixInterpolated
 IwramSoundMixInterpolated:
 	add	r5, r5, r8, lsl #2
-.L_audio_0920:
+.L_audio_interpolate_sample:
 	mul	r9, r7, ip
 	asr	r9, r9, #22
 	adds	r9, r9, r6, lsl #1
@@ -37,7 +37,7 @@ IwramSoundMixInterpolated:
 	strne	r0, [r5, -r8, lsl #2]
 	add	r7, r7, r4
 	lsrs	r9, r7, #23
-	beq	.L_audio_0964
+	beq	.L_audio_interpolate_next
 	subs	r2, r2, r7, lsr #23
 	blle	.L_audio_refill_source
 	subs	r9, r9, #1, 0
@@ -46,9 +46,9 @@ IwramSoundMixInterpolated:
 	ldrsb	ip, [r3, #1]!
 	sub	ip, ip, r6
 	bic	r7, r7, #1065353216
-.L_audio_0964:
+.L_audio_interpolate_next:
 	subs	r8, r8, #1, 0
-	bgt	.L_audio_0920
+	bgt	.L_audio_interpolate_sample
 	.global IwramSoundMixDone
 IwramSoundMixDone:
 	sub	r3, r3, #1, 0
@@ -81,39 +81,39 @@ IwramSoundMixDone:
 	.global IwramSoundEndChannel
 IwramSoundEndChannel:
 	strb	r6, [r4]
-	b	.L_audio_0ad4
-.L_audio_09c4:
+	b	.L_audio_to_thumb
+.L_audio_extract_align0:
 	lsls	r6, sl, #24
 	asrs	r6, r6, #24
-.L_audio_09cc:
+.L_audio_extract_align1:
 	lsls	r6, sl, #16
 	asrs	r6, r6, #24
-.L_audio_09d4:
+.L_audio_extract_align2:
 	lsls	r6, sl, #8
 	asrs	r6, r6, #24
-.L_audio_09dc:
+.L_audio_extract_align3:
 	asrs	r6, sl, #24
-.L_audio_09e0:
+.L_audio_extract_reload:
 	ldm	r3!, {sl}
 	lsls	r6, sl, #24
-.L_audio_09e8:
+.L_audio_extract_wrap1:
 	asrs	r6, r6, #24
 	lsls	r6, sl, #16
-.L_audio_09f0:
+.L_audio_extract_wrap2:
 	asrs	r6, r6, #24
 	lsls	r6, sl, #8
-.L_audio_09f8:
+.L_audio_extract_wrap3:
 	asrs	r6, r6, #24
 	.global IwramSoundMixBlock
 IwramSoundMixBlock:
 	push	{r4, r9}
-.L_audio_0a00:
+.L_audio_block:
 	mov	lr, r2
 	cmp	r2, r8
 	movgt	lr, r8
 	sub	lr, lr, #1, 0
 	lsrs	lr, lr, #2
-	beq	.L_audio_0a9c
+	beq	.L_audio_block_tail
 	sub	r8, r8, lr, lsl #2
 	sub	r2, r2, lr, lsl #2
 	add	r1, pc, #52, 0
@@ -130,35 +130,35 @@ IwramSoundMixBlock:
 	add	r1, r1, #12, 0
 	stm	r1, {r9, sl}
 	ldm	r3!, {sl}
-.L_audio_0a58:
+.L_audio_block_four:
 	ldm	r5, {r0, r1, r7, r9}
-AlchemyUncredited_080011cc:
+AlchemyUncredited_runtime_mix_interpolate_1:
 	nop
 	nop
-AlchemyUncreditedEnd_080011cc:
+AlchemyUncreditedEnd_runtime_mix_interpolate_1:
 	mlane	r0, fp, r6, r0
-AlchemyUncredited_080011d8:
+AlchemyUncredited_runtime_mix_interpolate_2:
 	nop
 	nop
-AlchemyUncreditedEnd_080011d8:
+AlchemyUncreditedEnd_runtime_mix_interpolate_2:
 	mlane	r1, fp, r6, r1
-AlchemyUncredited_080011e4:
+AlchemyUncredited_runtime_mix_interpolate_3:
 	nop
 	nop
-AlchemyUncreditedEnd_080011e4:
+AlchemyUncreditedEnd_runtime_mix_interpolate_3:
 	mlane	r7, fp, r6, r7
-AlchemyUncredited_080011f0:
+AlchemyUncredited_runtime_mix_interpolate_4:
 	nop
 	nop
-AlchemyUncreditedEnd_080011f0:
+AlchemyUncreditedEnd_runtime_mix_interpolate_4:
 	mlane	r9, fp, r6, r9
 	stmia	r5!, {r0, r1, r7, r9}
 	subs	lr, lr, #1, 0
-	bne	.L_audio_0a58
+	bne	.L_audio_block_four
 	sub	r3, r3, #4, 0
-.L_audio_0a9c:
+.L_audio_block_tail:
 	mov	r1, #4, 0
-.L_audio_0aa0:
+.L_audio_block_single:
 	ldr	r0, [r5]
 	ldrsb	r6, [r3], #1
 	mla	r0, fp, r6, r0
@@ -166,15 +166,15 @@ AlchemyUncreditedEnd_080011f0:
 	subs	r2, r2, #1, 0
 	bleq	.L_audio_channel_end
 	subs	r1, r1, #1, 0
-	bgt	.L_audio_0aa0
+	bgt	.L_audio_block_single
 	subs	r8, r8, #4, 0
-	bgt	.L_audio_0a00
+	bgt	.L_audio_block
 	pop	{r4, r9}
 	.global IwramSoundSaveChannel
 IwramSoundSaveChannel:
 	str	r2, [r4, #24]
 	str	r3, [r4, #40]
-.L_audio_0ad4:
+.L_audio_to_thumb:
 	add	r0, pc, #1, 0
 	bx	r0
 
@@ -183,10 +183,10 @@ IwramSoundSaveChannel:
 IwramSoundMixNextChannel:
 	ldr	r0, [sp, #4]
 	subs	r0, #1
-	ble.n	.L_audio_0ae6
+	ble.n	.L_audio_channels_done
 	adds	r4, #64
 	b.n	IwramSoundMixEntry
-.L_audio_0ae6:
+.L_audio_channels_done:
 	ldr	r5, [sp, #8]
 	add	r0, pc, #116
 	bx	r0
@@ -197,11 +197,11 @@ IwramSoundMixNextChannel:
 IwramSoundNormalizeSample:
 	ror	r7, r6, #16
 	adds	r7, r7, r7
-	bvc	.L_audio_0b04
+	bvc	.L_audio_normalize_high
 	orr	r6, r6, #16384
 	bic	r6, r6, #16320
 	submi	r6, r6, #64, 0
-.L_audio_0b04:
+.L_audio_normalize_high:
 	adds	r7, r6, r6
 	bxvc	lr
 	orr	r6, r6, #1073741824

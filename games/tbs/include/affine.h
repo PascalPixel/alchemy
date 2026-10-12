@@ -1,8 +1,8 @@
 #ifndef ALCHEMY_AFFINE_H
 #define ALCHEMY_AFFINE_H
 
-#include "unit/system/scheduler/runtime.h"
-#include "unit/system/scheduler/runtime4.h"
+#include "unit/runtime/runtime.h"
+#include "unit/runtime/oamlist.h"
 #include "types.h"
 #include "layout_guard.h"
 

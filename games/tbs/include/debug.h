@@ -3,7 +3,7 @@
 
 /* DEBUG */
 
-#include "unit/battle/effect/object2.h"
+#include "unit/object/objtable.h"
 #include "types.h"
 #include "edition.h"
 #include "farcall.h"

@@ -1,13 +1,13 @@
 #ifndef ALCHEMY_FIELD_EVENT_H
 #define ALCHEMY_FIELD_EVENT_H
 
-#include "unit/battle/effect/object.h"
-#include "unit/battle/effect/object6.h"
-#include "unit/battle/effect/object10.h"
-#include "unit/battle/effect/object12.h"
-#include "unit/battle/effect/object14.h"
-#include "unit/battle/effect/object15.h"
-#include "unit/battle/effect/object16.h"
+#include "unit/object/object.h"
+#include "unit/object/sparkle.h"
+#include "unit/object/evactor.h"
+#include "unit/object/evcamera.h"
+#include "unit/object/djinnev.h"
+#include "unit/object/psydisp.h"
+#include "unit/object/psyfx.h"
 #include "mapcopy.h"
 
 #include "layout_guard.h"
@@ -27,6 +27,7 @@ extern u8 gSceneState[];
 
 extern u8 *gKorosseoWork;
 
+// volatile: gFrameCount carries its tag where frame.h declares it
 extern volatile u32 gFrameCount;
 
 #include "fieldobj.h"

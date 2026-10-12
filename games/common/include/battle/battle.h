@@ -128,11 +128,11 @@ struct LinkedCaptureObject;
 struct MotionObject;
 struct ObjectRuntime;
 struct OrbitEffect;
-struct Output_08097f80;
+struct PolarOffsetOutput;
 struct RockWallHeights;
 struct SceneInteractionEntry;
 struct ScriptObjectEntry;
-struct Source_0808f28c;
+struct BattleSource;
 struct SparkObject;
 struct TransitionActorList;
 struct WaveFxWork;
@@ -142,7 +142,7 @@ struct CameraWork
 	u8	unknown_00[0x36];
 	u16 scroll;
 };
-struct Cells03001ad0
+struct BgScrollWords
 {
 	u16 unk00;
 	u16 unk02;
@@ -569,6 +569,7 @@ extern const u8					 ColorBuffer_FadeStep1Map[32];
 extern const u8					 ColorBuffer_FadeStep2Map[32];
 extern const u8					 ColorBuffer_FadeStep3Map[32];
 extern u16						 Encounter_EnemyGroupTable[];
+// volatile: gLinkStatus carries its tag where tbs/include/global_cells.h declares it (measured on tbs-en)
 extern volatile u16				 gLinkStatus;
 extern struct WorldMapWork		 gWorldMapWork;
 extern const struct SceneCueRule Scene_CueRuleTable[];

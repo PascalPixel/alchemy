@@ -1,0 +1,98 @@
+#ifndef ALCHEMY_UNIT_FIELD_FIELD_H
+#define ALCHEMY_UNIT_FIELD_FIELD_H
+
+#include "types.h"
+
+struct AnimationEntry;
+struct AnimationObject;
+struct AnimationPosition;
+struct DispatchObject;
+struct FieldPosition;
+struct MapScanline;
+struct ObjectRuntime;
+struct ResourceObject;
+struct ResourceObjectWork;
+struct ScriptInterpreter;
+struct ScriptObjectEntry;
+struct ScriptObjectRuntime;
+struct ScriptOperands;
+struct WorldPosition;
+
+u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
+s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir);
+void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screen_x, s32 height, s32 screen_y, s32 ground_height, s32 *scale);
+void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s32 *scale, s32 mode);
+void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point, s32 *scale, s32 mode, s32 depth);
+void ObjectGroup_SetChildValueUnlessFifteen(void *raw_parent, u32 value);
+s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
+s32 Animation_LookupValueByKey(s32 key);
+s32 Animation_InitializeObjects(struct AnimationObject *state);
+void Animation_InitWorkFromMetadata(struct AnimationEntry *work);
+s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id);
+void ResourceMetadata_Unregister(struct AnimationObject *state, s32 handle);
+void ResourceMetadata_ReleaseSlot(struct AnimationObject *group, u32 no);
+void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no);
+s32 AnimationObjects_SelectAnimation(struct AnimationObject *state, s32 flags);
+s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *group, s32 val);
+void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *group, s32 val);
+void ObjectSystem_Configure(s32 mode);
+struct AnimationEntry *AnimationObject_Allocate(s32 id);
+void ResourceMetadata_ClearRecord(void *dst);
+struct ResourceObject *ResourceObject_Create(s32 id);
+void ResourceObject_Release(struct ResourceObjectWork *work);
+s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt);
+void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos);
+void Map_RenderAnimatedTileFramesForObject(u8 *obj);
+void Map_RenderAllAnimatedTileFrames(u8 **tbl, s32 cnt);
+void ObjectDispatch_ApplyArgumentToChildren(void *raw, s32 no);
+void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *obj, s32 val);
+s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter);
+s32 Script_ClearFlagAndTest(struct ScriptInterpreter *interpreter);
+void Script_SetOrCompareAddress(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareUnsignedHalfword(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareX(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareY(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareZ(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareScaleX(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareScaleY(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareVelocityX(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareVelocityY(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareVelocityZ(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareSpeedLimit(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareAcceleration(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareTargetX(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareTargetY(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareTargetZ(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareVerticalMotion(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareGravity(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareTerrainHeight(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareWord4c(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareAddress50(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareByte54(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareMotionFlags(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareArrivalAxis(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareComparisonResult(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareSnapToTarget(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareCollisionFlags(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareSteeringFlags(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrComparePaused(struct ScriptOperands *state, s32 operation, s32 value);
+void Script_SetOrCompareRepeatCount(struct ScriptOperands *work, s32 operation, s32 value);
+void Script_SetOrCompareSignedHalfword64(struct ScriptOperands *work, s32 operation, s32 value);
+void Script_SetOrCompareSignedHalfword66(struct ScriptOperands *work, s32 operation, s32 value);
+void Script_SetOrCompareWord68(struct ScriptOperands *work, s32 operation, s32 value);
+void Script_SetOrCompareUpdateAddress(struct ScriptOperands *work, s32 operation, s32 value);
+void Script_SetOrCompareByte62(struct ScriptOperands *work, s32 operation, s32 value);
+void Script_SetOrCompareByte63(struct ScriptOperands *work, s32 operation, s32 value);
+void Ui_SetGridColumnParameter(s32 slot, s32 value);
+void Ui_SetGridColumnPriority(s32 slot, s32 value);
+
+struct ResourceObjectWork
+{
+	u8	  unknown_00[28];
+	u8	  resource; // VRAM キャッシュの番号
+	u8	  flags;	// ビット 0：VRAM キャッシュを返さない
+	u8	  unknown_1e[10];
+	void *children[4];
+};
+
+#endif

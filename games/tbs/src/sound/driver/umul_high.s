@@ -77,9 +77,9 @@ AudioEngine_RunMixerTick:
 	ldr	r6, [pc, #24]
 	ldr	r3, [pc, #12]
 	bx	r3
-AlchemyUncredited_080f965a:
+AlchemyUncredited_umul_high_1:
 	.2byte	0x0000
-AlchemyUncreditedEnd_080f965a:
+AlchemyUncreditedEnd_umul_high_1:
 	.4byte 0x03007ff0
 	.4byte 0x68736d53
 	.4byte SoundDriver_Mixer

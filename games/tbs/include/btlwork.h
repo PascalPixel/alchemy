@@ -2,12 +2,12 @@
 #define ALCHEMY_BATTLE_WORK_H
 
 #include "unit/battle/battle.h"
-#include "unit/battle/battle2.h"
-#include "unit/battle/battle3.h"
-#include "unit/battle/battle4.h"
-#include "unit/battle/battle5.h"
-#include "unit/battle/battle6.h"
-#include "unit/battle/battle7.h"
+#include "unit/battle/unit.h"
+#include "unit/battle/actlist.h"
+#include "unit/battle/command.h"
+#include "unit/battle/action.h"
+#include "unit/battle/tgtexec.h"
+#include "unit/battle/turnend.h"
 #include "types.h"
 #include "layout_guard.h"
 #include "btltype.h"

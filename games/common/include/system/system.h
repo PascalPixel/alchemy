@@ -22,7 +22,7 @@ u32 Random16(void);
 #endif
 extern u32 gRandomState;
 
-extern volatile u16 gSleepActive;
+extern u16 gSleepActive;
 
 /* SYSTEM */
 
@@ -30,7 +30,7 @@ extern volatile u16 gSleepActive;
 #include "edition.h"
 
 struct FlashChipInfo;
-struct FlashInfo08007220;
+struct FlashChipAtmelInfo;
 
 struct FlashChipType
 {
@@ -40,7 +40,7 @@ struct FlashChipType
 	u16 unknown_1a;
 	u8	sector_shift;
 };
-extern struct FlashInfo08007220	  Flash_ChipAtmel;
+extern struct FlashChipAtmelInfo  Flash_ChipAtmel;
 extern const struct FlashChipType Flash_ChipUnknown;
 extern u32						  Flash_Handler1;
 extern u32						  gEraseFlashSector;
@@ -51,15 +51,16 @@ extern u32 Flash_Handler4;
 extern struct FlashChipInfo *gFlash;
 #endif
 #ifndef OWN_gFlashSavedIme
-extern volatile u16 gFlashSavedIme;
+extern u16 gFlashSavedIme;
 #endif
 #ifndef OWN_gFlashTimeoutFlag
 extern u8 gFlashTimeoutFlag;
 #endif
 #ifndef OWN_gFlashTimerCount
+/* FAKEMATCH: volatile as flash.c declares it for FlashTimerIntr (library C): without it that function: differ 5 in tbs-en, 13 instructions for 14. No game C reads this cell. */
 extern volatile u16 gFlashTimerCount;
 #endif
-extern volatile u8 gFlashTimerNum;
+extern u8 gFlashTimerNum;
 extern u8		   gNumberTextDecimalEnd[];
 extern u8		   gNumberTextHexEnd[];
 extern u8		   Link_TimeLabelString[];
@@ -128,7 +129,7 @@ extern const u8	 Render_BuildOamListKernel[];
 extern const u8	 Resource_ExecuteTransfer[];
 extern const u8	 Resource_PatchThumbBranch[];
 extern const u8	 Rom_LanguageCode;
-extern u8		 RomBytes_080308a0[];
+extern u8		 Rom_UnknownBytes[];
 extern const u32 SentouKouka_Hikaku4Gyaku[];
 extern const u32 SentouKouka_Hikaku4Jun[];
 extern const u32 SentouKouka_HikakuGyaku[];

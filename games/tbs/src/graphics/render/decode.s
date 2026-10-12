@@ -14,16 +14,16 @@
 	.global Render_DecodeFrame
 Render_DecodeFrame:
 	cmp	r2, #0
-	bne	.L_08009cd0
+	bne	.Lmode
 	mov	r4, #255
 	ands	r2, r0, #3
 	ldm	r0!, {r3}
 	add	r2, r2, r2, lsl #2
 	add	pc, pc, r2, lsl #2
-AlchemyUncredited_08009bd4:
+AlchemyUncredited_render_decode_1:
 	nop
-.L_08009bd8:
-AlchemyUncreditedEnd_08009bd4:
+.Lcopy_checked:
+AlchemyUncreditedEnd_render_decode_1:
 	ands	r2, r4, r3
 	bxeq	lr
 	subs	ip, r2, #223
@@ -47,8 +47,8 @@ AlchemyUncreditedEnd_08009bd4:
 	ldm	r0!, {r3}
 	and	r2, r3, r3, lsr #16
 	ands	r2, r2, r2, lsr #8
-	beq	.L_08009bd8
-.L_08009c38:
+	beq	.Lcopy_checked
+.Lcopy_unchecked:
 	ands	r2, r4, r3
 	subs	ip, r2, #223
 	addhi	r1, r1, ip
@@ -68,28 +68,28 @@ AlchemyUncreditedEnd_08009bd4:
 	ldm	r0!, {r3}
 	and	r2, r3, r3, lsr #16
 	ands	r2, r2, r2, lsr #8
-	bne	.L_08009c38
-	b	.L_08009bd8
+	bne	.Lcopy_unchecked
+	b	.Lcopy_checked
 	.4byte gDecodeFillByte
 	ldr	r2, [pc, #-12]
 	ldrb	r2, [r2]
-	b	.L_08009cc0
+	b	.Lfill_next
 	mov	r2, #0
-	b	.L_08009cc0
+	b	.Lfill_next
 	mov	r2, #1
-	b	.L_08009cc0
+	b	.Lfill_next
 	mov	r2, #15
-	b	.L_08009cc0
-.L_08009cb4:
+	b	.Lfill_next
+.Lfill_put:
 	subs	r3, r3, #223
 	addhi	r1, r1, r3
 	strbls	r2, [r1], #1
-.L_08009cc0:
+.Lfill_next:
 	ldrb	r3, [r0], #1
 	cmp	r3, #0
-	bne	.L_08009cb4
+	bne	.Lfill_put
 	bx	lr
-.L_08009cd0:
+.Lmode:
 	add	r4, r2, r2
 	ldrsh	r4, [pc, r4]
 	add	pc, pc, r4
@@ -100,7 +100,7 @@ AlchemyUncreditedEnd_08009bd4:
 	sub	r2, r2, #2
 	ldr	r4, [pc, #136]
 	cmp	r4, r2
-	beq	.L_08009d64
+	beq	.Lmap_ready
 	str	r2, [pc, #124]
 	ldr	r3, [pc, #128]
 	add	r2, r3, r2, lsl #8
@@ -123,19 +123,19 @@ AlchemyUncreditedEnd_08009bd4:
 	ldm	r2!, {r4, r5, r6, r7, r8, r9, ip}
 	stmia	r3!, {r4, r5, r6, r7, r8, r9, ip}
 	pop	{r5, r6, r7, r8, r9}
-.L_08009d64:
+.Lmap_ready:
 	add	r2, pc, #48
-	b	.L_08009d70
-.L_08009d6c:
+	b	.Lmap_next
+.Lmap_skip:
 	add	r1, r1, r4
-.L_08009d70:
+.Lmap_next:
 	ldrb	r3, [r0], #1
 	subs	r4, r3, #223
-	bhi	.L_08009d6c
+	bhi	.Lmap_skip
 	cmp	r3, #0
 	ldrbne	r3, [r2, r3]
 	strbne	r3, [r1], #1
-	bne	.L_08009d70
+	bne	.Lmap_next
 	bx	lr
 .syntax unified
 	.section .data,"aw",%progbits
@@ -157,7 +157,7 @@ TileMap_DrawRows:
 	mov	r4, #10485760
 	orr	r4, r4, #56
 	orr	r4, r4, #-16777216
-.L_08009e8c:
+.Ldraw_row:
 	ldrsh	r6, [r0, #4]
 	ldr	r7, [r0, #8]
 	ldr	r8, [r0, #12]
@@ -165,7 +165,7 @@ TileMap_DrawRows:
 	lsl	r7, r7, #15
 	lsl	r8, r8, #15
 	add	r4, r4, #503316480
-.L_08009ea8:
+.Ldraw_cell:
 	lsr	sl, r8, #26
 	add	fp, r3, r7, lsr #26
 	ldrb	ip, [fp, sl, lsl #6]!
@@ -304,14 +304,14 @@ TileMap_DrawRows:
 	strh	r9, [r1], #2
 	add	r1, r1, #56
 	subs	r4, r4, #16777216
-	bpl	.L_08009ea8
+	bpl	.Ldraw_cell
 	sub	r1, r1, #1920
 	add	r1, r1, #8
 	sub	r4, r4, #65536
 	tst	r4, #458752
 	addeq	r1, r1, #1856
 	tst	r4, #16711680
-	bne	.L_08009e8c
+	bne	.Ldraw_row
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
 	.global TileMap_DrawRowsCodeSize

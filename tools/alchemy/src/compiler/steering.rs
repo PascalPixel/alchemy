@@ -382,7 +382,7 @@ fn parameter_names(tokens: &[&Tok]) -> Option<Vec<String>> {
 pub(crate) const SCRIPT_LAYER: &[&str] = &[
     "games/tbs/include/field_event.h",
     "games/tbs/include/field_service.h",
-    "games/tbs/src/field/runpa_jo/jo.h",
+    "games/tbs/src/scene/runpa_jo.h",
     "games/tbs/include/iwram_call.h",
 ];
 

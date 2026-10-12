@@ -12,24 +12,24 @@ Tile_ConvertMap:
 	orr	r4, r5, r5, lsr #8
 	add	r4, r4, #1
 	mov	r6, #16384
-.L_0800a394:
+.Lcell:
 	ldrh	ip, [r0], #2
 	cmp	r5, ip, lsl #20
-	bne	.L_0800a3ac
+	bne	.Lstore_cell
 	add	ip, ip, r4
 	cmp	r4, #0
 	addne	r4, r4, #1
-.L_0800a3ac:
+.Lstore_cell:
 	strh	ip, [r1], #4
 	subs	r6, r6, #1
-	bne	.L_0800a394
+	bne	.Lcell
 	add	r0, r2, #16384
 	sub	r1, r1, #65536
 	add	r1, r1, #2
 	mov	r5, #255
 	orr	r5, r5, r5, lsl #16
 	mov	r8, #4096
-.L_0800a3d0:
+.Linterleave:
 	ldr	r4, [r2], #4
 	ldr	ip, [r0], #4
 	and	r3, r4, r5
@@ -45,7 +45,7 @@ Tile_ConvertMap:
 	strh	r3, [r1], #4
 	strh	r7, [r1], #4
 	subs	r8, r8, #1
-	bne	.L_0800a3d0
+	bne	.Linterleave
 	pop	{r5, r6, r7, r8}
 	bx	lr
 	.global Tile_ConvertMapCodeSize
@@ -58,9 +58,9 @@ Tile_CopyStrided:
 	bicsne	r2, r2, #7
 	bxeq	lr
 	push	{r5, r6, r7, r8, r9, sl, fp}
-.L_0800a428:
+.Lstride_row:
 	mov	ip, r1
-.L_0800a42c:
+.Lstride_block:
 	ldm	r0, {r4, r5}
 	add	r0, r0, r1
 	ldm	r0, {r6, r7}
@@ -81,10 +81,10 @@ Tile_CopyStrided:
 	stmia	r3!, {r4, r5, r6, r7, r8, r9, sl, fp}
 	subs	ip, ip, #8
 	subgt	r0, r0, r1, lsl #3
-	bgt	.L_0800a42c
+	bgt	.Lstride_block
 	sub	r0, r0, r1
 	subs	r2, r2, #8
-	bgt	.L_0800a428
+	bgt	.Lstride_row
 	pop	{r5, r6, r7, r8, r9, sl, fp}
 	bx	lr
 	.global Tile_CopyStridedCodeSize

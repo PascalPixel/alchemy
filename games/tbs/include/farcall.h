@@ -37,7 +37,7 @@ struct LevelUpResult;
 struct MenuSprite;
 struct MotionObject;
 struct ObjectRuntime;
-struct Output_08097f80;
+struct PolarOffsetOutput;
 struct RenderInput;
 struct RenderOutput;
 struct ResourceObject;

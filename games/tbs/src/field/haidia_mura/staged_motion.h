@@ -94,21 +94,6 @@ struct Resource373Particle
 	u8	field55;
 };
 
-struct StagedVerticalEffect
-{
-	s32	 pad0[2];
-	s32	 f8;
-	s32	 fc;
-	s32	 f10;
-	s32	 pad14;
-	s32	 f18;
-	s32	 f1c;
-	s32	 pad20[17];
-	s16	 f64;
-	s16	 pad66;
-	s32 *f68;
-};
-
 extern struct SceneEvent gHaidiaMuraEvents3[];
 extern s32 gJasmineAction[];
 

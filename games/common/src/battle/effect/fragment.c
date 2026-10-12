@@ -11,10 +11,6 @@
 #include "system.h"
 #include "field_event.h"
 
-#if !GAME_TLA
-void ObjectDispatch_ApplyArgumentToChildrenFar(struct FieldActor *object, s32 animation);
-#endif
-
 struct ItemBreakFragmentPosition
 {
 	s32 x;
@@ -81,10 +77,6 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src)
 			lim <<= 5;
 			if (turn > lim)
 				turn = lim;
-#else
-			turn = (s16)(ArcTan2(dz, dx) - src->angle);
-			if (turn > 0x1000)
-				turn = 0x1000;
 #endif
 			if (turn < -0x1000)
 				turn = -0x1000;
@@ -103,8 +95,6 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src)
 
 #if GAME_TLA
 	obj = Object_Spawn(0x2a1, pos.x, pos.y, pos.z);
-#else
-	obj = Object_Spawn(0x11d, pos.x, pos.y, pos.z);
 #endif
 	if (obj != 0)
 	{
@@ -112,8 +102,6 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src)
 		obj->field_48 = 0x1999;
 #if GAME_TLA
 		Object_SetMode(obj, 0);
-#else
-		ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
 #endif
 		obj->field_5e = 12;
 		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_CommonParticleScript);

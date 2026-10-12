@@ -21,8 +21,6 @@ s32 BattlePres_WaitSync(void)
 {
 #if GAME_TLA
 	struct BtlWork *work = Ram_HeapSlots->battle_work;
-#else
-	struct BtlWork *work = BtlWk;
 #endif
 	u16 *peer;
 	u16 *sig;
@@ -74,8 +72,6 @@ s32 BattlePres_SyncTurn(void)
 {
 #if GAME_TLA
 	struct BtlWork *work = Ram_HeapSlots->battle_work;
-#else
-	struct BtlWork *work = BtlWk;
 #endif
 	u16 *peer;
 	u16 *sig;

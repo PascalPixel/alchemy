@@ -10,8 +10,6 @@
 //--------------------------------------------------------------------------
 #if GAME_TLA
 s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *sc)
-#else
-s32 Script_AdvancePastCursor(struct ScriptInterpreter *sc)
 #endif
 {
 	s32 zero;
@@ -19,9 +17,6 @@ s32 Script_AdvancePastCursor(struct ScriptInterpreter *sc)
 #if GAME_TLA
 	// 命令の次の語が指すスクリプトへ飛ぶ
 	sc->script = (const s32 *)sc->script[sc->cursor + 1];
-#else
-	// 命令の次の語を新しい先頭にする
-	sc->script = sc->script + sc->cursor + 1;
 #endif
 	zero = 0;
 	sc->cursor = zero;

@@ -112,7 +112,7 @@ static s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor)
 		if (descending_y < 0)
 		{
 			vertical_motion_direction = 0;
-			goto block_5;
+			actor->vertical_motion_direction = vertical_motion_direction;
 		}
 	}
 	else
@@ -122,7 +122,6 @@ static s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor)
 		if (ascending_y > 0x80000)
 		{
 			vertical_motion_direction = 1;
-		block_5:
 			actor->vertical_motion_direction = vertical_motion_direction;
 		}
 	}

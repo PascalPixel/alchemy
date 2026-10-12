@@ -101,31 +101,8 @@ static s32 HaidiaArashi_RerollHeadingOnCountdown(struct FieldActor *object)
 	return 1;
 }
 
-static s32 UpdateFixedPointCountdown(struct FieldActor *state)
-{
-	switch (state->timer)
-	{
-	case 6:
-		state->scale_x -= 0x4000;
-		state->scale_y += 0x2000;
-		break;
-	case 4:
-		state->scale_x += 0x2000;
-		state->scale_y += -0x1000;
-		break;
-	case 2:
-		state->scale_x += 0x1000;
-		state->scale_y -= 0x800;
-		break;
-	case 0:
-		state->scale_x = 0x10000;
-		state->scale_y = 0x10000;
-		state->timer = (Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
-		break;
-	}
-	state->timer--;
-	return 1;
-}
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include "../common/object/pulse.c"
 
 u8 *HaidiaArashi_GetEntrances(void)
 {
@@ -3050,7 +3027,7 @@ s32 HaidiaArashi_LookAroundScript[] = {
 };
 
 s32 HaidiaArashi_ActorEightScript[] = {
-	SC_CALL(UpdateFixedPointCountdown),
+	SC_CALL(SceneActor_UpdateScalePulse),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

@@ -789,42 +789,43 @@ s32 HaidiaSukureta_RestoreEntryState(void)
 		v5 = 20;
 		Engine_MapCopyCellAttributes(9, 24, 1, 1, 23, 20);
 		Engine_MapCopyCellAttributes(9, 24, 1, 1, 24, 20);
-		goto done;
-	}
-	Engine_ActorSetPosition(9, 0, 0);
-	Engine_ActorSetPosition(10, 0, 0);
-	Engine_ActorSetPosition(1, 0, 0);
-	Engine_ActorSetPosition(11, 0, 0);
-	Engine_EventBegin();
-	if (Engine_GameFlagIsSet(0x109) == 0)
-	{
-		if (gGameState.entrance == 10)
-		{
-			Scene_LeaveForMtAleph();
-		}
-	}
-	if (Engine_GameFlagIsSet(0x801) != 0)
-	{
-		Engine_ActorSetPosition(13, 0, 0);
-		Engine_ActorSetPosition(14, 0, 0);
-		Engine_ActorSetPosition(15, 0, 0);
 	}
 	else
 	{
-		if (Engine_GameFlagIsSet(0x808) != 0)
+		Engine_ActorSetPosition(9, 0, 0);
+		Engine_ActorSetPosition(10, 0, 0);
+		Engine_ActorSetPosition(1, 0, 0);
+		Engine_ActorSetPosition(11, 0, 0);
+		Engine_EventBegin();
+		if (Engine_GameFlagIsSet(0x109) == 0)
 		{
-			Actor_SetPosition(14, 0x1880000, 0x1780000);
-			Actor_SetPosition(15, 0x1780000, 0x1780000);
-			FieldObject_SetTargetAndCallback(14, 0x10000, Sukureta_StrangerActions);
-			FieldObject_SetTargetAndCallback(15, 0x10000, Sukureta_StrangerActions);
+			if (gGameState.entrance == 10)
+			{
+				Scene_LeaveForMtAleph();
+			}
 		}
+		if (Engine_GameFlagIsSet(0x801) != 0)
+		{
+			Engine_ActorSetPosition(13, 0, 0);
+			Engine_ActorSetPosition(14, 0, 0);
+			Engine_ActorSetPosition(15, 0, 0);
+		}
+		else
+		{
+			if (Engine_GameFlagIsSet(0x808) != 0)
+			{
+				Actor_SetPosition(14, 0x1880000, 0x1780000);
+				Actor_SetPosition(15, 0x1780000, 0x1780000);
+				FieldObject_SetTargetAndCallback(14, 0x10000, Sukureta_StrangerActions);
+				FieldObject_SetTargetAndCallback(15, 0x10000, Sukureta_StrangerActions);
+			}
+		}
+		if (Engine_GameFlagIsSet(0x87a) != 0)
+		{
+			Actor_SetPosition(16, 0x840000, 0x1080000);
+		}
+		Engine_EventEnd();
 	}
-	if (Engine_GameFlagIsSet(0x87a) != 0)
-	{
-		Actor_SetPosition(16, 0x840000, 0x1080000);
-	}
-	Engine_EventEnd();
-done:;
 	return 0;
 }
 

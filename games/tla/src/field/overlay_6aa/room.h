@@ -63,7 +63,7 @@ void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 u32 Random16Far(void);
 
-void Func_0200246c(s32 index, s32 value);
+s32 Func_0200246c(s32 index, s32 value);
 s32 Func_0200249c(s32 index);
 void Func_02004bd0(struct ObjectRuntime *object, const void *script);
 struct ObjectRuntime *Func_02004bd8(s32 kind, s32 x, s32 y, s32 z);

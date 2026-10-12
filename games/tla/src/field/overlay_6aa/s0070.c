@@ -30,11 +30,7 @@ void BattleFx_PrepareBufferInterpolation(void);
 
 s32 Func_02000070(void)
 {
-    s32 index = 0;
-
-    /* FAKEMATCH: ⚓️ builds the index after the value */
-    asm("" : "+l"(index));
-    Func_0200246c(index, 65);
+    Func_0200246c(0, 65);
     return 0;
 }
 

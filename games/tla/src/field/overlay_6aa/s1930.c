@@ -38,7 +38,7 @@ void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
 void Func_02000d18(void);
 void Func_02000fe0(u8 *cell);
 void Func_020012e4(struct ObjectRuntime *object);
-void Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
+s32 Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
 void Func_02002c2c(void);
 void Func_02004c88(s32 scene, s32 a1);
 void Func_02004d98(void);
@@ -52,56 +52,32 @@ s32 Func_02001930(void)
 
 void Func_0200196c(void)
 {
-    s32 id = 10;
-
-    /* FAKEMATCH: ⚓️ builds the id after the other arguments */
-    asm("" : "+l"(id));
-    Func_02002f4c(id, 19, 20, 0, Data_0200547c);
+    Func_02002f4c(10, 19, 20, 0, Data_0200547c);
 }
 
 void Func_02001988(void)
 {
-    s32 id = 12;
-
-    /* FAKEMATCH: ⚓️ builds the id after the other arguments */
-    asm("" : "+l"(id));
-    Func_02002f4c(id, 19, 20, 0, Data_020054cc);
+    Func_02002f4c(12, 19, 20, 0, Data_020054cc);
 }
 
 void Func_020019a4(void)
 {
-    s32 id = 9;
-
-    /* FAKEMATCH: ⚓️ builds the id after the other arguments */
-    asm("" : "+l"(id));
-    Func_02002f4c(id, 18, 20, 0x4000, Data_02005528);
+    Func_02002f4c(9, 18, 20, 0x4000, Data_02005528);
 }
 
 void Func_020019c4(void)
 {
-    s32 id = 9;
-
-    /* FAKEMATCH: ⚓️ builds the id after the other arguments */
-    asm("" : "+l"(id));
-    Func_02002f4c(id, 13, 14, 0, Data_02005578);
+    Func_02002f4c(9, 13, 14, 0, Data_02005578);
 }
 
 void Func_020019e0(void)
 {
-    s32 id = 11;
-
-    /* FAKEMATCH: ⚓️ builds the id after the other arguments */
-    asm("" : "+l"(id));
-    Func_02002f4c(id, 13, 14, 0x4000, Data_020055d4);
+    Func_02002f4c(11, 13, 14, 0x4000, Data_020055d4);
 }
 
 void Func_02001a00(void)
 {
-    s32 id = 13;
-
-    /* FAKEMATCH: ⚓️ builds the id after the other arguments */
-    asm("" : "+l"(id));
-    Func_02002f4c(id, 21, 22, 0, Data_02005644);
+    Func_02002f4c(13, 21, 22, 0, Data_02005644);
 }
 
 extern const u8 Data_020056a0[];

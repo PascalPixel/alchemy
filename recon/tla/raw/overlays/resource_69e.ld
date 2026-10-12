@@ -24,7 +24,7 @@ SECTIONS
         "*/resource_69e_overlay.o"(.text.x02008cc4)
         "*/games/tla/src/field/overlay_69e/lightset.o"(.text)
         "*/resource_69e_overlay.o"(.text.x02008e58)
-        "*/resource_69e_overlay.o"(.text.x02009044)
+        "*/games/tla/src/field/overlay_69e/s1044.o"(.text)
         "*/resource_69e_overlay.o"(.text.x02009070)
         "*/resource_69e_overlay.o"(.text.x02009230)
         "*/resource_69e_overlay.o"(.text.x02009308)

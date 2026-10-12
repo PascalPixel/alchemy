@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
 	.section .text.x02008064,"ax",%progbits
+	.balign 4
 	.global Func_02000064
 	.thumb_func
 Func_02000064:
@@ -52,6 +53,7 @@ Func_02000064:
 .L_020080c6:
 	pop {r5, r6, r7, pc}
 	.section .text.x02008148,"ax",%progbits
+	.balign 4
 	.global Func_02000148
 	.thumb_func
 Func_02000148:
@@ -215,6 +217,7 @@ Func_020001a4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 	.section .text.x020082b8,"ax",%progbits
+	.balign 4
 	.global Func_020002b8
 	.thumb_func
 Func_020002b8:
@@ -1120,6 +1123,7 @@ Func_020008a4:
 .L_02008adc:
 	.4byte MsgFieldWaitingForCompanion
 	.section .text.x02008ae8,"ax",%progbits
+	.balign 4
 	.global Func_02000ae8
 	.thumb_func
 Func_02000ae8:
@@ -1425,6 +1429,7 @@ Func_02000cc4:
 .L_02008d7c:
 	.4byte 0x05000184
 	.section .text.x02008e58,"ax",%progbits
+	.balign 4
 	.global Func_02000e58
 	.thumb_func
 Func_02000e58:
@@ -1665,33 +1670,8 @@ Func_02000e58:
 	pop {r5, r6, r7, pc}
 .L_02009040:
 	.4byte gPartyState
-	.section .text.x02009044,"ax",%progbits
-	.global Func_02001044
-	.thumb_func
-Func_02001044:
-	push {lr}
-	ldr r3, [r1]
-	ldr r4, [r0]
-	ldr r2, [r1, #8]
-	subs r4, r4, r3
-	ldr r3, [r0, #8]
-	asrs r4, r4, #16
-	subs r3, r3, r2
-	asrs r3, r3, #16
-	adds r2, r3, #0
-	muls r2, r3
-	adds r0, r4, #0
-	muls r0, r4
-	adds r3, r2, #0
-	adds r0, r0, r3
-	ldr r3, .L_0200906c
-	mov lr, r3
-	.2byte 0xf800
-	pop {pc}
-	.2byte 0x0000
-.L_0200906c:
-	.4byte IwramFillWords + 0x74
 	.section .text.x02009070,"ax",%progbits
+	.balign 4
 	.global Func_02001070
 	.thumb_func
 Func_02001070:

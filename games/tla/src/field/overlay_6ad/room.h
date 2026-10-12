@@ -51,7 +51,7 @@ void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 u32 Random16Far(void);
 
-void Func_020027ac(s32 index, s32 value);
+s32 Func_020027ac(s32 index, s32 value);
 s32 Func_020027dc(s32 index);
 s32 Func_02004a8c(struct Box *box);
 void Func_02004d10(struct Box box);

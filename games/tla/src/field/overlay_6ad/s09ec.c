@@ -2,27 +2,20 @@
 
 void Func_020009ec(void)
 {
-    s32 value = 65;
-
-    /* FAKEMATCH: ⚓️ builds the value before the index */
-    asm volatile("" : "+l"(value));
-    Func_020027ac_(2, value);
-    value = 65;
-    /* FAKEMATCH: ⚓️ builds the value before the index */
-    asm volatile("" : "+l"(value));
-    Func_020027ac_(1, value);
-    Func_020027ac_(0, 65);
+    Func_020027ac(2, 65);
+    Func_020027ac(1, 65);
+    Func_020027ac(0, 65);
     Flag_Clear(0x350);
     if (Object_GetById(10)->z >> 20 != 15 && Object_GetById(9)->z >> 20 != 15) {
-        Func_020027ac_(1, 33);
+        Func_020027ac(1, 33);
         return;
     }
     if (Object_GetById(9)->z >> 20 != 13) {
-        Func_020027ac_(0, 17);
+        Func_020027ac(0, 17);
         return;
     }
     if (Object_GetById(8)->x >> 20 != 37) {
-        Func_020027ac_(2, 49);
+        Func_020027ac(2, 49);
         return;
     }
     Flag_Set(0x350);
@@ -37,11 +30,7 @@ void Func_020009ec(void)
 
 void Func_02000aac(void)
 {
-    s32 value = 3;
-
-    /* FAKEMATCH: ⚓️ builds the value before the index */
-    asm volatile("" : "+l"(value));
-    Func_020027ac_(3, value);
+    Func_020027ac(3, 3);
     Func_020055d0(0x10000, 0x2000);
     Camera_SetBounds(0xb80000, -1, 0x2300000, 1);
 }

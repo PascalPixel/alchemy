@@ -45,14 +45,9 @@ void Func_02004d98(void);
 
 void Func_02000fa4(void)
 {
-    s32 index;
-
     Func_02004de0(0x248);
     Flag_Set(0x17d);
     ObjectMotion_EnableActionAndSetCallback(11, Data_0200503c);
-    index = 0;
-    /* FAKEMATCH: ⚓️ builds the index after the value */
-    asm("" : "+l"(index));
-    Func_0200246c(index, 3);
+    Func_0200246c(0, 3);
     Flag_Set(0x234);
 }

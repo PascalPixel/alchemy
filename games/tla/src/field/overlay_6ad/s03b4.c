@@ -2,32 +2,18 @@
 
 void Func_020003b4(void)
 {
-    s32 value;
-
     if (Object_GetById(15)->z >> 20 == 14) {
-        value = 65;
-        /* FAKEMATCH: ⚓️ builds the value before the index */
-        asm volatile("" : "+l"(value));
-        Func_020027ac(0, value);
+        Func_020027ac(0, 65);
         Func_020027ac(2, 19);
     } else {
-        value = 17;
-        /* FAKEMATCH: ⚓️ builds the value before the index */
-        asm volatile("" : "+l"(value));
-        Func_020027ac(0, value);
+        Func_020027ac(0, 17);
         Func_020027ac(2, 67);
     }
     if (Object_GetById(16)->x >> 20 == 6) {
-        value = 65;
-        /* FAKEMATCH: ⚓️ builds the value before the index */
-        asm volatile("" : "+l"(value));
-        Func_020027ac(1, value);
+        Func_020027ac(1, 65);
         Func_020027ac(3, 3);
     } else {
-        value = 49;
-        /* FAKEMATCH: ⚓️ builds the value before the index */
-        asm volatile("" : "+l"(value));
-        Func_020027ac(1, value);
+        Func_020027ac(1, 49);
         Func_020027ac(3, 67);
     }
 }
@@ -71,13 +57,8 @@ void Func_020004bc(s32 state)
 
 void Func_020004f8(void)
 {
-    s32 value;
-
     Func_020056c0(0x248);
-    value = 3;
-    /* FAKEMATCH: ⚓️ builds the value before the index */
-    asm volatile("" : "+l"(value));
-    Func_020027ac(0, value);
+    Func_020027ac(0, 3);
     GameFlag_SetBit(0x220);
 }
 

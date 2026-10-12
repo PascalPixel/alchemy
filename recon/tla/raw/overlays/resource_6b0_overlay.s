@@ -532,43 +532,6 @@ Func_02000480:
 	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008650:
 	.4byte 0xffff0000
-	.section .text.x02008660,"ax",%progbits
-	.global Func_02000660
-	.thumb_func
-Func_02000660:
-	push {r5, lr}
-	adds r5, r0, #0
-	adds r1, r5, #0
-	adds r2, r5, #0
-	adds r1, #100
-	adds r2, #102
-	ldrh r2, [r2]
-	ldrh r3, [r1]
-	adds r3, r3, r2
-	strh r3, [r1]
-	ldr r3, [r5, #68]
-	ldr r0, [r5, #76]
-	str r3, [r5, #8]
-	ldr r3, [r5, #72]
-	str r3, [r5, #12]
-	movs r3, #152
-	lsls r3, r3, #16
-	str r3, [r5, #16]
-	movs r2, #0
-	ldrsh r1, [r1, r2]
-	adds r2, r5, #0
-	adds r2, #8
-	bl Vector_AddPolarOffsetFar
-	ldr r3, [r5, #76]
-	ldr r2, .L_020086a0
-	adds r3, r3, r2
-	negs r0, r3
-	orrs r0, r3
-	lsrs r0, r0, #31
-	str r3, [r5, #76]
-	pop {r5, pc}
-.L_020086a0:
-	.4byte 0xffff0000
 	.section .text.x020086f8,"ax",%progbits
 	.global Func_020006f8
 	.thumb_func
@@ -2628,31 +2591,6 @@ Func_02001a94:
 	.4byte gPartyState
 .L_02009b84:
 	.4byte 0xfff00000
-	.section .text.x02009c60,"ax",%progbits
-	.global Func_02001c60
-	.thumb_func
-Func_02001c60:
-	push {lr}
-	bl Func_020000f4
-	bl Func_020034b0
-	ldr r3, .L_02009c8c
-	movs r2, #128
-	lsls r2, r2, #2
-	adds r2, #194
-	adds r3, r3, r2
-	movs r2, #2
-	strb r2, [r3]
-	movs r1, #99
-	ldr r0, .L_02009c90
-	bl Func_02003448
-	movs r0, #40
-	bl Battle_WaitMode0
-	bl Func_02000158
-	pop {pc}
-.L_02009c8c:
-	.4byte gPartyState
-.L_02009c90:
-	.4byte 0x000000ec
 	.section .text.x02009c94,"ax",%progbits
 	.global Func_02001c94
 	.thumb_func

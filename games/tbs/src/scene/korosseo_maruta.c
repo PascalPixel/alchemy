@@ -199,7 +199,7 @@ static inline void InitializeSelectedActor(s32 actorId)
 
 extern s32 gColossoParticleCount;
 
-// コロッセオ共通 (field/common/korosseo)
+// コロッセオ共通 (scene/common/korosseo)
 
 u8 *ColossoLogRollingStage_GetScriptData(void)
 {

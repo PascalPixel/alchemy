@@ -101,7 +101,7 @@ typedef void (*SceneTask)(void);
 
 #define KEYS_HELD gKeysHeld // VBlank で書く
 
-// コロッセオ共通 (field/common/korosseo)
+// コロッセオ共通 (scene/common/korosseo)
 
 u8 *KorosseoKawa_GetEntrances(void)
 {

@@ -2,6 +2,7 @@
 #include "unit/battle/effect/koukabit.h"
 #include "unit/battle/effect/koukatbl.h"
 #include "unit/battle/effect/effect.h"
+#include "unit/battle/effect/effect9.h"
 #include "unit/battle/effect/effect10.h"
 #include "unit/battle/effect/effect11.h"
 #include "unit/battle/effect/object.h"
@@ -17471,77 +17472,4 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 	for (i = 0; i != 11; i++)
 		ResourceObject_ReleaseFar(work->objects[i]);
 	BattleFx_EndCanvasLayer();
-}
-
-void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity)
-{
-	step->x += step->velocity_x;
-	step->y += step->velocity_y;
-	step->z += step->velocity_z;
-	step->velocity_y += gravity;
-	step->velocity_x = step->velocity_x * damping / 64;
-	step->velocity_y = step->velocity_y * damping / 64;
-	step->velocity_z = step->velocity_z * damping / 64;
-}
-
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity)
-{
-	step->x += step->velocity_x;
-	step->y += step->velocity_y;
-	step->velocity_y += gravity;
-	step->velocity_x = step->velocity_x * damping / 64;
-	step->velocity_y = step->velocity_y * damping / 64;
-}
-
-s32 EffectPosition_ApplyBaseAndYOffset(s32 *point, struct EffectPosition *position)
-{
-	s32 result = Render_ProjectPoint(point, &position->x);
-	position->y -= 16;
-	return result;
-}
-
-void EffectPosition_ApplyAnimationAndYOffset(s32 id, struct EffectPosition *position)
-{
-	BattleUnit_ProjectToScreen(id, &position->x);
-	position->y -= 16;
-}
-
-void EffectPosition_ApplyStepAndYOffset(s32 id, struct EffectPosition *position)
-{
-	BattleMotion_ProjectScaledPositionFar(id, position);
-	position->y -= 16;
-}
-
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position)
-{
-	BattleMotion_ProjectPositionFar(id, position);
-	position->y -= 16;
-}
-
-s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen)
-{
-	struct BattleCamera	   *camera;
-	struct MotionObject	   *object;
-	struct AnimationObject *info;
-	s32						scale;
-	/* FAKEMATCH: needed to match: the unused 12-byte vector preserves both stack adjustments and camera-load order. */
-	s32 unused[3];
-
-	camera = gCameraWork;
-	object = GetBattleObjectSlotFar(unit)->object;
-	info = GetMotionRecordFar(object, 0);
-	Render_ResetTransformState();
-	Graphics_PrepareTransferInIwramWork((u8 *)camera, (u8 *)camera->pos);
-	scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), info->scale);
-	screen[1] -= Iwram_MulQ16(scale, Battle_GetObjectTableValueFar(unit) >> 17);
-	return 0;
-}
-
-void BattleFx_ProbeKeysForExtendedActor(void)
-{
-	struct BattleEffectWork		*work = *(struct BattleEffectWork **)gBattleFxWork;
-	struct BattleEffectArgument *effect = work->effect;
-
-	if (effect->actors[0] > 0x7f)
-		(void)gKeysHeld;
 }

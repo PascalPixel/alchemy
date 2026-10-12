@@ -233,14 +233,6 @@ void EffectStep_RunAnimationMode2(struct EffectStep *step);
 void EffectStep_RunAnimationMode3Or4Or5(struct EffectStep *step);
 void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant);
 void BattlePres_RunRisingWall(struct BattleEffectArgument *effect);
-void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity);
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
-s32 EffectPosition_ApplyBaseAndYOffset(s32 *point, struct EffectPosition *position);
-void EffectPosition_ApplyAnimationAndYOffset(s32 id, struct EffectPosition *position);
-void EffectPosition_ApplyStepAndYOffset(s32 id, struct EffectPosition *position);
-void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
-s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
-void BattleFx_ProbeKeysForExtendedActor(void);
 
 // 粒の置き場：Ram_MapCellBuffer を struct EffectStep の並びとして使う
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)

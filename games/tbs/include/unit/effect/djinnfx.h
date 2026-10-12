@@ -15,7 +15,7 @@
 
 struct BattleEffectArgument;
 
-void BattleFx_DispatchByIdRange(s32 *arg0);
+void BattleFx_DispatchByIdRange(struct BattleEffectArgument *effect);
 void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect);
 void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect);
 void BattleFx_StepPaletteToResource(s32 resource_id);

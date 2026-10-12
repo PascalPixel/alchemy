@@ -67,7 +67,7 @@
 #include "fixed_point_position.h"
 #include "irq.h"
 
-void BattleFx_DispatchByIdRange(s32 *arg0)
+void BattleFx_DispatchByIdRange(struct BattleEffectArgument *effect)
 {
 	s32 kind;
 	s32 value;
@@ -76,20 +76,20 @@ void BattleFx_DispatchByIdRange(s32 *arg0)
 	Runtime_AllocateBlock(41, value);
 	Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectWork));
 	Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
-	value = *arg0;
+	value = effect->kind;
 	kind = value;
 	value = kind - 100;
 	if ((u32)value <= 35)
 	{
-		BattleFx_RunCastingImpact((struct BattleEffectArgument *)arg0, value);
+		BattleFx_RunCastingImpact(effect, value);
 	}
 	else if (kind > 199)
 	{
-		BattlePres_RunRingAndSparkScene((struct BattleEffectArgument *)arg0);
+		BattlePres_RunRingAndSparkScene(effect);
 	}
 	else
 	{
-		BattlePres_RunBeamSequence((struct BattleEffectArgument *)arg0);
+		BattlePres_RunBeamSequence(effect);
 	}
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
 	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);

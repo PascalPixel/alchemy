@@ -350,7 +350,7 @@
     "*/games/tla/src/graphics/text/lookup_symbol.o"(.text .rodata .data .padding)
     "*/recon/tla/de/rom.o"(.rom.000385e0)
     "*/games/tla/src/graphics/tile/metaent.o"(.text)
-    "*/games/common/src/graphics/tile/metatile.o"(.text)
+    "*/games/common/src/window/metatile.o"(.text)
     "*/games/tla/src/graphics/tile/decompress_4bpp.o"(.text .rodata .data .padding)
     "*/games/tla/src/graphics/tile/decompress_4bpp_nibbles.o"(.text .rodata .data .padding)
     "*/games/tla/src/graphics/tile/decompress_4bpp_loop.o"(.text .rodata .data .padding)

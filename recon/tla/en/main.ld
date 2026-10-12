@@ -396,7 +396,7 @@
         "*/recon/tla/raw/080385e0.o"(.text)
         "*/recon/tla/raw/080385e2.o"(.text)
         "*/games/tla/src/graphics/tile/metaent.o"(.text)
-        "*/games/common/src/graphics/tile/metatile.o"(.text)
+        "*/games/common/src/window/metatile.o"(.text)
         "*/games/tla/src/graphics/tile/decompress_4bpp.o"(.text .rodata .data .padding)
         "*/games/tla/src/graphics/tile/decompress_4bpp_nibbles.o"(.text .rodata .data .padding)
         "*/games/tla/src/graphics/tile/decompress_4bpp_loop.o"(.text .rodata .data .padding)

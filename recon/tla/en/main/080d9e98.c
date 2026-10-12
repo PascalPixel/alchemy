@@ -1,3 +1,7 @@
+/* Near miss, differ 10 of 60: scheduling only. The native loads the work
+ * slot before it copies the second argument, and orders the seven argument
+ * loads and the 0x80000 constant differently; a barrier after the work load
+ * moves the frame setup instead (differ 14). */
 #include "worka0.h"
 #include "object_runtime.h"
 

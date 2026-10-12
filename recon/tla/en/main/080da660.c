@@ -1,3 +1,6 @@
+/* Near miss, differ 8 of 57: scheduling only. The native opens the frame and
+ * saves the third argument before it starts the heap slot address, and the
+ * argument setup of Func_080da6e0 is ordered as in Func_080da334. */
 #include "worka0.h"
 #include "object_runtime.h"
 #include "system.h"

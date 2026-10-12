@@ -1,3 +1,6 @@
+/* Near miss, differ 6 of 58: scheduling only, in the argument setup of
+ * Func_080da3bc (the native loads the second y after the constant shift and
+ * shifts the sine before adding the lift). */
 #include "worka0.h"
 #include "object_runtime.h"
 #include "system.h"

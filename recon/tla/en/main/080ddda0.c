@@ -1,3 +1,7 @@
+/* Near miss, differ 4 of 113 (was 16 through a gEffectWork symbol; this game
+ * reads the effect work from its heap slot): two scheduling pairs. The native
+ * starts the 0x100000 lift before it loads y, and reloads the first anchor
+ * from the frame before it finishes the flag address. */
 #include "types.h"
 #include "objdisp.h"
 #include "system.h"
@@ -21,7 +25,7 @@ struct EffectChild {
     void (*callback)(void);
 };
 
-extern struct BattleEffectScene *gEffectWork;
+#include "ram_buffer.h"
 
 void BattleEffect_InitializeSharedScene(void);
 void *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
@@ -44,7 +48,7 @@ void BattleEffect_RunTargetedItemBreak(void)
     s32 index;
     s32 start_y;
 
-    scene = gEffectWork;
+    scene = Ram_HeapSlots->effect_work;
     child = scene->child;
     main_object = scene->main_object;
     if (child == 0)

@@ -1,3 +1,6 @@
+/* Near miss, differ 20 of 48: the same thirteen stores; four pool loads sit one
+ * row earlier in the native (ldr r3 before movs r2, #128 at the top; ldr r1
+ * and ldr r2 before the window address), which moves the pool words. */
 #include "types.h"
 #include "io_reg.h"
 

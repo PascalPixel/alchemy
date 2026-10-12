@@ -844,8 +844,7 @@ void KorosseoKawa_RunStageIntro(s32 scene)
 			Camera_MoveTo(PIXELS(328), -1, PIXELS(168), 1);
 			Engine_CameraWaitForMove();
 			Engine_EventShowMessage(scene, 0);
-			/* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
-			((s32 (*)())Korosseo_FadeInCompetitor)(0, 280, 200);
+			Korosseo_FadeInCompetitor(0, 280, 200);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 			Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 200);
 			Engine_EventWait(30);
@@ -992,8 +991,7 @@ void Korosseo_RunBrokenBridgeIntro(s32 scene)
 			SceneState_SetMode66AndPassOpeningSequence();
 			Engine_EventWait(60);
 			Event_ShowMessage(scene, 0);
-			/* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
-			((s32 (*)())Korosseo_FadeInCompetitor)(0, 736, 200);
+			Korosseo_FadeInCompetitor(0, 736, 200);
 			/* FAKEMATCH: the discarded result sets r0 after both other arguments. */
 			Value3(Engine_ActorFaceDirection, ACTOR_PARTY_LEADER, 0, 0);
 			KorosseoKawa_WaitForCountdown();
@@ -1038,8 +1036,7 @@ void Korosseo_RunLumberWaterIntro(s32 scene)
 		Event_ShowMessage(scene, 0);
 		KorosseoKawa_ReleaseMarker();
 		Engine_EventWait(15);
-		/* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
-		((s32 (*)())Korosseo_FadeInCompetitor)(0, 984, 200);
+		Korosseo_FadeInCompetitor(0, 984, 200);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 10);
 		Event_ShowMessage(scene, 0);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 30);

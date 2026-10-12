@@ -1053,9 +1053,8 @@ s32 StageSetup_BuildAndDispatch(void)
 	actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
 	Engine_ActorSetAnimation(8, 9);
 	gGameState.movement_mode = 0;
-	/* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
-	((s32 (*)())Korosseo_ShowItemIcon)(39, 3);
-	((s32 (*)())Korosseo_ShowItemIcon)(40, 17);
+	Korosseo_ShowItemIcon(39, 3);
+	Korosseo_ShowItemIcon(40, 17);
 	Engine_ActorSetChildValue(8, 2);
 
 	switch (gGameState.entrance)
@@ -1555,8 +1554,7 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
 		Engine_CameraWaitForMove();
 		Engine_EventWait(30);
 		Event_ShowMessage(scene, 0);
-		/* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
-		((s32 (*)())Korosseo_FadeInCompetitor)(0, x, 200);
+		Korosseo_FadeInCompetitor(0, x, 200);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
 		ColossoLogRollingStage_SpawnPositionedObject(0, x, 152);
 		ColossoLogRollingStage_SpawnPositionedObject(0, 296, 152);
@@ -1619,8 +1617,7 @@ void KorosseoMaruta_RunStageIntro(s32 scene)
 			ColossoLogRollingStage_StartSceneTask();
 			Engine_EventWait(60);
 			Engine_EventShowMessage(scene, 0);
-			/* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
-			((s32 (*)())Korosseo_FadeInCompetitor)(0, 504, 200);
+			Korosseo_FadeInCompetitor(0, 504, 200);
 			/* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
 			Value3(Engine_ActorFaceDirection, 0, 0, 0);
 			ColossoLogRollingStage_WaitForSceneTask();
@@ -1683,8 +1680,7 @@ void FieldScene_RunFourStepActorMotion(s32 event)
 			Engine_EventWait(30);
 			Event_ShowMessage(event, 0);
 			Event_ShowMessage(event, 0);
-			/* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
-			((s32 (*)())Korosseo_FadeInCompetitor)(0, 0x330, 200);
+			Korosseo_FadeInCompetitor(0, 0x330, 200);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 			Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x348, 200);
 			Engine_ActorFaceDirection(0, 0xc000, 20);
@@ -1779,8 +1775,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 event)
 			Engine_EventWait(30);
 			Event_ShowMessage(event, 0);
 			Event_ShowMessage(event, 0);
-			/* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
-			((s32 (*)())Korosseo_FadeInCompetitor)(0, 0x3d8, 184);
+			Korosseo_FadeInCompetitor(0, 0x3d8, 184);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
 			ColossoLogRollingStage_PositionAndActivateActor(0, 0x3e0, 184);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x2666);

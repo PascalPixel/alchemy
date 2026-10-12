@@ -894,9 +894,8 @@ s32 KorosseoKabe_ApplyEntryState(void)
 	}
 	Engine_ActorSetAnimation(8, 9);
 	gGameState.movement_mode = 0;
-	/* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
-	((s32 (*)())Korosseo_ShowItemIcon)(41, 89);
-	((s32 (*)())Korosseo_ShowItemIcon)(40, 77);
+	Korosseo_ShowItemIcon(41, 89);
+	Korosseo_ShowItemIcon(40, 77);
 	Engine_ActorSetChildValue(8, 1);
 	switch (gGameState.entrance)
 	{
@@ -1038,8 +1037,7 @@ void KorosseoKabe_RunStageIntro(s32 speaker)
 			Engine_CameraMoveTo(0x4c80000, -1, 0xb80000, 1);
 			Engine_CameraWaitForMove();
 			Engine_EventShowMessage(speaker, 0);
-			/* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
-			((s32 (*)())Korosseo_FadeInCompetitor)(ACTOR_PARTY_LEADER, 0x4f8, 168);
+			Korosseo_FadeInCompetitor(ACTOR_PARTY_LEADER, 0x4f8, 168);
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
 			SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x508, 184);
 			SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 0x508, 216);
@@ -1207,8 +1205,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 speaker)
 		z = 264;
 		Engine_CameraWaitForMove();
 		Engine_EventShowMessage(speaker, 0);
-		/* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
-		((s32 (*)())Korosseo_FadeInCompetitor)(ACTOR_PARTY_LEADER, 632, z);
+		Korosseo_FadeInCompetitor(ACTOR_PARTY_LEADER, 632, z);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 		Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, z);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 20);
@@ -1306,8 +1303,7 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
 		Camera_MoveTo(0x1380000, -1, 0xb00000, 1);
 		Engine_CameraWaitForMove();
 		Engine_EventShowMessage(speaker, 0);
-		/* FAKEMATCH: void function called as returning s32; as a void call the argument moves are ordered differently. */
-		((s32 (*)())Korosseo_FadeInCompetitor)(ACTOR_PARTY_LEADER, 408, 264);
+		Korosseo_FadeInCompetitor(ACTOR_PARTY_LEADER, 408, 264);
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
 		SceneActor_PlaceWithScale14000(ACTOR_PARTY_LEADER, 408, 216);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 10);

@@ -902,7 +902,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
 		((s32 (*)(s32, s32, s32, s32, s32, s32, s32))FieldScene_BuildDescriptorAndInstallTask)(
 			0, 8, 5, 0x680000, 0x1000000, 40, 41);
-		Map_CopyCellsTo(127, 0, 1, 2, 79, 6);
+		Map_CopyCellsLayered(127, 0, 1, 2, 79, 6);
 		Engine_ActorDestroy(34);
 		Engine_ActorDestroy(35);
 		Engine_ActorDestroy(36);

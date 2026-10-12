@@ -35,7 +35,7 @@
 	import Map_GetTerrainHeight, Map_GetTerrainHeightFar
 	import GetMapCellCollision, GetMapCellCollisionFar
 	import Engine_MapCopyCellAttributes, Map_CopyCellAttributeRectFar
-	import Engine_MapCopyCellsTo, Map_CopyCellIndexRectFar
+	import Engine_MapCopyCellsLayered, Map_CopyCellIndexRectFar
 	import Object_CheckMovementCollision, Map_CheckObjectStepFar
 	import Engine_ActorSetSpriteFlags, ObjectDispatch_SetSingleChildFlagsFar
 	import Graphics_EnableObjLayerAndCallbacks, Graphics_EnableObjLayerAndCallbacksFar

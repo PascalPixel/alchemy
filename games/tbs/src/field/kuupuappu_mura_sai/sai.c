@@ -654,7 +654,7 @@ void ActorPresentation_SetPairedSceneCells(void)
 	s32 v2 = 25;
 
 	Engine_MapCopyCellAttributes(41, 43, 1, 1, v1, v2);
-	Engine_MapCopyCells(40, 42, 12, 22, 3, 3);
+	Engine_MapCopyCellsTo(40, 42, 12, 22, 3, 3);
 }
 
 void ActorPresentation_SetAlternatePairedSceneCells(void)
@@ -663,7 +663,7 @@ void ActorPresentation_SetAlternatePairedSceneCells(void)
 	s32 v2 = 25;
 
 	Engine_MapCopyCellAttributes(37, 43, 1, 1, v1, v2);
-	Engine_MapCopyCells(36, 42, 12, 22, 3, 3);
+	Engine_MapCopyCellsTo(36, 42, 12, 22, 3, 3);
 }
 
 void FieldScene_RunActorEighteenDialogue(void)
@@ -707,7 +707,7 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
 	if (Engine_GameFlagIsSet(0x200))
 		Map_CopyCellAttributes(55, 26, 4, 2, 23, 26);
 	OverlayObject_CreateConfiguredObjectB(0x800000, 0, 0x1a40000, 223);
-	Engine_MapCopyCells(45, 41, 8, 45, 3, 3);
+	Engine_MapCopyCellsTo(45, 41, 8, 45, 3, 3);
 	Engine_TaskWait(1);
 	actor = Object_GetById(14);
 	actor->update = (void (*)(union FieldObject *))UpdateActorProximity;

@@ -5,7 +5,7 @@
 	import Engine_VramLoad, VramBlock_LoadCachedFar
 	import Engine_MapAnimateCells, Map_PlayMetatileCopySequenceFar
 	import Engine_MapCopyCellAttributes, Map_CopyCellAttributeRectFar
-	import Engine_MapCopyCellsTo, Map_CopyCellIndexRectFar
+	import Engine_MapCopyCellsLayered, Map_CopyCellIndexRectFar
 	import Engine_ActorSetSpriteFlags, ObjectDispatch_SetSingleChildFlagsFar
 	import Engine_ItemLoadIcon, Ui_PrepareTransferForItemFar
 	import Engine_GameFlagIsSet, GameFlag_TestFar

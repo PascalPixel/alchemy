@@ -1995,7 +1995,7 @@ s32 ArutamiraDou_ApplyEntryState(void)
 		state = (s8 *)&gSceneState[1];
 		if (state[0] == 99)
 		{
-			Map_CopyCellsTo(41, 55, 3, 2, 30, 55);
+			Map_CopyCellsLayered(41, 55, 3, 2, 30, 55);
 			Map_CopyCellAttributes(42, 8, 1, 1, 31, 8);
 		}
 		if (state[0] == 2)
@@ -2119,7 +2119,7 @@ void ArutamiraDou_ReleaseWallBurst(void)
 		object += 72;
 	}
 	Engine_TaskWait(80);
-	Map_CopyCellsTo(41, 55, 3, 2, 30, 55);
+	Map_CopyCellsLayered(41, 55, 3, 2, 30, 55);
 	Map_CopyCellAttributes(42, 8, 1, 1, 31, 8);
 	Engine_TaskWait(50);
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);

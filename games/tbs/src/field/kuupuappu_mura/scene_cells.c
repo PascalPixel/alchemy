@@ -16,11 +16,11 @@ void ActorDraw_SetupActorSceneCells(void)
 	struct FieldSprite *sprite = actor->sprite;
 
 	Engine_AudioPlayCue(188);
-	Engine_MapCopyCells(42, 33, 34, 16, 2, 2);
-	Engine_MapCopyCells(42, 35, 36, 16, 2, 2);
+	Engine_MapCopyCellsTo(42, 33, 34, 16, 2, 2);
+	Engine_MapCopyCellsTo(42, 35, 36, 16, 2, 2);
 	Engine_EventWait(4);
-	Engine_MapCopyCells(40, 33, 34, 16, 2, 2);
-	Engine_MapCopyCells(40, 35, 36, 16, 2, 2);
+	Engine_MapCopyCellsTo(40, 33, 34, 16, 2, 2);
+	Engine_MapCopyCellsTo(40, 35, 36, 16, 2, 2);
 	Engine_EventWait(4);
 	{
 		s32 dest_x = 3;

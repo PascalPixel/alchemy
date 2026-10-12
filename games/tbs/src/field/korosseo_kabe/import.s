@@ -31,7 +31,7 @@
 	import Engine_ObjectSetPosition, Object_SetMoveTargetFar
 	import Object_CommitPosition, Script_WaitForEventTimeoutFar
 	import Engine_MapCopyCellAttributes, Map_CopyCellAttributeRectFar
-	import Engine_MapCopyCellsTo, Map_CopyCellIndexRectFar
+	import Engine_MapCopyCellsLayered, Map_CopyCellIndexRectFar
 	import Object_CheckMovementCollision, Map_CheckObjectStepFar
 	import Engine_ActorSetSpriteFlags, ObjectDispatch_SetSingleChildFlagsFar
 	import Engine_MessageShowCentered, UiText_ShowPositionedMessageAndWaitFar

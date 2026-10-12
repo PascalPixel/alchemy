@@ -9,7 +9,7 @@
 	import Engine_ObjectSetScript, ObjectDispatch_InitializeFar
 	import Engine_ObjectCreate, Object_CreateFar
 	import Engine_MapAnimateCells, Map_PlayMetatileCopySequenceFar
-	import Engine_MapCopyCells, Map_CopyMetatileIndicesRectFar
+	import Engine_MapCopyCellsTo, Map_CopyMetatileIndicesRectFar
 	import Engine_MapCopyCellAttributes, Map_CopyCellAttributeRectFar
 	import Engine_ActorSetSpriteFlags, ObjectDispatch_SetSingleChildFlagsFar
 	import Engine_ObjectSetBlendMode, ObjectDispatch_SetChildBlendModeFar

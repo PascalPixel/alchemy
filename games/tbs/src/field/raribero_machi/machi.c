@@ -422,7 +422,7 @@ void FieldScene_RunSecondarySequence(void)
 	Actor_SetSpeed(22, 0xcccc, 0x6666);
 	Object_GetById(22)->motion_flags = 2;
 	Engine_ActorSetSpritePriority(22, 2);
-	Map_CopyCellsTo(34, 0, 1, 2, 4, 18);
+	Map_CopyCellsLayered(34, 0, 1, 2, 4, 18);
 	Event_PlayCue(158);
 	Engine_EventWait(20);
 	Actor_SetPosition(22, 0x480000, 0x1380000);
@@ -436,7 +436,7 @@ void FieldScene_RunSecondarySequence(void)
 	Engine_EventWait(20);
 	Actor_WalkByAndWait(22, 0, 16);
 #endif
-	Engine_MapCopyCellsTo(32, 0, 1, 2, 4, 18);
+	Engine_MapCopyCellsLayered(32, 0, 1, 2, 4, 18);
 	Event_PlayCue(159);
 	Engine_EventWait(20);
 	Event_ShowMessage(22, 0);
@@ -593,13 +593,13 @@ void FieldScene_RunSecondarySequence(void)
 	Actor_WalkByAndWait(22, -16, 0);
 	Actor_FaceDirection(22, 0xc000, 0);
 	Engine_EventWait(20);
-	Map_CopyCellsTo(34, 0, 1, 2, 4, 18);
+	Map_CopyCellsLayered(34, 0, 1, 2, 4, 18);
 	Event_PlayCue(158);
 	Engine_EventWait(10);
 	Actor_WalkByAndWait(22, 0, -16);
 	Actor_SetPosition(22, 0, 0);
 	Engine_EventWait(10);
-	Engine_MapCopyCellsTo(32, 0, 1, 2, 4, 18);
+	Engine_MapCopyCellsLayered(32, 0, 1, 2, 4, 18);
 	Event_PlayCue(159);
 	Engine_EventWait(50);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);

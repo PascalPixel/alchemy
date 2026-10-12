@@ -89,24 +89,24 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 	switch ((u32)KorosseoKawa_Countdown)
 	{
 	case 66:
-		Engine_MapCopyCellsTo(92, 31, 2, 2, 50, 38);
-		Engine_MapCopyCellsTo(92, 31, 2, 2, 54, 38);
+		Engine_MapCopyCellsLayered(92, 31, 2, 2, 50, 38);
+		Engine_MapCopyCellsLayered(92, 31, 2, 2, 54, 38);
 		Engine_ActorSetAnimation(16, 10);
 		break;
 	case 60:
-		Engine_MapCopyCellsTo(92, 33, 2, 2, 50, 38);
-		Engine_MapCopyCellsTo(92, 33, 2, 2, 54, 38);
+		Engine_MapCopyCellsLayered(92, 33, 2, 2, 50, 38);
+		Engine_MapCopyCellsLayered(92, 33, 2, 2, 54, 38);
 		Engine_MapCopyCellAttributes(50, 25, 6, 1, 50, 12);
 		Engine_ActorSetAnimation(16, 11);
 		break;
 	case 6:
-		Engine_MapCopyCellsTo(92, 31, 2, 2, 50, 38);
-		Engine_MapCopyCellsTo(92, 31, 2, 2, 54, 38);
+		Engine_MapCopyCellsLayered(92, 31, 2, 2, 50, 38);
+		Engine_MapCopyCellsLayered(92, 31, 2, 2, 54, 38);
 		Engine_ActorSetAnimation(16, 10);
 		break;
 	case 0:
-		Engine_MapCopyCellsTo(92, 29, 2, 2, 50, 38);
-		Engine_MapCopyCellsTo(92, 29, 2, 2, 54, 38);
+		Engine_MapCopyCellsLayered(92, 29, 2, 2, 50, 38);
+		Engine_MapCopyCellsLayered(92, 29, 2, 2, 54, 38);
 		Engine_ActorSetAnimation(16, 12);
 		Engine_MapCopyCellAttributes(50, 24, 6, 1, 50, 12);
 		KorosseoKawa_Countdown = 120;
@@ -640,7 +640,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
 		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
 		((s32 (*)(s32, s32, s32, s32, s32, s32, s32))FieldScene_BuildSceneDescriptorAndInstallTask)(
 			0, 8, 4, 0x5180000, 0xc00000, 24, 25);
-		Map_CopyCellsTo(127, 0, 1, 2, 19, 2);
+		Map_CopyCellsLayered(127, 0, 1, 2, 19, 2);
 		Engine_ActorDestroy(19);
 		Engine_ActorDestroy(20);
 		Engine_ActorDestroy(21);

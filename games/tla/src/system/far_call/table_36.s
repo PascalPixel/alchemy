@@ -5,7 +5,15 @@
 	.global Func_080c8950
 	.thumb_func
 Func_080c8950:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8950_Target
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8950_Target
+.else
 	overlay_veneer Func_080d072c
+.endif
+.endif
 	.global Func_080c8958
 	.thumb_func
 Func_080c8958:

@@ -1,3 +1,8 @@
+/* Near miss, differ 2: the listing loads the work pointer and the fill word
+ * and then makes the frame (ldr r5; ldr r3; sub sp, #4); this draft makes
+ * the frame first. Tried: the fill word as a forced temporary (frame between
+ * the two loads, differ 2), an empty asm barrier before the fill store
+ * (differ 4). */
 #include "types.h"
 #include "mem.h"
 #include "disptran.h"

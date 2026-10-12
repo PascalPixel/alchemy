@@ -5,7 +5,7 @@ void Func_02000054(void);
 void Func_02000068(void);
 void Func_02000094(void);
 
-extern u8 Data_02000090[];
+void Func_02000090(void);
 
 extern u32 Data_020027a8[];
 extern u32 Data_020027e4[];
@@ -81,7 +81,7 @@ struct SceneEvent gSceneEvents[] = {
 	{2, 33, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000054)},
 	{2, 34, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000054)},
 	{2, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000054)},
-	{0x10008c15, 10, CONDITION_ALWAYS, (u32)((u8 *)Data_02000090 + 1)},
+	{0x10008c15, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000090)},
 	{0x8c15, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Func_02000094)},
 	{SCENE_EVENTS_END},
 };

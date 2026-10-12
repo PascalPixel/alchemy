@@ -1,0 +1,85 @@
+#include "types.h"
+#include "ram_buffer.h"
+#include "object_runtime.h"
+#include "party_state.h"
+
+struct ObjectRuntime *Object_GetById(s32 id);
+void ObjectMotion_SetAngleToward(s32 id, s32 other, s32 flags);
+void Func_02004464(void);
+void Func_0200446c(void);
+void Func_0200451c(s32 message);
+void Func_02004534(s32 id, s32 flags);
+void Func_020045ec(s32 value);
+
+extern u8 MsgScene6A8No113[];
+extern u8 MsgScene6A8No114[];
+extern u8 MsgScene6A8No115[];
+extern u8 MsgScene6A8No117[];
+extern u8 MsgScene6A8No118[];
+extern u8 MsgScene6A8No119[];
+
+void Func_02000764(void)
+{
+    u8 *work = Ram_HeapSlots->event_work;
+    struct ObjectRuntime *object = Object_GetById(16);
+    s16 angle = object->angle;
+
+    Func_02004464();
+    Func_020045ec(0);
+    ((u8 *)object)[99] = 1;
+    if (*(s16 *)(work + 358) == 0) {
+        ObjectMotion_SetAngleToward(16, gPartyState.current_owner, 0);
+        Func_0200451c((s32)MsgScene6A8No113);
+    } else {
+        Func_0200451c((s32)MsgScene6A8No117);
+    }
+    Func_02004534(16, 0);
+    if (*(s16 *)(work + 358) == 0)
+        object->angle = angle;
+    ((u8 *)object)[99] = 0;
+    Func_0200446c();
+}
+
+void Func_020007f4(void)
+{
+    u8 *work = Ram_HeapSlots->event_work;
+    struct ObjectRuntime *object = Object_GetById(17);
+    s16 angle = object->angle;
+
+    Func_02004464();
+    Func_020045ec(0);
+    ((u8 *)object)[99] = 1;
+    if (*(s16 *)(work + 358) == 0) {
+        ObjectMotion_SetAngleToward(17, gPartyState.current_owner, 0);
+        Func_0200451c((s32)MsgScene6A8No114);
+    } else {
+        Func_0200451c((s32)MsgScene6A8No118);
+    }
+    Func_02004534(17, 0);
+    if (*(s16 *)(work + 358) == 0)
+        object->angle = angle;
+    ((u8 *)object)[99] = 0;
+    Func_0200446c();
+}
+
+void Func_02000884(void)
+{
+    u8 *work = Ram_HeapSlots->event_work;
+    struct ObjectRuntime *object = Object_GetById(18);
+    s16 angle = object->angle;
+
+    Func_02004464();
+    Func_020045ec(0);
+    ((u8 *)object)[99] = 1;
+    if (*(s16 *)(work + 358) == 0) {
+        ObjectMotion_SetAngleToward(18, gPartyState.current_owner, 0);
+        Func_0200451c((s32)MsgScene6A8No115);
+    } else {
+        Func_0200451c((s32)MsgScene6A8No119);
+    }
+    Func_02004534(18, 0);
+    if (*(s16 *)(work + 358) == 0)
+        object->angle = angle;
+    ((u8 *)object)[99] = 0;
+    Func_0200446c();
+}

@@ -135,39 +135,3 @@ Func_02000340:
 	.4byte 0x00000039
 .L_0200844c:
 	.4byte 0x0000003a
-	.section .text.x02008470,"ax",%progbits
-	.balign 4
-	.global Func_02000470
-	.thumb_func
-Func_02000470:
-	push {lr}
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #57
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_020084a0
-	movs r0, #208
-	lsls r0, r0, #2
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02008490
-	ldr r0, .L_020084a8
-	b .L_02008492
-.L_02008490:
-	ldr r0, .L_020084ac
-.L_02008492:
-	bl Func_02000604
-	movs r0, #18
-	movs r1, #0
-	bl Func_02000614
-	b .L_020084a4
-.L_020084a0:
-	bl Func_020004dc
-.L_020084a4:
-	pop {pc}
-	.2byte 0x0000
-.L_020084a8:
-	.4byte MsgScene65ENo20
-.L_020084ac:
-	.4byte MsgScene65ENo21

@@ -104,3 +104,7 @@ s32 BattlePlacement_UpdateTimedEntriesTwentyTimes(void)
     } while (turns >= 0);
     return 0;
 }
+
+void Func_08124cc0(void)
+{
+}

@@ -54,7 +54,15 @@ void Func_02000ad8(void)
     Call2(Object_SetModeById, 0xc, 4);
     Call2(Func_02004534, 0xc, 0);
     Call3(ObjectMotion_ArmCallback, 0xa, 0x3000, 0);
-    Call3(Func_0200455c, 0xa, 0x100, 0);
+    {
+        s32 anim = 0x80;
+        s32 zero = 0;
+        /* FAKEMATCH: ⚓️ loads the zero before 0x100's shift and the actor id after it; plain constants load the id before the shift (differ 2), 0x100 forced whole shifts before the zero (differ 2), the zero alone forced comes first (differ 4). */
+        __asm__ volatile("" : "+l"(anim));
+        /* FAKEMATCH: the second forced temporary of the same call, as above. */
+        __asm__ volatile("" : "+l"(zero));
+        Call3(Func_0200455c, 0xa, anim << 1, zero);
+    }
     Call2(Motion_SetModeAndWaitAnimation, 0xd, 4);
     Call2(Func_02004534, 0xd, 0);
     Call3(ObjectMotion_Launch, 0xf, 4, 0xa);

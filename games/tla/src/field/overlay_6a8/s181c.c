@@ -1,5 +1,3 @@
-/* Near miss, differ 6: the listing loads object->y and object->scale_x before
- * it builds 0x8000 and 0x51e; this draft builds each constant first. */
 #include "types.h"
 
 struct RisingObject {
@@ -19,8 +17,13 @@ void Func_020043e4(struct RisingObject *object);
 
 void Func_0200181c(struct RisingObject *object)
 {
+    s32 y;
+
     object->x += object->drift << 8;
-    object->y += 0x8000;
+    y = object->y;
+    asm volatile(""); /* FAKEMATCH: ⚓️ loads y before it builds 0x8000 */
+    object->y = y + 0x8000;
+    asm volatile(""); /* FAKEMATCH: ⚓️ stores y before it builds 0x51e */
     object->scale_x += 0x51e;
     object->scale_y += 0x51e;
     object->drift += 2;

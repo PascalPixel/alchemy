@@ -32,13 +32,6 @@ s32 gKorimaKiSparkCount __attribute__((section(".bss")));
 s32 gKorimaKiSparkSound __attribute__((section(".bss")));
 s32 gKorimaKiTransitionStep __attribute__((section(".bss")));
 
-struct Spark
-{
-	u8	unknown_00[0x64];
-	u16 phase;
-	u16 angle;
-};
-
 u8 *KorimaKi_GetEntrances(void)
 {
 	return gKorimaKiEntrances;
@@ -113,7 +106,6 @@ void KorimaKi_RunMessageScene(void)
 
 void KorimaKi_TalkToToreto(void)
 {
-	u32 i;
 	s32 record;
 
 	Engine_EventBegin();
@@ -211,7 +203,6 @@ void PaletteScene_RunFlaggedBranch(void)
 void RunEventScript01(void)
 {
 
-	u32				   i;
 	struct FieldActor *rec8;
 
 	rec8 = Actor_Get(ACTOR_PARTY_LEADER);
@@ -957,8 +948,8 @@ void KorimaKi_SpawnOrbitSparks(void)
 				spark->sprite->priority = 1;
 				Engine_ActorSetSpriteFlags(spark, 0);
 				Object_SetMode(spark, 1);
-				((struct Spark *)spark)->phase = 0;
-				((struct Spark *)spark)->angle = (i * 60 << 16) / 360;
+				spark->timer = 0;
+				spark->work = (i * 60 << 16) / 360;
 				spark->target_x = gKorimaKiSparkOrigin[0];
 				spark->target_y = gKorimaKiSparkOrigin[1];
 				spark->target_z = gKorimaKiSparkOrigin[2];

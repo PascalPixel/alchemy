@@ -580,9 +580,6 @@ s32 Title_ShowSplashScreen(s32 mode)
 	return result;
 }
 
-#ifndef MODERN // modern GCC keeps the headers' volatile declaration
-#endif
-
 s32 Title_ShowAnimatedSplash(void)
 {
 	s32 result;

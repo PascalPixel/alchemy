@@ -27,8 +27,6 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-#define NULL ((void *)0)
-
 struct Obj
 {
 	s32 f00, f04, f08, f0c, f10, f14, f18, f1c;
@@ -36,39 +34,6 @@ struct Obj
 	s32 f40, f44, f48, f4c, f50, f54, f58, f5c;
 	s32 f60;
 	u16 f64;
-};
-
-struct Ent
-{
-	u8			pad00[6];
-	u16			f06;
-	s32			f08;
-	u8			pad0c[4];
-	s32			f10;
-	u8			pad14[0x46];
-	u8			f5a;
-	u8			pad5b[13];
-	struct Ent *f68;
-};
-
-struct Rec
-{
-	u16 f00, f02, f04, f06;
-};
-
-struct Ent_02000800
-{
-	s32 f00, f04, f08, f0c;
-	u8	pad10[0x45];
-	u8	f55;
-};
-
-struct Obj_020025d8
-{
-	s32 f00, f04, f08, f0c, f10, f14;
-	s32 f18;
-	s32 f1c, f20, f24, f28, f2c, f30, f34;
-	s32 f38, f3c, f40;
 };
 
 struct Sub
@@ -204,8 +169,8 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 void FieldScene_RunActor16MessageBranch(void)
 {
-	struct Rec *q = Object_GetById(0);
-	s32			v = q->f06;
+	struct FieldActor *q = Object_GetById(0);
+	s32				   v = q->facing;
 	Engine_EventBegin();
 	if (v >= 0xa001 && v <= 0xdfff)
 	{
@@ -235,9 +200,6 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 void FieldScene_ConfigureActor0ThenRun(s32 a0)
 {
-	u32 i;
-	s32 record;
-
 	Object_GetById(0)->motion_flags = 0;
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
@@ -337,26 +299,26 @@ void KorimaMura_RunObjectSpreadScene(void)
 	Engine_AudioPlayCue(188);
 	for (i = 0; i < 10; i++)
 	{
-		u8 *obj = (u8 *)Engine_ObjectCreate(222, (148 + i * 4) << 16, 0, 0x1020000);
+		struct FieldActor *obj = Engine_ObjectCreate(222, (148 + i * 4) << 16, 0, 0x1020000);
 
 		if (obj != 0)
 		{
-			obj[85] = 0;
+			obj->motion_flags = 0;
 			Engine_ActorSetSpriteFlags(obj, 0);
-			((struct Flags9 *)*(u8 **)(obj + 80))->mode = 0;
+			((struct Flags9 *)obj->sprite)->mode = 0;
 			{
 				u16 delay = (((u32)(Engine_RandomNext() * 40)) >> 16) + 40;
 
-				*(u16 *)(obj + 100) = delay;
+				obj->timer = delay;
 			}
-			*(s32 *)(obj + 36) = (s32)(((i & 3) << 16) + 0x10000) >> 1;
-			*(s32 *)(obj + 44) = 0x10000;
+			obj->velocity_x = (s32)(((i & 3) << 16) + 0x10000) >> 1;
+			obj->velocity_z = 0x10000;
 			if (i & 1)
 			{
-				*(s32 *)(obj + 36) = -((s32)(((i & 3) << 16) + 0x10000) >> 1);
+				obj->velocity_x = -((s32)(((i & 3) << 16) + 0x10000) >> 1);
 			}
 			Object_SetMode(obj, 1);
-			Engine_ObjectSetScript((s32)obj, (s32)KorimaMura_DebrisScript);
+			Engine_ObjectSetScript(obj, (s32)KorimaMura_DebrisScript);
 		}
 	}
 	Map_CopyCellsTo(91, 19, 72, 9, 5, 7);
@@ -446,64 +408,64 @@ s32 Scene_Initialize(void)
 
 void SceneActor_SetActors19To22HeightByFrameParity(void)
 {
-	struct Ent_02000800 *p;
+	struct FieldActor *p;
 
 	p = Object_GetById(19);
 	if (p != 0)
 	{
 		s32 m;
-		p->f55 = 0;
+		p->motion_flags = 0;
 		m = gFrameCount & 1;
 		if (m == 0)
 		{
-			p->f0c = m;
+			p->y.fixed = m;
 		}
 		else
 		{
-			p->f0c = 0x1f40000;
+			p->y.fixed = 0x1f40000;
 		}
 	}
 	p = Object_GetById(20);
 	if (p != 0)
 	{
 		s32 z = 0;
-		p->f55 = z;
+		p->motion_flags = z;
 		if (gFrameCount & 1)
 		{
-			p->f0c = z;
+			p->y.fixed = z;
 		}
 		else
 		{
-			p->f0c = 0x1f40000;
+			p->y.fixed = 0x1f40000;
 		}
 	}
 	p = Object_GetById(21);
 	if (p != 0)
 	{
 		s32 m;
-		p->f55 = 0;
+		p->motion_flags = 0;
 		m = gFrameCount & 1;
 		if (m == 0)
 		{
-			p->f0c = m;
+			p->y.fixed = m;
 		}
 		else
 		{
-			p->f0c = 0x1f40000;
+			p->y.fixed = 0x1f40000;
 		}
 	}
 	p = Object_GetById(22);
 	if (p != 0)
 	{
 		s32 z = 0;
-		p->f55 = z;
+		p->motion_flags = z;
 		if (gFrameCount & 1)
 		{
-			p->f0c = z;
+			p->y.fixed = z;
 		}
 		else
 		{
-			p->f0c = 0x1f40000;
+			p->y.fixed = 0x1f40000;
 		}
 	}
 }
@@ -1502,10 +1464,10 @@ void FieldScene_RunPairedStepB(s32 arg0, s32 arg1, s32 arg2)
 	Engine_EventWait(arg2);
 }
 
-s32 SceneEffect_AdvanceAngleUntilIdle(struct Obj_020025d8 *p)
+s32 SceneEffect_AdvanceAngleUntilIdle(struct FieldActor *p)
 {
-	p->f18 += 0x1eb8;
-	if (p->f38 == 0x80000000 && p->f3c == p->f38 && p->f40 == p->f3c)
+	p->scale_x += 0x1eb8;
+	if (p->target_x == 0x80000000 && p->target_y == p->target_x && p->target_z == p->target_y)
 	{
 		Engine_ObjectDispatchRelease(p);
 	}
@@ -1514,15 +1476,15 @@ s32 SceneEffect_AdvanceAngleUntilIdle(struct Obj_020025d8 *p)
 
 void SceneEffect_SpawnObject26EveryEightFrames(void)
 {
-	struct Obj_02002608 *p;
-	struct Sub			*q;
-	s32					 f;
-	s32					 v;
-	s32					 w;
-	s32					 c1 = 0x620000;
-	s32					 c2 = 0x690000;
-	s32					 c3 = 0x620000;
-	s32					 c4 = 0x010d0000;
+	struct FieldActor *p;
+	struct Sub		  *q;
+	s32				   f;
+	s32				   v;
+	s32				   w;
+	s32				   c1 = 0x620000;
+	s32				   c2 = 0x690000;
+	s32				   c3 = 0x620000;
+	s32				   c4 = 0x010d0000;
 
 	f = gFrameCount & 7;
 	if (f != 0)
@@ -1538,19 +1500,19 @@ void SceneEffect_SpawnObject26EveryEightFrames(void)
 	{
 		return;
 	}
-	q = p->f50;
+	q = (struct Sub *)p->sprite;
 	q->f26 = f;
 	v = 0xfe;
-	v &= p->f23;
-	p->f23 = v;
+	v &= p->priority_flags;
+	p->priority_flags = v;
 	w = ~12;
 	w &= q->f09;
 	w |= 4;
 	q->f09 = w;
-	p->f18 = 0x1999;
-	p->f30 = 0x80000;
-	p->f34 = 0x80000;
-	p->f55 = f;
+	p->scale_x = 0x1999;
+	p->speed = 0x80000;
+	p->acceleration = 0x80000;
+	p->motion_flags = f;
 	Object_SetMode(p, 2);
 	Engine_ObjectSetPosition(p, c3, 0, c4);
 	Engine_ObjectSetScript(p, KorimaMura_Object26Script);

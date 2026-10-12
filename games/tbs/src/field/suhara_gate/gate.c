@@ -199,7 +199,6 @@ void Scene_RunPrimarySequence(void)
 
 void Scene_RunScene3c3SequenceA(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 	s32				   v5;
 

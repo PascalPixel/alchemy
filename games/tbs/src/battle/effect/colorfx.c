@@ -39,6 +39,9 @@
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
+// 火花の作業領域（マップのセルバッファを借りる）
+#define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
+
 //--------------------------------------------------------------------------
 // スロットを始める
 // 画面を消し、乱数の種をプレイ時間で決めてから ReelGame_Run へ入る
@@ -348,6 +351,8 @@ struct ReelWork
 #endif
 };
 
+// gGameState seen from +12, the base the bytes load: won_prizes is gGameState.won_prizes
+// (through the field itself ReelGame_RunFrame differs 12)
 struct ReelSave
 {
 	u8 unknown_000[0x120];
@@ -1035,7 +1040,7 @@ void ReelGame_InitTitle(void)
 	work = ((struct BattleEffectWork **)gBattleFxWork)[0];
 	left = 0;
 	for (i = 0; i != 0x800; i++)
-		((struct EffectStep *)Ram_MapCellBuffer)[i].variant = 0;
+		SPARKS[i].variant = 0;
 
 	letter = work->particles;
 	y = -0x200000;
@@ -1076,8 +1081,6 @@ void ReelGame_InitTitle(void)
 }
 
 extern u8 gOamCopyEnabled;
-
-#define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 
 void ReelGame_Run(void)
 {

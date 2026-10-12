@@ -526,7 +526,7 @@ void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor)
 	}
 }
 
-void Shop_SetCursor(struct ShopCursor *cursor, s32 target_x, s32 target_y, s8 kind)
+void Shop_SetCursor(struct ShopCursor *cursor, s32 target_x, s32 target_y, s32 kind)
 {
 	struct RenderOutput *anchor = cursor->anchor;
 
@@ -574,7 +574,7 @@ void Shop_PlaceCursor(void *window, s32 x, s32 y)
 		cursor_x = cursor_x + (((struct RenderInput *)window)->x * 8) + 8;
 		cursor_y = cursor_y + (((struct RenderInput *)window)->y * 8) + 8;
 	}
-	Shop_SetCursor(&shop->cursor, cursor_x, cursor_y, shop->mode);
+	Shop_SetCursor(&shop->cursor, cursor_x, cursor_y, (s8)shop->mode);
 }
 
 s32 Shop_SelBuy(void)
@@ -902,6 +902,13 @@ void Shop_DrawMoney(void)
 	}
 }
 
+// アイテム名の下の行の x（ドット）
+#if EDITION_INTERNATIONAL
+#define ITEM_NOTE_X 0
+#else
+#define ITEM_NOTE_X 8
+#endif
+
 void Shop_DrawItemPrice(s32 window, s32 item, s32 price, s32 price_mode)
 {
 	s32 message;
@@ -910,19 +917,11 @@ void Shop_DrawItemPrice(s32 window, s32 item, s32 price, s32 price_mode)
 		goto done;
 	goto draw;
 cannot_buy:
-#if EDITION_INTERNATIONAL
-	UiText_DrawCharacterAtOffsetFar((s32)MsgCannotBuyThat, window, 0, 8);
-#else
-	UiText_DrawCharacterAtOffsetFar((s32)MsgCannotBuyThat, window, 8, 8);
-#endif
+	UiText_DrawCharacterAtOffsetFar((s32)MsgCannotBuyThat, window, ITEM_NOTE_X, 8);
 	goto done;
 show_price:
 	message = (s32)MsgPrice;
-#if EDITION_INTERNATIONAL
-	UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
-#else
-	UiText_DrawCharacterAtOffsetFar(message, window, 8, 8);
-#endif
+	UiText_DrawCharacterAtOffsetFar(message, window, ITEM_NOTE_X, 8);
 	message -= 3;
 #if defined(TBS_EDITION_FR)
 	UiText_DrawNumberInWindowFar(price, 5, window, 0x18, 8);
@@ -945,11 +944,7 @@ draw:
 	case 1:
 		goto cannot_buy;
 	case 2:
-#if EDITION_INTERNATIONAL
-		UiText_DrawCharacterAtOffsetFar((s32)MsgNotBroken, window, 0, 8);
-#else
-		UiText_DrawCharacterAtOffsetFar((s32)MsgNotBroken, window, 8, 8);
-#endif
+		UiText_DrawCharacterAtOffsetFar((s32)MsgNotBroken, window, ITEM_NOTE_X, 8);
 		break;
 	default:
 		goto show_price;
@@ -3030,19 +3025,11 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
 		result = Inventory_CheckDiscardFar(unit_id, item_id);
 		if (result == -4)
 		{
-#if EDITION_INTERNATIONAL
-			UiText_DrawCharacterAtOffsetFar((s32)MsgCannotDrop, window, 0, 8);
-#else
-			UiText_DrawCharacterAtOffsetFar((s32)MsgCannotDrop, window, 8, 8);
-#endif
+			UiText_DrawCharacterAtOffsetFar((s32)MsgCannotDrop, window, ITEM_NOTE_X, 8);
 		}
 		else if (result == -3)
 		{
-#if EDITION_INTERNATIONAL
-			UiText_DrawCharacterAtOffsetFar((s32)MsgCannotRemove, window, 0, 8);
-#else
-			UiText_DrawCharacterAtOffsetFar((s32)MsgCannotRemove, window, 8, 8);
-#endif
+			UiText_DrawCharacterAtOffsetFar((s32)MsgCannotRemove, window, ITEM_NOTE_X, 8);
 		}
 		else
 		{

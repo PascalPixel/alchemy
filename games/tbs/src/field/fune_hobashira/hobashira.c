@@ -285,9 +285,6 @@ s32 FuneHobashira_ApplyEntryState(void)
 
 void FuneHobashira_SetupHiddenLeaderLookout(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Camera_MoveTo(-1, -1, -1, 0);
 	Engine_TaskWait(1);
@@ -302,7 +299,6 @@ void FuneHobashira_SetupHiddenLeaderLookout(void)
 
 void FuneHobashira_SetupVisibleLeaderLookout(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 	Engine_EventBegin();
@@ -423,7 +419,6 @@ void Scene_RunFourActorStagingSequence(void)
 
 void FieldScene_RunActorNinePresentationCycles(void)
 {
-	u32				   i;
 	struct FieldActor *rec9;
 	struct FieldActor *record;
 

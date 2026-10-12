@@ -5,14 +5,12 @@
 #include "field_scene.h"
 
 struct FieldActor;
-struct FixedPointCountdown;
-struct Object;
 union PairObject;
 
 extern s32 HaidiaArashi_ShakeDone;
 extern s32 HaidiaArashi_ShakeShift;
-s32 HaidiaArashi_RerollHeadingOnCountdown(struct Object *object);
-s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state);
+s32 HaidiaArashi_RerollHeadingOnCountdown(struct FieldActor *object);
+s32 UpdateFixedPointCountdown(struct FieldActor *state);
 u8 *HaidiaArashi_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
 u8 *HaidiaArashi_GetExits(void);

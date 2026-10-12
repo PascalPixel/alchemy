@@ -20,9 +20,6 @@
 #include "iowrite.h"
 
 #define NULL ((void *)0)
-#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-#define F(base, type, off) (*(type *)((u8 *)(base) + (off)))
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #include "fieldobj.h"
 #include "mem.h"
 #include "types.h"
@@ -64,23 +61,22 @@ struct WorkPointers
 
 s32 MakyuriIriguchi_TrailSparks(struct FieldActor *a0)
 {
-	s32 value;
-	s32 magic;
-	u8	storage[40];
-	u8 *rec = storage;
+	s32					 value;
+	s32					 magic;
+	struct EffectOptions options;
 
-	FIELD(rec, s32, 4) = 7;
+	options.palette = 7;
 	if ((gFrameCount & 1) == 0)
 	{
-		FIELD(rec, s32, 4) = 5;
+		options.palette = 5;
 	}
-	FIELD(rec, s32, 8) = 0xcccc;
-	FIELD(rec, s32, 12) = 0xcccc;
-	FIELD(rec, s32, 0) = 0;
+	options.start_scale_x = 0xcccc;
+	options.start_scale_y = 0xcccc;
+	options.priority = 0;
 	value = Engine_RandomNext();
 	magic = -(((u32)(value << 3) >> 16) * 0x3333);
 	Effect_Spawn((a0->x.fixed + ((8 - (gFrameCount & 15)) << 16)), (a0->y.fixed + 0x1a0000),
-		a0->z.fixed, 0, magic, 0, 0xb0000, rec);
+		a0->z.fixed, 0, magic, 0, 0xb0000, &options);
 	return 0;
 }
 
@@ -159,17 +155,17 @@ void FieldScene_RunStepWithValue1632(void)
 
 void SceneActor_RunActorZeroHandledMotion(s32 a)
 {
-	u8 *v = Object_GetById(ACTOR_PARTY_LEADER);
+	struct FieldActor *v = Object_GetById(ACTOR_PARTY_LEADER);
 	Engine_EventBegin();
 	Engine_AudioPlayCue(0xe4);
-	F(v, s32, 0x6c) = (s32)MakyuriIriguchi_TrailSparks;
-	F(v, s32, 0x30) = 0x3333;
+	v->update = (void (*)(union FieldObject *))MakyuriIriguchi_TrailSparks;
+	v->speed = 0x3333;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
 	Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
 	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 	Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
 	Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
-	F(v, s32, 0x6c) = 0;
+	v->update = 0;
 	Engine_EventWait(30);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
@@ -179,7 +175,6 @@ void SceneActor_RunActorZeroHandledMotion(s32 a)
 
 void MakyuriIriguchi_DropLeaderToColumn(s32 a0)
 {
-	u32 i;
 	s32 record;
 
 	Engine_EventBegin();

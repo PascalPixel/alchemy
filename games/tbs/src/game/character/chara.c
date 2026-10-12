@@ -93,7 +93,7 @@ u32 Party_GetAverageLevel(void)
 	}
 	for (i = 0; i < count; i++)
 	{
-		total += ((struct BtlUnit *)UnitGet(gGameState.active_owners[i]))->level;
+		total += UnitGet(gGameState.active_owners[i])->level;
 	}
 	total = total / count;
 	return total;
@@ -1192,7 +1192,7 @@ s32 Inventory_GetQuantity(s32 owner, s32 slot)
 {
 	s32 item_id;
 
-	owner = ((struct BtlUnit *)UnitGet(owner))->inventory[slot];
+	owner = UnitGet(owner)->inventory[slot];
 	item_id = ITEM_ID_MASK;
 	item_id &= owner;
 	owner = (u32)owner >> INVENTORY_QUANTITY_SHIFT;
@@ -1517,7 +1517,7 @@ s32 Inventory_Remove(s32 owner, s32 slot)
 
 s32 Inventory_Discard(s32 owner, s32 slot)
 {
-	s32 item = ((struct BtlUnit *)UnitGet(owner))->inventory[slot];
+	s32 item = UnitGet(owner)->inventory[slot];
 	s32 removed_slot = Inventory_Remove(owner, slot);
 
 	if (removed_slot != -1)
@@ -2097,7 +2097,7 @@ struct LevelUpResult *Owner_GetValueIfLevelThresholdReached(
 void Party_AdvanceOwnerCountToTarget(s32 unit, s32 lv)
 {
 	u8	res[16]; // struct LevelUpResult の受け取り（使わない）
-	s32 cur = ((struct BtlUnit *)UnitGet(unit))->level;
+	s32 cur = UnitGet(unit)->level;
 
 	while (cur < lv)
 	{
@@ -2237,10 +2237,6 @@ struct ElementLevelBonus
 };
 
 extern struct ElementLevelBonus Element_PowerResistByLevel[16];
-#ifdef MODERN
-// called before its definition below, which modern GCC refuses for an
-// implicit int declaration of a u32 function
-#endif
 
 #if EDITION_INTERNATIONAL
 #define ENEMY_SUFFIX_FIRST '1'
@@ -2249,8 +2245,6 @@ extern struct ElementLevelBonus Element_PowerResistByLevel[16];
 #define ENEMY_SUFFIX_FIRST 'A'
 #define ENEMY_SUFFIX_LAST 25
 #endif
-
-typedef s32 (*ClearWordsFn)(void *destination, s32 size);
 
 s32 BtlUnitSet(s32 unit_id, s32 enemy_id, s32 suffix)
 {
@@ -3188,7 +3182,7 @@ s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)
 
 u32 Djinn_IsActive(s32 owner, s32 index, s32 bit)
 {
-	s32 value = ((struct BtlUnit *)UnitGet(owner))->djinn_active[index] & (1 << bit);
+	s32 value = UnitGet(owner)->djinn_active[index] & (1 << bit);
 
 	return (u32)(-value | value) >> 31;
 }
@@ -3449,7 +3443,7 @@ void InventorySnapshot_Restore(void)
 		owner = 0;
 		do
 		{
-			u16 *inventory = ((struct BtlUnit *)UnitGet(owner))->inventory;
+			u16 *inventory = UnitGet(owner)->inventory;
 			s32	 remaining = 14;
 
 			do

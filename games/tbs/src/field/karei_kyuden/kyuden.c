@@ -20,15 +20,6 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-enum PartyEventsMessage
-{
-	MSG_WHEN_HEARD_WERE_BACK_IVAN = 0x1b21,
-	MSG_LORD_HAMMET_WILL_RELEASED_SOON = 0x1b83,
-	MSG_HAS_LEGACY_LORD_HAMMETS_SILK = 0x1b88,
-	MSG_ROBIN_SNEAKED_INTO_LUNPA_THATS = 0x1b91,
-	MSG_ITS_IVAN_HIS_COMPANIONS_PERFECT = 0x2588
-};
-
 static __inline__ void Scene_AdvanceStep(s32 amount)
 {
 
@@ -113,8 +104,6 @@ void FieldScene_RunActorEightTurnDialogue(void)
 void KareiKyuden_LeaveThroughDoor(void)
 {
 
-	u32				  i;
-	s32				  record;
 	struct EventWork *p5;
 
 	p5 = gEventWork;
@@ -228,8 +217,6 @@ void FieldScene_DispatchSceneByIndex(void)
 void RunEventScript01(void)
 {
 
-	u32				  i;
-	s32				  record;
 	struct EventWork *work;
 	s32				  v5;
 	s32				  tbl;

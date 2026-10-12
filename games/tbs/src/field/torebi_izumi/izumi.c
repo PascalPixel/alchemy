@@ -411,12 +411,6 @@ void TorebiIzumi_RevealPrize(s32 item)
 	Engine_EventEnd();
 }
 
-struct Workspace
-{
-	u8				  unknown_000[356];
-	struct FieldActor actor;
-};
-
 void TorebiIzumi_RiseAndFadeIn(void)
 {
 	u8 *p = gMapWork[0];

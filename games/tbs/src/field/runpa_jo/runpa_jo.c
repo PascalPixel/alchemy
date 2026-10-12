@@ -1061,8 +1061,6 @@ void RunActorScriptedSequenceC(s32 actor_id)
 
 void RunpaJo_ActOutGuardShiftDialogue(s32 a0)
 {
-	u32 i;
-	s32 record;
 	s32 intruder;
 
 	intruder = (s32)MsgRunpaShiftAlready;
@@ -1244,8 +1242,6 @@ void EV50_MAIN(void)
 
 void EV51_MAIN(void)
 {
-	u32 i;
-	s32 record;
 	s32 msg;
 
 	EV_BEGIN();
@@ -1406,9 +1402,6 @@ void RunpaJo_GatherPartyAroundActorTwelve(void)
 
 void RunpaJo_ActivateLeverTrap(void)
 {
-	u32 i;
-	s32 record;
-
 	Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
 	SE(141);
 	WAIT(80);
@@ -1427,9 +1420,6 @@ void RunpaJo_ActivateLeverTrap(void)
 
 void RunpaJo_RevealMonster(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_CameraMoveToActor(11, 1);
 	Engine_CameraWaitForMove();
 	WAIT(60);
@@ -1447,9 +1437,6 @@ void RunpaJo_RevealMonster(void)
 
 void RunpaJo_PositionPartyForMonster(void)
 {
-	u32 i;
-	s32 record;
-
 	OBJ_SPD(IWAN, 0x10000, 0x8000);
 	OBJ_WALK(IWAN, 504, 216);
 	OBJ_SPD(MEARI, 0x10000, 0x8000);
@@ -1730,7 +1717,6 @@ void EV20_DEMO(void)
 
 void FieldScene_RunMainScriptSequence(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 	s32				   script_a;
 	s32				   script_b;
@@ -2471,8 +2457,6 @@ void EV21_MAIN(void)
 
 void EV25_DONPA(void)
 {
-	u32 i;
-	s32 record;
 	s32 msg;
 	s32 msg2;
 
@@ -2670,8 +2654,6 @@ void EV18_SET(void)
 
 void EV20_MAIN(void)
 {
-	u32 i;
-	s32 record;
 	s32 msg;
 	s32 msg2;
 

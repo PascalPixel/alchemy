@@ -28,94 +28,20 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-#define NULL ((void *)0)
-
-enum StagedGroupMessage
-{
-	MSG_ROBIN_PEERED_INTO = 0x947,
-	MSG_CAME_KALAY_BECAUSE_DIDNT_LIKE = 0x1a7c,
-	MSG_WHY_WE_STOPPING_AT_PLACE = 0x1a92,
-	MSG_THATS_WE_CANT_WAIT_ANY = 0x1ab2,
-	MSG_LORD_HAMMET_SELLS_HIS_BEST = 0x1acf,
-	MSG_DID_FIND_NEEDED_IN_WEAPON = 0x1ad1,
-	MSG_LADY_LAYANA_SHARED_IN_LORD = 0x1ad5,
-	MSG_LORD_HAMMETS_PALACE_LORD_AWAY = 0x1b05,
-	MSG_WEVE_ARRIVED_HAMMET = 0x256f,
-	MSG_DO_WANT_GO_CAVE_UP = 0x2584,
-	MSG_LAYANA_WAS_VERY_HARD_ON = 0x25b3,
-	MSG_VERY_CLEAN_MAINTAINED = 0x29df
-};
-
-struct Obj
-{
-	u8	filler00[6];
-	u16 f06;
-};
-
-struct Obj_02000040
-{
-	u8	filler00[100];
-	u16 f64;
-	u16 f66;
-};
-
-struct Object
-{
-	u8	filler00[6];
-	u16 x;
-	u8	filler08[94];
-	s16 cnt;
-};
-
-typedef struct Effect
-{
-	unsigned char pad00[0xC];
-	s32			  y;
-	unsigned char pad10[0x13];
-	s8			  state23;
-} Effect;
-
-struct Obj_020036f8
-{
-	u8	filler00[8];
-	s32 f08;
-	s32 f0c;
-	u8	filler10[8];
-	s32 f18;
-	s32 f1c;
-	s32 f20;
-	s32 f24;
-	s32 f28;
-	u8	filler2c[56];
-	s16 f64;
-};
-
 #include "../common/object/orbit.h"
 
 extern u8 *gActorEffectWork;
-
-struct SpriteBits
-{
-	u8 pad0[5];
-	u8 b5_lo : 5;
-	u8 hidden : 1;
-	u8 b5_hi : 2;
-	u8 pad6[3];
-	u8 b9_lo : 2;
-	u8 mode : 2;
-	u8 b9_hi : 4;
-};
 
 union GameStateRows
 {
 	s16 halves[512][1];
 };
 
-static __inline__ void ClearStep(u8 *a)
+static __inline__ void ClearStep(struct FieldActor *a)
 {
 	s32 z = 0;
 
-	*(u16 *)(a + 100) = z;
+	a->timer = z;
 }
 
 void SceneState_ApplyValues12And2And3(void)
@@ -159,24 +85,24 @@ s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect)
 	return 1;
 }
 
-s32 OverlayObject_AdvanceXWhenCounterExpires(struct Object *obj)
+s32 OverlayObject_AdvanceXWhenCounterExpires(struct FieldActor *obj)
 {
-	s32 cnt = *(u16 *)&obj->cnt;
-	s32 loaded = obj->cnt;
+	s32 cnt = obj->work;
+	s32 loaded = (s16)obj->work;
 	s32 amount;
 
 	if (loaded == 0)
 	{
-		obj->x += (u32)(Engine_RandomNext() << 15) >> 16;
+		obj->facing += (u32)(Engine_RandomNext() << 15) >> 16;
 		amount = (u32)(Engine_RandomNext() * 80) >> 16;
-		obj->cnt = amount;
+		obj->work = amount;
 		if (amount == 0)
 		{
 			goto done;
 		}
 		cnt = amount;
 	}
-	obj->cnt = cnt - 1;
+	obj->work = cnt - 1;
 done:
 	return 1;
 }
@@ -343,11 +269,11 @@ void SceneDialogue_RunActorTenDialogue(void)
 
 void SceneState_BranchOnSlotZeroFacing(void)
 {
-	struct Obj *o;
-	u32			v;
+	struct FieldActor *o;
+	u32				   v;
 
 	o = Object_GetById(ACTOR_PARTY_LEADER);
-	v = (o->f06 - 0x2000) << 16;
+	v = (o->facing - 0x2000) << 16;
 	if (v > 0x80000000)
 	{
 		Engine_ShopOpen(22, 22);
@@ -363,11 +289,11 @@ void SceneState_BranchOnSlotZeroFacing(void)
 
 void SceneDialogue_RunActorTwentyThreeByLeaderHeading(void)
 {
-	struct Obj *o;
-	u32			v;
+	struct FieldActor *o;
+	u32				   v;
 
 	o = Object_GetById(ACTOR_PARTY_LEADER);
-	v = (o->f06 - 0x6001) << 16;
+	v = (o->facing - 0x6001) << 16;
 	if (v <= 0x7ffe0000)
 	{
 		Engine_ShopOpen(23, 23);
@@ -383,11 +309,11 @@ void SceneDialogue_RunActorTwentyThreeByLeaderHeading(void)
 
 void FieldScene_RunActorTwentyFourAngleDialogue(void)
 {
-	struct Obj *o;
-	u32			v;
+	struct FieldActor *o;
+	u32				   v;
 
 	o = Object_GetById(ACTOR_PARTY_LEADER);
-	v = (o->f06 - 0x2000) << 16;
+	v = (o->facing - 0x2000) << 16;
 	if (v > 0xC0000000)
 	{
 		Engine_ShopOpen(24, 24);
@@ -1084,7 +1010,7 @@ void SceneState_CheckFlags941And940(void)
 
 void SceneState_ApplyFlagGatedActorEightSetup(void)
 {
-	struct Obj *o;
+	struct FieldActor *o;
 
 	if (Engine_GameFlagIsSet(0xfd6) == 0)
 	{
@@ -1093,7 +1019,7 @@ void SceneState_ApplyFlagGatedActorEightSetup(void)
 	if (Engine_GameFlagIsSet(0x915) != 0)
 	{
 		o = Object_GetById(8);
-		o->f06 = 0;
+		o->facing = 0;
 	}
 	if (gGameState.entrance == 10)
 	{
@@ -1124,7 +1050,6 @@ void KareiMachi_StartWindowTransition(void)
 
 void FieldScene_RunMiddleSequence(void)
 {
-	u32				   i;
 	s32				   rec7;
 	struct FieldActor *record;
 	s32				   r0;
@@ -1309,13 +1234,13 @@ void SceneState_SetValues27Through34(void)
 
 void SceneEffect_SetSlotVariantAndDescriptor(s32 a)
 {
-	struct Obj_02000040 *p;
-	u32					 t;
+	struct FieldActor *p;
+	u32				   t;
 
 	p = Object_GetById(a);
-	p->f64 = a;
+	p->timer = a;
 	t = Engine_RandomNext();
-	p->f66 = (t * 5) >> 12;
+	p->work = (t * 5) >> 12;
 	Engine_ObjectSetScript(p, (s32)KareiMachi_Script01);
 }
 
@@ -1337,14 +1262,14 @@ void KareiMachi_AlternateDance(void)
 	switch (KareiMachi_DanceStep)
 	{
 	case 0:
-		ClearStep((u8 *)Object_GetById(21));
+		ClearStep(Object_GetById(21));
 		Engine_ActorEnableActionCallback(21, (const u8 *)KareiMachi_DanceScriptA);
 		KareiMachi_DanceStep++;
 		break;
 	case 1:
 		if (Object_GetById(21)->timer != 0)
 		{
-			ClearStep((u8 *)Object_GetById(20));
+			ClearStep(Object_GetById(20));
 			Engine_ActorEnableActionCallback(20, (const u8 *)KareiMachi_DanceScriptB);
 			KareiMachi_DanceStep++;
 		}
@@ -1352,7 +1277,7 @@ void KareiMachi_AlternateDance(void)
 	case 2:
 		if (Object_GetById(20)->timer != 0)
 		{
-			ClearStep((u8 *)Object_GetById(20));
+			ClearStep(Object_GetById(20));
 			Engine_ActorEnableActionCallback(20, (const u8 *)KareiMachi_DanceScriptA);
 			KareiMachi_DanceStep++;
 		}
@@ -1360,7 +1285,7 @@ void KareiMachi_AlternateDance(void)
 	case 3:
 		if (Object_GetById(20)->timer != 0)
 		{
-			ClearStep((u8 *)Object_GetById(21));
+			ClearStep(Object_GetById(21));
 			Engine_ActorEnableActionCallback(21, (const u8 *)KareiMachi_DanceScriptB);
 			KareiMachi_DanceStep++;
 		}
@@ -2040,14 +1965,14 @@ void FieldScene_RunScene3a8SequenceB(void)
 	}
 }
 
-void SceneEffect_UpdateMotionWithDamping(struct Obj_020036f8 *p)
+void SceneEffect_UpdateMotionWithDamping(struct FieldActor *p)
 {
 	s16 *h;
 	s32	 v;
 	s32	 a;
 	s32	 b;
 
-	h = &p->f64;
+	h = &p->timer;
 	v = *h;
 	if (v == 0)
 	{
@@ -2055,22 +1980,22 @@ void SceneEffect_UpdateMotionWithDamping(struct Obj_020036f8 *p)
 	}
 	else if (v == 1)
 	{
-		p->f24 = 0;
-		p->f28 = 0;
-		p->f08 = 0;
-		p->f0c = 0;
+		p->velocity_x = 0;
+		p->velocity_y = 0;
+		p->x.fixed = 0;
+		p->y.fixed = 0;
 	}
 	else
 	{
-		p->f18 += 0x800;
-		p->f1c += 0x800;
+		p->scale_x += 0x800;
+		p->scale_y += 0x800;
 	}
-	p->f08 += p->f24;
-	p->f0c += p->f28;
-	a = p->f24;
-	b = p->f28;
-	p->f24 = a - a / 256;
-	p->f28 = b - b / 16;
+	p->x.fixed += p->velocity_x;
+	p->y.fixed += p->velocity_y;
+	a = p->velocity_x;
+	b = p->velocity_y;
+	p->velocity_x = a - a / 256;
+	p->velocity_y = b - b / 16;
 	{
 		s32 t = *(u16 *)h;
 		t -= 1;
@@ -2113,37 +2038,37 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
 
 void FieldScene_RunScene3a8SequenceA(s32 a0, s32 a1, s32 a2)
 {
-	s32 p8;
-	u8 *rec7;
-	s32 value;
-	s32 mask;
-	u8 *link;
+	s32				   p8;
+	struct FieldActor *rec7;
+	s32				   value;
+	s32				   mask;
+	u8				  *link;
 
 	p8 = a2;
 	value = Engine_RandomNext();
-	rec7 = (u8 *)Engine_ObjectCreate(
+	rec7 = Engine_ObjectCreate(
 		222, (a0 + -0x80000), (((((u32)(value << 3) >> 16) << 16) + a1) + 0x100000), p8);
-	if ((s32)rec7 != 0)
+	if (rec7 != 0)
 	{
-		rec7[85] = (mask = 0);
-		link = (u8 *)*(s32 *)((s32)rec7 + 80);
+		((u8 *)rec7)[85] = (mask = 0);
+		link = (u8 *)rec7->sprite;
 		mask -= 13;
 		link[9] = ((link[9] & mask) | 8);
-		ObjectGroup_SetChildValue((s32)rec7, 9);
-		Engine_ActorSetSpriteFlags((s32)rec7, 0);
+		ObjectGroup_SetChildValue(rec7, 9);
+		Engine_ActorSetSpriteFlags(rec7, 0);
 		value = Random_Next();
-		*(s32 *)((s32)rec7 + 36) = ((((u32)(value << 1) >> 16) - 1) << 16);
+		rec7->velocity_x = ((((u32)(value << 1) >> 16) - 1) << 16);
 		value = Random_Next();
-		*(s32 *)((s32)rec7 + 40) = ((((u32)(((value << 1) + value) << 1) >> 16) - 3) << 16);
+		rec7->velocity_y = ((((u32)(((value << 1) + value) << 1) >> 16) - 3) << 16);
 		{
-			u16 *target = (u16 *)((s32)rec7 + 100);
+			u16 *target = (u16 *)&rec7->timer;
 			u16	 shown = 20;
 
 			*target = shown;
 			*((u8 *)target - 3) = 1;
 		}
-		Object_SetMode((s32)rec7, 1);
-		Engine_ObjectSetScript((s32)rec7, (s32)KareiMachi_Script02);
+		Object_SetMode(rec7, 1);
+		Engine_ObjectSetScript(rec7, (s32)KareiMachi_Script02);
 	}
 }
 
@@ -2167,15 +2092,15 @@ void SceneEffect_UpdateLobeOrbitEffect26(void)
 
 void FieldScene_DrawTilesAndRaiseActor11(void)
 {
-	Effect *effect = Object_GetById(11);
+	struct FieldActor *effect = Object_GetById(11);
 
 	Engine_MapCopyCellAttributes(0, 0, 1, 1, 9, 14);
 	Engine_MapCopyCellAttributes(0, 0, 1, 1, 9, 45);
 	if (effect != 0)
 	{
 		Engine_ActorSetSpriteFlags(effect, 0);
-		effect->y -= 0x200000;
-		effect->state23 = 2;
+		effect->y.fixed -= 0x200000;
+		effect->priority_flags = 2;
 	}
 	Engine_GameFlagSet(0x201);
 }

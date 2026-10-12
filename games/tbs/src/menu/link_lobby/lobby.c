@@ -76,11 +76,6 @@ struct LinkPeer
 
 extern struct LinkPeer gLinkPeerSignatures[2];
 
-struct LobbyPanel
-{
-	u8 unknown_00[24];
-};
-
 static s32 gLinkLobbyWaitFrames;
 
 u8 *LinkLobby_GetEntrances(void)
@@ -264,20 +259,13 @@ s32 LinkLobby_CallIntoCircle(void)
 
 s32 Scene_ClearFlagsAndPlayCue2927(void)
 {
-	u16 *work = *(u16 **)&gEventWork;
+	struct EventWork *work = gEventWork;
 
 	LinkLobby_WriteSlotValue(4);
 	Engine_GameFlagClear(512);
 	Engine_GameFlagClear(0x203);
 	Engine_EventBegin();
-
-	{
-
-		u16 *p = (u16 *)((u32)work + 386);
-		s32	 val = 0;
-		*p = val;
-	}
-
+	work->raised_trigger = 0;
 	Engine_EventSetMessage((s32)MsgLobbyLinkDisconnected);
 	Engine_EventOpenMessage(8, 0);
 	Engine_GameFlagClear(0x205);
@@ -929,12 +917,6 @@ s32 LinkLobby_RunBattleApplication(void)
 done:
 	Engine_EventEnd();
 }
-
-struct LobbyActor
-{
-	u8	unknown_00[6];
-	u16 facing;
-};
 
 s32 LinkLobby_TalkLinkedWins(s32 actor)
 {

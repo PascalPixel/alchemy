@@ -28,56 +28,8 @@
 #include "edition.h"
 #include "call.h"
 
-#define NULL ((void *)0)
-
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/create.c"
-
-#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-
-struct EffectRecord
-{
-	u8 pad[9];
-	u8 flags_lo : 2;
-	u8 mode : 2;
-	u8 flags_hi : 4;
-};
-
-union MotionWork
-{
-	struct
-	{
-		u32	 unk_00[2];
-		s32	 x, y, z;
-		u32	 unk_14;
-		s32	 accum_x, accum_y;
-		u32	 unk_20[4];
-		s32	 rate_x, rate_y;
-		u32	 unk_38[3];
-		s32	 velocity_x, velocity_y, velocity_z;
-		u16 *record;
-		u8	 unk_54[16];
-		u16	 angle_step;
-	} fields;
-	u8 bytes[102];
-};
-
-struct SceneActor
-{
-	u8	unk_00[6];
-	u16 facing;
-	u8	unk_08[92];
-	u16 state_flags;
-};
-
-struct SceneActor_02000350
-{
-	u8	unk_00[6];
-	u16 facing;
-	s32 x, y, z;
-	u8	unk_14[71];
-	u8	active;
-};
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/move.c"
@@ -85,15 +37,15 @@ struct SceneActor_02000350
 #include "../common/object/distance.c"
 
 s32 SceneActor_UpdateProximity(
-	struct SceneActor_02000350 *actor, struct SceneActor_02000350 *target, s32 range, s32 force)
+	struct FieldActor *actor, struct FieldActor *target, s32 range, s32 force)
 {
 	s32	 result = 0;
-	s32 *targetPos = &target->x;
-	s32 *actorPos = &actor->x;
+	s32 *targetPos = &target->x.fixed;
+	s32 *actorPos = &actor->x.fixed;
 
 	if (FixedPoint_Distance(targetPos, actorPos) < range || force != 0)
 	{
-		u32 angle = (u16)ArcTan2(target->z - actor->z, *targetPos - *actorPos);
+		u32 angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed, *targetPos - *actorPos);
 		u32 left = (angle - 0x1000) & 0xf000;
 		u32 right = (angle + 0x1000) & 0xf000;
 		u32 forward = angle & 0xf000;
@@ -101,25 +53,25 @@ s32 SceneActor_UpdateProximity(
 
 		if (forward == facing || right == facing || left == facing || force != 0)
 		{
-			actor->active = 1;
+			actor->paused = 1;
 			Object_SetMode(actor, 1);
 			result = 1;
 		}
 	}
 	else
 	{
-		actor->active = 0;
+		actor->paused = 0;
 		Object_SetMode(actor, 2);
 	}
 	return result;
 }
 
-s32 UpdateActorProximity(u8 *actor)
+s32 UpdateActorProximity(struct FieldActor *actor)
 {
 	u8				 **globals = gWindowWork;
 	u8				  *scene = globals[0];
 	u8				  *work = globals[12];
-	u16				  *flags = (u16 *)(actor + 100);
+	u16				  *flags = (u16 *)&actor->timer;
 	s32				   force = 0;
 	s32				   range = 18;
 	struct FieldActor *partner;
@@ -221,11 +173,11 @@ void SceneDialogue_ShowLine1CB0ForActor13(void)
 
 void SceneDialogue_RunActorFourteenFlagDialogue(void)
 {
-	struct SceneActor *actor = Actor_Get(14);
+	struct FieldActor *actor = Actor_Get(14);
 	u16				   facing = actor->facing;
 	s32				   text;
 
-	actor->state_flags |= 2;
+	actor->timer |= 2;
 	Engine_EventBegin();
 	text = (s32)MsgKuupuappuWarriorGuy;
 	Engine_EventSetMessage(text);
@@ -243,18 +195,18 @@ void SceneDialogue_RunActorFourteenFlagDialogue(void)
 	actor->facing = facing;
 	Engine_TaskWait(1);
 	Engine_EventEnd();
-	actor->state_flags = 1;
+	actor->timer = 1;
 	GameFlag_Set(0x307);
 }
 
 void SceneDialogue_RunActorFifteenFacingPreservedDialogue(void)
 {
-	struct Actor_02000640 *actor;
-	s16					   facing0;
+	struct FieldActor *actor;
+	s16				   facing0;
 
 	actor = Object_GetById(15);
 	facing0 = actor->facing;
-	actor->state_flags |= 2;
+	actor->timer |= 2;
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuWishVaultsElders);
 	Engine_ActorSetAnimation(15, 0);
@@ -263,7 +215,7 @@ void SceneDialogue_RunActorFifteenFacingPreservedDialogue(void)
 	actor->facing = facing0;
 	Engine_TaskWait(1);
 	Engine_EventEnd();
-	actor->state_flags = 0;
+	actor->timer = 0;
 }
 
 void SceneDialogue_RunActor16CountedDialogue(void)
@@ -324,7 +276,7 @@ void ActorPresentation_RunActor13AcceptanceDialogue(void)
 
 void KuupuappuMuraSai_RunActor14Talk(void)
 {
-	((struct SceneActor *)Actor_Get(14))->state_flags |= 2;
+	Actor_Get(14)->timer |= 2;
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x307) != 0)
 	{
@@ -337,14 +289,14 @@ void KuupuappuMuraSai_RunActor14Talk(void)
 		GameFlag_Set(0x307);
 	}
 	Engine_EventEnd();
-	((struct SceneActor *)Actor_Get(14))->state_flags = 1;
+	Actor_Get(14)->timer = 1;
 }
 
 void SceneDialogue_RunActorFifteenDialogue(void)
 {
 	{
-		struct SceneActor *actor = Object_GetById(15);
-		actor->state_flags |= 2;
+		struct FieldActor *actor = Object_GetById(15);
+		actor->timer |= 2;
 	}
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuGrownUpsAlways);
@@ -352,23 +304,21 @@ void SceneDialogue_RunActorFifteenDialogue(void)
 	Engine_EventEnd();
 	{
 		s32				   clear = 0;
-		struct SceneActor *actor = Object_GetById(15);
-		actor->state_flags = clear;
+		struct FieldActor *actor = Object_GetById(15);
+		actor->timer = clear;
 	}
 }
 
 void FieldScene_RunScene385SequenceA(void)
 {
-	u32 i;
 	s32 rec7;
-	s32 record;
 	s32 v5;
 
 	rec7 = GameFlag_IsSet(0x308);
 	if (rec7 == 0)
 	{
 		Engine_EventBegin();
-		*((u8 *)Actor_Get(16) + 91) = 1;
+		Actor_Get(16)->paused = 1;
 		Engine_ActorSetAnimation(16, 1);
 		Engine_ActorRunRepeatedMotion(16, 1);
 		Engine_EventWait(20);
@@ -380,7 +330,7 @@ void FieldScene_RunScene385SequenceA(void)
 			gEventWork->message++;
 		}
 		Event_ShowMessage(16, 0);
-		*((u8 *)Actor_Get(16) + 91) = rec7;
+		Actor_Get(16)->paused = rec7;
 		Engine_ActorEnableActionCallback(16, 2);
 		Engine_EventEnd();
 		GameFlag_Set(0x308);
@@ -388,10 +338,10 @@ void FieldScene_RunScene385SequenceA(void)
 	else
 	{
 		Engine_EventSetMessage((s32)MsgKuupuappuNotLikeEasy);
-		*((u8 *)Actor_Get(16) + 91) = 1;
+		Actor_Get(16)->paused = 1;
 		ActorPresentation_RunActorModeOneThenZero(16);
 		v5 = 0;
-		*((u8 *)Actor_Get(16) + 91) = v5;
+		Actor_Get(16)->paused = v5;
 	}
 }
 
@@ -418,9 +368,6 @@ void ActorPresentation_MoveActorToPositionAndWait(int actor, int x, int z, int f
 
 void FieldScene_RunActor21SequenceOnce(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Event_PlayCue(100);
 	Engine_EventWait(40);
@@ -574,9 +521,6 @@ void FieldScene_SetActor21Values0And4(void)
 
 void FieldScene_RunActor18MotionSequence(void)
 {
-	u32 i;
-	s32 record;
-
 	PartyInventory_Discard(231);
 	Engine_EventBegin();
 	Engine_EventWait(10);

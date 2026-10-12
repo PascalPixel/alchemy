@@ -26,51 +26,8 @@
 
 extern struct EventWork *gEventWork;
 
-#define NULL ((void *)0)
-#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-#define ObjectMotion_CallThenWaitForAnimationChange_9(args...) \
-	Engine_ActorSetAnimationAndWait(args)
-
-struct Params
-{
-	s32 unused0;
-	s32 field1;
-	s32 field2;
-	s32 field3;
-	u8	pad[24];
-};
-
-struct Descriptor_02000484
-{
-	u32 field0;
-	u8	unused[12];
-	u32 field16;
-	u32 field20;
-	u16 field24;
-	u16 unused26;
-	u32 field28;
-	u8	unused32[8];
-};
-
-struct Descriptor_020041ec
-{
-	u32 field0;
-	u32 field4;
-	u8	unused8[16];
-	u16 field24;
-	u8	unused26[6];
-	u8	unused32[8];
-};
-
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../effect/create.c"
-
-union SceneWord
-{
-	s32 word;
-	u16 half[2];
-};
 
 extern u8 gEffectWork[];
 
@@ -137,9 +94,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 void ShianJiin_AskBridgeCrossing(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgShianHowDidGetHereBridge);
 	if (GameFlag_IsSet(0x890) != 0)
@@ -256,7 +210,6 @@ void Scene_RunActorNineTransition(void)
 
 void Scene_RunScene39eSequenceB(void)
 {
-	u32				   i;
 	s32				   rec7;
 	struct FieldActor *record;
 
@@ -655,7 +608,6 @@ void ShianJiin_RunMasterScene(s32 mode)
 
 void ShianJiin_RunGatheringScene(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 	Engine_ActorFaceActor(13, 19, 0);
@@ -1121,7 +1073,6 @@ void FieldScene_RunSkippableStoryBeat(void)
 
 void FieldScene_RunEnsembleStoryBeat(void)
 {
-	u32				   i;
 	struct FieldActor *actor;
 
 	actor = Actor_Get(18);
@@ -1271,7 +1222,7 @@ void FieldScene_RunEnsembleStoryBeat(void)
 	Engine_ActorSetAnimation(13, 3);
 	Engine_ActorSetAnimation(14, 3);
 	Engine_ActorSetAnimation(15, 3);
-	ObjectMotion_CallThenWaitForAnimationChange_9(16, 3);
+	Engine_ActorSetAnimationAndWait(16, 3);
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(18, 2);
 	Engine_EventWait(20);
@@ -1402,25 +1353,25 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 void FieldScene_SpawnRandomizedParticle(void)
 {
-	struct Params	   params;
+	struct EffectOptions params;
 	struct FieldActor *record;
 	s32				   draw;
 	s32				   offset;
 
 	record = Object_GetById(ACTOR_PARTY_LEADER);
 
-	params.field1 = 7;
+	params.palette = 7;
 	draw = (u32)(Engine_RandomNext() * 7) >> 16;
 	if ((draw & 7) == 0)
-		params.field1 = 5;
+		params.palette = 5;
 
-	params.field2 = 0xb333;
-	params.field3 = 0xcccc;
+	params.start_scale_x = 0xb333;
+	params.start_scale_y = 0xcccc;
 
 	offset = ((u32)(Engine_RandomNext() * 8) >> 16) * 13107;
 
 	Effect_Spawn(record->x.fixed + ((8 - (gFrameCount & 15)) << 16), record->y.fixed + (192 << 13),
-		record->z.fixed, 0, -offset, 0, 144 << 12, (u8 *)&params);
+		record->z.fixed, 0, -offset, 0, 144 << 12, &params);
 
 	if ((gFrameCount & 1) != 0)
 		Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
@@ -1445,9 +1396,6 @@ void FieldScene_ApplyOffsetNeg32_0(void)
 
 void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x28000, 0x14000);
 	Engine_ActorSetDestinationOffset(0, a0, a1);
@@ -1460,7 +1408,6 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1)
 
 void FieldScene_RunScene39eSequenceA(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 	s32				   base5_200a5b9;
 
@@ -1491,9 +1438,6 @@ void FieldScene_PlaySound123AndEnable(void)
 
 void ShianJiin_RunExitTransition(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Event_PlayCue(188);
 	Map_AnimateCells((const u16 *)ShianJiin_CellStepsA, 77, 8);
@@ -1617,7 +1561,6 @@ void ShianJiin_AskIfCurious(void)
 
 void FieldScene_RunRoofEnsembleSequence(void)
 {
-	u32				   unused;
 	struct FieldActor *source_record;
 
 	Engine_EventBegin();
@@ -2288,16 +2231,16 @@ void FieldScene_FinishSequence(void)
 
 void FieldScene_SpawnEightShots(void)
 {
-	struct Descriptor_02000484 descriptor;
-	struct FieldActor		  *record;
-	u32						   i;
+	struct EffectOptions descriptor;
+	struct FieldActor	*record;
+	u32					 i;
 
 	record = Object_GetById(8);
-	descriptor.field0 = 1;
-	descriptor.field24 = 0x0119;
-	descriptor.field28 = (u32)ShianJiin_ShotScript;
-	descriptor.field16 = 224 << 10;
-	descriptor.field20 = 192 << 9;
+	descriptor.priority = 1;
+	descriptor.type = 0x0119;
+	descriptor.script = ShianJiin_ShotScript;
+	descriptor.target_scale_x = 224 << 10;
+	descriptor.target_scale_y = 192 << 9;
 	for (i = 0; i <= 7; i++)
 	{
 		Engine_EventWait(10);
@@ -2306,7 +2249,7 @@ void FieldScene_SpawnEightShots(void)
 			Engine_AudioPlayCue(0x82);
 		}
 		Effect_Spawn(record->x.fixed, record->y.fixed, record->z.fixed + 0xffe80000, 0, 0x9999, 0,
-			0x00360001, (u8 *)&descriptor);
+			0x00360001, &descriptor);
 	}
 	Engine_EventWait(60);
 }
@@ -2325,12 +2268,12 @@ void FieldScene_SelectActorModeFromInputBit(s32 arg0)
 
 void FieldScene_RunParticleRain(void)
 {
-	struct Descriptor_020041ec descriptor;
-	struct FieldActor		  *actor;
-	u32						   i;
-	s32						   x;
-	s32						   y;
-	s32						   scale;
+	struct EffectOptions descriptor;
+	struct FieldActor	*actor;
+	u32					 i;
+	s32					 x;
+	s32					 y;
+	s32					 scale;
 
 	Engine_AudioPlayCue(0x83);
 	Object_GetById(8)->update =
@@ -2345,9 +2288,9 @@ void FieldScene_RunParticleRain(void)
 		(void (*)(union FieldObject *))FieldScene_SelectActorModeFromInputBit;
 	Engine_EventWait(120);
 	actor = Object_GetById(8);
-	descriptor.field0 = 1;
-	descriptor.field4 = 2;
-	descriptor.field24 = 0x011d;
+	descriptor.priority = 1;
+	descriptor.palette = 2;
+	descriptor.type = 0x011d;
 	for (i = 0; i <= 63; i++)
 	{
 		if ((i & 3) == 0)
@@ -2357,7 +2300,7 @@ void FieldScene_RunParticleRain(void)
 		x = actor->x.fixed + ((((u32)(Engine_RandomNext() * 3) << 4) >> 16) << 16) + 0xfff40000;
 		y = actor->y.fixed + ((((u32)Engine_RandomNext() << 5) >> 16) << 16) + 0xfff00000;
 		scale = ((((u32)Engine_RandomNext() << 2) >> 16) << 15) + (128 << 8);
-		Effect_Spawn(x, y, actor->z.fixed, 0, scale, 0, 152 << 13, (u8 *)&descriptor);
+		Effect_Spawn(x, y, actor->z.fixed, 0, scale, 0, 152 << 13, &descriptor);
 		Engine_TaskWait(2);
 	}
 	Engine_AudioPlayCue(220);

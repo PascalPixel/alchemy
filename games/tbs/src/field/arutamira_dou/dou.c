@@ -11,7 +11,6 @@
 #include "unit/system/scheduler/callback.h"
 #include "iowrite.h"
 
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -68,15 +67,6 @@ struct RockPuzzle
 #define ArutamiraDou_RockPuzzle ((struct RockPuzzle *)&gSceneState[1])
 
 u16 gArutamiraActorWheelWork[6] __attribute__((nocommon, aligned(4)));
-
-struct Obj
-{
-	u8	unknown_00[24];
-	s32 a;
-	s32 b;
-	u8	unknown_20[68];
-	s16 frame;
-};
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
@@ -433,14 +423,14 @@ void FieldScene_RunGuardedSixWordStep(void)
 	Engine_EventEnd();
 }
 
-void ArutamiraDou_UpdateScalePulse(struct Obj *obj)
+void ArutamiraDou_UpdateScalePulse(struct FieldActor *obj)
 {
-	s32 v = ArutamiraDou_PulseScales[(obj->frame >> 2) & 3];
+	s32 v = ArutamiraDou_PulseScales[(obj->timer >> 2) & 3];
 
-	obj->a = v;
-	obj->b = v;
-	obj->frame++;
-	obj->frame &= 15;
+	obj->scale_x = v;
+	obj->scale_y = v;
+	obj->timer++;
+	obj->timer &= 15;
 }
 
 void SceneActor_SetPositionFromTransformedBase(s32 a, s32 b, s32 c)
@@ -2028,7 +2018,7 @@ s32 ArutamiraDou_ApplyEntryState(void)
 	return 0;
 }
 
-void OverlayObject_UpdateThreeStateMotion(void *obj)
+void OverlayObject_UpdateThreeStateMotion(struct EffectSlot *obj)
 {
 	s32 position[3];
 	s32 x;
@@ -2036,22 +2026,22 @@ void OverlayObject_UpdateThreeStateMotion(void *obj)
 	u8 *p;
 	s32 state;
 
-	p = (u8 *)obj + 0x40;
+	p = (u8 *)&obj->state;
 	state = *(s8 *)p;
 	if (state == 0)
 	{
-		z = FIELD(obj, s32, 0x18);
-		x = FIELD(obj, s32, 0x14);
-		FIELD(obj, s32, 8) = z;
+		z = obj->origin_z;
+		x = obj->origin_x;
+		obj->z = z;
 		position[2] = z;
-		FIELD(obj, s32, 4) = x;
+		obj->x = x;
 		position[0] = x;
 		Vector_AddPolarOffset(0x780000, Engine_RandomNext(), position);
-		FIELD(obj, s32, 0xC) = position[0];
-		FIELD(obj, s32, 0x10) = position[2];
-		FIELD(obj, s32, 0x24) = 0x50000;
-		FIELD(obj, s32, 0x20) = 0x50000;
-		FIELD(obj, u8, 0x42) = state;
+		obj->target_x = position[0];
+		obj->target_z = position[2];
+		obj->acceleration = 0x50000;
+		obj->max_speed = 0x50000;
+		obj->flag42 = state;
 		(*p)++;
 		if ((*(s32 *)gFrameTick & 3) == 0)
 			Engine_AudioPlayCue(0x86);
@@ -2074,12 +2064,12 @@ void OverlayObject_UpdateThreeStateMotion(void *obj)
 
 void ArutamiraDou_ReleaseWallBurst(void)
 {
-	extern u8 *gEffectWork;
-	u8		  *work;
-	s32		   pos[3];
-	s32		  *p;
-	u8		  *object;
-	s32		   n;
+	extern u8		  *gEffectWork;
+	u8				  *work;
+	s32				   pos[3];
+	s32				  *p;
+	struct EffectSlot *object;
+	s32				   n;
 
 	BattleFx_InitializeSlots();
 	work = gEffectWork;
@@ -2089,7 +2079,7 @@ void ArutamiraDou_ReleaseWallBurst(void)
 	p[1] = 0x180000;
 	p[2] = 0x900000;
 	Camera_WorldToScreen(p);
-	object = work + 88;
+	object = (struct EffectSlot *)(work + 88);
 	for (n = 23; n >= 0; n--)
 	{
 		s32 speed;
@@ -2098,12 +2088,12 @@ void ArutamiraDou_ReleaseWallBurst(void)
 		EffectSlot_SetCallback(object, OverlayObject_UpdateThreeStateMotion);
 		EffectSlot_SetObjectMode(object, 7);
 		ObjectGroup_SetChildValueUnlessFifteen(
-			(void *)*(s32 *)object, (u32)(Engine_RandomNext() * 7) >> 16);
+			object->object, (u32)(Engine_RandomNext() * 7) >> 16);
 		speed = Math_DivideUnsigned(Engine_RandomNext(), 3) + 0x18000;
-		*(s32 *)(object + 44) = speed;
-		*(s32 *)(object + 40) = speed;
+		object->scale_y = speed;
+		object->scale_x = speed;
 		Engine_TaskWait(1);
-		object += 72;
+		object++;
 	}
 	Engine_TaskWait(80);
 	Map_CopyCellsLayered(41, 55, 3, 2, 30, 55);

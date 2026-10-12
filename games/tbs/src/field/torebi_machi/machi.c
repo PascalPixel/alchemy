@@ -125,7 +125,6 @@ u8 *TorebiMachi_GetPlacements(void)
 void TorebiMachi_OpenActorEightPassage(void)
 {
 
-	u32				   i;
 	struct FieldActor *record;
 
 	record = Object_GetById(8);
@@ -309,9 +308,6 @@ void FieldScene_RunPatientTalk(void)
 
 void TorebiMachi_AskForSweets(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Actor_FaceDirection(26, 0x4000, 0);
 	Engine_ActorStartRepeatedMotion(26, 2);
@@ -338,10 +334,6 @@ void SceneDialogue_RunActor24Message235f(void)
 
 void TorebiMachi_ReceiveLeftovers(void)
 {
-
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x8bf) == 0)
 	{
@@ -410,7 +402,6 @@ void SceneActor_CopyPlayerModeToActor(union FieldObject *object)
 
 s32 TorebiMachi_ApplyEntryState(s32 a0)
 {
-	u32 i;
 	s32 record;
 	s32 handler;
 	s32 hidden;
@@ -467,10 +458,6 @@ s32 TorebiMachi_ApplyEntryState(s32 a0)
 
 void FieldScene_RunScene3b5SequenceA(void)
 {
-
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Actor_WalkToAndWait(0, 0x130, 0x138);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);

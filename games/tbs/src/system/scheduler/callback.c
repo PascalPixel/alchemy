@@ -51,8 +51,6 @@
 #include "flash.h"
 #include "audio_engine_symbols.h"
 
-extern u8 gDebugMode;
-
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
 #define HALT_ON_GAMEPAK_IRQ 1
@@ -261,8 +259,7 @@ void Runtime_InstallIwramAndIrqs(void)
 	Dma_Set(Runtime_IrqHandlers, gIrqHandlers, 0x8400000e, REG_DMA3);
 	Io_Write16(0, &REG_DISPSTAT);
 	Io_Write16(0xc3ff, &REG_KEYCNT);
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
-	|| defined(TBS_EDITION_IT)
+#if defined(HALT_ON_GAMEPAK_IRQ)
 	Io_Write16(0x3001, &REG_IE);
 #else
 	Io_Write16(0x1001, &REG_IE);
@@ -527,13 +524,13 @@ void WaitFrames(s32 frames)
 	}
 }
 
-void Runtime_SetMainState19(void)
-{
-	gKeyRepeatTimer = 19;
-}
-
 #define KEY_REPEAT_FIRST 19
 #define KEY_REPEAT_NEXT 6
+
+void Runtime_SetMainState19(void)
+{
+	gKeyRepeatTimer = KEY_REPEAT_FIRST;
+}
 
 void Input_UpdateKeyRepeatAndDirection(void)
 {
@@ -609,7 +606,7 @@ void Input_UpdateKeyRepeatAndDirection(void)
 	gKeysHeldLast = gKeysHeld;
 }
 
-extern u16 gLinkStatus;
+extern volatile u16 gLinkStatus;
 
 #define SOUND_PRESET_COUNT 5
 #define SOUND_PRESET_SIZE 152
@@ -628,7 +625,7 @@ void System_VBlankHandler(void)
 	}
 	if (gSerialExchangeActive != 0)
 	{
-		u16 *status = &gLinkStatus;
+		u16 *status = (u16 *)&gLinkStatus;
 		*status = SerialRuntime_ExchangePayloads((void *)&gSerialTransfer, gSerialPeerPayloads);
 		SerialRuntime_StepBlockTransfer();
 	}
@@ -660,7 +657,7 @@ void System_VBlankHandler(void)
 	gKeysHeld = keys;
 	if (keys == 0)
 	{
-		gKeyRepeatTimer = 19;
+		gKeyRepeatTimer = KEY_REPEAT_FIRST;
 		gKeysRepeat = keys;
 	}
 	else if (gKeysHeld & (gKeysHeldAtVBlank ^ 0xffff))
@@ -985,11 +982,6 @@ void Render_BuildOamList(void *work)
 // キャッシュは 96 個で、offset（バイト）が 0xffff ならあき。
 // size が 16 以下のものは VRAM を持っていない
 
-#if !GAME_TLA
-#include "iwram_call.h"
-#include "dma.h"
-#include "io_reg.h"
-
 //--------------------------------------------------------------------------
 // size バイト分の続いたあきブロックを前からさがし、id のものにする
 // 戻り値 : VRAM の中の位置（バイト）、なければ -1
@@ -1256,8 +1248,6 @@ s32 Resource_LoadIntoFreeSlot(s32 size)
 	VramBlock_LoadCached(no, size, 0);
 	return no;
 }
-
-#endif
 
 //--------------------------------------------------------------------------
 // キャッシュ no に、今の大きさのまま src を写しなおす
@@ -2063,9 +2053,6 @@ void RuntimeMemory_ReservedNoOp(void)
 
 #define MTX_DMA (DMA_ENABLE32 | DMA_32BIT | 12) // 行列 1 つ分の DMA
 
-#include "system.h"
-#include "iwram_call.h"
-
 typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 
 //--------------------------------------------------------------------------
@@ -2120,8 +2107,6 @@ void Graphics_RestoreTransferWork(void)
 		Dma_Set(gTransformStackTop, gTransform, MTX_DMA, REG_DMA3);
 	}
 }
-
-#if !GAME_TLA
 
 //--------------------------------------------------------------------------
 // 今の行列を単位行列にする
@@ -2388,7 +2373,6 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
 	out[8] = dz;
 	out[11] = -dot(ex, dx, ey, dy, ez, dz);
 }
-#endif
 
 void Graphics_PrepareTransferInIwramWork(s32 *eye, s32 *target)
 {
@@ -2570,7 +2554,7 @@ s32 SaveState_InitializeWorkspace(void)
 	volatile u32		   zero;
 	u32					   index;
 
-	work = Runtime_AllocateBlock(0x33, sizeof(*work));
+	work = Runtime_AllocateBlock(HEAP_SLOT_SAVE, sizeof(*work));
 	zero = 0;
 	START_DMA(&zero, work, 0x85000440);
 	SetFlashTimerIntr(2, &gIrqHandlers[5]);
@@ -2933,7 +2917,7 @@ u32 SaveState_ReleaseWorkspace(void)
 {
 	// 値を返さない int 関数 (pop {r1}; bx r1)
 	Runtime_SetIrqHandler(5, 0, NULL);
-	Runtime_ReleaseHeapBlock(51);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_SAVE);
 }
 
 void SerialRuntime_Initialize(void)
@@ -3318,7 +3302,6 @@ void SerialRuntime_RemoveIrqHandlers(void)
 	Runtime_SetIrqHandler(7, 0, 0);
 	Runtime_SetIrqHandler(6, 0, 0);
 }
-#define gLinkStatus (*(volatile u16(*)) & gLinkStatus)
 
 u32 SerialRuntime_WaitForStatusMask(s32 mask)
 {
@@ -3614,5 +3597,3 @@ restart:
 		WaitFrames(1);
 	}
 }
-
-#undef gLinkStatus

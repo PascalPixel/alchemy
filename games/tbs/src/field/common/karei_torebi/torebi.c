@@ -27,18 +27,6 @@
 #include "field_scene.h"
 #include "objcmd.h"
 
-struct SpriteBytes
-{
-	u8	unknown_00[9];
-	u8	priority;
-	u8	unknown_0a[11];
-	u8	second_priority;
-	u8	unknown_16[8];
-	u16 rotation;
-	u8	unknown_20[6];
-	u8	flags;
-};
-
 void SceneState_ApplyValues14And0And5(void)
 {
 	BattleFx_RunPageEffectForSlot(0xE, 0, 5);
@@ -113,9 +101,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 void KareiTorebi_MoveGuardAside(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	GameFlag_Set(0x8aa);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x188, 0x128);
@@ -174,9 +159,6 @@ void KareiTorebi_AskGoToTolbi(void)
 
 void KareiTorebi_AskCarryMessage(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x8a6) == 0)
 	{
@@ -202,9 +184,6 @@ L_020002c2:;
 
 void KareiTorebi_RemindBoardShip(void)
 {
-	u32 i;
-	s32 record;
-
 #if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_FR) && !defined(TBS_EDITION_IT)
 	((void)Object_GetById(0));
 	Engine_EventBegin();
@@ -319,10 +298,8 @@ void FieldScene_RunActorThirteenFlagDialogue(void)
 
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
-	u32 i;
 	s32 rec7;
-	s32 record;
-	s32 base6_2000240;
+	struct GameState *state;
 	s32 six00;
 
 #if !EDITION_INTERNATIONAL
@@ -357,11 +334,11 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 			msg = MSGNO(MsgYourCoins);
 			UiText_DrawCharacterAtOffset(msg, rec7, 0, 0);
 #endif
-			base6_2000240 = (s32)&gGameState;
+			state = &gGameState;
 #if !EDITION_INTERNATIONAL
 			msg += MSGNO(MsgCoins) - MSGNO(MsgYourCoins);
 #endif
-			UiText_DrawNumberInWindow(*(s32 *)(base6_2000240 + 16), 6, rec7, TICKET_COUNTER_X, 8);
+			UiText_DrawNumberInWindow(state->coins, 6, rec7, TICKET_COUNTER_X, 8);
 #if !EDITION_INTERNATIONAL
 			UiText_DrawCharacterAtOffset(msg, rec7, 48, 8);
 #endif
@@ -375,7 +352,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 			}
 			else
 			{
-				if ((u32)six00 <= (u32) * (s32 *)(base6_2000240 + 16))
+				if ((u32)six00 <= (u32)state->coins)
 				{
 					goto L_0200061e;
 				}
@@ -420,9 +397,6 @@ void KareiTorebi_TalkSeasickTourists(void)
 
 void KareiTorebi_DeliverParentsMessage(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x8a8) != 0)
 	{
@@ -496,9 +470,6 @@ void KareiTorebi_LeaveScene(void)
 
 s32 Scene_Initialize(void)
 {
-	u32 i;
-	s32 record;
-
 	if (gGameState.entrance == 90)
 	{
 		Engine_GameFlagSet(0x950);
@@ -526,9 +497,6 @@ s32 Scene_Initialize(void)
 
 void KareiTorebi_PreparePort(void)
 {
-	u32 i;
-	s32 record;
-
 	if (gGameState.entrance == 1)
 	{
 		if (GameFlag_IsSet(0x8ac) == 0)
@@ -593,7 +561,7 @@ void FieldScene_ConfigureFlaggedActors(void)
 		((u8 *)actor->sprite)[9] |= 12;
 		((u8 *)actor->sprite)[38] = 0;
 		zero = 0;
-		((struct SpriteBytes *)actor->sprite)->rotation = 0xc000;
+		actor->sprite->rotation = 0xc000;
 		actor = Object_GetById(11);
 		actor->priority_flags = zero;
 		((u8 *)actor->sprite)[9] |= 12;
@@ -630,24 +598,16 @@ void FieldScene_PlaceSlots14And15(void)
 
 void SceneActor_SetMode3AndFlagBit1(s32 no)
 {
-	u8 *p = ((u8 *)Object_GetById(no));
-	u8 *flag;
+	struct FieldActor *actor = Object_GetById(no);
 
-	Engine_ActorSetSpriteFlags(((u8 *)Object_GetById(no)), 0);
+	Engine_ActorSetSpriteFlags(Object_GetById(no), 0);
 	Engine_ActorSetSpritePriority(no, 3);
-	flag = p + 85;
-	*flag = 0;
-	p += 35;
-	{
-		u8 bit = 2;
-
-		*p = bit | *p;
-	}
+	actor->motion_flags = 0;
+	actor->priority_flags |= 2;
 }
 
 void FieldScene_RunScene3aeSequenceA(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 	Engine_EventBegin();

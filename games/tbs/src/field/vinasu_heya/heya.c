@@ -36,120 +36,10 @@
 #include "io_reg.h"
 #include "scene_ids.h"
 
-struct Sprite
+struct DirXZ
 {
-	u8	pad00[9];
-	u8	flags9;
-	u8	pad0a[20];
-	u16 angle;
-	u8	pad20[6];
-	u8	state26;
-};
-
-struct Effect
-{
-	u8			   pad00[24];
-	s32			   accum18;
-	s32			   accum1c;
-	u8			   pad20[3];
-	u8			   flatla3;
-	u8			   pad24[12];
-	s32			   rate30;
-	s32			   rate34;
-	u8			   pad38[12];
-	s32			   velocity_x;
-	s32			   velocity_y;
-	s32			   velocity_z;
-	struct Sprite *sprite;
-	u8			   pad54;
-	u8			   mode55;
-	u8			   pad56[14];
-	u16			   step64;
-	u8			   pad66[6];
-	u32			   callback;
-};
-
-struct Args_02003fe4
-{
-	s32 first;
-	s32 unused;
-	s32 last;
-};
-
-struct Args_02003ffc
-{
-	s32 first;
-	s32 unused;
-	s32 last;
-};
-
-struct Args_02004014
-{
-	s32 first;
-	s32 unused;
-	s32 last;
-};
-
-struct Args_02004030
-{
-	s32 first;
-	s32 unused;
-	s32 last;
-};
-
-struct BusyObject
-{
-	u8	filler00[0x28];
-	s32 busy;
-};
-
-struct Object_020005e4
-{
-	u8	unknown_00[8];
 	s32 x;
-	s32 y;
-	s32 z;
-};
-
-struct EffectParams_020005e4
-{
-	s32 unk00;
-	s32 mode;
-	s32 color1;
-	s32 color2;
-	u8	unknown_10[0x18];
-};
-
-struct Object_020006a0
-{
-	u8	unknown_00[8];
-	s32 x;
-	s32 y;
-	s32 z;
-};
-
-struct EffectParams_020006a0
-{
-	s32 unk00;
-	s32 mode;
-	s32 color1;
-	s32 color2;
-	u8	unknown_10[0x18];
-};
-
-struct EffectObject
-{
-	u8	filler00[0x30];
-	s32 color;
-	u8	filler34[0x38];
-	s32 callback;
-};
-
-struct SceneObject
-{
-	u8	filler00[8];
-	s32 x;
-	s32 y;
+	s32 unused;
 	s32 z;
 };
 
@@ -160,204 +50,11 @@ struct Vec
 	s32 z;
 };
 
-struct EffectParams
-{
-	s32 unk00;
-	s32 mode;
-	u8	filler08[0x1c];
-	s32 callback;
-};
-
-struct SceneObject_02000b98
-{
-	u8	filler00[8];
-	s32 x;
-	s32 y;
-	s32 z;
-	u8	filler14[0x24];
-	s32 near;
-	u8	filler3c[4];
-	s32 far;
-};
-
-struct EffectParams_02000b98
-{
-	s32 unk00;
-	s32 mode;
-	s32 color1;
-	s32 color2;
-	s32 unk10;
-	s32 unk14;
-	u16 angle;
-	u8	filler1a[0xa];
-	s32 callback;
-};
-
-struct EffectObject_02000c5c
-{
-	u8	filler00[0xc];
-	s32 timer;
-	u8	filler10[0x13];
-	u8	mode;
-	u8	filler24[0xc];
-	s32 scale_x;
-	s32 scale_y;
-	u8	filler38[0x1d];
-	u8	state;
-	u8	filler56[3];
-	u8	phase;
-	u8	filler5a[9];
-	u8	flag;
-	u8	filler64[8];
-	s32 callback;
-};
-
-typedef struct
-{
-	u8	filler0[8];
-	s32 unk8;
-	u8	fillerC[4];
-	s32 unk10;
-} Struct_A;
-
-typedef struct
-{
-	u8	filler0[10];
-	s16 unkA;
-	u8	fillerC[6];
-	s16 unk12;
-} Struct_B;
-
-struct Actor_020008c8
-{
-	u8	unknown_00[8];
-	s32 x;
-	s32 y;
-	s32 z;
-	u8	unknown_14[0xf];
-	u8	flatla3;
-};
-
-struct Position
-{
-	u32 filler00[2];
-	s32 x;
-	s32 y;
-	s32 z;
-};
-
-typedef struct
-{
-	u8	filler0[8];
-	s32 unk8;
-	u8	fillerC[4];
-	s32 unk10;
-} Struct_0ff0;
-
-typedef struct
-{
-	u8	filler0[8];
-	s32 unk8;
-	u8	fillerC[4];
-	s32 unk10;
-} Struct_199c;
-
-typedef struct
-{
-	u8	filler0[8];
-	s32 unk8;
-	s32 unkC;
-	s32 unk10;
-} Struct_19c0;
-
-typedef struct
-{
-	u8	filler0[8];
-	s32 unk8;
-} Struct_1a9c;
-
-typedef struct
-{
-	s32 filler0[3];
-	s32 unkC;
-} Struct_22a4b;
-
-struct Sprite_0200096c
-{
-	u8	pad00[9];
-	u8	flags9;
-	u8	pad0a[20];
-	u16 angle;
-	u8	pad20[6];
-	u8	state26;
-};
-
-struct Effect_0200096c
-{
-	u8						pad00[8];
-	s32						position[3];
-	u8						pad14[4];
-	s32						accum18;
-	s32						accum1c;
-	u8						pad20[3];
-	u8						flatla3;
-	u8						pad24[12];
-	s32						rate30;
-	s32						rate34;
-	u8						pad38[12];
-	s32						velocity[3];
-	struct Sprite_0200096c *sprite;
-	u8						pad54;
-	u8						mode55;
-	u8						pad56[14];
-	u16						step64;
-	u8						pad66[6];
-	u32						callback;
-};
-
-struct SceneObject_02000cc8
-{
-	u8	filler00[6];
-	u16 angle;
-	s32 x;
-	s32 y;
-	s32 z;
-	u8	filler14[0x14];
-	s32 accel;
-	u8	filler2c[4];
-	s32 scale_x;
-	s32 scale_y;
-	u8	filler38[0x1d];
-	u8	state;
-};
-
 union VecView
 {
 	struct Vec v;
 	s16		   h[6];
 };
-
-typedef struct
-{
-	u8	filler0[8];
-	s32 unk8;
-	s32 unkC;
-	u8	filler10[4];
-	s32 unk14;
-	u8	filler18[61];
-	u8	unk55;
-} Struct_1644;
-
-typedef struct
-{
-	u8	filler0[8];
-	s32 unk8;
-	u8	fillerC[4];
-	s32 unk10;
-} Struct_18f8;
-
-#ifndef MODERN // modern GCC keeps the headers' volatile declaration
-#endif
 
 static __inline__ void SetFlagBits(u8 *flags, u8 bits)
 {
@@ -409,9 +106,6 @@ void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 type)
 	}
 	return 0;
 }
-
-#ifndef MODERN // modern GCC keeps the headers' volatile declaration
-#endif
 
 extern u8 *gActorEffectWork;
 
@@ -536,21 +230,21 @@ s32 OverlayObject_UpdateEveryFourFrames(void *obj)
 	return 0;
 }
 
-s32 SceneEffect_SpawnRandomEveryEightFramesB(struct Object_020005e4 *object)
+s32 SceneEffect_SpawnRandomEveryEightFramesB(struct FieldActor *object)
 {
-	struct EffectParams_020005e4 params;
-	s32							 phase, x, y, speed;
+	struct EffectOptions params;
+	s32					 phase, x, y, speed;
 	phase = gFrameCount & 7;
 	if (phase != 0)
 		goto done;
-	params.unk00 = 3 - ((u32)(Engine_RandomNext() * 2) >> 16);
-	params.color1 = 0x6666;
-	params.color2 = 0x6666;
-	params.mode = 14;
-	x = object->x + ((((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16);
-	y = object->y + ((32 - ((u32)(Engine_RandomNext() * 32) >> 16)) << 16);
+	params.priority = 3 - ((u32)(Engine_RandomNext() * 2) >> 16);
+	params.start_scale_x = 0x6666;
+	params.start_scale_y = 0x6666;
+	params.palette = 14;
+	x = object->x.fixed + ((((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16);
+	y = object->y.fixed + ((32 - ((u32)(Engine_RandomNext() * 32) >> 16)) << 16);
 	speed = Math_Divide((((u32)(Engine_RandomNext() * 5) >> 16) << 16) + 0x00050000, 10);
-	Effect_Spawn(x, y, object->z, 0, speed, phase, 0x000b0000, &params);
+	Effect_Spawn(x, y, object->z.fixed, 0, speed, phase, 0x000b0000, &params);
 done:
 	return 0;
 }
@@ -561,28 +255,28 @@ s32 OverlayObject_ApplyZero(void *obj)
 	return 0;
 }
 
-s32 SceneEffect_SpawnTwoRandomizedParticles(struct Object_020006a0 *obj)
+s32 SceneEffect_SpawnTwoRandomizedParticles(struct FieldActor *obj)
 {
-	struct EffectParams_020006a0 params;
-	s32							 speed;
-	s32							 phase;
+	struct EffectOptions params;
+	s32					 speed;
+	s32					 phase;
 
-	params.color1 = 0x0000cccc;
-	params.color2 = 0x0000cccc;
-	params.unk00 = 0;
+	params.start_scale_x = 0x0000cccc;
+	params.start_scale_y = 0x0000cccc;
+	params.priority = 0;
 
 	speed = ((u32)(Engine_RandomNext() * 8) >> 16) * 0x3333;
 	phase = gFrameCount & 15;
 
-	Effect_Spawn(obj->x + ((8 - phase) << 16), obj->y + 0x001a0000, obj->z, 0, -speed, 0,
+	Effect_Spawn(obj->x.fixed + ((8 - phase) << 16), obj->y.fixed + 0x001a0000, obj->z.fixed, 0, -speed, 0,
 		0x000a0000, &params);
 
 	phase = gFrameCount & 15;
 	if (phase == 0)
 	{
-		params.color1 = 0x00008000;
-		params.color2 = 0x00008000;
-		Effect_Spawn(obj->x + ((((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16), obj->y, obj->z,
+		params.start_scale_x = 0x00008000;
+		params.start_scale_y = 0x00008000;
+		Effect_Spawn(obj->x.fixed + ((((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16), obj->y.fixed, obj->z.fixed,
 			0, 0, 0, 0x000a0000, &params);
 	}
 
@@ -591,21 +285,21 @@ s32 SceneEffect_SpawnTwoRandomizedParticles(struct Object_020006a0 *obj)
 
 void SceneEffect_RunObjectZeroColorSequence(void)
 {
-	struct EffectObject *obj;
-	struct EventWork	*state;
+	struct FieldActor *obj;
+	struct EventWork  *state;
 
 	state = gEventWork;
 	obj = Object_GetById(ACTOR_PARTY_LEADER);
 	Engine_EventBegin();
 	Engine_AudioPlayCue(228);
-	obj->callback = (s32)SceneEffect_SpawnTwoRandomizedParticles;
-	obj->color = 0x3333;
+	obj->update = (void (*)(union FieldObject *))SceneEffect_SpawnTwoRandomizedParticles;
+	obj->speed = 0x3333;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
 	Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
 	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 	Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
 	Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
-	obj->callback = 0;
+	obj->update = 0;
 	Engine_EventWait(30);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
@@ -653,23 +347,23 @@ void VinasuHeya_ReleaseEffectLeader(void)
 	*(s32 *)(gActorEffectWork + 24) = 0;
 }
 
-s32 SceneActor_SetFlagBitByRelativeDepth(struct Actor_020008c8 *actor)
+s32 SceneActor_SetFlagBitByRelativeDepth(struct FieldActor *actor)
 {
-	struct Actor_020008c8 *ref;
-	u8					  *fp;
-	u8					   flags;
+	struct FieldActor *ref;
+	u8				  *fp;
+	u8				   flags;
 	ref = Object_GetById(ACTOR_PARTY_LEADER);
-	fp = &actor->flatla3;
+	fp = &actor->priority_flags;
 	flags = *fp | 2;
 	*fp = flags;
-	if (ref->z < actor->z)
+	if (ref->z.fixed < actor->z.fixed)
 	{
-		s32 diff = actor->z - ref->z;
+		s32 diff = actor->z.fixed - ref->z.fixed;
 		s32 lim;
 		diff += 0x00040000;
-		lim = actor->y;
+		lim = actor->y.fixed;
 		lim += diff;
-		if (ref->y <= lim)
+		if (ref->y.fixed <= lim)
 		{
 			flags &= 0xfd;
 			*fp = flags;
@@ -680,30 +374,30 @@ s32 SceneActor_SetFlagBitByRelativeDepth(struct Actor_020008c8 *actor)
 
 void SceneActor_SwapPositionsByDepth(s32 group, s32 index)
 {
-	struct Position *first;
-	struct Position *second;
-	s32				 value;
+	struct FieldActor *first;
+	struct FieldActor *second;
+	s32				   value;
 
 	first = Object_GetById(group);
 	second = Object_GetById(index);
-	if (first->z <= second->z)
+	if (first->z.fixed <= second->z.fixed)
 	{
-		value = first->x;
-		first->x = second->x;
-		second->x = value;
+		value = first->x.fixed;
+		first->x.fixed = second->x.fixed;
+		second->x.fixed = value;
 
-		value = first->y;
-		first->y = second->y;
-		second->y = value;
+		value = first->y.fixed;
+		first->y.fixed = second->y.fixed;
+		second->y.fixed = value;
 
-		value = first->z;
-		first->z = second->z;
-		second->z = value;
+		value = first->z.fixed;
+		first->z.fixed = second->z.fixed;
+		second->z.fixed = value;
 		Engine_TaskWait(1);
 	}
 }
 
-void OverlayObject_WaitUntilIdle(struct BusyObject *obj)
+void OverlayObject_WaitUntilIdle(struct FieldActor *obj)
 {
 	s32 cnt;
 	s32 busy;
@@ -712,7 +406,7 @@ void OverlayObject_WaitUntilIdle(struct BusyObject *obj)
 	while (cnt != 0)
 	{
 		Engine_TaskWait(1);
-		busy = obj->busy;
+		busy = obj->velocity_y;
 		cnt--;
 		if (busy == 0)
 			break;
@@ -775,18 +469,18 @@ void FieldScene_RunSupplementalSequenceOne(void)
 
 void SceneEffect_SpawnNineRadialEffects(s32 actor)
 {
-	struct SceneObject *object;
-	struct Vec			vec;
-	struct EffectParams params;
-	u32					i;
-	s32					v;
-	s32					x;
-	s32					z;
+	struct FieldActor	   *object;
+	struct Vec			 vec;
+	struct EffectOptions params;
+	u32					 i;
+	s32					 v;
+	s32					 x;
+	s32					 z;
 
-	object = (struct SceneObject *)Object_GetById(actor);
-	params.unk00 = 1;
-	params.mode = 7;
-	params.callback = (s32)Effect_AdvanceMotion;
+	object = Object_GetById(actor);
+	params.priority = 1;
+	params.palette = 7;
+	params.update = Effect_AdvanceMotion;
 	for (i = 0; i <= 16; i += 2)
 	{
 		v = i << 12;
@@ -797,17 +491,17 @@ void SceneEffect_SpawnNineRadialEffects(s32 actor)
 		vec.z = z;
 		x += Math_Divide(x, 3);
 		vec.x = x;
-		Effect_Spawn(object->x, object->y, object->z, x, vec.y, z, 0x01030001, &params);
+		Effect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y, z, 0x01030001, &params);
 	}
 }
 
-s32 SceneEffect_SpawnRandomizedParticleEveryFourFrames(struct SceneObject_02000b98 *obj)
+s32 SceneEffect_SpawnRandomizedParticleEveryFourFrames(struct FieldActor *obj)
 {
-	struct EffectParams_02000b98 params;
-	s32							 y;
-	s32							 a;
-	s32							 b;
-	s32							 rnd;
+	struct EffectOptions params;
+	s32					 y;
+	s32					 a;
+	s32					 b;
+	s32					 rnd;
 
 	if ((gFrameCount & 3) != 0)
 	{
@@ -815,28 +509,28 @@ s32 SceneEffect_SpawnRandomizedParticleEveryFourFrames(struct SceneObject_02000b
 	}
 	if ((u32)(Engine_RandomNext() * 6) >> 16 == 0)
 	{
-		if (obj->near != 0x80000000 || obj->far != 0x80000000)
+		if (obj->target_x != ACTOR_NO_TARGET || obj->target_z != ACTOR_NO_TARGET)
 		{
 			Engine_AudioPlayCue(246);
 		}
 	}
 	y = 0;
-	params.angle = 286;
-	params.color1 = 0x10000;
-	params.color2 = 0x10000;
-	params.unk10 = -327;
-	params.unk14 = -327;
+	params.type = 286;
+	params.start_scale_x = 0x10000;
+	params.start_scale_y = 0x10000;
+	params.target_scale_x = -327;
+	params.target_scale_y = -327;
 	rnd = Engine_RandomNext();
 	a = Math_Divide(((((u32)(rnd * 9)) >> 16) - 4) << 16, 10);
 	rnd = Engine_RandomNext();
 	b = Math_Divide(((((u32)(rnd * 9)) >> 16) - 4) << 16, 10);
-	Effect_Spawn(obj->x, obj->y, obj->z - 0x10000, a, y, b, 0x001c0001, &params);
+	Effect_Spawn(obj->x.fixed, obj->y.fixed, obj->z.fixed - 0x10000, a, y, b, 0x001c0001, &params);
 	return 0;
 }
 
-struct EffectObject_02000c5c *SceneEffect_SpawnEffect284AtCell(s32 x, s32 z, s32 arg2)
+struct FieldActor *SceneEffect_SpawnEffect284AtCell(s32 x, s32 z, s32 arg2)
 {
-	struct EffectObject_02000c5c *obj;
+	struct FieldActor *obj;
 	s32							  sx;
 	s32							  sz;
 
@@ -847,62 +541,62 @@ struct EffectObject_02000c5c *SceneEffect_SpawnEffect284AtCell(s32 x, s32 z, s32
 	{
 		return 0;
 	}
-	obj->scale_x = 0x10000;
-	obj->scale_y = 0x10000;
+	obj->speed = 0x10000;
+	obj->acceleration = 0x10000;
 	Engine_ActorSetSpriteFlags(obj, 0);
 	Object_SetMode(obj, 7);
-	obj->state = 0;
-	obj->timer = 0;
-	obj->phase = 0;
-	obj->mode = 2;
-	obj->callback = (s32)SceneEffect_SpawnRandomizedParticleEveryFourFrames;
-	obj->flag = 0;
+	obj->motion_flags = 0;
+	obj->y.fixed = 0;
+	obj->collision_flags = 0;
+	obj->priority_flags = 2;
+	obj->update = (void (*)(union FieldObject *))SceneEffect_SpawnRandomizedParticleEveryFourFrames;
+	obj->rise_enabled = 0;
 	Engine_ObjectSetScript(obj, arg2);
 	return obj;
 }
 
 s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void)
 {
-	struct SceneObject_02000cc8 *obj;
-	struct Vec					 vec;
-	u8							*state;
-	u8							 old;
-	s32							 m;
+	struct FieldActor *obj;
+	struct Vec		   vec;
+	u8				  *state;
+	u8				   old;
+	s32				   m;
 #if !EDITION_INTERNATIONAL
 	u32 step;
 #endif
 
 	obj = Object_GetById(ACTOR_PARTY_LEADER);
-	state = &obj->state;
+	state = &obj->motion_flags;
 	old = *state;
 #if EDITION_INTERNATIONAL
-	vec.x = (obj->x & 0xfff00000) + 0x80000;
-	vec.y = obj->y;
-	vec.z = (obj->z & 0xfff00000) + 0x80000;
-	m = (obj->angle + 0x2000) & 0xc000;
+	vec.x = (obj->x.fixed & 0xfff00000) + 0x80000;
+	vec.y = obj->y.fixed;
+	vec.z = (obj->z.fixed & 0xfff00000) + 0x80000;
+	m = (obj->facing + 0x2000) & 0xc000;
 	Vector_AddPolarOffset(0x100000, m, &vec);
 #else
-	m = obj->angle >> 12;
+	m = obj->facing >> 12;
 	step = StagedActor_DirectionSteps[m];
-	vec.x = obj->x + (step & 0xffff0000);
-	vec.y = obj->y;
+	vec.x = obj->x.fixed + (step & 0xffff0000);
+	vec.y = obj->y.fixed;
 	step <<= 16;
-	vec.z = obj->z + step;
+	vec.z = obj->z.fixed + step;
 #endif
 	if (Object_CheckMovementCollision(obj, &vec) != 1
 		&& SceneData_FindSlotAtPosition(&vec, obj) == 0)
 	{
 #if EDITION_INTERNATIONAL
-		vec.x = (obj->x & 0xfff00000) + 0x80000;
-		vec.y = obj->y;
-		vec.z = (obj->z & 0xfff00000) + 0x80000;
-		Vector_AddPolarOffset(0x200000, (obj->angle + 0x2000) & 0xc000, &vec);
+		vec.x = (obj->x.fixed & 0xfff00000) + 0x80000;
+		vec.y = obj->y.fixed;
+		vec.z = (obj->z.fixed & 0xfff00000) + 0x80000;
+		Vector_AddPolarOffset(0x200000, (obj->facing + 0x2000) & 0xc000, &vec);
 #else
 		step = StagedActor_DirectionSteps[m];
-		vec.x = obj->x + ((step & 0xffff0000) << 1);
-		vec.y = obj->y;
+		vec.x = obj->x.fixed + ((step & 0xffff0000) << 1);
+		vec.y = obj->y.fixed;
 		step <<= 17;
-		vec.z = obj->z + step;
+		vec.z = obj->z.fixed + step;
 #endif
 		if (SceneData_FindSlotAtPosition(&vec, obj) == 0
 			&& Object_CheckMovementCollision(obj, &vec) == 0)
@@ -912,9 +606,9 @@ s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void)
 			Engine_TaskWait(6);
 			Engine_AudioPlayCue(152);
 			Object_SetMode(obj, 7);
-			obj->scale_x = 0x30000;
-			obj->scale_y = 0x20000;
-			obj->accel = 0x40000;
+			obj->speed = 0x30000;
+			obj->acceleration = 0x20000;
+			obj->velocity_y = 0x40000;
 			*state &= 0x7e;
 			Engine_ActorSetSpriteFlags(obj, 0);
 			Engine_ActorMoveToAndWait(
@@ -1059,11 +753,11 @@ void SceneDialogue_RunActorElevenDialogue(void)
 
 void FieldScene_SetFlag987AtActorTwelveTile(void)
 {
-	Struct_0ff0 *s;
+	struct FieldActor *s;
 
 	s = Object_GetById(12);
 	Engine_EventBegin();
-	if (s->unk8 >> 20 == 54 || s->unk10 >> 20 == 6)
+	if (s->x.fixed >> 20 == 54 || s->z.fixed >> 20 == 6)
 	{
 		Engine_GameFlagSet(0x987);
 	}
@@ -1253,13 +947,13 @@ void FieldScene_RunStatueDialogueSequence(void)
 
 void FieldScene_RunFlag986ActorOneScene(void)
 {
-	Struct_A *o;
-	Struct_B *u;
-	s32		  g;
-	s32		  m1;
-	s32		  m2;
-	s32		  h;
-	s32		  k;
+	struct FieldActor *o;
+	struct FieldActor *u;
+	s32				   g;
+	s32				   m1;
+	s32				   m2;
+	s32				   h;
+	s32				   k;
 
 	g = 0x986;
 	m1 = 0xcccc;
@@ -1268,7 +962,7 @@ void FieldScene_RunFlag986ActorOneScene(void)
 	k = 0x338;
 	Engine_EventBegin();
 	o = Object_GetById(12);
-	if (o->unk8 >> 20 == 53)
+	if (o->x.fixed >> 20 == 53)
 	{
 		if (Engine_GameFlagIsSet(g) == 0)
 		{
@@ -1276,7 +970,7 @@ void FieldScene_RunFlag986ActorOneScene(void)
 			o = Object_GetById(ACTOR_PARTY_LEADER);
 			if (o != 0)
 			{
-				Engine_ActorSetPosition(GERALD, o->unk8, o->unk10);
+				Engine_ActorSetPosition(GERALD, o->x.fixed, o->z.fixed);
 			}
 			Engine_ActorSetSpeed(GERALD, m1, m2);
 			Engine_ActorWalkToAndWait(GERALD, k, 88);
@@ -1302,7 +996,7 @@ void FieldScene_RunFlag986ActorOneScene(void)
 			u = Object_GetById(ACTOR_PARTY_LEADER);
 			if (u != 0)
 			{
-				Engine_ActorSetDestination(GERALD, u->unkA, u->unk12);
+				Engine_ActorSetDestination(GERALD, u->x.part.pixel, u->z.part.pixel);
 			}
 			Engine_ActorWaitForMove(GERALD);
 			Engine_ActorSetPosition(GERALD, 0, 0);
@@ -1323,21 +1017,21 @@ void FieldScene_RunFiveCallSequence(void)
 
 void SceneState_RunActor13AtColumn42Setup(void)
 {
-	Struct_1644 *obj;
-	s32			 val;
-	s32			 a;
-	s32			 b;
+	struct FieldActor *obj;
+	s32				   val;
+	s32				   a;
+	s32				   b;
 
 	obj = Object_GetById(13);
 	Engine_EventBegin();
-	if (obj->unk8 >> 20 == 42)
+	if (obj->x.fixed >> 20 == 42)
 	{
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(188);
-		obj->unk55 = 0;
+		obj->motion_flags = 0;
 		val = 0xfffe0000;
-		obj->unk14 = val;
-		obj->unkC = val;
+		obj->terrain_height = val;
+		obj->y.fixed = val;
 		Engine_GameFlagSet(0x200);
 		a = 3;
 		b = 5;
@@ -1378,19 +1072,11 @@ void VinasuHeya_UpdateFloorSwitch(void)
 
 void FieldScene_SetupActorTenCamera(void)
 {
-	u8 *state = *(u8 **)&gEventWork;
-	{
-		u16 *target = (u16 *)(state + 0xcba);
-		u16	 shown = 0;
+	struct EventWorkState *work;
 
-		*target = shown;
-	}
-	{
-		u16 *target = (u16 *)(state + 0xcb6);
-		u16	 shown = 1;
-
-		*target = shown;
-	}
+	work = (struct EventWorkState *)gEventWork;
+	work->field_cba = 0;
+	work->field_cb6 = 1;
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgVinasuThoughtIdExploreAfterDoor);
 	Actor_FaceActor(10, ACTOR_PARTY_LEADER, 0);
@@ -1406,7 +1092,6 @@ void FieldScene_SetupActorTenCamera(void)
 
 void Scene_RunActorLeapSequence(void)
 {
-	u32				   i;
 	struct FieldActor *rec7;
 	s32				   record;
 	s32				   zero;
@@ -1472,12 +1157,12 @@ void Scene_RunActorLeapSequence(void)
 void FieldScene_PlaceAndPinSlots8To10(void)
 {
 
-	u32			 i;
-	Struct_18f8 *rec;
-	s32			 x;
-	s32			 y;
-	s32			 a;
-	s32			 b;
+	u32				   i;
+	struct FieldActor *rec;
+	s32				   x;
+	s32				   y;
+	s32				   a;
+	s32				   b;
 
 	Object_GetById(8);
 	Engine_EventBegin();
@@ -1491,8 +1176,8 @@ void FieldScene_PlaceAndPinSlots8To10(void)
 	do
 	{
 		rec = Object_GetById(i + 8);
-		a = rec->unk8 >> 20;
-		b = rec->unk10 >> 20;
+		a = rec->x.fixed >> 20;
+		b = rec->z.fixed >> 20;
 		Engine_MapCopyCellAttributes(12, 50, 1, 1, a, b);
 		i++;
 	} while (i <= 2);
@@ -1516,30 +1201,30 @@ void SceneState_ApplyRectAt19_44AndRunThree(void)
 
 void SceneActor_ApplyKind45AtActorsElevenAndTwelve(void)
 {
-	u32			 i;
-	Struct_199c *p;
+	u32				   i;
+	struct FieldActor *p;
 
 	i = 0;
 	do
 	{
 		p = Object_GetById(i + 11);
 		i++;
-		SetMapCellCollision(0, p->unk8, p->unk10, 45);
+		SetMapCellCollision(0, p->x.fixed, p->z.fixed, 45);
 	} while (i <= 1);
 }
 
 void SceneActor_ApplyPositionsOfActors11And12(void)
 {
-	u32			 i;
-	Struct_19c0 *p;
+	u32				   i;
+	struct FieldActor *p;
 
 	i = 0;
 	do
 	{
 		p = Object_GetById(i + 11);
-		if (p->unkC > -0x100000)
+		if (p->y.fixed > -0x100000)
 		{
-			SetMapCellCollision(0, p->unk8, p->unk10, 255);
+			SetMapCellCollision(0, p->x.fixed, p->z.fixed, 255);
 		}
 		i++;
 	} while (i <= 1);
@@ -1558,19 +1243,19 @@ void FieldScene_RunGuardedThreeStepSetup(void)
 	Engine_EventEnd();
 }
 
-void SceneState_MarkActorAndApplyRectAtTile(Struct_1a14 *obj)
+void SceneState_MarkActorAndApplyRectAtTile(struct FieldActor *obj)
 {
 	s32 x;
 	s32 z;
 
-	obj->unk23 |= 2;
-	obj->unk55 = 0;
-	x = obj->unk8 >> 20;
-	z = obj->unk10 >> 20;
+	obj->priority_flags |= 2;
+	obj->motion_flags = 0;
+	x = obj->x.fixed >> 20;
+	z = obj->z.fixed >> 20;
 	Engine_MapCopyCellAttributes(9, 24, 1, 1, x, z);
 }
 
-void OverlayObject_ResetObjectWhenFlatbs2Set(Struct_1a50 *o)
+void OverlayObject_ResetObjectWhenFlatbs2Set(struct FieldActor *o)
 {
 	Struct_Sub *q;
 	s32			v;
@@ -1578,7 +1263,7 @@ void OverlayObject_ResetObjectWhenFlatbs2Set(Struct_1a50 *o)
 	s32			t;
 	s32			m;
 
-	q = o->unk50;
+	q = (Struct_Sub *)o->sprite;
 	v = q->unk9;
 	if ((v & 12) == 12)
 	{
@@ -1590,11 +1275,11 @@ void OverlayObject_ResetObjectWhenFlatbs2Set(Struct_1a50 *o)
 			*pq = m;
 		}
 		z = 0;
-		o->unk44 = z;
-		t = OverlayObject_SpawnWithMode14(o->unk8, 0, 0x2000000, 223);
+		o->bounce = z;
+		t = OverlayObject_SpawnWithMode14(o->x.fixed, 0, 0x2000000, 223);
 		OverlayObject_WaitUntilIdle(o);
-		o->unk8 = z;
-		o->unk10 = z;
+		o->x.fixed = z;
+		o->z.fixed = z;
 		Engine_ObjectDispatchRelease(t);
 	}
 	else
@@ -1605,13 +1290,13 @@ void OverlayObject_ResetObjectWhenFlatbs2Set(Struct_1a50 *o)
 
 void SceneActor_UpdateSlots11And12ByTile(void)
 {
-	Struct_1a9c *o;
+	struct FieldActor *o;
 
 	Engine_EventBegin();
 	o = Object_GetById(11);
-	if (o->unk8 >> 20 == 8)
+	if (o->x.fixed >> 20 == 8)
 	{
-		OverlayObject_WaitUntilIdle((struct BusyObject *)o);
+		OverlayObject_WaitUntilIdle(o);
 		SceneState_MarkActorAndApplyRectAtTile(o);
 	}
 	else
@@ -1619,9 +1304,9 @@ void SceneActor_UpdateSlots11And12ByTile(void)
 		OverlayObject_ResetObjectWhenFlatbs2Set(o);
 	}
 	o = Object_GetById(12);
-	if (o->unk8 >> 20 == 7)
+	if (o->x.fixed >> 20 == 7)
 	{
-		OverlayObject_WaitUntilIdle((struct BusyObject *)o);
+		OverlayObject_WaitUntilIdle(o);
 		SceneState_MarkActorAndApplyRectAtTile(o);
 	}
 	else
@@ -1962,12 +1647,12 @@ void SceneState_RunConditionalStep(void)
 	VinasuHeya_SettlePushedBlocks();
 }
 
-s32 SceneActor_SetHeightAboveLinkedRecord(Struct_22a4 *obj)
+s32 SceneActor_SetHeightAboveLinkedRecord(struct FieldActor *obj)
 {
-	Struct_22a4b *rec;
+	struct FieldActor *rec;
 
-	rec = Object_GetById(((s16 *)obj)[50]);
-	((s32 *)obj)[3] = rec->unkC + 0x100000;
+	rec = Object_GetById(obj->timer);
+	obj->y.fixed = rec->y.fixed + 0x100000;
 	return 0;
 }
 
@@ -2010,7 +1695,7 @@ void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 
 	struct FieldActor *cand;
 	s32				   highest = 0xffb00000;
-	u8				  *sel = 0;
+	struct FieldActor *sel = 0;
 	u32				   i;
 
 	for (i = 0; i <= 5; i++)
@@ -2026,8 +1711,8 @@ void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 		cand = Object_GetById(no);
 		sel = Object_GetById(selector);
 
-		if ((cand->x.fixed >> 20) != (*(s32 *)(sel + 8) >> 20)
-			|| (cand->z.fixed >> 20) != (*(s32 *)(sel + 16) >> 20))
+		if ((cand->x.fixed >> 20) != (sel->x.fixed >> 20)
+			|| (cand->z.fixed >> 20) != (sel->z.fixed >> 20))
 		{
 			continue;
 		}
@@ -2035,24 +1720,18 @@ void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 		cand_y = cand->y.fixed + 0x100000;
 		if (highest <= cand_y)
 		{
-			*(u16 *)(sel + 100) = no;
+			sel->timer = no;
 			highest = cand_y;
 		}
 	}
 
 	Engine_ActorSetSpeed(selector, 0x40000, 0x20000);
-	Engine_ObjectSetPosition(sel, *(s32 *)(sel + 8), highest, *(s32 *)(sel + 16));
+	Engine_ObjectSetPosition(sel, sel->x.fixed, highest, sel->z.fixed);
 	Engine_ActorWaitForMove(selector);
 	Engine_AudioPlayCue(188);
 	SceneEffect_SpawnNineRadialEffects(selector);
 	Engine_EventWait(30);
 }
-
-struct FloatingBlock
-{
-	u8	unknown_00[0x64];
-	s16 height_index;
-};
 
 static __inline__ void FloatingBlock_Settle(struct FieldActor *block, s32 value)
 {
@@ -2060,7 +1739,7 @@ static __inline__ void FloatingBlock_Settle(struct FieldActor *block, s32 value)
 	block->terrain_height = value;
 	block->velocity_y = value;
 	block->motion_flags = value;
-	((struct FloatingBlock *)block)->height_index = value;
+	block->timer = value;
 }
 
 static __inline__ void Actor_CopyPosition(struct FieldActor *to, struct FieldActor *from)
@@ -2141,13 +1820,13 @@ void VinasuHeya_ResolveFloatingBlock(void)
 			SceneActor_PickHighestSlotAtSameTileAndRelease(slot + 10);
 			if (Object_GetById(slot + 10)->x.fixed >> 20 == 6)
 			{
-				((struct FloatingBlock *)Object_GetById(8))->height_index++;
-				((struct FloatingBlock *)Object_GetById(9))->height_index--;
+				Object_GetById(8)->timer++;
+				Object_GetById(9)->timer--;
 			}
 			else
 			{
-				((struct FloatingBlock *)Object_GetById(8))->height_index--;
-				((struct FloatingBlock *)Object_GetById(9))->height_index++;
+				Object_GetById(8)->timer--;
+				Object_GetById(9)->timer++;
 			}
 			Object_GetById(slot + 10)->update =
 				(void (*)(union FieldObject *))SceneActor_SetHeightAboveLinkedRecord;
@@ -2447,20 +2126,6 @@ void Scene_RunScene3c8SequenceA(void)
 	}
 	Event_End();
 }
-
-struct DirXZ
-{
-	s32 x;
-	s32 unused;
-	s32 z;
-};
-
-struct DustParams
-{
-	u8	unknown_00[34];
-	u16 angle;
-	u8	unknown_24[4];
-};
 
 void FieldScene_DrawTilesWhenCheckClear(void)
 {
@@ -3073,50 +2738,50 @@ end:
 
 void SceneState_PassZeroAndMinusOneRecord(void)
 {
-	struct Args_02003fe4 args;
+	struct DirXZ args;
 
-	args.first = 0;
-	args.last = -1;
+	args.x = 0;
+	args.z = -1;
 	VinasuHeya_StepActorWithDust(&args);
 }
 
 void SceneState_PassRange0To1(void)
 {
-	struct Args_02003ffc args;
+	struct DirXZ args;
 
-	args.first = 0;
-	args.last = 1;
+	args.x = 0;
+	args.z = 1;
 	VinasuHeya_StepActorWithDust(&args);
 }
 
 void SceneState_PassRangeNeg1To0(void)
 {
-	struct Args_02004014 args;
+	struct DirXZ args;
 
-	args.first = -1;
-	args.last = 0;
+	args.x = -1;
+	args.z = 0;
 	VinasuHeya_StepActorWithDust(&args);
 }
 
 void SceneState_CallHandlerWithFlagPair(void)
 {
-	struct Args_02004030 args;
+	struct DirXZ args;
 
-	args.first = 1;
-	args.last = 0;
+	args.x = 1;
+	args.z = 0;
 	VinasuHeya_StepActorWithDust(&args);
 }
 
 void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
 {
-	s32				   id;
-	struct FieldActor *center;
-	struct FieldActor *actor;
-	s32				   pos[3];
-	struct DustParams  params;
-	s32				   hit;
-	s32				   phase;
-	s32				   x;
+	s32					 id;
+	struct FieldActor	*center;
+	struct FieldActor	*actor;
+	s32					 pos[3];
+	struct EffectOptions params;
+	s32					 hit;
+	s32					 phase;
+	s32					 x;
 
 	{
 		struct EventWork *event = gEventWork;
@@ -3132,7 +2797,7 @@ void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
 	phase = gFrameCount & 4;
 	if (phase == 0)
 	{
-		params.angle = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+		params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
 		x = actor->x.fixed + (((u32)(Engine_RandomNext() * 12) >> 16) << 16) - 0x60000;
 		Effect_Spawn(x, actor->y.fixed, actor->z.fixed,
 			(((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd) * dir->x, phase,

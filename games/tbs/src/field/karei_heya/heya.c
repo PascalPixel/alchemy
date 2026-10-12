@@ -19,15 +19,6 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 
-enum ArrivalMessage
-{
-	MSG_CAN_LIVE_IN_PEACE_IN = 0x1a8f,
-	MSG_GOING_TOLBI_ALSO = 0x1ad7,
-	MSG_PLEASE_FINISH_EATING_IF_TAKING = 0x1add,
-	MSG_DO_KNOW_ABOUT_CONTINENT_SOUTH = 0x1ae3,
-	MSG_OUR_INN_FEELS_EMPTY_NOW = 0x1afb
-};
-
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 scene = gGameState.scene;

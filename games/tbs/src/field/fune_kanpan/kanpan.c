@@ -27,15 +27,6 @@
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
 
-#ifdef ALCHEMY_FIELD_EVENT_H
-#endif
-
-union KanpanSlot
-{
-	s32 w;
-	s16 h[2];
-};
-
 s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
 {
 	s32 Math_RemainderUnsigned(s32, s16);
@@ -283,12 +274,6 @@ s32 FuneKanpan_UpdateHoverGullB(struct FieldActor *obj)
 	return 1;
 }
 
-struct FlyBy
-{
-	u8	unknown_00[0x64];
-	s16 step;
-};
-
 extern struct EventWork *gEventWork;
 
 struct MapLayer
@@ -366,35 +351,32 @@ s32 SceneActor_SetFacingFromSample(struct FieldActor *actor)
 
 s32 FuneKanpan_UpdateFlyByForActor21(struct FieldActor *obj)
 {
-	struct FlyBy *gull;
-
-	gull = (struct FlyBy *)obj;
-	switch (gull->step)
+	switch (obj->timer)
 	{
 	case 0:
 		if ((((u32)Engine_RandomNext() * 40) >> 16) == 0)
 		{
-			gull->step++;
+			obj->timer++;
 		}
 		break;
 	case 1:
-		gull->step++;
+		obj->timer++;
 		break;
 	case 2:
 		obj->velocity_y = 0x40000;
 		obj->speed = 0x40000;
 		obj->acceleration = 0x20000;
 		FieldObject_SetPosition((s32)obj, 0x1080000, 0, 0x2960000);
-		gull->step++;
+		obj->timer++;
 		break;
 	case 3:
-		gull->step++;
+		obj->timer++;
 		break;
 	case 4:
 		if (obj->target_x == ACTOR_NO_TARGET && obj->target_y == obj->target_x
 			&& obj->target_z == obj->target_y)
 		{
-			gull->step++;
+			obj->timer++;
 			Engine_AudioPlayCue(152);
 			if (obj->rise_enabled != 0)
 			{
@@ -416,10 +398,10 @@ s32 FuneKanpan_UpdateFlyByForActor21(struct FieldActor *obj)
 		}
 		break;
 	case 5:
-		gull->step++;
+		obj->timer++;
 		break;
 	case 6:
-		gull->step++;
+		obj->timer++;
 		obj->velocity_y = 0x40000;
 		obj->speed = 0x20000;
 		obj->acceleration = 0x10000;
@@ -433,17 +415,17 @@ s32 FuneKanpan_UpdateFlyByForActor21(struct FieldActor *obj)
 		}
 		break;
 	case 7:
-		gull->step++;
+		obj->timer++;
 		break;
 	case 8:
 		if (obj->target_x == ACTOR_NO_TARGET && obj->target_y == obj->target_x
 			&& obj->target_z == obj->target_y)
 		{
-			gull->step++;
+			obj->timer++;
 		}
 		break;
 	case 9:
-		gull->step = 0;
+		obj->timer = 0;
 		break;
 	}
 	return 1;
@@ -451,35 +433,32 @@ s32 FuneKanpan_UpdateFlyByForActor21(struct FieldActor *obj)
 
 s32 FuneKanpan_UpdateFlyByForActor22(struct FieldActor *obj)
 {
-	struct FlyBy *gull;
-
-	gull = (struct FlyBy *)obj;
-	switch (gull->step)
+	switch (obj->timer)
 	{
 	case 0:
 		if ((((u32)Engine_RandomNext() * 40) >> 16) == 0)
 		{
-			gull->step++;
+			obj->timer++;
 		}
 		break;
 	case 1:
-		gull->step++;
+		obj->timer++;
 		break;
 	case 2:
 		obj->velocity_y = 0x40000;
 		obj->speed = 0x40000;
 		obj->acceleration = 0x20000;
 		FieldObject_SetPosition((s32)obj, 0xb00000, 0, 0x2b80000);
-		gull->step++;
+		obj->timer++;
 		break;
 	case 3:
-		gull->step++;
+		obj->timer++;
 		break;
 	case 4:
 		if (obj->target_x == ACTOR_NO_TARGET && obj->target_y == obj->target_x
 			&& obj->target_z == obj->target_y)
 		{
-			gull->step++;
+			obj->timer++;
 			Engine_AudioPlayCue(152);
 			if (obj->rise_enabled != 0)
 			{
@@ -501,10 +480,10 @@ s32 FuneKanpan_UpdateFlyByForActor22(struct FieldActor *obj)
 		}
 		break;
 	case 5:
-		gull->step++;
+		obj->timer++;
 		break;
 	case 6:
-		gull->step++;
+		obj->timer++;
 		obj->velocity_y = 0x40000;
 		obj->speed = 0x20000;
 		obj->acceleration = 0x10000;
@@ -518,17 +497,17 @@ s32 FuneKanpan_UpdateFlyByForActor22(struct FieldActor *obj)
 		}
 		break;
 	case 7:
-		gull->step++;
+		obj->timer++;
 		break;
 	case 8:
 		if (obj->target_x == ACTOR_NO_TARGET && obj->target_y == obj->target_x
 			&& obj->target_z == obj->target_y)
 		{
-			gull->step++;
+			obj->timer++;
 		}
 		break;
 	case 9:
-		gull->step = 0;
+		obj->timer = 0;
 		break;
 	}
 	return 1;
@@ -714,9 +693,6 @@ void SceneDialogue_RunActor21Line(void)
 
 void FuneKanpan_OpenFirstDoor(void)
 {
-	u32 i;
-	s32 record;
-
 	if (GameFlag_IsSet(0x271) == 0)
 	{
 		Event_PlayCue(158);
@@ -727,9 +703,6 @@ void FuneKanpan_OpenFirstDoor(void)
 
 void FuneKanpan_OpenSecondDoor(void)
 {
-	u32 i;
-	s32 record;
-
 	if (GameFlag_IsSet(0x272) == 0)
 	{
 		Event_PlayCue(158);
@@ -996,9 +969,6 @@ void FuneKanpan_WatchCrewmanLeaveLeft(void)
 
 void FuneKanpan_ConfrontCrewman(void)
 {
-	u32 i;
-	s32 record;
-
 	Camera_SetSpeed(0x19999, 0x3333);
 	Camera_MoveTo(0xd80000, -1, 0x3380000, 1);
 	Engine_CameraWaitForMove();
@@ -1612,12 +1582,8 @@ void FuneKanpan_RunDeckCrewScene(void)
 
 void FieldScene_RunActorSequence(void)
 {
-	u32				   i;
 	struct FieldActor *rec8;
 	struct FieldActor *record;
-	s32				   base5_200c8c4;
-	s32				   base5_200c8b0;
-	s32				   base5_200c8d8;
 	s32				   base5_0;
 	const u8		  *base5_200c888;
 
@@ -1905,7 +1871,6 @@ void FieldScene_ConfigureLeadActors(void)
 
 void FieldScene_ConfigureThreeActors(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 	Engine_EventBegin();

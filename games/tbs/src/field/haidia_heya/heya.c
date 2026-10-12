@@ -361,7 +361,6 @@ void FieldScene_RunLongPresentationSequence(void)
 {
 	void Camera_MoveTo();
 
-	u32				   i;
 	struct FieldActor *record;
 	struct FieldActor *actor;
 	s32				   v6;

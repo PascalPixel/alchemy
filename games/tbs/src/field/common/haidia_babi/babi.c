@@ -46,8 +46,6 @@
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../object/facing.c"
 
-#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
-
 enum
 {
 
@@ -77,10 +75,9 @@ s32 HaidiaBabi_SelectExits(void)
 
 s32 HaidiaBabi_SelectPlacements(void)
 {
-	u8	*b = (u8 *)&gGameState;
 	s32 *tbl;
 
-	if (*(s16 *)(b + 0x1c2) == 19)
+	if (gGameState.entrance == 19)
 		return (s32)gHaidiaBabiPlacements4;
 	if (Engine_GameFlagIsSet(0x87a) != 0)
 		tbl = gHaidiaBabiPlacements3;
@@ -138,9 +135,6 @@ s32 HaidiaBabi_SelectEvents(void)
 
 void HaidiaBabi_RunHeyBoyScene(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Engine_ActorStartRepeatedMotion(16, 2);
 	Engine_EventWait(30);
@@ -264,7 +258,6 @@ void SceneState_ApplyValues123And11(void)
 
 s32 HaidiaBabi_RestoreEntryState(void)
 {
-	u32	 i;
 	s32	 record;
 
 	if (gGameState.entrance == 19)

@@ -28,7 +28,7 @@ void Shop_RestoreSceneTiles(s32 layer);
 void Shop_InitEffect(void);
 void ShopCursor_Advance(struct ShopCursor *cursor);
 void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor);
-void Shop_SetCursor(struct ShopCursor *cursor, s32 target_x, s32 target_y, s8 kind);
+void Shop_SetCursor(struct ShopCursor *cursor, s32 target_x, s32 target_y, s32 kind);
 void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y);
 void Shop_PlaceCursor(void *window, s32 x, s32 y);
 s32 Shop_SelBuy(void);

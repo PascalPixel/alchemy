@@ -46,12 +46,6 @@ enum
 	ANIM_HAMMER = 11
 };
 
-struct Flags38
-{
-	u8 pad[38];
-	u8 flags;
-};
-
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
 
@@ -155,9 +149,6 @@ void SceneDialogue_RunActorFourteenTalk(void)
 
 void FieldScene_RunFlag807BranchSequence(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x807) == 0)
 	{
@@ -210,9 +201,6 @@ void SceneDialogue_RunActor10LineAndFlag81f(void)
 
 void HaidiaMura_ReactToTremor(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
 	Engine_TaskWait(10);
@@ -256,9 +244,6 @@ void SceneState_Send210AndApplyRect(void)
 
 void HaidiaMura_OpenExitEleven(void)
 {
-	u32 i;
-	s32 record;
-
 	Event_PlayCue(188);
 	Map_AnimateCells((s32)gHaidiaMuraCellAnimC, 45, 11);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 0x101, 0x1a4);
@@ -298,9 +283,6 @@ void SceneState_ApplyValues123And2(void)
 
 void HaidiaMura_OpenExitFive(void)
 {
-	u32 i;
-	s32 record;
-
 	Event_PlayCue(158);
 	Map_AnimateCells((u32)gHaidiaMuraCellAnimA, 54, 32);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 0x196, 0x2d7);
@@ -309,9 +291,6 @@ void HaidiaMura_OpenExitFive(void)
 
 void HaidiaMura_OpenExitSix(void)
 {
-	u32 i;
-	s32 record;
-
 	Event_PlayCue(158);
 	Map_AnimateCells((u32)gHaidiaMuraCellAnimB, 45, 39);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 0x106, 0x325);
@@ -514,7 +493,6 @@ void SceneState_SetFlag204AndConfigureRegion49_46(void)
 
 void FieldScene_RunScene373SequenceE(void)
 {
-	u32				   i;
 	struct FieldActor *rec7;
 	struct FieldActor *record;
 
@@ -577,7 +555,6 @@ void SceneState_RunTablePairWhenActor22State1(void)
 
 void HaidiaMura_AskAboutSneakingToAleph(s32 a0, s32 a1)
 {
-	u32				   i;
 	s32				   p8;
 	struct FieldActor *rec8;
 	struct FieldActor *record;
@@ -1508,7 +1485,6 @@ void FieldScene_RunPrimaryActorSequence(void)
 
 void FieldScene_RunCompanionActorSequence(void)
 {
-	u32				   i;
 	struct FieldActor *actor_data;
 	s32				   shared_data;
 
@@ -1560,7 +1536,7 @@ void HaidiaMura_MoveActorAlongLowerZPath(s32 a0, s32 a1, s32 a2, s32 a3)
 	Actor_WalkToAndWait(a0, 0x188, 0x376);
 	Actor_FaceDirection(0, FACING_NORTH, 10);
 	rec8->motion_flags = 0;
-	((struct Flags38 *)p5)->flags = 0;
+	((struct FieldSprite *)p5)->flags = 0;
 	Engine_ActorSetAnimation(a0, p8);
 	Actor_SetSpeed(a0, 0x4ccc, 0x2666);
 	Actor_MoveToAndWait(a0, 0x188, 0x36b);
@@ -1594,7 +1570,7 @@ void HaidiaMura_MoveActorAlongHigherZPath(s32 a0, s32 a1, s32 a2, s32 a3)
 	Actor_WalkToAndWait(a0, 0x188, 0x35b);
 	Actor_FaceDirection(a0, FACING_NORTH, 10);
 	rec8->motion_flags = 0;
-	((struct Flags38 *)p5)->flags = 0;
+	((struct FieldSprite *)p5)->flags = 0;
 	Engine_ActorSetAnimation(a0, p8);
 	Actor_SetSpeed(a0, 0x10000, 0x8000);
 	Actor_MoveToAndWait(a0, 0x188, 0x36b);
@@ -2857,9 +2833,7 @@ void FieldScene_RunScriptedStepEE4(void)
 
 void FieldScene_RunScene373SequenceB(void)
 {
-	u32 i;
 	s32 rec7;
-	s32 record;
 
 	if (GameFlag_IsSet(0x241) != 0)
 	{

@@ -5,11 +5,9 @@
 #include "field_scene.h"
 
 struct FieldActor;
-struct Object;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
-struct Work_399;
 union FieldObject;
 
 typedef struct
@@ -23,7 +21,7 @@ typedef struct
 	s16 unk66;
 } T_0200154c;
 
-s32 OverlayObject_UpdateWobbleByCounter(struct Object *obj);
+s32 OverlayObject_UpdateWobbleByCounter(struct FieldActor *obj);
 const struct SceneEntrance *Scene_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
 u8 *ImiruMura_GetExits(void);
@@ -56,7 +54,7 @@ void SceneActor_UpdateCountdownArcPosition(T_0200154c *o);
 void ImiruMura_SwayAndSpark(struct FieldActor *actor);
 void ImiruMura_ShowActorNineTurnMessage(void);
 void ImiruMura_CastPsynergyAtActorNine(void);
-void SceneActor_ResetActorAndCenterOffsets(struct Work_399 *work);
+void SceneActor_ResetActorAndCenterOffsets(struct FieldActor *work);
 void FieldScene_RunSupplementalSequenceTwo(union FieldObject *object);
 void FieldScene_RunScene399SequenceA(void);
 void SceneState_UpdateZoneFlagsFromActorZero(void);

@@ -25,24 +25,14 @@
 #include "text/msg_ids.h"
 #include "objcmd.h"
 
-#define NULL ((void *)0)
-#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 
-struct EffectRecord
-{
-	u8 pad[9];
-	u8 flags_lo : 2;
-	u8 mode : 2;
-	u8 flags_hi : 4;
-};
-
 extern u8 *gEffectWork;
 
+// struct FieldActor の別の見方: sprite の先の角度を符号付き 16 ビットで読む
 struct Actor
 {
 	u8			  pad00[8];
@@ -72,19 +62,6 @@ struct Vec
 	s32 x;
 	s32 y;
 	s32 z;
-};
-
-struct EffectParams
-{
-	s32 count;
-	s32 kind;
-	s32 spread;
-	s32 rise;
-	s32 rise2;
-	s32 spin;
-	u16 tile;
-	u16 pad1a;
-	u8	pad1c[12];
 };
 
 struct Member_387
@@ -216,7 +193,6 @@ void *GomaIriguchi_GetEvents(void)
 
 s32 GomaIriguchi_RestoreEntryState(void)
 {
-	u32 i;
 	u8 *record;
 	s32 v5;
 
@@ -276,7 +252,6 @@ s32 GomaIriguchi_RestoreEntryState(void)
 
 void FieldScene_RunScene387SequenceA(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 #if EDITION_INTERNATIONAL
@@ -523,36 +498,36 @@ void GomaIriguchi_SetEntranceFlag(void)
 	EffectRuntime_StopCurrentObject();
 }
 
-void OverlayObject_TurnStateByEighth(u8 *obj)
+void OverlayObject_TurnStateByEighth(struct FieldActor *obj)
 {
-	u8 *state = *(u8 **)(obj + 80);
-	s32 v = *(u16 *)(state + 30) - 0x800;
+	struct FieldSprite *state = obj->sprite;
+	s32					v = state->rotation - 0x800;
 
-	*(u16 *)(state + 30) = v;
+	state->rotation = v;
 }
 
-void OverlayObject_WaitForHeight(u8 *obj, s32 height)
+void OverlayObject_WaitForHeight(struct FieldActor *obj, s32 height)
 {
 	s32 cnt = 60;
 	while (cnt != 0)
 	{
 		Engine_TaskWait(1);
 		cnt--;
-		if (*(s32 *)(obj + 12) <= height)
+		if (obj->y.fixed <= height)
 			break;
 	}
 }
 
 void GomaIriguchi_RunSpinningLeap(s32 id)
 {
-	struct Vec			 dir;
-	struct EffectParams	 params;
-	struct Vec			*v;
-	struct EffectParams *p;
-	struct Actor		*actor;
-	u32					 i;
-	s32					 x;
-	s32					 z;
+	struct Vec			  dir;
+	struct EffectOptions  params;
+	struct Vec			 *v;
+	struct EffectOptions *p;
+	struct Actor		 *actor;
+	u32					  i;
+	s32					  x;
+	s32					  z;
 
 	actor = (struct Actor *)Object_GetById(id);
 	actor->layer = 0;
@@ -570,7 +545,7 @@ void GomaIriguchi_RunSpinningLeap(s32 id)
 	actor->layer = 3;
 	actor->flags34 = 0;
 	Engine_ActorWaitForMove(id);
-	OverlayObject_WaitForHeight((s32)actor, 0x200000);
+	OverlayObject_WaitForHeight(actor, 0x200000);
 	Engine_AudioPlayCue(188);
 	Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
 	Engine_AudioPlayCue(141);
@@ -588,15 +563,15 @@ void GomaIriguchi_RunSpinningLeap(s32 id)
 	actor->speed = 0x50000;
 	Engine_ActorSetDestination(id, 139, 196);
 	Engine_ActorWaitForMove(id);
-	OverlayObject_WaitForHeight((s32)actor, 0x200000);
+	OverlayObject_WaitForHeight(actor, 0x200000);
 	actor->callback = 0;
 	actor->sprite->angle = 0x1000;
 	p = &params;
-	p->tile = 214;
-	p->spread = 0x8000;
-	p->rise = 0xcccc;
-	p->rise2 = 0x18000;
-	p->spin = 0x13333;
+	p->type = 214;
+	p->start_scale_x = 0x8000;
+	p->start_scale_y = 0xcccc;
+	p->target_scale_x = 0x18000;
+	p->target_scale_y = 0x13333;
 	Effect_Spawn(actor->x, actor->y, actor->z, 0, 0, 0, 0x1c0000, p);
 	Engine_AudioPlayCue(154);
 	Engine_ActorSetAnimation(id, 3);

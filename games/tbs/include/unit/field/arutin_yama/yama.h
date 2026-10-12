@@ -5,7 +5,6 @@
 #include "field_scene.h"
 
 struct FieldActor;
-struct Frame;
 struct SceneEntrance;
 struct SceneEvent;
 struct SceneMotion;
@@ -14,7 +13,7 @@ struct SceneRegion;
 union FieldObject;
 
 void SceneState_SetValue14Mode23(void);
-s32 SceneActor_CopyActor8PositionWithFixedY(struct Frame *dst);
+s32 SceneActor_CopyActor8PositionWithFixedY(struct FieldActor *dst);
 s32 OverlayObject_IntegrateAndDamp(struct FieldActor *actor);
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);

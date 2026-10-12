@@ -116,8 +116,6 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 void FieldScene_RunScene37fSequenceA(void)
 {
-	u32 i;
-	s32 record;
 	s32 v5;
 	s32 v6;
 
@@ -949,7 +947,6 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
 
 void Scene_RunTransitionCue(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 	Engine_EventBegin();
@@ -1004,9 +1001,6 @@ void Scene_RunTransitionCue(void)
 
 void Scene_RunActorFormation(s32 a0)
 {
-	u32 i;
-	s32 record;
-
 	Engine_MapCopyCellAttributes(122, 20, 1, 1, 100, 32);
 	Map_CopyCellAttributes(122, 20, 1, 1, 104, 32);
 	Map_CopyCellAttributes(122, 20, 1, 1, 108, 32);
@@ -1150,8 +1144,6 @@ void FieldScene_RunScriptedStep953(void)
 
 void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
 {
-	u32	 i;
-	s32	 record;
 	s32	 value;
 	s32 *timer;
 	s32	 v3;

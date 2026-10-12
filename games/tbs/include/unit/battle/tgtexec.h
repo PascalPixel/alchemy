@@ -93,7 +93,7 @@ s32 BattleEscape_PlayRun(struct BattleActionRecord *action);
 s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action);
 s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action);
 s32 BattlePres_RunApproachAction(struct BattleActionRecord *input);
-s32 BattlePres_RunUnitAction(s16 *action);
+s32 BattlePres_RunUnitAction(struct BattleActionRecord *action);
 void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_message, u8 *context);
 void BattleMotion_SetMode5AndActivateSlot(s32 unit_id);
 s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action);

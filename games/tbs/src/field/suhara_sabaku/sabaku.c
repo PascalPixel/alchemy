@@ -31,8 +31,6 @@
 #include "objcmd.h"
 #include "iowrite.h"
 
-#define NULL ((void *)0)
-
 extern u8 gEffectWork[];
 
 struct Selection_02000400
@@ -238,19 +236,12 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
 	s32 i;
 	s32 next_frame;
 	s32 p10;
-	s32 p10b;
 	s32				   p9;
 	s32				   p11;
-	s32				   p9b;
 	struct FieldActor *rec;
 	s32				   rec2;
 	struct FieldActor *rec7;
 	struct FieldActor *record;
-	s32				   v2;
-	s32				   queue_pos;
-	s32				   base6_4000208;
-	s32				   v0;
-	s32				   v6;
 
 	p10 = a0;
 	rec7 = Object_GetById(gGameState.selected_actor);
@@ -361,7 +352,6 @@ void FieldScene_RunLateActor12Step(void)
 
 void FieldScene_RunActorThirteenRestoration(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 	if (GameFlag_IsSet(0x9a0) == 0)

@@ -107,9 +107,7 @@ void FieldScene_RunPrimarySequence(void)
 
 void FieldScene_RunScene3b6SequenceA(void)
 {
-	u32 i;
 	s32 rec7;
-	s32 record;
 
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiHeyWhatsThis);
@@ -456,9 +454,6 @@ void SceneDialogue_RunActor25FlaggedLine(void)
 
 void TorebiHeya_ComplainAboutScam(s32 a0)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiGrrrScamWhyWontThey);
 	Actor_ShowEmote(31, 0x103, 40);

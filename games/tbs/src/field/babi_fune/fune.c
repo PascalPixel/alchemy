@@ -516,7 +516,6 @@ union GameStateRows
 	s32 words[256];
 };
 
-#define SPRITE_BYTES(actor) ((u8 *)(actor)->sprite)
 #define SPRITE_OF(actor) ((struct FieldSprite *)*(s32 *)((u8 *)(actor) + 0x50))
 #define SET_PRIORITY(actor, n) \
 	((n) == 9 ? (SPRITE_OF(actor)->priority = 1) : (SPRITE_OF(actor)->second_priority = 1))
@@ -793,11 +792,6 @@ void SceneEffect_LoadTablesAndStopDma0(void)
 	reg[5] = 0x7FFF & reg[5];
 	reg[5];
 }
-
-struct Half
-{
-	u16 v;
-};
 
 struct FadeSprite
 {

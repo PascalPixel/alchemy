@@ -4,10 +4,10 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct SceneActor_02000350;
+struct FieldActor;
 
-s32 SceneActor_UpdateProximity(struct SceneActor_02000350 *actor, struct SceneActor_02000350 *target, s32 range, s32 force);
-s32 UpdateActorProximity(u8 *actor);
+s32 SceneActor_UpdateProximity(struct FieldActor *actor, struct FieldActor *target, s32 range, s32 force);
+s32 UpdateActorProximity(struct FieldActor *actor);
 const void *SceneData_GetScriptTable(void);
 int SceneData_ReturnZero(void);
 const void *SceneData_GetMessageTable(void);

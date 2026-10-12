@@ -52,8 +52,6 @@ s32 ConditionalSceneSetup_InitForScene15(void)
 
 void RunEventScript01(void)
 {
-	u32				  i;
-	s32				  record;
 	struct EventWork *work;
 	s32				  action_script;
 

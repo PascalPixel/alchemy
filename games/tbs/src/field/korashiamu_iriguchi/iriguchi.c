@@ -165,9 +165,6 @@ void SceneDialogue_RunActor13MessageByFlag962(void)
 
 void KorashiamuIriguchi_TalkToActorFourteen(void)
 {
-	u32	 i;
-	s32	 record;
-
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x962) != 0)
 	{
@@ -189,9 +186,6 @@ void KorashiamuIriguchi_TalkToActorFourteen(void)
 
 void KorashiamuIriguchi_TryLuckyGuess(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x962) != 0)
 	{
@@ -231,9 +225,7 @@ L_02000448:;
 
 void KorashiamuIriguchi_IntroduceSecondSeed(void)
 {
-	u32				   i;
 	struct FieldActor *rec7;
-	s32				   record;
 
 	rec7 = Object_GetById(13);
 	Engine_EventBegin();
@@ -261,9 +253,6 @@ void KorashiamuIriguchi_IntroduceSecondSeed(void)
 
 void KorashiamuIriguchi_FrightenActorFourteen(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Actor_SetAttachedEffect(14, 0x102);
 	Engine_ActorRunRepeatedMotion(14, 2);
@@ -290,9 +279,6 @@ void SceneDialogue_ShowLine2118WithActor15Steps(void)
 
 void KorashiamuIriguchi_CheerForDekka(void)
 {
-	u32	 i;
-	s32	 record;
-
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(16, 2);
 	Engine_EventSetMessage((s32)MsgKorashiamuDekkaMustWinFinalsDekka);
@@ -334,9 +320,6 @@ void FieldScene_RunActorSeventeenDialogueSteps(void)
 
 void KorashiamuIriguchi_IntroduceSeventhSeed(void)
 {
-	u32	 i;
-	s32	 record;
-
 	Engine_EventBegin();
 	Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 20);
 	Engine_EventSetMessage((s32)MsgKorashiamuImBufordSeventhSeed);
@@ -718,9 +701,7 @@ void SceneState_ApplyFlags565And564(void)
 
 void FieldScene_RunConditionalSceneSetup(void)
 {
-	u32 i;
 	s32 flag_8a4;
-	s32 record;
 
 	Engine_EventBegin();
 	flag_8a4 = GameFlag_IsSet(0x8a4);
@@ -1332,7 +1313,6 @@ void FieldScene_BuildActorPresentationSequence(void)
 
 void KorashiamuIriguchi_EscortToEastExit(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 	if (GameFlag_IsSet(5) != 0)
@@ -1372,9 +1352,7 @@ void KorashiamuIriguchi_EscortToEastExit(void)
 
 void KorashiamuIriguchi_AnnounceFinals(void)
 {
-	u32				   i;
 	struct FieldActor *rec7;
-	s32				   record;
 
 	rec7 = Object_GetById(13);
 	Engine_EventBegin();
@@ -1420,9 +1398,6 @@ void KorashiamuIriguchi_AnnounceFinals(void)
 
 void KorashiamuIriguchi_WalkToEastExit(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x19999, 0xcccc);
 	Engine_EventOpenScreen();
@@ -1444,8 +1419,6 @@ void KorashiamuIriguchi_WalkToEastExit(void)
 
 void KorashiamuIriguchi_CelebrateAdvancement(void)
 {
-	u32 i;
-	s32 record;
 	s32 base5_200adac;
 
 	Engine_EventBegin();
@@ -1498,7 +1471,6 @@ void KorashiamuIriguchi_CelebrateAdvancement(void)
 
 void KorashiamuIriguchi_EscortToWestExit(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 	if (GameFlag_IsSet(5) != 0)
@@ -1531,9 +1503,6 @@ void KorashiamuIriguchi_EscortToWestExit(void)
 
 void KorashiamuIriguchi_WalkToWestExit(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x19999, 0xcccc);
 	Engine_EventOpenScreen();
@@ -1548,8 +1517,6 @@ void KorashiamuIriguchi_WalkToWestExit(void)
 
 void KorashiamuIriguchi_CelebrateBothWins(void)
 {
-	u32 i;
-	s32 record;
 	s32 base5_200adac;
 
 	Engine_EventBegin();

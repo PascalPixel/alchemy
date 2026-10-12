@@ -1435,7 +1435,6 @@ void MakyuriChojo_SinkActorPair(void)
 	struct FieldActor	*right;
 	u32					 i;
 	s32					 x;
-	s32					 y;
 	s32					 r;
 
 	left = Object_GetById(22);
@@ -1487,7 +1486,6 @@ void MakyuriChojo_RiseActorPair(void)
 	struct FieldActor	*right;
 	u32					 i;
 	s32					 x;
-	s32					 y;
 	s32					 r;
 
 	left = Object_GetById(22);

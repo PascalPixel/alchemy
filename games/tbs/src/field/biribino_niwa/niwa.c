@@ -229,9 +229,6 @@ s32 Scene_Initialize(void)
 
 void BiribinoNiwa_ApplyEntryState(void)
 {
-	u32 i;
-	s32 record;
-
 	if (Engine_GameFlagIsSet(0x109) != 0)
 	{
 		Engine_GameFlagClear(0x200);

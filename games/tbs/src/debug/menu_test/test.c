@@ -233,9 +233,6 @@ void MenuTest_RaisePartyLevelTarget(void)
 
 void FieldScene_GrantItemListToSlots(void)
 {
-	u32 tmp;
-	s32 slot;
-
 	UiText_ShowPositionedMessageAndWait(MsgDebugGotItem, 1);
 	Inventory_AddItem(0, 187);
 	Inventory_AddItem(0, 187);
@@ -521,7 +518,6 @@ void CommandTable_ConfigureCommandGroups(void)
 
 void FieldScene_ApplySlotOffsetsAndFlags(void)
 {
-	u32 i;
 	u8 *record;
 
 	UiText_ShowPositionedMessageAndWait(MsgDebugBodyTornApart, 1);

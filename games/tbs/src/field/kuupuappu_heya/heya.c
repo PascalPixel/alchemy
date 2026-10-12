@@ -35,58 +35,6 @@
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
 
-enum PromptMessage
-{
-	MSG_ROBIN_CHECKED_CHEST = 0x929,
-	MSG_ROBIN_CHECKED_BARREL = 0x92b,
-	MSG_BUT_CHEST_WAS_EMPTY = 0x949,
-	MSG_BUT_DIDNT_FIND_ANYTHING = 0x94b,
-	MSG_IF_ONLY_THESE_ROCKS_WERE = 0x1243,
-	MSG_OK_MISTER_LET_ME_SEE = 0x1245,
-	MSG_MISTER_FUN_SEE_STRANGE_NEW = 0x1247,
-	MSG_WONDER_OUTSIDE_WORLD_LIKE = 0x124b,
-	MSG_JUST_ME_OR_AM_MISSING = 0x124c,
-	MSG_COULD_THEY_THIEVES_GOOD_DONT = 0x124e,
-	MSG_COULD_SOMEONE_PLEASE_HELP_IVAN = 0x1250,
-	MSG_IVAN_HAS_GREAT_POWERS_WOULDNT = 0x1253,
-	MSG_DO_POSSESS_STRANGE_POWERS = 0x1256,
-	MSG_WOULD_REALLY_WOULD_HELP_ME = 0x125d,
-	MSG_YOURE_GOING_HELP_IVAN = 0x1276,
-	MSG_PLEASE_LOOK_AFTER_IVAN = 0x1278,
-	MSG_TICKLES_BEING_TICKLED_BY_BOY = 0x127c,
-	MSG_THIEVES_DIDNT_HIT_OUR_HOUSE = 0x1282,
-	MSG_DID_JUST_ARRIVE_IN_TOWN = 0x1284,
-	MSG_EVERYONE_THINKS_OUR_GUESTS_THIEVES = 0x128d,
-	MSG_THOSE_THREE_STRANGERS_SURE_HAVE = 0x128e,
-	MSG_MASTER_HIS_WIFE_BLINDED_BY = 0x1294,
-	MSG_ROBIN_TAKE_LEAD = 0x129f,
-	MSG_OW_STOP = 0x12ac,
-	MSG_WE_DONT_HAVE_TIME_FOR = 0x12bb,
-	MSG_THESE_KIDS_NOTHING_WORRY_ABOUT = 0x12dd,
-	MSG_THEY_THEY_GOT_US = 0x12e4,
-	MSG_SEE_THATS_HAPPENED = 0x12f2,
-	MSG_WAIT_DONT_WANT_TAKE_YOUR = 0x132a,
-	MSG_THANK_GOODNESS_THOSE_THIEVES_WERE = 0x1353,
-	MSG_IF_ROCK_WORTHLESS_MAYBE_THATS = 0x1355,
-	MSG_DID_THOSE_THIEVES_COME_FROM = 0x1356,
-	MSG_MY_FATHER_WORRIED_ABOUT_THOSE = 0x1359,
-	MSG_FATHER_LOOKS_SAD_WORRYING_LIKE = 0x135b,
-	MSG_THIEVES_HID_STOLEN_TREASURE_IN = 0x135c,
-	MSG_GUESS_NOTHING_IN_OUR_HOUSE = 0x135e,
-	MSG_HEADING_OUT_BEYOND_GOMA_RANGE = 0x1364,
-	MSG_HEARD_DEFEATED_THOSE_THIEVES = 0x1368,
-	MSG_CAVE_IN_GOMA_RANGE_DANGEROUS = 0x136c,
-	MSG_WE_FOUND_OUR_STOLEN_WEAPONS = 0x1370,
-	MSG_IF_YOURE_GONNA_HEAD_INTO = 0x1372,
-	MSG_WITH_BRIDGE_OUT_WILL_QUITE = 0x1374,
-	MSG_THEY_HID_THOSE_STOLEN_GOODS = 0x137b,
-	MSG_HAVE_LOT_LEFTOVER_BONES_FROM = 0x137c,
-	MSG_GEE_ALWAYS_GET_HUNGRY_WHEN = 0x1382,
-	MSG_WOW_HAVE_MANY_THINGS_ARENT = 0x1384,
-	MSG_WANT_MORE_BONES = 0x1385,
-	MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
-};
-
 u8 *SceneData_GetScriptTable(void)
 {
 	return KuupuappuHeya_Scripts;
@@ -392,9 +340,6 @@ void SceneDialogue_RunActorElevenDialogue(void)
 
 void KuupuappuHeya_TalkAboutIvan(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuIvanHasGreatPowersWouldnt);
 	SceneDialogue_PromptAndCountSkip(15);
@@ -543,46 +488,38 @@ clamp:
 	Engine_EventEnd();
 }
 
-struct Responder
+static inline void KuupuappuHeya_WalkOn(struct FieldActor *actor, s32 row, s32 half, u16 turn)
 {
-	u8	unknown_00[6];
-	u16 facing;
-	u8	unknown_08[0x5c];
-	s16 stop;
-};
-
-static inline void KuupuappuHeya_WalkOn(struct Responder *actor, s32 row, s32 half, u16 turn)
-{
-	Engine_ActorEnableActionCallback(25, KuupuappuHeya_ResponseScripts[row * 4 + actor->stop]);
-	actor->stop = actor->stop - half * 2 + turn;
+	Engine_ActorEnableActionCallback(25, KuupuappuHeya_ResponseScripts[row * 4 + actor->timer]);
+	actor->timer = actor->timer - half * 2 + turn;
 }
 
 void KuupuappuHeya_RunActor25Response(void)
 {
-	struct Responder *actor;
-	u32				  facing;
-	s32				  half;
+	struct FieldActor *actor;
+	u32				   facing;
+	s32				   half;
 
-	actor = (struct Responder *)Object_GetById(25);
+	actor = Object_GetById(25);
 	facing = actor->facing & 0xf000;
-	half = actor->stop >> 1;
+	half = actor->timer >> 1;
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(25, 2);
 	Engine_EventSetMessage((s32)MsgKuupuappuNoLeaveAlone);
 	Engine_EventShowMessage(25, 0);
 	Engine_ActorSetSpeed(25, 0x38000, 0x1c000);
-	switch (actor->stop)
+	switch (actor->timer)
 	{
 	case 4:
 		if (facing > 0x2000 && facing < 0xa000)
 		{
 			Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptR);
-			actor->stop = 2;
+			actor->timer = 2;
 		}
 		else
 		{
 			Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptP);
-			actor->stop = 3;
+			actor->timer = 3;
 		}
 		break;
 	case 0:
@@ -608,7 +545,7 @@ void KuupuappuHeya_RunActor25Response(void)
 		}
 		break;
 	}
-	actor->stop &= 3;
+	actor->timer &= 3;
 	Object_RefreshSelectorById(25);
 	Engine_EventEnd();
 }
@@ -617,18 +554,6 @@ void KuupuappuHeya_RunActor25Response(void)
 #define RATIO_LO 26214
 
 extern struct EventWork *gEventWork;
-
-struct ActorMode
-{
-	u8	pad[100];
-	u16 mode;
-};
-
-struct ActorFlags
-{
-	u8 pad[89];
-	u8 flags;
-};
 
 struct Stop
 {
@@ -646,18 +571,6 @@ struct StopSet
 struct StopRecord
 {
 	u8 unknown_00[16];
-};
-
-struct Rec_383b
-{
-	u8	pad00[8];
-	s32 f8;
-	u8	pad0c[4];
-	s32 f16;
-	u8	pad14[36];
-	s32 f56;
-	u8	pad3c[4];
-	s32 f64;
 };
 
 void SceneDialogue_RunActor10Line(void)
@@ -724,9 +637,6 @@ done:;
 
 void KuupuappuHeya_OfferBone(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	SceneActor_SetPairZeroAndValue(18, 0, 2);
 	if (GameFlag_IsSet(0x85b) == 0)
@@ -1329,8 +1239,8 @@ void FieldScene_RunOpeningSequenceSecond(void)
 void FieldScene_RunOpeningSequenceThird(void)
 {
 
-	void *actor24;
-	void *actor25;
+	struct FieldActor *actor24;
+	struct FieldActor *actor25;
 
 	actor24 = Object_GetById(24);
 	actor25 = Object_GetById(25);
@@ -1363,8 +1273,8 @@ void FieldScene_RunOpeningSequenceThird(void)
 	GameFlag_Set(2130);
 	GameFlag_Set(768);
 	Engine_TaskAddCallback((s32)SceneActor_FaceActors24And25TowardActorZero, 3200);
-	((struct FieldActor *)actor24)->timer = 1;
-	((struct FieldActor *)actor25)->timer = 3;
+	actor24->timer = 1;
+	actor25->timer = 3;
 	Engine_EventEnd();
 }
 
@@ -1483,16 +1393,16 @@ void FieldScene_ConfigurePairedActors(void)
 	Engine_ActorEnableActionCallback(24, KuupuappuHeya_PairScriptB);
 	Object_RefreshSelectorById(24);
 	{
-		u8 *record = (u8 *)Object_GetById(24);
-		u16 shown = 1;
+		struct FieldActor *record = Object_GetById(24);
+		u16				   shown = 1;
 
-		((struct FieldActor *)record)->timer = shown;
+		record->timer = shown;
 	}
 	{
-		u8 *record = (u8 *)Object_GetById(25);
-		u16 shown = 3;
+		struct FieldActor *record = Object_GetById(25);
+		u16				   shown = 3;
 
-		((struct FieldActor *)record)->timer = shown;
+		record->timer = shown;
 	}
 	Map_CopyCellAttributes(14, 48, 4, 1, 14, 44);
 }
@@ -1600,7 +1510,6 @@ void FieldScene_SelectActorPair(void)
 
 void KuupuappuHeya_RunBranchingDialogueScene(void)
 {
-	u32 i;
 	u8 *record;
 	s32 v5;
 
@@ -1872,8 +1781,8 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 				Engine_MapCopyCellAttributes(14, 50, 3, 1, 14, 44);
 				break;
 			}
-			((struct ActorMode *)Object_GetById(24))->mode = 5;
-			((struct ActorMode *)Object_GetById(25))->mode = 4;
+			Object_GetById(24)->timer = 5;
+			Object_GetById(25)->timer = 4;
 			Engine_TaskAddCallback(
 				(s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
 		}
@@ -1886,7 +1795,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 		Engine_MapCopyCellsTo(54, 2, 35, 80, 2, 10);
 		Map_CopyCellsTo(54, 2, 46, 21, 4, 8);
 		Engine_MapCopyCellsTo(54, 2, 46, 81, 4, 8);
-		((struct ActorFlags *)Object_GetById(26))->flags |= 4;
+		Object_GetById(26)->collision_flags |= 4;
 		Engine_ActorSetSpriteFlags(Object_GetById(26), 0);
 		if (Engine_GameFlagIsSet(0x859) != 0)
 		{
@@ -1959,7 +1868,6 @@ void SceneActor_FaceActors24And25TowardActorZero(void)
 
 void FieldScene_RunLateSequence(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 	s32				   v5;
 
@@ -2085,7 +1993,6 @@ s32 OverlayObject_RunObjectTwoWhenFlagged(void)
 
 void RunEventScript01(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 	struct EventWork  *work;
 	s32				   base5_200d17c;
@@ -2872,20 +2779,18 @@ struct StopRecord *KuupuappuHeya_SnapToNearestStop(struct StopSet *set, s16 *pos
 
 s32 KuupuappuHeya_IsRecordNearPoint(s32 x, s32 y, s32 id)
 {
-	struct Rec_383b *rec = Engine_ActorLookup(id);
-	s32				 target_x = rec->f56;
-	s32				 target_y;
-	s32				 dx;
-	s32				 dy;
+	struct FieldActor *rec = Engine_ActorLookup(id);
+	s32				   target_x = rec->target_x;
+	s32				   target_y;
 
 	if (target_x == 0x80000000)
 	{
-		target_x = rec->f8;
+		target_x = rec->x.fixed;
 	}
-	target_y = rec->f64;
+	target_y = rec->target_z;
 	if (target_y == 0x80000000)
 	{
-		target_y = rec->f16;
+		target_y = rec->z.fixed;
 	}
 
 	target_x = (target_x - x) >> 16;
@@ -3069,9 +2974,6 @@ void KuupuappuHeya_UpdateActorStops(void)
 
 void KuupuappuHeya_StartActorStops(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Camera_MoveTo(0xa80000, -1, 0x2900000, 1);
 	Actor_SetSpeed(0, 0xcccc, 0x6666);

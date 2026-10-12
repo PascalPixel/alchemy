@@ -60,7 +60,6 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 void FieldScene_RunScene37aSequenceA(void)
 {
-	u32 i;
 	s32 record;
 
 	if (CheckAllStatueLights() != 0)
@@ -107,9 +106,6 @@ L_020000f0:;
 
 void FieldScene_RunScene37aSequenceB(void)
 {
-	u32 i;
-	s32 record;
-
 	if (GameFlag_IsSet(0x200) == 0)
 	{
 		Engine_EventBegin();
@@ -124,7 +120,6 @@ void FieldScene_RunScene37aSequenceB(void)
 
 void FieldScene_RunScene37aSequenceC(void)
 {
-	u32 i;
 	s32 record;
 
 	if (CheckAllStatueLights() != 0)
@@ -164,9 +159,6 @@ L_020001d6:;
 
 void FieldScene_RunScene37aSequenceD(void)
 {
-	u32 i;
-	s32 record;
-
 	if (GameFlag_IsSet(0x202) == 0)
 	{
 		ColorBuffer_ApplyTarget(0x202db1, 1);
@@ -471,7 +463,6 @@ void FieldScene_RunScene37aSequenceF(void)
 
 void Scene_EnterInnerSanctum(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 	s32				   request;
 
@@ -782,9 +773,6 @@ void UpdateStatueLight4(void)
 
 void FieldScene_PrepareStatueTransition(void)
 {
-	u32 i;
-	s32 record;
-
 	Camera_MoveTo(-1, -1, -1, 0);
 	Map_CopyCellsTo(30, 43, 32, 40, 8, 3);
 	Map_CopyCellsTo(30, 43, 33, 39, 8, 1);
@@ -1094,7 +1082,6 @@ void FieldScene_RunFlaggedSequence(void)
 
 void Scene_ChangeLunaPictureToSol(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 	if (GameFlag_IsSet(FLAG_LUNA_PICTURE_CHANGED_TO_SOL) != 0)
@@ -1157,9 +1144,6 @@ void Scene_ChangeLunaPictureToSol(void)
 
 void FieldScene_RunActorPositionTransition(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_AudioPlayCue(21);
 	Actor_WalkToAndWait(0, 0x178, 184);
 	Engine_ActorSetAnimation(0, 0);
@@ -1183,9 +1167,7 @@ void FieldScene_RunActorPositionTransition(void)
 
 void FieldScene_RunSanctumRiseAndShrink(void)
 {
-	u32					i;
 	struct FieldActor  *actor;
-	s32					record;
 	s32					base5_8010;
 	s32					base5_0;
 	struct FieldSprite *sprite;
@@ -1342,8 +1324,6 @@ void FieldScene_RunSanctumRiseAndShrink(void)
 
 s32 SoruNichigetsu_RestoreEntryState(void)
 {
-	u32 i;
-	s32 record;
 	s32 done;
 	s32 lit;
 
@@ -1646,9 +1626,6 @@ void SoruNichigetsu_RunLightScene(void)
 
 void Sukureta_Talk(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	if (GameFlag_IsSet(FLAG_ROBIN_SEARCHING_FOR_SUKURETA) != 0)
 	{

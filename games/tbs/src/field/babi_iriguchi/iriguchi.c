@@ -14,8 +14,6 @@
 #include "unit/system/scheduler/callback.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
-#define NULL ((void *)0)
-#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 #include "mapcopy.h"
 #include "types.h"
 #include "field_event.h"
@@ -41,37 +39,6 @@
 #include "objcmd.h"
 
 extern u8 gEffectWork[];
-
-struct Owner
-{
-	u8 unk0[9];
-	u8 unk9_0 : 2;
-	u8 mode : 2;
-	u8 unk9_4 : 4;
-};
-
-struct MotionEffect
-{
-	u8			   pad00[8];
-	s32			   position[3];
-	u8			   pad14[4];
-	s32			   accum18;
-	s32			   accum1c;
-	u8			   pad20[3];
-	u8			   flatla3;
-	u8			   pad24[12];
-	s32			   rate30;
-	s32			   rate34;
-	u8			   pad38[12];
-	s32			   velocity[3];
-	struct Sprite *sprite;
-	u8			   pad54;
-	u8			   mode55;
-	u8			   pad56[14];
-	u16			   step64;
-	u8			   pad66[6];
-	u32			   callback;
-};
 
 static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
 {
@@ -284,14 +251,14 @@ void FieldScene_RunFourCallSequence(void)
 
 void SceneState_BranchOnActorEightOrNineTile(void)
 {
-	s32 *p = Object_GetById(9);
+	struct FieldActor *p = Object_GetById(9);
 
 	if ((Object_GetById(0)->x.fixed >> 20) <= 12)
 	{
 		p = Object_GetById(8);
-		if ((p[2] >> 20) == 6)
+		if ((p->x.fixed >> 20) == 6)
 		{
-			if ((p[4] >> 20) == 20)
+			if ((p->z.fixed >> 20) == 20)
 			{
 				FieldScene_RunFourCallSequence();
 				return;
@@ -300,9 +267,9 @@ void SceneState_BranchOnActorEightOrNineTile(void)
 	}
 	else
 	{
-		if ((p[2] >> 20) == 18)
+		if ((p->x.fixed >> 20) == 18)
 		{
-			if ((p[4] >> 20) == 20)
+			if ((p->z.fixed >> 20) == 20)
 			{
 				FieldScene_RunFourCallSequence();
 				return;
@@ -1058,18 +1025,18 @@ void BabiIriguchi_EnableEffectChildOption(void)
 
 void ActorPresentation_PlaceActorTwelveAtTile20And12(void)
 {
-	s32 *p = Object_GetById(12);
-	s32	 a = p[2] >> 20;
+	struct FieldActor *p = Object_GetById(12);
+	s32				   a = p->x.fixed >> 20;
 
 	if (a == 20)
 	{
-		s32 b = p[4] >> 20;
+		s32 b = p->z.fixed >> 20;
 
 		if (b == 12)
 		{
-			((u8 *)p)[85] = 2;
-			p[5] = 0x300000;
-			((u8 *)p)[35] = 2;
+			p->motion_flags = 2;
+			p->terrain_height = 0x300000;
+			p->priority_flags = 2;
 			{
 				s32 k5 = a, k6 = b;
 
@@ -1170,7 +1137,7 @@ void SceneState_ConfigureRegion82_7AndApply768(void)
 
 void SceneState_ApplyRectsAtActors8And9(void)
 {
-	s32 *p = Object_GetById(8);
+	struct FieldActor *p = Object_GetById(8);
 
 	Engine_ActorSetSpritePriority(8, 1);
 	Engine_ActorSetSpritePriority(9, 1);
@@ -1185,13 +1152,13 @@ void SceneState_ApplyRectsAtActors8And9(void)
 		Engine_MapCopyCellAttributes(69, 19, 3, 3, k5, k6);
 	}
 	{
-		s32 k5 = p[2] >> 20, k6 = p[4] >> 20;
+		s32 k5 = p->x.fixed >> 20, k6 = p->z.fixed >> 20;
 
 		Engine_MapCopyCellAttributes(3, 3, 1, 1, k5, k6);
 	}
 	{
-		s32 *q = Object_GetById(9);
-		s32	 k5 = q[2] >> 20, k6 = q[4] >> 20;
+		struct FieldActor *q = Object_GetById(9);
+		s32				   k5 = q->x.fixed >> 20, k6 = q->z.fixed >> 20;
 
 		Engine_MapCopyCellAttributes(3, 3, 1, 1, k5, k6);
 	}

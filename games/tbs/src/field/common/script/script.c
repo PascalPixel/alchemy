@@ -63,6 +63,8 @@
 #include "curve.h"
 #include "btlpty.h"
 #include "b5_context.h"
+#include "vram_tab.h"
+#include "vram_block.h"
 
 //--------------------------------------------------------------------------
 // source を destination に展開して destination を返す
@@ -585,7 +587,7 @@ void Render_PlaceProjectedSprite(
 	s32					   slot;
 
 	affine = 1;
-	if ((*(struct ObjectSystemWork **)(*(u8 (*)[])&gMenuCtrlWork))->suspended != 0)
+	if (gMenuCtrlWork->suspended != 0)
 		goto hide;
 	z = Render_ProjectPoint(point, screen);
 	if (screen[2] == 0)
@@ -1196,11 +1198,6 @@ struct ResourceObjectWork
 
 typedef char ResourceObjectWork_size[sizeof(struct ResourceObjectWork) == 56 ? 1 : -1];
 
-#if !GAME_TLA
-// 失われし時代の版（0x08022d40）は、まだリストのまま
-#include "metadata_lookup.h"
-#include "vram_tab.h"
-
 //--------------------------------------------------------------------------
 // アニメ id のスプライトオブジェクトを作る
 // あいている 64 個のオブジェクトの 1 つと VRAM キャッシュを使う
@@ -1297,7 +1294,6 @@ struct ResourceObject *ResourceObject_Create(s32 id)
 	}
 	return (struct ResourceObject *)found;
 }
-#endif
 
 //--------------------------------------------------------------------------
 // オブジェクトを解放する
@@ -1371,20 +1367,6 @@ s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt)
 // object.c
 // オブジェクト：フィールドのオブジェクトの作成・解放と、毎フレームの表示
 //--------------------------------------------------------------------------
-
-#include "types.h"
-#include "callback_scheduler.h"
-#include "scene.h"
-#include "global_cells.h"
-#include "map_scroll.h"
-#include "script.h"
-#include "animspr.h"
-#include "field_sprite.h"
-#include "fieldobj.h"
-#include "script_object_runtime.h"
-#include "script_motion.h"
-#include "vram_block.h"
-#include "iwram_call.h"
 
 //--------------------------------------------------------------------------
 // 絵を 1 ドットずつ消す処理の 1 回分
@@ -1636,7 +1618,6 @@ void ObjectDispatch_Release(struct DispatchObject *obj)
 	}
 }
 
-#if !GAME_TLA
 //--------------------------------------------------------------------------
 // フィールドのオブジェクトを作る。空きがなければ 0
 // id      : 4096 で割った商が種類（0 絵ひとつ、2 絵ふたつ）、下の 12 ビットが絵
@@ -2093,13 +2074,6 @@ struct CameraState
 	struct CameraLayer layers[1];
 };
 
-struct CameraSync
-{
-	s16 count;
-	s16 unk_02;
-	s16 frozen;
-};
-
 struct CameraPoint
 {
 	s32 x;
@@ -2129,7 +2103,7 @@ void ObjectSystem_UpdateCamera(void)
 	struct CameraState	*map;
 	s32					 cam_x;
 	s32					 cam_z;
-	struct CameraSync	*sync;
+	struct ObjectSystemWork *sync;
 	struct CameraObject *obj;
 	struct CameraSprite *spr;
 	s32					*cam;
@@ -2141,18 +2115,16 @@ void ObjectSystem_UpdateCamera(void)
 	u32					 bits;
 	s32					 scale[2];
 	s32					 pos[4];
-	s32					 y;
-	s32					 height;
 	u32					 bits_val;
 
 	map = *(struct CameraState **)(((u8 *)&gObjectSlots) + 12);
 	cam = &map->x;
 	cam_x = cam[0] & 0xffff0000;
 	cam_z = cam[1] & 0xffff0000;
-	sync = *(struct CameraSync **)(((u8 *)&gObjectSlots) + 4);
+	sync = *(struct ObjectSystemWork **)(((u8 *)&gObjectSlots) + 4);
 	// 絵を置く処理（Render_DecodeFrame）を作業領域へ写す
 	RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
-	sync->count = 0;
+	sync->used = 0;
 	obj = *(struct CameraObject **)((u8 *)&gObjectSlots);
 	for (cnt = 0; cnt < 64; cnt++, obj++)
 	{
@@ -2165,7 +2137,7 @@ void ObjectSystem_UpdateCamera(void)
 				continue;
 			if (kind != 1)
 				continue;
-			if (sync->frozen != 0 && obj->held == 0)
+			if (sync->suspended != 0 && obj->held == 0)
 			{
 				struct CameraSprite *frozen = obj->sprite;
 
@@ -2255,7 +2227,7 @@ void ObjectSystem_UpdateCameraFixed(void)
 {
 	s32					 cnt;
 	struct FixedCamera	*cam;
-	struct CameraSync	*sync;
+	struct ObjectSystemWork *sync;
 	struct CameraPoint	*eye;
 	struct CameraPoint	*tgt;
 	struct CameraObject *obj;
@@ -2272,7 +2244,7 @@ void ObjectSystem_UpdateCameraFixed(void)
 	struct CameraPoint spare[2];
 
 	cam = *(struct FixedCamera **)(((u8 *)&gObjectSlots) + 0x1c);
-	sync = *(struct CameraSync **)(((u8 *)&gObjectSlots) + 4);
+	sync = *(struct ObjectSystemWork **)(((u8 *)&gObjectSlots) + 4);
 	RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
 	eye = &cam->eye;
 	tgt = &cam->target;
@@ -2281,7 +2253,7 @@ void ObjectSystem_UpdateCameraFixed(void)
 	if (cam->target_override != NULL)
 		tgt = cam->target_override;
 	angle = (s16)ArcTan2((eye->x - tgt->x) >> 16, (eye->z - tgt->z) >> 16);
-	sync->count = 0;
+	sync->used = 0;
 	Render_ResetTransformState();
 	if (GameFlag_TestFar(363))
 	{
@@ -2338,8 +2310,6 @@ void ObjectSystem_UpdateCameraFixed(void)
 	}
 	Runtime_ReleaseHeapBlock(52);
 }
-
-#endif
 
 //--------------------------------------------------------------------------
 
@@ -2872,7 +2842,6 @@ void Object_UpdateAllMotion(void)
 	s32						   vx;
 	s32						   dist;
 	s32						   ratio;
-	s32						   vy;
 	s32						   turn;
 
 	obj = gObjectSlots;
@@ -3355,13 +3324,13 @@ s32 Script_ApplyLinkedObjectPosition(struct ScriptObjectRuntime *object)
 	return 1;
 }
 
-s32 Script_ApplyLocalOffsetPosition(u8 *arg0)
+s32 Script_ApplyLocalOffsetPosition(struct ScriptObjectRuntime *object)
 {
 	s32 offset[3];
 
-	Object_SetMoveTarget((struct ObjectRuntime *)arg0, *(s32 *)(arg0 + 8) + offset[0],
-		*(s32 *)(arg0 + 12) + offset[1], *(s32 *)(arg0 + 16) + offset[2]);
-	*(u16 *)(arg0 + 4) += 3;
+	Object_SetMoveTarget((struct ObjectRuntime *)object, object->x + offset[0],
+		object->y + offset[1], object->z + offset[2]);
+	object->script_cursor += 3;
 	return 1;
 }
 
@@ -3390,7 +3359,6 @@ s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj)
 	s32						dx;
 	s32						dist;
 	s32						step;
-	s32 (*div)(s32, s32);
 
 	bounds = gMapWork[0];
 	leader = obj->linked_object;
@@ -4416,12 +4384,6 @@ s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b)
 		return 0;
 	return -1;
 }
-
-struct KeyMoveEventWork
-{
-	u8	unknown_000[0x19c];
-	u16 blocked_steps;
-};
 
 struct WorldMapSprite
 {
@@ -5732,6 +5694,7 @@ void Map_SetCameraCenter(s32 x, s32 y)
 	}
 }
 
+// レイヤーの表示範囲の左上（セル）
 struct TilePos
 {
 	s32 x, y;
@@ -5882,20 +5845,9 @@ void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x, u32 destinati
 // マップ：セルの矩形の写し
 //--------------------------------------------------------------------------
 
-#include "map_scroll.h"
-#include "ram_buffer.h"
-
-extern u8 gMapCellBuffer[];
-
 #define MAP_CELLS ((u32 *)gMapCellBuffer)
 #define MAP_CELL_TILE_MASK 0x00000fff	   // ブロック番号
 #define MAP_CELL_ATTRIBUTE_MASK 0xfffff000 // 属性
-
-// レイヤーの表示範囲の左上（セル）
-struct TilePos_2
-{
-	s32 x, y;
-};
 
 //--------------------------------------------------------------------------
 // セル（16×16 ドット）の矩形をそのまま写す
@@ -5911,9 +5863,9 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 
 	u32					  *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
 	u32					  *dst = &((u32 *)Ram_MapCellBuffer)[y * 128 + dst_x];
 	struct MapLayerScroll *layer = ((struct MapScrollWork *)*gMapWork)->layers;
-	struct TilePos_2	   view[3];
+	struct TilePos		   view[3];
 	s32					   i;
-	struct TilePos_2	  *pos = view;
+	struct TilePos		  *pos = view;
 	s32					   x;
 
 	// 3 つのレイヤーの表示範囲（スクロール位置をセル単位に）
@@ -6066,9 +6018,9 @@ void Map_CopyCellIndexRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_
 	u32					  *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
 	u32					  *dst = &((u32 *)Ram_MapCellBuffer)[dst_y * 128 + dst_x];
 	struct MapLayerScroll *layer = ((struct MapScrollWork *)*gMapWork)->layers;
-	struct TilePos_2	   view[3];
+	struct TilePos		   view[3];
 	s32					   i;
-	struct TilePos_2	  *pos = view;
+	struct TilePos		  *pos = view;
 	s32					   x;
 
 	// 3 つのレイヤーの表示範囲（スクロール位置をセル単位に）
@@ -6165,9 +6117,6 @@ void Map_SetWorkFlagBits9To11(u32 v)
 	state->flags = flags;
 }
 
-#ifndef MODERN // modern GCC keeps the headers' volatile declaration
-#endif
-
 static __inline__ void Io_Set16(s32 value, volatile u16 *reg)
 {
 	*reg = value;
@@ -6178,7 +6127,6 @@ static __inline__ void Io_Put16(volatile u16 *reg, s32 value)
 	*reg = value;
 }
 
-typedef s32 (*RatioFn)(s32, s32);
 typedef s32 (*PlaneFn)(void *camera, s32 *position, void *lines, void *out);
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))

@@ -460,7 +460,7 @@ void FieldScene_RunScene3a3SequenceC(void)
 	motion = (struct SceneMotion *)Object_GetById(18);
 	motion->timer = 0;
 	motion->delay = 0;
-	*(s32 *)((u8 *)motion + 72) = 0x6666;
+	((struct FieldActor *)motion)->gravity = 0x6666;
 	motion->callback = SceneMotion_UpdateTimedActor;
 	Actor_SetSpeed(18, 0x13333, 0x9999);
 	Actor_MoveToAndWait(18, 28, 0x1cc);

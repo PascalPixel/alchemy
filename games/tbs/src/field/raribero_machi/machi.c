@@ -22,10 +22,6 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-#define NULL ((void *)0)
-
-#define REC_S16(rec, off) (*(s16 *)((rec) + (off)))
-
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
 	/* FAKEMATCH: forwarding inline: with this and SetOffset called directly, SceneActor_SetupActor18Event has 4 instructions different (argument load order) */
@@ -177,7 +173,6 @@ void RariberoMachi_RequestTouchedExit(void)
 
 void Scene_RunPrimarySequence(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 	Engine_EventBegin();
@@ -364,8 +359,7 @@ void Scene_RunPrimarySequence(void)
 
 void FieldScene_RunSecondarySequence(void)
 {
-	u32 i;
-	u8 *record;
+	struct FieldActor *record;
 
 	GameFlag_Set(0x9ba);
 	Engine_EventBegin();
@@ -629,7 +623,7 @@ void FieldScene_RunSecondarySequence(void)
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetDestination(GERALD, REC_S16(record, 10), REC_S16(record, 18));
+		Actor_SetDestination(GERALD, record->x.part.pixel, record->z.part.pixel);
 	}
 	Engine_ActorWaitForMove(GERALD);
 	Actor_SetPosition(GERALD, 0, 0);
@@ -637,7 +631,7 @@ void FieldScene_RunSecondarySequence(void)
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetDestination(MEARI, REC_S16(record, 10), REC_S16(record, 18));
+		Actor_SetDestination(MEARI, record->x.part.pixel, record->z.part.pixel);
 	}
 	Engine_ActorWaitForMove(MEARI);
 	Actor_SetPosition(MEARI, 0, 0);
@@ -645,7 +639,7 @@ void FieldScene_RunSecondarySequence(void)
 	record = Object_GetById(0);
 	if (record != 0)
 	{
-		Actor_SetDestination(IWAN, REC_S16(record, 10), REC_S16(record, 18));
+		Actor_SetDestination(IWAN, record->x.part.pixel, record->z.part.pixel);
 	}
 	Engine_ActorWaitForMove(IWAN);
 	Actor_SetPosition(IWAN, 0, 0);
@@ -655,9 +649,6 @@ void FieldScene_RunSecondarySequence(void)
 
 void FieldScene_RunScene3c6SequenceA(void)
 {
-	u32 i;
-	u8 *record;
-
 	Engine_EventSetMessage((s32)MsgRariberoThoughtShipWeSawAt);
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(22, 2);
@@ -699,9 +690,6 @@ void FieldScene_RunScene3c6SequenceA(void)
 
 void FieldScene_RunSequenceB(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgRariberoWhereGoingArentWeTaking);
 	Event_ShowMessage(GERALD, 0);

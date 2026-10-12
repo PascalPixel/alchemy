@@ -26,14 +26,6 @@
 
 s32	 Math_RemainderUnsigned();
 
-struct Actor
-{
-	s32 f00;
-	s32 f04;
-	s32 f08;
-	s32 f0c;
-};
-
 struct MapShake
 {
 	u8	unknown_00[0x18];
@@ -47,18 +39,6 @@ struct MapShake
 extern u32 gFrameCount;
 #endif
 void QueueIoWriteDelay2(u32 address, s32 value);
-
-struct SceneActorRecord
-{
-	u8	reserved_00[8];
-	s32 x;
-	s32 y;
-	s32 z;
-	u8	reserved_14[20];
-	s32 field_28;
-	u8	reserved_2c[28];
-	s32 field_48;
-};
 
 #define TILE(position) ((position) / 0x100000)
 
@@ -250,17 +230,17 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 s32 IsActor9AtTile15x54(void)
 {
-	s32 *actor = Object_GetById(9);
-	s32	 z = actor[4];
-	s32	 x;
-	s32	 z_tile;
-	s32	 x_tile;
+	struct FieldActor *actor = Object_GetById(9);
+	s32				   z = actor->z.fixed;
+	s32				   x;
+	s32				   z_tile;
+	s32				   x_tile;
 
 	if (z < 0)
 	{
 		z += 0x000FFFFF;
 	}
-	x = actor[2];
+	x = actor->x.fixed;
 	z_tile = z >> 20;
 	if (x < 0)
 	{
@@ -276,9 +256,6 @@ s32 IsActor9AtTile15x54(void)
 
 void FieldScene_RunFlag9a9GuardedScene(void)
 {
-	u32 i;
-	s32 record;
-
 	if (GameFlag_IsSet(0x9a9) == 0)
 	{
 		KuupuappuDou_PushBlockAhead();
@@ -307,9 +284,6 @@ void SceneState_ApplyThreeRects(void)
 
 void FieldScene_RunScene3a7SequenceA(void)
 {
-	u32 i;
-	s32 record;
-
 	if (GameFlag_IsSet(0x9a9) == 0)
 	{
 		if (IsActor9AtTile15x54() != 0)
@@ -341,17 +315,17 @@ void SceneState_ApplyThreeRectsRows9And10(void)
 
 s32 SceneActor_IsActor10AtTile16x12(void)
 {
-	s32 *p = Object_GetById(10);
-	s32	 z = p[4];
-	s32	 x;
-	s32	 cz;
-	s32	 cx;
+	struct FieldActor *p = Object_GetById(10);
+	s32				   z = p->z.fixed;
+	s32				   x;
+	s32				   cz;
+	s32				   cx;
 
 	if (z < 0)
 	{
 		z += 0x000FFFFF;
 	}
-	x = p[2];
+	x = p->x.fixed;
 	cz = z >> 20;
 	if (x < 0)
 	{
@@ -367,9 +341,6 @@ s32 SceneActor_IsActor10AtTile16x12(void)
 
 void FieldScene_RunGuardedStep9AAAfterSetup(void)
 {
-	u32 i;
-	s32 record;
-
 	KuupuappuDou_PushBlockAhead();
 	if (GameFlag_IsSet(0x9aa) == 0)
 	{
@@ -391,9 +362,6 @@ void Resource3a7_NoOpCallback(void)
 
 void FieldScene_RunGuardedStep9AA(void)
 {
-	u32 i;
-	s32 record;
-
 	if (GameFlag_IsSet(0x9aa) == 0)
 	{
 		if (SceneActor_IsActor10AtTile16x12() != 0)
@@ -527,9 +495,9 @@ void SceneActor_MarkSlot21AndSetFlag205(void)
 
 void SceneState_DispatchByActorZeroDepth(void)
 {
-	struct Actor *p = Object_GetById(ACTOR_PARTY_LEADER);
+	struct FieldActor *p = Object_GetById(ACTOR_PARTY_LEADER);
 
-	if (p->f0c >= 0x100000)
+	if (p->y.fixed >= 0x100000)
 	{
 		KuupuappuDou_RaiseActorPriorities();
 	}
@@ -621,8 +589,6 @@ void KuupuappuDou_RunRumble(void)
 
 void FieldScene_RunScene3a7SequenceB(void)
 {
-	u32 i;
-	s32 record;
 	s32 v5;
 	s32 v6;
 
@@ -649,27 +615,27 @@ void FieldScene_RunScene3a7SequenceB(void)
 
 s32 SceneActor_LiftLowActorOnSubjectTile(s32 subject_actor)
 {
-	struct SceneActorRecord *subject = (struct SceneActorRecord *)Object_GetById(subject_actor);
-	s32						 index = 0;
+	struct FieldActor *subject = Object_GetById(subject_actor);
+	s32				   index = 0;
 
 	do
 	{
-		struct SceneActorRecord *actor = (struct SceneActorRecord *)Object_GetById(index + 11);
+		struct FieldActor *actor = Object_GetById(index + 11);
 
-		if ((u32)(actor->y - 1) <= 0x000ffffe)
+		if ((u32)(actor->y.fixed - 1) <= 0x000ffffe)
 		{
-			s32 actor_z = TILE(actor->z);
-			s32 actor_x = TILE(actor->x);
-			s32 subject_z = TILE(subject->z);
-			s32 subject_x = TILE(subject->x);
+			s32 actor_z = TILE(actor->z.fixed);
+			s32 actor_x = TILE(actor->x.fixed);
+			s32 subject_z = TILE(subject->z.fixed);
+			s32 subject_x = TILE(subject->x.fixed);
 			s32 z_delta = subject_z - actor_z;
 			s32 x_delta = subject_x - actor_x;
 
 			if (x_delta == 0 && z_delta == 0)
 			{
-				actor->y = 0x00ff0000;
-				actor->field_48 = 0;
-				actor->field_28 = 0;
+				actor->y.fixed = 0x00ff0000;
+				actor->gravity = 0;
+				actor->velocity_y = 0;
 				return 1;
 			}
 		}
@@ -845,14 +811,14 @@ void SceneActor_InitSlots10To15AndStartTask(void)
 
 	do
 	{
-		s32 *record;
+		struct FieldActor *record;
 
 		Engine_ActorSetSpriteFlags(Object_GetById(selector), 0);
 		record = Object_GetById(selector);
-		record[17] = 0x1999;
-		record[18] = 0;
+		record->bounce = 0x1999;
+		record->gravity = 0;
 		remaining--;
-		record[3] = 0x00ff0000;
+		record->y.fixed = 0x00ff0000;
 		selector++;
 	} while (remaining >= 0);
 
@@ -870,13 +836,13 @@ void SceneActor_SetupActors11To14AndInstallTask(void)
 
 	do
 	{
-		s32 *rec;
+		struct FieldActor *rec;
 
 		Engine_ActorSetSpriteFlags(Object_GetById(no), 0);
 		rec = Object_GetById(no);
-		rec[17] = 0x1999;
-		rec[18] = 0;
-		rec[3] = 0x00ff0000;
+		rec->bounce = 0x1999;
+		rec->gravity = 0;
+		rec->y.fixed = 0x00ff0000;
 		Engine_ActorSetSpritePriority(i + 11, 1);
 		i++;
 		no++;

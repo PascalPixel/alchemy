@@ -5,8 +5,6 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-struct Obj_020036f8;
-struct Object;
 struct Resource3a8Effect;
 struct SceneEntrance;
 struct SceneEvent;
@@ -34,7 +32,7 @@ typedef struct Effect_0200390c
 
 void SceneState_ApplyValues12And2And3(void);
 s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect);
-s32 OverlayObject_AdvanceXWhenCounterExpires(struct Object *obj);
+s32 OverlayObject_AdvanceXWhenCounterExpires(struct FieldActor *obj);
 const struct SceneEntrance *Scene_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
 u8 *KareiMachi_GetExits(void);
@@ -70,7 +68,7 @@ void FieldScene_RunTwoActorCutsceneSequence(void);
 void FieldScene_RunSecondaryGroupSequence(void);
 void FieldScene_RunLateSequence(void);
 void FieldScene_RunScene3a8SequenceB(void);
-void SceneEffect_UpdateMotionWithDamping(struct Obj_020036f8 *p);
+void SceneEffect_UpdateMotionWithDamping(struct FieldActor *p);
 void FieldScene_RunSupplementalSequenceOne(s32 a0);
 void FieldScene_RunScene3a8SequenceA(s32 a0, s32 a1, s32 a2);
 void SceneEffect_UpdateLobeOrbitEffect26(void);

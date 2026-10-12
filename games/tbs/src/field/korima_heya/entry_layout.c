@@ -21,12 +21,6 @@
 #include "field_scene.h"
 #include "item_ids.h"
 
-struct Approach390Subject
-{
-	u16 unknown_00[3];
-	u16 dir;
-};
-
 void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
 {
 	u32			 i;
@@ -85,7 +79,7 @@ u8 *SceneData_GetPreparedRecords(void)
 void FieldScene_RunActor16MessageBranch(void)
 {
 
-	u32 dir = ((struct Approach390Subject *)Object_GetById(0))->dir;
+	u32 dir = Object_GetById(0)->facing;
 
 	Engine_EventBegin();
 
@@ -105,7 +99,7 @@ void FieldScene_RunActor16MessageBranch(void)
 void FieldScene_RunActor17MessageBranch(void)
 {
 
-	u32 dir = ((struct Approach390Subject *)Object_GetById(0))->dir;
+	u32 dir = Object_GetById(0)->facing;
 
 	Engine_EventBegin();
 
@@ -125,7 +119,7 @@ void FieldScene_RunActor17MessageBranch(void)
 void FieldScene_RunActor18MessageBranch(void)
 {
 
-	u32 dir = ((struct Approach390Subject *)Object_GetById(0))->dir;
+	u32 dir = Object_GetById(0)->facing;
 
 	Engine_EventBegin();
 
@@ -145,7 +139,7 @@ void FieldScene_RunActor18MessageBranch(void)
 void FieldScene_RunActor19MessageBranch(void)
 {
 
-	u32 dir = ((struct Approach390Subject *)Object_GetById(0))->dir;
+	u32 dir = Object_GetById(0)->facing;
 
 	Engine_EventBegin();
 

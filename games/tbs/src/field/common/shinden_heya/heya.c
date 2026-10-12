@@ -44,39 +44,6 @@ struct ShrineWork
 	u8	lamps[4];
 };
 
-extern
-
-	enum FacingGatedMessage
-{
-	MSG_WIELDERS_PSYNERGY_CALLED_ADEPTS_ADEPTS = 0x1035,
-	MSG_WE_HAD_IDEA_TRUE_SANCTUM = 0x1138,
-	MSG_ROBIN_WILL_ACCEPT_RESPONSIBILITY_FOR = 0x1162,
-	MSG_ARE_YOU_SURE = 0x1164,
-	MSG_ONCE_STEP_OUTSIDE_VILLAGE_CANNOT = 0x116c,
-	MSG_ACCEPT_ROBIN_CANT_MEAN = 0x1171,
-	MSG_MY_CONTROL_OVER_PSYNERGY_HAS = 0x119d,
-	MSG_DO_FEEL_ANY_CHANGE_IN = 0x119f,
-	MSG_WE_WILL_HELP_ANYTIME_AS = 0x1288,
-	MSG_HEALER_MUST_WORRIED_ABOUT_NEVER = 0x1289,
-	MSG_WONDER_IF_EVER_SEE_OUR = 0x128b,
-	MSG_WAS_HAND_FATE_RETURNED_GOLD = 0x1376,
-	MSG_WHEN_STRAY_FROM_YOUR_WORLDLY = 0x1377,
-	MSG_CHILD_HAS_AWAKENED_OUR_TEACHINGS = 0x1379,
-	MSG_AM_STARTING_FEEL_ONLY_BEGINNING = 0x1408,
-	MSG_CURSE_MAY_OVER_BUT_WE = 0x171c,
-	MSG_CAME_XIAN_FROM_VERY_DISTANT = 0x1823,
-	MSG_WAS_AFTER_EERIE_NIGHT_WHEN = 0x190a,
-	MSG_SAVED_ALTIN_FROM_MONSTERS_CLEARLY = 0x1951,
-	MSG_PATH_SOL_SANCTUM_STILL_CLOSED = 0x1bfc,
-	MSG_ROBIN_YOUR_NEW_FRIENDS_ADEPTS = 0x1bfd,
-	MSG_MAY_WRONG_BUT_LATELY_THERE = 0x1ce8,
-	MSG_POLISHED_GOLD_STATUE_RETURNED_US = 0x1ce9,
-	MSG_DIRTY_GOLDEN_STATUE_CLEANED_UP = 0x1ceb
-};
-
-#ifndef MODERN // modern GCC keeps the headers' volatile declaration
-#endif
-
 s32 UpdateFacingFromResolvedObject(struct FacingObject *object)
 {
 	struct FacingObject *target;
@@ -104,15 +71,7 @@ void *ShindenHeya_GetExits(void)
 
 void *SceneData_SelectPlacementTableBySubstate(void)
 {
-
-	s16 sub;
-
-	{
-		s32 off = 450;
-
-		sub = *(s16 *)((u8 *)&gGameState + off);
-	}
-	switch (sub)
+	switch (gGameState.entrance)
 	{
 	case 1:
 	case 2:
@@ -139,11 +98,7 @@ void *SceneData_SelectPlacementTableBySubstate(void)
 
 u8 *SceneData_SelectTableBySceneIdAndFlags(void)
 {
-
-	s16 *tbl = (s16 *)&gGameState;
-	s32	 no = tbl[225];
-
-	switch (no)
+	switch (gGameState.entrance)
 	{
 	case 10:
 	case 12:
@@ -248,16 +203,15 @@ void FieldScene_RunSupplementalSequenceOne(void)
 			if (Engine_EventChooseYesNo(0, 0) == 0)
 			{
 				Engine_EventWait(20);
-				if (((struct FacingObject *)Object_GetById(8))->facing >= 0xa000
-					&& ((struct FacingObject *)Object_GetById(8))->facing <= 0xe000)
+				if (Object_GetById(8)->facing >= 0xa000 && Object_GetById(8)->facing <= 0xe000)
 				{
 					Actor_SetSpeed(8, 0x8000, 0x4000);
 					Engine_ActorFaceDirection(8, 0, 0);
 					Engine_EventWait(10);
-					((struct FacingObject *)Object_GetById(8))->facing_flags &= ~1;
+					Object_GetById(8)->steering_flags &= ~ACTOR_FACES_MOTION;
 					Engine_ActorWalkToAndWait(8, 152, 120);
 					Engine_EventWait(1);
-					((struct FacingObject *)Object_GetById(8))->facing_flags |= 1;
+					Object_GetById(8)->steering_flags |= ACTOR_FACES_MOTION;
 					Engine_EventWait(20);
 					Engine_ActorSetAnimationAndWait(8, 3);
 					Engine_EventWait(20);
@@ -291,10 +245,6 @@ void FieldScene_RunSupplementalSequenceOne(void)
 
 void FieldScene_RunScene378SequenceB(void)
 {
-
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 #if EDITION_INTERNATIONAL
 	Event_CallWithLastActiveObjectId((s32)ShindenHeya_PlacementSequenceB);
@@ -398,7 +348,6 @@ void FieldScene_RunActorEightResetSequence(void)
 void ShindenHeya_RunAltarScene(void)
 {
 	struct ShrineWork *work;
-	u8				   zero;
 
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(0, 0);
@@ -960,21 +909,14 @@ dialogue:
 	}
 	else
 	{
-		u8 *actor;
-		s32 flags;
-
 		Engine_EventWait(0x1e);
 		Engine_ActorRunRepeatedMotion(0xc, 1);
 		Engine_ActorSetAnimationAndWait(0xc, 4);
 		Engine_EventWait(0x14);
 		Event_ShowMessage(0xc, 0);
 		Engine_EventWait(0x14);
-		actor = &Object_GetById(0xa)->priority_flags;
-		flags = 254;
-		flags &= *actor;
-		*actor = flags;
-		actor = (u8 *)Object_GetById(0xa);
-		((struct FieldActor *)actor)->update =
+		Object_GetById(0xa)->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
+		Object_GetById(0xa)->update =
 			(void (*)(union FieldObject *))ShindenHeya_MatchLeaderPriority;
 	}
 	Engine_EventEnd();
@@ -1461,60 +1403,57 @@ void ShindenHeya_FollowLeaderOffset(struct FieldActor *actor)
 	}
 }
 
-void SceneEffect_StepEllipseOrbit(u8 *obj)
+void SceneEffect_StepEllipseOrbit(struct FieldActor *obj)
 {
-	struct FieldActor *anchor = ((struct FieldActor *)obj)->linked_object;
-	u16				  *angle = &((struct FieldActor *)obj)->timer;
+	struct FieldActor *anchor = obj->linked_object;
+	u16				  *angle = &obj->timer;
 	u16				   theta = *angle;
 	s32				   x;
 	s32				   z;
 	s32				   tmp;
 
 	x = anchor->x.fixed + Engine_MathCos(theta) * 14;
-	((struct FieldActor *)obj)->x.fixed = x;
+	obj->x.fixed = x;
 
 	z = anchor->z.fixed + Engine_MathSin(theta) * 10;
-	tmp = ((struct FieldActor *)obj)->x.fixed;
-	((struct FieldActor *)obj)->z.fixed = z;
-	((struct FieldActor *)obj)->target_z = z;
-	((struct FieldActor *)obj)->target_x = tmp;
+	tmp = obj->x.fixed;
+	obj->z.fixed = z;
+	obj->target_z = z;
+	obj->target_x = tmp;
 
-	*angle = (*angle + ((struct FieldActor *)obj)->work);
+	*angle = (*angle + obj->work);
 }
 
 void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
 {
-	u32				   i;
-	s32				   p8;
-	s32				   p8b;
-	struct FieldActor *rec;
-	u8				  *rec8;
-	u8				  *p5;
+	s32					p8;
+	struct FieldActor  *rec;
+	struct FieldActor  *rec8;
+	struct FieldSprite *p5;
 
 	p8 = a1;
 	rec = Object_GetById(a0);
 	if (rec != 0)
 	{
 		rec8 = Object_Create(0x11d, rec->x.fixed, rec->y.fixed + 0x2d0000, rec->z.fixed);
-		if ((s32)rec8 != 0)
+		if (rec8 != 0)
 		{
-			p5 = (u8 *)((struct FieldActor *)rec8)->sprite;
-			Engine_ObjectSetScript((s32)rec8, (s32)ShindenHeya_OwnerEffectScript);
+			p5 = rec8->sprite;
+			Engine_ObjectSetScript(rec8, ShindenHeya_OwnerEffectScript);
 			{
 				s32 zero = 0;
 
-				((struct FieldActor *)rec8)->motion_flags = zero;
-				((struct FieldActor *)rec8)->timer = zero;
+				rec8->motion_flags = zero;
+				rec8->timer = zero;
 			}
-			((struct FieldActor *)rec8)->work = p8;
-			((struct FieldActor *)rec8)->update =
-				(void (*)(union FieldObject *))SceneEffect_StepEllipseOrbit;
+			rec8->work = p8;
+			rec8->update = (void (*)(union FieldObject *))SceneEffect_StepEllipseOrbit;
 			{
 				u16 v = 0;
-				p5[38] = v;
+				p5->flags = v;
 			}
-			((struct FieldActor *)rec8)->linked_object = rec;
-			((struct FieldSprite *)p5)->priority = rec->sprite->priority;
+			rec8->linked_object = rec;
+			p5->priority = rec->sprite->priority;
 		}
 	}
 }
@@ -1600,16 +1539,16 @@ void FieldScene_RunPairedActorChoreography(void)
 	Engine_EventWait(15);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, GERALD, 0);
 	Engine_ActorStartRepeatedMotion(0, 1);
-	((struct FacingObject *)Object_GetById(0))->facing_flags &= ~1;
+	Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 184, 168);
-	((struct FacingObject *)Object_GetById(1))->facing_flags &= ~1;
+	Object_GetById(1)->steering_flags &= ~ACTOR_FACES_MOTION;
 	Engine_ActorWalkToAndWait(1, 200, 168);
 	Engine_EventWait(1);
-	((struct FacingObject *)Object_GetById(1))->facing_flags |= 1;
+	Object_GetById(1)->steering_flags |= ACTOR_FACES_MOTION;
 	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	((struct FacingObject *)Object_GetById(0))->facing_flags |= 1;
-	((struct FacingObject *)Object_GetById(1))->facing_flags |= 1;
+	Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
+	Object_GetById(1)->steering_flags |= ACTOR_FACES_MOTION;
 	Engine_ActorJump(GERALD, 2, 0);
 	Engine_EventWait(15);
 	Engine_ActorFaceActor(GERALD, 8, 0);
@@ -1820,8 +1759,6 @@ void ShindenHeya_RaiseItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z)
 	u8				   *buf;
 	u32					i;
 	u8					zero;
-	s32					z;
-	u8				   *flag;
 
 	obj = Engine_ObjectCreate(22, fixed_x, fixed_y, fixed_z);
 	zero = 0;
@@ -1834,7 +1771,7 @@ void ShindenHeya_RaiseItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z)
 		spr->full_color = 0;
 		spr->palette = 0;
 		obj->velocity_y = 0x20000;
-		((struct FieldEffect *)obj)->velocity_y = 0x4000;
+		obj->gravity = 0x4000;
 		buf = Runtime_AllocateHeapBlock(17, 0x608);
 		Ui_PrepareTransferForItem(item);
 		Engine_VramLoad(spr->vram_block, 128, buf + 0x400);

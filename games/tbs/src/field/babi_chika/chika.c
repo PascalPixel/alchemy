@@ -42,90 +42,10 @@ struct Vec
 	s32 z;
 };
 
-struct EffectParams
-{
-	s32 unk00;
-	s32 mode;
-	u8	filler08[0x1c];
-	s32 callback;
-};
-
-struct Slot02000f10
-{
-	u8	head[8];
-	s32 x;
-	s32 y;
-	s32 rank;
-};
-
-typedef struct Actor_02000cd0
-{
-	u8	pad0[6];
-	u16 tag;
-	s32 x;
-	s32 y;
-	s32 z;
-	u8	pad20[20];
-	s32 speedZ;
-	s32 pad44;
-	s32 speedX;
-	s32 speedY;
-	u8	pad56[29];
-	u8	flags;
-} Actor_02000cd0;
-
-struct Actor_02000ec8
-{
-	u8	unknown_00[8];
-	s32 x;
-	s32 y;
-	s32 z;
-	u8	unknown_14[0xf];
-	u8	flatla3;
-};
-
-struct Track02001038
-{
-	u8	head[12];
-	s32 value;
-	u8	gap16[4];
-	s32 limit;
-	u8	gap24[16];
-	s32 state;
-	u8	gap44[16];
-	s32 mark;
-};
-
-struct MotionEffect
-{
-	u8			   pad00[8];
-	s32			   position[3];
-	u8			   pad14[4];
-	s32			   accum18;
-	s32			   accum1c;
-	u8			   pad20[3];
-	u8			   flatla3;
-	u8			   pad24[12];
-	s32			   rate30;
-	s32			   rate34;
-	u8			   pad38[12];
-	s32			   velocity[3];
-	struct Sprite *sprite;
-	u8			   pad54;
-	u8			   mode55;
-	u8			   pad56[14];
-	u16			   step64;
-	u8			   pad66[6];
-	u32			   callback;
-};
-
-struct Record_02000ec8;
-
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
 #include "../common/effect/create.c"
 
-#define FIELD_STAGED_ACTOR_IMPORTS
 extern u8 *gActorEffectWork;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -140,15 +60,15 @@ s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 
 s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 {
-	Actor_02000cd0 *actor = Object_GetById(ACTOR_PARTY_LEADER);
-	u8				saved = actor->flags;
-	s32				probe[3];
+	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
+	u8				   saved = actor->motion_flags;
+	s32				   probe[3];
 
-	probe[0] = (actor->x & 0xfff00000) + 0x00080000;
-	probe[1] = actor->y;
-	probe[2] = (actor->z & 0xfff00000) + 0x00080000;
+	probe[0] = (actor->x.fixed & 0xfff00000) + 0x00080000;
+	probe[1] = actor->y.fixed;
+	probe[2] = (actor->z.fixed & 0xfff00000) + 0x00080000;
 
-	Call3(Vector_AddPolarOffset, 0x00100000, (actor->tag + 0x2000) & 0xc000, (s32)probe);
+	Call3(Vector_AddPolarOffset, 0x00100000, (actor->facing + 0x2000) & 0xc000, (s32)probe);
 
 	if (Object_CheckMovementCollision(actor, probe) == 1)
 	{
@@ -165,10 +85,10 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 	Engine_AudioPlayCue(152);
 	Object_SetMode(actor, 7);
 
-	actor->speedX = 0x00030000;
-	actor->speedY = 0x00020000;
-	actor->speedZ = 0x00040000;
-	actor->flags &= 0x7e;
+	actor->speed = 0x00030000;
+	actor->acceleration = 0x00020000;
+	actor->velocity_y = 0x00040000;
+	actor->motion_flags &= 0x7e;
 
 	Engine_ActorSetSpriteFlags(actor, 0);
 #if EDITION_INTERNATIONAL
@@ -181,7 +101,7 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 	Engine_ActorSetSpriteFlags(actor, 1);
 	Engine_TaskWait(6);
 
-	actor->flags = saved;
+	actor->motion_flags = saved;
 	Engine_EventEnd();
 	return 0;
 
@@ -252,23 +172,23 @@ void BabiChika_UpdateTrackedActor(void)
 	}
 }
 
-s32 SceneActor_SetFlagBitByRelativeDepth(struct Actor_02000ec8 *actor)
+s32 SceneActor_SetFlagBitByRelativeDepth(struct FieldActor *actor)
 {
-	struct Actor_02000ec8 *ref;
-	u8					  *fp;
-	u8					   flag;
+	struct FieldActor *ref;
+	u8				  *fp;
+	u8				   flag;
 	ref = Object_GetById(ACTOR_PARTY_LEADER);
-	fp = &actor->flatla3;
+	fp = &actor->priority_flags;
 	flag = *fp | 2;
 	*fp = flag;
-	if (ref->z < actor->z)
+	if (ref->z.fixed < actor->z.fixed)
 	{
-		s32 lim = actor->z - ref->z;
+		s32 lim = actor->z.fixed - ref->z.fixed;
 		s32 ay;
 		lim += 0x00040000;
-		ay = actor->y;
+		ay = actor->y.fixed;
 		ay += lim;
-		if (ref->y <= ay)
+		if (ref->y.fixed <= ay)
 		{
 			flag &= 0xfd;
 			*fp = flag;
@@ -279,22 +199,22 @@ s32 SceneActor_SetFlagBitByRelativeDepth(struct Actor_02000ec8 *actor)
 
 void SceneState_SwapSlotPairByRank(s32 first, s32 second)
 {
-	struct Slot02000f10 *a = Object_GetById(first);
-	struct Slot02000f10 *b = Object_GetById(second);
+	struct FieldActor *a = Object_GetById(first);
+	struct FieldActor *b = Object_GetById(second);
 
-	if (a->rank <= b->rank)
+	if (a->z.fixed <= b->z.fixed)
 	{
 		s32 t;
 
-		t = a->x;
-		a->x = b->x;
-		b->x = t;
-		t = a->y;
-		a->y = b->y;
-		b->y = t;
-		t = a->rank;
-		a->rank = b->rank;
-		b->rank = t;
+		t = a->x.fixed;
+		a->x.fixed = b->x.fixed;
+		b->x.fixed = t;
+		t = a->y.fixed;
+		a->y.fixed = b->y.fixed;
+		b->y.fixed = t;
+		t = a->z.fixed;
+		a->z.fixed = b->z.fixed;
+		b->z.fixed = t;
 		Engine_TaskWait(1);
 	}
 }
@@ -339,7 +259,7 @@ s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record)
 	return 0;
 }
 
-void SceneActor_WaitValueBelowLimit(struct Track02001038 *track)
+void SceneActor_WaitValueBelowLimit(struct FieldActor *track)
 {
 	s32 cnt = 60;
 	s32 limit;
@@ -351,8 +271,8 @@ void SceneActor_WaitValueBelowLimit(struct Track02001038 *track)
 			s32 value;
 
 			Engine_TaskWait(1);
-			value = track->value;
-			limit = track->limit;
+			value = track->y.fixed;
+			limit = track->terrain_height;
 			cnt--;
 			if (value <= limit)
 			{
@@ -360,12 +280,12 @@ void SceneActor_WaitValueBelowLimit(struct Track02001038 *track)
 			}
 			continue;
 		}
-		limit = track->limit;
+		limit = track->terrain_height;
 		break;
 	}
-	track->state = 0;
-	track->value = limit;
-	track->mark = 0x80000000;
+	track->velocity_y = 0;
+	track->y.fixed = limit;
+	track->target_y = ACTOR_NO_TARGET;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -416,18 +336,18 @@ void BabiChika_RunLeaderSpray(void)
 
 void SceneEffect_SpawnNineRadialEffects(s32 actor)
 {
-	struct FieldActor  *object;
-	struct Vec			vec;
-	struct EffectParams params;
-	u32					i;
-	s32					v;
-	s32					x;
-	s32					z;
+	struct FieldActor	*object;
+	struct Vec			 vec;
+	struct EffectOptions params;
+	u32					 i;
+	s32					 v;
+	s32					 x;
+	s32					 z;
 
 	object = Object_GetById(actor);
-	params.unk00 = 1;
-	params.mode = 7;
-	params.callback = (s32)Effect_AdvanceMotion;
+	params.priority = 1;
+	params.palette = 7;
+	params.update = Effect_AdvanceMotion;
 	for (i = 0; i <= 16; i += 2)
 	{
 		v = i << 12;
@@ -439,7 +359,7 @@ void SceneEffect_SpawnNineRadialEffects(s32 actor)
 		x += Math_Divide(x, 3);
 		vec.x = x;
 		Effect_Spawn(
-			object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y, z, 0x01030001, (const struct EffectOptions *)&params);
+			object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y, z, 0x01030001, &params);
 	}
 }
 
@@ -628,15 +548,15 @@ void SceneState_RunUnlessActorZeroAt30_52(void)
 
 void FieldScene_RunSupplementalSequenceTwo(void)
 {
-	u32				   i;
-	s32				   rec2;
-	s32				   rec7;
-	struct FieldActor *actor;
-	s32				   value;
-	s32				   v5;
-	s32				   v6;
-	u8				   slot16[40];
-	u8				  *frame;
+	u32					  i;
+	s32					  rec2;
+	s32					  rec7;
+	struct FieldActor	 *actor;
+	s32					  value;
+	s32					  v5;
+	s32					  v6;
+	struct EffectOptions  slot16;
+	struct EffectOptions *frame;
 
 	Engine_EventBegin();
 	actor = Object_GetById(18);
@@ -644,10 +564,10 @@ void FieldScene_RunSupplementalSequenceTwo(void)
 	{
 		Engine_EventWait(30);
 		rec2 = OverlayObject_PrepareObject(0x2e80000, 0, 0xb80000, 253);
-		frame = slot16;
-		*(s32 *)(frame + 8) = 0x9999;
-		*(s32 *)(frame + 12) = 0x9999;
-		*(s32 *)(frame + 4) = 7;
+		frame = &slot16;
+		frame->start_scale_x = 0x9999;
+		frame->start_scale_y = 0x9999;
+		frame->palette = 7;
 		Actor_Get(18)->motion_flags = 0;
 		Engine_AudioPlayCue(185);
 		for (i = 0; i < 16; i++)
@@ -657,9 +577,8 @@ void FieldScene_RunSupplementalSequenceTwo(void)
 			rec7 = Random_Next();
 			rec7 = ((((u32)(rec7 << 4) >> 16) << 16) + 0x2e00000);
 			value = Engine_RandomNext();
-			Effect_Spawn(rec7, 0,
-				((((u32)(((value << 3) + value) << 1) >> 16) << 16) + 0x800000), 0, 0, 0, 0x90000,
-				(const struct EffectOptions *)frame);
+			Effect_Spawn(rec7, 0, ((((u32)(((value << 3) + value) << 1) >> 16) << 16) + 0x800000),
+				0, 0, 0, 0x90000, frame);
 		}
 		Map_CopyCellAttributes(51, 8, 1, 1, 49, 8);
 		Engine_EventWait(30);
@@ -688,8 +607,6 @@ void FieldScene_RunSupplementalSequenceTwo(void)
 
 void FieldScene_RunFourCallSequenceB(void)
 {
-	typedef s32 (*Handler_02001a10)(struct Record_02000ec8 *record);
-
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
 	Engine_EventEnd();
@@ -710,17 +627,17 @@ void ActorPresentation_ConfigureActorTwentyAndFlag200(void)
 
 void FieldScene_RunSupplementalSequenceOne(void)
 {
-	u32				   i;
-	s32				   rec2;
-	s32				   rec7;
-	struct FieldActor *actor;
-	s32				   value;
-	s32				   arg0;
-	s32				   arg2;
-	s32				   v5;
-	s32				   v6;
-	u8				   slot16[40];
-	u8				  *slot;
+	u32					  i;
+	s32					  rec2;
+	s32					  rec7;
+	struct FieldActor	 *actor;
+	s32					  value;
+	s32					  arg0;
+	s32					  arg2;
+	s32					  v5;
+	s32					  v6;
+	struct EffectOptions  slot16;
+	struct EffectOptions *slot;
 
 	Engine_EventBegin();
 	actor = Object_GetById(19);
@@ -730,10 +647,10 @@ void FieldScene_RunSupplementalSequenceOne(void)
 		{
 			Engine_EventWait(30);
 			rec2 = OverlayObject_PrepareObject(0x3020000, 0, 0x1120000, 223);
-			slot = slot16;
-			*(s32 *)(slot + 8) = 0x9999;
-			*(s32 *)(slot + 12) = 0x9999;
-			*(s32 *)(slot + 4) = 7;
+			slot = &slot16;
+			slot->start_scale_x = 0x9999;
+			slot->start_scale_y = 0x9999;
+			slot->palette = 7;
 			Actor_Get(19)->motion_flags = 0;
 			Engine_AudioPlayCue(185);
 			for (i = 0; i < 16; i++)
@@ -744,7 +661,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 				arg0 = ((((u32)(rec7 << 4) >> 16) << 16) + 0x3000000);
 				value = Engine_RandomNext();
 				arg2 = ((((u32)(((value << 3) + value) << 1) >> 16) << 16) + 0xe00000);
-				Effect_Spawn(arg0, 0, arg2, 0, 0, 0, 0x90000, (const struct EffectOptions *)slot);
+				Effect_Spawn(arg0, 0, arg2, 0, 0, 0, 0x90000, slot);
 			}
 			Map_CopyCellAttributes(51, 8, 1, 1, 45, 14);
 			Engine_EventWait(30);
@@ -774,8 +691,6 @@ void FieldScene_RunSupplementalSequenceOne(void)
 
 void FieldScene_RunFourStepSequenceA(void)
 {
-	typedef s32 (*Handler_02001a10)(struct Record_02000ec8 *record);
-
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
 	Engine_EventEnd();
@@ -822,16 +737,12 @@ void SceneDialogue_RunFlag982Or983Dialogue(void)
 
 void FieldScene_RunTwoStepSequence(void)
 {
-	typedef s32 (*Handler_02001a10)(struct Record_02000ec8 *record);
-
 	Engine_EventBegin();
 	Engine_EventEnd();
 }
 
 void FieldScene_RunFourStepSequenceB(void)
 {
-	typedef s32 (*Handler_02001a10)(struct Record_02000ec8 *record);
-
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
 	Engine_EventEnd();
@@ -840,8 +751,6 @@ void FieldScene_RunFourStepSequenceB(void)
 
 void SceneActor_InstallSlotNineHandler(void)
 {
-	typedef s32 (*Handler_02001a10)(struct Record_02000ec8 *record);
-
 	struct FieldActor *owner;
 
 	Engine_ActorEnableActionCallback(8, BabiChika_FlickerScript);
@@ -852,11 +761,9 @@ void SceneActor_InstallSlotNineHandler(void)
 
 void SceneActor_SetupSlotNineAndInstallHandler(void)
 {
-	typedef s32 (*Handler_02001a10)(struct Record_02000ec8 *record);
-
-	u8 *desc;
-	s32 col;
-	s32 row;
+	struct FieldActor *desc;
+	s32				   col;
+	s32				   row;
 
 	Engine_EventBegin();
 	Engine_ActorSetSpritePriority(9, 1);
@@ -876,20 +783,20 @@ void SceneActor_SetupSlotNineAndInstallHandler(void)
 	Engine_MapCopyCellAttributes(26, 8, 1, 1, col >> 20, row);
 
 	desc = Object_GetById(9);
-	*(Handler_02001a10 *)(desc + 108) = SceneActor_SetFlagBitByRelativeDepth;
+	desc->update = ACTOR_UPDATE_IDLE;
 
 	desc = Object_GetById(8);
-	*(Handler_02001a10 *)(desc + 108) = SceneActor_SetFlagBitByRelativeDepth;
+	desc->update = ACTOR_UPDATE_IDLE;
 
 	((u8 * (*)()) Engine_EventEnd)(desc);
 }
 
-s32 OverlayObject_SetYAboveLinkedActor(u8 *owner)
+s32 OverlayObject_SetYAboveLinkedActor(struct FieldActor *owner)
 {
-	s16				  *id = (s16 *)(owner + 100);
+	s16				  *id = &owner->timer;
 	struct FieldActor *actor = Object_GetById(*id);
 
-	*(s32 *)(owner + 12) = actor->y.fixed + 0x100000;
+	owner->y.fixed = actor->y.fixed + 0x100000;
 	return 0;
 }
 
@@ -979,7 +886,7 @@ void FieldScene_RunMiddleSequence(void)
 	{
 		if (Object_GetById(i + 12)->sprite->priority == 3 && GameFlag_IsSet(i + 0x200) == 0)
 		{
-			SceneActor_WaitValueBelowLimit((struct Track02001038 *)Actor_Get(i + 12));
+			SceneActor_WaitValueBelowLimit(Actor_Get(i + 12));
 			Actor_SetPosition(i + 12, 0, 0);
 			GameFlag_Set(i + 0x200);
 			break;
@@ -1042,8 +949,6 @@ void FieldScene_RunMiddleSequence(void)
 
 void FieldScene_RunThreeStepSequence(void)
 {
-	typedef s32 (*Handler_02001a10)(struct Record_02000ec8 *record);
-
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
 	Engine_EventEnd();
@@ -1077,8 +982,6 @@ void SceneState_SetSlot17And18Selectors(void)
 
 void FieldScene_RunFourCallSequence(void)
 {
-	typedef s32 (*Handler_02001a10)(struct Record_02000ec8 *record);
-
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
 	SceneState_SetSlot17And18Selectors();
@@ -1268,8 +1171,6 @@ s32 BabiChika_SelectEvents(void)
 
 void FieldScene_PlaceAndPinSlots8And9(void)
 {
-	typedef s32 (*Handler_02001a10)(struct Record_02000ec8 *record);
-
 	s32 row;
 
 	{

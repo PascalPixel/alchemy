@@ -111,7 +111,7 @@ FAR_CALL(Object_PlaceCurrentWithinCameraBoundsFar, Object_PlaceCurrentWithinCame
 FAR_CALL(Battle_GetWorkObject1e0Far, Battle_GetWorkObject1e0, struct FieldActor *, (void))
 FAR_CALL(
 	Map_SetViewBoundsFar, Map_SetViewBounds, void, (s32 min_x, s32 min_y, s32 max_x, s32 max_y))
-FAR_CALL(Event_SetDestinationFar, Event_SetDestination, void, (u16 first, u16 second))
+FAR_CALL(Event_SetDestinationFar, Event_SetDestination, void, (s32 first, s32 second))
 FAR_SLOT(Event_SetSavedDestination)
 FAR_CALL(Event_SetExitRequestFar, Event_SetExitRequest, void, (u16 value))
 FAR_CALL(

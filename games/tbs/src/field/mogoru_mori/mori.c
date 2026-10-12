@@ -579,7 +579,6 @@ void FieldScene_RunActorThirteenPresentationBeat(void)
 
 void MogoruMori_TransferActorFourteen(void)
 {
-	u32 i;
 	s32 record;
 
 	Engine_EventBegin();
@@ -919,7 +918,6 @@ void FieldScene_RunActor17CameraSequence(void)
 
 void MogoruMori_TransferActorEighteen(void)
 {
-	u32 i;
 	s32 record;
 
 	Engine_EventBegin();

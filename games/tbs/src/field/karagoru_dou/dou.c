@@ -27,24 +27,6 @@
 #include "field_effect.h"
 #include "text/msg_ids.h"
 
-#define NULL ((void *)0)
-
-enum StagedPairMessage
-{
-	MSG_WARRIORS_HAVE_BEEN_FIGHTING_WHILE = 0x23d2,
-	MSG_WE_MISSED_COLOSSO_BECAUSE_WE = 0x23d5,
-	MSG_IVE_BEEN_WAITING_FOR_ROBIN = 0x23d9,
-	MSG_WHY_GOING_BACK_ROBIN_DO = 0x23da
-};
-
-struct EffectRecord
-{
-	u8 pad[9];
-	u8 flags_lo : 2;
-	u8 mode : 2;
-	u8 flags_hi : 4;
-};
-
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/create.c"
 
@@ -278,9 +260,9 @@ void ActorPresentation_RunActorEightThresholdScene(void)
 	Object_GetById(8);
 	Engine_EventBegin();
 	{
-		s32 *actor = Object_GetById(8);
+		struct FieldActor *actor = Object_GetById(8);
 
-		if ((actor[2] >> 20) <= 30)
+		if ((actor->x.fixed >> 20) <= 30)
 		{
 			StagedActorPairScene_RunSpinningLeap(8);
 			{

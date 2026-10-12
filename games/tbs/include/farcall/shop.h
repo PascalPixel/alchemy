@@ -7,7 +7,7 @@ FAR_CALL(ShopCursor_AdvanceFar, ShopCursor_Advance, void, (struct ShopCursor * c
 FAR_CALL(
 	ShopCursor_MoveTowardTargetFar, ShopCursor_MoveTowardTarget, void, (struct ShopCursor * cursor))
 FAR_CALL(Shop_SetCursorFar, Shop_SetCursor, void,
-	(struct ShopCursor * cursor, s32 target_x, s32 target_y, s8 kind))
+	(struct ShopCursor * cursor, s32 target_x, s32 target_y, s32 kind))
 FAR_CALL(ShopCursor_SetPositionImmediateFar, ShopCursor_SetPositionImmediate, void,
 	(struct ShopCursor * cursor, s32 x, s32 y))
 FAR_CALL(Shop_FillSelectorFar, Shop_FillSelector, void, (s32 count, s32 selector, u8 *base))

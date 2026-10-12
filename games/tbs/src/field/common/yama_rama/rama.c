@@ -339,9 +339,6 @@ void ConfigureAndPlaceActorFourteen(void)
 
 void YamaRama_ClearActorPlacement(void)
 {
-	u32 i;
-	s32 record;
-
 	Map_CopyCellAttributes(21, 73, 1, 1, 21, 9);
 	MapObject_SetPosition(100, -1, -1);
 	Actor_SetPosition(14, 0, 0);

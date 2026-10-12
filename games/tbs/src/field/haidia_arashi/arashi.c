@@ -42,74 +42,6 @@ enum StormNightActor
 
 #define ACTOR_ID 22
 
-struct Object
-{
-	u8	filler00[6];
-	u16 x;
-	u8	filler08[92];
-	s16 counter;
-};
-
-typedef struct Obj
-{
-	u8			pad00[8];
-	s32			f08;
-	s32			f0c;
-	s32			f10;
-	u8			pad14[4];
-	s32			f18;
-	s32			f1c;
-	u8			pad20[0x44];
-	u16			f64;
-	u8			pad66[2];
-	struct Obj *f68;
-} Obj;
-
-typedef struct Ent
-{
-	u8 pad00[9];
-	u8 b01 : 2;
-	u8 f : 2;
-	u8 b45 : 4;
-} Ent;
-
-typedef struct Rec
-{
-	u8	 pad00[0x50];
-	Ent *f50;
-} Rec;
-
-struct FixedPointCountdown
-{
-	u8	pad_00[0x18];
-	s32 fixed_point_18;
-	s32 fixed_point_1c;
-	u8	pad_20[0x44];
-	s16 countdown;
-};
-
-typedef struct
-{
-	u8	filler0[8];
-	s32 unk8;
-	u8	fillerC[4];
-	s32 unk10;
-} Thing1;
-
-typedef struct
-{
-	u8	filler0[10];
-	s16 unkA;
-	u8	fillerC[6];
-	s16 unk12;
-} Thing2;
-
-struct Actor
-{
-	u8	reserved_00[80];
-	u8 *presentation;
-};
-
 s32 Math_RemainderUnsigned(s32, s32);
 
 union PairObject;
@@ -117,45 +49,44 @@ union PairObject;
 s32 HaidiaArashi_ShakeDone;
 s32 HaidiaArashi_ShakeShift;
 
-s32 HaidiaArashi_RerollHeadingOnCountdown(struct Object *object)
+s32 HaidiaArashi_RerollHeadingOnCountdown(struct FieldActor *object)
 {
-	s32 loaded = ((struct FieldActor *)object)->timer;
+	s32 loaded = object->timer;
 	s32 counter = (s16)loaded;
 
 	if (loaded == 0)
 	{
-		((struct FieldActor *)object)->facing = Engine_RandomNext();
+		object->facing = Engine_RandomNext();
 		counter = Math_RemainderUnsigned(Engine_RandomNext(), 20) + 20;
-		((struct FieldActor *)object)->timer = counter;
+		object->timer = counter;
 	}
-	((struct FieldActor *)object)->timer = counter - 1;
+	object->timer = counter - 1;
 	return 1;
 }
 
-s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state)
+s32 UpdateFixedPointCountdown(struct FieldActor *state)
 {
-	switch (((struct FieldActor *)state)->timer)
+	switch (state->timer)
 	{
 	case 6:
-		((struct FieldActor *)state)->scale_x -= 0x4000;
-		((struct FieldActor *)state)->scale_y += 0x2000;
+		state->scale_x -= 0x4000;
+		state->scale_y += 0x2000;
 		break;
 	case 4:
-		((struct FieldActor *)state)->scale_x += 0x2000;
-		((struct FieldActor *)state)->scale_y += -0x1000;
+		state->scale_x += 0x2000;
+		state->scale_y += -0x1000;
 		break;
 	case 2:
-		((struct FieldActor *)state)->scale_x += 0x1000;
-		((struct FieldActor *)state)->scale_y -= 0x800;
+		state->scale_x += 0x1000;
+		state->scale_y -= 0x800;
 		break;
 	case 0:
-		((struct FieldActor *)state)->scale_x = 0x10000;
-		((struct FieldActor *)state)->scale_y = 0x10000;
-		((struct FieldActor *)state)->timer =
-			(Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
+		state->scale_x = 0x10000;
+		state->scale_y = 0x10000;
+		state->timer = (Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
 		break;
 	}
-	((struct FieldActor *)state)->timer--;
+	state->timer--;
 	return 1;
 }
 
@@ -273,7 +204,6 @@ void HaidiaArashi_OpenBackdropExit5(void)
 
 void HaidiaArashi_OpenGateRoute(void)
 {
-	u32 i;
 	s32 record;
 
 	if (GameFlag_IsSet(0x206) == 0)
@@ -332,9 +262,6 @@ void HaidiaArashi_OpenBackdropExit9(void)
 
 void HaidiaArashi_OpenRouteTen(void)
 {
-	u32 i;
-	s32 record;
-
 	Event_PlayCue(158);
 	Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 74);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
@@ -344,9 +271,6 @@ void HaidiaArashi_OpenRouteTen(void)
 
 void HaidiaArashi_OpenRouteTwelve(void)
 {
-	u32 i;
-	s32 record;
-
 	Event_PlayCue(158);
 	Map_AnimateCells(HaidiaArashi_CellSteps1, 35, 73);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x4b6);
@@ -356,9 +280,6 @@ void HaidiaArashi_OpenRouteTwelve(void)
 
 void HaidiaArashi_OpenRouteThirteen(void)
 {
-	u32 i;
-	s32 record;
-
 	Event_PlayCue(158);
 	Map_AnimateCells(HaidiaArashi_CellSteps2, 38, 72);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 146, 0x49e);
@@ -682,7 +603,6 @@ void Scene_DoraSendsRobinToThePlaza(void)
 
 void HaidiaArashi_RunStormTriggerScene(void)
 {
-	u32				   i;
 	struct FieldActor *rec7;
 	struct FieldActor *record;
 	s32				   v3;
@@ -751,9 +671,6 @@ void HaidiaArashi_RunStormTriggerScene(void)
 
 void HaidiaArashi_SetStormCellAttributes(void)
 {
-	u32 i;
-	s32 record;
-
 	Map_CopyCellAttributes(29, 64, 1, 1, 21, 57);
 	Map_CopyCellAttributes(29, 64, 1, 1, 21, 58);
 	Map_CopyCellAttributes(29, 64, 1, 1, 22, 58);
@@ -1033,9 +950,6 @@ void FieldScene_RunScene372SequenceA(void)
 
 void FieldScene_RunScene372SequenceB(void)
 {
-	u32 i;
-	s32 record;
-
 	if (GameFlag_IsSet(0x836) == 0)
 	{
 		if (GameFlag_IsSet(0x837) == 0)
@@ -1192,7 +1106,6 @@ void FieldScene_RunScene372SequenceE(void)
 
 void FieldScene_RunScene372SequenceD(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 	struct FieldActor *actor;
 
@@ -1228,15 +1141,15 @@ void FieldScene_RunScene372SequenceD(void)
 
 void SceneActor_RunActor22PlacementSequence(s32 x, s32 y)
 {
-	Thing1 *a;
-	s32		w = 0x10000;
-	s32		h = 0x8000;
-	Thing2 *b;
+	struct FieldActor *a;
+	s32				   w = 0x10000;
+	s32				   h = 0x8000;
+	struct FieldActor *b;
 
 	a = Object_GetById(ACTOR_PARTY_LEADER);
 	if (a != 0)
 	{
-		Engine_ActorSetPosition(22, a->unk8, a->unk10);
+		Engine_ActorSetPosition(22, a->x.fixed, a->z.fixed);
 	}
 	Engine_ActorSetSpeed(22, w, h);
 	Engine_ActorWalkToAndWait(22, x, y);
@@ -1253,7 +1166,7 @@ void SceneActor_RunActor22PlacementSequence(s32 x, s32 y)
 	b = Object_GetById(ACTOR_PARTY_LEADER);
 	if (b != 0)
 	{
-		Engine_ActorSetDestination(22, b->unkA, b->unk12);
+		Engine_ActorSetDestination(22, b->x.part.pixel, b->z.part.pixel);
 	}
 	Engine_ActorWaitForMove(22);
 	Engine_ActorSetPosition(22, 0, 0);
@@ -1496,12 +1409,12 @@ void FieldScene_RunFlagGatedActorSequence(void)
 	Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
 	Engine_ActorSetAnimation(10, 5);
 	{
-		u8 *o;
-		s32 v;
-		o = (u8 *)Object_GetById(10);
+		struct FieldActor *o;
+		s32				   v;
+		o = Object_GetById(10);
 		v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
 		tbl = HaidiaArashi_ActorEightScript;
-		((struct FieldActor *)o)->timer = v;
+		o->timer = v;
 		Engine_ActorEnableActionCallback(10, (s32)tbl);
 	}
 	Actor_SetPosition(9, 0xC00000, 0x4A50000);
@@ -1510,22 +1423,22 @@ void FieldScene_RunFlagGatedActorSequence(void)
 	Actor_FaceDirection(24, FACING_SOUTH, 0);
 	Engine_ActorSetAnimation(24, 6);
 	{
-		u8 *o;
-		s32 v;
-		o = (u8 *)Object_GetById(24);
+		struct FieldActor *o;
+		s32				   v;
+		o = Object_GetById(24);
 		v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-		((struct FieldActor *)o)->timer = v;
+		o->timer = v;
 		Engine_ActorEnableActionCallback(24, (s32)tbl);
 	}
 	Actor_SetPosition(25, 0xFA0000, 0x4BE0000);
 	Actor_FaceDirection(25, FACING_SOUTH, 0);
 	Engine_ActorSetAnimation(25, 6);
 	{
-		u8 *o;
-		s32 v;
-		o = (u8 *)Object_GetById(25);
+		struct FieldActor *o;
+		s32				   v;
+		o = Object_GetById(25);
 		v = Math_RemainderUnsigned(Engine_RandomNext(), 0x5A) + 60;
-		((struct FieldActor *)o)->timer = v;
+		o->timer = v;
 		Engine_ActorEnableActionCallback(25, (s32)tbl);
 	}
 	Actor_SetPosition(26, 0xE30000, 0x4A50000);
@@ -1575,24 +1488,24 @@ void FieldScene_RunFlagGatedActorSequence(void)
 	BattleFx_PlayQueuedSound();
 	Engine_ActorSetAnimation(10, 1);
 	{
-		u8 *o;
-		o = (u8 *)Object_GetById(10);
-		((struct FieldActor *)o)->scale_x = 0x10000;
-		((struct FieldActor *)o)->scale_y = 0x10000;
+		struct FieldActor *o;
+		o = Object_GetById(10);
+		o->scale_x = 0x10000;
+		o->scale_y = 0x10000;
 	}
 	Engine_ActorSetAnimation(24, 1);
 	{
-		u8 *o;
-		o = (u8 *)Object_GetById(24);
-		((struct FieldActor *)o)->scale_x = 0x10000;
-		((struct FieldActor *)o)->scale_y = 0x10000;
+		struct FieldActor *o;
+		o = Object_GetById(24);
+		o->scale_x = 0x10000;
+		o->scale_y = 0x10000;
 	}
 	Engine_ActorSetAnimation(25, 1);
 	{
-		u8 *o;
-		o = (u8 *)Object_GetById(25);
-		((struct FieldActor *)o)->scale_x = 0x10000;
-		((struct FieldActor *)o)->scale_y = 0x10000;
+		struct FieldActor *o;
+		o = Object_GetById(25);
+		o->scale_x = 0x10000;
+		o->scale_y = 0x10000;
 	}
 	Engine_ActorStartRepeatedMotion(10, 2);
 	Engine_ActorStartRepeatedMotion(9, 2);
@@ -1619,9 +1532,9 @@ void FieldScene_RunFlagGatedActorSequence(void)
 	Engine_TaskWait(1);
 	Engine_AudioPlayCue(106);
 	{
-		u8 *o;
-		o = (u8 *)Object_GetById(23);
-		((struct FieldActor *)o)->velocity_y = 0x20000;
+		struct FieldActor *o;
+		o = Object_GetById(23);
+		o->velocity_y = 0x20000;
 	}
 	Engine_EventWait(6);
 	Engine_ActorSetAnimation(23, 7);
@@ -1639,23 +1552,23 @@ void FieldScene_RunFlagGatedActorSequence(void)
 	Engine_ActorRunRepeatedMotion(10, 2);
 	Event_ShowMessage(0x800A, 0);
 	{
-		u8 *o;
-		o = (u8 *)Object_GetById(25);
-		((struct FieldActor *)o)->steering_flags &= 0xFE;
+		struct FieldActor *o;
+		o = Object_GetById(25);
+		o->steering_flags &= 0xFE;
 	}
 	{
-		u8 *o;
-		o = (u8 *)Object_GetById(26);
-		((struct FieldActor *)o)->steering_flags &= 0xFE;
+		struct FieldActor *o;
+		o = Object_GetById(26);
+		o->steering_flags &= 0xFE;
 	}
 	Actor_SetSpeed(25, 0x9999, 0x4CCC);
 	Actor_SetSpeed(26, 0x9999, 0x4CCC);
 	Actor_SetDestination(25, 247, 0x4BA);
 	Actor_MoveToAndWait(26, 227, 0x4A5);
 	{
-		u8 *o;
-		o = (u8 *)Object_GetById(25);
-		((struct FieldActor *)o)->steering_flags |= 1;
+		struct FieldActor *o;
+		o = Object_GetById(25);
+		o->steering_flags |= 1;
 	}
 	Object_GetById(26)->steering_flags |= 1;
 	Engine_ActorFaceDirection(26, FACING_SOUTHWEST, 0);
@@ -1913,7 +1826,6 @@ void SceneDialogue_RunActorTenFlag30dDialogue(void)
 
 void HaidiaArashi_RunReunionAndDeparture(void)
 {
-	u32				   i;
 	struct FieldActor *rec;
 	struct FieldActor *record;
 	s32				   v5;
@@ -2441,9 +2353,6 @@ struct WorldMapOam
 
 void HaidiaArashi_FlashLightning(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_TaskWait(20);
 	GameFlag_Set(0x166);
 	Map_SetLayerEntryFlag(0);
@@ -2536,9 +2445,9 @@ void HaidiaArashi_UpdatePulsingGlow(void)
 
 void ActorPresentation_SelectActorTwentySevenState(void)
 {
-	struct Actor *actor = Object_GetById(27);
-	u32			  flags = gFrameCount;
-	u8			 *presentation = actor->presentation;
+	struct FieldActor *actor = Object_GetById(27);
+	u32				   flags = gFrameCount;
+	u8				  *presentation = (u8 *)actor->sprite;
 
 	if (flags & 1)
 	{
@@ -2554,10 +2463,8 @@ void ActorPresentation_SelectActorTwentySevenState(void)
 
 void HaidiaArashi_TryToFreeActorEight(void)
 {
-	u32				   i;
 	struct FieldActor *rec7;
 	struct FieldActor *rec8;
-	s32				   record;
 
 	rec8 = Object_GetById(ACTOR_PARTY_LEADER);
 	rec7 = Object_GetById(8);
@@ -2628,9 +2535,6 @@ void HaidiaArashi_TryToFreeActorEight(void)
 
 void FieldScene_ConfigureActorTwentyTwoScene(void)
 {
-	u32 i;
-	u8 *record;
-
 	Engine_EventBegin();
 	Camera_MoveTo(-1, -1, -1, 0);
 	Engine_ActorStop(ACTOR_ID);
@@ -2664,9 +2568,6 @@ void FieldScene_ConfigureActorTwentyTwoScene(void)
 
 void FieldScene_BuildPlacementGrid(void)
 {
-	u32 i;
-	u8 *record;
-
 	Map_CopyCellsTo(16, 96, 11, 73, 6, 3);
 	Map_CopyCellsTo(16, 96, 34, 68, 14, 10);
 	Map_CopyCellsTo(16, 96, 64, 68, 7, 7);
@@ -2854,19 +2755,19 @@ void SceneState_SetValue19ThenCall(void)
 
 void HaidiaArashi_CopyLeaderSpritePriority(void)
 {
-	Ent *src;
-	Ent *dst;
-	Ent *dst2;
+	struct FieldSpritePriority *src;
+	struct FieldSpritePriority *dst;
+	struct FieldSpritePriority *dst2;
 
-	src = (Ent *)Object_GetById(0)->sprite;
+	src = (struct FieldSpritePriority *)Object_GetById(0)->sprite;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-	Engine_ActorSetSpritePriority(22, ((struct FieldSpritePriority *)src)->priority);
-	Engine_ActorSetSpritePriority(8, ((struct FieldSpritePriority *)src)->priority);
+	Engine_ActorSetSpritePriority(22, src->priority);
+	Engine_ActorSetSpritePriority(8, src->priority);
 #else
-	dst = (Ent *)Object_GetById(22)->sprite;
-	((struct FieldSpritePriority *)dst)->priority = ((struct FieldSpritePriority *)src)->priority;
-	dst2 = (Ent *)Object_GetById(8)->sprite;
-	((struct FieldSpritePriority *)dst2)->priority = ((struct FieldSpritePriority *)src)->priority;
+	dst = (struct FieldSpritePriority *)Object_GetById(22)->sprite;
+	dst->priority = src->priority;
+	dst2 = (struct FieldSpritePriority *)Object_GetById(8)->sprite;
+	dst2->priority = src->priority;
 #endif
 }
 

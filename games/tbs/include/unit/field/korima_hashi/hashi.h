@@ -4,13 +4,12 @@
 #include "types.h"
 #include "field_scene.h"
 
+struct FieldActor;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 struct StagedActorEffectRequest;
-struct Struct2798;
-struct Struct288c;
 
 s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object);
 s32 SceneActor_UpdateRandomCounterMode(u8 *object);
@@ -26,10 +25,10 @@ s32 Scene_Initialize(void);
 void FieldScene_RunBranchingFormationPresentation(void);
 void Event_SayThenWait(s32 speaker, s32 frames);
 void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
-s32 SceneEffect_AdvanceAngleAndFinishWhenParked(struct Struct2798 *p);
+s32 SceneEffect_AdvanceAngleAndFinishWhenParked(struct FieldActor *p);
 void SceneEffect_SpawnObject26EveryEightFrames(void);
 s32 OverlayObject_SelectValueByFrameBit1(s32 obj);
-s32 SceneActor_CheckRegionTrigger(struct Struct288c *arg0);
+s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0);
 void KorimaHashi_AlternateBridgePostHeights(void);
 extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];

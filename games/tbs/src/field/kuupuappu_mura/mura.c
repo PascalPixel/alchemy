@@ -209,9 +209,6 @@ void *KuupuappuMura_SelectEvents(void)
 
 void SceneDialogue_RunActor9LineAndAdvance(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuWasntEruptionMtAlephIncredible);
 	SceneActor_ApplyActorCueThenWait(9, 0, 2);
@@ -761,9 +758,6 @@ void ActorPresentation_MoveActorToPositionAndWait(int actor, int x, int z, int f
 
 void FieldScene_RunActor23SequenceOnceByFlag867(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Event_PlayCue(100);
 	Engine_EventWait(40);
@@ -785,9 +779,6 @@ void FieldScene_RunActor23SequenceOnceByFlag867(void)
 
 void FieldScene_RunActor19MotionSequence(void)
 {
-	u32 i;
-	s32 record;
-
 	PartyInventory_Discard(231);
 	Engine_EventBegin();
 	Engine_EventWait(10);
@@ -811,7 +802,6 @@ void FieldScene_RunActor19MotionSequence(void)
 
 s32 KuupuappuMura_RestoreEntryState(void)
 {
-	u32				   i;
 	s32				   rec7;
 	struct FieldActor *record;
 	s32				   v7;

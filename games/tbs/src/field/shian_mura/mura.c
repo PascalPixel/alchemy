@@ -381,7 +381,6 @@ void SceneEffect_ActivateNearbyActor(void)
 
 void ShianMura_ActivateActorTwentyPlatform(void)
 {
-	u32 i;
 	s32 record;
 	s32 v5;
 	s32 x;
@@ -531,9 +530,6 @@ void ShianMura_HopLeaderAhead(void)
 
 void ShianMura_WalkThroughExit(s32 a0)
 {
-	u32 i;
-	s32 record;
-
 	Object_GetById(0)->motion_flags = 0;
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
 	if (a0 == 6)
@@ -633,7 +629,6 @@ void Scene_RunActorNineteenScript(void)
 
 void ShianMura_EscortActorEighteen(void)
 {
-	u32 i;
 	s32 record;
 
 	Engine_EventBegin();
@@ -677,7 +672,6 @@ s32 ShianMura_SetupScene(void)
 {
 	struct FieldActor *actor;
 	u32				   n;
-	s32				   x;
 
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	BattleFx_SetQueuedSoundAndPlay(169);

@@ -28,7 +28,7 @@ void FieldScene_RunActorUpdateSequence(void);
 void ShindenHeya_CopyActorPose(void);
 void ShindenHeya_ResetActorUpdate(void);
 void ShindenHeya_FollowLeaderOffset(struct FieldActor *actor);
-void SceneEffect_StepEllipseOrbit(u8 *obj);
+void SceneEffect_StepEllipseOrbit(struct FieldActor *obj);
 void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1);
 s32 ShindenHeya_ChooseRestartOption(void);
 void FieldScene_RunPairedActorChoreography(void);

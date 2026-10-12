@@ -100,17 +100,13 @@ s16 FixedPoint_Reciprocal(s16 value)
 #if !GAME_TLA
 #include "resource.h"
 #include "mem.h"
-#include "io_reg.h"
 #include "dma.h"
 #include "ram_buffer.h"
 #include "fixed_math.h"
-#include "system.h"
 #include "ui.h"
 #include "game_state.h"
 #include "map_scroll.h"
 #include "battle_effect_work.h"
-#include "btldisp.h"
-#include "iwram_call.h"
 #include "transform.h"
 #include "resource_ids.h"
 #include "text/msg_ids.h"
@@ -288,15 +284,12 @@ void LuckyDice_Run(void)
 	s32						 n;
 	s32						 x;
 	s32						 y;
-	s32						 z;
 	s32						 d;
 	s32						 e;
-	s32						 tile;
 	s32						 key;
 	s32						 tx;
 	s32						 ty;
 	s32						 base;
-	s32						 pos;
 	s32						 dx;
 	s32						 dy;
 	s32						 dz;

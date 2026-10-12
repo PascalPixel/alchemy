@@ -6,7 +6,6 @@
 
 struct FieldActor;
 struct Obj;
-struct Obj_020025d8;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
@@ -33,7 +32,7 @@ void FieldScene_RunSequenceA(void);
 void FieldScene_RunExtendedActorSequence(void);
 void FieldScene_RunPairedStepA(s32 arg0, s32 arg1);
 void FieldScene_RunPairedStepB(s32 arg0, s32 arg1, s32 arg2);
-s32 SceneEffect_AdvanceAngleUntilIdle(struct Obj_020025d8 *p);
+s32 SceneEffect_AdvanceAngleUntilIdle(struct FieldActor *p);
 void SceneEffect_SpawnObject26EveryEightFrames(void);
 s32 SceneEffect_SetModeByFrameBit1(s32 arg0);
 s32 KorimaMura_TriggerRegionScript(struct FieldActor *actor);

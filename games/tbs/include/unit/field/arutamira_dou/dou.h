@@ -4,8 +4,8 @@
 #include "types.h"
 #include "field_scene.h"
 
+struct EffectSlot;
 struct FieldActor;
-struct Obj;
 struct SceneEvent;
 struct ScenePlacement;
 
@@ -32,7 +32,7 @@ void SceneState_MarkObjectWhenActorElevenAhead(void);
 void FieldScene_RunActorElevenCellSetup(void);
 void ArutamiraDou_HopSelectedActor(void);
 void FieldScene_RunGuardedSixWordStep(void);
-void ArutamiraDou_UpdateScalePulse(struct Obj *obj);
+void ArutamiraDou_UpdateScalePulse(struct FieldActor *obj);
 void SceneActor_SetPositionFromTransformedBase(s32 a, s32 b, s32 c);
 void SceneActor_PlaceFiveActorsInRow(u8 *p);
 void ArutamiraDou_SpinActorWheel(void);
@@ -44,7 +44,7 @@ void FieldScene_RunFlagGatedActorEightDialogue(void);
 const struct SceneEvent *Scene_GetEvents(void);
 void ArutamiraDou_MatchLeaderPriority(struct FieldActor *actor);
 s32 ArutamiraDou_ApplyEntryState(void);
-void OverlayObject_UpdateThreeStateMotion(void *obj);
+void OverlayObject_UpdateThreeStateMotion(struct EffectSlot *obj);
 void ArutamiraDou_ReleaseWallBurst(void);
 extern s32 StagedActor_DirectionSteps[];
 extern u32 StagedActor_FootprintKinds[];

@@ -68,7 +68,7 @@ FAR_CALL(UiWindow_CreateWithLayoutBoundsFar, UiWindow_CreateWithLayoutBounds, vo
 FAR_CALL(PtyStDrawFar, PtyStDraw, void, (s32 flags))
 FAR_CALL(UiWork_FinalizeAndReleaseBlock16Far, UiWork_FinalizeAndReleaseBlock16, void, (void))
 FAR_CALL(UiWork_FinalizePendingCoreFar, UiWork_FinalizePendingCore, void, (void))
-FAR_CALL(UiWork_DrainPendingFar, UiWork_DrainPending, void, (void))
+FAR_CALL(UiWork_DrainPendingFar, UiWork_DrainPending, void, (s32 unused))
 FAR_SLOT(UiGlyph_ResetWorkState)
 FAR_SLOT(Resource_ClearOwnerListAndCounters)
 FAR_SLOT(Resource_PushPendingPair)

@@ -59,12 +59,12 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 void FieldScene_RunActor8AtCell24Sequence(void)
 {
-	s32				  *record;
+	struct FieldActor *record;
 	struct FieldActor *target;
 	s32				   value;
 
-	record = (s32 *)Object_GetById(8);
-	value = record[2] / 0x100000;
+	record = Object_GetById(8);
+	value = record->x.fixed / 0x100000;
 	if (value == 24)
 	{
 		SceneEffect_RunActorBurst(8);
@@ -104,7 +104,7 @@ s32 FieldScene_PlaceActor8OnEntry(void)
 				Engine_ActorSetPosition(8, 0x15a0000, 0x1240000);
 				record = Object_GetById(8);
 				Engine_ActorSetSpriteFlags(record, 0);
-				*((u8 *)Object_GetById(8) + 35) |= 2;
+				Object_GetById(8)->priority_flags |= 2;
 				Engine_ActorSetAnimation(8, 2);
 				Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
 			}
@@ -120,7 +120,7 @@ void SceneEffect_RotateRecord(EffectWork_020004c4 *work)
 	record->angle -= 0x800;
 }
 
-void SceneActor_WaitObjectBelowHeight(u8 *object, s32 height)
+void SceneActor_WaitObjectBelowHeight(struct FieldActor *object, s32 height)
 {
 	s32 frames = 60;
 
@@ -128,7 +128,7 @@ void SceneActor_WaitObjectBelowHeight(u8 *object, s32 height)
 	{
 		Engine_TaskWait(1);
 		frames--;
-		if (*(s32 *)(object + 12) <= height)
+		if (object->y.fixed <= height)
 			break;
 	}
 }

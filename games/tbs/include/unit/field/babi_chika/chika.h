@@ -5,11 +5,9 @@
 #include "field_scene.h"
 #include "fieldcoo.h"
 
-struct Actor_02000ec8;
 struct FieldActor;
 struct SceneEntrance;
 struct SceneRegion;
-struct Track02001038;
 
 typedef struct Target_02000cd0
 {
@@ -32,11 +30,11 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target);
 void SceneActor_PassRaisedPointOfActorZero(void);
 void SceneActor_PassActorZeroOffsetPoint(void);
 void BabiChika_UpdateTrackedActor(void);
-s32 SceneActor_SetFlagBitByRelativeDepth(struct Actor_02000ec8 *actor);
+s32 SceneActor_SetFlagBitByRelativeDepth(struct FieldActor *actor);
 void SceneState_SwapSlotPairByRank(s32 first, s32 second);
 s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object);
 s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record);
-void SceneActor_WaitValueBelowLimit(struct Track02001038 *track);
+void SceneActor_WaitValueBelowLimit(struct FieldActor *track);
 void BabiChika_RunLeaderSpray(void);
 void SceneEffect_SpawnNineRadialEffects(s32 actor);
 const struct SceneEntrance *Scene_GetEntrances(void);
@@ -68,7 +66,7 @@ void FieldScene_RunTwoStepSequence(void);
 void FieldScene_RunFourStepSequenceB(void);
 void SceneActor_InstallSlotNineHandler(void);
 void SceneActor_SetupSlotNineAndInstallHandler(void);
-s32 OverlayObject_SetYAboveLinkedActor(u8 *owner);
+s32 OverlayObject_SetYAboveLinkedActor(struct FieldActor *owner);
 void BabiChika_SettleSteps(s32 wait);
 void SceneActor_LandOnHighestPlatform(s32 subject);
 void FieldScene_RunMiddleSequence(void);

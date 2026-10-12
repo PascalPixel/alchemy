@@ -40,6 +40,7 @@ struct CaveEffectScripts
 	const s32 *script[3];
 };
 
+// EffectOptions cut after its scales: the caller's frame holds these 24 bytes only
 struct CaveDustOptions
 {
 	s32 priority;

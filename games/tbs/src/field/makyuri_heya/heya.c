@@ -52,7 +52,6 @@
 #include "iowrite.h"
 
 #define NULL ((void *)0)
-#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 #define FX16_0_1 0x1999
 #define FX16_0_25 0x4000
@@ -124,15 +123,8 @@ void MakyuriHeya_UpdateLeaderEffectTarget(void)
 
 s32 MakyuriHeya_TrailSparks(struct FieldActor *actor)
 {
-	struct
-	{
-		s32 priority;
-		s32 palette;
-		s32 start_scale_x;
-		s32 start_scale_y;
-		u8	unknown_10[24];
-	} options;
-	s32 velocity_y;
+	struct EffectOptions options;
+	s32					 velocity_y;
 
 	options.palette = 7;
 	if ((gFrameCount & 1) == 0)
@@ -257,17 +249,17 @@ struct BlockProbe
 
 void SceneActor_RunActorZeroHandledMotion(s32 a)
 {
-	u8 *v = Object_GetById(0);
+	struct FieldActor *v = Object_GetById(0);
 	Engine_EventBegin();
 	Engine_AudioPlayCue(0xe4);
-	FIELD_AT_OFFSET(v, s32, 0x6c) = (s32)MakyuriHeya_TrailSparks;
-	FIELD_AT_OFFSET(v, s32, 0x30) = 0x3333;
+	v->update = (void (*)(union FieldObject *))MakyuriHeya_TrailSparks;
+	v->speed = 0x3333;
 	Engine_ActorSetAnimation(0, 2);
 	Engine_ActorSetDestinationOffset(0, 0, -6);
 	Engine_ActorWaitForMove(0);
 	Engine_ActorSetChildValue(0, 15);
 	Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
-	FIELD_AT_OFFSET(v, s32, 0x6c) = 0;
+	v->update = 0;
 	Engine_EventWait(30);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
@@ -277,7 +269,6 @@ void SceneActor_RunActorZeroHandledMotion(s32 a)
 
 void MakyuriHeya_DropLeaderToColumn(s32 a0)
 {
-	u32 i;
 	s32 record;
 
 	Engine_EventBegin();
@@ -939,11 +930,6 @@ void MakyuriHeya_OpenStoneDoor(s32 side)
 	}
 }
 
-struct ColumnProbe
-{
-	s32 word[6];
-};
-
 struct LiftLayer
 {
 	u8	unknown_00[12];
@@ -1065,7 +1051,7 @@ s32 MakyuriHeya_StopActorNinePositionCallback(void)
 
 void MakyuriHeya_RunColumnProbeScene(void)
 {
-	struct ColumnProbe probe;
+	struct BlockProbe probe;
 	s32				   column;
 	s32				   start;
 
@@ -1075,7 +1061,7 @@ void MakyuriHeya_RunColumnProbeScene(void)
 	switch (probe.word[1])
 	{
 	case 10:
-		((void (*)(struct ColumnProbe))SceneActor_MoveAndRedraw)(probe);
+		((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
 		if (probe.word[4] >> 20 == 38)
 			Engine_GameFlagSet(0x318);
 		else
@@ -1083,7 +1069,7 @@ void MakyuriHeya_RunColumnProbeScene(void)
 		break;
 	case 11:
 		start = Object_GetById(11)->x.fixed >> 20;
-		((void (*)(struct ColumnProbe))SceneActor_MoveAndRedraw)(probe);
+		((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
 		column = probe.word[2] >> 20;
 		if (column == 47)
 		{
@@ -1263,7 +1249,6 @@ void SceneEffect_RotatePaletteEntries40To47(void)
 
 void FieldScene_RunActorThreeBranchSequence(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 	Engine_EventBegin();
@@ -2114,7 +2099,6 @@ void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 w)
 
 s32 Scene_Initialize(void)
 {
-	struct FieldActor *actor;
 	u32				   i;
 	s32				   flag;
 	s32				   x;

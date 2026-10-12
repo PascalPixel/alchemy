@@ -4,6 +4,8 @@
 #include "types.h"
 #include "field_scene.h"
 
+struct FieldActor;
+
 void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames);
 void *GomaIriguchi_GetEntrances(void);
 int SceneData_ReturnZero(void);
@@ -20,8 +22,8 @@ s32 GomaIriguchi_RestoreEntryState(void);
 void FieldScene_RunScene387SequenceA(void);
 void Overlay387_ConfigureActorEightAtDepth(void);
 void GomaIriguchi_SetEntranceFlag(void);
-void OverlayObject_TurnStateByEighth(u8 *obj);
-void OverlayObject_WaitForHeight(u8 *obj, s32 height);
+void OverlayObject_TurnStateByEighth(struct FieldActor *obj);
+void OverlayObject_WaitForHeight(struct FieldActor *obj, s32 height);
 void GomaIriguchi_RunSpinningLeap(s32 id);
 void SceneActor_ApplyValueAndMatchingSlots(s32 group, s32 value);
 void GomaIriguchi_GiveShamansRod(void);

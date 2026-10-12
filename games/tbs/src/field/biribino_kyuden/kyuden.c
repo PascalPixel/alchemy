@@ -98,9 +98,6 @@ void Kyuden_AskAboutKolima(void)
 
 void FieldScene_RunStartledGuard(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Actor_ShowEmote(14, 0x102, 0);
 	Engine_ActorRunRepeatedMotion(14, 2);
@@ -116,9 +113,6 @@ void FieldScene_RunStartledGuard(void)
 
 void FieldScene_RunScene38dSequenceA(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoFineWarrior);
 	if (GameFlag_IsSet(0x302) != 0)
@@ -165,9 +159,6 @@ void FieldScene_RunActorSeventeenFlaggedDialogue(void)
 
 void SceneDialogue_RunActor15Flag303Scene(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoSometimesWeNeedChildrenRemind);
 	if (GameFlag_IsSet(0x303) != 0)
@@ -346,9 +337,6 @@ void FieldScene_RunSlotSubjectBranch(s32 actor, s32 item, s32 flag)
 
 void FieldScene_RunRewardReminder(void)
 {
-	u32 i;
-	s32 record;
-
 	if (GameFlag_IsSet(FLAG_REWARD_TAKEN) == 0)
 	{
 		if (Engine_GameFlagIsSet(0x322) != 0)
@@ -370,9 +358,6 @@ void FieldScene_RunRewardReminder(void)
 
 void FieldScene_RunPalaceFarewell(void)
 {
-	u32 i;
-	s32 record;
-
 	if (GameFlag_IsSet(FLAG_REWARD_TAKEN) != 0)
 	{
 		Engine_EventBegin();
@@ -400,7 +385,6 @@ void FieldScene_RunPalaceFarewell(void)
 
 s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
 {
-	u32 i;
 	s32 rec8;
 	s32 record;
 
@@ -483,13 +467,13 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
 							Object_GetById(23)->motion_flags = rec8;
 							Object_GetById(24)->motion_flags = rec8;
 							record = (s32)Object_GetById(21);
-							*(s32 *)(record + 12) = -0x40000;
+							((struct FieldActor *)record)->y.fixed = -0x40000;
 							record = (s32)Object_GetById(22);
-							*(s32 *)(record + 12) = -0x40000;
+							((struct FieldActor *)record)->y.fixed = -0x40000;
 							record = (s32)Object_GetById(23);
-							*(s32 *)(record + 12) = -0x40000;
+							((struct FieldActor *)record)->y.fixed = -0x40000;
 							record = (s32)Object_GetById(24);
-							*(s32 *)(record + 12) = -0x40000;
+							((struct FieldActor *)record)->y.fixed = -0x40000;
 						}
 						else
 						{
@@ -960,9 +944,6 @@ leave:
 
 void FieldScene_RunPalaceGreeting(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();

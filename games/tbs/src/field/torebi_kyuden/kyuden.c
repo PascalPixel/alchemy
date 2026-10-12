@@ -173,8 +173,6 @@ void RunOpeningAuxiliarySequence(s32 a)
 
 void TorebiKyuden_OfferRest(s32 a0)
 {
-	u32 i;
-	s32 record;
 	s32 base6_2241;
 
 	Event_Begin();
@@ -2276,9 +2274,6 @@ void RunSupplementalSequenceOne(void)
 
 void SceneDialogue_ThankForSavingBabi(void)
 {
-	u32 i;
-	s32 record;
-
 	if (GameFlag_IsSet(0x96d) == 0)
 	{
 		GameFlag_Set(0x96d);

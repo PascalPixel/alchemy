@@ -10,7 +10,6 @@
 #include "unit/battle/effect/slots.h"
 #include "unit/system/scheduler/callback.h"
 
-#define NULL ((void *)0)
 #include "fieldobj.h"
 #include "mapcopy.h"
 #include "types.h"
@@ -34,29 +33,6 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
-
-typedef struct Obj
-{
-	s32 f00;
-	s32 f04;
-	s32 f08;
-	s32 f0c;
-	s32 f10;
-	u8	f14[28];
-	s32 f30;
-	s32 f34;
-} Obj;
-
-struct Rec_3a6
-{
-	u8	pad00[8];
-	s32 f8;
-	u8	pad0c[4];
-	s32 f16;
-	u8	pad14[14];
-	u8	f34;
-	u8	f35;
-};
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/create.c"
@@ -291,7 +267,6 @@ s32 FieldScene_RunPrimarySequence(s32 a0)
 void FieldScene_RunScene3a6SequenceA(void)
 {
 
-	u32				   i;
 	struct FieldActor *record;
 
 	if (GameFlag_IsSet(0x200) == 0)
@@ -322,7 +297,6 @@ void FieldScene_RunScene3a6SequenceA(void)
 void FieldScene_RunScene3a6SequenceB(void)
 {
 
-	u32				   i;
 	struct FieldActor *record;
 
 	if (GameFlag_IsSet(0x200) != 0)
@@ -438,7 +412,6 @@ void HaidiaDou_RunProbedColumnScene(void)
 void HaidiaDou_ToppleActorNine(void)
 {
 
-	u32				   i;
 	struct FieldActor *record;
 	s32				   zero;
 
@@ -479,7 +452,6 @@ void HaidiaDou_ToppleActorNine(void)
 
 void HaidiaDou_RunLoweredActorScene(void)
 {
-	s32						record;
 	struct StagedActorProbe probe;
 
 	Engine_EventBegin();
@@ -582,30 +554,30 @@ void DialogueLayout_ConfigureRowsByFlag301(void)
 void SceneActor_PositionPair(s32 a0, s32 a1, s32 a2)
 {
 
-	Obj *p;
-	Obj *q;
-	s32	 x;
-	s32	 y;
+	struct FieldActor *p;
+	struct FieldActor *q;
+	s32				   x;
+	s32				   y;
 
 	p = Object_GetById(gGameState.selected_actor);
 	q = Object_GetById(a0);
 	Engine_EventBegin();
 	{
-		x = ((p->f08 + (a1 << 16)) & 0xFFF00000) + 0x80000;
-		y = ((p->f10 + (a2 << 16)) & 0xFFF00000) + 0x80000;
+		x = ((p->x.fixed + (a1 << 16)) & 0xFFF00000) + 0x80000;
+		y = ((p->z.fixed + (a2 << 16)) & 0xFFF00000) + 0x80000;
 
-		p->f30 = 0x10000;
-		p->f34 = 0x8000;
-		Engine_ObjectSetPosition((struct FieldActor *)p, x, p->f0c, y);
+		p->speed = 0x10000;
+		p->acceleration = 0x8000;
+		Engine_ObjectSetPosition(p, x, p->y.fixed, y);
 	}
 	Object_SetMode(p, 27);
 	{
-		x = ((q->f08 + (a1 << 16)) & 0xFFF00000) + 0x80000;
-		y = ((q->f10 + (a2 << 16)) & 0xFFF00000) + 0x80000;
+		x = ((q->x.fixed + (a1 << 16)) & 0xFFF00000) + 0x80000;
+		y = ((q->z.fixed + (a2 << 16)) & 0xFFF00000) + 0x80000;
 
-		q->f30 = 0x10000;
-		q->f34 = 0x8000;
-		Engine_ObjectSetPosition((struct FieldActor *)q, x, q->f0c, y);
+		q->speed = 0x10000;
+		q->acceleration = 0x8000;
+		Engine_ObjectSetPosition(q, x, q->y.fixed, y);
 	}
 	if (a1 < 0 || a2 < 0)
 	{
@@ -645,15 +617,15 @@ void FieldScene_RunActor11Transition301(void)
 
 void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y)
 {
-	struct Rec_3a6 *rec = Object_GetById(id);
+	struct FieldActor *rec = Object_GetById(id);
 
 	if (rec != 0)
 	{
 		Engine_ActorSetSpritePriority(id, 3);
-		rec->f34 = 2;
-		rec->f35 |= 2;
-		rec->f8 = (x << 20) + 0x80000;
-		rec->f16 = (y << 20) + 0x80000;
+		rec->terrain_id = 2;
+		rec->priority_flags |= 2;
+		rec->x.fixed = (x << 20) + 0x80000;
+		rec->z.fixed = (y << 20) + 0x80000;
 	}
 }
 

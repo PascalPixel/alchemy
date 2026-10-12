@@ -19,8 +19,6 @@ typedef struct
 	s16 values[1];
 } BattleEffectIndexWindow;
 
-typedef struct BattleEffectArgument Efx;
-
 void BattlePres_ConfigureEffectDisplay(void);
 void BattleFx_AdvanceScrollOnInterval(void);
 void Camera_AdvanceBg2Reference(void);
@@ -184,7 +182,7 @@ void BattleFx_RunSeriesIMode3(struct BattleEffectArgument *effect);
 void BattleFx_RunSeriesIMode5(struct BattleEffectArgument *effect);
 void BattleFx_RunSeriesIMode7(struct BattleEffectArgument *effect);
 void BattleFx_RunSeriesIMode4(struct BattleEffectArgument *effect);
-void BattleEffect_RunBurstShower(Efx *efx, s32 mode);
+void BattleEffect_RunBurstShower(struct BattleEffectArgument *efx, s32 mode);
 void BattleFx_RunSwirlingStars(void *object);
 void BattleFx_RunOrbitingSparks(void);
 void BattleFx_RunTargetBursts(void *object);

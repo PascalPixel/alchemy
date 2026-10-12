@@ -56,7 +56,7 @@ struct PillarWork
 
 #define PILLAR_WORK (*(struct PillarWork **)&gWorkSlot[36])
 
-struct MapCell_2
+struct MapCellFields
 {
 	u32 tile : 12;
 	u32 layer : 2;
@@ -67,14 +67,8 @@ struct MapCell_2
 
 struct MapLayer_2
 {
-	struct MapCell_2 *cells;
-	u8				  pad04[44];
-};
-
-struct MapState_2
-{
-	u8				  pad000[0x130];
-	struct MapLayer_2 layers[1];
+	struct MapCellFields *cells;
+	u8					  pad04[44];
 };
 
 extern u8 *gEffectWork;
@@ -88,15 +82,6 @@ extern u8 *gEffectWork;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/map/panel.c"
-
-struct MapCellFields
-{
-	u32 tile : 12;
-	u32 layer : 2;
-	u8	kind : 2;
-	u8	height;
-	u8	event;
-};
 
 void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
 {
@@ -732,7 +717,6 @@ void FieldScene_RunScene3b3SequenceA(void)
 
 void FieldScene_RunFlaggedDisplayScene(void)
 {
-	u32				   i;
 	u8				  *queried;
 	struct FieldActor *record;
 

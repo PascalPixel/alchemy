@@ -237,6 +237,9 @@ struct DisplayScrollObject
 
 extern u16 Flash_Handler3; // クレジットはフラッシュ用のワードを流用する
 
+// OAM へ送る 128 個の表（これもフラッシュ用のワードに置く）
+#define SCROLL_OBJECTS (*(struct DisplayScrollObject **)&gFlashNumRemainingBytes)
+
 // スタッフロールの空行
 static const u8 Kuuhaku[] = "";
 
@@ -1152,7 +1155,7 @@ void DisplayScroll_UpdateObjects(void)
 	u32	 frame = Flash_Handler3;
 	u32	 fine = frame & 7;
 	s32	 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
-	u32 *entry = (u32 *)((*(struct DisplayScrollObject **)&gFlashNumRemainingBytes) + 24);
+	u32 *entry = (u32 *)(SCROLL_OBJECTS + 24);
 	s32	 row;
 
 	for (row = 0; row <= 15; row++)
@@ -1168,7 +1171,7 @@ void DisplayScroll_UpdateObjects(void)
 				tile = 0;
 		}
 	}
-	Dma_Set((*(struct DisplayScrollObject **)&gFlashNumRemainingBytes), OAM, 0x84000100, REG_DMA3);
+	Dma_Set(SCROLL_OBJECTS, OAM, 0x84000100, REG_DMA3);
 	if ((*(s16 *)&Flash_Handler0) == 0 && (gFrameTick & 3) == 0)
 		Flash_Handler3++;
 }
@@ -1198,14 +1201,13 @@ void DisplayScroll_InitObjectTable(void)
 	u32			 i;
 	u32			 j;
 
-	(*(struct DisplayScrollObject **)&gFlashNumRemainingBytes) =
-		Runtime_BumpAllocateAlternatePool(128 * sizeof(struct DisplayScrollObject));
+	SCROLL_OBJECTS = Runtime_BumpAllocateAlternatePool(128 * sizeof(struct DisplayScrollObject));
 	fill = 0;
 	Dma_Set((void *)&fill, (void *)0x06010000, 0x85001800, REG_DMA3);
 	fill = 0x11111111;
 	Dma_Set((void *)&fill, (void *)0x06016000, 0x85000040, REG_DMA3);
 
-	entry = (u32 *)(*(struct DisplayScrollObject **)&gFlashNumRemainingBytes);
+	entry = (u32 *)SCROLL_OBJECTS;
 	for (i = 0; i < 8; i++)
 	{
 		*entry++ = (i << 21) | 0x80004000;

@@ -200,7 +200,6 @@ void FieldScene_RunActor17Steps28AndD2(void)
 
 void FieldScene_RunScene398SequenceB(void)
 {
-	u32				   i;
 	struct FieldActor *rec7;
 	struct FieldActor *rec8;
 	s32				   record;
@@ -341,7 +340,6 @@ void BiribinoDou_PrepareWindowTransition(void)
 
 void FieldScene_RunScene398SequenceC(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 	s32				   v5;
 

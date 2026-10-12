@@ -155,7 +155,6 @@ void Scene_SaturosTakesHostages(void)
 	void ColorBuffer_ApplyTarget();
 	void Event_PlayCue();
 
-	u32 i;
 	u8 *record;
 	s32 base5_3001ec4;
 	s32 base5_3001ebc;

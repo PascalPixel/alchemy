@@ -45,14 +45,6 @@
 #define SCENE_PHASE (gEventWork->start_transition)
 #define ACTOR 8
 
-struct Object
-{
-	u8	filler00[8];
-	s32 x;
-	u8	filler0C[4];
-	s32 z;
-};
-
 struct StoryDialogueWork
 {
 	u8	reserved000[370];
@@ -614,7 +606,6 @@ s32 WorldMap_EnterScene(void)
 
 void RunEventScript01(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 	Engine_EventBegin();
@@ -2014,7 +2005,6 @@ void StoryScene_UpdateTransitionEffect(void)
 void FieldScene_RunActorEightApproach(void)
 {
 
-	u32				   i;
 	struct FieldActor *actor;
 
 	Engine_EventBegin();

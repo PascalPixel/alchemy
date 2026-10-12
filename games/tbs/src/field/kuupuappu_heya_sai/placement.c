@@ -90,9 +90,6 @@ void SceneDialogue_RunActor12Line(void)
 
 void FieldScene_RunActor16Sequence(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuRobinYouveComeBackVault);
 	Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
@@ -130,9 +127,6 @@ void SceneDialogue_RunActor23Line(void)
 
 void FieldScene_RunActor18FlaggedSequence(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 0);
 	if (GameFlag_IsSet(0x85b) == 0)
@@ -185,10 +179,10 @@ void SceneActor_RunActor16StepWithFlag91(void)
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(16, 1);
 	Engine_EventEnd();
-	slot = (u8 *)Object_GetById(16) + 91;
+	slot = &Object_GetById(16)->paused;
 	*slot = 1;
 	FieldScene_RunActor16Sequence();
-	slot = (u8 *)Object_GetById(16) + 91;
+	slot = &Object_GetById(16)->paused;
 	*slot = clear;
 	Engine_ActorEnableActionCallback(16, 2);
 }

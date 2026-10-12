@@ -34,16 +34,12 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-enum StagedPlacementMessage
-{
-	MSG_GOT_WOW_THATS_PRETTY_IMPRESSIVE = 0x132f
-};
-
 struct ScriptTable
 {
 	u8 *script[3];
 };
 
+// 柱の破片が struct FieldActor を読む見方（speed と acceleration は面ごとの速さ、work は符号付きの面番号）
 struct PillarEffect
 {
 	u8	unknown_00[8];
@@ -65,14 +61,6 @@ enum PillarEffectPlane
 	PLANE_XY = 0,
 	PLANE_XZ = 1,
 	PLANE_YZ = 2
-};
-
-struct Sprite389
-{
-	u8 pad[9];
-	u8 lo : 2;
-	u8 layer : 2;
-	u8 hi : 4;
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -120,38 +108,39 @@ s32 OverlayObject_ApplyValue15(s32 actor)
 
 void GomaHashira_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 flags, s32 layer)
 {
-	struct ScriptTable table;
-	u8				  *leader;
-	u8				  *obj;
-	struct Sprite389  *spr;
-	u32				   sel;
+	struct ScriptTable	table;
+	struct FieldActor  *leader;
+	struct FieldActor  *obj;
+	struct FieldSprite *spr;
+	u32					sel;
 
-	leader = (u8 *)Object_GetById(0);
+	leader = Object_GetById(0);
 	table = *(struct ScriptTable *)GomaHashira_PillarScripts;
-	obj = (u8 *)Engine_ObjectCreate(222, x, y, z);
+	obj = Engine_ObjectCreate(222, x, y, z);
 	if (obj == 0)
 		return;
-	spr = *(struct Sprite389 **)(obj + 80);
+	spr = obj->sprite;
 	Object_SetMode(obj, (flags + 1) & 15);
 	Engine_ObjectSetScript(obj, table.script[flags & 15]);
 	ObjectGroup_SetChildValue(obj, ((u32)flags >> 16) & 15);
-	obj[85] = 0;
-	((u8 *)spr)[38] = 0;
-	*(s32 *)(obj + 108) = (s32)SceneEffect_AdvancePositionByAxisMode;
-	*(s32 *)(obj + 48) = a3;
-	*(s32 *)(obj + 52) = a4;
-	*(u16 *)(obj + 102) = *(u16 *)&layer;
+	obj->motion_flags = 0;
+	spr->flags = 0;
+	obj->update = (void (*)(union FieldObject *))SceneEffect_AdvancePositionByAxisMode;
+	obj->speed = a3;
+	obj->acceleration = a4;
+	obj->work = *(u16 *)&layer;
 	sel = (u32)layer >> 16;
 	switch (sel)
 	{
 	case 0:
-		spr->layer = (*(struct Sprite389 **)(leader + 80))->layer;
+		((struct FieldSpritePriority *)spr)->priority =
+			((struct FieldSpritePriority *)leader->sprite)->priority;
 		break;
 	case 1:
 	case 2:
 	case 3:
-		obj[35] &= 0xfe;
-		spr->layer = sel;
+		obj->priority_flags &= 0xfe;
+		((struct FieldSpritePriority *)spr)->priority = sel;
 		break;
 	}
 }
@@ -212,19 +201,21 @@ void FieldScene_RunPrimarySequence(void)
 	s32				   a0;
 	s32				   a2;
 	struct FieldActor *rec4;
-	s32				   rec7a, reca, v1a, v2a, v3a, ta, ua, na;
-	s32				   rec7b, recb, v1b, v2b, v3b, tb, ub, nb;
+	struct FieldActor *rec7a, *reca;
+	s32				   v1a, v2a, v3a, ta, ua, na;
+	struct FieldActor *rec7b, *recb;
+	s32				   v1b, v2b, v3b, tb, ub, nb;
 
 	flags = gFrameCount & 7;
 	if (flags == 0)
 	{
 		rec7a = Object_GetById(9);
 		v1a = Engine_RandomNext();
-		a0 = *(s32 *)(rec7a + 8);
+		a0 = rec7a->x.fixed;
 		a0 += ((((u32)(((v1a << 1) + v1a) << 2)) >> 16) << 16);
 		rec4 = Object_GetById(9);
-		reca = (s32)Object_GetById(9);
-		a2 = *(s32 *)(reca + 16);
+		reca = Object_GetById(9);
+		a2 = reca->z.fixed;
 		a2 += 0x60000;
 		v2a = Engine_RandomNext();
 		ta = ((u32)((v2a << 2) + v2a) >> 16);
@@ -242,11 +233,11 @@ void FieldScene_RunPrimarySequence(void)
 		{
 			rec7b = Object_GetById(9);
 			v1b = Engine_RandomNext();
-			a0 = *(s32 *)(rec7b + 8);
+			a0 = rec7b->x.fixed;
 			a0 += ((((u32)(((v1b << 1) + v1b) << 2)) >> 16) << 16);
 			rec4 = Object_GetById(9);
-			recb = (s32)Object_GetById(9);
-			a2 = *(s32 *)(recb + 16);
+			recb = Object_GetById(9);
+			a2 = recb->z.fixed;
 			a2 += 0x60000;
 			v2b = Engine_RandomNext();
 			tb = ((u32)((v2b << 2) + v2b) >> 16);
@@ -263,13 +254,6 @@ void FieldScene_RunPrimarySequence(void)
 	}
 }
 
-#if !EDITION_INTERNATIONAL
-
-#endif
-
-#if EDITION_INTERNATIONAL
-#endif
-
 s32 GomaHashira_Actor13Frames;
 
 void FieldScene_RunPillarSequence(void)
@@ -280,12 +264,16 @@ void FieldScene_RunPillarSequence(void)
 	s32				   a0;
 	s32				   a2;
 	struct FieldActor *rec4;
-	s32				   r1, r2, r3, r4, r5, r6, r7;
-	s32				   rec7, v1, v2, v3, t, u, n;
+	struct FieldActor *r1;
+	s32				   r2, r3;
+	struct FieldActor *r4, *r5;
+	s32				   r6;
+	struct FieldActor *r7, *rec7;
+	s32				   v1, v2, v3, t, u, n;
 	struct FieldActor *p0;
 
-	r1 = (s32)Object_GetById(9);
-	kind = *(s32 *)(r1 + 8) / 0x100000;
+	r1 = Object_GetById(9);
+	kind = r1->x.fixed / 0x100000;
 	Engine_EventBegin();
 	if (kind == 25)
 	{
@@ -307,10 +295,10 @@ void FieldScene_RunPillarSequence(void)
 		Engine_EventWait(10);
 		Engine_ActorSetDestinationOffset(9, 2, 0);
 		Engine_ActorWaitForMove(9);
-		r4 = (s32)Object_GetById(9);
-		*(s32 *)(r4 + 68) = zero;
-		r5 = (s32)Object_GetById(9);
-		*(s32 *)(r5 + 72) = 0x9999;
+		r4 = Object_GetById(9);
+		r4->bounce = zero;
+		r5 = Object_GetById(9);
+		r5->gravity = 0x9999;
 		Engine_EventWait(3);
 		Engine_ActorSetSpeed(9, 0x28000, 0x4000);
 		Engine_AudioPlayCue(0x120);
@@ -320,13 +308,13 @@ void FieldScene_RunPillarSequence(void)
 		Engine_TaskRemoveCallback(base);
 		Engine_EventWait(12);
 		Engine_AudioPlayCue(189);
-		rec7 = (s32)Object_GetById(9);
+		rec7 = Object_GetById(9);
 		v1 = Engine_RandomNext();
-		a0 = *(s32 *)(rec7 + 8);
+		a0 = rec7->x.fixed;
 		a0 += ((((u32)(((v1 << 1) + v1) << 2)) >> 16) << 16);
 		rec4 = Object_GetById(9);
-		r7 = (s32)Object_GetById(9);
-		a2 = *(s32 *)(r7 + 16);
+		r7 = Object_GetById(9);
+		a2 = r7->z.fixed;
 		a2 += 0x60000;
 		v2 = Engine_RandomNext();
 		t = ((u32)((v2 << 2) + v2) >> 16);

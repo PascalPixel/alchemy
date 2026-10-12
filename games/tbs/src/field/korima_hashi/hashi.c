@@ -27,53 +27,12 @@
 #include "text/msg_ids.h"
 #include "objcmd.h"
 
-struct Struct3848
-{
-	u8	pad00[8];
-	u32 field08;
-	s32 field0c;
-	u32 field10;
-};
-
-struct Struct2798
-{
-	u8	pad00[0x18];
-	s32 field18;
-	u8	pad1c[0x38 - 0x1c];
-	s32 field38;
-	s32 field3c;
-	s32 field40;
-};
-
 struct Sub
 {
 	u8 pad00[9];
 	u8 f09;
 	u8 pad0a[28];
 	u8 f26;
-};
-
-struct Obj
-{
-	u8			pad00[0x18];
-	s32			f18;
-	u8			pad1c[7];
-	u8			f23;
-	u8			pad24[12];
-	s32			f30;
-	s32			f34;
-	u8			pad38[24];
-	struct Sub *f50;
-	u8			pad54[1];
-	u8			f55;
-};
-
-struct Struct288c
-{
-	u8	pad00[8];
-	s32 field08;
-	u8	pad0c[4];
-	s32 field10;
 };
 
 extern s32 KorimaHashi_TriggerPending;
@@ -140,8 +99,8 @@ void FieldScene_RunTile10x20Transition(void)
 		SceneActor_MoveAndRedraw(res);
 		if (res.actor_slot == 10 && (res.position_x >> 20) == 20)
 		{
-			u8 *actor;
-			s32 zero;
+			struct FieldActor *actor;
+			s32				   zero;
 
 			Engine_ActorSetAnimation(10, 3);
 			Actor_SetDestinationOffset(10, -18, 6);
@@ -153,8 +112,8 @@ void FieldScene_RunTile10x20Transition(void)
 			Map_CopyCellAttributes(0, 17, 2, 4, 19, 17);
 			StagedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4, zero);
 			Engine_GameFlagSet(0x200);
-			actor = (void *)Object_GetById(10);
-			Engine_ActorSetSpriteFlags((struct FieldActor *)actor, 0);
+			actor = Object_GetById(10);
+			Engine_ActorSetSpriteFlags(actor, 0);
 		}
 	}
 
@@ -207,17 +166,17 @@ void SceneActor_PassSubjectOffsetPosition(void)
 {
 	u32 buf[3];
 #if !EDITION_INTERNATIONAL
-	buf[0] = ((struct Struct3848 *)Object_GetById(0))->field08 + 0x1e0000;
-	buf[1] = ((struct Struct3848 *)Object_GetById(0))->field0c;
-	buf[2] = ((struct Struct3848 *)Object_GetById(0))->field10;
+	buf[0] = Object_GetById(0)->x.fixed + 0x1e0000;
+	buf[1] = Object_GetById(0)->y.fixed;
+	buf[2] = Object_GetById(0)->z.fixed;
 #else
 	s32				   off = 500;
-	struct Struct3848 *p = (void *)Object_GetById(*(s32 *)((u8 *)&gGameState + off));
-	u32				   base = p->field08 & 0xfff00000;
+	struct FieldActor *p = Object_GetById(*(s32 *)((u8 *)&gGameState + off));
+	u32				   base = p->x.fixed & 0xfff00000;
 
 	buf[0] = base + 0x80000;
-	buf[1] = p->field0c;
-	buf[2] = (p->field10 & 0xfff00000) + 0x80000;
+	buf[1] = p->y.fixed;
+	buf[2] = (p->z.fixed & 0xfff00000) + 0x80000;
 	buf[0] = base + 0x280000;
 #endif
 	StagedActor_RunStepEffect((struct StagedActorEffectRequest *)buf);
@@ -1148,10 +1107,10 @@ void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 	Engine_EventWait(c);
 }
 
-s32 SceneEffect_AdvanceAngleAndFinishWhenParked(struct Struct2798 *p)
+s32 SceneEffect_AdvanceAngleAndFinishWhenParked(struct FieldActor *p)
 {
-	p->field18 += 0x1eb8;
-	if (p->field38 == 0x80000000 && p->field3c == 0x80000000 && p->field40 == 0x80000000)
+	p->scale_x += 0x1eb8;
+	if (p->target_x == 0x80000000 && p->target_y == 0x80000000 && p->target_z == 0x80000000)
 	{
 		Engine_ObjectDispatchRelease(p);
 	}
@@ -1161,40 +1120,40 @@ s32 SceneEffect_AdvanceAngleAndFinishWhenParked(struct Struct2798 *p)
 void SceneEffect_SpawnObject26EveryEightFrames(void)
 {
 
-	struct Obj *obj;
-	struct Sub *sprite;
-	s32			phase;
-	s32			v;
-	s32			w;
-	s32			c1 = 0x00e70000;
-	s32			c2 = 0x01cc0000;
-	s32			c3 = 0x00e70000;
-	s32			c4 = 0x02700000;
+	struct FieldActor *obj;
+	struct Sub		  *sprite;
+	s32				   phase;
+	s32				   v;
+	s32				   w;
+	s32				   c1 = 0x00e70000;
+	s32				   c2 = 0x01cc0000;
+	s32				   c3 = 0x00e70000;
+	s32				   c4 = 0x02700000;
 
 	phase = gFrameCount & 7;
 	if (phase != 0)
 		return;
 	if (KorimaHashi_SparkleSound != 0)
 		Engine_AudioPlayCue(200);
-	obj = (struct Obj *)Engine_ObjectCreate(26, c1, 0, c2);
+	obj = Engine_ObjectCreate(26, c1, 0, c2);
 	if (obj == 0)
 		return;
-	sprite = obj->f50;
+	sprite = (struct Sub *)obj->sprite;
 	sprite->f26 = phase;
 	v = 0xfe;
-	v &= obj->f23;
-	obj->f23 = v;
+	v &= obj->priority_flags;
+	obj->priority_flags = v;
 	w = ~12;
 	w &= sprite->f09;
 	w |= 4;
 	sprite->f09 = w;
-	obj->f18 = 0x1999;
-	obj->f30 = 0x80000;
-	obj->f34 = 0x80000;
-	obj->f55 = phase;
-	Object_SetMode((struct FieldActor *)obj, 2);
-	Engine_ObjectSetPosition((struct FieldActor *)obj, c3, 0, c4);
-	Engine_ObjectSetScript((struct FieldActor *)obj, (const s32 *)KorimaHashi_Object26Script);
+	obj->scale_x = 0x1999;
+	obj->speed = 0x80000;
+	obj->acceleration = 0x80000;
+	obj->motion_flags = phase;
+	Object_SetMode(obj, 2);
+	Engine_ObjectSetPosition(obj, c3, 0, c4);
+	Engine_ObjectSetScript(obj, (const s32 *)KorimaHashi_Object26Script);
 }
 
 s32 OverlayObject_SelectValueByFrameBit1(s32 obj)
@@ -1211,35 +1170,35 @@ s32 OverlayObject_SelectValueByFrameBit1(s32 obj)
 	return 0;
 }
 
-s32 SceneActor_CheckRegionTrigger(struct Struct288c *arg0)
+s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0)
 {
 	s32 x;
 
 	if (KorimaHashi_PartyFlag != 0)
 	{
-		x = arg0->field08;
-		if (x > 0xc00000 && x < 0x1120000 && arg0->field10 > 0x2360000 && arg0->field10 < 0x2640000)
+		x = arg0->x.fixed;
+		if (x > 0xc00000 && x < 0x1120000 && arg0->z.fixed > 0x2360000 && arg0->z.fixed < 0x2640000)
 		{
 			goto hit;
 		}
-		if (x > 0xca0000 && x < 0xff0000 && arg0->field10 > 0x2250000 && arg0->field10 < 0x2780000)
+		if (x > 0xca0000 && x < 0xff0000 && arg0->z.fixed > 0x2250000 && arg0->z.fixed < 0x2780000)
 		{
 			goto hit;
 		}
 	}
 	else
 	{
-		x = arg0->field08;
-		if (x > 0xc00000 && x < 0xf40000 && arg0->field10 > 0x2250000 && arg0->field10 <= 0x248ffff)
+		x = arg0->x.fixed;
+		if (x > 0xc00000 && x < 0xf40000 && arg0->z.fixed > 0x2250000 && arg0->z.fixed <= 0x248ffff)
 		{
 			goto hit;
 		}
-		if (x > 0xf40000 && x < 0x1120000 && arg0->field10 > 0x23b0000
-			&& arg0->field10 <= 0x25cffff)
+		if (x > 0xf40000 && x < 0x1120000 && arg0->z.fixed > 0x23b0000
+			&& arg0->z.fixed <= 0x25cffff)
 		{
 			goto hit;
 		}
-		if (x > 0xd30000 && x < 0xff0000 && arg0->field10 > 0x2540000 && arg0->field10 < 0x2780000)
+		if (x > 0xd30000 && x < 0xff0000 && arg0->z.fixed > 0x2540000 && arg0->z.fixed < 0x2780000)
 		{
 			goto hit;
 		}

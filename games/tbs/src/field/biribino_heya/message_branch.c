@@ -140,9 +140,6 @@ void FieldScene_ConfigureActor21Scene(void)
 
 void FieldScene_RunActor24Sequence(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoGrrr);
 	Event_ShowMessageAndWait(24, 0, 20);
@@ -161,9 +158,6 @@ void FieldScene_RunActor24Sequence(void)
 void FieldScene_RunActor27Sequence(void)
 {
 	void Actor_FaceDirection();
-
-	u32 i;
-	s32 record;
 
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoDoBelieveTreeSpiritCan);
@@ -224,9 +218,6 @@ void FieldScene_RunActor19MessageBranch(void)
 void FieldScene_RunActor21SequenceOnFlag300(void)
 {
 	void Actor_FaceDirection();
-
-	u32 i;
-	s32 record;
 
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x300) == 0)
@@ -301,15 +292,15 @@ void FieldScene_RunActor10MessageBranch(void)
 s32 FieldScene_SetupActor27OnEntry(void)
 {
 
-	u8 *actor;
-	u8 *record;
-	s32 bits;
+	struct FieldActor *actor;
+	u8				  *record;
+	s32				   bits;
 
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-	actor = (u8 *)Object_GetById(27);
+	actor = Object_GetById(27);
 
-	actor[0x23] = bits = 0;
-	record = *(u8 **)(actor + 0x50);
+	((u8 *)actor)[0x23] = bits = 0;
+	record = (u8 *)actor->sprite;
 	bits -= 13;
 	bits &= record[9];
 	bits |= 8;

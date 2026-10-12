@@ -110,7 +110,7 @@ s32 Script_ApplyAbsolutePosition(struct ScriptInterpreter *interpreter);
 s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object);
 s32 Script_StoreAngleToLinkedObject(struct ScriptObjectRuntime *object);
 s32 Script_ApplyLinkedObjectPosition(struct ScriptObjectRuntime *object);
-s32 Script_ApplyLocalOffsetPosition(u8 *arg0);
+s32 Script_ApplyLocalOffsetPosition(struct ScriptObjectRuntime *object);
 s32 Camera_FollowLeaderInBounds(struct ObjectRuntime *obj);
 s32 Object_ApproachLinkedObject(struct ObjectRuntime *object);
 s32 Object_Wander(struct ScriptObjectRuntime *object);

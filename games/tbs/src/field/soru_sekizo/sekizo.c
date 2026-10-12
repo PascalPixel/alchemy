@@ -1039,7 +1039,6 @@ void SoruSekizo_RunStatueDropScene(void)
 
 void FieldScene_RunScene37bSequenceA(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 	record = Object_GetById(17);
@@ -1152,7 +1151,6 @@ void SoruSekizo_RunEventSequence(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
 	s32 p8b;
 	s32 p9;
 	s32 p9b;
-	s32 record;
 
 	p9 = a0;
 	p8 = a1;
@@ -1487,9 +1485,6 @@ void SoruSekizo_OpenSeal(void)
 
 void Scene_ShineLeftBeam(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x818) == 0)
 	{
@@ -1518,9 +1513,6 @@ void Scene_ShineLeftBeam(void)
 
 void Scene_ShineRightBeam(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x818) == 0)
 	{

@@ -4,7 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct EffectRecord;
 struct FieldActor;
 struct StagedActor;
 
@@ -14,7 +13,7 @@ s32 StagedActor_SetAngleByKind(struct FieldActor *o);
 void FuneHeya_AdvanceWalkerAfterRise(u8 *o);
 s32 StagedActor_CountdownUntilPositionUnset(struct FieldActor *o);
 void FuneHeya_RunWalkerStep(struct FieldActor *obj);
-void UpdateActorNineEffectMode(struct EffectRecord *record);
+void UpdateActorNineEffectMode(struct FieldActor *record);
 s32 StagedActor_SetReadyState(struct FieldActor *work);
 s32 FuneHeya_SelectEntrances(void);
 s32 SceneData_ReturnZero(void);

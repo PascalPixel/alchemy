@@ -58,26 +58,6 @@ enum
 };
 
 #define NULL ((void *)0)
-#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-
-union MotionWork
-{
-	struct
-	{
-		u32	 unk_00[2];
-		s32	 x, y, z;
-		u32	 unk_14;
-		s32	 accum_x, accum_y;
-		u32	 unk_20[4];
-		s32	 rate_x, rate_y;
-		u32	 unk_38[3];
-		s32	 velocity_x, velocity_y, velocity_z;
-		u16 *record;
-		u8	 unk_54[16];
-		u16	 angle_step;
-	} fields;
-	u8 bytes[102];
-};
 
 struct ObjectRuntime;
 
@@ -413,7 +393,6 @@ void Scene_BagJupiterStar(void)
 
 void FieldScene_StagePairedActors(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 	Event_PlayCue(17);
@@ -635,9 +614,6 @@ void FieldScene_RunElementalStarDemand(void)
 
 void Scene_OfferGuarantee(void)
 {
-	u32 i;
-	s32 record;
-
 	Actor_FaceDirection(JASMINE, FACING_SOUTHWEST, 0);
 	Actor_FaceDirection(ACTOR_SUKURETA, 0x5000, 0);
 	Actor_FaceDirection(ACTOR_SATUROS, FACING_WEST, 0);
@@ -2046,8 +2022,6 @@ void Scene_EnterStarRoom(void)
 
 s32 SoruStar_ApplyEntryState(void)
 {
-	u32 i;
-	s32 record;
 	s32 base5_f;
 
 	Engine_ColorBufferApplySource(0x10000, 0);

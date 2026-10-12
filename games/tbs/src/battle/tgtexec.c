@@ -365,8 +365,9 @@ void BattlePresentation_UpdateCamera(void)
 {
 	void							   **slot = (void **)&gCameraWork;
 	struct BattleCamera					*state = slot[0];
-	struct BattlePresentationTransition *transition = slot[32];
-	struct BtlWork						*work = slot[-3];
+	struct BattlePresentationTransition *transition =
+		slot[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
+	struct BtlWork						*work = slot[HEAP_SLOT_BATTLE - HEAP_SLOT_CAMERA];
 	struct FixedPointPosition			 local;
 	s32									*pos;
 	s16									 delta;
@@ -1233,7 +1234,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
 	BattleUnit_RefreshPlacement();
 	BattleParty_ReconcileDjinnRecovery();
 	BattleSummon_UpdateAvailability();
-	if (*((s32 *)Trade_GetOfferStateFar(0)) != 0)
+	if (((struct BattleSummonState *)Trade_GetOfferStateFar(0))->available_mask != 0)
 		battle->pty_st = 3;
 	else
 		battle->pty_st = 1;
@@ -1269,7 +1270,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
 	{
 		Battle_ReservedNoOp9B2C();
 		BattleSummon_UpdateAvailability();
-		if (*((s32 *)Trade_GetOfferStateFar(0)) != 0)
+		if (((struct BattleSummonState *)Trade_GetOfferStateFar(0))->available_mask != 0)
 			battle->pty_st = 3;
 		else
 			battle->pty_st = 1;
@@ -2553,18 +2554,6 @@ void ReleaseBattleObjectRecords(s32 no)
 	}
 }
 
-struct PairedObjectList
-{
-	u8						padding0[8];
-	struct AnimationObject *objects[1];
-};
-
-struct PairedObjectTable
-{
-	u8	padding0[0x18];
-	s32 count;
-};
-
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 {
 	s32						 i;
@@ -2574,7 +2563,6 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 	struct AnimationObject	*res;
 	struct SpriteEntry		*entry;
 	struct AnimationObject **objects;
-	u8						*table;
 	s32						 resource;
 	s32						 object_id;
 
@@ -2605,8 +2593,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 			continue;
 		if ((slot->resource & 0xfff) == 476 || (slot->resource & 0xfff) == 483)
 		{
-			table = (*(u8 **)&gMenuCtrlWork) + ((struct PairedObjectTable *)gMenuCtrlWork)->count * 4;
-			objects = ((struct PairedObjectList *)table)->objects;
+			objects = (struct AnimationObject **)gMenuCtrlWork->unknown_08 + gMenuCtrlWork->count;
 			resource = slot->resource;
 			object->record_storage_kind = 2;
 			object->records = objects;
@@ -2617,7 +2604,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
 				res->scale = Iwram_MulQ16(res->scale, slot->scale);
 				object->height = Resource_GetMetadataRecordFar(resource)->box_y >> 1;
 				*objects = res;
-				objects = &((struct PairedObjectList *)table)->objects[1];
+				objects++;
 			}
 			res->flags = 0;
 			res = ResourceObject_CreateFar(resource + 0x2001);
@@ -3060,19 +3047,14 @@ void BattleMotion_ReservedNoOp83B0()
 
 void BattleMotion_ApplyPairMidpoint(s32 first_id, s32 second_id)
 {
-	struct BtlObj		*second_slot;
-	struct MotionObject *first;
-	struct MotionObject *second;
-	s32					 x1;
-	s32					 x2;
-	s32					 z1;
-	s32					 z2;
-	struct
-	{
-		s32 x;
-		s32 y;
-		s32 z;
-	} pos;
+	struct BtlObj			 *second_slot;
+	struct MotionObject		 *first;
+	struct MotionObject		 *second;
+	s32						  x1;
+	s32						  x2;
+	s32						  z1;
+	s32						  z2;
+	struct FixedPointPosition pos;
 
 	first = BtlObjGet(first_id)->object;
 	second_slot = BtlObjGet(second_id);
@@ -3252,8 +3234,8 @@ s32 BattlePresentation_BuildSortedUnitEntries(struct BattleActionRecord *entries
 
 void BattlePres_AdjustCameraByShoulderKeys(void)
 {
-	struct BattleCamera					*cam = *(gWorkSlot + HEAP_SLOT_CAMERA);
-	struct BattlePresentationTransition *trans = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
+	struct BattleCamera					*cam = WORK_SLOT(HEAP_SLOT_CAMERA);
+	struct BattlePresentationTransition *trans = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
 
 	if ((gKeysHeld & 512) != 0)
 	{
@@ -3304,14 +3286,14 @@ s32 BattlePres_RunAction(struct BattleActionRecord *action)
 		break;
 	case 2:
 		WaitFrames(45);
-		BattlePres_RunUnitAction((s16 *)action);
+		BattlePres_RunUnitAction(action);
 		break;
 	case 0:
 	default:
 	{
 		struct BattlePresentationTransition *tr = gTransitionWork;
 		tr->flag = 0;
-		BattlePres_RunUnitAction((s16 *)action);
+		BattlePres_RunUnitAction(action);
 		tr->flag = 0;
 		break;
 	}
@@ -3565,7 +3547,7 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input)
 	return 0;
 }
 
-s32 BattlePres_RunUnitAction(s16 *action)
+s32 BattlePres_RunUnitAction(struct BattleActionRecord *action)
 {
 	struct BattlePresentationWork		 work;
 	struct BattlePresentationTransition *transition = gTransitionWork;
@@ -3573,7 +3555,7 @@ s32 BattlePres_RunUnitAction(s16 *action)
 	s32									 facing;
 	s32									 i;
 
-	if (action[0] > 4)
+	if (action->unit_id > 4)
 		facing = -0x2000;
 	else
 		facing = 0x2000;
@@ -3588,10 +3570,10 @@ s32 BattlePres_RunUnitAction(s16 *action)
 		transition->frames = 40;
 		WaitFrames(40);
 	}
-	work.kind = action[4];
-	work.initial_value = action[6];
-	work.actor = action[0];
-	work.first_target = action[5];
+	work.kind = action->parameter;
+	work.initial_value = action->rng;
+	work.actor = action->unit_id;
+	work.first_target = action->target;
 	if (BattleObject_IsValidId(work.actor) < 0)
 		return -1;
 	if (work.first_target > 127)
@@ -3602,7 +3584,7 @@ s32 BattlePres_RunUnitAction(s16 *action)
 	object = BtlObjGet(work.actor)->object;
 	ObjectDispatch_ApplyArgumentToChildrenFar(object, 3);
 	ObjectDispatch_ApplyValueToChildrenFar(object, 16);
-	if ((u16)action[5] <= 7)
+	if ((u16)action->target <= 7)
 	{
 		work.side = 1;
 		BattleParty_ListLivingUnits(1, work.actors);
@@ -3753,7 +3735,7 @@ s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
 }
 
 extern volatile s32 gFrameTick;
-extern u8			gDisp[];
+extern s32		   *gDisp; // 切り替えのタイマー（ワークのスロット 42）
 
 void Palette_UpdatePulseBrightness(void)
 {
@@ -3802,7 +3784,8 @@ void Camera_ConfigureScene(s32 pos)
 {
 	void							   **slots = (void **)&gCameraWork;
 	struct BattleCamera					*state = slots[0];
-	struct BattlePresentationTransition *secondary = slots[32];
+	struct BattlePresentationTransition *secondary =
+		slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
 	struct FixedPointPosition			 local;
 	u32									 result;
 
@@ -4470,8 +4453,8 @@ s32 Battle_FindTaggedSlotByValue(u32 id)
 
 void BattlePres_AdjustCameraByShoulderKeysAlt(void)
 {
-	struct BattleCamera					*cam = *(gWorkSlot + HEAP_SLOT_CAMERA);
-	struct BattlePresentationTransition *trans = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
+	struct BattleCamera					*cam = WORK_SLOT(HEAP_SLOT_CAMERA);
+	struct BattlePresentationTransition *trans = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
 
 	if ((gKeysHeld & KEY_L) != 0)
 	{
@@ -4512,12 +4495,12 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 de
 		return -1;
 	if (unit->class_index == 0)
 		BattleCommand_SelectAutomatic(request, 1);
-	view = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
+	view = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
 	view->frames = 60;
-	battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
+	battle = WORK_SLOT(HEAP_SLOT_BATTLE);
 	view->flag = 0;
 	battle->brightness = 0x10000;
-	camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+	camera = WORK_SLOT(HEAP_SLOT_CAMERA);
 	Render_ResetTransformState();
 	Graphics_PrepareTransferInIwramWork(camera->eye, camera->pos);
 	Camera_StoreSceneParameters(0x01fe0000, Iwram_RatioMulQ14(0x01fe0000, 0xc000), 0x7fff0000);
@@ -4629,8 +4612,8 @@ s32 BattlePres_BuildTargetList(struct BtlPlan *plan, struct BattlePresentationWo
 
 s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
 {
-	struct BattlePresentationTransition *presentation = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
-	struct BtlWork						*scene = *(gWorkSlot + HEAP_SLOT_BATTLE);
+	struct BattlePresentationTransition *presentation = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+	struct BtlWork						*scene = WORK_SLOT(HEAP_SLOT_BATTLE);
 	/* FAKEMATCH: the halfword initialization preserves the word copy into party_mode instead of folding it into an immediate zero (one instruction differs). */
 	union
 	{
@@ -5398,17 +5381,6 @@ void BattleMotion_RunValueSequence(s32 id, s32 unused0, s32 unused1)
 // バトル：倒れたユニットの絵と並びの後しまつ
 //--------------------------------------------------------------------------
 
-#if !GAME_TLA
-#include "battle.h"
-#include "system.h"
-#include "btlpty.h"
-#include "btlsys.h"
-#include "btltype.h"
-#include "btlwork.h"
-#include "btlsmn.h"
-#include "motobj.h"
-#include "animspr.h"
-
 //--------------------------------------------------------------------------
 // ユニットを味方か敵の並びから外し、行動の予定からも消す
 // id : ユニット番号
@@ -5502,7 +5474,6 @@ void BattleMotion_InitializeActorRecords(s32 id)
 		ActivateBattleObjectSlot(id);
 	}
 }
-#endif
 
 struct SlotArray
 {
@@ -5998,6 +5969,8 @@ s32 BattleActor_ResetRuntimeFields(s32 id)
 #define KEY_OKURI (KEY_A | KEY_B | KEYS_SHOULDERS) // 送りのキー
 
 // OAM の一枚
+// A second view of struct BattlePromptSprite, kept: plain halfwords, where its bit-fields
+// change BattlePresentation_WaitForAdvance (differ 50).
 struct AdvanceSprite
 {
 	struct AdvanceSprite *next;
@@ -9798,12 +9771,9 @@ void BattlePres_UpdateHBlankScroll(void)
 	struct BattleAffineHdma *records;
 	u16						*record;
 
-	if (((struct BattleBackgroundView *)*(
-			 void **)((u8 *)gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND * sizeof(void *)))
-			->mode
-		== 2)
+	if (((struct BattleBackgroundView *)WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND))->mode == 2)
 	{
-		records = *(struct BattleAffineHdma **)&gWorkSlot[10];
+		records = WORK_SLOT(10);
 		record = records->lines[records->page];
 		Io_Write16(record[0], &REG_BG2CNT);
 		Dma_Set(record + 1, (void *)0x0400000c, 0xa2600001, &REG_DMA0SAD);
@@ -9813,7 +9783,7 @@ void BattlePres_UpdateHBlankScroll(void)
 
 void BattlePresentation_UploadTileVariant(void)
 {
-	u32 variant = **(u32 **)gDisp - 1;
+	u32 variant = *gDisp - 1;
 	if (variant <= 31)
 		Dma_Set(BattlePres_TileVariants + (variant >> 2) * 32, (void *)0x06005000, 0x84000008,
 			REG_DMA3);
@@ -9858,7 +9828,7 @@ void BattlePres_DrawTransitionRows(void)
 	u32	 row;
 	u16 *tiles;
 
-	frame = **(s32 **)gDisp;
+	frame = *gDisp;
 	if (frame >= 0 && frame <= 79)
 	{
 		tile = (7 & frame) + 0xf081;
@@ -9914,18 +9884,10 @@ struct DisplayRegisters
 	u16 green_swap;
 };
 
-struct TransitionActorList
-{
-	u8	unknown_00[20];
-	s32 count;
-	u8	unknown_18[12];
-	u16 ids[24];
-};
-
 void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 {
 	volatile u32				 fill;
-	struct TransitionActorList	 list;
+	struct BattlePresentationWork list;
 	u16							 party[14];
 	u16							 actors[14];
 	struct BattleBackgroundView *work;
@@ -9941,7 +9903,7 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 	u16							*ids;
 	s32							 n;
 
-	work = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
+	work = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
 	timer = Runtime_AllocateHeapBlock(42, 4);
 	if (kind != 0x15b)
 	{
@@ -10015,7 +9977,7 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 	}
 	else
 	{
-		session = *(gWorkSlot + HEAP_SLOT_BATTLE);
+		session = WORK_SLOT(HEAP_SLOT_BATTLE);
 		work->second_mode = 1;
 		work->busy = 0;
 		count = BattleParty_ListActorIds(3, (u16 *)party);
@@ -10034,9 +9996,9 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 			s32 start = 0;
 
 			session->background = (u32)&ResourceId_VinasuChojoStormBackdrop;
-			list.count = BattleParty_ListActorIds(2, list.ids);
-			list.ids[list.count] = 0xff;
-			BattleActor_SpawnObjectsForList(list.ids, 0);
+			list.count = BattleParty_ListActorIds(2, list.actors);
+			list.actors[list.count] = 0xff;
+			BattleActor_SpawnObjectsForList(list.actors, 0);
 			BattleEffect_RunTileAndPaletteAnimationFar(&list);
 			BattlePres_SetupTransitionScene(0, 0, 0, 100);
 			*timer = start;
@@ -10200,9 +10162,9 @@ typedef void (*BitDecoder)(const u8 *source, void *destination);
 
 void BattleBackground_Load(s32 mode, s32 resource, s32 level)
 {
-	struct BattleBackgroundView *view = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
+	struct BattleBackgroundView *view = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
 	u8							*data = Resource_GetTableEntry(resource);
-	struct BtlWork				*session = *(gWorkSlot + HEAP_SLOT_BATTLE);
+	struct BtlWork				*session = WORK_SLOT(HEAP_SLOT_BATTLE);
 	u16							*palette;
 
 	RamCode_LoadSlot(49, BitDecoder_DecodeImage, BitDecoder_Size);
@@ -10220,7 +10182,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level)
 			offset--;
 		}
 		vram = (void *)0x06008000;
-		((BitDecoder) * (gWorkSlot + 49))(data + offset, vram);
+		((BitDecoder)WORK_SLOT(49))(data + offset, vram);
 	}
 	Runtime_ReleaseHeapBlock(49);
 	palette = session->palette;
@@ -10242,9 +10204,9 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level)
 
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
 {
-	struct BattleBackgroundView *view = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
-	struct BattleAffineHdma		*work = *(gWorkSlot + 10);
-	struct BattleCamera			*camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+	struct BattleBackgroundView *view = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+	struct BattleAffineHdma		*work = WORK_SLOT(10);
+	struct BattleCamera			*camera = WORK_SLOT(HEAP_SLOT_CAMERA);
 	u16							 wrap;
 	s32							 horizon;
 	u16							*line;
@@ -10311,7 +10273,6 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
 	s32					 render_bounds[3];
 	s32					 measured_bounds[3];
 	s32					 source_bounds[3];
-	s32 (*blend)(s32, s32);
 	s32 alpha;
 	s32 half;
 	s32 width;
@@ -10358,7 +10319,6 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom)
 	s32					 measured_bounds[3];
 	s32					 source_bounds[3];
 	s32					 span = 0x01fe0000;
-	s32 (*blend)(s32, s32);
 	s32 alpha;
 	s32 half;
 	s32 width;
@@ -10681,7 +10641,6 @@ s32 BattleFx_UpdateStarField(void)
 	s32				  ring_x;
 	s32				  ring_y;
 	s32				  phase;
-	s32				  age;
 	void			 *dest;
 	s32				  i;
 	struct SparkWork *work;
@@ -10789,16 +10748,14 @@ s32 BattleFx_UpdateStarField(void)
 
 u32 Graphics_UploadVramBlock(void)
 {
-	void *source = gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
-	u8	 *context = gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+	void			 *source = gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+	struct SparkWork *work = gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
 
 	if (source != 0)
 	{
-		u32 *active = (u32 *)(context + 0x13C0);
-
-		if (*active != 0)
+		if (work->ready != 0)
 		{
-			*active = 0;
+			work->ready = 0;
 			ColorBuffer_BackupAndScaleThreeQuarters(source, (void *)0x06004000, 0x4000);
 		}
 	}
@@ -10898,10 +10855,10 @@ s32 BattleFx_InitializeStarField(s32 mode)
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused)
 {
 	Iwram_ClearWords((void *)0x06004000, 0x4000);
-	Runtime_ReleaseHeapBlock(47);
-	Runtime_ReleaseHeapBlock(46);
-	Runtime_ReleaseHeapBlock(40);
-	Runtime_ReleaseHeapBlock(39);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
+	Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
 	REG_DISPCNT = 0x1341;
 	Scheduler_RemoveCallback((SchedulerCallback)Graphics_UploadVramBlock);
 	return Scheduler_RemoveCallback((SchedulerCallback)BattleFx_UpdateStarField);
@@ -10946,40 +10903,18 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 co
 	return 0;
 }
 
-struct Bg2OriginWork
-{
-	u8	unknown_0000[0x13c4];
-	s32 origin_x;
-	s32 origin_y;
-	s32 origin_pending;
-};
-
-struct EffectLaunch
-{
-	s32 kind;
-	s32 side;
-	s32 actor;
-	s32 target;
-	s32 unknown_0010;
-	s32 count;
-	s32 variant;
-	s32 prelude;
-	s32 unknown_0020;
-	s16 actors[24];
-};
-
 void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 {
 	/* FAKEMATCH: needed to match: an unread ten-word launch tail, the native frame's 40 extra bytes. */
 	s32					  spare[10];
 	struct EffectPosition position;
 	struct EffectPosition position2;
-	struct EffectLaunch	  launch;
-	struct EffectLaunch	  launch2;
+	struct BattlePresentationWork launch;
+	struct BattlePresentationWork launch2;
 	/* FAKEMATCH: needed to match: one variable, assigned twice, holds slot 12's address and later the IME address, as the bytes do; the session is slot 9, three words below. */
 	volatile u16		  *ime = (volatile u16 *)&gWorkSlot[12];
 	struct BtlWork		  *session = *(struct BtlWork **)((u8 *)ime - 12);
-	struct Bg2OriginWork  *work;
+	struct SparkWork	  *work;
 	s32					   frame;
 	s32					  *brightness;
 	struct EffectPosition *pos;
@@ -11003,7 +10938,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 		{
 			brightness = &session->brightness;
 			ime = &REG_IME;
-			work = gWorkSlot[39];
+			work = gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
 			if (frame <= 24)
 				Graphics_ScaleRgb555Clamped(
 					session->palette, (u16 *)0x050000c0, *brightness = 0x10000 - frame * 1092, 128);
@@ -11044,10 +10979,11 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 	}
 	else if (mode == 1)
 	{
+		// ここのワークは scenefx.c の struct BattleEffectWork だが、星のワークと同じオフセットに書く
 		BattlePresentation_PrepareSceneFar(kind);
 		for (frame = 0; frame < 40; frame++)
 		{
-			work = gWorkSlot[39];
+			work = gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
 			BattleMotion_ProjectScaledPosition(unit, (s32 *)&position2);
 			work->origin_x = (64 - position2.x) << 8;
 			work->origin_y = (64 - position2.y) << 8;
@@ -11059,26 +10995,26 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 	}
 	else if (mode == 2)
 	{
-		launch.prelude = 0;
+		launch.flags = 0;
 		launch.kind = kind;
 		launch.variant = variant;
 		launch.actor = unit;
 		launch.actors[0] = unit;
-		launch.target = unit;
+		launch.first_target = unit;
 		launch.count = 1;
-		launch.unknown_0010 = 1;
+		launch.initial_value = 1;
 		BattleFx_RunIceFleckBurstFar((struct BattleEffectArgument *)&launch);
 	}
 	else
 	{
 		launch2.kind = kind;
-		launch2.prelude = 0;
+		launch2.flags = 0;
 		launch2.variant = 0;
 		launch2.actor = unit;
 		launch2.actors[0] = unit;
-		launch2.target = unit;
+		launch2.first_target = unit;
 		launch2.count = 1;
-		launch2.unknown_0010 = 1;
+		launch2.initial_value = 1;
 		BattleFx_RunGatheringBurstFar(&launch2);
 	}
 }
@@ -11904,7 +11840,7 @@ void Battle_AwardSpoils(void)
 	s32					 slot;
 	u16					*found;
 	s32					 value;
-	s16					 gains[8];
+	struct LevelUpResult gains; // 上がった分は符号つきで読む
 	u16					 units[8];
 
 	spoils = &BtlWk->spoils;
@@ -11923,7 +11859,7 @@ void Battle_AwardSpoils(void)
 		unit = UnitGetFar(unit_id);
 		unit->experience += spoils->experience;
 		while (Iwram_CopyWords(backup, unit, sizeof(struct BtlUnit)),
-			Owner_GetValueIfLevelThresholdReachedFar(unit_id, gains) != 0)
+			Owner_GetValueIfLevelThresholdReachedFar(unit_id, &gains) != 0)
 		{
 			AudioCommand_PlayFar(0x59);
 			UiWork_ClearValueNameTablesFar();
@@ -11954,39 +11890,39 @@ void Battle_AwardSpoils(void)
 					}
 				}
 			}
-			if (gains[2] != 0)
+			if ((s16)gains.hp != 0)
 			{
-				UiWork_PushValueSlotFar(gains[2], 5);
+				UiWork_PushValueSlotFar((s16)gains.hp, 5);
 				UiText_ShowMessageAndWaitCoreFar((s32)MsgMaxHpRises);
 				BattlePresentation_WaitForAdvance();
 			}
-			if (gains[3] != 0)
+			if ((s16)gains.ep != 0)
 			{
-				UiWork_PushValueSlotFar(gains[3], 5);
+				UiWork_PushValueSlotFar((s16)gains.ep, 5);
 				UiText_ShowMessageAndWaitCoreFar((s32)MsgMaxPpRises);
 				BattlePresentation_WaitForAdvance();
 			}
-			if (gains[4] != 0)
+			if ((s16)gains.atk != 0)
 			{
-				UiWork_PushValueSlotFar(gains[4], 5);
+				UiWork_PushValueSlotFar((s16)gains.atk, 5);
 				UiText_ShowMessageAndWaitCoreFar((s32)MsgAttackRises);
 				BattlePresentation_WaitForAdvance();
 			}
-			if (gains[5] != 0)
+			if ((s16)gains.def != 0)
 			{
-				UiWork_PushValueSlotFar(gains[5], 5);
+				UiWork_PushValueSlotFar((s16)gains.def, 5);
 				UiText_ShowMessageAndWaitCoreFar((s32)MsgDefenseRises);
 				BattlePresentation_WaitForAdvance();
 			}
-			if (gains[6] != 0)
+			if ((s16)gains.agi != 0)
 			{
-				UiWork_PushValueSlotFar(gains[6], 5);
+				UiWork_PushValueSlotFar((s16)gains.agi, 5);
 				UiText_ShowMessageAndWaitCoreFar((s32)MsgAgilityRises);
 				BattlePresentation_WaitForAdvance();
 			}
-			if (gains[7] != 0)
+			if ((s16)gains.luck != 0)
 			{
-				UiWork_PushValueSlotFar(gains[7], 5);
+				UiWork_PushValueSlotFar((s16)gains.luck, 5);
 				UiText_ShowMessageAndWaitCoreFar((s32)MsgLuckRises);
 				BattlePresentation_WaitForAdvance();
 			}

@@ -318,7 +318,6 @@ void BiribinoMura_CheckLeaderAhead(void)
 
 void BiribinoMura_ReceiveJillsGift(void)
 {
-	u32				   i;
 	struct FieldActor *rec7;
 	struct FieldActor *record;
 
@@ -551,7 +550,6 @@ L_02000a60:;
 
 void FieldScene_RunScene38bSequenceA(void)
 {
-	u32				   i;
 	struct FieldActor *rec;
 	s32				   rec7;
 	struct FieldActor *rec8;

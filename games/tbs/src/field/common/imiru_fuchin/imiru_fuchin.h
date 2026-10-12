@@ -12,8 +12,6 @@ enum
 	ITEM_DRAGONS_EYE = 230
 };
 
-#define NULL ((void *)0)
-
 extern void *gWorkSlot[];
 
 struct TrackingWork

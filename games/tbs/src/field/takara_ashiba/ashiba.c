@@ -46,24 +46,6 @@ enum
 	ITEM_BLUE_KEY = 244
 };
 
-struct Actor
-{
-	s32 f00;
-	s32 f04;
-	s32 f08;
-	s32 f0c;
-	s32 f10;
-};
-
-struct Frame
-{
-	s32 f00;
-	s32 f04;
-	s32 f08;
-	s32 f0c;
-	s32 f10;
-};
-
 static __inline__ void SceneState_StoreStep(s16 *field, s32 step)
 {
 	*field = step;
@@ -353,9 +335,6 @@ void TakaraAshiba_OpenPassage(s32 arg)
 
 void TakaraAshiba_OpenPlatformPassage(s32 a0)
 {
-	u32 i;
-	s32 record;
-
 	if ((a0 & 0x100) != 0)
 	{
 		Event_PlayCue(157);
@@ -371,7 +350,6 @@ void TakaraAshiba_OpenPlatformPassage(s32 a0)
 
 void FieldScene_RunScene3b4SequenceC(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 	record = Object_GetById(0);
@@ -545,7 +523,6 @@ void TakaraAshiba_RaiseTriggerOnStand(void)
 
 void FieldScene_RunSupplementalSequenceOne(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 	Engine_EventBegin();
@@ -590,7 +567,6 @@ void SceneState_TriggerColumnTen(void)
 
 void FieldScene_RunScene3b4SequenceA(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 	Engine_EventBegin();
@@ -753,7 +729,6 @@ void SceneState_TriggerColumnNineteen(void)
 
 void FieldScene_RunScene3b4SequenceB(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 	Engine_EventBegin();
@@ -986,9 +961,6 @@ void SceneActor_BranchOnSlotZeroAtTile38(void)
 
 void TakaraAshiba_ReleaseActorNinePlatform(void)
 {
-	u32 i;
-	s32 record;
-
 	Scheduler_RemoveCallback((s32)ActorPresentation_PlaceActorFourteenOnActorNine);
 	Actor_SetPosition(14, 0, 0);
 	if (GameFlag_IsSet(0x207) != 0)
@@ -1148,19 +1120,19 @@ void FieldScene_RunThreeStepSequence(void)
 
 void ActorPresentation_PlaceActorFourteenOnActorNine(void)
 {
-	struct Actor *target = Object_GetById(14);
-	struct Actor *source = Object_GetById(9);
+	struct FieldActor *target = Object_GetById(14);
+	struct FieldActor *source = Object_GetById(9);
 
-	target->f0c = 0x200000;
-	target->f08 = source->f08;
-	target->f10 = source->f10 + 0x10000;
+	target->y.fixed = 0x200000;
+	target->x.fixed = source->x.fixed;
+	target->z.fixed = source->z.fixed + 0x10000;
 }
 
 void SceneActor_PassActorNinePositionWithId107(void)
 {
-	struct Frame *frame = Object_GetById(9);
+	struct FieldActor *frame = Object_GetById(9);
 
-	Engine_MapObjectSetPosition(107, frame->f08, frame->f10 + 0x10000);
+	Engine_MapObjectSetPosition(107, frame->x.fixed, frame->z.fixed + 0x10000);
 }
 
 void SceneActor_PublishMarkerBySlotZeroHeight(void)
@@ -1260,9 +1232,6 @@ void TakaraAshiba_UpdateItemIcons(void)
 
 void TakaraAshiba_InitializeScene1(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_TaskWait(1);
 	Korosseo_ShowItemIcon(12, 243);
 	Korosseo_ShowItemIcon(11, 244);

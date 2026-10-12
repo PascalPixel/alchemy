@@ -221,10 +221,7 @@ void KorimaMagari_CaptureShakeScroll(void)
 
 void Scene_RunKorimaMagariSequence(void)
 {
-	u32 i;
-	s32 record;
 	s32 v5;
-	s32 base5_200a0dc;
 	s32 v3;
 
 	Engine_EventBegin();

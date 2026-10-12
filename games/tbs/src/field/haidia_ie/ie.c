@@ -264,7 +264,6 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
 	u32				   i;
 	s32				   p8;
 	struct FieldActor *rec8;
-	s32				   record;
 	s32				   v2;
 
 	Engine_EventBegin();
@@ -326,9 +325,6 @@ void Villager_PointTheWay(void)
 
 void Villager_WelcomeBack(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x302) != 0)
 	{
@@ -475,7 +471,6 @@ void SceneState_ApplyFlag90d(void)
 s32 HaidiaIe_RestoreEntryState(void)
 {
 
-	u32 i;
 	s32 record;
 	s32 v5;
 
@@ -506,11 +501,11 @@ s32 HaidiaIe_RestoreEntryState(void)
 	}
 	v5 = 192;
 	record = Object_GetById(8);
-	*(s32 *)(record + 28) = (v5 << 9);
+	((struct FieldActor *)record)->scale_y = (v5 << 9);
 	record = Object_GetById(9);
-	*(s32 *)(record + 28) = (v5 << 9);
+	((struct FieldActor *)record)->scale_y = (v5 << 9);
 	record = Object_GetById(10);
-	*(s32 *)(record + 28) = (v5 << 9);
+	((struct FieldActor *)record)->scale_y = (v5 << 9);
 	if (Engine_GameFlagIsSet(0x87a) != 0)
 	{
 		Engine_MapCopyCellsTo(97, 2, 80, 5, 2, 2);
@@ -555,13 +550,13 @@ s32 HaidiaIe_RestoreEntryState(void)
 			if (Engine_GameFlagIsSet(0x834) != 0)
 			{
 				record = Object_GetById(20);
-				*(s32 *)(record + 24) = 0x4ccc;
-				*(s32 *)(record + 28) = 0x4ccc;
+				((struct FieldActor *)record)->scale_x = 0x4ccc;
+				((struct FieldActor *)record)->scale_y = 0x4ccc;
 				record = Object_GetById(20);
 				Engine_ActorSetSpriteFlags(record, 0);
 				record = Object_GetById(21);
-				*(s32 *)(record + 24) = 0x9999;
-				*(s32 *)(record + 28) = 0x9999;
+				((struct FieldActor *)record)->scale_x = 0x9999;
+				((struct FieldActor *)record)->scale_y = 0x9999;
 				Engine_ActorSetAnimation(13, 5);
 			}
 			else
@@ -920,7 +915,6 @@ void FieldScene_RunGroupChoreography(void)
 void HaidiaIe_RunActorPairEffectScene(void)
 {
 
-	u32				   i;
 	struct FieldActor *record;
 	s32				   v5;
 

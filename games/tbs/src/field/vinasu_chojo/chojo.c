@@ -60,57 +60,12 @@ typedef struct
 	Obj_020004bc *obj;
 } Spr_020004bc;
 
-struct SceneActor
-{
-	u8	pad00[6];
-	u16 angle;
-	s32 x;
-	s32 y;
-	s32 z;
-	u8	pad14[20];
-	s32 motion28;
-	u8	pad2c[4];
-	s32 motion30;
-	s32 motion34;
-	u8	pad38[29];
-	u8	flags55;
-};
-
-typedef struct
-{
-	u8	filler0[0xc];
-	s32 unk0c;
-	u8	filler10[8];
-	s32 unk18;
-	u8	filler1c[7];
-	u8	unk23;
-	u8	filler24[0x31];
-	u8	unk55;
-} Spr_0200071c;
-
-struct StagedVerticalEffect
-{
-	s32	 pad0[2];
-	s32	 f8;
-	s32	 fc;
-	s32	 f10;
-	s32	 pad14;
-	s32	 f18;
-	s32	 f1c;
-	s32	 pad20[17];
-	s16	 f64;
-	s16	 pad66;
-	s32 *f68;
-};
-
 s32	 Math_RemainderUnsigned(s32, s32);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
-
-struct StagedVerticalEffect;
 
 struct PairDetail
 {
@@ -396,7 +351,7 @@ s32 Scene_Initialize(void)
 	u32			  i;
 	s32			  z;
 	s16			  mode;
-	Spr_0200071c *obj;
+	struct FieldActor *obj;
 
 	Engine_GameFlagSet(324);
 	Engine_TaskWait(1);
@@ -415,9 +370,9 @@ s32 Scene_Initialize(void)
 		obj = Object_GetById(i);
 		Engine_ActorSetSpriteFlags(Object_GetById(i), z);
 		Engine_ActorSetSpritePriority(i, 1);
-		obj->unk55 = 4;
-		obj->unk23 |= 2;
-		obj->unk0c = 0x8000;
+		obj->motion_flags = 4;
+		obj->priority_flags |= 2;
+		obj->y.fixed = 0x8000;
 		i++;
 	} while (i <= 17);
 
@@ -471,10 +426,10 @@ s32 Scene_Initialize(void)
 
 		if (slot != 0)
 		{
-			Spr_0200071c *p = (Spr_0200071c *)Object_GetById(slot);
+			struct FieldActor *p = Object_GetById(slot);
 			if (p != 0)
 			{
-				p->unk55 = 0;
+				p->motion_flags = 0;
 			}
 		}
 	}
@@ -2676,9 +2631,6 @@ void FieldScene_RestageParty(void)
 
 void VinasuChojo_TryToPreventFall(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventSetMessage((s32)MsgVinasuNoooo);
 	VinasuChojo_ShowMessage(21);
 	Event_PlayCue(62);
@@ -3229,12 +3181,12 @@ void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object)
 	struct FieldEffect *anchor;
 	s32					spin;
 
-	anchor = *(struct FieldEffect **)((u8 *)object + 104);
+	anchor = (struct FieldEffect *)object->actor.linked_object;
 	spin = object->effect.spin;
-	object->effect.x = anchor->x + Engine_MathCos(spin) * (*(s32 *)((u8 *)object + 48) + 28);
+	object->effect.x = anchor->x + Engine_MathCos(spin) * (object->actor.speed + 28);
 	object->effect.z = (Engine_MathSin(spin) << 4) + 0xa40000;
-	*(s32 *)((u8 *)object + 56) = object->effect.x;
-	*(s32 *)((u8 *)object + 64) = object->effect.z;
+	object->actor.target_x = object->effect.x;
+	object->actor.target_z = object->effect.z;
 	object->effect.spin -= 0x200;
 }
 

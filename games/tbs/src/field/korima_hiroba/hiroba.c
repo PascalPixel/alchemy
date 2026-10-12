@@ -39,12 +39,6 @@ typedef struct
 	s32 lo, hi;
 } Pair;
 
-typedef struct
-{
-	s32	 w0, w1, w2, w3;
-	Pair tail;
-} Query;
-
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
 

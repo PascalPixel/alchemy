@@ -647,7 +647,6 @@ void Scene_OverhearSaturosAndMenardi(void)
 
 void HaidiaSukureta_RunArrivalScene(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 
 	if (GameFlag_IsSet(0x800) != 0)
@@ -733,7 +732,6 @@ void HaidiaSukureta_RunArrivalScene(void)
 
 s32 HaidiaSukureta_RestoreEntryState(void)
 {
-	u32				   i;
 	struct FieldActor *record;
 	s32				   v5;
 

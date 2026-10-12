@@ -11,7 +11,6 @@
 #include "unit/system/scheduler/callback.h"
 
 #define NULL ((void *)0)
-#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"
@@ -75,13 +74,6 @@ struct Spark
 	u8	unknown_00[0x64];
 	u16 phase;
 	u16 angle;
-};
-
-struct Vec3
-{
-	s32 x;
-	s32 y;
-	s32 z;
 };
 
 struct EffectParams
@@ -287,7 +279,6 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 void ToretoHeya_RunTableScene(void)
 {
-	u32				   i;
 	s32				   rec8;
 	struct FieldActor *leader;
 
@@ -370,7 +361,6 @@ void ToretoHeya_RunTableScene(void)
 
 void FieldScene_RunFourActorEncounter(void)
 {
-	u32				   i;
 	s32				   rec;
 	struct FieldActor *record;
 	s32				   v6;
@@ -881,9 +871,9 @@ void ToretoHeya_SpawnSwirlSparks(void)
 		Engine_AudioPlayCue(220);
 		for (i = 0; i < 6 - wave; i++)
 		{
-			spark = Engine_ObjectCreate(0x11d, (*(struct Vec3 *)ToretoHeya_SparkOrigin).x,
-				(*(struct Vec3 *)ToretoHeya_SparkOrigin).y,
-				(*(struct Vec3 *)ToretoHeya_SparkOrigin).z);
+			spark = Engine_ObjectCreate(0x11d, (*(struct Vec *)ToretoHeya_SparkOrigin).x,
+				(*(struct Vec *)ToretoHeya_SparkOrigin).y,
+				(*(struct Vec *)ToretoHeya_SparkOrigin).z);
 			if (spark != 0)
 			{
 				previous = Object_ReplaceResourceEntry(spark->sprite, previous);
@@ -893,9 +883,9 @@ void ToretoHeya_SpawnSwirlSparks(void)
 				Object_SetMode(spark, 1);
 				((struct Spark *)spark)->phase = 0;
 				((struct Spark *)spark)->angle = ((360 / (u32)(6 - wave) * i) << 16) / 360;
-				spark->target_x = (*(struct Vec3 *)ToretoHeya_SparkOrigin).x;
-				spark->target_y = (*(struct Vec3 *)ToretoHeya_SparkOrigin).y;
-				spark->target_z = (*(struct Vec3 *)ToretoHeya_SparkOrigin).z;
+				spark->target_x = (*(struct Vec *)ToretoHeya_SparkOrigin).x;
+				spark->target_y = (*(struct Vec *)ToretoHeya_SparkOrigin).y;
+				spark->target_z = (*(struct Vec *)ToretoHeya_SparkOrigin).z;
 				spark->speed = 0x19999;
 				spark->update = ToretoHeya_UpdateSwirlObject;
 			}

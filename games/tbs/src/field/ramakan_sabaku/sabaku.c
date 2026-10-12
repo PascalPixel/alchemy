@@ -46,19 +46,6 @@
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
 
-#ifndef MODERN // modern GCC keeps the headers' volatile declaration
-#endif
-
-struct EffectParams
-{
-	u8	pad00[8];
-	s32 scaleX;
-	s32 scaleY;
-	u8	pad10[18];
-	u16 angle;
-	u8	pad24[4];
-};
-
 void FieldScene_ApplyActor13Values3And3(void)
 {
 	BattleFx_RunPageEffectForSlot(13, 3, 3);
@@ -79,7 +66,7 @@ void RamakanSabaku_WaitForActorHeight(u8 *o, s32 limit)
 
 s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor)
 {
-	struct EffectParams params;
+	struct EffectOptions params;
 	s32					phase;
 
 	if ((gFrameCount & 7) == 0)
@@ -91,9 +78,9 @@ s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor)
 	{
 		return 0;
 	}
-	params.scaleX = 0xcccc;
-	params.scaleY = 0xcccc;
-	params.angle = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+	params.start_scale_x = 0xcccc;
+	params.start_scale_y = 0xcccc;
+	params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
 	Effect_Spawn(
 		actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, phase, phase, 0x00880001, &params);
 	return 0;
@@ -161,9 +148,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 void FieldScene_RunFlags8B2And8B3Steps(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x8b2) == 0)
 	{
@@ -185,7 +169,6 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 s32 RamakanSabaku_ApplyEntryState(void)
 {
-	u32 i;
 	s32 record;
 	s32 v5;
 
@@ -575,23 +558,13 @@ void RamakanSabaku_SweepBack(void)
 	RamakanSabaku_SetSandPhase(0);
 }
 
-struct DustParams
-{
-	u8	unknown_00[8];
-	s32 scale_x;
-	s32 scale_y;
-	u8	unknown_10[18];
-	u16 angle;
-	u8	unknown_24[4];
-};
-
 extern struct EventWork *gEventWork;
 
 void RamakanSabaku_UpdateTravelDust(void)
 {
 	struct FieldActor *actor;
 	struct EventWork  *event;
-	struct DustParams  params;
+	struct EffectOptions params;
 	s32				   dx;
 	s32				   z;
 	s32				   phase;
@@ -612,10 +585,10 @@ void RamakanSabaku_UpdateTravelDust(void)
 		{
 			return;
 		}
-		params.scale_x = 0x8000;
-		params.scale_y = 0x8000;
+		params.start_scale_x = 0x8000;
+		params.start_scale_y = 0x8000;
 		dx = 0;
-		params.angle = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+		params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
 		if (actor->facing != 0 && actor->facing != 0x8000)
 		{
 			z = actor->z.fixed;
@@ -636,9 +609,9 @@ void RamakanSabaku_UpdateTravelDust(void)
 		}
 		// フレームカウンタをもう一度読んで捨てる (ROM の読み出しそのまま)
 		gFrameCount;
-		params.scale_x = 0xcccc;
-		params.scale_y = 0xcccc;
-		params.angle = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+		params.start_scale_x = 0xcccc;
+		params.start_scale_y = 0xcccc;
+		params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
 		Effect_Spawn(actor->x.fixed, actor->y.fixed + 0x20000, actor->z.fixed, 0,
 			((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999, phase, 0x880001, &params);
 	}
@@ -723,7 +696,7 @@ void RamakanSabaku_UpdateDustAndProbe(void)
 	s32				   id;
 	struct FieldActor *actor;
 	s32				   pos[3];
-	struct DustParams  params;
+	struct EffectOptions params;
 	s32				   hit;
 	s32				   phase;
 	s32				   x;
@@ -743,7 +716,7 @@ void RamakanSabaku_UpdateDustAndProbe(void)
 	phase = gFrameCount & 4;
 	if (phase == 0)
 	{
-		params.angle = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+		params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
 		x = actor->x.fixed + (((u32)(Engine_RandomNext() * 12) >> 16) << 16) - 0x60000;
 		Effect_Spawn(x, actor->y.fixed, actor->z.fixed, 0, phase,
 			((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd, 0x800000, &params);
@@ -914,17 +887,11 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
 
 void RamakanSabaku_ResetActorEightPosition(void)
 {
-	u32 i;
-	s32 record;
-
 	Actor_SetSpeed(8, 0x8000, 0x4000);
 	Engine_ActorSetAnimation(8, 1);
 	Actor_WalkToAndWait(8, 168, 96);
 	Engine_ActorSetAnimation(8, 2);
 }
-
-#ifndef MODERN // modern GCC keeps the headers' volatile declaration
-#endif
 
 void RamakanSabaku_RunSandstorm(void)
 {

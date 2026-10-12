@@ -4,12 +4,12 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct S_02000474;
+struct FieldActor;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
-struct V;
+struct Vec;
 
 void NoOpEffectCallback(void);
 const struct SceneEntrance *Scene_GetEntrances(void);
@@ -54,7 +54,7 @@ void ActivateSceneActor9(void);
 void ActivateSceneActor19(void);
 void ActivateSceneActor14(void);
 void ActivateSceneActor16(void);
-s32 TryPushBlockingSceneActor(struct S_02000474 *actor, struct V *requested);
+s32 TryPushBlockingSceneActor(struct FieldActor *actor, struct Vec *requested);
 s32 CheckActorPathSouth(void);
 s32 CheckActorPathNorth(void);
 s32 CheckActorPathWest(void);

@@ -34,83 +34,6 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-struct Sprite
-{
-	u8	pad00[9];
-	u8	flags9;
-	u8	pad0a[20];
-	u16 angle;
-	u8	pad20[6];
-	u8	state26;
-};
-
-struct Effect
-{
-	u8			   pad00[8];
-	s32			   position[3];
-	u8			   pad14[4];
-	s32			   accum18;
-	s32			   accum1c;
-	u8			   pad20[3];
-	u8			   flatla3;
-	u8			   pad24[12];
-	s32			   rate30;
-	s32			   rate34;
-	u8			   pad38[12];
-	s32			   velocity[3];
-	struct Sprite *sprite;
-	u8			   pad54;
-	u8			   mode55;
-	u8			   pad56[14];
-	u16			   step64;
-	u8			   pad66[6];
-	u32			   callback;
-};
-
-typedef struct Obj
-{
-	s32 f00;
-	s32 f04;
-	s32 f08;
-	s32 f0c;
-	s32 f10;
-	u8	f14[28];
-	s32 f30;
-	s32 f34;
-} Obj;
-
-struct S_02000474
-{
-	s32 f00;
-	u16 f04;
-	u16 f06;
-	s32 f08;
-	s32 f0c;
-	s32 f10;
-	u8	pad14[20];
-	s32 f28;
-	u8	pad2c[4];
-	s32 f30;
-	s32 f34;
-	u8	pad38[29];
-	u8	f55;
-};
-
-struct V
-{
-	s32 a;
-	s32 b;
-	s32 c;
-};
-
-struct SceneObject
-{
-	u8	filler00[8];
-	s32 x;
-	s32 y;
-	s32 z;
-};
-
 struct Vec
 {
 	s32 x;
@@ -118,39 +41,11 @@ struct Vec
 	s32 z;
 };
 
-struct EffectParams
-{
-	u8	filler00[0x24];
-	s32 callback;
-};
-
-typedef union
-{
-	s32 w;
-	s16 h[2];
-} RecWord;
-
-struct S_02001b14
-{
-	s32 pad[2];
-	s32 f08;
-	s32 f0c;
-	s32 f10;
-};
-
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
 #include "../common/effect/create.c"
 #include "../common/effect/move.c"
 #include "../common/effect/spawnov.c"
-
-struct Owner
-{
-	u8 unk0[9];
-	u8 unk9_0 : 2;
-	u8 mode : 2;
-	u8 unk9_4 : 4;
-};
 
 union GameStateRows
 {
@@ -222,16 +117,16 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 void SpawnRadialEffectBurst(s32 object_id)
 {
-	struct SceneObject *object;
-	struct Vec			vec;
-	struct EffectParams params;
-	u32					angle_step;
-	s32					angle;
-	s32					x;
-	s32					z;
+	struct FieldActor	   *object;
+	struct Vec			 vec;
+	struct EffectOptions params;
+	u32					 angle_step;
+	s32					 angle;
+	s32					 x;
+	s32					 z;
 
-	object = (struct SceneObject *)Object_GetById(object_id);
-	params.callback = (s32)Effect_AdvanceMotion;
+	object = Object_GetById(object_id);
+	params.update = Effect_AdvanceMotion;
 	for (angle_step = 0; angle_step <= 16; angle_step += 2)
 	{
 		angle = angle_step << 12;
@@ -242,7 +137,7 @@ void SpawnRadialEffectBurst(s32 object_id)
 		vec.z = z;
 		x += Math_Divide(x, 3);
 		vec.x = x;
-		Effect_Spawn(object->x, object->y, object->z, x, vec.y, z, 0x01000001, &params);
+		Effect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y, z, 0x01000001, &params);
 	}
 }
 
@@ -569,9 +464,6 @@ void TakaraShima_RunAreaEntry(void)
 
 void TakaraShima_LeaveClearedRoom(void)
 {
-	u32 i;
-	s32 record;
-
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
 	Engine_EventOpenScreen();
@@ -730,30 +622,30 @@ void RunSceneVectorTransition(void)
 
 void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
 {
-	Obj *p;
-	Obj *q;
-	s32	 x;
-	s32	 y;
+	struct FieldActor *p;
+	struct FieldActor *q;
+	s32				   x;
+	s32				   y;
 
 	p = Object_GetById(gGameState.selected_actor);
 	q = Object_GetById(actor_id);
 	Engine_EventBegin();
 	{
-		x = ((p->f08 + (x_offset << 16)) & 0xFFF00000) + 0x80000;
-		y = ((p->f10 + (z_offset << 16)) & 0xFFF00000) + 0x80000;
+		x = ((p->x.fixed + (x_offset << 16)) & 0xFFF00000) + 0x80000;
+		y = ((p->z.fixed + (z_offset << 16)) & 0xFFF00000) + 0x80000;
 
-		p->f30 = 0x10000;
-		p->f34 = 0x8000;
-		Engine_ObjectSetPosition((struct FieldActor *)p, x, p->f0c, y);
+		p->speed = 0x10000;
+		p->acceleration = 0x8000;
+		Engine_ObjectSetPosition(p, x, p->y.fixed, y);
 	}
 	Object_SetMode(p, 27);
 	{
-		x = ((q->f08 + (x_offset << 16)) & 0xFFF00000) + 0x80000;
-		y = ((q->f10 + (z_offset << 16)) & 0xFFF00000) + 0x80000;
+		x = ((q->x.fixed + (x_offset << 16)) & 0xFFF00000) + 0x80000;
+		y = ((q->z.fixed + (z_offset << 16)) & 0xFFF00000) + 0x80000;
 
-		q->f30 = 0x10000;
-		q->f34 = 0x8000;
-		Engine_ObjectSetPosition((struct FieldActor *)q, x, q->f0c, y);
+		q->speed = 0x10000;
+		q->acceleration = 0x8000;
+		Engine_ObjectSetPosition(q, x, q->y.fixed, y);
 	}
 	if (x_offset < 0 || z_offset < 0)
 	{
@@ -893,18 +785,18 @@ void ActivateSceneActor16(void)
 	SetSceneActorModes(16);
 }
 
-s32 TryPushBlockingSceneActor(struct S_02000474 *actor, struct V *requested)
+s32 TryPushBlockingSceneActor(struct FieldActor *actor, struct Vec *requested)
 {
-	u8 *state = &actor->f55;
+	u8 *state = &actor->motion_flags;
 	s32 saved_state = *state;
 #if EDITION_INTERNATIONAL
-	struct V destination;
+	struct Vec destination;
 
-	destination.a = (actor->f08 & 0xfff00000) + 0x80000;
-	destination.b = actor->f0c;
-	destination.c = (actor->f10 & 0xfff00000) + 0x80000;
+	destination.x = (actor->x.fixed & 0xfff00000) + 0x80000;
+	destination.y = actor->y.fixed;
+	destination.z = (actor->z.fixed & 0xfff00000) + 0x80000;
 	{
-		s32 direction = (actor->f06 + 0x2000) & 0xc000;
+		s32 direction = (actor->facing + 0x2000) & 0xc000;
 
 		Vector_AddPolarOffset(0x200000, direction, &destination);
 	}
@@ -921,9 +813,9 @@ s32 TryPushBlockingSceneActor(struct S_02000474 *actor, struct V *requested)
 		Engine_TaskWait(6);
 		Engine_AudioPlayCue(152);
 		Object_SetMode(actor, 7);
-		actor->f30 = 0x30000;
-		actor->f34 = 0x20000;
-		actor->f28 = 0x40000;
+		actor->speed = 0x30000;
+		actor->acceleration = 0x20000;
+		actor->velocity_y = 0x40000;
 		t = 126;
 		t &= *state;
 		*state = (u8)t;
@@ -948,54 +840,54 @@ s32 TryPushBlockingSceneActor(struct S_02000474 *actor, struct V *requested)
 
 s32 CheckActorPathSouth(void)
 {
-	struct S_02001b14 *actor = Object_GetById(ACTOR_PARTY_LEADER);
-	struct V		   destination;
+	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
+	struct Vec		   destination;
 
-	destination.a = actor->f08;
-	destination.b = actor->f0c;
-	destination.c = actor->f10 + -0x200000;
+	destination.x = actor->x.fixed;
+	destination.y = actor->y.fixed;
+	destination.z = actor->z.fixed + -0x200000;
 	return TryPushBlockingSceneActor(actor, &destination);
 }
 
 s32 CheckActorPathNorth(void)
 {
-	struct S_02001b14 *actor = Object_GetById(ACTOR_PARTY_LEADER);
-	struct V		   destination;
+	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
+	struct Vec		   destination;
 
-	destination.a = actor->f08;
-	destination.b = actor->f0c;
-	destination.c = actor->f10 + 0x200000;
+	destination.x = actor->x.fixed;
+	destination.y = actor->y.fixed;
+	destination.z = actor->z.fixed + 0x200000;
 	return TryPushBlockingSceneActor(actor, &destination);
 }
 
 s32 CheckActorPathWest(void)
 {
-	struct S_02001b14 *actor = Object_GetById(ACTOR_PARTY_LEADER);
-	struct V		   destination;
+	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
+	struct Vec		   destination;
 
-	destination.a = actor->f08 + -0x200000;
-	destination.b = actor->f0c;
-	destination.c = actor->f10;
+	destination.x = actor->x.fixed + -0x200000;
+	destination.y = actor->y.fixed;
+	destination.z = actor->z.fixed;
 	return TryPushBlockingSceneActor(actor, &destination);
 }
 
 s32 CheckActorPathEast(void)
 {
-	struct S_02001b14 *actor = Object_GetById(ACTOR_PARTY_LEADER);
-	struct V		   destination;
+	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
+	struct Vec		   destination;
 
-	destination.a = actor->f08 + 0x200000;
-	destination.b = actor->f0c;
-	destination.c = actor->f10;
+	destination.x = actor->x.fixed + 0x200000;
+	destination.y = actor->y.fixed;
+	destination.z = actor->z.fixed;
 	return TryPushBlockingSceneActor(actor, &destination);
 }
 
 void UpdateEscapeRouteForActorPositions(void)
 {
-	s32 actor_x = ((Obj *)Object_GetById(8))->f08 >> 20;
-	s32 actor_z = ((Obj *)Object_GetById(8))->f10 >> 20;
-	s32 actor_12_x = ((Obj *)Object_GetById(12))->f08 >> 20;
-	s32 actor_15_x = ((Obj *)Object_GetById(15))->f08 >> 20;
+	s32 actor_x = Object_GetById(8)->x.fixed >> 20;
+	s32 actor_z = Object_GetById(8)->z.fixed >> 20;
+	s32 actor_12_x = Object_GetById(12)->x.fixed >> 20;
+	s32 actor_15_x = Object_GetById(15)->x.fixed >> 20;
 
 	if (actor_z == 19)
 	{
@@ -1044,7 +936,7 @@ void UpdateEscapeRouteForActorPositions(void)
 	}
 	Engine_TaskWait(2);
 	{
-		s32 route_end_z = ((Obj *)Object_GetById(8))->f10 >> 20;
+		s32 route_end_z = Object_GetById(8)->z.fixed >> 20;
 		s32 route_x = actor_x - 1;
 
 		Engine_MapCopyCellAttributes(route_x, actor_z, 3, 1, route_x, route_end_z);
@@ -1054,9 +946,9 @@ void UpdateEscapeRouteForActorPositions(void)
 
 void UpdateActor8ReturnRoute(void)
 {
-	s32 x = ((Obj *)Object_GetById(8))->f08 >> 20;
-	s32 y = ((Obj *)Object_GetById(8))->f10 >> 20;
-	s32 z = ((Obj *)Object_GetById(12))->f08 >> 20;
+	s32 x = Object_GetById(8)->x.fixed >> 20;
+	s32 y = Object_GetById(8)->z.fixed >> 20;
+	s32 z = Object_GetById(12)->x.fixed >> 20;
 
 	if (y == 7)
 	{
@@ -1088,7 +980,7 @@ void UpdateActor8ReturnRoute(void)
 	}
 	Engine_TaskWait(2);
 	{
-		s32 k = ((Obj *)Object_GetById(8))->f10 >> 20;
+		s32 k = Object_GetById(8)->z.fixed >> 20;
 		s32 m = x - 1;
 
 		Engine_MapCopyCellAttributes(m, y, 3, 1, m, k);
@@ -1098,10 +990,10 @@ void UpdateActor8ReturnRoute(void)
 
 void UpdateActor10RetreatRoute(void)
 {
-	s32 x = ((Obj *)Object_GetById(10))->f08 >> 20;
-	s32 y = ((Obj *)Object_GetById(10))->f10 >> 20;
-	s32 z = ((Obj *)Object_GetById(13))->f08 >> 20;
-	s32 w = ((Obj *)Object_GetById(15))->f08 >> 20;
+	s32 x = Object_GetById(10)->x.fixed >> 20;
+	s32 y = Object_GetById(10)->z.fixed >> 20;
+	s32 z = Object_GetById(13)->x.fixed >> 20;
+	s32 w = Object_GetById(15)->x.fixed >> 20;
 
 	if (y == 18)
 	{
@@ -1137,7 +1029,7 @@ void UpdateActor10RetreatRoute(void)
 	}
 	Engine_TaskWait(2);
 	{
-		s32 k = ((Obj *)Object_GetById(10))->f10 >> 20;
+		s32 k = Object_GetById(10)->z.fixed >> 20;
 		s32 m = x - 1;
 
 		Engine_MapCopyCellAttributes(m, y, 3, 1, m, k);
@@ -1147,8 +1039,8 @@ void UpdateActor10RetreatRoute(void)
 
 void UpdateActor10AdvanceRoute(void)
 {
-	s32 x = ((Obj *)Object_GetById(10))->f08 >> 20;
-	s32 y = ((Obj *)Object_GetById(10))->f10 >> 20;
+	s32 x = Object_GetById(10)->x.fixed >> 20;
+	s32 y = Object_GetById(10)->z.fixed >> 20;
 
 	if (y != 18)
 	{
@@ -1163,7 +1055,7 @@ void UpdateActor10AdvanceRoute(void)
 		}
 		Engine_TaskWait(2);
 		{
-			s32 k = ((Obj *)Object_GetById(10))->f10 >> 20;
+			s32 k = Object_GetById(10)->z.fixed >> 20;
 			s32 m = x - 1;
 
 			Engine_MapCopyCellAttributes(m, y, 3, 1, m, k);
@@ -1174,14 +1066,14 @@ void UpdateActor10AdvanceRoute(void)
 
 void UpdateActor11WestRoute(void)
 {
-	s32 x = ((Obj *)Object_GetById(11))->f08 >> 20;
-	s32 y = ((Obj *)Object_GetById(11))->f10 >> 20;
+	s32 x = Object_GetById(11)->x.fixed >> 20;
+	s32 y = Object_GetById(11)->z.fixed >> 20;
 
 	if (x != 30)
 	{
 		if (x == 34)
 		{
-			if ((((Obj *)Object_GetById(10))->f10 >> 20) == 18)
+			if ((Object_GetById(10)->z.fixed >> 20) == 18)
 			{
 				return;
 			}
@@ -1189,7 +1081,7 @@ void UpdateActor11WestRoute(void)
 		}
 		else if (x == 36)
 		{
-			if ((((Obj *)Object_GetById(10))->f10 >> 20) == 18)
+			if ((Object_GetById(10)->z.fixed >> 20) == 18)
 			{
 				PositionSceneActorPair(11, -32, 0);
 			}
@@ -1200,7 +1092,7 @@ void UpdateActor11WestRoute(void)
 		}
 		Engine_TaskWait(2);
 		{
-			s32 k = ((Obj *)Object_GetById(11))->f08 >> 20;
+			s32 k = Object_GetById(11)->x.fixed >> 20;
 			s32 m = y - 1;
 
 			Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
@@ -1211,14 +1103,14 @@ void UpdateActor11WestRoute(void)
 
 void UpdateActor11EastRoute(void)
 {
-	s32 x = ((Obj *)Object_GetById(11))->f08 >> 20;
-	s32 y = ((Obj *)Object_GetById(11))->f10 >> 20;
+	s32 x = Object_GetById(11)->x.fixed >> 20;
+	s32 y = Object_GetById(11)->z.fixed >> 20;
 
 	if (x != 36)
 	{
 		if (x == 30)
 		{
-			if ((((Obj *)Object_GetById(10))->f10 >> 20) == 18)
+			if ((Object_GetById(10)->z.fixed >> 20) == 18)
 			{
 				return;
 			}
@@ -1230,7 +1122,7 @@ void UpdateActor11EastRoute(void)
 		}
 		Engine_TaskWait(2);
 		{
-			s32 k = ((Obj *)Object_GetById(11))->f08 >> 20;
+			s32 k = Object_GetById(11)->x.fixed >> 20;
 			s32 m = y - 1;
 
 			Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
@@ -1241,8 +1133,8 @@ void UpdateActor11EastRoute(void)
 
 void UpdateActor12WestRoute(void)
 {
-	s32 x = ((Obj *)Object_GetById(12))->f08 >> 20;
-	s32 y = ((Obj *)Object_GetById(12))->f10 >> 20;
+	s32 x = Object_GetById(12)->x.fixed >> 20;
+	s32 y = Object_GetById(12)->z.fixed >> 20;
 
 	if (x == 36)
 	{
@@ -1260,7 +1152,7 @@ void UpdateActor12WestRoute(void)
 	}
 	Engine_TaskWait(2);
 	{
-		s32 k = ((Obj *)Object_GetById(12))->f08 >> 20;
+		s32 k = Object_GetById(12)->x.fixed >> 20;
 		s32 m = y - 1;
 
 		Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
@@ -1270,8 +1162,8 @@ void UpdateActor12WestRoute(void)
 
 void UpdateActor12EastRoute(void)
 {
-	s32 x = ((Obj *)Object_GetById(12))->f08 >> 20;
-	s32 y = ((Obj *)Object_GetById(12))->f10 >> 20;
+	s32 x = Object_GetById(12)->x.fixed >> 20;
+	s32 y = Object_GetById(12)->z.fixed >> 20;
 
 	if (x == 24)
 	{
@@ -1288,7 +1180,7 @@ void UpdateActor12EastRoute(void)
 	}
 	Engine_TaskWait(2);
 	{
-		s32 k = ((Obj *)Object_GetById(12))->f08 >> 20;
+		s32 k = Object_GetById(12)->x.fixed >> 20;
 		s32 m = y - 1;
 
 		Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
@@ -1298,10 +1190,10 @@ void UpdateActor12EastRoute(void)
 
 void UpdateActor13WestRoute(void)
 {
-	s32 x = ((Obj *)Object_GetById(13))->f08 >> 20;
-	s32 y = ((Obj *)Object_GetById(13))->f10 >> 20;
-	s32 z = ((Obj *)Object_GetById(10))->f10 >> 20;
-	s32 w = ((Obj *)Object_GetById(15))->f08 >> 20;
+	s32 x = Object_GetById(13)->x.fixed >> 20;
+	s32 y = Object_GetById(13)->z.fixed >> 20;
+	s32 z = Object_GetById(10)->z.fixed >> 20;
+	s32 w = Object_GetById(15)->x.fixed >> 20;
 
 	if (x == 36)
 	{
@@ -1372,7 +1264,7 @@ void UpdateActor13WestRoute(void)
 	}
 	Engine_TaskWait(2);
 	{
-		s32 k = ((Obj *)Object_GetById(13))->f08 >> 20;
+		s32 k = Object_GetById(13)->x.fixed >> 20;
 		s32 m = y - 1;
 
 		Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
@@ -1382,8 +1274,8 @@ void UpdateActor13WestRoute(void)
 
 void UpdateActor13EastRoute(void)
 {
-	s32 x = ((Obj *)Object_GetById(13))->f08 >> 20;
-	s32 y = ((Obj *)Object_GetById(13))->f10 >> 20;
+	s32 x = Object_GetById(13)->x.fixed >> 20;
+	s32 y = Object_GetById(13)->z.fixed >> 20;
 
 	Object_GetById(15);
 	if (x == 25)
@@ -1409,7 +1301,7 @@ void UpdateActor13EastRoute(void)
 	}
 	Engine_TaskWait(2);
 	{
-		s32 k = ((Obj *)Object_GetById(13))->f08 >> 20;
+		s32 k = Object_GetById(13)->x.fixed >> 20;
 		s32 m = y - 1;
 
 		Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
@@ -1419,10 +1311,10 @@ void UpdateActor13EastRoute(void)
 
 void UpdateActor15WestRoute(void)
 {
-	s32 x = ((Obj *)Object_GetById(15))->f08 >> 20;
-	s32 y = ((Obj *)Object_GetById(15))->f10 >> 20;
-	s32 z = ((Obj *)Object_GetById(8))->f10 >> 20;
-	s32 w = ((Obj *)Object_GetById(10))->f10 >> 20;
+	s32 x = Object_GetById(15)->x.fixed >> 20;
+	s32 y = Object_GetById(15)->z.fixed >> 20;
+	s32 z = Object_GetById(8)->z.fixed >> 20;
+	s32 w = Object_GetById(10)->z.fixed >> 20;
 
 	if (x == 35)
 	{
@@ -1467,7 +1359,7 @@ void UpdateActor15WestRoute(void)
 	}
 	Engine_TaskWait(2);
 	{
-		s32 k = ((Obj *)Object_GetById(15))->f08 >> 20;
+		s32 k = Object_GetById(15)->x.fixed >> 20;
 		s32 m = y - 1;
 
 		Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
@@ -1477,10 +1369,10 @@ void UpdateActor15WestRoute(void)
 
 void UpdateActor15EastRoute(void)
 {
-	s32 x = ((Obj *)Object_GetById(15))->f08 >> 20;
-	s32 y = ((Obj *)Object_GetById(15))->f10 >> 20;
-	s32 z = ((Obj *)Object_GetById(10))->f10 >> 20;
-	s32 w = ((Obj *)Object_GetById(13))->f08 >> 20;
+	s32 x = Object_GetById(15)->x.fixed >> 20;
+	s32 y = Object_GetById(15)->z.fixed >> 20;
+	s32 z = Object_GetById(10)->z.fixed >> 20;
+	s32 w = Object_GetById(13)->x.fixed >> 20;
 
 	if (x == 24)
 	{
@@ -1548,7 +1440,7 @@ void UpdateActor15EastRoute(void)
 	}
 	Engine_TaskWait(2);
 	{
-		s32 k = ((Obj *)Object_GetById(15))->f08 >> 20;
+		s32 k = Object_GetById(15)->x.fixed >> 20;
 		s32 m = y - 1;
 
 		Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
@@ -1558,9 +1450,9 @@ void UpdateActor15EastRoute(void)
 
 void UpdateActor17SouthRoute(void)
 {
-	s32 x = ((Obj *)Object_GetById(17))->f08 >> 20;
-	s32 y = ((Obj *)Object_GetById(17))->f10 >> 20;
-	s32 z = ((Obj *)Object_GetById(19))->f08 >> 20;
+	s32 x = Object_GetById(17)->x.fixed >> 20;
+	s32 y = Object_GetById(17)->z.fixed >> 20;
+	s32 z = Object_GetById(19)->x.fixed >> 20;
 
 	if (y == 19)
 	{
@@ -1587,7 +1479,7 @@ void UpdateActor17SouthRoute(void)
 	}
 	Engine_TaskWait(2);
 	{
-		s32 k = ((Obj *)Object_GetById(17))->f10 >> 20;
+		s32 k = Object_GetById(17)->z.fixed >> 20;
 		s32 m = x - 1;
 
 		Engine_MapCopyCellAttributes(m, y, 3, 1, m, k);
@@ -1597,8 +1489,8 @@ void UpdateActor17SouthRoute(void)
 
 void UpdateActor17NorthRoute(void)
 {
-	s32 x = ((Obj *)Object_GetById(17))->f08 >> 20;
-	s32 y = ((Obj *)Object_GetById(17))->f10 >> 20;
+	s32 x = Object_GetById(17)->x.fixed >> 20;
+	s32 y = Object_GetById(17)->z.fixed >> 20;
 
 	if (y == 15)
 	{
@@ -1614,7 +1506,7 @@ void UpdateActor17NorthRoute(void)
 	}
 	Engine_TaskWait(2);
 	{
-		s32 k = ((Obj *)Object_GetById(17))->f10 >> 20;
+		s32 k = Object_GetById(17)->z.fixed >> 20;
 
 		s32 m = x - 1;
 

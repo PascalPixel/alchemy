@@ -18,17 +18,8 @@
 #include "field_effect.h"
 #include "text/msg_ids.h"
 
-#define NULL ((void *)0)
-
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/create.c"
-
-union KanpanSlot
-{
-	s32	  w;
-	u16	  h[2];
-	void *p;
-};
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/effect/move.c"

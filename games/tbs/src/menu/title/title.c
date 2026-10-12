@@ -36,8 +36,6 @@
 #include "call.h"
 #include "field_scene.h"
 
-#define DMA3 (REG_DMA3)
-
 extern u16 gBgScroll[];
 
 struct TitleWork
@@ -163,7 +161,7 @@ void Title_LoadSprites(s32 unused)
 	res = Resource_GetTableEntry((s32)&ResourceId_IntroTilesB);
 	if (gTitleVramBlock == -1)
 		gTitleVramBlock = Resource_FindFreeEntry();
-	Dma_Set(res, (void *)0x05000200, 0x84000070, DMA3);
+	Dma_Set(res, (void *)0x05000200, 0x84000070, REG_DMA3);
 	res += 0x1c0;
 	Resource_DecodeType01(res, buffer);
 	Vram_Load(gTitleVramBlock, 0x1e00, buffer + 0x7800);
@@ -172,10 +170,10 @@ void Title_LoadSprites(s32 unused)
 	if (gTitleVramBlock == -1)
 		gTitleVramBlock = Resource_FindFreeEntry();
 	Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), buffer);
-	Dma_Set(buffer, (void *)0x050003e0, 0x84000008, DMA3);
+	Dma_Set(buffer, (void *)0x050003e0, 0x84000008, REG_DMA3);
 	Vram_Load(gTitleVramBlock, 0x500, buffer + 32);
 #endif
-	dma = DMA3;
+	dma = REG_DMA3;
 	while (dma[2] & 0x80000000)
 		;
 	MemFree(buffer);
@@ -289,10 +287,10 @@ void Title_LoadBackground(void)
 	gBgScroll[5] = 0;
 	blank = 0x1ff;
 	res = Resource_GetTableEntry(id);
-	Dma_Set(res, (void *)0x05000000, 0x84000070, DMA3);
+	Dma_Set(res, (void *)0x05000000, 0x84000070, REG_DMA3);
 	res += 0x1c0;
 	Value2(Resource_DecodeType01, (s32)res, (s32)Ram_MapCellBuffer);
-	Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, DMA3);
+	Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, REG_DMA3);
 	map = (u16 *)0x06003000;
 	tile = 0x1a0;
 	y = 0;
@@ -321,7 +319,7 @@ col:
 		scroll->x = 0;
 		scroll++;
 	}
-	Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, DMA3);
+	Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, REG_DMA3);
 	((struct TitleWork *)gMapWork[0])->mode = 0x1400;
 }
 

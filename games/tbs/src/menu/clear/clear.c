@@ -44,9 +44,6 @@ struct ClearWork
 	u16 mode;
 };
 
-#undef DMA3
-#define DMA3 (REG_DMA3)
-
 u8 *SceneData_GetScriptTable(void)
 {
 	return Clear_ScriptTable;
@@ -89,10 +86,10 @@ void Clear_LoadBackground(void)
 	gBgScroll[5] = 0;
 	blank = 0x1ff;
 	res = Engine_ResourceGetTableEntry(id);
-	Dma_Set(res, (void *)0x05000000, 0x84000070, DMA3);
+	Dma_Set(res, (void *)0x05000000, 0x84000070, REG_DMA3);
 	res += 0x1c0;
 	Value2(Resource_DecodeType01, (s32)res, (s32)Ram_MapCellBuffer);
-	Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, DMA3);
+	Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, REG_DMA3);
 	map = (u16 *)0x06003000;
 	tile = 0x1a0;
 	y = 0;
@@ -121,7 +118,7 @@ col:
 		scroll->x = 0;
 		scroll++;
 	}
-	Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, DMA3);
+	Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, REG_DMA3);
 	((struct ClearWork *)gMapWork[0])->mode = 0x1400;
 	{
 		struct FieldActor *leader;
@@ -316,7 +313,6 @@ s32							   __modsi3();
 s32 SaveMenu_Run(void)
 {
 	s32 page_count;
-	s32 rec;
 	s32 encoded_size;
 	s32 page_window;
 	s32 rec5;
@@ -325,7 +321,6 @@ s32 SaveMenu_Run(void)
 	s32 value;
 	s32 v5;
 	s32 v7;
-	s32 count;
 	s32 v6;
 	s32 link_message;
 	s32 v1;
@@ -333,7 +328,6 @@ s32 SaveMenu_Run(void)
 	s32 n;
 	s32 page_message;
 	s32 page;
-	s32 x;
 	s32 started;
 	s32 help_window;
 	s32 heading_window;
@@ -674,7 +668,6 @@ L_0200057a:;
 			Engine_TaskWait(1);
 		}
 	}
-L_0200095e:;
 	if (v4 == 0)
 	{
 		RenderOutput_PrepareForRedraw(v6);
@@ -852,8 +845,8 @@ L_020009cc:;
 					v5 = 0;
 					UiWindow_SetTilemapEntry(page_window, 0xf128, (17 - (s32)page_count), -1, 0);
 					UiWindow_SetTilemapEntry(page_window, 0xf129, 18, -1, 0);
-					UiRender_MarkRow(
-						(struct UiRenderWork *)gWindowWork[0], *(u16 *)(page_window + 14));
+					UiRender_MarkRow((struct UiRenderWork *)gWindowWork[0],
+						((struct UiWindow *)page_window)->y);
 				}
 				v6 = page * 50 + 50;
 				if (v6 > encoded_size)
@@ -899,7 +892,6 @@ L_02000c96:;
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(60);
-L_Return:;
 	return 0;
 }
 

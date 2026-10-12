@@ -4,6 +4,7 @@
 #include "types.h"
 #include "field_scene.h"
 
+struct FieldActor;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
@@ -29,7 +30,7 @@ void FieldScene_RunActor8AtCell24Sequence(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 FieldScene_PlaceActor8OnEntry(void);
 void SceneEffect_RotateRecord(EffectWork_020004c4 *work);
-void SceneActor_WaitObjectBelowHeight(u8 *object, s32 height);
+void SceneActor_WaitObjectBelowHeight(struct FieldActor *object, s32 height);
 void SceneEffect_RunActorBurst(s32 no);
 extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];

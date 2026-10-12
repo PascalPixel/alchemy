@@ -33,6 +33,26 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void Scene_JoinRodSearch(void);
+static void KuupuappuHeya_RunBranchingDialogueScene(void);
+static void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 next, const u8 *desc);
+static void SceneActor_FaceActors24And25TowardActorZero(void);
+static void FieldScene_RunLateSequence(void);
+static void KuupuappuHeya_RunVaultEvent(void);
+static void RunEventScript01(void);
+static void RunDialoguePromptScene(void);
+static void KuupuappuHeya_OpenWindowTransition(void);
+static void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
+static void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
+static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
+static void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
+static void SceneEffect_ApplyPairWithValue141(s32 a, s32 b);
+static void SceneState_SetValue2ThenFinish(void);
+static void OverlayObject_ConfigureObject22WithResource17(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z);
+static void KuupuappuHeya_UpdateActorStops(void);
+static void KuupuappuHeya_StartActorStops(void);
+
 // 戦闘開始の種類 (battle/party/party.c と同じ)
 
 u8 *SceneData_GetScriptTable(void)
@@ -70,7 +90,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 }
 
 #if !EDITION_INTERNATIONAL
-s32 KuupuappuHeya_TryJumpTo(struct FixedPointPosition *pos)
+static s32 KuupuappuHeya_TryJumpTo(struct FixedPointPosition *pos)
 {
 	struct FieldActor *obj;
 	u8				  *flags;
@@ -104,7 +124,7 @@ s32 KuupuappuHeya_TryJumpTo(struct FixedPointPosition *pos)
 }
 #endif
 
-void ActorPresentation_SetSceneCellByAngle(void)
+static void ActorPresentation_SetSceneCellByAngle(void)
 {
 	s32 x;
 	s32 z;
@@ -148,7 +168,7 @@ void ActorPresentation_SetSceneCellByAngle(void)
 	}
 }
 
-void FieldScene_RunObjectTwentySixPositionCheck(void)
+static void FieldScene_RunObjectTwentySixPositionCheck(void)
 {
 	struct FieldActor *obj;
 	s32				   x;
@@ -166,7 +186,7 @@ void FieldScene_RunObjectTwentySixPositionCheck(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorNineteenAngleDialogue(void)
+static void FieldScene_RunActorNineteenAngleDialogue(void)
 {
 	s32 v = Object_GetById(0)->facing;
 
@@ -190,7 +210,7 @@ void FieldScene_RunActorNineteenAngleDialogue(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorTwentyAngleDialogue(void)
+static void FieldScene_RunActorTwentyAngleDialogue(void)
 {
 	s32 v = Object_GetById(0)->facing;
 
@@ -214,7 +234,7 @@ void FieldScene_RunActorTwentyAngleDialogue(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorTwentyThreeAngleDialogue(void)
+static void FieldScene_RunActorTwentyThreeAngleDialogue(void)
 {
 	s32 v = Object_GetById(0)->facing;
 
@@ -238,7 +258,7 @@ void FieldScene_RunActorTwentyThreeAngleDialogue(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorEighteenConditionalScene(void)
+static void FieldScene_RunActorEighteenConditionalScene(void)
 {
 	Engine_EventBegin();
 	if (PartyInventory_HasSpace() == 0)
@@ -256,7 +276,7 @@ void FieldScene_RunActorEighteenConditionalScene(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_ShowLine12BB(void)
+static void SceneDialogue_ShowLine12BB(void)
 {
 #if EDITION_INTERNATIONAL
 	Battle_InitializeRenderObject();
@@ -265,7 +285,7 @@ void SceneDialogue_ShowLine12BB(void)
 	Engine_EventShowMessage(GERALD, 0);
 }
 
-void SceneDialogue_ShowEmptyBarrel(void)
+static void SceneDialogue_ShowEmptyBarrel(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgKuupuappuRobinCheckedBarrel, 1);
@@ -273,7 +293,7 @@ void SceneDialogue_ShowEmptyBarrel(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_ShowEmptyChest(void)
+static void SceneDialogue_ShowEmptyChest(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgKuupuappuRobinCheckedChest, 1);
@@ -297,14 +317,14 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gKuupuappuHeyaEvents;
 }
 
-void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x)
+static void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x)
 {
 	Engine_ActorSetAnimation(x, 1);
 	SceneActor_SetPairZeroAndValue(x, 0, 2);
 	Engine_EventShowMessage(x, 0);
 }
 
-void SceneState_RunGuardedActorStep(s32 x)
+static void SceneState_RunGuardedActorStep(s32 x)
 {
 	u8 *flag = &Object_GetById(x)->paused;
 	s32 zero = 0;
@@ -318,7 +338,7 @@ void SceneState_RunGuardedActorStep(s32 x)
 	*flag = zero;
 }
 
-void SceneDialogue_PromptAndCountSkip(s32 x)
+static void SceneDialogue_PromptAndCountSkip(s32 x)
 {
 	SceneActor_SetPairZeroAndValue(x, 0, 2);
 	Engine_EventOpenMessage(x, 0);
@@ -329,7 +349,7 @@ void SceneDialogue_PromptAndCountSkip(s32 x)
 	Engine_EventShowMessage(x, 0);
 }
 
-void SceneDialogue_RunActorElevenDialogue(void)
+static void SceneDialogue_RunActorElevenDialogue(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuMisterFunSeeStrangeNew);
@@ -338,7 +358,7 @@ void SceneDialogue_RunActorElevenDialogue(void)
 	Engine_EventEnd();
 }
 
-void KuupuappuHeya_TalkAboutIvan(void)
+static void KuupuappuHeya_TalkAboutIvan(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuIvanHasGreatPowersWouldnt);
@@ -347,7 +367,7 @@ void KuupuappuHeya_TalkAboutIvan(void)
 	Engine_EventEnd();
 }
 
-void SceneState_BranchOnSlotZeroFacingAndFlag855(void)
+static void SceneState_BranchOnSlotZeroFacingAndFlag855(void)
 {
 	s32 value = Object_GetById(0)->facing;
 
@@ -369,7 +389,7 @@ void SceneState_BranchOnSlotZeroFacingAndFlag855(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor9FlaggedLine(void)
+static void SceneDialogue_RunActor9FlaggedLine(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
@@ -384,7 +404,7 @@ void SceneDialogue_RunActor9FlaggedLine(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorTwelveFlaggedDialogue(void)
+static void SceneDialogue_RunActorTwelveFlaggedDialogue(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) != 0)
@@ -399,7 +419,7 @@ void SceneDialogue_RunActorTwelveFlaggedDialogue(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFlag856DialogueBranch(void)
+static void FieldScene_RunFlag856DialogueBranch(void)
 {
 	s32 g;
 	g = 0x851;
@@ -427,7 +447,7 @@ void FieldScene_RunFlag856DialogueBranch(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_ShowLine128E(void)
+static void SceneDialogue_ShowLine128E(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuThoseThreeStrangersSureHave);
@@ -435,7 +455,7 @@ void SceneDialogue_ShowLine128E(void)
 	Engine_EventEnd();
 }
 
-void SceneActor_StepActor24AnimationByFacing(void)
+static void SceneActor_StepActor24AnimationByFacing(void)
 {
 	struct FieldActor *p;
 	s16				  *q;
@@ -494,7 +514,7 @@ static inline void KuupuappuHeya_WalkOn(struct FieldActor *actor, s32 row, s32 h
 	actor->timer = actor->timer - half * 2 + turn;
 }
 
-void KuupuappuHeya_RunActor25Response(void)
+static void KuupuappuHeya_RunActor25Response(void)
 {
 	struct FieldActor *actor;
 	u32				   facing;
@@ -573,7 +593,7 @@ struct StopRecord
 	u8 unknown_00[16];
 };
 
-void SceneDialogue_RunActor10Line(void)
+static void SceneDialogue_RunActor10Line(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuDidThoseThievesComeFrom);
@@ -581,7 +601,7 @@ void SceneDialogue_RunActor10Line(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor11Line(void)
+static void SceneDialogue_RunActor11Line(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuMyFatherWorriedAboutThose);
@@ -589,7 +609,7 @@ void SceneDialogue_RunActor11Line(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor14Line(void)
+static void SceneDialogue_RunActor14Line(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuHeardDefeatedThoseThieves);
@@ -597,7 +617,7 @@ void SceneDialogue_RunActor14Line(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene383SequenceC(void)
+static void FieldScene_RunScene383SequenceC(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x857) == 0)
@@ -635,7 +655,7 @@ void FieldScene_RunScene383SequenceC(void)
 done:;
 }
 
-void KuupuappuHeya_OfferBone(void)
+static void KuupuappuHeya_OfferBone(void)
 {
 	Engine_EventBegin();
 	SceneActor_SetPairZeroAndValue(18, 0, 2);
@@ -681,7 +701,7 @@ L_020009ec:;
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorNineFlaggedDialogue(void)
+static void SceneDialogue_RunActorNineFlaggedDialogue(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
@@ -696,7 +716,7 @@ void SceneDialogue_RunActorNineFlaggedDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorElevenFlaggedDialogue(void)
+static void SceneDialogue_RunActorElevenFlaggedDialogue(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
@@ -711,7 +731,7 @@ void SceneDialogue_RunActorElevenFlaggedDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_ShowLine124EOr135E(void)
+static void SceneDialogue_ShowLine124EOr135E(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
@@ -726,7 +746,7 @@ void SceneDialogue_ShowLine124EOr135E(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor16FlaggedLine(void)
+static void SceneDialogue_RunActor16FlaggedLine(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
@@ -741,7 +761,7 @@ void SceneDialogue_RunActor16FlaggedLine(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorEighteenBranchedDialogue(void)
+static void SceneDialogue_RunActorEighteenBranchedDialogue(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
@@ -760,7 +780,7 @@ void SceneDialogue_RunActorEighteenBranchedDialogue(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunSetupSequence(void)
+static void FieldScene_RunSetupSequence(void)
 {
 
 	struct FieldActor *record;
@@ -860,7 +880,7 @@ L_join_setup_paths:;
 	Engine_EventEnd();
 }
 
-void Scene_JoinRodSearch(void)
+static void Scene_JoinRodSearch(void)
 {
 	s32 mes;
 
@@ -1018,7 +1038,7 @@ void Scene_JoinRodSearch(void)
 	Engine_EventShowMessage(2, 0);
 }
 
-void FieldScene_RunVaultClosingSequence(void)
+static void FieldScene_RunVaultClosingSequence(void)
 {
 	s32 base;
 
@@ -1205,13 +1225,13 @@ void FieldScene_RunVaultClosingSequence(void)
 	Engine_EventEnd();
 }
 
-void SceneState_SetValue123Mode11(void)
+static void SceneState_SetValue123Mode11(void)
 {
 	Engine_AudioPlayCue(123);
 	Engine_EventRequestExit(11);
 }
 
-void FieldScene_RunOpeningSequenceHead(void)
+static void FieldScene_RunOpeningSequenceHead(void)
 {
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
 	Actor_WalkTo(ACTOR_PARTY_LEADER, 728, 408);
@@ -1220,7 +1240,7 @@ void FieldScene_RunOpeningSequenceHead(void)
 	Engine_EventRequestExit(15);
 }
 
-void FieldScene_RunOpeningSequenceSecond(void)
+static void FieldScene_RunOpeningSequenceSecond(void)
 {
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 744, 408);
@@ -1236,7 +1256,7 @@ void FieldScene_RunOpeningSequenceSecond(void)
 	Engine_EventRequestExit(14);
 }
 
-void FieldScene_RunOpeningSequenceThird(void)
+static void FieldScene_RunOpeningSequenceThird(void)
 {
 
 	struct FieldActor *actor24;
@@ -1278,7 +1298,7 @@ void FieldScene_RunOpeningSequenceThird(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene383SequenceB(void)
+static void FieldScene_RunScene383SequenceB(void)
 {
 	struct FieldActor *actor24;
 	struct FieldActor *actor25;
@@ -1366,14 +1386,14 @@ void FieldScene_RunScene383SequenceB(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunSteps107And250(void)
+static void FieldScene_RunSteps107And250(void)
 {
 	Engine_GameFlagSet(0x107);
 	Engine_GameFlagSet(0x250);
 	KuupuappuHeya_StartActorStops();
 }
 
-void FieldScene_ConfigurePairedActors(void)
+static void FieldScene_ConfigurePairedActors(void)
 {
 	Engine_EventWait(30);
 	Engine_ActorRunRepeatedMotion(24, 1);
@@ -1407,7 +1427,7 @@ void FieldScene_ConfigurePairedActors(void)
 	Map_CopyCellAttributes(14, 48, 4, 1, 14, 44);
 }
 
-void FieldScene_SelectActorPair(void)
+static void FieldScene_SelectActorPair(void)
 {
 	u8				 *record;
 	s32				  actor;
@@ -1508,7 +1528,7 @@ void FieldScene_SelectActorPair(void)
 	Engine_EventEnd();
 }
 
-void KuupuappuHeya_RunBranchingDialogueScene(void)
+static void KuupuappuHeya_RunBranchingDialogueScene(void)
 {
 	u8 *record;
 	s32 v5;
@@ -1632,7 +1652,7 @@ void KuupuappuHeya_RunBranchingDialogueScene(void)
 	Engine_ActorSetPosition(2, 0, 0);
 }
 
-void KuupuappuHeya_PoseDialogueActors(void)
+static void KuupuappuHeya_PoseDialogueActors(void)
 {
 	switch (gEventWork->touched_trigger)
 	{
@@ -1675,7 +1695,7 @@ void KuupuappuHeya_PoseDialogueActors(void)
 	}
 }
 
-void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 next, const u8 *desc)
+static void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 next, const u8 *desc)
 {
 	struct FieldActor *rec = Object_GetById(actor);
 
@@ -1686,7 +1706,7 @@ void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 next, c
 	}
 }
 
-void SceneState_SetFlagByActorPosition(void)
+static void SceneState_SetFlagByActorPosition(void)
 {
 	struct FieldActor *p0 = Object_GetById(0);
 	s32				   rx = p0->x.fixed;
@@ -1855,7 +1875,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 	return 0;
 }
 
-void SceneActor_FaceActors24And25TowardActorZero(void)
+static void SceneActor_FaceActors24And25TowardActorZero(void)
 {
 	struct FieldActor *origin = Object_GetById(0);
 	struct FieldActor *first = Object_GetById(24);
@@ -1865,7 +1885,7 @@ void SceneActor_FaceActors24And25TowardActorZero(void)
 	second->facing = ArcTan2(origin->z.fixed - second->z.fixed, origin->x.fixed - second->x.fixed);
 }
 
-void FieldScene_RunLateSequence(void)
+static void FieldScene_RunLateSequence(void)
 {
 	struct FieldActor *record;
 	s32				   v5;
@@ -1920,7 +1940,7 @@ void FieldScene_RunLateSequence(void)
 	Engine_EventEnd();
 }
 
-void KuupuappuHeya_RunVaultEvent(void)
+static void KuupuappuHeya_RunVaultEvent(void)
 {
 
 	Actor_SetPosition(10, 0x3180000, 0x1a00000);
@@ -1970,12 +1990,12 @@ void KuupuappuHeya_RunVaultEvent(void)
 	BattleFx_SetWeightedResult(12, 5);
 }
 
-s32 KuupuappuHeya_GetIwanVenusDjinnCount(void)
+static s32 KuupuappuHeya_GetIwanVenusDjinnCount(void)
 {
 	return UnitGet(2)->djinn_owned_counts[0];
 }
 
-s32 OverlayObject_RunObjectTwoWhenFlagged(void)
+static s32 OverlayObject_RunObjectTwoWhenFlagged(void)
 {
 	u8 *state;
 
@@ -1990,7 +2010,7 @@ s32 OverlayObject_RunObjectTwoWhenFlagged(void)
 	}
 }
 
-void RunEventScript01(void)
+static void RunEventScript01(void)
 {
 	struct FieldActor *record;
 	struct EventWork  *work;
@@ -2201,7 +2221,7 @@ void RunEventScript01(void)
 	Engine_EventEnd();
 }
 
-void RunDialoguePromptScene(void)
+static void RunDialoguePromptScene(void)
 {
 	struct FieldActor *obj;
 	struct FieldActor *actor;
@@ -2632,7 +2652,7 @@ void RunDialoguePromptScene(void)
 	Engine_EventEnd();
 }
 
-void KuupuappuHeya_OpenWindowTransition(void)
+static void KuupuappuHeya_OpenWindowTransition(void)
 {
 	struct EventWork *state;
 
@@ -2643,32 +2663,32 @@ void KuupuappuHeya_OpenWindowTransition(void)
 	Engine_EventWait(1);
 }
 
-void SceneActor_SetModeZeroAndValue(s32 a, s32 b)
+static void SceneActor_SetModeZeroAndValue(s32 a, s32 b)
 {
 	Engine_EventShowMessage(a, 0);
 	Engine_EventWait(b);
 }
 
-void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c)
+static void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c)
 {
 	Engine_ActorFaceActor(a, b, 0);
 	Engine_EventWait(c);
 }
 
-void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
+static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 {
 	Engine_ActorFaceEachOther(a, b, 0);
 	Engine_EventWait(c);
 }
 
-void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c)
+static void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c)
 {
 	((void (*)(s32, s32, s32))Engine_ActorSetAnimation)(a, b, c);
 	ObjectMotion_WaitForAnimationChange(a);
 	Engine_EventWait(c);
 }
 
-void SceneEffect_ApplyPairWithValue141(s32 a, s32 b)
+static void SceneEffect_ApplyPairWithValue141(s32 a, s32 b)
 {
 	Engine_PsynergyBegin(141, 1);
 	Engine_PsynergySetTarget(a, b);
@@ -2677,14 +2697,14 @@ void SceneEffect_ApplyPairWithValue141(s32 a, s32 b)
 	Engine_TaskWait(1);
 }
 
-void SceneState_SetValue2ThenFinish(void)
+static void SceneState_SetValue2ThenFinish(void)
 {
 	Engine_PsynergyPlayEffect(2);
 	Engine_PsynergyLowerHands();
 	BattleEffect_CleanupSceneObjects();
 }
 
-void OverlayObject_ConfigureObject22WithResource17(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z)
+static void OverlayObject_ConfigureObject22WithResource17(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z)
 {
 	u8 *o;
 	u8 *q;
@@ -2716,7 +2736,7 @@ void OverlayObject_ConfigureObject22WithResource17(s32 a, s32 fixed_x, s32 fixed
 	}
 }
 
-u8 *SceneData_FindEntryAtPosition(s32 *o)
+static u8 *SceneData_FindEntryAtPosition(s32 *o)
 {
 	s32 x = (o[0] - 0x400000) >> 19;
 	s32 y = (o[2] - 0x2700000) >> 19;
@@ -2742,7 +2762,7 @@ u8 *SceneData_FindEntryAtPosition(s32 *o)
 	return ret;
 }
 
-struct StopRecord *KuupuappuHeya_SnapToNearestStop(struct StopSet *set, s16 *pos)
+static struct StopRecord *KuupuappuHeya_SnapToNearestStop(struct StopSet *set, s16 *pos)
 {
 	struct Stop *stop;
 	s32			 id;
@@ -2776,7 +2796,7 @@ struct StopRecord *KuupuappuHeya_SnapToNearestStop(struct StopSet *set, s16 *pos
 	return &((struct StopRecord *)KuupuappuHeya_Stops)[id];
 }
 
-s32 KuupuappuHeya_IsRecordNearPoint(s32 x, s32 y, s32 id)
+static s32 KuupuappuHeya_IsRecordNearPoint(s32 x, s32 y, s32 id)
 {
 	struct FieldActor *rec = Engine_ActorLookup(id);
 	s32				   target_x = rec->target_x;
@@ -2799,7 +2819,7 @@ s32 KuupuappuHeya_IsRecordNearPoint(s32 x, s32 y, s32 id)
 	return 0;
 }
 
-s32 KuupuappuHeya_IsActorNearPoint(s32 x, s32 z, s32 id)
+static s32 KuupuappuHeya_IsActorNearPoint(s32 x, s32 z, s32 id)
 {
 	struct FieldActor *actor = Engine_ActorLookup(id);
 	s32				   ax;
@@ -2818,7 +2838,7 @@ s32 KuupuappuHeya_IsActorNearPoint(s32 x, s32 z, s32 id)
 	return 0;
 }
 
-s32 SceneActor_CheckTileFreeOfKinds(u8 *p)
+static s32 SceneActor_CheckTileFreeOfKinds(u8 *p)
 {
 	s32 x;
 	s32 y;
@@ -2839,12 +2859,12 @@ s32 SceneActor_CheckTileFreeOfKinds(u8 *p)
 	return 0;
 }
 
-void SceneActor_ApplyScaledBytePairPosition(s32 a, u8 *p)
+static void SceneActor_ApplyScaledBytePairPosition(s32 a, u8 *p)
 {
 	Engine_ObjectSetPosition(a, (p[0] << 19) + 0x480000, 0, (p[1] << 19) + 0x2780000);
 }
 
-void KuupuappuHeya_UpdateActorStops(void)
+static void KuupuappuHeya_UpdateActorStops(void)
 {
 	struct FieldActor *leader;
 	struct FieldActor *actor;
@@ -2971,7 +2991,7 @@ void KuupuappuHeya_UpdateActorStops(void)
 	}
 }
 
-void KuupuappuHeya_StartActorStops(void)
+static void KuupuappuHeya_StartActorStops(void)
 {
 	Engine_EventBegin();
 	Camera_MoveTo(0xa80000, -1, 0x2900000, 1);

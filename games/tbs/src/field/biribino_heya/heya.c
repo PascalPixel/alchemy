@@ -38,7 +38,7 @@ s32 BiribinoHeya_PreparePlacements(void)
 	return (s32)gBiribinoHeyaPlacements;
 }
 
-void FieldScene_RunActor16MessageBranch(void)
+static void FieldScene_RunActor16MessageBranch(void)
 {
 
 	u32 dir;
@@ -66,7 +66,7 @@ void FieldScene_RunActor16MessageBranch(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor18MessageBranch(void)
+static void FieldScene_RunActor18MessageBranch(void)
 {
 
 	u32 dir;
@@ -99,7 +99,7 @@ u8 *SceneData_GetTertiaryTable(void)
 	return (u8 *)BiribinoHeya_TertiaryTable;
 }
 
-void FieldScene_RunActor17MessageBranch(void)
+static void FieldScene_RunActor17MessageBranch(void)
 {
 	u32 dir;
 
@@ -128,7 +128,7 @@ void FieldScene_RunActor17MessageBranch(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_ConfigureActor21Scene(void)
+static void FieldScene_ConfigureActor21Scene(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoImReallyWorriedAboutKolima);
@@ -138,7 +138,7 @@ void FieldScene_ConfigureActor21Scene(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor24Sequence(void)
+static void FieldScene_RunActor24Sequence(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoGrrr);
@@ -155,7 +155,7 @@ void FieldScene_RunActor24Sequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor27Sequence(void)
+static void FieldScene_RunActor27Sequence(void)
 {
 	void Actor_FaceDirection();
 
@@ -173,7 +173,7 @@ void FieldScene_RunActor27Sequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor8Message(void)
+static void FieldScene_RunActor8Message(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoDoKnowIfHolyTree);
@@ -181,7 +181,7 @@ void FieldScene_RunActor8Message(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor13Message(void)
+static void FieldScene_RunActor13Message(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoDoKnowSilk);
@@ -189,7 +189,7 @@ void FieldScene_RunActor13Message(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor19MessageBranch(void)
+static void FieldScene_RunActor19MessageBranch(void)
 {
 
 	u32 dir;
@@ -215,7 +215,7 @@ void FieldScene_RunActor19MessageBranch(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor21SequenceOnFlag300(void)
+static void FieldScene_RunActor21SequenceOnFlag300(void)
 {
 	void Actor_FaceDirection();
 
@@ -240,7 +240,7 @@ void FieldScene_RunActor21SequenceOnFlag300(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_ConfigureActor22Scene(void)
+static void FieldScene_ConfigureActor22Scene(void)
 {
 
 	Engine_EventBegin();
@@ -252,7 +252,7 @@ void FieldScene_ConfigureActor22Scene(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_ConfigureActor23Scene(void)
+static void FieldScene_ConfigureActor23Scene(void)
 {
 
 	Engine_EventBegin();
@@ -264,7 +264,7 @@ void FieldScene_ConfigureActor23Scene(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor27Message(void)
+static void FieldScene_RunActor27Message(void)
 {
 
 	Engine_EventBegin();
@@ -273,7 +273,7 @@ void FieldScene_RunActor27Message(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor10MessageBranch(void)
+static void FieldScene_RunActor10MessageBranch(void)
 {
 
 	Engine_EventBegin();

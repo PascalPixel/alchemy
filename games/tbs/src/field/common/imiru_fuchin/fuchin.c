@@ -33,6 +33,18 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void DialogueLayout_ConfigureGroupOne(void);
+static void DialogueLayout_ConfigureGroupTwo(void);
+static void DialogueLayout_ConfigureGroupThree(void);
+static void FieldScene_RunFlagBranchedLayoutSteps(void);
+static void FieldScene_RunScene39aSequenceA(void);
+static void ImiruFuchin_ApplyEntrySetup(void);
+static void ImiruFuchin_ApplyRoomLayout(void);
+static void ImiruFuchin_HopBy(s32 dx, s32 dz);
+static void ImiruFuchin_PlaceDragonsEye(void);
+static void SceneActor_StepSubjectAlongHeading(void);
+
 s32 ImiruFuchin_TrackLeader;
 
 struct CaveEffectScripts
@@ -64,12 +76,12 @@ LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetX, struct CaveDustOptions, target_scal
 LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetY, struct CaveDustOptions, target_scale_y,
 	(u32) & ((struct EffectOptions *)0)->target_scale_y);
 
-void SceneState_ApplyValues8And2And1(void)
+static void SceneState_ApplyValues8And2And1(void)
 {
 	BattleFx_RunPageEffectForSlot(8, 2, 1);
 }
 
-void SceneState_ApplyValues11And62(void)
+static void SceneState_ApplyValues11And62(void)
 {
 	BattleFx_SetPhaseRequest(0xB, 0x3E);
 }
@@ -150,7 +162,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gImiruFuchinPlacementsOther;
 }
 
-void SceneActor_PlacePairAtOffset(s32 id, s32 dx, s32 dz)
+static void SceneActor_PlacePairAtOffset(s32 id, s32 dx, s32 dz)
 {
 	struct FieldActor *actor;
 	struct FieldActor *other;
@@ -189,7 +201,7 @@ void SceneActor_PlacePairAtOffset(s32 id, s32 dx, s32 dz)
 	Engine_EventEnd();
 }
 
-void ActorPresentation_SetupActorEightForFlag301(void)
+static void ActorPresentation_SetupActorEightForFlag301(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -201,7 +213,7 @@ void ActorPresentation_SetupActorEightForFlag301(void)
 	DialogueLayout_ConfigureGroupOne();
 }
 
-void SceneState_RunSlot8OffsetStep(void)
+static void SceneState_RunSlot8OffsetStep(void)
 {
 	s32 offset = 112;
 
@@ -215,7 +227,7 @@ void SceneState_RunSlot8OffsetStep(void)
 	DialogueLayout_ConfigureGroupOne();
 }
 
-void FieldScene_RunActor9Transition302(void)
+static void FieldScene_RunActor9Transition302(void)
 {
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(9, 0, 0x40);
@@ -225,7 +237,7 @@ void FieldScene_RunActor9Transition302(void)
 	DialogueLayout_ConfigureGroupOne();
 }
 
-void ActorPresentation_SetupActorNineForFlag302(void)
+static void ActorPresentation_SetupActorNineForFlag302(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -236,7 +248,7 @@ void ActorPresentation_SetupActorNineForFlag302(void)
 	DialogueLayout_ConfigureGroupOne();
 }
 
-void ActorPresentation_SetupActorTenForFlag303(void)
+static void ActorPresentation_SetupActorTenForFlag303(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -247,7 +259,7 @@ void ActorPresentation_SetupActorTenForFlag303(void)
 	DialogueLayout_ConfigureGroupOne();
 }
 
-void FieldScene_RunActor10Transition303(void)
+static void FieldScene_RunActor10Transition303(void)
 {
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(0xA, 0, -64);
@@ -257,7 +269,7 @@ void FieldScene_RunActor10Transition303(void)
 	DialogueLayout_ConfigureGroupOne();
 }
 
-void FieldScene_RunActor8Transition304(void)
+static void FieldScene_RunActor8Transition304(void)
 {
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(8, 0x90, 0);
@@ -267,7 +279,7 @@ void FieldScene_RunActor8Transition304(void)
 	DialogueLayout_ConfigureGroupTwo();
 }
 
-void FieldScene_RunActor8Transition304And305(void)
+static void FieldScene_RunActor8Transition304And305(void)
 {
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(8, -144, 0);
@@ -278,7 +290,7 @@ void FieldScene_RunActor8Transition304And305(void)
 	DialogueLayout_ConfigureGroupTwo();
 }
 
-void FieldScene_RunActor8Transition305(void)
+static void FieldScene_RunActor8Transition305(void)
 {
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(8, -14, 0);
@@ -288,7 +300,7 @@ void FieldScene_RunActor8Transition305(void)
 	DialogueLayout_ConfigureGroupTwo();
 }
 
-void FieldScene_RunActor8FlaggedSequence(void)
+static void FieldScene_RunActor8FlaggedSequence(void)
 {
 	Engine_AudioPlayCue(0xF1);
 
@@ -309,7 +321,7 @@ void FieldScene_RunActor8FlaggedSequence(void)
 	DialogueLayout_ConfigureGroupTwo();
 }
 
-void ActorPresentation_SetupActorNineForFlag306(void)
+static void ActorPresentation_SetupActorNineForFlag306(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -320,7 +332,7 @@ void ActorPresentation_SetupActorNineForFlag306(void)
 	DialogueLayout_ConfigureGroupTwo();
 }
 
-void FieldScene_RunActor9Flag306Sequence(void)
+static void FieldScene_RunActor9Flag306Sequence(void)
 {
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(9, 0, -64);
@@ -330,7 +342,7 @@ void FieldScene_RunActor9Flag306Sequence(void)
 	DialogueLayout_ConfigureGroupTwo();
 }
 
-void ActorPresentation_SetupActorTenForFlag307(void)
+static void ActorPresentation_SetupActorTenForFlag307(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -342,7 +354,7 @@ void ActorPresentation_SetupActorTenForFlag307(void)
 	DialogueLayout_ConfigureGroupTwo();
 }
 
-void FieldScene_RunActorTenDepthSequence(void)
+static void FieldScene_RunActorTenDepthSequence(void)
 {
 
 	s32 depth = -96;
@@ -357,7 +369,7 @@ void FieldScene_RunActorTenDepthSequence(void)
 	DialogueLayout_ConfigureGroupTwo();
 }
 
-void FieldScene_PlaceActorEightByFlags(void)
+static void FieldScene_PlaceActorEightByFlags(void)
 {
 	Engine_AudioPlayCue(0xF1);
 
@@ -379,7 +391,7 @@ void FieldScene_PlaceActorEightByFlags(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void FieldScene_RunActor8Transition308And309(void)
+static void FieldScene_RunActor8Transition308And309(void)
 {
 	Engine_AudioPlayCue(0xF1);
 	Engine_GameFlagClear(0x308);
@@ -390,7 +402,7 @@ void FieldScene_RunActor8Transition308And309(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void ActorPresentation_SetupActorEightForFlags308And309Guarded(void)
+static void ActorPresentation_SetupActorEightForFlags308And309Guarded(void)
 {
 
 	if (Engine_GameFlagIsSet(0x310) != 0)
@@ -413,7 +425,7 @@ void ActorPresentation_SetupActorEightForFlags308And309Guarded(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void ActorPresentation_SetupActorEightForFlags308And309(void)
+static void ActorPresentation_SetupActorEightForFlags308And309(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -425,7 +437,7 @@ void ActorPresentation_SetupActorEightForFlags308And309(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void ActorPresentation_SetupActorNineForFlag30a(void)
+static void ActorPresentation_SetupActorNineForFlag30a(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -436,7 +448,7 @@ void ActorPresentation_SetupActorNineForFlag30a(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void FieldScene_RunActor9Transition30A(void)
+static void FieldScene_RunActor9Transition30A(void)
 {
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(9, 0x20, 0);
@@ -446,7 +458,7 @@ void FieldScene_RunActor9Transition30A(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void FieldScene_PlaceActorTenByFlags(void)
+static void FieldScene_PlaceActorTenByFlags(void)
 {
 	Engine_AudioPlayCue(241);
 	if (Engine_GameFlagIsSet(0x308) != 0)
@@ -470,7 +482,7 @@ void FieldScene_PlaceActorTenByFlags(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void FieldScene_RunFlag308DialogueBranch(void)
+static void FieldScene_RunFlag308DialogueBranch(void)
 {
 	Engine_AudioPlayCue(0xf1);
 
@@ -511,7 +523,7 @@ void FieldScene_RunFlag308DialogueBranch(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void FieldScene_RunActor10Transition30BTo30E(void)
+static void FieldScene_RunActor10Transition30BTo30E(void)
 {
 	Engine_AudioPlayCue(241);
 	SceneActor_PlacePairAtOffset(10, 0, -16);
@@ -524,7 +536,7 @@ void FieldScene_RunActor10Transition30BTo30E(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void FieldScene_RunFlag311DialogueBranch(void)
+static void FieldScene_RunFlag311DialogueBranch(void)
 {
 	Engine_AudioPlayCue(0xf1);
 	if (Engine_GameFlagIsSet(0x311) != 0)
@@ -557,7 +569,7 @@ void FieldScene_RunFlag311DialogueBranch(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void ActorPresentation_SetupActorTenForFlags30bAnd30d(void)
+static void ActorPresentation_SetupActorTenForFlags30bAnd30d(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -569,7 +581,7 @@ void ActorPresentation_SetupActorTenForFlags30bAnd30d(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void FieldScene_RunActor10Flags30bTo30eSequenceA(void)
+static void FieldScene_RunActor10Flags30bTo30eSequenceA(void)
 {
 	Engine_AudioPlayCue(241);
 	SceneActor_PlacePairAtOffset(10, 0, 64);
@@ -582,7 +594,7 @@ void FieldScene_RunActor10Flags30bTo30eSequenceA(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void FieldScene_RunActor10Flags30bTo30eSequenceB(void)
+static void FieldScene_RunActor10Flags30bTo30eSequenceB(void)
 {
 	Engine_AudioPlayCue(241);
 	SceneActor_PlacePairAtOffset(10, 0, -80);
@@ -595,7 +607,7 @@ void FieldScene_RunActor10Flags30bTo30eSequenceB(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void FieldScene_RunActor10Flags30bTo30eSequenceC(void)
+static void FieldScene_RunActor10Flags30bTo30eSequenceC(void)
 {
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(0xA, 0, 0x40);
@@ -608,7 +620,7 @@ void FieldScene_RunActor10Flags30bTo30eSequenceC(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void FieldScene_RunActorElevenFlaggedSteps(void)
+static void FieldScene_RunActorElevenFlaggedSteps(void)
 {
 	Engine_AudioPlayCue(0xf1);
 
@@ -641,7 +653,7 @@ void FieldScene_RunActorElevenFlaggedSteps(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void FieldScene_RunSteps30FTo312(void)
+static void FieldScene_RunSteps30FTo312(void)
 {
 	Engine_GameFlagClear(0x30F);
 	Engine_GameFlagClear(0x310);
@@ -649,7 +661,7 @@ void FieldScene_RunSteps30FTo312(void)
 	Engine_GameFlagClear(0x312);
 }
 
-void FieldScene_RunActor11Offset128Sequence(void)
+static void FieldScene_RunActor11Offset128Sequence(void)
 {
 	Engine_AudioPlayCue(241);
 	SceneActor_PlacePairAtOffset(11, 0, 128);
@@ -659,7 +671,7 @@ void FieldScene_RunActor11Offset128Sequence(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void FieldScene_RunActor11Flags30fTo312Sequence(void)
+static void FieldScene_RunActor11Flags30fTo312Sequence(void)
 {
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(0xB, 0, -16);
@@ -672,7 +684,7 @@ void FieldScene_RunActor11Flags30fTo312Sequence(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void ActorPresentation_SetupActorElevenAt0_112(void)
+static void ActorPresentation_SetupActorElevenAt0_112(void)
 {
 
 	Engine_AudioPlayCue(241);
@@ -683,7 +695,7 @@ void ActorPresentation_SetupActorElevenAt0_112(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void ActorPresentation_SetupActorElevenAt0_64(void)
+static void ActorPresentation_SetupActorElevenAt0_64(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -694,7 +706,7 @@ void ActorPresentation_SetupActorElevenAt0_64(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void ActorPresentation_SetupActorElevenAt0_80(void)
+static void ActorPresentation_SetupActorElevenAt0_80(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -705,7 +717,7 @@ void ActorPresentation_SetupActorElevenAt0_80(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void FieldScene_RunActor11Transition(void)
+static void FieldScene_RunActor11Transition(void)
 {
 	Engine_AudioPlayCue(241);
 	SceneActor_PlacePairAtOffset(11, 0, 48);
@@ -715,7 +727,7 @@ void FieldScene_RunActor11Transition(void)
 	DialogueLayout_ConfigureGroupThree();
 }
 
-void ActorPresentation_SetupActorEightForFlag313(void)
+static void ActorPresentation_SetupActorEightForFlag313(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -726,7 +738,7 @@ void ActorPresentation_SetupActorEightForFlag313(void)
 	FieldScene_RunFlagBranchedLayoutSteps();
 }
 
-void FieldScene_RunActor8Transition313(void)
+static void FieldScene_RunActor8Transition313(void)
 {
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(8, 0, -112);
@@ -736,7 +748,7 @@ void FieldScene_RunActor8Transition313(void)
 	FieldScene_RunFlagBranchedLayoutSteps();
 }
 
-void FieldScene_RunActor9Flag314Sequence(void)
+static void FieldScene_RunActor9Flag314Sequence(void)
 {
 	Engine_AudioPlayCue(0xF1);
 	SceneActor_PlacePairAtOffset(9, -128, 0);
@@ -746,7 +758,7 @@ void FieldScene_RunActor9Flag314Sequence(void)
 	FieldScene_RunFlagBranchedLayoutSteps();
 }
 
-void ActorPresentation_SetupActorNineForFlag314(void)
+static void ActorPresentation_SetupActorNineForFlag314(void)
 {
 
 	Engine_AudioPlayCue(0xF1);
@@ -757,7 +769,7 @@ void ActorPresentation_SetupActorNineForFlag314(void)
 	FieldScene_RunFlagBranchedLayoutSteps();
 }
 
-void ActorPresentation_SetupActorTenForFlag315(void)
+static void ActorPresentation_SetupActorTenForFlag315(void)
 {
 
 	Engine_AudioPlayCue(241);
@@ -768,7 +780,7 @@ void ActorPresentation_SetupActorTenForFlag315(void)
 	FieldScene_RunFlagBranchedLayoutSteps();
 }
 
-void FieldScene_RunActor10Flag315Sequence(void)
+static void FieldScene_RunActor10Flag315Sequence(void)
 {
 	Engine_AudioPlayCue(241);
 	SceneActor_PlacePairAtOffset(10, -160, 0);
@@ -778,34 +790,34 @@ void FieldScene_RunActor10Flag315Sequence(void)
 	FieldScene_RunFlagBranchedLayoutSteps();
 }
 
-void ActorPresentation_AdvanceActorEightStates(void)
+static void ActorPresentation_AdvanceActorEightStates(void)
 {
 
 	Engine_ActorSetAnimation(8, 1);
 	Engine_ActorSetAnimation(8, 2);
 }
 
-void FieldScene_SetActor9Values1And2(void)
+static void FieldScene_SetActor9Values1And2(void)
 {
 	Engine_ActorSetAnimation(9, 1);
 	Engine_ActorSetAnimation(9, 2);
 }
 
-void ActorPresentation_AdvanceActorTenStates(void)
+static void ActorPresentation_AdvanceActorTenStates(void)
 {
 
 	Engine_ActorSetAnimation(10, 1);
 	Engine_ActorSetAnimation(10, 2);
 }
 
-void SceneActor_SetActor11Values1And2(void)
+static void SceneActor_SetActor11Values1And2(void)
 {
 
 	Engine_ActorSetAnimation(11, 1);
 	Engine_ActorSetAnimation(11, 2);
 }
 
-struct FieldActor *OverlayObject_CreateAndInitialize(s32 a, s32 b, s32 c, s32 d)
+static struct FieldActor *OverlayObject_CreateAndInitialize(s32 a, s32 b, s32 c, s32 d)
 {
 	struct FieldActor *actor = Engine_ObjectCreate(d, a, b, c);
 
@@ -856,7 +868,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gImiruFuchinEventsOther;
 }
 
-void ImiruFuchin_TurnLeaderAndExit(void)
+static void ImiruFuchin_TurnLeaderAndExit(void)
 {
 	struct FieldActor *work;
 
@@ -869,12 +881,12 @@ void ImiruFuchin_TurnLeaderAndExit(void)
 	Engine_EventRequestExit(1);
 }
 
-void FieldScene_RunSingleStep(void)
+static void FieldScene_RunSingleStep(void)
 {
 	SceneActor_StepSubjectAlongHeading();
 }
 
-void SceneActor_PlaceAtTileAndMark(s32 id, s32 tile_x, s32 tile_z)
+static void SceneActor_PlaceAtTileAndMark(s32 id, s32 tile_x, s32 tile_z)
 {
 	struct FieldActor *actor = Object_GetById(id);
 
@@ -888,7 +900,7 @@ void SceneActor_PlaceAtTileAndMark(s32 id, s32 tile_x, s32 tile_z)
 	}
 }
 
-void DialogueLayout_ConfigureGroupOne(void)
+static void DialogueLayout_ConfigureGroupOne(void)
 {
 	{
 		s32 x = 8;
@@ -954,7 +966,7 @@ void DialogueLayout_ConfigureGroupOne(void)
 	}
 }
 
-void DialogueLayout_ConfigureGroupTwo(void)
+static void DialogueLayout_ConfigureGroupTwo(void)
 {
 	{
 		s32 x = 12;
@@ -1049,7 +1061,7 @@ void DialogueLayout_ConfigureGroupTwo(void)
 	}
 }
 
-void DialogueLayout_ConfigureGroupThree(void)
+static void DialogueLayout_ConfigureGroupThree(void)
 {
 	{
 		s32 x = 12, y = 21;
@@ -1186,7 +1198,7 @@ void DialogueLayout_ConfigureGroupThree(void)
 	}
 }
 
-void FieldScene_RunFlagBranchedLayoutSteps(void)
+static void FieldScene_RunFlagBranchedLayoutSteps(void)
 {
 
 	if ((((u16)gGameState.entrance - 1) << 16) <= (u32)0x10000)
@@ -1264,7 +1276,7 @@ void FieldScene_RunFlagBranchedLayoutSteps(void)
 	}
 }
 
-void ImiruFuchin_StartTrackingLeader(void)
+static void ImiruFuchin_StartTrackingLeader(void)
 {
 	if (ImiruFuchin_TrackLeader != 0)
 	{
@@ -1274,7 +1286,7 @@ void ImiruFuchin_StartTrackingLeader(void)
 	}
 }
 
-void ImiruFuchin_StopTrackingLeader(void)
+static void ImiruFuchin_StopTrackingLeader(void)
 {
 	if (ImiruFuchin_TrackLeader != 0)
 	{
@@ -1299,7 +1311,7 @@ s32 ImiruFuchin_ApplyEntryHook(void)
 	return 0;
 }
 
-void FieldScene_RunScene39aSequenceA(void)
+static void FieldScene_RunScene39aSequenceA(void)
 {
 	struct FieldActor *actor;
 
@@ -1312,7 +1324,7 @@ void FieldScene_RunScene39aSequenceA(void)
 	Engine_EventEnd();
 }
 
-void ImiruFuchin_ApplyEntrySetup(void)
+static void ImiruFuchin_ApplyEntrySetup(void)
 {
 	struct FieldActor *actor;
 	/* FAKEMATCH: needed to match: the shared zero/address-word lifetime avoids swapping registers and adding a heap-cell add. Literal zeros and the slot read in place: differ 51. */
@@ -1373,7 +1385,7 @@ void ImiruFuchin_ApplyEntrySetup(void)
 	}
 }
 
-void ImiruFuchin_ApplyRoomLayout(void)
+static void ImiruFuchin_ApplyRoomLayout(void)
 {
 	if (gGameState.scene == (s32)&SceneId_ImiruFuchin2)
 	{
@@ -1404,7 +1416,7 @@ void ImiruFuchin_ApplyRoomLayout(void)
 	}
 }
 
-void ImiruFuchin_HopOnTrigger(void)
+static void ImiruFuchin_HopOnTrigger(void)
 {
 	s32 trigger = gEventWork->touched_trigger;
 
@@ -1426,17 +1438,17 @@ void ImiruFuchin_HopOnTrigger(void)
 	}
 }
 
-void FieldScene_ApplyOffset0Neg32(void)
+static void FieldScene_ApplyOffset0Neg32(void)
 {
 	ImiruFuchin_HopBy(0, -32);
 }
 
-void SceneState_ApplyOffsetMinus32(void)
+static void SceneState_ApplyOffsetMinus32(void)
 {
 	ImiruFuchin_HopBy(-32, 0);
 }
 
-void ImiruFuchin_HopBy(s32 dx, s32 dz)
+static void ImiruFuchin_HopBy(s32 dx, s32 dz)
 {
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x28000, 0x14000);
@@ -1448,7 +1460,7 @@ void ImiruFuchin_HopBy(s32 dx, s32 dz)
 	Engine_EventEnd();
 }
 
-void ImiruFuchin_PlaceDragonsEye(void)
+static void ImiruFuchin_PlaceDragonsEye(void)
 {
 	struct FieldActor  *actor;
 	struct FieldSprite *sprite;
@@ -1473,7 +1485,7 @@ void ImiruFuchin_PlaceDragonsEye(void)
 	}
 }
 
-void ImiruFuchin_TakeDragonsEye(void)
+static void ImiruFuchin_TakeDragonsEye(void)
 {
 
 	Engine_EventBegin();
@@ -1494,7 +1506,7 @@ void ImiruFuchin_TakeDragonsEye(void)
 	Engine_EventEnd();
 }
 
-void OverlayObject_AdvancePositionByDelta(union FieldObject *raw)
+static void OverlayObject_AdvancePositionByDelta(union FieldObject *raw)
 {
 	struct FieldEffect *object = &raw->effect;
 
@@ -1505,7 +1517,7 @@ void OverlayObject_AdvancePositionByDelta(union FieldObject *raw)
 	object->scale_y += object->scale_rate_y;
 }
 
-s32 OverlayObject_ApplyValue15(s32 obj)
+static s32 OverlayObject_ApplyValue15(s32 obj)
 {
 	ObjectGroup_SetChildValue((struct FieldActor *)obj, 15);
 	return 0;
@@ -1565,7 +1577,7 @@ void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 veloc
 	}
 }
 
-void ImiruFuchin_BlowCaveMouthDust(void)
+static void ImiruFuchin_BlowCaveMouthDust(void)
 {
 	struct CaveDustOptions params;
 	s32					   phase;
@@ -1588,7 +1600,7 @@ void ImiruFuchin_BlowCaveMouthDust(void)
 		(const struct EffectOptions *)&params);
 }
 
-void FieldScene_RunFourPassCallbackSequence(void)
+static void FieldScene_RunFourPassCallbackSequence(void)
 {
 	u32 pass;
 
@@ -1634,28 +1646,28 @@ void FieldScene_RunFourPassCallbackSequence(void)
 	Engine_EventEnd();
 }
 
-void SceneState_SetValue17e1(void)
+static void SceneState_SetValue17e1(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFuchinDragonFlameShowsPath, 1);
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunLine17e2(void)
+static void SceneDialogue_RunLine17e2(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFuchinSecretKiRevealed, 1);
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScriptedStep17E3(void)
+static void FieldScene_RunScriptedStep17E3(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFuchinLightRevealsShadows, 1);
 	Engine_EventEnd();
 }
 
-void SceneState_SetWorkspace370ByFlag820(void)
+static void SceneState_SetWorkspace370ByFlag820(void)
 {
 
 	Engine_EventBegin();
@@ -1675,7 +1687,7 @@ void SceneState_SetWorkspace370ByFlag820(void)
 	Engine_EventEnd();
 }
 
-void ImiruFuchin_StartFadeIn(void)
+static void ImiruFuchin_StartFadeIn(void)
 {
 	struct BattleFxScene		  *scene;
 	struct DisplayTransitionState *transition;
@@ -1695,7 +1707,7 @@ void ImiruFuchin_StartFadeIn(void)
 	}
 }
 
-void SceneActor_TurnTowardTableAngle(union FieldObject *object)
+static void SceneActor_TurnTowardTableAngle(union FieldObject *object)
 {
 	struct FieldActor *actor = &object->actor;
 	s32				   timer;
@@ -1726,7 +1738,7 @@ void SceneActor_TurnTowardTableAngle(union FieldObject *object)
 	ObjectDispatch_ApplyValueToChildren(actor, 0x30);
 }
 
-void SceneActor_StepSubjectAlongHeading(void)
+static void SceneActor_StepSubjectAlongHeading(void)
 {
 
 	struct FieldActor	*subject;

@@ -34,16 +34,24 @@
 #include "heap_state.h"
 #include "field_effect.h"
 
+// 前方宣言
+static void ToretoPalette_CaptureBank(void);
+static void ToretoPalette_ApplyTint(void);
+static void ToretoHeya_PlayGesture(s32 gesture);
+static void ToretoHeya_SpawnSwirlSparks(void);
+static void ToretoHeya_ApplyFlaggedMapPatches(void);
+static void ToretoHeya_RunLandingDustScene(void);
+
 static u8	ToretoHeya_SparkOrigin[12];
 static u8	ToretoHeya_SparkCounter[4];
 static s16 *ToretoHeya_PaletteBuffer;
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -60,7 +68,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -148,7 +156,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gToretoHeyaPlacements;
 }
 
-void ToretoHeya_HandleFloorSwitch(s32 flag, s32 src_x, s32 src_y, s32 entrance)
+static void ToretoHeya_HandleFloorSwitch(s32 flag, s32 src_x, s32 src_y, s32 entrance)
 {
 	s32				   dest_x;
 	s32				   dest_y;
@@ -196,112 +204,112 @@ void ToretoHeya_HandleFloorSwitch(s32 flag, s32 src_x, s32 src_y, s32 entrance)
 		Engine_GameFlagSet(0x122);
 }
 
-void FieldScene_RunStep200(void)
+static void FieldScene_RunStep200(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x200, 64, 35, 21);
 }
 
-void FieldScene_RunStep201(void)
+static void FieldScene_RunStep201(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x201, 65, 35, 22);
 }
 
-void FieldScene_RunStep202(void)
+static void FieldScene_RunStep202(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x202, 66, 35, 23);
 }
 
-void FieldScene_RunStep203(void)
+static void FieldScene_RunStep203(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x203, 67, 35, 24);
 }
 
-void FieldScene_RunStep204(void)
+static void FieldScene_RunStep204(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x204, 68, 35, 25);
 }
 
-void FieldScene_RunStep205(void)
+static void FieldScene_RunStep205(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x205, 69, 35, 26);
 }
 
-void FieldScene_RunStep206(void)
+static void FieldScene_RunStep206(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x206, 70, 35, 27);
 }
 
-void FieldScene_RunStep207(void)
+static void FieldScene_RunStep207(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x207, 71, 35, 28);
 }
 
-void FieldScene_RunStep208(void)
+static void FieldScene_RunStep208(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x208, 72, 35, 29);
 }
 
-void FieldScene_RunStep209(void)
+static void FieldScene_RunStep209(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x209, 73, 35, 31);
 }
 
-void FieldScene_RunStep20a(void)
+static void FieldScene_RunStep20a(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x20a, 74, 35, 32);
 }
 
-void FieldScene_RunStep20b(void)
+static void FieldScene_RunStep20b(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x20b, 79, 35, 50);
 }
 
-void FieldScene_RunStep20c(void)
+static void FieldScene_RunStep20c(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x20c, 75, 35, 51);
 }
 
-void FieldScene_RunStep20d(void)
+static void FieldScene_RunStep20d(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x20d, 76, 35, 52);
 }
 
-void FieldScene_RunStep20e(void)
+static void FieldScene_RunStep20e(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x20e, 77, 35, 53);
 }
 
-void FieldScene_RunStep20f(void)
+static void FieldScene_RunStep20f(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x20f, 78, 35, 54);
 }
 
-void FieldScene_RunStep210(void)
+static void FieldScene_RunStep210(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x210, 80, 35, 55);
 }
 
-void FieldScene_RunStep211(void)
+static void FieldScene_RunStep211(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x211, 81, 35, 56);
 }
 
-void FieldScene_RunStep212(void)
+static void FieldScene_RunStep212(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x212, 82, 35, 57);
 }
 
-void FieldScene_RunStep213(void)
+static void FieldScene_RunStep213(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x213, 83, 35, 58);
 }
 
-void FieldScene_RunStep214(void)
+static void FieldScene_RunStep214(void)
 {
 	ToretoHeya_HandleFloorSwitch(0x214, 84, 35, 59);
 }
 
-void SceneState_ClearStoryVariantWhenIdle(void)
+static void SceneState_ClearStoryVariantWhenIdle(void)
 {
 	if (Engine_LeaderCheckAhead() == 0)
 		*ToretoHeya_PaletteBuffer = -1;
@@ -312,7 +320,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gToretoHeyaEvents;
 }
 
-void ToretoHeya_RunTableScene(void)
+static void ToretoHeya_RunTableScene(void)
 {
 	s32				   rec8;
 	struct FieldActor *leader;
@@ -394,7 +402,7 @@ void ToretoHeya_RunTableScene(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFourActorEncounter(void)
+static void FieldScene_RunFourActorEncounter(void)
 {
 	s32				   rec;
 	struct FieldActor *record;
@@ -594,7 +602,7 @@ void FieldScene_RunFourActorEncounter(void)
 	Engine_EventEnd();
 }
 
-void SceneState_ApplyRectsByFlag844(s32 flag)
+static void SceneState_ApplyRectsByFlag844(s32 flag)
 {
 	if (flag != 0 && Engine_GameFlagIsSet(0x109) == 0)
 		FieldScene_RunFourActorEncounter();
@@ -699,12 +707,12 @@ s32 ToretoHeya_EnterRoom(void)
 	return 0;
 }
 
-void ToretoPalette_CaptureBank(void)
+static void ToretoPalette_CaptureBank(void)
 {
 	Dma_Set((const void *)0x05000000, *(void **)&gPaletteBufferWork, 0x84000070, REG_DMA3);
 }
 
-void ToretoPalette_ApplyTint(void)
+static void ToretoPalette_ApplyTint(void)
 {
 	u16 *src;
 	u16 *dst;
@@ -776,7 +784,7 @@ void ToretoPalette_ApplyTint(void)
 		ToretoHeya_TintIndex = 0;
 }
 
-void ToretoHeya_PlayGesture(s32 gesture)
+static void ToretoHeya_PlayGesture(s32 gesture)
 {
 	switch (gesture)
 	{
@@ -850,7 +858,7 @@ void ToretoHeya_PlayGesture(s32 gesture)
 	Engine_TaskWait(12);
 }
 
-void ToretoHeya_UpdateSwirlObject(struct Swirl *obj)
+static void ToretoHeya_UpdateSwirlObject(struct Swirl *obj)
 {
 	struct Vec pos;
 	s32		   t;
@@ -883,7 +891,7 @@ void ToretoHeya_UpdateSwirlObject(struct Swirl *obj)
 	}
 }
 
-void ToretoHeya_SpawnSwirlSparks(void)
+static void ToretoHeya_SpawnSwirlSparks(void)
 {
 	struct FieldActor *spark;
 	u32				   frame;
@@ -937,7 +945,7 @@ void ToretoHeya_SpawnSwirlSparks(void)
 	}
 }
 
-void ToretoHeya_ApplyFlaggedMapPatches(void)
+static void ToretoHeya_ApplyFlaggedMapPatches(void)
 {
 	s32 i;
 
@@ -949,12 +957,12 @@ void ToretoHeya_ApplyFlaggedMapPatches(void)
 	}
 }
 
-void SceneEffect_RegisterPaletteFadeCallback(void)
+static void SceneEffect_RegisterPaletteFadeCallback(void)
 {
 	Engine_TaskRemoveCallback(ToretoPalette_ApplyTint);
 }
 
-void Effect_AdvanceMotion(union FieldObject *object)
+static void Effect_AdvanceMotion(union FieldObject *object)
 {
 	struct FieldEffect *efx = &object->effect;
 
@@ -968,7 +976,7 @@ void Effect_AdvanceMotion(union FieldObject *object)
 	efx->sprite->rotation += efx->spin;
 }
 
-void ToretoHeya_RunLandingDustScene(void)
+static void ToretoHeya_RunLandingDustScene(void)
 {
 	struct EffectParams	 params;
 	struct Vec			 dir;

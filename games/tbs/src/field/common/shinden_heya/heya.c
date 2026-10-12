@@ -36,6 +36,19 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void FieldScene_RunScriptedSceneSequence(void);
+static void FieldScene_RunActorUpdateSequence(void);
+static void ShindenHeya_CopyActorPose(void);
+static void ShindenHeya_ResetActorUpdate(void);
+static void ShindenHeya_FollowLeaderOffset(struct FieldActor *actor);
+static void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1);
+static s32 ShindenHeya_ChooseRestartOption(void);
+static void FieldScene_RunPairedActorChoreography(void);
+static void ShindenHeya_RaiseItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z);
+static void ShindenHeya_SpawnActorSpark(s32 id);
+static void SceneState_ApplyTwoRects(void);
+
 struct ShrineWork
 {
 	u8	unknown_0000[0xe5a];
@@ -44,7 +57,7 @@ struct ShrineWork
 	u8	lamps[4];
 };
 
-s32 UpdateFacingFromResolvedObject(struct FacingObject *object)
+static s32 UpdateFacingFromResolvedObject(struct FacingObject *object)
 {
 	struct FacingObject *target;
 
@@ -130,7 +143,7 @@ u8 *SceneData_SelectTableBySceneIdAndFlags(void)
 	return ShindenHeya_SceneTableA;
 }
 
-void FieldScene_RunActorNineFlagDialogueA(void)
+static void FieldScene_RunActorNineFlagDialogueA(void)
 {
 	Engine_EventBegin();
 
@@ -155,7 +168,7 @@ void FieldScene_RunActorNineFlagDialogueA(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorNineFlagDialogueB(void)
+static void FieldScene_RunActorNineFlagDialogueB(void)
 {
 
 	Engine_EventBegin();
@@ -182,7 +195,7 @@ void FieldScene_RunActorNineFlagDialogueB(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunSupplementalSequenceOne(void)
+static void FieldScene_RunSupplementalSequenceOne(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgShindenAreYouSure);
@@ -243,7 +256,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene378SequenceB(void)
+static void FieldScene_RunScene378SequenceB(void)
 {
 	Engine_EventBegin();
 #if EDITION_INTERNATIONAL
@@ -269,7 +282,7 @@ void FieldScene_RunScene378SequenceB(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorTenCountStep(void)
+static void FieldScene_RunActorTenCountStep(void)
 {
 
 	Engine_EventBegin();
@@ -328,7 +341,7 @@ s32 ShindenHeya_ApplyEntryState(void)
 	return 0;
 }
 
-void FieldScene_RunActorEightResetSequence(void)
+static void FieldScene_RunActorEightResetSequence(void)
 {
 	Engine_EventBegin();
 	Engine_CameraSetSpeed(0x10000, 0x2000);
@@ -345,7 +358,7 @@ void FieldScene_RunActorEightResetSequence(void)
 	Engine_EventEnd();
 }
 
-void ShindenHeya_RunAltarScene(void)
+static void ShindenHeya_RunAltarScene(void)
 {
 	struct ShrineWork *work;
 
@@ -386,14 +399,14 @@ void ShindenHeya_RunAltarScene(void)
 	}
 }
 
-s32 ShindenHeya_MatchLeaderPriority(struct FieldActor *actor)
+static s32 ShindenHeya_MatchLeaderPriority(struct FieldActor *actor)
 {
 	actor->sprite->priority = Object_GetById(0)->sprite->priority;
 	actor->sprite->second_priority = Object_GetById(0)->sprite->priority;
 	return 0;
 }
 
-void FieldScene_RunScriptedSceneSequence(void)
+static void FieldScene_RunScriptedSceneSequence(void)
 {
 	u32 i;
 
@@ -922,7 +935,7 @@ dialogue:
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorUpdateSequence(void)
+static void FieldScene_RunActorUpdateSequence(void)
 {
 
 	u32				   i;
@@ -1335,7 +1348,7 @@ void FieldScene_RunActorUpdateSequence(void)
 	Engine_ActorSetAnimation(12, 3);
 }
 
-void ShindenHeya_CopyActorPose(void)
+static void ShindenHeya_CopyActorPose(void)
 {
 	u32						i;
 	struct FieldActor	   *rec7;
@@ -1371,14 +1384,14 @@ void ShindenHeya_CopyActorPose(void)
 	((struct FieldSprite *)p5)->priority = 2;
 }
 
-void ShindenHeya_ResetActorUpdate(void)
+static void ShindenHeya_ResetActorUpdate(void)
 {
 	struct FieldActor *state = Object_GetById(14);
 	state->update = 0;
 	Engine_ActorSetPosition(14, 0, 0);
 }
 
-void ShindenHeya_FollowLeaderOffset(struct FieldActor *actor)
+static void ShindenHeya_FollowLeaderOffset(struct FieldActor *actor)
 {
 	struct FieldActor *leader;
 
@@ -1403,7 +1416,7 @@ void ShindenHeya_FollowLeaderOffset(struct FieldActor *actor)
 	}
 }
 
-void SceneEffect_StepEllipseOrbit(struct FieldActor *obj)
+static void SceneEffect_StepEllipseOrbit(struct FieldActor *obj)
 {
 	struct FieldActor *anchor = obj->linked_object;
 	u16				  *angle = &obj->timer;
@@ -1424,7 +1437,7 @@ void SceneEffect_StepEllipseOrbit(struct FieldActor *obj)
 	*angle = (*angle + obj->work);
 }
 
-void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
+static void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
 {
 	s32					p8;
 	struct FieldActor  *rec;
@@ -1475,7 +1488,7 @@ extern volatile u32 gFrameTick;
 #define CURSOR_X 64
 #endif
 
-s32 ShindenHeya_ChooseRestartOption(void)
+static s32 ShindenHeya_ChooseRestartOption(void)
 {
 	s32				  slot;
 	struct TextCursor cursor;
@@ -1526,7 +1539,7 @@ s32 ShindenHeya_ChooseRestartOption(void)
 
 s32 Math_RemainderUnsigned();
 
-void FieldScene_RunPairedActorChoreography(void)
+static void FieldScene_RunPairedActorChoreography(void)
 {
 
 	Actor_SetSpeed(0, 0x18000, 0xc000);
@@ -1752,7 +1765,7 @@ void FieldScene_RunPairedActorChoreography(void)
 	Engine_EventWait(60);
 }
 
-void ShindenHeya_RaiseItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z)
+static void ShindenHeya_RaiseItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z)
 {
 	struct FieldActor  *obj;
 	struct FieldSprite *spr;
@@ -1786,7 +1799,7 @@ void ShindenHeya_RaiseItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z)
 	}
 }
 
-void ShindenHeya_UpdateRisingSpark(union FieldObject *object)
+static void ShindenHeya_UpdateRisingSpark(union FieldObject *object)
 {
 	struct FieldActor *spark = &object->actor;
 	s32				   scale;
@@ -1816,7 +1829,7 @@ void ShindenHeya_UpdateRisingSpark(union FieldObject *object)
 		Engine_ObjectSetScript(spark, ShindenHeya_SparkEndScript);
 }
 
-void ShindenHeya_SpawnActorSpark(s32 id)
+static void ShindenHeya_SpawnActorSpark(s32 id)
 {
 	struct FieldActor  *actor;
 	struct FieldActor  *obj;
@@ -1844,7 +1857,7 @@ void ShindenHeya_SpawnActorSpark(s32 id)
 	spr->priority = actor->sprite->priority;
 }
 
-void SceneState_ApplyTwoRects(void)
+static void SceneState_ApplyTwoRects(void)
 {
 	{
 		s32 width = 3, height = 2;
@@ -1857,7 +1870,7 @@ void SceneState_ApplyTwoRects(void)
 	Engine_TaskWait(1);
 }
 
-s32 IsActorFacingInward(void)
+static s32 IsActorFacingInward(void)
 {
 	struct FieldActor *actor = Object_GetById(0);
 
@@ -1868,7 +1881,7 @@ s32 IsActorFacingInward(void)
 	return 0;
 }
 
-void FieldScene_RunActorEightFacingDialogue(void)
+static void FieldScene_RunActorEightFacingDialogue(void)
 {
 	if (IsActorFacingInward() != 0)
 	{
@@ -1887,7 +1900,7 @@ void FieldScene_RunActorEightFacingDialogue(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_DispatchBySceneId(void)
+static void FieldScene_DispatchBySceneId(void)
 {
 	s32 no;
 
@@ -1931,7 +1944,7 @@ void FieldScene_DispatchBySceneId(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorEightFlaggedDialogue(void)
+static void SceneDialogue_RunActorEightFlaggedDialogue(void)
 {
 	if (IsActorFacingInward() != 0)
 	{
@@ -1948,7 +1961,7 @@ void SceneDialogue_RunActorEightFlaggedDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorEightFollowupDialogue(void)
+static void SceneDialogue_RunActorEightFollowupDialogue(void)
 {
 	if (IsActorFacingInward() != 0)
 	{
@@ -1964,7 +1977,7 @@ void SceneDialogue_RunActorEightFollowupDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorEightDialogue(void)
+static void SceneDialogue_RunActorEightDialogue(void)
 {
 	if (IsActorFacingInward() != 0)
 	{

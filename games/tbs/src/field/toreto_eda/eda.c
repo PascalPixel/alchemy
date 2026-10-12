@@ -24,6 +24,9 @@
 #include "field_event.h"
 #include "field_scene.h"
 
+// 前方宣言
+static void ToretoEda_StartBg3Split(void);
+
 extern struct EventWork *gEventWork;
 extern u8				 gDisplayTransition[];
 
@@ -54,7 +57,7 @@ static s32 sSplitLine;
 static u16 sHofsAbove;
 static u16 sHofsBelow;
 
-void State_SetActorEightValue3d(void)
+static void State_SetActorEightValue3d(void)
 {
 	BattleFx_SetPhaseRequest(8, 0x3D);
 }
@@ -79,7 +82,7 @@ u8 *ToretoEda_GetPlacements(void)
 	return (u8 *)ToretoEda_SceneTable2;
 }
 
-void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
+static void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
 {
 	u8				   *work = *(u8 **)&gEventWork;
 	struct SceneObject *obj;
@@ -111,37 +114,37 @@ void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
 	}
 }
 
-void Scene_ApplyOffset0Pos5(void)
+static void Scene_ApplyOffset0Pos5(void)
 {
 	Actor_ShiftObjectsByBlock(0, 5);
 }
 
-void Scene_ApplyOffset0Neg5(void)
+static void Scene_ApplyOffset0Neg5(void)
 {
 	Actor_ShiftObjectsByBlock(0, -5);
 }
 
-void Scene_ApplyOffset0Pos5Second(void)
+static void Scene_ApplyOffset0Pos5Second(void)
 {
 	Actor_ShiftObjectsByBlock(0, 5);
 }
 
-void Scene_ApplyOffset0Neg5Second(void)
+static void Scene_ApplyOffset0Neg5Second(void)
 {
 	Actor_ShiftObjectsByBlock(0, -5);
 }
 
-void Scene_ApplyOffset0Pos6(void)
+static void Scene_ApplyOffset0Pos6(void)
 {
 	Actor_ShiftObjectsByBlock(0, 6);
 }
 
-void Scene_ApplyOffset0Neg6(void)
+static void Scene_ApplyOffset0Neg6(void)
 {
 	Actor_ShiftObjectsByBlock(0, -6);
 }
 
-void ToretoEda_PlayCueAndSelectTouchedExit(void)
+static void ToretoEda_PlayCueAndSelectTouchedExit(void)
 {
 	struct EventWork *state = gEventWork;
 	s16				 *cnt;
@@ -151,7 +154,7 @@ void ToretoEda_PlayCueAndSelectTouchedExit(void)
 	Engine_EventRequestExit(*cnt);
 }
 
-void Effect_SetAlphaBlendForScene9(void)
+static void Effect_SetAlphaBlendForScene9(void)
 {
 	u8 *disp;
 
@@ -183,21 +186,21 @@ u8 *ToretoEda_GetEvents(void)
 	return (u8 *)ToretoEda_SceneTable3;
 }
 
-void Scene_RunTwoCallSequence(void)
+static void Scene_RunTwoCallSequence(void)
 {
 	Engine_EventBegin();
 	Engine_EventEnd();
 }
 
-void State_RunEmptyHookFirst(void)
+static void State_RunEmptyHookFirst(void)
 {
 }
 
-void State_RunEmptyHook(void)
+static void State_RunEmptyHook(void)
 {
 }
 
-void ToretoEda_ExchangeInputPacket(void)
+static void ToretoEda_ExchangeInputPacket(void)
 {
 	u16 *hdr = sTransferHeader;
 
@@ -246,7 +249,7 @@ s32 ToretoEda_InitializeBackdropTransition(void)
 	return 0;
 }
 
-void Effect_UpdateBg3HofsByVcount(void)
+static void Effect_UpdateBg3HofsByVcount(void)
 {
 	u16 *src;
 	u32	 value;
@@ -263,7 +266,7 @@ void Effect_UpdateBg3HofsByVcount(void)
 	REG_BG3HOFS = value;
 }
 
-void Effect_SetBg3HofsSplit(void)
+static void Effect_SetBg3HofsSplit(void)
 {
 	union SceneCell *work = (union SceneCell *)(((u8 *)gMapWork[0]) + 260);
 	s32				 hofs;
@@ -273,7 +276,7 @@ void Effect_SetBg3HofsSplit(void)
 	sHofsBelow = hofs - (gFrameCount >> 2);
 }
 
-void ToretoEda_StartBg3Split(void)
+static void ToretoEda_StartBg3Split(void)
 {
 	Runtime_SetIrqHandler(1, 0, Effect_UpdateBg3HofsByVcount);
 	Engine_TaskAddCallback((s32)Effect_SetBg3HofsSplit, 0xc80);

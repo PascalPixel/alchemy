@@ -94,7 +94,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gTorebiKyudenPlacementsOther;
 }
 
-void FieldScene_RunBranchedSteps1FF1(s32 a)
+static void FieldScene_RunBranchedSteps1FF1(s32 a)
 {
 	s32 k = (s32)MsgTorebiRunBabisSoldiers;
 
@@ -107,7 +107,7 @@ void FieldScene_RunBranchedSteps1FF1(s32 a)
 	Engine_EventShowMessage(a, 0);
 }
 
-void RunOpeningAuxiliarySequence(s32 a)
+static void RunOpeningAuxiliarySequence(s32 a)
 {
 
 	struct FieldActor *ret;
@@ -171,7 +171,7 @@ void RunOpeningAuxiliarySequence(s32 a)
 	Event_End();
 }
 
-void TorebiKyuden_OfferRest(s32 a0)
+static void TorebiKyuden_OfferRest(s32 a0)
 {
 	s32 base6_2241;
 
@@ -213,7 +213,7 @@ void TorebiKyuden_OfferRest(s32 a0)
 	Event_End();
 }
 
-void FieldScene_RunBranchedSteps2006(s32 a)
+static void FieldScene_RunBranchedSteps2006(s32 a)
 {
 	s32 k = (s32)MsgTorebiPlanningEnterColosso;
 
@@ -234,7 +234,7 @@ void FieldScene_RunBranchedSteps2006(s32 a)
 	Engine_EventShowMessage(a, 0);
 }
 
-void RunMiddleAuxiliarySequence(s32 a)
+static void RunMiddleAuxiliarySequence(s32 a)
 {
 	struct FieldActor *obj;
 	u8				  *q;
@@ -272,7 +272,7 @@ void RunMiddleAuxiliarySequence(s32 a)
 	Event_End();
 }
 
-void TorebiKyuden_ReactToPalaceEscape(s32 unused0, s32 a1)
+static void TorebiKyuden_ReactToPalaceEscape(s32 unused0, s32 a1)
 {
 	Event_Begin();
 	Event_SetMessage((s32)MsgTorebiEvenIfEscapedBabiPalace);
@@ -294,7 +294,7 @@ void TorebiKyuden_ReactToPalaceEscape(s32 unused0, s32 a1)
 	Event_End();
 }
 
-void SceneDialogue_ShowMessage22a8Branch(s32 a)
+static void SceneDialogue_ShowMessage22a8Branch(s32 a)
 {
 	s32 k = (s32)MsgTorebiMeetBabi;
 
@@ -307,7 +307,7 @@ void SceneDialogue_ShowMessage22a8Branch(s32 a)
 	Engine_EventShowMessage(a, 0);
 }
 
-void SceneDialogue_RunChoiceSequence22ab(s32 no)
+static void SceneDialogue_RunChoiceSequence22ab(s32 no)
 {
 	s32 msg = (s32)MsgTorebiEasternShoresKaragol;
 
@@ -320,7 +320,7 @@ void SceneDialogue_RunChoiceSequence22ab(s32 no)
 	Engine_EventShowMessage(no, 0);
 }
 
-void SceneDialogue_RunChoiceSequence2352(void)
+static void SceneDialogue_RunChoiceSequence2352(void)
 {
 	s32 msg;
 
@@ -357,7 +357,7 @@ void SceneDialogue_RunChoiceSequence2352(void)
 	}
 }
 
-void FieldScene_RunScene3b8SequenceB(void)
+static void FieldScene_RunScene3b8SequenceB(void)
 {
 	struct FieldActor *record;
 
@@ -508,7 +508,7 @@ void FieldScene_RunScene3b8SequenceB(void)
 	Event_End();
 }
 
-void FieldScene_RunScene3b8SequenceA(void)
+static void FieldScene_RunScene3b8SequenceA(void)
 {
 	struct FieldActor *record;
 	s16				   dir;
@@ -695,7 +695,7 @@ void FieldScene_RunScene3b8SequenceA(void)
 L_02000fe2:;
 }
 
-void RunPrimaryEffectSequence(void)
+static void RunPrimaryEffectSequence(void)
 {
 	GameFlag_Set(2411);
 	Event_Begin();
@@ -949,7 +949,7 @@ void RunPrimaryEffectSequence(void)
 	Event_End();
 }
 
-void FieldScene_RunBranchingActorSequence(void)
+static void FieldScene_RunBranchingActorSequence(void)
 {
 	struct FieldActor *actor;
 	s32				   step;
@@ -1231,7 +1231,7 @@ void FieldScene_RunBranchingActorSequence(void)
 	Event_End();
 }
 
-void FieldScene_RunMainCutsceneSequence(void)
+static void FieldScene_RunMainCutsceneSequence(void)
 {
 	s16 *position;
 
@@ -2173,7 +2173,7 @@ void FieldScene_RunMainCutsceneSequence(void)
 	Event_End();
 }
 
-void TorebiKyuden_LeaveThroughDoor(void)
+static void TorebiKyuden_LeaveThroughDoor(void)
 {
 	struct EventWork *work;
 
@@ -2211,7 +2211,7 @@ void TorebiKyuden_LeaveThroughDoor(void)
 	Event_End();
 }
 
-void RunSceneEffectSetup(void)
+static void RunSceneEffectSetup(void)
 {
 	Event_Begin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384);
@@ -2223,7 +2223,7 @@ void RunSceneEffectSetup(void)
 	Event_End();
 }
 
-void RunSupplementalSequenceOne(void)
+static void RunSupplementalSequenceOne(void)
 {
 	s32 p;
 	GameFlag_Set(2412);
@@ -2272,7 +2272,7 @@ void RunSupplementalSequenceOne(void)
 	Event_End();
 }
 
-void SceneDialogue_ThankForSavingBabi(void)
+static void SceneDialogue_ThankForSavingBabi(void)
 {
 	if (GameFlag_IsSet(0x96d) == 0)
 	{
@@ -2287,7 +2287,7 @@ void SceneDialogue_ThankForSavingBabi(void)
 	}
 }
 
-void SceneDialogue_AskIfLeavingPalace(s32 a)
+static void SceneDialogue_AskIfLeavingPalace(s32 a)
 {
 	s32 k = (s32)MsgTorebiWarriorsWhoStayed;
 
@@ -2305,7 +2305,7 @@ void SceneDialogue_AskIfLeavingPalace(s32 a)
 	}
 }
 
-void FieldScene_RunStepWithValue29e0(void)
+static void FieldScene_RunStepWithValue29e0(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);

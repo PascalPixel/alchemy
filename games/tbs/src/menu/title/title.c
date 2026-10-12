@@ -36,6 +36,10 @@
 #include "call.h"
 #include "field_scene.h"
 
+// 前方宣言
+static void Title_RevealScreen(s32 unused);
+static void Title_LoadBackground(void);
+
 extern u16 gBgScroll[];
 
 struct TitleWork
@@ -149,7 +153,7 @@ s32 Title_Run(void)
 	return 0;
 }
 
-void Title_LoadSprites(s32 unused)
+static void Title_LoadSprites(s32 unused)
 {
 	u8			 *buffer;
 	volatile u32 *dma;
@@ -179,7 +183,7 @@ void Title_LoadSprites(s32 unused)
 	MemFree(buffer);
 }
 
-void Title_RevealSpriteRow(void)
+static void Title_RevealSpriteRow(void)
 {
 	u32				   *w;
 	struct TitleSprite *p;
@@ -244,7 +248,7 @@ loop:
 	gTitleRevealFrame++;
 }
 
-void Title_RevealScreen(s32 unused)
+static void Title_RevealScreen(s32 unused)
 {
 	s32 i;
 
@@ -270,7 +274,7 @@ void Title_RevealScreen(s32 unused)
 	gEventWork->transition_frames = 60;
 }
 
-void Title_LoadBackground(void)
+static void Title_LoadBackground(void)
 {
 	u8				  *res;
 	s32				   id;

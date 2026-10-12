@@ -2,7 +2,6 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/korima_hashi/hashi.h"
-#include "unit/field/common/object/staged_actor.h"
 #include "unit/field/korima_hashi/falling_effect.h"
 #include "unit/battle/effect/object.h"
 #include "battle.h"
@@ -25,6 +24,13 @@
 #include "text/msg_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void FieldScene_RunBranchingFormationPresentation(void);
+static void Event_SayThenWait(s32 speaker, s32 frames);
+static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
+static void SceneEffect_SpawnObject26EveryEightFrames(void);
+static void KorimaHashi_AlternateBridgePostHeights(void);
+
 struct Sub
 {
 	u8 pad00[9];
@@ -40,7 +46,7 @@ extern s32 KorimaHashi_SparkleSound;
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
 
-s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object)
+static s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object)
 {
 	s32 *pending = &KorimaHashi_TriggerPending;
 	if (*pending)
@@ -51,7 +57,7 @@ s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object)
 	return 1;
 }
 
-s32 SceneActor_UpdateRandomCounterMode(u8 *object)
+static s32 SceneActor_UpdateRandomCounterMode(u8 *object)
 {
 	u16 *counter = (u16 *)(object + 100);
 	*counter = (*counter + (((u32)Engine_RandomNext() * 100) >> 16));
@@ -87,7 +93,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return KorimaHashi_Placements;
 }
 
-void FieldScene_RunTile10x20Transition(void)
+static void FieldScene_RunTile10x20Transition(void)
 {
 	struct StagedActorProbe res;
 	Engine_EventBegin();
@@ -118,7 +124,7 @@ void FieldScene_RunTile10x20Transition(void)
 	Engine_EventEnd();
 }
 
-s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
+static s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
 {
 	struct StagedActorEffect *actor = (void *)Object_GetById(0);
 	u8						 *flags = &actor->motion_flags;
@@ -160,7 +166,7 @@ s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
 	return 0;
 }
 
-void SceneActor_PassSubjectOffsetPosition(void)
+static void SceneActor_PassSubjectOffsetPosition(void)
 {
 	u32 buf[3];
 #if !EDITION_INTERNATIONAL
@@ -220,7 +226,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-void FieldScene_RunBranchingFormationPresentation(void)
+static void FieldScene_RunBranchingFormationPresentation(void)
 {
 	struct FieldActor *record;
 	s32				  *party;
@@ -1093,19 +1099,19 @@ leave:;
 	Engine_EventEnd();
 }
 
-void Event_SayThenWait(s32 speaker, s32 frames)
+static void Event_SayThenWait(s32 speaker, s32 frames)
 {
 	Engine_EventShowMessage(speaker, 0);
 	Engine_EventWait(frames);
 }
 
-void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
+static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 {
 	Engine_ActorFaceDirection(a, b, 0);
 	Engine_EventWait(c);
 }
 
-s32 SceneEffect_AdvanceAngleAndFinishWhenParked(struct FieldActor *p)
+static s32 SceneEffect_AdvanceAngleAndFinishWhenParked(struct FieldActor *p)
 {
 	p->scale_x += 0x1eb8;
 	if (p->target_x == 0x80000000 && p->target_y == 0x80000000 && p->target_z == 0x80000000)
@@ -1115,7 +1121,7 @@ s32 SceneEffect_AdvanceAngleAndFinishWhenParked(struct FieldActor *p)
 	return 1;
 }
 
-void SceneEffect_SpawnObject26EveryEightFrames(void)
+static void SceneEffect_SpawnObject26EveryEightFrames(void)
 {
 
 	struct FieldActor *obj;
@@ -1154,7 +1160,7 @@ void SceneEffect_SpawnObject26EveryEightFrames(void)
 	Engine_ObjectSetScript(obj, KorimaHashi_Object26Script);
 }
 
-s32 OverlayObject_SelectValueByFrameBit1(s32 obj)
+static s32 OverlayObject_SelectValueByFrameBit1(s32 obj)
 {
 
 	if (((gFrameCount >> 1) & 1) != 0)
@@ -1168,7 +1174,7 @@ s32 OverlayObject_SelectValueByFrameBit1(s32 obj)
 	return 0;
 }
 
-s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0)
+static s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0)
 {
 	s32 x;
 
@@ -1215,7 +1221,7 @@ s32 KorimaHashi_TriggerPending __attribute__((section(".bss")));
 s32 KorimaHashi_PartyFlag __attribute__((section(".bss")));
 s32 KorimaHashi_SparkleSound __attribute__((section(".bss")));
 
-void KorimaHashi_AlternateBridgePostHeights(void)
+static void KorimaHashi_AlternateBridgePostHeights(void)
 {
 	struct FieldActor *p;
 

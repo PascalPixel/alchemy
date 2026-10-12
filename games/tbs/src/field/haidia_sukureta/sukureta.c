@@ -25,7 +25,7 @@
 #include "objcmd.h"
 #include "facing_object.h"
 
-s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
+static s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 {
 	s32					 delta;
 	u16					 old;
@@ -90,7 +90,7 @@ u8 *SceneData_SelectEffectTable(void)
 	return (u8 *)Placement_Effects;
 }
 
-void Scene_RunActorTwelveDialogue(void)
+static void Scene_RunActorTwelveDialogue(void)
 {
 	s32 base;
 
@@ -123,7 +123,7 @@ void Scene_RunActorTwelveDialogue(void)
 	Engine_EventEnd();
 }
 
-void Scene_PlanSanctumVisit(void)
+static void Scene_PlanSanctumVisit(void)
 {
 	struct FieldActor *record;
 	s32				   x, y;
@@ -366,7 +366,7 @@ void Scene_PlanSanctumVisit(void)
 	}
 }
 
-void Scene_LeaveForMtAleph(void)
+static void Scene_LeaveForMtAleph(void)
 {
 	struct FieldActor *record;
 	s32				   facing;
@@ -444,7 +444,7 @@ void Scene_LeaveForMtAleph(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_SetupWithDescriptorA0ACWhenFlag242Clear(void)
+static void FieldScene_SetupWithDescriptorA0ACWhenFlag242Clear(void)
 {
 	if (Engine_GameFlagIsSet(0x242) == 0)
 	{
@@ -455,7 +455,7 @@ void FieldScene_SetupWithDescriptorA0ACWhenFlag242Clear(void)
 	Engine_EventRequestExit(3);
 }
 
-void Scene_OverhearSaturosAndMenardi(void)
+static void Scene_OverhearSaturosAndMenardi(void)
 {
 	struct FieldActor *record;
 	s32				   x, z;
@@ -674,7 +674,7 @@ void Scene_OverhearSaturosAndMenardi(void)
 	Engine_EventEnd();
 }
 
-void HaidiaSukureta_RunArrivalScene(void)
+static void HaidiaSukureta_RunArrivalScene(void)
 {
 	struct FieldActor *record;
 
@@ -849,7 +849,7 @@ L_0200171e:;
 	return 0;
 }
 
-void HaidiaSukureta_RunActorSequence(void)
+static void HaidiaSukureta_RunActorSequence(void)
 {
 	struct FieldActor *record;
 	s32				   base;
@@ -935,7 +935,7 @@ void HaidiaSukureta_RunActorSequence(void)
 	}
 }
 
-void SceneState_SetWorkAndFlag87d(void)
+static void SceneState_SetWorkAndFlag87d(void)
 {
 	struct EventWork *work;
 
@@ -951,7 +951,7 @@ void SceneState_SetWorkAndFlag87d(void)
 	Engine_EventEnd();
 }
 
-void SceneState_SetWorkAndFlag87e(void)
+static void SceneState_SetWorkAndFlag87e(void)
 {
 	struct EventWork *work;
 
@@ -967,7 +967,7 @@ void SceneState_SetWorkAndFlag87e(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorSixteenDialogue(void)
+static void SceneDialogue_RunActorSixteenDialogue(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgHaidiaMemoriesOfThisCottage);

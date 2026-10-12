@@ -39,6 +39,30 @@
 #include "objcmd.h"
 #include "irq.h"
 
+// 前方宣言
+static void FieldScene_RunSharedSetPiece(s32 a0);
+static void ArutinYama_ApplyEntryState(void);
+static void ArutinYama_RestoreAreaThree(void);
+static void ArutinYama_RestoreAreaFour(void);
+static void ArutinYama_RestoreAreaFive(void);
+static void ArutinYama_RestoreAreaSix(void);
+static void ArutinYama_RestoreAreaSeven(void);
+static void ArutinYama_PlaceFlaggedActors(void);
+static void ArutinYama_RestoreAreaTen(void);
+static void ArutinYama_RestoreAreaEleven(void);
+static void ArutinYama_StartLeafGust(s32 x, s32 y, s32 z, s32 facing);
+static void FieldScene_RunScene3a4SequenceG(void);
+static void SceneState_ForwardByRuntimeSelector(s32 arg);
+static void FieldScene_RunActorTenFourStepSequence(void);
+static void FieldScene_RunOpeningAuxiliarySequence(void);
+static void FieldScene_RunScene3a4SequenceF(void);
+static void FieldScene_RunScene3a4SequenceE(void);
+static void RunEventScript01(void);
+static void SceneActor_SetActor12ModeByActorZeroHeight(void);
+static void SceneActor_ClearCollisionFlagAndPlaceMarker(s32 no);
+static void ArutinYama_RunRollingObject(s32 id, s32 heading);
+static void ArutinYama_StartPaletteAnim(void);
+
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 enum
@@ -49,13 +73,13 @@ enum
 extern s32 ArutinYama_LeafMode;
 extern s32 ArutinYama_LeafOrigin[3];
 
-void SceneState_SetValue14Mode23(void)
+static void SceneState_SetValue14Mode23(void)
 {
 
 	BattleFx_SetPhaseRequest(0xE, 0x17);
 }
 
-s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
+static s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 {
 	s32					 delta;
 	u16					 old;
@@ -87,7 +111,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 	return 1;
 }
 
-s32 SceneActor_CopyActor8PositionWithFixedY(struct FieldActor *dst)
+static s32 SceneActor_CopyActor8PositionWithFixedY(struct FieldActor *dst)
 {
 	struct FieldActor *src = Object_GetById(8);
 
@@ -97,7 +121,7 @@ s32 SceneActor_CopyActor8PositionWithFixedY(struct FieldActor *dst)
 	return 0;
 }
 
-s32 OverlayObject_IntegrateAndDamp(struct FieldActor *actor)
+static s32 OverlayObject_IntegrateAndDamp(struct FieldActor *actor)
 {
 	s32 rise;
 	s32 growth;
@@ -226,7 +250,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gArutinYamaPlacementsOther;
 }
 
-void ArutinYama_BeginRollingRide(s32 a0)
+static void ArutinYama_BeginRollingRide(s32 a0)
 {
 	struct FieldActor *rec7;
 	struct FieldActor *rec8;
@@ -258,28 +282,28 @@ void ArutinYama_BeginRollingRide(s32 a0)
 	BattleFx_PlayQueuedSound();
 }
 
-void ArutinYama_StartAreaOneEncounter(void)
+static void ArutinYama_StartAreaOneEncounter(void)
 {
 	Battle_SetStart(3);
 	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama1, 99);
 	BattleFx_SetWeightedResult(53, 2);
 }
 
-void ArutinYama_StartAreaThreeEncounter(void)
+static void ArutinYama_StartAreaThreeEncounter(void)
 {
 	Battle_SetStart(3);
 	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama3, 99);
 	BattleFx_SetWeightedResult(53, 2);
 }
 
-void ArutinYama_StartAreaFiveEncounter(void)
+static void ArutinYama_StartAreaFiveEncounter(void)
 {
 	Battle_SetStart(3);
 	Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama5, 99);
 	BattleFx_SetWeightedResult(53, 2);
 }
 
-void SceneActor_UpdateSlot10ByTileX(void)
+static void SceneActor_UpdateSlot10ByTileX(void)
 {
 	struct FieldActor *a = Object_GetById(10);
 
@@ -306,7 +330,7 @@ void SceneActor_UpdateSlot10ByTileX(void)
 	}
 }
 
-void ActorPresentation_SetCellAndLowerActorEight(void)
+static void ActorPresentation_SetCellAndLowerActorEight(void)
 {
 
 	struct FieldActor *p;
@@ -326,7 +350,7 @@ void ActorPresentation_SetCellAndLowerActorEight(void)
 	Engine_GameFlagSet(0x200);
 }
 
-void ArutinYama_RestoreFallingActorNine(void)
+static void ArutinYama_RestoreFallingActorNine(void)
 {
 
 	struct FieldActor *p;
@@ -344,7 +368,7 @@ void ArutinYama_RestoreFallingActorNine(void)
 	Engine_GameFlagSet(0x201);
 }
 
-void SceneActor_RaiseSlot9StepA(void)
+static void SceneActor_RaiseSlot9StepA(void)
 {
 	struct FieldActor *p;
 	s32				   s0;
@@ -361,7 +385,7 @@ void SceneActor_RaiseSlot9StepA(void)
 	Engine_GameFlagSet(0x200);
 }
 
-void SceneActor_RaiseSlot9StepB(void)
+static void SceneActor_RaiseSlot9StepB(void)
 {
 	struct FieldActor *p;
 	s32				   s0;
@@ -380,7 +404,7 @@ void SceneActor_RaiseSlot9StepB(void)
 	Engine_GameFlagSet(0x200);
 }
 
-void SceneState_ApplyRectAndLowerActor9(void)
+static void SceneState_ApplyRectAndLowerActor9(void)
 {
 
 	struct FieldActor *rec;
@@ -400,7 +424,7 @@ void SceneState_ApplyRectAndLowerActor9(void)
 	Engine_GameFlagSet(0x200);
 }
 
-void SceneActor_RaiseSlot11AndSetFlag201(void)
+static void SceneActor_RaiseSlot11AndSetFlag201(void)
 {
 	struct FieldActor *p;
 	s32				   s0;
@@ -419,7 +443,7 @@ void SceneActor_RaiseSlot11AndSetFlag201(void)
 	Engine_GameFlagSet(0x201);
 }
 
-void SceneActor_AdjustSlot12AndSetFlag204(void)
+static void SceneActor_AdjustSlot12AndSetFlag204(void)
 {
 
 	struct FieldActor *p;
@@ -439,7 +463,7 @@ void SceneActor_AdjustSlot12AndSetFlag204(void)
 	Engine_GameFlagSet(0x204);
 }
 
-void SceneState_SetDispcntBit9ByThreshold(void)
+static void SceneState_SetDispcntBit9ByThreshold(void)
 {
 #ifdef MODERN
 	// modern GCC holds one type for a name in a file
@@ -468,7 +492,7 @@ void SceneState_SetDispcntBit9ByThreshold(void)
 #undef ArutinYama_RiseTimer
 #endif
 
-void FieldScene_RunEarlySequence(void)
+static void FieldScene_RunEarlySequence(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -514,7 +538,7 @@ void FieldScene_RunEarlySequence(void)
 	GameFlag_Set(0x8fd);
 }
 
-void FieldScene_RunScene3a4SequenceH(void)
+static void FieldScene_RunScene3a4SequenceH(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -551,7 +575,7 @@ void FieldScene_RunScene3a4SequenceH(void)
 	GameFlag_Set(0x8fe);
 }
 
-void FieldScene_RunScene3a4SequenceI(void)
+static void FieldScene_RunScene3a4SequenceI(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -590,7 +614,7 @@ void FieldScene_RunScene3a4SequenceI(void)
 	GameFlag_Set(0x907);
 }
 
-void FieldScene_RunScene3a4SequenceB(void)
+static void FieldScene_RunScene3a4SequenceB(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -608,7 +632,7 @@ void FieldScene_RunScene3a4SequenceB(void)
 	}
 }
 
-void FieldScene_RunValue1528Scene(void)
+static void FieldScene_RunValue1528Scene(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
@@ -619,7 +643,7 @@ void FieldScene_RunValue1528Scene(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene3a4SequenceA(void)
+static void FieldScene_RunScene3a4SequenceA(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -637,7 +661,7 @@ void FieldScene_RunScene3a4SequenceA(void)
 	}
 }
 
-void FieldScene_RunLine1528Sequence(void)
+static void FieldScene_RunLine1528Sequence(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -650,7 +674,7 @@ void FieldScene_RunLine1528Sequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene3a4SequenceC(void)
+static void FieldScene_RunScene3a4SequenceC(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -674,7 +698,7 @@ void FieldScene_RunScene3a4SequenceC(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene3a4SequenceD(void)
+static void FieldScene_RunScene3a4SequenceD(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -698,19 +722,19 @@ void FieldScene_RunScene3a4SequenceD(void)
 	Engine_EventEnd();
 }
 
-void ArutinYama_SetActorTenUnderfootPriority(void)
+static void ArutinYama_SetActorTenUnderfootPriority(void)
 {
 
 	Object_GetById(10)->priority_flags = 3;
 }
 
-void ArutinYama_SetActorTenAutomaticPriority(void)
+static void ArutinYama_SetActorTenAutomaticPriority(void)
 {
 
 	Object_GetById(10)->priority_flags = 1;
 }
 
-void ArutinYama_PushMovableObject(void)
+static void ArutinYama_PushMovableObject(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -729,7 +753,7 @@ void ArutinYama_PushMovableObject(void)
 	Engine_EventEnd();
 }
 
-void ArutinYama_SwingActorIntoSetPiece(void)
+static void ArutinYama_SwingActorIntoSetPiece(void)
 {
 	struct FieldActor  *actor;
 	struct FieldSprite *sprite;
@@ -817,7 +841,7 @@ struct Half
 	u16 v;
 };
 
-void FieldScene_RunSharedSetPiece(s32 a0)
+static void FieldScene_RunSharedSetPiece(s32 a0)
 {
 	struct FieldActor *actor0;
 	struct FieldActor *actor8;
@@ -960,7 +984,7 @@ void FieldScene_RunSharedSetPiece(s32 a0)
 	GameFlag_Set(0x908);
 }
 
-void FieldScene_RunFallingRocksWarning(void)
+static void FieldScene_RunFallingRocksWarning(void)
 {
 	struct FieldActor *record;
 	s32				   msg;
@@ -1104,7 +1128,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return table;
 }
 
-void SceneMotion_UpdateTimedActor(struct SceneMotion *work)
+static void SceneMotion_UpdateTimedActor(struct SceneMotion *work)
 {
 	if (work->delay != 0)
 	{
@@ -1143,7 +1167,7 @@ void SceneMotion_UpdateTimedActor(struct SceneMotion *work)
 		work->timer = 0;
 }
 
-void FieldScene_BuildMultiPhasePresentation(void)
+static void FieldScene_BuildMultiPhasePresentation(void)
 {
 	struct Half		   p10;
 	s32				   p8;
@@ -1284,7 +1308,7 @@ void FieldScene_BuildMultiPhasePresentation(void)
 	Engine_EventEnd();
 }
 
-void ArutinYama_RunLeapSequence(void)
+static void ArutinYama_RunLeapSequence(void)
 {
 	union TimedActor  *actor;
 	struct FieldActor *record;
@@ -1424,7 +1448,7 @@ s32 ArutinYama_RunAreaScene(void)
 	return 0;
 }
 
-void ArutinYama_ApplyEntryState(void)
+static void ArutinYama_ApplyEntryState(void)
 {
 	s32				   opened;
 	s32				   flag;
@@ -1520,7 +1544,7 @@ void ArutinYama_ApplyEntryState(void)
 	}
 }
 
-void ArutinYama_RestoreAreaThree(void)
+static void ArutinYama_RestoreAreaThree(void)
 {
 
 	if (GameFlag_IsSet(0x8fe) != 0)
@@ -1559,7 +1583,7 @@ void ArutinYama_RestoreAreaThree(void)
 	}
 }
 
-void ArutinYama_RestoreAreaFour(void)
+static void ArutinYama_RestoreAreaFour(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -1580,7 +1604,7 @@ void ArutinYama_RestoreAreaFour(void)
 	}
 }
 
-void ArutinYama_RestoreAreaFive(void)
+static void ArutinYama_RestoreAreaFive(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -1630,7 +1654,7 @@ void ArutinYama_RestoreAreaFive(void)
 	}
 }
 
-void ArutinYama_RestoreAreaSix(void)
+static void ArutinYama_RestoreAreaSix(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -1669,7 +1693,7 @@ void ArutinYama_RestoreAreaSix(void)
 	}
 }
 
-void ArutinYama_RestoreAreaSeven(void)
+static void ArutinYama_RestoreAreaSeven(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -1721,7 +1745,7 @@ void ArutinYama_RestoreAreaSeven(void)
 	}
 }
 
-void ArutinYama_PlaceFlaggedActors(void)
+static void ArutinYama_PlaceFlaggedActors(void)
 {
 	struct FieldActor *actor;
 
@@ -1759,7 +1783,7 @@ void ArutinYama_PlaceFlaggedActors(void)
 	}
 }
 
-void ArutinYama_RestoreAreaTen(void)
+static void ArutinYama_RestoreAreaTen(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -1802,7 +1826,7 @@ void ArutinYama_RestoreAreaTen(void)
 	}
 }
 
-void ArutinYama_RestoreAreaEleven(void)
+static void ArutinYama_RestoreAreaEleven(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -1816,7 +1840,7 @@ void ArutinYama_RestoreAreaEleven(void)
 	}
 }
 
-void ArutinYama_InitLeaf(struct FieldActor *leaf)
+static void ArutinYama_InitLeaf(struct FieldActor *leaf)
 {
 	leaf->motion_flags = 0;
 	leaf->sprite->priority = 1;
@@ -1826,7 +1850,7 @@ void ArutinYama_InitLeaf(struct FieldActor *leaf)
 	leaf->scale_y = 0x4ccc;
 }
 
-void ArutinYama_UpdateDriftingLeaf(union FieldObject *object)
+static void ArutinYama_UpdateDriftingLeaf(union FieldObject *object)
 {
 	struct FieldActor *leaf = &object->actor;
 
@@ -1871,7 +1895,7 @@ void ArutinYama_UpdateDriftingLeaf(union FieldObject *object)
 		Engine_ObjectDispatchRelease(leaf);
 }
 
-void ArutinYama_SpawnLeaf(void)
+static void ArutinYama_SpawnLeaf(void)
 {
 	union FieldObject *leaf;
 
@@ -1889,7 +1913,7 @@ void ArutinYama_SpawnLeaf(void)
 	Object_SetMode(&leaf->actor, 1);
 }
 
-void ArutinYama_StartLeafGust(s32 x, s32 y, s32 z, s32 facing)
+static void ArutinYama_StartLeafGust(s32 x, s32 y, s32 z, s32 facing)
 {
 	ArutinYama_LeafOrigin[0] = x;
 	ArutinYama_LeafOrigin[1] = y;
@@ -1900,7 +1924,7 @@ void ArutinYama_StartLeafGust(s32 x, s32 y, s32 z, s32 facing)
 	Engine_TaskAddCallback(ArutinYama_SpawnLeaf, 0xc80);
 }
 
-void FieldScene_RunScene3a4SequenceG(void)
+static void FieldScene_RunScene3a4SequenceG(void)
 {
 	struct FieldActor *spark;
 	s32				   scale;
@@ -1936,7 +1960,7 @@ void FieldScene_RunScene3a4SequenceG(void)
 	}
 }
 
-void SceneState_ForwardByRuntimeSelector(s32 arg)
+static void SceneState_ForwardByRuntimeSelector(s32 arg)
 {
 
 	s32 sel = gFrameCount & 7;
@@ -1951,7 +1975,7 @@ void SceneState_ForwardByRuntimeSelector(s32 arg)
 	}
 }
 
-void FieldScene_RunActorTenFourStepSequence(void)
+static void FieldScene_RunActorTenFourStepSequence(void)
 {
 	Engine_PsynergyBegin(24, 1);
 	Engine_PsynergySetTarget(10, 9);
@@ -1966,7 +1990,7 @@ void FieldScene_RunActorTenFourStepSequence(void)
 	Engine_ActorSetChildValue(10, 2);
 }
 
-void FieldScene_RunOpeningAuxiliarySequence(void)
+static void FieldScene_RunOpeningAuxiliarySequence(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -1995,7 +2019,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene3a4SequenceF(void)
+static void FieldScene_RunScene3a4SequenceF(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -2014,7 +2038,7 @@ void FieldScene_RunScene3a4SequenceF(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene3a4SequenceE(void)
+static void FieldScene_RunScene3a4SequenceE(void)
 {
 	extern u8 ArutinYama_RiseTimer[];
 
@@ -2033,7 +2057,7 @@ void FieldScene_RunScene3a4SequenceE(void)
 	Engine_EventEnd();
 }
 
-void SceneAudio_PlayCue183EverySixtyTicks(void)
+static void SceneAudio_PlayCue183EverySixtyTicks(void)
 {
 	ArutinYama_CueTicks++;
 	if (ArutinYama_CueTicks == 60)
@@ -2043,7 +2067,7 @@ void SceneAudio_PlayCue183EverySixtyTicks(void)
 	}
 }
 
-void FieldScene_RunLateAuxiliarySequence(void)
+static void FieldScene_RunLateAuxiliarySequence(void)
 {
 	Engine_EventBegin();
 	Camera_SetSpeed(0x9999, 0x1333);
@@ -2067,7 +2091,7 @@ void FieldScene_RunLateAuxiliarySequence(void)
 	BattleFx_SetWeightedResult(53, 3);
 }
 
-void SceneActor_SetActor8ModeByCounterBit(void)
+static void SceneActor_SetActor8ModeByCounterBit(void)
 {
 
 	if (((gFrameCount >> 1) & 1) != 0)
@@ -2080,7 +2104,7 @@ void SceneActor_SetActor8ModeByCounterBit(void)
 	}
 }
 
-void RunEventScript01(void)
+static void RunEventScript01(void)
 {
 	struct FieldActor *record;
 	struct EventWork  *work;
@@ -2209,12 +2233,12 @@ void RunEventScript01(void)
 	Engine_EventEnd();
 }
 
-void ArutinYama_RequestPsynergy(void)
+static void ArutinYama_RequestPsynergy(void)
 {
 	gEventWork->psynergy_request = 0x1018;
 }
 
-void SceneActor_SetActor12ModeByActorZeroHeight(void)
+static void SceneActor_SetActor12ModeByActorZeroHeight(void)
 {
 
 	if (Object_GetById(0)->y.fixed > 0x00300000)
@@ -2234,7 +2258,7 @@ void SceneActor_SetActor12ModeByActorZeroHeight(void)
 	}
 }
 
-void SceneActor_ClearCollisionFlagAndPlaceMarker(s32 no)
+static void SceneActor_ClearCollisionFlagAndPlaceMarker(s32 no)
 {
 	struct FieldActor *record;
 
@@ -2244,7 +2268,7 @@ void SceneActor_ClearCollisionFlagAndPlaceMarker(s32 no)
 	SetMapCellCollision(0, record->x.fixed, record->z.fixed, 255);
 }
 
-void ArutinYama_SettleAndMountLeader(struct FieldActor *object)
+static void ArutinYama_SettleAndMountLeader(struct FieldActor *object)
 {
 	s32					x;
 	s32					z;
@@ -2291,11 +2315,11 @@ void ArutinYama_SettleAndMountLeader(struct FieldActor *object)
 	Engine_AudioPlayCue(159);
 }
 
-void ArutinYama_ReservedNoOp(void)
+static void ArutinYama_ReservedNoOp(void)
 {
 }
 
-void ArutinYama_TurnRollingObjectA(struct FieldActor *object)
+static void ArutinYama_TurnRollingObjectA(struct FieldActor *object)
 {
 	union FieldCoordinate *p;
 	union FieldCoordinate  pos[3];
@@ -2331,7 +2355,7 @@ void ArutinYama_TurnRollingObjectA(struct FieldActor *object)
 	Engine_AudioPlayCue(233);
 }
 
-void ArutinYama_TurnRollingObjectB(struct FieldActor *object)
+static void ArutinYama_TurnRollingObjectB(struct FieldActor *object)
 {
 	union FieldCoordinate *p;
 	union FieldCoordinate  pos[3];
@@ -2367,7 +2391,7 @@ void ArutinYama_TurnRollingObjectB(struct FieldActor *object)
 	Engine_AudioPlayCue(233);
 }
 
-void ArutinYama_SetRollingStateAndPlayCue(u16 *record)
+static void ArutinYama_SetRollingStateAndPlayCue(u16 *record)
 {
 	record = (u16 *)((char *)record + 102);
 	{
@@ -2378,7 +2402,7 @@ void ArutinYama_SetRollingStateAndPlayCue(u16 *record)
 	Engine_AudioPlayCue(288);
 }
 
-void ArutinYama_AdvanceRollingObject(struct FieldActor *object)
+static void ArutinYama_AdvanceRollingObject(struct FieldActor *object)
 {
 	s32					   angle = 0xc000;
 	s32					   radius;
@@ -2430,7 +2454,7 @@ void ArutinYama_AdvanceRollingObject(struct FieldActor *object)
 	}
 }
 
-void ArutinYama_RunRollingObject(s32 id, s32 heading)
+static void ArutinYama_RunRollingObject(s32 id, s32 heading)
 {
 	struct FieldActor	 *object = Object_GetById(id);
 	struct FieldActor	 *leader = Engine_ActorLookup(gGameState.selected_actor);
@@ -2504,7 +2528,7 @@ arrived:
 	Engine_EventEnd();
 }
 
-void ArutinYama_StepPaletteAnim(void)
+static void ArutinYama_StepPaletteAnim(void)
 {
 	u16 *palette = gPaletteBufferWork;
 
@@ -2528,7 +2552,7 @@ void ArutinYama_StepPaletteAnim(void)
 	ArutinYama_PaletteHold--;
 }
 
-void ArutinYama_StartPaletteAnim(void)
+static void ArutinYama_StartPaletteAnim(void)
 {
 	struct Half zero;
 

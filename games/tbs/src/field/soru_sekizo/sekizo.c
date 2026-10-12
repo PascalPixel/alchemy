@@ -23,6 +23,20 @@
 #include "sound.h"
 #include "system.h"
 
+// 前方宣言
+static void Scene_RunGuardSequenceC(void);
+static void SoruSekizo_RunStatueDropScene(void);
+static void SoruSekizo_RunEventSequence(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4);
+static s32 SceneActor_IsActorAtTile(s32 no, s32 x, s32 z);
+static void SoruSekizo_OpenNorthwestSeal(void);
+static void SoruSekizo_OpenNortheastSeal(void);
+static void SoruSekizo_OpenSouthwestSeal(void);
+static void SoruSekizo_OpenSoutheastSeal(void);
+static void SoruSekizo_OpenSeal(void);
+static void Scene_ShineLeftBeam(void);
+static void Scene_ShineRightBeam(void);
+static void Event_SayThenWait(s32 speaker, s32 frames);
+
 enum StatueHallFlag
 {
 	FLAG_STATUE_TRAP_SPRUNG = 0x813,
@@ -126,7 +140,7 @@ u8 *SceneEventRuntime_GetEffectData(void)
 	return (u8 *)SceneEventRuntime_EffectData;
 }
 
-s32 SceneEventRuntime_SelectInitialSceneByFlags(void)
+static s32 SceneEventRuntime_SelectInitialSceneByFlags(void)
 {
 	s32 no;
 
@@ -150,7 +164,7 @@ fail:
 	return -1;
 }
 
-void Scene_OpenTheHole(void)
+static void Scene_OpenTheHole(void)
 {
 	s32 i;
 
@@ -180,7 +194,7 @@ void Scene_OpenTheHole(void)
 	SoruSekizo_RunStatueDropScene();
 }
 
-void FieldScene_SetupStagedActors(void)
+static void FieldScene_SetupStagedActors(void)
 {
 	struct FieldActor *leader;
 
@@ -325,7 +339,7 @@ void FieldScene_SetupStagedActors(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunStagedActorScene(void)
+static void FieldScene_RunStagedActorScene(void)
 {
 	struct EventWork  *work;
 	struct FieldActor *record;
@@ -516,7 +530,7 @@ void FieldScene_RunStagedActorScene(void)
 	Engine_EventEnd();
 }
 
-void SoruSekizo_RunSealOpenedSequence(void)
+static void SoruSekizo_RunSealOpenedSequence(void)
 {
 	struct FocusWork  *work;
 	struct FieldActor *leader;
@@ -606,7 +620,7 @@ void SoruSekizo_RunSealOpenedSequence(void)
 	work->focus = saved;
 }
 
-void SceneEffect_UpdateScrollingSpriteRows(void)
+static void SceneEffect_UpdateScrollingSpriteRows(void)
 {
 	s32		   *cp = &((struct Cam *)gMapWork[0])->x;
 	struct Ent *e = SoruSekizo_SpriteRows;
@@ -661,7 +675,7 @@ void SceneEffect_UpdateScrollingSpriteRows(void)
 	SoruSekizo_ScrollPhase += 0x80;
 }
 
-void SceneState_RunWhenSlotZeroFacingC000(void)
+static void SceneState_RunWhenSlotZeroFacingC000(void)
 {
 	u16 *p = Object_GetById(0);
 	if (p[3] == 0xc000)
@@ -670,7 +684,7 @@ void SceneState_RunWhenSlotZeroFacingC000(void)
 	}
 }
 
-void SceneState_RunWhenActorZeroFacing4000(void)
+static void SceneState_RunWhenActorZeroFacing4000(void)
 {
 	u16 *p = Object_GetById(0);
 	if (p[3] == 0x4000)
@@ -679,7 +693,7 @@ void SceneState_RunWhenActorZeroFacing4000(void)
 	}
 }
 
-void FieldScene_RunPrimarySequenceHead(void)
+static void FieldScene_RunPrimarySequenceHead(void)
 {
 	if (GameFlag_IsSet(GATE_CODE) == 0)
 	{
@@ -815,7 +829,7 @@ s32 Scene_RunGuardSequenceB(void)
 	return 0;
 }
 
-void Scene_RunGuardSequenceC(void)
+static void Scene_RunGuardSequenceC(void)
 {
 	u32	 i;
 	s32	 value;
@@ -863,7 +877,7 @@ void Scene_RunGuardSequenceC(void)
 	}
 }
 
-void FieldScene_CallWhenCheck9_31_9(void)
+static void FieldScene_CallWhenCheck9_31_9(void)
 {
 	if (SceneActor_IsActorAtTile(9, 31, 9) != 0)
 	{
@@ -871,7 +885,7 @@ void FieldScene_CallWhenCheck9_31_9(void)
 	}
 }
 
-void FieldScene_RunGuardedStep11(void)
+static void FieldScene_RunGuardedStep11(void)
 {
 	if (SceneActor_IsActorAtTile(11, 40, 9) != 0)
 	{
@@ -879,7 +893,7 @@ void FieldScene_RunGuardedStep11(void)
 	}
 }
 
-void FieldScene_RunGuardedStep13(void)
+static void FieldScene_RunGuardedStep13(void)
 {
 	if (SceneActor_IsActorAtTile(13, 31, 12) != 0)
 	{
@@ -887,7 +901,7 @@ void FieldScene_RunGuardedStep13(void)
 	}
 }
 
-void FieldScene_RunGuardedStep15(void)
+static void FieldScene_RunGuardedStep15(void)
 {
 	if (SceneActor_IsActorAtTile(15, 40, 12) != 0)
 	{
@@ -895,7 +909,7 @@ void FieldScene_RunGuardedStep15(void)
 	}
 }
 
-void ConfigureSceneAndCheckActors(void)
+static void ConfigureSceneAndCheckActors(void)
 {
 	Field_SetMapCellCollision(2, 0x00d00000, 0x00700000, 0);
 	if (SceneActor_IsActorAtTile(10, 14, 7) != 0)
@@ -904,7 +918,7 @@ void ConfigureSceneAndCheckActors(void)
 	}
 }
 
-void ConfigureAlternateSceneAndCheckActors(void)
+static void ConfigureAlternateSceneAndCheckActors(void)
 {
 	Field_SetMapCellCollision(2, 23068672, 7340032, 0);
 	if (SceneActor_IsActorAtTile(12, 21, 7) != 0)
@@ -913,7 +927,7 @@ void ConfigureAlternateSceneAndCheckActors(void)
 	}
 }
 
-void FieldScene_RunClosingSequence(void)
+static void FieldScene_RunClosingSequence(void)
 {
 	struct FieldActor *first;
 	s32				   kind;
@@ -932,7 +946,7 @@ void FieldScene_RunClosingSequence(void)
 	}
 }
 
-void SoruSekizo_BlockLeftTriggerCell(void)
+static void SoruSekizo_BlockLeftTriggerCell(void)
 {
 	s32 x = Object_GetById(0)->x.fixed >> 20;
 	s32 y = Object_GetById(0)->z.fixed >> 20;
@@ -943,7 +957,7 @@ void SoruSekizo_BlockLeftTriggerCell(void)
 	}
 }
 
-void SoruSekizo_BlockRightTriggerCell(void)
+static void SoruSekizo_BlockRightTriggerCell(void)
 {
 	s32 x = Object_GetById(0)->x.fixed >> 20;
 	s32 y = Object_GetById(0)->z.fixed >> 20;
@@ -954,7 +968,7 @@ void SoruSekizo_BlockRightTriggerCell(void)
 	}
 }
 
-void SoruSekizo_RunStatueDropScene(void)
+static void SoruSekizo_RunStatueDropScene(void)
 {
 	struct FieldActor *statue;
 	struct FieldActor *leader;
@@ -1037,7 +1051,7 @@ void SoruSekizo_RunStatueDropScene(void)
 	}
 }
 
-void FieldScene_RunScene37bSequenceA(void)
+static void FieldScene_RunScene37bSequenceA(void)
 {
 	struct FieldActor *record;
 
@@ -1062,37 +1076,37 @@ void FieldScene_RunScene37bSequenceA(void)
 	}
 }
 
-void FieldScene_RunFiveValueStep9(void)
+static void FieldScene_RunFiveValueStep9(void)
 {
 	SoruSekizo_RunEventSequence(9, 31, 9, 30, 9);
 	SoruSekizo_OpenNorthwestSeal();
 }
 
-void FieldScene_RunFiveValueStep11(void)
+static void FieldScene_RunFiveValueStep11(void)
 {
 	SoruSekizo_RunEventSequence(11, 40, 9, 41, 9);
 	SoruSekizo_OpenNortheastSeal();
 }
 
-void FieldScene_ApplyRect13_31_12_30_12(void)
+static void FieldScene_ApplyRect13_31_12_30_12(void)
 {
 	SoruSekizo_RunEventSequence(13, 31, 12, 30, 12);
 	SoruSekizo_OpenSouthwestSeal();
 }
 
-void FieldScene_RunFiveValueStep15(void)
+static void FieldScene_RunFiveValueStep15(void)
 {
 	SoruSekizo_RunEventSequence(15, 40, 12, 41, 12);
 	SoruSekizo_OpenSoutheastSeal();
 }
 
-void FieldScene_ApplyRect10_14_7_13_7(void)
+static void FieldScene_ApplyRect10_14_7_13_7(void)
 {
 	SoruSekizo_RunEventSequence(10, 14, 7, 13, 7);
 	Scene_ShineLeftBeam();
 }
 
-void SceneActor_UseActorTenCellAndNext(void)
+static void SceneActor_UseActorTenCellAndNext(void)
 {
 	struct FieldActor *record = Object_GetById(10);
 	s32				   cell;
@@ -1106,7 +1120,7 @@ void SceneActor_UseActorTenCellAndNext(void)
 	SoruSekizo_RunEventSequence(10, 13, cell + 1, 13, cell);
 }
 
-void SceneActor_MoveActor10ByRow(void)
+static void SceneActor_MoveActor10ByRow(void)
 {
 	s32 *p = Object_GetById(10);
 	if (p != NULL)
@@ -1116,13 +1130,13 @@ void SceneActor_MoveActor10ByRow(void)
 	}
 }
 
-void FieldScene_ApplyRect12_21_7_22_7(void)
+static void FieldScene_ApplyRect12_21_7_22_7(void)
 {
 	SoruSekizo_RunEventSequence(12, 21, 7, 22, 7);
 	Scene_ShineRightBeam();
 }
 
-void SceneActor_ApplyActorTwelveZCellPair(void)
+static void SceneActor_ApplyActorTwelveZCellPair(void)
 {
 	s32 *p = Object_GetById(12);
 	if (p != NULL)
@@ -1132,7 +1146,7 @@ void SceneActor_ApplyActorTwelveZCellPair(void)
 	}
 }
 
-void SceneActor_RunSlot12ColumnStep(void)
+static void SceneActor_RunSlot12ColumnStep(void)
 {
 	s32 *p = Object_GetById(12);
 	if (p != NULL)
@@ -1142,7 +1156,7 @@ void SceneActor_RunSlot12ColumnStep(void)
 	}
 }
 
-void SoruSekizo_RunEventSequence(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
+static void SoruSekizo_RunEventSequence(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
 {
 	s32 p10;
 	s32 p10b;
@@ -1172,7 +1186,7 @@ void SoruSekizo_RunEventSequence(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
 	p10c = ((a4 << 4) + 8);
 }
 
-s32 SceneActor_IsActorAtTile(s32 no, s32 x, s32 z)
+static s32 SceneActor_IsActorAtTile(s32 no, s32 x, s32 z)
 {
 	s32 *p = Object_GetById(no);
 	if (p == NULL || (p[2] >> 20) != x)
@@ -1186,7 +1200,7 @@ s32 SceneActor_IsActorAtTile(s32 no, s32 x, s32 z)
 	return 1;
 }
 
-void SoruSekizo_OpenNorthwestSeal(void)
+static void SoruSekizo_OpenNorthwestSeal(void)
 {
 	s32 *p = (s32 *)&gSealScene;
 	p[0] = 0;
@@ -1241,7 +1255,7 @@ void SoruSekizo_OpenNorthwestSeal(void)
 	SoruSekizo_OpenSeal();
 }
 
-void SoruSekizo_OpenNortheastSeal(void)
+static void SoruSekizo_OpenNortheastSeal(void)
 {
 	s32 *p = (s32 *)&gSealScene;
 	p[0] = 4;
@@ -1296,7 +1310,7 @@ void SoruSekizo_OpenNortheastSeal(void)
 	SoruSekizo_OpenSeal();
 }
 
-void SoruSekizo_OpenSouthwestSeal(void)
+static void SoruSekizo_OpenSouthwestSeal(void)
 {
 	s32 *p = (s32 *)&gSealScene;
 	p[0] = 0;
@@ -1351,7 +1365,7 @@ void SoruSekizo_OpenSouthwestSeal(void)
 	SoruSekizo_OpenSeal();
 }
 
-void SoruSekizo_OpenSoutheastSeal(void)
+static void SoruSekizo_OpenSoutheastSeal(void)
 {
 	s32 *p = (s32 *)&gSealScene;
 	p[0] = 4;
@@ -1409,7 +1423,7 @@ void SoruSekizo_OpenSoutheastSeal(void)
 #define COPY_CELLS(c) \
 	Map_CopyCellsTo((c).src_x, (c).src_y, (c).dest_x, (c).dest_y, (c).width, (c).height)
 
-void SoruSekizo_OpenSeal(void)
+static void SoruSekizo_OpenSeal(void)
 {
 	struct SealScene *scene;
 	s32				  result;
@@ -1483,7 +1497,7 @@ void SoruSekizo_OpenSeal(void)
 	Engine_EventEnd();
 }
 
-void Scene_ShineLeftBeam(void)
+static void Scene_ShineLeftBeam(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x818) == 0)
@@ -1511,7 +1525,7 @@ void Scene_ShineLeftBeam(void)
 	Engine_EventEnd();
 }
 
-void Scene_ShineRightBeam(void)
+static void Scene_ShineRightBeam(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x818) == 0)
@@ -1539,7 +1553,7 @@ void Scene_ShineRightBeam(void)
 	Engine_EventEnd();
 }
 
-void Event_SayThenWait(s32 speaker, s32 frames)
+static void Event_SayThenWait(s32 speaker, s32 frames)
 {
 	Engine_EventShowMessage(speaker, 0);
 	Engine_EventWait(frames);

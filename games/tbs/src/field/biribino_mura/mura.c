@@ -26,6 +26,16 @@
 #include "facing_object.h"
 #include "fieldobj.h"
 
+// 前方宣言
+static void BiribinoMura_RestoreVillageActors(void);
+static void Scene_UpdatePuzzleActors(void);
+static void FieldScene_RunScene38bSequenceA(void);
+static void ActorPresentation_RepaintTenCellsAndActorEightCell(void);
+static void BiribinoMura_RestoreRaisedEntrance(void);
+static void BiribinoMura_UpdateCornerSpawn(void);
+static void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor);
+static void FieldScene_DrawTilesByActor8Row(void);
+
 struct SpawnCounter
 {
 	s16 frames;
@@ -33,7 +43,7 @@ struct SpawnCounter
 
 struct SpawnCounter gCornerSpawnCounter;
 
-s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
+static s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 {
 	s32					 delta;
 	u16					 old;
@@ -98,7 +108,7 @@ u8 *SceneData_GetMessageTable(void)
 	return (u8 *)Placement_Messages;
 }
 
-void SceneState_SetValues9_3_0(void)
+static void SceneState_SetValues9_3_0(void)
 {
 	BattleFx_RunPageEffectForSlot(9, 3, 0);
 }
@@ -122,7 +132,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gBiribinoMuraPlacementsOther;
 }
 
-void FieldScene_RunScriptedSteps947And29DD(void)
+static void FieldScene_RunScriptedSteps947And29DD(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
@@ -149,28 +159,28 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gBiribinoMuraEventsOther;
 }
 
-void FieldScene_RunScriptedStep1472(void)
+static void FieldScene_RunScriptedStep1472(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgBiribinoAreaOffLimitsThoseWithout, 1);
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScriptedStep146E(void)
+static void FieldScene_RunScriptedStep146E(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgBiribinoMccoysHiddenWarehouseDoNot, 1);
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunLine1470(void)
+static void SceneDialogue_RunLine1470(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgBiribinoThereTreeLooksLikePerson, 1);
 	Engine_EventEnd();
 }
 
-void BiribinoMura_TalkAboutHumanTree(void)
+static void BiribinoMura_TalkAboutHumanTree(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoItsTreeButAlmostLooks);
@@ -183,7 +193,7 @@ void BiribinoMura_TalkAboutHumanTree(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorTwelveDialogue(void)
+static void SceneDialogue_RunActorTwelveDialogue(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoDidSeeTreeAtEntrance);
@@ -191,7 +201,7 @@ void SceneDialogue_RunActorTwelveDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorFourteenDialogue(void)
+static void SceneDialogue_RunActorFourteenDialogue(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoHaveTriedHeadingSoutheastFrom);
@@ -199,7 +209,7 @@ void SceneDialogue_RunActorFourteenDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_ShowLine16BF(void)
+static void SceneDialogue_ShowLine16BF(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoWasTurnedIntoTreeFor);
@@ -207,7 +217,7 @@ void SceneDialogue_ShowLine16BF(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorSixteenDialogue(void)
+static void SceneDialogue_RunActorSixteenDialogue(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoCurseWasBrokenThanksEfforts);
@@ -215,7 +225,7 @@ void SceneDialogue_RunActorSixteenDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_ShowLine16CC(void)
+static void SceneDialogue_ShowLine16CC(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoHaveEverBeenVillageImil);
@@ -223,7 +233,7 @@ void SceneDialogue_ShowLine16CC(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunEarlySequence(void)
+static void FieldScene_RunEarlySequence(void)
 {
 
 	u32				   i;
@@ -288,7 +298,7 @@ void FieldScene_RunEarlySequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene38bSequenceC(void)
+static void FieldScene_RunScene38bSequenceC(void)
 {
 	struct FieldActor *rec;
 	struct FieldActor *rec7;
@@ -340,12 +350,12 @@ void FieldScene_RunScene38bSequenceC(void)
 	}
 }
 
-void BiribinoMura_CheckLeaderAhead(void)
+static void BiribinoMura_CheckLeaderAhead(void)
 {
 	Engine_LeaderCheckAhead();
 }
 
-void BiribinoMura_ReceiveJillsGift(void)
+static void BiribinoMura_ReceiveJillsGift(void)
 {
 	struct FieldActor *rec7;
 	struct FieldActor *record;
@@ -470,7 +480,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-void BiribinoMura_RestoreVillageActors(void)
+static void BiribinoMura_RestoreVillageActors(void)
 {
 
 	struct FieldActor *record;
@@ -526,7 +536,7 @@ void BiribinoMura_RestoreVillageActors(void)
 	}
 }
 
-void Scene_UpdatePuzzleActors(void)
+static void Scene_UpdatePuzzleActors(void)
 {
 	s32				   p10;
 	s32				   p9;
@@ -577,7 +587,7 @@ L_02000a60:;
 	}
 }
 
-void FieldScene_RunScene38bSequenceA(void)
+static void FieldScene_RunScene38bSequenceA(void)
 {
 	struct FieldActor *rec;
 	s32				   rec7;
@@ -651,7 +661,7 @@ L_02000c92:;
 	ActorPresentation_RepaintTenCellsAndActorEightCell();
 }
 
-void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
+static void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
 {
 	struct FieldActor *actor;
 	s32				   tx;
@@ -672,7 +682,7 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
 	Engine_MapCopyCellAttributes(0, 0, 1, 1, tx, tz);
 }
 
-void BiribinoMura_RestoreRaisedEntrance(void)
+static void BiribinoMura_RestoreRaisedEntrance(void)
 {
 	struct FieldActor *leader;
 
@@ -693,7 +703,7 @@ void BiribinoMura_RestoreRaisedEntrance(void)
 	}
 }
 
-struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
+static struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
 {
 	struct FieldActor **actors = gEventWork->placed_actors - 8;
 	u32					i;
@@ -710,7 +720,7 @@ struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
 	return 0;
 }
 
-void BiribinoMura_PushFacedBlock(void)
+static void BiribinoMura_PushFacedBlock(void)
 {
 	struct FieldActor	  *leader;
 	struct FieldActor	  *block;
@@ -760,7 +770,7 @@ void BiribinoMura_PushFacedBlock(void)
 	}
 }
 
-void BiribinoMura_UpdateCornerSpawn(void)
+static void BiribinoMura_UpdateCornerSpawn(void)
 {
 	struct FieldActor *actor;
 
@@ -781,7 +791,7 @@ void BiribinoMura_UpdateCornerSpawn(void)
 	}
 }
 
-void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor)
+static void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor)
 {
 	struct FieldActor  *effect;
 	struct FieldSprite *sprite;
@@ -804,7 +814,7 @@ void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor)
 	sprite->priority = 3;
 }
 
-void FieldScene_DrawTilesByActor8Row(void)
+static void FieldScene_DrawTilesByActor8Row(void)
 {
 	struct FieldActor *actor;
 

@@ -36,7 +36,7 @@ s32 SuharaHeya_SelectPlacements(void)
 	return (s32)gSuharaHeyaPlacements;
 }
 
-void Dialogue_HandleFacingChoice(s32 no)
+static void Dialogue_HandleFacingChoice(s32 no)
 {
 	u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
 	if (facing == 0xc000)
@@ -66,7 +66,7 @@ void Dialogue_HandleFacingChoice(s32 no)
 	}
 }
 
-void Dialogue_HandleFacingBranch(s32 no)
+static void Dialogue_HandleFacingBranch(s32 no)
 {
 	u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
 	if (facing == 0xc000)
@@ -85,7 +85,7 @@ void Dialogue_HandleFacingBranch(s32 no)
 	}
 }
 
-void Dialogue_HandleFacingAction(s32 no)
+static void Dialogue_HandleFacingAction(s32 no)
 {
 	u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
 	if (facing == 0xc000)
@@ -104,7 +104,7 @@ void Dialogue_HandleFacingAction(s32 no)
 	}
 }
 
-void SuharaHeya_AskBlownHere(s32 obj)
+static void SuharaHeya_AskBlownHere(s32 obj)
 {
 	s32 msg = (s32)MsgSuharaSupposeFolkBlown;
 	Engine_EventSetMessage(msg);
@@ -121,7 +121,7 @@ void SuharaHeya_AskBlownHere(s32 obj)
 	Engine_EventShowMessage(obj, 0);
 }
 
-void SuharaHeya_PlayCueAndRequestTouchedExit(void)
+static void SuharaHeya_PlayCueAndRequestTouchedExit(void)
 {
 	struct EventWork *state = gEventWork;
 	s16				 *cnt = (s16 *)&state->touched_trigger;
@@ -130,7 +130,7 @@ void SuharaHeya_PlayCueAndRequestTouchedExit(void)
 	Engine_AudioPlayCue(0x7B);
 }
 
-void Scene_RunPrimaryScript(void)
+static void Scene_RunPrimaryScript(void)
 {
 	struct FieldActor *record;
 	GameFlag_Set(2480);

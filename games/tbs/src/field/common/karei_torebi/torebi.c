@@ -27,7 +27,15 @@
 #include "field_scene.h"
 #include "objcmd.h"
 
-void SceneState_ApplyValues14And0And5(void)
+// 前方宣言
+static void KareiTorebi_PreparePort(void);
+static void FieldScene_ConfigureFlaggedActors(void);
+static void KareiTorebi_PrepareWindowTransition(void);
+static void FieldScene_PlaceSlots14And15(void);
+static void SceneActor_SetMode3AndFlagBit1(s32 no);
+static void FieldScene_RunScene3aeSequenceA(void);
+
+static void SceneState_ApplyValues14And0And5(void)
 {
 	BattleFx_RunPageEffectForSlot(0xE, 0, 5);
 }
@@ -99,7 +107,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gKareiTorebiPlacementsOther;
 }
 
-void KareiTorebi_MoveGuardAside(void)
+static void KareiTorebi_MoveGuardAside(void)
 {
 	Engine_EventBegin();
 	GameFlag_Set(0x8aa);
@@ -149,7 +157,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gKareiTorebiEventsOther;
 }
 
-void KareiTorebi_AskGoToTolbi(void)
+static void KareiTorebi_AskGoToTolbi(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKareiWantGoToTolbi);
@@ -157,7 +165,7 @@ void KareiTorebi_AskGoToTolbi(void)
 	Engine_EventEnd();
 }
 
-void KareiTorebi_AskCarryMessage(void)
+static void KareiTorebi_AskCarryMessage(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x8a6) == 0)
@@ -182,7 +190,7 @@ L_020002c2:;
 	Engine_EventEnd();
 }
 
-void KareiTorebi_RemindBoardShip(void)
+static void KareiTorebi_RemindBoardShip(void)
 {
 #if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_FR) && !defined(TBS_EDITION_IT)
 	((void)Object_GetById(0));
@@ -205,7 +213,7 @@ void KareiTorebi_RemindBoardShip(void)
 	}
 }
 
-void SceneDialogue_RunActor12Event(void)
+static void SceneDialogue_RunActor12Event(void)
 {
 	s32				   owner;
 	s32				   slot;
@@ -273,7 +281,7 @@ done:
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorThirteenFlagDialogue(void)
+static void FieldScene_RunActorThirteenFlagDialogue(void)
 {
 	Engine_EventBegin();
 
@@ -296,7 +304,7 @@ void FieldScene_RunActorThirteenFlagDialogue(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunOpeningAuxiliarySequence(void)
+static void FieldScene_RunOpeningAuxiliarySequence(void)
 {
 	s32				  rec7;
 	struct GameState *state;
@@ -379,7 +387,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 	}
 }
 
-void KareiTorebi_TalkScaryTrip(void)
+static void KareiTorebi_TalkScaryTrip(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKareiHearScaryTrip);
@@ -387,7 +395,7 @@ void KareiTorebi_TalkScaryTrip(void)
 	Engine_EventEnd();
 }
 
-void KareiTorebi_TalkSeasickTourists(void)
+static void KareiTorebi_TalkSeasickTourists(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKareiTouristsLookUpset);
@@ -395,7 +403,7 @@ void KareiTorebi_TalkSeasickTourists(void)
 	Engine_EventEnd();
 }
 
-void KareiTorebi_DeliverParentsMessage(void)
+static void KareiTorebi_DeliverParentsMessage(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x8a8) != 0)
@@ -444,7 +452,7 @@ void KareiTorebi_DeliverParentsMessage(void)
 	}
 }
 
-void KareiTorebi_LeaveScene(void)
+static void KareiTorebi_LeaveScene(void)
 {
 	Engine_EventBegin();
 	Event_PlayCue(158);
@@ -495,7 +503,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-void KareiTorebi_PreparePort(void)
+static void KareiTorebi_PreparePort(void)
 {
 	if (gGameState.entrance == 1)
 	{
@@ -522,7 +530,7 @@ void KareiTorebi_PreparePort(void)
 	}
 }
 
-void FieldScene_ConfigureFlaggedActors(void)
+static void FieldScene_ConfigureFlaggedActors(void)
 {
 	struct FieldActor *actor;
 	u8				   zero;
@@ -574,13 +582,13 @@ void FieldScene_ConfigureFlaggedActors(void)
 	}
 }
 
-void KareiTorebi_PrepareWindowTransition(void)
+static void KareiTorebi_PrepareWindowTransition(void)
 {
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	Engine_GameFlagClear(0x12F);
 }
 
-void FieldScene_PlaceSlots14And15(void)
+static void FieldScene_PlaceSlots14And15(void)
 {
 	s32 pos14;
 	s32 pos15;
@@ -596,7 +604,7 @@ void FieldScene_PlaceSlots14And15(void)
 	SceneActor_SetMode3AndFlagBit1(15);
 }
 
-void SceneActor_SetMode3AndFlagBit1(s32 no)
+static void SceneActor_SetMode3AndFlagBit1(s32 no)
 {
 	struct FieldActor *actor = Object_GetById(no);
 
@@ -606,7 +614,7 @@ void SceneActor_SetMode3AndFlagBit1(s32 no)
 	actor->priority_flags |= 2;
 }
 
-void FieldScene_RunScene3aeSequenceA(void)
+static void FieldScene_RunScene3aeSequenceA(void)
 {
 	struct FieldActor *record;
 
@@ -694,7 +702,7 @@ void FieldScene_RunScene3aeSequenceA(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene3aeSequenceB(void)
+static void FieldScene_RunScene3aeSequenceB(void)
 {
 	struct FieldActor *actor;
 

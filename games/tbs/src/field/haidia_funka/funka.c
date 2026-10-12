@@ -16,6 +16,9 @@
 #include "text/msg_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void RunEventScript01(void);
+
 u8 *ConditionalSceneSetup_GetScriptData(void)
 {
 	return (u8 *)HaidiaFunka_SceneTable0;
@@ -50,7 +53,7 @@ s32 ConditionalSceneSetup_InitForScene15(void)
 	return 0;
 }
 
-void RunEventScript01(void)
+static void RunEventScript01(void)
 {
 	struct EventWork *work;
 	s32				  action_script;

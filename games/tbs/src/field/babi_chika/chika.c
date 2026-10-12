@@ -2,7 +2,6 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/babi_chika/chika.h"
-#include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/system/scheduler/runtime.h"
@@ -31,6 +30,13 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static s32	OverlayObject_SetYAboveLinkedActor(struct FieldActor *owner);
+static void FieldScene_PlaceAndPinSlots8And9(void);
+static void FieldScene_PlaceAndPinSlots10And11(void);
+static void BabiChika_RestorePlatformCells(void);
+static void BabiChika_MarkActorCells(void);
+
 struct Vec
 {
 	s32 x;
@@ -41,12 +47,12 @@ struct Vec
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -63,7 +69,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -86,13 +92,13 @@ extern u8 *gActorEffectWork;
 #include "../common/effect/move.c"
 #include "../common/effect/spawn.c"
 
-s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
+static s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 {
 	Engine_ActorSetSpriteFlags(no, 0);
 	return 0;
 }
 
-s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
+static s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 {
 	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 	u8				   saved = actor->motion_flags;
@@ -143,7 +149,7 @@ refuse:
 	return 1;
 }
 
-void SceneActor_PassRaisedPointOfActorZero(void)
+static void SceneActor_PassRaisedPointOfActorZero(void)
 {
 	s32				   pos[3];
 	struct FieldActor *p = Object_GetById(ACTOR_PARTY_LEADER);
@@ -154,7 +160,7 @@ void SceneActor_PassRaisedPointOfActorZero(void)
 	SceneActor_MoveActorZeroToTarget(pos);
 }
 
-void SceneActor_PassActorZeroOffsetPoint(void)
+static void SceneActor_PassActorZeroOffsetPoint(void)
 {
 	s32				   pos[3];
 	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -165,7 +171,7 @@ void SceneActor_PassActorZeroOffsetPoint(void)
 	SceneActor_MoveActorZeroToTarget(pos);
 }
 
-void BabiChika_UpdateTrackedActor(void)
+static void BabiChika_UpdateTrackedActor(void)
 {
 	struct FieldActor *actor;
 	u8				  *work;
@@ -206,7 +212,7 @@ void BabiChika_UpdateTrackedActor(void)
 	}
 }
 
-s32 SceneActor_SetFlagBitByRelativeDepth(struct FieldActor *actor)
+static s32 SceneActor_SetFlagBitByRelativeDepth(struct FieldActor *actor)
 {
 	struct FieldActor *ref;
 	u8				  *fp;
@@ -231,7 +237,7 @@ s32 SceneActor_SetFlagBitByRelativeDepth(struct FieldActor *actor)
 	return 0;
 }
 
-void SceneState_SwapSlotPairByRank(s32 first, s32 second)
+static void SceneState_SwapSlotPairByRank(s32 first, s32 second)
 {
 	struct FieldActor *a = Object_GetById(first);
 	struct FieldActor *b = Object_GetById(second);
@@ -253,7 +259,7 @@ void SceneState_SwapSlotPairByRank(s32 first, s32 second)
 	}
 }
 
-s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object)
+static s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object)
 {
 	struct EffectOptions options;
 	s32					 x;
@@ -274,7 +280,7 @@ s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object)
 	return 0;
 }
 
-s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record)
+static s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record)
 {
 	Record *ref = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -293,7 +299,7 @@ s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record)
 	return 0;
 }
 
-void SceneActor_WaitValueBelowLimit(struct FieldActor *track)
+static void SceneActor_WaitValueBelowLimit(struct FieldActor *track)
 {
 	s32 cnt = 60;
 	s32 limit;
@@ -322,7 +328,7 @@ void SceneActor_WaitValueBelowLimit(struct FieldActor *track)
 	track->target_y = ACTOR_NO_TARGET;
 }
 
-void Effect_AdvanceMotion(union FieldObject *object)
+static void Effect_AdvanceMotion(union FieldObject *object)
 {
 	struct FieldEffect *efx = &object->effect;
 
@@ -336,7 +342,7 @@ void Effect_AdvanceMotion(union FieldObject *object)
 	efx->sprite->rotation += efx->spin;
 }
 
-void BabiChika_RunLeaderSpray(void)
+static void BabiChika_RunLeaderSpray(void)
 {
 	struct FieldActor	*leader = Object_GetById(0);
 	struct EffectOptions options;
@@ -379,7 +385,7 @@ void BabiChika_RunLeaderSpray(void)
 #define ACTOR_UPDATE_IDLE ((void (*)(union FieldObject *))SceneActor_SetFlagBitByRelativeDepth)
 #define ACTOR_UPDATE_PANEL ((void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor)
 
-void SceneEffect_SpawnNineRadialEffects(s32 actor)
+static void SceneEffect_SpawnNineRadialEffects(s32 actor)
 {
 	struct FieldActor	*object;
 	struct Vec			 vec;
@@ -453,7 +459,7 @@ u8 *SceneData_SelectAndApplyTableBySceneId(void)
 	return tbl;
 }
 
-void SceneState_RunRect73x38Step(void)
+static void SceneState_RunRect73x38Step(void)
 {
 	Engine_EventBegin();
 	Map_CopyCellAttributes(73, 38, 5, 5, 9, 38);
@@ -462,7 +468,7 @@ void SceneState_RunRect73x38Step(void)
 	Engine_EventEnd();
 }
 
-void SceneActor_ApplyPointLeftOfActorZero(void)
+static void SceneActor_ApplyPointLeftOfActorZero(void)
 {
 	s32				   point[3];
 	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -473,7 +479,7 @@ void SceneActor_ApplyPointLeftOfActorZero(void)
 	SceneActor_MoveActorZeroToTarget(point);
 }
 
-void FieldScene_RunLayoutAt93By30(void)
+static void FieldScene_RunLayoutAt93By30(void)
 {
 	Engine_EventBegin();
 	Map_CopyCellAttributes(93, 30, 6, 5, 29, 30);
@@ -482,12 +488,12 @@ void FieldScene_RunLayoutAt93By30(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunStepWith6(void)
+static void FieldScene_RunStepWith6(void)
 {
 	BattleFx_RunRisingObjectSequence(0, 6, 0);
 }
 
-void SceneActor_PassPointTwoRightOfActorZero(void)
+static void SceneActor_PassPointTwoRightOfActorZero(void)
 {
 	s32				   pos[3];
 	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -498,7 +504,7 @@ void SceneActor_PassPointTwoRightOfActorZero(void)
 	SceneActor_MoveActorZeroToTarget(pos);
 }
 
-void SceneState_ApplyTwoRectsAndRunThree(void)
+static void SceneState_ApplyTwoRectsAndRunThree(void)
 {
 	Engine_EventBegin();
 	Engine_MapCopyCellAttributes(89, 49, 3, 2, 25, 49);
@@ -508,7 +514,7 @@ void SceneState_ApplyTwoRectsAndRunThree(void)
 	Engine_EventEnd();
 }
 
-void SceneActor_CheckTwoUnitsAboveActorZero(void)
+static void SceneActor_CheckTwoUnitsAboveActorZero(void)
 {
 	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 	s32				   target[3];
@@ -522,7 +528,7 @@ void SceneActor_CheckTwoUnitsAboveActorZero(void)
 	}
 }
 
-void SceneActor_MirrorFlag201IntoSlot14(void)
+static void SceneActor_MirrorFlag201IntoSlot14(void)
 {
 	u8 *flags;
 	u8	value;
@@ -544,7 +550,7 @@ void SceneActor_MirrorFlag201IntoSlot14(void)
 	}
 }
 
-void BabiChika_ConfigureActorFourteenRise(void)
+static void BabiChika_ConfigureActorFourteenRise(void)
 {
 	u8 *p;
 	u8	val;
@@ -566,12 +572,12 @@ void BabiChika_ConfigureActorFourteenRise(void)
 	}
 }
 
-void SceneState_ApplyFlag970(void)
+static void SceneState_ApplyFlag970(void)
 {
 	Engine_GameFlagSet(0x970);
 }
 
-void SceneState_RunUnlessActorZeroAtTile32x50(void)
+static void SceneState_RunUnlessActorZeroAtTile32x50(void)
 {
 	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -581,7 +587,7 @@ void SceneState_RunUnlessActorZeroAtTile32x50(void)
 	}
 }
 
-void SceneState_RunUnlessActorZeroAt30_52(void)
+static void SceneState_RunUnlessActorZeroAt30_52(void)
 {
 	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -591,7 +597,7 @@ void SceneState_RunUnlessActorZeroAt30_52(void)
 	}
 }
 
-void FieldScene_RunSupplementalSequenceTwo(void)
+static void FieldScene_RunSupplementalSequenceTwo(void)
 {
 	u32					  i;
 	s32					  rec2;
@@ -650,7 +656,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFourCallSequenceB(void)
+static void FieldScene_RunFourCallSequenceB(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
@@ -658,7 +664,7 @@ void FieldScene_RunFourCallSequenceB(void)
 	FieldScene_RunSupplementalSequenceTwo();
 }
 
-void ActorPresentation_ConfigureActorTwentyAndFlag200(void)
+static void ActorPresentation_ConfigureActorTwentyAndFlag200(void)
 {
 	u8 *flags;
 
@@ -670,7 +676,7 @@ void ActorPresentation_ConfigureActorTwentyAndFlag200(void)
 	Engine_GameFlagSet(0x200);
 }
 
-void FieldScene_RunSupplementalSequenceOne(void)
+static void FieldScene_RunSupplementalSequenceOne(void)
 {
 	u32					  i;
 	s32					  rec2;
@@ -734,7 +740,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFourStepSequenceA(void)
+static void FieldScene_RunFourStepSequenceA(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
@@ -742,18 +748,18 @@ void FieldScene_RunFourStepSequenceA(void)
 	FieldScene_RunSupplementalSequenceOne();
 }
 
-void BabiChika_InstallActorNineteenFlicker(void)
+static void BabiChika_InstallActorNineteenFlicker(void)
 {
 	Engine_ActorEnableActionCallback(19, BabiChika_FlickerScript);
 }
 
-void SceneState_SetValue202ThenCall(void)
+static void SceneState_SetValue202ThenCall(void)
 {
 	Engine_GameFlagSet(0x202);
 	FieldScene_RunSupplementalSequenceOne();
 }
 
-void SceneActor_ConfigureSlot21AndSetFlag201(void)
+static void SceneActor_ConfigureSlot21AndSetFlag201(void)
 {
 	u8 *flags;
 
@@ -765,7 +771,7 @@ void SceneActor_ConfigureSlot21AndSetFlag201(void)
 	Engine_GameFlagSet(0x201);
 }
 
-void SceneDialogue_RunFlag982Or983Dialogue(void)
+static void SceneDialogue_RunFlag982Or983Dialogue(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -780,13 +786,13 @@ void SceneDialogue_RunFlag982Or983Dialogue(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunTwoStepSequence(void)
+static void FieldScene_RunTwoStepSequence(void)
 {
 	Engine_EventBegin();
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFourStepSequenceB(void)
+static void FieldScene_RunFourStepSequenceB(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
@@ -794,7 +800,7 @@ void FieldScene_RunFourStepSequenceB(void)
 	FieldScene_RunTwoStepSequence();
 }
 
-void SceneActor_InstallSlotNineHandler(void)
+static void SceneActor_InstallSlotNineHandler(void)
 {
 	struct FieldActor *owner;
 
@@ -804,7 +810,7 @@ void SceneActor_InstallSlotNineHandler(void)
 	owner->update = (void (*)(union FieldObject *))SceneActor_CopyActor8PositionWhenAtRow10;
 }
 
-void SceneActor_SetupSlotNineAndInstallHandler(void)
+static void SceneActor_SetupSlotNineAndInstallHandler(void)
 {
 	struct FieldActor *desc;
 	s32				   col;
@@ -836,7 +842,7 @@ void SceneActor_SetupSlotNineAndInstallHandler(void)
 	((u8 * (*)()) Engine_EventEnd)(desc);
 }
 
-s32 OverlayObject_SetYAboveLinkedActor(struct FieldActor *owner)
+static s32 OverlayObject_SetYAboveLinkedActor(struct FieldActor *owner)
 {
 	s16				  *id = &owner->timer;
 	struct FieldActor *actor = Object_GetById(*id);
@@ -845,7 +851,7 @@ s32 OverlayObject_SetYAboveLinkedActor(struct FieldActor *owner)
 	return 0;
 }
 
-void BabiChika_SettleSteps(s32 wait)
+static void BabiChika_SettleSteps(s32 wait)
 {
 	u32 i;
 
@@ -879,7 +885,7 @@ void BabiChika_SettleSteps(s32 wait)
 	Engine_EventWait(wait);
 }
 
-void SceneActor_LandOnHighestPlatform(s32 subject)
+static void SceneActor_LandOnHighestPlatform(s32 subject)
 {
 	s32 best = -0x500000;
 	u32 i;
@@ -919,7 +925,7 @@ void SceneActor_LandOnHighestPlatform(s32 subject)
 	Engine_EventWait(30);
 }
 
-void FieldScene_RunMiddleSequence(void)
+static void FieldScene_RunMiddleSequence(void)
 {
 	struct FieldActor saved;
 	s32				  i;
@@ -992,14 +998,14 @@ void FieldScene_RunMiddleSequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunThreeStepSequence(void)
+static void FieldScene_RunThreeStepSequence(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
 	Engine_EventEnd();
 }
 
-void SceneState_SetSlot17And18Selectors(void)
+static void SceneState_SetSlot17And18Selectors(void)
 {
 	Engine_EventBegin();
 
@@ -1025,7 +1031,7 @@ void SceneState_SetSlot17And18Selectors(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFourCallSequence(void)
+static void FieldScene_RunFourCallSequence(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
@@ -1033,7 +1039,7 @@ void FieldScene_RunFourCallSequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunLateSequenceHead(void)
+static void FieldScene_RunLateSequenceHead(void)
 {
 	Map_CopyCellAttributes(72, 49, 1, 1, 8, 49);
 	Map_CopyCellAttributes(113, 43, 1, 1, 49, 43);
@@ -1043,7 +1049,7 @@ void FieldScene_RunLateSequenceHead(void)
 	Actor_SetPosition(16, 51904512, 45613056);
 }
 
-void FieldScene_RunLateSequenceSecond(void)
+static void FieldScene_RunLateSequenceSecond(void)
 {
 	Map_CopyCellAttributes(8, 113, 1, 1, 8, 49);
 	Map_CopyCellAttributes(49, 107, 1, 1, 49, 43);
@@ -1053,7 +1059,7 @@ void FieldScene_RunLateSequenceSecond(void)
 	Actor_SetPosition(16, 0, 0);
 }
 
-void FieldScene_RunScene3c4SequenceA(void)
+static void FieldScene_RunScene3c4SequenceA(void)
 {
 	struct FieldActor *record;
 	s32				   v6;
@@ -1176,7 +1182,7 @@ void FieldScene_RunScene3c4SequenceA(void)
 done:;
 }
 
-void FieldScene_RunLayoutAt83By45(void)
+static void FieldScene_RunLayoutAt83By45(void)
 {
 	Engine_EventBegin();
 	{
@@ -1190,7 +1196,7 @@ void FieldScene_RunLayoutAt83By45(void)
 	Engine_EventEnd();
 }
 
-void SceneState_SetValue268bInScene(void)
+static void SceneState_SetValue268bInScene(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -1198,7 +1204,7 @@ void SceneState_SetValue268bInScene(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScriptedStep953(void)
+static void FieldScene_RunScriptedStep953(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
@@ -1214,7 +1220,7 @@ s32 BabiChika_SelectEvents(void)
 	return (s32)Data_0200bef4;
 }
 
-void FieldScene_PlaceAndPinSlots8And9(void)
+static void FieldScene_PlaceAndPinSlots8And9(void)
 {
 	s32 row;
 
@@ -1237,7 +1243,7 @@ void FieldScene_PlaceAndPinSlots8And9(void)
 	}
 }
 
-void FieldScene_PlaceAndPinSlots10And11(void)
+static void FieldScene_PlaceAndPinSlots10And11(void)
 {
 	s32 row;
 
@@ -1260,7 +1266,7 @@ void FieldScene_PlaceAndPinSlots10And11(void)
 	}
 }
 
-void BabiChika_RestorePlatformCells(void)
+static void BabiChika_RestorePlatformCells(void)
 {
 	struct FieldActor *record;
 	s32				   p5;
@@ -1285,7 +1291,7 @@ void BabiChika_RestorePlatformCells(void)
 	Map_CopyCellAttributes(22, 52, 1, 1, p5, (record->z.fixed >> 20));
 }
 
-void BabiChika_MarkActorCells(void)
+static void BabiChika_MarkActorCells(void)
 {
 	Map_CopyCellAttributes(108, 19, 4, 1, 44, 19);
 	StagedActor_FillGridAttributeRectangle(

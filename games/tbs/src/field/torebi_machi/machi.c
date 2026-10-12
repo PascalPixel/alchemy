@@ -16,12 +16,15 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-void SceneState_SetValues31_2_4(void)
+// 前方宣言
+static void FieldScene_ResetActor9AndDrawTiles(void);
+
+static void SceneState_SetValues31_2_4(void)
 {
 	BattleFx_RunPageEffectForSlot(0x1F, 2, 4);
 }
 
-s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
+static s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 {
 	s32 delta_x = (*first_position++ - *second_position++) >> 16;
 	s32 delta_y = (*first_position++ - *second_position++) >> 16;
@@ -33,7 +36,7 @@ s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 	return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-s32 SceneActor_UpdatePlayerProximity(
+static s32 SceneActor_UpdatePlayerProximity(
 	struct SceneActor *actor, struct SceneActor *target, s32 range, s32 force)
 {
 	s32	 result = 0;
@@ -71,7 +74,7 @@ s32 SceneActor_UpdatePlayerProximity(
 	return result;
 }
 
-s32 SceneActor_UpdatePartnerProximity(u8 *self)
+static s32 SceneActor_UpdatePartnerProximity(u8 *self)
 {
 	u8					  **globals = (u8 **)gWindowWork;
 	struct TorebiSceneWork *scene = (struct TorebiSceneWork *)globals[0];
@@ -130,7 +133,7 @@ u8 *TorebiMachi_GetPlacements(void)
 	return (u8 *)gTorebiMachiPlacements;
 }
 
-void TorebiMachi_OpenActorEightPassage(void)
+static void TorebiMachi_OpenActorEightPassage(void)
 {
 
 	struct FieldActor *record;
@@ -146,33 +149,33 @@ void TorebiMachi_OpenActorEightPassage(void)
 	Engine_GameFlagSet(0x200);
 }
 
-void ConfigureAndPlaceActorOneHundredTwo(void)
+static void ConfigureAndPlaceActorOneHundredTwo(void)
 {
 	s32 a = 3, b = 26;
 	Engine_MapCopyCellAttributes(3, 32, 1, 1, a, b);
 	MapObject_SetPosition(102, 0x00380000, 0x01a80000);
 }
 
-void HideActorOneHundredTwo(void)
+static void HideActorOneHundredTwo(void)
 {
 	s32 a = 3, b = 26;
 	Engine_MapCopyCellAttributes(2, 25, 1, 1, a, b);
 	MapObject_SetPosition(102, -1, -1);
 }
 
-void SceneDialogue_RunMessage0e36(void)
+static void SceneDialogue_RunMessage0e36(void)
 {
 	Engine_EventSetMessage((s32)MsgTorebiFaceAwayTolbi);
 	Engine_EventShowMessage(-1, 0);
 }
 
-void SceneDialogue_RunMessage0e37(void)
+static void SceneDialogue_RunMessage0e37(void)
 {
 	Engine_EventSetMessage((s32)MsgTorebiTossLuckyMedal);
 	Engine_EventShowMessage(-1, 0);
 }
 
-void FieldScene_RunSupplementalSequenceTwo(void)
+static void FieldScene_RunSupplementalSequenceTwo(void)
 {
 	struct EventWork  *work = gEventWork;
 	struct SceneActor *actor;
@@ -223,7 +226,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunSiblingsTalk(void)
+static void FieldScene_RunSiblingsTalk(void)
 {
 	struct EventWork  *work = gEventWork;
 	struct SceneActor *actor;
@@ -287,7 +290,7 @@ u8 *TorebiMachi_SelectEvents(void)
 	return (u8 *)gTorebiMachiEvents;
 }
 
-void SceneDialogue_RunActor15Message1f92(void)
+static void SceneDialogue_RunActor15Message1f92(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiSomeoneLiveMore);
@@ -295,7 +298,7 @@ void SceneDialogue_RunActor15Message1f92(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor24Message1f9d(void)
+static void SceneDialogue_RunActor24Message1f9d(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiChildrenLoveSouvenirs);
@@ -303,7 +306,7 @@ void SceneDialogue_RunActor24Message1f9d(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunPatientTalk(void)
+static void FieldScene_RunPatientTalk(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiPatientLittleGuy);
@@ -314,7 +317,7 @@ void FieldScene_RunPatientTalk(void)
 	Engine_EventEnd();
 }
 
-void TorebiMachi_AskForSweets(void)
+static void TorebiMachi_AskForSweets(void)
 {
 	Engine_EventBegin();
 	Actor_FaceDirection(26, 0x4000, 0);
@@ -324,7 +327,7 @@ void TorebiMachi_AskForSweets(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor27Message1fa3(void)
+static void SceneDialogue_RunActor27Message1fa3(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiInnsFullStaying);
@@ -332,7 +335,7 @@ void SceneDialogue_RunActor27Message1fa3(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor24Message235f(void)
+static void SceneDialogue_RunActor24Message235f(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiFinalsWerent);
@@ -340,7 +343,7 @@ void SceneDialogue_RunActor24Message235f(void)
 	Engine_EventEnd();
 }
 
-void TorebiMachi_ReceiveLeftovers(void)
+static void TorebiMachi_ReceiveLeftovers(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x8bf) == 0)
@@ -361,7 +364,7 @@ void TorebiMachi_ReceiveLeftovers(void)
 	Engine_EventEnd();
 }
 
-void SceneScript_SetupActors(void)
+static void SceneScript_SetupActors(void)
 {
 
 	struct EventWork *work = gEventWork;
@@ -395,7 +398,7 @@ void SceneScript_SetupActors(void)
 	Engine_EventEnd();
 }
 
-void SceneActor_CopyPlayerModeToActor(union FieldObject *object)
+static void SceneActor_CopyPlayerModeToActor(union FieldObject *object)
 {
 	s32 priority;
 
@@ -464,7 +467,7 @@ s32 TorebiMachi_ApplyEntryState(s32 a0)
 	return 0;
 }
 
-void FieldScene_RunScene3b5SequenceA(void)
+static void FieldScene_RunScene3b5SequenceA(void)
 {
 	Engine_EventBegin();
 	Actor_WalkToAndWait(0, 0x130, 0x138);
@@ -490,13 +493,13 @@ void FieldScene_RunScene3b5SequenceA(void)
 	Engine_EventEnd();
 }
 
-void SceneState_SetValue30ThenCall(void)
+static void SceneState_SetValue30ThenCall(void)
 {
 	Engine_EventRequestExit(30);
 	Engine_EventEnd();
 }
 
-void TorebiMachi_RequestTouchedExit(void)
+static void TorebiMachi_RequestTouchedExit(void)
 {
 
 	s16 *cnt = &gEventWork->touched_trigger;
@@ -504,7 +507,7 @@ void TorebiMachi_RequestTouchedExit(void)
 	Engine_EventRequestExit(*cnt);
 }
 
-void FieldScene_RunPrimarySequence(void)
+static void FieldScene_RunPrimarySequence(void)
 {
 	s32 base;
 
@@ -602,7 +605,7 @@ void FieldScene_RunPrimarySequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_ResetActor9AndDrawTiles(void)
+static void FieldScene_ResetActor9AndDrawTiles(void)
 {
 	struct Actor *actor = Object_GetById(9);
 	if (actor != 0)

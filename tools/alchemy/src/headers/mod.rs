@@ -4,6 +4,7 @@
 
 mod expand;
 mod generate;
+mod internal;
 pub(crate) mod lint;
 mod model;
 mod objects;
@@ -59,7 +60,25 @@ const USAGE: &str = "usage: alchemy headers apply [--dry-run] [--functions] [--l
          function: its file, its calls above the definition under another\n\
          shape, its plain calls there, and the verdict. FILE.c limits the\n\
          pass to the functions those files define; --dry-run writes\n\
-         nothing (the trials read the tree and compile in a copy).";
+         nothing (the trials read the tree and compile in a copy).\n\
+       alchemy headers static [--dry-run] [--leave FILE] [--report FILE]\n\
+  static  an overlay is one C file beside its stub tables, and a function\n\
+         of it that no other object of the overlay names is `static`: the\n\
+         entry table's functions and whatever an assembly file names stay\n\
+         as they are, and so does a function called before its definition\n\
+         with no prototype in scope, one a header beside its own names,\n\
+         and one of a shared C file that some unit names above the line\n\
+         that includes the file. The file's header loses the prototype;\n\
+         where the file names the function above its definition, the\n\
+         prototype stands once, `static`, in one block after the file's\n\
+         includes, in definition order, with the struct tags the block and\n\
+         the static heads point to and no header declares. A header left\n\
+         with nothing goes, with the lines that include it. Each overlay\n\
+         unit is compiled before and after in the six editions: `static`\n\
+         makes a symbol local and changes nothing else, and a unit whose\n\
+         objects differ otherwise is left as it was, with the first part\n\
+         that differs printed. --leave FILE names C files, one a line, to\n\
+         leave as they are; --report writes one row per function.";
 
 fn write(root: &Path, file: &str, text: &str) -> Result<(), String> {
     let path = root.join(file);
@@ -322,6 +341,14 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             apply(root(), arguments.iter().any(|a| a == "--dry-run"), arguments.iter().any(|a| a == "--functions"), leave, report)
         }
         Some("units") => units(root(), arguments.get(1).ok_or(USAGE)?, arguments.get(2).ok_or(USAGE)?),
+        Some("static") => {
+            let after = |flag: &str| arguments.iter().position(|a| a == flag).and_then(|at| arguments.get(at + 1));
+            let leave = match after("--leave") {
+                Some(path) => std::fs::read_to_string(path).map_err(|e| format!("{path}: {e}"))?.lines().map(|line| line.trim().to_string()).filter(|line| !line.is_empty()).collect(),
+                None => BTreeSet::new(),
+            };
+            internal::run(root(), arguments.iter().any(|a| a == "--dry-run"), leave, after("--report").map(String::as_str))
+        }
         Some("undeclared") => {
             let report = arguments.iter().position(|a| a == "--report").and_then(|at| arguments.get(at + 1));
             let files: Vec<String> = arguments[1..].iter().filter(|a| !a.starts_with("--") && Some(*a) != report).cloned().collect();

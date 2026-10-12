@@ -25,7 +25,7 @@ extern u8 gMapCellBuffer[];
 extern s32 StagedActor_DirectionSteps[];
 extern s32 StagedActor_FootprintBounds[];
 
-s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
+static s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 {
 	s32 delta_x = (*first_position++ - *second_position++) >> 16;
 	s32 delta_y = (*first_position++ - *second_position++) >> 16;
@@ -37,7 +37,7 @@ s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 	return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-struct StagedActor *StagedActor_FindAtTile(s32 *position, struct StagedActor *origin)
+static struct StagedActor *StagedActor_FindAtTile(s32 *position, struct StagedActor *origin)
 {
 	struct FieldStepWork  *work = (struct FieldStepWork *)gEventWork;
 	struct ObjectRuntime **slots = work->actors;
@@ -57,7 +57,7 @@ struct StagedActor *StagedActor_FindAtTile(s32 *position, struct StagedActor *or
 	return 0;
 }
 
-void StagedActor_AdvancePair(void)
+static void StagedActor_AdvancePair(void)
 {
 	s32					dst[3];
 	struct StagedActor *lead;
@@ -131,7 +131,7 @@ void StagedActor_AdvancePair(void)
 	Object_SetMode((struct FieldActor *)lead, 1);
 }
 
-s32 StagedActor_FillGridAttributeRectangle(
+static s32 StagedActor_FillGridAttributeRectangle(
 	u32 layer, s32 x, s32 z, u32 width, u32 height, s32 value)
 {
 	struct MapState *map = gMapWork[0];
@@ -164,7 +164,7 @@ s32 StagedActor_FillGridAttributeRectangle(
 	return 0;
 }
 
-s32 StagedActor_StopBlockedMotion(struct StagedActor *actor)
+static s32 StagedActor_StopBlockedMotion(struct StagedActor *actor)
 {
 	struct StagedActorProbePoint probe;
 	u32							 dir;
@@ -211,7 +211,7 @@ done:
 	return 0;
 }
 
-u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot, s32 *footprint)
+static u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot, s32 *footprint)
 {
 	struct FieldStepWork  *work = (struct FieldStepWork *)gEventWork;
 	struct StagedActor	  *player = (struct StagedActor *)Object_GetById(0);
@@ -260,7 +260,7 @@ u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot, s32 *footprint)
 	return NULL;
 }
 
-s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe)
+static s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe)
 {
 	s32					direction;
 	s32					position[3];
@@ -352,7 +352,7 @@ found:
 	return 1;
 }
 
-void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
+static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 {
 	/* FAKEMATCH: needed to match: the integer cell read keeps incoming probe spills before the cache load. */
 	struct MapScrollWork		   *workspace;
@@ -499,7 +499,7 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 	BattleFx_PlayQueuedSound();
 }
 
-s32 FieldScene_RedrawActorFootprint(s32 id)
+static s32 FieldScene_RedrawActorFootprint(s32 id)
 {
 	struct MapScrollWork   *work = gMapWork[0];
 	struct StagedActor	   *actor = (struct StagedActor *)Object_GetById(id);

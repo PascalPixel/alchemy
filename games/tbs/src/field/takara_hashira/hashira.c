@@ -4,8 +4,6 @@
 #include "unit/import.h"
 #include "unit/field/takara_hashira/hashira.h"
 #include "unit/field/common/effect/move.h"
-#include "unit/field/common/object/staged_actor.h"
-#include "unit/field/common/map/panel.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "unit/system/scheduler/runtime.h"
@@ -70,12 +68,12 @@ struct MapLayer_2
 
 extern u8 *gEffectWork;
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -92,7 +90,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -117,7 +115,7 @@ void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/map/panel.c"
 
-void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
+static void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
 {
 	s32 cnt = 60;
 
@@ -140,7 +138,7 @@ void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
 	*(u32 *)(obj + 12) = *(u32 *)(obj + 20);
 }
 
-void SceneActor_WaitHeightBelowLimit(struct FieldActor *obj, s32 limit)
+static void SceneActor_WaitHeightBelowLimit(struct FieldActor *obj, s32 limit)
 {
 	s32 cnt = 60;
 
@@ -166,7 +164,7 @@ void SceneActor_WaitHeightBelowLimit(struct FieldActor *obj, s32 limit)
 	obj->target_y = 0x80000000;
 }
 
-s32 FieldScene_QueryActorFootprint(
+static s32 FieldScene_QueryActorFootprint(
 	s32 id, s32 *width, s32 *depth, struct StagedActorProbe *probe, s32 *left, s32 *top)
 {
 	u8				   *map = gMapWork[0];
@@ -235,7 +233,7 @@ check:
 	return 1;
 }
 
-s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no)
+static s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no)
 {
 	struct FieldActor *obj = Object_GetById(no);
 	u32				   out20, out16;
@@ -269,7 +267,7 @@ s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no)
 	return 1;
 }
 
-s32 SceneActor_ApplyPlacementQuery(u8 *no)
+static s32 SceneActor_ApplyPlacementQuery(u8 *no)
 {
 	struct FieldActor *obj = Object_GetById(no);
 	s32				   out20, out16, out12, out8;
@@ -294,7 +292,7 @@ s32 SceneActor_ApplyPlacementQuery(u8 *no)
 	return 1;
 }
 
-void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst)
+static void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst)
 {
 	struct MapState *map = gMapWork[0];
 
@@ -313,7 +311,7 @@ void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst)
 	}
 }
 
-void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *source)
+static void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *source)
 {
 	struct MapCellFields *src = (struct MapCellFields *)source;
 	struct MapState		 *map = gMapWork[0];
@@ -331,7 +329,7 @@ void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *so
 	}
 }
 
-s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
+static s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
 {
 	struct FieldActor *actor = Object_GetById(id);
 	s32				   found;
@@ -399,7 +397,7 @@ s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
 	return found;
 }
 
-void StagedActor_StepDownUntilClamp(s32 index)
+static void StagedActor_StepDownUntilClamp(s32 index)
 {
 	struct FieldActor *obj = Object_GetById(index);
 	u32				   cnt;
@@ -423,7 +421,7 @@ void StagedActor_StepDownUntilClamp(s32 index)
 	}
 }
 
-void FieldScene_RunPrimarySequence(void)
+static void FieldScene_RunPrimarySequence(void)
 {
 
 	struct FieldActor *rec;
@@ -455,7 +453,7 @@ void FieldScene_RunPrimarySequence(void)
 	}
 }
 
-s32 FieldScene_RunScene3b3SequenceD(void)
+static s32 FieldScene_RunScene3b3SequenceD(void)
 {
 	struct FieldActor *leader;
 	u8				  *flags;
@@ -539,7 +537,7 @@ reject:
 	return 0;
 }
 
-void FieldScene_RunScene3b3SequenceE(union FieldObject *object)
+static void FieldScene_RunScene3b3SequenceE(union FieldObject *object)
 {
 	s32 velocity_x;
 	s32 velocity_y;
@@ -559,7 +557,7 @@ void FieldScene_RunScene3b3SequenceE(union FieldObject *object)
 	object->effect.sprite->rotation += object->effect.spin;
 }
 
-s32 SceneActor_ApplyCounterLowBitsAsMode(u8 *actor)
+static s32 SceneActor_ApplyCounterLowBitsAsMode(u8 *actor)
 {
 	ObjectGroup_SetChildValue(actor, *(u16 *)(actor + 100) & 15);
 	return 0;
@@ -625,7 +623,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gTakaraHashiraPlacementsOther;
 }
 
-void FieldScene_RunTransitionOrFallback(void)
+static void FieldScene_RunTransitionOrFallback(void)
 {
 	Engine_EventBegin();
 	if (FieldScene_RunScene3b3SequenceD() == 0)
@@ -633,7 +631,7 @@ void FieldScene_RunTransitionOrFallback(void)
 	Engine_EventEnd();
 }
 
-void SceneState_ApplyPlacementResult(void)
+static void SceneState_ApplyPlacementResult(void)
 {
 	struct StagedActorProbe out;
 
@@ -657,7 +655,7 @@ static s32				 TakaraHashira_ProbePosition[3];
 static u8				 TakaraHashira_ShakenScroll[12];
 static s32				 TakaraHashira_ShakeChance;
 
-void TakaraHashira_JitterBackgroundScroll(void)
+static void TakaraHashira_JitterBackgroundScroll(void)
 {
 	u32			  line = REG_VCOUNT;
 	u32			 *src = &((u32 *)gBgScroll)[1];
@@ -686,7 +684,7 @@ static __inline__ void Dma_Wait(volatile u32 *dma)
 		;
 }
 
-void CopyAndOffsetCoordinatePreset(void)
+static void CopyAndOffsetCoordinatePreset(void)
 {
 	u32		  *destination;
 	const u32 *source;
@@ -703,7 +701,7 @@ void CopyAndOffsetCoordinatePreset(void)
 	coordinates[5] += 0xc0;
 }
 
-void FieldScene_RunScene3b3SequenceA(void)
+static void FieldScene_RunScene3b3SequenceA(void)
 {
 	s32 record;
 
@@ -749,7 +747,7 @@ void FieldScene_RunScene3b3SequenceA(void)
 	Engine_TaskWait(30);
 }
 
-void FieldScene_RunFlaggedDisplayScene(void)
+static void FieldScene_RunFlaggedDisplayScene(void)
 {
 	u8				  *queried;
 	struct FieldActor *record;
@@ -813,7 +811,7 @@ void FieldScene_RunFlaggedDisplayScene(void)
 	Engine_EventEnd();
 }
 
-s32 TakaraHashira_SyncPriorityIfBehind(struct FieldActor *actor, struct FieldActor *front)
+static s32 TakaraHashira_SyncPriorityIfBehind(struct FieldActor *actor, struct FieldActor *front)
 {
 	s32 result = 0;
 
@@ -837,7 +835,7 @@ s32 TakaraHashira_SyncPriorityIfBehind(struct FieldActor *actor, struct FieldAct
 	return result;
 }
 
-s32 TakaraHashira_SyncPriorityIfAhead(struct FieldActor *front, struct FieldActor *actor)
+static s32 TakaraHashira_SyncPriorityIfAhead(struct FieldActor *front, struct FieldActor *actor)
 {
 	s32 result = 0;
 
@@ -861,7 +859,7 @@ s32 TakaraHashira_SyncPriorityIfAhead(struct FieldActor *front, struct FieldActo
 	return result;
 }
 
-s32 TakaraHashira_UpdateActorPriority(struct FieldActor *actor)
+static s32 TakaraHashira_UpdateActorPriority(struct FieldActor *actor)
 {
 	struct FieldActor *leader = Object_GetById(0);
 	s32				   hit;
@@ -909,7 +907,7 @@ s32 TakaraHashira_UpdateActorPriority(struct FieldActor *actor)
 	return 0;
 }
 
-void TakaraHashira_SortPillarActors(void)
+static void TakaraHashira_SortPillarActors(void)
 {
 	u32				   i;
 	u32				   j;
@@ -971,7 +969,7 @@ struct PillarActor
 	u8	motion_flags;
 };
 
-void TakaraHashira_UpdatePillarActors(void)
+static void TakaraHashira_UpdatePillarActors(void)
 {
 	u32					 id;
 	struct PillarActor	*actor;
@@ -1067,7 +1065,7 @@ struct Probe
 	s32 word[6];
 };
 
-void TakaraHashira_PushPillar(void)
+static void TakaraHashira_PushPillar(void)
 {
 	Engine_EventBegin();
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -1086,12 +1084,12 @@ void TakaraHashira_PushPillar(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunSingleStep(void)
+static void FieldScene_RunSingleStep(void)
 {
 	battle_owner_69();
 }
 
-void TakaraHashira_RunStagedCellScene(void)
+static void TakaraHashira_RunStagedCellScene(void)
 {
 	struct FieldActor *leader = Object_GetById(0);
 	s32				   pos[3];
@@ -1110,14 +1108,14 @@ void TakaraHashira_RunStagedCellScene(void)
 	}
 }
 
-void TakaraHashira_AttachPillarRider(void)
+static void TakaraHashira_AttachPillarRider(void)
 {
 	struct FieldActor *obj = Object_GetById(ACTOR_PARTY_LEADER);
 	PILLAR_WORK->rider = obj;
 	obj->rise_counter = 1;
 }
 
-void TakaraHashira_ReleasePillarRider(void)
+static void TakaraHashira_ReleasePillarRider(void)
 {
 	struct FieldActor *obj = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -1125,7 +1123,7 @@ void TakaraHashira_ReleasePillarRider(void)
 	obj->rise_counter = 0;
 }
 
-s32 SceneActor_UpdateBit1ByPositionToSlotZero(struct FieldActor *actor)
+static s32 SceneActor_UpdateBit1ByPositionToSlotZero(struct FieldActor *actor)
 {
 	struct FieldActor *ref = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -1139,7 +1137,7 @@ s32 SceneActor_UpdateBit1ByPositionToSlotZero(struct FieldActor *actor)
 	return 0;
 }
 
-void TakaraHashira_RunActorAction(s32 id)
+static void TakaraHashira_RunActorAction(s32 id)
 {
 	struct FieldActor *actor;
 
@@ -1152,17 +1150,17 @@ void TakaraHashira_RunActorAction(s32 id)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor11Step(void)
+static void FieldScene_RunActor11Step(void)
 {
 	TakaraHashira_RunActorAction(11);
 }
 
-void FieldScene_RunActor12Step(void)
+static void FieldScene_RunActor12Step(void)
 {
 	TakaraHashira_RunActorAction(12);
 }
 
-void TakaraHashira_CheckLeaderOnPillar(void)
+static void TakaraHashira_CheckLeaderOnPillar(void)
 {
 	struct FieldActor *leader;
 	struct FieldActor *pillar;
@@ -1183,7 +1181,7 @@ void TakaraHashira_CheckLeaderOnPillar(void)
 	}
 }
 
-void TakaraHashira_RaiseActorFourteen(void)
+static void TakaraHashira_RaiseActorFourteen(void)
 {
 	struct FieldActor *pillar;
 
@@ -1199,7 +1197,7 @@ void TakaraHashira_RaiseActorFourteen(void)
 	Map_CopyCellAttributes(20, 14, 1, 1, 22, 16);
 }
 
-void SceneEffect_SpawnRandomizedParticle(void)
+static void SceneEffect_SpawnRandomizedParticle(void)
 {
 	struct EffectOptions  options;
 	struct EffectOptions *d;
@@ -1237,7 +1235,7 @@ void SceneEffect_SpawnRandomizedParticle(void)
 		d);
 }
 
-s32 SceneEffect_SpawnRandomEffectEveryEightFrames(struct FieldActor *actor)
+static s32 SceneEffect_SpawnRandomEffectEveryEightFrames(struct FieldActor *actor)
 {
 	struct EffectOptions  options;
 	struct EffectOptions *p;
@@ -1264,7 +1262,7 @@ s32 SceneEffect_SpawnRandomEffectEveryEightFrames(struct FieldActor *actor)
 	return 0;
 }
 
-void TakaraHashira_RunMapShiftScene(void)
+static void TakaraHashira_RunMapShiftScene(void)
 {
 	s32 set;
 
@@ -1305,7 +1303,7 @@ void TakaraHashira_RunMapShiftScene(void)
 	}
 }
 
-void StagedActor_PlaceAtObjectTenCell(void)
+static void StagedActor_PlaceAtObjectTenCell(void)
 {
 	struct FieldActor *obj = Object_GetById(10);
 	s32				   x;
@@ -1320,7 +1318,7 @@ void StagedActor_PlaceAtObjectTenCell(void)
 	Engine_EventEnd();
 }
 
-void TakaraHashira_DropActorTen(void)
+static void TakaraHashira_DropActorTen(void)
 {
 	struct FieldActor *rec7;
 	s32				   rec8;
@@ -1345,7 +1343,7 @@ void TakaraHashira_DropActorTen(void)
 	Engine_EventEnd();
 }
 
-void TakaraHashira_RunPushScene(void)
+static void TakaraHashira_RunPushScene(void)
 {
 	struct Probe probe;
 
@@ -1390,7 +1388,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gTakaraHashiraEventsOther;
 }
 
-void TakaraHashira_PrepLoweredActor(s32 id)
+static void TakaraHashira_PrepLoweredActor(s32 id)
 {
 	struct FieldActor *actor = Object_GetById(id);
 
@@ -1401,7 +1399,7 @@ void TakaraHashira_PrepLoweredActor(s32 id)
 	actor->sprite->priority = 2;
 }
 
-void TakaraHashira_RestoreFlaggedPillar(s32 a0)
+static void TakaraHashira_RestoreFlaggedPillar(s32 a0)
 {
 	struct FieldActor *actor;
 
@@ -1415,7 +1413,7 @@ void TakaraHashira_RestoreFlaggedPillar(s32 a0)
 	}
 }
 
-void OverlayObject_SetCallbackAndMode2(s32 id)
+static void OverlayObject_SetCallbackAndMode2(s32 id)
 {
 	struct FieldActor *actor = Object_GetById(id);
 
@@ -1424,7 +1422,7 @@ void OverlayObject_SetCallbackAndMode2(s32 id)
 	actor->update = (void (*)(union FieldObject *))TakaraHashira_UpdateActorPriority;
 }
 
-void SceneActor_CheckActors8To11NearSlotZero(void)
+static void SceneActor_CheckActors8To11NearSlotZero(void)
 {
 	struct FieldActor *hero = Object_GetById(ACTOR_PARTY_LEADER);
 	u32				   selector;

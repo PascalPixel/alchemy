@@ -38,14 +38,17 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void RamakanSabaku_SetSandPhase(u16 value);
+
 #define NULL ((void *)0)
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -62,7 +65,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -83,12 +86,12 @@ void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 #include "../common/effect/move.c"
 #include "../common/effect/spawn.c"
 
-void FieldScene_ApplyActor13Values3And3(void)
+static void FieldScene_ApplyActor13Values3And3(void)
 {
 	BattleFx_RunPageEffectForSlot(13, 3, 3);
 }
 
-void RamakanSabaku_WaitForActorHeight(u8 *o, s32 limit)
+static void RamakanSabaku_WaitForActorHeight(u8 *o, s32 limit)
 {
 	s32 frames = 60;
 
@@ -101,7 +104,7 @@ void RamakanSabaku_WaitForActorHeight(u8 *o, s32 limit)
 	}
 }
 
-s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor)
+static s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor)
 {
 	struct EffectOptions params;
 	s32					 phase;
@@ -183,7 +186,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gRamakanSabakuPlacementsOther;
 }
 
-void FieldScene_RunFlags8B2And8B3Steps(void)
+static void FieldScene_RunFlags8B2And8B3Steps(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x8b2) == 0)
@@ -204,7 +207,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return RamakanSabaku_Events;
 }
 
-s32 RamakanSabaku_ApplyEntryState(void)
+static s32 RamakanSabaku_ApplyEntryState(void)
 {
 	s32 record;
 	s32 v5;
@@ -285,7 +288,7 @@ clear_actors:;
 	return record;
 }
 
-s32 RamakanSabaku_ConfigureAreaLayout(void)
+static s32 RamakanSabaku_ConfigureAreaLayout(void)
 {
 	s32 i;
 
@@ -364,7 +367,7 @@ reset_objects:;
 	}
 }
 
-void RamakanSabaku_ReturnToArea3(void)
+static void RamakanSabaku_ReturnToArea3(void)
 {
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Party_SetFields1ceAnd1d0((s32)&SceneId_RamakanSabaku3, 5);
@@ -372,7 +375,7 @@ void RamakanSabaku_ReturnToArea3(void)
 	BattleFx_SetWeightedResult(53, 5);
 }
 
-void RamakanSabaku_ShowRandomPartyLine(s32 a0)
+static void RamakanSabaku_ShowRandomPartyLine(s32 a0)
 {
 	s32 i;
 	s32 p8;
@@ -400,7 +403,7 @@ void RamakanSabaku_ShowRandomPartyLine(s32 a0)
 	Engine_EventEnd();
 }
 
-void RamakanSabaku_RaiseQuarterTriggers(void)
+static void RamakanSabaku_RaiseQuarterTriggers(void)
 {
 	struct EventWork *work = gEventWork;
 	u8				 *state = (u8 *)&gGameState;
@@ -446,7 +449,7 @@ void RamakanSabaku_RaiseQuarterTriggers(void)
 	}
 }
 
-s32 RamakanSabaku_CalculatePlanarDistance(s32 *position_a, s32 *position_b)
+static s32 RamakanSabaku_CalculatePlanarDistance(s32 *position_a, s32 *position_b)
 {
 	s32 dx = (*position_b++ - *position_a++) >> 16;
 	s32 dz = (*position_b - position_a[1]) >> 16;
@@ -462,7 +465,7 @@ struct SafePoint
 	s32 z;
 };
 
-void RamakanSabaku_SweepBack(void)
+static void RamakanSabaku_SweepBack(void)
 {
 	u8		  *work;
 	s32		   frames;
@@ -597,7 +600,7 @@ void RamakanSabaku_SweepBack(void)
 
 extern struct EventWork *gEventWork;
 
-void RamakanSabaku_UpdateTravelDust(void)
+static void RamakanSabaku_UpdateTravelDust(void)
 {
 	struct FieldActor	*actor;
 	struct EventWork	*event;
@@ -654,7 +657,7 @@ void RamakanSabaku_UpdateTravelDust(void)
 	}
 }
 
-void RamakanSabaku_FaceNearestActor(void)
+static void RamakanSabaku_FaceNearestActor(void)
 {
 	struct FieldActor *target;
 	struct FieldActor *actor;
@@ -727,7 +730,7 @@ void RamakanSabaku_FaceNearestActor(void)
 	BattleFx_SetWeightedResult(53, 4);
 }
 
-void RamakanSabaku_UpdateDustAndProbe(void)
+static void RamakanSabaku_UpdateDustAndProbe(void)
 {
 	struct FieldActor	*center;
 	s32					 id;
@@ -800,7 +803,7 @@ void RamakanSabaku_UpdateDustAndProbe(void)
 	actor->z.fixed += 0x18000;
 }
 
-void RamakanSabaku_PlayStartledRetreat(void)
+static void RamakanSabaku_PlayStartledRetreat(void)
 {
 	s32				   rec8;
 	struct FieldActor *record;
@@ -922,7 +925,7 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
 	return 0;
 }
 
-void RamakanSabaku_ResetActorEightPosition(void)
+static void RamakanSabaku_ResetActorEightPosition(void)
 {
 	Actor_SetSpeed(8, 0x8000, 0x4000);
 	Engine_ActorSetAnimation(8, 1);
@@ -930,7 +933,7 @@ void RamakanSabaku_ResetActorEightPosition(void)
 	Engine_ActorSetAnimation(8, 2);
 }
 
-void RamakanSabaku_RunSandstorm(void)
+static void RamakanSabaku_RunSandstorm(void)
 {
 	u8				  *buffer;
 	s32				   tile;
@@ -1121,7 +1124,7 @@ void RamakanSabaku_ClaimSandEffectVram(void)
 	Engine_TaskAddCallback(RamakanSabaku_RunSandstorm, 0xc76);
 }
 
-void RamakanSabaku_SetSandPhase(u16 value)
+static void RamakanSabaku_SetSandPhase(u16 value)
 {
 	RamakanSabaku_SandPhase = value;
 }

@@ -21,7 +21,7 @@
 #include "field_scene.h"
 #include "item_ids.h"
 
-void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
+static void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
 {
 	u32			 i;
 	register u8	 v16;
@@ -76,7 +76,7 @@ u8 *SceneData_GetPreparedRecords(void)
 	return buf;
 }
 
-void FieldScene_RunActor16MessageBranch(void)
+static void FieldScene_RunActor16MessageBranch(void)
 {
 
 	u32 dir = Object_GetById(0)->facing;
@@ -96,7 +96,7 @@ void FieldScene_RunActor16MessageBranch(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor17MessageBranch(void)
+static void FieldScene_RunActor17MessageBranch(void)
 {
 
 	u32 dir = Object_GetById(0)->facing;
@@ -116,7 +116,7 @@ void FieldScene_RunActor17MessageBranch(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor18MessageBranch(void)
+static void FieldScene_RunActor18MessageBranch(void)
 {
 
 	u32 dir = Object_GetById(0)->facing;
@@ -136,7 +136,7 @@ void FieldScene_RunActor18MessageBranch(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor19MessageBranch(void)
+static void FieldScene_RunActor19MessageBranch(void)
 {
 
 	u32 dir = Object_GetById(0)->facing;

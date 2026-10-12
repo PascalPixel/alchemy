@@ -26,6 +26,9 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void FieldScene_RunSecondaryScript(void);
+
 enum
 {
 	ENTRANCE_SANCTUM_RETURN = 12,
@@ -49,7 +52,7 @@ enum
 	FLAG_AERIE_EVENTS_DONE = 0x9a7
 };
 
-s32 SceneActor_SetActor14Pose258(void)
+static s32 SceneActor_SetActor14Pose258(void)
 {
 	Actor_SetAttachedEffect(14, 258);
 	return 0;
@@ -87,7 +90,7 @@ u8 *RariberoHeya_GetPlacements(void)
 	return gRariberoPlacements;
 }
 
-void RariberoHeya_RunItemShop(s32 keeper)
+static void RariberoHeya_RunItemShop(s32 keeper)
 {
 	struct FieldActor *leader = Object_GetById(0);
 	u16				   facing = (leader->facing + 0x2000) & 0xc000;
@@ -120,7 +123,7 @@ void RariberoHeya_RunItemShop(s32 keeper)
 	}
 }
 
-void Dialogue_HandleFacingBranch(s32 no)
+static void Dialogue_HandleFacingBranch(s32 no)
 {
 	u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
 	if (party_facing == 0xc000)
@@ -139,7 +142,7 @@ void Dialogue_HandleFacingBranch(s32 no)
 	}
 }
 
-void Dialogue_HandleAlternateFacingBranch(s32 no)
+static void Dialogue_HandleAlternateFacingBranch(s32 no)
 {
 	u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
 	if (party_facing == 0xc000)
@@ -158,7 +161,7 @@ void Dialogue_HandleAlternateFacingBranch(s32 no)
 	}
 }
 
-void Dialogue_HandleFacingAction(s32 no)
+static void Dialogue_HandleFacingAction(s32 no)
 {
 	u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
 	if (party_facing == 0xc000)
@@ -177,7 +180,7 @@ void Dialogue_HandleFacingAction(s32 no)
 	}
 }
 
-void Dialogue_HandleFacingCueBranch(s32 no)
+static void Dialogue_HandleFacingCueBranch(s32 no)
 {
 	u16 party_facing = (Object_GetById(0)->facing + 0x2000) & ~0x3fff;
 	if (party_facing == 0xc000)
@@ -196,7 +199,7 @@ void Dialogue_HandleFacingCueBranch(s32 no)
 	}
 }
 
-void RariberoScene_PlayPoseSequence(void)
+static void RariberoScene_PlayPoseSequence(void)
 {
 	s16 facing;
 
@@ -231,7 +234,7 @@ void RariberoScene_PlayPoseSequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunSequenceA(void)
+static void FieldScene_RunSequenceA(void)
 {
 
 	Engine_GameFlagSet(0x9BC);
@@ -251,7 +254,7 @@ void FieldScene_RunSequenceA(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunThreeCallSequence(void)
+static void FieldScene_RunThreeCallSequence(void)
 {
 
 	Engine_GameFlagSet(0x9BC);
@@ -259,7 +262,7 @@ void FieldScene_RunThreeCallSequence(void)
 	Engine_EventShowMessage(0xC, 0);
 }
 
-void RariberoHeya_RequestTouchedExitAndPlayCue(void)
+static void RariberoHeya_RequestTouchedExitAndPlayCue(void)
 {
 	struct EventWork *work = gEventWork;
 	s16				 *p = (s16 *)&work->touched_trigger;
@@ -285,7 +288,7 @@ u8 *RariberoHeya_GetEvents(void)
 	return gRariberoEvents;
 }
 
-void FieldScene_RunPrimaryScript(void)
+static void FieldScene_RunPrimaryScript(void)
 {
 
 	Engine_EventBegin();
@@ -629,7 +632,7 @@ void FieldScene_RunPrimaryScript(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunSecondaryScript(void)
+static void FieldScene_RunSecondaryScript(void)
 {
 	Engine_EventSetMessage((s32)MsgRariberoTellOthers);
 	Engine_EventWait(20);

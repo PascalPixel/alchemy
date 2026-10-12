@@ -3,7 +3,7 @@
 #include "map.h"
 #include "io_reg.h"
 
-void Map_DrawCellPanel(s32 x, s32 y, s32 width, s32 height, s32 plane, s32 destX, s32 destY)
+static void Map_DrawCellPanel(s32 x, s32 y, s32 width, s32 height, s32 plane, s32 destX, s32 destY)
 {
 	u32 *cell = (u32 *)Ram_MapCellBuffer + (y * 128 + x);
 	s32	 row;

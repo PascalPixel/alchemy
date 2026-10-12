@@ -27,14 +27,25 @@
 #include "text/msg_ids.h"
 #include "fieldobj.h"
 
+// 前方宣言
+static void FieldScene_RunFourActorPresentation(void);
+static s32 FindNearestF2Actor(void);
+static void SceneActor_SetMode55OnSevenRecords(void);
+static void RunScene59Sequence(void);
+static void MakyuriChojo_SinkActorPair(void);
+static void MakyuriChojo_RiseActorPair(void);
+static void MakyuriChojo_LowerCollectedActors(void);
+static void MakyuriChojo_RaiseCollectedActors(void);
+static void MakyuriChojo_FlickerActorEight(void);
+
 #define NULL ((void *)0)
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -51,7 +62,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -201,7 +212,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-void FieldScene_RunFourActorPresentation(void)
+static void FieldScene_RunFourActorPresentation(void)
 {
 	struct FieldActor *leader;
 
@@ -296,7 +307,7 @@ void FieldScene_RunFourActorPresentation(void)
 	Engine_EventEnd();
 }
 
-s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
+static s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 {
 	s32 delta_x = (*first_position++ - *second_position++) >> 16;
 	s32 delta_y = (*first_position++ - *second_position++) >> 16;
@@ -314,7 +325,7 @@ struct SpriteNumber
 	const s16 *number;
 };
 
-s32 FindNearestF2Actor(void)
+static s32 FindNearestF2Actor(void)
 {
 	struct EventWork   *work = gEventWork;
 	struct FieldActor **slot;
@@ -347,7 +358,7 @@ s32 FindNearestF2Actor(void)
 	return nearest_actor;
 }
 
-void SceneActor_InitializeMotion(void)
+static void SceneActor_InitializeMotion(void)
 {
 	struct FieldActor *actor;
 	s32				   position[3];
@@ -381,7 +392,7 @@ void SceneActor_InitializeMotion(void)
 	}
 }
 
-void MakyuriChojo_StepOntoNearestActor(void)
+static void MakyuriChojo_StepOntoNearestActor(void)
 {
 	struct FieldActor *leader;
 	struct FieldActor *actor;
@@ -420,7 +431,7 @@ void MakyuriChojo_StepOntoNearestActor(void)
 	Engine_EventEnd();
 }
 
-void SceneActor_SetMode55OnSevenRecords(void)
+static void SceneActor_SetMode55OnSevenRecords(void)
 {
 	Object_GetById(ACTOR_PARTY_LEADER)->motion_flags = 3;
 	Object_GetById(14)->motion_flags = 4;
@@ -431,7 +442,7 @@ void SceneActor_SetMode55OnSevenRecords(void)
 	Object_GetById(19)->motion_flags = 4;
 }
 
-void RunScene58Sequence(void)
+static void RunScene58Sequence(void)
 {
 	struct FieldActor *actor;
 
@@ -868,7 +879,7 @@ void RunScene58Sequence(void)
 	Engine_EventEnd();
 }
 
-void RunScene59Sequence(void)
+static void RunScene59Sequence(void)
 {
 
 	Engine_EventBegin();
@@ -1428,7 +1439,7 @@ void RunScene59Sequence(void)
 	Engine_EventEnd();
 }
 
-void MakyuriChojo_BringLiftUp(void)
+static void MakyuriChojo_BringLiftUp(void)
 {
 	struct MapLayerScroll *lift;
 
@@ -1457,7 +1468,7 @@ void MakyuriChojo_BringLiftUp(void)
 	Engine_EventEnd();
 }
 
-void MakyuriChojo_TakeLiftDown(void)
+static void MakyuriChojo_TakeLiftDown(void)
 {
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -1471,7 +1482,7 @@ void MakyuriChojo_TakeLiftDown(void)
 	Engine_EventEnd();
 }
 
-void MakyuriChojo_SinkActorPair(void)
+static void MakyuriChojo_SinkActorPair(void)
 {
 	struct EffectParams	 params;
 	struct EffectParams *p;
@@ -1522,7 +1533,7 @@ void MakyuriChojo_SinkActorPair(void)
 	Engine_ActorSetPosition(24, 0, 0);
 }
 
-void MakyuriChojo_RiseActorPair(void)
+static void MakyuriChojo_RiseActorPair(void)
 {
 	struct EffectParams	 params;
 	struct EffectParams *p;
@@ -1578,7 +1589,7 @@ void MakyuriChojo_RiseActorPair(void)
 	Engine_ActorSetSpriteFlags(Object_GetById(24), 1);
 }
 
-void MakyuriChojo_CollectBandSlots(s32 *out, s32 y)
+static void MakyuriChojo_CollectBandSlots(s32 *out, s32 y)
 {
 	struct ActorTable *table;
 	u32				   slot;
@@ -1600,7 +1611,7 @@ void MakyuriChojo_CollectBandSlots(s32 *out, s32 y)
 	}
 }
 
-void MakyuriChojo_LowerCollectedActors(void)
+static void MakyuriChojo_LowerCollectedActors(void)
 {
 	s32					   ids[5];
 	struct MapLayerScroll *lift;
@@ -1643,7 +1654,7 @@ void MakyuriChojo_LowerCollectedActors(void)
 		Object_GetById(ids[i])->motion_flags = 0;
 }
 
-void MakyuriChojo_RaiseCollectedActors(void)
+static void MakyuriChojo_RaiseCollectedActors(void)
 {
 	s32					   ids[5];
 	struct MapLayerScroll *lift;
@@ -1687,7 +1698,7 @@ void MakyuriChojo_RaiseCollectedActors(void)
 	Engine_TaskWait(2);
 }
 
-void FieldScene_ConfigureValue93Scene(void)
+static void FieldScene_ConfigureValue93Scene(void)
 {
 	Engine_PsynergyBegin(93, 1);
 	Engine_PsynergySetTarget(24, 9);
@@ -1697,7 +1708,7 @@ void FieldScene_ConfigureValue93Scene(void)
 	BattleEffect_CleanupSceneObjects();
 }
 
-void SceneEffect_UpdateArcPosition(struct OverlayObject *object)
+static void SceneEffect_UpdateArcPosition(struct OverlayObject *object)
 {
 	struct OverlayObject *parent;
 	u16					  angle;
@@ -1726,7 +1737,7 @@ struct LampSpark
 	void (*update)();
 };
 
-void MakyuriChojo_FlickerActorEight(void)
+static void MakyuriChojo_FlickerActorEight(void)
 {
 	struct FieldActor	 *lamp;
 	struct LampSpark	 *spark;

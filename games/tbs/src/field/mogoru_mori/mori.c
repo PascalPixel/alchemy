@@ -2,7 +2,6 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/mogoru_mori/mori.h"
-#include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 
@@ -30,6 +29,9 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "objcmd.h"
+
+// 前方宣言
+static void InitializeStagedActorSceneOrbitingEffect(s32 id);
 
 typedef struct OrbitingSceneObjectSprite
 {
@@ -82,12 +84,12 @@ enum
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -104,7 +106,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -134,12 +136,12 @@ struct Vec
 
 extern struct EventWork *gEventWork;
 
-void SceneState_SetValue18Mode2(void)
+static void SceneState_SetValue18Mode2(void)
 {
 	BattleFx_SetPhaseRequest(18, 2);
 }
 
-s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
+static s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
 {
 	struct FieldActor *p = Object_GetById(ACTOR_PARTY_LEADER);
 	u8				  *f = &p->motion_flags;
@@ -173,19 +175,19 @@ s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
 	return 0;
 }
 
-s32 MogoruMori_CopyTimerToChild(s32 a)
+static s32 MogoruMori_CopyTimerToChild(s32 a)
 {
 	ObjectGroup_SetChildValue(a, ((struct FieldActor *)a)->timer);
 	return 0;
 }
 
-s32 OverlayObject_ApplyZero(s32 a)
+static s32 OverlayObject_ApplyZero(s32 a)
 {
 	Engine_ActorSetSpriteFlags(a, 0);
 	return 0;
 }
 
-void MogoruMori_HopActorTo(s32 a0, s32 a1, s32 a2, s32 a3)
+static void MogoruMori_HopActorTo(s32 a0, s32 a1, s32 a2, s32 a3)
 {
 	struct FieldActor *rec7;
 
@@ -203,7 +205,7 @@ void MogoruMori_HopActorTo(s32 a0, s32 a1, s32 a2, s32 a3)
 	rec7->gravity = 0x10000;
 }
 
-void MogoruMori_SpawnPuffRing(s32 id)
+static void MogoruMori_SpawnPuffRing(s32 id)
 {
 	struct Vec			  dir;
 	struct EffectOptions  params;
@@ -232,7 +234,7 @@ void MogoruMori_SpawnPuffRing(s32 id)
 	}
 }
 
-void FieldScene_RunSixCallSetupSequence(s32 no, s32 val)
+static void FieldScene_RunSixCallSetupSequence(s32 no, s32 val)
 {
 	s32 v0 = 0x20000;
 	s32 v1 = 0x4000;
@@ -293,7 +295,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gMogoruMoriPlacementsOther;
 }
 
-void MogoruMori_RunProbedActorNineScene(void)
+static void MogoruMori_RunProbedActorNineScene(void)
 {
 	struct StagedActorProbe probe;
 	s32						fifth;
@@ -322,7 +324,7 @@ void MogoruMori_RunProbedActorNineScene(void)
 	Engine_EventEnd();
 }
 
-void SceneActor_PassOffsetPointOfActorZero(void)
+static void SceneActor_PassOffsetPointOfActorZero(void)
 {
 	s32 v[3];
 #if EDITION_INTERNATIONAL
@@ -339,7 +341,7 @@ void SceneActor_PassOffsetPointOfActorZero(void)
 	SceneActor_TryRunSlotZeroMoveStep(v);
 }
 
-void SceneActor_BobActorZeroWhenAheadClear(void)
+static void SceneActor_BobActorZeroWhenAheadClear(void)
 {
 	s32				   pos[3];
 	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -376,7 +378,7 @@ void SceneActor_BobActorZeroWhenAheadClear(void)
 	}
 }
 
-void FieldScene_RunScriptedSteps0And17E6(void)
+static void FieldScene_RunScriptedSteps0And17E6(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -384,7 +386,7 @@ void FieldScene_RunScriptedSteps0And17E6(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor10WaypointSequence(void)
+static void FieldScene_RunActor10WaypointSequence(void)
 {
 	struct FieldActor *slot;
 
@@ -423,7 +425,7 @@ void FieldScene_RunActor10WaypointSequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorElevenPresentationBeat(void)
+static void FieldScene_RunActorElevenPresentationBeat(void)
 {
 	struct FieldActor *slot;
 
@@ -458,7 +460,7 @@ void FieldScene_RunActorElevenPresentationBeat(void)
 	Engine_EventEnd();
 }
 
-void SceneActor_RunActorTwelveThreeWaypointMotion(void)
+static void SceneActor_RunActorTwelveThreeWaypointMotion(void)
 {
 	struct FieldActor *slot;
 
@@ -496,7 +498,7 @@ void SceneActor_RunActorTwelveThreeWaypointMotion(void)
 	Engine_EventEnd();
 }
 
-void MogoruMori_AwardHiddenNut(s32 a)
+static void MogoruMori_AwardHiddenNut(s32 a)
 {
 	Engine_EventBegin();
 	Engine_ActorSetPosition(16, 0, 0);
@@ -506,7 +508,7 @@ void MogoruMori_AwardHiddenNut(s32 a)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunProbedActorEightOrTenScene(void)
+static void FieldScene_RunProbedActorEightOrTenScene(void)
 {
 	struct StagedActorProbe probe;
 	s32						fifth;
@@ -550,7 +552,7 @@ void FieldScene_RunProbedActorEightOrTenScene(void)
 	Engine_EventEnd();
 }
 
-void SceneState_ApplyCrossRectsAroundActor11(void)
+static void SceneState_ApplyCrossRectsAroundActor11(void)
 {
 	s32 x;
 	s32 z;
@@ -578,7 +580,7 @@ void SceneState_ApplyCrossRectsAroundActor11(void)
 	Engine_EventEnd();
 }
 
-void MogoruMori_RunBranchHopScene(void)
+static void MogoruMori_RunBranchHopScene(void)
 {
 	struct FieldActor *rec7;
 
@@ -612,7 +614,7 @@ void MogoruMori_RunBranchHopScene(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorThirteenPresentationBeat(void)
+static void FieldScene_RunActorThirteenPresentationBeat(void)
 {
 	struct FieldActor *slot;
 
@@ -656,7 +658,7 @@ void FieldScene_RunActorThirteenPresentationBeat(void)
 	Engine_EventEnd();
 }
 
-void MogoruMori_TransferActorFourteen(void)
+static void MogoruMori_TransferActorFourteen(void)
 {
 	s32 record;
 
@@ -674,7 +676,7 @@ void MogoruMori_TransferActorFourteen(void)
 	Engine_EventEnd();
 }
 
-void SceneActor_RunActorFourteenFourWaypointMotion(void)
+static void SceneActor_RunActorFourteenFourWaypointMotion(void)
 {
 	struct FieldActor *slot;
 
@@ -720,7 +722,7 @@ void SceneActor_RunActorFourteenFourWaypointMotion(void)
 	Engine_EventEnd();
 }
 
-void MogoruMori_RunProbedLandingScene(void)
+static void MogoruMori_RunProbedLandingScene(void)
 {
 	struct StagedActorProbe probe;
 	s32						landed;
@@ -774,7 +776,7 @@ end:
 	Engine_EventEnd();
 }
 
-void SceneActor_BobActorZeroWhenTargetClear(void)
+static void SceneActor_BobActorZeroWhenTargetClear(void)
 {
 	struct FieldActor *record;
 	u8				  *mode;
@@ -817,7 +819,7 @@ void SceneActor_BobActorZeroWhenTargetClear(void)
 	}
 }
 
-void SceneActor_MarkActorThirteenTileAndPark(void)
+static void SceneActor_MarkActorThirteenTileAndPark(void)
 {
 	s32 x;
 	s32 z;
@@ -845,7 +847,7 @@ void SceneActor_MarkActorThirteenTileAndPark(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunSupplementalSequenceOne(void)
+static void FieldScene_RunSupplementalSequenceOne(void)
 {
 
 	s32				   x;
@@ -877,7 +879,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene39fSequenceA(void)
+static void FieldScene_RunScene39fSequenceA(void)
 {
 
 	struct FieldActor *rec7;
@@ -911,7 +913,7 @@ void FieldScene_RunScene39fSequenceA(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunSlot16WaypointSequence(void)
+static void FieldScene_RunSlot16WaypointSequence(void)
 {
 	struct FieldActor *slot;
 
@@ -953,7 +955,7 @@ void FieldScene_RunSlot16WaypointSequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor17CameraSequence(void)
+static void FieldScene_RunActor17CameraSequence(void)
 {
 	struct FieldActor *slot;
 
@@ -995,7 +997,7 @@ void FieldScene_RunActor17CameraSequence(void)
 	Engine_EventEnd();
 }
 
-void MogoruMori_TransferActorEighteen(void)
+static void MogoruMori_TransferActorEighteen(void)
 {
 	s32 record;
 
@@ -1013,7 +1015,7 @@ void MogoruMori_TransferActorEighteen(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorEighteenEffectSequence(void)
+static void FieldScene_RunActorEighteenEffectSequence(void)
 {
 	struct FieldActor *slot;
 
@@ -1058,7 +1060,7 @@ void FieldScene_RunActorEighteenEffectSequence(void)
 	Engine_EventEnd();
 }
 
-void MogoruMori_RunActorEighteenEscape(void)
+static void MogoruMori_RunActorEighteenEscape(void)
 {
 	struct FieldActor *rec7;
 
@@ -1089,7 +1091,7 @@ void MogoruMori_RunActorEighteenEscape(void)
 	Engine_EventEnd();
 }
 
-void MogoruMori_RunClosingChoreography(void)
+static void MogoruMori_RunClosingChoreography(void)
 {
 	struct Vec		   dir;
 	struct Vec		  *v;
@@ -1461,7 +1463,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 	return 0;
 }
 
-s32 SceneEffect_UpdateOrbitPosition(s32 *p)
+static s32 SceneEffect_UpdateOrbitPosition(s32 *p)
 {
 	s16 *q = (s16 *)p[20];
 	s32	 a, b;
@@ -1477,7 +1479,7 @@ s32 SceneEffect_UpdateOrbitPosition(s32 *p)
 	return 0;
 }
 
-void InitializeStagedActorSceneOrbitingEffect(s32 id)
+static void InitializeStagedActorSceneOrbitingEffect(s32 id)
 {
 	OrbitingSceneObject		  *actor;
 	OrbitingSceneObjectSprite *sprite;

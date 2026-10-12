@@ -7,12 +7,8 @@
 #include "unit/field/korosseo_maruta/maruta.h"
 #include "unit/field/common/korosseo/solo_competitor.h"
 #include "unit/field/common/korosseo/solo_round.h"
-#include "unit/field/common/korosseo/korosseo.h"
 #include "unit/field/common/korosseo/compete.h"
-#include "unit/field/common/korosseo/marker.h"
 #include "unit/field/common/korosseo/item_icon.h"
-#include "unit/field/common/korosseo/path_rival.h"
-#include "unit/field/common/korosseo/scene_state.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "unit/game/character/chara.h"
@@ -47,6 +43,26 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "fieldobj.h"
+
+// 前方宣言
+static void FieldScene_RunMultiPhaseActorSequence(s32 a0);
+static void Korosseo_RunGreetScene(s32 a0);
+static void ColossoLogRollingStage_RestoreActorPositions(void);
+static void ColossoLogRollingStage_MarkSceneProgress(void);
+static void ColossoLogRollingStage_ClearSavedActorPositions(void);
+static s32 ColossoLogRollingStage_RunStateInteraction(s32 actor, s32 flags);
+static void ColossoLogRollingStage_InitializeStateInteraction(s32 actor, s32 flags);
+static void ColossoLogRollingStage_RunScriptedTransition(s32 mode);
+static void ColossoLogRollingStage_ResetActorMotion(s32 selector);
+static void ColossoLogRollingStage_StartPaletteTaskFromState(u32 first_value, u32 second_value, u32 mode);
+static void ColossoLogRollingStage_StopPaletteTask(void);
+static void ColossoLogRollingStage_PositionScaledObject(s32 id, s32 x, s32 z);
+static void ColossoLogRollingStage_NoopSceneHook(void);
+static void ColossoLogRollingStage_WaitForBalanceState(void);
+static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_handle);
+static void ColossoLogRollingStage_InitializeSceneControl(s32 resource);
+static void ColossoLogRollingStage_PushStagedActor(void);
+static void *SceneActor_FindOccupantAheadOfSubject(void);
 
 typedef struct ActorSpriteRef
 {
@@ -207,7 +223,7 @@ u8 *ColossoLogRollingStage_GetEffectData(void)
 	return (u8 *)gKorosseoMarutaPlacements;
 }
 
-void ColossoLogRollingStage_SceneTask(void)
+static void ColossoLogRollingStage_SceneTask(void)
 {
 	struct EventWork  *work = gEventWork;
 	struct FieldActor *actor = Object_GetById(gGameState.selected_actor);
@@ -253,7 +269,7 @@ void ColossoLogRollingStage_SceneTask(void)
 
 // 別ファイルの関数: 呼び出し側は宣言なし (暗黙の int) で呼んでいる
 
-void ColossoLogRollingStage_ResetAndRunSceneTask(void)
+static void ColossoLogRollingStage_ResetAndRunSceneTask(void)
 {
 	SceneTaskEntry entry;
 
@@ -264,12 +280,12 @@ void ColossoLogRollingStage_ResetAndRunSceneTask(void)
 	entry();
 }
 
-void ColossoLogRollingStage_StartSceneTask(void)
+static void ColossoLogRollingStage_StartSceneTask(void)
 {
 	Engine_TaskAddCallback(ColossoLogRollingStage_SceneTask, 0xC80);
 }
 
-void ColossoLogRollingStage_WaitForSceneTask(void)
+static void ColossoLogRollingStage_WaitForSceneTask(void)
 {
 	s32 polls;
 
@@ -287,7 +303,7 @@ void ColossoLogRollingStage_WaitForSceneTask(void)
 	}
 }
 
-void ColossoLogRollingStage_NudgeActorsLeft(void)
+static void ColossoLogRollingStage_NudgeActorsLeft(void)
 {
 	u8				   *workspace = (u8 *)gEventWork;
 	s16				   *table = (s16 *)&gGameState;
@@ -304,7 +320,7 @@ void ColossoLogRollingStage_NudgeActorsLeft(void)
 	}
 }
 
-void ColossoLogRollingStage_ConfigureGridRegion(void)
+static void ColossoLogRollingStage_ConfigureGridRegion(void)
 {
 	Engine_GameFlagSet(0x360);
 	{
@@ -315,7 +331,7 @@ void ColossoLogRollingStage_ConfigureGridRegion(void)
 	}
 }
 
-void ColossoLogRollingStage_ConfigurePrimaryObjects(void)
+static void ColossoLogRollingStage_ConfigurePrimaryObjects(void)
 {
 	PrimaryStageObject *object;
 
@@ -338,7 +354,7 @@ void ColossoLogRollingStage_ConfigurePrimaryObjects(void)
 	Engine_MapCopyCellAttributes(14, 12, 1, 1, 9, 12);
 }
 
-void FieldScene_RunClosingAuxiliarySequence(void)
+static void FieldScene_RunClosingAuxiliarySequence(void)
 {
 
 	s32				   actor;
@@ -384,7 +400,7 @@ void FieldScene_RunClosingAuxiliarySequence(void)
 	}
 }
 
-void ColossoLogRollingStage_ConfigureSecondaryObjects(void)
+static void ColossoLogRollingStage_ConfigureSecondaryObjects(void)
 {
 
 	s16					 *table;
@@ -416,7 +432,7 @@ void ColossoLogRollingStage_ConfigureSecondaryObjects(void)
 	Engine_GameFlagClear(0x367);
 }
 
-void FieldScene_RunFinalAuxiliarySequence(void)
+static void FieldScene_RunFinalAuxiliarySequence(void)
 {
 
 	struct FieldActor *probe;
@@ -456,13 +472,13 @@ void FieldScene_RunFinalAuxiliarySequence(void)
 	}
 }
 
-void ColossoLogRollingStage_RunSetupCompletionHooks(void)
+static void ColossoLogRollingStage_RunSetupCompletionHooks(void)
 {
 	ColossoLogRollingStage_PushStagedActor();
 	FieldScene_RunFinalAuxiliarySequence();
 }
 
-void ColossoLogRollingStage_ConfigureActorThirteen(void)
+static void ColossoLogRollingStage_ConfigureActorThirteen(void)
 {
 
 	StageObstacleActor *actor;
@@ -475,16 +491,16 @@ void ColossoLogRollingStage_ConfigureActorThirteen(void)
 	Engine_MapCopyCellAttributes(17, 11, 1, 1, x, 11);
 }
 
-void ColossoLogRollingStage_NoopSetupHook(void)
+static void ColossoLogRollingStage_NoopSetupHook(void)
 {
 }
 
-void ColossoLogRollingStage_RunSetupHook(void)
+static void ColossoLogRollingStage_RunSetupHook(void)
 {
 	ColossoLogRollingStage_PushStagedActor();
 }
 
-void ColossoLogRollingStage_ActivateClearObstacleActors(void)
+static void ColossoLogRollingStage_ActivateClearObstacleActors(void)
 {
 
 	StageObstacleActor *actor;
@@ -512,7 +528,7 @@ void ColossoLogRollingStage_ActivateClearObstacleActors(void)
 	}
 }
 
-void ColossoLogRollingStage_ShowActorPositionMessage(void)
+static void ColossoLogRollingStage_ShowActorPositionMessage(void)
 {
 
 	StageObstacleActor *actor;
@@ -536,7 +552,7 @@ void ColossoLogRollingStage_ShowActorPositionMessage(void)
 	}
 }
 
-s32 ColossoLogRollingStage_CheckObstacleDestination(s32 x, s32 z)
+static s32 ColossoLogRollingStage_CheckObstacleDestination(s32 x, s32 z)
 {
 
 	StageObstacleActor *actor;
@@ -565,7 +581,7 @@ s32 ColossoLogRollingStage_CheckObstacleDestination(s32 x, s32 z)
 	return 0;
 }
 
-s32 ColossoLogRollingStage_CheckPathClearance(s32 x, s32 y)
+static s32 ColossoLogRollingStage_CheckPathClearance(s32 x, s32 y)
 {
 	if (ColossoLogRollingStage_CheckObstacleDestination(x, y - 0x180000) != 0
 		|| ColossoLogRollingStage_CheckObstacleDestination(x, y - 0x80000) != 0
@@ -577,7 +593,7 @@ s32 ColossoLogRollingStage_CheckPathClearance(s32 x, s32 y)
 	return 0;
 }
 
-void FieldScene_RunEarlySequence(void)
+static void FieldScene_RunEarlySequence(void)
 {
 
 	struct FieldActor *rider;
@@ -696,7 +712,7 @@ far:
 	ColossoLogRollingStage_ActivateClearObstacleActors();
 }
 
-s32 ColossoLogRollingStage_SetSceneEventValues(void)
+static s32 ColossoLogRollingStage_SetSceneEventValues(void)
 {
 
 	Map_SetLayerEntryFlag(1);
@@ -706,7 +722,7 @@ s32 ColossoLogRollingStage_SetSceneEventValues(void)
 	return 0;
 }
 
-void ColossoLogRollingStage_ConfigureSceneEventEffect(void)
+static void ColossoLogRollingStage_ConfigureSceneEventEffect(void)
 {
 	StageMotionEffect *effect;
 	s32				   move_rate;
@@ -721,7 +737,7 @@ void ColossoLogRollingStage_ConfigureSceneEventEffect(void)
 	Engine_GameFlagSet(0x363);
 }
 
-void ColossoLogRollingStage_WaitForSceneEventTask(void)
+static void ColossoLogRollingStage_WaitForSceneEventTask(void)
 {
 
 	BattleEffect_PauseObject(28);
@@ -733,7 +749,7 @@ void ColossoLogRollingStage_WaitForSceneEventTask(void)
 	Engine_TaskRemoveCallback(ColossoLogRollingStage_SceneTask);
 }
 
-void ColossoLogRollingStage_OffsetActiveActor(void)
+static void ColossoLogRollingStage_OffsetActiveActor(void)
 {
 
 	StageObstacleActor *actor;
@@ -753,7 +769,7 @@ void ColossoLogRollingStage_OffsetActiveActor(void)
 	Object_CommitPosition(actor);
 }
 
-void ColossoLogRollingStage_ClampAndOffsetActiveActor(void)
+static void ColossoLogRollingStage_ClampAndOffsetActiveActor(void)
 {
 
 	StageObstacleActor *actor;
@@ -778,11 +794,11 @@ void ColossoLogRollingStage_ClampAndOffsetActiveActor(void)
 	BattleFx_RunRisingObjectSequence(*slot, 6, 0);
 }
 
-void ColossoLogRollingStage_NoopSceneEventHook(void)
+static void ColossoLogRollingStage_NoopSceneEventHook(void)
 {
 }
 
-void KorosseoMaruta_RunCompetitorTalk(s32 a0)
+static void KorosseoMaruta_RunCompetitorTalk(s32 a0)
 {
 	struct EventWork *work;
 	s32				  owner;
@@ -819,7 +835,7 @@ void KorosseoMaruta_RunCompetitorTalk(s32 a0)
 	}
 }
 
-void KorosseoMaruta_RunStageStart(void)
+static void KorosseoMaruta_RunStageStart(void)
 {
 	s32 place;
 	s32 i;
@@ -859,7 +875,7 @@ void KorosseoMaruta_RunStageStart(void)
 	Engine_GameFlagSet(0x11a);
 }
 
-void ColossoLogRollingStage_RunSceneEventIfReady(void)
+static void ColossoLogRollingStage_RunSceneEventIfReady(void)
 {
 	if (SceneActor_FindOccupantAheadOfSubject() == 0)
 	{
@@ -867,7 +883,7 @@ void ColossoLogRollingStage_RunSceneEventIfReady(void)
 	}
 }
 
-void ColossoLogRollingStage_FinishOrContinueSceneEvent(void)
+static void ColossoLogRollingStage_FinishOrContinueSceneEvent(void)
 {
 	if (SceneActor_FindOccupantAheadOfSubject() == 0)
 	{
@@ -1120,7 +1136,7 @@ s32 StageSetup_BuildAndDispatch(void)
 	return 0;
 }
 
-s32 ColossoLogRollingStage_AdvanceParticleMotion(SceneParticle *particle)
+static s32 ColossoLogRollingStage_AdvanceParticleMotion(SceneParticle *particle)
 {
 	particle->x += particle->velocity_x << 8;
 	particle->y += particle->velocity_y << 8;
@@ -1131,7 +1147,7 @@ s32 ColossoLogRollingStage_AdvanceParticleMotion(SceneParticle *particle)
 	return 0;
 }
 
-void ColossoLogRollingStage_SpawnPeriodicParticle(void)
+static void ColossoLogRollingStage_SpawnPeriodicParticle(void)
 {
 
 	SceneParticle *particle;
@@ -1186,7 +1202,7 @@ void ColossoLogRollingStage_SpawnPeriodicParticle(void)
 	Engine_ActorEnableActionCallback(kind, (u8 *)gColossoParticleKinds);
 }
 
-void FieldScene_RunMultiPhaseActorSequence(s32 a0)
+static void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 {
 
 	struct FieldActor *record;
@@ -1389,7 +1405,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 	Engine_EventEnd();
 }
 
-void Korosseo_RunGreetScene(s32 a0)
+static void Korosseo_RunGreetScene(s32 a0)
 {
 	s32				   p10;
 	s32				   p9;
@@ -1456,7 +1472,7 @@ void Korosseo_RunGreetScene(s32 a0)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunDualArrivalSequence(s32 scene)
+static void FieldScene_RunDualArrivalSequence(s32 scene)
 {
 	struct FieldActor *pan1;
 	struct FieldActor *pan2;
@@ -1532,7 +1548,7 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunSecondArrivalSequence(s32 scene)
+static void FieldScene_RunSecondArrivalSequence(s32 scene)
 {
 	s32 state;
 	s32 x;
@@ -1590,7 +1606,7 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
 	Engine_EventEnd();
 }
 
-void KorosseoMaruta_RunStageIntro(s32 scene)
+static void KorosseoMaruta_RunStageIntro(s32 scene)
 {
 	struct EventWork *work;
 	s32				  state;
@@ -1652,7 +1668,7 @@ void KorosseoMaruta_RunStageIntro(s32 scene)
 	}
 }
 
-void FieldScene_RunFourStepActorMotion(s32 event)
+static void FieldScene_RunFourStepActorMotion(s32 event)
 {
 
 	s32				   result;
@@ -1720,7 +1736,7 @@ void FieldScene_RunFourStepActorMotion(s32 event)
 	}
 }
 
-void ColossoLogRollingStage_PositionActor(s32 selector, s32 x, s32 z)
+static void ColossoLogRollingStage_PositionActor(s32 selector, s32 x, s32 z)
 {
 
 	s32 *record;
@@ -1734,7 +1750,7 @@ void ColossoLogRollingStage_PositionActor(s32 selector, s32 x, s32 z)
 	}
 }
 
-void ColossoLogRollingStage_PositionAndActivateActor(s32 selector, s32 x, s32 z)
+static void ColossoLogRollingStage_PositionAndActivateActor(s32 selector, s32 x, s32 z)
 {
 
 	s32 *record;
@@ -1750,7 +1766,7 @@ void ColossoLogRollingStage_PositionAndActivateActor(s32 selector, s32 x, s32 z)
 	}
 }
 
-void FieldScene_RunOpeningAuxiliarySequence(s32 event)
+static void FieldScene_RunOpeningAuxiliarySequence(s32 event)
 {
 
 	s32				   i;
@@ -1816,7 +1832,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 event)
 	}
 }
 
-void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor)
+static void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor)
 {
 
 	s32 state;
@@ -1862,7 +1878,7 @@ void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor)
 	Engine_EventEnd();
 }
 
-void ColossoLogRollingStage_RestoreActorPositions(void)
+static void ColossoLogRollingStage_RestoreActorPositions(void)
 {
 
 	s32 center;
@@ -1900,7 +1916,7 @@ void ColossoLogRollingStage_RestoreActorPositions(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/solo_competitor.c"
 
-void ColossoLogRollingStage_MarkSceneProgress(void)
+static void ColossoLogRollingStage_MarkSceneProgress(void)
 {
 
 	u8	*state;
@@ -1926,7 +1942,7 @@ void ColossoLogRollingStage_MarkSceneProgress(void)
 	}
 }
 
-void ColossoLogRollingStage_SelectNearestObstacle(void)
+static void ColossoLogRollingStage_SelectNearestObstacle(void)
 {
 
 	struct EventWork *state;
@@ -2018,7 +2034,7 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/solo_round.c"
 
-void ColossoLogRollingStage_ClearSavedActorPositions(void)
+static void ColossoLogRollingStage_ClearSavedActorPositions(void)
 {
 
 	GameFlag_SetByte(896, 0);
@@ -2029,7 +2045,7 @@ void ColossoLogRollingStage_ClearSavedActorPositions(void)
 	GameFlag_SetByte(936, 0);
 }
 
-s32 ColossoLogRollingStage_RunStateInteraction(s32 actor, s32 flags)
+static s32 ColossoLogRollingStage_RunStateInteraction(s32 actor, s32 flags)
 {
 	s32 scene;
 	s32 msg;
@@ -2075,7 +2091,7 @@ s32 ColossoLogRollingStage_RunStateInteraction(s32 actor, s32 flags)
 	return Engine_EventChooseYesNo(0, 0);
 }
 
-void ColossoLogRollingStage_InitializeStateInteraction(s32 actor, s32 flags)
+static void ColossoLogRollingStage_InitializeStateInteraction(s32 actor, s32 flags)
 {
 	s32 scene;
 	s32 msg;
@@ -2223,7 +2239,7 @@ L_main:
 	GameFlag_SetByte((obj << 4) + 888, sy);
 }
 
-void ColossoLogRollingStage_ApplyItemToMatchingSlots(s32 handle, s32 item)
+static void ColossoLogRollingStage_ApplyItemToMatchingSlots(s32 handle, s32 item)
 {
 
 	u8 *record;
@@ -2244,7 +2260,7 @@ void ColossoLogRollingStage_ApplyItemToMatchingSlots(s32 handle, s32 item)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/korosseo.c"
 
-void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
+static void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
 {
 	s32 handler;
 
@@ -2285,7 +2301,7 @@ void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
 	Korosseo_ModeTaskPosition = 0;
 }
 
-void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
+static void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
 {
 
 	if (mode == 0)
@@ -2343,7 +2359,7 @@ check_transition:
 	Engine_GameFlagSet(0x123);
 }
 
-void FieldScene_RunScene3bcSequenceA(s32 a0)
+static void FieldScene_RunScene3bcSequenceA(s32 a0)
 {
 
 	s32 kind;
@@ -2388,7 +2404,7 @@ void FieldScene_RunScene3bcSequenceA(s32 a0)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/compete.c"
 
-void ColossoLogRollingStage_ResetActorMotion(s32 selector)
+static void ColossoLogRollingStage_ResetActorMotion(s32 selector)
 {
 
 	struct FieldActor *record;
@@ -2402,7 +2418,7 @@ void ColossoLogRollingStage_ResetActorMotion(s32 selector)
 	record->target_z = 0x80000000;
 }
 
-void ColossoLogRollingStage_EnsurePaletteHandle(void)
+static void ColossoLogRollingStage_EnsurePaletteHandle(void)
 {
 
 	s16 *cursor = &Korosseo_MarkerSlot;
@@ -2433,7 +2449,7 @@ void ColossoLogRollingStage_StartPaletteTask(u32 first_value, u32 second_value, 
 	}
 }
 
-void ColossoLogRollingStage_StartPaletteTaskFromState(u32 first_value, u32 second_value, u32 mode)
+static void ColossoLogRollingStage_StartPaletteTaskFromState(u32 first_value, u32 second_value, u32 mode)
 {
 	Korosseo_MarkerEndX = first_value;
 	Korosseo_MarkerEndY = second_value;
@@ -2449,7 +2465,7 @@ void ColossoLogRollingStage_StartPaletteTaskFromState(u32 first_value, u32 secon
 	}
 }
 
-void ColossoLogRollingStage_StopPaletteTask(void)
+static void ColossoLogRollingStage_StopPaletteTask(void)
 {
 
 	Engine_TaskRemoveCallback(Korosseo_UpdateMarker);
@@ -2457,7 +2473,7 @@ void ColossoLogRollingStage_StopPaletteTask(void)
 	Korosseo_MarkerSlot = -1;
 }
 
-void ColossoLogRollingStage_PositionScaledObject(s32 id, s32 x, s32 z)
+static void ColossoLogRollingStage_PositionScaledObject(s32 id, s32 x, s32 z)
 {
 
 	ScaledStageObject *object = (ScaledStageObject *)Engine_ActorLookup(id);
@@ -2505,7 +2521,7 @@ void ColossoLogRollingStage_SpawnPositionedObject(s32 object_id, s32 x, s32 z)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/item_icon.c"
 
-void WriteU32AsHex(u8 *hex_text, u32 value)
+static void WriteU32AsHex(u8 *hex_text, u32 value)
 {
 	s32 digit_index;
 
@@ -2520,18 +2536,18 @@ void WriteU32AsHex(u8 *hex_text, u32 value)
 	}
 }
 
-void ColossoLogRollingStage_NoopSceneHook(void)
+static void ColossoLogRollingStage_NoopSceneHook(void)
 {
 }
 
-void ColossoLogRollingStage_SetBalanceStateReady(void)
+static void ColossoLogRollingStage_SetBalanceStateReady(void)
 {
 	SceneControl *control = (SceneControl *)gSceneState;
 
 	control->enabled = 9;
 }
 
-void ColossoLogRollingStage_WaitForBalanceState(void)
+static void ColossoLogRollingStage_WaitForBalanceState(void)
 {
 	SceneControl *control = (SceneControl *)gSceneState;
 
@@ -2541,7 +2557,7 @@ void ColossoLogRollingStage_WaitForBalanceState(void)
 	}
 }
 
-void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source)
+static void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source)
 {
 
 	s32 position[3];
@@ -2582,7 +2598,7 @@ void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source)
 	}
 }
 
-s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(StageEffect_02003d88 *source)
+static s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(StageEffect_02003d88 *source)
 {
 
 	StageEffect_02003d88 *effect = Object_GetById(source->linked_effect_slot);
@@ -2595,7 +2611,7 @@ s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(StageEffect_02003d88 *source)
 	return 0;
 }
 
-s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_handle)
+static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_handle)
 {
 	u8				  *work = gKorosseoWork;
 	struct FieldActor *actor;
@@ -2700,7 +2716,7 @@ void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_act
 	Runtime_BumpFree(handle);
 }
 
-void ColossoLogRollingStage_InitializeSceneControl(s32 resource)
+static void ColossoLogRollingStage_InitializeSceneControl(s32 resource)
 {
 	u8			 *work = gKorosseoWork;
 	SceneControl *control = (SceneControl *)gSceneState;
@@ -2720,7 +2736,7 @@ void ColossoLogRollingStage_InitializeSceneControl(s32 resource)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/scene_state.c"
 
-void *SceneData_FindSlotAtPosition(void *position, void *self)
+static void *SceneData_FindSlotAtPosition(void *position, void *self)
 {
 	s32				   *pos = position;
 	struct FieldActor **slots = gEventWork->actors;
@@ -2739,7 +2755,7 @@ void *SceneData_FindSlotAtPosition(void *position, void *self)
 	return 0;
 }
 
-void ColossoLogRollingStage_PushStagedActor(void)
+static void ColossoLogRollingStage_PushStagedActor(void)
 {
 
 	MarutaSceneRecord *subject;
@@ -2828,7 +2844,7 @@ void ColossoLogRollingStage_PushStagedActor(void)
 	Object_SetMode(subject, 1);
 }
 
-void *SceneActor_FindOccupantAheadOfSubject(void)
+static void *SceneActor_FindOccupantAheadOfSubject(void)
 {
 	struct FieldActor *record;
 	s32				   facing;

@@ -3,7 +3,6 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/babi_iriguchi/iriguchi.h"
-#include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/effect/move.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
@@ -35,6 +34,10 @@
 #include "objcmd.h"
 #include "fieldobj.h"
 
+// 前方宣言
+static void BabiIriguchi_CloseTruthDoor(void);
+static void SceneState_ApplyRectsAtActors8And9(void);
+
 extern u8 gEffectWork[];
 
 static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
@@ -45,12 +48,12 @@ static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -67,7 +70,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -88,12 +91,12 @@ void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 #include "../common/effect/move.c"
 #include "../common/effect/spawn.c"
 
-void SceneState_SetValue8Mode66(void)
+static void SceneState_SetValue8Mode66(void)
 {
 	BattleFx_SetPhaseRequest(8, 66);
 }
 
-void OverlayObject_WaitUntilIdle(s32 *obj)
+static void OverlayObject_WaitUntilIdle(s32 *obj)
 {
 	s32 i = 60;
 
@@ -108,7 +111,7 @@ void OverlayObject_WaitUntilIdle(s32 *obj)
 	}
 }
 
-void Effect_AdvanceMotion(union FieldObject *object)
+static void Effect_AdvanceMotion(union FieldObject *object)
 {
 	struct FieldEffect *efx = &object->effect;
 
@@ -122,7 +125,7 @@ void Effect_AdvanceMotion(union FieldObject *object)
 	efx->sprite->rotation += efx->spin;
 }
 
-void FieldScene_RunSupplementalSequenceOne(void)
+static void FieldScene_RunSupplementalSequenceOne(void)
 {
 	u32					 i;
 	struct FieldActor	*leader;
@@ -169,7 +172,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene3c5SequenceA(s32 exit)
+static void FieldScene_RunScene3c5SequenceA(s32 exit)
 {
 	struct FieldActor *leader;
 
@@ -250,7 +253,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gBabiIriguchiPlacementsOther;
 }
 
-void BabiIriguchi_JumpFromLedge(void)
+static void BabiIriguchi_JumpFromLedge(void)
 {
 	struct FieldActor *rec7;
 
@@ -289,7 +292,7 @@ done:;
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFourCallSequence(void)
+static void FieldScene_RunFourCallSequence(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
@@ -297,7 +300,7 @@ void FieldScene_RunFourCallSequence(void)
 	Engine_EventEnd();
 }
 
-void SceneState_BranchOnActorEightOrNineTile(void)
+static void SceneState_BranchOnActorEightOrNineTile(void)
 {
 	struct FieldActor *p = Object_GetById(9);
 
@@ -327,7 +330,7 @@ void SceneState_BranchOnActorEightOrNineTile(void)
 	FieldEffect_UpdateGridPlacement();
 }
 
-void ResetSceneParametersAndFinishSetup(void)
+static void ResetSceneParametersAndFinishSetup(void)
 {
 	Camera_MoveTo(-1, -1, -1, 0);
 	BattleFx_RunRisingObjectSequence(0, 6, 0);
@@ -335,7 +338,7 @@ void ResetSceneParametersAndFinishSetup(void)
 	Engine_EventWaitForScreen();
 }
 
-void FieldScene_RunStep11(void)
+static void FieldScene_RunStep11(void)
 {
 	Engine_EventBegin();
 	ResetSceneParametersAndFinishSetup();
@@ -343,7 +346,7 @@ void FieldScene_RunStep11(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunStep12WithPosition(void)
+static void FieldScene_RunStep12WithPosition(void)
 {
 	Engine_EventBegin();
 	OverlayObject_PrepareObject(0x1d00000, 0, 0x1220000, 223);
@@ -352,7 +355,7 @@ void FieldScene_RunStep12WithPosition(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunStep13WithTwoPositions(void)
+static void FieldScene_RunStep13WithTwoPositions(void)
 {
 	Engine_EventBegin();
 	OverlayObject_PrepareObject(0x8f0000, 0, 0x1220000, 223);
@@ -362,7 +365,7 @@ void FieldScene_RunStep13WithTwoPositions(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunStep15(void)
+static void FieldScene_RunStep15(void)
 {
 	Engine_EventBegin();
 	ResetSceneParametersAndFinishSetup();
@@ -370,7 +373,7 @@ void FieldScene_RunStep15(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunStepWithValue2693(void)
+static void FieldScene_RunStepWithValue2693(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -378,7 +381,7 @@ void FieldScene_RunStepWithValue2693(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunBranchingActorSequence(void)
+static void FieldScene_RunBranchingActorSequence(void)
 {
 	struct FieldActor *record;
 
@@ -665,7 +668,7 @@ void FieldScene_RunBranchingActorSequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorEventSequence(void)
+static void FieldScene_RunActorEventSequence(void)
 {
 	struct FieldActor *record;
 
@@ -957,7 +960,7 @@ void FieldScene_RunActorEventSequence(void)
 	Engine_EventEnd();
 }
 
-void ActorPresentation_SetSceneCellByFlag985(void)
+static void ActorPresentation_SetSceneCellByFlag985(void)
 {
 	if (Engine_GameFlagIsSet(0x985) == 0)
 	{
@@ -969,12 +972,12 @@ void ActorPresentation_SetSceneCellByFlag985(void)
 	}
 }
 
-void SceneState_ApplyRectAt32x78(void)
+static void SceneState_ApplyRectAt32x78(void)
 {
 	Map_CopyCellsLayered(32, 78, 1, 2, 17, 78);
 }
 
-void BabiIriguchi_OpenTruthDoor(void)
+static void BabiIriguchi_OpenTruthDoor(void)
 {
 	if (GameFlag_IsSet(0x985) == 0)
 	{
@@ -994,7 +997,7 @@ void BabiIriguchi_OpenTruthDoor(void)
 	}
 }
 
-void BabiIriguchi_CloseTruthDoor(void)
+static void BabiIriguchi_CloseTruthDoor(void)
 {
 	if (GameFlag_IsSet(0x985) != 0)
 	{
@@ -1018,7 +1021,7 @@ void BabiIriguchi_CloseTruthDoor(void)
 	}
 }
 
-void BabiIriguchi_FlipTruthDoorSwitch(void)
+static void BabiIriguchi_FlipTruthDoorSwitch(void)
 {
 	u8	*work = (u8 *)gEventWork;
 	s16 *seeing;
@@ -1047,7 +1050,7 @@ void BabiIriguchi_FlipTruthDoorSwitch(void)
 	Engine_EventEnd();
 }
 
-struct StagedActor *BabiIriguchi_FindActorAhead(struct StagedActor *actor)
+static struct StagedActor *BabiIriguchi_FindActorAhead(struct StagedActor *actor)
 {
 	s32	 pos[3];
 	s32 *p = pos;
@@ -1066,12 +1069,12 @@ struct StagedActor *BabiIriguchi_FindActorAhead(struct StagedActor *actor)
 	return StagedActor_FindAtTile(p, actor);
 }
 
-void BabiIriguchi_EnableEffectChildOption(void)
+static void BabiIriguchi_EnableEffectChildOption(void)
 {
 	((struct BattleFxScene *)*(void **)gEffectWork)->child_option = 1;
 }
 
-void ActorPresentation_PlaceActorTwelveAtTile20And12(void)
+static void ActorPresentation_PlaceActorTwelveAtTile20And12(void)
 {
 	struct FieldActor *p = Object_GetById(12);
 	s32				   a = p->x.fixed >> 20;
@@ -1094,7 +1097,7 @@ void ActorPresentation_PlaceActorTwelveAtTile20And12(void)
 	}
 }
 
-void SceneActor_PushObjectAheadIfLevel(void)
+static void SceneActor_PushObjectAheadIfLevel(void)
 {
 	struct StagedActor *p = (struct StagedActor *)Object_GetById(ACTOR_PARTY_LEADER);
 	struct StagedActor *q = BabiIriguchi_FindActorAhead(p);
@@ -1126,7 +1129,7 @@ void SceneActor_PushObjectAheadIfLevel(void)
 	StagedActor_AdvancePair();
 }
 
-void SceneActor_RunSlotZeroFacingCheck(void)
+static void SceneActor_RunSlotZeroFacingCheck(void)
 {
 	struct StagedActor *p = (struct StagedActor *)Object_GetById(0);
 	struct StagedActor *ahead = BabiIriguchi_FindActorAhead(p);
@@ -1172,7 +1175,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gBabiIriguchiEventsOther;
 }
 
-void SceneState_ConfigureRegion82_7AndApply768(void)
+static void SceneState_ConfigureRegion82_7AndApply768(void)
 {
 
 	s32 a = 18;
@@ -1183,7 +1186,7 @@ void SceneState_ConfigureRegion82_7AndApply768(void)
 	Engine_GameFlagSet(768);
 }
 
-void SceneState_ApplyRectsAtActors8And9(void)
+static void SceneState_ApplyRectsAtActors8And9(void)
 {
 	struct FieldActor *p = Object_GetById(8);
 
@@ -1214,7 +1217,7 @@ void SceneState_ApplyRectsAtActors8And9(void)
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
-void BabiIriguchi_MatchLeaderPriority(void)
+static void BabiIriguchi_MatchLeaderPriority(void)
 {
 	struct FieldSprite *sprite;
 	struct FieldActor  *actor;

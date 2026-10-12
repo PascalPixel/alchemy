@@ -4,7 +4,6 @@
 #include "unit/import.h"
 #include "unit/field/karagoru_dou/dou.h"
 #include "unit/field/common/effect/move.h"
-#include "unit/field/common/object/staged_actor.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "battle.h"
@@ -25,12 +24,16 @@
 #include "text/msg_ids.h"
 #include "fieldobj.h"
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+// 前方宣言
+static void ActorPresentation_RunActorNineThresholdScene(void);
+static void StagedActorPairScene_RunSpinningLeap(s32 id);
+
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -47,7 +50,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -153,7 +156,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gKaragoruDouEventsOther;
 }
 
-void FieldScene_RunScene3beSequenceB(void)
+static void FieldScene_RunScene3beSequenceB(void)
 {
 	struct FieldActor *leader;
 
@@ -205,7 +208,7 @@ void FieldScene_RunScene3beSequenceB(void)
 	}
 }
 
-void ActorPresentation_RunActorElevenRecoveryScene(void)
+static void ActorPresentation_RunActorElevenRecoveryScene(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceActor(11, ACTOR_PARTY_LEADER, 0);
@@ -229,7 +232,7 @@ void ActorPresentation_RunActorElevenRecoveryScene(void)
 	Engine_EventEnd();
 }
 
-void KaragoruDou_AskToCross(void)
+static void KaragoruDou_AskToCross(void)
 {
 	s32 base;
 
@@ -254,7 +257,7 @@ void KaragoruDou_AskToCross(void)
 	}
 }
 
-void ActorPresentation_SelectActorNineScript(void)
+static void ActorPresentation_SelectActorNineScript(void)
 {
 	if (Engine_GameFlagIsSet(2384) != 0 && Engine_GameFlagIsSet(2415) == 0)
 		Engine_EventSetMessage((s32)MsgKaragoruWeMissedColossoBecauseWe);
@@ -263,7 +266,7 @@ void ActorPresentation_SelectActorNineScript(void)
 	Engine_EventShowMessage(9, 0);
 }
 
-void KaragoruDou_LeaveArena(void)
+static void KaragoruDou_LeaveArena(void)
 {
 	struct EventWork *work;
 
@@ -284,12 +287,12 @@ void KaragoruDou_LeaveArena(void)
 	Engine_EventEnd();
 }
 
-void StagedActorPairScene_RunStep(void)
+static void StagedActorPairScene_RunStep(void)
 {
 	Engine_LeaderCheckAhead();
 }
 
-void ActorPresentation_RunActorEightThresholdScene(void)
+static void ActorPresentation_RunActorEightThresholdScene(void)
 {
 	Object_GetById(8);
 	Engine_EventBegin();
@@ -311,13 +314,13 @@ void ActorPresentation_RunActorEightThresholdScene(void)
 	Engine_EventEnd();
 }
 
-void StagedActorPairScene_RunUpdate(void)
+static void StagedActorPairScene_RunUpdate(void)
 {
 	StagedActor_AdvancePair();
 	ActorPresentation_RunActorNineThresholdScene();
 }
 
-void ActorPresentation_RunActorNineThresholdScene(void)
+static void ActorPresentation_RunActorNineThresholdScene(void)
 {
 	Engine_EventBegin();
 	if ((Object_GetById(9)->x.fixed >> 20) > 42)
@@ -336,18 +339,18 @@ void ActorPresentation_RunActorNineThresholdScene(void)
 	Engine_EventEnd();
 }
 
-void StagedActorPairScene_NoopActorCallback(void)
+static void StagedActorPairScene_NoopActorCallback(void)
 {
 }
 
-void StagedActorPairScene_RotateActorPart(u8 *actor)
+static void StagedActorPairScene_RotateActorPart(u8 *actor)
 {
 	u8 *sprite_part = *(u8 **)(actor + 80);
 
 	*(u16 *)(sprite_part + 30) -= 0x400;
 }
 
-void StagedActorPairScene_WaitForHeight(struct HeightTrackedObject *object, s32 limit)
+static void StagedActorPairScene_WaitForHeight(struct HeightTrackedObject *object, s32 limit)
 {
 	s32 frames = 40;
 
@@ -362,7 +365,7 @@ void StagedActorPairScene_WaitForHeight(struct HeightTrackedObject *object, s32 
 	}
 }
 
-void StagedActorPairScene_RunSpinningLeap(s32 id)
+static void StagedActorPairScene_RunSpinningLeap(s32 id)
 {
 	union SpinningActor *work;
 	u32					 cnt;
@@ -412,11 +415,11 @@ void StagedActorPairScene_RunSpinningLeap(s32 id)
 	Engine_ActorSetAnimation(id, 2);
 }
 
-void StagedActorPairScene_NoopSceneCallback(void)
+static void StagedActorPairScene_NoopSceneCallback(void)
 {
 }
 
-void StagedActorPairScene_RunActorTwelveCommand(void)
+static void StagedActorPairScene_RunActorTwelveCommand(void)
 {
 	Engine_ActorSetPosition(12, 0, 0);
 }

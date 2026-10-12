@@ -56,7 +56,7 @@ u8 *MenuTest_GetPlacements(void)
 }
 
 #if EDITION_INTERNATIONAL
-void SceneDialogue_ShowMessageAndWait(s32 arg0)
+static void SceneDialogue_ShowMessageAndWait(s32 arg0)
 {
 	UiWork_FinalizePendingCore();
 	UiText_OpenMessageWindow(arg0, 5, 0, 0x22);
@@ -67,7 +67,7 @@ void SceneDialogue_ShowMessageAndWait(s32 arg0)
 	Engine_TaskWait(1);
 }
 
-void CommandTable_RunDirectionalInput(s32 x, s32 cnt)
+static void CommandTable_RunDirectionalInput(s32 x, s32 cnt)
 {
 	volatile s32 *key;
 	s32			  token;
@@ -119,43 +119,43 @@ end:
 	Engine_DebugFinalizeWindow(token, 2);
 }
 
-void SceneState_ApplyBlockC9b(void)
+static void SceneState_ApplyBlockC9b(void)
 {
 	CommandTable_RunDirectionalInput(
 		(s32)MsgWeaponShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-void SceneState_ApplyBlockCc6(void)
+static void SceneState_ApplyBlockCc6(void)
 {
 	CommandTable_RunDirectionalInput(
 		(s32)MsgArmorShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-void SceneState_ApplyBlockCf1(void)
+static void SceneState_ApplyBlockCf1(void)
 {
 	CommandTable_RunDirectionalInput(
 		(s32)MsgItemShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-void SceneState_ApplyBlockD21(void)
+static void SceneState_ApplyBlockD21(void)
 {
 	CommandTable_RunDirectionalInput(
 		(s32)MsgSanctumWelcome, MsgWarriorShopWelcome - MsgSanctumWelcome);
 }
 
-void SceneState_ApplyBlockD4c(void)
+static void SceneState_ApplyBlockD4c(void)
 {
 	CommandTable_RunDirectionalInput(
 		(s32)MsgWarriorShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-void SceneState_ApplyBlockD77(void)
+static void SceneState_ApplyBlockD77(void)
 {
 	CommandTable_RunDirectionalInput(
 		(s32)MsgWarriorArmorShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-void SceneState_ApplyBlockDa2(void)
+static void SceneState_ApplyBlockDa2(void)
 {
 	CommandTable_RunDirectionalInput(
 		(s32)MsgWarriorItemShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
@@ -164,7 +164,7 @@ void SceneState_ApplyBlockDa2(void)
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
-void DebugMenu_RunMessageTest(void)
+static void DebugMenu_RunMessageTest(void)
 {
 	Engine_EventSetMessage(MSGNO(MsgBattleAdditionalPsynergyHelp));
 	Engine_EventSetMessage(MSGNO(MsgHaidiaComeOnHurry));
@@ -172,38 +172,38 @@ void DebugMenu_RunMessageTest(void)
 }
 #endif
 
-void SceneState_ApplyOne(void)
+static void SceneState_ApplyOne(void)
 {
 	Battle_ApplyPresetItemsAndFlags(1);
 }
 
-void SceneState_NoOp(void)
+static void SceneState_NoOp(void)
 {
 }
 
-void SceneState_QueryTwoValues(void)
+static void SceneState_QueryTwoValues(void)
 {
 	s32 a;
 	s32 b;
 	Shop_PickUnitItem(&a, &b);
 }
 
-void SceneState_ApplyZero(void)
+static void SceneState_ApplyZero(void)
 {
 	NameEntry_EditOwnerName(0);
 }
 
-void CommandTable_NoOpCallback(void)
+static void CommandTable_NoOpCallback(void)
 {
 }
 
-void SceneState_SetRecordFlag53(void)
+static void SceneState_SetRecordFlag53(void)
 {
 	gEffectWork->child_mode = 1;
 }
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-void DebugMenu_GiveItemToParty(void)
+static void DebugMenu_GiveItemToParty(void)
 {
 	PartyInventory_GiveItem(181, 0);
 }
@@ -214,7 +214,7 @@ s32 MenuTest_GetEvents(void)
 	return (s32)MenuTest_Events;
 }
 
-void MenuTest_RaisePartyLevelTarget(void)
+static void MenuTest_RaisePartyLevelTarget(void)
 {
 	s32 *p;
 
@@ -231,7 +231,7 @@ void MenuTest_RaisePartyLevelTarget(void)
 	UnitCalc(2);
 }
 
-void FieldScene_GrantItemListToSlots(void)
+static void FieldScene_GrantItemListToSlots(void)
 {
 	UiText_ShowPositionedMessageAndWait(MsgDebugGotItem, 1);
 	Inventory_AddItem(0, 187);
@@ -431,7 +431,7 @@ void FieldScene_GrantItemListToSlots(void)
 	UnitCalc(2);
 }
 
-void CommandTable_ConfigureCommandGroups(void)
+static void CommandTable_ConfigureCommandGroups(void)
 {
 	u8 buf[256];
 #if !EDITION_INTERNATIONAL
@@ -516,7 +516,7 @@ void CommandTable_ConfigureCommandGroups(void)
 	UnitCalc(2);
 }
 
-void FieldScene_ApplySlotOffsetsAndFlags(void)
+static void FieldScene_ApplySlotOffsetsAndFlags(void)
 {
 	u8 *record;
 
@@ -542,7 +542,7 @@ void FieldScene_ApplySlotOffsetsAndFlags(void)
 	UnitCalc(2);
 }
 
-void FieldScene_AssignCodeSetAToSlots(void)
+static void FieldScene_AssignCodeSetAToSlots(void)
 {
 	UiText_ShowPositionedMessageAndWait(MsgDebugGotSturdyEquipment, 1);
 	Inventory_AddItem(0, 85);
@@ -585,7 +585,7 @@ void FieldScene_AssignCodeSetAToSlots(void)
 	UnitCalc(2);
 }
 
-void DebugMenu_SelectItem(void)
+static void DebugMenu_SelectItem(void)
 {
 	struct RenderInput *window;
 	struct RenderInput *details;
@@ -687,13 +687,13 @@ done:
 	Engine_DebugFinalizeWindow(details, 1);
 }
 
-void SceneState_RunCall1c00(void)
+static void SceneState_RunCall1c00(void)
 {
 
 	DebugMenu_SelectItem();
 }
 
-void FieldScene_AssignCodeSetBToSlots(void)
+static void FieldScene_AssignCodeSetBToSlots(void)
 {
 	UiText_ShowPositionedMessageAndWait(MsgDebugGotTreasure, 1);
 	Inventory_AddItem(ROBIN, 0xb8);
@@ -784,13 +784,13 @@ s32 CommandTable_ConfigureCommandList(void)
 	return 0;
 }
 
-s32 SceneState_GetFarResult2384(void)
+static s32 SceneState_GetFarResult2384(void)
 {
 	return DebugMenu_BrowseIcons();
 }
 
 #if !EDITION_INTERNATIONAL
-s32 DebugMenu_SelectCharacter(void)
+static s32 DebugMenu_SelectCharacter(void)
 {
 	return Menu_OpenCharacterSelector();
 }
@@ -798,7 +798,7 @@ s32 DebugMenu_SelectCharacter(void)
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #else
-s32 SceneState_GetFarResult2418(s32 unit_id)
+static s32 SceneState_GetFarResult2418(s32 unit_id)
 {
 	return Shop_ConfirmAct(unit_id);
 }

@@ -2,7 +2,6 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/arutamira_dou/dou.h"
-#include "unit/field/common/object/staged_actor.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "unit/menu/shop/shop.h"
@@ -37,6 +36,9 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void ArutamiraDou_ReleaseWallBurst(void);
+
 typedef struct
 {
 	s32 x;
@@ -69,7 +71,7 @@ u16 gArutamiraActorWheelWork[6] __attribute__((nocommon, aligned(4)));
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
 
-void FieldScene_SetActor13Value41(void)
+static void FieldScene_SetActor13Value41(void)
 {
 	BattleFx_SetPhaseRequest(13, 0x41);
 }
@@ -108,7 +110,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gArutamiraDouPlacementsOther;
 }
 
-void ArutamiraDou_ApplyFadeBlend(void)
+static void ArutamiraDou_ApplyFadeBlend(void)
 {
 	s8 level = ((s8 *)gSceneState)[4];
 
@@ -151,7 +153,7 @@ void ArutamiraDou_ApplyFadeBlend(void)
 	}
 }
 
-void ArutamiraDou_SetFadeLevel(s32 level)
+static void ArutamiraDou_SetFadeLevel(s32 level)
 {
 	u8 *work;
 	u8 *fade = &gSceneState[4];
@@ -164,37 +166,37 @@ void ArutamiraDou_SetFadeLevel(s32 level)
 	}
 }
 
-void FieldScene_RunIndexedStep0(void)
+static void FieldScene_RunIndexedStep0(void)
 {
 	ArutamiraDou_SetFadeLevel(0);
 }
 
-void FieldScene_RunIndexedStep1(void)
+static void FieldScene_RunIndexedStep1(void)
 {
 	ArutamiraDou_SetFadeLevel(1);
 }
 
-void FieldScene_RunIndexedStep2(void)
+static void FieldScene_RunIndexedStep2(void)
 {
 	ArutamiraDou_SetFadeLevel(2);
 }
 
-void FieldScene_RunIndexedStep3(void)
+static void FieldScene_RunIndexedStep3(void)
 {
 	ArutamiraDou_SetFadeLevel(3);
 }
 
-void FieldScene_RunIndexedStep4(void)
+static void FieldScene_RunIndexedStep4(void)
 {
 	ArutamiraDou_SetFadeLevel(4);
 }
 
-void FieldScene_RunIndexedStep5(void)
+static void FieldScene_RunIndexedStep5(void)
 {
 	ArutamiraDou_SetFadeLevel(5);
 }
 
-void SceneEffect_SetupBlendByFlag201(void)
+static void SceneEffect_SetupBlendByFlag201(void)
 {
 	u8 **base = (u8 **)&gEventWork;
 	u8	*state;
@@ -247,7 +249,7 @@ void SceneEffect_SetupBlendByFlag201(void)
 	}
 }
 
-void ArutamiraDou_ApplyRoomVisuals(void)
+static void ArutamiraDou_ApplyRoomVisuals(void)
 {
 	if (gGameState.scene == (s32)&SceneId_ArutamiraDou1)
 	{
@@ -265,7 +267,7 @@ void ArutamiraDou_ApplyRoomVisuals(void)
 	}
 }
 
-void SceneState_RunFlag200SetupAndPlaceActors16To20(void)
+static void SceneState_RunFlag200SetupAndPlaceActors16To20(void)
 {
 	extern u8 *gEffectWork;
 
@@ -288,7 +290,7 @@ void SceneState_RunFlag200SetupAndPlaceActors16To20(void)
 	}
 }
 
-void ArutamiraDou_RespawnActorObject(void)
+static void ArutamiraDou_RespawnActorObject(void)
 {
 	extern u8		  *gEffectWork;
 	u8				  *work;
@@ -310,7 +312,7 @@ void ArutamiraDou_RespawnActorObject(void)
 	}
 }
 
-void ArutamiraDou_SettleActorOnCell(void)
+static void ArutamiraDou_SettleActorOnCell(void)
 {
 	struct FieldActor *actor = Object_GetById(12);
 
@@ -326,13 +328,13 @@ void ArutamiraDou_SettleActorOnCell(void)
 	}
 }
 
-void FieldScene_RunTwoCallSequence(void)
+static void FieldScene_RunTwoCallSequence(void)
 {
 	StagedActor_AdvancePair();
 	ArutamiraDou_SettleActorOnCell();
 }
 
-void SceneState_MarkObjectWhenActorElevenAhead(void)
+static void SceneState_MarkObjectWhenActorElevenAhead(void)
 {
 	extern u8		  *gEffectWork;
 	u8				  *obj = gEffectWork;
@@ -349,7 +351,7 @@ void SceneState_MarkObjectWhenActorElevenAhead(void)
 	}
 }
 
-void FieldScene_RunActorElevenCellSetup(void)
+static void FieldScene_RunActorElevenCellSetup(void)
 {
 	extern u8		  *gEffectWork;
 	u8				  *obj = gEffectWork;
@@ -374,7 +376,7 @@ void FieldScene_RunActorElevenCellSetup(void)
 	}
 }
 
-void ArutamiraDou_HopSelectedActor(void)
+static void ArutamiraDou_HopSelectedActor(void)
 {
 	struct FieldActor	  *actor = Object_GetById(gGameState.selected_actor);
 	s32					   flags = actor->motion_flags;
@@ -409,7 +411,7 @@ void ArutamiraDou_HopSelectedActor(void)
 	}
 }
 
-void FieldScene_RunGuardedSixWordStep(void)
+static void FieldScene_RunGuardedSixWordStep(void)
 {
 	struct StagedActorProbe s;
 
@@ -421,7 +423,7 @@ void FieldScene_RunGuardedSixWordStep(void)
 	Engine_EventEnd();
 }
 
-void ArutamiraDou_UpdateScalePulse(struct FieldActor *obj)
+static void ArutamiraDou_UpdateScalePulse(struct FieldActor *obj)
 {
 	s32 v = ArutamiraDou_PulseScales[(obj->timer >> 2) & 3];
 
@@ -431,7 +433,7 @@ void ArutamiraDou_UpdateScalePulse(struct FieldActor *obj)
 	obj->timer &= 15;
 }
 
-void SceneActor_SetPositionFromTransformedBase(s32 a, s32 b, s32 c)
+static void SceneActor_SetPositionFromTransformedBase(s32 a, s32 b, s32 c)
 {
 	s32				   k1 = 0x1f80000;
 	s32				   k2 = 0x180000;
@@ -448,7 +450,7 @@ void SceneActor_SetPositionFromTransformedBase(s32 a, s32 b, s32 c)
 	obj->z.fixed = k3;
 }
 
-void SceneActor_PlaceFiveActorsInRow(u8 *p)
+static void SceneActor_PlaceFiveActorsInRow(u8 *p)
 {
 	s32 i = 0;
 
@@ -460,7 +462,7 @@ void SceneActor_PlaceFiveActorsInRow(u8 *p)
 	} while (i <= 4);
 }
 
-void ArutamiraDou_SpinActorWheel(void)
+static void ArutamiraDou_SpinActorWheel(void)
 {
 	struct ActorWheel *wheel = ArutamiraDou_Wheel;
 	s32				   flag = 1;
@@ -521,7 +523,7 @@ void ArutamiraDou_SpinActorWheel(void)
 	ArutamiraDou_Wheel->ticks++;
 }
 
-void ArutamiraDou_TurnRock(s32 action)
+static void ArutamiraDou_TurnRock(s32 action)
 {
 	s32				   won = 0;
 	s32				   i;
@@ -700,7 +702,7 @@ extern u8 gFrameTick[];
 
 s32 Math_DivideUnsigned(s32 value, s32 divisor);
 
-void FieldScene_RunExtendedActorPresentation(void)
+static void FieldScene_RunExtendedActorPresentation(void)
 {
 	u8				  *display;
 	struct FieldActor *actor;
@@ -1500,7 +1502,7 @@ void FieldScene_RunExtendedActorPresentation(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunBranchingCutsceneSequence(void)
+static void FieldScene_RunBranchingCutsceneSequence(void)
 {
 	struct FieldActor *leader;
 	s32				   line;
@@ -1774,7 +1776,7 @@ void FieldScene_RunBranchingCutsceneSequence(void)
 	Engine_EventEnd();
 }
 
-void ArutamiraDou_AskAboutRockOrder(void)
+static void ArutamiraDou_AskAboutRockOrder(void)
 {
 	s32 question;
 
@@ -1797,7 +1799,7 @@ void ArutamiraDou_AskAboutRockOrder(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFlagGatedActorEightDialogue(void)
+static void FieldScene_RunFlagGatedActorEightDialogue(void)
 {
 	if (Engine_GameFlagIsSet(0x960) == 0)
 		return;
@@ -1846,7 +1848,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gArutamiraDouEventsOther;
 }
 
-void ArutamiraDou_MatchLeaderPriority(struct FieldActor *actor)
+static void ArutamiraDou_MatchLeaderPriority(struct FieldActor *actor)
 {
 	if (actor != NULL)
 	{
@@ -2016,7 +2018,7 @@ s32 ArutamiraDou_ApplyEntryState(void)
 	return 0;
 }
 
-void OverlayObject_UpdateThreeStateMotion(struct EffectSlot *obj)
+static void OverlayObject_UpdateThreeStateMotion(struct EffectSlot *obj)
 {
 	s32 position[3];
 	s32 x;
@@ -2060,7 +2062,7 @@ void OverlayObject_UpdateThreeStateMotion(struct EffectSlot *obj)
 	}
 }
 
-void ArutamiraDou_ReleaseWallBurst(void)
+static void ArutamiraDou_ReleaseWallBurst(void)
 {
 	extern u8		  *gEffectWork;
 	u8				  *work;

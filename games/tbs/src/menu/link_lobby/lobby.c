@@ -88,7 +88,7 @@ s32 SceneData_ReturnZero(void)
 	return 0;
 }
 
-s32 LinkLobby_InitializeSerial(void)
+static s32 LinkLobby_InitializeSerial(void)
 {
 	u32 saved;
 
@@ -116,7 +116,7 @@ s32 LinkLobby_SelectPlacements(void)
 	return (s32)gLinkLobbyPlacements;
 }
 
-s32 LinkLobby_PeerSlotMatches(s32 slot)
+static s32 LinkLobby_PeerSlotMatches(s32 slot)
 {
 	s32 id = -1;
 
@@ -149,14 +149,14 @@ s32 LinkLobby_PeerSlotMatches(s32 slot)
 	return 0;
 }
 
-void LinkLobby_WriteSlotValue(s32 slot)
+static void LinkLobby_WriteSlotValue(s32 slot)
 {
 	s32 *dst = (s32 *)gSerialTransfer.payload;
 	s32 *src = &LinkLobby_SlotValues[slot];
 	dst[LinkLobby_SlotColumns[slot]] = *src;
 }
 
-s32 LinkLobby_PollPeerReady(void)
+static s32 LinkLobby_PollPeerReady(void)
 {
 	struct EventWork *work;
 	s32				  result;
@@ -230,7 +230,7 @@ s32 LinkLobby_PollPeerReady(void)
 u32 gLinkLobbyCallFrames;
 #define gLinkStatus (*(volatile u16(*)) & gLinkStatus)
 
-s32 LinkLobby_CallIntoCircle(void)
+static s32 LinkLobby_CallIntoCircle(void)
 {
 	s32 set;
 
@@ -257,7 +257,7 @@ s32 LinkLobby_CallIntoCircle(void)
 	Engine_EventEnd();
 }
 
-s32 Scene_ClearFlagsAndPlayCue2927(void)
+static s32 Scene_ClearFlagsAndPlayCue2927(void)
 {
 	struct EventWork *work = gEventWork;
 
@@ -272,7 +272,7 @@ s32 Scene_ClearFlagsAndPlayCue2927(void)
 	Engine_EventEnd();
 }
 
-s32 LinkLobby_ReceivePartyRecords(void)
+static s32 LinkLobby_ReceivePartyRecords(void)
 {
 	u16 buf[24];
 	u32 size;
@@ -410,7 +410,7 @@ done:
 	return result;
 }
 
-s32 SceneData_CopyUpToThreeEntries(u16 *dest)
+static s32 SceneData_CopyUpToThreeEntries(u16 *dest)
 {
 	s32 cnt = Party_CountActiveOwners();
 	if (cnt > 3)
@@ -453,7 +453,7 @@ struct LinkOfferList
 	s32				 count;
 };
 
-s32 LinkLobby_SendPartyRecords(void)
+static s32 LinkLobby_SendPartyRecords(void)
 {
 	s32					  result;
 	u8					 *table;
@@ -604,7 +604,7 @@ done:
 
 extern u8 gMapCellBuffer[];
 
-s32 LinkLobby_ExchangePartyRecords(void)
+static s32 LinkLobby_ExchangePartyRecords(void)
 {
 	s32 result;
 	s32 first;
@@ -649,7 +649,7 @@ check:
 	return result;
 }
 
-s32 LinkLobby_RunConnectionSequence(void)
+static s32 LinkLobby_RunConnectionSequence(void)
 {
 	struct EventWork *work;
 	s32				  failed;
@@ -796,7 +796,7 @@ done:
 	Engine_EventEnd();
 }
 
-s32 LinkLobby_RunBattleApplication(void)
+static s32 LinkLobby_RunBattleApplication(void)
 {
 	/* Returns no value: r0 is whatever the last call left. */
 
@@ -915,7 +915,7 @@ done:
 	Engine_EventEnd();
 }
 
-s32 LinkLobby_TalkLinkedWins(s32 actor)
+static s32 LinkLobby_TalkLinkedWins(s32 actor)
 {
 	u32	 facing = Object_GetById(0)->facing;
 	u16 *count;
@@ -954,7 +954,7 @@ done:;
 
 extern u8 gOptionMirror;
 
-s32 LinkLobby_RunChoicePrompt(s32 id)
+static s32 LinkLobby_RunChoicePrompt(s32 id)
 {
 	s32 window;
 	s32 choice;
@@ -1030,14 +1030,14 @@ s32 LinkLobby_RunChoicePrompt(s32 id)
 	Engine_EventEnd();
 }
 
-s32 State_ApplyValueAndGetResult(s32 arg0)
+static s32 State_ApplyValueAndGetResult(s32 arg0)
 {
 	Engine_EventBegin();
 	Engine_SanctumOpen(arg0);
 	Engine_EventEnd();
 }
 
-s32 LinkLobby_PartyContains(s32 id)
+static s32 LinkLobby_PartyContains(s32 id)
 {
 	s32 count;
 	s32 max;
@@ -1067,11 +1067,11 @@ s32 LinkLobby_PartyContains(s32 id)
 	return 0;
 }
 
-void State_NoOp(void)
+static void State_NoOp(void)
 {
 }
 
-s32 LinkLobby_TalkByProgress(s32 actor)
+static s32 LinkLobby_TalkByProgress(s32 actor)
 {
 	s32 base = (s32)MsgLobbyCantWaitLets;
 	s32 lead = LinkLobby_PartyContains(0);
@@ -1113,7 +1113,7 @@ s32 LinkLobby_TalkByProgress(s32 actor)
 	Engine_EventEnd();
 }
 
-s32 LinkLobby_StartExchange(void)
+static s32 LinkLobby_StartExchange(void)
 {
 	SerialRuntime_RemoveIrqHandlers();
 	Sound_LoadPresetParameters(2);
@@ -1122,7 +1122,7 @@ s32 LinkLobby_StartExchange(void)
 
 /* The handlers below are s32 and return no value: r0 is whatever Engine_EventEnd left. */
 
-s32 LinkLobby_TalkToAttendant(s32 actor)
+static s32 LinkLobby_TalkToAttendant(s32 actor)
 {
 	s32 message;
 	s32 step = 0;
@@ -1149,7 +1149,7 @@ s32 LinkLobby_TalkToAttendant(s32 actor)
 	Engine_EventEnd();
 }
 
-s32 LinkLobby_TalkAlternating(s32 actor)
+static s32 LinkLobby_TalkAlternating(s32 actor)
 {
 	s32 message;
 
@@ -1173,7 +1173,7 @@ s32 LinkLobby_TalkAlternating(s32 actor)
 	Engine_EventEnd();
 }
 
-s32 LinkLobby_ShowCountMessage(s32 id)
+static s32 LinkLobby_ShowCountMessage(s32 id)
 {
 	struct GameState *gs;
 
@@ -1198,7 +1198,7 @@ u8 *LinkLobby_GetEvents(void)
 	return (u8 *)gLinkLobbyEvents;
 }
 
-s32 LinkLobby_SaveBattleResults(void)
+static s32 LinkLobby_SaveBattleResults(void)
 {
 	s32 window;
 
@@ -1215,7 +1215,7 @@ s32 LinkLobby_SaveBattleResults(void)
 	UiWork_Finalize(window, 1);
 }
 
-s32 LinkLobby_SaveMonsterBattleResults(void)
+static s32 LinkLobby_SaveMonsterBattleResults(void)
 {
 	s32 window;
 
@@ -1232,7 +1232,7 @@ s32 LinkLobby_SaveMonsterBattleResults(void)
 	UiWork_Finalize(window, 1);
 }
 
-s32 LinkLobby_DrawThreeDigitValue(s32 value)
+static s32 LinkLobby_DrawThreeDigitValue(s32 value)
 {
 	s32 digit;
 

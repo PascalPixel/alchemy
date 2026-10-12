@@ -6,6 +6,20 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 
+// 前方宣言
+static void Innkeeper_Talk(void);
+static void Chef_Talk(void);
+static void Chef_ReadMind(void);
+static void InnClerk_Talk(void);
+static void TemplePriest_Talk(void);
+static void ItemMerchant_ReadMind(void);
+static void ItemMerchant_Talk(void);
+static void WeaponMerchant_ReadMind(void);
+static void WeaponMerchant_Talk(void);
+static void ArmorMerchant_ReadMind(void);
+static void ArmorMerchant_Talk(void);
+static void TravelingPriest_Talk(void);
+
 const struct SceneEntrance gInteriorEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ ROOM_FIRST_HOME, CONDITION_ALWAYS, 192, 0, 184, FACING_NORTH, 0, 16, 0, 256, 224, 0 },
@@ -254,7 +268,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gInteriorSealedEvents;
 }
 
-void Innkeeper_Talk(void)
+static void Innkeeper_Talk(void)
 {
 	struct FieldActor *leader;
 
@@ -281,7 +295,7 @@ void Innkeeper_Talk(void)
 	Engine_EventEnd();
 }
 
-void Chef_Talk(void)
+static void Chef_Talk(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgRunpaChefOffersStory);
@@ -290,7 +304,7 @@ void Chef_Talk(void)
 	Engine_EventEnd();
 }
 
-void Chef_ReadMind(void)
+static void Chef_ReadMind(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgRunpaChefThinksOfPrisoner);
@@ -299,7 +313,7 @@ void Chef_ReadMind(void)
 	Engine_EventEnd();
 }
 
-void InnClerk_Talk(void)
+static void InnClerk_Talk(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgRunpaInnClerkAsksAboutGuest);
@@ -307,7 +321,7 @@ void InnClerk_Talk(void)
 	Engine_EventEnd();
 }
 
-void TemplePriest_Talk(void)
+static void TemplePriest_Talk(void)
 {
 	struct FieldActor *leader;
 
@@ -332,7 +346,7 @@ void TemplePriest_Talk(void)
 	}
 }
 
-void ItemMerchant_ReadMind(void)
+static void ItemMerchant_ReadMind(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0)
 	{
@@ -350,7 +364,7 @@ void ItemMerchant_ReadMind(void)
 	}
 }
 
-void ItemMerchant_Talk(void)
+static void ItemMerchant_Talk(void)
 {
 	struct FieldActor *leader;
 
@@ -375,7 +389,7 @@ void ItemMerchant_Talk(void)
 	}
 }
 
-void WeaponMerchant_ReadMind(void)
+static void WeaponMerchant_ReadMind(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0)
 	{
@@ -389,7 +403,7 @@ void WeaponMerchant_ReadMind(void)
 	}
 }
 
-void WeaponMerchant_Talk(void)
+static void WeaponMerchant_Talk(void)
 {
 	struct FieldActor *leader;
 	s32				   facing;
@@ -417,7 +431,7 @@ void WeaponMerchant_Talk(void)
 	}
 }
 
-void ArmorMerchant_ReadMind(void)
+static void ArmorMerchant_ReadMind(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0)
 	{
@@ -431,7 +445,7 @@ void ArmorMerchant_ReadMind(void)
 	}
 }
 
-void ArmorMerchant_Talk(void)
+static void ArmorMerchant_Talk(void)
 {
 	struct FieldActor *leader;
 	s32				   facing;
@@ -477,7 +491,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-void TravelingPriest_Talk(void)
+static void TravelingPriest_Talk(void)
 {
 	struct FieldActor *leader;
 

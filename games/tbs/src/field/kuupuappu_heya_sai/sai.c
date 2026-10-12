@@ -21,7 +21,10 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 
-void SceneState_CheckPositionWindow(void)
+// 前方宣言
+static void OverlayObject_InitObject22(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z);
+
+static void SceneState_CheckPositionWindow(void)
 {
 	s32 v1;
 	s32 v0;
@@ -59,7 +62,7 @@ u8 *SceneData_GetPreparedActors(void)
 	return slot;
 }
 
-void SceneActor_RunActorStep(s32 arg0)
+static void SceneActor_RunActorStep(s32 arg0)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(arg0, 1);
@@ -67,28 +70,28 @@ void SceneActor_RunActorStep(s32 arg0)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor9Line(void)
+static void SceneDialogue_RunActor9Line(void)
 {
 	Engine_EventSetMessage((s32)MsgKuupuappuThoughtSawCatGetUp);
 	Engine_ActorFaceEachOther(9, ACTOR_PARTY_LEADER, 2);
 	SceneActor_RunActorStep(9);
 }
 
-void SceneDialogue_RunActor11Line(void)
+static void SceneDialogue_RunActor11Line(void)
 {
 	Engine_EventSetMessage((s32)MsgKuupuappuDodonpasHenchmenNeverAttackedUs);
 	Engine_ActorFaceEachOther(11, ACTOR_PARTY_LEADER, 2);
 	SceneActor_RunActorStep(11);
 }
 
-void SceneDialogue_RunActor12Line(void)
+static void SceneDialogue_RunActor12Line(void)
 {
 	Engine_EventSetMessage((s32)MsgKuupuappuItsNearTimeForColosso);
 	Engine_ActorFaceEachOther(12, ACTOR_PARTY_LEADER, 2);
 	SceneActor_RunActorStep(12);
 }
 
-void FieldScene_RunActor16Sequence(void)
+static void FieldScene_RunActor16Sequence(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuRobinYouveComeBackVault);
@@ -111,21 +114,21 @@ void FieldScene_RunActor16Sequence(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor16Line(void)
+static void SceneDialogue_RunActor16Line(void)
 {
 	Engine_EventSetMessage((s32)MsgKuupuappuThoseGuysReallyWantedRevenge);
 	Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
 	SceneActor_RunActorStep(16);
 }
 
-void SceneDialogue_RunActor23Line(void)
+static void SceneDialogue_RunActor23Line(void)
 {
 	Engine_EventSetMessage((s32)MsgKuupuappuDidSomeCookingNowIve);
 	Engine_ActorFaceEachOther(23, ACTOR_PARTY_LEADER, 2);
 	SceneActor_RunActorStep(23);
 }
 
-void FieldScene_RunActor18FlaggedSequence(void)
+static void FieldScene_RunActor18FlaggedSequence(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 0);
@@ -171,7 +174,7 @@ L_020002d4:;
 	Engine_EventEnd();
 }
 
-void SceneActor_RunActor16StepWithFlag91(void)
+static void SceneActor_RunActor16StepWithFlag91(void)
 {
 	u8 *slot;
 	u8	clear = 0;
@@ -187,7 +190,7 @@ void SceneActor_RunActor16StepWithFlag91(void)
 	Engine_ActorEnableActionCallback(16, 2);
 }
 
-void FieldScene_RunActor18ConditionalCue(void)
+static void FieldScene_RunActor18ConditionalCue(void)
 {
 	Engine_EventBegin();
 
@@ -207,7 +210,7 @@ void FieldScene_RunActor18ConditionalCue(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor19StepByPlace(void)
+static void FieldScene_RunActor19StepByPlace(void)
 {
 	u32 place;
 
@@ -227,7 +230,7 @@ void FieldScene_RunActor19StepByPlace(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor20StepByPlace(void)
+static void FieldScene_RunActor20StepByPlace(void)
 {
 	u32 place;
 
@@ -247,7 +250,7 @@ void FieldScene_RunActor20StepByPlace(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor21StepByPlace(void)
+static void FieldScene_RunActor21StepByPlace(void)
 {
 	u32 place;
 
@@ -267,7 +270,7 @@ void FieldScene_RunActor21StepByPlace(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor22StepByPlace(void)
+static void FieldScene_RunActor22StepByPlace(void)
 {
 	u32 place;
 
@@ -287,7 +290,7 @@ void FieldScene_RunActor22StepByPlace(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor18FlaggedLine(void)
+static void SceneDialogue_RunActor18FlaggedLine(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x85B) == 0)
@@ -335,7 +338,7 @@ s32 FieldScene_InitSceneStateByStep(void)
 	return 0;
 }
 
-void OverlayObject_InitObject22(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z)
+static void OverlayObject_InitObject22(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z)
 {
 	u8 *o;
 	u8 *q;

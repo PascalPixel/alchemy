@@ -29,7 +29,7 @@ struct PathWork
 	s16 path[0x3840];
 };
 
-void Korosseo_UpdatePathRival(void)
+static void Korosseo_UpdatePathRival(void)
 {
 	struct PathWork		*work = (struct PathWork *)gKorosseoWork;
 	struct PathRecorder *rec = (struct PathRecorder *)gSceneState;
@@ -134,7 +134,7 @@ void Korosseo_UpdatePathRival(void)
 
 extern u8 Korosseo_GaugeGraphics[];
 
-void Korosseo_DrawGauge(void)
+static void Korosseo_DrawGauge(void)
 {
 	struct KorosseoGaugeWork   *gauge = (struct KorosseoGaugeWork *)gKorosseoWork;
 	s32						   *dst = (s32 *)gauge;

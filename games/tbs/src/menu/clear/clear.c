@@ -36,6 +36,11 @@
 #include "uiwindow.h"
 #include "call.h"
 
+// 前方宣言
+static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out);
+static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out);
+static u16 SceneData_GetBufferCrc16(u32 count, u8 *p);
+
 extern u16 gBgScroll[];
 
 struct ClearWork
@@ -69,7 +74,7 @@ u8 *SceneData_GetEffectTable(void)
 	return Clear_EffectTable;
 }
 
-void Clear_LoadBackground(void)
+static void Clear_LoadBackground(void)
 {
 	u8				  *res;
 	s32				   id;
@@ -128,7 +133,7 @@ col:
 	}
 }
 
-void Clear_UpdateBlend(void)
+static void Clear_UpdateBlend(void)
 {
 	s32 frame;
 	s32 level;
@@ -152,7 +157,7 @@ const u16 Clear_ExtraCodeSequence[] = {
 	KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT, KEY_UP, KEY_SELECT, 0,
 };
 
-void Clear_CheckButtonCodes(void)
+static void Clear_CheckButtonCodes(void)
 {
 	if (Clear_CodeUnlocked == 0)
 	{
@@ -211,7 +216,7 @@ void Clear_CheckButtonCodes(void)
 	}
 }
 
-void Clear_NameEntryCharacter(s32 cell, u8 *text)
+static void Clear_NameEntryCharacter(s32 cell, u8 *text)
 {
 	text[1] = 0;
 	text[2] = 0;
@@ -270,7 +275,7 @@ void Clear_NameEntryCharacter(s32 cell, u8 *text)
 #endif
 }
 
-s32 Scene_GetModeMask(void)
+static s32 Scene_GetModeMask(void)
 {
 	s32 mode;
 
@@ -900,7 +905,7 @@ L_02000c96:;
 	return 0;
 }
 
-void SaveMenu_FillTileGrid(struct RenderInput *window, s32 value)
+static void SaveMenu_FillTileGrid(struct RenderInput *window, s32 value)
 {
 	u16 *shadow;
 	u16 *vram;
@@ -930,7 +935,7 @@ void SaveMenu_FillTileGrid(struct RenderInput *window, s32 value)
 	Runtime_BumpFree((void *)saved);
 }
 
-void SaveMenu_FillTileBlock(const struct RenderInput *window)
+static void SaveMenu_FillTileBlock(const struct RenderInput *window)
 {
 	s16 *mirror = ((struct UiRenderWork *)gWindowWork[0])->tilemap;
 	s16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);
@@ -990,7 +995,7 @@ struct PasswordOwner
 	u32					 values[4];
 };
 
-s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
+static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 {
 	s32 length;
 	u32 rank_bits;
@@ -1218,7 +1223,7 @@ s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 	return length;
 }
 
-s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out)
+static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out)
 {
 	s32 key;
 	s32 count;
@@ -1270,7 +1275,7 @@ s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out)
 	return count;
 }
 
-u16 SceneData_GetBufferCrc16(u32 count, u8 *p)
+static u16 SceneData_GetBufferCrc16(u32 count, u8 *p)
 {
 	u32 crc;
 	u32 i;

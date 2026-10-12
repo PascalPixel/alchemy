@@ -2,7 +2,6 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/korima_kawa/kawa.h"
-#include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/korima/palette.h"
 #include "unit/battle/effect/object.h"
 #include "battle.h"
@@ -54,7 +53,7 @@ u8 *MapStagedScene_SelectTertiaryData(void)
 	return Data_02009038;
 }
 
-void FieldScene_RunActorTenPlacementScene(void)
+static void FieldScene_RunActorTenPlacementScene(void)
 {
 	struct StagedActorProbe result;
 	Engine_EventBegin();
@@ -80,7 +79,7 @@ void FieldScene_RunActorTenPlacementScene(void)
 	Engine_EventEnd();
 }
 
-s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
+static s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
 {
 
 	struct StagedActorEffect *actor = (void *)Object_GetById(0);
@@ -123,7 +122,7 @@ s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
 	return 0;
 }
 
-void SceneActor_ApplyOffsetObjectPosition(void)
+static void SceneActor_ApplyOffsetObjectPosition(void)
 {
 	struct Resource393Position pos;
 #if !EDITION_INTERNATIONAL

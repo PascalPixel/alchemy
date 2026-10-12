@@ -12,6 +12,12 @@
 #include "io_reg.h"
 #include "battle_effect_runtime.h"
 
+// 前方宣言
+static u16	SceneEffect_AdjustColorChannels(u16 color, s32 adj);
+static void KorimaPalette_SaveFirst(void);
+static void KorimaPalette_SaveSecond(void);
+static void KorimaPalette_Capture(void);
+
 void SceneEffect_AdjustPaletteColors(s32 a)
 {
 	u16 i;
@@ -30,7 +36,7 @@ void SceneEffect_AdjustPaletteColors(s32 a)
 	Engine_ColorBufferApplyTarget(0x10000, 0);
 }
 
-u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
+static u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
 {
 	s16 green = ((color >> 5) & 31);
 	s16 red = (color & 31);
@@ -49,19 +55,19 @@ u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
 	return packed;
 }
 
-void KorimaPalette_SaveFirst(void)
+static void KorimaPalette_SaveFirst(void)
 {
 	Dma_Set(gPaletteBufferWork->palette, KorimaPalette_First, DMA_ENABLE32 | DMA_32BIT | 0xe0,
 		REG_DMA3);
 }
 
-void KorimaPalette_SaveSecond(void)
+static void KorimaPalette_SaveSecond(void)
 {
 	Dma_Set(gPaletteBufferWork->palette, KorimaPalette_Second, DMA_ENABLE32 | DMA_32BIT | 0xe0,
 		REG_DMA3);
 }
 
-void KorimaPalette_Capture(void)
+static void KorimaPalette_Capture(void)
 {
 	u16 *buf = gPaletteBufferWork->palette;
 

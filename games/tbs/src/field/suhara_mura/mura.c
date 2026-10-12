@@ -41,7 +41,7 @@ s32 SceneData_SelectActorTableByFlag96f(void)
 	return (s32)SuharaMura_Actors;
 }
 
-void SuharaMura_TalkLalivero(s32 obj)
+static void SuharaMura_TalkLalivero(s32 obj)
 {
 	s32 cue = (s32)MsgSuharaTryingGetLalivero;
 	Engine_EventSetMessage(cue);
@@ -58,7 +58,7 @@ void SuharaMura_TalkLalivero(s32 obj)
 	Engine_EventShowMessage(obj, 0);
 }
 
-void SuharaMura_TalkSandstorm(s32 obj)
+static void SuharaMura_TalkSandstorm(s32 obj)
 {
 	s32 cue = (s32)MsgSuharaBroughtSuhallaSandstorm;
 	Engine_EventSetMessage(cue);
@@ -75,7 +75,7 @@ void SuharaMura_TalkSandstorm(s32 obj)
 	Engine_EventShowMessage(obj, 0);
 }
 
-void FieldScene_RunLayoutStepThenSet201(void)
+static void FieldScene_RunLayoutStepThenSet201(void)
 {
 	s32 width = 4;
 	s32 height = 9;
@@ -84,7 +84,7 @@ void FieldScene_RunLayoutStepThenSet201(void)
 	Engine_GameFlagSet(0x201);
 }
 
-void SuharaMura_AnimateCells0(void)
+static void SuharaMura_AnimateCells0(void)
 {
 	struct EventWork *work = gEventWork;
 	s32				  no = work->touched_trigger;
@@ -98,7 +98,7 @@ void SuharaMura_AnimateCells0(void)
 	Engine_EventRequestExit(no);
 }
 
-void SuharaMura_AnimateCells1(void)
+static void SuharaMura_AnimateCells1(void)
 {
 	struct EventWork *work = gEventWork;
 	s32				  no = work->touched_trigger;

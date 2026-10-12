@@ -42,12 +42,12 @@ struct PeriodicEffectConfig
 
 void Effect_Spawn();
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -64,7 +64,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -123,12 +123,12 @@ struct SpawnParams
 	u8	unknown_22[6];
 };
 
-void SceneEffect_RequestFixedEffect(void)
+static void SceneEffect_RequestFixedEffect(void)
 {
 	BattleFx_RunPageEffectForSlot(22, 1, 2);
 }
 
-void Actor_UpdatePresentationFlag(void)
+static void Actor_UpdatePresentationFlag(void)
 {
 	struct SceneState *scene = (void *)Object_GetById(0);
 	if (scene->field_0e > 31)
@@ -141,14 +141,14 @@ void Actor_UpdatePresentationFlag(void)
 	}
 }
 
-void SceneEffect_AdvanceRotatingSprite(void)
+static void SceneEffect_AdvanceRotatingSprite(void)
 {
 	u8 *entity = Object_GetById(19);
 	u8 *sprite = (u8 *)((struct FieldActor *)entity)->sprite;
 	((struct FieldSprite *)sprite)->rotation += 0x1400;
 }
 
-void SceneEffect_SpawnPeriodicEffect(void)
+static void SceneEffect_SpawnPeriodicEffect(void)
 {
 	u8 *entity = Object_GetById(14);
 
@@ -164,7 +164,7 @@ void SceneEffect_SpawnPeriodicEffect(void)
 	}
 }
 
-s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
+static s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 {
 	s32 delta_x = (*first_position++ - *second_position++) >> 16;
 	s32 delta_y = (*first_position++ - *second_position++) >> 16;
@@ -176,7 +176,7 @@ s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 	return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-s32 SceneActor_UpdateTracking(
+static s32 SceneActor_UpdateTracking(
 	struct MapActor *actor, struct MapActor *target, s32 distance_limit, s32 force_tracking)
 {
 	s32 result = 0;
@@ -219,7 +219,7 @@ s32 SceneActor_UpdateTracking(
 	return result;
 }
 
-s32 ShianMura_WatchGateTrigger(struct FieldActor *self)
+static s32 ShianMura_WatchGateTrigger(struct FieldActor *self)
 {
 	struct FieldActor *leader;
 	s32				   near = 0;
@@ -271,7 +271,7 @@ s32 SceneEffect_PrepareState(void)
 	return (s32)gShianMuraPlacements;
 }
 
-void SceneEffect_ShowActorSetupMessage(void)
+static void SceneEffect_ShowActorSetupMessage(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgShianYoungWarriorsVeryGallantCame);
@@ -279,7 +279,7 @@ void SceneEffect_ShowActorSetupMessage(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunPrimarySequence(void)
+static void FieldScene_RunPrimarySequence(void)
 {
 	struct FieldActor *puddle;
 	struct FieldActor *record;
@@ -416,14 +416,14 @@ void FieldScene_RunPrimarySequence(void)
 	Engine_EventEnd();
 }
 
-void SceneEffect_ActivateNearbyActor(void)
+static void SceneEffect_ActivateNearbyActor(void)
 {
 	struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 	if ((leader->z.fixed >> 20) <= 13)
 		Engine_ActorSetSpritePriority(20, 1);
 }
 
-void ShianMura_ActivateActorTwentyPlatform(void)
+static void ShianMura_ActivateActorTwentyPlatform(void)
 {
 	struct FieldActor *record;
 	s32				   v5;
@@ -443,7 +443,7 @@ void ShianMura_ActivateActorTwentyPlatform(void)
 	Engine_EventEnd();
 }
 
-void ShianMura_RunNpcMeetScene(void)
+static void ShianMura_RunNpcMeetScene(void)
 {
 	s32				   flag;
 	struct FieldActor *leader;
@@ -526,7 +526,7 @@ void ShianMura_RunNpcMeetScene(void)
 	}
 }
 
-void SceneEffect_RunActorSceneMessage(void)
+static void SceneEffect_RunActorSceneMessage(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgShianWarriorsFromSchoolStrongWarriors);
@@ -534,7 +534,7 @@ void SceneEffect_RunActorSceneMessage(void)
 	Engine_EventEnd();
 }
 
-void ShianMura_HopLeaderAhead(void)
+static void ShianMura_HopLeaderAhead(void)
 {
 	s32					   flags;
 	struct FieldActor	  *leader;
@@ -572,7 +572,7 @@ void ShianMura_HopLeaderAhead(void)
 	}
 }
 
-void ShianMura_WalkThroughExit(s32 a0)
+static void ShianMura_WalkThroughExit(s32 a0)
 {
 	Object_GetById(0)->motion_flags = 0;
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -589,7 +589,7 @@ void ShianMura_WalkThroughExit(s32 a0)
 	Engine_EventRequestExit(a0);
 }
 
-void SceneEffect_DispatchStep(void)
+static void SceneEffect_DispatchStep(void)
 {
 	s16 *scene = (s16 *)gEventWork;
 	u8	*shared0;
@@ -640,7 +640,7 @@ void SceneEffect_DispatchStep(void)
 	Engine_EventEnd();
 }
 
-void Scene_RunActorNineteenScript(void)
+static void Scene_RunActorNineteenScript(void)
 {
 	s32 cb;
 
@@ -671,7 +671,7 @@ void Scene_RunActorNineteenScript(void)
 	Engine_EventEnd();
 }
 
-void ShianMura_EscortActorEighteen(void)
+static void ShianMura_EscortActorEighteen(void)
 {
 	s32 record;
 

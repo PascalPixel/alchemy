@@ -33,6 +33,16 @@
 #include "scene_ids.h"
 #include "map.h"
 
+// 前方宣言
+struct DirXZ;
+static void VinasuHeya_StepActorWithDust(struct DirXZ *dir);
+static void Scene_RunPairedParticleWaveSequence(void);
+static void SceneState_CallWith432And32(void);
+static void FieldScene_CallWith560And44(void);
+static void Scene_RunParticleWaveSequence(void);
+static void Scene_RunEastParticleWaveSequence(void);
+static void FieldScene_RunLeaderDropSequence(void);
+
 struct DirXZ
 {
 	s32 x;
@@ -66,7 +76,7 @@ struct EventWorkState
 	u16 field_cba;
 };
 
-void ConfigureOverlayObject(struct FieldActor *object, s32 palette)
+static void ConfigureOverlayObject(struct FieldActor *object, s32 palette)
 {
 	object->motion_flags = 0;
 	object->collision_flags = 8;
@@ -74,7 +84,7 @@ void ConfigureOverlayObject(struct FieldActor *object, s32 palette)
 	ObjectGroup_SetChildValue(object, palette);
 }
 
-void *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *obj;
 
@@ -89,7 +99,7 @@ void *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object;
 
@@ -112,7 +122,7 @@ extern u8 *gActorEffectWork;
 #include "ability_ids.h"
 #include "objcmd.h"
 
-s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
+static s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 {
 	s32 delta_x = (*first_position++ - *second_position++) >> 16;
 	s32 delta_y = (*first_position++ - *second_position++) >> 16;
@@ -124,7 +134,7 @@ s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 	return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-void *SceneData_FindSlotAtPosition(void *position, void *self)
+static void *SceneData_FindSlotAtPosition(void *position, void *self)
 {
 	s32				   *pos = position;
 	struct FieldActor **slots = gEventWork->actors;
@@ -143,7 +153,7 @@ void *SceneData_FindSlotAtPosition(void *position, void *self)
 	return 0;
 }
 
-void RunStagedActorTransition(void)
+static void RunStagedActorTransition(void)
 {
 	s32					target_position[3];
 	struct StagedActor *leader;
@@ -221,7 +231,7 @@ void RunStagedActorTransition(void)
 
 extern u8 gMapCellBuffer[];
 
-s32 StagedActor_FillGridAttributeRectangle(
+static s32 StagedActor_FillGridAttributeRectangle(
 	u32 layer, s32 x, s32 z, u32 width, u32 height, s32 value)
 {
 	struct MapState *map = gMapWork[0];
@@ -254,7 +264,7 @@ s32 StagedActor_FillGridAttributeRectangle(
 	return 0;
 }
 
-void SceneActor_ApplySlotsMatchingKind212(void)
+static void SceneActor_ApplySlotsMatchingKind212(void)
 {
 	struct FieldActor **actors = gEventWork->placed_actors;
 	struct FieldActor  *actor;
@@ -268,13 +278,13 @@ void SceneActor_ApplySlotsMatchingKind212(void)
 	}
 }
 
-s32 VinasuHeya_UpdateChildFromTimer(struct FieldActor *obj)
+static s32 VinasuHeya_UpdateChildFromTimer(struct FieldActor *obj)
 {
 	ObjectGroup_SetChildValue(obj, obj->timer & 15);
 	return 0;
 }
 
-s32 OverlayObject_UpdateEveryFourFrames(void *obj)
+static s32 OverlayObject_UpdateEveryFourFrames(void *obj)
 {
 	if ((gFrameCount & 3) == 0)
 		ObjectGroup_SetChildValue(obj, 7);
@@ -286,7 +296,7 @@ s32 OverlayObject_UpdateEveryFourFrames(void *obj)
 	return 0;
 }
 
-s32 SceneEffect_SpawnRandomEveryEightFramesB(struct FieldActor *object)
+static s32 SceneEffect_SpawnRandomEveryEightFramesB(struct FieldActor *object)
 {
 	struct EffectOptions params;
 	s32					 phase, x, y, speed;
@@ -305,13 +315,13 @@ done:
 	return 0;
 }
 
-s32 OverlayObject_ApplyZero(void *obj)
+static s32 OverlayObject_ApplyZero(void *obj)
 {
 	Engine_ActorSetSpriteFlags(obj, 0);
 	return 0;
 }
 
-s32 SceneEffect_SpawnTwoRandomizedParticles(struct FieldActor *obj)
+static s32 SceneEffect_SpawnTwoRandomizedParticles(struct FieldActor *obj)
 {
 	struct EffectOptions params;
 	s32					 speed;
@@ -339,7 +349,7 @@ s32 SceneEffect_SpawnTwoRandomizedParticles(struct FieldActor *obj)
 	return 0;
 }
 
-void SceneEffect_RunObjectZeroColorSequence(void)
+static void SceneEffect_RunObjectZeroColorSequence(void)
 {
 	struct FieldActor *obj;
 	struct EventWork  *state;
@@ -363,7 +373,7 @@ void SceneEffect_RunObjectZeroColorSequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunOpeningAuxiliarySequence(void)
+static void FieldScene_RunOpeningAuxiliarySequence(void)
 {
 	struct FieldActor *leader;
 
@@ -393,17 +403,17 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 	}
 }
 
-void VinasuHeya_AttachEffectLeader(void)
+static void VinasuHeya_AttachEffectLeader(void)
 {
 	*(s32 *)(gActorEffectWork + 24) = Object_GetById(ACTOR_PARTY_LEADER);
 }
 
-void VinasuHeya_ReleaseEffectLeader(void)
+static void VinasuHeya_ReleaseEffectLeader(void)
 {
 	*(s32 *)(gActorEffectWork + 24) = 0;
 }
 
-s32 SceneActor_SetFlagBitByRelativeDepth(struct FieldActor *actor)
+static s32 SceneActor_SetFlagBitByRelativeDepth(struct FieldActor *actor)
 {
 	struct FieldActor *ref;
 	u8				  *fp;
@@ -428,7 +438,7 @@ s32 SceneActor_SetFlagBitByRelativeDepth(struct FieldActor *actor)
 	return 0;
 }
 
-void SceneActor_SwapPositionsByDepth(s32 group, s32 index)
+static void SceneActor_SwapPositionsByDepth(s32 group, s32 index)
 {
 	struct FieldActor *first;
 	struct FieldActor *second;
@@ -453,7 +463,7 @@ void SceneActor_SwapPositionsByDepth(s32 group, s32 index)
 	}
 }
 
-void OverlayObject_WaitUntilIdle(struct FieldActor *obj)
+static void OverlayObject_WaitUntilIdle(struct FieldActor *obj)
 {
 	s32 cnt;
 	s32 busy;
@@ -469,7 +479,7 @@ void OverlayObject_WaitUntilIdle(struct FieldActor *obj)
 	}
 }
 
-void Effect_AdvanceMotion(union FieldObject *object)
+static void Effect_AdvanceMotion(union FieldObject *object)
 {
 	struct FieldEffect *efx = &object->effect;
 
@@ -483,7 +493,7 @@ void Effect_AdvanceMotion(union FieldObject *object)
 	efx->sprite->rotation += efx->spin;
 }
 
-void FieldScene_RunSupplementalSequenceOne(void)
+static void FieldScene_RunSupplementalSequenceOne(void)
 {
 	struct FieldActor	*actor;
 	u32					 i;
@@ -534,7 +544,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 	Engine_EventEnd();
 }
 
-void SceneEffect_SpawnNineRadialEffects(s32 actor)
+static void SceneEffect_SpawnNineRadialEffects(s32 actor)
 {
 	struct FieldActor	*object;
 	struct Vec			 vec;
@@ -563,7 +573,7 @@ void SceneEffect_SpawnNineRadialEffects(s32 actor)
 	}
 }
 
-s32 SceneEffect_SpawnRandomizedParticleEveryFourFrames(struct FieldActor *obj)
+static s32 SceneEffect_SpawnRandomizedParticleEveryFourFrames(struct FieldActor *obj)
 {
 	struct EffectOptions params;
 	s32					 y;
@@ -596,7 +606,7 @@ s32 SceneEffect_SpawnRandomizedParticleEveryFourFrames(struct FieldActor *obj)
 	return 0;
 }
 
-struct FieldActor *SceneEffect_SpawnEffect284AtCell(s32 x, s32 z, s32 arg2)
+static struct FieldActor *SceneEffect_SpawnEffect284AtCell(s32 x, s32 z, s32 arg2)
 {
 	struct FieldActor *obj;
 	s32				   sx;
@@ -623,7 +633,7 @@ struct FieldActor *SceneEffect_SpawnEffect284AtCell(s32 x, s32 z, s32 arg2)
 	return obj;
 }
 
-s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void)
+static s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void)
 {
 	struct FieldActor *obj;
 	struct Vec		   vec;
@@ -769,14 +779,14 @@ no_match:
 	return gVinasuHeyaPlacementsOther;
 }
 
-void VinasuHeya_ShowLockedDoorMessage(void)
+static void VinasuHeya_ShowLockedDoorMessage(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorEightTenStepLoop(void)
+static void FieldScene_RunActorEightTenStepLoop(void)
 {
 	u32 n;
 	u32 w;
@@ -809,7 +819,7 @@ void FieldScene_RunActorEightTenStepLoop(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorElevenDialogue(void)
+static void SceneDialogue_RunActorElevenDialogue(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgVinasuIveWaitedLongSeeIts);
@@ -819,7 +829,7 @@ void SceneDialogue_RunActorElevenDialogue(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_SetFlag987AtActorTwelveTile(void)
+static void FieldScene_SetFlag987AtActorTwelveTile(void)
 {
 	struct FieldActor *s;
 
@@ -832,7 +842,7 @@ void FieldScene_SetFlag987AtActorTwelveTile(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_ReadRelief(void)
+static void SceneDialogue_ReadRelief(void)
 {
 #if defined(TBS_EDITION_EN)
 	Engine_EventBegin();
@@ -850,7 +860,7 @@ void SceneDialogue_ReadRelief(void)
 #endif
 }
 
-void SceneState_ApplySixRectsAfter161(void)
+static void SceneState_ApplySixRectsAfter161(void)
 {
 	s32 x;
 	s32 y;
@@ -874,7 +884,7 @@ void SceneState_ApplySixRectsAfter161(void)
 	Engine_MapCopyCellsTo(121, 55, 110, 55, a, a);
 }
 
-void SceneState_ApplySixRectsAfterFlag161(void)
+static void SceneState_ApplySixRectsAfterFlag161(void)
 {
 	s32 x;
 	s32 y;
@@ -898,7 +908,7 @@ void SceneState_ApplySixRectsAfterFlag161(void)
 	Engine_MapCopyCellsTo(117, 55, 110, 55, a, a);
 }
 
-void FieldScene_RunLeaderSurpriseApproach(void)
+static void FieldScene_RunLeaderSurpriseApproach(void)
 {
 	struct FieldActor *actor;
 	s32				   z;
@@ -933,7 +943,7 @@ void FieldScene_RunLeaderSurpriseApproach(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunStatueDialogueSequence(void)
+static void FieldScene_RunStatueDialogueSequence(void)
 {
 	struct EventWorkState *work;
 
@@ -1013,7 +1023,7 @@ void FieldScene_RunStatueDialogueSequence(void)
 	work->field_cb6 = 0;
 }
 
-void FieldScene_RunFlag986ActorOneScene(void)
+static void FieldScene_RunFlag986ActorOneScene(void)
 {
 	struct FieldActor *o;
 	struct FieldActor *u;
@@ -1073,7 +1083,7 @@ void FieldScene_RunFlag986ActorOneScene(void)
 	}
 }
 
-void FieldScene_RunFiveCallSequence(void)
+static void FieldScene_RunFiveCallSequence(void)
 {
 
 	Engine_EventBegin();
@@ -1083,7 +1093,7 @@ void FieldScene_RunFiveCallSequence(void)
 	FieldScene_RunFlag986ActorOneScene();
 }
 
-void SceneState_RunActor13AtColumn42Setup(void)
+static void SceneState_RunActor13AtColumn42Setup(void)
 {
 	struct FieldActor *obj;
 	s32				   val;
@@ -1108,7 +1118,7 @@ void SceneState_RunActor13AtColumn42Setup(void)
 	Engine_EventEnd();
 }
 
-void VinasuHeya_UpdateFloorSwitch(void)
+static void VinasuHeya_UpdateFloorSwitch(void)
 {
 	struct FieldActor *leader = Object_GetById(0);
 	s32				   x = leader->x.part.pixel;
@@ -1138,7 +1148,7 @@ void VinasuHeya_UpdateFloorSwitch(void)
 	}
 }
 
-void FieldScene_SetupActorTenCamera(void)
+static void FieldScene_SetupActorTenCamera(void)
 {
 	struct EventWorkState *work;
 
@@ -1158,7 +1168,7 @@ void FieldScene_SetupActorTenCamera(void)
 	Engine_EventEnd();
 }
 
-void Scene_RunActorLeapSequence(void)
+static void Scene_RunActorLeapSequence(void)
 {
 	struct FieldActor *rec7;
 	s32				   record;
@@ -1222,7 +1232,7 @@ void Scene_RunActorLeapSequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_PlaceAndPinSlots8To10(void)
+static void FieldScene_PlaceAndPinSlots8To10(void)
 {
 
 	u32				   i;
@@ -1253,7 +1263,7 @@ void FieldScene_PlaceAndPinSlots8To10(void)
 	Engine_EventEnd();
 }
 
-void SceneState_ApplyRectAt19_44AndRunThree(void)
+static void SceneState_ApplyRectAt19_44AndRunThree(void)
 {
 	s32 x;
 	s32 y;
@@ -1267,7 +1277,7 @@ void SceneState_ApplyRectAt19_44AndRunThree(void)
 	Engine_EventEnd();
 }
 
-void SceneActor_ApplyKind45AtActorsElevenAndTwelve(void)
+static void SceneActor_ApplyKind45AtActorsElevenAndTwelve(void)
 {
 	u32				   i;
 	struct FieldActor *p;
@@ -1281,7 +1291,7 @@ void SceneActor_ApplyKind45AtActorsElevenAndTwelve(void)
 	} while (i <= 1);
 }
 
-void SceneActor_ApplyPositionsOfActors11And12(void)
+static void SceneActor_ApplyPositionsOfActors11And12(void)
 {
 	u32				   i;
 	struct FieldActor *p;
@@ -1298,7 +1308,7 @@ void SceneActor_ApplyPositionsOfActors11And12(void)
 	} while (i <= 1);
 }
 
-void FieldScene_RunGuardedThreeStepSetup(void)
+static void FieldScene_RunGuardedThreeStepSetup(void)
 {
 
 	Engine_EventBegin();
@@ -1311,7 +1321,7 @@ void FieldScene_RunGuardedThreeStepSetup(void)
 	Engine_EventEnd();
 }
 
-void SceneState_MarkActorAndApplyRectAtTile(struct FieldActor *obj)
+static void SceneState_MarkActorAndApplyRectAtTile(struct FieldActor *obj)
 {
 	s32 x;
 	s32 z;
@@ -1323,7 +1333,7 @@ void SceneState_MarkActorAndApplyRectAtTile(struct FieldActor *obj)
 	Engine_MapCopyCellAttributes(9, 24, 1, 1, x, z);
 }
 
-void OverlayObject_ResetObjectWhenFlatbs2Set(struct FieldActor *o)
+static void OverlayObject_ResetObjectWhenFlatbs2Set(struct FieldActor *o)
 {
 	Struct_Sub *q;
 	s32			v;
@@ -1356,7 +1366,7 @@ void OverlayObject_ResetObjectWhenFlatbs2Set(struct FieldActor *o)
 	}
 }
 
-void SceneActor_UpdateSlots11And12ByTile(void)
+static void SceneActor_UpdateSlots11And12ByTile(void)
 {
 	struct FieldActor *o;
 
@@ -1390,7 +1400,7 @@ struct MapWork
 	struct ScrollLayer layer;
 };
 
-void VinasuHeya_ShiftBridge(void)
+static void VinasuHeya_ShiftBridge(void)
 {
 	struct EffectOptions options;
 	struct ScrollLayer	*layer;
@@ -1467,7 +1477,7 @@ void VinasuHeya_ShiftBridge(void)
 	}
 }
 
-void VinasuHeya_RunCellPushScene(void)
+static void VinasuHeya_RunCellPushScene(void)
 {
 	u8				  *flags;
 	s32				   z;
@@ -1555,7 +1565,7 @@ void VinasuHeya_RunCellPushScene(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunGuardedRectStep(void)
+static void FieldScene_RunGuardedRectStep(void)
 {
 	s32 x;
 	s32 y;
@@ -1572,7 +1582,7 @@ void FieldScene_RunGuardedRectStep(void)
 	VinasuHeya_RunCellPushScene();
 }
 
-void VinasuHeya_SettlePushedBlocks(void)
+static void VinasuHeya_SettlePushedBlocks(void)
 {
 	struct FieldActor	*marker = 0;
 	struct FieldActor	*leader = Object_GetById(0);
@@ -1702,7 +1712,7 @@ void VinasuHeya_SettlePushedBlocks(void)
 	Engine_EventEnd();
 }
 
-void SceneState_RunConditionalStep(void)
+static void SceneState_RunConditionalStep(void)
 {
 	Engine_EventBegin();
 	if (SceneActor_TryMoveActorZeroTwoTilesAhead() == 0)
@@ -1715,7 +1725,7 @@ void SceneState_RunConditionalStep(void)
 	VinasuHeya_SettlePushedBlocks();
 }
 
-s32 SceneActor_SetHeightAboveLinkedRecord(struct FieldActor *obj)
+static s32 SceneActor_SetHeightAboveLinkedRecord(struct FieldActor *obj)
 {
 	struct FieldActor *rec;
 
@@ -1724,7 +1734,7 @@ s32 SceneActor_SetHeightAboveLinkedRecord(struct FieldActor *obj)
 	return 0;
 }
 
-void VinasuHeya_LowerFloatingBlocks(s32 wait)
+static void VinasuHeya_LowerFloatingBlocks(s32 wait)
 {
 	struct FieldActor *a = Object_GetById(8);
 	struct FieldActor *b = Object_GetById(9);
@@ -1758,7 +1768,7 @@ void VinasuHeya_LowerFloatingBlocks(s32 wait)
 	Engine_EventWait(wait);
 }
 
-void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
+static void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
 {
 
 	struct FieldActor *cand;
@@ -1817,7 +1827,7 @@ static __inline__ void Actor_CopyPosition(struct FieldActor *to, struct FieldAct
 	to->z.fixed = from->z.fixed;
 }
 
-void VinasuHeya_ResolveFloatingBlock(void)
+static void VinasuHeya_ResolveFloatingBlock(void)
 {
 	struct FieldActor  work;
 	struct FieldActor *first = NULL;
@@ -1907,7 +1917,7 @@ void VinasuHeya_ResolveFloatingBlock(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunThreeCallSequence(void)
+static void FieldScene_RunThreeCallSequence(void)
 {
 
 	Engine_EventBegin();
@@ -1915,7 +1925,7 @@ void FieldScene_RunThreeCallSequence(void)
 	Engine_EventEnd();
 }
 
-void VinasuHeya_RetractBridge(void)
+static void VinasuHeya_RetractBridge(void)
 {
 	struct EffectOptions options;
 	struct ScrollLayer	*layer;
@@ -1983,7 +1993,7 @@ void VinasuHeya_RetractBridge(void)
 	}
 }
 
-void VinasuHeya_ExtendBridge(void)
+static void VinasuHeya_ExtendBridge(void)
 {
 	struct EffectOptions options;
 	struct ScrollLayer	*layer;
@@ -2050,7 +2060,7 @@ void VinasuHeya_ExtendBridge(void)
 	}
 }
 
-void Scene_RunScene3c8SequenceA(void)
+static void Scene_RunScene3c8SequenceA(void)
 {
 	struct FieldActor *effect;
 	struct FieldActor *actor;
@@ -2195,7 +2205,7 @@ void Scene_RunScene3c8SequenceA(void)
 	Event_End();
 }
 
-void FieldScene_DrawTilesWhenCheckClear(void)
+static void FieldScene_DrawTilesWhenCheckClear(void)
 {
 
 	Engine_EventBegin();
@@ -2215,7 +2225,7 @@ void FieldScene_DrawTilesWhenCheckClear(void)
 	Scene_RunScene3c8SequenceA();
 }
 
-void FieldScene_RunApproachAndSpawnEffect(void)
+static void FieldScene_RunApproachAndSpawnEffect(void)
 {
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -2259,7 +2269,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gVinasuHeyaEvents2;
 }
 
-void SceneActor_ClearActorModeAndSetState5(s32 no)
+static void SceneActor_ClearActorModeAndSetState5(s32 no)
 {
 	struct FieldActor *p;
 	s32				   mask;
@@ -2279,7 +2289,7 @@ void SceneActor_ClearActorModeAndSetState5(s32 no)
 	}
 }
 
-void SceneState_ApplyStepToSlots15To18(void)
+static void SceneState_ApplyStepToSlots15To18(void)
 {
 	u32 i;
 
@@ -2804,7 +2814,7 @@ end:
 	return 0;
 }
 
-void SceneState_PassZeroAndMinusOneRecord(void)
+static void SceneState_PassZeroAndMinusOneRecord(void)
 {
 	struct DirXZ args;
 
@@ -2813,7 +2823,7 @@ void SceneState_PassZeroAndMinusOneRecord(void)
 	VinasuHeya_StepActorWithDust(&args);
 }
 
-void SceneState_PassRange0To1(void)
+static void SceneState_PassRange0To1(void)
 {
 	struct DirXZ args;
 
@@ -2822,7 +2832,7 @@ void SceneState_PassRange0To1(void)
 	VinasuHeya_StepActorWithDust(&args);
 }
 
-void SceneState_PassRangeNeg1To0(void)
+static void SceneState_PassRangeNeg1To0(void)
 {
 	struct DirXZ args;
 
@@ -2831,7 +2841,7 @@ void SceneState_PassRangeNeg1To0(void)
 	VinasuHeya_StepActorWithDust(&args);
 }
 
-void SceneState_CallHandlerWithFlagPair(void)
+static void SceneState_CallHandlerWithFlagPair(void)
 {
 	struct DirXZ args;
 
@@ -2840,7 +2850,7 @@ void SceneState_CallHandlerWithFlagPair(void)
 	VinasuHeya_StepActorWithDust(&args);
 }
 
-void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
+static void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
 {
 	s32					 id;
 	struct FieldActor	*center;
@@ -2926,7 +2936,7 @@ static __inline__ void Rubble_SetScaleAndSpin(struct EffectOptions *opts)
 	opts->spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
 }
 
-void Scene_RunPairedParticleWaveSequence(void)
+static void Scene_RunPairedParticleWaveSequence(void)
 {
 	struct EffectOptions options;
 	u32					 repeat;
@@ -2983,7 +2993,7 @@ void Scene_RunPairedParticleWaveSequence(void)
 	Engine_EventEnd();
 }
 
-void VinasuHeya_SpawnRandomParticles(s32 x, s32 z)
+static void VinasuHeya_SpawnRandomParticles(s32 x, s32 z)
 {
 	struct EffectOptions options;
 
@@ -3006,17 +3016,17 @@ void VinasuHeya_SpawnRandomParticles(s32 x, s32 z)
 	}
 }
 
-void SceneState_CallWith432And32(void)
+static void SceneState_CallWith432And32(void)
 {
 	VinasuHeya_SpawnRandomParticles(432, 32);
 }
 
-void FieldScene_CallWith560And44(void)
+static void FieldScene_CallWith560And44(void)
 {
 	VinasuHeya_SpawnRandomParticles(0x230, 44);
 }
 
-void Scene_RunParticleWaveSequence(void)
+static void Scene_RunParticleWaveSequence(void)
 {
 	struct EffectOptions  options;
 	u32					  repeat;
@@ -3079,7 +3089,7 @@ void Scene_RunParticleWaveSequence(void)
 	Engine_EventEnd();
 }
 
-void Scene_RunEastParticleWaveSequence(void)
+static void Scene_RunEastParticleWaveSequence(void)
 {
 	struct EffectOptions  options;
 	u32					  repeat;
@@ -3138,7 +3148,7 @@ void Scene_RunEastParticleWaveSequence(void)
 	Engine_EventEnd();
 }
 
-s32 VinasuHeya_UpdateRisingSpray(struct FieldActor *actor)
+static s32 VinasuHeya_UpdateRisingSpray(struct FieldActor *actor)
 {
 	struct EffectOptions  options;
 	struct EffectOptions *o = &options;
@@ -3165,7 +3175,7 @@ s32 VinasuHeya_UpdateRisingSpray(struct FieldActor *actor)
 	return 0;
 }
 
-void FieldScene_RunLeaderDropSequence(void)
+static void FieldScene_RunLeaderDropSequence(void)
 {
 	u32				   i;
 	struct FieldActor *leader;
@@ -3244,7 +3254,7 @@ struct TrackSprite
 	struct TrackAnimation *animations[4];
 };
 
-s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
+static s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
 {
 	s32					pos[3];
 	struct FieldActor  *piece;

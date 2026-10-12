@@ -45,6 +45,35 @@
 #include "heap_state.h"
 #include "objcmd.h"
 
+// 前方宣言
+union PairObject;
+static void VinasuChojo_ConfigureGroupMotion(void);
+static void Scene_RunScriptedActorPresentation(void);
+static void VinasuChojo_ShowPartyMember(s32 actor, s32 shown);
+static void SceneEffect_UpdateObjectByFrameParity(s32 a);
+static void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent);
+static void SceneState_ApplyPair140And0(void);
+static void VinasuChojo_CleanupSceneObjects(void);
+static void FieldScene_RunStep6(void);
+static void Scene_RunPairedActorEffectSequence(void);
+static void VinasuChojo_FlashScreen(void);
+static void SceneEffect_SpawnParticlesAboveActor(void);
+static void VinasuChojo_UpdateBeamActors(void);
+static void FieldScene_RunThreeStepsInBracket(void);
+static void FieldScene_RunBracketedSceneWithFlag282(void);
+static void VinasuChojo_RunLeapEntrance(void);
+static void FieldScene_RunPairDefeat(void);
+static void FieldScene_RunMultiActorPresentation(void);
+static void VinasuChojo_RunActorTransition(void);
+static void FieldScene_RestageParty(void);
+static void VinasuChojo_TryToPreventFall(void);
+static void Scene_RunExtendedActorTransition(void);
+static void SceneActor_ParkRecord(struct FieldActor *actor);
+static void VinasuChojo_RunTransitionStep(void);
+static void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor);
+static void SceneEffect_SpawnParticlesBesideActor(void);
+static void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object);
+
 typedef struct
 {
 	u8	 filler0[0x28];
@@ -59,12 +88,12 @@ typedef struct
 
 s32 Math_RemainderUnsigned(s32, s32);
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -81,7 +110,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -142,7 +171,7 @@ struct WorldMapOam
 	u16 size : 2;
 };
 
-s32 OverlayObject_StepScaleByCounter(struct FieldActor *actor)
+static s32 OverlayObject_StepScaleByCounter(struct FieldActor *actor)
 {
 	s16 *counter = (s16 *)&actor->timer;
 
@@ -174,7 +203,7 @@ s32 OverlayObject_StepScaleByCounter(struct FieldActor *actor)
 	return 1;
 }
 
-void Effect_MoveWithDrag(union FieldObject *object)
+static void Effect_MoveWithDrag(union FieldObject *object)
 {
 	s32 velocity_x = object->effect.velocity_x;
 	s32 velocity_z;
@@ -190,7 +219,7 @@ void Effect_MoveWithDrag(union FieldObject *object)
 	object->effect.sprite->rotation += object->effect.spin;
 }
 
-void VinasuChojo_StepSpriteRotation(struct FieldActor *actor)
+static void VinasuChojo_StepSpriteRotation(struct FieldActor *actor)
 {
 	struct FieldSprite *sprite = actor->sprite;
 	u16					rotation = sprite->rotation;
@@ -204,7 +233,7 @@ void VinasuChojo_StepSpriteRotation(struct FieldActor *actor)
 	}
 }
 
-s32 OverlayObject_UpdateHeadingTimer(struct FieldActor *actor)
+static s32 OverlayObject_UpdateHeadingTimer(struct FieldActor *actor)
 {
 	u16 *q = &actor->work;
 	s32	 c = *q;
@@ -251,7 +280,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gVinasuChojoPlacements;
 }
 
-s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
+static s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 {
 	s32 delta_x = (*first_position++ - *second_position++) >> 16;
 	s32 delta_y = (*first_position++ - *second_position++) >> 16;
@@ -263,7 +292,7 @@ s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 	return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-s32 SceneActor_FindNearestSlotOfKindF2(void)
+static s32 SceneActor_FindNearestSlotOfKindF2(void)
 {
 	struct EventWork   *work = gEventWork;
 	struct FieldActor **p;
@@ -296,7 +325,7 @@ s32 SceneActor_FindNearestSlotOfKindF2(void)
 	return best;
 }
 
-void InitializeActorZeroMotion(void)
+static void InitializeActorZeroMotion(void)
 {
 	struct FieldActor *actor;
 	s32				   position[3];
@@ -330,7 +359,7 @@ void InitializeActorZeroMotion(void)
 	}
 }
 
-void SceneEffect_SpawnAndBobWithActorZero(void)
+static void SceneEffect_SpawnAndBobWithActorZero(void)
 {
 	struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 	struct FieldActor *pillar;
@@ -370,7 +399,7 @@ void SceneEffect_SpawnAndBobWithActorZero(void)
 	Engine_EventEnd();
 }
 
-void VinasuChojo_ConfigureGroupMotion(void)
+static void VinasuChojo_ConfigureGroupMotion(void)
 {
 	s32 flags;
 
@@ -480,18 +509,18 @@ s32 Scene_Initialize(void)
 	return z;
 }
 
-void VinasuChojo_ShowMessage(s32 speaker)
+static void VinasuChojo_ShowMessage(s32 speaker)
 {
 	Engine_EventShowMessage(speaker, 0);
 	Engine_EventWait(10);
 }
 
-void VinasuChojo_FaceActor(s32 actor, s32 facing)
+static void VinasuChojo_FaceActor(s32 actor, s32 facing)
 {
 	Engine_ActorFaceDirection(actor, facing, 10);
 }
 
-void Scene_RunScriptedActorPresentation(void)
+static void Scene_RunScriptedActorPresentation(void)
 {
 	struct FieldActor *companion;
 	struct FieldActor *leader;
@@ -768,7 +797,7 @@ void Scene_RunScriptedActorPresentation(void)
 	Engine_EventEnd();
 }
 
-void VinasuChojo_ShowPartyMember(s32 actor, s32 shown)
+static void VinasuChojo_ShowPartyMember(s32 actor, s32 shown)
 {
 	s32 record;
 
@@ -787,7 +816,7 @@ void VinasuChojo_ShowPartyMember(s32 actor, s32 shown)
 	}
 }
 
-void Scene_RunActorEntrySequence(void)
+static void Scene_RunActorEntrySequence(void)
 {
 	s32				   owner;
 	struct FieldActor *object;
@@ -1207,7 +1236,7 @@ void Scene_RunActorEntrySequence(void)
 	GameFlag_Set(0x350);
 }
 
-void SceneEffect_UpdateObjectByFrameParity(s32 a)
+static void SceneEffect_UpdateObjectByFrameParity(s32 a)
 {
 	if (*(s32 *)&gFrameCount & 2)
 	{
@@ -1223,7 +1252,7 @@ void SceneEffect_UpdateObjectByFrameParity(s32 a)
 	}
 }
 
-void SceneState_ForwardByRuntimeWordBits(s32 a)
+static void SceneState_ForwardByRuntimeWordBits(s32 a)
 {
 	if (gFrameCount & 1)
 	{
@@ -1235,7 +1264,7 @@ void SceneState_ForwardByRuntimeWordBits(s32 a)
 	}
 }
 
-void Effect_AnimateVerticalPositive(union FieldObject *object)
+static void Effect_AnimateVerticalPositive(union FieldObject *object)
 {
 	struct FieldActor *self = &object->actor;
 	struct FieldActor *anchor;
@@ -1260,7 +1289,7 @@ void Effect_AnimateVerticalPositive(union FieldObject *object)
 	self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
 }
 
-void Effect_AnimateVerticalNegative(union FieldObject *object)
+static void Effect_AnimateVerticalNegative(union FieldObject *object)
 {
 	struct FieldActor *self = &object->actor;
 	struct FieldActor *anchor;
@@ -1285,7 +1314,7 @@ void Effect_AnimateVerticalNegative(union FieldObject *object)
 	self->z.fixed = anchor->z.fixed - (0x10000 - amplitude) * 5 + 0x100000;
 }
 
-void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
+static void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
 {
 	union PairObject   *pair[2];
 	union PairObject   *child;
@@ -1340,17 +1369,17 @@ void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
 	}
 }
 
-void SceneState_ApplyPair140And0(void)
+static void SceneState_ApplyPair140And0(void)
 {
 	Engine_PsynergyBegin(140, 0);
 }
 
-void VinasuChojo_CleanupSceneObjects(void)
+static void VinasuChojo_CleanupSceneObjects(void)
 {
 	BattleEffect_CleanupSceneObjects();
 }
 
-void FieldScene_RunStep6(void)
+static void FieldScene_RunStep6(void)
 {
 	SceneState_ForwardByRuntimeWordBits((s32)Object_GetById(6));
 }
@@ -1370,7 +1399,7 @@ static inline void VinasuChojo_AimBurst(s32 velocity[3], s32 angle)
 	velocity[0] = cosine;
 }
 
-void Scene_RunPairedActorEffectSequence(void)
+static void Scene_RunPairedActorEffectSequence(void)
 {
 	struct EffectOptions second_burst;
 	s32					 velocity[3];
@@ -1921,7 +1950,7 @@ void Scene_RunPairedActorEffectSequence(void)
 	GameFlag_Set(0x351);
 }
 
-void VinasuChojo_FlashScreen(void)
+static void VinasuChojo_FlashScreen(void)
 {
 	Engine_AudioPlayCue(187);
 	Engine_ColorBufferApplyTarget(0x7fff, 1);
@@ -1958,7 +1987,7 @@ enum
 	ORBIT_CENTER_ACTOR = 24
 };
 
-void SceneEffect_UpdateOrbitAroundActor(union ChojoOrbitEffect *effect)
+static void SceneEffect_UpdateOrbitAroundActor(union ChojoOrbitEffect *effect)
 {
 	struct FieldActor *center = Object_GetById(ORBIT_CENTER_ACTOR);
 	u16				   angle = effect->orbit.angle;
@@ -1970,7 +1999,7 @@ void SceneEffect_UpdateOrbitAroundActor(union ChojoOrbitEffect *effect)
 	effect->orbit.angle -= 0x800;
 }
 
-void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
+static void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
 {
 	struct FieldActor *anchor = Object_GetById(23);
 	u16				  *pangle = (u16 *)(actor + 100);
@@ -1998,7 +2027,7 @@ void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
 	}
 }
 
-void SceneEffect_SpawnParticlesAboveActor(void)
+static void SceneEffect_SpawnParticlesAboveActor(void)
 {
 	struct FieldActor	   *center;
 	union ChojoOrbitEffect *effect;
@@ -2055,7 +2084,7 @@ static __inline__ s32 Actor_IsParked(struct FieldActor *actor)
 	return 0;
 }
 
-void VinasuChojo_UpdateBeamActors(void)
+static void VinasuChojo_UpdateBeamActors(void)
 {
 	struct FieldActor *first;
 	struct FieldActor *second;
@@ -2112,7 +2141,7 @@ void VinasuChojo_UpdateBeamActors(void)
 	}
 }
 
-void FieldScene_RunThreeStepsInBracket(void)
+static void FieldScene_RunThreeStepsInBracket(void)
 {
 	Engine_EventBegin();
 	FieldScene_RunPairDefeat();
@@ -2121,7 +2150,7 @@ void FieldScene_RunThreeStepsInBracket(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunBracketedSceneWithFlag282(void)
+static void FieldScene_RunBracketedSceneWithFlag282(void)
 {
 	Engine_EventBegin();
 	FieldScene_RestageParty();
@@ -2137,7 +2166,7 @@ void FieldScene_RunBracketedSceneWithFlag282(void)
 	Engine_EventEnd();
 }
 
-void VinasuChojo_RunLeapEntrance(void)
+static void VinasuChojo_RunLeapEntrance(void)
 {
 	struct FieldActor *leader;
 	struct FieldActor *actor;
@@ -2222,7 +2251,7 @@ void VinasuChojo_RunLeapEntrance(void)
 	Engine_EventRequestExit(2);
 }
 
-void FieldScene_RunPairDefeat(void)
+static void FieldScene_RunPairDefeat(void)
 {
 	struct FieldActor *actor;
 
@@ -2323,7 +2352,7 @@ void FieldScene_RunPairDefeat(void)
 	Engine_EventWait(160);
 }
 
-void FieldScene_RunMultiActorPresentation(void)
+static void FieldScene_RunMultiActorPresentation(void)
 {
 	s32 count_flag;
 	s32 request_a;
@@ -2442,7 +2471,7 @@ void FieldScene_RunMultiActorPresentation(void)
 static s32 VinasuChojo_TransitionTimer;
 static s32 VinasuChojo_TransitionStep;
 
-void VinasuChojo_RunActorTransition(void)
+static void VinasuChojo_RunActorTransition(void)
 {
 	struct FieldActor *lower;
 	struct FieldActor *middle;
@@ -2646,7 +2675,7 @@ void VinasuChojo_RunActorTransition(void)
 	Engine_EventWaitForScreen();
 }
 
-void FieldScene_RestageParty(void)
+static void FieldScene_RestageParty(void)
 {
 	struct FieldActor *actor;
 
@@ -2720,7 +2749,7 @@ void FieldScene_RestageParty(void)
 	Engine_TaskWait(60);
 }
 
-void VinasuChojo_TryToPreventFall(void)
+static void VinasuChojo_TryToPreventFall(void)
 {
 	Engine_EventSetMessage((s32)MsgVinasuNoooo);
 	VinasuChojo_ShowMessage(21);
@@ -2744,7 +2773,7 @@ void VinasuChojo_TryToPreventFall(void)
 	VinasuChojo_ShowMessage(6);
 }
 
-void Scene_RunExtendedActorTransition(void)
+static void Scene_RunExtendedActorTransition(void)
 {
 	struct FieldActor *actor;
 	s32				   step_pending;
@@ -3052,7 +3081,7 @@ void Scene_RunExtendedActorTransition(void)
 	Engine_EventWait(80);
 }
 
-void SceneActor_ParkRecord(struct FieldActor *actor)
+static void SceneActor_ParkRecord(struct FieldActor *actor)
 {
 	actor->target_x = ACTOR_NO_TARGET;
 	actor->target_y = ACTOR_NO_TARGET;
@@ -3065,7 +3094,7 @@ void SceneActor_ParkRecord(struct FieldActor *actor)
 	actor->timer = 0;
 }
 
-void VinasuChojo_RunTransitionStep(void)
+static void VinasuChojo_RunTransitionStep(void)
 {
 	struct FieldActor  *center;
 	struct FieldActor  *effect;
@@ -3189,7 +3218,7 @@ void VinasuChojo_RunTransitionStep(void)
 	SceneEffect_AdvanceGatedRiseCounter(Actor_Get(6));
 }
 
-void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor)
+static void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor)
 {
 	if (actor->rise_enabled != 0)
 	{
@@ -3209,7 +3238,7 @@ void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor)
 	}
 }
 
-void SceneEffect_SpawnParticlesBesideActor(void)
+static void SceneEffect_SpawnParticlesBesideActor(void)
 {
 	struct FieldActor	 *center;
 	struct FieldActor	 *effect;
@@ -3267,7 +3296,7 @@ void SceneEffect_SpawnParticlesBesideActor(void)
 	sprite->priority = center->sprite->priority;
 }
 
-void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object)
+static void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object)
 {
 	struct FieldEffect *anchor;
 	s32					spin;

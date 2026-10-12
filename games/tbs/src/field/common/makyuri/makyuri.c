@@ -206,7 +206,7 @@ void Makyuri_TickSpawnTimer(void)
 	}
 }
 
-void OverlayObject_ReleasePublishedAttachment(void)
+static void OverlayObject_ReleasePublishedAttachment(void)
 {
 	u8 **pub = Runtime_AllocateBlock(35, 4);
 	u8	*state;

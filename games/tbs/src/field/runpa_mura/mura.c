@@ -12,6 +12,10 @@
 #include "text/msg_ids.h"
 #include "fieldobj.h"
 
+// 前方宣言
+static void Guards_Watch(void);
+static void InitializeStagedActorSceneOrbitingEffect(s32 id);
+
 typedef struct OrbitingSceneObjectSprite
 {
 	u8 padding_00[5];
@@ -61,12 +65,12 @@ enum
 	PALETTE_EFFECT = 15
 };
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -83,7 +87,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -187,7 +191,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gLunpaPlacements;
 }
 
-void FloatingNut_Catch(void)
+static void FloatingNut_Catch(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetPosition(ACTOR_FLOATING_NUT, 0, 0);
@@ -197,7 +201,7 @@ void FloatingNut_Catch(void)
 	Engine_EventEnd();
 }
 
-void HiddenPuddle_Freeze(void)
+static void HiddenPuddle_Freeze(void)
 {
 	struct FieldActor *pillar;
 
@@ -215,7 +219,7 @@ void HiddenPuddle_Freeze(void)
 	GameFlag_Set(FLAG_LUNPA_PUDDLE_FROZEN);
 }
 
-void IcePillar_UpdateDrawOrder(void)
+static void IcePillar_UpdateDrawOrder(void)
 {
 	if (Object_GetById(ACTOR_PARTY_LEADER)->y.fixed >= PILLAR_TOP_HEIGHT)
 	{
@@ -227,7 +231,7 @@ void IcePillar_UpdateDrawOrder(void)
 	}
 }
 
-void Reveal_ShowSecrets(void)
+static void Reveal_ShowSecrets(void)
 {
 	struct FieldActor *actor;
 	s32				   cell_x;
@@ -281,7 +285,7 @@ void Reveal_ShowSecrets(void)
 	GameFlag_Clear(FLAG_LUNPA_SECRETS_HIDDEN);
 }
 
-void Reveal_HideSecrets(void)
+static void Reveal_HideSecrets(void)
 {
 	struct FieldActor *puddle;
 
@@ -303,7 +307,7 @@ void Reveal_HideSecrets(void)
 	GameFlag_Set(FLAG_LUNPA_SECRETS_HIDDEN);
 }
 
-void Well_Search(void)
+static void Well_Search(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
@@ -327,7 +331,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gLunpaSealedEvents;
 }
 
-void WestGuard_Talk(void)
+static void WestGuard_Talk(void)
 {
 	Engine_EventBegin();
 	Engine_ActorShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | 2, 60);
@@ -336,7 +340,7 @@ void WestGuard_Talk(void)
 	Engine_EventEnd();
 }
 
-void EastGuard_Talk(void)
+static void EastGuard_Talk(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY) == 0)
@@ -362,7 +366,7 @@ void EastGuard_Talk(void)
 	Engine_EventEnd();
 }
 
-void EastGuard_MindRead(void)
+static void EastGuard_MindRead(void)
 {
 	s32 thoughts;
 
@@ -387,7 +391,7 @@ void EastGuard_MindRead(void)
 	}
 }
 
-void VillagerA_Talk(void)
+static void VillagerA_Talk(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgRunpaVillagerAAsksHowLong);
@@ -395,7 +399,7 @@ void VillagerA_Talk(void)
 	Engine_EventEnd();
 }
 
-void VillagerC_Talk(void)
+static void VillagerC_Talk(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgRunpaVillagerCAsksAboutKidnapping);
@@ -403,7 +407,7 @@ void VillagerC_Talk(void)
 	Engine_EventEnd();
 }
 
-void VillagerG_Talk(void)
+static void VillagerG_Talk(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgRunpaVillagerGAsksAboutDonpa);
@@ -411,7 +415,7 @@ void VillagerG_Talk(void)
 	Engine_EventEnd();
 }
 
-void VillagerB_Shivers(void)
+static void VillagerB_Shivers(void)
 {
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_B, 3);
@@ -420,7 +424,7 @@ void VillagerB_Shivers(void)
 	Engine_EventEnd();
 }
 
-void VillagerD_Talk(void)
+static void VillagerD_Talk(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgRunpaVillagerDAsksAboutCommotion);
@@ -428,7 +432,7 @@ void VillagerD_Talk(void)
 	Engine_EventEnd();
 }
 
-void LeftGuard_Talk(void)
+static void LeftGuard_Talk(void)
 {
 	s32 recognition;
 
@@ -454,7 +458,7 @@ void LeftGuard_Talk(void)
 	Engine_EventShowMessage(ACTOR_LEFT_GUARD, 0);
 }
 
-void RightGuard_Talk(void)
+static void RightGuard_Talk(void)
 {
 	if (gGameState.cloaked != 0)
 	{
@@ -471,7 +475,7 @@ void RightGuard_Talk(void)
 	Engine_EventShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
 
-void LeftGuard_MindRead(void)
+static void LeftGuard_MindRead(void)
 {
 	s32 seen;
 
@@ -503,7 +507,7 @@ void LeftGuard_MindRead(void)
 	Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 }
 
-void RightGuard_MindRead(void)
+static void RightGuard_MindRead(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0)
 	{
@@ -516,7 +520,7 @@ void RightGuard_MindRead(void)
 	Engine_EventShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
 
-void Party_WatchForFortress(void)
+static void Party_WatchForFortress(void)
 {
 	s32 cell_z = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed / CELL_SIZE;
 
@@ -527,7 +531,7 @@ void Party_WatchForFortress(void)
 	}
 }
 
-void Gerald_RefusesToReturn(void)
+static void Gerald_RefusesToReturn(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -542,7 +546,7 @@ void Gerald_RefusesToReturn(void)
 	Engine_EventEnd();
 }
 
-void Door_Enter(void)
+static void Door_Enter(void)
 {
 	struct EventWork  *work;
 	struct FieldActor *actor;
@@ -576,7 +580,7 @@ void Door_Enter(void)
 	Engine_EventEnd();
 }
 
-void HiddenPassage_Enter(void)
+static void HiddenPassage_Enter(void)
 {
 	if (GameFlag_IsSet(FLAG_LUNPA_PASSAGE_OPEN) != 0)
 	{
@@ -592,7 +596,7 @@ void HiddenPassage_Enter(void)
 	}
 }
 
-void FortressGate_Enter(void)
+static void FortressGate_Enter(void)
 {
 	GameFlag_Set(FLAG_GATE_FORTRESS_ENTERED);
 	Engine_EventBegin();
@@ -611,12 +615,12 @@ void FortressGate_Enter(void)
 	Engine_EventEnd();
 }
 
-void Party_CheckAhead(void)
+static void Party_CheckAhead(void)
 {
 	Engine_LeaderCheckAhead();
 }
 
-void Reveal_PlayTreasureCue(void)
+static void Reveal_PlayTreasureCue(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_LUNPA_SECRETS_HIDDEN) == 0)
 	{
@@ -624,7 +628,7 @@ void Reveal_PlayTreasureCue(void)
 	}
 }
 
-void HiddenSwitch_Pull(void)
+static void HiddenSwitch_Pull(void)
 {
 	if (GameFlag_IsSet(FLAG_LUNPA_SECRETS_HIDDEN) != 0)
 	{
@@ -660,7 +664,7 @@ void HiddenSwitch_Pull(void)
 	GameFlag_Set(FLAG_LUNPA_PASSAGE_OPEN);
 }
 
-void Guards_BlockGate(void)
+static void Guards_BlockGate(void)
 {
 	if (gGameState.cloaked == 0)
 	{
@@ -688,11 +692,11 @@ void Guards_BlockGate(void)
 	}
 }
 
-void Scene_DoNothing(void)
+static void Scene_DoNothing(void)
 {
 }
 
-void Cloak_Begin(void)
+static void Cloak_Begin(void)
 {
 	Engine_MapCopyCellAttributes(6, 11, 1, 1, 7, 11);
 	Engine_MapCopyCellAttributes(6, 11, 1, 1, 8, 11);
@@ -700,7 +704,7 @@ void Cloak_Begin(void)
 	Engine_GameFlagSet(FLAG_GATE_CLOAK_CAST);
 }
 
-void Guards_CatchParty(void)
+static void Guards_CatchParty(void)
 {
 	struct FieldActor *leader;
 	s32				   warning;
@@ -756,14 +760,14 @@ void Guards_CatchParty(void)
 	Engine_TaskAddCallback(Guards_Watch, TASK_PRIORITY_SCENE);
 }
 
-void Gateway_Reopen(void)
+static void Gateway_Reopen(void)
 {
 	Engine_MapCopyCellAttributes(7, 12, 1, 1, 7, 11);
 	Engine_MapCopyCellAttributes(7, 12, 1, 1, 8, 11);
 	Engine_MapCopyCellAttributes(7, 12, 1, 1, 9, 11);
 }
 
-void Cloak_End(void)
+static void Cloak_End(void)
 {
 	struct EventWork  *work;
 	struct FieldActor *leader;
@@ -786,7 +790,7 @@ void Cloak_End(void)
 	Engine_GameFlagClear(FLAG_GATE_PARTY_CAUGHT);
 }
 
-void Guards_Watch(void)
+static void Guards_Watch(void)
 {
 	struct EventWork  *work;
 	struct FieldActor *leader;
@@ -801,7 +805,7 @@ void Guards_Watch(void)
 	}
 }
 
-void Leader_KickUpDust(void)
+static void Leader_KickUpDust(void)
 {
 	struct FieldActor *leader;
 	s32				   angle;
@@ -819,7 +823,7 @@ void Leader_KickUpDust(void)
 	}
 }
 
-void Party_ThrownOut(void)
+static void Party_ThrownOut(void)
 {
 	Engine_EventBegin();
 	Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(160), PIXELS(128));
@@ -897,7 +901,7 @@ void Party_ThrownOut(void)
 	Engine_EventEnd();
 }
 
-void Leader_SneaksOut(void)
+static void Leader_SneaksOut(void)
 {
 	Engine_EventBegin();
 	Engine_EventOpenScreen();
@@ -981,7 +985,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-s32 SceneEffect_UpdateOrbitPosition(s32 *p)
+static s32 SceneEffect_UpdateOrbitPosition(s32 *p)
 {
 	s16 *q = (s16 *)p[20];
 	s32	 a, b;
@@ -997,7 +1001,7 @@ s32 SceneEffect_UpdateOrbitPosition(s32 *p)
 	return 0;
 }
 
-void InitializeStagedActorSceneOrbitingEffect(s32 id)
+static void InitializeStagedActorSceneOrbitingEffect(s32 id)
 {
 	OrbitingSceneObject		  *actor;
 	OrbitingSceneObjectSprite *sprite;

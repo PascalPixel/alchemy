@@ -21,6 +21,11 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void FieldScene_RunMiddleSequence(void);
+static void FieldScene_RunScene3a3SequenceD(void);
+static void SceneEffect_SpawnDriftingParticle(void);
+
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 v = gGameState.scene;
@@ -85,7 +90,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gArutinMuraEventsOther;
 }
 
-void FieldScene_RunActorEightPromptDialogue(void)
+static void FieldScene_RunActorEightPromptDialogue(void)
 {
 	struct EventWork *work;
 
@@ -108,7 +113,7 @@ void FieldScene_RunActorEightPromptDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_ShowLine1918(void)
+static void SceneDialogue_ShowLine1918(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgArutinDidSeeWaterGushingOut);
@@ -116,7 +121,7 @@ void SceneDialogue_ShowLine1918(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunOpeningAuxiliarySequence(void)
+static void FieldScene_RunOpeningAuxiliarySequence(void)
 {
 
 	struct FieldActor *rec18;
@@ -155,7 +160,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor17Message1924(void)
+static void SceneDialogue_RunActor17Message1924(void)
 {
 
 	Engine_EventBegin();
@@ -164,7 +169,7 @@ void SceneDialogue_RunActor17Message1924(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor9Message1932(void)
+static void SceneDialogue_RunActor9Message1932(void)
 {
 
 	Engine_EventBegin();
@@ -173,7 +178,7 @@ void SceneDialogue_RunActor9Message1932(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor10Message18d9(void)
+static void SceneDialogue_RunActor10Message18d9(void)
 {
 
 	Engine_EventBegin();
@@ -182,7 +187,7 @@ void SceneDialogue_RunActor10Message18d9(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor14Message18e1(void)
+static void SceneDialogue_RunActor14Message18e1(void)
 {
 
 	Engine_EventBegin();
@@ -191,7 +196,7 @@ void SceneDialogue_RunActor14Message18e1(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor21Message194a(void)
+static void SceneDialogue_RunActor21Message194a(void)
 {
 
 	Engine_EventBegin();
@@ -200,7 +205,7 @@ void SceneDialogue_RunActor21Message194a(void)
 	Engine_EventEnd();
 }
 
-s32 SceneActor_IsSlotZeroAngleInRange(void)
+static s32 SceneActor_IsSlotZeroAngleInRange(void)
 {
 	struct Slot02000338 *slot = (struct Slot02000338 *)Object_GetById(0);
 
@@ -211,7 +216,7 @@ s32 SceneActor_IsSlotZeroAngleInRange(void)
 	return 0;
 }
 
-void FieldScene_RunActorFifteenFlagBranch(void)
+static void FieldScene_RunActorFifteenFlagBranch(void)
 {
 
 	if (Engine_GameFlagIsSet(0x242) == 0)
@@ -240,7 +245,7 @@ void FieldScene_RunActorFifteenFlagBranch(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorTwentyFlagBranch(void)
+static void FieldScene_RunActorTwentyFlagBranch(void)
 {
 
 	if (Engine_GameFlagIsSet(0x241) == 0)
@@ -268,7 +273,7 @@ void FieldScene_RunActorTwentyFlagBranch(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorTwentyOneFlagBranch(void)
+static void FieldScene_RunActorTwentyOneFlagBranch(void)
 {
 	if (Engine_GameFlagIsSet(0x240) == 0)
 	{
@@ -295,7 +300,7 @@ void FieldScene_RunActorTwentyOneFlagBranch(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFacingGatedDialogue18(void)
+static void FieldScene_RunFacingGatedDialogue18(void)
 {
 	struct FieldActor *rec;
 
@@ -323,7 +328,7 @@ void FieldScene_RunFacingGatedDialogue18(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunEarlySequence(void)
+static void FieldScene_RunEarlySequence(void)
 {
 	u32				   i;
 	struct EventWork  *work;
@@ -399,7 +404,7 @@ void FieldScene_RunEarlySequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene3a3SequenceB(void)
+static void FieldScene_RunScene3a3SequenceB(void)
 {
 	struct EventWork *work;
 
@@ -414,7 +419,7 @@ void FieldScene_RunScene3a3SequenceB(void)
 	Engine_EventEnd();
 }
 
-void SceneMotion_UpdateTimedActor(struct SceneMotion *work)
+static void SceneMotion_UpdateTimedActor(struct SceneMotion *work)
 {
 	if (work->delay != 0)
 	{
@@ -453,7 +458,7 @@ void SceneMotion_UpdateTimedActor(struct SceneMotion *work)
 		work->timer = 0;
 }
 
-void FieldScene_RunScene3a3SequenceC(void)
+static void FieldScene_RunScene3a3SequenceC(void)
 {
 	struct SceneMotion *motion;
 
@@ -474,7 +479,7 @@ void FieldScene_RunScene3a3SequenceC(void)
 	Engine_ActorSetAnimation(18, 1);
 }
 
-void SceneState_SetFlag906ByActorNineteenX(void)
+static void SceneState_SetFlag906ByActorNineteenX(void)
 {
 	struct Actor *p = (struct Actor *)Object_GetById(19);
 
@@ -520,7 +525,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-void FieldScene_RunMiddleSequence(void)
+static void FieldScene_RunMiddleSequence(void)
 {
 	struct FieldActor *leader;
 	s32				   kind;
@@ -605,7 +610,7 @@ placed:
 	Engine_TaskWait(1);
 }
 
-void FieldScene_RunScene3a3SequenceD(void)
+static void FieldScene_RunScene3a3SequenceD(void)
 {
 	struct FieldActor *actor;
 	s32				   facing;
@@ -654,7 +659,7 @@ void FieldScene_RunScene3a3SequenceD(void)
 	}
 }
 
-void SceneActor_ResetStateAndSpan(struct Actor02000c0c *actor)
+static void SceneActor_ResetStateAndSpan(struct Actor02000c0c *actor)
 {
 
 	u8 *state = &actor->state;
@@ -671,7 +676,7 @@ void SceneActor_ResetStateAndSpan(struct Actor02000c0c *actor)
 	actor->reach = 0x4CCC;
 }
 
-void SceneEffect_UpdateDriftingParticle(struct SceneMotion *work)
+static void SceneEffect_UpdateDriftingParticle(struct SceneMotion *work)
 {
 	work->x += (work->timer << 12) + ((s16)((s32)(((u32)Engine_RandomNext() * 2) >> 16) - 1) << 15);
 	if (work->timer <= 3)
@@ -699,7 +704,7 @@ void SceneEffect_UpdateDriftingParticle(struct SceneMotion *work)
 	}
 }
 
-void SceneEffect_SpawnDriftingParticle(void)
+static void SceneEffect_SpawnDriftingParticle(void)
 {
 	struct SceneMotion *work;
 	if ((gFrameCount & 3) == 0)
@@ -717,7 +722,7 @@ void SceneEffect_SpawnDriftingParticle(void)
 	}
 }
 
-void ArutinMura_RunDriftEndScene(void)
+static void ArutinMura_RunDriftEndScene(void)
 {
 	Engine_EventBegin();
 	Camera_SetSpeed(0x6666, 0xccc);

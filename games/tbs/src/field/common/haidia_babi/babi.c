@@ -42,7 +42,15 @@
 #include "iowrite.h"
 #include "fieldobj.h"
 
-s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
+// 前方宣言
+static void FieldScene_RunComplexActorSequence(void);
+static void FieldScene_RunPaletteRampSequence(void);
+static void ActorPresentation_SetTwoSceneCells(void);
+static void FieldScene_RunSupplementalSequenceOne(void);
+static void HaidiaBabi_SpawnEffectPair(union FieldObject *object);
+static void FieldScene_RunSixStepSequence17e4(void);
+
+static s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 {
 	s32					 delta;
 	u16					 old;
@@ -117,7 +125,7 @@ s32 HaidiaBabi_SelectPlacements(void)
 	return (s32)tbl;
 }
 
-void HaidiaBabi_AskAboutKraden(s32 object)
+static void HaidiaBabi_AskAboutKraden(s32 object)
 {
 	s32 msg = (s32)MsgHaidiaFolksSeemKnow;
 
@@ -161,7 +169,7 @@ s32 HaidiaBabi_SelectEvents(void)
 	return (s32)gHaidiaBabiEvents;
 }
 
-void HaidiaBabi_RunHeyBoyScene(void)
+static void HaidiaBabi_RunHeyBoyScene(void)
 {
 	Engine_EventBegin();
 	Engine_ActorStartRepeatedMotion(16, 2);
@@ -185,7 +193,7 @@ void HaidiaBabi_RunHeyBoyScene(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorFourteenDialogue11AA(void)
+static void SceneDialogue_RunActorFourteenDialogue11AA(void)
 {
 	struct EventWork *work;
 
@@ -206,7 +214,7 @@ void SceneDialogue_RunActorFourteenDialogue11AA(void)
 	Engine_EventEnd();
 }
 
-void HaidiaBabi_CloseScreenAndExit(s32 object)
+static void HaidiaBabi_CloseScreenAndExit(s32 object)
 {
 	if (Engine_GameFlagIsSet(0x834) != 0)
 	{
@@ -218,67 +226,67 @@ void HaidiaBabi_CloseScreenAndExit(s32 object)
 	Engine_EventRequestExit(object);
 }
 
-void SceneState_SetValue123Mode1(void)
+static void SceneState_SetValue123Mode1(void)
 {
 	Engine_AudioPlayCue(0x7B);
 	HaidiaBabi_CloseScreenAndExit(1);
 }
 
-void FieldScene_RunStep7BThen2(void)
+static void FieldScene_RunStep7BThen2(void)
 {
 	Engine_AudioPlayCue(0x7B);
 	HaidiaBabi_CloseScreenAndExit(2);
 }
 
-void SceneState_SetValue123Mode3(void)
+static void SceneState_SetValue123Mode3(void)
 {
 	Engine_AudioPlayCue(0x7B);
 	HaidiaBabi_CloseScreenAndExit(3);
 }
 
-void FieldScene_RunStep7BThen4(void)
+static void FieldScene_RunStep7BThen4(void)
 {
 	Engine_AudioPlayCue(0x7B);
 	HaidiaBabi_CloseScreenAndExit(4);
 }
 
-void FieldScene_RunStep80Then5(void)
+static void FieldScene_RunStep80Then5(void)
 {
 	Engine_AudioPlayCue(0x80);
 	HaidiaBabi_CloseScreenAndExit(5);
 }
 
-void FieldScene_RunStep7BThen6(void)
+static void FieldScene_RunStep7BThen6(void)
 {
 	Engine_AudioPlayCue(0x7B);
 	HaidiaBabi_CloseScreenAndExit(6);
 }
 
-void FieldScene_RunStep80Then7(void)
+static void FieldScene_RunStep80Then7(void)
 {
 	Engine_AudioPlayCue(0x80);
 	HaidiaBabi_CloseScreenAndExit(7);
 }
 
-void SceneState_SetValue129Mode8(void)
+static void SceneState_SetValue129Mode8(void)
 {
 	Engine_AudioPlayCue(0x81);
 	HaidiaBabi_CloseScreenAndExit(8);
 }
 
-void SceneState_SetValue129Mode9(void)
+static void SceneState_SetValue129Mode9(void)
 {
 	Engine_AudioPlayCue(0x81);
 	HaidiaBabi_CloseScreenAndExit(9);
 }
 
-void FieldScene_RunStep7BThen10(void)
+static void FieldScene_RunStep7BThen10(void)
 {
 	Engine_AudioPlayCue(0x7B);
 	HaidiaBabi_CloseScreenAndExit(10);
 }
 
-void SceneState_ApplyValues123And11(void)
+static void SceneState_ApplyValues123And11(void)
 {
 	Engine_AudioPlayCue(0x7B);
 	HaidiaBabi_CloseScreenAndExit(11);
@@ -380,7 +388,7 @@ L_02000550:;
 	return 0;
 }
 
-void FieldScene_RunComplexActorSequence(void)
+static void FieldScene_RunComplexActorSequence(void)
 {
 	s32					  base;
 	struct FieldSprite	 *sprite;
@@ -559,7 +567,7 @@ struct PairWork
 
 extern struct PairWork *gEffectWork;
 
-void FieldScene_RunPaletteRampSequence(void)
+static void FieldScene_RunPaletteRampSequence(void)
 {
 	struct FieldActor  *actor;
 	struct FieldSprite *sprite;
@@ -676,7 +684,7 @@ ramp:
 	Engine_EventRequestExit(21);
 }
 
-void HaidiaBabi_RunInnkeeperTalk(void)
+static void HaidiaBabi_RunInnkeeperTalk(void)
 {
 	struct FieldActor *actor;
 
@@ -718,7 +726,7 @@ void HaidiaBabi_RunInnkeeperTalk(void)
 	}
 }
 
-void SceneDialogue_ShowLine1C13WithActor16Steps(void)
+static void SceneDialogue_ShowLine1C13WithActor16Steps(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceActor(0x10, ACTOR_PARTY_LEADER, 0xA);
@@ -729,7 +737,7 @@ void SceneDialogue_ShowLine1C13WithActor16Steps(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorThirteenDialogue(void)
+static void SceneDialogue_RunActorThirteenDialogue(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgHaidiaDoraWouldntLetHimStay);
@@ -738,7 +746,7 @@ void SceneDialogue_RunActorThirteenDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor16LineAndFlag81c(void)
+static void SceneDialogue_RunActor16LineAndFlag81c(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgHaidiaDoraWasStruckWithIllness);
@@ -747,7 +755,7 @@ void SceneDialogue_RunActor16LineAndFlag81c(void)
 	Engine_EventEnd();
 }
 
-void HaidiaBabi_RunSickbedVisit(void)
+static void HaidiaBabi_RunSickbedVisit(void)
 {
 	struct FieldActor *record;
 	s32				   msg;
@@ -857,7 +865,7 @@ void HaidiaBabi_RunSickbedVisit(void)
 	Engine_EventEnd();
 }
 
-void HaidiaBabi_RunActorEightMessageScene(void)
+static void HaidiaBabi_RunActorEightMessageScene(void)
 {
 	s32 message;
 
@@ -881,7 +889,7 @@ void HaidiaBabi_RunActorEightMessageScene(void)
 	Engine_EventEnd();
 }
 
-void ActorPresentation_SetTwoSceneCells(void)
+static void ActorPresentation_SetTwoSceneCells(void)
 {
 	{
 		s32 size = 2;
@@ -895,7 +903,7 @@ void ActorPresentation_SetTwoSceneCells(void)
 	}
 }
 
-void FieldScene_RunSupplementalSequenceOne(void)
+static void FieldScene_RunSupplementalSequenceOne(void)
 {
 	struct FieldActor  *actor;
 	struct FieldSprite *sprite;
@@ -941,7 +949,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 	Engine_EventRequestExit(22);
 }
 
-void SceneEffect_UpdateObjectByFrameParity(union FieldObject *object)
+static void SceneEffect_UpdateObjectByFrameParity(union FieldObject *object)
 {
 	if ((gFrameCount & 2) != 0)
 	{
@@ -957,7 +965,7 @@ void SceneEffect_UpdateObjectByFrameParity(union FieldObject *object)
 	}
 }
 
-void OverlayObject_UpdateOnFrameParity(union FieldObject *object)
+static void OverlayObject_UpdateOnFrameParity(union FieldObject *object)
 {
 	if ((gFrameCount & 1) != 0)
 	{
@@ -969,7 +977,7 @@ void OverlayObject_UpdateOnFrameParity(union FieldObject *object)
 	}
 }
 
-void OverlayObject_ApplyRandomSlotOnOddFrames(union FieldObject *object)
+static void OverlayObject_ApplyRandomSlotOnOddFrames(union FieldObject *object)
 {
 	if ((gFrameCount & 1) != 0)
 	{
@@ -979,7 +987,7 @@ void OverlayObject_ApplyRandomSlotOnOddFrames(union FieldObject *object)
 	}
 }
 
-void Effect_AnimateVerticalPositive(union FieldObject *object)
+static void Effect_AnimateVerticalPositive(union FieldObject *object)
 {
 	struct FieldActor *self = &object->actor;
 	struct FieldActor *anchor;
@@ -1004,7 +1012,7 @@ void Effect_AnimateVerticalPositive(union FieldObject *object)
 	self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
 }
 
-void Effect_AnimateVerticalNegative(union FieldObject *object)
+static void Effect_AnimateVerticalNegative(union FieldObject *object)
 {
 	struct FieldActor *self = &object->actor;
 	struct FieldActor *anchor;
@@ -1029,7 +1037,7 @@ void Effect_AnimateVerticalNegative(union FieldObject *object)
 	self->z.fixed = anchor->z.fixed - (0x10000 - amplitude) * 5 + 0x100000;
 }
 
-void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
+static void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
 {
 	union PairObject	   *parent = (union PairObject *)object;
 	union PairObject	   *pair[2];
@@ -1084,27 +1092,27 @@ void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
 	}
 }
 
-void SceneState_SetValue140Mode0(void)
+static void SceneState_SetValue140Mode0(void)
 {
 	Engine_PsynergyBegin(0x8C, 0);
 }
 
-void FieldScene_RunSingleStep(void)
+static void FieldScene_RunSingleStep(void)
 {
 	BattleEffect_CleanupSceneObjects();
 }
 
-void FieldScene_RunActor8TwoStep(void)
+static void FieldScene_RunActor8TwoStep(void)
 {
 	OverlayObject_UpdateOnFrameParity((union FieldObject *)Object_GetById(8));
 }
 
-void FieldScene_RunStep17(void)
+static void FieldScene_RunStep17(void)
 {
 	OverlayObject_ApplyRandomSlotOnOddFrames((union FieldObject *)Object_GetById(17));
 }
 
-void FieldScene_RunSixStepSequence17e4(void)
+static void FieldScene_RunSixStepSequence17e4(void)
 {
 	Engine_PsynergyBegin(0x94, 1);
 	Engine_PsynergySetTarget(8, 0x11);

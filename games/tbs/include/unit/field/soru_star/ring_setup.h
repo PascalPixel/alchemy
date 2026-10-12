@@ -3,7 +3,6 @@
 
 #include "types.h"
 
-void Soru_UpdateRing(void);
 void SoruStar_SetupElementalRings(s32 first, u32 count);
 
 #endif

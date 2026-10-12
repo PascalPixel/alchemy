@@ -22,6 +22,21 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void FieldScene_DispatchBySelector(void);
+static void FieldScene_CallPairWith10(s32 no);
+static void SceneState_ForwardMaskedHalfwordWith10(s32 arg0, s32 arg1);
+static void SceneState_ApplyRectsByFlatla384And962(void);
+static void FieldScene_BuildActorPresentationSequence(void);
+static void KorashiamuIriguchi_EscortToEastExit(void);
+static void KorashiamuIriguchi_AnnounceFinals(void);
+static void KorashiamuIriguchi_WalkToEastExit(void);
+static void KorashiamuIriguchi_CelebrateAdvancement(void);
+static void KorashiamuIriguchi_EscortToWestExit(void);
+static void KorashiamuIriguchi_WalkToWestExit(void);
+static void KorashiamuIriguchi_CelebrateBothWins(void);
+static void ActorPresentation_SetActorsTwelveToEighteen(void);
+
 #define RECORD_17 17
 
 const struct SceneEntrance *Scene_GetEntrances(void)
@@ -130,7 +145,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gKorashiamuIriguchiEventsOther;
 }
 
-void SceneDialogue_RunActor10MessageByFlag962(void)
+static void SceneDialogue_RunActor10MessageByFlag962(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x962))
@@ -146,7 +161,7 @@ void SceneDialogue_RunActor10MessageByFlag962(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor13MessageByFlag962(void)
+static void SceneDialogue_RunActor13MessageByFlag962(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x962))
@@ -163,7 +178,7 @@ void SceneDialogue_RunActor13MessageByFlag962(void)
 	Engine_EventEnd();
 }
 
-void KorashiamuIriguchi_TalkToActorFourteen(void)
+static void KorashiamuIriguchi_TalkToActorFourteen(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x962) != 0)
@@ -184,7 +199,7 @@ void KorashiamuIriguchi_TalkToActorFourteen(void)
 	Engine_EventEnd();
 }
 
-void KorashiamuIriguchi_TryLuckyGuess(void)
+static void KorashiamuIriguchi_TryLuckyGuess(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x962) != 0)
@@ -223,7 +238,7 @@ L_02000448:;
 	Engine_EventEnd();
 }
 
-void KorashiamuIriguchi_IntroduceSecondSeed(void)
+static void KorashiamuIriguchi_IntroduceSecondSeed(void)
 {
 	struct FieldActor *rec7;
 
@@ -251,7 +266,7 @@ void KorashiamuIriguchi_IntroduceSecondSeed(void)
 	Engine_EventEnd();
 }
 
-void KorashiamuIriguchi_FrightenActorFourteen(void)
+static void KorashiamuIriguchi_FrightenActorFourteen(void)
 {
 	Engine_EventBegin();
 	Actor_SetAttachedEffect(14, 0x102);
@@ -263,7 +278,7 @@ void KorashiamuIriguchi_FrightenActorFourteen(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_ShowLine2118WithActor15Steps(void)
+static void SceneDialogue_ShowLine2118WithActor15Steps(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKorashiamuWhoHaveComeQuestionMe);
@@ -277,7 +292,7 @@ void SceneDialogue_ShowLine2118WithActor15Steps(void)
 	Engine_EventEnd();
 }
 
-void KorashiamuIriguchi_CheerForDekka(void)
+static void KorashiamuIriguchi_CheerForDekka(void)
 {
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(16, 2);
@@ -303,7 +318,7 @@ void KorashiamuIriguchi_CheerForDekka(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorSeventeenDialogueSteps(void)
+static void FieldScene_RunActorSeventeenDialogueSteps(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceEachOther(17, ACTOR_PARTY_LEADER, 20);
@@ -318,7 +333,7 @@ void FieldScene_RunActorSeventeenDialogueSteps(void)
 	Engine_EventEnd();
 }
 
-void KorashiamuIriguchi_IntroduceSeventhSeed(void)
+static void KorashiamuIriguchi_IntroduceSeventhSeed(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 20);
@@ -335,7 +350,7 @@ void KorashiamuIriguchi_IntroduceSeventhSeed(void)
 	Engine_EventEnd();
 }
 
-void KorashiamuIriguchi_AskReadyForFinals(void)
+static void KorashiamuIriguchi_AskReadyForFinals(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceEachOther(8, ACTOR_PARTY_LEADER, 20);
@@ -347,7 +362,7 @@ void KorashiamuIriguchi_AskReadyForFinals(void)
 	Engine_EventEnd();
 }
 
-void Scene_RunBranchingActorPresentation(void)
+static void Scene_RunBranchingActorPresentation(void)
 {
 	s32 record;
 
@@ -567,7 +582,7 @@ void Scene_RunBranchingActorPresentation(void)
 	Engine_EventEnd();
 }
 
-void KorashiamuIriguchi_RunGatherScene(void)
+static void KorashiamuIriguchi_RunGatherScene(void)
 {
 	struct FieldActor *actor;
 	s32				   script;
@@ -693,13 +708,13 @@ void KorashiamuIriguchi_RunGatherScene(void)
 	}
 }
 
-void SceneState_ApplyFlags565And564(void)
+static void SceneState_ApplyFlags565And564(void)
 {
 	Engine_GameFlagClear(0x235);
 	Engine_GameFlagSet(564);
 }
 
-void FieldScene_RunConditionalSceneSetup(void)
+static void FieldScene_RunConditionalSceneSetup(void)
 {
 	s32 flag_8a4;
 
@@ -738,7 +753,7 @@ void FieldScene_RunConditionalSceneSetup(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_BuildActorPresentationGroup(void)
+static void FieldScene_BuildActorPresentationGroup(void)
 {
 	struct FieldActor *rec2;
 	s32				   shift;
@@ -848,7 +863,7 @@ void FieldScene_BuildActorPresentationGroup(void)
 	Engine_EventEnd();
 }
 
-void KorashiamuIriguchi_ShowQualifyingTrialMessage(void)
+static void KorashiamuIriguchi_ShowQualifyingTrialMessage(void)
 {
 	Engine_EventBegin();
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
@@ -872,7 +887,7 @@ void KorashiamuIriguchi_ShowQualifyingTrialMessage(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunMiddleSequence(void)
+static void FieldScene_RunMiddleSequence(void)
 {
 	u32				   counter;
 	struct FieldActor *rec;
@@ -1006,7 +1021,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-void FieldScene_DispatchBySelector(void)
+static void FieldScene_DispatchBySelector(void)
 {
 	s32 no;
 
@@ -1073,18 +1088,18 @@ void FieldScene_DispatchBySelector(void)
 	}
 }
 
-void FieldScene_CallPairWith10(s32 no)
+static void FieldScene_CallPairWith10(s32 no)
 {
 	Engine_EventShowMessage(no, 0);
 	Engine_EventWait(10);
 }
 
-void SceneState_ForwardMaskedHalfwordWith10(s32 arg0, s32 arg1)
+static void SceneState_ForwardMaskedHalfwordWith10(s32 arg0, s32 arg1)
 {
 	Engine_ActorFaceDirection(arg0, (u16)arg1, 10);
 }
 
-void SceneState_ApplyRectsByFlatla384And962(void)
+static void SceneState_ApplyRectsByFlatla384And962(void)
 {
 	s32 pair;
 	s32 a, b;
@@ -1109,7 +1124,7 @@ void SceneState_ApplyRectsByFlatla384And962(void)
 	}
 }
 
-void FieldScene_BuildActorPresentationSequence(void)
+static void FieldScene_BuildActorPresentationSequence(void)
 {
 	s32 flag;
 
@@ -1311,7 +1326,7 @@ void FieldScene_BuildActorPresentationSequence(void)
 	Engine_EventRequestExit(64);
 }
 
-void KorashiamuIriguchi_EscortToEastExit(void)
+static void KorashiamuIriguchi_EscortToEastExit(void)
 {
 	struct FieldActor *record;
 
@@ -1350,7 +1365,7 @@ void KorashiamuIriguchi_EscortToEastExit(void)
 	}
 }
 
-void KorashiamuIriguchi_AnnounceFinals(void)
+static void KorashiamuIriguchi_AnnounceFinals(void)
 {
 	struct FieldActor *rec7;
 
@@ -1396,7 +1411,7 @@ void KorashiamuIriguchi_AnnounceFinals(void)
 	Engine_EventEnd();
 }
 
-void KorashiamuIriguchi_WalkToEastExit(void)
+static void KorashiamuIriguchi_WalkToEastExit(void)
 {
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x19999, 0xcccc);
@@ -1417,7 +1432,7 @@ void KorashiamuIriguchi_WalkToEastExit(void)
 	}
 }
 
-void KorashiamuIriguchi_CelebrateAdvancement(void)
+static void KorashiamuIriguchi_CelebrateAdvancement(void)
 {
 	s32 base5_200adac;
 
@@ -1469,7 +1484,7 @@ void KorashiamuIriguchi_CelebrateAdvancement(void)
 	Engine_EventRequestExit(67);
 }
 
-void KorashiamuIriguchi_EscortToWestExit(void)
+static void KorashiamuIriguchi_EscortToWestExit(void)
 {
 	struct FieldActor *record;
 
@@ -1501,7 +1516,7 @@ void KorashiamuIriguchi_EscortToWestExit(void)
 	Engine_EventRequestExit(21);
 }
 
-void KorashiamuIriguchi_WalkToWestExit(void)
+static void KorashiamuIriguchi_WalkToWestExit(void)
 {
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x19999, 0xcccc);
@@ -1515,7 +1530,7 @@ void KorashiamuIriguchi_WalkToWestExit(void)
 	Engine_EventRequestExit(22);
 }
 
-void KorashiamuIriguchi_CelebrateBothWins(void)
+static void KorashiamuIriguchi_CelebrateBothWins(void)
 {
 	s32 base5_200adac;
 
@@ -1567,7 +1582,7 @@ void KorashiamuIriguchi_CelebrateBothWins(void)
 	Engine_EventRequestExit(64);
 }
 
-void ActorPresentation_SetActorsTwelveToEighteen(void)
+static void ActorPresentation_SetActorsTwelveToEighteen(void)
 {
 	Engine_ActorSetChildValue(12, 3);
 	Engine_ActorSetChildValue(13, 0);

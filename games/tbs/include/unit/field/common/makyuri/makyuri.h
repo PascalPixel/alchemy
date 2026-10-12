@@ -6,6 +6,5 @@
 void SceneState_ClearCurrentRecordAndReleaseTarget(void);
 void Makyuri_RunActorMove(void);
 void Makyuri_TickSpawnTimer(void);
-void OverlayObject_ReleasePublishedAttachment(void);
 
 #endif

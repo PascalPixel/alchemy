@@ -5,8 +5,6 @@
 #include "unit/import.h"
 #include "unit/field/makyuri_iriguchi/iriguchi.h"
 #include "unit/field/common/effect/move.h"
-#include "unit/field/common/object/staged_actor.h"
-#include "unit/field/common/makyuri/palette_cycle.h"
 #include "unit/field/common/makyuri/lights.h"
 #include "unit/field/makyuri_iriguchi/pillar.h"
 #include "unit/field/common/makyuri/makyuri.h"
@@ -43,6 +41,10 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void MakyuriIriguchi_CrossDoorway(void);
+static void MakyuriIriguchi_RunDoorScene(void);
+
 struct WorkPointers
 {
 	u8 *event;
@@ -50,12 +52,12 @@ struct WorkPointers
 	u8 *scene;
 };
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -72,7 +74,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -94,7 +96,7 @@ void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 #include "../common/effect/spawn.c"
 #include "../common/object/staged_actor.c"
 
-s32 MakyuriIriguchi_TrailSparks(struct FieldActor *a0)
+static s32 MakyuriIriguchi_TrailSparks(struct FieldActor *a0)
 {
 	s32					 value;
 	s32					 magic;
@@ -115,13 +117,13 @@ s32 MakyuriIriguchi_TrailSparks(struct FieldActor *a0)
 	return 0;
 }
 
-s32 SceneAudio_PlayCue118AndReturnZero(void)
+static s32 SceneAudio_PlayCue118AndReturnZero(void)
 {
 	Engine_AudioPlayCue(118);
 	return 0;
 }
 
-s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object)
+static s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object)
 {
 	struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -140,22 +142,22 @@ s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/makyuri/palette_cycle.c"
 
-void MakyuriIriguchi_TickSpawnTimer(void)
+static void MakyuriIriguchi_TickSpawnTimer(void)
 {
 	Makyuri_TickSpawnTimer();
 }
 
-void MakyuriIriguchi_ClearCurrentRecordAndReleaseTarget(void)
+static void MakyuriIriguchi_ClearCurrentRecordAndReleaseTarget(void)
 {
 	SceneState_ClearCurrentRecordAndReleaseTarget();
 }
 
-void FieldScene_RunSingleStep(void)
+static void FieldScene_RunSingleStep(void)
 {
 	Makyuri_RunActorMove();
 }
 
-void MakyuriIriguchi_TriggerPillarRise(void)
+static void MakyuriIriguchi_TriggerPillarRise(void)
 {
 	MakyuriIriguchi_RaisePillar();
 }
@@ -180,7 +182,7 @@ void *SceneData_GetSceneTableC(void)
 	return MakyuriIriguchi_SceneTableC;
 }
 
-void FieldScene_RunStepWithValue1632(void)
+static void FieldScene_RunStepWithValue1632(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -188,7 +190,7 @@ void FieldScene_RunStepWithValue1632(void)
 	Engine_EventEnd();
 }
 
-void SceneActor_RunActorZeroHandledMotion(s32 a)
+static void SceneActor_RunActorZeroHandledMotion(s32 a)
 {
 	struct FieldActor *v = Object_GetById(ACTOR_PARTY_LEADER);
 	Engine_EventBegin();
@@ -208,7 +210,7 @@ void SceneActor_RunActorZeroHandledMotion(s32 a)
 	Engine_EventEnd();
 }
 
-void MakyuriIriguchi_DropLeaderToColumn(s32 a0)
+static void MakyuriIriguchi_DropLeaderToColumn(s32 a0)
 {
 	s32 record;
 
@@ -224,17 +226,17 @@ void MakyuriIriguchi_DropLeaderToColumn(s32 a0)
 	Engine_EventWait(30);
 }
 
-void FieldScene_RunIndexedStep17(void)
+static void FieldScene_RunIndexedStep17(void)
 {
 	SceneActor_RunActorZeroHandledMotion(17);
 }
 
-void FieldScene_RunIndexedStep18(void)
+static void FieldScene_RunIndexedStep18(void)
 {
 	SceneActor_RunActorZeroHandledMotion(18);
 }
 
-void FieldScene_RunIndexedStep19(void)
+static void FieldScene_RunIndexedStep19(void)
 {
 	SceneActor_RunActorZeroHandledMotion(19);
 }
@@ -244,7 +246,7 @@ void *SceneData_GetSceneTableD(void)
 	return MakyuriIriguchi_SceneTableD;
 }
 
-void FieldScene_RunSupplementalSequenceTwo(void)
+static void FieldScene_RunSupplementalSequenceTwo(void)
 {
 	s32 a;
 	s32 b;
@@ -302,18 +304,18 @@ void FieldScene_RunSupplementalSequenceTwo(void)
 	}
 }
 
-void FieldScene_RunIndexedStep63(void)
+static void FieldScene_RunIndexedStep63(void)
 {
 	Engine_EventRequestExit(63);
 }
 
-void MakyuriIriguchi_InstallActorEightPath(void)
+static void MakyuriIriguchi_InstallActorEightPath(void)
 {
 	Engine_GameFlagClear(0x205);
 	Engine_ActorEnableActionCallback(8, MakyuriIriguchi_Actor8Path1);
 }
 
-void MakyuriIriguchi_SendActor8ByLeaderColumn(void)
+static void MakyuriIriguchi_SendActor8ByLeaderColumn(void)
 {
 	struct FieldActor *record;
 	s32				   field8;
@@ -333,7 +335,7 @@ void MakyuriIriguchi_SendActor8ByLeaderColumn(void)
 	}
 }
 
-void MakyuriIriguchi_OpenEntrance(void)
+static void MakyuriIriguchi_OpenEntrance(void)
 {
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(8, 2);
@@ -345,7 +347,7 @@ void MakyuriIriguchi_OpenEntrance(void)
 	Engine_EventEnd();
 }
 
-void MakyuriIriguchi_ArriveWithSparks(void)
+static void MakyuriIriguchi_ArriveWithSparks(void)
 {
 	struct FieldActor *actor;
 	s32				   flag;
@@ -530,7 +532,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
 	return 0;
 }
 
-void MakyuriIriguchi_CrossDoorway(void)
+static void MakyuriIriguchi_CrossDoorway(void)
 {
 	s32				   i;
 	struct FieldActor *ivan;
@@ -599,7 +601,7 @@ void MakyuriIriguchi_CrossDoorway(void)
 	Engine_EventEnd();
 }
 
-void MakyuriIriguchi_RunDoorScene(void)
+static void MakyuriIriguchi_RunDoorScene(void)
 {
 	struct FieldActor *record;
 
@@ -636,7 +638,7 @@ void MakyuriIriguchi_RunDoorScene(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/makyuri/lights.c"
 
-void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
+static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 {
 	struct FieldActor *obj = Engine_ObjectCreate(24, src->x.fixed, src->y.fixed, src->z.fixed);
 

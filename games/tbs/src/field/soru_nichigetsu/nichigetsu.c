@@ -22,6 +22,13 @@
 #include "text/msg_ids.h"
 #include "iowrite.h"
 
+// 前方宣言
+static void Scene_EnterInnerSanctum(void);
+static void FieldScene_RunActorPositionTransition(void);
+static s32 CheckAllStatueLights(void);
+static void SetSolShindenActorStep(s32 actor_step, s32 wait_frames);
+static void SoruNichigetsu_RunLightScene(void);
+
 extern struct EventWork *gEventWork;
 
 void InitializeSceneRecordBuffer(void);
@@ -58,7 +65,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gSoruNichigetsuEvents;
 }
 
-void FieldScene_RunScene37aSequenceA(void)
+static void FieldScene_RunScene37aSequenceA(void)
 {
 	s32 record;
 
@@ -104,7 +111,7 @@ void FieldScene_RunScene37aSequenceA(void)
 L_020000f0:;
 }
 
-void FieldScene_RunScene37aSequenceB(void)
+static void FieldScene_RunScene37aSequenceB(void)
 {
 	if (GameFlag_IsSet(0x200) == 0)
 	{
@@ -118,7 +125,7 @@ void FieldScene_RunScene37aSequenceB(void)
 	}
 }
 
-void FieldScene_RunScene37aSequenceC(void)
+static void FieldScene_RunScene37aSequenceC(void)
 {
 	s32 record;
 
@@ -157,7 +164,7 @@ void FieldScene_RunScene37aSequenceC(void)
 L_020001d6:;
 }
 
-void FieldScene_RunScene37aSequenceD(void)
+static void FieldScene_RunScene37aSequenceD(void)
 {
 	if (GameFlag_IsSet(0x202) == 0)
 	{
@@ -169,14 +176,14 @@ void FieldScene_RunScene37aSequenceD(void)
 	}
 }
 
-void ClearSolShindenBackdrop(void)
+static void ClearSolShindenBackdrop(void)
 {
 	s32	 black = 0;
 	u16 *backdrop_color = (u16 *)0x5000000;
 	*backdrop_color = black;
 }
 
-void SetStatueLightGroup1(void)
+static void SetStatueLightGroup1(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_1) != 0)
 	{
@@ -204,7 +211,7 @@ void SetStatueLightGroup1(void)
 	}
 }
 
-void SetStatueLightGroup2(void)
+static void SetStatueLightGroup2(void)
 {
 	if (Engine_GameFlagIsSet(0x826) != 0)
 	{
@@ -232,7 +239,7 @@ void SetStatueLightGroup2(void)
 	}
 }
 
-void SetStatueLightGroup3(void)
+static void SetStatueLightGroup3(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_1) != 0)
 	{
@@ -260,7 +267,7 @@ void SetStatueLightGroup3(void)
 	}
 }
 
-void SetStatueLightGroup4(void)
+static void SetStatueLightGroup4(void)
 {
 	if (Engine_GameFlagIsSet(0x826) != 0)
 	{
@@ -288,7 +295,7 @@ void SetStatueLightGroup4(void)
 	}
 }
 
-void FieldScene_RunScene37aSequenceF(void)
+static void FieldScene_RunScene37aSequenceF(void)
 {
 	struct FieldActor *rec;
 
@@ -461,7 +468,7 @@ void FieldScene_RunScene37aSequenceF(void)
 	}
 }
 
-void Scene_EnterInnerSanctum(void)
+static void Scene_EnterInnerSanctum(void)
 {
 	struct FieldActor *record;
 	s32				   request;
@@ -531,7 +538,7 @@ void Scene_EnterInnerSanctum(void)
 	GameFlag_Set(FLAG_INNER_SANCTUM_ENTERED);
 }
 
-void UpdateStatueTrapActor(void)
+static void UpdateStatueTrapActor(void)
 {
 	EntA *scene_actor;
 	EntA *target_actor;
@@ -603,7 +610,7 @@ void UpdateStatueTrapActor(void)
 	Engine_EventEnd();
 }
 
-void UpdateStatueLight1(void)
+static void UpdateStatueLight1(void)
 {
 	if ((Random_Next() & 3) != 0)
 	{
@@ -654,7 +661,7 @@ void UpdateStatueLight1(void)
 	}
 }
 
-void UpdateStatueLight2(void)
+static void UpdateStatueLight2(void)
 {
 	if ((Engine_RandomNext() & 3) != 0)
 	{
@@ -693,7 +700,7 @@ void UpdateStatueLight2(void)
 	}
 }
 
-void UpdateStatueLight3(void)
+static void UpdateStatueLight3(void)
 {
 	if ((Engine_RandomNext() & 3) != 0)
 	{
@@ -732,7 +739,7 @@ void UpdateStatueLight3(void)
 	}
 }
 
-void UpdateStatueLight4(void)
+static void UpdateStatueLight4(void)
 {
 	if ((Engine_RandomNext() & 3) != 0)
 	{
@@ -771,7 +778,7 @@ void UpdateStatueLight4(void)
 	}
 }
 
-void FieldScene_PrepareStatueTransition(void)
+static void FieldScene_PrepareStatueTransition(void)
 {
 	Camera_MoveTo(-1, -1, -1, 0);
 	Map_CopyCellsTo(30, 43, 32, 40, 8, 3);
@@ -801,7 +808,7 @@ void FieldScene_PrepareStatueTransition(void)
 	Engine_ColorBufferInterpolate(24);
 }
 
-void Scene_SpringStatueTrap(void)
+static void Scene_SpringStatueTrap(void)
 {
 	s32 outer_pair;
 	s32 second_pair;
@@ -877,7 +884,7 @@ void Scene_SpringStatueTrap(void)
 	Engine_EventRequestExit(3);
 }
 
-void FieldScene_RunClosingSequence(void)
+static void FieldScene_RunClosingSequence(void)
 {
 	s32 i;
 	Engine_EventBegin();
@@ -965,7 +972,7 @@ void FieldScene_RunClosingSequence(void)
 	Engine_EventRequestExit(4);
 }
 
-void FieldScene_RunFlaggedSequence(void)
+static void FieldScene_RunFlaggedSequence(void)
 {
 	s32 base;
 	s32 i6;
@@ -1080,7 +1087,7 @@ void FieldScene_RunFlaggedSequence(void)
 	Engine_EventRequestExit(5);
 }
 
-void Scene_ChangeLunaPictureToSol(void)
+static void Scene_ChangeLunaPictureToSol(void)
 {
 	struct FieldActor *record;
 
@@ -1142,7 +1149,7 @@ void Scene_ChangeLunaPictureToSol(void)
 	}
 }
 
-void FieldScene_RunActorPositionTransition(void)
+static void FieldScene_RunActorPositionTransition(void)
 {
 	Engine_AudioPlayCue(21);
 	Actor_WalkToAndWait(0, 0x178, 184);
@@ -1165,7 +1172,7 @@ void FieldScene_RunActorPositionTransition(void)
 	Engine_GameFlagSet(0x811);
 }
 
-void FieldScene_RunSanctumRiseAndShrink(void)
+static void FieldScene_RunSanctumRiseAndShrink(void)
 {
 	struct FieldActor  *actor;
 	s32					base5_8010;
@@ -1510,7 +1517,7 @@ L_02002510:;
 	return 0;
 }
 
-s32 CheckAllStatueLights(void)
+static s32 CheckAllStatueLights(void)
 {
 	s32 all_set = 1;
 
@@ -1526,13 +1533,13 @@ s32 CheckAllStatueLights(void)
 	return all_set;
 }
 
-void SetSolShindenActorStep(s32 actor_step, s32 wait_frames)
+static void SetSolShindenActorStep(s32 actor_step, s32 wait_frames)
 {
 	Engine_EventShowMessage(actor_step, 0);
 	Engine_EventWait(wait_frames);
 }
 
-void SoruNichigetsu_RunLightScene(void)
+static void SoruNichigetsu_RunLightScene(void)
 {
 	struct FieldActor *leader;
 	u8				  *field;
@@ -1624,7 +1631,7 @@ void SoruNichigetsu_RunLightScene(void)
 	Engine_EventEnd();
 }
 
-void Sukureta_Talk(void)
+static void Sukureta_Talk(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(FLAG_ROBIN_SEARCHING_FOR_SUKURETA) != 0)

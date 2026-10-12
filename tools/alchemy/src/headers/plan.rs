@@ -75,8 +75,14 @@ pub(crate) struct Plan {
 /// The identifiers a file's code names: comments, literals and include
 /// lines apart.
 pub(crate) fn identifiers(text: &str) -> BTreeSet<&str> {
+    places(text).into_iter().map(|(_, word)| word).collect()
+}
+
+/// Each identifier of a file's code with where it stands, in the text's
+/// order: comments, literals and include lines apart.
+pub(crate) fn places(text: &str) -> Vec<(usize, &str)> {
     let bytes = text.as_bytes();
-    let mut found = BTreeSet::new();
+    let mut found = Vec::new();
     let mut i = 0;
     let mut line_start = true;
     while i < bytes.len() {
@@ -95,7 +101,7 @@ pub(crate) fn identifiers(text: &str) -> BTreeSet<&str> {
             i = text[i..].find('\n').map_or(bytes.len(), |at| i + at);
         } else if byte.is_ascii_alphabetic() || byte == b'_' {
             let end = (i..bytes.len()).find(|&k| !(bytes[k].is_ascii_alphanumeric() || bytes[k] == b'_')).unwrap_or(bytes.len());
-            found.insert(&text[i..end]);
+            found.push((i, &text[i..end]));
             i = end;
             line_start = false;
         } else {

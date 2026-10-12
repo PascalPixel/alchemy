@@ -3,7 +3,6 @@
 #include "unit/import.h"
 #include "unit/field/haidia_dou/dou.h"
 #include "unit/field/common/effect/move.h"
-#include "unit/field/common/object/staged_actor.h"
 #include "unit/battle/effect/object.h"
 #include "unit/system/scheduler/runtime.h"
 
@@ -31,12 +30,16 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+// 前方宣言
+static void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y);
+static void HaidiaDou_ApplyEntryState(void);
+
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -53,7 +56,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -75,12 +78,12 @@ void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 #include "../common/effect/spawn.c"
 #include "../common/object/staged_actor.c"
 
-void SceneState_SetValues8_3_4(void)
+static void SceneState_SetValues8_3_4(void)
 {
 	BattleFx_RunPageEffectForSlot(8, 3, 4);
 }
 
-void SceneActor_WaitActorDescent(struct FieldActor *actor)
+static void SceneActor_WaitActorDescent(struct FieldActor *actor)
 {
 	s32 frames = 60;
 
@@ -94,7 +97,7 @@ void SceneActor_WaitActorDescent(struct FieldActor *actor)
 	actor->y.fixed = actor->terrain_height;
 }
 
-s32 SceneActor_FaceActorZero(struct FieldActor *obj)
+static s32 SceneActor_FaceActorZero(struct FieldActor *obj)
 {
 	struct FieldActor *target = Object_GetById(ACTOR_PARTY_LEADER);
 	s32				   dz = target->z.fixed - obj->z.fixed;
@@ -152,17 +155,17 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gHaidiaDouPlacements1;
 }
 
-void FieldScene_ConfigureRegionAtRow15(void)
+static void FieldScene_ConfigureRegionAtRow15(void)
 {
 	Engine_MapCopyCells(16, 15, 1, 1, 15, 15);
 }
 
-void FieldScene_ConfigureRegionAtRow17(void)
+static void FieldScene_ConfigureRegionAtRow17(void)
 {
 	Engine_MapCopyCells(16, 17, 1, 1, 15, 15);
 }
 
-void HaidiaDou_SinkPillarColumn23(void)
+static void HaidiaDou_SinkPillarColumn23(void)
 {
 	struct EffectOptions  options;
 	struct EffectOptions *o;
@@ -207,7 +210,7 @@ void HaidiaDou_SinkPillarColumn23(void)
 	Engine_EventEnd();
 }
 
-void HaidiaDou_SinkPillarColumn27(void)
+static void HaidiaDou_SinkPillarColumn27(void)
 {
 	struct EffectOptions  options;
 	struct EffectOptions *o;
@@ -249,7 +252,7 @@ void HaidiaDou_SinkPillarColumn27(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunInitBracketThenSequence(void)
+static void FieldScene_RunInitBracketThenSequence(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
@@ -257,7 +260,7 @@ void FieldScene_RunInitBracketThenSequence(void)
 	HaidiaDou_SinkPillarColumn27();
 }
 
-s32 FieldScene_RunPrimarySequence(s32 a0)
+static s32 FieldScene_RunPrimarySequence(s32 a0)
 {
 
 	union FieldCoordinate to[3];
@@ -299,7 +302,7 @@ s32 FieldScene_RunPrimarySequence(s32 a0)
 	return 0;
 }
 
-void FieldScene_RunScene3a6SequenceA(void)
+static void FieldScene_RunScene3a6SequenceA(void)
 {
 
 	struct FieldActor *record;
@@ -329,7 +332,7 @@ void FieldScene_RunScene3a6SequenceA(void)
 	}
 }
 
-void FieldScene_RunScene3a6SequenceB(void)
+static void FieldScene_RunScene3a6SequenceB(void)
 {
 
 	struct FieldActor *record;
@@ -357,7 +360,7 @@ void FieldScene_RunScene3a6SequenceB(void)
 	}
 }
 
-void FieldScene_RunScene3a6SequenceC(void)
+static void FieldScene_RunScene3a6SequenceC(void)
 {
 
 	struct FieldActor *rec8;
@@ -390,14 +393,14 @@ void FieldScene_RunScene3a6SequenceC(void)
 	}
 }
 
-void FieldScene_RunActor8ZeroStep(void)
+static void FieldScene_RunActor8ZeroStep(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(8, 0);
 	Engine_EventEnd();
 }
 
-void HaidiaDou_RunProbedColumnScene(void)
+static void HaidiaDou_RunProbedColumnScene(void)
 {
 	struct FieldActor	   *record;
 	s32						v6;
@@ -444,7 +447,7 @@ void HaidiaDou_RunProbedColumnScene(void)
 	Engine_EventEnd();
 }
 
-void HaidiaDou_ToppleActorNine(void)
+static void HaidiaDou_ToppleActorNine(void)
 {
 
 	struct FieldActor *record;
@@ -485,7 +488,7 @@ void HaidiaDou_ToppleActorNine(void)
 	Engine_EventEnd();
 }
 
-void HaidiaDou_RunLoweredActorScene(void)
+static void HaidiaDou_RunLoweredActorScene(void)
 {
 	struct StagedActorProbe probe;
 
@@ -562,7 +565,7 @@ s32 HaidiaDou_RunSceneScript(void)
 	return 0;
 }
 
-void HaidiaDou_PlayCueAndRequestTouchedExit(void)
+static void HaidiaDou_PlayCueAndRequestTouchedExit(void)
 {
 	s32 val = gEventWork->touched_trigger;
 
@@ -570,7 +573,7 @@ void HaidiaDou_PlayCueAndRequestTouchedExit(void)
 	Engine_EventRequestExit(val);
 }
 
-void DialogueLayout_ConfigureRowsByFlag301(void)
+static void DialogueLayout_ConfigureRowsByFlag301(void)
 {
 	Engine_MapCopyCellAttributes(0, 34, 13, 3, 23, 34);
 
@@ -586,7 +589,7 @@ void DialogueLayout_ConfigureRowsByFlag301(void)
 	}
 }
 
-void SceneActor_PositionPair(s32 a0, s32 a1, s32 a2)
+static void SceneActor_PositionPair(s32 a0, s32 a1, s32 a2)
 {
 
 	struct FieldActor *p;
@@ -626,7 +629,7 @@ void SceneActor_PositionPair(s32 a0, s32 a1, s32 a2)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunShiftAndSetFlag301(void)
+static void FieldScene_RunShiftAndSetFlag301(void)
 {
 
 	Engine_AudioPlayCue(241);
@@ -638,7 +641,7 @@ void FieldScene_RunShiftAndSetFlag301(void)
 	Engine_AudioPlayCue(0x121);
 }
 
-void FieldScene_RunActor11Transition301(void)
+static void FieldScene_RunActor11Transition301(void)
 {
 
 	Engine_AudioPlayCue(241);
@@ -650,7 +653,7 @@ void FieldScene_RunActor11Transition301(void)
 	Engine_AudioPlayCue(0x121);
 }
 
-void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y)
+static void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y)
 {
 	struct FieldActor *rec = Object_GetById(id);
 
@@ -664,7 +667,7 @@ void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y)
 	}
 }
 
-void HaidiaDou_ApplyEntryState(void)
+static void HaidiaDou_ApplyEntryState(void)
 {
 	s32 flag;
 
@@ -767,7 +770,7 @@ void HaidiaDou_ApplyEntryState(void)
 	}
 }
 
-void ActorPresentation_AdvanceActorElevenStates(void)
+static void ActorPresentation_AdvanceActorElevenStates(void)
 {
 	Engine_ActorSetAnimation(11, 1);
 	Engine_ActorSetAnimation(11, 2);

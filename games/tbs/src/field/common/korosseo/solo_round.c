@@ -58,7 +58,7 @@ void Korosseo_FinishSoloRound(s32 id)
 	Engine_EventEnd();
 }
 
-void RunPartyCountInteraction(s32 actorId)
+static void RunPartyCountInteraction(s32 actorId)
 {
 	PartyInteractionRecord *record;
 	s32						x;

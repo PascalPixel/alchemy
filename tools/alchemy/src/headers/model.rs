@@ -135,7 +135,7 @@ pub(crate) fn spelling(header: &str) -> Option<String> {
 
 impl Model {
     /// Where an include line of `from`, compiled in `unit`, finds its file.
-    fn resolve(&self, exists: &dyn Fn(&str) -> bool, unit: &str, from: &str, name: &str) -> Option<String> {
+    pub(crate) fn resolve(&self, exists: &dyn Fn(&str) -> bool, unit: &str, from: &str, name: &str) -> Option<String> {
         let mut candidates = vec![format!("{}/{name}", directory(from)), format!("{}/{name}", directory(unit)), format!("{INCLUDE}{name}")];
         candidates.extend(COMMON_INCLUDE_MODULES.iter().map(|module| format!("{COMMON}{module}/{name}")));
         candidates.into_iter().map(|c| normalize(&c)).find(|c| exists(c))

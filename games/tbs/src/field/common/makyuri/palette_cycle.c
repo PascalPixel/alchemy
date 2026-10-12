@@ -11,7 +11,7 @@
 #include "frame.h"
 #include "io_reg.h"
 
-void Makyuri_CyclePalette(void)
+static void Makyuri_CyclePalette(void)
 {
 	volatile u16 cur;
 	u32			 i;
@@ -36,7 +36,7 @@ void Makyuri_CyclePalette(void)
 	BG_PLTT_COLOR(6, 9) = gPaletteCycleRed | bits;
 }
 
-void Makyuri_ClearPalette(void)
+static void Makyuri_ClearPalette(void)
 {
 	u32 i;
 

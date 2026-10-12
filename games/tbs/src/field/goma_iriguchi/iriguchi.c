@@ -24,12 +24,17 @@
 #include "text/msg_ids.h"
 #include "objcmd.h"
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+// 前方宣言
+static void GomaIriguchi_SetEntranceFlag(void);
+static void GomaIriguchi_RunSpinningLeap(s32 id);
+static void GomaIriguchi_GiveShamansRod(void);
+
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -46,7 +51,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -115,7 +120,7 @@ struct Item_387
 	u8	equippable;
 };
 
-void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames)
+static void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames)
 {
 	Engine_EventShowMessage(selector, 0);
 	Engine_EventWait(frames);
@@ -141,7 +146,7 @@ void *GomaIriguchi_GetPlacements(void)
 	return GomaIriguchi_SceneTableC;
 }
 
-void FieldScene_RunOpeningAuxiliarySequence(void)
+static void FieldScene_RunOpeningAuxiliarySequence(void)
 {
 	struct FieldActor *record;
 	s32				   v3;
@@ -166,7 +171,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 	}
 }
 
-void FieldScene_RunScene387SequenceC(void)
+static void FieldScene_RunScene387SequenceC(void)
 {
 	struct FieldActor *actor;
 	s32				   tile_x;
@@ -184,7 +189,7 @@ void FieldScene_RunScene387SequenceC(void)
 	}
 }
 
-void FieldScene_RunScene387SequenceD(void)
+static void FieldScene_RunScene387SequenceD(void)
 {
 	struct EventWork *p5;
 	s32				  v5;
@@ -208,15 +213,15 @@ void FieldScene_RunScene387SequenceD(void)
 	Engine_EventEnd();
 }
 
-void Resource387_NoOpCallbackA(void)
+static void Resource387_NoOpCallbackA(void)
 {
 }
 
-void Resource387_NoOpCallbackB(void)
+static void Resource387_NoOpCallbackB(void)
 {
 }
 
-void FieldScene_RunStepWithValue866(void)
+static void FieldScene_RunStepWithValue866(void)
 {
 	Engine_EventBegin();
 	Engine_GameFlagSet(0x866);
@@ -287,7 +292,7 @@ s32 GomaIriguchi_RestoreEntryState(void)
 	return 0;
 }
 
-void FieldScene_RunScene387SequenceA(void)
+static void FieldScene_RunScene387SequenceA(void)
 {
 	struct FieldActor *record;
 
@@ -494,7 +499,7 @@ void FieldScene_RunScene387SequenceA(void)
 	}
 }
 
-void Overlay387_ConfigureActorEightAtDepth(void)
+static void Overlay387_ConfigureActorEightAtDepth(void)
 {
 	s32						  depth;
 	s32						  span;
@@ -515,7 +520,7 @@ void Overlay387_ConfigureActorEightAtDepth(void)
 	Engine_EventEnd();
 }
 
-void GomaIriguchi_SetEntranceFlag(void)
+static void GomaIriguchi_SetEntranceFlag(void)
 {
 
 	u8 *p5;
@@ -535,7 +540,7 @@ void GomaIriguchi_SetEntranceFlag(void)
 	EffectRuntime_StopCurrentObject();
 }
 
-void OverlayObject_TurnStateByEighth(struct FieldActor *obj)
+static void OverlayObject_TurnStateByEighth(struct FieldActor *obj)
 {
 	struct FieldSprite *state = obj->sprite;
 	s32					v = state->rotation - 0x800;
@@ -543,7 +548,7 @@ void OverlayObject_TurnStateByEighth(struct FieldActor *obj)
 	state->rotation = v;
 }
 
-void OverlayObject_WaitForHeight(struct FieldActor *obj, s32 height)
+static void OverlayObject_WaitForHeight(struct FieldActor *obj, s32 height)
 {
 	s32 cnt = 60;
 	while (cnt != 0)
@@ -555,7 +560,7 @@ void OverlayObject_WaitForHeight(struct FieldActor *obj, s32 height)
 	}
 }
 
-void GomaIriguchi_RunSpinningLeap(s32 id)
+static void GomaIriguchi_RunSpinningLeap(s32 id)
 {
 	struct Vec			  dir;
 	struct EffectOptions  params;
@@ -615,7 +620,7 @@ void GomaIriguchi_RunSpinningLeap(s32 id)
 	Engine_MapWaitWorkValuesBelow256();
 }
 
-void SceneActor_ApplyValueAndMatchingSlots(s32 group, s32 value)
+static void SceneActor_ApplyValueAndMatchingSlots(s32 group, s32 value)
 {
 	u8 *work = UnitGet(group);
 	s32 i;
@@ -627,7 +632,7 @@ void SceneActor_ApplyValueAndMatchingSlots(s32 group, s32 value)
 	}
 }
 
-void GomaIriguchi_GiveShamansRod(void)
+static void GomaIriguchi_GiveShamansRod(void)
 {
 	struct Member_387 *member;
 	struct Item_387	  *item;

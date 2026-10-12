@@ -33,6 +33,19 @@
 #include "objcmd.h"
 #include "facing_object.h"
 
+// 前方宣言
+static void Scene_BagJupiterStar(void);
+static void FieldScene_StagePairedActors(void);
+static void FieldScene_RunElementalStarDemand(void);
+static void Scene_OfferGuarantee(void);
+static void Scene_UnmaskGarcia(void);
+static void Scene_AlexTakesStars(void);
+static void SoruStar_LineUpFollowers(void);
+static void Event_SayThenWait(s32 speaker, s32 frames);
+static s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z);
+static void Scene_GiveMythrilBags(void);
+static void SoruStar_RiseActorFourteenSparks(void);
+
 enum StarRoomActor
 {
 	ACTOR_SUKURETA = ACTOR_FIRST_PLACED + 1,
@@ -62,12 +75,12 @@ struct ObjectRuntime;
 
 extern struct SceneEvent Placement_Effects[];
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -84,7 +97,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -112,7 +125,7 @@ static __inline__ void SkipMessage(s32 amount)
 	gEventWork->message += amount;
 }
 
-s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
+static s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 {
 	s32					 delta;
 	u16					 old;
@@ -169,7 +182,7 @@ s32 *SceneData_GetEffectTable(void)
 	return (s32 *)Placement_Effects;
 }
 
-void Scene_BagVenusStar(void)
+static void Scene_BagVenusStar(void)
 {
 	u32 i;
 	s32 obj;
@@ -268,7 +281,7 @@ void Scene_BagVenusStar(void)
 	Engine_EventEnd();
 }
 
-void Scene_BagMercuryStar(void)
+static void Scene_BagMercuryStar(void)
 {
 	u32 i;
 	s32 obj;
@@ -368,7 +381,7 @@ void Scene_BagMercuryStar(void)
 	Engine_EventEnd();
 }
 
-void Scene_HandOverStars(void)
+static void Scene_HandOverStars(void)
 {
 	Engine_EventBegin();
 	Scene_BagJupiterStar();
@@ -382,7 +395,7 @@ void Scene_HandOverStars(void)
 	SoruStar_LineUpFollowers();
 }
 
-void Scene_BagJupiterStar(void)
+static void Scene_BagJupiterStar(void)
 {
 	u32 i;
 	s32 obj;
@@ -457,7 +470,7 @@ void Scene_BagJupiterStar(void)
 	Engine_MessageShowCentered((s32)MsgSoruJupiterStarBagged, 1);
 }
 
-void FieldScene_StagePairedActors(void)
+static void FieldScene_StagePairedActors(void)
 {
 	struct FieldActor *record;
 
@@ -514,7 +527,7 @@ void FieldScene_StagePairedActors(void)
 	Engine_EventWait(40);
 }
 
-void FieldScene_RunElementalStarDemand(void)
+static void FieldScene_RunElementalStarDemand(void)
 {
 	u8				  *motion_flags;
 	u8				  *sprite_flags;
@@ -678,7 +691,7 @@ void FieldScene_RunElementalStarDemand(void)
 	Engine_ActorRunRepeatedMotion(9, 2);
 }
 
-void Scene_OfferGuarantee(void)
+static void Scene_OfferGuarantee(void)
 {
 	Actor_FaceDirection(JASMINE, FACING_SOUTHWEST, 0);
 	Actor_FaceDirection(ACTOR_SUKURETA, 0x5000, 0);
@@ -776,7 +789,7 @@ void Scene_OfferGuarantee(void)
 	Actor_FaceDirection(ACTOR_GARCIA_MASKED, 0xb000, 40);
 }
 
-void Scene_UnmaskGarcia(void)
+static void Scene_UnmaskGarcia(void)
 {
 	struct FieldActor *obj;
 	struct FieldActor *other;
@@ -975,7 +988,7 @@ void Scene_UnmaskGarcia(void)
 	Engine_ActorSetAnimation(GERALD, 1);
 }
 
-void Scene_AlexTakesStars(void)
+static void Scene_AlexTakesStars(void)
 {
 	u32				   i;
 	struct FieldActor *rec;
@@ -1174,7 +1187,7 @@ struct StarFollower
 	struct FieldActor *leader;
 };
 
-void SoruStar_LineUpFollowers(void)
+static void SoruStar_LineUpFollowers(void)
 {
 	struct FieldActor	*leader;
 	struct StarFollower *actor;
@@ -1245,7 +1258,7 @@ struct EffectParams
 	u8	pad1c[12];
 };
 
-void Scene_BagMarsStar(void)
+static void Scene_BagMarsStar(void)
 {
 	u8				   pass;
 	s32				   star;
@@ -1320,7 +1333,7 @@ void Scene_BagMarsStar(void)
 	Engine_EventRequestExit(2);
 }
 
-void Sukureta_Talk(void)
+static void Sukureta_Talk(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(FLAG_STARS_GIVEN_TO_ALEX))
@@ -1341,7 +1354,7 @@ void Sukureta_Talk(void)
 	Engine_EventEnd();
 }
 
-void Jasmine_Talk(void)
+static void Jasmine_Talk(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(FLAG_STARS_GIVEN_TO_ALEX))
@@ -1362,7 +1375,7 @@ void Jasmine_Talk(void)
 	Engine_EventEnd();
 }
 
-void Saturos_Talk(void)
+static void Saturos_Talk(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgSoruSaturosBringTheFinalStar);
@@ -1370,7 +1383,7 @@ void Saturos_Talk(void)
 	Engine_EventEnd();
 }
 
-void Menardi_Talk(void)
+static void Menardi_Talk(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgSoruMenardiBringTheFinalGem);
@@ -1378,7 +1391,7 @@ void Menardi_Talk(void)
 	Engine_EventEnd();
 }
 
-void Garcia_Talk(void)
+static void Garcia_Talk(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgSoruGarciaSilence);
@@ -1386,7 +1399,7 @@ void Garcia_Talk(void)
 	Engine_EventEnd();
 }
 
-void Alex_Talk(void)
+static void Alex_Talk(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgSoruAlexOnlyOneLeft);
@@ -1394,7 +1407,7 @@ void Alex_Talk(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunLine1072WithPair9And10(void)
+static void SceneDialogue_RunLine1072WithPair9And10(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgSoruNoStarsOutThere);
@@ -1402,12 +1415,12 @@ void SceneDialogue_RunLine1072WithPair9And10(void)
 	Engine_EventEnd();
 }
 
-void SoruStar_CheckLeaderAhead(void)
+static void SoruStar_CheckLeaderAhead(void)
 {
 	Engine_LeaderCheckAhead();
 }
 
-void Scene_EnterStarRoom(void)
+static void Scene_EnterStarRoom(void)
 {
 	u16				   i;
 	u8				  *leader_motion;
@@ -2154,13 +2167,13 @@ s32 SoruStar_ApplyEntryState(void)
 	return 0;
 }
 
-void Event_SayThenWait(s32 speaker, s32 frames)
+static void Event_SayThenWait(s32 speaker, s32 frames)
 {
 	Engine_EventShowMessage(speaker, 0);
 	Engine_EventWait(frames);
 }
 
-s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z)
+static s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z)
 {
 	GlyphTransfer	   *glyph;
 	struct FieldActor  *actor;
@@ -2195,7 +2208,7 @@ s32 Scene_PresentItem(s32 item, s32 x, s32 y, s32 z)
 	return owner;
 }
 
-void Scene_GiveMythrilBags(void)
+static void Scene_GiveMythrilBags(void)
 {
 	u8 *work = (u8 *)gEventWork;
 	s16 saved = *(s16 *)(work + 472);
@@ -2225,7 +2238,7 @@ void Scene_GiveMythrilBags(void)
 	*(s16 *)(work + 472) = saved;
 }
 
-void SoruStar_RiseActorFourteenSparks(void)
+static void SoruStar_RiseActorFourteenSparks(void)
 {
 	struct EffectParams	 params;
 	struct EffectParams *p;

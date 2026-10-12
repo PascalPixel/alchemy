@@ -1,7 +1,6 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/goma_hashira/hashira.h"
-#include "unit/field/common/object/staged_actor.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "unit/system/scheduler/runtime.h"
@@ -64,14 +63,14 @@ enum PillarEffectPlane
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
 
-void ConfigureActorThirteenSceneParameters(void)
+static void ConfigureActorThirteenSceneParameters(void)
 {
 	Actor_ShowEmote(13, 256, 0);
 	Engine_ActorJump(13, 2, 0);
 	BattleFx_SetPhaseRequest(12, 40);
 }
 
-void SceneEffect_AdvancePositionByAxisMode(struct PillarEffect *effect)
+static void SceneEffect_AdvancePositionByAxisMode(struct PillarEffect *effect)
 {
 	s16 plane = effect->plane;
 
@@ -98,13 +97,13 @@ void SceneEffect_AdvancePositionByAxisMode(struct PillarEffect *effect)
 	}
 }
 
-s32 OverlayObject_ApplyValue15(s32 actor)
+static s32 OverlayObject_ApplyValue15(s32 actor)
 {
 	ObjectGroup_SetChildValue(actor, 15);
 	return 0;
 }
 
-void GomaHashira_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 flags, s32 layer)
+static void GomaHashira_SpawnPillarEffect(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 flags, s32 layer)
 {
 	struct ScriptTable	table;
 	struct FieldActor  *leader;
@@ -163,7 +162,7 @@ u8 *SceneData_GetActorTable(void)
 	return GomaHashira_Actors;
 }
 
-void ConfigureSceneForActorEightColumn(void)
+static void ConfigureSceneForActorEightColumn(void)
 {
 	struct FieldActor *actor;
 	s32				   x;
@@ -193,7 +192,7 @@ void ConfigureSceneForActorEightColumn(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunPrimarySequence(void)
+static void FieldScene_RunPrimarySequence(void)
 {
 	s32				   flags;
 	s32				   a0;
@@ -254,7 +253,7 @@ void FieldScene_RunPrimarySequence(void)
 
 s32 GomaHashira_Actor13Frames;
 
-void FieldScene_RunPillarSequence(void)
+static void FieldScene_RunPillarSequence(void)
 {
 	s32				   kind;
 	s32				   zero;
@@ -338,7 +337,7 @@ void FieldScene_RunPillarSequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunPillarBurst(void)
+static void FieldScene_RunPillarBurst(void)
 {
 	s32 x;
 	s32 z;
@@ -366,14 +365,14 @@ void FieldScene_RunPillarBurst(void)
 	}
 }
 
-void FieldScene_RunThreeCallSequence(void)
+static void FieldScene_RunThreeCallSequence(void)
 {
 	Engine_EventBegin();
 	FieldScene_RunPillarBurst();
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFourStepSequence(void)
+static void FieldScene_RunFourStepSequence(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
@@ -381,7 +380,7 @@ void FieldScene_RunFourStepSequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_TryJumpForward(void)
+static void FieldScene_TryJumpForward(void)
 {
 #if EDITION_INTERNATIONAL
 	Field_TryJumpForward();
@@ -425,7 +424,7 @@ u8 *SceneData_GetExtraTable(void)
 	return GomaHashira_Extras;
 }
 
-void GomaHashira_DriveActor13Idle(void)
+static void GomaHashira_DriveActor13Idle(void)
 {
 	struct EventWork *work;
 	s32				  t;
@@ -453,7 +452,7 @@ void GomaHashira_DriveActor13Idle(void)
 		work->raised_trigger = 99;
 }
 
-void FieldScene_RunActor13Departure(void)
+static void FieldScene_RunActor13Departure(void)
 {
 	Engine_TaskRemoveCallback(GomaHashira_DriveActor13Idle);
 	Engine_EventBegin();

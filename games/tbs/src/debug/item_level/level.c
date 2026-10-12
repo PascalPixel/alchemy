@@ -54,14 +54,14 @@ u8 *ItemLevel_GetPlacements(void)
 }
 
 #if EDITION_INTERNATIONAL
-void FieldScene_RunActor13Mode102Step(void)
+static void FieldScene_RunActor13Mode102Step(void)
 {
 	Engine_EventSetMessage(MsgDebugWontStopYou);
 	Call3(Engine_ActorShowEmote, 13, 0x102, 0);
 	Engine_EventShowMessage(13, 0);
 }
 
-void FieldScene_RunActor13Mode105Step(void)
+static void FieldScene_RunActor13Mode105Step(void)
 {
 	Engine_ActorShowEmote(13, 0x105, 0);
 	Engine_EventSetMessage(MsgDebugWontStopYou);
@@ -74,7 +74,7 @@ u8 *ItemLevel_GetEvents(void)
 	return (u8 *)gItemLevelEvents;
 }
 
-void SceneState_AddToRecordCount(s32 id, s32 amount)
+static void SceneState_AddToRecordCount(s32 id, s32 amount)
 {
 	u8 *entry = UnitGet(id);
 
@@ -82,7 +82,7 @@ void SceneState_AddToRecordCount(s32 id, s32 amount)
 	UnitCalc(id);
 }
 
-void Scene_AddToListedRecordCounts(s32 amount)
+static void Scene_AddToListedRecordCounts(s32 amount)
 {
 	u16	 list[16];
 	u16 *p;
@@ -101,7 +101,7 @@ void Scene_AddToListedRecordCounts(s32 amount)
 	}
 }
 
-void FieldScene_RunCountAdjustPanel(void)
+static void FieldScene_RunCountAdjustPanel(void)
 {
 	u8 *record;
 	s32 win;
@@ -161,7 +161,7 @@ void FieldScene_RunCountAdjustPanel(void)
 	}
 }
 
-void ItemLevel_SelectItem(void)
+static void ItemLevel_SelectItem(void)
 {
 	struct RenderInput *window;
 	struct RenderInput *details;
@@ -301,7 +301,7 @@ done:
 }
 
 #if EDITION_INTERNATIONAL
-void ItemLevel_SelectAbility(void)
+static void ItemLevel_SelectAbility(void)
 {
 	struct RenderInput *window;
 	struct RenderInput *details;
@@ -415,7 +415,7 @@ done:
 }
 #endif
 
-void SceneState_SetWorkWords1c0And1c8(void)
+static void SceneState_SetWorkWords1c0And1c8(void)
 {
 	gEventWork->start_transition = 0x201;
 	gEventWork->transition_frames = 24;
@@ -439,7 +439,7 @@ s32 FieldScene_RunEntrySetup(void)
 }
 
 #if !EDITION_INTERNATIONAL
-void ItemLevel_RunMotionTest(void)
+static void ItemLevel_RunMotionTest(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(10, 2);
@@ -451,7 +451,7 @@ void ItemLevel_RunMotionTest(void)
 #endif
 
 #if EDITION_INTERNATIONAL
-void FieldScene_DrawThreeCaptionWindow(void)
+static void FieldScene_DrawThreeCaptionWindow(void)
 {
 	struct RenderInput *window;
 	/* FAKEMATCH: an unread 32-byte text buffer, the native frame's 32 extra bytes. Without it: differ 4 (sp moves 4 for 36). */
@@ -464,19 +464,19 @@ void FieldScene_DrawThreeCaptionWindow(void)
 }
 #endif
 
-void SceneState_SetRecordFlag53(void)
+static void SceneState_SetRecordFlag53(void)
 {
 	u8 *record = *(u8 **)gEffectWork;
 
 	record[53] = 1;
 }
 
-int SceneState_GetFarResult100c(void)
+static int SceneState_GetFarResult100c(void)
 {
 	return DebugMenu_BrowseIcons();
 }
 
-int SceneState_GetFarResult1020(void)
+static int SceneState_GetFarResult1020(void)
 {
 	return DebugMenu_BrowseEntryGlyphs();
 }

@@ -23,14 +23,23 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void FieldScene_RunSecondEnsembleBeat(void);
+static void FieldScene_RunEnsembleStoryBeat(void);
+static void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1);
+static void FieldScene_SetFlag140AndFinishSequence(s32 arg0, s32 arg1);
+static void FieldScene_FinishSequence(void);
+static void FieldScene_SpawnEightShots(void);
+static void FieldScene_RunParticleRain(void);
+
 extern struct EventWork *gEventWork;
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -47,7 +56,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -70,13 +79,13 @@ extern u8 gEffectWork[];
 #include "../effect/move.c"
 #include "../effect/spawn.c"
 
-s32 StopXianActor(void *actor)
+static s32 StopXianActor(void *actor)
 {
 	Engine_ActorSetSpriteFlags(actor, 0);
 	return 0;
 }
 
-s32 FaceXianActorToPlayer(struct FieldActor *actor)
+static s32 FaceXianActorToPlayer(struct FieldActor *actor)
 {
 	struct FieldActor *player = Object_GetById(ACTOR_PARTY_LEADER);
 	actor->facing = ArcTan2(player->z.fixed - actor->z.fixed, player->x.fixed - actor->x.fixed);
@@ -127,7 +136,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gShianJiinPlacements;
 }
 
-void ShianJiin_AskBridgeCrossing(void)
+static void ShianJiin_AskBridgeCrossing(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgShianHowDidGetHereBridge);
@@ -148,7 +157,7 @@ void ShianJiin_AskBridgeCrossing(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFlag88FBranch(void)
+static void FieldScene_RunFlag88FBranch(void)
 {
 
 	Engine_EventBegin();
@@ -178,7 +187,7 @@ void FieldScene_RunFlag88FBranch(void)
 	}
 }
 
-void ShianJiin_RunTempleWalkScene(void)
+static void ShianJiin_RunTempleWalkScene(void)
 {
 	s32				  *p8;
 	struct FieldActor *master;
@@ -218,7 +227,7 @@ void ShianJiin_RunTempleWalkScene(void)
 	Engine_EventEnd();
 }
 
-void Scene_RunActorNineTransition(void)
+static void Scene_RunActorNineTransition(void)
 {
 	Engine_EventBegin();
 	Engine_GameFlagSet(2196);
@@ -243,7 +252,7 @@ void Scene_RunActorNineTransition(void)
 	Engine_EventEnd();
 }
 
-void Scene_RunScene39eSequenceB(void)
+static void Scene_RunScene39eSequenceB(void)
 {
 	s32				   rec7;
 	struct FieldActor *record;
@@ -380,7 +389,7 @@ void Scene_RunScene39eSequenceB(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_ShowDialogue17B1(void)
+static void FieldScene_ShowDialogue17B1(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgShianEnjoyReadingMindsOthersDo);
@@ -388,7 +397,7 @@ void FieldScene_ShowDialogue17B1(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_ShowDialogue1825(void)
+static void FieldScene_ShowDialogue1825(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgShianMasterFehsSchoolCameWatch);
@@ -396,7 +405,7 @@ void FieldScene_ShowDialogue1825(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunRoofSceneExit(void)
+static void FieldScene_RunRoofSceneExit(void)
 {
 	Engine_EventBegin();
 
@@ -444,7 +453,7 @@ testPendingWork:
 	Engine_EventEnd();
 }
 
-void FieldScene_ShowDialogue182D(void)
+static void FieldScene_ShowDialogue182D(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgShianMasterFehVeryBusyDo);
@@ -452,7 +461,7 @@ void FieldScene_ShowDialogue182D(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunForwardArcBurst(void)
+static void FieldScene_RunForwardArcBurst(void)
 {
 	struct FieldActor *actor = Object_GetById(19);
 	u32				   index;
@@ -480,7 +489,7 @@ void FieldScene_RunForwardArcBurst(void)
 		0x3333, 0, 0, 0);
 }
 
-void ShianJiin_SpinAway(void)
+static void ShianJiin_SpinAway(void)
 {
 	struct FieldActor *actor;
 	u32				   i;
@@ -506,7 +515,7 @@ void ShianJiin_SpinAway(void)
 		0, 0, 0);
 }
 
-void FieldScene_RunDescentBurst(void)
+static void FieldScene_RunDescentBurst(void)
 {
 	struct FieldActor *actor = Object_GetById(19);
 	u32				   i = 0;
@@ -533,7 +542,7 @@ void FieldScene_RunDescentBurst(void)
 		0x00003333, 0, 0xffff0000, 0, 0);
 }
 
-void Scene_RunPrimarySequence(void)
+static void Scene_RunPrimarySequence(void)
 {
 	struct FieldActor *actor;
 	u32				   count;
@@ -567,7 +576,7 @@ void Scene_RunPrimarySequence(void)
 		actor->x.fixed + 0x60000, actor->y.fixed, actor->z.fixed - 0x80000, base, 0, 0x10000, 0, 0);
 }
 
-void ShianJiin_WalkByFacing(void)
+static void ShianJiin_WalkByFacing(void)
 {
 	u32 dir;
 	u32 limit;
@@ -598,7 +607,7 @@ void ShianJiin_WalkByFacing(void)
 	}
 }
 
-void ShianJiin_RunMasterScene(s32 mode)
+static void ShianJiin_RunMasterScene(s32 mode)
 {
 	s32 msg;
 
@@ -641,7 +650,7 @@ void ShianJiin_RunMasterScene(s32 mode)
 	Actor_FaceDirection(15, 0x2000, 30);
 }
 
-void ShianJiin_RunGatheringScene(void)
+static void ShianJiin_RunGatheringScene(void)
 {
 	struct FieldActor *record;
 
@@ -695,7 +704,7 @@ void ShianJiin_RunGatheringScene(void)
 	Engine_GameFlagSet(0x301);
 }
 
-void FieldScene_DispatchApproachByFacing(void)
+static void FieldScene_DispatchApproachByFacing(void)
 {
 	Engine_EventBegin();
 
@@ -720,7 +729,7 @@ void FieldScene_DispatchApproachByFacing(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_DispatchByFacing(void)
+static void FieldScene_DispatchByFacing(void)
 {
 	struct FieldActor *record = Object_GetById(ACTOR_PARTY_LEADER);
 	u16				   angle;
@@ -753,7 +762,7 @@ void FieldScene_DispatchByFacing(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_DispatchByFacingAndFlags(void)
+static void FieldScene_DispatchByFacingAndFlags(void)
 {
 	struct FieldActor *record = Object_GetById(ACTOR_PARTY_LEADER);
 	u16				   facing;
@@ -814,7 +823,7 @@ void FieldScene_DispatchByFacingAndFlags(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunSecondEnsembleBeat(void)
+static void FieldScene_RunSecondEnsembleBeat(void)
 {
 	s32				   id;
 	struct FieldActor *rec;
@@ -1084,7 +1093,7 @@ finish:
 	Engine_ActorEnableActionCallback(12, ShianJiin_ActorTwelveScript);
 }
 
-void FieldScene_RunSkippableStoryBeat(void)
+static void FieldScene_RunSkippableStoryBeat(void)
 {
 
 	Engine_EventBegin();
@@ -1106,7 +1115,7 @@ void FieldScene_RunSkippableStoryBeat(void)
 	}
 }
 
-void FieldScene_RunEnsembleStoryBeat(void)
+static void FieldScene_RunEnsembleStoryBeat(void)
 {
 	struct FieldActor *actor;
 
@@ -1312,7 +1321,7 @@ void FieldScene_RunEnsembleStoryBeat(void)
 	GameFlag_Set(0x89b);
 }
 
-void FieldScene_ShowDialogue1A58(void)
+static void FieldScene_ShowDialogue1A58(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgShianWaterMonstersFloodedAltinDid);
@@ -1320,7 +1329,7 @@ void FieldScene_ShowDialogue1A58(void)
 	Engine_EventEnd();
 }
 
-void StartSchoolDoorEvent(void)
+static void StartSchoolDoorEvent(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(2202) == 0 && GameFlag_IsSet(2197) == 0)
@@ -1341,7 +1350,7 @@ void StartSchoolDoorEvent(void)
 	}
 }
 
-void FieldScene_DispatchByRange(void)
+static void FieldScene_DispatchByRange(void)
 {
 	struct FieldActor *record;
 	u32				   biased;
@@ -1364,7 +1373,7 @@ void FieldScene_DispatchByRange(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_ShowDialogue17DF(void)
+static void FieldScene_ShowDialogue17DF(void)
 {
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(8, 2);
@@ -1386,7 +1395,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gShianJiinEvents;
 }
 
-void FieldScene_SpawnRandomizedParticle(void)
+static void FieldScene_SpawnRandomizedParticle(void)
 {
 	struct EffectOptions params;
 	struct FieldActor	*record;
@@ -1414,22 +1423,22 @@ void FieldScene_SpawnRandomizedParticle(void)
 		Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 1);
 }
 
-void FieldScene_ApplyOffset0Neg32(void)
+static void FieldScene_ApplyOffset0Neg32(void)
 {
 	FieldScene_RunOpeningAuxiliarySequence(0, -32);
 }
 
-void FieldScene_ApplyOffset0Pos32(void)
+static void FieldScene_ApplyOffset0Pos32(void)
 {
 	FieldScene_RunOpeningAuxiliarySequence(0, 32);
 }
 
-void FieldScene_ApplyOffsetNeg32_0(void)
+static void FieldScene_ApplyOffsetNeg32_0(void)
 {
 	FieldScene_RunOpeningAuxiliarySequence(-32, 0);
 }
 
-void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1)
+static void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1)
 {
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x28000, 0x14000);
@@ -1441,7 +1450,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene39eSequenceA(void)
+static void FieldScene_RunScene39eSequenceA(void)
 {
 	struct FieldActor *record;
 	s32				   base5_200a5b9;
@@ -1465,13 +1474,13 @@ void FieldScene_RunScene39eSequenceA(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_PlaySound123AndEnable(void)
+static void FieldScene_PlaySound123AndEnable(void)
 {
 	Engine_AudioPlayCue(123);
 	Engine_EventRequestExit(1);
 }
 
-void ShianJiin_RunExitTransition(void)
+static void ShianJiin_RunExitTransition(void)
 {
 	Engine_EventBegin();
 	Event_PlayCue(188);
@@ -1486,7 +1495,7 @@ void ShianJiin_RunExitTransition(void)
 	Engine_EventEnd();
 }
 
-void ShianJiin_AskIfCurious(void)
+static void ShianJiin_AskIfCurious(void)
 {
 	struct FieldActor *record;
 
@@ -1594,7 +1603,7 @@ void ShianJiin_AskIfCurious(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunRoofEnsembleSequence(void)
+static void FieldScene_RunRoofEnsembleSequence(void)
 {
 	struct FieldActor *source_record;
 
@@ -2243,7 +2252,7 @@ s32 ShianJiin_ApplyEntryState(void)
 	return 0;
 }
 
-void FieldScene_SetFlag140AndFinishSequence(s32 arg0, s32 arg1)
+static void FieldScene_SetFlag140AndFinishSequence(s32 arg0, s32 arg1)
 {
 	u8 *globalCtx;
 
@@ -2257,14 +2266,14 @@ void FieldScene_SetFlag140AndFinishSequence(s32 arg0, s32 arg1)
 	Engine_TaskWait(1);
 }
 
-void FieldScene_FinishSequence(void)
+static void FieldScene_FinishSequence(void)
 {
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	Engine_PsynergyPlayEffect(2);
 	Engine_PsynergyLowerHands();
 }
 
-void FieldScene_SpawnEightShots(void)
+static void FieldScene_SpawnEightShots(void)
 {
 	struct EffectOptions descriptor;
 	struct FieldActor	*record;
@@ -2289,7 +2298,7 @@ void FieldScene_SpawnEightShots(void)
 	Engine_EventWait(60);
 }
 
-void FieldScene_SelectActorModeFromInputBit(s32 arg0)
+static void FieldScene_SelectActorModeFromInputBit(s32 arg0)
 {
 	if ((*(u32 *)&gFrameCount >> 1) & 1)
 	{
@@ -2301,7 +2310,7 @@ void FieldScene_SelectActorModeFromInputBit(s32 arg0)
 	}
 }
 
-void FieldScene_RunParticleRain(void)
+static void FieldScene_RunParticleRain(void)
 {
 	struct EffectOptions descriptor;
 	struct FieldActor	*actor;

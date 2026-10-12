@@ -32,7 +32,23 @@
 #include "fieldobj.h"
 #include "field_effect.h"
 
-s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
+// 前方宣言
+static void HaidiaIe_RunScriptScene(void);
+static void FieldScene_RunGroupChoreography(void);
+static void HaidiaIe_RunActorPairEffectScene(void);
+static void Scene_RunExtendedActorSequence(void);
+static void Event_SayThenWait(s32 speaker, s32 frames);
+static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
+static void OverlayObject_UpdateOnFrameBit1(s32 obj);
+static void HaidiaIe_SpawnEffectPair(union PairObject *parent);
+static void SceneState_ApplyPair140And0(void);
+static void HaidiaIe_CleanupSceneObjects(void);
+static void FieldScene_RunStep15(void);
+static void FieldScene_RunStep17(void);
+static void FieldScene_RunStep20(void);
+static void SceneState_SetValues352_365_2116_2117_40(void);
+
+static s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 {
 	s32					 delta;
 	u16					 old;
@@ -100,7 +116,7 @@ void *SceneData_SelectTableByFlags834And87a(void)
 	return Data_0200b170;
 }
 
-void Scene_CheckPsynergyStone(void)
+static void Scene_CheckPsynergyStone(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgHaidiaCheckedThePsynergyStone, 1);
@@ -134,7 +150,7 @@ void *SceneData_SelectTableByFlags87a_815_834(void)
 	return Data_0200b938;
 }
 
-void Villager_AskAboutMeditation(void)
+static void Villager_AskAboutMeditation(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgHaidiaMeditateOnMtAlephDaily);
@@ -143,7 +159,7 @@ void Villager_AskAboutMeditation(void)
 	Engine_EventEnd();
 }
 
-void Villager_RecallThreeYearsAgo(void)
+static void Villager_RecallThreeYearsAgo(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgHaidiaADifficultTimeThreeYears);
@@ -152,7 +168,7 @@ void Villager_RecallThreeYearsAgo(void)
 	Engine_EventEnd();
 }
 
-void Villager_AskAboutTheTravelers(void)
+static void Villager_AskAboutTheTravelers(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgHaidiaDidTheTravelersMeetThe);
@@ -161,7 +177,7 @@ void Villager_AskAboutTheTravelers(void)
 	Engine_EventEnd();
 }
 
-void Villager_ShowOffPsynergy(void)
+static void Villager_ShowOffPsynergy(void)
 {
 	u32	 i;
 	s32	 message;
@@ -238,7 +254,7 @@ void Villager_ShowOffPsynergy(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunFlagGatedMessageStep(void)
+static void SceneDialogue_RunFlagGatedMessageStep(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x87a) != 0)
@@ -270,7 +286,7 @@ void SceneDialogue_RunFlagGatedMessageStep(void)
 	Engine_EventEnd();
 }
 
-void Scene_StoneFellOnTheHut(void)
+static void Scene_StoneFellOnTheHut(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(26, 1);
@@ -289,7 +305,7 @@ void Scene_StoneFellOnTheHut(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunMiddleAuxiliarySequence(void)
+static void FieldScene_RunMiddleAuxiliarySequence(void)
 {
 	u32				   i;
 	s32				   p8;
@@ -336,7 +352,7 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
 	Engine_EventEnd();
 }
 
-void Villager_PointTheWay(void)
+static void Villager_PointTheWay(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 10);
@@ -353,7 +369,7 @@ void Villager_PointTheWay(void)
 	Engine_EventEnd();
 }
 
-void Villager_WelcomeBack(void)
+static void Villager_WelcomeBack(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x302) != 0)
@@ -369,7 +385,7 @@ void Villager_WelcomeBack(void)
 	Engine_EventEnd();
 }
 
-void Scene_PsynergyStoneIsGone(void)
+static void Scene_PsynergyStoneIsGone(void)
 {
 	struct Obj *p = Object_GetById(21);
 	Engine_EventBegin();
@@ -394,7 +410,7 @@ void Scene_PsynergyStoneIsGone(void)
 	Engine_EventEnd();
 }
 
-void HaidiaIe_RequestBackdropExit(s32 no)
+static void HaidiaIe_RequestBackdropExit(s32 no)
 {
 	struct EventWork *p;
 	if (Engine_GameFlagIsSet(0x834) != 0)
@@ -407,7 +423,7 @@ void HaidiaIe_RequestBackdropExit(s32 no)
 	Engine_EventRequestExit(no);
 }
 
-void FieldScene_RunSupplementalSequenceOne(void)
+static void FieldScene_RunSupplementalSequenceOne(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)&Value_0200beb4, 44, 7);
@@ -415,7 +431,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 	HaidiaIe_RequestBackdropExit(1);
 }
 
-void FieldScene_RunSupplementalSequenceTwo(void)
+static void FieldScene_RunSupplementalSequenceTwo(void)
 {
 	Event_PlayCue(188);
 	Map_CopyCellsTo(0, 63, 51, 8, 2, 2);
@@ -428,7 +444,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
 	HaidiaIe_RequestBackdropExit(2);
 }
 
-void FieldScene_RunSupplementalSequenceThree(void)
+static void FieldScene_RunSupplementalSequenceThree(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)&Value_0200beb4, 43, 15);
@@ -436,7 +452,7 @@ void FieldScene_RunSupplementalSequenceThree(void)
 	HaidiaIe_RequestBackdropExit(3);
 }
 
-void FieldScene_RunSupplementalSequenceFour(void)
+static void FieldScene_RunSupplementalSequenceFour(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)&Value_0200beb4, 52, 18);
@@ -444,7 +460,7 @@ void FieldScene_RunSupplementalSequenceFour(void)
 	HaidiaIe_RequestBackdropExit(4);
 }
 
-void FieldScene_RunSupplementalSequenceFive(void)
+static void FieldScene_RunSupplementalSequenceFive(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)&Value_0200beb4, 41, 32);
@@ -452,7 +468,7 @@ void FieldScene_RunSupplementalSequenceFive(void)
 	HaidiaIe_RequestBackdropExit(5);
 }
 
-void FieldScene_RunSupplementalSequenceSix(void)
+static void FieldScene_RunSupplementalSequenceSix(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)&Value_0200beb4, 35, 36);
@@ -460,7 +476,7 @@ void FieldScene_RunSupplementalSequenceSix(void)
 	HaidiaIe_RequestBackdropExit(6);
 }
 
-void FieldScene_RunSupplementalSequenceSeven(void)
+static void FieldScene_RunSupplementalSequenceSeven(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)&Value_0200beb4, 51, 39);
@@ -468,13 +484,13 @@ void FieldScene_RunSupplementalSequenceSeven(void)
 	HaidiaIe_RequestBackdropExit(7);
 }
 
-void FieldScene_RunStep7BThen8(void)
+static void FieldScene_RunStep7BThen8(void)
 {
 	Engine_AudioPlayCue(123);
 	HaidiaIe_RequestBackdropExit(8);
 }
 
-void SceneState_ApplyFlag815Branch(void)
+static void SceneState_ApplyFlag815Branch(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 	{
@@ -483,17 +499,17 @@ void SceneState_ApplyFlag815Branch(void)
 	}
 }
 
-void SceneState_ApplyFlag90b(void)
+static void SceneState_ApplyFlag90b(void)
 {
 	Engine_GameFlagSet(0x90b);
 }
 
-void SceneState_ApplyFlag90c(void)
+static void SceneState_ApplyFlag90c(void)
 {
 	Engine_GameFlagSet(0x90c);
 }
 
-void SceneState_ApplyFlag90d(void)
+static void SceneState_ApplyFlag90d(void)
 {
 	Engine_GameFlagSet(0x90d);
 }
@@ -635,7 +651,7 @@ L_02000b80:;
 	return 0;
 }
 
-void FieldScene_RunElderAidEvent(void)
+static void FieldScene_RunElderAidEvent(void)
 {
 	struct FieldActor *leader;
 	s32				   skip_reply = 0;
@@ -789,7 +805,7 @@ void FieldScene_RunElderAidEvent(void)
 	}
 }
 
-void HaidiaIe_RunScriptScene(void)
+static void HaidiaIe_RunScriptScene(void)
 {
 	u8 *rec7;
 
@@ -846,7 +862,7 @@ void HaidiaIe_RunScriptScene(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunGroupChoreography(void)
+static void FieldScene_RunGroupChoreography(void)
 {
 	struct FieldActor *record;
 	s32				   walk_speed;
@@ -942,7 +958,7 @@ void FieldScene_RunGroupChoreography(void)
 	Engine_GameFlagSet(0x11a);
 }
 
-void HaidiaIe_RunActorPairEffectScene(void)
+static void HaidiaIe_RunActorPairEffectScene(void)
 {
 
 	struct FieldActor *record;
@@ -1024,7 +1040,7 @@ void HaidiaIe_RunActorPairEffectScene(void)
 	Engine_EventEnd();
 }
 
-void Scene_RunExtendedActorSequence(void)
+static void Scene_RunExtendedActorSequence(void)
 {
 	struct FieldActor *record;
 	struct EventWork  *work;
@@ -1349,19 +1365,19 @@ void Scene_RunExtendedActorSequence(void)
 	Engine_EventEnd();
 }
 
-void Event_SayThenWait(s32 speaker, s32 frames)
+static void Event_SayThenWait(s32 speaker, s32 frames)
 {
 	Engine_EventShowMessage(speaker, 0);
 	Engine_EventWait(frames);
 }
 
-void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
+static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 {
 	Engine_ActorFaceDirection(a, b, 0);
 	Engine_EventWait(c);
 }
 
-void OverlayObject_UpdateOnFrameBit1(s32 obj)
+static void OverlayObject_UpdateOnFrameBit1(s32 obj)
 {
 	if ((gFrameCount & 2) != 0)
 	{
@@ -1377,7 +1393,7 @@ void OverlayObject_UpdateOnFrameBit1(s32 obj)
 	}
 }
 
-void SceneEffect_UpdateByFrameBits(s32 no)
+static void SceneEffect_UpdateByFrameBits(s32 no)
 {
 	if ((gFrameCount & 1) != 0)
 	{
@@ -1390,7 +1406,7 @@ void SceneEffect_UpdateByFrameBits(s32 no)
 	}
 }
 
-void SceneEffect_UpdateByFrameBit(s32 no)
+static void SceneEffect_UpdateByFrameBit(s32 no)
 {
 	if ((gFrameCount & 1) != 0)
 	{
@@ -1399,7 +1415,7 @@ void SceneEffect_UpdateByFrameBit(s32 no)
 	}
 }
 
-void Effect_AnimateVerticalPositive(union FieldObject *object)
+static void Effect_AnimateVerticalPositive(union FieldObject *object)
 {
 	struct FieldActor *self = &object->actor;
 	struct FieldActor *anchor;
@@ -1424,7 +1440,7 @@ void Effect_AnimateVerticalPositive(union FieldObject *object)
 	self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
 }
 
-void Effect_AnimateVerticalNegative(union FieldObject *object)
+static void Effect_AnimateVerticalNegative(union FieldObject *object)
 {
 	struct FieldActor *self = &object->actor;
 	struct FieldActor *anchor;
@@ -1449,7 +1465,7 @@ void Effect_AnimateVerticalNegative(union FieldObject *object)
 	self->z.fixed = anchor->z.fixed - (0x10000 - amplitude) * 5 + 0x100000;
 }
 
-void HaidiaIe_SpawnEffectPair(union PairObject *parent)
+static void HaidiaIe_SpawnEffectPair(union PairObject *parent)
 {
 	union PairObject   *pair[2];
 	union PairObject   *child;
@@ -1504,32 +1520,32 @@ void HaidiaIe_SpawnEffectPair(union PairObject *parent)
 	}
 }
 
-void SceneState_ApplyPair140And0(void)
+static void SceneState_ApplyPair140And0(void)
 {
 	Engine_PsynergyBegin(140, 0);
 }
 
-void HaidiaIe_CleanupSceneObjects(void)
+static void HaidiaIe_CleanupSceneObjects(void)
 {
 	BattleEffect_CleanupSceneObjects();
 }
 
-void FieldScene_RunStep15(void)
+static void FieldScene_RunStep15(void)
 {
 	SceneEffect_UpdateByFrameBits((s32)Object_GetById(15));
 }
 
-void FieldScene_RunStep17(void)
+static void FieldScene_RunStep17(void)
 {
 	SceneEffect_UpdateByFrameBits((s32)Object_GetById(17));
 }
 
-void FieldScene_RunStep20(void)
+static void FieldScene_RunStep20(void)
 {
 	SceneEffect_UpdateByFrameBit((s32)Object_GetById(20));
 }
 
-void SceneState_SetValues352_365_2116_2117_40(void)
+static void SceneState_SetValues352_365_2116_2117_40(void)
 {
 	Engine_GameFlagSet(352);
 	Engine_GameFlagSet(0x16d);

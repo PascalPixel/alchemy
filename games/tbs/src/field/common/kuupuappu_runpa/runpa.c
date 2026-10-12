@@ -113,7 +113,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gJailThiefEvents;
 }
 
-void ThiefLeader_Talk(void)
+static void ThiefLeader_Talk(void)
 {
 	Engine_EventBegin();
 
@@ -141,7 +141,7 @@ void ThiefLeader_Talk(void)
 	Engine_EventEnd();
 }
 
-void LeftThief_Talk(void)
+static void LeftThief_Talk(void)
 {
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
@@ -151,7 +151,7 @@ void LeftThief_Talk(void)
 	Engine_EventEnd();
 }
 
-void RightThief_Talk(void)
+static void RightThief_Talk(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
@@ -161,7 +161,7 @@ void RightThief_Talk(void)
 	Engine_EventEnd();
 }
 
-void ThiefLeader_ReadMind(void)
+static void ThiefLeader_ReadMind(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuThiefLeaderThoughts);
@@ -169,7 +169,7 @@ void ThiefLeader_ReadMind(void)
 	Engine_EventEnd();
 }
 
-void LeftThief_ReadMind(void)
+static void LeftThief_ReadMind(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuLeftThiefThoughts);
@@ -177,7 +177,7 @@ void LeftThief_ReadMind(void)
 	Engine_EventEnd();
 }
 
-void RightThief_ReadMind(void)
+static void RightThief_ReadMind(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKuupuappuRightThiefThoughts);
@@ -185,7 +185,7 @@ void RightThief_ReadMind(void)
 	Engine_EventEnd();
 }
 
-void VaultDoor_Leave(void)
+static void VaultDoor_Leave(void)
 {
 	Engine_AudioPlayCue(SOUND_MAP_EXIT);
 	Engine_EventRequestExit(JAIL_EXIT_TO_VAULT);

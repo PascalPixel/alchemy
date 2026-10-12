@@ -19,6 +19,9 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 
+// 前方宣言
+static void SceneState_ClearSlotsBySubState(void);
+
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	s16 scene = gGameState.scene;
@@ -109,7 +112,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gKareiHeyaEventsOther;
 }
 
-void SceneDialogue_RunActor12DialogueAndSetFlag910(void)
+static void SceneDialogue_RunActor12DialogueAndSetFlag910(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKareiPleaseFinishEatingIfTaking);
@@ -118,7 +121,7 @@ void SceneDialogue_RunActor12DialogueAndSetFlag910(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor16Dialogue(void)
+static void SceneDialogue_RunActor16Dialogue(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKareiDoKnowAboutContinentSouth);
@@ -126,7 +129,7 @@ void SceneDialogue_RunActor16Dialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor8FlaggedDialogue(void)
+static void SceneDialogue_RunActor8FlaggedDialogue(void)
 {
 	struct FieldActor *p = Object_GetById(0);
 
@@ -154,7 +157,7 @@ void SceneDialogue_RunActor8FlaggedDialogue(void)
 	}
 }
 
-void SceneDialogue_RunActor8FacingDialogue(void)
+static void SceneDialogue_RunActor8FacingDialogue(void)
 {
 
 	struct FieldActor *p = Object_GetById(0);
@@ -172,7 +175,7 @@ void SceneDialogue_RunActor8FacingDialogue(void)
 	}
 }
 
-void FieldScene_RunArrivalPlacement(void)
+static void FieldScene_RunArrivalPlacement(void)
 {
 
 	struct EventWork  *work = gEventWork;
@@ -244,7 +247,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-void SceneState_ClearSlotsBySubState(void)
+static void SceneState_ClearSlotsBySubState(void)
 {
 	s16 sub = gGameState.entrance;
 

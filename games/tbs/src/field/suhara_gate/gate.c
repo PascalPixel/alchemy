@@ -19,7 +19,7 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-void Scene_SetActor13Value1A(void)
+static void Scene_SetActor13Value1A(void)
 {
 	BattleFx_SetPhaseRequest(0xD, 0x1A);
 }
@@ -150,7 +150,7 @@ s32 SuharaGate_EnterScene(void)
 	return 0;
 }
 
-void Scene_RunScene3c3SequenceC(void)
+static void Scene_RunScene3c3SequenceC(void)
 {
 	s32 arg;
 	s32 v5;
@@ -167,7 +167,7 @@ void Scene_RunScene3c3SequenceC(void)
 	Engine_EventRequestExit(arg);
 }
 
-void Dialogue_ShowMessages8fbAnd8fc(void)
+static void Dialogue_ShowMessages8fbAnd8fc(void)
 {
 	s16 token = gEventWork->touched_trigger;
 
@@ -177,7 +177,7 @@ void Dialogue_ShowMessages8fbAnd8fc(void)
 	Engine_EventRequestExit(token);
 }
 
-void Scene_RunPrimarySequence(void)
+static void Scene_RunPrimarySequence(void)
 {
 	Engine_EventBegin();
 	Actor_SetSpeed(8, 65536, 32768);
@@ -197,7 +197,7 @@ void Scene_RunPrimarySequence(void)
 	Engine_EventEnd();
 }
 
-void Scene_RunScene3c3SequenceA(void)
+static void Scene_RunScene3c3SequenceA(void)
 {
 	struct FieldActor *record;
 	s32				   v5;
@@ -306,7 +306,7 @@ void Scene_RunScene3c3SequenceA(void)
 	Engine_EventEnd();
 }
 
-void Scene_RunActorNinePromptDialogue(void)
+static void Scene_RunActorNinePromptDialogue(void)
 {
 	u8 *work;
 
@@ -347,7 +347,7 @@ done:
 	Engine_EventEnd();
 }
 
-void Scene_RunActorTenRepeatedMotion(void)
+static void Scene_RunActorTenRepeatedMotion(void)
 {
 	unsigned int beat;
 

@@ -10,7 +10,7 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-void ActorDraw_SetupActorSceneCells(void)
+static void ActorDraw_SetupActorSceneCells(void)
 {
 	struct FieldActor  *actor = Object_GetById(ACTOR_PARTY_LEADER);
 	struct FieldSprite *sprite = actor->sprite;

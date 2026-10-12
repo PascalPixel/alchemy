@@ -3,7 +3,6 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/field/takara_ashiba/ashiba.h"
-#include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/korosseo/item_icon.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
@@ -38,6 +37,14 @@
 #include "objcmd.h"
 #include "iowrite.h"
 
+// 前方宣言
+static void SceneActor_BranchOnSlotZeroAtTile38(void);
+static void ActorPresentation_PlaceActorFourteenOnActorNine(void);
+static void SceneActor_PassActorNinePositionWithId107(void);
+static void TakaraAshiba_InitializeScene1(void);
+static void TakaraAshiba_InitializeScene2(void);
+static void TakaraAshiba_InitializeScene3(void);
+
 enum
 {
 	ITEM_RED_KEY = 243,
@@ -63,12 +70,12 @@ static __inline__ void LiftBlock(s32 column, u8 lowered)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
 
-void SceneActor_SetActor15ModeZero(void)
+static void SceneActor_SetActor15ModeZero(void)
 {
 	BattleFx_RunPageEffectForSlot(15, 0, 6);
 }
 
-void Resource3b4_EmptyHookA(void)
+static void Resource3b4_EmptyHookA(void)
 {
 }
 
@@ -120,11 +127,11 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gTakaraAshibaPlacementsOther;
 }
 
-void Resource3b4_EmptyHookB(void)
+static void Resource3b4_EmptyHookB(void)
 {
 }
 
-s32 SceneActor_FaceTowardActorZero(struct FieldActor *actor)
+static s32 SceneActor_FaceTowardActorZero(struct FieldActor *actor)
 {
 	struct FieldActor *leader = Object_GetById(0);
 
@@ -132,7 +139,7 @@ s32 SceneActor_FaceTowardActorZero(struct FieldActor *actor)
 	return 0;
 }
 
-void TakaraAshiba_StartActorFifteenJump(void)
+static void TakaraAshiba_StartActorFifteenJump(void)
 {
 	struct FieldActor *record;
 
@@ -157,7 +164,7 @@ void TakaraAshiba_StartActorFifteenJump(void)
 	}
 }
 
-void TakaraAshiba_RunActorFifteenSprint(void)
+static void TakaraAshiba_RunActorFifteenSprint(void)
 {
 	struct FieldActor *rec7;
 	s32				   rec8;
@@ -206,7 +213,7 @@ void TakaraAshiba_RunActorFifteenSprint(void)
 	}
 }
 
-void TakaraAshiba_ReturnActorFifteen(void)
+static void TakaraAshiba_ReturnActorFifteen(void)
 {
 	struct FieldActor *record;
 
@@ -251,7 +258,7 @@ void TakaraAshiba_ReturnActorFifteen(void)
 	}
 }
 
-void FieldScene_CopyActorPosition(void)
+static void FieldScene_CopyActorPosition(void)
 {
 	struct FieldActor *dst;
 	struct FieldActor *src;
@@ -281,7 +288,7 @@ void FieldScene_CopyActorPosition(void)
 	}
 }
 
-void FieldScene_RunActor15ZeroStep(void)
+static void FieldScene_RunActor15ZeroStep(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(15, 0);
@@ -307,12 +314,12 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gTakaraAshibaEventsOther;
 }
 
-void TakaraAshiba_CheckLeaderAhead(void)
+static void TakaraAshiba_CheckLeaderAhead(void)
 {
 	Engine_LeaderCheckAhead();
 }
 
-void TakaraAshiba_OpenPassage(s32 arg)
+static void TakaraAshiba_OpenPassage(s32 arg)
 {
 	s32 step = (arg & 0xff) * 4;
 	s32 dest = step + 77;
@@ -331,7 +338,7 @@ void TakaraAshiba_OpenPassage(s32 arg)
 	Engine_MapCopyCellAttributes(column, 40, 1, 1, column, 42);
 }
 
-void TakaraAshiba_OpenPlatformPassage(s32 a0)
+static void TakaraAshiba_OpenPlatformPassage(s32 a0)
 {
 	if ((a0 & 0x100) != 0)
 	{
@@ -346,7 +353,7 @@ void TakaraAshiba_OpenPlatformPassage(s32 a0)
 	Map_CopyCellAttributes(6, 49, 1, 1, 6, 51);
 }
 
-void FieldScene_RunScene3b4SequenceC(void)
+static void FieldScene_RunScene3b4SequenceC(void)
 {
 	struct FieldActor *record;
 
@@ -365,7 +372,7 @@ void FieldScene_RunScene3b4SequenceC(void)
 	}
 }
 
-void SceneState_SetSelectorFlagWhenFacingC000(s32 selector)
+static void SceneState_SetSelectorFlagWhenFacingC000(s32 selector)
 {
 	struct FieldActor *slot = Object_GetById(0);
 	s32				   flag;
@@ -388,17 +395,17 @@ void SceneState_SetSelectorFlagWhenFacingC000(s32 selector)
 	PartyInventory_Remove(244);
 }
 
-void FieldScene_RunIndexedStep0(void)
+static void FieldScene_RunIndexedStep0(void)
 {
 	SceneState_SetSelectorFlagWhenFacingC000(0);
 }
 
-void FieldScene_RunIndexedStep1(void)
+static void FieldScene_RunIndexedStep1(void)
 {
 	SceneState_SetSelectorFlagWhenFacingC000(1);
 }
 
-void TakaraAshiba_ResetBlockedStepsForSelectorTwo(void)
+static void TakaraAshiba_ResetBlockedStepsForSelectorTwo(void)
 {
 	struct FieldActor *slot;
 	s16				  *cnt;
@@ -418,7 +425,7 @@ void TakaraAshiba_ResetBlockedStepsForSelectorTwo(void)
 	}
 }
 
-void TakaraAshiba_ResetBlockedStepsForSelectorThree(void)
+static void TakaraAshiba_ResetBlockedStepsForSelectorThree(void)
 {
 	struct FieldActor *p;
 	s16				  *cnt;
@@ -438,7 +445,7 @@ void TakaraAshiba_ResetBlockedStepsForSelectorThree(void)
 	}
 }
 
-void SceneState_ApplyRectAndPlaceSlot12(void)
+static void SceneState_ApplyRectAndPlaceSlot12(void)
 {
 	s32 a = 25;
 	s32 b = 48;
@@ -452,14 +459,14 @@ void SceneState_ApplyRectAndPlaceSlot12(void)
 	Engine_EventWait(1);
 }
 
-void ConfigureAndPlaceActorTwelve(void)
+static void ConfigureAndPlaceActorTwelve(void)
 {
 	s32 a = 25, b = 48;
 	Map_CopyCells(24, 48, 1, 2, a, b);
 	Actor_SetPosition(12, 0x00080000, 0x00080000);
 }
 
-void FieldScene_RunStep8ValueEe7(void)
+static void FieldScene_RunStep8ValueEe7(void)
 {
 	Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -468,7 +475,7 @@ void FieldScene_RunStep8ValueEe7(void)
 	Engine_GameFlagSet(0xEE7);
 }
 
-void FieldScene_RunStep9ValueEe8(void)
+static void FieldScene_RunStep9ValueEe8(void)
 {
 	Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -477,7 +484,7 @@ void FieldScene_RunStep9ValueEe8(void)
 	Engine_GameFlagSet(0xEE8);
 }
 
-void FieldScene_RunStep10ValueEe9(void)
+static void FieldScene_RunStep10ValueEe9(void)
 {
 	Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -486,7 +493,7 @@ void FieldScene_RunStep10ValueEe9(void)
 	Engine_GameFlagSet(0xEE9);
 }
 
-void FieldScene_RunStep11ValueEea(void)
+static void FieldScene_RunStep11ValueEea(void)
 {
 	Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -495,7 +502,7 @@ void FieldScene_RunStep11ValueEea(void)
 	Engine_GameFlagSet(0xEEA);
 }
 
-void FieldScene_RunStep12ValueEeb(void)
+static void FieldScene_RunStep12ValueEeb(void)
 {
 	Engine_ItemShowFound(ITEM_RED_KEY, 3);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -504,7 +511,7 @@ void FieldScene_RunStep12ValueEeb(void)
 	Engine_GameFlagSet(0xEEB);
 }
 
-void TakaraAshiba_RaiseTriggerOnStand(void)
+static void TakaraAshiba_RaiseTriggerOnStand(void)
 {
 	struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 	s32				   x = leader->x.fixed / 0x100000;
@@ -519,7 +526,7 @@ void TakaraAshiba_RaiseTriggerOnStand(void)
 	}
 }
 
-void FieldScene_RunSupplementalSequenceOne(void)
+static void FieldScene_RunSupplementalSequenceOne(void)
 {
 	struct FieldActor *record;
 
@@ -548,7 +555,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 	GameFlag_Clear(0x220);
 }
 
-void SceneState_TriggerColumnTen(void)
+static void SceneState_TriggerColumnTen(void)
 {
 	struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 	s32				   x = leader->x.fixed / 0x100000;
@@ -563,7 +570,7 @@ void SceneState_TriggerColumnTen(void)
 	}
 }
 
-void FieldScene_RunScene3b4SequenceA(void)
+static void FieldScene_RunScene3b4SequenceA(void)
 {
 	struct FieldActor *record;
 
@@ -592,7 +599,7 @@ void FieldScene_RunScene3b4SequenceA(void)
 	GameFlag_Clear(0x220);
 }
 
-void SceneActor_TrackOriginColumnForSlot(s32 no)
+static void SceneActor_TrackOriginColumnForSlot(s32 no)
 {
 
 	struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -618,22 +625,22 @@ void SceneActor_TrackOriginColumnForSlot(s32 no)
 	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 }
 
-void FieldScene_RunLateIndexedStep0(void)
+static void FieldScene_RunLateIndexedStep0(void)
 {
 	SceneActor_TrackOriginColumnForSlot(0);
 }
 
-void FieldScene_RunLateIndexedStep1(void)
+static void FieldScene_RunLateIndexedStep1(void)
 {
 	SceneActor_TrackOriginColumnForSlot(1);
 }
 
-void FieldScene_RunLateIndexedStep2(void)
+static void FieldScene_RunLateIndexedStep2(void)
 {
 	SceneActor_TrackOriginColumnForSlot(2);
 }
 
-void FieldScene_RunPrimarySequence(void)
+static void FieldScene_RunPrimarySequence(void)
 {
 	struct FieldActor *record;
 
@@ -665,7 +672,7 @@ void FieldScene_RunPrimarySequence(void)
 	}
 }
 
-void TakaraAshiba_RunActorElevenFollowScene(void)
+static void TakaraAshiba_RunActorElevenFollowScene(void)
 {
 	struct FieldActor *record;
 	s32				   v3;
@@ -709,7 +716,7 @@ void TakaraAshiba_RunActorElevenFollowScene(void)
 	}
 }
 
-void SceneState_TriggerColumnNineteen(void)
+static void SceneState_TriggerColumnNineteen(void)
 {
 	struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 	s32				   x = leader->x.fixed / 0x100000;
@@ -725,7 +732,7 @@ void SceneState_TriggerColumnNineteen(void)
 	}
 }
 
-void FieldScene_RunScene3b4SequenceB(void)
+static void FieldScene_RunScene3b4SequenceB(void)
 {
 	struct FieldActor *record;
 
@@ -753,7 +760,7 @@ void FieldScene_RunScene3b4SequenceB(void)
 	GameFlag_Clear(0x220);
 }
 
-void SetBlendAlphaCoefficients(void)
+static void SetBlendAlphaCoefficients(void)
 {
 	u32 coefficient = 208;
 
@@ -761,14 +768,14 @@ void SetBlendAlphaCoefficients(void)
 	REG_BLDALPHA = coefficient;
 }
 
-void SceneEffect_SetBlendAlpha0607(void)
+static void SceneEffect_SetBlendAlpha0607(void)
 {
 	u16 value = 0x0607;
 
 	REG_BLDALPHA = value;
 }
 
-void FieldScene_DispatchBySlotZeroFacing(void)
+static void FieldScene_DispatchBySlotZeroFacing(void)
 {
 	struct FieldActor *slot = Object_GetById(ACTOR_PARTY_LEADER);
 	u16				   facing = slot->facing;
@@ -816,11 +823,11 @@ void FieldScene_DispatchBySlotZeroFacing(void)
 	}
 }
 
-void FieldScene_NoOpCallback(void)
+static void FieldScene_NoOpCallback(void)
 {
 }
 
-void SceneActor_MarkSlot13AndSetFlag200(void)
+static void SceneActor_MarkSlot13AndSetFlag200(void)
 {
 	struct FieldActor *slot = Object_GetById(13);
 	s32				   fifth = 40;
@@ -838,7 +845,7 @@ void SceneActor_MarkSlot13AndSetFlag200(void)
 	Engine_GameFlagSet(512);
 }
 
-void SceneState_BranchOnActorZeroFacing(void)
+static void SceneState_BranchOnActorZeroFacing(void)
 {
 	struct Slot *slot = Object_GetById(0);
 
@@ -852,7 +859,7 @@ void SceneState_BranchOnActorZeroFacing(void)
 	}
 }
 
-void TakaraAshiba_RestoreActorEightTerrain(void)
+static void TakaraAshiba_RestoreActorEightTerrain(void)
 {
 	Engine_MapCopyCellAttributes(57, 42, 1, 1, 40, 42);
 	Engine_MapCopyCellAttributes(57, 42, 1, 1, 41, 42);
@@ -862,7 +869,7 @@ void TakaraAshiba_RestoreActorEightTerrain(void)
 	Object_GetById(8)->motion_flags = 1;
 }
 
-void ActorPresentation_SetSceneCell58AndMarkActorEight(void)
+static void ActorPresentation_SetSceneCell58AndMarkActorEight(void)
 {
 	s32 extent = 42;
 
@@ -870,7 +877,7 @@ void ActorPresentation_SetSceneCell58AndMarkActorEight(void)
 	Object_GetById(8)->priority_flags = 2;
 }
 
-void TakaraAshiba_RestoreRightUnderfootCell(void)
+static void TakaraAshiba_RestoreRightUnderfootCell(void)
 {
 	s32 w = 41;
 	s32 h = 42;
@@ -879,7 +886,7 @@ void TakaraAshiba_RestoreRightUnderfootCell(void)
 	Object_GetById(8)->priority_flags = 2;
 }
 
-void TakaraAshiba_RestoreLeftUnderfootCell(void)
+static void TakaraAshiba_RestoreLeftUnderfootCell(void)
 {
 	s32 width = 40;
 	s32 height = 42;
@@ -888,7 +895,7 @@ void TakaraAshiba_RestoreLeftUnderfootCell(void)
 	Object_GetById(8)->priority_flags = 2;
 }
 
-void TakaraAshiba_DispatchByActorEightColumn(void)
+static void TakaraAshiba_DispatchByActorEightColumn(void)
 {
 	struct FieldActor *actor = Object_GetById(8);
 	s32				   x = actor->x.fixed;
@@ -929,7 +936,7 @@ void TakaraAshiba_DispatchByActorEightColumn(void)
 	}
 }
 
-void SceneActor_BranchOnSlotZeroAtTile38(void)
+static void SceneActor_BranchOnSlotZeroAtTile38(void)
 {
 	s32 *slot0 = Object_GetById(0);
 	s32 *slot8 = Object_GetById(8);
@@ -957,7 +964,7 @@ void SceneActor_BranchOnSlotZeroAtTile38(void)
 	TakaraAshiba_DispatchByActorEightColumn();
 }
 
-void TakaraAshiba_ReleaseActorNinePlatform(void)
+static void TakaraAshiba_ReleaseActorNinePlatform(void)
 {
 	Scheduler_RemoveCallback((s32)ActorPresentation_PlaceActorFourteenOnActorNine);
 	Actor_SetPosition(14, 0, 0);
@@ -973,7 +980,7 @@ void TakaraAshiba_ReleaseActorNinePlatform(void)
 	GameFlag_Set(0x206);
 }
 
-void SceneActor_RunWhenActor9AtTile45x43(void)
+static void SceneActor_RunWhenActor9AtTile45x43(void)
 {
 	s32 *slot = Object_GetById(9);
 	s32	 x = slot[2] / 0x100000;
@@ -985,13 +992,13 @@ void SceneActor_RunWhenActor9AtTile45x43(void)
 	}
 }
 
-void FieldScene_RunTwoStepSequence(void)
+static void FieldScene_RunTwoStepSequence(void)
 {
 	StagedActor_AdvancePair();
 	SceneActor_RunWhenActor9AtTile45x43();
 }
 
-void SceneState_ApplyTwoRectsAtRow56(void)
+static void SceneState_ApplyTwoRectsAtRow56(void)
 {
 	s32 base = 55;
 
@@ -999,7 +1006,7 @@ void SceneState_ApplyTwoRectsAtRow56(void)
 	Engine_MapCopyCellAttributes(42, 56, 1, 1, 42, base);
 }
 
-void TakaraAshiba_RestoreActorTenLeftCell(void)
+static void TakaraAshiba_RestoreActorTenLeftCell(void)
 {
 	s32 width = 38;
 	s32 height = 55;
@@ -1008,7 +1015,7 @@ void TakaraAshiba_RestoreActorTenLeftCell(void)
 	Object_GetById(10)->motion_flags = 0;
 }
 
-void TakaraAshiba_RestoreActorTenRightCell(void)
+static void TakaraAshiba_RestoreActorTenRightCell(void)
 {
 	s32 w = 42;
 	s32 h = 55;
@@ -1017,7 +1024,7 @@ void TakaraAshiba_RestoreActorTenRightCell(void)
 	Object_GetById(10)->motion_flags = 0;
 }
 
-void TakaraAshiba_UpdateBlockRects(void)
+static void TakaraAshiba_UpdateBlockRects(void)
 {
 	struct FieldActor *block = Object_GetById(10);
 	s32				   y = block->y.fixed / 0x100000;
@@ -1046,14 +1053,14 @@ void TakaraAshiba_UpdateBlockRects(void)
 	}
 }
 
-void FieldScene_RunThreeCallSequenceB(void)
+static void FieldScene_RunThreeCallSequenceB(void)
 {
 	SceneState_ApplyTwoRectsAtRow56();
 	StagedActor_AdvancePair();
 	TakaraAshiba_UpdateBlockRects();
 }
 
-void FieldScene_DispatchByActorZeroFacing(void)
+static void FieldScene_DispatchByActorZeroFacing(void)
 {
 	struct Slot *slot = Object_GetById(0);
 
@@ -1067,7 +1074,7 @@ void FieldScene_DispatchByActorZeroFacing(void)
 	}
 }
 
-void SceneState_ApplyFourRectsAt48_55(void)
+static void SceneState_ApplyFourRectsAt48_55(void)
 {
 	s32 base = 55;
 
@@ -1077,7 +1084,7 @@ void SceneState_ApplyFourRectsAt48_55(void)
 	Engine_MapCopyCellAttributes(48, 55, 1, 1, 52, base);
 }
 
-void ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void)
+static void ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void)
 {
 	s32 *slot;
 	s32	 tile;
@@ -1092,31 +1099,31 @@ void ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void)
 	Engine_MapCopyCellAttributes(53, 55, 1, 1, tile, 55);
 }
 
-void FieldScene_RunSingleStep(void)
+static void FieldScene_RunSingleStep(void)
 {
 	ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
 }
 
-void FieldScene_RunThreeCallSequence(void)
+static void FieldScene_RunThreeCallSequence(void)
 {
 	SceneState_ApplyFourRectsAt48_55();
 	StagedActor_AdvancePair();
 	FieldScene_RunSingleStep();
 }
 
-void TakaraAshiba_RepaintActorCells(void)
+static void TakaraAshiba_RepaintActorCells(void)
 {
 	ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
 }
 
-void FieldScene_RunThreeStepSequence(void)
+static void FieldScene_RunThreeStepSequence(void)
 {
 	SceneState_ApplyFourRectsAt48_55();
 	StagedActor_AdvancePair();
 	TakaraAshiba_RepaintActorCells();
 }
 
-void ActorPresentation_PlaceActorFourteenOnActorNine(void)
+static void ActorPresentation_PlaceActorFourteenOnActorNine(void)
 {
 	struct FieldActor *target = Object_GetById(14);
 	struct FieldActor *source = Object_GetById(9);
@@ -1126,14 +1133,14 @@ void ActorPresentation_PlaceActorFourteenOnActorNine(void)
 	target->z.fixed = source->z.fixed + 0x10000;
 }
 
-void SceneActor_PassActorNinePositionWithId107(void)
+static void SceneActor_PassActorNinePositionWithId107(void)
 {
 	struct FieldActor *frame = Object_GetById(9);
 
 	Engine_MapObjectSetPosition(107, frame->x.fixed, frame->z.fixed + 0x10000);
 }
 
-void SceneActor_PublishMarkerBySlotZeroHeight(void)
+static void SceneActor_PublishMarkerBySlotZeroHeight(void)
 {
 	struct FieldActor *leader = Object_GetById(0);
 	u8				   priority;
@@ -1181,7 +1188,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-void TakaraAshiba_UpdateItemIcons(void)
+static void TakaraAshiba_UpdateItemIcons(void)
 {
 	if (++TakaraAshiba_IconTimer > 16)
 	{
@@ -1228,7 +1235,7 @@ void TakaraAshiba_UpdateItemIcons(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korosseo/item_icon.c"
 
-void TakaraAshiba_InitializeScene1(void)
+static void TakaraAshiba_InitializeScene1(void)
 {
 	Engine_TaskWait(1);
 	Korosseo_ShowItemIcon(12, 243);
@@ -1274,7 +1281,7 @@ void TakaraAshiba_InitializeScene1(void)
 	}
 }
 
-void TakaraAshiba_InitializeScene2(void)
+static void TakaraAshiba_InitializeScene2(void)
 {
 	Object_GetById(8)->collision_flags = 1;
 	Object_GetById(9)->collision_flags = 1;
@@ -1292,7 +1299,7 @@ void TakaraAshiba_InitializeScene2(void)
 	Io_Write16(0x607, &REG_BLDALPHA);
 }
 
-void TakaraAshiba_InitializeScene3(void)
+static void TakaraAshiba_InitializeScene3(void)
 {
 	s32 record;
 

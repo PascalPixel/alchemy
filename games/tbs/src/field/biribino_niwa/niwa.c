@@ -24,6 +24,12 @@
 #include "objcmd.h"
 #include "facing_object.h"
 
+// 前方宣言
+static void BiribinoNiwa_ApplyEntryState(void);
+static void BiribinoNiwa_RunGardenScene(void);
+static void FieldScene_OpenGate(void);
+static void InitializeStagedActorSceneOrbitingEffect(s32 id);
+
 typedef struct OrbitingSceneObjectSprite
 {
 	u8 padding_00[5];
@@ -69,7 +75,7 @@ typedef struct OrbitingSceneObject
 
 extern struct EventWork *gEventWork;
 
-s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
+static s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 {
 	s32					 delta;
 	u16					 old;
@@ -129,7 +135,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gBiribinoNiwaPlacementsOther;
 }
 
-void FieldScene_RunStepWithValueFd2(void)
+static void FieldScene_RunStepWithValueFd2(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetPosition(0xD, 0, 0);
@@ -139,7 +145,7 @@ void FieldScene_RunStepWithValueFd2(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunStepWithValue29de(void)
+static void FieldScene_RunStepWithValue29de(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
@@ -156,7 +162,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gBiribinoNiwaEventsOther;
 }
 
-void SceneDialogue_AskAboutBarricade(void)
+static void SceneDialogue_AskAboutBarricade(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoHaveYouSeenBarricadeWe);
@@ -164,7 +170,7 @@ void SceneDialogue_AskAboutBarricade(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_AskIfResponsible(void)
+static void SceneDialogue_AskIfResponsible(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoTellingMeImResponsibleFor);
@@ -172,7 +178,7 @@ void SceneDialogue_AskIfResponsible(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_AskIfFineWarrior(void)
+static void SceneDialogue_AskIfFineWarrior(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoDoThinkCanBecomeAs);
@@ -180,7 +186,7 @@ void SceneDialogue_AskIfFineWarrior(void)
 	Engine_EventEnd();
 }
 
-void BiribinoNiwa_RunGardenEvent(void)
+static void BiribinoNiwa_RunGardenEvent(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x84a) != 0)
@@ -263,7 +269,7 @@ done:
 	Engine_EventEnd();
 }
 
-void BiribinoNiwa_LeaveThroughGate(void)
+static void BiribinoNiwa_LeaveThroughGate(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x200) == 0)
@@ -298,7 +304,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-void BiribinoNiwa_ApplyEntryState(void)
+static void BiribinoNiwa_ApplyEntryState(void)
 {
 	if (Engine_GameFlagIsSet(0x109) != 0)
 	{
@@ -333,7 +339,7 @@ void BiribinoNiwa_ApplyEntryState(void)
 	}
 }
 
-void BiribinoNiwa_RunGardenScene(void)
+static void BiribinoNiwa_RunGardenScene(void)
 {
 
 	Engine_EventBegin();
@@ -419,14 +425,14 @@ void BiribinoNiwa_RunGardenScene(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_OpenGate(void)
+static void FieldScene_OpenGate(void)
 {
 	Engine_AudioPlayCue(0xBC);
 	Engine_MapAnimateCells(Niwa_GateCells, 0x34, 0xB);
 	Engine_GameFlagSet(0x200);
 }
 
-s32 SceneEffect_UpdateOrbitPosition(s32 *p)
+static s32 SceneEffect_UpdateOrbitPosition(s32 *p)
 {
 	s16 *q = (s16 *)p[20];
 	s32	 a, b;
@@ -442,7 +448,7 @@ s32 SceneEffect_UpdateOrbitPosition(s32 *p)
 	return 0;
 }
 
-void InitializeStagedActorSceneOrbitingEffect(s32 id)
+static void InitializeStagedActorSceneOrbitingEffect(s32 id)
 {
 	OrbitingSceneObject		  *actor;
 	OrbitingSceneObjectSprite *sprite;

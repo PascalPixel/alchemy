@@ -22,7 +22,13 @@
 #include "objcmd.h"
 #include "fieldobj.h"
 
-s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
+// 前方宣言
+static void RunGuardedSceneSetup(void);
+static void BiribinoDou_PrepareWindowTransition(void);
+static void FieldScene_RunScene398SequenceC(void);
+static void Resource398_ImportBankNoOp(s32 unused);
+
+static s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 {
 	Engine_ActorSetSpriteFlags(no, 0);
 	return 0;
@@ -95,7 +101,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gBiribinoDouEventsOther;
 }
 
-void SceneState_ConfigureRegion1_0_21x14(void)
+static void SceneState_ConfigureRegion1_0_21x14(void)
 {
 	s32 w = 21;
 	s32 h = 14;
@@ -103,7 +109,7 @@ void SceneState_ConfigureRegion1_0_21x14(void)
 	Engine_MapCopyCellAttributes(1, 0, 1, 1, w, h);
 }
 
-void SceneState_ConfigureRegion0_0_21x14(void)
+static void SceneState_ConfigureRegion0_0_21x14(void)
 {
 	s32 w = 21;
 	s32 h = 14;
@@ -111,7 +117,7 @@ void SceneState_ConfigureRegion0_0_21x14(void)
 	Engine_MapCopyCellAttributes(0, 0, 1, 1, w, h);
 }
 
-void SceneState_ApplyTwoRects(void)
+static void SceneState_ApplyTwoRects(void)
 {
 	{
 		s32 a5 = 1;
@@ -127,7 +133,7 @@ void SceneState_ApplyTwoRects(void)
 	}
 }
 
-void FieldScene_RunTwoLayoutSteps(void)
+static void FieldScene_RunTwoLayoutSteps(void)
 {
 	{
 		s32 fifth = 1;
@@ -143,7 +149,7 @@ void FieldScene_RunTwoLayoutSteps(void)
 	}
 }
 
-void FieldScene_RunActor9Flag882Scene(void)
+static void FieldScene_RunActor9Flag882Scene(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetPosition(9, 0, 0);
@@ -151,7 +157,7 @@ void FieldScene_RunActor9Flag882Scene(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene398SequenceA(void)
+static void FieldScene_RunScene398SequenceA(void)
 {
 	Engine_EventBegin();
 	Actor_SetPosition(8, 0, 0);
@@ -165,7 +171,7 @@ void FieldScene_RunScene398SequenceA(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorFifteenScene(void)
+static void FieldScene_RunActorFifteenScene(void)
 {
 
 	Engine_EventBegin();
@@ -176,7 +182,7 @@ void FieldScene_RunActorFifteenScene(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorSixteenScene(void)
+static void FieldScene_RunActorSixteenScene(void)
 {
 
 	Engine_EventBegin();
@@ -187,7 +193,7 @@ void FieldScene_RunActorSixteenScene(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor17Steps28AndD2(void)
+static void FieldScene_RunActor17Steps28AndD2(void)
 {
 
 	Engine_EventBegin();
@@ -198,7 +204,7 @@ void FieldScene_RunActor17Steps28AndD2(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene398SequenceB(void)
+static void FieldScene_RunScene398SequenceB(void)
 {
 	struct FieldActor *rec7;
 	struct FieldActor *rec8;
@@ -270,7 +276,7 @@ L_020003c2:;
 L_02000414:;
 }
 
-void ActorPresentation_SetSceneCell31AndFlag305(void)
+static void ActorPresentation_SetSceneCell31AndFlag305(void)
 {
 	s32 width = 8;
 	s32 height = 13;
@@ -279,12 +285,12 @@ void ActorPresentation_SetSceneCell31AndFlag305(void)
 	Engine_GameFlagSet(0x305);
 }
 
-void BiribinoDou_SetMapWorkFlag(void)
+static void BiribinoDou_SetMapWorkFlag(void)
 {
 	FIELD_AT_OFFSET(gMapWork[0], s8 *, 0x17) = 1;
 }
 
-void BiribinoDou_ClearMapWorkFlag(void)
+static void BiribinoDou_ClearMapWorkFlag(void)
 {
 	FIELD_AT_OFFSET(gMapWork[0], s8 *, 0x17) = 0;
 }
@@ -308,7 +314,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-void RunGuardedSceneSetup(void)
+static void RunGuardedSceneSetup(void)
 {
 	if (Engine_GameFlagIsSet(0x305) != 0)
 	{
@@ -320,7 +326,7 @@ void RunGuardedSceneSetup(void)
 	}
 }
 
-void BiribinoDou_PrepareWindowTransition(void)
+static void BiribinoDou_PrepareWindowTransition(void)
 {
 
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -338,7 +344,7 @@ void BiribinoDou_PrepareWindowTransition(void)
 	}
 }
 
-void FieldScene_RunScene398SequenceC(void)
+static void FieldScene_RunScene398SequenceC(void)
 {
 	struct FieldActor *record;
 	s32				   v5;
@@ -434,7 +440,7 @@ void FieldScene_RunScene398SequenceC(void)
 	}
 }
 
-struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
+static struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
 {
 	struct FieldActor **actors = gEventWork->placed_actors - 8;
 	u32					i;
@@ -451,7 +457,7 @@ struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
 	return 0;
 }
 
-void StagedActor_PushActorAhead(void)
+static void StagedActor_PushActorAhead(void)
 {
 	struct FieldActor *player;
 	struct FieldActor *target;
@@ -508,7 +514,7 @@ void StagedActor_PushActorAhead(void)
 	FieldScene_RunScene398SequenceB();
 }
 
-void Resource398_ImportBankNoOp(s32 unused)
+static void Resource398_ImportBankNoOp(s32 unused)
 {
 }
 

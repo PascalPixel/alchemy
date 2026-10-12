@@ -41,7 +41,7 @@ extern s16	Korosseo_ModeTaskParam;
 extern s32	Korosseo_ModeTaskPosition;
 extern s16 *Korosseo_ModeTaskScript;
 
-void Korosseo_LoadPortrait(s32 id)
+static void Korosseo_LoadPortrait(s32 id)
 {
 	u8 *buf;
 	s32 off;
@@ -59,7 +59,7 @@ void Korosseo_LoadPortrait(s32 id)
 	Runtime_BumpFree(buf);
 }
 
-void Korosseo_UpdateModeTask(void)
+static void Korosseo_UpdateModeTask(void)
 {
 	u32					  *write = Korosseo_ModeTaskSprites;
 	struct Sprite		  *sprite = (struct Sprite *)write;

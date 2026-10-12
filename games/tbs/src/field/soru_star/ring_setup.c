@@ -52,7 +52,7 @@ struct SoruRingList
 	u16					 count;
 };
 
-void Soru_UpdateRing(void)
+static void Soru_UpdateRing(void)
 {
 	struct SoruRingList	 *list = Runtime_AllocateBlock(33, 404);
 	struct SoruRingEntry *entry = list->entries;

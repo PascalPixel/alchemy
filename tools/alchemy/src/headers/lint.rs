@@ -13,7 +13,9 @@ pub(crate) const BASELINE: &str = "tools/alchemy/headers.tsv";
 
 const USAGE: &str = "usage: alchemy check headers [--update | --list]\n\
 Counts, in ☀️'s game C files and the C files they include: prototypes of\n\
-functions (at file scope and inside functions), extern declarations of\n\
+functions (at file scope and inside functions; a `static` prototype of a\n\
+function the same file defines `static` is that file's own forward\n\
+declaration and is not counted), extern declarations of\n\
 objects (one inside a function under a FAKEMATCH tag is the device S2\n\
 allows and is not counted), and macros that cast a name to another type\n\
 under the name itself. Counts, in the headers those files read, each\n\
@@ -58,9 +60,13 @@ fn tagged(text: &str, start: usize, end: usize) -> bool {
 pub(crate) fn in_source(file: &str, text: &str) -> Vec<Finding> {
     let mut found = Vec::new();
     let mut push = |kind, at: usize, name: &str| found.push(Finding { kind, file: file.to_string(), line: line(text, at), name: name.to_string() });
-    for entry in super::scan::entries(text) {
+    let all = super::scan::entries(text);
+    // A file's forward declaration of its own static function declares
+    // nothing another file defines.
+    let own = |name: &str| all.iter().any(|entry| entry.name == name && entry.local && matches!(entry.what, What::Definition { .. }));
+    for entry in &all {
         match entry.what {
-            What::Prototype if !entry.local => push("prototype", entry.start, &entry.name),
+            What::Prototype if !(entry.local && own(&entry.name)) => push("prototype", entry.start, &entry.name),
             What::Extern => push("extern", entry.start, &entry.name),
             What::ShapeMacro { .. } | What::ViewMacro => push("cast-macro", entry.start, &entry.name),
             _ => {}
@@ -114,7 +120,7 @@ pub(crate) fn second_declarations(headers: &[(&str, &str)]) -> Vec<Finding> {
 
 /// Where a C file of a unit stands in the unit's text: the unit's own
 /// offset, or the unit's line that includes the file and the offset in it.
-fn place(model: &Model, unit: &str, file: &str, offset: usize) -> Option<(usize, usize)> {
+pub(crate) fn place(model: &Model, unit: &str, file: &str, offset: usize) -> Option<(usize, usize)> {
     if file == unit {
         return Some((offset, 0));
     }
@@ -328,7 +334,7 @@ mod tests {
 
     #[test]
     fn a_c_file_is_refused_what_a_header_should_say() {
-        let source = "#include \"unit/a.h\"\ns32 Other(s32 a);\nextern u8 gTable[];\nstatic void Mine(void);\n#define Other ((void (*)(s32))Other)\n#define gTable ((u16(*)) & gTable)\n#define LIMIT 4\n\nvoid Run(void)\n{\n\tvoid Deep();\n\textern u8 gWork[];\n\t/* FAKEMATCH: the address folds only through this view. */\n\textern u16 gFolded[];\n\tDeep();\n}\n";
+        let source = "#include \"unit/a.h\"\ns32 Other(s32 a);\nextern u8 gTable[];\nstatic void Mine(void);\n#define Other ((void (*)(s32))Other)\n#define gTable ((u16(*)) & gTable)\n#define LIMIT 4\n\nvoid Run(void)\n{\n\tvoid Deep();\n\textern u8 gWork[];\n\t/* FAKEMATCH: the address folds only through this view. */\n\textern u16 gFolded[];\n\tDeep();\n}\n\nstatic void Mine(void)\n{\n}\n";
         let found: Vec<(&str, usize, String)> = in_source("games/tbs/src/a.c", source).into_iter().map(|f| (f.kind, f.line, f.name)).collect();
         assert_eq!(
             found,
@@ -341,6 +347,15 @@ mod tests {
                 ("prototype", 11, "Deep".to_string()),
             ]
         );
+    }
+
+    #[test]
+    fn a_files_forward_declaration_of_its_own_static_function_is_not_counted() {
+        let source = "static void Mine(s32 a);\nstatic s32 Theirs(void);\nstatic void Shown(void);\nvoid Open(void);\n\nvoid Run(void)\n{\n\tMine(Theirs());\n}\n\nstatic void Mine(s32 a)\n{\n}\n\nvoid Shown(void)\n{\n}\n\nvoid Open(void)\n{\n}\n";
+        let found: Vec<(&str, usize, String)> = in_source("games/tbs/src/a.c", source).into_iter().map(|f| (f.kind, f.line, f.name)).collect();
+        // Theirs is defined nowhere in the file, Shown is not static
+        // where the file defines it, and Open's prototype is not static.
+        assert_eq!(found, vec![("prototype", 2, "Theirs".to_string()), ("prototype", 3, "Shown".to_string()), ("prototype", 4, "Open".to_string())]);
     }
 
     #[test]

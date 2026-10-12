@@ -6,8 +6,7 @@
 #include "unit/import.h"
 #include "unit/field/makyuri_heya/heya.h"
 #include "unit/field/common/effect/move.h"
-#include "unit/field/common/object/staged_actor.h"
-#include "unit/field/common/makyuri/palette_cycle.h"
+#include "staged_actor.h"
 #include "unit/field/common/makyuri/lights.h"
 #include "unit/field/makyuri_iriguchi/pillar.h"
 #include "unit/field/common/makyuri/makyuri.h"
@@ -47,6 +46,20 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "iowrite.h"
+
+// 前方宣言
+static void FieldScene_RunActorElevenAtTile5And13(void);
+static void SceneState_RunWhenActor8AtTile10x23(void);
+static void MakyuriHeya_SyncBlockFlags(void);
+static void SceneEffect_SpawnParticleRowsAndDrawTiles(void);
+static void MakyuriHeya_OpenThreeStepStair(void);
+static void SceneEffect_SpawnParticleEveryFourthFrame(void);
+static void SceneEffect_SpawnRandomEveryFourFrames(s32 x, s32 y, s32 z);
+static void SceneEffect_SpawnWithRandomOffset(s32 x, s32 y, s32 z);
+static void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 w);
+static void MakyuriHeya_RideLift(void);
+static void MakyuriHeya_CastPsynergyAtActor11(void);
+static void SceneState_SetRecordTableValue(s32 key, s32 value);
 
 #define NULL ((void *)0)
 
@@ -88,12 +101,12 @@ struct SceneLookupRecord
 	u16 tbl[1];
 };
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -110,7 +123,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -132,7 +145,7 @@ void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 #include "../common/effect/spawn.c"
 #include "../common/object/staged_actor.c"
 
-void SceneState_ApplyPair12And21(void)
+static void SceneState_ApplyPair12And21(void)
 {
 	BattleFx_SetPhaseRequest(12, 21);
 }
@@ -144,7 +157,7 @@ struct LeaderEffectWork
 	struct FieldActor *target;
 };
 
-void MakyuriHeya_UpdateLeaderEffectTarget(void)
+static void MakyuriHeya_UpdateLeaderEffectTarget(void)
 {
 	struct FieldActor		*actor = Object_GetById(0);
 	struct LeaderEffectWork *work = *(struct LeaderEffectWork **)Ram_ActorEffectWork;
@@ -156,7 +169,7 @@ void MakyuriHeya_UpdateLeaderEffectTarget(void)
 }
 #endif
 
-s32 MakyuriHeya_TrailSparks(struct FieldActor *actor)
+static s32 MakyuriHeya_TrailSparks(struct FieldActor *actor)
 {
 	struct EffectOptions options;
 	s32					 velocity_y;
@@ -231,27 +244,27 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gMakyuriHeyaPlacementsOther;
 }
 
-void MakyuriHeya_TickSpawnTimer(void)
+static void MakyuriHeya_TickSpawnTimer(void)
 {
 	Makyuri_TickSpawnTimer();
 }
 
-void MakyuriHeya_ClearSceneRecordAndTarget(void)
+static void MakyuriHeya_ClearSceneRecordAndTarget(void)
 {
 	SceneState_ClearCurrentRecordAndReleaseTarget();
 }
 
-void FieldScene_RunSingleStep(void)
+static void FieldScene_RunSingleStep(void)
 {
 	Makyuri_RunActorMove();
 }
 
-void MakyuriHeya_TriggerPillarRise(void)
+static void MakyuriHeya_TriggerPillarRise(void)
 {
 	MakyuriIriguchi_RaisePillar();
 }
 
-void SceneDialogue_RunLine1637(void)
+static void SceneDialogue_RunLine1637(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgMakyuriHeyaStrangeForcesBlockWay, 1);
@@ -282,7 +295,7 @@ struct BlockProbe
 	s32 word[6];
 };
 
-void SceneActor_RunActorZeroHandledMotion(s32 a)
+static void SceneActor_RunActorZeroHandledMotion(s32 a)
 {
 	struct FieldActor *v = Object_GetById(0);
 	Engine_EventBegin();
@@ -302,7 +315,7 @@ void SceneActor_RunActorZeroHandledMotion(s32 a)
 	Engine_EventEnd();
 }
 
-void MakyuriHeya_DropLeaderToColumn(s32 a0)
+static void MakyuriHeya_DropLeaderToColumn(s32 a0)
 {
 	s32 record;
 
@@ -318,22 +331,22 @@ void MakyuriHeya_DropLeaderToColumn(s32 a0)
 	Engine_EventWait(30);
 }
 
-void MakyuriHeya_RunExitThreeScene(void)
+static void MakyuriHeya_RunExitThreeScene(void)
 {
 	SceneActor_RunActorZeroHandledMotion(gEventWork->touched_trigger - 50);
 }
 
-void MakyuriHeya_RunExitThirteenScene(void)
+static void MakyuriHeya_RunExitThirteenScene(void)
 {
 	SceneActor_RunActorZeroHandledMotion(gEventWork->touched_trigger - 50);
 }
 
-void MakyuriHeya_RunExitFiveScene(void)
+static void MakyuriHeya_RunExitFiveScene(void)
 {
 	SceneActor_RunActorZeroHandledMotion(gEventWork->touched_trigger - 50);
 }
 
-void MakyuriHeya_ExitWhenChannelsOpen(void)
+static void MakyuriHeya_ExitWhenChannelsOpen(void)
 {
 	if (GameFlag_IsSet(0x310) != 0 && GameFlag_IsSet(0x311) != 0 && GameFlag_IsSet(0x312) != 0)
 	{
@@ -356,7 +369,7 @@ void MakyuriHeya_ExitWhenChannelsOpen(void)
 	}
 }
 
-void MakyuriHeya_RunPushedBlockScene(void)
+static void MakyuriHeya_RunPushedBlockScene(void)
 {
 	struct BlockProbe probe;
 	s32				  x;
@@ -431,7 +444,7 @@ end:
 	Engine_EventEnd();
 }
 
-void MakyuriHeya_WalkLeaderIn(void)
+static void MakyuriHeya_WalkLeaderIn(void)
 {
 	struct EventWork *work;
 
@@ -472,7 +485,7 @@ void MakyuriHeya_WalkLeaderIn(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFourCallSequence(void)
+static void FieldScene_RunFourCallSequence(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
@@ -480,7 +493,7 @@ void FieldScene_RunFourCallSequence(void)
 	FieldScene_RunActorElevenAtTile5And13();
 }
 
-void FieldScene_RunActorElevenAtTile5And13(void)
+static void FieldScene_RunActorElevenAtTile5And13(void)
 {
 	s32				   x;
 	s32				   y;
@@ -507,7 +520,7 @@ void FieldScene_RunActorElevenAtTile5And13(void)
 	Engine_EventEnd();
 }
 
-void MakyuriHeya_TriggerSmallFloorSwitch(void)
+static void MakyuriHeya_TriggerSmallFloorSwitch(void)
 {
 	s32				   x;
 	s32				   z;
@@ -533,7 +546,7 @@ void MakyuriHeya_TriggerSmallFloorSwitch(void)
 	}
 }
 
-void MakyuriHeya_CloseFloorSwitch(void)
+static void MakyuriHeya_CloseFloorSwitch(void)
 {
 	struct FieldActor *actor;
 
@@ -552,7 +565,7 @@ void MakyuriHeya_CloseFloorSwitch(void)
 	}
 }
 
-void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1, s32 a2)
+static void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1, s32 a2)
 {
 	u32 i;
 	s32 v;
@@ -583,7 +596,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1, s32 a2)
 	Map_CopyCellAttributes(42, 52, 4, 5, 42, 33);
 }
 
-void MakyuriHeya_RunSequenceG(s32 a0)
+static void MakyuriHeya_RunSequenceG(s32 a0)
 {
 	u32 i;
 	s32 x;
@@ -620,12 +633,12 @@ void MakyuriHeya_RunSequenceG(s32 a0)
 	Engine_MapRenderWaitForValues();
 }
 
-void MakyuriHeya_SprayAtFountain(void)
+static void MakyuriHeya_SprayAtFountain(void)
 {
 	SceneEffect_SpawnRandomEveryFourFrames(0x2b20000, 0, 0x2480000);
 }
 
-void FieldScene_RunSupplementalSequenceOne(s32 a0)
+static void FieldScene_RunSupplementalSequenceOne(s32 a0)
 {
 	s32 *rec;
 	s32	 outer;
@@ -699,7 +712,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
 	Engine_MapRenderWaitForValues();
 }
 
-void MakyuriHeya_RunSequenceF(void)
+static void MakyuriHeya_RunSequenceF(void)
 {
 	s32 *rec;
 	s32	 outer;
@@ -739,7 +752,7 @@ void MakyuriHeya_RunSequenceF(void)
 	Engine_TaskRemoveCallback((s32)MakyuriHeya_SprayAtFountain);
 }
 
-void MakyuriHeya_RunSequenceE(void)
+static void MakyuriHeya_RunSequenceE(void)
 {
 	SceneEvent ev;
 	s32		   kind;
@@ -815,7 +828,7 @@ void MakyuriHeya_RunSequenceE(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFourSteps(void)
+static void FieldScene_RunFourSteps(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
@@ -823,7 +836,7 @@ void FieldScene_RunFourSteps(void)
 	SceneState_RunWhenActor8AtTile10x23();
 }
 
-void SceneState_RunWhenActor8AtTile10x23(void)
+static void SceneState_RunWhenActor8AtTile10x23(void)
 {
 	s32 x = Object_GetById(8)->x.fixed / 0x100000;
 	s32 y = Object_GetById(8)->z.fixed / 0x100000;
@@ -844,7 +857,7 @@ void SceneState_RunWhenActor8AtTile10x23(void)
 	Engine_EventEnd();
 }
 
-void MakyuriHeya_TriggerFloorSwitch(void)
+static void MakyuriHeya_TriggerFloorSwitch(void)
 {
 	s32 x;
 	s32 z;
@@ -870,7 +883,7 @@ void MakyuriHeya_TriggerFloorSwitch(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene39cSequenceA(void)
+static void FieldScene_RunScene39cSequenceA(void)
 {
 	struct FieldActor *actor;
 
@@ -896,7 +909,7 @@ static __inline__ s32 Door_DriftStep(void)
 	return ((drift << 3) >> 16) * 0x3333;
 }
 
-void MakyuriHeya_OpenStoneDoor(s32 side)
+static void MakyuriHeya_OpenStoneDoor(s32 side)
 {
 	struct EffectOptions  params;
 	u32					  j;
@@ -973,7 +986,7 @@ struct LiftLayer
 	s32 unknown_1c;
 };
 
-void SceneEffect_SpawnParticleRowsByMode(s32 mode)
+static void SceneEffect_SpawnParticleRowsByMode(s32 mode)
 {
 	s32 buf[10];
 	u32 i, j;
@@ -1020,7 +1033,7 @@ void SceneEffect_SpawnParticleRowsByMode(s32 mode)
 	}
 }
 
-s32 MakyuriHeya_StartPillarPush(void)
+static s32 MakyuriHeya_StartPillarPush(void)
 {
 	s32 cell_x;
 	s32 cell_z;
@@ -1059,7 +1072,7 @@ s32 MakyuriHeya_StartPillarPush(void)
 	return 0;
 }
 
-void SceneActor_UseActorNinePositionWithYOffset(void)
+static void SceneActor_UseActorNinePositionWithYOffset(void)
 {
 	s32 *p = Object_GetById(9);
 	u32	 v = Engine_RandomNext();
@@ -1070,7 +1083,7 @@ void SceneActor_UseActorNinePositionWithYOffset(void)
 	SceneEffect_SpawnRandomEveryFourFrames(p[2], b, c);
 }
 
-s32 MakyuriHeya_StartActorNineParticles(void)
+static s32 MakyuriHeya_StartActorNineParticles(void)
 {
 	s32 n = 0xc80;
 
@@ -1078,13 +1091,13 @@ s32 MakyuriHeya_StartActorNineParticles(void)
 	return 0;
 }
 
-s32 MakyuriHeya_StopActorNinePositionCallback(void)
+static s32 MakyuriHeya_StopActorNinePositionCallback(void)
 {
 	Engine_TaskRemoveCallback((s32)SceneActor_UseActorNinePositionWithYOffset);
 	return 0;
 }
 
-void MakyuriHeya_RunColumnProbeScene(void)
+static void MakyuriHeya_RunColumnProbeScene(void)
 {
 	struct BlockProbe probe;
 	s32				  column;
@@ -1182,7 +1195,7 @@ end:
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFourStepSequence(void)
+static void FieldScene_RunFourStepSequence(void)
 {
 	Engine_EventBegin();
 	StagedActor_AdvancePair();
@@ -1190,7 +1203,7 @@ void FieldScene_RunFourStepSequence(void)
 	Engine_EventEnd();
 }
 
-void MakyuriHeya_SyncBlockFlags(void)
+static void MakyuriHeya_SyncBlockFlags(void)
 {
 	s32 i;
 	s32 flag;
@@ -1238,7 +1251,7 @@ void MakyuriHeya_SyncBlockFlags(void)
 	Engine_EventEnd();
 }
 
-void SceneState_ApplyRectWhenActor20AtColumn28(void)
+static void SceneState_ApplyRectWhenActor20AtColumn28(void)
 {
 	s32 col;
 
@@ -1257,7 +1270,7 @@ void SceneState_ApplyRectWhenActor20AtColumn28(void)
 	Engine_EventEnd();
 }
 
-void SceneEffect_RotatePaletteEntries40To47(void)
+static void SceneEffect_RotatePaletteEntries40To47(void)
 {
 	unsigned int index;
 	u16			*dst;
@@ -1282,7 +1295,7 @@ void SceneEffect_RotatePaletteEntries40To47(void)
 	}
 }
 
-void FieldScene_RunActorThreeBranchSequence(void)
+static void FieldScene_RunActorThreeBranchSequence(void)
 {
 	struct FieldActor *record;
 
@@ -1335,7 +1348,7 @@ void FieldScene_RunActorThreeBranchSequence(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor3TimedLine(void)
+static void SceneDialogue_RunActor3TimedLine(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimationAndWait(3, 4);
@@ -1345,7 +1358,7 @@ void SceneDialogue_RunActor3TimedLine(void)
 	Engine_EventEnd();
 }
 
-void MakyuriHeya_FadePaletteToWhite(void)
+static void MakyuriHeya_FadePaletteToWhite(void)
 {
 	volatile u16 *pal;
 	u32			  i;
@@ -1383,7 +1396,7 @@ void MakyuriHeya_FadePaletteToWhite(void)
 	} while (done <= 7);
 }
 
-void FieldScene_RunColumnChoreography(void)
+static void FieldScene_RunColumnChoreography(void)
 {
 	struct FieldActor *record;
 	s32				   pos;
@@ -1548,7 +1561,7 @@ void FieldScene_RunColumnChoreography(void)
 	Engine_EventEnd();
 }
 
-void SceneEffect_RotatePaletteEntries97To103(void)
+static void SceneEffect_RotatePaletteEntries97To103(void)
 {
 	unsigned int i;
 	u16			*dst;
@@ -1573,7 +1586,7 @@ void SceneEffect_RotatePaletteEntries97To103(void)
 	}
 }
 
-void MakyuriHeya_FadePaletteToBlack(void)
+static void MakyuriHeya_FadePaletteToBlack(void)
 {
 	volatile u16 *pal;
 	u32			  i;
@@ -1606,7 +1619,7 @@ void MakyuriHeya_FadePaletteToBlack(void)
 	} while (done != 7);
 }
 
-void MakyuriHeya_SinkActorWithSparks(s32 actor)
+static void MakyuriHeya_SinkActorWithSparks(s32 actor)
 {
 	struct EffectOptions  params;
 	struct EffectOptions *p;
@@ -1644,7 +1657,7 @@ void MakyuriHeya_SinkActorWithSparks(s32 actor)
 	}
 }
 
-void FieldScene_RunRandomEffectActorSequence(void)
+static void FieldScene_RunRandomEffectActorSequence(void)
 {
 	struct ConfiguredEffectOptions *effect;
 	s32								row_offset;
@@ -1864,7 +1877,7 @@ void FieldScene_RunRandomEffectActorSequence(void)
 	}
 }
 
-void FieldScene_RunScriptedSteps0And1576(void)
+static void FieldScene_RunScriptedSteps0And1576(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(0, 1);
@@ -1872,7 +1885,7 @@ void FieldScene_RunScriptedSteps0And1576(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScriptedSteps0And953(void)
+static void FieldScene_RunScriptedSteps0And953(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(0, 1);
@@ -1880,7 +1893,7 @@ void FieldScene_RunScriptedSteps0And953(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFlag881Dialogue(void)
+static void FieldScene_RunFlag881Dialogue(void)
 {
 
 	Engine_EventBegin();
@@ -1899,7 +1912,7 @@ void FieldScene_RunFlag881Dialogue(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor184Sequence(void)
+static void FieldScene_RunActor184Sequence(void)
 {
 	Engine_EventBegin();
 	Engine_AudioPlayCue(0x53);
@@ -1912,7 +1925,7 @@ void FieldScene_RunActor184Sequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene39cSequenceB(void)
+static void FieldScene_RunScene39cSequenceB(void)
 {
 	Engine_EventBegin();
 	if (gGameState.scene == (s32)&SceneId_MakyuriHeya1)
@@ -1937,7 +1950,7 @@ void FieldScene_RunScene39cSequenceB(void)
 	Engine_EventEnd();
 }
 
-void MakyuriHeya_ArriveWithSparks(void)
+static void MakyuriHeya_ArriveWithSparks(void)
 {
 	struct FieldActor *actor;
 	s32				   done;
@@ -1970,7 +1983,7 @@ void MakyuriHeya_ArriveWithSparks(void)
 	}
 }
 
-void SceneEffect_SpawnParticleRowsAndDrawTiles(void)
+static void SceneEffect_SpawnParticleRowsAndDrawTiles(void)
 {
 	s32 buf[10];
 	u32 i, j;
@@ -1998,7 +2011,7 @@ void SceneEffect_SpawnParticleRowsAndDrawTiles(void)
 	}
 }
 
-void MakyuriHeya_OpenThreeStepStair(void)
+static void MakyuriHeya_OpenThreeStepStair(void)
 {
 	struct EffectOptions  params;
 	struct EffectOptions *p;
@@ -2038,7 +2051,7 @@ void MakyuriHeya_OpenThreeStepStair(void)
 	}
 }
 
-void SceneEffect_SpawnParticleEveryFourthFrame(void)
+static void SceneEffect_SpawnParticleEveryFourthFrame(void)
 {
 	s32	 buf[10];
 	s32 *p = Object_GetById(0);
@@ -2061,7 +2074,7 @@ void SceneEffect_SpawnParticleEveryFourthFrame(void)
 	}
 }
 
-void SceneEffect_SpawnRandomEveryFourFrames(s32 x, s32 y, s32 z)
+static void SceneEffect_SpawnRandomEveryFourFrames(s32 x, s32 y, s32 z)
 {
 	s32 buf[10];
 	s32 m = gFrameCount & 3;
@@ -2082,7 +2095,7 @@ void SceneEffect_SpawnRandomEveryFourFrames(s32 x, s32 y, s32 z)
 	}
 }
 
-void SceneEffect_SpawnWithRandomOffset(s32 x, s32 y, s32 z)
+static void SceneEffect_SpawnWithRandomOffset(s32 x, s32 y, s32 z)
 {
 	s32 buf[10];
 
@@ -2098,7 +2111,7 @@ void SceneEffect_SpawnWithRandomOffset(s32 x, s32 y, s32 z)
 	}
 }
 
-void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 w)
+static void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 w)
 {
 	s32 desc[10];
 	s32 tmp[3];
@@ -2560,7 +2573,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-void MakyuriHeya_RunPartyScene(void)
+static void MakyuriHeya_RunPartyScene(void)
 {
 	s32				   base;
 	s32				   position;
@@ -2655,7 +2668,7 @@ void MakyuriHeya_RunPartyScene(void)
 	Engine_EventEnd();
 }
 
-void MakyuriHeya_RideLift(void)
+static void MakyuriHeya_RideLift(void)
 {
 	struct LiftLayer *layer;
 	s32				  speed;
@@ -2740,7 +2753,7 @@ void MakyuriHeya_RideLift(void)
 	Actor_Get(0)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
 }
 
-void MakyuriHeya_CastPsynergyAtActor11(void)
+static void MakyuriHeya_CastPsynergyAtActor11(void)
 {
 	u8 *p5;
 	u8 *addr;
@@ -2758,7 +2771,7 @@ void MakyuriHeya_CastPsynergyAtActor11(void)
 	Engine_PsynergyLowerHands();
 }
 
-void SceneState_SetRecordTableValue(s32 key, s32 value)
+static void SceneState_SetRecordTableValue(s32 key, s32 value)
 {
 	s32 slot = PartyInventory_FindOwner(key);
 
@@ -2776,7 +2789,7 @@ void SceneState_SetRecordTableValue(s32 key, s32 value)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/makyuri/lights.c"
 
-void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
+static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 {
 	struct FieldActor  *obj;
 	struct FieldSprite *sprite;

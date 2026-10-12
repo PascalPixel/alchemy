@@ -27,6 +27,15 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void RunEventScript01(void);
+static void PaletteScene_RunActorTransitionSequence(void);
+static void PaletteScene_SpawnEffect(void);
+static void PaletteScene_AdvanceTransition(void);
+static void KorimaKi_PlayGesture(s32 actor, s32 gesture);
+static void KorimaKi_SpawnOrbitSparks(void);
+static void PaletteScene_SetRecordValue(s32 key, s32 value);
+
 s32 gKorimaKiSparkOrigin[3] __attribute__((section(".bss")));
 s32 gKorimaKiSparkCount __attribute__((section(".bss")));
 s32 gKorimaKiSparkSound __attribute__((section(".bss")));
@@ -52,7 +61,7 @@ u8 *KorimaKi_GetPlacements(void)
 	return gKorimaKiPlacements;
 }
 
-void PaletteScene_Initialize(void)
+static void PaletteScene_Initialize(void)
 {
 	struct EventWork *scene;
 
@@ -68,7 +77,7 @@ u8 *KorimaKi_GetEvents(void)
 	return gKorimaKiEvents;
 }
 
-void KorimaKi_RunMessageScene(void)
+static void KorimaKi_RunMessageScene(void)
 {
 	Engine_EventBegin();
 	KorimaKi_PlayGesture(11, 1);
@@ -104,7 +113,7 @@ void KorimaKi_RunMessageScene(void)
 	Engine_EventEnd();
 }
 
-void KorimaKi_TalkToToreto(void)
+static void KorimaKi_TalkToToreto(void)
 {
 	s32 record;
 
@@ -155,7 +164,7 @@ L_02000220:;
 	Engine_EventEnd();
 }
 
-void PaletteScene_RunActorNineBranch(void)
+static void PaletteScene_RunActorNineBranch(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x845) != 0)
@@ -170,7 +179,7 @@ void PaletteScene_RunActorNineBranch(void)
 	Engine_EventEnd();
 }
 
-void PaletteScene_RunActorEightBranch(void)
+static void PaletteScene_RunActorEightBranch(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x845) != 0)
@@ -185,7 +194,7 @@ void PaletteScene_RunActorEightBranch(void)
 	Engine_EventEnd();
 }
 
-void PaletteScene_RunFlaggedBranch(void)
+static void PaletteScene_RunFlaggedBranch(void)
 {
 	Engine_EventBegin();
 	Battle_ResetEffectCounter();
@@ -200,7 +209,7 @@ void PaletteScene_RunFlaggedBranch(void)
 	Engine_EventEnd();
 }
 
-void RunEventScript01(void)
+static void RunEventScript01(void)
 {
 
 	struct FieldActor *rec8;
@@ -267,7 +276,7 @@ void RunEventScript01(void)
 	Engine_EventWait(20);
 }
 
-void PaletteScene_RunActorTransitionSequence(void)
+static void PaletteScene_RunActorTransitionSequence(void)
 {
 	s32				   actorThreeEnabled;
 	struct FieldActor *object;
@@ -702,7 +711,7 @@ s32 KorimaKi_PrepareActors(void)
 	return 0;
 }
 
-s32 PaletteScene_AdvanceEffectFrame(struct PaletteEffectFrame *frame)
+static s32 PaletteScene_AdvanceEffectFrame(struct PaletteEffectFrame *frame)
 {
 	frame->progress += 0x1EB8;
 	if (frame->limit == 0x80000000)
@@ -718,7 +727,7 @@ s32 PaletteScene_AdvanceEffectFrame(struct PaletteEffectFrame *frame)
 	return 1;
 }
 
-void PaletteScene_SpawnEffect(void)
+static void PaletteScene_SpawnEffect(void)
 {
 
 	struct PaletteEffect *effect;
@@ -758,7 +767,7 @@ void PaletteScene_SpawnEffect(void)
 	Engine_ObjectSetScript(effect, gKorimaKiEffectScript);
 }
 
-void PaletteScene_AdvanceTransition(void)
+static void PaletteScene_AdvanceTransition(void)
 {
 	s32 step = gKorimaKiTransitionStep;
 
@@ -780,7 +789,7 @@ void PaletteScene_AdvanceTransition(void)
 	}
 }
 
-void KorimaKi_PlayGesture(s32 actor, s32 gesture)
+static void KorimaKi_PlayGesture(s32 actor, s32 gesture)
 {
 	if (actor == 10)
 	{
@@ -895,7 +904,7 @@ void KorimaKi_PlayGesture(s32 actor, s32 gesture)
 	Engine_TaskWait(12);
 }
 
-void PaletteScene_AdvanceOrbit(struct OrbitingPaletteEffect *effect)
+static void PaletteScene_AdvanceOrbit(struct OrbitingPaletteEffect *effect)
 {
 	s32 position[3];
 	s32 step = effect->step;
@@ -922,7 +931,7 @@ void PaletteScene_AdvanceOrbit(struct OrbitingPaletteEffect *effect)
 	}
 }
 
-void KorimaKi_SpawnOrbitSparks(void)
+static void KorimaKi_SpawnOrbitSparks(void)
 {
 	struct FieldActor *spark;
 	s32				   previous;
@@ -965,7 +974,7 @@ void KorimaKi_SpawnOrbitSparks(void)
 	}
 }
 
-void PaletteScene_SetRecordValue(s32 key, s32 value)
+static void PaletteScene_SetRecordValue(s32 key, s32 value)
 {
 	s32 slot = PartyInventory_FindOwner(key);
 

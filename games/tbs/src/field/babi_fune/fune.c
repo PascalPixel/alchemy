@@ -41,6 +41,10 @@
 #include "field_scene.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void SceneEffect_LoadTablesAndStopDma0(void);
+static void BabiFune_ScheduleFade(void);
+
 s32 Math_DivideUnsigned();
 
 u8 *BabiFune_GetEntrances(void)
@@ -63,18 +67,18 @@ u8 *BabiFune_GetPlacements(void)
 	return BabiFune_SceneTableC;
 }
 
-void PlayWorkspaceCueAndClearPaletteZero(void)
+static void PlayWorkspaceCueAndClearPaletteZero(void)
 {
 	Engine_EventRequestExit(gEventWork->touched_trigger);
 	Io_Write16(0, &PLTT_BACKDROP);
 }
 
-void BabiFune_LoadTablesAndStopDma(void)
+static void BabiFune_LoadTablesAndStopDma(void)
 {
 	SceneEffect_LoadTablesAndStopDma0();
 }
 
-void FieldScene_ConfigureFixedPointValues(void)
+static void FieldScene_ConfigureFixedPointValues(void)
 {
 	DisplayScroll_InitializeHBlankDma(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000, 0x4000);
 }
@@ -84,7 +88,7 @@ u8 *BabiFune_GetEvents(void)
 	return BabiFune_SceneTableD;
 }
 
-void BabiFune_CyclePalette(void)
+static void BabiFune_CyclePalette(void)
 {
 	u16 *frame;
 	s32	 v;
@@ -98,7 +102,7 @@ void BabiFune_CyclePalette(void)
 		*frame = 0;
 }
 
-void BabiFune_UpdateDriftingObject(u8 *obj)
+static void BabiFune_UpdateDriftingObject(u8 *obj)
 {
 	u16 *wait = &((struct FieldActor *)obj)->timer;
 	s32	 left = *wait;
@@ -127,7 +131,7 @@ void BabiFune_UpdateDriftingObject(u8 *obj)
 	}
 }
 
-void SceneState_CountDownEveryFortyTicks(void)
+static void SceneState_CountDownEveryFortyTicks(void)
 {
 	s32 n = BabiFune_CountTicks + 1;
 
@@ -155,7 +159,7 @@ struct WaveMap
 	struct WaveMapLayer layers[8];
 };
 
-void BabiFune_UpdateWaves(void)
+static void BabiFune_UpdateWaves(void)
 {
 	volatile u16			   blend;
 	struct FixedPointPosition  place;
@@ -234,7 +238,7 @@ void BabiFune_UpdateWaves(void)
 	}
 }
 
-s32 BabiFune_StoreLeaderHeight(void)
+static s32 BabiFune_StoreLeaderHeight(void)
 {
 	s32				  *d;
 	struct FieldActor *p;
@@ -245,7 +249,7 @@ s32 BabiFune_StoreLeaderHeight(void)
 	return 0;
 }
 
-s32 BabiFune_StoreActorOneHeight(void)
+static s32 BabiFune_StoreActorOneHeight(void)
 {
 	s32				  *p;
 	struct FieldActor *rec;
@@ -256,7 +260,7 @@ s32 BabiFune_StoreActorOneHeight(void)
 	return 0;
 }
 
-s32 BabiFune_StoreActorThreeHeight(void)
+static s32 BabiFune_StoreActorThreeHeight(void)
 {
 	s32				  *d;
 	struct FieldActor *p;
@@ -267,7 +271,7 @@ s32 BabiFune_StoreActorThreeHeight(void)
 	return 0;
 }
 
-s32 BabiFune_StoreActorTwoHeight(void)
+static s32 BabiFune_StoreActorTwoHeight(void)
 {
 	s32				  *d;
 	struct FieldActor *p;
@@ -278,7 +282,7 @@ s32 BabiFune_StoreActorTwoHeight(void)
 	return 0;
 }
 
-void Scene_RunExtendedPresentationSequence(void)
+static void Scene_RunExtendedPresentationSequence(void)
 {
 	struct MapScrollWork *scroll;
 	struct FieldActor	 *ship;
@@ -536,7 +540,7 @@ static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base)
 	return (u16)(Iwram_MulQ16(BabiFune_WaveSine[(angle >> 16) & 0xff], amplitude) / 256) + base;
 }
 
-void BabiFune_RunDeparture(void)
+static void BabiFune_RunDeparture(void)
 {
 	struct WaveMap *map;
 	s32				i;
@@ -781,7 +785,7 @@ void DisplayScroll_BuildAndSwapHBlankPage(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../../graphics/display/scroll_initialize_hblank_dma.c"
 
-void SceneEffect_LoadTablesAndStopDma0(void)
+static void SceneEffect_LoadTablesAndStopDma0(void)
 {
 	volatile u16 *reg;
 
@@ -804,7 +808,7 @@ static struct FadeSprite BabiFune_FadeSprites[24];
 static s16				 BabiFune_FadeStep;
 static s16				 BabiFune_FadeSlot;
 
-void BabiFune_StepFade(void)
+static void BabiFune_StepFade(void)
 {
 	u32 *entry;
 	u32	 tile;
@@ -845,7 +849,7 @@ void BabiFune_StepFade(void)
 		Runtime_PushSlotEntry(&BabiFune_FadeSprites[i], 255);
 }
 
-void BabiFune_ScheduleFade(void)
+static void BabiFune_ScheduleFade(void)
 {
 	u8			*buf;
 	volatile u32 fill;

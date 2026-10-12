@@ -22,6 +22,9 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void FieldScene_RunScene3c6SequenceA(void);
+
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
 	/* FAKEMATCH: forwarding inline: with this and SetOffset called directly, SceneActor_SetupActor18Event has 4 instructions different (argument load order) */
@@ -63,7 +66,7 @@ enum
 	ITEM_ICON_TILE_BYTES = 128
 };
 
-void SceneActor_SetActor23Params2And6(void)
+static void SceneActor_SetActor23Params2And6(void)
 {
 	BattleFx_RunPageEffectForSlot(0x17, 2, 6);
 }
@@ -92,7 +95,7 @@ s32 SceneData_SelectTableByFlag9a7(void)
 	return (s32)Placement_Actors;
 }
 
-void SceneActor_StartLament(s32 actor)
+static void SceneActor_StartLament(s32 actor)
 {
 	void Actor_FaceDirection();
 
@@ -109,7 +112,7 @@ void SceneActor_StartLament(s32 actor)
 	Engine_ActorEnableActionCallback(actor, (const u8 *)RariberoMachi_LamentActions);
 }
 
-void RariberoMachi_AskLeaving(s32 obj)
+static void RariberoMachi_AskLeaving(s32 obj)
 {
 	s32 msg = (s32)MsgRariberoLeavingLalivero;
 	Engine_EventSetMessage(msg);
@@ -126,7 +129,7 @@ void RariberoMachi_AskLeaving(s32 obj)
 	Engine_EventShowMessage(obj, 0);
 }
 
-void SceneActor_SetupActor18Event(void)
+static void SceneActor_SetupActor18Event(void)
 {
 
 	Engine_GameFlagSet(2491);
@@ -138,7 +141,7 @@ void SceneActor_SetupActor18Event(void)
 	Engine_EventWait(10);
 }
 
-void Scene_RunTableTransition(void)
+static void Scene_RunTableTransition(void)
 {
 	s32 no = gEventWork->touched_trigger;
 	s32 x = RariberoMachi_DoorCells[no][0];
@@ -161,7 +164,7 @@ void Scene_RunTableTransition(void)
 	Engine_EventRequestExit(no);
 }
 
-void RariberoMachi_RequestTouchedExit(void)
+static void RariberoMachi_RequestTouchedExit(void)
 {
 	struct EventWork *work = gEventWork;
 	s16				 *p = (s16 *)&work->touched_trigger;
@@ -171,7 +174,7 @@ void RariberoMachi_RequestTouchedExit(void)
 	Engine_EventRequestExit(n);
 }
 
-void Scene_RunPrimarySequence(void)
+static void Scene_RunPrimarySequence(void)
 {
 	struct FieldActor *record;
 
@@ -357,7 +360,7 @@ void Scene_RunPrimarySequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunSecondarySequence(void)
+static void FieldScene_RunSecondarySequence(void)
 {
 	struct FieldActor *record;
 
@@ -647,7 +650,7 @@ void FieldScene_RunSecondarySequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene3c6SequenceA(void)
+static void FieldScene_RunScene3c6SequenceA(void)
 {
 	Engine_EventSetMessage((s32)MsgRariberoThoughtShipWeSawAt);
 	Engine_EventWait(20);
@@ -688,7 +691,7 @@ void FieldScene_RunScene3c6SequenceA(void)
 	Event_ShowMessage(IWAN, 0);
 }
 
-void FieldScene_RunSequenceB(void)
+static void FieldScene_RunSequenceB(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgRariberoWhereGoingArentWeTaking);

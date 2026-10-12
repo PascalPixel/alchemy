@@ -30,6 +30,10 @@
 #include "objcmd.h"
 #include "iowrite.h"
 
+// 前方宣言
+static void SuharaSabaku_ApplyVisitFlagBlend(void);
+static void SuharaSabaku_ApplyAltarFlagBlend(void);
+
 extern u8 gEffectWork[];
 
 struct Selection_02000400
@@ -56,12 +60,12 @@ static u16 gSuharaSabakuShownLevel;
 
 #define EncounterPalette (*(volatile u16 *)0x0500019e)
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -78,7 +82,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -110,19 +114,19 @@ struct FieldGlobals
 
 void QueueSceneSound(s32 cue);
 
-void SceneState_SendRequest15With45(void)
+static void SceneState_SendRequest15With45(void)
 {
 	BattleFx_SetPhaseRequest(15, 45);
 }
 
-s32 SuharaSabaku_ClearActorSpriteAndCollisionFlags(u8 *obj)
+static s32 SuharaSabaku_ClearActorSpriteAndCollisionFlags(u8 *obj)
 {
 	Engine_ActorSetSpriteFlags(obj, 0);
 	((struct FieldActor *)obj)->collision_flags = 0;
 	return 0;
 }
 
-s32 SuharaSabaku_ToggleActorActive(u8 *obj)
+static s32 SuharaSabaku_ToggleActorActive(u8 *obj)
 {
 	((struct FieldActor *)obj)->active ^= 1;
 	return 1;
@@ -176,7 +180,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gSuharaSabakuPlacementsOther;
 }
 
-void SuharaSabaku_SyncSelectedActorProgress(void)
+static void SuharaSabaku_SyncSelectedActorProgress(void)
 {
 	struct Actor_02000400	  *actor;
 	struct SceneWork_02000400 *scene;
@@ -201,7 +205,7 @@ void SuharaSabaku_SyncSelectedActorProgress(void)
 	GameFlag_SetByte(0x210, progress);
 }
 
-void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
+static void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
 {
 	s32				   p10;
 	s32				   rec2;
@@ -243,32 +247,32 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
 	}
 }
 
-void FieldScene_RunActor8Step(void)
+static void FieldScene_RunActor8Step(void)
 {
 	FieldScene_RunMiddleAuxiliarySequence(8);
 }
 
-void FieldScene_RunActor9Step(void)
+static void FieldScene_RunActor9Step(void)
 {
 	FieldScene_RunMiddleAuxiliarySequence(9);
 }
 
-void FieldScene_RunActor10Step(void)
+static void FieldScene_RunActor10Step(void)
 {
 	FieldScene_RunMiddleAuxiliarySequence(10);
 }
 
-void FieldScene_RunActor11Step(void)
+static void FieldScene_RunActor11Step(void)
 {
 	FieldScene_RunMiddleAuxiliarySequence(11);
 }
 
-void FieldScene_RunActor12Step(void)
+static void FieldScene_RunActor12Step(void)
 {
 	FieldScene_RunMiddleAuxiliarySequence(12);
 }
 
-void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
+static void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
 {
 	s32				   i;
 	s32				   next_frame;
@@ -362,32 +366,32 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunLateActor8Step(void)
+static void FieldScene_RunLateActor8Step(void)
 {
 	SuharaSabaku_RestoreActorScaleAndBlend(8);
 }
 
-void FieldScene_RunLateActor9Step(void)
+static void FieldScene_RunLateActor9Step(void)
 {
 	SuharaSabaku_RestoreActorScaleAndBlend(9);
 }
 
-void FieldScene_RunLateActor10Step(void)
+static void FieldScene_RunLateActor10Step(void)
 {
 	SuharaSabaku_RestoreActorScaleAndBlend(10);
 }
 
-void FieldScene_RunLateActor11Step(void)
+static void FieldScene_RunLateActor11Step(void)
 {
 	SuharaSabaku_RestoreActorScaleAndBlend(11);
 }
 
-void FieldScene_RunLateActor12Step(void)
+static void FieldScene_RunLateActor12Step(void)
 {
 	SuharaSabaku_RestoreActorScaleAndBlend(12);
 }
 
-void FieldScene_RunActorThirteenRestoration(void)
+static void FieldScene_RunActorThirteenRestoration(void)
 {
 	struct FieldActor *record;
 
@@ -453,7 +457,7 @@ void FieldScene_RunActorThirteenRestoration(void)
 	}
 }
 
-s32 SuharaSabaku_FollowLeaderWithSparks(struct FieldActor *actor)
+static s32 SuharaSabaku_FollowLeaderWithSparks(struct FieldActor *actor)
 {
 	struct EffectOptions options;
 	struct FieldActor	*leader;
@@ -511,7 +515,7 @@ s32 SuharaSabaku_FollowLeaderWithSparks(struct FieldActor *actor)
 	return 1;
 }
 
-void PlaceActorTwelveWhenFlagClear(void)
+static void PlaceActorTwelveWhenFlagClear(void)
 {
 	if (GameFlag_IsSet(2487) == 0)
 	{
@@ -521,13 +525,13 @@ void PlaceActorTwelveWhenFlagClear(void)
 	}
 }
 
-void SuharaSabaku_EnableEffectChildOption(void)
+static void SuharaSabaku_EnableEffectChildOption(void)
 {
 	u8 *state = *(u8 **)gEffectWork;
 	((struct BattleFxScene *)state)->child_option = 1;
 }
 
-void SuharaSabaku_MeetActor(s32 a0, s32 actor)
+static void SuharaSabaku_MeetActor(s32 a0, s32 actor)
 {
 	struct GameState *state;
 
@@ -570,7 +574,7 @@ void SuharaSabaku_MeetActor(s32 a0, s32 actor)
 	Object_GetById(gGameState.selected_actor)->motion_flags = 3;
 }
 
-void SuharaSabaku_DropAndLeave(void)
+static void SuharaSabaku_DropAndLeave(void)
 {
 	s32				   other;
 	struct FieldActor *leader;
@@ -609,7 +613,7 @@ void SuharaSabaku_DropAndLeave(void)
 	}
 }
 
-void EncounterPalette_Pulse(void)
+static void EncounterPalette_Pulse(void)
 {
 	u16 phase = gFrameCount & 63;
 	s32 level;
@@ -621,7 +625,7 @@ void EncounterPalette_Pulse(void)
 	EncounterPalette = ((u32)level << 16) >> 16;
 }
 
-s32 FieldScene_RunOpeningAuxiliarySequence(void)
+static s32 FieldScene_RunOpeningAuxiliarySequence(void)
 {
 	s32 record;
 
@@ -640,7 +644,7 @@ s32 FieldScene_RunOpeningAuxiliarySequence(void)
 	}
 }
 
-s32 FieldScene_RunScene3c0SequenceA(void)
+static s32 FieldScene_RunScene3c0SequenceA(void)
 {
 	if (gGameState.scene == (s32)&SceneId_SuharaSabaku2)
 	{
@@ -701,7 +705,7 @@ s32 SuharaSabaku_RunSceneScript(void)
 	return 0;
 }
 
-void SuharaSabaku_ApplyVisitFlagBlend(void)
+static void SuharaSabaku_ApplyVisitFlagBlend(void)
 {
 	struct FieldActor *actor;
 	s32				   id;
@@ -749,7 +753,7 @@ void SuharaSabaku_ApplyVisitFlagBlend(void)
 	IO_WRITE_QUEUE_PUSH(0x04000052, ((16 - alpha) << 8) | alpha, 0x20000);
 }
 
-void SuharaSabaku_ApplyAltarFlagBlend(void)
+static void SuharaSabaku_ApplyAltarFlagBlend(void)
 {
 	struct FieldActor  *actor;
 	struct FieldSprite *sprite;

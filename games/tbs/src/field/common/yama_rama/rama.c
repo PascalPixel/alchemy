@@ -33,7 +33,7 @@ static __inline__ void Scene_AdvanceStep(s32 amount)
 	gEventWork->message += amount;
 }
 
-s32 EventScript_PrepareActorRenderFlags(union FieldObject *object)
+static s32 EventScript_PrepareActorRenderFlags(union FieldObject *object)
 {
 	object->actor.priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
 	object->actor.sprite->priority = 3;
@@ -41,7 +41,7 @@ s32 EventScript_PrepareActorRenderFlags(union FieldObject *object)
 	return 0;
 }
 
-s32 OverlayObject_SetFacingTowardObject10(void *self)
+static s32 OverlayObject_SetFacingTowardObject10(void *self)
 {
 	struct FieldActor *actor = self;
 	struct FieldActor *obj;
@@ -79,7 +79,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return YamaRama_Placements;
 }
 
-void SceneDialogue_RunMessage1958Step(void)
+static void SceneDialogue_RunMessage1958Step(void)
 {
 
 	struct EventWork *work;
@@ -103,7 +103,7 @@ void SceneDialogue_RunMessage1958Step(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor11Message195d(void)
+static void SceneDialogue_RunActor11Message195d(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgYamaDoKnowMeditation);
@@ -111,7 +111,7 @@ void SceneDialogue_RunActor11Message195d(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor13Message1961(void)
+static void SceneDialogue_RunActor13Message1961(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgYamaDidKnowMasterHamaGreatest);
@@ -119,7 +119,7 @@ void SceneDialogue_RunActor13Message1961(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunPrimaryScript(void)
+static void FieldScene_RunPrimaryScript(void)
 {
 	Event_PlayCue(188);
 	Map_AnimateCells(YamaRama_BoulderCells, 67, 6);
@@ -132,7 +132,7 @@ void FieldScene_RunPrimaryScript(void)
 	Engine_EventRequestExit(2);
 }
 
-void FieldScene_RunScene3a2SequenceA(void)
+static void FieldScene_RunScene3a2SequenceA(void)
 {
 	void Event_ShowMessageAndWait();
 
@@ -319,7 +319,7 @@ void FieldScene_RunScene3a2SequenceA(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunLine1956(void)
+static void SceneDialogue_RunLine1956(void)
 {
 
 	Engine_EventBegin();
@@ -328,7 +328,7 @@ void SceneDialogue_RunLine1956(void)
 	Engine_EventEnd();
 }
 
-void ConfigureAndPlaceActorFourteen(void)
+static void ConfigureAndPlaceActorFourteen(void)
 {
 
 	s32 a = 21, b = 9;
@@ -337,14 +337,14 @@ void ConfigureAndPlaceActorFourteen(void)
 	PlaceActor(14, 0x01580000, 0x00980000);
 }
 
-void YamaRama_ClearActorPlacement(void)
+static void YamaRama_ClearActorPlacement(void)
 {
 	Map_CopyCellAttributes(21, 73, 1, 1, 21, 9);
 	MapObject_SetPosition(100, -1, -1);
 	Actor_SetPosition(14, 0, 0);
 }
 
-void SceneDialogue_RunActorFifteenByLeaderHeading(void)
+static void SceneDialogue_RunActorFifteenByLeaderHeading(void)
 {
 
 	u32 heading = Object_GetById(0)->facing;
@@ -362,7 +362,7 @@ void SceneDialogue_RunActorFifteenByLeaderHeading(void)
 	Engine_EventEnd();
 }
 
-void Scene_RunEventTransition(void)
+static void Scene_RunEventTransition(void)
 {
 	struct FieldActor *record;
 	s32				   none;
@@ -425,7 +425,7 @@ void Scene_RunEventTransition(void)
 	}
 }
 
-void Scene_RunActorCue(void)
+static void Scene_RunActorCue(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgYamaDoDoWarriorShouldReturn);
@@ -442,7 +442,7 @@ void Scene_RunActorCue(void)
 	Engine_EventEnd();
 }
 
-void Scene_RunActorExchange(void)
+static void Scene_RunActorExchange(void)
 {
 	Engine_EventBegin();
 	Engine_EventOpenScreen();
@@ -478,7 +478,7 @@ void Scene_RunActorExchange(void)
 	GameFlag_Set(0x8b1);
 }
 
-void Scene_RunActorSequence(void)
+static void Scene_RunActorSequence(void)
 {
 
 	s32 mask;
@@ -595,7 +595,7 @@ void Scene_RunActorSequence(void)
 	Engine_EventRequestExit(6);
 }
 
-void FieldScene_RunScriptedSteps0And1A12(void)
+static void FieldScene_RunScriptedSteps0And1A12(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -603,7 +603,7 @@ void FieldScene_RunScriptedSteps0And1A12(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunPairedLayoutStepsThenSetOne(void)
+static void FieldScene_RunPairedLayoutStepsThenSetOne(void)
 {
 	{
 		s32 fifth = 1;
@@ -620,7 +620,7 @@ void FieldScene_RunPairedLayoutStepsThenSetOne(void)
 	Engine_EventWait(1);
 }
 
-void SceneState_RunRect6x28Step(void)
+static void SceneState_RunRect6x28Step(void)
 {
 	{
 		s32 fifth = 1;
@@ -637,7 +637,7 @@ void SceneState_RunRect6x28Step(void)
 	Engine_EventWait(1);
 }
 
-s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct FieldActor *actor)
+static s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct FieldActor *actor)
 {
 	if (Object_GetById(0)->y.fixed > actor->y.fixed)
 	{
@@ -649,7 +649,7 @@ s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct FieldActor *actor)
 	}
 }
 
-void SceneActor_UpdateActorFourteenByDepth(void)
+static void SceneActor_UpdateActorFourteenByDepth(void)
 {
 	struct FieldActor *current = Object_GetById(0);
 	struct FieldActor *other = Object_GetById(14);
@@ -660,7 +660,7 @@ void SceneActor_UpdateActorFourteenByDepth(void)
 	}
 }
 
-void ActorPresentation_PrepareActorFourteenWithCallback(void)
+static void ActorPresentation_PrepareActorFourteenWithCallback(void)
 {
 	u8 zero;
 
@@ -682,7 +682,7 @@ void ActorPresentation_PrepareActorFourteenWithCallback(void)
 	Engine_EventEnd();
 }
 
-void YamaRama_DisableActorCollision(void)
+static void YamaRama_DisableActorCollision(void)
 {
 	Engine_EventBegin();
 	{

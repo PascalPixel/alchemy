@@ -31,6 +31,16 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void FieldScene_RunPrimaryScriptChoreography(void);
+static void ImiruMura_CastPsynergyAtActorNine(void);
+static void FieldScene_RunScene399SequenceA(void);
+static void SceneState_UpdateZoneFlagsFromActorZero(void);
+static void SceneState_UpdateActor11WithFlag203(void);
+static void RunEventScript02(void);
+static void FieldScene_RunThreeActorChoreography(void);
+static void StagedActor_RunHeadingProbeStep(void);
+
 extern u8 gEffectWork[];
 
 #define ACTOR_FLAGS_OFFSET_020019e8 90
@@ -60,7 +70,7 @@ struct SharedData_02000240
 // 表を符号付き半語で読む見方
 extern s32 ImiruMura_ArcOrigin[];
 
-s32 OverlayObject_UpdateWobbleByCounter(struct FieldActor *obj)
+static s32 OverlayObject_UpdateWobbleByCounter(struct FieldActor *obj)
 {
 	switch (obj->timer)
 	{
@@ -93,7 +103,7 @@ s32 OverlayObject_UpdateWobbleByCounter(struct FieldActor *obj)
 	return 1;
 }
 
-s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
+static s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 {
 	s32					 delta;
 	u16					 old;
@@ -169,7 +179,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gImiruMuraPlacements;
 }
 
-void ImiruMura_RunHeadingProbe(void)
+static void ImiruMura_RunHeadingProbe(void)
 {
 	StagedActor_RunHeadingProbeStep();
 }
@@ -183,7 +193,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gImiruMuraEventsOther;
 }
 
-void SceneDialogue_RunActorEightFlagGatedDialogue(void)
+static void SceneDialogue_RunActorEightFlagGatedDialogue(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(3) != 0)
@@ -202,7 +212,7 @@ void SceneDialogue_RunActorEightFlagGatedDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_ShowLine1571Or152F(void)
+static void SceneDialogue_ShowLine1571Or152F(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(3) != 0)
@@ -217,7 +227,7 @@ void SceneDialogue_ShowLine1571Or152F(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor9Line(void)
+static void SceneDialogue_RunActor9Line(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceActor(9, ACTOR_PARTY_LEADER, 10);
@@ -226,7 +236,7 @@ void SceneDialogue_RunActor9Line(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorTenFlag881Dialogue(void)
+static void SceneDialogue_RunActorTenFlag881Dialogue(void)
 {
 	Engine_EventBegin();
 
@@ -260,7 +270,7 @@ void SceneDialogue_RunActorTenFlag881Dialogue(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunSupplementalSequenceOne(void)
+static void FieldScene_RunSupplementalSequenceOne(void)
 {
 
 	struct FieldActor *actor9_record;
@@ -321,7 +331,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 	}
 }
 
-void SceneDialogue_RunActor12Line(void)
+static void SceneDialogue_RunActor12Line(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage(MSGNO(MsgImiruDoWantWeapons));
@@ -329,7 +339,7 @@ void SceneDialogue_RunActor12Line(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor18Line(void)
+static void SceneDialogue_RunActor18Line(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage(MSGNO(MsgImiruDoWantSeeRestaurantMenu));
@@ -337,7 +347,7 @@ void SceneDialogue_RunActor18Line(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor20BranchScene(void)
+static void SceneDialogue_RunActor20BranchScene(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(3) != 0)
@@ -355,7 +365,7 @@ void SceneDialogue_RunActor20BranchScene(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor20FlaggedLine(void)
+static void SceneDialogue_RunActor20FlaggedLine(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(3) != 0)
@@ -370,7 +380,7 @@ void SceneDialogue_RunActor20FlaggedLine(void)
 	Engine_EventEnd();
 }
 
-void ImiruMura_TalkAboutLighthouse(void)
+static void ImiruMura_TalkAboutLighthouse(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage(MSGNO(MsgImiruHappenedInLighthouseNortheast));
@@ -379,7 +389,7 @@ void ImiruMura_TalkAboutLighthouse(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorEightBranchedDialogue(void)
+static void SceneDialogue_RunActorEightBranchedDialogue(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x82b) != 0)
@@ -398,12 +408,12 @@ void SceneDialogue_RunActorEightBranchedDialogue(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunSingleStep(void)
+static void FieldScene_RunSingleStep(void)
 {
 	FieldScene_RunSupplementalSequenceOne();
 }
 
-void SceneDialogue_ShowLine156E(void)
+static void SceneDialogue_ShowLine156E(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage(MSGNO(MsgImiruMuraMaryIsAGoodGirlI));
@@ -411,7 +421,7 @@ void SceneDialogue_ShowLine156E(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_ShowLine1573Or155A(void)
+static void SceneDialogue_ShowLine1573Or155A(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(3) != 0)
@@ -426,7 +436,7 @@ void SceneDialogue_ShowLine1573Or155A(void)
 	Engine_EventEnd();
 }
 
-void ImiruMura_RunExitDoor(void)
+static void ImiruMura_RunExitDoor(void)
 {
 	struct EventWork  *event;
 	struct FieldActor *actor;
@@ -477,7 +487,7 @@ void ImiruMura_RunExitDoor(void)
 	Engine_EventEnd();
 }
 
-void ImiruMura_RunWeaponShop(void)
+static void ImiruMura_RunWeaponShop(void)
 {
 	s32 dir;
 
@@ -516,7 +526,7 @@ void ImiruMura_RunWeaponShop(void)
 	}
 }
 
-void ImiruMura_RunArmorShop(void)
+static void ImiruMura_RunArmorShop(void)
 {
 	s32 dir;
 
@@ -555,7 +565,7 @@ void ImiruMura_RunArmorShop(void)
 	}
 }
 
-void ImiruMura_RunItemShop(void)
+static void ImiruMura_RunItemShop(void)
 {
 	s32 dir;
 
@@ -594,7 +604,7 @@ void ImiruMura_RunItemShop(void)
 	}
 }
 
-void ImiruMura_OpenInn(void)
+static void ImiruMura_OpenInn(void)
 {
 	struct FieldActor *leader;
 
@@ -622,7 +632,7 @@ void ImiruMura_OpenInn(void)
 	}
 }
 
-void ImiruMura_OpenSanctum(void)
+static void ImiruMura_OpenSanctum(void)
 {
 	struct FieldActor *leader;
 
@@ -812,7 +822,7 @@ s32 ImiruMura_ApplyEntryState(void)
 	return 0;
 }
 
-void FieldScene_RunPrimaryScriptChoreography(void)
+static void FieldScene_RunPrimaryScriptChoreography(void)
 {
 	struct FieldActor *leader;
 	s32				   tbl;
@@ -981,7 +991,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
 	Engine_EventEnd();
 }
 
-void SceneActor_UpdateCountdownArcPosition(T_0200154c *o)
+static void SceneActor_UpdateCountdownArcPosition(T_0200154c *o)
 {
 	s32	 buf[3];
 	s32 *b;
@@ -1011,7 +1021,7 @@ void SceneActor_UpdateCountdownArcPosition(T_0200154c *o)
 	}
 }
 
-void ImiruMura_SwayAndSpark(struct FieldActor *actor)
+static void ImiruMura_SwayAndSpark(struct FieldActor *actor)
 {
 	s32				   pos[3];
 	struct FieldActor *spark;
@@ -1046,13 +1056,13 @@ void ImiruMura_SwayAndSpark(struct FieldActor *actor)
 
 s32 __umodsi3();
 
-void ImiruMura_ShowActorNineTurnMessage(void)
+static void ImiruMura_ShowActorNineTurnMessage(void)
 {
 	Engine_ActorEnableActionCallback(9, (s32)ImiruMura_TurnScript);
 	Engine_EventShowMessage(9, 0);
 }
 
-void ImiruMura_CastPsynergyAtActorNine(void)
+static void ImiruMura_CastPsynergyAtActorNine(void)
 {
 	u8 *work;
 
@@ -1066,7 +1076,7 @@ void ImiruMura_CastPsynergyAtActorNine(void)
 	BattleEffect_CleanupSceneObjects();
 }
 
-void SceneActor_ResetActorAndCenterOffsets(struct FieldActor *work)
+static void SceneActor_ResetActorAndCenterOffsets(struct FieldActor *work)
 {
 	struct FieldSpritePriority *rec;
 
@@ -1084,7 +1094,7 @@ void SceneActor_ResetActorAndCenterOffsets(struct FieldActor *work)
 	work->scale_y = 0x8000;
 }
 
-void FieldScene_RunSupplementalSequenceTwo(union FieldObject *object)
+static void FieldScene_RunSupplementalSequenceTwo(union FieldObject *object)
 {
 	object->effect.x += (s16)object->effect.spin << 8;
 	object->effect.y += 0x8000;
@@ -1097,7 +1107,7 @@ void FieldScene_RunSupplementalSequenceTwo(union FieldObject *object)
 	}
 }
 
-void FieldScene_RunScene399SequenceA(void)
+static void FieldScene_RunScene399SequenceA(void)
 {
 	volatile u32	  *frame;
 	union FieldObject *object;
@@ -1160,7 +1170,7 @@ void FieldScene_RunScene399SequenceA(void)
 	}
 }
 
-void SceneState_UpdateZoneFlagsFromActorZero(void)
+static void SceneState_UpdateZoneFlagsFromActorZero(void)
 {
 	struct FieldActor *obj;
 	s32				   x;
@@ -1209,7 +1219,7 @@ rest:
 	return;
 }
 
-void SceneState_UpdateActor11WithFlag203(void)
+static void SceneState_UpdateActor11WithFlag203(void)
 {
 	s32 a;
 	s32 b;
@@ -1234,7 +1244,7 @@ void SceneState_UpdateActor11WithFlag203(void)
 	Engine_MapCopyCellAttributes(15, 6, 1, 1, a, b);
 }
 
-void SceneActor_SetActorZeroFacingC000AndRun(void)
+static void SceneActor_SetActorZeroFacingC000AndRun(void)
 {
 	struct FieldActor *work;
 
@@ -1247,7 +1257,7 @@ void SceneActor_SetActorZeroFacingC000AndRun(void)
 	Engine_EventRequestExit(8);
 }
 
-void RunEventScript02(void)
+static void RunEventScript02(void)
 {
 	Engine_EventBegin();
 	Engine_EventOpenScreen();
@@ -1256,7 +1266,7 @@ void RunEventScript02(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunThreeActorChoreography(void)
+static void FieldScene_RunThreeActorChoreography(void)
 {
 
 	struct FieldActor *leader;
@@ -1399,7 +1409,7 @@ void FieldScene_RunThreeActorChoreography(void)
 	Engine_EventEnd();
 }
 
-void SceneActor_TurnTowardTableAngle(s32 z)
+static void SceneActor_TurnTowardTableAngle(s32 z)
 {
 	T  *o;
 	s32 t;
@@ -1436,7 +1446,7 @@ void SceneActor_TurnTowardTableAngle(s32 z)
 	ObjectDispatch_ApplyValueToChildren(o, 0x30);
 }
 
-void StagedActor_RunHeadingProbeStep(void)
+static void StagedActor_RunHeadingProbeStep(void)
 {
 
 	struct FieldActor	*subject;

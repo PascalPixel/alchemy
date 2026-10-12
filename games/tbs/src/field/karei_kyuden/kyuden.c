@@ -20,6 +20,13 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void FieldScene_DispatchSceneByIndex(void);
+static void RunEventScript01(void);
+static void ConfigureFourSceneChannelsAndHandoff(s32 handoff);
+static void SceneChannel_ConfigureUniformAndHandoff(s32 handoff);
+static void Scene_RunPartySequence(void);
+
 static __inline__ void Scene_AdvanceStep(s32 amount)
 {
 
@@ -68,7 +75,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gKareiKyudenEventsOther;
 }
 
-void SceneDialogue_RunActor13Message1b83(void)
+static void SceneDialogue_RunActor13Message1b83(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKareiLordHammetWillReleasedSoon);
@@ -76,7 +83,7 @@ void SceneDialogue_RunActor13Message1b83(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor16Message1b88(void)
+static void SceneDialogue_RunActor16Message1b88(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgKareiHasLegacyLordHammetsSilk);
@@ -84,7 +91,7 @@ void SceneDialogue_RunActor16Message1b88(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorEightTurnDialogue(void)
+static void FieldScene_RunActorEightTurnDialogue(void)
 {
 
 	Engine_EventBegin();
@@ -101,7 +108,7 @@ void FieldScene_RunActorEightTurnDialogue(void)
 	Engine_EventEnd();
 }
 
-void KareiKyuden_LeaveThroughDoor(void)
+static void KareiKyuden_LeaveThroughDoor(void)
 {
 
 	struct EventWork *p5;
@@ -147,7 +154,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-void FieldScene_DispatchSceneByIndex(void)
+static void FieldScene_DispatchSceneByIndex(void)
 {
 	struct FieldActor *rec;
 	s32				   h;
@@ -214,7 +221,7 @@ void FieldScene_DispatchSceneByIndex(void)
 	}
 }
 
-void RunEventScript01(void)
+static void RunEventScript01(void)
 {
 
 	struct EventWork *work;
@@ -686,7 +693,7 @@ void RunEventScript01(void)
 	Engine_EventEnd();
 }
 
-void ConfigureFourSceneChannelsAndHandoff(s32 handoff)
+static void ConfigureFourSceneChannelsAndHandoff(s32 handoff)
 {
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
 	Actor_FaceDirection(1, FACING_NORTHEAST, 0);
@@ -698,7 +705,7 @@ void ConfigureFourSceneChannelsAndHandoff(s32 handoff)
 	}
 }
 
-void SceneChannel_ConfigureUniformAndHandoff(s32 handoff)
+static void SceneChannel_ConfigureUniformAndHandoff(s32 handoff)
 {
 	Actor_FaceDirection(0, FACING_NORTH, 0);
 	Actor_FaceDirection(1, FACING_NORTH, 0);
@@ -710,7 +717,7 @@ void SceneChannel_ConfigureUniformAndHandoff(s32 handoff)
 	}
 }
 
-void Scene_RunPartySequence(void)
+static void Scene_RunPartySequence(void)
 {
 
 	struct FieldActor *record;

@@ -17,7 +17,11 @@
 #include "objcmd.h"
 #include "facing_object.h"
 
-s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
+// 前方宣言
+static void FieldScene_RunLongPresentationSequence(void);
+static void Scene_UpdateTimedActor(void);
+
+static s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 {
 	s32					 delta;
 	u16					 old;
@@ -49,7 +53,7 @@ s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 	return 1;
 }
 
-s32 AdvancePositionScaleAndVelocity(ScaledMotion *motion)
+static s32 AdvancePositionScaleAndVelocity(ScaledMotion *motion)
 {
 	motion->x += motion->velocity_x << 8;
 	motion->y += motion->velocity_y << 8;
@@ -108,7 +112,7 @@ void *HaidiaHeya_SelectEvents(void)
 	return gValeHouseEvents;
 }
 
-void Villager_AskWhySukuretaCame(void)
+static void Villager_AskWhySukuretaCame(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgHaidiaSukuretaCameToStudyMt);
@@ -117,7 +121,7 @@ void Villager_AskWhySukuretaCame(void)
 	Engine_EventEnd();
 }
 
-void Villager_PlanToScareVisitors(void)
+static void Villager_PlanToScareVisitors(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgHaidiaLetsScareSukuretasVisitors);
@@ -126,7 +130,7 @@ void Villager_PlanToScareVisitors(void)
 	Engine_EventEnd();
 }
 
-void Scene_GiveFarewellHerb(void)
+static void Scene_GiveFarewellHerb(void)
 {
 	s32 gift;
 
@@ -149,7 +153,7 @@ void Scene_GiveFarewellHerb(void)
 	Engine_EventEnd();
 }
 
-void Villager_AskAboutStrangePowers(void)
+static void Villager_AskAboutStrangePowers(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgHaidiaTheCulpritsHadStrangePowers);
@@ -157,7 +161,7 @@ void Villager_AskAboutStrangePowers(void)
 	Engine_EventEnd();
 }
 
-void Villager_AskAboutDora(void)
+static void Villager_AskAboutDora(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgHaidiaDidYouHearAboutDora);
@@ -165,7 +169,7 @@ void Villager_AskAboutDora(void)
 	Engine_EventEnd();
 }
 
-void HaidiaHeya_TalkHopeDidntGetSick(void)
+static void HaidiaHeya_TalkHopeDidntGetSick(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgHaidiaHopeDidntGet);
@@ -173,7 +177,7 @@ void HaidiaHeya_TalkHopeDidntGetSick(void)
 	Engine_EventEnd();
 }
 
-void HaidiaHeya_RequestWindowExit(s32 value)
+static void HaidiaHeya_RequestWindowExit(s32 value)
 {
 	if (Engine_GameFlagIsSet(0x834) != 0)
 		BattleFx_SetBlock30ValuesMaxZero();
@@ -185,42 +189,42 @@ void HaidiaHeya_RequestWindowExit(s32 value)
 	Engine_EventRequestExit(value);
 }
 
-void FieldScene_RunIndexedStep1(void)
+static void FieldScene_RunIndexedStep1(void)
 {
 	HaidiaHeya_RequestWindowExit(1);
 }
 
-void FieldScene_RunIndexedStep2(void)
+static void FieldScene_RunIndexedStep2(void)
 {
 	HaidiaHeya_RequestWindowExit(2);
 }
 
-void FieldScene_RunIndexedStep3(void)
+static void FieldScene_RunIndexedStep3(void)
 {
 	HaidiaHeya_RequestWindowExit(3);
 }
 
-void FieldScene_RunIndexedStep4(void)
+static void FieldScene_RunIndexedStep4(void)
 {
 	HaidiaHeya_RequestWindowExit(4);
 }
 
-void FieldScene_RunIndexedStep5(void)
+static void FieldScene_RunIndexedStep5(void)
 {
 	HaidiaHeya_RequestWindowExit(5);
 }
 
-void FieldScene_RunIndexedStep6(void)
+static void FieldScene_RunIndexedStep6(void)
 {
 	HaidiaHeya_RequestWindowExit(6);
 }
 
-void FieldScene_RunIndexedStep7(void)
+static void FieldScene_RunIndexedStep7(void)
 {
 	HaidiaHeya_RequestWindowExit(7);
 }
 
-void FieldScene_RunIndexedStep8(void)
+static void FieldScene_RunIndexedStep8(void)
 {
 	HaidiaHeya_RequestWindowExit(8);
 }
@@ -282,7 +286,7 @@ s32 Scene_RunSupplementalSequenceOne(void)
 	return 0;
 }
 
-void FieldScene_RunByActorDirectionAndFlags(void)
+static void FieldScene_RunByActorDirectionAndFlags(void)
 {
 
 	struct FieldActor *p;
@@ -319,7 +323,7 @@ void FieldScene_RunByActorDirectionAndFlags(void)
 	Engine_EventEnd();
 }
 
-void HaidiaHeya_OpenArmorShop(void)
+static void HaidiaHeya_OpenArmorShop(void)
 {
 	struct FieldActor *actor;
 
@@ -351,7 +355,7 @@ void HaidiaHeya_OpenArmorShop(void)
 	}
 }
 
-void HaidiaHeya_OpenItemShop(void)
+static void HaidiaHeya_OpenItemShop(void)
 {
 	struct FieldActor *actor;
 
@@ -386,7 +390,7 @@ void HaidiaHeya_OpenItemShop(void)
 	}
 }
 
-void FieldScene_RunLongPresentationSequence(void)
+static void FieldScene_RunLongPresentationSequence(void)
 {
 	void Camera_MoveTo();
 
@@ -673,7 +677,7 @@ void FieldScene_RunLongPresentationSequence(void)
 	Engine_EventEnd();
 }
 
-void Scene_UpdateTimedActor(void)
+static void Scene_UpdateTimedActor(void)
 {
 	s32				  no;
 	u32				  phase;

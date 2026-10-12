@@ -26,6 +26,30 @@
 #include "objcmd.h"
 #include "fieldobj.h"
 
+// 前方宣言
+union PairObject;
+static void SoruFunka_RaiseAndShrinkActor(s32 a0);
+static void SoruFunka_ThrowEruptionRing(void);
+static void SceneState_InitStateWordsAndSlots(void);
+static void SoruFunka_StepEmbers(void);
+static void SceneState_UpdateRandomTimerLevel(void);
+static void Scene_RunExtendedEffectPresentation(void);
+static void SoruFunka_PlaceBeforeStar(s32 actor);
+static void SceneState_ApplyRectsByCondition(s32 a);
+static void SceneState_ApplyRectPairByFlag(s32 a);
+static void FieldScene_RunRandomHalfBranch(void);
+static void FieldScene_RunLateRandomHalfBranch(void);
+static void FieldScene_RunFourWayEffectSequence(u32 mode);
+static void SceneEffect_AdvanceTenEntryTimers(void);
+static void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b);
+static void SceneState_ConfigureEightCornerRegions(void);
+static void FieldScene_RunVariantStep(s32 a, s32 b, s32 c);
+static void FieldScene_RunStepByRuntimeBits(s32 a);
+static void SoruFunka_SpawnEffectPair(union PairObject *parent);
+static void SceneState_SetValue140Mode0(void);
+static void SoruFunka_CleanupSceneObjects(void);
+static void FieldScene_RunActor15TwoStep(void);
+
 s32 Math_RemainderUnsigned(s32 value, s32 modulus);
 
 struct EmberSprite
@@ -149,7 +173,7 @@ u8 *SceneData_GetEffectTable(void)
 	return (u8 *)Placement_Effects;
 }
 
-void Scene_SaturosTakesHostages(void)
+static void Scene_SaturosTakesHostages(void)
 {
 	void Actor_ShowEmote();
 	void ColorBuffer_ApplyTarget();
@@ -516,7 +540,7 @@ void Scene_SaturosTakesHostages(void)
 	Party_RemoveOwnerRestored(5);
 }
 
-void SoruFunka_RaiseAndShrinkActor(s32 a0)
+static void SoruFunka_RaiseAndShrinkActor(s32 a0)
 {
 	struct FieldActor *rec7;
 	struct FieldActor *recA;
@@ -559,11 +583,11 @@ void SoruFunka_RaiseAndShrinkActor(s32 a0)
 	Actor_SetPosition(8, 0, 0);
 }
 
-void Resource381_NoOpCallbackA(void)
+static void Resource381_NoOpCallbackA(void)
 {
 }
 
-void Resource381_NoOpCallbackB(void)
+static void Resource381_NoOpCallbackB(void)
 {
 }
 
@@ -577,13 +601,13 @@ s32 SoruFunka_RunHostageSceneOnEntranceTen(void)
 	return 0;
 }
 
-s32 OverlayObject_SetRecordAngleFromHeading(Ent *p)
+static s32 OverlayObject_SetRecordAngleFromHeading(Ent *p)
 {
 	*(u16 *)(p->unk50 + 30) = p->unk6 + 0x4000;
 	return 1;
 }
 
-void SoruFunka_ThrowEruptionRing(void)
+static void SoruFunka_ThrowEruptionRing(void)
 {
 	struct FieldActor  *actor;
 	struct FieldActor  *spun;
@@ -640,7 +664,7 @@ void SoruFunka_ThrowEruptionRing(void)
 	}
 }
 
-void SceneState_InitStateWordsAndSlots(void)
+static void SceneState_InitStateWordsAndSlots(void)
 {
 	s32 *p;
 	u32	 i;
@@ -656,7 +680,7 @@ void SceneState_InitStateWordsAndSlots(void)
 	}
 }
 
-void SoruFunka_StepEmbers(void)
+static void SoruFunka_StepEmbers(void)
 {
 	u8			 *work;
 	s32			  level;
@@ -754,7 +778,7 @@ void SoruFunka_StepEmbers(void)
 	}
 }
 
-void SceneState_UpdateRandomTimerLevel(void)
+static void SceneState_UpdateRandomTimerLevel(void)
 {
 	u32 v;
 
@@ -793,7 +817,7 @@ void SceneState_UpdateRandomTimerLevel(void)
 	}
 }
 
-void Scene_RunExtendedEffectPresentation(void)
+static void Scene_RunExtendedEffectPresentation(void)
 {
 	struct QuakeWork   *quake;
 	struct FieldActor  *wise_one;
@@ -1444,7 +1468,7 @@ void Scene_RunExtendedEffectPresentation(void)
 	GameFlag_Set(0x100);
 }
 
-void SoruFunka_PlaceBeforeStar(s32 actor)
+static void SoruFunka_PlaceBeforeStar(s32 actor)
 {
 	struct FieldActor *object;
 
@@ -1454,7 +1478,7 @@ void SoruFunka_PlaceBeforeStar(s32 actor)
 	Engine_ActorSetSpritePriority(actor, 3);
 }
 
-void SceneState_ApplyRectsByCondition(s32 a)
+static void SceneState_ApplyRectsByCondition(s32 a)
 {
 	if (a != 0)
 	{
@@ -1478,7 +1502,7 @@ void SceneState_ApplyRectsByCondition(s32 a)
 	Engine_MapRedraw();
 }
 
-void SceneState_ApplyRectPairByFlag(s32 a)
+static void SceneState_ApplyRectPairByFlag(s32 a)
 {
 	if (a != 0)
 	{
@@ -1497,7 +1521,7 @@ void SceneState_ApplyRectPairByFlag(s32 a)
 	Engine_MapRedraw();
 }
 
-void FieldScene_RunRandomHalfBranch(void)
+static void FieldScene_RunRandomHalfBranch(void)
 {
 	if ((gFrameCount & 1) == 0)
 	{
@@ -1512,7 +1536,7 @@ void FieldScene_RunRandomHalfBranch(void)
 	}
 }
 
-void FieldScene_RunLateRandomHalfBranch(void)
+static void FieldScene_RunLateRandomHalfBranch(void)
 {
 	if ((gFrameCount & 1) == 0)
 	{
@@ -1527,7 +1551,7 @@ void FieldScene_RunLateRandomHalfBranch(void)
 	}
 }
 
-void FieldScene_RunFourWayEffectSequence(u32 mode)
+static void FieldScene_RunFourWayEffectSequence(u32 mode)
 {
 	extern u8 *gArcEffects[];
 	void	   Actor_ShowEmote(s32, s32, s32);
@@ -1642,7 +1666,7 @@ void FieldScene_RunFourWayEffectSequence(u32 mode)
 	Engine_ColorBufferInterpolate(40);
 }
 
-void SceneEffect_AdvanceTenEntryTimers(void)
+static void SceneEffect_AdvanceTenEntryTimers(void)
 {
 #ifdef MODERN
 	// modern GCC holds one type for a name in a file
@@ -1687,7 +1711,7 @@ void SceneEffect_AdvanceTenEntryTimers(void)
 #undef gArcEffects
 #endif
 
-void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b)
+static void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b)
 {
 	Ent_02002c1c *p;
 
@@ -1712,7 +1736,7 @@ void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b)
 	Engine_TaskWait(30);
 }
 
-void SceneState_ConfigureEightCornerRegions(void)
+static void SceneState_ConfigureEightCornerRegions(void)
 {
 	s32 x;
 	s32 y;
@@ -1735,7 +1759,7 @@ void SceneState_ConfigureEightCornerRegions(void)
 	Engine_MapCopyCellAttributes(43, 28, 1, 1, v, w);
 }
 
-void FieldScene_RunVariantStep(s32 a, s32 b, s32 c)
+static void FieldScene_RunVariantStep(s32 a, s32 b, s32 c)
 {
 	if (a == 1)
 	{
@@ -1754,7 +1778,7 @@ void FieldScene_RunVariantStep(s32 a, s32 b, s32 c)
 	}
 }
 
-void FieldScene_RunStepByRuntimeBits(s32 a)
+static void FieldScene_RunStepByRuntimeBits(s32 a)
 {
 	if ((gFrameCount & 2) != 0)
 	{
@@ -1770,7 +1794,7 @@ void FieldScene_RunStepByRuntimeBits(s32 a)
 	}
 }
 
-void SceneState_ForwardByRuntimeWordBits(s32 a)
+static void SceneState_ForwardByRuntimeWordBits(s32 a)
 {
 	if (gFrameCount & 1)
 	{
@@ -1782,7 +1806,7 @@ void SceneState_ForwardByRuntimeWordBits(s32 a)
 	}
 }
 
-void Effect_AnimateVerticalPositive(union FieldObject *object)
+static void Effect_AnimateVerticalPositive(union FieldObject *object)
 {
 	struct FieldActor *self = &object->actor;
 	struct FieldActor *anchor;
@@ -1807,7 +1831,7 @@ void Effect_AnimateVerticalPositive(union FieldObject *object)
 	self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
 }
 
-void Effect_AnimateVerticalNegative(union FieldObject *object)
+static void Effect_AnimateVerticalNegative(union FieldObject *object)
 {
 	struct FieldActor *self = &object->actor;
 	struct FieldActor *anchor;
@@ -1832,7 +1856,7 @@ void Effect_AnimateVerticalNegative(union FieldObject *object)
 	self->z.fixed = anchor->z.fixed - (0x10000 - amplitude) * 5 + 0x100000;
 }
 
-void SoruFunka_SpawnEffectPair(union PairObject *parent)
+static void SoruFunka_SpawnEffectPair(union PairObject *parent)
 {
 	union PairObject   *pair[2];
 	union PairObject   *child;
@@ -1882,17 +1906,17 @@ void SoruFunka_SpawnEffectPair(union PairObject *parent)
 	}
 }
 
-void SceneState_SetValue140Mode0(void)
+static void SceneState_SetValue140Mode0(void)
 {
 	Engine_PsynergyBegin(140, 0);
 }
 
-void SoruFunka_CleanupSceneObjects(void)
+static void SoruFunka_CleanupSceneObjects(void)
 {
 	BattleEffect_CleanupSceneObjects();
 }
 
-void FieldScene_RunActor15TwoStep(void)
+static void FieldScene_RunActor15TwoStep(void)
 {
 	SceneState_ForwardByRuntimeWordBits((s32)Object_GetById(15));
 }

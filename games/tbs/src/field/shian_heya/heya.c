@@ -18,12 +18,12 @@
 #include "text/msg_ids.h"
 #include "fieldobj.h"
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -40,7 +40,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -89,7 +89,7 @@ s32 ShianHeya_SelectPlacements(void)
 	return (s32)ShianHeya_SceneTable2;
 }
 
-void SceneDialogue_RunActor14FlaggedDialogue(void)
+static void SceneDialogue_RunActor14FlaggedDialogue(void)
 {
 	u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
 	u32	 value = state[3];
@@ -114,7 +114,7 @@ void SceneDialogue_RunActor14FlaggedDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor15FlaggedDialogue(void)
+static void SceneDialogue_RunActor15FlaggedDialogue(void)
 {
 	u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
 	u32	 value = state[3];
@@ -139,7 +139,7 @@ void SceneDialogue_RunActor15FlaggedDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor16FlaggedDialogue(void)
+static void SceneDialogue_RunActor16FlaggedDialogue(void)
 {
 
 	u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
@@ -163,7 +163,7 @@ void SceneDialogue_RunActor16FlaggedDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor17FlaggedDialogue(void)
+static void SceneDialogue_RunActor17FlaggedDialogue(void)
 {
 
 	u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
@@ -189,7 +189,7 @@ void SceneDialogue_RunActor17FlaggedDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor10Dialogue(void)
+static void SceneDialogue_RunActor10Dialogue(void)
 {
 
 	Engine_EventBegin();
@@ -198,7 +198,7 @@ void SceneDialogue_RunActor10Dialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor12Dialogue(void)
+static void SceneDialogue_RunActor12Dialogue(void)
 {
 
 	Engine_EventBegin();
@@ -207,7 +207,7 @@ void SceneDialogue_RunActor12Dialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor9MotionDialogue(void)
+static void SceneDialogue_RunActor9MotionDialogue(void)
 {
 
 	Engine_EventBegin();

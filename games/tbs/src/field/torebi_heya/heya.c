@@ -37,7 +37,7 @@ s32 TorebiHeya_SelectPlacements(void)
 }
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-void SceneDialogue_AskBabiWasMissing(s32 subject)
+static void SceneDialogue_AskBabiWasMissing(s32 subject)
 {
 	s32 msg;
 
@@ -70,7 +70,7 @@ u8 *TorebiHeya_SelectEvents(void)
 	return Data_02009310;
 }
 
-void TorebiHeya_StartWindowTransition(void)
+static void TorebiHeya_StartWindowTransition(void)
 {
 	struct EventWork *state = gEventWork;
 
@@ -79,7 +79,7 @@ void TorebiHeya_StartWindowTransition(void)
 	((void (*)(void))Engine_EventRequestExit)();
 }
 
-void FieldScene_RunPrimarySequence(void)
+static void FieldScene_RunPrimarySequence(void)
 {
 	u32				   i;
 	struct FieldActor *record;
@@ -105,7 +105,7 @@ void FieldScene_RunPrimarySequence(void)
 	Engine_EventRequestExit(*(s16 *)p6);
 }
 
-void FieldScene_RunScene3b6SequenceA(void)
+static void FieldScene_RunScene3b6SequenceA(void)
 {
 	s32 rec7;
 
@@ -165,7 +165,7 @@ void FieldScene_RunScene3b6SequenceA(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorsThirtyOneToThirtyThreeChoreography(void)
+static void FieldScene_RunActorsThirtyOneToThirtyThreeChoreography(void)
 {
 
 	Engine_EventBegin();
@@ -242,7 +242,7 @@ s32 Scene_InitFacingActors(void)
 	return 0;
 }
 
-void SceneDialogue_RunFacingPrompt(s32 no)
+static void SceneDialogue_RunFacingPrompt(s32 no)
 {
 	struct FieldActor *actor = Object_GetById(0);
 	s32				   msg;
@@ -278,7 +278,7 @@ void SceneDialogue_RunFacingPrompt(s32 no)
 	}
 }
 
-void SceneDialogue_RunFacingActionPrompt(s32 no)
+static void SceneDialogue_RunFacingActionPrompt(s32 no)
 {
 	struct FieldActor *actor = Object_GetById(0);
 	s32				   msg;
@@ -317,7 +317,7 @@ void SceneDialogue_RunFacingActionPrompt(s32 no)
 	}
 }
 
-void SceneDialogue_RunFacingAction(s32 no)
+static void SceneDialogue_RunFacingAction(s32 no)
 {
 	struct FieldActor *actor = Object_GetById(0);
 	if ((u16)((actor->facing + 0x2000) & ~0x3fff) == 0xc000)
@@ -344,7 +344,7 @@ void SceneDialogue_RunFacingAction(s32 no)
 	}
 }
 
-void SceneDialogue_AskWatchingColosso(s32 subject)
+static void SceneDialogue_AskWatchingColosso(s32 subject)
 {
 	s32 message;
 
@@ -367,7 +367,7 @@ void SceneDialogue_AskWatchingColosso(s32 subject)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorLine23a1(s32 no)
+static void SceneDialogue_RunActorLine23a1(s32 no)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiGrrrChefInBadMood);
@@ -375,7 +375,7 @@ void SceneDialogue_RunActorLine23a1(s32 no)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_AskStay(s32 subject)
+static void SceneDialogue_AskStay(s32 subject)
 {
 	s32 msg;
 
@@ -398,7 +398,7 @@ void SceneDialogue_AskStay(s32 subject)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunExcitedLines(s32 a0)
+static void SceneDialogue_RunExcitedLines(s32 a0)
 {
 	s32 msg;
 
@@ -436,7 +436,7 @@ void SceneDialogue_RunExcitedLines(s32 a0)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor25FlaggedLine(void)
+static void SceneDialogue_RunActor25FlaggedLine(void)
 {
 
 	Engine_EventBegin();
@@ -452,7 +452,7 @@ void SceneDialogue_RunActor25FlaggedLine(void)
 	Engine_EventEnd();
 }
 
-void TorebiHeya_ComplainAboutScam(s32 a0)
+static void TorebiHeya_ComplainAboutScam(s32 a0)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiGrrrScamWhyWontThey);
@@ -461,7 +461,7 @@ void TorebiHeya_ComplainAboutScam(s32 a0)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_AskRememberWarrior(s32 subject)
+static void SceneDialogue_AskRememberWarrior(s32 subject)
 {
 	s32 message;
 
@@ -484,7 +484,7 @@ void SceneDialogue_AskRememberWarrior(s32 subject)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunFacingMessage(s32 no)
+static void SceneDialogue_RunFacingMessage(s32 no)
 {
 
 	struct FieldActor *actor = Object_GetById(0);

@@ -1,7 +1,6 @@
 #include "battle_effect_runtime.h"
 #include "unit/import.h"
 #include "unit/field/korima_magari/magari.h"
-#include "unit/field/common/map/panel.h"
 #include "unit/field/common/korima/palette.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
@@ -28,6 +27,12 @@
 #include "text/msg_ids.h"
 #include "field_scene.h"
 
+// 前方宣言
+struct IcePlacement;
+static void State_ApplyRectByLayoutSelector(void);
+static void KorimaMagari_PlaceObjects(struct IcePlacement *entry);
+static void Scene_PushBlockAlongRun(struct TileRun2 *runs);
+
 u8 *KorimaMagari_GetEntrances(void)
 {
 	return gKorimaMagariEntrances;
@@ -53,7 +58,7 @@ u8 *KorimaMagari_GetEvents(void)
 	return gKorimaMagariEvents;
 }
 
-void KorimaMagari_RedrawBoard(void)
+static void KorimaMagari_RedrawBoard(void)
 {
 	Scene_PushBlockAlongRun(gKorimaMagariRecords);
 	Engine_MapCopyCellAttributes(0, 0x40, 0x20, 0x20, 0, 0);
@@ -61,7 +66,7 @@ void KorimaMagari_RedrawBoard(void)
 	State_ApplyRectByLayoutSelector();
 }
 
-void KorimaMagari_TryJumpForward(void)
+static void KorimaMagari_TryJumpForward(void)
 {
 	Field_TryJumpForward();
 }
@@ -91,7 +96,7 @@ struct TileRun2
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/map/panel.c"
 
-void State_ApplyRectByLayoutSelector(void)
+static void State_ApplyRectByLayoutSelector(void)
 {
 	if (*(s16 *)gKorimaMagariReturned == 1)
 	{
@@ -103,7 +108,7 @@ void State_ApplyRectByLayoutSelector(void)
 	}
 }
 
-void Scene_RepaintBoardRecords(void)
+static void Scene_RepaintBoardRecords(void)
 {
 	struct FieldActor *piece;
 	s16				  *record = gKorimaMagariRecords;
@@ -177,7 +182,7 @@ void Scene_RepaintBoardRecords(void)
 	State_ApplyRectByLayoutSelector();
 }
 
-void State_UpdateScrollRegistersWithPreset(void)
+static void State_UpdateScrollRegistersWithPreset(void)
 {
 	u16			  line;
 	u32			 *source;
@@ -201,7 +206,7 @@ void State_UpdateScrollRegistersWithPreset(void)
 	*destination = *source;
 }
 
-void KorimaMagari_CaptureShakeScroll(void)
+static void KorimaMagari_CaptureShakeScroll(void)
 {
 	u32		  *dst;
 	const u32 *src;
@@ -218,7 +223,7 @@ void KorimaMagari_CaptureShakeScroll(void)
 	p[5] += 0xb0;
 }
 
-void Scene_RunKorimaMagariSequence(void)
+static void Scene_RunKorimaMagariSequence(void)
 {
 	s32 v5;
 	s32 v3;
@@ -328,7 +333,7 @@ L_02000626:;
 	Engine_EventEnd();
 }
 
-void KorimaMagari_RunReturnSequence(void)
+static void KorimaMagari_RunReturnSequence(void)
 {
 	s32 v5;
 
@@ -356,7 +361,7 @@ void KorimaMagari_RunReturnSequence(void)
 	Engine_EventEnd();
 }
 
-void KorimaMagari_RunDepartSequence(void)
+static void KorimaMagari_RunDepartSequence(void)
 {
 	s32 v5;
 
@@ -416,7 +421,7 @@ s32 KorimaMagari_SetupBoard(void)
 	return 0;
 }
 
-void KorimaMagari_PlaceObjects(struct IcePlacement *entry)
+static void KorimaMagari_PlaceObjects(struct IcePlacement *entry)
 {
 	struct FieldActor *actor;
 	s32				   height;
@@ -476,7 +481,7 @@ void State_StampRecordCells(s16 *records, s32 value)
 	} while (record[0] != -1);
 }
 
-const struct TileRun *SceneData_FindTileRunAt(const struct TileRun *run, s32 x, s32 y)
+static const struct TileRun *SceneData_FindTileRunAt(const struct TileRun *run, s32 x, s32 y)
 {
 	while (run->id != -1)
 	{
@@ -497,7 +502,7 @@ const struct TileRun *SceneData_FindTileRunAt(const struct TileRun *run, s32 x, 
 	return 0;
 }
 
-s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode)
+static s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode)
 {
 	s32 i;
 
@@ -522,7 +527,7 @@ s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode)
 	return 0;
 }
 
-void Scene_PushBlockAlongRun(struct TileRun2 *runs)
+static void Scene_PushBlockAlongRun(struct TileRun2 *runs)
 {
 	struct FieldActor *actor;
 	struct TileRun2	  *run;

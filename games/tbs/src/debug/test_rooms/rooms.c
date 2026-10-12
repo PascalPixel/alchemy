@@ -34,25 +34,25 @@ u8 *TestRooms_GetPlacements(void)
 	return (u8 *)TestRooms_Placements;
 }
 
-void State_ApplyValues8And0And0Then30(void)
+static void State_ApplyValues8And0And0Then30(void)
 {
 	BattleFx_RunPageEffectForSlot(8, 0, 0);
 	Engine_GameFlagClear(0x30);
 }
 
-void State_ApplyValues9And1And0Then44(void)
+static void State_ApplyValues9And1And0Then44(void)
 {
 	BattleFx_RunPageEffectForSlot(9, 1, 0);
 	Engine_GameFlagClear(0x44);
 }
 
-void State_ApplyValues10And2And0Then58(void)
+static void State_ApplyValues10And2And0Then58(void)
 {
 	BattleFx_RunPageEffectForSlot(0xA, 2, 0);
 	Engine_GameFlagClear(0x58);
 }
 
-void State_ApplyValues11And3And0Then6c(void)
+static void State_ApplyValues11And3And0Then6c(void)
 {
 	BattleFx_RunPageEffectForSlot(0xB, 3, 0);
 	Engine_GameFlagClear(0x6C);

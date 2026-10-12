@@ -32,6 +32,14 @@
 #include "ability_ids.h"
 #include "iowrite.h"
 
+// 前方宣言
+static void TorebiIzumi_RiseAndFadeIn(void);
+static void TorebiIzumi_OfferLuckyWheels(s32 spoken);
+static s32 TorebiIzumi_RunSpringGame(void);
+static s32 SceneDialogue_PickTopicVariantId(s32 topic);
+static void SceneState_InitFourActorRecordsAndInstallTask(void);
+static s32 TorebiIzumi_RunSpringRide(s32 side);
+
 struct SpringPoint
 {
 	s32 x;
@@ -98,7 +106,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gTorebiIzumiPlacementsOther;
 }
 
-void TorebiIzumi_AskForLuckyMedal(s32 object)
+static void TorebiIzumi_AskForLuckyMedal(s32 object)
 {
 	s32 question = (s32)MsgTorebiLuckyMedal;
 	Engine_EventSetMessage(question);
@@ -115,7 +123,7 @@ void TorebiIzumi_AskForLuckyMedal(s32 object)
 	Engine_EventShowMessage(object, 0);
 }
 
-void TorebiIzumi_AskIfFirstTime(s32 object)
+static void TorebiIzumi_AskIfFirstTime(s32 object)
 {
 	s32 question = (s32)MsgTorebiYerFirstTime;
 	Engine_EventSetMessage(question);
@@ -132,7 +140,7 @@ void TorebiIzumi_AskIfFirstTime(s32 object)
 	Engine_EventShowMessage(object, 0);
 }
 
-void TorebiIzumi_WalkLeaderToSpring(void)
+static void TorebiIzumi_WalkLeaderToSpring(void)
 {
 	s32 leader = gGameState.selected_actor;
 
@@ -148,7 +156,7 @@ void TorebiIzumi_WalkLeaderToSpring(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunMessage0e34(void)
+static void SceneDialogue_RunMessage0e34(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiLuckyWheelsRulesPullLever);
@@ -156,7 +164,7 @@ void SceneDialogue_RunMessage0e34(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunMessage0e35(void)
+static void SceneDialogue_RunMessage0e35(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgTorebiLuckyWheelsPrizesPrizesDetermined);
@@ -164,7 +172,7 @@ void SceneDialogue_RunMessage0e35(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunIndexedStep0(void)
+static void FieldScene_RunIndexedStep0(void)
 {
 	TorebiIzumi_OfferLuckyWheels(0);
 }
@@ -306,7 +314,7 @@ s32 TorebiIzumi_OpenScene(void)
 	return 0;
 }
 
-void TorebiIzumi_RevealPrize(s32 item)
+static void TorebiIzumi_RevealPrize(s32 item)
 {
 	Engine_EventBegin();
 	Engine_EventWait(30);
@@ -411,7 +419,7 @@ void TorebiIzumi_RevealPrize(s32 item)
 	Engine_EventEnd();
 }
 
-void TorebiIzumi_RiseAndFadeIn(void)
+static void TorebiIzumi_RiseAndFadeIn(void)
 {
 	u8		  *p = gMapWork[0];
 	const u16 *step;
@@ -433,7 +441,7 @@ void TorebiIzumi_RiseAndFadeIn(void)
 	}
 }
 
-void TorebiIzumi_OfferLuckyWheels(s32 spoken)
+static void TorebiIzumi_OfferLuckyWheels(s32 spoken)
 {
 	s32 tickets = PartyInventory_CountItem(228);
 	s32 room;
@@ -502,7 +510,7 @@ play:
 	Party_SetFields1ceAnd1d0((s32)&SceneId_TorebiIzumi1, 12);
 }
 
-void TorebiIzumi_PayToPlay(void)
+static void TorebiIzumi_PayToPlay(void)
 {
 	u32 cost;
 	u32 coins;
@@ -558,7 +566,7 @@ void TorebiIzumi_PayToPlay(void)
 #define TOSS_WIDTH 10
 #endif
 
-s32 TorebiIzumi_RunSpringGame(void)
+static s32 TorebiIzumi_RunSpringGame(void)
 {
 	s32				  choice = 0;
 	s32				  text;
@@ -840,7 +848,7 @@ struct Half
 	u16 v;
 };
 
-s32 SceneDialogue_PickTopicVariantId(s32 topic)
+static s32 SceneDialogue_PickTopicVariantId(s32 topic)
 {
 	s32 cursor;
 	s32 variant;
@@ -864,7 +872,7 @@ s32 SceneDialogue_PickTopicVariantId(s32 topic)
 	return TorebiIzumi_TopicIds[topic * 3 + variant];
 }
 
-void TorebiIzumi_PlaceActor(s32 id, s32 *pos, s32 dir, s32 palette, s32 value)
+static void TorebiIzumi_PlaceActor(s32 id, s32 *pos, s32 dir, s32 palette, s32 value)
 {
 	u8 *actor = (u8 *)Object_GetById(id);
 	u8 *sprite;
@@ -909,7 +917,7 @@ void TorebiIzumi_PlaceActor(s32 id, s32 *pos, s32 dir, s32 palette, s32 value)
 	}
 }
 
-void TorebiIzumi_SetActorActive(s32 arg0, s32 arg1)
+static void TorebiIzumi_SetActorActive(s32 arg0, s32 arg1)
 {
 	struct FieldActor *entry = Object_GetById(arg0);
 
@@ -933,7 +941,7 @@ static s32 TorebiIzumi_RideFrame;
 static s32 TorebiIzumi_RideEnded;
 static s32 TorebiIzumi_RideResult;
 
-void FieldScene_RunSecondaryScript(void)
+static void FieldScene_RunSecondaryScript(void)
 {
 	struct SpringRide  *ride;
 	struct SpringActor *rec;
@@ -1400,7 +1408,7 @@ void FieldScene_RunSecondaryScript(void)
 	}
 }
 
-void SceneState_InitFourActorRecordsAndInstallTask(void)
+static void SceneState_InitFourActorRecordsAndInstallTask(void)
 {
 	struct SpringRide *ride = &TorebiIzumi_Ride;
 	s32				   i = 0;
@@ -1451,7 +1459,7 @@ void SceneState_InitFourActorRecordsAndInstallTask(void)
 	}
 }
 
-s32 TorebiIzumi_RunSpringRide(s32 side)
+static s32 TorebiIzumi_RunSpringRide(s32 side)
 {
 	struct SpringRide *ride;
 

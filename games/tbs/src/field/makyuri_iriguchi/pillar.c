@@ -97,7 +97,7 @@ struct AnchoredEffect
 	struct EffectAnchor *f104;
 };
 
-s32 SceneEffect_AdvanceAnchoredRiseFrame(struct AnchoredEffect *work)
+static s32 SceneEffect_AdvanceAnchoredRiseFrame(struct AnchoredEffect *work)
 {
 	struct EffectAnchor *src = work->f104;
 	s16					 step = ++work->f100;
@@ -117,7 +117,7 @@ s32 SceneEffect_AdvanceAnchoredRiseFrame(struct AnchoredEffect *work)
 	return 1;
 }
 
-s32 OverlayObject_RampWords24And28Over16Frames(struct FieldActor *o)
+static s32 OverlayObject_RampWords24And28Over16Frames(struct FieldActor *o)
 {
 	u16 *c = &o->timer;
 	s16	 n;
@@ -133,7 +133,7 @@ s32 OverlayObject_RampWords24And28Over16Frames(struct FieldActor *o)
 	return 1;
 }
 
-s32 OverlayObject_AdvanceScaleCounter(struct FieldActor *o)
+static s32 OverlayObject_AdvanceScaleCounter(struct FieldActor *o)
 {
 	u16 *c = &o->timer;
 	s16	 n;
@@ -149,7 +149,7 @@ s32 OverlayObject_AdvanceScaleCounter(struct FieldActor *o)
 	return 1;
 }
 
-s32 Makyuri_FollowLeader(struct FieldActor *actor)
+static s32 Makyuri_FollowLeader(struct FieldActor *actor)
 {
 	struct FieldActor	*leader;
 	struct FollowSprite *sprite;
@@ -200,7 +200,7 @@ s32 Makyuri_FollowLeader(struct FieldActor *actor)
 	return 1;
 }
 
-void MakyuriHeya_SpawnSparkPair(void)
+static void MakyuriHeya_SpawnSparkPair(void)
 {
 	struct SpawnPoint  *point;
 	struct FieldActor  *spark;

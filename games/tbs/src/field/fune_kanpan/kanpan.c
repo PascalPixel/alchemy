@@ -25,9 +25,46 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void FuneKanpan_ConfrontCrewman(void);
+static void FuneKanpan_ApplyEntryState(void);
+static void FuneKanpan_PlaceRandomDeckActors(void);
+static void SceneActor_PlaceActors20To27(void);
+static void FuneKanpan_SetupRaisedCrewman(void);
+static void FuneKanpan_SetupDeckCrewman(void);
+static void FuneKanpan_PlaceDeckActors(void);
+static void FuneKanpan_SetupHiddenLeaderDeparture(void);
+static void FuneKanpan_SetupVisibleLeaderDeparture(void);
+static void FuneKanpan_AnnouncePreparationsReady(s32 a0, s32 a1);
+static void FieldScene_RunActorTwentyDialogueSequence(void);
+static void FieldScene_RunShipDeckEventScript(void);
+static void FuneKanpan_RunDeckCrewScene(void);
+static void FieldScene_RunActorSequence(void);
+static void FuneKanpan_RunJumpScene(void);
+static void FieldScene_ConfigureLeadActors(void);
+static void FieldScene_ConfigureThreeActors(void);
+static void FieldScene_RunPartyRosterScene(void);
+static s32 SceneState_FindFirstSetFlagOfGroup(u32 sel);
+static void FuneKanpan_RockDeck(void);
+static void SceneEffect_InitSlotsEightToNineteen(void);
+static void OverlayObject_ActivateSlotWithMode3(s32 a);
+static void FuneKanpan_ChooseSlotModes(void);
+static s32 SceneData_SelectTableEntryByFlagGroup(u32 sel);
+static void SceneState_ConfigureEntries8Through19(void);
+static void SceneEffect_AdvanceSlotByValueBand(s32 actor, s32 slot);
+static void SceneEffect_SelectSlotValueAndPosition(s32 id, s32 slot, s32 flags);
+static void SceneState_InitActorSlots8To19(void);
+static void SceneState_ApplyFiveRectsAtColumn78(void);
+static void DialogueLayout_ConfigureTwoRegions(void);
+static void FieldScene_RunStepThen10(s32 a);
+static void FieldScene_CallPairWith10(s32 a, s32 b);
+static void FuneKanpan_ArriveAtTolbi(void);
+static void FuneKanpan_RunRobinTalk(void);
+static void FuneKanpan_PlaceLeaderOnDeck(void);
+
 // 戦闘開始の種類 (battle/party/party.c と同じ)
 
-s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
+static s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
 {
 	s32 Math_RemainderUnsigned(s32, s16);
 	switch (actor->timer)
@@ -55,7 +92,7 @@ s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
 	return 1;
 }
 
-s32 SceneState_ApplyArgMode1AndReturnZero(s32 a)
+static s32 SceneState_ApplyArgMode1AndReturnZero(s32 a)
 {
 	Engine_ActorSetSpriteFlags(a, 1);
 	return 0;
@@ -74,7 +111,7 @@ struct HoverGull
 
 #define GULL(obj) ((struct HoverGull *)(obj))
 
-s32 FuneKanpan_UpdateHoverGullA(struct FieldActor *obj)
+static s32 FuneKanpan_UpdateHoverGullA(struct FieldActor *obj)
 {
 	if (GULL(obj)->step != 0)
 	{
@@ -174,7 +211,7 @@ s32 FuneKanpan_UpdateHoverGullA(struct FieldActor *obj)
 	return 1;
 }
 
-s32 FuneKanpan_UpdateHoverGullB(struct FieldActor *obj)
+static s32 FuneKanpan_UpdateHoverGullB(struct FieldActor *obj)
 {
 	if (GULL(obj)->step != 0)
 	{
@@ -305,7 +342,7 @@ static s32 FuneKanpan_DeckSpare;
 
 static s32 FuneKanpan_LayerSpeed[2];
 
-s32 SceneActor_OscillateHeightBetweenLimits(struct FieldActor *actor)
+static s32 SceneActor_OscillateHeightBetweenLimits(struct FieldActor *actor)
 {
 	s16 *flag = (s16 *)&actor->work;
 	s32	 val;
@@ -332,7 +369,7 @@ done:
 	return 1;
 }
 
-s32 SceneActor_SetFacingFromSample(struct FieldActor *actor)
+static s32 SceneActor_SetFacingFromSample(struct FieldActor *actor)
 {
 	u32 v = ((u32)(Engine_RandomNext() << 5)) >> 16;
 
@@ -349,7 +386,7 @@ s32 SceneActor_SetFacingFromSample(struct FieldActor *actor)
 	return 1;
 }
 
-s32 FuneKanpan_UpdateFlyByForActor21(struct FieldActor *obj)
+static s32 FuneKanpan_UpdateFlyByForActor21(struct FieldActor *obj)
 {
 	switch (obj->timer)
 	{
@@ -431,7 +468,7 @@ s32 FuneKanpan_UpdateFlyByForActor21(struct FieldActor *obj)
 	return 1;
 }
 
-s32 FuneKanpan_UpdateFlyByForActor22(struct FieldActor *obj)
+static s32 FuneKanpan_UpdateFlyByForActor22(struct FieldActor *obj)
 {
 	switch (obj->timer)
 	{
@@ -513,14 +550,14 @@ s32 FuneKanpan_UpdateFlyByForActor22(struct FieldActor *obj)
 	return 1;
 }
 
-s32 FuneKanpan_RandomlyStartActorHop(struct FieldActor *actor)
+static s32 FuneKanpan_RandomlyStartActorHop(struct FieldActor *actor)
 {
 	if ((((u32)(Engine_RandomNext() * 40)) >> 16) == 0)
 		actor->velocity_y = 0x40000;
 	return 1;
 }
 
-void OverlayObject_DecayFields24And28(struct FieldActor *actor)
+static void OverlayObject_DecayFields24And28(struct FieldActor *actor)
 {
 	if (actor->scale_x > 0x10000)
 	{
@@ -529,7 +566,7 @@ void OverlayObject_DecayFields24And28(struct FieldActor *actor)
 	}
 }
 
-s32 FuneKanpan_IdleTurn(struct FieldActor *actor)
+static s32 FuneKanpan_IdleTurn(struct FieldActor *actor)
 {
 	if (actor->rise_counter != 0)
 	{
@@ -611,7 +648,7 @@ u8 *FuneKanpan_GetEvents(void)
 	return gFuneKanpanEvents;
 }
 
-void FieldScene_RunOpeningAuxiliarySequence(void)
+static void FieldScene_RunOpeningAuxiliarySequence(void)
 {
 	struct FieldActor *rec7;
 	s32				   record;
@@ -647,7 +684,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene3afSequenceA(void)
+static void FieldScene_RunScene3afSequenceA(void)
 {
 	struct FieldActor *rec7;
 	s32				   record;
@@ -683,7 +720,7 @@ void FieldScene_RunScene3afSequenceA(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor21Line(void)
+static void SceneDialogue_RunActor21Line(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgFuneHeadedColosso);
@@ -691,7 +728,7 @@ void SceneDialogue_RunActor21Line(void)
 	Engine_EventEnd();
 }
 
-void FuneKanpan_OpenFirstDoor(void)
+static void FuneKanpan_OpenFirstDoor(void)
 {
 	if (GameFlag_IsSet(0x271) == 0)
 	{
@@ -701,7 +738,7 @@ void FuneKanpan_OpenFirstDoor(void)
 	}
 }
 
-void FuneKanpan_OpenSecondDoor(void)
+static void FuneKanpan_OpenSecondDoor(void)
 {
 	if (GameFlag_IsSet(0x272) == 0)
 	{
@@ -711,7 +748,7 @@ void FuneKanpan_OpenSecondDoor(void)
 	}
 }
 
-void FuneKanpan_RunDeckStateEvent(void)
+static void FuneKanpan_RunDeckStateEvent(void)
 {
 
 	s32				  v5;
@@ -746,7 +783,7 @@ void FuneKanpan_RunDeckStateEvent(void)
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
-void FuneKanpan_RunDeckStateEventFromEntry(void)
+static void FuneKanpan_RunDeckStateEventFromEntry(void)
 {
 	if ((u16)(Object_GetById(ACTOR_PARTY_LEADER)->facing - 0x6001) <= 0x3ffe)
 	{
@@ -758,7 +795,7 @@ void FuneKanpan_RunDeckStateEventFromEntry(void)
 }
 #endif
 
-void FieldScene_RunActorAndEffectPresentationSetup(void)
+static void FieldScene_RunActorAndEffectPresentationSetup(void)
 {
 	struct FieldActor *record;
 
@@ -873,7 +910,7 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
 	}
 }
 
-void FuneKanpan_WatchCrewmanLeaveRight(void)
+static void FuneKanpan_WatchCrewmanLeaveRight(void)
 {
 	u8 bits;
 
@@ -920,7 +957,7 @@ void FuneKanpan_WatchCrewmanLeaveRight(void)
 	}
 }
 
-void FuneKanpan_WatchCrewmanLeaveLeft(void)
+static void FuneKanpan_WatchCrewmanLeaveLeft(void)
 {
 	u8 bits;
 
@@ -967,7 +1004,7 @@ void FuneKanpan_WatchCrewmanLeaveLeft(void)
 	}
 }
 
-void FuneKanpan_ConfrontCrewman(void)
+static void FuneKanpan_ConfrontCrewman(void)
 {
 	Camera_SetSpeed(0x19999, 0x3333);
 	Camera_MoveTo(0xd80000, -1, 0x3380000, 1);
@@ -1010,7 +1047,7 @@ s32 FuneKanpan_ResetDeck(void)
 	return 0;
 }
 
-void FuneKanpan_ApplyEntryState(void)
+static void FuneKanpan_ApplyEntryState(void)
 {
 	s32 flag;
 
@@ -1130,7 +1167,7 @@ void FuneKanpan_ApplyEntryState(void)
 	}
 }
 
-void FuneKanpan_PlaceRandomDeckActors(void)
+static void FuneKanpan_PlaceRandomDeckActors(void)
 {
 	s32				   Math_RemainderUnsigned(s32, s16);
 	struct FieldActor *actor;
@@ -1172,7 +1209,7 @@ void FuneKanpan_PlaceRandomDeckActors(void)
 	}
 }
 
-void SceneActor_PlaceActors20To27(void)
+static void SceneActor_PlaceActors20To27(void)
 {
 	s32 m = 0xA0;
 
@@ -1203,7 +1240,7 @@ void SceneActor_PlaceActors20To27(void)
 	Engine_ActorSetPosition(20, 0, 0);
 }
 
-void FuneKanpan_SetupRaisedCrewman(void)
+static void FuneKanpan_SetupRaisedCrewman(void)
 {
 	struct FieldActor *record;
 	u8				   bits;
@@ -1240,7 +1277,7 @@ void FuneKanpan_SetupRaisedCrewman(void)
 	Engine_EventEnd();
 }
 
-void FuneKanpan_SetupDeckCrewman(void)
+static void FuneKanpan_SetupDeckCrewman(void)
 {
 	struct FieldActor *record;
 
@@ -1270,7 +1307,7 @@ void FuneKanpan_SetupDeckCrewman(void)
 	Engine_EventEnd();
 }
 
-void FuneKanpan_PlaceDeckActors(void)
+static void FuneKanpan_PlaceDeckActors(void)
 {
 	struct FieldActor *record;
 	s32				   v5;
@@ -1309,7 +1346,7 @@ void FuneKanpan_PlaceDeckActors(void)
 	Engine_EventEnd();
 }
 
-void FuneKanpan_SetupHiddenLeaderDeparture(void)
+static void FuneKanpan_SetupHiddenLeaderDeparture(void)
 {
 	struct FieldActor *record;
 
@@ -1343,7 +1380,7 @@ void FuneKanpan_SetupHiddenLeaderDeparture(void)
 	FuneKanpan_AnnouncePreparationsReady(23, 21);
 }
 
-void FuneKanpan_SetupVisibleLeaderDeparture(void)
+static void FuneKanpan_SetupVisibleLeaderDeparture(void)
 {
 	struct FieldActor *record;
 
@@ -1381,7 +1418,7 @@ void FuneKanpan_SetupVisibleLeaderDeparture(void)
 	FuneKanpan_AnnouncePreparationsReady(20, 23);
 }
 
-void FuneKanpan_AnnouncePreparationsReady(s32 a0, s32 a1)
+static void FuneKanpan_AnnouncePreparationsReady(s32 a0, s32 a1)
 {
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	Engine_EventOpenScreen();
@@ -1408,7 +1445,7 @@ void FuneKanpan_AnnouncePreparationsReady(s32 a0, s32 a1)
 	Engine_EventRequestExit(10);
 }
 
-void FieldScene_RunActorTwentyDialogueSequence(void)
+static void FieldScene_RunActorTwentyDialogueSequence(void)
 {
 	Engine_EventBegin();
 	Event_CallWithLastActiveObjectId((s32)FuneKanpan_CrewScript);
@@ -1431,7 +1468,7 @@ void FieldScene_RunActorTwentyDialogueSequence(void)
 	Engine_EventRequestExit(11);
 }
 
-void FieldScene_RunShipDeckEventScript(void)
+static void FieldScene_RunShipDeckEventScript(void)
 {
 	s32 v;
 
@@ -1494,7 +1531,7 @@ void FieldScene_RunShipDeckEventScript(void)
 	Engine_EventRequestExit(12);
 }
 
-void FuneKanpan_RunDeckCrewScene(void)
+static void FuneKanpan_RunDeckCrewScene(void)
 {
 
 	Engine_EventBegin();
@@ -1580,7 +1617,7 @@ void FuneKanpan_RunDeckCrewScene(void)
 	Engine_EventRequestExit(13);
 }
 
-void FieldScene_RunActorSequence(void)
+static void FieldScene_RunActorSequence(void)
 {
 	struct FieldActor *rec8;
 	struct FieldActor *record;
@@ -1703,7 +1740,7 @@ void FieldScene_RunActorSequence(void)
 	Engine_EventRequestExit(14);
 }
 
-void FuneKanpan_RunJumpScene(void)
+static void FuneKanpan_RunJumpScene(void)
 {
 	struct FieldActor *actor;
 
@@ -1813,7 +1850,7 @@ void FuneKanpan_RunJumpScene(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_ConfigureLeadActors(void)
+static void FieldScene_ConfigureLeadActors(void)
 {
 	struct FieldActor *record;
 
@@ -1869,7 +1906,7 @@ void FieldScene_ConfigureLeadActors(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_ConfigureThreeActors(void)
+static void FieldScene_ConfigureThreeActors(void)
 {
 	struct FieldActor *record;
 
@@ -1907,7 +1944,7 @@ void FieldScene_ConfigureThreeActors(void)
 	Engine_EventRequestExit(15);
 }
 
-void FieldScene_RunPartyRosterScene(void)
+static void FieldScene_RunPartyRosterScene(void)
 {
 	s32				   roster[4];
 	s32				   matched[4];
@@ -2146,7 +2183,7 @@ scene:
 	Engine_EventEnd();
 }
 
-s32 SceneState_FindFirstSetFlagOfGroup(u32 sel)
+static s32 SceneState_FindFirstSetFlagOfGroup(u32 sel)
 {
 	s32 v = 0;
 	s32 id = 23;
@@ -2177,7 +2214,7 @@ s32 SceneState_FindFirstSetFlagOfGroup(u32 sel)
 	return 0;
 }
 
-void FuneKanpan_RockDeck(void)
+static void FuneKanpan_RockDeck(void)
 {
 	struct MapWork	*map = gMapWork[0];
 	s32				*camera = map->camera;
@@ -2212,7 +2249,7 @@ void FuneKanpan_RockDeck(void)
 
 s32 FuneKanpan_SlotDepth[8];
 
-void SceneEffect_InitSlotsEightToNineteen(void)
+static void SceneEffect_InitSlotsEightToNineteen(void)
 {
 	Object_GetById(8)->collision_flags = 0;
 	Object_GetById(9)->collision_flags = 0;
@@ -2245,7 +2282,7 @@ void SceneEffect_InitSlotsEightToNineteen(void)
 	FuneKanpan_ChooseSlotModes();
 }
 
-void OverlayObject_ActivateSlotWithMode3(s32 a)
+static void OverlayObject_ActivateSlotWithMode3(s32 a)
 {
 	struct FieldActor *p = Object_GetById(a);
 
@@ -2271,7 +2308,7 @@ struct SlotSprite
 	s16 tilt;
 };
 
-void FuneKanpan_ChooseSlotModes(void)
+static void FuneKanpan_ChooseSlotModes(void)
 {
 	u32 *mode = FuneKanpan_SlotMode;
 	u32	 i;
@@ -2306,7 +2343,7 @@ void FuneKanpan_ChooseSlotModes(void)
 	FuneKanpan_SlotMode[7] = 3;
 }
 
-s32 SceneData_SelectTableEntryByFlagGroup(u32 sel)
+static s32 SceneData_SelectTableEntryByFlagGroup(u32 sel)
 {
 	s32 base = 0;
 	u32 i;
@@ -2334,7 +2371,7 @@ s32 SceneData_SelectTableEntryByFlagGroup(u32 sel)
 	return 0;
 }
 
-void SceneState_ConfigureEntries8Through19(void)
+static void SceneState_ConfigureEntries8Through19(void)
 {
 	SceneEffect_AdvanceSlotByValueBand(8, 0);
 	FuneKanpan_SlotPhase[0] = 0;
@@ -2354,7 +2391,7 @@ void SceneState_ConfigureEntries8Through19(void)
 	SceneEffect_SelectSlotValueAndPosition(19, 7, 1);
 }
 
-void SceneEffect_AdvanceSlotByValueBand(s32 actor, s32 slot)
+static void SceneEffect_AdvanceSlotByValueBand(s32 actor, s32 slot)
 {
 	u16 value = FuneKanpan_SlotValue[slot];
 
@@ -2380,7 +2417,7 @@ void SceneEffect_AdvanceSlotByValueBand(s32 actor, s32 slot)
 	}
 }
 
-void SceneEffect_SelectSlotValueAndPosition(s32 id, s32 slot, s32 flags)
+static void SceneEffect_SelectSlotValueAndPosition(s32 id, s32 slot, s32 flags)
 {
 	struct FieldActor *actor = Object_GetById(id);
 	struct SlotSprite *sprite = (struct SlotSprite *)actor->sprite;
@@ -2422,7 +2459,7 @@ void SceneEffect_SelectSlotValueAndPosition(s32 id, s32 slot, s32 flags)
 	}
 }
 
-void SceneState_InitActorSlots8To19(void)
+static void SceneState_InitActorSlots8To19(void)
 {
 	struct FieldActor *actor;
 	u32				   i;
@@ -2493,7 +2530,7 @@ void SceneState_InitActorSlots8To19(void)
 	SceneEffect_SelectSlotValueAndPosition(19, 7, 3);
 }
 
-void SceneState_ApplyFiveRectsAtColumn78(void)
+static void SceneState_ApplyFiveRectsAtColumn78(void)
 {
 	Engine_MapCopyCellsTo(78, 39, 78, 40, 5, 1);
 	Engine_MapCopyCellsTo(78, 39, 78, 41, 5, 1);
@@ -2507,24 +2544,24 @@ void SceneState_ApplyFiveRectsAtColumn78(void)
 	}
 }
 
-void DialogueLayout_ConfigureTwoRegions(void)
+static void DialogueLayout_ConfigureTwoRegions(void)
 {
 	Engine_MapCopyCellsTo(66, 61, 64, 40, 5, 4);
 	Engine_MapCopyCellAttributes(0, 0, 5, 4, 5, 39);
 }
 
-void FieldScene_RunStepThen10(s32 a)
+static void FieldScene_RunStepThen10(s32 a)
 {
 	Engine_EventShowMessage(a, 0);
 	Engine_EventWait(10);
 }
 
-void FieldScene_CallPairWith10(s32 a, s32 b)
+static void FieldScene_CallPairWith10(s32 a, s32 b)
 {
 	Engine_ActorFaceDirection(a, b, 10);
 }
 
-void FuneKanpan_ArriveAtTolbi(void)
+static void FuneKanpan_ArriveAtTolbi(void)
 {
 	Engine_EventBegin();
 	FuneKanpan_LayerScroll[0] = 0x40000;
@@ -2590,7 +2627,7 @@ void FuneKanpan_ArriveAtTolbi(void)
 	Engine_EventRequestExit(16);
 }
 
-void FieldScene_RunThreeActorEncounter(void)
+static void FieldScene_RunThreeActorEncounter(void)
 {
 	struct FieldActor *leader;
 	u8				   bits;
@@ -2691,7 +2728,7 @@ void FieldScene_RunThreeActorEncounter(void)
 	Engine_EventEnd();
 }
 
-void FuneKanpan_RunRobinTalk(void)
+static void FuneKanpan_RunRobinTalk(void)
 {
 	Engine_EventBegin();
 	Event_CallWithLastActiveObjectId(FuneKanpan_ClosingCrewScript);
@@ -2772,7 +2809,7 @@ void FuneKanpan_RunRobinTalk(void)
 	Engine_EventRequestExit(17);
 }
 
-void FuneKanpan_PlaceLeaderOnDeck(void)
+static void FuneKanpan_PlaceLeaderOnDeck(void)
 {
 	struct FieldActor *record;
 

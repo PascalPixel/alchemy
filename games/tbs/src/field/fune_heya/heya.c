@@ -29,9 +29,53 @@
 #include "item_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void FuneHeya_TurnActorToOpenSide(s32 a0);
+static s32 SceneActor_CheckBucketOffsetPoint(s32 bucket);
+static s32 SceneState_ApplyLevelFromFlags(void);
+static void FieldScene_RunPrimarySequence(s32 a0, s32 a1, s32 a2);
+static void FieldScene_RunExtendedActorChoreography(void);
+static void FuneHeya_ApplyFlaggedLayout(void);
+static void SceneState_RunFlagGatedSetupCascade(void);
+static void RunSceneSelectionChain(void);
+static void SceneActor_SetFlagBit3ForActors28To35(void);
+static void FieldScene_RunFourActorCoordinatePresentation(void);
+static void FuneHeya_CastOff(void);
+static void FuneHeya_AnnounceDeparture(void);
+static void FuneHeya_CallActorSixteenToRow(void);
+static void FuneHeya_CallActorEighteenToRow(void);
+static void FieldScene_RunFlagBranchedSetupCascade(void);
+static void FuneHeya_AskAboutMonsters(void);
+static void FuneHeya_AnnounceTurn(void);
+static void FuneHeya_SetupFirstRowingPair(void);
+static void FieldScene_RunActors24And25Setup(void);
+static void Scene_RunConditionalActorPresentation(s32 a0);
+static struct FieldActor *FuneHeya_PlaceAnchorCharm(void);
+static void FieldScene_InstallFlaggedActors10To17(u8 *src);
+static void FieldScene_RunStepThen10(s32 a);
+static void FieldScene_CallPairWith10(s32 a, u16 b);
+static void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d);
+static void ConfigureSceneMotionFlags(s32 x, s32 y, s32 z, u32 flags);
+static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt);
+static s32 FuneHeya_FindFirstSetFlag(u32 group, s32 alternate);
+static void SceneState_ApplyActor8FourFlags(void);
+static void SceneActor_RunFirstMatchingSlot(s32 a0, s32 a1);
+static void FuneHeya_SetupReplacementRower(void);
+static void FieldScene_RunPositionTransferPresentation(void);
+static void FieldScene_RunFormationAndEffectPresentation(void);
+static void FieldScene_RunActors24And25SetupWithValue929(void);
+static void FuneHeya_SetupReplacementPair(void);
+static void FieldScene_RunActors24And25SetupWithValue92a(void);
+static void FieldScene_RunExtendedFormationPresentation(void);
+static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2);
+static void RunActorsEightAndNineMapEvent(void);
+static void Scene_RunFourActorProgressPresentation(void);
+static void FuneHeya_DismissReplacementRowers(void);
+static void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b);
+
 // 戦闘開始の種類 (battle/party/party.c と同じ)
 
-s32 ResetStagedActorState(struct StagedActor *actor)
+static s32 ResetStagedActorState(struct StagedActor *actor)
 {
 	Object_SetMode(actor, 1);
 	actor->x.value = 0;
@@ -45,7 +89,7 @@ s32 ResetStagedActorState(struct StagedActor *actor)
 	return 0;
 }
 
-s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor)
+static s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor)
 {
 	s16 vertical_motion_direction;
 	s32 descending_y;
@@ -75,7 +119,7 @@ s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor)
 	return 1;
 }
 
-s32 StagedActor_SetAngleByKind(struct FieldActor *o)
+static s32 StagedActor_SetAngleByKind(struct FieldActor *o)
 {
 	u32 v = (u32)(((s32 (*)(u8 *o))Engine_RandomNext)(o) << 6) >> 16;
 
@@ -92,7 +136,7 @@ s32 StagedActor_SetAngleByKind(struct FieldActor *o)
 	return 1;
 }
 
-void FuneHeya_AdvanceWalkerAfterRise(u8 *o)
+static void FuneHeya_AdvanceWalkerAfterRise(u8 *o)
 {
 	u8 *p = &((struct FieldActor *)o)->rise_counter;
 	s32 n = *p + 1;
@@ -104,7 +148,7 @@ void FuneHeya_AdvanceWalkerAfterRise(u8 *o)
 	}
 }
 
-s32 StagedActor_CountdownUntilPositionUnset(struct FieldActor *o)
+static s32 StagedActor_CountdownUntilPositionUnset(struct FieldActor *o)
 {
 	s32 n = o->rise_base_y;
 
@@ -131,7 +175,7 @@ struct Walker
 	s16 step;
 };
 
-void FuneHeya_RunWalkerStep(struct FieldActor *obj)
+static void FuneHeya_RunWalkerStep(struct FieldActor *obj)
 {
 	struct FieldActor *leader;
 	struct Walker	  *walker;
@@ -206,7 +250,7 @@ void FuneHeya_RunWalkerStep(struct FieldActor *obj)
 	}
 }
 
-void UpdateActorNineEffectMode(struct FieldActor *record)
+static void UpdateActorNineEffectMode(struct FieldActor *record)
 {
 	struct FieldActor *actor;
 
@@ -233,7 +277,7 @@ void UpdateActorNineEffectMode(struct FieldActor *record)
 	}
 }
 
-s32 StagedActor_SetReadyState(struct FieldActor *work)
+static s32 StagedActor_SetReadyState(struct FieldActor *work)
 {
 	struct FieldSprite *rec = work->sprite;
 
@@ -424,7 +468,7 @@ u8 *SceneData_SelectTableBySceneIndexAndFlags(void)
 	return FuneHeya_SceneTable04;
 }
 
-void FuneHeya_AskToSeeCaptain(void)
+static void FuneHeya_AskToSeeCaptain(void)
 {
 	Engine_EventBegin();
 	Battle_ResetEffectCounter();
@@ -458,7 +502,7 @@ L_020006ea:;
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor12Line(void)
+static void SceneDialogue_RunActor12Line(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgFuneYouCameAskCaptainSet);
@@ -466,7 +510,7 @@ void SceneDialogue_RunActor12Line(void)
 	Engine_EventEnd();
 }
 
-void FuneHeya_TalkCaptainStatus(void)
+static void FuneHeya_TalkCaptainStatus(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x928) != 0)
@@ -500,7 +544,7 @@ void FuneHeya_TalkCaptainStatus(void)
 	Engine_EventEnd();
 }
 
-void FuneHeya_AskAboutWarriors(void)
+static void FuneHeya_AskAboutWarriors(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x925) != 0)
@@ -531,7 +575,7 @@ L_0200088e:;
 	Engine_EventEnd();
 }
 
-void SceneDialogue_ShowLine1E19Or1D50(void)
+static void SceneDialogue_ShowLine1E19Or1D50(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x925) != 0)
@@ -547,7 +591,7 @@ void SceneDialogue_ShowLine1E19Or1D50(void)
 	Engine_EventEnd();
 }
 
-void SceneState_RunFlagBranchedActor8Setup(void)
+static void SceneState_RunFlagBranchedActor8Setup(void)
 {
 	if (Engine_GameFlagIsSet(0x300) != 0)
 	{
@@ -586,7 +630,7 @@ void SceneState_RunFlagBranchedActor8Setup(void)
 	}
 }
 
-void SceneDialogue_RunActorTenFlaggedDialogue(void)
+static void SceneDialogue_RunActorTenFlaggedDialogue(void)
 {
 	if (Engine_GameFlagIsSet(0x300) != 0)
 	{
@@ -625,7 +669,7 @@ void SceneDialogue_RunActorTenFlaggedDialogue(void)
 	}
 }
 
-void FieldScene_RunActor11FlagDialogue(void)
+static void FieldScene_RunActor11FlagDialogue(void)
 {
 	if (Engine_GameFlagIsSet(0x8A0) != 0)
 	{
@@ -673,7 +717,7 @@ void FieldScene_RunActor11FlagDialogue(void)
 	}
 }
 
-void FieldScene_RunScene3b1SequenceA(void)
+static void FieldScene_RunScene3b1SequenceA(void)
 {
 	s32				   rec7;
 	struct FieldActor *record;
@@ -739,7 +783,7 @@ L_02000c9a:;
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b1SequenceB(void)
+static void FieldScene_RunScene3b1SequenceB(void)
 {
 	s32				   rec7;
 	struct FieldActor *record;
@@ -805,7 +849,7 @@ L_02000de0:;
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorThirteenFlag300Branch(void)
+static void SceneDialogue_RunActorThirteenFlag300Branch(void)
 {
 	if (Engine_GameFlagIsSet(0x300) != 0)
 	{
@@ -844,7 +888,7 @@ void SceneDialogue_RunActorThirteenFlag300Branch(void)
 	}
 }
 
-void FieldScene_RunFlag300BranchDialogue(void)
+static void FieldScene_RunFlag300BranchDialogue(void)
 {
 	if (Engine_GameFlagIsSet(0x300) != 0)
 	{
@@ -883,7 +927,7 @@ void FieldScene_RunFlag300BranchDialogue(void)
 	}
 }
 
-void FieldScene_RunActor15FlagDialogue(void)
+static void FieldScene_RunActor15FlagDialogue(void)
 {
 	if (Engine_GameFlagIsSet(0x300) != 0)
 	{
@@ -922,7 +966,7 @@ void FieldScene_RunActor15FlagDialogue(void)
 	}
 }
 
-void FieldScene_RunActor16FlagDialogue(void)
+static void FieldScene_RunActor16FlagDialogue(void)
 {
 	s32				   obj;
 	struct FieldActor *actor;
@@ -967,7 +1011,7 @@ void FieldScene_RunActor16FlagDialogue(void)
 	}
 }
 
-struct FieldActor *FindActorNearPosition(s32 x, s32 y)
+static struct FieldActor *FindActorNearPosition(s32 x, s32 y)
 {
 	struct EventWork   *work;
 	struct FieldActor **actor;
@@ -999,7 +1043,7 @@ struct FieldActor *FindActorNearPosition(s32 x, s32 y)
 	return 0;
 }
 
-void FuneHeya_TurnActorToOpenSide(s32 a0)
+static void FuneHeya_TurnActorToOpenSide(s32 a0)
 {
 	s32				   p10;
 	struct FieldActor *rec4;
@@ -1076,7 +1120,7 @@ static __inline__ void SetPose(u8 *rec, s32 pose)
 
 extern struct EventWork *gEventWork;
 
-s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
+static s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
 {
 	struct FieldActor *obj = Object_GetById(0);
 	u32				   ofs = FuneHeya_TurnSteps[bucket];
@@ -1103,7 +1147,7 @@ s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
 	return 1;
 }
 
-s32 SceneState_ApplyLevelFromFlags(void)
+static s32 SceneState_ApplyLevelFromFlags(void)
 {
 	s32 ret = 0;
 
@@ -1123,7 +1167,7 @@ s32 SceneState_ApplyLevelFromFlags(void)
 	return FuneHeya_FindFirstSetFlag(ret, 1);
 }
 
-void SceneDialogue_ShowLine1ECETo1ED0(void)
+static void SceneDialogue_ShowLine1ECETo1ED0(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92c))
@@ -1136,7 +1180,7 @@ void SceneDialogue_ShowLine1ECETo1ED0(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor19TwoFlagLineA(void)
+static void SceneDialogue_RunActor19TwoFlagLineA(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92d))
@@ -1149,7 +1193,7 @@ void SceneDialogue_RunActor19TwoFlagLineA(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor20TwoFlagLine(void)
+static void SceneDialogue_RunActor20TwoFlagLine(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92e))
@@ -1162,7 +1206,7 @@ void SceneDialogue_RunActor20TwoFlagLine(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_ShowLine1ED1Or1ED2(void)
+static void SceneDialogue_ShowLine1ED1Or1ED2(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92f))
@@ -1173,7 +1217,7 @@ void SceneDialogue_ShowLine1ED1Or1ED2(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor22TwoFlagLine(void)
+static void SceneDialogue_RunActor22TwoFlagLine(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x930))
@@ -1186,7 +1230,7 @@ void SceneDialogue_RunActor22TwoFlagLine(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor23BranchedDialogue(void)
+static void SceneDialogue_RunActor23BranchedDialogue(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x931))
@@ -1199,7 +1243,7 @@ void SceneDialogue_RunActor23BranchedDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor24BranchedDialogue(void)
+static void SceneDialogue_RunActor24BranchedDialogue(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x932))
@@ -1212,7 +1256,7 @@ void SceneDialogue_RunActor24BranchedDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor25FlaggedLine(void)
+static void SceneDialogue_RunActor25FlaggedLine(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x933))
@@ -1223,7 +1267,7 @@ void SceneDialogue_RunActor25FlaggedLine(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor18TwoFlagLine(void)
+static void SceneDialogue_RunActor18TwoFlagLine(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92c))
@@ -1236,7 +1280,7 @@ void SceneDialogue_RunActor18TwoFlagLine(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor19TwoFlagLineB(void)
+static void SceneDialogue_RunActor19TwoFlagLineB(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92d))
@@ -1249,7 +1293,7 @@ void SceneDialogue_RunActor19TwoFlagLineB(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_ShowLine1EDBTo1EDDActor20(void)
+static void SceneDialogue_ShowLine1EDBTo1EDDActor20(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92e))
@@ -1262,7 +1306,7 @@ void SceneDialogue_ShowLine1EDBTo1EDDActor20(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor21FlaggedLine(void)
+static void SceneDialogue_RunActor21FlaggedLine(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x92f))
@@ -1273,7 +1317,7 @@ void SceneDialogue_RunActor21FlaggedLine(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor22BranchedDialogue(void)
+static void SceneDialogue_RunActor22BranchedDialogue(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x930))
@@ -1286,7 +1330,7 @@ void SceneDialogue_RunActor22BranchedDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_ShowLine1EDBTo1EDDActor23(void)
+static void SceneDialogue_ShowLine1EDBTo1EDDActor23(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x931))
@@ -1299,7 +1343,7 @@ void SceneDialogue_ShowLine1EDBTo1EDDActor23(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_ShowLine1EDBTo1EDDActor24(void)
+static void SceneDialogue_ShowLine1EDBTo1EDDActor24(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x932))
@@ -1312,7 +1356,7 @@ void SceneDialogue_ShowLine1EDBTo1EDDActor24(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_ShowLine1EDEOr1EDF(void)
+static void SceneDialogue_ShowLine1EDEOr1EDF(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x933))
@@ -1323,7 +1367,7 @@ void SceneDialogue_ShowLine1EDEOr1EDF(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunPrimarySequence(s32 a0, s32 a1, s32 a2)
+static void FieldScene_RunPrimarySequence(s32 a0, s32 a1, s32 a2)
 {
 	struct FieldActor *record;
 
@@ -1352,7 +1396,7 @@ void FieldScene_RunPrimarySequence(s32 a0, s32 a1, s32 a2)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b1SequenceC(void)
+static void FieldScene_RunScene3b1SequenceC(void)
 {
 	struct FieldActor *leader;
 
@@ -1403,7 +1447,7 @@ void FieldScene_RunScene3b1SequenceC(void)
 	}
 }
 
-void FuneHeya_RunFlagBranchSequence(void)
+static void FuneHeya_RunFlagBranchSequence(void)
 {
 
 	Engine_EventBegin();
@@ -1434,7 +1478,7 @@ void FuneHeya_RunFlagBranchSequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene3b1SequenceD(void)
+static void FieldScene_RunScene3b1SequenceD(void)
 {
 	if (GameFlag_IsSet(0x301) != 0)
 	{
@@ -1448,7 +1492,7 @@ void FieldScene_RunScene3b1SequenceD(void)
 	}
 }
 
-void FieldScene_RunFlagGatedThreeActorSetup(void)
+static void FieldScene_RunFlagGatedThreeActorSetup(void)
 {
 	if (Engine_GameFlagIsSet(0x922) == 0)
 		return;
@@ -1481,7 +1525,7 @@ void FieldScene_RunFlagGatedThreeActorSetup(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunThreeActorPresentation(void)
+static void FieldScene_RunThreeActorPresentation(void)
 {
 	s32 request_a;
 	s32 request_b;
@@ -1607,7 +1651,7 @@ void FieldScene_RunThreeActorPresentation(void)
 	}
 }
 
-void FieldScene_RunExtendedActorChoreography(void)
+static void FieldScene_RunExtendedActorChoreography(void)
 {
 	s32 request_a;
 	s32 request_b;
@@ -1848,7 +1892,7 @@ void FieldScene_RunExtendedActorChoreography(void)
 	GameFlag_Set(0x921);
 }
 
-void FieldScene_RunBranchingActorPresentation(void)
+static void FieldScene_RunBranchingActorPresentation(void)
 {
 	struct FieldActor *record;
 	s32				   request_a;
@@ -2287,7 +2331,7 @@ s32 FuneHeya_ApplyEntryState(void)
 	return 0;
 }
 
-void FuneHeya_ApplyFlaggedLayout(void)
+static void FuneHeya_ApplyFlaggedLayout(void)
 {
 	struct FieldActor *actor;
 	struct FieldActor *other;
@@ -2353,7 +2397,7 @@ void FuneHeya_ApplyFlaggedLayout(void)
 	}
 }
 
-void SceneState_RunFlagGatedSetupCascade(void)
+static void SceneState_RunFlagGatedSetupCascade(void)
 {
 	if (Engine_GameFlagIsSet(0x93e) != 0)
 	{
@@ -2399,7 +2443,7 @@ void SceneState_RunFlagGatedSetupCascade(void)
 	}
 }
 
-void RunSceneSelectionChain(void)
+static void RunSceneSelectionChain(void)
 {
 	Engine_TaskWait(1);
 	SceneActor_SetFlagBit3ForActors28To35();
@@ -2464,7 +2508,7 @@ void RunSceneSelectionChain(void)
 	}
 }
 
-void SceneActor_SetFlagBit3ForActors28To35(void)
+static void SceneActor_SetFlagBit3ForActors28To35(void)
 {
 	u32 i;
 	u32 bit;
@@ -2481,7 +2525,7 @@ void SceneActor_SetFlagBit3ForActors28To35(void)
 	}
 }
 
-void FuneHeya_PlaceFoundActors(s32 gated)
+static void FuneHeya_PlaceFoundActors(s32 gated)
 {
 	s32 actor;
 
@@ -2523,7 +2567,7 @@ void FuneHeya_PlaceFoundActors(s32 gated)
 	}
 }
 
-void FieldScene_RunFourActorCoordinatePresentation(void)
+static void FieldScene_RunFourActorCoordinatePresentation(void)
 {
 	struct FieldActor *record;
 	s32				   mode;
@@ -2653,7 +2697,7 @@ void FieldScene_RunFourActorCoordinatePresentation(void)
 	GameFlag_Set(0x926);
 }
 
-void FuneHeya_CastOff(void)
+static void FuneHeya_CastOff(void)
 {
 	s32 rec7;
 
@@ -2681,7 +2725,7 @@ void FuneHeya_CastOff(void)
 	FieldScene_RunSceneStep(9, 11, 0);
 }
 
-void FuneHeya_AnnounceDeparture(void)
+static void FuneHeya_AnnounceDeparture(void)
 {
 	Engine_EventBegin();
 	FieldScene_RunSceneStep(15, 1, 1);
@@ -2692,7 +2736,7 @@ void FuneHeya_AnnounceDeparture(void)
 	FieldScene_RunSceneStep(9, 11, 0);
 }
 
-void FuneHeya_CallActorSixteenToRow(void)
+static void FuneHeya_CallActorSixteenToRow(void)
 {
 	Engine_EventBegin();
 	FieldScene_RunSceneStep(24, 0, 0);
@@ -2711,7 +2755,7 @@ void FuneHeya_CallActorSixteenToRow(void)
 	FieldScene_RunSceneStep(9, 12, 0);
 }
 
-void FuneHeya_CallActorEighteenToRow(void)
+static void FuneHeya_CallActorEighteenToRow(void)
 {
 	Engine_EventBegin();
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -2729,7 +2773,7 @@ void FuneHeya_CallActorEighteenToRow(void)
 	FieldScene_RunSceneStep(9, 12, 0);
 }
 
-void FieldScene_RunFlagBranchedSetupCascade(void)
+static void FieldScene_RunFlagBranchedSetupCascade(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(9, 5);
@@ -2786,7 +2830,7 @@ void FieldScene_RunFlagBranchedSetupCascade(void)
 	}
 }
 
-void FuneHeya_AskAboutMonsters(void)
+static void FuneHeya_AskAboutMonsters(void)
 {
 	Engine_EventBegin();
 	FieldScene_RunSceneStep(15, 1, 1);
@@ -2799,7 +2843,7 @@ void FuneHeya_AskAboutMonsters(void)
 	FieldScene_RunSceneStep(9, 14, 0);
 }
 
-void FuneHeya_AnnounceTurn(void)
+static void FuneHeya_AnnounceTurn(void)
 {
 	Engine_EventBegin();
 	Camera_MoveTo(-1, -1, -1, 0);
@@ -2812,7 +2856,7 @@ void FuneHeya_AnnounceTurn(void)
 	FieldScene_RunSceneStep(9, 15, 0);
 }
 
-void FuneHeya_SetupFirstRowingPair(void)
+static void FuneHeya_SetupFirstRowingPair(void)
 {
 	s32 base5_200e8e4;
 
@@ -2834,7 +2878,7 @@ void FuneHeya_SetupFirstRowingPair(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActors24And25Setup(void)
+static void FieldScene_RunActors24And25Setup(void)
 {
 	Engine_EventBegin();
 	FieldScene_RunSceneStep(24, 1, 0);
@@ -2845,7 +2889,7 @@ void FieldScene_RunActors24And25Setup(void)
 	Engine_EventEnd();
 }
 
-void Scene_RunConditionalActorPresentation(s32 a0)
+static void Scene_RunConditionalActorPresentation(s32 a0)
 {
 	s32				   rec7;
 	struct FieldActor *record;
@@ -2967,7 +3011,7 @@ void Scene_RunConditionalActorPresentation(s32 a0)
 L_02004592:;
 }
 
-struct FieldActor *FuneHeya_PlaceAnchorCharm(void)
+static struct FieldActor *FuneHeya_PlaceAnchorCharm(void)
 {
 	s32					set = GameFlag_IsSet(0x200);
 	struct FieldActor  *object;
@@ -2994,7 +3038,7 @@ struct FieldActor *FuneHeya_PlaceAnchorCharm(void)
 	return object;
 }
 
-void FieldScene_InstallFlaggedActors10To17(u8 *src)
+static void FieldScene_InstallFlaggedActors10To17(u8 *src)
 {
 	if (Engine_GameFlagIsSet(0x928) != 0)
 	{
@@ -3052,7 +3096,7 @@ void FieldScene_InstallFlaggedActors10To17(u8 *src)
 	FieldScene_RunSceneStep(6, 17, src);
 }
 
-void FuneHeya_PoseSceneActor(s32 id)
+static void FuneHeya_PoseSceneActor(s32 id)
 {
 	switch (id)
 	{
@@ -3086,24 +3130,24 @@ void FuneHeya_PoseSceneActor(s32 id)
 	}
 }
 
-void FieldScene_RunStepThen10(s32 a)
+static void FieldScene_RunStepThen10(s32 a)
 {
 	Engine_EventShowMessage(a, 0);
 	Engine_EventWait(10);
 }
 
-void FieldScene_CallPairWith10(s32 a, u16 b)
+static void FieldScene_CallPairWith10(s32 a, u16 b)
 {
 	Engine_ActorFaceDirection(a, b, 10);
 }
 
-void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d)
+static void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d)
 {
 	((void (*)())Engine_ActorSetPosition)(a, b << 16, c << 16, d);
 	Object_GetById(a)->facing = d;
 }
 
-void ConfigureSceneMotionFlags(s32 x, s32 y, s32 z, u32 flags)
+static void ConfigureSceneMotionFlags(s32 x, s32 y, s32 z, u32 flags)
 {
 	u32 selected;
 
@@ -3116,7 +3160,7 @@ void ConfigureSceneMotionFlags(s32 x, s32 y, s32 z, u32 flags)
 	Engine_EventWait(selected);
 }
 
-void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
+static void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 {
 	u32 slot;
 
@@ -3407,7 +3451,7 @@ void FieldScene_RunSceneStep(s32 step, u32 arg, u32 opt)
 	}
 }
 
-s32 FuneHeya_FindFirstSetFlag(u32 group, s32 alternate)
+static s32 FuneHeya_FindFirstSetFlag(u32 group, s32 alternate)
 {
 	s32 flag = 0;
 	s32 id = 8;
@@ -3442,7 +3486,7 @@ s32 FuneHeya_FindFirstSetFlag(u32 group, s32 alternate)
 	return 0;
 }
 
-void SceneState_ApplyActor8FourFlags(void)
+static void SceneState_ApplyActor8FourFlags(void)
 {
 	SceneActor_RunFirstMatchingSlot(8, 0x92c);
 	SceneActor_RunFirstMatchingSlot(8, 0x935);
@@ -3450,7 +3494,7 @@ void SceneState_ApplyActor8FourFlags(void)
 	SceneActor_RunFirstMatchingSlot(8, 0x990);
 }
 
-void SceneActor_RunFirstMatchingSlot(s32 a0, s32 a1)
+static void SceneActor_RunFirstMatchingSlot(s32 a0, s32 a1)
 {
 	unsigned int i = 0;
 
@@ -3467,7 +3511,7 @@ void SceneActor_RunFirstMatchingSlot(s32 a0, s32 a1)
 	} while (i <= 8);
 }
 
-void FuneHeya_SetupReplacementRower(void)
+static void FuneHeya_SetupReplacementRower(void)
 {
 	s32 rec8;
 	s32 base5_200e840;
@@ -3491,7 +3535,7 @@ void FuneHeya_SetupReplacementRower(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunPositionTransferPresentation(void)
+static void FieldScene_RunPositionTransferPresentation(void)
 {
 	struct FieldActor *record;
 	s32				   message;
@@ -3556,7 +3600,7 @@ void FieldScene_RunPositionTransferPresentation(void)
 	GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
 }
 
-void FieldScene_RunFormationAndEffectPresentation(void)
+static void FieldScene_RunFormationAndEffectPresentation(void)
 {
 	s32 action;
 
@@ -3650,7 +3694,7 @@ void FieldScene_RunFormationAndEffectPresentation(void)
 	Engine_EventRequestExit(4);
 }
 
-void FieldScene_RunActors24And25SetupWithValue929(void)
+static void FieldScene_RunActors24And25SetupWithValue929(void)
 {
 	s32 handle = FuneHeya_FindFirstSetFlag(0, 0);
 
@@ -3665,7 +3709,7 @@ void FieldScene_RunActors24And25SetupWithValue929(void)
 	Engine_EventEnd();
 }
 
-void FuneHeya_SetupReplacementPair(void)
+static void FuneHeya_SetupReplacementPair(void)
 {
 	s32 rec2;
 	s32 rec8;
@@ -3694,7 +3738,7 @@ void FuneHeya_SetupReplacementPair(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActors24And25SetupWithValue92a(void)
+static void FieldScene_RunActors24And25SetupWithValue92a(void)
 {
 	s32 handle = FuneHeya_FindFirstSetFlag(0, 0);
 	s32 other = FuneHeya_FindFirstSetFlag(1, 0);
@@ -3711,7 +3755,7 @@ void FieldScene_RunActors24And25SetupWithValue92a(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunExtendedFormationPresentation(void)
+static void FieldScene_RunExtendedFormationPresentation(void)
 {
 	s32				   slot_b;
 	s32				   slot_c;
@@ -3835,7 +3879,7 @@ void FieldScene_RunExtendedFormationPresentation(void)
 	Engine_EventEnd();
 }
 
-void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
+static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
 {
 	s32	 value;
 	s32 *timer = &FuneHeya_CueTimer;
@@ -3859,7 +3903,7 @@ void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
 	}
 }
 
-void RunActorsEightAndNineMapEvent(void)
+static void RunActorsEightAndNineMapEvent(void)
 {
 	Engine_EventBegin();
 	FieldScene_RunSceneStep(15, 1, 0);
@@ -3874,7 +3918,7 @@ void RunActorsEightAndNineMapEvent(void)
 	FieldScene_RunSceneStep(9, 21, 0);
 }
 
-void Scene_RunFourActorProgressPresentation(void)
+static void Scene_RunFourActorProgressPresentation(void)
 {
 	s32				   rec;
 	s32				   rec2;
@@ -4005,7 +4049,7 @@ void Scene_RunFourActorProgressPresentation(void)
 	Engine_EventEnd();
 }
 
-void FuneHeya_DismissReplacementRowers(void)
+static void FuneHeya_DismissReplacementRowers(void)
 {
 	s32 rec2;
 	s32 rec4;
@@ -4079,7 +4123,7 @@ void FuneHeya_DismissReplacementRowers(void)
 	Engine_EventRequestExit(10);
 }
 
-void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b)
+static void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b)
 {
 	s32 cnt_a = 0;
 	s32 cnt_b = 0;

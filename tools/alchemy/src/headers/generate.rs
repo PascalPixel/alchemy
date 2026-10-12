@@ -66,7 +66,7 @@ fn guard(header: &str) -> String {
     format!("ALCHEMY_{name}_H")
 }
 
-fn editions_only(condition: &str) -> bool {
+pub(crate) fn editions_only(condition: &str) -> bool {
     words(condition).iter().all(|w| {
         EDITION_MACROS.contains(w) || w.starts_with("TBS_EDITION_") || w.starts_with("TLA_EDITION_") || w.chars().all(|c| c.is_ascii_digit())
     })

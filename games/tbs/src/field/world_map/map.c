@@ -40,6 +40,33 @@
 #include "objcmd.h"
 #include "fieldobj.h"
 
+// 前方宣言
+static s32 StoryActor_ApplyMapRotation(struct FieldActor *actor);
+static void RunEventScript01(void);
+static void FieldScene_RunActorTransferSequence(void);
+static void WorldMap_ShakeTransferStartCamera(void);
+static void WorldMap_ShakeTransferLandingCamera(void);
+static void WorldMap_UpdateTransferredActorLanding(void);
+static void WorldMap_TransferToExit102(void);
+static void WorldMap_TransferToExit103(void);
+static void WorldMap_TransferToExit104(void);
+static void WorldMap_TransferToFuneHeya(void);
+static void WorldMap_TransferToExit106(void);
+static void WorldMap_CompleteTransfer(void);
+static void WorldMap_DisembarkCarriage(void);
+static void WorldMap_RunBlackOrbScene(void);
+static void WorldMap_ActivateSite138(s32 actor);
+static void WorldMap_StopLeaderLeavingShip(void);
+static void FieldScene_RunActorPresentationSequence(void);
+static void StoryScene_StartTransition(void);
+static void StoryScene_UpdateTransitionEffect(void);
+static void FieldScene_RunActorEightApproach(void);
+static s32 StoryScene_ComputeOpposingSlotDelta(void);
+static s32 StoryReward_LookupBySelection(u32 selection);
+static void WorldMap_RunOpeningRise(void);
+static void StoryScene_UpdateSelectedActorProgress(void);
+static void Scene_RunScene371SequenceA(s32 palette);
+
 // 戦闘開始の種類 (battle/party/party.c と同じ)
 
 #define SCENE_PHASE (gEventWork->start_transition)
@@ -84,7 +111,7 @@ enum
 
 extern u8 gDebugMode[];
 
-void StoryProgress_TriggerEvent0808(void)
+static void StoryProgress_TriggerEvent0808(void)
 {
 	struct EventWork *work = gEventWork;
 
@@ -102,7 +129,7 @@ void StoryProgress_TriggerEvent0808(void)
 	}
 }
 
-void StoryProgress_TriggerEvent0809(void)
+static void StoryProgress_TriggerEvent0809(void)
 {
 	struct GameState *state = &gGameState;
 	s32				 *steps = &state->encounter_steps;
@@ -115,7 +142,7 @@ void StoryProgress_TriggerEvent0809(void)
 	}
 }
 
-void StoryProgress_TriggerEvent080A(void)
+static void StoryProgress_TriggerEvent080A(void)
 {
 	struct GameState *state = &gGameState;
 	s32				 *steps = &state->encounter_steps;
@@ -128,7 +155,7 @@ void StoryProgress_TriggerEvent080A(void)
 	}
 }
 
-void StoryActor_AdvanceTimer(struct FieldActor *actor)
+static void StoryActor_AdvanceTimer(struct FieldActor *actor)
 {
 	if (actor->timer <= 0)
 	{
@@ -140,7 +167,7 @@ void StoryActor_AdvanceTimer(struct FieldActor *actor)
 	}
 }
 
-void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor)
+static void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor)
 {
 	struct FieldActor *spark;
 	s32				   x;
@@ -174,7 +201,7 @@ void StoryActor_ConfigureSpawnedObject(struct FieldActor *actor)
 	spark->update = (void (*)(union FieldObject *))StoryActor_AdvanceTimer;
 }
 
-void WorldMap_UpdateBobbingMarker(struct FieldActor *actor)
+static void WorldMap_UpdateBobbingMarker(struct FieldActor *actor)
 {
 	s16 *angle;
 
@@ -194,7 +221,7 @@ void WorldMap_UpdateBobbingMarker(struct FieldActor *actor)
 	}
 }
 
-s32 StoryActor_Initialize(struct FieldActor *actor)
+static s32 StoryActor_Initialize(struct FieldActor *actor)
 {
 	if (Engine_GameFlagIsSet(0x30) != 0)
 	{
@@ -228,7 +255,7 @@ u8 *WorldMap_GetExits(void)
 	return gWorldMapExits;
 }
 
-s32 StoryActor_ApplyFlaggedMode(struct FieldActor *actor)
+static s32 StoryActor_ApplyFlaggedMode(struct FieldActor *actor)
 {
 	StoryActor_ApplyMapRotation(actor);
 	if (Engine_GameFlagIsSet(0x847) != 0)
@@ -238,7 +265,7 @@ s32 StoryActor_ApplyFlaggedMode(struct FieldActor *actor)
 	return 1;
 }
 
-s32 StoryActor_ApplyMapRotation(struct FieldActor *actor)
+static s32 StoryActor_ApplyMapRotation(struct FieldActor *actor)
 {
 	struct MapRenderWork *work = gMapWork[0];
 	struct FieldSprite	 *sprite = actor->sprite;
@@ -248,7 +275,7 @@ s32 StoryActor_ApplyMapRotation(struct FieldActor *actor)
 	return 1;
 }
 
-s32 StoryActor_ApplyMapRotationWithCollision(struct FieldActor *actor)
+static s32 StoryActor_ApplyMapRotationWithCollision(struct FieldActor *actor)
 {
 	struct MapRenderWork *work = gMapWork[0];
 	struct FieldSprite	 *sprite = actor->sprite;
@@ -258,7 +285,7 @@ s32 StoryActor_ApplyMapRotationWithCollision(struct FieldActor *actor)
 	return 1;
 }
 
-s32 StoryActor_ResetPosition(struct FieldActor *actor)
+static s32 StoryActor_ResetPosition(struct FieldActor *actor)
 {
 	Engine_ActorSetSpriteFlags(actor, 0);
 	Engine_ObjectSetPartPalettes(actor, 10);
@@ -272,7 +299,7 @@ s32 StoryActor_ResetPosition(struct FieldActor *actor)
 	return 0;
 }
 
-s32 StoryActor_ClearActiveFlag(struct FieldActor *actor)
+static s32 StoryActor_ClearActiveFlag(struct FieldActor *actor)
 {
 	if ((actor->active & 1) && (gFrameCount & 1))
 		actor->active ^= 1;
@@ -320,7 +347,7 @@ struct ScenePlacement *StoryScene_SelectPlacementTable(void)
 	return gWorldMapPlacements;
 }
 
-void StoryScene_SetBranchValueFromX(s32 trigger, s32 exit_before, s32 exit_after)
+static void StoryScene_SetBranchValueFromX(s32 trigger, s32 exit_before, s32 exit_after)
 {
 	struct EventWork  *work;
 	struct FieldActor *subject;
@@ -340,7 +367,7 @@ void StoryScene_SetBranchValueFromX(s32 trigger, s32 exit_before, s32 exit_after
 	Engine_AudioPlayCue(0x7B);
 }
 
-void StoryScene_SetBranchValueFromZ(s32 trigger, s32 exit_before, s32 exit_after)
+static void StoryScene_SetBranchValueFromZ(s32 trigger, s32 exit_before, s32 exit_after)
 {
 	struct EventWork  *work;
 	struct FieldActor *subject;
@@ -360,27 +387,27 @@ void StoryScene_SetBranchValueFromZ(s32 trigger, s32 exit_before, s32 exit_after
 	Engine_AudioPlayCue(0x7B);
 }
 
-void SceneState_SetValues130_6_47(void)
+static void SceneState_SetValues130_6_47(void)
 {
 	StoryScene_SetBranchValueFromX(0x82, 6, 0x2F);
 }
 
-void SceneState_ApplyValues150And46And11(void)
+static void SceneState_ApplyValues150And46And11(void)
 {
 	StoryScene_SetBranchValueFromZ(0x96, 0x2E, 0x0B);
 }
 
-void SceneState_ApplyValues116And56And21(void)
+static void SceneState_ApplyValues116And56And21(void)
 {
 	StoryScene_SetBranchValueFromZ(0x74, 0x38, 0x15);
 }
 
-void SceneState_ApplyValues151And25And54(void)
+static void SceneState_ApplyValues151And25And54(void)
 {
 	StoryScene_SetBranchValueFromZ(0x97, 0x19, 0x36);
 }
 
-void FieldScene_RunStep7D3B1E(void)
+static void FieldScene_RunStep7D3B1E(void)
 {
 
 	StoryScene_SetBranchValueFromZ(0x7D, 0x3B, 0x1E);
@@ -391,7 +418,7 @@ struct SceneEvent *WorldMap_GetEvents(void)
 	return gWorldMapEvents;
 }
 
-void MapActor_UpdateContact(void)
+static void MapActor_UpdateContact(void)
 {
 	struct FieldActor *leader;
 	struct EventWork  *work;
@@ -455,7 +482,7 @@ void MapActor_UpdateContact(void)
 	}
 }
 
-void SceneState_ApplyFlag85aBranch(void)
+static void SceneState_ApplyFlag85aBranch(void)
 {
 	if (Engine_GameFlagIsSet(0x85a) == 0)
 	{
@@ -468,7 +495,7 @@ void SceneState_ApplyFlag85aBranch(void)
 	}
 }
 
-void FieldScene_RunStep74(void)
+static void FieldScene_RunStep74(void)
 {
 
 	Engine_EventBegin();
@@ -604,7 +631,7 @@ s32 WorldMap_EnterScene(void)
 	return 0;
 }
 
-void RunEventScript01(void)
+static void RunEventScript01(void)
 {
 	struct FieldActor *record;
 
@@ -667,7 +694,7 @@ void RunEventScript01(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorTransferSequence(void)
+static void FieldScene_RunActorTransferSequence(void)
 {
 	struct FieldActor *actor;
 	struct FieldActor *record;
@@ -932,7 +959,7 @@ void FieldScene_RunActorTransferSequence(void)
 	Engine_EventEnd();
 }
 
-void WorldMap_ShakeTransferStartCamera(void)
+static void WorldMap_ShakeTransferStartCamera(void)
 {
 	Camera_MoveTo(0x160c0000, -1, 0x6f80000, 1);
 	Engine_TaskWait(4);
@@ -960,7 +987,7 @@ void WorldMap_ShakeTransferStartCamera(void)
 	Engine_TaskWait(4);
 }
 
-void WorldMap_ShakeTransferLandingCamera(void)
+static void WorldMap_ShakeTransferLandingCamera(void)
 {
 	Camera_MoveTo(0x15ec0000, -1, 0x6c80000, 1);
 	Engine_TaskWait(4);
@@ -988,7 +1015,7 @@ void WorldMap_ShakeTransferLandingCamera(void)
 	Engine_TaskWait(4);
 }
 
-void WorldMap_UpdateTransferredActorLanding(void)
+static void WorldMap_UpdateTransferredActorLanding(void)
 {
 	struct FieldActor *actor;
 	struct FieldActor *guide;
@@ -1010,7 +1037,7 @@ void WorldMap_UpdateTransferredActorLanding(void)
 	}
 }
 
-void WorldMap_TransferToExit102(void)
+static void WorldMap_TransferToExit102(void)
 {
 	struct FieldActor *actor;
 
@@ -1032,7 +1059,7 @@ void WorldMap_TransferToExit102(void)
 	Engine_EventEnd();
 }
 
-void WorldMap_TransferToExit103(void)
+static void WorldMap_TransferToExit103(void)
 {
 	struct FieldActor *actor;
 
@@ -1061,7 +1088,7 @@ void WorldMap_TransferToExit103(void)
 	Engine_EventEnd();
 }
 
-void WorldMap_TransferToExit104(void)
+static void WorldMap_TransferToExit104(void)
 {
 	struct FieldActor *actor;
 
@@ -1090,7 +1117,7 @@ void WorldMap_TransferToExit104(void)
 	Engine_EventEnd();
 }
 
-void WorldMap_TransferToFuneHeya(void)
+static void WorldMap_TransferToFuneHeya(void)
 {
 	struct FieldActor *actor;
 
@@ -1119,7 +1146,7 @@ void WorldMap_TransferToFuneHeya(void)
 	Engine_EventEnd();
 }
 
-void WorldMap_TransferToExit106(void)
+static void WorldMap_TransferToExit106(void)
 {
 	struct FieldActor *actor;
 
@@ -1155,7 +1182,7 @@ void WorldMap_TransferToExit106(void)
 	Engine_EventEnd();
 }
 
-void WorldMap_CompleteTransfer(void)
+static void WorldMap_CompleteTransfer(void)
 {
 	struct FieldActor *actor;
 
@@ -1180,7 +1207,7 @@ void WorldMap_CompleteTransfer(void)
 	Engine_EventEnd();
 }
 
-void WorldMap_ShowDjinnTutorial(void)
+static void WorldMap_ShowDjinnTutorial(void)
 {
 	Battle_ClearObjectFlag5bWhenMode3();
 	BattleFx_ScheduleRatioTransition(0x10000, 6);
@@ -1208,7 +1235,7 @@ void WorldMap_ShowDjinnTutorial(void)
 #define DJINNI 8
 #define FLAG_DJINNI_MET 0x16e
 
-void WorldMap_MeetVenusDjinni(void)
+static void WorldMap_MeetVenusDjinni(void)
 {
 	struct FieldActor *djinni;
 	struct FieldActor *leader;
@@ -1424,7 +1451,7 @@ learn:
 
 s32 gWorldMapTriggerActor;
 
-void WorldMap_DisembarkCarriage(void)
+static void WorldMap_DisembarkCarriage(void)
 {
 	struct FieldActor *actor;
 
@@ -1483,7 +1510,7 @@ void WorldMap_DisembarkCarriage(void)
 	Engine_EventEnd();
 }
 
-void WorldMap_RunBlackOrbScene(void)
+static void WorldMap_RunBlackOrbScene(void)
 {
 	struct FieldActor *leader;
 
@@ -1561,7 +1588,7 @@ void WorldMap_RunBlackOrbScene(void)
 	Engine_EventEnd();
 }
 
-void WorldMap_ActivateSite138(s32 actor)
+static void WorldMap_ActivateSite138(s32 actor)
 {
 	s32 i;
 
@@ -1589,7 +1616,7 @@ void WorldMap_ActivateSite138(s32 actor)
 	}
 }
 
-void WorldMap_RestoreExitTrigger(void)
+static void WorldMap_RestoreExitTrigger(void)
 {
 	s32 i;
 
@@ -1608,7 +1635,7 @@ void WorldMap_RestoreExitTrigger(void)
 	}
 }
 
-void WorldMap_PromptBlackOrbUse(void)
+static void WorldMap_PromptBlackOrbUse(void)
 {
 	Engine_EventBegin();
 	Actor_FaceActor(55, ACTOR_PARTY_LEADER, 0);
@@ -1618,7 +1645,7 @@ void WorldMap_PromptBlackOrbUse(void)
 	Engine_EventEnd();
 }
 
-void WorldMap_StopLeaderLeavingShip(void)
+static void WorldMap_StopLeaderLeavingShip(void)
 {
 	Engine_EventBegin();
 	Battle_SetObjectFlag5bWhenMode3();
@@ -1630,7 +1657,7 @@ void WorldMap_StopLeaderLeavingShip(void)
 	Engine_EventEnd();
 }
 
-void StoryScene_ShowRewardDialogue(void)
+static void StoryScene_ShowRewardDialogue(void)
 {
 
 	Engine_EventBegin();
@@ -1653,7 +1680,7 @@ void StoryScene_ShowRewardDialogue(void)
 #define SITE 55
 #define ITEM_BLACK_ORB 242
 
-void WorldMap_UseBlackOrb(void)
+static void WorldMap_UseBlackOrb(void)
 {
 	struct FieldActor  *site;
 	struct FieldActor  *orb;
@@ -1814,7 +1841,7 @@ u16 gWorldMapBlend;
 #define QueueFrame(buffer, offset) \
 	IO_WRITE_QUEUE_PUSH(0x06002000, (u32)((buffer) + (offset)), 0x84000140)
 
-void FieldScene_RunActorPresentationSequence(void)
+static void FieldScene_RunActorPresentationSequence(void)
 {
 	PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
 	Engine_EventBegin();
@@ -1928,7 +1955,7 @@ void FieldScene_RunActorPresentationSequence(void)
 	Event_SetDestination((s32)&SceneId_Title, 10);
 }
 
-void StoryScene_StartTransition(void)
+static void StoryScene_StartTransition(void)
 {
 	Engine_EventBegin();
 	Engine_AudioPlayCue(141);
@@ -1961,7 +1988,7 @@ void StoryScene_StartTransition(void)
 	Engine_EventEnd();
 }
 
-void StoryScene_UpdateTransitionEffect(void)
+static void StoryScene_UpdateTransitionEffect(void)
 {
 	u32				   x = (u32)Engine_RandomNext() * TRANSITION_EFFECT_WIDTH >> 16;
 	u32				   z = (u32)Engine_RandomNext() * TRANSITION_EFFECT_DEPTH >> 16;
@@ -2002,7 +2029,7 @@ void StoryScene_UpdateTransitionEffect(void)
 	}
 }
 
-void FieldScene_RunActorEightApproach(void)
+static void FieldScene_RunActorEightApproach(void)
 {
 
 	struct FieldActor *actor;
@@ -2041,7 +2068,7 @@ void FieldScene_RunActorEightApproach(void)
 	Engine_EventRequestExit(110);
 }
 
-s32 StoryScene_ComputeOpposingSlotDelta(void)
+static s32 StoryScene_ComputeOpposingSlotDelta(void)
 {
 	s32 positive_total = StoryReward_LookupBySelection(0);
 	s32 negative_total;
@@ -2052,7 +2079,7 @@ s32 StoryScene_ComputeOpposingSlotDelta(void)
 	return positive_total - negative_total;
 }
 
-s32 StoryReward_LookupBySelection(u32 selection)
+static s32 StoryReward_LookupBySelection(u32 selection)
 {
 	s32 flag_base = 0;
 	u32 offset;
@@ -2080,7 +2107,7 @@ s32 StoryReward_LookupBySelection(u32 selection)
 	return 0;
 }
 
-void WorldMap_SpawnActorEightPuff(void)
+static void WorldMap_SpawnActorEightPuff(void)
 {
 	struct FieldActor  *leader;
 	struct FieldActor  *obj;
@@ -2120,7 +2147,7 @@ void WorldMap_SpawnActorEightPuff(void)
 	Engine_ObjectSetScript(obj, (s32)gActorEightPuffScript);
 }
 
-void WorldMap_RunOpeningRise(void)
+static void WorldMap_RunOpeningRise(void)
 {
 	struct FieldActor *actor;
 	s32				   record;
@@ -2156,7 +2183,7 @@ void WorldMap_RunOpeningRise(void)
 	Engine_EventRequestExit(111);
 }
 
-void StoryScene_UpdateSelectedActorProgress(void)
+static void StoryScene_UpdateSelectedActorProgress(void)
 {
 
 	struct FieldActor *actor;
@@ -2182,7 +2209,7 @@ void StoryScene_UpdateSelectedActorProgress(void)
 	GameFlag_SetByte(0x2f8, progress);
 }
 
-void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
+static void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
 {
 	s32				   rec2;
 	struct FieldActor *actor;
@@ -2218,17 +2245,17 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
 	}
 }
 
-void StoryScene_SetReferenceActor(void)
+static void StoryScene_SetReferenceActor(void)
 {
 	FieldScene_RunOpeningAuxiliarySequence(54);
 }
 
-void StoryScene_ActivateSharedState(void)
+static void StoryScene_ActivateSharedState(void)
 {
 	gEffectWork->active = 1;
 }
 
-void StoryScene_CompleteActor98(void)
+static void StoryScene_CompleteActor98(void)
 {
 	struct FieldActor *selected_actor;
 
@@ -2246,7 +2273,7 @@ void StoryScene_CompleteActor98(void)
 	selected_actor->motion_flags = 2;
 }
 
-void WorldMap_RaiseActors(void)
+static void WorldMap_RaiseActors(void)
 {
 	struct FieldActor *actor = Actor_Get(gGameState.selected_actor);
 	struct FieldActor *other = Actor_Get(54);
@@ -2274,7 +2301,7 @@ void WorldMap_RaiseActors(void)
 	Event_SetDestination((s32)&SceneId_WorldMap, 27);
 }
 
-void SceneEffect_RestoreBlendRegisters(void)
+static void SceneEffect_RestoreBlendRegisters(void)
 {
 
 	QueueIoWriteDelay2(0x04000050, 0x3f41);
@@ -2288,7 +2315,7 @@ void SceneEffect_RestoreBlendRegisters(void)
 	}
 }
 
-void FieldScene_RunLateSequence(void)
+static void FieldScene_RunLateSequence(void)
 {
 
 	struct FieldActor *record;
@@ -2320,7 +2347,7 @@ void FieldScene_RunLateSequence(void)
 	}
 }
 
-void Scene_RunScene371SequenceA(s32 palette)
+static void Scene_RunScene371SequenceA(s32 palette)
 {
 	u8 *buffer = Runtime_BumpAllocateAlternatePool(0x4000);
 
@@ -2396,7 +2423,7 @@ void Scene_RunScene371SequenceA(s32 palette)
 	Engine_GameFlagSet(0x101);
 }
 
-void SceneActor_UpdateObjectByCounterBits(u8 *obj)
+static void SceneActor_UpdateObjectByCounterBits(u8 *obj)
 {
 	if ((gFrameCount & 2) != 0)
 	{
@@ -2412,7 +2439,7 @@ void SceneActor_UpdateObjectByCounterBits(u8 *obj)
 	}
 }
 
-void OverlayObject_UpdateOnFrameParity(u8 *obj)
+static void OverlayObject_UpdateOnFrameParity(u8 *obj)
 {
 	if ((gFrameCount & 1) != 0)
 	{
@@ -2424,7 +2451,7 @@ void OverlayObject_UpdateOnFrameParity(u8 *obj)
 	}
 }
 
-void SceneState_RunSlotStepOnOddFrames(s32 arg0)
+static void SceneState_RunSlotStepOnOddFrames(s32 arg0)
 {
 	if ((gFrameCount & 1) != 0)
 	{
@@ -2434,7 +2461,7 @@ void SceneState_RunSlotStepOnOddFrames(s32 arg0)
 	}
 }
 
-void Effect_AnimateVerticalPositive(union FieldObject *object)
+static void Effect_AnimateVerticalPositive(union FieldObject *object)
 {
 	struct FieldActor *self = &object->actor;
 	struct FieldActor *anchor;
@@ -2459,7 +2486,7 @@ void Effect_AnimateVerticalPositive(union FieldObject *object)
 	self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
 }
 
-void Effect_AnimateVerticalNegative(union FieldObject *object)
+static void Effect_AnimateVerticalNegative(union FieldObject *object)
 {
 	struct FieldActor *self = &object->actor;
 	struct FieldActor *anchor;

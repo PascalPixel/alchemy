@@ -24,6 +24,19 @@
 #include "field_scene.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void FuneHobashira_SetupHiddenLeaderLookout(void);
+static void FuneHobashira_SetupVisibleLeaderLookout(void);
+static void FuneHobashira_AnnounceClearCourse(void);
+static void Scene_RunFourActorStagingSequence(void);
+static void FieldScene_RunActorNinePresentationCycles(void);
+static void OverlayObject_InitWithRandomFields(s32 a);
+static void FieldScene_RunPrimarySequence(void);
+static void FieldScene_RunSevenActorEnsemble(void);
+static void FuneHobashira_UpdateSway(void);
+static s32 SceneData_GetDifferenceOfPairSums(void);
+static s32 SceneData_GetValueByFirstSetFlag(u32 a);
+
 struct SwayActor
 {
 	u8	unknown_00[8];
@@ -51,7 +64,7 @@ s32 FuneHobashira_CameraCenter[2] __attribute__((section(".bss")));
 s32 FuneHobashira_CameraOrigin[2] __attribute__((section(".bss")));
 s32 FuneHobashira_SwayX __attribute__((section(".bss")));
 
-s32 Object_PlaceFromCameraOffset(struct FieldActor *object)
+static s32 Object_PlaceFromCameraOffset(struct FieldActor *object)
 {
 	s32 *position = *((s32 **)gMapWork[0]);
 	s32 *origin = FuneHobashira_CameraOrigin;
@@ -65,7 +78,7 @@ s32 Object_PlaceFromCameraOffset(struct FieldActor *object)
 	return 0;
 }
 
-s32 SceneActor_SetFacingFromSample(struct FieldActor *object)
+static s32 SceneActor_SetFacingFromSample(struct FieldActor *object)
 {
 	u32 sample = (u32)(Engine_RandomNext() << 6) >> 16;
 
@@ -85,7 +98,7 @@ s32 SceneActor_SetFacingFromSample(struct FieldActor *object)
 	return 1;
 }
 
-void FuneHobashira_GrowActorScale(struct FieldActor *o)
+static void FuneHobashira_GrowActorScale(struct FieldActor *o)
 {
 	if (o->scale_x < 0x10000)
 	{
@@ -94,7 +107,7 @@ void FuneHobashira_GrowActorScale(struct FieldActor *o)
 	}
 }
 
-s32 FuneHobashira_SwayActor(struct SwayActor *actor)
+static s32 FuneHobashira_SwayActor(struct SwayActor *actor)
 {
 	s16 *state = &actor->x_state;
 	s32	 next;
@@ -151,7 +164,7 @@ s32 FuneHobashira_SwayActor(struct SwayActor *actor)
 	return 1;
 }
 
-s32 OverlayObject_ShrinkScaleThenStop(struct FieldActor *o)
+static s32 OverlayObject_ShrinkScaleThenStop(struct FieldActor *o)
 {
 	u8 *t = (u8 *)o->sprite;
 
@@ -200,12 +213,12 @@ u8 *FuneHobashira_GetEvents(void)
 	return (u8 *)FuneHobashira_SceneTableE;
 }
 
-void FuneHobashira_UpdateGridPlacement(void)
+static void FuneHobashira_UpdateGridPlacement(void)
 {
 	FieldEffect_UpdateGridPlacement();
 }
 
-void FieldScene_RunActor232SceneWhenFlag923Or922(void)
+static void FieldScene_RunActor232SceneWhenFlag923Or922(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_MAST_923) != 0 || Engine_GameFlagIsSet(FLAG_MAST_922) != 0)
 	{
@@ -283,7 +296,7 @@ s32 FuneHobashira_ApplyEntryState(void)
 	return 0;
 }
 
-void FuneHobashira_SetupHiddenLeaderLookout(void)
+static void FuneHobashira_SetupHiddenLeaderLookout(void)
 {
 	Engine_EventBegin();
 	Camera_MoveTo(-1, -1, -1, 0);
@@ -297,7 +310,7 @@ void FuneHobashira_SetupHiddenLeaderLookout(void)
 	Engine_EventEnd();
 }
 
-void FuneHobashira_SetupVisibleLeaderLookout(void)
+static void FuneHobashira_SetupVisibleLeaderLookout(void)
 {
 	struct FieldActor *record;
 
@@ -313,7 +326,7 @@ void FuneHobashira_SetupVisibleLeaderLookout(void)
 	Engine_EventEnd();
 }
 
-void FuneHobashira_AnnounceClearCourse(void)
+static void FuneHobashira_AnnounceClearCourse(void)
 {
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	Engine_EventOpenScreen();
@@ -335,7 +348,7 @@ void FuneHobashira_AnnounceClearCourse(void)
 	Engine_EventRequestExit(10);
 }
 
-void Scene_RunFourActorStagingSequence(void)
+static void Scene_RunFourActorStagingSequence(void)
 {
 	s32				  *placement = *(*(struct FieldGlobals *)gMapWork).map;
 	struct FieldActor *actor;
@@ -417,7 +430,7 @@ void Scene_RunFourActorStagingSequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorNinePresentationCycles(void)
+static void FieldScene_RunActorNinePresentationCycles(void)
 {
 	struct FieldActor *rec9;
 	struct FieldActor *record;
@@ -512,7 +525,7 @@ void FieldScene_RunActorNinePresentationCycles(void)
 	Engine_EventEnd();
 }
 
-void OverlayObject_InitWithRandomFields(s32 a)
+static void OverlayObject_InitWithRandomFields(s32 a)
 {
 	struct FieldActor *obj;
 	u32				   x;
@@ -535,7 +548,7 @@ void OverlayObject_InitWithRandomFields(s32 a)
 	Engine_ActorEnableActionCallback(a, (const u8 *)FuneHobashira_DriftActions);
 }
 
-void FieldScene_RunPrimarySequence(void)
+static void FieldScene_RunPrimarySequence(void)
 {
 	u32				   i;
 	struct FieldActor *actor;
@@ -652,7 +665,7 @@ void FieldScene_RunPrimarySequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunSevenActorEnsemble(void)
+static void FieldScene_RunSevenActorEnsemble(void)
 {
 	Engine_EventBegin();
 	Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
@@ -720,7 +733,7 @@ void FieldScene_RunSevenActorEnsemble(void)
 	Engine_EventEnd();
 }
 
-void FuneHobashira_UpdateSway(void)
+static void FuneHobashira_UpdateSway(void)
 {
 	s32 *pos = *((s32 **)gMapWork[0]);
 	s32	 dx = Engine_MathCos(FuneHobashira_SwayX);
@@ -737,7 +750,7 @@ void FuneHobashira_UpdateSway(void)
 	FuneHobashira_SwayY &= 0xffff;
 }
 
-s32 SceneData_GetDifferenceOfPairSums(void)
+static s32 SceneData_GetDifferenceOfPairSums(void)
 {
 	s32 a;
 	s32 b;
@@ -749,7 +762,7 @@ s32 SceneData_GetDifferenceOfPairSums(void)
 	return a - b;
 }
 
-s32 SceneData_GetValueByFirstSetFlag(u32 a)
+static s32 SceneData_GetValueByFirstSetFlag(u32 a)
 {
 	s32 base = 0;
 	u32 i;

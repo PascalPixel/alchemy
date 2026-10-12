@@ -23,12 +23,15 @@
 #include "fixed_math.h"
 #include "objcmd.h"
 
-void SetEffectRecordMode(struct FieldActor *work, s32 mode)
+// 前方宣言
+static void SceneEffect_RunActorBurst(s32 no);
+
+static void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
 	work->sprite->priority = mode;
 }
 
-void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -45,7 +48,7 @@ void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type)
 	return 0;
 }
 
-void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
+static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 type)
 {
 	struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -94,7 +97,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gGomaSuiroPlacementsOther;
 }
 
-void FieldScene_RunActor8AtCell24Sequence(void)
+static void FieldScene_RunActor8AtCell24Sequence(void)
 {
 	struct FieldActor *record;
 	struct FieldActor *target;
@@ -150,14 +153,14 @@ s32 FieldScene_PlaceActor8OnEntry(void)
 	return 0;
 }
 
-void SceneEffect_RotateRecord(EffectWork_020004c4 *work)
+static void SceneEffect_RotateRecord(EffectWork_020004c4 *work)
 {
 	EffectRecord_020004c4 *record = work->record;
 
 	record->angle -= 0x800;
 }
 
-void SceneActor_WaitObjectBelowHeight(struct FieldActor *object, s32 height)
+static void SceneActor_WaitObjectBelowHeight(struct FieldActor *object, s32 height)
 {
 	s32 frames = 60;
 
@@ -201,7 +204,7 @@ struct Vector
 
 void Effect_Spawn();
 
-void SceneEffect_RunActorBurst(s32 no)
+static void SceneEffect_RunActorBurst(s32 no)
 {
 	union SceneActor *work;
 	u32				  cnt;

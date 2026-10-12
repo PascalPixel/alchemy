@@ -24,6 +24,12 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
+// 前方宣言
+static void SceneState_ApplyThreeRects(void);
+static void KuupuappuDou_RaiseActorPriorities(void);
+static void KuupuappuDou_EnableGroupAutomaticPriority(void);
+static void KuupuappuDou_SpawnPuffs(struct FieldActor *source);
+
 s32 Math_RemainderUnsigned();
 
 struct MapShake
@@ -104,7 +110,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gKuupuappuDouPlacementsOther;
 }
 
-s32 *SceneData_FindActiveSlotAtCell(s32 cx, s32 cz)
+static s32 *SceneData_FindActiveSlotAtCell(s32 cx, s32 cz)
 {
 	s32 **slots = (s32 **)((u8 *)gEventWork + 0x14);
 	u32	  i;
@@ -129,7 +135,7 @@ struct DirectionSteps
 #define DIRECTION_STEP(heading) \
 	(((struct DirectionSteps *)KuupuappuDou_DirectionSteps)->xz[heading])
 
-void KuupuappuDou_PushBlockAhead(void)
+static void KuupuappuDou_PushBlockAhead(void)
 {
 	/* FAKEMATCH: the table is s16 pairs, read here as one word per heading
 	   (x in the high half, z in the low). The read must stay an array
@@ -199,12 +205,12 @@ void KuupuappuDou_PushBlockAhead(void)
 	Object_SetMode(leader, 1);
 }
 
-void SceneState_ApplyFlag300(void)
+static void SceneState_ApplyFlag300(void)
 {
 	Engine_GameFlagSet(0x300);
 }
 
-void KuupuappuDou_ShowLockedDoorMessage(void)
+static void KuupuappuDou_ShowLockedDoorMessage(void)
 {
 	Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
 }
@@ -228,7 +234,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gKuupuappuDouEventsOther;
 }
 
-s32 IsActor9AtTile15x54(void)
+static s32 IsActor9AtTile15x54(void)
 {
 	struct FieldActor *actor = Object_GetById(9);
 	s32				   z = actor->z.fixed;
@@ -254,7 +260,7 @@ s32 IsActor9AtTile15x54(void)
 	return 0;
 }
 
-void FieldScene_RunFlag9a9GuardedScene(void)
+static void FieldScene_RunFlag9a9GuardedScene(void)
 {
 	if (GameFlag_IsSet(0x9a9) == 0)
 	{
@@ -268,7 +274,7 @@ void FieldScene_RunFlag9a9GuardedScene(void)
 	}
 }
 
-void SceneState_ApplyThreeRects(void)
+static void SceneState_ApplyThreeRects(void)
 {
 	s32 strip = 16;
 
@@ -282,7 +288,7 @@ void SceneState_ApplyThreeRects(void)
 	Engine_MapCopyCellAttributes(16, 52, 1, 1, strip, 53);
 }
 
-void FieldScene_RunScene3a7SequenceA(void)
+static void FieldScene_RunScene3a7SequenceA(void)
 {
 	if (GameFlag_IsSet(0x9a9) == 0)
 	{
@@ -295,11 +301,11 @@ void FieldScene_RunScene3a7SequenceA(void)
 	}
 }
 
-void FieldScene_NoOp(void)
+static void FieldScene_NoOp(void)
 {
 }
 
-void SceneState_ApplyThreeRectsRows9And10(void)
+static void SceneState_ApplyThreeRectsRows9And10(void)
 {
 	s32 strip = 17;
 
@@ -313,7 +319,7 @@ void SceneState_ApplyThreeRectsRows9And10(void)
 	Engine_MapCopyCellAttributes(17, 10, 1, 1, strip, 11);
 }
 
-s32 SceneActor_IsActor10AtTile16x12(void)
+static s32 SceneActor_IsActor10AtTile16x12(void)
 {
 	struct FieldActor *p = Object_GetById(10);
 	s32				   z = p->z.fixed;
@@ -339,7 +345,7 @@ s32 SceneActor_IsActor10AtTile16x12(void)
 	return 0;
 }
 
-void FieldScene_RunGuardedStep9AAAfterSetup(void)
+static void FieldScene_RunGuardedStep9AAAfterSetup(void)
 {
 	KuupuappuDou_PushBlockAhead();
 	if (GameFlag_IsSet(0x9aa) == 0)
@@ -356,11 +362,11 @@ void FieldScene_RunGuardedStep9AAAfterSetup(void)
 	}
 }
 
-void Resource3a7_NoOpCallback(void)
+static void Resource3a7_NoOpCallback(void)
 {
 }
 
-void FieldScene_RunGuardedStep9AA(void)
+static void FieldScene_RunGuardedStep9AA(void)
 {
 	if (GameFlag_IsSet(0x9aa) == 0)
 	{
@@ -376,7 +382,7 @@ void FieldScene_RunGuardedStep9AA(void)
 	}
 }
 
-void SceneState_ApplyRectAndMarkActor16(void)
+static void SceneState_ApplyRectAndMarkActor16(void)
 {
 	struct FieldActor *rec = Object_GetById(16);
 
@@ -395,7 +401,7 @@ void SceneState_ApplyRectAndMarkActor16(void)
 	Engine_GameFlagSet(0x200);
 }
 
-void SceneState_ConfigureRegion26_30AndMarkActor17(void)
+static void SceneState_ConfigureRegion26_30AndMarkActor17(void)
 {
 	struct FieldActor *rec = Object_GetById(17);
 
@@ -414,7 +420,7 @@ void SceneState_ConfigureRegion26_30AndMarkActor17(void)
 	Engine_GameFlagSet(0x201);
 }
 
-void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
+static void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
 {
 	struct FieldActor *record = Object_GetById(18);
 
@@ -433,7 +439,7 @@ void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
 	Engine_GameFlagSet(0x202);
 }
 
-void SceneState_ApplyRectAndSetupActor19(void)
+static void SceneState_ApplyRectAndSetupActor19(void)
 {
 	struct FieldActor *p = Object_GetById(19);
 
@@ -453,7 +459,7 @@ void SceneState_ApplyRectAndSetupActor19(void)
 	Engine_GameFlagSet(0x203);
 }
 
-void SceneActor_SetupSlotTwenty(void)
+static void SceneActor_SetupSlotTwenty(void)
 {
 	struct FieldActor *rec = Object_GetById(20);
 
@@ -473,7 +479,7 @@ void SceneActor_SetupSlotTwenty(void)
 	Engine_GameFlagSet(0x204);
 }
 
-void SceneActor_MarkSlot21AndSetFlag205(void)
+static void SceneActor_MarkSlot21AndSetFlag205(void)
 {
 	struct FieldActor *record = Object_GetById(21);
 
@@ -493,7 +499,7 @@ void SceneActor_MarkSlot21AndSetFlag205(void)
 	Engine_GameFlagSet(0x205);
 }
 
-void SceneState_DispatchByActorZeroDepth(void)
+static void SceneState_DispatchByActorZeroDepth(void)
 {
 	struct FieldActor *p = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -507,7 +513,7 @@ void SceneState_DispatchByActorZeroDepth(void)
 	}
 }
 
-void KuupuappuDou_RaiseActorPriorities(void)
+static void KuupuappuDou_RaiseActorPriorities(void)
 {
 	s32 i;
 	s32 id;
@@ -520,7 +526,7 @@ void KuupuappuDou_RaiseActorPriorities(void)
 	}
 }
 
-void KuupuappuDou_EnableGroupAutomaticPriority(void)
+static void KuupuappuDou_EnableGroupAutomaticPriority(void)
 {
 	s32 index = 16;
 	s32 flag = 1;
@@ -536,7 +542,7 @@ void KuupuappuDou_EnableGroupAutomaticPriority(void)
 	} while (remaining >= 0);
 }
 
-void KuupuappuDou_RunRumble(void)
+static void KuupuappuDou_RunRumble(void)
 {
 	struct MapShake *shake = (struct MapShake *)(((u8 *)gMapWork[0]) + 0x164);
 	s32				 frames;
@@ -587,7 +593,7 @@ void KuupuappuDou_RunRumble(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene3a7SequenceB(void)
+static void FieldScene_RunScene3a7SequenceB(void)
 {
 	s32 v5;
 	s32 v6;
@@ -613,7 +619,7 @@ void FieldScene_RunScene3a7SequenceB(void)
 	}
 }
 
-s32 SceneActor_LiftLowActorOnSubjectTile(s32 subject_actor)
+static s32 SceneActor_LiftLowActorOnSubjectTile(s32 subject_actor)
 {
 	struct FieldActor *subject = Object_GetById(subject_actor);
 	s32				   index = 0;
@@ -646,7 +652,7 @@ s32 SceneActor_LiftLowActorOnSubjectTile(s32 subject_actor)
 	return 0;
 }
 
-void FieldScene_RunOpeningAuxiliarySequence(void)
+static void FieldScene_RunOpeningAuxiliarySequence(void)
 {
 	s32				   i;
 	struct FieldActor *rec7;
@@ -706,7 +712,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 	}
 }
 
-void FieldScene_RunScene3a7SequenceD(void)
+static void FieldScene_RunScene3a7SequenceD(void)
 {
 
 	s32				   i;
@@ -762,7 +768,7 @@ void FieldScene_RunScene3a7SequenceD(void)
 	}
 }
 
-void SceneActor_TransformAndApplyRecordPosition(s32 *rec, s32 v0, s32 v1)
+static void SceneActor_TransformAndApplyRecordPosition(s32 *rec, s32 v0, s32 v1)
 {
 	s32 pos[3];
 
@@ -777,7 +783,7 @@ void SceneActor_TransformAndApplyRecordPosition(s32 *rec, s32 v0, s32 v1)
 	Engine_ObjectSetPosition(rec, pos[0], pos[1], pos[2]);
 }
 
-void KuupuappuDou_SpawnPuffs(struct FieldActor *source)
+static void KuupuappuDou_SpawnPuffs(struct FieldActor *source)
 {
 	struct FieldActor *puff;
 	s32				   i;
@@ -804,7 +810,7 @@ void KuupuappuDou_SpawnPuffs(struct FieldActor *source)
 	}
 }
 
-void SceneActor_InitSlots10To15AndStartTask(void)
+static void SceneActor_InitSlots10To15AndStartTask(void)
 {
 	s32 selector = 10;
 	s32 remaining = 5;
@@ -829,7 +835,7 @@ void SceneActor_InitSlots10To15AndStartTask(void)
 	}
 }
 
-void SceneActor_SetupActors11To14AndInstallTask(void)
+static void SceneActor_SetupActors11To14AndInstallTask(void)
 {
 	s32 no = 11;
 	s32 i = 0;

@@ -25,6 +25,13 @@
 #include "objcmd.h"
 #include "facing_object.h"
 
+// 前方宣言
+static void FieldScene_RunSlotSubjectBranch(s32 actor, s32 item, s32 flag);
+static void Kyuden_RunKolimaRequest(void);
+static void FieldScene_RunPalaceGreeting(void);
+static void RunEventScript02(void);
+static void BiribinoKyuden_RunActorRowScene(void);
+
 struct KyudenSceneRecord
 {
 	u8 unk_000[166];
@@ -37,7 +44,7 @@ struct KyudenSceneRecord
 	u8 field_238;
 };
 
-s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
+static s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 {
 	s32					 delta;
 	u16					 old;
@@ -117,7 +124,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gBiribinoKyudenEventsOther;
 }
 
-void Kyuden_AskAboutKolima(void)
+static void Kyuden_AskAboutKolima(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoYouWillingGoKolimaForest);
@@ -125,7 +132,7 @@ void Kyuden_AskAboutKolima(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunStartledGuard(void)
+static void FieldScene_RunStartledGuard(void)
 {
 	Engine_EventBegin();
 	Actor_ShowEmote(14, 0x102, 0);
@@ -140,7 +147,7 @@ void FieldScene_RunStartledGuard(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene38dSequenceA(void)
+static void FieldScene_RunScene38dSequenceA(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoFineWarrior);
@@ -153,7 +160,7 @@ void FieldScene_RunScene38dSequenceA(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor16Message1769(void)
+static void SceneDialogue_RunActor16Message1769(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoWasWatchingFromHereAfter);
@@ -161,7 +168,7 @@ void SceneDialogue_RunActor16Message1769(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorSeventeenFlaggedDialogue(void)
+static void FieldScene_RunActorSeventeenFlaggedDialogue(void)
 {
 	Engine_EventBegin();
 
@@ -186,7 +193,7 @@ void FieldScene_RunActorSeventeenFlaggedDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor15Flag303Scene(void)
+static void SceneDialogue_RunActor15Flag303Scene(void)
 {
 	Engine_EventBegin();
 	Engine_EventSetMessage((s32)MsgBiribinoSometimesWeNeedChildrenRemind);
@@ -199,7 +206,7 @@ void SceneDialogue_RunActor15Flag303Scene(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActorSeventeenFlagDialogue(void)
+static void FieldScene_RunActorSeventeenFlagDialogue(void)
 {
 	Engine_EventBegin();
 
@@ -224,7 +231,7 @@ void FieldScene_RunActorSeventeenFlagDialogue(void)
 	Engine_EventEnd();
 }
 
-void BiribinoKyuden_RunDoorExitScene(void)
+static void BiribinoKyuden_RunDoorExitScene(void)
 {
 	struct EventWork *work;
 	s32				  lock;
@@ -264,21 +271,21 @@ void BiribinoKyuden_RunDoorExitScene(void)
 	Map_SetLayerEntryFlag(2);
 }
 
-void FieldScene_ShowChestEmpty(void)
+static void FieldScene_ShowChestEmpty(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgBiribinoRobinCheckedChestButWas, 1);
 	Engine_EventEnd();
 }
 
-void FieldScene_ShowChestLocked(void)
+static void FieldScene_ShowChestLocked(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgBiribinoTreasureChestLocked, 1);
 	Engine_EventEnd();
 }
 
-void FieldScene_RunChestStep(s32 flag)
+static void FieldScene_RunChestStep(s32 flag)
 {
 	if (Engine_GameFlagIsSet(flag) != 0)
 	{
@@ -290,7 +297,7 @@ void FieldScene_RunChestStep(s32 flag)
 	}
 }
 
-void FieldScene_RunStep210ByFlag84e(void)
+static void FieldScene_RunStep210ByFlag84e(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0)
 	{
@@ -302,7 +309,7 @@ void FieldScene_RunStep210ByFlag84e(void)
 	}
 }
 
-void FieldScene_RunStep211ByFlag84e(void)
+static void FieldScene_RunStep211ByFlag84e(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0)
 	{
@@ -314,7 +321,7 @@ void FieldScene_RunStep211ByFlag84e(void)
 	}
 }
 
-void FieldScene_RunStep212ByFlag84e(void)
+static void FieldScene_RunStep212ByFlag84e(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0)
 	{
@@ -326,7 +333,7 @@ void FieldScene_RunStep212ByFlag84e(void)
 	}
 }
 
-void FieldScene_RunStep213ByFlag84e(void)
+static void FieldScene_RunStep213ByFlag84e(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0)
 	{
@@ -338,7 +345,7 @@ void FieldScene_RunStep213ByFlag84e(void)
 	}
 }
 
-void FieldScene_RunSlotSubjectBranch(s32 actor, s32 item, s32 flag)
+static void FieldScene_RunSlotSubjectBranch(s32 actor, s32 item, s32 flag)
 {
 	s32 record;
 
@@ -364,7 +371,7 @@ void FieldScene_RunSlotSubjectBranch(s32 actor, s32 item, s32 flag)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunRewardReminder(void)
+static void FieldScene_RunRewardReminder(void)
 {
 	if (GameFlag_IsSet(FLAG_REWARD_TAKEN) == 0)
 	{
@@ -385,7 +392,7 @@ void FieldScene_RunRewardReminder(void)
 	}
 }
 
-void FieldScene_RunPalaceFarewell(void)
+static void FieldScene_RunPalaceFarewell(void)
 {
 	if (GameFlag_IsSet(FLAG_REWARD_TAKEN) != 0)
 	{
@@ -517,7 +524,7 @@ L_02000888:;
 	return 0;
 }
 
-void Kyuden_RunKolimaRequest(void)
+static void Kyuden_RunKolimaRequest(void)
 {
 	struct FieldActor *record;
 
@@ -971,7 +978,7 @@ leave:
 	Engine_EventEnd();
 }
 
-void FieldScene_RunPalaceGreeting(void)
+static void FieldScene_RunPalaceGreeting(void)
 {
 	Engine_EventBegin();
 	Engine_EventOpenScreen();
@@ -1021,21 +1028,21 @@ void FieldScene_RunPalaceGreeting(void)
 	Engine_EventEnd();
 }
 
-void ConfigurePrimarySceneChannels(void)
+static void ConfigurePrimarySceneChannels(void)
 {
 	Actor_FaceDirection(1, 0xe000, 0);
 	Actor_FaceDirection(2, 0xa000, 0);
 	Actor_FaceDirection(3, 0x8000, 0);
 }
 
-void ConfigureSecondarySceneChannels(void)
+static void ConfigureSecondarySceneChannels(void)
 {
 	Actor_FaceDirection(1, 0xc000, 0);
 	Actor_FaceDirection(2, 0xc000, 0);
 	Actor_FaceDirection(3, 0xa000, 0);
 }
 
-void RunEventScript02(void)
+static void RunEventScript02(void)
 {
 	struct FieldActor *buf;
 	struct FieldActor *actor;
@@ -1331,7 +1338,7 @@ void RunEventScript02(void)
 	Engine_EventEnd();
 }
 
-void BiribinoKyuden_RunActorRowScene(void)
+static void BiribinoKyuden_RunActorRowScene(void)
 {
 	u16				   zero;
 	struct FieldActor *actor;

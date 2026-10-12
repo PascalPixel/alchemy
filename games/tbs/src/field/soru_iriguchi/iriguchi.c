@@ -23,6 +23,15 @@
 #include "ability_ids.h"
 #include "fieldobj.h"
 
+// 前方宣言
+static void SoruIriguchi_ApplyEntryState(void);
+static void FieldScene_RunSceneEntryHook(void);
+static void Scene_EnterSolSanctum(void);
+static void Scene_SukuretaSuspectsHiddenPassage(void);
+static void Scene_RunTransitionCue(void);
+static void Scene_RunActorFormation(s32 a0);
+static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2);
+
 s32 SoruIriguchi_CueTimer __attribute__((section(".bss")));
 
 void InitializeSceneRecordBuffer();
@@ -114,7 +123,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gSoruIriguchiEventsOther;
 }
 
-void FieldScene_RunScene37fSequenceA(void)
+static void FieldScene_RunScene37fSequenceA(void)
 {
 	s32 v5;
 	s32 v6;
@@ -141,7 +150,7 @@ void FieldScene_RunScene37fSequenceA(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunFlag81aMessageBranch(void)
+static void SceneDialogue_RunFlag81aMessageBranch(void)
 {
 
 	Engine_EventBegin();
@@ -164,7 +173,7 @@ void SceneDialogue_RunFlag81aMessageBranch(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunOpeningAuxiliarySequence(void)
+static void FieldScene_RunOpeningAuxiliarySequence(void)
 {
 	s32 id;
 	s32 v5;
@@ -217,7 +226,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 	}
 }
 
-void FieldScene_RunFlag821Dialogue(void)
+static void FieldScene_RunFlag821Dialogue(void)
 {
 
 	struct EventWork *work;
@@ -247,7 +256,7 @@ void FieldScene_RunFlag821Dialogue(void)
 	Engine_EventEnd();
 }
 
-void SoruIriguchi_SetSmallGem(void)
+static void SoruIriguchi_SetSmallGem(void)
 {
 	s32 message;
 
@@ -286,7 +295,7 @@ void SoruIriguchi_SetSmallGem(void)
 	}
 }
 
-void Scene_UpdateOuterActor9Flags(void)
+static void Scene_UpdateOuterActor9Flags(void)
 {
 	s32 *work = Object_GetById(9);
 	s32	 pos;
@@ -308,7 +317,7 @@ void Scene_UpdateOuterActor9Flags(void)
 	}
 }
 
-void Scene_UpdateOuterActor10Flags(void)
+static void Scene_UpdateOuterActor10Flags(void)
 {
 	s32 *work = Object_GetById(10);
 	s32	 pos;
@@ -330,7 +339,7 @@ void Scene_UpdateOuterActor10Flags(void)
 	}
 }
 
-void Scene_UpdateFormationActor9Flags(void)
+static void Scene_UpdateFormationActor9Flags(void)
 {
 	s32 *work = Object_GetById(9);
 	s32	 pos;
@@ -353,7 +362,7 @@ void Scene_UpdateFormationActor9Flags(void)
 	Scene_RunActorFormation(0);
 }
 
-void Scene_UpdateFormationActor10Flags(void)
+static void Scene_UpdateFormationActor10Flags(void)
 {
 	s32 *work = Object_GetById(10);
 	s32	 pos;
@@ -376,7 +385,7 @@ void Scene_UpdateFormationActor10Flags(void)
 	Scene_RunActorFormation(0);
 }
 
-void Scene_UpdateFormationActor11Flags(void)
+static void Scene_UpdateFormationActor11Flags(void)
 {
 	s32 *work = Object_GetById(11);
 	s32	 pos;
@@ -399,7 +408,7 @@ void Scene_UpdateFormationActor11Flags(void)
 	Scene_RunActorFormation(0);
 }
 
-void Scene_UpdateFormationActor12Flags(void)
+static void Scene_UpdateFormationActor12Flags(void)
 {
 	s32 *work = Object_GetById(12);
 	s32	 pos;
@@ -422,7 +431,7 @@ void Scene_UpdateFormationActor12Flags(void)
 	Scene_RunActorFormation(0);
 }
 
-void Scene_UpdateFormationActor13Flags(void)
+static void Scene_UpdateFormationActor13Flags(void)
 {
 	s32 *work = Object_GetById(13);
 	s32	 pos;
@@ -445,7 +454,7 @@ void Scene_UpdateFormationActor13Flags(void)
 	Scene_RunActorFormation(0);
 }
 
-void Scene_UpdateFormationActor14Flags(void)
+static void Scene_UpdateFormationActor14Flags(void)
 {
 	s32 *work = Object_GetById(14);
 	s32	 pos;
@@ -466,7 +475,7 @@ void Scene_UpdateFormationActor14Flags(void)
 	Scene_RunActorFormation(0);
 }
 
-struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
+static struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
 {
 	struct FieldActor **actors = gEventWork->placed_actors - 8;
 	u32					i;
@@ -483,7 +492,7 @@ struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z)
 	return 0;
 }
 
-void SoruIriguchi_PushFacedBlock(void)
+static void SoruIriguchi_PushFacedBlock(void)
 {
 	struct FieldActor	  *leader;
 	struct FieldActor	  *block;
@@ -561,7 +570,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-void SoruIriguchi_ApplyEntryState(void)
+static void SoruIriguchi_ApplyEntryState(void)
 {
 	GameFlag_Set(0x144);
 	gEventWork->start_transition = 0x100;
@@ -586,7 +595,7 @@ void SoruIriguchi_ApplyEntryState(void)
 	}
 }
 
-void FieldScene_RunSceneEntryHook(void)
+static void FieldScene_RunSceneEntryHook(void)
 {
 	s32 entrance;
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -673,7 +682,7 @@ void FieldScene_RunSceneEntryHook(void)
 	}
 }
 
-void Scene_EnterSolSanctum(void)
+static void Scene_EnterSolSanctum(void)
 {
 	struct FieldActor *record;
 
@@ -759,7 +768,7 @@ void Scene_EnterSolSanctum(void)
 	Engine_EventEnd();
 }
 
-void Scene_SukuretaSuspectsHiddenPassage(void)
+static void Scene_SukuretaSuspectsHiddenPassage(void)
 {
 	u8 *record;
 
@@ -958,7 +967,7 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
 	Engine_EventEnd();
 }
 
-void Scene_RunTransitionCue(void)
+static void Scene_RunTransitionCue(void)
 {
 	struct FieldActor *record;
 
@@ -1012,7 +1021,7 @@ void Scene_RunTransitionCue(void)
 	Engine_EventEnd();
 }
 
-void Scene_RunActorFormation(s32 a0)
+static void Scene_RunActorFormation(s32 a0)
 {
 	Engine_MapCopyCellAttributes(122, 20, 1, 1, 100, 32);
 	Map_CopyCellAttributes(122, 20, 1, 1, 104, 32);
@@ -1148,14 +1157,14 @@ L_02001a1c:;
 L_02001a7e:;
 }
 
-void FieldScene_RunScriptedStep953(void)
+static void FieldScene_RunScriptedStep953(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
 	Engine_EventEnd();
 }
 
-void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
+static void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
 {
 	s32	 value;
 	s32 *timer;

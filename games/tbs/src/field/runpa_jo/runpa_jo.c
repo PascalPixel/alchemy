@@ -5,7 +5,6 @@
 #include "field_event.h"
 #include "unit/import.h"
 #include "unit/field/runpa_jo/runpa_jo.h"
-#include "unit/field/common/object/staged_actor.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
 #include "unit/system/scheduler/runtime.h"
@@ -31,6 +30,25 @@
 #include "field_scene.h"
 #include "item_ids.h"
 #include "objcmd.h"
+
+// 前方宣言
+static s32 TryStartActorInteraction(s32 actor_id, s32 interaction_id);
+static void FieldScene_RunScene3bfSequenceC(void);
+static s32 IsActorInteractionAvailable(s32 actor_id);
+static s32 IsSceneActorWithinFourSteps(s32 actor_id);
+static s32 IsSceneActorWithinTriggerBox(s32 actor_id);
+static void RunActorScriptedSequenceA(s32 actor_id);
+static void RunActorScriptedSequenceB(s32 handle);
+static void RunActorScriptedSequenceC(s32 actor_id);
+static void RunpaJo_ActOutGuardShiftDialogue(s32 a0);
+static void RunActorScriptedSequenceD(s32 actor_id);
+static void FieldScene_InstallSceneTasks(void);
+static void FieldScene_SetupActorsForScene(void);
+static void FieldScene_RestoreActorsFromFlags(void);
+static void FieldScene_ActivateThreeActorGroup(void);
+static void FieldScene_ActivateTwoActorGroup(void);
+static void FieldScene_ActivateAlternateActorGroup(void);
+static void ActivateFiveActorGroupFromFlags(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/object/staged_actor.c"
@@ -120,7 +138,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gRunpaJoEventsOther;
 }
 
-void ConfigureSceneActor12(void)
+static void ConfigureSceneActor12(void)
 {
 
 	s32				   actor_slot = 15;
@@ -137,13 +155,13 @@ void ConfigureSceneActor12(void)
 	}
 }
 
-void EV70_INIT(void)
+static void EV70_INIT(void)
 {
 
 	StagedActor_AdvancePair();
 }
 
-void EV50_START(void)
+static void EV50_START(void)
 {
 
 	OBJ_SPD(12, 0x10000, 0x8000);
@@ -155,7 +173,7 @@ void EV50_START(void)
 	FLAG_SET(0x943);
 }
 
-void EV12_MOVE(void)
+static void EV12_MOVE(void)
 {
 	struct FieldActor *actor;
 
@@ -177,13 +195,13 @@ void EV12_MOVE(void)
 	}
 }
 
-void PlaceActorTwelveAndFinishScene(void)
+static void PlaceActorTwelveAndFinishScene(void)
 {
 	OBJ_POS_SET(12, 248, 376);
 	ConfigureSceneActor12();
 }
 
-void PlaceSceneObjectPairFromTableA(s32 table_index)
+static void PlaceSceneObjectPairFromTableA(s32 table_index)
 {
 
 	s32 position_x = gRunpaJoPairTableA[table_index * 2];
@@ -194,7 +212,7 @@ void PlaceSceneObjectPairFromTableA(s32 table_index)
 	Engine_MapCopyCells(position_x, position_z - 0x30, 1, 1, position_x, position_z - 0x2e);
 }
 
-void EV40_A(void)
+static void EV40_A(void)
 {
 
 	struct EventWork *work;
@@ -217,7 +235,7 @@ void EV40_A(void)
 	}
 }
 
-void FieldScene_SetPositionPairs(s32 idx)
+static void FieldScene_SetPositionPairs(s32 idx)
 {
 	s32 top_x;
 	s32 top_y;
@@ -233,7 +251,7 @@ void FieldScene_SetPositionPairs(s32 idx)
 		Map_CopyCellAttributes(top_x, bottom_y, 1, 1, top_x, top_y - 43);
 }
 
-void EV40_B(void)
+static void EV40_B(void)
 {
 
 	struct EventWork *work;
@@ -251,7 +269,7 @@ void EV40_B(void)
 	}
 }
 
-void PlaceSceneObjectPairFromTableB(s32 table_index)
+static void PlaceSceneObjectPairFromTableB(s32 table_index)
 {
 
 	s32 position_x = gRunpaJoPairTableB[table_index * 2];
@@ -262,7 +280,7 @@ void PlaceSceneObjectPairFromTableB(s32 table_index)
 	Engine_MapCopyCells(position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
 }
 
-void EV40_D(void)
+static void EV40_D(void)
 {
 
 	struct EventWork *work;
@@ -280,7 +298,7 @@ void EV40_D(void)
 	}
 }
 
-void PlaceSceneObjectPairFromTableC(s32 table_index)
+static void PlaceSceneObjectPairFromTableC(s32 table_index)
 {
 
 	s32 position_x = gRunpaJoPairTableC[table_index * 2];
@@ -292,7 +310,7 @@ void PlaceSceneObjectPairFromTableC(s32 table_index)
 		position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
 }
 
-void EV40_C(void)
+static void EV40_C(void)
 {
 
 	struct EventWork *work;
@@ -310,7 +328,7 @@ void EV40_C(void)
 	}
 }
 
-void EV99_ROUYA(void)
+static void EV99_ROUYA(void)
 {
 	if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) == -1)
 	{
@@ -318,12 +336,12 @@ void EV99_ROUYA(void)
 	}
 }
 
-void EV98_TOBIRA(void)
+static void EV98_TOBIRA(void)
 {
 	Engine_MessageShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
 }
 
-void Actor8_Interact(void)
+static void Actor8_Interact(void)
 {
 	if (TryStartActorInteraction(8, 8) != 0)
 	{
@@ -331,7 +349,7 @@ void Actor8_Interact(void)
 	}
 }
 
-void Actor9_Interact(void)
+static void Actor9_Interact(void)
 {
 	if (TryStartActorInteraction(9, 7) != 0)
 	{
@@ -339,7 +357,7 @@ void Actor9_Interact(void)
 	}
 }
 
-void Actor10_Interact(void)
+static void Actor10_Interact(void)
 {
 	if (TryStartActorInteraction(10, 6) != 0)
 	{
@@ -347,7 +365,7 @@ void Actor10_Interact(void)
 	}
 }
 
-void Actor11_Interact(void)
+static void Actor11_Interact(void)
 {
 	if (TryStartActorInteraction(11, 5) != 0)
 	{
@@ -355,7 +373,7 @@ void Actor11_Interact(void)
 	}
 }
 
-s32 TryStartActorInteraction(s32 actor_id, s32 interaction_id)
+static s32 TryStartActorInteraction(s32 actor_id, s32 interaction_id)
 {
 	s32 started = 0;
 	s32 interaction;
@@ -377,23 +395,23 @@ s32 TryStartActorInteraction(s32 actor_id, s32 interaction_id)
 	return started;
 }
 
-void NoOpSceneCallbackA(void)
+static void NoOpSceneCallbackA(void)
 {
 }
 
-void NoOpSceneCallbackB(void)
+static void NoOpSceneCallbackB(void)
 {
 }
 
-void NoOpSceneCallbackC(void)
+static void NoOpSceneCallbackC(void)
 {
 }
 
-void NoOpSceneCallbackD(void)
+static void NoOpSceneCallbackD(void)
 {
 }
 
-void EV08_KAGI(void)
+static void EV08_KAGI(void)
 {
 
 	Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x108, 0x318);
@@ -408,7 +426,7 @@ void EV08_KAGI(void)
 	Engine_ActorSetPosition(8, 0, 0);
 }
 
-s32 IsPlayerInAccidentTriggerArea(void)
+static s32 IsPlayerInAccidentTriggerArea(void)
 {
 	SceneActor *player = Object_GetById(0);
 	s32			z = player->z;
@@ -437,7 +455,7 @@ s32 IsPlayerInAccidentTriggerArea(void)
 	return 0;
 }
 
-void FieldScene_UpdateActorPairInteraction(void)
+static void FieldScene_UpdateActorPairInteraction(void)
 {
 	struct ObjectRuntime  *actor = Actor_Get(9);
 	struct ObjectRuntime  *other = Actor_Get(10);
@@ -503,7 +521,7 @@ void FieldScene_UpdateActorPairInteraction(void)
 	}
 }
 
-void EV91_SET(void)
+static void EV91_SET(void)
 {
 	EV_BEGIN();
 	Engine_ActorStop(9);
@@ -515,7 +533,7 @@ void EV91_SET(void)
 	EV_END();
 }
 
-s32 AreSceneActorsInPassingLane(void)
+static s32 AreSceneActorsInPassingLane(void)
 {
 	SceneActor *player = Object_GetById(0);
 	SceneActor *passing_actor = Object_GetById(17);
@@ -552,7 +570,7 @@ s32 AreSceneActorsInPassingLane(void)
 	return 0;
 }
 
-void FieldScene_UpdateActorSeventeenInteraction(void)
+static void FieldScene_UpdateActorSeventeenInteraction(void)
 {
 
 	struct ObjectRuntime  *actor = Actor_Get(17);
@@ -606,13 +624,13 @@ void FieldScene_UpdateActorSeventeenInteraction(void)
 	}
 }
 
-void EV92_ON(void)
+static void EV92_ON(void)
 {
 	RunActorScriptedSequenceA(17);
 	EV_END();
 }
 
-s32 IsPlayerInSecondaryTriggerArea(void)
+static s32 IsPlayerInSecondaryTriggerArea(void)
 {
 	SceneActor *player = Object_GetById(0);
 	s32			zz = player->z / 0x100000;
@@ -633,7 +651,7 @@ s32 IsPlayerInSecondaryTriggerArea(void)
 	return 0;
 }
 
-void FieldScene_UpdateActorEighteenInteraction(void)
+static void FieldScene_UpdateActorEighteenInteraction(void)
 {
 
 	struct ObjectRuntime  *actor = Actor_Get(18);
@@ -685,13 +703,13 @@ void FieldScene_UpdateActorEighteenInteraction(void)
 	}
 }
 
-void EV93_ON(void)
+static void EV93_ON(void)
 {
 	RunActorScriptedSequenceA(18);
 	EV_END();
 }
 
-s32 IsPlayerOutsideSceneRectangle(void)
+static s32 IsPlayerOutsideSceneRectangle(void)
 {
 	SceneActor *player = Object_GetById(0);
 	s32			zz = player->z / 0x100000;
@@ -704,7 +722,7 @@ s32 IsPlayerOutsideSceneRectangle(void)
 	return 1;
 }
 
-void FieldScene_RunScene3bfSequenceA(void)
+static void FieldScene_RunScene3bfSequenceA(void)
 {
 
 	struct EventWork *work;
@@ -730,13 +748,13 @@ void FieldScene_RunScene3bfSequenceA(void)
 	}
 }
 
-void EV94_MAIN(void)
+static void EV94_MAIN(void)
 {
 	RunActorScriptedSequenceA(17);
 	EV_END();
 }
 
-void TriggerSceneStage95FromActor12(void)
+static void TriggerSceneStage95FromActor12(void)
 {
 
 	struct EventWork *scene_state = gEventWork;
@@ -753,7 +771,7 @@ void TriggerSceneStage95FromActor12(void)
 	}
 }
 
-void FieldScene_RunScene3bfSequenceB(void)
+static void FieldScene_RunScene3bfSequenceB(void)
 {
 
 	struct EventWork *work;
@@ -774,7 +792,7 @@ void FieldScene_RunScene3bfSequenceB(void)
 	}
 }
 
-void FieldScene_RunScene3bfSequenceC(void)
+static void FieldScene_RunScene3bfSequenceC(void)
 {
 
 	struct EventWork *work;
@@ -795,7 +813,7 @@ void FieldScene_RunScene3bfSequenceC(void)
 	}
 }
 
-s32 IsSceneActorVerticallyNearPlayer(s32 actor_id)
+static s32 IsSceneActorVerticallyNearPlayer(s32 actor_id)
 {
 	SceneActor *scene_actor = Object_GetById(actor_id);
 	SceneActor *player = Object_GetById(0);
@@ -812,7 +830,7 @@ s32 IsSceneActorVerticallyNearPlayer(s32 actor_id)
 	return 0;
 }
 
-s32 IsSceneActorHorizontallyNearPlayer(s32 actor_id)
+static s32 IsSceneActorHorizontallyNearPlayer(s32 actor_id)
 {
 	SceneActor *scene_actor = Object_GetById(actor_id);
 	SceneActor *player = Object_GetById(0);
@@ -833,7 +851,7 @@ s32 IsSceneActorHorizontallyNearPlayer(s32 actor_id)
 	return 0;
 }
 
-s32 IsActorInteractionAvailable(s32 actor_id)
+static s32 IsActorInteractionAvailable(s32 actor_id)
 {
 	if (IsSceneActorWithinTriggerBox(actor_id) == 0)
 	{
@@ -850,7 +868,7 @@ s32 IsActorInteractionAvailable(s32 actor_id)
 	}
 }
 
-s32 IsSceneActorWithinFourSteps(s32 actor_id)
+static s32 IsSceneActorWithinFourSteps(s32 actor_id)
 {
 	SceneActor *scene_actor = Object_GetById(actor_id);
 	SceneActor *player = Object_GetById(0);
@@ -878,7 +896,7 @@ s32 IsSceneActorWithinFourSteps(s32 actor_id)
 	return 0;
 }
 
-s32 IsSceneActorWithinTriggerBox(s32 actor_id)
+static s32 IsSceneActorWithinTriggerBox(s32 actor_id)
 {
 	SceneActor *scene_actor = Object_GetById(actor_id);
 	SceneActor *player = Engine_EventGetViewCenter();
@@ -905,7 +923,7 @@ s32 IsSceneActorWithinTriggerBox(s32 actor_id)
 	return 1;
 }
 
-void TriggerScene41AtVillagePath(void)
+static void TriggerScene41AtVillagePath(void)
 {
 
 	SceneActor *player = Object_GetById(0);
@@ -926,7 +944,7 @@ void TriggerScene41AtVillagePath(void)
 	}
 }
 
-void TriggerScene40AtVillagePath(void)
+static void TriggerScene40AtVillagePath(void)
 {
 
 	DirectionalSceneActor *player = Object_GetById(0);
@@ -948,7 +966,7 @@ void TriggerScene40AtVillagePath(void)
 	}
 }
 
-void RunActor9ScriptedSequence(void)
+static void RunActor9ScriptedSequence(void)
 {
 	EV_BEGIN();
 	Engine_ActorSetDestinationOffset(9, 0, 0);
@@ -970,7 +988,7 @@ void RunActor9ScriptedSequence(void)
 	EV_END();
 }
 
-void RunActorScriptedSequenceA(s32 actor_id)
+static void RunActorScriptedSequenceA(s32 actor_id)
 {
 	EV_BEGIN();
 	EV_BEGIN();
@@ -1001,7 +1019,7 @@ void RunActorScriptedSequenceA(s32 actor_id)
 	EV_END();
 }
 
-void TurnActorToSceneDirection(s32 actor_id)
+static void TurnActorToSceneDirection(s32 actor_id)
 {
 
 	OBJ_FACE(actor_id, ACTOR_PARTY_LEADER, 0);
@@ -1026,7 +1044,7 @@ void TurnActorToSceneDirection(s32 actor_id)
 	}
 }
 
-void RunActorScriptedSequenceB(s32 handle)
+static void RunActorScriptedSequenceB(s32 handle)
 {
 	s32 id;
 
@@ -1043,7 +1061,7 @@ void RunActorScriptedSequenceB(s32 handle)
 	MES_PUT(handle, 0);
 }
 
-void RunActorScriptedSequenceC(s32 actor_id)
+static void RunActorScriptedSequenceC(s32 actor_id)
 {
 	u8 *t = MsgRunpaGuardWhosThat;
 
@@ -1057,7 +1075,7 @@ void RunActorScriptedSequenceC(s32 actor_id)
 	MES_PUT(actor_id, 0);
 }
 
-void RunpaJo_ActOutGuardShiftDialogue(s32 a0)
+static void RunpaJo_ActOutGuardShiftDialogue(s32 a0)
 {
 	s32 intruder;
 
@@ -1076,7 +1094,7 @@ void RunpaJo_ActOutGuardShiftDialogue(s32 a0)
 	MES_PUT(a0, 0);
 }
 
-void RunActorScriptedSequenceD(s32 actor_id)
+static void RunActorScriptedSequenceD(s32 actor_id)
 {
 	u8 *t = (s32)MsgRunpaScoundrel;
 
@@ -1093,7 +1111,7 @@ void RunActorScriptedSequenceD(s32 actor_id)
 	MES_PUT(actor_id, 0);
 }
 
-void EV33_SHIRABE(void)
+static void EV33_SHIRABE(void)
 {
 
 	OBJ_MODE(ACTOR_PARTY_LEADER, 1);
@@ -1108,7 +1126,7 @@ void EV33_SHIRABE(void)
 	Engine_GameFlagSet(2380);
 }
 
-void EV30_TAKARABAKO(void)
+static void EV30_TAKARABAKO(void)
 {
 
 	OBJ_MODE(ACTOR_PARTY_LEADER, 1);
@@ -1123,7 +1141,7 @@ void EV30_TAKARABAKO(void)
 	Engine_GameFlagSet(2377);
 }
 
-void EV31_BANPEI(void)
+static void EV31_BANPEI(void)
 {
 	s32 line;
 
@@ -1184,7 +1202,7 @@ void EV31_BANPEI(void)
 	FLAG_SET(0x94a);
 }
 
-void FieldScene_RunSequenceTail(void)
+static void FieldScene_RunSequenceTail(void)
 {
 	EV_BEGIN();
 	OBJ_POS_SET(12, 688, 88);
@@ -1198,7 +1216,7 @@ void FieldScene_RunSequenceTail(void)
 	Engine_EventOpenScreen();
 }
 
-void EV32_KARA(void)
+static void EV32_KARA(void)
 {
 
 	OBJ_MODE(ACTOR_PARTY_LEADER, 1);
@@ -1213,7 +1231,7 @@ void EV32_KARA(void)
 	Engine_GameFlagSet(2379);
 }
 
-void EV50_MAIN(void)
+static void EV50_MAIN(void)
 {
 	EV_BEGIN();
 	Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 0);
@@ -1238,7 +1256,7 @@ void EV50_MAIN(void)
 	Engine_GameFlagSet(548);
 }
 
-void EV51_MAIN(void)
+static void EV51_MAIN(void)
 {
 	s32 msg;
 
@@ -1264,25 +1282,25 @@ void EV51_MAIN(void)
 	FLAG_SET(0x225);
 }
 
-void ConfigureInteractionRegionA(void)
+static void ConfigureInteractionRegionA(void)
 {
 	Engine_MapCopyCells(2, 82, 1, 2, 21, 81);
 	Engine_MapCopyCellAttributes(21, 32, 1, 1, 21, 34);
 }
 
-void ConfigureInteractionRegionB(void)
+static void ConfigureInteractionRegionB(void)
 {
 	Engine_MapCopyCells(2, 84, 1, 2, 6, 55);
 	Engine_MapCopyCellAttributes(5, 9, 1, 1, 6, 10);
 }
 
-void ConfigureInteractionRegionC(void)
+static void ConfigureInteractionRegionC(void)
 {
 	Engine_MapCopyCells(2, 86, 1, 2, 27, 62);
 	Engine_MapCopyCellAttributes(26, 16, 1, 1, 27, 17);
 }
 
-void EV52_IDO(void)
+static void EV52_IDO(void)
 {
 
 	if (*(s16 *)(((u8 *)gEventWork) + 0xcb8) != 0)
@@ -1302,7 +1320,7 @@ void EV52_IDO(void)
 	}
 }
 
-void EV51_SUB(void)
+static void EV51_SUB(void)
 {
 
 	if (*(s16 *)(((u8 *)gEventWork) + 0xcb8) != 0)
@@ -1322,7 +1340,7 @@ void EV51_SUB(void)
 	}
 }
 
-void EV00_HANTEI1(void)
+static void EV00_HANTEI1(void)
 {
 	Engine_MapCopyCells(5, 77, 1, 2, 17, 82);
 	Engine_MapCopyCells(5, 77, 1, 2, 3, 55);
@@ -1330,7 +1348,7 @@ void EV00_HANTEI1(void)
 	Engine_MapCopyCellAttributes(3, 8, 1, 1, 3, 10);
 }
 
-void EV00_HANTEI2(void)
+static void EV00_HANTEI2(void)
 {
 	Engine_MapCopyCells(8, 77, 1, 2, 17, 82);
 	Engine_MapCopyCells(8, 77, 1, 2, 3, 55);
@@ -1338,32 +1356,32 @@ void EV00_HANTEI2(void)
 	Engine_MapCopyCellAttributes(2, 10, 1, 1, 3, 10);
 }
 
-void EV08_TANSU(void)
+static void EV08_TANSU(void)
 {
 	Engine_GameFlagSet(2372);
 	Engine_GameFlagClear(535);
 	Engine_ActorSetPosition(8, 0, 0);
 }
 
-void EV09_MAKI(void)
+static void EV09_MAKI(void)
 {
 	Engine_GameFlagSet(2373);
 	ConfigureInteractionRegionC();
 	Engine_ActorSetPosition(9, 0, 0);
 }
 
-void EV10_HON(void)
+static void EV10_HON(void)
 {
 	Engine_GameFlagSet(2374);
 	Engine_GameFlagClear(536);
 	Engine_ActorSetPosition(10, 0, 0);
 }
 
-void NoOpInteractionCallback(void)
+static void NoOpInteractionCallback(void)
 {
 }
 
-void RunpaJo_GatherPartyAroundActorTwelve(void)
+static void RunpaJo_GatherPartyAroundActorTwelve(void)
 {
 	struct FieldActor *actor;
 
@@ -1398,7 +1416,7 @@ void RunpaJo_GatherPartyAroundActorTwelve(void)
 	WAIT(15);
 }
 
-void RunpaJo_ActivateLeverTrap(void)
+static void RunpaJo_ActivateLeverTrap(void)
 {
 	Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
 	SE(141);
@@ -1416,7 +1434,7 @@ void RunpaJo_ActivateLeverTrap(void)
 	WAIT(60);
 }
 
-void RunpaJo_RevealMonster(void)
+static void RunpaJo_RevealMonster(void)
 {
 	Engine_CameraMoveToActor(11, 1);
 	Engine_CameraWaitForMove();
@@ -1433,7 +1451,7 @@ void RunpaJo_RevealMonster(void)
 	WAIT(30);
 }
 
-void RunpaJo_PositionPartyForMonster(void)
+static void RunpaJo_PositionPartyForMonster(void)
 {
 	OBJ_SPD(IWAN, 0x10000, 0x8000);
 	OBJ_WALK(IWAN, 504, 216);
@@ -1450,7 +1468,7 @@ void RunpaJo_PositionPartyForMonster(void)
 	OBJ_DIR(ACTOR_PARTY_LEADER, 0xc000, 0);
 }
 
-void EV20_DEMO(void)
+static void EV20_DEMO(void)
 {
 	s32 text_line;
 
@@ -1713,7 +1731,7 @@ void EV20_DEMO(void)
 	EV_END();
 }
 
-void FieldScene_RunMainScriptSequence(void)
+static void FieldScene_RunMainScriptSequence(void)
 {
 	struct FieldActor *record;
 	s32				   script_a;
@@ -2384,7 +2402,7 @@ void FieldScene_RunMainScriptSequence(void)
 	EV_END();
 }
 
-void EV21_MES(void)
+static void EV21_MES(void)
 {
 
 	switch (gRunpaJoRandomPick)
@@ -2430,7 +2448,7 @@ void EV21_MES(void)
 	}
 }
 
-void EV21_MAIN(void)
+static void EV21_MAIN(void)
 {
 
 	s32 msg;
@@ -2453,7 +2471,7 @@ void EV21_MAIN(void)
 	MES_PUT(21, 0);
 }
 
-void EV25_DONPA(void)
+static void EV25_DONPA(void)
 {
 	s32 msg;
 	s32 msg2;
@@ -2524,7 +2542,7 @@ void EV25_DONPA(void)
 	}
 }
 
-void EV25_SEL(void)
+static void EV25_SEL(void)
 {
 	if (Engine_GameFlagIsSet(0x941))
 	{
@@ -2538,7 +2556,7 @@ void EV25_SEL(void)
 	}
 }
 
-void EV24_SEL(void)
+static void EV24_SEL(void)
 {
 	if (Engine_GameFlagIsSet(0x941))
 	{
@@ -2552,7 +2570,7 @@ void EV24_SEL(void)
 	}
 }
 
-void EV24_MAIN(void)
+static void EV24_MAIN(void)
 {
 	s32 sequence_id;
 
@@ -2617,40 +2635,40 @@ void EV24_MAIN(void)
 	}
 }
 
-void EV26_SET(void)
+static void EV26_SET(void)
 {
 	Engine_BattleFxRunPageEffectForSlot(26, 1, 5);
 	Engine_GameFlagSet(0x94e);
 }
 
-void EV14_SET(void)
+static void EV14_SET(void)
 {
 	Engine_ActorRunRepeatedMotion(14, 2);
 	MES_SET((s32)MsgRunpaOwwwDontHurt);
 	MES_PUT(14, 0);
 }
 
-void EV13_SET(void)
+static void EV13_SET(void)
 {
 	Engine_ActorRunRepeatedMotion(13, 2);
 	MES_SET((s32)MsgRunpaRightRightGive);
 	MES_PUT(13, 0);
 }
 
-void EV12_SET(void)
+static void EV12_SET(void)
 {
 	Engine_ActorRunRepeatedMotion(12, 2);
 	MES_SET((s32)MsgRunpaGuysTougherThought);
 	MES_PUT(12, 0);
 }
 
-void EV18_SET(void)
+static void EV18_SET(void)
 {
 	MES_SET((s32)MsgRunpaKnowWhereDodonpa);
 	Engine_EventAskYesNo(18, 0);
 }
 
-void EV20_MAIN(void)
+static void EV20_MAIN(void)
 {
 	s32 msg;
 	s32 msg2;
@@ -2702,7 +2720,7 @@ void EV20_MAIN(void)
 	}
 }
 
-void EV20_END(void)
+static void EV20_END(void)
 {
 
 	if (Engine_GameFlagIsSet(0x226))
@@ -2720,11 +2738,11 @@ void EV20_END(void)
 	}
 }
 
-void NoOpActorCallback(void)
+static void NoOpActorCallback(void)
 {
 }
 
-void EV17_TALK(void)
+static void EV17_TALK(void)
 {
 	s32 msg = (s32)MsgRunpaWrongTurnOver;
 
@@ -2736,7 +2754,7 @@ void EV17_TALK(void)
 	}
 }
 
-void EV17_LOAD(void)
+static void EV17_LOAD(void)
 {
 	MES_SET((s32)MsgRunpaCantBelieveWhen);
 	MES_PUT(13, 0);
@@ -2804,7 +2822,7 @@ s32 FieldScene_DispatchActorUpdate(void)
 	return 0;
 }
 
-void FieldScene_InstallSceneTasks(void)
+static void FieldScene_InstallSceneTasks(void)
 {
 	FieldScene_ActivateThreeActorGroup();
 	switch (gGameState.entrance)
@@ -2857,7 +2875,7 @@ void FieldScene_InstallSceneTasks(void)
 	Engine_TaskWait(1);
 }
 
-void FieldScene_SetupActorsForScene(void)
+static void FieldScene_SetupActorsForScene(void)
 {
 	struct FieldActor *actor;
 
@@ -2945,7 +2963,7 @@ void FieldScene_SetupActorsForScene(void)
 	actor->scale_y = 0xc000;
 }
 
-void FieldScene_RestoreActorsFromFlags(void)
+static void FieldScene_RestoreActorsFromFlags(void)
 {
 	struct FieldActor *actor;
 
@@ -3012,7 +3030,7 @@ void FieldScene_RestoreActorsFromFlags(void)
 	Engine_MapSetWorkFlagBits9To11(0xe00);
 }
 
-void FieldScene_ActivateThreeActorGroup(void)
+static void FieldScene_ActivateThreeActorGroup(void)
 {
 	if (Engine_GameFlagIsSet(0x35a))
 	{
@@ -3028,7 +3046,7 @@ void FieldScene_ActivateThreeActorGroup(void)
 	}
 }
 
-void FieldScene_ActivateTwoActorGroup(void)
+static void FieldScene_ActivateTwoActorGroup(void)
 {
 	if (Engine_GameFlagIsSet(0x358))
 	{
@@ -3040,7 +3058,7 @@ void FieldScene_ActivateTwoActorGroup(void)
 	}
 }
 
-void FieldScene_ActivateAlternateActorGroup(void)
+static void FieldScene_ActivateAlternateActorGroup(void)
 {
 	if (Engine_GameFlagIsSet(0x355))
 	{
@@ -3056,7 +3074,7 @@ void FieldScene_ActivateAlternateActorGroup(void)
 	}
 }
 
-void ActivateFiveActorGroupFromFlags(void)
+static void ActivateFiveActorGroupFromFlags(void)
 {
 	if (Engine_GameFlagIsSet(0x350))
 	{

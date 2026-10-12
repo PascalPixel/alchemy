@@ -6,6 +6,21 @@
 #include "cave.h"
 #include "text/msg_ids.h"
 
+// 前方宣言
+static void Reunion_Converse(void);
+static void WagonChoice_Run(void);
+static u8 Leader_AnswersYes(void);
+static u8 Gerald_AsksIfNotRiding(void);
+static u8 Gerald_AsksAboutUnfinishedBusiness(void);
+static u8 Party_ConfirmsStaying(void);
+static u8 Bunza_AsksAboutUnfinishedBusiness(void);
+static u8 Gerald_ChecksNothingLeftToDo(void);
+static u8 Mia_AsksIfRidingAfterAll(void);
+static u8 Bunza_CannotWait(void);
+static u8 Gerald_AsksAboutThingsToDo(void);
+static void Party_StaysBehind(void);
+static void Party_RidesWagon(void);
+
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
 	return gCaveEntrances;
@@ -35,7 +50,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gCaveEvents;
 }
 
-void HiddenPuddle_Freeze(void)
+static void HiddenPuddle_Freeze(void)
 {
 	struct FieldActor *puddle;
 
@@ -46,7 +61,7 @@ void HiddenPuddle_Freeze(void)
 	}
 }
 
-void SouthPuddle_Freeze(void)
+static void SouthPuddle_Freeze(void)
 {
 	struct FieldActor *puddle;
 
@@ -60,7 +75,7 @@ void SouthPuddle_Freeze(void)
 	GameFlag_Set(FLAG_CAVE_SOUTH_PILLAR);
 }
 
-void Gate_DrawPropped(void)
+static void Gate_DrawPropped(void)
 {
 	struct FieldActor *pillar;
 
@@ -85,7 +100,7 @@ void Gate_DrawPropped(void)
 	Map_CopyCellAttributes(19, 17, 1, 1, 21, 14);
 }
 
-void GatePuddle_Freeze(void)
+static void GatePuddle_Freeze(void)
 {
 	struct FieldActor *pillar;
 
@@ -105,12 +120,12 @@ void GatePuddle_Freeze(void)
 	}
 }
 
-void NorthPuddle_Freeze(void)
+static void NorthPuddle_Freeze(void)
 {
 	Engine_GameFlagSet(FLAG_CAVE_NORTH_PILLAR);
 }
 
-void Gate_Lower(void)
+static void Gate_Lower(void)
 {
 	if (GameFlag_IsSet(FLAG_CAVE_GATE_RAISED) != 0)
 	{
@@ -135,7 +150,7 @@ void Gate_Lower(void)
 	Map_CopyCellAttributes(19, 17, 1, 1, 22, 15);
 }
 
-void LoweringSwitch_Flip(void)
+static void LoweringSwitch_Flip(void)
 {
 	if (GameFlag_IsSet(FLAG_CAVE_GATE_LOWERED) == 0)
 	{
@@ -150,7 +165,7 @@ void LoweringSwitch_Flip(void)
 	}
 }
 
-void Gate_Raise(void)
+static void Gate_Raise(void)
 {
 	Map_CopyCells(41, 87, 2, 5, 21, 59);
 	Engine_TaskWait(4);
@@ -165,7 +180,7 @@ void Gate_Raise(void)
 	Map_CopyCellAttributes(19, 17, 1, 1, 21, 14);
 }
 
-void RaisingSwitch_Flip(void)
+static void RaisingSwitch_Flip(void)
 {
 	if (GameFlag_IsSet(FLAG_CAVE_GATE_PROPPED) == 0)
 	{
@@ -180,7 +195,7 @@ void RaisingSwitch_Flip(void)
 	}
 }
 
-void Reunion_Begin(void)
+static void Reunion_Begin(void)
 {
 	struct FieldActor *leader;
 	s32				   sighting;
@@ -306,7 +321,7 @@ void Reunion_Begin(void)
 	}
 }
 
-void Reunion_Converse(void)
+static void Reunion_Converse(void)
 {
 	s32 reunion;
 	s32 plan;
@@ -601,7 +616,7 @@ void Reunion_Converse(void)
 	WagonChoice_Run();
 }
 
-void WagonChoice_Run(void)
+static void WagonChoice_Run(void)
 {
 	s32 wagon;
 	s32 insisted;
@@ -678,52 +693,52 @@ stay:
 done:;
 }
 
-u8 Leader_AnswersYes(void)
+static u8 Leader_AnswersYes(void)
 {
 	return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-u8 Gerald_AsksIfNotRiding(void)
+static u8 Gerald_AsksIfNotRiding(void)
 {
 	Engine_EventSetMessage((s32)MsgRunpaGeraldAsksIfNotRiding);
 	Engine_EventOpenMessage(GERALD, 0);
 	return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-u8 Gerald_AsksAboutUnfinishedBusiness(void)
+static u8 Gerald_AsksAboutUnfinishedBusiness(void)
 {
 	Engine_EventSetMessage((s32)MsgRunpaGeraldAsksAboutUnfinishedBusiness);
 	Engine_EventOpenMessage(GERALD, 0);
 	return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-u8 Party_ConfirmsStaying(void)
+static u8 Party_ConfirmsStaying(void)
 {
 	return TRUE;
 }
 
-u8 Bunza_AsksAboutUnfinishedBusiness(void)
+static u8 Bunza_AsksAboutUnfinishedBusiness(void)
 {
 	Engine_EventSetMessage((s32)MsgRunpaBunzaAsksAboutUnfinishedBusiness);
 	Engine_EventOpenMessage(ACTOR_BUNZA, 0);
 	return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-u8 Gerald_ChecksNothingLeftToDo(void)
+static u8 Gerald_ChecksNothingLeftToDo(void)
 {
 	Engine_EventSetMessage((s32)MsgRunpaGeraldChecksNothingLeft);
 	Engine_EventOpenMessage(GERALD, 0);
 	return TRUE;
 }
 
-u8 Mia_AsksIfRidingAfterAll(void)
+static u8 Mia_AsksIfRidingAfterAll(void)
 {
 	Engine_EventSetMessage((s32)MsgRunpaMiaAsksIfRidingAfter);
 	Engine_EventOpenMessage(MEARI, 0);
 	return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-u8 Bunza_CannotWait(void)
+static u8 Bunza_CannotWait(void)
 {
 	s32 warning;
 
@@ -743,14 +758,14 @@ u8 Bunza_CannotWait(void)
 	return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-u8 Gerald_AsksAboutThingsToDo(void)
+static u8 Gerald_AsksAboutThingsToDo(void)
 {
 	Engine_EventSetMessage((s32)MsgRunpaGeraldAsksAboutThingsTo);
 	Engine_EventOpenMessage(GERALD, 0);
 	return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-void Party_StaysBehind(void)
+static void Party_StaysBehind(void)
 {
 	struct FieldActor *leader;
 	s32				   farewell;
@@ -859,7 +874,7 @@ void Party_StaysBehind(void)
 	GameFlag_Set(FLAG_PARTY_STAYED_IN_LUNPA);
 }
 
-void Party_RidesWagon(void)
+static void Party_RidesWagon(void)
 {
 	struct FieldActor *leader;
 	s32				   departure;

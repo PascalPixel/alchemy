@@ -2,7 +2,6 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/field/haidia_mura/mura.h"
-#include "unit/field/common/object/staged_actor.h"
 #include "unit/field/world_map/linked_effects.h"
 #include "unit/battle/effect/object.h"
 #include "unit/field/common/script/field.h"
@@ -32,6 +31,35 @@
 #include "objcmd.h"
 #include "fieldobj.h"
 #include "field_effect.h"
+
+// 前方宣言
+static void FieldScene_RunScene373SequenceC(void);
+static void HaidiaMura_AskAboutSneakingToAleph(s32 a0, s32 a1);
+static void HaidiaMura_MoveActorAlongLowerZPath(s32 a0, s32 a1, s32 a2, s32 a3);
+static void HaidiaMura_MoveActorAlongHigherZPath(s32 a0, s32 a1, s32 a2, s32 a3);
+static void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode);
+static void FieldScene_RunLargeStagingSequence(void);
+static void Scene_RepairTheHouse(void);
+static void FieldScene_RunStep8C(void);
+static void FieldScene_RunSingleStep(void);
+static void SceneState_SetValue1ThenCall(void);
+static void SceneState_SetValue0ThenCall(void);
+static void FieldScene_RunStep9(void);
+static void FieldScene_RunStep17(void);
+static void SceneState_SetValue24ThenCall(void);
+static void SceneState_SetValue25ThenCall(void);
+static s32 SceneActor_RunStep18WhenTargetSet(s32 *p);
+static void Effect_ConfigureSpawnedParticle(struct SourceEntity *source);
+static void Effect_SpawnRisingDustBurst(struct Resource373Emitter *emitter);
+static void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x, s32 delta_z);
+static void HaidiaMura_OpenVillagerLane(void);
+static void Effect_PlayStepSound(void);
+static void FieldScene_RunScene373SequenceB(void);
+static void SceneActor_SetFlagByteBySlotZeroPosition(void);
+static void InitializeStagedActorSceneOrbitingEffect(s32 id);
+static void OverlayObject_UpdateOnFrameBit1(s32 p);
+static void SceneEffect_UpdateObjectOnOddFrames(s32 p);
+static void SceneEffect_UpdateObjectOnOddFramesOnly(s32 p);
 
 typedef struct OrbitingSceneObjectSprite
 {
@@ -117,7 +145,7 @@ s32 MapStagedScene_SelectTertiaryData(void)
 	return (s32)gHaidiaMuraPlacements;
 }
 
-void SceneDialogue_RunActor181Scene(void)
+static void SceneDialogue_RunActor181Scene(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetPosition(26, 0, 0);
@@ -127,7 +155,7 @@ void SceneDialogue_RunActor181Scene(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor181Scene(void)
+static void FieldScene_RunActor181Scene(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetPosition(20, 0, 0);
@@ -146,7 +174,7 @@ s32 MapStagedScene_SelectQuaternaryData(void)
 	return (s32)gHaidiaMuraEvents;
 }
 
-void SceneDialogue_RunActorTenFlaggedDialogue(void)
+static void SceneDialogue_RunActorTenFlaggedDialogue(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
@@ -163,7 +191,7 @@ void SceneDialogue_RunActorTenFlaggedDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorFourteenTalk(void)
+static void SceneDialogue_RunActorFourteenTalk(void)
 {
 	s32 flag = 0x806;
 	Engine_EventBegin();
@@ -188,7 +216,7 @@ void SceneDialogue_RunActorFourteenTalk(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunFlag807BranchSequence(void)
+static void FieldScene_RunFlag807BranchSequence(void)
 {
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x807) == 0)
@@ -215,7 +243,7 @@ void FieldScene_RunFlag807BranchSequence(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor21FlaggedLine(void)
+static void SceneDialogue_RunActor21FlaggedLine(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x202) != 0)
@@ -230,7 +258,7 @@ void SceneDialogue_RunActor21FlaggedLine(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActor10LineAndFlag81f(void)
+static void SceneDialogue_RunActor10LineAndFlag81f(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 10, 20);
@@ -240,7 +268,7 @@ void SceneDialogue_RunActor10LineAndFlag81f(void)
 	Engine_EventEnd();
 }
 
-void HaidiaMura_ReactToTremor(void)
+static void HaidiaMura_ReactToTremor(void)
 {
 	Engine_EventBegin();
 	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
@@ -253,7 +281,7 @@ void HaidiaMura_ReactToTremor(void)
 	Engine_EventEnd();
 }
 
-void SceneDialogue_RunActorNineteenDialogue(void)
+static void SceneDialogue_RunActorNineteenDialogue(void)
 {
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(19, 2);
@@ -265,7 +293,7 @@ void SceneDialogue_RunActorNineteenDialogue(void)
 	Engine_EventEnd();
 }
 
-void SceneState_Send210AndApplyRectAt40x84(void)
+static void SceneState_Send210AndApplyRectAt40x84(void)
 {
 	s32 m, n;
 	Engine_GameFlagSet(0x210);
@@ -274,7 +302,7 @@ void SceneState_Send210AndApplyRectAt40x84(void)
 	Engine_MapCopyCellAttributes(40, 84, 7, 4, m, n);
 }
 
-void SceneState_Send210AndApplyRect(void)
+static void SceneState_Send210AndApplyRect(void)
 {
 	s32 m, n;
 	Engine_GameFlagClear(0x210);
@@ -283,7 +311,7 @@ void SceneState_Send210AndApplyRect(void)
 	Engine_MapCopyCellAttributes(40, 89, 7, 4, m, n);
 }
 
-void HaidiaMura_OpenExitEleven(void)
+static void HaidiaMura_OpenExitEleven(void)
 {
 	Event_PlayCue(188);
 	Map_AnimateCells((s32)gHaidiaMuraCellAnimC, 45, 11);
@@ -291,7 +319,7 @@ void HaidiaMura_OpenExitEleven(void)
 	Engine_EventRequestExit(11);
 }
 
-void SceneState_ApplyFlag801Branch(void)
+static void SceneState_ApplyFlag801Branch(void)
 {
 	if (Engine_GameFlagIsSet(0x801) == 0)
 	{
@@ -304,25 +332,25 @@ void SceneState_ApplyFlag801Branch(void)
 	}
 }
 
-void SceneState_SetValue123Mode3(void)
+static void SceneState_SetValue123Mode3(void)
 {
 	Engine_AudioPlayCue(123);
 	Engine_EventRequestExit(3);
 }
 
-void SceneState_SetValue123Mode4(void)
+static void SceneState_SetValue123Mode4(void)
 {
 	Engine_AudioPlayCue(123);
 	Engine_EventRequestExit(4);
 }
 
-void SceneState_ApplyValues123And2(void)
+static void SceneState_ApplyValues123And2(void)
 {
 	Engine_AudioPlayCue(123);
 	Engine_EventRequestExit(2);
 }
 
-void HaidiaMura_OpenExitFive(void)
+static void HaidiaMura_OpenExitFive(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells((u32)gHaidiaMuraCellAnimA, 54, 32);
@@ -330,7 +358,7 @@ void HaidiaMura_OpenExitFive(void)
 	Engine_EventRequestExit(5);
 }
 
-void HaidiaMura_OpenExitSix(void)
+static void HaidiaMura_OpenExitSix(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells((u32)gHaidiaMuraCellAnimB, 45, 39);
@@ -338,7 +366,7 @@ void HaidiaMura_OpenExitSix(void)
 	Engine_EventRequestExit(6);
 }
 
-void SceneDialogue_RunFlag815GatedStep(void)
+static void SceneDialogue_RunFlag815GatedStep(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0 && Engine_GameFlagIsSet(0x87a) == 0)
 	{
@@ -369,7 +397,7 @@ void SceneDialogue_RunFlag815GatedStep(void)
 	}
 }
 
-void FieldScene_RunPrimarySequence(void)
+static void FieldScene_RunPrimarySequence(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)gHaidiaMuraCellAnimB, 49, 69);
@@ -377,7 +405,7 @@ void FieldScene_RunPrimarySequence(void)
 	Engine_EventRequestExit(8);
 }
 
-void FieldScene_RunScene373SequenceA(void)
+static void FieldScene_RunScene373SequenceA(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)gHaidiaMuraCellAnimD, 52, 76);
@@ -385,7 +413,7 @@ void FieldScene_RunScene373SequenceA(void)
 	Engine_EventRequestExit(9);
 }
 
-void FieldScene_RunPrimarySequenceSecond(void)
+static void FieldScene_RunPrimarySequenceSecond(void)
 {
 	Event_PlayCue(158);
 	Map_AnimateCells((s32)gHaidiaMuraCellAnimA, 35, 74);
@@ -393,7 +421,7 @@ void FieldScene_RunPrimarySequenceSecond(void)
 	Engine_EventRequestExit(10);
 }
 
-void FieldScene_RunScene373SequenceC(void)
+static void FieldScene_RunScene373SequenceC(void)
 {
 	struct FieldActor *leader;
 	struct FieldActor *jasmine;
@@ -439,7 +467,7 @@ void FieldScene_RunScene373SequenceC(void)
 	Engine_EventEnd();
 }
 
-void HaidiaMura_RunCameraRiseScene(void)
+static void HaidiaMura_RunCameraRiseScene(void)
 {
 	s32 **cam;
 	s32	 *saved;
@@ -489,7 +517,7 @@ void HaidiaMura_RunCameraRiseScene(void)
 	}
 }
 
-void FieldScene_RunPuppyBarks(void)
+static void FieldScene_RunPuppyBarks(void)
 {
 	s32 msg;
 
@@ -508,7 +536,7 @@ void FieldScene_RunPuppyBarks(void)
 	}
 }
 
-void SceneState_RunFlag204Step(void)
+static void SceneState_RunFlag204Step(void)
 {
 	s32 m, n;
 	Engine_EventBegin();
@@ -520,7 +548,7 @@ void SceneState_RunFlag204Step(void)
 	Engine_EventEnd();
 }
 
-void SceneState_SetFlag204AndConfigureRegion49_46(void)
+static void SceneState_SetFlag204AndConfigureRegion49_46(void)
 {
 	s32 p5, p6;
 	Engine_EventBegin();
@@ -532,7 +560,7 @@ void SceneState_SetFlag204AndConfigureRegion49_46(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene373SequenceE(void)
+static void FieldScene_RunScene373SequenceE(void)
 {
 	struct FieldActor *rec7;
 	struct FieldActor *record;
@@ -579,7 +607,7 @@ void FieldScene_RunScene373SequenceE(void)
 	Engine_EventEnd();
 }
 
-void SceneState_RunTablePairWhenActor22State1(void)
+static void SceneState_RunTablePairWhenActor22State1(void)
 {
 	u8 *p = Object_GetById(22);
 	if (Engine_GameFlagIsSet(0x823) != 0)
@@ -594,7 +622,7 @@ void SceneState_RunTablePairWhenActor22State1(void)
 	}
 }
 
-void HaidiaMura_AskAboutSneakingToAleph(s32 a0, s32 a1)
+static void HaidiaMura_AskAboutSneakingToAleph(s32 a0, s32 a1)
 {
 	s32				   p8;
 	struct FieldActor *rec8;
@@ -627,7 +655,7 @@ void HaidiaMura_AskAboutSneakingToAleph(s32 a0, s32 a1)
 	Engine_EventEnd();
 }
 
-void SceneState_RunTablePairWhenActor22State2(void)
+static void SceneState_RunTablePairWhenActor22State2(void)
 {
 	u8 *p = Object_GetById(22);
 	if (Engine_GameFlagIsSet(0x823) != 0)
@@ -642,7 +670,7 @@ void SceneState_RunTablePairWhenActor22State2(void)
 	}
 }
 
-void SceneState_RunTablePairByActor22State(void)
+static void SceneState_RunTablePairByActor22State(void)
 {
 	u8 *rec = Object_GetById(22);
 	if (Engine_GameFlagIsSet(0x823) != 0)
@@ -664,7 +692,7 @@ void SceneState_RunTablePairByActor22State(void)
 	}
 }
 
-void HouseScene_RunRepairMorning(void)
+static void HouseScene_RunRepairMorning(void)
 {
 	struct FieldActor *leader;
 	struct FieldActor *actor;
@@ -1365,7 +1393,7 @@ s32 HaidiaMura_ApplyEntryState(void)
 	return 0;
 }
 
-void FieldScene_RunSecondaryActorSequence(void)
+static void FieldScene_RunSecondaryActorSequence(void)
 {
 	struct FieldActor *record;
 	s32				   msg;
@@ -1442,7 +1470,7 @@ void FieldScene_RunSecondaryActorSequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunPrimaryActorSequence(void)
+static void FieldScene_RunPrimaryActorSequence(void)
 {
 	struct FieldActor *record;
 
@@ -1524,7 +1552,7 @@ void FieldScene_RunPrimaryActorSequence(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunCompanionActorSequence(void)
+static void FieldScene_RunCompanionActorSequence(void)
 {
 	struct FieldActor *actor_data;
 	s32				   shared_data;
@@ -1560,7 +1588,7 @@ void FieldScene_RunCompanionActorSequence(void)
 	Engine_EventEnd();
 }
 
-void HaidiaMura_MoveActorAlongLowerZPath(s32 a0, s32 a1, s32 a2, s32 a3)
+static void HaidiaMura_MoveActorAlongLowerZPath(s32 a0, s32 a1, s32 a2, s32 a3)
 {
 	s32				   p10;
 	s32				   p8;
@@ -1594,7 +1622,7 @@ void HaidiaMura_MoveActorAlongLowerZPath(s32 a0, s32 a1, s32 a2, s32 a3)
 	Engine_ActorSetAnimation(a0, 1);
 }
 
-void HaidiaMura_MoveActorAlongHigherZPath(s32 a0, s32 a1, s32 a2, s32 a3)
+static void HaidiaMura_MoveActorAlongHigherZPath(s32 a0, s32 a1, s32 a2, s32 a3)
 {
 	s32				   p10;
 	s32				   p8;
@@ -1628,7 +1656,7 @@ void HaidiaMura_MoveActorAlongHigherZPath(s32 a0, s32 a1, s32 a2, s32 a3)
 	Engine_ActorSetAnimation(a0, 1);
 }
 
-void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode)
+static void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode)
 {
 	s32 selector = first;
 	u32 i;
@@ -1656,7 +1684,7 @@ void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode)
 	}
 }
 
-void FieldScene_RunLargeStagingSequence(void)
+static void FieldScene_RunLargeStagingSequence(void)
 {
 	u32 i;
 	/* FAKEMATCH: rec's dead zero initializer and the none2 temporary preserve register allocation throughout the scene. Without the initializer 170 instructions differ; a plain 0 for none2 is born two instructions later, outranks the callback address and exchanges r9 and r10 with it (14 differ). */
@@ -1961,7 +1989,7 @@ void FieldScene_RunLargeStagingSequence(void)
 	Engine_EventEnd();
 }
 
-void Scene_RepairTheHouse(void)
+static void Scene_RepairTheHouse(void)
 {
 	struct FieldActor *scene;
 	struct FieldActor *rec;
@@ -2603,47 +2631,47 @@ void Scene_RepairTheHouse(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunStep8C(void)
+static void FieldScene_RunStep8C(void)
 {
 	Engine_PsynergyBegin(0x8c, 0);
 }
 
-void FieldScene_RunSingleStep(void)
+static void FieldScene_RunSingleStep(void)
 {
 	BattleEffect_CleanupSceneObjects();
 }
 
-void SceneState_SetValue1ThenCall(void)
+static void SceneState_SetValue1ThenCall(void)
 {
 	SceneEffect_UpdateObjectOnOddFrames((s32)Object_GetById(GERALD));
 }
 
-void SceneState_SetValue0ThenCall(void)
+static void SceneState_SetValue0ThenCall(void)
 {
 	SceneEffect_UpdateObjectOnOddFrames((s32)Object_GetById(ACTOR_PARTY_LEADER));
 }
 
-void FieldScene_RunStep9(void)
+static void FieldScene_RunStep9(void)
 {
 	SceneEffect_UpdateObjectOnOddFramesOnly((s32)Object_GetById(9));
 }
 
-void FieldScene_RunStep17(void)
+static void FieldScene_RunStep17(void)
 {
 	SceneEffect_UpdateObjectOnOddFramesOnly((s32)Object_GetById(0x17));
 }
 
-void SceneState_SetValue24ThenCall(void)
+static void SceneState_SetValue24ThenCall(void)
 {
 	SceneEffect_UpdateObjectOnOddFramesOnly((s32)Object_GetById(0x18));
 }
 
-void SceneState_SetValue25ThenCall(void)
+static void SceneState_SetValue25ThenCall(void)
 {
 	SceneEffect_UpdateObjectOnOddFramesOnly((s32)Object_GetById(0x19));
 }
 
-s32 Runtime_ComputeFixedPointDistance(s32 *first_position, s32 *second_position)
+static s32 Runtime_ComputeFixedPointDistance(s32 *first_position, s32 *second_position)
 {
 	s32 delta_x = (*first_position++ - *second_position++) >> 16;
 	s32 delta_y = (*first_position++ - *second_position++) >> 16;
@@ -2655,7 +2683,7 @@ s32 Runtime_ComputeFixedPointDistance(s32 *first_position, s32 *second_position)
 	return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32 range, s32 force)
+static s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32 range, s32 force)
 {
 	s32 result;
 	u32 angle;
@@ -2702,7 +2730,7 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
 	return result;
 }
 
-s32 SceneActor_RunStep18WhenTargetSet(s32 *p)
+static s32 SceneActor_RunStep18WhenTargetSet(s32 *p)
 {
 	struct FieldActor *t = Object_GetById(ACTOR_PARTY_LEADER);
 	if (p[14] == 0x80000000 && p[16] == 0x80000000)
@@ -2711,7 +2739,7 @@ s32 SceneActor_RunStep18WhenTargetSet(s32 *p)
 	return 0;
 }
 
-void Effect_ConfigureSpawnedParticle(struct SourceEntity *source)
+static void Effect_ConfigureSpawnedParticle(struct SourceEntity *source)
 {
 	s32					   spawn_position[3];
 	s32					   particle_index;
@@ -2742,7 +2770,7 @@ void Effect_ConfigureSpawnedParticle(struct SourceEntity *source)
 	Engine_AudioPlayCue(0x8a);
 }
 
-void Effect_SpawnRisingDustBurst(struct Resource373Emitter *emitter)
+static void Effect_SpawnRisingDustBurst(struct Resource373Emitter *emitter)
 {
 	s32 frame_countdown;
 
@@ -2795,7 +2823,7 @@ void Effect_SpawnRisingDustBurst(struct Resource373Emitter *emitter)
 	emitter->field2c = 0;
 }
 
-void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x, s32 delta_z)
+static void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x, s32 delta_z)
 {
 	s32 position[3];
 	if (particle != 0)
@@ -2808,7 +2836,7 @@ void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x, s32 delta_z)
 	}
 }
 
-void SceneState_ApplyRectAndRunTwo(void)
+static void SceneState_ApplyRectAndRunTwo(void)
 {
 	s32 e;
 	s32 f;
@@ -2826,7 +2854,7 @@ void SceneState_ApplyRectAndRunTwo(void)
 	HaidiaMura_OpenVillagerLane();
 }
 
-void HaidiaMura_OpenVillagerLane(void)
+static void HaidiaMura_OpenVillagerLane(void)
 {
 	struct FieldActor *actor;
 	s32				   column;
@@ -2859,20 +2887,20 @@ void HaidiaMura_OpenVillagerLane(void)
 	}
 }
 
-void Effect_PlayStepSound(void)
+static void Effect_PlayStepSound(void)
 {
 	if ((*(u32 *)&gFrameCount & 15) == 0)
 		Engine_AudioPlayCue(0x83);
 }
 
-void FieldScene_RunScriptedStepEE4(void)
+static void FieldScene_RunScriptedStepEE4(void)
 {
 	Engine_EventBegin();
 	Engine_MessageShowCentered((s32)MsgHaidiaDoorWontOpen, 1);
 	Engine_EventEnd();
 }
 
-void FieldScene_RunScene373SequenceB(void)
+static void FieldScene_RunScene373SequenceB(void)
 {
 	s32 rec7;
 
@@ -2897,7 +2925,7 @@ void FieldScene_RunScene373SequenceB(void)
 L_02005a8a:;
 }
 
-void SceneActor_SetFlagByteBySlotZeroPosition(void)
+static void SceneActor_SetFlagByteBySlotZeroPosition(void)
 {
 	s32				  *g = Object_GetById(ACTOR_PARTY_LEADER);
 	struct FieldActor *q;
@@ -2914,7 +2942,7 @@ void SceneActor_SetFlagByteBySlotZeroPosition(void)
 	}
 }
 
-s32 SceneEffect_UpdateOrbitPosition(s32 *p)
+static s32 SceneEffect_UpdateOrbitPosition(s32 *p)
 {
 	s16 *q = (s16 *)p[20];
 	s32	 a, b;
@@ -2930,7 +2958,7 @@ s32 SceneEffect_UpdateOrbitPosition(s32 *p)
 	return 0;
 }
 
-void InitializeStagedActorSceneOrbitingEffect(s32 id)
+static void InitializeStagedActorSceneOrbitingEffect(s32 id)
 {
 	OrbitingSceneObject		  *actor;
 	OrbitingSceneObjectSprite *sprite;
@@ -2969,7 +2997,7 @@ void InitializeStagedActorSceneOrbitingEffect(s32 id)
 	actor->state = zero;
 }
 
-void OverlayObject_UpdateOnFrameBit1(s32 p)
+static void OverlayObject_UpdateOnFrameBit1(s32 p)
 {
 
 	if ((gFrameCount & 2) != 0)
@@ -2980,7 +3008,7 @@ void OverlayObject_UpdateOnFrameBit1(s32 p)
 		WorldMap_CreateLinkedEffects((void *)p);
 }
 
-void SceneEffect_UpdateObjectOnOddFrames(s32 p)
+static void SceneEffect_UpdateObjectOnOddFrames(s32 p)
 {
 	if ((gFrameCount & 1) != 0)
 		Engine_ObjectSetPartPalettes(p, (gFrameCount >> 1) % 6);
@@ -2988,13 +3016,13 @@ void SceneEffect_UpdateObjectOnOddFrames(s32 p)
 		WorldMap_CreateLinkedEffects((void *)p);
 }
 
-void SceneEffect_UpdateObjectOnOddFramesOnly(s32 p)
+static void SceneEffect_UpdateObjectOnOddFramesOnly(s32 p)
 {
 	if ((gFrameCount & 1) != 0)
 		Engine_ObjectSetPartPalettes(p, (gFrameCount >> 1) % 6);
 }
 
-void Effect_AnimateVerticalPositive(union FieldObject *object)
+static void Effect_AnimateVerticalPositive(union FieldObject *object)
 {
 	struct FieldActor *self = &object->actor;
 	struct FieldActor *anchor;
@@ -3019,7 +3047,7 @@ void Effect_AnimateVerticalPositive(union FieldObject *object)
 	self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
 }
 
-void Effect_AnimateVerticalNegative(union FieldObject *object)
+static void Effect_AnimateVerticalNegative(union FieldObject *object)
 {
 	struct FieldActor *self = &object->actor;
 	struct FieldActor *anchor;

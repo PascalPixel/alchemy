@@ -28,7 +28,7 @@ extern s16					  Korosseo_MarkerEndY;
 extern s16					  Korosseo_MarkerBlink;
 extern s16					  Korosseo_MarkerPriority;
 
-void Korosseo_UpdateMarker(void)
+static void Korosseo_UpdateMarker(void)
 {
 	s32						tile;
 	s32						total;

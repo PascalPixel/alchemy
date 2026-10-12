@@ -2,7 +2,6 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/field/korima_hiroba/hiroba.h"
-#include "unit/field/common/object/staged_actor.h"
 #include "unit/field/common/korima/palette.h"
 #include "unit/battle/effect/object.h"
 #include "battle.h"
@@ -20,6 +19,9 @@
 #include "io_reg.h"
 #include "ability_ids.h"
 #include "field_scene.h"
+
+// 前方宣言
+static void InitializeStagedActorSceneOrbitingEffect(s32 id);
 
 typedef struct OrbitingSceneObjectSprite
 {
@@ -102,7 +104,7 @@ u8 *SceneData_GetActorTable(void)
 	return KorimaHiroba_Actors;
 }
 
-void SceneActor_RunPlacementQuery(void)
+static void SceneActor_RunPlacementQuery(void)
 {
 	struct StagedActorProbe result;
 	Engine_EventBegin();
@@ -111,7 +113,7 @@ void SceneActor_RunPlacementQuery(void)
 	Engine_EventEnd();
 }
 
-void KorimaHiroba_AwardHiddenNut(void)
+static void KorimaHiroba_AwardHiddenNut(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetPosition(11, 0, 0);
@@ -147,7 +149,7 @@ s32 FieldScene_SetupEntryActors8To11(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "../common/korima/palette.c"
 
-s32 SceneEffect_UpdateOrbitPosition(s32 *p)
+static s32 SceneEffect_UpdateOrbitPosition(s32 *p)
 {
 	s16 *q = (s16 *)p[20];
 	s32	 a, b;
@@ -163,7 +165,7 @@ s32 SceneEffect_UpdateOrbitPosition(s32 *p)
 	return 0;
 }
 
-void InitializeStagedActorSceneOrbitingEffect(s32 id)
+static void InitializeStagedActorSceneOrbitingEffect(s32 id)
 {
 	OrbitingSceneObject		  *actor;
 	OrbitingSceneObjectSprite *sprite;

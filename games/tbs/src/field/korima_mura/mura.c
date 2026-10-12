@@ -27,6 +27,13 @@
 #include "objcmd.h"
 #include "facing_object.h"
 
+// 前方宣言
+static void FieldScene_RunExtendedActorSequence(void);
+static void FieldScene_RunPairedStepA(s32 arg0, s32 arg1);
+static void FieldScene_RunPairedStepB(s32 arg0, s32 arg1, s32 arg2);
+static void SceneEffect_SpawnObject26EveryEightFrames(void);
+static void FieldScene_RunFlag845And847Branches(void);
+
 struct Obj
 {
 	s32 f00, f04, f08, f0c, f10, f14, f18, f1c;
@@ -44,7 +51,7 @@ struct Sub
 	u8 f26;
 };
 
-s32 KorimaMura_ApplyPendingPose(s32 arg0)
+static s32 KorimaMura_ApplyPendingPose(s32 arg0)
 {
 	if (KorimaMura_PendingPose != 0)
 	{
@@ -54,7 +61,7 @@ s32 KorimaMura_ApplyPendingPose(s32 arg0)
 	return 1;
 }
 
-s32 SceneEffect_AdvanceCounterAndSwitchMode(struct Obj *p)
+static s32 SceneEffect_AdvanceCounterAndSwitchMode(struct Obj *p)
 {
 	s32 v = Engine_RandomNext();
 	s32 t = v * 100;
@@ -75,7 +82,7 @@ s32 SceneEffect_AdvanceCounterAndSwitchMode(struct Obj *p)
 	return 1;
 }
 
-void SceneData_InitRecordTable(u8 *o)
+static void SceneData_InitRecordTable(u8 *o)
 {
 	u8 *p = o + 72;
 	u32 i;
@@ -98,7 +105,7 @@ void SceneData_InitRecordTable(u8 *o)
 	}
 }
 
-s32 SceneEffect_UpdateFallingObject(struct Obj *p)
+static s32 SceneEffect_UpdateFallingObject(struct Obj *p)
 {
 	p->f08 += p->f24;
 	p->f10 += p->f2c;
@@ -116,7 +123,7 @@ s32 SceneEffect_UpdateFallingObject(struct Obj *p)
 	return 1;
 }
 
-s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
+static s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 {
 	s32					 delta;
 	u16					 old;
@@ -196,7 +203,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 	return gKorimaMuraPlacements;
 }
 
-void FieldScene_RunActor16MessageBranch(void)
+static void FieldScene_RunActor16MessageBranch(void)
 {
 	struct FieldActor *q = Object_GetById(0);
 	s32				   v = q->facing;
@@ -213,7 +220,7 @@ void FieldScene_RunActor16MessageBranch(void)
 	Engine_EventEnd();
 }
 
-void FieldScene_RunActor27Step(void)
+static void FieldScene_RunActor27Step(void)
 {
 	BattleFx_RunPageEffectForSlot(27, 0, 1);
 }
@@ -227,7 +234,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gKorimaMuraEvents;
 }
 
-void FieldScene_ConfigureActor0ThenRun(s32 a0)
+static void FieldScene_ConfigureActor0ThenRun(s32 a0)
 {
 	Object_GetById(0)->motion_flags = 0;
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -237,7 +244,7 @@ void FieldScene_ConfigureActor0ThenRun(s32 a0)
 	Engine_EventRequestExit(a0);
 }
 
-void KorimaMura_AnimateSwitchOrExit(void)
+static void KorimaMura_AnimateSwitchOrExit(void)
 {
 	struct EventWork *work = gEventWork;
 	s32				  x = 0;
@@ -277,7 +284,7 @@ void KorimaMura_AnimateSwitchOrExit(void)
 	Engine_EventEnd();
 }
 
-void KorimaMura_RunObjectSpreadScene(void)
+static void KorimaMura_RunObjectSpreadScene(void)
 {
 	u32 i;
 	s32 v5;
@@ -435,7 +442,7 @@ s32 Scene_Initialize(void)
 	return 0;
 }
 
-void SceneActor_SetActors19To22HeightByFrameParity(void)
+static void SceneActor_SetActors19To22HeightByFrameParity(void)
 {
 	struct FieldActor *p;
 
@@ -499,7 +506,7 @@ void SceneActor_SetActors19To22HeightByFrameParity(void)
 	}
 }
 
-void FieldScene_StartEffect141Sequence(s32 arg0, s32 arg1)
+static void FieldScene_StartEffect141Sequence(s32 arg0, s32 arg1)
 {
 	Engine_PsynergyBegin(141, 1);
 	Engine_PsynergySetTarget(arg0, arg1);
@@ -508,14 +515,14 @@ void FieldScene_StartEffect141Sequence(s32 arg0, s32 arg1)
 	Engine_TaskWait(1);
 }
 
-void FieldScene_RunSequenceA(void)
+static void FieldScene_RunSequenceA(void)
 {
 	Engine_PsynergyPlayEffect(2);
 	Engine_PsynergyLowerHands();
 	BattleEffect_CleanupSceneObjects();
 }
 
-void FieldScene_RunExtendedActorSequence(void)
+static void FieldScene_RunExtendedActorSequence(void)
 {
 	struct FieldActor *actor;
 	s32				  *layout;
@@ -1481,19 +1488,19 @@ leave:
 	Engine_EventEnd();
 }
 
-void FieldScene_RunPairedStepA(s32 arg0, s32 arg1)
+static void FieldScene_RunPairedStepA(s32 arg0, s32 arg1)
 {
 	Engine_EventShowMessage(arg0, 0);
 	Engine_EventWait(arg1);
 }
 
-void FieldScene_RunPairedStepB(s32 arg0, s32 arg1, s32 arg2)
+static void FieldScene_RunPairedStepB(s32 arg0, s32 arg1, s32 arg2)
 {
 	Engine_ActorFaceDirection(arg0, arg1, 0);
 	Engine_EventWait(arg2);
 }
 
-s32 SceneEffect_AdvanceAngleUntilIdle(struct FieldActor *p)
+static s32 SceneEffect_AdvanceAngleUntilIdle(struct FieldActor *p)
 {
 	p->scale_x += 0x1eb8;
 	if (p->target_x == 0x80000000 && p->target_y == p->target_x && p->target_z == p->target_y)
@@ -1503,7 +1510,7 @@ s32 SceneEffect_AdvanceAngleUntilIdle(struct FieldActor *p)
 	return 1;
 }
 
-void SceneEffect_SpawnObject26EveryEightFrames(void)
+static void SceneEffect_SpawnObject26EveryEightFrames(void)
 {
 	struct FieldActor *p;
 	struct Sub		  *q;
@@ -1547,7 +1554,7 @@ void SceneEffect_SpawnObject26EveryEightFrames(void)
 	Engine_ObjectSetScript(p, KorimaMura_Object26Script);
 }
 
-s32 SceneEffect_SetModeByFrameBit1(s32 arg0)
+static s32 SceneEffect_SetModeByFrameBit1(s32 arg0)
 {
 	if ((gFrameCount >> 1) & 1)
 	{
@@ -1560,7 +1567,7 @@ s32 SceneEffect_SetModeByFrameBit1(s32 arg0)
 	return 0;
 }
 
-s32 KorimaMura_TriggerRegionScript(struct FieldActor *actor)
+static s32 KorimaMura_TriggerRegionScript(struct FieldActor *actor)
 {
 	if (KorimaMura_LayoutFlag != 0)
 	{
@@ -1598,7 +1605,7 @@ s32 KorimaMura_PendingPose __attribute__((section(".bss")));
 s32 KorimaMura_LayoutFlag __attribute__((section(".bss")));
 s32 KorimaMura_EffectActive __attribute__((section(".bss")));
 
-void FieldScene_RunFlag845And847Branches(void)
+static void FieldScene_RunFlag845And847Branches(void)
 {
 	if (Engine_GameFlagIsSet(0x845) == 0)
 	{

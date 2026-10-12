@@ -1,5 +1,36 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "dma.h"
+#include "io_reg.h"
+
+struct WaveFxScroll {
+    u16 lines[2][162];
+    u8 unknown_288[2];
+    u8 page;
+    u8 unknown_28b[9];
+    u8 delay;
+};
+
+// BG0 の走査線スクロールを HBlank DMA に掛ける
+void Func_080dcdc8(void)
+{
+    struct WaveFxScroll *work = Ram_HeapSlots->unknown_4c[3];
+
+    if (!work->delay) {
+        /* FAKEMATCH: ⚓️ stores the stopped control word before it starts the destination address and before the line offset's last shift; written as work->lines[work->page] the address is started ahead of the store (differ 2), and with the barrier alone the whole offset is (differ 2). The temporary holds the page's offset in words until the barrier. */
+        s32 line = work->page * 81;
+        volatile u16 *dma = (volatile u16 *)0x040000b0;
+
+        dma[5] &= 0xc5ff; // 開始タイミングとリピートを消す
+        dma[5] &= 0x7fff; // 止める
+        /* FAKEMATCH: see above; the control word is stored before the rest. */
+        asm volatile("");
+        line *= 4;
+        (void)dma[5];
+        // HBlank ごとに 16 ビットを 1 回 (リピート、転送先リロード)
+        Dma_Set((u8 *)work + line, (void *)0x04000010, 0xa2600001, (volatile u32 *)dma);
+    }
+}
 
 s32 Func_080dce20(s16 hue)
 {

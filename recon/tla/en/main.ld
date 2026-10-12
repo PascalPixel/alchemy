@@ -1248,7 +1248,6 @@
         "*/games/tla/src/battle/effect/wavefx.o"(.text)
         "*/recon/tla/raw/080dcadc.o"(.text)
         "*/recon/tla/raw/080dcb44.o"(.text)
-        "*/recon/tla/raw/080dcdc8.o"(.text)
         "*/games/tla/src/battle/effect/hue.o"(.text)
         "*/games/tla/src/battle/effect/set_callback_when_target_unset.o"(.text)
         "*/games/tla/src/battle/effect/get_cycled_table_word.o"(.text)

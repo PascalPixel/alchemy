@@ -197,7 +197,7 @@ extern const u8 Data_020040dc[];
 extern const u8 Data_0200411c[];
 extern const u8 Data_02004128[];
 extern const u8 Data_0200414c[];
-extern const u8 Data_02004350[];
+extern const u8 Data_02004351[];
 extern const u8 Data_020044c8[];
 
 extern const u8 MsgCheckedTheColumn[];

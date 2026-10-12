@@ -1,14 +1,13 @@
-/* Near miss, differ 2 of 46: the native reads the map work pointer before it
-   copies the id to r5 (ldr r3, [r3, #32]; adds r5, r1, #0); this draft copies
-   the id first. The three are tied in the scheduler and the parameter copy
-   is first in the stream. */
-#include "../../../../../games/tla/src/field/overlay_67c/local.h"
+#include "local.h"
 
 void Func_020011d4(s32 unused, s32 id)
 {
-    s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->map_work + 0x140);
+    u8 *map = (u8 *)Ram_HeapSlots->map_work;
+    s32 *layer;
     s32 i;
 
+    do { } while (0); /* FAKEMATCH: the loop note ends the scheduling block: the native loads the map work before it copies the id (differ 2 without it). */
+    layer = (s32 *)(map + 0x140);
     Object_SetPartAttribute(Object_GetById(id), 5);
     Func_02001e78(id);
     Object_SetModeById(id, 3);

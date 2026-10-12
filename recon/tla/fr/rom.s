@@ -3349,22 +3349,21 @@ Func_080fa5a4:
 	.balign 4
 	.incbin "baserom.gba", 0x000fc8c8, 0x00000430
 	.section .rom.000fcd2e, "ax"
-	.incbin "baserom.gba", 0x000fcd2e, 0x00000046
-	.global Func_080fad1c
-	.type Func_080fad1c, %function
+	.incbin "baserom.gba", 0x000fcd2e, 0x00000002
+	.global Menu_HideEmptyEntryIcons
+	.type Menu_HideEmptyEntryIcons, %function
 	.thumb_func
-Func_080fad1c:
-	.incbin "baserom.gba", 0x000fcd74, 0x0000006c
+Menu_HideEmptyEntryIcons:
+	.incbin "baserom.gba", 0x000fcd30, 0x00000044
+	.section .rom.000fcde0, "ax"
+	.balign 4
 	.global ItemMenu_Collect
 	.type ItemMenu_Collect, %function
 	.thumb_func
 ItemMenu_Collect:
 	.incbin "baserom.gba", 0x000fcde0, 0x00000048
-	.global ItemMenu_DrawIcons
-	.type ItemMenu_DrawIcons, %function
-	.thumb_func
-ItemMenu_DrawIcons:
-	.incbin "baserom.gba", 0x000fce28, 0x000002d4
+	.section .rom.000fcee4, "ax"
+	.incbin "baserom.gba", 0x000fcee4, 0x00000218
 	.section .rom.000fd15c, "ax"
 	.incbin "baserom.gba", 0x000fd15c, 0x00000544
 	.section .rom.000fd7e8, "ax"

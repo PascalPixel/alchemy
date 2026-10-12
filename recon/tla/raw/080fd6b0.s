@@ -31,7 +31,7 @@ Func_080fd6b0:
 	cmp r7, #0
 	bge .L_080fd6c8
 	mov r0, r8
-	bl Func_080facd8
+	bl Menu_HideEmptyEntryIcons
 	pop {r3}
 	mov r8, r3
 	pop {r5, r6, r7, pc}

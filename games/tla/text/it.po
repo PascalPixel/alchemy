@@ -18259,7 +18259,7 @@ msgctxt "message"
 msgid "04562"
 msgstr "Attivare strumento?"
 
-msgctxt "message"
+msgctxt "MsgItemMenuEmpty"
 msgid "04563"
 msgstr "Non hai strumenti."
 

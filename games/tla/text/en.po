@@ -16415,7 +16415,7 @@ msgctxt "message"
 msgid "04101"
 msgstr "Equip this item?"
 
-msgctxt "message"
+msgctxt "MsgItemMenuEmpty"
 msgid "04102"
 msgstr "You have no items."
 

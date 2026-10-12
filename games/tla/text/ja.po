@@ -16423,7 +16423,7 @@ msgctxt "message"
 msgid "04103"
 msgstr "そうびしますか?"
 
-msgctxt "message"
+msgctxt "MsgItemMenuEmpty"
 msgid "04104"
 msgstr "アイテムをもっていません"
 

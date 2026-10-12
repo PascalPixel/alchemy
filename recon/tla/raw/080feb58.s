@@ -104,7 +104,7 @@ Func_080feb58:
 	movs r1, #96
 	bl Func_081005e4
 	adds r0, r5, #0
-	bl Func_080facd8
+	bl Menu_HideEmptyEntryIcons
 	mov r2, r11
 	cmp r2, #2
 	bne .L_080fec5a

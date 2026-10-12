@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080facd8
+	.global Menu_HideEmptyEntryIcons
 	.thumb_func
-Func_080facd8:
+Menu_HideEmptyEntryIcons:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}

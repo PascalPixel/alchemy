@@ -18259,7 +18259,7 @@ msgctxt "message"
 msgid "04562"
 msgstr "Item anlegen?"
 
-msgctxt "message"
+msgctxt "MsgItemMenuEmpty"
 msgid "04563"
 msgstr "Du hast keine Items."
 

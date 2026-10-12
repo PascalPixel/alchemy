@@ -128,7 +128,7 @@ Func_080fa870:
 	adds r3, r3, r2
 	ldrh r0, [r6, r3]
 	movs r1, #1
-	bl Func_080fae2c
+	bl ItemMenu_RefreshOwner
 	movs r3, #9
 	str r3, [sp, #0]
 	mov r0, r8
@@ -159,7 +159,7 @@ Func_080fa870:
 	ldrh r3, [r3]
 	mov r1, r11
 	ands r1, r3
-	bl Func_080fad48
+	bl InventoryMenu_GetItemQuantity
 	ldr r3, [sp, #12]
 	movs r1, #129
 	lsls r3, r3, #1
@@ -167,7 +167,7 @@ Func_080fa870:
 	adds r3, r3, r1
 	adds r5, r0, #0
 	ldrh r0, [r6, r3]
-	bl Func_080fad1c
+	bl ItemMenu_Count
 	cmp r0, #15
 	bne .L_080fa9d8
 	cmp r5, #0

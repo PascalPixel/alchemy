@@ -141,7 +141,7 @@ Func_080fa5a4:
 	movs r1, #0
 	lsls r3, r3, #1
 	ldrh r0, [r3, r6]
-	bl Func_080fae2c
+	bl ItemMenu_RefreshOwner
 	ldr r3, [sp, #20]
 	adds r0, r5, #0
 	lsls r3, r3, #1
@@ -225,7 +225,7 @@ Func_080fa5a4:
 	movs r1, #0
 	lsls r3, r3, #1
 	ldrh r0, [r3, r6]
-	bl Func_080fae2c
+	bl ItemMenu_RefreshOwner
 	movs r0, #112
 	bl Audio_PlayCue
 	b .L_080fa7a4
@@ -233,7 +233,7 @@ Func_080fa5a4:
 	ldr r3, [sp, #20]
 	lsls r3, r3, #1
 	ldrh r0, [r3, r6]
-	bl Func_080fad1c
+	bl ItemMenu_Count
 	cmp r0, #0
 	beq .L_080fa79e
 	movs r0, #112

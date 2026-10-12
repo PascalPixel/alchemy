@@ -18259,7 +18259,7 @@ msgctxt "message"
 msgid "04562"
 msgstr "¿Equipar?"
 
-msgctxt "message"
+msgctxt "MsgItemMenuEmpty"
 msgid "04563"
 msgstr "No tienes objetos."
 

@@ -479,62 +479,6 @@ Func_020003b4:
 	.4byte Data_02003d10
 .L_02008534:
 	.4byte 0xffff0000
-	.section .text.x02008538,"ax",%progbits
-	.global Func_02000538
-	.thumb_func
-Func_02000538:
-	push {r5, r6, lr}
-	adds r5, r3, #0
-	ldr r3, [sp, #12]
-	ldr r6, [sp, #16]
-	mov r12, r3
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r4, [r3, #32]
-	cmp r4, #0
-	beq .L_0200858a
-	cmp r0, #2
-	bhi .L_02008560
-	lsls r3, r0, #3
-	subs r3, r3, r0
-	movs r0, #156
-	lsls r0, r0, #1
-	lsls r3, r3, #3
-	adds r3, r3, r0
-	ldr r0, [r4, r3]
-	b .L_02008562
-.L_02008560:
-	ldr r0, .L_02008590
-.L_02008562:
-	lsls r3, r2, #7
-	adds r3, r1, r3
-	lsls r3, r3, #2
-	movs r1, #0
-	adds r0, r0, r3
-	cmp r1, r12
-	bcs .L_0200858a
-.L_02008570:
-	lsls r3, r1, #9
-	movs r2, #0
-	adds r3, r0, r3
-	cmp r2, r5
-	bcs .L_02008584
-.L_0200857a:
-	adds r2, #1
-	strb r6, [r3, #2]
-	adds r3, #4
-	cmp r2, r5
-	bcc .L_0200857a
-.L_02008584:
-	adds r1, #1
-	cmp r1, r12
-	bcc .L_02008570
-.L_0200858a:
-	movs r0, #0
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_02008590:
-	.4byte gMapCellBuffer
 	.section .text.x020085cc,"ax",%progbits
 	.balign 4
 	.global Func_020005cc

@@ -53,7 +53,9 @@
 void SerialRuntime_Initialize(void)
 {
 	u32 interrupt_enable;
-	/* FAKEMATCH: keep the fill word's address before its store. */
+	/* FAKEMATCH: the fill word is volatile, so the zero is stored through its
+	 * address (mov r0, sp; str r3, [r0]). 2026-10-13: as a plain u32 the zero
+	 * is stored to [sp, #0] before the address is formed (differ 6). */
 	volatile u32		  zero;
 	s32					  index;
 	struct SerialRuntime *state;

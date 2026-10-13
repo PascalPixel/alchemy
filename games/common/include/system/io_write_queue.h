@@ -29,7 +29,7 @@ void IoWriteQueue_FlushPending(void);
 
 // 割り込みを止めて I/O 書き込みキューに 1 件積む。満杯（32 件）なら何もしない
 // address : 書き込み先、value : 値、control : 遅延フレーム << 16、または DMA の制御語
-/* FAKEMATCH: the count is read and stored through count_, a u16 pointer to q->count held in a local; written as q->count, 15 linked sections of tbs-en differ (measured 2026-10-13: the nine QueueIoWriteDelay writers, 18 functions with inline pushes in 12 objects, and the overlays). It replaces the earlier tagged cast store *(u16 *)&q->count, so it is the same device in another form. */
+/* FAKEMATCH: the count is read and stored through count_, a u16 pointer to q->count held in a local; written as q->count, 15 linked sections of tbs-en differ (measured 2026-10-13: the nine QueueIoWriteDelay writers, 18 functions with inline pushes in 12 objects, and the overlays). It replaces the earlier tagged cast store *(u16 *)&q->count, so it is the same device in another form. The body is braces alone, not do { } while (0): an outer one-pass block changes 8 linked sections of tbs-en (the QueueIoWriteDelay writers, six objects with inline pushes and the overlays; ⚓️ unchanged; measured 2026-10-13). */
 #define IO_WRITE_QUEUE_PUSH(address, value, control) \
 	{                                                \
 		struct IoWriteQueue *q = &gIoWriteQueue;     \

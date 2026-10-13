@@ -187,113 +187,49 @@ static void EV19_TOUCH(void)
 static void SetStatueLightGroup1(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_1) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2d, 28, 0x22, 10, a, b);
-	}
+		Map_CopyCellsTo(0x2d, 28, 0x22, 10, 2, 1);
 	if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_2) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2f, 28, 0x24, 10, a, b);
-	}
+		Map_CopyCellsTo(0x2f, 28, 0x24, 10, 2, 1);
 	if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_3) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2d, 29, 0x22, 11, a, b);
-	}
+		Map_CopyCellsTo(0x2d, 29, 0x22, 11, 2, 1);
 	if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_4) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2f, 29, 0x24, 11, a, b);
-	}
+		Map_CopyCellsTo(0x2f, 29, 0x24, 11, 2, 1);
 }
 
 static void SetStatueLightGroup2(void)
 {
 	if (Engine_GameFlagIsSet(0x826) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2d, 28, 0x22, 10, a, b);
-	}
+		Map_CopyCellsTo(0x2d, 28, 0x22, 10, 2, 1);
 	if (Engine_GameFlagIsSet(0x827) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2f, 28, 0x24, 10, a, b);
-	}
+		Map_CopyCellsTo(0x2f, 28, 0x24, 10, 2, 1);
 	if (Engine_GameFlagIsSet(0x828) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2d, 29, 0x22, 11, a, b);
-	}
+		Map_CopyCellsTo(0x2d, 29, 0x22, 11, 2, 1);
 	if (Engine_GameFlagIsSet(0x829) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2f, 29, 0x24, 11, a, b);
-	}
+		Map_CopyCellsTo(0x2f, 29, 0x24, 11, 2, 1);
 }
 
 static void SetStatueLightGroup3(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_1) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2d, 30, 0x22, 10, a, b);
-	}
+		Map_CopyCellsTo(0x2d, 30, 0x22, 10, 2, 1);
 	if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_2) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2f, 30, 0x24, 10, a, b);
-	}
+		Map_CopyCellsTo(0x2f, 30, 0x24, 10, 2, 1);
 	if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_3) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2d, 31, 0x22, 11, a, b);
-	}
+		Map_CopyCellsTo(0x2d, 31, 0x22, 11, 2, 1);
 	if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_4) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2f, 31, 0x24, 11, a, b);
-	}
+		Map_CopyCellsTo(0x2f, 31, 0x24, 11, 2, 1);
 }
 
 static void SetStatueLightGroup4(void)
 {
 	if (Engine_GameFlagIsSet(0x826) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2d, 30, 0x22, 10, a, b);
-	}
+		Map_CopyCellsTo(0x2d, 30, 0x22, 10, 2, 1);
 	if (Engine_GameFlagIsSet(0x827) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2f, 30, 0x24, 10, a, b);
-	}
+		Map_CopyCellsTo(0x2f, 30, 0x24, 10, 2, 1);
 	if (Engine_GameFlagIsSet(0x828) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2d, 31, 0x22, 11, a, b);
-	}
+		Map_CopyCellsTo(0x2d, 31, 0x22, 11, 2, 1);
 	if (Engine_GameFlagIsSet(0x829) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2f, 31, 0x24, 11, a, b);
-	}
+		Map_CopyCellsTo(0x2f, 31, 0x24, 11, 2, 1);
 }
 
 static void EV11_TOUCH(void)

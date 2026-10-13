@@ -245,9 +245,7 @@ u32 SaveState_BuildSummaryHeader(void)
 	u32					sum = 0;
 
 	summary = (struct SaveSummary *)(gSaveBuffer - 16);
-	/* FAKEMATCH: Runtime_GetBuildStampTimeFar is called as u32 (*)(s32); as u32 (*)(void), its prototype, SaveState_BuildSummaryHeader does not compile */
-	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-	gGameState.build_stamp = ((u32 (*)(s32))Runtime_GetBuildStampTimeFar)(0);
+	gGameState.build_stamp = Runtime_GetBuildStampTimeFar(0);
 	gGameState.play_time = gLoadedStateWord;
 	{
 		u32 *copy = (u32 *)gSceneState;

@@ -392,9 +392,7 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs)
 		found->output.tail_link = &slot->output.head;
 		found->unknown_10 = 1;
 		found->flags = 1;
-		/* FAKEMATCH: UiWork_ResetCounters is called as void (*)(); as void (*)(void), its prototype, UiWindow_Create does not compile */
-		/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-		((void (*)())UiWork_ResetCounters)(x);
+		UiWork_ResetCounters(x);
 		if (attrs & 8)
 		{
 			found->flags |= 8;

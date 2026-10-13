@@ -699,9 +699,7 @@ s32 Field_RunScene(s32 entrance)
 			if (GameFlag_TestFar(0x12f) != 0)
 			{
 				GameFlag_ClearBitFar(0x12f);
-				/* FAKEMATCH: UiTimedNotice_CreateFar is called as void (*)(s32); as void (*)(void), its prototype, Field_RunScene does not compile */
-				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-				((void (*)(s32))UiTimedNotice_CreateFar)(gGameState.scene);
+				UiTimedNotice_CreateFar(gGameState.scene);
 			}
 			if (gGameState.pending_djinn_event != 0)
 			{
@@ -954,9 +952,7 @@ s32 Field_RunScene(s32 entrance)
 								ctrl->wait = 1;
 								WaitFrames(1);
 							}
-							/* FAKEMATCH: Menu_RunWorkspaceResultLoopFar is called as void (*)(s32); as s32 (*)(void), its prototype, Field_RunScene does not compile */
-							/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-							((void (*)(s32))Menu_RunWorkspaceResultLoopFar)(0);
+							Menu_RunWorkspaceResultLoopFar(0);
 							ctrl->wait = 0;
 						}
 						else

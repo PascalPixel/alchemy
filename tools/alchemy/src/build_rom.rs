@@ -8,26 +8,40 @@ use crate::process::run as command;
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
+use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Mutex;
 
-const USAGE: &str = "usage: alchemy build rom [--target GAME-EDITION] [--script FILE] [--output DIR] [--keep-going]\n\
+const USAGE: &str = "usage: alchemy build rom [--target GAME-EDITION] [--script FILE] [--output DIR] [--keep-going] [--commands]\n\
 Compile and assemble every object the linker script lists, link them in its\n\
 order, write the ROM image beside the linker map and fix its cartridge header\n\
 (Nintendo logo and complement check) as pret's gbafix does. Japanese TBS is\n\
 the default.\n\
 --keep-going writes the\n\
 image despite link errors, for locating differences; it never passes a compare.\n\
+--commands prints every command the build runs, one per line: the argv the\n\
+build passes, quoted for a shell, with paths inside the checkout relative to\n\
+it, where every command runs. Each C object shows its compiler and full\n\
+options (agscc's xgcc for game Thumb C; cpp0, then gcc2952_arm for game ARM\n\
+C or old_agbcc for the sound and flash libraries) and its assembler; a C\n\
+source the build preprocesses to learn what it reads shows that run first.\n\
+Then come the linker, objcopy and nm, and the header fix-up, which runs\n\
+inside alchemy, as `alchemy gbafix ROM --silent`; the image is then\n\
+zero-filled to the cartridge size. A command whose products the build cache\n\
+already holds prints too, after `# cached: `, so the lines always list the\n\
+whole build. Assets and messages encode inside alchemy and print nothing.\n\
 A build prints settled=1 and stops at once when no file it reads and none it\n\
-made has changed on disk since it last finished; ALCHEMY_REVERIFY=1 makes it\n\
-check everything by content regardless, as `alchemy verify` always does.";
+made has changed on disk since it last finished, unless given --commands;\n\
+ALCHEMY_REVERIFY=1 makes it check everything by content regardless, as\n\
+`alchemy verify` always does.";
 
 pub fn run(args: &[String]) -> Result<(), String> {
     let mut target = decomp_target(None)?;
     let mut script = None;
     let mut output = None;
     let mut keep_going = false;
+    let mut commands = None;
     let mut args = args.iter();
     while let Some(arg) = args.next() {
         match arg.as_str() {
@@ -39,6 +53,7 @@ pub fn run(args: &[String]) -> Result<(), String> {
             "--script" => script = Some(PathBuf::from(args.next().ok_or(USAGE)?)),
             "--output" => output = Some(PathBuf::from(args.next().ok_or(USAGE)?)),
             "--keep-going" => keep_going = true,
+            "--commands" => commands = Some(Commands::printed(crate::compiler::routing::root())),
             _ => return Err(USAGE.into()),
         }
     }
@@ -46,10 +61,12 @@ pub fn run(args: &[String]) -> Result<(), String> {
     let output = output.unwrap_or_else(|| PathBuf::from(target.output_dir));
     // The ordinary build of an edition stops here when nothing it reads and
     // nothing it made has changed since it last finished (see settled.rs).
+    // A build asked for its commands goes on to list them all.
     let place = root.join(&output);
     let name = target.id.as_str();
     let before = (script.is_none() && !keep_going).then(|| crate::settled::inputs(root));
-    if let Some(before) = before.as_ref().filter(|_| std::env::var_os("ALCHEMY_REVERIFY").is_none()) {
+    let shortcut = commands.is_none() && std::env::var_os("ALCHEMY_REVERIFY").is_none();
+    if let Some(before) = before.as_ref().filter(|_| shortcut) {
         if let Some(printed) = crate::settled::holds(&place, name, before) {
             print!("settled=1\n{printed}");
             return Ok(());
@@ -61,14 +78,12 @@ pub fn run(args: &[String]) -> Result<(), String> {
         Some(script) => script,
         None => crate::edition::script(root, target, &output)?,
     };
-    let linked = link(
-        root,
+    let build = Build {
         target,
-        &script,
-        &output,
-        target.id.as_str(),
-        keep_going,
-    )?;
+        modern: None,
+        commands: commands.as_ref(),
+    };
+    let linked = link_with(root, build, &script, &output, target.id.as_str(), keep_going)?;
     let printed = |steps: usize, preprocessed: usize| {
         format!(
             "objects={}\nsteps={steps}\npreprocessed={preprocessed}\nmap={}\nrom={}\n",
@@ -124,33 +139,21 @@ pub(crate) fn source_for(root: &Path, object: &str) -> Result<PathBuf, String> {
         .ok_or_else(|| format!("{object}.o has no C, assembly or MIDI source"))
 }
 
-pub(crate) fn link(
-    root: &Path,
-    target: DecompTarget,
-    script: &Path,
-    output: &Path,
-    name: &str,
-    keep_going: bool,
-) -> Result<Linked, String> {
-    link_with(root, target, script, output, name, keep_going, None)
-}
-
-/// link, through the matching compilers or, given `modern`, through a modern
-/// GCC (`alchemy build modern`): the same objects, assets and scaffold.
+/// Builds an edition's image from `script`, through the matching compilers
+/// or, given `build.modern`, through a modern GCC (`alchemy build modern`):
+/// the same objects, assets and scaffold.
 pub(crate) fn link_with(
     root: &Path,
-    target: DecompTarget,
+    build: Build,
     script: &Path,
     output: &Path,
     name: &str,
     keep_going: bool,
-    modern: Option<&crate::modern::Modern>,
 ) -> Result<Linked, String> {
     prefer_installed_binutils();
     let output = root.join(output);
     fs::create_dir_all(&output).map_err(|error| error.to_string())?;
     let index = Index::open(&output);
-    let build = Build { target, modern };
     let mut linked = link_indexed(root, build, script, &output, name, keep_going, &index);
     if let Ok(linked) = &mut linked {
         linked.steps = index.made.load(Ordering::Relaxed);
@@ -160,9 +163,83 @@ pub(crate) fn link_with(
 }
 
 #[derive(Clone, Copy)]
-struct Build<'a> {
-    target: DecompTarget,
-    modern: Option<&'a crate::modern::Modern>,
+pub(crate) struct Build<'a> {
+    pub target: DecompTarget,
+    pub modern: Option<&'a crate::modern::Modern>,
+    /// Where the commands go under --commands.
+    pub commands: Option<&'a Commands>,
+}
+
+impl Build<'_> {
+    /// Shows these steps under --commands, together and in order: before
+    /// they run, or, `cached`, as the steps whose products the cache holds.
+    fn show(&self, steps: &[&[String]], cached: bool) {
+        if let Some(commands) = self.commands {
+            commands.print(steps.iter().map(|step| commands.line(step, cached)).collect());
+        }
+    }
+}
+
+/// --commands: every program the build runs, one line each, printed before
+/// it runs; a C source's dependency listing, which runs while the build
+/// plans, prints with that object's steps, or at once when it fails. A line
+/// is the very argv the build passes, each word quoted as a shell reads it
+/// and the checkout's paths made relative to it, as the cache keys hold them
+/// (`portable`): every command runs in the checkout. A step whose products
+/// the cache already holds is printed too, after CACHED, so the lines are
+/// always the whole build.
+pub(crate) struct Commands {
+    root: PathBuf,
+    /// The lines, kept instead of printed: a test reads them.
+    kept: Option<Mutex<Vec<String>>>,
+}
+
+/// What a cached step's line starts with. It makes the line a shell
+/// comment: the lines run as a script redo only what this build ran.
+const CACHED: &str = "# cached: ";
+
+impl Commands {
+    pub(crate) fn printed(root: &Path) -> Commands {
+        Commands {
+            root: root.to_path_buf(),
+            kept: None,
+        }
+    }
+
+    fn line(&self, step: &[String], cached: bool) -> String {
+        let words: Vec<String> = step
+            .iter()
+            .map(|word| quoted(&String::from_utf8_lossy(&portable(&self.root, word.as_bytes()))))
+            .collect();
+        format!("{}{}", if cached { CACHED } else { "" }, words.join(" "))
+    }
+
+    /// Prints lines together: another thread's lines never fall among them.
+    fn print(&self, lines: Vec<String>) {
+        if let Some(kept) = &self.kept {
+            kept.lock().unwrap().extend(lines);
+            return;
+        }
+        let mut out = std::io::stdout().lock();
+        for line in lines {
+            let _ = writeln!(out, "{line}");
+        }
+    }
+}
+
+/// A word as a shell reads it: as it is when it holds nothing a shell
+/// treats specially, else in single quotes.
+fn quoted(word: &str) -> String {
+    let plain = |byte: u8| byte.is_ascii_alphanumeric() || b"_-+=/.,:@%".contains(&byte);
+    if !word.is_empty() && word.bytes().all(plain) {
+        return word.to_owned();
+    }
+    format!("'{}'", word.replace('\'', r"'\''"))
+}
+
+/// A command's words, as the build passes them.
+fn argv(words: &[&str]) -> Vec<String> {
+    words.iter().map(|word| (*word).to_owned()).collect()
 }
 
 /// A linker script and, when it includes an object list's fragments, the
@@ -243,7 +320,9 @@ fn link_indexed(
         let pass = symbols_pass(
             root, build, script, &text, output, name, &sources, &streamed, index,
         )?;
-        let table = command(&["arm-none-eabi-nm", &pass.to_string_lossy()], root)?;
+        let table = argv(&["arm-none-eabi-nm", &pass.to_string_lossy()]);
+        build.show(&[&table], false);
+        let table = command(&table, root)?;
         let table = format!("{:x}", Sha256::digest(table.as_bytes()));
         for source in &streamed {
             linked_objects.extend(build_overlay_streams(
@@ -273,7 +352,17 @@ fn link_indexed(
     }
     let products = [image.clone(), elf.clone(), map.clone()];
     let key = link_key(root, build, index, &arguments, &text, &objects)?;
-    if !index.fresh(&products, &key) {
+    let binary = argv(&[
+        "arm-none-eabi-objcopy",
+        "-O",
+        "binary",
+        &elf.to_string_lossy(),
+        &image.to_string_lossy(),
+    ]);
+    let fix = header_fix(&image);
+    let cached = index.fresh(&products, &key);
+    build.show(&[&arguments, &binary, &fix], cached);
+    if !cached {
         index.forget(&image);
         if let Err(error) = run_link(build, &arguments, output, name) {
             if !keep_going || !elf.is_file() {
@@ -281,17 +370,8 @@ fn link_indexed(
             }
             eprintln!("{error}");
         }
-        command(
-            &[
-                "arm-none-eabi-objcopy",
-                "-O",
-                "binary",
-                &elf.to_string_lossy(),
-                &image.to_string_lossy(),
-            ],
-            root,
-        )?;
-        finish_image(&image)?;
+        command(&binary, root)?;
+        finish_image(&fix, &image)?;
         if !keep_going {
             index.record(&products, &key, Vec::new())?;
         }
@@ -305,10 +385,10 @@ fn link_indexed(
             .map_err(|error| format!("{}: {error}", image.display()))?;
     }
     if let Some(pass) = &symbols {
-        same_addresses(root, pass, &elf)?;
+        same_addresses(root, build, pass, &elf)?;
     }
     if build.modern.is_none() && links_game_code(&sources, &objects)? {
-        checked_entries(root, target, &elf)?;
+        checked_entries(root, build, &elf)?;
     }
     for directory in asset_directories(output) {
         let _ = fs::remove_dir_all(directory);
@@ -596,13 +676,19 @@ fn parallel<T: Sync, R: Send>(
         .collect())
 }
 
-/// Finishes the image objcopy wrote: the cartridge header fix-up pret's
-/// Makefiles run right after objcopy (`gbafix ROM -p --silent`), the
-/// Nintendo logo and the complement check, then zero padding to the
+/// The cartridge header fix-up pret's Makefiles run right after objcopy
+/// (`gbafix ROM -p --silent`), as the command that does it here: the
+/// Nintendo logo and the complement check, without -p.
+fn header_fix(image: &Path) -> Vec<String> {
+    argv(&["alchemy", "gbafix", &image.to_string_lossy(), "--silent"])
+}
+
+/// Finishes the image objcopy wrote: the header fix-up `fix`, run inside
+/// this program as `alchemy gbafix` runs it, then zero padding to the
 /// cartridge's size.
-fn finish_image(image: &Path) -> Result<(), String> {
+fn finish_image(fix: &[String], image: &Path) -> Result<(), String> {
+    crate::gbafix::run(&fix[2..])?;
     let mut bytes = fs::read(image).map_err(|error| format!("{}: {error}", image.display()))?;
-    crate::gbafix::fix(&mut bytes, &crate::gbafix::Fields::default(), false);
     bytes.resize(cartridge_size(bytes.len()), 0);
     fs::write(image, bytes).map_err(|error| format!("{}: {error}", image.display()))
 }
@@ -674,6 +760,7 @@ fn link_command(
     arguments
 }
 
+/// Runs the link, its command already shown.
 fn run_link(build: Build, arguments: &[String], output: &Path, name: &str) -> Result<(), String> {
     let root = crate::compiler::routing::root();
     if build.modern.is_none() {
@@ -707,35 +794,34 @@ fn symbols_pass(
     let mut arguments = link_command(root, build, script, text, &objects, &elf);
     arguments.insert(1, "--unresolved-symbols=ignore-all".to_owned());
     let key = link_key(root, build, index, &arguments, text, &objects)?;
-    if index.fresh(std::slice::from_ref(&elf), &key) {
+    let elf_text = elf.to_string_lossy();
+    let extract = argv(&[
+        "arm-none-eabi-objcopy",
+        "--extract-symbol",
+        &elf_text,
+        &elf_text,
+    ]);
+    let cached = index.fresh(std::slice::from_ref(&elf), &key);
+    build.show(&[&arguments, &extract], cached);
+    if cached {
         return Ok(elf);
     }
     command(&arguments, root)?;
-    let elf_text = elf.to_string_lossy();
-    command(
-        &[
-            "arm-none-eabi-objcopy",
-            "--extract-symbol",
-            &elf_text,
-            &elf_text,
-        ],
-        root,
-    )?;
+    command(&extract, root)?;
     index.record(std::slice::from_ref(&elf), &key, Vec::new())?;
     Ok(elf)
 }
 
-fn same_addresses(root: &Path, pass: &Path, elf: &Path) -> Result<(), String> {
+fn same_addresses(root: &Path, build: Build, pass: &Path, elf: &Path) -> Result<(), String> {
     let table = |path: &Path| -> Result<std::collections::BTreeMap<String, String>, String> {
-        let text = command(
-            &[
-                "arm-none-eabi-nm",
-                "--defined-only",
-                "--extern-only",
-                &path.to_string_lossy(),
-            ],
-            root,
-        )?;
+        let table = argv(&[
+            "arm-none-eabi-nm",
+            "--defined-only",
+            "--extern-only",
+            &path.to_string_lossy(),
+        ]);
+        build.show(&[&table], false);
+        let text = command(&table, root)?;
         Ok(text
             .lines()
             .filter_map(|line| {
@@ -797,9 +883,10 @@ const CARTRIDGE_BOOT: EntryHeader = EntryHeader {
     offsets: false,
 };
 
-fn checked_entries(root: &Path, target: DecompTarget, elf: &Path) -> Result<(), String> {
+fn checked_entries(root: &Path, build: Build, elf: &Path) -> Result<(), String> {
     use object::{Object, ObjectSymbol};
 
+    let target = build.target;
     let mut headers = Vec::new();
     for kind in [&IWRAM_CALLS, &RAM_BUFFERS, &CARTRIDGE_BOOT] {
         let header = Path::new(target.game_dir()).join(kind.path);
@@ -827,10 +914,9 @@ fn checked_entries(root: &Path, target: DecompTarget, elf: &Path) -> Result<(), 
     if headers.is_empty() {
         return Ok(());
     }
-    let symbols = command(
-        &["arm-none-eabi-nm", "--defined-only", &elf.to_string_lossy()],
-        root,
-    )?;
+    let table = argv(&["arm-none-eabi-nm", "--defined-only", &elf.to_string_lossy()]);
+    build.show(&[&table], false);
+    let symbols = command(&table, root)?;
     let placed: std::collections::BTreeMap<&str, u32> = symbols
         .lines()
         .filter_map(|line| {
@@ -1045,7 +1131,17 @@ fn compile_told(
         plan(root, build, source, object, told, index)
             .map_err(|error| format!("{}: {error}", source.display()))
     })?;
-    let stale: Vec<Plan> = plans.into_iter().flatten().collect();
+    // Every object's commands in the order of the sources, before any step
+    // runs: first any dependency listing planning ran.
+    if let Some(commands) = build.commands {
+        let mut lines = Vec::new();
+        for plan in &plans {
+            lines.extend(plan.listing.iter().map(|step| commands.line(step, false)));
+            lines.extend(plan.steps.iter().map(|step| commands.line(step, plan.cached)));
+        }
+        commands.print(lines);
+    }
+    let stale: Vec<Plan> = plans.into_iter().filter(|plan| !plan.cached).collect();
     let mut assets = Vec::new();
     for plan in &stale {
         for asset in source_assets(root, target, &plan.source)? {
@@ -1072,6 +1168,11 @@ struct Plan {
     assembly: Option<(PathBuf, String)>,
     scratch: Vec<PathBuf>,
     warnings: Option<PathBuf>,
+    /// Whether the cache holds the object: its steps do not run.
+    cached: bool,
+    /// The preprocessor run that listed what a C source reads, when the
+    /// key had to be learned from it.
+    listing: Option<Vec<String>>,
 }
 
 fn plan(
@@ -1081,7 +1182,7 @@ fn plan(
     object: &Path,
     told: &[String],
     index: &Index,
-) -> Result<Option<Plan>, String> {
+) -> Result<Plan, String> {
     let target = build.target;
     fs::create_dir_all(object.parent().expect("object directory"))
         .map_err(|error| error.to_string())?;
@@ -1096,6 +1197,7 @@ fn plan(
     // A C source whose key is already known, or the list to learn it from.
     let mut known = None;
     let mut learned = None;
+    let mut listing = None;
     let steps = if extension == Some("mid") {
         let midi = fs::read(root.join(source)).map_err(|error| error.to_string())?;
         let text = ags::sound::sequence_assembly(&midi)?;
@@ -1136,7 +1238,14 @@ fn plan(
         known = index.reads.key(root, object, &guard, &preprocess);
         if known.is_none() {
             crate::reads::PREPROCESSED.fetch_add(1, Ordering::Relaxed);
-            command(&crate::reads::listing(&preprocess, &listed, modern.is_some()), root)?;
+            let step = crate::reads::listing(&preprocess, &listed, modern.is_some());
+            // Shown with the object's other steps once all are planned,
+            // or here, when it fails and no other step will run.
+            if let Err(error) = command(&step, root) {
+                build.show(&[&step], false);
+                return Err(error);
+            }
+            listing = Some(step);
             hasher.update(portable(
                 root,
                 &fs::read(&preprocessed).map_err(|error| error.to_string())?,
@@ -1170,12 +1279,12 @@ fn plan(
     }
     let mut products = vec![object.to_path_buf()];
     products.extend(warnings.clone());
-    if index.fresh(&products, &key) {
+    let cached = index.fresh(&products, &key);
+    if cached {
         index.bind_source(root, source, object)?;
         remove_scratch(&scratch);
-        return Ok(None);
     }
-    Ok(Some(Plan {
+    Ok(Plan {
         source: source.to_path_buf(),
         object: object.to_path_buf(),
         key,
@@ -1183,7 +1292,9 @@ fn plan(
         assembly,
         scratch,
         warnings,
-    }))
+        cached,
+        listing,
+    })
 }
 
 fn run_plan(root: &Path, plan: &Plan, index: &Index) -> Result<(), String> {
@@ -1793,8 +1904,9 @@ fn build_overlay_streams(
         }
         compile_told(root, build, &tables, &told, output, index)?;
     }
-    parallel(&linked, |(id, script, objects)| {
-        let overlay = Overlay {
+    let overlays: Vec<Overlay> = linked
+        .iter()
+        .map(|(id, script, objects)| Overlay {
             root,
             build,
             output,
@@ -1804,8 +1916,18 @@ fn build_overlay_streams(
             symbols,
             table,
             directory: &directory,
-        };
-        build_overlay(&overlay, index).map_err(|error| format!("resource_{id}: {error}"))
+        })
+        .collect();
+    let plans = parallel(&overlays, |overlay| {
+        plan_overlay(overlay, index).map_err(|error| format!("resource_{}: {error}", overlay.id))
+    })?;
+    // Every overlay's commands, in the order of its streams, before any runs.
+    for plan in &plans {
+        build.show(&plan.steps(), plan.cached);
+    }
+    let planned: Vec<(&Overlay, &OverlayPlan)> = overlays.iter().zip(&plans).collect();
+    parallel(&planned, |(overlay, plan)| {
+        build_overlay(overlay, plan, index).map_err(|error| format!("resource_{}: {error}", overlay.id))
     })?;
     let mut objects: Vec<(PathBuf, PathBuf)> = sources
         .into_iter()
@@ -1951,7 +2073,37 @@ struct Overlay<'a> {
     directory: &'a Path,
 }
 
-fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
+/// What linking one overlay runs, every command in its order, the files
+/// they name and whether the cache already holds what they make.
+struct OverlayPlan {
+    listing: Option<PathBuf>,
+    assemble: Vec<Vec<String>>,
+    /// nm over each object and library: the names the overlay defines.
+    tables: Vec<Vec<String>>,
+    extract: Vec<String>,
+    link: Vec<String>,
+    strip: Vec<String>,
+    binary: Vec<String>,
+    names: String,
+    own_symbols: String,
+    elf: String,
+    map: String,
+    image: String,
+    stream: PathBuf,
+    products: [PathBuf; 4],
+    key: String,
+    cached: bool,
+}
+
+impl OverlayPlan {
+    fn steps(&self) -> Vec<&[String]> {
+        let mut steps: Vec<&[String]> = self.assemble.iter().chain(&self.tables).map(Vec::as_slice).collect();
+        steps.extend([&self.extract, &self.link, &self.strip, &self.binary].map(Vec::as_slice));
+        steps
+    }
+}
+
+fn plan_overlay(overlay: &Overlay, index: &Index) -> Result<OverlayPlan, String> {
     let Overlay {
         root,
         build,
@@ -2043,32 +2195,61 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
     hasher.update(env!("ALCHEMY_LINK_RULE").as_bytes());
     let key = format!("{:x}", hasher.finalize());
     let products = overlay_products(directory, id);
-    if index.fresh(&products, &key) {
-        return overlay_gate(&elf, &map, build.modern.is_some());
+    let cached = index.fresh(&products, &key);
+    let tables = std::iter::once(PathBuf::from(&object))
+        .chain(objects.iter().cloned())
+        .chain(libraries.iter().cloned())
+        .map(|path| argv(&["arm-none-eabi-nm", "-g", "--defined-only", &path.to_string_lossy()]))
+        .collect();
+    let extract = argv(&[
+        "arm-none-eabi-objcopy",
+        "--extract-symbol",
+        &format!("--strip-symbols={names}"),
+        &symbols.to_string_lossy(),
+        &own_symbols,
+    ]);
+    let strip = argv(&["arm-none-eabi-objcopy", &format!("--strip-symbols={names}"), &elf]);
+    let binary = argv(&["arm-none-eabi-objcopy", "-O", "binary", &elf, &image]);
+    Ok(OverlayPlan {
+        listing,
+        assemble,
+        tables,
+        extract,
+        link,
+        strip,
+        binary,
+        names,
+        own_symbols,
+        elf,
+        map,
+        image,
+        stream,
+        products,
+        key,
+        cached,
+    })
+}
+
+/// Links one overlay as planned, its commands already shown: its image
+/// packed into the stream the main image includes.
+fn build_overlay(overlay: &Overlay, plan: &OverlayPlan, index: &Index) -> Result<(), String> {
+    let Overlay { root, build, output, .. } = *overlay;
+    let modern = build.modern.is_some();
+    if plan.cached {
+        return overlay_gate(&plan.elf, &plan.map, modern);
     }
-    index.forget(&stream);
-    if let Some(listing) = &listing {
-        for asset in source_assets(root, target, listing)? {
+    index.forget(&plan.stream);
+    if let Some(listing) = &plan.listing {
+        for asset in source_assets(root, build.target, listing)? {
             materialize(root, output, index, &asset)?;
         }
     }
-    for step in &assemble {
+    for step in &plan.assemble {
         command(step, root)?;
     }
     let mut own = BTreeSet::new();
-    for path in std::iter::once(PathBuf::from(&object))
-        .chain(objects.iter().cloned())
-        .chain(libraries.iter().cloned())
-    {
-        let table = command(
-            &[
-                "arm-none-eabi-nm",
-                "-g",
-                "--defined-only",
-                &path.to_string_lossy(),
-            ],
-            root,
-        )?;
+    for step in &plan.tables {
+        let table = command(step, root)?;
         own.extend(
             table
                 .lines()
@@ -2083,44 +2264,25 @@ fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
             text
         })
     };
-    fs::write(&names, list(&mut own.iter())).map_err(|error| error.to_string())?;
-    command(
-        &[
-            "arm-none-eabi-objcopy",
-            "--extract-symbol",
-            &format!("--strip-symbols={names}"),
-            &symbols.to_string_lossy(),
-            &own_symbols,
-        ],
-        root,
-    )?;
-    let linked = command(&link, root);
-    let _ = fs::remove_file(&own_symbols);
+    fs::write(&plan.names, list(&mut own.iter())).map_err(|error| error.to_string())?;
+    command(&plan.extract, root)?;
+    let linked = command(&plan.link, root);
+    let _ = fs::remove_file(&plan.own_symbols);
     linked?;
-    let imported = imported_symbols(&elf, &own)?;
-    fs::write(&names, list(&mut imported.iter())).map_err(|error| error.to_string())?;
-    let stripped = command(
-        &[
-            "arm-none-eabi-objcopy",
-            &format!("--strip-symbols={names}"),
-            &elf,
-        ],
-        root,
-    );
-    let _ = fs::remove_file(&names);
+    let imported = imported_symbols(&plan.elf, &own)?;
+    fs::write(&plan.names, list(&mut imported.iter())).map_err(|error| error.to_string())?;
+    let stripped = command(&plan.strip, root);
+    let _ = fs::remove_file(&plan.names);
     stripped?;
-    overlay_gate(&elf, &map, build.modern.is_some())?;
-    command(
-        &["arm-none-eabi-objcopy", "-O", "binary", &elf, &image],
-        root,
-    )?;
-    let decoded = fs::read(&image).map_err(|error| error.to_string());
-    let _ = fs::remove_file(&image);
+    overlay_gate(&plan.elf, &plan.map, modern)?;
+    command(&plan.binary, root)?;
+    let decoded = fs::read(&plan.image).map_err(|error| error.to_string());
+    let _ = fs::remove_file(&plan.image);
     let mut decoded = decoded?;
     store_thumb_calls(&mut decoded);
     let encoded = compress_tagged(&decoded, &OVERLAY_MACHINE)?;
-    fs::write(&stream, encoded).map_err(|error| error.to_string())?;
-    index.record(&products, &key, Vec::new())
+    fs::write(&plan.stream, encoded).map_err(|error| error.to_string())?;
+    index.record(&plan.products, &plan.key, Vec::new())
 }
 
 fn imported_symbols(elf: &str, own: &BTreeSet<String>) -> Result<BTreeSet<String>, String> {
@@ -2500,6 +2662,58 @@ mod tests {
             ["--strip-local-absolute", "--defsym", "import.Object_GetById=1", "--defsym", "import.__divsi3=1"]
         );
         assert!(told_arguments(&[]).is_empty());
+    }
+
+    #[test]
+    fn commands_list_each_compile_with_its_option_set_run_or_cached() {
+        let root = tempfile::tempdir().unwrap();
+        let source = PathBuf::from("games/tbs/src/value.c");
+        fs::create_dir_all(root.path().join("games/tbs/src")).unwrap();
+        fs::write(root.path().join(&source), "int Value(void) { return 7; }\n").unwrap();
+        let output = root.path().join("out/tbs-en");
+        fs::create_dir_all(&output).unwrap();
+        let commands = Commands {
+            root: root.path().to_path_buf(),
+            kept: Some(Mutex::new(Vec::new())),
+        };
+        let target = decomp_target(Some("tbs-en")).unwrap();
+        let build = Build {
+            target,
+            modern: None,
+            commands: Some(&commands),
+        };
+        let lines = || std::mem::take(&mut *commands.kept.as_ref().unwrap().lock().unwrap());
+        let index = Index::open(&output);
+        compile_all(root.path(), build, std::slice::from_ref(&source), &output, &index).unwrap();
+        let ran = lines();
+        // What the source reads, listed by the preprocessor; then agscc's
+        // compile with ☀️'s option set, and the assembler.
+        assert_eq!(ran.len(), 3, "{ran:#?}");
+        assert!(ran[0].ends_with(" -Wp,-MD,out/tbs-en/obj/games/tbs/src/value.d"), "{}", ran[0]);
+        let words: Vec<&str> = ran[1].split(' ').collect();
+        assert!(words[0].ends_with("/tools/out/compilers/xgcc"), "{}", ran[1]);
+        for flag in ["-O2", "-mthumb", "-mcpu=arm7tdmi", "-nostdinc", "-fcall-used-r4", "-mthumb-interwork"] {
+            assert!(words.contains(&flag), "{flag}: {}", ran[1]);
+        }
+        assert!(words.contains(&"-DTBS_EDITION_EN=1"), "{}", ran[1]);
+        assert_eq!(words[words.len() - 4..], ["-S", "-o", "out/tbs-en/obj/games/tbs/src/value.s", "games/tbs/src/value.c"]);
+        assert!(ran[2].ends_with(" -o out/tbs-en/obj/games/tbs/src/value.o out/tbs-en/obj/games/tbs/src/value.s"), "{}", ran[2]);
+        // Built, the object is the cache's: the same commands, marked, and
+        // no preprocessor run to learn its key again.
+        compile_all(root.path(), build, std::slice::from_ref(&source), &output, &index).unwrap();
+        let cached: Vec<String> = ran[1..].iter().map(|line| format!("{CACHED}{line}")).collect();
+        assert_eq!(lines(), cached);
+    }
+
+    #[test]
+    fn a_command_line_is_its_argv_as_a_shell_reads_it() {
+        let commands = Commands::printed(Path::new("/checkout"));
+        let step = argv(&["/checkout/tools/out/compilers/cpp0", "-Acpu(arm)", "-Wp,-MD,/checkout/out/a.d", "/elsewhere/b.c", "it's", ""]);
+        assert_eq!(
+            commands.line(&step, false),
+            r"tools/out/compilers/cpp0 '-Acpu(arm)' -Wp,-MD,out/a.d /elsewhere/b.c 'it'\''s' ''"
+        );
+        assert_eq!(commands.line(&argv(&["arm-none-eabi-nm", "/checkout/x.o"]), true), "# cached: arm-none-eabi-nm x.o");
     }
 
     #[test]

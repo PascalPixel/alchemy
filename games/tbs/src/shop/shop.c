@@ -515,19 +515,17 @@ void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor)
 				sprite->x = sprite->x - step;
 			else
 				sprite->x = sprite->x - 1;
+			sprite->oam.x = sprite->x;
 		}
-		else
+		else if (delta < 0)
 		{
-			if (delta >= 0)
-				goto move_y;
 			if (step != 0)
 				sprite->x = sprite->x + step;
 			else
 				sprite->x = sprite->x + 1;
+			sprite->oam.x = sprite->x;
 		}
-		sprite->oam.x = sprite->x;
 
-	move_y:
 		delta = sprite->y - cursor->target_y;
 		step = delta / 4;
 		if (step < 0)
@@ -538,17 +536,16 @@ void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor)
 				sprite->y = sprite->y - step;
 			else
 				sprite->y = sprite->y - 1;
+			sprite->oam.y = sprite->y;
 		}
-		else
+		else if (delta < 0)
 		{
-			if (delta >= 0)
-				return;
 			if (step != 0)
 				sprite->y = sprite->y + step;
 			else
 				sprite->y = sprite->y + 1;
+			sprite->oam.y = sprite->y;
 		}
-		sprite->oam.y = sprite->y;
 	}
 }
 

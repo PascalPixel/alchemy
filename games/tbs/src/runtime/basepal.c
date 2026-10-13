@@ -217,10 +217,7 @@ void Text_DrawSignedDecimalRightAligned(s32 value, s32 keta)
 
 void Bg0_ClearTilemap(void)
 {
-	volatile u32 fill;
-
-	fill = 0xf000f000;
-	Dma_Set((const void *)&fill, BG_SCREEN_BLOCK(4), 0x85000140, REG_DMA3);
+	Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 0x500);
 	gDebugTextCursor = (u16 *)BG_SCREEN_BLOCK(4);
 	Io_Write16(0x400, &REG_BG0CNT);
 }

@@ -578,22 +578,14 @@ static void EV10_SCRIPT(void)
 		Io_Write16((i << 11) | (i << 5), &PLTT_BACKDROP);
 		Event_Wait(10);
 	}
+	Io_Write16(0x7e00, &PLTT_BACKDROP);
+	for (flash = 0; flash < 3; flash++)
 	{
-		u16 color = 0x7e00;
-
-		PLTT_BACKDROP = color;
-	}
-	{
-		u16 bright = 0x1010;
-
-		for (flash = 0; flash < 3; flash++)
-		{
-			Event_PlayCue(212);
-			REG_BLDALPHA = bright;
-			Event_Wait(3);
-			Io_Write16(0x810, &REG_BLDALPHA);
-			Event_Wait(65);
-		}
+		Event_PlayCue(212);
+		Io_Write16(0x1010, &REG_BLDALPHA);
+		Event_Wait(3);
+		Io_Write16(0x810, &REG_BLDALPHA);
+		Event_Wait(65);
 	}
 	BabiFune_ShimmerActive = 1;
 	BabiFune_ShimmerPhase = 0;
@@ -627,14 +619,7 @@ static void EV10_SCRIPT(void)
 	Event_PlayCue(288);
 	Task_Wait(1);
 	Event_PlayCue(145);
-	{
-		u16 blend = 191;
-
-		do
-		{
-			REG_BLDCNT = blend;
-		} while (0);
-	}
+	Io_Write16(191, &REG_BLDCNT);
 	for (white = 0; white <= 16; white++)
 	{
 		REG_BLDY = white;

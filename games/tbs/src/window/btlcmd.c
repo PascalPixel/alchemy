@@ -3731,9 +3731,10 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 					break;
 				}
 				/* FAKEMATCH: a dead store here keeps the test above from being
-				   threaded past the break. Measured (2026-10-13): without it the
-				   test branches straight on (one instruction fewer) and the spill
-				   slots reorder (differ 53). */
+				   threaded past the break. Measured (2026-10-13, after
+				   MenuCell_SetCursor): without it the unusable branch skips the
+				   native jump through the next block (793 instructions for 794,
+				   differ 11 in every edition). */
 				result = -1;
 			}
 			else

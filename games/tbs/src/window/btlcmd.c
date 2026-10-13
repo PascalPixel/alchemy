@@ -1033,7 +1033,13 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 		{
 			output->active = 1;
 			output->kind = 1;
-			/* FAKEMATCH: a char store (alias set 0) keeps the index store ahead of the attribute word in sched2 */
+			/* FAKEMATCH: instruction order only: a char store (alias set 0) keeps
+			   the index store ahead of the attribute word in sched2. Plain forms
+			   measured (2026-10-13) for this and the two typed stores below:
+			   output->index, entry->attributes.word or entry->tile.value alone
+			   differ 2, 2 and 4; all three plain differ 2 (the entry copy moves
+			   after the x and y stores), with entry set first or after the
+			   sentinel still 2, after x or y 38. */
 			*(s8 *)&output->index = Resource_LoadIntoFreeSlot(128);
 			entry = (struct PreviewSprite *)((u8 *)output + 16);
 			output->sentinel = 240;

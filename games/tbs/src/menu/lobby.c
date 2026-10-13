@@ -1292,12 +1292,8 @@ s32 LinkLobby_RunRoundResult(void)
 		Engine_EventOpenScreen();
 		Engine_EventWaitForScreen();
 		LinkLobby_WriteSlotValue(5);
-		{
-			struct GameState *state = &gGameState;
-
-			state->link_tallies[0]++;
-			state->link_tallies[3]++;
-		}
+		gGameState.link_tallies[0]++;
+		gGameState.link_tallies[3]++;
 		wins = (s8)GameFlag_GetByte(0x3f8);
 		msg = wins * 2 + 2;
 		if (msg > 14)
@@ -1315,41 +1311,36 @@ s32 LinkLobby_RunRoundResult(void)
 		{
 			Call2(GameFlag_SetByte, 1000, v + 1);
 		}
+		Engine_ActorFaceActor(8, gGameState.selected_actor, 0);
+		Engine_EventSetMessage((s32)MsgLobbyNotBadNextMonster + msg);
+		Engine_EventOpenMessage(8, 0);
+		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
-			struct GameState *state = &gGameState;
-
-			Engine_ActorFaceActor(8, state->selected_actor, 0);
-			Engine_EventSetMessage((s32)MsgLobbyNotBadNextMonster + msg);
-			Engine_EventOpenMessage(8, 0);
-			if (Engine_EventChooseYesNo(0, 0) == 0)
+			if (wins > 90)
 			{
-				if (wins > 90)
-				{
-					wins = 90;
-				}
-				GameFlag_SetByte(0x3f8, wins);
+				wins = 90;
+			}
+			GameFlag_SetByte(0x3f8, wins);
+		}
+		else
+		{
+			Engine_GameFlagClear(0x173);
+			GameFlag_SetByte(0x3f8, -1);
+			UiText_DrawQuantity(gGameState.link_tallies[3], 5);
+			score = gGameState.link_tallies[3];
+			if (gGameState.link_tallies[2] < score)
+			{
+				gGameState.link_tallies[2] = score;
+				Engine_EventSetMessage((s32)MsgLobbyWonNumberBattleBroke);
+				Engine_EventOpenMessage(8, 0);
+				LinkLobby_SaveMonsterBattleResults();
 			}
 			else
 			{
-
-				Engine_GameFlagClear(0x173);
-				GameFlag_SetByte(0x3f8, -1);
-				UiText_DrawQuantity(state->link_tallies[3], 5);
-				score = state->link_tallies[3];
-				if (state->link_tallies[2] < score)
-				{
-					state->link_tallies[2] = score;
-					Engine_EventSetMessage((s32)MsgLobbyWonNumberBattleBroke);
-					Engine_EventOpenMessage(8, 0);
-					LinkLobby_SaveMonsterBattleResults();
-				}
-				else
-				{
-					Engine_EventSetMessage((s32)MsgLobbyWonNumberBattle);
-					Engine_EventOpenMessage(8, 0);
-				}
-				LinkLobby_WriteSlotValue(0);
+				Engine_EventSetMessage((s32)MsgLobbyWonNumberBattle);
+				Engine_EventOpenMessage(8, 0);
 			}
+			LinkLobby_WriteSlotValue(0);
 		}
 		Engine_EventEnd();
 	}

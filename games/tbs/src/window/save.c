@@ -1953,7 +1953,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 						i++;
 					}
 				}
-				goto finish;
+				break;
 			}
 			if (row == 4)
 				goto remove_character;
@@ -2272,7 +2272,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 						i++;
 					}
 				}
-				goto finish;
+				break;
 			}
 			if (row == 8)
 				goto remove_character;

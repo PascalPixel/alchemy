@@ -1872,7 +1872,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
 		Iwram_ExpandBitRuns(input, buf + 33, colour);
 		if (mark != 0)
 		{
-			/* FAKEMATCH: assigning digits in the mark argument computes buf + 7 in r1 and copies it to r5 for the loop, as the native does. A plain buf + 7 argument computes it in r5 and copies it to r1 (differ 6 in tbs-ja, the only edition with this body). */
+			/* FAKEMATCH: assigning digits in the mark argument computes buf + 7 in r1 and makes the loop's copy in r5, as the native does. A plain buf + 7 argument computes it in r5 and makes the copy in r1 (differ 6 in tbs-ja, the only edition with this body). */
 			Iwram_ExpandBitRuns(mark, digits = buf + 7, colour);
 			Iwram_ExpandBitRuns(mark, buf + 8, colour);
 		}

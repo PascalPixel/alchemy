@@ -42,14 +42,14 @@
 //! under MODERN, `FIXED_ADDRESS` calls the linked routine by name, and the
 //! compiler folds ids into neighbouring constants.
 
-use crate::build_rom::{link_with, Linked};
+use crate::build_rom::{link_with, Build, Commands, Linked};
 use crate::compiler::routing::{cflags_for_family, family_for_source, CompilerFamily};
 use crate::targets::{decomp_target, DecompTarget};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
-const USAGE: &str = "usage: alchemy build modern [--target GAME-EDITION]... [--cc COMPILER] [--keep-going] [--update]
+const USAGE: &str = "usage: alchemy build modern [--target GAME-EDITION]... [--cc COMPILER] [--keep-going] [--update] [--commands]
 Build each edition (all six of ☀️ by default) from the same source with a
 modern GCC, as pret's `make modern`: out/modern/<edition>.gba, a ROM that
 matches nothing, and every compiler and linker warning in
@@ -58,7 +58,8 @@ out/modern/warnings-summary.txt. The compiler is --cc, else $MODERN_CC,
 else the arm-none-eabi-gcc on PATH. --keep-going writes an
 image despite link errors. A build of all six editions fails when it has
 more distinct warnings than tools/alchemy/modern.tsv allows for its
-compiler; --update lowers that count to the build's.";
+compiler; --update lowers that count to the build's. --commands prints
+each edition's commands as `alchemy build rom --commands` does.";
 
 /// The count of distinct warnings a build of the six editions may have.
 const ALLOWED: &str = "tools/alchemy/modern.tsv";
@@ -275,6 +276,7 @@ pub fn run(args: &[String]) -> Result<(), String> {
         .unwrap_or_else(|| DEFAULT_CC.to_owned());
     let mut keep_going = false;
     let mut update = false;
+    let mut commands = None;
     let mut args = args.iter();
     while let Some(arg) = args.next() {
         match arg.as_str() {
@@ -286,6 +288,7 @@ pub fn run(args: &[String]) -> Result<(), String> {
             "--cc" => cc = args.next().ok_or(USAGE)?.clone(),
             "--keep-going" => keep_going = true,
             "--update" => update = true,
+            "--commands" => commands = Some(Commands::printed(crate::compiler::routing::root())),
             _ => return Err(USAGE.into()),
         }
     }
@@ -300,7 +303,12 @@ pub fn run(args: &[String]) -> Result<(), String> {
     let root = crate::compiler::routing::root();
     let mut results = Vec::new();
     for target in &targets {
-        let result = build(root, *target, &modern, keep_going);
+        let edition = Build {
+            target: *target,
+            modern: Some(&modern),
+            commands: commands.as_ref(),
+        };
+        let result = build(root, edition, keep_going);
         match &result {
             Ok(line) => println!("{}: {line}", target.id),
             Err(error) => println!("{}: FAILED\n{error}", target.id),
@@ -375,12 +383,8 @@ fn hold(table: &str, compiler: &str, found: usize, update: bool) -> Result<(Stri
     Ok((text, verdict))
 }
 
-fn build(
-    root: &Path,
-    target: DecompTarget,
-    modern: &Modern,
-    keep_going: bool,
-) -> Result<String, String> {
+fn build(root: &Path, edition: Build, keep_going: bool) -> Result<String, String> {
+    let target = edition.target;
     let name = target.id.as_str();
     let output = Path::new(OUTPUT).join(name);
     fs::create_dir_all(root.join(&output)).map_err(|error| error.to_string())?;
@@ -389,15 +393,7 @@ fn build(
     let text = crate::edition::image_script(root, target, crate::edition::Image::Main)?;
     let modern_script = output.join(format!("{name}.modern.ld"));
     write_if_changed(&root.join(&modern_script), &main_script(&text))?;
-    let Linked { image, .. } = link_with(
-        root,
-        target,
-        &modern_script,
-        &output,
-        name,
-        keep_going,
-        Some(modern),
-    )?;
+    let Linked { image, .. } = link_with(root, edition, &modern_script, &output, name, keep_going)?;
     let rom = root.join(OUTPUT).join(format!("{name}.gba"));
     fs::copy(&image, &rom).map_err(|error| format!("{}: {error}", rom.display()))?;
     let bytes = fs::read(&rom).map_err(|error| error.to_string())?;

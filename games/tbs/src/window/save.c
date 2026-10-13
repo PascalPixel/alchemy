@@ -1796,7 +1796,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 	Dma_Set((void *)0x050001e0, pal, 0x84000008, REG_DMA3);
 	pal[4] = 0x6318;
 	end = (u8 *)(original_length + (s32)input);
-	for (;;)
+	while (1)
 	{
 		s32 width = 1;
 
@@ -1911,7 +1911,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 				continue;
 			}
 			result = -1;
-			goto finish;
+			break;
 		}
 		if (!(gKeysRepeat & KEY_A))
 			continue;
@@ -1982,7 +1982,6 @@ s32 NameEntry_EditOwnerName(s32 entry)
 			text_dirty = 1;
 		}
 	}
-finish:
 	UiWork_Finalize((struct UiWindow *)window, 2);
 	UiWork_Finalize((struct UiWindow *)label, 2);
 	UiWork_FinalizeEntityMatchingLocalizedId(entry);
@@ -2063,7 +2062,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 	pal = (u16 *)0x050001c0;
 	Dma_Set((void *)0x050001e0, pal, 0x84000008, REG_DMA3);
 	pal[4] = 0x6318;
-	for (;;)
+	while (1)
 	{
 		s32 width = 1;
 
@@ -2220,7 +2219,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 			else
 			{
 				result = -1;
-				goto finish;
+				break;
 			}
 			RenderOutput_PrepareForRedraw(label);
 			UiText_DrawString(input, (s32)label, 0, 0);
@@ -2316,7 +2315,6 @@ s32 NameEntry_EditOwnerName(s32 entry)
 			text_dirty = 1;
 		}
 	}
-finish:
 	UiWork_Finalize((struct UiWindow *)window, 2);
 	UiWork_Finalize((struct UiWindow *)label, 2);
 	UiWork_FinalizeEntityMatchingLocalizedId(entry);

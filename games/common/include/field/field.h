@@ -379,6 +379,7 @@ extern struct MenuSprite RamakanSabaku_SandWork[];
 #ifndef OWN_Render_DecodeFrame
 extern u8 Render_DecodeFrame[];
 #endif
+extern u8		SoruSekizo_SpriteRowsGfx[];
 extern u32		StagedActor_FootprintKinds[];
 extern const u8 TileMap_DrawRows[];
 extern u8		TileMap_DrawRowsCodeSize[];

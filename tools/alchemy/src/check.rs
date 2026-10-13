@@ -4,6 +4,7 @@ mod aliases;
 pub(crate) mod hygiene;
 mod layout;
 mod no_asm;
+mod packed;
 mod publication;
 
 const USAGE: &str =

@@ -102,11 +102,11 @@ build-alchemy:
 	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
 
 compare:
-	$(BUILD) rom $(COMMANDS) --target tbs-ja
+	$(BUILD) rom --target tbs-ja $(COMMANDS)
 	@grep -F ' out/tbs-ja/' rom.sha1 | $(SHA1) -
 
 compare-tla:
-	$(BUILD) rom $(COMMANDS) --target tla-ja
+	$(BUILD) rom --target tla-ja $(COMMANDS)
 	@grep -F ' out/tla-ja/' rom.sha1 | $(SHA1) -
 
 compare-all:
@@ -137,11 +137,11 @@ compare-other-editions:
 compare-tbs-ja: compare
 compare-tla-ja: compare-tla
 $(COMPARE_EDITIONS): compare-%:
-	$(BUILD) rom $(COMMANDS) --target $*
+	$(BUILD) rom --target $* $(COMMANDS)
 	@grep -F ' out/$*/' rom.sha1 | $(SHA1) -
 
 build-rom:
-	$(BUILD) rom $(COMMANDS) --target $(TARGET)
+	$(BUILD) rom --target $(TARGET) $(COMMANDS)
 
 precommit:
 	@$(ALCHEMY) verify --pre-commit

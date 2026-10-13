@@ -3498,7 +3498,10 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		UiText_ShowMessageAndWaitCoreFar((s32)MsgActorAttacks);
 		// 外れ：まぼろしなら 153/256、ほかに 1/32
 		// 相手が動けなければ外れない
-		/* FAKEMATCH: needed to match: the one-pass block keeps the native test order */
+		/* FAKEMATCH: the one-pass block places the body ahead of its five tests, reached by a
+		 * backward beq from the last one, whose zero (r5) the first store reuses. As a plain
+		 * if, with the tests negated or not, or as a while loop left by break, the tests come
+		 * first (differ 105 in tbs-en). */
 		do
 		{
 			if (tgt->hp == 0 || tgt->nemuri != 0 || tgt->shibire != 0 || tgt->miugoki != 0

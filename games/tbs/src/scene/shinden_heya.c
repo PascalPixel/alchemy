@@ -1872,12 +1872,10 @@ static void ShindenHeya_SpawnActorSpark(s32 id)
 static void SceneState_ApplyTwoRects(void)
 {
 	{
-		s32 width = 3, height = 2;
-		Map_CopyCellsTo(0, 64, 11, 68, width, height);
+		Map_CopyCellsTo(0, 64, 11, 68, 3, 2);
 	}
 	{
-		s32 x = 11, y = 8;
-		Map_CopyCellAttributes(11, 10, 3, 2, x, 8);
+		Map_CopyCellAttributes(11, 10, 3, 2, 11, 8);
 	}
 	Engine_TaskWait(1);
 }

@@ -279,7 +279,6 @@ static void EV08_PSYNERGY(void)
 		{
 			StagedActorPairScene_RunSpinningLeap(8);
 			{
-				s32 x = 27;
 
 				Map_CopyCellAttributes(29, 19, 1, 1, 27, 19);
 			}

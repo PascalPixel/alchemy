@@ -151,15 +151,13 @@ static void EV08_PSYNERGY(void)
 
 static void ConfigureAndPlaceActorOneHundredTwo(void)
 {
-	s32 a = 3, b = 26;
-	Map_CopyCellAttributes(3, 32, 1, 1, a, 26);
+	Map_CopyCellAttributes(3, 32, 1, 1, 3, 26);
 	MapObject_SetPosition(102, 0x00380000, 0x01a80000);
 }
 
 static void HideActorOneHundredTwo(void)
 {
-	s32 a = 3, b = 26;
-	Map_CopyCellAttributes(2, 25, 1, 1, a, 26);
+	Map_CopyCellAttributes(2, 25, 1, 1, 3, 26);
 	MapObject_SetPosition(102, -1, -1);
 }
 

@@ -1039,16 +1039,14 @@ static void DialogueLayout_ConfigureGroupTwo(void)
 static void DialogueLayout_ConfigureGroupThree(void)
 {
 	{
-		s32 x = 12, y = 21;
-		Map_CopyCellAttributes(12, 3, 9, 16, x, y);
+		Map_CopyCellAttributes(12, 3, 9, 16, 12, 21);
 	}
 
 	if (Engine_GameFlagIsSet(0x308) != 0)
 	{
 		SceneActor_PlaceAtTileAndMark(8, 14, 25);
 		{
-			s32 x = 20, y = 24;
-			Map_CopyCellAttributes(16, 24, 1, 3, x, y);
+			Map_CopyCellAttributes(16, 24, 1, 3, 20, 24);
 		}
 	}
 	else if (Engine_GameFlagIsSet(0x309) != 0)
@@ -1065,8 +1063,7 @@ static void DialogueLayout_ConfigureGroupThree(void)
 	{
 		SceneActor_PlaceAtTileAndMark(8, 20, 25);
 		{
-			s32 x = 14, y = 24;
-			Map_CopyCellAttributes(16, 24, 1, 3, x, y);
+			Map_CopyCellAttributes(16, 24, 1, 3, 14, 24);
 		}
 	}
 
@@ -1074,16 +1071,14 @@ static void DialogueLayout_ConfigureGroupThree(void)
 	{
 		SceneActor_PlaceAtTileAndMark(9, 13, 35);
 		{
-			s32 x = 15, y = 34;
-			Map_CopyCellAttributes(14, 34, 1, 3, x, y);
+			Map_CopyCellAttributes(14, 34, 1, 3, 15, 34);
 		}
 	}
 	else
 	{
 		SceneActor_PlaceAtTileAndMark(9, 15, 35);
 		{
-			s32 x = 13, y = 34;
-			Map_CopyCellAttributes(14, 34, 1, 3, x, y);
+			Map_CopyCellAttributes(14, 34, 1, 3, 13, 34);
 		}
 	}
 

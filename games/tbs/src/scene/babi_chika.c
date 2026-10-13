@@ -1105,8 +1105,7 @@ static void FieldScene_PlaceAndPinSlots8And9(void)
 	s32 row;
 
 	{
-		s32 p5 = 9, p6 = 38;
-		Map_CopyCellAttributes(73, 38, 5, 5, p5, 38);
+		Map_CopyCellAttributes(73, 38, 5, 5, 9, 38);
 	}
 	SceneActor_SwapPositionsByDepth(9, 8);
 
@@ -1128,8 +1127,7 @@ static void FieldScene_PlaceAndPinSlots10And11(void)
 	s32 row;
 
 	{
-		s32 k5 = 29, k6 = 30;
-		Map_CopyCellAttributes(93, 30, 6, 5, k5, 30);
+		Map_CopyCellAttributes(93, 30, 6, 5, 29, 30);
 	}
 	SceneActor_SwapPositionsByDepth(11, 10);
 

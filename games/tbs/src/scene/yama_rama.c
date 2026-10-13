@@ -339,8 +339,7 @@ static void EV05_SEARCH(void)
 static void ConfigureAndPlaceActorFourteen(void)
 {
 
-	s32 a = 21, b = 9;
-	Map_CopyCellAttributes(85, 9, 1, 1, a, 9);
+	Map_CopyCellAttributes(85, 9, 1, 1, 21, 9);
 	Engine_MapObjectSetPosition(100, 0, 0);
 	PlaceActor(14, 0x01580000, 0x00980000);
 }

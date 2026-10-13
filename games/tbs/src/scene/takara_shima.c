@@ -562,9 +562,8 @@ static void EV15_PSYNERGY(void)
 {
 	Engine_GameFlagSet(2244);
 	{
-		s32 k4 = 8, k5 = 21;
 
-		Map_CopyCellAttributes(0, 0, 1, 1, k4, 21);
+		Map_CopyCellAttributes(0, 0, 1, 1, 8, 21);
 	}
 }
 

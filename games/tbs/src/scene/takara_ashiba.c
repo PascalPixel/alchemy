@@ -473,8 +473,7 @@ static void SceneState_ApplyRectAndPlaceSlot12(void)
 
 static void ConfigureAndPlaceActorTwelve(void)
 {
-	s32 a = 25, b = 48;
-	Map_CopyCells(24, 48, 1, 2, a, b);
+	Map_CopyCells(24, 48, 1, 2, 25, 48);
 	Actor_SetPosition(12, 0x00080000, 0x00080000);
 }
 

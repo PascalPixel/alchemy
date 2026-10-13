@@ -174,8 +174,7 @@ static void Scene_OpenTheHole(void)
 	s32 i;
 
 	{
-		s32 k5 = 2, k6 = 1;
-		Map_CopyCellsTo(0, 28, 17, 8, k5, k6);
+		Map_CopyCellsTo(0, 28, 17, 8, 2, 1);
 	}
 	Engine_AudioPlayCue(200);
 	for (i = 0; i != 22; i++)
@@ -186,14 +185,12 @@ static void Scene_OpenTheHole(void)
 		Engine_EventWait(4);
 	}
 	{
-		s32 k5 = 4, k6 = 3;
-		Map_CopyCellsTo(0, 59, 15, 38, k5, k6);
-		Map_CopyCellsTo(4, 59, 17, 38, k5, k6);
+		Map_CopyCellsTo(0, 59, 15, 38, 4, 3);
+		Map_CopyCellsTo(4, 59, 17, 38, 4, 3);
 	}
 	Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
 	{
-		s32 k5 = 17, k6 = 8;
-		Map_CopyCellAttributes(0, 0, 2, 1, k5, k6);
+		Map_CopyCellAttributes(0, 0, 2, 1, 17, 8);
 	}
 	Engine_GameFlagSet(0x207);
 	EV17_PSYNERGY();

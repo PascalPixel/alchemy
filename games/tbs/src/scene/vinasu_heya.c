@@ -1573,8 +1573,7 @@ static void EV35_SCRIPT(void)
 	Engine_EventBegin();
 	if (SceneActor_TryMoveActorZeroTwoTilesAhead() == 0)
 	{
-		s32 k5 = 44, k6 = 39;
-		Map_CopyCellAttributes(108, 39, 13, 7, k5, 39);
+		Map_CopyCellAttributes(108, 39, 13, 7, 44, 39);
 		RunStagedActorTransition();
 	}
 	Engine_EventEnd();
@@ -2068,12 +2067,10 @@ static void EV45_SCRIPT_6(void)
 	if (SceneActor_TryMoveActorZeroTwoTilesAhead() == 0)
 	{
 		{
-			s32 k5 = 5, k6 = 48;
-			Map_CopyCellAttributes(69, 48, 4, 2, k5, 48);
+			Map_CopyCellAttributes(69, 48, 4, 2, 5, 48);
 		}
 		{
-			s32 j5 = 9, j6 = 37;
-			Map_CopyCellAttributes(73, 37, 9, 13, j5, 37);
+			Map_CopyCellAttributes(73, 37, 9, 13, 9, 37);
 		}
 		RunStagedActorTransition();
 	}

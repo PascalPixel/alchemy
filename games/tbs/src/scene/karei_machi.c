@@ -1038,8 +1038,7 @@ static void KareiMachi_StartWindowTransition(void)
 	{
 		Map_CopyCellsTo(58, 5, 58, 8, 2, 3);
 		{
-			s32 a = 8, b = 10;
-			Map_CopyCellAttributes(8, 11, 2, 1, a, 10);
+			Map_CopyCellAttributes(8, 11, 2, 1, 8, 10);
 		}
 		Map_CopyCellsTo(8, 12, 8, 11, 2, 1);
 		Engine_MapRedraw();

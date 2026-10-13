@@ -1132,14 +1132,12 @@ static void SceneState_ApplyRectsAtActors8And9(void)
 	Engine_ActorSetSpritePriority(8, 1);
 	Engine_ActorSetSpritePriority(9, 1);
 	{
-		s32 k5 = 5, k6 = 19;
 
-		Map_CopyCellAttributes(69, 19, 3, 3, k5, k6);
+		Map_CopyCellAttributes(69, 19, 3, 3, 5, 19);
 	}
 	{
-		s32 k5 = 17, k6 = 19;
 
-		Map_CopyCellAttributes(69, 19, 3, 3, k5, k6);
+		Map_CopyCellAttributes(69, 19, 3, 3, 17, 19);
 	}
 	{
 		s32 k5 = p->x.fixed >> 20, k6 = p->z.fixed >> 20;

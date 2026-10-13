@@ -291,7 +291,6 @@ static void EV10_PSYNERGY(void)
 
 	if (a != 0)
 	{
-		s32 x = 24;
 		s32 t;
 
 		Map_CopyCellAttributes(24, 27, 2, 1, 24, 26);

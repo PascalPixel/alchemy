@@ -1170,8 +1170,7 @@ static void SceneState_UpdateZoneFlagsFromActorZero(void)
 		if (r != 0)
 			return;
 		((State *)gMapWork[0])->unk17 = r;
-		/* FAKEMATCH: called through a cast to the void call the bytes show; called by its value-returning prototype, differ 11 at this site alone, 19 with all three sites plain (2026-10-13). */
-		((void (*)(s32))Engine_GameFlagSet)(g);
+		Engine_GameFlagSet(g);
 		Engine_GameFlagClear(h);
 		return;
 	}
@@ -1179,8 +1178,7 @@ static void SceneState_UpdateZoneFlagsFromActorZero(void)
 	{
 		st = gMapWork[0];
 		st->unk17 = 0;
-		/* FAKEMATCH: called through a cast to the void call the bytes show; called by its value-returning prototype, differ 13 at this site alone, 19 with all three sites plain (2026-10-13). */
-		((void (*)(s32))Engine_GameFlagSet)(g);
+		Engine_GameFlagSet(g);
 		Engine_GameFlagClear(h);
 		return;
 	}
@@ -1189,8 +1187,7 @@ static void SceneState_UpdateZoneFlagsFromActorZero(void)
 		return;
 	st = gMapWork[0];
 	st->unk17 = 1;
-	/* FAKEMATCH: called through a cast to the void call the bytes show; called by its value-returning prototype, differ 2 at this site alone, 19 with all three sites plain (2026-10-13). */
-	((void (*)(s32))Engine_GameFlagSet)(h);
+	Engine_GameFlagSet(h);
 	Engine_GameFlagClear(g);
 	return;
 }

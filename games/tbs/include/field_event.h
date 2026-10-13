@@ -105,7 +105,7 @@ void			   Engine_MapCopyCellAttributes();
 void			   Engine_MapRedraw();
 void			   Engine_WorkSetValuesIfNonNegative();
 s32				   Engine_GameFlagIsSet();
-s32				   Engine_GameFlagSet();
+void			   Engine_GameFlagSet();
 void			   Engine_GameFlagClear();
 void			   Engine_AudioPlayCue();
 void			   Engine_ShopOpen();
@@ -297,12 +297,14 @@ enum
 	FLAG_ARRIVAL_EVENT_PENDING = 0x12f
 };
 
-#ifdef MODERN
-// field.h and game_flags.h declare the engine's GameFlag_IsSet, _Set and
-// _Clear; modern GCC refuses these static ones under the same names, so the
-// scene layer's take their own
-#define GameFlag_IsSet FieldEvent_GameFlagIsSet
+// game_flags.h declares the main image's s32 GameFlag_Set; the scene layer's
+// is void and has its own name
 #define GameFlag_Set FieldEvent_GameFlagSet
+#ifdef MODERN
+// field.h and game_flags.h declare the engine's GameFlag_IsSet and _Clear;
+// modern GCC refuses these static ones under the same names, so the scene
+// layer's take their own
+#define GameFlag_IsSet FieldEvent_GameFlagIsSet
 #define GameFlag_Clear FieldEvent_GameFlagClear
 #endif
 static inline s32 GameFlag_IsSet(s32 flag)
@@ -310,9 +312,9 @@ static inline s32 GameFlag_IsSet(s32 flag)
 	return Engine_GameFlagIsSet(flag);
 }
 
-static inline s32 GameFlag_Set(s32 flag)
+static inline void FieldEvent_GameFlagSet(s32 flag)
 {
-	return Engine_GameFlagSet(flag);
+	Engine_GameFlagSet(flag);
 }
 
 static inline void GameFlag_Clear(s32 flag)

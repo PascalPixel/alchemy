@@ -8,9 +8,10 @@
 // 止めるときは IME にレジスタ自身のアドレスの下位 16 ビット
 // （0x0208、ビット 0 は 0）が書かれる。
 // Each step is its own statement macro, written do { } while (0), the shape
-// the lock sites and write-queue pushes of both games match through: the
-// saved copy is taken before IME is written, and the restore stands apart
-// from the code around it.
+// ☀️'s lock sites and write-queue pushes and ⚓️'s callback scheduler match
+// through: the saved copy is taken before IME is written, and the restore
+// stands apart from the code around it. ⚓️'s own queue writers (io.c) do
+// not match through it yet.
 
 // 元の IME を saved に入れる
 #define IME_SAVE(ime, saved) \

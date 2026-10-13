@@ -779,30 +779,21 @@ menu_top:;
 				}
 				else
 				{
-					if ((gKeyState & KEY_LEFT) != 0)
+					if ((gKeyState & KEY_LEFT) != 0 && page_count > 1)
 					{
-						if (page_count <= 1)
-						{
-							goto check_right;
-						}
 						Engine_AudioPlayCue(111);
 						rec5 = page + page_count;
 						rec5--;
 					}
-					else
+					else if ((gKeyState & KEY_RIGHT) != 0 && page_count > 1)
 					{
-					check_right:;
-						if ((gKeyState & KEY_RIGHT) == 0)
-						{
-							goto keys_done;
-						}
-						if (page_count <= 1)
-						{
-							goto keys_done;
-						}
 						Engine_AudioPlayCue(111);
 						rec5 = page + page_count;
 						rec5++;
+					}
+					else
+					{
+						goto keys_done;
 					}
 					rec5 = (rec5 % page_count);
 					v7 = 1;

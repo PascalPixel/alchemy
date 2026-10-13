@@ -2309,12 +2309,9 @@ static void AdvanceActor16AlongEscapeRoute(void)
 	s32 row;
 	s32 companionRow;
 
-	/* FAKEMATCH: read into x before the row and assigned after it; read straight into its variable, tbs-en differs */
-	s32 x;
 	column = Object_GetById(16)->x.fixed >> 20;
-	x = Object_GetById(16)->z.fixed >> 20;
+	row = Object_GetById(16)->z.fixed >> 20;
 	companionRow = Object_GetById(9)->z.fixed >> 20;
-	row = x;
 
 	if (column == 6)
 	{
@@ -2350,9 +2347,8 @@ static void AdvanceActor16AlongEscapeRoute(void)
 
 	Engine_TaskWait(2);
 
-	row -= 1;
-	Engine_MapCopyCellAttributes(column, row, 1, 3, Object_GetById(16)->x.fixed >> 20, row);
-	Map_CopyCellAttributes(0, 0, 1, 3, column, row);
+	Engine_MapCopyCellAttributes(column, row - 1, 1, 3, Object_GetById(16)->x.fixed >> 20, row - 1);
+	Map_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）

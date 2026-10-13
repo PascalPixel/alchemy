@@ -410,11 +410,9 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 void OptionMenu_InitializeWork(void)
 {
 	struct WorkspaceWork *work;
-	volatile u32		  zero;
 
 	work = Runtime_AllocateBlock(20, 0x628);
-	zero = 0;
-	Dma_Set((const void *)&zero, work, 0x8500018a, REG_DMA3);
+	Dma_Fill32(0, work, 0x628);
 	work->option[0] = gGameState.palette_glow[0];
 	work->option_count[0] = 24;
 	work->option[1] = gGameState.palette_glow[1];
@@ -737,11 +735,9 @@ void Menu_RunSelectedWorkspaceEntry(void)
 
 void Menu_InitializeSelectedWorkspace(void)
 {
-	void		*work;
-	volatile u32 zero;
+	void *work;
 	work = Runtime_AllocateBlock(20, 0x628);
-	zero = 0;
-	Dma_Set(&zero, work, 0x8500018a, REG_DMA3);
+	Dma_Fill32(0, work, 0x628);
 	Scheduler_AddOrUpdateCallback(Menu_RunSelectedWorkspaceEntry, 3200);
 }
 

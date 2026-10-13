@@ -228,12 +228,10 @@ void EffectSlot_SetCallback(struct EffectSlot *effect, EffectCallback callback)
 
 void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z)
 {
-	s32			 unit;
-	s8			*object;
-	volatile u32 zero;
+	s32 unit;
+	s8 *object;
 
-	zero = 0;
-	Dma_Set((const void *)&zero, effect, 0x85000000 | (sizeof *effect / 4), REG_DMA3);
+	Dma_Fill32(0, effect, sizeof *effect);
 	object = ResourceObject_CreateFar(kind);
 	effect->object = object;
 	if (object != NULL)
@@ -263,9 +261,7 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z)
 
 void BattleFx_ClearOwnedSlot(struct EffectSlot *slot)
 {
-	volatile u32 zero;
 	if (slot->object)
 		ResourceObject_ReleaseFar(slot->object);
-	zero = 0;
-	Dma_Set(&zero, slot, 0x85000000 | (sizeof *slot / 4), REG_DMA3);
+	Dma_Fill32(0, slot, sizeof *slot);
 }

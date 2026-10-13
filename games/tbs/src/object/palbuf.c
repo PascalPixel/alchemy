@@ -468,13 +468,10 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 //--------------------------------------------------------------------------
 void BattleEffect_InitializeBuffers(void)
 {
-	volatile s32				zero;
 	struct BattleEffectBuffers *buf;
 
 	buf = Runtime_AllocateBlock(HEAP_SLOT_PALBUF, sizeof(*buf));
-	zero = 0;
-	Dma_Set((const void *)&zero, buf,
-		DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | (sizeof(*buf) >> 2), REG_DMA3);
+	Dma_Fill32(0, buf, sizeof(*buf));
 	Dma_Set(
 		(void *)BG_PLTT, &buf->palette[0], DMA_ENABLE32 | DMA_32BIT | (COLOR_HALF / 2), REG_DMA3);
 	Dma_Set((void *)OBJ_PLTT, &buf->palette[COLOR_HALF],

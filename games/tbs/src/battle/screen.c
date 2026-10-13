@@ -570,11 +570,9 @@ void BattlePresentation_InitializeWorkAndResetState(void)
 {
 	struct BattleAffineHdma		*work;
 	struct BattleBackgroundView *state;
-	volatile u32				 zero;
 	work = Runtime_AllocateBlock(10, sizeof *work);
 	state = (struct BattleBackgroundView *)gTransitionWork;
-	zero = 0;
-	Dma_Set(&zero, work, 0x850000a8, REG_DMA3);
+	Dma_Fill32(0, work, sizeof *work);
 	state->mode = 0;
 }
 

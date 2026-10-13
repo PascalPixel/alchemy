@@ -326,7 +326,6 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
 	s32						row;
 	s32						col;
 	s16						value;
-	volatile u32			fill;
 
 	variant = 0;
 	buffer = MemAlloc(0x200);
@@ -352,9 +351,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
 	Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000, DMA_ENABLE32 | DMA_32BIT | 0x800,
 		REG_DMA3);
 	Resource_DecodeType01(Resource_GetTableEntry(resources[5]), gMapLayerData);
-	fill = 0xf07ff07f;
-	Dma_Set((const void *)&fill, BG_SCREEN_BLOCK(5),
-		DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x180, REG_DMA3);
+	Dma_Fill32(0xf07ff07f, BG_SCREEN_BLOCK(5), 0x600);
 	cursor = (u32 *)BG_SCREEN_BLOCK(6);
 	tile = 0x01a901a8;
 	for (row = 0; row < 20; row++)
@@ -803,13 +800,10 @@ void MapAnimation_StartChannels(const u16 *script)
 	struct MapState *state;
 	s32				 count;
 	u32				 command;
-	volatile u32	 zero;
 
 	state = gMapWork[0];
 	count = 0;
-	zero = 0;
-	Dma_Set((const void *)&zero, state->anim, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x30,
-		REG_DMA3);
+	Dma_Fill32(0, state->anim, sizeof(state->anim));
 	command = *script++;
 	while (command != 0xffff)
 	{

@@ -118,6 +118,9 @@ extern u8						  gSerialPeerPayloads[4][24];
 // volatile: tagged where it steers, in SerialRuntime_StepBlockTransfer (tbs serial.c)
 extern volatile u8				  gSerialBlockSequence;
 extern u8						  gLinkExchangeState;
+// 通信の状態。VBlank の通信処理が書き換える
+/* FAKEMATCH: volatile makes every access to this cell a load or store of its own; without it, in tbs-en, SaveMenu_Run: differ 221, 923 instructions for 920, and SerialRuntime_WaitForStatusMask: differ 18, 21 for 23. */
+extern volatile u16				  gLinkStatus;
 
 static inline s32 SerialRuntime_AddParentFlag(s32 status)
 {

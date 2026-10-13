@@ -778,12 +778,8 @@ void BattleFx_LoadActionEffectResources(s32 act_no, s32 mode)
 	running = ev->resolving_action;
 	if (running == 0)
 	{
-		volatile u32 fill;
-
 		work = Runtime_AllocateHeapBlock(HEAP_SLOT_FX, sizeof *work);
-		fill = running;
-		Dma_Set((const void *)&fill, work,
-			DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | (sizeof *work / 4), REG_DMA3);
+		Dma_Fill32(running, work, sizeof *work);
 	}
 	else
 	{

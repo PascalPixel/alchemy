@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "serial_runtime.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"

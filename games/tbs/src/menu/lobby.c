@@ -1362,7 +1362,7 @@ s32 LinkLobby_RunRoundResult(void)
 		Engine_EventWaitForScreen();
 		LinkLobby_WriteSlotValue(5);
 		Engine_ActorFaceActor(8, gGameState.selected_actor, 0);
-		/* FAKEMATCH: one scalar holds the row address, then its score. */
+		/* FAKEMATCH: one scalar holds the row address, then its score. Reading link_tallies[3] twice, also through a u16 pointer local: differ 36; reading it once into score before the call: differ 10. */
 		score = (u32)&gGameState.link_tallies[3];
 		UiText_DrawQuantity(*(u16 *)score, 5);
 		score = *(u16 *)score;
@@ -1409,7 +1409,7 @@ s32 LinkLobby_RunRoundResult(void)
 			gGameState.link_tallies[4]++;
 			v = gGameState.link_tallies[7] + 1;
 			gGameState.link_tallies[7] = v;
-			/* FAKEMATCH: reuse the other score branches' address slot. */
+			/* FAKEMATCH: reuse the other score branches' address slot. Through link_tallies[6] itself or a u16 pointer local: differ 8. */
 			score = (u32)&gGameState.link_tallies[6];
 			if (*(u16 *)score < (u16)v)
 			{

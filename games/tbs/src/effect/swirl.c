@@ -5177,14 +5177,13 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 #undef MARK
 #undef PATCH
 
-	// Each writing step is a statement macro, written do { } while (0): the
-	// steps keep list order and are scheduled within themselves. As plain
-	// statements PUT differs 38, COPY 12 and PATCH 2.
+	/* FAKEMATCH: one-pass blocks keep each writing step together and in list order while allowing scheduling within it. Measured 2026-10-13 in all six editions, written as plain statements: PUT differs 38, COPY 12 and PATCH 2, so each of the three carries a tag and counts at its uses. COPY_FROM, COPY_TWICE and PUT_BRANCH match without a block and have none. */
 #define PUT(word)        \
 	do                   \
 	{                    \
 		*dst++ = (word); \
 	} while (0)
+	/* FAKEMATCH: a one-pass block, as PUT's tag explains; written as plain statements, COPY differs 12 in all six editions. */
 #define COPY(n)                                         \
 	do                                                  \
 	{                                                   \
@@ -5192,28 +5191,22 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 		dst += (n);                                     \
 		src += (n);                                     \
 	} while (0)
-#define COPY_FROM(from, n)                               \
-	do                                                   \
-	{                                                    \
-		Dma_Set(from, dst, DMA_COPY_WORDS(n), REG_DMA3); \
-		dst += (n);                                      \
-	} while (0)
+#define COPY_FROM(from, n)                           \
+	Dma_Set(from, dst, DMA_COPY_WORDS(n), REG_DMA3); \
+	dst += (n)
 #define COPY_TWICE(from, n)                              \
-	do                                                   \
 	{                                                    \
 		const u32 *part = (from);                        \
 		Dma_Set(part, dst, DMA_COPY_WORDS(n), REG_DMA3); \
 		dst += (n);                                      \
 		Dma_Set(part, dst, DMA_COPY_WORDS(n), REG_DMA3); \
 		dst += (n);                                      \
-	} while (0)
-#define PUT_BRANCH(target)                         \
-	do                                             \
-	{                                              \
-		*dst = *src++ + BRANCH_FIELD(dst, target); \
-		dst++;                                     \
-	} while (0)
+	}
+#define PUT_BRANCH(target)                     \
+	*dst = *src++ + BRANCH_FIELD(dst, target); \
+	dst++
 #define MARK(site) site = dst
+	/* FAKEMATCH: a one-pass block, as PUT's tag explains; written as a plain statement, PATCH differs 2 in all six editions. */
 #define PATCH(site)                         \
 	do                                      \
 	{                                       \

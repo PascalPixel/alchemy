@@ -105,7 +105,7 @@ static void Clear_LoadBackground(void)
 	u16				  *map;
 	u32				   x;
 	u32				   y;
-	s32				   tile;
+	u16				   tile;
 	struct ScrollPair *scroll;
 	s32				   blank;
 
@@ -121,25 +121,13 @@ static void Clear_LoadBackground(void)
 	Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, REG_DMA3);
 	map = (u16 *)0x06003000;
 	tile = 0x1a0;
-	y = 0;
-col:
+	for (y = 0; y < 20; y++)
 	{
-		x = 0;
-	row:
-		{
-			s32 old = tile;
-
-			/* FAKEMATCH: keep the signed tile wrap in the high half. */
-			tile = ((old << 16) + 0x10000) >> 16;
-			*map++ = old;
-		}
-		if (++x <= 29)
-			goto row;
+		for (x = 0; x < 30; x++)
+			*map++ = tile++;
 		*map++ = blank;
 		*map++ = blank;
 	}
-	if (++y <= 19)
-		goto col;
 	scroll = (struct ScrollPair *)gBgScroll;
 	for (y = 0; y <= 3; y++)
 	{

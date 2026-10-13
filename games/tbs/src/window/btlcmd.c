@@ -5047,6 +5047,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
                doubleword, the call also sets r1, so the r1 reload for
                class_id no longer depends on the in reload and sched2 loads
                i * 2 before in, as native (differ 2). */
+			/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 			actor = (struct BtlUnit *)(s32)((s64 (*)(s32))UnitGetFar)(actorId);
 			COUNTDOWN->actorId = actorId;
 			COUNTDOWN->unk_40 = 0;

@@ -2712,6 +2712,7 @@ static void Effect_ConfigureSpawnedParticle(struct SourceEntity *source)
 	s32					   particle_index;
 	struct StagedParticle *particle;
 	spawn_position[0] = source->f08;
+	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 	spawn_position[1] = source->f0c - (((s32 (*)())Engine_RandomNext)(source) << 4) - 0x80000;
 	spawn_position[2] = source->f10;
 	particle_index = Engine_RandomNext();

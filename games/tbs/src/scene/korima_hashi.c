@@ -1140,6 +1140,7 @@ static s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0)
 	return 0;
 hit:
 	Engine_AudioPlayCue(106);
+	/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 	((s32 (*)())Engine_ObjectSetScript)((s32)arg0, (s32)KorimaHashi_TriggerScript);
 	KorimaHashi_TriggerPending = 1;
 	return 0;

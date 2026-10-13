@@ -1550,6 +1550,7 @@ static void MakyuriChojo_LowerCollectedActors(void)
 	n = 0;
 	for (i = 0; i <= 4; i++)
 		ids[i] = 66;
+	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 	((s32 (*)())MakyuriChojo_CollectBandSlots)(ids, lift->offset_y, lift);
 	for (i = 0; i <= 4; i++)
 	{

@@ -308,6 +308,7 @@ static void EV25_SCRIPT(void)
 		case 9:
 			if (probe.word[4] >> 20 == 8)
 			{
+				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 				((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
 				Engine_EventWait(20);
 				Map_CopyCellsTo(119, 9, 109, 11, 1, 1);
@@ -321,6 +322,7 @@ static void EV25_SCRIPT(void)
 				Map_CopyCellsTo(117, 9, 104, 7, one, one);
 				Map_CopyCellsTo(119, 8, 109, 11, one, one);
 				Map_CopyCellsTo(118, 8, 104, 13, one, one);
+				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 				((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
 				GameFlag_Clear(0x310);
 			}
@@ -328,6 +330,7 @@ static void EV25_SCRIPT(void)
 		case 10:
 			if (probe.word[4] >> 20 == 12)
 			{
+				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 				((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
 				Engine_EventWait(10);
 				if (GameFlag_IsSet(0x310))
@@ -347,6 +350,7 @@ static void EV25_SCRIPT(void)
 					Map_CopyCellsTo(119, 9, 109, 11, one, one);
 					Map_CopyCellsTo(118, 8, 104, 13, one, one);
 				}
+				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 				((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
 				GameFlag_Clear(0x311);
 			}
@@ -355,11 +359,13 @@ static void EV25_SCRIPT(void)
 			x = probe.word[2];
 			if (x >> 20 == 40)
 			{
+				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 				((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
 				GameFlag_Set(0x312);
 			}
 			else
 			{
+				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 				((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
 				GameFlag_Clear(0x312);
 			}
@@ -695,6 +701,7 @@ static void MakyuriHeya_RunSequenceE(void)
 			shape = ev.f2;
 			if ((shape >> 20) == 11)
 			{
+				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 				((void (*)(SceneEvent))SceneActor_MoveAndRedraw)(ev);
 				Engine_EventWait(30);
 				Engine_AudioPlayCue(211);
@@ -719,6 +726,7 @@ static void MakyuriHeya_RunSequenceE(void)
 				Map_CopyCellsTo(71, 59, 81, 49, 1, 1);
 				Map_CopyCellsTo(71, 59, 82, 49, 1, 1);
 				Map_CopyCellsTo(78, 58, 83, 49, 1, 1);
+				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 				((void (*)(SceneEvent))SceneActor_MoveAndRedraw)(ev);
 				GameFlag_Clear(0x302);
 			}
@@ -727,6 +735,7 @@ static void MakyuriHeya_RunSequenceE(void)
 		{
 			if ((ev.t0 >> 20) == 40)
 			{
+				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 				((void (*)(SceneEvent))SceneActor_MoveAndRedraw)(ev);
 				if (GameFlag_IsSet(0x307) == 0)
 				{
@@ -746,6 +755,7 @@ static void MakyuriHeya_RunSequenceE(void)
 			else if ((ev.t0 >> 20) == 42)
 			{
 				ev.t1 = (s32)MakyuriHeya_RunSequenceF;
+				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 				((void (*)(SceneEvent))SceneActor_MoveAndRedraw)(ev);
 				MakyuriHeya_RunSequenceG(5);
 				GameFlag_Clear(0x306);
@@ -1036,6 +1046,7 @@ static void EV40_SCRIPT(void)
 		switch (probe.word[1])
 		{
 		case 10:
+			/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 			((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
 			if (probe.word[4] >> 20 == 38)
 				Engine_GameFlagSet(0x318);
@@ -1044,6 +1055,7 @@ static void EV40_SCRIPT(void)
 			break;
 		case 11:
 			start = Object_GetById(11)->x.fixed >> 20;
+			/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 			((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
 			column = probe.word[2] >> 20;
 			if (column == 47)
@@ -2514,6 +2526,7 @@ static void EV08_PSYNERGY_1(void)
 		if (Engine_EventChooseYesNo(0, 0) == 1)
 		{
 			Engine_EventWait(20);
+			/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 			((s32 (*)())Engine_ActorSetAnimationAndWait)(3, 4);
 			Engine_EventWait(20);
 			event = base + 5;
@@ -2526,6 +2539,7 @@ static void EV08_PSYNERGY_1(void)
 					break;
 				}
 				Engine_EventWait(20);
+				/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 				((s32 (*)())Engine_ActorSetAnimationAndWait)(3, 4);
 				Engine_EventWait(20);
 				event = (s32)MsgMakyuriDontHideTruth;

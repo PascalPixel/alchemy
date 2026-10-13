@@ -2447,6 +2447,7 @@ s32 Scene_RunEntrySetup(void)
 		case 4:
 		case 5:
 			/* FAKEMATCH: value-returning cast prevents cross-jumping these blocks. */
+			/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 			((s32 (*)(void))FieldScene_RunOpeningAuxiliarySequence)();
 			BattleFx_SetQueuedSoundAndPlay(170);
 			break;

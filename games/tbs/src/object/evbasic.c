@@ -273,6 +273,7 @@ void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value)
 	if (value != 0)
 	{
 		/* FAKEMATCH: Party_ShowJoinedMessageFar is called as s32 (*)(s32, s32); as void (*)(s32), its prototype, Event_PrepareObjectAndApplyValue does not compile */
+		/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 		((s32 (*)(s32, s32))Party_ShowJoinedMessageFar)(event_id, value);
 	}
 }
@@ -594,6 +595,7 @@ void UiText_DrawQuantityPairWithCue(s32 unit, s32 abil)
 {
 	// 引数なしの宣言だが、r0・r1 の unit・abil がそのまま渡る
 	/* FAKEMATCH: OwnerAction_AddFar is called as void (*)(void); as s32 (*)(s32, s32), its prototype, UiText_DrawQuantityPairWithCue does not compile */
+	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 	((void (*)(void))OwnerAction_AddFar)();
 	AudioCommand_PlayFar(83);
 	UiWork_PushValueSlotFar(unit, 1);

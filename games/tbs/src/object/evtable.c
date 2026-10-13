@@ -1249,6 +1249,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 			UiWork_PushValueSlotFar(item_id, 2);
 			UiText_ShowPositionedMessageAndWaitFar((s32)MsgActorUsesItem, 1);
 			/* FAKEMATCH: needed to match: called as returning a value, the 0 is loaded after the action id (measured differ 2 as void) */
+			/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 			((s32 (*)(s32, s32))BattleFx_LoadActionEffectResources)(action_id, 0);
 			runtime->resolving_action = 1;
 			BattleFx_Run();

@@ -200,6 +200,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 static void EV08_PSYNERGY_1(s32 message_id)
 {
+	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 	((void (*)(s32 arg0))Engine_EventBegin)(message_id);
 	Engine_ActorSetPosition(8, 0, 0);
 	Engine_GameFlagSet(4055);
@@ -632,6 +633,7 @@ static void RunSceneVectorTransition(void)
 	Engine_EventBegin();
 	if (StagedActor_FindClearPosition(&transition) != 0)
 	{
+		/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 		((void (*)(struct V6))SceneActor_MoveAndRedraw)(transition);
 	}
 	Engine_EventEnd();

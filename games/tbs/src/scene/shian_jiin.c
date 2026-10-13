@@ -1009,7 +1009,7 @@ static void FieldScene_RunSecondEnsembleBeat(void)
 	Event_OpenMessage(18, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		((s32 (*)())Engine_ActorRunRepeatedMotion)(16, 1);
+		Engine_ActorRunRepeatedMotion(16, 1);
 		Engine_EventWait(20);
 		Event_ShowMessageAndWait(16, 0, 20);
 		GameFlag_Set(0x898);
@@ -1412,6 +1412,7 @@ static void EV03_TOUCH_1(void)
 
 	Engine_EventBegin();
 	particle_task = (s32)FieldScene_SpawnRandomizedParticle;
+	/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 	((void (*)())Engine_TaskAddCallback)(particle_task, 0xc80);
 	Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
 	gEventWork->transition_frames = 60;

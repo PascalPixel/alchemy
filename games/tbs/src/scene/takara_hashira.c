@@ -1307,6 +1307,7 @@ static void TakaraHashira_RunPushScene(void)
 	Engine_EventBegin();
 	if (StagedActor_FindClearPosition(&probe) != 0)
 	{
+		/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 		((void (*)(struct Probe))SceneActor_MoveAndRedraw)(probe);
 	}
 	else

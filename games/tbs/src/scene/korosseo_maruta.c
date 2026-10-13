@@ -2160,11 +2160,13 @@ static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 seco
 	if (flag == 0)
 	{
 		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
+		/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, first_handle);
 		UiWork_PushValueSlot(first_handle, 2);
 	}
 	else
 	{
+		/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, second_handle);
 		UiWork_PushValueSlot(second_handle, 2);
 	}

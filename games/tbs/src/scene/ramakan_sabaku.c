@@ -232,6 +232,7 @@ static s32 RamakanSabaku_ApplyEntryState(void)
 	v5 = 100;
 	do
 	{
+		/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 		record = ((s32 (*)())Engine_MapObjectSetPosition)(v5, 0, 0);
 		v5 = (v5 + 1);
 	} while (v5 <= 107);

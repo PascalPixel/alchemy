@@ -721,6 +721,7 @@ static void EV09_PSYNERGY(void)
 	desc = Object_GetById(8);
 	desc->update = ACTOR_UPDATE_IDLE;
 
+	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 	((u8 * (*)()) Engine_EventEnd)(desc);
 }
 

@@ -1611,11 +1611,13 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
 	if (flag == 0)
 	{
 		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
+		/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, handleA);
 		UiWork_PushValueSlot(handleA, 2);
 	}
 	else
 	{
+		/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, handleB);
 		UiWork_PushValueSlot(handleB, 2);
 	}

@@ -3288,16 +3288,8 @@ top:
 		*st = *st + 1;
 		return;
 	}
-	if (state == 3)
-	{
-		if (BattleFx_HasReachedTarget(effect) == 0)
-			BattleFx_ClearOwnedSlot(effect);
-		return;
-	}
-	else
-	{
-		return;
-	}
+	if (state == 3 && BattleFx_HasReachedTarget(effect) == 0)
+		BattleFx_ClearOwnedSlot(effect);
 }
 
 //--------------------------------------------------------------------------

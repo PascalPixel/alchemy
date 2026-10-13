@@ -258,9 +258,9 @@ static inline void FieldObject_SetTargetAndCallback(s32 object, s32 target, cons
 	Object_SetTargetAndCallback(object, target, actions);
 }
 
-static inline void FieldVector_AddPolarOffset(s32 radius, s32 heading, s32 *position)
+static inline void FieldVector_AddPolarOffset(s32 radius, s32 heading, struct FieldPosition *probe)
 {
-	Vector_AddPolarOffset(radius, heading, position);
+	Vector_AddPolarOffset(radius, heading, probe);
 }
 
 #endif

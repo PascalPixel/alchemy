@@ -71,17 +71,17 @@ static s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 
 static s32 SceneActor_MoveActorZeroToTarget(const MoveTarget *target)
 {
-	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
-	u8				   saved = actor->motion_flags;
-	s32				   probe[3];
+	struct FieldActor	*actor = Object_GetById(ACTOR_PARTY_LEADER);
+	u8					 saved = actor->motion_flags;
+	struct FieldPosition probe;
 
-	probe[0] = (actor->x.fixed & 0xfff00000) + 0x00080000;
-	probe[1] = actor->y.fixed;
-	probe[2] = (actor->z.fixed & 0xfff00000) + 0x00080000;
+	probe.x = (actor->x.fixed & 0xfff00000) + 0x00080000;
+	probe.y = actor->y.fixed;
+	probe.z = (actor->z.fixed & 0xfff00000) + 0x00080000;
 
-	FieldVector_AddPolarOffset(0x00100000, (actor->facing + 0x2000) & 0xc000, probe);
+	FieldVector_AddPolarOffset(0x00100000, (actor->facing + 0x2000) & 0xc000, &probe);
 
-	if (Object_CheckMovementCollision(actor, probe) != 1
+	if (Object_CheckMovementCollision(actor, &probe) != 1
 		&& Object_CheckMovementCollision(actor, target) == 0)
 	{
 		Engine_EventBegin();

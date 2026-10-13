@@ -2481,15 +2481,13 @@ static void ArutinYama_StepPaletteAnim(void)
 
 	if (ArutinYama_PaletteHold <= 0)
 	{
-		s32			frame;
-		struct Half zero;
+		s32 frame;
 
 	next:
 		frame = ArutinYama_PaletteScript[ArutinYama_PaletteStep++];
 		if (frame == -1)
 		{
-			zero.v = 0;
-			ArutinYama_PaletteStep = zero.v;
+			ArutinYama_PaletteStep = 0;
 			goto next;
 		}
 		ArutinYama_PaletteHold = ArutinYama_PaletteScript[ArutinYama_PaletteStep++];

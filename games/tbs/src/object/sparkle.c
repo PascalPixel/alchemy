@@ -161,12 +161,17 @@ struct MarkerWork
 	struct MarkerSlot slots[MARKER_MAX];
 };
 
+// OBJ 属性の上位バイトは struct FieldSprite と同じビット割り当て
 struct EfxVisual
 {
 	u8 pad0[5];
-	u8 flatbs;
+	u8 flags_05_low : 5;
+	u8 full_color : 1; // 256 色
+	u8 flags_05_high : 2;
 	u8 pad1[3];
-	u8 flatla;
+	u8 flags_09_low : 2;
+	u8 priority : 2; // BG との優先度
+	u8 palette : 4;
 	u8 pad2[18];
 	u8 slot; // VRAM のタイル枠
 	u8 pad3[9];
@@ -346,23 +351,12 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item)
 	{
 		struct EfxVisual *vis = obj->vis;
 		void			 *buf;
-		s32				  mask;
-		s32				  zero = 0;
 
-		vis->unk1 = zero;
-		vis->unk2 = zero;
-
-		/* FAKEMATCH: the mask ~32 is built from the register already holding zero; written ~32, tbs-en differs */
-		vis->flatbs &= zero - 33;
-
-		mask = vis->flatla & 0x0f;
-		{
-			s32 clr = 13;
-			clr = -clr;
-			mask &= clr;
-		}
-		mask |= 4;
-		vis->flatla = mask;
+		vis->unk1 = 0;
+		vis->unk2 = 0;
+		vis->full_color = 0;
+		vis->palette = 0;
+		vis->priority = 1;
 
 		obj->travel = 0x20000;
 		obj->dy = 0x4000;
@@ -459,23 +453,12 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
 	if (object != 0)
 	{
 		struct EfxVisual *visual = object->vis;
-		s32				  mask;
 
-		s32 zero = 0;
-		visual->unk1 = zero;
-		visual->unk2 = zero;
-
-		/* FAKEMATCH: the mask ~32 is built from the register already holding zero; written ~32, tbs-en differs */
-		visual->flatbs &= zero - 33;
-
-		mask = visual->flatla & 0x0f;
-		{
-			s32 clear = 13;
-			clear = -clear;
-			mask &= clear;
-		}
-		mask |= 4;
-		visual->flatla = mask;
+		visual->unk1 = 0;
+		visual->unk2 = 0;
+		visual->full_color = 0;
+		visual->palette = 0;
+		visual->priority = 1;
 
 		Ui_PrepareTransferForItemFar(value);
 		VramBlock_LoadCached(visual->slot, 128, (u8 *)handle + 0x400);

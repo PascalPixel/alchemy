@@ -616,7 +616,7 @@ static s32 LinkLobby_ExchangePartyRecords(void)
 	s32 first;
 	s32 flag;
 
-	/* FAKEMATCH: separate initialization from the following flag query. */
+	/* FAKEMATCH: the one-pass block keeps result's zero in r6 ahead of the flag call, as the listing loads it. Plain before the call, with the store moved ahead of the call too, as the declaration's initializer, or as gLinkExchangeState = result = 0 after it, the zero is scheduled after the call: differ 4; storing 0 and setting result apart after the call: differ 36. */
 	do
 	{
 		result = 0;

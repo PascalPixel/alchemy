@@ -646,7 +646,7 @@ static void EV10_SCRIPT(void)
 s32 BabiFune_SetupScene(void)
 {
 	struct WaveMap *map;
-	/* FAKEMATCH: volatile restores the form the bytes prove: cnt lives at sp+2 and each step is stored there with strh (a 4-byte frame for none). Without it differ 53, 164 instructions for 165. */
+	/* FAKEMATCH: volatile restores the form the bytes prove: cnt lives at sp+2 and each step is stored there with strh (a 4-byte frame for none). Without it (2026-10-13, the BGxCNT writes chained as in EV10_SCRIPT) differ 23, 158 instructions for 165. */
 	volatile u16	cnt;
 
 	map = gMapWork[0];
@@ -694,23 +694,9 @@ s32 BabiFune_SetupScene(void)
 		SET_PRIORITY(actor, 9);
 		SET_PRIORITY(actor, 21);
 	}
-	{
-		struct Half
-		{
-			u16 v;
-		} two, three;
-
-		cnt = REG_BG3CNT & 0xfffc;
-		two.v = 2;
-		cnt |= two.v;
-		REG_BG3CNT = cnt;
-		cnt = REG_BG2CNT & 0xfffc;
-		three.v = 3;
-		cnt |= three.v;
-		REG_BG2CNT = cnt;
-		cnt = (REG_BG1CNT & 0xfffc) | three.v;
-		REG_BG1CNT = cnt;
-	}
+	REG_BG3CNT = cnt = (REG_BG3CNT & 0xfffc) | 2;
+	REG_BG2CNT = cnt = (REG_BG2CNT & 0xfffc) | 3;
+	REG_BG1CNT = cnt = (REG_BG1CNT & 0xfffc) | 3;
 	Io_Write16(0x2648, &REG_BLDCNT);
 	Io_Write16(0x810, &REG_BLDALPHA);
 	{

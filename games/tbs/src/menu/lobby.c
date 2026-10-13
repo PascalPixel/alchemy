@@ -933,31 +933,37 @@ static s32 EV09_TALK(s32 actor)
 	{
 		base = (s32)MsgLobbyLooksLikeFirst;
 		count = &gGameState.link_tallies[4];
-		if (*count == 0)
+		if (*count != 0)
+		{
+			UiWork_ClearValueNameTables();
+			UiText_DrawQuantity(*count, 5);
+			Engine_EventSetMessage(base + 1);
+			Engine_EventShowMessage(actor, 0);
+		}
+		else
 		{
 			Engine_EventSetMessage((s32)MsgLobbyTellTotalWins);
 			Engine_EventShowMessage(actor, 0);
-			goto done;
 		}
 	}
 	else
 	{
 		base = (s32)MsgLobbyLooksLikeFirstTime;
 		count = &gGameState.link_tallies[7];
-		if (*count == 0)
-			goto none;
+		if (*count != 0)
+		{
+			UiWork_ClearValueNameTables();
+			UiText_DrawQuantity(*count, 5);
+			Engine_EventSetMessage(base + 1);
+			Engine_EventShowMessage(actor, 0);
+		}
+		else
+		{
+			Engine_EventSetMessage((s32)MsgLobbyTellConsecutiveWins);
+			Engine_EventShowMessage(actor, 0);
+		}
 	}
-	UiWork_ClearValueNameTables();
-	UiText_DrawQuantity(*count, 5);
-	Engine_EventSetMessage(base + 1);
-	Engine_EventShowMessage(actor, 0);
-	goto done;
-none:
-	Engine_EventSetMessage((s32)MsgLobbyTellConsecutiveWins);
-	Engine_EventShowMessage(actor, 0);
-done:;
 }
-
 static s32 EV15_TALK(s32 id)
 {
 	s32 window;

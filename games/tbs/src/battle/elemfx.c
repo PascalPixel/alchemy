@@ -392,7 +392,11 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 	struct EffectPosition		  position2;
 	struct BattlePresentationWork launch;
 	struct BattlePresentationWork launch2;
-	/* FAKEMATCH: needed to match: one variable, assigned twice, holds slot 12's address and later the IME address, as the bytes do; the session is slot 9, three words below. */
+	/* FAKEMATCH: one variable, assigned twice, holds slot 12's address
+	 * and later the IME address, as the bytes do; the session is slot 9,
+	 * three words below. Measured: the session read as gWorkSlot[9] with
+	 * ime set only in the loop differs 124 (247 instructions for 249);
+	 * with IO_WRITE_QUEUE_PUSH in the loop as well, 140. */
 	volatile u16		  *ime = (volatile u16 *)&gWorkSlot[12];
 	struct BtlWork		  *session = *(struct BtlWork **)((u8 *)ime - 12);
 	struct SparkWork	  *work;

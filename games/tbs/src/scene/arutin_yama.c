@@ -2499,11 +2499,8 @@ static void ArutinYama_StepPaletteAnim(void)
 
 static void ArutinYama_StartPaletteAnim(void)
 {
-	struct Half zero;
-
-	zero.v = 0;
-	ArutinYama_PaletteStep = zero.v;
-	ArutinYama_PaletteHold = zero.v;
+	ArutinYama_PaletteStep = 0;
+	ArutinYama_PaletteHold = 0;
 	Engine_TaskAddCallback((s32)&ArutinYama_StepPaletteAnim, 0xc80);
 }
 

@@ -870,15 +870,8 @@ static void EV08_TALK(void)
 
 static void ActorPresentation_SetTwoSceneCells(void)
 {
-	{
-		s32 size = 2;
-
-		Map_CopyCellsTo(22, 85, 25, 85, size, size);
-	}
-	{
-
-		Map_CopyCellAttributes(25, 15, 2, 2, 25, 25);
-	}
+	Map_CopyCellsTo(22, 85, 25, 85, 2, 2);
+	Map_CopyCellAttributes(25, 15, 2, 2, 25, 25);
 }
 
 static void FieldScene_RunSupplementalSequenceOne(void)

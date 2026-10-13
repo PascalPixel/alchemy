@@ -1633,7 +1633,9 @@ static void EV35_TALK(s32 scene)
 			Engine_EventWait(60);
 			Engine_EventShowMessage(scene, 0);
 			Korosseo_FadeInCompetitor(0, 504, 200);
-			/* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
+			/* FAKEMATCH: the void result is discarded; Call3 changes argument allocation.
+			 * 2026-10-13: the scene layer's Actor_FaceDirection loads r0 before r1
+			 * and r2, where native loads it last (differ 2). */
 			Value3(Engine_ActorFaceDirection, 0, 0, 0);
 			ColossoLogRollingStage_WaitForSceneTask();
 			Actor_SetSpeed(0, 0x18000, 0xc000);
@@ -1995,7 +1997,9 @@ static void FieldScene_RunScene3bcSequenceA(s32 a0)
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(86);
 		Korosseo_LoadPortrait(8);
-		/* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
+		/* FAKEMATCH: the void result is discarded; Call2 changes argument allocation.
+		 * 2026-10-13: called directly, as elsewhere in this file, each of these two
+		 * sites loads r0 before r1, where native loads r1 first (differ 4). */
 		Value2(ColossoLogRollingStage_InitializeModeTask, 3, 1);
 		Engine_EventWait(-a0 * 60 + 60);
 		kind = 0;
@@ -2005,7 +2009,7 @@ static void FieldScene_RunScene3bcSequenceA(s32 a0)
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(a0 + 90);
 		Korosseo_LoadPortrait(4);
-		/* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
+		/* FAKEMATCH: the void result is discarded, as in the first arm. */
 		Value2(ColossoLogRollingStage_InitializeModeTask, 3, 0);
 		Engine_EventWait(a0 * 60 + 60);
 		kind = 8;
@@ -2159,14 +2163,15 @@ static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 seco
 	}
 	if (flag == 0)
 	{
-		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-		/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+		/* FAKEMATCH: the void function is called as returning s32, which loads r1
+		 * before r0 as native. 2026-10-13: called by its prototype at both
+		 * sites, each loads r0 first (differ 4). */
 		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, first_handle);
 		UiWork_PushValueSlot(first_handle, 2);
 	}
 	else
 	{
-		/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+		/* FAKEMATCH: called as returning s32, as in the first arm. */
 		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, second_handle);
 		UiWork_PushValueSlot(second_handle, 2);
 	}

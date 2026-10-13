@@ -327,7 +327,13 @@ s32 DjinnMenu_RunScreen(void)
 						break;
 					}
 				}
-				/* FAKEMATCH: needed to match: a one-pass block builds the selection address before found * 10 */
+				/* FAKEMATCH: the one-pass block ends the store's scheduling region, so the
+				 * selection address (movs #186, lsls) is built before the last shift of
+				 * found * 10. 2026-10-13: the plain store differs 2 (the two lsls swap),
+				 * as does DJINN_LIST_ROWS * found; found * DJINN_LIST_ROWS + column
+				 * differs 4; this repeated block as a static __inline__ function with
+				 * its own counter adds a saved register. The whole block as one
+				 * do { } while (0) statement macro, used at both places, matches. */
 				do
 				{
 					menu->selection[0] = column + found * DJINN_LIST_ROWS;
@@ -386,7 +392,8 @@ s32 DjinnMenu_RunScreen(void)
 						break;
 					}
 				}
-				/* FAKEMATCH: needed to match: a one-pass block builds the selection address before found * 10 */
+				/* FAKEMATCH: the one-pass block ends the store's scheduling region, as at
+				 * case 13; the plain store differs 2 here too (the two lsls swap). */
 				do
 				{
 					menu->selection[0] = column + found * DJINN_LIST_ROWS;
@@ -1603,7 +1610,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
 		state->pair_index[mode] = entry % 32;
 		state->pair_element[mode] = DJINN_ELEMENT(entry);
 		state->pair_owner[mode] = DJINN_OWNER(entry);
-		/* FAKEMATCH: keep entry live through owner extraction and pass result through the boundary; an input alone exchanges the final index shift and table-base copy (2 instructions differ), while no boundary ties the owner mask to entry (8 differ). 2026-10-11: plain, entry dies at the owner and, so reload ties the result to entry instead of the mask (ands r2, r3 for ands r3, r2: differ 8); an input-only barrier leaves a sched2 tie (differ 2); storing the fields in other orders differs 13-1106. */
+		/* FAKEMATCH: keep entry live through owner extraction and pass result through the boundary; an input alone exchanges the final index shift and table-base copy (2 instructions differ), while no boundary ties the owner mask to entry (8 differ). 2026-10-11: plain, entry dies at the owner and, so reload ties the result to entry instead of the mask (ands r2, r3 for ands r3, r2: differ 8); an input-only barrier leaves a sched2 tie (differ 2); storing the fields in other orders differs 13-1106. 2026-10-13: entry as s32 or u16 with no barrier differs 1186 and 1165 (24 and 29 more instructions). */
 		asm("" : "+r"(result) : "r"(entry));
 	}
 	state->selection[mode] = x + y * 10;

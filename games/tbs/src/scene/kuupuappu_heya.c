@@ -1280,7 +1280,7 @@ static void EV10_TOUCH(void)
 	Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
 	GameFlag_Set(2130);
 	GameFlag_Set(768);
-	Engine_TaskAddCallback((s32)SceneActor_FaceActors24And25TowardActorZero, 3200);
+	Engine_TaskAddCallback(SceneActor_FaceActors24And25TowardActorZero, 3200);
 	actor24->timer = 1;
 	actor25->timer = 3;
 	Engine_EventEnd();
@@ -1511,7 +1511,7 @@ static void FieldScene_SelectActorPair(void)
 
 		((struct FieldActor *)record)->timer = shown;
 	}
-	Engine_TaskAddCallback((s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
+	Engine_TaskAddCallback(SceneActor_FaceActors24And25TowardActorZero, 0xc80);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	Engine_EventEnd();
 }
@@ -1740,8 +1740,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 			Engine_ActorEnableActionCallback(18, (const s32 *)1);
 			Actor_FaceDirection(18, 0x4000, 0);
 			OverlayObject_ConfigureObject22WithResource17(231, 0x2380000, 0x100000, 0x2a00000);
-			/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
-			((void (*)())Engine_TaskAddCallback)((s32)SceneState_SetFlagByActorPosition, 0xc80);
+			Task_AddCallback(SceneState_SetFlagByActorPosition, 0xc80);
 		}
 		else if (Engine_GameFlagIsSet(0x853) != 0)
 		{
@@ -1753,9 +1752,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 			&& Engine_GameFlagIsSet(0x853) == 0 && Engine_GameFlagIsSet(0x300) != 0)
 		{
 			Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
-			/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
-			((void (*)())Engine_TaskAddCallback)(
-				(s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
+			Task_AddCallback(SceneActor_FaceActors24And25TowardActorZero, 0xc80);
 			break;
 		}
 		if (Engine_GameFlagIsSet(0x856) != 0)
@@ -1773,7 +1770,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 			}
 			Object_GetById(24)->timer = 5;
 			Object_GetById(25)->timer = 4;
-			Engine_TaskAddCallback((s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
+			Engine_TaskAddCallback(SceneActor_FaceActors24And25TowardActorZero, 0xc80);
 		}
 		break;
 	case 13:
@@ -2712,7 +2709,11 @@ static struct StopRecord *KuupuappuHeya_SnapToNearestStop(struct StopSet *set, s
 		d = (s16)(p - *pos);
 		if (d < 0)
 			d = -d;
-		/* FAKEMATCH: the used-stop test reads the id through a volatile lvalue, so the id is loaded again for the result. */
+		/* FAKEMATCH: the used-stop test reads the id through a volatile lvalue, so
+		 * the id is loaded again for the result. 2026-10-13: the plain test
+		 * reuses its load (48 instructions for 49, differ 9); set->stops[i].id
+		 * in the arm reloads it through a second strength-reduced pointer
+		 * (differ 54). */
 		if (*(volatile u8 *)&stop->id != 0xff && d < best)
 		{
 			best = d;

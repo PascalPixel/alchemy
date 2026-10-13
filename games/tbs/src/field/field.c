@@ -82,9 +82,7 @@ u8 *Resource_DecompressLz(const u8 *source, u8 *destination)
 {
 	s32		  token;
 	u32		  length;
-	u32		  sentinel;
 	u32		  control;
-	u8		  byte;
 	u8		 *start;
 	const u8 *base;
 	const u8 *command;
@@ -97,53 +95,45 @@ u8 *Resource_DecompressLz(const u8 *source, u8 *destination)
 		return (u8 *)literal;
 	command = source + token;
 	control = *command;
-	sentinel = 128;
-	sentinel <<= 1; // 8 ビット読み終えたしるし
 	base = literal;
 	start = destination;
 	command++;
-	control |= sentinel;
-	goto dispatch;
-
-back_reference:
-	length = token >> 12;
-	if (length == 0)
+	control |= 0x100; // 8 ビット読み終えたしるし
+	for (;;)
 	{
-		length = *command + 16;
-		command++;
+		if ((control & 1) != 0)
+		{
+			if (control != 1) // 残っているのがしるしだけなら次の制御バイトへ
+				*destination++ = *literal++;
+		}
+		else
+		{
+			token = *command++ << 8;
+			token |= *command++;
+			if (token == 0)
+				break;
+			length = token >> 12;
+			if (length == 0)
+			{
+				length = *command + 16;
+				command++;
+			}
+			length += 2;
+			copy = base - (token & 0x0fff);
+			while (length != 0)
+			{
+				*destination++ = *copy++;
+				length--;
+			}
+		}
+		control >>= 1;
+		if (control == 0)
+		{
+			control = *command;
+			command++;
+			control |= 0x100;
+		}
 	}
-	length += 2;
-	copy = base - (token & 0x0fff);
-	while (length != 0)
-	{
-		*destination++ = *copy++;
-		length--;
-	}
-
-shift:
-	control >>= 1;
-	if (control == 0)
-	{
-		control = *command;
-		sentinel = 128;
-		sentinel <<= 1;
-		command++;
-		control |= sentinel;
-	}
-
-dispatch:
-	if ((control & 1) != 0)
-	{
-		if (control != 1) // 残っているのがしるしだけなら次の制御バイトへ
-			*destination++ = *literal++;
-		goto shift;
-	}
-
-	byte = *command++;
-	token = byte << 8;
-	token |= *command++;
-	if (token != 0)
-		goto back_reference;
 	return start;
 }
 
@@ -998,7 +988,10 @@ s32 AnimationObjects_SelectAnimation(struct AnimationObject *state, s32 flags)
 	high_bit = flags & 0x80;
 	flags &= 0x7f;
 
-	/* FAKEMATCH: the index/test loop keeps an 8-byte frame; a for loop spills an entry cursor and uses 12 bytes. */
+	/* FAKEMATCH: the index/test loop keeps an 8-byte frame; a for loop spills an
+	 * entry cursor and uses 12 bytes. 2026-10-13: for (index = 0; index <
+	 * state->count; index++) strength-reduces entries[index] into that cursor
+	 * (82 instructions for 76, differ 30). */
 	if (state->last_no != flags)
 	{
 		index = 0;

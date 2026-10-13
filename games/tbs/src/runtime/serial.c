@@ -53,7 +53,9 @@
 void SerialRuntime_Initialize(void)
 {
 	u32 interrupt_enable;
-	/* FAKEMATCH: keep the fill word's address before its store. */
+	/* FAKEMATCH: the fill word is volatile, so the zero is stored through its
+	 * address (mov r0, sp; str r3, [r0]). 2026-10-13: as a plain u32 the zero
+	 * is stored to [sp, #0] before the address is formed (differ 6). */
 	volatile u32		  zero;
 	s32					  index;
 	struct SerialRuntime *state;
@@ -546,7 +548,10 @@ void SerialRuntime_StepBlockTransfer(void)
 	u32							id;
 	struct SerialTransferState *own;
 	u32							gap;
-	/* FAKEMATCH: the halfword record retains the measured pooled-one construction; it is not protocol state. */
+	/* FAKEMATCH: the halfword record is a HImode 1, which Thumb movhi loads from
+	 * the literal pool into r8 at entry, as native; it is not protocol state.
+	 * 2026-10-13: the constant 1 at both stores differs 55 (252 instructions
+	 * for 257), as does a u16 local, which is promoted to SImode. */
 	struct OneCell one;
 
 	id = ~((REG_SIOCNT << 26) >> 30) & 1;

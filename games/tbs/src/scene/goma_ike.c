@@ -29,7 +29,7 @@ u8 Engine_ActorSetSpriteFlags(s32, s32);
 
 u8 Engine_ActorSetAnimation(s32, s32);
 
-u8 Engine_MapCopyCellAttributes(s32, s32, s32, s32, s32, s32);
+u8 Map_CopyCellAttributes(s32, s32, s32, s32, s32, s32);
 
 u8 *SceneData_GetPrimaryTable(void)
 {

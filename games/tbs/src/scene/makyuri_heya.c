@@ -433,13 +433,13 @@ static void EV11_PSYNERGY(void)
 		Object_GetById(11)->y.fixed += 0xfffe0000;
 		p = Object_GetById(11);
 		p->target_y = Object_GetById(11)->y.fixed;
-		Engine_MapCopyCellsTo(5, 2, 5, 11, 1, 1);
+		Map_CopyCellsTo(5, 2, 5, 11, 1, 1);
 		Engine_AudioPlayCue(0xd9);
 		Engine_MapAnimateCells(MakyuriHeya_GateCells, 9, 7);
 		{
 			s32 s0 = 9;
 			s32 s1 = 10;
-			Engine_MapCopyCellAttributes(9, 5, 1, 1, s0, s1);
+			Map_CopyCellAttributes(9, 5, 1, 1, s0, s1);
 		}
 		Engine_GameFlagSet(0x874);
 	}
@@ -464,7 +464,7 @@ static void EV12_TOUCH_2(void)
 			Object_GetById(0)->y.fixed += -0x20000;
 			actor = Object_GetById(0);
 			actor->target_y = Object_GetById(0)->y.fixed;
-			Engine_MapCopyCellsTo(5, 2, 5, 11, 1, 1);
+			Map_CopyCellsTo(5, 2, 5, 11, 1, 1);
 			Engine_AudioPlayCue(217);
 			Engine_MapAnimateCells((s32)MakyuriHeya_GateCells, 9, 7);
 			Engine_EventEnd();
@@ -649,7 +649,7 @@ static void MakyuriHeya_RunSequenceF(void)
 	s32	 shown;
 	s32	 arr[10];
 
-	Engine_MapCopyCellsTo(78, 58, 110, 36, 1, 1);
+	Map_CopyCellsTo(78, 58, 110, 36, 1, 1);
 	rec = arr;
 	rec[1] = 5;
 	rec[2] = 0x8000;
@@ -672,7 +672,7 @@ static void MakyuriHeya_RunSequenceF(void)
 			inner++;
 			base = base + -0x20000;
 		} while ((u32)inner <= 7);
-		Engine_MapCopyCellsTo(111, 35, (109 - outer), 36, 1, 1);
+		Map_CopyCellsTo(111, 35, (109 - outer), 36, 1, 1);
 		outer++;
 	} while ((u32)outer <= 2);
 	Engine_TaskRemoveCallback((s32)MakyuriHeya_SprayAtFountain);
@@ -774,10 +774,10 @@ static void EV08_PSYNERGY_3(void)
 		Object_GetById(8)->y.fixed += 0xfffe0000;
 		p = (s32 *)Object_GetById(8);
 		p[15] = Object_GetById(8)->y.fixed;
-		Engine_MapCopyCellsTo(6, 29, 10, 23, 1, 1);
+		Map_CopyCellsTo(6, 29, 10, 23, 1, 1);
 		Engine_AudioPlayCue(0xd9);
 		Engine_MapAnimateCells(MakyuriHeya_FloorSwitchCells, 10, 18);
-		Engine_MapCopyCellAttributes(10, 16, 1, 1, x, 19);
+		Map_CopyCellAttributes(10, 16, 1, 1, x, 19);
 		Engine_GameFlagSet(0x878);
 	}
 	Engine_EventEnd();
@@ -803,7 +803,7 @@ static void EV12_TOUCH_3(void)
 	Engine_EventWait(5);
 	Object_GetById(0)->y.fixed -= 0x20000;
 	Object_GetById(0)->target_y = Object_GetById(0)->y.fixed;
-	Engine_MapCopyCellsTo(6, 29, 10, 23, 1, 1);
+	Map_CopyCellsTo(6, 29, 10, 23, 1, 1);
 	Engine_AudioPlayCue(217);
 	Engine_MapAnimateCells(MakyuriHeya_FloorSwitchCells, 10, 18);
 	Engine_EventEnd();
@@ -845,18 +845,18 @@ static void MakyuriHeya_OpenStoneDoor(s32 side)
 	Engine_AudioPlayCue(211);
 	if (side == 0)
 	{
-		Engine_MapCopyCellsTo(111, 57, 113, 42, 1, 1);
-		Engine_MapCopyCellsTo(111, 59, 113, 43, 1, 1);
+		Map_CopyCellsTo(111, 57, 113, 42, 1, 1);
+		Map_CopyCellsTo(111, 59, 113, 43, 1, 1);
 	}
 	else if (side == 1)
 	{
-		Engine_MapCopyCellsTo(113, 58, 112, 46, side, side);
-		Engine_MapCopyCellsTo(115, 58, 113, 46, side, side);
+		Map_CopyCellsTo(113, 58, 112, 46, side, side);
+		Map_CopyCellsTo(115, 58, 113, 46, side, side);
 	}
 	else
 	{
-		Engine_MapCopyCellsTo(115, 57, 116, 44, 1, 1);
-		Engine_MapCopyCellsTo(113, 57, 115, 44, 1, 1);
+		Map_CopyCellsTo(115, 57, 116, 44, 1, 1);
+		Map_CopyCellsTo(113, 57, 115, 44, 1, 1);
 	}
 	p = &params;
 	p->palette = 7;
@@ -888,18 +888,18 @@ static void MakyuriHeya_OpenStoneDoor(s32 side)
 		}
 		if (side == 0)
 		{
-			Engine_MapCopyCellsTo(111, 58, 113, i + 43, 1, 1);
-			Engine_MapCopyCellsTo(111, 59, 113, i + 44, 1, 1);
+			Map_CopyCellsTo(111, 58, 113, i + 43, 1, 1);
+			Map_CopyCellsTo(111, 59, 113, i + 44, 1, 1);
 		}
 		else if (side == 1)
 		{
-			Engine_MapCopyCellsTo(114, 58, i + 113, 46, side, side);
-			Engine_MapCopyCellsTo(115, 58, i + 114, 46, side, side);
+			Map_CopyCellsTo(114, 58, i + 113, 46, side, side);
+			Map_CopyCellsTo(115, 58, i + 114, 46, side, side);
 		}
 		else
 		{
-			Engine_MapCopyCellsTo(114, 57, 115 - i, 44, 1, 1);
-			Engine_MapCopyCellsTo(113, 57, 114 - i, 44, 1, 1);
+			Map_CopyCellsTo(114, 57, 115 - i, 44, 1, 1);
+			Map_CopyCellsTo(113, 57, 114 - i, 44, 1, 1);
 		}
 	}
 }
@@ -917,9 +917,9 @@ static void SceneEffect_SpawnParticleRowsByMode(s32 mode)
 	s32 buf[10];
 	u32 i, j;
 
-	Engine_MapCopyCellsTo(0x70, 0x39, 0x71, 0x2a, 1, 1);
-	Engine_MapCopyCellsTo(0x75, 0x3a, 0x70, 0x2e, 1, 1);
-	Engine_MapCopyCellsTo(0x75, 0x39, 0x74, 0x2c, 1, 1);
+	Map_CopyCellsTo(0x70, 0x39, 0x71, 0x2a, 1, 1);
+	Map_CopyCellsTo(0x75, 0x3a, 0x70, 0x2e, 1, 1);
+	Map_CopyCellsTo(0x75, 0x39, 0x74, 0x2c, 1, 1);
 	Engine_AudioPlayCue(0x121);
 	buf[1] = 5;
 	buf[2] = 0x8000;
@@ -951,11 +951,11 @@ static void SceneEffect_SpawnParticleRowsByMode(s32 mode)
 			}
 		}
 		if (mode == 0)
-			Engine_MapCopyCellsTo(0x70, 0x3a, 0x71, j + 43, 1, 1);
+			Map_CopyCellsTo(0x70, 0x3a, 0x71, j + 43, 1, 1);
 		else if (mode == 1)
-			Engine_MapCopyCellsTo(0x70, 0x3a, j + 113, 0x2e, mode, mode);
+			Map_CopyCellsTo(0x70, 0x3a, j + 113, 0x2e, mode, mode);
 		else
-			Engine_MapCopyCellsTo(0x70, 0x3a, 115 - j, 0x2c, 1, 1);
+			Map_CopyCellsTo(0x70, 0x3a, 115 - j, 0x2c, 1, 1);
 	}
 }
 
@@ -1191,7 +1191,7 @@ static void EV20_PSYNERGY(void)
 			s32 a = 31;
 			s32 b = 20;
 
-			Engine_MapCopyCellAttributes(29, 20, 1, 1, a, b);
+			Map_CopyCellAttributes(29, 20, 1, 1, a, b);
 		}
 	}
 	Engine_EventEnd();
@@ -1885,7 +1885,7 @@ static void SceneEffect_SpawnParticleRowsAndDrawTiles(void)
 	s32 buf[10];
 	u32 i, j;
 
-	Engine_MapCopyCellsTo(0x4a, 0x3a, 0x46, 0x22, 1, 1);
+	Map_CopyCellsTo(0x4a, 0x3a, 0x46, 0x22, 1, 1);
 	buf[1] = 7;
 	buf[2] = 0x8000;
 	buf[3] = 0x8000;
@@ -1903,8 +1903,8 @@ static void SceneEffect_SpawnParticleRowsAndDrawTiles(void)
 				Engine_EventWait(1);
 			}
 		}
-		Engine_MapCopyCellsTo(0x4a, 0x3b, 0x46, 34 - j, 1, 1);
-		Engine_MapCopyCellsTo(0x4a, 0x3a, 0x46, 33 - j, 1, 1);
+		Map_CopyCellsTo(0x4a, 0x3b, 0x46, 34 - j, 1, 1);
+		Map_CopyCellsTo(0x4a, 0x3a, 0x46, 33 - j, 1, 1);
 	}
 }
 
@@ -1916,7 +1916,7 @@ static void MakyuriHeya_OpenThreeStepStair(void)
 	u32					  j;
 	s32					  z;
 
-	Engine_MapCopyCellsTo(76, 61, 74, 38, 1, 1);
+	Map_CopyCellsTo(76, 61, 74, 38, 1, 1);
 	p = &params;
 	p->palette = 5;
 	p->start_scale_x = 0x8000;
@@ -1943,8 +1943,8 @@ static void MakyuriHeya_OpenThreeStepStair(void)
 			}
 			z += -0x20000;
 		}
-		Engine_MapCopyCellsTo(71, 59, 70, 34 - i, 1, 1);
-		Engine_MapCopyCellsTo(71, 59, i + 75, 38, 1, 1);
+		Map_CopyCellsTo(71, 59, 70, 34 - i, 1, 1);
+		Map_CopyCellsTo(71, 59, i + 75, 38, 1, 1);
 	}
 }
 
@@ -2103,9 +2103,9 @@ s32 Scene_Initialize(void)
 			SetEffectRecordMode(Object_GetById(12), 1);
 			if (Engine_GameFlagIsSet(0x310))
 			{
-				Engine_MapCopyCellsTo(119, 9, 109, 11, 1, 1);
+				Map_CopyCellsTo(119, 9, 109, 11, 1, 1);
 				if (Engine_GameFlagIsSet(0x311))
-					Engine_MapCopyCellsTo(118, 9, 104, 13, 1, 1);
+					Map_CopyCellsTo(118, 9, 104, 13, 1, 1);
 				Engine_MapRedraw();
 				Engine_TaskWait(1);
 			}
@@ -2138,16 +2138,16 @@ s32 Scene_Initialize(void)
 				Engine_TaskWait(1);
 				Engine_AudioPlayCue(211);
 				Actor_SetPosition(8, 184 << 16, 132 << 18);
-				Engine_MapCopyCellAttributes(11, 31, 1, 4, 9, 31);
-				Engine_MapCopyCellAttributes(7, 30, 1, 4, 11, 31);
-				Engine_MapCopyCellsTo(74, 58, 70, 32, 1, 2);
-				Engine_MapCopyCellsTo(74, 59, 70, 34, 1, 1);
-				Engine_MapCopyCellsTo(76, 60, 74, 38, 3, 1);
-				Engine_MapCopyCellsTo(77, 60, 76, 38, 2, 1);
-				Engine_MapCopyCellsTo(75, 58, 86, 41, 1, 3);
-				Engine_MapCopyCellsTo(75, 59, 86, 43, 1, 2);
-				Engine_MapCopyCellsTo(76, 59, 80, 49, 2, 1);
-				Engine_MapCopyCellsTo(77, 59, 82, 49, 2, 1);
+				Map_CopyCellAttributes(11, 31, 1, 4, 9, 31);
+				Map_CopyCellAttributes(7, 30, 1, 4, 11, 31);
+				Map_CopyCellsTo(74, 58, 70, 32, 1, 2);
+				Map_CopyCellsTo(74, 59, 70, 34, 1, 1);
+				Map_CopyCellsTo(76, 60, 74, 38, 3, 1);
+				Map_CopyCellsTo(77, 60, 76, 38, 2, 1);
+				Map_CopyCellsTo(75, 58, 86, 41, 1, 3);
+				Map_CopyCellsTo(75, 59, 86, 43, 1, 2);
+				Map_CopyCellsTo(76, 59, 80, 49, 2, 1);
+				Map_CopyCellsTo(77, 59, 82, 49, 2, 1);
 			}
 			break;
 		case 3:
@@ -2156,16 +2156,16 @@ s32 Scene_Initialize(void)
 			Engine_TaskWait(1);
 			if (Engine_GameFlagIsSet(0x109) && Engine_GameFlagIsSet(0x256))
 			{
-				Engine_MapCopyCellsTo(5, 2, 5, 11, 1, 1);
-				Engine_MapCopyCellsTo(9, 1, 9, 7, 1, 2);
+				Map_CopyCellsTo(5, 2, 5, 11, 1, 1);
+				Map_CopyCellsTo(9, 1, 9, 7, 1, 2);
 			}
 			if (Engine_GameFlagIsSet(0x874))
 			{
 				Engine_ActorSetPosition(11, 176 << 15, 216 << 16);
 				Object_GetById(11)->y.fixed += -0x20000;
 				Object_GetById(11)->target_y = Object_GetById(11)->y.fixed;
-				Engine_MapCopyCellsTo(9, 1, 9, 7, 1, 2);
-				Engine_MapCopyCellsTo(5, 2, 5, 11, 1, 1);
+				Map_CopyCellsTo(9, 1, 9, 7, 1, 2);
+				Map_CopyCellsTo(5, 2, 5, 11, 1, 1);
 				Map_CopyCellAttributes(9, 5, 1, 1, 9, 10);
 			}
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -2179,8 +2179,8 @@ s32 Scene_Initialize(void)
 			if (Engine_GameFlagIsSet(0x306))
 			{
 				FieldScene_RunSupplementalSequenceOne(0);
-				Engine_MapCopyCellAttributes(42, 41, 4, 1, 42, 39);
-				Engine_MapCopyCellAttributes(42, 40, 4, 1, 42, 41);
+				Map_CopyCellAttributes(42, 41, 4, 1, 42, 39);
+				Map_CopyCellAttributes(42, 40, 4, 1, 42, 41);
 				Actor_SetPosition(10, 176 << 18, 160 << 18);
 			}
 			break;
@@ -2245,16 +2245,16 @@ s32 Scene_Initialize(void)
 			{
 				Object_GetById(0)->y.fixed = -0x20000;
 				Object_GetById(0)->target_y = Object_GetById(0)->y.fixed;
-				Engine_MapCopyCellsTo(6, 29, 10, 23, 1, 1);
-				Engine_MapCopyCellsTo(10, 28, 10, 18, 1, 2);
+				Map_CopyCellsTo(6, 29, 10, 23, 1, 1);
+				Map_CopyCellsTo(10, 28, 10, 18, 1, 2);
 			}
 			if (Engine_GameFlagIsSet(0x878))
 			{
 				Engine_ActorSetPosition(8, 168 << 16, 188 << 17);
 				Object_GetById(8)->y.fixed += -0x20000;
 				Object_GetById(8)->target_y = Object_GetById(8)->y.fixed;
-				Engine_MapCopyCellsTo(6, 29, 10, 23, 1, 1);
-				Engine_MapCopyCellsTo(10, 28, 10, 18, 1, 2);
+				Map_CopyCellsTo(6, 29, 10, 23, 1, 1);
+				Map_CopyCellsTo(10, 28, 10, 18, 1, 2);
 				Map_CopyCellAttributes(10, 16, 1, 1, 10, 19);
 				Engine_MapRedraw();
 			}
@@ -2413,11 +2413,11 @@ s32 Scene_Initialize(void)
 			SetEffectRecordMode(Object_GetById(0), 1);
 		case 11:
 			Map_CopyCellAttributes(104, 34, 5, 4, 40, 34);
-			Engine_MapCopyCellsTo(45, 91, 40, 91, 5, 4);
+			Map_CopyCellsTo(45, 91, 40, 91, 5, 4);
 			if (!Engine_GameFlagIsSet(0x881))
 			{
-				Engine_MapCopyCellsTo(30, 45, 50, 45, 5, 6);
-				Engine_MapCopyCellsTo(50, 105, 50, 109, 5, 3);
+				Map_CopyCellsTo(30, 45, 50, 45, 5, 6);
+				Map_CopyCellsTo(50, 105, 50, 109, 5, 3);
 				Engine_MapRedraw();
 				Engine_TaskWait(1);
 			}

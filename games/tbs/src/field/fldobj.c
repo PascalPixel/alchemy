@@ -665,7 +665,9 @@ struct FixedCamera
 //--------------------------------------------------------------------------
 void ObjectSystem_UpdateCamera(void)
 {
-	/* FAKEMATCH: needed to match: unused; the native frame keeps room for three points above the position. */
+	/* FAKEMATCH: frame local: unused; the native frame keeps room for
+	   three points above the position. Measured (2026-10-13): without it
+	   the frame is 44 bytes for 80 (differ 4, the two sp adjustments). */
 	struct CameraPoint		 spare[3];
 	s32						 cnt;
 	struct CameraState		*map;
@@ -808,7 +810,9 @@ void ObjectSystem_UpdateCameraFixed(void)
 	void					*spr;
 	s32						 scale2[2];
 	s32						 scale[2];
-	/* FAKEMATCH: needed to match: unused; the native frame keeps room for two points above the scales. */
+	/* FAKEMATCH: frame local: unused; the native frame keeps room for two
+	   points above the scales. Measured (2026-10-13): without it the frame
+	   is 28 bytes for 52 (differ 4, the two sp adjustments). */
 	struct CameraPoint spare[2];
 
 	cam = *(struct FixedCamera **)(((u8 *)&gObjectSlots) + 0x1c);

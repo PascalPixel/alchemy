@@ -3420,7 +3420,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		struct DjinnRecoveryList	  *list;
 		s32							   side;
 		u8							   counts[4];
-		/* FAKEMATCH: needed to match: unread: the reference frame keeps 8 bytes below counts */
+		/* FAKEMATCH: never read: the native frame keeps 8 bytes below counts, exactly this array; without it the frame is 40 bytes, not 48, and every slot above it moves (differ 28 in tbs-en). */
 		u8	unused[8];
 		s32 i;
 

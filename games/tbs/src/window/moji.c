@@ -33,7 +33,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y, co
 	u32 index;
 #endif
 #if defined(TBS_EDITION_JA)
-	/* FAKEMATCH: these records reserve the native frame's 64-byte unused area. */
+	/* FAKEMATCH: these records reserve the native frame's 64-byte unused area. Without them 6 of 193 differ in tbs-ja (sub sp, #36 for #100, and the stacked argument's offset). */
 	struct RenderInput frame[4];
 #endif
 

@@ -331,7 +331,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
 	struct BtlWork *table = BtlWk;
 	struct BtlUnit *actor = UnitGetFar(unit);
 	s32				single_slot = Summon_IsEntryFlagged(actor->class_id);
-	/* FAKEMATCH: initializing the two halves preserves the word copy into pass, mov r4, r10; one s32 zero folds that copy into movs r4, #0 (one instruction differs). */
+	/* FAKEMATCH: initializing the two halves preserves the word copy into pass, mov r4, r10; one s32 zero folds that copy into movs r4, #0 (one instruction differs). 2026-10-13: result as an s32 set to 0, with pass = result or pass = 0, differs 2 of 114; pass = result = 0 differs 6, result = pass = 0 19. */
 	union
 	{
 		s32 value;
@@ -372,7 +372,10 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
 		}
 
 		/* FAKEMATCH: cancelling updates retain sprite_value's allocation
-		 * priority; a self-assignment instead differs in 18 rows. */
+		 * priority; a self-assignment instead differs in 18 rows.
+		 * 2026-10-13: without them 18 of 114 differ; the exit test written
+		 * !(== || ==) or as a switch on sprite_value 18; the load's
+		 * value as pass + sprite_value 16. */
 		sprite_value ^= 1;
 		sprite_value ^= 1;
 		if (pass == 0)
@@ -1086,85 +1089,75 @@ s32 BattleStatusIcon_Cycle(struct BtlObj *slot)
 
 	// 表示中の状態が消えたら、すぐに切り替える
 	old = (struct AnimationEntry *)slot->animation_entry;
-	if (old == 0)
+	if ((old == 0 ? (s16)slot->active_conditions != 0
+				  : (((s16)slot->active_conditions >> slot->selected_condition) & 1) == 0)
+		|| slot->cycle_timer == 0)
 	{
-		if ((s16)slot->active_conditions == 0)
-			goto wait;
-		goto update;
-	}
-	if ((((s16)slot->active_conditions >> slot->selected_condition) & 1) == 0)
-		goto update;
-wait:
-	if (slot->cycle_timer != 0)
-		goto done;
-
-update:
-	anim = -1;
-	owner = slot->object;
-	if ((s16)slot->active_conditions != 0)
-	{
-		prev = slot->selected_condition;
-		for (anim = prev + 1;; anim++)
+		anim = -1;
+		owner = slot->object;
+		if ((s16)slot->active_conditions != 0)
 		{
-			if (anim > ICON_MAX - 1)
-				anim = 0;
-			if ((((s16)slot->active_conditions >> anim) & 1) != 0)
-				break;
+			prev = slot->selected_condition;
+			for (anim = prev + 1;; anim++)
+			{
+				if (anim > ICON_MAX - 1)
+					anim = 0;
+				if ((((s16)slot->active_conditions >> anim) & 1) != 0)
+					break;
+			}
+
+			if (prev != anim || old == 0)
+			{
+				slot->selected_condition = anim;
+				changed = 1;
+			}
+			slot->cycle_timer = 80;
 		}
-
-		if (prev != anim || old == 0)
+		else
 		{
-			slot->selected_condition = anim;
 			changed = 1;
 		}
-		slot->cycle_timer = 80;
-	}
-	else
-	{
-		changed = 1;
-	}
 
-	rec = GetMotionRecord(owner, 0);
-	if (rec != 0)
-	{
-		// アイコンのアニメ番号は、幅 32 のキャラと他とで別の並び
-		if (anim >= 0)
+		rec = GetMotionRecord(owner, 0);
+		if (rec != 0)
 		{
-			if (rec->width == 32)
-				anim += 340;
-			else
-				anim += 355;
-		}
-
-		if (slot->animation_entry != 0 && changed != 0)
-		{
-			ResourceMetadata_UnregisterFar(rec, (s32)slot->animation_entry);
-			slot->animation_entry = 0;
-		}
-
-		if (anim >= 0 && changed != 0)
-		{
-			// The handle is stored first and cleared again when registration fails.
-			handle = ResourceMetadata_RegisterFar(rec, anim);
-			slot->animation_entry = (struct SpriteEntry *)handle;
-			if (handle == -1)
-				slot->animation_entry = 0;
-			icon = (struct AnimationEntry *)slot->animation_entry;
-			if (icon != 0)
+			// アイコンのアニメ番号は、幅 32 のキャラと他とで別の並び
+			if (anim >= 0)
 			{
-				icon->priority = 3;
-				Animation_SetWorkEntryFar(icon, 0);
+				if (rec->width == 32)
+					anim += 340;
+				else
+					anim += 355;
 			}
+
+			if (slot->animation_entry != 0 && changed != 0)
+			{
+				ResourceMetadata_UnregisterFar(rec, (s32)slot->animation_entry);
+				slot->animation_entry = 0;
+			}
+
+			if (anim >= 0 && changed != 0)
+			{
+				// The handle is stored first and cleared again when registration fails.
+				handle = ResourceMetadata_RegisterFar(rec, anim);
+				slot->animation_entry = (struct SpriteEntry *)handle;
+				if (handle == -1)
+					slot->animation_entry = 0;
+				icon = (struct AnimationEntry *)slot->animation_entry;
+				if (icon != 0)
+				{
+					icon->priority = 3;
+					Animation_SetWorkEntryFar(icon, 0);
+				}
+			}
+
+			rec->dirty = 1;
+			if (anim >= 0)
+				slot->animation = anim;
+			else
+				slot->animation = 0;
 		}
-
-		rec->dirty = 1;
-		if (anim >= 0)
-			slot->animation = anim;
-		else
-			slot->animation = 0;
 	}
-
-done:;
 }
 
 //--------------------------------------------------------------------------
@@ -1789,7 +1782,7 @@ s32 BattleMotion_ProjectScaledPosition(s32 id, s32 *projected)
 	struct AnimationObject *record = GetMotionRecord(object, 0);
 	s32						scaled;
 	s32						factor;
-	/* FAKEMATCH: needed to match: the input position BattleMotion_ProjectPosition fills, unused here */
+	/* FAKEMATCH: never used: the input position BattleMotion_ProjectPosition fills, unused here; it keeps the native's 12-byte frame. Without it 4 of 42 differ (no sub sp, #12 and add sp, #12). */
 	struct EffectPosition input;
 
 	Camera_ApplyTransformByFlag();

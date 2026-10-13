@@ -579,9 +579,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
 				goto fail;
 			result = state->count;
 			state->count = count;
-			if (BattleLink_SendActions() < 0)
-				goto fail;
-			if (BtlRndFar() != state->check)
+			if (BattleLink_SendActions() < 0 || BtlRndFar() != state->check)
 				goto fail;
 			gBattleRandomSeed = state->seed;
 		}

@@ -1357,18 +1357,10 @@ static void FuneKanpan_SetupVisibleLeaderDeparture(void)
 	Actor_SetPosition(21, 0, 0);
 	Actor_SetPosition(20, 0, 0);
 	record = Object_GetById(20);
-	{
-		u16 shown = 0x3000;
-
-		record->facing = shown;
-	}
+	record->facing = 0x3000;
 	Actor_SetPosition(23, 0xe80000, 0x28a0000);
 	record = Object_GetById(23);
-	{
-		s32 shown = 0xb000;
-
-		record->facing = shown;
-	}
+	record->facing = 0xb000;
 	Engine_TaskWait(1);
 	FuneKanpan_AnnouncePreparationsReady(20, 23);
 }

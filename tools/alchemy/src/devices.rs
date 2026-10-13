@@ -269,23 +269,40 @@ fn instruction(template: &str) -> bool {
             || matches!(template, "nop" | "ret" | "eret" | "wfi" | "wfe" | "sev" | "yield"))
 }
 
-/// The names of every macro under games/ a FAKEMATCH tag explains, read
-/// once per run.
-pub(crate) fn tagged_macro_names(root: &Path) -> &'static BTreeSet<String> {
-    static NAMES: std::sync::OnceLock<BTreeSet<String>> = std::sync::OnceLock::new();
-    NAMES.get_or_init(|| {
-        let mut names = BTreeSet::new();
+/// The names of the macros a FAKEMATCH tag explains, or whose body holds a
+/// device, that the C file at `path` can use: those its own game's headers
+/// and games/common's headers define (a games/common file sees both games'
+/// headers), and those it defines itself. Headers are read once per run.
+pub(crate) fn tagged_macro_names(root: &Path, path: &str, text: &str) -> BTreeSet<String> {
+    type ByFolder = BTreeMap<String, BTreeSet<String>>;
+    static HEADERS: std::sync::OnceLock<std::sync::Mutex<BTreeMap<std::path::PathBuf, ByFolder>>> = std::sync::OnceLock::new();
+    let mut cache = HEADERS.get_or_init(Default::default).lock().unwrap_or_else(|e| e.into_inner());
+    let headers = cache.entry(root.to_path_buf()).or_insert_with(|| {
+        let mut by_folder: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
         for entry in walkdir::WalkDir::new(root.join("games")).into_iter().flatten() {
-            let path = entry.path();
-            if !matches!(path.extension().and_then(|e| e.to_str()), Some("c" | "h")) {
+            let file = entry.path();
+            if file.extension().and_then(|e| e.to_str()) != Some("h") {
                 continue;
             }
-            if let Ok(bytes) = fs::read(path) {
-                names.extend(tagged_macros(&String::from_utf8_lossy(&bytes)).into_iter().map(|(name, _)| name));
+            let relative = file.strip_prefix(root).unwrap_or(file).to_string_lossy().into_owned();
+            let folder = relative.split('/').take(2).collect::<Vec<_>>().join("/");
+            if let Ok(bytes) = fs::read(file) {
+                by_folder
+                    .entry(folder)
+                    .or_default()
+                    .extend(tagged_macros(&String::from_utf8_lossy(&bytes)).into_iter().map(|(name, _)| name));
             }
         }
-        names
-    })
+        by_folder
+    });
+    let own = path.split('/').take(2).collect::<Vec<_>>().join("/");
+    let mut names: BTreeSet<String> = headers
+        .iter()
+        .filter(|(folder, _)| own == "games/common" || folder.as_str() == own || folder.as_str() == "games/common")
+        .flat_map(|(_, names)| names.iter().cloned())
+        .collect();
+    names.extend(tagged_macros(text).into_iter().map(|(name, _)| name));
+    names
 }
 
 /// A macro body without the outer `do { ... } while (0)` that wraps a
@@ -556,5 +573,29 @@ mod tests {
         assert_eq!(found.get("BARRIER"), Some(&vec![1]));
         let code = code_only("void f(void)\n{\n\tLAYER(1);\n\tINNER(2);\n\tINNER(3);\n\tBARRIER();\n}\n");
         assert_eq!(devices(&code, &BTreeSet::new(), &found), [0, 1, 0, 0, 0, 2, 0]);
+    }
+
+    #[test]
+    fn a_macro_counts_only_in_the_game_and_file_that_can_use_it() {
+        let root = tempfile::tempdir().unwrap();
+        let write = |path: &str, text: &str| {
+            let file = root.path().join(path);
+            std::fs::create_dir_all(file.parent().unwrap()).unwrap();
+            std::fs::write(file, text).unwrap();
+        };
+        write(
+            "games/tla/include/local.h",
+            "/* FAKEMATCH: measured. */\n#define STEP(v) do { g = (v); asm(\"\"); } while (0)\n",
+        );
+        write("games/tbs/include/plain.h", "#define WAIT() do { } while (0)\n");
+        write("games/tbs/src/a.c", "void f(void)\n{\n\tSTEP(1);\n\tWAIT();\n}\n");
+        write("games/tla/src/b.c", "void g(void)\n{\n\tSTEP(1);\n}\n");
+        let counts = count(root.path()).unwrap();
+        let get = |game: &str, kind: &str| counts[&(game.to_string(), kind.to_string())];
+        assert_eq!(get("tbs", "asm-barrier"), 0, "a tla header's macro is not counted in tbs");
+        assert_eq!(get("tla", "asm-barrier"), 1);
+        assert_eq!(get("tbs", "one-pass"), 0, "a wrapper alone is no device");
+        assert!(!tagged_macro_names(root.path(), "games/tbs/src/a.c", "").contains("STEP"));
+        assert!(tagged_macro_names(root.path(), "games/tla/src/b.c", "").contains("STEP"));
     }
 }

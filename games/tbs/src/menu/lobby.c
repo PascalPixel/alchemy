@@ -862,7 +862,7 @@ static s32 EV08_TALK(void)
 		if (Engine_GameFlagIsSet(0x202))
 		{
 			line = msg + 3;
-			/* FAKEMATCH: the first branch's answers jump into this block's message tail, and an accepted challenge back into its opening, which keeps the reference's single copy of each. */
+			/* The first branch's answers jump into this block's message tail, and an accepted challenge back into its opening: the listing keeps one copy of each. Written as if/else arms with their own message calls, cross-jumping folds the copies into the last arm instead (differ 51 to 55). */
 		message:
 			Engine_EventSetMessage(line);
 		open_message:

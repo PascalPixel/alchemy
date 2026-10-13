@@ -150,15 +150,14 @@ static void KuupuappuDou_PushBlockAhead(void)
 	   BiribinoMura_FacingCellSteps and indexed directly, compiles to 143
 	   instructions for 146 (differ 79); read through a const s32 local
 	   pointer, differ 94. */
-	struct FieldActor	  *leader = Object_GetById(0);
-	s32					   direction = leader->facing >> 12;
-	struct FieldActor	  *block;
-	struct FieldActor	  *beyond;
-	union FieldCoordinate  pos[3];
-	union FieldCoordinate *p;
-	s32					   i;
-	s32					   cx;
-	s32					   cz;
+	struct FieldActor	 *leader = Object_GetById(0);
+	s32					  direction = leader->facing >> 12;
+	struct FieldActor	 *block;
+	struct FieldActor	 *beyond;
+	union FieldCoordinate pos[3];
+	s32					  i;
+	s32					  cx;
+	s32					  cz;
 
 	cx = (leader->x.part.pixel + (DIRECTION_STEP(direction) >> 16)) >> 4;
 	cz = (leader->z.part.pixel + (s16)DIRECTION_STEP(direction)) >> 4;
@@ -182,11 +181,10 @@ static void KuupuappuDou_PushBlockAhead(void)
 		return;
 	}
 	block->terrain_id = 2;
-	p = pos;
-	p[0].fixed = block->x.fixed + (DIRECTION_STEP(direction) & 0xffff0000);
-	p[1].fixed = block->y.fixed;
-	p[2].fixed = block->z.fixed + (DIRECTION_STEP(direction) << 16);
-	if (Object_CheckMovementCollision(block, p) > 0)
+	pos[0].fixed = block->x.fixed + (DIRECTION_STEP(direction) & 0xffff0000);
+	pos[1].fixed = block->y.fixed;
+	pos[2].fixed = block->z.fixed + (DIRECTION_STEP(direction) << 16);
+	if (Object_CheckMovementCollision(block, pos) > 0)
 	{
 		return;
 	}
@@ -195,14 +193,14 @@ static void KuupuappuDou_PushBlockAhead(void)
 	Engine_AudioPlayCue(238);
 	block->speed = 0x3333;
 	block->acceleration = 0x3333;
-	Engine_ObjectSetPosition(block, p[0].fixed, p[1].fixed, p[2].fixed);
+	Engine_ObjectSetPosition(block, pos[0].fixed, pos[1].fixed, pos[2].fixed);
 	leader->speed = 0x3333;
 	leader->acceleration = 0x3333;
-	Engine_ObjectSetPosition(leader, p[0].fixed, p[1].fixed, p[2].fixed);
+	Engine_ObjectSetPosition(leader, pos[0].fixed, pos[1].fixed, pos[2].fixed);
 	Engine_ObjectCommitPosition(block);
 	Engine_AudioPlayCue(288);
-	block->x.fixed = p[0].fixed;
-	block->z.fixed = p[2].fixed;
+	block->x.fixed = pos[0].fixed;
+	block->z.fixed = pos[2].fixed;
 	block->velocity_x = 0;
 	block->velocity_z = 0;
 	leader->velocity_x = 0;

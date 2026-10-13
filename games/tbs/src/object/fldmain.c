@@ -785,7 +785,10 @@ s32 Field_RunScene(s32 entrance)
 						UiText_ShowPositionedMessageAndWaitFar((s32)MsgFieldPartyAnnihilated, 1);
 						vitals = UnitGetFar(gGameState.selected_actor);
 						vitals->hp = 1;
-						/* FAKEMATCH: needed to match: the one-pass block keeps the reloaded 1 below the hp store */
+						/* FAKEMATCH: the one-pass block keeps the reloaded 1 of the HP ratio
+						 * below the hp store. Measured: plain, the 1 and its shift are
+						 * scheduled above the store (differ 6); the gauges through
+						 * Vitals_Ratio, as evbasic.c writes this same revival, differ 60. */
 						do
 						{
 							vitals->hp_gauge = Vitals_Clamp((vitals->hp << 14) / vitals->max_hp);

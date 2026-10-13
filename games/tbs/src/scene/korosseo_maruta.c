@@ -1633,7 +1633,9 @@ static void EV35_TALK(s32 scene)
 			Engine_EventWait(60);
 			Engine_EventShowMessage(scene, 0);
 			Korosseo_FadeInCompetitor(0, 504, 200);
-			/* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
+			/* FAKEMATCH: the void result is discarded; Call3 changes argument allocation.
+			 * 2026-10-13: the scene layer's Actor_FaceDirection loads r0 before r1
+			 * and r2, where native loads it last (differ 2). */
 			Value3(Engine_ActorFaceDirection, 0, 0, 0);
 			ColossoLogRollingStage_WaitForSceneTask();
 			Actor_SetSpeed(0, 0x18000, 0xc000);
@@ -1995,7 +1997,9 @@ static void FieldScene_RunScene3bcSequenceA(s32 a0)
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(86);
 		Korosseo_LoadPortrait(8);
-		/* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
+		/* FAKEMATCH: the void result is discarded; Call2 changes argument allocation.
+		 * 2026-10-13: called directly, as elsewhere in this file, each of these two
+		 * sites loads r0 before r1, where native loads r1 first (differ 4). */
 		Value2(ColossoLogRollingStage_InitializeModeTask, 3, 1);
 		Engine_EventWait(-a0 * 60 + 60);
 		kind = 0;
@@ -2005,7 +2009,7 @@ static void FieldScene_RunScene3bcSequenceA(s32 a0)
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(a0 + 90);
 		Korosseo_LoadPortrait(4);
-		/* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
+		/* FAKEMATCH: the void result is discarded, as in the first arm. */
 		Value2(ColossoLogRollingStage_InitializeModeTask, 3, 0);
 		Engine_EventWait(a0 * 60 + 60);
 		kind = 8;

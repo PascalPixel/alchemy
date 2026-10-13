@@ -1847,11 +1847,8 @@ static void AdvanceActor9AlongEscapeRoute(void)
 	s32 companion14Column;
 	s32 companion16Column;
 
-	/* FAKEMATCH: read into x before the row and assigned after it; read straight into its variable, tbs-en differs */
-	s32 x;
-	x = Object_GetById(9)->x.fixed >> 20;
+	column = Object_GetById(9)->x.fixed >> 20;
 	row = Object_GetById(9)->z.fixed >> 20;
-	column = x;
 	companion19Column = Object_GetById(19)->x.fixed >> 20;
 	companion14Column = Object_GetById(14)->x.fixed >> 20;
 	companion16Column = Object_GetById(16)->x.fixed >> 20;
@@ -1924,9 +1921,9 @@ static void AdvanceActor9AlongEscapeRoute(void)
 
 	Engine_TaskWait(2);
 
-	column -= 1;
-	Engine_MapCopyCellAttributes(column, row, 3, 1, column, Object_GetById(9)->z.fixed >> 20);
-	Map_CopyCellAttributes(0, 0, 3, 1, column, row);
+	Engine_MapCopyCellAttributes(
+		column - 1, row, 3, 1, column - 1, Object_GetById(9)->z.fixed >> 20);
+	Map_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
 static void TakaraShima_SettlePushedBlockWest(void)

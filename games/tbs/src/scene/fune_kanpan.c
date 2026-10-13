@@ -2668,13 +2668,16 @@ static void FieldScene_RunThreeActorEncounter(void)
 		FieldScene_CallPairWith10(1, 0x6000);
 		Engine_ActorRunRepeatedMotion(GERALD, 1);
 		Event_OpenMessage(GERALD, 0);
-	ask_again:
-		if (Engine_EventChooseYesNo(0, 0) == 1)
+		for (;;)
 		{
-			Engine_ActorRunRepeatedMotion(IWAN, 1);
-			Engine_EventSetMessage((s32)MsgFuneRobinDontTalkLikeShouldnt);
-			Event_OpenMessage(IWAN, 0);
-			goto ask_again;
+			if (Engine_EventChooseYesNo(0, 0) == 1)
+			{
+				Engine_ActorRunRepeatedMotion(IWAN, 1);
+				Engine_EventSetMessage((s32)MsgFuneRobinDontTalkLikeShouldnt);
+				Event_OpenMessage(IWAN, 0);
+			}
+			else
+				break;
 		}
 	}
 	Engine_EventWait(20);

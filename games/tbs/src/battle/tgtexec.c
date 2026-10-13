@@ -161,7 +161,11 @@ void BattleActor_RemoveFromLists(s32 id)
 	}
 
 	// 敵の並び
-	/* FAKEMATCH: needed to match: the goto loop avoids the pointer walk and saved 0xfe constant produced by a for loop */
+	/* FAKEMATCH: the one-pass block around the enemy scan keeps the party loop's shape: its
+	 * REMOVED constant loaded once ahead of it and the store inside it; without the block
+	 * the party loop's first test is peeled ahead of it (differ 26 in tbs-en). The enemy
+	 * scan is a label loop: as for (;;) left by return it walks a pointer and keeps 0xfe
+	 * in r4 (differ 24), as a do-while on the end mark differ 51. */
 	do
 	{
 		j = 0;

@@ -1446,7 +1446,7 @@ SECTIONS
     "*/games/tla/src/battle/party/roll_counter_early_end.o"(.text)
     "*/games/tla/src/battle/party/timed_entries.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00124cc0)
-    "*/games/common/src/battle/build_sequential_table.o"(.text)
+    "*/games/tla/src/battle/build_sequential_table.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00125bb4)
     "*/games/tla/src/battle/presentation/f125c5c.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00125cf8)

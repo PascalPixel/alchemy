@@ -1809,7 +1809,7 @@
         "*/recon/tla/raw/08125390.o"(.text)
         "*/recon/tla/raw/0812561c.o"(.text)
         "*/recon/tla/raw/08125aa0.o"(.text)
-        "*/games/common/src/battle/build_sequential_table.o"(.text)
+        "*/games/tla/src/battle/build_sequential_table.o"(.text)
         "*/recon/tla/raw/08125bb8.o"(.text)
         "*/recon/tla/raw/08125c0c.o"(.text)
         "*/games/tla/src/battle/presentation/f125c5c.o"(.text)

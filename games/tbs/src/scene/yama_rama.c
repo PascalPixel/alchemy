@@ -663,14 +663,11 @@ static void EV14_SCRIPT(void)
 
 static void EV14_PSYNERGY(void)
 {
-	u8 zero;
-
-	zero = 0;
 	Engine_EventBegin();
 
 	Object_GetById(14)->priority_flags &= 0xfd;
 	Object_GetById(14)->collision_flags &= 0xfd;
-	Object_GetById(14)->motion_flags = zero;
+	Object_GetById(14)->motion_flags = 0;
 	Object_GetById(14)->update =
 		(void (*)(union FieldObject *))SceneActor_SetFlagBitByRankAgainstActorZero;
 

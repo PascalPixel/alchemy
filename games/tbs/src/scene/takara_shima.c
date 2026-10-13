@@ -387,12 +387,7 @@ static void EV08_PSYNERGY(void)
 	Engine_ActorSetSpritePriority(8, 3);
 
 	entity->motion_flags = 0;
-	{
-		s32 flags = 2;
-
-		flags |= entity->priority_flags;
-		entity->priority_flags = flags;
-	}
+	entity->priority_flags |= 2;
 
 	Map_CopyCellAttributes(42, 10, 1, 1, column, 10);
 

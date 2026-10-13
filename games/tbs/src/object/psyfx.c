@@ -945,7 +945,13 @@ void UpdateRisingParticleBurst(void *object)
 		if (child != 0)
 		{
 			s32 speed;
-			/* FAKEMATCH: needed to match: a block-local 1.0 keeps 0x10000 in one register for both uses */
+			/* FAKEMATCH: a block-local 1.0, set before the block's calls, keeps
+			 * 0x10000 in one register that loop.c hoists for both uses.
+			 * Measured: written as the constant at both uses, or with speed
+			 * holding the call plus the constant, it stays unhoisted (89
+			 * instructions for 93, differ 24); the acceleration stored before
+			 * Random16() written inline hoists it but moves that store above
+			 * the call (differ 4). */
 			s32 unit = 0x10000;
 
 			ObjectDispatch_InitializeFar((struct DispatchObject *)child, BattleFx_FragmentScript);

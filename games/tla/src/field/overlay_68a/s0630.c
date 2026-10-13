@@ -15,9 +15,8 @@ s32 Func_02000630(void)
 
 		saved = *(volatile u16 *)0x050000fc;
 		index = 14;
-		/* FAKEMATCH: goto loops, which GCC does not treat as loops: the native builds the palette address inside them, as overlay 689's Func_020002f8. */
 	first:
-		palette = (volatile u16 *)0x050000e0;
+		palette = (u16 *)0x050000e0;
 		palette[index] = (palette - 1)[index];
 		index--;
 		if (index != 1)
@@ -25,9 +24,8 @@ s32 Func_02000630(void)
 		*(volatile u16 *)0x050000e2 = saved;
 		saved = *(volatile u16 *)0x0500011c;
 		index = 14;
-		/* FAKEMATCH: the same goto loop for the second palette. */
 	second:
-		palette = (volatile u16 *)0x05000100;
+		palette = (u16 *)0x05000100;
 		palette[index] = (palette - 1)[index];
 		index--;
 		if (index != 1)

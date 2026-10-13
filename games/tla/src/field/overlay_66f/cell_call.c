@@ -18,7 +18,5 @@ void Func_020004f4(s32 id, s32 a, s32 b)
     s32 x = object->x >> 20;
     s32 z = object->z >> 20;
 
-    /* FAKEMATCH: ⚓️ reads the cell before it sets up the call */
-    asm("" : "+l"(x), "+l"(z));
     Func_0200106c(a, b, 1, 1, x, z);
 }

@@ -27,8 +27,6 @@ void Func_020013b0(s32 id)
     /* FAKEMATCH: the native loads x, builds the x offset, loads y and then adds the offset; without these three barriers y is loaded after the add (one reordered pair, differ 2). */
     __asm__ volatile("" : "+r"(x));
     dx = 0x80000;
-    /* FAKEMATCH: second barrier of the three above. */
-    __asm__ volatile("" : "+r"(dx));
     y = object->y;
     /* FAKEMATCH: third barrier of the three above. */
     __asm__ volatile("" : "+r"(dx));

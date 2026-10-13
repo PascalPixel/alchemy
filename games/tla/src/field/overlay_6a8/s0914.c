@@ -41,8 +41,6 @@ void Func_02000914(void)
         Call1(Battle_WaitMode0, 0xa);
         {
             s32 y = 0xc0;
-            /* FAKEMATCH: ⚓️ starts 0x3000 before the other arguments and shifts it after them; plain constants build it third (differ 4), the whole value forced builds it first with its shift (differ 2). */
-            __asm__ volatile("" : "+l"(y));
             Call4(Func_020044d4, 8, 0x2080000, 0x1680000, y << 6);
         }
         t8 = Func_02004584();

@@ -4,8 +4,6 @@ void Func_0200071c(void)
 {
     s32 priority;
 
-    /* FAKEMATCH: the native builds the priority before loading the callback. As a plain constant the load comes before the priority shift (differ 2); the same barrier after the assignment fixes that and moves the angle shift of the call before (differ 2). Naming the priority here, before it is set, keeps both, as in Func_02003628. */
-    __asm__ volatile("" : "+r"(priority));
     Func_02003d7c();
     Func_02003eac(0);
     ObjectMotion_ArmCallback_(gPartyState.current_owner, 0x4000, 0);

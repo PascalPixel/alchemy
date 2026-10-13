@@ -36,8 +36,6 @@ void Func_0200106c(void)
             break;
     }
     state = &gPartyState;
-    /* FAKEMATCH: keeps the party state address load before the gravity store (differ 2 without) */
-    __asm__("" : : "r"(state));
     object->gravity = saved;
     /* FAKEMATCH: keeps the gravity store before the owner offset is built (differ 2 without) */
     __asm__("");

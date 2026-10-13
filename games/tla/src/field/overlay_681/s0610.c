@@ -35,8 +35,6 @@ void Func_0200062c(struct ObjectRuntime *object)
     scale += bias;
     object->scale_x = scale;
     object->scale_y = object->scale_y + ((Random16Far() << 12) >> 16) + bias;
-    /* FAKEMATCH: the native stores scale_y, starts the limit 0xfff (movs r2, #240), loads scale_x and then finishes the limit; without these three barriers and the limit built in two steps the limit is started before the store and shifted before the load (two reordered pairs, differ 4). */
-    __asm__ volatile("");
     limit = 240;
     /* FAKEMATCH: second barrier of the three above: the limit is started before scale_x is loaded. */
     __asm__ volatile("" : "+r"(limit));

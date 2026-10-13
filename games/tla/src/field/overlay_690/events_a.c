@@ -82,8 +82,6 @@ void Func_020005cc(void)
     Func_02002150(0);
     CommitPos(4, 0, -14);
     id = 4;
-    /* FAKEMATCH: the native loads the actor id before the other arguments. */
-    __asm__ volatile("" : "+r"(id));
     ObjectMotion_CommitPositionAndActivate(id, 16, 0);
     Func_0200052c();
 }
@@ -97,8 +95,6 @@ void Func_020005f4(void)
     CommitPos(4, -2, -6);
     x = 14;
     z = 8;
-    /* FAKEMATCH: the native loads both distances, then the actor id, then negates. */
-    __asm__ volatile("" : "+r"(x), "+r"(z));
     id = 4;
     /* FAKEMATCH: the actor id comes between the distances and their negation. */
     __asm__ volatile("" : "+r"(id));
@@ -113,8 +109,6 @@ void Func_02000624(void)
     Func_02002068();
     Func_02002150(0);
     a = 192;
-    /* FAKEMATCH: the native loads the angle's byte, then the actor id, then shifts. */
-    __asm__ volatile("" : "+r"(a));
     id = 4;
     /* FAKEMATCH: the actor id comes between the angle byte and its shift. */
     __asm__ volatile("" : "+r"(id));

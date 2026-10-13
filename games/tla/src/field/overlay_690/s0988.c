@@ -49,8 +49,6 @@ s32 Func_02000988(void)
         }
 #endif
     }
-    /* FAKEMATCH: as at the second test. */
-    __asm__("" : : : "memory");
     if (gPartyState.scene == (s32)&SceneId_Ov690Room4) {
         if (GameFlag_Test(0x230)) {
             CopyCells2(0, 3, 1, 1, 3, 15);

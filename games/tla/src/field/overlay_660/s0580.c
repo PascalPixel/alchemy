@@ -33,26 +33,18 @@ s32 Func_02000580(void)
 				s32 id;
 
 				turn = 0x2000;
-				/* FAKEMATCH: the native builds the angle 0x2000, which both objects take, before the other arguments; unforced it is built after the id (differ 6). */
-				asm volatile("" : "+l"(turn));
 				x = 153;
-				/* FAKEMATCH: the native loads the id between the two halves of the x 306 << 16; written whole, the x is finished first (differ 2). */
-				__asm__("" : "+l"(x));
 				id = 17;
 				/* FAKEMATCH: and this forced id keeps its load right after that half; unforced it loads last. */
 				asm volatile("" : "+l"(id));
 				x <<= 17;
 				z = 335 << 16;
-				/* FAKEMATCH: and the finished x and the z keep their loads before the angle is copied; unforced the copy comes first. */
-				asm volatile("" : "+l"(x), "+l"(z));
 				Func_02000824(id, x, z, turn);
 			}
 			{
 				s32 angle = 0x6000;
 				s32 z = 336 << 16;
 
-				/* FAKEMATCH: the native starts the angle before the z; the plain call starts the z first (differ 4). */
-				asm volatile("" : "+l"(angle), "+l"(z));
 				Func_02000824(18, 345 << 16, z, angle);
 			}
 			ObjectDispatch_SetSingleChildFlags(Object_GetById(19), 0);

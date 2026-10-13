@@ -57,8 +57,6 @@ void Func_020043f8(void)
     {
         s32 priority = 0x480;
 
-        /* FAKEMATCH: the barrier holds r0 until the priority is complete, so the callback is loaded last as the native has; through the inline alone it comes one row early, and a plain temporary shares one register between the two calls. */
-        __asm__("" : "+l"(priority) : : "r0");
         Scheduler_AddOrUpdateCallback(Func_02004394, priority);
     }
 }

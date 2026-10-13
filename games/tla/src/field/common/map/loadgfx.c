@@ -42,8 +42,6 @@ void MapAnimation_Start(void)
     s8 *active;
 
     active = &work->animation_active;
-    /* FAKEMATCH: ⚓️ addresses the active flag before it sets the shared one */
-    __asm__ volatile("" : "+l"(active));
     one = 1;
     *active = one;
     Scheduler_EnableCallbacks(MapAnimation_Update);

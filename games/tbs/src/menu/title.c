@@ -118,30 +118,34 @@ s32 Title_Run(void)
 	RuntimeDispatch_NoOpHook((s32)&ResourceId_PaletteFarCalls);
 	if (gGameState.entrance == 2)
 	{
-	menu:
-		Engine_AudioPlayCue(19);
-		Title_ShowSplashScreen(0);
-		PaletteFar_Entry20(0);
-		if (SaveState_ScanRecordFlags() <= 0)
-			goto chosen;
-		Engine_AudioPlayCue(70);
-		if (PaletteFar_Entry00(1) != 0)
-			goto chosen;
-		Engine_AudioPlayCue(17);
-		Blend_SetDarkenTarget16(30);
-		Blend_WaitForTransition();
-		wait = 0;
-		if (gKeysHeld == 0)
+		for (;;)
 		{
-			do
+			Engine_AudioPlayCue(19);
+			Title_ShowSplashScreen(0);
+			PaletteFar_Entry20(0);
+			if (SaveState_ScanRecordFlags() > 0)
 			{
-				Engine_TaskWait(1);
-				if (++wait > 119)
-					break;
-			} while (gKeysHeld == 0);
+				Engine_AudioPlayCue(70);
+				if (PaletteFar_Entry00(1) == 0)
+				{
+					Engine_AudioPlayCue(17);
+					Blend_SetDarkenTarget16(30);
+					Blend_WaitForTransition();
+					wait = 0;
+					if (gKeysHeld == 0)
+					{
+						do
+						{
+							Engine_TaskWait(1);
+							if (++wait > 119)
+								break;
+						} while (gKeysHeld == 0);
+					}
+					continue;
+				}
+			}
+			break;
 		}
-		goto menu;
-	chosen:
 		Event_SetDestination((s32)&SceneId_Clear, 1);
 	}
 	else

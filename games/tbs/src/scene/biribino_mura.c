@@ -702,7 +702,12 @@ static void BiribinoMura_PushFacedBlock(void)
 	if (block != NULL)
 	{
 		block->terrain_id = 2;
-		/* FAKEMATCH: the probe is filled through a pointer to it; indexing pos directly drops a saved register and moves the step table address (measured). */
+		/* FAKEMATCH: the probe is filled and read through a pointer to it,
+		   kept in a saved register as native (KuupuappuDou_PushBlockAhead
+		   writes the same probe the same way). Plain forms measured
+		   (2026-10-13): indexing pos directly addresses it from sp, drops
+		   that register and moves the step table address (114 instructions
+		   for 118, differ 46). */
 		p = pos;
 		step = BiribinoMura_FacingCellSteps[dir];
 		p[0].fixed = block->x.fixed + (step & -0x10000);

@@ -850,7 +850,7 @@ menu_top:;
 					}
 					for (v7 = page * 50, n = 0; v7 != v6; v7++, n++)
 					{
-						/* FAKEMATCH: the loop note ends the CSE path, which otherwise carries the glyph address into both draw calls for gcse to hoist out of the loop; the native rebuilds sp + 24 at each call. Without the block differ 374 on tbs-en, 22 instructions more */
+						/* FAKEMATCH: the loop note ends the CSE path, which otherwise carries the glyph address into both draw calls for gcse to hoist out of the loop; the native rebuilds sp + 24 at each call. Without the block differ 336 on tbs-en, 16 instructions more */
 						do
 						{
 							Clear_NameEntryCharacter(password[v7] & 63, glyph);
@@ -869,7 +869,7 @@ menu_top:;
 							s32 row;
 
 							rec7 = (n % 10);
-							/* FAKEMATCH: an explicit libgcc call; written n / 10 it differs 254 on tbs-en (244 on tbs-ja), 16 instructions more */
+							/* FAKEMATCH: an explicit libgcc call; written n / 10 it differs 216 on tbs-en (220 on tbs-ja), 10 instructions more */
 							row = __divsi3(n, 10);
 							UiText_DrawString(glyph, page_window, rec7 * 12 + 8, (row << 4) + 2);
 						}

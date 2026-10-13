@@ -493,7 +493,7 @@ void FieldMotes_Start(void)
 	size = 0x410;
 	work = Runtime_AllocateBlock(29, size);
 	mote = work->particles;
-	/* FAKEMATCH: needed to match: reusing the allocation size for the cleared word keeps it in r1. */
+	/* FAKEMATCH: reusing the allocation size for the cleared word keeps the zero in r1, the register size was passed in; a plain zero = 0 takes r3 (differ 4). */
 	size = 0;
 	zero = size;
 	Dma_Set((void *)&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x104, REG_DMA3);
@@ -505,7 +505,7 @@ void FieldMotes_Start(void)
 	for (i = 0; i < 32; i++)
 	{
 		s32 *pos = ((struct MapScrollWork *)gMapWork[0])->origin;
-		/* FAKEMATCH: needed to match: reusing the integer field cursor for the height x argument keeps the stores in r1. */
+		/* FAKEMATCH: reusing the integer field cursor for the height x argument keeps the stores in r1. A plain s32 * cursor with x of its own puts the cursor in r2 and the leader's base in r0 (differ 16). */
 		u32 p = (u32)mote;
 		s32 z;
 		*(s32 *)p = 0;

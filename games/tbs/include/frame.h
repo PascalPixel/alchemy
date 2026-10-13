@@ -16,8 +16,7 @@ extern u32			gCpuLoadTimer;
 extern u32			gCpuLoadPeak;
 /* FAKEMATCH: volatile makes every access to this cell a load or store of its own. Measured 2026-10-12 with alchemy diff on tbs-en: without it 27 functions in 17 files differ, most Ui_RunOwnerStatusScreen (529), ItemList_SelectEntry (346) and SummonMenu_SelectSummon (151). */
 extern volatile u32 gFrameCount;
-/* FAKEMATCH: volatile makes every access to this cell a load or store of its own; without it Ui_ApplyTableOffsetToPair (save.c), which reads it once for each of its two sprites, differs 33 in tbs-en, 15 instructions for 22: CSE reuses the first index. */
-extern volatile u32 gFrameTick;
+extern u32			gFrameTick;
 extern void (*gVBlankHook)(void);
 
 /* FAKEMATCH: volatile makes every access to this cell a load or store of its own; without it WaitFrames: differ 82 in tbs-en, 401 instructions for 403. */

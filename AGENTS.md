@@ -310,7 +310,15 @@ or functions is exactly this cheating.
   IWRAM call layer (one inline per resident routine in `iwram_call.h`,
   calling its checked fixed entry): 360 call sites match through it, and
   five sites in two functions keep a tagged direct call (2026-10-11,
-  decided under Pascal's delegation). Never patch
+  decided under Pascal's delegation). So are statement macros written
+  `do { ... } while (0)`, C's idiom for a macro used as one statement,
+  where every use matches through that shape: `Io_Write16` (106 sites),
+  `Battle_SetStart` (34), `UiRender_MarkRow` (10) and `MenuCell_GetCursor`
+  (4). Their comments say why they have that shape, and the wrapper is no
+  device. A device inside a macro body (an inner one-pass block, an empty
+  asm, a register pin) still counts at each use, tagged or not, and a macro
+  whose tag records that its stores match plainly elsewhere stays a device
+  (Pascal, 2026-10-13). Never patch
   compiler output. _Check: no-asm (in lint-staged)._
 - **S3** Camelotize: reconstruct readable source consistent with the games'
   hardware, approved compilers and demonstrated program structure. Separate

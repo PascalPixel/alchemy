@@ -1305,7 +1305,6 @@ static void RunEventScript02(void)
 
 static void BiribinoKyuden_RunActorRowScene(void)
 {
-	u16				   zero;
 	struct FieldActor *actor;
 
 	Engine_EventBegin();
@@ -1329,11 +1328,10 @@ static void BiribinoKyuden_RunActorRowScene(void)
 	Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
 	Engine_ActorSetSpriteFlags(Object_GetById(24), 0);
 	actor = Object_GetById(21);
-	zero = 0;
-	actor->motion_flags = zero;
-	Object_GetById(22)->motion_flags = zero;
-	Object_GetById(23)->motion_flags = zero;
-	Object_GetById(24)->motion_flags = zero;
+	actor->motion_flags = 0;
+	Object_GetById(22)->motion_flags = 0;
+	Object_GetById(23)->motion_flags = 0;
+	Object_GetById(24)->motion_flags = 0;
 	Object_GetById(21)->y.fixed = -0x40000;
 	Object_GetById(22)->y.fixed = -0x40000;
 	Object_GetById(23)->y.fixed = -0x40000;

@@ -846,13 +846,11 @@ static void BabiFune_StepFade(void)
 
 static void BabiFune_ScheduleFade(void)
 {
-	u8			*buf;
-	volatile u32 fill;
+	u8 *buf;
 
 	buf = Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 0x100);
 	BabiFune_FadeSlot = Resource_FindFreeEntry();
-	fill = 0x11111111;
-	Dma_Set((const void *)&fill, buf, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x40, REG_DMA3);
+	Dma_Fill32(0x11111111, buf, 0x100);
 	Engine_VramLoad(BabiFune_FadeSlot, 0x100, (s32)buf);
 
 	BabiFune_FadeStep = 0x30;

@@ -277,18 +277,10 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter)
 	obj = Object_Spawn(285, pos.x, pos.y, pos.z);
 	if (obj != 0)
 	{
-		s32 mask;
-		u8	flags;
-
-		// パーツ 0 の 9 バイト目：bit 2〜3 を 1 にする
+		// パーツ 0 の優先度を 1 にする
 		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_ParticleScript);
 		ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
-		mask = 13;
-		flags = ((u8 *)&((struct AnimationObject *)obj->animation)->part[0])[9];
-		mask = -mask;
-		mask &= flags;
-		mask |= 4;
-		((u8 *)&((struct AnimationObject *)obj->animation)->part[0])[9] = mask;
+		((struct AnimationObject *)obj->animation)->part[0].priority = 1;
 	}
 }
 

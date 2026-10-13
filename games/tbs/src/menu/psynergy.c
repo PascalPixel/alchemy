@@ -160,7 +160,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
 			ItemMenu_DrawMsg(0, (s32)MsgPsynergyChooseOwner);
 			chosen = PsynergyMenu_SelectPartySlot(0);
 			cancelled = -1;
-			/* FAKEMATCH: dead code: the redundant cancellation copy ends the CSE block, so the cancellation and done constants take the native registers; XOR equality keeps the copy into the result. Plain forms measured 2026-10-13, each differ 12 (r2 and r3 exchanged): chosen == -1 setting result to -1 or to chosen, with either store first, the call tested directly, and chosen == cancelled. */
+			/* FAKEMATCH: the redundant cancellation copy ends the CSE block, so the cancellation and done constants take the native registers; XOR equality keeps the copy into the result. Plain forms measured 2026-10-13, each differ 12 (r2 and r3 exchanged): chosen == -1 setting result to -1 or to chosen, with either store first, the call tested directly, and chosen == cancelled. */
 			if (chosen == -1)
 				cancelled = chosen;
 			if (((u32)chosen ^ (u32)cancelled) == 0)
@@ -182,7 +182,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
 				{
 					struct PsynergyMenuState *saved_work = work;
 
-					/* FAKEMATCH: dead code: the discarded conditional restoration puts labels between the psynergy_count and mode loads, so reload_cse_move2add builds the mode offset from its own constant (movs #154, lsls #2) as the bytes do; both arms disappear. Plain forms measured 2026-10-13: without the block move2add makes it adds r2, #80 from the count offset (differ 51). */
+					/* FAKEMATCH: the discarded conditional restoration puts labels between the psynergy_count and mode loads, so reload_cse_move2add builds the mode offset from its own constant (movs #154, lsls #2) as the bytes do; both arms disappear. Plain forms measured 2026-10-13: without the block move2add makes it adds r2, #80 from the count offset (differ 51). */
 					if (done)
 						work = NULL;
 					if (done)

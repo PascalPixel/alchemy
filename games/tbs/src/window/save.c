@@ -179,7 +179,11 @@ s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
 
 s32 SaveState_ScanRecordFlags(void)
 {
-	/* FAKEMATCH: the signed cursor from the party tail preserves the literal base changed by direct flag fields. */
+	/* FAKEMATCH: the signed cursor from the party tail keeps the native
+	 * literal base 0x1070 and the flag offsets 1 and 2. Measured: the
+	 * fields read as summary[i].send_flag and .flag_count, or through a
+	 * walking summary pointer, base the cursor on send_flag (0x1071)
+	 * with offsets 0 and 1 (differ 4). */
 	s32 err;
 	s32 cnt;
 	s32 ret;

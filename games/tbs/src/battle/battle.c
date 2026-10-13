@@ -972,7 +972,7 @@ s32 BattlePres_SyncTurn(void)
 	u16			   *peer;
 	u16			   *sig;
 	s32				lost = 0;
-	/* FAKEMATCH: needed to match: never used: the reference's frame keeps twenty bytes that no instruction touches */
+	/* FAKEMATCH: never used: the reference's frame keeps twenty bytes that no instruction touches; without it 20 of 232 differ (no sub sp, #20, and the branches and pool loads shift). */
 	u16 spare[10];
 
 	if (work->two_sided != 0)

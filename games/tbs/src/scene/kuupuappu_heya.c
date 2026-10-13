@@ -2824,7 +2824,7 @@ static void KuupuappuHeya_UpdateActorStops(void)
 		if (work->blocked_steps > 0 && dx * dx + dz * dz <= 400
 			&& (d = (u16)facing - angle) > -0x1000 && d < 0x1000)
 		{
-			/* FAKEMATCH: a dead store keeps this empty branch through the first jump optimization, as the native lays out its jumps. */
+			/* FAKEMATCH: a dead store keeps this empty branch through the first jump optimization, as the native lays out its jumps (bge to the else, then b past it). Measured: an empty branch, an empty statement, the negated test with || and a self-assignment all give the inverted blt (tbs-en 4 differ); Japanese matches all of them. */
 			d = 0;
 #if EDITION_INTERNATIONAL
 		}

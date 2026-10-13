@@ -400,9 +400,8 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 				test_position.y = other->y;
 				test_position.z = other->z;
 				Vector_AddPolarOffset(0xa0000, direction + 0x1000, &test_position);
-				if (Map_CheckObjectStep(other, &test_position) != 0)
-					goto blocked;
-				if (Map_CheckObjectStep(other, &test_position) != 0)
+				if (Map_CheckObjectStep(other, &test_position) != 0
+					|| Map_CheckObjectStep(other, &test_position) != 0)
 					goto blocked;
 				test_position.x = other->x;
 				test_position.y = other->y;

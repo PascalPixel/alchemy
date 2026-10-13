@@ -360,15 +360,9 @@ static s32 SceneActor_SetFacingFromSample(struct FieldActor *actor)
 	u32 v = ((u32)(Engine_RandomNext() << 5)) >> 16;
 
 	if (v == 6)
-	{
-		s32 t = 0xD0;
-		actor->facing = t << 8;
-	}
+		actor->facing = 0xd000;
 	else if (v == 9)
-	{
-		s32 t = 0xB0;
-		actor->facing = t << 8;
-	}
+		actor->facing = 0xb000;
 	return 1;
 }
 

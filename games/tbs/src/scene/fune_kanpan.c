@@ -1190,30 +1190,18 @@ static void FuneKanpan_PlaceRandomDeckActors(void)
 
 static void SceneActor_PlaceActors20To27(void)
 {
-	s32 m = 0xA0;
-
-	m <<= 7;
 	Engine_ActorSetPosition(21, 0x1060000, 0x2C20000);
-	Object_GetById(21)->facing = m;
+	Object_GetById(21)->facing = 0x5000;
 	Engine_ActorSetPosition(24, 0xA40000, 0x2880000);
-	{
-		s32 z = 0;
-		Object_GetById(24)->facing = z;
-	}
+	Object_GetById(24)->facing = 0;
 	Engine_ActorSetSpritePriority(24, 1);
 	Engine_ActorSetPosition(25, 0xC60000, 0x2990000);
-	{
-		s32 x = 0x80;
-		Object_GetById(25)->facing = x << 8;
-	}
+	Object_GetById(25)->facing = 0x8000;
 	Engine_ActorSetSpritePriority(25, 1);
 	Engine_ActorSetPosition(26, 0xBC0000, 0x2A60000);
-	{
-		s32 x = 0xB0;
-		Object_GetById(26)->facing = x << 8;
-	}
+	Object_GetById(26)->facing = 0xb000;
 	Engine_ActorSetPosition(27, 0xBA0000, 0x27B0000);
-	Object_GetById(27)->facing = m;
+	Object_GetById(27)->facing = 0x5000;
 	Engine_ActorSetPosition(22, 0, 0);
 	Engine_ActorSetPosition(23, 0, 0);
 	Engine_ActorSetPosition(20, 0, 0);

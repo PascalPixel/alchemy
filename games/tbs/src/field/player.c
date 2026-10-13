@@ -282,36 +282,39 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 		}
 		else
 		{
-			if (Map_CheckObjectStep(object, &position) != 0)
-				goto choose_direction;
-			test_position.x = object->x;
-			test_position.y = object->y;
-			test_position.z = object->z;
-			Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &test_position);
-			if (Map_CheckObjectStep(object, &test_position) != 0)
-				goto choose_direction;
-			test_position.x = object->x;
-			test_position.y = object->y;
-			test_position.z = object->z;
-			Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &test_position);
-			if (Map_CheckObjectStep(object, &test_position) != 0)
-				goto choose_direction;
-			test_position.x = object->x;
-			test_position.y = object->y;
-			test_position.z = object->z;
-			Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &test_position);
-			if (Map_CheckObjectStep(object, &test_position) != 0)
-				goto choose_direction;
-			test_position.x = object->x;
-			test_position.y = object->y;
-			test_position.z = object->z;
-			Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &test_position);
-			if (Map_CheckObjectStep(object, &test_position) != 0)
-				goto choose_direction;
-			heading = angle;
-			goto push_objects;
-
-		choose_direction:
+			if (Map_CheckObjectStep(object, &position) == 0)
+			{
+				test_position.x = object->x;
+				test_position.y = object->y;
+				test_position.z = object->z;
+				Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &test_position);
+				if (Map_CheckObjectStep(object, &test_position) == 0)
+				{
+					test_position.x = object->x;
+					test_position.y = object->y;
+					test_position.z = object->z;
+					Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &test_position);
+					if (Map_CheckObjectStep(object, &test_position) == 0)
+					{
+						test_position.x = object->x;
+						test_position.y = object->y;
+						test_position.z = object->z;
+						Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &test_position);
+						if (Map_CheckObjectStep(object, &test_position) == 0)
+						{
+							test_position.x = object->x;
+							test_position.y = object->y;
+							test_position.z = object->z;
+							Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &test_position);
+							if (Map_CheckObjectStep(object, &test_position) == 0)
+							{
+								heading = angle;
+								goto push_objects;
+							}
+						}
+					}
+				}
+			}
 			direction = angle;
 			count = 0;
 			angle_offsets[count++] = direction + 0x1000;

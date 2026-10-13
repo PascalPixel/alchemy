@@ -687,46 +687,15 @@ void Party_ApplyStatePreset(void)
 	for (id = 0; id <= 1; id++)
 	{
 		struct BtlUnit *unit = UnitGet(id);
-		s32				ratio;
-		s32				rate;
 		s32				slot;
 
 		Unit_Recover(unit);
-		{
-			s16 max_hp = unit->max_hp;
-
-			ratio = (max_hp << 14) / max_hp;
-		}
-		rate = 0x4000;
-		if (ratio <= rate)
-		{
-			rate = 0;
-			if (ratio >= 0)
-			{
-				rate = ratio;
-			}
-		}
-		unit->hp_gauge = rate;
-		if ((rate << 16) == 0 && unit->hp != 0)
-		{
+		unit->hp_gauge = Vitals_Ratio(unit->hp, unit->max_hp);
+		if (unit->hp_gauge == 0 && unit->hp != 0)
 			unit->hp_gauge = 1;
-		}
-
-		ratio = (unit->ep << 14) / unit->max_ep;
-		rate = 0x4000;
-		if (ratio <= rate)
-		{
-			rate = 0;
-			if (ratio >= 0)
-			{
-				rate = ratio;
-			}
-		}
-		unit->ep_gauge = rate;
-		if ((rate << 16) == 0 && unit->ep != 0)
-		{
+		unit->ep_gauge = Vitals_Ratio(unit->ep, unit->max_ep);
+		if (unit->ep_gauge == 0 && unit->ep != 0)
 			unit->ep_gauge = 1;
-		}
 
 		for (slot = 0; slot <= 14; slot++)
 		{

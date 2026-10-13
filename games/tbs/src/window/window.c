@@ -1535,7 +1535,7 @@ s32 UiText_OpenEntryMessage(s32 window, s32 argument)
 	struct UiRenderWork *work = UI_WORK;
 	s32					 entry;
 	s32					 result = 0;
-	/* FAKEMATCH: needed to match: four unread render entry slots, the native frame's eight extra bytes. */
+	/* FAKEMATCH: never read: the native frame keeps 8 bytes above the two outgoing arguments, exactly these four slots; without them the frame is 8 bytes, not 16 (differ 4 in tbs-en). */
 	u16 entries[4];
 
 	work->result[0] = 0;

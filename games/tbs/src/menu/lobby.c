@@ -492,7 +492,7 @@ static s32 LinkLobby_SendPartyRecords(void)
 	}
 	for (i = 0; i < count; i++)
 	{
-		/* FAKEMATCH: a one-pass boundary keeps the send failure inline and gives the record copy's argument order; without it loop.c moves the failure out of the loop. */
+		/* FAKEMATCH: a one-pass boundary keeps the send failure inline and gives the record copy's argument order; without it loop.c moves the failure out of the loop: differ 26 (all three of this function's blocks removed: differ 66). */
 		do
 		{
 			Iwram_CopyWords(heap, UnitGet(owners[i]), size);
@@ -511,7 +511,7 @@ static s32 LinkLobby_SendPartyRecords(void)
 			Engine_TaskWait(1);
 			if (--timeout < 0 || (gLinkStatus & 3) != 3)
 			{
-				/* FAKEMATCH: a one-pass boundary keeps this failure inline, so its -1 is reloaded here and jump2 merges it into the offer's; moved out of the loop, it shifts every later reload register. */
+				/* FAKEMATCH: a one-pass boundary keeps this failure inline, so its -1 is reloaded here and jump2 merges it into the offer's; moved out of the loop, it shifts every later reload register: differ 59 without the block. */
 				do
 				{
 					if (++tries > 24)
@@ -556,7 +556,7 @@ next:
 	Runtime_BumpFree(heap);
 	size = 0x140;
 	heap = Runtime_BumpAllocateAlternatePool(size);
-	/* FAKEMATCH: a one-pass boundary gives the offer copy's argument order and keeps the list base's copy first after the call. */
+	/* FAKEMATCH: a one-pass boundary gives the offer copy's argument order and keeps the list base's copy first after the call; as a plain call: differ 6. */
 	do
 	{
 		Iwram_CopyWords(heap, Trade_GetOfferState(0), size);

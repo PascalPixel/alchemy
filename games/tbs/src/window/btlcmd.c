@@ -2249,6 +2249,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 	tbl[cnt] = 0x80000000;
 	ctx->dirty = 1;
 
+	/* FAKEMATCH: forced store: this dead store of cur_spr before the loop keeps the native allocation; without it the function differs 394 (1193 instructions for 1201) in tbs-en and tbs-ja (measured 2026-10-14). */
 	cur_spr = &slot;
 	for (;;)
 	{
@@ -2668,6 +2669,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 			cursor_pos.x = cx - 2;
 		}
 		cursor_pos.y = (row * 2 + list_win->y) * 8 + 20;
+		/* FAKEMATCH: forced re-point: cur_spr already holds &slot; storing it again here keeps the native reload; without it the function differs 36 in tbs-en and tbs-ja (measured 2026-10-14). */
 		cur_spr = &slot;
 		((u32 *)cur_spr)[1] = MENU_SPRITE_SIZE_16;
 		((u32 *)cur_spr)[2] = 0;

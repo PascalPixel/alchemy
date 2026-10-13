@@ -9,11 +9,10 @@
 // （0x0208、ビット 0 は 0）が書かれる。
 // Each step is its own statement macro, written do { } while (0), the shape
 // ☀️'s lock sites and write-queue pushes and ⚓️'s callback scheduler match
-// through: the saved copy is taken before IME is written, and the restore
-// stands apart from the code around it. ⚓️'s own queue writers (io.c) do
-// not match through it yet, and SerialRuntime_Initialize writes IRQ_LOCK's
-// two steps out (see its tag). IRQ_UNLOCK's wrapper is a device, not this
-// layer: a plain restore matches at some sites (see its tag).
+// through: the saved copy is taken before IME is written. SerialRuntime_Initialize
+// writes IRQ_LOCK's two steps out (see its tag). IME_RESTORE's and IRQ_UNLOCK's
+// wrappers are devices, not this layer: a plain restore matches at some sites
+// (see their tags).
 
 // 元の IME を saved に入れる
 #define IME_SAVE(ime, saved) \
@@ -30,6 +29,7 @@
 	} while (0)
 
 // IME を saved に戻す
+/* FAKEMATCH: the do { } while (0) wrapper steers: written plainly as *(ime) = (saved), BattleFx_PlayUnitElementEffect differs 2 and BattleEffect_RunShockwaveScene differs 6 in all six ☀️ editions; BattlePresentation_SetPaletteLevel's plain restore matches, and IME_RESTORE((volatile u16 *)&REG_IME, saved) there differs 2 in all six (measured 2026-10-14). A device at each use, as IRQ_UNLOCK is (S2). */
 #define IME_RESTORE(ime, saved) \
 	do                          \
 	{                           \

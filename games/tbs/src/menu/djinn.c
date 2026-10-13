@@ -171,10 +171,7 @@ s32 ItemMenu_Run(void)
 }
 
 // 移した Djinn を一覧の中で探し、その位置を選び直す
-// A statement macro, written do { } while (0), used at both places: the
-// selection store ends its scheduling region. As plain statements the two
-// shifts of found * DJINN_LIST_ROWS swap (differ 2); as an inline function
-// with its own counter, one more register is saved.
+/* FAKEMATCH: a statement macro local to DjinnMenu_RunScreen, used at its two places, not a habit of the game (S2): the do { } while (0) wrapper ends the selection store's scheduling region. As plain statements the two shifts of found * DJINN_LIST_ROWS swap (differ 2); as an inline function with its own counter, one more register is saved. */
 #define DjinnMenu_ReselectPairEntry(menu, i)                              \
 	do                                                                    \
 	{                                                                     \

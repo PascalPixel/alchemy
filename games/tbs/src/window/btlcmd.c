@@ -3939,8 +3939,10 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 	redraw = 0xFFFF;
 	slotId = Resource_LoadIntoFreeSlot(256);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-	/* FAKEMATCH: this value-preserving null initializer is needed to match
-     * infoWin in r10; a direct zero swaps high registers and spill slots. */
+	/* FAKEMATCH: register choice only: this value-preserving null
+     * initializer is needed to match infoWin in r10; a direct zero swaps
+     * high registers and spill slots (2026-10-13: infoWin = 0 differs 94
+     * in ES and IT). */
 	infoWin = (struct UiWindow *)((u32)(u16)sel >> 16);
 #else
 	infoWin = 0;

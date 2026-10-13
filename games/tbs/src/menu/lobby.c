@@ -766,7 +766,8 @@ static s32 EV10_TOUCH(void)
 				Engine_GameFlagClear(0x203);
 				Engine_GameFlagClear(0x200);
 				work->raised_trigger = 2;
-				goto done;
+				Engine_EventEnd();
+				return;
 			}
 			Actor_SetSpeed(0, 0x8000, 0x4000);
 			Engine_ActorWaitForMove(0);
@@ -798,7 +799,6 @@ static s32 EV10_TOUCH(void)
 		} while (i <= 0x7c7);
 		Runtime_ReleaseHeapBlock(54);
 	}
-done:
 	Engine_EventEnd();
 }
 

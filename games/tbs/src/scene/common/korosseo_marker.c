@@ -173,8 +173,7 @@ static void Korosseo_UpdateMarker(void)
 	total = *steps;
 	if (total != 0)
 	{
-		/* FAKEMATCH: needed to match: the signed read of the raw halfword keeps the step out of the interpolation registers. */
-		step = (u16)++Korosseo_MarkerStep;
+		step = ++Korosseo_MarkerStep;
 		py = &Korosseo_MarkerX;
 		sy = &Korosseo_MarkerStartX;
 		diff = Korosseo_MarkerEndX - sy->signed_value;

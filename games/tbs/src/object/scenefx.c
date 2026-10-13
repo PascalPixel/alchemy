@@ -354,7 +354,7 @@ void FieldFx_StartGroundParticles(void)
 	volatile u32			   fill;
 	u32						   i;
 
-	/* FAKEMATCH: one pointer, words, holds the fill's zero, the decode buffer and each particle's cell cursor, all three in r6 as the native keeps them. A plain fill = 0 takes r3 (differ 4); a cell cursor of its own reallocates the loop and shrinks the frame by 4 (differ 58). */
+	/* FAKEMATCH: one pointer, words, holds the fill's zero, the decode buffer and each particle's cell cursor, all three in r6 as the native keeps them. A plain fill = 0 takes r3 (differ 4); a cell cursor of its own reallocates the loop and drops a stack slot (differ 58). */
 	work = Runtime_AllocateBlock(29, sizeof(struct GroundParticleWork));
 	leader = ((struct MapScrollWork *)gMapWork[0])->origin;
 	BattleFx_SetQueuedSoundAndPlay(170);

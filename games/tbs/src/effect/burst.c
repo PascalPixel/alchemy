@@ -155,7 +155,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *efx, s32 mode)
 	struct BattleEffectWork *work;
 	void					*dst;
 	u8						*aux;
-	DrawRectangle			 blit[2];
+	BlitterPair				 blit;
 	s32						 pos[3];
 	s32						 seat[8][3];
 	s32						 aim[3];
@@ -446,7 +446,7 @@ void BattleFx_RunSwirlingStars(void *object)
 	void					*canvas;
 	s32						 record[3];
 	struct EffectPosition	 pos;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	struct EffectStep		*star;
 	s32						 i;
 	s32						 frame;
@@ -549,13 +549,12 @@ void BattleFx_RunOrbitingSparks(void)
 	struct EffectPosition	 center;
 	struct EffectPosition	 pos;
 	s32						 frame;
-	/* FAKEMATCH: needed to match: only draw[0] is used: the second word fills four bytes of the frame */
-	DrawRectangle		 draw[2];
-	s32					 member;
-	struct BattleCamera *camera;
-	u8					*palette;
-	s32					 x_offset;
-	s32					 i;
+	BlitterPair				 draw;
+	s32						 member;
+	struct BattleCamera		*camera;
+	u8						*palette;
+	s32						 x_offset;
+	s32						 i;
 
 	work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
 	canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
@@ -787,7 +786,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
 	struct EffectPosition		 screen;
 	s32							 position[4];
 	struct EffectPosition		 target;
-	DrawRectangle				 draw[2];
+	BlitterPair					 draw;
 	void					   **cache;
 	struct BattleBackgroundView *presentation;
 	void						*canvas;
@@ -1403,7 +1402,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
 	u32						*cache, *entry;
 	struct BattleEffectWork *work;
 	void					*canvas;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	s32						 origin_x, origin_y;
 	struct EffectPosition	 first, last;
 	s32						 i, frame, cell, height, ofs, middle;
@@ -1697,7 +1696,7 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
 	void					*canvas;
 	s32						 i;
 	s32						 frame;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	u8						*sprites;
 	struct EffectPosition	 pos;
 	s32						 j;
@@ -1849,7 +1848,7 @@ void BattleFx_PrepareCanvasEffect(
 	void				   **cursor;
 	struct BattleEffectWork *work;
 	void					*canvas;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	u8						*sheet;
 	s32						 total;
 	struct MotionObject		*target;
@@ -2216,7 +2215,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 	s32						 i;
 	s32						 j;
 	s32						 frame;
-	struct BlitterPair		 draw;
+	BlitterPair				 draw;
 	struct BattleCamera		*camera;
 	u8						*sheet;
 	s32						 se_wait;
@@ -2264,7 +2263,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 		else
 			BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, CLIP, GOUSEI_KASAN);
 	}
-	draw.upper = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+	draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
 
 	// 弾の絵
 	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -2447,10 +2446,10 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 						HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP | GOUSEI_FLIP_X, GOUSEI_KASAN);
 				else
 					BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CLIP, GOUSEI_KASAN);
-				draw.lower = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+				draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 				if (frame <= 3)
-					draw.lower(canvas, work->sheet + 0x65c0, x, y, 20, 40);
-				draw.lower(canvas, work->sheet + 0x65c0, x, y, 20, 40);
+					draw[1](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+				draw[1](canvas, work->sheet + 0x65c0, x, y, 20, 40);
 				Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 			}
 
@@ -2624,35 +2623,35 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 						else if (mode == 1)
 						{
 							if (ABS(shot->x) <= ABS(tgt->x))
-								draw.upper(canvas, work->sheet + frame % 6 * 768, pos->x - 16,
+								draw[0](canvas, work->sheet + frame % 6 * 768, pos->x - 16,
 									pos->y - 12, 32, 24);
 						}
 						else if (mode == 7 || mode == 9 || mode == 10)
 						{
 							s32 cell = j & 3;
-							draw.upper(canvas, work->sheet + Volley_PelletOffsets[cell], pos->x - 4,
+							draw[0](canvas, work->sheet + Volley_PelletOffsets[cell], pos->x - 4,
 								pos->y - 4, 8, 8);
 						}
 						else if (mode == 2)
 						{
-							draw.upper(
+							draw[0](
 								canvas, work->sheet + j % 6 * 128, pos->x - 4, pos->y - 8, 8, 16);
 						}
 						else if (mode == 3)
 						{
-							draw.upper(canvas, work->sheet + 96, pos->x - 9, pos->y - 7, 18, 13);
+							draw[0](canvas, work->sheet + 96, pos->x - 9, pos->y - 7, 18, 13);
 						}
 						else if (mode == 4)
 						{
-							draw.upper(canvas, work, pos->x - 6, pos->y - 4, 12, 8);
+							draw[0](canvas, work, pos->x - 6, pos->y - 4, 12, 8);
 						}
 						else if (mode == 11)
 						{
-							draw.upper(canvas, work->sheet + 330, pos->x - 15, pos->y - 12, 29, 23);
+							draw[0](canvas, work->sheet + 330, pos->x - 15, pos->y - 12, 29, 23);
 						}
 						else
 						{
-							draw.upper(canvas, work, pos->x - 20, pos->y - 32, 40, 64);
+							draw[0](canvas, work, pos->x - 20, pos->y - 32, 40, 64);
 						}
 					}
 				}
@@ -2721,7 +2720,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 				{
 					s32 size = (p->variant >> 3) + 1;
 
-					draw.upper(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+					draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
 						HI(p->x) - size / 2, HI(p->y) - size, size, size * 2);
 					EffectStep_AdvanceWithGravity2D(p, 60, 0x1000);
 					if (p->y > 0x700000)
@@ -2739,7 +2738,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 				{
 					s32 size = (p->variant >> 4) + 1;
 
-					draw.upper(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+					draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
 						HI(p->x) - size / 2, HI(p->y) - size, size, size * 2);
 					EffectStep_AdvanceWithGravity2D(p, 60, -0x4000);
 					p->variant--;
@@ -2879,7 +2878,7 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *effect, s32 v
 	void				   **cursor;
 	struct BattleEffectWork *work;
 	void					*canvas;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	struct BattleCamera		*camera;
 	u8						*sheet;
 	struct EffectStep		*p;
@@ -3077,7 +3076,7 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
 	void					*canvas;
 	s32						 frame;
 	u8						*sheet;
-	DrawRectangle			 blit[2];
+	BlitterPair				 blit;
 	DrawRectangle			*draw;
 	struct EffectStep		*flame;
 	struct EffectStep		*mote;
@@ -3220,7 +3219,7 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect)
 	struct BattleEffectWork *work;
 	void					*canvas;
 	u8						*sheet;
-	DrawRectangle			 blit[2];
+	BlitterPair				 blit;
 	DrawRectangle			*draw;
 	struct EffectStep		*ball;
 	struct EffectStep		*mote;
@@ -3362,7 +3361,7 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
 	struct BattleEffectWork *work;
 	void					*canvas;
 	s32						 frame;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	u8						*sheet;
 	struct EffectStep		*step;
 	struct EffectStep		*mote;
@@ -3477,7 +3476,7 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
 	struct BattleEffectWork *work;
 	void					*canvas;
 	u8						*sheet;
-	DrawRectangle			 callbacks[2];
+	BlitterPair				 callbacks;
 	DrawRectangle			*draw;
 	struct EffectStep		*step;
 	struct EffectStep		*mote;
@@ -3629,7 +3628,7 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect)
 	s32						 spawn[3];
 	s32						 screen_y;
 	s32						 screen_x;
-	DrawRectangle			 routine[2];
+	BlitterPair				 routine;
 	struct EffectStep		*p;
 	s32						 i;
 	s32						 frame;
@@ -3748,7 +3747,7 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
 	void					*canvas;
 	s32						 i;
 	s32						 frame;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	struct BattleCamera		*camera;
 	struct MotionObject		*target;
 	struct MotionObject		*actor;
@@ -3970,7 +3969,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 	void					*dst;
 	u8						*aux;
 	s32						 frame;
-	DrawRectangle			 blit[2];
+	BlitterPair				 blit;
 	s32						 size;
 	s32						 count;
 	s32						 i;
@@ -4743,7 +4742,7 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 	struct EffectPosition	 pos;
 	s32						 screen_x;
 	s32						 screen_y;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	struct BattleEffectWork *work;
 	void					*canvas;
 	s32						 frame;
@@ -4967,7 +4966,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 	void				   **cursor;
 	struct BattleEffectWork *work;
 	void					*canvas;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	u8						*sprites;
 	s32						 wall_x;
 	s32						 rock_x;

@@ -73,11 +73,10 @@ struct Point2D
 	s32 y;
 };
 
-struct BlitterPair
-{
-	DrawRectangle upper;
-	DrawRectangle lower;
-};
+// 演出の描画ルーチンの組：[0] は HEAP_SLOT_BLITTER、[1] は HEAP_SLOT_BLITTER_ALTERNATE に
+// BattleEffect_LoadWork が作る。演出の多くがこの組をフレームに置き、一つしか
+// 使わない演出も組ごと置く
+typedef DrawRectangle BlitterPair[2];
 
 #define gBlitters ((DrawRectangle *)gWorkSlot)
 

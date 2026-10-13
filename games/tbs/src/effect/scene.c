@@ -93,7 +93,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 	u8						*order;
 	s32						 point[3];
 	struct EffectPosition	 screen;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 
 	cursor = gBattleFxWork;
 	work = *cursor++;
@@ -1496,7 +1496,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
 	s32						 point[3];
 	s32						 origin_x;
 	s32						 origin_y;
-	DrawRectangle			 blit[2];
+	BlitterPair				 blit;
 
 	slots = gBattleFxWork;
 	cursor = slots;
@@ -1874,7 +1874,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 	void				   **cursor;
 	struct BattleEffectWork *work;
 	void					*canvas;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	s32						 member;
 	s32						 shift;
 	s32						 flags;
@@ -2222,7 +2222,7 @@ void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
 	s32						 origin[3];
 	struct EffectPosition	 screen;
 	s32						 point[3];
-	DrawRectangle			 callbacks[2];
+	BlitterPair				 callbacks;
 	s32						 i;
 	s32						 palette;
 
@@ -2734,7 +2734,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
 	u8						*sheet;
 	s32						 top;
 	struct EffectPosition	 screen;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	struct MotionObject		*user;
 	s32						 i;
 
@@ -2925,7 +2925,7 @@ void BattleFx_RunRisingMotes(struct BattleEffectArgument *effect)
 	s32						 xyz[3];
 	struct EffectPosition	 screen;
 	s32						 point[3];
-	DrawRectangle			 pair[2];
+	BlitterPair				 pair;
 	struct EffectStep		*mote;
 	s32						 i;
 
@@ -3186,7 +3186,7 @@ void BattleFx_RunClosingBolts(struct BattleEffectArgument *effect)
 	u8						*sheet;
 	s32						 bolt;
 	s32						 cnt;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	s32						 i;
 
 	// ワーク、キャンバス、BG2 の拡大と位置
@@ -3362,7 +3362,7 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
 	void				   **cursor;
 	struct BattleEffectWork *work;
 	void					*canvas;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	s32						 variant;
 	struct EffectPosition	 screen;
 	s32						 frame;

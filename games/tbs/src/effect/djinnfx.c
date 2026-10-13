@@ -108,7 +108,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
 	struct BattleCamera		*camera;
 	s32						 kind;
 	struct BtlUnit			*unit;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	DrawRectangle			*slots;
 	struct MotionObject		*target;
 	void					*colors = (void *)0x05000000;
@@ -335,7 +335,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
 	s32						 velocity_z;
 	s32						 acceleration;
 	s32						 strength;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	DrawRectangle			*slots;
 	struct MotionObject		*object;
 	struct MotionObject		*target;
@@ -681,7 +681,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	s32						   strip_x;
 	struct FixedPointPosition  velocity;
 	struct EffectPosition	   spark_screen;
-	DrawRectangle			   blitters[2];
+	BlitterPair				   blitters;
 	struct EffectPosition	   projected;
 
 	slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;

@@ -1232,7 +1232,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 			{
 				UiWork_PushValueSlotFar(item_id, 2);
 				UiText_ShowPositionedMessageAndWaitFar((s32)MsgUseItemQuestion, 13);
-				/* FAKEMATCH: needed to match: the owner index doubles as the declined flag, which ranks it above best in global allocation (r6, best r7) */
+				/* FAKEMATCH: needed to match: the owner index doubles as the declined flag, which ranks it above best in global allocation (r6, best r7). A declined local of its own: differ 109. */
 				i = Object_CallSpawnRoutineAtOrigin(1);
 				UiWork_FinalizePendingCoreFar();
 				if (i != 0)
@@ -1246,8 +1246,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 			UiWork_PushValueSlotFar(actor, 1);
 			UiWork_PushValueSlotFar(item_id, 2);
 			UiText_ShowPositionedMessageAndWaitFar((s32)MsgActorUsesItem, 1);
-			/* FAKEMATCH: needed to match: called as returning a value, the 0 is loaded after the action id (measured differ 2 as void) */
-			/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+			/* FAKEMATCH: called through a cast to the s32 call the bytes show: called as void by its prototype, the 0 is loaded before the action id (differ 2), also with action_id declared at function scope; with action_id read after runtime: differ 8. */
 			((s32 (*)(s32, s32))BattleFx_LoadActionEffectResources)(action_id, 0);
 			runtime->resolving_action = 1;
 			BattleFx_Run();

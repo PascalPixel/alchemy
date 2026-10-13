@@ -94,7 +94,7 @@ void Korosseo_RestoreCompetitor(s32 id)
 		Engine_EventWait(30);
 	}
 	zero = 0;
-	/* FAKEMATCH: needed to match: byte accesses keep the stage zero before the start-position load. */
+	/* FAKEMATCH: needed to match: byte accesses keep the stage zero before the start-position load. As state->stage and state->mode stores, of zero, a literal 0 or zero = 0: differ 6. */
 	control = (u8 *)state;
 	control[(u32) & ((struct CompetitorState *)0)->stage] = zero;
 	control[(u32) & ((struct CompetitorState *)0)->mode] = 15;
@@ -173,8 +173,7 @@ static void Korosseo_UpdateMarker(void)
 	total = *steps;
 	if (total != 0)
 	{
-		/* FAKEMATCH: needed to match: the signed read of the raw halfword keeps the step out of the interpolation registers. */
-		step = (u16)++Korosseo_MarkerStep;
+		step = ++Korosseo_MarkerStep;
 		py = &Korosseo_MarkerX;
 		sy = &Korosseo_MarkerStartX;
 		diff = Korosseo_MarkerEndX - sy->signed_value;
@@ -189,7 +188,7 @@ static void Korosseo_UpdateMarker(void)
 	}
 	if (++Korosseo_MarkerBlink <= 13)
 	{
-		/* FAKEMATCH: needed to match: the size bit in a local puts the priority after it. */
+		/* FAKEMATCH: needed to match: the size bit in a local puts the priority after it. As the literal 0x40000000 in the expression, in any of four operand orders: differ 6. */
 		s32 size = 0x40000000;
 
 		x = Korosseo_MarkerX;

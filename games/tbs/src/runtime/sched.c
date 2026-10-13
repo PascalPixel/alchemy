@@ -320,10 +320,10 @@ void Runtime_InvokeCallbacksByKey(s32 key)
 	{
 		remaining = SCHEDULER_TBS_TASK_COUNT + 1;
 		task--;
-	next_task:
-		remaining--;
-		if (remaining != 0)
+		for (;;)
 		{
+			if (--remaining == 0)
+				return;
 			task++;
 			if (TASK_STATE_HIGH(task) == key)
 			{
@@ -331,7 +331,6 @@ void Runtime_InvokeCallbacksByKey(s32 key)
 
 				callback();
 			}
-			goto next_task;
 		}
 	}
 }

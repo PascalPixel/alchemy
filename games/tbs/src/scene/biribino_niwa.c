@@ -186,10 +186,16 @@ static void EV12_TALK(void)
 			Actor_FaceDirection(11, 0xc000, 10);
 			FieldScene_OpenGate();
 			Actor_WalkToAndWait(11, 0x148, 246);
-			/* FAKEMATCH: called without its prototype, the actor id loads after the two zeros. */
-			/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+			/* FAKEMATCH: instruction order only: called through a cast with no
+			   prototype that returns a value, the call sets r0, so sched2 loads
+			   the actor id after the two zeros, as native. Plain forms measured
+			   (2026-10-13): Engine_ActorSetPosition or Actor_SetPosition by
+			   their prototype load r0 first (differ 2). */
 			((s32 (*)())Engine_ActorSetPosition)(11, 0, 0);
-			/* FAKEMATCH: the do/while keeps this call after the argument setup of the previous one. Plain call or GameFlag_Set: differ 2. */
+			/* FAKEMATCH: instruction order only: the one-pass block's loop note
+			   after the call above is a scheduling barrier; with the cast it
+			   keeps r0 last among that call's arguments. A plain call or
+			   GameFlag_Set here loads r0 first (differ 2). */
 			do
 			{
 				Engine_GameFlagSet(0x84a);

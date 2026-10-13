@@ -1581,18 +1581,10 @@ static void FieldScene_RunActorSequence(void)
 	Engine_TaskWait(1);
 	Engine_ActorSetPosition(22, 0xb00000, 0x2b80000);
 	record = Object_GetById(22);
-	{
-		s32 shown = 0xd000;
-
-		record->facing = shown;
-	}
+	record->facing = 0xd000;
 	Engine_ActorSetPosition(21, 0x1080000, 0x2960000);
 	record = Object_GetById(21);
-	{
-		s32 shown = 0xb000;
-
-		record->facing = shown;
-	}
+	record->facing = 0xb000;
 	Actor_SetPosition(24, 0xb80000, 0x2a00000);
 	Actor_SetPosition(25, 0xca0000, 0x2b40000);
 	Actor_SetPosition(26, 0xfc0000, 0x2860000);
@@ -1638,11 +1630,7 @@ static void FieldScene_RunActorSequence(void)
 	rec8->x.fixed = 0xc20000;
 	rec8->y.fixed = 0x500000;
 	rec8->z.fixed = 0x2820000;
-	{
-		u16 shown = 0x5000;
-
-		rec8->facing = shown;
-	}
+	rec8->facing = 0x5000;
 	rec8->bounce = 0x6666;
 	rec8->gravity = 0x20000;
 	Engine_EventWait(80);

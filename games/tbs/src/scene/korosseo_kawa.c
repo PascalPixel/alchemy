@@ -196,12 +196,7 @@ static void SceneState_ApplyRectsForActorsNineAndTen(void)
 	struct FieldActor *actor;
 	s32				   blocked;
 
-	{
-		s32 x = 23;
-		s32 y = 12;
-
-		Map_CopyCellAttributes(27, 13, 3, 1, x, y);
-	}
+	Map_CopyCellAttributes(27, 13, 3, 1, 23, 12);
 	actor = Object_GetById(9);
 	blocked = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
 	if (actor->y.fixed == 0 && blocked == 0)
@@ -517,7 +512,7 @@ static void EV50_TOUCH(void)
 	Engine_ActorSetAnimation(0, 16);
 	Engine_ActorSetAnimation(8, 9);
 	Engine_EventWait(10);
-	/* FAKEMATCH: base is 0 from the top of the function, so 0 - approach + 1 is not folded into 1 - approach. */
+	/* FAKEMATCH: base is 0 from the top of the function, so 0 - approach + 1 is built as movs #0, subs, adds #1, as the native does. 1 - approach or -approach + 1 folds into movs #1, subs (differ 7 in tbs-en). */
 	BattleFx_SetWeightedResult(72, base - approach + 1);
 	Battle_SetStart(3);
 	Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoKawa, 4);
@@ -1020,7 +1015,7 @@ static void EV22_TALK(s32 scene)
 			Engine_EventWait(60);
 			Event_ShowMessage(scene, 0);
 			Korosseo_FadeInCompetitor(0, 736, 200);
-			/* FAKEMATCH: the discarded result sets r0 after both other arguments. */
+			/* FAKEMATCH: called as returning a value, the discarded result's call sets r0 after both other arguments, as the native does. Called directly, through Actor_FaceDirection or through Call3, r0 is set first (differ 2 in tbs-en). */
 			Value3(Engine_ActorFaceDirection, ACTOR_PARTY_LEADER, 0, 0);
 			KorosseoKawa_WaitForCountdown();
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
@@ -1074,7 +1069,7 @@ static void EV23_TALK(s32 scene)
 		OverlayObject_PlaceWithScale14000(0, 1000, 176);
 		OverlayObject_PlaceWithScale14000(0, 1016, 168);
 		Engine_EventWait(15);
-		/* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
+		/* FAKEMATCH: the void result is discarded; called directly or through Call3 the argument moves come in another order (differ 2 in tbs-en). */
 		Value3(StagedActor_PlacePairAtOffsetAndRun, 18, 160, 0);
 		Camera_MoveTo(0x4400000, -1, 0xa80000, 1);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -1222,7 +1217,7 @@ static void FieldScene_RunLateSequence(s32 a0)
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(86);
 		Korosseo_LoadPortrait(8);
-		/* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
+		/* FAKEMATCH: the void result is discarded; called directly or through Call2 the argument moves come in another order (differ 2 in tbs-en). */
 		Value2(SceneData_SelectBlockAndResetCounters, 3, 1);
 		Engine_EventWait(-a0 * 60 + 60);
 		kind = 0;
@@ -1232,7 +1227,7 @@ static void FieldScene_RunLateSequence(s32 a0)
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(a0 + 90);
 		Korosseo_LoadPortrait(4);
-		/* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
+		/* FAKEMATCH: the void result is discarded; called directly or through Call2 the argument moves come in another order (differ 2 in tbs-en). */
 		Value2(SceneData_SelectBlockAndResetCounters, 3, 0);
 		Engine_EventWait(a0 * 60 + 60);
 		kind = 8;
@@ -1395,14 +1390,13 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
 
 	if (flag == 0)
 	{
-		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-		/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+		/* FAKEMATCH: the void function is called as returning s32, the call the bytes show; called by its prototype the argument moves come in another order (differ 2 in tbs-en). */
 		((s32 (*)(s32, s32))SceneActor_ApplyValueAndMatchingSlots)(0, handle_a);
 		UiWork_PushValueSlot(handle_a, 2);
 	}
 	else
 	{
-		/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+		/* FAKEMATCH: the same call as returning s32; by its prototype: differ 2 in tbs-en. */
 		((s32 (*)(s32, s32))SceneActor_ApplyValueAndMatchingSlots)(0, handle_b);
 		UiWork_PushValueSlot(handle_b, 2);
 	}

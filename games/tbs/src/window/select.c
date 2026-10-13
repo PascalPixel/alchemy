@@ -104,7 +104,7 @@ struct GlyphCursor
 
 static __inline__ void ResetCursor(struct GlyphCursor *cursor)
 {
-	/* FAKEMATCH: needed to match: keep the cursor-subrecord base for the paired row stores. */
+	/* FAKEMATCH: the helper takes the node's base field as its record, so each row store forms base + 372 and stores the cursor at #2, as the native does. A plain work->records[7].kind = 0 folds the offset into 374 and stores at #0 (differ 6). */
 	cursor->cursor = 0;
 }
 
@@ -682,7 +682,7 @@ void Menu_SetupSelectionSide(struct SelectionScreen *state, s32 index)
 	state->records[index].kind = 0;
 	if (index != 0)
 	{
-		/* FAKEMATCH: the separate local preserves the early r5 load and late copy; direct assignment changes later node registers. */
+		/* FAKEMATCH: the separate local loads the tile pointer early into r5 and makes its copy late, as the native does. Assigning Menu_CursorObjectTiles directly where right is read: differ 42; the same at the top of the branch: differ 16 (tbs-en). */
 		u8 *right = Menu_CursorObjectTiles;
 
 		count = state->count;

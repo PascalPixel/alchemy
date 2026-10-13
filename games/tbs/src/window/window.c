@@ -573,7 +573,7 @@ void UiWork_UpdateListTail(struct RenderOutputList *list)
 
 void RenderOutput_AppendToList(struct RenderOutputList *list, struct RenderOutput *node)
 {
-	/* FAKEMATCH: needed to match: the first-word tail store preserves the two stores in order; the typed tail-link field reverses them. */
+	/* FAKEMATCH: storing the new tail as a RenderOutput * keeps both stores in one alias set, so they stay in order. The typed list->tail_link = &node->next lets the scheduler put the tail store first (differ 2 in all six editions). */
 	if (list != NULL)
 	{
 		*list->tail_link = node;
@@ -784,7 +784,6 @@ void UiWork_ProcessRenderChannels(void)
 {
 	struct UiChannelSlot *channel = UI_WORK->channels;
 	s32					  channel_no = 0;
-	s32					  one = 1;
 
 	do
 	{
@@ -813,7 +812,7 @@ void UiWork_ProcessRenderChannels(void)
 					switch (kind)
 					{
 					case 8:
-						channel->work->state = one;
+						channel->work->state = 1;
 						break;
 					case 9:
 					{
@@ -827,7 +826,7 @@ void UiWork_ProcessRenderChannels(void)
 						channel->colour = pending;
 						channel->outline = pending;
 						channel->line_spacing = pending;
-						channel->work->state = one;
+						channel->work->state = 1;
 						break;
 					}
 					}
@@ -1535,7 +1534,7 @@ s32 UiText_OpenEntryMessage(s32 window, s32 argument)
 	struct UiRenderWork *work = UI_WORK;
 	s32					 entry;
 	s32					 result = 0;
-	/* FAKEMATCH: needed to match: four unread render entry slots, the native frame's eight extra bytes. */
+	/* FAKEMATCH: never read: the native frame keeps 8 bytes above the two outgoing arguments, exactly these four slots; without them the frame is 8 bytes, not 16 (differ 4 in tbs-en). */
 	u16 entries[4];
 
 	work->result[0] = 0;
@@ -1824,7 +1823,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
 	s32					 nibble;
 	u32					 value;
 
-	/* FAKEMATCH: needed to match: the empty loop ends a scheduling region, keeping the spill of out ahead of the work-address load. */
+	/* FAKEMATCH: the empty one-pass block ends a scheduling region, keeping the spill of out ahead of the work-address load. Without it the load is scheduled first (differ 2 in tbs-ja, the only edition with this body); assigning work after mark = 0 instead moves the zero too (differ 6). */
 	do
 	{
 	} while (0);
@@ -1872,7 +1871,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
 		Iwram_ExpandBitRuns(input, buf + 33, colour);
 		if (mark != 0)
 		{
-			/* FAKEMATCH: needed to match: assigning digits in the mark argument makes the argument register compute buf + 7 before its loop copy. */
+			/* FAKEMATCH: assigning digits in the mark argument computes buf + 7 in r1 and makes the loop's copy in r5, as the native does. A plain buf + 7 argument computes it in r5 and makes the copy in r1 (differ 6 in tbs-ja, the only edition with this body). */
 			Iwram_ExpandBitRuns(mark, digits = buf + 7, colour);
 			Iwram_ExpandBitRuns(mark, buf + 8, colour);
 		}
@@ -1886,7 +1885,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
 		Iwram_ExpandBitRuns(input, buf + 32, colour);
 		if (mark != 0)
 		{
-			/* FAKEMATCH: needed to match: this mark path needs the same argument-before-loop order as the outlined path. */
+			/* FAKEMATCH: the same assignment in the argument as the outlined path above; a plain buf + 7 argument differs the same way (differ 6 in tbs-ja). */
 			Iwram_ExpandBitRuns(mark, digits = buf + 7, colour);
 		}
 	}
@@ -2902,7 +2901,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 						kind = UiText_ItemGenders[tmp];
 						word = possessives.text[kind & 3];
 #endif
-						/* FAKEMATCH: needed to match: value counts the letters, compared unsigned; a counter of its own loses r1 in Spanish and Italian. */
+						/* FAKEMATCH: value counts the letters, compared unsigned, keeping the allocation of Spanish and Italian. With the function's u32 j or i as the counter: differ 44 or 58 in tbs-es, 476 or 486 in tbs-it. */
 						for (value = 0; (u32)value < 16; value++)
 						{
 							if ((c8 = *word++) == 0)
@@ -3777,8 +3776,6 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 m
 		mark = (s16)UiText_MarkGlyphCodes[(u32)character >> 14];
 		character &= 0x3fff;
 		width = 4;
-		if (character == ' ')
-			goto done;
 #else
 		if (((struct BattleDisplayWork *)gWindowWork[HEAP_SLOT_BATTLE_DISPLAY - HEAP_SLOT_WINDOW])
 				->window
@@ -3792,28 +3789,28 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 m
 		}
 		font = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
 		width = 4;
-		if (character == ' ')
-			goto done;
 #endif
-		RamCode_Load(draw, UiText_DrawGlyphArm, UiText_DrawGlyphCodeSize);
-		result = draw(window, character, x, y, font);
+		if (character != ' ')
+		{
+			RamCode_Load(draw, UiText_DrawGlyphArm, UiText_DrawGlyphCodeSize);
+			result = draw(window, character, x, y, font);
 #if !EDITION_INTERNATIONAL
-		if ((u16)mark != 0)
-			result += draw(window, (u16)mark, x + result, y, font);
+			if ((u16)mark != 0)
+				result += draw(window, (u16)mark, x + result, y, font);
 #endif
-		MemFree(draw);
-		return result;
+			MemFree(draw);
+			return result;
+		}
 	}
-
-	if (character == ' ')
+	else if (character == ' ')
 	{
 #if !EDITION_INTERNATIONAL
 		width = 7;
 #else
 		width = 5;
 #endif
-		goto done;
 	}
+	else
 	{
 		u32					 tiles[32];
 		struct RenderOutput *output;
@@ -4227,7 +4224,13 @@ void UiWork_AnimateSpriteSlots(void)
 				break;
 			case 6:
 				if (output->anim_step == 0)
-					goto reset;
+				{
+					sprite->affine_index = 0;
+					sprite->affine = 0;
+					sprite->x = output->x;
+					sprite->y = output->y;
+					break;
+				}
 				effect.scale_x = 512;
 				effect.scale_y = 512;
 				effect.angle = 0;
@@ -4269,18 +4272,18 @@ void UiWork_AnimateSpriteSlots(void)
 				sprite->y = output->y + UiSprite_BounceOffsets[output->anim_step & 15];
 				break;
 			case 8:
-				if (output->anim_step == 0)
-					goto reset;
-				effect.scale_x = 320;
-				effect.scale_y = 320;
-				effect.angle = 0;
-				sprite->affine_index = AffineMatrix_BuildForEffect(&effect);
-				sprite->affine = 3;
-				sprite->x = output->x - 8;
-				sprite->y = output->y - 8;
-				output->anim_step--;
-				break;
-			reset:
+				if (output->anim_step != 0)
+				{
+					effect.scale_x = 320;
+					effect.scale_y = 320;
+					effect.angle = 0;
+					sprite->affine_index = AffineMatrix_BuildForEffect(&effect);
+					sprite->affine = 3;
+					sprite->x = output->x - 8;
+					sprite->y = output->y - 8;
+					output->anim_step--;
+					break;
+				}
 				sprite->affine_index = 0;
 				sprite->affine = 0;
 				sprite->x = output->x;

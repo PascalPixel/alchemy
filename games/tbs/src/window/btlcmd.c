@@ -2780,13 +2780,6 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 	s32							   pressed, repeated, result;
 	s32							   index;
 
-	/* FAKEMATCH: register choice (spill slots) only: a dead store. GCSE
-	   sizes its hash table from the function's length and PRE numbers its
-	   reaching registers in bucket order; with this store the table has
-	   379 buckets and &ordered and &sprites take their spill slots before
-	   count - 1, as in the native frame (377 buckets without it: 80 rows
-	   differ, every one a spill slot's offset). */
-	result = 0;
 	render = UI_WORK;
 	drawn_row = -1;
 	drawn_page = -1;
@@ -3349,11 +3342,6 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 				window->width - (count + 4) / BATTLE_LIST_ROWS - 3, edge, 0);
 			UiWindow_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2, edge, 0);
 			UiRender_MarkRow(render, window->y - 1);
-			/* FAKEMATCH: the cursor pointer pair preserves the native
-             * spill slots (42 rows differ without the pair); it keeps
-             * all 770 instructions in every edition. */
-			cur++;
-			cur--;
 		}
 
 		for (i = 0; i < icon_count; i++)
@@ -3721,9 +3709,6 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 		pos.x = window->x * 8 - 4;
 		pos.y = (row * 2 + window->y) * 8 + 20;
 		((u32 *)spr)[1] = 0x40000000;
-		((u32 *)spr)[2] = 0;
-		/* FAKEMATCH: this dead duplicate is needed to match the native spill
-         * slots; removing it changes 42 aligned instructions. */
 		((u32 *)spr)[2] = 0;
 		spr->oam.f.tile = Resource_GetBuffer(cursor_handle, (s32)Resource_FixedBlockBTiles);
 		spr->oam.f.x = pos.x + ((gFrameCount & 4) >> 1) - 4;

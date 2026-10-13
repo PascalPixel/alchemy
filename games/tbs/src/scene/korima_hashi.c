@@ -113,7 +113,6 @@ static void EV10_SCRIPT(void)
 		if (res.actor_slot == 10 && (res.position_x >> 20) == 20)
 		{
 			struct FieldActor *actor;
-			s32				   zero;
 
 			Engine_ActorSetAnimation(10, 3);
 			Actor_SetDestinationOffset(10, -18, 6);
@@ -121,9 +120,8 @@ static void EV10_SCRIPT(void)
 			Engine_AudioPlayCue(240);
 			Engine_ActorSetAnimation(10, 8);
 			Object_GetById(10)->priority_flags = 2;
-			zero = 0;
 			Map_CopyCellAttributes(0, 17, 2, 4, 19, 17);
-			StagedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4, zero);
+			StagedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4, 0);
 			Engine_GameFlagSet(0x200);
 			actor = Object_GetById(10);
 			Engine_ActorSetSpriteFlags(actor, 0);

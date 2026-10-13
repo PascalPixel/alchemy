@@ -2177,7 +2177,15 @@ s32 Menu_CreateEightEntryObjects(s32 resource)
 
 void ItemMenu_ApplyFlags(const u8 *flags)
 {
-	/* FAKEMATCH: the y-field pointer keeps the category flag index as a counter instead of a walking pointer. */
+	/* FAKEMATCH: the y-field pointer keeps the category flag index as a
+	   counter instead of a walking pointer: it is the loop's 18th real
+	   insn before combine, and loop.c reduces the flags[index] giv only
+	   while its 17 reaches the insn count. Plain forms measured
+	   (2026-10-13): entry->y = value in this loop, in a for loop over
+	   category_icons[index], with ++index in the test or with the two
+	   tests nested, differ 22; value as s16, u16 or s8, 23 to 28;
+	   value += 16 before the sentinel store, differ 2 (the add moves
+	   ahead of the call). */
 	struct InventoryMenuState *base;
 	struct RenderOutput		 **slot;
 	struct RenderOutput		  *entry;

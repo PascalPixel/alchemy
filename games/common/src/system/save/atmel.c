@@ -95,13 +95,12 @@ attempt:
         goto retry_failed;
 advance:
     current += 1;
-    if (result != 0)
-        goto done;
-    count += 1;
-    if ((u32)count <= 31)
-        goto next_sector;
-
-done:
+    if (result == 0)
+    {
+        count += 1;
+        if ((u32)count <= 31)
+            goto next_sector;
+    }
     REG_WAITCNT =
         (REG_WAITCNT & 0xfffc) | 3;
     return result;

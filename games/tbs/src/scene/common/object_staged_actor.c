@@ -176,7 +176,7 @@ static s32 StagedActor_StopBlockedMotion(struct StagedActor *actor)
 		do
 		{
 			if (kind == *kinds++)
-				goto done;
+				return 0;
 			i++;
 		} while (i <= 5);
 		actor->velocity_x = 0;
@@ -196,7 +196,6 @@ static s32 StagedActor_StopBlockedMotion(struct StagedActor *actor)
 		actor->target_x = 0x80000000;
 		actor->target_z = 0x80000000;
 	}
-done:
 	return 0;
 }
 

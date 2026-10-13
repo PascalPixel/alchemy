@@ -249,11 +249,6 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gMakyuriHeyaEventsOther;
 }
 
-struct BlockProbe
-{
-	s32 word[6];
-};
-
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/makyuri_risedrop.c"
 
@@ -297,19 +292,18 @@ static void MakyuriHeya_ExitWhenChannelsOpen(void)
 
 static void EV25_SCRIPT(void)
 {
-	struct BlockProbe probe;
-	s32				  x;
+	struct StagedActorProbe probe;
+	s32						x;
 
 	Engine_EventBegin();
 	if (StagedActor_FindClearPosition(&probe) != 0)
 	{
-		switch ((u32)probe.word[1])
+		switch ((u32)probe.actor_slot)
 		{
 		case 9:
-			if (probe.word[4] >> 20 == 8)
+			if (probe.position_z >> 20 == 8)
 			{
-				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-				((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
+				SceneActor_MoveAndRedraw(probe);
 				Engine_EventWait(20);
 				Map_CopyCellsTo(119, 9, 109, 11, 1, 1);
 				SceneEffect_SpawnRandomizedBurst(0x2d60000, 0, 0xb40000, 0x8000);
@@ -322,16 +316,14 @@ static void EV25_SCRIPT(void)
 				Map_CopyCellsTo(117, 9, 104, 7, one, one);
 				Map_CopyCellsTo(119, 8, 109, 11, one, one);
 				Map_CopyCellsTo(118, 8, 104, 13, one, one);
-				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-				((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
+				SceneActor_MoveAndRedraw(probe);
 				GameFlag_Clear(0x310);
 			}
 			break;
 		case 10:
-			if (probe.word[4] >> 20 == 12)
+			if (probe.position_z >> 20 == 12)
 			{
-				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-				((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
+				SceneActor_MoveAndRedraw(probe);
 				Engine_EventWait(10);
 				if (GameFlag_IsSet(0x310))
 				{
@@ -350,23 +342,20 @@ static void EV25_SCRIPT(void)
 					Map_CopyCellsTo(119, 9, 109, 11, one, one);
 					Map_CopyCellsTo(118, 8, 104, 13, one, one);
 				}
-				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-				((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
+				SceneActor_MoveAndRedraw(probe);
 				GameFlag_Clear(0x311);
 			}
 			break;
 		case 11:
-			x = probe.word[2];
+			x = probe.position_x;
 			if (x >> 20 == 40)
 			{
-				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-				((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
+				SceneActor_MoveAndRedraw(probe);
 				GameFlag_Set(0x312);
 			}
 			else
 			{
-				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-				((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
+				SceneActor_MoveAndRedraw(probe);
 				GameFlag_Clear(0x312);
 			}
 			break;
@@ -1036,28 +1025,26 @@ static s32 MakyuriHeya_StopActorNinePositionCallback(void)
 
 static void EV40_SCRIPT(void)
 {
-	struct BlockProbe probe;
-	s32				  column;
-	s32				  start;
+	struct StagedActorProbe probe;
+	s32						column;
+	s32						start;
 
 	Engine_EventBegin();
 	if (StagedActor_FindClearPosition(&probe) != 0)
 	{
-		switch (probe.word[1])
+		switch (probe.actor_slot)
 		{
 		case 10:
-			/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-			((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
-			if (probe.word[4] >> 20 == 38)
+			SceneActor_MoveAndRedraw(probe);
+			if (probe.position_z >> 20 == 38)
 				Engine_GameFlagSet(0x318);
 			else
 				Engine_GameFlagClear(0x318);
 			break;
 		case 11:
 			start = Object_GetById(11)->x.fixed >> 20;
-			/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-			((void (*)(struct BlockProbe))SceneActor_MoveAndRedraw)(probe);
-			column = probe.word[2] >> 20;
+			SceneActor_MoveAndRedraw(probe);
+			column = probe.position_x >> 20;
 			if (column == 47)
 			{
 				Engine_GameFlagSet(0x319);

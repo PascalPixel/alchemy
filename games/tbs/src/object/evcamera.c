@@ -713,57 +713,57 @@ again:
 	pos->y = leader->y;
 	pos->z = (leader->z & 0xfff00000) + 0x80000;
 	Vector_AddPolarOffset(0x200000, angle, pos);
-	if (Map_CheckObjectStepFar(leader, pos) != 0)
-		goto done;
-	if (leader->animation_kind == 1)
-		child_mode = ((struct FieldSprite *)leader->animation)->flags;
-	Battle_Reset();
-	ObjectDispatch_ApplyArgumentToChildrenFar(leader, 6);
-	WaitFrames(6);
-	AudioCommand_PlayFar(152);
-	ObjectDispatch_ApplyArgumentToChildrenFar(leader, 7);
-	leader->speed_limit = 0x30000;
-	leader->acceleration = 0x20000;
-	leader->velocity_y = 0x40000;
-	*flags &= 0x7e;
-	ObjectDispatch_SetSingleChildFlagsFar(leader, child_mode & 0xfe);
-	ObjectMotion_SetPositionAndCommit(gGameState.selected_actor,
-		((union FieldCoordinate *)&pos->x)->part.pixel,
-		((union FieldCoordinate *)&pos->z)->part.pixel);
-	ObjectDispatch_ApplyArgumentToChildrenFar(leader, 6);
-	ObjectDispatch_SetSingleChildFlagsFar(leader, child_mode);
-	if ((target = Object_FindNearestFacingTarget(leader, 207)) != NULL
-		|| (target = Object_FindNearestFacingTarget(leader, 205)) != NULL)
+	if (Map_CheckObjectStepFar(leader, pos) == 0)
 	{
-		ObjectDispatch_ApplyArgumentToChildrenFar(target, 7);
-		leader->y -= 0x10000;
-		leader->terrain_height -= 0x10000;
-		WaitFrames(2);
-		leader->y -= 0x10000;
-		leader->terrain_height -= 0x10000;
-		WaitFrames(10);
-		leader->y += 0x10000;
-		leader->terrain_height += 0x10000;
-		WaitFrames(4);
-		leader->y += 0x10000;
-		leader->terrain_height += 0x10000;
-	}
-	else
-	{
+		if (leader->animation_kind == 1)
+			child_mode = ((struct FieldSprite *)leader->animation)->flags;
+		Battle_Reset();
+		ObjectDispatch_ApplyArgumentToChildrenFar(leader, 6);
 		WaitFrames(6);
+		AudioCommand_PlayFar(152);
+		ObjectDispatch_ApplyArgumentToChildrenFar(leader, 7);
+		leader->speed_limit = 0x30000;
+		leader->acceleration = 0x20000;
+		leader->velocity_y = 0x40000;
+		*flags &= 0x7e;
+		ObjectDispatch_SetSingleChildFlagsFar(leader, child_mode & 0xfe);
+		ObjectMotion_SetPositionAndCommit(gGameState.selected_actor,
+			((union FieldCoordinate *)&pos->x)->part.pixel,
+			((union FieldCoordinate *)&pos->z)->part.pixel);
+		ObjectDispatch_ApplyArgumentToChildrenFar(leader, 6);
+		ObjectDispatch_SetSingleChildFlagsFar(leader, child_mode);
+		if ((target = Object_FindNearestFacingTarget(leader, 207)) != NULL
+			|| (target = Object_FindNearestFacingTarget(leader, 205)) != NULL)
+		{
+			ObjectDispatch_ApplyArgumentToChildrenFar(target, 7);
+			leader->y -= 0x10000;
+			leader->terrain_height -= 0x10000;
+			WaitFrames(2);
+			leader->y -= 0x10000;
+			leader->terrain_height -= 0x10000;
+			WaitFrames(10);
+			leader->y += 0x10000;
+			leader->terrain_height += 0x10000;
+			WaitFrames(4);
+			leader->y += 0x10000;
+			leader->terrain_height += 0x10000;
+		}
+		else
+		{
+			WaitFrames(6);
+		}
+		*flags = saved;
+		BattleFx_FinishAction();
+		if (work != NULL)
+			work->encounter_steps += Iwram_MulQ16(work->encounter_rate, 0x200000);
+		if (GetMapCellCollisionFar(leader->terrain_id, pos->x, pos->z) == 0xf9)
+		{
+			ObjectDispatch_ApplyArgumentToChildrenFar(leader, 1);
+			WaitFrames(6);
+			goto again;
+		}
+		result = 0;
 	}
-	*flags = saved;
-	BattleFx_FinishAction();
-	if (work != NULL)
-		work->encounter_steps += Iwram_MulQ16(work->encounter_rate, 0x200000);
-	if (GetMapCellCollisionFar(leader->terrain_id, pos->x, pos->z) == 0xf9)
-	{
-		ObjectDispatch_ApplyArgumentToChildrenFar(leader, 1);
-		WaitFrames(6);
-		goto again;
-	}
-	result = 0;
-done:
 	return result;
 }
 

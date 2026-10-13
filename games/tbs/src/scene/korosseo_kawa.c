@@ -1222,7 +1222,7 @@ static void FieldScene_RunLateSequence(s32 a0)
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(86);
 		Korosseo_LoadPortrait(8);
-		/* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
+		/* FAKEMATCH: the void result is discarded; called directly or through Call2 the argument moves come in another order (differ 2 in tbs-en). */
 		Value2(SceneData_SelectBlockAndResetCounters, 3, 1);
 		Engine_EventWait(-a0 * 60 + 60);
 		kind = 0;
@@ -1232,7 +1232,7 @@ static void FieldScene_RunLateSequence(s32 a0)
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(a0 + 90);
 		Korosseo_LoadPortrait(4);
-		/* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
+		/* FAKEMATCH: the void result is discarded; called directly or through Call2 the argument moves come in another order (differ 2 in tbs-en). */
 		Value2(SceneData_SelectBlockAndResetCounters, 3, 0);
 		Engine_EventWait(a0 * 60 + 60);
 		kind = 8;

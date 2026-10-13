@@ -331,7 +331,7 @@ static void ItemLevel_SelectAbility(void)
 	Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
 	Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001, REG_DMA3);
 	Engine_TaskWait(1);
-	for (;;)
+	while (1)
 	{
 		if (redraw)
 		{
@@ -351,7 +351,7 @@ static void ItemLevel_SelectAbility(void)
 		if (gKeyState & KEY_B)
 		{
 			Engine_AudioPlayCue(113);
-			goto done;
+			break;
 		}
 		if (gKeysRepeat & KEY_UP)
 		{
@@ -418,7 +418,6 @@ static void ItemLevel_SelectAbility(void)
 		step = 0;
 		Engine_TaskWait(1);
 	}
-done:
 	RenderOutput_RedrawSavedRect(window);
 	Engine_TaskWait(1);
 	UiWork_Finalize(window, 1);

@@ -184,7 +184,6 @@ struct WaveFxWork
 
 void RunSceneTransitionEffect(s32 x, s32 y)
 {
-	u32				   __umodsi3(u32 numerator, u32 denominator);
 	struct WaveFxWork *work;
 	volatile u32	   zero;
 
@@ -192,7 +191,7 @@ void RunSceneTransitionEffect(s32 x, s32 y)
 	BattleEffect_InitializeSharedScene();
 	zero = 0;
 	Dma_Set((const void *)&zero, work, 0x850000a6, REG_DMA3);
-	work->hue = __umodsi3(gFrameCount << 1, 360);
+	work->hue = ((u32)(gFrameCount << 1) % (u32)360);
 	BattleFx_AdvanceHueCycle();
 	BattleFx_ApplyColorToTargetBuffer(
 		(work->blue << 10) | (work->green << 5) | work->red | 0x200000, 1);
@@ -260,7 +259,7 @@ void BattleFx_UpdateWaveScene(void)
 	// 160 ライン分のずれを ±4 ドットの正弦波で作り、面を切り替える
 	line = work->lines[work->page ^ 1];
 	for (i = 0; i < 160; i++)
-		*line++ = Trig_Sin(__udivsi3((work->phase + i * 8) << 16, 160)) >> 14;
+		*line++ = Trig_Sin(((u32)((work->phase + i * 8) << 16) / (u32)160)) >> 14;
 	work->phase += 4;
 	work->page ^= 1;
 	if (work->page != 0)
@@ -3945,6 +3944,7 @@ void BattleFx_UpdatePairedArcSpawner(struct ArcEffectObject *obj)
 
 	if (gGameState.map == (s32)&SceneId_Clear)
 	{
+		/* FAKEMATCH: explicit libgcc calls here and in the else if below; written with the operator, tbs-en differs */
 		if (__modsi3(cnt, 7) == 0)
 			BattleFx_SpawnDescendingArcParticles(obj);
 	}

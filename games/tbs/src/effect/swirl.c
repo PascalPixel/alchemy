@@ -2791,7 +2791,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 				}
 				z = scene[2] - 100;
 				scene[2] = z;
-				size = __divsi3(z, 100) + 1;
+				size = (z / 100) + 1;
 				if (near > z)
 				{
 					near = z;
@@ -2844,7 +2844,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 					scene[2] = 60;
 				}
 				scene[2] += 60;
-				size = __divsi3(scene[2], 20) + 2;
+				size = ((scene[2]) / 20) + 2;
 				scene[0] += 60;
 				scene[1] += 80;
 				draw[0](canvas, ramp + ParticleStreams_CellOffsets[size - 1], scene[0] - size / 2,
@@ -2986,7 +2986,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 		if (obj != 0)
 		{
 			obj->flags = 0;
-			AnimationObjects_SelectAnimationFar(obj, __modsi3(i, 3));
+			AnimationObjects_SelectAnimationFar(obj, (i % 3));
 			((struct AnimationObject *)work->objects[i])->part[0].priority = 0;
 		}
 	}

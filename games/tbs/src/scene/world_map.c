@@ -1850,7 +1850,6 @@ enum
 	TRANSITION_EFFECT_DEPTH = 30
 };
 
-s32 __umodsi3(u32 value, s32 divisor);
 u16 gWorldMapBlend;
 
 #define QueueFrame(buffer, offset) \
@@ -2458,7 +2457,7 @@ static void OverlayObject_UpdateOnFrameParity(u8 *obj)
 {
 	if ((gFrameCount & 1) != 0)
 	{
-		Engine_ObjectSetPartPalettes(obj, __umodsi3((gFrameCount >> 1), 6));
+		Engine_ObjectSetPartPalettes(obj, ((u32)((gFrameCount >> 1)) % (u32)6));
 	}
 	if ((gFrameCount & 15) == 0)
 	{

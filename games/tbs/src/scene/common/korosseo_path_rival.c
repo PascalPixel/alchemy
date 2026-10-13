@@ -234,8 +234,8 @@ static void Korosseo_DrawGauge(void)
 		actor = Engine_ActorLookup(gauge->rival_actor);
 		if (actor != 0)
 		{
-			x = __divsi3(actor->x.fixed - gauge->finish_x, 0xe0000) + 112;
-			y = __divsi3(actor->z.fixed - gauge->finish_z, 0xe0000) + gauge->level * 6 - 4;
+			x = ((actor->x.fixed - gauge->finish_x) / 0xe0000) + 112;
+			y = ((actor->z.fixed - gauge->finish_z) / 0xe0000) + gauge->level * 6 - 4;
 			y &= 255;
 			*dst++ = 0;
 			y |= x << 16;
@@ -247,8 +247,8 @@ static void Korosseo_DrawGauge(void)
 		actor = Engine_ActorLookup(gauge->player_actor);
 		if (actor != 0)
 		{
-			x = __divsi3(actor->x.fixed - gauge->finish_x, 0xe0000) + 112;
-			y = __divsi3(actor->z.fixed - gauge->finish_z, 0xe0000) + gauge->level * 6 - 4;
+			x = ((actor->x.fixed - gauge->finish_x) / 0xe0000) + 112;
+			y = ((actor->z.fixed - gauge->finish_z) / 0xe0000) + gauge->level * 6 - 4;
 			y &= 255;
 			*dst++ = 0;
 			y |= x << 16;

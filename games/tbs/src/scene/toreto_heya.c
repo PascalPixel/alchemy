@@ -874,6 +874,7 @@ static void ToretoHeya_SpawnSwirlSparks(void)
 	counter = &ToretoHeya_SparkCounter;
 	frame = *counter;
 	previous = 0;
+	/* FAKEMATCH: an explicit libgcc call; written with the operator, tbs-en differs */
 	wave = __divsi3(frame, 10);
 	switch (frame)
 	{

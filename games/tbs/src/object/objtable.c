@@ -148,7 +148,6 @@ extern const struct ScenePlacement Field_DefaultPlacements[2];
 
 void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
 {
-	u32						__umodsi3(u32 numerator, u32 denominator);
 	struct FieldStepWork   *work;
 	struct ObjectRuntime   *object;
 	struct ObjectRuntime   *previous;
@@ -213,7 +212,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
 		{
 			ObjectDispatch_ApplyArgumentToChildrenFar(object, 1);
 			if (object->animation_kind == 1 && (sprite = object->animation) != 0)
-				sprite->last_no = __umodsi3(Random16(), 30);
+				sprite->last_no = ((u32)(Random16()) % (u32)30);
 			object->angle = entry->facing;
 			object->unknown_59 = 1;
 			ObjectMotion_SetActionCallback(object, entry->behavior);

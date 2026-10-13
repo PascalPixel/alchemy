@@ -262,7 +262,6 @@ s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y, s32 va
 	}
 }
 
-s32 __divsi3(s32, s32);
 
 void PtyStDraw(s32 flags)
 {
@@ -350,7 +349,7 @@ void PtyStDraw(s32 flags)
 		if (unit->max_hp != 0)
 		{
 			current = unit->hp;
-			value = __divsi3(current * 40, unit->max_hp);
+			value = ((current * 40) / unit->max_hp);
 			if (value == 0 && current != 0)
 				value = 1;
 			UiWindow_DrawStatusBarTiles(window, x + i * 6 + 1, y + 2, value);
@@ -364,7 +363,7 @@ void PtyStDraw(s32 flags)
 			if (unit->max_ep != 0)
 			{
 				current = unit->ep;
-				value = __divsi3(current * 40, unit->max_ep);
+				value = ((current * 40) / unit->max_ep);
 				if (value == 0 && current != 0)
 					value = 1;
 				UiWindow_DrawStatusBarTiles(window, x + i * 6 + 1, y + 3, value);

@@ -3531,7 +3531,7 @@ done:
 				gap -= 4;
 				if (gap < 0)
 					gap = 0;
-				gap = __divsi3(gap << 8, counts[i] - 1);
+				gap = ((gap << 8) / (counts[i] - 1));
 #if EDITION_INTERNATIONAL
 				if (gap < 0 || gap > 0xc00)
 					gap = 0x200;

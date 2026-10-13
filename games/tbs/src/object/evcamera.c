@@ -299,6 +299,7 @@ s32 BattleFx_StepRatioTransition(void)
 	delta = work->zoom - *from;
 	step = &work->zoom_transition_step;
 	(*step)++;
+	/* FAKEMATCH: an explicit libgcc call; written with the operator, tbs-en differs */
 	zoom = *from + __divsi3(delta * *step, *frames);
 	work->distance = Iwram_MulQ16(work->far_plane, zoom);
 	gScanlinePitch = work->pitch + 1;
@@ -553,6 +554,7 @@ s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object)
 		if (distance >= step)
 		{
 			newX = object->x + (cellX << 20) / step;
+			/* FAKEMATCH: an explicit libgcc call; written with the operator, tbs-en differs */
 			Object_SetMoveTargetFar(
 				object, newX, object->y, object->z + __divsi3(cellY << 20, step));
 			ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);

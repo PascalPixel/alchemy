@@ -1651,10 +1651,11 @@ static void AdvanceActor18AlongEscapeRoute(void)
 	s32 companion19Column;
 	s32 companion14Column;
 
-	s32 permuted_5;
-	permuted_5 = Object_GetById(18)->x.fixed >> 20;
+	/* FAKEMATCH: read into x before the row and assigned after it; read straight into its variable, tbs-en differs */
+	s32 x;
+	x = Object_GetById(18)->x.fixed >> 20;
 	row = Object_GetById(18)->z.fixed >> 20;
-	column = permuted_5;
+	column = x;
 	companion19Column = Object_GetById(19)->x.fixed >> 20;
 	companion14Column = Object_GetById(14)->x.fixed >> 20;
 
@@ -1850,10 +1851,11 @@ static void AdvanceActor9AlongEscapeRoute(void)
 	s32 companion14Column;
 	s32 companion16Column;
 
-	s32 permuted_6;
-	permuted_6 = Object_GetById(9)->x.fixed >> 20;
+	/* FAKEMATCH: read into x before the row and assigned after it; read straight into its variable, tbs-en differs */
+	s32 x;
+	x = Object_GetById(9)->x.fixed >> 20;
 	row = Object_GetById(9)->z.fixed >> 20;
-	column = permuted_6;
+	column = x;
 	companion19Column = Object_GetById(19)->x.fixed >> 20;
 	companion14Column = Object_GetById(14)->x.fixed >> 20;
 	companion16Column = Object_GetById(16)->x.fixed >> 20;
@@ -2118,11 +2120,9 @@ static void RetreatActor14AlongEscapeRoute(void)
 	s32 companion9Row;
 	s32 rowM1;
 
-	s32 permuted_7;
-	column = Object_GetById(14)->x.fixed >> 20;
-	permuted_7 = Object_GetById(14)->z.fixed >> 20;
+		column = Object_GetById(14)->x.fixed >> 20;
+	row = Object_GetById(14)->z.fixed >> 20;
 	companion18Row = Object_GetById(18)->z.fixed >> 20;
-	row = permuted_7;
 	companion9Row = Object_GetById(9)->z.fixed >> 20;
 
 	if (column == 13)
@@ -2191,11 +2191,9 @@ static void AdvanceActor14AlongEscapeRoute(void)
 	s32 companion9Row;
 	s32 rowM1;
 
-	s32 permuted_7;
-	column = Object_GetById(14)->x.fixed >> 20;
-	permuted_7 = Object_GetById(14)->z.fixed >> 20;
+		column = Object_GetById(14)->x.fixed >> 20;
+	row = Object_GetById(14)->z.fixed >> 20;
 	companion18Row = Object_GetById(18)->z.fixed >> 20;
-	row = permuted_7;
 	companion9Row = Object_GetById(9)->z.fixed >> 20;
 
 	if (column == 6)
@@ -2253,11 +2251,9 @@ static void RetreatActor16AlongEscapeRoute(void)
 	s32 companion9Row;
 	s32 rowM1;
 
-	s32 permuted_7;
-	column = Object_GetById(16)->x.fixed >> 20;
-	permuted_7 = Object_GetById(16)->z.fixed >> 20;
+		column = Object_GetById(16)->x.fixed >> 20;
+	row = Object_GetById(16)->z.fixed >> 20;
 	companion18Row = Object_GetById(18)->z.fixed >> 20;
-	row = permuted_7;
 	companion9Row = Object_GetById(9)->z.fixed >> 20;
 
 	if (column == 13)
@@ -2320,11 +2316,12 @@ static void AdvanceActor16AlongEscapeRoute(void)
 	s32 row;
 	s32 companionRow;
 
-	s32 permuted_6;
+	/* FAKEMATCH: read into x before the row and assigned after it; read straight into its variable, tbs-en differs */
+	s32 x;
 	column = Object_GetById(16)->x.fixed >> 20;
-	permuted_6 = Object_GetById(16)->z.fixed >> 20;
+	x = Object_GetById(16)->z.fixed >> 20;
 	companionRow = Object_GetById(9)->z.fixed >> 20;
-	row = permuted_6;
+	row = x;
 
 	if (column == 6)
 	{

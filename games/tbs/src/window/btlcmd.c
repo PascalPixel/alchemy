@@ -98,7 +98,6 @@
 #include "disptran.h"
 #include "frame.h"
 
-s32 __divsi3(s32, s32);
 
 static __inline__ u32 XorWord(u32 word, u32 mask)
 {
@@ -1080,7 +1079,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 
 	total =
 		DjinnMenu_ListChangedDjinn(snap->action_slots, unit->action_slots, list, &gained, &lost);
-	pages = __divsi3(total - 1, 5) + 1;
+	pages = ((total - 1) / 5) + 1;
 	*pageCount = pages;
 	if (page * 5 - 5 >= total)
 		page = pages;

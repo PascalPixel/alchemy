@@ -1032,7 +1032,6 @@ static void ImiruMura_SwayAndSpark(struct FieldActor *actor)
 	}
 }
 
-s32 __umodsi3();
 
 static void ImiruMura_ShowActorNineTurnMessage(void)
 {
@@ -1092,7 +1091,7 @@ static void FieldScene_RunScene399SequenceA(void)
 	union FieldObject *object;
 
 	frame = &gFrameCount;
-	if (__umodsi3(*frame, 60) == 0)
+	if (((u32)*frame % (u32)60) == 0)
 	{
 		object = (union FieldObject *)Object_Create(222, 0x1cf0000, 0, 0x1240000);
 		if (object != NULL)
@@ -1103,7 +1102,7 @@ static void FieldScene_RunScene399SequenceA(void)
 			Object_SetMode(object, 5);
 		}
 	}
-	if (__umodsi3(*frame + 30, 60) == 0)
+	if (((u32)(*frame + 30) % (u32)60) == 0)
 	{
 		object = (union FieldObject *)Object_Create(222, 0x1400000, 0x200000, 0x1640000);
 		if (object != NULL)
@@ -1114,7 +1113,7 @@ static void FieldScene_RunScene399SequenceA(void)
 			Object_SetMode(object, 5);
 		}
 	}
-	if (__umodsi3(*frame + 10, 60) == 0)
+	if (((u32)(*frame + 10) % (u32)60) == 0)
 	{
 		object = (union FieldObject *)Object_Create(222, 0x760000, 0, 0x460000);
 		if (object != NULL)
@@ -1125,7 +1124,7 @@ static void FieldScene_RunScene399SequenceA(void)
 			Object_SetMode(object, 5);
 		}
 	}
-	if (__umodsi3(*frame + 50, 60) == 0)
+	if (((u32)(*frame + 50) % (u32)60) == 0)
 	{
 		object = (union FieldObject *)Object_Create(222, 0x1560000, 0, 0x7c0000);
 		if (object != NULL)
@@ -1136,7 +1135,7 @@ static void FieldScene_RunScene399SequenceA(void)
 			Object_SetMode(object, 5);
 		}
 	}
-	if (__umodsi3(*frame + 80, 60) == 0)
+	if (((u32)(*frame + 80) % (u32)60) == 0)
 	{
 		object = (union FieldObject *)Object_Create(222, 0x1af0000, 0, 0xab0000);
 		if (object != NULL)

@@ -328,7 +328,6 @@ struct SaveLinkGreeting
 };
 
 s32							   __divsi3(s32, s32);
-s32							   __modsi3();
 
 s32 SaveMenu_Run(void)
 {
@@ -734,7 +733,7 @@ not_first:;
 		Ui_LoadWindowGraphics();
 		page_window = UiWindow_Create(5, 4, 20, 12, v6);
 		page = 0;
-		page_count = (__divsi3(encoded_size, 50) + 1);
+		page_count = ((encoded_size / 50) + 1);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 		record = UiWindow_Create(8, 0, 13, 4, v6);
 #else
@@ -824,7 +823,7 @@ not_first:;
 					rec5 = page + page_count;
 					rec5++;
 				}
-				rec5 = __modsi3(rec5, page_count);
+				rec5 = (rec5 % page_count);
 				v7 = 1;
 				page = rec5;
 			}
@@ -880,20 +879,21 @@ not_first:;
 					{
 						Clear_NameEntryCharacter(password[v7] & 63, glyph);
 					} while (0);
-					record = __modsi3(v7, 10);
+					record = (v7 % 10);
 					if (record > 4)
 					{
 						s32 row;
 
-						rec7 = __modsi3(n, 10);
-						row = __divsi3(n, 10);
+						rec7 = (n % 10);
+						row = (n / 10);
 						UiText_DrawString(glyph, page_window, rec7 * 12 + 18, (row << 4) + 2);
 					}
 					else
 					{
 						s32 row;
 
-						rec7 = __modsi3(n, 10);
+						rec7 = (n % 10);
+						/* FAKEMATCH: an explicit libgcc call; written with the operator, tbs-en differs */
 						row = __divsi3(n, 10);
 						UiText_DrawString(glyph, page_window, rec7 * 12 + 8, (row << 4) + 2);
 					}

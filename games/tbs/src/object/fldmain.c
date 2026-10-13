@@ -695,324 +695,330 @@ s32 Field_RunScene(s32 entrance)
 	{
 		result = code;
 		work->exit = 0;
-		goto done;
 	}
-	GameFlag_ClearBitFar(0x109);
-	if (BattleFx_SumCounters() == 0)
+	else
 	{
-		if (work->transition_active == 0)
+		GameFlag_ClearBitFar(0x109);
+		if (BattleFx_SumCounters() == 0)
 		{
-			DisplayTransition_Start(work->transition, work->transition_frames);
-			work->transition_active = 1;
-			PLTT_BACKDROP = 0;
-			if (ObjectEffect_RunPendingFlagEvent() == 0)
-				WaitFrames((work->transition_frames + 1) / 2);
-		}
-		if (GameFlag_TestFar(0x12f) != 0)
-		{
-			GameFlag_ClearBitFar(0x12f);
-			/* FAKEMATCH: UiTimedNotice_CreateFar is called as void (*)(s32); as void (*)(void), its prototype, Field_RunScene does not compile */
-			/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-			((void (*)(s32))UiTimedNotice_CreateFar)(gGameState.scene);
-		}
-		if (gGameState.pending_djinn_event != 0)
-		{
-			Djinn_ResolvePendingEvent(gGameState.pending_djinn_event, 1);
-			gGameState.pending_djinn_event = 0;
-		}
-		if (gGameState.pending_item != 0)
-		{
-			Battle_SetObjectFlag5bWhenMode3();
-			if (Party_CheckMemberValueTotal(gGameState.pending_item) == 0)
-				PartyInventory_GiveItem(gGameState.pending_item, 0);
-			Battle_ClearObjectFlag5bWhenMode3();
-			gGameState.pending_item = 0;
-		}
-	}
-
-	for (;;)
-	{
-		GameFlag_SetBitFar(0x104);
-		actor = work->actors[gGameState.selected_actor];
-		ObjectDispatch_InitFromTable6Far(actor);
-		gGameState.x = actor->x.fixed;
-		gGameState.y = 0;
-		gGameState.z = actor->z.fixed;
-		gGameState.heading = actor->facing;
-		gGameState.turn = actor->terrain_id;
-
-		while (BattleFx_SumCounters() != 0)
-		{
-			s32 next = work->exit;
-
-			if (next != 0)
+			if (work->transition_active == 0)
 			{
-				result = next;
-				work->exit = 0;
-				goto done;
+				DisplayTransition_Start(work->transition, work->transition_frames);
+				work->transition_active = 1;
+				PLTT_BACKDROP = 0;
+				if (ObjectEffect_RunPendingFlagEvent() == 0)
+					WaitFrames((work->transition_frames + 1) / 2);
 			}
-			if (work->event != 0)
+			if (GameFlag_TestFar(0x12f) != 0)
 			{
-				work->busy = 1;
-				if (work->event == -1)
+				GameFlag_ClearBitFar(0x12f);
+				/* FAKEMATCH: UiTimedNotice_CreateFar is called as void (*)(s32); as void (*)(void), its prototype, Field_RunScene does not compile */
+				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
+				((void (*)(s32))UiTimedNotice_CreateFar)(gGameState.scene);
+			}
+			if (gGameState.pending_djinn_event != 0)
+			{
+				Djinn_ResolvePendingEvent(gGameState.pending_djinn_event, 1);
+				gGameState.pending_djinn_event = 0;
+			}
+			if (gGameState.pending_item != 0)
+			{
+				Battle_SetObjectFlag5bWhenMode3();
+				if (Party_CheckMemberValueTotal(gGameState.pending_item) == 0)
+					PartyInventory_GiveItem(gGameState.pending_item, 0);
+				Battle_ClearObjectFlag5bWhenMode3();
+				gGameState.pending_item = 0;
+			}
+		}
+
+		for (;;)
+		{
+			GameFlag_SetBitFar(0x104);
+			actor = work->actors[gGameState.selected_actor];
+			ObjectDispatch_InitFromTable6Far(actor);
+			gGameState.x = actor->x.fixed;
+			gGameState.y = 0;
+			gGameState.z = actor->z.fixed;
+			gGameState.heading = actor->facing;
+			gGameState.turn = actor->terrain_id;
+
+			while (BattleFx_SumCounters() != 0)
+			{
+				s32 next = work->exit;
+
+				if (next != 0)
 				{
-					u32 i;
-
-					Battle_InitializeRenderObject();
-					Battle_SetObjectFlag5bWhenMode3();
-					for (i = 0; i < work->count; i++)
+					result = next;
+					work->exit = 0;
+					goto done;
+				}
+				if (work->event != 0)
+				{
+					work->busy = 1;
+					if (work->event == -1)
 					{
-						ObjectDispatch_ApplyArgumentToChildrenFar(actor, 22);
-						UiWork_PushValueSlotFar(work->quantities[i], 1);
-						UiText_ShowPositionedMessageAndWaitFar((s32)MsgFieldStrengthExhausted, 1);
-					}
-					if (work->survived == 0)
-					{
-						struct BtlUnit *vitals;
+						u32 i;
 
-						if (gGameState.selected_actor == 0)
+						Battle_InitializeRenderObject();
+						Battle_SetObjectFlag5bWhenMode3();
+						for (i = 0; i < work->count; i++)
 						{
-							if (GameFlag_TestFar(32) != 0)
-								ObjectDispatch_ApplyArgumentToChildrenFar(actor, 21);
+							ObjectDispatch_ApplyArgumentToChildrenFar(actor, 22);
+							UiWork_PushValueSlotFar(work->quantities[i], 1);
+							UiText_ShowPositionedMessageAndWaitFar(
+								(s32)MsgFieldStrengthExhausted, 1);
+						}
+						if (work->survived == 0)
+						{
+							struct BtlUnit *vitals;
+
+							if (gGameState.selected_actor == 0)
+							{
+								if (GameFlag_TestFar(32) != 0)
+									ObjectDispatch_ApplyArgumentToChildrenFar(actor, 21);
+								else
+									ObjectDispatch_ApplyArgumentToChildrenFar(actor, 37);
+							}
 							else
-								ObjectDispatch_ApplyArgumentToChildrenFar(actor, 37);
+							{
+								ObjectDispatch_ApplyArgumentToChildrenFar(actor, 19);
+							}
+							AudioCommand_PlayFar(59);
+							UiText_ShowPositionedMessageAndWaitFar(
+								(s32)MsgFieldPartyAnnihilated, 1);
+							vitals = UnitGetFar(gGameState.selected_actor);
+							vitals->hp = 1;
+							/* FAKEMATCH: the one-pass block keeps the reloaded 1 of the HP ratio
+							 * below the hp store. Measured: plain, the 1 and its shift are
+							 * scheduled above the store (differ 6); the gauges through
+							 * Vitals_Ratio, as evbasic.c writes this same revival, differ 60. */
+							do
+							{
+								vitals->hp_gauge =
+									Vitals_Clamp((vitals->hp << 14) / vitals->max_hp);
+								if (vitals->hp_gauge == 0 && vitals->hp != 0)
+									vitals->hp_gauge = 1;
+							} while (0);
+							vitals->ep_gauge = Vitals_Clamp((vitals->ep << 14) / vitals->max_ep);
+							if (vitals->ep_gauge == 0 && vitals->ep != 0)
+								vitals->ep_gauge = 1;
+							gGameState.scene = gGameState.saved_scene;
+							gGameState.entrance = gGameState.saved_entrance;
+							Battle_ClearObjectFlag5bWhenMode3();
+							result = 999;
+							goto done;
 						}
-						else
-						{
-							ObjectDispatch_ApplyArgumentToChildrenFar(actor, 19);
-						}
-						AudioCommand_PlayFar(59);
-						UiText_ShowPositionedMessageAndWaitFar((s32)MsgFieldPartyAnnihilated, 1);
-						vitals = UnitGetFar(gGameState.selected_actor);
-						vitals->hp = 1;
-						/* FAKEMATCH: the one-pass block keeps the reloaded 1 of the HP ratio
-						 * below the hp store. Measured: plain, the 1 and its shift are
-						 * scheduled above the store (differ 6); the gauges through
-						 * Vitals_Ratio, as evbasic.c writes this same revival, differ 60. */
-						do
-						{
-							vitals->hp_gauge = Vitals_Clamp((vitals->hp << 14) / vitals->max_hp);
-							if (vitals->hp_gauge == 0 && vitals->hp != 0)
-								vitals->hp_gauge = 1;
-						} while (0);
-						vitals->ep_gauge = Vitals_Clamp((vitals->ep << 14) / vitals->max_ep);
-						if (vitals->ep_gauge == 0 && vitals->ep != 0)
-							vitals->ep_gauge = 1;
-						gGameState.scene = gGameState.saved_scene;
-						gGameState.entrance = gGameState.saved_entrance;
 						Battle_ClearObjectFlag5bWhenMode3();
-						result = 999;
-						goto done;
 					}
-					Battle_ClearObjectFlag5bWhenMode3();
+					else if (work->event == -888)
+					{
+						Battle_InitializeRenderObject();
+						Map_ShowWorldMap((s32)&ResourceId_WorldMapPicture);
+					}
+					else if (work->event == -889)
+					{
+						Battle_InitializeRenderObject();
+						BattleFx_RunVisibilityTransition();
+					}
+					else
+					{
+						BattleFx_RunKind6DescriptorAction(work->event);
+					}
+					work->busy = 0;
+					work->event = 0;
 				}
-				else if (work->event == -888)
+				else if (work->scene != 0)
 				{
 					Battle_InitializeRenderObject();
-					Map_ShowWorldMap((s32)&ResourceId_WorldMapPicture);
+					ObjectTable_Snapshot();
+					gGameState.return_cue = -1;
+					gGameState.scene = 510;
+					gGameState.entrance = work->scene;
+					work->exit = 999;
+					Scene_FadeColorFromWhite(work->scene);
+					work->unknown_1a8 = 0;
+					work->scene = 0;
+					gGameState.encounter_steps = 0;
 				}
-				else if (work->event == -889)
+				else if (work->action != 0)
 				{
-					Battle_InitializeRenderObject();
-					BattleFx_RunVisibilityTransition();
+					work->busy = 1;
+					BattleAction_RunDescriptor(work->action);
+					work->busy = 0;
+					work->action = 0;
 				}
-				else
+				else if (work->input != 0)
 				{
-					BattleFx_RunKind6DescriptorAction(work->event);
+					Battle_DispatchInputEvent(work->input);
+					work->input = 0;
 				}
-				work->busy = 0;
-				work->event = 0;
-			}
-			else if (work->scene != 0)
-			{
-				Battle_InitializeRenderObject();
-				ObjectTable_Snapshot();
-				gGameState.return_cue = -1;
-				gGameState.scene = 510;
-				gGameState.entrance = work->scene;
-				work->exit = 999;
-				Scene_FadeColorFromWhite(work->scene);
-				work->unknown_1a8 = 0;
-				work->scene = 0;
-				gGameState.encounter_steps = 0;
-			}
-			else if (work->action != 0)
-			{
-				work->busy = 1;
-				BattleAction_RunDescriptor(work->action);
-				work->busy = 0;
-				work->action = 0;
-			}
-			else if (work->input != 0)
-			{
-				Battle_DispatchInputEvent(work->input);
-				work->input = 0;
-			}
-			else if (work->examine != 0)
-			{
-				s32 object;
+				else if (work->examine != 0)
+				{
+					s32 object;
 
-				UiTimedNotice_CloseIfActiveFar();
-				object = BattleEffect_SelectNearbyObject(gGameState.selected_actor);
-				mode = 0;
-				if (object != -1)
-				{
-					mode = BattleFx_FindDescriptorWithOverride(object) != 0;
-				}
-				if (mode != 0)
-				{
-					work->descriptor = object | 0x1000;
-					work->menu = 0;
-				}
-				else
-				{
-					mode = Object_GetTriggerTileAheadOfCurrent();
+					UiTimedNotice_CloseIfActiveFar();
+					object = BattleEffect_SelectNearbyObject(gGameState.selected_actor);
+					mode = 0;
+					if (object != -1)
+					{
+						mode = BattleFx_FindDescriptorWithOverride(object) != 0;
+					}
 					if (mode != 0)
 					{
-						work->tile = mode;
+						work->descriptor = object | 0x1000;
 						work->menu = 0;
 					}
 					else
 					{
-						work->menu = 1;
-					}
-				}
-				work->examine = 0;
-			}
-			else if (work->menu != 0)
-			{
-				UiTimedNotice_CloseIfActiveFar();
-				Battle_InitializeRenderObject();
-				AudioCommand_PlayFar(111);
-				Battle_SetObjectFlag5bWhenMode3();
-				GameFlag_SetBitFar(0x106);
-				if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0
-					&& (gKeysHeld & KEY_SELECT) != 0)
-				{
-					Menu_RunSelectionWithCursorObjectFar();
-				}
-				else if (GameFlag_TestFar(0x107) != 0)
-				{
-					work->event = 250;
-				}
-				else
-				{
-					work->unknown_cc0 = 0;
-					Menu_RunTopSelectionFar();
-					work->unknown_cc0 = 1;
-				}
-				Battle_ClearObjectFlag5bWhenMode3();
-				GameFlag_ClearBitFar(0x106);
-				GameFlag_RefreshLureCapFar();
-				work->menu = 0;
-			}
-			else if ((s16)work->descriptor != 0)
-			{
-				Battle_SetObjectFlag5bWhenMode3();
-				BattleFx_RunDescriptorAction(work->descriptor & 0xfff);
-				Battle_ClearObjectFlag5bWhenMode3();
-				work->descriptor = 0;
-			}
-			else if (work->tile != 0)
-			{
-				Battle_SetObjectFlag5bWhenMode3();
-				Field_RunTileAction(work->tile);
-				Battle_ClearObjectFlag5bWhenMode3();
-				work->tile = 0;
-			}
-			else if (work->command != 0)
-			{
-				UiTimedNotice_CloseIfActiveFar();
-				Battle_SetObjectFlag5bWhenMode3();
-				BattleCommand_ExecuteSelectedAction(work->command);
-				Battle_ClearObjectFlag5bWhenMode3();
-				work->command = 0;
-			}
-			else if (work->item != 0)
-			{
-				Battle_SetObjectFlag5bWhenMode3();
-				BattleCommand_ExecuteSelectedItem(work->item, work->item_argument);
-				Battle_ClearObjectFlag5bWhenMode3();
-				work->item = 0;
-			}
-			else if (work->start != 0)
-			{
-				AudioCommand_PlayFar(111);
-				Battle_InitializeRenderObject();
-				Battle_SetObjectFlag5bWhenMode3();
-				GameFlag_SetBitFar(0x106);
-				if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0)
-				{
-					Menu_RunSelectionFar();
-				}
-				/* FAKEMATCH: the volatile read loads gDebugMode again for this second test, as the bytes do; read plainly in both tests, CSE reuses the first load and Field_RunScene differs 48, 961 instructions for 965. The other three reads of gDebugMode in this function need no qualifier. */
-				else if (*(volatile u8 *)&gDebugMode != 0 && (gKeysHeld & KEY_L) != 0)
-				{
-					Debug_RunPaletteEditor();
-				}
-				else if (GameFlag_TestFar(0x107) != 0)
-				{
-					work->event = 250;
-				}
-				else
-				{
-					Battle_ResetEffectCounter();
-					UiTimedNotice_CloseIfActiveFar();
-					gGameState.return_cue = AudioCommand_GetSecondaryStateByteFar();
-					if (GameFlag_TestFar(0x17e) == 0)
-					{
-						struct MenuCtrl *ctrl = (struct MenuCtrl *)gMenuCtrlWork;
-						u8				*owner = ResourceBlockOwners;
-						s32				 free = 0;
-						s32				 n = 512;
-
-						do
+						mode = Object_GetTriggerTileAheadOfCurrent();
+						if (mode != 0)
 						{
-							if (*owner++ == 0xff)
-								free++;
-						} while (--n != 0);
-						if (free - 136 < 0)
-						{
-							ctrl->wait = 1;
-							WaitFrames(1);
+							work->tile = mode;
+							work->menu = 0;
 						}
-						/* FAKEMATCH: Menu_RunWorkspaceResultLoopFar is called as void (*)(s32); as s32 (*)(void), its prototype, Field_RunScene does not compile */
-						/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-						((void (*)(s32))Menu_RunWorkspaceResultLoopFar)(0);
-						ctrl->wait = 0;
+						else
+						{
+							work->menu = 1;
+						}
+					}
+					work->examine = 0;
+				}
+				else if (work->menu != 0)
+				{
+					UiTimedNotice_CloseIfActiveFar();
+					Battle_InitializeRenderObject();
+					AudioCommand_PlayFar(111);
+					Battle_SetObjectFlag5bWhenMode3();
+					GameFlag_SetBitFar(0x106);
+					if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0
+						&& (gKeysHeld & KEY_SELECT) != 0)
+					{
+						Menu_RunSelectionWithCursorObjectFar();
+					}
+					else if (GameFlag_TestFar(0x107) != 0)
+					{
+						work->event = 250;
 					}
 					else
 					{
-						UiText_ShowPositionedMessageAndWaitFar((s32)MsgFieldPauseUnavailable, 1);
+						work->unknown_cc0 = 0;
+						Menu_RunTopSelectionFar();
+						work->unknown_cc0 = 1;
 					}
+					Battle_ClearObjectFlag5bWhenMode3();
+					GameFlag_ClearBitFar(0x106);
+					GameFlag_RefreshLureCapFar();
+					work->menu = 0;
 				}
-				Battle_ClearObjectFlag5bWhenMode3();
-				GameFlag_ClearBitFar(0x106);
-				work->start = 0;
-			}
-		}
+				else if ((s16)work->descriptor != 0)
+				{
+					Battle_SetObjectFlag5bWhenMode3();
+					BattleFx_RunDescriptorAction(work->descriptor & 0xfff);
+					Battle_ClearObjectFlag5bWhenMode3();
+					work->descriptor = 0;
+				}
+				else if (work->tile != 0)
+				{
+					Battle_SetObjectFlag5bWhenMode3();
+					Field_RunTileAction(work->tile);
+					Battle_ClearObjectFlag5bWhenMode3();
+					work->tile = 0;
+				}
+				else if (work->command != 0)
+				{
+					UiTimedNotice_CloseIfActiveFar();
+					Battle_SetObjectFlag5bWhenMode3();
+					BattleCommand_ExecuteSelectedAction(work->command);
+					Battle_ClearObjectFlag5bWhenMode3();
+					work->command = 0;
+				}
+				else if (work->item != 0)
+				{
+					Battle_SetObjectFlag5bWhenMode3();
+					BattleCommand_ExecuteSelectedItem(work->item, work->item_argument);
+					Battle_ClearObjectFlag5bWhenMode3();
+					work->item = 0;
+				}
+				else if (work->start != 0)
+				{
+					AudioCommand_PlayFar(111);
+					Battle_InitializeRenderObject();
+					Battle_SetObjectFlag5bWhenMode3();
+					GameFlag_SetBitFar(0x106);
+					if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0)
+					{
+						Menu_RunSelectionFar();
+					}
+					/* FAKEMATCH: the volatile read loads gDebugMode again for this second test, as the bytes do; read plainly in both tests, CSE reuses the first load and Field_RunScene differs 48, 961 instructions for 965. The other three reads of gDebugMode in this function need no qualifier. */
+					else if (*(volatile u8 *)&gDebugMode != 0 && (gKeysHeld & KEY_L) != 0)
+					{
+						Debug_RunPaletteEditor();
+					}
+					else if (GameFlag_TestFar(0x107) != 0)
+					{
+						work->event = 250;
+					}
+					else
+					{
+						Battle_ResetEffectCounter();
+						UiTimedNotice_CloseIfActiveFar();
+						gGameState.return_cue = AudioCommand_GetSecondaryStateByteFar();
+						if (GameFlag_TestFar(0x17e) == 0)
+						{
+							struct MenuCtrl *ctrl = (struct MenuCtrl *)gMenuCtrlWork;
+							u8				*owner = ResourceBlockOwners;
+							s32				 free = 0;
+							s32				 n = 512;
 
-		GameFlag_ClearBitFar(0x104);
-		actor = work->actors[gGameState.selected_actor];
-		if (actor != NULL)
-		{
-			if (gGameState.movement_mode == 2)
-				ObjectDispatch_InitFromTable0Far(actor);
-			else if (gGameState.movement_mode == 1)
-				ObjectDispatch_InitFromTable1Far(actor);
-			else if (work->mode == 3)
-				ObjectDispatch_InitFromTable3Far(actor);
-			else
-				ObjectDispatch_InitFromTable2Far(actor);
-		}
-		do
-		{
-			WaitFrames(1);
+							do
+							{
+								if (*owner++ == 0xff)
+									free++;
+							} while (--n != 0);
+							if (free - 136 < 0)
+							{
+								ctrl->wait = 1;
+								WaitFrames(1);
+							}
+							/* FAKEMATCH: Menu_RunWorkspaceResultLoopFar is called as void (*)(s32); as s32 (*)(void), its prototype, Field_RunScene does not compile */
+							/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
+							((void (*)(s32))Menu_RunWorkspaceResultLoopFar)(0);
+							ctrl->wait = 0;
+						}
+						else
+						{
+							UiText_ShowPositionedMessageAndWaitFar(
+								(s32)MsgFieldPauseUnavailable, 1);
+						}
+					}
+					Battle_ClearObjectFlag5bWhenMode3();
+					GameFlag_ClearBitFar(0x106);
+					work->start = 0;
+				}
+			}
+
+			GameFlag_ClearBitFar(0x104);
 			actor = work->actors[gGameState.selected_actor];
-			if (gDebugMode == 0 || GameFlag_TestFar(0x163) == 0)
-				Field_ProcessStep(
-					actor->terrain_id, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-		} while (BattleFx_SumCounters() == 0);
+			if (actor != NULL)
+			{
+				if (gGameState.movement_mode == 2)
+					ObjectDispatch_InitFromTable0Far(actor);
+				else if (gGameState.movement_mode == 1)
+					ObjectDispatch_InitFromTable1Far(actor);
+				else if (work->mode == 3)
+					ObjectDispatch_InitFromTable3Far(actor);
+				else
+					ObjectDispatch_InitFromTable2Far(actor);
+			}
+			do
+			{
+				WaitFrames(1);
+				actor = work->actors[gGameState.selected_actor];
+				if (gDebugMode == 0 || GameFlag_TestFar(0x163) == 0)
+					Field_ProcessStep(
+						actor->terrain_id, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+			} while (BattleFx_SumCounters() == 0);
+		}
 	}
 
 done:

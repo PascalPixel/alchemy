@@ -221,7 +221,7 @@ void Debug_SelectAbilityPair(void)
 			VramBlock_LoadCached(slot, 128, Resource_FixedBlockBTiles);
 			cursor = RenderOutput_Create(slot, 0x40000000, win, 0, 0);
 		}
-		/* FAKEMATCH: needed to match: the title message reuses the slot variable */
+		/* FAKEMATCH: needed to match: the title message reuses the slot variable. The message id passed directly: differ 23. */
 		slot = (s32)MsgPanelHpMaxLabel;
 		UiText_DrawCharacterAtOffset(slot, title, 16, 0);
 		for (;;)
@@ -302,7 +302,7 @@ void Debug_SelectAbilityPair(void)
 				AudioCommand_PlayFar(113);
 			else
 				continue;
-			/* FAKEMATCH: the unread flag forces fresh zeros for both entries and the cursor argument instead of reusing the row register. */
+			/* FAKEMATCH: the unread flag forces fresh zeros for both entries and the cursor argument instead of reusing the row register. Without the store, also without the flag: differ 4. */
 			done = 1;
 			break;
 		}

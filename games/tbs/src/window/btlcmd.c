@@ -4385,6 +4385,8 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 						if (count == 0)
 							goto no_condition;
 						break;
+					default:
+						break;
 					case 6:
 						count = 0;
 						if (unit->doku != 0)
@@ -4477,11 +4479,8 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 								(struct RenderInput *)infoWin, 0, 8 * count);
 							count++;
 						}
-						if (count == 0)
-							goto no_condition;
-						break;
-					default:
-						break;
+						if (count != 0)
+							break;
 					no_condition:
 						UiWork_SetParamNibble(2);
 						UiText_DrawCharacterAtOffset(

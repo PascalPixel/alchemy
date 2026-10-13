@@ -177,34 +177,28 @@ static s32 StagedActor_CountdownUntilPositionUnset(struct FieldActor *o)
 	return 0;
 }
 
-struct Walker
-{
-	u8	unknown_00[0x4c];
-	s32 countdown;
-	u8	unknown_50[0x16];
-	s16 step;
-};
-
 static void FuneHeya_RunWalkerStep(struct FieldActor *obj)
 {
 	struct FieldActor *leader;
-	struct Walker	  *walker;
 
-	walker = (struct Walker *)obj;
 	leader = Object_GetById(8);
-	switch (walker->step)
+	switch ((s16)obj->work)
 	{
 	case 0:
 		obj->facing = 0xb000;
-		goto advance;
+		obj->work++;
+		obj->rise_counter = 0;
+		break;
 	case 2:
 		obj->facing = 0;
-		goto advance;
+		obj->work++;
+		obj->rise_counter = 0;
+		break;
 	case 4:
 		Object_SetMode(obj, 2);
 		FieldObject_SetPosition((s32)obj, 0x1d40000, 0x200000, 0x2780000);
-		walker->countdown = 60;
-		walker->step++;
+		obj->rise_base_y = 60;
+		obj->work++;
 		break;
 	case 5:
 		if (StagedActor_CountdownUntilPositionUnset((u8 *)obj) != 0)
@@ -215,7 +209,7 @@ static void FuneHeya_RunWalkerStep(struct FieldActor *obj)
 			{
 				obj->rise_enabled = 1;
 			}
-			walker->step++;
+			obj->work++;
 		}
 		break;
 	case 7:
@@ -224,16 +218,15 @@ static void FuneHeya_RunWalkerStep(struct FieldActor *obj)
 			Object_SetMode(obj, 3);
 			obj->rise_enabled = 2;
 		}
-	advance:
-		walker->step++;
+		obj->work++;
 		/* FAKEMATCH: the zero is spelled as a 16-bit value so it is loaded after the step store; a plain 0 is loaded before it. */
-		*(u8 *)&obj->rise_counter = (u16)0;
+		obj->rise_counter = 0;
 		break;
 	case 9:
 		Object_SetMode(obj, 2);
 		FieldObject_SetPosition((s32)obj, 0x1e00000, 0x200000, 0x2580000);
-		walker->countdown = 60;
-		walker->step++;
+		obj->rise_base_y = 60;
+		obj->work++;
 		if (leader->paused == 0)
 		{
 			obj->rise_enabled = 3;
@@ -244,7 +237,7 @@ static void FuneHeya_RunWalkerStep(struct FieldActor *obj)
 		{
 			Object_SetMode(obj, 1);
 			obj->rise_counter = 0;
-			walker->step++;
+			obj->work++;
 		}
 		break;
 	case 1:
@@ -255,7 +248,7 @@ static void FuneHeya_RunWalkerStep(struct FieldActor *obj)
 		FuneHeya_AdvanceWalkerAfterRise((u8 *)obj);
 		break;
 	case 12:
-		walker->step = 0;
+		obj->work = 0;
 		break;
 	}
 }

@@ -1124,7 +1124,7 @@ s32 Battle_ClearSerialTransferPayload(void)
 		Dma_Set((void *)&(cell), (dest), DMA_FILL32 | ((bytes) >> 2), REG_DMA3); \
 	}
 
-/* FAKEMATCH: the one-pass block keeps the seed store in place in Battle_RunEncounter; as a plain assignment, tbs-en differs. */
+/* FAKEMATCH: the one-pass block keeps the seed store in place in Battle_RunEncounter: the reference stores the zero held in r5 and only then sets wait's zero in r5. 2026-10-13: as a plain assignment 4 of 645 differ (the pool load and wait's zero are scheduled around the store); the store in the for's initializer, after a comma or chained with wait, differs the same 4; wait = 0 set before it 18. */
 #define BattleRandom_ClearSeed() \
 	do                           \
 	{                            \

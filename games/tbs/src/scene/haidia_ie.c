@@ -925,7 +925,6 @@ static void FieldScene_RunGroupChoreography(void)
 
 static void HaidiaIe_RunActorPairEffectScene(void)
 {
-
 	struct FieldActor *record;
 	s32				   v5;
 
@@ -949,12 +948,7 @@ static void HaidiaIe_RunActorPairEffectScene(void)
 	Engine_ActorSetSpriteFlags(record, 0);
 	Engine_ActorSetAnimation(25, 7);
 	record = Object_GetById(25);
-	{
-		u8 *motion = (u8 *)record->sprite;
-		u16 shown = 0x1555;
-
-		*(u16 *)(motion + 30) = shown;
-	}
+	record->sprite->rotation = 0x1555;
 	record = Object_GetById(25);
 	Engine_ActorSetSpriteFlags(record, 0);
 	{

@@ -239,7 +239,12 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z)
 	if (object != NULL)
 		object[9] &= ~0x0c;
 	EffectSlot_SetPosition(effect, x, z);
-	/* FAKEMATCH: needed to match: 1.0 is held in a local, set before max_speed, so the object reload is scheduled ahead of the three unit stores */
+	/* FAKEMATCH: register choice only: 1.0 is held in a local set before
+	   max_speed, so it lives beside 2.0 and takes r2, which lets sched2
+	   load the object ahead of the three unit stores, as native. Plain
+	   forms measured (2026-10-13): the chain with the constant, three
+	   separate stores, or the chain before max_speed give 1.0 r3 and the
+	   reload after the stores (differ 12). */
 	unit = 0x10000;
 	effect->max_speed = 0x20000;
 	effect->acceleration = effect->scale_y = effect->scale_x = unit;

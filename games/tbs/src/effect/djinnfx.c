@@ -635,7 +635,7 @@ static __inline__ void DrawScrolledImage(void *canvas, const void *pixels, s32 x
 static __inline__ void DrawCroppedImage(
 	void *canvas, const void *pixels, s32 x, s32 y, s32 width, DrawRectangle *draw)
 {
-	/* FAKEMATCH: needed to match: keep the cropped height inside the drawing scope */
+	/* FAKEMATCH: forwarding inline; the cropped height stays inside its scope. Both calls made through the blitter directly with 91 differ 16 on tbs-en: the stack arguments 128 and 91 go through r0 instead of r1 and the pixels pool load moves ahead of them. */
 	(*draw)(canvas, pixels, x, y, width, 91);
 }
 
@@ -1719,7 +1719,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 			{
 				struct EffectStep	  *step = (struct EffectStep *)(Ram_MapCellBuffer + 0x4000);
 				struct EffectPosition *origin;
-				/* FAKEMATCH: needed to match: a zero offset known only after gcse keeps the origin copy, hoisted after the projection address */
+				/* FAKEMATCH: a zero offset known only after gcse keeps the origin copy, hoisted after the projection address. origin = target_screen, or target_screen->x and ->y read directly, differ 64 on tbs-en, two instructions fewer. */
 				s32 bias = 0;
 				for (i = 0; i != 64; i++, step++)
 				{
@@ -1730,7 +1730,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 						SceneTransform_ApplyPitch(step->velocity_x);
 						SceneTransform_ApplyYaw(step->velocity_y);
 						EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
-						/* FAKEMATCH: needed to match: see bias above */
+						/* FAKEMATCH: the zero bias above; see there. */
 						origin = (struct EffectPosition *)((u8 *)target_screen + bias);
 						projected.x = projected.x / 2 + origin->x / 2;
 						projected.y += origin->y + 32;

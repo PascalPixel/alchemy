@@ -426,7 +426,6 @@ s32 Menu_RunWorkspaceResultLoop(void)
 {
 	s32 result;
 
-retry:
 	result = Menu_RunWorkspaceSelectionLoop();
 	if (result == -1)
 	{
@@ -436,7 +435,7 @@ retry:
 	{
 		if (Save_WriteSelectedSlot() == -1)
 		{
-			goto retry;
+			return Menu_RunWorkspaceResultLoop();
 		}
 	}
 	else if (result == 1)
@@ -448,7 +447,7 @@ retry:
 	{
 		if (Menu_RunWorkspaceOptions() == -1)
 		{
-			goto retry;
+			return Menu_RunWorkspaceResultLoop();
 		}
 	}
 	return 0;
@@ -475,7 +474,7 @@ s32 DebugMenu_BrowseIcons(void)
 	gMenuCtrlWork->suspended = redraw;
 	WaitFrames(1);
 
-	do
+	while (1)
 	{
 		if (gKeysRepeat & KEY_LEFT)
 		{
@@ -498,9 +497,9 @@ s32 DebugMenu_BrowseIcons(void)
 			mode++;
 		}
 		if (gKeysRepeat & KEY_A)
-			goto close;
+			break;
 		if (gKeysRepeat & KEY_B)
-			goto close;
+			break;
 		if (redraw != 0)
 		{
 			redraw = 0;
@@ -545,8 +544,7 @@ s32 DebugMenu_BrowseIcons(void)
 			}
 		}
 		WaitFrames(1);
-	} while (1);
-close:
+	}
 	UiWork_Finalize(window, 2);
 	gMenuCtrlWork->suspended = 0;
 	return 0;
@@ -591,7 +589,9 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
 	total = count + i;
 
 	/* FAKEMATCH: the count-derived mask is needed to match the native mask
-     * in r9 and work in fp; a direct constant swaps them (four instructions). */
+     * in r9 and work in fp; a direct constant swaps them (four instructions).
+     * 2026-10-13: cancel = KEY_B differs 12 of 179, KEY_B tested directly
+     * 20, cancel = KEY_B set first in the function 48. */
 	cancel = ((u32)(u16)count >> 16) | KEY_B;
 	/* FAKEMATCH: defining the offset before the loop keeps its load in r1; defining it inside redraw uses r3 (4 instructions differ in all six editions). */
 	slot_offset = RENDER_SLOT_VALUE_OFS + 2;
@@ -632,7 +632,12 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
 				glyph = Portrait_SpriteMap[(index - count) * 2 + 1] + 128;
 			{
 				/* FAKEMATCH: the word temporary is needed to match palette's
-                 * r2 through the slot store; direct assignment chooses r3. */
+                 * r2 through the slot store; direct assignment chooses r3.
+                 * 2026-10-13: slot assigned directly with 15 passed as a
+                 * literal differs 4 of 179 (the 15 takes r3 after the slot
+                 * store); so do the loaded temporary alone, the load
+                 * written as an index and the assignment inside the
+                 * argument list; pal alone, without loaded, differs 69. */
 				s32 pal;
 				s32 loaded = *(u16 *)((u8 *)work + slot_offset);
 				pal = 15;

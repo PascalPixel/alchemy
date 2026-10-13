@@ -342,7 +342,7 @@ static s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
 				y = top << 20;
 				kind = 253;
 			}
-			/* FAKEMATCH: a do-while(0) around the object and height lets sched2 issue the height arithmetic first, as the reference does */
+			/* FAKEMATCH: a one-pass block around the object and height lets sched2 issue the height arithmetic first, as the native does. Without it: differ 2; with height computed before the call it reallocates the function (differ 99, tbs-en). */
 			do
 			{
 				object = OverlayObject_PrepareObject(x, y, z, kind);

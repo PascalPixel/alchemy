@@ -1233,9 +1233,8 @@ retry:
 		radius = base + Iwram_MulQ16(Random16(), range);
 		heading = object->script_value + (Random16() >> 2) - (Random16() >> 2);
 		Vector_AddPolarOffset(radius, heading, &pos);
-		if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0)
-			goto retry;
-		if (Map_CheckObjectStep((struct ObjectRuntime *)object, &pos) != 0)
+		if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0
+			|| Map_CheckObjectStep((struct ObjectRuntime *)object, &pos) != 0)
 			goto retry;
 		radius += 0x80000;
 		probe.x = object->x;
@@ -1297,87 +1296,89 @@ s32 ScriptObject_WanderNearHome(struct ScriptObjectRuntime *object)
 	tries = 0;
 	dx = object->x / 0x10000 - object->home_x;
 	dz = object->z / 0x10000 - object->home_z;
-	if (dx * dx + dz * dz > limit)
-		goto home;
-roam:
-	tries++;
-	if (tries > 7)
-		goto home;
-	radius = base + Iwram_MulQ16(Random16(), range);
-	heading = angle + (Random16() >> 2) - (Random16() >> 2);
-	pos.x = object->x;
-	pos.y = object->y;
-	pos.z = object->z;
-	Vector_AddPolarOffset(0x80000, heading, &pos);
-	if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0)
-		goto roam;
-	pos.x = object->x;
-	pos.y = object->y;
-	pos.z = object->z;
-	Vector_AddPolarOffset(radius, heading, &pos);
-	if (Map_CheckObjectStep((struct ObjectRuntime *)object, &pos) != 0)
-		goto roam;
-	probe.x = object->x;
-	probe.y = object->y;
-	radius += 0x80000;
-	probe.z = object->z;
-	Vector_AddPolarOffset(radius, heading, &probe);
-	if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
-		goto roam;
-	probe.x = object->x;
-	probe.y = object->y;
-	probe.z = object->z;
-	Vector_AddPolarOffset(radius, heading + 0x2000, &probe);
-	if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
-		goto roam;
-	probe.x = object->x;
-	probe.y = object->y;
-	probe.z = object->z;
-	Vector_AddPolarOffset(radius, heading - 0x2000, &probe);
-	if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
-		goto roam;
-	probe.x = object->x;
-	probe.y = object->y;
-	probe.z = object->z;
-	Vector_AddPolarOffset(radius, heading + 0x4000, &probe);
-	if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
-		goto roam;
-	probe.x = object->x;
-	probe.y = object->y;
-	probe.z = object->z;
-	Vector_AddPolarOffset(radius, heading - 0x4000, &probe);
-	if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
-		goto roam;
-	dx = pos.x / 0x10000 - object->home_x;
-	dz = pos.z / 0x10000 - object->home_z;
-	if (dx * dx + dz * dz > limit)
-		goto roam;
-	object->flags_59 |= 2;
-	Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
-	goto done;
-home:
+	if (dx * dx + dz * dz <= limit)
+	{
+	roam:
+		tries++;
+		if (tries <= 7)
+		{
+			radius = base + Iwram_MulQ16(Random16(), range);
+			heading = angle + (Random16() >> 2) - (Random16() >> 2);
+			pos.x = object->x;
+			pos.y = object->y;
+			pos.z = object->z;
+			Vector_AddPolarOffset(0x80000, heading, &pos);
+			if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0)
+				goto roam;
+			pos.x = object->x;
+			pos.y = object->y;
+			pos.z = object->z;
+			Vector_AddPolarOffset(radius, heading, &pos);
+			if (Map_CheckObjectStep((struct ObjectRuntime *)object, &pos) != 0)
+				goto roam;
+			probe.x = object->x;
+			probe.y = object->y;
+			radius += 0x80000;
+			probe.z = object->z;
+			Vector_AddPolarOffset(radius, heading, &probe);
+			if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
+				goto roam;
+			probe.x = object->x;
+			probe.y = object->y;
+			probe.z = object->z;
+			Vector_AddPolarOffset(radius, heading + 0x2000, &probe);
+			if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
+				goto roam;
+			probe.x = object->x;
+			probe.y = object->y;
+			probe.z = object->z;
+			Vector_AddPolarOffset(radius, heading - 0x2000, &probe);
+			if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
+				goto roam;
+			probe.x = object->x;
+			probe.y = object->y;
+			probe.z = object->z;
+			Vector_AddPolarOffset(radius, heading + 0x4000, &probe);
+			if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
+				goto roam;
+			probe.x = object->x;
+			probe.y = object->y;
+			probe.z = object->z;
+			Vector_AddPolarOffset(radius, heading - 0x4000, &probe);
+			if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
+				goto roam;
+			dx = pos.x / 0x10000 - object->home_x;
+			dz = pos.z / 0x10000 - object->home_z;
+			if (dx * dx + dz * dz > limit)
+				goto roam;
+			object->flags_59 |= 2;
+			Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
+			goto done;
+		}
+	}
 	tries = 0;
 	angle = (u16)ArcTan2(dz, dx) + 0x8000;
 back:
 	tries++;
-	if (tries > 7)
-		goto done;
-	radius = base + Iwram_MulQ16(Random16(), range);
-	heading = angle + (Random16() >> 2) - (Random16() >> 2);
-	pos.x = object->x;
-	pos.y = object->y;
-	pos.z = object->z;
-	Vector_AddPolarOffset(0x80000, heading, &pos);
-	if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0)
-		goto back;
-	pos.x = object->x;
-	pos.y = object->y;
-	pos.z = object->z;
-	Vector_AddPolarOffset(radius, heading, &pos);
-	if (Map_CheckObjectStep((struct ObjectRuntime *)object, &pos) != 0)
-		goto back;
-	object->flags_59 &= ~2;
-	Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
+	if (tries <= 7)
+	{
+		radius = base + Iwram_MulQ16(Random16(), range);
+		heading = angle + (Random16() >> 2) - (Random16() >> 2);
+		pos.x = object->x;
+		pos.y = object->y;
+		pos.z = object->z;
+		Vector_AddPolarOffset(0x80000, heading, &pos);
+		if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0)
+			goto back;
+		pos.x = object->x;
+		pos.y = object->y;
+		pos.z = object->z;
+		Vector_AddPolarOffset(radius, heading, &pos);
+		if (Map_CheckObjectStep((struct ObjectRuntime *)object, &pos) != 0)
+			goto back;
+		object->flags_59 &= ~2;
+		Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
+	}
 done:
 	object->script_cursor += 4;
 	return 1;

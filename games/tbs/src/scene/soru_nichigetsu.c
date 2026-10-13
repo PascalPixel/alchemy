@@ -187,113 +187,49 @@ static void EV19_TOUCH(void)
 static void SetStatueLightGroup1(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_1) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2d, 28, 0x22, 10, a, b);
-	}
+		Map_CopyCellsTo(0x2d, 28, 0x22, 10, 2, 1);
 	if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_2) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2f, 28, 0x24, 10, a, b);
-	}
+		Map_CopyCellsTo(0x2f, 28, 0x24, 10, 2, 1);
 	if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_3) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2d, 29, 0x22, 11, a, b);
-	}
+		Map_CopyCellsTo(0x2d, 29, 0x22, 11, 2, 1);
 	if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_4) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2f, 29, 0x24, 11, a, b);
-	}
+		Map_CopyCellsTo(0x2f, 29, 0x24, 11, 2, 1);
 }
 
 static void SetStatueLightGroup2(void)
 {
 	if (Engine_GameFlagIsSet(0x826) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2d, 28, 0x22, 10, a, b);
-	}
+		Map_CopyCellsTo(0x2d, 28, 0x22, 10, 2, 1);
 	if (Engine_GameFlagIsSet(0x827) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2f, 28, 0x24, 10, a, b);
-	}
+		Map_CopyCellsTo(0x2f, 28, 0x24, 10, 2, 1);
 	if (Engine_GameFlagIsSet(0x828) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2d, 29, 0x22, 11, a, b);
-	}
+		Map_CopyCellsTo(0x2d, 29, 0x22, 11, 2, 1);
 	if (Engine_GameFlagIsSet(0x829) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2f, 29, 0x24, 11, a, b);
-	}
+		Map_CopyCellsTo(0x2f, 29, 0x24, 11, 2, 1);
 }
 
 static void SetStatueLightGroup3(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_1) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2d, 30, 0x22, 10, a, b);
-	}
+		Map_CopyCellsTo(0x2d, 30, 0x22, 10, 2, 1);
 	if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_2) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2f, 30, 0x24, 10, a, b);
-	}
+		Map_CopyCellsTo(0x2f, 30, 0x24, 10, 2, 1);
 	if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_3) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2d, 31, 0x22, 11, a, b);
-	}
+		Map_CopyCellsTo(0x2d, 31, 0x22, 11, 2, 1);
 	if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_4) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2f, 31, 0x24, 11, a, b);
-	}
+		Map_CopyCellsTo(0x2f, 31, 0x24, 11, 2, 1);
 }
 
 static void SetStatueLightGroup4(void)
 {
 	if (Engine_GameFlagIsSet(0x826) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2d, 30, 0x22, 10, a, b);
-	}
+		Map_CopyCellsTo(0x2d, 30, 0x22, 10, 2, 1);
 	if (Engine_GameFlagIsSet(0x827) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2f, 30, 0x24, 10, a, b);
-	}
+		Map_CopyCellsTo(0x2f, 30, 0x24, 10, 2, 1);
 	if (Engine_GameFlagIsSet(0x828) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2d, 31, 0x22, 11, a, b);
-	}
+		Map_CopyCellsTo(0x2d, 31, 0x22, 11, 2, 1);
 	if (Engine_GameFlagIsSet(0x829) != 0)
-	{
-		s32 a = 2;
-		s32 b = 1;
-		Map_CopyCellsTo(0x2f, 31, 0x24, 11, a, b);
-	}
+		Map_CopyCellsTo(0x2f, 31, 0x24, 11, 2, 1);
 }
 
 static void EV11_TOUCH(void)
@@ -1176,7 +1112,6 @@ static void FieldScene_RunActorPositionTransition(void)
 static void EV20_SEARCH(void)
 {
 	struct FieldActor  *actor;
-	s32					base5_8010;
 	s32					base5_0;
 	struct FieldSprite *sprite;
 
@@ -1239,13 +1174,12 @@ static void EV20_SEARCH(void)
 		Engine_ActorSetAnimation(16, 3);
 		Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 		Engine_ActorSetAnimation(16, 1);
-		base5_8010 = 0x8010;
 		Engine_ActorSetAnimation(0, 0);
 		Engine_EventSetMessage((s32)MsgSoruHa);
-		SetSolShindenActorStep(base5_8010, 6);
+		SetSolShindenActorStep(32784, 6);
 		Engine_ActorSetAnimationAndWait(16, 3);
 		Engine_ActorSetAnimation(16, 1);
-		Engine_EventShowMessage(base5_8010, 0);
+		Engine_EventShowMessage(32784, 0);
 		Engine_ActorSetAnimation(0, 3);
 		Engine_EventWait(60);
 		actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1256,7 +1190,9 @@ static void EV20_SEARCH(void)
 		Actor_FaceDirection(0, 0xc000, 20);
 		Actor_SetSpeed(0, 0x4ccc, 0x2666);
 		actor->steering_flags &= ~ACTOR_FACES_MOTION;
-		/* FAKEMATCH: the zero goes through the sprite variable (r7). */
+		/* FAKEMATCH: register choice only: the zero goes through the sprite
+		   variable, whose pseudo has r7, as native. Plain forms measured
+		   (2026-10-13): motion_flags = 0 puts the zero in r2 (differ 4). */
 		sprite = 0;
 		actor->motion_flags = (u32)sprite;
 		Engine_AudioPlayCue(201);
@@ -1288,7 +1224,12 @@ static void EV20_SEARCH(void)
 		Actor_FaceDirection(16, 0xc000, 20);
 		Engine_ActorSetSpeed(16, 0x4ccc, 0x2666);
 		actor = Object_GetById(16);
-		/* FAKEMATCH: a mask temporary delays both byte stores past the zero. */
+		/* FAKEMATCH: register choice and order only: the mask temporary
+		   gives the cleared flags r2 and the motion address r3, so both
+		   byte stores wait past the zero, as native. Plain forms measured
+		   (2026-10-13): &= ~ACTOR_FACES_MOTION with base5_0 = 0 and the
+		   store before, after or chained puts the flags in r3, stored at
+		   once (differ 10); motion_flags = 0 before base5_0 = 0, 23. */
 		{
 			s32 m = 254;
 

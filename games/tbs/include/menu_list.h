@@ -128,7 +128,7 @@ LAYOUT_OFFSET_GUARD(MenuCell_AutoDelay, struct MenuCell, auto_delay, 0xdc);
 LAYOUT_OFFSET_GUARD(MenuCell_AutoMode, struct MenuCell, auto_mode, 0xe0);
 
 // 前に選んでいた位置 (ページ、行、戻る行) を読み戻す
-/* FAKEMATCH: the one-pass block keeps the three cursor reads together at its uses; as a plain block, tbs-en differs. */
+/* A statement macro (S2: a layer, 4 sites): the three cursor reads stay together at every use; as a plain block, tbs-en differs. */
 #define MenuCell_GetCursor(page_, row_, preferred_)                         \
 	do                                                                      \
 	{                                                                       \

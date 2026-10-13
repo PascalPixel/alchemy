@@ -160,8 +160,8 @@ s32 DebugParty_LoadPreset(s32 preset)
 			state->djinn_active[i] = 0;
 		}
 		for (i = 0; i < 32; i++)
-			/* FAKEMATCH: the halfword store through a u16 cast loads its zero from the literal pool, as the reference does. */
-			*(u16 *)&((struct BtlUnit *)state)->action_slots[i] = 0;
+			/* FAKEMATCH: the halfword store through a u16 cast loads its zero from the literal pool, as the reference does. 2026-10-13: the field store state->action_slots[i].encoded_action = 0, with or without a (u16) cast on the zero, differs 23 of 210: movs r3, #0 takes the place of the ldr of the zero and the literal pool moves to the function end; any store through a dereference (this cast, *&...encoded_action, ((u16 *)state->action_slots)[i * 2]) matches. */
+			*(u16 *)&state->action_slots[i] = 0;
 		for (i = 0; i < 2; i++)
 		{
 			if (Debug_PartyPresets[row].actions[i] != 0)
@@ -865,7 +865,7 @@ s32 LinkBattle_SendParty(void)
 	size = LINK_PARTY_OFFER_BYTES;
 	MemFree(buffer);
 	buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
-	/* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's copy is emitted before the count's address as in the reference */
+	/* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's copy is emitted before the count's address as in the reference. 2026-10-13: the plain call differs 2 of 152 (adds r4, r6, #0 is scheduled after the count's load); list set before the copy differs 6; list as buffer + 8, list set in the for's initializer, and the offer state read into a local first differ the same 2. */
 	do
 	{
 		Iwram_CopyWords(buffer, Trade_GetOfferStateFar(0), size);
@@ -972,7 +972,7 @@ s32 BattlePres_SyncTurn(void)
 	u16			   *peer;
 	u16			   *sig;
 	s32				lost = 0;
-	/* FAKEMATCH: needed to match: never used: the reference's frame keeps twenty bytes that no instruction touches */
+	/* FAKEMATCH: never used: the reference's frame keeps twenty bytes that no instruction touches; without it 20 of 232 differ (no sub sp, #20, and the branches and literal offsets shift). */
 	u16 spare[10];
 
 	if (work->two_sided != 0)
@@ -1124,7 +1124,7 @@ s32 Battle_ClearSerialTransferPayload(void)
 		Dma_Set((void *)&(cell), (dest), DMA_FILL32 | ((bytes) >> 2), REG_DMA3); \
 	}
 
-/* FAKEMATCH: the one-pass block keeps the seed store in place in Battle_RunEncounter; as a plain assignment, tbs-en differs. */
+/* FAKEMATCH: the one-pass block keeps the seed store in place in Battle_RunEncounter: the reference stores the zero held in r5 and only then sets wait's zero in r5. 2026-10-13: as a plain assignment 4 of 645 differ (the seed's address and wait's zero are scheduled around the store); the store in the for's initializer, after a comma or chained with wait, differs the same 4; wait = 0 set before it 18. */
 #define BattleRandom_ClearSeed() \
 	do                           \
 	{                            \

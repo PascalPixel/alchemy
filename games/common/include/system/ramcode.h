@@ -25,6 +25,7 @@
 	} while (0)
 
 // 作業スロットに場所を取って写す。使い終わったら Runtime_ReleaseHeapBlock
+/* FAKEMATCH: the inner one-pass block around size_, as in RamCode_Load above. */
 #define RamCode_LoadSlot(slot, code, bytes)                                     \
 	do                                                                          \
 	{                                                                           \

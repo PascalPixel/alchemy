@@ -360,15 +360,9 @@ static s32 SceneActor_SetFacingFromSample(struct FieldActor *actor)
 	u32 v = ((u32)(Engine_RandomNext() << 5)) >> 16;
 
 	if (v == 6)
-	{
-		s32 t = 0xD0;
-		actor->facing = t << 8;
-	}
+		actor->facing = 0xd000;
 	else if (v == 9)
-	{
-		s32 t = 0xB0;
-		actor->facing = t << 8;
-	}
+		actor->facing = 0xb000;
 	return 1;
 }
 
@@ -1196,30 +1190,18 @@ static void FuneKanpan_PlaceRandomDeckActors(void)
 
 static void SceneActor_PlaceActors20To27(void)
 {
-	s32 m = 0xA0;
-
-	m <<= 7;
 	Engine_ActorSetPosition(21, 0x1060000, 0x2C20000);
-	Object_GetById(21)->facing = m;
+	Object_GetById(21)->facing = 0x5000;
 	Engine_ActorSetPosition(24, 0xA40000, 0x2880000);
-	{
-		s32 z = 0;
-		Object_GetById(24)->facing = z;
-	}
+	Object_GetById(24)->facing = 0;
 	Engine_ActorSetSpritePriority(24, 1);
 	Engine_ActorSetPosition(25, 0xC60000, 0x2990000);
-	{
-		s32 x = 0x80;
-		Object_GetById(25)->facing = x << 8;
-	}
+	Object_GetById(25)->facing = 0x8000;
 	Engine_ActorSetSpritePriority(25, 1);
 	Engine_ActorSetPosition(26, 0xBC0000, 0x2A60000);
-	{
-		s32 x = 0xB0;
-		Object_GetById(26)->facing = x << 8;
-	}
+	Object_GetById(26)->facing = 0xb000;
 	Engine_ActorSetPosition(27, 0xBA0000, 0x27B0000);
-	Object_GetById(27)->facing = m;
+	Object_GetById(27)->facing = 0x5000;
 	Engine_ActorSetPosition(22, 0, 0);
 	Engine_ActorSetPosition(23, 0, 0);
 	Engine_ActorSetPosition(20, 0, 0);
@@ -1273,11 +1255,7 @@ static void FuneKanpan_SetupDeckCrewman(void)
 	Actor_SetPosition(23, 0xee0000, 0x2720000);
 	Actor_SetPosition(22, 0x10c0000, 0x2a60000);
 	record = Object_GetById(22);
-	{
-		u16 shown = 0;
-
-		record->facing = shown;
-	}
+	record->facing = 0;
 	Engine_ActorEnableActionCallback(22, FuneKanpan_LeadActionsC);
 	{
 		struct FieldActor *record = Object_GetById(21);
@@ -1347,18 +1325,10 @@ static void FuneKanpan_SetupHiddenLeaderDeparture(void)
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
 	Actor_SetPosition(23, 0, 0);
 	record = Object_GetById(23);
-	{
-		u16 shown = 0x3000;
-
-		record->facing = shown;
-	}
+	record->facing = 0x3000;
 	Actor_SetPosition(21, 0xe80000, 0x28a0000);
 	record = Object_GetById(21);
-	{
-		s32 shown = 0xb000;
-
-		record->facing = shown;
-	}
+	record->facing = 0xb000;
 	Camera_MoveTo(0xe80000, -1, 0x27c0000, 0);
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
@@ -1387,18 +1357,10 @@ static void FuneKanpan_SetupVisibleLeaderDeparture(void)
 	Actor_SetPosition(21, 0, 0);
 	Actor_SetPosition(20, 0, 0);
 	record = Object_GetById(20);
-	{
-		u16 shown = 0x3000;
-
-		record->facing = shown;
-	}
+	record->facing = 0x3000;
 	Actor_SetPosition(23, 0xe80000, 0x28a0000);
 	record = Object_GetById(23);
-	{
-		s32 shown = 0xb000;
-
-		record->facing = shown;
-	}
+	record->facing = 0xb000;
 	Engine_TaskWait(1);
 	FuneKanpan_AnnouncePreparationsReady(20, 23);
 }
@@ -1619,18 +1581,10 @@ static void FieldScene_RunActorSequence(void)
 	Engine_TaskWait(1);
 	Engine_ActorSetPosition(22, 0xb00000, 0x2b80000);
 	record = Object_GetById(22);
-	{
-		s32 shown = 0xd000;
-
-		record->facing = shown;
-	}
+	record->facing = 0xd000;
 	Engine_ActorSetPosition(21, 0x1080000, 0x2960000);
 	record = Object_GetById(21);
-	{
-		s32 shown = 0xb000;
-
-		record->facing = shown;
-	}
+	record->facing = 0xb000;
 	Actor_SetPosition(24, 0xb80000, 0x2a00000);
 	Actor_SetPosition(25, 0xca0000, 0x2b40000);
 	Actor_SetPosition(26, 0xfc0000, 0x2860000);
@@ -1676,11 +1630,7 @@ static void FieldScene_RunActorSequence(void)
 	rec8->x.fixed = 0xc20000;
 	rec8->y.fixed = 0x500000;
 	rec8->z.fixed = 0x2820000;
-	{
-		u16 shown = 0x5000;
-
-		rec8->facing = shown;
-	}
+	rec8->facing = 0x5000;
 	rec8->bounce = 0x6666;
 	rec8->gravity = 0x20000;
 	Engine_EventWait(80);
@@ -1846,11 +1796,7 @@ static void FieldScene_ConfigureLeadActors(void)
 	Actor_SetPosition(23, 0xee0000, 0x2720000);
 	Actor_SetPosition(22, 0x10c0000, 0x2a60000);
 	record = Object_GetById(22);
-	{
-		u16 shown = 0;
-
-		record->facing = shown;
-	}
+	record->facing = 0;
 	Engine_ActorEnableActionCallback(22, FuneKanpan_LeadActionsC);
 	{
 		struct FieldActor *record = Object_GetById(21);
@@ -2668,13 +2614,16 @@ static void FieldScene_RunThreeActorEncounter(void)
 		FieldScene_CallPairWith10(1, 0x6000);
 		Engine_ActorRunRepeatedMotion(GERALD, 1);
 		Event_OpenMessage(GERALD, 0);
-	ask_again:
-		if (Engine_EventChooseYesNo(0, 0) == 1)
+		for (;;)
 		{
-			Engine_ActorRunRepeatedMotion(IWAN, 1);
-			Engine_EventSetMessage((s32)MsgFuneRobinDontTalkLikeShouldnt);
-			Event_OpenMessage(IWAN, 0);
-			goto ask_again;
+			if (Engine_EventChooseYesNo(0, 0) == 1)
+			{
+				Engine_ActorRunRepeatedMotion(IWAN, 1);
+				Engine_EventSetMessage((s32)MsgFuneRobinDontTalkLikeShouldnt);
+				Event_OpenMessage(IWAN, 0);
+			}
+			else
+				break;
 		}
 	}
 	Engine_EventWait(20);
@@ -2804,11 +2753,7 @@ static void FuneKanpan_PlaceLeaderOnDeck(void)
 	Engine_MapRedraw();
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0xe80000, 0x2a40000);
 	record = Object_GetById(0);
-	{
-		u16 shown = 0x4000;
-
-		record->facing = shown;
-	}
+	record->facing = 0x4000;
 	Engine_TaskWait(1);
 }
 

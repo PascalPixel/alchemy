@@ -21,6 +21,7 @@
 		do                      \
 		{
 
+/* FAKEMATCH: closes IRQ_LOCK's two one-pass blocks; see the tag above IRQ_LOCK. */
 #define IRQ_UNLOCK(saved) \
 	}                     \
 	while (0)             \

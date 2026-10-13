@@ -119,7 +119,6 @@ struct WorldMapWork
 void BattleFx_SetupResourcesAndWindow(void)
 {
 	u32					*oam;
-	volatile u32		 fill;
 	u32					*pal;
 	struct WorldMapWork *work;
 	struct FieldActor	*object;
@@ -133,8 +132,7 @@ void BattleFx_SetupResourcesAndWindow(void)
 	oam = (u32 *)work->markers;
 	object = Object_GetById(gGameState.selected_actor);
 	work->vram_block = Resource_FindFreeEntry();
-	fill = 0;
-	Dma_Set((const void *)&fill, pal, 0x85000020, REG_DMA3);
+	Dma_Fill32(0, pal, 0x80);
 	pal[0] = 255;
 	pal[1] = 0x1ff;
 	pal[2] = 272;

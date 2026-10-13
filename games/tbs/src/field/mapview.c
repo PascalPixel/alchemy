@@ -199,7 +199,7 @@ s32 Map_InitializePerspectiveScene(void)
 	Io_Write16(0x100, &REG_BG2PA);
 	REG_BG2PB = 0;
 	REG_BG2PC = 0;
-	/* FAKEMATCH: needed to match: loop notes keep BG2PD's constant late and r0 first below */
+	/* FAKEMATCH: one-pass block; its loop notes keep the 0x100 for BG2PD built just before its store and the 12 for Runtime_AllocateBlock loaded before the 76. Without it differ 6, whether the three writes are Io_Put16, Io_Set16 or plain stores; Io_Write16 for BG2PD (itself a one-pass macro) differ 2. */
 	do
 	{
 		Io_Put16(&REG_BG2PD, 0x100);
@@ -721,7 +721,7 @@ void Map_LoadDefaultCellsAndUpdateBlock(void)
 
 void MapAnimation_Update(void)
 {
-	/* FAKEMATCH: needed to match: indexed channel expressions preserve ip/lr allocation and the sentinel/VRAM pool order. */
+	/* FAKEMATCH: each channel is written (state->anim + i), not through a channel pointer: a pointer anim = state->anim + i (or &state->anim[i], declared in either scope) differs 4, ip and lr swapping the 0xffff sentinel and the VRAM base; a walking anim++ differs 8; state->anim[i]. differs 167, no walking pointer at all. */
 	struct MapState *state = gMapWork[0];
 	u32				 i;
 

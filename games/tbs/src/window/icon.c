@@ -263,7 +263,7 @@ extern const u8 *RenderResource_PairSourceTable[];
 
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot)
 {
-	/* FAKEMATCH: three more names of the one table keep each case's own literal slot; one name folds the switch to a single load. */
+	/* FAKEMATCH: three more names of the one table keep each case's own literal slot; with the one name in every case the switch folds away, differ 21 on tbs-en (9 instructions for 24). */
 	extern const u8 *PairSource1[] __asm__("RenderResource_PairSourceTable"), *PairSource2[] __asm__("RenderResource_PairSourceTable"), *PairSource3[] __asm__("RenderResource_PairSourceTable");
 	void *source;
 	switch (value)

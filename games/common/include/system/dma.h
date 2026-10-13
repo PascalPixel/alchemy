@@ -11,6 +11,13 @@ struct DmaRegisters
 	u32 control;
 };
 
+#define Dma_Fill16(value, destination, size)                                    \
+	{                                                                           \
+		volatile u16 fill_ = (value);                                           \
+		Dma_Set((const void *)&fill_, (destination), 0x81000000 | ((size) / 2), \
+			(volatile u32 *)0x040000d4);                                        \
+	}
+
 #define Dma_Fill32(value, destination, size)                                    \
 	{                                                                           \
 		volatile u32 fill_ = (value);                                           \

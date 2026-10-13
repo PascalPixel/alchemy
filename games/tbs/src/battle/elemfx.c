@@ -249,7 +249,11 @@ s32 BattleFx_InitializeStarField(s32 mode)
 	((s32 *)gTransitionWork)[2] = 1;
 	work = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
 	Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
-	/* FAKEMATCH: needed to match: the empty loop ends a scheduling region, keeping the multiply routine's address load ahead of the spark cursor. */
+	/* FAKEMATCH: the empty loop ends a scheduling region, keeping the
+	 * multiply routine's address load ahead of the spark cursor. Measured:
+	 * without it the two swap (differ 2); the sparks indexed in place
+	 * still differ 2, the cursor walked as a pointer 4, and the two heap
+	 * allocations in the other order 12. */
 	do
 	{
 	} while (0);
@@ -309,7 +313,10 @@ s32 BattleFx_InitializeStarField(s32 mode)
 		break;
 	}
 	Dma_Set(data, BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 32, REG_DMA3);
-	/* FAKEMATCH: needed to match: the one-pass block keeps the BG2 origin writes in source order, the zero loaded first. */
+	/* FAKEMATCH: the one-pass block keeps the zero ahead of the BG2X
+	 * address, which reload derives from the DMA register's. Measured:
+	 * plain stores of 0, or of zero outside a block, load it after the
+	 * address (differ 2); REG_BG2X = REG_BG2Y = 0 differs 13. */
 	do
 	{
 		zero = 0;
@@ -385,7 +392,11 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 	struct EffectPosition		  position2;
 	struct BattlePresentationWork launch;
 	struct BattlePresentationWork launch2;
-	/* FAKEMATCH: needed to match: one variable, assigned twice, holds slot 12's address and later the IME address, as the bytes do; the session is slot 9, three words below. */
+	/* FAKEMATCH: one variable, assigned twice, holds slot 12's address
+	 * and later the IME address, as the bytes do; the session is slot 9,
+	 * three words below. Measured: the session read as gWorkSlot[9] with
+	 * ime set only in the loop differs 124 (247 instructions for 249);
+	 * with IO_WRITE_QUEUE_PUSH in the loop as well, 140. */
 	volatile u16		  *ime = (volatile u16 *)&gWorkSlot[12];
 	struct BtlWork		  *session = *(struct BtlWork **)((u8 *)ime - 12);
 	struct SparkWork	  *work;

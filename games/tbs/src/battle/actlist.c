@@ -515,7 +515,7 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action)
 		for (j = 0; j != animation->count - 1; j++)
 			work.params[i][j] = animation->entries[j]->param;
 	}
-	/* FAKEMATCH: needed to match: the one-pass stages force fresh work pointers in the reset loop and place the dispatch argument before the kind store */
+	/* FAKEMATCH: needed to match: the one-pass stages force fresh work pointers in the reset loop and place the dispatch argument before the kind store. As plain statements the allocation changes from the side choice on: differ 103, also with the variant stored before the kind. */
 	do
 	{
 		work.kind = 0;

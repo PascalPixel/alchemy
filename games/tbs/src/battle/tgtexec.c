@@ -161,7 +161,11 @@ void BattleActor_RemoveFromLists(s32 id)
 	}
 
 	// 敵の並び
-	/* FAKEMATCH: needed to match: the goto loop avoids the pointer walk and saved 0xfe constant produced by a for loop */
+	/* FAKEMATCH: the one-pass block around the enemy scan keeps the party loop's shape: its
+	 * REMOVED constant loaded once ahead of it and the store inside it; without the block
+	 * the party loop's first test is peeled ahead of it (differ 26 in tbs-en). The enemy
+	 * scan is a label loop: as for (;;) left by return it walks a pointer and keeps 0xfe
+	 * in r4 (differ 24), as a do-while on the end mark differ 51. */
 	do
 	{
 		j = 0;
@@ -1681,7 +1685,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			s32	 heal;
 			u16 *pt;
 
-			/* FAKEMATCH: walking a pointer down from hp to max_hp reads each stat twice, unsigned and signed, as the ROM does; plain f reads share one load. */
+			/* FAKEMATCH: walking a pointer down from hp to max_hp reads each stat twice, unsigned and signed, as the ROM does; plain member reads, (u16)target->hp beside target->hp and the same for max_hp, share one load each (differ 116 in tbs-en). */
 			pt = (u16 *)&target->hp;
 			old = *pt--;
 			heal = *(s16 *)(pt + 1);
@@ -2207,15 +2211,14 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *req, s32 retry)
 		n = 0;
 		if (rnd >= total)
 		{
-		loop:
-			n++;
-			if (n <= 7)
+			while (++n <= 7)
 			{
 				total += weights[n];
 				if (rnd < total)
+				{
 					no = n;
-				else
-					goto loop;
+					break;
+				}
 			}
 		}
 		return no;
@@ -3417,7 +3420,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		struct DjinnRecoveryList	  *list;
 		s32							   side;
 		u8							   counts[4];
-		/* FAKEMATCH: needed to match: unread: the reference frame keeps 8 bytes below counts */
+		/* FAKEMATCH: never read: the native frame keeps 8 bytes below counts, exactly this array; without it the frame is 40 bytes, not 48, and every slot above it moves (differ 28 in tbs-en). */
 		u8	unused[8];
 		s32 i;
 
@@ -3499,7 +3502,10 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		UiText_ShowMessageAndWaitCoreFar((s32)MsgActorAttacks);
 		// 外れ：まぼろしなら 153/256、ほかに 1/32
 		// 相手が動けなければ外れない
-		/* FAKEMATCH: needed to match: the one-pass block keeps the native test order */
+		/* FAKEMATCH: the one-pass block places the body ahead of its five tests, reached by a
+		 * backward beq from the last one, whose zero (r5) the first store reuses. As a plain
+		 * if, with the tests negated or not, or as a while loop left by break, the tests come
+		 * first (differ 105 in tbs-en). */
 		do
 		{
 			if (tgt->hp == 0 || tgt->nemuri != 0 || tgt->shibire != 0 || tgt->miugoki != 0

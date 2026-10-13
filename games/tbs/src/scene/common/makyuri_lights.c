@@ -52,27 +52,27 @@ void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
 	if (st->lit != 0 && st->lower != 0)
 	{
 		obj = Engine_ObjectCreate(26, actor->x, actor->y + 0x180000, z);
-		if (obj == 0)
-			goto upper;
-		obj->terrain_height = actor->terrain_height;
-		anim = obj->sprite;
-		Engine_ObjectSetScript(obj, Makyuri_PillarScript);
-		obj->linked_object = (struct FieldActor *)actor;
-		obj->motion_flags = 4;
-		obj->y.fixed += -0x8000;
-		if (anim != 0)
+		if (obj != 0)
 		{
-			AnimationObjects_SelectAnimation(anim, 6 - st->lit);
-			anim->flags = 0;
-			anim->priority = 1;
+			obj->terrain_height = actor->terrain_height;
+			anim = obj->sprite;
+			Engine_ObjectSetScript(obj, Makyuri_PillarScript);
+			obj->linked_object = (struct FieldActor *)actor;
+			obj->motion_flags = 4;
+			obj->y.fixed += -0x8000;
+			if (anim != 0)
+			{
+				AnimationObjects_SelectAnimation(anim, 6 - st->lit);
+				anim->flags = 0;
+				anim->priority = 1;
+			}
+			st->lower = obj;
 		}
-		st->lower = obj;
 	}
 	else
 	{
 		st->lower = 0;
 	}
-upper:
 	if (cell->collision_code == region && st->upper != 0)
 	{
 		obj = Engine_ObjectCreate(26, actor->x, actor->y, actor->z);

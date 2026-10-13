@@ -292,14 +292,14 @@ void UiMessage_ShowAndRestoreState(s32 message_id)
 	{
 		no += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
 	}
-	(*slot)->active = 0xDU;
+	(*slot)->active = 13;
 	UiWork_FinalizePendingCoreFar();
 	UiText_OpenMessageWindowFar(no, 5, 0, (variant << 0x10) | 0x22);
 	while (UiWork_IsCompleteFar() == 0)
 	{
-		WaitFrames(1U);
+		WaitFrames(1);
 	}
-	WaitFrames(1U);
+	WaitFrames(1);
 	state->cursor.anchor->active = saved;
 }
 
@@ -354,10 +354,9 @@ static const u16 Shop_SelectorTileOffsets[30] =
 
 void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 {
-	u32		   shifted = selector << 4;
 	const u16 *offset;
 
-	selector = shifted + 1;
+	selector = (selector << 4) + 1;
 
 	if (count > 0)
 	{
@@ -515,19 +514,17 @@ void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor)
 				sprite->x = sprite->x - step;
 			else
 				sprite->x = sprite->x - 1;
+			sprite->oam.x = sprite->x;
 		}
-		else
+		else if (delta < 0)
 		{
-			if (delta >= 0)
-				goto move_y;
 			if (step != 0)
 				sprite->x = sprite->x + step;
 			else
 				sprite->x = sprite->x + 1;
+			sprite->oam.x = sprite->x;
 		}
-		sprite->oam.x = sprite->x;
 
-	move_y:
 		delta = sprite->y - cursor->target_y;
 		step = delta / 4;
 		if (step < 0)
@@ -538,17 +535,16 @@ void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor)
 				sprite->y = sprite->y - step;
 			else
 				sprite->y = sprite->y - 1;
+			sprite->oam.y = sprite->y;
 		}
-		else
+		else if (delta < 0)
 		{
-			if (delta >= 0)
-				return;
 			if (step != 0)
 				sprite->y = sprite->y + step;
 			else
 				sprite->y = sprite->y + 1;
+			sprite->oam.y = sprite->y;
 		}
-		sprite->oam.y = sprite->y;
 	}
 }
 

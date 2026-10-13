@@ -95,7 +95,7 @@
 
 s32 BattlePres_RunMosaicFadeOut(void)
 {
-	/* FAKEMATCH: volatile restores the form the bytes prove: the four saved BGxCNT values live at sp+6, 4, 2 and 0, each stored with strh and loaded again with ldrh for the write back (an 8-byte frame). Without all four differ 61, 83 instructions for 90 and no frame; without one alone, 27 to 45. */
+	/* FAKEMATCH: volatile restores the form the bytes prove: the four saved BGxCNT values live at sp+6, 4, 2 and 0, each stored with strh and loaded again with ldrh for the write back (an 8-byte frame). Without all four differ 61, 83 instructions for 90 and no frame; without one alone, 27 to 45; as a u16 saved[4] array, in either order: differ 60. */
 	volatile u16  bg0cnt;
 	volatile u16  bg1cnt;
 	volatile u16  bg2cnt;
@@ -471,7 +471,7 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
 	u32				ime;
 	u32			   *slot = &ime;
 
-	/* FAKEMATCH: needed to match: the one-pass block and the loop on a zero local keep the IME save through slot's register */
+	/* FAKEMATCH: needed to match: the one-pass block and the loop on a zero local keep the IME save through slot's register. As a plain block, also with a volatile register pointer, the save is stored sp-relative, ahead of the palette address: differ 8; as IRQ_LOCK(*slot) and IRQ_UNLOCK the save is stored sp-relative and the restore loads the register address first: differ 8; plain statements restoring REG_IME = *slot: differ 14. */
 	do
 	{
 		u16 *ime_reg = (u16 *)0x04000208;
@@ -600,7 +600,11 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level)
 		/* FAKEMATCH: conditional cancelling updates end CSE before the
 		 * decoder arguments, keeping the VRAM load before the data add.
 		 * They disappear from all 103 instructions in every edition;
-		 * a reassignment or XOR pair instead differs by four rows. */
+		 * a reassignment or XOR pair instead differs by four rows.
+		 * Plain, with data + 0x100 and the VRAM address as the call's
+		 * arguments, the data add is scheduled first: differ 2; through
+		 * the vram local alone: differ 4; through a decoder local:
+		 * differ 79. */
 		if (session)
 		{
 			offset++;

@@ -798,11 +798,7 @@ next_state:
 	{
 		slot->target_x = slot->origin_x;
 		slot->target_z = slot->origin_z;
-		{
-			u32 value = 0x400;
-
-			slot->max_turn_step = value;
-		}
+		slot->max_turn_step = 0x400;
 		slot->flag42 = 1;
 		(*state_ptr)++;
 		return;
@@ -824,7 +820,9 @@ void BattleFx_RunItemBreakSequence(void)
 	scene = gEffectWork;
 	object = scene->main_object;
 
-	/* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling */
+	/* FAKEMATCH: the one-pass block keeps the main_object load below the
+	 * frame's sub sp. Measured: plain, the scheduler lifts the load
+	 * above it (differ 2). */
 	do
 	{
 		BattleEffect_InitializeSharedScene();
@@ -945,7 +943,13 @@ void UpdateRisingParticleBurst(void *object)
 		if (child != 0)
 		{
 			s32 speed;
-			/* FAKEMATCH: needed to match: a block-local 1.0 keeps 0x10000 in one register for both uses */
+			/* FAKEMATCH: a block-local 1.0, set before the block's calls, keeps
+			 * 0x10000 in one register that loop.c hoists for both uses.
+			 * Measured: written as the constant at both uses, or with speed
+			 * holding the call plus the constant, it stays unhoisted (89
+			 * instructions for 93, differ 24); the acceleration stored before
+			 * Random16() written inline hoists it but moves that store above
+			 * the call (differ 4). */
 			s32 unit = 0x10000;
 
 			ObjectDispatch_InitializeFar((struct DispatchObject *)child, BattleFx_FragmentScript);
@@ -2753,7 +2757,10 @@ void BattleFx_SteerLiftedTarget(s32 id)
 	ObjectDispatch_InitializeFar((struct DispatchObject *)src, BattleFx_SourceHoldScript);
 
 	// 持ち手を左右 32 ドットに出し、対象の左右 16 ドットへ動かす
-	/* FAKEMATCH: needed to match: the position is reached through this pointer everywhere but in the steering loop's first part, which names the position itself */
+	/* FAKEMATCH: the position is reached through this pointer everywhere
+	 * but in the steering loop's first part, which names the position
+	 * itself. Measured: the position named everywhere differs 10; the
+	 * pointer everywhere differs 561 (514 instructions for 531). */
 	p = &pos;
 	p->x = work->x;
 	p->y = work->y + (16 << 16);
@@ -2842,7 +2849,11 @@ void BattleFx_SteerLiftedTarget(s32 id)
 		pos.z = target->z.fixed;
 		Vector_AddPolarOffset(16 << 16, angle, &pos);
 		i = ScriptObject_CheckOverlapFar(target, &pos);
-		/* FAKEMATCH: needed to match: entering the blocked path from both tests keeps it ahead of the drop path, as the ROM lays them out */
+		/* FAKEMATCH: entering the blocked path from both tests keeps it
+		 * ahead of the drop path, as the ROM lays them out. Measured: the two
+		 * tests as one || differ 407 (536 instructions for 531, the
+		 * allocation changing from the prologue on), under for (;;) or
+		 * while (1). */
 		if (i != 0)
 			goto blocked;
 		if (ObjProbeUp(target, p) > 0)
@@ -3288,16 +3299,8 @@ top:
 		*st = *st + 1;
 		return;
 	}
-	if (state == 3)
-	{
-		if (BattleFx_HasReachedTarget(effect) == 0)
-			BattleFx_ClearOwnedSlot(effect);
-		return;
-	}
-	else
-	{
-		return;
-	}
+	if (state == 3 && BattleFx_HasReachedTarget(effect) == 0)
+		BattleFx_ClearOwnedSlot(effect);
 }
 
 //--------------------------------------------------------------------------
@@ -3937,18 +3940,17 @@ void BattleFx_UpdateEffect16State(void)
 void BattleFx_UpdatePairedArcSpawner(struct ArcEffectObject *obj)
 {
 	s16 phase;
-	s16 cnt;
+	s32 cnt;
 
 	phase = obj->phase;
 	cnt = obj->step++;
 
 	if (gGameState.map == (s32)&SceneId_Clear)
 	{
-		/* FAKEMATCH: explicit libgcc calls here and in the else if below; written with the operator, tbs-en differs */
-		if (__modsi3(cnt, 7) == 0)
+		if (cnt % 7 == 0)
 			BattleFx_SpawnDescendingArcParticles(obj);
 	}
-	else if (__modsi3(cnt, 5) == 0)
+	else if (cnt % 5 == 0)
 	{
 		BattleFx_SpawnDescendingArcParticles(obj);
 	}

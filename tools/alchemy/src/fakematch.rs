@@ -461,8 +461,15 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         .collect::<BTreeMap<_, _>>();
     let mut spread = BTreeMap::<&str, (usize, [u64; 2])>::new();
     let mut steered = BTreeSet::new();
+    // A helper reaches the callers of its own game (a games/common header,
+    // both): a same-named function of the other game is not its caller.
+    let game = |path: &str| path.split('/').take(2).collect::<Vec<_>>().join("/");
+    let reaches = |header: &str, caller: &str| {
+        let (header, caller) = (game(header), game(caller));
+        header == "games/common" || caller == "games/common" || header == caller
+    };
     for (file, function, calls) in &callers {
-        for helper in calls.iter().filter(|c| helpers.contains_key(*c)) {
+        for helper in calls.iter().filter(|c| helpers.get(*c).is_some_and(|header| reaches(header, file))) {
             let bytes = size(file, function);
             let entry = spread.entry(helper.as_str()).or_default();
             entry.0 += 1;

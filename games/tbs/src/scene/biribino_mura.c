@@ -687,12 +687,10 @@ static void BiribinoMura_RestoreRaisedEntrance(void)
 
 static void BiribinoMura_PushFacedBlock(void)
 {
-	struct FieldActor	  *leader;
-	struct FieldActor	  *block;
-	s32					   step;
-	u32					   dir;
-	union FieldCoordinate  pos[3];
-	union FieldCoordinate *p;
+	struct FieldActor	 *leader;
+	struct FieldActor	 *block;
+	u32					  dir;
+	union FieldCoordinate pos[3];
 
 	leader = Object_GetById(0);
 	dir = leader->facing >> 12;
@@ -702,26 +700,23 @@ static void BiribinoMura_PushFacedBlock(void)
 	if (block != NULL)
 	{
 		block->terrain_id = 2;
-		/* FAKEMATCH: the probe is filled through a pointer to it; indexing pos directly drops a saved register and moves the step table address (measured). */
-		p = pos;
-		step = BiribinoMura_FacingCellSteps[dir];
-		p[0].fixed = block->x.fixed + (step & -0x10000);
-		p[1].fixed = block->y.fixed;
-		p[2].fixed = block->z.fixed + (step << 16);
-		if (Object_CheckMovementCollision(block, p) <= 0)
+		pos[0].fixed = block->x.fixed + (BiribinoMura_FacingCellSteps[dir] & -0x10000);
+		pos[1].fixed = block->y.fixed;
+		pos[2].fixed = block->z.fixed + (BiribinoMura_FacingCellSteps[dir] << 16);
+		if (Object_CheckMovementCollision(block, pos) <= 0)
 		{
 			Object_SetMode(leader, 8);
 			Engine_TaskWait(15);
 			Engine_AudioPlayCue(185);
 			block->speed = 0x3333;
 			block->acceleration = 0x3333;
-			Engine_ObjectSetPosition(block, p[0].fixed, p[1].fixed, p[2].fixed);
+			Engine_ObjectSetPosition(block, pos[0].fixed, pos[1].fixed, pos[2].fixed);
 			leader->speed = 0x3333;
 			leader->acceleration = 0x3333;
-			Engine_ObjectSetPosition(leader, p[0].fixed, p[1].fixed, p[2].fixed);
+			Engine_ObjectSetPosition(leader, pos[0].fixed, pos[1].fixed, pos[2].fixed);
 			Engine_ObjectCommitPosition(block);
-			block->x.fixed = p[0].fixed;
-			block->z.fixed = p[2].fixed;
+			block->x.fixed = pos[0].fixed;
+			block->z.fixed = pos[2].fixed;
 			block->velocity_x = 0;
 			block->velocity_z = 0;
 			Object_SetMode(leader, 1);

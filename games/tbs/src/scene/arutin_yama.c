@@ -790,11 +790,6 @@ union TimedActor
 	struct SceneMotion motion;
 };
 
-struct Half
-{
-	u16 v;
-};
-
 static void FieldScene_RunSharedSetPiece(s32 a0)
 {
 	struct FieldActor *actor0;
@@ -1123,8 +1118,6 @@ static void SceneMotion_UpdateTimedActor(struct SceneMotion *work)
 
 static void EV10_TOUCH_1(void)
 {
-	struct Half		   p10;
-	s32				   p8;
 	union TimedActor  *rec3;
 	struct FieldActor *rec7;
 	struct FieldActor *record;
@@ -1142,8 +1135,6 @@ static void EV10_TOUCH_1(void)
 	Engine_CameraMoveTo(0x1270000, 0x200000, 0xd40000, 1);
 	rec3->motion.active = 0;
 	rec3->motion.timer = 0;
-	p8 = (s32)rec3 + 100;
-	p10.v = 0;
 	rec3->motion.delay = 0;
 	rec3->actor.gravity = 0x6666;
 	rec3->actor.update = (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
@@ -1151,7 +1142,7 @@ static void EV10_TOUCH_1(void)
 	Actor_MoveToAndWait(10, 0x134, 0x123);
 	Engine_ActorMoveToAndWait(10, 0x137, 215);
 	rec3->actor.update = 0;
-	rec3->motion.state = p10.v;
+	rec3->motion.state = 0;
 	Engine_EventWait(16);
 	Engine_ActorSetAnimation(10, 1);
 	Engine_AudioPlayCue(229);
@@ -1213,7 +1204,7 @@ static void EV10_TOUCH_1(void)
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	Engine_EventWait(40);
 	Engine_ActorFaceDirection(10, 0x8000, 40);
-	Object_GetById(9)->motion_flags = p10.v;
+	Object_GetById(9)->motion_flags = 0;
 	Map_CopyCellAttributes(3, 0, 1, 1, 17, 13);
 	Map_CopyCellAttributes(3, 0, 1, 1, 18, 13);
 	Map_CopyCellAttributes(3, 0, 1, 1, 19, 13);
@@ -1354,11 +1345,6 @@ static void EV11_TOUCH_1(void)
 	GameFlag_Set(0x905);
 	Engine_EventEnd();
 }
-
-struct Byte
-{
-	u8 v;
-};
 
 s32 ArutinYama_RunAreaScene(void)
 {
@@ -2413,7 +2399,6 @@ static void ArutinYama_RunRollingObject(s32 id, s32 heading)
 	struct FieldActor	 *object = Object_GetById(id);
 	struct FieldActor	 *leader = Engine_ActorLookup(gGameState.selected_actor);
 	union FieldCoordinate pos[3];
-	struct Byte			  zero;
 	s32					  n;
 
 	Engine_EventBegin();
@@ -2447,8 +2432,7 @@ static void ArutinYama_RunRollingObject(s32 id, s32 heading)
 	object->facing = heading;
 	object->speed = 0x20000;
 	object->acceleration = 0xccc;
-	zero.v = 0;
-	object->paused = zero.v;
+	object->paused = 0;
 	object->timer = object->y.fixed / 0x10000;
 	object->work = 0;
 	pos[0].fixed = object->x.fixed;
@@ -2488,15 +2472,13 @@ static void ArutinYama_StepPaletteAnim(void)
 
 	if (ArutinYama_PaletteHold <= 0)
 	{
-		s32			frame;
-		struct Half zero;
+		s32 frame;
 
 	next:
 		frame = ArutinYama_PaletteScript[ArutinYama_PaletteStep++];
 		if (frame == -1)
 		{
-			zero.v = 0;
-			ArutinYama_PaletteStep = zero.v;
+			ArutinYama_PaletteStep = 0;
 			goto next;
 		}
 		ArutinYama_PaletteHold = ArutinYama_PaletteScript[ArutinYama_PaletteStep++];
@@ -2508,11 +2490,8 @@ static void ArutinYama_StepPaletteAnim(void)
 
 static void ArutinYama_StartPaletteAnim(void)
 {
-	struct Half zero;
-
-	zero.v = 0;
-	ArutinYama_PaletteStep = zero.v;
-	ArutinYama_PaletteHold = zero.v;
+	ArutinYama_PaletteStep = 0;
+	ArutinYama_PaletteHold = 0;
 	Engine_TaskAddCallback((s32)&ArutinYama_StepPaletteAnim, 0xc80);
 }
 

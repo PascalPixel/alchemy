@@ -88,8 +88,8 @@ s32 Scheduler_EnableOverlayCallbacksWithFlags(void)
 void UiWindow_InitializeWork(s32 unused)
 {
 	struct InventoryMenuState *work = gMenuWork;
-	volatile u32			   zero = 0;
-	Dma_Set(&zero, work, 0x8500029c, REG_DMA3);
+
+	Dma_Fill32(0, work, 0x29c * 4);
 	work->pane_index[0] = -1;
 	work->pane_count[0] = 1;
 	work->pane_count[1] = 1;

@@ -239,7 +239,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
 {
 	struct BattlePresentationTransition *presentation = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
 	struct BtlWork						*scene = WORK_SLOT(HEAP_SLOT_BATTLE);
-	/* FAKEMATCH: the halfword initialization preserves the word copy into party_mode instead of folding it into an immediate zero (one instruction differs). */
+	/* FAKEMATCH: the halfword initialization preserves the word copy into party_mode instead of folding it into an immediate zero (one instruction differs). 2026-10-13: completed as an s32 set to 0, with party_mode = completed or party_mode = 0, differs 2 of 105 (movs r2, #0 for adds r2, r7, #0). */
 	union
 	{
 		s32 value;
@@ -848,7 +848,7 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value)
 	struct AnimationObject *record;
 	struct AnimationEntry  *child;
 	struct AnimationEntry **children;
-	/* FAKEMATCH: needed to match: cached compound assignment keeps 94 bytes but changes registers and store order */
+	/* FAKEMATCH: the mask is a value and the first frame is read into a temporary: loop.c keeps 255 in sl across the call and the frame is or-ed with it, as the native. 2026-10-13: a constant (child->frame = 0xff, |= 0xff, |= -1, = -1) stores movs #255, 18 of 46 differ; child->frame |= mask or = child->frame | mask without the temporary, with a u8, s32 or u32 mask, differ 28 (registers and the order of the two stores). */
 	u8 mask = 0xff;
 	u8 frame;
 

@@ -196,10 +196,8 @@ u32 Owner_CalculateBaseElements(s32 owner, s16 destination[4][2])
 			((s32 *)destination)[i] = Enemy_ElementPresetTable[index].values[i];
 			i++;
 			if (i > 3)
-				goto copied;
+				return index;
 		}
-	copied:
-		return index;
 	}
 
 	Owner_GetDigitValues(state->class_id, (u8 *)state->djinn_available, values);

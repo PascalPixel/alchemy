@@ -2270,7 +2270,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 		s32 mag;
 		s32 ang;
 
-		/* FAKEMATCH: needed to match: the mask is loaded into the magnitude before the random word is taken in, as the native code does */
+		/* FAKEMATCH: the mask is loaded into the magnitude before the random word is taken in, as the native code does (ldr r6, =0x1ff; ands r6, r0). 2026-10-13: Random16() & 0x1FF, 0x1FF & Random16() and mag = Random16() followed by mag &= 0x1FF all differ 41 of 779, 780 instructions: the and takes the random word as its destination, copied into r6, with the mask in r3, and the pool offsets shift. */
 		mag = 0x1FF;
 		mag &= Random16();
 		ang = Random16() & 0xFFFF;
@@ -2741,9 +2741,9 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 	for (i = 0; i != 128; i++)
 	{
 		s32 angle = Random16() & 0xffff;
-		/* FAKEMATCH: needed to match: a form the bytes prove: the amplitude is a value, not a literal: the native hoists 255 into sl and multiplies with muls */
+		/* FAKEMATCH: a form the bytes prove: the amplitude is a value, not a literal: the native hoists 255 into sl and multiplies with muls. 2026-10-13: 255 written at both multiplies differs 142 of 2455; amp and speed set before the loop differ 2 (i = 0 is scheduled after them), set after i = 0 or in the for initializer 0, the same bytes as here. */
 		s32 amp = 255;
-		/* FAKEMATCH: needed to match: register choice: the velocities' zero is a value set at the top of the body, which loop.c hoists into r8 as the native's */
+		/* FAKEMATCH: register choice: the velocities' zero is a value set at the top of the body, which loop.c hoists into r8 as the native's. 2026-10-13: 0 stored directly differs 138 of 2455; see amp for the forms set before the loop. */
 		s32 speed = 0;
 		SPARKS[i].x = (Trig_Sin(angle) * amp) >> 2;
 		SPARKS[i].z = (Trig_Cos(angle) * amp) >> 2;
@@ -2957,7 +2957,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 			if (n <= 6)
 			{
 				s32 cell = n * 770 + ParticleStreams_CellOffsets[7] + 0x2710;
-				/* FAKEMATCH: needed to match: the height is a value, so high / 2 is hoisted into fp */
+				/* FAKEMATCH: the height is a value, so high / 2 is hoisted into fp. 2026-10-13: the literals (4, 8 and 16) differ 690 of 2455. */
 				s32 high = 8;
 				BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
 				blit = slots[HEAP_SLOT_BLITTER_ALTERNATE];
@@ -3269,7 +3269,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 		if (frame >= 72 && frame < 76)
 		{
 			s32 r2 = (frame << 4) - 1136;
-			/* FAKEMATCH: needed to match: the size is a value, so 5 and 20 are hoisted into fp and sl */
+			/* FAKEMATCH: the size is a value, so 5 and 20 are hoisted into fp and sl. 2026-10-13: the literals (5, [9], 10 and 20) differ 100 of 2455. */
 			s32 size = 10;
 			for (i = 0; i != 256; i++)
 			{
@@ -3303,7 +3303,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 						half = radius / 2;
 						dx = (half * sx) / 8;
 						right = cx + dx;
-						/* FAKEMATCH: needed to match: a dead branch restores the label CSE and reload saw between the edges */
+						/* FAKEMATCH: a dead branch restores the label CSE and reload saw between the edges. 2026-10-13: without it 67 of 2455 differ; as if (dx > cx) left = 0; else left = cx - dx; 173. */
 						if (dx > cx)
 						{
 							left = 0;
@@ -3349,7 +3349,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 						half2 = slope / 2;
 						dx = (half2 * sx) / 8;
 						right = cx + dx;
-						/* FAKEMATCH: needed to match: a dead branch restores the label CSE and reload saw between the edges */
+						/* FAKEMATCH: a dead branch restores the label CSE and reload saw between the edges. 2026-10-13: without it 1954 of 2455 differ, without both dead branches 1949. */
 						if (dx > cx)
 						{
 							left = 0;
@@ -3526,7 +3526,7 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 
 		if (frame > 63)
 		{
-			/* FAKEMATCH: needed to match: forced temporary: the shake value through an s32 keeps the AND constant an immediate and the instruction count native's */
+			/* FAKEMATCH: forced temporary: the shake value through an s32 keeps the AND constant an immediate and the instruction count native's. 2026-10-13: gBgScroll[1].y = (Random16() & 3) + 30 directly differs 17 of 2455, 2456 instructions. */
 			s32 shake = (Random16() & 3) + 30;
 
 			gBgScroll[1].y = shake;

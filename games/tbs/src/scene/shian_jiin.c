@@ -1412,7 +1412,7 @@ static void EV03_TOUCH_1(void)
 
 	Engine_EventBegin();
 	particle_task = (s32)FieldScene_SpawnRandomizedParticle;
-	/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+	/* FAKEMATCH: called through a cast to the void call the bytes show; called by its value-returning prototype, the priority's shift moves ahead of the callback's move (differ 2), and with the routine passed directly instead of through the s32 local, differ 5 (2026-10-13). */
 	((void (*)())Engine_TaskAddCallback)(particle_task, 0xc80);
 	Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
 	gEventWork->transition_frames = 60;

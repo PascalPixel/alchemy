@@ -322,16 +322,17 @@ redraw:
 			work->selection--;
 			if (work->selection < 0)
 				work->selection = work->count - 1;
-			goto redraw;
 		}
-		if ((gKeysRepeat & KEY_RIGHT) || (gKeysRepeat & KEY_DOWN))
+		else if ((gKeysRepeat & KEY_RIGHT) || (gKeysRepeat & KEY_DOWN))
 		{
 			AudioCommand_PlayFar(111);
 			work->selection++;
 			if (work->selection >= work->count)
 				work->selection = 0;
-			goto redraw;
 		}
+		else
+			continue;
+		goto redraw;
 	}
 }
 

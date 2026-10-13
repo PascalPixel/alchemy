@@ -300,9 +300,7 @@ void UiWindow_FillFromScene(void *dst)
 
 	if (scene == 0)
 	{
-		volatile u16 fill = 0xe0e0;
-
-		Dma_Set((void *)&fill, dst, 0x810000a0, REG_DMA3);
+		Dma_Fill16(0xe0e0, dst, 0x140);
 	}
 	else
 	{

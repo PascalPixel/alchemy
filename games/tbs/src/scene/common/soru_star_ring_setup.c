@@ -199,12 +199,10 @@ void SoruStar_SetupElementalRings(s32 first, u32 count)
 	u32					   i;
 	s32					   none;
 	s32					   cleared;
-	volatile u32		   zero;
 
 	list = Runtime_AllocateBlock(33, 0x194);
-	zero = 0;
 	entry = list->entries;
-	Dma_Set((const void *)&zero, list, 0x85000065, REG_DMA3);
+	Dma_Fill32(0, list, 0x194);
 	if (count > 10)
 		count = 10;
 	none = 0;

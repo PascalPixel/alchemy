@@ -343,7 +343,7 @@ s32 BtlEfxRevChk(s32 effect_id)
 s32 BattleFx_RollSuccess(
 	s32 caster, s32 target, s32 resistance_category, s32 effect_id, s32 success_scale)
 {
-	/* FAKEMATCH: the byte-status view and pointer setup prevent adjacent reads from merging into wider loads. */
+	/* FAKEMATCH: three status reads (fuuji after the effect 4 test, konran in it, akuryo for effect 0x40) go through the byte view state[offset], so each builds its address from a fresh offset constant as the native does; read as unit fields, CSE reuses a neighbouring address. All eleven reads as fields differ 120 (184 instructions for 204); every other read is a field at no cost. */
 	u8			   *state = (u8 *)UnitGet(target);
 	struct BtlUnit *unit = (struct BtlUnit *)state;
 	s32				attempts = 1;
@@ -361,17 +361,15 @@ s32 BattleFx_RollSuccess(
 		return 0;
 	}
 
-	if (effect_id == 3 && *(s8 *)(state + (u32) & ((struct BtlUnit *)0)->doku) == 0)
+	if (effect_id == 3 && unit->doku == 0)
 	{
 		return 0;
 	}
 
 	goto action4_check;
 action4_tail:
-	if (state[(u32) & ((struct BtlUnit *)0)->shibire] == 0
-		&& state[(u32) & ((struct BtlUnit *)0)->nemuri] == 0
-		&& state[(u32) & ((struct BtlUnit *)0)->fuuji] == 0
-		&& state[(u32) & ((struct BtlUnit *)0)->shiryo] == 0)
+	if (unit->shibire == 0 && unit->nemuri == 0 && state[(u32) & ((struct BtlUnit *)0)->fuuji] == 0
+		&& unit->shiryo == 0)
 	{
 		return 0;
 	}
@@ -379,30 +377,28 @@ action4_tail:
 action4_check:
 	if (effect_id == 4)
 	{
-		if (state[(u32) & ((struct BtlUnit *)0)->maboroshi] == 0
-			&& state[(u32) & ((struct BtlUnit *)0)->konran] == 0
-			&& state[(u32) & ((struct BtlUnit *)0)->charm] == 0)
+		if (unit->maboroshi == 0 && state[(u32) & ((struct BtlUnit *)0)->konran] == 0
+			&& unit->charm == 0)
 		{
 			goto action4_tail;
 		}
 	}
 
 action4_done:
-	poison = (s8 *)(state + (u32) & ((struct BtlUnit *)0)->doku);
-	delusion = state + (u32) & ((struct BtlUnit *)0)->maboroshi;
-	confusion = state + (u32) & ((struct BtlUnit *)0)->konran;
-	charm = state + (u32) & ((struct BtlUnit *)0)->charm;
-	stun = state + (u32) & ((struct BtlUnit *)0)->shibire;
-	sleep = state + (u32) & ((struct BtlUnit *)0)->nemuri;
+	poison = &unit->doku;
+	delusion = &unit->maboroshi;
+	confusion = (u8 *)&unit->konran;
+	charm = &unit->charm;
+	stun = &unit->shibire;
+	sleep = &unit->nemuri;
 	if (effect_id == 0x40 && *poison == 0 && *delusion == 0 && *confusion == 0 && *charm == 0
-		&& *stun == 0 && *sleep == 0 && state[(u32) & ((struct BtlUnit *)0)->fuuji] == 0
-		&& state[(u32) & ((struct BtlUnit *)0)->shiryo] == 0
+		&& *stun == 0 && *sleep == 0 && unit->fuuji == 0 && unit->shiryo == 0
 		&& state[(u32) & ((struct BtlUnit *)0)->akuryo] == 0)
 	{
 		return 0;
 	}
 
-	if (effect_id == 0x1C && state[(u32) & ((struct BtlUnit *)0)->shiryo] == 1)
+	if (effect_id == 0x1C && unit->shiryo == 1)
 	{
 		return 0;
 	}

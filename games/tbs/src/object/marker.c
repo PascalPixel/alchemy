@@ -142,16 +142,12 @@ void Battle_PlaceMapMarkers(void)
 	s32							count = 0;
 	u8						   *list = map->markers;
 	struct MarkerSlot		   *slot = work->slots;
-	volatile u32				fill;
 	const struct SceneEvent	   *event;
 	struct ScriptObjectRuntime *obj;
 	u32							column;
 	u32							row;
 
-	fill = 0;
-	Dma_Set((void *)&fill, slot,
-		DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | (sizeof(struct MarkerSlot) * MARKER_MAX / 4),
-		REG_DMA3);
+	Dma_Fill32(0, slot, sizeof(struct MarkerSlot) * MARKER_MAX);
 	if (list == NULL)
 		return;
 

@@ -51,8 +51,8 @@
 void Runtime_InitializeHeap(void)
 {
 	union HeapState *work = (union HeapState *)gWorkSlot;
-	volatile u32	 zero = 0;
-	Dma_Set(&zero, work, 0x85000040, REG_DMA3);
+
+	Dma_Fill32(0, work, 0x100);
 	work->heap.next_iwram = gIwramHeap;
 	work->heap.next_ewram = gEwramHeap;
 }

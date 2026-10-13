@@ -139,7 +139,7 @@ static s32 LinkLobby_PeerSlotMatches(s32 slot)
 	{
 		Engine_GameFlagClear(0x303);
 	}
-	/* FAKEMATCH: a loop that runs at most once places the test after the body as the ROM does. */
+	/* FAKEMATCH: a loop that runs at most once places the test after the body as the ROM does. As an if around the body: differ 43; as an early return 0 on the failed test: differ 55. */
 	while (id >= 0 && Engine_GameFlagIsSet(0x303))
 	{
 		const s32 *expected = &LinkLobby_SlotValues[slot];
@@ -492,7 +492,7 @@ static s32 LinkLobby_SendPartyRecords(void)
 	}
 	for (i = 0; i < count; i++)
 	{
-		/* FAKEMATCH: a one-pass boundary keeps the send failure inline and gives the record copy's argument order; without it loop.c moves the failure out of the loop. */
+		/* FAKEMATCH: a one-pass boundary keeps the send failure inline and gives the record copy's argument order; without it loop.c moves the failure out of the loop: differ 26 (all three of this function's blocks removed: differ 66). */
 		do
 		{
 			Iwram_CopyWords(heap, UnitGet(owners[i]), size);
@@ -511,7 +511,7 @@ static s32 LinkLobby_SendPartyRecords(void)
 			Engine_TaskWait(1);
 			if (--timeout < 0 || (gLinkStatus & 3) != 3)
 			{
-				/* FAKEMATCH: a one-pass boundary keeps this failure inline, so its -1 is reloaded here and jump2 merges it into the offer's; moved out of the loop, it shifts every later reload register. */
+				/* FAKEMATCH: a one-pass boundary keeps this failure inline, so its -1 is reloaded here and jump2 merges it into the offer's; moved out of the loop, it shifts every later reload register: differ 59 without the block. */
 				do
 				{
 					if (++tries > 24)
@@ -556,7 +556,7 @@ next:
 	Runtime_BumpFree(heap);
 	size = 0x140;
 	heap = Runtime_BumpAllocateAlternatePool(size);
-	/* FAKEMATCH: a one-pass boundary gives the offer copy's argument order and keeps the list base's copy first after the call. */
+	/* FAKEMATCH: a one-pass boundary gives the offer copy's argument order and keeps the list base's copy first after the call; as a plain call: differ 6. */
 	do
 	{
 		Iwram_CopyWords(heap, Trade_GetOfferState(0), size);
@@ -616,7 +616,7 @@ static s32 LinkLobby_ExchangePartyRecords(void)
 	s32 first;
 	s32 flag;
 
-	/* FAKEMATCH: separate initialization from the following flag query. */
+	/* FAKEMATCH: the one-pass block keeps result's zero in r6 ahead of the flag call, as the listing loads it. Plain before the call, with the store moved ahead of the call too, as the declaration's initializer, or as gLinkExchangeState = result = 0 after it, the zero is scheduled after the call: differ 4; storing 0 and setting result apart after the call: differ 36. */
 	do
 	{
 		result = 0;
@@ -766,7 +766,8 @@ static s32 EV10_TOUCH(void)
 				Engine_GameFlagClear(0x203);
 				Engine_GameFlagClear(0x200);
 				work->raised_trigger = 2;
-				goto done;
+				Engine_EventEnd();
+				return;
 			}
 			Actor_SetSpeed(0, 0x8000, 0x4000);
 			Engine_ActorWaitForMove(0);
@@ -798,7 +799,6 @@ static s32 EV10_TOUCH(void)
 		} while (i <= 0x7c7);
 		Runtime_ReleaseHeapBlock(54);
 	}
-done:
 	Engine_EventEnd();
 }
 
@@ -862,7 +862,7 @@ static s32 EV08_TALK(void)
 		if (Engine_GameFlagIsSet(0x202))
 		{
 			line = msg + 3;
-			/* FAKEMATCH: the first branch's answers jump into this block's message tail, and an accepted challenge back into its opening, which keeps the reference's single copy of each. */
+			/* The first branch's answers jump into this block's message tail, and an accepted challenge back into its opening: the listing keeps one copy of each. Written as if/else arms with their own message calls, cross-jumping folds the copies into the last arm instead (differ 51 to 55). */
 		message:
 			Engine_EventSetMessage(line);
 		open_message:
@@ -933,36 +933,43 @@ static s32 EV09_TALK(s32 actor)
 	{
 		base = (s32)MsgLobbyLooksLikeFirst;
 		count = &gGameState.link_tallies[4];
-		if (*count == 0)
+		if (*count != 0)
+		{
+			UiWork_ClearValueNameTables();
+			UiText_DrawQuantity(*count, 5);
+			Engine_EventSetMessage(base + 1);
+			Engine_EventShowMessage(actor, 0);
+		}
+		else
 		{
 			Engine_EventSetMessage((s32)MsgLobbyTellTotalWins);
 			Engine_EventShowMessage(actor, 0);
-			goto done;
 		}
 	}
 	else
 	{
 		base = (s32)MsgLobbyLooksLikeFirstTime;
 		count = &gGameState.link_tallies[7];
-		if (*count == 0)
-			goto none;
+		if (*count != 0)
+		{
+			UiWork_ClearValueNameTables();
+			UiText_DrawQuantity(*count, 5);
+			Engine_EventSetMessage(base + 1);
+			Engine_EventShowMessage(actor, 0);
+		}
+		else
+		{
+			Engine_EventSetMessage((s32)MsgLobbyTellConsecutiveWins);
+			Engine_EventShowMessage(actor, 0);
+		}
 	}
-	UiWork_ClearValueNameTables();
-	UiText_DrawQuantity(*count, 5);
-	Engine_EventSetMessage(base + 1);
-	Engine_EventShowMessage(actor, 0);
-	goto done;
-none:
-	Engine_EventSetMessage((s32)MsgLobbyTellConsecutiveWins);
-	Engine_EventShowMessage(actor, 0);
-done:;
 }
-
 static s32 EV15_TALK(s32 id)
 {
 	s32 window;
 	s32 choice;
 	s32 shown;
+	s32 ok;
 
 	Engine_EventBegin();
 	Engine_ActorFaceActor(id, gGameState.selected_actor, 0);
@@ -1003,32 +1010,24 @@ static s32 EV15_TALK(s32 id)
 		Engine_TaskWait(1);
 	}
 	UiWork_Finalize(window, 1);
+	if (choice >= 0)
 	{
-		s32 ok;
-		s32 message;
-
-		if (choice >= 0)
-		{
-			ok = DebugParty_LoadPreset(choice);
-		}
-		else
-		{
-			message = (s32)MsgLobbyTease;
-			goto show;
-		}
-		/* FAKEMATCH: the refusal jumps into the 0x98b branch so the two share one message call, as the reference lays them out. */
-		if (ok != 0)
-		{
-			message = (s32)MsgLobbyNoParameterAsk;
-		show:
-			Engine_EventSetMessage(message);
-			Engine_EventShowMessage(9, 0);
-		}
-		else
-		{
-			Engine_EventSetMessage((s32)MsgLobbySettingsMadeRest);
-			Engine_EventShowMessage(9, 0);
-		}
+		ok = DebugParty_LoadPreset(choice);
+	}
+	if (choice < 0)
+	{
+		Engine_EventSetMessage((s32)MsgLobbyTease);
+		Engine_EventShowMessage(9, 0);
+	}
+	else if (ok != 0)
+	{
+		Engine_EventSetMessage((s32)MsgLobbyNoParameterAsk);
+		Engine_EventShowMessage(9, 0);
+	}
+	else
+	{
+		Engine_EventSetMessage((s32)MsgLobbySettingsMadeRest);
+		Engine_EventShowMessage(9, 0);
 	}
 	Engine_TaskWait(10);
 	Engine_EventEnd();
@@ -1293,12 +1292,8 @@ s32 LinkLobby_RunRoundResult(void)
 		Engine_EventOpenScreen();
 		Engine_EventWaitForScreen();
 		LinkLobby_WriteSlotValue(5);
-		{
-			struct GameState *state = &gGameState;
-
-			state->link_tallies[0]++;
-			state->link_tallies[3]++;
-		}
+		gGameState.link_tallies[0]++;
+		gGameState.link_tallies[3]++;
 		wins = (s8)GameFlag_GetByte(0x3f8);
 		msg = wins * 2 + 2;
 		if (msg > 14)
@@ -1316,41 +1311,36 @@ s32 LinkLobby_RunRoundResult(void)
 		{
 			Call2(GameFlag_SetByte, 1000, v + 1);
 		}
+		Engine_ActorFaceActor(8, gGameState.selected_actor, 0);
+		Engine_EventSetMessage((s32)MsgLobbyNotBadNextMonster + msg);
+		Engine_EventOpenMessage(8, 0);
+		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
-			struct GameState *state = &gGameState;
-
-			Engine_ActorFaceActor(8, state->selected_actor, 0);
-			Engine_EventSetMessage((s32)MsgLobbyNotBadNextMonster + msg);
-			Engine_EventOpenMessage(8, 0);
-			if (Engine_EventChooseYesNo(0, 0) == 0)
+			if (wins > 90)
 			{
-				if (wins > 90)
-				{
-					wins = 90;
-				}
-				GameFlag_SetByte(0x3f8, wins);
+				wins = 90;
+			}
+			GameFlag_SetByte(0x3f8, wins);
+		}
+		else
+		{
+			Engine_GameFlagClear(0x173);
+			GameFlag_SetByte(0x3f8, -1);
+			UiText_DrawQuantity(gGameState.link_tallies[3], 5);
+			score = gGameState.link_tallies[3];
+			if (gGameState.link_tallies[2] < score)
+			{
+				gGameState.link_tallies[2] = score;
+				Engine_EventSetMessage((s32)MsgLobbyWonNumberBattleBroke);
+				Engine_EventOpenMessage(8, 0);
+				LinkLobby_SaveMonsterBattleResults();
 			}
 			else
 			{
-
-				Engine_GameFlagClear(0x173);
-				GameFlag_SetByte(0x3f8, -1);
-				UiText_DrawQuantity(state->link_tallies[3], 5);
-				score = state->link_tallies[3];
-				if (state->link_tallies[2] < score)
-				{
-					state->link_tallies[2] = score;
-					Engine_EventSetMessage((s32)MsgLobbyWonNumberBattleBroke);
-					Engine_EventOpenMessage(8, 0);
-					LinkLobby_SaveMonsterBattleResults();
-				}
-				else
-				{
-					Engine_EventSetMessage((s32)MsgLobbyWonNumberBattle);
-					Engine_EventOpenMessage(8, 0);
-				}
-				LinkLobby_WriteSlotValue(0);
+				Engine_EventSetMessage((s32)MsgLobbyWonNumberBattle);
+				Engine_EventOpenMessage(8, 0);
 			}
+			LinkLobby_WriteSlotValue(0);
 		}
 		Engine_EventEnd();
 	}
@@ -1363,7 +1353,7 @@ s32 LinkLobby_RunRoundResult(void)
 		Engine_EventWaitForScreen();
 		LinkLobby_WriteSlotValue(5);
 		Engine_ActorFaceActor(8, gGameState.selected_actor, 0);
-		/* FAKEMATCH: one scalar holds the row address, then its score. */
+		/* FAKEMATCH: one scalar holds the row address, then its score. Reading link_tallies[3] twice, also through a u16 pointer local: differ 36; reading it once into score before the call: differ 10. */
 		score = (u32)&gGameState.link_tallies[3];
 		UiText_DrawQuantity(*(u16 *)score, 5);
 		score = *(u16 *)score;
@@ -1410,7 +1400,7 @@ s32 LinkLobby_RunRoundResult(void)
 			gGameState.link_tallies[4]++;
 			v = gGameState.link_tallies[7] + 1;
 			gGameState.link_tallies[7] = v;
-			/* FAKEMATCH: reuse the other score branches' address slot. */
+			/* FAKEMATCH: reuse the other score branches' address slot. Through link_tallies[6] itself or a u16 pointer local: differ 8. */
 			score = (u32)&gGameState.link_tallies[6];
 			if (*(u16 *)score < (u16)v)
 			{

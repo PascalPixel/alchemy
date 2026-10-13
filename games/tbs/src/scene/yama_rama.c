@@ -30,12 +30,6 @@
 #include "objcmd.h"
 #include "field_effect.h"
 
-static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
-{
-	/* FAKEMATCH: forwarding inline: called directly, ConfigureAndPlaceActorFourteen has 2 instructions different (argument load order) */
-	Engine_ActorSetPosition(actor, x, y);
-}
-
 static __inline__ void Scene_AdvanceStep(s32 amount)
 {
 	gEventWork->message += amount;
@@ -341,7 +335,7 @@ static void ConfigureAndPlaceActorFourteen(void)
 
 	Map_CopyCellAttributes(85, 9, 1, 1, 21, 9);
 	Engine_MapObjectSetPosition(100, 0, 0);
-	PlaceActor(14, 0x01580000, 0x00980000);
+	Actor_SetPosition(14, 0x01580000, 0x00980000);
 }
 
 static void YamaRama_ClearActorPlacement(void)
@@ -669,14 +663,11 @@ static void EV14_SCRIPT(void)
 
 static void EV14_PSYNERGY(void)
 {
-	u8 zero;
-
-	zero = 0;
 	Engine_EventBegin();
 
 	Object_GetById(14)->priority_flags &= 0xfd;
 	Object_GetById(14)->collision_flags &= 0xfd;
-	Object_GetById(14)->motion_flags = zero;
+	Object_GetById(14)->motion_flags = 0;
 	Object_GetById(14)->update =
 		(void (*)(union FieldObject *))SceneActor_SetFlagBitByRankAgainstActorZero;
 

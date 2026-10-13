@@ -161,34 +161,16 @@ struct MarkerWork
 	struct MarkerSlot slots[MARKER_MAX];
 };
 
-struct EfxVisual
-{
-	u8 pad0[5];
-	u8 flatbs;
-	u8 pad1[3];
-	u8 flatla;
-	u8 pad2[18];
-	u8 slot; // VRAM のタイル枠
-	u8 pad3[9];
-	u8 unk1;
-	u8 unk2;
-};
-
-struct TileBits
-{
-	u16 tile : 10;
-};
-
 struct EfxObj
 {
-	s32				  data; // スクリプト
-	u8				  pad0[0x24];
-	u32				  travel;
-	u8				  pad1[0x1c];
-	u32				  dy;
-	u8				  pad2[4];
-	struct EfxVisual *vis;
-	u8				  pad3[24];
+	s32						data; // スクリプト
+	u8						pad0[0x24];
+	u32						travel;
+	u8						pad1[0x1c];
+	u32						dy;
+	u8						pad2[4];
+	struct AnimationObject *vis;
+	u8						pad3[24];
 	void (*proc)(void); // 毎フレームの処理
 };
 
@@ -272,18 +254,10 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter)
 	obj = Object_Spawn(285, pos.x, pos.y, pos.z);
 	if (obj != 0)
 	{
-		s32 mask;
-		u8	flags;
-
-		// パーツ 0 の 9 バイト目：bit 2〜3 を 1 にする
+		// パーツ 0 の優先度を 1 にする
 		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_ParticleScript);
 		ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
-		mask = 13;
-		flags = ((u8 *)&((struct AnimationObject *)obj->animation)->part[0])[9];
-		mask = -mask;
-		mask &= flags;
-		mask |= 4;
-		((u8 *)&((struct AnimationObject *)obj->animation)->part[0])[9] = mask;
+		((struct AnimationObject *)obj->animation)->part[0].priority = 1;
 	}
 }
 
@@ -344,25 +318,14 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item)
 
 	ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_ParticleEmitterScript);
 	{
-		struct EfxVisual *vis = obj->vis;
-		void			 *buf;
-		s32				  mask;
-		s32				  zero = 0;
+		struct AnimationObject *vis = obj->vis;
+		void				   *buf;
 
-		vis->unk1 = zero;
-		vis->unk2 = zero;
-
-		/* FAKEMATCH: the mask ~32 is built from the register already holding zero; written ~32, tbs-en differs */
-		vis->flatbs &= zero - 33;
-
-		mask = vis->flatla & 0x0f;
-		{
-			s32 clr = 13;
-			clr = -clr;
-			mask &= clr;
-		}
-		mask |= 4;
-		vis->flatla = mask;
+		vis->flags = 0;
+		vis->count = 0;
+		vis->part[0].full_color = 0;
+		vis->part[0].palette = 0;
+		vis->part[0].priority = 1;
 
 		obj->travel = 0x20000;
 		obj->dy = 0x4000;
@@ -371,8 +334,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item)
 		buf = Runtime_AllocateHeapBlock(17, 0x608);
 		Ui_PrepareTransferForItemFar(item);
 
-		((struct TileBits *)((u8 *)vis + 8))->tile =
-			VramBlock_LoadCached(vis->slot, 128, (u8 *)buf + 0x400);
+		vis->part[0].tile = VramBlock_LoadCached(vis->slot, 128, (u8 *)buf + 0x400);
 
 		Runtime_ReleaseHeapBlock(17);
 		obj->proc = (void (*)(void))BattleFx_EmitRandomParticleFromEmitter;
@@ -458,24 +420,13 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
 
 	if (object != 0)
 	{
-		struct EfxVisual *visual = object->vis;
-		s32				  mask;
+		struct AnimationObject *visual = object->vis;
 
-		s32 zero = 0;
-		visual->unk1 = zero;
-		visual->unk2 = zero;
-
-		/* FAKEMATCH: the mask ~32 is built from the register already holding zero; written ~32, tbs-en differs */
-		visual->flatbs &= zero - 33;
-
-		mask = visual->flatla & 0x0f;
-		{
-			s32 clear = 13;
-			clear = -clear;
-			mask &= clear;
-		}
-		mask |= 4;
-		visual->flatla = mask;
+		visual->flags = 0;
+		visual->count = 0;
+		visual->part[0].full_color = 0;
+		visual->part[0].palette = 0;
+		visual->part[0].priority = 1;
 
 		Ui_PrepareTransferForItemFar(value);
 		VramBlock_LoadCached(visual->slot, 128, (u8 *)handle + 0x400);
@@ -551,17 +502,9 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct FieldActor *source)
 	obj = Object_Spawn(285, pos.x, pos.y, pos.z);
 	if (obj != 0)
 	{
-		s32 mask;
-		u8	flags;
-
 		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_ParticleScript);
 		ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
-		mask = 13;
-		flags = ((u8 *)&((struct AnimationObject *)obj->animation)->part[0])[9];
-		mask = -mask;
-		mask &= flags;
-		mask |= 4;
-		((u8 *)&((struct AnimationObject *)obj->animation)->part[0])[9] = mask;
+		((struct AnimationObject *)obj->animation)->part[0].priority = 1;
 	}
 }
 
@@ -643,7 +586,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
 					case 0x500000:
 						if (entry->flag != -1 && GameFlag_TestFar(entry->flag) == 0)
 						{
-							/* FAKEMATCH: needed to match: the spawned object reuses the actor variable, which keeps both in r5 */
+							/* FAKEMATCH: the spawned object reuses the actor variable, so the one pseudo keeps ObjectTable_Get's result in r5 (adds r5, r0, #0) before the actor_x and actor_z loads. 2026-10-13: a separate object variable, block-local or function-scope in any declaration position, differs 9 of 163: the copy into r5 is gone, the loads read r0 and three pool offsets move. */
 							actor = (struct ObjectRuntime *)Object_CreateFar(
 								22, (x << 20) + (8 << 16), 0, (z << 20) + (8 << 16));
 							if (actor != 0)

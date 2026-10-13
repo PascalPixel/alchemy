@@ -203,7 +203,6 @@ DEFINE_TICK_STATUS(BattleUnit_TickSleep, nemuri, 50)
 s32 Battle_AdvanceCounterAndCheckChance(s32 id)
 {
 	s32				next;
-	s32				expired;
 	u8				remaining;
 	s32				turns;
 	s32				packed;
@@ -226,22 +225,16 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 id)
 			unit->fuuji = next;
 			packed = next;
 		}
-		expired = 1;
 		remaining = packed;
-		if (remaining != 0)
+		if (remaining == 0)
+			return 1;
+		if (remaining <= 7U && BattleUnit_RollCounterEarlyEnd(id, unit->fuuji, 0x1E) != 0)
 		{
-			if (remaining <= 7U && BattleUnit_RollCounterEarlyEnd(id, unit->fuuji, 0x1E) != 0)
-			{
-				unit->fuuji = 0U;
-				return 1;
-			}
-			goto block_9;
+			unit->fuuji = 0U;
+			return 1;
 		}
-		return expired;
 	}
-block_9:
-	expired = 0;
-	return expired;
+	return 0;
 }
 
 s32 BattleUnit_TickRefrain(s32 unit_id)

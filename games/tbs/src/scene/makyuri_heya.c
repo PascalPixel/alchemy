@@ -102,16 +102,6 @@ struct WorkPointers
 	u8 *scene;
 };
 
-typedef struct
-{
-	s32 f0;
-	s32 f1;
-	s32 f2;
-	s32 f3;
-	s32 t0;
-	s32 t1;
-} SceneEvent;
-
 struct SceneLookupRecord
 {
 	u8	pad00[216];
@@ -538,7 +528,7 @@ static void MakyuriHeya_RunSequenceG(s32 a0)
 		Map_CopyCellsTo(39, 51, y, 32, 1, six);
 		pos = i + 106;
 		four = 4;
-		/* FAKEMATCH: width and height go through locals k and four; as literals, direct or through Map_CopyCellsTo, tbs-en differs */
+		/* FAKEMATCH: width and height go through locals k and four, and loop.c hoists k's 2 into r9 as the native has it. As the literals 2 and 4: differ 26, through Map_CopyCellsTo: differ 35; k = 2 set before the loop: differ 8; four as the literal 4: differ 20. */
 		Engine_MapCopyCellsTo(105, 51, pos, 32, k, four);
 		if (a0 != 0)
 		{
@@ -676,29 +666,26 @@ static void MakyuriHeya_RunSequenceF(void)
 
 static void MakyuriHeya_RunSequenceE(void)
 {
-	SceneEvent ev;
-	s32		   kind;
-	s32		   shape;
-	s32		   three;
+	struct StagedActorProbe probe;
+	s32						kind;
+	s32						shape;
 
 	Engine_EventBegin();
-	if (StagedActor_FindClearPosition(&ev) != 0)
+	if (StagedActor_FindClearPosition(&probe) != 0)
 	{
-		kind = ev.f1;
+		kind = probe.actor_slot;
 		if (kind == 8)
 		{
-			shape = ev.f2;
+			shape = probe.position_x;
 			if ((shape >> 20) == 11)
 			{
-				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-				((void (*)(SceneEvent))SceneActor_MoveAndRedraw)(ev);
+				SceneActor_MoveAndRedraw(probe);
 				Engine_EventWait(30);
 				Engine_AudioPlayCue(211);
 				SceneEffect_SpawnParticleRowsAndDrawTiles();
-				three = 3;
-				Map_CopyCellsTo(76, 60, 74, 38, three, 1);
+				Map_CopyCellsTo(76, 60, 74, 38, 3, 1);
 				Map_CopyCellsTo(77, 60, 76, 38, 2, 1);
-				Map_CopyCellsTo(75, 58, 86, 41, 1, three);
+				Map_CopyCellsTo(75, 58, 86, 41, 1, 3);
 				Map_CopyCellsTo(75, 59, 86, 43, 1, 2);
 				Map_CopyCellsTo(76, 59, 80, 49, 2, 1);
 				Map_CopyCellsTo(77, 59, 82, 49, 2, 1);
@@ -706,7 +693,7 @@ static void MakyuriHeya_RunSequenceE(void)
 			}
 			else
 			{
-				ev.t1 = (s32)MakyuriHeya_OpenThreeStepStair;
+				probe.callback = MakyuriHeya_OpenThreeStepStair;
 				Map_CopyCellsTo(75, 57, 86, 41, 1, 1);
 				Map_CopyCellsTo(71, 59, 86, 42, 1, 1);
 				Map_CopyCellsTo(71, 59, 86, 43, 1, 1);
@@ -715,17 +702,15 @@ static void MakyuriHeya_RunSequenceE(void)
 				Map_CopyCellsTo(71, 59, 81, 49, 1, 1);
 				Map_CopyCellsTo(71, 59, 82, 49, 1, 1);
 				Map_CopyCellsTo(78, 58, 83, 49, 1, 1);
-				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-				((void (*)(SceneEvent))SceneActor_MoveAndRedraw)(ev);
+				SceneActor_MoveAndRedraw(probe);
 				GameFlag_Clear(0x302);
 			}
 		}
 		else if (kind == 10)
 		{
-			if ((ev.t0 >> 20) == 40)
+			if ((probe.position_z >> 20) == 40)
 			{
-				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-				((void (*)(SceneEvent))SceneActor_MoveAndRedraw)(ev);
+				SceneActor_MoveAndRedraw(probe);
 				if (GameFlag_IsSet(0x307) == 0)
 				{
 					Camera_SetSpeed(0x18000, 0x3000);
@@ -741,11 +726,10 @@ static void MakyuriHeya_RunSequenceE(void)
 				}
 				GameFlag_Set(0x306);
 			}
-			else if ((ev.t0 >> 20) == 42)
+			else if ((probe.position_z >> 20) == 42)
 			{
-				ev.t1 = (s32)MakyuriHeya_RunSequenceF;
-				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-				((void (*)(SceneEvent))SceneActor_MoveAndRedraw)(ev);
+				probe.callback = MakyuriHeya_RunSequenceF;
+				SceneActor_MoveAndRedraw(probe);
 				MakyuriHeya_RunSequenceG(5);
 				GameFlag_Clear(0x306);
 			}
@@ -2513,7 +2497,7 @@ static void EV08_PSYNERGY_1(void)
 		if (Engine_EventChooseYesNo(0, 0) == 1)
 		{
 			Engine_EventWait(20);
-			/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+			/* FAKEMATCH: called through a cast to the unprototyped call the bytes show, which loads r1 before r0; called by its prototype, also through the script layer's Actor_SetAnimationAndWait, r0 loads first: differ 2 at each site. */
 			((s32 (*)())Engine_ActorSetAnimationAndWait)(3, 4);
 			Engine_EventWait(20);
 			event = base + 5;
@@ -2526,7 +2510,7 @@ static void EV08_PSYNERGY_1(void)
 					break;
 				}
 				Engine_EventWait(20);
-				/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+				/* FAKEMATCH: called through a cast to the unprototyped call the bytes show, which loads r1 before r0; called by its prototype, also through the script layer's Actor_SetAnimationAndWait, r0 loads first: differ 2 at each site. */
 				((s32 (*)())Engine_ActorSetAnimationAndWait)(3, 4);
 				Engine_EventWait(20);
 				event = (s32)MsgMakyuriDontHideTruth;

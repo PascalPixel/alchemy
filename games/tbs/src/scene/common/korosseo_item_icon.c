@@ -23,7 +23,6 @@ void Korosseo_ShowItemIcon(s32 id, s32 item)
 	s32						base;
 	s32						tile;
 	s32						none;
-	volatile u32			zero;
 
 	obj = Object_GetById(id);
 	if (obj != 0)
@@ -35,9 +34,7 @@ void Korosseo_ShowItemIcon(s32 id, s32 item)
 			base = (s32)Runtime_AllocateHeapBlock(17, 0x608);
 			none = 0;
 			base += 0x400;
-			zero = none;
-			Dma_Set((const void *)&zero, (void *)base,
-				DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x20, REG_DMA3);
+			Dma_Fill32(none, (void *)base, 0x80);
 			ItemIcon_LoadTilesFar(item);
 			tile = Engine_VramLoad(spr->slot, 128, base);
 			Runtime_ReleaseHeapBlock(17);

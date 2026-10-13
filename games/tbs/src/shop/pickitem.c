@@ -72,7 +72,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
 	shop->mode = 12;
 	PsynergyMenu_InitializeEntryObjectsFar(list_window, 2, 0, 8, result);
 
-	for (;;)
+	while (1)
 	{
 		if (redraw != 0)
 		{
@@ -106,7 +106,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
 			*selected_unit = unit_id;
 			*selected_item = item_slot;
 			result = 0;
-			goto done;
+			break;
 		}
 
 		if ((gKeyState & KEY_B) != 0)
@@ -115,7 +115,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
 			*selected_unit = -1;
 			*selected_item = -1;
 			result = -1;
-			goto done;
+			break;
 		}
 
 		if ((gKeysRepeat & KEY_LEFT) != 0)
@@ -132,7 +132,6 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
 		}
 	}
 
-done:
 	Menu_ReleaseEntryObjectsFar();
 	UiWork_FinalizeFar(list_window, 2);
 	UiWork_FinalizeFar(shop->item_window, 2);
@@ -171,7 +170,7 @@ s32 Shop_SelUse(s32 actor)
 	shop->mode = 12;
 	selection = 0;
 
-	for (;;)
+	while (1)
 	{
 		if (redraw != 0)
 		{
@@ -199,7 +198,7 @@ s32 Shop_SelUse(s32 actor)
 			{
 				AudioCommand_PlayFar(112);
 				result = selection;
-				goto exit_loop;
+				break;
 			}
 			if (status == -4)
 			{
@@ -220,7 +219,7 @@ s32 Shop_SelUse(s32 actor)
 		{
 			AudioCommand_PlayFar(113);
 			result = -1;
-			goto exit_loop;
+			break;
 		}
 
 		if ((gKeysRepeat & KEY_LEFT) != 0)
@@ -259,7 +258,6 @@ s32 Shop_SelUse(s32 actor)
 		}
 	}
 
-exit_loop:
 	UiWork_FinalizeFar(win2, 2);
 	UiWork_FinalizeFar(win1, 2);
 	WaitFrames(1);

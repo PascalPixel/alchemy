@@ -378,15 +378,15 @@ static void FieldScene_RunComplexActorSequence(void)
 {
 	s32					  base;
 	struct FieldSprite	 *sprite;
-	struct FieldActor	 *p12;
-	struct FieldActor	 *p89;
 	struct MapScrollWork *work;
 	struct FieldActor	 *scene_actor;
 	struct EventWork	**control;
-	s32					  ground;
 
 	control = (struct EventWork **)Ram_EventWork;
-	/* FAKEMATCH: needed to match: stage the root reads before consuming the event record. Read in place: differ 12 (map work first) or 14 (view centre first). */
+	/* FAKEMATCH: needed to match: stage the root reads before consuming
+	   the event record. Read in place (measured again 2026-10-13, with the
+	   once-used locals gone): 431 instructions for 430, differ 11 (map
+	   work first) or 13 (view centre first). */
 	{
 		struct EventWork *event = *control;
 
@@ -403,10 +403,8 @@ static void FieldScene_RunComplexActorSequence(void)
 	Engine_ActorSetPosition(16, 0, 0);
 	Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
 	Engine_ActorSetAnimation(0, 18);
-	ground = 0;
 	sprite->rotation = 1365;
-	p12 = Object_GetById(17);
-	p12->motion_flags = 0;
+	Object_GetById(17)->motion_flags = 0;
 	Engine_ActorSetSpriteFlags(Object_GetById(17), 0);
 	Engine_ActorSetPosition(17, 37748736, 42598400);
 	Map_ClearLayerEntryFlag(7);
@@ -426,7 +424,7 @@ static void FieldScene_RunComplexActorSequence(void)
 	work->max_x = 0x02700000;
 	work->max_y = 0x03300000;
 	scene_actor->x.fixed = 0x02340000;
-	scene_actor->y.fixed = ground;
+	scene_actor->y.fixed = 0;
 	scene_actor->z.fixed = 0x02b30000;
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
@@ -491,8 +489,7 @@ static void FieldScene_RunComplexActorSequence(void)
 	Actor_SetSpeed(8, 98304, 49152);
 	Actor_SetSpeed(0, 98304, 49152);
 	Engine_CameraFollowActor(8, 1);
-	p89 = Object_GetById(0);
-	p89->priority_flags |= 0x1;
+	Object_GetById(0)->priority_flags |= 0x1;
 	Engine_ActorEnableActionCallback(8, gHaidiaBabiSharedAction);
 	Engine_EventWait(20);
 	Engine_ActorEnableActionCallback(0, gHaidiaBabiSharedAction);
@@ -873,15 +870,8 @@ static void EV08_TALK(void)
 
 static void ActorPresentation_SetTwoSceneCells(void)
 {
-	{
-		s32 size = 2;
-
-		Map_CopyCellsTo(22, 85, 25, 85, size, size);
-	}
-	{
-
-		Map_CopyCellAttributes(25, 15, 2, 2, 25, 25);
-	}
+	Map_CopyCellsTo(22, 85, 25, 85, 2, 2);
+	Map_CopyCellAttributes(25, 15, 2, 2, 25, 25);
 }
 
 static void FieldScene_RunSupplementalSequenceOne(void)

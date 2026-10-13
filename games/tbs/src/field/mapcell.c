@@ -310,24 +310,11 @@ void Map_WaitWorkValuesBelow256(void)
 	cnt = 0;
 	if (work->shake_x > 255 || work->shake_y > 255)
 	{
-		goto body;
-	body:
+	wait:
 		WaitFrames(1);
-		++cnt;
-		if (cnt >= 300)
-		{
-			goto done;
-		}
-		if (work->shake_x > 255)
-		{
-			goto body;
-		}
-		if (work->shake_y > 255)
-		{
-			goto body;
-		}
+		if (++cnt < 300 && (work->shake_x > 255 || work->shake_y > 255))
+			goto wait;
 	}
-done:
 	work->shake_decay = 0;
 }
 

@@ -189,36 +189,6 @@ pub(crate) fn mask_inline(text: &str) -> String {
     String::from_utf8(bytes).expect("review scopes contain complete tokens")
 }
 
-/// Prints candidates for review; it never approves or writes a ledger.
-pub(crate) fn entry(args: &[String]) -> std::process::ExitCode {
-    if args != ["--candidates"] {
-        eprintln!("usage: alchemy check evidence --candidates\nPrint source claims and fingerprints for review; never approve automatically.");
-        return std::process::ExitCode::from(2);
-    }
-    println!("{HEADER}");
-    let root = crate::compiler::routing::root();
-    let mut rows = BTreeMap::new();
-    for entry in walkdir::WalkDir::new(root.join("games")).sort_by_file_name().into_iter().filter_map(Result::ok) {
-        if !entry.file_type().is_file() { continue; }
-        let Ok(text) = std::fs::read_to_string(entry.path()) else { continue };
-        if entry.path().extension().is_some_and(|e| e == "s" || e == "S") {
-            let proof = text.lines().map(str::trim).take_while(|line| line.is_empty() || line.starts_with('@'))
-                .skip_while(|line| !line.starts_with("@ C2:"))
-                .filter_map(|line| line.strip_prefix("@ C2:").or_else(|| line.strip_prefix('@')))
-                .map(str::trim).filter(|line| !line.is_empty()).collect::<Vec<_>>().join(" ");
-            let veneers = builds_veneers(root, entry.path());
-            if !veneers {
-                if let Some(hash) = assembly_digest(root, entry.path()) {
-                    if !proof.is_empty() { rows.insert(("assembly", hash), proof); }
-                }
-            }
-        } else if entry.path().extension().is_some_and(|e| e == "c" || e == "h") {
-            for (span, reason) in claims(&text) { rows.insert(("inline-assembly", digest(&text[span], false)), reason); }
-        }
-    }
-    for ((kind, digest), reason) in rows { println!("{kind}\t{digest}\t{reason}"); }
-    std::process::ExitCode::SUCCESS
-}
 
 #[cfg(test)]
 mod tests {

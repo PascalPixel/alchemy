@@ -8,7 +8,7 @@ mod packed;
 mod publication;
 
 const USAGE: &str =
-    "usage: alchemy check <publication|coverage|layout|no-asm|dead|aliases|devices|evidence|headers|hygiene|object-list|packer|progress> [args]";
+    "usage: alchemy check <publication|coverage|layout|no-asm|dead|aliases|devices|headers|hygiene|object-list|packer|progress> [args]";
 
 pub fn entry(arguments: &[String]) -> ExitCode {
     let Some(command) = arguments.first().map(String::as_str) else {
@@ -28,7 +28,6 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         "aliases" => aliases::entry(rest),
         "devices" => crate::devices::entry(rest),
         "headers" => crate::headers::lint::entry(rest),
-        "evidence" => crate::evidence::entry(rest),
         "hygiene" => hygiene::entry(rest),
         "object-list" => crate::object_list::entry(rest),
         "packer" => crate::packer::entry(rest),

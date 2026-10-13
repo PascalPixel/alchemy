@@ -782,7 +782,7 @@ s32 FieldEffect_UpdateGridPlacement(void)
 
 		if (TILE_CELLS[index].collision_code == TILE_CELLS_TARGET[index].collision_code)
 		{
-			/* FAKEMATCH: needed to match: the six-word probe preserves the 24-byte frame; a three-word position halves it. */
+			/* FAKEMATCH: frame local: the six-word probe keeps the native 24-byte frame though only its first three words are the position. Plain forms measured 2026-10-13: one struct FieldPosition or s32[3] differ 4 (a 12-byte frame); two FieldPositions match as well. */
 			s32					  vector[6];
 			struct FieldPosition *position = (struct FieldPosition *)vector;
 

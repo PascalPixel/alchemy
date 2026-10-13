@@ -101,12 +101,13 @@ pub fn indexed_bitmap_png(data: &[u8]) -> Result<IndexedImage, AssetError> {
     })
 }
 
-fn encode_png(
+pub(crate) fn encode_png(
     width: usize,
     height: usize,
     color: png::ColorType,
     depth: png::BitDepth,
     palette: Option<&[u8]>,
+    transparency: Option<&[u8]>,
     pixels: &[u8],
 ) -> Result<Vec<u8>, AssetError> {
     let mut output = Vec::new();
@@ -116,10 +117,90 @@ fn encode_png(
     if let Some(palette) = palette {
         encoder.set_palette(palette);
     }
+    if let Some(alpha) = transparency {
+        encoder.set_trns(alpha);
+    }
     let mut writer = encoder.write_header().map_err(png_error)?;
     writer.write_image_data(pixels).map_err(png_error)?;
     writer.finish().map_err(png_error)?;
     Ok(output)
+}
+
+/// Palette indices `width` to a row, packed `depth` bits a pixel with the
+/// leftmost pixel highest and every row in whole bytes, as a PNG holds them.
+pub(crate) fn packed_rows(pixels: &[u8], width: usize, depth: png::BitDepth) -> Vec<u8> {
+    let depth = depth as usize;
+    let row_bytes = (width * depth).div_ceil(8);
+    let mut packed = vec![0u8; row_bytes * (pixels.len() / width)];
+    for (y, row) in pixels.chunks(width).enumerate() {
+        for (x, &index) in row.iter().enumerate() {
+            let bit = x * depth;
+            packed[y * row_bytes + bit / 8] |= index << (8 - depth - bit % 8);
+        }
+    }
+    packed
+}
+
+/// The PLTE and tRNS entries of an indexed PNG as written: two drawings
+/// with the same entries show the same colours and transparency.
+pub fn png_palette(data: &[u8]) -> Result<(Vec<u8>, Vec<u8>), AssetError> {
+    let (output, _, info) = decode(data)?;
+    if output.color_type != png::ColorType::Indexed {
+        return err("only an indexed PNG has a palette");
+    }
+    let palette = info
+        .palette
+        .as_deref()
+        .ok_or_else(|| AssetError("PNG lacks PLTE".into()))?;
+    Ok((palette.to_vec(), info.trns.as_deref().unwrap_or_default().to_vec()))
+}
+
+/// A PNG of the palette indices `pixels`, `width` to a row, written with the
+/// palette, transparency and bit depth of the indexed PNG `like`: a sheet
+/// drawn again keeps its colours exactly.
+pub fn png_like(like: &[u8], pixels: &[u8], width: usize) -> Result<Vec<u8>, AssetError> {
+    let (output, _, info) = decode(like)?;
+    if output.color_type != png::ColorType::Indexed {
+        return err("only an indexed PNG lends its palette");
+    }
+    let palette = info
+        .palette
+        .as_deref()
+        .ok_or_else(|| AssetError("PNG lacks PLTE".into()))?;
+    if width == 0 || pixels.is_empty() || !pixels.len().is_multiple_of(width) {
+        return err("a drawing needs whole nonempty rows");
+    }
+    let entries = (palette.len() / 3).min(1 << output.bit_depth as usize);
+    if pixels.iter().any(|index| *index as usize >= entries) {
+        return err("a pixel references a missing palette entry");
+    }
+    encode_png(
+        width,
+        pixels.len() / width,
+        png::ColorType::Indexed,
+        output.bit_depth,
+        Some(palette),
+        info.trns.as_deref(),
+        &packed_rows(pixels, width, output.bit_depth),
+    )
+}
+
+/// The palette indices of a tile stream drawn `tiles_wide` tiles to a row,
+/// in stream order: the sheet a plain `.4bpp` or `.8bpp` recipe reads.
+pub fn tile_sheet_pixels(tiles: &[u8], bpp: GbaBpp, tiles_wide: usize) -> Result<Vec<u8>, AssetError> {
+    let (tiles_high, width, height) = image_shape(tiles, bpp, tiles_wide)?;
+    let mut pixels = vec![0u8; width * height];
+    for tile in 0..tiles_high * tiles_wide {
+        let (left, top) = (tile % tiles_wide * 8, tile / tiles_wide * 8);
+        let bytes = &tiles[tile * bpp.tile_bytes()..][..bpp.tile_bytes()];
+        for i in 0..64 {
+            pixels[(top + i / 8) * width + left + i % 8] = match bpp {
+                GbaBpp::Bpp4 => bytes[i / 2] >> (i % 2 * 4) & 0x0f,
+                GbaBpp::Bpp8 => bytes[i],
+            };
+        }
+    }
+    Ok(pixels)
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -140,13 +221,6 @@ impl GbaBpp {
         match self {
             Self::Bpp4 => 16,
             Self::Bpp8 => 256,
-        }
-    }
-
-    fn png_depth(self) -> png::BitDepth {
-        match self {
-            Self::Bpp4 => png::BitDepth::Four,
-            Self::Bpp8 => png::BitDepth::Eight,
         }
     }
 
@@ -246,6 +320,7 @@ pub fn png_from_bitmap(pixels: &[u8], palette: &[u8], width: usize) -> Result<Ve
         png::ColorType::Indexed,
         png::BitDepth::Eight,
         Some(&rgb),
+        None,
         pixels,
     )
 }
@@ -488,71 +563,4 @@ pub fn sprite_runs(tiles: &[u8], bpp: GbaBpp) -> Vec<SpriteRun> {
             }
         })
         .collect()
-}
-
-pub fn png_from_gba_tiles(
-    tiles: &[u8],
-    palette: &[u8],
-    bpp: GbaBpp,
-    tiles_wide: usize,
-) -> Result<Vec<u8>, AssetError> {
-    png_from_tiles(tiles, palette, bpp, tiles_wide, None)
-}
-
-fn png_from_tiles(
-    tiles: &[u8],
-    palette: &[u8],
-    bpp: GbaBpp,
-    tiles_wide: usize,
-    banks: Option<&[u8]>,
-) -> Result<Vec<u8>, AssetError> {
-    let output_bpp = if banks.is_some() { GbaBpp::Bpp8 } else { bpp };
-    let rgb = palette_rgb(palette, output_bpp)?;
-    let entries = rgb.len() / 3;
-    let (tiles_high, width, height) = image_shape(tiles, bpp, tiles_wide)?;
-    let mut pixels = vec![0u8; width * height];
-    for tile_y in 0..tiles_high {
-        for tile_x in 0..tiles_wide {
-            let offset = (tile_y * tiles_wide + tile_x) * bpp.tile_bytes();
-            for y in 0..8 {
-                for x in 0..8 {
-                    let mut index = match bpp {
-                        GbaBpp::Bpp4 => {
-                            let byte = tiles[offset + y * 4 + x / 2];
-                            if x.is_multiple_of(2) {
-                                byte & 0x0f
-                            } else {
-                                byte >> 4
-                            }
-                        }
-                        GbaBpp::Bpp8 => tiles[offset + y * 8 + x],
-                    };
-                    if let Some(banks) = banks {
-                        index |= banks[tile_y * tiles_wide + tile_x] << 4;
-                    }
-                    if index as usize >= entries {
-                        return err("tile references an index outside the BGR555 palette");
-                    }
-                    pixels[(tile_y * 8 + y) * width + tile_x * 8 + x] = index;
-                }
-            }
-        }
-    }
-    let encoded = if output_bpp == GbaBpp::Bpp4 {
-        let mut packed = Vec::with_capacity(pixels.len() / 2);
-        for pair in pixels.as_chunks::<2>().0 {
-            packed.push(pair[0] << 4 | pair[1]);
-        }
-        packed
-    } else {
-        pixels
-    };
-    encode_png(
-        width,
-        height,
-        png::ColorType::Indexed,
-        output_bpp.png_depth(),
-        Some(&rgb),
-        &encoded,
-    )
 }

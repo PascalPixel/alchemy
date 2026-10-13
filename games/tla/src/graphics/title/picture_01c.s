@@ -1,8 +1,9 @@
 	.include "games/common/include/game/ed_asm.h"
 	.section .rodata
-@ The subtitle's words in each language, three 64x64 frames a sheet, in four
-@ stages from blurred (01C) to sharp (01F, in picture_01e.s), in
-@ Resource_Data01B's colours.
+@ The subtitle's words in each language, each sheet three 64x64 word pieces
+@ placed side by side in one row, as the title shows them, in four stages
+@ from blurred (01C) to sharp (01F, in picture_01e.s), in Resource_Data01B's
+@ colours.
 @ Streams are rounded to four bytes; PACKER rows name the buffer's last writer.
 @ The bytes after 01D in Spanish, French and Italian are neither their last
 @ writer's nor provable residue, and stay on those editions' scaffolds.

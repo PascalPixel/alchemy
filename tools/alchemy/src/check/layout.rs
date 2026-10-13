@@ -9,7 +9,8 @@ use std::process::ExitCode;
 const USAGE: &str = "usage: alchemy check layout [--report]\n\
 Refuses every tile-sheet PNG whose finder layout beats the drawn one clearly, unless\n\
 it is the best arrangement of the whole sprites its recipe names;\n\
---report lists every sheet with both scores instead.";
+--report lists every sheet with both scores instead, and marks STACKED a column of\n\
+named sprites that a wider arrangement of them joins clearly better.";
 
 pub const MARGIN: f64 = 0.1;
 
@@ -19,28 +20,15 @@ struct Recipe {
     form: String,
 }
 
-fn tile_form(form: &str) -> Option<(GbaBpp, (usize, usize))> {
-    let bpp = match form.get(..4)? {
-        "4bpp" => GbaBpp::Bpp4,
-        "8bpp" => GbaBpp::Bpp8,
-        _ => return None,
-    };
-    let shape = &form[4..];
-    if shape.is_empty() {
-        return Some((bpp, (1, 1)));
-    }
-    let (wide, high) = shape.split_once('x')?;
-    Some((
-        bpp,
-        (
-            wide.parse::<usize>().ok()? / 8,
-            high.parse::<usize>().ok()? / 8,
-        ),
-    ))
+/// A form of tiles, well formed or not: `judge` reads it through the
+/// build's own `ags::resource::tile_form` and refuses one that names no
+/// hardware shape.
+fn names_tiles(form: &str) -> bool {
+    form.starts_with("4bpp") || form.starts_with("8bpp")
 }
 
 fn judged_form(form: &str) -> bool {
-    tile_form(form).is_some() || form == BITMAP
+    names_tiles(form) || form == BITMAP
 }
 
 const BITMAP: &str = "bitmap";
@@ -138,7 +126,7 @@ fn tilemap_problems(list: &str, sibling: &dyn Fn(&str) -> Result<Vec<u8>, String
         let [part, form, drawing @ ..] = fields.as_slice() else {
             continue;
         };
-        if tile_form(form).is_none() {
+        if !names_tiles(form) {
             continue;
         }
         if drawing.is_empty() {
@@ -241,6 +229,18 @@ impl Judgement {
             .is_some_and(|best| self.drawn_score >= best)
     }
 
+    /// A column of named sprites that a wider arrangement of the same
+    /// sprites joins clearly better: pieces of one picture stacked where the
+    /// game may show them side by side. Only the report marks it, for the
+    /// code that places the sprites to settle; it refuses nothing.
+    pub fn stacked_pieces(&self) -> bool {
+        self.sprites_score.is_some_and(|best| {
+            self.drawn.tiles_wide == self.drawn.meta.0
+                && self.tiles > self.drawn.meta.0 * self.drawn.meta.1
+                && best - self.drawn_score > MARGIN
+        })
+    }
+
     pub fn banked(&self) -> bool {
         self.found_score() - self.drawn_score > MARGIN && !self.best_of_its_sprites()
     }
@@ -250,7 +250,7 @@ const ANIMATION_TILES: usize = 4;
 
 pub fn judge(png: &[u8], form: &str) -> Result<Option<Judgement>, String> {
     let image = indexed_bitmap_png(png).map_err(|error| error.0)?;
-    let (bpp, meta) = match tile_form(form) {
+    let (bpp, meta) = match ags::resource::tile_form(form) {
         Some(tiles) => tiles,
         None if form == BITMAP && image.width == 8 => (GbaBpp::Bpp8, (1, 1)),
         None if form == BITMAP => return Ok(None),
@@ -357,6 +357,7 @@ fn run(root: &Path, report: bool) -> Result<(), String> {
     });
     let mut banked = Vec::new();
     let mut judged = 0;
+    let mut stacked = 0;
     for (recipe, judgement) in recipes.iter().zip(judgements) {
         let Some((name, judgement)) = judgement? else {
             continue;
@@ -392,12 +393,19 @@ fn run(root: &Path, report: bool) -> Result<(), String> {
             println!(
                 "{:+.3}\t{}{line}",
                 judgement.found_score() - judgement.drawn_score,
-                if judgement.banked() { "BANKED " } else { "" }
+                if judgement.banked() {
+                    "BANKED "
+                } else if judgement.stacked_pieces() {
+                    "STACKED "
+                } else {
+                    ""
+                }
             );
         }
         if judgement.banked() {
             banked.push(line);
         }
+        stacked += usize::from(judgement.stacked_pieces());
     }
     if judged == 0 {
         return Err("layout check judged no tile sheet".into());
@@ -407,7 +415,7 @@ fn run(root: &Path, report: bool) -> Result<(), String> {
             println!("TILEMAP {problem}");
         }
         println!(
-            "layout judged={judged} banked={} tilemap={}",
+            "layout judged={judged} banked={} tilemap={} stacked={stacked}",
             banked.len(),
             tilemaps.len()
         );
@@ -421,8 +429,9 @@ fn run(root: &Path, report: bool) -> Result<(), String> {
         ));
     }
     Err(format!(
-        "{} banked tile sheet(s); redraw each at the finder's layout (agsgfx X.4bpp Y.png), or a mixed\n\
-         column as the part list of its sprite runs (agsgfx X.4bpp Y.png --sprites):\n{}",
+        "{} banked tile sheet(s); redraw each as the finder lays out its tiles, or a mixed column\n\
+         as a part list of its sprite runs (agsgfx X.png Y.png --from FORM --to FORM --wide N draws\n\
+         a sheet's tiles again and refuses any drawing that does not build them back):\n{}",
         banked.len(),
         banked.join("\n")
     ))
@@ -624,12 +633,31 @@ mod tests {
     }
 
     #[test]
-    fn tile_forms_name_their_depth_and_obj_shape() {
-        assert_eq!(tile_form("4bpp"), Some((GbaBpp::Bpp4, (1, 1))));
-        assert_eq!(tile_form("8bpp32x16"), Some((GbaBpp::Bpp8, (4, 2))));
-        assert_eq!(tile_form("frames"), None);
-        assert_eq!(tile_form("bitmap"), None);
+    fn tile_forms_are_judged_and_one_naming_no_obj_shape_is_refused() {
         assert!(judged_form("bitmap") && judged_form("8bpp32x16") && !judged_form("frames"));
+        assert!(judged_form("4bpp24x8"), "judged, and refused as no tile form");
+        let png = png_from_bitmap(&glyph_strip(&[true, true], 1), &[0u8; 32], 32).unwrap();
+        for form in ["4bpp24x8", "4bpp08x08"] {
+            let error = judge(&png, form).unwrap_err();
+            assert_eq!(error, format!(".{form} is not a tile form"));
+        }
+        assert!(judge(&png, "4bpp32x8").unwrap().is_some());
+    }
+
+    #[test]
+    fn pieces_of_a_picture_stacked_in_a_column_of_named_sprites_are_marked() {
+        let palette = [0u8; 32];
+        let slope: Vec<u8> = (0..80 * 16)
+            .map(|index| u8::from(index / 80 * 5 >= index % 80))
+            .collect();
+        let row = png_from_bitmap(&slope, &palette, 80).unwrap();
+        let judgement = judge(&row, "4bpp16x16").unwrap().unwrap();
+        assert!(!judgement.banked() && !judgement.stacked_pieces(), "{judgement:?}");
+        let column = ags::resource::redraw(&row, "4bpp16x16", "4bpp16x16", Some(1)).unwrap();
+        let judgement = judge(&column, "4bpp16x16").unwrap().unwrap();
+        assert!(judgement.stacked_pieces(), "{judgement:?}");
+        let plain = judge(&column, "4bpp").unwrap().unwrap();
+        assert!(!plain.stacked_pieces(), "only named sprites are marked: {plain:?}");
     }
 
     #[test]

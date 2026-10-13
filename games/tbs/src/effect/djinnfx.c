@@ -601,41 +601,41 @@ void BattleFx_StepPaletteToResource(s32 resource_id)
 
 static __inline__ void LoadResource(const void *id, void *dest, s32 skip, s32 copy)
 {
-	/* FAKEMATCH: needed to match: inline scope keeps each resource call's arguments local */
+	/* FAKEMATCH: forwarding inline; its scope keeps each resource call's arguments local. Resource_LoadAndDecompress called directly at all 24 sites differs 1319 on tbs-en: three more spill slots (sub sp, #196 for #184) move every stack offset. */
 	Resource_LoadAndDecompress((s32)id, dest, skip, copy);
 }
 
 static __inline__ void PackRows(void *src, void *dest, s32 width, s32 height)
 {
-	/* FAKEMATCH: needed to match: keep packing arguments within their own inline scope */
+	/* FAKEMATCH: forwarding inline for the one packing call; Graphics_PackTileRows called directly differs 1321 on tbs-en, three more spill slots moving every stack offset. */
 	Graphics_PackTileRows(src, dest, width, height);
 }
 
 static __inline__ void DrawImage(
 	void *canvas, const void *pixels, s32 x, s32 y, s32 width, s32 height, DrawRectangle *draw)
 {
-	/* FAKEMATCH: needed to match: inline scope reloads each image address at its drawing call */
+	/* FAKEMATCH: forwarding inline; its scope reloads each image address at its drawing call. The four calls made through the blitter directly differ 1189 on tbs-en, four more spill slots moving every stack offset. */
 	(*draw)(canvas, pixels, x, y, width, height);
 }
 
 static __inline__ void DrawTallImage(
 	void *canvas, const void *pixels, s32 x, s32 y, s32 width, DrawRectangle *draw)
 {
-	/* FAKEMATCH: needed to match: derive height inside the inline scope so the dimension stores reuse one register instead of keeping two argument temporaries alive */
+	/* FAKEMATCH: forwarding inline; deriving the height inside its scope lets the dimension stores reuse one register instead of keeping two argument temporaries alive. Called through the blitter directly with width * 2 it differs 1155 on tbs-en, two more spill slots. */
 	(*draw)(canvas, pixels, x, y, width, width * 2);
 }
 
 static __inline__ void DrawScrolledImage(void *canvas, const void *pixels, s32 x, s32 y, s32 width,
 	s32 height, s32 scroll, DrawRectangle *draw)
 {
-	/* FAKEMATCH: needed to match: subtract the scrolled part inside the drawing scope */
+	/* FAKEMATCH: forwarding inline; the scrolled part is subtracted inside its scope. Called through the blitter directly with height - scroll it differs 226 on tbs-en. */
 	(*draw)(canvas, pixels, x, y, width, height - scroll);
 }
 
 static __inline__ void DrawCroppedImage(
 	void *canvas, const void *pixels, s32 x, s32 y, s32 width, DrawRectangle *draw)
 {
-	/* FAKEMATCH: needed to match: keep the cropped height inside the drawing scope */
+	/* FAKEMATCH: forwarding inline; the cropped height stays inside its scope. Both calls made through the blitter directly with 91 differ 16 on tbs-en: the stack arguments 128 and 91 go through r0 instead of r1 and the pixels pool load moves ahead of them. */
 	(*draw)(canvas, pixels, x, y, width, 91);
 }
 
@@ -1719,7 +1719,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 			{
 				struct EffectStep	  *step = (struct EffectStep *)(Ram_MapCellBuffer + 0x4000);
 				struct EffectPosition *origin;
-				/* FAKEMATCH: needed to match: a zero offset known only after gcse keeps the origin copy, hoisted after the projection address */
+				/* FAKEMATCH: a zero offset known only after gcse keeps the origin copy, hoisted after the projection address. origin = target_screen, or target_screen->x and ->y read directly, differ 64 on tbs-en, two instructions fewer. */
 				s32 bias = 0;
 				for (i = 0; i != 64; i++, step++)
 				{
@@ -1730,7 +1730,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 						SceneTransform_ApplyPitch(step->velocity_x);
 						SceneTransform_ApplyYaw(step->velocity_y);
 						EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
-						/* FAKEMATCH: needed to match: see bias above */
+						/* FAKEMATCH: the zero bias above; see there. */
 						origin = (struct EffectPosition *)((u8 *)target_screen + bias);
 						projected.x = projected.x / 2 + origin->x / 2;
 						projected.y += origin->y + 32;

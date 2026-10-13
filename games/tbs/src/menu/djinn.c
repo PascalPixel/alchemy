@@ -327,7 +327,13 @@ s32 DjinnMenu_RunScreen(void)
 						break;
 					}
 				}
-				/* FAKEMATCH: needed to match: a one-pass block builds the selection address before found * 10 */
+				/* FAKEMATCH: the one-pass block ends the store's scheduling region, so the
+				 * selection address (movs #186, lsls) is built before the last shift of
+				 * found * 10. 2026-10-13: the plain store differs 2 (the two lsls swap),
+				 * as does DJINN_LIST_ROWS * found; found * DJINN_LIST_ROWS + column
+				 * differs 4; this repeated block as a static __inline__ function with
+				 * its own counter adds a saved register. The whole block as one
+				 * do { } while (0) statement macro, used at both places, matches. */
 				do
 				{
 					menu->selection[0] = column + found * DJINN_LIST_ROWS;
@@ -386,7 +392,8 @@ s32 DjinnMenu_RunScreen(void)
 						break;
 					}
 				}
-				/* FAKEMATCH: needed to match: a one-pass block builds the selection address before found * 10 */
+				/* FAKEMATCH: the one-pass block ends the store's scheduling region, as at
+				 * case 13; the plain store differs 2 here too (the two lsls swap). */
 				do
 				{
 					menu->selection[0] = column + found * DJINN_LIST_ROWS;

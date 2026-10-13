@@ -627,13 +627,12 @@ static void TakaraShima_RestoreRoomActors(void)
 
 static void RunSceneVectorTransition(void)
 {
-	struct V6 transition;
+	struct StagedActorProbe probe;
 
 	Engine_EventBegin();
-	if (StagedActor_FindClearPosition(&transition) != 0)
+	if (StagedActor_FindClearPosition(&probe) != 0)
 	{
-		/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-		((void (*)(struct V6))SceneActor_MoveAndRedraw)(transition);
+		SceneActor_MoveAndRedraw(probe);
 	}
 	Engine_EventEnd();
 }

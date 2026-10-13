@@ -1017,11 +1017,6 @@ static void TakaraHashira_UpdatePillarActors(void)
 	TakaraHashira_SortPillarActors();
 }
 
-struct Probe
-{
-	s32 word[6];
-};
-
 static void TakaraHashira_PushPillar(void)
 {
 	Engine_EventBegin();
@@ -1302,13 +1297,12 @@ static void EV10_PSYNERGY(void)
 
 static void TakaraHashira_RunPushScene(void)
 {
-	struct Probe probe;
+	struct StagedActorProbe probe;
 
 	Engine_EventBegin();
 	if (StagedActor_FindClearPosition(&probe) != 0)
 	{
-		/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-		((void (*)(struct Probe))SceneActor_MoveAndRedraw)(probe);
+		SceneActor_MoveAndRedraw(probe);
 	}
 	else
 	{

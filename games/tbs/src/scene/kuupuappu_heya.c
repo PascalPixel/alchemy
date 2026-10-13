@@ -112,7 +112,7 @@ static s32 KuupuappuHeya_TryJumpTo(struct FixedPointPosition *pos)
 	obj = Object_GetById(0);
 	flags = &obj->motion_flags;
 	saved = *flags;
-	if (Object_CheckMovementCollision(obj, pos) == 0)
+	if (FieldObject_CheckMovementCollision(obj, pos) == 0)
 	{
 		Engine_EventBegin();
 		Object_SetMode(obj, 6);
@@ -1527,7 +1527,7 @@ static void KuupuappuHeya_RunBranchingDialogueScene(void)
 
 		record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
 	}
-	Map_SetViewBounds(0x200000, 0x2400000, 0x1900000, 0x3a80000);
+	FieldMap_SetViewBounds(0x200000, 0x2400000, 0x1900000, 0x3a80000);
 	Actor_SetSpeed(0, 0xcccc, 0x6666);
 	Actor_SetSpeed(1, 0xcccc, 0x6666);
 	Actor_SetSpeed(2, 0xcccc, 0x6666);

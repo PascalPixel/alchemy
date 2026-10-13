@@ -213,7 +213,7 @@ static void SceneState_ApplyRectsForActorsNineAndTen(void)
 	{
 		s32 x = actor->x.fixed >> 20;
 
-		GameFlag_SetByte(784, x);
+		FieldGameFlag_SetByte(784, x);
 	}
 	{
 		s32 x = actor->x.fixed >> 20;
@@ -603,7 +603,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
 		actor->motion_flags = hit;
 		Map_CopyCellAttributes(14, 13, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
 	}
-	x = GameFlag_GetByte(0x310);
+	x = FieldGameFlag_GetByte(0x310);
 	if (x == 0)
 	{
 		x = 25;
@@ -1475,7 +1475,7 @@ static void StagedActor_PushActorAhead(void)
 	step <<= 16;
 	pos.z = target->z.fixed + step;
 
-	if (Object_CheckMovementCollision(target, &pos) > 0)
+	if (FieldObject_CheckMovementCollision(target, &pos) > 0)
 	{
 		return;
 	}

@@ -696,7 +696,7 @@ static void EV30_TOUCH(void)
 	pos[0] = actor->x.fixed;
 	pos[1] = actor->y.fixed;
 	pos[2] = actor->z.fixed + 0x18000;
-	hit = Object_CheckMovementCollision(actor, pos);
+	hit = FieldObject_CheckMovementCollision(actor, pos);
 	phase = gFrameCount & 4;
 	if (phase == 0)
 	{
@@ -722,7 +722,7 @@ static void EV30_TOUCH(void)
 	pos[0] = actor->x.fixed;
 	pos[1] = actor->y.fixed;
 	pos[2] = actor->z.fixed + 0x80000;
-	hit = Object_CheckMovementCollision(actor, pos);
+	hit = FieldObject_CheckMovementCollision(actor, pos);
 	if (hit > 0)
 	{
 		return;
@@ -730,7 +730,7 @@ static void EV30_TOUCH(void)
 	pos[0] = actor->x.fixed + 0x5b333;
 	pos[1] = actor->y.fixed;
 	pos[2] = actor->z.fixed + 0x5b333;
-	hit = Object_CheckMovementCollision(actor, pos);
+	hit = FieldObject_CheckMovementCollision(actor, pos);
 	if (hit > 0)
 	{
 		return;
@@ -738,7 +738,7 @@ static void EV30_TOUCH(void)
 	pos[0] = actor->x.fixed - 0x5b333;
 	pos[1] = actor->y.fixed;
 	pos[2] = actor->z.fixed + 0x5b333;
-	hit = Object_CheckMovementCollision(actor, pos);
+	hit = FieldObject_CheckMovementCollision(actor, pos);
 	if (hit > 0)
 	{
 		return;

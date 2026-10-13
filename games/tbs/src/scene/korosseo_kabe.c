@@ -222,17 +222,17 @@ static void SceneState_StoreSlotTileXToWork832To848(void)
 
 	record = (s32 *)Object_GetById(12);
 	value = record[2] >> 20;
-	GameFlag_SetByte(832, value);
+	FieldGameFlag_SetByte(832, value);
 	Map_CopyCellAttributes(71, 16, 1, 1, value, 16);
 
 	record = (s32 *)Object_GetById(13);
 	value = record[2] >> 20;
-	GameFlag_SetByte(840, value);
+	FieldGameFlag_SetByte(840, value);
 	Map_CopyCellAttributes(71, 16, 1, 1, value, 16);
 
 	record = (s32 *)Object_GetById(14);
 	value = record[2] >> 20;
-	GameFlag_SetByte(848, value);
+	FieldGameFlag_SetByte(848, value);
 	Map_CopyCellAttributes(71, 16, 1, 1, value, 16);
 }
 
@@ -327,7 +327,7 @@ static void EV19_PSYNERGY(void)
 
 static void KorosseoKabe_RunSelectedActorRisingEffect(void)
 {
-	BattleFx_RunRisingObjectSequence(gGameState.selected_actor, 6, 0);
+	FieldBattleFx_RunRisingObjectSequence(gGameState.selected_actor, 6, 0);
 }
 
 static void KorosseoKabe_CheckLeaderAhead(void)
@@ -839,7 +839,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 	actor->priority_flags = 2;
 	Map_CopyCellAttributes(52, 28, 1, 3, col, 13);
 
-	x = GameFlag_GetByte(0x340);
+	x = FieldGameFlag_GetByte(0x340);
 	if (x == 0)
 	{
 		x = 73;
@@ -849,7 +849,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 	actor->motion_flags = zero;
 	actor->priority_flags = 2;
 	Map_CopyCellAttributes(71, 16, 1, 1, x, 16);
-	x = GameFlag_GetByte(0x348);
+	x = FieldGameFlag_GetByte(0x348);
 	if (x == 0)
 	{
 		x = 76;
@@ -859,7 +859,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 	actor->motion_flags = zero;
 	actor->priority_flags = 2;
 	Map_CopyCellAttributes(71, 16, 1, 1, x, 16);
-	x = GameFlag_GetByte(0x350);
+	x = FieldGameFlag_GetByte(0x350);
 	if (x == 0)
 	{
 		x = 79;
@@ -1219,7 +1219,7 @@ static void EV38_TALK(s32 speaker)
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
 		OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 488, 248);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 20);
-		BattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, 0);
+		FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, 0);
 		Engine_CameraMoveTo(0x2180000, -1, 0xa00000, 1);
 		Engine_EventShowMessage(speaker, 0);
 		Korosseo_RestoreCompetitor(ACTOR_PARTY_LEADER);
@@ -1756,7 +1756,7 @@ static void StagedActor_PushActorAhead(void)
 	step <<= 16;
 	pos.z = target->z + step;
 
-	if (Object_CheckMovementCollision(target, &pos) > 0)
+	if (FieldObject_CheckMovementCollision(target, &pos) > 0)
 	{
 		return;
 	}

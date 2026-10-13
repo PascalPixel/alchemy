@@ -80,8 +80,8 @@ static s32 SceneActor_MoveActorZeroToTarget(const MoveTarget *target)
 
 	FieldVector_AddPolarOffset(0x00100000, (actor->facing + 0x2000) & 0xc000, &probe);
 
-	if (Object_CheckMovementCollision(actor, &probe) != 1
-		&& Object_CheckMovementCollision(actor, target) == 0)
+	if (FieldObject_CheckMovementCollision(actor, &probe) != 1
+		&& FieldObject_CheckMovementCollision(actor, target) == 0)
 	{
 		Engine_EventBegin();
 		Object_SetMode(actor, 6);
@@ -372,7 +372,7 @@ static void EV26_SCRIPT(void)
 
 static void FieldScene_RunStepWith6(void)
 {
-	BattleFx_RunRisingObjectSequence(0, 6, 0);
+	FieldBattleFx_RunRisingObjectSequence(0, 6, 0);
 }
 
 static void SceneActor_PassPointTwoRightOfActorZero(void)

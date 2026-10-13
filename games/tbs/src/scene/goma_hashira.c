@@ -406,7 +406,7 @@ static void EV20_TOUCH(void)
 	pos = &target;
 	pos->y = Object_GetById(0)->y.fixed;
 	pos->z = Object_GetById(0)->z.fixed;
-	if (Object_CheckMovementCollision(obj, pos) == 0)
+	if (FieldObject_CheckMovementCollision(obj, pos) == 0)
 	{
 		Engine_EventBegin();
 		Object_SetMode(obj, 6);

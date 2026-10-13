@@ -473,7 +473,7 @@ static void EV13_PSYNERGY(void)
 
 	actor = Object_GetById(13);
 	x = actor->x >> 20;
-	GameFlag_SetByte(880, x);
+	FieldGameFlag_SetByte(880, x);
 	Map_CopyCellAttributes(18, 10, 3, 1, 18, 11);
 	Map_CopyCellAttributes(17, 11, 1, 1, x, 11);
 }
@@ -790,7 +790,7 @@ static void EV05_RAISED(void)
 	Engine_ObjectSetPosition(actor, actor->x, actor->y, z + 0xC0000);
 	Object_CommitPosition(actor);
 	Engine_ActorSetAttachedEffect(*slot, 258);
-	BattleFx_RunRisingObjectSequence(*slot, 6, 0);
+	FieldBattleFx_RunRisingObjectSequence(*slot, 6, 0);
 }
 
 static void ColossoLogRollingStage_NoopSceneEventHook(void)
@@ -963,7 +963,7 @@ s32 StageSetup_BuildAndDispatch(void)
 		actor->y.fixed = 32 << 16;
 	}
 
-	column = GameFlag_GetByte(880);
+	column = FieldGameFlag_GetByte(880);
 	if (column == 0)
 	{
 		column = 19;
@@ -2249,7 +2249,7 @@ static void ColossoLogRollingStage_PushStagedActor(void)
 	step <<= 16;
 	position.z = target->z + step;
 
-	if (Object_CheckMovementCollision(target, &position) > 0)
+	if (FieldObject_CheckMovementCollision(target, &position) > 0)
 	{
 		return;
 	}

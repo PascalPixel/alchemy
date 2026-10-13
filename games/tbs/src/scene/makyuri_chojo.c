@@ -17,6 +17,7 @@
 #include "unit/runtime/math.h"
 #include "types.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "field_scene.h"
 #include "overlay_object.h"
 #include "create_configured_overlay_object.h"
@@ -295,7 +296,7 @@ static void SceneActor_InitializeMotion(void)
 	position[1] = actor->y.fixed;
 	position[2] = (actor->z.fixed & 0xfff00000) + 0x80000;
 	Vector_AddPolarOffset(0x200000, angle, position);
-	if (Object_CheckMovementCollision(actor, position) == 0)
+	if (FieldObject_CheckMovementCollision(actor, position) == 0)
 	{
 		Engine_GameFlagClear(592);
 		EV11_TOUCH();

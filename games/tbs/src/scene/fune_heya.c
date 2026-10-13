@@ -1136,7 +1136,7 @@ static s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
 		point[1] = obj->y.fixed;
 		point[2] = z << 16;
 
-		if (Object_CheckMovementCollision(obj, point) != 0)
+		if (FieldObject_CheckMovementCollision(obj, point) != 0)
 		{
 			return 0;
 		}

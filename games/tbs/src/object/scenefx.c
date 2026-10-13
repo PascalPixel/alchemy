@@ -351,18 +351,15 @@ void FieldFx_StartGroundParticles(void)
 	s32						  *leader;
 	struct GroundParticle	  *particle;
 	u32						  *words;
-	volatile u32			   fill;
 	u32						   i;
 
-	/* FAKEMATCH: one pointer, words, holds the fill's zero, the decode buffer and each particle's cell cursor, all three in r6 as the native keeps them. A plain fill = 0 takes r3 (differ 4); a cell cursor of its own reallocates the loop and drops a stack slot (differ 58). */
+	/* FAKEMATCH: one pointer, words, holds the fill's zero, the decode buffer and each particle's cell cursor, all three in r6 as the native keeps them. A plain fill = 0 takes r3 (differ 4); a cell cursor of its own reallocates the loop and drops a stack slot (differ 58). 2026-10-13: an inline allocate-then-clear helper (Runtime_AllocateBlock, then Dma_Fill32(0, block, size)) differs 22: the fill moves before the sound call. */
 	work = Runtime_AllocateBlock(29, sizeof(struct GroundParticleWork));
 	leader = ((struct MapScrollWork *)gMapWork[0])->origin;
 	BattleFx_SetQueuedSoundAndPlay(170);
 	words = 0;
 	particle = work->particles;
-	fill = (u32)words;
-	Dma_Set(
-		(const void *)&fill, work, 0x85000000 | (sizeof(struct GroundParticleWork) / 4), REG_DMA3);
+	Dma_Fill32((u32)words, work, sizeof(struct GroundParticleWork));
 	words = Runtime_AllocateBlock(14, 0x400);
 	Resource_DecodeByteLz(FieldFx_GroundParticleTiles, words);
 	work->entry = Resource_FindFreeEntry();
@@ -488,15 +485,13 @@ void FieldMotes_Start(void)
 	u8						  *tiles;
 	u32						   i;
 	u32						   size;
-	volatile u32			   zero;
 
 	size = 0x410;
 	work = Runtime_AllocateBlock(29, size);
 	mote = work->particles;
-	/* FAKEMATCH: reusing the allocation size for the cleared word keeps the zero in r1, the register size was passed in; a plain zero = 0 takes r3 (differ 4). */
+	/* FAKEMATCH: reusing the allocation size for the cleared word keeps the zero in r1, the register size was passed in; a plain zero = 0 takes r3 (differ 4). 2026-10-13: an allocate-then-clear helper, as an inline function or a statement macro (Runtime_AllocateBlock, then Dma_Fill32(0, block, size)), differs 10: the zero takes r3 and mote is formed after the fill. */
 	size = 0;
-	zero = size;
-	Dma_Set((void *)&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x104, REG_DMA3);
+	Dma_Fill32(size, work, sizeof(*work));
 	tiles = Runtime_AllocateBlock(14, 0x400);
 	Resource_DecodeByteLz(FieldFx_MoteTiles, tiles);
 	work->entry = Resource_FindFreeEntry();
@@ -628,12 +623,10 @@ void FieldEffect_InitSparkles(void)
 	u8						  *buf;
 	u32						   i;
 	s32						   clear;
-	volatile u32			   zero;
 
-	/* FAKEMATCH: needed to match: reusing the allocation size for the fill word keeps zero in r1; a separate helper value differs by four instructions. */
+	/* FAKEMATCH: needed to match: reusing the allocation size for the fill word keeps zero in r1; a separate helper value differs by four instructions. 2026-10-13: an allocate-then-clear helper, as an inline function or a statement macro (Runtime_AllocateBlock, then Dma_Fill32(0, block, size)), differs 10: the zero takes r3 and p is formed after the fill. */
 	size = 0;
-	zero = size;
-	Dma_Set(&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x104, REG_DMA3);
+	Dma_Fill32(size, work, sizeof(*work));
 	buf = Runtime_AllocateBlock(14, 0x400);
 	Resource_DecodeByteLz(FieldFx_SparkleTiles, buf);
 	work->entry = Resource_FindFreeEntry();
@@ -672,13 +665,10 @@ void BattleFx_StartTwelveFrameBlend(void)
 {
 	struct FieldBlendWork	   *work;
 	struct BattleEffectBuffers *buffers;
-	volatile u32				zero;
 
 	work = Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
 	buffers = gPaletteBufferWork;
-	zero = 0;
-	Dma_Set(
-		(const void *)&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x7e2, REG_DMA3);
+	Dma_Fill32(0, work, sizeof(struct FieldBlendWork));
 	BattleFx_BuildBuffer(0x10003, buffers, work, 1);
 	BattleFx_BuildBuffer(0x10005, buffers, work->to, 1);
 	BattleFx_InterpolateBuffers(work->to, work->from, work->delta, 12);
@@ -713,14 +703,11 @@ void BattleFx_StartBufferBlend(s32 from, s32 to)
 {
 	struct FieldBlendWork	   *work;
 	struct BattleEffectBuffers *buffers;
-	volatile u32				zero;
 	s16						   *target;
 
 	work = Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
 	buffers = gPaletteBufferWork;
-	zero = 0;
-	Dma_Set(
-		(const void *)&zero, work, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x7e2, REG_DMA3);
+	Dma_Fill32(0, work, sizeof(struct FieldBlendWork));
 	BattleFx_BuildBuffer(from, buffers, work, 1);
 	target = work->to;
 	BattleFx_BuildBuffer(to, buffers, target, 1);

@@ -569,8 +569,6 @@ extern const u8					 ColorBuffer_FadeStep1Map[32];
 extern const u8					 ColorBuffer_FadeStep2Map[32];
 extern const u8					 ColorBuffer_FadeStep3Map[32];
 extern u16						 Encounter_EnemyGroupTable[];
-// volatile: gLinkStatus carries its tag where tbs/include/global_cells.h declares it (measured on tbs-en)
-extern volatile u16				 gLinkStatus;
 extern struct WorldMapWork		 gWorldMapWork;
 extern const struct SceneCueRule Scene_CueRuleTable[];
 s32								 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);

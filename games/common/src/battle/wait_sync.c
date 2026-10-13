@@ -9,9 +9,7 @@
 #include "serial_runtime.h"
 #include "btlwork.h"
 
-// volatile: gLinkStatus carries its tag where tbs/include/global_cells.h declares it (measured on tbs-en)
-extern volatile u16 gLinkStatus;
-extern u16			gLinkPeerSignatures[][12];
+extern u16 gLinkPeerSignatures[][12];
 
 //--------------------------------------------------------------------------
 // 通信対戦なら、相手と "EXEC" の合図をそろえる

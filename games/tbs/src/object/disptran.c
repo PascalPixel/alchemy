@@ -593,10 +593,8 @@ void DisplayTransition_UpdateScanlineTable(void)
 void DisplayTransition_InitializeBattleEffectState(s32 mode)
 {
 	struct DisplayTransitionState *state = Runtime_AllocateBlock(31, sizeof(*state));
-	volatile u32				   zero;
 
-	zero = 0;
-	Dma_Set((const void *)&zero, state, 0x85000000 | (sizeof(*state) / 4), REG_DMA3);
+	Dma_Fill32(0, state, sizeof(*state));
 	state->mode = mode;
 	state->value = 0;
 	state->mask = 0x3f3f;
@@ -613,12 +611,10 @@ void BattleFx_EnableTwoCallbacks(void)
 
 struct DisplayTransitionState *DisplayTransition_AllocateAndClearState(void)
 {
-	volatile u32				   clear_value;
 	struct DisplayTransitionState *state;
 
 	state = Runtime_AllocateBlock(31, sizeof(*state));
-	clear_value = 0;
-	Dma_Set((const void *)&clear_value, state, 0x85000000 | (sizeof(*state) / 4), REG_DMA3);
+	Dma_Fill32(0, state, sizeof(*state));
 	return state;
 }
 
@@ -996,8 +992,7 @@ typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 void DisplayTransition_FillTilemapAndSolidTile(s32 color)
 {
 	struct DisplayTransitionState *work = gDisplayTransition;
-	volatile u32				   fill = 0xf000f000;
-	Dma_Set((const void *)&fill, BG_SCREEN_BLOCK(4), 0x85000140, REG_DMA3);
+	Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 0x500);
 	if (color != -1)
 	{
 		u32	 pattern = 0;
@@ -1015,11 +1010,9 @@ void DisplayTransition_FillTilemapAndSolidTile(s32 color)
 void DisplayTransition_InitializeState(s32 value)
 {
 	struct DisplayTransitionState *state;
-	volatile u32				   zero;
 
 	state = Runtime_AllocateBlock(0x1f, sizeof(*state));
-	zero = 0;
-	Dma_Set((const void *)&zero, state, 0x85000000 | (sizeof(*state) / 4), REG_DMA3);
+	Dma_Fill32(0, state, sizeof(*state));
 	DisplayTransition_FillTilemapAndSolidTile(0);
 	state->mode = value;
 	state->value = 0;

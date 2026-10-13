@@ -169,10 +169,7 @@ s32 Map_InitializePerspectiveScene(void)
 		~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
 	Blend_SetDarkenTarget0(0);
 	work = Runtime_AllocateHeapBlock(8, sizeof(struct PerspectiveWork));
-	fill = 0;
-	Dma_Set(&fill, work,
-		DMA_ENABLE32 | DMA_SRC_FIXED32 | DMA_32BIT | (sizeof(struct PerspectiveWork) / 4),
-		REG_DMA3);
+	Dma_Fill32Cell(fill, 0, work, sizeof(struct PerspectiveWork));
 	work->view_x = 0;
 	work->view_y = 0;
 	work->scale_x = 0x200000;
@@ -326,7 +323,6 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
 	s32						row;
 	s32						col;
 	s16						value;
-	volatile u32			fill;
 
 	variant = 0;
 	buffer = MemAlloc(0x200);
@@ -352,9 +348,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
 	Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000, DMA_ENABLE32 | DMA_32BIT | 0x800,
 		REG_DMA3);
 	Resource_DecodeType01(Resource_GetTableEntry(resources[5]), gMapLayerData);
-	fill = 0xf07ff07f;
-	Dma_Set((const void *)&fill, BG_SCREEN_BLOCK(5),
-		DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x180, REG_DMA3);
+	Dma_Fill32(0xf07ff07f, BG_SCREEN_BLOCK(5), 0x600);
 	cursor = (u32 *)BG_SCREEN_BLOCK(6);
 	tile = 0x01a901a8;
 	for (row = 0; row < 20; row++)
@@ -803,13 +797,10 @@ void MapAnimation_StartChannels(const u16 *script)
 	struct MapState *state;
 	s32				 count;
 	u32				 command;
-	volatile u32	 zero;
 
 	state = gMapWork[0];
 	count = 0;
-	zero = 0;
-	Dma_Set((const void *)&zero, state->anim, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x30,
-		REG_DMA3);
+	Dma_Fill32(0, state->anim, sizeof(state->anim));
 	command = *script++;
 	while (command != 0xffff)
 	{
@@ -909,9 +900,7 @@ void DisplayBlend_StartScript(u16 *script)
 	volatile u32			 zero;
 
 	started = 0;
-	zero = 0;
-	state = &((struct MapState *)gMapWork[0])->blend;
-	Dma_Set((const void *)&zero, state, 0x85000003, REG_DMA3);
+	Dma_Fill32Cell(zero, 0, state = &((struct MapState *)gMapWork[0])->blend, sizeof(*state));
 	if (*script != 0xffff)
 	{
 		state->script = script;

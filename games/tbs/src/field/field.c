@@ -1091,12 +1091,8 @@ void ObjectSystem_Configure(s32 mode)
 			Runtime_AllocateHeapBlock(3, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
 	}
 	PaletteDma_LoadBlock();
-	zero = 0;
-	Dma_Set((const void *)&zero, objects,
-		0x85000000 | (ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject) / 4), REG_DMA3);
-	zero = 0;
-	Dma_Set((const void *)&zero, states,
-		0x85000000 | (ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry) / 4), REG_DMA3);
+	Dma_Fill32Cell(zero, 0, objects, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
+	Dma_Fill32Cell(zero, 0, states, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
 	VramBlock_LoadCached(93, 128, Object_ShadowTiles);
 	RamCode_LoadSlot(53, Tile_CopyStrided, Tile_CopyStridedCodeSize);
 }
@@ -1160,12 +1156,7 @@ void ResourceMetadata_ClearRecord(void *dst)
 {
 	if (dst != 0)
 	{
-		volatile u32 zero;
-
-		zero = 0;
-		Dma_Set(&zero, dst,
-			(DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32) | (sizeof(struct AnimationEntry) / 4),
-			REG_DMA3);
+		Dma_Fill32(0, dst, sizeof(struct AnimationEntry));
 	}
 }
 
@@ -1280,7 +1271,6 @@ struct ResourceObject *ResourceObject_Create(s32 id)
 //--------------------------------------------------------------------------
 void ResourceObject_Release(struct ResourceObjectWork *work)
 {
-	volatile u32 zero;
 	s32			 n;
 	void	   **child;
 
@@ -1294,9 +1284,7 @@ void ResourceObject_Release(struct ResourceObjectWork *work)
 		{
 			ResourceMetadata_ClearRecord(*child++);
 		} while (--n >= 0);
-		zero = 0;
-		Dma_Set(&zero, work, (DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32) | (sizeof(*work) / 4),
-			REG_DMA3);
+		Dma_Fill32(0, work, sizeof(*work));
 	}
 }
 

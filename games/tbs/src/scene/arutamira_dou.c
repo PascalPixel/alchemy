@@ -1868,7 +1868,6 @@ s32 ArutamiraDou_ApplyEntryState(void)
 {
 	s8				  *state;
 	struct FieldActor *actor;
-	volatile s32	   zero;
 	s32				   i;
 
 	if (gGameState.entrance == 0)
@@ -1964,9 +1963,7 @@ s32 ArutamiraDou_ApplyEntryState(void)
 		*(s32 *)&Object_GetById(10)->update = (s32)ArutamiraDou_MatchLeaderPriority;
 		if (gGameState.entrance == 52)
 		{
-			zero = 0;
-			Dma_Set(&zero, ArutamiraDou_ClearTarget, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 3,
-				REG_DMA3);
+			Dma_Fill32(0, ArutamiraDou_ClearTarget, 12);
 			if (!Engine_GameFlagIsSet(0x109))
 			{
 				u8 *race = gSceneState;

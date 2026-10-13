@@ -25,6 +25,23 @@ struct DmaRegisters
 			(volatile u32 *)0x040000d4);                                        \
 	}
 
+// Dma_Fill32 with the caller's word: a function that fills several blocks
+// keeps one cell for all of them, and its address is formed once.
+// 何度も埋める関数は語を一つだけ持ち、埋めるたびに値を入れて送る
+#define Dma_Fill32Cell(cell, value, destination, size)                           \
+	{                                                                            \
+		(cell) = (value);                                                        \
+		Dma_Set((const void *)&(cell), (destination), 0x85000000 | ((size) / 4), \
+			(volatile u32 *)0x040000d4);                                         \
+	}
+
+// pret の CpuFill32: BIOS の CpuSet で同じ語を埋める
+#define Cpu_Fill32(value, destination, size)                                         \
+	{                                                                                \
+		volatile u32 fill_ = (value);                                                \
+		Bios_CpuSet((const void *)&fill_, (destination), 0x05000000 | ((size) / 4)); \
+	}
+
 /* Unpinning trials: an ordinary input-only channel stays in r4 across
  * adjacent transfers. A read/write early-clobber channel instead reloads
  * its address at each call. Returning that channel and chaining the first

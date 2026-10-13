@@ -185,12 +185,10 @@ struct WaveFxWork
 void RunSceneTransitionEffect(s32 x, s32 y)
 {
 	struct WaveFxWork *work;
-	volatile u32	   zero;
 
 	work = Runtime_AllocateBlock(22, 0x298);
 	BattleEffect_InitializeSharedScene();
-	zero = 0;
-	Dma_Set((const void *)&zero, work, 0x850000a6, REG_DMA3);
+	Dma_Fill32(0, work, 0x298);
 	work->hue = ((u32)(gFrameCount << 1) % (u32)360);
 	BattleFx_AdvanceHueCycle();
 	BattleFx_ApplyColorToTargetBuffer(

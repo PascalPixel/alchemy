@@ -149,12 +149,10 @@ s32 SaveState_InitializeWorkspace(void)
 	struct SaveWorkspace  *work;
 	struct SaveSlotHeader  header;
 	struct SaveSlotHeader *slot;
-	volatile u32		   zero;
 	u32					   index;
 
 	work = Runtime_AllocateBlock(HEAP_SLOT_SAVE, sizeof(*work));
-	zero = 0;
-	START_DMA(&zero, work, 0x85000440);
+	Dma_Fill32(0, work, sizeof(*work));
 	SetFlashTimerIntr(2, &gIrqHandlers[5]);
 
 	for (index = 0; index < 8; index++)
@@ -292,13 +290,11 @@ s32 SaveState_WriteRecord(s32 record_id, void *source)
 {
 	struct SaveWorkspace *work;
 	struct SaveSlotHeader header;
-	volatile u32		  zero;
 	u32					  current;
 	u32					  slot;
 
 	work = gSaveWorkspace;
-	zero = 0;
-	START_DMA(&zero, &work->slot, 0x85000400);
+	Dma_Fill32(0, &work->slot, sizeof(work->slot));
 	WAIT_DMA();
 	current = SaveState_FindLatestSlot(record_id);
 	slot = SaveState_SelectWriteSlot(record_id);
@@ -421,11 +417,9 @@ s32 SaveState_InvalidateSlot(s32 index)
 {
 	struct SaveWorkspace *work;
 	struct SaveSlotHeader header;
-	volatile u32		  zero;
 
 	work = gSaveWorkspace;
-	zero = 0;
-	START_DMA(&zero, &header, 0x85000004);
+	Dma_Fill32(0, &header, sizeof(header));
 	WAIT_DMA();
 	START_DMA(Save_HeaderTemplate, &header, 0x84000002);
 	WAIT_DMA();
@@ -480,7 +474,6 @@ s32 SaveState_LoadSummaryRecords(void)
 {
 	struct SaveWorkspace *work;
 	struct SaveSummary	 *summary;
-	volatile u32		  zero;
 	u32					  group;
 	s32					  count;
 
@@ -492,8 +485,7 @@ s32 SaveState_LoadSummaryRecords(void)
 	{
 		u32 index;
 
-		zero = 0;
-		START_DMA(&zero, summary, 0x85000010);
+		Dma_Fill32(0, summary, sizeof(*summary));
 		index = SaveState_FindLatestSlot(group);
 		if (index <= 15)
 		{

@@ -468,13 +468,10 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 //--------------------------------------------------------------------------
 void BattleEffect_InitializeBuffers(void)
 {
-	volatile s32				zero;
 	struct BattleEffectBuffers *buf;
 
 	buf = Runtime_AllocateBlock(HEAP_SLOT_PALBUF, sizeof(*buf));
-	zero = 0;
-	Dma_Set((const void *)&zero, buf,
-		DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | (sizeof(*buf) >> 2), REG_DMA3);
+	Dma_Fill32(0, buf, sizeof(*buf));
 	Dma_Set(
 		(void *)BG_PLTT, &buf->palette[0], DMA_ENABLE32 | DMA_32BIT | (COLOR_HALF / 2), REG_DMA3);
 	Dma_Set((void *)OBJ_PLTT, &buf->palette[COLOR_HALF],
@@ -663,16 +660,14 @@ void BattleFx_StartFadeOverlay(void *object)
 
 	work = Runtime_AllocateBlock(36, 28);
 	tiles = Runtime_AllocateHeapBlock(14, 0x400);
-	fill = 0x11111111;
-	Dma_Set((const void *)&fill, tiles, 0x85000080, REG_DMA3);
+	Dma_Fill32Cell(fill, 0x11111111, tiles, 0x200);
 	VramBlock_LoadCached(94, 0x200, tiles);
 	Runtime_ReleaseHeapBlock(14);
 	Scheduler_AddOrUpdateCallback(Object_EffectSpawnCallback, 0xc80);
 	Io_Write16(0x3f9e, &REG_BLDCNT);
 	Io_Write16(16, &REG_BLDALPHA);
 	Io_Write16(31, &REG_BLDY);
-	fill = 0;
-	Dma_Set((const void *)&fill, work, 0x85000007, REG_DMA3);
+	Dma_Fill32Cell(fill, 0, work, 28);
 	if (object == NULL)
 		object = ObjectTable_Get(gGameState.selected_actor);
 	work[6] = (u32)object;

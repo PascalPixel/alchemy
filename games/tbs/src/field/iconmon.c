@@ -106,10 +106,8 @@ void Ui_RunIconMonitor(void)
 	work = Runtime_AllocateBlock(9, 10 * sizeof(*work));
 	gDecodeFillByte = 3;
 
-	zero = 0;
-	Dma_Set(&zero, work, 0x85000001, REG_DMA3);
-	zero = 0;
-	Dma_Set(&zero, ent, 0x85000008, REG_DMA3);
+	Dma_Fill32Cell(zero, 0, work, 4);
+	Dma_Fill32Cell(zero, 0, ent, sizeof(ent));
 
 	no = Ui_FindNextNumberWithMetadata(-1, 1);
 	for (i = 0; i <= 3; i++)

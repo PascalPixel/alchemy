@@ -587,8 +587,13 @@ menu_top:;
 				greeting[2] = 0x30;
 				greeting[3] = 0x30;
 			}
-			while ((gKeyState & KEY_B) == 0)
+			for (;;)
 			{
+				if ((gKeyState & KEY_B) != 0)
+				{
+					Engine_AudioPlayCue(113);
+					break;
+				}
 				if ((v5 & gLinkStatus) == v5)
 				{
 					u32	 control = REG_SIOCNT;
@@ -621,7 +626,7 @@ menu_top:;
 								if (received[3] == 83)
 								{
 									v7 = 1;
-									goto link_waited;
+									break;
 								}
 							}
 						}
@@ -629,8 +634,6 @@ menu_top:;
 				}
 				Engine_TaskWait(1);
 			}
-			Engine_AudioPlayCue(113);
-		link_waited:;
 			UiWork_Finalize(v6, 2);
 			if (v7 == 0)
 			{

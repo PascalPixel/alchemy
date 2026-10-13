@@ -239,7 +239,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
 {
 	struct BattlePresentationTransition *presentation = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
 	struct BtlWork						*scene = WORK_SLOT(HEAP_SLOT_BATTLE);
-	/* FAKEMATCH: the halfword initialization preserves the word copy into party_mode instead of folding it into an immediate zero (one instruction differs). */
+	/* FAKEMATCH: the halfword initialization preserves the word copy into party_mode instead of folding it into an immediate zero (one instruction differs). 2026-10-13: completed as an s32 set to 0, with party_mode = completed or party_mode = 0, differs 2 of 105 (movs r2, #0 for adds r2, r7, #0). */
 	union
 	{
 		s32 value;

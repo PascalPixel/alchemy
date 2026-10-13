@@ -81,38 +81,26 @@ void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byte_count)
 
 void Scheduler_SortTasks(void)
 {
-	/* FAKEMATCH: the leading test and reused swap cursor retain 84 bytes; ordinary nested for loops produce 80. */
+	/* FAKEMATCH: the declaration initializer repeats the first pass's assignment; the native loads the table before the loop and again at the top of every pass. Without it the table address is hoisted into r5 (push r7): differ 28. Reusing the swap cursor, a leading pass test or the reload at the end of a pass: differ 11 to 26. */
 	struct SchedulerTask  saved;
-	struct SchedulerTask *base = gSchedulerTaskTable;
-	struct SchedulerTask *task;
-	s32					  pass = SCHEDULER_TBS_TASK_COUNT - 1;
-	s32					  remaining;
-	goto sort_pass;
-next_pass:
-	base = gSchedulerTaskTable;
-sort_pass:
-	task = base;
-	if (pass <= 0)
-		goto finish_pass;
-	remaining = pass;
-next_task:
-	if ((s16)task[1].state > (s16)task->state)
+	struct SchedulerTask *task = gSchedulerTaskTable;
+	s32					  pass;
+	s32					  index;
+
+	for (pass = SCHEDULER_TBS_TASK_COUNT - 1; pass > 1; pass--)
 	{
-		memcpy(&saved, task, sizeof(saved));
-		base = task;
-		task++;
-		memcpy(base, task, sizeof(saved));
-		memcpy(task, &saved, sizeof(saved));
+		task = gSchedulerTaskTable;
+		for (index = 0; index < pass; index++)
+		{
+			if ((s16)task[1].state > (s16)task->state)
+			{
+				memcpy(&saved, task, sizeof(saved));
+				memcpy(task, task + 1, sizeof(saved));
+				memcpy(task + 1, &saved, sizeof(saved));
+			}
+			task++;
+		}
 	}
-	else
-	{
-		task++;
-	}
-	if (--remaining != 0)
-		goto next_task;
-finish_pass:
-	if (--pass > 1)
-		goto next_pass;
 }
 
 s32 Scheduler_FindCallback(SchedulerCallback callback)

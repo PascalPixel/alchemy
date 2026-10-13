@@ -177,7 +177,6 @@ void *ObjectDispatch_FindFreeObject(void)
 //--------------------------------------------------------------------------
 void ObjectDispatch_Release(struct DispatchObject *obj)
 {
-	volatile u32				zero;
 	s32							n;
 	struct ResourceObjectWork **child;
 
@@ -199,7 +198,7 @@ void ObjectDispatch_Release(struct DispatchObject *obj)
 			} while (--n >= 0);
 			break;
 		}
-		Dma_Fill32Cell(zero, 0, obj, sizeof(struct ObjectRuntime));
+		Dma_Fill32(0, obj, sizeof(struct ObjectRuntime));
 	}
 }
 

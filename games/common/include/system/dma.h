@@ -25,9 +25,12 @@ struct DmaRegisters
 			(volatile u32 *)0x040000d4);                                        \
 	}
 
-// Dma_Fill32 with the caller's word: a function that fills several blocks
-// keeps one cell for all of them, and its address is formed once.
-// 何度も埋める関数は語を一つだけ持ち、埋めるたびに値を入れて送る
+// Dma_Fill32 with the caller's word, a volatile local the function declares
+// at its own scope: the word takes that place in the frame (in
+// Map_InitializePerspectiveScene sp+28, where Dma_Fill32's inner word lands
+// at sp+16), and a function that fills several blocks keeps one word for
+// all of them and forms its address once.
+// 語は関数の局所変数。何度も埋める関数は語を一つだけ持ち、埋めるたびに値を入れて送る
 #define Dma_Fill32Cell(cell, value, destination, size)                           \
 	{                                                                            \
 		(cell) = (value);                                                        \

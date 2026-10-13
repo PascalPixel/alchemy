@@ -900,7 +900,9 @@ void DisplayBlend_StartScript(u16 *script)
 	volatile u32			 zero;
 
 	started = 0;
-	Dma_Fill32Cell(zero, 0, state = &((struct MapState *)gMapWork[0])->blend, sizeof(*state));
+	zero = 0;
+	state = &((struct MapState *)gMapWork[0])->blend;
+	Dma_Set((const void *)&zero, state, 0x85000003, REG_DMA3);
 	if (*script != 0xffff)
 	{
 		state->script = script;

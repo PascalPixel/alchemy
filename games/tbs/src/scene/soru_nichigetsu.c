@@ -1176,7 +1176,6 @@ static void FieldScene_RunActorPositionTransition(void)
 static void EV20_SEARCH(void)
 {
 	struct FieldActor  *actor;
-	s32					base5_8010;
 	s32					base5_0;
 	struct FieldSprite *sprite;
 
@@ -1239,13 +1238,12 @@ static void EV20_SEARCH(void)
 		Engine_ActorSetAnimation(16, 3);
 		Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 		Engine_ActorSetAnimation(16, 1);
-		base5_8010 = 0x8010;
 		Engine_ActorSetAnimation(0, 0);
 		Engine_EventSetMessage((s32)MsgSoruHa);
-		SetSolShindenActorStep(base5_8010, 6);
+		SetSolShindenActorStep(32784, 6);
 		Engine_ActorSetAnimationAndWait(16, 3);
 		Engine_ActorSetAnimation(16, 1);
-		Engine_EventShowMessage(base5_8010, 0);
+		Engine_EventShowMessage(32784, 0);
 		Engine_ActorSetAnimation(0, 3);
 		Engine_EventWait(60);
 		actor = Actor_Get(ACTOR_PARTY_LEADER);

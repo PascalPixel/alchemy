@@ -1255,11 +1255,7 @@ static void FuneKanpan_SetupDeckCrewman(void)
 	Actor_SetPosition(23, 0xee0000, 0x2720000);
 	Actor_SetPosition(22, 0x10c0000, 0x2a60000);
 	record = Object_GetById(22);
-	{
-		u16 shown = 0;
-
-		record->facing = shown;
-	}
+	record->facing = 0;
 	Engine_ActorEnableActionCallback(22, FuneKanpan_LeadActionsC);
 	{
 		struct FieldActor *record = Object_GetById(21);

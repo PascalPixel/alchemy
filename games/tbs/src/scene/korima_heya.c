@@ -32,10 +32,10 @@
 static void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
 {
 	u32			 i;
-	register u8	 v16;
-	register s32 v04;
-	register u16 def00;
-	register u16 alt00;
+	u8	 v16;
+	s32 v04;
+	u16 def00;
+	u16 alt00;
 
 	i = 0;
 	v16 = 2;

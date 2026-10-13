@@ -660,9 +660,9 @@ void Event_SetExitRequest(u16 value)
 //--------------------------------------------------------------------------
 void BattleFx_SetWeightedResult(s32 zone_no, s32 slot_no)
 {
-	register s32				  zone = zone_no;
-	register s32				  slot = slot_no;
-	register struct EventRuntime *ev = (struct EventRuntime *)gEventWork;
+	s32				  zone = zone_no;
+	s32				  slot = slot_no;
+	struct EventRuntime *ev = (struct EventRuntime *)gEventWork;
 
 	ev->value_17c = BattleFx_GetWeightedResult(zone, slot); // 敵グループ
 	if (zone == CHOJO && slot == 0)

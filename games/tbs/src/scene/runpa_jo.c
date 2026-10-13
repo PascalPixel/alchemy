@@ -3110,6 +3110,7 @@ static void ActivateFiveActorGroupFromFlags(void)
 }
 
 // 共通ソースと field.h の宣言は const でないが、この三つの表は ROM では .rodata にある
+/* FAKEMATCH: the three section attributes below place non-const tables in .rodata, where the ROM has them; without them, tbs-en differs, and const conflicts with field.h */
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 

@@ -31,7 +31,7 @@ $(LIBGCC):
 .PHONY: help bootstrap merge-drivers fetch-dependencies compilers compiler-sources compiler-source-check toolchain-check build-tools build-alchemy
 .PHONY: compare compare-tla compare-all build-rom
 .PHONY: precommit prepush verify land test test-integration lint-staged language-check
-.PHONY: publication-check publication-staged-check hygiene-check coverage-report
+.PHONY: publication-check source-check publication-staged-check hygiene-check coverage-report
 .PHONY: publication-tree-check layout-check dead-check aliases-check devices-check headers-check object-list-check packer-check modern-check
 .PHONY: progress figure deps similar worst clean modern
 
@@ -115,7 +115,7 @@ COMPARE_EDITIONS := $(addprefix compare-,$(EDITIONS))
 # ALCHEMY, so its child checks need no Cargo build and cannot replace that binary.
 ifeq ($(origin ALCHEMY),file)
 compiler-runtime toolchain-check compare compare-tla compare-editions compare-other-editions \
-$(COMPARE_EDITIONS) build-rom precommit prepush verify land publication-check \
+$(COMPARE_EDITIONS) build-rom precommit prepush verify land publication-check source-check \
 hygiene-check publication-staged-check lint-staged coverage-report progress figure \
 publication-tree-check layout-check dead-check aliases-check devices-check headers-check object-list-check \
 packer-check deps similar worst modern: | build-alchemy
@@ -157,6 +157,14 @@ publication-check:
 	@$(MAKE) --no-print-directory -k -j8 ALCHEMY="$(ALCHEMY)" \
 	    publication-tree-check layout-check dead-check aliases-check devices-check headers-check hygiene-check \
 	    object-list-check packer-check
+
+# The checks that read only the source, for a runner with no ROM and no
+# build: aliases and packer read the twelve linked images and stay in
+# publication-check.
+source-check:
+	@$(MAKE) --no-print-directory -k -j8 ALCHEMY="$(ALCHEMY)" \
+	    publication-tree-check layout-check dead-check devices-check headers-check hygiene-check \
+	    object-list-check
 
 publication-tree-check:
 	$(CHECK) publication --tree

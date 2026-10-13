@@ -30,7 +30,6 @@
 #endif
 
 // ワークのスロット表 gWorkSlot の中の作業ポインタ
-extern void *gWorkSlot[64];
 #define Ram_MapWork ((void **)&gWorkSlot[8])
 #define Ram_CameraWork ((void **)&gWorkSlot[12])
 #define Ram_EventWork ((void **)&gWorkSlot[27])

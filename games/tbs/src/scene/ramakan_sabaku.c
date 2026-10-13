@@ -45,6 +45,7 @@
 #include "dma.h"
 #include "io_write_queue.h"
 #include "menu_list.h"
+#include "heap_state.h"
 #include "ram_buffer.h"
 #include "vram_block.h"
 #include "io_reg.h"

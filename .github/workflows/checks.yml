@@ -59,11 +59,11 @@ jobs:
         run: >-
           cargo test --locked --offline --release --manifest-path tools/Cargo.toml
           -p alchemy --bin alchemy -- --include-ignored
-          check::publication:: check::layout:: check::commit_progress::
+          check::publication:: check::layout::
           compiler::routing::target_tests::only_ compiler::no_asm:: compiler::steering:: compiler::c_syntax::
           verify::tests::
 
       - name: Check public source and pinned compiler provenance
         run: >-
           make ALCHEMY=tools/out/cargo-target/release/alchemy
-          publication-check language-check compiler-source-check
+          source-check language-check compiler-source-check

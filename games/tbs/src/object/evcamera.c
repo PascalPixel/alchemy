@@ -299,7 +299,7 @@ s32 BattleFx_StepRatioTransition(void)
 	delta = work->zoom - *from;
 	step = &work->zoom_transition_step;
 	(*step)++;
-	/* FAKEMATCH: an explicit libgcc call; written with the operator, tbs-en differs */
+	/* FAKEMATCH: an explicit libgcc call, an ordinary call where the operator makes a libcall block. Plain form measured 2026-10-13: the same sum with the / operator differ 93 (84 instructions instead of 87). */
 	zoom = *from + __divsi3(delta * *step, *frames);
 	work->distance = Iwram_MulQ16(work->far_plane, zoom);
 	gScanlinePitch = work->pitch + 1;
@@ -536,6 +536,7 @@ s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object)
 	s32					  cellX;
 	s32					  cellY;
 	s32					  newX;
+	s32					  newZ;
 	s32					  distance;
 
 	target = object->linked_object;
@@ -554,9 +555,8 @@ s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object)
 		if (distance >= step)
 		{
 			newX = object->x + (cellX << 20) / step;
-			/* FAKEMATCH: an explicit libgcc call; written with the operator, tbs-en differs */
-			Object_SetMoveTargetFar(
-				object, newX, object->y, object->z + __divsi3(cellY << 20, step));
+			newZ = object->z + (cellY << 20) / step;
+			Object_SetMoveTargetFar(object, newX, object->y, newZ);
 			ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
 		}
 		else
@@ -782,7 +782,7 @@ s32 FieldEffect_UpdateGridPlacement(void)
 
 		if (TILE_CELLS[index].collision_code == TILE_CELLS_TARGET[index].collision_code)
 		{
-			/* FAKEMATCH: needed to match: the six-word probe preserves the 24-byte frame; a three-word position halves it. */
+			/* FAKEMATCH: frame local: the six-word probe keeps the native 24-byte frame though only its first three words are the position. Plain forms measured 2026-10-13: one struct FieldPosition or s32[3] differ 4 (a 12-byte frame); two FieldPositions match as well. */
 			s32					  vector[6];
 			struct FieldPosition *position = (struct FieldPosition *)vector;
 
@@ -851,7 +851,7 @@ s32 battle_owner_69(void)
 
 		if (TILE_CELLS[index].collision_code == TILE_CELLS_ABOVE[index].collision_code)
 		{
-			/* FAKEMATCH: needed to match: the six-word probe preserves the 24-byte frame; a three-word position halves it. */
+			/* FAKEMATCH: frame local: the six-word probe keeps the native 24-byte frame though only its first three words are the position. Plain forms measured 2026-10-13: one struct FieldPosition or s32[3] differ 4 (a 12-byte frame); two FieldPositions match as well. */
 			s32					  vector[6];
 			struct FieldPosition *position = (struct FieldPosition *)vector;
 
@@ -920,7 +920,7 @@ s32 Object_GetScreenPosition(s32 object_id, s32 *position)
 
 	if (object == 0)
 		return -1;
-	/* FAKEMATCH: needed to match: the adjacent coordinate-word read avoids four bytes added by separate named bases. */
+	/* FAKEMATCH: the view position read as two adjacent words through one pointer, so both loads share one base. Plain forms measured 2026-10-13: view_x and view_y read through gMapWork[0], or through a struct MapScrollWork pointer, differ 28 (61 instructions instead of 59). */
 	camera = &((struct MapScrollWork *)gMapWork[0])->view_x;
 	camera_x = camera[0] & 0xffff0000;
 	camera_z = camera[1] & 0xffff0000;

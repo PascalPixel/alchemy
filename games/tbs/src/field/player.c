@@ -282,36 +282,39 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 		}
 		else
 		{
-			if (Map_CheckObjectStep(object, &position) != 0)
-				goto choose_direction;
-			test_position.x = object->x;
-			test_position.y = object->y;
-			test_position.z = object->z;
-			Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &test_position);
-			if (Map_CheckObjectStep(object, &test_position) != 0)
-				goto choose_direction;
-			test_position.x = object->x;
-			test_position.y = object->y;
-			test_position.z = object->z;
-			Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &test_position);
-			if (Map_CheckObjectStep(object, &test_position) != 0)
-				goto choose_direction;
-			test_position.x = object->x;
-			test_position.y = object->y;
-			test_position.z = object->z;
-			Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &test_position);
-			if (Map_CheckObjectStep(object, &test_position) != 0)
-				goto choose_direction;
-			test_position.x = object->x;
-			test_position.y = object->y;
-			test_position.z = object->z;
-			Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &test_position);
-			if (Map_CheckObjectStep(object, &test_position) != 0)
-				goto choose_direction;
-			heading = angle;
-			goto push_objects;
-
-		choose_direction:
+			if (Map_CheckObjectStep(object, &position) == 0)
+			{
+				test_position.x = object->x;
+				test_position.y = object->y;
+				test_position.z = object->z;
+				Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &test_position);
+				if (Map_CheckObjectStep(object, &test_position) == 0)
+				{
+					test_position.x = object->x;
+					test_position.y = object->y;
+					test_position.z = object->z;
+					Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &test_position);
+					if (Map_CheckObjectStep(object, &test_position) == 0)
+					{
+						test_position.x = object->x;
+						test_position.y = object->y;
+						test_position.z = object->z;
+						Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &test_position);
+						if (Map_CheckObjectStep(object, &test_position) == 0)
+						{
+							test_position.x = object->x;
+							test_position.y = object->y;
+							test_position.z = object->z;
+							Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &test_position);
+							if (Map_CheckObjectStep(object, &test_position) == 0)
+							{
+								heading = angle;
+								goto push_objects;
+							}
+						}
+					}
+				}
+			}
 			direction = angle;
 			count = 0;
 			angle_offsets[count++] = direction + 0x1000;
@@ -379,44 +382,48 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 				if (Runtime_CheckRadiusOverlap(&other->x, radius, &contact.x, other->radius - 2)
 					< 0)
 					continue;
-				if ((other->unknown_59 & 2) == 0 || other->movement_state != 0)
-					goto blocked;
-				direction = ArcTan2(other->z - object->z, other->x - object->x);
-				test_position.x = other->x;
-				test_position.y = other->y;
-				test_position.z = other->z;
-				heading = direction;
-				Vector_AddPolarOffset(0x4000, direction, &test_position);
-				if (ScriptObject_CheckOverlap(
-						(struct ScriptObjectEntry *)other, (s32 *)&test_position))
-					goto blocked;
-				test_position.x = other->x;
-				test_position.y = other->y;
-				test_position.z = other->z;
-				Vector_AddPolarOffset(0xa0000, direction, &test_position);
-				if (Map_CheckObjectStep(other, &test_position) != 0)
-					goto blocked;
-				test_position.x = other->x;
-				test_position.y = other->y;
-				test_position.z = other->z;
-				Vector_AddPolarOffset(0xa0000, direction + 0x1000, &test_position);
-				if (Map_CheckObjectStep(other, &test_position) != 0)
-					goto blocked;
-				if (Map_CheckObjectStep(other, &test_position) != 0)
-					goto blocked;
-				test_position.x = other->x;
-				test_position.y = other->y;
-				test_position.z = other->z;
-				Vector_AddPolarOffset(0xa0000, direction - 0x1000, &test_position);
-				if (Map_CheckObjectStep(other, &test_position) != 0)
-					goto blocked;
-				Vector_AddPolarOffset(0x4000, direction, (struct FieldPosition *)&other->x);
-				other->target_x = -0x80000000;
-				other->target_y = -0x80000000;
-				other->target_z = -0x80000000;
-				pushed |= 1;
-				continue;
-			blocked:
+				if ((other->unknown_59 & 2) != 0 && other->movement_state == 0)
+				{
+					direction = ArcTan2(other->z - object->z, other->x - object->x);
+					test_position.x = other->x;
+					test_position.y = other->y;
+					test_position.z = other->z;
+					heading = direction;
+					Vector_AddPolarOffset(0x4000, direction, &test_position);
+					if (!ScriptObject_CheckOverlap(
+							(struct ScriptObjectEntry *)other, (s32 *)&test_position))
+					{
+						test_position.x = other->x;
+						test_position.y = other->y;
+						test_position.z = other->z;
+						Vector_AddPolarOffset(0xa0000, direction, &test_position);
+						if (Map_CheckObjectStep(other, &test_position) == 0)
+						{
+							test_position.x = other->x;
+							test_position.y = other->y;
+							test_position.z = other->z;
+							Vector_AddPolarOffset(0xa0000, direction + 0x1000, &test_position);
+							if (Map_CheckObjectStep(other, &test_position) == 0
+								&& Map_CheckObjectStep(other, &test_position) == 0)
+							{
+								test_position.x = other->x;
+								test_position.y = other->y;
+								test_position.z = other->z;
+								Vector_AddPolarOffset(0xa0000, direction - 0x1000, &test_position);
+								if (Map_CheckObjectStep(other, &test_position) == 0)
+								{
+									Vector_AddPolarOffset(
+										0x4000, direction, (struct FieldPosition *)&other->x);
+									other->target_x = -0x80000000;
+									other->target_y = -0x80000000;
+									other->target_z = -0x80000000;
+									pushed |= 1;
+									continue;
+								}
+							}
+						}
+					}
+				}
 				collision |= 2;
 			}
 			if (collision == 0 && pushed != 0)
@@ -598,40 +605,45 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
 		if (gDebugMode == 0 || (gKeysHeld & KEY_L) == 0)
 		{
 #if EDITION_INTERNATIONAL
-			if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position) != 0)
-				goto choose_direction;
-
-			test_position.x = object->x;
-			test_position.y = object->y;
-			test_position.z = object->z;
-			Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000, &test_position);
-			if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position)
-				!= 0)
-				goto choose_direction;
-			test_position.x = object->x;
-			test_position.y = object->y;
-			test_position.z = object->z;
-			Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000, &test_position);
-			if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position)
-				!= 0)
-				goto choose_direction;
-			test_position.x = object->x;
-			test_position.y = object->y;
-			test_position.z = object->z;
-			Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x2000, &test_position);
-			if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position)
-				!= 0)
-				goto choose_direction;
-			test_position.x = object->x;
-			test_position.y = object->y;
-			test_position.z = object->z;
-			Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x2000, &test_position);
-			if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position)
-				!= 0)
-				goto choose_direction;
-			goto update_object;
-
-		choose_direction:
+			if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position) == 0)
+			{
+				test_position.x = object->x;
+				test_position.y = object->y;
+				test_position.z = object->z;
+				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000, &test_position);
+				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position)
+					== 0)
+				{
+					test_position.x = object->x;
+					test_position.y = object->y;
+					test_position.z = object->z;
+					Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000, &test_position);
+					if (CheckWorldMapCollisionRange(
+							(s32)object, (struct WorldPosition *)&test_position)
+						== 0)
+					{
+						test_position.x = object->x;
+						test_position.y = object->y;
+						test_position.z = object->z;
+						Vector_AddPolarOffset(
+							WORLD_PROBE_RADIUS, direction + 0x2000, &test_position);
+						if (CheckWorldMapCollisionRange(
+								(s32)object, (struct WorldPosition *)&test_position)
+							== 0)
+						{
+							test_position.x = object->x;
+							test_position.y = object->y;
+							test_position.z = object->z;
+							Vector_AddPolarOffset(
+								WORLD_PROBE_RADIUS, direction - 0x2000, &test_position);
+							if (CheckWorldMapCollisionRange(
+									(s32)object, (struct WorldPosition *)&test_position)
+								== 0)
+								goto update_object;
+						}
+					}
+				}
+			}
 			count = 0;
 			angle_offsets[count++] = direction + 0x1000;
 			angle_offsets[count++] = direction - 0x1000;
@@ -845,7 +857,7 @@ s32 Field_CheckConfiguredKeysAndCount(void *work)
 s32 Object_MoveByKeys(struct ObjectRuntime *object)
 {
 	struct FieldPosition pos;
-	/* FAKEMATCH: never used; its 68 bytes are the native frame space no instruction touches; without it, tbs-en differs */
+	/* FAKEMATCH: never used; its 68 bytes are the native frame space no instruction touches. Without it the frame is 12 bytes, not 80 (differ 8: the sp adjustments and pos's address). 68 bytes is exactly the probe locals of the sibling Object_MoveOnWorldMap (test_position and angle_offsets[28] internationally, left_position, right_position and angle_offsets[22] in Japan); declared here instead, they also match tbs-en and tbs-ja (2026-10-13). */
 	u8					 unused[68];
 	struct MapCell		*from;
 	struct MapCell		*to;

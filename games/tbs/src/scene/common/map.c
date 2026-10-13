@@ -29,7 +29,7 @@ static void Map_DrawCellPanel(s32 x, s32 y, s32 width, s32 height, s32 plane, s3
 				dst = (u32 *)(BG_SCREEN_BLOCK(5) + 64) + index;
 				*dst = *src;
 
-				/* FAKEMATCH: needed to match: end is a forced temporary for the bound's evaluation order. */
+				/* FAKEMATCH: forced temporary: end takes the bound where the loop tests it, apart from the guard's destX + width, and the allocation follows the bytes. Plain forms measured 2026-10-13 in both scenes that include this file: ++col < destX + width differ 26 (the bound in r3 instead of r2 and the block addresses loaded in another order); col++ as its own expression differ 26; a for loop over col differ 26; end set once before the guard and tested by both differ 54. */
 			} while (end = destX + width, ++col < end);
 		cell += 128 - width;
 	}

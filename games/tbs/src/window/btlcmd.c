@@ -5173,7 +5173,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 
 				AudioCommand_PlayFar(112);
 				mode = 0;
-				MenuCell_SetCursor(mode, mode, mode);
+				MenuCell_SetCursor(0, 0, 0);
 			psynergy_menu:
 				list = state->list;
 				pick = state->pick;
@@ -5460,7 +5460,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 
 				AudioCommand_PlayFar(112);
 				mode = 0;
-				MenuCell_SetCursor(mode, mode, mode);
+				MenuCell_SetCursor(0, 0, 0);
 			item_menu:
 				state->entries[0].oam.f.x = 96;
 				pick = state->pick;

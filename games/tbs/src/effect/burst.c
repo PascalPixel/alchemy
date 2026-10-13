@@ -967,7 +967,11 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
 							point[0] = trail->x;
 #if defined(TBS_EDITION_JA)
 							{
-								/* FAKEMATCH: needed to match: naming the result pointer keeps the point address in a register across this loop */
+								/* FAKEMATCH: the named result pointer is a pseudo of its own,
+								 * which gives the Japanese frame its 124 bytes and keeps the
+								 * trail counter j in a stack slot, as native. 2026-10-13: the
+								 * plain &screen argument, as the other editions pass it,
+								 * gives a 120-byte frame and j in r9 (tbs-ja differ 372). */
 								struct EffectPosition *out = &screen;
 
 								EffectPosition_ApplyBaseAndYOffset(point, out);

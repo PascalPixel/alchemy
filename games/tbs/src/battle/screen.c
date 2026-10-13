@@ -95,7 +95,7 @@
 
 s32 BattlePres_RunMosaicFadeOut(void)
 {
-	/* FAKEMATCH: volatile restores the form the bytes prove: the four saved BGxCNT values live at sp+6, 4, 2 and 0, each stored with strh and loaded again with ldrh for the write back (an 8-byte frame). Without all four differ 61, 83 instructions for 90 and no frame; without one alone, 27 to 45. */
+	/* FAKEMATCH: volatile restores the form the bytes prove: the four saved BGxCNT values live at sp+6, 4, 2 and 0, each stored with strh and loaded again with ldrh for the write back (an 8-byte frame). Without all four differ 61, 83 instructions for 90 and no frame; without one alone, 27 to 45; as a u16 saved[4] array, in either order: differ 60. */
 	volatile u16  bg0cnt;
 	volatile u16  bg1cnt;
 	volatile u16  bg2cnt;

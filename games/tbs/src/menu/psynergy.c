@@ -185,10 +185,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
 				{
 					struct PsynergyMenuState *saved_work = work;
 
-					/* FAKEMATCH: the discarded conditional restoration
-                     * ends the CSE block, so the mode offset is built from
-                     * its own constant instead of adding 80 to the earlier
-                     * pane offset. Both conditional arms disappear. */
+					/* FAKEMATCH: dead code: the discarded conditional restoration puts labels between the psynergy_count and mode loads, so reload_cse_move2add builds the mode offset from its own constant (movs #154, lsls #2) as the bytes do; both arms disappear. Plain forms measured 2026-10-13: without the block move2add makes it adds r2, #80 from the count offset (differ 51). */
 					if (done)
 						work = NULL;
 					if (done)

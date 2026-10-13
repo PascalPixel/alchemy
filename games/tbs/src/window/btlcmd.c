@@ -3760,7 +3760,10 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 				{
 					break;
 				}
-				/* FAKEMATCH: a dead store here keeps the test above from being threaded past the break. */
+				/* FAKEMATCH: a dead store here keeps the test above from being
+				   threaded past the break. Measured (2026-10-13): without it the
+				   test branches straight on (one instruction fewer) and the spill
+				   slots reorder (differ 53). */
 				result = -1;
 			}
 			else

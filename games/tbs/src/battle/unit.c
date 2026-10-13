@@ -331,7 +331,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
 	struct BtlWork *table = BtlWk;
 	struct BtlUnit *actor = UnitGetFar(unit);
 	s32				single_slot = Summon_IsEntryFlagged(actor->class_id);
-	/* FAKEMATCH: initializing the two halves preserves the word copy into pass, mov r4, r10; one s32 zero folds that copy into movs r4, #0 (one instruction differs). */
+	/* FAKEMATCH: initializing the two halves preserves the word copy into pass, mov r4, r10; one s32 zero folds that copy into movs r4, #0 (one instruction differs). 2026-10-13: result as an s32 set to 0, with pass = result or pass = 0, differs 2 of 114; pass = result = 0 differs 6, result = pass = 0 19. */
 	union
 	{
 		s32 value;

@@ -28,7 +28,6 @@
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
-#include "rgb555.h"
 #include "menu.h"
 #include "minigame.h"
 #include "sound.h"
@@ -605,8 +604,25 @@ void PaletteGlow_UpdateSine(void)
 			r += 22;
 			g += 16;
 			col += 20;
-			Palette_PutRgb555(pal, r, g, col);
+			/* FAKEMATCH: the one-pass block keeps the blue shift after the three
+			 * adds, in source order. Measured: without it the scheduler moves the
+			 * red add below the shifts (differ 6); the colour as one expression
+			 * differs 25, and r, g, b locals in place of col differ 6, as a do
+			 * or a for loop. */
+			do
+			{
+				col <<= 10;
+			} while (0);
+			g <<= 5;
+			col |= g;
+			col |= r;
 		}
+		/* FAKEMATCH: the one-pass block keeps the store ahead of the loop
+		 * index's increment. Measured: without it, differ 2. */
+		do
+		{
+			*pal++ = col;
+		} while (0);
 	} while (++i <= 3);
 }
 

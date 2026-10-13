@@ -1233,9 +1233,8 @@ retry:
 		radius = base + Iwram_MulQ16(Random16(), range);
 		heading = object->script_value + (Random16() >> 2) - (Random16() >> 2);
 		Vector_AddPolarOffset(radius, heading, &pos);
-		if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0)
-			goto retry;
-		if (Map_CheckObjectStep((struct ObjectRuntime *)object, &pos) != 0)
+		if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0
+			|| Map_CheckObjectStep((struct ObjectRuntime *)object, &pos) != 0)
 			goto retry;
 		radius += 0x80000;
 		probe.x = object->x;

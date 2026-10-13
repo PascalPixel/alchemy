@@ -219,7 +219,6 @@ static void FuneHeya_RunWalkerStep(struct FieldActor *obj)
 			obj->rise_enabled = 2;
 		}
 		obj->work++;
-		/* FAKEMATCH: the zero is spelled as a 16-bit value so it is loaded after the step store; a plain 0 is loaded before it. */
 		obj->rise_counter = 0;
 		break;
 	case 9:

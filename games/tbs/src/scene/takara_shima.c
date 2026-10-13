@@ -1650,11 +1650,8 @@ static void AdvanceActor18AlongEscapeRoute(void)
 	s32 companion19Column;
 	s32 companion14Column;
 
-	/* FAKEMATCH: read into x before the row and assigned after it; read straight into its variable, tbs-en differs */
-	s32 x;
-	x = Object_GetById(18)->x.fixed >> 20;
+	column = Object_GetById(18)->x.fixed >> 20;
 	row = Object_GetById(18)->z.fixed >> 20;
-	column = x;
 	companion19Column = Object_GetById(19)->x.fixed >> 20;
 	companion14Column = Object_GetById(14)->x.fixed >> 20;
 
@@ -1723,9 +1720,9 @@ static void AdvanceActor18AlongEscapeRoute(void)
 
 	Engine_TaskWait(2);
 
-	column -= 1;
-	Engine_MapCopyCellAttributes(column, row, 3, 1, column, Object_GetById(18)->z.fixed >> 20);
-	Map_CopyCellAttributes(0, 0, 3, 1, column, row);
+	Engine_MapCopyCellAttributes(
+		column - 1, row, 3, 1, column - 1, Object_GetById(18)->z.fixed >> 20);
+	Map_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
 #undef IN_COLUMNS

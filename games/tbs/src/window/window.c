@@ -1824,7 +1824,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
 	s32					 nibble;
 	u32					 value;
 
-	/* FAKEMATCH: needed to match: the empty loop ends a scheduling region, keeping the spill of out ahead of the work-address load. */
+	/* FAKEMATCH: the empty one-pass block ends a scheduling region, keeping the spill of out ahead of the work-address load. Without it the load is scheduled first (differ 2 in tbs-ja, the only edition with this body); assigning work after mark = 0 instead moves the zero too (differ 6). */
 	do
 	{
 	} while (0);

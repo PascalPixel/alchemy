@@ -101,6 +101,7 @@ const u8 Title_PromptBlendLevels[60] = {
 
 void Title_PlaceIntroSprites(void)
 {
+	/* FAKEMATCH: the OAM shadow it builds is struct OamShadow, volatile words (tag in oambuf.h): without the qualifier differ 205, 471 instructions for 496. */
 	struct IntroWork *work;
 	u32				  n;
 	s32				  base;

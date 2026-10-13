@@ -262,6 +262,7 @@ void LuckyDice_Run(void)
 	s32						 matches[2];
 	u16						*obj_palette;
 	struct BattleEffectWork *work;
+	/* FAKEMATCH: the OAM shadow it builds is struct OamShadow, volatile words (tag in oambuf.h): without the qualifier differ 1702. */
 	struct LuckyDiceSprites *sprites;
 	struct BattleCamera		*render;
 	s32						 frame;
@@ -313,7 +314,6 @@ void LuckyDice_Run(void)
 	{
 		for (tx = 0; tx != 32; tx++)
 		{
-			/* FAKEMATCH: the tile map store into VRAM is volatile, the form the bytes prove; as a plain u16 store LuckyDice_Run differs 175, 2045 instructions for 2046 (measured 2026-10-13 on tbs-en). */
 			*(volatile u16 *)(0x06003000 + i) = tx + ty * 30;
 			i += 2;
 		}

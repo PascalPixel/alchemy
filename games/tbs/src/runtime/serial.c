@@ -72,6 +72,9 @@ void SerialRuntime_Initialize(void)
 	REG_SIOCNT16 = REG_SIOCNT16 | 0x4003;
 	state = &gSerialRuntime;
 	REG_IME = 1;
+	/* FAKEMATCH: the fill word is volatile, now Dma_Fill32's own word rather than a local, so the
+	 * zero is stored through its address (mov r0, sp; str r3, [r0]). 2026-10-13: as a plain
+	 * u32 the zero is stored to [sp, #0] before the address is formed (differ 6). */
 	Dma_Fill32(0, state, sizeof(*state));
 	state->send_index = -1;
 	state->send_buffer[0] = (u16 *)(state->storage + 0);

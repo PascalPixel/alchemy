@@ -393,6 +393,7 @@ const u8 ReelGame_TitleLetterWidths[REEL_TITLE_LETTERS] = {
 
 void ReelGame_RunFrame(void)
 {
+	/* FAKEMATCH: the OAM shadow it builds is struct OamShadow, volatile words (tag in oambuf.h): without attr01's qualifier differ 119, 1730 instructions for 1729; without attr2's differ 1558, 1701 for 1729. */
 	struct ReelWork			*work;
 	struct BattleEffectWork *fx;
 	volatile u16			*dma;

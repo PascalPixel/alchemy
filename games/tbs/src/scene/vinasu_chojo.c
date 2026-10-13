@@ -30,7 +30,6 @@
 #include "types.h"
 #include "vinasu.h"
 #include "field_effect.h"
-#include "actor.h"
 #include "field_event.h"
 #include "field_scene.h"
 #include "sound_ids.h"
@@ -3081,7 +3080,7 @@ static void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor)
 
 static void SceneEffect_SpawnParticlesBesideActor(void)
 {
-	union FieldObject	 *center;
+	struct FieldActor	 *center;
 	struct FieldActor	 *effect;
 	struct FieldSprite	 *sprite;
 	struct MapScrollWork *map;
@@ -3089,7 +3088,7 @@ static void SceneEffect_SpawnParticlesBesideActor(void)
 	s32					  phase;
 	s32					  angle;
 
-	center = OBJ_GET(23);
+	center = Actor_Get(23);
 	map = gMapWork[0];
 	drift = (u32)(Random_Next() * 48) >> 16 << 16;
 	if ((s16)(map->view_y >> 16) <= 129)
@@ -3117,8 +3116,7 @@ static void SceneEffect_SpawnParticlesBesideActor(void)
 	if (phase != 0)
 		return;
 	effect = Object_Create(
-		284, center->actor.x.fixed + 0x80000, center->actor.y.fixed + drift + 0x80000,
-		center->actor.z.fixed);
+		284, center->x.fixed + 0x80000, center->y.fixed + drift + 0x80000, center->z.fixed);
 	drift /= 0x60000;
 	drift <<= 16;
 	if (effect == 0)
@@ -3130,11 +3128,12 @@ static void SceneEffect_SpawnParticlesBesideActor(void)
 	angle = Random_Next() & 0xffff000;
 	effect->timer = angle;
 	effect->work = phase;
-	effect->linked_object = &center->actor;
+	effect->linked_object = center;
 	effect->update = VinasuChojo_UpdateOrbitingEffect;
 	effect->speed = Engine_MathSin((drift & 0xfffff) >> 4) * 24 >> 16;
-	sprite->flags = 0;
-	sprite->priority = center->actor.sprite->priority;
+	/* FAKEMATCH: the flag byte is stored through a byte pointer, which may alias the priority read after it; as a plain field store the read's address is set up one instruction earlier. Field store: differ 2; it matches when center->sprite is read through union FieldObject. */
+	(&sprite->flags)[0] = 0;
+	sprite->priority = center->sprite->priority;
 }
 
 static void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object)

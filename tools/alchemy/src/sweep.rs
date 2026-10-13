@@ -1,9 +1,9 @@
 //! alchemy sweep: drop FAKEMATCH devices the compiler no longer needs.
 //!
-//! For each tagged register pin, empty asm barrier or volatile in a C file,
-//! the device and its tag come out, the file compiles for every edition that
-//! builds it, and the removal stays only when every object is byte-identical
-//! to the one the last build linked: same object, same ROM.
+//! For each tagged register pin, empty asm barrier, volatile or one-pass
+//! block in a C file, the device and its tag come out, the file compiles for
+//! every edition that builds it, and the removal stays only when every object
+//! is byte-identical to the one the last build linked: same object, same ROM.
 
 use crate::targets::{target_for, DecompTarget, TARGET_IDS};
 use std::collections::BTreeSet;
@@ -12,10 +12,10 @@ use std::path::{Path, PathBuf};
 
 const USAGE: &str = "usage: alchemy sweep FILE.c...\n\
 For each FAKEMATCH-tagged device in each file (a register pin, an empty asm\n\
-barrier or a volatile qualifier), remove the device and its tag, compile the\n\
-file for every edition whose last build compiled it, and keep the removal\n\
-when every object is byte-identical to that build's. Other devices (one-pass\n\
-blocks, wrappers, dead stores) are listed and left alone. Run make\n\
+barrier, a volatile qualifier or a one-pass block), remove the device and its\n\
+tag, compile the file for every edition whose last build compiled it, and\n\
+keep the removal when every object is byte-identical to that build's. Other\n\
+devices (wrappers, dead stores) are listed and left alone. Run make\n\
 compare-editions first, and again after.";
 
 pub fn run(args: &[String]) -> Result<(), String> {
@@ -181,6 +181,9 @@ fn tags(text: &str) -> Vec<Tag> {
 /// first pin, empty asm or volatile from the tag to the end of the next
 /// statement.
 fn remove(text: &str, tag: &Tag) -> Option<String> {
+    if let Some(unwrapped) = one_pass(text, tag) {
+        return Some(unwrapped);
+    }
     let after = &text[tag.end..];
     let statement = after.find(';').map(|end| end + 1)?;
     let span = &after[..statement];
@@ -219,6 +222,58 @@ fn remove(text: &str, tag: &Tag) -> Option<String> {
         rest = &rest[1..];
     }
     Some(format!("{prefix}{device}{rest}"))
+}
+
+/// A tag alone on its line over a one-pass block: the block's statements,
+/// one level less indented, in place of the tag and the block.
+fn one_pass(text: &str, tag: &Tag) -> Option<String> {
+    let line_start = text[..tag.start].rfind('\n').map_or(0, |at| at + 1);
+    let after = &text[tag.end..];
+    let newline = after.find('\n')?;
+    if !after[..newline].trim().is_empty() {
+        return None;
+    }
+    // An empty block with its tag after it on one line: the line goes.
+    let empty = regex::Regex::new(r"^do\s*\{\s*\}\s*while\s*\(\s*0\s*\)\s*;$").expect("static pattern");
+    if empty.is_match(text[line_start..tag.start].trim()) {
+        return Some(format!("{}{}", &text[..line_start], &after[newline + 1..]));
+    }
+    if !text[line_start..tag.start].trim().is_empty() {
+        return None;
+    }
+    let block = &after[newline + 1..];
+    let indent = &block[..block.len() - block.trim_start_matches([' ', '\t']).len()];
+    let keyword = block.trim_start_matches([' ', '\t']).strip_prefix("do")?;
+    if !keyword.starts_with(|c: char| c.is_whitespace() || c == '{') {
+        return None;
+    }
+    let open = block.len() - keyword.trim_start().len();
+    if !block[open..].starts_with('{') {
+        return None;
+    }
+    let mut depth = 0;
+    let close = block[open..].char_indices().find_map(|(at, c)| {
+        depth += match c {
+            '{' => 1,
+            '}' => -1,
+            _ => 0,
+        };
+        (depth == 0).then_some(open + at)
+    })?;
+    let tail = regex::Regex::new(r"^\s*while\s*\(\s*0\s*\)\s*;[ \t]*\n?").expect("static pattern");
+    let end = close + 1 + tail.find(&block[close + 1..])?.end();
+    let body = &block[open + 1..close];
+    let mut out = String::new();
+    if body.contains('\n') {
+        for line in body.trim_start_matches([' ', '\t']).trim_start_matches('\n').trim_end().lines() {
+            let line = line.strip_prefix('\t').or_else(|| line.strip_prefix("    ")).unwrap_or(line);
+            out.push_str(line);
+            out.push('\n');
+        }
+    } else if !body.trim().is_empty() {
+        out = format!("{indent}{}\n", body.trim());
+    }
+    Some(format!("{}{out}{}", &text[..line_start], &block[end..]))
 }
 
 #[cfg(test)]
@@ -267,8 +322,20 @@ mod tests {
     }
 
     #[test]
+    fn a_one_pass_block_gives_up_its_statements() {
+        let text = "{\n\tx = 1;\n\t/* FAKEMATCH: one pass */\n\tdo\n\t{\n\t\tf();\n\t\tg();\n\t} while (0);\n\th();\n}\n";
+        assert_eq!(removed(text).unwrap(), "{\n\tx = 1;\n\tf();\n\tg();\n\th();\n}\n");
+        let text = "{\n    /* FAKEMATCH: one pass */\n    do {\n        if (a) { f(); }\n    } while (0);\n}\n";
+        assert_eq!(removed(text).unwrap(), "{\n    if (a) { f(); }\n}\n");
+        let text = "{\n\t/* FAKEMATCH: empty */\n\tdo\n\t{\n\t} while (0);\n\tf();\n}\n";
+        assert_eq!(removed(text).unwrap(), "{\n\tf();\n}\n");
+        let text = "{\n\tx = 1;\n\tdo { } while (0); /* FAKEMATCH: boundary */\n\tf();\n}\n";
+        assert_eq!(removed(text).unwrap(), "{\n\tx = 1;\n\tf();\n}\n");
+    }
+
+    #[test]
     fn other_devices_stay() {
-        let text = "{\n    /* FAKEMATCH: one pass */\n    do {\n        f();\n    } while (0);\n}\n";
+        let text = "{\n    /* FAKEMATCH: loop */\n    do {\n        f();\n    } while (--n);\n}\n";
         assert!(removed(text).is_none());
         let text = "{\n    /* FAKEMATCH: dead store */\n    result = -1;\n}\n";
         assert!(removed(text).is_none());

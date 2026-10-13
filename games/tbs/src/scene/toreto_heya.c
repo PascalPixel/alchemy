@@ -874,7 +874,10 @@ static void ToretoHeya_SpawnSwirlSparks(void)
 	counter = &ToretoHeya_SparkCounter;
 	frame = *counter;
 	previous = 0;
-	/* FAKEMATCH: an explicit libgcc call; written with the operator, tbs-en differs */
+	/* FAKEMATCH: the explicit libgcc call keeps the final count's reload
+	 * in r3. Measured: (s32)frame / 10, or frame declared s32 and
+	 * divided with /, reload it into r5 (differ 6); the division moved
+	 * above previous = 0 differs 10. */
 	wave = __divsi3(frame, 10);
 	switch (frame)
 	{
@@ -907,7 +910,10 @@ static void ToretoHeya_SpawnSwirlSparks(void)
 		}
 	case 44:
 		Engine_AudioPlayCue(0x121);
-		/* FAKEMATCH: the counter pointer is taken again here so it is dead across the spark loop, where the loop index takes its register. */
+		/* FAKEMATCH: the counter pointer is taken again here so it is dead
+		 * across the spark loop, where the loop index takes its register.
+		 * Measured: without it, differ 36; with the division also written
+		 * with /, differ 51. */
 		counter = &ToretoHeya_SparkCounter;
 		break;
 	}

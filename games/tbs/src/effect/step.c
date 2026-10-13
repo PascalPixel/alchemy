@@ -53,7 +53,6 @@
 #include "keystate.h"
 #include "btltype.h"
 #include "sound_ids.h"
-#include "call.h"
 #include "btlsys.h"
 #include "battle_session.h"
 #include "animspr.h"

@@ -249,7 +249,11 @@ s32 BattleFx_InitializeStarField(s32 mode)
 	((s32 *)gTransitionWork)[2] = 1;
 	work = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
 	Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
-	/* FAKEMATCH: needed to match: the empty loop ends a scheduling region, keeping the multiply routine's address load ahead of the spark cursor. */
+	/* FAKEMATCH: the empty loop ends a scheduling region, keeping the
+	 * multiply routine's address load ahead of the spark cursor. Measured:
+	 * without it the two swap (differ 2); the sparks indexed in place
+	 * still differ 2, the cursor walked as a pointer 4, and the two heap
+	 * allocations in the other order 12. */
 	do
 	{
 	} while (0);
@@ -309,7 +313,10 @@ s32 BattleFx_InitializeStarField(s32 mode)
 		break;
 	}
 	Dma_Set(data, BG_PLTT, DMA_ENABLE32 | DMA_32BIT | 32, REG_DMA3);
-	/* FAKEMATCH: needed to match: the one-pass block keeps the BG2 origin writes in source order, the zero loaded first. */
+	/* FAKEMATCH: the one-pass block keeps the zero ahead of the BG2X
+	 * address, which reload derives from the DMA register's. Measured:
+	 * plain stores of 0, or of zero outside a block, load it after the
+	 * address (differ 2); REG_BG2X = REG_BG2Y = 0 differs 13. */
 	do
 	{
 		zero = 0;

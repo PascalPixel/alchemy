@@ -383,7 +383,10 @@ static void FieldScene_RunComplexActorSequence(void)
 	struct EventWork	**control;
 
 	control = (struct EventWork **)Ram_EventWork;
-	/* FAKEMATCH: needed to match: stage the root reads before consuming the event record. Read in place: differ 12 (map work first) or 14 (view centre first). */
+	/* FAKEMATCH: needed to match: stage the root reads before consuming
+	   the event record. Read in place (measured again 2026-10-13, with the
+	   once-used locals gone): 431 instructions for 430, differ 11 (map
+	   work first) or 13 (view centre first). */
 	{
 		struct EventWork *event = *control;
 

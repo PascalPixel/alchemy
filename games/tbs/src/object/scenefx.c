@@ -353,7 +353,7 @@ void FieldFx_StartGroundParticles(void)
 	u32						  *words;
 	u32						   i;
 
-	/* FAKEMATCH: one pointer, words, holds the fill's zero, the decode buffer and each particle's cell cursor, all three in r6 as the native keeps them. A plain fill = 0 takes r3 (differ 4); a cell cursor of its own reallocates the loop and drops a stack slot (differ 58). */
+	/* FAKEMATCH: one pointer, words, holds the fill's zero, the decode buffer and each particle's cell cursor, all three in r6 as the native keeps them. A plain fill = 0 takes r3 (differ 4); a cell cursor of its own reallocates the loop and drops a stack slot (differ 58). 2026-10-13: an inline allocate-then-clear helper (Runtime_AllocateBlock, then Dma_Fill32(0, block, size)) differs 22: the fill moves before the sound call. */
 	work = Runtime_AllocateBlock(29, sizeof(struct GroundParticleWork));
 	leader = ((struct MapScrollWork *)gMapWork[0])->origin;
 	BattleFx_SetQueuedSoundAndPlay(170);
@@ -489,7 +489,7 @@ void FieldMotes_Start(void)
 	size = 0x410;
 	work = Runtime_AllocateBlock(29, size);
 	mote = work->particles;
-	/* FAKEMATCH: reusing the allocation size for the cleared word keeps the zero in r1, the register size was passed in; a plain zero = 0 takes r3 (differ 4). */
+	/* FAKEMATCH: reusing the allocation size for the cleared word keeps the zero in r1, the register size was passed in; a plain zero = 0 takes r3 (differ 4). 2026-10-13: an allocate-then-clear helper, as an inline function or a statement macro (Runtime_AllocateBlock, then Dma_Fill32(0, block, size)), differs 10: the zero takes r3 and mote is formed after the fill. */
 	size = 0;
 	Dma_Fill32(size, work, sizeof(*work));
 	tiles = Runtime_AllocateBlock(14, 0x400);
@@ -624,7 +624,7 @@ void FieldEffect_InitSparkles(void)
 	u32						   i;
 	s32						   clear;
 
-	/* FAKEMATCH: needed to match: reusing the allocation size for the fill word keeps zero in r1; a separate helper value differs by four instructions. */
+	/* FAKEMATCH: needed to match: reusing the allocation size for the fill word keeps zero in r1; a separate helper value differs by four instructions. 2026-10-13: an allocate-then-clear helper, as an inline function or a statement macro (Runtime_AllocateBlock, then Dma_Fill32(0, block, size)), differs 10: the zero takes r3 and p is formed after the fill. */
 	size = 0;
 	Dma_Fill32(size, work, sizeof(*work));
 	buf = Runtime_AllocateBlock(14, 0x400);

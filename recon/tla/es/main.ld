@@ -1694,7 +1694,7 @@
     "*/games/tla/src/battle/effect/sentou_kouka_tenkai_2_dispatch.o"(.text .rodata .data .padding)
     "*/games/tla/src/battle/effect/sentou_kouka_tenkai_2_tables.o"(.text .rodata .data .padding)
     "*/games/tla/src/battle/effect/sentou_kouka_tenkai_2_commands.o"(.text .rodata .data .padding)
-    "*/games/common/src/graphics/tile/clear_character_block.o"(.text)
+    "*/games/tla/src/graphics/tile/clear_character_block.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.001a052c)
     "*/games/tla/src/graphics/tile/scroll.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.001a06e0)

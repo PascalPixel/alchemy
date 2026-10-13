@@ -971,7 +971,7 @@ static void KuupuappuMura_SpawnDriftingEffect(s32 flags)
 		s32 bias;
 
 		cnt = (u32)Engine_RandomNext() % 10 + 5;
-		/* FAKEMATCH: reuse the coordinate local for the direction mask. */
+		/* FAKEMATCH: reuse the coordinate local for the direction mask. With the literal 1, also as (flags ^ 1) << 2 or through a mask local of its own: differ 116. */
 		x = 1;
 		flags &= x;
 		bias = flags ^ x;
@@ -997,7 +997,7 @@ static void KuupuappuMura_SpawnDriftingEffect(s32 flags)
 			(void (*)(union FieldObject *))SceneEffect_UpdateMotionWithDamping;
 		u8 *sprite_flags;
 
-		/* FAKEMATCH: preserve the sprite-flags address scheduling boundary. */
+		/* FAKEMATCH: preserve the sprite-flags address scheduling boundary. As plain stores, sprite->flags = 0 after the update pointer or through the pointer local: differ 2; the flags stored first: differ 4. */
 		do
 		{
 			sprite_flags = &sprite->flags;

@@ -1126,14 +1126,12 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 {
 	struct BtlUnit *state;
 	s32				i;
-	s32				zero;
 	s32				count;
 	s32				mode;
 
 	state = UnitGetFar(id);
-	zero = 0;
 	for (i = 4; i >= 0; i--)
-		output[i] = zero;
+		output[i] = 0;
 
 	count = 0;
 	if (state->hp == 0 && requested == 1)

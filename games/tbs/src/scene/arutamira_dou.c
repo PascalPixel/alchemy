@@ -1958,7 +1958,7 @@ s32 ArutamiraDou_ApplyEntryState(void)
 		FieldScene_RedrawActorFootprint(8);
 		FieldScene_RedrawActorFootprint(9);
 		FieldScene_RedrawActorFootprint(10);
-		/* FAKEMATCH: the three callbacks are stored as s32, so the entrance read after them may alias them and stays below the last store. */
+		/* FAKEMATCH: the three callbacks are stored as s32, so the entrance read after them may alias them and stays below the last store. 2026-10-13: stored through the update field itself (with a cast of the function) or as void *, 2 of 403 differ: the last store moves below the entrance's ldrsh. */
 		*(s32 *)&Object_GetById(8)->update = (s32)ArutamiraDou_MatchLeaderPriority;
 		*(s32 *)&Object_GetById(9)->update = (s32)ArutamiraDou_MatchLeaderPriority;
 		*(s32 *)&Object_GetById(10)->update = (s32)ArutamiraDou_MatchLeaderPriority;

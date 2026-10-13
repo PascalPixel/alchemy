@@ -2183,7 +2183,6 @@ void ItemMenu_ApplyFlags(const u8 *flags)
 	struct RenderOutput		  *entry;
 	s32						   index;
 	s32						   value;
-	u16						   kind;
 
 	base = gMenuWork;
 	ItemMenu_ResetCategory();
@@ -2195,8 +2194,7 @@ void ItemMenu_ApplyFlags(const u8 *flags)
 		entry = *slot++;
 		if (entry != 0 && flags[index] != 0)
 		{
-			kind = 8;
-			entry->x = kind;
+			entry->x = 8;
 			{
 				s16 *y = &entry->y;
 

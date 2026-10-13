@@ -52,10 +52,13 @@
 void SerialRuntime_Initialize(void)
 {
 	u32					  interrupt_enable;
+	volatile u16		 *ime;
 	s32					  index;
 	struct SerialRuntime *state;
 
-	IRQ_LOCK(interrupt_enable);
+	/* FAKEMATCH: IRQ_LOCK written out with the IME address set inside the save statement; through IRQ_LOCK, whose pointer is initialized first, the IME load is scheduled after sub sp, #4 where the native loads it before (differ 2 in tbs-en, 123 instructions either way). */
+	IME_SAVE((ime = &REG_IME), interrupt_enable);
+	IME_DISABLE(ime);
 	Runtime_SetIrqHandler(7, 0, SerialRuntime_HandleTransferInterrupt);
 	Runtime_SetIrqHandler(6, 0, SerialRuntime_HandleTransferInterrupt);
 	REG_IME = 0;

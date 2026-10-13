@@ -11,7 +11,8 @@
 // ☀️'s lock sites and write-queue pushes and ⚓️'s callback scheduler match
 // through: the saved copy is taken before IME is written, and the restore
 // stands apart from the code around it. ⚓️'s own queue writers (io.c) do
-// not match through it yet.
+// not match through it yet, and SerialRuntime_Initialize writes IRQ_LOCK's
+// two steps out (see its tag).
 
 // 元の IME を saved に入れる
 #define IME_SAVE(ime, saved) \
@@ -35,15 +36,13 @@
 	} while (0)
 
 // 割り込みを止めて、元の IME を saved に入れる。IRQ_UNLOCK で元に戻す。
-// The address is set inside the save statement: with a statement between
-// the two, SerialRuntime_Initialize differs.
-#define IRQ_LOCK(saved)                     \
-	do                                      \
-	{                                       \
-		volatile u16 *ime_;                 \
-                                            \
-		IME_SAVE((ime_ = &REG_IME), saved); \
-		IME_DISABLE(ime_);                  \
+#define IRQ_LOCK(saved)                \
+	do                                 \
+	{                                  \
+		volatile u16 *ime_ = &REG_IME; \
+                                       \
+		IME_SAVE(ime_, saved);         \
+		IME_DISABLE(ime_);             \
 	} while (0)
 
 #define IRQ_UNLOCK(saved) \

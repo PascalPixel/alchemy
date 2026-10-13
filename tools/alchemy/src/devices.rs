@@ -136,21 +136,25 @@ pub(crate) fn count(root: &Path) -> Result<Counts, String> {
             }
         }
     }
-    // Macros whose body holds a device count at each use, by that device
-    // (S2: every device is counted, a macro's too). A macro a header
-    // defines reaches its own game and, from games/common, both; a macro
-    // a C file defines reaches only that file.
-    let mut header_macros: BTreeMap<&str, BTreeMap<String, Vec<usize>>> = BTreeMap::new();
+    // Macros whose body holds a device count at each use, by that device,
+    // with the devices of the macros their body uses (S2: every device is
+    // counted, a macro's too). A macro a header defines reaches its own
+    // game and, from games/common, both; a macro a C file defines reaches
+    // only that file.
+    let mut header_definitions: BTreeMap<&str, Vec<Definition>> = BTreeMap::new();
     for (path, text) in &sources {
         if !path.ends_with(".h") {
             continue;
         }
+        let found = definitions(text);
         for (game, folder, _) in &games {
             if path.starts_with(folder) || path.starts_with("games/common") {
-                header_macros.entry(game).or_default().extend(tagged_macros(text));
+                header_definitions.entry(game).or_default().extend(found.iter().cloned());
             }
         }
     }
+    let header_macros: BTreeMap<&str, BTreeMap<String, Kinds>> =
+        header_definitions.iter().map(|(game, found)| (*game, resolve(found))).collect();
     let mut counts = Counts::new();
     for (game, _, _) in &games {
         for kind in KINDS {
@@ -170,9 +174,9 @@ pub(crate) fn count(root: &Path) -> Result<Counts, String> {
             {
                 continue;
             }
-            let tagged = header_macros.get(game).cloned().unwrap_or_default();
-            let local = if path.ends_with(".c") { definitions(text) } else { Vec::new() };
-            let found = devices_in(&without_proven(&code_only(text)), &emitting, &tagged, &local);
+            let headers = header_macros.get(game).cloned().unwrap_or_default();
+            let local = if path.ends_with(".c") { in_force(&definitions(text), &headers) } else { Vec::new() };
+            let found = devices_in(&without_proven(&code_only(text)), &emitting, &headers, &local);
             for (kind, value) in KINDS.iter().zip(found) {
                 *counts.get_mut(&(game.to_string(), kind.to_string())).unwrap() += value;
             }
@@ -268,16 +272,23 @@ fn instruction(template: &str) -> bool {
 }
 
 /// The names of the macros a FAKEMATCH tag explains, or whose body holds a
-/// device, that the C file at `path` can use: those its own game's headers
+/// device or uses a macro that does, that the C file at `path` can use:
+/// those its own game's headers
 /// and games/common's headers define (a games/common file sees both games'
 /// headers), and those it defines itself. Headers are read once per run.
 pub(crate) fn tagged_macro_names(root: &Path, path: &str, text: &str) -> BTreeSet<String> {
-    type ByFolder = BTreeMap<String, BTreeSet<String>>;
-    static HEADERS: std::sync::OnceLock<std::sync::Mutex<BTreeMap<std::path::PathBuf, ByFolder>>> = std::sync::OnceLock::new();
+    // Each top folder's header definitions, and the macros each folder's
+    // files can use, resolved once per run.
+    #[derive(Default)]
+    struct Headers {
+        by_folder: BTreeMap<String, Vec<Definition>>,
+        by_scope: BTreeMap<String, BTreeMap<String, Kinds>>,
+    }
+    static HEADERS: std::sync::OnceLock<std::sync::Mutex<BTreeMap<std::path::PathBuf, Headers>>> = std::sync::OnceLock::new();
     let mut cache = HEADERS.get_or_init(Default::default).lock().unwrap_or_else(|e| e.into_inner());
     let headers = cache.entry(root.to_path_buf()).or_insert_with(|| {
-        let mut by_folder: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
-        for entry in walkdir::WalkDir::new(root.join("games")).into_iter().flatten() {
+        let mut by_folder: BTreeMap<String, Vec<Definition>> = BTreeMap::new();
+        for entry in walkdir::WalkDir::new(root.join("games")).sort_by_file_name().into_iter().flatten() {
             let file = entry.path();
             if file.extension().and_then(|e| e.to_str()) != Some("h") {
                 continue;
@@ -285,21 +296,25 @@ pub(crate) fn tagged_macro_names(root: &Path, path: &str, text: &str) -> BTreeSe
             let relative = file.strip_prefix(root).unwrap_or(file).to_string_lossy().into_owned();
             let folder = relative.split('/').take(2).collect::<Vec<_>>().join("/");
             if let Ok(bytes) = fs::read(file) {
-                by_folder
-                    .entry(folder)
-                    .or_default()
-                    .extend(tagged_macros(&String::from_utf8_lossy(&bytes)).into_iter().map(|(name, _)| name));
+                by_folder.entry(folder).or_default().extend(definitions(&String::from_utf8_lossy(&bytes)));
             }
         }
-        by_folder
+        Headers { by_folder, by_scope: BTreeMap::new() }
     });
     let own = path.split('/').take(2).collect::<Vec<_>>().join("/");
-    let mut names: BTreeSet<String> = headers
-        .iter()
-        .filter(|(folder, _)| own == "games/common" || folder.as_str() == own || folder.as_str() == "games/common")
-        .flat_map(|(_, names)| names.iter().cloned())
-        .collect();
-    names.extend(tagged_macros(text).into_iter().map(|(name, _)| name));
+    if !headers.by_scope.contains_key(&own) {
+        let reached = headers
+            .by_folder
+            .iter()
+            .filter(|(folder, _)| own == "games/common" || folder.as_str() == own || folder.as_str() == "games/common")
+            .flat_map(|(_, found)| found.iter());
+        let resolved = resolve(reached);
+        headers.by_scope.insert(own.clone(), resolved);
+    }
+    let reached = &headers.by_scope[&own];
+    let mut names: BTreeSet<String> = reached.keys().cloned().collect();
+    let local = in_force(&definitions(text), reached);
+    names.extend(local.into_iter().filter(|(_, _, kinds)| kinds.is_some_and(|kinds| kinds.iter().any(|n| *n > 0))).map(|(_, name, _)| name));
     names
 }
 
@@ -317,36 +332,45 @@ fn without_statement_wrapper(code: &str) -> String {
     }
 }
 
-/// Each macro whose body holds a device, with the KINDS indexes of those
-/// devices, so a device counts at every use (S2). A FAKEMATCH tag in the
-/// comment right above its #define, or in its body, explains it; a tagged
-/// body with no device the count knows by kind (a forced temporary, a
-/// cast) is a tagged-macro use. An untagged macro counts its pins, barriers
-/// and one-pass blocks all the same: dropping a tag hides nothing.
-fn tagged_macros(text: &str) -> Vec<(String, Vec<usize>)> {
-    definitions(text)
-        .into_iter()
-        .filter_map(|(_, name, kinds)| kinds.map(|kinds| (name, kinds)))
-        .collect()
+/// The devices of one use of a macro, in KINDS order.
+type Kinds = [usize; 7];
+
+/// One #define or #undef of a text.
+#[derive(Clone)]
+struct Definition {
+    /// Its line, from 0.
+    line: usize,
+    name: String,
+    /// The devices its own body holds, each as often as it occurs (None
+    /// for an #undef). A FAKEMATCH tag in the comment right above the
+    /// #define, or in its body, explains them; a tagged body with no
+    /// device the count knows by kind (a forced temporary, a cast) is one
+    /// tagged-macro use. An untagged body counts its devices all the same:
+    /// dropping a tag hides nothing.
+    own: Option<Kinds>,
+    /// The identifiers its body uses: the devices of a macro among them
+    /// count at each use of this one.
+    words: Vec<String>,
 }
 
-/// Every #define and #undef of a text, in order: its line, its name, and
-/// the device kinds of a #define whose body holds a device (None for an
-/// #undef or a plain #define). A C file's macro counts from the #define
-/// that holds its device to the next #define or #undef of its name.
-fn definitions(text: &str) -> Vec<(usize, String, Option<Vec<usize>>)> {
+/// Every #define and #undef of a text, in order.
+fn definitions(text: &str) -> Vec<Definition> {
     let lines: Vec<&str> = text.lines().collect();
     let define = regex::Regex::new(r"^\s*#\s*define\s+([A-Za-z_][A-Za-z0-9_]*)").expect("static pattern");
     let undef = regex::Regex::new(r"^\s*#\s*undef\s+([A-Za-z_][A-Za-z0-9_]*)").expect("static pattern");
     let comment = regex::Regex::new(r"^\s*(/\*|\*|//)|\*/\s*$").expect("static pattern");
+    let word = regex::Regex::new(r"[A-Za-z_][A-Za-z0-9_]*").expect("static pattern");
+    let open = regex::Regex::new(r"\bdo\s*\{").expect("static pattern");
+    let close_last = regex::Regex::new(r"\}\s*while\s*\(\s*0\s*\)\s*$").expect("static pattern");
     let mut found = Vec::new();
     for (i, line) in lines.iter().enumerate() {
         if let Some(name) = undef.captures(line).map(|c| c[1].to_string()) {
-            found.push((i, name, None));
+            found.push(Definition { line: i, name, own: None, words: Vec::new() });
             continue;
         }
-        let Some(name) = define.captures(line).map(|c| c[1].to_string()) else { continue };
-        let mut body = line.to_string();
+        let Some(head) = define.captures(line) else { continue };
+        let name = head[1].to_string();
+        let mut body = line[head.get(0).map_or(0, |m| m.end())..].to_string();
         let mut j = i;
         while lines[j].trim_end().ends_with('\\') && j + 1 < lines.len() {
             j += 1;
@@ -362,24 +386,95 @@ fn definitions(text: &str) -> Vec<(usize, String, Option<Vec<usize>>)> {
         let tagged = above.contains("FAKEMATCH") || body.contains("FAKEMATCH");
         let code = code_only(&body);
         let templates = asm_statements(&code);
-        let mut kinds = Vec::new();
-        if templates.iter().any(|t| register(t.trim())) {
-            kinds.push(0);
+        let mut own = [0; 7];
+        own[0] = templates.iter().filter(|t| register(t.trim())).count();
+        own[1] = templates.iter().filter(|t| t.trim().is_empty()).count();
+        own[3] = code.lines().map(volatiles).sum();
+        own[5] = one_pass(&without_statement_wrapper(&format!("#define {name}{code}")));
+        // A body that ends by closing more blocks than it opens ends a
+        // statement wrapper another macro opened (IRQ_UNLOCK closing
+        // IRQ_LOCK's `do {`): that close is the pair's wrapper, no device.
+        let joined = code.replace("\\\n", " ");
+        let opens = open.find_iter(&joined).count();
+        let closes_last = close_last.is_match(&joined);
+        if closes_last && own[5] > opens {
+            own[5] -= 1;
         }
-        if templates.iter().any(|t| t.trim().is_empty()) {
-            kinds.push(1);
+        if tagged && own.iter().all(|n| *n == 0) {
+            own[6] = 1;
         }
-        let volatile = code.matches("volatile").count() > templates.len();
-        if tagged && volatile {
-            kinds.push(3);
+        let words = word.find_iter(&code).map(|w| w.as_str().to_string()).filter(|w| *w != name).collect();
+        found.push(Definition { line: i, name, own: Some(own), words });
+    }
+    found
+}
+
+/// Each macro of `definitions` that holds a device, with the devices of the
+/// macros its body uses, as far down as they go (S2: a device inside a
+/// macro counts at each use, inside a macro another macro uses too). A
+/// later #define or #undef of a name replaces an earlier one.
+fn resolve<'a>(definitions: impl IntoIterator<Item = &'a Definition>) -> BTreeMap<String, Kinds> {
+    let mut bodies: BTreeMap<&str, (&Kinds, &[String])> = BTreeMap::new();
+    for definition in definitions {
+        match &definition.own {
+            Some(own) => bodies.insert(&definition.name, (own, &definition.words)),
+            None => bodies.remove(definition.name.as_str()),
+        };
+    }
+    fn total<'a>(name: &'a str, bodies: &BTreeMap<&'a str, (&Kinds, &'a [String])>, done: &mut BTreeMap<&'a str, Kinds>, open: &mut BTreeSet<&'a str>) -> Kinds {
+        if let Some(kinds) = done.get(name) {
+            return *kinds;
         }
-        if one_pass(&without_statement_wrapper(&code)) > 0 {
-            kinds.push(5);
+        let Some((own, words)) = bodies.get(name) else { return [0; 7] };
+        // A macro that names itself, directly or through another, is not
+        // expanded again (C stops there too).
+        if !open.insert(name) {
+            return [0; 7];
         }
-        if tagged && kinds.is_empty() {
-            kinds.push(6);
+        let mut sum = **own;
+        for word in words.iter() {
+            let inner = total(word, bodies, done, open);
+            for (kind, n) in sum.iter_mut().zip(inner) {
+                *kind += n;
+            }
         }
-        found.push((i, name, (!kinds.is_empty()).then_some(kinds)));
+        open.remove(name);
+        done.insert(name, sum);
+        sum
+    }
+    let mut done = BTreeMap::new();
+    let mut found = BTreeMap::new();
+    for name in bodies.keys() {
+        let sum = total(name, &bodies, &mut done, &mut BTreeSet::new());
+        if sum.iter().any(|n| *n > 0) {
+            found.insert(name.to_string(), sum);
+        }
+    }
+    found
+}
+
+/// A C file's own #define and #undef lines, in order: its line, its name
+/// and, for a #define, its devices with those of the macros its body uses,
+/// the file's own as defined above it and otherwise its headers'. A use
+/// counts by the definition in force on its line, from its #define to the
+/// next #define or #undef of its name.
+fn in_force(definitions: &[Definition], headers: &BTreeMap<String, Kinds>) -> Vec<(usize, String, Option<Kinds>)> {
+    let mut found: Vec<(usize, String, Option<Kinds>)> = Vec::new();
+    for definition in definitions {
+        let kinds = definition.own.map(|own| {
+            let mut sum = own;
+            for word in &definition.words {
+                let inner = match found.iter().rev().find(|(_, name, _)| name == word) {
+                    Some((_, _, kinds)) => kinds.unwrap_or([0; 7]),
+                    None => headers.get(word).copied().unwrap_or([0; 7]),
+                };
+                for (kind, n) in sum.iter_mut().zip(inner) {
+                    *kind += n;
+                }
+            }
+            sum
+        });
+        found.push((definition.line, definition.name.clone(), kinds));
     }
     found
 }
@@ -390,18 +485,19 @@ fn one_pass(code: &str) -> usize {
     regex::Regex::new(r"\}\s*while\s*\(\s*0\s*\)").expect("static pattern").find_iter(code).count()
 }
 
-/// Counts in KINDS order over one file, outside #define bodies (a macro's
-/// devices count where it is used).
-type Definitions = [(usize, String, Option<Vec<usize>>)];
+/// A file's own macros, each with its devices from the line it is defined
+/// (None from an #undef).
+type InForce = [(usize, String, Option<Kinds>)];
 
 #[cfg(test)]
-fn devices(code: &str, emitting: &BTreeSet<String>, tagged: &BTreeMap<String, Vec<usize>>) -> [usize; 7] {
-    devices_in(code, emitting, tagged, &[])
+fn devices(code: &str, emitting: &BTreeSet<String>, headers: &BTreeMap<String, Kinds>) -> [usize; 7] {
+    devices_in(code, emitting, headers, &[])
 }
 
-/// As `devices`, where `local` holds the file's own #define and #undef
-/// lines: a use counts by the definition in force on its line.
-fn devices_in(code: &str, emitting: &BTreeSet<String>, tagged: &BTreeMap<String, Vec<usize>>, local: &Definitions) -> [usize; 7] {
+/// Counts in KINDS order over one file, outside #define bodies: a macro's
+/// devices count where it is used, by the file's own definition in force
+/// on that line (`local`, from `in_force`) and otherwise by its headers'.
+fn devices_in(code: &str, emitting: &BTreeSet<String>, headers: &BTreeMap<String, Kinds>, local: &InForce) -> [usize; 7] {
     let mut plain = String::with_capacity(code.len());
     let mut lines = code.lines();
     while let Some(line) = lines.next() {
@@ -437,24 +533,15 @@ fn devices_in(code: &str, emitting: &BTreeSet<String>, tagged: &BTreeMap<String,
             if found.as_str() == "goto" {
                 gotos += 1;
             }
-            let in_force = local.iter().rev().find(|(at, name, _)| *at < number && name == found.as_str());
-            let kinds = match in_force {
-                Some((_, _, kinds)) => kinds.as_ref(),
-                None => tagged.get(found.as_str()),
+            let kinds = match local.iter().rev().find(|(at, name, _)| *at < number && name == found.as_str()) {
+                Some((_, _, kinds)) => *kinds,
+                None => headers.get(found.as_str()).copied(),
             };
-            if let Some(kinds) = kinds {
-                for kind in kinds {
-                    macro_uses[*kind] += 1;
-                }
+            for (kind, n) in macro_uses.iter_mut().zip(kinds.unwrap_or([0; 7])) {
+                *kind += n;
             }
         }
-        if line.contains("volatile") && !hardware(line) {
-            volatile += line.matches("volatile").count()
-                - line.matches("asm volatile").count()
-                - line.matches("__asm__ volatile").count()
-                - line.matches("asm __volatile__").count()
-                - line.matches("__asm__ __volatile__").count();
-        }
+        volatile += volatiles(line);
     }
     [
         pins + macro_uses[0],
@@ -465,6 +552,19 @@ fn devices_in(code: &str, emitting: &BTreeSet<String>, tagged: &BTreeMap<String,
         one_pass(&plain) + macro_uses[5],
         macro_uses[6],
     ]
+}
+
+/// The volatile objects a line declares or reads through, outside asm
+/// qualifiers and lines about the hardware.
+fn volatiles(line: &str) -> usize {
+    if !line.contains("volatile") || hardware(line) {
+        return 0;
+    }
+    line.matches("volatile").count()
+        - line.matches("asm volatile").count()
+        - line.matches("__asm__ volatile").count()
+        - line.matches("asm __volatile__").count()
+        - line.matches("__asm__ __volatile__").count()
 }
 
 /// A line about the hardware: registers, I/O or video memory addresses.
@@ -562,11 +662,11 @@ mod tests {
 #define PLAIN(v) do { g = (v); } while (0)
 #define TEMP(v) { u32 t_ = (v); g = t_; } /* FAKEMATCH: temporary. */
 ";
-        let tagged: BTreeMap<String, Vec<usize>> = tagged_macros(header).into_iter().collect();
+        let tagged = resolve(&definitions(header));
         // SET's only block is the statement macro's own wrapper: its tag
         // still counts it, as a tagged macro, not as a one-pass block.
-        assert_eq!(tagged.get("SET"), Some(&vec![6]));
-        assert_eq!(tagged.get("TEMP"), Some(&vec![6]));
+        assert_eq!(tagged.get("SET"), Some(&[0, 0, 0, 0, 0, 0, 1]));
+        assert_eq!(tagged.get("TEMP"), Some(&[0, 0, 0, 0, 0, 0, 1]));
         assert!(!tagged.contains_key("PLAIN"));
         let code = code_only("void f(void)\n{\n\tSET(1);\n\tSET(2);\n\tPLAIN(3);\n\tTEMP(4);\n\tdo\n\t{\n\t\tg = 5;\n\t} while (0);\n}\n");
         assert_eq!(devices(&code, &BTreeSet::new(), &tagged), [0, 0, 0, 0, 0, 1, 3]);
@@ -592,11 +692,11 @@ mod tests {
 #define HALF() } while (0); g = 0; } while (0)
 #define BARRIER() do { asm(\"\"); } while (0)
 ";
-        let found: BTreeMap<String, Vec<usize>> = tagged_macros(header).into_iter().collect();
+        let found = resolve(&definitions(header));
         assert!(!found.contains_key("LAYER"), "the wrapper alone is no device");
-        assert_eq!(found.get("INNER"), Some(&vec![5]), "an untagged macro's inner block still counts");
-        assert_eq!(found.get("HALF"), Some(&vec![5]), "a macro closing another's blocks is no wrapper");
-        assert_eq!(found.get("BARRIER"), Some(&vec![1]));
+        assert_eq!(found.get("INNER"), Some(&[0, 0, 0, 0, 0, 1, 0]), "an untagged macro's inner block still counts");
+        assert_eq!(found.get("HALF"), Some(&[0, 0, 0, 0, 0, 1, 0]), "a macro closing another's inner block counts it; its last close ends their wrapper");
+        assert_eq!(found.get("BARRIER"), Some(&[0, 1, 0, 0, 0, 0, 0]));
         let code = code_only("void f(void)\n{\n\tLAYER(1);\n\tINNER(2);\n\tINNER(3);\n\tBARRIER();\n}\n");
         assert_eq!(devices(&code, &BTreeSet::new(), &found), [0, 1, 0, 0, 0, 2, 0]);
     }
@@ -646,8 +746,76 @@ void later(void)
 \tPUT(3);
 }
 ";
-        let local = definitions(text);
+        let local = in_force(&definitions(text), &BTreeMap::new());
         let found = devices_in(&code_only(text), &BTreeSet::new(), &BTreeMap::new(), &local);
         assert_eq!(found, [0, 1, 0, 0, 0, 0, 0], "only the use under the tagged definition counts");
+    }
+
+    #[test]
+    fn a_macro_counts_the_devices_of_the_macros_inside_it() {
+        // A lock pair's two meaningful blocks and its volatile, as
+        // irqlock.h writes them, and a push that wraps the pair.
+        let header = "/* FAKEMATCH: measured. */
+#define LOCK(saved) \\
+\tdo \\
+\t{ \\
+\t\tvolatile u16 *ime_; \\
+\t\tdo \\
+\t\t{ \\
+\t\t\time_ = &g_ime; \\
+\t\t\tsaved = *ime_; \\
+\t\t} while (0); \\
+\t\t*ime_ = 0; \\
+\t\tdo \\
+\t\t{
+/* FAKEMATCH: closes LOCK's blocks. */
+#define UNLOCK(saved) \\
+\t} \\
+\twhile (0) \\
+\t\t; \\
+\tg_ime = saved; \\
+\t} \\
+\twhile (0)
+#define PUSH(v) \\
+\t{ \\
+\t\tu32 saved; \\
+\t\tLOCK(saved); \\
+\t\tg = (v); \\
+\t\tUNLOCK(saved); \\
+\t}
+#define TWICE(v) { PUSH(v); PUSH(v); }
+#define LOOP() LOOP()
+";
+        let found = resolve(&definitions(header));
+        assert_eq!(found.get("LOCK"), Some(&[0, 0, 0, 1, 0, 1, 0]), "its read block; its leading do opens the pair's wrapper");
+        assert_eq!(found.get("UNLOCK"), Some(&[0, 0, 0, 0, 0, 1, 0]), "the guarded block; its last close ends the wrapper");
+        assert_eq!(found.get("PUSH"), Some(&[0, 0, 0, 1, 0, 2, 0]), "an untagged macro counts the devices of those it uses");
+        assert_eq!(found.get("TWICE"), Some(&[0, 0, 0, 2, 0, 4, 0]), "as far down as they go");
+        assert!(!found.contains_key("LOOP"), "a macro that names itself expands once");
+        let code = code_only("void f(void)\n{\n\tPUSH(1);\n\tPUSH(2);\n}\n");
+        assert_eq!(devices(&code, &BTreeSet::new(), &found), [0, 0, 0, 2, 0, 4, 0]);
+        // A C file's own macro over a header's counts at each of its uses.
+        let text = "#define DEFINE_WRITE(name) void name(u32 v) { PUSH(v); }\nDEFINE_WRITE(WriteA)\nDEFINE_WRITE(WriteB)\n";
+        let local = in_force(&definitions(text), &found);
+        assert_eq!(devices_in(&code_only(text), &BTreeSet::new(), &found, &local), [0, 0, 0, 2, 0, 4, 0]);
+    }
+
+    #[test]
+    fn a_volatile_in_a_macro_counts_as_it_would_written_out_tagged_or_not() {
+        let header = "#define FILL(value, to) \\
+\t{ \\
+\t\tvolatile u32 fill_ = (value); \\
+\t\tDma_Set(&fill_, (to), 0x85000000, (volatile u32 *)0x040000d4); \\
+\t}
+#define READ(x) (*(volatile u16 *)0x04000130 & (x))
+#define TWO() { volatile u8 a_; volatile u8 b_; a_ = b_; }
+";
+        let found = resolve(&definitions(header));
+        assert_eq!(found.get("FILL"), Some(&[0, 0, 0, 1, 0, 0, 0]), "the temporary counts, the hardware register does not");
+        assert!(!found.contains_key("READ"), "a hardware register alone is no device");
+        assert_eq!(found.get("TWO"), Some(&[0, 0, 0, 2, 0, 0, 0]), "each volatile counts");
+        let written = code_only("void f(void)\n{\n\t{\n\t\tvolatile u32 fill_ = 0;\n\t\tDma_Set(&fill_, p, 0x85000000, (volatile u32 *)0x040000d4);\n\t}\n}\n");
+        let used = code_only("void f(void)\n{\n\tFILL(0, p);\n}\n");
+        assert_eq!(devices(&written, &BTreeSet::new(), &BTreeMap::new()), devices(&used, &BTreeSet::new(), &found));
     }
 }

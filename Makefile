@@ -39,6 +39,7 @@ help:
 	@printf '%s\n' \
 	  'make bootstrap       fetch locked dependencies and build the approved toolchain' \
 	  'make fetch-dependencies  download only the locked Rust dependencies' \
+	  'make compare-tbs     build the six ☀️ editions and check each against rom.sha1; needs no ROM' \
 	  'make compare-all     compare linked source and both private ROM compositions' \
 	  'make compare-editions  compare all twelve editions, with Japanese as the base' \
 	  'make modern          build the six ☀️ editions with a modern GCC (MODERN_CC) into out/modern: no match, every warning in out/modern/warnings.txt' \
@@ -114,7 +115,7 @@ COMPARE_EDITIONS := $(addprefix compare-,$(EDITIONS))
 # Build once per invocation. Verification passes its pinned executable through
 # ALCHEMY, so its child checks need no Cargo build and cannot replace that binary.
 ifeq ($(origin ALCHEMY),file)
-compiler-runtime toolchain-check compare compare-tla compare-editions compare-other-editions \
+compiler-runtime toolchain-check compare compare-tla compare-tbs compare-editions compare-other-editions \
 $(COMPARE_EDITIONS) build-rom precommit prepush verify land publication-check source-check \
 hygiene-check publication-staged-check lint-staged coverage-report progress figure \
 publication-tree-check layout-check dead-check aliases-check devices-check headers-check object-list-check \
@@ -123,7 +124,10 @@ endif
 
 CPUS := $(shell sysctl -n hw.ncpu 2>/dev/null || nproc 2>/dev/null || echo 4)
 JOBS ?= $(CPUS)
-.PHONY: compare-editions compare-other-editions compare-tbs-ja compare-tla-ja $(COMPARE_EDITIONS)
+.PHONY: compare-tbs compare-editions compare-other-editions compare-tbs-ja compare-tla-ja $(COMPARE_EDITIONS)
+# The six ☀️ editions, which read no ROM (INSTALL.md).
+compare-tbs:
+	@$(MAKE) --no-print-directory -j$(JOBS) ALCHEMY="$(ALCHEMY)" compare $(filter compare-tbs-%,$(COMPARE_EDITIONS))
 compare-editions:
 	@$(MAKE) --no-print-directory -j$(JOBS) ALCHEMY="$(ALCHEMY)" compare compare-tla $(COMPARE_EDITIONS)
 compare-other-editions:

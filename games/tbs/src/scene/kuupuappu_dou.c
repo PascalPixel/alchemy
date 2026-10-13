@@ -145,7 +145,11 @@ static void KuupuappuDou_PushBlockAhead(void)
 	/* FAKEMATCH: the table is s16 pairs, read here as one word per heading
 	   (x in the high half, z in the low). The read must stay an array
 	   reference: through a plain s32 pointer cast the address is summed once
-	   into a register and the function no longer matches. */
+	   into a register and the function no longer matches. Measured
+	   (2026-10-13): the table as const s32 words, written like
+	   BiribinoMura_FacingCellSteps and indexed directly, compiles to 143
+	   instructions for 146 (differ 79); read through a const s32 local
+	   pointer, differ 94. */
 	struct FieldActor	  *leader = Object_GetById(0);
 	s32					   direction = leader->facing >> 12;
 	struct FieldActor	  *block;

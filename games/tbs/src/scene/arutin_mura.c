@@ -23,7 +23,6 @@
 #include "field_event.h"
 #include "field_scene.h"
 #include "arutin_mura.h"
-#include "call.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"

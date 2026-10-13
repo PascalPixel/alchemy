@@ -4721,8 +4721,10 @@ void UpdateLinkSessionCountdown(void)
 			state->timer = 0;
 			return;
 		}
-		while ((timer = state->timer) < 0
-			&& (signature = (struct LinkSignature *)gLinkPeerSignatures[runtime->link_side ^ 1])->e == 'E'
+		while (
+			(timer = state->timer) < 0
+			&& (signature = (struct LinkSignature *)gLinkPeerSignatures[runtime->link_side ^ 1])->e
+				   == 'E'
 			&& signature->d == 'D')
 		{
 			if (signature->v == 'V')

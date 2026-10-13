@@ -383,7 +383,6 @@ static void FieldScene_RunComplexActorSequence(void)
 	struct MapScrollWork *work;
 	struct FieldActor	 *scene_actor;
 	struct EventWork	**control;
-	s32					  ground;
 
 	control = (struct EventWork **)Ram_EventWork;
 	/* FAKEMATCH: needed to match: stage the root reads before consuming the event record. Read in place: differ 12 (map work first) or 14 (view centre first). */
@@ -403,7 +402,6 @@ static void FieldScene_RunComplexActorSequence(void)
 	Engine_ActorSetPosition(16, 0, 0);
 	Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
 	Engine_ActorSetAnimation(0, 18);
-	ground = 0;
 	sprite->rotation = 1365;
 	p12 = Object_GetById(17);
 	p12->motion_flags = 0;
@@ -426,7 +424,7 @@ static void FieldScene_RunComplexActorSequence(void)
 	work->max_x = 0x02700000;
 	work->max_y = 0x03300000;
 	scene_actor->x.fixed = 0x02340000;
-	scene_actor->y.fixed = ground;
+	scene_actor->y.fixed = 0;
 	scene_actor->z.fixed = 0x02b30000;
 	Engine_MapRedraw();
 	Engine_TaskWait(1);

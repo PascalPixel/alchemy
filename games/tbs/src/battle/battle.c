@@ -865,7 +865,7 @@ s32 LinkBattle_SendParty(void)
 	size = LINK_PARTY_OFFER_BYTES;
 	MemFree(buffer);
 	buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
-	/* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's copy is emitted before the count's address as in the reference */
+	/* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's copy is emitted before the count's address as in the reference. 2026-10-13: the plain call differs 2 of 152 (adds r4, r6, #0 is scheduled after the count's load); list set before the copy differs 6; list as buffer + 8, list set in the for's initializer, and the offer state read into a local first differ the same 2. */
 	do
 	{
 		Iwram_CopyWords(buffer, Trade_GetOfferStateFar(0), size);

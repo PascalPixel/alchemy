@@ -382,43 +382,48 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 				if (Runtime_CheckRadiusOverlap(&other->x, radius, &contact.x, other->radius - 2)
 					< 0)
 					continue;
-				if ((other->unknown_59 & 2) == 0 || other->movement_state != 0)
-					goto blocked;
-				direction = ArcTan2(other->z - object->z, other->x - object->x);
-				test_position.x = other->x;
-				test_position.y = other->y;
-				test_position.z = other->z;
-				heading = direction;
-				Vector_AddPolarOffset(0x4000, direction, &test_position);
-				if (ScriptObject_CheckOverlap(
-						(struct ScriptObjectEntry *)other, (s32 *)&test_position))
-					goto blocked;
-				test_position.x = other->x;
-				test_position.y = other->y;
-				test_position.z = other->z;
-				Vector_AddPolarOffset(0xa0000, direction, &test_position);
-				if (Map_CheckObjectStep(other, &test_position) != 0)
-					goto blocked;
-				test_position.x = other->x;
-				test_position.y = other->y;
-				test_position.z = other->z;
-				Vector_AddPolarOffset(0xa0000, direction + 0x1000, &test_position);
-				if (Map_CheckObjectStep(other, &test_position) != 0
-					|| Map_CheckObjectStep(other, &test_position) != 0)
-					goto blocked;
-				test_position.x = other->x;
-				test_position.y = other->y;
-				test_position.z = other->z;
-				Vector_AddPolarOffset(0xa0000, direction - 0x1000, &test_position);
-				if (Map_CheckObjectStep(other, &test_position) != 0)
-					goto blocked;
-				Vector_AddPolarOffset(0x4000, direction, (struct FieldPosition *)&other->x);
-				other->target_x = -0x80000000;
-				other->target_y = -0x80000000;
-				other->target_z = -0x80000000;
-				pushed |= 1;
-				continue;
-			blocked:
+				if ((other->unknown_59 & 2) != 0 && other->movement_state == 0)
+				{
+					direction = ArcTan2(other->z - object->z, other->x - object->x);
+					test_position.x = other->x;
+					test_position.y = other->y;
+					test_position.z = other->z;
+					heading = direction;
+					Vector_AddPolarOffset(0x4000, direction, &test_position);
+					if (!ScriptObject_CheckOverlap(
+							(struct ScriptObjectEntry *)other, (s32 *)&test_position))
+					{
+						test_position.x = other->x;
+						test_position.y = other->y;
+						test_position.z = other->z;
+						Vector_AddPolarOffset(0xa0000, direction, &test_position);
+						if (Map_CheckObjectStep(other, &test_position) == 0)
+						{
+							test_position.x = other->x;
+							test_position.y = other->y;
+							test_position.z = other->z;
+							Vector_AddPolarOffset(0xa0000, direction + 0x1000, &test_position);
+							if (Map_CheckObjectStep(other, &test_position) == 0
+								&& Map_CheckObjectStep(other, &test_position) == 0)
+							{
+								test_position.x = other->x;
+								test_position.y = other->y;
+								test_position.z = other->z;
+								Vector_AddPolarOffset(0xa0000, direction - 0x1000, &test_position);
+								if (Map_CheckObjectStep(other, &test_position) == 0)
+								{
+									Vector_AddPolarOffset(
+										0x4000, direction, (struct FieldPosition *)&other->x);
+									other->target_x = -0x80000000;
+									other->target_y = -0x80000000;
+									other->target_z = -0x80000000;
+									pushed |= 1;
+									continue;
+								}
+							}
+						}
+					}
+				}
 				collision |= 2;
 			}
 			if (collision == 0 && pushed != 0)

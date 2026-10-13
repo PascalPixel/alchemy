@@ -1607,7 +1607,7 @@
     "*/recon/tla/fr/rom.o"(.rom.00157530)
     "*/games/common/src/effect/transpose_copy.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00157636)
-    "*/games/common/src/effect/load_and_decompress.o"(.text)
+    "*/games/tla/src/battle/effect/load_and_decompress.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00157d30)
     "*/games/tla/src/battle/effect/screen_shake.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.00158dc8)

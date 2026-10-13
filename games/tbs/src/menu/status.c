@@ -104,7 +104,12 @@ s32 CharacterSelector_Run(void)
 	struct CharacterMenuState *work = gMenuWork;
 	s32						   result = 0;
 
-	/* FAKEMATCH: the do-while keeps the cursor store in source order */
+	/* FAKEMATCH: instruction order only: the one-pass block ends the
+	   schedule after the work load, so the zero is set before the slot
+	   offset, as native. Plain forms measured (2026-10-13): the store
+	   without the block, or with result declared first, moves the
+	   offset into the work load's delay (differ 4); storing a constant
+	   0 differs 14, two returns 26. */
 	do
 	{
 		work->selected_slots[0] = result;

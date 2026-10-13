@@ -471,7 +471,7 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
 	u32				ime;
 	u32			   *slot = &ime;
 
-	/* FAKEMATCH: needed to match: the one-pass block and the loop on a zero local keep the IME save through slot's register */
+	/* FAKEMATCH: needed to match: the one-pass block and the loop on a zero local keep the IME save through slot's register. As a plain block, also with a volatile register pointer, the save is stored sp-relative, ahead of the palette address: differ 8; as IRQ_LOCK(*slot) and IRQ_UNLOCK the save is stored sp-relative and the restore loads the register address first: differ 8; plain statements restoring REG_IME = *slot: differ 14. */
 	do
 	{
 		u16 *ime_reg = (u16 *)0x04000208;

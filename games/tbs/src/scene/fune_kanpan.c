@@ -2753,11 +2753,7 @@ static void FuneKanpan_PlaceLeaderOnDeck(void)
 	Engine_MapRedraw();
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0xe80000, 0x2a40000);
 	record = Object_GetById(0);
-	{
-		u16 shown = 0x4000;
-
-		record->facing = shown;
-	}
+	record->facing = 0x4000;
 	Engine_TaskWait(1);
 }
 

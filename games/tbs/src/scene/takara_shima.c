@@ -357,7 +357,6 @@ static void EV08_PSYNERGY(void)
 	struct FieldActor *entity;
 	s16				  *slot;
 	s32				   column;
-	u8				   zero;
 
 	entity = Object_GetById(8);
 	column = entity->x.fixed >> 20;
@@ -378,27 +377,16 @@ static void EV08_PSYNERGY(void)
 #endif
 
 	entity->motion_flags = 3;
-#if !EDITION_INTERNATIONAL
-	zero = 0;
-#endif
 
 	Engine_EventWait(8);
 	SpawnRadialEffectBurst(8);
 	Engine_AudioPlayCue(136);
 	Engine_EventWait(40);
 
-#if EDITION_INTERNATIONAL
 	Engine_ActorSetSpriteFlags((u8 *)Object_GetById(8), 0);
-#else
-	Engine_ActorSetSpriteFlags((u8 *)Object_GetById(8), zero);
-#endif
 	Engine_ActorSetSpritePriority(8, 3);
 
-#if EDITION_INTERNATIONAL
 	entity->motion_flags = 0;
-#else
-	entity->motion_flags = zero;
-#endif
 	{
 		s32 flags = 2;
 

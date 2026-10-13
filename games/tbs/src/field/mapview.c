@@ -721,7 +721,7 @@ void Map_LoadDefaultCellsAndUpdateBlock(void)
 
 void MapAnimation_Update(void)
 {
-	/* FAKEMATCH: each channel is written (state->anim + i), not through a pointer local: a local anim = state->anim + i (or &state->anim[i], declared in either scope) differs 4, ip and lr swapping the 0xffff sentinel and the VRAM base; a walking anim++ differs 8; state->anim[i]. differs 167, no walking pointer at all. */
+	/* FAKEMATCH: each channel is written (state->anim + i), not through a channel pointer: a pointer anim = state->anim + i (or &state->anim[i], declared in either scope) differs 4, ip and lr swapping the 0xffff sentinel and the VRAM base; a walking anim++ differs 8; state->anim[i]. differs 167, no walking pointer at all. */
 	struct MapState *state = gMapWork[0];
 	u32				 i;
 

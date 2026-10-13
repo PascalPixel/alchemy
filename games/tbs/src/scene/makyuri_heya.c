@@ -2497,7 +2497,7 @@ static void EV08_PSYNERGY_1(void)
 		if (Engine_EventChooseYesNo(0, 0) == 1)
 		{
 			Engine_EventWait(20);
-			/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+			/* FAKEMATCH: called through a cast to the unprototyped call the bytes show, which loads r1 before r0; called by its prototype, also through the script layer's Actor_SetAnimationAndWait, r0 loads first: differ 2 at each site. */
 			((s32 (*)())Engine_ActorSetAnimationAndWait)(3, 4);
 			Engine_EventWait(20);
 			event = base + 5;
@@ -2510,7 +2510,7 @@ static void EV08_PSYNERGY_1(void)
 					break;
 				}
 				Engine_EventWait(20);
-				/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+				/* FAKEMATCH: called through a cast to the unprototyped call the bytes show, which loads r1 before r0; called by its prototype, also through the script layer's Actor_SetAnimationAndWait, r0 loads first: differ 2 at each site. */
 				((s32 (*)())Engine_ActorSetAnimationAndWait)(3, 4);
 				Engine_EventWait(20);
 				event = (s32)MsgMakyuriDontHideTruth;

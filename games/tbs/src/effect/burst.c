@@ -2504,7 +2504,11 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 								 * before the hit test, preserving the native sign
 								 * result and duplicated side check. Both updates
 								 * disappear; removing both guards loses three
-								 * English instructions and changes 77 rows. 2026-10-11: one test after an if/else that sets hit differs 65. */
+								 * English instructions and changes 77 rows. 2026-10-11: one test after an if/else that sets hit differs 65.
+								 * 2026-10-13: the ?: of both sign tests 65 (or 77 tested whole),
+								 * hit preset 0 and set by nested ifs 53, tests on shot->x 65; these
+								 * guards with one test after the if/else 55. The per-side test and
+								 * its goto are the native layout. */
 								if (tgt)
 								{
 									hit ^= x;

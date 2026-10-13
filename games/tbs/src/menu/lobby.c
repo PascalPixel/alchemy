@@ -139,7 +139,7 @@ static s32 LinkLobby_PeerSlotMatches(s32 slot)
 	{
 		Engine_GameFlagClear(0x303);
 	}
-	/* FAKEMATCH: a loop that runs at most once places the test after the body as the ROM does. */
+	/* FAKEMATCH: a loop that runs at most once places the test after the body as the ROM does. As an if around the body: differ 43; as an early return 0 on the failed test: differ 55. */
 	while (id >= 0 && Engine_GameFlagIsSet(0x303))
 	{
 		const s32 *expected = &LinkLobby_SlotValues[slot];

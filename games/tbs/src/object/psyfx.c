@@ -824,7 +824,9 @@ void BattleFx_RunItemBreakSequence(void)
 	scene = gEffectWork;
 	object = scene->main_object;
 
-	/* FAKEMATCH: needed to match: removing this one-pass block changes instruction scheduling */
+	/* FAKEMATCH: the one-pass block keeps the main_object load below the
+	 * frame's sub sp. Measured: plain, the scheduler lifts the load
+	 * above it (differ 2). */
 	do
 	{
 		BattleEffect_InitializeSharedScene();

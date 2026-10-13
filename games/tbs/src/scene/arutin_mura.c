@@ -548,8 +548,7 @@ static void FieldScene_RunMiddleSequence(void)
 	else if (GameFlag_IsSet(0x241) != 0)
 	{
 		Map_CopyCellsTo(64, 0, 0, 32, 32, 32);
-		/* FAKEMATCH: the void result is discarded; Call6 changes argument allocation. */
-		Value6(Engine_MapCopyCellAttributes, 64, 0, 32, 32, 0, 0);
+		Map_CopyCellAttributes(64, 0, 32, 32, 0, 0);
 		Engine_ActorDestroy(17);
 		Engine_ActorDestroy(20);
 		Engine_ActorDestroy(21);
@@ -557,8 +556,7 @@ static void FieldScene_RunMiddleSequence(void)
 	else if (GameFlag_IsSet(0x240) != 0)
 	{
 		Map_CopyCellsTo(0, 64, 0, 32, 32, 32);
-		/* FAKEMATCH: the void result is discarded; Call6 changes argument allocation. */
-		Value6(Engine_MapCopyCellAttributes, 0, 64, 32, 32, 0, 0);
+		Map_CopyCellAttributes(0, 64, 32, 32, 0, 0);
 		Engine_ActorDestroy(16);
 		Engine_ActorDestroy(17);
 		Engine_ActorDestroy(21);

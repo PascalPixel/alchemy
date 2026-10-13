@@ -528,7 +528,7 @@ static void MakyuriHeya_RunSequenceG(s32 a0)
 		Map_CopyCellsTo(39, 51, y, 32, 1, six);
 		pos = i + 106;
 		four = 4;
-		/* FAKEMATCH: width and height go through locals k and four; as literals, direct or through Map_CopyCellsTo, tbs-en differs */
+		/* FAKEMATCH: width and height go through locals k and four, and loop.c hoists k's 2 into r9 as the native has it. As the literals 2 and 4: differ 26 (also through Map_CopyCellsTo); k = 2 set before the loop: differ 8; four as the literal 4: differ 20. */
 		Engine_MapCopyCellsTo(105, 51, pos, 32, k, four);
 		if (a0 != 0)
 		{

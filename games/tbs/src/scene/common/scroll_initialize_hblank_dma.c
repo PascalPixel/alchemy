@@ -16,11 +16,9 @@ void DisplayScroll_InitializeHBlankDma(
 	s32 mode, s32 freq_x, s32 step_x, s32 amp_x, s32 freq_y, s32 step_y, s32 amp_y)
 {
 	struct DisplayScrollWork *work;
-	volatile u32			  zero;
 
 	work = Runtime_AllocateBlock(34, 0xf20);
-	zero = 0;
-	Dma_Set(&zero, work, 0x850003c8, REG_DMA3);
+	Dma_Fill32(0, work, 0xf20);
 	WaitDma(REG_DMA3);
 	work->mode = mode;
 	work->freq_x = freq_x;

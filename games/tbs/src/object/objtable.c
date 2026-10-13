@@ -379,7 +379,11 @@ void Scene_AssignViewFlags(struct SceneRegionEntry *entry)
 	GameFlag_SetBitFar(FLG_OUT);
 	while (entry->id != -1)
 	{
-		/* FAKEMATCH: needed to match: the flag read through a u16 keeps loop.c to one hoisted bound address */
+		/* FAKEMATCH: the flag read through a u16 keeps loop.c to one hoisted bound
+		 * address (view + 236; view + 244 is formed in the loop, as native).
+		 * 2026-10-13: entry->flag == 0, directly or through an s16 local, hoists
+		 * both bound addresses (differ 18); (u16)entry->flag == 0 loads with
+		 * ldrh (differ 23). */
 		u16 raw = entry->flag;
 		s16 flag = raw;
 

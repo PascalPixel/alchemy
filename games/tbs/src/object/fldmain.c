@@ -599,7 +599,6 @@ struct MenuCtrl
 
 s32 Field_RunScene(s32 entrance)
 {
-	volatile s32	   zero;
 	struct FieldWork  *work;
 	struct FieldActor *actor;
 	s32				   mode;
@@ -607,8 +606,7 @@ s32 Field_RunScene(s32 entrance)
 	s32				   code;
 
 	work = Runtime_AllocateBlock(27, sizeof(struct FieldWork));
-	zero = 0;
-	Dma_Set(&zero, work, 0x85000000 | (sizeof(struct FieldWork) / 4), REG_DMA3);
+	Dma_Fill32(0, work, sizeof(struct FieldWork));
 	GameFlag_ClearBitFar(0x103);
 	gGameState.default_scene = gGameState.scene;
 	gGameState.default_entrance = gGameState.entrance;

@@ -1298,11 +1298,9 @@ void UiWindow_UpdateInterpolatedGeometry(void *arg, s32 save_position)
 //--------------------------------------------------------------------------
 u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count)
 {
-	volatile u16 fill;
 	if (count > 0)
 	{
-		fill = value;
-		Dma_Set(&fill, dst, count | (DMA_ENABLE32 | DMA_SRC_FIXED32), REG_DMA3);
+		Dma_Fill16(value, dst, count * 2);
 		dst += count;
 	}
 	return dst;

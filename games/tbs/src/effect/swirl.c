@@ -1775,7 +1775,6 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
 	struct EffectPosition	 position;
 	struct EffectPosition	 origin;
 	struct EffectPosition	 out;
-	volatile s32			 fill;
 	DrawRectangle			 routine[2];
 	s32						 i;
 	s32						 frame;
@@ -1862,8 +1861,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
 		}
 		if (frame == 8)
 		{
-			fill = 0x3f3f3f3f;
-			Dma_Set((void *)&fill, canvas, 0x85001000, REG_DMA3);
+			Dma_Fill32(0x3f3f3f3f, canvas, 0x4000);
 		}
 		Render_ResetTransformState();
 		Graphics_PrepareTransferInIwramWork(view->eye, view->pos);

@@ -921,7 +921,6 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 	struct UiRenderWork	 *render;
 	u32					  stamp;
 	void				 *work;
-	volatile u32		  zero;
 	s32					  result;
 	s32					  i;
 	s32					  y;
@@ -999,8 +998,7 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 		}
 	}
 
-	zero = 0;
-	Dma_Set(&zero, work, 0x85000000 | (0xa70 / 4), REG_DMA3);
+	Dma_Fill32(0, work, 0xa70);
 	Scheduler_ScheduleCallbackAAfterFrames();
 	list = UiWindow_Create(1, 2, 28, 7, 2);
 	summary = save->summary;
@@ -1159,7 +1157,6 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 	u32					  stamp;
 	void				 *work;
 	struct ShopCursor	  marker;
-	volatile u32		  zero;
 	s32					  result;
 	s32					  i;
 	s32					  x;
@@ -1234,8 +1231,7 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 		}
 	}
 
-	zero = 0;
-	Dma_Set(&zero, work, 0x85000000 | (0xa70 / 4), REG_DMA3);
+	Dma_Fill32(0, work, 0xa70);
 	list = UiWindow_Create(1, 2, 28, 7, 2);
 
 	for (i = 0, summary = save->summary; i < 3; i++, summary++)

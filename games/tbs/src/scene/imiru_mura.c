@@ -569,7 +569,7 @@ static void ImiruMura_RunItemShop(void)
 			Engine_EventBegin();
 			Engine_EventSetMessage((s32)MsgMakyuriMomsSickGetWhatever);
 			Engine_EventShowMessage(14, 0);
-			/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+			/* FAKEMATCH: called through a cast to the value-returning call the bytes show; called by its void prototype, the two argument moves swap (differ 2). A prototyped s32 (*)(s32, s32) cast matches as well (2026-10-13). */
 			((s32 (*)())Engine_ShopOpen)(12, 14);
 			Engine_EventEnd();
 		}

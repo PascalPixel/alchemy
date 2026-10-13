@@ -158,7 +158,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 			n = i % 4;
 			BattleEffect_LoadWork(
 				HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
-			draw.lower = ((DrawRectangle *)Ram_WorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
+			draw.lower = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
 			draw.lower(canvas, work->sheet + n * 1088, 47, ground.y - 64, 17, 64);
 			n = frame / 4 % 3;
 			glow = work->sheet + n * 1032 + 0x1100;
@@ -166,7 +166,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 			BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
 				GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
-			draw.lower = ((DrawRectangle *)Ram_WorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
+			draw.lower = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
 			n = i % 4;
 			draw.lower(canvas, work->sheet + n * 1088, 64, ground.y - 64, 17, 64);
 			draw.lower(canvas, glow, 64, ground.y - 36, 24, 43);
@@ -672,7 +672,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
 		if (frame >= 0 && frame <= 14)
 		{
 			s32			   picture = frame / 3 % 5;
-			DrawRectangle *slot = &((DrawRectangle *)Ram_WorkSlot)[47];
+			DrawRectangle *slot = &((DrawRectangle *)gWorkSlot)[47];
 
 			for (i = 0; i != 4; i++)
 			{

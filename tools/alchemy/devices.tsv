@@ -4,7 +4,7 @@ tbs	goto	413
 tbs	inline-asm	0
 tbs	one-pass	372
 tbs	register-pin	11
-tbs	tagged-macro	52
+tbs	tagged-macro	61
 tbs	volatile	198
 tla	asm-barrier	534
 tla	goto	245

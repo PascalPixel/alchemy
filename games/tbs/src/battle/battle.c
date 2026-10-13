@@ -160,8 +160,8 @@ s32 DebugParty_LoadPreset(s32 preset)
 			state->djinn_active[i] = 0;
 		}
 		for (i = 0; i < 32; i++)
-			/* FAKEMATCH: the halfword store through a u16 cast loads its zero from the literal pool, as the reference does. */
-			*(u16 *)&((struct BtlUnit *)state)->action_slots[i] = 0;
+			/* FAKEMATCH: the halfword store through a u16 cast loads its zero from the literal pool, as the reference does. 2026-10-13: the field store state->action_slots[i].encoded_action = 0, with or without a (u16) cast on the zero, differs 23 of 210: movs r3, #0 replaces the pool load and the pool moves to the function end; any store through a dereference (this cast, *&...encoded_action, ((u16 *)state->action_slots)[i * 2]) matches. */
+			*(u16 *)&state->action_slots[i] = 0;
 		for (i = 0; i < 2; i++)
 		{
 			if (Debug_PartyPresets[row].actions[i] != 0)

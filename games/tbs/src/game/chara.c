@@ -1034,7 +1034,11 @@ void Owner_UpdateSecondInputAndRatios(struct BtlUnit *unit, s32 ep)
 		if (ep >= 0)
 			cur = ep;
 	}
-	/* FAKEMATCH: the one-pass loop keeps the store before the ratio-input reads. */
+	/* FAKEMATCH: the one-pass block keeps the EP store ahead of the HP
+	 * gauge's loads. Measured: the plain store lets the scheduler lift
+	 * the hp load above it (differ 2); the store in each arm of the clamp
+	 * differs 40 to 43; the gauges through Vitals_Ratio, or through an
+	 * inline Unit_UpdateGauges as object.c has, still differ 2. */
 	do
 	{
 		unit->ep = cur;

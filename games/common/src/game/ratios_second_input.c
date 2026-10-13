@@ -26,7 +26,10 @@ void Owner_UpdateSecondInputAndRatios(struct BtlUnit *unit, s32 ep)
 		if (ep >= 0)
 			cur = ep;
 	}
-	/* FAKEMATCH: the one-pass loop keeps the store before the ratio-input reads. */
+	/* FAKEMATCH: the one-pass block keeps the EP store ahead of the HP
+	 * gauge's loads. Measured in tla-ja and tla-en: the plain store lets
+	 * the scheduler lift the hp load above it (differ 2). Its twin in
+	 * games/tbs/src/game/chara.c records the other forms measured there. */
 	do
 	{
 		unit->ep = cur;

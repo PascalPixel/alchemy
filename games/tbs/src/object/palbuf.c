@@ -608,7 +608,7 @@ void Object_EffectSpawnCallback(void)
 	s32							height;
 	s32							other;
 	s32							row;
-	/* FAKEMATCH: needed to match: nothing reads or writes these four bytes */
+	/* FAKEMATCH: never used; nothing reads or writes these four bytes of the native frame. Without them the frame is 12 bytes, not 16 (differ 4: the sp adjustments), measured 2026-10-13. */
 	s16 unused[2];
 
 	if (actor == 0)

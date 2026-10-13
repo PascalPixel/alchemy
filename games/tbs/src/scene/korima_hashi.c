@@ -1113,34 +1113,24 @@ static s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0)
 {
 	s32 x;
 
-	if (KorimaHashi_PartyFlag != 0)
-	{
-		x = arg0->x.fixed;
-		if ((x > 0xc00000 && x < 0x1120000 && arg0->z.fixed > 0x2360000
+	if (!(KorimaHashi_PartyFlag != 0
+		? (x = arg0->x.fixed,
+			(x > 0xc00000 && x < 0x1120000 && arg0->z.fixed > 0x2360000
 				&& arg0->z.fixed < 0x2640000)
 			|| (x > 0xca0000 && x < 0xff0000 && arg0->z.fixed > 0x2250000
 				&& arg0->z.fixed < 0x2780000))
-		{
-			goto hit;
-		}
-	}
-	else
-	{
-		x = arg0->x.fixed;
-		if ((x > 0xc00000 && x < 0xf40000 && arg0->z.fixed > 0x2250000
+		: (x = arg0->x.fixed,
+			(x > 0xc00000 && x < 0xf40000 && arg0->z.fixed > 0x2250000
 				&& arg0->z.fixed <= 0x248ffff)
 			|| (x > 0xf40000 && x < 0x1120000 && arg0->z.fixed > 0x23b0000
 				&& arg0->z.fixed <= 0x25cffff)
 			|| (x > 0xd30000 && x < 0xff0000 && arg0->z.fixed > 0x2540000
-				&& arg0->z.fixed < 0x2780000))
-		{
-			goto hit;
-		}
+				&& arg0->z.fixed < 0x2780000))))
+	{
+		return 0;
 	}
-	return 0;
-hit:
 	Engine_AudioPlayCue(106);
-	/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+	/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype or through Object_SetScript, r0 is set before the script literal loads (2 differ) */
 	((s32 (*)())Engine_ObjectSetScript)((s32)arg0, (s32)KorimaHashi_TriggerScript);
 	KorimaHashi_TriggerPending = 1;
 	return 0;

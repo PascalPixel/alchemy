@@ -93,7 +93,7 @@ void Ui_RunIconMonitor(void)
 	u32						  cnt;
 	s32						  alt;
 	s32						  moved;
-	/* FAKEMATCH: volatile, as gKeysHeld and gKeysRepeat are declared (keystate.h): each *held and *repeat is a load of its own. A plain held differs 245, 663 instructions for 672; a plain repeat 89, 669 for 672. */
+	/* FAKEMATCH: volatile, as gKeysHeld and gKeysRepeat are declared (keystate.h): each *held and *repeat is a load of its own. A plain held differs 245, 663 instructions for 672; a plain repeat 89, 669 for 672. Using gKeysHeld and gKeysRepeat directly differs 283: the native keeps only these two addresses in fp and r9 and reloads every other key address from the pool. */
 	volatile u32			 *held;
 	volatile u32			 *repeat;
 	u32						  i;
@@ -150,7 +150,7 @@ restart:
 		ResourceMetadata_Register((struct AnimationObject *)alt, ent[1].no);
 		ResourceMetadata_Register((struct AnimationObject *)alt, ent[2].no);
 		ResourceMetadata_Register((struct AnimationObject *)alt, ent[3].no);
-		/* FAKEMATCH: needed to match: the native adds the flags offset to the object's own register (r5) in place; a separate address takes a copy. */
+		/* FAKEMATCH: needed to match: the native adds the flags offset to the object's own register (r5) in place; a separate address takes a copy. Measured 2026-10-13: ((struct AnimationObject *)alt)->flags = flag, the same through a pointer local, or a byte offset from alt all differ 55; a separate object variable 128 (the index and the object share r5). */
 		alt = (s32) & ((struct AnimationObject *)alt)->flags;
 		*(u8 *)alt = flag;
 	}

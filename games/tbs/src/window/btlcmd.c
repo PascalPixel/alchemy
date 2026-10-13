@@ -3025,7 +3025,10 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 		//------------------------------------------------------------------
 		nav = gLinkCountdownWork;
 		/* FAKEMATCH: instruction order only: page, row and preferred are
-		   stored in source order before the keys are read (differ 4). */
+		   stored in source order before the keys are read (differ 4).
+		   Plain forms measured (2026-10-13): the same order, or through
+		   gLinkCountdownWork directly, store row first (differ 4); the
+		   other five store orders differ 8 to 12. */
 		do
 		{
 			nav->page = page;
@@ -4034,7 +4037,11 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 			/* FAKEMATCH: the separate switch arms end CSE before the
              * projection call, keeping the scaled offset reload ahead of
              * the ids load. Sharing their block reverses two rows; no
-             * switch branch remains in any edition. */
+             * switch branch remains in any edition. Plain forms measured
+             * (2026-10-13, EN and ES alike): ids[cursor] or a block-local
+             * t = cursor * 2 reload ids before cursor * 2 (differ 2);
+             * cursor[ids], *(cursor + ids) and (u8 *)ids + cursor * 2
+             * differ 24; the call ahead of head and pending 12 to 24. */
 			switch (t)
 			{
 			case 0:
@@ -4385,6 +4392,8 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 						if (count == 0)
 							goto no_condition;
 						break;
+					default:
+						break;
 					case 6:
 						count = 0;
 						if (unit->doku != 0)
@@ -4477,11 +4486,8 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 								(struct RenderInput *)infoWin, 0, 8 * count);
 							count++;
 						}
-						if (count == 0)
-							goto no_condition;
-						break;
-					default:
-						break;
+						if (count != 0)
+							break;
 					no_condition:
 						UiWork_SetParamNibble(2);
 						UiText_DrawCharacterAtOffset(
@@ -5183,7 +5189,11 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 				mode = 0;
 				/* FAKEMATCH: instruction order only: the one-pass block's loop
                    notes end the schedule here, so mode = 0 goes out before the
-                   countdown base is loaded, as native (differ 4). */
+                   countdown base is loaded, as native (differ 4). Plain
+                   forms measured (2026-10-13): mode = 0 before the sound
+                   call, a chain ending in mode = 0 or a local copy of
+                   COUNTDOWN still load the base first (differ 4); a chain
+                   from mode 8; three constant stores 12. */
 				do
 				{
 				} while (0);

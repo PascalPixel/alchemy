@@ -86,46 +86,42 @@ static void SceneDialogue_ShowMessageAndWait(s32 arg0)
 
 static void CommandTable_RunDirectionalInput(s32 x, s32 cnt)
 {
-	/* FAKEMATCH: volatile, as gKeysHeld is declared (keystate.h): each *key is a load of its own. A plain pointer differs 58, 73 instructions for 75. */
-	volatile s32 *key;
-	s32			  token;
-	s32			  i;
+	s32 token;
+	s32 i;
 
 	gGameState.message_speed = 2;
 	token = UiWindow_CreateWithSideObject(125, 0, 0, 0);
 	for (i = 0; i < cnt; i++)
 	{
-		key = &gKeysHeld;
 		UiWork_PushValueSlot(1, 1);
 		UiWork_PushValueSlot(141, 2);
 		UiWork_PushValueSlot(0x1e240, 5);
 		SceneDialogue_ShowMessageAndWait(x);
-		goto test;
-	retry:
-		if (*key != 0)
+		for (;;)
 		{
-			goto next;
+			if ((gKeysHeld & 2) != 0)
+			{
+				goto end;
+			}
+			if ((gKeysHeld & 1) != 0 || (gKeysHeld & 0x80) != 0)
+			{
+				x++;
+				break;
+			}
+			if ((gKeysHeld & 0x40) != 0)
+			{
+				x--;
+				break;
+			}
+			if (gKeysHeld == 0)
+			{
+				Engine_TaskWait(1);
+			}
+			else
+			{
+				break;
+			}
 		}
-		Engine_TaskWait(1);
-	test:
-		if ((*key & 2) != 0)
-		{
-			goto end;
-		}
-		if ((*key & 1) == 0 && (*key & 0x80) == 0)
-		{
-			goto other;
-		}
-		x++;
-		goto next;
-	other:
-		if ((*key & 0x40) != 0)
-		{
-			x--;
-			goto next;
-		}
-		goto retry;
-	next:;
 	}
 end:
 	UiWork_FinalizePendingCore();

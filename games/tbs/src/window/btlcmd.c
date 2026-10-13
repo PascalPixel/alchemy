@@ -475,7 +475,11 @@ void Graphics_InstallBg1VCountHandler(void)
 	s32 zero = 0;
 
 	*(volatile u16 *)address = zero;
-	/* FAKEMATCH: needed to match: the do-while keeps the handler load ahead of the index. */
+	/* FAKEMATCH: instruction order only: the do-while keeps the handler
+	   load ahead of the index. Plain forms measured (2026-10-13):
+	   REG_BG0VOFS = 0 or Io_Write16 with a direct call load the halfword
+	   zero from the pool (differ 6); through an s32 zero the store
+	   matches but the call sets r0 before loading the handler (differ 2). */
 	do
 	{
 		address = (u32)Graphics_ClearBg1ControlBit2;

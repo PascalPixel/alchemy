@@ -202,56 +202,56 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 		}
 		/* FAKEMATCH: needed to match: explicit timer-test lifetime keeps command back-edges and the decoded frame value separate from the hold reload. */
 	read_command:
-		if ((s16)e->timer > 0)
-			goto advance_timer;
-		base = e->script[e->pos++];
-		arg = e->script[e->pos++];
-		switch (base)
+		if ((s16)e->timer <= 0)
 		{
-		case 254:
-			Animation_SetWorkEntry(e, arg);
-			obj->last_no = arg;
-			break;
-		case 253:
-			e->pos = arg;
-			break;
-		case 245:
-			e->timer += arg << 4;
-			break;
-		case 241:
-			e->pos -= 2;
-			goto framed;
-		case 240:
-			e->kind = arg;
-			break;
-		case 255:
-			e->frame_base = 255;
-			base = 255;
-			e->timer += arg << 4;
-			goto select_direction;
-		case 239:
-			e->frame_base = 255;
-			e->script = 0;
-			base = 255;
-			obj->count--;
-			goto select_direction;
-		case 242:
-		case 243:
-		case 244:
-		case 246:
-		case 247:
-		case 248:
-		case 249:
-		case 250:
-		case 252:
-			break;
-		default:
-			e->frame_base = base;
-			e->timer += arg << 4;
-			goto select_direction;
+			base = e->script[e->pos++];
+			arg = e->script[e->pos++];
+			switch (base)
+			{
+			case 254:
+				Animation_SetWorkEntry(e, arg);
+				obj->last_no = arg;
+				break;
+			case 253:
+				e->pos = arg;
+				break;
+			case 245:
+				e->timer += arg << 4;
+				break;
+			case 241:
+				e->pos -= 2;
+				goto framed;
+			case 240:
+				e->kind = arg;
+				break;
+			case 255:
+				e->frame_base = 255;
+				base = 255;
+				e->timer += arg << 4;
+				goto select_direction;
+			case 239:
+				e->frame_base = 255;
+				e->script = 0;
+				base = 255;
+				obj->count--;
+				goto select_direction;
+			case 242:
+			case 243:
+			case 244:
+			case 246:
+			case 247:
+			case 248:
+			case 249:
+			case 250:
+			case 252:
+				break;
+			default:
+				e->frame_base = base;
+				e->timer += arg << 4;
+				goto select_direction;
+			}
+			goto read_command;
 		}
-		goto read_command;
-	advance_timer:
 		e->timer = e->timer - e->step;
 	framed:
 		base = e->frame_base;

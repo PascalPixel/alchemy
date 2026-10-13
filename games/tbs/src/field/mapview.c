@@ -863,44 +863,42 @@ void DisplayBlend_RunScript(void)
 again:
 	value = state->delay;
 	test = value;
-	if (test != 0)
-		goto tick;
-
-	cursor = state->cursor;
-	command = *cursor;
-	cursor++;
-	if (command == 0xffff)
+	if (test == 0)
 	{
-		state->cursor = state->script;
+		cursor = state->cursor;
+		command = *cursor;
+		cursor++;
+		if (command == 0xffff)
+		{
+			state->cursor = state->script;
+			goto again;
+		}
+
+		if ((command & 0xff00) == 0xfe00)
+		{
+			value = command & 0xff;
+			if (value == 0xff)
+				return;
+			state->cursor = state->script + value * 2;
+			goto again;
+		}
+
+		if ((command & 0xf000) == 0x3000)
+		{
+			REG_BLDCNT = command;
+			work->blend_control = command;
+			state->cursor++;
+			goto again;
+		}
+
+		if ((work->blend_control & 0xc0) == 0x40)
+			REG_BLDALPHA = command;
+		else
+			REG_BLDY = command;
+		state->delay = cursor[0];
+		state->cursor += 2;
 		goto again;
 	}
-
-	if ((command & 0xff00) == 0xfe00)
-	{
-		value = command & 0xff;
-		if (value == 0xff)
-			return;
-		state->cursor = state->script + value * 2;
-		goto again;
-	}
-
-	if ((command & 0xf000) == 0x3000)
-	{
-		REG_BLDCNT = command;
-		work->blend_control = command;
-		state->cursor++;
-		goto again;
-	}
-
-	if ((work->blend_control & 0xc0) == 0x40)
-		REG_BLDALPHA = command;
-	else
-		REG_BLDY = command;
-	state->delay = cursor[0];
-	state->cursor += 2;
-	goto again;
-
-tick:
 	state->delay = value + 0xffff;
 }
 

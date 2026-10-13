@@ -869,59 +869,57 @@ s32 BattleEffect_SelectNearbyObject(s32 id)
 	best = -1;
 	best_dist = 32;
 	src = ObjectTable_Get(id);
-	if (src == 0)
-		goto done;
-
-	for (i = 0; i <= OBJ_LAST; i++)
+	if (src != 0)
 	{
-		if (i == id)
-			continue;
-
-		obj = ObjectTable_Get(i);
-		if (obj == 0 || (obj->unknown_59 & 8) != 0)
-			continue;
-
-		if (obj->y - src->y >= 0)
+		for (i = 0; i <= OBJ_LAST; i++)
 		{
-			if (obj->y - src->y >= 48 << 16)
+			if (i == id)
 				continue;
-		}
-		else if (src->y - obj->y >= 48 << 16)
-		{
-			continue;
-		}
 
-		// ドット単位の距離
-		dx = (obj->x - src->x) / 0x10000;
-		dy = (obj->y - src->y) / 0x10000;
-		dz = (obj->z - src->z) / 0x10000;
-
-		xx = dx * dx;
-		yy = dy * dy;
-		zz = dz * dz;
-		sq = xx + yy + zz;
-		dist = Iwram_Sqrt(sq);
-		if ((obj->unknown_59 & 4) != 0)
-			dist = dist * 10 / 13;
-		if (dist >= best_dist)
-			continue;
-
-		angle = (u16)ArcTan2(obj->z - src->z, obj->x - src->x);
-		if (dist > 11)
-		{
-			s32 diff = (s16)(angle - src->angle);
-
-			if (diff < -0x2fff)
+			obj = ObjectTable_Get(i);
+			if (obj == 0 || (obj->unknown_59 & 8) != 0)
 				continue;
-			if (diff > 0x2fff)
-				continue;
-		}
 
-		best = i;
-		best_dist = dist;
+			if (obj->y - src->y >= 0)
+			{
+				if (obj->y - src->y >= 48 << 16)
+					continue;
+			}
+			else if (src->y - obj->y >= 48 << 16)
+			{
+				continue;
+			}
+
+			// ドット単位の距離
+			dx = (obj->x - src->x) / 0x10000;
+			dy = (obj->y - src->y) / 0x10000;
+			dz = (obj->z - src->z) / 0x10000;
+
+			xx = dx * dx;
+			yy = dy * dy;
+			zz = dz * dz;
+			sq = xx + yy + zz;
+			dist = Iwram_Sqrt(sq);
+			if ((obj->unknown_59 & 4) != 0)
+				dist = dist * 10 / 13;
+			if (dist >= best_dist)
+				continue;
+
+			angle = (u16)ArcTan2(obj->z - src->z, obj->x - src->x);
+			if (dist > 11)
+			{
+				s32 diff = (s16)(angle - src->angle);
+
+				if (diff < -0x2fff)
+					continue;
+				if (diff > 0x2fff)
+					continue;
+			}
+
+			best = i;
+			best_dist = dist;
+		}
 	}
-
-done:
 	return best;
 }
 

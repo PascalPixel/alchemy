@@ -70,45 +70,45 @@ static void Korosseo_UpdateModeTask(void)
 	struct AffineTransform work;
 
 commands:
-	if (Korosseo_ModeTaskTimer != 0)
-		goto render;
+	if (Korosseo_ModeTaskTimer == 0)
 	{
-		switch (*Korosseo_ModeTaskScript++)
 		{
-		case 0x4000:
-			Korosseo_ModeTaskPosition = *Korosseo_ModeTaskScript++ << 8;
-			Korosseo_ModeMoveTarget = *Korosseo_ModeTaskScript++;
-			Korosseo_ModeMoveDuration = 0;
-			break;
-		case 0x3000:
-			Korosseo_ModeMoveStart = Korosseo_ModeMoveTarget;
-			Korosseo_ModeMoveTarget = *Korosseo_ModeTaskScript++;
-			Korosseo_ModeMoveDuration = *Korosseo_ModeTaskScript++;
-			Korosseo_ModeMoveStep = 0;
-			break;
-		case 0x1000:
-			Korosseo_ModeScaleStart = Korosseo_ModeScaleTarget;
-			Korosseo_ModeScaleTarget = *Korosseo_ModeTaskScript++;
-			Korosseo_ModeScaleDuration = *Korosseo_ModeTaskScript++;
-			Korosseo_ModeScaleStep = 0;
-			break;
-		case 0x2000:
-			Korosseo_ModeBlendStart = Korosseo_ModeBlendTarget;
-			Korosseo_ModeBlendTarget = *Korosseo_ModeTaskScript++;
-			Korosseo_ModeBlendDuration = *Korosseo_ModeTaskScript++;
-			Korosseo_ModeBlendStep = 0;
-			break;
-		case 0x7fff:
-			Korosseo_ModeTaskTimer = *Korosseo_ModeTaskScript++;
-			break;
-		case -1:
-			Engine_TaskRemoveCallback(Korosseo_UpdateModeTask);
-			Resource_ResetEntry(Korosseo_PortraitSlot);
-			return;
+			switch (*Korosseo_ModeTaskScript++)
+			{
+			case 0x4000:
+				Korosseo_ModeTaskPosition = *Korosseo_ModeTaskScript++ << 8;
+				Korosseo_ModeMoveTarget = *Korosseo_ModeTaskScript++;
+				Korosseo_ModeMoveDuration = 0;
+				break;
+			case 0x3000:
+				Korosseo_ModeMoveStart = Korosseo_ModeMoveTarget;
+				Korosseo_ModeMoveTarget = *Korosseo_ModeTaskScript++;
+				Korosseo_ModeMoveDuration = *Korosseo_ModeTaskScript++;
+				Korosseo_ModeMoveStep = 0;
+				break;
+			case 0x1000:
+				Korosseo_ModeScaleStart = Korosseo_ModeScaleTarget;
+				Korosseo_ModeScaleTarget = *Korosseo_ModeTaskScript++;
+				Korosseo_ModeScaleDuration = *Korosseo_ModeTaskScript++;
+				Korosseo_ModeScaleStep = 0;
+				break;
+			case 0x2000:
+				Korosseo_ModeBlendStart = Korosseo_ModeBlendTarget;
+				Korosseo_ModeBlendTarget = *Korosseo_ModeTaskScript++;
+				Korosseo_ModeBlendDuration = *Korosseo_ModeTaskScript++;
+				Korosseo_ModeBlendStep = 0;
+				break;
+			case 0x7fff:
+				Korosseo_ModeTaskTimer = *Korosseo_ModeTaskScript++;
+				break;
+			case -1:
+				Engine_TaskRemoveCallback(Korosseo_UpdateModeTask);
+				Resource_ResetEntry(Korosseo_PortraitSlot);
+				return;
+			}
 		}
+		goto commands;
 	}
-	goto commands;
-render:
 	Korosseo_ModeTaskTimer--;
 	if (Korosseo_ModeScaleDuration == 0)
 	{

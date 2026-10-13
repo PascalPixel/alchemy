@@ -2159,14 +2159,15 @@ static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 seco
 	}
 	if (flag == 0)
 	{
-		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-		/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+		/* FAKEMATCH: the void function is called as returning s32, which loads r1
+		 * before r0 as native. 2026-10-13: called by its prototype at both
+		 * sites, each loads r0 first (differ 4). */
 		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, first_handle);
 		UiWork_PushValueSlot(first_handle, 2);
 	}
 	else
 	{
-		/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+		/* FAKEMATCH: called as returning s32, as in the first arm. */
 		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, second_handle);
 		UiWork_PushValueSlot(second_handle, 2);
 	}

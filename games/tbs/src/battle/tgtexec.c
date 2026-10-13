@@ -2207,15 +2207,14 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *req, s32 retry)
 		n = 0;
 		if (rnd >= total)
 		{
-		loop:
-			n++;
-			if (n <= 7)
+			while (++n <= 7)
 			{
 				total += weights[n];
 				if (rnd < total)
+				{
 					no = n;
-				else
-					goto loop;
+					break;
+				}
 			}
 		}
 		return no;

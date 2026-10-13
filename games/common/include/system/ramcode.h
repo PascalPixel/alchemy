@@ -9,6 +9,7 @@
 // ARM ルーチンを RAM へ写して使う。bytes はルーチンの大きさ (リンカの記号)
 
 // ヒープに場所を取って写す。使い終わったら MemFree
+/* FAKEMATCH: the inner one-pass block around size_ (here and in RamCode_LoadSlot) separates the size from its uses as UiText_BuildRenderEntries needs; as a plain assignment, tbs-en differs. */
 #define RamCode_Load(to, code, bytes)                                             \
 	do                                                                            \
 	{                                                                             \

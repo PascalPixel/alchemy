@@ -124,6 +124,7 @@ extern struct GameState gGameState;
 #endif
 
 // 戦闘開始の種類を設定
+/* FAKEMATCH: the one-pass block's loop-end note ends CSE's block and holds the store in place at its 34 uses; as a plain assignment, tbs-en differs. */
 #define Battle_SetStart(mode)             \
 	do                                    \
 	{                                     \

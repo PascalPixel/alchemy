@@ -230,7 +230,15 @@ fn one_pass(text: &str, tag: &Tag) -> Option<String> {
     let line_start = text[..tag.start].rfind('\n').map_or(0, |at| at + 1);
     let after = &text[tag.end..];
     let newline = after.find('\n')?;
-    if !text[line_start..tag.start].trim().is_empty() || !after[..newline].trim().is_empty() {
+    if !after[..newline].trim().is_empty() {
+        return None;
+    }
+    // An empty block with its tag after it on one line: the line goes.
+    let empty = regex::Regex::new(r"^do\s*\{\s*\}\s*while\s*\(\s*0\s*\)\s*;$").expect("static pattern");
+    if empty.is_match(text[line_start..tag.start].trim()) {
+        return Some(format!("{}{}", &text[..line_start], &after[newline + 1..]));
+    }
+    if !text[line_start..tag.start].trim().is_empty() {
         return None;
     }
     let block = &after[newline + 1..];
@@ -321,6 +329,8 @@ mod tests {
         assert_eq!(removed(text).unwrap(), "{\n    if (a) { f(); }\n}\n");
         let text = "{\n\t/* FAKEMATCH: empty */\n\tdo\n\t{\n\t} while (0);\n\tf();\n}\n";
         assert_eq!(removed(text).unwrap(), "{\n\tf();\n}\n");
+        let text = "{\n\tx = 1;\n\tdo { } while (0); /* FAKEMATCH: boundary */\n\tf();\n}\n";
+        assert_eq!(removed(text).unwrap(), "{\n\tx = 1;\n\tf();\n}\n");
     }
 
     #[test]

@@ -237,7 +237,9 @@ void UnitCalc(s32 owner)
 			work->item = Item_GetDirect(st->inventory[i]);
 			if (work->item->flags & ITEM_CURSED)
 				st->restraint |= 3;
-			/* FAKEMATCH: a do-while barrier keeps the defense load after the item bonus load, as the ROM schedules it */
+			/* FAKEMATCH: the one-pass block keeps the defense load after the
+			 * item's second bonus load, as the ROM schedules it. Measured:
+			 * plain, the scheduler lifts work->def above that load (differ 2). */
 			do
 			{
 				work->atk += work->item->primary_bonus;

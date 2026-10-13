@@ -160,10 +160,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
 			ItemMenu_DrawMsg(0, (s32)MsgPsynergyChooseOwner);
 			chosen = PsynergyMenu_SelectPartySlot(0);
 			cancelled = -1;
-			/* FAKEMATCH: the redundant cancellation copy ends the CSE block,
-             * preserving the native cancellation/done register choices.
-             * Without it, r2/r3 exchange and 12 instructions differ.
-             * XOR equality keeps the cancellation copy into the result. */
+			/* FAKEMATCH: dead code: the redundant cancellation copy ends the CSE block, so the cancellation and done constants take the native registers; XOR equality keeps the copy into the result. Plain forms measured 2026-10-13, each differ 12 (r2 and r3 exchanged): chosen == -1 setting result to -1 or to chosen, with either store first, the call tested directly, and chosen == cancelled. */
 			if (chosen == -1)
 				cancelled = chosen;
 			if (((u32)chosen ^ (u32)cancelled) == 0)

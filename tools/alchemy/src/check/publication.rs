@@ -5007,7 +5007,7 @@ static void Scene_RunGuardSequenceC(void)
 
 	p = (s32 *)SoruSekizo_SpriteRows;
 	buf = (s32)Runtime_AllocateBlock(14, 0x400);
-	Resource_DecodeByteLz((s32)SoruSekizo_SpriteRowsGfx, buf);
+	Resource_DecodeByteLz((s32)Scene_PackedRowsGfx, buf);
 	value = Engine_VramLoad(Resource_FindFreeEntry(), 128, buf);
 	Engine_HeapRelease(14);
 }
@@ -5018,7 +5018,9 @@ static void Event_SayThenWait(s32 speaker, s32 frames)
 	Engine_EventWait(frames);
 }
 
-s32 SoruSekizo_SpriteRowsGfx[] = { 0 };
+s32 Scene_PackedRowsGfx[] = {
+	0x11111111, 0x22222222, 0x33333333, 0x44444444, 5, 6, 7, 8,
+};
 
 struct SceneEntrance SceneEventRuntime_ScriptData[] = {
 	{ 0, CONDITION_ALWAYS, 287, 0, 176, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -5033,9 +5035,9 @@ struct SceneEntrance SceneEventRuntime_ScriptData[] = {
         assert_eq!(publication_data_reason(scene, STATUE_HALL.as_bytes(), None), Some(REASON));
         // Built from a picture: the array is gone and the header declares
         // the asset's symbol.
-        let (before, after) = STATUE_HALL.split_once("s32 SoruSekizo_SpriteRowsGfx[] = {").unwrap();
+        let (before, after) = STATUE_HALL.split_once("s32 Scene_PackedRowsGfx[] = {").unwrap();
         let built = format!(
-            "extern u8 SoruSekizo_SpriteRowsGfx[];\n{before}{}",
+            "extern u8 Scene_PackedRowsGfx[];\n{before}{}",
             after.split_once("};\n\n").unwrap().1
         );
         assert_eq!(packed_numbers_reason(scene, &built), None);

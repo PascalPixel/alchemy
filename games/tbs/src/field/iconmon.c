@@ -426,7 +426,7 @@ s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step)
 			continue;
 		}
 		{
-			/* FAKEMATCH: needed to match: the upper bound in a local compares as cmp against 0x200 with blt; the literal compares against 0x1ff from the pool. */
+			/* FAKEMATCH: the upper bound in a local compares as cmp against 0x200 with blt; the literal compares against 0x1ff from the pool. 2026-10-13: start >= 0x200 or 0x200 <= start differs 9 of 25 (ldr r3, =0x1ff and ble); the tests as one else-if chain 9, start < 0x200 guarding the lookup 13. */
 			s32 limit = 0x200;
 			if (start >= limit)
 			{

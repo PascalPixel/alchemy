@@ -411,30 +411,31 @@ menu_top:;
 		PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
 		v5 = 1;
 		v7 = 0;
-	edit_name:;
-		Engine_TaskWait(6);
-		v6 = NameEntry_EditOwnerName(v7);
-		if (v6 == -1)
+		for (;;)
 		{
-			if (v7 == 0)
+			Engine_TaskWait(6);
+			v6 = NameEntry_EditOwnerName(v7);
+			if (v6 == -1)
 			{
-				goto menu_top;
+				if (v7 == 0)
+				{
+					goto menu_top;
+				}
+				v7--;
+				continue;
 			}
-			v7--;
-			goto edit_name;
-		}
-		if (Clear_CodeUnlocked != 0)
-		{
-			v5 = 4;
-		}
-		if (Clear_ExtraCodeUnlocked != 0)
-		{
-			v5 = 7;
-		}
-		v7 = (v7 + 1);
-		if (v7 < v5)
-		{
-			goto edit_name;
+			if (Clear_CodeUnlocked != 0)
+			{
+				v5 = 4;
+			}
+			if (Clear_ExtraCodeUnlocked != 0)
+			{
+				v5 = 7;
+			}
+			if (++v7 >= v5)
+			{
+				break;
+			}
 		}
 		Party_SetFlag32AndRefreshMembers();
 		gGameState.scene = (s32)&SceneId_HaidiaBabi;

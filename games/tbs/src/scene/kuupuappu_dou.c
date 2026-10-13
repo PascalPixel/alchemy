@@ -815,11 +815,7 @@ static void SceneActor_InitSlots10To15AndStartTask(void)
 		selector++;
 	} while (remaining >= 0);
 
-	{
-		s32 rank = 0xc80;
-
-		Engine_TaskAddCallback((s32)FieldScene_RunScene3a7SequenceD, rank);
-	}
+	Engine_TaskAddCallback((s32)FieldScene_RunScene3a7SequenceD, 0xc80);
 }
 
 static void SceneActor_SetupActors11To14AndInstallTask(void)
@@ -841,11 +837,7 @@ static void SceneActor_SetupActors11To14AndInstallTask(void)
 		no++;
 	} while (i <= 3);
 
-	{
-		s32 rate = 0xc80;
-
-		Engine_TaskAddCallback((s32)FieldScene_RunOpeningAuxiliarySequence, rate);
-	}
+	Engine_TaskAddCallback((s32)FieldScene_RunOpeningAuxiliarySequence, 0xc80);
 }
 
 s32 KuupuappuDou_ApplyEntryState(void)

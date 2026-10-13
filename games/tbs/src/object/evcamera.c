@@ -554,7 +554,7 @@ s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object)
 		if (distance >= step)
 		{
 			newX = object->x + (cellX << 20) / step;
-			/* FAKEMATCH: an explicit libgcc call; written with the operator, tbs-en differs */
+			/* FAKEMATCH: an explicit libgcc call, an ordinary call where the operator makes a libcall block. Plain form measured 2026-10-13: (cellY << 20) / step, as newX divides, differ 54 (70 instructions instead of 66). */
 			Object_SetMoveTargetFar(
 				object, newX, object->y, object->z + __divsi3(cellY << 20, step));
 			ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);

@@ -15,7 +15,8 @@ pub(crate) struct Measure {
     pub done: Option<u64>,
     pub executable: Option<u64>,
     pub percent: Option<f64>,
-    /// DONE data bytes and the data total; empty before 2026-10-08.
+    /// DONE data bytes and the data total: measured from 2026-10-08, and
+    /// rebuilt from each earlier day's own source back to the first.
     pub data: Option<u64>,
     pub data_total: Option<u64>,
 }
@@ -255,8 +256,8 @@ fn parse(text: &str) -> Result<History, String> {
                     let total = total
                         .parse::<u64>()
                         .map_err(|_| problem("invalid data total"))?;
-                    if total == 0 || data > total || done == "-" {
-                        return Err(problem("data needs its total and the code bytes beside it"));
+                    if total == 0 || data > total || (done == "-" && percent == "-") {
+                        return Err(problem("data needs its total and the code beside it, as bytes or a published percentage"));
                     }
                     Some((data, total))
                 }
@@ -285,7 +286,11 @@ fn parse(text: &str) -> Result<History, String> {
                 if !percent.is_finite() || !(0.0..=100.0).contains(&percent) {
                     return Err(problem("published percentage is outside 0–100"));
                 }
-                Some(Measure::published(percent))
+                Some(Measure {
+                    data: data.map(|(data, _)| data),
+                    data_total: data.map(|(_, total)| total),
+                    ..Measure::published(percent)
+                })
             } else {
                 None
             };
@@ -827,9 +832,20 @@ mod tests {
             (loaded.days, loaded.hours),
             (history.days.clone(), history.hours.clone())
         );
-        let invalid = format!("{HEADER}\n2026-10-08\t-\t-\t1.0\t9\t10\t-\t-\t-\t-\t-\t-\t-\n");
+        let invalid = format!("{HEADER}\n2026-10-08\t-\t-\t-\t9\t10\t-\t-\t-\t-\t-\t-\t-\n");
         assert!(parse(&invalid).is_err());
     }
+    #[test]
+    fn rebuilt_data_sits_beside_a_published_percentage_but_never_alone() {
+        let head = format!("# began\t2026-07-16\n{HEADER}\n");
+        let beside = format!("{head}2026-07-16\t-\t-\t1.0\t0\t100\t-\t-\t-\t-\t-\t-\t-\n");
+        let history = parse(&beside).unwrap();
+        assert_eq!(history.days[0].tbs.as_ref().unwrap().data_percent(), Some(0.0));
+        assert_eq!(data_points(&history, "tbs").len(), 1);
+        let alone = format!("{head}2026-07-16\t-\t-\t-\t0\t100\t-\t-\t-\t-\t-\t-\t-\n");
+        assert!(parse(&alone).is_err());
+    }
+
     #[test]
     fn a_publication_takes_over_what_the_checkout_measured_since() {
         let day = |date: &str, percent: f64| Day {

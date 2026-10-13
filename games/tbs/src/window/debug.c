@@ -426,7 +426,6 @@ s32 Menu_RunWorkspaceResultLoop(void)
 {
 	s32 result;
 
-retry:
 	result = Menu_RunWorkspaceSelectionLoop();
 	if (result == -1)
 	{
@@ -436,7 +435,7 @@ retry:
 	{
 		if (Save_WriteSelectedSlot() == -1)
 		{
-			goto retry;
+			return Menu_RunWorkspaceResultLoop();
 		}
 	}
 	else if (result == 1)
@@ -448,7 +447,7 @@ retry:
 	{
 		if (Menu_RunWorkspaceOptions() == -1)
 		{
-			goto retry;
+			return Menu_RunWorkspaceResultLoop();
 		}
 	}
 	return 0;

@@ -28,7 +28,6 @@
 #include "serial_runtime.h"
 #include "frame.h"
 #include "keystate.h"
-#include "input.h"
 #include "oam.h"
 #include "map_scroll.h"
 #include "heap_state.h"

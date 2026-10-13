@@ -1,7 +1,9 @@
 #ifndef TLA_INPUT_H
 #define TLA_INPUT_H
 
-#include "edition.h"
+// The Lost Age's key input state: held, pressed and repeating keys.
+// ⚓️ のキー入力。☀️ のキー入力は keystate.h にある。
+
 #include "types.h"
 #include "layout_guard.h"
 

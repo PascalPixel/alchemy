@@ -1337,11 +1337,7 @@ s32 HaidiaMura_ApplyEntryState(void)
 				s32 priority;
 				s32 actor;
 
-				/* FAKEMATCH: the cancelled byte keeps priority's constant before the actor's; a plain 2, even in a one-pass block, copies actor first (2 aligned differences). */
-				do
-				{
-					priority = ((u32)(u8)set >> 8) + 2;
-				} while (0);
+				priority = ((u32)(u8)set >> 8) + 2;
 				actor = ACTOR_DORA;
 				Engine_ActorSetSpritePriority(actor, priority);
 			}

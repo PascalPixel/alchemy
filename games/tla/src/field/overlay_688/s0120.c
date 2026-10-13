@@ -78,9 +78,6 @@ void Func_02000120(void)
     } else {
         struct PartyState *party = &gPartyState;
 
-        /* FAKEMATCH: a one-pass block loads the party state before its offset is built (one reordered row). */
-        do {
-        } while (0);
         party->current_owner = 4;
         party->render_mode = 0;
         party->owner_override = 0;

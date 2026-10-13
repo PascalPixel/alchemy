@@ -353,16 +353,11 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
 	divide = Iwram_UnsignedDivideEntry;
 	scale = divide(num, t) >> 15;
 	scale = -scale;
-	/* FAKEMATCH: the normalization keeps its CSE block; without it, the third
-	 * product spills before the negated axis (four reordered instructions). */
-	do
-	{
-		dx = Iwram_MulQ16(dx, scale);
-		dy = Iwram_MulQ16(dy, scale);
-		t = Iwram_MulQ16(dz, scale);
-		uz = -dx;
-		dz = t;
-	} while (0);
+	dx = Iwram_MulQ16(dx, scale);
+	dy = Iwram_MulQ16(dy, scale);
+	t = Iwram_MulQ16(dz, scale);
+	uz = -dx;
+	dz = t;
 
 	// 横の軸 u = (dz, 0, -dx) を長さ 1 に
 	t = Iwram_MulQ16(dy, dy);

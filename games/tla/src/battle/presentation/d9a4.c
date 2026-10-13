@@ -56,9 +56,6 @@ void Func_0811d7e8(u16 *source, struct ActionTargets *targets)
         do {
         } while (0);
         value = &targets->value_4a;
-        /* FAKEMATCH: a one-pass block keeps the field address ahead of the side store; as plain statements, in any order, the store comes first (4 differ). */
-        do {
-        } while (0);
         targets->side = own;
         *value = half;
     }

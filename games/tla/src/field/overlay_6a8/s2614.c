@@ -53,8 +53,6 @@ s32 Func_02002614(void)
         register s32 skip __asm__("r0");
         s32 value = 0x209;
 
-        /* FAKEMATCH: the one-pass block's loop note keeps the pinned argument's load first after it, ahead of the store; an empty asm there would move the literal pool (it counts four estimated bytes). */
-        do { } while (0);
         skip = 0;
         *effect = value;
         Func_020045dc(skip);

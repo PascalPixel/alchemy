@@ -80,11 +80,8 @@ s32 Scheduler_CountCallbacksByKey(s32 key)
     u8 *status = &gSchedulerTaskCount;
     u32 observed;
 
-    /* FAKEMATCH: the one-pass read keeps zero between the status address and byte load, and the table address after them; plain assignments reorder these loads (4 aligned differences). */
-    do {
-        count = 0;
-        observed = *status;
-    } while (0);
+    count = 0;
+    observed = *status;
     cursor = (u32)gSchedulerTaskTable;
     key >>= 8;
     if (observed == 1) {

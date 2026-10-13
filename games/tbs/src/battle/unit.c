@@ -1086,85 +1086,75 @@ s32 BattleStatusIcon_Cycle(struct BtlObj *slot)
 
 	// 表示中の状態が消えたら、すぐに切り替える
 	old = (struct AnimationEntry *)slot->animation_entry;
-	if (old == 0)
+	if ((old == 0 ? (s16)slot->active_conditions != 0
+				  : (((s16)slot->active_conditions >> slot->selected_condition) & 1) == 0)
+		|| slot->cycle_timer == 0)
 	{
-		if ((s16)slot->active_conditions == 0)
-			goto wait;
-		goto update;
-	}
-	if ((((s16)slot->active_conditions >> slot->selected_condition) & 1) == 0)
-		goto update;
-wait:
-	if (slot->cycle_timer != 0)
-		goto done;
-
-update:
-	anim = -1;
-	owner = slot->object;
-	if ((s16)slot->active_conditions != 0)
-	{
-		prev = slot->selected_condition;
-		for (anim = prev + 1;; anim++)
+		anim = -1;
+		owner = slot->object;
+		if ((s16)slot->active_conditions != 0)
 		{
-			if (anim > ICON_MAX - 1)
-				anim = 0;
-			if ((((s16)slot->active_conditions >> anim) & 1) != 0)
-				break;
+			prev = slot->selected_condition;
+			for (anim = prev + 1;; anim++)
+			{
+				if (anim > ICON_MAX - 1)
+					anim = 0;
+				if ((((s16)slot->active_conditions >> anim) & 1) != 0)
+					break;
+			}
+
+			if (prev != anim || old == 0)
+			{
+				slot->selected_condition = anim;
+				changed = 1;
+			}
+			slot->cycle_timer = 80;
 		}
-
-		if (prev != anim || old == 0)
+		else
 		{
-			slot->selected_condition = anim;
 			changed = 1;
 		}
-		slot->cycle_timer = 80;
-	}
-	else
-	{
-		changed = 1;
-	}
 
-	rec = GetMotionRecord(owner, 0);
-	if (rec != 0)
-	{
-		// アイコンのアニメ番号は、幅 32 のキャラと他とで別の並び
-		if (anim >= 0)
+		rec = GetMotionRecord(owner, 0);
+		if (rec != 0)
 		{
-			if (rec->width == 32)
-				anim += 340;
-			else
-				anim += 355;
-		}
-
-		if (slot->animation_entry != 0 && changed != 0)
-		{
-			ResourceMetadata_UnregisterFar(rec, (s32)slot->animation_entry);
-			slot->animation_entry = 0;
-		}
-
-		if (anim >= 0 && changed != 0)
-		{
-			// The handle is stored first and cleared again when registration fails.
-			handle = ResourceMetadata_RegisterFar(rec, anim);
-			slot->animation_entry = (struct SpriteEntry *)handle;
-			if (handle == -1)
-				slot->animation_entry = 0;
-			icon = (struct AnimationEntry *)slot->animation_entry;
-			if (icon != 0)
+			// アイコンのアニメ番号は、幅 32 のキャラと他とで別の並び
+			if (anim >= 0)
 			{
-				icon->priority = 3;
-				Animation_SetWorkEntryFar(icon, 0);
+				if (rec->width == 32)
+					anim += 340;
+				else
+					anim += 355;
 			}
+
+			if (slot->animation_entry != 0 && changed != 0)
+			{
+				ResourceMetadata_UnregisterFar(rec, (s32)slot->animation_entry);
+				slot->animation_entry = 0;
+			}
+
+			if (anim >= 0 && changed != 0)
+			{
+				// The handle is stored first and cleared again when registration fails.
+				handle = ResourceMetadata_RegisterFar(rec, anim);
+				slot->animation_entry = (struct SpriteEntry *)handle;
+				if (handle == -1)
+					slot->animation_entry = 0;
+				icon = (struct AnimationEntry *)slot->animation_entry;
+				if (icon != 0)
+				{
+					icon->priority = 3;
+					Animation_SetWorkEntryFar(icon, 0);
+				}
+			}
+
+			rec->dirty = 1;
+			if (anim >= 0)
+				slot->animation = anim;
+			else
+				slot->animation = 0;
 		}
-
-		rec->dirty = 1;
-		if (anim >= 0)
-			slot->animation = anim;
-		else
-			slot->animation = 0;
 	}
-
-done:;
 }
 
 //--------------------------------------------------------------------------

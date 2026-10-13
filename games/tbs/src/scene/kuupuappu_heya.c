@@ -2638,8 +2638,7 @@ static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 
 static void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c)
 {
-	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-	((void (*)(s32, s32, s32))Engine_ActorSetAnimation)(a, b, c);
+	Engine_ActorSetAnimation(a, b, c);
 	ObjectMotion_WaitForAnimationChange(a);
 	Engine_EventWait(c);
 }

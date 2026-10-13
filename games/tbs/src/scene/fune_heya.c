@@ -130,8 +130,7 @@ static s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor)
 
 static s32 StagedActor_SetAngleByKind(struct FieldActor *o)
 {
-	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-	u32 v = (u32)(((s32 (*)(u8 *o))Engine_RandomNext)(o) << 6) >> 16;
+	u32 v = (u32)(Engine_RandomNext(o) << 6) >> 16;
 
 	if (v == 6)
 	{
@@ -3141,8 +3140,7 @@ static void FieldScene_CallPairWith10(s32 a, u16 b)
 
 static void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d)
 {
-	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-	((void (*)())Engine_ActorSetPosition)(a, b << 16, c << 16, d);
+	Engine_ActorSetPosition(a, b << 16, c << 16, d);
 	Object_GetById(a)->facing = d;
 }
 

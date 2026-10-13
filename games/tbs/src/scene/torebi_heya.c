@@ -84,8 +84,7 @@ static void TorebiHeya_StartWindowTransition(void)
 
 	state->start_transition = 0x201;
 	state->transition_frames = 24;
-	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-	((void (*)(void))Engine_EventRequestExit)();
+	Engine_EventRequestExit();
 }
 
 static void FieldScene_RunPrimarySequence(void)

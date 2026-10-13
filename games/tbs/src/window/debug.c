@@ -475,7 +475,7 @@ s32 DebugMenu_BrowseIcons(void)
 	gMenuCtrlWork->suspended = redraw;
 	WaitFrames(1);
 
-	do
+	while (1)
 	{
 		if (gKeysRepeat & KEY_LEFT)
 		{
@@ -498,9 +498,9 @@ s32 DebugMenu_BrowseIcons(void)
 			mode++;
 		}
 		if (gKeysRepeat & KEY_A)
-			goto close;
+			break;
 		if (gKeysRepeat & KEY_B)
-			goto close;
+			break;
 		if (redraw != 0)
 		{
 			redraw = 0;
@@ -545,8 +545,7 @@ s32 DebugMenu_BrowseIcons(void)
 			}
 		}
 		WaitFrames(1);
-	} while (1);
-close:
+	}
 	UiWork_Finalize(window, 2);
 	gMenuCtrlWork->suspended = 0;
 	return 0;

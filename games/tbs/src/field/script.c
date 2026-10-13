@@ -1221,7 +1221,6 @@ s32 Object_Wander(struct ScriptObjectRuntime *object)
 	base = *args++;
 	range = *args++;
 	limit = *args / 0x10000;
-	/* FAKEMATCH: needed to match: the retry label and one-pass distance block preserve the 32-byte frame and division/load registers. */
 	tries = 0;
 	limit = limit * limit;
 retry:
@@ -1255,6 +1254,7 @@ retry:
 		Vector_AddPolarOffset(radius, heading - 0x2000, &probe);
 		if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
 			goto retry;
+		/* FAKEMATCH: one-pass block: it ends cse2's block, so the division works on the loaded pos.x and the copy outlives it into found. As plain statements cse2 swaps them (differ 16), also with dx/dz split or casts. The retry gotos stay: as for(;;) with continue, loop.c hoists &pos and &probe, which the native recomputes each try (differ 128). */
 		do
 		{
 			dx = pos.x / 0x10000 - object->home_x;

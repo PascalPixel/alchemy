@@ -1461,7 +1461,7 @@ static void FieldScene_RunShipDeckEventScript(void)
 		Engine_TaskWait(1);
 	} while (Object_GetById(24)->timer == 0);
 	FuneKanpan_OpenFirstDoor();
-	/* FAKEMATCH: the do/while sets r0 = 21 first, straight after the call. Plain call: differ 2; Engine_ActorWalkTo directly: differ 4. */
+	/* FAKEMATCH: the do/while sets r0 = 21 first, straight after the call. Plain call: differ 2; Engine_ActorWalkTo directly: differ 4. Measured 2026-10-13: Actor_WalkTo as a do/while statement macro at every use changes 111 functions in the six editions, so the block is this site's alone. */
 	do
 	{
 		Actor_WalkTo(21, 196, 612);
@@ -1857,8 +1857,9 @@ static void FieldScene_ConfigureThreeActors(void)
 	Actor_SetPosition(21, 0xb80000, 0x2780000);
 	record = Object_GetById(21);
 	record->facing = 0xb000;
-	/* FAKEMATCH: needed to match: the work pointer is read as a word, which may alias the facing stores, so they stay ahead of its load. gEventWork->start_transition: differ 2. */
-	*(s32 *)(*(s32 *)&gEventWork + 0x1c0) = 0x202;
+	/* FAKEMATCH: needed to match: the work pointer is read as a word, which may alias the facing stores, so they stay ahead of its load. gEventWork->start_transition: differ 2; the records held as union FieldObject: differ 2. Measured 2026-10-13: with gEventWork declared a word (u32, cast at each use) the plain store matches and, in all six editions, only HaidiaIe_RunActorPairEffectScene changes (differ 2); this word view on every start_transition store changes 49 functions. */
+	((struct EventWork *)*(u32 *)&gEventWork)->start_transition =
+		SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(20);

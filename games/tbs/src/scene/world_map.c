@@ -1761,7 +1761,9 @@ static void EV96_SCRIPT(void)
          * clears, so the zero takes r1 and the address r0, as the game has
          * them. As plain stores the zero takes r3 and the address a copy in
          * r2 (differ 20 in EN); a repeated struct-field store deletes the
-         * first store instead and leaves the clear at the end (differ 6). */
+         * first store instead and leaves the clear at the end (differ 6). Held as
+         * union FieldObject, as raribero_machi.c holds the Black Orb, the
+         * plain store still differs 20 (2026-10-13). */
 		motion = &orb->motion_flags;
 		*motion = 0;
 		buffer = Heap_Allocate(17, 0x608);

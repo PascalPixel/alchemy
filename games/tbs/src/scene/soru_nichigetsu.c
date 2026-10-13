@@ -1192,7 +1192,9 @@ static void EV20_SEARCH(void)
 		actor->steering_flags &= ~ACTOR_FACES_MOTION;
 		/* FAKEMATCH: register choice only: the zero goes through the sprite
 		   variable, whose pseudo has r7, as native. Plain forms measured
-		   (2026-10-13): motion_flags = 0 puts the zero in r2 (differ 4). */
+		   (2026-10-13): motion_flags = 0 puts the zero in r2 (differ 4), also
+		   with the actor held as union FieldObject and with FieldActor's
+		   coordinates as s32. */
 		sprite = 0;
 		actor->motion_flags = (u32)sprite;
 		Engine_AudioPlayCue(201);

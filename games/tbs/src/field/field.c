@@ -990,7 +990,10 @@ s32 AnimationObjects_SelectAnimation(struct AnimationObject *state, s32 flags)
 	high_bit = flags & 0x80;
 	flags &= 0x7f;
 
-	/* FAKEMATCH: the index/test loop keeps an 8-byte frame; a for loop spills an entry cursor and uses 12 bytes. */
+	/* FAKEMATCH: the index/test loop keeps an 8-byte frame; a for loop spills an
+	 * entry cursor and uses 12 bytes. 2026-10-13: for (index = 0; index <
+	 * state->count; index++) strength-reduces entries[index] into that cursor
+	 * (82 instructions for 76, differ 30). */
 	if (state->last_no != flags)
 	{
 		index = 0;

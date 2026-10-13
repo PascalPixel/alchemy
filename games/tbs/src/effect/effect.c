@@ -1350,7 +1350,10 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 	void				   **cursor;
 	struct BattleEffectWork *work;
 	void					*canvas;
-	/* FAKEMATCH: needed to match: an unused second blitter word fills the frame's 8-byte draw slot */
+	/* FAKEMATCH: frame local: an unused second blitter word fills the
+	   frame's 8-byte draw slot, as this file's two-blitter effects declare
+	   draw[2]. Measured (2026-10-13): with draw[1] the frame is 80 bytes
+	   for 84 (differ 14, stack offsets only). */
 	DrawRectangle		  draw[2];
 	struct BtlObj		 *first;
 	struct BtlObj		 *second;

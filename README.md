@@ -39,6 +39,9 @@ Alchemy is not a remake, a mod, an emulator or a download of the games, and it
 doesn’t include them. It will open to outside contributions once both games
 are complete.
 
+To build it yourself and check it against the original, follow
+[INSTALL.md](INSTALL.md).
+
 ## Acknowledgements
 
 _Golden Sun_, its characters, music, art and original code were created by

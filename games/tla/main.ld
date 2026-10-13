@@ -932,7 +932,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000d7014)
     "*/games/tla/src/field/common/effect/fieldgfx.o"(.text)
     "*/games/tla/src/battle/effect/spinstep.o"(.text)
-    "*/games/common/src/object/motion_move_halfway_toward_target.o"(.text)
+    "*/games/tla/src/battle/effect/motion_move_halfway_toward_target.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d7504)
     "*/games/tla/src/battle/effect/slots.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d7ac0)

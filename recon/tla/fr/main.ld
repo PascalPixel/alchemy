@@ -951,7 +951,7 @@
     "*/recon/tla/fr/rom.o"(.rom.000dc028)
     "*/games/tla/src/field/common/effect/fieldgfx.o"(.text)
     "*/games/tla/src/battle/effect/spinstep.o"(.text)
-    "*/games/common/src/object/motion_move_halfway_toward_target.o"(.text)
+    "*/games/tla/src/battle/effect/motion_move_halfway_toward_target.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000dc518)
     "*/recon/tla/fr/rom.o"(.rom.000dc77c)
     "*/games/tla/src/battle/effect/slots.o"(.text)

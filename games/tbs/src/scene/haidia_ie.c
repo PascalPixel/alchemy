@@ -528,7 +528,7 @@ s32 HaidiaIe_RestoreEntryState(void)
 	((struct FieldActor *)record)->scale_y = (v5 << 9);
 	if (Engine_GameFlagIsSet(0x87a) != 0)
 	{
-		Engine_MapCopyCellsTo(97, 2, 80, 5, 2, 2);
+		Map_CopyCellsTo(97, 2, 80, 5, 2, 2);
 		Map_CopyCellsTo(42, 53, 42, 54, 3, 1);
 		Engine_MapRedraw();
 		Engine_TaskWait(1);
@@ -553,7 +553,7 @@ s32 HaidiaIe_RestoreEntryState(void)
 			if (Engine_GameFlagIsSet(0x815) != 0)
 			{
 				Actor_SetPosition(16, 0xb40000, 0x2380000);
-				Engine_MapCopyCellsTo(92, 2, 80, 5, 2, 2);
+				Map_CopyCellsTo(92, 2, 80, 5, 2, 2);
 				Map_CopyCellsTo(42, 53, 42, 54, 3, 1);
 				Engine_MapRedraw();
 				Engine_TaskWait(1);

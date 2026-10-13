@@ -691,7 +691,7 @@ s32 ImiruMura_ApplyEntryState(void)
 			if (Engine_GameFlagIsSet(0x881))
 			{
 				Map_CopyCellAttributes(10, 7, 1, 1, 10, 8);
-				Engine_MapCopyCellsTo(3, 125, 9, 69, 3, 3);
+				Map_CopyCellsTo(3, 125, 9, 69, 3, 3);
 				Engine_MapRedraw();
 				Engine_TaskWait(1);
 				Engine_ActorEnableActionCallback(8, (const s32 *)2);
@@ -713,7 +713,7 @@ s32 ImiruMura_ApplyEntryState(void)
 			else
 			{
 				Map_CopyCellAttributes(10, 7, 1, 1, 10, 8);
-				Engine_MapCopyCellsTo(3, 125, 9, 69, 3, 3);
+				Map_CopyCellsTo(3, 125, 9, 69, 3, 3);
 				Engine_MapRedraw();
 				Engine_TaskWait(1);
 				if (Engine_GameFlagIsSet(0x82c))
@@ -744,11 +744,11 @@ s32 ImiruMura_ApplyEntryState(void)
 				Actor_SetPosition(12, 0x16c0000, 0x2420000);
 				Engine_ActorSetSpritePriority(12, 2);
 				Object_GetById(12)->collision_flags |= 4;
-				Engine_MapCopyCellsTo(6, 125, 22, 88, 3, 3);
+				Map_CopyCellsTo(6, 125, 22, 88, 3, 3);
 				Actor_SetPosition(13, 0x1ec0000, 0x2420000);
 				Engine_ActorSetSpritePriority(13, 2);
 				Object_GetById(13)->collision_flags |= 4;
-				Engine_MapCopyCellsTo(9, 125, 28, 88, 3, 3);
+				Map_CopyCellsTo(9, 125, 28, 88, 3, 3);
 			}
 			else
 			{
@@ -768,7 +768,7 @@ s32 ImiruMura_ApplyEntryState(void)
 				Object_GetById(15)->collision_flags |= 4;
 				Engine_ActorSetPosition(14, 0x1980000, 0x1080000);
 				Object_GetById(14)->facing = 0x1000;
-				Engine_MapCopyCellsTo(12, 125, 26, 70, 3, 3);
+				Map_CopyCellsTo(12, 125, 26, 70, 3, 3);
 			}
 			else
 			{
@@ -1214,7 +1214,7 @@ static void EV11_PSYNERGY(void)
 	a = 15;
 	b = 7;
 #endif
-	Engine_MapCopyCellAttributes(15, 6, 1, 1, a, b);
+	Map_CopyCellAttributes(15, 6, 1, 1, a, b);
 }
 
 static void EV04_TOUCH(void)

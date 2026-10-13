@@ -336,7 +336,7 @@ static void EV12_PSYNERGY(void)
 		actor->motion_flags = 2;
 		actor->terrain_height = 0;
 		actor->priority_flags = 2;
-		Engine_MapCopyCellAttributes(30, 20, 1, 1, 32, 20);
+		Map_CopyCellAttributes(30, 20, 1, 1, 32, 20);
 #if EDITION_INTERNATIONAL
 		Engine_GameFlagSet(0x212);
 #endif
@@ -376,9 +376,7 @@ static void EV11_PSYNERGY(void)
 	t = (s8)t;
 	if (t == 0)
 	{
-		s32 a = 0x49;
-		s32 b = 0x11;
-		Engine_MapCopyCellAttributes(0x4c, 0x10, 1, 1, a, b);
+		Map_CopyCellAttributes(0x4c, 0x10, 1, 1, 0x49, 0x11);
 		if (p != 0)
 		{
 			s32 c = 2;

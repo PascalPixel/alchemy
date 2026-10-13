@@ -196,14 +196,14 @@ static void EV11_PSYNERGY(void)
 		Engine_GameFlagSet(0x335);
 		v0 = 0x23;
 		v1 = 0x4D;
-		Engine_MapCopyCellAttributes(0x23, 0x4E, 1, 1, v0, v1);
+		Map_CopyCellAttributes(0x23, 0x4E, 1, 1, v0, v1);
 	}
 	else
 	{
 		Engine_GameFlagClear(0x335);
 		v0 = 0x23;
 		v1 = 0x4D;
-		Engine_MapCopyCellAttributes(0x22, 0x4D, 1, 1, v0, v1);
+		Map_CopyCellAttributes(0x22, 0x4D, 1, 1, v0, v1);
 	}
 }
 
@@ -216,27 +216,25 @@ static void FieldScene_RunTwoStepSequence(void)
 static void SceneState_StoreSlotTileXToWork832To848(void)
 {
 
-	s32	 fifth = 14;
-	s32	 sixth = 11;
 	s32 *record;
 	s32	 value;
 
-	Engine_MapCopyCellAttributes(100, 11, 12, 4, fifth, sixth);
+	Map_CopyCellAttributes(100, 11, 12, 4, 14, 11);
 
 	record = (s32 *)Object_GetById(12);
 	value = record[2] >> 20;
 	GameFlag_SetByte(832, value);
-	Engine_MapCopyCellAttributes(71, 16, 1, 1, value, 16);
+	Map_CopyCellAttributes(71, 16, 1, 1, value, 16);
 
 	record = (s32 *)Object_GetById(13);
 	value = record[2] >> 20;
 	GameFlag_SetByte(840, value);
-	Engine_MapCopyCellAttributes(71, 16, 1, 1, value, 16);
+	Map_CopyCellAttributes(71, 16, 1, 1, value, 16);
 
 	record = (s32 *)Object_GetById(14);
 	value = record[2] >> 20;
 	GameFlag_SetByte(848, value);
-	Engine_MapCopyCellAttributes(71, 16, 1, 1, value, 16);
+	Map_CopyCellAttributes(71, 16, 1, 1, value, 16);
 }
 
 static void EV18_SCRIPT(void)
@@ -301,10 +299,8 @@ static void EV20_SCRIPT(void)
 	p = (u8 *)Object_GetById(20) + 85;
 	*p = 0;
 	{
-		s32 p5 = 44;
-		s32 p6 = 17;
 
-		Engine_MapCopyCellAttributes(46, 17, 1, 1, p5, p6);
+		Map_CopyCellAttributes(46, 17, 1, 1, 44, 17);
 	}
 }
 
@@ -316,10 +312,8 @@ static void FieldScene_SetFlag332AndDrawTiles(void)
 	slot = (u8 *)Object_GetById(21) + 85;
 	*slot = 0;
 	{
-		s32 v5 = 50;
-		s32 v6 = 17;
 
-		Engine_MapCopyCellAttributes(46, 17, 1, 1, v5, v6);
+		Map_CopyCellAttributes(46, 17, 1, 1, 50, 17);
 	}
 }
 
@@ -327,10 +321,8 @@ static void EV19_PSYNERGY(void)
 {
 	Engine_GameFlagSet(0x333);
 	{
-		s32 width = 32;
-		s32 height = 77;
 
-		Engine_MapCopyCellAttributes(32, 37, 1, 4, width, height);
+		Map_CopyCellAttributes(32, 37, 1, 4, 32, 77);
 	}
 }
 
@@ -416,11 +408,11 @@ static void EV22_SCRIPT(void)
 	if (push != 0)
 	{
 		SceneActor_MovePairByTileOffset(block, push, 0);
-		Engine_MapCopyCellAttributes(120, 10, 5, 6, 48, 10);
+		Map_CopyCellAttributes(120, 10, 5, 6, 48, 10);
 		x = Object_GetById(32)->x.fixed >> 20;
-		Engine_MapCopyCellAttributes(52, 28, 1, 3, x, 10);
+		Map_CopyCellAttributes(52, 28, 1, 3, x, 10);
 		x = Object_GetById(33)->x.fixed >> 20;
-		Engine_MapCopyCellAttributes(52, 28, 1, 3, x, 13);
+		Map_CopyCellAttributes(52, 28, 1, 3, x, 13);
 	}
 }
 
@@ -475,16 +467,16 @@ static void SceneState_ApplyRectsForActors15To17(void)
 {
 	s32 field;
 
-	Engine_MapCopyCellAttributes(100, 11, 12, 4, 14, 11);
+	Map_CopyCellAttributes(100, 11, 12, 4, 14, 11);
 
 	field = Object_GetById(15)->x.fixed >> 20;
-	Engine_MapCopyCellAttributes(13, 28, 1, 4, field, 11);
+	Map_CopyCellAttributes(13, 28, 1, 4, field, 11);
 
 	field = Object_GetById(16)->x.fixed >> 20;
-	Engine_MapCopyCellAttributes(13, 28, 1, 4, field, 11);
+	Map_CopyCellAttributes(13, 28, 1, 4, field, 11);
 
 	field = Object_GetById(17)->z.fixed >> 20;
-	Engine_MapCopyCellAttributes(13, 28, 4, 1, 18, field);
+	Map_CopyCellAttributes(13, 28, 4, 1, 18, field);
 }
 
 static void EV24_TOUCH(void)
@@ -694,8 +686,8 @@ static void EV31_PSYNERGY(void)
 
 	Engine_TaskRemoveCallback(FieldScene_RunSupplementalSequenceOne);
 
-	Engine_MapCopyCellAttributes(58, 28, 7, 1, 58, 13);
-	Engine_MapCopyCellAttributes(57, 11, 1, 1, 58, 11);
+	Map_CopyCellAttributes(58, 28, 7, 1, 58, 13);
+	Map_CopyCellAttributes(57, 11, 1, 1, 58, 11);
 }
 
 static void EV50_TOUCH(void)
@@ -748,8 +740,6 @@ const struct SceneEvent *Scene_GetEvents(void)
 static void FieldScene_RunPairedEntranceWalk(s32 a0)
 {
 
-	u32 i;
-	s32 record;
 
 	Engine_ActorDestroy(40);
 	Engine_ActorDestroy(41);
@@ -843,12 +833,12 @@ s32 KorosseoKabe_ApplyEntryState(void)
 	col = actor->x.fixed >> 20;
 	actor->motion_flags = zero;
 	actor->priority_flags = 2;
-	Engine_MapCopyCellAttributes(52, 28, 1, 3, col, 10);
+	Map_CopyCellAttributes(52, 28, 1, 3, col, 10);
 	actor = Object_GetById(33);
 	col = actor->x.fixed >> 20;
 	actor->motion_flags = zero;
 	actor->priority_flags = 2;
-	Engine_MapCopyCellAttributes(52, 28, 1, 3, col, 13);
+	Map_CopyCellAttributes(52, 28, 1, 3, col, 13);
 
 	x = GameFlag_GetByte(0x340);
 	if (x == 0)
@@ -859,7 +849,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 	actor->x.fixed = (x << 20) + 0x80000;
 	actor->motion_flags = zero;
 	actor->priority_flags = 2;
-	Engine_MapCopyCellAttributes(71, 16, 1, 1, x, 16);
+	Map_CopyCellAttributes(71, 16, 1, 1, x, 16);
 	x = GameFlag_GetByte(0x348);
 	if (x == 0)
 	{
@@ -869,7 +859,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 	actor->x.fixed = (x << 20) + 0x80000;
 	actor->motion_flags = zero;
 	actor->priority_flags = 2;
-	Engine_MapCopyCellAttributes(71, 16, 1, 1, x, 16);
+	Map_CopyCellAttributes(71, 16, 1, 1, x, 16);
 	x = GameFlag_GetByte(0x350);
 	if (x == 0)
 	{
@@ -879,7 +869,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 	actor->x.fixed = (x << 20) + 0x80000;
 	actor->motion_flags = zero;
 	actor->priority_flags = 2;
-	Engine_MapCopyCellAttributes(71, 16, 1, 1, x, 16);
+	Map_CopyCellAttributes(71, 16, 1, 1, x, 16);
 
 	SceneState_ApplyRectsForActors15To17();
 	Engine_ActorSetAnimation(31, 10);
@@ -890,7 +880,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 			actor = Object_GetById(k);
 			actor->priority_flags = 2;
 			Object_SetMode(actor, 4);
-			Engine_MapCopyCellAttributes(56, 13, 1, 1, pos, row);
+			Map_CopyCellAttributes(56, 13, 1, 1, pos, row);
 		}
 		Engine_ActorSetAnimation(31, 10);
 		BattleEffect_PauseObject(31);
@@ -1084,9 +1074,7 @@ static void EV35_TALK(s32 speaker)
 
 static void EV36_TALK(s32 a0)
 {
-	u32 i;
 	s32 rec;
-	s32 record;
 
 	if (gGameState.entrance == 2)
 	{
@@ -1135,9 +1123,7 @@ static void EV36_TALK(s32 a0)
 
 static void EV37_TALK(s32 a0)
 {
-	u32 i;
 	s32 rec2;
-	s32 record;
 
 	if (gGameState.entrance == 2)
 	{

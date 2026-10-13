@@ -2383,10 +2383,10 @@ static void VinasuChojo_RunActorTransition(void)
 	upper->z.fixed = PIXELS(96);
 	Map_CopyCellsTo(102, 4, 74, 4, 18, 23);
 	Map_CopyCellsTo(39, 72, 11, 72, 16, 21);
-	Engine_MapCopyCellAttributes(19, 6, 3, 7, 22, 6);
-	Engine_MapCopyCellAttributes(19, 6, 3, 7, 13, 6);
-	Engine_MapCopyCellAttributes(19, 6, 3, 7, 22, 13);
-	Engine_MapCopyCellAttributes(19, 6, 3, 7, 13, 13);
+	Map_CopyCellAttributes(19, 6, 3, 7, 22, 6);
+	Map_CopyCellAttributes(19, 6, 3, 7, 13, 6);
+	Map_CopyCellAttributes(19, 6, 3, 7, 22, 13);
+	Map_CopyCellAttributes(19, 6, 3, 7, 13, 13);
 	Engine_TaskWait(1);
 	actor = Object_GetById(8);
 	actor->x.fixed -= PIXELS(16);

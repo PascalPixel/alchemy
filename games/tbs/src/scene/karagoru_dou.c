@@ -280,9 +280,8 @@ static void EV08_PSYNERGY(void)
 			StagedActorPairScene_RunSpinningLeap(8);
 			{
 				s32 x = 27;
-				s32 y = 19;
 
-				Engine_MapCopyCellAttributes(29, 19, 1, 1, x, y);
+				Map_CopyCellAttributes(29, 19, 1, 1, 27, 19);
 			}
 			Engine_GameFlagSet(2466);
 		}

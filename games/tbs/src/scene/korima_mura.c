@@ -271,8 +271,6 @@ static void KorimaMura_AnimateSwitchOrExit(void)
 static void EV10_TOUCH(void)
 {
 	u32 i;
-	s32 v5;
-	s32 v6;
 
 	Engine_EventBegin();
 	Camera_SetSpeed(0x20000, 0x4000);
@@ -304,17 +302,15 @@ static void EV10_TOUCH(void)
 	Engine_ObjectMotionSetPositionAndCommit(8, 234, 200);
 	Engine_EventWait(10);
 	Engine_AudioPlayCue(198);
-	v5 = 5;
-	v6 = 4;
 	Engine_EventWait(30);
-	Engine_MapCopyCellsTo(91, 0, 72, 9, v5, v6);
+	Map_CopyCellsTo(91, 0, 72, 9, 5, 4);
 	Engine_EventWait(12);
-	Engine_MapCopyCellsTo(91, 4, 72, 9, v5, v6);
+	Map_CopyCellsTo(91, 4, 72, 9, 5, 4);
 	Engine_EventWait(9);
 	Actor_FaceDirection(0, FACING_NORTH, 0);
-	Engine_MapCopyCellsTo(91, 8, 72, 9, v5, v5);
+	Map_CopyCellsTo(91, 8, 72, 9, 5, 5);
 	Engine_EventWait(6);
-	Engine_MapCopyCellsTo(91, 13, 72, 9, v5, 6);
+	Map_CopyCellsTo(91, 13, 72, 9, 5, 6);
 	Engine_EventWait(3);
 	Engine_AudioPlayCue(188);
 	for (i = 0; i < 10; i++)
@@ -360,8 +356,6 @@ s32 Scene_Initialize(void)
 	s16 scene;
 	u32 actor;
 	u8 *tbl;
-	s32 x;
-	s32 y;
 
 	scene = gGameState.scene;
 
@@ -394,11 +388,9 @@ s32 Scene_Initialize(void)
 		{
 			Engine_ActorSetSpriteFlags(Object_GetById(actor), 0);
 		}
-		Engine_MapCopyCellAttributes(13, 9, 1, 1, 13, 8);
-		Engine_MapCopyCellAttributes(13, 9, 1, 1, 15, 8);
-		x = 14;
-		y = 9;
-		Engine_MapCopyCellAttributes(13, 9, 1, 1, x, y);
+		Map_CopyCellAttributes(13, 9, 1, 1, 13, 8);
+		Map_CopyCellAttributes(13, 9, 1, 1, 15, 8);
+		Map_CopyCellAttributes(13, 9, 1, 1, 14, 9);
 	}
 
 	if (Engine_GameFlagIsSet(0x843) == 0)
@@ -1578,7 +1570,7 @@ static void FieldScene_RunFlag845And847Branches(void)
 		Engine_ActorSetPosition(8, 0, 0);
 		{
 			s32 k5 = 9, k6 = 18;
-			Engine_MapCopyCellAttributes(9, 17, 5, 1, k5, k6);
+			Map_CopyCellAttributes(9, 17, 5, 1, k5, k6);
 		}
 		Engine_MapRedraw();
 		Engine_TaskWait(1);
@@ -1591,11 +1583,11 @@ static void FieldScene_RunFlag845And847Branches(void)
 	{
 		{
 			s32 k5 = 5, k6 = 7;
-			Engine_MapCopyCellsTo(91, 19, 72, 9, k5, k6);
+			Map_CopyCellsTo(91, 19, 72, 9, k5, k6);
 		}
 		{
 			s32 k5 = 8, k6 = 11;
-			Engine_MapCopyCellAttributes(23, 11, 5, 7, k5, k6);
+			Map_CopyCellAttributes(23, 11, 5, 7, k5, k6);
 		}
 		Engine_MapRedraw();
 		Engine_TaskWait(1);

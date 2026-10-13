@@ -1111,16 +1111,14 @@ static void SceneState_ForwardMaskedHalfwordWith10(s32 arg0, s32 arg1)
 
 static void SceneState_ApplyRectsByFlatla384And962(void)
 {
-	s32 pair;
 	s32 a, b;
 
 	if (Engine_GameFlagIsSet(2384) != 0)
 	{
-		pair = 2;
-		Engine_MapCopyCellsTo(64, 0, 48, 5, pair, pair);
+		Map_CopyCellsTo(64, 0, 48, 5, 2, 2);
 		a = 16;
 		b = 8;
-		Engine_MapCopyCellAttributes(14, 8, 2, 1, a, b);
+		Map_CopyCellAttributes(14, 8, 2, 1, a, b);
 	}
 	else
 	{
@@ -1129,7 +1127,7 @@ static void SceneState_ApplyRectsByFlatla384And962(void)
 		{
 			a = 14;
 			b = 11;
-			Engine_MapCopyCellAttributes(30, 22, 1, 2, a, b);
+			Map_CopyCellAttributes(30, 22, 1, 2, a, b);
 		}
 	}
 }

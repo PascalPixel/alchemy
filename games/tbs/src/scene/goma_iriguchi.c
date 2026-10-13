@@ -153,7 +153,7 @@ static void EV10_PSYNERGY(void)
 		Object_GetById(10)->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
 		Object_GetById(10)->motion_flags = 0;
 		Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
-		Engine_MapCopyCellAttributes(54, 17, 1, 1, tile_x, 17);
+		Map_CopyCellAttributes(54, 17, 1, 1, tile_x, 17);
 		Engine_GameFlagSet(0x863);
 	}
 }
@@ -232,8 +232,8 @@ s32 GomaIriguchi_RestoreEntryState(void)
 		Object_GetById(8)->priority_flags |= 2;
 		v5 = 12;
 		Engine_ActorSetAnimation(8, 2);
-		Engine_MapCopyCellAttributes(39, 12, 3, 1, 8, v5);
-		Engine_MapCopyCellAttributes(43, 11, 3, 1, v5, 11);
+		Map_CopyCellAttributes(39, 12, 3, 1, 8, v5);
+		Map_CopyCellAttributes(43, 11, 3, 1, v5, 11);
 	}
 	if (Engine_GameFlagIsSet(0x861) != 0)
 	{
@@ -471,7 +471,6 @@ static void FieldScene_RunScene387SequenceA(void)
 static void Overlay387_ConfigureActorEightAtDepth(void)
 {
 	s32						  depth;
-	s32						  span;
 	struct OverlayActorState *state;
 
 	Engine_EventBegin();
@@ -481,9 +480,8 @@ static void Overlay387_ConfigureActorEightAtDepth(void)
 		GomaIriguchi_RunSpinningLeap(8);
 		state = Object_GetById(8);
 		state->flags |= 2;
-		span = 12;
-		Engine_MapCopyCellAttributes(39, 12, 3, 1, 8, span);
-		Engine_MapCopyCellAttributes(43, 11, 3, 1, span, depth);
+		Map_CopyCellAttributes(39, 12, 3, 1, 8, 12);
+		Map_CopyCellAttributes(43, 11, 3, 1, 12, depth);
 		Engine_GameFlagSet(2144);
 	}
 	Engine_EventEnd();

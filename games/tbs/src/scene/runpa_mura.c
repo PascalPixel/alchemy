@@ -624,9 +624,9 @@ static void Scene_DoNothing(void)
 
 static void Cloak_Begin(void)
 {
-	Engine_MapCopyCellAttributes(6, 11, 1, 1, 7, 11);
-	Engine_MapCopyCellAttributes(6, 11, 1, 1, 8, 11);
-	Engine_MapCopyCellAttributes(6, 11, 1, 1, 9, 11);
+	Map_CopyCellAttributes(6, 11, 1, 1, 7, 11);
+	Map_CopyCellAttributes(6, 11, 1, 1, 8, 11);
+	Map_CopyCellAttributes(6, 11, 1, 1, 9, 11);
 	Engine_GameFlagSet(FLAG_GATE_CLOAK_CAST);
 }
 
@@ -688,9 +688,9 @@ static void EV91_RAISED(void)
 
 static void Gateway_Reopen(void)
 {
-	Engine_MapCopyCellAttributes(7, 12, 1, 1, 7, 11);
-	Engine_MapCopyCellAttributes(7, 12, 1, 1, 8, 11);
-	Engine_MapCopyCellAttributes(7, 12, 1, 1, 9, 11);
+	Map_CopyCellAttributes(7, 12, 1, 1, 7, 11);
+	Map_CopyCellAttributes(7, 12, 1, 1, 8, 11);
+	Map_CopyCellAttributes(7, 12, 1, 1, 9, 11);
 }
 
 static void Cloak_End(void)

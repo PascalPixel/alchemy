@@ -152,14 +152,14 @@ static void EV08_PSYNERGY(void)
 static void ConfigureAndPlaceActorOneHundredTwo(void)
 {
 	s32 a = 3, b = 26;
-	Engine_MapCopyCellAttributes(3, 32, 1, 1, a, b);
+	Map_CopyCellAttributes(3, 32, 1, 1, a, 26);
 	MapObject_SetPosition(102, 0x00380000, 0x01a80000);
 }
 
 static void HideActorOneHundredTwo(void)
 {
 	s32 a = 3, b = 26;
-	Engine_MapCopyCellAttributes(2, 25, 1, 1, a, b);
+	Map_CopyCellAttributes(2, 25, 1, 1, a, 26);
 	MapObject_SetPosition(102, -1, -1);
 }
 
@@ -616,9 +616,7 @@ static void EV09_PSYNERGY(void)
 	}
 	Engine_ActorSetAnimation(9, 5);
 	{
-		s32 v5 = 34;
-		s32 v6 = 16;
-		Engine_MapCopyCellAttributes(36, 16, 1, 1, v5, v6);
+		Map_CopyCellAttributes(36, 16, 1, 1, 34, 16);
 	}
 	Engine_GameFlagSet(0x201);
 }

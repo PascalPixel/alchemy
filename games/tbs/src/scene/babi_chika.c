@@ -389,8 +389,8 @@ static void SceneActor_PassPointTwoRightOfActorZero(void)
 static void EV28_SCRIPT(void)
 {
 	Engine_EventBegin();
-	Engine_MapCopyCellAttributes(89, 49, 3, 2, 25, 49);
-	Engine_MapCopyCellAttributes(89, 51, 8, 5, 25, 51);
+	Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
+	Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
 	StagedActor_AdvancePair();
 	BabiChika_RestorePlatformCells();
 	Engine_EventEnd();
@@ -713,7 +713,7 @@ static void EV09_PSYNERGY(void)
 
 	col = Object_GetById(9)->x.fixed;
 	row = Object_GetById(9)->z.fixed >> 20;
-	Engine_MapCopyCellAttributes(26, 8, 1, 1, col >> 20, row);
+	Map_CopyCellAttributes(26, 8, 1, 1, col >> 20, row);
 
 	desc = Object_GetById(9);
 	desc->update = ACTOR_UPDATE_IDLE;
@@ -1067,10 +1067,8 @@ static void EV41_SCRIPT(void)
 {
 	Engine_EventBegin();
 	{
-		s32 width = 19;
-		s32 height = 45;
 
-		Engine_MapCopyCellAttributes(83, 45, 11, 8, width, height);
+		Map_CopyCellAttributes(83, 45, 11, 8, 19, 45);
 	}
 	StagedActor_AdvancePair();
 	FieldScene_RunScene3c4SequenceA();
@@ -1107,20 +1105,20 @@ static void FieldScene_PlaceAndPinSlots8And9(void)
 
 	{
 		s32 p5 = 9, p6 = 38;
-		Engine_MapCopyCellAttributes(73, 38, 5, 5, p5, p6);
+		Map_CopyCellAttributes(73, 38, 5, 5, p5, 38);
 	}
 	SceneActor_SwapPositionsByDepth(9, 8);
 
 	{
 		s32 col = Object_GetById(8)->x.fixed >> 20;
 		row = Object_GetById(8)->z.fixed >> 20;
-		Engine_MapCopyCellAttributes(2, 36, 1, 1, col, row);
+		Map_CopyCellAttributes(2, 36, 1, 1, col, row);
 	}
 
 	{
 		s32 col = Object_GetById(9)->x.fixed >> 20;
 		row = Object_GetById(9)->z.fixed >> 20;
-		Engine_MapCopyCellAttributes(2, 36, 1, 1, col, row);
+		Map_CopyCellAttributes(2, 36, 1, 1, col, row);
 	}
 }
 
@@ -1130,20 +1128,20 @@ static void FieldScene_PlaceAndPinSlots10And11(void)
 
 	{
 		s32 k5 = 29, k6 = 30;
-		Engine_MapCopyCellAttributes(93, 30, 6, 5, k5, k6);
+		Map_CopyCellAttributes(93, 30, 6, 5, k5, 30);
 	}
 	SceneActor_SwapPositionsByDepth(11, 10);
 
 	{
 		s32 col20 = Object_GetById(10)->x.fixed >> 20;
 		row = Object_GetById(10)->z.fixed >> 20;
-		Engine_MapCopyCellAttributes(2, 36, 1, 1, col20, row);
+		Map_CopyCellAttributes(2, 36, 1, 1, col20, row);
 	}
 
 	{
 		s32 col20 = Object_GetById(11)->x.fixed >> 20;
 		row = Object_GetById(11)->z.fixed >> 20;
-		Engine_MapCopyCellAttributes(2, 36, 1, 1, col20, row);
+		Map_CopyCellAttributes(2, 36, 1, 1, col20, row);
 	}
 }
 
@@ -1201,11 +1199,11 @@ s32 FieldScene_InitializeActorGroups(void)
 			{
 				Map_CopyCellsTo(121, 4, 74, 9, 5, 8);
 				Map_CopyCellsTo(18, 83, 9, 73, 3, 2);
-				Engine_MapCopyCellsTo(18, 81, 9, 75, 3, 2);
-				Engine_MapCopyCellsTo(18, 83, 9, 77, 3, 2);
-				Engine_MapCopyCellsTo(18, 83, 9, 79, 3, 2);
-				Engine_MapCopyCellsTo(18, 83, 11, 78, 3, 2);
-				Engine_MapCopyCellsTo(18, 83, 13, 79, 3, 2);
+				Map_CopyCellsTo(18, 81, 9, 75, 3, 2);
+				Map_CopyCellsTo(18, 83, 9, 77, 3, 2);
+				Map_CopyCellsTo(18, 83, 9, 79, 3, 2);
+				Map_CopyCellsTo(18, 83, 11, 78, 3, 2);
+				Map_CopyCellsTo(18, 83, 13, 79, 3, 2);
 			}
 			else
 			{
@@ -1213,10 +1211,10 @@ s32 FieldScene_InitializeActorGroups(void)
 					break;
 				Map_CopyCellsTo(121, 13, 74, 9, 5, 8);
 				Map_CopyCellsTo(18, 85, 11, 74, 3, 2);
-				Engine_MapCopyCellsTo(18, 83, 13, 75, 3, 2);
-				Engine_MapCopyCellsTo(18, 85, 11, 76, 3, 2);
-				Engine_MapCopyCellsTo(18, 83, 11, 78, 3, 2);
-				Engine_MapCopyCellsTo(18, 83, 13, 79, 3, 2);
+				Map_CopyCellsTo(18, 83, 13, 75, 3, 2);
+				Map_CopyCellsTo(18, 85, 11, 76, 3, 2);
+				Map_CopyCellsTo(18, 83, 11, 78, 3, 2);
+				Map_CopyCellsTo(18, 83, 13, 79, 3, 2);
 			}
 			break;
 		case 3:
@@ -1261,10 +1259,10 @@ s32 FieldScene_InitializeActorGroups(void)
 			if (Engine_GameFlagIsSet(0x971))
 			{
 				Map_CopyCellsTo(59, 8, 49, 8, 1, 3);
-				Engine_MapCopyCellAttributes(51, 8, 1, 1, 49, 8);
+				Map_CopyCellAttributes(51, 8, 1, 1, 49, 8);
 				Object_GetById(18)->priority_flags |= 2;
 				Engine_ActorSetAnimation(18, 3);
-				Engine_MapCopyCellAttributes(45, 4, 1, 1, 46, 8);
+				Map_CopyCellAttributes(45, 4, 1, 1, 46, 8);
 				Actor_SetPosition(18, 186 << 18, 136 << 16);
 				Object_GetById(18)->y.fixed = -0x100000;
 				Actor_SetPosition(20, 186 << 18, 136 << 16);
@@ -1279,10 +1277,10 @@ s32 FieldScene_InitializeActorGroups(void)
 			if (Engine_GameFlagIsSet(0x972))
 			{
 				Map_CopyCellsTo(59, 8, 45, 14, 1, 3);
-				Engine_MapCopyCellAttributes(51, 8, 1, 1, 45, 14);
+				Map_CopyCellAttributes(51, 8, 1, 1, 45, 14);
 				Object_GetById(19)->priority_flags |= 2;
 				Engine_ActorSetAnimation(19, 3);
-				Engine_MapCopyCellAttributes(45, 4, 1, 1, 48, 14);
+				Map_CopyCellAttributes(45, 4, 1, 1, 48, 14);
 				Actor_SetPosition(19, 194 << 18, 232 << 16);
 				Object_GetById(19)->y.fixed = -0x100000;
 				Engine_ActorSetPosition(21, 194 << 18, 232 << 16);

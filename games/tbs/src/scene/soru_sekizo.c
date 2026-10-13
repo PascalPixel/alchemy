@@ -175,25 +175,25 @@ static void Scene_OpenTheHole(void)
 
 	{
 		s32 k5 = 2, k6 = 1;
-		Engine_MapCopyCellsTo(0, 28, 17, 8, k5, k6);
+		Map_CopyCellsTo(0, 28, 17, 8, k5, k6);
 	}
 	Engine_AudioPlayCue(200);
 	for (i = 0; i != 22; i++)
 	{
-		Engine_MapCopyCellsTo(10, 61, 17, 40, 2, 1);
+		Map_CopyCellsTo(10, 61, 17, 40, 2, 1);
 		Engine_EventWait(4);
-		Engine_MapCopyCellsTo(8, 61, 17, 40, 2, 1);
+		Map_CopyCellsTo(8, 61, 17, 40, 2, 1);
 		Engine_EventWait(4);
 	}
 	{
 		s32 k5 = 4, k6 = 3;
-		Engine_MapCopyCellsTo(0, 59, 15, 38, k5, k6);
-		Engine_MapCopyCellsTo(4, 59, 17, 38, k5, k6);
+		Map_CopyCellsTo(0, 59, 15, 38, k5, k6);
+		Map_CopyCellsTo(4, 59, 17, 38, k5, k6);
 	}
-	Engine_MapCopyCellsTo(8, 60, 17, 39, 2, 2);
+	Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
 	{
 		s32 k5 = 17, k6 = 8;
-		Engine_MapCopyCellAttributes(0, 0, 2, 1, k5, k6);
+		Map_CopyCellAttributes(0, 0, 2, 1, k5, k6);
 	}
 	Engine_GameFlagSet(0x207);
 	EV17_PSYNERGY();
@@ -1048,8 +1048,8 @@ static void EV17_PSYNERGY(void)
 				}
 				Engine_EventWait(40);
 				Engine_MessageShowCentered((s32)MsgSoruSomethingClicked, 1);
-				Engine_MapCopyCellAttributes(0, 1, 2, 1, 17, 8);
-				Engine_MapCopyCellAttributes(17, 9, 2, 1, 17, 7);
+				Map_CopyCellAttributes(0, 1, 2, 1, 17, 8);
+				Map_CopyCellAttributes(17, 9, 2, 1, 17, 7);
 			}
 		}
 		Engine_EventEnd();

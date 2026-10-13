@@ -1032,7 +1032,7 @@ static void EV12_PSYNERGY(void)
 			{
 				s32 k5 = a, k6 = b;
 
-				Engine_MapCopyCellAttributes(38, 12, 1, 1, k5, k6);
+				Map_CopyCellAttributes(38, 12, 1, 1, k5, k6);
 			}
 		}
 	}
@@ -1119,10 +1119,8 @@ const struct SceneEvent *Scene_GetEvents(void)
 static void EV10_PSYNERGY(void)
 {
 
-	s32 a = 18;
-	s32 b = 7;
 
-	Engine_MapCopyCellAttributes(82, 7, 1, 2, a, b);
+	Map_CopyCellAttributes(82, 7, 1, 2, 18, 7);
 	Engine_TaskWait(1);
 	Engine_GameFlagSet(768);
 }
@@ -1136,23 +1134,23 @@ static void SceneState_ApplyRectsAtActors8And9(void)
 	{
 		s32 k5 = 5, k6 = 19;
 
-		Engine_MapCopyCellAttributes(69, 19, 3, 3, k5, k6);
+		Map_CopyCellAttributes(69, 19, 3, 3, k5, k6);
 	}
 	{
 		s32 k5 = 17, k6 = 19;
 
-		Engine_MapCopyCellAttributes(69, 19, 3, 3, k5, k6);
+		Map_CopyCellAttributes(69, 19, 3, 3, k5, k6);
 	}
 	{
 		s32 k5 = p->x.fixed >> 20, k6 = p->z.fixed >> 20;
 
-		Engine_MapCopyCellAttributes(3, 3, 1, 1, k5, k6);
+		Map_CopyCellAttributes(3, 3, 1, 1, k5, k6);
 	}
 	{
 		struct FieldActor *q = Object_GetById(9);
 		s32				   k5 = q->x.fixed >> 20, k6 = q->z.fixed >> 20;
 
-		Engine_MapCopyCellAttributes(3, 3, 1, 1, k5, k6);
+		Map_CopyCellAttributes(3, 3, 1, 1, k5, k6);
 	}
 }
 

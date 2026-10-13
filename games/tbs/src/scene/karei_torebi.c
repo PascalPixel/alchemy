@@ -589,7 +589,7 @@ static void FieldScene_ConfigureFlaggedActors(void)
 	if (Engine_GameFlagIsSet(0x950))
 	{
 		Map_CopyCellAttributes(18, 18, 1, 1, 14, 18);
-		Engine_MapCopyCellAttributes(18, 18, 1, 1, 15, 18);
+		Map_CopyCellAttributes(18, 18, 1, 1, 15, 18);
 	}
 }
 
@@ -607,9 +607,9 @@ static void FieldScene_PlaceSlots14And15(void)
 	pos14 = Object_GetById(14)->x.fixed >> 20;
 	pos15 = Object_GetById(15)->x.fixed >> 20;
 
-	Engine_MapCopyCellAttributes(5, 12, 5, 1, 5, 11);
-	Engine_MapCopyCellAttributes(1, 0, 1, 1, pos15, 11);
-	Engine_MapCopyCellAttributes(1, 0, 1, 1, pos14, 11);
+	Map_CopyCellAttributes(5, 12, 5, 1, 5, 11);
+	Map_CopyCellAttributes(1, 0, 1, 1, pos15, 11);
+	Map_CopyCellAttributes(1, 0, 1, 1, pos14, 11);
 
 	SceneActor_SetMode3AndFlagBit1(14);
 	SceneActor_SetMode3AndFlagBit1(15);

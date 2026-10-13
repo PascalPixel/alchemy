@@ -263,9 +263,7 @@ static void SceneState_ClearSlotsBySubState(void)
 	{
 	case 3:
 	{
-		s32 fifth = 4;
-		s32 sixth = 2;
-		Engine_MapCopyCellsTo(30, 14, 30, 16, fifth, sixth);
+		Map_CopyCellsTo(30, 14, 30, 16, 4, 2);
 		return;
 	}
 	case 9:

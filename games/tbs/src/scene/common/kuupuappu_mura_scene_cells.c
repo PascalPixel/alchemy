@@ -16,16 +16,14 @@ static void ActorDraw_SetupActorSceneCells(void)
 	struct FieldSprite *sprite = actor->sprite;
 
 	Engine_AudioPlayCue(188);
-	Engine_MapCopyCellsTo(42, 33, 34, 16, 2, 2);
-	Engine_MapCopyCellsTo(42, 35, 36, 16, 2, 2);
+	Map_CopyCellsTo(42, 33, 34, 16, 2, 2);
+	Map_CopyCellsTo(42, 35, 36, 16, 2, 2);
 	Engine_EventWait(4);
-	Engine_MapCopyCellsTo(40, 33, 34, 16, 2, 2);
-	Engine_MapCopyCellsTo(40, 35, 36, 16, 2, 2);
+	Map_CopyCellsTo(40, 33, 34, 16, 2, 2);
+	Map_CopyCellsTo(40, 35, 36, 16, 2, 2);
 	Engine_EventWait(4);
 	{
-		s32 dest_x = 3;
-		s32 dest_y = 16;
-		Engine_MapCopyCellAttributes(33, 21, 2, 2, dest_x, dest_y);
+		Map_CopyCellAttributes(33, 21, 2, 2, 3, 16);
 	}
 	actor->priority_flags &= ~1;
 	sprite->priority = 3;

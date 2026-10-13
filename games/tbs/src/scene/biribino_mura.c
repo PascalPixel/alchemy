@@ -655,10 +655,10 @@ static void EV08_PSYNERGY_3(void)
 	{
 		s32 x = ((u8 *)Mura_RepaintCells)[i];
 		s32 z = ((u8 *)Mura_RepaintCells)[i + 1];
-		Engine_MapCopyCellAttributes(1, 0, 1, 1, x, z);
+		Map_CopyCellAttributes(1, 0, 1, 1, x, z);
 	}
 
-	Engine_MapCopyCellAttributes(0, 0, 1, 1, tx, tz);
+	Map_CopyCellAttributes(0, 0, 1, 1, tx, tz);
 }
 
 static void BiribinoMura_RestoreRaisedEntrance(void)

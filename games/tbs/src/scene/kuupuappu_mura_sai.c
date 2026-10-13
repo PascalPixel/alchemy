@@ -363,10 +363,8 @@ static void EV08_TOUCH(void)
 	Engine_AudioPlayCue(158);
 	Engine_MapAnimateCells(KuupuappuMuraSai_Scene8Cells, 54, 13);
 	{
-		s32 cell = 23;
-		s32 row = 12;
 
-		Engine_MapCopyCellAttributes(33, 20, 1, 3, cell, row);
+		Map_CopyCellAttributes(33, 20, 1, 3, 23, 12);
 	}
 	actor->state_23 &= ~1;
 	flags = presentation->flags;
@@ -384,10 +382,8 @@ static void EV09_TOUCH(void)
 	Engine_AudioPlayCue(158);
 	Engine_MapAnimateCells(KuupuappuMuraSai_Scene9Cells, 49, 10);
 	{
-		s32 cell = 18;
-		s32 row = 10;
 
-		Engine_MapCopyCellAttributes(33, 20, 1, 3, cell, row);
+		Map_CopyCellAttributes(33, 20, 1, 3, 18, 10);
 	}
 	actor->state_23 &= ~1;
 	flags = presentation->flags;
@@ -418,10 +414,8 @@ static void EV12_TOUCH(void)
 	Engine_AudioPlayCue(158);
 	Engine_MapAnimateCells(KuupuappuMuraSai_Scene12Cells, 35, 9);
 	{
-		s32 cell = 4;
-		s32 row = 10;
 
-		Engine_MapCopyCellAttributes(33, 20, 1, 3, cell, row);
+		Map_CopyCellAttributes(33, 20, 1, 3, 4, 10);
 	}
 	actor->state_23 &= ~1;
 	flags = presentation->flags;
@@ -463,20 +457,16 @@ static void EV18_SCRIPT(void)
 
 static void ActorPresentation_SetPairedSceneCells(void)
 {
-	s32 v1 = 13;
-	s32 v2 = 25;
 
-	Engine_MapCopyCellAttributes(41, 43, 1, 1, v1, v2);
-	Engine_MapCopyCellsTo(40, 42, 12, 22, 3, 3);
+	Map_CopyCellAttributes(41, 43, 1, 1, 13, 25);
+	Map_CopyCellsTo(40, 42, 12, 22, 3, 3);
 }
 
 static void ActorPresentation_SetAlternatePairedSceneCells(void)
 {
-	s32 v1 = 13;
-	s32 v2 = 25;
 
-	Engine_MapCopyCellAttributes(37, 43, 1, 1, v1, v2);
-	Engine_MapCopyCellsTo(36, 42, 12, 22, 3, 3);
+	Map_CopyCellAttributes(37, 43, 1, 1, 13, 25);
+	Map_CopyCellsTo(36, 42, 12, 22, 3, 3);
 }
 
 static void EV18_TALK(void)
@@ -520,7 +510,7 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
 	if (Engine_GameFlagIsSet(0x200))
 		Map_CopyCellAttributes(55, 26, 4, 2, 23, 26);
 	OverlayObject_CreateConfiguredObject(0x800000, 0, 0x1a40000, 223);
-	Engine_MapCopyCellsTo(45, 41, 8, 45, 3, 3);
+	Map_CopyCellsTo(45, 41, 8, 45, 3, 3);
 	Engine_TaskWait(1);
 	actor = Object_GetById(14);
 	actor->update = (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;

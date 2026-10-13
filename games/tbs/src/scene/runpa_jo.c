@@ -153,11 +153,10 @@ const struct SceneEvent *Scene_GetEvents(void)
 static void ConfigureSceneActor12(void)
 {
 
-	s32				   actor_slot = 15;
 	struct FieldActor *actor;
 
-	Engine_MapCopyCellAttributes(15, 20, 1, 1, actor_slot, 22);
-	Engine_MapCopyCellAttributes(17, 23, 1, 3, actor_slot, 23);
+	Map_CopyCellAttributes(15, 20, 1, 1, 15, 22);
+	Map_CopyCellAttributes(17, 23, 1, 3, 15, 23);
 	actor = Object_GetById(12);
 	if (actor != 0)
 	{
@@ -219,9 +218,9 @@ static void PlaceSceneObjectPairFromTableA(s32 table_index)
 	s32 position_x = gRunpaJoPairTableA[table_index * 2];
 	s32 position_z = gRunpaJoPairTableA[table_index * 2 + 1];
 
-	Engine_MapCopyCells(0, 0x4d, 1, 3, position_x, position_z);
-	Engine_MapCopyCells(1, 0x4d, 1, 1, position_x + 1, position_z);
-	Engine_MapCopyCells(position_x, position_z - 0x30, 1, 1, position_x, position_z - 0x2e);
+	Map_CopyCells(0, 0x4d, 1, 3, position_x, position_z);
+	Map_CopyCells(1, 0x4d, 1, 1, position_x + 1, position_z);
+	Map_CopyCells(position_x, position_z - 0x30, 1, 1, position_x, position_z - 0x2e);
 }
 
 static void EV40_A(void)
@@ -287,9 +286,9 @@ static void PlaceSceneObjectPairFromTableB(s32 table_index)
 	s32 position_x = gRunpaJoPairTableB[table_index * 2];
 	s32 position_z = gRunpaJoPairTableB[table_index * 2 + 1];
 
-	Engine_MapCopyCells(0x37, 0x79, 1, 3, position_x, position_z);
-	Engine_MapCopyCells(0x38, 0x79, 1, 1, position_x + 1, position_z);
-	Engine_MapCopyCells(position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
+	Map_CopyCells(0x37, 0x79, 1, 3, position_x, position_z);
+	Map_CopyCells(0x38, 0x79, 1, 1, position_x + 1, position_z);
+	Map_CopyCells(position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
 }
 
 static void EV40_D(void)
@@ -316,8 +315,8 @@ static void PlaceSceneObjectPairFromTableC(s32 table_index)
 	s32 position_x = gRunpaJoPairTableC[table_index * 2];
 	s32 position_z = gRunpaJoPairTableC[table_index * 2 + 1];
 
-	Engine_MapCopyCells(1, 0x50, 1, 3, position_x, position_z);
-	Engine_MapCopyCells(2, 0x50, 1, 1, position_x + 1, position_z);
+	Map_CopyCells(1, 0x50, 1, 3, position_x, position_z);
+	Map_CopyCells(2, 0x50, 1, 1, position_x + 1, position_z);
 	Engine_MapCopyCellAttributes(
 		position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
 }
@@ -1296,20 +1295,20 @@ static void EV51_MAIN(void)
 
 static void ConfigureInteractionRegionA(void)
 {
-	Engine_MapCopyCells(2, 82, 1, 2, 21, 81);
-	Engine_MapCopyCellAttributes(21, 32, 1, 1, 21, 34);
+	Map_CopyCells(2, 82, 1, 2, 21, 81);
+	Map_CopyCellAttributes(21, 32, 1, 1, 21, 34);
 }
 
 static void ConfigureInteractionRegionB(void)
 {
-	Engine_MapCopyCells(2, 84, 1, 2, 6, 55);
-	Engine_MapCopyCellAttributes(5, 9, 1, 1, 6, 10);
+	Map_CopyCells(2, 84, 1, 2, 6, 55);
+	Map_CopyCellAttributes(5, 9, 1, 1, 6, 10);
 }
 
 static void ConfigureInteractionRegionC(void)
 {
-	Engine_MapCopyCells(2, 86, 1, 2, 27, 62);
-	Engine_MapCopyCellAttributes(26, 16, 1, 1, 27, 17);
+	Map_CopyCells(2, 86, 1, 2, 27, 62);
+	Map_CopyCellAttributes(26, 16, 1, 1, 27, 17);
 }
 
 static void EV52_IDO(void)
@@ -1354,18 +1353,18 @@ static void EV51_SUB(void)
 
 static void EV00_HANTEI1(void)
 {
-	Engine_MapCopyCells(5, 77, 1, 2, 17, 82);
-	Engine_MapCopyCells(5, 77, 1, 2, 3, 55);
-	Engine_MapCopyCellAttributes(15, 33, 1, 1, 17, 35);
-	Engine_MapCopyCellAttributes(3, 8, 1, 1, 3, 10);
+	Map_CopyCells(5, 77, 1, 2, 17, 82);
+	Map_CopyCells(5, 77, 1, 2, 3, 55);
+	Map_CopyCellAttributes(15, 33, 1, 1, 17, 35);
+	Map_CopyCellAttributes(3, 8, 1, 1, 3, 10);
 }
 
 static void EV00_HANTEI2(void)
 {
-	Engine_MapCopyCells(8, 77, 1, 2, 17, 82);
-	Engine_MapCopyCells(8, 77, 1, 2, 3, 55);
-	Engine_MapCopyCellAttributes(18, 35, 1, 1, 17, 35);
-	Engine_MapCopyCellAttributes(2, 10, 1, 1, 3, 10);
+	Map_CopyCells(8, 77, 1, 2, 17, 82);
+	Map_CopyCells(8, 77, 1, 2, 3, 55);
+	Map_CopyCellAttributes(18, 35, 1, 1, 17, 35);
+	Map_CopyCellAttributes(2, 10, 1, 1, 3, 10);
 }
 
 static void EV08_TANSU(void)

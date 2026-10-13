@@ -574,15 +574,15 @@ static void FieldScene_RunPaletteRampSequence(void)
 	Engine_ActorEnableActionCallback(10, gHaidiaBabiRampActor10Action);
 	((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->start_transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-	Engine_MapCopyCellsTo(83, 15, 83, 19, 5, 4);
-	Engine_MapCopyCellsTo(90, 16, 90, 20, 5, 4);
-	Engine_MapCopyCellsTo(77, 23, 82, 23, 5, 7);
-	Engine_MapCopyCellsTo(83, 33, 85, 33, 2, 2);
-	Engine_MapCopyCellsTo(91, 28, 90, 28, 1, 1);
-	Engine_MapCopyCellsTo(91, 28, 88, 30, 1, 1);
-	Engine_MapCopyCellsTo(94, 27, 94, 23, 6, 4);
-	Engine_MapCopyCellsTo(92, 28, 87, 23, 4, 4);
-	Engine_MapCopyCellsTo(65, 53, 88, 24, 2, 2);
+	Map_CopyCellsTo(83, 15, 83, 19, 5, 4);
+	Map_CopyCellsTo(90, 16, 90, 20, 5, 4);
+	Map_CopyCellsTo(77, 23, 82, 23, 5, 7);
+	Map_CopyCellsTo(83, 33, 85, 33, 2, 2);
+	Map_CopyCellsTo(91, 28, 90, 28, 1, 1);
+	Map_CopyCellsTo(91, 28, 88, 30, 1, 1);
+	Map_CopyCellsTo(94, 27, 94, 23, 6, 4);
+	Map_CopyCellsTo(92, 28, 87, 23, 4, 4);
+	Map_CopyCellsTo(65, 53, 88, 24, 2, 2);
 	DisplayBlend_EnableRunScript();
 	SetBlendTarget(0x3f42);
 	Io_Write16(0x100c, &REG_BLDALPHA);
@@ -879,9 +879,8 @@ static void ActorPresentation_SetTwoSceneCells(void)
 		Map_CopyCellsTo(22, 85, 25, 85, size, size);
 	}
 	{
-		s32 destination = 25;
 
-		Engine_MapCopyCellAttributes(25, 15, 2, 2, destination, destination);
+		Map_CopyCellAttributes(25, 15, 2, 2, 25, 25);
 	}
 }
 

@@ -79,10 +79,8 @@ static void EV13_TALK(s32 obj)
 
 static void EV16_PSYNERGY(void)
 {
-	s32 width = 4;
-	s32 height = 9;
 
-	Engine_MapCopyCellAttributes(25, 9, 1, 1, width, height);
+	Map_CopyCellAttributes(25, 9, 1, 1, 4, 9);
 	Engine_GameFlagSet(0x201);
 }
 

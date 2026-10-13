@@ -111,18 +111,14 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 static void EV10_TOUCH(void)
 {
-	s32 w = 21;
-	s32 h = 14;
 
-	Engine_MapCopyCellAttributes(1, 0, 1, 1, w, h);
+	Map_CopyCellAttributes(1, 0, 1, 1, 21, 14);
 }
 
 static void EV11_TOUCH(void)
 {
-	s32 w = 21;
-	s32 h = 14;
 
-	Engine_MapCopyCellAttributes(0, 0, 1, 1, w, h);
+	Map_CopyCellAttributes(0, 0, 1, 1, 21, 14);
 }
 
 static void SceneState_ApplyTwoRects(void)
@@ -131,13 +127,13 @@ static void SceneState_ApplyTwoRects(void)
 		s32 a5 = 1;
 		s32 a6 = 3;
 
-		Engine_MapCopyCellsTo(111, 37, 97, 21, a5, a6);
+		Map_CopyCellsTo(111, 37, 97, 21, a5, a6);
 	}
 	{
 		s32 a5 = 32;
 		s32 a6 = 24;
 
-		Engine_MapCopyCellAttributes(46, 38, 3, 2, a5, a6);
+		Map_CopyCellAttributes(46, 38, 3, 2, a5, a6);
 	}
 }
 
@@ -147,13 +143,13 @@ static void FieldScene_RunTwoLayoutSteps(void)
 		s32 fifth = 1;
 		s32 sixth = 3;
 
-		Engine_MapCopyCellsTo(95, 21, 97, 21, fifth, sixth);
+		Map_CopyCellsTo(95, 21, 97, 21, fifth, sixth);
 	}
 	{
 		s32 fifth = 32;
 		s32 sixth = 25;
 
-		Engine_MapCopyCellAttributes(46, 38, 3, 1, fifth, sixth);
+		Map_CopyCellAttributes(46, 38, 3, 1, fifth, sixth);
 	}
 }
 
@@ -270,10 +266,8 @@ static void FieldScene_RunScene398SequenceB(void)
 
 static void EV08_PSYNERGY_3(void)
 {
-	s32 width = 8;
-	s32 height = 13;
 
-	Engine_MapCopyCellAttributes(31, 0, 1, 1, width, height);
+	Map_CopyCellAttributes(31, 0, 1, 1, 8, 13);
 	Engine_GameFlagSet(0x305);
 }
 
@@ -310,10 +304,8 @@ static void RunGuardedSceneSetup(void)
 {
 	if (Engine_GameFlagIsSet(0x305) != 0)
 	{
-		s32 width = 8;
-		s32 height = 13;
 
-		Engine_MapCopyCellAttributes(31, 0, 1, 1, width, height);
+		Map_CopyCellAttributes(31, 0, 1, 1, 8, 13);
 		Engine_ActorSetAnimation(8, 0);
 	}
 }

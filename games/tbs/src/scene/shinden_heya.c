@@ -1877,7 +1877,7 @@ static void SceneState_ApplyTwoRects(void)
 	}
 	{
 		s32 x = 11, y = 8;
-		Engine_MapCopyCellAttributes(11, 10, 3, 2, x, y);
+		Map_CopyCellAttributes(11, 10, 3, 2, x, 8);
 	}
 	Engine_TaskWait(1);
 }

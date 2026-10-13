@@ -292,18 +292,17 @@ static void EV10_PSYNERGY(void)
 	if (a != 0)
 	{
 		s32 x = 24;
-		s32 y = 26;
 		s32 t;
 
-		Engine_MapCopyCellAttributes(x, 27, 2, 1, x, y);
+		Map_CopyCellAttributes(24, 27, 2, 1, 24, 26);
 		t = a->x.fixed >> 20;
 		if (t == 25)
 		{
-			Engine_MapCopyCellAttributes(0, 0, 1, 1, t, y);
+			Map_CopyCellAttributes(0, 0, 1, 1, t, 26);
 		}
 		else
 		{
-			Engine_MapCopyCellAttributes(0, 0, 1, 1, x, y);
+			Map_CopyCellAttributes(0, 0, 1, 1, 24, 26);
 		}
 		Engine_ActorSetSpriteFlags(a, 0);
 		a->motion_flags = 0;
@@ -316,13 +315,9 @@ static void EV08_PSYNERGY(void)
 {
 
 	struct FieldActor *p;
-	s32				   s0;
-	s32				   s1;
 
 	p = Object_GetById(8);
-	s0 = 9;
-	s1 = 13;
-	Engine_MapCopyCellAttributes(7, 13, 1, 1, s0, s1);
+	Map_CopyCellAttributes(7, 13, 1, 1, 9, 13);
 	if (p != 0)
 	{
 		Engine_ActorSetSpriteFlags(p, 0);
@@ -336,13 +331,9 @@ static void EV09_PSYNERGY(void)
 {
 
 	struct FieldActor *p;
-	s32				   s0;
-	s32				   s1;
 
 	p = Object_GetById(9);
-	s0 = 17;
-	s1 = 13;
-	Engine_MapCopyCellAttributes(29, 1, 3, 1, s0, s1);
+	Map_CopyCellAttributes(29, 1, 3, 1, 17, 13);
 	if (p != 0)
 	{
 		p->motion_flags = 2;
@@ -353,11 +344,9 @@ static void EV09_PSYNERGY(void)
 static void EV09_PSYNERGY_7(void)
 {
 	struct FieldActor *p;
-	s32				   s0;
 
 	p = Object_GetById(9);
-	s0 = 26;
-	Engine_MapCopyCellAttributes(0, 0, 1, 1, s0, s0);
+	Map_CopyCellAttributes(0, 0, 1, 1, 26, 26);
 	if (p != 0)
 	{
 		Engine_ActorSetSpriteFlags(p, 0);
@@ -370,13 +359,9 @@ static void EV09_PSYNERGY_7(void)
 static void EV09_PSYNERGY_5(void)
 {
 	struct FieldActor *p;
-	s32				   s0;
-	s32				   s1;
 
 	p = Object_GetById(9);
-	s0 = 25;
-	s1 = 13;
-	Engine_MapCopyCellAttributes(23, 13, 1, 1, s0, s1);
+	Map_CopyCellAttributes(23, 13, 1, 1, 25, 13);
 	if (p != 0)
 	{
 		Engine_ActorSetSpriteFlags(p, 0);
@@ -390,13 +375,9 @@ static void EV09_PSYNERGY_6(void)
 {
 
 	struct FieldActor *rec;
-	s32				   s0;
-	s32				   s1;
 
 	rec = Object_GetById(9);
-	s0 = 43;
-	s1 = 41;
-	Engine_MapCopyCellAttributes(45, 41, 1, 1, s0, s1);
+	Map_CopyCellAttributes(45, 41, 1, 1, 43, 41);
 	if (rec != 0)
 	{
 		Engine_ActorSetSpriteFlags(rec, 0);
@@ -409,13 +390,9 @@ static void EV09_PSYNERGY_6(void)
 static void EV11_PSYNERGY_7(void)
 {
 	struct FieldActor *p;
-	s32				   s0;
-	s32				   s1;
 
 	p = Object_GetById(11);
-	s0 = 17;
-	s1 = 10;
-	Engine_MapCopyCellAttributes(1, 0, 1, 1, s0, s1);
+	Map_CopyCellAttributes(1, 0, 1, 1, 17, 10);
 	if (p != 0)
 	{
 		Engine_ActorSetSpriteFlags(p, 0);
@@ -429,13 +406,9 @@ static void EV12_PSYNERGY(void)
 {
 
 	struct FieldActor *p;
-	s32				   s0;
-	s32				   s1;
 
 	p = Object_GetById(12);
-	s0 = 26;
-	s1 = 15;
-	Engine_MapCopyCellAttributes(1, 0, 1, 1, s0, s1);
+	Map_CopyCellAttributes(1, 0, 1, 1, 26, 15);
 	if (p != 0)
 	{
 		Engine_ActorSetSpriteFlags(p, 0);
@@ -1242,9 +1215,9 @@ static void EV10_TOUCH_1(void)
 	Engine_EventWait(40);
 	Engine_ActorFaceDirection(10, 0x8000, 40);
 	Object_GetById(9)->motion_flags = p10.v;
-	Engine_MapCopyCellAttributes(3, 0, 1, 1, 17, 13);
-	Engine_MapCopyCellAttributes(3, 0, 1, 1, 18, 13);
-	Engine_MapCopyCellAttributes(3, 0, 1, 1, 19, 13);
+	Map_CopyCellAttributes(3, 0, 1, 1, 17, 13);
+	Map_CopyCellAttributes(3, 0, 1, 1, 18, 13);
+	Map_CopyCellAttributes(3, 0, 1, 1, 19, 13);
 	Engine_ActorSetSpeed(10, 0x16666, 0xb333);
 	record = Object_GetById(10);
 	Engine_ActorSetSpriteFlags(record, 0);
@@ -1278,9 +1251,9 @@ static void EV10_TOUCH_1(void)
 	Engine_AudioPlayCue(147);
 	Engine_ActorRunRepeatedMotion(10, 2);
 	Engine_EventWait(40);
-	Engine_MapCopyCellAttributes(4, 0, 1, 1, 17, 13);
-	Engine_MapCopyCellAttributes(2, 0, 1, 1, 18, 13);
-	Engine_MapCopyCellAttributes(4, 0, 1, 1, 19, 13);
+	Map_CopyCellAttributes(4, 0, 1, 1, 17, 13);
+	Map_CopyCellAttributes(2, 0, 1, 1, 18, 13);
+	Map_CopyCellAttributes(4, 0, 1, 1, 19, 13);
 	rec7 = Object_GetById(0);
 	Engine_CameraSetSpeed(0x4cccc, 0x9999);
 	Engine_CameraMoveTo(rec7->x.fixed, rec7->y.fixed, rec7->z.fixed, 1);

@@ -273,7 +273,7 @@ static void EV15_TOUCH(void)
 	Engine_GameFlagSet(0x210);
 	m = 10;
 	n = 84;
-	Engine_MapCopyCellAttributes(40, 84, 7, 4, m, n);
+	Map_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
 static void EV14_TOUCH(void)
@@ -282,7 +282,7 @@ static void EV14_TOUCH(void)
 	Engine_GameFlagClear(0x210);
 	m = 10;
 	n = 84;
-	Engine_MapCopyCellAttributes(40, 89, 7, 4, m, n);
+	Map_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
 static void EV01_TOUCH(void)
@@ -516,7 +516,7 @@ static void EV100_TOUCH(void)
 	Engine_EventBegin();
 	m = 20;
 	n = 50;
-	Engine_MapCopyCellAttributes(49, 53, 8, 4, m, n);
+	Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
 	HaidiaMura_MoveActorAlongLowerZPath(0, 10, 11, 1);
 	Engine_GameFlagSet(0x204);
 	Engine_EventEnd();
@@ -530,7 +530,7 @@ static void EV101_TOUCH(void)
 	Engine_GameFlagClear(0x204);
 	p5 = 20;
 	p6 = 50;
-	Engine_MapCopyCellAttributes(49, 46, 8, 4, p5, p6);
+	Map_CopyCellAttributes(49, 46, 8, 4, 20, 50);
 	Engine_EventEnd();
 }
 
@@ -1238,8 +1238,8 @@ s32 HaidiaMura_ApplyEntryState(void)
 				InitializeStagedActorSceneOrbitingEffect(20);
 			}
 		}
-		Engine_MapCopyCellsTo(2, 102, 84, 41, 2, 1);
-		Engine_MapCopyCellsTo(1, 102, 83, 41, 1, 1);
+		Map_CopyCellsTo(2, 102, 84, 41, 2, 1);
+		Map_CopyCellsTo(1, 102, 83, 41, 1, 1);
 		actor = Object_GetById((Engine_GameFlagIsSet(0x87a) != 0) + 20);
 		Engine_ActorSetSpriteFlags(actor, 0);
 		if (Engine_GameFlagIsSet(0x314))
@@ -2805,8 +2805,6 @@ static void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x, s32 delta_
 
 static void SceneState_ApplyRectAndRunTwo(void)
 {
-	s32 e;
-	s32 f;
 #if !EDITION_INTERNATIONAL
 	// 日本版のみ: 村人を引くが戻り値は使わない
 	if (Engine_GameFlagIsSet(0x87a))
@@ -2814,9 +2812,7 @@ static void SceneState_ApplyRectAndRunTwo(void)
 	else
 		Object_GetById(20);
 #endif
-	e = 22;
-	f = 36;
-	Engine_MapCopyCellAttributes(17, 0, 3, 1, e, f);
+	Map_CopyCellAttributes(17, 0, 3, 1, 22, 36);
 	StagedActor_AdvancePair();
 	HaidiaMura_OpenVillagerLane();
 }
@@ -2839,12 +2835,12 @@ static void HaidiaMura_OpenVillagerLane(void)
 	column = actor->x.fixed >> 20;
 	if (column == 22)
 	{
-		Engine_MapCopyCellAttributes(17, 1, 1, 1, column, 36);
+		Map_CopyCellAttributes(17, 1, 1, 1, column, 36);
 		Engine_GameFlagSet(0x314);
 	}
 	else if (column == 23)
 	{
-		Engine_MapCopyCellAttributes(17, 1, 1, 1, column, 36);
+		Map_CopyCellAttributes(17, 1, 1, 1, column, 36);
 		Engine_GameFlagSet(0x315);
 	}
 	else

@@ -215,7 +215,7 @@ static s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no)
 
 	r2 = rec[2];
 	r4 = rec[4];
-	Engine_MapCopyCellAttributes(2, 2, out20, out16, r2, r4);
+	Map_CopyCellAttributes(2, 2, out20, out16, r2, r4);
 
 	Object_SetMode(obj, 4);
 	mask = 2;
@@ -223,11 +223,11 @@ static s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no)
 
 	if (out20 > out16)
 	{
-		Engine_MapCopyCellsTo(70, 40, rec[2] + 32, rec[4] + 2, out20, out16);
+		Map_CopyCellsTo(70, 40, rec[2] + 32, rec[4] + 2, out20, out16);
 	}
 	else
 	{
-		Engine_MapCopyCellsTo(68, 40, rec[2] + 32, rec[4] + 2, out20, out16);
+		Map_CopyCellsTo(68, 40, rec[2] + 32, rec[4] + 2, out20, out16);
 	}
 
 	return 1;
@@ -248,7 +248,7 @@ static s32 SceneActor_ApplyPlacementQuery(u8 *no)
 		s32 x = out12 + rec[2];
 		s32 z = out8 + rec[4];
 
-		Engine_MapCopyCellAttributes(x, z, out20, out16, rec[2], rec[4]);
+		Map_CopyCellAttributes(x, z, out20, out16, rec[2], rec[4]);
 		StagedActor_FillGridAttributeRectangle(0, rec[2], rec[4], out20, out16, 255);
 	}
 
@@ -688,13 +688,13 @@ static void FieldScene_RunScene3b3SequenceA(void)
 	Engine_AudioPlayCue(0x121);
 	if (Engine_GameFlagIsSet(0x200) == 0)
 	{
-		Engine_MapCopyCellsTo(0, 32, 32, 0, 32, 32);
-		Engine_MapCopyCellsTo(32, 32, 64, 0, 32, 32);
+		Map_CopyCellsTo(0, 32, 32, 0, 32, 32);
+		Map_CopyCellsTo(32, 32, 64, 0, 32, 32);
 	}
 	else
 	{
-		Engine_MapCopyCellsTo(0, 64, 32, 0, 32, 32);
-		Engine_MapCopyCellsTo(32, 64, 64, 0, 32, 32);
+		Map_CopyCellsTo(0, 64, 32, 0, 32, 32);
+		Map_CopyCellsTo(32, 64, 64, 0, 32, 32);
 	}
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, 0);
@@ -1438,8 +1438,8 @@ s32 TakaraHashira_SetupArea(void)
 		if (Engine_GameFlagIsSet(0x109) != 0 && Engine_GameFlagIsSet(0x200) != 0)
 		{
 			Map_CopyCellsTo(79, 34, 84, 24, 1, 2);
-			Engine_MapCopyCellsTo(0, 32, 32, 0, 32, 32);
-			Engine_MapCopyCellsTo(32, 32, 64, 0, 32, 32);
+			Map_CopyCellsTo(0, 32, 32, 0, 32, 32);
+			Map_CopyCellsTo(32, 32, 64, 0, 32, 32);
 			SceneActor_ApplyPlacementQueryAndTag(9);
 			SceneActor_ApplyPlacementQueryAndTag(10);
 			SceneActor_ApplyPlacementQueryAndTag(11);
@@ -1492,7 +1492,7 @@ s32 TakaraHashira_SetupArea(void)
 					z = actor->z.fixed >> 20;
 					if (z == 9)
 					{
-						Engine_MapCopyCellAttributes(27, 8, 1, 1, x, z);
+						Map_CopyCellAttributes(27, 8, 1, 1, x, z);
 						break;
 					}
 				}

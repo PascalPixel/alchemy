@@ -203,13 +203,9 @@ static void FieldScene_DispatchSceneByIndex(void)
 	case 11:
 		if (Engine_GameFlagIsSet(0x915) != 0)
 		{
-			s32 a5 = 4;
-			s32 a6 = 3;
-			Engine_MapCopyCellsTo(58, 70, 54, 70, a5, a6);
+			Map_CopyCellsTo(58, 70, 54, 70, 4, 3);
 			{
-				s32 b5 = 55;
-				s32 b6 = 8;
-				Engine_MapCopyCellAttributes(55, 9, 2, 1, b5, b6);
+				Map_CopyCellAttributes(55, 9, 2, 1, 55, 8);
 			}
 			Engine_MapRedraw();
 			Engine_TaskWait(1);

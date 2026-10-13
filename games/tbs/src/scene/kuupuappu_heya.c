@@ -162,7 +162,7 @@ static void EV40_SCRIPT(void)
 #endif
 		x = 42;
 		z = 85;
-		Engine_MapCopyCellAttributes(41, 85, 1, 1, x, z);
+		Map_CopyCellAttributes(41, 85, 1, 1, x, z);
 	}
 	else if (Object_GetById(0)->facing >= 0x2000 && Object_GetById(0)->facing <= 0x6000)
 	{
@@ -178,7 +178,7 @@ static void EV40_SCRIPT(void)
 #endif
 		x = 42;
 		z = 85;
-		Engine_MapCopyCellAttributes(43, 85, 1, 1, x, z);
+		Map_CopyCellAttributes(43, 85, 1, 1, x, z);
 	}
 }
 
@@ -186,15 +186,13 @@ static void EV26_PSYNERGY(void)
 {
 	struct FieldActor *obj;
 	s32				   x;
-	s32				   z;
 
 	Engine_EventBegin();
 	obj = Object_GetById(26);
 	if ((obj->x.fixed >> 20) == 42)
 	{
 		x = 41;
-		z = 24;
-		Engine_MapCopyCellAttributes(101, 24, 3, 4, x, z);
+		Map_CopyCellAttributes(101, 24, 3, 4, 41, 24);
 		Engine_GameFlagSet(0x859);
 	}
 	Engine_EventEnd();
@@ -1768,7 +1766,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 			Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
 			if (Engine_GameFlagIsSet(0x853) == 0)
 			{
-				Engine_MapCopyCellAttributes(14, 50, 3, 1, 14, 44);
+				Map_CopyCellAttributes(14, 50, 3, 1, 14, 44);
 				break;
 			}
 			Object_GetById(24)->timer = 5;
@@ -1780,10 +1778,10 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 	case 14:
 		Engine_EventWait(2);
 		Map_CopyCellsTo(54, 2, 35, 20, 2, 10);
-		Engine_MapCopyCellsTo(54, 2, 95, 20, 2, 10);
-		Engine_MapCopyCellsTo(54, 2, 35, 80, 2, 10);
+		Map_CopyCellsTo(54, 2, 95, 20, 2, 10);
+		Map_CopyCellsTo(54, 2, 35, 80, 2, 10);
 		Map_CopyCellsTo(54, 2, 46, 21, 4, 8);
-		Engine_MapCopyCellsTo(54, 2, 46, 81, 4, 8);
+		Map_CopyCellsTo(54, 2, 46, 81, 4, 8);
 		Object_GetById(26)->collision_flags |= 4;
 		Engine_ActorSetSpriteFlags(Object_GetById(26), 0);
 		if (Engine_GameFlagIsSet(0x859) != 0)
@@ -1795,7 +1793,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 	case 15:
 		Engine_EventWait(2);
 		Map_CopyCellsTo(54, 2, 44, 21, 2, 8);
-		Engine_MapCopyCellsTo(54, 2, 44, 81, 2, 8);
+		Map_CopyCellsTo(54, 2, 44, 81, 2, 8);
 		Engine_EventBegin();
 		if (Engine_GameFlagIsSet(0x855) != 0)
 		{
@@ -1820,15 +1818,15 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 		Engine_EventEnd();
 		break;
 	case 16:
-		Engine_MapCopyCells(54, 2, 2, 8, 44, 21);
-		Engine_MapCopyCells(54, 2, 2, 8, 44, 81);
+		Map_CopyCells(54, 2, 2, 8, 44, 21);
+		Map_CopyCells(54, 2, 2, 8, 44, 81);
 		Engine_ActorSetPosition(8, 0x3380000, 0x1c80000);
 		FieldScene_RunLateSequence();
 		Engine_EventRequestExit(16);
 		break;
 	case 17:
-		Engine_MapCopyCells(54, 2, 2, 8, 44, 21);
-		Engine_MapCopyCells(54, 2, 2, 8, 44, 81);
+		Map_CopyCells(54, 2, 2, 8, 44, 21);
+		Map_CopyCells(54, 2, 2, 8, 44, 81);
 		if (Engine_GameFlagIsSet(0x109) == 0)
 		{
 			Actor_SetPosition(8, 0x3380000, 0x1c80000);

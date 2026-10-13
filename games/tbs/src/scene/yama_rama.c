@@ -340,7 +340,7 @@ static void ConfigureAndPlaceActorFourteen(void)
 {
 
 	s32 a = 21, b = 9;
-	Engine_MapCopyCellAttributes(85, 9, 1, 1, a, b);
+	Map_CopyCellAttributes(85, 9, 1, 1, a, 9);
 	Engine_MapObjectSetPosition(100, 0, 0);
 	PlaceActor(14, 0x01580000, 0x00980000);
 }
@@ -617,13 +617,13 @@ static void FieldScene_RunPairedLayoutStepsThenSetOne(void)
 		s32 fifth = 1;
 		s32 sixth = 2;
 
-		Engine_MapCopyCellsTo(5, 28, 5, 13, fifth, sixth);
+		Map_CopyCellsTo(5, 28, 5, 13, fifth, sixth);
 	}
 	{
 		s32 fifth = 5;
 		s32 sixth = 13;
 
-		Engine_MapCopyCellAttributes(5, 28, 1, 2, fifth, sixth);
+		Map_CopyCellAttributes(5, 28, 1, 2, fifth, sixth);
 	}
 	Engine_EventWait(1);
 }
@@ -634,13 +634,13 @@ static void SceneState_RunRect6x28Step(void)
 		s32 fifth = 1;
 		s32 sixth = 2;
 
-		Engine_MapCopyCellsTo(6, 28, 5, 13, fifth, sixth);
+		Map_CopyCellsTo(6, 28, 5, 13, fifth, sixth);
 	}
 	{
 		s32 fifth = 5;
 		s32 sixth = 13;
 
-		Engine_MapCopyCellAttributes(6, 28, 1, 2, fifth, sixth);
+		Map_CopyCellAttributes(6, 28, 1, 2, fifth, sixth);
 	}
 	Engine_EventWait(1);
 }
@@ -681,8 +681,8 @@ static void EV14_PSYNERGY(void)
 	Object_GetById(14)->update =
 		(void (*)(union FieldObject *))SceneActor_SetFlagBitByRankAgainstActorZero;
 
-	Engine_MapCopyCellAttributes(55, 16, 1, 1, 56, 18);
-	Engine_MapCopyCellAttributes(55, 16, 1, 1, 20, 18);
+	Map_CopyCellAttributes(55, 16, 1, 1, 56, 18);
+	Map_CopyCellAttributes(55, 16, 1, 1, 20, 18);
 
 	Engine_TaskWait(1);
 	Engine_GameFlagSet(512);
@@ -694,10 +694,8 @@ static void EV15_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	{
-		s32 fifth = 21;
-		s32 sixth = 11;
 
-		Engine_MapCopyCellAttributes(14, 6, 1, 2, fifth, sixth);
+		Map_CopyCellAttributes(14, 6, 1, 2, 21, 11);
 	}
 	Object_GetById(15)->collision_flags = 254;
 	Engine_GameFlagSet(0x201);
@@ -773,10 +771,10 @@ s32 YamaRama_ApplyEntryState(void)
 		}
 		if (GameFlag_IsSet(0x8b2))
 		{
-			Engine_MapCopyCellsTo(54, 21, 53, 21, 1, 2);
-			Engine_MapCopyCellAttributes(18, 20, 1, 3, 17, 21);
-			Engine_MapCopyCellsTo(44, 18, 43, 17, 1, 1);
-			Engine_MapCopyCellAttributes(8, 17, 1, 1, 7, 17);
+			Map_CopyCellsTo(54, 21, 53, 21, 1, 2);
+			Map_CopyCellAttributes(18, 20, 1, 3, 17, 21);
+			Map_CopyCellsTo(44, 18, 43, 17, 1, 1);
+			Map_CopyCellAttributes(8, 17, 1, 1, 7, 17);
 		}
 		if (Engine_GameFlagIsSet(0x895) && !Engine_GameFlagIsSet(0x8b2))
 		{

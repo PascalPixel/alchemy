@@ -274,7 +274,7 @@ static void EV1045_SCRIPT(void)
 		Engine_EventBegin();
 		Battle_ResetEffectCounter();
 		Engine_AudioPlayCue(182);
-		Engine_MapCopyCellsTo(0, 71, 100, 71, 1, 1);
+		Map_CopyCellsTo(0, 71, 100, 71, 1, 1);
 		Engine_MapRedraw();
 		Engine_EventWait(40);
 		message = (s32)MsgSoruSetSmallGem;
@@ -608,10 +608,10 @@ static void FieldScene_RunSceneEntryHook(void)
 	case 2:
 		if (Engine_GameFlagIsSet(0x81a) != 0)
 		{
-			Engine_MapCopyCellsTo(1, 109, 4, 81, 1, 1);
-			Engine_MapCopyCellsTo(0, 70, 30, 42, 1, 1);
-			Engine_MapCopyCellsTo(0, 29, 3, 1, 3, 2);
-			Engine_MapCopyCellAttributes(0, 29, 3, 2, 3, 1);
+			Map_CopyCellsTo(1, 109, 4, 81, 1, 1);
+			Map_CopyCellsTo(0, 70, 30, 42, 1, 1);
+			Map_CopyCellsTo(0, 29, 3, 1, 3, 2);
+			Map_CopyCellAttributes(0, 29, 3, 2, 3, 1);
 			Engine_MapRedraw();
 		}
 		break;
@@ -668,7 +668,7 @@ static void FieldScene_RunSceneEntryHook(void)
 		Engine_GameFlagSet(0x234);
 		if (GameFlag_IsSet(0x821) != 0)
 		{
-			Engine_MapCopyCellsTo(0, 71, 100, 71, 1, 1);
+			Map_CopyCellsTo(0, 71, 100, 71, 1, 1);
 			Map_CopyCellsTo(122, 20, 120, 30, 1, 2);
 			Map_CopyCellAttributes(122, 20, 1, 2, 120, 30);
 			Engine_MapRedraw();
@@ -1018,7 +1018,7 @@ static void Scene_RunTransitionCue(void)
 
 static void Scene_RunActorFormation(s32 a0)
 {
-	Engine_MapCopyCellAttributes(122, 20, 1, 1, 100, 32);
+	Map_CopyCellAttributes(122, 20, 1, 1, 100, 32);
 	Map_CopyCellAttributes(122, 20, 1, 1, 104, 32);
 	Map_CopyCellAttributes(122, 20, 1, 1, 108, 32);
 	Map_CopyCellAttributes(122, 20, 1, 1, 112, 32);

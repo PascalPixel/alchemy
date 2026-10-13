@@ -221,8 +221,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 static void EV20_SCRIPT_1(void)
 {
 	struct StagedActorProbe probe;
-	s32						fifth;
-	s32						sixth;
 
 	Engine_EventBegin();
 	if (StagedActor_FindClearPosition(&probe) != 0)
@@ -239,9 +237,7 @@ static void EV20_SCRIPT_1(void)
 			Engine_AudioPlayCue(240);
 			Engine_ActorSetSpritePriority(9, 1);
 			Object_GetById(9)->priority_flags = 2;
-			fifth = 31;
-			sixth = 25;
-			Engine_MapCopyCellAttributes(38, 27, 4, 2, fifth, sixth);
+			Map_CopyCellAttributes(38, 27, 4, 2, 31, 25);
 		}
 	}
 	Engine_EventEnd();
@@ -449,7 +445,7 @@ static void EV20_SCRIPT_2(void)
 		{
 			fifth = 35;
 			sixth = 68;
-			Engine_MapCopyCellAttributes(35, 67, 4, 1, fifth, sixth);
+			Map_CopyCellAttributes(35, 67, 4, 1, fifth, sixth);
 		}
 		else if (probe.actor_slot == 10 && (probe.position_x >> 20) == 35)
 		{
@@ -466,7 +462,7 @@ static void EV20_SCRIPT_2(void)
 
 			fifth = 34;
 			sixth = 30;
-			Engine_MapCopyCellAttributes(44, 30, 2, 4, fifth, sixth);
+			Map_CopyCellAttributes(44, 30, 2, 4, fifth, sixth);
 			height = 4;
 			StagedActor_FillGridAttributeRectangle(2, 35, 30, 1, height, value);
 		}

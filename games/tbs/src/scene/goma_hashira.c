@@ -191,14 +191,14 @@ static void EV08_PSYNERGY(void)
 	{
 		a4 = 18;
 		a5 = 6;
-		Engine_MapCopyCellAttributes(18, 40, 6, 3, a4, a5);
+		Map_CopyCellAttributes(18, 40, 6, 3, a4, a5);
 		Engine_GameFlagClear(0x302);
 	}
 	else
 	{
 		a4 = 18;
 		a5 = 6;
-		Engine_MapCopyCellAttributes(24, 40, 6, 3, a4, a5);
+		Map_CopyCellAttributes(24, 40, 6, 3, a4, a5);
 		Engine_GameFlagSet(0x302);
 	}
 	Engine_EventEnd();

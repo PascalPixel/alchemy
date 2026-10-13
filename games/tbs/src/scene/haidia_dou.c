@@ -127,12 +127,12 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 static void FieldScene_ConfigureRegionAtRow15(void)
 {
-	Engine_MapCopyCells(16, 15, 1, 1, 15, 15);
+	Map_CopyCells(16, 15, 1, 1, 15, 15);
 }
 
 static void FieldScene_ConfigureRegionAtRow17(void)
 {
-	Engine_MapCopyCells(16, 17, 1, 1, 15, 15);
+	Map_CopyCells(16, 17, 1, 1, 15, 15);
 }
 
 static void EV09_PSYNERGY(void)
@@ -489,10 +489,9 @@ static void EV22_SCRIPT(void)
 		{
 			Engine_GameFlagSet(0x204);
 			{
-				s32 column = 14;
 
-				Engine_MapCopyCellAttributes(14, 17, 2, 1, column, 16);
-				Engine_MapCopyCellAttributes(14, 13, 1, 1, column, 15);
+				Map_CopyCellAttributes(14, 17, 2, 1, 14, 16);
+				Map_CopyCellAttributes(14, 13, 1, 1, 14, 15);
 			}
 		}
 	}
@@ -545,17 +544,17 @@ static void HaidiaDou_PlayCueAndRequestTouchedExit(void)
 
 static void DialogueLayout_ConfigureRowsByFlag301(void)
 {
-	Engine_MapCopyCellAttributes(0, 34, 13, 3, 23, 34);
+	Map_CopyCellAttributes(0, 34, 13, 3, 23, 34);
 
 	if (Engine_GameFlagIsSet(0x301) != 0)
 	{
 		SceneActor_PlaceAtTile(11, 35, 35);
-		Engine_MapCopyCellAttributes(24, 34, 1, 3, 23, 34);
+		Map_CopyCellAttributes(24, 34, 1, 3, 23, 34);
 	}
 	else
 	{
 		SceneActor_PlaceAtTile(11, 23, 35);
-		Engine_MapCopyCellAttributes(24, 34, 1, 3, 35, 34);
+		Map_CopyCellAttributes(24, 34, 1, 3, 35, 34);
 	}
 }
 
@@ -690,8 +689,8 @@ static void HaidiaDou_ApplyEntryState(void)
 			else if (Engine_GameFlagIsSet(0x204) != 0)
 			{
 				StagedActor_FillGridAttributeRectangle(0, 13, 15, 4, 2, flag);
-				Engine_MapCopyCellAttributes(14, 17, 2, 1, 14, 16);
-				Engine_MapCopyCellAttributes(14, 13, 1, 1, 14, 15);
+				Map_CopyCellAttributes(14, 17, 2, 1, 14, 16);
+				Map_CopyCellAttributes(14, 13, 1, 1, 14, 15);
 			}
 			else
 			{

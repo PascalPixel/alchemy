@@ -1036,13 +1036,12 @@ static void KareiMachi_StartWindowTransition(void)
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	if (Engine_GameFlagIsSet(0x915) != 0)
 	{
-		s32 k = 2;
-		Engine_MapCopyCellsTo(58, 5, 58, 8, k, 3);
+		Map_CopyCellsTo(58, 5, 58, 8, 2, 3);
 		{
 			s32 a = 8, b = 10;
-			Engine_MapCopyCellAttributes(8, 11, 2, 1, a, b);
+			Map_CopyCellAttributes(8, 11, 2, 1, a, 10);
 		}
-		Engine_MapCopyCellsTo(8, 12, 8, 11, k, 1);
+		Map_CopyCellsTo(8, 12, 8, 11, 2, 1);
 		Engine_MapRedraw();
 		Engine_TaskWait(1);
 	}
@@ -2094,8 +2093,8 @@ static void EV11_PSYNERGY(void)
 {
 	struct FieldActor *effect = Object_GetById(11);
 
-	Engine_MapCopyCellAttributes(0, 0, 1, 1, 9, 14);
-	Engine_MapCopyCellAttributes(0, 0, 1, 1, 9, 45);
+	Map_CopyCellAttributes(0, 0, 1, 1, 9, 14);
+	Map_CopyCellAttributes(0, 0, 1, 1, 9, 45);
 	if (effect != 0)
 	{
 		Engine_ActorSetSpriteFlags(effect, 0);

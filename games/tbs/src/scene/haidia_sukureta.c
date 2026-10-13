@@ -782,13 +782,13 @@ s32 HaidiaSukureta_RestoreEntryState(void)
 		}
 		v5 = 21;
 		Engine_EventEnd();
-		Engine_MapCopyCellAttributes(9, 24, 1, 1, 14, v5);
-		Engine_MapCopyCellAttributes(9, 24, 1, 1, 15, v5);
-		Engine_MapCopyCellAttributes(9, 24, 1, 1, 23, 19);
-		Engine_MapCopyCellAttributes(9, 24, 1, 1, 24, 19);
+		Map_CopyCellAttributes(9, 24, 1, 1, 14, v5);
+		Map_CopyCellAttributes(9, 24, 1, 1, 15, v5);
+		Map_CopyCellAttributes(9, 24, 1, 1, 23, 19);
+		Map_CopyCellAttributes(9, 24, 1, 1, 24, 19);
 		v5 = 20;
-		Engine_MapCopyCellAttributes(9, 24, 1, 1, 23, 20);
-		Engine_MapCopyCellAttributes(9, 24, 1, 1, 24, 20);
+		Map_CopyCellAttributes(9, 24, 1, 1, 23, 20);
+		Map_CopyCellAttributes(9, 24, 1, 1, 24, 20);
 	}
 	else
 	{

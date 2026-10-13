@@ -2521,22 +2521,20 @@ static void SceneState_InitActorSlots8To19(void)
 
 static void SceneState_ApplyFiveRectsAtColumn78(void)
 {
-	Engine_MapCopyCellsTo(78, 39, 78, 40, 5, 1);
-	Engine_MapCopyCellsTo(78, 39, 78, 41, 5, 1);
-	Engine_MapCopyCellsTo(78, 39, 79, 42, 4, 1);
-	Engine_MapCopyCellsTo(78, 39, 82, 43, 1, 1);
+	Map_CopyCellsTo(78, 39, 78, 40, 5, 1);
+	Map_CopyCellsTo(78, 39, 78, 41, 5, 1);
+	Map_CopyCellsTo(78, 39, 79, 42, 4, 1);
+	Map_CopyCellsTo(78, 39, 82, 43, 1, 1);
 	{
-		s32 x = 17;
-		s32 y = 40;
 
-		Engine_MapCopyCellAttributes(17, 38, 5, 2, x, y);
+		Map_CopyCellAttributes(17, 38, 5, 2, 17, 40);
 	}
 }
 
 static void DialogueLayout_ConfigureTwoRegions(void)
 {
-	Engine_MapCopyCellsTo(66, 61, 64, 40, 5, 4);
-	Engine_MapCopyCellAttributes(0, 0, 5, 4, 5, 39);
+	Map_CopyCellsTo(66, 61, 64, 40, 5, 4);
+	Map_CopyCellAttributes(0, 0, 5, 4, 5, 39);
 }
 
 static void FieldScene_RunStepThen10(s32 a)

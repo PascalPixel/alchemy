@@ -292,10 +292,8 @@ s32 FieldScene_InitSceneStateByStep(void)
 
 	if (scene == 5)
 	{
-		s32 fifth = 4;
-		s32 sixth = 3;
 
-		Engine_MapCopyCellsTo(0, 120, 8, 67, fifth, sixth);
+		Map_CopyCellsTo(0, 120, 8, 67, 4, 3);
 		zero = 0;
 		Object_GetById(8)->motion_flags = zero;
 		Object_GetById(8)->y.fixed = zero;

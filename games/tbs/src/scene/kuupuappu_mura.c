@@ -614,10 +614,8 @@ static void EV08_TOUCH(void)
 	Engine_AudioPlayCue(158);
 	Engine_MapAnimateCells(KuupuappuMura_Scene8Cells, 54, 13);
 	{
-		s32 cell = 23;
-		s32 row = 12;
 
-		Engine_MapCopyCellAttributes(33, 20, 1, 3, cell, row);
+		Map_CopyCellAttributes(33, 20, 1, 3, 23, 12);
 	}
 	actor->priority_flags &= ~1;
 	sprite->priority = 3;
@@ -632,10 +630,8 @@ static void EV09_TOUCH(void)
 	Engine_AudioPlayCue(158);
 	Engine_MapAnimateCells(KuupuappuMura_Scene9Cells, 49, 10);
 	{
-		s32 cell = 18;
-		s32 row = 10;
 
-		Engine_MapCopyCellAttributes(33, 20, 1, 3, cell, row);
+		Map_CopyCellAttributes(33, 20, 1, 3, 18, 10);
 	}
 	actor->priority_flags &= ~1;
 	sprite->priority = 3;
@@ -660,10 +656,8 @@ static void EV12_TOUCH(void)
 	Engine_AudioPlayCue(158);
 	Engine_MapAnimateCells(KuupuappuMura_Scene12Cells, 35, 9);
 	{
-		s32 cell = 4;
-		s32 row = 10;
 
-		Engine_MapCopyCellAttributes(33, 20, 1, 3, cell, row);
+		Map_CopyCellAttributes(33, 20, 1, 3, 4, 10);
 	}
 	actor->priority_flags &= ~1;
 	sprite->priority = 3;

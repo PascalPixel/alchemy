@@ -62,7 +62,6 @@
 #include "field_scene.h"
 #include "io_reg.h"
 #include "callback_scheduler.h"
-#include "call.h"
 #include "resource_ids.h"
 #include "field_service.h"
 #include "text/msg_ids.h"
@@ -1091,8 +1090,8 @@ static void EV36_TALK(s32 a0)
 			Camera_SetSpeed(0x30000, 0x6000);
 			Camera_MoveTo(0x3d80000, -1, 0xe80000, 1);
 			Engine_CameraWaitForMove();
-			/* FAKEMATCH: called through Value2, its result discarded; called directly or through Call2 it differs 2 on tbs-en. */
-			Value2(Engine_EventShowMessage, a0, 0);
+			/* FAKEMATCH: called through a cast to the s32 call type the bytes show, its result discarded (as call.h's Value2 did, 2026-10-13); called directly or through Call2 it differs 2 on tbs-en. */
+			((s32 (*)())Engine_EventShowMessage)(a0, 0);
 			KorosseoKabe_StartSupplementalSceneTask();
 			Event_ShowMessage(a0, 0);
 			Korosseo_FadeInCompetitor(0, 0x438, 0x108);
@@ -1152,8 +1151,8 @@ static void EV37_TALK(s32 a0)
 			Event_ShowMessage(a0, 0);
 			OverlayObject_PlaceWithScale14000(0, 0x348, 232);
 			Engine_EventWait(10);
-			/* FAKEMATCH: called through Value3, its result discarded; called directly or through Call3 it differs 2 on tbs-en. */
-			Value3(SceneActor_MovePairByTileOffset, 33, -64, 0);
+			/* FAKEMATCH: called through a cast to the s32 call type the bytes show, its result discarded (as call.h's Value3 did, 2026-10-13); called directly or through Call3 it differs 2 on tbs-en. */
+			((s32 (*)())SceneActor_MovePairByTileOffset)(33, -64, 0);
 			Camera_MoveTo(0x2f00000, -1, 0xd80000, 1);
 			Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 			Engine_EventWait(10);
@@ -1441,8 +1440,8 @@ static void FieldScene_RunLateSequence(s32 a0)
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(86);
 		Korosseo_LoadPortrait(8);
-		/* FAKEMATCH: called through Value2, its result discarded; called directly or through Call2 each of the two calls differs 2 on tbs-en, both 4. */
-		Value2(KorosseoKabe_InitializeModeTask, 3, 1);
+		/* FAKEMATCH: called through a cast to the s32 call type the bytes show, its result discarded (as call.h's Value2 did, 2026-10-13); called directly or through Call2 each of the two calls differs 2 on tbs-en, both 4. */
+		((s32 (*)())KorosseoKabe_InitializeModeTask)(3, 1);
 		Engine_EventWait(-a0 * 60 + 60);
 		kind = 0;
 	}
@@ -1451,8 +1450,8 @@ static void FieldScene_RunLateSequence(s32 a0)
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(a0 + 90);
 		Korosseo_LoadPortrait(4);
-		/* FAKEMATCH: called through Value2 like the call above; called directly or through Call2 it differs 2 on tbs-en. */
-		Value2(KorosseoKabe_InitializeModeTask, 3, 0);
+		/* FAKEMATCH: called through the s32 cast like the call above; called directly or through Call2 it differs 2 on tbs-en. */
+		((s32 (*)())KorosseoKabe_InitializeModeTask)(3, 0);
 		Engine_EventWait(a0 * 60 + 60);
 		kind = 8;
 	}

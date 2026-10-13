@@ -1712,7 +1712,7 @@ static void VinasuHeya_ResolveFloatingBlock(void)
 		}
 		if (block->sprite->priority == 3 && !GameFlag_IsSet(0x200 + i))
 		{
-			/* FAKEMATCH: the zero is taken before the priority call, in the search counter, so it is held in r5 across the call */
+			/* FAKEMATCH: forced temporary: the zero is the search counter's, set before the priority call, so movs r5, #0 follows the call as the bytes do. Plain forms measured 2026-10-13: block->bounce = 0 after the call differ 6 (CSE reuses GameFlag_IsSet's zero result, copied to r5 before the test); the same with the flag test first differ 18; the zero stored before the call differ 23. */
 			j = 0;
 			Engine_ActorSetSpritePriority(i + 10, 1);
 			block->bounce = j;

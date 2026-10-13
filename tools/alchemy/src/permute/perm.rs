@@ -511,7 +511,7 @@ pub fn count(nodes: &[Node]) -> Result<u64, String> {
     let groups = once_groups(nodes);
     for (key, options) in &groups {
         if options.len() == 1 {
-            return Err(format!("PERM_ONCE({key}) occurs only once, possible error?"));
+            return Err(format!("PERM_ONCE({key}) is used once; a key names choices shared by two or more places"));
         }
     }
     product(std::iter::once(inner_count(nodes)).chain(groups.iter().map(|(_, options)| Ok(options.len() as u64))))
@@ -624,7 +624,7 @@ fn eval_node(node: &Node, mut seed: u64, once: &[&Node], vars: &mut BTreeMap<Str
             let kind = match node {
                 Node::Randomize(_) => {
                     if text.contains("/* _permuter randomizer start */") {
-                        return Err("nested PERM_RANDOMIZE not supported".into());
+                        return Err("PERM_RANDOMIZE cannot hold another PERM_RANDOMIZE".into());
                     }
                     out.randomize.push(text.clone());
                     "randomizer"

@@ -1,7 +1,7 @@
 
 #include "game_state.h"
 #include "unit/scene/kuupuappu_heya_sai.h"
-#include "unit/scene/common/kuupuappu/itemobj.h"
+#include "unit/scene/common/kuupuappu_itemobj.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evbasic.h"
@@ -25,7 +25,7 @@
 #include "item_ids.h"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu/spotflag.c"
+#include "common/kuupuappu_spotflag.c"
 
 u8 *SceneData_GetScriptTable(void)
 {
@@ -143,11 +143,13 @@ static void EV18_TALK(void)
 			Engine_EventWait(20);
 			Engine_EventSetMessage((s32)MsgKuupuappuWowHaveManyThingsArent);
 			Event_ShowMessage(18, 0);
-			goto turn_back;
 		}
-		Engine_ItemShowFound(ITEM_BONE, 3);
-		Engine_PartyGiveItem(ITEM_BONE, 0);
-		GameFlag_Set(0x85b);
+		else
+		{
+			Engine_ItemShowFound(ITEM_BONE, 3);
+			Engine_PartyGiveItem(ITEM_BONE, 0);
+			GameFlag_Set(0x85b);
+		}
 	}
 	else
 	{
@@ -157,7 +159,6 @@ static void EV18_TALK(void)
 		Engine_EventWait(20);
 		Event_ShowMessage(18, 0);
 	}
-turn_back:;
 	Actor_FaceDirection(18, 0x4000, 0);
 	Engine_EventEnd();
 }
@@ -179,7 +180,7 @@ static void EV1040_PSYNERGY(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu/bone.c"
+#include "common/kuupuappu_bone.c"
 
 static void EV19_TALK(void)
 {
@@ -291,10 +292,8 @@ s32 FieldScene_InitSceneStateByStep(void)
 
 	if (scene == 5)
 	{
-		s32 fifth = 4;
-		s32 sixth = 3;
 
-		Engine_MapCopyCellsTo(0, 120, 8, 67, fifth, sixth);
+		Map_CopyCellsTo(0, 120, 8, 67, 4, 3);
 		zero = 0;
 		Object_GetById(8)->motion_flags = zero;
 		Object_GetById(8)->y.fixed = zero;
@@ -310,7 +309,7 @@ s32 FieldScene_InitSceneStateByStep(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu/itemobj.c"
+#include "common/kuupuappu_itemobj.c"
 
 struct SceneEntrance Placement_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },

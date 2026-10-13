@@ -106,8 +106,7 @@ struct LinkUnit
 	u8 side;
 };
 
-s32	  BattleParty_PrepareActiveOwners(u16 *unit_ids);
-s32	  Func_0801680c(void *source, s32 size);
+s32 BattleParty_PrepareActiveOwners(u16 *unit_ids);
 
 s32 LinkBattle_SendParty(void)
 {
@@ -133,7 +132,7 @@ s32 LinkBattle_SendParty(void)
 		Iwram_CopyWords(buffer, UnitGet(owners[i]), size);
 		((struct LinkUnit *)buffer)->side = 2;
 		work->owner_slots[owners[i]] = i - 128;
-		if (Func_0801680c(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+		if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
 			break;
 		SerialRuntime_WaitForTransferA();
 		WaitFrames(2);
@@ -141,7 +140,7 @@ s32 LinkBattle_SendParty(void)
 	for (; i <= 2; i++)
 	{
 		((struct LinkUnit *)buffer)->side = 0;
-		if (Func_0801680c(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+		if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_UNIT_BYTES) == -1)
 			break;
 		SerialRuntime_WaitForTransferA();
 		WaitFrames(2);
@@ -164,7 +163,7 @@ s32 LinkBattle_SendParty(void)
 		{
 		} while (0);
 	}
-	if (Func_0801680c(buffer, LINK_PARTY_OFFER_BYTES) != -1)
+	if (SerialRuntime_BeginTransferA(buffer, LINK_PARTY_OFFER_BYTES) != -1)
 	{
 		SerialRuntime_WaitForTransferA();
 		WaitFrames(1);

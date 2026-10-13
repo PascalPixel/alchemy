@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/scene/biribino_niwa.h"
-#include "unit/scene/common/object/orbit.h"
+#include "unit/scene/common/object_orbit.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"
@@ -38,7 +38,7 @@ static void BiribinoNiwa_RunGardenScene(void);
 static void FieldScene_OpenGate(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/facing.c"
+#include "common/object_facing.c"
 
 u8 *SceneData_GetScriptTable(void)
 {
@@ -137,68 +137,72 @@ static void EV12_TALK(void)
 			}
 			Engine_EventSetMessage((s32)MsgBiribinoMasterQuiteCranky);
 			Engine_EventShowMessage(12, 0);
-			goto done;
 		}
-		Engine_EventSetMessage((s32)MsgBiribinoLordMccoyDifficult);
-		Engine_EventShowMessage(12, 0);
+		else
+		{
+			Engine_EventSetMessage((s32)MsgBiribinoLordMccoyDifficult);
+			Engine_EventShowMessage(12, 0);
+			goto guard;
+		}
 	}
 	else
 	{
 		Engine_EventSetMessage((s32)MsgBiribinoLordOnlyMeet);
 		Engine_EventOpenMessage(12, 0);
-		if (Engine_EventChooseYesNo(0, 0) != 0)
+		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
-			goto declined;
+			gEventWork->message++;
+			Engine_EventShowMessageAndWait(12, 0, 10);
+			if (Object_GetById(0)->z.fixed < 0x10e0000)
+			{
+				Actor_SetSpeed(12, 0xcccc, 0x6666);
+				Actor_WalkToAndWait(0, 0x15a, 0x112);
+				Actor_WalkToAndWait(0, 0x148, 0x11a);
+				Actor_FaceDirection(0, 0xc000, 0);
+			}
+			Actor_FaceDirection(11, 0x1000, 0);
+			Actor_FaceDirection(12, 0x7000, 20);
+			Actor_ShowEmote(11, 0x102, 20);
+			Engine_ActorStartRepeatedMotion(11, 1);
+			Engine_EventShowMessageAndWait(11, 0, 10);
+			Actor_ShowEmote(12, 0x108, 60);
+			Engine_ActorStartRepeatedMotion(12, 1);
+			Engine_EventShowMessageAndWait(12, 0, 20);
+			Engine_ActorSetAnimation(11, 3);
+			Engine_ActorSetAnimationAndWait(12, 3);
+			Actor_FaceDirection(11, 0x3000, 0);
+			Actor_FaceDirection(12, 0x5000, 10);
+			Engine_ActorStartRepeatedMotion(11, 1);
+			Engine_EventShowMessageAndWait(11, 0, 20);
+			Actor_FaceDirection(11, 0xf000, 0);
+			Engine_ActorSetSpeed(12, 0x10000, 0x8000);
+			Object_GetById(12)->steering_flags &= ~ACTOR_FACES_MOTION;
+			Actor_WalkToAndWait(12, 0x15a, 0x107);
+			Engine_EventWait(1);
+			Object_GetById(12)->steering_flags |= ACTOR_FACES_MOTION;
+			Actor_SetSpeed(11, 0x9999, 0x4ccc);
+			Actor_WalkToAndWait(11, 0x148, 0x107);
+			Actor_WalkToAndWait(11, 0x148, 252);
+			Actor_FaceDirection(11, 0xc000, 10);
+			FieldScene_OpenGate();
+			Actor_WalkToAndWait(11, 0x148, 246);
+			/* FAKEMATCH: called without its prototype, the actor id loads after the two zeros. */
+			/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+			((s32 (*)())Engine_ActorSetPosition)(11, 0, 0);
+			/* FAKEMATCH: the do/while keeps this call after the argument setup of the previous one. Plain call or GameFlag_Set: differ 2. */
+			do
+			{
+				Engine_GameFlagSet(0x84a);
+			} while (0);
+		guard:
+			FieldObject_SetTargetAndCallback(12, 0x10000, BiribinoNiwa_GuardScript);
 		}
-		gEventWork->message++;
-		Engine_EventShowMessageAndWait(12, 0, 10);
-		if (Object_GetById(0)->z.fixed < 0x10e0000)
+		else
 		{
-			Actor_SetSpeed(12, 0xcccc, 0x6666);
-			Actor_WalkToAndWait(0, 0x15a, 0x112);
-			Actor_WalkToAndWait(0, 0x148, 0x11a);
-			Actor_FaceDirection(0, 0xc000, 0);
+			Engine_EventShowMessage(12, 0);
+			Actor_FaceDirection(12, 0x3000, 10);
 		}
-		Actor_FaceDirection(11, 0x1000, 0);
-		Actor_FaceDirection(12, 0x7000, 20);
-		Actor_ShowEmote(11, 0x102, 20);
-		Engine_ActorStartRepeatedMotion(11, 1);
-		Engine_EventShowMessageAndWait(11, 0, 10);
-		Actor_ShowEmote(12, 0x108, 60);
-		Engine_ActorStartRepeatedMotion(12, 1);
-		Engine_EventShowMessageAndWait(12, 0, 20);
-		Engine_ActorSetAnimation(11, 3);
-		Engine_ActorSetAnimationAndWait(12, 3);
-		Actor_FaceDirection(11, 0x3000, 0);
-		Actor_FaceDirection(12, 0x5000, 10);
-		Engine_ActorStartRepeatedMotion(11, 1);
-		Engine_EventShowMessageAndWait(11, 0, 20);
-		Actor_FaceDirection(11, 0xf000, 0);
-		Engine_ActorSetSpeed(12, 0x10000, 0x8000);
-		Object_GetById(12)->steering_flags &= ~ACTOR_FACES_MOTION;
-		Actor_WalkToAndWait(12, 0x15a, 0x107);
-		Engine_EventWait(1);
-		Object_GetById(12)->steering_flags |= ACTOR_FACES_MOTION;
-		Actor_SetSpeed(11, 0x9999, 0x4ccc);
-		Actor_WalkToAndWait(11, 0x148, 0x107);
-		Actor_WalkToAndWait(11, 0x148, 252);
-		Actor_FaceDirection(11, 0xc000, 10);
-		FieldScene_OpenGate();
-		Actor_WalkToAndWait(11, 0x148, 246);
-		/* FAKEMATCH: called without its prototype, the actor id loads after the two zeros. */
-		((s32 (*)())Engine_ActorSetPosition)(11, 0, 0);
-		/* FAKEMATCH: the do/while keeps this call after the argument setup of the previous one. Plain call or GameFlag_Set: differ 2. */
-		do
-		{
-			Engine_GameFlagSet(0x84a);
-		} while (0);
 	}
-	FieldObject_SetTargetAndCallback(12, 0x10000, BiribinoNiwa_GuardScript);
-	goto done;
-declined:
-	Engine_EventShowMessage(12, 0);
-	Actor_FaceDirection(12, 0x3000, 10);
-done:
 	Engine_EventEnd();
 }
 
@@ -366,7 +370,7 @@ static void FieldScene_OpenGate(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/orbit.c"
+#include "common/object_orbit.c"
 
 u16 Niwa_GateCells[] = {
 	MAP_CELL_STEP(34, 25, 1, 3, 5), MAP_CELL_STEP(35, 25, 1, 3, 5), MAP_CELL_STEP(36, 25, 1, 3, 5), MAP_CELL_STEPS_END,

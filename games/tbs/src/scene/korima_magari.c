@@ -1,7 +1,7 @@
 #include "battle_effect_runtime.h"
 #include "unit/import.h"
 #include "unit/scene/korima_magari.h"
-#include "unit/scene/common/korima/palette.h"
+#include "unit/scene/common/korima_palette.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"
@@ -78,7 +78,7 @@ u8 *KorimaMagari_GetEvents(void)
 static void EV11_SCRIPT(void)
 {
 	Scene_PushBlockAlongRun(gKorimaMagariRecords);
-	Engine_MapCopyCellAttributes(0, 0x40, 0x20, 0x20, 0, 0);
+	Map_CopyCellAttributes(0, 0x40, 0x20, 0x20, 0, 0);
 	State_StampRecordCells((s32)gKorimaMagariRecords, 0xff);
 	State_ApplyRectByLayoutSelector();
 }
@@ -107,7 +107,7 @@ struct TileRun2
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/map/panel.c"
+#include "common/map.c"
 
 static void State_ApplyRectByLayoutSelector(void)
 {
@@ -238,7 +238,6 @@ static void KorimaMagari_CaptureShakeScroll(void)
 
 static void EV09_SEARCH(void)
 {
-	s32 v5;
 	s32 v3;
 
 	Engine_EventBegin();
@@ -247,57 +246,54 @@ static void EV09_SEARCH(void)
 	Engine_CameraWaitForMove();
 	Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
 	Engine_AudioPlayCue(232);
-	if (*gKorimaMagariLayout != 0)
-	{
-	}
-	else
+	if (*gKorimaMagariLayout == 0)
 	{
 		Actor_SetPosition(9, 0x1000000, 0x1ce0000);
-		Engine_MapCopyCells(77, 34, 1, 2, 83, 25);
+		Map_CopyCells(77, 34, 1, 2, 83, 25);
 		Engine_TaskWait(3);
-		Engine_MapCopyCells(78, 34, 1, 2, 83, 25);
+		Map_CopyCells(78, 34, 1, 2, 83, 25);
 		Engine_TaskWait(3);
-		Engine_MapCopyCells(79, 34, 1, 2, 83, 25);
-		v5 = 79;
+		Map_CopyCells(79, 34, 1, 2, 83, 25);
 		Engine_TaskWait(30);
-		Engine_MapCopyCells(67, 34, 2, 5, v5, 25);
+		Map_CopyCells(67, 34, 2, 5, 79, 25);
 		Engine_TaskWait(6);
-		Engine_MapCopyCells(69, 34, 2, 5, v5, 25);
+		Map_CopyCells(69, 34, 2, 5, 79, 25);
 		Engine_ActorSetAnimation(9, 1);
 		Engine_AudioPlayCue(240);
 		Engine_TaskWait(6);
-		Engine_MapCopyCells(71, 34, 2, 5, v5, 25);
+		Map_CopyCells(71, 34, 2, 5, 79, 25);
 		Engine_TaskWait(6);
-		Engine_MapCopyCells(73, 34, 2, 5, v5, 25);
-		Engine_MapCopyCells(75, 38, 2, 1, v5, 29);
+		Map_CopyCells(73, 34, 2, 5, 79, 25);
+		Map_CopyCells(75, 38, 2, 1, 79, 29);
 		Engine_TaskWait(4);
-		Engine_MapCopyCells(77, 38, 2, 1, v5, 29);
+		Map_CopyCells(77, 38, 2, 1, 79, 29);
 		Engine_TaskWait(6);
-		Engine_MapCopyCells(79, 38, 2, 1, v5, 29);
+		Map_CopyCells(79, 38, 2, 1, 79, 29);
 		Engine_TaskWait(8);
-		Engine_MapCopyCells(65, 53, 2, 1, v5, 29);
+		Map_CopyCells(65, 53, 2, 1, 79, 29);
 		Map_CopyCells(65, 40, 2, 4, 15, 28);
-		goto draw_panels;
 	}
-	Actor_SetPosition(9, 0x1000000, 0x1e00000);
-	Engine_MapCopyCells(78, 34, 1, 2, 83, 25);
-	Engine_TaskWait(3);
-	Engine_MapCopyCells(77, 34, 1, 2, 83, 25);
-	Engine_TaskWait(3);
-	Engine_MapCopyCells(76, 34, 1, 2, 83, 25);
-	Engine_TaskWait(30);
-	Map_CopyCells(65, 45, 2, 4, 15, 28);
-	Engine_MapCopyCells(71, 50, 2, 5, 79, 25);
-	Engine_ActorSetAnimation(9, 2);
-	Engine_AudioPlayCue(230);
-	Engine_TaskWait(6);
-	Engine_MapCopyCells(69, 50, 2, 5, 79, 25);
-	Engine_TaskWait(6);
-	Engine_MapCopyCells(67, 50, 2, 5, 79, 25);
-	Engine_TaskWait(6);
-	Engine_MapCopyCells(65, 50, 2, 5, 79, 25);
-	Engine_TaskWait(30);
-draw_panels:;
+	else
+	{
+		Actor_SetPosition(9, 0x1000000, 0x1e00000);
+		Map_CopyCells(78, 34, 1, 2, 83, 25);
+		Engine_TaskWait(3);
+		Map_CopyCells(77, 34, 1, 2, 83, 25);
+		Engine_TaskWait(3);
+		Map_CopyCells(76, 34, 1, 2, 83, 25);
+		Engine_TaskWait(30);
+		Map_CopyCells(65, 45, 2, 4, 15, 28);
+		Map_CopyCells(71, 50, 2, 5, 79, 25);
+		Engine_ActorSetAnimation(9, 2);
+		Engine_AudioPlayCue(230);
+		Engine_TaskWait(6);
+		Map_CopyCells(69, 50, 2, 5, 79, 25);
+		Engine_TaskWait(6);
+		Map_CopyCells(67, 50, 2, 5, 79, 25);
+		Engine_TaskWait(6);
+		Map_CopyCells(65, 50, 2, 5, 79, 25);
+		Engine_TaskWait(30);
+	}
 	if (*gKorimaMagariLayout == 0)
 	{
 		Map_DrawCellPanel(9, 19, 16, 5, *gKorimaMagariLayout, 9, 30);
@@ -348,7 +344,6 @@ draw_panels:;
 
 static void EV13_TOUCH(void)
 {
-	s32 v5;
 
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(0, 8);
@@ -366,17 +361,15 @@ static void EV13_TOUCH(void)
 	Engine_ActorWaitForMove(8);
 	Engine_ActorSetAnimation(8, 1);
 	Engine_AudioPlayCue(0x120);
-	v5 = 9;
 	Engine_AudioPlayCue(213);
-	Engine_MapCopyCellAttributes(5, 9, 1, 4, 6, v5);
-	Engine_MapCopyCellAttributes(0, 0, 1, 4, 4, v5);
+	Map_CopyCellAttributes(5, 9, 1, 4, 6, 9);
+	Map_CopyCellAttributes(0, 0, 1, 4, 4, 9);
 	*gKorimaMagariReturned = 1;
 	Engine_EventEnd();
 }
 
 static void EV12_TOUCH(void)
 {
-	s32 v5;
 
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(0, 8);
@@ -394,10 +387,9 @@ static void EV12_TOUCH(void)
 	Engine_ActorWaitForMove(8);
 	Engine_ActorSetAnimation(8, 1);
 	Engine_AudioPlayCue(0x120);
-	v5 = 9;
 	Engine_AudioPlayCue(213);
-	Engine_MapCopyCellAttributes(5, 9, 1, 4, 4, v5);
-	Engine_MapCopyCellAttributes(0, 0, 1, 4, 6, v5);
+	Map_CopyCellAttributes(5, 9, 1, 4, 4, 9);
+	Map_CopyCellAttributes(0, 0, 1, 4, 6, 9);
 	*gKorimaMagariReturned = 0;
 	Engine_EventEnd();
 }
@@ -409,9 +401,9 @@ s32 KorimaMagari_SetupBoard(void)
 	gKorimaMagariReturned = (u16 *)gSceneState;
 	(*(u16 **)&gKorimaMagariLayout) = (u16 *)gSceneState + 1;
 	gKorimaMagariRecords = (s16 *)gSceneState + 2;
-	Engine_MapCopyCells(32, 0, 64, 32, 0, 64);
-	Engine_MapCopyCellAttributes(0, 0, 32, 32, 0, 64);
-	Engine_MapCopyCellAttributes(32, 0, 32, 32, 0, 32);
+	Map_CopyCells(32, 0, 64, 32, 0, 64);
+	Map_CopyCellAttributes(0, 0, 32, 32, 0, 64);
+	Map_CopyCellAttributes(32, 0, 32, 32, 0, 32);
 	if (Engine_GameFlagIsSet(0x109) == 0)
 	{
 		Dma_Set(KorimaMagari_DefaultRecords, gKorimaMagariRecords, DMA_ENABLE32 | DMA_32BIT | 0x12,
@@ -616,7 +608,7 @@ static void Scene_PushBlockAlongRun(struct TileRun2 *runs)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima/palette.c"
+#include "common/korima_palette.c"
 
 u32 KorimaMagari_DefaultRecords[] = {
 	0xb00cd, 0x10009, 0, 0xc00cf, 12, 0, 0x1100cf, 12,

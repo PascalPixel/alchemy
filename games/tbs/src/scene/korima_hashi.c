@@ -2,7 +2,7 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/scene/korima_hashi.h"
-#include "unit/scene/korima_hashi_falling_effect.h"
+#include "unit/scene/common/korima_hashi_falling_effect.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/marker.h"
@@ -53,7 +53,7 @@ extern s32 KorimaHashi_PartyFlag;
 extern s32 KorimaHashi_SparkleSound;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/staged_actor.c"
+#include "common/object_staged_actor.c"
 
 static s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object)
 {
@@ -134,7 +134,7 @@ static void EV10_SCRIPT(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima/jump.c"
+#include "common/korima_jump.c"
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
@@ -892,116 +892,119 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 		}
 		Engine_ActorSetAnimation(MEARI, 3);
 		Engine_ActorSetAnimationAndWait(GERALD, 3);
-		goto ivan_bows;
-	}
-	Engine_EventWait(20);
-	Engine_ActorSetAnimationAndWait(GERALD, 3);
-	Engine_EventWait(10);
-	Engine_EventSetMessage((s32)MsgKorimaYoureRobinThereIsntMuch);
-	Event_SayThenWait(GERALD, 10);
-	Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
-	SceneActor_SetPairZeroAndValue(0, 0x6000, 20);
-	Engine_ActorSetAnimation(GERALD, 3);
-	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-	Engine_EventWait(10);
-	Engine_ActorSetAnimationAndWait(IWAN, 4);
-	Event_OpenMessage(IWAN, 0);
-	if (Engine_EventChooseYesNo(0, 0) == 0)
-	{
-		Engine_EventWait(20);
-		Actor_ShowEmote(IWAN, 0x103, 0);
-		Engine_EventWait(40);
-		SceneActor_SetPairZeroAndValue(2, 0xe000, 10);
-		Event_SayThenWait(IWAN, 10);
-		if (*party_flag != 0)
-		{
-			SceneActor_SetPairZeroAndValue(3, 0, 10);
-			Engine_ActorStartRepeatedMotion(MEARI, 3);
-			Event_SayThenWait(MEARI, 20);
-		}
-		else
-		{
-			gEventWork->message += 1;
-		}
-		Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-		Actor_ShowEmote(GERALD, 0x102, 0);
-		Engine_EventWait(40);
-		Engine_ActorRunRepeatedMotion(GERALD, 2);
-		Event_SayThenWait(GERALD, 20);
-		Actor_ShowEmote(GERALD, 0x105, 0);
-		Engine_EventWait(120);
-		Event_SayThenWait(IWAN, 40);
-		if (KorimaHashi_PartyFlag != 0)
-		{
-			SceneActor_SetPairZeroAndValue(3, 0x2000, 10);
-			Engine_ActorSetAnimationAndWait(MEARI, 4);
-			Event_SayThenWait(MEARI, 10);
-		}
-		else
-		{
-			gEventWork->message += 1;
-		}
-		Engine_EventWait(60);
-		Engine_ActorRunRepeatedMotion(IWAN, 2);
-		if (KorimaHashi_PartyFlag != 0)
-		{
-			SceneActor_SetPairZeroAndValue(2, 0xa000, 40);
-			SceneActor_SetPairZeroAndValue(2, 0xe000, 20);
-		}
-		Event_SayThenWait(IWAN, 10);
-		Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-		Engine_ActorRunRepeatedMotion(GERALD, 2);
-		Engine_EventWait(40);
-		Event_SayThenWait(IWAN, 20);
-		Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-		Engine_ActorSetAnimationAndWait(GERALD, 3);
-		Engine_EventWait(20);
-		Engine_ActorSetAnimation(MEARI, 3);
-	ivan_bows:;
 		Engine_ActorSetAnimationAndWait(IWAN, 3);
-		goto leave;
-	}
-	Actor_ShowEmote(IWAN, 0x105, 0);
-	Engine_EventWait(40);
-	Engine_ActorSetAnimationAndWait(IWAN, 3);
-	Engine_EventSetMessage((s32)MsgKorimaThatsReliefRobinThoughtYoud);
-	Event_SayThenWait(IWAN, 20);
-	if (*party_flag != 0)
-	{
-		SceneActor_SetPairZeroAndValue(3, 0, 10);
-		Engine_ActorStartRepeatedMotion(MEARI, 1);
-		Event_SayThenWait(MEARI, 20);
 	}
 	else
 	{
-		gEventWork->message += 1;
+		Engine_EventWait(20);
+		Engine_ActorSetAnimationAndWait(GERALD, 3);
+		Engine_EventWait(10);
+		Engine_EventSetMessage((s32)MsgKorimaYoureRobinThereIsntMuch);
+		Event_SayThenWait(GERALD, 10);
+		Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
+		SceneActor_SetPairZeroAndValue(0, 0x6000, 20);
+		Engine_ActorSetAnimation(GERALD, 3);
+		Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+		Engine_EventWait(10);
+		Engine_ActorSetAnimationAndWait(IWAN, 4);
+		Event_OpenMessage(IWAN, 0);
+		if (Engine_EventChooseYesNo(0, 0) == 0)
+		{
+			Engine_EventWait(20);
+			Actor_ShowEmote(IWAN, 0x103, 0);
+			Engine_EventWait(40);
+			SceneActor_SetPairZeroAndValue(2, 0xe000, 10);
+			Event_SayThenWait(IWAN, 10);
+			if (*party_flag != 0)
+			{
+				SceneActor_SetPairZeroAndValue(3, 0, 10);
+				Engine_ActorStartRepeatedMotion(MEARI, 3);
+				Event_SayThenWait(MEARI, 20);
+			}
+			else
+			{
+				gEventWork->message += 1;
+			}
+			Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
+			Actor_ShowEmote(GERALD, 0x102, 0);
+			Engine_EventWait(40);
+			Engine_ActorRunRepeatedMotion(GERALD, 2);
+			Event_SayThenWait(GERALD, 20);
+			Actor_ShowEmote(GERALD, 0x105, 0);
+			Engine_EventWait(120);
+			Event_SayThenWait(IWAN, 40);
+			if (KorimaHashi_PartyFlag != 0)
+			{
+				SceneActor_SetPairZeroAndValue(3, 0x2000, 10);
+				Engine_ActorSetAnimationAndWait(MEARI, 4);
+				Event_SayThenWait(MEARI, 10);
+			}
+			else
+			{
+				gEventWork->message += 1;
+			}
+			Engine_EventWait(60);
+			Engine_ActorRunRepeatedMotion(IWAN, 2);
+			if (KorimaHashi_PartyFlag != 0)
+			{
+				SceneActor_SetPairZeroAndValue(2, 0xa000, 40);
+				SceneActor_SetPairZeroAndValue(2, 0xe000, 20);
+			}
+			Event_SayThenWait(IWAN, 10);
+			Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+			Engine_ActorRunRepeatedMotion(GERALD, 2);
+			Engine_EventWait(40);
+			Event_SayThenWait(IWAN, 20);
+			Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+			Engine_ActorSetAnimationAndWait(GERALD, 3);
+			Engine_EventWait(20);
+			Engine_ActorSetAnimation(MEARI, 3);
+			Engine_ActorSetAnimationAndWait(IWAN, 3);
+		}
+		else
+		{
+			Actor_ShowEmote(IWAN, 0x105, 0);
+			Engine_EventWait(40);
+			Engine_ActorSetAnimationAndWait(IWAN, 3);
+			Engine_EventSetMessage((s32)MsgKorimaThatsReliefRobinThoughtYoud);
+			Event_SayThenWait(IWAN, 20);
+			if (*party_flag != 0)
+			{
+				SceneActor_SetPairZeroAndValue(3, 0, 10);
+				Engine_ActorStartRepeatedMotion(MEARI, 1);
+				Event_SayThenWait(MEARI, 20);
+			}
+			else
+			{
+				gEventWork->message += 1;
+			}
+			Actor_ShowEmote(GERALD, 0x102, 0);
+			Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
+			Engine_EventWait(40);
+			Engine_ActorRunRepeatedMotion(GERALD, 2);
+			Event_SayThenWait(GERALD, 20);
+			Actor_ShowEmote(IWAN, 0x105, 0);
+			Engine_EventWait(80);
+			Event_SayThenWait(IWAN, 40);
+			if (KorimaHashi_PartyFlag != 0)
+			{
+				SceneActor_SetPairZeroAndValue(3, 0x2000, 20);
+				Engine_ActorSetAnimation(MEARI, 4);
+				Event_SayThenWait(MEARI, 40);
+			}
+			else
+			{
+				gEventWork->message += 1;
+			}
+			Engine_ActorRunRepeatedMotion(IWAN, 2);
+			Engine_EventWait(20);
+			Event_SayThenWait(IWAN, 20);
+			Engine_ActorStartRepeatedMotion(GERALD, 2);
+			Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+			Engine_EventWait(40);
+			Event_SayThenWait(IWAN, 20);
+		}
 	}
-	Actor_ShowEmote(GERALD, 0x102, 0);
-	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-	Engine_EventWait(40);
-	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	Event_SayThenWait(GERALD, 20);
-	Actor_ShowEmote(IWAN, 0x105, 0);
-	Engine_EventWait(80);
-	Event_SayThenWait(IWAN, 40);
-	if (KorimaHashi_PartyFlag != 0)
-	{
-		SceneActor_SetPairZeroAndValue(3, 0x2000, 20);
-		Engine_ActorSetAnimation(MEARI, 4);
-		Event_SayThenWait(MEARI, 40);
-	}
-	else
-	{
-		gEventWork->message += 1;
-	}
-	Engine_ActorRunRepeatedMotion(IWAN, 2);
-	Engine_EventWait(20);
-	Event_SayThenWait(IWAN, 20);
-	Engine_ActorStartRepeatedMotion(GERALD, 2);
-	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-	Engine_EventWait(40);
-	Event_SayThenWait(IWAN, 20);
-leave:;
 	Event_PlayCue(17);
 	Actor_SetSpeed(GERALD, 0x13333, 0x9999);
 	Actor_SetSpeed(IWAN, 0x13333, 0x9999);
@@ -1062,7 +1065,7 @@ static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima/grow.c"
+#include "common/korima_grow.c"
 
 static void SceneEffect_SpawnObject26EveryEightFrames(void)
 {
@@ -1104,7 +1107,7 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima/blink.c"
+#include "common/korima_blink.c"
 
 static s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0)
 {
@@ -1113,11 +1116,10 @@ static s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0)
 	if (KorimaHashi_PartyFlag != 0)
 	{
 		x = arg0->x.fixed;
-		if (x > 0xc00000 && x < 0x1120000 && arg0->z.fixed > 0x2360000 && arg0->z.fixed < 0x2640000)
-		{
-			goto hit;
-		}
-		if (x > 0xca0000 && x < 0xff0000 && arg0->z.fixed > 0x2250000 && arg0->z.fixed < 0x2780000)
+		if ((x > 0xc00000 && x < 0x1120000 && arg0->z.fixed > 0x2360000
+				&& arg0->z.fixed < 0x2640000)
+			|| (x > 0xca0000 && x < 0xff0000 && arg0->z.fixed > 0x2250000
+				&& arg0->z.fixed < 0x2780000))
 		{
 			goto hit;
 		}
@@ -1125,16 +1127,12 @@ static s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0)
 	else
 	{
 		x = arg0->x.fixed;
-		if (x > 0xc00000 && x < 0xf40000 && arg0->z.fixed > 0x2250000 && arg0->z.fixed <= 0x248ffff)
-		{
-			goto hit;
-		}
-		if (x > 0xf40000 && x < 0x1120000 && arg0->z.fixed > 0x23b0000
-			&& arg0->z.fixed <= 0x25cffff)
-		{
-			goto hit;
-		}
-		if (x > 0xd30000 && x < 0xff0000 && arg0->z.fixed > 0x2540000 && arg0->z.fixed < 0x2780000)
+		if ((x > 0xc00000 && x < 0xf40000 && arg0->z.fixed > 0x2250000
+				&& arg0->z.fixed <= 0x248ffff)
+			|| (x > 0xf40000 && x < 0x1120000 && arg0->z.fixed > 0x23b0000
+				&& arg0->z.fixed <= 0x25cffff)
+			|| (x > 0xd30000 && x < 0xff0000 && arg0->z.fixed > 0x2540000
+				&& arg0->z.fixed < 0x2780000))
 		{
 			goto hit;
 		}
@@ -1142,13 +1140,14 @@ static s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0)
 	return 0;
 hit:
 	Engine_AudioPlayCue(106);
+	/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 	((s32 (*)())Engine_ObjectSetScript)((s32)arg0, (s32)KorimaHashi_TriggerScript);
 	KorimaHashi_TriggerPending = 1;
 	return 0;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "korima_hashi_falling_effect.c"
+#include "common/korima_hashi_falling_effect.c"
 s32 KorimaHashi_TriggerPending __attribute__((section(".bss")));
 s32 KorimaHashi_PartyFlag __attribute__((section(".bss")));
 s32 KorimaHashi_SparkleSound __attribute__((section(".bss")));

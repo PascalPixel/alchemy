@@ -19,7 +19,8 @@ goto statements (a device that needs no tag; library C apart), and\n\
 fails when a count rises above tools/alchemy/devices.tsv. --update writes\n\
 the current counts there; lower them whenever a device goes.";
 
-pub(crate) const KINDS: [&str; 5] = ["register-pin", "asm-barrier", "inline-asm", "volatile", "goto"];
+pub(crate) const KINDS: [&str; 7] =
+    ["register-pin", "asm-barrier", "inline-asm", "volatile", "goto", "one-pass", "tagged-macro"];
 
 pub(crate) type Counts = BTreeMap<(String, String), usize>;
 
@@ -101,12 +102,14 @@ fn ratchet(baseline: &Counts, counts: &Counts) -> Vec<String> {
 pub(crate) fn summary(counts: &Counts, game: &str) -> String {
     let get = |kind: &str| counts.get(&(game.to_string(), kind.to_string())).copied().unwrap_or(0);
     format!(
-        "; devices: {} register pins, {} asm barriers, {} inline asm, {} volatile, {} goto",
+        "; devices: {} register pins, {} asm barriers, {} inline asm, {} volatile, {} goto, {} one-pass blocks, {} other tagged macro uses",
         get("register-pin"),
         get("asm-barrier"),
         get("inline-asm"),
         get("volatile"),
-        get("goto")
+        get("goto"),
+        get("one-pass"),
+        get("tagged-macro")
     )
 }
 
@@ -133,6 +136,14 @@ pub(crate) fn count(root: &Path) -> Result<Counts, String> {
             }
         }
     }
+    // Macros a FAKEMATCH tag explains count at each use, by the device
+    // their body holds (S2: every device is counted, a macro's too).
+    let mut tagged: BTreeMap<String, Vec<usize>> = BTreeMap::new();
+    for (_, text) in &sources {
+        for (name, kinds) in tagged_macros(text) {
+            tagged.insert(name, kinds);
+        }
+    }
     let mut counts = Counts::new();
     for (game, _, _) in &games {
         for kind in KINDS {
@@ -152,7 +163,7 @@ pub(crate) fn count(root: &Path) -> Result<Counts, String> {
             {
                 continue;
             }
-            let found = devices(&without_proven(&code_only(text)), &emitting);
+            let found = devices(&without_proven(&code_only(text)), &emitting, &tagged);
             for (kind, value) in KINDS.iter().zip(found) {
                 *counts.get_mut(&(game.to_string(), kind.to_string())).unwrap() += value;
             }
@@ -247,9 +258,85 @@ fn instruction(template: &str) -> bool {
             || matches!(template, "nop" | "ret" | "eret" | "wfi" | "wfe" | "sev" | "yield"))
 }
 
+/// The names of every macro under games/ a FAKEMATCH tag explains, read
+/// once per run.
+pub(crate) fn tagged_macro_names(root: &Path) -> &'static BTreeSet<String> {
+    static NAMES: std::sync::OnceLock<BTreeSet<String>> = std::sync::OnceLock::new();
+    NAMES.get_or_init(|| {
+        let mut names = BTreeSet::new();
+        for entry in walkdir::WalkDir::new(root.join("games")).into_iter().flatten() {
+            let path = entry.path();
+            if !matches!(path.extension().and_then(|e| e.to_str()), Some("c" | "h")) {
+                continue;
+            }
+            if let Ok(bytes) = fs::read(path) {
+                names.extend(tagged_macros(&String::from_utf8_lossy(&bytes)).into_iter().map(|(name, _)| name));
+            }
+        }
+        names
+    })
+}
+
+/// Each macro a FAKEMATCH tag explains, with the KINDS indexes of the
+/// devices its body holds: the tag in the comment right above its
+/// #define, or in its body. A body with no device the count knows by kind
+/// (a forced temporary, a cast) is a tagged-macro use.
+fn tagged_macros(text: &str) -> Vec<(String, Vec<usize>)> {
+    let lines: Vec<&str> = text.lines().collect();
+    let define = regex::Regex::new(r"^\s*#\s*define\s+([A-Za-z_][A-Za-z0-9_]*)").expect("static pattern");
+    let comment = regex::Regex::new(r"^\s*(/\*|\*|//)|\*/\s*$").expect("static pattern");
+    let mut found = Vec::new();
+    for (i, line) in lines.iter().enumerate() {
+        let Some(name) = define.captures(line).map(|c| c[1].to_string()) else { continue };
+        let mut body = line.to_string();
+        let mut j = i;
+        while lines[j].trim_end().ends_with('\\') && j + 1 < lines.len() {
+            j += 1;
+            body.push('\n');
+            body.push_str(lines[j]);
+        }
+        let mut above = String::new();
+        let mut k = i;
+        while k > 0 && comment.is_match(lines[k - 1]) {
+            k -= 1;
+            above.insert_str(0, lines[k]);
+        }
+        if !(above.contains("FAKEMATCH") || body.contains("FAKEMATCH")) {
+            continue;
+        }
+        let code = code_only(&body);
+        let templates = asm_statements(&code);
+        let mut kinds = Vec::new();
+        if templates.iter().any(|t| register(t.trim())) {
+            kinds.push(0);
+        }
+        if templates.iter().any(|t| t.trim().is_empty()) {
+            kinds.push(1);
+        }
+        let volatile = code.matches("volatile").count() > templates.len();
+        if volatile {
+            kinds.push(3);
+        }
+        if one_pass(&code) > 0 {
+            kinds.push(5);
+        }
+        if kinds.is_empty() {
+            kinds.push(6);
+        }
+        found.push((name, kinds));
+    }
+    found
+}
+
+/// One-pass blocks: `do { ... } while (0)`, which ends CSE's block and is a
+/// scheduling barrier (S2 names it a device).
+fn one_pass(code: &str) -> usize {
+    regex::Regex::new(r"\}\s*while\s*\(\s*0\s*\)").expect("static pattern").find_iter(code).count()
+}
+
 /// Counts in KINDS order over one file, outside #define bodies (a macro's
 /// devices count where it is used).
-fn devices(code: &str, emitting: &BTreeSet<String>) -> [usize; 5] {
+fn devices(code: &str, emitting: &BTreeSet<String>, tagged: &BTreeMap<String, Vec<usize>>) -> [usize; 7] {
     let mut plain = String::with_capacity(code.len());
     let mut lines = code.lines();
     while let Some(line) = lines.next() {
@@ -276,6 +363,7 @@ fn devices(code: &str, emitting: &BTreeSet<String>) -> [usize; 5] {
     let word = regex::Regex::new(r"[A-Za-z_][A-Za-z0-9_]*").expect("static pattern");
     let mut volatile = 0;
     let mut gotos = 0;
+    let mut macro_uses = [0usize; 7];
     for line in plain.lines() {
         for found in word.find_iter(line) {
             if emitting.contains(found.as_str()) {
@@ -283,6 +371,11 @@ fn devices(code: &str, emitting: &BTreeSet<String>) -> [usize; 5] {
             }
             if found.as_str() == "goto" {
                 gotos += 1;
+            }
+            if let Some(kinds) = tagged.get(found.as_str()) {
+                for kind in kinds {
+                    macro_uses[*kind] += 1;
+                }
             }
         }
         if line.contains("volatile") && !hardware(line) {
@@ -293,7 +386,15 @@ fn devices(code: &str, emitting: &BTreeSet<String>) -> [usize; 5] {
                 - line.matches("__asm__ __volatile__").count();
         }
     }
-    [pins, barriers, inline, volatile, gotos]
+    [
+        pins + macro_uses[0],
+        barriers + macro_uses[1],
+        inline,
+        volatile + macro_uses[3],
+        gotos,
+        one_pass(&plain) + macro_uses[5],
+        macro_uses[6],
+    ]
 }
 
 /// A line about the hardware: registers, I/O or video memory addresses.
@@ -313,7 +414,7 @@ mod tests {
         assert!(instruction("swi 2; mov r0, r1"));
         assert!(instruction("nop"));
         assert!(!instruction("Resource_Table"));
-        assert_eq!(devices("asm(\"swi 2; mov r0, r1\"); asm(\"nop\");", &BTreeSet::new()), [0, 0, 2, 0, 0]);
+        assert_eq!(devices("asm(\"swi 2; mov r0, r1\"); asm(\"nop\");", &BTreeSet::new(), &BTreeMap::new()), [0, 0, 2, 0, 0, 0, 0]);
     }
 
     #[test]
@@ -329,7 +430,7 @@ mod tests {
              STEER(a);\n",
         );
         let emitting = BTreeSet::from(["STEER".to_string()]);
-        assert_eq!(devices(&code, &emitting), [1, 2, 3, 1, 0]);
+        assert_eq!(devices(&code, &emitting, &BTreeMap::new()), [1, 2, 3, 1, 0, 0, 0]);
     }
 
     #[test]
@@ -338,7 +439,7 @@ mod tests {
         let bodies = macro_bodies(&code);
         assert_eq!(bodies[0].0, "STEER");
         assert!(asm_statements(&bodies[0].1).iter().any(|t| instruction(t)));
-        assert_eq!(devices(&code, &BTreeSet::new()), [0, 0, 0, 0, 0]);
+        assert_eq!(devices(&code, &BTreeSet::new(), &BTreeMap::new()), [0, 0, 0, 0, 0, 0, 0]);
     }
 
     #[test]
@@ -347,7 +448,7 @@ mod tests {
             "__asm__ __volatile__(\"\" : : \"r\"(value));\n\
              volatile s32 counter; __asm__ __volatile__(\"\" : : \"r\"(counter));\n",
         );
-        assert_eq!(devices(&code, &BTreeSet::new()), [0, 2, 0, 1, 0]);
+        assert_eq!(devices(&code, &BTreeSet::new(), &BTreeMap::new()), [0, 2, 0, 1, 0, 0, 0]);
     }
 
     #[test]
@@ -360,7 +461,7 @@ mod tests {
         );
         assert!(!proven_macros(&code).contains("IDENT"));
         assert_eq!(without_proven(&code), code);
-        assert_eq!(devices(&without_proven(&code), &BTreeSet::new()), [2, 1, 1, 0, 0]);
+        assert_eq!(devices(&without_proven(&code), &BTreeSet::new(), &BTreeMap::new()), [2, 1, 1, 0, 0, 0, 0]);
     }
 
     #[test]
@@ -376,6 +477,26 @@ mod tests {
     #[test]
     fn gotos_are_counted_where_code_jumps_not_where_a_comment_or_macro_names_them() {
         let code = code_only("void f(void)\n{\n\tif (x)\n\t\tgoto done; // goto in a comment\n\tgoto done;\ndone:\n\treturn;\n}\n#define LEAVE goto done\n");
-        assert_eq!(devices(&code, &BTreeSet::new()), [0, 0, 0, 0, 2]);
+        assert_eq!(devices(&code, &BTreeSet::new(), &BTreeMap::new()), [0, 0, 0, 0, 2, 0, 0]);
+    }
+
+    #[test]
+    fn one_pass_blocks_and_tagged_macros_count_at_each_use() {
+        let header = "// 説明
+/* FAKEMATCH: measured. */
+#define SET(v) \\
+	do \\
+	{ \\
+		g = (v); \\
+	} while (0)
+#define PLAIN(v) do { g = (v); } while (0)
+#define TEMP(v) { u32 t_ = (v); g = t_; } /* FAKEMATCH: temporary. */
+";
+        let tagged: BTreeMap<String, Vec<usize>> = tagged_macros(header).into_iter().collect();
+        assert_eq!(tagged.get("SET"), Some(&vec![5]));
+        assert_eq!(tagged.get("TEMP"), Some(&vec![6]));
+        assert!(!tagged.contains_key("PLAIN"));
+        let code = code_only("void f(void)\n{\n\tSET(1);\n\tSET(2);\n\tPLAIN(3);\n\tTEMP(4);\n\tdo\n\t{\n\t\tg = 5;\n\t} while (0);\n}\n");
+        assert_eq!(devices(&code, &BTreeSet::new(), &tagged), [0, 0, 0, 0, 0, 3, 1]);
     }
 }

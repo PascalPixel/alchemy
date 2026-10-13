@@ -6,7 +6,7 @@
 #include "game_state.h"
 #include "vram_tab.h"
 #include "unit/scene/haidia_babi.h"
-#include "unit/scene/common/effect/psynergy.h"
+#include "unit/scene/common/effect_psynergy.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"
@@ -67,7 +67,7 @@ static void HaidiaBabi_SpawnEffectPair(union FieldObject *object);
 static void FieldScene_RunSixStepSequence17e4(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/facing.c"
+#include "common/object_facing.c"
 
 enum
 {
@@ -309,24 +309,24 @@ s32 HaidiaBabi_RestoreEntryState(void)
 		{
 			record = (s32)Object_GetById(17);
 			Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
-			if (gGameState.entrance != 6 && gGameState.entrance != 7)
+			if (gGameState.entrance == 6 || gGameState.entrance == 7)
 			{
-				goto done;
-			}
-			if (Engine_GameFlagIsSet(0x109) != 0)
-			{
-				record = Engine_GameFlagIsSet(0x203);
-				if (record == 0)
+				if (Engine_GameFlagIsSet(0x109) != 0)
 				{
-					goto done;
+					record = Engine_GameFlagIsSet(0x203);
+					if (record != 0)
+					{
+						Map_ClearLayerEntryFlag(12);
+					}
 				}
-				Map_ClearLayerEntryFlag(12);
-				goto done;
+				else
+				{
+					Map_ClearLayerEntryFlag(11);
+					record = (s32)Object_GetById(8);
+					Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
+					Engine_ActorSetAnimation(8, 10);
+				}
 			}
-			Map_ClearLayerEntryFlag(11);
-			record = (s32)Object_GetById(8);
-			Engine_ActorSetSpriteFlags((struct FieldActor *)record, 0);
-			Engine_ActorSetAnimation(8, 10);
 		}
 		else
 		{
@@ -371,7 +371,6 @@ s32 HaidiaBabi_RestoreEntryState(void)
 			}
 		}
 	}
-done:;
 	return 0;
 }
 
@@ -575,15 +574,15 @@ static void FieldScene_RunPaletteRampSequence(void)
 	Engine_ActorEnableActionCallback(10, gHaidiaBabiRampActor10Action);
 	((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->start_transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-	Engine_MapCopyCellsTo(83, 15, 83, 19, 5, 4);
-	Engine_MapCopyCellsTo(90, 16, 90, 20, 5, 4);
-	Engine_MapCopyCellsTo(77, 23, 82, 23, 5, 7);
-	Engine_MapCopyCellsTo(83, 33, 85, 33, 2, 2);
-	Engine_MapCopyCellsTo(91, 28, 90, 28, 1, 1);
-	Engine_MapCopyCellsTo(91, 28, 88, 30, 1, 1);
-	Engine_MapCopyCellsTo(94, 27, 94, 23, 6, 4);
-	Engine_MapCopyCellsTo(92, 28, 87, 23, 4, 4);
-	Engine_MapCopyCellsTo(65, 53, 88, 24, 2, 2);
+	Map_CopyCellsTo(83, 15, 83, 19, 5, 4);
+	Map_CopyCellsTo(90, 16, 90, 20, 5, 4);
+	Map_CopyCellsTo(77, 23, 82, 23, 5, 7);
+	Map_CopyCellsTo(83, 33, 85, 33, 2, 2);
+	Map_CopyCellsTo(91, 28, 90, 28, 1, 1);
+	Map_CopyCellsTo(91, 28, 88, 30, 1, 1);
+	Map_CopyCellsTo(94, 27, 94, 23, 6, 4);
+	Map_CopyCellsTo(92, 28, 87, 23, 4, 4);
+	Map_CopyCellsTo(65, 53, 88, 24, 2, 2);
 	DisplayBlend_EnableRunScript();
 	SetBlendTarget(0x3f42);
 	Io_Write16(0x100c, &REG_BLDALPHA);
@@ -880,9 +879,8 @@ static void ActorPresentation_SetTwoSceneCells(void)
 		Map_CopyCellsTo(22, 85, 25, 85, size, size);
 	}
 	{
-		s32 destination = 25;
 
-		Engine_MapCopyCellAttributes(25, 15, 2, 2, destination, destination);
+		Map_CopyCellAttributes(25, 15, 2, 2, 25, 25);
 	}
 }
 
@@ -971,7 +969,7 @@ static void OverlayObject_ApplyRandomSlotOnOddFrames(union FieldObject *object)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/vertical.c"
+#include "common/effect_vertical.c"
 
 static void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
 {
@@ -1029,7 +1027,7 @@ static void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/psynergy.c"
+#include "common/effect_psynergy.c"
 
 static void FieldScene_RunActor8TwoStep(void)
 {

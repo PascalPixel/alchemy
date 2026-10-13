@@ -34,7 +34,7 @@ struct CategoryItemIcon {
 
 struct CategoryItemIconState {
     u8 reserved_00[76];
-    struct CategoryItemIcon *icons[15];
+    struct CategoryItemIcon *icons[32];
 };
 
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items)
@@ -71,4 +71,24 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items)
             }
         }
     }
+}
+
+void ItemMenu_PosCategory(void)
+{
+    struct CategoryItemIconState *state = Ram_HeapSlots->menu_runtime;
+    s32 x = 248;
+    struct CategoryItemIcon **entry = state->icons;
+    s32 y = 168;
+    s32 remaining = 31;
+
+    do {
+        struct CategoryItemIcon *icon = *entry++;
+
+        if (icon != 0) {
+            icon->x = x;
+            icon->y = y;
+            UiIcon_PrepareObject(icon);
+        }
+        remaining--;
+    } while (remaining >= 0);
 }

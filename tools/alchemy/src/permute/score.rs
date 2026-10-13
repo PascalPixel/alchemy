@@ -233,7 +233,7 @@ fn branch(mnemonic: &str) -> bool {
 
 fn stack_pattern() -> &'static Regex {
     static STACK: OnceLock<Regex> = OnceLock::new();
-    STACK.get_or_init(|| Regex::new(r"sp, #-?(0x[0-9a-fA-F]+|[0-9]+)\b").unwrap())
+    STACK.get_or_init(|| Regex::new(r"\bsp, #-?(?P<offset>0x[[:xdigit:]]+|\d+)\b").unwrap())
 }
 
 fn normalize(text: &str, options: Options) -> String {

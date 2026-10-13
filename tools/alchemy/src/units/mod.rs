@@ -309,7 +309,7 @@ fn validation_report(judged: &[Judged]) -> String {
     // title.c, merged earlier from five files.
     for j in judged {
         let image = &j.loaded.image;
-        let members: Vec<usize> = image.functions.iter().enumerate().filter(|(_, f)| f.object.ends_with("src/menu/title/title.o")).map(|(i, _)| i).collect();
+        let members: Vec<usize> = image.functions.iter().enumerate().filter(|(_, f)| f.object.ends_with("src/menu/title.o")).map(|(i, _)| i).collect();
         if members.is_empty() {
             continue;
         }

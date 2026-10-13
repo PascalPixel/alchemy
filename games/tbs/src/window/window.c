@@ -3,7 +3,7 @@
 // 表示：スプライト出力（RenderOutput）のあきリスト
 //--------------------------------------------------------------------------
 
-#include "unit/graphics/font/mark_codes.h"
+#include "unit/window/mark_codes.h"
 #include "unit/window/scales.h"
 #include "unit/window/sideobjt.h"
 #include "unit/window/spranim.h"
@@ -19,7 +19,7 @@
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evmes.h"
-#include "unit/graphics/text/moji.h"
+#include "unit/window/moji.h"
 #include "unit/runtime/runtime.h"
 #include "unit/runtime/oamlist.h"
 #include "unit/runtime/objvram.h"
@@ -393,6 +393,7 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs)
 		found->unknown_10 = 1;
 		found->flags = 1;
 		/* FAKEMATCH: UiWork_ResetCounters is called as void (*)(); as void (*)(void), its prototype, UiWindow_Create does not compile */
+		/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 		((void (*)())UiWork_ResetCounters)(x);
 		if (attrs & 8)
 		{
@@ -3531,7 +3532,7 @@ done:
 				gap -= 4;
 				if (gap < 0)
 					gap = 0;
-				gap = __divsi3(gap << 8, counts[i] - 1);
+				gap = ((gap << 8) / (counts[i] - 1));
 #if EDITION_INTERNATIONAL
 				if (gap < 0 || gap > 0xc00)
 					gap = 0x200;

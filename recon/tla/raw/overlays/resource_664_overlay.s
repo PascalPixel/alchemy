@@ -2554,36 +2554,6 @@ Func_02001690:
 	.4byte 0x025b0000
 .L_020097f0:
 	.4byte 0xffe00000
-	.section .text.x020097f4,"ax",%progbits
-	.global Func_020017f4
-	.thumb_func
-Func_020017f4:
-	ldr r3, .L_02009824
-	movs r2, #35
-	adds r2, r2, r0
-	mov r12, r2
-	ldr r2, [r3]
-	movs r3, #1
-	ands r2, r3
-	mov r4, r12
-	movs r3, #2
-	lsls r3, r2
-	ldrb r2, [r4]
-	ldr r1, [r0, #104]
-	eors r3, r2
-	strb r3, [r4]
-	movs r2, #128
-	ldr r3, [r1, #8]
-	lsls r2, r2, #12
-	str r3, [r0, #8]
-	ldr r3, [r1, #12]
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	ldr r3, [r1, #16]
-	str r3, [r0, #16]
-	bx lr
-.L_02009824:
-	.4byte gFrameCount
 	.section .text.x02009828,"ax",%progbits
 	.global Func_02001828
 	.thumb_func

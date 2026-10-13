@@ -164,7 +164,7 @@ Resource_DirectoryTable:
 	resource , Slots_FinalGameBanner
 	resource , Summon_GreenHairedMaidenTiles
 	resource , Summon_SeaSerpentTiles
-	resource , Summon_PinkCloudTiles
+	resource , Summon_PinkPetalsTiles
 	resource , Summon_CrimsonBeastTiles
 	resource , Summon_RedSlashTiles
 	resource , Summon_RedCrescentTiles
@@ -172,7 +172,7 @@ Resource_DirectoryTable:
 	resource , Summon_WhiteWispsTiles
 	resource , Summon_ForestCanopyTiles
 	resource , Summon_BronzeAutomatonTiles
-	resource , Summon_ColourNoiseTiles
+	resource , Summon_MissileTiles
 	resource , Summon_GoldenDragonHeadTiles
 	resource , Summon_GoldenDragonTiles
 	resource , Summon_RobedGoddessTiles

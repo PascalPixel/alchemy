@@ -11,7 +11,7 @@
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evmes.h"
-#include "unit/graphics/text/moji.h"
+#include "unit/window/moji.h"
 #include "unit/runtime/runtime.h"
 #include "unit/runtime/oamlist.h"
 #include "unit/runtime/objvram.h"
@@ -241,6 +241,7 @@ u32 SaveState_BuildSummaryHeader(void)
 
 	summary = (struct SaveSummary *)(gSaveBuffer - 16);
 	/* FAKEMATCH: Runtime_GetBuildStampTimeFar is called as u32 (*)(s32); as u32 (*)(void), its prototype, SaveState_BuildSummaryHeader does not compile */
+	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 	gGameState.build_stamp = ((u32 (*)(s32))Runtime_GetBuildStampTimeFar)(0);
 	gGameState.play_time = gLoadedStateWord;
 	{
@@ -1794,7 +1795,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 		VramBlock_LoadCached(slot, 128, Resource_FixedBlockBTiles);
 		output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
 		cursor.output = output;
-		ShopCursor_SetPositionImmediateFar(&cursor, window->x * 8 + 140, window->y * 8 + 52);
+		ShopCursor_SetPositionImmediateFar(&cursor.cursor, window->x * 8 + 140, window->y * 8 + 52);
 	}
 	slot = Resource_FindFreeEntry();
 	if (slot <= 95)
@@ -1804,7 +1805,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 		caret.output = output;
 		output->sentinel = 255;
 		((struct FieldSprite *)output->unknown_10)->priority = 0;
-		ShopCursor_SetPositionImmediateFar(&caret, UiText_SetRenderString(input) + 70, 22);
+		ShopCursor_SetPositionImmediateFar(&caret.cursor, UiText_SetRenderString(input) + 70, 22);
 	}
 	pal = (u16 *)0x050001c0;
 	Dma_Set((void *)0x050001e0, pal, 0x84000008, REG_DMA3);
@@ -1827,15 +1828,15 @@ s32 NameEntry_EditOwnerName(s32 entry)
 		if (cursor_dirty)
 		{
 			cursor_dirty = 0;
-			Shop_SetCursorFar(&cursor, (window->x + column) * 8 - 7, (window->y + row) * 8 + 15, 3);
+			Shop_SetCursorFar(&cursor.cursor, (window->x + column) * 8 - 7, (window->y + row) * 8 + 15, 3);
 		}
 		if (text_dirty)
 		{
 			text_dirty = 0;
-			Shop_SetCursorFar(&caret, UiText_SetRenderString(input) + 70, 22, 3);
+			Shop_SetCursorFar(&caret.cursor, UiText_SetRenderString(input) + 70, 22, 3);
 		}
-		ShopCursor_AdvanceFar(&cursor);
-		ShopCursor_MoveTowardTargetFar(&caret);
+		ShopCursor_AdvanceFar(&cursor.cursor);
+		ShopCursor_MoveTowardTargetFar(&caret.cursor);
 		{
 			u32 frame = (gFrameTick >> 1) & 7;
 
@@ -2061,7 +2062,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 		VramBlock_LoadCached(slot, 128, Resource_FixedBlockBTiles);
 		output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
 		cursor.output = output;
-		ShopCursor_SetPositionImmediateFar(&cursor, window->x * 8 + 140, window->y * 8 + 92);
+		ShopCursor_SetPositionImmediateFar(&cursor.cursor, window->x * 8 + 140, window->y * 8 + 92);
 	}
 	slot = Resource_FindFreeEntry();
 	if (slot <= 95)
@@ -2072,7 +2073,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 		output->sentinel = 255;
 		((struct FieldSprite *)output->unknown_10)->priority = 0;
 		x = 72 + NameEntry_CountLetters(input) * 10;
-		ShopCursor_SetPositionImmediateFar(&caret, x, 22);
+		ShopCursor_SetPositionImmediateFar(&caret.cursor, x, 22);
 	}
 	pal = (u16 *)0x050001c0;
 	Dma_Set((void *)0x050001e0, pal, 0x84000008, REG_DMA3);
@@ -2096,16 +2097,16 @@ s32 NameEntry_EditOwnerName(s32 entry)
 		if (cursor_dirty)
 		{
 			cursor_dirty = 0;
-			Shop_SetCursorFar(&cursor, (window->x + column) * 8 - 7, (window->y + row) * 8 + 15, 3);
+			Shop_SetCursorFar(&cursor.cursor, (window->x + column) * 8 - 7, (window->y + row) * 8 + 15, 3);
 		}
 		if (text_dirty)
 		{
 			text_dirty = 0;
 			x = 72 + NameEntry_CountLetters(input) * 10;
-			Shop_SetCursorFar(&caret, x, 22, 3);
+			Shop_SetCursorFar(&caret.cursor, x, 22, 3);
 		}
-		ShopCursor_AdvanceFar(&cursor);
-		ShopCursor_MoveTowardTargetFar(&caret);
+		ShopCursor_AdvanceFar(&cursor.cursor);
+		ShopCursor_MoveTowardTargetFar(&caret.cursor);
 		{
 			u32 frame = (gFrameTick >> 1) & 7;
 
@@ -2372,7 +2373,7 @@ s32 PartyTalkMenu_Choose(s32 unused)
 	{
 		VramBlock_LoadCached(slot, 128, Resource_FixedBlockBTiles);
 		cursor.output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
-		ShopCursor_SetPositionImmediateFar(&cursor, window->x * 8 - 3, window->y * 8 + 9);
+		ShopCursor_SetPositionImmediateFar(&cursor.cursor, window->x * 8 - 3, window->y * 8 + 9);
 	}
 	palette = (u16 *)0x050001c0;
 	Dma_Set((const void *)0x050001e0, palette, 0x84000008, REG_DMA3);
@@ -2385,9 +2386,9 @@ s32 PartyTalkMenu_Choose(s32 unused)
 		if (moved)
 		{
 			moved = 0;
-			Shop_SetCursorFar(&cursor, window->x * 8 - 3, (window->y + row * 2) * 8 + 9, 3);
+			Shop_SetCursorFar(&cursor.cursor, window->x * 8 - 3, (window->y + row * 2) * 8 + 9, 3);
 		}
-		ShopCursor_AdvanceFar(&cursor);
+		ShopCursor_AdvanceFar(&cursor.cursor);
 		if (gKeysRepeat & KEY_UP)
 		{
 			AudioCommand_PlayFar(111);

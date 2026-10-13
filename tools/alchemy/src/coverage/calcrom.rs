@@ -173,6 +173,11 @@ fn source_mark(
         let expanded = expansion.fresh(&path)?;
         let analysis = crate::compiler::steering::analyze(&expanded, &path)?;
         reasons = analysis.reasons.clone();
+        let mut analysis = analysis;
+        for (function, macros) in crate::compiler::steering::macro_users(&text, crate::devices::tagged_macro_names(root)) {
+            reasons.entry(function.clone()).or_default().extend(macros.into_iter().map(|name| format!("via macro {name}")));
+            analysis.steered.insert(function);
+        }
         if analysis
             .whole_owners
             .contains(&crate::compiler::steering::owner(&path))

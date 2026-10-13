@@ -29,7 +29,7 @@ u8 Engine_ActorSetSpriteFlags(s32, s32);
 
 u8 Engine_ActorSetAnimation(s32, s32);
 
-u8 Engine_MapCopyCellAttributes(s32, s32, s32, s32, s32, s32);
+u8 Map_CopyCellAttributes(s32, s32, s32, s32, s32, s32);
 
 u8 *SceneData_GetPrimaryTable(void)
 {
@@ -77,6 +77,7 @@ s32 Scene_PlaceActor8OnGate300(void)
 		((struct Resource388SlotView *)Object_GetById(8))->unknown_23 = 2;
 		state = 0;
 		((struct Resource388SlotView *)Object_GetById(8))->unknown_59 = state;
+		/* FAKEMATCH: the 5th and 6th arguments go through locals; as literals, direct or through Map_CopyCellAttributes, tbs-en differs */
 		arg5 = 0xB;
 		arg6 = 6;
 		Engine_MapCopyCellAttributes(0xB, 0x24, 5, 5, arg5, arg6);

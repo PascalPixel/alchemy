@@ -2,7 +2,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/karei_machi.h"
-#include "unit/scene/common/object/orbit.h"
+#include "unit/scene/common/object_orbit.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"
@@ -100,21 +100,16 @@ static s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect)
 		}
 		next_timer = (u32)(Engine_RandomNext() * 0x50) >> 0x10;
 		effect->action_timer = next_timer;
-		if (next_timer != 0)
-		{
-			goto decrement_timer;
-		}
 	}
-	else
+	if (effect->action_timer != 0)
 	{
-	decrement_timer:
 		--effect->action_timer;
 	}
 	return 1;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/heading.c"
+#include "common/object_heading.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -1041,13 +1036,11 @@ static void KareiMachi_StartWindowTransition(void)
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	if (Engine_GameFlagIsSet(0x915) != 0)
 	{
-		s32 k = 2;
-		Engine_MapCopyCellsTo(58, 5, 58, 8, k, 3);
+		Map_CopyCellsTo(58, 5, 58, 8, 2, 3);
 		{
-			s32 a = 8, b = 10;
-			Engine_MapCopyCellAttributes(8, 11, 2, 1, a, b);
+			Map_CopyCellAttributes(8, 11, 2, 1, 8, 10);
 		}
-		Engine_MapCopyCellsTo(8, 12, 8, 11, k, 1);
+		Map_CopyCellsTo(8, 12, 8, 11, 2, 1);
 		Engine_MapRedraw();
 		Engine_TaskWait(1);
 	}
@@ -1145,10 +1138,7 @@ static void FieldScene_RunMiddleSequence(void)
 		Map_CopyCellsTo(25, 42, 25, 47, 1, 1);
 		Map_CopyCellAttributes(22, 50, 2, 1, 24, 49);
 	}
-	if (GameFlag_IsSet(0x302) == 0)
-	{
-	}
-	else
+	if (GameFlag_IsSet(0x302) != 0)
 	{
 		Actor_SetPosition(8, 0xe80000, 0x2dc0000);
 		Map_CopyCellAttributes(7, 44, 1, 1, 0, 1);
@@ -1180,20 +1170,18 @@ static void FieldScene_RunMiddleSequence(void)
 		Map_CopyCellsTo(71, 12, 71, 43, 10, 13);
 		Map_CopyCellAttributes(6, 13, 12, 12, 6, 44);
 		Map_CopyCellAttributes(0, 1, 1, 1, 7, 44);
-		goto second_half;
-	}
-	switch (((union GameStateRows *)&gGameState)->halves[225][0])
-	{
-	case 1:
-	case 2:
-		BattleFx_SetQueuedSoundAndPlay(170);
-		break;
-	}
-second_half:;
-	if (GameFlag_IsSet(0x303) == 0)
-	{
 	}
 	else
+	{
+		switch (((union GameStateRows *)&gGameState)->halves[225][0])
+		{
+		case 1:
+		case 2:
+			BattleFx_SetQueuedSoundAndPlay(170);
+			break;
+		}
+	}
+	if (GameFlag_IsSet(0x303) != 0)
 	{
 		Actor_SetPosition(9, 0x2b80000, 0x2dc0000);
 		Map_CopyCellsTo(74, 58, 107, 41, 1, 5);
@@ -1217,16 +1205,17 @@ second_half:;
 		Map_CopyCellsTo(38, 14, 38, 44, 8, 4);
 		Map_CopyCellsTo(102, 14, 102, 44, 8, 12);
 		Map_CopyCellAttributes(37, 13, 10, 12, 37, 43);
-		goto done;
 	}
-	switch (((union GameStateRows *)&gGameState)->halves[225][0])
+	else
 	{
-	case 3:
-	case 4:
-		BattleFx_SetQueuedSoundAndPlay(170);
-		break;
+		switch (((union GameStateRows *)&gGameState)->halves[225][0])
+		{
+		case 3:
+		case 4:
+			BattleFx_SetQueuedSoundAndPlay(170);
+			break;
+		}
 	}
-done:;
 }
 
 static void SceneState_SetValues27Through34(void)
@@ -1787,7 +1776,7 @@ static void FieldScene_RunSecondaryGroupSequence(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/findcell.c"
+#include "common/object_findcell.c"
 
 static void FieldScene_RunLateSequence(void)
 {
@@ -2103,8 +2092,8 @@ static void EV11_PSYNERGY(void)
 {
 	struct FieldActor *effect = Object_GetById(11);
 
-	Engine_MapCopyCellAttributes(0, 0, 1, 1, 9, 14);
-	Engine_MapCopyCellAttributes(0, 0, 1, 1, 9, 45);
+	Map_CopyCellAttributes(0, 0, 1, 1, 9, 14);
+	Map_CopyCellAttributes(0, 0, 1, 1, 9, 45);
 	if (effect != 0)
 	{
 		Engine_ActorSetSpriteFlags(effect, 0);
@@ -2115,7 +2104,7 @@ static void EV11_PSYNERGY(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/orbit.c"
+#include "common/object_orbit.c"
 
 // 向きごとの 1 マス先: 上位 16 ビットが x、下位 16 ビットが z
 #define FACING_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

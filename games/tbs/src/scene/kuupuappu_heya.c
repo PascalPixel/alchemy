@@ -2,7 +2,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/kuupuappu_heya.h"
-#include "unit/scene/common/kuupuappu/itemobj.h"
+#include "unit/scene/common/kuupuappu_itemobj.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evtable.h"
@@ -162,7 +162,7 @@ static void EV40_SCRIPT(void)
 #endif
 		x = 42;
 		z = 85;
-		Engine_MapCopyCellAttributes(41, 85, 1, 1, x, z);
+		Map_CopyCellAttributes(41, 85, 1, 1, x, z);
 	}
 	else if (Object_GetById(0)->facing >= 0x2000 && Object_GetById(0)->facing <= 0x6000)
 	{
@@ -178,7 +178,7 @@ static void EV40_SCRIPT(void)
 #endif
 		x = 42;
 		z = 85;
-		Engine_MapCopyCellAttributes(43, 85, 1, 1, x, z);
+		Map_CopyCellAttributes(43, 85, 1, 1, x, z);
 	}
 }
 
@@ -186,15 +186,13 @@ static void EV26_PSYNERGY(void)
 {
 	struct FieldActor *obj;
 	s32				   x;
-	s32				   z;
 
 	Engine_EventBegin();
 	obj = Object_GetById(26);
 	if ((obj->x.fixed >> 20) == 42)
 	{
 		x = 41;
-		z = 24;
-		Engine_MapCopyCellAttributes(101, 24, 3, 4, x, z);
+		Map_CopyCellAttributes(101, 24, 3, 4, 41, 24);
 		Engine_GameFlagSet(0x859);
 	}
 	Engine_EventEnd();
@@ -273,7 +271,7 @@ static void EV23_TALK(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu/bone.c"
+#include "common/kuupuappu_bone.c"
 
 static void EV250_RAISED(void)
 {
@@ -324,7 +322,7 @@ static void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu/talk.c"
+#include "common/kuupuappu_talk.c"
 
 static void SceneDialogue_PromptAndCountSkip(s32 x)
 {
@@ -464,7 +462,12 @@ static void SceneActor_StepActor24AnimationByFacing(void)
 		{
 			Engine_ActorEnableActionCallback(24, KuupuappuHeya_StepActions[v]);
 			*(u16 *)q = *(u16 *)q + 1;
-			goto clamp;
+		}
+		else
+		{
+			Engine_ActorEnableActionCallback(24, KuupuappuHeya_IdleActions[v]);
+			n = *(u16 *)q - 1;
+			*(u16 *)q = n;
 		}
 	}
 	else
@@ -475,13 +478,14 @@ static void SceneActor_StepActor24AnimationByFacing(void)
 		{
 			Engine_ActorEnableActionCallback(24, KuupuappuHeya_StepActions[v]);
 			*(u16 *)q = *(u16 *)q + 1;
-			goto clamp;
+		}
+		else
+		{
+			Engine_ActorEnableActionCallback(24, KuupuappuHeya_IdleActions[v]);
+			n = *(u16 *)q - 1;
+			*(u16 *)q = n;
 		}
 	}
-	Engine_ActorEnableActionCallback(24, KuupuappuHeya_IdleActions[v]);
-	n = *(u16 *)q - 1;
-	*(u16 *)q = n;
-clamp:
 	if (*q > 5)
 	{
 		n = 0;
@@ -624,7 +628,7 @@ static void FieldScene_RunScene383SequenceC(void)
 			Engine_EventSetMessage(((s32)MsgKuupuappuYouWereSuchGreatHelp + 3));
 			SceneActor_SetModeZeroAndValue(16, 20);
 			Engine_EventEnd();
-			goto done;
+			return;
 		}
 		GameFlag_Set(0x857);
 		Engine_PartyGiveItem(ITEM_WATER_OF_LIFE, 0);
@@ -638,7 +642,6 @@ static void FieldScene_RunScene383SequenceC(void)
 	}
 	Event_ShowMessage(16, 0);
 	Engine_EventEnd();
-done:;
 }
 
 static void KuupuappuHeya_OfferBone(void)
@@ -668,11 +671,13 @@ static void KuupuappuHeya_OfferBone(void)
 			Engine_EventWait(20);
 			Engine_EventSetMessage((s32)MsgKuupuappuWowHaveManyThingsArent);
 			Event_ShowMessage(18, 0);
-			goto turn_back;
 		}
-		Engine_ItemShowFound(ITEM_BONE, 3);
-		Engine_PartyGiveItem(ITEM_BONE, 0);
-		GameFlag_Set(0x85b);
+		else
+		{
+			Engine_ItemShowFound(ITEM_BONE, 3);
+			Engine_PartyGiveItem(ITEM_BONE, 0);
+			GameFlag_Set(0x85b);
+		}
 	}
 	else
 	{
@@ -682,7 +687,6 @@ static void KuupuappuHeya_OfferBone(void)
 		Engine_EventWait(20);
 		Event_ShowMessage(18, 0);
 	}
-turn_back:;
 	Actor_FaceDirection(18, 0x4000, 0);
 	Engine_EventEnd();
 }
@@ -781,10 +785,7 @@ static void EV02_TALK(void)
 	Actor_SetPosition(GERALD, 0x1800000, 0x1980000);
 	Actor_WalkToAndWait(GERALD, 0x170, 0x198);
 	Actor_FaceDirection(GERALD, 0xd000, 20);
-	if (GameFlag_IsSet(0x850) != 0)
-	{
-	}
-	else
+	if (GameFlag_IsSet(0x850) == 0)
 	{
 		GameFlag_Set(0x850);
 		SceneEffect_ApplyPairWithValue141(2, 0);
@@ -831,12 +832,13 @@ static void EV02_TALK(void)
 		Engine_EventWait(10);
 		Event_ShowMessage(IWAN, 0);
 		Event_OpenMessage(IWAN, 0);
-		goto L_join_setup_paths;
 	}
-	Event_PlayCue(60);
-	Engine_EventSetMessage((s32)MsgKuupuappuWouldReallyWouldHelpMe);
-	Event_OpenMessage(IWAN, 0);
-L_join_setup_paths:;
+	else
+	{
+		Event_PlayCue(60);
+		Engine_EventSetMessage((s32)MsgKuupuappuWouldReallyWouldHelpMe);
+		Event_OpenMessage(IWAN, 0);
+	}
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Scene_JoinRodSearch();
@@ -1693,7 +1695,7 @@ static void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu/spotflag.c"
+#include "common/kuupuappu_spotflag.c"
 
 s32 KuupuappuHeya_ApplyEntryState(void)
 {
@@ -1738,6 +1740,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 			Engine_ActorEnableActionCallback(18, (const s32 *)1);
 			Actor_FaceDirection(18, 0x4000, 0);
 			OverlayObject_ConfigureObject22WithResource17(231, 0x2380000, 0x100000, 0x2a00000);
+			/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 			((void (*)())Engine_TaskAddCallback)((s32)SceneState_SetFlagByActorPosition, 0xc80);
 		}
 		else if (Engine_GameFlagIsSet(0x853) != 0)
@@ -1750,6 +1753,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 			&& Engine_GameFlagIsSet(0x853) == 0 && Engine_GameFlagIsSet(0x300) != 0)
 		{
 			Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
+			/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 			((void (*)())Engine_TaskAddCallback)(
 				(s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
 			break;
@@ -1764,7 +1768,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 			Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
 			if (Engine_GameFlagIsSet(0x853) == 0)
 			{
-				Engine_MapCopyCellAttributes(14, 50, 3, 1, 14, 44);
+				Map_CopyCellAttributes(14, 50, 3, 1, 14, 44);
 				break;
 			}
 			Object_GetById(24)->timer = 5;
@@ -1776,10 +1780,10 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 	case 14:
 		Engine_EventWait(2);
 		Map_CopyCellsTo(54, 2, 35, 20, 2, 10);
-		Engine_MapCopyCellsTo(54, 2, 95, 20, 2, 10);
-		Engine_MapCopyCellsTo(54, 2, 35, 80, 2, 10);
+		Map_CopyCellsTo(54, 2, 95, 20, 2, 10);
+		Map_CopyCellsTo(54, 2, 35, 80, 2, 10);
 		Map_CopyCellsTo(54, 2, 46, 21, 4, 8);
-		Engine_MapCopyCellsTo(54, 2, 46, 81, 4, 8);
+		Map_CopyCellsTo(54, 2, 46, 81, 4, 8);
 		Object_GetById(26)->collision_flags |= 4;
 		Engine_ActorSetSpriteFlags(Object_GetById(26), 0);
 		if (Engine_GameFlagIsSet(0x859) != 0)
@@ -1791,7 +1795,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 	case 15:
 		Engine_EventWait(2);
 		Map_CopyCellsTo(54, 2, 44, 21, 2, 8);
-		Engine_MapCopyCellsTo(54, 2, 44, 81, 2, 8);
+		Map_CopyCellsTo(54, 2, 44, 81, 2, 8);
 		Engine_EventBegin();
 		if (Engine_GameFlagIsSet(0x855) != 0)
 		{
@@ -1816,15 +1820,15 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 		Engine_EventEnd();
 		break;
 	case 16:
-		Engine_MapCopyCells(54, 2, 2, 8, 44, 21);
-		Engine_MapCopyCells(54, 2, 2, 8, 44, 81);
+		Map_CopyCells(54, 2, 2, 8, 44, 21);
+		Map_CopyCells(54, 2, 2, 8, 44, 81);
 		Engine_ActorSetPosition(8, 0x3380000, 0x1c80000);
 		FieldScene_RunLateSequence();
 		Engine_EventRequestExit(16);
 		break;
 	case 17:
-		Engine_MapCopyCells(54, 2, 2, 8, 44, 21);
-		Engine_MapCopyCells(54, 2, 2, 8, 44, 81);
+		Map_CopyCells(54, 2, 2, 8, 44, 21);
+		Map_CopyCells(54, 2, 2, 8, 44, 81);
 		if (Engine_GameFlagIsSet(0x109) == 0)
 		{
 			Actor_SetPosition(8, 0x3380000, 0x1c80000);
@@ -1962,7 +1966,7 @@ static s32 KuupuappuHeya_GetIwanVenusDjinnCount(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu/djinn.c"
+#include "common/kuupuappu_djinn.c"
 
 static void RunEventScript01(void)
 {
@@ -2637,6 +2641,7 @@ static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 
 static void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c)
 {
+	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 	((void (*)(s32, s32, s32))Engine_ActorSetAnimation)(a, b, c);
 	ObjectMotion_WaitForAnimationChange(a);
 	Engine_EventWait(c);
@@ -2659,7 +2664,7 @@ static void SceneState_SetValue2ThenFinish(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu/itemobj.c"
+#include "common/kuupuappu_itemobj.c"
 
 static u8 *SceneData_FindEntryAtPosition(s32 *o)
 {

@@ -5,16 +5,10 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/scene/korosseo_maruta.h"
-#include "unit/scene/common/korosseo/saved.h"
-#include "unit/scene/common/korosseo/solo_competitor.h"
-#include "unit/scene/common/korosseo/raised.h"
-#include "unit/scene/common/korosseo/solo_round.h"
-#include "unit/scene/common/korosseo/cheer.h"
-#include "unit/scene/common/korosseo/compete.h"
-#include "unit/scene/common/korosseo/markslot.h"
-#include "unit/scene/common/korosseo/markmove.h"
-#include "unit/scene/common/korosseo/setup.h"
-#include "unit/scene/common/korosseo/occupant.h"
+#include "unit/scene/common/korosseo_solo.h"
+#include "unit/scene/common/korosseo_marker.h"
+#include "unit/scene/common/korosseo_setup.h"
+#include "unit/scene/common/korosseo_occupant.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evtable.h"
@@ -51,7 +45,7 @@
 #include "unit/runtime/objvram.h"
 #include "unit/runtime/math.h"
 #include "unit/runtime/heap.h"
-#include "unit/scene/common/korosseo/item_icon.h"
+#include "unit/scene/common/korosseo_item_icon.h"
 #include "types.h"
 #include "field_event.h"
 #include "field_scene.h"
@@ -199,7 +193,7 @@ static inline void InitializeSelectedActor(s32 actorId)
 
 extern s32 gColossoParticleCount;
 
-// コロッセオ共通 (scene/common/korosseo)
+// コロッセオ共通 (scene/common/korosseo_*.c)
 
 u8 *ColossoLogRollingStage_GetScriptData(void)
 {
@@ -322,10 +316,8 @@ static void EV29_PSYNERGY(void)
 {
 	Engine_GameFlagSet(0x360);
 	{
-		s32 width = 49;
-		s32 height = 61;
 
-		Engine_MapCopyCellAttributes(47, 61, 1, 4, width, height);
+		Map_CopyCellAttributes(47, 61, 1, 4, 49, 61);
 	}
 }
 
@@ -348,8 +340,8 @@ static void EV09_SCRIPT(void)
 	Engine_ObjectSetPosition(object, object->x, 0x40000, object->y);
 
 	Engine_GameFlagSet(0x362);
-	Engine_MapCopyCellAttributes(15, 12, 1, 1, 13, 12);
-	Engine_MapCopyCellAttributes(14, 12, 1, 1, 9, 12);
+	Map_CopyCellAttributes(15, 12, 1, 1, 13, 12);
+	Map_CopyCellAttributes(14, 12, 1, 1, 9, 12);
 }
 
 static void EV15_TOUCH(void)
@@ -422,9 +414,7 @@ static void EV16_TOUCH(void)
 
 	Engine_ActorWaitForMove(10);
 	{
-		s32 stack_first = 9;
-		s32 stack_second = 12;
-		Engine_MapCopyCellAttributes(0, 25, 1, 1, stack_first, stack_second);
+		Map_CopyCellAttributes(0, 25, 1, 1, 9, 12);
 	}
 	Engine_TaskWait(2);
 	Engine_GameFlagClear(0x367);
@@ -464,8 +454,8 @@ static void EV12_PSYNERGY(void)
 			lower->speed = 0xcccc;
 			Engine_ObjectSetPosition(lower, lower->x.fixed, 0x40000, lower->z.fixed);
 			Engine_GameFlagSet(0x368);
-			Engine_MapCopyCellAttributes(15, 12, 1, 1, 13, z);
-			Engine_MapCopyCellAttributes(1, 25, 1, 1, x, z);
+			Map_CopyCellAttributes(15, 12, 1, 1, 13, z);
+			Map_CopyCellAttributes(1, 25, 1, 1, x, z);
 		}
 	}
 }
@@ -485,8 +475,8 @@ static void EV13_PSYNERGY(void)
 	actor = Object_GetById(13);
 	x = actor->x >> 20;
 	GameFlag_SetByte(880, x);
-	Engine_MapCopyCellAttributes(18, 10, 3, 1, 18, 11);
-	Engine_MapCopyCellAttributes(17, 11, 1, 1, x, 11);
+	Map_CopyCellAttributes(18, 10, 3, 1, 18, 11);
+	Map_CopyCellAttributes(17, 11, 1, 1, x, 11);
 }
 
 static void EV14_PSYNERGY(void)
@@ -517,10 +507,10 @@ static void ColossoLogRollingStage_ActivateClearObstacleActors(void)
 			actor->state = 0;
 			x = actor->x >> 20;
 			z = actor->z >> 20;
-			Engine_MapCopyCellAttributes(83, 13, 1, 1, x, z);
+			Map_CopyCellAttributes(83, 13, 1, 1, x, z);
 			x2 = actor->x >> 20;
 			z2 = actor->z >> 20;
-			Engine_MapCopyCellAttributes(83, 13, 1, 1, x2, z2 + 52);
+			Map_CopyCellAttributes(83, 13, 1, 1, x2, z2 + 52);
 			Engine_GameFlagSet(slot + 517);
 		}
 	}
@@ -632,27 +622,39 @@ static void EV23_SCRIPT(void)
 		for (;;)
 		{
 			next_x = x - 0x100000;
-			if (ColossoLogRollingStage_CheckPathClearance(next_x, z) != 0)
-				goto moved;
-			steps++;
-			x = next_x;
+			if (ColossoLogRollingStage_CheckPathClearance(next_x, z) == 0)
+			{
+				steps++;
+				x = next_x;
+			}
+			else
+			{
+				break;
+			}
 		}
 	}
-	if (!(gKeysHeld & KEY_RIGHT))
+	else
 	{
-		return;
+		if (!(gKeysHeld & KEY_RIGHT))
+		{
+			return;
+		}
+		mode = 3;
+		step = 8;
+		for (;;)
+		{
+			next_x = x + 0x100000;
+			if (ColossoLogRollingStage_CheckPathClearance(next_x, z) == 0)
+			{
+				steps++;
+				x = next_x;
+			}
+			else
+			{
+				break;
+			}
+		}
 	}
-	mode = 3;
-	step = 8;
-	for (;;)
-	{
-		next_x = x + 0x100000;
-		if (ColossoLogRollingStage_CheckPathClearance(next_x, z) != 0)
-			goto moved;
-		steps++;
-		x = next_x;
-	}
-moved:
 	if (steps == 0)
 	{
 		return;
@@ -948,8 +950,8 @@ s32 StageSetup_BuildAndDispatch(void)
 
 	if (Engine_GameFlagIsSet(872) != 0)
 	{
-		Engine_MapCopyCellAttributes(15, 12, 1, 1, 13, 12);
-		Engine_MapCopyCellAttributes(1, 25, 1, 1, 9, 12);
+		Map_CopyCellAttributes(15, 12, 1, 1, 13, 12);
+		Map_CopyCellAttributes(1, 25, 1, 1, 9, 12);
 		actor = Object_GetById(12);
 		Engine_ActorSetSpriteFlags(actor, 0);
 		actor->motion_flags = 0;
@@ -972,7 +974,7 @@ s32 StageSetup_BuildAndDispatch(void)
 	actor->motion_flags = 0;
 	actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
 	Map_CopyCellAttributes(18, 10, 3, 1, 18, 11);
-	Engine_MapCopyCellAttributes(17, 11, 1, 1, column, 11);
+	Map_CopyCellAttributes(17, 11, 1, 1, column, 11);
 
 	for (i = 15; i <= 17; i++)
 	{
@@ -1045,8 +1047,8 @@ s32 StageSetup_BuildAndDispatch(void)
 		actor = Object_GetById(31);
 		Object_SetMode(actor, 8);
 		actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
-		Engine_MapCopyCellAttributes(86, 10, 1, 2, 84, 10);
-		Engine_MapCopyCellAttributes(86, 9, 1, 1, 84, 12);
+		Map_CopyCellAttributes(86, 10, 1, 2, 84, 10);
+		Map_CopyCellAttributes(86, 9, 1, 1, 84, 12);
 	}
 	else
 	{
@@ -1877,13 +1879,9 @@ static void EV38_TALK(s32 actor)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo/saved.c"
-#include "common/korosseo/solo_competitor.c"
-#include "common/korosseo/raised.c"
-#include "common/korosseo/solo_round.c"
-#include "common/korosseo/cheer.c"
-#include "common/item/addequip.c"
-#include "common/korosseo/korosseo.c"
+#include "common/korosseo_solo.c"
+#include "common/item.c"
+#include "common/korosseo_task.c"
 
 static void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
 {
@@ -1957,12 +1955,10 @@ static void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
 	ColossoLogRollingStage_InitializeModeTask(1, 0);
 	Engine_EventWait(120);
 
-	goto check_transition;
-wait_transition:
-	Engine_TaskWait(1);
-check_transition:
-	if (AudioCommand_GetStateByte() != 0)
-		goto wait_transition;
+	while (AudioCommand_GetStateByte() != 0)
+	{
+		Engine_TaskWait(1);
+	}
 
 	Engine_AudioPlayCue(0x121);
 	Korosseo_LoadPortrait(5);
@@ -2027,11 +2023,8 @@ static void FieldScene_RunScene3bcSequenceA(s32 a0)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo/compete.c"
-#include "common/korosseo/markslot.c"
-#include "common/korosseo/marker.c"
-#include "common/korosseo/markmove.c"
-#include "common/korosseo/item_icon.c"
+#include "common/korosseo_marker.c"
+#include "common/korosseo_item_icon.c"
 
 static void WriteU32AsHex(u8 *hex_text, u32 value)
 {
@@ -2167,11 +2160,13 @@ static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 seco
 	if (flag == 0)
 	{
 		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
+		/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, first_handle);
 		UiWork_PushValueSlot(first_handle, 2);
 	}
 	else
 	{
+		/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, second_handle);
 		UiWork_PushValueSlot(second_handle, 2);
 	}
@@ -2182,10 +2177,10 @@ static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 seco
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo/path_rival.c"
-#include "common/korosseo/setup.c"
-#include "common/korosseo/scene_state.c"
-#include "common/object/findslot.c"
+#include "common/korosseo_path_rival.c"
+#include "common/korosseo_setup.c"
+#include "common/korosseo_scene_state.c"
+#include "common/object_findslot.c"
 
 static void ColossoLogRollingStage_PushStagedActor(void)
 {
@@ -2277,7 +2272,7 @@ static void ColossoLogRollingStage_PushStagedActor(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo/occupant.c"
+#include "common/korosseo_occupant.c"
 
 const s32 KorosseoMaruta_Record30Script[] = {
 	SC_SET(SW_Y, PIXELS(1)),

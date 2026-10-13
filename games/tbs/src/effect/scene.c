@@ -96,7 +96,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 	struct EffectPosition	 screen;
 	DrawRectangle			 draw[2];
 
-	cursor = (void **)gBattleFxWork;
+	cursor = gBattleFxWork;
 	work = *cursor++;
 	canvas = *cursor;
 	work->effect = effect;
@@ -1499,7 +1499,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
 	s32						 origin_y;
 	DrawRectangle			 blit[2];
 
-	slots = (void **)gBattleFxWork;
+	slots = gBattleFxWork;
 	cursor = slots;
 	work = *cursor++;
 	canvas = *cursor;
@@ -1888,7 +1888,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 	s32						 origin_x;
 	s32						 origin_y;
 
-	cursor = (void **)gBattleFxWork;
+	cursor = gBattleFxWork;
 	work = *cursor++;
 	canvas = *cursor;
 	work->effect = effect;
@@ -2230,7 +2230,7 @@ void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
 	s32						 i;
 	s32						 palette;
 
-	cursor = (void **)gBattleFxWork;
+	cursor = gBattleFxWork;
 	work = *cursor++;
 	canvas = *cursor;
 	work->effect = effect;
@@ -3372,7 +3372,7 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
 	s32						 frame;
 	s32						 i;
 
-	cursor = (void **)gBattleFxWork;
+	cursor = gBattleFxWork;
 	work = *cursor++;
 	canvas = *cursor;
 	work->effect = effect;

@@ -3,7 +3,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/babi_iriguchi.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evtable.h"
@@ -57,12 +57,11 @@ static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/staged_actor.c"
+#include "common/object_staged_actor.c"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
+#include "common/effect_create.c"
+#include "common/effect_spawn.c"
 
 static void EV08_TALK(void)
 {
@@ -70,8 +69,8 @@ static void EV08_TALK(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/waitidle.c"
-#include "common/effect/advance.c"
+#include "common/object_waitidle.c"
+#include "common/effect_advance.c"
 
 static void FieldScene_RunSupplementalSequenceOne(void)
 {
@@ -207,14 +206,7 @@ static void BabiIriguchi_JumpFromLedge(void)
 
 	rec7 = Object_GetById(0);
 	Engine_EventBegin();
-	if ((rec7->x.fixed >> 20) != 6)
-	{
-		if ((rec7->x.fixed >> 20) != 18)
-		{
-			goto done;
-		}
-	}
-	if ((rec7->z.fixed >> 20) == 20)
+	if (((rec7->x.fixed >> 20) == 6 || (rec7->x.fixed >> 20) == 18) && (rec7->z.fixed >> 20) == 20)
 	{
 		rec7->target_x = -0x80000000;
 		rec7->target_z = -0x80000000;
@@ -223,19 +215,20 @@ static void BabiIriguchi_JumpFromLedge(void)
 		Engine_ActorJump(0, 4, 0);
 		{
 			u16 dir = rec7->facing;
-			if ((u16)(dir + 0x4fff) > 0x1fff && (u16)(dir - 0x3001) > 0x1fff)
-				goto step_down;
+			if ((u16)(dir + 0x4fff) <= 0x1fff || (u16)(dir - 0x3001) <= 0x1fff)
+			{
+				Engine_ActorSetDestinationOffset(0, 16, 0);
+				Engine_ActorWaitForMove(0);
+				Actor_FaceDirection(0, FACING_WEST, 20);
+			}
+			else
+			{
+				FieldObjectMotion_OffsetPositionAndResetMotion(0, 0, -16);
+				Engine_ActorWaitForMove(0);
+				Actor_FaceDirection(0, FACING_SOUTH, 20);
+			}
 		}
-		Engine_ActorSetDestinationOffset(0, 16, 0);
-		Engine_ActorWaitForMove(0);
-		Actor_FaceDirection(0, FACING_WEST, 20);
-		goto done;
-	step_down:;
-		FieldObjectMotion_OffsetPositionAndResetMotion(0, 0, -16);
-		Engine_ActorWaitForMove(0);
-		Actor_FaceDirection(0, FACING_SOUTH, 20);
 	}
-done:;
 	SceneState_ApplyRectsAtActors8And9();
 	Engine_EventEnd();
 }
@@ -1039,7 +1032,7 @@ static void EV12_PSYNERGY(void)
 			{
 				s32 k5 = a, k6 = b;
 
-				Engine_MapCopyCellAttributes(38, 12, 1, 1, k5, k6);
+				Map_CopyCellAttributes(38, 12, 1, 1, k5, k6);
 			}
 		}
 	}
@@ -1126,10 +1119,8 @@ const struct SceneEvent *Scene_GetEvents(void)
 static void EV10_PSYNERGY(void)
 {
 
-	s32 a = 18;
-	s32 b = 7;
 
-	Engine_MapCopyCellAttributes(82, 7, 1, 2, a, b);
+	Map_CopyCellAttributes(82, 7, 1, 2, 18, 7);
 	Engine_TaskWait(1);
 	Engine_GameFlagSet(768);
 }
@@ -1141,25 +1132,23 @@ static void SceneState_ApplyRectsAtActors8And9(void)
 	Engine_ActorSetSpritePriority(8, 1);
 	Engine_ActorSetSpritePriority(9, 1);
 	{
-		s32 k5 = 5, k6 = 19;
 
-		Engine_MapCopyCellAttributes(69, 19, 3, 3, k5, k6);
+		Map_CopyCellAttributes(69, 19, 3, 3, 5, 19);
 	}
 	{
-		s32 k5 = 17, k6 = 19;
 
-		Engine_MapCopyCellAttributes(69, 19, 3, 3, k5, k6);
+		Map_CopyCellAttributes(69, 19, 3, 3, 17, 19);
 	}
 	{
 		s32 k5 = p->x.fixed >> 20, k6 = p->z.fixed >> 20;
 
-		Engine_MapCopyCellAttributes(3, 3, 1, 1, k5, k6);
+		Map_CopyCellAttributes(3, 3, 1, 1, k5, k6);
 	}
 	{
 		struct FieldActor *q = Object_GetById(9);
 		s32				   k5 = q->x.fixed >> 20, k6 = q->z.fixed >> 20;
 
-		Engine_MapCopyCellAttributes(3, 3, 1, 1, k5, k6);
+		Map_CopyCellAttributes(3, 3, 1, 1, k5, k6);
 	}
 }
 

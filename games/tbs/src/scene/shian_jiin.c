@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/scene/shian_jiin.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"
@@ -43,9 +43,8 @@ static void FieldScene_SpawnEightShots(void);
 static void FieldScene_RunParticleRain(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
+#include "common/effect_create.c"
+#include "common/effect_spawn.c"
 
 static s32 StopXianActor(void *actor)
 {
@@ -379,13 +378,9 @@ static void EV12_TALK(void)
 
 	Object_GetById(12)->paused = 0;
 
-	goto testPendingWork;
-waitPendingWork:
-	Engine_TaskWait(1);
-testPendingWork:
-	if (Object_GetById(12)->y.fixed > 0)
+	while (Object_GetById(12)->y.fixed > 0)
 	{
-		goto waitPendingWork;
+		Engine_TaskWait(1);
 	}
 
 	Object_GetById(12)->y.fixed = 0;
@@ -761,17 +756,14 @@ static void EV20_PSYNERGY(void)
 
 	if (record->z.part.pixel <= 209)
 	{
-		if (Engine_GameFlagIsSet(0x89a) == 0)
-			goto scene0;
-		if (Engine_GameFlagIsSet(0x89b) != 0)
-			goto scene0;
-		goto scene1;
-	scene0:
-		ShianJiin_RunMasterScene(0);
-		goto firstSceneComplete;
-	scene1:
-		ShianJiin_RunGatheringScene();
-	firstSceneComplete:
+		if (Engine_GameFlagIsSet(0x89a) == 0 || Engine_GameFlagIsSet(0x89b) != 0)
+		{
+			ShianJiin_RunMasterScene(0);
+		}
+		else
+		{
+			ShianJiin_RunGatheringScene();
+		}
 		Engine_EventEnd();
 		return;
 	}
@@ -793,7 +785,6 @@ static void EV20_PSYNERGY(void)
 
 static void FieldScene_RunSecondEnsembleBeat(void)
 {
-	s32				   id;
 	struct FieldActor *rec;
 
 	GameFlag_Set(0x89a);
@@ -1018,42 +1009,38 @@ static void FieldScene_RunSecondEnsembleBeat(void)
 	Event_OpenMessage(18, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		((s32 (*)())Engine_ActorRunRepeatedMotion)(16, 1);
+		Engine_ActorRunRepeatedMotion(16, 1);
 		Engine_EventWait(20);
-		id = 16;
-		goto joinBeat;
+		Event_ShowMessageAndWait(16, 0, 20);
+		GameFlag_Set(0x898);
 	}
-
-	Event_SkipMessages(1);
-	Engine_EventWait(20);
-	Actor_ShowEmote(18, 0x105, 60);
-	Actor_FaceDirection(18, 128 << 7, 20);
-	Engine_ActorRunRepeatedMotion(16, 2);
-	Engine_EventWait(20);
-	Event_OpenMessage(16, 0);
-	if (Engine_EventChooseYesNo(0, 0) != 0)
+	else
 	{
-		goto skipTwice;
+		Event_SkipMessages(1);
+		Engine_EventWait(20);
+		Actor_ShowEmote(18, 0x105, 60);
+		Actor_FaceDirection(18, 128 << 7, 20);
+		Engine_ActorRunRepeatedMotion(16, 2);
+		Engine_EventWait(20);
+		Event_OpenMessage(16, 0);
+		if (Engine_EventChooseYesNo(0, 0) == 0)
+		{
+			Engine_ActorSetAnimationAndWait(16, 3);
+			Engine_EventWait(20);
+			Actor_FaceDirection(18, 176 << 8, 20);
+			Event_ShowMessageAndWait(18, 0, 20);
+			GameFlag_Set(0x898);
+		}
+		else
+		{
+			Event_SkipMessages(1);
+			Engine_EventWait(20);
+			Engine_ActorSetAnimationAndWait(18, 4);
+			Engine_EventWait(20);
+			Event_ShowMessageAndWait(18, 0, 20);
+			GameFlag_Set(0x899);
+		}
 	}
-	Engine_ActorSetAnimationAndWait(16, 3);
-	Engine_EventWait(20);
-	Actor_FaceDirection(18, 176 << 8, 20);
-	id = 18;
-
-joinBeat:
-	Event_ShowMessageAndWait(id, 0, 20);
-	GameFlag_Set(0x898);
-	goto finish;
-
-skipTwice:
-	Event_SkipMessages(1);
-	Engine_EventWait(20);
-	Engine_ActorSetAnimationAndWait(18, 4);
-	Engine_EventWait(20);
-	Event_ShowMessageAndWait(18, 0, 20);
-	GameFlag_Set(0x899);
-
-finish:
 	Actor_FaceDirection(10, 128 << 8, 0);
 	Actor_FaceDirection(11, 128 << 8, 20);
 	Engine_ActorSetAnimation(10, 5);
@@ -1425,6 +1412,7 @@ static void EV03_TOUCH_1(void)
 
 	Engine_EventBegin();
 	particle_task = (s32)FieldScene_SpawnRandomizedParticle;
+	/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 	((void (*)())Engine_TaskAddCallback)(particle_task, 0xc80);
 	Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
 	gEventWork->transition_frames = 60;

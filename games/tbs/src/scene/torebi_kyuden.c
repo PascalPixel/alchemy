@@ -540,7 +540,7 @@ static void EV70_SEARCH(void)
 		{
 			Event_Wait(20);
 			Inn_PlaySleep(0);
-			goto done;
+			return;
 		}
 		Event_Wait(20);
 		facing = dir;
@@ -703,7 +703,6 @@ static void EV70_SEARCH(void)
 		GameFlag_Set(0x96a);
 	}
 	Event_End();
-done:;
 }
 
 static void EV60_TOUCH(void)

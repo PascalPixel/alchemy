@@ -2,8 +2,8 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/scene/mogoru_mori.h"
-#include "unit/scene/common/object/orbit.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/object_orbit.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/marker.h"
@@ -46,12 +46,11 @@ enum
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/staged_actor.c"
+#include "common/object_staged_actor.c"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
+#include "common/effect_create.c"
+#include "common/effect_spawn.c"
 
 struct Vec
 {
@@ -222,8 +221,6 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 static void EV20_SCRIPT_1(void)
 {
 	struct StagedActorProbe probe;
-	s32						fifth;
-	s32						sixth;
 
 	Engine_EventBegin();
 	if (StagedActor_FindClearPosition(&probe) != 0)
@@ -240,9 +237,7 @@ static void EV20_SCRIPT_1(void)
 			Engine_AudioPlayCue(240);
 			Engine_ActorSetSpritePriority(9, 1);
 			Object_GetById(9)->priority_flags = 2;
-			fifth = 31;
-			sixth = 25;
-			Engine_MapCopyCellAttributes(38, 27, 4, 2, fifth, sixth);
+			Map_CopyCellAttributes(38, 27, 4, 2, 31, 25);
 		}
 	}
 	Engine_EventEnd();
@@ -450,7 +445,7 @@ static void EV20_SCRIPT_2(void)
 		{
 			fifth = 35;
 			sixth = 68;
-			Engine_MapCopyCellAttributes(35, 67, 4, 1, fifth, sixth);
+			Map_CopyCellAttributes(35, 67, 4, 1, fifth, sixth);
 		}
 		else if (probe.actor_slot == 10 && (probe.position_x >> 20) == 35)
 		{
@@ -467,7 +462,7 @@ static void EV20_SCRIPT_2(void)
 
 			fifth = 34;
 			sixth = 30;
-			Engine_MapCopyCellAttributes(44, 30, 2, 4, fifth, sixth);
+			Map_CopyCellAttributes(44, 30, 2, 4, fifth, sixth);
 			height = 4;
 			StagedActor_FillGridAttributeRectangle(2, 35, 30, 1, height, value);
 		}
@@ -656,47 +651,47 @@ static void EV20_SCRIPT_3(void)
 	if (StagedActor_FindClearPosition(&probe) != 0)
 	{
 		SceneActor_MoveAndRedraw(probe);
-		if (probe.actor_slot == 9)
-			goto nine;
-		if (probe.actor_slot == 11)
-			goto eleven;
-		goto other;
-	nine:
-		Map_CopyCellAttributes(38, 68, 1, 4, probe.position_x >> 20, 68);
-		if (probe.position_x >> 20 == 42)
+		if (probe.actor_slot == 9 || probe.actor_slot == 11)
 		{
-			Map_CopyCellAttributes(26, 20, 2, 4, probe.position_x >> 20, 23);
-			Engine_ActorSetSpritePriority(9, 1);
-			landed = 1;
-			GameFlag_Set(0x312);
+			if (probe.actor_slot == 9)
+			{
+				Map_CopyCellAttributes(38, 68, 1, 4, probe.position_x >> 20, 68);
+				if (probe.position_x >> 20 == 42)
+				{
+					Map_CopyCellAttributes(26, 20, 2, 4, probe.position_x >> 20, 23);
+					Engine_ActorSetSpritePriority(9, 1);
+					landed = 1;
+					GameFlag_Set(0x312);
+				}
+			}
+			else
+			{
+				if (probe.position_x >> 20 == 40)
+				{
+					Map_CopyCellAttributes(26, 20, 2, 4, probe.position_x >> 20, 32);
+					Engine_ActorSetSpritePriority(11, 1);
+					landed = 1;
+					GameFlag_Set(0x313);
+				}
+			}
+			if (landed == 0)
+			{
+				Engine_EventEnd();
+				return;
+			}
+			Engine_ActorSetAnimation(probe.actor_slot, 3);
+			Engine_ActorSetDestinationOffset(probe.actor_slot, 18, 6);
+			Engine_EventWait(30);
+			Engine_ActorSetAnimation(probe.actor_slot, 8);
+			Engine_AudioPlayCue(240);
+			Actor_Get(probe.actor_slot)->priority_flags = 2;
 		}
-		goto join;
-	eleven:
-		if (probe.position_x >> 20 == 40)
+		else
 		{
-			Map_CopyCellAttributes(26, 20, 2, 4, probe.position_x >> 20, 32);
-			Engine_ActorSetSpritePriority(11, 1);
-			landed = 1;
-			GameFlag_Set(0x313);
+			if (probe.actor_slot == 8)
+				Map_CopyCellAttributes(42, 49, 1, 4, probe.position_x >> 20, 49);
 		}
-	join:
-		if (landed == 0)
-		{
-			Engine_EventEnd();
-			return;
-		}
-		Engine_ActorSetAnimation(probe.actor_slot, 3);
-		Engine_ActorSetDestinationOffset(probe.actor_slot, 18, 6);
-		Engine_EventWait(30);
-		Engine_ActorSetAnimation(probe.actor_slot, 8);
-		Engine_AudioPlayCue(240);
-		Actor_Get(probe.actor_slot)->priority_flags = 2;
-		goto end;
-	other:
-		if (probe.actor_slot == 8)
-			Map_CopyCellAttributes(42, 49, 1, 4, probe.position_x >> 20, 49);
 	}
-end:
 	Engine_EventEnd();
 }
 
@@ -1388,7 +1383,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/orbit.c"
+#include "common/object_orbit.c"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

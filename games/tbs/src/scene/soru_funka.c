@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "unit/scene/soru_funka.h"
-#include "unit/scene/common/effect/psynergy.h"
-#include "unit/scene/soru_star_ring_setup.h"
+#include "unit/scene/common/effect_psynergy.h"
+#include "unit/scene/common/soru_star_ring_setup.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"
@@ -1490,21 +1490,19 @@ static void SceneState_ApplyRectsByCondition(s32 a)
 	if (a != 0)
 	{
 		s32 x;
-		s32 y;
 		x = 1;
-		Engine_MapCopyCellsTo(8, 47, 64, 7, x, x);
-		y = 2;
-		Engine_MapCopyCellsTo(7, 48, 63, 8, y, x);
-		Engine_MapCopyCellsTo(7, 49, 63, 9, y, x);
+		Map_CopyCellsTo(8, 47, 64, 7, x, x);
+		Map_CopyCellsTo(7, 48, 63, 8, 2, x);
+		Map_CopyCellsTo(7, 49, 63, 9, 2, x);
 	}
 	else
 	{
 		s32 x;
 		x = 1;
-		Engine_MapCopyCellsTo(56, 0, 64, 7, x, x);
-		Engine_MapCopyCellsTo(56, 0, 63, 8, x, x);
-		Engine_MapCopyCellsTo(56, 0, 63, 9, 2, x);
-		Engine_MapCopyCellsTo(58, 25, 64, 8, x, x);
+		Map_CopyCellsTo(56, 0, 64, 7, x, x);
+		Map_CopyCellsTo(56, 0, 63, 8, x, x);
+		Map_CopyCellsTo(56, 0, 63, 9, 2, x);
+		Map_CopyCellsTo(58, 25, 64, 8, x, x);
 	}
 	Engine_MapRedraw();
 }
@@ -1515,15 +1513,15 @@ static void SceneState_ApplyRectPairByFlag(s32 a)
 	{
 		s32 n;
 		n = 2;
-		Engine_MapCopyCellsTo(9, 45, 65, 5, n, n);
-		Engine_MapCopyCellsTo(11, 46, 67, 6, 1, n);
+		Map_CopyCellsTo(9, 45, 65, 5, n, n);
+		Map_CopyCellsTo(11, 46, 67, 6, 1, n);
 	}
 	else
 	{
 		s32 n;
 		n = 2;
-		Engine_MapCopyCellsTo(89, 2, 65, 5, n, n);
-		Engine_MapCopyCellsTo(102, 32, 67, 6, 1, n);
+		Map_CopyCellsTo(89, 2, 65, 5, n, n);
+		Map_CopyCellsTo(102, 32, 67, 6, 1, n);
 	}
 	Engine_MapRedraw();
 }
@@ -1745,25 +1743,15 @@ static void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b)
 
 static void SceneState_ConfigureEightCornerRegions(void)
 {
-	s32 x;
-	s32 y;
-	s32 z;
-	s32 w;
-	s32 v;
 
-	x = 0;
-	Engine_MapCopyCellAttributes(14, 8, 1, 1, 10, x);
-	Engine_MapCopyCellAttributes(14, 28, 1, 1, 11, x);
-	Engine_MapCopyCellAttributes(44, 8, 1, 1, 12, x);
-	Engine_MapCopyCellAttributes(44, 28, 1, 1, 13, x);
-	z = 14;
-	y = 8;
-	Engine_MapCopyCellAttributes(13, 8, 1, 1, z, y);
-	w = 28;
-	Engine_MapCopyCellAttributes(13, 28, 1, 1, z, w);
-	v = 44;
-	Engine_MapCopyCellAttributes(43, 8, 1, 1, v, y);
-	Engine_MapCopyCellAttributes(43, 28, 1, 1, v, w);
+	Map_CopyCellAttributes(14, 8, 1, 1, 10, 0);
+	Map_CopyCellAttributes(14, 28, 1, 1, 11, 0);
+	Map_CopyCellAttributes(44, 8, 1, 1, 12, 0);
+	Map_CopyCellAttributes(44, 28, 1, 1, 13, 0);
+	Map_CopyCellAttributes(13, 8, 1, 1, 14, 8);
+	Map_CopyCellAttributes(13, 28, 1, 1, 14, 28);
+	Map_CopyCellAttributes(43, 8, 1, 1, 44, 8);
+	Map_CopyCellAttributes(43, 28, 1, 1, 44, 28);
 }
 
 static void FieldScene_RunVariantStep(s32 a, s32 b, s32 c)
@@ -1814,7 +1802,7 @@ static void SceneState_ForwardByRuntimeWordBits(s32 a)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/vertical.c"
+#include "common/effect_vertical.c"
 
 static void SoruFunka_SpawnEffectPair(union PairObject *parent)
 {
@@ -1867,7 +1855,7 @@ static void SoruFunka_SpawnEffectPair(union PairObject *parent)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/psynergy.c"
+#include "common/effect_psynergy.c"
 
 static void FieldScene_RunActor15TwoStep(void)
 {
@@ -1875,7 +1863,7 @@ static void FieldScene_RunActor15TwoStep(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "soru_star_ring_setup.c"
+#include "common/soru_star_ring_setup.c"
 
 s32 Funka_ArcOriginsHead[] = {
 	SC_SET(SW_VELOCITY_Y, 0x60000),

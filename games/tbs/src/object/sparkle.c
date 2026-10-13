@@ -352,6 +352,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item)
 		vis->unk1 = zero;
 		vis->unk2 = zero;
 
+		/* FAKEMATCH: the mask ~32 is built from the register already holding zero; written ~32, tbs-en differs */
 		vis->flatbs &= zero - 33;
 
 		mask = vis->flatla & 0x0f;
@@ -464,6 +465,7 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
 		visual->unk1 = zero;
 		visual->unk2 = zero;
 
+		/* FAKEMATCH: the mask ~32 is built from the register already holding zero; written ~32, tbs-en differs */
 		visual->flatbs &= zero - 33;
 
 		mask = visual->flatla & 0x0f;

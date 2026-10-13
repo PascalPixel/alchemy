@@ -263,9 +263,7 @@ static void SceneState_ClearSlotsBySubState(void)
 	{
 	case 3:
 	{
-		s32 fifth = 4;
-		s32 sixth = 2;
-		Engine_MapCopyCellsTo(30, 14, 30, 16, fifth, sixth);
+		Map_CopyCellsTo(30, 14, 30, 16, 4, 2);
 		return;
 	}
 	case 9:
@@ -276,35 +274,31 @@ static void SceneState_ClearSlotsBySubState(void)
 	case 14:
 	case 15:
 	case 17:
-		break;
+		if (Engine_GameFlagIsSet(0x911) != 0)
+		{
+
+			Engine_ActorDestroy(10);
+			Engine_ActorDestroy(11);
+			Engine_ActorDestroy(12);
+			Engine_ActorDestroy(13);
+			Engine_ActorDestroy(14);
+			Engine_ActorDestroy(17);
+			Engine_ActorDestroy(18);
+			Engine_ActorDestroy(19);
+			Engine_ActorDestroy(15);
+		}
+		else
+		{
+			Engine_ActorSetChildValue(13, 2);
+		}
+		return;
 	default:
-		goto other;
-	}
-
-	if (Engine_GameFlagIsSet(0x911) != 0)
-	{
-
-		Engine_ActorDestroy(10);
-		Engine_ActorDestroy(11);
-		Engine_ActorDestroy(12);
-		Engine_ActorDestroy(13);
-		Engine_ActorDestroy(14);
-		Engine_ActorDestroy(17);
-		Engine_ActorDestroy(18);
-		Engine_ActorDestroy(19);
-		Engine_ActorDestroy(15);
-	}
-	else
-	{
-		Engine_ActorSetChildValue(13, 2);
-	}
-	return;
-
-other:
-	if (Engine_GameFlagIsSet(0x911) != 0)
-	{
-		Engine_ActorDestroy(16);
-		Engine_ActorDestroy(17);
+		if (Engine_GameFlagIsSet(0x911) != 0)
+		{
+			Engine_ActorDestroy(16);
+			Engine_ActorDestroy(17);
+		}
+		break;
 	}
 }
 

@@ -2719,6 +2719,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused)
 			if (changed)
 			{
 				changed = 0;
+				/* FAKEMATCH: an explicit libgcc call; written with the operator, tbs-en differs */
 				sel = __modsi3(sel + 2, 2);
 			}
 			if (gKeyState & KEY_A)

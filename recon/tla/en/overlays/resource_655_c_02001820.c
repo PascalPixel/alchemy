@@ -1,3 +1,4 @@
+/* Near miss, differ 4 (was 56): two pairs in the other order. The listing loads the record table (ldr r5) before it starts the flag id and the counter, where this draft starts both first; a barrier after the table load would also hold the frame's sub sp ahead of them, which the listing has after. And the listing builds the 1 for the two stack arguments after it reads the first origin halfword (ldrh r0; movs r4, #1), this draft before. Func_020018a8, Func_02001930 and Func_020019b8 are the same loop over other tables. */
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -81,15 +82,27 @@ static __inline__ void Wait(s32 frames)
 
 void Func_02001820(void)
 {
+    const u16 *cell = &Data_02004066[0].present;
+    s32 flag = 0x240;
     u32 i;
 
     for (i = 0; i <= 13; i++) {
         if (Flag_Test(0x109) != 0) {
-            if (Flag_Test(0x240 + i) != 0)
-                Func_02003be0(Data_02003fd2[0], Data_02003fd2[1], Data_02004066[i].x, Data_02004066[i].y, 1, 1);
-        } else if (Data_02004066[i].present != 0) {
-            Flag_Set(0x240 + i);
+            if (Flag_Test(flag) != 0) {
+                s32 x;
+                s32 y;
+
+                cell = &Data_02004066[i].x;
+                x = *cell++;
+                y = *cell++;
+                Func_02003be0(Data_02003fd2[0], Data_02003fd2[1], x, y, 1, 1);
+            }
+        } else {
+            if (*cell != 0)
+                Flag_Set(flag);
+            cell += 6;
         }
+        flag++;
     }
     if (Flag_Test(0x109) == 0)
         Func_02001804();

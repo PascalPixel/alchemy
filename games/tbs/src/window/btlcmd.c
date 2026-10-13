@@ -12,7 +12,7 @@
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evmes.h"
-#include "unit/graphics/text/moji.h"
+#include "unit/window/moji.h"
 #include "unit/runtime/runtime.h"
 #include "unit/runtime/oamlist.h"
 #include "unit/runtime/objvram.h"
@@ -98,7 +98,6 @@
 #include "disptran.h"
 #include "frame.h"
 
-s32 __divsi3(s32, s32);
 
 static __inline__ u32 XorWord(u32 word, u32 mask)
 {
@@ -1080,7 +1079,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 
 	total =
 		DjinnMenu_ListChangedDjinn(snap->action_slots, unit->action_slots, list, &gained, &lost);
-	pages = __divsi3(total - 1, 5) + 1;
+	pages = ((total - 1) / 5) + 1;
 	*pageCount = pages;
 	if (page * 5 - 5 >= total)
 		page = pages;
@@ -5048,6 +5047,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
                doubleword, the call also sets r1, so the r1 reload for
                class_id no longer depends on the in reload and sched2 loads
                i * 2 before in, as native (differ 2). */
+			/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 			actor = (struct BtlUnit *)(s32)((s64 (*)(s32))UnitGetFar)(actorId);
 			COUNTDOWN->actorId = actorId;
 			COUNTDOWN->unk_40 = 0;

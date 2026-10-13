@@ -12,7 +12,7 @@
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evmes.h"
-#include "unit/graphics/text/moji.h"
+#include "unit/window/moji.h"
 #include "unit/runtime/runtime.h"
 #include "unit/runtime/oamlist.h"
 #include "unit/runtime/objvram.h"

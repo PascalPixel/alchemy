@@ -1,4 +1,4 @@
-@ All editions link graphics/text/moji.c; this listing remains reference only.
+@ All editions link window/moji.c; this listing remains reference only.
 	.include "games/common/include/game/ed_asm.h"
 	.syntax unified
 	.arm

@@ -234,6 +234,26 @@ pub(crate) fn analyze(text: &str, source: &str) -> Result<Analysis, String> {
     Ok(result)
 }
 
+/// Each function of a C file, read before preprocessing, whose body uses
+/// a macro a FAKEMATCH tag explains, with the macros it uses: the tag sits
+/// above the macro's #define, so it is in no function the preprocessed
+/// text holds, and the functions that expand it are the steered ones.
+pub(crate) fn macro_users(raw: &str, tagged: &BTreeSet<String>) -> BTreeMap<String, BTreeSet<String>> {
+    let mut found: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    let Ok(tokens) = lex(raw) else { return found };
+    for (name, _, _, _, open) in scan_definitions(&tokens) {
+        let Some(close) = matching(&tokens, open) else { continue };
+        for token in &tokens[open + 1..close] {
+            if let Tok::Ident(word) = &token.tok {
+                if tagged.contains(word) {
+                    found.entry(name.clone()).or_default().insert(word.clone());
+                }
+            }
+        }
+    }
+    found
+}
+
 fn has_reason(tokens: &[Token]) -> bool {
     tokens.iter().any(|token| match &token.tok {
         Tok::Comment(comment) => comment
@@ -437,6 +457,14 @@ mod tests {
             ["Adapter", "Call1", "Caller"].map(String::from).into()
         );
     }
+    #[test]
+    fn functions_that_expand_a_tagged_macro_are_steered() {
+        let raw = "#define SET(v) do { g = (v); } while (0)\nvoid Uses(void)\n{\n\tSET(1);\n}\nvoid Plain(void)\n{\n\tg = 2;\n}\n";
+        let tagged = BTreeSet::from(["SET".to_string()]);
+        let users = macro_users(raw, &tagged);
+        assert_eq!(users.keys().collect::<Vec<_>>(), vec!["Uses"]);
+    }
+
     #[test]
     fn named_helpers_steer_and_noninline_calls_and_members_do_not() {
         let text = "static inline int Help(int x) { /* FAKEMATCH: measured. */ return x; }\nint Tagged(int x) { /* FAKEMATCH: measured. */ return x; }\nint Alias(void) { int (*f)(int) = Help; return f(1); }\nint Ordinary(void) { return Tagged(1); }\nint Member(struct S *s) { return s->Help; }\n";

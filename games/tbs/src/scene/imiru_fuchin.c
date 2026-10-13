@@ -174,7 +174,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/pairmove.c"
+#include "common/object_pairmove.c"
 
 static void EV11_TOUCH_2(void)
 {
@@ -880,7 +880,7 @@ static void DialogueLayout_ConfigureGroupOne(void)
 	{
 		s32 x = 8;
 		s32 y = 29;
-		Engine_MapCopyCellAttributes(8, 42, 15, 5, x, y);
+		Map_CopyCellAttributes(8, 42, 15, 5, x, y);
 	}
 
 	if (Engine_GameFlagIsSet(0x301) != 0)
@@ -889,7 +889,7 @@ static void DialogueLayout_ConfigureGroupOne(void)
 		{
 			s32 x = 8;
 			s32 y = 30;
-			Engine_MapCopyCellAttributes(9, 30, 1, 3, x, y);
+			Map_CopyCellAttributes(9, 30, 1, 3, x, y);
 		}
 	}
 	else
@@ -898,7 +898,7 @@ static void DialogueLayout_ConfigureGroupOne(void)
 		{
 			s32 x = 22;
 			s32 y = 30;
-			Engine_MapCopyCellAttributes(9, 30, 1, 3, x, y);
+			Map_CopyCellAttributes(9, 30, 1, 3, x, y);
 		}
 	}
 
@@ -908,7 +908,7 @@ static void DialogueLayout_ConfigureGroupOne(void)
 		{
 			s32 x = 11;
 			s32 y = 33;
-			Engine_MapCopyCellAttributes(14, 33, 3, 1, x, y);
+			Map_CopyCellAttributes(14, 33, 3, 1, x, y);
 		}
 	}
 	else
@@ -917,7 +917,7 @@ static void DialogueLayout_ConfigureGroupOne(void)
 		{
 			s32 x = 11;
 			s32 y = 29;
-			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, y);
+			Map_CopyCellAttributes(14, 29, 3, 1, x, y);
 		}
 	}
 
@@ -927,7 +927,7 @@ static void DialogueLayout_ConfigureGroupOne(void)
 		{
 			s32 x = 17;
 			s32 y = 33;
-			Engine_MapCopyCellAttributes(14, 33, 3, 1, x, y);
+			Map_CopyCellAttributes(14, 33, 3, 1, x, y);
 		}
 	}
 	else
@@ -936,7 +936,7 @@ static void DialogueLayout_ConfigureGroupOne(void)
 		{
 			s32 x = 17;
 			s32 y = 29;
-			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, y);
+			Map_CopyCellAttributes(14, 29, 3, 1, x, y);
 		}
 	}
 }
@@ -946,7 +946,7 @@ static void DialogueLayout_ConfigureGroupTwo(void)
 	{
 		s32 x = 12;
 		s32 y = 8;
-		Engine_MapCopyCellAttributes(0, 28, 10, 18, x, y);
+		Map_CopyCellAttributes(0, 28, 10, 18, x, y);
 	}
 
 	if (Engine_GameFlagIsSet(0x304) != 0)
@@ -955,7 +955,7 @@ static void DialogueLayout_ConfigureGroupTwo(void)
 		{
 			s32 x = 13;
 			s32 y = 19;
-			Engine_MapCopyCellAttributes(20, 19, 1, 3, x, y);
+			Map_CopyCellAttributes(20, 19, 1, 3, x, y);
 		}
 	}
 	else
@@ -964,7 +964,7 @@ static void DialogueLayout_ConfigureGroupTwo(void)
 		{
 			s32 x = 21;
 			s32 y = 19;
-			Engine_MapCopyCellAttributes(20, 19, 1, 3, x, y);
+			Map_CopyCellAttributes(20, 19, 1, 3, x, y);
 		}
 	}
 
@@ -974,12 +974,12 @@ static void DialogueLayout_ConfigureGroupTwo(void)
 		{
 			s32 x = 12;
 			s32 y = 19;
-			Engine_MapCopyCellAttributes(5, 19, 1, 3, x, y);
+			Map_CopyCellAttributes(5, 19, 1, 3, x, y);
 		}
 		{
 			s32 x = 13;
 			s32 y = 19;
-			Engine_MapCopyCellAttributes(20, 19, 1, 3, x, y);
+			Map_CopyCellAttributes(20, 19, 1, 3, x, y);
 		}
 		if (Engine_GameFlagIsSet(0x304) != 0)
 		{
@@ -987,12 +987,12 @@ static void DialogueLayout_ConfigureGroupTwo(void)
 			{
 				s32 x = 13;
 				s32 y = 19;
-				Engine_MapCopyCellAttributes(20, 19, 1, 3, x, y);
+				Map_CopyCellAttributes(20, 19, 1, 3, x, y);
 			}
 			{
 				s32 x = 12;
 				s32 y = 19;
-				Engine_MapCopyCellAttributes(20, 19, 1, 3, x, y);
+				Map_CopyCellAttributes(20, 19, 1, 3, x, y);
 			}
 		}
 	}
@@ -1003,7 +1003,7 @@ static void DialogueLayout_ConfigureGroupTwo(void)
 		{
 			s32 x = 14;
 			s32 y = 17;
-			Engine_MapCopyCellAttributes(14, 18, 3, 1, x, y);
+			Map_CopyCellAttributes(14, 18, 3, 1, x, y);
 		}
 	}
 	else
@@ -1012,7 +1012,7 @@ static void DialogueLayout_ConfigureGroupTwo(void)
 		{
 			s32 x = 14;
 			s32 y = 21;
-			Engine_MapCopyCellAttributes(14, 18, 3, 1, x, y);
+			Map_CopyCellAttributes(14, 18, 3, 1, x, y);
 		}
 	}
 
@@ -1022,7 +1022,7 @@ static void DialogueLayout_ConfigureGroupTwo(void)
 		{
 			s32 x = 18;
 			s32 y = 25;
-			Engine_MapCopyCellAttributes(14, 18, 3, 1, x, y);
+			Map_CopyCellAttributes(14, 18, 3, 1, x, y);
 		}
 	}
 	else
@@ -1031,7 +1031,7 @@ static void DialogueLayout_ConfigureGroupTwo(void)
 		{
 			s32 x = 18;
 			s32 y = 8;
-			Engine_MapCopyCellAttributes(14, 18, 3, 1, x, y);
+			Map_CopyCellAttributes(14, 18, 3, 1, x, y);
 		}
 	}
 }
@@ -1039,16 +1039,14 @@ static void DialogueLayout_ConfigureGroupTwo(void)
 static void DialogueLayout_ConfigureGroupThree(void)
 {
 	{
-		s32 x = 12, y = 21;
-		Engine_MapCopyCellAttributes(12, 3, 9, 16, x, y);
+		Map_CopyCellAttributes(12, 3, 9, 16, 12, 21);
 	}
 
 	if (Engine_GameFlagIsSet(0x308) != 0)
 	{
 		SceneActor_PlaceAtTileAndMark(8, 14, 25);
 		{
-			s32 x = 20, y = 24;
-			Engine_MapCopyCellAttributes(16, 24, 1, 3, x, y);
+			Map_CopyCellAttributes(16, 24, 1, 3, 20, 24);
 		}
 	}
 	else if (Engine_GameFlagIsSet(0x309) != 0)
@@ -1056,17 +1054,16 @@ static void DialogueLayout_ConfigureGroupThree(void)
 		SceneActor_PlaceAtTileAndMark(8, 17, 25);
 		{
 			s32 y = 24;
-			Engine_MapCopyCellAttributes(18, 24, 1, 3, 20, y);
-			Engine_MapCopyCellAttributes(18, 24, 1, 3, 14, y);
-			Engine_MapCopyCellAttributes(8, 41, 1, 3, 17, y);
+			Map_CopyCellAttributes(18, 24, 1, 3, 20, y);
+			Map_CopyCellAttributes(18, 24, 1, 3, 14, y);
+			Map_CopyCellAttributes(8, 41, 1, 3, 17, y);
 		}
 	}
 	else
 	{
 		SceneActor_PlaceAtTileAndMark(8, 20, 25);
 		{
-			s32 x = 14, y = 24;
-			Engine_MapCopyCellAttributes(16, 24, 1, 3, x, y);
+			Map_CopyCellAttributes(16, 24, 1, 3, 14, 24);
 		}
 	}
 
@@ -1074,16 +1071,14 @@ static void DialogueLayout_ConfigureGroupThree(void)
 	{
 		SceneActor_PlaceAtTileAndMark(9, 13, 35);
 		{
-			s32 x = 15, y = 34;
-			Engine_MapCopyCellAttributes(14, 34, 1, 3, x, y);
+			Map_CopyCellAttributes(14, 34, 1, 3, 15, 34);
 		}
 	}
 	else
 	{
 		SceneActor_PlaceAtTileAndMark(9, 15, 35);
 		{
-			s32 x = 13, y = 34;
-			Engine_MapCopyCellAttributes(14, 34, 1, 3, x, y);
+			Map_CopyCellAttributes(14, 34, 1, 3, 13, 34);
 		}
 	}
 
@@ -1092,8 +1087,8 @@ static void DialogueLayout_ConfigureGroupThree(void)
 		SceneActor_PlaceAtTileAndMark(10, 15, 22);
 		{
 			s32 x = 14;
-			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 30);
-			Engine_MapCopyCellAttributes(5, 41, 3, 1, x, 22);
+			Map_CopyCellAttributes(14, 29, 3, 1, x, 30);
+			Map_CopyCellAttributes(5, 41, 3, 1, x, 22);
 		}
 	}
 	else if (Engine_GameFlagIsSet(0x30c) != 0)
@@ -1101,9 +1096,9 @@ static void DialogueLayout_ConfigureGroupThree(void)
 		SceneActor_PlaceAtTileAndMark(10, 15, 23);
 		{
 			s32 x = 14;
-			Engine_MapCopyCellAttributes(5, 42, 3, 1, x, 23);
-			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 30);
-			Engine_MapCopyCellAttributes(10, 44, 3, 1, x, 21);
+			Map_CopyCellAttributes(5, 42, 3, 1, x, 23);
+			Map_CopyCellAttributes(14, 29, 3, 1, x, 30);
+			Map_CopyCellAttributes(10, 44, 3, 1, x, 21);
 		}
 	}
 	else if (Engine_GameFlagIsSet(0x30d) != 0)
@@ -1111,9 +1106,9 @@ static void DialogueLayout_ConfigureGroupThree(void)
 		SceneActor_PlaceAtTileAndMark(10, 15, 26);
 		{
 			s32 x = 14;
-			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 22);
-			Engine_MapCopyCellAttributes(5, 43, 3, 1, x, 26);
-			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 30);
+			Map_CopyCellAttributes(14, 29, 3, 1, x, 22);
+			Map_CopyCellAttributes(5, 43, 3, 1, x, 26);
+			Map_CopyCellAttributes(14, 29, 3, 1, x, 30);
 		}
 	}
 	else if (Engine_GameFlagIsSet(0x30e) != 0)
@@ -1121,9 +1116,9 @@ static void DialogueLayout_ConfigureGroupThree(void)
 		SceneActor_PlaceAtTileAndMark(10, 15, 27);
 		{
 			s32 x = 14;
-			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 22);
-			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 30);
-			Engine_MapCopyCellAttributes(5, 44, 3, 1, x, 27);
+			Map_CopyCellAttributes(14, 29, 3, 1, x, 22);
+			Map_CopyCellAttributes(14, 29, 3, 1, x, 30);
+			Map_CopyCellAttributes(5, 44, 3, 1, x, 27);
 		}
 	}
 	else
@@ -1136,8 +1131,8 @@ static void DialogueLayout_ConfigureGroupThree(void)
 		SceneActor_PlaceAtTileAndMark(11, 15, 23);
 		{
 			s32 x = 14;
-			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 31);
-			Engine_MapCopyCellAttributes(10, 40, 3, 1, x, 23);
+			Map_CopyCellAttributes(14, 29, 3, 1, x, 31);
+			Map_CopyCellAttributes(10, 40, 3, 1, x, 23);
 		}
 	}
 	else if (Engine_GameFlagIsSet(0x310) != 0)
@@ -1145,8 +1140,8 @@ static void DialogueLayout_ConfigureGroupThree(void)
 		SceneActor_PlaceAtTileAndMark(11, 15, 24);
 		{
 			s32 x = 14;
-			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 31);
-			Engine_MapCopyCellAttributes(10, 41, 3, 1, x, 24);
+			Map_CopyCellAttributes(14, 29, 3, 1, x, 31);
+			Map_CopyCellAttributes(10, 41, 3, 1, x, 24);
 		}
 	}
 	else if (Engine_GameFlagIsSet(0x311) != 0)
@@ -1154,8 +1149,8 @@ static void DialogueLayout_ConfigureGroupThree(void)
 		SceneActor_PlaceAtTileAndMark(11, 15, 27);
 		{
 			s32 x = 14;
-			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 31);
-			Engine_MapCopyCellAttributes(10, 42, 3, 1, x, 27);
+			Map_CopyCellAttributes(14, 29, 3, 1, x, 31);
+			Map_CopyCellAttributes(10, 42, 3, 1, x, 27);
 		}
 	}
 	else if (Engine_GameFlagIsSet(0x312) != 0)
@@ -1163,8 +1158,8 @@ static void DialogueLayout_ConfigureGroupThree(void)
 		SceneActor_PlaceAtTileAndMark(11, 15, 28);
 		{
 			s32 x = 14;
-			Engine_MapCopyCellAttributes(14, 29, 3, 1, x, 31);
-			Engine_MapCopyCellAttributes(10, 43, 3, 1, x, 28);
+			Map_CopyCellAttributes(14, 29, 3, 1, x, 31);
+			Map_CopyCellAttributes(10, 43, 3, 1, x, 28);
 		}
 	}
 	else
@@ -1181,7 +1176,7 @@ static void FieldScene_RunFlagBranchedLayoutSteps(void)
 		{
 			s32 x = 14;
 			s32 y = 10;
-			Engine_MapCopyCellAttributes(22, 20, 9, 8, x, y);
+			Map_CopyCellAttributes(22, 20, 9, 8, x, y);
 		}
 	}
 	else
@@ -1189,7 +1184,7 @@ static void FieldScene_RunFlagBranchedLayoutSteps(void)
 		{
 			s32 x = 7;
 			s32 y = 45;
-			Engine_MapCopyCellAttributes(20, 45, 11, 4, x, y);
+			Map_CopyCellAttributes(20, 45, 11, 4, x, y);
 		}
 	}
 
@@ -1199,7 +1194,7 @@ static void FieldScene_RunFlagBranchedLayoutSteps(void)
 		{
 			s32 x = 19;
 			s32 y = 10;
-			Engine_MapCopyCellAttributes(19, 11, 3, 1, x, y);
+			Map_CopyCellAttributes(19, 11, 3, 1, x, y);
 		}
 	}
 	else
@@ -1208,7 +1203,7 @@ static void FieldScene_RunFlagBranchedLayoutSteps(void)
 		{
 			s32 x = 19;
 			s32 y = 17;
-			Engine_MapCopyCellAttributes(19, 11, 3, 1, x, y);
+			Map_CopyCellAttributes(19, 11, 3, 1, x, y);
 		}
 	}
 
@@ -1218,7 +1213,7 @@ static void FieldScene_RunFlagBranchedLayoutSteps(void)
 		{
 			s32 x = 22;
 			s32 y = 15;
-			Engine_MapCopyCellAttributes(16, 15, 1, 3, x, y);
+			Map_CopyCellAttributes(16, 15, 1, 3, x, y);
 		}
 	}
 	else
@@ -1227,7 +1222,7 @@ static void FieldScene_RunFlagBranchedLayoutSteps(void)
 		{
 			s32 x = 14;
 			s32 y = 15;
-			Engine_MapCopyCellAttributes(16, 15, 1, 3, x, y);
+			Map_CopyCellAttributes(16, 15, 1, 3, x, y);
 		}
 	}
 
@@ -1237,7 +1232,7 @@ static void FieldScene_RunFlagBranchedLayoutSteps(void)
 		{
 			s32 x = 7;
 			s32 y = 45;
-			Engine_MapCopyCellAttributes(15, 15, 1, 3, x, y);
+			Map_CopyCellAttributes(15, 15, 1, 3, x, y);
 		}
 	}
 	else
@@ -1246,7 +1241,7 @@ static void FieldScene_RunFlagBranchedLayoutSteps(void)
 		{
 			s32 x = 17;
 			s32 y = 45;
-			Engine_MapCopyCellAttributes(15, 15, 1, 3, x, y);
+			Map_CopyCellAttributes(15, 15, 1, 3, x, y);
 		}
 	}
 }
@@ -1765,33 +1760,31 @@ static void SceneActor_StepSubjectAlongHeading(void)
 		Object_CommitPosition(subject);
 		subject->update = SceneActor_TurnTowardTableAngle;
 
-		goto advance_probe;
-	continue_probe:
-		if (Map_GetTerrainHeight(subject->terrain_id, probe.x, probe.z) - subject->y.fixed
-			> 0x80000)
+		for (;;)
 		{
-			goto finish_probe;
-		}
-		x = probe.x;
-		z = probe.z;
-		subject->speed = 0x20000;
-		subject->acceleration = 0x1999;
-		Engine_ObjectSetPosition(subject, probe.x, probe.y, probe.z);
-		Object_CommitPosition(subject);
-		if (marker != goal)
-		{
-			goto blocked;
+			FieldVector_AddPolarOffset(0x100000, heading, &probe);
+			marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
+			if (marker == 255)
+			{
+				break;
+			}
+			if (Map_GetTerrainHeight(subject->terrain_id, probe.x, probe.z) - subject->y.fixed
+				> 0x80000)
+			{
+				break;
+			}
+			x = probe.x;
+			z = probe.z;
+			subject->speed = 0x20000;
+			subject->acceleration = 0x1999;
+			Engine_ObjectSetPosition(subject, probe.x, probe.y, probe.z);
+			Object_CommitPosition(subject);
+			if (marker != goal)
+			{
+				goto blocked;
+			}
 		}
 
-	advance_probe:
-		FieldVector_AddPolarOffset(0x100000, heading, &probe);
-		marker = GetMapCellCollision(subject->terrain_id, probe.x, probe.z);
-		if (marker != 255)
-		{
-			goto continue_probe;
-		}
-
-	finish_probe:
 		subject->speed = 0x20000;
 		subject->acceleration = 0x10000;
 		Engine_ObjectSetPosition(subject, x, subject->y.fixed, z);

@@ -112,8 +112,10 @@ A game is finished when all six hold (Pascal, 2026-10-08):
   `effect`, `object`), and in `scene`: each scene overlay is
   `scene/<place>.c` with its entry table `scene/entry/<place>.s` and its
   import table `scene/import/<place>.s`, and text several scenes include is
-  under `scene/common`. Unit headers follow the same paths under
-  `include/unit`.
+  under `scene/common`. The six overlays that are not scenes sit the same
+  way in `menu` and `debug`. Unit headers follow the same paths under
+  `include/unit`. `games/common/src` has the same bank folders: a shared
+  file sits under the bank that links it.
 - `games/tbs/objects.tsv` is ☀️'s object list: the object order of the main
   image and of each overlay, with the editions that link each row. A row is
   one linker statement, or stands for several: a `unit` row for an
@@ -145,7 +147,8 @@ A game is finished when all six hold (Pascal, 2026-10-08):
   (S3); `field_event.h` and `field_service.h` hold the script layer the
   commands expand to.
 - `recon/tla/<lang>` holds that ⚓️ edition's scaffold (`main.ld`, `main/`,
-  `overlays/`, `units/`) beside `recon/tla/overlays.s` and its symbol files;
+  `overlays/`, `units/`) beside `recon/tla/unidentified.s` (data not yet
+  identified, placed from the ROM) and the symbol files;
   ☀️ has no scaffold left, and `recon/tbs/en` keeps only near-miss drafts
   (`main/`, `overlays/`, S4), each named by the address it would replace.
 - `tools/` holds alchemy (one `alchemy` command for both games: build,

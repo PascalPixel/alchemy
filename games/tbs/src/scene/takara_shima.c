@@ -2,8 +2,8 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/scene/takara_shima.h"
-#include "unit/scene/common/object/orbit.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/object_orbit.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/marker.h"
@@ -57,12 +57,11 @@ struct Vec
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/staged_actor.c"
+#include "common/object_staged_actor.c"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
+#include "common/effect_create.c"
+#include "common/effect_spawn.c"
 
 union GameStateRows
 {
@@ -130,7 +129,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/advance.c"
+#include "common/effect_advance.c"
 
 static void SpawnRadialEffectBurst(s32 object_id)
 {
@@ -201,6 +200,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 static void EV08_PSYNERGY_1(s32 message_id)
 {
+	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 	((void (*)(s32 arg0))Engine_EventBegin)(message_id);
 	Engine_ActorSetPosition(8, 0, 0);
 	Engine_GameFlagSet(4055);
@@ -407,7 +407,7 @@ static void EV08_PSYNERGY(void)
 		entity->priority_flags = flags;
 	}
 
-	Engine_MapCopyCellAttributes(42, 10, 1, 1, column, 10);
+	Map_CopyCellAttributes(42, 10, 1, 1, column, 10);
 
 #if !EDITION_INTERNATIONAL
 	{
@@ -562,9 +562,8 @@ static void EV15_PSYNERGY(void)
 {
 	Engine_GameFlagSet(2244);
 	{
-		s32 k4 = 8, k5 = 21;
 
-		Engine_MapCopyCellAttributes(0, 0, 1, 1, k4, k5);
+		Map_CopyCellAttributes(0, 0, 1, 1, 8, 21);
 	}
 }
 
@@ -633,6 +632,7 @@ static void RunSceneVectorTransition(void)
 	Engine_EventBegin();
 	if (StagedActor_FindClearPosition(&transition) != 0)
 	{
+		/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 		((void (*)(struct V6))SceneActor_MoveAndRedraw)(transition);
 	}
 	Engine_EventEnd();
@@ -695,7 +695,7 @@ static void MarkGridLeftOfSceneActor(s32 actor_mode, s32 grid_value, s32 grid_at
 			s32 k5 = p->f10 >> 20;
 			s32 k4 = (p->f08 >> 20) - 1;
 
-			Engine_MapCopyCellAttributes(grid_value, grid_attribute, 3, 1, k4, k5);
+			Map_CopyCellAttributes(grid_value, grid_attribute, 3, 1, k4, k5);
 		}
 	}
 }
@@ -716,7 +716,7 @@ static void MarkGridAboveSceneActor(s32 actor_mode, s32 grid_value, s32 grid_att
 			s32 k4 = p->f08 >> 20;
 			s32 k5 = (p->f10 >> 20) - 1;
 
-			Engine_MapCopyCellAttributes(grid_value, grid_attribute, 1, 3, k4, k5);
+			Map_CopyCellAttributes(grid_value, grid_attribute, 1, 3, k4, k5);
 		}
 	}
 }
@@ -957,9 +957,9 @@ static void UpdateEscapeRouteForActorPositions(void)
 		s32 route_end_z = Object_GetById(8)->z.fixed >> 20;
 		s32 route_x = actor_x - 1;
 
-		Engine_MapCopyCellAttributes(route_x, actor_z, 3, 1, route_x, route_end_z);
+		Map_CopyCellAttributes(route_x, actor_z, 3, 1, route_x, route_end_z);
 	}
-	Engine_MapCopyCellAttributes(0, 0, 3, 1, actor_x - 1, actor_z);
+	Map_CopyCellAttributes(0, 0, 3, 1, actor_x - 1, actor_z);
 }
 
 static void UpdateActor8ReturnRoute(void)
@@ -1001,9 +1001,9 @@ static void UpdateActor8ReturnRoute(void)
 		s32 k = Object_GetById(8)->z.fixed >> 20;
 		s32 m = x - 1;
 
-		Engine_MapCopyCellAttributes(m, y, 3, 1, m, k);
+		Map_CopyCellAttributes(m, y, 3, 1, m, k);
 	}
-	Engine_MapCopyCellAttributes(0, 0, 3, 1, x - 1, y);
+	Map_CopyCellAttributes(0, 0, 3, 1, x - 1, y);
 }
 
 static void UpdateActor10RetreatRoute(void)
@@ -1050,9 +1050,9 @@ static void UpdateActor10RetreatRoute(void)
 		s32 k = Object_GetById(10)->z.fixed >> 20;
 		s32 m = x - 1;
 
-		Engine_MapCopyCellAttributes(m, y, 3, 1, m, k);
+		Map_CopyCellAttributes(m, y, 3, 1, m, k);
 	}
-	Engine_MapCopyCellAttributes(0, 0, 3, 1, x - 1, y);
+	Map_CopyCellAttributes(0, 0, 3, 1, x - 1, y);
 }
 
 static void UpdateActor10AdvanceRoute(void)
@@ -1076,9 +1076,9 @@ static void UpdateActor10AdvanceRoute(void)
 			s32 k = Object_GetById(10)->z.fixed >> 20;
 			s32 m = x - 1;
 
-			Engine_MapCopyCellAttributes(m, y, 3, 1, m, k);
+			Map_CopyCellAttributes(m, y, 3, 1, m, k);
 		}
-		Engine_MapCopyCellAttributes(0, 0, 3, 1, x - 1, y);
+		Map_CopyCellAttributes(0, 0, 3, 1, x - 1, y);
 	}
 }
 
@@ -1113,9 +1113,9 @@ static void UpdateActor11WestRoute(void)
 			s32 k = Object_GetById(11)->x.fixed >> 20;
 			s32 m = y - 1;
 
-			Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
+			Map_CopyCellAttributes(x, m, 1, 3, k, m);
 		}
-		Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
+		Map_CopyCellAttributes(0, 0, 1, 3, x, y - 1);
 	}
 }
 
@@ -1143,9 +1143,9 @@ static void UpdateActor11EastRoute(void)
 			s32 k = Object_GetById(11)->x.fixed >> 20;
 			s32 m = y - 1;
 
-			Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
+			Map_CopyCellAttributes(x, m, 1, 3, k, m);
 		}
-		Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
+		Map_CopyCellAttributes(0, 0, 1, 3, x, y - 1);
 	}
 }
 
@@ -1173,9 +1173,9 @@ static void UpdateActor12WestRoute(void)
 		s32 k = Object_GetById(12)->x.fixed >> 20;
 		s32 m = y - 1;
 
-		Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
+		Map_CopyCellAttributes(x, m, 1, 3, k, m);
 	}
-	Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
+	Map_CopyCellAttributes(0, 0, 1, 3, x, y - 1);
 }
 
 static void UpdateActor12EastRoute(void)
@@ -1201,9 +1201,9 @@ static void UpdateActor12EastRoute(void)
 		s32 k = Object_GetById(12)->x.fixed >> 20;
 		s32 m = y - 1;
 
-		Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
+		Map_CopyCellAttributes(x, m, 1, 3, k, m);
 	}
-	Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
+	Map_CopyCellAttributes(0, 0, 1, 3, x, y - 1);
 }
 
 static void UpdateActor13WestRoute(void)
@@ -1285,9 +1285,9 @@ static void UpdateActor13WestRoute(void)
 		s32 k = Object_GetById(13)->x.fixed >> 20;
 		s32 m = y - 1;
 
-		Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
+		Map_CopyCellAttributes(x, m, 1, 3, k, m);
 	}
-	Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
+	Map_CopyCellAttributes(0, 0, 1, 3, x, y - 1);
 }
 
 static void UpdateActor13EastRoute(void)
@@ -1322,9 +1322,9 @@ static void UpdateActor13EastRoute(void)
 		s32 k = Object_GetById(13)->x.fixed >> 20;
 		s32 m = y - 1;
 
-		Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
+		Map_CopyCellAttributes(x, m, 1, 3, k, m);
 	}
-	Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
+	Map_CopyCellAttributes(0, 0, 1, 3, x, y - 1);
 }
 
 static void UpdateActor15WestRoute(void)
@@ -1380,9 +1380,9 @@ static void UpdateActor15WestRoute(void)
 		s32 k = Object_GetById(15)->x.fixed >> 20;
 		s32 m = y - 1;
 
-		Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
+		Map_CopyCellAttributes(x, m, 1, 3, k, m);
 	}
-	Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
+	Map_CopyCellAttributes(0, 0, 1, 3, x, y - 1);
 }
 
 static void UpdateActor15EastRoute(void)
@@ -1461,9 +1461,9 @@ static void UpdateActor15EastRoute(void)
 		s32 k = Object_GetById(15)->x.fixed >> 20;
 		s32 m = y - 1;
 
-		Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
+		Map_CopyCellAttributes(x, m, 1, 3, k, m);
 	}
-	Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
+	Map_CopyCellAttributes(0, 0, 1, 3, x, y - 1);
 }
 
 static void UpdateActor17SouthRoute(void)
@@ -1500,9 +1500,9 @@ static void UpdateActor17SouthRoute(void)
 		s32 k = Object_GetById(17)->z.fixed >> 20;
 		s32 m = x - 1;
 
-		Engine_MapCopyCellAttributes(m, y, 3, 1, m, k);
+		Map_CopyCellAttributes(m, y, 3, 1, m, k);
 	}
-	Engine_MapCopyCellAttributes(0, 0, 3, 1, x - 1, y);
+	Map_CopyCellAttributes(0, 0, 3, 1, x - 1, y);
 }
 
 static void UpdateActor17NorthRoute(void)
@@ -1528,9 +1528,9 @@ static void UpdateActor17NorthRoute(void)
 
 		s32 m = x - 1;
 
-		Engine_MapCopyCellAttributes(m, y, 3, 1, m, k);
+		Map_CopyCellAttributes(m, y, 3, 1, m, k);
 	}
-	Engine_MapCopyCellAttributes(0, 0, 3, 1, x - 1, y);
+	Map_CopyCellAttributes(0, 0, 3, 1, x - 1, y);
 }
 
 #define IN_COLUMNS(x) ((x) >= 6 && (x) <= 8)
@@ -1640,7 +1640,7 @@ static void TakaraShima_SettlePushedBlockNorth(void)
 	Engine_TaskWait(2);
 	Engine_MapCopyCellAttributes(
 		cell_x - 1, cell_z, 3, 1, cell_x - 1, Object_GetById(18)->z.fixed >> 20);
-	Engine_MapCopyCellAttributes(0, 0, 3, 1, cell_x - 1, cell_z);
+	Map_CopyCellAttributes(0, 0, 3, 1, cell_x - 1, cell_z);
 }
 
 #undef IN_COLUMNS
@@ -1652,10 +1652,11 @@ static void AdvanceActor18AlongEscapeRoute(void)
 	s32 companion19Column;
 	s32 companion14Column;
 
-	s32 permuted_5;
-	permuted_5 = Object_GetById(18)->x.fixed >> 20;
+	/* FAKEMATCH: read into x before the row and assigned after it; read straight into its variable, tbs-en differs */
+	s32 x;
+	x = Object_GetById(18)->x.fixed >> 20;
 	row = Object_GetById(18)->z.fixed >> 20;
-	column = permuted_5;
+	column = x;
 	companion19Column = Object_GetById(19)->x.fixed >> 20;
 	companion14Column = Object_GetById(14)->x.fixed >> 20;
 
@@ -1663,14 +1664,17 @@ static void AdvanceActor18AlongEscapeRoute(void)
 	{
 		if ((u32)(companion14Column - 6) <= 2)
 		{
-			goto transition32;
+			PositionSceneActorPair(18, 0, 32);
 		}
-		if ((u32)(companion19Column - 6) <= 2)
+		else if ((u32)(companion19Column - 6) <= 2)
 		{
-			goto transition80;
+			PositionSceneActorPair(18, 0, 80);
 		}
-		PositionSceneActorPair(18, 0, 64);
-		PositionSceneActorPair(18, 0, 96);
+		else
+		{
+			PositionSceneActorPair(18, 0, 64);
+			PositionSceneActorPair(18, 0, 96);
+		}
 	}
 	else if (row == 11)
 	{
@@ -1691,7 +1695,6 @@ static void AdvanceActor18AlongEscapeRoute(void)
 	{
 		if ((u32)(companion19Column - 6) <= 2)
 		{
-		transition32:
 			PositionSceneActorPair(18, 0, 32);
 		}
 		else
@@ -1705,7 +1708,6 @@ static void AdvanceActor18AlongEscapeRoute(void)
 		{
 			return;
 		}
-	transition80:
 		PositionSceneActorPair(18, 0, 80);
 	}
 	else if (row == 15)
@@ -1725,7 +1727,7 @@ static void AdvanceActor18AlongEscapeRoute(void)
 
 	column -= 1;
 	Engine_MapCopyCellAttributes(column, row, 3, 1, column, Object_GetById(18)->z.fixed >> 20);
-	Engine_MapCopyCellAttributes(0, 0, 3, 1, column, row);
+	Map_CopyCellAttributes(0, 0, 3, 1, column, row);
 }
 
 #undef IN_COLUMNS
@@ -1837,7 +1839,7 @@ static void TakaraShima_SettleSecondBlockNorth(void)
 	Engine_TaskWait(2);
 	Engine_MapCopyCellAttributes(
 		cell_x - 1, cell_z, 3, 1, cell_x - 1, Object_GetById(9)->z.fixed >> 20);
-	Engine_MapCopyCellAttributes(0, 0, 3, 1, cell_x - 1, cell_z);
+	Map_CopyCellAttributes(0, 0, 3, 1, cell_x - 1, cell_z);
 }
 
 #undef IN_COLUMNS
@@ -1850,10 +1852,11 @@ static void AdvanceActor9AlongEscapeRoute(void)
 	s32 companion14Column;
 	s32 companion16Column;
 
-	s32 permuted_6;
-	permuted_6 = Object_GetById(9)->x.fixed >> 20;
+	/* FAKEMATCH: read into x before the row and assigned after it; read straight into its variable, tbs-en differs */
+	s32 x;
+	x = Object_GetById(9)->x.fixed >> 20;
 	row = Object_GetById(9)->z.fixed >> 20;
-	column = permuted_6;
+	column = x;
 	companion19Column = Object_GetById(19)->x.fixed >> 20;
 	companion14Column = Object_GetById(14)->x.fixed >> 20;
 	companion16Column = Object_GetById(16)->x.fixed >> 20;
@@ -1866,13 +1869,16 @@ static void AdvanceActor9AlongEscapeRoute(void)
 		}
 		if ((u32)(companion14Column - 9) <= 2)
 		{
-			goto transition48;
+			PositionSceneActorPair(9, 0, 48);
 		}
-		if ((u32)(companion19Column - 9) > 2)
+		else
 		{
-			PositionSceneActorPair(9, 0, 80);
+			if ((u32)(companion19Column - 9) > 2)
+			{
+				PositionSceneActorPair(9, 0, 80);
+			}
+			PositionSceneActorPair(9, 0, 96);
 		}
-		PositionSceneActorPair(9, 0, 96);
 	}
 	else if (row == 11)
 	{
@@ -1882,7 +1888,6 @@ static void AdvanceActor9AlongEscapeRoute(void)
 		}
 		if ((u32)(companion19Column - 9) <= 2)
 		{
-		transition48:
 			PositionSceneActorPair(9, 0, 48);
 		}
 		else
@@ -1926,7 +1931,7 @@ static void AdvanceActor9AlongEscapeRoute(void)
 
 	column -= 1;
 	Engine_MapCopyCellAttributes(column, row, 3, 1, column, Object_GetById(9)->z.fixed >> 20);
-	Engine_MapCopyCellAttributes(0, 0, 3, 1, column, row);
+	Map_CopyCellAttributes(0, 0, 3, 1, column, row);
 }
 
 static void TakaraShima_SettlePushedBlockWest(void)
@@ -2030,7 +2035,7 @@ static void TakaraShima_SettlePushedBlockWest(void)
 	Engine_TaskWait(2);
 	Engine_MapCopyCellAttributes(
 		cell_x, cell_z - 1, 1, 3, Object_GetById(19)->x.fixed >> 20, cell_z - 1);
-	Engine_MapCopyCellAttributes(0, 0, 1, 3, cell_x, cell_z - 1);
+	Map_CopyCellAttributes(0, 0, 1, 3, cell_x, cell_z - 1);
 }
 
 static void TakaraShima_SettlePushedBlock(void)
@@ -2105,7 +2110,7 @@ static void TakaraShima_SettlePushedBlock(void)
 	Engine_TaskWait(2);
 	Engine_MapCopyCellAttributes(
 		cell_x, cell_z - 1, 1, 3, Object_GetById(19)->x.fixed >> 20, cell_z - 1);
-	Engine_MapCopyCellAttributes(0, 0, 1, 3, cell_x, cell_z - 1);
+	Map_CopyCellAttributes(0, 0, 1, 3, cell_x, cell_z - 1);
 }
 
 static void RetreatActor14AlongEscapeRoute(void)
@@ -2116,11 +2121,9 @@ static void RetreatActor14AlongEscapeRoute(void)
 	s32 companion9Row;
 	s32 rowM1;
 
-	s32 permuted_7;
-	column = Object_GetById(14)->x.fixed >> 20;
-	permuted_7 = Object_GetById(14)->z.fixed >> 20;
+		column = Object_GetById(14)->x.fixed >> 20;
+	row = Object_GetById(14)->z.fixed >> 20;
 	companion18Row = Object_GetById(18)->z.fixed >> 20;
-	row = permuted_7;
 	companion9Row = Object_GetById(9)->z.fixed >> 20;
 
 	if (column == 13)
@@ -2178,7 +2181,7 @@ static void RetreatActor14AlongEscapeRoute(void)
 
 	rowM1 = row - 1;
 	Engine_MapCopyCellAttributes(column, rowM1, 1, 3, Object_GetById(14)->x.fixed >> 20, rowM1);
-	Engine_MapCopyCellAttributes(0, 0, 1, 3, column, rowM1);
+	Map_CopyCellAttributes(0, 0, 1, 3, column, rowM1);
 }
 
 static void AdvanceActor14AlongEscapeRoute(void)
@@ -2189,11 +2192,9 @@ static void AdvanceActor14AlongEscapeRoute(void)
 	s32 companion9Row;
 	s32 rowM1;
 
-	s32 permuted_7;
-	column = Object_GetById(14)->x.fixed >> 20;
-	permuted_7 = Object_GetById(14)->z.fixed >> 20;
+		column = Object_GetById(14)->x.fixed >> 20;
+	row = Object_GetById(14)->z.fixed >> 20;
 	companion18Row = Object_GetById(18)->z.fixed >> 20;
-	row = permuted_7;
 	companion9Row = Object_GetById(9)->z.fixed >> 20;
 
 	if (column == 6)
@@ -2240,7 +2241,7 @@ static void AdvanceActor14AlongEscapeRoute(void)
 
 	rowM1 = row - 1;
 	Engine_MapCopyCellAttributes(column, rowM1, 1, 3, Object_GetById(14)->x.fixed >> 20, rowM1);
-	Engine_MapCopyCellAttributes(0, 0, 1, 3, column, rowM1);
+	Map_CopyCellAttributes(0, 0, 1, 3, column, rowM1);
 }
 
 static void RetreatActor16AlongEscapeRoute(void)
@@ -2251,11 +2252,9 @@ static void RetreatActor16AlongEscapeRoute(void)
 	s32 companion9Row;
 	s32 rowM1;
 
-	s32 permuted_7;
-	column = Object_GetById(16)->x.fixed >> 20;
-	permuted_7 = Object_GetById(16)->z.fixed >> 20;
+		column = Object_GetById(16)->x.fixed >> 20;
+	row = Object_GetById(16)->z.fixed >> 20;
 	companion18Row = Object_GetById(18)->z.fixed >> 20;
-	row = permuted_7;
 	companion9Row = Object_GetById(9)->z.fixed >> 20;
 
 	if (column == 13)
@@ -2309,7 +2308,7 @@ static void RetreatActor16AlongEscapeRoute(void)
 
 	rowM1 = row - 1;
 	Engine_MapCopyCellAttributes(column, rowM1, 1, 3, Object_GetById(16)->x.fixed >> 20, rowM1);
-	Engine_MapCopyCellAttributes(0, 0, 1, 3, column, rowM1);
+	Map_CopyCellAttributes(0, 0, 1, 3, column, rowM1);
 }
 
 static void AdvanceActor16AlongEscapeRoute(void)
@@ -2318,11 +2317,12 @@ static void AdvanceActor16AlongEscapeRoute(void)
 	s32 row;
 	s32 companionRow;
 
-	s32 permuted_6;
+	/* FAKEMATCH: read into x before the row and assigned after it; read straight into its variable, tbs-en differs */
+	s32 x;
 	column = Object_GetById(16)->x.fixed >> 20;
-	permuted_6 = Object_GetById(16)->z.fixed >> 20;
+	x = Object_GetById(16)->z.fixed >> 20;
 	companionRow = Object_GetById(9)->z.fixed >> 20;
-	row = permuted_6;
+	row = x;
 
 	if (column == 6)
 	{
@@ -2360,11 +2360,11 @@ static void AdvanceActor16AlongEscapeRoute(void)
 
 	row -= 1;
 	Engine_MapCopyCellAttributes(column, row, 1, 3, Object_GetById(16)->x.fixed >> 20, row);
-	Engine_MapCopyCellAttributes(0, 0, 1, 3, column, row);
+	Map_CopyCellAttributes(0, 0, 1, 3, column, row);
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/orbit.c"
+#include "common/object_orbit.c"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

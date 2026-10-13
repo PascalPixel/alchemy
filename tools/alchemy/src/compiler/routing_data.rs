@@ -26,8 +26,8 @@ pub static AGBCC_FLASH_SOURCES: &[&str] = &[
 
 /// Both games' ARM C uses stock GCC 2.95.2 with one option set for the class.
 pub static GAME_ARM_SOURCES: &[&str] = &[
-    "games/tbs/src/graphics/text/moji.c",
-    "games/common/src/graphics/tile/metatile.c",
-    "games/tbs/src/field/common/object/update.c",
-    "games/tbs/src/graphics/tile/vertices.c",
+    "games/tbs/src/window/moji.c",
+    "games/common/src/window/metatile.c",
+    "games/tbs/src/field/update.c",
+    "games/tbs/src/field/vertices.c",
 ];

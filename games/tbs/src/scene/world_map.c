@@ -2,7 +2,7 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/scene/world_map.h"
-#include "unit/scene/world_map_linked_effects.h"
+#include "unit/scene/common/world_map_linked_effects.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/fldmain.h"
@@ -1432,20 +1432,21 @@ static void EV90_TOUCH(void)
 	Actor_FaceActor(DJINNI, 0, 0);
 	Event_ShowMessage(DJINNI, 0);
 	Event_OpenMessage(DJINNI, 0);
-	if (Event_ChooseYesNo(0, 0) != 1)
-		goto learn;
-	Actor_SetAnimation(0, 22);
-	Actor_RunRepeatedMotion(DJINNI, 2);
-	Event_SetMessage((s32)MsgWorldMapHmmmmExplainAgain);
-	Event_OpenMessage(DJINNI, 0);
 	if (Event_ChooseYesNo(0, 0) == 1)
-		goto learn;
-	Event_ShowMessage(DJINNI, 0);
-	Actor_WalkToAndWait(DJINNI, x >> 16, z >> 16);
-	WorldMap_ShowDjinnTutorial();
-	Battle_ClearObjectFlag5bWhenMode3();
-	return;
-learn:
+	{
+		Actor_SetAnimation(0, 22);
+		Actor_RunRepeatedMotion(DJINNI, 2);
+		Event_SetMessage((s32)MsgWorldMapHmmmmExplainAgain);
+		Event_OpenMessage(DJINNI, 0);
+		if (Event_ChooseYesNo(0, 0) != 1)
+		{
+			Event_ShowMessage(DJINNI, 0);
+			Actor_WalkToAndWait(DJINNI, x >> 16, z >> 16);
+			WorldMap_ShowDjinnTutorial();
+			Battle_ClearObjectFlag5bWhenMode3();
+			return;
+		}
+	}
 	Actor_SetAnimation(0, 22);
 	Event_SetMessage((s32)MsgWorldMapYeahWantLearn);
 	Actor_Jump(DJINNI, 2, 20);
@@ -1849,7 +1850,6 @@ enum
 	TRANSITION_EFFECT_DEPTH = 30
 };
 
-s32 __umodsi3(u32 value, s32 divisor);
 u16 gWorldMapBlend;
 
 #define QueueFrame(buffer, offset) \
@@ -2457,7 +2457,7 @@ static void OverlayObject_UpdateOnFrameParity(u8 *obj)
 {
 	if ((gFrameCount & 1) != 0)
 	{
-		Engine_ObjectSetPartPalettes(obj, __umodsi3((gFrameCount >> 1), 6));
+		Engine_ObjectSetPartPalettes(obj, ((u32)((gFrameCount >> 1)) % (u32)6));
 	}
 	if ((gFrameCount & 15) == 0)
 	{
@@ -2476,8 +2476,8 @@ static void SceneState_RunSlotStepOnOddFrames(s32 arg0)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/vertical.c"
-#include "world_map_linked_effects.c"
+#include "common/effect_vertical.c"
+#include "common/world_map_linked_effects.c"
 
 s32 gTransferArrive10[] = {
 	SC_POS(PIXELS(5848), 0, PIXELS(1576)),

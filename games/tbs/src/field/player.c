@@ -1,4 +1,4 @@
-#include "unit/field/common/fielddat.h"
+#include "unit/field/fielddat.h"
 #include "unit/field/field.h"
 #include "unit/field/fldobj.h"
 #include "unit/field/script.h"
@@ -845,6 +845,7 @@ s32 Field_CheckConfiguredKeysAndCount(void *work)
 s32 Object_MoveByKeys(struct ObjectRuntime *object)
 {
 	struct FieldPosition pos;
+	/* FAKEMATCH: never used; its 68 bytes are the native frame space no instruction touches; without it, tbs-en differs */
 	u8					 unused[68];
 	struct MapCell		*from;
 	struct MapCell		*to;

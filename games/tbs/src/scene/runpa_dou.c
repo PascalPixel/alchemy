@@ -661,11 +661,7 @@ ask_to_ride:
 				goto ride;
 			}
 		}
-		if (Bunza_CannotWait())
-		{
-			goto stay;
-		}
-		if (!insisted)
+		if (Bunza_CannotWait() || !insisted)
 		{
 			goto stay;
 		}
@@ -693,12 +689,11 @@ ask_to_ride:
 		goto ask_to_ride;
 	ride:
 		Party_RidesWagon();
-		goto done;
+		return;
 	}
 stay:
 	Party_ConfirmsStaying();
 	Party_StaysBehind();
-done:;
 }
 
 static u8 Leader_AnswersYes(void)

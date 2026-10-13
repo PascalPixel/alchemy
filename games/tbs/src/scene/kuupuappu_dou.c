@@ -281,16 +281,13 @@ static void EV60_SCRIPT(void)
 
 static void SceneState_ApplyThreeRects(void)
 {
-	s32 strip = 16;
 
 	{
-		s32 fifth = 80;
-		s32 sixth = 50;
 
-		Engine_MapCopyCells(87, 50, 2, 4, fifth, sixth);
+		Map_CopyCells(87, 50, 2, 4, 80, 50);
 	}
-	Engine_MapCopyCells(23, 52, 1, 2, strip, 52);
-	Engine_MapCopyCellAttributes(16, 52, 1, 1, strip, 53);
+	Map_CopyCells(23, 52, 1, 2, 16, 52);
+	Map_CopyCellAttributes(16, 52, 1, 1, 16, 53);
 }
 
 static void EV09_PSYNERGY_2(void)
@@ -312,16 +309,13 @@ static void FieldScene_NoOp(void)
 
 static void SceneState_ApplyThreeRectsRows9And10(void)
 {
-	s32 strip = 17;
 
 	{
-		s32 p5 = 80;
-		s32 p6 = 9;
 
-		Engine_MapCopyCells(90, 9, 2, 3, p5, p6);
+		Map_CopyCells(90, 9, 2, 3, 80, 9);
 	}
-	Engine_MapCopyCells(27, 10, 1, 2, strip, 10);
-	Engine_MapCopyCellAttributes(17, 10, 1, 1, strip, 11);
+	Map_CopyCells(27, 10, 1, 2, 17, 10);
+	Map_CopyCellAttributes(17, 10, 1, 1, 17, 11);
 }
 
 static s32 SceneActor_IsActor10AtTile16x12(void)
@@ -391,10 +385,8 @@ static void EV16_PSYNERGY(void)
 {
 	struct FieldActor *rec = Object_GetById(16);
 
-	s32 fifth = 23;
-	s32 sixth = 32;
 
-	Engine_MapCopyCellAttributes(26, 30, 1, 1, fifth, sixth);
+	Map_CopyCellAttributes(26, 30, 1, 1, 23, 32);
 
 	if (rec != 0)
 	{
@@ -410,10 +402,8 @@ static void EV17_PSYNERGY(void)
 {
 	struct FieldActor *rec = Object_GetById(17);
 
-	s32 p5 = 23;
-	s32 p6 = 34;
 
-	Engine_MapCopyCellAttributes(26, 30, 1, 1, p5, p6);
+	Map_CopyCellAttributes(26, 30, 1, 1, 23, 34);
 
 	if (rec != 0)
 	{
@@ -429,10 +419,8 @@ static void EV18_PSYNERGY(void)
 {
 	struct FieldActor *record = Object_GetById(18);
 
-	s32 a = 24;
-	s32 b = 34;
 
-	Engine_MapCopyCellAttributes(26, 30, 1, 1, a, b);
+	Map_CopyCellAttributes(26, 30, 1, 1, 24, 34);
 
 	if (record != 0)
 	{
@@ -448,10 +436,8 @@ static void EV19_PSYNERGY(void)
 {
 	struct FieldActor *p = Object_GetById(19);
 
-	s32 a5 = 26;
-	s32 a6 = 32;
 
-	Engine_MapCopyCellAttributes(26, 30, 1, 1, a5, a6);
+	Map_CopyCellAttributes(26, 30, 1, 1, 26, 32);
 
 	if (p != 0)
 	{
@@ -468,10 +454,8 @@ static void EV20_PSYNERGY(void)
 {
 	struct FieldActor *rec = Object_GetById(20);
 
-	s32 fifth = 26;
-	s32 sixth = 34;
 
-	Engine_MapCopyCellAttributes(26, 30, 1, 1, fifth, sixth);
+	Map_CopyCellAttributes(26, 30, 1, 1, 26, 34);
 
 	if (rec != 0)
 	{
@@ -488,10 +472,8 @@ static void EV21_PSYNERGY(void)
 {
 	struct FieldActor *record = Object_GetById(21);
 
-	s32 fifth = 28;
-	s32 sixth = 33;
 
-	Engine_MapCopyCellAttributes(26, 30, 1, 1, fifth, sixth);
+	Map_CopyCellAttributes(26, 30, 1, 1, 28, 33);
 
 	if (record != 0)
 	{
@@ -884,11 +866,11 @@ s32 KuupuappuDou_ApplyEntryState(void)
 			}
 			else
 			{
-				Engine_MapCopyCells(108, 27, 1, 1, 92, 27);
+				Map_CopyCells(108, 27, 1, 1, 92, 27);
 				Engine_TaskWait(1);
 				Map_CopyCells(19, 83, 15, 8, 19, 91);
 				Engine_TaskWait(1);
-				Engine_MapCopyCells(2, 24, 1, 2, 25, 27);
+				Map_CopyCells(2, 24, 1, 2, 25, 27);
 			}
 			Engine_MapRedraw();
 			Engine_TaskWait(1);
@@ -917,7 +899,7 @@ s32 KuupuappuDou_ApplyEntryState(void)
 			else
 			{
 				Map_CopyCellAttributes(5, 12, 1, 1, 6, 12);
-				Engine_MapCopyCellAttributes(12, 10, 1, 1, 12, 11);
+				Map_CopyCellAttributes(12, 10, 1, 1, 12, 11);
 			}
 			break;
 		case 8:

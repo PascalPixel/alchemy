@@ -863,7 +863,6 @@ s32 DjinnMenu_ShowHelp(void)
 #define CURSOR_WIDTH 5
 #endif
 
-u32 __umodsi3(u32, u32);
 
 s32 DjinnMenu_SelectDjinn(s32 mode)
 {
@@ -943,8 +942,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
 		u16 source_cursor;
 		s32 n;
 		source_cursor = state->selection[0];
-		fromX = (u16)__umodsi3(source_cursor, 10);
-		fromY = (u16)__udivsi3(source_cursor, 10);
+		fromX = (u16)((u32)source_cursor % (u32)10);
+		fromY = (u16)((u32)source_cursor / (u32)10);
 		Menu_DrawAtWindowOffset(state->list_window, fromX * 7 + 1, fromY + 2, CURSOR_WIDTH, 1, 14);
 		UiWindow_ApplyRectAtObjectOrigin(state->list_window, fromX * 7 + 1, 2, CURSOR_WIDTH, 7, 6);
 		for (n = 0; n < state->owner_count; n++)

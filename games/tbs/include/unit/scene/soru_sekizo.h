@@ -10,7 +10,6 @@ u8 *SceneEventRuntime_GetMessageData(void);
 u8 *SceneEventRuntime_GetActorData(void);
 u8 *SceneEventRuntime_GetEffectData(void);
 s32 Scene_RunGuardSequenceB(void);
-extern s32 SoruSekizo_SpriteRowsGfx[];
 extern struct SceneEntrance SceneEventRuntime_ScriptData[];
 extern u32 SceneEventRuntime_MessageData[];
 extern struct ScenePlacement SceneEventRuntime_ActorData[];

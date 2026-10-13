@@ -8,7 +8,15 @@ Func_080c8730:
 	.global Func_080c8738
 	.thumb_func
 Func_080c8738:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080cdd80
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080cdd80
+.else
 	overlay_veneer Func_080eaf28
+.endif
+.endif
 	.global Func_080c8740
 	.thumb_func
 Func_080c8740:

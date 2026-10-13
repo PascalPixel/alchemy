@@ -7,7 +7,35 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
+#include "battle_unit.h"
+#include "owner_state.h"
+#include "ram_buffer.h"
 
+
+extern struct BtlUnit gOwnerStates[];
+
+void *UnitGet(s32 owner)
+{
+    struct BtlUnit *states;
+    struct BtlUnit *unit;
+
+    if ((u32)owner < 8) {
+        /* FAKEMATCH: the record size as a forced temporary is built first, and a one-pass block loads the table before the size is scaled; indexed straight the scaling comes before the load (differ 2), and either device alone leaves the same two rows apart. */
+        s32 offset = sizeof(struct BtlUnit);
+
+        do {
+            states = gOwnerStates;
+        } while (0);
+        offset *= owner;
+        unit = (struct BtlUnit *)((u8 *)states + offset);
+        return unit;
+    }
+    if ((u32)owner - 0x80 < 6 && (states = Ram_HeapSlots->unknown_d0[2]) != NULL) {
+        unit = &states[owner - 0x80];
+        return unit;
+    }
+    return NULL;
+}
 
 s32 GameFlag_Test(s32 flag)
 {

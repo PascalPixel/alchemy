@@ -970,7 +970,7 @@ mod tests {
         // ☀️ battle/effect/emitter.c:256; field/common/object/snapshot.c:42
         same("    s32 work = (s32)gEventWork;\n    u32 off = (obj_id * 4) + 0x14;\n\n    s32 src_z = (s32)*(struct EfxSrc **)(work + off);\n");
         same("    if (index > 0xbf)\n        return 0;\n    offset = (index * 4) + 0x14;\n    return *(void **)(base + offset);\n");
-        // COMMON battle/party/contains_id.c:8; ☀️ battle/motion/slots.c; ⚓️ battle/summon/find_slot.c
+        // COMMON battle/contains_id.c:8; ☀️ battle/motion/slots.c; ⚓️ battle/summon/find_slot.c
         same("    if (id > 7)\n        id += 0x78;\n");
         same("        object_id -= 0x78;\n");
         same("        id = i + 0x80;\n");

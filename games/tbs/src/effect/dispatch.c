@@ -61,7 +61,7 @@
 
 void Camera_ApplyPhasedDelta(void)
 {
-	struct BattleEffectWork *work = *(struct BattleEffectWork **)gBattleFxWork;
+	struct BattleEffectWork *work = gBattleFxWork[0];
 	struct BattleCamera		*camera = *(struct BattleCamera **)((u8 *)gBattleFxWork - 108);
 	s32						*phase = &work->camera_phase;
 
@@ -187,7 +187,7 @@ void BattleFx_DispatchMode(s32 *arg)
 	Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectWork));
 	Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
 
-	work = *(struct BattleEffectWork **)gBattleFxWork;
+	work = gBattleFxWork[0];
 	work->effect = (struct BattleEffectArgument *)arg;
 	kind = arg[0];
 	if (kind == 0)
@@ -311,7 +311,7 @@ void ObjectGroup_UpdateMembers(
 	s32						 group_index;
 
 	set = GetBattleObjectSlotFar(set_id);
-	state = *(struct BattleEffectWork **)gBattleFxWork;
+	state = gBattleFxWork[0];
 	group_index = 0;
 
 	while ((group = GetMotionRecordFar(set->object, group_index)) != NULL)

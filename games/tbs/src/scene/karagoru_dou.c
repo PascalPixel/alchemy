@@ -3,7 +3,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/karagoru_dou.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/marker.h"
@@ -42,7 +42,7 @@ static void EV09_PSYNERGY_3(void);
 static void StagedActorPairScene_RunSpinningLeap(s32 id);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
+#include "common/effect_create.c"
 
 union SpinningActor
 {
@@ -51,9 +51,8 @@ union SpinningActor
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
-#include "common/object/staged_actor.c"
+#include "common/effect_spawn.c"
+#include "common/object_staged_actor.c"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
@@ -280,10 +279,8 @@ static void EV08_PSYNERGY(void)
 		{
 			StagedActorPairScene_RunSpinningLeap(8);
 			{
-				s32 x = 27;
-				s32 y = 19;
 
-				Engine_MapCopyCellAttributes(29, 19, 1, 1, x, y);
+				Map_CopyCellAttributes(29, 19, 1, 1, 27, 19);
 			}
 			Engine_GameFlagSet(2466);
 		}

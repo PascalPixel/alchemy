@@ -1,8 +1,8 @@
 #include "game_state.h"
 #include "window.h"
 #include "unit/scene/kuupuappu_mura.h"
-#include "unit/scene/common/kuupuappu/range.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/kuupuappu_range.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"
@@ -50,9 +50,8 @@ static void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay);
 static void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
+#include "common/effect_create.c"
+#include "common/effect_spawn.c"
 
 union DriftingObject
 {
@@ -61,7 +60,7 @@ union DriftingObject
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu/nearby.c"
+#include "common/kuupuappu_nearby.c"
 
 static s32 ActorPresentation_UpdateEntityFromLeader(struct FieldActor *entity)
 {
@@ -112,7 +111,7 @@ static int KuupuappuMura_GetIwanVenusDjinnCount(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu/djinn.c"
+#include "common/kuupuappu_djinn.c"
 
 static void KuupuappuMura_SayFarewellToIvan(void)
 {
@@ -325,7 +324,7 @@ static void SceneActor_RunActorStep(s32 actor)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu/talk.c"
+#include "common/kuupuappu_talk.c"
 
 static void EV08_TALK(void)
 {
@@ -576,7 +575,7 @@ static void EV21_PSYNERGY(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu/toggle.c"
+#include "common/kuupuappu_toggle.c"
 
 static void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 continuation)
 {
@@ -615,10 +614,8 @@ static void EV08_TOUCH(void)
 	Engine_AudioPlayCue(158);
 	Engine_MapAnimateCells(KuupuappuMura_Scene8Cells, 54, 13);
 	{
-		s32 cell = 23;
-		s32 row = 12;
 
-		Engine_MapCopyCellAttributes(33, 20, 1, 3, cell, row);
+		Map_CopyCellAttributes(33, 20, 1, 3, 23, 12);
 	}
 	actor->priority_flags &= ~1;
 	sprite->priority = 3;
@@ -633,10 +630,8 @@ static void EV09_TOUCH(void)
 	Engine_AudioPlayCue(158);
 	Engine_MapAnimateCells(KuupuappuMura_Scene9Cells, 49, 10);
 	{
-		s32 cell = 18;
-		s32 row = 10;
 
-		Engine_MapCopyCellAttributes(33, 20, 1, 3, cell, row);
+		Map_CopyCellAttributes(33, 20, 1, 3, 18, 10);
 	}
 	actor->priority_flags &= ~1;
 	sprite->priority = 3;
@@ -651,7 +646,7 @@ static void EV10_TOUCH(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "kuupuappu_mura_scene_cells.c"
+#include "common/kuupuappu_mura_scene_cells.c"
 
 static void EV12_TOUCH(void)
 {
@@ -661,10 +656,8 @@ static void EV12_TOUCH(void)
 	Engine_AudioPlayCue(158);
 	Engine_MapAnimateCells(KuupuappuMura_Scene12Cells, 35, 9);
 	{
-		s32 cell = 4;
-		s32 row = 10;
 
-		Engine_MapCopyCellAttributes(33, 20, 1, 3, cell, row);
+		Map_CopyCellAttributes(33, 20, 1, 3, 4, 10);
 	}
 	actor->priority_flags &= ~1;
 	sprite->priority = 3;
@@ -878,8 +871,8 @@ s32 KuupuappuMura_RestoreEntryState(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/distance.c"
-#include "common/kuupuappu/range.c"
+#include "common/object_distance.c"
+#include "common/kuupuappu_range.c"
 
 static void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay)
 {

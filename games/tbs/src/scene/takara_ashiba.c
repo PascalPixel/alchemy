@@ -22,7 +22,7 @@
 #include "unit/runtime/sched.h"
 #include "unit/runtime/math.h"
 #include "unit/runtime/heap.h"
-#include "unit/scene/common/korosseo/item_icon.h"
+#include "unit/scene/common/korosseo_item_icon.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -75,15 +75,14 @@ static __inline__ void LiftBlock(s32 column, u8 lowered)
 {
 	{
 		s32 fifth = column;
-		s32 last = 42;
-		Engine_MapCopyCellAttributes(61, 36, 1, 1, fifth, last);
+		Map_CopyCellAttributes(61, 36, 1, 1, fifth, 42);
 	}
 	Object_GetById(8)->motion_flags = lowered;
 	Object_GetById(8)->y.fixed = 0x200000;
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/staged_actor.c"
+#include "common/object_staged_actor.c"
 
 static void EV15_SCRIPT(void)
 {
@@ -345,12 +344,12 @@ static void TakaraAshiba_OpenPassage(s32 arg)
 		Engine_AudioPlayCue(157);
 		Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
 		Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-		Engine_MapCopyCells(79, 29, 1, 3, dest, 40);
+		Map_CopyCells(79, 29, 1, 3, dest, 40);
 		Engine_TaskWait(40);
 	}
-	Engine_MapCopyCells(80, 29, 1, 3, dest, 40);
-	Engine_MapCopyCellAttributes(column, 40, 1, 1, column, 41);
-	Engine_MapCopyCellAttributes(column, 40, 1, 1, column, 42);
+	Map_CopyCells(80, 29, 1, 3, dest, 40);
+	Map_CopyCellAttributes(column, 40, 1, 1, column, 41);
+	Map_CopyCellAttributes(column, 40, 1, 1, column, 42);
 }
 
 static void TakaraAshiba_OpenPlatformPassage(s32 a0)
@@ -462,13 +461,11 @@ static void EV54_TOUCH_1(void)
 
 static void SceneState_ApplyRectAndPlaceSlot12(void)
 {
-	s32 a = 25;
-	s32 b = 48;
 	s32 slot = 12;
 	s32 x = 0x1980000;
 	s32 z = 0x3080000;
 
-	Engine_MapCopyCells(25, 45, 1, 2, a, b);
+	Map_CopyCells(25, 45, 1, 2, 25, 48);
 	if (Engine_GameFlagIsSet(0xeeb) == 0)
 		Engine_ActorSetPosition(slot, x, z);
 	Engine_EventWait(1);
@@ -476,8 +473,7 @@ static void SceneState_ApplyRectAndPlaceSlot12(void)
 
 static void ConfigureAndPlaceActorTwelve(void)
 {
-	s32 a = 25, b = 48;
-	Map_CopyCells(24, 48, 1, 2, a, b);
+	Map_CopyCells(24, 48, 1, 2, 25, 48);
 	Actor_SetPosition(12, 0x00080000, 0x00080000);
 }
 
@@ -802,7 +798,7 @@ static void EV60_SCRIPT(void)
 			{
 				s32 fifth = 45;
 				s32 last = 43;
-				Engine_MapCopyCellAttributes(46, 43, 1, 1, fifth, last);
+				Map_CopyCellAttributes(46, 43, 1, 1, fifth, last);
 			}
 		}
 		Engine_GameFlagClear(0x207);
@@ -819,7 +815,7 @@ static void EV60_SCRIPT(void)
 			{
 				s32 fifth = 45;
 				s32 last = 43;
-				Engine_MapCopyCellAttributes(58, 36, 1, 1, fifth, last);
+				Map_CopyCellAttributes(58, 36, 1, 1, fifth, last);
 			}
 		}
 		Engine_GameFlagSet(0x207);
@@ -845,10 +841,8 @@ static void FieldScene_NoOpCallback(void)
 static void EV13_PSYNERGY(void)
 {
 	struct FieldActor *slot = Object_GetById(13);
-	s32				   fifth = 40;
-	s32				   sixth = 55;
 
-	Engine_MapCopyCellAttributes(40, 54, 1, 1, fifth, sixth);
+	Map_CopyCellAttributes(40, 54, 1, 1, 40, 55);
 	if (slot != 0)
 	{
 		u8 *other = &Object_GetById(13)->motion_flags;
@@ -876,37 +870,32 @@ static void EV70_SCRIPT(void)
 
 static void TakaraAshiba_RestoreActorEightTerrain(void)
 {
-	Engine_MapCopyCellAttributes(57, 42, 1, 1, 40, 42);
-	Engine_MapCopyCellAttributes(57, 42, 1, 1, 41, 42);
-	Engine_MapCopyCellAttributes(58, 42, 1, 1, 42, 42);
-	Engine_MapCopyCellAttributes(62, 37, 3, 1, 37, 42);
+	Map_CopyCellAttributes(57, 42, 1, 1, 40, 42);
+	Map_CopyCellAttributes(57, 42, 1, 1, 41, 42);
+	Map_CopyCellAttributes(58, 42, 1, 1, 42, 42);
+	Map_CopyCellAttributes(62, 37, 3, 1, 37, 42);
 
 	Object_GetById(8)->motion_flags = 1;
 }
 
 static void ActorPresentation_SetSceneCell58AndMarkActorEight(void)
 {
-	s32 extent = 42;
 
-	Engine_MapCopyCellAttributes(58, 41, 1, 1, extent, extent);
+	Map_CopyCellAttributes(58, 41, 1, 1, 42, 42);
 	Object_GetById(8)->priority_flags = 2;
 }
 
 static void TakaraAshiba_RestoreRightUnderfootCell(void)
 {
-	s32 w = 41;
-	s32 h = 42;
 
-	Engine_MapCopyCellAttributes(44, 42, 1, 1, w, h);
+	Map_CopyCellAttributes(44, 42, 1, 1, 41, 42);
 	Object_GetById(8)->priority_flags = 2;
 }
 
 static void TakaraAshiba_RestoreLeftUnderfootCell(void)
 {
-	s32 width = 40;
-	s32 height = 42;
 
-	Engine_MapCopyCellAttributes(39, 42, 1, 1, width, height);
+	Map_CopyCellAttributes(39, 42, 1, 1, 40, 42);
 	Object_GetById(8)->priority_flags = 2;
 }
 
@@ -1015,27 +1004,22 @@ static void EV52_SCRIPT(void)
 
 static void SceneState_ApplyTwoRectsAtRow56(void)
 {
-	s32 base = 55;
 
-	Engine_MapCopyCellAttributes(38, 56, 1, 1, 38, base);
-	Engine_MapCopyCellAttributes(42, 56, 1, 1, 42, base);
+	Map_CopyCellAttributes(38, 56, 1, 1, 38, 55);
+	Map_CopyCellAttributes(42, 56, 1, 1, 42, 55);
 }
 
 static void TakaraAshiba_RestoreActorTenLeftCell(void)
 {
-	s32 width = 38;
-	s32 height = 55;
 
-	Engine_MapCopyCellAttributes(40, 54, 1, 1, width, height);
+	Map_CopyCellAttributes(40, 54, 1, 1, 38, 55);
 	Object_GetById(10)->motion_flags = 0;
 }
 
 static void TakaraAshiba_RestoreActorTenRightCell(void)
 {
-	s32 w = 42;
-	s32 h = 55;
 
-	Engine_MapCopyCellAttributes(40, 54, 1, 1, w, h);
+	Map_CopyCellAttributes(40, 54, 1, 1, 42, 55);
 	Object_GetById(10)->motion_flags = 0;
 }
 
@@ -1091,12 +1075,11 @@ static void EV54_SCRIPT(void)
 
 static void SceneState_ApplyFourRectsAt48_55(void)
 {
-	s32 base = 55;
 
-	Engine_MapCopyCellAttributes(48, 55, 1, 1, 49, base);
-	Engine_MapCopyCellAttributes(48, 55, 1, 1, 50, base);
-	Engine_MapCopyCellAttributes(48, 55, 1, 1, 51, base);
-	Engine_MapCopyCellAttributes(48, 55, 1, 1, 52, base);
+	Map_CopyCellAttributes(48, 55, 1, 1, 49, 55);
+	Map_CopyCellAttributes(48, 55, 1, 1, 50, 55);
+	Map_CopyCellAttributes(48, 55, 1, 1, 51, 55);
+	Map_CopyCellAttributes(48, 55, 1, 1, 52, 55);
 }
 
 static void ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void)
@@ -1108,10 +1091,10 @@ static void ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void)
 
 	slot = Object_GetById(11);
 	tile = slot[2] / 0x100000;
-	Engine_MapCopyCellAttributes(53, 55, 1, 1, tile, 55);
+	Map_CopyCellAttributes(53, 55, 1, 1, tile, 55);
 	slot = Object_GetById(12);
 	tile = slot[2] / 0x100000;
-	Engine_MapCopyCellAttributes(53, 55, 1, 1, tile, 55);
+	Map_CopyCellAttributes(53, 55, 1, 1, tile, 55);
 }
 
 static void EV11_PSYNERGY_3(void)
@@ -1248,7 +1231,7 @@ static void TakaraAshiba_UpdateItemIcons(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo/item_icon.c"
+#include "common/korosseo_item_icon.c"
 
 static void TakaraAshiba_InitializeScene1(void)
 {

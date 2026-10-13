@@ -536,47 +536,40 @@ s32 Scene_Initialize(void)
 static void FieldScene_RunMiddleSequence(void)
 {
 	struct FieldActor *leader;
-	s32				   kind;
 
 	leader = Object_GetById(ACTOR_PARTY_LEADER);
 	if (GameFlag_IsSet(0x242) != 0)
 	{
 		Map_CopyCellsTo(64, 32, 0, 32, 32, 32);
 		Map_CopyCellAttributes(64, 32, 32, 32, 0, 0);
-		kind = 20;
+		Engine_ActorDestroy(20);
+		Engine_ActorDestroy(21);
+	}
+	else if (GameFlag_IsSet(0x241) != 0)
+	{
+		Map_CopyCellsTo(64, 0, 0, 32, 32, 32);
+		/* FAKEMATCH: the void result is discarded; Call6 changes argument allocation. */
+		Value6(Engine_MapCopyCellAttributes, 64, 0, 32, 32, 0, 0);
+		Engine_ActorDestroy(17);
+		Engine_ActorDestroy(20);
+		Engine_ActorDestroy(21);
+	}
+	else if (GameFlag_IsSet(0x240) != 0)
+	{
+		Map_CopyCellsTo(0, 64, 0, 32, 32, 32);
+		/* FAKEMATCH: the void result is discarded; Call6 changes argument allocation. */
+		Value6(Engine_MapCopyCellAttributes, 0, 64, 32, 32, 0, 0);
+		Engine_ActorDestroy(16);
+		Engine_ActorDestroy(17);
+		Engine_ActorDestroy(21);
 	}
 	else
 	{
-		if (GameFlag_IsSet(0x241) != 0)
-		{
-			Map_CopyCellsTo(64, 0, 0, 32, 32, 32);
-			/* FAKEMATCH: the void result is discarded; Call6 changes argument allocation. */
-			Value6(Engine_MapCopyCellAttributes, 64, 0, 32, 32, 0, 0);
-			Engine_ActorDestroy(17);
-			kind = 20;
-		}
-		else
-		{
-			if (GameFlag_IsSet(0x240) == 0)
-			{
-				goto unchanged;
-			}
-			Map_CopyCellsTo(0, 64, 0, 32, 32, 32);
-			/* FAKEMATCH: the void result is discarded; Call6 changes argument allocation. */
-			Value6(Engine_MapCopyCellAttributes, 0, 64, 32, 32, 0, 0);
-			Engine_ActorDestroy(16);
-			kind = 17;
-		}
+		Map_CopyCellAttributes(0, 32, 32, 32, 0, 0);
+		Engine_ActorDestroy(15);
+		Engine_ActorDestroy(16);
+		Engine_ActorDestroy(17);
 	}
-	Engine_ActorDestroy(kind);
-	Engine_ActorDestroy(21);
-	goto placed;
-unchanged:
-	Map_CopyCellAttributes(0, 32, 32, 32, 0, 0);
-	Engine_ActorDestroy(15);
-	Engine_ActorDestroy(16);
-	Engine_ActorDestroy(17);
-placed:
 	if (GameFlag_IsSet(0x8ff) != 0)
 	{
 		Engine_ActorDestroy(18);

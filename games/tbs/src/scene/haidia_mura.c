@@ -2,9 +2,9 @@
 #include "vram_tab.h"
 #include "unit/import.h"
 #include "unit/scene/haidia_mura.h"
-#include "unit/scene/common/object/orbit.h"
-#include "unit/scene/common/effect/psynergy.h"
-#include "unit/scene/world_map_linked_effects.h"
+#include "unit/scene/common/object_orbit.h"
+#include "unit/scene/common/effect_psynergy.h"
+#include "unit/scene/common/world_map_linked_effects.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/marker.h"
@@ -90,7 +90,7 @@ enum
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/staged_actor.c"
+#include "common/object_staged_actor.c"
 
 s32 MapStagedScene_SelectPrimaryData(void)
 {
@@ -273,7 +273,7 @@ static void EV15_TOUCH(void)
 	Engine_GameFlagSet(0x210);
 	m = 10;
 	n = 84;
-	Engine_MapCopyCellAttributes(40, 84, 7, 4, m, n);
+	Map_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
 static void EV14_TOUCH(void)
@@ -282,7 +282,7 @@ static void EV14_TOUCH(void)
 	Engine_GameFlagClear(0x210);
 	m = 10;
 	n = 84;
-	Engine_MapCopyCellAttributes(40, 89, 7, 4, m, n);
+	Map_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
 static void EV01_TOUCH(void)
@@ -516,7 +516,7 @@ static void EV100_TOUCH(void)
 	Engine_EventBegin();
 	m = 20;
 	n = 50;
-	Engine_MapCopyCellAttributes(49, 53, 8, 4, m, n);
+	Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
 	HaidiaMura_MoveActorAlongLowerZPath(0, 10, 11, 1);
 	Engine_GameFlagSet(0x204);
 	Engine_EventEnd();
@@ -530,7 +530,7 @@ static void EV101_TOUCH(void)
 	Engine_GameFlagClear(0x204);
 	p5 = 20;
 	p6 = 50;
-	Engine_MapCopyCellAttributes(49, 46, 8, 4, p5, p6);
+	Map_CopyCellAttributes(49, 46, 8, 4, 20, 50);
 	Engine_EventEnd();
 }
 
@@ -1238,8 +1238,8 @@ s32 HaidiaMura_ApplyEntryState(void)
 				InitializeStagedActorSceneOrbitingEffect(20);
 			}
 		}
-		Engine_MapCopyCellsTo(2, 102, 84, 41, 2, 1);
-		Engine_MapCopyCellsTo(1, 102, 83, 41, 1, 1);
+		Map_CopyCellsTo(2, 102, 84, 41, 2, 1);
+		Map_CopyCellsTo(1, 102, 83, 41, 1, 1);
 		actor = Object_GetById((Engine_GameFlagIsSet(0x87a) != 0) + 20);
 		Engine_ActorSetSpriteFlags(actor, 0);
 		if (Engine_GameFlagIsSet(0x314))
@@ -2606,7 +2606,7 @@ static void Scene_RepairTheHouse(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/psynergy.c"
+#include "common/effect_psynergy.c"
 
 static void SceneState_SetValue1ThenCall(void)
 {
@@ -2712,6 +2712,7 @@ static void Effect_ConfigureSpawnedParticle(struct SourceEntity *source)
 	s32					   particle_index;
 	struct StagedParticle *particle;
 	spawn_position[0] = source->f08;
+	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 	spawn_position[1] = source->f0c - (((s32 (*)())Engine_RandomNext)(source) << 4) - 0x80000;
 	spawn_position[2] = source->f10;
 	particle_index = Engine_RandomNext();
@@ -2805,8 +2806,6 @@ static void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x, s32 delta_
 
 static void SceneState_ApplyRectAndRunTwo(void)
 {
-	s32 e;
-	s32 f;
 #if !EDITION_INTERNATIONAL
 	// 日本版のみ: 村人を引くが戻り値は使わない
 	if (Engine_GameFlagIsSet(0x87a))
@@ -2814,9 +2813,7 @@ static void SceneState_ApplyRectAndRunTwo(void)
 	else
 		Object_GetById(20);
 #endif
-	e = 22;
-	f = 36;
-	Engine_MapCopyCellAttributes(17, 0, 3, 1, e, f);
+	Map_CopyCellAttributes(17, 0, 3, 1, 22, 36);
 	StagedActor_AdvancePair();
 	HaidiaMura_OpenVillagerLane();
 }
@@ -2839,12 +2836,12 @@ static void HaidiaMura_OpenVillagerLane(void)
 	column = actor->x.fixed >> 20;
 	if (column == 22)
 	{
-		Engine_MapCopyCellAttributes(17, 1, 1, 1, column, 36);
+		Map_CopyCellAttributes(17, 1, 1, 1, column, 36);
 		Engine_GameFlagSet(0x314);
 	}
 	else if (column == 23)
 	{
-		Engine_MapCopyCellAttributes(17, 1, 1, 1, column, 36);
+		Map_CopyCellAttributes(17, 1, 1, 1, column, 36);
 		Engine_GameFlagSet(0x315);
 	}
 	else
@@ -2874,12 +2871,11 @@ static void FieldScene_RunScene373SequenceB(void)
 	if (GameFlag_IsSet(0x241) != 0)
 	{
 		rec7 = GameFlag_IsSet(0x106);
-		if (rec7 != 0)
+		if (rec7 == 0)
 		{
-			goto done;
+			Object_GetById(22)->paused = rec7;
+			GameFlag_Clear(0x241);
 		}
-		Object_GetById(22)->paused = rec7;
-		GameFlag_Clear(0x241);
 	}
 	else
 	{
@@ -2889,7 +2885,6 @@ static void FieldScene_RunScene373SequenceB(void)
 			GameFlag_Set(0x241);
 		}
 	}
-done:;
 }
 
 static void SceneActor_SetFlagByteBySlotZeroPosition(void)
@@ -2910,7 +2905,7 @@ static void SceneActor_SetFlagByteBySlotZeroPosition(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/orbit.c"
+#include "common/object_orbit.c"
 
 static void OverlayObject_UpdateOnFrameBit1(s32 p)
 {
@@ -2938,8 +2933,8 @@ static void SceneEffect_UpdateObjectOnOddFramesOnly(s32 p)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/vertical.c"
-#include "world_map_linked_effects.c"
+#include "common/effect_vertical.c"
+#include "common/world_map_linked_effects.c"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

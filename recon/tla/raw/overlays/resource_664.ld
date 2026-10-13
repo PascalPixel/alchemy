@@ -34,7 +34,7 @@ SECTIONS
         "*/resource_664_overlay.o"(.text.x02009458)
         "*/resource_664_overlay.o"(.text.x0200960c)
         "*/resource_664_overlay.o"(.text.x02009690)
-        "*/resource_664_overlay.o"(.text.x020097f4)
+        "*/games/tla/src/field/overlay_664/s17f4.o"(.text)
         "*/resource_664_overlay.o"(.text.x02009828)
         "*/games/tla/src/field/overlay_664/places.o"(.text)
         "*/games/tla/src/field/overlay_664/scene_tables.o"(.text)

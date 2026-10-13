@@ -1,8 +1,8 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/scene/runpa_mura.h"
-#include "unit/scene/common/object/orbit.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/object_orbit.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"
@@ -31,9 +31,8 @@ enum
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
+#include "common/effect_create.c"
+#include "common/effect_spawn.c"
 
 s32 gShortEffectScript[] = {
 	SCRIPT_WAIT(1),
@@ -625,9 +624,9 @@ static void Scene_DoNothing(void)
 
 static void Cloak_Begin(void)
 {
-	Engine_MapCopyCellAttributes(6, 11, 1, 1, 7, 11);
-	Engine_MapCopyCellAttributes(6, 11, 1, 1, 8, 11);
-	Engine_MapCopyCellAttributes(6, 11, 1, 1, 9, 11);
+	Map_CopyCellAttributes(6, 11, 1, 1, 7, 11);
+	Map_CopyCellAttributes(6, 11, 1, 1, 8, 11);
+	Map_CopyCellAttributes(6, 11, 1, 1, 9, 11);
 	Engine_GameFlagSet(FLAG_GATE_CLOAK_CAST);
 }
 
@@ -689,9 +688,9 @@ static void EV91_RAISED(void)
 
 static void Gateway_Reopen(void)
 {
-	Engine_MapCopyCellAttributes(7, 12, 1, 1, 7, 11);
-	Engine_MapCopyCellAttributes(7, 12, 1, 1, 8, 11);
-	Engine_MapCopyCellAttributes(7, 12, 1, 1, 9, 11);
+	Map_CopyCellAttributes(7, 12, 1, 1, 7, 11);
+	Map_CopyCellAttributes(7, 12, 1, 1, 8, 11);
+	Map_CopyCellAttributes(7, 12, 1, 1, 9, 11);
 }
 
 static void Cloak_End(void)
@@ -913,7 +912,7 @@ s32 Scene_Initialize(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/orbit.c"
+#include "common/object_orbit.c"
 
 #define LUNPA_ENTRANCE(entrance, x, z, facing) \
 	{(entrance), CONDITION_ALWAYS, (x), 0, (z), (facing), 0, -1, -1, -1, -1, 0}

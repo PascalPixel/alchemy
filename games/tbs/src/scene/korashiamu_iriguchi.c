@@ -215,6 +215,7 @@ static void EV16_TALK_3(void)
 		if (GameFlag_IsSet(0x3c0) != 0)
 		{
 			Engine_EventSetMessage((s32)MsgKorashiamuLookImSorryButWe);
+			Event_ShowMessage(16, 0);
 		}
 		else
 		{
@@ -232,17 +233,18 @@ static void EV16_TALK_3(void)
 				Engine_EventWait(40);
 				Event_ShowMessage(16, 0);
 				GameFlag_Set(0x3c0);
-				goto end_event;
+			}
+			else
+			{
+				Event_ShowMessage(16, 0);
 			}
 		}
-		Event_ShowMessage(16, 0);
 	}
 	else
 	{
 		Engine_EventSetMessage((s32)MsgKorashiamuDoKnowLuckyGuess);
 		Event_AskYesNo(16, 0);
 	}
-end_event:;
 	Engine_EventEnd();
 }
 
@@ -1109,16 +1111,14 @@ static void SceneState_ForwardMaskedHalfwordWith10(s32 arg0, s32 arg1)
 
 static void SceneState_ApplyRectsByFlatla384And962(void)
 {
-	s32 pair;
 	s32 a, b;
 
 	if (Engine_GameFlagIsSet(2384) != 0)
 	{
-		pair = 2;
-		Engine_MapCopyCellsTo(64, 0, 48, 5, pair, pair);
+		Map_CopyCellsTo(64, 0, 48, 5, 2, 2);
 		a = 16;
 		b = 8;
-		Engine_MapCopyCellAttributes(14, 8, 2, 1, a, b);
+		Map_CopyCellAttributes(14, 8, 2, 1, a, b);
 	}
 	else
 	{
@@ -1127,7 +1127,7 @@ static void SceneState_ApplyRectsByFlatla384And962(void)
 		{
 			a = 14;
 			b = 11;
-			Engine_MapCopyCellAttributes(30, 22, 1, 2, a, b);
+			Map_CopyCellAttributes(30, 22, 1, 2, a, b);
 		}
 	}
 }

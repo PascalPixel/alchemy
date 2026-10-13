@@ -80,6 +80,7 @@ void BlendTransition_Update(void)
 			level = gBlendTargetLevel;
 			delta = gBlendStartLevel - gBlendTargetLevel;
 			step = *remaining;
+			/* FAKEMATCH: an explicit libgcc call; written with the operator, tbs-en differs */
 			level += __divsi3(delta * step, gBlendDuration);
 			REG_BLDY = level;
 			if (*remaining == 0)

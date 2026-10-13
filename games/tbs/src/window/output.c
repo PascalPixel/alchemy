@@ -8,7 +8,7 @@
 #include "unit/window/save.h"
 #include "unit/window/btlcmd.h"
 #include "unit/object/objtable.h"
-#include "unit/graphics/text/moji.h"
+#include "unit/window/moji.h"
 #include "unit/runtime/objvram.h"
 #include "unit/runtime/heap.h"
 #include "types.h"

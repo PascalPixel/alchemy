@@ -53,8 +53,8 @@ Data_02000500:
 	.global Data_02000504
 Data_02000504:
 	.space 0x0000001c
-	.global Data_02000520
-Data_02000520:
+	.global gOwnerStates
+gOwnerStates:
 	.space 0x00000ae0
 	.global Data_02001000
 Data_02001000:

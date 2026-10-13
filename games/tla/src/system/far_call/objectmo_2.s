@@ -40,7 +40,7 @@ BattleEffect_PauseObjectFar:
 	.global BattleFx_ResumeObjectFar
 	.thumb_func
 BattleFx_ResumeObjectFar:
-	overlay_veneer Func_080e035c
+	overlay_veneer BattleFx_ResumeObject
 	.global ObjectTable_FindActiveByValueFar
 	.thumb_func
 ObjectTable_FindActiveByValueFar:

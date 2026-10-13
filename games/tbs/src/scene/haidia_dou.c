@@ -2,7 +2,7 @@
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/scene/haidia_dou.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/marker.h"
@@ -44,10 +44,9 @@ static void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y);
 static void HaidiaDou_ApplyEntryState(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
-#include "common/object/staged_actor.c"
+#include "common/effect_create.c"
+#include "common/effect_spawn.c"
+#include "common/object_staged_actor.c"
 
 static void EV08_SCRIPT(void)
 {
@@ -128,12 +127,12 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 static void FieldScene_ConfigureRegionAtRow15(void)
 {
-	Engine_MapCopyCells(16, 15, 1, 1, 15, 15);
+	Map_CopyCells(16, 15, 1, 1, 15, 15);
 }
 
 static void FieldScene_ConfigureRegionAtRow17(void)
 {
-	Engine_MapCopyCells(16, 17, 1, 1, 15, 15);
+	Map_CopyCells(16, 17, 1, 1, 15, 15);
 }
 
 static void EV09_PSYNERGY(void)
@@ -490,10 +489,9 @@ static void EV22_SCRIPT(void)
 		{
 			Engine_GameFlagSet(0x204);
 			{
-				s32 column = 14;
 
-				Engine_MapCopyCellAttributes(14, 17, 2, 1, column, 16);
-				Engine_MapCopyCellAttributes(14, 13, 1, 1, column, 15);
+				Map_CopyCellAttributes(14, 17, 2, 1, 14, 16);
+				Map_CopyCellAttributes(14, 13, 1, 1, 14, 15);
 			}
 		}
 	}
@@ -546,22 +544,22 @@ static void HaidiaDou_PlayCueAndRequestTouchedExit(void)
 
 static void DialogueLayout_ConfigureRowsByFlag301(void)
 {
-	Engine_MapCopyCellAttributes(0, 34, 13, 3, 23, 34);
+	Map_CopyCellAttributes(0, 34, 13, 3, 23, 34);
 
 	if (Engine_GameFlagIsSet(0x301) != 0)
 	{
 		SceneActor_PlaceAtTile(11, 35, 35);
-		Engine_MapCopyCellAttributes(24, 34, 1, 3, 23, 34);
+		Map_CopyCellAttributes(24, 34, 1, 3, 23, 34);
 	}
 	else
 	{
 		SceneActor_PlaceAtTile(11, 23, 35);
-		Engine_MapCopyCellAttributes(24, 34, 1, 3, 35, 34);
+		Map_CopyCellAttributes(24, 34, 1, 3, 35, 34);
 	}
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/pairmove.c"
+#include "common/object_pairmove.c"
 
 static void EV20_TOUCH(void)
 {
@@ -691,8 +689,8 @@ static void HaidiaDou_ApplyEntryState(void)
 			else if (Engine_GameFlagIsSet(0x204) != 0)
 			{
 				StagedActor_FillGridAttributeRectangle(0, 13, 15, 4, 2, flag);
-				Engine_MapCopyCellAttributes(14, 17, 2, 1, 14, 16);
-				Engine_MapCopyCellAttributes(14, 13, 1, 1, 14, 15);
+				Map_CopyCellAttributes(14, 17, 2, 1, 14, 16);
+				Map_CopyCellAttributes(14, 13, 1, 1, 14, 15);
 			}
 			else
 			{

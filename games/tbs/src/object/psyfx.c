@@ -13,7 +13,7 @@
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/object/fxslot.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/runtime/runtime.h"
 #include "unit/runtime/objvram.h"
 #include "unit/runtime/sched.h"
@@ -184,7 +184,6 @@ struct WaveFxWork
 
 void RunSceneTransitionEffect(s32 x, s32 y)
 {
-	u32				   __umodsi3(u32 numerator, u32 denominator);
 	struct WaveFxWork *work;
 	volatile u32	   zero;
 
@@ -192,7 +191,7 @@ void RunSceneTransitionEffect(s32 x, s32 y)
 	BattleEffect_InitializeSharedScene();
 	zero = 0;
 	Dma_Set((const void *)&zero, work, 0x850000a6, REG_DMA3);
-	work->hue = __umodsi3(gFrameCount << 1, 360);
+	work->hue = ((u32)(gFrameCount << 1) % (u32)360);
 	BattleFx_AdvanceHueCycle();
 	BattleFx_ApplyColorToTargetBuffer(
 		(work->blue << 10) | (work->green << 5) | work->red | 0x200000, 1);
@@ -260,7 +259,7 @@ void BattleFx_UpdateWaveScene(void)
 	// 160 ライン分のずれを ±4 ドットの正弦波で作り、面を切り替える
 	line = work->lines[work->page ^ 1];
 	for (i = 0; i < 160; i++)
-		*line++ = Trig_Sin(__udivsi3((work->phase + i * 8) << 16, 160)) >> 14;
+		*line++ = Trig_Sin(((u32)((work->phase + i * 8) << 16) / (u32)160)) >> 14;
 	work->phase += 4;
 	work->page ^= 1;
 	if (work->page != 0)
@@ -1034,14 +1033,6 @@ void FieldEffect_WatchLeaderDistance(void)
 // markers.c
 // 戦闘エフェクト 8 番：選択中のオブジェクトを中心に画面を切りかえ、印を出す
 //--------------------------------------------------------------------------
-// gEventWork から並ぶワークのポインタ
-struct EffectGlobals
-{
-	struct FieldWork			  *scene; // イベントのワーク
-	u8							   unknown_04[12];
-	struct DisplayTransitionState *work; // 画面切りかえのワーク
-};
-
 //--------------------------------------------------------------------------
 // 戦闘エフェクト 8 番
 // 選択中のオブジェクトの位置を中心に画面切りかえを始め、
@@ -1053,13 +1044,13 @@ void RunBattleEffect08(void)
 	struct DisplayTransitionState *work;
 	struct FieldActor			  *target;
 	s32							   arg;
-	s32							   ev;
+	void						  *ev;
 	s32							   frame;
 
-	scene = ((struct EffectGlobals *)&gEventWork)->scene;
+	scene = WORK_SLOT(HEAP_SLOT_EVENT);
 	ObjectDispatch_ApplyValueToKind200Children(6);
 	DisplayTransition_InitializeBattleEffectState(8);
-	work = ((struct EffectGlobals *)&gEventWork)->work;
+	work = WORK_SLOT(HEAP_SLOT_TRANSITION);
 	target = ObjectTable_Get(gGameState.selected_actor);
 	work->centre_x = target->x.fixed;
 	work->centre_y = target->z.fixed - target->y.fixed;
@@ -1071,7 +1062,7 @@ void RunBattleEffect08(void)
 #endif
 	WaitFrames(1);
 	ev = BattleFx_FindMatchingEvent(0x50000005, 8, &arg);
-	if (ev != 0)
+	if (ev != NULL)
 		BattleFx_RunEventAction(ev, gGameState.selected_actor, arg);
 	AudioCommand_PlayFar(131);
 
@@ -1666,7 +1657,7 @@ void RunBattleEffect04(void)
 	struct BattleFxScene   *scene;
 	struct EffectSlot	   *slot;
 	struct AnimationObject *res;
-	s32						ev;
+	void				   *ev;
 	s32						scale;
 	s32						i;
 	u8						res_slot;
@@ -1800,8 +1791,8 @@ void RunBattleEffect04(void)
 
 	// 応じるマップのイベントがあれば動かす
 	ev = BattleFx_FindMatchingEvent(0x50000005, 4, &ctx);
-	if (ev != 0)
-		BattleFx_RunEventAction((void *)ev, gGameState.selected_actor, ctx);
+	if (ev != NULL)
+		BattleFx_RunEventAction(ev, gGameState.selected_actor, ctx);
 	WaitFrames(10);
 	BattleFx_PrepareBufferInterpolation();
 	WaitFrames(20);
@@ -2995,9 +2986,6 @@ struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle
 	return obj;
 }
 
-// ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/move.c"
-
 // FieldActor と同じ物体。0x64 を符号なし、0x66 を符号つきで読む (FieldActor の型ではバイトが変わる)
 struct OrbitEffect
 {
@@ -3019,7 +3007,7 @@ struct OrbitEffect
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #define EFFECT_SPAWN_RESIDENT
-#include "../field/common/effect/spawn.c"
+#include "../scene/common/effect_spawn.c"
 #undef EFFECT_SPAWN_RESIDENT
 
 //--------------------------------------------------------------------------
@@ -3956,6 +3944,7 @@ void BattleFx_UpdatePairedArcSpawner(struct ArcEffectObject *obj)
 
 	if (gGameState.map == (s32)&SceneId_Clear)
 	{
+		/* FAKEMATCH: explicit libgcc calls here and in the else if below; written with the operator, tbs-en differs */
 		if (__modsi3(cnt, 7) == 0)
 			BattleFx_SpawnDescendingArcParticles(obj);
 	}

@@ -1,5 +1,5 @@
 #include "unit/window/scales.h"
-#include "unit/menu/optdata.h"
+#include "unit/window/optdata.h"
 #include "unit/window/window.h"
 #include "unit/window/config.h"
 #include "unit/window/wintile.h"
@@ -11,7 +11,7 @@
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evmes.h"
-#include "unit/graphics/text/moji.h"
+#include "unit/window/moji.h"
 #include "unit/runtime/runtime.h"
 #include "unit/runtime/objvram.h"
 #include "unit/runtime/sched.h"
@@ -378,9 +378,9 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 
 	work = gSelectionWork;
 	sel = work->page;
-	ShopCursor_AdvanceFar(&work->cursor);
-	ShopCursor_MoveTowardTargetFar(&work->marker[0]);
-	ShopCursor_MoveTowardTargetFar(&work->marker[1]);
+	ShopCursor_AdvanceFar(&work->cursor.cursor);
+	ShopCursor_MoveTowardTargetFar(&work->marker[0].cursor);
+	ShopCursor_MoveTowardTargetFar(&work->marker[1].cursor);
 
 	if (sel == 0)
 	{
@@ -476,7 +476,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
 		work->cursor.output = out;
 		x = win->x * 8;
 		y = win->y * 8 + 12;
-		ShopCursor_SetPositionImmediateFar(&work->cursor, x, y);
+		ShopCursor_SetPositionImmediateFar(&work->cursor.cursor, x, y);
 	}
 
 	x = Resource_FindFreeEntry();
@@ -509,7 +509,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
 		x = win->x * 8 + OPTION_SLIDER_X;
 		x += work->option[0] * 60 / work->option_count[0];
 		y = win->y * 8 + 4;
-		ShopCursor_SetPositionImmediateFar(&work->marker[0], x, y);
+		ShopCursor_SetPositionImmediateFar(&work->marker[0].cursor, x, y);
 	}
 
 	x = Resource_FindFreeEntry();
@@ -522,7 +522,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
 		x = win->x * 8 + OPTION_SLIDER_X;
 		x += work->option[1] * 60 / work->option_count[1];
 		y = win->y * 8 + 20;
-		ShopCursor_SetPositionImmediateFar(&work->marker[1], x, y);
+		ShopCursor_SetPositionImmediateFar(&work->marker[1].cursor, x, y);
 	}
 
 	y = 28;
@@ -619,11 +619,11 @@ s32 Menu_RunWorkspaceOptions(void)
 			x = icon->x * 8 + OPTION_SLIDER_X;
 			x += (*pA * 60) / work->option_count[0];
 			y = icon->y * 8 + 4;
-			Shop_SetCursorFar(&work->marker[0], x, y, 1);
+			Shop_SetCursorFar(&work->marker[0].cursor, x, y, 1);
 			x = icon->x * 8 + OPTION_SLIDER_X;
 			x += (*pB * 60) / work->option_count[1];
 			y = icon->y * 8 + 20;
-			Shop_SetCursorFar(&work->marker[1], x, y, 1);
+			Shop_SetCursorFar(&work->marker[1].cursor, x, y, 1);
 
 			x = work->option[2] + (s32)MsgMessageSpeedSetting;
 			UiWindow_ClearInteriorTiles(icon, OPTION_SETTING_X, 40, OPTION_SPEED_END, 48);
@@ -640,7 +640,7 @@ s32 Menu_RunWorkspaceOptions(void)
 			y = (page * 3 + icon->y) * 8 + 4;
 			if (page == 0)
 				y += 8;
-			Shop_SetCursorFar(&work->cursor, x, y, 3);
+			Shop_SetCursorFar(&work->cursor.cursor, x, y, 3);
 			RenderOutput_ClearList(win);
 			UiText_DrawResource(page + (s32)MsgOptionHelp, win, 0, 0);
 		}
@@ -730,7 +730,7 @@ void Menu_RunSelectedWorkspaceEntry(void)
 	struct WorkspaceWork *work = gSelectionWork;
 	u32					  index;
 
-	ShopCursor_AdvanceFar(&work->cursor);
+	ShopCursor_AdvanceFar(&work->cursor.cursor);
 	index = work->page;
 	Ui_ApplyTableScaleToObject(work->icon[index]);
 }
@@ -815,7 +815,7 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void)
 		work->cursor.output = RenderOutput_Create(slot, 0x40000000, win, 0, 0);
 		x = win->x * 8;
 		y = win->y * 8 + 16;
-		ShopCursor_SetPositionImmediateFar(&work->cursor, x, y);
+		ShopCursor_SetPositionImmediateFar(&work->cursor.cursor, x, y);
 	}
 	y = -4;
 	for (i = 0; i < rows; i++)
@@ -907,7 +907,7 @@ s32 Menu_RunWorkspaceSelectionLoop(void)
 			top = window->y;
 			x = window->x * 8;
 			y = (((page * 3) + top) * 8) + 0x10;
-			Shop_SetCursorFar(&work->cursor, x, y, 3);
+			Shop_SetCursorFar(&work->cursor.cursor, x, y, 3);
 		}
 		Ui_ApplyTableOffsetToPair(pair);
 		WaitFrames(1);

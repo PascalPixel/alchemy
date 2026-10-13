@@ -18,9 +18,9 @@
 //! editions. The entry table is DIR/entry/NAME where the checkout has that
 //! assembler source and DIR/entry otherwise, and the import table is
 //! DIR/import/NAME or DIR/import the same way. So an overlay with a folder
-//! of its own keeps `entry.s` and `import.s` beside its C file
-//! (games/tbs/src/menu/title), and overlays whose C files share one folder
-//! (games/tbs/src/scene) keep their tables in its `entry` and `import`
+//! of its own keeps `entry.s` and `import.s` beside its C file, and overlays
+//! whose C files share one folder (games/tbs/src/scene, games/tbs/src/menu,
+//! games/tbs/src/debug) keep their tables in its `entry` and `import`
 //! folders, each named as its C file. The row names no sections. What an
 //! overlay links besides (a library member, a picture, its `.bss`) has its
 //! own rows after it. The list is read as the rows it stands for, so every

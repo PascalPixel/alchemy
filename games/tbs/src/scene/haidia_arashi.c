@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/scene/haidia_arashi.h"
-#include "unit/scene/common/effect/psynergy.h"
+#include "unit/scene/common/effect_psynergy.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"
@@ -101,7 +101,7 @@ static s32 HaidiaArashi_RerollHeadingOnCountdown(struct FieldActor *object)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/pulse.c"
+#include "common/object_pulse.c"
 
 u8 *HaidiaArashi_GetEntrances(void)
 {
@@ -130,29 +130,21 @@ u8 *HaidiaArashi_GetEvents(void)
 
 static void EV15_TOUCH(void)
 {
-	s32 a;
-	s32 b;
 
 	Engine_GameFlagSet(0x210);
-	a = 10;
-	b = 84;
-	Engine_MapCopyCellAttributes(40, 84, 7, 4, a, b);
+	Map_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
 static void EV14_TOUCH(void)
 {
 
-	s32 a;
-	s32 b;
 
 	Engine_GameFlagClear(0x210);
-	a = 10;
-	b = 84;
-	Engine_MapCopyCellAttributes(40, 89, 7, 4, a, b);
+	Map_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/haidia/exit.c"
+#include "common/haidia.c"
 
 static void HaidiaArashi_OpenBackdropExit11(void)
 {
@@ -205,26 +197,18 @@ static void EV06_TOUCH(void)
 
 static void EV07_TOUCH(void)
 {
-	s32 record;
-
 	if (GameFlag_IsSet(0x206) == 0)
 	{
 		Event_PlayCue(158);
 		Map_AnimateCells(HaidiaArashi_CellSteps2, 45, 39);
 	}
-	if (GameFlag_IsSet(0x835) == 0)
+	if (GameFlag_IsSet(0x835) == 0 && GameFlag_IsSet(0x831) == 0)
 	{
-		record = GameFlag_IsSet(0x831);
-		if (record != 0)
-		{
-			goto leave;
-		}
 		FieldScene_RunScene372SequenceA();
 		GameFlag_Set(0x206);
 	}
 	else
 	{
-	leave:;
 		Actor_WalkTo(ACTOR_PARTY_LEADER, 0x106, 0x325);
 		Engine_EventWait(3);
 		Haidia_RequestBackdropExit(6);
@@ -460,11 +444,11 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 		EV15_TOUCH();
 	}
 	Engine_GameFlagSet(0x834);
-	Engine_MapCopyCellAttributes(29, 24, 1, 2, 26, 46);
-	Engine_MapCopyCellAttributes(29, 25, 1, 1, 27, 46);
-	Engine_MapCopyCellAttributes(29, 25, 1, 1, 28, 46);
-	Engine_MapCopyCellAttributes(19, 0x5A, 1, 1, 20, 0x58);
-	Engine_MapCopyCellAttributes(19, 0x5A, 1, 1, 20, 0x59);
+	Map_CopyCellAttributes(29, 24, 1, 2, 26, 46);
+	Map_CopyCellAttributes(29, 25, 1, 1, 27, 46);
+	Map_CopyCellAttributes(29, 25, 1, 1, 28, 46);
+	Map_CopyCellAttributes(19, 0x5A, 1, 1, 20, 0x58);
+	Map_CopyCellAttributes(19, 0x5A, 1, 1, 20, 0x59);
 	{
 		struct FieldActor *actor;
 
@@ -746,25 +730,15 @@ static void EV42_TOUCH(void)
 
 static void ActorPresentation_SetEightSceneCells(void)
 {
-	s32 a = 15;
-	s32 d = 0x35;
-	s32 e;
-	s32 b;
-	s32 c;
-	s32 f;
 
-	Engine_MapCopyCellAttributes(29, 23, 1, 1, a, d);
-	b = 14;
-	Engine_MapCopyCellAttributes(29, 23, 1, 1, b, d);
-	c = 13;
-	Engine_MapCopyCellAttributes(29, 23, 1, 1, c, d);
-	Engine_MapCopyCellAttributes(26, 20, 2, 1, b, 0x34);
-	e = 0x36;
-	Engine_MapCopyCellAttributes(25, 21, 1, 1, c, e);
-	Engine_MapCopyCellAttributes(25, 21, 1, 1, a, e);
-	Engine_MapCopyCellAttributes(14, 0x35, 1, 1, b, e);
-	f = 0x37;
-	Engine_MapCopyCellAttributes(13, 0x37, 1, 1, a, f);
+	Map_CopyCellAttributes(29, 23, 1, 1, 15, 0x35);
+	Map_CopyCellAttributes(29, 23, 1, 1, 14, 0x35);
+	Map_CopyCellAttributes(29, 23, 1, 1, 13, 0x35);
+	Map_CopyCellAttributes(26, 20, 2, 1, 14, 0x34);
+	Map_CopyCellAttributes(25, 21, 1, 1, 13, 0x36);
+	Map_CopyCellAttributes(25, 21, 1, 1, 15, 0x36);
+	Map_CopyCellAttributes(14, 0x35, 1, 1, 14, 0x36);
+	Map_CopyCellAttributes(13, 0x37, 1, 1, 15, 0x37);
 }
 
 static void EV43_TOUCH(void)
@@ -831,14 +805,11 @@ static void EV43_TOUCH(void)
 static void SceneState_ApplyFourRects(void)
 {
 
-	s32 a = 0x2a;
-	s32 b;
 
-	Engine_MapCopyCellAttributes(29, 22, 1, 1, 3, a);
-	b = 2;
-	Engine_MapCopyCellAttributes(29, 21, 1, 1, b, a);
-	Engine_MapCopyCellAttributes(29, 21, 1, 1, 4, a);
-	Engine_MapCopyCellAttributes(23, 20, 3, 1, b, 0x2b);
+	Map_CopyCellAttributes(29, 22, 1, 1, 3, 0x2a);
+	Map_CopyCellAttributes(29, 21, 1, 1, 2, 0x2a);
+	Map_CopyCellAttributes(29, 21, 1, 1, 4, 0x2a);
+	Map_CopyCellAttributes(23, 20, 3, 1, 2, 0x2b);
 }
 
 static void EV44_TOUCH(void)
@@ -904,18 +875,12 @@ static void EV44_TOUCH(void)
 
 static void FieldScene_DrawFiveTileBlocks(void)
 {
-	s32 a = 26;
-	s32 h = 0x47;
-	s32 b;
-	s32 a2;
 
-	Engine_MapCopyCellAttributes(29, 20, 1, 1, a, h);
-	b = 0x46;
-	Engine_MapCopyCellAttributes(29, 20, 1, 1, a, b);
-	a2 = 27;
-	Engine_MapCopyCellAttributes(29, 20, 1, 1, a2, b);
-	Engine_MapCopyCellAttributes(28, 21, 1, 1, 28, h);
-	Engine_MapCopyCellAttributes(28, 22, 1, 1, a2, 0x48);
+	Map_CopyCellAttributes(29, 20, 1, 1, 26, 0x47);
+	Map_CopyCellAttributes(29, 20, 1, 1, 26, 0x46);
+	Map_CopyCellAttributes(29, 20, 1, 1, 27, 0x46);
+	Map_CopyCellAttributes(28, 21, 1, 1, 28, 0x47);
+	Map_CopyCellAttributes(28, 22, 1, 1, 27, 0x48);
 }
 
 static void FieldScene_RunScene372SequenceA(void)
@@ -2665,7 +2630,7 @@ static void HaidiaArashi_CycleObjectPalettes(s32 o)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/vertical.c"
+#include "common/effect_vertical.c"
 
 static void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
 {
@@ -2723,7 +2688,7 @@ static void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/psynergy.c"
+#include "common/effect_psynergy.c"
 
 static void FieldScene_RunFourPairedSteps(void)
 {

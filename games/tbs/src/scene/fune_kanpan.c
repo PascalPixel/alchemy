@@ -78,7 +78,7 @@ static void FuneKanpan_PlaceLeaderOnDeck(void);
 s32 Math_RemainderUnsigned(s32, s16);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/pulse.c"
+#include "common/object_pulse.c"
 
 static s32 SceneState_ApplyArgMode1AndReturnZero(s32 a)
 {
@@ -1991,72 +1991,76 @@ static void FieldScene_RunPartyRosterScene(void)
 			break;
 		}
 	}
-	if (found == 4)
-		goto scene;
-	member = 28;
-	for (index = 0; index <= 3; index++)
+	if (found != 4)
 	{
-		if (roster[index] == member)
+		member = 28;
+		for (index = 0; index <= 3; index++)
 		{
-			matched[found] = member;
-			category[found] = found;
-			found++;
-			break;
+			if (roster[index] == member)
+			{
+				matched[found] = member;
+				category[found] = found;
+				found++;
+				break;
+			}
 		}
-	}
-	if (found == 4)
-		goto scene;
-	member = 29;
-	for (index = 0; index <= 3; index++)
-	{
-		if (roster[index] == member)
+		if (found != 4)
 		{
-			matched[found] = member;
-			category[found] = found;
-			found++;
-			break;
-		}
-	}
-	if (found == 4)
-		goto scene;
-	member = 26;
-	for (index = 0; index <= 3; index++)
-	{
-		if (roster[index] == member)
-		{
-			matched[found] = member;
-			category[found] = 10;
-			found++;
-			break;
-		}
-	}
-	if (found == 4)
-		goto scene;
-	member = 30;
-	for (index = 0; index <= 3; index++)
-	{
-		if (roster[index] == member)
-		{
-			matched[found] = member;
-			category[found] = 11;
-			found++;
-			break;
-		}
-	}
-	if (found == 4)
-		goto scene;
-	member = 31;
-	for (index = 0; index <= 3; index++)
-	{
-		if (roster[index] == member)
-		{
-			matched[found] = member;
-			category[found] = 20;
-			break;
+			member = 29;
+			for (index = 0; index <= 3; index++)
+			{
+				if (roster[index] == member)
+				{
+					matched[found] = member;
+					category[found] = found;
+					found++;
+					break;
+				}
+			}
+			if (found != 4)
+			{
+				member = 26;
+				for (index = 0; index <= 3; index++)
+				{
+					if (roster[index] == member)
+					{
+						matched[found] = member;
+						category[found] = 10;
+						found++;
+						break;
+					}
+				}
+				if (found != 4)
+				{
+					member = 30;
+					for (index = 0; index <= 3; index++)
+					{
+						if (roster[index] == member)
+						{
+							matched[found] = member;
+							category[found] = 11;
+							found++;
+							break;
+						}
+					}
+					if (found != 4)
+					{
+						member = 31;
+						for (index = 0; index <= 3; index++)
+						{
+							if (roster[index] == member)
+							{
+								matched[found] = member;
+								category[found] = 20;
+								break;
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
-scene:
 	Engine_EventBegin();
 	Engine_ActorSetChildValue(0, 15);
 	Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
@@ -2517,22 +2521,20 @@ static void SceneState_InitActorSlots8To19(void)
 
 static void SceneState_ApplyFiveRectsAtColumn78(void)
 {
-	Engine_MapCopyCellsTo(78, 39, 78, 40, 5, 1);
-	Engine_MapCopyCellsTo(78, 39, 78, 41, 5, 1);
-	Engine_MapCopyCellsTo(78, 39, 79, 42, 4, 1);
-	Engine_MapCopyCellsTo(78, 39, 82, 43, 1, 1);
+	Map_CopyCellsTo(78, 39, 78, 40, 5, 1);
+	Map_CopyCellsTo(78, 39, 78, 41, 5, 1);
+	Map_CopyCellsTo(78, 39, 79, 42, 4, 1);
+	Map_CopyCellsTo(78, 39, 82, 43, 1, 1);
 	{
-		s32 x = 17;
-		s32 y = 40;
 
-		Engine_MapCopyCellAttributes(17, 38, 5, 2, x, y);
+		Map_CopyCellAttributes(17, 38, 5, 2, 17, 40);
 	}
 }
 
 static void DialogueLayout_ConfigureTwoRegions(void)
 {
-	Engine_MapCopyCellsTo(66, 61, 64, 40, 5, 4);
-	Engine_MapCopyCellAttributes(0, 0, 5, 4, 5, 39);
+	Map_CopyCellsTo(66, 61, 64, 40, 5, 4);
+	Map_CopyCellAttributes(0, 0, 5, 4, 5, 39);
 }
 
 static void FieldScene_RunStepThen10(s32 a)

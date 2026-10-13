@@ -127,7 +127,7 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value)
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void)
 {
-	void				   **heap_cache = (void **)gBattleFxWork;
+	void				   **heap_cache = gBattleFxWork;
 	struct BattleEffectWork *work = heap_cache[0];
 	void					*source;
 	s32						*counter;
@@ -181,7 +181,7 @@ void BattleFx_FlushPendingGraphicsTransfer(void)
 	void					*source;
 	s32						 transfer_mode;
 
-	heap_cache = (void **)gBattleFxWork;
+	heap_cache = gBattleFxWork;
 	work = heap_cache[0];
 	source = Ram_MapCellBuffer;
 	if (work->transfer_pending != 1)
@@ -219,7 +219,7 @@ void BattleFx_FlushPendingGraphicsTransfer(void)
 
 void Graphics_ApplyWindowBlendRegisters(void)
 {
-	struct BattleEffectWork *work = *(struct BattleEffectWork **)gBattleFxWork;
+	struct BattleEffectWork *work = gBattleFxWork[0];
 
 	REG_WIN0H = work->win0h;
 	REG_WIN0V = work->win0v;
@@ -234,7 +234,7 @@ void Graphics_ApplyWindowBlendRegisters(void)
 
 void Display_ApplyBg2Reference(void)
 {
-	struct BattleEffectWork *work = *(struct BattleEffectWork **)gBattleFxWork;
+	struct BattleEffectWork *work = gBattleFxWork[0];
 
 	REG_BG2X = work->bg2x;
 	REG_BG2Y = work->bg2y;
@@ -266,7 +266,7 @@ void ObjectGroup_TickMemberTimers(void)
 	struct BattleEffectWork *work;
 	s32						 i;
 
-	work = *(struct BattleEffectWork **)gBattleFxWork;
+	work = gBattleFxWork[0];
 	i = 0;
 	do
 	{

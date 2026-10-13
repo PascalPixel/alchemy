@@ -111,7 +111,7 @@ static s32 OverlayObject_UpdateWobbleByCounter(struct FieldActor *obj)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/facing.c"
+#include "common/object_facing.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -569,6 +569,7 @@ static void ImiruMura_RunItemShop(void)
 			Engine_EventBegin();
 			Engine_EventSetMessage((s32)MsgMakyuriMomsSickGetWhatever);
 			Engine_EventShowMessage(14, 0);
+			/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 			((s32 (*)())Engine_ShopOpen)(12, 14);
 			Engine_EventEnd();
 		}
@@ -691,7 +692,7 @@ s32 ImiruMura_ApplyEntryState(void)
 			if (Engine_GameFlagIsSet(0x881))
 			{
 				Map_CopyCellAttributes(10, 7, 1, 1, 10, 8);
-				Engine_MapCopyCellsTo(3, 125, 9, 69, 3, 3);
+				Map_CopyCellsTo(3, 125, 9, 69, 3, 3);
 				Engine_MapRedraw();
 				Engine_TaskWait(1);
 				Engine_ActorEnableActionCallback(8, (const s32 *)2);
@@ -713,7 +714,7 @@ s32 ImiruMura_ApplyEntryState(void)
 			else
 			{
 				Map_CopyCellAttributes(10, 7, 1, 1, 10, 8);
-				Engine_MapCopyCellsTo(3, 125, 9, 69, 3, 3);
+				Map_CopyCellsTo(3, 125, 9, 69, 3, 3);
 				Engine_MapRedraw();
 				Engine_TaskWait(1);
 				if (Engine_GameFlagIsSet(0x82c))
@@ -744,11 +745,11 @@ s32 ImiruMura_ApplyEntryState(void)
 				Actor_SetPosition(12, 0x16c0000, 0x2420000);
 				Engine_ActorSetSpritePriority(12, 2);
 				Object_GetById(12)->collision_flags |= 4;
-				Engine_MapCopyCellsTo(6, 125, 22, 88, 3, 3);
+				Map_CopyCellsTo(6, 125, 22, 88, 3, 3);
 				Actor_SetPosition(13, 0x1ec0000, 0x2420000);
 				Engine_ActorSetSpritePriority(13, 2);
 				Object_GetById(13)->collision_flags |= 4;
-				Engine_MapCopyCellsTo(9, 125, 28, 88, 3, 3);
+				Map_CopyCellsTo(9, 125, 28, 88, 3, 3);
 			}
 			else
 			{
@@ -768,7 +769,7 @@ s32 ImiruMura_ApplyEntryState(void)
 				Object_GetById(15)->collision_flags |= 4;
 				Engine_ActorSetPosition(14, 0x1980000, 0x1080000);
 				Object_GetById(14)->facing = 0x1000;
-				Engine_MapCopyCellsTo(12, 125, 26, 70, 3, 3);
+				Map_CopyCellsTo(12, 125, 26, 70, 3, 3);
 			}
 			else
 			{
@@ -1032,7 +1033,6 @@ static void ImiruMura_SwayAndSpark(struct FieldActor *actor)
 	}
 }
 
-s32 __umodsi3();
 
 static void ImiruMura_ShowActorNineTurnMessage(void)
 {
@@ -1092,7 +1092,7 @@ static void FieldScene_RunScene399SequenceA(void)
 	union FieldObject *object;
 
 	frame = &gFrameCount;
-	if (__umodsi3(*frame, 60) == 0)
+	if (((u32)*frame % (u32)60) == 0)
 	{
 		object = (union FieldObject *)Object_Create(222, 0x1cf0000, 0, 0x1240000);
 		if (object != NULL)
@@ -1103,7 +1103,7 @@ static void FieldScene_RunScene399SequenceA(void)
 			Object_SetMode(object, 5);
 		}
 	}
-	if (__umodsi3(*frame + 30, 60) == 0)
+	if (((u32)(*frame + 30) % (u32)60) == 0)
 	{
 		object = (union FieldObject *)Object_Create(222, 0x1400000, 0x200000, 0x1640000);
 		if (object != NULL)
@@ -1114,7 +1114,7 @@ static void FieldScene_RunScene399SequenceA(void)
 			Object_SetMode(object, 5);
 		}
 	}
-	if (__umodsi3(*frame + 10, 60) == 0)
+	if (((u32)(*frame + 10) % (u32)60) == 0)
 	{
 		object = (union FieldObject *)Object_Create(222, 0x760000, 0, 0x460000);
 		if (object != NULL)
@@ -1125,7 +1125,7 @@ static void FieldScene_RunScene399SequenceA(void)
 			Object_SetMode(object, 5);
 		}
 	}
-	if (__umodsi3(*frame + 50, 60) == 0)
+	if (((u32)(*frame + 50) % (u32)60) == 0)
 	{
 		object = (union FieldObject *)Object_Create(222, 0x1560000, 0, 0x7c0000);
 		if (object != NULL)
@@ -1136,7 +1136,7 @@ static void FieldScene_RunScene399SequenceA(void)
 			Object_SetMode(object, 5);
 		}
 	}
-	if (__umodsi3(*frame + 80, 60) == 0)
+	if (((u32)(*frame + 80) % (u32)60) == 0)
 	{
 		object = (union FieldObject *)Object_Create(222, 0x1af0000, 0, 0xab0000);
 		if (object != NULL)
@@ -1154,7 +1154,6 @@ static void SceneState_UpdateZoneFlagsFromActorZero(void)
 	struct FieldActor *obj;
 	s32				   x;
 	s32				   cx;
-	s32				   y;
 	s32				   r;
 	s32				   g;
 	s32				   h;
@@ -1165,25 +1164,22 @@ static void SceneState_UpdateZoneFlagsFromActorZero(void)
 	cx = x >> 19;
 	g = 0x200;
 	h = 0x201;
-	if ((u32)(cx - 24) > 7)
+	if ((u32)(cx - 24) <= 7 || ((u32)((obj->z.fixed >> 19) - 36) <= 9 && (u32)(cx - 22) <= 9))
 	{
-		y = obj->z.fixed;
-		if ((u32)((y >> 19) - 36) > 9 || (u32)(cx - 22) > 9)
-			goto rest;
-	}
-	r = Engine_GameFlagIsSet(g);
-	if (r != 0)
+		r = Engine_GameFlagIsSet(g);
+		if (r != 0)
+			return;
+		((State *)gMapWork[0])->unk17 = r;
+		/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+		((void (*)(s32))Engine_GameFlagSet)(g);
+		Engine_GameFlagClear(h);
 		return;
-	((State *)gMapWork[0])->unk17 = r;
-	((void (*)(s32))Engine_GameFlagSet)(g);
-	Engine_GameFlagClear(h);
-	return;
-
-rest:
-	if (x > 0xE80000 && obj->y.fixed > 0x1E0000 && y > 0xD40000)
+	}
+	if (x > 0xE80000 && obj->y.fixed > 0x1E0000 && obj->z.fixed > 0xD40000)
 	{
 		st = gMapWork[0];
 		st->unk17 = 0;
+		/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 		((void (*)(s32))Engine_GameFlagSet)(g);
 		Engine_GameFlagClear(h);
 		return;
@@ -1193,6 +1189,7 @@ rest:
 		return;
 	st = gMapWork[0];
 	st->unk17 = 1;
+	/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
 	((void (*)(s32))Engine_GameFlagSet)(h);
 	Engine_GameFlagClear(g);
 	return;
@@ -1220,7 +1217,7 @@ static void EV11_PSYNERGY(void)
 	a = 15;
 	b = 7;
 #endif
-	Engine_MapCopyCellAttributes(15, 6, 1, 1, a, b);
+	Map_CopyCellAttributes(15, 6, 1, 1, a, b);
 }
 
 static void EV04_TOUCH(void)
@@ -1478,32 +1475,29 @@ static void StagedActor_RunHeadingProbeStep(void)
 		Engine_ObjectCommitPosition(subject);
 		subject->update = (void (*)(union FieldObject *))SceneActor_TurnTowardTableAngle;
 
-		goto advanceProbe;
-	continueProbe:
-		if (Map_GetTerrainHeight(*p, probe.x, probe.z) - subject->y.fixed > 0x80000)
+		for (;;)
 		{
-			goto finishProbe;
-		}
-		x = probe.x;
-		z = probe.z;
-		subject->speed = 0x20000;
-		subject->acceleration = 0x1999;
-		Engine_ObjectSetPosition(subject, probe.x, probe.y, probe.z);
-		Engine_ObjectCommitPosition(subject);
-		if (marker != goal)
-		{
-			goto blocked;
-		}
-
-	advanceProbe:
-		FieldVector_AddPolarOffset(0x100000, heading, &probe);
-		marker = GetMapCellCollision(*p, probe.x, probe.z);
-		if (marker != 255)
-		{
-			goto continueProbe;
+			FieldVector_AddPolarOffset(0x100000, heading, &probe);
+			if ((marker = GetMapCellCollision(*p, probe.x, probe.z)) == 255)
+			{
+				break;
+			}
+			if (Map_GetTerrainHeight(*p, probe.x, probe.z) - subject->y.fixed > 0x80000)
+			{
+				break;
+			}
+			x = probe.x;
+			z = probe.z;
+			subject->speed = 0x20000;
+			subject->acceleration = 0x1999;
+			Engine_ObjectSetPosition(subject, probe.x, probe.y, probe.z);
+			Engine_ObjectCommitPosition(subject);
+			if (marker != goal)
+			{
+				goto blocked;
+			}
 		}
 
-	finishProbe:
 		subject->speed = 0x20000;
 		subject->acceleration = 0x10000;
 		Engine_ObjectSetPosition(subject, x, subject->y.fixed, z);

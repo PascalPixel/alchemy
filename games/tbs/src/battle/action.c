@@ -438,7 +438,7 @@ s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
 		if (plan->presentation_flags & 0x8000)
 			BattleFx_InitializeModeFar((s32 *)&work);
 		else if (plan->presentation_flags & 0x4000)
-			BattleFx_DispatchByIdRangeFar((s32 *)&work);
+			BattleFx_DispatchByIdRangeFar((struct BattleEffectArgument *)&work);
 		else
 			BattleFx_DispatchModeFar((s32 *)&work);
 		BattleEventRuntime_WaitForReady();
@@ -632,7 +632,7 @@ s32 RunBattlePresentation(struct BtlPlan *plan, s32 mode)
 		if (work.kind != 0)
 		{
 			if (plan->presentation_flags & 0x4000)
-				BattleFx_DispatchByIdRangeFar((s32 *)&work);
+				BattleFx_DispatchByIdRangeFar((struct BattleEffectArgument *)&work);
 			else
 				BattleFx_DispatchModeFar((s32 *)&work);
 		}
@@ -715,7 +715,7 @@ s32 BattlePres_RunSimple(struct BtlPlan *input, s32 flags)
 	}
 	else
 	{
-		BattleFx_DispatchByIdRangeFar((s32 *)&work);
+		BattleFx_DispatchByIdRangeFar((struct BattleEffectArgument *)&work);
 		BattleEv_DispatchQueued();
 		ObjMotRst(saved_input->tgt_no[0]);
 	}
@@ -783,7 +783,7 @@ s32 BattlePres_RunItem(struct BtlPlan *plan, s32 unused, struct BattleActionReco
 			fade += 0x444;
 		} while (i < 20);
 		if (plan->presentation_flags & 0x4000)
-			BattleFx_DispatchByIdRangeFar((s32 *)&work);
+			BattleFx_DispatchByIdRangeFar((struct BattleEffectArgument *)&work);
 		else
 			BattleFx_DispatchModeFar((s32 *)&work);
 	}
@@ -953,7 +953,7 @@ s32 BattlePres_RunPsynergyCast(struct BtlPlan *plan, s32 mode)
 		if (work.kind)
 		{
 			if (plan->presentation_flags & 0x4000)
-				BattleFx_DispatchByIdRangeFar((s32 *)&work);
+				BattleFx_DispatchByIdRangeFar((struct BattleEffectArgument *)&work);
 			else
 				BattleFx_DispatchModeFar((s32 *)&work);
 		}

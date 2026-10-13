@@ -112,7 +112,7 @@ Func_080addf0:
 .L_080adec4:
 	.4byte GameFlagBytes
 .L_080adec8:
-	.4byte Data_02000520
+	.4byte gOwnerStates
 .L_080adecc:
 	.4byte 0x85000298
 .L_080aded0:

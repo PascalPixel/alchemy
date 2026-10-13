@@ -2,7 +2,7 @@
 #include "scene_ids.h"
 #include "vram_tab.h"
 #include "unit/scene/haidia_ie.h"
-#include "unit/scene/common/effect/psynergy.h"
+#include "unit/scene/common/effect_psynergy.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/fldmain.h"
@@ -62,7 +62,7 @@ static void FieldScene_RunStep20(void);
 static void SceneState_SetValues352_365_2116_2117_40(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/facing.c"
+#include "common/object_facing.c"
 
 u8 *HaidiaIe_GetEntrances(void)
 {
@@ -395,7 +395,7 @@ static void Scene_PsynergyStoneIsGone(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/haidia/exit.c"
+#include "common/haidia.c"
 
 static void EV01_TOUCH(void)
 {
@@ -528,7 +528,7 @@ s32 HaidiaIe_RestoreEntryState(void)
 	((struct FieldActor *)record)->scale_y = (v5 << 9);
 	if (Engine_GameFlagIsSet(0x87a) != 0)
 	{
-		Engine_MapCopyCellsTo(97, 2, 80, 5, 2, 2);
+		Map_CopyCellsTo(97, 2, 80, 5, 2, 2);
 		Map_CopyCellsTo(42, 53, 42, 54, 3, 1);
 		Engine_MapRedraw();
 		Engine_TaskWait(1);
@@ -541,26 +541,24 @@ s32 HaidiaIe_RestoreEntryState(void)
 			BattleFx_StartTwelveFrameBlend();
 			Map_CopyCellAttributes(21, 38, 1, 1, 18, 41);
 			record = Engine_GameFlagIsSet(0x840);
-			if (record == 0)
+			if (record != 0)
 			{
-				goto check_entrance;
+				Engine_ActorSetPosition(17, 0, 0);
+				Engine_ActorSetPosition(18, 0, 0);
+				FieldObject_SetTargetAndCallback(19, 0x10000, HaidiaIe_FaceTargetActions);
 			}
-			Engine_ActorSetPosition(17, 0, 0);
-			Engine_ActorSetPosition(18, 0, 0);
-			FieldObject_SetTargetAndCallback(19, 0x10000, HaidiaIe_FaceTargetActions);
 		}
 		else
 		{
 			if (Engine_GameFlagIsSet(0x815) != 0)
 			{
 				Actor_SetPosition(16, 0xb40000, 0x2380000);
-				Engine_MapCopyCellsTo(92, 2, 80, 5, 2, 2);
+				Map_CopyCellsTo(92, 2, 80, 5, 2, 2);
 				Map_CopyCellsTo(42, 53, 42, 54, 3, 1);
 				Engine_MapRedraw();
 				Engine_TaskWait(1);
 			}
 		}
-	check_entrance:;
 		if (gGameState.entrance == 12)
 		{
 			Scene_RunExtendedActorSequence();
@@ -599,18 +597,12 @@ s32 HaidiaIe_RestoreEntryState(void)
 			}
 			else
 			{
-				if (Engine_GameFlagIsSet(0x834) != 0)
+				if (Engine_GameFlagIsSet(0x834) != 0 && (record = Engine_GameFlagIsSet(0x842)) != 0)
 				{
-					record = Engine_GameFlagIsSet(0x842);
-					if (record == 0)
-					{
-						goto open_screen;
-					}
 					HaidiaIe_RunScriptScene();
 				}
 				else
 				{
-				open_screen:;
 					if (Engine_GameFlagIsSet(0x834) != 0)
 					{
 						Engine_EventOpenScreen();
@@ -621,7 +613,6 @@ s32 HaidiaIe_RestoreEntryState(void)
 			}
 		}
 	}
-done:;
 	return 0;
 }
 
@@ -1390,7 +1381,7 @@ static void SceneEffect_UpdateByFrameBit(s32 no)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/vertical.c"
+#include "common/effect_vertical.c"
 
 static void HaidiaIe_SpawnEffectPair(union PairObject *parent)
 {
@@ -1448,7 +1439,7 @@ static void HaidiaIe_SpawnEffectPair(union PairObject *parent)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/psynergy.c"
+#include "common/effect_psynergy.c"
 
 static void FieldScene_RunStep15(void)
 {

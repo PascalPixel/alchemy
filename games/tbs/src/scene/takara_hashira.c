@@ -3,7 +3,7 @@
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/takara_hashira.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/marker.h"
@@ -81,13 +81,12 @@ struct MapLayer_2
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
-#include "common/object/staged_actor.c"
+#include "common/effect_create.c"
+#include "common/effect_spawn.c"
+#include "common/object_staged_actor.c"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/map/panel.c"
+#include "common/map.c"
 
 static void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
 {
@@ -147,22 +146,15 @@ static s32 FieldScene_QueryActorFootprint(
 	s32					a;
 	s32					b;
 
-	i = 0;
-	if (actor->animation->entries[0]->anim_id != StagedActor_FootprintKinds[i])
+	for (i = 0; i <= 5; i++)
 	{
-	miss:
+		if (actor->animation->entries[0]->anim_id == StagedActor_FootprintKinds[i])
+		{
+			probe->footprint_index = i;
+			break;
+		}
 		probe->footprint_index = 7;
-		if (++i > 5)
-		{
-			goto check;
-		}
-		if (actor->animation->entries[0]->anim_id != StagedActor_FootprintKinds[i])
-		{
-			goto miss;
-		}
 	}
-	probe->footprint_index = i;
-check:
 	if ((u32)probe->footprint_index > 6)
 	{
 		return 0;
@@ -223,7 +215,7 @@ static s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no)
 
 	r2 = rec[2];
 	r4 = rec[4];
-	Engine_MapCopyCellAttributes(2, 2, out20, out16, r2, r4);
+	Map_CopyCellAttributes(2, 2, out20, out16, r2, r4);
 
 	Object_SetMode(obj, 4);
 	mask = 2;
@@ -231,11 +223,11 @@ static s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no)
 
 	if (out20 > out16)
 	{
-		Engine_MapCopyCellsTo(70, 40, rec[2] + 32, rec[4] + 2, out20, out16);
+		Map_CopyCellsTo(70, 40, rec[2] + 32, rec[4] + 2, out20, out16);
 	}
 	else
 	{
-		Engine_MapCopyCellsTo(68, 40, rec[2] + 32, rec[4] + 2, out20, out16);
+		Map_CopyCellsTo(68, 40, rec[2] + 32, rec[4] + 2, out20, out16);
 	}
 
 	return 1;
@@ -256,7 +248,7 @@ static s32 SceneActor_ApplyPlacementQuery(u8 *no)
 		s32 x = out12 + rec[2];
 		s32 z = out8 + rec[4];
 
-		Engine_MapCopyCellAttributes(x, z, out20, out16, rec[2], rec[4]);
+		Map_CopyCellAttributes(x, z, out20, out16, rec[2], rec[4]);
 		StagedActor_FillGridAttributeRectangle(0, rec[2], rec[4], out20, out16, 255);
 	}
 
@@ -463,51 +455,42 @@ static s32 FieldScene_RunScene3b3SequenceD(void)
 	step <<= 16;
 	p[2] = leader->z.fixed + step;
 #endif
-	if (Object_CheckMovementCollision(leader, p) == 1)
+	if (Object_CheckMovementCollision(leader, p) != 1
+		&& StagedActor_FindAtTile(p, (struct StagedActor *)leader) == 0)
 	{
-		goto reject;
-	}
-	if (StagedActor_FindAtTile(p, (struct StagedActor *)leader) != 0)
-	{
-		goto reject;
-	}
 #if EDITION_INTERNATIONAL
-	p[0] = (leader->x.fixed & -0x100000) + 0x80000;
-	p[1] = leader->y.fixed;
-	p[2] = (leader->z.fixed & -0x100000) + 0x80000;
-	Vector_AddPolarOffset(0x200000, mode, p);
+		p[0] = (leader->x.fixed & -0x100000) + 0x80000;
+		p[1] = leader->y.fixed;
+		p[2] = (leader->z.fixed & -0x100000) + 0x80000;
+		Vector_AddPolarOffset(0x200000, mode, p);
 #else
-	step = StagedActor_DirectionSteps[mode];
-	p[0] = leader->x.fixed + ((step & 0xffff0000) * 2);
-	p[1] = leader->y.fixed;
-	step <<= 17;
-	p[2] = leader->z.fixed + step;
+		step = StagedActor_DirectionSteps[mode];
+		p[0] = leader->x.fixed + ((step & 0xffff0000) * 2);
+		p[1] = leader->y.fixed;
+		step <<= 17;
+		p[2] = leader->z.fixed + step;
 #endif
-	if (StagedActor_FindAtTile(p, (struct StagedActor *)leader) != 0)
-	{
-		goto reject;
+		if (StagedActor_FindAtTile(p, (struct StagedActor *)leader) == 0
+			&& Object_CheckMovementCollision(leader, p) == 0)
+		{
+			Engine_EventBegin();
+			Object_SetMode(leader, 6);
+			Engine_TaskWait(6);
+			Engine_AudioPlayCue(152);
+			Object_SetMode(leader, 7);
+			leader->speed = 0x30000;
+			leader->acceleration = 0x20000;
+			leader->velocity_y = 0x40000;
+			*flags &= 126;
+			Engine_ActorSetSpriteFlags(leader, 0);
+			Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, ((s16 *)p)[1], ((s16 *)p)[5]);
+			Object_SetMode(leader, 6);
+			Engine_ActorSetSpriteFlags(leader, 1);
+			*flags = saved;
+			Engine_EventEnd();
+			return 1;
+		}
 	}
-	if (Object_CheckMovementCollision(leader, p) != 0)
-	{
-		goto reject;
-	}
-	Engine_EventBegin();
-	Object_SetMode(leader, 6);
-	Engine_TaskWait(6);
-	Engine_AudioPlayCue(152);
-	Object_SetMode(leader, 7);
-	leader->speed = 0x30000;
-	leader->acceleration = 0x20000;
-	leader->velocity_y = 0x40000;
-	*flags &= 126;
-	Engine_ActorSetSpriteFlags(leader, 0);
-	Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, ((s16 *)p)[1], ((s16 *)p)[5]);
-	Object_SetMode(leader, 6);
-	Engine_ActorSetSpriteFlags(leader, 1);
-	*flags = saved;
-	Engine_EventEnd();
-	return 1;
-reject:
 	return 0;
 }
 
@@ -705,13 +688,13 @@ static void FieldScene_RunScene3b3SequenceA(void)
 	Engine_AudioPlayCue(0x121);
 	if (Engine_GameFlagIsSet(0x200) == 0)
 	{
-		Engine_MapCopyCellsTo(0, 32, 32, 0, 32, 32);
-		Engine_MapCopyCellsTo(32, 32, 64, 0, 32, 32);
+		Map_CopyCellsTo(0, 32, 32, 0, 32, 32);
+		Map_CopyCellsTo(32, 32, 64, 0, 32, 32);
 	}
 	else
 	{
-		Engine_MapCopyCellsTo(0, 64, 32, 0, 32, 32);
-		Engine_MapCopyCellsTo(32, 64, 64, 0, 32, 32);
+		Map_CopyCellsTo(0, 64, 32, 0, 32, 32);
+		Map_CopyCellsTo(32, 64, 64, 0, 32, 32);
 	}
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, 0);
@@ -1324,6 +1307,7 @@ static void TakaraHashira_RunPushScene(void)
 	Engine_EventBegin();
 	if (StagedActor_FindClearPosition(&probe) != 0)
 	{
+		/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
 		((void (*)(struct Probe))SceneActor_MoveAndRedraw)(probe);
 	}
 	else
@@ -1455,8 +1439,8 @@ s32 TakaraHashira_SetupArea(void)
 		if (Engine_GameFlagIsSet(0x109) != 0 && Engine_GameFlagIsSet(0x200) != 0)
 		{
 			Map_CopyCellsTo(79, 34, 84, 24, 1, 2);
-			Engine_MapCopyCellsTo(0, 32, 32, 0, 32, 32);
-			Engine_MapCopyCellsTo(32, 32, 64, 0, 32, 32);
+			Map_CopyCellsTo(0, 32, 32, 0, 32, 32);
+			Map_CopyCellsTo(32, 32, 64, 0, 32, 32);
 			SceneActor_ApplyPlacementQueryAndTag(9);
 			SceneActor_ApplyPlacementQueryAndTag(10);
 			SceneActor_ApplyPlacementQueryAndTag(11);
@@ -1509,7 +1493,7 @@ s32 TakaraHashira_SetupArea(void)
 					z = actor->z.fixed >> 20;
 					if (z == 9)
 					{
-						Engine_MapCopyCellAttributes(27, 8, 1, 1, x, z);
+						Map_CopyCellAttributes(27, 8, 1, 1, x, z);
 						break;
 					}
 				}

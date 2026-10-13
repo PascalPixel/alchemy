@@ -54,7 +54,7 @@ struct KyudenSceneRecord
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/facing.c"
+#include "common/object_facing.c"
 
 u8 *SceneData_GetScriptTable(void)
 {
@@ -412,31 +412,19 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
 	{
 		Engine_GameFlagClear(0x200);
 	}
-	if (Engine_GameFlagIsSet(0x84f) == 0)
+	if (Engine_GameFlagIsSet(0x84f) == 0 && Engine_GameFlagIsSet(0x845) == 0)
 	{
-		record = Engine_GameFlagIsSet(0x845);
-		if (record != 0)
-		{
-			goto after_flag;
-		}
 		if (gGameState.entrance == 29)
 		{
 			Kyuden_RunKolimaRequest();
-			goto done;
 		}
-		if (gGameState.entrance != 9)
+		else if (gGameState.entrance == 9 && Engine_GameFlagIsSet(0x321) != 0)
 		{
-			goto done;
+			FieldScene_RunPalaceGreeting();
 		}
-		if (Engine_GameFlagIsSet(0x321) == 0)
-		{
-			goto done;
-		}
-		FieldScene_RunPalaceGreeting();
 	}
 	else
 	{
-	after_flag:;
 		rec8 = Engine_GameFlagIsSet(0x84e);
 		if (rec8 != 0)
 		{
@@ -445,16 +433,14 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
 		{
 			if (gGameState.entrance == 29)
 			{
-				if (Engine_GameFlagIsSet(0x85e) != 0)
+				if (Engine_GameFlagIsSet(0x85e) == 0)
 				{
-					goto done;
+					record = Engine_GameFlagIsSet(0x845);
+					if (record != 0)
+					{
+						RunEventScript02();
+					}
 				}
-				record = Engine_GameFlagIsSet(0x845);
-				if (record == 0)
-				{
-					goto done;
-				}
-				RunEventScript02();
 			}
 			else
 			{
@@ -464,8 +450,8 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
 					{
 						if (Engine_GameFlagIsSet(0x109) != 0)
 						{
-							Engine_MapCopyCellAttributes(38, 55, 4, 1, 38, 45);
-							Engine_MapCopyCellAttributes(42, 55, 4, 1, 38, 46);
+							Map_CopyCellAttributes(38, 55, 4, 1, 38, 45);
+							Map_CopyCellAttributes(42, 55, 4, 1, 38, 46);
 							Actor_SetPosition(21, 0x2680000, 0x2d80000);
 							Actor_SetPosition(22, 0x2780000, 0x2d80000);
 							Actor_SetPosition(23, 0x2880000, 0x2d80000);
@@ -500,7 +486,6 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
 			}
 		}
 	}
-done:;
 	return 0;
 }
 
@@ -1327,8 +1312,8 @@ static void BiribinoKyuden_RunActorRowScene(void)
 	Camera_MoveTo(-1, -1, -1, 0);
 	Engine_EventGetViewCenter()->motion_flags = 0;
 	Engine_CameraMoveTo(0x2740000, -1, 0x2ec0000, 0);
-	Engine_MapCopyCellAttributes(38, 55, 4, 1, 38, 45);
-	Engine_MapCopyCellAttributes(42, 55, 4, 1, 38, 46);
+	Map_CopyCellAttributes(38, 55, 4, 1, 38, 45);
+	Map_CopyCellAttributes(42, 55, 4, 1, 38, 46);
 	Object_GetById(0)->facing = 0;
 	Actor_SetPosition(0, 0x2410000, 0x2f80000);
 	Object_GetById(19)->facing = 0;

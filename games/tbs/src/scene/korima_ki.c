@@ -1,7 +1,7 @@
 #include "battle_effect_runtime.h"
 #include "game_state.h"
 #include "unit/scene/korima_ki.h"
-#include "unit/scene/common/korima/palette.h"
+#include "unit/scene/common/korima_palette.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evtable.h"
@@ -151,10 +151,7 @@ static void KorimaKi_TalkToToreto(void)
 			Event_ShowMessage(8, 0);
 			KorimaKi_PlayGesture(10, 0);
 			record = PartyInventory_FindOwner(184);
-			if (record == -1)
-			{
-				goto end_event;
-			}
+			if (record != -1)
 			{
 				u16 *target = &gEventWork->unknown_172;
 				u16	 shown = 1;
@@ -177,7 +174,6 @@ static void KorimaKi_TalkToToreto(void)
 			Engine_TaskWait(40);
 		}
 	}
-end_event:;
 	Engine_EventEnd();
 }
 
@@ -729,7 +725,7 @@ s32 KorimaKi_PrepareActors(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima/grow.c"
+#include "common/korima_grow.c"
 
 static void PaletteScene_SpawnEffect(void)
 {
@@ -994,7 +990,7 @@ static void PaletteScene_SetRecordValue(s32 key, s32 value)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima/palette.c"
+#include "common/korima_palette.c"
 
 s32 SceneAction_ActorOneEntry[] = {
 	SC_ARG(2),

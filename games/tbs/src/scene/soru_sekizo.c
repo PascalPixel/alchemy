@@ -153,25 +153,19 @@ u8 *SceneEventRuntime_GetEffectData(void)
 
 static s32 SceneEventRuntime_SelectInitialSceneByFlags(void)
 {
-	s32 no;
-
 	if (Engine_GameFlagIsSet(0x818) != 0)
 	{
 		if (Engine_GameFlagIsSet(FLAG_STATUE_TRAP_SPRUNG) == 0)
 		{
-			no = 3;
-			goto apply;
+			Engine_EventRequestExit(3);
+			return 1;
 		}
-		goto fail;
 	}
-	if (Engine_GameFlagIsSet(0x812) == 0)
+	else if (Engine_GameFlagIsSet(0x812) == 0)
 	{
-		no = 4;
-	apply:
-		Engine_EventRequestExit(no);
+		Engine_EventRequestExit(4);
 		return 1;
 	}
-fail:
 	return -1;
 }
 
@@ -180,26 +174,23 @@ static void Scene_OpenTheHole(void)
 	s32 i;
 
 	{
-		s32 k5 = 2, k6 = 1;
-		Engine_MapCopyCellsTo(0, 28, 17, 8, k5, k6);
+		Map_CopyCellsTo(0, 28, 17, 8, 2, 1);
 	}
 	Engine_AudioPlayCue(200);
 	for (i = 0; i != 22; i++)
 	{
-		Engine_MapCopyCellsTo(10, 61, 17, 40, 2, 1);
+		Map_CopyCellsTo(10, 61, 17, 40, 2, 1);
 		Engine_EventWait(4);
-		Engine_MapCopyCellsTo(8, 61, 17, 40, 2, 1);
+		Map_CopyCellsTo(8, 61, 17, 40, 2, 1);
 		Engine_EventWait(4);
 	}
 	{
-		s32 k5 = 4, k6 = 3;
-		Engine_MapCopyCellsTo(0, 59, 15, 38, k5, k6);
-		Engine_MapCopyCellsTo(4, 59, 17, 38, k5, k6);
+		Map_CopyCellsTo(0, 59, 15, 38, 4, 3);
+		Map_CopyCellsTo(4, 59, 17, 38, 4, 3);
 	}
-	Engine_MapCopyCellsTo(8, 60, 17, 39, 2, 2);
+	Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
 	{
-		s32 k5 = 17, k6 = 8;
-		Engine_MapCopyCellAttributes(0, 0, 2, 1, k5, k6);
+		Map_CopyCellAttributes(0, 0, 2, 1, 17, 8);
 	}
 	Engine_GameFlagSet(0x207);
 	EV17_PSYNERGY();
@@ -1054,8 +1045,8 @@ static void EV17_PSYNERGY(void)
 				}
 				Engine_EventWait(40);
 				Engine_MessageShowCentered((s32)MsgSoruSomethingClicked, 1);
-				Engine_MapCopyCellAttributes(0, 1, 2, 1, 17, 8);
-				Engine_MapCopyCellAttributes(17, 9, 2, 1, 17, 7);
+				Map_CopyCellAttributes(0, 1, 2, 1, 17, 8);
+				Map_CopyCellAttributes(17, 9, 2, 1, 17, 7);
 			}
 		}
 		Engine_EventEnd();
@@ -1569,8 +1560,6 @@ static void Event_SayThenWait(s32 speaker, s32 frames)
 	Engine_EventShowMessage(speaker, 0);
 	Engine_EventWait(frames);
 }
-
-s32 SoruSekizo_SpriteRowsGfx[] = { 0 };
 
 struct SceneEntrance SceneEventRuntime_ScriptData[] = {
 	{ 0, CONDITION_ALWAYS, 287, 0, 176, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },

@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/scene/shian_mura.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"
@@ -52,9 +52,8 @@ struct PeriodicEffectConfig
 void Effect_Spawn();
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
+#include "common/effect_create.c"
+#include "common/effect_spawn.c"
 
 #define FLAG_SHIAN_WATER_SPILLED 0x200
 
@@ -136,7 +135,7 @@ static void SceneEffect_SpawnPeriodicEffect(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/distance.c"
+#include "common/object_distance.c"
 
 static s32 SceneActor_UpdateTracking(
 	struct MapActor *actor, struct MapActor *target, s32 distance_limit, s32 force_tracking)
@@ -554,8 +553,6 @@ static void ShianMura_WalkThroughExit(s32 a0)
 static void SceneEffect_DispatchStep(void)
 {
 	s16 *scene = (s16 *)gEventWork;
-	u8	*shared0;
-	s32	 shared1;
 
 	Engine_EventBegin();
 
@@ -567,14 +564,12 @@ static void SceneEffect_DispatchStep(void)
 		break;
 	case 2:
 		Engine_AudioPlayCue(158);
-		shared0 = ShianMura_GateSteps2;
-		shared1 = 83;
-		goto shared;
+		Engine_MapAnimateCells(ShianMura_GateSteps2, 83, 11);
+		break;
 	case 3:
 		Engine_AudioPlayCue(158);
-		shared0 = ShianMura_GateSteps2;
-		shared1 = 86;
-		goto shared;
+		Engine_MapAnimateCells(ShianMura_GateSteps2, 86, 11);
+		break;
 	case 4:
 		Engine_AudioPlayCue(158);
 		Engine_MapAnimateCells(ShianMura_GateSteps3, 84, 24);
@@ -585,10 +580,7 @@ static void SceneEffect_DispatchStep(void)
 		break;
 	case 6:
 		Engine_AudioPlayCue(188);
-		shared0 = ShianMura_GateSteps4;
-		shared1 = 69;
-	shared:
-		Engine_MapAnimateCells(shared0, shared1, 11);
+		Engine_MapAnimateCells(ShianMura_GateSteps4, 69, 11);
 		break;
 	case 7:
 		Engine_AudioPlayCue(158);

@@ -1,10 +1,7 @@
 @ C2: Resource_DecodeByteLzArm:
 @ bcs/bcc consume lsls lr's carry. The decoder dispatch also enters
 @ eight-byte code slots, unlike the compiler's four-byte switch entries.
-@ Further hand evidence: the return is pop {r0, r5, r6, r7, ip} / bx ip, which
-@ also pops the r1 saved at entry into r0. The project's ARM C routines
-@ (Tile_BuildMetatiles, UiText_DrawGlyphArm) return with pop {..., lr} /
-@ bx lr; none returns through ip.
+@ Its return pops the r1 saved at entry into r0.
 @ C2: Render_BuildOamListKernel:
 @ unshifted movs r6, r6/r5/r4/r3 copy and test; ldmdb r2! also loads
 @ a four-register list outside the block-copy patterns.
@@ -18,11 +15,8 @@
 @ BrightenKernel) without saving lr.
 @ C2: ColorBuffer_DarkenPartialKernel:
 @ ldm r0!, {r4-r7} and stmia r2!, {r4-r7} write back through a
-@ four-register list starting at r4. Stock agbcc_arm's block-copy expander
+@ four-register list starting at r4. GCC 2.95.2's block-copy expander
 @ fixes that list at r0-r3; its general ldm/stm peepholes never write back.
-@ Further hand evidence: the return is pop {r5, r6, r7, r8, ip} / bx ip. The
-@ project's ARM C routines (Tile_BuildMetatiles, UiText_DrawGlyphArm) return
-@ with pop {..., lr} / bx lr; none returns through ip.
 @ C2: ColorBuffer_BrightenPartialKernel to ColorBuffer_KernelsEnd:
 @ push {r5-r9} saves callee-saved registers without lr.
 @ C2: Resource_DecodeHalfwordLz:

@@ -19,7 +19,7 @@ The later [release and history study](vershist.md) finds that 2.95, 2.95.1 and
 2.95.2.1 also match those ARM cases. The positive ARM evidence identifies an early
 2.95 family, not uniquely 2.95.2; this frozen Thumb trial still tests 2.95.2.
 
-**Frozen trial.** The source state is glyph `7bad69deed` (only the broad study's
+**Frozen trial.** The source state is the commit of 2026-10-10 "Record stock GCC compiler study across both games" (only the broad study's
 report differs from its source baseline). The compiler is the untouched stock
 GCC 2.95.2 `thumb-coff` cc1 from the earlier pinned 32-bit build, SHA-256
 `3ce52facc98ece7b678a2b2b22caf37bd1a880358e3da9ed9478a6aa93ecc974`.

@@ -233,9 +233,9 @@ static void RunEventScript01(void)
 	Camera_MoveTo(0xd60000, -1, 0x1d80000, 1);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
-	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 0x2008c00);
+	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, HaidiaFunka_ActionScriptHead);
 	Engine_EventWait(30);
-	Engine_ActorEnableActionCallback(GERALD, 0x2008c64);
+	Engine_ActorEnableActionCallback(GERALD, HaidiaFunka_ActionScriptGerald);
 	Object_RefreshSelectorById(1);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
 	Actor_FaceDirection(GERALD, 0, 0);
@@ -329,7 +329,7 @@ static void RunEventScript01(void)
 	Engine_EventWait(30);
 	Actor_WalkToAndWait(8, 255, 0x1bd);
 	Engine_EventWait(40);
-	Map_AnimateCells(0x2008ea0, 45, 11);
+	Map_AnimateCells(HaidiaFunka_CellSteps, 45, 11);
 	Event_PlayCue(188);
 	Engine_EventWait(30);
 	Actor_WalkTo(8, 255, 0x186);
@@ -382,6 +382,9 @@ s32 HaidiaFunka_ActionScriptHead[] = {
 	SC_SYNC,
 	SC_ARG(1),
 	SC_END,
+};
+
+s32 HaidiaFunka_ActionScriptGerald[] = {
 	SC_ARG(2),
 	SC_MOVE(PIXELS(128), 0, PIXELS(378)),
 	SC_SYNC,

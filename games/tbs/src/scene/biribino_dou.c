@@ -111,18 +111,14 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 static void EV10_TOUCH(void)
 {
-	s32 w = 21;
-	s32 h = 14;
 
-	Engine_MapCopyCellAttributes(1, 0, 1, 1, w, h);
+	Map_CopyCellAttributes(1, 0, 1, 1, 21, 14);
 }
 
 static void EV11_TOUCH(void)
 {
-	s32 w = 21;
-	s32 h = 14;
 
-	Engine_MapCopyCellAttributes(0, 0, 1, 1, w, h);
+	Map_CopyCellAttributes(0, 0, 1, 1, 21, 14);
 }
 
 static void SceneState_ApplyTwoRects(void)
@@ -131,13 +127,13 @@ static void SceneState_ApplyTwoRects(void)
 		s32 a5 = 1;
 		s32 a6 = 3;
 
-		Engine_MapCopyCellsTo(111, 37, 97, 21, a5, a6);
+		Map_CopyCellsTo(111, 37, 97, 21, a5, a6);
 	}
 	{
 		s32 a5 = 32;
 		s32 a6 = 24;
 
-		Engine_MapCopyCellAttributes(46, 38, 3, 2, a5, a6);
+		Map_CopyCellAttributes(46, 38, 3, 2, a5, a6);
 	}
 }
 
@@ -147,13 +143,13 @@ static void FieldScene_RunTwoLayoutSteps(void)
 		s32 fifth = 1;
 		s32 sixth = 3;
 
-		Engine_MapCopyCellsTo(95, 21, 97, 21, fifth, sixth);
+		Map_CopyCellsTo(95, 21, 97, 21, fifth, sixth);
 	}
 	{
 		s32 fifth = 32;
 		s32 sixth = 25;
 
-		Engine_MapCopyCellAttributes(46, 38, 3, 1, fifth, sixth);
+		Map_CopyCellAttributes(46, 38, 3, 1, fifth, sixth);
 	}
 }
 
@@ -216,80 +212,62 @@ static void FieldScene_RunScene398SequenceB(void)
 {
 	struct FieldActor *rec7;
 	struct FieldActor *rec8;
-	s32				   record;
 	s32				   v5;
 
 	rec7 = Object_GetById(11);
 	rec8 = Actor_Get(12);
-	if ((rec7->x.fixed >> 20) == 35)
+	if ((rec7->x.fixed >> 20) == 35 && (rec7->z.fixed >> 20) == 23)
 	{
-		if ((rec7->z.fixed >> 20) != 23)
-		{
-			goto clear_first;
-		}
 		GameFlag_Set(0x303);
 	}
 	else
 	{
-	clear_first:;
 		GameFlag_Clear(0x303);
 	}
-	if ((rec8->x.fixed >> 20) == 35)
+	if ((rec8->x.fixed >> 20) == 35 && (rec8->z.fixed >> 20) == 23)
 	{
-		if ((rec8->z.fixed >> 20) != 23)
-		{
-			goto clear_second;
-		}
 		GameFlag_Set(0x304);
 	}
 	else
 	{
-	clear_second:;
 		GameFlag_Clear(0x304);
 	}
-	if (GameFlag_IsSet(0x303) == 0)
+	if (GameFlag_IsSet(0x303) != 0 || GameFlag_IsSet(0x304) != 0)
 	{
-		record = GameFlag_IsSet(0x304);
-		if (record == 0)
+		if (GameFlag_IsSet(0x302) == 0)
 		{
-			goto neither_set;
+			Engine_EventBegin();
+			Engine_EventWait(40);
+			Event_PlayCue(210);
+			v5 = 36;
+			Engine_ActorSetAnimationAndWait(17, 6);
+			Map_CopyCellAttributes(0, 1, 1, 1, v5, 22);
+			Map_CopyCellAttributes(0, 2, 1, 1, v5, 24);
+			Engine_EventEnd();
 		}
+		GameFlag_Set(0x302);
 	}
-	if (GameFlag_IsSet(0x302) == 0)
+	else
 	{
-		Engine_EventBegin();
-		Engine_EventWait(40);
-		Event_PlayCue(210);
-		v5 = 36;
-		Engine_ActorSetAnimationAndWait(17, 6);
-		Map_CopyCellAttributes(0, 1, 1, 1, v5, 22);
-		Map_CopyCellAttributes(0, 2, 1, 1, v5, 24);
-		Engine_EventEnd();
+		if (GameFlag_IsSet(0x302) != 0)
+		{
+			Engine_EventBegin();
+			Engine_EventWait(40);
+			Event_PlayCue(220);
+			v5 = 36;
+			Engine_ActorSetAnimationAndWait(17, 2);
+			Map_CopyCellAttributes(1, 1, 1, 1, v5, 22);
+			Map_CopyCellAttributes(1, 2, 1, 1, v5, 24);
+			Engine_EventEnd();
+		}
+		GameFlag_Clear(0x302);
 	}
-	GameFlag_Set(0x302);
-	goto done;
-neither_set:;
-	if (GameFlag_IsSet(0x302) != 0)
-	{
-		Engine_EventBegin();
-		Engine_EventWait(40);
-		Event_PlayCue(220);
-		v5 = 36;
-		Engine_ActorSetAnimationAndWait(17, 2);
-		Map_CopyCellAttributes(1, 1, 1, 1, v5, 22);
-		Map_CopyCellAttributes(1, 2, 1, 1, v5, 24);
-		Engine_EventEnd();
-	}
-	GameFlag_Clear(0x302);
-done:;
 }
 
 static void EV08_PSYNERGY_3(void)
 {
-	s32 width = 8;
-	s32 height = 13;
 
-	Engine_MapCopyCellAttributes(31, 0, 1, 1, width, height);
+	Map_CopyCellAttributes(31, 0, 1, 1, 8, 13);
 	Engine_GameFlagSet(0x305);
 }
 
@@ -326,10 +304,8 @@ static void RunGuardedSceneSetup(void)
 {
 	if (Engine_GameFlagIsSet(0x305) != 0)
 	{
-		s32 width = 8;
-		s32 height = 13;
 
-		Engine_MapCopyCellAttributes(31, 0, 1, 1, width, height);
+		Map_CopyCellAttributes(31, 0, 1, 1, 8, 13);
 		Engine_ActorSetAnimation(8, 0);
 	}
 }
@@ -449,7 +425,7 @@ static void FieldScene_RunScene398SequenceC(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/findcell.c"
+#include "common/object_findcell.c"
 
 static void StagedActor_PushActorAhead(void)
 {

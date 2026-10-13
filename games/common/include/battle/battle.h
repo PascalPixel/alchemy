@@ -271,7 +271,7 @@ extern s8							 FiveMode_Records[];
 extern struct WaveFxWork *gBattleBgFxWork;
 #endif
 #ifndef OWN_gBattleFxWork
-extern u8 gBattleFxWork[];
+extern void *gBattleFxWork[];
 #endif
 #ifndef OWN_gBattleOwnerStates
 extern u8 *gBattleOwnerStates;

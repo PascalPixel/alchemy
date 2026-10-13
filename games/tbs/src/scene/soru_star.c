@@ -1,8 +1,8 @@
 #include "game_state.h"
 #include "unit/import.h"
 #include "unit/scene/soru_star.h"
-#include "unit/field/common/effect/move.h"
-#include "unit/scene/soru_star_ring_setup.h"
+#include "unit/scene/common/effect_spawn.h"
+#include "unit/scene/common/soru_star_ring_setup.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/marker.h"
@@ -95,9 +95,8 @@ struct ObjectRuntime;
 extern struct SceneEvent Placement_Effects[];
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
+#include "common/effect_create.c"
+#include "common/effect_spawn.c"
 
 static __inline__ void SkipMessage(s32 amount)
 {
@@ -105,7 +104,7 @@ static __inline__ void SkipMessage(s32 amount)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object/facing.c"
+#include "common/object_facing.c"
 
 s32 *SceneData_GetScriptTable(void)
 {
@@ -162,7 +161,7 @@ static void EV02_SEARCH(void)
 	Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
 	Engine_AudioPlayCue(144);
 	Engine_MapAnimateCells(SoruStar_StarCells, 96, 29);
-	Engine_MapCopyCellAttributes(0, 0, 1, 1, 41, 29);
+	Map_CopyCellAttributes(0, 0, 1, 1, 41, 29);
 	Map_CopyCellsTo(87, 42, 41, 31, 1, 2);
 	Engine_EventWait(40);
 	Engine_WorkSetValuesIfNonNegative(0, 0, 0);
@@ -173,8 +172,8 @@ static void EV02_SEARCH(void)
 	Engine_EventWait(20);
 	Engine_AudioPlayCue(144);
 	Engine_MapAnimateCells(SoruStar_StarCells, 74, 29);
-	Engine_MapCopyCellAttributes(0, 0, 1, 1, 19, 29);
-	Engine_MapCopyCellsTo(87, 42, 19, 31, 1, 2);
+	Map_CopyCellAttributes(0, 0, 1, 1, 19, 29);
+	Map_CopyCellsTo(87, 42, 19, 31, 1, 2);
 	Engine_EventWait(40);
 	Engine_WorkSetValuesIfNonNegative(0, 0, 0);
 	Camera_MoveTo(0x2970000, -1, 0xc00000, 1);
@@ -183,8 +182,8 @@ static void EV02_SEARCH(void)
 	Engine_EventWait(20);
 	Engine_AudioPlayCue(144);
 	Engine_MapAnimateCells(SoruStar_StarCells, 96, 10);
-	Engine_MapCopyCellAttributes(0, 0, 1, 1, 41, 10);
-	Engine_MapCopyCellsTo(87, 42, 41, 12, 1, 2);
+	Map_CopyCellAttributes(0, 0, 1, 1, 41, 10);
+	Map_CopyCellsTo(87, 42, 41, 12, 1, 2);
 	Engine_EventWait(40);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	Engine_EventCloseScreen();
@@ -200,7 +199,7 @@ static void EV02_SEARCH(void)
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	Engine_MapRenderWaitForValues();
 	Engine_EventWait(20);
-	Engine_MapCopyCellsTo(0, 40, 43, 66, 3, 3);
+	Map_CopyCellsTo(0, 40, 43, 66, 3, 3);
 	Engine_EventWait(20);
 	obj = Scene_PresentItem(220, 0x2c80000, 0x100000, 0x1d00000);
 	Engine_EventWait(40);
@@ -2069,42 +2068,42 @@ s32 SoruStar_ApplyEntryState(void)
 	}
 	if (Engine_GameFlagIsSet(0x83c) != 0)
 	{
-		Engine_MapCopyCellsTo(0, 40, 43, 66, 3, 3);
-		Engine_MapCopyCellsTo(83, 40, 96, 29, 3, 4);
-		Engine_MapCopyCellAttributes(0, 0, 1, 1, 41, 29);
+		Map_CopyCellsTo(0, 40, 43, 66, 3, 3);
+		Map_CopyCellsTo(83, 40, 96, 29, 3, 4);
+		Map_CopyCellAttributes(0, 0, 1, 1, 41, 29);
 		Map_CopyCellsTo(87, 42, 41, 31, 1, 2);
-		Engine_MapCopyCellsTo(83, 40, 74, 29, 3, 4);
-		Engine_MapCopyCellAttributes(0, 0, 1, 1, 19, 29);
-		Engine_MapCopyCellsTo(87, 42, 19, 31, 1, 2);
-		Engine_MapCopyCellsTo(83, 40, 96, 10, 3, 4);
+		Map_CopyCellsTo(83, 40, 74, 29, 3, 4);
+		Map_CopyCellAttributes(0, 0, 1, 1, 19, 29);
+		Map_CopyCellsTo(87, 42, 19, 31, 1, 2);
+		Map_CopyCellsTo(83, 40, 96, 10, 3, 4);
 		Map_CopyCellAttributes(0, 0, 1, 1, 41, 10);
-		Engine_MapCopyCellsTo(87, 42, 41, 12, 1, 2);
+		Map_CopyCellsTo(87, 42, 41, 12, 1, 2);
 	}
 	if (Engine_GameFlagIsSet(0x83d) != 0)
 	{
-		Engine_MapCopyCellsTo(0, 40, 43, 46, 3, 3);
-		Engine_MapCopyCellsTo(83, 40, 84, 4, 3, 4);
-		Engine_MapCopyCellAttributes(0, 0, 1, 1, 29, 4);
+		Map_CopyCellsTo(0, 40, 43, 46, 3, 3);
+		Map_CopyCellsTo(83, 40, 84, 4, 3, 4);
+		Map_CopyCellAttributes(0, 0, 1, 1, 29, 4);
 		Map_CopyCellsTo(87, 42, 29, 6, 1, 2);
-		Engine_MapCopyCellsTo(83, 40, 76, 21, 3, 4);
-		Engine_MapCopyCellAttributes(0, 0, 1, 1, 21, 21);
-		Engine_MapCopyCellsTo(87, 42, 21, 23, 1, 2);
-		Engine_MapCopyCellsTo(83, 40, 76, 29, 3, 4);
-		Engine_MapCopyCellAttributes(0, 0, 1, 1, 21, 29);
-		Engine_MapCopyCellsTo(87, 42, 21, 31, 1, 2);
+		Map_CopyCellsTo(83, 40, 76, 21, 3, 4);
+		Map_CopyCellAttributes(0, 0, 1, 1, 21, 21);
+		Map_CopyCellsTo(87, 42, 21, 23, 1, 2);
+		Map_CopyCellsTo(83, 40, 76, 29, 3, 4);
+		Map_CopyCellAttributes(0, 0, 1, 1, 21, 29);
+		Map_CopyCellsTo(87, 42, 21, 31, 1, 2);
 	}
 	if (Engine_GameFlagIsSet(0x83e) != 0)
 	{
-		Engine_MapCopyCellsTo(0, 40, 13, 66, 3, 3);
-		Engine_MapCopyCellsTo(83, 40, 65, 31, 3, 4);
+		Map_CopyCellsTo(0, 40, 13, 66, 3, 3);
+		Map_CopyCellsTo(83, 40, 65, 31, 3, 4);
 		Map_CopyCellAttributes(0, 0, 1, 1, 10, 31);
 		Map_CopyCellsTo(87, 42, 10, 33, 1, 2);
-		Engine_MapCopyCellsTo(83, 40, 79, 9, 3, 4);
+		Map_CopyCellsTo(83, 40, 79, 9, 3, 4);
 		Map_CopyCellAttributes(0, 0, 1, 1, 24, 9);
-		Engine_MapCopyCellsTo(87, 42, 24, 11, 1, 2);
-		Engine_MapCopyCellsTo(83, 40, 91, 10, 3, 4);
-		Engine_MapCopyCellAttributes(0, 0, 1, 1, 36, 10);
-		Engine_MapCopyCellsTo(87, 42, 36, 12, 1, 2);
+		Map_CopyCellsTo(87, 42, 24, 11, 1, 2);
+		Map_CopyCellsTo(83, 40, 91, 10, 3, 4);
+		Map_CopyCellAttributes(0, 0, 1, 1, 36, 10);
+		Map_CopyCellsTo(87, 42, 36, 12, 1, 2);
 		SoruStar_LineUpFollowers();
 	}
 	if (Engine_GameFlagIsSet(0x83b) == 0)
@@ -2226,7 +2225,7 @@ static void SoruStar_RiseActorFourteenSparks(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "soru_star_ring_setup.c"
+#include "common/soru_star_ring_setup.c"
 
 s32 gEffectScript0[] = {
 	SC_WAIT(1),

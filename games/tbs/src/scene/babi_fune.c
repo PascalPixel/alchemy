@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "vram_tab.h"
 #include "unit/scene/babi_fune.h"
-#include "unit/graphics/display/scroll_initialize_hblank_dma.h"
+#include "unit/scene/common/scroll_initialize_hblank_dma.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evtable.h"
@@ -799,7 +799,7 @@ void DisplayScroll_BuildAndSwapHBlankPage(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../graphics/display/scroll_initialize_hblank_dma.c"
+#include "common/scroll_initialize_hblank_dma.c"
 
 static void SceneEffect_LoadTablesAndStopDma0(void)
 {

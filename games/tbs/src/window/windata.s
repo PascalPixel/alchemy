@@ -178,7 +178,7 @@ Link_TimeLabelString:
 	.endif
 	.global DjinnMenu_BlinkTile
 DjinnMenu_BlinkTile:
-	.incbin "menu/djinn/blink.4bpp"
+	.incbin "window/blink.4bpp"
 @ 項目, 列, 行, 強調列, 強調行, 強調幅
 	.global OwnerStatus_StatCursors
 OwnerStatus_StatCursors:

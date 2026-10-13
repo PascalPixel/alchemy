@@ -2,7 +2,7 @@
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/scene/toreto_heya.h"
-#include "unit/field/common/effect/move.h"
+#include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/sparkle.h"
@@ -55,7 +55,7 @@ static u8	ToretoHeya_SparkCounter[4];
 static s16 *ToretoHeya_PaletteBuffer;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/create.c"
+#include "common/effect_create.c"
 
 struct Vec
 {
@@ -102,8 +102,7 @@ struct EffectParams
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../field/common/effect/move.c"
-#include "../field/common/effect/spawn.c"
+#include "common/effect_spawn.c"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
@@ -145,12 +144,12 @@ static void ToretoHeya_HandleFloorSwitch(s32 flag, s32 src_x, s32 src_y, s32 ent
 	*ToretoHeya_PaletteBuffer = entrance;
 	if (Engine_GameFlagIsSet(flag) == 0)
 	{
-		Engine_MapCopyCells(src_x, src_y, 1, 1, dest_x, dest_y);
+		Map_CopyCells(src_x, src_y, 1, 1, dest_x, dest_y);
 		Engine_GameFlagSet(flag);
 		return;
 	}
 	*ToretoHeya_PaletteBuffer = -1;
-	Engine_MapCopyCells(src_x, src_y + 1, 1, 1, dest_x, dest_y);
+	Map_CopyCells(src_x, src_y + 1, 1, 1, dest_x, dest_y);
 	Engine_AudioPlayCue(206);
 	Engine_EventBegin();
 	Event_SetDestination((s32)&SceneId_ToretoHeya, entrance);
@@ -583,20 +582,20 @@ static void SceneState_ApplyRectsByFlag844(s32 flag)
 	if (Engine_GameFlagIsSet(0x844) != 0)
 	{
 		s32 w1 = 10;
-		Engine_MapCopyCells(121, 34, 3, 1, 93, w1);
+		Map_CopyCells(121, 34, 3, 1, 93, w1);
 		{
 			s32 w2 = 30;
-			Engine_MapCopyCells(46, 38, 1, 1, w2, 43);
-			Engine_MapCopyCellAttributes(0, 0, 1, 2, w2, 9);
+			Map_CopyCells(46, 38, 1, 1, w2, 43);
+			Map_CopyCellAttributes(0, 0, 1, 2, w2, 9);
 		}
-		Engine_MapCopyCellAttributes(26, 3, 1, 2, w1, 8);
-		Engine_MapCopyCells(26, 35, 1, 4, w1, 40);
+		Map_CopyCellAttributes(26, 3, 1, 2, w1, 8);
+		Map_CopyCells(26, 35, 1, 4, w1, 40);
 	}
 	else
 	{
 		s32 w1 = 10;
 		s32 w2 = 8;
-		Engine_MapCopyCellAttributes(11, 8, 1, 2, w1, w2);
+		Map_CopyCellAttributes(11, 8, 1, 2, w1, w2);
 	}
 }
 
@@ -875,6 +874,7 @@ static void ToretoHeya_SpawnSwirlSparks(void)
 	counter = &ToretoHeya_SparkCounter;
 	frame = *counter;
 	previous = 0;
+	/* FAKEMATCH: an explicit libgcc call; written with the operator, tbs-en differs */
 	wave = __divsi3(frame, 10);
 	switch (frame)
 	{
@@ -935,7 +935,7 @@ static void EV00_PSYNERGY(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect/advance.c"
+#include "common/effect_advance.c"
 
 static void ToretoHeya_RunLandingDustScene(void)
 {

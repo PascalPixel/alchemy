@@ -5,7 +5,7 @@
 #include "unit/object/evbasic.h"
 #include "unit/object/evactor.h"
 #include "unit/object/scenefx.h"
-#include "unit/graphics/display/scroll_initialize_hblank_dma.h"
+#include "unit/scene/common/scroll_initialize_hblank_dma.h"
 #include "unit/runtime/runtime.h"
 #include "unit/runtime/oamlist.h"
 #include "unit/runtime/objvram.h"
@@ -210,7 +210,7 @@ void DisplayScroll_BuildAndSwapHBlankPage(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../graphics/display/scroll_initialize_hblank_dma.c"
+#include "../scene/common/scroll_initialize_hblank_dma.c"
 
 void DisplayScroll_DisarmHBlankDma(void)
 {

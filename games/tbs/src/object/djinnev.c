@@ -479,11 +479,10 @@ void BattleFx_UpdateAllSlots(void)
 
 void BattleFx_InitializeSlots(void)
 {
-	void		*work;
-	volatile u32 zero;
+	void *work;
+
 	work = Runtime_AllocateHeapBlock(56, sizeof(struct BattleFxScene));
-	zero = 0;
-	Dma_Set(&zero, work, 0x85000000 | (sizeof(struct BattleFxScene) / 4), REG_DMA3);
+	Dma_Fill32(0, work, sizeof(struct BattleFxScene));
 	Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllSlots, 3200);
 }
 

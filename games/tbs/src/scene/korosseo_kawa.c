@@ -196,12 +196,7 @@ static void SceneState_ApplyRectsForActorsNineAndTen(void)
 	struct FieldActor *actor;
 	s32				   blocked;
 
-	{
-		s32 x = 23;
-		s32 y = 12;
-
-		Map_CopyCellAttributes(27, 13, 3, 1, x, y);
-	}
+	Map_CopyCellAttributes(27, 13, 3, 1, 23, 12);
 	actor = Object_GetById(9);
 	blocked = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
 	if (actor->y.fixed == 0 && blocked == 0)

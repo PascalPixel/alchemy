@@ -153,7 +153,8 @@ struct ActionDescriptorTables
 	struct ActionDescriptor *tables[4];
 };
 
-struct ActionDescriptor *BattleAction_FindDescriptor(s32 id)
+// 4 つの表を順に見て id の記述子を探す（見つかればその場で返す）
+static inline struct ActionDescriptor *ActionDescriptor_Scan(s32 id)
 {
 	struct ActionDescriptor *entry;
 	s32						 i;
@@ -169,7 +170,7 @@ struct ActionDescriptor *BattleAction_FindDescriptor(s32 id)
 			for (; (s16)entry->sprite != -1; entry++)
 			{
 				if ((s16)entry->sprite == id)
-					goto found;
+					return entry;
 			}
 		}
 		else
@@ -179,13 +180,20 @@ struct ActionDescriptor *BattleAction_FindDescriptor(s32 id)
 				if ((s16)entry->sprite > 7)
 				{
 					if (group == id)
-						goto found;
+						return entry;
 					group++;
 				}
 			}
 		}
 	}
-found:
+	return entry;
+}
+
+struct ActionDescriptor *BattleAction_FindDescriptor(s32 id)
+{
+	struct ActionDescriptor *entry;
+
+	entry = ActionDescriptor_Scan(id);
 	if ((s16)entry->sprite == -1)
 		return NULL;
 	return entry;

@@ -366,25 +366,15 @@ s32 BattleFx_RollSuccess(
 		return 0;
 	}
 
-	goto action4_check;
-action4_tail:
-	if (unit->shibire == 0 && unit->nemuri == 0 && state[(u32) & ((struct BtlUnit *)0)->fuuji] == 0
-		&& unit->shiryo == 0)
+	while (effect_id == 4 && unit->maboroshi == 0 && state[(u32) & ((struct BtlUnit *)0)->konran] == 0
+		   && unit->charm == 0)
 	{
-		return 0;
-	}
-	goto action4_done;
-action4_check:
-	if (effect_id == 4)
-	{
-		if (unit->maboroshi == 0 && state[(u32) & ((struct BtlUnit *)0)->konran] == 0
-			&& unit->charm == 0)
-		{
-			goto action4_tail;
-		}
+		if (unit->shibire == 0 && unit->nemuri == 0
+			&& state[(u32) & ((struct BtlUnit *)0)->fuuji] == 0 && unit->shiryo == 0)
+			return 0;
+		break;
 	}
 
-action4_done:
 	poison = &unit->doku;
 	delusion = &unit->maboroshi;
 	confusion = (u8 *)&unit->konran;

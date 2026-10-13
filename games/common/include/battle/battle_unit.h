@@ -147,13 +147,33 @@ LAYOUT_OFFSET_GUARD(BattleUnit_Status140, struct BtlUnit, akuryo, 0x140);
 
 LAYOUT_OFFSET_GUARD(BattleUnit_EnemyId, struct BtlUnit, enemy_id, 0x14a);
 
-// HP と PP を上限まで戻す
-/* FAKEMATCH: the one-pass block keeps both copies ahead of the gauge ratio that follows (Party_ApplyStatePreset, Owner_RefreshActiveRatios, Party_RemoveOwnerRestored, Party_SetReturnPoint). Not source: the same two stores match only as plain statements in kyuden.c, sell.c and solo_competitor.c, where the block changes the saved registers (kyuden.c, sell.c) and the object differs. */
-#define Unit_Recover(unit)           \
-	do                               \
-	{                                \
-		(unit)->hp = (unit)->max_hp; \
-		(unit)->ep = (unit)->max_ep; \
+// ゲージの割合 (0x4000 で満タン) を 0〜0x4000 に収める
+static __inline__ s32 Vitals_Clamp(s32 ratio)
+{
+	s32 clamped;
+
+	if (ratio > 0x4000)
+		clamped = 0x4000;
+	else if (ratio < 0)
+		clamped = 0;
+	else
+		clamped = ratio;
+	return clamped;
+}
+
+// HP と EP のゲージを計算し直す（残っていれば最低 1）
+// A statement macro, written do { } while (0): every site matches through
+// that shape. Written out at each site, or as an inline function, the
+// gauge loads are scheduled across the store before them.
+#define Unit_UpdateGauges(unit)                                               \
+	do                                                                        \
+	{                                                                         \
+		(unit)->hp_gauge = Vitals_Clamp(((unit)->hp << 14) / (unit)->max_hp); \
+		if ((unit)->hp_gauge == 0 && (unit)->hp != 0)                         \
+			(unit)->hp_gauge = 1;                                             \
+		(unit)->ep_gauge = Vitals_Clamp(((unit)->ep << 14) / (unit)->max_ep); \
+		if ((unit)->ep_gauge == 0 && (unit)->ep != 0)                         \
+			(unit)->ep_gauge = 1;                                             \
 	} while (0)
 
 #endif

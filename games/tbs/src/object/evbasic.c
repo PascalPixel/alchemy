@@ -314,13 +314,9 @@ void Party_RemoveOwnerRestored(s32 owner)
 	Party_RemoveActiveOwnerFar(owner);
 	Event_ClearInvalidPackedValues();
 	vitals = UnitGetFar(owner);
-	Unit_Recover(vitals);
-	vitals->hp_gauge = Vitals_Ratio(vitals->hp, vitals->max_hp);
-	if (vitals->hp_gauge == 0 && vitals->hp != 0)
-		vitals->hp_gauge = 1;
-	vitals->ep_gauge = Vitals_Ratio(vitals->ep, vitals->max_ep);
-	if (vitals->ep_gauge == 0 && vitals->ep != 0)
-		vitals->ep_gauge = 1;
+	vitals->hp = vitals->max_hp;
+	vitals->ep = vitals->max_ep;
+	Unit_UpdateGauges(vitals);
 	vitals->doku = 0;
 	standing = 0;
 	count = Party_CountActiveOwnersFar();
@@ -334,12 +330,7 @@ void Party_RemoveOwnerRestored(s32 owner)
 	{
 		vitals = UnitGetFar(gGameState.selected_actor);
 		vitals->hp = 1;
-		vitals->hp_gauge = Vitals_Ratio(vitals->hp, vitals->max_hp);
-		if (vitals->hp_gauge == 0 && vitals->hp != 0)
-			vitals->hp_gauge = 1;
-		vitals->ep_gauge = Vitals_Ratio(vitals->ep, vitals->max_ep);
-		if (vitals->ep_gauge == 0 && vitals->ep != 0)
-			vitals->ep_gauge = 1;
+		Unit_UpdateGauges(vitals);
 	}
 }
 

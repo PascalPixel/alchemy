@@ -2556,7 +2556,17 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 	}
 	else
 	{
-		RamCode_LoadSlot(50, Text_DecodeSymbol, Text_DecodeSymbolCodeSize);
+		{
+			u32 size;
+
+			/* FAKEMATCH: the size in a block of its own, so the slot number goes to r0 before the size's copy to r1 (differ 2 as RamCode_LoadSlot). */
+			do
+			{
+				size = (u32)Text_DecodeSymbolCodeSize;
+			} while (0);
+			Dma_Set((const void *)Text_DecodeSymbol, Runtime_AllocateHeapBlock(50, size),
+				0x84000000 | (size >> 2), REG_DMA3);
+		}
 		decode = (s32 (*)(struct TextReader *))gWindowWork[TEXT_WORK_BLOCK - HEAP_SLOT_WINDOW];
 		UiText_LookupMessage(&st, script);
 
@@ -3062,7 +3072,17 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 	}
 	else
 	{
-		RamCode_LoadSlot(50, Text_DecodeSymbol, Text_DecodeSymbolCodeSize);
+		{
+			u32 size;
+
+			/* FAKEMATCH: the size in a block of its own, so the slot number goes to r0 before the size's copy to r1 (differ 2 as RamCode_LoadSlot). */
+			do
+			{
+				size = (u32)Text_DecodeSymbolCodeSize;
+			} while (0);
+			Dma_Set((const void *)Text_DecodeSymbol, Runtime_AllocateHeapBlock(50, size),
+				0x84000000 | (size >> 2), REG_DMA3);
+		}
 		decode = (s32 (*)(struct TextReader *))gWindowWork[50 - HEAP_SLOT_WINDOW];
 		UiText_LookupMessage(&st, script);
 		do

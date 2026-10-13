@@ -7,6 +7,7 @@
 #if EDITION_INTERNATIONAL || defined(TLA_EDITION_JA)
 #include "types.h"
 #include "fixed_math.h"
+#include "rgb555.h"
 
 extern u8 gFrameTick[];
 
@@ -36,20 +37,8 @@ void PaletteGlow_UpdateSine(void)
 			r += 22;
 			g += 16;
 			col += 20;
-			/* FAKEMATCH: one-pass block; its loop notes hold the blue shift after the three adds, where the native schedules it. Without it differ 6 on tbs-en and tla-ja (the red add sinks below the shifts), as also with r, g and b locals stored as (b << 10) | (g << 5) | r; one expression ((col + 20) << 10) | ((col + 16) << 5) | (col * 2 + 22) differs 25, red first 14 (tbs-en). */
-			do
-			{
-				col <<= 10;
-			} while (0);
-			g <<= 5;
-			col |= g;
-			col |= r;
+			Palette_PutRgb555(pal, r, g, col);
 		}
-		/* FAKEMATCH: one-pass block; it keeps the store ahead of the loop counter increment. Without it differ 2 on tbs-en and tla-ja (the increment moves above the strh). */
-		do
-		{
-			*pal++ = col;
-		} while (0);
 	} while (++i <= 3);
 }
 

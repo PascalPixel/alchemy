@@ -170,6 +170,32 @@ s32 ItemMenu_Run(void)
 	return 1;
 }
 
+// 移した Djinn を一覧の中で探し、その位置を選び直す
+// A statement macro, written do { } while (0), used at both places: the
+// selection store ends its scheduling region. As plain statements the two
+// shifts of found * DJINN_LIST_ROWS swap (differ 2); as an inline function
+// with its own counter, one more register is saved.
+#define DjinnMenu_ReselectPairEntry(menu, i)                              \
+	do                                                                    \
+	{                                                                     \
+		s32 column;                                                       \
+		s32 found;                                                        \
+		u8	entry;                                                        \
+                                                                          \
+		column = (u16)((u32)(menu)->selection[1] % DJINN_LIST_ROWS);      \
+		found = 0;                                                        \
+		entry = (menu)->pair_entries[0];                                  \
+		for ((i) = 0; (i) < (menu)->backdrop->list.counts[column]; (i)++) \
+		{                                                                 \
+			if (entry == (u8)(menu)->backdrop->list.ids[column][(i)])     \
+			{                                                             \
+				found = (i);                                              \
+				break;                                                    \
+			}                                                             \
+		}                                                                 \
+		(menu)->selection[0] = column + found * DJINN_LIST_ROWS;          \
+	} while (0)
+
 s32 DjinnMenu_RunScreen(void)
 {
 	struct DjinnMenuWork *menu;
@@ -311,35 +337,8 @@ s32 DjinnMenu_RunScreen(void)
 			menu->cursor->active = 13;
 			RenderOutput_ClearListFar(menu->list_window);
 			Menu_ComputeEntryValues(menu->backdrop);
-			{
-				s32 column;
-				s32 found;
-				u8	entry;
-
-				column = (u16)((u32)menu->selection[1] % DJINN_LIST_ROWS);
-				found = 0;
-				entry = menu->pair_entries[0];
-				for (i = 0; i < menu->backdrop->list.counts[column]; i++)
-				{
-					if (entry == (u8)menu->backdrop->list.ids[column][i])
-					{
-						found = i;
-						break;
-					}
-				}
-				/* FAKEMATCH: the one-pass block ends the store's scheduling region, so the
-				 * selection address (movs #186, lsls) is built before the last shift of
-				 * found * 10. 2026-10-13: the plain store differs 2 (the two lsls swap),
-				 * as does DJINN_LIST_ROWS * found; found * DJINN_LIST_ROWS + column
-				 * differs 4; this repeated block as a static __inline__ function with
-				 * its own counter adds a saved register. The whole block as one
-				 * do { } while (0) statement macro, used at both places, matches. */
-				do
-				{
-					menu->selection[0] = column + found * DJINN_LIST_ROWS;
-				} while (0);
-				menu->cursor->active = 1;
-			}
+			DjinnMenu_ReselectPairEntry(menu, i);
+			menu->cursor->active = 1;
 			state = 0;
 			break;
 		case 6:
@@ -376,30 +375,8 @@ s32 DjinnMenu_RunScreen(void)
 			UnitCalcFar(menu->shown_owner[0]);
 			UnitCalcFar(menu->shown_owner[1]);
 			Menu_ComputeEntryValues(menu->backdrop);
-			{
-				s32 column;
-				s32 found;
-				u8	entry;
-
-				column = (u16)((u32)menu->selection[1] % DJINN_LIST_ROWS);
-				found = 0;
-				entry = menu->pair_entries[0];
-				for (i = 0; i < menu->backdrop->list.counts[column]; i++)
-				{
-					if (entry == (u8)menu->backdrop->list.ids[column][i])
-					{
-						found = i;
-						break;
-					}
-				}
-				/* FAKEMATCH: the one-pass block ends the store's scheduling region, as at
-				 * case 13; the plain store differs 2 here too (the two lsls swap). */
-				do
-				{
-					menu->selection[0] = column + found * DJINN_LIST_ROWS;
-				} while (0);
-				menu->cursor->active = 1;
-			}
+			DjinnMenu_ReselectPairEntry(menu, i);
+			menu->cursor->active = 1;
 			state = 2;
 			break;
 		case 4:

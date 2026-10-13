@@ -167,16 +167,6 @@ void MapGroupTable_SelectEntry(s32 kind)
 	}
 }
 
-static __inline__ void Unit_UpdateGauges(struct BtlUnit *unit)
-{
-	unit->hp_gauge = Vitals_Ratio(unit->hp, unit->max_hp);
-	if (unit->hp_gauge == 0 && unit->hp != 0)
-		unit->hp_gauge = 1;
-	unit->ep_gauge = Vitals_Ratio(unit->ep, unit->max_ep);
-	if (unit->ep_gauge == 0 && unit->ep != 0)
-		unit->ep_gauge = 1;
-}
-
 void Party_SetReturnPoint(s32 reason)
 {
 	struct BtlUnit *unit;
@@ -198,7 +188,8 @@ void Party_SetReturnPoint(s32 reason)
 			for (i = 0; i < 2; i++)
 			{
 				unit = UnitGetFar(i);
-				Unit_Recover(unit);
+				unit->hp = unit->max_hp;
+				unit->ep = unit->max_ep;
 				Unit_UpdateGauges(unit);
 			}
 		}

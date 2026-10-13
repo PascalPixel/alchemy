@@ -597,19 +597,6 @@ struct MenuCtrl
 	u16 wait;
 };
 
-static __inline__ s32 Vitals_Clamp(s32 ratio)
-{
-	s32 clamped;
-
-	if (ratio > 0x4000)
-		clamped = 0x4000;
-	else if (ratio < 0)
-		clamped = 0;
-	else
-		clamped = ratio;
-	return clamped;
-}
-
 s32 Field_RunScene(s32 entrance)
 {
 	volatile s32	   zero;
@@ -788,20 +775,7 @@ s32 Field_RunScene(s32 entrance)
 								(s32)MsgFieldPartyAnnihilated, 1);
 							vitals = UnitGetFar(gGameState.selected_actor);
 							vitals->hp = 1;
-							/* FAKEMATCH: the one-pass block keeps the reloaded 1 of the HP ratio
-							 * below the hp store. Measured: plain, the 1 and its shift are
-							 * scheduled above the store (differ 6); the gauges through
-							 * Vitals_Ratio, as evbasic.c writes this same revival, differ 60. */
-							do
-							{
-								vitals->hp_gauge =
-									Vitals_Clamp((vitals->hp << 14) / vitals->max_hp);
-								if (vitals->hp_gauge == 0 && vitals->hp != 0)
-									vitals->hp_gauge = 1;
-							} while (0);
-							vitals->ep_gauge = Vitals_Clamp((vitals->ep << 14) / vitals->max_ep);
-							if (vitals->ep_gauge == 0 && vitals->ep != 0)
-								vitals->ep_gauge = 1;
+							Unit_UpdateGauges(vitals);
 							gGameState.scene = gGameState.saved_scene;
 							gGameState.entrance = gGameState.saved_entrance;
 							Battle_ClearObjectFlag5bWhenMode3();

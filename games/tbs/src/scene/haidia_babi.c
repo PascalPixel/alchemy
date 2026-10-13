@@ -378,8 +378,6 @@ static void FieldScene_RunComplexActorSequence(void)
 {
 	s32					  base;
 	struct FieldSprite	 *sprite;
-	struct FieldActor	 *p12;
-	struct FieldActor	 *p89;
 	struct MapScrollWork *work;
 	struct FieldActor	 *scene_actor;
 	struct EventWork	**control;
@@ -403,8 +401,7 @@ static void FieldScene_RunComplexActorSequence(void)
 	Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
 	Engine_ActorSetAnimation(0, 18);
 	sprite->rotation = 1365;
-	p12 = Object_GetById(17);
-	p12->motion_flags = 0;
+	Object_GetById(17)->motion_flags = 0;
 	Engine_ActorSetSpriteFlags(Object_GetById(17), 0);
 	Engine_ActorSetPosition(17, 37748736, 42598400);
 	Map_ClearLayerEntryFlag(7);
@@ -489,8 +486,7 @@ static void FieldScene_RunComplexActorSequence(void)
 	Actor_SetSpeed(8, 98304, 49152);
 	Actor_SetSpeed(0, 98304, 49152);
 	Engine_CameraFollowActor(8, 1);
-	p89 = Object_GetById(0);
-	p89->priority_flags |= 0x1;
+	Object_GetById(0)->priority_flags |= 0x1;
 	Engine_ActorEnableActionCallback(8, gHaidiaBabiSharedAction);
 	Engine_EventWait(20);
 	Engine_ActorEnableActionCallback(0, gHaidiaBabiSharedAction);

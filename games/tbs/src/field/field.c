@@ -103,47 +103,44 @@ u8 *Resource_DecompressLz(const u8 *source, u8 *destination)
 	start = destination;
 	command++;
 	control |= sentinel;
-	goto dispatch;
-
-back_reference:
-	length = token >> 12;
-	if (length == 0)
+	for (;;)
 	{
-		length = *command + 16;
-		command++;
+		if ((control & 1) != 0)
+		{
+			if (control != 1) // 残っているのがしるしだけなら次の制御バイトへ
+				*destination++ = *literal++;
+		}
+		else
+		{
+			byte = *command++;
+			token = byte << 8;
+			token |= *command++;
+			if (token == 0)
+				break;
+			length = token >> 12;
+			if (length == 0)
+			{
+				length = *command + 16;
+				command++;
+			}
+			length += 2;
+			copy = base - (token & 0x0fff);
+			while (length != 0)
+			{
+				*destination++ = *copy++;
+				length--;
+			}
+		}
+		control >>= 1;
+		if (control == 0)
+		{
+			control = *command;
+			sentinel = 128;
+			sentinel <<= 1;
+			command++;
+			control |= sentinel;
+		}
 	}
-	length += 2;
-	copy = base - (token & 0x0fff);
-	while (length != 0)
-	{
-		*destination++ = *copy++;
-		length--;
-	}
-
-shift:
-	control >>= 1;
-	if (control == 0)
-	{
-		control = *command;
-		sentinel = 128;
-		sentinel <<= 1;
-		command++;
-		control |= sentinel;
-	}
-
-dispatch:
-	if ((control & 1) != 0)
-	{
-		if (control != 1) // 残っているのがしるしだけなら次の制御バイトへ
-			*destination++ = *literal++;
-		goto shift;
-	}
-
-	byte = *command++;
-	token = byte << 8;
-	token |= *command++;
-	if (token != 0)
-		goto back_reference;
 	return start;
 }
 

@@ -548,7 +548,10 @@ void SerialRuntime_StepBlockTransfer(void)
 	u32							id;
 	struct SerialTransferState *own;
 	u32							gap;
-	/* FAKEMATCH: the halfword record retains the measured pooled-one construction; it is not protocol state. */
+	/* FAKEMATCH: the halfword record is a HImode 1, which Thumb movhi loads from
+	 * the literal pool into r8 at entry, as native; it is not protocol state.
+	 * 2026-10-13: the constant 1 at both stores differs 55 (252 instructions
+	 * for 257), as does a u16 local, which is promoted to SImode. */
 	struct OneCell one;
 
 	id = ~((REG_SIOCNT << 26) >> 30) & 1;

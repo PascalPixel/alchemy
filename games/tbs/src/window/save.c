@@ -28,6 +28,7 @@
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
+#include "rgb555.h"
 #include "menu.h"
 #include "minigame.h"
 #include "sound.h"
@@ -244,9 +245,7 @@ u32 SaveState_BuildSummaryHeader(void)
 	u32					sum = 0;
 
 	summary = (struct SaveSummary *)(gSaveBuffer - 16);
-	/* FAKEMATCH: Runtime_GetBuildStampTimeFar is called as u32 (*)(s32); as u32 (*)(void), its prototype, SaveState_BuildSummaryHeader does not compile */
-	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-	gGameState.build_stamp = ((u32 (*)(s32))Runtime_GetBuildStampTimeFar)(0);
+	gGameState.build_stamp = Runtime_GetBuildStampTimeFar(0);
 	gGameState.play_time = gLoadedStateWord;
 	{
 		u32 *copy = (u32 *)gSceneState;
@@ -606,25 +605,8 @@ void PaletteGlow_UpdateSine(void)
 			r += 22;
 			g += 16;
 			col += 20;
-			/* FAKEMATCH: the one-pass block keeps the blue shift after the three
-			 * adds, in source order. Measured: without it the scheduler moves the
-			 * red add below the shifts (differ 6); the colour as one expression
-			 * differs 25, and r, g, b locals in place of col differ 6, as a do
-			 * or a for loop. */
-			do
-			{
-				col <<= 10;
-			} while (0);
-			g <<= 5;
-			col |= g;
-			col |= r;
+			Palette_PutRgb555(pal, r, g, col);
 		}
-		/* FAKEMATCH: the one-pass block keeps the store ahead of the loop
-		 * index's increment. Measured: without it, differ 2. */
-		do
-		{
-			*pal++ = col;
-		} while (0);
 	} while (++i <= 3);
 }
 
@@ -939,7 +921,6 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 	struct UiRenderWork	 *render;
 	u32					  stamp;
 	void				 *work;
-	volatile u32		  zero;
 	s32					  result;
 	s32					  i;
 	s32					  y;
@@ -1017,8 +998,7 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 		}
 	}
 
-	zero = 0;
-	Dma_Set(&zero, work, 0x85000000 | (0xa70 / 4), REG_DMA3);
+	Dma_Fill32(0, work, 0xa70);
 	Scheduler_ScheduleCallbackAAfterFrames();
 	list = UiWindow_Create(1, 2, 28, 7, 2);
 	summary = save->summary;
@@ -1177,7 +1157,6 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 	u32					  stamp;
 	void				 *work;
 	struct ShopCursor	  marker;
-	volatile u32		  zero;
 	s32					  result;
 	s32					  i;
 	s32					  x;
@@ -1252,8 +1231,7 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 		}
 	}
 
-	zero = 0;
-	Dma_Set(&zero, work, 0x85000000 | (0xa70 / 4), REG_DMA3);
+	Dma_Fill32(0, work, 0xa70);
 	list = UiWindow_Create(1, 2, 28, 7, 2);
 
 	for (i = 0, summary = save->summary; i < 3; i++, summary++)

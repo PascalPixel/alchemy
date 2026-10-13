@@ -60,7 +60,7 @@ void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height);
 void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 full_width);
 s32 UiWork_IsComplete(void);
 s32 UiWork_IsIdle(struct UiWindow *window);
-void UiWork_ResetCounters(void);
+void UiWork_ResetCounters();
 void UiWork_InitCountersWithResourceAndScheduleRefresh(void);
 void UiWork_InitCountersAndScheduleRefresh(s32 initialize);
 void UiWork_FinalizeSharedSlot(void);

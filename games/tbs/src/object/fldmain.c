@@ -597,22 +597,8 @@ struct MenuCtrl
 	u16 wait;
 };
 
-static __inline__ s32 Vitals_Clamp(s32 ratio)
-{
-	s32 clamped;
-
-	if (ratio > 0x4000)
-		clamped = 0x4000;
-	else if (ratio < 0)
-		clamped = 0;
-	else
-		clamped = ratio;
-	return clamped;
-}
-
 s32 Field_RunScene(s32 entrance)
 {
-	volatile s32	   zero;
 	struct FieldWork  *work;
 	struct FieldActor *actor;
 	s32				   mode;
@@ -620,8 +606,7 @@ s32 Field_RunScene(s32 entrance)
 	s32				   code;
 
 	work = Runtime_AllocateBlock(27, sizeof(struct FieldWork));
-	zero = 0;
-	Dma_Set(&zero, work, 0x85000000 | (sizeof(struct FieldWork) / 4), REG_DMA3);
+	Dma_Fill32(0, work, sizeof(struct FieldWork));
 	GameFlag_ClearBitFar(0x103);
 	gGameState.default_scene = gGameState.scene;
 	gGameState.default_entrance = gGameState.entrance;
@@ -712,9 +697,7 @@ s32 Field_RunScene(s32 entrance)
 			if (GameFlag_TestFar(0x12f) != 0)
 			{
 				GameFlag_ClearBitFar(0x12f);
-				/* FAKEMATCH: UiTimedNotice_CreateFar is called as void (*)(s32); as void (*)(void), its prototype, Field_RunScene does not compile */
-				/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-				((void (*)(s32))UiTimedNotice_CreateFar)(gGameState.scene);
+				UiTimedNotice_CreateFar(gGameState.scene);
 			}
 			if (gGameState.pending_djinn_event != 0)
 			{
@@ -788,20 +771,7 @@ s32 Field_RunScene(s32 entrance)
 								(s32)MsgFieldPartyAnnihilated, 1);
 							vitals = UnitGetFar(gGameState.selected_actor);
 							vitals->hp = 1;
-							/* FAKEMATCH: the one-pass block keeps the reloaded 1 of the HP ratio
-							 * below the hp store. Measured: plain, the 1 and its shift are
-							 * scheduled above the store (differ 6); the gauges through
-							 * Vitals_Ratio, as evbasic.c writes this same revival, differ 60. */
-							do
-							{
-								vitals->hp_gauge =
-									Vitals_Clamp((vitals->hp << 14) / vitals->max_hp);
-								if (vitals->hp_gauge == 0 && vitals->hp != 0)
-									vitals->hp_gauge = 1;
-							} while (0);
-							vitals->ep_gauge = Vitals_Clamp((vitals->ep << 14) / vitals->max_ep);
-							if (vitals->ep_gauge == 0 && vitals->ep != 0)
-								vitals->ep_gauge = 1;
+							Unit_UpdateGauges(vitals);
 							gGameState.scene = gGameState.saved_scene;
 							gGameState.entrance = gGameState.saved_entrance;
 							Battle_ClearObjectFlag5bWhenMode3();
@@ -980,9 +950,7 @@ s32 Field_RunScene(s32 entrance)
 								ctrl->wait = 1;
 								WaitFrames(1);
 							}
-							/* FAKEMATCH: Menu_RunWorkspaceResultLoopFar is called as void (*)(s32); as s32 (*)(void), its prototype, Field_RunScene does not compile */
-							/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-							((void (*)(s32))Menu_RunWorkspaceResultLoopFar)(0);
+							Menu_RunWorkspaceResultLoopFar(0);
 							ctrl->wait = 0;
 						}
 						else

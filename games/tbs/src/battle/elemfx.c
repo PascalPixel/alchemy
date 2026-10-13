@@ -430,33 +430,7 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
 			BattleMotion_ProjectScaledPosition(unit, (s32 *)pos);
 			work->origin_x = (64 - pos->x) << 8;
 			work->origin_y = (64 - pos->y) << 8;
-			{
-				/* FAKEMATCH: needed to match: IO_WRITE_QUEUE_PUSH written out with the IME address in the function's own pointer, set at the top of the loop; the one-pass blocks keep the saved copy ahead of the IME store and the restore ahead of the next statement. With the macro the IME address and pos trade r6 and r7 (differ 20). */
-				struct IoWriteQueue *q;
-				u32					 saved;
-				s32					 count;
-
-				q = &gIoWriteQueue;
-				do
-				{
-					saved = *ime;
-				} while (0);
-				*ime = (u16)(u32)ime;
-				count = q->count;
-				if (count <= 31)
-				{
-					u32 *entry = (u32 *)((u8 *)q + count * 12 + 4);
-
-					*(u16 *)&q->count = count + 1;
-					*entry++ = (u32)&work->origin_x;
-					*entry++ = 0x04000028;
-					*entry = 0x84000002;
-				}
-				do
-				{
-					*ime = saved;
-				} while (0);
-			}
+			IO_WRITE_QUEUE_PUSH_IME(ime, 0x04000028, (u32)&work->origin_x, 0x84000002);
 			work->origin_pending = 1;
 			WaitFrames(1);
 		}

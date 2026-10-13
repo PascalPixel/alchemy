@@ -167,16 +167,6 @@ void MapGroupTable_SelectEntry(s32 kind)
 	}
 }
 
-static __inline__ void Unit_UpdateGauges(struct BtlUnit *unit)
-{
-	unit->hp_gauge = Vitals_Ratio(unit->hp, unit->max_hp);
-	if (unit->hp_gauge == 0 && unit->hp != 0)
-		unit->hp_gauge = 1;
-	unit->ep_gauge = Vitals_Ratio(unit->ep, unit->max_ep);
-	if (unit->ep_gauge == 0 && unit->ep != 0)
-		unit->ep_gauge = 1;
-}
-
 void Party_SetReturnPoint(s32 reason)
 {
 	struct BtlUnit *unit;
@@ -198,7 +188,8 @@ void Party_SetReturnPoint(s32 reason)
 			for (i = 0; i < 2; i++)
 			{
 				unit = UnitGetFar(i);
-				Unit_Recover(unit);
+				unit->hp = unit->max_hp;
+				unit->ep = unit->max_ep;
 				Unit_UpdateGauges(unit);
 			}
 		}
@@ -273,8 +264,7 @@ static __inline__ s32 Scene_RunTable(s32 entrance)
 	s32	  result;
 
 	Dma_Set(palette, saved, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
-	/* FAKEMATCH: the cast states the call the bytes show, entrance passed in r0 to a function its prototype declares s32 (void): through the prototype the argument does not compile, and the call without it differs 27 of 229 in Game_ResetForNewGame (r0 is not set). */
-	result = ((s32 (*)(s32))Runtime_BlankDisplayAndRunFar)(entrance);
+	result = Runtime_BlankDisplayAndRunFar(entrance);
 	Dma_Set(saved, palette, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
 	MemFree(saved);
 	return result;
@@ -287,8 +277,7 @@ static __inline__ s32 Scene_LoadTable(s32 entrance)
 	s32	  result;
 
 	Dma_Set(palette, saved, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
-	/* FAKEMATCH: the cast states the call the bytes show, entrance passed in r0 to a function its prototype declares s32 (void): through the prototype the argument does not compile, and the call without it differs 29 of 229 in Game_ResetForNewGame (r0 is not set). */
-	result = ((s32 (*)(s32))Runtime_BlankDisplayLoadValueAndRunFar)(entrance);
+	result = Runtime_BlankDisplayLoadValueAndRunFar(entrance);
 	Dma_Set(saved, palette, DMA_ENABLE32 | DMA_32BIT | (64 / 4), REG_DMA3);
 	MemFree(saved);
 	return result;

@@ -392,9 +392,7 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs)
 		found->output.tail_link = &slot->output.head;
 		found->unknown_10 = 1;
 		found->flags = 1;
-		/* FAKEMATCH: UiWork_ResetCounters is called as void (*)(); as void (*)(void), its prototype, UiWindow_Create does not compile */
-		/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-		((void (*)())UiWork_ResetCounters)(x);
+		UiWork_ResetCounters(x);
 		if (attrs & 8)
 		{
 			found->flags |= 8;
@@ -1300,11 +1298,9 @@ void UiWindow_UpdateInterpolatedGeometry(void *arg, s32 save_position)
 //--------------------------------------------------------------------------
 u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count)
 {
-	volatile u16 fill;
 	if (count > 0)
 	{
-		fill = value;
-		Dma_Set(&fill, dst, count | (DMA_ENABLE32 | DMA_SRC_FIXED32), REG_DMA3);
+		Dma_Fill16(value, dst, count * 2);
 		dst += count;
 	}
 	return dst;
@@ -2556,7 +2552,17 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 	}
 	else
 	{
-		RamCode_LoadSlot(50, Text_DecodeSymbol, Text_DecodeSymbolCodeSize);
+		{
+			u32 size;
+
+			/* FAKEMATCH: instruction order only: the size in a block of its own, so the slot number goes to r0 before the size's copy to r1. 2026-10-13, tbs-en: RamCode_LoadSlot, the size and the block as initialized locals, and the size written at both uses with no local all differ 2 (the copy to r1 first). */
+			do
+			{
+				size = (u32)Text_DecodeSymbolCodeSize;
+			} while (0);
+			Dma_Set((const void *)Text_DecodeSymbol, Runtime_AllocateHeapBlock(50, size),
+				0x84000000 | (size >> 2), REG_DMA3);
+		}
 		decode = (s32 (*)(struct TextReader *))gWindowWork[TEXT_WORK_BLOCK - HEAP_SLOT_WINDOW];
 		UiText_LookupMessage(&st, script);
 
@@ -3062,7 +3068,17 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 	}
 	else
 	{
-		RamCode_LoadSlot(50, Text_DecodeSymbol, Text_DecodeSymbolCodeSize);
+		{
+			u32 size;
+
+			/* FAKEMATCH: instruction order only: the size in a block of its own, as in the international copy above; RamCode_LoadSlot differs 2 (the copy to r1 first). */
+			do
+			{
+				size = (u32)Text_DecodeSymbolCodeSize;
+			} while (0);
+			Dma_Set((const void *)Text_DecodeSymbol, Runtime_AllocateHeapBlock(50, size),
+				0x84000000 | (size >> 2), REG_DMA3);
+		}
 		decode = (s32 (*)(struct TextReader *))gWindowWork[50 - HEAP_SLOT_WINDOW];
 		UiText_LookupMessage(&st, script);
 		do

@@ -691,13 +691,9 @@ void Party_ApplyStatePreset(void)
 		struct BtlUnit *unit = UnitGet(id);
 		s32				slot;
 
-		Unit_Recover(unit);
-		unit->hp_gauge = Vitals_Ratio(unit->hp, unit->max_hp);
-		if (unit->hp_gauge == 0 && unit->hp != 0)
-			unit->hp_gauge = 1;
-		unit->ep_gauge = Vitals_Ratio(unit->ep, unit->max_ep);
-		if (unit->ep_gauge == 0 && unit->ep != 0)
-			unit->ep_gauge = 1;
+		unit->hp = unit->max_hp;
+		unit->ep = unit->max_ep;
+		Unit_UpdateGauges(unit);
 
 		for (slot = 0; slot <= 14; slot++)
 		{
@@ -732,13 +728,9 @@ void Owner_RefreshActiveRatios(s32 arg0)
 	{
 		obj = UnitGet(gGameState.active_owners[n]);
 
-		Unit_Recover(obj);
-		obj->hp_gauge = Vitals_Ratio(obj->hp, obj->max_hp);
-		if (obj->hp_gauge == 0 && obj->hp != 0)
-			obj->hp_gauge = 1;
-		obj->ep_gauge = Vitals_Ratio(obj->ep, obj->max_ep);
-		if (obj->ep_gauge == 0 && obj->ep != 0)
-			obj->ep_gauge = 1;
+		obj->hp = obj->max_hp;
+		obj->ep = obj->max_ep;
+		Unit_UpdateGauges(obj);
 
 		if (arg0 == 1)
 		{
@@ -784,20 +776,8 @@ void Owner_RefreshRatiosOnFlag(void)
 		}
 
 		obj = UnitGet(ownerId);
-		/* FAKEMATCH: the one-pass block keeps the EP store ahead of the HP
-		 * gauge's loads, as in Owner_UpdateSecondInputAndRatios. Measured:
-		 * the plain store differs 4, with the gauges through Vitals_Ratio
-		 * or written out in full. */
-		do
-		{
-			obj->ep = obj->max_ep;
-		} while (0);
-		obj->hp_gauge = Vitals_Ratio(obj->hp, obj->max_hp);
-		if (obj->hp_gauge == 0 && obj->hp != 0)
-			obj->hp_gauge = 1;
-		obj->ep_gauge = Vitals_Ratio(obj->ep, obj->max_ep);
-		if (obj->ep_gauge == 0 && obj->ep != 0)
-			obj->ep_gauge = 1;
+		obj->ep = obj->max_ep;
+		Unit_UpdateGauges(obj);
 	}
 }
 
@@ -810,12 +790,7 @@ void UnitRatio(s32 owner_no)
 	struct BtlUnit *owner;
 
 	owner = UnitGet(owner_no);
-	owner->hp_gauge = Vitals_Ratio(owner->hp, owner->max_hp);
-	if (owner->hp_gauge == 0 && owner->hp != 0)
-		owner->hp_gauge = 1;
-	owner->ep_gauge = Vitals_Ratio(owner->ep, owner->max_ep);
-	if (owner->ep_gauge == 0 && owner->ep != 0)
-		owner->ep_gauge = 1;
+	Unit_UpdateGauges(owner);
 }
 
 void Owner_UpdateRatioPair(struct BtlUnit *state, s32 input)
@@ -835,12 +810,7 @@ void Owner_UpdateRatioPair(struct BtlUnit *state, s32 input)
 		}
 	}
 	state->hp = value;
-	state->hp_gauge = Vitals_Ratio(state->hp, state->max_hp);
-	if (state->hp_gauge == 0 && state->hp != 0)
-		state->hp_gauge = 1;
-	state->ep_gauge = Vitals_Ratio(state->ep, state->max_ep);
-	if (state->ep_gauge == 0 && state->ep != 0)
-		state->ep_gauge = 1;
+	Unit_UpdateGauges(state);
 }
 
 //--------------------------------------------------------------------------
@@ -860,7 +830,6 @@ void Owner_UpdateRatioPair(struct BtlUnit *state, s32 input)
 void Owner_UpdateSecondInputAndRatios(struct BtlUnit *unit, s32 ep)
 {
 	s32 cur;
-	s32 rate;
 
 	if (ep > unit->max_ep)
 	{
@@ -872,56 +841,8 @@ void Owner_UpdateSecondInputAndRatios(struct BtlUnit *unit, s32 ep)
 		if (ep >= 0)
 			cur = ep;
 	}
-	/* FAKEMATCH: the one-pass block keeps the EP store ahead of the HP
-	 * gauge's loads. Measured: the plain store lets the scheduler lift
-	 * the hp load above it (differ 2); the store in each arm of the clamp
-	 * differs 40 to 43; the gauges through Vitals_Ratio, or through an
-	 * inline Unit_UpdateGauges as object.c has, still differ 2. */
-	do
-	{
-		unit->ep = cur;
-	} while (0);
-
-	// HP のゲージ
-	rate = unit->hp;
-	rate <<= 14;
-	rate = rate / unit->max_hp;
-	{
-		s32 gauge = 0x4000;
-
-		if (rate <= gauge)
-		{
-			gauge = 0;
-			if (rate >= 0)
-				gauge = rate;
-		}
-		unit->hp_gauge = gauge;
-		if ((gauge << 16) == 0 && unit->hp != 0)
-			unit->hp_gauge = 1;
-	}
-
-	// EP のゲージ
-	{
-		s32 num;
-		s32 max;
-
-		num = unit->ep;
-		max = unit->max_ep;
-		rate = (num << 14) / max;
-	}
-	{
-		s32 gauge = 0x4000;
-
-		if (rate <= gauge)
-		{
-			gauge = 0;
-			if (rate >= 0)
-				gauge = rate;
-		}
-		unit->ep_gauge = gauge;
-		if ((gauge << 16) == 0 && unit->ep != 0)
-			unit->ep_gauge = 1;
-	}
+	unit->ep = cur;
+	Unit_UpdateGauges(unit);
 }
 
 s32 Owner_AdjustFirstValue(s32 owner, s32 delta)

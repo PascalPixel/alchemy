@@ -1775,7 +1775,6 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
 	struct EffectPosition	 position;
 	struct EffectPosition	 origin;
 	struct EffectPosition	 out;
-	volatile s32			 fill;
 	DrawRectangle			 routine[2];
 	s32						 i;
 	s32						 frame;
@@ -1862,8 +1861,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
 		}
 		if (frame == 8)
 		{
-			fill = 0x3f3f3f3f;
-			Dma_Set((void *)&fill, canvas, 0x85001000, REG_DMA3);
+			Dma_Fill32(0x3f3f3f3f, canvas, 0x4000);
 		}
 		Render_ResetTransformState();
 		Graphics_PrepareTransferInIwramWork(view->eye, view->pos);
@@ -2597,44 +2595,6 @@ extern u8				  ShockwaveScene_ShardHeights[];
 
 #define SPARKS (&PARTICLES[128])
 
-#define QUEUE_IO_WRITE(address, value, delay)                                  \
-	{                                                                          \
-		struct IoWriteQueue *q;                                                \
-		u32					 saved;                                            \
-		s32					 count;                                            \
-                                                                               \
-		q = &gIoWriteQueue;                                                    \
-		do                                                                     \
-		{                                                                      \
-			/* FAKEMATCH: a one-pass block from the IME read to its restore, \
-               after q: its loop notes bound sched2 where the native's queue \
-               writes are bounded (q loads ahead of the A/B branch's \
-               frame = 150 store, the frame 64 block's fill stays after the \
-               restore); without it 6 of 2455 rows differ. */ \
-			do                                                                 \
-			{                                                                  \
-				/* FAKEMATCH: the one-pass IME read of io.c's and canvas.c's \
-                   queue writes; without it 16 of 2455 rows differ. */ \
-				saved = *ime;                                                  \
-			} while (0);                                                       \
-			*ime = (u16)ime;                                                   \
-			count = q->count;                                                  \
-			if (count <= 31)                                                   \
-			{                                                                  \
-				u32 *destination = q->entries[count];                          \
-				/* FAKEMATCH: the count stored through a u16 pointer, as \
-                   io_write_queue.h's and canvas.c's queue writes (the same \
-                   halfword store, scheduled as the native's); stored as \
-                   q->count, 8 of 2455 rows differ. */     \
-				*(u16 *)&q->count = count + 1;                                 \
-				*destination++ = (value);                                      \
-				*destination++ = (address);                                    \
-				*destination = (delay);                                        \
-			}                                                                  \
-			*ime = saved;                                                      \
-		} while (0);                                                           \
-	}
-
 void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 {
 	s32							   anchor[3];
@@ -3067,8 +3027,8 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 			if (frame >= 5 && frame < 150)
 			{
 				frame = 150;
-				QUEUE_IO_WRITE(0x04000020, 0x80, 0x20000);
-				QUEUE_IO_WRITE(0x04000028, 0, 0x30000);
+				IO_WRITE_QUEUE_PUSH_IME(ime, 0x04000020, 0x80, 0x20000);
+				IO_WRITE_QUEUE_PUSH_IME(ime, 0x04000028, 0, 0x30000);
 				Resource_LoadAndDecompress(
 					(s32)&ResourceId_ExplosionSheet, work->sheet + 0x4000, 1, 0);
 			}
@@ -3084,8 +3044,8 @@ void BattleEffect_RunShockwaveScene(struct BattleEffectArgument *effect)
 
 		if (frame == 64)
 		{
-			QUEUE_IO_WRITE(0x04000020, 0x80, 0x20000);
-			QUEUE_IO_WRITE(0x04000028, 0, 0x30000);
+			IO_WRITE_QUEUE_PUSH_IME(ime, 0x04000020, 0x80, 0x20000);
+			IO_WRITE_QUEUE_PUSH_IME(ime, 0x04000028, 0, 0x30000);
 			fill = 0;
 			Dma_Set(&fill, canvas, 0x85001000, REG_DMA3);
 			Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet, work->sheet + 0x4000, 1, 0);
@@ -5217,7 +5177,9 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 #undef MARK
 #undef PATCH
 
-	/* FAKEMATCH: needed to match: one-pass blocks keep each writing step together and in list order while allowing scheduling within each step 2026-10-11: COPY_FROM, COPY_TWICE and PUT_BRANCH match without their blocks; without, PUT differs 38, COPY 12 and PATCH 2. */
+	// Each writing step is a statement macro, written do { } while (0): the
+	// steps keep list order and are scheduled within themselves. As plain
+	// statements PUT differs 38, COPY 12 and PATCH 2.
 #define PUT(word)        \
 	do                   \
 	{                    \
@@ -5230,20 +5192,27 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 		dst += (n);                                     \
 		src += (n);                                     \
 	} while (0)
-#define COPY_FROM(from, n)                           \
-	Dma_Set(from, dst, DMA_COPY_WORDS(n), REG_DMA3); \
-	dst += (n)
+#define COPY_FROM(from, n)                               \
+	do                                                   \
+	{                                                    \
+		Dma_Set(from, dst, DMA_COPY_WORDS(n), REG_DMA3); \
+		dst += (n);                                      \
+	} while (0)
 #define COPY_TWICE(from, n)                              \
+	do                                                   \
 	{                                                    \
 		const u32 *part = (from);                        \
 		Dma_Set(part, dst, DMA_COPY_WORDS(n), REG_DMA3); \
 		dst += (n);                                      \
 		Dma_Set(part, dst, DMA_COPY_WORDS(n), REG_DMA3); \
 		dst += (n);                                      \
-	}
-#define PUT_BRANCH(target)                     \
-	*dst = *src++ + BRANCH_FIELD(dst, target); \
-	dst++
+	} while (0)
+#define PUT_BRANCH(target)                         \
+	do                                             \
+	{                                              \
+		*dst = *src++ + BRANCH_FIELD(dst, target); \
+		dst++;                                     \
+	} while (0)
 #define MARK(site) site = dst
 #define PATCH(site)                         \
 	do                                      \

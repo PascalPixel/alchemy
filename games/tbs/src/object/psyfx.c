@@ -798,11 +798,7 @@ next_state:
 	{
 		slot->target_x = slot->origin_x;
 		slot->target_z = slot->origin_z;
-		{
-			u32 value = 0x400;
-
-			slot->max_turn_step = value;
-		}
+		slot->max_turn_step = 0x400;
 		slot->flag42 = 1;
 		(*state_ptr)++;
 		return;

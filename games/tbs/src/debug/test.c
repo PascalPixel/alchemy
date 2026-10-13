@@ -442,7 +442,7 @@ static void EV02_TALK(void)
 
 static void EV09_TALK(void)
 {
-	/* FAKEMATCH: never used; its 256 bytes are the native frame space no instruction touches; without it, tbs-en differs */
+	/* FAKEMATCH: never used in the international editions, which compile out the benchmark that fills it; its 256 bytes are the native frame space no instruction touches. Declared inside the benchmark's #if, tbs-en loses sub sp, #256 and its add: differ 4. */
 	u8 buf[256];
 #if !EDITION_INTERNATIONAL
 	s32 i;

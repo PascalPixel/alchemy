@@ -188,7 +188,7 @@ static void Korosseo_UpdateMarker(void)
 	}
 	if (++Korosseo_MarkerBlink <= 13)
 	{
-		/* FAKEMATCH: needed to match: the size bit in a local puts the priority after it. */
+		/* FAKEMATCH: needed to match: the size bit in a local puts the priority after it. As the literal 0x40000000 in the expression, in any of four operand orders: differ 6. */
 		s32 size = 0x40000000;
 
 		x = Korosseo_MarkerX;

@@ -2363,7 +2363,7 @@ s32 PartyTalkMenu_Choose(s32 unused)
 	palette = (u16 *)0x050001c0;
 	Dma_Set((const void *)0x050001e0, palette, 0x84000008, REG_DMA3);
 	palette[4] = 0x6318;
-	do
+	while (1)
 	{
 		UiWindow_SetTileAttributeRect(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1, 14);
 		WaitFrames(1);
@@ -2394,11 +2394,14 @@ s32 PartyTalkMenu_Choose(s32 unused)
 		{
 			AudioCommand_PlayFar(113);
 			row = -1;
-			goto close;
+			break;
 		}
-	} while (!(gKeysRepeat & KEY_A));
-	AudioCommand_PlayFar(112);
-close:
+		if (gKeysRepeat & KEY_A)
+		{
+			AudioCommand_PlayFar(112);
+			break;
+		}
+	}
 	UiWork_Finalize(window, 2);
 	WaitFrames(1);
 	Resource_ResetEntry(slot);

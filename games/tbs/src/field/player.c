@@ -844,7 +844,7 @@ s32 Field_CheckConfiguredKeysAndCount(void *work)
 s32 Object_MoveByKeys(struct ObjectRuntime *object)
 {
 	struct FieldPosition pos;
-	/* FAKEMATCH: never used; its 68 bytes are the native frame space no instruction touches; without it, tbs-en differs */
+	/* FAKEMATCH: never used; its 68 bytes are the native frame space no instruction touches. Without it the frame is 12 bytes, not 80 (differ 8: the sp adjustments and pos's address). 68 bytes is exactly the probe locals of the sibling Object_MoveOnWorldMap (test_position and angle_offsets[28] internationally, left_position, right_position and angle_offsets[22] in Japan); declared here instead, they also match tbs-en and tbs-ja (2026-10-13). */
 	u8					 unused[68];
 	struct MapCell		*from;
 	struct MapCell		*to;

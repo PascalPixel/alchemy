@@ -51,15 +51,16 @@ struct TransitionActorList;
 struct UiWindow;
 struct WorldPosition;
 
-// A stub is declared with no prototype, as its callers were compiled: the
-// bytes show calls made with no prototype in scope. Seven stubs are called
-// with other arguments than their targets take (the blank-display runners
-// with the entrance in r0, OwnerAction_AddFar with none,
-// Party_ShowJoinedMessageFar with two, UiTimedNotice_CreateFar,
-// Menu_RunWorkspaceResultLoopFar and Runtime_GetBuildStampTimeFar with
-// one), which C89 accepts only from a declaration with no prototype; their
-// rows have empty parameters. params records the other targets' own.
-#define FAR_CALL(name, target, type, params) type name ();
+// Each stub is declared with its target's parameters (params). Seven rows
+// have empty parameters instead, a declaration with no prototype: the
+// bytes show their callers passing other arguments than the target takes,
+// which C89 accepts only with no prototype in scope. They are the
+// blank-display runners (the entrance in r0), OwnerAction_AddFar (called
+// with none), Party_ShowJoinedMessageFar (two), UiTimedNotice_CreateFar,
+// Menu_RunWorkspaceResultLoopFar and Runtime_GetBuildStampTimeFar (one
+// each). The near call UiWork_ResetCounters is declared the same way in
+// unit/window/window.h (UiWindow_Create passes it one).
+#define FAR_CALL(name, target, type, params) type name params;
 #define FAR_ENTRY(name, target)
 #define FAR_SLOT(target)
 
@@ -82,10 +83,5 @@ struct WorldPosition;
 #undef FAR_CALL
 #undef FAR_ENTRY
 #undef FAR_SLOT
-
-// The one stub whose calls need a prototype: the international
-// StatusMenu_ShowOwnerProgressMessage passes a u64 value, which the
-// prototype narrows to r0 (with none, r0 and r1 carry it).
-void UiWork_PushValueSlotFar(u32 value, u32 kind);
 
 #endif

@@ -517,7 +517,7 @@ static void EV50_TOUCH(void)
 	Engine_ActorSetAnimation(0, 16);
 	Engine_ActorSetAnimation(8, 9);
 	Engine_EventWait(10);
-	/* FAKEMATCH: base is 0 from the top of the function, so 0 - approach + 1 is not folded into 1 - approach. */
+	/* FAKEMATCH: base is 0 from the top of the function, so 0 - approach + 1 is built as movs #0, subs, adds #1, as the native does. 1 - approach or -approach + 1 folds into movs #1, subs (differ 7 in tbs-en). */
 	BattleFx_SetWeightedResult(72, base - approach + 1);
 	Battle_SetStart(3);
 	Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoKawa, 4);

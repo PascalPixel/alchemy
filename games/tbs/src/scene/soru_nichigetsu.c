@@ -1256,7 +1256,9 @@ static void EV20_SEARCH(void)
 		Actor_FaceDirection(0, 0xc000, 20);
 		Actor_SetSpeed(0, 0x4ccc, 0x2666);
 		actor->steering_flags &= ~ACTOR_FACES_MOTION;
-		/* FAKEMATCH: the zero goes through the sprite variable (r7). */
+		/* FAKEMATCH: register choice only: the zero goes through the sprite
+		   variable, whose pseudo has r7, as native. Plain forms measured
+		   (2026-10-13): motion_flags = 0 puts the zero in r2 (differ 4). */
 		sprite = 0;
 		actor->motion_flags = (u32)sprite;
 		Engine_AudioPlayCue(201);
@@ -1288,7 +1290,12 @@ static void EV20_SEARCH(void)
 		Actor_FaceDirection(16, 0xc000, 20);
 		Engine_ActorSetSpeed(16, 0x4ccc, 0x2666);
 		actor = Object_GetById(16);
-		/* FAKEMATCH: a mask temporary delays both byte stores past the zero. */
+		/* FAKEMATCH: register choice and order only: the mask temporary
+		   gives the cleared flags r2 and the motion address r3, so both
+		   byte stores wait past the zero, as native. Plain forms measured
+		   (2026-10-13): &= ~ACTOR_FACES_MOTION with base5_0 = 0 and the
+		   store before, after or chained puts the flags in r3, stored at
+		   once (differ 10); motion_flags = 0 before base5_0 = 0, 23. */
 		{
 			s32 m = 254;
 

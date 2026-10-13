@@ -1020,7 +1020,7 @@ static void EV22_TALK(s32 scene)
 			Engine_EventWait(60);
 			Event_ShowMessage(scene, 0);
 			Korosseo_FadeInCompetitor(0, 736, 200);
-			/* FAKEMATCH: the discarded result sets r0 after both other arguments. */
+			/* FAKEMATCH: called as returning a value, the discarded result's call sets r0 after both other arguments, as the native does. Called directly, through Actor_FaceDirection or through Call3, r0 is set first (differ 2 in tbs-en). */
 			Value3(Engine_ActorFaceDirection, ACTOR_PARTY_LEADER, 0, 0);
 			KorosseoKawa_WaitForCountdown();
 			Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);

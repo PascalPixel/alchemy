@@ -805,45 +805,15 @@ void Owner_RatioNoOp(void)
 
 void UnitRatio(s32 owner_no)
 {
-	s32				first;
-	s32				second;
-	s32				first_value;
-	s32				second_value;
 	struct BtlUnit *owner;
 
 	owner = UnitGet(owner_no);
-	first = (owner->hp << 14) / owner->max_hp;
-	first_value = 0x4000;
-	if (first <= 0x4000)
-	{
-		first_value = 0;
-		if (first >= 0)
-		{
-			first_value = first;
-		}
-	}
-	owner->hp_gauge = first_value;
-	if (((first_value << 16) == 0) && (owner->hp != 0))
-	{
-		first_value = 1;
-		owner->hp_gauge = first_value;
-	}
-	second = (owner->ep << 14) / owner->max_ep;
-	second_value = 0x4000;
-	if (second <= 0x4000)
-	{
-		second_value = 0;
-		if (second >= 0)
-		{
-			second_value = second;
-		}
-	}
-	owner->ep_gauge = second_value;
-	if (((second_value << 16) == 0) && (owner->ep != 0))
-	{
-		second_value = 1;
-		owner->ep_gauge = second_value;
-	}
+	owner->hp_gauge = Vitals_Ratio(owner->hp, owner->max_hp);
+	if (owner->hp_gauge == 0 && owner->hp != 0)
+		owner->hp_gauge = 1;
+	owner->ep_gauge = Vitals_Ratio(owner->ep, owner->max_ep);
+	if (owner->ep_gauge == 0 && owner->ep != 0)
+		owner->ep_gauge = 1;
 }
 
 void Owner_UpdateRatioPair(struct BtlUnit *state, s32 input)

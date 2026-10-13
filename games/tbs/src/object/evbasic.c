@@ -215,20 +215,17 @@ void Battle_Reset(void)
 	{
 		Battle_ResetEffectCounter();
 	}
-	{
-		s32 zero = 0;
-		runtime->unknown_cc2 = zero;
-		runtime->unknown_cc4 = zero;
-		runtime->unknown_1c8 = 0x10;
-		runtime->mode_1cc = zero;
-		runtime->unknown_1da = 0xFFFF;
-		runtime->unknown_1dc = -1;
-		runtime->unknown_1de = -1;
-		Scheduler_AddOrUpdateCallback((const void *)Battle_UpdateModeFromShoulderButtons, 0xC80);
-		GameFlag_ClearBitFar(0x132);
-		runtime->object_id = gGameState.selected_actor;
-		runtime->unknown_1f8 = zero;
-	}
+	runtime->unknown_cc2 = 0;
+	runtime->unknown_cc4 = 0;
+	runtime->unknown_1c8 = 0x10;
+	runtime->mode_1cc = 0;
+	runtime->unknown_1da = 0xFFFF;
+	runtime->unknown_1dc = -1;
+	runtime->unknown_1de = -1;
+	Scheduler_AddOrUpdateCallback((const void *)Battle_UpdateModeFromShoulderButtons, 0xC80);
+	GameFlag_ClearBitFar(0x132);
+	runtime->object_id = gGameState.selected_actor;
+	runtime->unknown_1f8 = 0;
 }
 
 void BattleFx_FinishAction(void)

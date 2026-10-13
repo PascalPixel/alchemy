@@ -372,7 +372,10 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
 		}
 
 		/* FAKEMATCH: cancelling updates retain sprite_value's allocation
-		 * priority; a self-assignment instead differs in 18 rows. */
+		 * priority; a self-assignment instead differs in 18 rows.
+		 * 2026-10-13: without them 18 of 114 differ; the exit test written
+		 * !(== || ==) or as a switch on sprite_value 18; the load's
+		 * value as pass + sprite_value 16. */
 		sprite_value ^= 1;
 		sprite_value ^= 1;
 		if (pass == 0)

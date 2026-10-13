@@ -2987,6 +2987,11 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 		cur->tile = Resource_GetBuffer((u16)cursor_handle, (s32)Resource_FixedBlockBTiles);
 		cur->x = cursor_position.x + ((gFrameCount & 4) >> 1) - 4;
 		cur->y = cursor_position.y - ((gFrameCount & 4) >> 2) - 8;
+		/* FAKEMATCH: register choice and order: the cursor is pushed through
+		   sprite, re-pointed at it here as a struct MenuSprite *, which keeps
+		   the frame loop's registers as the native allocates them. Measured
+		   (2026-10-13): pushing &cursor or cur directly gives 947
+		   instructions for 946, differ 87 in all six editions. */
 		sprite = (struct MenuSprite *)&cursor;
 		Runtime_PushSlotEntry(sprite, 242);
 

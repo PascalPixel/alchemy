@@ -454,423 +454,428 @@ void ReelGame_RunFrame(void)
 	}
 	work->keys = pad;
 
-	if (gDebugPaused != 0)
-		goto build_objects;
-
-	if (work->state == 0)
+	if (gDebugPaused == 0)
 	{
-		coins = PartyInventory_CountItemFar(228);
-		UiText_DrawNumberInWindowFar(
-			coins - work->bet, REEL_COIN_DIGITS, work->sub_window, REEL_COIN_X, 0);
-		UiText_DrawNumberInWindowFar(work->bet, 2, work->sub_window, 64, 8);
-		if (work->pressed & KEY_B)
+		if (work->state == 0)
 		{
-			struct ReelSave *save = (struct ReelSave *)((u8 *)&gGameState + 12);
+			coins = PartyInventory_CountItemFar(228);
+			UiText_DrawNumberInWindowFar(
+				coins - work->bet, REEL_COIN_DIGITS, work->sub_window, REEL_COIN_X, 0);
+			UiText_DrawNumberInWindowFar(work->bet, 2, work->sub_window, 64, 8);
+			if (work->pressed & KEY_B)
+			{
+				struct ReelSave *save = (struct ReelSave *)((u8 *)&gGameState + 12);
 
-			work->state = 10;
-			save->won_prizes[0] = -2;
-			UiWork_FinalizeFar(work->window, 1);
-			goto build_objects;
-		}
-		if (work->pressed & KEY_UP)
-		{
-			if (work->bet <= 3 && coins > work->bet)
-			{
-				work->bet++;
-				AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+				work->state = 10;
+				save->won_prizes[0] = -2;
+				UiWork_FinalizeFar(work->window, 1);
 			}
 			else
 			{
-				AudioCommand_PlayFar(SOUND_MENU_CANCEL);
-			}
-		}
-		if (work->pressed & KEY_DOWN)
-		{
-			if (work->bet > 1)
-			{
-				work->bet--;
-				AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-			}
-			else
-			{
-				AudioCommand_PlayFar(SOUND_MENU_CANCEL);
-			}
-		}
-		REG_BLDCNT = 0x3fd0;
-		REG_BLDALPHA = 0x10;
-		if (work->pressed & KEY_A)
-		{
-			work->state = 1;
-			fx->frame = 0;
-			UiWork_FinalizeFar(work->window, 1);
-			for (k = 0; k != work->bet; k++)
-				PartyInventory_RemoveFar(228);
-			UiWork_FinalizeFar(work->sub_window, 1);
-			AudioCommand_PlayFar(0x130);
-		}
-	}
-	else if (work->state == 5)
-	{
-		all = 0;
-		work->timer++;
-		for (k = 0; k != 5 && work->reels[k].held != 0; k++)
-			;
-		if (k == 5)
-			all = 1;
-		if (work->pressed & KEY_A)
-		{
-			work->timer = 0;
-			fx->frame = 0;
-			if (work->spins == 4)
-			{
-				work->spins = 0;
-				work->cursor = 0;
-				work->state = 0;
-				for (i = 0; i != 5; i++)
+				if (work->pressed & KEY_UP)
 				{
-					work->reels[i].held = 0;
-					work->reels[i].stop = -1;
-				}
-			}
-			else if (work->cursor <= 4)
-			{
-				AudioCommand_PlayFar(0x131);
-				work->reels[work->cursor].held ^= 1;
-			}
-			else if (all == 0)
-			{
-				AudioCommand_PlayFar(0x130);
-				work->state = 1;
-				work->cursor = 0;
-				for (i = 0; i != 5; i++)
-					work->reels[i].stop = -1;
-				work->spins++;
-			}
-			else
-			{
-				AudioCommand_PlayFar(SOUND_MENU_CANCEL);
-			}
-		}
-		else
-		{
-			if (work->direction & KEY_RIGHT)
-			{
-				work->cursor = (work->cursor + 1) % 6;
-				AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-			}
-			if (work->direction & KEY_LEFT)
-			{
-				work->cursor = (work->cursor + 5) % 6;
-				AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
-			}
-		}
-
-		if (work->state == 5)
-		{
-#if EDITION_INTERNATIONAL
-			if (work->cursor == 5)
-			{
-				if (all != 0)
-				{
-					if (work->phase != 1 && work->phase != 2)
+					if (work->bet <= 3 && coins > work->bet)
 					{
-						UiWork_FinalizeFar(work->window, 1);
-						work->window =
-							UiWindow_CreateFar(REEL_ALL_HELD_X, 0, REEL_ALL_HELD_WIDTH, 4, 6);
-						UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsAllHeld, work->window, 0, 0);
-						work->phase = 1;
+						work->bet++;
+						AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
 					}
-					else if (work->phase == 1)
+					else
 					{
-						UiText_DrawCharacterAtOffsetFar(
-							(s32)MsgSlotsCannotPull, work->window, 0, 8);
-						work->phase = 2;
+						AudioCommand_PlayFar(SOUND_MENU_CANCEL);
 					}
 				}
-				else
+				if (work->pressed & KEY_DOWN)
 				{
-					if (work->phase != 3)
+					if (work->bet > 1)
 					{
-						UiWork_FinalizeFar(work->window, 1);
-						work->window = UiWindow_CreateFar(REEL_START_X, 0, REEL_START_WIDTH, 3, 6);
-						UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsStart, work->window, 0, 0);
+						work->bet--;
+						AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
 					}
-					work->phase = 3;
+					else
+					{
+						AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+					}
 				}
-			}
-			else if (work->reels[work->cursor].held == 0)
-			{
-				if (work->phase != 4)
+				REG_BLDCNT = 0x3fd0;
+				REG_BLDALPHA = 0x10;
+				if (work->pressed & KEY_A)
 				{
+					work->state = 1;
+					fx->frame = 0;
 					UiWork_FinalizeFar(work->window, 1);
-					work->window = UiWindow_CreateFar(REEL_HOLD_X, 0, REEL_HOLD_WIDTH, 3, 6);
-					UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsHold, work->window, 0, 0);
-				}
-				work->phase = 4;
-			}
-			else
-			{
-				if (work->phase != 5)
-				{
-					UiWork_FinalizeFar(work->window, 1);
-					work->window = UiWindow_CreateFar(REEL_RELEASE_X, 0, REEL_RELEASE_WIDTH, 3, 6);
-					UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsRelease, work->window, 0, 0);
-				}
-				work->phase = 5;
-			}
-#else
-			UiWork_FinalizeFar(work->window, 1);
-			if (work->cursor == 5)
-			{
-				if (all != 0)
-				{
-					work->window = UiWindow_CreateFar(12, 0, 18, 3, 6);
-					UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsAllHeld, work->window, 0, 0);
-				}
-				else
-				{
-					work->window = UiWindow_CreateFar(18, 0, 12, 3, 6);
-					UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsStart, work->window, 0, 0);
+					for (k = 0; k != work->bet; k++)
+						PartyInventory_RemoveFar(228);
+					UiWork_FinalizeFar(work->sub_window, 1);
+					AudioCommand_PlayFar(0x130);
 				}
 			}
-			else
+		}
+		else if (work->state == 5)
+		{
+			all = 0;
+			work->timer++;
+			for (k = 0; k != 5 && work->reels[k].held != 0; k++)
+				;
+			if (k == 5)
+				all = 1;
+			if (work->pressed & KEY_A)
 			{
-				work->window = UiWindow_CreateFar(18, 0, 12, 3, 6);
-				if (work->reels[work->cursor].held == 0)
-					UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsHold, work->window, 0, 0);
-				else
-					UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsRelease, work->window, 0, 0);
-			}
-#endif
-		}
-		else
-		{
-			UiWork_FinalizeFar(work->window, 1);
-		}
-	}
-	else if (work->state == 2)
-	{
-		work->timer++;
-		blend = 0;
-		if (work->timer == 60)
-		{
-			work->state = 3;
-			AudioCommand_PlayFar(93);
-			work->timer = 0;
-			REG_BLDCNT = 0x3f44;
-			REG_BLDALPHA = 0x1010;
-			fx->transfer_mode = 2;
-			fx->transfer_value = 75;
-		}
-	}
-	else if (work->state == 3)
-	{
-		work->timer++;
-		blend = 0;
-		if (work->pressed & KEY_A)
-		{
-			work->state = 10;
-			AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
-		}
-	}
-	else if (work->state == 11)
-	{
-#if EDITION_INTERNATIONAL
-		if (work->phase == 0)
-		{
-			work->phase = 1;
-			UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsPullLever, work->window, 0, 8);
-		}
-#endif
-		if (work->pressed & KEY_A)
-		{
-			work->state = 5;
-#if EDITION_INTERNATIONAL
-			work->phase = 0;
-#endif
-			AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
-			UiWork_FinalizeFar(work->window, 1);
-		}
-	}
-	else if (work->state == 20)
-	{
-		work->timer++;
-		if (work->timer == 45)
-			work->state = 10;
-	}
-	else if (work->state != 10)
-	{
-		if (work->timer == 4)
-		{
-			work->window = UiWindow_CreateFar(REEL_STOP_X, 17, REEL_STOP_WIDTH, 3, 6);
-			UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsStopReels, work->window, 0, 0);
-		}
-		if (work->timer == 16)
-			AudioCommand_PlayFar(0x132);
-		if (work->timer > 56)
-		{
-			if (fx->frame > 31 || (work->pressed & KEY_R))
-			{
+				work->timer = 0;
 				fx->frame = 0;
-				for (i = 0; i != 5; i++)
-				{
-					if (work->reels[i].held == 0 && work->reels[i].stop == -1)
-					{
-						work->reels[i].stop = (Random16() & 3) + 4;
-						AudioCommand_PlayFar(0x133);
-						break;
-					}
-				}
-			}
-		}
-
-		for (i = 0; i != 5; i++)
-		{
-			if (work->reels[i].stop > 0)
-				work->reels[i].stop--;
-		}
-
-		cnt = 0;
-		for (i = 0; i != 5; i++)
-		{
-			if (work->reels[i].held == 1)
-				cnt++;
-			else if (work->reels[i].stop == 0 && (work->reels[i].position & 15) == 8)
-				cnt++;
-		}
-
-		if (cnt == 5)
-		{
-			struct ReelSave *save = (struct ReelSave *)((u8 *)&gGameState + 12);
-			s32				 hits = 0;
-
-			for (col = 0; col != 7; col++)
-			{
-				s32 mixed;
-				s32 found;
-
-				found = -1;
-				mixed = 0;
-				work->winning_lines[col] = 0;
-				if (col > 3 - work->bet && col < work->bet + 3)
-				{
-					for (i = 0; i != 5; i++)
-					{
-						s32 sym;
-
-						if (col == 0)
-							sym = work->reels[i]
-									  .symbols[(i - work->reels[i].position / 16 + 22) % 21];
-						else if (col == 6)
-							sym = work->reels[i]
-									  .symbols[(-i - work->reels[i].position / 16 + 26) % 21];
-						else
-							sym = work->reels[i]
-									  .symbols[(col - work->reels[i].position / 16 + 21) % 21];
-						if (sym != 5)
-						{
-							if (found == -1)
-								found = sym;
-							else if (found != sym)
-								mixed = 1;
-						}
-					}
-					if (mixed == 0)
-					{
-						work->winning_lines[col] = 1;
-						save->won_prizes[hits] = ReelGame_SymbolPrizes[found];
-						hits++;
-					}
-				}
-			}
-			work->timer = 0;
-			if (hits != 0)
-			{
-				save->won_prizes[hits] = -1;
-				work->state = 2;
-				AudioCommand_PlayFar(171);
-				fx->transfer_mode = 1;
-				fx->transfer_value = 0;
-				REG_BLDCNT = 0;
-				UiWork_FinalizeFar(work->window, 1);
-			}
-			else
-			{
-				work->state = 11;
-#if EDITION_INTERNATIONAL
-				work->phase = 0;
-				UiWork_FinalizeFar(work->window, 1);
-#if REEL_HINT_BEFORE_LAST_SPIN
-				if (work->spins <= 3)
-#endif
-				{
-					work->window = UiWindow_CreateFar(3, 16, 24, 4, 6);
-					UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsChooseHeld, work->window, 0, 0);
-				}
-#else
-				UiWork_FinalizeFar(work->window, 1);
-				{
-					s32 message;
-
-					work->window = UiWindow_CreateFar(7, 16, 16, 4, 6);
-					message = (s32)MsgSlotsChooseHeld;
-					UiText_DrawCharacterAtOffsetFar(message, work->window, 0, 0);
-					UiText_DrawCharacterAtOffsetFar(message + 1, work->window, 0, 8);
-				}
-#endif
 				if (work->spins == 4)
 				{
-					s32				 left = PartyInventory_CountItemFar(228);
-					struct UiWindow *window;
-					s32				 message;
-
-					if (left > 0)
-						work->state = 20;
-					else
-						work->state = 20;
-					if (work->bet > left)
-						work->bet = left;
 					work->spins = 0;
 					work->cursor = 0;
+					work->state = 0;
 					for (i = 0; i != 5; i++)
 					{
 						work->reels[i].held = 0;
 						work->reels[i].stop = -1;
 					}
+				}
+				else if (work->cursor <= 4)
+				{
+					AudioCommand_PlayFar(0x131);
+					work->reels[work->cursor].held ^= 1;
+				}
+				else if (all == 0)
+				{
+					AudioCommand_PlayFar(0x130);
+					work->state = 1;
+					work->cursor = 0;
+					for (i = 0; i != 5; i++)
+						work->reels[i].stop = -1;
+					work->spins++;
+				}
+				else
+				{
+					AudioCommand_PlayFar(SOUND_MENU_CANCEL);
+				}
+			}
+			else
+			{
+				if (work->direction & KEY_RIGHT)
+				{
+					work->cursor = (work->cursor + 1) % 6;
+					AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+				}
+				if (work->direction & KEY_LEFT)
+				{
+					work->cursor = (work->cursor + 5) % 6;
+					AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+				}
+			}
+
+			if (work->state == 5)
+			{
+#if EDITION_INTERNATIONAL
+				if (work->cursor == 5)
+				{
+					if (all != 0)
+					{
+						if (work->phase != 1 && work->phase != 2)
+						{
+							UiWork_FinalizeFar(work->window, 1);
+							work->window =
+								UiWindow_CreateFar(REEL_ALL_HELD_X, 0, REEL_ALL_HELD_WIDTH, 4, 6);
+							UiText_DrawCharacterAtOffsetFar(
+								(s32)MsgSlotsAllHeld, work->window, 0, 0);
+							work->phase = 1;
+						}
+						else if (work->phase == 1)
+						{
+							UiText_DrawCharacterAtOffsetFar(
+								(s32)MsgSlotsCannotPull, work->window, 0, 8);
+							work->phase = 2;
+						}
+					}
+					else
+					{
+						if (work->phase != 3)
+						{
+							UiWork_FinalizeFar(work->window, 1);
+							work->window =
+								UiWindow_CreateFar(REEL_START_X, 0, REEL_START_WIDTH, 3, 6);
+							UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsStart, work->window, 0, 0);
+						}
+						work->phase = 3;
+					}
+				}
+				else if (work->reels[work->cursor].held == 0)
+				{
+					if (work->phase != 4)
+					{
+						UiWork_FinalizeFar(work->window, 1);
+						work->window = UiWindow_CreateFar(REEL_HOLD_X, 0, REEL_HOLD_WIDTH, 3, 6);
+						UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsHold, work->window, 0, 0);
+					}
+					work->phase = 4;
+				}
+				else
+				{
+					if (work->phase != 5)
+					{
+						UiWork_FinalizeFar(work->window, 1);
+						work->window =
+							UiWindow_CreateFar(REEL_RELEASE_X, 0, REEL_RELEASE_WIDTH, 3, 6);
+						UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsRelease, work->window, 0, 0);
+					}
+					work->phase = 5;
+				}
+#else
+				UiWork_FinalizeFar(work->window, 1);
+				if (work->cursor == 5)
+				{
+					if (all != 0)
+					{
+						work->window = UiWindow_CreateFar(12, 0, 18, 3, 6);
+						UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsAllHeld, work->window, 0, 0);
+					}
+					else
+					{
+						work->window = UiWindow_CreateFar(18, 0, 12, 3, 6);
+						UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsStart, work->window, 0, 0);
+					}
+				}
+				else
+				{
+					work->window = UiWindow_CreateFar(18, 0, 12, 3, 6);
+					if (work->reels[work->cursor].held == 0)
+						UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsHold, work->window, 0, 0);
+					else
+						UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsRelease, work->window, 0, 0);
+				}
+#endif
+			}
+			else
+			{
+				UiWork_FinalizeFar(work->window, 1);
+			}
+		}
+		else if (work->state == 2)
+		{
+			work->timer++;
+			blend = 0;
+			if (work->timer == 60)
+			{
+				work->state = 3;
+				AudioCommand_PlayFar(93);
+				work->timer = 0;
+				REG_BLDCNT = 0x3f44;
+				REG_BLDALPHA = 0x1010;
+				fx->transfer_mode = 2;
+				fx->transfer_value = 75;
+			}
+		}
+		else if (work->state == 3)
+		{
+			work->timer++;
+			blend = 0;
+			if (work->pressed & KEY_A)
+			{
+				work->state = 10;
+				AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+			}
+		}
+		else if (work->state == 11)
+		{
+#if EDITION_INTERNATIONAL
+			if (work->phase == 0)
+			{
+				work->phase = 1;
+				UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsPullLever, work->window, 0, 8);
+			}
+#endif
+			if (work->pressed & KEY_A)
+			{
+				work->state = 5;
+#if EDITION_INTERNATIONAL
+				work->phase = 0;
+#endif
+				AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+				UiWork_FinalizeFar(work->window, 1);
+			}
+		}
+		else if (work->state == 20)
+		{
+			work->timer++;
+			if (work->timer == 45)
+				work->state = 10;
+		}
+		else if (work->state != 10)
+		{
+			if (work->timer == 4)
+			{
+				work->window = UiWindow_CreateFar(REEL_STOP_X, 17, REEL_STOP_WIDTH, 3, 6);
+				UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsStopReels, work->window, 0, 0);
+			}
+			if (work->timer == 16)
+				AudioCommand_PlayFar(0x132);
+			if (work->timer > 56)
+			{
+				if (fx->frame > 31 || (work->pressed & KEY_R))
+				{
+					fx->frame = 0;
+					for (i = 0; i != 5; i++)
+					{
+						if (work->reels[i].held == 0 && work->reels[i].stop == -1)
+						{
+							work->reels[i].stop = (Random16() & 3) + 4;
+							AudioCommand_PlayFar(0x133);
+							break;
+						}
+					}
+				}
+			}
+
+			for (i = 0; i != 5; i++)
+			{
+				if (work->reels[i].stop > 0)
+					work->reels[i].stop--;
+			}
+
+			cnt = 0;
+			for (i = 0; i != 5; i++)
+			{
+				if (work->reels[i].held == 1)
+					cnt++;
+				else if (work->reels[i].stop == 0 && (work->reels[i].position & 15) == 8)
+					cnt++;
+			}
+
+			if (cnt == 5)
+			{
+				struct ReelSave *save = (struct ReelSave *)((u8 *)&gGameState + 12);
+				s32				 hits = 0;
+
+				for (col = 0; col != 7; col++)
+				{
+					s32 mixed;
+					s32 found;
+
+					found = -1;
+					mixed = 0;
+					work->winning_lines[col] = 0;
+					if (col > 3 - work->bet && col < work->bet + 3)
+					{
+						for (i = 0; i != 5; i++)
+						{
+							s32 sym;
+
+							if (col == 0)
+								sym = work->reels[i]
+										  .symbols[(i - work->reels[i].position / 16 + 22) % 21];
+							else if (col == 6)
+								sym = work->reels[i]
+										  .symbols[(-i - work->reels[i].position / 16 + 26) % 21];
+							else
+								sym = work->reels[i]
+										  .symbols[(col - work->reels[i].position / 16 + 21) % 21];
+							if (sym != 5)
+							{
+								if (found == -1)
+									found = sym;
+								else if (found != sym)
+									mixed = 1;
+							}
+						}
+						if (mixed == 0)
+						{
+							work->winning_lines[col] = 1;
+							save->won_prizes[hits] = ReelGame_SymbolPrizes[found];
+							hits++;
+						}
+					}
+				}
+				work->timer = 0;
+				if (hits != 0)
+				{
+					save->won_prizes[hits] = -1;
+					work->state = 2;
+					AudioCommand_PlayFar(171);
 					fx->transfer_mode = 1;
 					fx->transfer_value = 0;
 					REG_BLDCNT = 0;
-					window = UiWindow_CreateFar(18, 0, 12, 4, 6);
-					work->sub_window = window;
-					message = (s32)MsgSlotsBet;
-					UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
-					UiText_DrawCharacterAtOffsetFar(message - 1, work->sub_window, 0, 0);
+					UiWork_FinalizeFar(work->window, 1);
 				}
-			}
-		}
-
-		if (work->state == 1)
-		{
-			for (i = 0; i != 5; i++)
-			{
-				struct Reel *reel = &work->reels[i];
-
-				if (reel->held == 0)
+				else
 				{
-					if (reel->stop != 0)
-						reel->position += 8;
-					else if ((reel->position & 15) != 8)
-						reel->position += 8;
-					if (reel->position == 336)
-						reel->position = 0;
+					work->state = 11;
+#if EDITION_INTERNATIONAL
+					work->phase = 0;
+					UiWork_FinalizeFar(work->window, 1);
+#if REEL_HINT_BEFORE_LAST_SPIN
+					if (work->spins <= 3)
+#endif
+					{
+						work->window = UiWindow_CreateFar(3, 16, 24, 4, 6);
+						UiText_DrawCharacterAtOffsetFar(
+							(s32)MsgSlotsChooseHeld, work->window, 0, 0);
+					}
+#else
+					UiWork_FinalizeFar(work->window, 1);
+					{
+						s32 message;
+
+						work->window = UiWindow_CreateFar(7, 16, 16, 4, 6);
+						message = (s32)MsgSlotsChooseHeld;
+						UiText_DrawCharacterAtOffsetFar(message, work->window, 0, 0);
+						UiText_DrawCharacterAtOffsetFar(message + 1, work->window, 0, 8);
+					}
+#endif
+					if (work->spins == 4)
+					{
+						s32				 left = PartyInventory_CountItemFar(228);
+						struct UiWindow *window;
+						s32				 message;
+
+						if (left > 0)
+							work->state = 20;
+						else
+							work->state = 20;
+						if (work->bet > left)
+							work->bet = left;
+						work->spins = 0;
+						work->cursor = 0;
+						for (i = 0; i != 5; i++)
+						{
+							work->reels[i].held = 0;
+							work->reels[i].stop = -1;
+						}
+						fx->transfer_mode = 1;
+						fx->transfer_value = 0;
+						REG_BLDCNT = 0;
+						window = UiWindow_CreateFar(18, 0, 12, 4, 6);
+						work->sub_window = window;
+						message = (s32)MsgSlotsBet;
+						UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
+						UiText_DrawCharacterAtOffsetFar(message - 1, work->sub_window, 0, 0);
+					}
 				}
 			}
+
+			if (work->state == 1)
+			{
+				for (i = 0; i != 5; i++)
+				{
+					struct Reel *reel = &work->reels[i];
+
+					if (reel->held == 0)
+					{
+						if (reel->stop != 0)
+							reel->position += 8;
+						else if ((reel->position & 15) != 8)
+							reel->position += 8;
+						if (reel->position == 336)
+							reel->position = 0;
+					}
+				}
+			}
+			(fx->frame)++;
+			work->timer++;
 		}
-		(fx->frame)++;
-		work->timer++;
 	}
 
-build_objects:
 	if (work->state == 5)
 	{
 		x = work->cursor * 36 + 36;

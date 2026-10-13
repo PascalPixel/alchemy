@@ -4717,27 +4717,35 @@ void UpdateLinkSessionCountdown(void)
 			return;
 
 		runtime = BtlWk;
-		if (runtime->link_paused != 0)
-		{
-			state->timer = 0;
-			return;
-		}
-		while (
-			(timer = state->timer) < 0
-			&& (signature = (struct LinkSignature *)gLinkPeerSignatures[runtime->link_side ^ 1])->e
-				   == 'E'
-			&& signature->d == 'D')
-		{
-			if (signature->v == 'V')
-				if (signature->s == 'S')
-				{
-					state->timer = COUNTDOWN_START_FRAMES;
-					timer = state->timer;
-				}
-			break;
-		}
+		if (runtime->link_paused == 0)
+			goto load_timer;
+		state->timer = 0;
+		return;
+
+	signature_tail:
+		if (signature->v != 'V')
+			goto signature_done;
+		if (signature->s != 'S')
+			goto signature_done;
+		state->timer = COUNTDOWN_START_FRAMES;
+		timer = state->timer;
+		goto signature_done;
+
+	load_timer:
+		timer = state->timer;
+		if (timer >= 0)
+			goto timer_ready;
+		signature = (struct LinkSignature *)gLinkPeerSignatures[runtime->link_side ^ 1];
+		if (signature->e != 'E')
+			goto signature_done;
+		if (signature->d == 'D')
+			goto signature_tail;
+
+	signature_done:
 		if (timer < 0)
 			return;
+
+	timer_ready:
 		if (state->displayHandle == 0 && state->secondaryHandle == 0)
 		{
 			state->displayHandle = Link_CreateCountdownLabelWindow();

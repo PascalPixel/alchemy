@@ -14,6 +14,7 @@
 #include "unit/field/mapcell.h"
 #include "unit/runtime/math.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "farcall.h"
 
 static inline void Actor_EnableActionCallback(s32 actor, const s32 *table)
@@ -257,9 +258,9 @@ static inline void FieldObject_SetTargetAndCallback(s32 object, s32 target, cons
 	Object_SetTargetAndCallback(object, target, actions);
 }
 
-static inline void FieldVector_AddPolarOffset(s32 radius, s32 heading, struct FieldPosition *probe)
+static inline void FieldVector_AddPolarOffset(s32 radius, s32 heading, s32 *position)
 {
-	Vector_AddPolarOffset(radius, heading, probe);
+	Vector_AddPolarOffset(radius, heading, position);
 }
 
 #endif

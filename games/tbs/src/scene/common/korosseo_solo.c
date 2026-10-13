@@ -212,8 +212,8 @@ void Korosseo_FinishSoloRound(s32 id)
 		work->transition_frames = 15;
 		Engine_EventCloseScreen();
 		Engine_EventWaitForScreen();
-		Call2(GameFlag_SetByte, (slot << 4) + 0x370, obj->x.fixed >> 20);
-		Call2(GameFlag_SetByte, (slot << 4) + 0x378, obj->z.fixed >> 20);
+		FieldGameFlag_SetByte((slot << 4) + 0x370, obj->x.fixed >> 20);
+		FieldGameFlag_SetByte((slot << 4) + 0x378, obj->z.fixed >> 20);
 		slot++;
 		if (slot > 3)
 		{

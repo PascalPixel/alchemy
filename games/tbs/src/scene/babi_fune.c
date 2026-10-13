@@ -597,7 +597,7 @@ static void EV10_SCRIPT(void)
 	}
 	BabiFune_ShimmerActive = 1;
 	BabiFune_ShimmerPhase = 0;
-	Value2(Scheduler_AddOrUpdateCallback, (s32)BabiFune_UpdateWaves, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(BabiFune_UpdateWaves, TASK_PRIORITY_SCENE);
 	BabiFune_DriftActive = 1;
 	Event_Wait(20);
 	Event_PlayCue(163);
@@ -608,8 +608,7 @@ static void EV10_SCRIPT(void)
 	Event_Wait(60);
 	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
 	BabiFune_CountTicks = 0;
-	Value2(Scheduler_AddOrUpdateCallback, (s32)SceneState_CountDownEveryFortyTicks,
-		TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(SceneState_CountDownEveryFortyTicks, TASK_PRIORITY_SCENE);
 	sunk = 0;
 	do
 	{
@@ -643,7 +642,7 @@ static void EV10_SCRIPT(void)
 		REG_BLDY = dark;
 		Event_Wait(8);
 	}
-	Value2(Scheduler_AddOrUpdateCallback, (s32)BabiFune_CyclePalette, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(BabiFune_CyclePalette, TASK_PRIORITY_SCENE);
 	Event_PlayCue(80);
 	AudioCommand_WaitForStateByteClear();
 	Event_Wait(20);

@@ -26,6 +26,7 @@
 #include "sound.h"
 #include "system.h"
 #include "level.h"
+#include "field_service.h"
 #include "fieldobj.h"
 #include "call.h"
 #include "party_state.h"
@@ -69,7 +70,7 @@ u8 *ItemLevel_GetPlacements(void)
 static void FieldScene_RunActor13Mode102Step(void)
 {
 	Engine_EventSetMessage(MsgDebugWontStopYou);
-	Call3(Engine_ActorShowEmote, 13, 0x102, 0);
+	Actor_ShowEmote(13, 0x102, 0);
 	Engine_EventShowMessage(13, 0);
 }
 
@@ -100,7 +101,7 @@ static void Scene_AddToListedRecordCounts(s32 amount)
 	u16 *p;
 	s32	 n;
 
-	n = Value1((s32 (*)(u16 *))Party_ListActiveOwners, (s32)list);
+	n = FieldParty_ListActiveOwners(list);
 	if (n > 0)
 	{
 		s32 count;
@@ -455,7 +456,7 @@ static void ItemLevel_RunMotionTest(void)
 	Engine_ActorSetAnimation(10, 2);
 	Engine_ActorSetAnimation(11, 4);
 	ObjectMotion_WaitForAnimationChange(10);
-	Call3(Engine_ActorSetPosition, 11, 312 << 16, 416 << 16);
+	Actor_SetPosition(11, 312 << 16, 416 << 16);
 	Engine_EventEnd();
 }
 #endif

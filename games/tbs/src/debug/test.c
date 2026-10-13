@@ -36,6 +36,7 @@
 #include "edition.h"
 #include "menu_test.h"
 #include "call.h"
+#include "engcall.h"
 #include "types.h"
 #include "io_reg.h"
 #include "inventory.h"
@@ -531,8 +532,8 @@ static void EV10_TALK(void)
 	u8 *record;
 
 	UiText_ShowPositionedMessageAndWait(MsgDebugBodyTornApart, 1);
-	Value2(Owner_AdjustFirstValue, 0, -100);
-	Value2(Owner_AdjustFirstValue, 1, -100);
+	FieldOwner_AdjustFirstValue(0, -100);
+	FieldOwner_AdjustFirstValue(1, -100);
 	Owner_AdjustFirstValue(2, -33);
 	Owner_AdjustFirstValue(3, -100);
 	UnitEpAdd(0, -50);

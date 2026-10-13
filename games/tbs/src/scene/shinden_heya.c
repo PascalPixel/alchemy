@@ -1485,11 +1485,6 @@ static void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
 	}
 }
 
-struct TextCursor
-{
-	u8 storage[12];
-};
-
 #if EDITION_INTERNATIONAL
 #define QUESTION_X 2
 #define QUESTION_WIDTH 25
@@ -1503,7 +1498,7 @@ struct TextCursor
 static s32 ShindenHeya_ChooseRestartOption(void)
 {
 	s32				  slot;
-	struct TextCursor cursor;
+	struct MenuSprite cursor;
 	s32				  window;
 	s32				  text;
 	s32				  choice;
@@ -1529,8 +1524,8 @@ static s32 ShindenHeya_ChooseRestartOption(void)
 	{
 		UiText_DrawResource(text + 1, window, 16, 16);
 	}
-	Call2(UiTextResource_Initialize, (s32)&cursor, (s32)&slot);
-	Call3(UiTextResource_SetPosition, (s32)&cursor, 72, 60);
+	FieldUiTextResource_Initialize(&cursor, &slot);
+	FieldUiTextResource_SetPosition(&cursor, 72, 60);
 	choice = 0;
 	while ((gKeyState & KEY_A) == 0)
 	{
@@ -1541,7 +1536,7 @@ static s32 ShindenHeya_ChooseRestartOption(void)
 			choice ^= 1;
 		}
 		x = ShindenHeya_CursorBob[(gFrameTick >> 1) & 15] + CURSOR_X;
-		Call3(UiTextResource_SetPosition, (s32)&cursor, x, (choice << 4) + 60);
+		FieldUiTextResource_SetPosition(&cursor, x, (choice << 4) + 60);
 		Engine_EventWait(1);
 	}
 	UiTextResource_Release(slot);

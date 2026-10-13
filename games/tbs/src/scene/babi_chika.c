@@ -22,6 +22,7 @@
 #include "types.h"
 #include "text/msg_ids.h"
 #include "field_event.h"
+#include "field_service.h"
 #include "field_scene.h"
 #include "field_effect.h"
 #include "staged_actor.h"
@@ -78,7 +79,7 @@ static s32 SceneActor_MoveActorZeroToTarget(const MoveTarget *target)
 	probe[1] = actor->y.fixed;
 	probe[2] = (actor->z.fixed & 0xfff00000) + 0x00080000;
 
-	Call3(Vector_AddPolarOffset, 0x00100000, (actor->facing + 0x2000) & 0xc000, (s32)probe);
+	FieldVector_AddPolarOffset(0x00100000, (actor->facing + 0x2000) & 0xc000, probe);
 
 	if (Object_CheckMovementCollision(actor, probe) != 1
 		&& Object_CheckMovementCollision(actor, target) == 0)

@@ -31,6 +31,7 @@
 #include "edition.h"
 #include "types.h"
 #include "field_event.h"
+#include "field_service.h"
 #include "scene.h"
 #include "io_reg.h"
 #include "serial_runtime.h"
@@ -332,7 +333,7 @@ test1:
 		result++;
 	}
 	Engine_TaskWait(2);
-	Call2(Ui_AdjustValueWithoutLimit, (s32)MsgEnemyLabel, (s32)buf);
+	FieldUi_AdjustValueWithoutLimit((s32)MsgEnemyLabel, (s32)buf);
 	i = 0;
 	if (buf[i] != 0)
 	{
@@ -1300,7 +1301,7 @@ s32 LinkLobby_RunRoundResult(void)
 		{
 			msg = 14;
 		}
-		v = Value1(GameFlag_GetByte, 1000);
+		v = FieldGameFlag_GetByte(1000);
 		if (v == 2)
 		{
 			GameFlag_SetByte(1000, 0);
@@ -1309,7 +1310,7 @@ s32 LinkLobby_RunRoundResult(void)
 		}
 		else
 		{
-			Call2(GameFlag_SetByte, 1000, v + 1);
+			FieldGameFlag_SetByte(1000, v + 1);
 		}
 		Engine_ActorFaceActor(8, gGameState.selected_actor, 0);
 		Engine_EventSetMessage((s32)MsgLobbyNotBadNextMonster + msg);

@@ -50,6 +50,7 @@
 #include "system.h"
 #include "types.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "field_scene.h"
 #include "text/msg_ids.h"
 #include "edition.h"
@@ -1849,14 +1850,14 @@ static void EV15_TOUCH(void)
 		Map_CopyCellsTo(92, 46, 92, 40, 3, 2);
 		Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
 		Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
-		Call3(BattleFx_RunRisingObjectSequence, ACTOR_PARTY_LEADER, 6, -1);
+		FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, -1);
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
 		Engine_EventWait(60);
 		Engine_EventRequestExit(8);
 	}
 	else
 	{
-		Call3(BattleFx_RunRisingObjectSequence, ACTOR_PARTY_LEADER, 6, -1);
+		FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, -1);
 	}
 	Engine_EventEnd();
 }

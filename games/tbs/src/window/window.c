@@ -573,7 +573,7 @@ void UiWork_UpdateListTail(struct RenderOutputList *list)
 
 void RenderOutput_AppendToList(struct RenderOutputList *list, struct RenderOutput *node)
 {
-	/* FAKEMATCH: needed to match: the first-word tail store preserves the two stores in order; the typed tail-link field reverses them. */
+	/* FAKEMATCH: storing the new tail as a RenderOutput * keeps both stores in one alias set, so they stay in order. The typed list->tail_link = &node->next lets the scheduler put the tail store first (differ 2 in all six editions). */
 	if (list != NULL)
 	{
 		*list->tail_link = node;

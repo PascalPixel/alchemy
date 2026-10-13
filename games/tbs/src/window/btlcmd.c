@@ -2756,7 +2756,7 @@ enum
 //--------------------------------------------------------------------------
 s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 {
-	struct MenuSprite			   cursor;
+	struct CursorSprite			   cursor;
 	struct MenuSprite			   sprites[4];
 	u8							   available[33]; // 覚えた召喚
 	u8							   ordered[33];	  // 呼べるものを先にした並び
@@ -2774,7 +2774,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 	struct MenuPoint			   cursor_position;
 	const struct SummonDefinition *summon;
 	struct MenuCell				  *nav;
-	struct MenuSprite			  *sprite, *cur;
+	struct MenuSprite			  *sprite;
+	struct CursorSprite			  *cur;
 	s32							   used;
 	s32							   id, tile, affordable;
 	s32							   pressed, repeated, result;
@@ -2981,16 +2982,13 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 		// カーソルは 4 フレームごとに揺れる
 		cursor_position.x = window->x * 8 - 2;
 		cursor_position.y = (row * 2 + window->y) * 8 + 20;
-		/* FAKEMATCH: instruction order only: as u32 words, not through the
-		   union, these stores do not alias cursor_position, so cur is
-		   reloaded before cursor_position.y is stored (differ 2). */
 		((u32 *)cur)[1] = MENU_SPRITE_SIZE_16;
 		((u32 *)cur)[2] = 0;
-		cur->oam.f.tile = Resource_GetBuffer((u16)cursor_handle, (s32)Resource_FixedBlockBTiles);
-		cur->oam.f.x = cursor_position.x + ((gFrameCount & 4) >> 1) - 4;
-		cur->oam.f.y = cursor_position.y - ((gFrameCount & 4) >> 2) + 248;
-		sprite = &cursor;
-		Runtime_PushSlotEntry((s32 *)sprite, 242);
+		cur->tile = Resource_GetBuffer((u16)cursor_handle, (s32)Resource_FixedBlockBTiles);
+		cur->x = cursor_position.x + ((gFrameCount & 4) >> 1) - 4;
+		cur->y = cursor_position.y - ((gFrameCount & 4) >> 2) - 8;
+		sprite = (struct MenuSprite *)&cursor;
+		Runtime_PushSlotEntry(sprite, 242);
 
 		// 必要な属性のスタンバイ数を 8 フレームごとに点滅させる
 		{
@@ -3354,9 +3352,11 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 		pos.y = (row * 2 + window->y) * 8 + 20;
 		/* FAKEMATCH: register choice (spill slots) only: re-pointing cur each
 		   frame orders the spill slots of the cursor address and row*2 as the
-		   native frame does. Measured (2026-10-13): without it differ 34;
-		   the cursor written directly, with no cur and neither pointer
-		   device, 781 instructions for 770 (differ 209). */
+		   native frame does. Measured (2026-10-13, after MenuCell_SetCursor):
+		   without it differ 56; with it but without the assignment before
+		   the loop, differ 14; the cursor written directly, with no cur,
+		   781 instructions for 770 (differ 209). Battle_SelectAbility sets
+		   cur_spr the same two ways, untagged (394 and 36 without them). */
 		cur = &cursor;
 		((u32 *)cur)[1] = MENU_SPRITE_SIZE_16;
 		((u32 *)cur)[2] = 0;

@@ -324,7 +324,7 @@ void Resource_RunCopiedDecoder(s32 a, s32 b)
 
 	base = gDecodeBuffer;
 	RamCode_LoadSlot(49, TileMap_DrawRows, TileMap_DrawRowsCodeSize);
-	/* FAKEMATCH: needed to match: the do-while orders the call's argument loads. */
+	/* FAKEMATCH: one-pass block: its loop notes keep gBgTileBuffer's address load ahead of a's move into r0, as the bytes order the call's arguments. Plain forms measured 2026-10-13: the bare call differ 2 (that load one move later); the tile address in a local differ 2; &gBgTileBuffer[0x4000] and &base[0x1000] through WORK_SLOT differ 3; the routine in a local pointer differ 8; base += 0x1000 after the load call differ 10; gDecodeBuffer + 0x1000 at the declaration differ 26. */
 	do
 	{
 		((void (*)(s32, s32, void *, void *))gWorkSlot[49])(

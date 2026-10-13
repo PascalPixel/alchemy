@@ -342,9 +342,10 @@ or functions is exactly this cheating.
 
   - Layout: `games/<game>/src`, `include`, `sound`, `text`, the same folders
     in both games (`games/tbs`, `games/tla`) and `games/common`; lowercase
-    8.3 file and folder names, `.c` and `.h` (Pascal, 2026-10-08: no evidence
-    for the uppercase style). A scene's file takes its place's full name
-    and may be longer than eight letters (Pascal, 2026-10-12). The one exception follows the GNU convention:
+    file and folder names, `.c` and `.h` (Pascal, 2026-10-08: no evidence
+    for the uppercase style), short and descriptive, with no eight-letter
+    limit (Pascal, 2026-10-13). A scene's file takes its place's full name
+    (Pascal, 2026-10-12). The one exception follows the GNU convention:
     an assembly file the C preprocessor reads (`#include`, `#define`, `#if`)
     is all capitals, name and extension (`NAME.S`); plain assembly such as
     `rom_head.s` is lowercase. The build chooses preprocessing by the
@@ -374,6 +375,9 @@ or functions is exactly this cheating.
     explanations are allowed. Use trailing comments for fields and cases, and
     short blocks or section labels when they help explain a larger operation.
     Keep comments useful and UTF-8. FAKEMATCH explanations (S2) stay English.
+    Each module's header also carries one short English line saying what
+    the module is, for readers who do not read Japanese (Pascal,
+    2026-10-13).
   - Formatting: the showcase uses tabs at four columns, opening braces on
     their own lines, a space before control parentheses, and blank lines
     between logical steps. Group related declarations and constants; align

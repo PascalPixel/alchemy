@@ -600,7 +600,11 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level)
 		/* FAKEMATCH: conditional cancelling updates end CSE before the
 		 * decoder arguments, keeping the VRAM load before the data add.
 		 * They disappear from all 103 instructions in every edition;
-		 * a reassignment or XOR pair instead differs by four rows. */
+		 * a reassignment or XOR pair instead differs by four rows.
+		 * Plain, with data + 0x100 and the VRAM address as the call's
+		 * arguments, the data add is scheduled first: differ 2; through
+		 * the vram local alone: differ 4; through a decoder local:
+		 * differ 79. */
 		if (session)
 		{
 			offset++;

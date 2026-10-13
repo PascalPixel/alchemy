@@ -75,8 +75,6 @@ void Func_02000dc4(void)
 		{
 			s32 speed = 0xc0;
 
-			/* FAKEMATCH: the native starts the speed 0x3000 before the other arguments and finishes it before the id; forced whole or unforced it is finished last (differ 4). */
-			__asm__("" : "+l"(speed));
 			Func_02001068_(23, 0x1f80000, 0x1680000, speed << 6);
 		}
 		Object_LinkObjectAndSetCallback(19, party->current_owner);
@@ -111,8 +109,6 @@ void Func_02000ed0(void)
 	{
 		s32 priority = 0x480;
 
-		/* FAKEMATCH: the native finishes the priority before it loads the callback; unforced the load comes between its halves (differ 2). */
-		asm volatile("" : "+l"(priority));
 		Scheduler_AddOrUpdateCallback(Func_02000bf0, priority);
 	}
 }

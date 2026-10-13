@@ -52,8 +52,6 @@ s32 Func_02000074(void)
 		s32 flag = 0x104;
 		s32 a0;
 
-		/* FAKEMATCH: the native loads the first argument between the two halves of the flag 0x203; written whole, the flag is finished first (differ 2). */
-		__asm__("" : "+l"(flag));
 		a0 = 1;
 		/* FAKEMATCH: and this forced first argument keeps its load right after that half; unforced it loads last. */
 		asm volatile("" : "+l"(a0));

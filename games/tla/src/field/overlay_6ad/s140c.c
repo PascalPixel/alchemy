@@ -14,11 +14,7 @@ s32 Func_0200140c(void)
     struct PartyState *party;
     s32 flag = 0xa30;
 
-    /* FAKEMATCH: ⚓️ builds the flag before it loads the party state's address */
-    asm volatile("" : "+l"(flag));
     party = &gPartyState;
-    /* FAKEMATCH: ⚓️ loads the party state's address before the flag test */
-    asm("" : "+l"(party));
     if (GameFlag_Test(flag))
         Func_02005548(party->map + ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2), 0x5000000);
     return 0;

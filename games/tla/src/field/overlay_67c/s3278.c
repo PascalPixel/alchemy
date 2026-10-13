@@ -14,7 +14,5 @@ void Func_02003278(void)
     VramBlock_LoadCached_(Data_0200536c.vram_entry, 0xc80, buffer);
     MemFree(buffer);
     priority = 0x41c;
-    /* FAKEMATCH: the native builds the priority before loading the callback (differ 2). */
-    __asm__ volatile("" : "+r"(priority));
     Scheduler_AddOrUpdateCallback(Func_020030f4, priority);
 }

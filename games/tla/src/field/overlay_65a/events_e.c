@@ -147,8 +147,6 @@ void Func_02000dcc(void)
         object = Object_GetById(11);
         x = 162;
         z = 216;
-        /* FAKEMATCH: the native starts z before it shifts x; the two barriers keep movs r1, movs r3, lsls r1, movs r2, lsls r3 in that order (differ 2 without them). */
-        __asm__("" : "+r"(x), "+r"(z));
         x <<= 18;
         y = 0;
         /* FAKEMATCH: second barrier of the pair above: y is cleared before z is shifted. */

@@ -10,9 +10,8 @@ void Func_020002f8(void)
 
         saved = *(volatile u16 *)0x05000172;
         index = 9;
-        /* FAKEMATCH: goto loops, which GCC does not treat as loops: ⚓️ loads the palette address inside them */
     first:
-        palette = (volatile u16 *)0x05000160;
+        palette = (u16 *)0x05000160;
         palette[index] = (palette - 1)[index];
         index--;
         if (index != 4)

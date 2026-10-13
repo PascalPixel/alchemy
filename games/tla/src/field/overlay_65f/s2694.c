@@ -402,8 +402,6 @@ L_0200ae32:;
     {
         s32 a1 = 0x101;
         s32 a2 = 60;
-        /* FAKEMATCH: the native loads the later arguments before the first; the plain call loads the first earlier. */
-        asm volatile("" : "+l"(a1), "+l"(a2));
         Func_0200528c(9, a1, a2);
     }
     {
@@ -915,8 +913,6 @@ L_0200b84e:;
     p2 = (s32)gPartyState;
     {
         s32 a0 = *(s32 *)((p2 + 0x214));
-        /* FAKEMATCH: the native loads the first argument before the others; the plain call loads it last. */
-        asm volatile("" : "+l"(a0));
         Object_AttachWorkTargetToObject(a0, 1);
     }
     Func_02001344();

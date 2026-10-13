@@ -50,11 +50,7 @@ s32 Func_02005020(s32 time)
         s32 (*mul)(s32 a, s32 b);
         s32 scale = 128;
 
-        /* FAKEMATCH: ⚓️ loads the multiplier between the halves of the volume */
-        asm("" : "+l"(scale) : "l"(cosine));
         mul = Iwram_MulQ16;
-        /* FAKEMATCH: and builds the rest of the volume only after it */
-        asm("" : "+l"(mul) : "l"(scale));
         volume = mul(scale << 2, cosine);
     }
     if (volume <= 16)

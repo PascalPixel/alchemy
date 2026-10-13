@@ -15,8 +15,8 @@ static __inline__ void Ov682_MesOpen(s32 speaker, s32 flags)
     { \
         /* FAKEMATCH: the native loads the emote and the frames before the actor at every emote of this overlay; pinned to their argument registers they are loaded first, as there. Through an inline the actor comes one row early wherever the emote takes two instructions, and an empty asm barrier at each call moves the literal pools of a long scene. */ \
         register s32 emote_ __asm__("r1") = (emote); \
-        /* FAKEMATCH: the frames, pinned with the emote above. */ \
-        register s32 frames_ __asm__("r2") = (frames); \
+ \
+        s32 frames_ = (frames); \
         Func_02002b1c((actor), emote_, frames_); \
     }
 s32 GameFlag_Test();

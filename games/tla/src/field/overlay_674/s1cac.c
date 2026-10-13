@@ -17,8 +17,6 @@ void Func_02001cac(void)
     __asm__("" : : "r"(first));
     scroll = (volatile u16 *)0x04000014;
     *scroll = first;
-    /* FAKEMATCH: keeps the scroll store before the DMA address is built */
-    __asm__("");
     dma = REG_DMA0;
 
     /* FAKEMATCH: the one-pass block reads the control before its mask is started; without it the mask is started first (differ 2) */

@@ -13,7 +13,5 @@ void VramBlock_Load93(void)
     const u8 *data = Data_0802e89c;
     s32 size = 128;
 
-    /* FAKEMATCH: the native builds the size before the block id; the plain call builds the id first (one reordered pair, differ 2). */
-    asm volatile("" : "+l"(data), "+l"(size));
     VramBlock_LoadCached(93, size, data);
 }

@@ -5,8 +5,6 @@ void Func_02003628(void)
     void *buffer;
     s32 priority;
 
-    /* FAKEMATCH: the native builds the priority before loading the callback. As a plain constant the load comes before the priority's last add (differ 2); the same barrier after the assignment, a one-pass block around it or an empty barrier before the call fix that and move the size's shift above the buffer copy (differ 2). Naming the priority here, before it is set, is the one place measured that keeps both. */
-    __asm__ volatile("" : "+r"(priority));
     Iwram_ClearWords(&Data_02005970, 0x3a4);
     buffer = MemAlloc_(0x400);
     Func_02003c7c(Data_02004351, buffer);

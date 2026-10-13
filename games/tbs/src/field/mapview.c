@@ -160,6 +160,7 @@ s32 Map_InitializePerspectiveScene(void)
 	u16						 *yaw;
 	u16						 *pitch;
 	u16						 *turn;
+	/* FAKEMATCH: the fill word is this function's own volatile local, filled by Dma_Fill32Cell, so it takes the native's frame slot at sp+28; plain Dma_Fill32's inner word lands at sp+16 and the slots after it shift (differ 4 in all six editions, measured 2026-10-13). */
 	volatile u32			  fill;
 	struct FixedPointPosition vector;
 	s32						  far_plane;

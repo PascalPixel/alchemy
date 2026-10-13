@@ -96,45 +96,43 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order)
     (void)gSchedulerStatus;
     index = -1;
     IRQ_LOCK(saved_interrupt_state);
-    {
+    i = 0;
+    if (task->callback == (u32)callback) {
+        task->state = order;
+        index = 0;
+    } else {
+    find_existing:
+        i++;
+        task++;
+        if (i <= 23) {
+            if (task->callback == (u32)callback) {
+                task->state = order;
+                index = i;
+            } else {
+                goto find_existing;
+            }
+        }
+    }
+    task = gSchedulerTaskTable;
+    if (index == -1) {
         i = 0;
-        if (task->callback == (u32)callback) {
+        if (task->callback == 0) {
+            task->callback = (u32)callback;
             task->state = order;
+            task->mask = 0;
             index = 0;
         } else {
-        find_existing:
+        find_empty:
             i++;
             task++;
             if (i <= 23) {
-                if (task->callback == (u32)callback) {
+                if (task->callback == 0) {
+                    task->callback = (u32)callback;
                     task->state = order;
+                    task->mask = 0;
                     index = i;
                 } else {
-                    goto find_existing;
-                }
-            }
-        }
-        task = gSchedulerTaskTable;
-        if (index == -1) {
-            i = 0;
-            if (task->callback == 0) {
-                task->callback = (u32)callback;
-                task->state = order;
-                task->mask = 0;
-                index = 0;
-            } else {
-            find_empty:
-                i++;
-                task++;
-                if (i <= 23) {
-                    if (task->callback == 0) {
-                        task->callback = (u32)callback;
-                        task->state = order;
-                        task->mask = 0;
-                        index = i;
-                    } else {
-                        goto find_empty;
-                    }
+                    goto find_empty;
                 }
             }
         }

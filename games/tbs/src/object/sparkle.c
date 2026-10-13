@@ -526,17 +526,9 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct FieldActor *source)
 	obj = Object_Spawn(285, pos.x, pos.y, pos.z);
 	if (obj != 0)
 	{
-		s32 mask;
-		u8	flags;
-
 		ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_ParticleScript);
 		ObjectDispatch_ApplyArgumentToChildrenFar(obj, 0);
-		mask = 13;
-		flags = ((u8 *)&((struct AnimationObject *)obj->animation)->part[0])[9];
-		mask = -mask;
-		mask &= flags;
-		mask |= 4;
-		((u8 *)&((struct AnimationObject *)obj->animation)->part[0])[9] = mask;
+		((struct AnimationObject *)obj->animation)->part[0].priority = 1;
 	}
 }
 

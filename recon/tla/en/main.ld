@@ -92,7 +92,7 @@
         "*/games/tla/src/system/memory/debugnum.o"(.text)
         "*/recon/tla/raw/08014b70.o"(.text)
         "*/games/tla/src/system/memory/memory.o"(.text)
-        "*/games/common/src/runtime/render.o"(.text)
+        "*/games/tla/src/graphics/render/render.o"(.text)
         "*/recon/tla/raw/08015024.o"(.text)
         "*/recon/tla/raw/08015068.o"(.text)
         "*/recon/tla/raw/080150ac.o"(.text)

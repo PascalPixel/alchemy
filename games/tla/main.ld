@@ -105,7 +105,7 @@ SECTIONS
     "*/games/tla/src/system/memory/debugnum.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00014b70)
     "*/games/tla/src/system/memory/memory.o"(.text)
-    "*/games/common/src/runtime/render.o"(.text)
+    "*/games/tla/src/graphics/render/render.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00015024)
     "*/recon/tla/ja/rom.o"(.rom.00015068)
     "*/recon/tla/ja/rom.o"(.rom.000150e4)

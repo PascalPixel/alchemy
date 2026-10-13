@@ -170,7 +170,7 @@ s32 Shop_SelUse(s32 actor)
 	shop->mode = 12;
 	selection = 0;
 
-	for (;;)
+	while (1)
 	{
 		if (redraw != 0)
 		{
@@ -198,7 +198,7 @@ s32 Shop_SelUse(s32 actor)
 			{
 				AudioCommand_PlayFar(112);
 				result = selection;
-				goto exit_loop;
+				break;
 			}
 			if (status == -4)
 			{
@@ -219,7 +219,7 @@ s32 Shop_SelUse(s32 actor)
 		{
 			AudioCommand_PlayFar(113);
 			result = -1;
-			goto exit_loop;
+			break;
 		}
 
 		if ((gKeysRepeat & KEY_LEFT) != 0)
@@ -258,7 +258,6 @@ s32 Shop_SelUse(s32 actor)
 		}
 	}
 
-exit_loop:
 	UiWork_FinalizeFar(win2, 2);
 	UiWork_FinalizeFar(win1, 2);
 	WaitFrames(1);

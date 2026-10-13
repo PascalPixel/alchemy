@@ -79,7 +79,7 @@ next_page:
 	message_window = UiWindow_CreateFar(0, 17, 30, 3, 2);
 	redraw = 1;
 
-	for (;;)
+	while (1)
 	{
 		count = shop->stock_count;
 		if (redraw != 0)
@@ -100,13 +100,13 @@ next_page:
 			selected = cursor;
 			AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
 			result = 0;
-			goto stock_done;
+			break;
 		}
 		if ((gKeyState & KEY_B) != 0)
 		{
 			AudioCommand_PlayFar(SOUND_MENU_CANCEL);
 			result = -1;
-			goto stock_done;
+			break;
 		}
 		if ((gKeysRepeat & KEY_LEFT) != 0)
 		{
@@ -148,7 +148,6 @@ next_page:
 		WaitFrames(1);
 	}
 
-stock_done:
 	UiWork_FinalizeFar(message_window, 2);
 	UiWork_FinalizeFar(stock_window, 2);
 	WaitFrames(1);
@@ -169,7 +168,7 @@ stock_done:
 	item_window = UiWindow_CreateFar(16, 11, 14, 9, 2);
 	redraw = 1;
 
-	for (;;)
+	while (1)
 	{
 		if (ask_again != 0)
 		{
@@ -210,7 +209,7 @@ stock_done:
 				AudioCommand_PlayFar(SOUND_MENU_CANCEL);
 				UiMessage_ShowAndRestoreState((s32)MsgBuyNotEnoughMoney);
 				result = -1;
-				goto party_done;
+				break;
 			}
 			if (Item_IsCompatibleWithOwnerFar(member, shop->selected_item) == 0)
 			{
@@ -231,13 +230,13 @@ stock_done:
 			Shop_BuyDone(member, shop->selected_item, quantity);
 			Shop_BuySpecialItem((void *)party_window, item_window);
 			result = 0;
-			goto party_done;
+			break;
 		}
 		if ((gKeyState & KEY_B) != 0)
 		{
 			AudioCommand_PlayFar(SOUND_MENU_CANCEL);
 			result = -1;
-			goto party_done;
+			break;
 		}
 		if ((gKeysRepeat & KEY_LEFT) != 0)
 		{
@@ -254,7 +253,6 @@ stock_done:
 		WaitFrames(1);
 	}
 
-party_done:
 	Menu_ReleaseEntryObjectsFar();
 	UiWork_FinalizeFar(item_window, 2);
 	UiWork_FinalizeFar(party_window, 2);
@@ -380,41 +378,41 @@ void Shop_DrawItemPrice(s32 window, s32 item, s32 price, s32 price_mode)
 
 	if (window == 0)
 		return;
-	goto draw;
-cannot_buy:
-	UiText_DrawCharacterAtOffsetFar((s32)MsgCannotBuyThat, window, ITEM_NOTE_X, 8);
-	return;
-show_price:
-	message = (s32)MsgPrice;
-	UiText_DrawCharacterAtOffsetFar(message, window, ITEM_NOTE_X, 8);
-	message -= 3;
-#if defined(TBS_EDITION_FR)
-	UiText_DrawNumberInWindowFar(price, 5, window, 0x18, 8);
-	UiText_DrawCharacterAtOffsetFar(message, window, 0x40, 8);
-#elif defined(TBS_EDITION_ES)
-	UiText_DrawNumberInWindowFar(price, 5, window, 0x20, 8);
-	UiText_DrawCharacterAtOffsetFar(message, window, 0x50, 8);
-#else
-	UiText_DrawNumberInWindowFar(price, 5, window, 0x20, 8);
-	UiText_DrawCharacterAtOffsetFar(message, window, 0x48, 8);
-#endif
-	return;
-draw:
-	RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
-	UiText_DrawCharacterAtOffsetFar(item + (s32)MsgItemName, window, 0, 0);
-	if (price != 0)
-		goto show_price;
-	switch (price_mode)
+	while (1)
 	{
-	case 1:
-		goto cannot_buy;
-	case 2:
-		UiText_DrawCharacterAtOffsetFar((s32)MsgNotBroken, window, ITEM_NOTE_X, 8);
-		break;
-	default:
-		goto show_price;
+		RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
+		UiText_DrawCharacterAtOffsetFar(item + (s32)MsgItemName, window, 0, 0);
+		if (price == 0)
+		{
+			if (price_mode != 1)
+			{
+				if (price_mode == 2)
+				{
+					UiText_DrawCharacterAtOffsetFar((s32)MsgNotBroken, window, ITEM_NOTE_X, 8);
+					break;
+				}
+			}
+			else
+			{
+				UiText_DrawCharacterAtOffsetFar((s32)MsgCannotBuyThat, window, ITEM_NOTE_X, 8);
+				return;
+			}
+		}
+		message = (s32)MsgPrice;
+		UiText_DrawCharacterAtOffsetFar(message, window, ITEM_NOTE_X, 8);
+		message -= 3;
+#if defined(TBS_EDITION_FR)
+		UiText_DrawNumberInWindowFar(price, 5, window, 0x18, 8);
+		UiText_DrawCharacterAtOffsetFar(message, window, 0x40, 8);
+#elif defined(TBS_EDITION_ES)
+		UiText_DrawNumberInWindowFar(price, 5, window, 0x20, 8);
+		UiText_DrawCharacterAtOffsetFar(message, window, 0x50, 8);
+#else
+		UiText_DrawNumberInWindowFar(price, 5, window, 0x20, 8);
+		UiText_DrawCharacterAtOffsetFar(message, window, 0x48, 8);
+#endif
+		return;
 	}
-	return;
 }
 
 //--------------------------------------------------------------------------
@@ -986,7 +984,7 @@ s32 Shop_SelSell(s32 unit_id)
 		shop->mode = 12;
 		redraw = 1;
 
-		for (;;)
+		while (1)
 		{
 			if (redraw != 0)
 			{
@@ -1008,13 +1006,13 @@ s32 Shop_SelSell(s32 unit_id)
 			{
 				AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
 				result = 0;
-				goto done;
+				break;
 			}
 			if ((gKeyState & KEY_B) != 0)
 			{
 				AudioCommand_PlayFar(SOUND_MENU_CANCEL);
 				result = -1;
-				goto done;
+				break;
 			}
 			if ((gKeysRepeat & KEY_LEFT) != 0)
 			{
@@ -1052,7 +1050,7 @@ s32 Shop_SelSell(s32 unit_id)
 			}
 			WaitFrames(1);
 		}
-	done:
+
 		UiWork_FinalizeFar(price_window, 2);
 		WaitFrames(1);
 		if (result != 0)
@@ -1274,7 +1272,7 @@ s32 Shop_SelRepair(s32 unit_id)
 		shop->mode = 12;
 		redraw = 1;
 
-		for (;;)
+		while (1)
 		{
 			if (redraw != 0)
 			{
@@ -1296,13 +1294,13 @@ s32 Shop_SelRepair(s32 unit_id)
 			{
 				AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
 				result = 0;
-				goto done;
+				break;
 			}
 			if ((gKeyState & KEY_B) != 0)
 			{
 				AudioCommand_PlayFar(SOUND_MENU_CANCEL);
 				result = -1;
-				goto done;
+				break;
 			}
 			if ((gKeysRepeat & KEY_LEFT) != 0)
 			{
@@ -1340,7 +1338,6 @@ s32 Shop_SelRepair(s32 unit_id)
 			}
 			WaitFrames(1);
 		}
-	done:
 
 		UiWork_FinalizeFar(price_window, 2);
 		WaitFrames(1);
@@ -1472,7 +1469,7 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
 	UiWork_PushValueSlotFar(shop->selected_item, 2);
 	UiMessage_ShowAndRestoreState(message + 1);
 
-	for (;;)
+	while (1)
 	{
 		if (redraw != 0)
 		{
@@ -1504,13 +1501,13 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
 			Inventory_AddItemFar(unit_id, shop->selected_item);
 			Party_AdjustSixDigitCounterBFar(-price);
 			Party_AdjustCounterCappedAt28Far(1);
-			goto done;
+			break;
 		}
 		if ((gKeyState & KEY_B) != 0)
 		{
 			UiMessage_ShowAndRestoreState((s32)MsgDontWantIt);
 			AudioCommand_PlayFar(0x71);
-			goto done;
+			break;
 		}
 		if ((gKeysRepeat & KEY_LEFT) != 0)
 		{
@@ -1526,6 +1523,5 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
 		}
 		WaitFrames(1);
 	}
-done:
 	shop->selected_item = saved;
 }

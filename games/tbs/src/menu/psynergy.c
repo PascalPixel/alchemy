@@ -874,7 +874,7 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies)
 
 s32 PsynergyMenu_CollectActions(struct BtlUnit *owner, u16 *actions, s32 mode)
 {
-	/* FAKEMATCH: the doubled zero store through the byte-offset cursor makes loop.c replace the counter with the pointer (274 bytes); a single indexed clear keeps the counter (266). */
+	/* FAKEMATCH: the doubled zero store through the byte-offset cursor makes loop.c replace the counter with the pointer (274 bytes); a single indexed clear keeps the counter (266). Measured 2026-10-13: a single store through a pointer walking down from actions + 31, through the byte offset, or as a pre-decrement do-while differs 31 to 33; actions[n] = 0 from 31 down differs 43. */
 	s32 n;
 	s32 passes;
 	s32 count;

@@ -80,13 +80,11 @@ void Shop_StepCursor(void)
 void Shop_InitializeCursorWork(void)
 {
 	struct ShopRuntime *work;
-	volatile s32		zero;
 	s32					slot;
 
 	work = Runtime_AllocateHeapBlock(55, 0xa70);
 	Battle_ResetEffectCounterFar();
-	zero = 0;
-	Dma_Set((const void *)&zero, work, 0x8500029c, REG_DMA3);
+	Dma_Fill32(0, work, 0x29c * 4);
 	work->mode = 12;
 	work->party_member_count = Party_ListActiveOwnersFar(work->party_member_ids);
 	slot = Resource_FindFreeEntry();
@@ -160,7 +158,7 @@ s32 Shop_Run(s32 row, s32 keeper_id)
 	ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
 	shop->cursor.anchor = anchor;
 	UiMessage_ShowAndWait((s32)MsgWeaponShopWelcome);
-loop:
+	while (1)
 	{
 		choice = Menu_SelectEntry11To14Far(choice);
 		shop->party_action = choice;
@@ -195,13 +193,11 @@ loop:
 		}
 		else
 		{
-			goto done;
+			break;
 		}
 		ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
 		UiMessage_ShowAndWait((s32)MsgAnythingElse);
-		goto loop;
 	}
-done:
 	UiMessage_ShowAndWait((s32)MsgShopFarewell);
 	UiWork_FinalizeFar(window, 2);
 	Inn_Cleanup();

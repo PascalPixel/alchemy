@@ -626,7 +626,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
 					case 0x500000:
 						if (entry->flag != -1 && GameFlag_TestFar(entry->flag) == 0)
 						{
-							/* FAKEMATCH: needed to match: the spawned object reuses the actor variable, which keeps both in r5 */
+							/* FAKEMATCH: the spawned object reuses the actor variable, so the one pseudo keeps ObjectTable_Get's result in r5 (adds r5, r0, #0) before the actor_x and actor_z loads. 2026-10-13: a separate object variable, block-local or function-scope in any declaration position, differs 9 of 163: the copy into r5 is gone, the loads read r0 and three pool offsets move. */
 							actor = (struct ObjectRuntime *)Object_CreateFar(
 								22, (x << 20) + (8 << 16), 0, (z << 20) + (8 << 16));
 							if (actor != 0)

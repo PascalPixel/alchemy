@@ -536,6 +536,7 @@ s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object)
 	s32					  cellX;
 	s32					  cellY;
 	s32					  newX;
+	s32					  newZ;
 	s32					  distance;
 
 	target = object->linked_object;
@@ -554,9 +555,8 @@ s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object)
 		if (distance >= step)
 		{
 			newX = object->x + (cellX << 20) / step;
-			/* FAKEMATCH: an explicit libgcc call, an ordinary call where the operator makes a libcall block. Plain form measured 2026-10-13: (cellY << 20) / step, as newX divides, differ 54 (70 instructions instead of 66). */
-			Object_SetMoveTargetFar(
-				object, newX, object->y, object->z + __divsi3(cellY << 20, step));
+			newZ = object->z + (cellY << 20) / step;
+			Object_SetMoveTargetFar(object, newX, object->y, newZ);
 			ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
 		}
 		else

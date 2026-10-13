@@ -864,30 +864,28 @@ s32 BattlePres_DivideBy16(s32 value)
 s32 Runtime_AdjustDebugValueWithButtons(s32 ret)
 {
 	struct BtlWork *battle;
-	/* FAKEMATCH: volatile, as gKeysRepeat is declared (keystate.h): each *keys is a load of its own. A plain pointer differs 22, 73 instructions either way. */
-	volatile u32   *keys;
 
 	if (gKeysHeld & KEY_START)
 	{
-		keys = &gKeysRepeat;
-	loop:
-		battle = BtlWk;
-		if (*keys & 0x20)
-			battle->debug_value -= 1;
-		if (*keys & 0x10)
-			battle->debug_value += 1;
-		if (*keys & 0x40)
-			battle->debug_value -= 100;
-		if (*keys & 0x80)
-			battle->debug_value += 100;
-		if (gKeyState & KEY_A)
+		for (;;)
 		{
-			ret = battle->debug_value;
-		}
-		else
-		{
-			WaitFrames(1);
-			goto loop;
+			battle = BtlWk;
+			if (gKeysRepeat & 0x20)
+				battle->debug_value -= 1;
+			if (gKeysRepeat & 0x10)
+				battle->debug_value += 1;
+			if (gKeysRepeat & 0x40)
+				battle->debug_value -= 100;
+			if (gKeysRepeat & 0x80)
+				battle->debug_value += 100;
+			if (gKeyState & KEY_A)
+				ret = battle->debug_value;
+			else
+			{
+				WaitFrames(1);
+				continue;
+			}
+			break;
 		}
 	}
 	if (gKeysHeld & KEY_SELECT)

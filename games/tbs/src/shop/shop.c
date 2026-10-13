@@ -292,14 +292,14 @@ void UiMessage_ShowAndRestoreState(s32 message_id)
 	{
 		no += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
 	}
-	(*slot)->active = 0xDU;
+	(*slot)->active = 13;
 	UiWork_FinalizePendingCoreFar();
 	UiText_OpenMessageWindowFar(no, 5, 0, (variant << 0x10) | 0x22);
 	while (UiWork_IsCompleteFar() == 0)
 	{
-		WaitFrames(1U);
+		WaitFrames(1);
 	}
-	WaitFrames(1U);
+	WaitFrames(1);
 	state->cursor.anchor->active = saved;
 }
 
@@ -354,10 +354,9 @@ static const u16 Shop_SelectorTileOffsets[30] =
 
 void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 {
-	u32		   shifted = selector << 4;
 	const u16 *offset;
 
-	selector = shifted + 1;
+	selector = (selector << 4) + 1;
 
 	if (count > 0)
 	{

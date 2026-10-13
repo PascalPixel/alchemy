@@ -299,7 +299,7 @@ s32 BattleFx_StepRatioTransition(void)
 	delta = work->zoom - *from;
 	step = &work->zoom_transition_step;
 	(*step)++;
-	/* FAKEMATCH: an explicit libgcc call; written with the operator, tbs-en differs */
+	/* FAKEMATCH: an explicit libgcc call, an ordinary call where the operator makes a libcall block. Plain form measured 2026-10-13: *from + delta * *step / *frames differ 93 (84 instructions instead of 87). */
 	zoom = *from + __divsi3(delta * *step, *frames);
 	work->distance = Iwram_MulQ16(work->far_plane, zoom);
 	gScanlinePitch = work->pitch + 1;

@@ -1256,7 +1256,7 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
 						ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 16);
 						BattleEventRuntime_BeginPhaseFar(133);
 					}
-					/* FAKEMATCH: needed to match: restores the CSE block boundary after the hit block (k << 3 is recomputed) */
+					/* FAKEMATCH: needed to match: restores the CSE block boundary after the hit block (k << 3 is recomputed). Without the block: differ 449; without both of this function's empty blocks: differ 337. */
 					do
 					{
 					} while (0);
@@ -1295,7 +1295,7 @@ void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
 								struct EffectStep *burst;
 								s32				   group = k * 4;
 
-								/* FAKEMATCH: needed to match: restores the CSE block boundary between group's set and group * 8 */
+								/* FAKEMATCH: needed to match: restores the CSE block boundary between group's set and group * 8. Without the block: differ 171; as gBursts + group * 8 + i without it: differ 177. */
 								do
 								{
 								} while (0);
@@ -1394,7 +1394,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
 	cursor = heap_cache;
 	work = *cursor++;
 	canvas = *cursor;
-	/* FAKEMATCH: needed to match: the zero is held in sl through the setup calls */
+	/* FAKEMATCH: needed to match: the zero is held in sl through the setup calls. Storing the literal 0 without the local: differ 66. */
 	zero_val = 0;
 	work->effect = object;
 	BattleFx_BeginTiledCanvas(0);
@@ -1522,7 +1522,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
 			else
 			{
 				idx_a = 1;
-				/* FAKEMATCH: needed to match: i is 160 here, so this is 0: a literal 0 drops a stack slot and shrinks the frame */
+				/* FAKEMATCH: needed to match: i is 160 here, so this is 0: a literal 0 drops a stack slot and shrinks the frame (differ 452). */
 				idx_b = i >> 31;
 			}
 			if (frame <= 87)
@@ -5020,7 +5020,7 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
 	void				   **slot;
 	struct BattleEffectWork *work;
 	void					*canvas;
-	/* FAKEMATCH: needed to match: the family's blitter pair: this effect loads only one */
+	/* FAKEMATCH: needed to match: the family's blitter pair: this effect loads only one. A single blitter, as draw[1] or a plain pointer: differ 202. */
 	DrawRectangle		  draw[2];
 	struct EffectStep	 *marker;
 	s32					  i;
@@ -5298,7 +5298,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
 								view.depth = 314;
 							if (view.depth > 634)
 								view.depth = 634;
-							/* FAKEMATCH: needed to match: the size series A draws its sparks at, kept from that effect and never used here */
+							/* FAKEMATCH: needed to match: the size series A draws its sparks at, kept from that effect and never used here. Without the dead store: differ 479. */
 							cel = 3 - (view.depth - 314) / 128;
 							cel = (i * 4 + frame) % 9;
 							{

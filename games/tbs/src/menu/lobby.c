@@ -963,6 +963,7 @@ static s32 EV15_TALK(s32 id)
 	s32 window;
 	s32 choice;
 	s32 shown;
+	s32 ok;
 
 	Engine_EventBegin();
 	Engine_ActorFaceActor(id, gGameState.selected_actor, 0);
@@ -1003,32 +1004,24 @@ static s32 EV15_TALK(s32 id)
 		Engine_TaskWait(1);
 	}
 	UiWork_Finalize(window, 1);
+	if (choice >= 0)
 	{
-		s32 ok;
-		s32 message;
-
-		if (choice >= 0)
-		{
-			ok = DebugParty_LoadPreset(choice);
-		}
-		else
-		{
-			message = (s32)MsgLobbyTease;
-			goto show;
-		}
-		/* FAKEMATCH: the refusal jumps into the 0x98b branch so the two share one message call, as the reference lays them out. */
-		if (ok != 0)
-		{
-			message = (s32)MsgLobbyNoParameterAsk;
-		show:
-			Engine_EventSetMessage(message);
-			Engine_EventShowMessage(9, 0);
-		}
-		else
-		{
-			Engine_EventSetMessage((s32)MsgLobbySettingsMadeRest);
-			Engine_EventShowMessage(9, 0);
-		}
+		ok = DebugParty_LoadPreset(choice);
+	}
+	if (choice < 0)
+	{
+		Engine_EventSetMessage((s32)MsgLobbyTease);
+		Engine_EventShowMessage(9, 0);
+	}
+	else if (ok != 0)
+	{
+		Engine_EventSetMessage((s32)MsgLobbyNoParameterAsk);
+		Engine_EventShowMessage(9, 0);
+	}
+	else
+	{
+		Engine_EventSetMessage((s32)MsgLobbySettingsMadeRest);
+		Engine_EventShowMessage(9, 0);
 	}
 	Engine_TaskWait(10);
 	Engine_EventEnd();

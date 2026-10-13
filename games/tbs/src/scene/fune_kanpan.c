@@ -1325,18 +1325,10 @@ static void FuneKanpan_SetupHiddenLeaderDeparture(void)
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
 	Actor_SetPosition(23, 0, 0);
 	record = Object_GetById(23);
-	{
-		u16 shown = 0x3000;
-
-		record->facing = shown;
-	}
+	record->facing = 0x3000;
 	Actor_SetPosition(21, 0xe80000, 0x28a0000);
 	record = Object_GetById(21);
-	{
-		s32 shown = 0xb000;
-
-		record->facing = shown;
-	}
+	record->facing = 0xb000;
 	Camera_MoveTo(0xe80000, -1, 0x27c0000, 0);
 	Engine_MapRedraw();
 	Engine_TaskWait(1);

@@ -3374,7 +3374,11 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 
 		pos.x = window->x * 8 - 2;
 		pos.y = (row * 2 + window->y) * 8 + 20;
-		/* FAKEMATCH: re-pointing cur each frame orders the spill slots of the cursor address and row*2 as the native frame does. */
+		/* FAKEMATCH: register choice (spill slots) only: re-pointing cur each
+		   frame orders the spill slots of the cursor address and row*2 as the
+		   native frame does. Measured (2026-10-13): without it differ 34;
+		   the cursor written directly, with no cur and neither pointer
+		   device, 781 instructions for 770 (differ 209). */
 		cur = &cursor;
 		((u32 *)cur)[1] = MENU_SPRITE_SIZE_16;
 		((u32 *)cur)[2] = 0;

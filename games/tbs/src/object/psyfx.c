@@ -2761,7 +2761,10 @@ void BattleFx_SteerLiftedTarget(s32 id)
 	ObjectDispatch_InitializeFar((struct DispatchObject *)src, BattleFx_SourceHoldScript);
 
 	// 持ち手を左右 32 ドットに出し、対象の左右 16 ドットへ動かす
-	/* FAKEMATCH: needed to match: the position is reached through this pointer everywhere but in the steering loop's first part, which names the position itself */
+	/* FAKEMATCH: the position is reached through this pointer everywhere
+	 * but in the steering loop's first part, which names the position
+	 * itself. Measured: the position named everywhere differs 10; the
+	 * pointer everywhere differs 561 (514 instructions for 531). */
 	p = &pos;
 	p->x = work->x;
 	p->y = work->y + (16 << 16);

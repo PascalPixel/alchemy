@@ -784,7 +784,6 @@ void UiWork_ProcessRenderChannels(void)
 {
 	struct UiChannelSlot *channel = UI_WORK->channels;
 	s32					  channel_no = 0;
-	s32					  one = 1;
 
 	do
 	{
@@ -813,7 +812,7 @@ void UiWork_ProcessRenderChannels(void)
 					switch (kind)
 					{
 					case 8:
-						channel->work->state = one;
+						channel->work->state = 1;
 						break;
 					case 9:
 					{
@@ -827,7 +826,7 @@ void UiWork_ProcessRenderChannels(void)
 						channel->colour = pending;
 						channel->outline = pending;
 						channel->line_spacing = pending;
-						channel->work->state = one;
+						channel->work->state = 1;
 						break;
 					}
 					}

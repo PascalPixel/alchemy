@@ -529,12 +529,12 @@ fn placeholder(file: &str, exists: &dyn Fn(&str) -> bool) -> Result<String, Stri
     Ok(format!("{folder}/{found}.c"))
 }
 
-/// Eight letters, or in a game's scene folder a scene's full name (S3).
-fn eight_three(file: &str) -> Result<(), String> {
+/// A short lower-case C file name (S3).
+fn short_name(file: &str) -> Result<(), String> {
     if file.ends_with(".c") && crate::check::hygiene::name_length_fits(file) {
         Ok(())
     } else {
-        Err(format!("{file}: not a lower-case 8.3 C file name; pass --name"))
+        Err(format!("{file}: not a short lower-case C file name; pass --name"))
     }
 }
 
@@ -670,7 +670,7 @@ fn split(arguments: &[String]) -> Result<(), String> {
         Some(name) => return Err(format!("{name}: NEW is a file name; the tail goes beside {file}")),
         None => placeholder(&file, &exists)?,
     };
-    eight_three(&new)?;
+    short_name(&new)?;
     let new_header = unit_header(&new).ok_or("no unit header for the tail")?;
     if let Some(taken) = [&new, &new_header].into_iter().find(|path| exists(path)) {
         return Err(format!("{taken} already exists; pass --name"));
@@ -939,9 +939,9 @@ mod tests {
         assert_eq!(placeholder("a/window2.c", &files(&["a/window.c", "a/window2.c"])).unwrap(), "a/window3.c");
         assert_eq!(placeholder("a/window.c", &files(&["a/window.c", "a/window2.h"])).unwrap(), "a/window3.c");
         assert_eq!(placeholder("a/b5.c", &files(&["a/b5.c"])).unwrap(), "a/b52.c");
-        assert!(eight_three("a/window2.c").is_ok() && eight_three("a/windowing2.c").is_err() && eight_three("a/Window.c").is_err());
-        // A scene's file may be longer, in its game's scene folder and nowhere else.
-        assert!(eight_three("games/tbs/src/scene/haidia_mura2.c").is_ok() && eight_three("games/tbs/src/scene/haidia_mura2.h").is_err());
-        assert!(eight_three("games/tbs/src/scene/common/haidia_mura2.c").is_err() && eight_three("games/tbs/src/menu/haidia_mura2.c").is_err());
+        assert!(short_name("a/window2.c").is_ok() && short_name("a/windowing2.c").is_ok() && short_name("a/Window.c").is_err());
+        // A long name fits in any folder; the tail is a C file.
+        assert!(short_name("games/tbs/src/scene/haidia_mura2.c").is_ok() && short_name("games/tbs/src/scene/haidia_mura2.h").is_err());
+        assert!(short_name("games/tbs/src/scene/common/haidia_mura2.c").is_ok() && short_name("games/tbs/src/menu/haidia_mura2.c").is_ok());
     }
 }

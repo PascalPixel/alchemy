@@ -36,9 +36,8 @@ join is at least 0.7 (runs joined below that were rejected on review).
 flatten merges the runs of one proposed unit (IMAGE:UNIT as in the units
 TSV; main is the main image), or the named sources, into one C file in ROM
 order, in the folder holding most of their functions and named after its
-main module file (the largest 8.3-named one), else after the folder;
---name chooses. A scene's file (directly in games/<game>/src/scene) keeps
-its place's full name, the one name that may be longer than 8.3. Every
+main module file (the largest one with a short lower-case name), else
+after the folder; --name chooses. Every
 linker script under games/ and recon/ and every game's object list
 (games/<game>/objects.tsv) that names the objects, and the compiler
 routing tables, follow; the old files and local headers only they
@@ -390,10 +389,6 @@ fn group(root: &Path, options: &Options, judged: &[super::Judged], target: Decom
     Ok(found)
 }
 
-fn is_eight_three(stem: &str) -> bool {
-    !stem.is_empty() && stem.len() <= 8 && stem.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_')
-}
-
 /// Where the merged file goes and what it is called.
 fn destination(root: &Path, objects: &[String], judged: &[super::Judged], name: Option<&str>) -> Result<String, String> {
     let mut count: BTreeMap<String, usize> = BTreeMap::new();
@@ -418,22 +413,19 @@ fn destination(root: &Path, objects: &[String], judged: &[super::Judged], name: 
                 let module = objects
                     .iter()
                     .filter(|o| Path::new(stem(o)).parent().is_some_and(|p| p.to_string_lossy() == folder))
-                    .filter(|o| is_eight_three(&Path::new(stem(o)).file_name().unwrap_or_default().to_string_lossy()))
+                    .filter(|o| crate::check::hygiene::name_length_fits(&Path::new(stem(o)).file_name().unwrap_or_default().to_string_lossy()))
                     .max_by_key(|o| (bytes.get(*o).copied().unwrap_or(0), std::cmp::Reverse(objects.iter().position(|x| x == *o))));
                 match module {
                     Some(o) => Path::new(stem(o)).file_name().unwrap_or_default().to_string_lossy().into_owned(),
-                    None => {
-                        let leaf = Path::new(&folder).file_name().unwrap_or_default().to_string_lossy().into_owned();
-                        leaf.chars().take(8).collect::<String>().trim_end_matches('_').to_string()
-                    }
+                    None => Path::new(&folder).file_name().unwrap_or_default().to_string_lossy().into_owned(),
                 }
             }
         },
     };
     let path = format!("{folder}/{file}.c");
-    // Eight letters, or a scene's own file under its place's full name (S3).
+    // A short lower-case name (S3).
     if !crate::check::hygiene::name_length_fits(&path) {
-        return Err(format!("{file}: not a lower-case 8.3 name; pass --name"));
+        return Err(format!("{file}: not a short lower-case name; pass --name"));
     }
     let theirs = objects.iter().any(|o| format!("{}.c", stem(o)) == path);
     if !theirs {
@@ -449,9 +441,8 @@ fn destination(root: &Path, objects: &[String], judged: &[super::Judged], name: 
 
 /// An area's main unit, the one defining what its entry table's veneers
 /// name. Where the area has a folder of its own, with entry.s in it, the
-/// unit takes the last word of the folder (haidia_mura/mura.c), or the 8.3
-/// abbreviation of it the folder's files already use. Where areas share
-/// one folder, each with an entry table of its own (scene/entry/NAME.s, as
+/// unit takes the last word of the folder (haidia_mura/mura.c). Where areas
+/// share one folder, each with an entry table of its own (scene/entry/NAME.s, as
 /// a unit row of the object list finds it), the unit keeps its name, the
 /// area's. None when the run is not the main unit or another file already
 /// has that name.
@@ -475,18 +466,6 @@ fn area_word(root: &Path, folder: &str, objects: &[String]) -> Option<String> {
     }
     let leaf = Path::new(folder).file_name()?.to_string_lossy().into_owned();
     let word = leaf.rsplit('_').next()?.to_string();
-    let word = if word.len() <= 8 {
-        word
-    } else {
-        let mut known: Vec<String> = fs::read_dir(root.join(folder))
-            .ok()?
-            .filter_map(|e| e.ok())
-            .filter_map(|e| e.path().file_stem().map(|s| s.to_string_lossy().into_owned()))
-            .filter(|s| is_eight_three(s) && s.len() >= 4 && word.starts_with(s.as_str()))
-            .collect();
-        known.sort_by_key(|s| std::cmp::Reverse(s.len()));
-        known.into_iter().next().unwrap_or_else(|| word.chars().take(8).collect())
-    };
     let path = format!("{folder}/{word}.c");
     let ours = objects.iter().any(|o| format!("{}.c", stem(o)) == path);
     (ours || !root.join(&path).exists()).then_some(word)
@@ -1099,15 +1078,6 @@ mod tests {
         assert!(!applies(&chain(forced(), Edge::End, 0.670)));
         assert!(!applies(&chain(forced(), forced(), 0.516)));
         assert!(!applies(&chain(Edge::Weak("p=0.40".into()), forced(), 0.99)));
-    }
-
-    #[test]
-    fn names_are_eight_three() {
-        assert!(is_eight_three("clear"));
-        assert!(is_eight_three("rom_head"));
-        assert!(!is_eight_three("tilegrids"));
-        assert!(!is_eight_three("Clear"));
-        assert!(!is_eight_three("CLEAR"));
     }
 
     #[test]

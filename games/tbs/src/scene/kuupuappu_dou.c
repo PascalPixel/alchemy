@@ -145,17 +145,19 @@ static void KuupuappuDou_PushBlockAhead(void)
 	/* FAKEMATCH: the table is s16 pairs, read here as one word per heading
 	   (x in the high half, z in the low). The read must stay an array
 	   reference: through a plain s32 pointer cast the address is summed once
-	   into a register and the function no longer matches. */
-	struct FieldActor	  *leader = Object_GetById(0);
-	s32					   direction = leader->facing >> 12;
-	struct FieldActor	  *block;
-	struct FieldActor	  *beyond;
-	union FieldCoordinate  pos[3];
-	union FieldCoordinate *p;
-	s32					   zero;
-	s32					   i;
-	s32					   cx;
-	s32					   cz;
+	   into a register and the function no longer matches. Measured
+	   (2026-10-13): the table as const s32 words, written like
+	   BiribinoMura_FacingCellSteps and indexed directly, compiles to 143
+	   instructions for 146 (differ 79); read through a const s32 local
+	   pointer, differ 94. */
+	struct FieldActor	 *leader = Object_GetById(0);
+	s32					  direction = leader->facing >> 12;
+	struct FieldActor	 *block;
+	struct FieldActor	 *beyond;
+	union FieldCoordinate pos[3];
+	s32					  i;
+	s32					  cx;
+	s32					  cz;
 
 	cx = (leader->x.part.pixel + (DIRECTION_STEP(direction) >> 16)) >> 4;
 	cz = (leader->z.part.pixel + (s16)DIRECTION_STEP(direction)) >> 4;
@@ -179,12 +181,10 @@ static void KuupuappuDou_PushBlockAhead(void)
 		return;
 	}
 	block->terrain_id = 2;
-	zero = 0;
-	p = pos;
-	p[0].fixed = block->x.fixed + (DIRECTION_STEP(direction) & 0xffff0000);
-	p[1].fixed = block->y.fixed;
-	p[2].fixed = block->z.fixed + (DIRECTION_STEP(direction) << 16);
-	if (Object_CheckMovementCollision(block, p) > 0)
+	pos[0].fixed = block->x.fixed + (DIRECTION_STEP(direction) & 0xffff0000);
+	pos[1].fixed = block->y.fixed;
+	pos[2].fixed = block->z.fixed + (DIRECTION_STEP(direction) << 16);
+	if (Object_CheckMovementCollision(block, pos) > 0)
 	{
 		return;
 	}
@@ -193,18 +193,18 @@ static void KuupuappuDou_PushBlockAhead(void)
 	Engine_AudioPlayCue(238);
 	block->speed = 0x3333;
 	block->acceleration = 0x3333;
-	Engine_ObjectSetPosition(block, p[0].fixed, p[1].fixed, p[2].fixed);
+	Engine_ObjectSetPosition(block, pos[0].fixed, pos[1].fixed, pos[2].fixed);
 	leader->speed = 0x3333;
 	leader->acceleration = 0x3333;
-	Engine_ObjectSetPosition(leader, p[0].fixed, p[1].fixed, p[2].fixed);
+	Engine_ObjectSetPosition(leader, pos[0].fixed, pos[1].fixed, pos[2].fixed);
 	Engine_ObjectCommitPosition(block);
 	Engine_AudioPlayCue(288);
-	block->x.fixed = p[0].fixed;
-	block->z.fixed = p[2].fixed;
-	block->velocity_x = zero;
-	block->velocity_z = zero;
-	leader->velocity_x = zero;
-	leader->velocity_z = zero;
+	block->x.fixed = pos[0].fixed;
+	block->z.fixed = pos[2].fixed;
+	block->velocity_x = 0;
+	block->velocity_z = 0;
+	leader->velocity_x = 0;
+	leader->velocity_z = 0;
 	leader->target_x = ACTOR_NO_TARGET;
 	leader->target_z = ACTOR_NO_TARGET;
 	Object_SetMode(leader, 1);
@@ -815,11 +815,7 @@ static void SceneActor_InitSlots10To15AndStartTask(void)
 		selector++;
 	} while (remaining >= 0);
 
-	{
-		s32 rank = 0xc80;
-
-		Engine_TaskAddCallback((s32)FieldScene_RunScene3a7SequenceD, rank);
-	}
+	Engine_TaskAddCallback((s32)FieldScene_RunScene3a7SequenceD, TASK_PRIORITY_SCENE);
 }
 
 static void SceneActor_SetupActors11To14AndInstallTask(void)
@@ -841,11 +837,7 @@ static void SceneActor_SetupActors11To14AndInstallTask(void)
 		no++;
 	} while (i <= 3);
 
-	{
-		s32 rate = 0xc80;
-
-		Engine_TaskAddCallback((s32)FieldScene_RunOpeningAuxiliarySequence, rate);
-	}
+	Engine_TaskAddCallback((s32)FieldScene_RunOpeningAuxiliarySequence, TASK_PRIORITY_SCENE);
 }
 
 s32 KuupuappuDou_ApplyEntryState(void)
@@ -936,7 +928,7 @@ s32 KuupuappuDou_ApplyEntryState(void)
 				Engine_ActorSetAnimation(21, 5);
 				EV21_PSYNERGY();
 			}
-			Engine_TaskAddCallback((s32)SceneState_DispatchByActorZeroDepth, 0xc80);
+			Engine_TaskAddCallback((s32)SceneState_DispatchByActorZeroDepth, TASK_PRIORITY_SCENE);
 			break;
 		case 10:
 		case 11:

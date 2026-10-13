@@ -198,10 +198,9 @@ const struct SceneEvent *Scene_GetEvents(void)
 	return gTakaraShimaEventsOther;
 }
 
-static void EV08_PSYNERGY_1(s32 message_id)
+static void EV08_PSYNERGY_1(void)
 {
-	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-	((void (*)(s32 arg0))Engine_EventBegin)(message_id);
+	Engine_EventBegin();
 	Engine_ActorSetPosition(8, 0, 0);
 	Engine_GameFlagSet(4055);
 	Engine_ItemShowFound(ITEM_NUT, 3);
@@ -358,7 +357,6 @@ static void EV08_PSYNERGY(void)
 	struct FieldActor *entity;
 	s16				  *slot;
 	s32				   column;
-	u8				   zero;
 
 	entity = Object_GetById(8);
 	column = entity->x.fixed >> 20;
@@ -379,33 +377,17 @@ static void EV08_PSYNERGY(void)
 #endif
 
 	entity->motion_flags = 3;
-#if !EDITION_INTERNATIONAL
-	zero = 0;
-#endif
 
 	Engine_EventWait(8);
 	SpawnRadialEffectBurst(8);
 	Engine_AudioPlayCue(136);
 	Engine_EventWait(40);
 
-#if EDITION_INTERNATIONAL
 	Engine_ActorSetSpriteFlags((u8 *)Object_GetById(8), 0);
-#else
-	Engine_ActorSetSpriteFlags((u8 *)Object_GetById(8), zero);
-#endif
 	Engine_ActorSetSpritePriority(8, 3);
 
-#if EDITION_INTERNATIONAL
 	entity->motion_flags = 0;
-#else
-	entity->motion_flags = zero;
-#endif
-	{
-		s32 flags = 2;
-
-		flags |= entity->priority_flags;
-		entity->priority_flags = flags;
-	}
+	entity->priority_flags |= 2;
 
 	Map_CopyCellAttributes(42, 10, 1, 1, column, 10);
 
@@ -1651,11 +1633,8 @@ static void AdvanceActor18AlongEscapeRoute(void)
 	s32 companion19Column;
 	s32 companion14Column;
 
-	/* FAKEMATCH: read into x before the row and assigned after it; read straight into its variable, tbs-en differs */
-	s32 x;
-	x = Object_GetById(18)->x.fixed >> 20;
+	column = Object_GetById(18)->x.fixed >> 20;
 	row = Object_GetById(18)->z.fixed >> 20;
-	column = x;
 	companion19Column = Object_GetById(19)->x.fixed >> 20;
 	companion14Column = Object_GetById(14)->x.fixed >> 20;
 
@@ -1724,9 +1703,9 @@ static void AdvanceActor18AlongEscapeRoute(void)
 
 	Engine_TaskWait(2);
 
-	column -= 1;
-	Engine_MapCopyCellAttributes(column, row, 3, 1, column, Object_GetById(18)->z.fixed >> 20);
-	Map_CopyCellAttributes(0, 0, 3, 1, column, row);
+	Engine_MapCopyCellAttributes(
+		column - 1, row, 3, 1, column - 1, Object_GetById(18)->z.fixed >> 20);
+	Map_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
 #undef IN_COLUMNS
@@ -1851,11 +1830,8 @@ static void AdvanceActor9AlongEscapeRoute(void)
 	s32 companion14Column;
 	s32 companion16Column;
 
-	/* FAKEMATCH: read into x before the row and assigned after it; read straight into its variable, tbs-en differs */
-	s32 x;
-	x = Object_GetById(9)->x.fixed >> 20;
+	column = Object_GetById(9)->x.fixed >> 20;
 	row = Object_GetById(9)->z.fixed >> 20;
-	column = x;
 	companion19Column = Object_GetById(19)->x.fixed >> 20;
 	companion14Column = Object_GetById(14)->x.fixed >> 20;
 	companion16Column = Object_GetById(16)->x.fixed >> 20;
@@ -1928,9 +1904,9 @@ static void AdvanceActor9AlongEscapeRoute(void)
 
 	Engine_TaskWait(2);
 
-	column -= 1;
-	Engine_MapCopyCellAttributes(column, row, 3, 1, column, Object_GetById(9)->z.fixed >> 20);
-	Map_CopyCellAttributes(0, 0, 3, 1, column, row);
+	Engine_MapCopyCellAttributes(
+		column - 1, row, 3, 1, column - 1, Object_GetById(9)->z.fixed >> 20);
+	Map_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
 static void TakaraShima_SettlePushedBlockWest(void)
@@ -2316,12 +2292,9 @@ static void AdvanceActor16AlongEscapeRoute(void)
 	s32 row;
 	s32 companionRow;
 
-	/* FAKEMATCH: read into x before the row and assigned after it; read straight into its variable, tbs-en differs */
-	s32 x;
 	column = Object_GetById(16)->x.fixed >> 20;
-	x = Object_GetById(16)->z.fixed >> 20;
+	row = Object_GetById(16)->z.fixed >> 20;
 	companionRow = Object_GetById(9)->z.fixed >> 20;
-	row = x;
 
 	if (column == 6)
 	{
@@ -2357,9 +2330,8 @@ static void AdvanceActor16AlongEscapeRoute(void)
 
 	Engine_TaskWait(2);
 
-	row -= 1;
-	Engine_MapCopyCellAttributes(column, row, 1, 3, Object_GetById(16)->x.fixed >> 20, row);
-	Map_CopyCellAttributes(0, 0, 1, 3, column, row);
+	Engine_MapCopyCellAttributes(column, row - 1, 1, 3, Object_GetById(16)->x.fixed >> 20, row - 1);
+	Map_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）

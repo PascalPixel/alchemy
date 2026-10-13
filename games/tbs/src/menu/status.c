@@ -104,7 +104,12 @@ s32 CharacterSelector_Run(void)
 	struct CharacterMenuState *work = gMenuWork;
 	s32						   result = 0;
 
-	/* FAKEMATCH: the do-while keeps the cursor store in source order */
+	/* FAKEMATCH: instruction order only: the one-pass block ends the
+	   schedule after the work load, so the zero is set before the slot
+	   offset, as native. Plain forms measured (2026-10-13): the store
+	   without the block, or with result declared first, moves the
+	   offset into the work load's delay (differ 4); storing a constant
+	   0 differs 14, two returns 26. */
 	do
 	{
 		work->selected_slots[0] = result;
@@ -1121,14 +1126,12 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 {
 	struct BtlUnit *state;
 	s32				i;
-	s32				zero;
 	s32				count;
 	s32				mode;
 
 	state = UnitGetFar(id);
-	zero = 0;
 	for (i = 4; i >= 0; i--)
-		output[i] = zero;
+		output[i] = 0;
 
 	count = 0;
 	if (state->hp == 0 && requested == 1)
@@ -1886,12 +1889,7 @@ s32 ItemMenu_SelectItem(void)
 	RenderOutput_ClearListFar(menu->message_window);
 	ItemMenu_HideAllIcons();
 	RenderOutput_RedrawSavedRectFar(menu->status_window);
-	{
-		s32 delay = 200;
-
-		delay <<= 4;
-		Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, delay);
-	}
+	Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
 	return result;
 }
 
@@ -2172,13 +2170,20 @@ s32 Menu_CreateEightEntryObjects(s32 resource)
 
 void ItemMenu_ApplyFlags(const u8 *flags)
 {
-	/* FAKEMATCH: the y-field pointer keeps the category flag index as a counter instead of a walking pointer. */
+	/* FAKEMATCH: the y-field pointer keeps the category flag index as a
+	   counter instead of a walking pointer: it is the loop's 18th real
+	   insn before combine, and loop.c reduces the flags[index] giv only
+	   while its 17 reaches the insn count. Plain forms measured
+	   (2026-10-13): entry->y = value in this loop, in a for loop over
+	   category_icons[index], with ++index in the test or with the two
+	   tests nested, differ 22; value as s16, u16 or s8, 23 to 28;
+	   value += 16 before the sentinel store, differ 2 (the add moves
+	   ahead of the call). */
 	struct InventoryMenuState *base;
 	struct RenderOutput		 **slot;
 	struct RenderOutput		  *entry;
 	s32						   index;
 	s32						   value;
-	u16						   kind;
 
 	base = gMenuWork;
 	ItemMenu_ResetCategory();
@@ -2190,8 +2195,7 @@ void ItemMenu_ApplyFlags(const u8 *flags)
 		entry = *slot++;
 		if (entry != 0 && flags[index] != 0)
 		{
-			kind = 8;
-			entry->x = kind;
+			entry->x = 8;
 			{
 				s16 *y = &entry->y;
 

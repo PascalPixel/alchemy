@@ -475,7 +475,11 @@ void Graphics_InstallBg1VCountHandler(void)
 	s32 zero = 0;
 
 	*(volatile u16 *)address = zero;
-	/* FAKEMATCH: needed to match: the do-while keeps the handler load ahead of the index. */
+	/* FAKEMATCH: instruction order only: the do-while keeps the handler
+	   load ahead of the index. Plain forms measured (2026-10-13):
+	   REG_BG0VOFS = 0 or Io_Write16 with a direct call load the halfword
+	   zero from the pool (differ 6); through an s32 zero the store
+	   matches but the call sets r0 before loading the handler (differ 2). */
 	do
 	{
 		address = (u32)Graphics_ClearBg1ControlBit2;
@@ -1029,7 +1033,13 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 		{
 			output->active = 1;
 			output->kind = 1;
-			/* FAKEMATCH: a char store (alias set 0) keeps the index store ahead of the attribute word in sched2 */
+			/* FAKEMATCH: instruction order only: a char store (alias set 0) keeps
+			   the index store ahead of the attribute word in sched2. Plain forms
+			   measured (2026-10-13) for this and the two typed stores below:
+			   output->index, entry->attributes.word or entry->tile.value alone
+			   differ 2, 2 and 4; all three plain differ 2 (the entry copy moves
+			   after the x and y stores), with entry set first or after the
+			   sentinel still 2, after x or y 38. */
 			*(s8 *)&output->index = Resource_LoadIntoFreeSlot(128);
 			entry = (struct PreviewSprite *)((u8 *)output + 16);
 			output->sentinel = 240;
@@ -3364,7 +3374,11 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 
 		pos.x = window->x * 8 - 2;
 		pos.y = (row * 2 + window->y) * 8 + 20;
-		/* FAKEMATCH: re-pointing cur each frame orders the spill slots of the cursor address and row*2 as the native frame does. */
+		/* FAKEMATCH: register choice (spill slots) only: re-pointing cur each
+		   frame orders the spill slots of the cursor address and row*2 as the
+		   native frame does. Measured (2026-10-13): without it differ 34;
+		   the cursor written directly, with no cur and neither pointer
+		   device, 781 instructions for 770 (differ 209). */
 		cur = &cursor;
 		((u32 *)cur)[1] = MENU_SPRITE_SIZE_16;
 		((u32 *)cur)[2] = 0;
@@ -3750,7 +3764,10 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 				{
 					break;
 				}
-				/* FAKEMATCH: a dead store here keeps the test above from being threaded past the break. */
+				/* FAKEMATCH: a dead store here keeps the test above from being
+				   threaded past the break. Measured (2026-10-13): without it the
+				   test branches straight on (one instruction fewer) and the spill
+				   slots reorder (differ 53). */
 				result = -1;
 			}
 			else
@@ -3922,8 +3939,10 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 	redraw = 0xFFFF;
 	slotId = Resource_LoadIntoFreeSlot(256);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-	/* FAKEMATCH: this value-preserving null initializer is needed to match
-     * infoWin in r10; a direct zero swaps high registers and spill slots. */
+	/* FAKEMATCH: register choice only: this value-preserving null
+     * initializer is needed to match infoWin in r10; a direct zero swaps
+     * high registers and spill slots (2026-10-13: infoWin = 0 differs 94
+     * in ES and IT). */
 	infoWin = (struct UiWindow *)((u32)(u16)sel >> 16);
 #else
 	infoWin = 0;
@@ -5049,11 +5068,11 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 
 			ent = &out[i];
 			actorId = in[i];
-			/* FAKEMATCH: instruction order only: called as returning a
-               doubleword, the call also sets r1, so the r1 reload for
-               class_id no longer depends on the in reload and sched2 loads
-               i * 2 before in, as native (differ 2). */
-			/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+			/* FAKEMATCH: instruction order only: called through a cast as
+               returning a doubleword, the call also sets r1, so the r1
+               reload for class_id no longer depends on the in reload and
+               sched2 loads i * 2 before in, as native (by its prototype,
+               differ 2). */
 			actor = (struct BtlUnit *)(s32)((s64 (*)(s32))UnitGetFar)(actorId);
 			COUNTDOWN->actorId = actorId;
 			COUNTDOWN->unk_40 = 0;

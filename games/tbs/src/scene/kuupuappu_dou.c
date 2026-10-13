@@ -156,7 +156,6 @@ static void KuupuappuDou_PushBlockAhead(void)
 	struct FieldActor	  *beyond;
 	union FieldCoordinate  pos[3];
 	union FieldCoordinate *p;
-	s32					   zero;
 	s32					   i;
 	s32					   cx;
 	s32					   cz;
@@ -183,7 +182,6 @@ static void KuupuappuDou_PushBlockAhead(void)
 		return;
 	}
 	block->terrain_id = 2;
-	zero = 0;
 	p = pos;
 	p[0].fixed = block->x.fixed + (DIRECTION_STEP(direction) & 0xffff0000);
 	p[1].fixed = block->y.fixed;
@@ -205,10 +203,10 @@ static void KuupuappuDou_PushBlockAhead(void)
 	Engine_AudioPlayCue(288);
 	block->x.fixed = p[0].fixed;
 	block->z.fixed = p[2].fixed;
-	block->velocity_x = zero;
-	block->velocity_z = zero;
-	leader->velocity_x = zero;
-	leader->velocity_z = zero;
+	block->velocity_x = 0;
+	block->velocity_z = 0;
+	leader->velocity_x = 0;
+	leader->velocity_z = 0;
 	leader->target_x = ACTOR_NO_TARGET;
 	leader->target_z = ACTOR_NO_TARGET;
 	Object_SetMode(leader, 1);

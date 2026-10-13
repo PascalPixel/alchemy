@@ -75,7 +75,7 @@ static void FieldScene_RunActor13Mode102Step(void)
 
 static void FieldScene_RunActor13Mode105Step(void)
 {
-	Engine_ActorShowEmote(13, 0x105, 0);
+	Actor_ShowEmote(13, 0x105, 0);
 	Engine_EventSetMessage(MsgDebugWontStopYou);
 	Engine_EventShowMessage(13, 0);
 }

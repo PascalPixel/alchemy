@@ -533,8 +533,8 @@ static void EV10_TALK(void)
 	UiText_ShowPositionedMessageAndWait(MsgDebugBodyTornApart, 1);
 	FieldOwner_AdjustFirstValue(0, -100);
 	FieldOwner_AdjustFirstValue(1, -100);
-	Owner_AdjustFirstValue(2, -33);
-	Owner_AdjustFirstValue(3, -100);
+	FieldOwner_AdjustFirstValue(2, -33);
+	FieldOwner_AdjustFirstValue(3, -100);
 	UnitEpAdd(0, -50);
 	UnitEpAdd(1, -40);
 	UnitEpAdd(2, -35);

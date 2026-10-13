@@ -136,12 +136,19 @@ pub(crate) fn count(root: &Path) -> Result<Counts, String> {
             }
         }
     }
-    // Macros a FAKEMATCH tag explains count at each use, by the device
-    // their body holds (S2: every device is counted, a macro's too).
-    let mut tagged: BTreeMap<String, Vec<usize>> = BTreeMap::new();
-    for (_, text) in &sources {
-        for (name, kinds) in tagged_macros(text) {
-            tagged.insert(name, kinds);
+    // Macros whose body holds a device count at each use, by that device
+    // (S2: every device is counted, a macro's too). A macro a header
+    // defines reaches its own game and, from games/common, both; a macro
+    // a C file defines reaches only that file.
+    let mut header_macros: BTreeMap<&str, BTreeMap<String, Vec<usize>>> = BTreeMap::new();
+    for (path, text) in &sources {
+        if !path.ends_with(".h") {
+            continue;
+        }
+        for (game, folder, _) in &games {
+            if path.starts_with(folder) || path.starts_with("games/common") {
+                header_macros.entry(game).or_default().extend(tagged_macros(text));
+            }
         }
     }
     let mut counts = Counts::new();
@@ -162,6 +169,10 @@ pub(crate) fn count(root: &Path) -> Result<Counts, String> {
                 )
             {
                 continue;
+            }
+            let mut tagged = header_macros.get(game).cloned().unwrap_or_default();
+            if path.ends_with(".c") {
+                tagged.extend(tagged_macros(text));
             }
             let found = devices(&without_proven(&code_only(text)), &emitting, &tagged);
             for (kind, value) in KINDS.iter().zip(found) {
@@ -277,10 +288,26 @@ pub(crate) fn tagged_macro_names(root: &Path) -> &'static BTreeSet<String> {
     })
 }
 
-/// Each macro a FAKEMATCH tag explains, with the KINDS indexes of the
-/// devices its body holds: the tag in the comment right above its
-/// #define, or in its body. A body with no device the count knows by kind
-/// (a forced temporary, a cast) is a tagged-macro use.
+/// A macro body without the outer `do { ... } while (0)` that wraps a
+/// statement macro's whole body: C's idiom for a macro used as one
+/// statement, the source's own layer (S2), not a device. Blocks inside it
+/// still count.
+fn without_statement_wrapper(code: &str) -> String {
+    let joined = code.replace("\\\n", " ");
+    let wrapper = regex::Regex::new(r"(?s)^(\s*#\s*define\s+[A-Za-z_][A-Za-z0-9_]*(?:\([^)]*\))?)\s*do\s*\{(.*)\}\s*while\s*\(\s*0\s*\)\s*$")
+        .expect("static pattern");
+    match wrapper.captures(&joined) {
+        Some(c) => format!("{} {{{}}}", &c[1], &c[2]),
+        None => joined,
+    }
+}
+
+/// Each macro whose body holds a device, with the KINDS indexes of those
+/// devices, so a device counts at every use (S2). A FAKEMATCH tag in the
+/// comment right above its #define, or in its body, explains it; a tagged
+/// body with no device the count knows by kind (a forced temporary, a
+/// cast) is a tagged-macro use. An untagged macro counts its pins, barriers
+/// and one-pass blocks all the same: dropping a tag hides nothing.
 fn tagged_macros(text: &str) -> Vec<(String, Vec<usize>)> {
     let lines: Vec<&str> = text.lines().collect();
     let define = regex::Regex::new(r"^\s*#\s*define\s+([A-Za-z_][A-Za-z0-9_]*)").expect("static pattern");
@@ -301,9 +328,7 @@ fn tagged_macros(text: &str) -> Vec<(String, Vec<usize>)> {
             k -= 1;
             above.insert_str(0, lines[k]);
         }
-        if !(above.contains("FAKEMATCH") || body.contains("FAKEMATCH")) {
-            continue;
-        }
+        let tagged = above.contains("FAKEMATCH") || body.contains("FAKEMATCH");
         let code = code_only(&body);
         let templates = asm_statements(&code);
         let mut kinds = Vec::new();
@@ -314,16 +339,18 @@ fn tagged_macros(text: &str) -> Vec<(String, Vec<usize>)> {
             kinds.push(1);
         }
         let volatile = code.matches("volatile").count() > templates.len();
-        if volatile {
+        if tagged && volatile {
             kinds.push(3);
         }
-        if one_pass(&code) > 0 {
+        if one_pass(&without_statement_wrapper(&code)) > 0 {
             kinds.push(5);
         }
-        if kinds.is_empty() {
+        if tagged && kinds.is_empty() {
             kinds.push(6);
         }
-        found.push((name, kinds));
+        if !kinds.is_empty() {
+            found.push((name, kinds));
+        }
     }
     found
 }
@@ -493,10 +520,41 @@ mod tests {
 #define TEMP(v) { u32 t_ = (v); g = t_; } /* FAKEMATCH: temporary. */
 ";
         let tagged: BTreeMap<String, Vec<usize>> = tagged_macros(header).into_iter().collect();
-        assert_eq!(tagged.get("SET"), Some(&vec![5]));
+        // SET's only block is the statement macro's own wrapper: its tag
+        // still counts it, as a tagged macro, not as a one-pass block.
+        assert_eq!(tagged.get("SET"), Some(&vec![6]));
         assert_eq!(tagged.get("TEMP"), Some(&vec![6]));
         assert!(!tagged.contains_key("PLAIN"));
         let code = code_only("void f(void)\n{\n\tSET(1);\n\tSET(2);\n\tPLAIN(3);\n\tTEMP(4);\n\tdo\n\t{\n\t\tg = 5;\n\t} while (0);\n}\n");
-        assert_eq!(devices(&code, &BTreeSet::new(), &tagged), [0, 0, 0, 0, 0, 3, 1]);
+        assert_eq!(devices(&code, &BTreeSet::new(), &tagged), [0, 0, 0, 0, 0, 1, 3]);
+    }
+
+    #[test]
+    fn a_statement_macros_wrapper_is_its_layer_and_a_block_inside_it_a_device() {
+        let header = "#define LAYER(v) \\
+	do \\
+	{ \\
+		g = (v); \\
+	} while (0)
+#define INNER(v) \\
+	do \\
+	{ \\
+		u32 s_; \\
+		do \\
+		{ \\
+			s_ = (v); \\
+		} while (0); \\
+		g = s_; \\
+	} while (0)
+#define HALF() } while (0); g = 0; } while (0)
+#define BARRIER() do { asm(\"\"); } while (0)
+";
+        let found: BTreeMap<String, Vec<usize>> = tagged_macros(header).into_iter().collect();
+        assert!(!found.contains_key("LAYER"), "the wrapper alone is no device");
+        assert_eq!(found.get("INNER"), Some(&vec![5]), "an untagged macro's inner block still counts");
+        assert_eq!(found.get("HALF"), Some(&vec![5]), "a macro closing another's blocks is no wrapper");
+        assert_eq!(found.get("BARRIER"), Some(&vec![1]));
+        let code = code_only("void f(void)\n{\n\tLAYER(1);\n\tINNER(2);\n\tINNER(3);\n\tBARRIER();\n}\n");
+        assert_eq!(devices(&code, &BTreeSet::new(), &found), [0, 1, 0, 0, 0, 2, 0]);
     }
 }

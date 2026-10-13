@@ -143,8 +143,8 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0x2001);
 	REG_BG2PA = 0x100;
-	Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
-	Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, graphics, 0, 0);
+	BattleFx_LoadResource((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
+	BattleFx_LoadResource((s32)&ResourceId_SparkleDots, graphics, 0, 0);
 	BattlePres_ConfigureEffectDisplay();
 	REG_BLDCNT = 0x3f44;
 	REG_WININ = 0x3337;
@@ -341,8 +341,8 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0x2001);
 	REG_BG2PA = 0x100;
-	Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet, work->sheet + 0x604, 1, 1);
-	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0, 0);
+	BattleFx_LoadResource((s32)&ResourceId_BlueBeamSheet, work->sheet + 0x604, 1, 1);
+	BattleFx_LoadResource((s32)&ResourceId_ParticleSpritesD, work->sheet, 0, 0);
 	BattlePres_ConfigureEffectDisplay();
 	REG_BLDCNT = 0x3f44;
 	REG_WININ = 0x3337;
@@ -602,7 +602,7 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
 	}
 
 	// 筋の絵と、mode で選ぶ色
-	Resource_LoadAndDecompress((s32)&ResourceId_FiveModeImage, work->sheet, 0, 0);
+	BattleFx_LoadResource((s32)&ResourceId_FiveModeImage, work->sheet, 0, 0);
 	switch (mode)
 	{
 	case 0:
@@ -783,7 +783,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
 	draw.upper = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 11, 2);
 	draw.lower = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
-	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	BattleFx_LoadResource((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 	if (mode == 0)
 		resource = (s32)&ResourceId_OrangePaletteA;
 	else
@@ -982,12 +982,12 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 	else
 		BattleFx_BeginCanvasLayer(1);
 	REG_BLDALPHA = 0x1010;
-	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-	Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
+	BattleFx_LoadResource((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	BattleFx_LoadResource((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
 	if (TwelveMode_Records[mode * 7] == 0)
-		Resource_LoadAndDecompress((s32)&ResourceId_BeamSequenceImage, work->sheet + 0xc80, 0, 0);
+		BattleFx_LoadResource((s32)&ResourceId_BeamSequenceImage, work->sheet + 0xc80, 0, 0);
 	else
-		Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage, work->sheet + 0xc80, 0, 0);
+		BattleFx_LoadResource((s32)&ResourceId_TwelveModeImage, work->sheet + 0xc80, 0, 0);
 	switch (TwelveMode_Records[mode * 7 + 3])
 	{
 	case 0:
@@ -1011,7 +1011,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 		break;
 	}
 	Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(resource), 128);
-	Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet + 0x3200, 1, 0);
+	BattleFx_LoadResource((s32)&ResourceId_SmokeSheet, work->sheet + 0x3200, 1, 0);
 
 	for (k = 0; k != 1; k++)
 	{
@@ -1373,7 +1373,7 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 	canvas = *cursor;
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0);
-	Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1, 1);
+	BattleFx_LoadResource((s32)&ResourceId_FlashBurstSheet, work->sheet, 1, 1);
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
 	work->transfer_mode = 2;
 	work->transfer_value = 75; // 転送のたびに 3/4 へ減らして残像にする
@@ -1522,7 +1522,7 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect)
 		GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_NURI);
 	draw[1] = (DrawRectangle)heap_cache[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
 	blit = draw;
-	Resource_LoadAndDecompress((s32)&ResourceId_SwordSlashSheet, work->sheet, 1, 1);
+	BattleFx_LoadResource((s32)&ResourceId_SwordSlashSheet, work->sheet, 1, 1);
 	work->transfer_mode = 1; // 転送のたびにキャンバスを 0 で消す
 	work->transfer_value = 0;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);

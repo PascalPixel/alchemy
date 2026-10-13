@@ -103,8 +103,8 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
 		BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 1);
 		draw[0] = (DrawRectangle)heap[7];
 	}
-	Resource_LoadAndDecompress((s32)&ResourceId_MagentaSwirlSheet, work->sheet, 1, 1);
-	Resource_LoadAndDecompress((s32)&ResourceId_MagentaTailSheet, Ram_MapCellBuffer, 1, 0);
+	BattleFx_LoadResource((s32)&ResourceId_MagentaSwirlSheet, work->sheet, 1, 1);
+	BattleFx_LoadResource((s32)&ResourceId_MagentaTailSheet, Ram_MapCellBuffer, 1, 0);
 	if (mode == 0)
 	{
 		void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
@@ -202,7 +202,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
 	EffectPosition_ApplyStepAndYOffset(work->effect->actors[work->effect->count - 1], &last);
 	first.x += (last.x - first.x) / 2;
 	REG_BG2X = (64 - first.x) << 8;
-	Resource_LoadAndDecompress((s32)&ResourceId_SpiderWebSheet, work->sheet, 1, 1);
+	BattleFx_LoadResource((s32)&ResourceId_SpiderWebSheet, work->sheet, 1, 1);
 	work->transfer_mode = 1;
 	work->transfer_value = 0;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);

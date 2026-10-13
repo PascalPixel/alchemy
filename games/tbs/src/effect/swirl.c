@@ -2270,7 +2270,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 		s32 mag;
 		s32 ang;
 
-		/* FAKEMATCH: the mask is loaded into the magnitude before the random word is taken in, as the native code does (ldr r6, =0x1ff; ands r6, r0). 2026-10-13: Random16() & 0x1FF, 0x1FF & Random16() and mag = Random16() followed by mag &= 0x1FF all differ 41 of 779: the and takes the random word as its destination, copied into r6, with the mask in r3, and the pool offsets shift. */
+		/* FAKEMATCH: the mask is loaded into the magnitude before the random word is taken in, as the native code does (ldr r6, =0x1ff; ands r6, r0). 2026-10-13: Random16() & 0x1FF, 0x1FF & Random16() and mag = Random16() followed by mag &= 0x1FF all differ 41 of 779, 780 instructions: the and takes the random word as its destination, copied into r6, with the mask in r3, and the pool offsets shift. */
 		mag = 0x1FF;
 		mag &= Random16();
 		ang = Random16() & 0xFFFF;

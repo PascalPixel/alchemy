@@ -94,7 +94,7 @@ void Korosseo_RestoreCompetitor(s32 id)
 		Engine_EventWait(30);
 	}
 	zero = 0;
-	/* FAKEMATCH: needed to match: byte accesses keep the stage zero before the start-position load. */
+	/* FAKEMATCH: needed to match: byte accesses keep the stage zero before the start-position load. As state->stage and state->mode stores, of zero, a literal 0 or zero = 0: differ 6. */
 	control = (u8 *)state;
 	control[(u32) & ((struct CompetitorState *)0)->stage] = zero;
 	control[(u32) & ((struct CompetitorState *)0)->mode] = 15;

@@ -1091,12 +1091,8 @@ void ObjectSystem_Configure(s32 mode)
 			Runtime_AllocateHeapBlock(3, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
 	}
 	PaletteDma_LoadBlock();
-	zero = 0;
-	Dma_Set((const void *)&zero, objects,
-		0x85000000 | (ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject) / 4), REG_DMA3);
-	zero = 0;
-	Dma_Set((const void *)&zero, states,
-		0x85000000 | (ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry) / 4), REG_DMA3);
+	Dma_Fill32Cell(zero, 0, objects, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
+	Dma_Fill32Cell(zero, 0, states, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
 	VramBlock_LoadCached(93, 128, Object_ShadowTiles);
 	RamCode_LoadSlot(53, Tile_CopyStrided, Tile_CopyStridedCodeSize);
 }

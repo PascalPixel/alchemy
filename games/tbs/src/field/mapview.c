@@ -169,10 +169,7 @@ s32 Map_InitializePerspectiveScene(void)
 		~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
 	Blend_SetDarkenTarget0(0);
 	work = Runtime_AllocateHeapBlock(8, sizeof(struct PerspectiveWork));
-	fill = 0;
-	Dma_Set(&fill, work,
-		DMA_ENABLE32 | DMA_SRC_FIXED32 | DMA_32BIT | (sizeof(struct PerspectiveWork) / 4),
-		REG_DMA3);
+	Dma_Fill32Cell(fill, 0, work, sizeof(struct PerspectiveWork));
 	work->view_x = 0;
 	work->view_y = 0;
 	work->scale_x = 0x200000;
@@ -903,9 +900,7 @@ void DisplayBlend_StartScript(u16 *script)
 	volatile u32			 zero;
 
 	started = 0;
-	zero = 0;
-	state = &((struct MapState *)gMapWork[0])->blend;
-	Dma_Set((const void *)&zero, state, 0x85000003, REG_DMA3);
+	Dma_Fill32Cell(zero, 0, state = &((struct MapState *)gMapWork[0])->blend, sizeof(*state));
 	if (*script != 0xffff)
 	{
 		state->script = script;

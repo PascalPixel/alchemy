@@ -660,16 +660,14 @@ void BattleFx_StartFadeOverlay(void *object)
 
 	work = Runtime_AllocateBlock(36, 28);
 	tiles = Runtime_AllocateHeapBlock(14, 0x400);
-	fill = 0x11111111;
-	Dma_Set((const void *)&fill, tiles, 0x85000080, REG_DMA3);
+	Dma_Fill32Cell(fill, 0x11111111, tiles, 0x200);
 	VramBlock_LoadCached(94, 0x200, tiles);
 	Runtime_ReleaseHeapBlock(14);
 	Scheduler_AddOrUpdateCallback(Object_EffectSpawnCallback, 0xc80);
 	Io_Write16(0x3f9e, &REG_BLDCNT);
 	Io_Write16(16, &REG_BLDALPHA);
 	Io_Write16(31, &REG_BLDY);
-	fill = 0;
-	Dma_Set((const void *)&fill, work, 0x85000007, REG_DMA3);
+	Dma_Fill32Cell(fill, 0, work, 28);
 	if (object == NULL)
 		object = ObjectTable_Get(gGameState.selected_actor);
 	work[6] = (u32)object;

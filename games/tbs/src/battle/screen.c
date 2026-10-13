@@ -351,10 +351,8 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 		work->second_mode = 1;
 		work->mode = 1;
 		work->busy = 0;
-		fill = 0x33333333;
-		Dma_Set((void *)&fill, (void *)0x06005000, 0x85000008, REG_DMA3);
-		fill = 0;
-		Dma_Set((void *)&fill, (void *)0x06005100, 0x85000008, REG_DMA3);
+		Dma_Fill32Cell(fill, 0x33333333, (void *)0x06005000, 0x20);
+		Dma_Fill32Cell(fill, 0, (void *)0x06005100, 0x20);
 		REG_BG1CNT = 0xc04;
 		REG_BG0CNT |= 2;
 		work->mode = 2;

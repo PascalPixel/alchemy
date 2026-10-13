@@ -60,12 +60,8 @@ void Graphics_ClearCharacterBlockAndPalette(s32 alt)
 		vram = 0x06008000;
 		pal = 0x05000100;
 	}
-	fill = v;
-	Dma_Set((const void *)&fill, (void *)vram, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 7680,
-		REG_DMA3);
-	fill = 0;
-	Dma_Set((const void *)&fill, (void *)pal, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 64,
-		REG_DMA3);
+	Dma_Fill32Cell(fill, v, (void *)vram, 0x7800);
+	Dma_Fill32Cell(fill, 0, (void *)pal, 0x100);
 }
 
 typedef s32 (*PackedDecoder)(u8 *source, u32 destination, u32 fill);
@@ -1200,10 +1196,8 @@ void DisplayScroll_InitObjectTable(void)
 	u32			 j;
 
 	SCROLL_OBJECTS = Runtime_BumpAllocateAlternatePool(128 * sizeof(struct DisplayScrollObject));
-	fill = 0;
-	Dma_Set((void *)&fill, (void *)0x06010000, 0x85001800, REG_DMA3);
-	fill = 0x11111111;
-	Dma_Set((void *)&fill, (void *)0x06016000, 0x85000040, REG_DMA3);
+	Dma_Fill32Cell(fill, 0, (void *)0x06010000, 0x6000);
+	Dma_Fill32Cell(fill, 0x11111111, (void *)0x06016000, 0x100);
 
 	entry = (u32 *)SCROLL_OBJECTS;
 	for (i = 0; i < 8; i++)

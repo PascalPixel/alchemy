@@ -25,6 +25,16 @@ struct DmaRegisters
 			(volatile u32 *)0x040000d4);                                        \
 	}
 
+// Dma_Fill32 with the caller's word: a function that fills several blocks
+// keeps one cell for all of them, and its address is formed once.
+// 何度も埋める関数は語を一つだけ持ち、埋めるたびに値を入れて送る
+#define Dma_Fill32Cell(cell, value, destination, size)                           \
+	{                                                                            \
+		(cell) = (value);                                                        \
+		Dma_Set((const void *)&(cell), (destination), 0x85000000 | ((size) / 4), \
+			(volatile u32 *)0x040000d4);                                         \
+	}
+
 // pret の CpuFill32: BIOS の CpuSet で同じ語を埋める
 #define Cpu_Fill32(value, destination, size)                                         \
 	{                                                                                \

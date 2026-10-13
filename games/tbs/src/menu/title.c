@@ -41,7 +41,6 @@
 #include "io_reg.h"
 #include "vram_block.h"
 #include "ram_buffer.h"
-#include "call.h"
 #include "field_scene.h"
 #include "map_scroll.h"
 

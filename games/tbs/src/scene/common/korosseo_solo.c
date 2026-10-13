@@ -13,7 +13,6 @@
 #include "battle_unit.h"
 #include "fieldobj.h"
 #include "animspr.h"
-#include "call.h"
 #include "text/msg_ids.h"
 
 void SceneActor_PlacePartyAtSavedTiles(void)

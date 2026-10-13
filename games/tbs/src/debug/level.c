@@ -28,7 +28,6 @@
 #include "level.h"
 #include "field_service.h"
 #include "fieldobj.h"
-#include "call.h"
 #include "party_state.h"
 #include "types.h"
 #include "io_reg.h"

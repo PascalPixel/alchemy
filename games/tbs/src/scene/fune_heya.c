@@ -29,7 +29,6 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "call.h"
 #include "field_service.h"
 #include "text/msg_ids.h"
 #include "callback_scheduler.h"

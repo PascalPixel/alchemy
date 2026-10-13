@@ -33,7 +33,6 @@
 #include "battle_effect_runtime.h"
 #include "object_lookup.h"
 #include "field_service.h"
-#include "call.h"
 #include "iwram_call.h"
 #include "frame.h"
 #include "ability_ids.h"

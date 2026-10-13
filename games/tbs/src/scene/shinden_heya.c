@@ -36,7 +36,6 @@
 #include "field_effect.h"
 #include "field_scene.h"
 #include "facing_object.h"
-#include "call.h"
 #include "text/msg_ids.h"
 #include "io_reg.h"
 #include "save_state.h"

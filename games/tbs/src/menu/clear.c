@@ -57,7 +57,6 @@
 #include "item.h"
 #include "game_state.h"
 #include "uiwindow.h"
-#include "call.h"
 #include "text/msg_ids.h"
 #include "frame.h"
 #include "map_scroll.h"

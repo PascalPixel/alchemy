@@ -10,7 +10,6 @@
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "torebi_heya.h"
-#include "call.h"
 #include "field_event.h"
 #include "text/msg_ids.h"
 #include "types.h"

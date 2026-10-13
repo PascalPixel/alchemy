@@ -38,7 +38,6 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "call.h"
 #include "ability_ids.h"
 #include "objcmd.h"
 

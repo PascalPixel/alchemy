@@ -32,7 +32,6 @@
 #include "system.h"
 #include "iwram_call.h"
 #include "map_scroll.h"
-#include "call.h"
 #include "text/msg_ids.h"
 #include "fieldobj.h"
 

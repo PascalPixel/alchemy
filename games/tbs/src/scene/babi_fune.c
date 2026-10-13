@@ -39,7 +39,6 @@
 #include "fixed_point_position.h"
 #include "tbs_edition.h"
 #include "scene_ids.h"
-#include "call.h"
 #include "fieldobj.h"
 #include "iowrite.h"
 #include "map_scroll.h"

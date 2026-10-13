@@ -35,7 +35,6 @@
 #include "system.h"
 #include "edition.h"
 #include "menu_test.h"
-#include "call.h"
 #include "engcall.h"
 #include "types.h"
 #include "io_reg.h"

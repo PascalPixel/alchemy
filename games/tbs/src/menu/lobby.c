@@ -38,7 +38,6 @@
 #include "iwram_call.h"
 #include "character.h"
 #include "mem.h"
-#include "call.h"
 #include "tbs_edition.h"
 #include "text/msg_ids.h"
 #include "callback_scheduler.h"

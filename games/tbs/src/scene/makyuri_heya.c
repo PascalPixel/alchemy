@@ -54,7 +54,6 @@
 #include "field_scene.h"
 #include "text/msg_ids.h"
 #include "edition.h"
-#include "call.h"
 #include "global_cells.h"
 #include "map_render_work.h"
 #include "io_reg.h"

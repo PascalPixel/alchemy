@@ -82,7 +82,6 @@ u8 *Resource_DecompressLz(const u8 *source, u8 *destination)
 {
 	s32		  token;
 	u32		  length;
-	u32		  sentinel;
 	u32		  control;
 	u8		  byte;
 	u8		 *start;
@@ -97,12 +96,10 @@ u8 *Resource_DecompressLz(const u8 *source, u8 *destination)
 		return (u8 *)literal;
 	command = source + token;
 	control = *command;
-	sentinel = 128;
-	sentinel <<= 1; // 8 ビット読み終えたしるし
 	base = literal;
 	start = destination;
 	command++;
-	control |= sentinel;
+	control |= 0x100; // 8 ビット読み終えたしるし
 	for (;;)
 	{
 		if ((control & 1) != 0)
@@ -135,10 +132,8 @@ u8 *Resource_DecompressLz(const u8 *source, u8 *destination)
 		if (control == 0)
 		{
 			control = *command;
-			sentinel = 128;
-			sentinel <<= 1;
 			command++;
-			control |= sentinel;
+			control |= 0x100;
 		}
 	}
 	return start;

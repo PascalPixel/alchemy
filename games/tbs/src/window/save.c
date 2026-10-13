@@ -387,56 +387,41 @@ s32 SaveState_WriteSlotPair(s32 arg0)
 s32 SaveState_ProcessSelectedSlot(void)
 {
 	void *buffer;
-	s32	  value;
 	s32	  result;
 	s32	  found;
-	s32	  error;
+	u8	 *dst;
 
 	buffer = Runtime_BumpAllocateAlternatePool(0x1000);
 	result = 0;
-	value = gSaveSlot;
-	if (value != -1)
+	if (gSaveSlot == -1)
+		return -1;
+	found = SaveState_InitializeWorkspace();
+	if (found != 0)
 	{
-		found = SaveState_InitializeWorkspace();
+		UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
+		result = -9;
+	}
+	else
+	{
+		found = SaveState_ReadRecordPayload(gSaveSlot, buffer);
 		if (found != 0)
 		{
-			error = 9;
-			UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
-			/* FAKEMATCH: this eliminated self-assignment ends CSE before
-             * the shared negate block. Without it, the unbound error uses
-             * r6 for both constants and needs a copy to r7 (differ 6).
-             * Scoping, a slot pointer and an inline return leave that
-             * allocation; duplicating the negate tail still differs 4. */
-			gSaveSlot += 0;
-			goto negate;
+			UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
+			result = -2;
 		}
-		else
+		dst = (u8 *)buffer + (s32)gSaveStamp;
+		dst -= (s32)gSaveBuffer;
+		Iwram_CopyWords(dst, gSaveStamp, 16);
+		found = SaveState_WriteRecord(gSaveSlot, buffer);
+		if (found != 0)
 		{
-			u8 *dst;
-
-			found = SaveState_ReadRecordPayload(gSaveSlot, buffer);
-			if (found != 0)
-			{
-				UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
-				result = -2;
-			}
-			dst = (u8 *)buffer + (s32)gSaveStamp;
-			dst -= (s32)gSaveBuffer;
-			Iwram_CopyWords(dst, gSaveStamp, 16);
-			found = SaveState_WriteRecord(gSaveSlot, buffer);
-			if (found != 0)
-			{
-				UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
-				error = 3;
-			negate:
-				result = -error;
-			}
+			UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
+			result = -3;
 		}
-		SaveState_ReleaseWorkspace();
-		MemFree(buffer);
-		value = result;
 	}
-	return value;
+	SaveState_ReleaseWorkspace();
+	MemFree(buffer);
+	return result;
 }
 
 s32 SaveState_ConfirmAndProcessSelectedSlot(void)

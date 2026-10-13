@@ -858,7 +858,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 			work->particles[i].variant = -1;
 		presentation->initial_value = 1;
 		work->frame = 0;
-		for (frame = 0; frame != 192; frame++, work->frame++)
+		frame = 0;
+		do
 		{
 			s32 angle = frame << 8;
 			/* FAKEMATCH: count fixed in r2, as in the reference; as a hard register it leaves the division temp canonical in cse, so the compare and +3 use the temp as in the reference. */
@@ -884,12 +885,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 			if (mode == 1)
 			{
 				if ((gKeysRepeat & 3) && frame > 16)
-					goto skipped;
+					break;
 			}
 			else
 			{
 				if ((gKeysRepeat & 3) && frame > 4)
-					goto skipped;
+					break;
 			}
 			{
 				s32 hold;
@@ -1029,8 +1030,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 			}
 			work->transfer_pending = 1;
 			WaitFrames(1);
-		}
-	skipped:
+			frame++;
+			work->frame++;
+		} while (frame != 192);
 		WaitFrames(1);
 		presentation->initial_value = 0;
 		Scheduler_RemoveCallback(Camera_AdvanceBg2Reference);

@@ -7,7 +7,10 @@ use crate::patch::{patch_name, Patch};
 use crate::assets::compression::{
     encode_delta7, encode_halfword_lz, encode_icon4, encode_tilemap_delta, encode_zero_skip,
 };
-use crate::assets::image::{bgr555_palette_of, indexed_bitmap_png, GbaBpp};
+use crate::assets::image::{
+    bgr555_palette_of, indexed_bitmap_png, png_like, tile_sheet_pixels, tiles_from_metatiles,
+    GbaBpp, TileLayout,
+};
 
 pub const PACKER: LzMachine = LzMachine::new(4123, 485, 4126, 272);
 
@@ -23,11 +26,7 @@ pub fn is_recipe(built: &str) -> bool {
         [form, codec] => (*form, Some(*codec)),
         _ => return false,
     };
-    let tiles = ["4bpp", "8bpp"].iter().any(|bpp| {
-        form.strip_prefix(bpp)
-            .is_some_and(|shape| shape.is_empty() || obj_shape(shape).is_some())
-    });
-    let form = tiles
+    let form = tile_form(form).is_some()
         || data_form(form)
         || matches!(
             form,
@@ -643,6 +642,204 @@ fn strip_picture(
     Ok(output)
 }
 
+/// The depth and OBJ shape, in tiles, a tile form names: `.4bpp` and `.8bpp`
+/// read single 8x8 tiles, `.4bpp32x16` and the like whole sprites (A4).
+pub fn tile_form(form: &str) -> Option<(GbaBpp, (usize, usize))> {
+    let bpp = match form.get(..4)? {
+        "4bpp" => GbaBpp::Bpp4,
+        "8bpp" => GbaBpp::Bpp8,
+        _ => return None,
+    };
+    match &form[4..] {
+        "" => Some((bpp, (1, 1))),
+        shape => obj_shape(shape).map(|shape| (bpp, shape)),
+    }
+}
+
+fn depth_of(form: &str) -> Result<GbaBpp, String> {
+    tile_form(form)
+        .map(|(bpp, _)| bpp)
+        .ok_or_else(|| format!(".{form} is not a tile form"))
+}
+
+/// A tile sheet drawn again: the PNG `png` read as the tile form `from`, its
+/// tiles laid out as the OBJ sprites of the tile form `to`, `wide` sprites to
+/// a row (every sprite in one row when `None`), in the PNG's own palette,
+/// transparency and bit depth. Both forms must be tile forms of one depth:
+/// a 4bpp stream read as 8bpp pixels is no drawing of it. The drawing moves
+/// the PNG's own pixels, every palette index whole: a 4bpp build keeps only
+/// each index's low four bits, so a sheet drawn in palette banks would lose
+/// its banks if drawn again from the built tiles.
+pub fn redraw(png: &[u8], from: &str, to: &str, wide: Option<usize>) -> Result<Vec<u8>, String> {
+    if depth_of(from)? != depth_of(to)? {
+        return Err(format!(".{from} and .{to} differ in depth"));
+    }
+    let tiles = build_file(&format!("SHEET.{from}"), png)?;
+    let sheet = Picture::read("the sheet", png, from)?;
+    let drawing = drawn_as(&sheet.tiles, png, to, wide)?;
+    builds_the_same(&drawing, to, &tiles)?;
+    keeps_the_pixels(&drawing, to, &[sheet])?;
+    Ok(drawing)
+}
+
+/// The tiles a part list of tile parts builds, drawn again as one sheet of
+/// the OBJ sprites of `to` (see `redraw`). Every part must be a plain tile
+/// part of `to`'s depth, and the parts' PNGs must share one palette unless
+/// `palette` names the PNG whose palette the sheet takes.
+pub fn redraw_parts(
+    list: &[u8],
+    to: &str,
+    wide: Option<usize>,
+    palette: Option<&[u8]>,
+    sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
+) -> Result<Vec<u8>, String> {
+    let depth = depth_of(to)?;
+    let text = std::str::from_utf8(list).map_err(|_| "the part list is not text".to_string())?;
+    let mut pngs = Vec::new();
+    for line in text.lines().filter(|line| !line.trim().is_empty()) {
+        let fields: Vec<&str> = line.split('\t').map(str::trim).collect();
+        let [part, form] = fields.as_slice() else {
+            return Err(format!("{line:?} is no tile part; only tile parts redraw"));
+        };
+        match tile_form(form) {
+            Some((bpp, _)) if bpp == depth => {}
+            Some(_) => return Err(format!("part {part} is .{form}, not the depth of .{to}")),
+            None => return Err(format!("{line:?} is no tile part; only tile parts redraw")),
+        }
+        pngs.push((*part, *form, sibling(&input_name(&format!("{part}.{form}"))?)?));
+    }
+    let (first_part, _, first) = pngs.first().ok_or("the part list names no part")?;
+    let like = match palette {
+        Some(png) => png,
+        None => {
+            let shared = crate::assets::image::png_palette(first).map_err(|error| error.0)?;
+            for (part, _, png) in &pngs[1..] {
+                if crate::assets::image::png_palette(png).map_err(|error| error.0)? != shared {
+                    return Err(format!(
+                        "parts {first_part} and {part} differ in palette; name the palette to draw in"
+                    ));
+                }
+            }
+            first.as_slice()
+        }
+    };
+    let tiles = build_file_with("LIST.parts", list, sibling)?;
+    let parts = pngs
+        .iter()
+        .map(|(part, form, png)| Picture::read(&format!("part {part}"), png, form))
+        .collect::<Result<Vec<_>, _>>()?;
+    let sheet: Vec<u8> = parts.iter().flat_map(|part| part.tiles.iter().copied()).collect();
+    let drawing = drawn_as(&sheet, like, to, wide)?;
+    builds_the_same(&drawing, to, &tiles)?;
+    keeps_the_pixels(&drawing, to, &parts)?;
+    Ok(drawing)
+}
+
+/// A picture read as a tile form: its own pixels, and the same pixels as
+/// 8x8 tiles in the order the form reads them, one byte a pixel. Every
+/// palette index stays whole, where a 4bpp build keeps only its low four
+/// bits; the build of the form packs these tiles.
+struct Picture<'a> {
+    name: String,
+    form: &'a str,
+    width: usize,
+    pixels: Vec<u8>,
+    tiles: Vec<u8>,
+}
+
+impl<'a> Picture<'a> {
+    fn read(name: &str, png: &[u8], form: &'a str) -> Result<Self, String> {
+        let (_, (wide, high)) =
+            tile_form(form).ok_or_else(|| format!(".{form} is not a tile form"))?;
+        let image = indexed_bitmap_png(png).map_err(|error| format!("{name}: {}", error.0))?;
+        let (width, height) = (image.width as usize, image.height as usize);
+        let pixels = indices(&image);
+        let tiles = metatiles(&pixels, width, height, GbaBpp::Bpp8, wide, high)
+            .map_err(|error| format!("{name}: {error}"))?;
+        Ok(Self {
+            name: name.to_owned(),
+            form,
+            width,
+            pixels,
+            tiles,
+        })
+    }
+
+    /// How many of the form's sprites the picture holds to a row.
+    fn sprites_wide(&self) -> usize {
+        let (_, (wide, _)) = tile_form(self.form).expect("a picture is read as a tile form");
+        self.width / (wide * 8)
+    }
+}
+
+/// `tiles`, 8x8 tiles of one byte a pixel, laid out as the OBJ sprites of
+/// `form`, `wide` to a row (every sprite in one row when `None`): the pixels
+/// and their width.
+fn laid_out(tiles: &[u8], form: &str, wide: Option<usize>) -> Result<(Vec<u8>, usize), String> {
+    let (_, (sprite_wide, sprite_high)) =
+        tile_form(form).ok_or_else(|| format!(".{form} is not a tile form"))?;
+    let count = tiles.len() / 64;
+    if count == 0 || !tiles.len().is_multiple_of(64) || !count.is_multiple_of(sprite_wide * sprite_high) {
+        return Err(format!(
+            "{count} tiles are not whole {}x{} sprites",
+            sprite_wide * 8,
+            sprite_high * 8
+        ));
+    }
+    let sprites = count / (sprite_wide * sprite_high);
+    let wide = wide.unwrap_or(sprites);
+    if wide == 0 || !sprites.is_multiple_of(wide) {
+        return Err(format!("{sprites} sprites do not fill rows of {wide}"));
+    }
+    let layout = TileLayout {
+        meta: (sprite_wide, sprite_high),
+        tiles_wide: wide * sprite_wide,
+    };
+    let sheet = tiles_from_metatiles(tiles, GbaBpp::Bpp8, layout);
+    let pixels =
+        tile_sheet_pixels(&sheet, GbaBpp::Bpp8, layout.tiles_wide).map_err(|error| error.0)?;
+    Ok((pixels, layout.tiles_wide * 8))
+}
+
+/// `tiles` (see `laid_out`) drawn as the OBJ sprites of `form`, `wide` to a
+/// row, in the palette, transparency and bit depth of the PNG `like`.
+fn drawn_as(tiles: &[u8], like: &[u8], form: &str, wide: Option<usize>) -> Result<Vec<u8>, String> {
+    let (pixels, width) = laid_out(tiles, form, wide)?;
+    png_like(like, &pixels, width).map_err(|error| error.0)
+}
+
+/// `form` must build exactly `tiles`, the source's own build, from a drawing.
+fn builds_the_same(png: &[u8], form: &str, tiles: &[u8]) -> Result<(), String> {
+    if build_file(&format!("SHEET.{form}"), png)? != tiles {
+        return Err(format!("the drawing does not build the same tiles as .{form}"));
+    }
+    Ok(())
+}
+
+/// The last word on a drawing: read as `form` and laid out again as each
+/// source picture was, in turn, it gives back every pixel of each, every
+/// palette index whole.
+fn keeps_the_pixels(png: &[u8], form: &str, sources: &[Picture]) -> Result<(), String> {
+    let drawing = Picture::read("the drawing", png, form)?;
+    let mut rest = drawing.tiles.as_slice();
+    for source in sources {
+        let (tiles, after) = rest.split_at(source.tiles.len().min(rest.len()));
+        let kept = laid_out(tiles, source.form, Some(source.sprites_wide()))
+            .is_ok_and(|(pixels, _)| pixels == source.pixels);
+        if !kept {
+            return Err(format!(
+                "the drawing does not give back every pixel of {} as .{}",
+                source.name, source.form
+            ));
+        }
+        rest = after;
+    }
+    if !rest.is_empty() {
+        return Err("the drawing holds more tiles than its source".into());
+    }
+    Ok(())
+}
+
 fn obj_shape(name: &str) -> Option<(usize, usize)> {
     let (wide, high) = name.split_once('x')?;
     let shape = (
@@ -661,15 +858,8 @@ fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
         "gbapal" => bgr555_palette_of(&image).map_err(|error| format!("{built}: {}", error.0))?,
         "bitmap" => indices(&image),
         "strips" => strip_picture(built, &image)?,
-        "4bpp" => metatiles(&indices(&image), width, height, GbaBpp::Bpp4, 1, 1)?,
-        "8bpp" => metatiles(&indices(&image), width, height, GbaBpp::Bpp8, 1, 1)?,
         form if form.starts_with("4bpp") || form.starts_with("8bpp") => {
-            let bpp = if form.starts_with('4') {
-                GbaBpp::Bpp4
-            } else {
-                GbaBpp::Bpp8
-            };
-            let (wide, high) = obj_shape(&form[4..])
+            let (bpp, (wide, high)) = tile_form(form)
                 .ok_or_else(|| format!("{built}: .{form} names no OBJ shape"))?;
             metatiles(&indices(&image), width, height, bpp, wide, high)?
         }
@@ -786,6 +976,237 @@ mod tests {
         assert!(is_recipe("graphics/title/picture.strips"));
         let odd = crate::assets::image::png_from_bitmap(&pixels[..16 * 12], &palette, 16).unwrap();
         assert!(build_file("P.strips", &odd).unwrap_err().contains("whole 8x8 tiles"));
+    }
+
+    /// Two 16x16 pictures, a box of colour 1 and a box of colour 2, drawn
+    /// one above the other as a plain sheet.
+    fn two_boxes_stacked() -> Vec<u8> {
+        (0..16 * 32)
+            .map(|index| {
+                let (x, y) = (index % 16, index / 16 % 16);
+                let colour = 1 + (index / (16 * 16)) as u8;
+                if x == 0 || y == 0 || x == 15 || y == 15 { colour } else { 0 }
+            })
+            .collect()
+    }
+
+    /// An indexed PNG of `depth` bits, `width` wide, in sixteen colours whose
+    /// blue rises by `blue` a step, colour 0 transparent when `clear`.
+    fn indexed(pixels: &[u8], width: usize, depth: png::BitDepth, blue: u8, clear: bool) -> Vec<u8> {
+        let rgb: Vec<u8> = (0..16u8).flat_map(|colour| [colour * 8, colour * 8, colour * blue]).collect();
+        crate::assets::image::encode_png(
+            width,
+            pixels.len() / width,
+            png::ColorType::Indexed,
+            depth,
+            Some(&rgb),
+            clear.then_some(&[0u8][..]),
+            &crate::assets::image::packed_rows(pixels, width, depth),
+        )
+        .unwrap()
+    }
+
+    fn bit_depth(png: &[u8]) -> png::BitDepth {
+        png::Decoder::new(std::io::Cursor::new(png)).read_info().unwrap().info().bit_depth
+    }
+
+    #[test]
+    fn tile_forms_name_their_depth_and_hardware_shape() {
+        assert_eq!(tile_form("8bpp64x32"), Some((GbaBpp::Bpp8, (8, 4))));
+        assert_eq!(tile_form("4bpp"), Some((GbaBpp::Bpp4, (1, 1))));
+        assert_eq!(tile_form("4bpp24x8"), None, "no OBJ is 24 wide");
+        assert_eq!(tile_form("4bpp08x08"), None, "a shape is written as the build reads it");
+        assert_eq!(tile_form("bitmap"), None);
+    }
+
+    #[test]
+    fn a_stacked_sheet_redraws_as_its_sprites_side_by_side() {
+        let palette: Vec<u8> = (0..16u16).flat_map(|colour| (colour * 0x0421).to_le_bytes()).collect();
+        let png = crate::assets::image::png_from_bitmap(&two_boxes_stacked(), &palette, 16).unwrap();
+        let tiles = build_file("S.4bpp16x16", &png).unwrap();
+        assert_eq!(tiles, build_file("S.4bpp", &png).unwrap(), "one sprite wide, both forms agree");
+        let row = redraw(&png, "4bpp16x16", "4bpp16x16", None).unwrap();
+        assert_eq!(redraw(&png, "4bpp", "4bpp16x16", None).unwrap(), row);
+        let image = indexed_bitmap_png(&row).unwrap();
+        assert_eq!((image.width, image.height), (32, 16));
+        assert_eq!((image.pixels[0], image.pixels[16], image.pixels[17]), (1, 2, 2));
+        assert_eq!(image.palette, indexed_bitmap_png(&png).unwrap().palette);
+        assert_eq!(build_file("S.4bpp16x16", &row).unwrap(), tiles);
+        assert_ne!(build_file("S.4bpp", &row).unwrap(), tiles, "a plain sheet reads rows across both");
+        let column = redraw(&row, "4bpp16x16", "4bpp16x16", Some(1)).unwrap();
+        assert_eq!(indexed_bitmap_png(&column).unwrap().pixels, indexed_bitmap_png(&png).unwrap().pixels);
+    }
+
+    #[test]
+    fn a_4bpp_png_redraws_at_its_own_depth_and_back() {
+        let png = indexed(&two_boxes_stacked(), 16, png::BitDepth::Four, 8, false);
+        assert_eq!(bit_depth(&png), png::BitDepth::Four);
+        let row = redraw(&png, "4bpp16x16", "4bpp16x16", None).unwrap();
+        assert_eq!(bit_depth(&row), png::BitDepth::Four);
+        assert_eq!(indexed_bitmap_png(&row).unwrap().width, 32);
+        assert_eq!(build_file("S.4bpp16x16", &row).unwrap(), build_file("S.4bpp16x16", &png).unwrap());
+        assert_eq!(redraw(&row, "4bpp16x16", "4bpp16x16", Some(1)).unwrap(), png, "and back, byte for byte");
+    }
+
+    #[test]
+    fn a_redrawing_keeps_the_transparency() {
+        let png = indexed(&two_boxes_stacked(), 16, png::BitDepth::Eight, 8, true);
+        let row = redraw(&png, "4bpp16x16", "4bpp16x16", None).unwrap();
+        let (plte, trns) = crate::assets::image::png_palette(&row).unwrap();
+        assert_eq!(trns, [0]);
+        assert_eq!((plte, trns), crate::assets::image::png_palette(&png).unwrap());
+        assert!(indexed_bitmap_png(&row).unwrap().has_transparency);
+    }
+
+    #[test]
+    fn a_png_redraws_only_from_a_tile_form_of_the_same_depth() {
+        let png = indexed(&two_boxes_stacked(), 16, png::BitDepth::Eight, 8, false);
+        assert!(redraw(&png, "bitmap", "4bpp16x16", None).unwrap_err().contains(".bitmap is not a tile form"));
+        assert!(redraw(&png, "4bpp16x16", "frames", None).unwrap_err().contains(".frames is not a tile form"));
+        assert!(redraw(&png, "4bpp16x16", "8bpp16x16", None).unwrap_err().contains("differ in depth"));
+        assert!(redraw(&png, "8bpp", "4bpp16x16", None).unwrap_err().contains("differ in depth"));
+        assert!(redraw(&png, "8bpp", "8bpp16x16", None).is_ok(), "an 8bpp sheet of the same picture");
+    }
+
+    /// The two boxes as the parts A and B of a part list, beside it.
+    fn two_parts(b_blue: u8, b_clear: bool) -> impl Fn(&str) -> Result<Vec<u8>, String> {
+        let pixels = two_boxes_stacked();
+        let (top, bottom) = pixels.split_at(16 * 16);
+        let a = indexed(top, 16, png::BitDepth::Eight, 8, false);
+        let b = indexed(bottom, 16, png::BitDepth::Eight, b_blue, b_clear);
+        move |name: &str| match name.to_ascii_lowercase().as_str() {
+            "a.png" => Ok(a.clone()),
+            "b.png" => Ok(b.clone()),
+            _ => Err(format!("no {name}")),
+        }
+    }
+
+    #[test]
+    fn a_part_list_redraws_as_one_sheet_of_its_tiles() {
+        let sibling = two_parts(8, false);
+        let list = b"A\t4bpp16x16\nB\t4bpp\n";
+        let row = redraw_parts(list, "4bpp16x16", None, None, &sibling).unwrap();
+        assert_eq!(build_file("S.4bpp16x16", &row).unwrap(), build_file_with("L.parts", list, &sibling).unwrap());
+        let sheet = indexed(&two_boxes_stacked(), 16, png::BitDepth::Eight, 8, false);
+        assert_eq!(row, redraw(&sheet, "4bpp", "4bpp16x16", None).unwrap());
+    }
+
+    #[test]
+    fn a_part_list_redraws_only_tile_parts_of_the_same_depth() {
+        let sibling = two_parts(8, false);
+        let refused = |list: &str, to: &str| redraw_parts(list.as_bytes(), to, None, None, &sibling).unwrap_err();
+        assert!(refused("A\t4bpp16x16\nB\t8bpp\n", "4bpp16x16").contains("part B is .8bpp, not the depth of .4bpp16x16"));
+        assert!(refused("A\t4bpp\nB\t4bpp\n", "8bpp16x16").contains("part A is .4bpp"));
+        assert!(refused("A\t4bpp\nM\ttable\n", "4bpp16x16").contains("no tile part"));
+        assert!(refused("A\t4bpp\tMAP\t0\t4\n", "4bpp16x16").contains("no tile part"));
+        assert!(refused("A\t4bpp\n", "bitmap").contains(".bitmap is not a tile form"));
+        assert!(refused("\n", "4bpp16x16").contains("names no part"));
+    }
+
+    #[test]
+    fn parts_in_different_palettes_redraw_only_in_a_named_palette() {
+        let list = b"A\t4bpp16x16\nB\t4bpp16x16\n";
+        for sibling in [two_parts(16, false), two_parts(8, true)] {
+            let error = redraw_parts(list, "4bpp16x16", None, None, &sibling).unwrap_err();
+            assert!(error.contains("parts A and B differ in palette"), "{error}");
+            let b = sibling("b.png").unwrap();
+            let row = redraw_parts(list, "4bpp16x16", None, Some(&b), &sibling).unwrap();
+            let palette = crate::assets::image::png_palette(&row).unwrap();
+            assert_eq!(palette, crate::assets::image::png_palette(&b).unwrap());
+        }
+    }
+
+    #[test]
+    fn a_redrawing_that_cannot_build_the_same_tiles_is_refused() {
+        let png = indexed(&two_boxes_stacked(), 16, png::BitDepth::Eight, 8, false);
+        let tiles = build_file("S.4bpp16x16", &png).unwrap();
+        assert!(redraw(&png, "4bpp16x16", "4bpp16x16", Some(3)).unwrap_err().contains("rows of 3"));
+        assert!(redraw(&png, "4bpp16x16", "4bpp64x64", None).unwrap_err().contains("whole 64x64"));
+        assert!(redraw(&png, "4bpp16x16", "4bpp24x8", None).unwrap_err().contains("not a tile form"));
+        // The drawing is laid out from the sheet's pixels and judged against
+        // the sheet's own build. A drawing laid out by the form that checks
+        // it builds back, so the check is shown a drawing of another form:
+        // the boxes side by side, which a plain sheet reads across both.
+        let sheet = Picture::read("the sheet", &png, "4bpp16x16").unwrap();
+        let row = drawn_as(&sheet.tiles, &png, "4bpp16x16", None).unwrap();
+        assert!(builds_the_same(&row, "4bpp16x16", &tiles).is_ok());
+        let error = builds_the_same(&row, "4bpp", &tiles).unwrap_err();
+        assert_eq!(error, "the drawing does not build the same tiles as .4bpp");
+    }
+
+    /// The two boxes drawn in OBJ palette banks 10 and 13, as a sheet in
+    /// 256 colours whose 4bpp tiles the game shows in those palettes: each
+    /// index carries its bank in its high four bits, and the lower box is
+    /// filled with its bank's colour 0, which a 4bpp build writes as 0.
+    fn two_boxes_in_banks() -> Vec<u8> {
+        two_boxes_stacked()
+            .iter()
+            .enumerate()
+            .map(|(index, colour)| match (index < 16 * 16, colour) {
+                (true, 0) => 0,
+                (true, colour) => 0xa0 | colour,
+                (false, colour) => 0xd0 | colour,
+            })
+            .collect()
+    }
+
+    /// An 8-bit indexed PNG in 256 colours, `width` wide.
+    fn in_banks(pixels: &[u8], width: usize) -> Vec<u8> {
+        let rgb: Vec<u8> = (0..=255u8).flat_map(|index| [index & 0xf0, index << 4, 0]).collect();
+        crate::assets::image::encode_png(
+            width,
+            pixels.len() / width,
+            png::ColorType::Indexed,
+            png::BitDepth::Eight,
+            Some(&rgb),
+            None,
+            pixels,
+        )
+        .unwrap()
+    }
+
+    #[test]
+    fn a_sheet_in_palette_banks_redraws_and_back_keeping_every_index() {
+        let pixels = two_boxes_in_banks();
+        let png = in_banks(&pixels, 16);
+        let tiles = build_file("S.4bpp16x16", &png).unwrap();
+        let row = redraw(&png, "4bpp16x16", "4bpp16x16", None).unwrap();
+        let drawn = indexed_bitmap_png(&row).unwrap();
+        assert_eq!((drawn.width, drawn.height), (32, 16));
+        assert_eq!((drawn.pixels[0], drawn.pixels[16], drawn.pixels[32 + 17]), (0xa1, 0xd2, 0xd0));
+        assert_eq!(build_file("S.4bpp16x16", &row).unwrap(), tiles);
+        assert_eq!(redraw(&row, "4bpp16x16", "4bpp16x16", Some(1)).unwrap(), png, "and back, every index");
+        assert_eq!(redraw(&png, "4bpp", "4bpp", Some(2)).unwrap(), png, "and as itself");
+        // The two boxes as parts of a part list keep their banks the same way.
+        let (top, bottom) = pixels.split_at(16 * 16);
+        let (a, b) = (in_banks(top, 16), in_banks(bottom, 16));
+        let sibling = move |name: &str| match name.to_ascii_lowercase().as_str() {
+            "a.png" => Ok(a.clone()),
+            "b.png" => Ok(b.clone()),
+            _ => Err(format!("no {name}")),
+        };
+        let list = b"A\t4bpp16x16\nB\t4bpp\n";
+        assert_eq!(redraw_parts(list, "4bpp16x16", None, None, &sibling).unwrap(), row);
+    }
+
+    #[test]
+    fn a_drawing_that_does_not_give_back_its_source_is_refused() {
+        let png = in_banks(&two_boxes_in_banks(), 16);
+        let tiles = build_file("S.4bpp16x16", &png).unwrap();
+        let sheet = Picture::read("the sheet", &png, "4bpp16x16").unwrap();
+        let row = drawn_as(&sheet.tiles, &png, "4bpp16x16", None).unwrap();
+        assert!(keeps_the_pixels(&row, "4bpp16x16", std::slice::from_ref(&sheet)).is_ok());
+        // The row drawn from the built tiles keeps only each index's low four
+        // bits: it builds the same tiles, and the last check refuses it.
+        let nibbles: Vec<u8> = sheet.tiles.iter().map(|index| index & 0x0f).collect();
+        let lost = drawn_as(&nibbles, &png, "4bpp16x16", None).unwrap();
+        assert!(builds_the_same(&lost, "4bpp16x16", &tiles).is_ok());
+        let error = keeps_the_pixels(&lost, "4bpp16x16", std::slice::from_ref(&sheet)).unwrap_err();
+        assert_eq!(error, "the drawing does not give back every pixel of the sheet as .4bpp16x16");
+        // A drawing that holds more than its source is refused too.
+        let top = Picture::read("the top box", &in_banks(&two_boxes_in_banks()[..16 * 16], 16), "4bpp16x16");
+        let error = keeps_the_pixels(&row, "4bpp16x16", &[top.unwrap()]).unwrap_err();
+        assert_eq!(error, "the drawing holds more tiles than its source");
     }
 
     #[test]

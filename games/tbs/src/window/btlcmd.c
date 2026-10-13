@@ -3033,18 +3033,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 		//------------------------------------------------------------------
 		// 入力
 		//------------------------------------------------------------------
+		MenuCell_SetCursor(page, row, preferred);
 		nav = gLinkCountdownWork;
-		/* FAKEMATCH: instruction order only: page, row and preferred are
-		   stored in source order before the keys are read (differ 4).
-		   Plain forms measured (2026-10-13): the same order, or through
-		   gLinkCountdownWork directly, store row first (differ 4); the
-		   other five store orders differ 8 to 12. */
-		do
-		{
-			nav->page = page;
-			nav->row = row;
-			nav->preferred_row = preferred;
-		} while (0);
 		pressed = gKeyState;
 		repeated = gKeysRepeat;
 
@@ -3390,15 +3380,8 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 			Runtime_PushSlotEntry(cur, 242);
 		}
 
+		MenuCell_SetCursor(page, row, preferred_row);
 		cell = gLinkCountdownWork;
-		cell->page = page;
-		cell->row = row;
-		/* FAKEMATCH: a one-pass block finishes these stores before input is read. The duplicate final store is removed by flow but preserves the native spill-slot order; with one store, 42 instructions differ only in their stack offsets. */
-		cell->preferred_row = preferred_row;
-		cell->preferred_row = preferred_row;
-		do
-		{
-		} while (0);
 
 		if ((gKeyState & KEY_A) != 0)
 		{
@@ -3750,10 +3733,8 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 			Runtime_PushSlotEntry(spr, 242);
 		}
 
+		MenuCell_SetCursor(page, row, preferred_row);
 		nav = gLinkCountdownWork;
-		nav->page = page;
-		nav->row = row;
-		nav->preferred_row = preferred_row;
 
 		if ((gKeyState & KEY_A) != 0)
 		{
@@ -4750,35 +4731,25 @@ void UpdateLinkSessionCountdown(void)
 			return;
 
 		runtime = BtlWk;
-		if (runtime->link_paused == 0)
-			goto load_timer;
-		state->timer = 0;
-		return;
-
-	signature_tail:
-		if (signature->v != 'V')
-			goto signature_done;
-		if (signature->s != 'S')
-			goto signature_done;
-		state->timer = COUNTDOWN_START_FRAMES;
-		timer = state->timer;
-		goto signature_done;
-
-	load_timer:
-		timer = state->timer;
-		if (timer >= 0)
-			goto timer_ready;
-		signature = (struct LinkSignature *)gLinkPeerSignatures[runtime->link_side ^ 1];
-		if (signature->e != 'E')
-			goto signature_done;
-		if (signature->d == 'D')
-			goto signature_tail;
-
-	signature_done:
+		if (runtime->link_paused != 0)
+		{
+			state->timer = 0;
+			return;
+		}
+		while ((timer = state->timer) < 0
+			&& (signature = (struct LinkSignature *)gLinkPeerSignatures[runtime->link_side ^ 1])->e == 'E'
+			&& signature->d == 'D')
+		{
+			if (signature->v == 'V')
+				if (signature->s == 'S')
+				{
+					state->timer = COUNTDOWN_START_FRAMES;
+					timer = state->timer;
+				}
+			break;
+		}
 		if (timer < 0)
 			return;
-
-	timer_ready:
 		if (state->displayHandle == 0 && state->secondaryHandle == 0)
 		{
 			state->displayHandle = Link_CreateCountdownLabelWindow();
@@ -4984,7 +4955,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 	}
 	Scheduler_AddOrUpdateCallback(UpdateLinkSessionCountdown, 3200);
 
-	for (;;)
+	while (1)
 	{
 		DrawPartyPanels();
 		state->entryActive[2] = 0;
@@ -5037,17 +5008,17 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 			ent->command = 99;
 			ent->parameter = 0;
 			ent->target = 256;
-			goto finish;
+			break;
 		}
 		if (mode != 14)
 		{
-			goto finish;
+			break;
 		}
 		AudioCommand_PlayFar(154);
 		i = 0;
 		if (i >= count)
 		{
-			goto finish;
+			break;
 		}
 
 		for (;;)
@@ -5206,19 +5177,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 
 				AudioCommand_PlayFar(112);
 				mode = 0;
-				/* FAKEMATCH: instruction order only: the one-pass block's loop
-                   notes end the schedule here, so mode = 0 goes out before the
-                   countdown base is loaded, as native (differ 4). Plain
-                   forms measured (2026-10-13): mode = 0 before the sound
-                   call, a chain ending in mode = 0 or a local copy of
-                   COUNTDOWN still load the base first (differ 4); a chain
-                   from mode 8; three constant stores 12. */
-				do
-				{
-				} while (0);
-				COUNTDOWN->unk_34 = mode;
-				COUNTDOWN->unk_30 = mode;
-				COUNTDOWN->unk_38 = mode;
+				MenuCell_SetCursor(mode, mode, mode);
 			psynergy_menu:
 				list = state->list;
 				pick = state->pick;
@@ -5318,9 +5277,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 				s32							   n;
 
 				AudioCommand_PlayFar(112);
-				COUNTDOWN->unk_34 = 0;
-				COUNTDOWN->unk_30 = 0;
-				COUNTDOWN->unk_38 = 0;
+				MenuCell_SetCursor(0, 0, 0);
 			djinn_menu:
 #if EDITION_INTERNATIONAL
 				state->entries[0].oam.f.x = 80;
@@ -5425,9 +5382,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 				s32				 index;
 
 				AudioCommand_PlayFar(112);
-				COUNTDOWN->unk_34 = 0;
-				COUNTDOWN->unk_30 = 0;
-				COUNTDOWN->unk_38 = 0;
+				MenuCell_SetCursor(0, 0, 0);
 			summon_menu:
 				state->entries[0].oam.f.x = 144;
 				COUNTDOWN->selected[i] = 0x80000000;
@@ -5509,14 +5464,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 
 				AudioCommand_PlayFar(112);
 				mode = 0;
-				/* FAKEMATCH: instruction order only: as in the psynergy case,
-                   mode = 0 before the countdown base (differ 2). */
-				do
-				{
-				} while (0);
-				COUNTDOWN->unk_34 = mode;
-				COUNTDOWN->unk_30 = mode;
-				COUNTDOWN->unk_38 = mode;
+				MenuCell_SetCursor(mode, mode, mode);
 			item_menu:
 				state->entries[0].oam.f.x = 96;
 				pick = state->pick;
@@ -5646,7 +5594,6 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 		break;
 	}
 
-finish:
 	if (state->enabled != 0)
 	{
 		sync = (u16 *)gSerialTransfer.payload;

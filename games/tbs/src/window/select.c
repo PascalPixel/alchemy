@@ -104,7 +104,7 @@ struct GlyphCursor
 
 static __inline__ void ResetCursor(struct GlyphCursor *cursor)
 {
-	/* FAKEMATCH: needed to match: keep the cursor-subrecord base for the paired row stores. */
+	/* FAKEMATCH: the helper takes the node's base field as its record, so each row store forms base + 372 and stores the cursor at #2, as the native does. A plain work->records[7].kind = 0 folds the offset into 374 and stores at #0 (differ 6). */
 	cursor->cursor = 0;
 }
 

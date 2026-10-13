@@ -274,7 +274,7 @@ void Runtime_InstallIwramAndIrqs(void)
 
 static __inline__ void System_SoftReset(void)
 {
-	/* FAKEMATCH: a void-returning entry pointer places the target in r1; the value-returning pointer preserves the measured r0 call. */
+	/* FAKEMATCH: the restart entry is called as returning s32, so its address is built in r0 as the native does at both resets in WaitFrames; through a void (*)(void) pointer it is built in r1 (differ 4 in all six editions). */
 	s32 (*reset)(void) = (s32 (*)(void))Cart_Restart;
 
 	gCartridgeResetMarker = 0x19670704;

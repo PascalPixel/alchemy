@@ -234,7 +234,7 @@ static void Title_RevealSpriteRow(void)
 	tile = gVramBlockCache[gTitleVramBlock].offset >> 5;
 	i = 0;
 	y = 0x88;
-loop:
+	do
 	{
 		x = 232 - (18 - i) * 8;
 		*w++ = 0;
@@ -248,9 +248,7 @@ loop:
 		if (n != 0)
 			Runtime_PushSlotEntry(p++, 255);
 		tile += 2;
-	}
-	if (++i <= 17)
-		goto loop;
+	} while (++i <= 17);
 #endif
 	gTitleRevealFrame++;
 }

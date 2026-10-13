@@ -920,7 +920,7 @@ s32 Object_GetScreenPosition(s32 object_id, s32 *position)
 
 	if (object == 0)
 		return -1;
-	/* FAKEMATCH: needed to match: the adjacent coordinate-word read avoids four bytes added by separate named bases. */
+	/* FAKEMATCH: the view position read as two adjacent words through one pointer, so both loads share one base. Plain forms measured 2026-10-13: view_x and view_y read through gMapWork[0], or through a struct MapScrollWork pointer, differ 28 (61 instructions instead of 59). */
 	camera = &((struct MapScrollWork *)gMapWork[0])->view_x;
 	camera_x = camera[0] & 0xffff0000;
 	camera_z = camera[1] & 0xffff0000;

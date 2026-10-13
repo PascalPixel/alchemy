@@ -83,7 +83,6 @@ u8 *Resource_DecompressLz(const u8 *source, u8 *destination)
 	s32		  token;
 	u32		  length;
 	u32		  control;
-	u8		  byte;
 	u8		 *start;
 	const u8 *base;
 	const u8 *command;
@@ -109,8 +108,7 @@ u8 *Resource_DecompressLz(const u8 *source, u8 *destination)
 		}
 		else
 		{
-			byte = *command++;
-			token = byte << 8;
+			token = *command++ << 8;
 			token |= *command++;
 			if (token == 0)
 				break;

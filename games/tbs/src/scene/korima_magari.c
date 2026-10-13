@@ -454,7 +454,8 @@ static void KorimaMagari_PlaceObjects(struct IcePlacement *entry)
 		actor->collision_flags = 0;
 		actor->radius = 32;
 		height = Map_GetTerrainHeight(0, actor->x.part.pixel, actor->z.part.pixel) << 16;
-		((struct ObjectRuntime *)actor)->y += height;
+		/* FAKEMATCH: y is updated through an s32 lvalue; the coordinate union has an s16 member, which would order the next entry load after this store. */
+		*(s32 *)&actor->y += height;
 		actor->terrain_height = height;
 	}
 }

@@ -1262,6 +1262,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
 	u32		  bits;
 	u32		  mask;
 
+	/* FAKEMATCH: never used; its 32 bytes are the native frame space no instruction touches; without it, tbs-en differs */
 	u32 unused[8];
 
 	if (text == NULL)

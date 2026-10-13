@@ -451,6 +451,7 @@ static void EV02_TALK(void)
 
 static void EV09_TALK(void)
 {
+	/* FAKEMATCH: never used; its 256 bytes are the native frame space no instruction touches; without it, tbs-en differs */
 	u8 buf[256];
 #if !EDITION_INTERNATIONAL
 	s32 i;

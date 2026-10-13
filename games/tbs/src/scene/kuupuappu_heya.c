@@ -2709,7 +2709,11 @@ static struct StopRecord *KuupuappuHeya_SnapToNearestStop(struct StopSet *set, s
 		d = (s16)(p - *pos);
 		if (d < 0)
 			d = -d;
-		/* FAKEMATCH: the used-stop test reads the id through a volatile lvalue, so the id is loaded again for the result. */
+		/* FAKEMATCH: the used-stop test reads the id through a volatile lvalue, so
+		 * the id is loaded again for the result. 2026-10-13: the plain test
+		 * reuses its load (48 instructions for 49, differ 9); set->stops[i].id
+		 * in the arm reloads it through a second strength-reduced pointer
+		 * (differ 54). */
 		if (*(volatile u8 *)&stop->id != 0xff && d < best)
 		{
 			best = d;

@@ -17,8 +17,7 @@ rewritten so that it rebuilds the original exactly, in all six languages
 everything else on the cartridge (pictures, music, text, tables) is built from
 our own source files rather than copied from the original. A piece only counts
 once every language that uses it comes out byte for byte identical, and a
-game is only 100% done when both numbers are. Both pictures redraw themselves
-after every change.
+game is only 100% done when both numbers are.
 
 The chart shows that climb day by day: code as the bright line and data,
 measured since 8 October 2026, as the darker one. The colours along the bottom
@@ -26,6 +25,19 @@ show which AI models did the work. Sudden drops are honesty checks: when we find
 something that only looked finished, it comes back off the count until it’s
 done properly. The map below it shows the whole project by size: everything
 in light rose is still waiting to be rewritten.
+
+## What this is
+
+When Camelot made Golden Sun, they wrote it as instructions a person can read
+and then turned those into the unreadable code that sits on the cartridge. The
+readable version was never released. Alchemy rebuilds it, and every piece is
+checked against the original until the two are identical, in all six
+languages. The AI does the heavy lifting, and the original game is the judge.
+Names follow the Japanese release: Sukureta for Kraden, Gerald for Garet.
+
+Alchemy is not a remake, a mod, an emulator or a download of the games, and it
+doesn’t include them. It will open to outside contributions once both games
+are complete.
 
 ## Acknowledgements
 
@@ -43,5 +55,5 @@ Thank you to:
 - [pret](https://github.com/pret), whose decompilations set the standard Alchemy
   measures itself against, and whose [agbcc](https://github.com/pret/agbcc)
   Alchemy builds the games’ library code with.
-
-- [Simon Lindholm](https://github.com/simonlindholm/decomp-permuter), for the permuter whose behavior Alchemy reimplements in Rust.
+- [Simon Lindholm](https://github.com/simonlindholm/decomp-permuter), for the
+  permuter whose behavior Alchemy reimplements in Rust.

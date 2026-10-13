@@ -682,7 +682,7 @@ void Menu_SetupSelectionSide(struct SelectionScreen *state, s32 index)
 	state->records[index].kind = 0;
 	if (index != 0)
 	{
-		/* FAKEMATCH: the separate local preserves the early r5 load and late copy; direct assignment changes later node registers. */
+		/* FAKEMATCH: the separate local loads the tile pointer early into r5 and copies it late, as the native does. frames = Menu_CursorObjectTiles where right is copied: differ 42; the same at the top of the branch: differ 16 (tbs-en). */
 		u8 *right = Menu_CursorObjectTiles;
 
 		count = state->count;

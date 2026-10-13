@@ -819,14 +819,6 @@ void Owner_RefreshRatiosOnFlag(void)
 	s32				group;
 	s32				doRefresh;
 	struct BtlUnit *obj;
-	s32				t;
-	s32				v14;
-	s32				v16;
-	s32				v34;
-	s32				v36;
-	s32				v38;
-	s32				v3A;
-	s32				one;
 
 	count = Party_CountActiveOwners();
 	for (n = 0; n < count; n++)
@@ -855,49 +847,20 @@ void Owner_RefreshRatiosOnFlag(void)
 		}
 
 		obj = UnitGet(ownerId);
-		/* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+		/* FAKEMATCH: the one-pass block keeps the EP store ahead of the HP
+		 * gauge's loads, as in Owner_UpdateSecondInputAndRatios. Measured:
+		 * the plain store differs 4, with the gauges through Vitals_Ratio
+		 * or written out in full. */
 		do
 		{
 			obj->ep = obj->max_ep;
 		} while (0);
-
-		v38 = obj->hp;
-		v34 = obj->max_hp;
-		t = (v38 << 14) / v34;
-		v14 = 0x4000;
-		if (t <= 0x4000)
-		{
-			v14 = 0;
-			if (t >= 0)
-			{
-				v14 = t;
-			}
-		}
-		obj->hp_gauge = v14;
-		if (((v14 << 16) == 0) && (obj->hp != 0))
-		{
-			one = 1;
-			obj->hp_gauge = one;
-		}
-
-		v3A = obj->ep;
-		v36 = obj->max_ep;
-		t = (v3A << 14) / v36;
-		v16 = 0x4000;
-		if (t <= 0x4000)
-		{
-			v16 = 0;
-			if (t >= 0)
-			{
-				v16 = t;
-			}
-		}
-		obj->ep_gauge = v16;
-		if (((v16 << 16) == 0) && (obj->ep != 0))
-		{
-			one = 1;
-			obj->ep_gauge = one;
-		}
+		obj->hp_gauge = Vitals_Ratio(obj->hp, obj->max_hp);
+		if (obj->hp_gauge == 0 && obj->hp != 0)
+			obj->hp_gauge = 1;
+		obj->ep_gauge = Vitals_Ratio(obj->ep, obj->max_ep);
+		if (obj->ep_gauge == 0 && obj->ep != 0)
+			obj->ep_gauge = 1;
 	}
 }
 

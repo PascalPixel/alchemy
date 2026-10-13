@@ -1074,7 +1074,7 @@ static void EV23_TALK(s32 scene)
 		OverlayObject_PlaceWithScale14000(0, 1000, 176);
 		OverlayObject_PlaceWithScale14000(0, 1016, 168);
 		Engine_EventWait(15);
-		/* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
+		/* FAKEMATCH: the void result is discarded; called directly or through Call3 the argument moves come in another order (differ 2 in tbs-en). */
 		Value3(StagedActor_PlacePairAtOffsetAndRun, 18, 160, 0);
 		Camera_MoveTo(0x4400000, -1, 0xa80000, 1);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);

@@ -1355,11 +1355,6 @@ static void EV11_TOUCH_1(void)
 	Engine_EventEnd();
 }
 
-struct Byte
-{
-	u8 v;
-};
-
 s32 ArutinYama_RunAreaScene(void)
 {
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -2413,7 +2408,6 @@ static void ArutinYama_RunRollingObject(s32 id, s32 heading)
 	struct FieldActor	 *object = Object_GetById(id);
 	struct FieldActor	 *leader = Engine_ActorLookup(gGameState.selected_actor);
 	union FieldCoordinate pos[3];
-	struct Byte			  zero;
 	s32					  n;
 
 	Engine_EventBegin();
@@ -2447,8 +2441,7 @@ static void ArutinYama_RunRollingObject(s32 id, s32 heading)
 	object->facing = heading;
 	object->speed = 0x20000;
 	object->acceleration = 0xccc;
-	zero.v = 0;
-	object->paused = zero.v;
+	object->paused = 0;
 	object->timer = object->y.fixed / 0x10000;
 	object->work = 0;
 	pos[0].fixed = object->x.fixed;

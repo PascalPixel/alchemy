@@ -379,11 +379,11 @@ void Shop_DrawItemPrice(s32 window, s32 item, s32 price, s32 price_mode)
 	s32 message;
 
 	if (window == 0)
-		goto done;
+		return;
 	goto draw;
 cannot_buy:
 	UiText_DrawCharacterAtOffsetFar((s32)MsgCannotBuyThat, window, ITEM_NOTE_X, 8);
-	goto done;
+	return;
 show_price:
 	message = (s32)MsgPrice;
 	UiText_DrawCharacterAtOffsetFar(message, window, ITEM_NOTE_X, 8);
@@ -398,7 +398,7 @@ show_price:
 	UiText_DrawNumberInWindowFar(price, 5, window, 0x20, 8);
 	UiText_DrawCharacterAtOffsetFar(message, window, 0x48, 8);
 #endif
-	goto done;
+	return;
 draw:
 	RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
 	UiText_DrawCharacterAtOffsetFar(item + (s32)MsgItemName, window, 0, 0);
@@ -414,7 +414,6 @@ draw:
 	default:
 		goto show_price;
 	}
-done:
 	return;
 }
 

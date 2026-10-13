@@ -1685,7 +1685,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			s32	 heal;
 			u16 *pt;
 
-			/* FAKEMATCH: walking a pointer down from hp to max_hp reads each stat twice, unsigned and signed, as the ROM does; plain f reads share one load. */
+			/* FAKEMATCH: walking a pointer down from hp to max_hp reads each stat twice, unsigned and signed, as the ROM does; plain member reads, (u16)target->hp beside target->hp and the same for max_hp, share one load each (differ 116 in tbs-en). */
 			pt = (u16 *)&target->hp;
 			old = *pt--;
 			heal = *(s16 *)(pt + 1);

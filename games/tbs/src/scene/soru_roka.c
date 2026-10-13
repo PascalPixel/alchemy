@@ -18,9 +18,7 @@
 #include "field_scene.h"
 #include "fieldobj.h"
 
-s32 Engine_GameFlagIsSet(s32);
-
-void Engine_WorkSetValuesIfNonNegative(s32, s32, s32);
+#include "field_event.h"
 
 u8 *SceneData_GetScriptTable(void)
 {

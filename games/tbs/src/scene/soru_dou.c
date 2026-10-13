@@ -15,11 +15,7 @@
 #include "resource_37c_runtime.h"
 #include "field_scene.h"
 
-s32 Engine_GameFlagIsSet(s32);
-
-void Engine_WorkSetValuesIfNonNegative(s32, s32, s32);
-
-void Engine_GameFlagSet(s32);
+#include "field_event.h"
 
 u8 *State_Run(void)
 {

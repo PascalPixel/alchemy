@@ -3944,18 +3944,17 @@ void BattleFx_UpdateEffect16State(void)
 void BattleFx_UpdatePairedArcSpawner(struct ArcEffectObject *obj)
 {
 	s16 phase;
-	s16 cnt;
+	s32 cnt;
 
 	phase = obj->phase;
 	cnt = obj->step++;
 
 	if (gGameState.map == (s32)&SceneId_Clear)
 	{
-		/* FAKEMATCH: explicit libgcc calls here and in the else if below; written with the operator, tbs-en differs */
-		if (__modsi3(cnt, 7) == 0)
+		if (cnt % 7 == 0)
 			BattleFx_SpawnDescendingArcParticles(obj);
 	}
-	else if (__modsi3(cnt, 5) == 0)
+	else if (cnt % 5 == 0)
 	{
 		BattleFx_SpawnDescendingArcParticles(obj);
 	}

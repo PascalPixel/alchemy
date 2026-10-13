@@ -1158,7 +1158,7 @@ s32 Battle_RunEncounter(s32 enemy_group)
 	transition = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_BACKGROUND, 32);
 	Runtime_AllocateBlock(11, 0x280);
 	target = camera->pos;
-	/* FAKEMATCH: needed to match: result starts at 0 and is never read before each exit sets it; CSE takes the setup zeros from its register, r7 as listed (without it 262) */
+	/* FAKEMATCH: needed to match: result starts at 0 and is never read before each exit sets it; CSE takes the setup zeros from its register, r7 as listed (without it 262). 2026-10-13: initialised at its declaration 130; set after Scheduler_ResetTaskTable 262; the zero in handle 20 (setup matches, handle and result swap r5/r7); in wait 120, pos 113, actor 121, i 323, count 363. */
 	result = 0;
 	Iwram_ClearWords(owner_states, 0x7c8);
 	Scheduler_ResetTaskTable();

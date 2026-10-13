@@ -835,44 +835,12 @@ void Owner_UpdateRatioPair(struct BtlUnit *state, s32 input)
 		}
 	}
 	state->hp = value;
-	value = ((value << 16) >> 2) / state->max_hp;
-
-	{
-		s32 output = 0x4000;
-
-		if (value <= output)
-		{
-			output = 0;
-			if (value >= 0)
-			{
-				output = value;
-			}
-		}
-		state->hp_gauge = output;
-		if ((output << 16) == 0 && state->hp != 0)
-		{
-			state->hp_gauge = 1;
-		}
-	}
-
-	value = (state->ep << 14) / state->max_ep;
-	{
-		s32 output = 0x4000;
-
-		if (value <= output)
-		{
-			output = 0;
-			if (value >= 0)
-			{
-				output = value;
-			}
-		}
-		state->ep_gauge = output;
-		if ((output << 16) == 0 && state->ep != 0)
-		{
-			state->ep_gauge = 1;
-		}
-	}
+	state->hp_gauge = Vitals_Ratio(state->hp, state->max_hp);
+	if (state->hp_gauge == 0 && state->hp != 0)
+		state->hp_gauge = 1;
+	state->ep_gauge = Vitals_Ratio(state->ep, state->max_ep);
+	if (state->ep_gauge == 0 && state->ep != 0)
+		state->ep_gauge = 1;
 }
 
 //--------------------------------------------------------------------------

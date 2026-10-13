@@ -161,39 +161,16 @@ struct MarkerWork
 	struct MarkerSlot slots[MARKER_MAX];
 };
 
-// OBJ 属性の上位バイトは struct FieldSprite と同じビット割り当て
-struct EfxVisual
-{
-	u8 pad0[5];
-	u8 flags_05_low : 5;
-	u8 full_color : 1; // 256 色
-	u8 flags_05_high : 2;
-	u8 pad1[3];
-	u8 flags_09_low : 2;
-	u8 priority : 2; // BG との優先度
-	u8 palette : 4;
-	u8 pad2[18];
-	u8 slot; // VRAM のタイル枠
-	u8 pad3[9];
-	u8 unk1;
-	u8 unk2;
-};
-
-struct TileBits
-{
-	u16 tile : 10;
-};
-
 struct EfxObj
 {
-	s32				  data; // スクリプト
-	u8				  pad0[0x24];
-	u32				  travel;
-	u8				  pad1[0x1c];
-	u32				  dy;
-	u8				  pad2[4];
-	struct EfxVisual *vis;
-	u8				  pad3[24];
+	s32						data; // スクリプト
+	u8						pad0[0x24];
+	u32						travel;
+	u8						pad1[0x1c];
+	u32						dy;
+	u8						pad2[4];
+	struct AnimationObject *vis;
+	u8						pad3[24];
 	void (*proc)(void); // 毎フレームの処理
 };
 
@@ -341,14 +318,14 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item)
 
 	ObjectDispatch_InitializeFar((struct DispatchObject *)obj, BattleFx_ParticleEmitterScript);
 	{
-		struct EfxVisual *vis = obj->vis;
-		void			 *buf;
+		struct AnimationObject *vis = obj->vis;
+		void				   *buf;
 
-		vis->unk1 = 0;
-		vis->unk2 = 0;
-		vis->full_color = 0;
-		vis->palette = 0;
-		vis->priority = 1;
+		vis->flags = 0;
+		vis->count = 0;
+		vis->part[0].full_color = 0;
+		vis->part[0].palette = 0;
+		vis->part[0].priority = 1;
 
 		obj->travel = 0x20000;
 		obj->dy = 0x4000;
@@ -357,8 +334,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item)
 		buf = Runtime_AllocateHeapBlock(17, 0x608);
 		Ui_PrepareTransferForItemFar(item);
 
-		((struct TileBits *)((u8 *)vis + 8))->tile =
-			VramBlock_LoadCached(vis->slot, 128, (u8 *)buf + 0x400);
+		vis->part[0].tile = VramBlock_LoadCached(vis->slot, 128, (u8 *)buf + 0x400);
 
 		Runtime_ReleaseHeapBlock(17);
 		obj->proc = (void (*)(void))BattleFx_EmitRandomParticleFromEmitter;
@@ -444,13 +420,13 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
 
 	if (object != 0)
 	{
-		struct EfxVisual *visual = object->vis;
+		struct AnimationObject *visual = object->vis;
 
-		visual->unk1 = 0;
-		visual->unk2 = 0;
-		visual->full_color = 0;
-		visual->palette = 0;
-		visual->priority = 1;
+		visual->flags = 0;
+		visual->count = 0;
+		visual->part[0].full_color = 0;
+		visual->part[0].palette = 0;
+		visual->part[0].priority = 1;
 
 		Ui_PrepareTransferForItemFar(value);
 		VramBlock_LoadCached(visual->slot, 128, (u8 *)handle + 0x400);

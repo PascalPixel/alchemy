@@ -405,48 +405,44 @@ menu_top:;
 	{
 		v6 = 0;
 	}
-	if (v6 != 0)
+	if (v6 == 0)
 	{
-		goto chosen;
-	}
-	GameState_InitDefaults();
-	PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
-	v5 = 1;
-	v7 = 0;
-edit_name:;
-	Engine_TaskWait(6);
-	v6 = NameEntry_EditOwnerName(v7);
-	if (v6 == -1)
-	{
-		if (v7 == 0)
+		GameState_InitDefaults();
+		PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
+		v5 = 1;
+		v7 = 0;
+		for (;;)
 		{
-			goto menu_top;
+			Engine_TaskWait(6);
+			v6 = NameEntry_EditOwnerName(v7);
+			if (v6 == -1)
+			{
+				if (v7 == 0)
+				{
+					goto menu_top;
+				}
+				v7--;
+				continue;
+			}
+			if (Clear_CodeUnlocked != 0)
+			{
+				v5 = 4;
+			}
+			if (Clear_ExtraCodeUnlocked != 0)
+			{
+				v5 = 7;
+			}
+			if (++v7 >= v5)
+			{
+				break;
+			}
 		}
-		v7--;
-		goto edit_name;
+		Party_SetFlag32AndRefreshMembers();
+		gGameState.scene = (s32)&SceneId_HaidiaBabi;
+		gGameState.entrance = 20;
+		goto leave;
 	}
-	if (Clear_CodeUnlocked != 0)
-	{
-		v5 = 4;
-	}
-	if (Clear_ExtraCodeUnlocked != 0)
-	{
-		v5 = 7;
-	}
-	v7 = (v7 + 1);
-	if (v7 < v5)
-	{
-		goto edit_name;
-	}
-	Party_SetFlag32AndRefreshMembers();
-	gGameState.scene = (s32)&SceneId_HaidiaBabi;
-	gGameState.entrance = 20;
-	goto leave;
-chosen:;
-	if (v6 != 1)
-	{
-	}
-	else
+	if (v6 == 1)
 	{
 		struct GameState *state;
 
@@ -557,342 +553,335 @@ chosen:;
 		{
 			goto link_load;
 		}
-		if (v6 != 1)
+		if (v6 == 1)
 		{
-			goto not_first;
-		}
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
-		v6 = UiWindow_Create(4, 5, 22, 8, 2);
+			v6 = UiWindow_Create(4, 5, 22, 8, 2);
 #else
-		v6 = UiWindow_Create(6, 5, 18, 8, 2);
+			v6 = UiWindow_Create(6, 5, 18, 8, 2);
 #endif
-		link_message = (s32)MsgClearSaveLabel;
+			link_message = (s32)MsgClearSaveLabel;
 
-		UiText_DrawResource(link_message, v6, 0, 4);
-		UiText_DrawResource((link_message + 1), v6, 0, 16);
-		UiText_DrawResource((link_message + 3), v6, 0, 36);
-		SerialRuntime_Initialize();
-		Engine_TaskWait(10);
-		{
-			u16 *sync = (u16 *)gSerialTransfer.payload;
-
-			sync[0] = 0x30;
-			sync[1] = 0x30;
-			sync[2] = 0x30;
-			sync[3] = 0x30;
-		}
-		v7 = 0;
-		v5 = 3;
-		for (v1 = 0; v1 != 4; v1++)
-		{
-			u16 *greeting = ((struct SaveLinkGreeting *)gLinkPeerSignatures)[v1].code;
-
-			greeting[0] = 0x30;
-			greeting[1] = 0x30;
-			greeting[2] = 0x30;
-			greeting[3] = 0x30;
-		}
-		while ((gKeyState & KEY_B) == 0)
-		{
-			if ((v5 & gLinkStatus) == v5)
+			UiText_DrawResource(link_message, v6, 0, 4);
+			UiText_DrawResource((link_message + 1), v6, 0, 16);
+			UiText_DrawResource((link_message + 3), v6, 0, 36);
+			SerialRuntime_Initialize();
+			Engine_TaskWait(10);
 			{
-				u32	 control = REG_SIOCNT;
-				u32	 peer = ((control << 26) >> 30) ^ 1;
-				u16 *received = ((struct SaveLinkGreeting *)gLinkPeerSignatures)[peer].code;
+				u16 *sync = (u16 *)gSerialTransfer.payload;
+
+				sync[0] = 0x30;
+				sync[1] = 0x30;
+				sync[2] = 0x30;
+				sync[3] = 0x30;
+			}
+			v7 = 0;
+			v5 = 3;
+			for (v1 = 0; v1 != 4; v1++)
+			{
+				u16 *greeting = ((struct SaveLinkGreeting *)gLinkPeerSignatures)[v1].code;
+
+				greeting[0] = 0x30;
+				greeting[1] = 0x30;
+				greeting[2] = 0x30;
+				greeting[3] = 0x30;
+			}
+			for (;;)
+			{
+				if ((gKeyState & KEY_B) != 0)
+				{
+					Engine_AudioPlayCue(113);
+					break;
+				}
+				if ((v5 & gLinkStatus) == v5)
+				{
+					u32	 control = REG_SIOCNT;
+					u32	 peer = ((control << 26) >> 30) ^ 1;
+					u16 *received = ((struct SaveLinkGreeting *)gLinkPeerSignatures)[peer].code;
 
 #if defined(TBS_EDITION_DE)
-				if (received[0] == 69)
-				{
-#elif defined(TBS_EDITION_FR)
-				if (received[0] == 70)
-				{
-#elif defined(TBS_EDITION_ES)
-				if (received[0] == 83)
-				{
-#elif defined(TBS_EDITION_IT)
-				if (received[0] == 73)
-				{
-#elif !EDITION_INTERNATIONAL
-				if (received[0] == 67)
-				{
-#else
-				if (received[0] == 85)
-				{
-#endif
-					if (received[1] == 86)
+					if (received[0] == 69)
 					{
-						if (received[2] == 84)
+#elif defined(TBS_EDITION_FR)
+					if (received[0] == 70)
+					{
+#elif defined(TBS_EDITION_ES)
+					if (received[0] == 83)
+					{
+#elif defined(TBS_EDITION_IT)
+					if (received[0] == 73)
+					{
+#elif !EDITION_INTERNATIONAL
+					if (received[0] == 67)
+					{
+#else
+					if (received[0] == 85)
+					{
+#endif
+						if (received[1] == 86)
 						{
-							if (received[3] == 83)
+							if (received[2] == 84)
 							{
-								v7 = 1;
-								goto link_waited;
+								if (received[3] == 83)
+								{
+									v7 = 1;
+									break;
+								}
 							}
 						}
 					}
 				}
+				Engine_TaskWait(1);
 			}
-			Engine_TaskWait(1);
-		}
-		Engine_AudioPlayCue(113);
-	link_waited:;
-		UiWork_Finalize(v6, 2);
-		if (v7 == 0)
-		{
-			goto link_select;
-		}
+			UiWork_Finalize(v6, 2);
+			if (v7 == 0)
+			{
+				goto link_select;
+			}
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
-		v6 = UiWindow_Create(4, 10, 22, 4, 2);
+			v6 = UiWindow_Create(4, 10, 22, 4, 2);
 #else
-		v6 = UiWindow_Create(5, 10, 20, 4, 2);
+			v6 = UiWindow_Create(5, 10, 20, 4, 2);
 #endif
 
-		UiText_DrawResource((s32)MsgClearSendingData, v6, 0, 4);
-		Engine_TaskWait(10);
-		SerialRuntime_BeginTransferA((s32)gSaveBuffer, 0x1004);
-		Engine_TaskWait(10);
-		v5 = 0;
-		v1 = 3;
-		v4 = 1;
-		for (v7 = 0; v7 <= 0x927bf; v7++)
-		{
-			v5 = (v5 + 1);
-			if ((v1 & gLinkStatus) == v1)
+			UiText_DrawResource((s32)MsgClearSendingData, v6, 0, 4);
+			Engine_TaskWait(10);
+			SerialRuntime_BeginTransferA((s32)gSaveBuffer, 0x1004);
+			Engine_TaskWait(10);
+			v5 = 0;
+			v1 = 3;
+			v4 = 1;
+			for (v7 = 0; v7 <= 0x927bf; v7++)
 			{
-				v5 = 0;
-			}
-			if (v5 == 10)
-			{
-				v4 = 0;
-				break;
-			}
-			if (gSerialSendSource == 0)
-			{
-				break;
-			}
-			Engine_TaskWait(1);
-		}
-	}
-	if (v4 == 0)
-	{
-		RenderOutput_PrepareForRedraw(v6);
-		UiText_DrawResource((s32)MsgClearCommunicationError, v6, 0, 4);
-		v5 = 1;
-		do
-		{
-			Engine_TaskWait(1);
-		} while ((gKeyState & v5) == 0);
-	}
-	Engine_TaskWait(10);
-	SerialRuntime_RemoveIrqHandlers();
-	Engine_TaskWait(10);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-	UiWork_Finalize(v6, 2);
-	Engine_TaskWait(1);
-#else
-	RenderOutput_PrepareForRedraw(v6);
-	UiWork_Finalize(v6, 2);
-#endif
-	goto menu_top;
-not_first:;
-	if (v6 == 0)
-	{
-	page_select:;
-		v6 = Menu_SelectResourceLayout(1);
-
-		if (v6 == -1)
-		{
-			goto link_select;
-		}
-		{
-			u8 *data = save_data;
-			s16 sum;
-
-			encoded_size = Clear_PackPasswordData(0, v6, data);
-			sum = SceneData_GetBufferCrc16(encoded_size, data);
-			save_data[encoded_size] = (u16)sum >> 8;
-			save_data[encoded_size + 1] = sum;
-			encoded_size += 2;
-			encoded_size = Clear_EncodePassword(data, encoded_size, password);
-		}
-		v6 = 2;
-		Ui_LoadWindowGraphics();
-		page_window = UiWindow_Create(5, 4, 20, 12, v6);
-		page = 0;
-		page_count = ((encoded_size / 50) + 1);
-#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-		record = UiWindow_Create(8, 0, 13, 4, v6);
-#else
-		record = UiWindow_Create(10, 0, 10, 4, v6);
-#endif
-		page_message = (s32)MsgClearPasswordLabel;
-		heading_window = record;
-		UiText_DrawResource(page_message, heading_window, 6, 4);
-		v7 = 1;
-		if (page_count == 1)
-		{
-			record = UiWindow_Create(5, 16, 20, 3, v6);
-			help_window = record;
-#if EDITION_INTERNATIONAL
-			UiText_DrawCharacterAtOffset(page_message - 2, help_window, 80, 0);
-#else
-			UiText_DrawCharacterAtOffset(page_message - 2, help_window, 0, 0);
-#endif
-		}
-		else
-		{
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
-	|| defined(TBS_EDITION_IT)
-			record = UiWindow_Create(0, 16, 30, 3, v6);
-#elif !EDITION_INTERNATIONAL
-			record = UiWindow_Create(3, 16, 24, 3, v6);
-#else
-			record = UiWindow_Create(1, 16, 28, 3, v6);
-#endif
-			help_window = record;
-			UiText_DrawCharacterAtOffset(page_message - 1, help_window, 0, 0);
-		}
-		Graphics_ExpandVramTilesByColorTable(0x6006000);
-		RenderOutput_PrepareForRedraw(page_window);
-		for (;;)
-		{
-			Link_DrawShiftedTilePair(0x6002500);
-			if ((gKeyState & KEY_B) != 0)
-			{
-				Engine_AudioPlayCue(113);
-				RenderOutput_PrepareForRedraw(page_window);
-				UiWork_Finalize(page_window, 2);
-				UiWork_Finalize(help_window, 2);
-				UiWork_Finalize(heading_window, 2);
-				goto page_select;
-			}
-			if ((gKeyState & KEY_A) != 0)
-			{
-				page = (page + 1);
-				v7 = 1;
-				if (page == page_count)
+				v5 = (v5 + 1);
+				if ((v1 & gLinkStatus) == v1)
 				{
-					Engine_AudioPlayCue(112);
+					v5 = 0;
+				}
+				if (v5 == 10)
+				{
+					v4 = 0;
+					break;
+				}
+				if (gSerialSendSource == 0)
+				{
+					break;
+				}
+				Engine_TaskWait(1);
+			}
+			if (v4 == 0)
+			{
+				RenderOutput_PrepareForRedraw(v6);
+				UiText_DrawResource((s32)MsgClearCommunicationError, v6, 0, 4);
+				v5 = 1;
+				do
+				{
+					Engine_TaskWait(1);
+				} while ((gKeyState & v5) == 0);
+			}
+			Engine_TaskWait(10);
+			SerialRuntime_RemoveIrqHandlers();
+			Engine_TaskWait(10);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+			UiWork_Finalize(v6, 2);
+			Engine_TaskWait(1);
+#else
+			RenderOutput_PrepareForRedraw(v6);
+			UiWork_Finalize(v6, 2);
+#endif
+			goto menu_top;
+		}
+		if (v6 == 0)
+		{
+		page_select:;
+			v6 = Menu_SelectResourceLayout(1);
+
+			if (v6 == -1)
+			{
+				goto link_select;
+			}
+			{
+				u8 *data = save_data;
+				s16 sum;
+
+				encoded_size = Clear_PackPasswordData(0, v6, data);
+				sum = SceneData_GetBufferCrc16(encoded_size, data);
+				save_data[encoded_size] = (u16)sum >> 8;
+				save_data[encoded_size + 1] = sum;
+				encoded_size += 2;
+				encoded_size = Clear_EncodePassword(data, encoded_size, password);
+			}
+			v6 = 2;
+			Ui_LoadWindowGraphics();
+			page_window = UiWindow_Create(5, 4, 20, 12, v6);
+			page = 0;
+			page_count = ((encoded_size / 50) + 1);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+			record = UiWindow_Create(8, 0, 13, 4, v6);
+#else
+			record = UiWindow_Create(10, 0, 10, 4, v6);
+#endif
+			page_message = (s32)MsgClearPasswordLabel;
+			heading_window = record;
+			UiText_DrawResource(page_message, heading_window, 6, 4);
+			v7 = 1;
+			if (page_count == 1)
+			{
+				record = UiWindow_Create(5, 16, 20, 3, v6);
+				help_window = record;
+#if EDITION_INTERNATIONAL
+				UiText_DrawCharacterAtOffset(page_message - 2, help_window, 80, 0);
+#else
+				UiText_DrawCharacterAtOffset(page_message - 2, help_window, 0, 0);
+#endif
+			}
+			else
+			{
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
+	|| defined(TBS_EDITION_IT)
+				record = UiWindow_Create(0, 16, 30, 3, v6);
+#elif !EDITION_INTERNATIONAL
+				record = UiWindow_Create(3, 16, 24, 3, v6);
+#else
+				record = UiWindow_Create(1, 16, 28, 3, v6);
+#endif
+				help_window = record;
+				UiText_DrawCharacterAtOffset(page_message - 1, help_window, 0, 0);
+			}
+			Graphics_ExpandVramTilesByColorTable(0x6006000);
+			RenderOutput_PrepareForRedraw(page_window);
+			for (;;)
+			{
+				Link_DrawShiftedTilePair(0x6002500);
+				if ((gKeyState & KEY_B) != 0)
+				{
+					Engine_AudioPlayCue(113);
 					RenderOutput_PrepareForRedraw(page_window);
 					UiWork_Finalize(page_window, 2);
 					UiWork_Finalize(help_window, 2);
 					UiWork_Finalize(heading_window, 2);
-					Engine_TaskWait(1);
-					goto menu_top;
+					goto page_select;
 				}
-				Engine_AudioPlayCue(111);
-			}
-			else
-			{
-				if ((gKeyState & KEY_LEFT) != 0)
+				if ((gKeyState & KEY_A) != 0)
 				{
-					if (page_count <= 1)
+					page = (page + 1);
+					v7 = 1;
+					if (page == page_count)
 					{
-						goto check_right;
+						Engine_AudioPlayCue(112);
+						RenderOutput_PrepareForRedraw(page_window);
+						UiWork_Finalize(page_window, 2);
+						UiWork_Finalize(help_window, 2);
+						UiWork_Finalize(heading_window, 2);
+						Engine_TaskWait(1);
+						goto menu_top;
 					}
 					Engine_AudioPlayCue(111);
-					rec5 = page + page_count;
-					rec5--;
 				}
 				else
 				{
-				check_right:;
-					if ((gKeyState & KEY_RIGHT) == 0)
+					if ((gKeyState & KEY_LEFT) != 0 && page_count > 1)
 					{
-						goto keys_done;
+						Engine_AudioPlayCue(111);
+						rec5 = page + page_count;
+						rec5--;
 					}
-					if (page_count <= 1)
+					else if ((gKeyState & KEY_RIGHT) != 0 && page_count > 1)
 					{
-						goto keys_done;
-					}
-					Engine_AudioPlayCue(111);
-					rec5 = page + page_count;
-					rec5++;
-				}
-				rec5 = (rec5 % page_count);
-				v7 = 1;
-				page = rec5;
-			}
-		keys_done:;
-			if (v7 != 1)
-			{
-				v5 = page_message;
-			}
-			else
-			{
-				RenderOutput_PrepareForRedraw(page_window);
-				v7 = 0;
-				v5 = 2;
-				do
-				{
-					UiWindow_DrawDividerLine(page_window, 0, v5, 18, v5);
-					v5 = (v5 + 2);
-					v7 = (v7 + 1);
-				} while (v7 != 4);
-				if (page_count > 1)
-				{
-					v7 = 0;
-					if (page_count != 0)
-					{
-						v6 = 0;
-						do
-						{
-							value = v7 + 0xf301;
-							if (v7 == page)
-							{
-								value = v7 + 0xf30b;
-							}
-							UiWindow_SetTilemapEntry(
-								page_window, value, v7 + 18 - page_count, -1, v6);
-							v7 = (v7 + 1);
-						} while (v7 != page_count);
-					}
-					v5 = 0;
-					UiWindow_SetTilemapEntry(page_window, 0xf128, (17 - (s32)page_count), -1, 0);
-					UiWindow_SetTilemapEntry(page_window, 0xf129, 18, -1, 0);
-					UiRender_MarkRow(
-						(struct UiRenderWork *)gWindowWork[0], ((struct UiWindow *)page_window)->y);
-				}
-				v6 = page * 50 + 50;
-				if (v6 > encoded_size)
-				{
-					v6 = encoded_size;
-				}
-				for (v7 = page * 50, n = 0; v7 != v6; v7++, n++)
-				{
-					/* FAKEMATCH: the loop note ends the CSE path, which otherwise carries the glyph address into both draw calls for gcse to hoist out of the loop; the native rebuilds sp + 24 at each call */
-					do
-					{
-						Clear_NameEntryCharacter(password[v7] & 63, glyph);
-					} while (0);
-					record = (v7 % 10);
-					if (record > 4)
-					{
-						s32 row;
-
-						rec7 = (n % 10);
-						row = (n / 10);
-						UiText_DrawString(glyph, page_window, rec7 * 12 + 18, (row << 4) + 2);
+						Engine_AudioPlayCue(111);
+						rec5 = page + page_count;
+						rec5++;
 					}
 					else
 					{
-						s32 row;
-
-						rec7 = (n % 10);
-						/* FAKEMATCH: an explicit libgcc call; written with the operator, tbs-en differs */
-						row = __divsi3(n, 10);
-						UiText_DrawString(glyph, page_window, rec7 * 12 + 8, (row << 4) + 2);
+						goto keys_done;
 					}
+					rec5 = (rec5 % page_count);
+					v7 = 1;
+					page = rec5;
 				}
-				v7 = 0;
+			keys_done:;
+				if (v7 != 1)
+				{
+					v5 = page_message;
+				}
+				else
+				{
+					RenderOutput_PrepareForRedraw(page_window);
+					v7 = 0;
+					v5 = 2;
+					do
+					{
+						UiWindow_DrawDividerLine(page_window, 0, v5, 18, v5);
+						v5 = (v5 + 2);
+						v7 = (v7 + 1);
+					} while (v7 != 4);
+					if (page_count > 1)
+					{
+						v7 = 0;
+						if (page_count != 0)
+						{
+							v6 = 0;
+							do
+							{
+								value = v7 + 0xf301;
+								if (v7 == page)
+								{
+									value = v7 + 0xf30b;
+								}
+								UiWindow_SetTilemapEntry(
+									page_window, value, v7 + 18 - page_count, -1, v6);
+								v7 = (v7 + 1);
+							} while (v7 != page_count);
+						}
+						v5 = 0;
+						UiWindow_SetTilemapEntry(
+							page_window, 0xf128, (17 - (s32)page_count), -1, 0);
+						UiWindow_SetTilemapEntry(page_window, 0xf129, 18, -1, 0);
+						UiRender_MarkRow((struct UiRenderWork *)gWindowWork[0],
+							((struct UiWindow *)page_window)->y);
+					}
+					v6 = page * 50 + 50;
+					if (v6 > encoded_size)
+					{
+						v6 = encoded_size;
+					}
+					for (v7 = page * 50, n = 0; v7 != v6; v7++, n++)
+					{
+						/* FAKEMATCH: the loop note ends the CSE path, which otherwise carries the glyph address into both draw calls for gcse to hoist out of the loop; the native rebuilds sp + 24 at each call. Without the block differ 374 on tbs-en, 22 instructions more */
+						do
+						{
+							Clear_NameEntryCharacter(password[v7] & 63, glyph);
+						} while (0);
+						record = (v7 % 10);
+						if (record > 4)
+						{
+							s32 row;
+
+							rec7 = (n % 10);
+							row = (n / 10);
+							UiText_DrawString(glyph, page_window, rec7 * 12 + 18, (row << 4) + 2);
+						}
+						else
+						{
+							s32 row;
+
+							rec7 = (n % 10);
+							/* FAKEMATCH: an explicit libgcc call; written n / 10 it differs 254 on tbs-en (244 on tbs-ja), 16 instructions more */
+							row = __divsi3(n, 10);
+							UiText_DrawString(glyph, page_window, rec7 * 12 + 8, (row << 4) + 2);
+						}
+					}
+					v7 = 0;
+				}
+				Engine_TaskWait(1);
 			}
-			Engine_TaskWait(1);
 		}
+		Engine_TaskWait(0x12c);
+		goto menu_top;
 	}
-	Engine_TaskWait(0x12c);
-	goto menu_top;
 leave:;
 	gEventWork->requested_exit = 0x3e7;
 	Engine_EventWait(30);

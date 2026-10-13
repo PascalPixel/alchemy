@@ -724,7 +724,7 @@ static void EV50_TOUCH(void)
 	Engine_ActorSetAnimation(0, 16);
 	Engine_ActorSetAnimation(8, 9);
 	Engine_EventWait(10);
-	/* FAKEMATCH: base is set at the top of the function, so 2 - rec8 + 1 is not folded into 3 - rec8. */
+	/* FAKEMATCH: base is set to 2 at the top of the function, so base - rec8 + 1 is not folded; written 3 - rec8 or 2 - rec8 + 1 it differs 10 on tbs-en, two instructions fewer. */
 	BattleFx_SetWeightedResult(72, base - rec8 + 1);
 	Battle_SetStart(3);
 	Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoKabe, 4);
@@ -1091,7 +1091,7 @@ static void EV36_TALK(s32 a0)
 			Camera_SetSpeed(0x30000, 0x6000);
 			Camera_MoveTo(0x3d80000, -1, 0xe80000, 1);
 			Engine_CameraWaitForMove();
-			/* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
+			/* FAKEMATCH: called through Value2, its result discarded; called directly or through Call2 it differs 2 on tbs-en. */
 			Value2(Engine_EventShowMessage, a0, 0);
 			KorosseoKabe_StartSupplementalSceneTask();
 			Event_ShowMessage(a0, 0);
@@ -1152,7 +1152,7 @@ static void EV37_TALK(s32 a0)
 			Event_ShowMessage(a0, 0);
 			OverlayObject_PlaceWithScale14000(0, 0x348, 232);
 			Engine_EventWait(10);
-			/* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
+			/* FAKEMATCH: called through Value3, its result discarded; called directly or through Call3 it differs 2 on tbs-en. */
 			Value3(SceneActor_MovePairByTileOffset, 33, -64, 0);
 			Camera_MoveTo(0x2f00000, -1, 0xd80000, 1);
 			Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -1441,7 +1441,7 @@ static void FieldScene_RunLateSequence(s32 a0)
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(86);
 		Korosseo_LoadPortrait(8);
-		/* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
+		/* FAKEMATCH: called through Value2, its result discarded; called directly or through Call2 each of the two calls differs 2 on tbs-en, both 4. */
 		Value2(KorosseoKabe_InitializeModeTask, 3, 1);
 		Engine_EventWait(-a0 * 60 + 60);
 		kind = 0;
@@ -1451,7 +1451,7 @@ static void FieldScene_RunLateSequence(s32 a0)
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(a0 + 90);
 		Korosseo_LoadPortrait(4);
-		/* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
+		/* FAKEMATCH: called through Value2 like the call above; called directly or through Call2 it differs 2 on tbs-en. */
 		Value2(KorosseoKabe_InitializeModeTask, 3, 0);
 		Engine_EventWait(a0 * 60 + 60);
 		kind = 8;
@@ -1610,14 +1610,13 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
 
 	if (flag == 0)
 	{
-		/* FAKEMATCH: void functions called as returning s32; as void calls the argument moves are ordered differently. */
-		/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+		/* FAKEMATCH: called through a cast to the s32 call type the bytes show; called by its void prototype the argument moves are ordered differently: differ 2 on tbs-en, 4 with the call below. */
 		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, handleA);
 		UiWork_PushValueSlot(handleA, 2);
 	}
 	else
 	{
-		/* FAKEMATCH: called through a cast to the call type the bytes show; called by its prototype, tbs-en differs */
+		/* FAKEMATCH: the same cast as above; by its prototype differ 2 on tbs-en. */
 		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, handleB);
 		UiWork_PushValueSlot(handleB, 2);
 	}

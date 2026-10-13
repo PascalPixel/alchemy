@@ -60,7 +60,6 @@ s32 Scene_PlaceActor8OnGate300(void)
 {
 	struct Resource388Runtime *work;
 
-	s8	state;
 	s32 arg5;
 	s32 arg6;
 	s32 pos_x = 0xD80000;
@@ -75,9 +74,8 @@ s32 Scene_PlaceActor8OnGate300(void)
 		Engine_ActorSetAnimation(8, 2);
 		Engine_ActorSetSpriteFlags((s32)Object_GetById(8), 0);
 		((struct Resource388SlotView *)Object_GetById(8))->unknown_23 = 2;
-		state = 0;
-		((struct Resource388SlotView *)Object_GetById(8))->unknown_59 = state;
-		/* FAKEMATCH: the 5th and 6th arguments go through locals; as literals, direct or through Map_CopyCellAttributes, tbs-en differs */
+		((struct Resource388SlotView *)Object_GetById(8))->unknown_59 = 0;
+		/* FAKEMATCH: the 5th and 6th arguments go through locals; as literals in the direct call they differ 6 on tbs-en, and through Map_CopyCellAttributes they differ too */
 		arg5 = 0xB;
 		arg6 = 6;
 		Engine_MapCopyCellAttributes(0xB, 0x24, 5, 5, arg5, arg6);

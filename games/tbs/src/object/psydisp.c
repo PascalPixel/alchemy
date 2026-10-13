@@ -445,8 +445,8 @@ void ObjectGroup_ApplyRandomChildValues(void *owner)
 	s32			  cnt;
 	void		**entry;
 	void		 *part;
-	/* FAKEMATCH: volatile, as gFrameCount is declared (frame.h): each *frame_count is a load of its own. A plain pointer differs 16, 46 instructions either way. */
-	volatile s32 *frame_count;
+	/* FAKEMATCH: volatile, as gFrameCount is declared (frame.h): each *frame_count is a load of its own through the pointer local. A plain pointer differs 16; gFrameCount read directly in the loop differs 6; 46 instructions every way. */
+	volatile u32 *frame_count;
 	s32			  value;
 
 	kind = ((struct ObjectRuntime *)owner)->animation_kind;
@@ -458,13 +458,13 @@ void ObjectGroup_ApplyRandomChildValues(void *owner)
 			initial_count = ((struct AnimationObject *)anim)->count;
 			if (initial_count != 0)
 			{
-				frame_count = (volatile s32 *)&gFrameCount;
+				frame_count = &gFrameCount;
 				entry = (void **)((struct AnimationObject *)anim)->entries;
 				cnt = initial_count;
 				do
 				{
 					part = *entry++;
-					value = (u32)*frame_count % 6;
+					value = *frame_count % 6;
 					cnt--;
 					((struct AnimationEntry *)part)->param = value;
 				} while (cnt != 0);

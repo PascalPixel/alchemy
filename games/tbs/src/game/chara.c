@@ -755,11 +755,6 @@ void Owner_RefreshActiveRatios(s32 arg0)
 	s32				count;
 	s32				n;
 	struct BtlUnit *obj;
-	s32				t;
-	s32				v14;
-	s32				v16;
-	s32				one;
-	s16				v34;
 
 	count = Party_CountActiveOwners();
 	for (n = 0; n < count; n++)
@@ -767,41 +762,12 @@ void Owner_RefreshActiveRatios(s32 arg0)
 		obj = UnitGet(gGameState.active_owners[n]);
 
 		Unit_Recover(obj);
-
-		v34 = obj->max_hp;
-		t = (v34 << 14) / v34;
-		v14 = 0x4000;
-		if (t <= 0x4000)
-		{
-			v14 = 0;
-			if (t >= 0)
-			{
-				v14 = t;
-			}
-		}
-		obj->hp_gauge = v14;
-		if (((v14 << 16) == 0) && (obj->hp != 0))
-		{
-			one = 1;
-			obj->hp_gauge = one;
-		}
-
-		t = (obj->ep << 14) / obj->max_ep;
-		v16 = 0x4000;
-		if (t <= 0x4000)
-		{
-			v16 = 0;
-			if (t >= 0)
-			{
-				v16 = t;
-			}
-		}
-		obj->ep_gauge = v16;
-		if (((v16 << 16) == 0) && (obj->ep != 0))
-		{
-			one = 1;
-			obj->ep_gauge = one;
-		}
+		obj->hp_gauge = Vitals_Ratio(obj->hp, obj->max_hp);
+		if (obj->hp_gauge == 0 && obj->hp != 0)
+			obj->hp_gauge = 1;
+		obj->ep_gauge = Vitals_Ratio(obj->ep, obj->max_ep);
+		if (obj->ep_gauge == 0 && obj->ep != 0)
+			obj->ep_gauge = 1;
 
 		if (arg0 == 1)
 		{

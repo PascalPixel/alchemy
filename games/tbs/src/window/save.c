@@ -1947,7 +1947,9 @@ s32 NameEntry_EditOwnerName(s32 entry)
 					/* FAKEMATCH: the split restores end the pointer setup's
                      * CSE blocks. They disappear, preserving destination/
                      * source/index in r2/r1/r0; removing the barrier alone
-                     * changes them to r1/r0/r2 (14 instructions differ). */
+                     * changes them to r1/r0/r2 (14 instructions differ). A for loop
+                     * copying saved[i] = input[i], or walking the pointers,
+                     * differs 14; the while form with i declared first, 12. */
 					if (saved)
 						src = NULL;
 					if (saved)
@@ -2263,7 +2265,9 @@ s32 NameEntry_EditOwnerName(s32 entry)
 					/* FAKEMATCH: the split restores end the pointer setup's
                      * CSE blocks. They disappear, preserving destination/
                      * source/index in r1/r2/r0; removing the barrier alone
-                     * changes them to r2/r0/r1 (14 instructions differ). */
+                     * changes them to r2/r0/r1 (14 instructions differ). A for loop
+                     * copying saved[i] = input[i] differs 18, one walking the
+                     * pointers 14; the while form with i declared first, 12. */
 					dst_save = dst;
 					src_save = src;
 					if (window->height)

@@ -3777,8 +3777,6 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 m
 		mark = (s16)UiText_MarkGlyphCodes[(u32)character >> 14];
 		character &= 0x3fff;
 		width = 4;
-		if (character == ' ')
-			goto done;
 #else
 		if (((struct BattleDisplayWork *)gWindowWork[HEAP_SLOT_BATTLE_DISPLAY - HEAP_SLOT_WINDOW])
 				->window
@@ -3792,28 +3790,28 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 m
 		}
 		font = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
 		width = 4;
-		if (character == ' ')
-			goto done;
 #endif
-		RamCode_Load(draw, UiText_DrawGlyphArm, UiText_DrawGlyphCodeSize);
-		result = draw(window, character, x, y, font);
+		if (character != ' ')
+		{
+			RamCode_Load(draw, UiText_DrawGlyphArm, UiText_DrawGlyphCodeSize);
+			result = draw(window, character, x, y, font);
 #if !EDITION_INTERNATIONAL
-		if ((u16)mark != 0)
-			result += draw(window, (u16)mark, x + result, y, font);
+			if ((u16)mark != 0)
+				result += draw(window, (u16)mark, x + result, y, font);
 #endif
-		MemFree(draw);
-		return result;
+			MemFree(draw);
+			return result;
+		}
 	}
-
-	if (character == ' ')
+	else if (character == ' ')
 	{
 #if !EDITION_INTERNATIONAL
 		width = 7;
 #else
 		width = 5;
 #endif
-		goto done;
 	}
+	else
 	{
 		u32					 tiles[32];
 		struct RenderOutput *output;

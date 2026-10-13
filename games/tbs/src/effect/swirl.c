@@ -729,7 +729,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 	REG_BG2PA = 0x100;
 	/* FAKEMATCH: test through direction so CSE retains the mode reload
 	 * in this arm. Testing mode directly replaces ldr r4,[sp,#76] with
-	 * movs r4,#1 (1532 instructions, two differing rows). */
+	 * movs r4,#1 (1532 instructions, two differing rows). 2026-10-13:
+	 * a switch on mode, side tested by if/else or `side != 1 ? -1 : mode`
+	 * differ the same 2; direction = -1 first and set in the arm 58. */
 	direction = mode;
 	if (direction == 1)
 	{

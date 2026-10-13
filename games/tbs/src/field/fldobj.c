@@ -114,10 +114,8 @@ void ObjectSystem_Initialize(s32 mode)
 	sys = Runtime_AllocateBlock(6, sizeof(*sys));
 	objs = Runtime_AllocateBlock(5, 64 * sizeof(*objs));
 	ObjectSystem_Configure(mode);
-	fill = 0;
-	Dma_Set((const void *)&fill, objs, 0x85000700, REG_DMA3); // 32 ビットでうめる
-	fill = 0;
-	Dma_Set((const void *)&fill, sys, 0x85000017, REG_DMA3);
+	Dma_Fill32Cell(fill, 0, objs, 64 * sizeof(*objs));
+	Dma_Fill32Cell(fill, 0, sys, sizeof(*sys));
 	if (mode == 4)
 		Scheduler_AddOrUpdateCallback(Object_UpdateAllMotion, 0xc8a);
 	else
@@ -179,8 +177,6 @@ void *ObjectDispatch_FindFreeObject(void)
 //--------------------------------------------------------------------------
 void ObjectDispatch_Release(struct DispatchObject *obj)
 {
-	volatile u32				zero;
-	volatile u32			   *src;
 	s32							n;
 	struct ResourceObjectWork **child;
 
@@ -202,9 +198,7 @@ void ObjectDispatch_Release(struct DispatchObject *obj)
 			} while (--n >= 0);
 			break;
 		}
-		src = &zero;
-		*src = 0;
-		Dma_Set(src, obj, 0x85000000 | (sizeof(struct ObjectRuntime) / 4), REG_DMA3);
+		Dma_Fill32(0, obj, sizeof(struct ObjectRuntime));
 	}
 }
 
@@ -222,7 +216,6 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
 	void					   *spr;
 	s32							kind;
 	void					  **ent;
-	volatile u32				zero;
 
 	ObjectDispatch_FindFreeObject();
 	kind = id / 4096;
@@ -251,9 +244,8 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
 			// 絵の並び（4 つ分）をとって 0 でうめ、id と id + 1 の絵を入れる
 			ent = (void **)((u32 *)gMenuCtrlWork + gMenuCtrlWork->count++ + 2);
 			obj->animation_kind = kind;
-			zero = 0;
 			obj->animation = ent;
-			Dma_Set(&zero, ent, 0x85000004, REG_DMA3);
+			Dma_Fill32(0, ent, 0x10);
 			spr = ResourceObject_Create(id);
 			if (spr != NULL)
 			{

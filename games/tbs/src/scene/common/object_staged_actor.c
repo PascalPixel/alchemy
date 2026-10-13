@@ -345,7 +345,10 @@ static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 	/* FAKEMATCH: gMapWork[0] read as a u32 may alias the probe's s32 fields, so
 	 * the load stays after the four stores of the incoming probe, as native.
 	 * 2026-10-13: the plain gMapWork[0] (a void *) is scheduled above those
-	 * stores (differ 6). */
+	 * stores (differ 6). With gMapWork declared u32[] (global_cells.h) the
+	 * plain (struct MapScrollWork *)gMapWork[0] matches and, in all six
+	 * editions, only DisplayBlend_StartScript changes; it matches again with
+	 * the map work read into a local before the zero is stored. */
 	struct MapScrollWork		   *workspace;
 	struct StagedActor			   *actor;
 	struct StagedActorProbePosition original_position;

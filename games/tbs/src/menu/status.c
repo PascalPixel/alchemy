@@ -109,7 +109,8 @@ s32 CharacterSelector_Run(void)
 	   offset, as native. Plain forms measured (2026-10-13): the store
 	   without the block, or with result declared first, moves the
 	   offset into the work load's delay (differ 4); storing a constant
-	   0 differs 14, two returns 26. */
+	   0 differs 14, two returns 26. Measured 2026-10-13: the call
+	   result kept in result and tested, or a ?: on it, differ 19. */
 	do
 	{
 		work->selected_slots[0] = result;

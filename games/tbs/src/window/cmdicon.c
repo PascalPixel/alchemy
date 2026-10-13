@@ -253,11 +253,9 @@ void AffineEffect_UpdateFrame(void)
 
 void *AffineEffect_InitializeWork(void)
 {
-	void		*work;
-	volatile u32 zero;
+	void *work;
 	work = Runtime_AllocateBlock(58, 152);
-	zero = 0;
-	Dma_Set(&zero, work, 0x85000026, REG_DMA3);
+	Dma_Fill32(0, work, 152);
 	Scheduler_AddOrUpdateCallback(AffineEffect_UpdateFrame, 0xc76);
 	return work;
 }

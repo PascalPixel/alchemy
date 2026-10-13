@@ -2249,6 +2249,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 	tbl[cnt] = 0x80000000;
 	ctx->dirty = 1;
 
+	/* FAKEMATCH: forced store: this dead store of cur_spr before the loop keeps the native allocation; without it the function differs 394 (1193 instructions for 1201) in tbs-en and tbs-ja (measured 2026-10-14). */
 	cur_spr = &slot;
 	for (;;)
 	{
@@ -2668,6 +2669,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 			cursor_pos.x = cx - 2;
 		}
 		cursor_pos.y = (row * 2 + list_win->y) * 8 + 20;
+		/* FAKEMATCH: forced re-point: cur_spr already holds &slot; storing it again here keeps the native reload; without it the function differs 36 in tbs-en and tbs-ja (measured 2026-10-14). */
 		cur_spr = &slot;
 		((u32 *)cur_spr)[1] = MENU_SPRITE_SIZE_16;
 		((u32 *)cur_spr)[2] = 0;
@@ -2756,7 +2758,7 @@ enum
 //--------------------------------------------------------------------------
 s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 {
-	struct MenuSprite			   cursor;
+	struct CursorSprite			   cursor;
 	struct MenuSprite			   sprites[4];
 	u8							   available[33]; // 覚えた召喚
 	u8							   ordered[33];	  // 呼べるものを先にした並び
@@ -2774,19 +2776,13 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 	struct MenuPoint			   cursor_position;
 	const struct SummonDefinition *summon;
 	struct MenuCell				  *nav;
-	struct MenuSprite			  *sprite, *cur;
+	struct MenuSprite			  *sprite;
+	struct CursorSprite			  *cur;
 	s32							   used;
 	s32							   id, tile, affordable;
 	s32							   pressed, repeated, result;
 	s32							   index;
 
-	/* FAKEMATCH: register choice (spill slots) only: a dead store. GCSE
-	   sizes its hash table from the function's length and PRE numbers its
-	   reaching registers in bucket order; with this store the table has
-	   379 buckets and &ordered and &sprites take their spill slots before
-	   count - 1, as in the native frame (377 buckets without it: 80 rows
-	   differ, every one a spill slot's offset). */
-	result = 0;
 	render = UI_WORK;
 	drawn_row = -1;
 	drawn_page = -1;
@@ -2988,16 +2984,18 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 		// カーソルは 4 フレームごとに揺れる
 		cursor_position.x = window->x * 8 - 2;
 		cursor_position.y = (row * 2 + window->y) * 8 + 20;
-		/* FAKEMATCH: instruction order only: as u32 words, not through the
-		   union, these stores do not alias cursor_position, so cur is
-		   reloaded before cursor_position.y is stored (differ 2). */
 		((u32 *)cur)[1] = MENU_SPRITE_SIZE_16;
 		((u32 *)cur)[2] = 0;
-		cur->oam.f.tile = Resource_GetBuffer((u16)cursor_handle, (s32)Resource_FixedBlockBTiles);
-		cur->oam.f.x = cursor_position.x + ((gFrameCount & 4) >> 1) - 4;
-		cur->oam.f.y = cursor_position.y - ((gFrameCount & 4) >> 2) + 248;
-		sprite = &cursor;
-		Runtime_PushSlotEntry((s32 *)sprite, 242);
+		cur->tile = Resource_GetBuffer((u16)cursor_handle, (s32)Resource_FixedBlockBTiles);
+		cur->x = cursor_position.x + ((gFrameCount & 4) >> 1) - 4;
+		cur->y = cursor_position.y - ((gFrameCount & 4) >> 2) - 8;
+		/* FAKEMATCH: register choice and order: the cursor is pushed through
+		   sprite, re-pointed at it here as a struct MenuSprite *, which keeps
+		   the frame loop's registers as the native allocates them. Measured
+		   (2026-10-13): pushing &cursor or cur directly gives 947
+		   instructions for 946, differ 87 in all six editions. */
+		sprite = (struct MenuSprite *)&cursor;
+		Runtime_PushSlotEntry(sprite, 242);
 
 		// 必要な属性のスタンバイ数を 8 フレームごとに点滅させる
 		{
@@ -3033,18 +3031,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 		//------------------------------------------------------------------
 		// 入力
 		//------------------------------------------------------------------
+		MenuCell_SetCursor(page, row, preferred);
 		nav = gLinkCountdownWork;
-		/* FAKEMATCH: instruction order only: page, row and preferred are
-		   stored in source order before the keys are read (differ 4).
-		   Plain forms measured (2026-10-13): the same order, or through
-		   gLinkCountdownWork directly, store row first (differ 4); the
-		   other five store orders differ 8 to 12. */
-		do
-		{
-			nav->page = page;
-			nav->row = row;
-			nav->preferred_row = preferred;
-		} while (0);
 		pressed = gKeyState;
 		repeated = gKeysRepeat;
 
@@ -3359,11 +3347,6 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 				window->width - (count + 4) / BATTLE_LIST_ROWS - 3, edge, 0);
 			UiWindow_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2, edge, 0);
 			UiRender_MarkRow(render, window->y - 1);
-			/* FAKEMATCH: the cursor pointer pair preserves the native
-             * spill slots (42 rows differ without the pair); it keeps
-             * all 770 instructions in every edition. */
-			cur++;
-			cur--;
 		}
 
 		for (i = 0; i < icon_count; i++)
@@ -3376,9 +3359,11 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 		pos.y = (row * 2 + window->y) * 8 + 20;
 		/* FAKEMATCH: register choice (spill slots) only: re-pointing cur each
 		   frame orders the spill slots of the cursor address and row*2 as the
-		   native frame does. Measured (2026-10-13): without it differ 34;
-		   the cursor written directly, with no cur and neither pointer
-		   device, 781 instructions for 770 (differ 209). */
+		   native frame does. Measured (2026-10-13, after MenuCell_SetCursor):
+		   without it differ 56; with it but without the assignment before
+		   the loop, differ 14; the cursor written directly, with no cur,
+		   781 instructions for 770 (differ 209). Battle_SelectAbility sets
+		   cur_spr the same two ways, untagged (394 and 36 without them). */
 		cur = &cursor;
 		((u32 *)cur)[1] = MENU_SPRITE_SIZE_16;
 		((u32 *)cur)[2] = 0;
@@ -3390,15 +3375,8 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 			Runtime_PushSlotEntry(cur, 242);
 		}
 
+		MenuCell_SetCursor(page, row, preferred_row);
 		cell = gLinkCountdownWork;
-		cell->page = page;
-		cell->row = row;
-		/* FAKEMATCH: a one-pass block finishes these stores before input is read. The duplicate final store is removed by flow but preserves the native spill-slot order; with one store, 42 instructions differ only in their stack offsets. */
-		cell->preferred_row = preferred_row;
-		cell->preferred_row = preferred_row;
-		do
-		{
-		} while (0);
 
 		if ((gKeyState & KEY_A) != 0)
 		{
@@ -3739,9 +3717,6 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 		pos.y = (row * 2 + window->y) * 8 + 20;
 		((u32 *)spr)[1] = 0x40000000;
 		((u32 *)spr)[2] = 0;
-		/* FAKEMATCH: this dead duplicate is needed to match the native spill
-         * slots; removing it changes 42 aligned instructions. */
-		((u32 *)spr)[2] = 0;
 		spr->oam.f.tile = Resource_GetBuffer(cursor_handle, (s32)Resource_FixedBlockBTiles);
 		spr->oam.f.x = pos.x + ((gFrameCount & 4) >> 1) - 4;
 		spr->oam.f.y = pos.y - ((gFrameCount & 4) >> 2) - 8;
@@ -3750,10 +3725,8 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 			Runtime_PushSlotEntry(spr, 242);
 		}
 
+		MenuCell_SetCursor(page, row, preferred_row);
 		nav = gLinkCountdownWork;
-		nav->page = page;
-		nav->row = row;
-		nav->preferred_row = preferred_row;
 
 		if ((gKeyState & KEY_A) != 0)
 		{
@@ -3765,9 +3738,10 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 					break;
 				}
 				/* FAKEMATCH: a dead store here keeps the test above from being
-				   threaded past the break. Measured (2026-10-13): without it the
-				   test branches straight on (one instruction fewer) and the spill
-				   slots reorder (differ 53). */
+				   threaded past the break. Measured (2026-10-13, after
+				   MenuCell_SetCursor): without it the unusable branch skips the
+				   native jump through the next block (793 instructions for 794,
+				   differ 11 in every edition). */
 				result = -1;
 			}
 			else
@@ -4984,7 +4958,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 	}
 	Scheduler_AddOrUpdateCallback(UpdateLinkSessionCountdown, 3200);
 
-	for (;;)
+	while (1)
 	{
 		DrawPartyPanels();
 		state->entryActive[2] = 0;
@@ -5037,17 +5011,17 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 			ent->command = 99;
 			ent->parameter = 0;
 			ent->target = 256;
-			goto finish;
+			break;
 		}
 		if (mode != 14)
 		{
-			goto finish;
+			break;
 		}
 		AudioCommand_PlayFar(154);
 		i = 0;
 		if (i >= count)
 		{
-			goto finish;
+			break;
 		}
 
 		for (;;)
@@ -5206,19 +5180,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 
 				AudioCommand_PlayFar(112);
 				mode = 0;
-				/* FAKEMATCH: instruction order only: the one-pass block's loop
-                   notes end the schedule here, so mode = 0 goes out before the
-                   countdown base is loaded, as native (differ 4). Plain
-                   forms measured (2026-10-13): mode = 0 before the sound
-                   call, a chain ending in mode = 0 or a local copy of
-                   COUNTDOWN still load the base first (differ 4); a chain
-                   from mode 8; three constant stores 12. */
-				do
-				{
-				} while (0);
-				COUNTDOWN->unk_34 = mode;
-				COUNTDOWN->unk_30 = mode;
-				COUNTDOWN->unk_38 = mode;
+				MenuCell_SetCursor(mode, mode, mode);
 			psynergy_menu:
 				list = state->list;
 				pick = state->pick;
@@ -5318,9 +5280,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 				s32							   n;
 
 				AudioCommand_PlayFar(112);
-				COUNTDOWN->unk_34 = 0;
-				COUNTDOWN->unk_30 = 0;
-				COUNTDOWN->unk_38 = 0;
+				MenuCell_SetCursor(0, 0, 0);
 			djinn_menu:
 #if EDITION_INTERNATIONAL
 				state->entries[0].oam.f.x = 80;
@@ -5425,9 +5385,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 				s32				 index;
 
 				AudioCommand_PlayFar(112);
-				COUNTDOWN->unk_34 = 0;
-				COUNTDOWN->unk_30 = 0;
-				COUNTDOWN->unk_38 = 0;
+				MenuCell_SetCursor(0, 0, 0);
 			summon_menu:
 				state->entries[0].oam.f.x = 144;
 				COUNTDOWN->selected[i] = 0x80000000;
@@ -5509,14 +5467,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 
 				AudioCommand_PlayFar(112);
 				mode = 0;
-				/* FAKEMATCH: instruction order only: as in the psynergy case,
-                   mode = 0 before the countdown base (differ 2). */
-				do
-				{
-				} while (0);
-				COUNTDOWN->unk_34 = mode;
-				COUNTDOWN->unk_30 = mode;
-				COUNTDOWN->unk_38 = mode;
+				MenuCell_SetCursor(mode, mode, mode);
 			item_menu:
 				state->entries[0].oam.f.x = 96;
 				pick = state->pick;
@@ -5646,7 +5597,6 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 		break;
 	}
 
-finish:
 	if (state->enabled != 0)
 	{
 		sync = (u16 *)gSerialTransfer.payload;

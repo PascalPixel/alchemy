@@ -16,6 +16,7 @@
 #include "layout_guard.h"
 #include "keystate.h"
 #include "farcall.h"
+#include "frame.h"
 
 enum
 {
@@ -137,9 +138,17 @@ LAYOUT_OFFSET_GUARD(MenuCell_AutoMode, struct MenuCell, auto_mode, 0xe0);
 		(preferred_) = ((struct MenuCell *)gWindowWork[42])->preferred_row; \
 	} while (0)
 
+// 選んでいる位置 (ページ、行、戻る行) を書き残す
+/* FAKEMATCH: the do { } while (0) wrapper steers, so this is a device at each of its 7 sites, not a layer (S2: not every use matches through it). Battle_SelectAbility writes the same three stores plainly through its already loaded menu pointer, and through this macro it differs 2 in all six editions (measured 2026-10-13). At the 7 sites the work-cell pointer it loads stays apart from the reload after it, and the three stores finish before the keys are read; written as three plain stores, with the dead-store pads gone, SummonMenu_SelectSummon differs 84 (stores through its nav pointer; through gLinkCountdownWork, the macro's own stores unwrapped, it differs 4), ItemList_SelectEntry 46 and BattleMenu_RunActionSelection 42 in tbs-en, and elsewhere the row store goes first (differ 4) or the base is loaded before mode = 0 (differ 2 to 4). */
+#define MenuCell_SetCursor(page_, row_, preferred_)       \
+	do                                                    \
+	{                                                     \
+		gLinkCountdownWork->page = (page_);               \
+		gLinkCountdownWork->row = (row_);                 \
+		gLinkCountdownWork->preferred_row = (preferred_); \
+	} while (0)
+
 extern struct MenuCell *gLinkCountdownWork;
-// volatile: gFrameCount carries its tag where frame.h declares it
-extern volatile u32		gFrameCount;
 extern u8				Resource_FixedBlockBTiles[];
 extern const u8			Menu_AnimatedCursorTiles[];
 

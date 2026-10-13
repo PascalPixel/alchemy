@@ -24,6 +24,7 @@
 #include "callback_scheduler.h"
 #include "call.h"
 #include "frame.h"
+#include "oambuf.h"
 
 s32 Runtime_BlankDisplayAndRun(void)
 {
@@ -164,19 +165,13 @@ s16 FixedPoint_Reciprocal(s16 value)
 #define DICE_KIND_X 0x280
 #endif
 
-struct LuckyDiceObj
-{
-	volatile u32 attr01;
-	volatile u32 attr2;
-};
-
 struct LuckyDiceSprites
 {
-	u8					filler[200];
-	struct LuckyDiceObj obj[128];
-	s32					coins_window;
-	s32					winnings_window;
-	s32					help_window;
+	u8				 filler[200];
+	struct OamShadow obj[128];
+	s32				 coins_window;
+	s32				 winnings_window;
+	s32				 help_window;
 };
 
 #include "keystate.h"
@@ -267,7 +262,7 @@ void LuckyDice_Run(void)
 	s32						 matches[2];
 	u16						*obj_palette;
 	struct BattleEffectWork *work;
-	/* FAKEMATCH: the OAM shadow entries (struct LuckyDiceObj) are volatile, the form the bytes prove: loop.c forms no DEST_ADDR givs for volatile stores, so every obj loop keeps the count * 8 + 200 and + 204 offset givs (without it 1702) */
+	/* FAKEMATCH: the OAM shadow it builds is struct OamShadow, volatile words (tag in oambuf.h): without the qualifier differ 1702. */
 	struct LuckyDiceSprites *sprites;
 	struct BattleCamera		*render;
 	s32						 frame;

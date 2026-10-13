@@ -36,6 +36,7 @@
 #include "text/msg_ids.h"
 #include "trackbuf.h"
 #include "frame.h"
+#include "oambuf.h"
 
 //--------------------------------------------------------------------------
 // colorfx.c
@@ -324,12 +325,6 @@ struct Reel
 	s8	stop;
 };
 
-struct ReelObject
-{
-	volatile u32 attr01;
-	volatile u32 attr2;
-};
-
 struct UiWindow;
 
 struct ReelWork
@@ -346,7 +341,7 @@ struct ReelWork
 	u8				  unknown_0a4[4];
 	s32				  timer;
 	s32				  winning_lines[7];
-	struct ReelObject obj[128];
+	struct OamShadow  obj[128];
 	struct UiWindow	 *window;
 	struct UiWindow	 *sub_window;
 	u8				  unknown_4d0[8];
@@ -398,7 +393,7 @@ const u8 ReelGame_TitleLetterWidths[REEL_TITLE_LETTERS] = {
 
 void ReelGame_RunFrame(void)
 {
-	/* FAKEMATCH: the OAM shadow words (struct ReelObject) are volatile, as LuckyDice_Run's in camera.c. Without attr01's qualifier differ 119, 1730 instructions for 1729; without attr2's differ 1558, 1701 for 1729. */
+	/* FAKEMATCH: the OAM shadow it builds is struct OamShadow, volatile words (tag in oambuf.h): without attr01's qualifier differ 119, 1730 instructions for 1729; without attr2's differ 1558, 1701 for 1729. */
 	struct ReelWork			*work;
 	struct BattleEffectWork *fx;
 	volatile u16			*dma;

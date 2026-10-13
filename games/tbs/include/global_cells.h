@@ -21,8 +21,6 @@ extern u8				 gDecodeBuffer[];
 extern u8				 gActorSpriteSlots[];
 
 // 通信
-/* FAKEMATCH: volatile makes every access to this cell a load or store of its own; without it, in tbs-en, SaveMenu_Run: differ 221, 923 instructions for 920, and SerialRuntime_WaitForStatusMask: differ 18, 21 for 23. */
-extern volatile u16 gLinkStatus;
 extern u16			gLinkPeerSignatures[][12]; // 相手ごとに 24 バイト
 
 #endif

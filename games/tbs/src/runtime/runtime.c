@@ -33,7 +33,6 @@
 #include "serial_runtime.h"
 #include "frame.h"
 #include "keystate.h"
-#include "input.h"
 #include "oam.h"
 #include "map_scroll.h"
 #include "heap_state.h"
@@ -63,8 +62,6 @@
 
 void System_Initialize(void)
 {
-	volatile u32 zero;
-
 	{
 		volatile u16 *dma0 = REG_DMA0;
 
@@ -73,8 +70,7 @@ void System_Initialize(void)
 		dma0[5];
 	}
 	Io_Write16(WAITCNT_GAME, &REG_WAITCNT);
-	zero = 0;
-	Dma_Set((const void *)&zero, (void *)0x03000000, 0x85001e00, REG_DMA3);
+	Dma_Fill32(0, (void *)0x03000000, 0x7800);
 	Runtime_InitializeHeap();
 	Runtime_InstallIwramAndIrqs();
 	*(u32 *)&gIoWriteQueue.count = 0;

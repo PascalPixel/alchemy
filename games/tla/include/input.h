@@ -1,7 +1,9 @@
-#ifndef ALCHEMY_INPUT_H
-#define ALCHEMY_INPUT_H
+#ifndef TLA_INPUT_H
+#define TLA_INPUT_H
 
-#include "edition.h"
+// The Lost Age's key input state: held, pressed and repeating keys.
+// ⚓️ のキー入力。☀️ のキー入力は keystate.h にある。
+
 #include "types.h"
 #include "layout_guard.h"
 
@@ -26,8 +28,6 @@ LAYOUT_OFFSET_GUARD(InputState_Repeat, struct InputState, repeat, 12);
 LAYOUT_OFFSET_GUARD(InputState_RepeatTimer, struct InputState, repeat_timer, 32);
 
 extern struct InputState gInput;
-#if GAME_TLA
 void Input_UpdateKeyRepeatAndDirection(void);
-#endif
 
 #endif

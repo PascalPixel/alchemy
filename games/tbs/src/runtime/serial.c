@@ -27,7 +27,6 @@
 #include "serial_runtime.h"
 #include "frame.h"
 #include "keystate.h"
-#include "input.h"
 #include "oam.h"
 #include "map_scroll.h"
 #include "heap_state.h"
@@ -52,15 +51,14 @@
 
 void SerialRuntime_Initialize(void)
 {
-	u32 interrupt_enable;
-	/* FAKEMATCH: the fill word is volatile, so the zero is stored through its
-	 * address (mov r0, sp; str r3, [r0]). 2026-10-13: as a plain u32 the zero
-	 * is stored to [sp, #0] before the address is formed (differ 6). */
-	volatile u32		  zero;
+	u32					  interrupt_enable;
+	volatile u16		 *ime;
 	s32					  index;
 	struct SerialRuntime *state;
 
-	IRQ_LOCK(interrupt_enable);
+	/* FAKEMATCH: IRQ_LOCK written out with the IME address set inside the save statement; through IRQ_LOCK, whose pointer is initialized first, the IME load is scheduled after sub sp, #4 where the native loads it before (differ 2 in tbs-en, 123 instructions either way). */
+	IME_SAVE((ime = &REG_IME), interrupt_enable);
+	IME_DISABLE(ime);
 	Runtime_SetIrqHandler(7, 0, SerialRuntime_HandleTransferInterrupt);
 	Runtime_SetIrqHandler(6, 0, SerialRuntime_HandleTransferInterrupt);
 	REG_IME = 0;
@@ -77,8 +75,10 @@ void SerialRuntime_Initialize(void)
 	REG_SIOCNT16 = REG_SIOCNT16 | 0x4003;
 	state = &gSerialRuntime;
 	REG_IME = 1;
-	zero = 0;
-	Dma_Set(&zero, state, 0x85000058, REG_DMA3);
+	/* FAKEMATCH: the fill word is volatile, now Dma_Fill32's own word rather than a local, so the
+	 * zero is stored through its address (mov r0, sp; str r3, [r0]). 2026-10-13: as a plain
+	 * u32 the zero is stored to [sp, #0] before the address is formed (differ 6). */
+	Dma_Fill32(0, state, sizeof(*state));
 	state->send_index = -1;
 	state->send_buffer[0] = (u16 *)(state->storage + 0);
 	state->send_buffer[1] = (u16 *)(state->storage + 32);
@@ -678,11 +678,10 @@ void RuntimeWait_BusyLoopTick(void)
 
 void SerialTest_Run(void)
 {
-	u16			*tile;
-	s32			 value;
-	s32			 n;
-	s32			 tick;
-	volatile u32 zero;
+	u16 *tile;
+	s32	 value;
+	s32	 n;
+	s32	 tick;
 
 	AudioCommand_PlayFar(3);
 	SerialRuntime_Initialize();
@@ -696,8 +695,7 @@ void SerialTest_Run(void)
 		tile--;
 		value--;
 	} while (n >= 0);
-	zero = 0;
-	Bios_CpuSet((const void *)&zero, gMapCellBuffer, 0x05000100);
+	Cpu_Fill32(0, gMapCellBuffer, 0x400);
 	SerialRuntime_WaitForStatusMask(3);
 restart:
 	SerialRuntime_BeginTransferB(gMapCellBuffer);

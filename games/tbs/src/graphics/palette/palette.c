@@ -34,6 +34,7 @@
 #include "scene.h"
 #include "global_cells.h"
 #include "frame.h"
+#include "oambuf.h"
 
 struct IntroSprite
 {
@@ -55,7 +56,7 @@ struct IntroWork
 	s32 rise;
 	union
 	{
-		volatile u32 objects[120][2];
+		struct OamShadow objects[120];
 		struct
 		{
 			u8				   unknown_18[0x68];
@@ -75,7 +76,7 @@ const u8 Title_PromptBlendLevels[60] = {
 	15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
 };
 
-#define ENTRY(i, word) (work->area.objects[i][word])
+#define OBJ(i) (work->area.objects[i])
 
 #define WRAP256(v)    \
 	while ((v) > 255) \
@@ -88,19 +89,19 @@ const u8 Title_PromptBlendLevels[60] = {
 	y = (top - base) * ((x + (half)) - 104) / 80 + base - (half); \
 	WRAP256(y)
 
-#define QUAD(i, size, shape, tile)                                                            \
-	ENTRY(i, 0) = ((x + 4) << 16) | y | ((shape) + 0x00002400);                               \
-	ENTRY((i) + 1, 0) = ((x + 4 + (size)) << 16) | y | ((shape) + 0x10002400);                \
-	ENTRY((i) + 2, 0) = ((x + 4) << 16) | (u8)(y + (size)) | ((shape) + 0x20002400);          \
-	ENTRY((i) + 3, 0) = ((x + 4 + (size)) << 16) | (u8)(y + (size)) | ((shape) + 0x30002400); \
-	ENTRY(i, 1) = (tile);                                                                     \
-	ENTRY((i) + 1, 1) = (tile);                                                               \
-	ENTRY((i) + 2, 1) = (tile);                                                               \
-	ENTRY((i) + 3, 1) = (tile)
+#define QUAD(i, size, shape, tile)                                                              \
+	OBJ(i).attr01 = ((x + 4) << 16) | y | ((shape) + 0x00002400);                               \
+	OBJ((i) + 1).attr01 = ((x + 4 + (size)) << 16) | y | ((shape) + 0x10002400);                \
+	OBJ((i) + 2).attr01 = ((x + 4) << 16) | (u8)(y + (size)) | ((shape) + 0x20002400);          \
+	OBJ((i) + 3).attr01 = ((x + 4 + (size)) << 16) | (u8)(y + (size)) | ((shape) + 0x30002400); \
+	OBJ(i).attr2 = (tile);                                                                      \
+	OBJ((i) + 1).attr2 = (tile);                                                                \
+	OBJ((i) + 2).attr2 = (tile);                                                                \
+	OBJ((i) + 3).attr2 = (tile)
 
 void Title_PlaceIntroSprites(void)
 {
-	/* FAKEMATCH: the OAM shadow words (area.objects of struct IntroWork, written through ENTRY) are volatile, as LuckyDice_Run's in camera.c. Without the qualifier differ 205, 471 instructions for 496. */
+	/* FAKEMATCH: the OAM shadow it builds is struct OamShadow, volatile words (tag in oambuf.h): without the qualifier differ 205, 471 instructions for 496. */
 	struct IntroWork *work;
 	u32				  n;
 	s32				  base;
@@ -126,8 +127,8 @@ void Title_PlaceIntroSprites(void)
 			QUAD(n, 16, 0x40000000, 232);
 			n += 4;
 			PLACE(2, 16);
-			ENTRY(n, 0) = ((x + 4) << 16) | y | 0x80002400;
-			ENTRY(n, 1) = 128;
+			OBJ(n).attr01 = ((x + 4) << 16) | y | 0x80002400;
+			OBJ(n).attr2 = 128;
 			n++;
 			PLACE(4, 32);
 			QUAD(n, 32, 0x80000000, 192);
@@ -147,16 +148,16 @@ void Title_PlaceIntroSprites(void)
 		}
 	}
 	for (; n <= 119; n++)
-		ENTRY(n, 0) = 0x400020a0;
+		OBJ(n).attr01 = 0x400020a0;
 	REG_BLDCNT = 0x3f50;
 	REG_BLDALPHA = 0x0e0e;
-	Dma_Set(&ENTRY(0, 0), OAM, ((n * 8) >> 2) | 0x84000000, REG_DMA3);
+	Dma_Set(&OBJ(0), OAM, ((n * 8) >> 2) | 0x84000000, REG_DMA3);
 	line = 32 - gBgScroll[1].y;
 	WRAP256(line);
-	ENTRY(12, 0) = line | 0xc05c2000;
-	ENTRY(12, 1) = 0x800;
-	Dma_Set(&ENTRY(12, 0), (u8 *)OAM + n * 8, 0x84000002, REG_DMA3);
-	Dma_Set(&ENTRY(0, 0), OAM, 0x84000008, REG_DMA3);
+	OBJ(12).attr01 = line | 0xc05c2000;
+	OBJ(12).attr2 = 0x800;
+	Dma_Set(&OBJ(12), (u8 *)OAM + n * 8, 0x84000002, REG_DMA3);
+	Dma_Set(&OBJ(0), OAM, 0x84000008, REG_DMA3);
 }
 
 void Title_LoadIntroBackgrounds(void)
@@ -995,13 +996,11 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 
 void TitlePalette_InitializeBuffers(void)
 {
-	volatile u32			 zero;
 	struct TitlePaletteWork *buffer;
 	s32						 operation;
 
 	buffer = Runtime_AllocateBlock(32, sizeof(*buffer));
-	zero = 0;
-	Dma_Set(&zero, buffer, 0x85000c01, REG_DMA3);
+	Dma_Fill32(0, buffer, sizeof(*buffer));
 	Dma_Set((void *)0x05000000, buffer, 0x84000080, REG_DMA3);
 	Dma_Set((void *)0x05000200, &buffer->palette[256], 0x84000080, REG_DMA3);
 	Graphics_TransformPaletteBuffer(0x10000, buffer->palette, buffer->target, 0);

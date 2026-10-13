@@ -51,6 +51,15 @@ struct TransitionActorList;
 struct UiWindow;
 struct WorldPosition;
 
+// Each stub is declared with its target's parameters (params). Seven rows
+// have empty parameters instead, a declaration with no prototype: the
+// bytes show their callers passing other arguments than the target takes,
+// which C89 accepts only with no prototype in scope. They are the
+// blank-display runners (the entrance in r0), OwnerAction_AddFar (called
+// with none), Party_ShowJoinedMessageFar (two), UiTimedNotice_CreateFar,
+// Menu_RunWorkspaceResultLoopFar and Runtime_GetBuildStampTimeFar (one
+// each). The near call UiWork_ResetCounters is declared the same way in
+// unit/window/window.h (UiWindow_Create passes it one).
 #define FAR_CALL(name, target, type, params) type name params;
 #define FAR_ENTRY(name, target)
 #define FAR_SLOT(target)

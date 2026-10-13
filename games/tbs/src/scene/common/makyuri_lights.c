@@ -34,15 +34,12 @@ void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
 	struct MapCell		 *cell;
 	s32					  z;
 	s32					  flag;
-	volatile u32		  cleared;
 
 	*(struct MakyuriLights **)Runtime_AllocateBlock(35, sizeof(st)) = st;
 	flag = Engine_GameFlagIsSet(0x109);
 	if (flag == 0)
 	{
-		cleared = flag;
-		Dma_Set(
-			(const void *)&cleared, st, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 7, REG_DMA3);
+		Dma_Fill32(flag, st, sizeof(*st));
 		st->region = region;
 		return;
 	}

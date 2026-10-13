@@ -79,20 +79,6 @@ struct EffectDescriptor
 
 #define OBJ_LAST 66 // 調べるオブジェクト番号の最後
 
-static __inline__ s32 Vitals_Ratio(s32 value, s32 max)
-{
-	s32 ratio = (value << 14) / max;
-	s32 clamped;
-
-	if (ratio > 0x4000)
-		clamped = 0x4000;
-	else if (ratio < 0)
-		clamped = 0;
-	else
-		clamped = ratio;
-	return clamped;
-}
-
 //--------------------------------------------------------------------------
 // マップのマーカー物体
 //--------------------------------------------------------------------------

@@ -92,7 +92,7 @@ FAR_CALL(Localization_LookupEntryIdFar, Localization_LookupEntryId, s32, (u32 va
 FAR_CALL(Menu_RunTopSelectionFar, Menu_RunTopSelection, s32, (void))
 FAR_CALL(Menu_SelectSaveSlotActionFar, Menu_SelectSaveSlotAction, s32, (void))
 FAR_CALL(Menu_SelectResourceLayoutFar, Menu_SelectResourceLayout, s32, (s32 mode))
-FAR_CALL(UiTimedNotice_CreateFar, UiTimedNotice_Create, void, (void))
+FAR_CALL(UiTimedNotice_CreateFar, UiTimedNotice_Create, void, ())
 FAR_CALL(UiTimedNotice_CloseIfActiveFar, UiTimedNotice_CloseIfActive, void, (void))
 FAR_CALL(UiText_ShowCenteredMessageFar, UiText_ShowCenteredMessage, void,
 	(s32 message, s32 mode, s32 y_offset))
@@ -149,7 +149,7 @@ FAR_CALL(
 	Djinn_ShowJoinedMessageFar, Djinn_ShowJoinedMessage, void, (s32 pc, s32 element, s32 djinn))
 FAR_CALL(PaletteGlow_UpdateFar, PaletteGlow_Update, void, (s32 phase, s32 brightness))
 FAR_SLOT(Menu_RunWorkspaceOptions)
-FAR_CALL(Menu_RunWorkspaceResultLoopFar, Menu_RunWorkspaceResultLoop, s32, (void))
+FAR_CALL(Menu_RunWorkspaceResultLoopFar, Menu_RunWorkspaceResultLoop, s32, ())
 FAR_SLOT(UiWindow_FillScreenBlockRect)
 FAR_CALL(Menu_SelectEntry11To14Far, Menu_SelectEntry11To14, s32, (s32 sel))
 FAR_CALL(Menu_SelectEntry19To1cFar, Menu_SelectEntry19To1c, s32, (s32 sel))
@@ -178,5 +178,5 @@ FAR_CALL(UiWindow_DrawFrameFar, UiWindow_DrawFrame, void, (s32 x, s32 y, u32 wid
 FAR_CALL(UiWindow_EraseBorderRectFar, UiWindow_EraseBorderRect, void,
 	(s32 x, s32 y, u32 width, u32 height))
 FAR_CALL(Link_DrawShiftedTilePairFar, Link_DrawShiftedTilePair, void, (s32 offset))
-FAR_CALL(Party_ShowJoinedMessageFar, Party_ShowJoinedMessage, void, (s32 member))
+FAR_CALL(Party_ShowJoinedMessageFar, Party_ShowJoinedMessage, void, ())
 FAR_CALL(Party_ShowPairJoinedMessageFar, Party_ShowPairJoinedMessage, void, (s32 first, s32 second))

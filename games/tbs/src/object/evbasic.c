@@ -269,9 +269,7 @@ void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value)
 	Party_AddActiveOwnerFar(event_id);
 	if (value != 0)
 	{
-		/* FAKEMATCH: Party_ShowJoinedMessageFar is called as s32 (*)(s32, s32); as void (*)(s32), its prototype, Event_PrepareObjectAndApplyValue does not compile */
-		/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-		((s32 (*)(s32, s32))Party_ShowJoinedMessageFar)(event_id, value);
+		Party_ShowJoinedMessageFar(event_id, value);
 	}
 }
 
@@ -314,13 +312,9 @@ void Party_RemoveOwnerRestored(s32 owner)
 	Party_RemoveActiveOwnerFar(owner);
 	Event_ClearInvalidPackedValues();
 	vitals = UnitGetFar(owner);
-	Unit_Recover(vitals);
-	vitals->hp_gauge = Vitals_Ratio(vitals->hp, vitals->max_hp);
-	if (vitals->hp_gauge == 0 && vitals->hp != 0)
-		vitals->hp_gauge = 1;
-	vitals->ep_gauge = Vitals_Ratio(vitals->ep, vitals->max_ep);
-	if (vitals->ep_gauge == 0 && vitals->ep != 0)
-		vitals->ep_gauge = 1;
+	vitals->hp = vitals->max_hp;
+	vitals->ep = vitals->max_ep;
+	Unit_UpdateGauges(vitals);
 	vitals->doku = 0;
 	standing = 0;
 	count = Party_CountActiveOwnersFar();
@@ -334,12 +328,7 @@ void Party_RemoveOwnerRestored(s32 owner)
 	{
 		vitals = UnitGetFar(gGameState.selected_actor);
 		vitals->hp = 1;
-		vitals->hp_gauge = Vitals_Ratio(vitals->hp, vitals->max_hp);
-		if (vitals->hp_gauge == 0 && vitals->hp != 0)
-			vitals->hp_gauge = 1;
-		vitals->ep_gauge = Vitals_Ratio(vitals->ep, vitals->max_ep);
-		if (vitals->ep_gauge == 0 && vitals->ep != 0)
-			vitals->ep_gauge = 1;
+		Unit_UpdateGauges(vitals);
 	}
 }
 
@@ -591,9 +580,7 @@ s32 Object_CallSpawnRoutineAtOrigin(s32 value)
 void UiText_DrawQuantityPairWithCue(s32 unit, s32 abil)
 {
 	// 引数なしの宣言だが、r0・r1 の unit・abil がそのまま渡る
-	/* FAKEMATCH: OwnerAction_AddFar is called as void (*)(void); as s32 (*)(s32, s32), its prototype, UiText_DrawQuantityPairWithCue does not compile */
-	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-	((void (*)(void))OwnerAction_AddFar)();
+	OwnerAction_AddFar();
 	AudioCommand_PlayFar(83);
 	UiWork_PushValueSlotFar(unit, 1);
 	UiWork_PushValueSlotFar(abil, 4);

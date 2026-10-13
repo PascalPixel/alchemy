@@ -237,7 +237,9 @@ void UnitCalc(s32 owner)
 			work->item = Item_GetDirect(st->inventory[i]);
 			if (work->item->flags & ITEM_CURSED)
 				st->restraint |= 3;
-			/* FAKEMATCH: a do-while barrier keeps the defense load after the item bonus load, as the ROM schedules it */
+			/* FAKEMATCH: the one-pass block keeps the defense load after the
+			 * item's second bonus load, as the ROM schedules it. Measured:
+			 * plain, the scheduler lifts work->def above that load (differ 2). */
 			do
 			{
 				work->atk += work->item->primary_bonus;
@@ -687,46 +689,15 @@ void Party_ApplyStatePreset(void)
 	for (id = 0; id <= 1; id++)
 	{
 		struct BtlUnit *unit = UnitGet(id);
-		s32				ratio;
-		s32				rate;
 		s32				slot;
 
 		Unit_Recover(unit);
-		{
-			s16 max_hp = unit->max_hp;
-
-			ratio = (max_hp << 14) / max_hp;
-		}
-		rate = 0x4000;
-		if (ratio <= rate)
-		{
-			rate = 0;
-			if (ratio >= 0)
-			{
-				rate = ratio;
-			}
-		}
-		unit->hp_gauge = rate;
-		if ((rate << 16) == 0 && unit->hp != 0)
-		{
+		unit->hp_gauge = Vitals_Ratio(unit->hp, unit->max_hp);
+		if (unit->hp_gauge == 0 && unit->hp != 0)
 			unit->hp_gauge = 1;
-		}
-
-		ratio = (unit->ep << 14) / unit->max_ep;
-		rate = 0x4000;
-		if (ratio <= rate)
-		{
-			rate = 0;
-			if (ratio >= 0)
-			{
-				rate = ratio;
-			}
-		}
-		unit->ep_gauge = rate;
-		if ((rate << 16) == 0 && unit->ep != 0)
-		{
+		unit->ep_gauge = Vitals_Ratio(unit->ep, unit->max_ep);
+		if (unit->ep_gauge == 0 && unit->ep != 0)
 			unit->ep_gauge = 1;
-		}
 
 		for (slot = 0; slot <= 14; slot++)
 		{
@@ -755,11 +726,6 @@ void Owner_RefreshActiveRatios(s32 arg0)
 	s32				count;
 	s32				n;
 	struct BtlUnit *obj;
-	s32				t;
-	s32				v14;
-	s32				v16;
-	s32				one;
-	s16				v34;
 
 	count = Party_CountActiveOwners();
 	for (n = 0; n < count; n++)
@@ -767,41 +733,12 @@ void Owner_RefreshActiveRatios(s32 arg0)
 		obj = UnitGet(gGameState.active_owners[n]);
 
 		Unit_Recover(obj);
-
-		v34 = obj->max_hp;
-		t = (v34 << 14) / v34;
-		v14 = 0x4000;
-		if (t <= 0x4000)
-		{
-			v14 = 0;
-			if (t >= 0)
-			{
-				v14 = t;
-			}
-		}
-		obj->hp_gauge = v14;
-		if (((v14 << 16) == 0) && (obj->hp != 0))
-		{
-			one = 1;
-			obj->hp_gauge = one;
-		}
-
-		t = (obj->ep << 14) / obj->max_ep;
-		v16 = 0x4000;
-		if (t <= 0x4000)
-		{
-			v16 = 0;
-			if (t >= 0)
-			{
-				v16 = t;
-			}
-		}
-		obj->ep_gauge = v16;
-		if (((v16 << 16) == 0) && (obj->ep != 0))
-		{
-			one = 1;
-			obj->ep_gauge = one;
-		}
+		obj->hp_gauge = Vitals_Ratio(obj->hp, obj->max_hp);
+		if (obj->hp_gauge == 0 && obj->hp != 0)
+			obj->hp_gauge = 1;
+		obj->ep_gauge = Vitals_Ratio(obj->ep, obj->max_ep);
+		if (obj->ep_gauge == 0 && obj->ep != 0)
+			obj->ep_gauge = 1;
 
 		if (arg0 == 1)
 		{
@@ -819,14 +756,6 @@ void Owner_RefreshRatiosOnFlag(void)
 	s32				group;
 	s32				doRefresh;
 	struct BtlUnit *obj;
-	s32				t;
-	s32				v14;
-	s32				v16;
-	s32				v34;
-	s32				v36;
-	s32				v38;
-	s32				v3A;
-	s32				one;
 
 	count = Party_CountActiveOwners();
 	for (n = 0; n < count; n++)
@@ -855,49 +784,20 @@ void Owner_RefreshRatiosOnFlag(void)
 		}
 
 		obj = UnitGet(ownerId);
-		/* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+		/* FAKEMATCH: the one-pass block keeps the EP store ahead of the HP
+		 * gauge's loads, as in Owner_UpdateSecondInputAndRatios. Measured:
+		 * the plain store differs 4, with the gauges through Vitals_Ratio
+		 * or written out in full. */
 		do
 		{
 			obj->ep = obj->max_ep;
 		} while (0);
-
-		v38 = obj->hp;
-		v34 = obj->max_hp;
-		t = (v38 << 14) / v34;
-		v14 = 0x4000;
-		if (t <= 0x4000)
-		{
-			v14 = 0;
-			if (t >= 0)
-			{
-				v14 = t;
-			}
-		}
-		obj->hp_gauge = v14;
-		if (((v14 << 16) == 0) && (obj->hp != 0))
-		{
-			one = 1;
-			obj->hp_gauge = one;
-		}
-
-		v3A = obj->ep;
-		v36 = obj->max_ep;
-		t = (v3A << 14) / v36;
-		v16 = 0x4000;
-		if (t <= 0x4000)
-		{
-			v16 = 0;
-			if (t >= 0)
-			{
-				v16 = t;
-			}
-		}
-		obj->ep_gauge = v16;
-		if (((v16 << 16) == 0) && (obj->ep != 0))
-		{
-			one = 1;
-			obj->ep_gauge = one;
-		}
+		obj->hp_gauge = Vitals_Ratio(obj->hp, obj->max_hp);
+		if (obj->hp_gauge == 0 && obj->hp != 0)
+			obj->hp_gauge = 1;
+		obj->ep_gauge = Vitals_Ratio(obj->ep, obj->max_ep);
+		if (obj->ep_gauge == 0 && obj->ep != 0)
+			obj->ep_gauge = 1;
 	}
 }
 
@@ -907,45 +807,15 @@ void Owner_RatioNoOp(void)
 
 void UnitRatio(s32 owner_no)
 {
-	s32				first;
-	s32				second;
-	s32				first_value;
-	s32				second_value;
 	struct BtlUnit *owner;
 
 	owner = UnitGet(owner_no);
-	first = (owner->hp << 14) / owner->max_hp;
-	first_value = 0x4000;
-	if (first <= 0x4000)
-	{
-		first_value = 0;
-		if (first >= 0)
-		{
-			first_value = first;
-		}
-	}
-	owner->hp_gauge = first_value;
-	if (((first_value << 16) == 0) && (owner->hp != 0))
-	{
-		first_value = 1;
-		owner->hp_gauge = first_value;
-	}
-	second = (owner->ep << 14) / owner->max_ep;
-	second_value = 0x4000;
-	if (second <= 0x4000)
-	{
-		second_value = 0;
-		if (second >= 0)
-		{
-			second_value = second;
-		}
-	}
-	owner->ep_gauge = second_value;
-	if (((second_value << 16) == 0) && (owner->ep != 0))
-	{
-		second_value = 1;
-		owner->ep_gauge = second_value;
-	}
+	owner->hp_gauge = Vitals_Ratio(owner->hp, owner->max_hp);
+	if (owner->hp_gauge == 0 && owner->hp != 0)
+		owner->hp_gauge = 1;
+	owner->ep_gauge = Vitals_Ratio(owner->ep, owner->max_ep);
+	if (owner->ep_gauge == 0 && owner->ep != 0)
+		owner->ep_gauge = 1;
 }
 
 void Owner_UpdateRatioPair(struct BtlUnit *state, s32 input)
@@ -965,44 +835,12 @@ void Owner_UpdateRatioPair(struct BtlUnit *state, s32 input)
 		}
 	}
 	state->hp = value;
-	value = ((value << 16) >> 2) / state->max_hp;
-
-	{
-		s32 output = 0x4000;
-
-		if (value <= output)
-		{
-			output = 0;
-			if (value >= 0)
-			{
-				output = value;
-			}
-		}
-		state->hp_gauge = output;
-		if ((output << 16) == 0 && state->hp != 0)
-		{
-			state->hp_gauge = 1;
-		}
-	}
-
-	value = (state->ep << 14) / state->max_ep;
-	{
-		s32 output = 0x4000;
-
-		if (value <= output)
-		{
-			output = 0;
-			if (value >= 0)
-			{
-				output = value;
-			}
-		}
-		state->ep_gauge = output;
-		if ((output << 16) == 0 && state->ep != 0)
-		{
-			state->ep_gauge = 1;
-		}
-	}
+	state->hp_gauge = Vitals_Ratio(state->hp, state->max_hp);
+	if (state->hp_gauge == 0 && state->hp != 0)
+		state->hp_gauge = 1;
+	state->ep_gauge = Vitals_Ratio(state->ep, state->max_ep);
+	if (state->ep_gauge == 0 && state->ep != 0)
+		state->ep_gauge = 1;
 }
 
 //--------------------------------------------------------------------------
@@ -1034,7 +872,11 @@ void Owner_UpdateSecondInputAndRatios(struct BtlUnit *unit, s32 ep)
 		if (ep >= 0)
 			cur = ep;
 	}
-	/* FAKEMATCH: the one-pass loop keeps the store before the ratio-input reads. */
+	/* FAKEMATCH: the one-pass block keeps the EP store ahead of the HP
+	 * gauge's loads. Measured: the plain store lets the scheduler lift
+	 * the hp load above it (differ 2); the store in each arm of the clamp
+	 * differs 40 to 43; the gauges through Vitals_Ratio, or through an
+	 * inline Unit_UpdateGauges as object.c has, still differ 2. */
 	do
 	{
 		unit->ep = cur;

@@ -898,7 +898,6 @@ void DisplayTransition_UpdateScanline(void)
 {
 	u32								line;
 	struct DisplayTransitionWindow *state;
-	u16								value;
 
 	line = REG_VCOUNT;
 	state = gMapWork[0];
@@ -909,43 +908,35 @@ again:
 	case 3:
 		if (line >= state->irq_first_line)
 		{
-			value = REG_DISPCNT;
-			REG_DISPCNT = (value & 0xFFF8) | 2;
-			value = 9;
-			state->irq_phase = value;
+			REG_DISPCNT = (REG_DISPCNT & 0xFFF8) | 2;
+			state->irq_phase = 9;
 		}
 		break;
 	case 2:
 		if (line >= state->irq_second_line)
 		{
-			value = REG_DISPCNT;
-			REG_DISPCNT = value & 0xFFF8;
-			value = 9;
-			state->irq_phase = value;
+			REG_DISPCNT &= 0xFFF8;
+			state->irq_phase = 9;
 		}
 		break;
 	case 1:
 		if (line >= state->irq_first_line)
 		{
-			value = REG_DISPCNT;
-			REG_DISPCNT = (value & 0xFFF8) | 2;
+			REG_DISPCNT = (REG_DISPCNT & 0xFFF8) | 2;
 			state->irq_phase++;
 			goto again;
 		}
 		if (line >= state->irq_second_line)
 		{
-			value = REG_DISPCNT;
-			REG_DISPCNT = value & 0xFFF8;
-			value = 3;
-			state->irq_phase = value;
+			REG_DISPCNT &= 0xFFF8;
+			state->irq_phase = 3;
 			goto again;
 		}
 		break;
 	case 0:
 		if (line <= 158)
 		{
-			value = 1;
-			state->irq_phase = value;
+			state->irq_phase = 1;
 			goto again;
 		}
 		break;

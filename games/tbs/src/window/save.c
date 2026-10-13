@@ -179,7 +179,11 @@ s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
 
 s32 SaveState_ScanRecordFlags(void)
 {
-	/* FAKEMATCH: the signed cursor from the party tail preserves the literal base changed by direct flag fields. */
+	/* FAKEMATCH: the signed cursor from the party tail keeps the native
+	 * literal base 0x1070 and the flag offsets 1 and 2. Measured: the
+	 * fields read as summary[i].send_flag and .flag_count, or through a
+	 * walking summary pointer, base the cursor on send_flag (0x1071)
+	 * with offsets 0 and 1 (differ 4). */
 	s32 err;
 	s32 cnt;
 	s32 ret;
@@ -602,7 +606,11 @@ void PaletteGlow_UpdateSine(void)
 			r += 22;
 			g += 16;
 			col += 20;
-			/* FAKEMATCH: the do-while fixes the shift's place in the schedule. */
+			/* FAKEMATCH: the one-pass block keeps the blue shift after the three
+			 * adds, in source order. Measured: without it the scheduler moves the
+			 * red add below the shifts (differ 6); the colour as one expression
+			 * differs 25, and r, g, b locals in place of col differ 6, as a do
+			 * or a for loop. */
 			do
 			{
 				col <<= 10;
@@ -611,7 +619,8 @@ void PaletteGlow_UpdateSine(void)
 			col |= g;
 			col |= r;
 		}
-		/* FAKEMATCH: likewise for the store. */
+		/* FAKEMATCH: the one-pass block keeps the store ahead of the loop
+		 * index's increment. Measured: without it, differ 2. */
 		do
 		{
 			*pal++ = col;
@@ -1796,7 +1805,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 	Dma_Set((void *)0x050001e0, pal, 0x84000008, REG_DMA3);
 	pal[4] = 0x6318;
 	end = (u8 *)(original_length + (s32)input);
-	for (;;)
+	while (1)
 	{
 		s32 width = 1;
 
@@ -1911,7 +1920,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 				continue;
 			}
 			result = -1;
-			goto finish;
+			break;
 		}
 		if (!(gKeysRepeat & KEY_A))
 			continue;
@@ -1938,7 +1947,9 @@ s32 NameEntry_EditOwnerName(s32 entry)
 					/* FAKEMATCH: the split restores end the pointer setup's
                      * CSE blocks. They disappear, preserving destination/
                      * source/index in r2/r1/r0; removing the barrier alone
-                     * changes them to r1/r0/r2 (14 instructions differ). */
+                     * changes them to r1/r0/r2 (14 instructions differ). A for loop
+                     * copying saved[i] = input[i], or walking the pointers,
+                     * differs 14; the while form with i declared first, 12. */
 					if (saved)
 						src = NULL;
 					if (saved)
@@ -1953,7 +1964,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 						i++;
 					}
 				}
-				goto finish;
+				break;
 			}
 			if (row == 4)
 				goto remove_character;
@@ -1982,7 +1993,6 @@ s32 NameEntry_EditOwnerName(s32 entry)
 			text_dirty = 1;
 		}
 	}
-finish:
 	UiWork_Finalize((struct UiWindow *)window, 2);
 	UiWork_Finalize((struct UiWindow *)label, 2);
 	UiWork_FinalizeEntityMatchingLocalizedId(entry);
@@ -2063,7 +2073,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 	pal = (u16 *)0x050001c0;
 	Dma_Set((void *)0x050001e0, pal, 0x84000008, REG_DMA3);
 	pal[4] = 0x6318;
-	for (;;)
+	while (1)
 	{
 		s32 width = 1;
 
@@ -2220,7 +2230,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 			else
 			{
 				result = -1;
-				goto finish;
+				break;
 			}
 			RenderOutput_PrepareForRedraw(label);
 			UiText_DrawString(input, (s32)label, 0, 0);
@@ -2255,7 +2265,9 @@ s32 NameEntry_EditOwnerName(s32 entry)
 					/* FAKEMATCH: the split restores end the pointer setup's
                      * CSE blocks. They disappear, preserving destination/
                      * source/index in r1/r2/r0; removing the barrier alone
-                     * changes them to r2/r0/r1 (14 instructions differ). */
+                     * changes them to r2/r0/r1 (14 instructions differ). A for loop
+                     * copying saved[i] = input[i] differs 18, one walking the
+                     * pointers 14; the while form with i declared first, 12. */
 					dst_save = dst;
 					src_save = src;
 					if (window->height)
@@ -2272,7 +2284,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 						i++;
 					}
 				}
-				goto finish;
+				break;
 			}
 			if (row == 8)
 				goto remove_character;
@@ -2316,7 +2328,6 @@ s32 NameEntry_EditOwnerName(s32 entry)
 			text_dirty = 1;
 		}
 	}
-finish:
 	UiWork_Finalize((struct UiWindow *)window, 2);
 	UiWork_Finalize((struct UiWindow *)label, 2);
 	UiWork_FinalizeEntityMatchingLocalizedId(entry);
@@ -2363,7 +2374,7 @@ s32 PartyTalkMenu_Choose(s32 unused)
 	palette = (u16 *)0x050001c0;
 	Dma_Set((const void *)0x050001e0, palette, 0x84000008, REG_DMA3);
 	palette[4] = 0x6318;
-	do
+	while (1)
 	{
 		UiWindow_SetTileAttributeRect(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1, 14);
 		WaitFrames(1);
@@ -2394,11 +2405,14 @@ s32 PartyTalkMenu_Choose(s32 unused)
 		{
 			AudioCommand_PlayFar(113);
 			row = -1;
-			goto close;
+			break;
 		}
-	} while (!(gKeysRepeat & KEY_A));
-	AudioCommand_PlayFar(112);
-close:
+		if (gKeysRepeat & KEY_A)
+		{
+			AudioCommand_PlayFar(112);
+			break;
+		}
+	}
 	UiWork_Finalize(window, 2);
 	WaitFrames(1);
 	Resource_ResetEntry(slot);

@@ -327,7 +327,9 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
 	scale = Iwram_UnsignedDivide(num, t) >> 15;
 	scale = -scale;
 	/* FAKEMATCH: the normalization keeps its CSE block; without it, the third
-	 * product spills before the negated axis (four reordered instructions). */
+	 * product spills before the negated axis (four reordered instructions).
+	 * Measured as well: uz = -dx moved below the block differs 4, and the
+	 * negation folded into uz = Iwram_MulQ16(-dx, scale) differs 38. */
 	do
 	{
 		dx = Iwram_MulQ16(dx, scale);
@@ -357,12 +359,10 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
 	ex = eye[0];
 	ey = eye[1];
 	ez = eye[2];
-	{
-		out[0] = ux;
-		out[3] = zero;
-		out[6] = uz;
-		out[9] = -dot(ex, ux, ez, uz, zero, zero);
-	}
+	out[0] = ux;
+	out[3] = zero;
+	out[6] = uz;
+	out[9] = -dot(ex, ux, ez, uz, zero, zero);
 	out[4] = vy;
 	out[7] = vz;
 	out[1] = vx;

@@ -1759,7 +1759,7 @@
         "*/recon/tla/raw/0811d24c.o"(.text)
         "*/recon/tla/raw/0811d2f8.o"(.text)
         "*/recon/tla/raw/0811d414.o"(.text)
-        "*/games/common/src/battle/actions.o"(.text)
+        "*/games/tla/src/battle/actions.o"(.text)
         "*/games/tla/src/battle/presentation/d7e4.o"(.text)
         "*/games/tla/src/battle/presentation/d9a4.o"(.text)
         "*/recon/tla/raw/0811d9cc.o"(.text)

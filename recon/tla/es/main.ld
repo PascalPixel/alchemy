@@ -1417,7 +1417,7 @@
     "*/recon/tla/es/rom.o"(.rom.0011cfe8)
     "*/games/tla/src/battle/turn.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.0011d264)
-    "*/games/common/src/battle/actions.o"(.text)
+    "*/games/tla/src/battle/actions.o"(.text)
     "*/games/tla/src/battle/presentation/d7e4.o"(.text)
     "*/games/tla/src/battle/presentation/d9a4.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.0011d9e4)

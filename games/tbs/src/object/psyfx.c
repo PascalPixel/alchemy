@@ -2850,7 +2850,11 @@ void BattleFx_SteerLiftedTarget(s32 id)
 		pos.z = target->z.fixed;
 		Vector_AddPolarOffset(16 << 16, angle, &pos);
 		i = ScriptObject_CheckOverlapFar(target, &pos);
-		/* FAKEMATCH: needed to match: entering the blocked path from both tests keeps it ahead of the drop path, as the ROM lays them out */
+		/* FAKEMATCH: entering the blocked path from both tests keeps it
+		 * ahead of the drop path, as the ROM lays them out. Measured: the two
+		 * tests as one || differ 407 (536 instructions for 531, the
+		 * allocation changing from the prologue on), under for (;;) or
+		 * while (1). */
 		if (i != 0)
 			goto blocked;
 		if (ObjProbeUp(target, p) > 0)

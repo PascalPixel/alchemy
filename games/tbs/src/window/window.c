@@ -4225,7 +4225,13 @@ void UiWork_AnimateSpriteSlots(void)
 				break;
 			case 6:
 				if (output->anim_step == 0)
-					goto reset;
+				{
+					sprite->affine_index = 0;
+					sprite->affine = 0;
+					sprite->x = output->x;
+					sprite->y = output->y;
+					break;
+				}
 				effect.scale_x = 512;
 				effect.scale_y = 512;
 				effect.angle = 0;
@@ -4267,18 +4273,18 @@ void UiWork_AnimateSpriteSlots(void)
 				sprite->y = output->y + UiSprite_BounceOffsets[output->anim_step & 15];
 				break;
 			case 8:
-				if (output->anim_step == 0)
-					goto reset;
-				effect.scale_x = 320;
-				effect.scale_y = 320;
-				effect.angle = 0;
-				sprite->affine_index = AffineMatrix_BuildForEffect(&effect);
-				sprite->affine = 3;
-				sprite->x = output->x - 8;
-				sprite->y = output->y - 8;
-				output->anim_step--;
-				break;
-			reset:
+				if (output->anim_step != 0)
+				{
+					effect.scale_x = 320;
+					effect.scale_y = 320;
+					effect.angle = 0;
+					sprite->affine_index = AffineMatrix_BuildForEffect(&effect);
+					sprite->affine = 3;
+					sprite->x = output->x - 8;
+					sprite->y = output->y - 8;
+					output->anim_step--;
+					break;
+				}
 				sprite->affine_index = 0;
 				sprite->affine = 0;
 				sprite->x = output->x;

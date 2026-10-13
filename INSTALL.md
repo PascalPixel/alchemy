@@ -65,6 +65,23 @@ The built ROMs are `out/<edition>/<edition>.gba`. To build one edition, run
 `make compare` is the Japanese edition. To check against your own cartridge,
 compare your dump's SHA-1 with the line for its edition in `rom.sha1`.
 
+## See the compile
+
+```sh
+make V=1 compare-tbs-en
+```
+
+prints every command the build runs, one line each, as a shell would read
+it: each C file's compiler with its full options, each assembler, the linker,
+objcopy and the header fix-up. A step the build cache already holds prints
+after `# cached: `, so the list is always the whole build. The same option is
+`alchemy build rom --target tbs-en --commands`. Every game Thumb file of an
+edition compiles with one option set, for example ☀️'s:
+
+```
+tools/out/compilers/xgcc -Btools/out/compilers/ -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi -nostdinc -fcall-used-r4 -I... -DTBS_EDITION_EN=1 -Iout/tbs-en -S -o out/tbs-en/obj/games/tbs/src/battle/tgtexec.s games/tbs/src/battle/tgtexec.c
+```
+
 ## The Lost Age ⚓️
 
 Part of ⚓️ is still copied from the original: its scaffold under `recon/tla`

@@ -2902,7 +2902,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 						kind = UiText_ItemGenders[tmp];
 						word = possessives.text[kind & 3];
 #endif
-						/* FAKEMATCH: needed to match: value counts the letters, compared unsigned; a counter of its own loses r1 in Spanish and Italian. */
+						/* FAKEMATCH: value counts the letters, compared unsigned, keeping the allocation of Spanish and Italian. With the function's u32 j or i as the counter: differ 44 or 58 in tbs-es, 476 or 486 in tbs-it. */
 						for (value = 0; (u32)value < 16; value++)
 						{
 							if ((c8 = *word++) == 0)

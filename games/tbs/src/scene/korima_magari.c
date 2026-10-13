@@ -454,7 +454,7 @@ static void KorimaMagari_PlaceObjects(struct IcePlacement *entry)
 		actor->collision_flags = 0;
 		actor->radius = 32;
 		height = Map_GetTerrainHeight(0, actor->x.part.pixel, actor->z.part.pixel) << 16;
-		/* FAKEMATCH: y is updated through an s32 lvalue; the coordinate union has an s16 member, which would order the next entry load after this store. */
+		/* FAKEMATCH: y is updated through an s32 lvalue; the coordinate union has an s16 member, which would order the next entry load after this store. Measured 2026-10-13: actor->y += height matches when FieldActor's x, y and z are s32 and the pixel half is read as ((s16 *)&c)[1]; all six editions stay identical with three other functions holding a union FieldObject handle. Held as union FieldObject: differ 4. */
 		*(s32 *)&actor->y += height;
 		actor->terrain_height = height;
 	}

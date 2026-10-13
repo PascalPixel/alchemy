@@ -140,7 +140,11 @@ s32 BattleEffect_ApplyToTargets(s32 effect_id, s32 source_id, s32 target_id, s32
 	else
 		target = UnitGetFar(0);
 
-	/* FAKEMATCH: the dead test keeps the range load before the count guard and preserves target-index and power-load registers. */
+	/* FAKEMATCH: the dead test loads effect->rng ahead of the count
+	 * guard, where the native keeps it for the first pass through the
+	 * loop; it preserves the target-index and power-load registers.
+	 * Measured: without it the load moves past the guard and the
+	 * allocation shifts (485 instructions for 484, differ 49). */
 	if (effect->rng == 0xff && later_target != 0)
 		result_code = 3;
 

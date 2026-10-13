@@ -2555,7 +2555,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 		{
 			u32 size;
 
-			/* FAKEMATCH: the size in a block of its own, so the slot number goes to r0 before the size's copy to r1 (differ 2 as RamCode_LoadSlot). */
+			/* FAKEMATCH: instruction order only: the size in a block of its own, so the slot number goes to r0 before the size's copy to r1. 2026-10-13, tbs-en: RamCode_LoadSlot, the size and the block as initialized locals, and the size written at both uses with no local all differ 2 (the copy to r1 first). */
 			do
 			{
 				size = (u32)Text_DecodeSymbolCodeSize;
@@ -3071,7 +3071,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 		{
 			u32 size;
 
-			/* FAKEMATCH: the size in a block of its own, so the slot number goes to r0 before the size's copy to r1 (differ 2 as RamCode_LoadSlot). */
+			/* FAKEMATCH: instruction order only: the size in a block of its own, as in the international copy above; RamCode_LoadSlot differs 2 (the copy to r1 first). */
 			do
 			{
 				size = (u32)Text_DecodeSymbolCodeSize;

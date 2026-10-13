@@ -1889,12 +1889,7 @@ s32 ItemMenu_SelectItem(void)
 	RenderOutput_ClearListFar(menu->message_window);
 	ItemMenu_HideAllIcons();
 	RenderOutput_RedrawSavedRectFar(menu->status_window);
-	{
-		s32 delay = 200;
-
-		delay <<= 4;
-		Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, delay);
-	}
+	Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
 	return result;
 }
 

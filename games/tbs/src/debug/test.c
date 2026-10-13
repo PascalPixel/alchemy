@@ -112,15 +112,10 @@ static void CommandTable_RunDirectionalInput(s32 x, s32 cnt)
 		{
 			goto end;
 		}
-		if ((*key & 1) != 0)
-		{
-			goto inc;
-		}
-		if ((*key & 0x80) == 0)
+		if ((*key & 1) == 0 && (*key & 0x80) == 0)
 		{
 			goto other;
 		}
-	inc:
 		x++;
 		goto next;
 	other:

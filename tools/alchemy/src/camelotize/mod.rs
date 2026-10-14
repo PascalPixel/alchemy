@@ -1,5 +1,6 @@
 mod barriers;
 mod casts;
+pub(crate) mod constants;
 mod declarations;
 mod fields;
 mod idioms;
@@ -42,6 +43,14 @@ nothing. REWRITE is one of:
                 a pointer cast of an address taken on the spot, of a
                 function or in pointer arithmetic stays, and *(T *)&x folds
                 to x only when x is declared T
+  constants     --header H [--kind flag|sound] [--aliases TSV]: integer
+                literals at known flag or sound id positions (flag and
+                sound calls and macros, cue stores, scene table conditions,
+                cue tables, and the rule tables' assembler macros in .S
+                files) as H's names;
+                a TSV row (file stem, value, alias) names a value in that
+                file first; computed, unnamed, doubly named and packed ids
+                are printed for naming by hand
   idioms        x = x + 1 as x++, x = x | n as x |= n, !(a == b) as
                 a != b, parentheses around one name, number or call, an
                 else after a block that returns, flattened, and empty
@@ -187,6 +196,9 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         return Err(USAGE.into());
     }
     let root = root();
+    if rewrite == "constants" {
+        return constants::run(root, files, dry);
+    }
     let proved = matches!(rewrite.as_str(), "casts" | "idioms");
     // Proved rewrites compile every candidate set, so files run side by side.
     let workers = if proved {

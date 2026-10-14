@@ -784,12 +784,14 @@ alchemy objects EDITION...             # what differs from the ROM, object or pl
 alchemy dead [--apply PATH]            # what no edition links, includes or selects
 make progress                          # DONE code and data, one line per edition (alchemy progress)
 alchemy check devices [--update]       # register pins, asm barriers, inline asm, volatile, goto: may only fall
+alchemy check constants [--update | --list [PATH...]]   # flag and sound ids still written as numbers: only ☀️'s, against its names header, may only fall
 alchemy fakematch [--show N]           # every FAKEMATCH tag by device and family, weighed by the bytes it steers
 # Camelotize
 make worst                             # maintained C ranked by how mechanical it reads
 alchemy units [--dry-run N]            # Camelot's translation units proposed from the linked images
 alchemy camelotize REWRITE FILE...     # actors, events, registers, declarations, barriers
 alchemy camelotize numbers|casts|idioms FILE...  # decimal quantities, needless casts, C idioms
+alchemy camelotize constants --header H [--aliases TSV] FILE...   # ids at their known positions as H's names; prints what needs a hand
 alchemy keep [PATH...]                 # keep only edits that leave all twelve identical
 alchemy sweep FILE.c...                # drop FAKEMATCH pins, barriers and volatiles the bytes no longer need
 # Work in parallel

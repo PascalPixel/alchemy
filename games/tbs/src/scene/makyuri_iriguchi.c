@@ -129,7 +129,7 @@ static void EV01_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	Engine_MessageShowCentered((s32)MsgMakyuriWhoHonorsHeart, 1);
+	Engine_MessageShowCentered(MsgMakyuriWhoHonorsHeart, 1);
 	Engine_EventEnd();
 }
 
@@ -369,7 +369,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
 			Engine_EventWaitForScreen();
 			Engine_ActorSetAnimation(0, 1);
 			Engine_EventWait(30);
-			UiText_ShowCenteredMessage((s32)MsgMakyuriWhoHonorsHeart, 0, 0);
+			UiText_ShowCenteredMessage(MsgMakyuriWhoHonorsHeart, 0, 0);
 			ColorBuffer_ApplyTarget(0x10000, 0);
 			Engine_ColorBufferInterpolate(30);
 		}

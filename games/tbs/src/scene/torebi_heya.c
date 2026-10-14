@@ -41,7 +41,7 @@ static void SceneDialogue_AskBabiWasMissing(s32 subject)
 {
 	s32 msg;
 
-	msg = (s32)MsgTorebiHeyaBabiShowedHimselfAtFinals;
+	msg = MsgTorebiHeyaBabiShowedHimselfAtFinals;
 	Engine_EventSetMessage(msg);
 	Engine_EventOpenMessage(subject, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -110,7 +110,7 @@ static void FieldScene_RunScene3b6SequenceA(void)
 	s32 rec7;
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgTorebiHeyWhatsThis);
+	Engine_EventSetMessage(MsgTorebiHeyWhatsThis);
 	Engine_EventWait(40);
 	rec7 = Engine_ObjectCreate(0x11c, 0x2580000, 0, 0x3380000);
 	Engine_ActorSetSpriteFlags(rec7, 0);
@@ -169,7 +169,7 @@ static void FieldScene_RunActorsThirtyOneToThirtyThreeChoreography(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgTorebiHeWontSailShipEven);
+	Engine_EventSetMessage(MsgTorebiHeWontSailShipEven);
 	Engine_EventWait(30);
 	Engine_ActorJump(31, 4, 13);
 	Engine_ActorJump(31, 4, 30);
@@ -252,17 +252,17 @@ static void EV21_TALK(s32 no)
 	}
 	else if (Engine_GameFlagIsSet(0x950) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgTorebiRightOneWell);
+		Engine_EventSetMessage(MsgTorebiRightOneWell);
 		Engine_EventShowMessage(no, 0);
 	}
 	else if (Engine_GameFlagIsSet(0x962) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgTorebiRequireLotHealing);
+		Engine_EventSetMessage(MsgTorebiRequireLotHealing);
 		Engine_EventShowMessage(no, 0);
 	}
 	else
 	{
-		msg = (s32)MsgTorebiFirstTimeTolbi;
+		msg = MsgTorebiFirstTimeTolbi;
 		Engine_EventSetMessage(msg);
 		Engine_EventOpenMessage(no, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -288,7 +288,7 @@ static void EV19_TALK(s32 no)
 	}
 	else if (Engine_GameFlagIsSet(0x950) != 0)
 	{
-		msg = (s32)MsgTorebiComeWayKalay;
+		msg = MsgTorebiComeWayKalay;
 		Engine_EventSetMessage(msg);
 		Engine_EventOpenMessage(no, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -304,12 +304,12 @@ static void EV19_TALK(s32 no)
 	}
 	else if (Engine_GameFlagIsSet(0x962) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgTorebiColossoFinalsFinally);
+		Engine_EventSetMessage(MsgTorebiColossoFinalsFinally);
 		Engine_EventShowMessage(no, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgTorebiLookStrongGo);
+		Engine_EventSetMessage(MsgTorebiLookStrongGo);
 		Engine_EventShowMessage(no, 0);
 		Engine_ActorShowEmote(no, 0x106, 0);
 		Engine_EventWait(40);
@@ -328,17 +328,17 @@ static void EV20_TALK(s32 no)
 	{
 		if (Engine_GameFlagIsSet(0x950) != 0)
 		{
-			Engine_EventSetMessage((s32)MsgTorebiWasntAbleWatch);
+			Engine_EventSetMessage(MsgTorebiWasntAbleWatch);
 			Engine_EventShowMessage(no, 0);
 		}
 		else if (Engine_GameFlagIsSet(0x962) != 0)
 		{
-			Engine_EventSetMessage((s32)MsgTorebiMaybeCloseShop);
+			Engine_EventSetMessage(MsgTorebiMaybeCloseShop);
 			Engine_EventShowMessage(no, 0);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgTorebiIfCanMakeNameFor);
+			Engine_EventSetMessage(MsgTorebiIfCanMakeNameFor);
 			Engine_EventShowMessage(no, 0);
 		}
 	}
@@ -350,7 +350,7 @@ static void EV26_TALK(s32 subject)
 
 	Engine_EventBegin();
 
-	message = (s32)MsgTorebiLookLikeWarrior;
+	message = MsgTorebiLookLikeWarrior;
 	Engine_EventSetMessage(message);
 	Engine_EventOpenMessage(subject, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -370,7 +370,7 @@ static void EV26_TALK(s32 subject)
 static void EV27_TALK(s32 no)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgTorebiGrrrChefInBadMood);
+	Engine_EventSetMessage(MsgTorebiGrrrChefInBadMood);
 	Engine_EventShowMessage(no, 0);
 	Engine_EventEnd();
 }
@@ -381,7 +381,7 @@ static void EV09_TALK(s32 subject)
 
 	Engine_EventBegin();
 
-	msg = (s32)MsgTorebiWantStay;
+	msg = MsgTorebiWantStay;
 	Engine_EventSetMessage(msg);
 	Engine_EventOpenMessage(subject, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -405,7 +405,7 @@ static void EV25_TALK(s32 a0)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x8bd) == 0)
 	{
-		msg = (s32)MsgTorebiHeeHeeLook;
+		msg = MsgTorebiHeeHeeLook;
 		Engine_EventSetMessage(msg);
 		Event_OpenMessage(a0, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -424,13 +424,13 @@ static void EV25_TALK(s32 a0)
 		if (GameFlag_IsSet(0x8be) == 0)
 		{
 			GameFlag_Set(0x8be);
-			Engine_EventSetMessage((s32)MsgTorebiHello);
+			Engine_EventSetMessage(MsgTorebiHello);
 			Event_ShowMessage(a0, 0);
 			Engine_EventWait(10);
 			Engine_ActorRunRepeatedMotion(a0, 2);
 			Engine_EventWait(20);
 		}
-		Engine_EventSetMessage((s32)MsgTorebiHoHumFine);
+		Engine_EventSetMessage(MsgTorebiHoHumFine);
 		Event_ShowMessage(a0, 0);
 	}
 	Engine_EventEnd();
@@ -442,11 +442,11 @@ static void EV25_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x8BE) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgTorebiHehHehSheJustHid);
+		Engine_EventSetMessage(MsgTorebiHehHehSheJustHid);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgTorebiThingFoundDefinitelySameAs);
+		Engine_EventSetMessage(MsgTorebiThingFoundDefinitelySameAs);
 	}
 	Engine_EventShowMessage(25, 0);
 	Engine_EventEnd();
@@ -455,7 +455,7 @@ static void EV25_PSYNERGY(void)
 static void EV31_TALK(s32 a0)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgTorebiGrrrScamWhyWontThey);
+	Engine_EventSetMessage(MsgTorebiGrrrScamWhyWontThey);
 	Actor_ShowEmote(31, 0x103, 40);
 	Event_ShowMessage(a0, 0);
 	Engine_EventEnd();
@@ -467,7 +467,7 @@ static void EV35_TALK(s32 subject)
 
 	Engine_EventBegin();
 
-	message = (s32)MsgTorebiWarriorRemember;
+	message = MsgTorebiWarriorRemember;
 	Engine_EventSetMessage(message);
 	Engine_EventOpenMessage(subject, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -496,17 +496,17 @@ static void EV30_TALK(s32 no)
 	{
 		if (Engine_GameFlagIsSet(0x950) != 0)
 		{
-			Engine_EventSetMessage((s32)MsgTorebiShipsArentGoing);
+			Engine_EventSetMessage(MsgTorebiShipsArentGoing);
 			Engine_EventShowMessage(no, 0);
 		}
 		else if (Engine_GameFlagIsSet(0x962) != 0)
 		{
-			Engine_EventSetMessage((s32)MsgTorebiMissFinalsTolbis);
+			Engine_EventSetMessage(MsgTorebiMissFinalsTolbis);
 			Engine_EventShowMessage(no, 0);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgTorebiWasteStuckHereWhenSuch);
+			Engine_EventSetMessage(MsgTorebiWasteStuckHereWhenSuch);
 			Engine_EventShowMessage(no, 0);
 		}
 	}

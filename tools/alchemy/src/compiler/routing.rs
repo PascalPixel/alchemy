@@ -540,9 +540,16 @@ mod target_tests {
                 assert_eq!(family_for_source(target, source), CompilerFamily::Game);
             }
             assert_eq!(
-                family_for_source(target, "games/common/src/sound/engine.c"),
+                family_for_source(target, "games/common/src/sound/sound.c"),
                 CompilerFamily::Agbcc
             );
+            for (owner, source) in [
+                (CompilerTarget::Tbs, "games/tbs/src/sound/engine.c"),
+                (CompilerTarget::Tla, "games/tla/src/sound/engine.c"),
+            ] {
+                let family = if target == owner { CompilerFamily::Agbcc } else { CompilerFamily::Game };
+                assert_eq!(family_for_source(target, source), family, "{source} in {target:?}");
+            }
             for source in [
                 "games/common/src/sound_effect/schedule.c",
                 "games/common/src/sound/../game/flags.c",
@@ -632,7 +639,11 @@ mod target_tests {
             );
         }
         assert_eq!(
-            cflags_for_target_source(CompilerTarget::Tbs, "games/common/src/sound/engine.c"),
+            cflags_for_target_source(CompilerTarget::Tbs, "games/tbs/src/sound/engine.c"),
+            agbcc_cflags()
+        );
+        assert_eq!(
+            cflags_for_target_source(CompilerTarget::Tla, "games/tla/src/sound/engine.c"),
             agbcc_cflags()
         );
         assert_eq!(

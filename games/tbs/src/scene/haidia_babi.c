@@ -101,7 +101,7 @@ s32 HaidiaBabi_SelectPlacements(void)
 
 static void EV09_TALK(s32 object)
 {
-	s32 msg = (s32)MsgHaidiaFolksSeemKnow;
+	s32 msg = MsgHaidiaFolksSeemKnow;
 
 	Engine_EventSetMessage(msg);
 	Engine_EventOpenMessage(object, 0);
@@ -148,7 +148,7 @@ static void EV16_TALK(void)
 	Engine_EventBegin();
 	Engine_ActorStartRepeatedMotion(16, 2);
 	Engine_EventWait(30);
-	Engine_EventSetMessage((s32)MsgHaidiaHeyBoy);
+	Engine_EventSetMessage(MsgHaidiaHeyBoy);
 	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 16, 10);
 	Event_ShowMessageAndWait(16, 0, 6);
 	Actor_ShowEmote(16, 0x102, 0);
@@ -173,7 +173,7 @@ static void EV14_TALK(void)
 
 	Engine_EventBegin();
 	Engine_ActorFaceActor(0xE, ACTOR_PARTY_LEADER, 0xA);
-	Engine_EventSetMessage((s32)MsgHaidiaTheMaskedManWasGarcia);
+	Engine_EventSetMessage(MsgHaidiaTheMaskedManWasGarcia);
 	Engine_EventOpenMessage(0xE, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
@@ -398,7 +398,7 @@ static void FieldScene_RunComplexActorSequence(void)
 	Engine_ActorSetPosition(8, 34996224, 45088768);
 	Graphics_EnableObjLayerAndCallbacks();
 	Ui_SetRenderResultFromObject(8);
-	base = (s32)MsgHaidiaWake;
+	base = MsgHaidiaWake;
 	UiText_ShowCenteredMessage(base, 1, 0);
 	Engine_EventWait(40);
 	MapRender_SetValues(65536, 65536, 65536);
@@ -591,7 +591,7 @@ static void FieldScene_RunPaletteRampSequence(void)
 	Actor_SetPosition(9, PIXELS(414), PIXELS(530));
 	Engine_ActorWalkToAndWait(9, 427, 483);
 	Engine_CameraWaitForMove();
-	Engine_EventSetMessage((s32)MsgHaidiaDoraHurryBoulder);
+	Engine_EventSetMessage(MsgHaidiaDoraHurryBoulder);
 	Engine_EventShowMessageAndWait(32777, 0, 10);
 	Engine_CameraSetSpeed(0x18000, 0x3000);
 	Engine_CameraMoveTo(PIXELS(480), -1, PIXELS(444), 1);
@@ -668,11 +668,11 @@ static void HaidiaBabi_RunInnkeeperTalk(void)
 			Actor_FaceActor(13, ACTOR_PARTY_LEADER, 10);
 			if (GameFlag_IsSet(0x300) == 0)
 			{
-				Engine_EventSetMessage((s32)MsgHaidiaCameBack2);
+				Engine_EventSetMessage(MsgHaidiaCameBack2);
 				Event_ShowMessage(13, 0);
 				GameFlag_Set(0x300);
 			}
-			Engine_EventSetMessage((s32)MsgHaidiaHomeJustToStay);
+			Engine_EventSetMessage(MsgHaidiaHomeJustToStay);
 			Event_AskYesNo(13, 0);
 			Actor_FaceDirection(13, 0x9000, 10);
 		}
@@ -680,11 +680,11 @@ static void HaidiaBabi_RunInnkeeperTalk(void)
 		{
 			if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0)
 			{
-				Engine_EventSetMessage((s32)MsgHaidiaTheVisitorsCausedTheEruption);
+				Engine_EventSetMessage(MsgHaidiaTheVisitorsCausedTheEruption);
 			}
 			else
 			{
-				Engine_EventSetMessage((s32)MsgHaidiaTheThreeTravelersSeemOdd);
+				Engine_EventSetMessage(MsgHaidiaTheThreeTravelersSeemOdd);
 			}
 			Event_ShowMessage(13, 0);
 		}
@@ -696,7 +696,7 @@ static void SceneDialogue_ShowLine1C13WithActor16Steps(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceActor(0x10, ACTOR_PARTY_LEADER, 0xA);
-	Engine_EventSetMessage((s32)MsgHaidiaYouveGrownSoMuch);
+	Engine_EventSetMessage(MsgHaidiaYouveGrownSoMuch);
 	Engine_EventShowMessage(0x10, 0);
 	Engine_ActorFaceDirection(0x10, 0xB000, 0xA);
 	Engine_GameFlagSet(0x301);
@@ -706,7 +706,7 @@ static void SceneDialogue_ShowLine1C13WithActor16Steps(void)
 static void EV13_PSYNERGY(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgHaidiaDoraWouldntLetHimStay);
+	Engine_EventSetMessage(MsgHaidiaDoraWouldntLetHimStay);
 	Engine_EventShowMessage(0xD, 0);
 	Engine_GameFlagSet(0x81C);
 	Engine_EventEnd();
@@ -715,7 +715,7 @@ static void EV13_PSYNERGY(void)
 static void EV16_PSYNERGY(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgHaidiaDoraWasStruckWithIllness);
+	Engine_EventSetMessage(MsgHaidiaDoraWasStruckWithIllness);
 	Engine_EventShowMessage(0x10, 0);
 	Engine_GameFlagSet(0x81C);
 	Engine_EventEnd();
@@ -731,7 +731,7 @@ static void HaidiaBabi_RunSickbedVisit(void)
 	Actor_WalkToAndWait(0, 0x239, 0x189);
 	Actor_FaceDirection(0, 0x4000, 40);
 	Engine_ActorStartRepeatedMotion(8, 2);
-	Engine_EventSetMessage((s32)MsgHaidiaCoughCoughWho);
+	Engine_EventSetMessage(MsgHaidiaCoughCoughWho);
 	Engine_EventShowMessageAndWait(8, 0, 80);
 	Actor_ShowEmote(8, 0x101, 60);
 	Engine_ActorStartRepeatedMotion(8, 1);
@@ -774,7 +774,7 @@ static void HaidiaBabi_RunSickbedVisit(void)
 	Engine_EventWait(20);
 	Engine_EventShowMessage(8, 0);
 	Actor_ShowEmote(8, 0x107, 60);
-	msg = (s32)MsgHaidiaWhoToldIll;
+	msg = MsgHaidiaWhoToldIll;
 	Engine_EventSetMessage(msg);
 	Engine_EventOpenMessage(8, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 1)
@@ -840,14 +840,14 @@ static void EV08_TALK(void)
 	{
 		Object_SetTargetAndCallback(8, 0x10000, (s32)gHaidiaBabiActor8Departure);
 		Engine_EventWait(20);
-		Engine_EventSetMessage((s32)MsgHaidiaDontWorryBest);
+		Engine_EventSetMessage(MsgHaidiaDontWorryBest);
 		Engine_EventShowMessage(8, 0);
 	}
 	else
 	{
 		Engine_ActorRunRepeatedMotion(8, 2);
 		Engine_EventWait(40);
-		message = (s32)MsgHaidiaUnnOhhKyle;
+		message = MsgHaidiaUnnOhhKyle;
 		Engine_EventSetMessage(message);
 		Engine_EventShowMessageAndWait(8, 0, 40);
 		Engine_MessageShowCentered((message + 1), 1);

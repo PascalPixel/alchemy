@@ -152,7 +152,7 @@ s32 Shop_Run(s32 row, s32 keeper_id)
 	anchor->kind = 0;
 	ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
 	shop->cursor.anchor = anchor;
-	UiMessage_ShowAndWait((s32)MsgWeaponShopWelcome);
+	UiMessage_ShowAndWait(MsgWeaponShopWelcome);
 	while (1)
 	{
 		choice = Menu_SelectEntry11To14Far(choice);
@@ -160,30 +160,30 @@ s32 Shop_Run(s32 row, s32 keeper_id)
 		if (choice == 0)
 		{
 			shop->stock_count = EventTable_CopyRowHeader(row, shop->stock_item_ids);
-			UiMessage_ShowAndWait((s32)MsgWhatWouldYouLike);
+			UiMessage_ShowAndWait(MsgWhatWouldYouLike);
 			Shop_SelBuy();
 		}
 		else if (choice == 1)
 		{
-			UiMessage_ShowAndWait((s32)MsgWhatToSell);
+			UiMessage_ShowAndWait(MsgWhatToSell);
 			Shop_PickUnit();
 		}
 		else if (choice == 2)
 		{
 			if (AbilityMenu_BuildAvailableList() != 0)
 			{
-				UiMessage_ShowAndWait((s32)MsgConnoisseur);
+				UiMessage_ShowAndWait(MsgConnoisseur);
 				Shop_SelBuy();
 			}
 			else
 			{
-				UiMessage_ShowAndWait((s32)MsgOutOfStock);
+				UiMessage_ShowAndWait(MsgOutOfStock);
 				WaitFrames(1);
 			}
 		}
 		else if (choice == 3)
 		{
-			UiMessage_ShowAndWait((s32)MsgFixDamaged);
+			UiMessage_ShowAndWait(MsgFixDamaged);
 			Shop_SelUnit();
 		}
 		else
@@ -191,9 +191,9 @@ s32 Shop_Run(s32 row, s32 keeper_id)
 			break;
 		}
 		ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
-		UiMessage_ShowAndWait((s32)MsgAnythingElse);
+		UiMessage_ShowAndWait(MsgAnythingElse);
 	}
-	UiMessage_ShowAndWait((s32)MsgShopFarewell);
+	UiMessage_ShowAndWait(MsgShopFarewell);
 	UiWork_FinalizeFar(window, 2);
 	Inn_Cleanup();
 	return 0;
@@ -639,7 +639,7 @@ next_page:
 			Shop_PlaceCursor((void *)stock_window, cursor % 7 * 32 - 8, 8);
 			shop->mode = 4;
 			Shop_DrawStock(stock_window, cursor);
-			Shop_DrawMsg(message_window, item_id + (s32)MsgItemPlainName);
+			Shop_DrawMsg(message_window, item_id + MsgItemPlainName);
 			RenderOutput_RedrawSavedRectFar((struct UiWindow *)price_window);
 			Shop_DrawItemPrice(price_window, item_id, stock_item->price, 0);
 		}
@@ -703,7 +703,7 @@ next_page:
 		goto close;
 
 	shop->selected_item = shop->stock_item_ids[selected];
-	UiMessage_ShowAndWait((s32)MsgWhoGetsThis);
+	UiMessage_ShowAndWait(MsgWhoGetsThis);
 	item = Item_GetDirectFar(shop->selected_item);
 	quantity = 1;
 	member = 0;
@@ -721,7 +721,7 @@ next_page:
 		if (ask_again != 0)
 		{
 			ask_again = 0;
-			UiMessage_ShowAndWait((s32)MsgWhoGetsThis);
+			UiMessage_ShowAndWait(MsgWhoGetsThis);
 			redraw = 1;
 		}
 		if (redraw != 0)
@@ -746,23 +746,23 @@ next_page:
 				UiWork_PushValueSlotFar(member, 1);
 				UiWork_PushValueSlotFar(shop->selected_item, 2);
 				if (Inventory_CountFar(member) == 15)
-					UiMessage_ShowAndWait((s32)MsgPackFull);
+					UiMessage_ShowAndWait(MsgPackFull);
 				else
-					UiMessage_ShowAndWait((s32)MsgCannotCarryItem);
+					UiMessage_ShowAndWait(MsgCannotCarryItem);
 				continue;
 			}
 			Inventory_RemoveFar(member, slot);
 			if ((u32)item->price > gGameState.coins)
 			{
 				AudioCommand_PlayFar(SOUND_MENU_CANCEL);
-				UiMessage_ShowAndRestoreState((s32)MsgBuyNotEnoughMoney);
+				UiMessage_ShowAndRestoreState(MsgBuyNotEnoughMoney);
 				result = -1;
 				break;
 			}
 			if (Item_IsCompatibleWithOwnerFar(member, shop->selected_item) == 0)
 			{
 				UiWork_PushValueSlotFar(member, 1);
-				UiMessage_ShowAndWait((s32)MsgCannotEquipStillWant);
+				UiMessage_ShowAndWait(MsgCannotEquipStillWant);
 				if (UiMessage_ShowChoice(0) != 0)
 				{
 					ask_again = 1;
@@ -814,7 +814,7 @@ next_page:
 		if (selected > shop->stock_count - 1)
 			selected = shop->stock_count - 1;
 	}
-	UiMessage_ShowAndWait((s32)MsgBuyAnythingElse);
+	UiMessage_ShowAndWait(MsgBuyAnythingElse);
 	goto next_page;
 
 close:
@@ -901,10 +901,10 @@ void Shop_DrawMoney(void)
 	if (window != 0)
 	{
 #if EDITION_INTERNATIONAL
-		UiText_DrawCharacterAtOffsetFar((s32)MsgYourCoins, window, 0, 0);
+		UiText_DrawCharacterAtOffsetFar(MsgYourCoins, window, 0, 0);
 		UiText_DrawNumberInWindowFar(gGameState.coins, 6, window, 0x20, 8);
 #else
-		s32 msg = (s32)MsgYourCoins;
+		s32 msg = MsgYourCoins;
 
 		UiText_DrawCharacterAtOffsetFar(msg, window, 0, 0);
 		UiText_DrawNumberInWindowFar(gGameState.coins, 6, window, 0, 8);
@@ -928,10 +928,10 @@ void Shop_DrawItemPrice(s32 window, s32 item, s32 price, s32 price_mode)
 		return;
 	goto draw;
 cannot_buy:
-	UiText_DrawCharacterAtOffsetFar((s32)MsgCannotBuyThat, window, ITEM_NOTE_X, 8);
+	UiText_DrawCharacterAtOffsetFar(MsgCannotBuyThat, window, ITEM_NOTE_X, 8);
 	return;
 show_price:
-	message = (s32)MsgPrice;
+	message = MsgPrice;
 	UiText_DrawCharacterAtOffsetFar(message, window, ITEM_NOTE_X, 8);
 	message -= 3;
 #if defined(TBS_EDITION_FR)
@@ -947,7 +947,7 @@ show_price:
 	return;
 draw:
 	RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
-	UiText_DrawCharacterAtOffsetFar(item + (s32)MsgItemName, window, 0, 0);
+	UiText_DrawCharacterAtOffsetFar(item + MsgItemName, window, 0, 0);
 	if (price != 0)
 		goto show_price;
 	switch (price_mode)
@@ -955,7 +955,7 @@ draw:
 	case 1:
 		goto cannot_buy;
 	case 2:
-		UiText_DrawCharacterAtOffsetFar((s32)MsgNotBroken, window, ITEM_NOTE_X, 8);
+		UiText_DrawCharacterAtOffsetFar(MsgNotBroken, window, ITEM_NOTE_X, 8);
 		break;
 	default:
 		goto show_price;
@@ -1019,7 +1019,7 @@ void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
 	RenderOutput_PrepareForRedrawFar(window);
 	if (!Item_CanOwnerEquip(unit_id, item_id))
 	{
-		UiText_DrawResourceFar((s32)MsgShopCannotEquip, window, 8, 24);
+		UiText_DrawResourceFar(MsgShopCannotEquip, window, 8, 24);
 		return;
 	}
 	slot = Inventory_FindEquippedFar(unit_id, item->type);
@@ -1072,11 +1072,11 @@ void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
 		UiText_DrawNumberInWindowFar(without[i], 3, window, 32, i * 16);
 		if (without[i] != with[i])
 			UiText_DrawNumberInWindowFar(with[i], 3, window, 72, i * 16);
-		UiText_DrawCharacterAtOffsetFar((s32)MsgShopStatLabel + i, window, 0, i * 16);
+		UiText_DrawCharacterAtOffsetFar(MsgShopStatLabel + i, window, 0, i * 16);
 		UiWindow_DrawDividerLineFar(window, 0, i * 2 + 2, 13, i * 2 + 2);
 	}
 	if (replaced != -1)
-		UiText_DrawCharacterAtOffsetFar(replaced + (s32)MsgItemName, window, 0, 48);
+		UiText_DrawCharacterAtOffsetFar(replaced + MsgItemName, window, 0, 48);
 }
 void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
 {
@@ -1103,11 +1103,11 @@ void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
 		{
 			off = slot * 2 + 216;
 			UiWork_PushValueSlotFar((*(u16 *)(unit + off) >> 11) + 1, 5);
-			UiText_DrawCharacterAtOffsetFar((s32)MsgYouHave, window, 0, 0);
+			UiText_DrawCharacterAtOffsetFar(MsgYouHave, window, 0, 0);
 		}
 		else
 		{
-			UiText_DrawCharacterAtOffsetFar((s32)MsgShopNoneInStock, window, 0, 0);
+			UiText_DrawCharacterAtOffsetFar(MsgShopNoneInStock, window, 0, 0);
 		}
 		item_index = 0;
 		first_offset = 216;
@@ -1164,7 +1164,7 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
 	result = 1;
 	if (item->flags & 0x10)
 	{
-		UiMessage_ShowAndWait((s32)MsgHowManyToBuy);
+		UiMessage_ShowAndWait(MsgHowManyToBuy);
 		slot = Inventory_FindFar(unit_id, item_id);
 		if (slot != -1)
 		{
@@ -1279,10 +1279,10 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
 #if EDITION_INTERNATIONAL
 					UiText_DrawNumberInWindowFar(result, 2, window, QUANTITY_X, 0);
 					UiText_DrawNumberInWindowFar(price * result, 6, window, QUANTITY_X + 16, 0);
-					UiText_DrawCharacterAtOffsetFar((s32)MsgCoins, window, COINS_X, 0);
+					UiText_DrawCharacterAtOffsetFar(MsgCoins, window, COINS_X, 0);
 #else
 					UiText_DrawNumberInWindowFar(result, 2, window, 64, 0);
-					msg = (s32)MsgPiece;
+					msg = MsgPiece;
 					UiText_DrawCharacterAtOffsetFar(msg, window, 80, 0);
 					UiText_DrawNumberInWindowFar(price * result, 6, window, 96, 0);
 					UiText_DrawCharacterAtOffsetFar(msg - 1, window, 144, 0);
@@ -1321,7 +1321,7 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
 			Shop_DrawMoney();
 		} while (remaining != 0);
 	}
-	UiMessage_ShowAndRestoreState((s32)MsgHereYouGo);
+	UiMessage_ShowAndRestoreState(MsgHereYouGo);
 	if (Shop_ConfirmEquip(unit_id, added_slot) != 0)
 	{
 		Shop_SellOld(unit_id, replaced_slot);
@@ -1353,7 +1353,7 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 	}
 
 	UiWork_PushValueSlotFar(unit_id, 1);
-	UiMessage_ShowAndWait((s32)MsgEquipNowPrompt);
+	UiMessage_ShowAndWait(MsgEquipNowPrompt);
 	if (UiMessage_ShowChoice(0) != 0)
 		return 0;
 
@@ -1366,14 +1366,14 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 	{
 		AudioCommand_PlayFar(103);
 		UiWork_FinalizePendingCoreFar();
-		UiText_OpenMessageWindowFar((s32)MsgBecameCursed, 8, 4, 2);
+		UiText_OpenMessageWindowFar(MsgBecameCursed, 8, 4, 2);
 		while (UiWork_IsCompleteFar() == 0)
 		{
 			WaitFrames(1);
 		}
 	}
 
-	UiMessage_ShowAndRestoreState((s32)MsgLookBolder);
+	UiMessage_ShowAndRestoreState(MsgLookBolder);
 	return 1;
 }
 
@@ -1547,7 +1547,7 @@ s32 Shop_SelSell(s32 unit_id)
 				shop->mode = 3;
 				Shop_DrawItemPrice(
 					list_window, item_id, Shop_SalePrice(unit->inventory[selection]), 1);
-				Shop_DrawMsg(price_window, item_id + (s32)MsgItemPlainName);
+				Shop_DrawMsg(price_window, item_id + MsgItemPlainName);
 			}
 
 			if ((gKeyState & KEY_A) != 0)
@@ -1607,7 +1607,7 @@ s32 Shop_SelSell(s32 unit_id)
 		quantity = Shop_SelSellNum(unit_id, selection);
 		if (quantity != -1)
 			Shop_SellItem(unit_id, selection, quantity);
-		UiMessage_ShowAndWait((s32)MsgSellAnythingElse);
+		UiMessage_ShowAndWait(MsgSellAnythingElse);
 		if (Inventory_CountFar(unit_id) == 0)
 			break;
 	}
@@ -1633,9 +1633,9 @@ void Shop_DrawUnitGrid(s32 window, s32 unit_id)
 		if (Inventory_CountFar(unit_id) == 0)
 		{
 #if defined(TBS_EDITION_IT)
-			UiText_DrawResourceFar((s32)MsgNoItems, window, 20, 12);
+			UiText_DrawResourceFar(MsgNoItems, window, 20, 12);
 #else
-			UiText_DrawResourceFar((s32)MsgNoItems, window, 8, 20);
+			UiText_DrawResourceFar(MsgNoItems, window, 8, 20);
 #endif
 		}
 		else
@@ -1693,7 +1693,7 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
 	selection = state;
 	if ((item->flags & 0x10) && state > 1)
 	{
-		UiMessage_ShowAndWait((s32)MsgHowManyToSell);
+		UiMessage_ShowAndWait(MsgHowManyToSell);
 		saved_x = shop->cursor.target_x;
 		saved_y = shop->cursor.target_y;
 		shop->cursor.anchor->active = 4;
@@ -1728,34 +1728,34 @@ void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
 	if (total == 0)
 	{
 		UiWork_PushValueSlotFar(item_id, 2);
-		UiMessage_ShowAndRestoreState((s32)MsgWeDoNotBuy);
+		UiMessage_ShowAndRestoreState(MsgWeDoNotBuy);
 		return;
 	}
 	if ((unit->inventory[slot] & 0x200) && (item->flags & 2))
 	{
 		UiWork_PushValueSlotFar(item_id, 2);
-		UiMessage_ShowAndRestoreState((s32)MsgCannotSellEquipped);
+		UiMessage_ShowAndRestoreState(MsgCannotSellEquipped);
 		return;
 	}
 	if (all)
-		message = (s32)MsgOldItemSellOffer;
+		message = MsgOldItemSellOffer;
 	else if (unit->inventory[slot] & 0x400)
-		message = (s32)MsgDamagedSellOffer;
+		message = MsgDamagedSellOffer;
 	else if (count > 1)
-		message = (s32)MsgSellTotal;
+		message = MsgSellTotal;
 	else if (rare)
-		message = (s32)MsgRareSellOffer;
+		message = MsgRareSellOffer;
 	else
-		message = (s32)MsgSellOffer;
+		message = MsgSellOffer;
 	UiWork_PushValueSlotFar(item_id, 2);
 	UiWork_PushValueSlotFar(total, 5);
 	UiMessage_ShowAndRestoreState(message);
 	if (UiMessage_ShowChoice(0) != 0)
 	{
 		if (rare || all)
-			message = (s32)MsgKeepIt;
+			message = MsgKeepIt;
 		else
-			message = (s32)MsgChangedMind;
+			message = MsgChangedMind;
 		UiMessage_ShowAndRestoreState(message);
 		return;
 	}
@@ -1766,9 +1766,9 @@ void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
 	Shop_DrawMoney();
 	Shop_DrawUnitGrid(shop->item_window, unit_id);
 	if (rare || all)
-		message = (s32)MsgSold;
+		message = MsgSold;
 	else
-		message = (s32)MsgDeal;
+		message = MsgDeal;
 	UiMessage_ShowAndRestoreState(message);
 }
 
@@ -1836,7 +1836,7 @@ s32 Shop_SelRepair(s32 unit_id)
 				shop->mode = 3;
 				price = Shop_RepairPrice(unit->inventory[selection]);
 				Shop_DrawItemPrice(list_window, item_id, price, 2);
-				Shop_DrawMsg(price_window, item_id + (s32)MsgItemPlainName);
+				Shop_DrawMsg(price_window, item_id + MsgItemPlainName);
 			}
 			if ((gKeyState & KEY_A) != 0)
 			{
@@ -1893,7 +1893,7 @@ s32 Shop_SelRepair(s32 unit_id)
 			break;
 
 		Shop_RepairItem(unit_id, selection);
-		UiMessage_ShowAndWait((s32)MsgRepairAnythingElse);
+		UiMessage_ShowAndWait(MsgRepairAnythingElse);
 		if (Inventory_CountFar(unit_id) == 0)
 			break;
 	}
@@ -1918,29 +1918,29 @@ void Shop_RepairItem(s32 unit_id, s32 slot)
 	if (kind != 2)
 	{
 		UiWork_PushValueSlotFar(item_id, 2);
-		UiMessage_ShowAndRestoreState((s32)MsgCannotRepairKind);
+		UiMessage_ShowAndRestoreState(MsgCannotRepairKind);
 		return;
 	}
 	if (!(unit->inventory[slot] & 0x400))
 	{
 		UiWork_PushValueSlotFar(item_id, 2);
-		UiMessage_ShowAndRestoreState((s32)MsgNotDamaged);
+		UiMessage_ShowAndRestoreState(MsgNotDamaged);
 		return;
 	}
 	if ((unit->inventory[slot] & 0x200) && (kind & item->flags))
 	{
 		UiWork_PushValueSlotFar(item_id, 2);
-		UiMessage_ShowAndRestoreState((s32)MsgCursedWontComeOff);
+		UiMessage_ShowAndRestoreState(MsgCursedWontComeOff);
 		return;
 	}
 	if (price > gGameState.coins)
 	{
-		UiMessage_ShowAndRestoreState((s32)MsgNotEnoughMoney);
+		UiMessage_ShowAndRestoreState(MsgNotEnoughMoney);
 		return;
 	}
 	UiWork_PushValueSlotFar(item_id, 2);
 	UiWork_PushValueSlotFar(price, 5);
-	message = (s32)MsgShopRepairConfirm;
+	message = MsgShopRepairConfirm;
 	UiMessage_ShowAndRestoreState(message);
 	if (UiMessage_ShowChoice(0) != 0)
 	{
@@ -2012,7 +2012,7 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
 		return;
 	shop->selected_item = SPECIAL_ITEM;
 	UiWork_PushValueSlotFar(SPECIAL_ITEM, 2);
-	message = (s32)MsgTokenGift;
+	message = MsgTokenGift;
 	UiMessage_ShowAndRestoreState(message);
 	UiWork_PushValueSlotFar(shop->selected_item, 2);
 	UiMessage_ShowAndRestoreState(message + 1);
@@ -2038,14 +2038,14 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
 				UiWork_PushValueSlotFar(unit_id, 1);
 				UiWork_PushValueSlotFar(shop->selected_item, 2);
 				if (Inventory_CountFar(unit_id) == 15)
-					UiMessage_ShowAndWait((s32)MsgPackFull);
+					UiMessage_ShowAndWait(MsgPackFull);
 				else
-					UiMessage_ShowAndWait((s32)MsgCannotCarryItem);
+					UiMessage_ShowAndWait(MsgCannotCarryItem);
 				continue;
 			}
 			Inventory_RemoveFar(unit_id, slot);
 			AudioCommand_PlayFar(0x65);
-			UiMessage_ShowAndRestoreState((s32)MsgHereYouGo);
+			UiMessage_ShowAndRestoreState(MsgHereYouGo);
 			Inventory_AddItemFar(unit_id, shop->selected_item);
 			Party_AdjustSixDigitCounterBFar(-price);
 			Party_AdjustCounterCappedAt28Far(1);
@@ -2053,7 +2053,7 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
 		}
 		if ((gKeyState & KEY_B) != 0)
 		{
-			UiMessage_ShowAndRestoreState((s32)MsgDontWantIt);
+			UiMessage_ShowAndRestoreState(MsgDontWantIt);
 			AudioCommand_PlayFar(0x71);
 			break;
 		}
@@ -2379,15 +2379,15 @@ s32 Shop_MsgByMode(s32 value)
 
 	if (mode == 1)
 	{
-		value += (u32)MsgCurePoisonService - (u32)MsgReviveService;
+		value += MsgCurePoisonService - MsgReviveService;
 	}
 	if (mode == 2)
 	{
-		value += (u32)MsgExorcismService - (u32)MsgReviveService;
+		value += MsgExorcismService - MsgReviveService;
 	}
 	if (mode == 3)
 	{
-		value += (u32)MsgRemoveCurseService - (u32)MsgReviveService;
+		value += MsgRemoveCurseService - MsgReviveService;
 	}
 	return value;
 }
@@ -2465,7 +2465,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
 	cursor_anchor->kind = 0;
 	ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
 	shop->cursor.anchor = cursor_anchor;
-	UiMessage_ShowResolvedAndWait((s32)MsgSanctumWelcome);
+	UiMessage_ShowResolvedAndWait(MsgSanctumWelcome);
 
 #if EDITION_INTERNATIONAL
 	shop->money_window = UiWindow_CreateFar(16, 11, 12, 4, 2);
@@ -2482,7 +2482,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
 			break;
 
 		{
-			s32 base = (s32)MsgReviveService;
+			s32 base = MsgReviveService;
 			s32 message = base;
 
 			base = 0;
@@ -2498,10 +2498,10 @@ s32 Shop_ConfirmAct(s32 unit_id)
 		}
 		shop->party_action = 0;
 		ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
-		UiMessage_ShowResolvedAndWait((s32)MsgSanctumMoreAid);
+		UiMessage_ShowResolvedAndWait(MsgSanctumMoreAid);
 	}
 
-	UiMessage_ShowResolvedAndWait((s32)MsgSanctumFarewell);
+	UiMessage_ShowResolvedAndWait(MsgSanctumFarewell);
 	UiWork_FinalizeFar(shop->money_window, 2);
 	UiWork_FinalizeFar(list_window, 2);
 	Inn_Cleanup();
@@ -2524,7 +2524,7 @@ s32 Sanctum_RunPartyService(void)
 	price_window = 0;
 	redraw = 1;
 	kind = shop->party_action;
-	UiMessage_ShowResolvedAndWait((s32)MsgWhoToRevive);
+	UiMessage_ShowResolvedAndWait(MsgWhoToRevive);
 
 	list_window = UiWindow_CreateFar(1, 12, 13, 3, 2);
 	shop->cursor.anchor->active = 4;
@@ -2555,7 +2555,7 @@ s32 Sanctum_RunPartyService(void)
 		if (retry != 0)
 		{
 			retry = 0;
-			UiMessage_ShowResolvedAndWait((s32)MsgWhoToRevive);
+			UiMessage_ShowResolvedAndWait(MsgWhoToRevive);
 			redraw = 1;
 			selection = 0;
 			while (selection < shop->party_member_count)
@@ -2589,7 +2589,7 @@ s32 Sanctum_RunPartyService(void)
 			}
 			UiWork_PushValueSlotFar(unit_id, 1);
 			UiWork_PushValueSlotFar(price, 5);
-			message = (s32)MsgReviveDonation;
+			message = MsgReviveDonation;
 			UiMessage_ShowResolvedAndWait(message);
 			if (UiMessage_ShowChoiceVariant(0) != 0)
 			{
@@ -2717,11 +2717,11 @@ void Shop_DrawSelMsg(s32 target, s32 selection)
 		RenderOutput_PrepareForRedrawFar(target);
 		if (Shop_CanServe(selection, variant) != 0)
 		{
-			variant = (s32)MsgReviveCost;
+			variant = MsgReviveCost;
 		}
 		else
 		{
-			variant = (s32)MsgNoHealingNeeded;
+			variant = MsgNoHealingNeeded;
 		}
 		variant = Shop_MsgByMode(variant);
 		UiWork_PushValueSlotFar(message, 5);
@@ -2936,7 +2936,7 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
 
 	amount = Inn_RoomPrice(mode);
 	UiWork_PushValueSlotFar(amount, 5);
-	message_base = (s32)MsgInnWelcome;
+	message_base = MsgInnWelcome;
 	UiMessage_ShowAndWait(message_base);
 	state->window = UiWindow_CreateFar(0, 16, MESSAGE_WINDOW_ROWS, 4, 2);
 	Shop_DrawMoney();
@@ -3151,7 +3151,7 @@ s32 Shop_SelUse(s32 actor)
 			Shop_PlaceCursor(window, x, y);
 			shop->mode = 3;
 			Shop_DrawUseItem(win1, actor, selection);
-			Shop_DrawMsg(win2, flags + (s32)MsgItemPlainName);
+			Shop_DrawMsg(win2, flags + MsgItemPlainName);
 		}
 
 		WaitFrames(1);
@@ -3167,11 +3167,11 @@ s32 Shop_SelUse(s32 actor)
 			}
 			if (status == -4)
 			{
-				UiText_OpenMessageWindowFar((s32)MsgCannotDropIt, 8, 1, 2);
+				UiText_OpenMessageWindowFar(MsgCannotDropIt, 8, 1, 2);
 			}
 			else if (result == -3)
 			{
-				UiText_OpenMessageWindowFar((s32)MsgCannotRemoveIt, 8, 1, 2);
+				UiText_OpenMessageWindowFar(MsgCannotRemoveIt, 8, 1, 2);
 			}
 			AudioCommand_PlayFar(113);
 			while (UiWork_IsCompleteFar() == 0)
@@ -3241,16 +3241,16 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
 		s32 result;
 
 		RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
-		UiText_DrawCharacterAtOffsetFar(masked + (s32)MsgItemName, window, 0, 0);
+		UiText_DrawCharacterAtOffsetFar(masked + MsgItemName, window, 0, 0);
 
 		result = Inventory_CheckDiscardFar(unit_id, item_id);
 		if (result == -4)
 		{
-			UiText_DrawCharacterAtOffsetFar((s32)MsgCannotDrop, window, ITEM_NOTE_X, 8);
+			UiText_DrawCharacterAtOffsetFar(MsgCannotDrop, window, ITEM_NOTE_X, 8);
 		}
 		else if (result == -3)
 		{
-			UiText_DrawCharacterAtOffsetFar((s32)MsgCannotRemove, window, ITEM_NOTE_X, 8);
+			UiText_DrawCharacterAtOffsetFar(MsgCannotRemove, window, ITEM_NOTE_X, 8);
 		}
 		else
 		{
@@ -3261,25 +3261,25 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
 			total = mult * qty;
 
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_IT)
-			UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 8, 8);
+			UiText_DrawCharacterAtOffsetFar(MsgPriceHeading, window, 8, 8);
 			UiText_DrawNumberInWindowFar(total, 5, window, 40, 8);
-			UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 5, window, 80, 8);
+			UiText_DrawCharacterAtOffsetFar(MsgPriceHeading - 5, window, 80, 8);
 #elif defined(TBS_EDITION_DE)
-			UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 0, 8);
+			UiText_DrawCharacterAtOffsetFar(MsgPriceHeading, window, 0, 8);
 			UiText_DrawNumberInWindowFar(total, 5, window, 32, 8);
-			UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 5, window, 72, 8);
+			UiText_DrawCharacterAtOffsetFar(MsgPriceHeading - 5, window, 72, 8);
 #elif defined(TBS_EDITION_ES)
-			UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 8, 8);
+			UiText_DrawCharacterAtOffsetFar(MsgPriceHeading, window, 8, 8);
 			UiText_DrawNumberInWindowFar(total, 5, window, 40, 8);
-			UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 5, window, 88, 8);
+			UiText_DrawCharacterAtOffsetFar(MsgPriceHeading - 5, window, 88, 8);
 #elif defined(TBS_EDITION_FR)
-			UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 8, 8);
+			UiText_DrawCharacterAtOffsetFar(MsgPriceHeading, window, 8, 8);
 			UiText_DrawNumberInWindowFar(total, 5, window, 32, 8);
-			UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 5, window, 72, 8);
+			UiText_DrawCharacterAtOffsetFar(MsgPriceHeading - 5, window, 72, 8);
 #else
-			UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading, window, 8, 8);
+			UiText_DrawCharacterAtOffsetFar(MsgPriceHeading, window, 8, 8);
 			UiText_DrawNumberInWindowFar(total, 5, window, 40, 8);
-			UiText_DrawCharacterAtOffsetFar((s32)MsgPriceHeading - 1, window, 80, 8);
+			UiText_DrawCharacterAtOffsetFar(MsgPriceHeading - 1, window, 80, 8);
 #endif
 		}
 	}

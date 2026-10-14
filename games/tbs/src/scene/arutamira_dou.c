@@ -533,7 +533,7 @@ static void ArutamiraDou_TurnRock(s32 action)
 
 	Event_Begin();
 	Battle_ResetEffectCounter();
-	Event_SetMessage((s32)MsgArutamiraRotatedRock);
+	Event_SetMessage(MsgArutamiraRotatedRock);
 	Event_ShowMessage(16, 0);
 	Event_End();
 	for (i = 0; i <= 4; i++)
@@ -708,7 +708,7 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Battle_ResetEffectCounter();
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgArutamiraCameBackPleaseDraughtQuickly);
+	Engine_EventSetMessage(MsgArutamiraCameBackPleaseDraughtQuickly);
 	Event_ShowMessage(8, 0);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 160);
@@ -817,15 +817,15 @@ static void FieldScene_RunExtendedActorPresentation(void)
 		Engine_EventWait(10);
 		Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
 		Engine_EventWait(30);
-		Engine_EventSetMessage((s32)MsgArutamiraWouldHaveRevealedMyselfSooner);
+		Engine_EventSetMessage(MsgArutamiraWouldHaveRevealedMyselfSooner);
 		Event_ShowMessage(9, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgArutamiraMustTraveledIndeedIfDidnt);
+		Engine_EventSetMessage(MsgArutamiraMustTraveledIndeedIfDidnt);
 		Event_ShowMessage(9, 0);
 	}
-	Engine_EventSetMessage((s32)MsgArutamiraHowDidBecomeParalyzedWhile);
+	Engine_EventSetMessage(MsgArutamiraHowDidBecomeParalyzedWhile);
 	Engine_EventWait(10);
 	Engine_ActorRunRepeatedMotion(MEARI, 2);
 	Engine_EventWait(20);
@@ -986,15 +986,15 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Event_OpenMessage(GERALD, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgArutamiraThatsSukuretaSaidAlchemyCould);
+		Engine_EventSetMessage(MsgArutamiraThatsSukuretaSaidAlchemyCould);
 		Event_ShowMessage(GERALD, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgArutamiraForgotSukuretaSaidAlchemyCould);
+		Engine_EventSetMessage(MsgArutamiraForgotSukuretaSaidAlchemyCould);
 		Event_ShowMessage(GERALD, 0);
 	}
-	Engine_EventSetMessage((s32)MsgArutamiraWhatWasThat);
+	Engine_EventSetMessage(MsgArutamiraWhatWasThat);
 	Engine_EventWait(10);
 	Actor_ShowEmote(9, EMOTE_IN_FRONT, 40);
 	Actor_FaceDirection(9, FACING_SOUTH, 0);
@@ -1012,7 +1012,7 @@ static void FieldScene_RunExtendedActorPresentation(void)
 	Engine_ActorSetAnimationAndWait(GERALD, ANIM_NOD);
 	Engine_EventWait(30);
 	Event_OpenMessage(9, 0);
-	Engine_EventSetMessage((s32)MsgArutamiraBabi);
+	Engine_EventSetMessage(MsgArutamiraBabi);
 	Engine_EventChooseYesNo(0, 0);
 	display = (u8 *)gDisplayTransition;
 	{
@@ -1384,7 +1384,7 @@ static void FieldScene_RunExtendedActorPresentation(void)
 		Engine_EventWait(10);
 		Engine_ActorRunRepeatedMotion(GERALD, 2);
 		Engine_EventWait(20);
-		Engine_EventSetMessage((s32)MsgArutamiraSoWellDoIt);
+		Engine_EventSetMessage(MsgArutamiraSoWellDoIt);
 		Event_ShowMessage(GERALD, 0);
 	}
 	else
@@ -1392,10 +1392,10 @@ static void FieldScene_RunExtendedActorPresentation(void)
 		Engine_EventWait(10);
 		Engine_ActorRunRepeatedMotion(GERALD, 2);
 		Engine_EventWait(20);
-		Engine_EventSetMessage((s32)MsgArutamiraDontWantEitherDo);
+		Engine_EventSetMessage(MsgArutamiraDontWantEitherDo);
 		Event_ShowMessage(GERALD, 0);
 	}
-	Engine_EventSetMessage((s32)MsgArutamiraEitherWayWereStuckHere);
+	Engine_EventSetMessage(MsgArutamiraEitherWayWereStuckHere);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(IWAN, ANIM_SHAKE_HEAD);
 	Engine_EventWait(30);
@@ -1424,7 +1424,7 @@ static void FieldScene_RunExtendedActorPresentation(void)
 		Engine_EventWait(10);
 		Engine_ActorSetAnimationAndWait(GERALD, ANIM_NOD);
 		Engine_EventWait(30);
-		Engine_EventSetMessage((s32)MsgArutamiraGreatItsDecidedJustHave);
+		Engine_EventSetMessage(MsgArutamiraGreatItsDecidedJustHave);
 		Event_ShowMessage(GERALD, 0);
 		Engine_EventWait(10);
 		Engine_ActorFaceEachOther(MEARI, IWAN, 50);
@@ -1444,7 +1444,7 @@ static void FieldScene_RunExtendedActorPresentation(void)
 		Engine_EventWait(10);
 		Engine_ActorSetAnimationAndWait(GERALD, ANIM_SHAKE_HEAD);
 		Engine_EventWait(30);
-		Engine_EventSetMessage((s32)MsgArutamiraDontLetMeDownLike);
+		Engine_EventSetMessage(MsgArutamiraDontLetMeDownLike);
 		Event_ShowMessage(GERALD, 0);
 		Engine_EventWait(10);
 		Engine_ActorFaceEachOther(MEARI, IWAN, 50);
@@ -1501,7 +1501,7 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 	Engine_AudioPlayCue(24);
 	Engine_EventBegin();
 	Battle_ResetEffectCounter();
-	Engine_EventSetMessage((s32)MsgArutamiraSee);
+	Engine_EventSetMessage(MsgArutamiraSee);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(20);
 	Engine_EventShowMessage(8, 0);
@@ -1597,7 +1597,7 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 	Actor_FaceActor(IWAN, ACTOR_PARTY_LEADER, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgArutamiraKiddingHaventActually);
+		Engine_EventSetMessage(MsgArutamiraKiddingHaventActually);
 		Engine_EventWait(20);
 		Actor_ShowEmote(GERALD, 0x100, 40);
 		Actor_SetSpeed(GERALD, 0x20000, 0x10000);
@@ -1608,7 +1608,7 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgArutamiraDontTrustAnyone);
+		Engine_EventSetMessage(MsgArutamiraDontTrustAnyone);
 		Engine_EventWait(10);
 		Actor_SetSpeed(GERALD, 0x10000, 0x8000);
 		Actor_WalkByAndWait(1, 0, -16);
@@ -1619,7 +1619,7 @@ static void FieldScene_RunBranchingCutsceneSequence(void)
 		Engine_EventShowMessage(1, 0);
 	}
 
-	line = (s32)MsgArutamiraSaidCouldntMove;
+	line = MsgArutamiraSaidCouldntMove;
 	Engine_EventSetMessage(line);
 	Actor_ShowEmote(IWAN, 0x103, 40);
 	Actor_SetSpeed(IWAN, 0x20000, 0x10000);
@@ -1772,7 +1772,7 @@ static void EV08_TALK(void)
 	s32 question;
 
 	Engine_EventBegin();
-	question = (s32)MsgArutamiraForgetOrderRock;
+	question = MsgArutamiraForgetOrderRock;
 	Engine_EventSetMessage(question);
 	Engine_EventOpenMessage(8, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -1799,7 +1799,7 @@ static void EV19_TOUCH(void)
 
 	Engine_GameFlagSet(0x961);
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgArutamiraWait);
+	Engine_EventSetMessage(MsgArutamiraWait);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventWait(10);
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);

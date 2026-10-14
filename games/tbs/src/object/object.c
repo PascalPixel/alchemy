@@ -2046,8 +2046,7 @@ s32 Field_RunScene(s32 entrance)
 						{
 							ObjectDispatch_ApplyArgumentToChildrenFar(actor, 22);
 							UiWork_PushValueSlotFar(work->quantities[i], 1);
-							UiText_ShowPositionedMessageAndWaitFar(
-								(s32)MsgFieldStrengthExhausted, 1);
+							UiText_ShowPositionedMessageAndWaitFar(MsgFieldStrengthExhausted, 1);
 						}
 						if (work->survived == 0)
 						{
@@ -2065,8 +2064,7 @@ s32 Field_RunScene(s32 entrance)
 								ObjectDispatch_ApplyArgumentToChildrenFar(actor, 19);
 							}
 							AudioCommand_PlayFar(59);
-							UiText_ShowPositionedMessageAndWaitFar(
-								(s32)MsgFieldPartyAnnihilated, 1);
+							UiText_ShowPositionedMessageAndWaitFar(MsgFieldPartyAnnihilated, 1);
 							vitals = UnitGetFar(gGameState.selected_actor);
 							vitals->hp = 1;
 							Unit_UpdateGauges(vitals);
@@ -2253,8 +2251,7 @@ s32 Field_RunScene(s32 entrance)
 						}
 						else
 						{
-							UiText_ShowPositionedMessageAndWaitFar(
-								(s32)MsgFieldPauseUnavailable, 1);
+							UiText_ShowPositionedMessageAndWaitFar(MsgFieldPauseUnavailable, 1);
 						}
 					}
 					Battle_ClearObjectFlag5bWhenMode3();
@@ -2814,7 +2811,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
 			{
 				s32 no = BattleFx_GetFlags(id);
 				u32 rnd = Random16();
-				s32 mes = (s32)MsgPonderEllipsis + no * 2 + (rnd * 2 >> 16);
+				s32 mes = MsgPonderEllipsis + no * 2 + (rnd * 2 >> 16);
 				Battle_Reset();
 				Event_SetMessageId(mes);
 				BattleEv_RunWait(id, 0);
@@ -3056,8 +3053,8 @@ s32 Field_RunTileAction(s32 tile)
 	{
 		Battle_InitializeRenderObject();
 		tile = Field_TileMessageOffsets[n];
-		UiText_ShowPositionedMessageAndWaitFar((s32)MsgTileChecked + tile, 1);
-		UiText_ShowPositionedMessageAndWaitFar((s32)MsgTileResult + tile, 1);
+		UiText_ShowPositionedMessageAndWaitFar(MsgTileChecked + tile, 1);
+		UiText_ShowPositionedMessageAndWaitFar(MsgTileResult + tile, 1);
 	}
 	else
 	{
@@ -3071,7 +3068,7 @@ s32 Field_RunTileAction(s32 tile)
 			if ((descriptor->trigger & 0x400) == 0 && n != 0)
 			{
 				Battle_InitializeRenderObject();
-				UiText_ShowPositionedMessageAndWaitFar((s32)MsgTileChecked + n, 1);
+				UiText_ShowPositionedMessageAndWaitFar(MsgTileChecked + n, 1);
 				GameFlag_SetBitFar(0x142);
 			}
 			else
@@ -3086,7 +3083,7 @@ s32 Field_RunTileAction(s32 tile)
 					if (GameFlag_IsConditionActive(condition) != 0)
 						((void (*)(s32))descriptor->value)(gGameState.selected_actor);
 					if (GameFlag_TestFar(0x142) != 0)
-						UiText_ShowPositionedMessageAndWaitFar((s32)MsgTileResult + n, 1);
+						UiText_ShowPositionedMessageAndWaitFar(MsgTileResult + n, 1);
 				}
 				else
 				{
@@ -3094,7 +3091,7 @@ s32 Field_RunTileAction(s32 tile)
 						UiText_ShowPositionedMessageAndWaitFar(
 							(*(const u16 *)&descriptor->value), 1);
 					else
-						UiText_ShowPositionedMessageAndWaitFar((s32)MsgButFoundNothing, 1);
+						UiText_ShowPositionedMessageAndWaitFar(MsgButFoundNothing, 1);
 				}
 			}
 			else
@@ -3121,16 +3118,16 @@ s32 Field_RunTileAction(s32 tile)
 							EffectRuntime_PrepareRisingObject(object);
 							AudioCommand_PlayFar(83);
 							UiWork_PushValueSlotFar((*(const u16 *)&descriptor->value), 5);
-							UiText_ShowPositionedMessageAndWaitFar((s32)MsgGotPsynergyStone, 3);
+							UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone, 3);
 							BattleParty_ApplyDrain(999, 0);
 							UiWindow_CreateWithLayoutBoundsFar(1);
 							AudioCommand_PlayFar(126);
-							UiText_ShowPositionedMessageAndWaitFar((s32)MsgGotPsynergyStone + 1, 1);
+							UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone + 1, 1);
 							UiWork_FinalizeAndReleaseBlock16Far();
 							ObjectDispatch_ApplyArgumentToChildrenFar(object, 2);
 							AudioCommand_PlayFar(246);
 							Battle_WaitMode0(30);
-							UiText_ShowPositionedMessageAndWaitFar((s32)MsgGotPsynergyStone + 2, 1);
+							UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone + 2, 1);
 							EffectRuntime_ClearCurrentFlags(tile);
 							if (condition != -1)
 								GameFlag_SetBitFar(condition);
@@ -3150,7 +3147,7 @@ s32 Field_RunTileAction(s32 tile)
 							Battle_SetStart(2);
 							BattleFx_SelectBattleCue(99, (*(const u16 *)&descriptor->value));
 							AudioCommand_PlayFar(gGameState.scene_cue);
-							UiText_ShowPositionedMessageAndWaitFar((s32)MsgChestWasMimic, 1);
+							UiText_ShowPositionedMessageAndWaitFar(MsgChestWasMimic, 1);
 						}
 						else if (type == 0x200000)
 						{
@@ -3164,7 +3161,7 @@ s32 Field_RunTileAction(s32 tile)
 							EffectRuntime_PrepareRisingObject(object);
 							AudioCommand_PlayFar(83);
 							UiWork_PushValueSlotFar((*(const u16 *)&descriptor->value), 5);
-							UiText_ShowPositionedMessageAndWaitFar((s32)MsgGotCoins, 3);
+							UiText_ShowPositionedMessageAndWaitFar(MsgGotCoins, 3);
 							Party_AdjustCoinsFar((*(const u16 *)&descriptor->value));
 							if (condition != -1)
 								GameFlag_SetBitFar(condition);
@@ -3183,8 +3180,8 @@ s32 Field_RunTileAction(s32 tile)
 							if (owner == -1)
 							{
 								UiWork_PushValueSlotFar(descriptor->value & 0xfff, 2);
-								UiText_ShowPositionedMessageAndWaitFar((s32)MsgFoundItem, 1);
-								UiText_ShowPositionedMessageAndWaitFar((s32)MsgFoundItem + 4, 1);
+								UiText_ShowPositionedMessageAndWaitFar(MsgFoundItem, 1);
+								UiText_ShowPositionedMessageAndWaitFar(MsgFoundItem + 4, 1);
 								Object_DestroyIfPresent(object);
 								if ((descriptor->control & 0x1ff) == 19)
 									EffectRuntime_SetMode5AndPlayCue(tile);
@@ -3199,13 +3196,12 @@ s32 Field_RunTileAction(s32 tile)
 								if (owner == gGameState.selected_actor)
 								{
 									UiText_ShowPositionedMessageAndWaitFar(
-										(s32)MsgKorosseoRobinGotItem, 3);
+										MsgKorosseoRobinGotItem, 3);
 								}
 								else
 								{
 									UiWork_PushValueSlotFar(owner, 1);
-									UiText_ShowPositionedMessageAndWaitFar(
-										(s32)MsgGaveItemToMember, 3);
+									UiText_ShowPositionedMessageAndWaitFar(MsgGaveItemToMember, 3);
 								}
 								if (condition != -1)
 									GameFlag_SetBitFar(condition);
@@ -3215,12 +3211,12 @@ s32 Field_RunTileAction(s32 tile)
 					}
 					else
 					{
-						UiText_ShowPositionedMessageAndWaitFar((s32)MsgCantOpenIt, 1);
+						UiText_ShowPositionedMessageAndWaitFar(MsgCantOpenIt, 1);
 					}
 				}
 				else
 				{
-					UiText_ShowPositionedMessageAndWaitFar((s32)MsgTileResult + n, 1);
+					UiText_ShowPositionedMessageAndWaitFar(MsgTileResult + n, 1);
 				}
 				BattleFx_FinishAction();
 				BattleFx_PlayQueuedSound();
@@ -3228,8 +3224,8 @@ s32 Field_RunTileAction(s32 tile)
 		}
 		else
 		{
-			UiText_ShowPositionedMessageAndWaitFar((s32)MsgCheckedGround, 1);
-			UiText_ShowPositionedMessageAndWaitFar((s32)MsgGroundDidntFindAnything, 1);
+			UiText_ShowPositionedMessageAndWaitFar(MsgCheckedGround, 1);
+			UiText_ShowPositionedMessageAndWaitFar(MsgGroundDidntFindAnything, 1);
 		}
 		GameFlag_ClearBitFar(0x142);
 	}
@@ -3604,7 +3600,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 
 		if (best == 0)
 		{
-			UiText_ShowPositionedMessageAndWaitFar((s32)MsgNothingHappens, 1);
+			UiText_ShowPositionedMessageAndWaitFar(MsgNothingHappens, 1);
 			return -1;
 		}
 	}
@@ -3618,7 +3614,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 		{
 			UiWork_PushValueSlotFar(actor, 1);
 			UiWork_PushValueSlotFar(item_id, 2);
-			UiText_ShowPositionedMessageAndWaitFar((s32)MsgActorUsesItem, 1);
+			UiText_ShowPositionedMessageAndWaitFar(MsgActorUsesItem, 1);
 		}
 		if ((s32)event->value < 0x10000)
 		{
@@ -3651,7 +3647,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 			if (action_id == 149 && !GameFlag_TestFar(0x144))
 			{
 				UiWork_PushValueSlotFar(item_id, 2);
-				UiText_ShowPositionedMessageAndWaitFar((s32)MsgUseItemQuestion, 13);
+				UiText_ShowPositionedMessageAndWaitFar(MsgUseItemQuestion, 13);
 				/* FAKEMATCH: needed to match: the owner index doubles as the declined flag, which ranks it above best in global allocation (r6, best r7). A declined local of its own: differ 109. */
 				i = Object_CallSpawnRoutineAtOrigin(1);
 				UiWork_FinalizePendingCoreFar();
@@ -3665,7 +3661,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 
 			UiWork_PushValueSlotFar(actor, 1);
 			UiWork_PushValueSlotFar(item_id, 2);
-			UiText_ShowPositionedMessageAndWaitFar((s32)MsgActorUsesItem, 1);
+			UiText_ShowPositionedMessageAndWaitFar(MsgActorUsesItem, 1);
 			/* FAKEMATCH: called through a cast to the s32 call the bytes show: called as void by its prototype, the 0 is loaded before the action id (differ 2), also with action_id declared at function scope; with action_id read after runtime: differ 8. */
 			((s32 (*)(s32, s32))BattleFx_LoadActionEffectResources)(action_id, 0);
 			runtime->resolving_action = 1;
@@ -3679,7 +3675,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 	}
 
 	if (GameFlag_TestFar(0x142))
-		UiText_ShowPositionedMessageAndWaitFar((s32)MsgNothingHappens, 1);
+		UiText_ShowPositionedMessageAndWaitFar(MsgNothingHappens, 1);
 	if (GameFlag_TestFar(0x143))
 		Inventory_RemoveFar(actor, slot);
 	return result;
@@ -3784,7 +3780,7 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
 // 使う者とわざの名前を入れたメッセージを出して待つ
 #define ENA_MES(who, act, m)                                               \
 	(UiWork_PushValueSlotFar((who), 1), UiWork_PushValueSlotFar((act), 4), \
-		UiText_ShowPositionedMessageAndWaitFar((s32)(m), 1))
+		UiText_ShowPositionedMessageAndWaitFar((m), 1))
 
 //--------------------------------------------------------------------------
 // フィールドでエナジーを使う
@@ -3834,7 +3830,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 code)
 			return 0;
 		}
 		UiWork_PushValueSlotFar(ENA_RITAN, 4);
-		UiText_ShowPositionedMessageAndWaitFar((s32)MsgUseAbilityConfirm, 13);
+		UiText_ShowPositionedMessageAndWaitFar(MsgUseAbilityConfirm, 13);
 		no = Object_CallSpawnRoutineAtOrigin(1); // 0 = はい
 		UiWork_FinalizePendingCoreFar();
 		if (no != 0)

@@ -44,7 +44,7 @@ s32 BattleUnit_TickCharm(s32 unit_id);
 s32 BattleUnit_TickStun(s32 unit_id);
 s32 BattleUnit_TickSleep(s32 unit_id);
 
-#define MES_PUSH(m) BtlEvPush(BEV_MES, (u32)(m))
+#define MES_PUSH(m) BtlEvPush(BEV_MES, (m))
 
 // L・R を押しているあいだカメラの yaw を 512 ずつ動かす。同じ関数がふたつある
 #define DEFINE_ADJUST_CAMERA(name)                                                           \

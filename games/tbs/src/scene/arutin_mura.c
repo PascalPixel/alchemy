@@ -96,7 +96,7 @@ static void EV08_TALK(void)
 	struct EventWork *work;
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgArutinYourFirstTimeVisitAltin);
+	Engine_EventSetMessage(MsgArutinYourFirstTimeVisitAltin);
 
 	Engine_EventOpenMessage(8, 0);
 
@@ -117,7 +117,7 @@ static void EV08_TALK(void)
 static void EV09_TALK_1(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgArutinDidSeeWaterGushingOut);
+	Engine_EventSetMessage(MsgArutinDidSeeWaterGushingOut);
 	Engine_EventAskYesNo(9, 0);
 	Engine_EventEnd();
 }
@@ -132,13 +132,13 @@ static void EV14_TALK_1(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x909) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgArutinOnesWhoDefeatedWaterBeasts);
+		Engine_EventSetMessage(MsgArutinOnesWhoDefeatedWaterBeasts);
 		Event_AskYesNo(14, 0);
 	}
 	else
 	{
 		Engine_ActorSetAnimation(14, 4);
-		Engine_EventSetMessage((s32)MsgArutinWeCantDrinkWaterMonsters);
+		Engine_EventSetMessage(MsgArutinWeCantDrinkWaterMonsters);
 		Event_ShowMessageAndWait(14, 0, 10);
 		ready_flag = GameFlag_IsSet(0x8ff);
 		if (ready_flag == 0)
@@ -165,7 +165,7 @@ static void EV17_TALK(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgArutinTrueFoundAncientRuinsIn);
+	Engine_EventSetMessage(MsgArutinTrueFoundAncientRuinsIn);
 	Engine_EventAskYesNo(17, 0);
 	Engine_EventEnd();
 }
@@ -174,7 +174,7 @@ static void EV09_TALK_2(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgArutinGirlFromXianWasAsking);
+	Engine_EventSetMessage(MsgArutinGirlFromXianWasAsking);
 	Engine_EventAskYesNo(9, 0);
 	Engine_EventEnd();
 }
@@ -183,7 +183,7 @@ static void EV10_TALK(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgArutinTryingFindYourWayWest);
+	Engine_EventSetMessage(MsgArutinTryingFindYourWayWest);
 	Engine_EventAskYesNo(10, 0);
 	Engine_EventEnd();
 }
@@ -192,7 +192,7 @@ static void EV14_TALK_2(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgArutinDefeatedThoseMonstersDidnt);
+	Engine_EventSetMessage(MsgArutinDefeatedThoseMonstersDidnt);
 	Engine_EventAskYesNo(14, 0);
 	Engine_EventEnd();
 }
@@ -201,7 +201,7 @@ static void EV21_TALK(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgArutinThereFewBeastsInMine);
+	Engine_EventSetMessage(MsgArutinThereFewBeastsInMine);
 	Engine_EventAskYesNo(21, 0);
 	Engine_EventEnd();
 }
@@ -223,7 +223,7 @@ static void EV15_TALK(void)
 	if (Engine_GameFlagIsSet(0x242) == 0)
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage((s32)MsgArutinDoWantWeapons);
+		Engine_EventSetMessage(MsgArutinDoWantWeapons);
 
 		Engine_EventAskYesNo(15, 0);
 		Engine_EventEnd();
@@ -237,10 +237,10 @@ static void EV15_TALK(void)
 	}
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgArutinThankGoodnessWaterHasReceded);
+	Engine_EventSetMessage(MsgArutinThankGoodnessWaterHasReceded);
 	if (Engine_GameFlagIsSet(0x909) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgArutinYoullHaveFindPassageIn);
+		Engine_EventSetMessage(MsgArutinYoullHaveFindPassageIn);
 	}
 	Engine_EventShowMessage(15, 0);
 	Engine_EventEnd();
@@ -252,7 +252,7 @@ static void FieldScene_RunActorTwentyFlagBranch(void)
 	if (Engine_GameFlagIsSet(0x241) == 0)
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage((s32)MsgArutinMyStoreSubmergedWantSell);
+		Engine_EventSetMessage(MsgArutinMyStoreSubmergedWantSell);
 		Engine_EventShowMessage(20, 0);
 		Engine_EventEnd();
 		return;
@@ -265,10 +265,10 @@ static void FieldScene_RunActorTwentyFlagBranch(void)
 	}
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgArutinItsGreatCanSellArmor);
+	Engine_EventSetMessage(MsgArutinItsGreatCanSellArmor);
 	if (Engine_GameFlagIsSet(0x909) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgArutinHowAboutArentImpressedBy);
+		Engine_EventSetMessage(MsgArutinHowAboutArentImpressedBy);
 	}
 	Engine_EventShowMessage(17, 0);
 	Engine_EventEnd();
@@ -279,7 +279,7 @@ static void FieldScene_RunActorTwentyOneFlagBranch(void)
 	if (Engine_GameFlagIsSet(0x240) == 0)
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage((s32)MsgArutinWillDoIfMyMerchandise);
+		Engine_EventSetMessage(MsgArutinWillDoIfMyMerchandise);
 		Engine_EventShowMessage(21, 0);
 		Engine_EventEnd();
 		return;
@@ -292,10 +292,10 @@ static void FieldScene_RunActorTwentyOneFlagBranch(void)
 	}
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgArutinNoneMyGoodsWereDamaged);
+	Engine_EventSetMessage(MsgArutinNoneMyGoodsWereDamaged);
 	if (Engine_GameFlagIsSet(0x909) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgArutinGirlFromXianBoughtLot);
+		Engine_EventSetMessage(MsgArutinGirlFromXianBoughtLot);
 	}
 	Engine_EventShowMessage(16, 0);
 	Engine_EventEnd();
@@ -317,12 +317,12 @@ static void EV18_TALK(void)
 
 	if (Engine_GameFlagIsSet(0x909) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgArutinThereSmallTempleWestAltin);
+		Engine_EventSetMessage(MsgArutinThereSmallTempleWestAltin);
 		Engine_EventShowMessage(18, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgArutinWeGotLittleDampBut);
+		Engine_EventSetMessage(MsgArutinWeGotLittleDampBut);
 		Engine_EventAskYesNo(18, 0);
 	}
 

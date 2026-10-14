@@ -5067,7 +5067,7 @@ s32 BattleFx_RunEventAction(void *event, s32 param, s32 target)
 		if (GameFlag_TestFar(322) != 0)
 		{
 			Battle_Reset();
-			UiText_ShowPositionedMessageAndWaitFar((s32)MsgNothingHappens, 1);
+			UiText_ShowPositionedMessageAndWaitFar(MsgNothingHappens, 1);
 			BattleFx_FinishAction();
 		}
 	}
@@ -9513,11 +9513,11 @@ void FieldEvent_ShowStatusMessage(void)
 	if (gGameState.avoid_by_item == 0)
 	{
 		UiWork_PushValueSlotFar(ENA_PURUFU, 4);
-		UiText_ShowPositionedMessageAndWaitFar((s32)MsgAbilityWoreOff, 1);
+		UiText_ShowPositionedMessageAndWaitFar(MsgAbilityWoreOff, 1);
 		return;
 	}
 	UiWork_PushValueSlotFar(ITEM_HANE, 2);
-	UiText_ShowPositionedMessageAndWaitFar((s32)MsgItemWoreOff, 1);
+	UiText_ShowPositionedMessageAndWaitFar(MsgItemWoreOff, 1);
 }
 
 void RunBattleEffect16(void)
@@ -9576,7 +9576,7 @@ void RunBattleEffect16(void)
 		ObjectDispatch_SetSingleChildFlagsFar(object, 1);
 	Animation_ApplyChildValuesFar(object, 0);
 	Resource_ResetEntry(scene->arc_tile_slot);
-	UiText_ShowPositionedMessageAndWaitFar((s32)MsgMonstersAttackLess, 1);
+	UiText_ShowPositionedMessageAndWaitFar(MsgMonstersAttackLess, 1);
 }
 
 void EffectSlot_Update(struct EffectSlot *effect)
@@ -10079,9 +10079,9 @@ void Map_UpdateWorldMapMarkers(void)
 		if (best != -1)
 		{
 			if (best == 0)
-				best_mes = (s32)MsgPresentLocation;
+				best_mes = MsgPresentLocation;
 			else
-				best_mes = Scene_GetAreaNameIndex(best_mes, 1) + (s32)MsgDebugEntryName;
+				best_mes = Scene_GetAreaNameIndex(best_mes, 1) + MsgDebugEntryName;
 			UiText_MeasureResourceEntriesFar(best_mes, &width, &height);
 			cursor_x = best_x;
 			cursor_y = best_y;
@@ -10145,7 +10145,7 @@ void Map_ShowWorldMap(s32 picture)
 	BattleFx_SetupResourcesAndWindow();
 	Scheduler_AddOrUpdateCallback(Map_UpdateWorldMapMarkers, 0xc80);
 	if (GameFlag_TestFar(284))
-		UiText_ShowPositionedMessageAndWaitFar((s32)MsgNotOnMap, 1);
+		UiText_ShowPositionedMessageAndWaitFar(MsgNotOnMap, 1);
 	do
 	{
 		WaitFrames(1);

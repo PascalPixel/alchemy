@@ -455,7 +455,7 @@ static void EV99_RAISED(void)
 	Actor_ShowEmote(13, 0x100, 30);
 	Engine_ActorRunRepeatedMotion(13, 2);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
-	Engine_EventSetMessage((s32)MsgGomaGotWowThatsPrettyImpressive);
+	Engine_EventSetMessage(MsgGomaGotWowThatsPrettyImpressive);
 	Event_ShowMessage(13, 0);
 	Engine_ActorSetAnimationAndWait(13, 3);
 	Engine_EventWait(30);

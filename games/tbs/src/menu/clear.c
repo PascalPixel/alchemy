@@ -334,12 +334,12 @@ s32 SaveMenu_Run(void)
 	if (gGameState.entrance == 2)
 	{
 	L_ask:
-		UiText_ShowPositionedMessageAndWait((s32)MsgSaveAdventureQuestion, 5);
+		UiText_ShowPositionedMessageAndWait(MsgSaveAdventureQuestion, 5);
 		v7 = Object_CallSpawnRoutineAtOrigin(1);
 		UiWork_FinalizePendingCore();
 		if (v7 == 0)
 		{
-			UiText_ShowPositionedMessageAndWait(((s32)MsgSaveAdventureQuestion + 1), 1);
+			UiText_ShowPositionedMessageAndWait(MsgSaveAdventureQuestion + 1, 1);
 			gGameState.unknown_20f = 1;
 			v7 = Save_WriteSelectedSlot();
 			if (v7 == -1)
@@ -363,7 +363,7 @@ menu_top:;
 		{
 			gGameState.saved_options = 1;
 			gOptionMirror = 1;
-			UiText_ShowCenteredMessage((s32)MsgNoBackupMemory, 1, 8);
+			UiText_ShowCenteredMessage(MsgNoBackupMemory, 1, 8);
 		}
 	}
 	if (v6 == 0)
@@ -443,7 +443,7 @@ menu_top:;
 		{
 			if (Scene_GetModeMask() != 0)
 			{
-				UiText_ShowPositionedMessageAndWait((s32)MsgSaveRecoveryFailed, 9);
+				UiText_ShowPositionedMessageAndWait(MsgSaveRecoveryFailed, 9);
 				goto menu_top;
 			}
 			state->scene = state->saved_scene;
@@ -453,8 +453,8 @@ menu_top:;
 		}
 		else if (state->play_time != ((struct SaveMenuSceneState *)gSceneState)->word_100)
 		{
-			UiText_ShowPositionedMessageAndWait((s32)MsgSaveDataCorrupted, 9);
-			UiText_ShowPositionedMessageAndWait((s32)MsgSaveDataCorrupted + 1, 13);
+			UiText_ShowPositionedMessageAndWait(MsgSaveDataCorrupted, 9);
+			UiText_ShowPositionedMessageAndWait(MsgSaveDataCorrupted + 1, 13);
 			if (Menu_RunConfirmSelection(1, 0, 0, 0) != 0)
 			{
 				UiWork_FinalizePendingCore();
@@ -464,7 +464,7 @@ menu_top:;
 			if (Scene_GetModeMask() != 0)
 			{
 				/* FAKEMATCH: MsgSaveRecoveryFailed as MsgSaveDataCorrupted + 2, the native adds 2 to the register holding message 4 (186 by name). */
-				UiText_ShowPositionedMessageAndWait((s32)MsgSaveDataCorrupted + 2, 9);
+				UiText_ShowPositionedMessageAndWait(MsgSaveDataCorrupted + 2, 9);
 				goto menu_top;
 			}
 			state->scene = state->saved_scene;
@@ -540,7 +540,7 @@ menu_top:;
 #else
 			v6 = UiWindow_Create(6, 5, 18, 8, 2);
 #endif
-			link_message = (s32)MsgClearSaveLabel;
+			link_message = MsgClearSaveLabel;
 
 			UiText_DrawResource(link_message, v6, 0, 4);
 			UiText_DrawResource((link_message + 1), v6, 0, 16);
@@ -625,7 +625,7 @@ menu_top:;
 			v6 = UiWindow_Create(5, 10, 20, 4, 2);
 #endif
 
-			UiText_DrawResource((s32)MsgClearSendingData, v6, 0, 4);
+			UiText_DrawResource(MsgClearSendingData, v6, 0, 4);
 			Engine_TaskWait(10);
 			SerialRuntime_BeginTransferA((s32)gSaveBuffer, 0x1004);
 			Engine_TaskWait(10);
@@ -653,7 +653,7 @@ menu_top:;
 			if (v4 == 0)
 			{
 				RenderOutput_PrepareForRedraw(v6);
-				UiText_DrawResource((s32)MsgClearCommunicationError, v6, 0, 4);
+				UiText_DrawResource(MsgClearCommunicationError, v6, 0, 4);
 				v5 = 1;
 				do
 				{
@@ -702,7 +702,7 @@ menu_top:;
 #else
 			record = UiWindow_Create(10, 0, 10, 4, v6);
 #endif
-			page_message = (s32)MsgClearPasswordLabel;
+			page_message = MsgClearPasswordLabel;
 			heading_window = record;
 			UiText_DrawResource(page_message, heading_window, 6, 4);
 			v7 = 1;

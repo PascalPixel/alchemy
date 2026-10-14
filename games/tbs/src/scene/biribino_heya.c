@@ -55,11 +55,11 @@ static void EV16_TALK(void)
 	{
 		if (Engine_GameFlagIsSet(0x845) == 0)
 		{
-			Engine_EventSetMessage((s32)MsgBiribinoThereWasAbleHealerIn);
+			Engine_EventSetMessage(MsgBiribinoThereWasAbleHealerIn);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgBiribinoOurWeaponsBestCanFind);
+			Engine_EventSetMessage(MsgBiribinoOurWeaponsBestCanFind);
 		}
 		Engine_EventShowMessage(16, 0);
 	}
@@ -83,11 +83,11 @@ static void EV18_TALK(void)
 	{
 		if (Engine_GameFlagIsSet(0x845) == 0)
 		{
-			Engine_EventSetMessage((s32)MsgBiribinoMustUsedTypesDangerBeing);
+			Engine_EventSetMessage(MsgBiribinoMustUsedTypesDangerBeing);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgBiribinoTurnedOutWarriorsHiredBy);
+			Engine_EventSetMessage(MsgBiribinoTurnedOutWarriorsHiredBy);
 		}
 		Engine_EventShowMessage(18, 0);
 	}
@@ -114,7 +114,7 @@ static void EV17_TALK(void)
 	{
 		if (GameFlag_IsSet(0x845) == 0)
 		{
-			Engine_EventSetMessage((s32)MsgBiribinoHaveEverHeardOcean);
+			Engine_EventSetMessage(MsgBiribinoHaveEverHeardOcean);
 			Actor_FaceActor(17, ACTOR_PARTY_LEADER, 0);
 			Engine_EventWait(10);
 			Event_AskYesNo(17, 0);
@@ -122,7 +122,7 @@ static void EV17_TALK(void)
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgBiribinoForSomeReasonOceanFills);
+			Engine_EventSetMessage(MsgBiribinoForSomeReasonOceanFills);
 			Event_ShowMessage(17, 0);
 		}
 	}
@@ -132,7 +132,7 @@ static void EV17_TALK(void)
 static void FieldScene_ConfigureActor21Scene(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgBiribinoImReallyWorriedAboutKolima);
+	Engine_EventSetMessage(MsgBiribinoImReallyWorriedAboutKolima);
 	Actor_FaceActor(21, ACTOR_PARTY_LEADER, 0);
 	Event_ShowMessage(21, 0);
 	Actor_FaceDirection(21, 0xc000, 10);
@@ -142,7 +142,7 @@ static void FieldScene_ConfigureActor21Scene(void)
 static void EV24_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgBiribinoGrrr);
+	Engine_EventSetMessage(MsgBiribinoGrrr);
 	Event_ShowMessageAndWait(24, 0, 20);
 	Actor_FaceActor(24, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(10);
@@ -161,7 +161,7 @@ static void FieldScene_RunActor27Sequence(void)
 	void Actor_FaceDirection();
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgBiribinoDoBelieveTreeSpiritCan);
+	Engine_EventSetMessage(MsgBiribinoDoBelieveTreeSpiritCan);
 	Actor_FaceActor(27, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(10);
 	Event_OpenMessage(27, 0);
@@ -177,7 +177,7 @@ static void FieldScene_RunActor27Sequence(void)
 static void EV08_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgBiribinoDoKnowIfHolyTree);
+	Engine_EventSetMessage(MsgBiribinoDoKnowIfHolyTree);
 	Engine_EventAskYesNo(8, 0);
 	Engine_EventEnd();
 }
@@ -185,7 +185,7 @@ static void EV08_TALK(void)
 static void EV13_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgBiribinoDoKnowSilk);
+	Engine_EventSetMessage(MsgBiribinoDoKnowSilk);
 	Engine_EventAskYesNo(13, 0);
 	Engine_EventEnd();
 }
@@ -204,12 +204,12 @@ static void EV19_TALK(void)
 	}
 	else if (Engine_GameFlagIsSet(0x845) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgBiribinoWasntCurseInKolimaHorrifying);
+		Engine_EventSetMessage(MsgBiribinoWasntCurseInKolimaHorrifying);
 		Engine_EventAskYesNo(19, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgBiribinoCurseOnKolimaScaryDevelopment);
+		Engine_EventSetMessage(MsgBiribinoCurseOnKolimaScaryDevelopment);
 		Engine_EventShowMessage(19, 0);
 	}
 
@@ -223,7 +223,7 @@ static void FieldScene_RunActor21SequenceOnFlag300(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x300) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgBiribinoTwoSpecialsOneDinnerOne);
+		Engine_EventSetMessage(MsgBiribinoTwoSpecialsOneDinnerOne);
 		Event_ShowMessage(21, 0);
 		Actor_FaceDirection(21, 0x8000, 20);
 		Event_ShowMessage(21, 0);
@@ -235,7 +235,7 @@ static void FieldScene_RunActor21SequenceOnFlag300(void)
 		GameFlag_Set(0x300);
 	}
 	Actor_FaceActor(21, ACTOR_PARTY_LEADER, 0);
-	Engine_EventSetMessage((s32)MsgBiribinoIfWantMealSpeakWaitress);
+	Engine_EventSetMessage(MsgBiribinoIfWantMealSpeakWaitress);
 	Event_ShowMessage(21, 0);
 	Actor_FaceDirection(21, 0xc000, 10);
 	Engine_EventEnd();
@@ -245,7 +245,7 @@ static void EV22_TALK(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgBiribinoReallyThinkHeadChefHas);
+	Engine_EventSetMessage(MsgBiribinoReallyThinkHeadChefHas);
 	Engine_EventShowMessage(0x16, 0);
 	Engine_ActorFaceActor(0x16, ACTOR_PARTY_LEADER, 0);
 	Engine_EventShowMessage(0x16, 0);
@@ -257,7 +257,7 @@ static void EV23_TALK(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgBiribinoLetsSeeServeThemWater);
+	Engine_EventSetMessage(MsgBiribinoLetsSeeServeThemWater);
 	Event_ShowMessage(23, 0);
 	Actor_FaceActor(23, ACTOR_PARTY_LEADER, 0);
 	Event_ShowMessage(23, 0);
@@ -269,7 +269,7 @@ static void FieldScene_RunActor27Message(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgBiribinoWasSomeMealDontJust);
+	Engine_EventSetMessage(MsgBiribinoWasSomeMealDontJust);
 	Engine_EventAskYesNo(27, 0);
 	Engine_EventEnd();
 }
@@ -280,11 +280,11 @@ static void EV10_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(3) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgBiribinoEvenFrozenImilMustFeel);
+		Engine_EventSetMessage(MsgBiribinoEvenFrozenImilMustFeel);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgBiribinoWhenSpringComesWantGo);
+		Engine_EventSetMessage(MsgBiribinoWhenSpringComesWantGo);
 	}
 	Engine_EventShowMessage(10, 0);
 	Engine_EventEnd();

@@ -44,7 +44,7 @@ s32 SceneData_SelectActorTableByFlag96f(void)
 
 static void EV09_TALK(s32 obj)
 {
-	s32 cue = (s32)MsgSuharaTryingGetLalivero;
+	s32 cue = MsgSuharaTryingGetLalivero;
 	Engine_EventSetMessage(cue);
 	Engine_EventOpenMessage(obj, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -61,7 +61,7 @@ static void EV09_TALK(s32 obj)
 
 static void EV13_TALK(s32 obj)
 {
-	s32 cue = (s32)MsgSuharaBroughtSuhallaSandstorm;
+	s32 cue = MsgSuharaBroughtSuhallaSandstorm;
 	Engine_EventSetMessage(cue);
 	Engine_EventOpenMessage(obj, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)

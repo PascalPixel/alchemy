@@ -151,16 +151,16 @@ static void FieldScene_RunActorNineFlagDialogueA(void)
 
 	if (Engine_GameFlagIsSet(0x855) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgShindenWhenStrayFromYourWorldly);
+		Engine_EventSetMessage(MsgShindenWhenStrayFromYourWorldly);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgShindenHealerMustWorriedAboutNever);
+		Engine_EventSetMessage(MsgShindenHealerMustWorriedAboutNever);
 	}
 
 	if (gGameState.entrance == 11)
 	{
-		Engine_EventSetMessage((s32)MsgShindenPolishedGoldStatueReturnedUs);
+		Engine_EventSetMessage(MsgShindenPolishedGoldStatueReturnedUs);
 	}
 
 	Engine_ActorSetAnimation(9, 1);
@@ -177,16 +177,16 @@ static void EV09_PSYNERGY(void)
 
 	if (Engine_GameFlagIsSet(0x855) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgShindenWonderIfEverSeeOur);
+		Engine_EventSetMessage(MsgShindenWonderIfEverSeeOur);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgShindenChildHasAwakenedOurTeachings);
+		Engine_EventSetMessage(MsgShindenChildHasAwakenedOurTeachings);
 	}
 
 	if (gGameState.entrance == 11)
 	{
-		Engine_EventSetMessage((s32)MsgShindenDirtyGoldenStatueCleanedUp);
+		Engine_EventSetMessage(MsgShindenDirtyGoldenStatueCleanedUp);
 	}
 
 	Engine_ActorStop(9);
@@ -200,7 +200,7 @@ static void EV09_PSYNERGY(void)
 static void FieldScene_RunSupplementalSequenceOne(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgShindenAreYouSure);
+	Engine_EventSetMessage(MsgShindenAreYouSure);
 	Engine_EventOpenMessage(8, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
@@ -265,7 +265,7 @@ static void FieldScene_RunScene378SequenceB(void)
 	Event_CallWithLastActiveObjectId((s32)ShindenHeya_PlacementSequenceB);
 	Engine_TaskWait(1);
 #endif
-	Engine_EventSetMessage((s32)MsgShindenRobinYourNewFriendsAdepts);
+	Engine_EventSetMessage(MsgShindenRobinYourNewFriendsAdepts);
 	Engine_EventOpenMessage(9, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
@@ -290,7 +290,7 @@ static void EV10_TALK(void)
 	Engine_EventBegin();
 	Engine_ActorFaceActor(10, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(10);
-	Engine_EventSetMessage((s32)MsgShindenDoFeelAnyChangeIn);
+	Engine_EventSetMessage(MsgShindenDoFeelAnyChangeIn);
 	Engine_EventOpenMessage(10, 0);
 
 	if (Engine_EventChooseYesNo(0, 0) == 1)
@@ -354,7 +354,7 @@ static void EV02_TOUCH(void)
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(8, 4);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgShindenOnceStepOutsideVillageCannot);
+	Engine_EventSetMessage(MsgShindenOnceStepOutsideVillageCannot);
 	Engine_EventShowMessage(8, 0);
 	Engine_GameFlagSet(0x200);
 	Engine_EventEnd();
@@ -384,7 +384,7 @@ static void EV01_TOUCH(void)
 	work->lamps[2] = 1;
 	work->lamps[3] = 1;
 	Engine_EventWait(1);
-	UiText_ShowCenteredMessage((s32)MsgShindenWorldBeganDrifting, 1, 0);
+	UiText_ShowCenteredMessage(MsgShindenWorldBeganDrifting, 1, 0);
 	Engine_ColorBufferApplyTarget(0, 0);
 	Engine_ColorBufferInterpolate(120);
 	Engine_EventWait(120);
@@ -460,7 +460,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Actor_SetSpeed(8, 0xcccc, 0x6666);
 		Engine_EventWait(0x1e);
 		Engine_ActorRunRepeatedMotion(0xc, 2);
-		Engine_EventSetMessage((s32)MsgShindenWeHadIdeaTrueSanctum);
+		Engine_EventSetMessage(MsgShindenWeHadIdeaTrueSanctum);
 		Event_ShowMessage(0xc, 0);
 		Engine_EventWait(0xa);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
@@ -907,7 +907,7 @@ static void FieldScene_RunScriptedSceneSequence(void)
 		Event_ShowMessage(GERALD, 0);
 		Engine_EventWait(0x1e);
 	}
-	Engine_EventSetMessage((s32)MsgShindenRobinWillAcceptResponsibilityFor);
+	Engine_EventSetMessage(MsgShindenRobinWillAcceptResponsibilityFor);
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Engine_EventWait(0x14);
 	Event_OpenMessage(8, 0);
@@ -977,7 +977,7 @@ static void FieldScene_RunActorUpdateSequence(void)
 	Engine_EventWait(30);
 	Engine_ActorSetAnimationAndWait(GERALD, 4);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgShindenAcceptRobinCantMean);
+	Engine_EventSetMessage(MsgShindenAcceptRobinCantMean);
 	Event_ShowMessage(GERALD, 0);
 	Engine_EventWait(20);
 	Actor_FaceActor(12, GERALD, 0);
@@ -1502,7 +1502,7 @@ static s32 ShindenHeya_ChooseRestartOption(void)
 	Engine_ColorBufferInterpolate(1);
 	Engine_EventWait(1);
 	window = UiWindow_Create(QUESTION_X, 7, QUESTION_WIDTH, 5, 1);
-	text = (s32)MsgShindenGreatHealer;
+	text = MsgShindenGreatHealer;
 	UiText_DrawResource(text, window, 16, 0);
 	if (SaveState_CountRecordsExcludingFlagged(1) == 0)
 	{
@@ -1884,11 +1884,11 @@ static void FieldScene_RunActorEightFacingDialogue(void)
 
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x87a) != 0)
-		Engine_EventSetMessage((s32)MsgShindenPathSolSanctumStillClosed);
+		Engine_EventSetMessage(MsgShindenPathSolSanctumStillClosed);
 	else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
-		Engine_EventSetMessage((s32)MsgShindenMyControlOverPsynergyHas);
+		Engine_EventSetMessage(MsgShindenMyControlOverPsynergyHas);
 	else
-		Engine_EventSetMessage((s32)MsgShindenWieldersPsynergyCalledAdeptsAdepts);
+		Engine_EventSetMessage(MsgShindenWieldersPsynergyCalledAdeptsAdepts);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventEnd();
 }
@@ -1913,15 +1913,15 @@ static void FieldScene_DispatchBySceneId(void)
 	case 12:
 		if (Engine_GameFlagIsSet(0x855) != 0)
 		{
-			Engine_EventSetMessage((s32)MsgShindenWasHandFateReturnedGold);
+			Engine_EventSetMessage(MsgShindenWasHandFateReturnedGold);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgShindenWeWillHelpAnytimeAs);
+			Engine_EventSetMessage(MsgShindenWeWillHelpAnytimeAs);
 		}
 		break;
 	case 11:
-		Engine_EventSetMessage((s32)MsgShindenMayWrongButLatelyThere);
+		Engine_EventSetMessage(MsgShindenMayWrongButLatelyThere);
 		break;
 	case 20:
 	case 21:
@@ -1947,9 +1947,9 @@ static void SceneDialogue_RunActorEightFlaggedDialogue(void)
 
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x845) != 0)
-		Engine_EventSetMessage((s32)MsgShindenCurseMayOverButWe);
+		Engine_EventSetMessage(MsgShindenCurseMayOverButWe);
 	else
-		Engine_EventSetMessage((s32)MsgShindenAmStartingFeelOnlyBeginning);
+		Engine_EventSetMessage(MsgShindenAmStartingFeelOnlyBeginning);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventEnd();
 }
@@ -1963,9 +1963,9 @@ static void SceneDialogue_RunActorEightFollowupDialogue(void)
 	}
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgShindenWasAfterEerieNightWhen);
+	Engine_EventSetMessage(MsgShindenWasAfterEerieNightWhen);
 	if (Engine_GameFlagIsSet(0x909) != 0)
-		Engine_EventSetMessage((s32)MsgShindenSavedAltinFromMonstersClearly);
+		Engine_EventSetMessage(MsgShindenSavedAltinFromMonstersClearly);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventEnd();
 }
@@ -1979,7 +1979,7 @@ static void SceneDialogue_RunActorEightDialogue(void)
 	}
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgShindenCameXianFromVeryDistant);
+	Engine_EventSetMessage(MsgShindenCameXianFromVeryDistant);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventEnd();
 }

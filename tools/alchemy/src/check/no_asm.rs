@@ -549,7 +549,7 @@ fn batched_audit_uses_current_catalog_and_invalidates_clean_keys() {
     let source = root.join("import.c");
     fs::write(
         &source,
-        "#include \"text/msg_ids.h\"\nTEXT_MESSAGE_ENUM(MsgImported);\n\
+        "#include \"text/msg_ids.h\"\n\
          #if TEXT_MESSAGE_NUMBER_MsgImported == 8\n#define KIND naked\n\
          #else\n#define KIND packed\n#endif\n\
          void Imported(void) __attribute__((KIND));\n",

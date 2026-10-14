@@ -155,13 +155,13 @@ static void HideActorOneHundredTwo(void)
 
 static void EV30_SEARCH(void)
 {
-	Engine_EventSetMessage((s32)MsgTorebiFaceAwayTolbi);
+	Engine_EventSetMessage(MsgTorebiFaceAwayTolbi);
 	Engine_EventShowMessage(-1, 0);
 }
 
 static void EV31_SEARCH(void)
 {
-	Engine_EventSetMessage((s32)MsgTorebiTossLuckyMedal);
+	Engine_EventSetMessage(MsgTorebiTossLuckyMedal);
 	Engine_EventShowMessage(-1, 0);
 }
 
@@ -180,30 +180,30 @@ static void EV16_SCRIPT(void)
 	{
 		if (Engine_GameFlagIsSet(0x950) != 0)
 		{
-			msg = (s32)MsgTorebiYayEasyRun;
+			msg = MsgTorebiYayEasyRun;
 		}
 		else if (Engine_GameFlagIsSet(0x962) != 0)
 		{
-			msg = (s32)MsgTorebiHoorayFinalsSeven;
+			msg = MsgTorebiHoorayFinalsSeven;
 		}
 		else
 		{
-			msg = (s32)MsgTorebiWheeFestivalColosso;
+			msg = MsgTorebiWheeFestivalColosso;
 		}
 	}
 	else
 	{
 		if (Engine_GameFlagIsSet(0x950) != 0)
 		{
-			msg = (s32)MsgTorebiMainStreetTolbi;
+			msg = MsgTorebiMainStreetTolbi;
 		}
 		else if (Engine_GameFlagIsSet(0x962) != 0)
 		{
-			msg = (s32)MsgTorebiWinBigUsed;
+			msg = MsgTorebiWinBigUsed;
 		}
 		else
 		{
-			msg = (s32)MsgTorebiOldestShouldntShare;
+			msg = MsgTorebiOldestShouldntShare;
 		}
 	}
 	Engine_EventSetMessage(msg);
@@ -231,30 +231,30 @@ static void EV17_SCRIPT(void)
 	{
 		if (Engine_GameFlagIsSet(0x950) != 0)
 		{
-			msg = (s32)MsgTorebiHaHaHa;
+			msg = MsgTorebiHaHaHa;
 		}
 		else if (Engine_GameFlagIsSet(0x962) != 0)
 		{
-			msg = (s32)MsgTorebiWaahBigBrother;
+			msg = MsgTorebiWaahBigBrother;
 		}
 		else
 		{
-			msg = (s32)MsgTorebiWaahSaidMoney;
+			msg = MsgTorebiWaahSaidMoney;
 		}
 	}
 	else
 	{
 		if (Engine_GameFlagIsSet(0x950) != 0)
 		{
-			msg = (s32)MsgTorebiBrotherMeanDuring;
+			msg = MsgTorebiBrotherMeanDuring;
 		}
 		else if (Engine_GameFlagIsSet(0x962) != 0)
 		{
-			msg = (s32)MsgTorebiMamaWhyListen;
+			msg = MsgTorebiMamaWhyListen;
 		}
 		else
 		{
-			msg = (s32)MsgTorebiMamaToldShare;
+			msg = MsgTorebiMamaToldShare;
 		}
 	}
 	Engine_EventSetMessage(msg);
@@ -283,7 +283,7 @@ u8 *TorebiMachi_SelectEvents(void)
 static void EV15_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgTorebiSomeoneLiveMore);
+	Engine_EventSetMessage(MsgTorebiSomeoneLiveMore);
 	Engine_EventAskYesNo(15, 0);
 	Engine_EventEnd();
 }
@@ -291,7 +291,7 @@ static void EV15_TALK(void)
 static void EV24_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgTorebiChildrenLoveSouvenirs);
+	Engine_EventSetMessage(MsgTorebiChildrenLoveSouvenirs);
 	Engine_EventAskYesNo(24, 0);
 	Engine_EventEnd();
 }
@@ -299,7 +299,7 @@ static void EV24_TALK(void)
 static void EV25_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgTorebiPatientLittleGuy);
+	Engine_EventSetMessage(MsgTorebiPatientLittleGuy);
 	Actor_FaceDirection(25, 0xc000, 0);
 	Engine_EventShowMessage(25, 0);
 	Actor_FaceDirection(25, 0x8000, 0);
@@ -312,7 +312,7 @@ static void EV26_TALK(void)
 	Engine_EventBegin();
 	Actor_FaceDirection(26, 0x4000, 0);
 	Engine_ActorStartRepeatedMotion(26, 2);
-	Engine_EventSetMessage((s32)MsgTorebiWaahBuySweets);
+	Engine_EventSetMessage(MsgTorebiWaahBuySweets);
 	Engine_EventShowMessage(26, 0);
 	Engine_EventEnd();
 }
@@ -320,7 +320,7 @@ static void EV26_TALK(void)
 static void EV27_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgTorebiInnsFullStaying);
+	Engine_EventSetMessage(MsgTorebiInnsFullStaying);
 	Engine_EventShowMessage(0x1B, 0);
 	Engine_EventEnd();
 }
@@ -328,7 +328,7 @@ static void EV27_TALK(void)
 static void EV12_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgTorebiFinalsWerent);
+	Engine_EventSetMessage(MsgTorebiFinalsWerent);
 	Engine_EventAskYesNo(24, 0);
 	Engine_EventEnd();
 }
@@ -339,7 +339,7 @@ static void EV19_TALK(void)
 	if (GameFlag_IsSet(0x8bf) == 0)
 	{
 		Engine_GameFlagSet(0x8bf);
-		Engine_EventSetMessage((s32)MsgTorebiLeftovers);
+		Engine_EventSetMessage(MsgTorebiLeftovers);
 		Engine_EventShowMessage(19, 0);
 		Engine_ItemShowFound(233, 3);
 		Engine_EventShowMessage(19, 0);
@@ -348,7 +348,7 @@ static void EV19_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgTorebiFestivalLongerUsual);
+		Engine_EventSetMessage(MsgTorebiFestivalLongerUsual);
 		Engine_EventShowMessage(19, 0);
 	}
 	Engine_EventEnd();
@@ -464,7 +464,7 @@ static void EV28_TALK(void)
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
 	Engine_ActorFaceDirection(28, 0x4000, 0);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgTorebiWantTestLuck);
+	Engine_EventSetMessage(MsgTorebiWantTestLuck);
 	Event_OpenMessage(28, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
@@ -505,7 +505,7 @@ static void EV20_TOUCH(void)
 	Camera_MoveTo(-1, -1, -1, 0);
 	Actor_SetSpeed(29, 0x10000, 0x8000);
 	Engine_ActorSetSpeed(30, 0x10000, 0x8000);
-	base = (s32)MsgTorebiSeenAnyoneWho;
+	base = MsgTorebiSeenAnyoneWho;
 	Engine_EventSetMessage(base);
 	Actor_SetPosition(29, 0x480000, 0xd00000);
 	Actor_SetPosition(30, 0x380000, 0xd00000);

@@ -92,7 +92,7 @@ static void EV10_TALK(s32 actor)
 	object->scale_x = 0x10000;
 	object = Actor_Get(actor);
 	object->scale_y = 0x10000;
-	Engine_EventSetMessage((s32)MsgRariberoOhhTheyTookShebaHeaded);
+	Engine_EventSetMessage(MsgRariberoOhhTheyTookShebaHeaded);
 	Event_ShowMessage(actor, 0);
 	Actor_FaceDirection(actor, 0xc000, 0);
 	Engine_EventWait(20);
@@ -101,7 +101,7 @@ static void EV10_TALK(s32 actor)
 
 static void EV11_TALK(s32 obj)
 {
-	s32 msg = (s32)MsgRariberoLeavingLalivero;
+	s32 msg = MsgRariberoLeavingLalivero;
 	Engine_EventSetMessage(msg);
 	Engine_EventOpenMessage(obj, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -120,7 +120,7 @@ static void SceneActor_SetupActor18Event(void)
 {
 
 	Engine_GameFlagSet(2491);
-	Engine_EventSetMessage((s32)MsgRariberoWasToldLetInIf);
+	Engine_EventSetMessage(MsgRariberoWasToldLetInIf);
 	Engine_EventShowMessage(18, 0);
 	Actor_SetSpeed(18, 0x10000, 0x8000);
 	Actor_WalkByAndWait(18, -16, 0);
@@ -166,7 +166,7 @@ static void Scene_RunPrimarySequence(void)
 	struct FieldActor *record;
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgRariberoMoreTolbisSoldiersLayDefeated);
+	Engine_EventSetMessage(MsgRariberoMoreTolbisSoldiersLayDefeated);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0xf80000, 0x1a80000);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
 	Engine_ActorSetAnimation(8, 0);
@@ -353,7 +353,7 @@ static void EV50_TOUCH(void)
 
 	GameFlag_Set(0x9ba);
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgRariberoWhereGoingRobinIodemAsked);
+	Engine_EventSetMessage(MsgRariberoWhereGoingRobinIodemAsked);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 104, 0x178);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
 	FieldMotion_LaunchFromFocusedObject(1, -32, 0, 0);
@@ -522,7 +522,7 @@ static void EV50_TOUCH(void)
 	{
 		FieldScene_RunScene3c6SequenceA();
 	}
-	Engine_EventSetMessage((s32)MsgRariberoBabiToldMeShipAncients);
+	Engine_EventSetMessage(MsgRariberoBabiToldMeShipAncients);
 	Engine_EventWait(10);
 	Engine_ActorRunRepeatedMotion(22, 2);
 	Engine_EventWait(20);
@@ -639,7 +639,7 @@ static void EV50_TOUCH(void)
 
 static void FieldScene_RunScene3c6SequenceA(void)
 {
-	Engine_EventSetMessage((s32)MsgRariberoThoughtShipWeSawAt);
+	Engine_EventSetMessage(MsgRariberoThoughtShipWeSawAt);
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(22, 2);
 	Engine_EventWait(20);
@@ -681,7 +681,7 @@ static void FieldScene_RunScene3c6SequenceA(void)
 static void EV51_TOUCH(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgRariberoWhereGoingArentWeTaking);
+	Engine_EventSetMessage(MsgRariberoWhereGoingArentWeTaking);
 	Event_ShowMessage(GERALD, 0);
 	Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
 	Engine_EventEnd();

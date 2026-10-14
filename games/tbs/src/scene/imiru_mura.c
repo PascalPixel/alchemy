@@ -250,7 +250,7 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 		Engine_EventBegin();
 		Actor_FaceActor(9, 0, 0);
 		Engine_EventWait(10);
-		Engine_EventSetMessage((s32)MsgMakyuriReallySayDie);
+		Engine_EventSetMessage(MsgMakyuriReallySayDie);
 		Event_AskYesNo(9, 0);
 		Engine_EventEnd();
 	}
@@ -261,7 +261,7 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 			Engine_EventBegin();
 			Engine_ActorSetAnimation(9, 7);
 			Engine_MapAnimateCells((s32)ImiruMura_CellStepsA, 10, 69);
-			Engine_EventSetMessage((s32)MsgMakyuriFeelMuchBetter);
+			Engine_EventSetMessage(MsgMakyuriFeelMuchBetter);
 			Event_ShowMessage(9, 0);
 			Engine_ActorSetAnimation(9, 8);
 			Map_AnimateCells((s32)ImiruMura_CellStepsB, 10, 69);
@@ -273,7 +273,7 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 			actor9_record = Object_GetById(9);
 			actor9_record->timer = 10;
 			Engine_ActorEnableActionCallback(9, ImiruMura_ActorScriptA);
-			Engine_EventSetMessage((s32)MsgMakyuriOoohHelpMe);
+			Engine_EventSetMessage(MsgMakyuriOoohHelpMe);
 			Engine_EventShowMessage(9, 0);
 			Engine_ActorStop(8);
 			Actor_ShowEmote(8, 256, 40);
@@ -326,7 +326,7 @@ static void EV20_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgImiruHaveVisitedOldCoupleWho);
+		Engine_EventSetMessage(MsgImiruHaveVisitedOldCoupleWho);
 		Engine_EventAskYesNo(20, 0);
 		Engine_GameFlagSet(0x82a);
 		Engine_GameFlagSet(0x82c);
@@ -471,7 +471,7 @@ static void ImiruMura_RunWeaponShop(void)
 		Engine_EventBegin();
 		Engine_ActorFaceActor(12, 0, 0);
 		Engine_EventWait(10);
-		Engine_EventSetMessage((s32)MsgMakyuriCatchUpLostOpportunity);
+		Engine_EventSetMessage(MsgMakyuriCatchUpLostOpportunity);
 		Engine_EventShowMessage(12, 0);
 		Actor_FaceDirection(12, 0x4000, 10);
 		Engine_EventEnd();
@@ -486,7 +486,7 @@ static void ImiruMura_RunWeaponShop(void)
 			Engine_CameraWaitForMove();
 			Engine_EventWait(20);
 			Object_SetActionCallbackAndRefreshById(12, (s32)ImiruMura_TurnScript);
-			Engine_EventSetMessage((s32)MsgMakyuriStoreClosedUntilWell);
+			Engine_EventSetMessage(MsgMakyuriStoreClosedUntilWell);
 			Engine_EventShowMessage(12, 0);
 			Engine_CameraMoveTo(0x1aa0000, -1, 0x2680000, 1);
 			Engine_CameraWaitForMove();
@@ -510,7 +510,7 @@ static void ImiruMura_RunArmorShop(void)
 		Engine_EventBegin();
 		Engine_ActorFaceActor(13, 0, 0);
 		Engine_EventWait(10);
-		Engine_EventSetMessage((s32)MsgMakyuriShameStoreClosed);
+		Engine_EventSetMessage(MsgMakyuriShameStoreClosed);
 		Engine_EventShowMessage(13, 0);
 		Actor_FaceDirection(13, 0x4000, 10);
 		Engine_EventEnd();
@@ -525,7 +525,7 @@ static void ImiruMura_RunArmorShop(void)
 			Engine_CameraWaitForMove();
 			Engine_EventWait(20);
 			Object_SetActionCallbackAndRefreshById(13, (s32)ImiruMura_TurnScript);
-			Engine_EventSetMessage((s32)MsgMakyuriTooSickBusiness);
+			Engine_EventSetMessage(MsgMakyuriTooSickBusiness);
 			Engine_EventShowMessage(13, 0);
 			Engine_CameraMoveTo(0x1aa0000, -1, 0x2680000, 1);
 			Engine_CameraWaitForMove();
@@ -548,7 +548,7 @@ static void ImiruMura_RunItemShop(void)
 		}
 		Engine_EventBegin();
 		Engine_ActorFaceActor(15, 0, 0);
-		Engine_EventSetMessage((s32)MsgMakyuriRecoveredThanksFountain);
+		Engine_EventSetMessage(MsgMakyuriRecoveredThanksFountain);
 		Engine_EventShowMessage(15, 0);
 		Actor_FaceDirection(15, 0x4000, 0);
 		Engine_EventEnd();
@@ -558,7 +558,7 @@ static void ImiruMura_RunItemShop(void)
 		if ((u32)((dir << 16) + 0x5fff0000) <= 0x3ffe0000)
 		{
 			Engine_EventBegin();
-			Engine_EventSetMessage((s32)MsgMakyuriMomsSickGetWhatever);
+			Engine_EventSetMessage(MsgMakyuriMomsSickGetWhatever);
 			Engine_EventShowMessage(14, 0);
 			/* FAKEMATCH: called through a cast to the value-returning call the bytes show; called by its void prototype, the two argument moves swap (differ 2). A prototyped s32 (*)(s32, s32) cast matches as well (2026-10-13). */
 			((s32 (*)())Engine_ShopOpen)(12, 14);
@@ -567,7 +567,7 @@ static void ImiruMura_RunItemShop(void)
 		else
 		{
 			Engine_ActorFaceActor(14, 0, 10);
-			Engine_EventSetMessage((s32)MsgMakyuriDadLumberjack);
+			Engine_EventSetMessage(MsgMakyuriDadLumberjack);
 			Engine_EventShowMessage(14, 0);
 			Actor_FaceDirection(14, 0x5000, 10);
 		}

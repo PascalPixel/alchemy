@@ -108,7 +108,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 static void EV27_TALK(s32 object)
 {
-	s32 question = (s32)MsgTorebiLuckyMedal;
+	s32 question = MsgTorebiLuckyMedal;
 	Engine_EventSetMessage(question);
 	Engine_EventOpenMessage(object, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -125,7 +125,7 @@ static void EV27_TALK(s32 object)
 
 static void EV11_TALK(s32 object)
 {
-	s32 question = (s32)MsgTorebiYerFirstTime;
+	s32 question = MsgTorebiYerFirstTime;
 	Engine_EventSetMessage(question);
 	Engine_EventOpenMessage(object, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -159,7 +159,7 @@ static void EV80_SEARCH(void)
 static void EV15_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgTorebiLuckyWheelsRulesPullLever);
+	Engine_EventSetMessage(MsgTorebiLuckyWheelsRulesPullLever);
 	Engine_EventOpenMessage(-1, 0);
 	Engine_EventEnd();
 }
@@ -167,7 +167,7 @@ static void EV15_TALK(void)
 static void EV14_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgTorebiLuckyWheelsPrizesPrizesDetermined);
+	Engine_EventSetMessage(MsgTorebiLuckyWheelsPrizesPrizesDetermined);
 	Engine_EventOpenMessage(-1, 0);
 	Engine_EventEnd();
 }
@@ -254,14 +254,14 @@ s32 TorebiIzumi_OpenScene(void)
 					Engine_AudioPlayCue(91);
 				}
 				Engine_EventWait(20);
-				Engine_EventSetMessage((s32)MsgTorebiYaWonNumber);
+				Engine_EventSetMessage(MsgTorebiYaWonNumber);
 				UiWork_PushValueSlot(diff, 5);
 				Engine_EventShowMessage(9, 0);
 				AudioCommand_WaitForStateByteClear();
 			}
 			else if (diff < 0)
 			{
-				Engine_EventSetMessage((s32)MsgTorebiYaLostNumber);
+				Engine_EventSetMessage(MsgTorebiYaLostNumber);
 				UiWork_PushValueSlot(-diff, 5);
 				Engine_EventShowMessage(9, 0);
 			}
@@ -280,7 +280,7 @@ s32 TorebiIzumi_OpenScene(void)
 			}
 			else if (list[0] != -2)
 			{
-				Engine_EventSetMessage((s32)MsgTorebiCongratulations);
+				Engine_EventSetMessage(MsgTorebiCongratulations);
 				Engine_EventShowMessage(8, 0);
 				if (*list != -1)
 				{
@@ -288,11 +288,11 @@ s32 TorebiIzumi_OpenScene(void)
 					{
 						if (i == 0)
 						{
-							Engine_EventSetMessage((s32)MsgTorebiWonItemGo);
+							Engine_EventSetMessage(MsgTorebiWonItemGo);
 						}
 						else
 						{
-							Engine_EventSetMessage((s32)MsgTorebiWonItemGo2);
+							Engine_EventSetMessage(MsgTorebiWonItemGo2);
 						}
 						item = SceneDialogue_PickTopicVariantId(list[i]);
 						UiWork_PushValueSlot(item, 2);
@@ -305,7 +305,7 @@ s32 TorebiIzumi_OpenScene(void)
 					}
 				}
 				gGameState.won_prizes[0] = -2;
-				Engine_EventSetMessage((s32)MsgTorebiComeAgain);
+				Engine_EventSetMessage(MsgTorebiComeAgain);
 				Engine_EventShowMessage(8, 0);
 			}
 			Engine_EventEnd();
@@ -449,7 +449,7 @@ static void TorebiIzumi_OfferLuckyWheels(s32 spoken)
 	ObjectTable_Snapshot();
 	if (spoken == 0)
 	{
-		s32 message = (s32)MsgTorebiStepRightTry;
+		s32 message = MsgTorebiStepRightTry;
 
 		Engine_EventSetMessage(message);
 		Engine_EventShowMessage(8, 0);
@@ -479,7 +479,7 @@ static void TorebiIzumi_OfferLuckyWheels(s32 spoken)
 		}
 		if (room <= 6 && Engine_EventChooseYesNo(0, 0) != 0)
 		{
-			Engine_EventSetMessage((s32)MsgTorebiGetRidItems);
+			Engine_EventSetMessage(MsgTorebiGetRidItems);
 			Engine_EventShowMessage(8, 0);
 			return;
 		}
@@ -488,20 +488,20 @@ static void TorebiIzumi_OfferLuckyWheels(s32 spoken)
 	{
 		if (tickets == 0)
 		{
-			Engine_EventSetMessage((s32)MsgTorebiBadComeBack);
+			Engine_EventSetMessage(MsgTorebiBadComeBack);
 			Engine_EventShowMessage(8, 0);
 			return;
 		}
-		Engine_EventSetMessage((s32)MsgTorebiBadLikeUse);
+		Engine_EventSetMessage(MsgTorebiBadLikeUse);
 		Engine_EventOpenMessage(8, 0);
 		if (Engine_EventChooseYesNo(0, 0) != 0)
 		{
-			Engine_EventSetMessage((s32)MsgTorebiComeAgain);
+			Engine_EventSetMessage(MsgTorebiComeAgain);
 			Engine_EventShowMessage(8, 0);
 			return;
 		}
 	}
-	Engine_EventSetMessage((s32)MsgTorebiStepRightEnjoy);
+	Engine_EventSetMessage(MsgTorebiStepRightEnjoy);
 	Engine_EventShowMessage(8, 0);
 	Event_RequestDestination(508, 0);
 	Party_SetFields1ceAnd1d0((s32)&SceneId_TorebiIzumi1, 12);
@@ -517,13 +517,13 @@ static void EV09_TALK(void)
 	coins = gGameState.coins;
 	if (coins < cost)
 	{
-		Engine_EventSetMessage((s32)MsgTorebiYaDontEnough);
+		Engine_EventSetMessage(MsgTorebiYaDontEnough);
 		Engine_EventOpenMessage(9, 0);
 		return;
 	}
 	*(u32 *)gSceneState = coins;
 	ObjectTable_Snapshot();
-	Engine_EventSetMessage((s32)MsgTorebiBuddyWannaTry);
+	Engine_EventSetMessage(MsgTorebiBuddyWannaTry);
 	UiWork_PushValueSlot(cost, 5);
 	Engine_EventOpenMessage(9, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -580,7 +580,7 @@ static s32 TorebiIzumi_RunSpringGame(void)
 
 	Event_Begin();
 	Battle_ResetEffectCounter();
-	message = (s32)MsgTorebiThrow;
+	message = MsgTorebiThrow;
 #if EDITION_INTERNATIONAL
 	state = &gGameState;
 prompt:
@@ -590,7 +590,7 @@ prompt:
 	Event_OpenMessage(-1, 0);
 	window = UiWindow_Create(0, 0, ASK_WIDTH, 4, 2);
 	{
-		text = (s32)MsgTorebiCoins;
+		text = MsgTorebiCoins;
 		UiText_DrawCharacterAtOffset(text, window, 0, 0);
 		UiText_DrawNumberInWindow(coins, 6, window, NUMBER_X, 0);
 		UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
@@ -634,7 +634,7 @@ prompt:
 	}
 	window = UiWindow_Create(TOSS_X, 15, TOSS_WIDTH, 4, 2);
 	{
-		text = (s32)MsgTorebiToss;
+		text = MsgTorebiToss;
 		UiText_DrawCharacterAtOffset(text, window, 0, 0);
 		UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
 	}
@@ -662,7 +662,7 @@ prompt:
 	asm("" : "+r"(message));
 	for (;;)
 	{
-		text = (s32)MsgTorebiCoins;
+		text = MsgTorebiCoins;
 		/* FAKEMATCH: keep the coin label in r9; otherwise the repeated marker takes fp and moves state into r9. */
 		asm("" : "+r"(text));
 		state = &gGameState;
@@ -673,10 +673,10 @@ prompt:
 		window = UiWindow_Create(0, 0, ASK_WIDTH, 4, 2);
 		UiText_DrawCharacterAtOffset(text, window, 0, 0);
 		UiText_DrawNumberInWindow(coins, 6, window, NUMBER_X, 0);
-		UiText_DrawCharacterAtOffset((s32)MsgTorebiCounterMarker, window, 104, 0);
+		UiText_DrawCharacterAtOffset(MsgTorebiCounterMarker, window, 104, 0);
 		UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
 		UiText_DrawNumberInWindow(tickets, 6, window, NUMBER_X, 8);
-		UiText_DrawCharacterAtOffset((s32)MsgTorebiCounterMarker, window, 104, 8);
+		UiText_DrawCharacterAtOffset(MsgTorebiCounterMarker, window, 104, 8);
 		choice = Menu_SelectEntry20To21(choice);
 		UiWork_Finalize(window, 2);
 		UiWork_FinalizePendingCore();
@@ -714,7 +714,7 @@ prompt:
 			}
 		}
 		window = UiWindow_Create(TOSS_X, 15, TOSS_WIDTH, 4, 2);
-		result = (s32)MsgTorebiToss;
+		result = MsgTorebiToss;
 		UiText_DrawCharacterAtOffset(result, window, 0, 0);
 		UiText_DrawCharacterAtOffset(result + 1, window, 0, 8);
 		Task_Wait(5);
@@ -759,7 +759,7 @@ prompt:
 				Event_PlayCue(91);
 				UiWork_PushValueSlot(
 					((struct { u16 coins[1]; } *)TorebiIzumi_CoinPrizes)->coins[result], 5);
-				Event_SetMessage((s32)MsgTorebiWonNumberCoin);
+				Event_SetMessage(MsgTorebiWonNumberCoin);
 				Event_ShowMessage(-1, 0);
 			}
 			else

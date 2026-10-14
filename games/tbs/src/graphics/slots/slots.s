@@ -5,8 +5,8 @@
 	.global Slots_Jackpot
 Slots_Jackpot:
 	.ifeq EDITION_INTERNATIONAL
-	.incbin "graphics/slots/jackpot_ja.gbapal"
-	.incbin "graphics/slots/jackpot_ja.4bpp32x32.lz"
+	.incbin "common/graphics/slots/jackpot_ja.gbapal"
+	.incbin "common/graphics/slots/jackpot_ja.4bpp32x32.lz"
 	.else
 	.incbin "graphics/slots/jackpot.gbapal"
 	.incbin "graphics/slots/jackpot.4bpp32x32.lz"

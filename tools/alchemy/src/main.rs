@@ -45,6 +45,7 @@ mod permute;
 mod process;
 mod queues;
 mod reads;
+mod rename;
 mod settled;
 mod show;
 mod sweep;
@@ -101,6 +102,8 @@ Camelotize
   fakematch     every FAKEMATCH tag by device and family, largest first
   camelotize    mechanical rewrites: actors, events, registers,
                 declarations, barriers
+  rename        one name anew wherever the tree spells it: C, assembly, tables,
+                linker scripts, scaffolds and comments, with its far-call twin
   keep          keep only the edits that leave all twelve editions identical
   sweep         drop FAKEMATCH pins, barriers and volatiles the bytes no longer need
   units         propose Camelot's translation units from the linked images
@@ -143,6 +146,7 @@ fn main() -> ExitCode {
         "queues" => result(queues::run(rest)),
         "integrate" => result(integrate::run(rest)),
         "keep" => result(keep::run(rest)),
+        "rename" => result(rename::run(rest)),
         "diff" => result(diff::run(rest)),
         "permute" => result(permute::run(rest)),
         "merge-driver" => result(merge::run(rest)),

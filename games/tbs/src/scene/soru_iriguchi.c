@@ -158,11 +158,11 @@ static void EV20_SEARCH(void)
 
 	if (Engine_GameFlagIsSet(0x81a) != 0)
 	{
-		Engine_MessageShowCentered((s32)MsgSoruMinotaurReliefBothEyes, 1);
+		Engine_MessageShowCentered(MsgSoruMinotaurReliefBothEyes, 1);
 	}
 	else
 	{
-		Engine_MessageShowCentered((s32)MsgSoruMinotaurReliefOneEye, 1);
+		Engine_MessageShowCentered(MsgSoruMinotaurReliefOneEye, 1);
 		if (Engine_GameFlagIsSet(0xf01) != 0)
 		{
 			u16 *p = &gEventWork->unknown_172;
@@ -197,7 +197,7 @@ static void EV1044_SCRIPT(void)
 			Map_CopyCellsTo(0, 70, 30, 42, v5, v5);
 			Engine_MapRedraw();
 			Engine_EventWait(40);
-			id = (s32)MsgSoruSetSmallGem;
+			id = MsgSoruSetSmallGem;
 			Engine_MessageShowCentered(id, 1);
 			Engine_EventWait(20);
 			v6 = 3;
@@ -236,12 +236,12 @@ static void EV21_SEARCH(void)
 
 	if (Engine_GameFlagIsSet(0x821) != 0)
 	{
-		Engine_MessageShowCentered((s32)MsgSoruMinotaurReliefBothEyes, 1);
+		Engine_MessageShowCentered(MsgSoruMinotaurReliefBothEyes, 1);
 	}
 	else if (Engine_GameFlagIsSet(0xf02) != 0)
 	{
 		work = gEventWork;
-		Engine_MessageShowCentered((s32)MsgSoruMinotaurReliefOneEye, 1);
+		Engine_MessageShowCentered(MsgSoruMinotaurReliefOneEye, 1);
 		{
 
 			u16 *frame = &work->unknown_172;
@@ -251,7 +251,7 @@ static void EV21_SEARCH(void)
 	}
 	else
 	{
-		Engine_MessageShowCentered((s32)MsgSoruMinotaurReliefOneEye, 1);
+		Engine_MessageShowCentered(MsgSoruMinotaurReliefOneEye, 1);
 	}
 
 	Engine_EventEnd();
@@ -269,7 +269,7 @@ static void EV1045_SCRIPT(void)
 		Map_CopyCellsTo(0, 71, 100, 71, 1, 1);
 		Engine_MapRedraw();
 		Engine_EventWait(40);
-		message = (s32)MsgSoruSetSmallGem;
+		message = MsgSoruSetSmallGem;
 		Engine_MessageShowCentered(message, 1);
 		Engine_EventWait(20);
 		Engine_AudioPlayCue(183);
@@ -719,7 +719,7 @@ static void Scene_EnterSolSanctum(void)
 	Actor_FaceDirection(ACTOR_SUKURETA, 0x5000, 40);
 	Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 20);
 	Engine_ActorJump(ACTOR_SUKURETA, 4, 20);
-	Engine_EventSetMessage((s32)MsgSoruSukuretaFirstTimeAtSol);
+	Engine_EventSetMessage(MsgSoruSukuretaFirstTimeAtSol);
 	Event_AskYesNo(0x4008, 0);
 	Engine_EventWait(20);
 	Camera_MoveTo(0x4c80000, -1, 0x940000, 1);
@@ -841,7 +841,7 @@ static void Scene_SukuretaSuspectsHiddenPassage(void)
 	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
 	Actor_FaceDirection(JASMINE, FACING_NORTHWEST, 10);
 	Actor_ShowEmote(GERALD, 0x101, 20);
-	Engine_EventSetMessage((s32)MsgSoruWrongSukureta);
+	Engine_EventSetMessage(MsgSoruWrongSukureta);
 	Event_ShowMessageAndWait(GERALD, 0, 10);
 	Actor_ShowEmote(ACTOR_SUKURETA, 0x102, 60);
 	Engine_ActorStartRepeatedMotion(ACTOR_SUKURETA, 2);
@@ -889,13 +889,13 @@ static void Scene_SukuretaSuspectsHiddenPassage(void)
 	Event_OpenMessage(GERALD, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgSoruDangerousSplitStay);
+		Engine_EventSetMessage(MsgSoruDangerousSplitStay);
 		Engine_ActorRunRepeatedMotion(GERALD, 1);
 		Engine_EventShowMessageAndWait(1, 0, 10);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgSoruCantSeriouslyWant);
+		Engine_EventSetMessage(MsgSoruCantSeriouslyWant);
 		Actor_FaceDirection(JASMINE, FACING_WEST, 20);
 		Event_ShowMessageAndWait(JASMINE, 0, 10);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -990,7 +990,7 @@ static void Scene_RunTransitionCue(void)
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Actor_FaceDirection(8, FACING_EAST, 30);
-	Engine_EventSetMessage((s32)MsgSoruMoreStatuesOutOfReach);
+	Engine_EventSetMessage(MsgSoruMoreStatuesOutOfReach);
 	Event_ShowMessageAndWait(0x4008, 0, 10);
 	Actor_ShowEmote(8, 0x100, 40);
 	Engine_ActorRunRepeatedMotion(8, 1);
@@ -1135,7 +1135,7 @@ static void Scene_RunActorFormation(s32 a0)
 static void EV10_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
+	Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
 	Engine_EventEnd();
 }
 

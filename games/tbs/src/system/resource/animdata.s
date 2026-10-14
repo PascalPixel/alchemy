@@ -1,7 +1,7 @@
 	.section .rodata
 	.global Object_ShadowTiles
 Object_ShadowTiles:
-	.incbin "system/resource/shadow.8bpp"
+	.incbin "common/system/resource/shadow.8bpp"
 
 @ 敵スプライトの資源番号と敵番号
 	.global ResourceSlot_NumberTable

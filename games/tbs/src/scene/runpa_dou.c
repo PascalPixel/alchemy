@@ -157,7 +157,7 @@ static void EV03_SEARCH(void)
 	{
 		if (GameFlag_IsSet(FLAG_CAVE_GATE_PROPPED) == 0)
 		{
-			Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
+			Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
 			Event_PlayCue(SOUND_GATE_MOVE);
 			Gate_Lower();
 			GameFlag_Set(FLAG_CAVE_GATE_LOWERED);
@@ -187,7 +187,7 @@ static void EV04_SEARCH(void)
 	{
 		if (GameFlag_IsSet(FLAG_CAVE_GATE_RAISED) == 0)
 		{
-			Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
+			Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
 			Event_PlayCue(SOUND_GATE_MOVE);
 			Gate_Raise();
 			GameFlag_Set(FLAG_CAVE_GATE_RAISED);
@@ -255,7 +255,7 @@ static void EV10_TOUCH(void)
 		Engine_EventWait(30);
 
 		Engine_ActorRunRepeatedMotion(GERALD, 1);
-		sighting = (s32)MsgRunpaThinkSawSomeone;
+		sighting = MsgRunpaThinkSawSomeone;
 		Engine_EventSetMessage(sighting + SIGHTING_GERALD_SAW_SOMEONE);
 		Event_ShowMessage(GERALD, 0);
 		Engine_EventWait(30);
@@ -283,7 +283,7 @@ static void EV10_TOUCH(void)
 		}
 
 		Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | 0, 70);
-		recognition = (s32)MsgRunpaMoment;
+		recognition = MsgRunpaMoment;
 		Engine_EventSetMessage(recognition + RECOGNITION_HAMMET_CALLS_OUT);
 		Event_ShowMessage(ACTOR_HAMMET, 0);
 		Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -352,7 +352,7 @@ static void Reunion_Converse(void)
 	Engine_ActorSetAnimationAndWait(IWAN, ANIM_NOD);
 	Engine_EventWait(30);
 	Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | 2, 70);
-	reunion = (s32)MsgRunpaDodonpaNeverIntention;
+	reunion = MsgRunpaDodonpaNeverIntention;
 	Engine_EventSetMessage(reunion + REUNION_BUNZA_ASKS_ABOUT_RELEASE);
 	Event_ShowMessage(ACTOR_BUNZA, 0);
 	Engine_ActorSetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
@@ -569,7 +569,7 @@ static void Reunion_Converse(void)
 	Actor_FaceActor(IWAN, ACTOR_BUNZA, 0);
 	Actor_FaceActor(ACTOR_HAMMET, ACTOR_BUNZA, 0);
 	Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | 1, 60);
-	plan = (s32)MsgRunpaBunza;
+	plan = MsgRunpaBunza;
 	Engine_EventSetMessage(plan + PLAN_HAMMET_ASKS_PLAN);
 	Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMET, 0);
 	Engine_EventWait(20);
@@ -623,7 +623,7 @@ static void WagonChoice_Run(void)
 	s32 insisted;
 	s32 konran;
 
-	wagon = (s32)MsgRunpaLetsTakeWagon;
+	wagon = MsgRunpaLetsTakeWagon;
 	Engine_EventSetMessage(wagon + WAGON_BUNZA_LEADS_THE_WAY);
 	Engine_EventShowMessage(ACTOR_BUNZA, 0);
 	Engine_ActorFaceActor(GERALD, ACTOR_PARTY_LEADER, 0);
@@ -674,7 +674,7 @@ ask_to_ride:
 		{
 			goto ask_about_business;
 		}
-		konran = (s32)MsgRunpaTotallyConfusedChanged;
+		konran = MsgRunpaTotallyConfusedChanged;
 		Engine_EventSetMessage(konran + CONFUSION_IVAN_IS_CONFUSED);
 		Engine_EventShowMessage(IWAN, 0);
 		Engine_EventSetMessage(konran + CONFUSION_GERALD_ASKS_AGAIN);
@@ -696,14 +696,14 @@ static u8 Leader_AnswersYes(void)
 
 static u8 Gerald_AsksIfNotRiding(void)
 {
-	Engine_EventSetMessage((s32)MsgRunpaGeraldAsksIfNotRiding);
+	Engine_EventSetMessage(MsgRunpaGeraldAsksIfNotRiding);
 	Engine_EventOpenMessage(GERALD, 0);
 	return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
 static u8 Gerald_AsksAboutUnfinishedBusiness(void)
 {
-	Engine_EventSetMessage((s32)MsgRunpaGeraldAsksAboutUnfinishedBusiness);
+	Engine_EventSetMessage(MsgRunpaGeraldAsksAboutUnfinishedBusiness);
 	Engine_EventOpenMessage(GERALD, 0);
 	return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
@@ -715,21 +715,21 @@ static u8 Party_ConfirmsStaying(void)
 
 static u8 Bunza_AsksAboutUnfinishedBusiness(void)
 {
-	Engine_EventSetMessage((s32)MsgRunpaBunzaAsksAboutUnfinishedBusiness);
+	Engine_EventSetMessage(MsgRunpaBunzaAsksAboutUnfinishedBusiness);
 	Engine_EventOpenMessage(ACTOR_BUNZA, 0);
 	return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
 static u8 Gerald_ChecksNothingLeftToDo(void)
 {
-	Engine_EventSetMessage((s32)MsgRunpaGeraldChecksNothingLeft);
+	Engine_EventSetMessage(MsgRunpaGeraldChecksNothingLeft);
 	Engine_EventOpenMessage(GERALD, 0);
 	return TRUE;
 }
 
 static u8 Mia_AsksIfRidingAfterAll(void)
 {
-	Engine_EventSetMessage((s32)MsgRunpaMiaAsksIfRidingAfter);
+	Engine_EventSetMessage(MsgRunpaMiaAsksIfRidingAfter);
 	Engine_EventOpenMessage(MEARI, 0);
 	return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
@@ -740,7 +740,7 @@ static u8 Bunza_CannotWait(void)
 
 	Actor_FaceActor(IWAN, ACTOR_PARTY_LEADER, 0);
 	Actor_ShowEmote(IWAN, EMOTE_IN_FRONT | 2, 60);
-	warning = (s32)MsgRunpaMeaningWontRide;
+	warning = MsgRunpaMeaningWontRide;
 	Engine_EventSetMessage(warning + WARNING_IVAN_ASKS_IF_STAYING);
 	Event_ShowMessage(IWAN, 0);
 	Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH - FACING_STEP, 0);
@@ -756,7 +756,7 @@ static u8 Bunza_CannotWait(void)
 
 static u8 Gerald_AsksAboutThingsToDo(void)
 {
-	Engine_EventSetMessage((s32)MsgRunpaGeraldAsksAboutThingsTo);
+	Engine_EventSetMessage(MsgRunpaGeraldAsksAboutThingsTo);
 	Engine_EventOpenMessage(GERALD, 0);
 	return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
@@ -768,7 +768,7 @@ static void Party_StaysBehind(void)
 
 	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 5, 60);
 	Actor_FaceActor(GERALD, ACTOR_PARTY_LEADER, 0);
-	farewell = (s32)MsgRunpaInsistStick;
+	farewell = MsgRunpaInsistStick;
 	Engine_EventSetMessage(farewell + FAREWELL_GERALD_STAYS);
 	Event_ShowMessage(GERALD, 0);
 	Engine_ActorRunRepeatedMotion(MEARI, 1);
@@ -876,7 +876,7 @@ static void Party_RidesWagon(void)
 	s32				   departure;
 
 	Actor_FaceDirection(GERALD, FACING_SOUTH + FACING_STEP, 0);
-	departure = (s32)MsgRunpaDontUnfinishedBusiness;
+	departure = MsgRunpaDontUnfinishedBusiness;
 	Engine_EventSetMessage(departure + DEPARTURE_GERALD_HEADS_FOR_KALAY);
 	Event_ShowMessage(GERALD, 0);
 	Engine_ActorSetAnimationAndWait(IWAN, ANIM_NOD);

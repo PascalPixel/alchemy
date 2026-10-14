@@ -5,22 +5,29 @@
 //! `out/modern/warnings.txt`. Its objects, scripts and images live under
 //! `out/modern` only; rom.sha1 never names them.
 //!
-//! Camelot's C, Thumb and ARM, goes through the modern compiler (MODERN_CC,
-//! by default Homebrew's arm-none-eabi-gcc) with one option set: pret's
-//! `-mthumb -mthumb-interwork -O2 -mabi=apcs-gnu -mcpu=arm7tdmi
-//! -fno-toplevel-reorder`, with `-marm` for the files the matching build
-//! compiles as ARM. Nintendo's library C (MusicPlayer2000, flash) keeps its
-//! matching compiler, as pret keeps m4a on old_agbcc: its sound driver
-//! relies on behaviour a modern compiler changes. Assembly, MIDI, assets and
-//! the scaffold build exactly as in the matching build. The rest of the
-//! option set:
+//! All of the game's C goes through the modern compiler (MODERN_CC, by
+//! default Homebrew's arm-none-eabi-gcc) with one option set: pret's
+//! `-mthumb -mthumb-interwork -O2 -mabi=apcs-gnu -mtune=arm7tdmi
+//! -march=armv4t -fno-toplevel-reorder`, here with `-mcpu=arm7tdmi`, which
+//! sets the same pair, and with `-marm` for the files the matching build
+//! compiles as ARM. That is Camelot's C, Thumb and ARM, and Nintendo's
+//! library C (MusicPlayer2000, flash) as well, as in pret: pokeemerald's
+//! Makefile gives m4a.c old_agbcc and agb_flash*.c their own
+//! `-O -mthumb-interwork` only when MODERN is 0, and its modern build
+//! compiles both with the rest at its common options. Where the modern
+//! compiler breaks a library, the defined form goes behind `UBFIX`, as in
+//! pret's m4a.c. Assembly, MIDI, assets and the scaffold build exactly as
+//! in the matching build. The rest of the option set:
 //! - `-std=gnu89`: the source is C89 (S3); GCC 15 and later default to C23,
-//!   where `bool` is a keyword and `f()` means `f(void)`.
-//! - `-fpermissive`: GCC 14 made implicit declarations, int/pointer
-//!   conversions and incompatible pointer types errors; here they stay
-//!   warnings, reported rather than stopping the build.
-//! - `-fcall-used-r4`: the game's calling convention (K1), which its
-//!   assembly relies on, not a matching device.
+//!   where `bool` is a keyword and `f()` means `f(void)`. Under gnu89 the
+//!   classes GCC 14 made errors for C99 and later (implicit declarations,
+//!   int/pointer conversions, incompatible pointer types, mismatched
+//!   returns) stay warnings, so the build takes no `-fpermissive`.
+//! - `-fcall-used-r4` for Camelot's C: the game's calling convention (K1),
+//!   which its assembly relies on, not a matching device. The library C
+//!   keeps the convention of its matching compiler, r4 saved: the player
+//!   tick in the library's assembly keeps a note in r4 across its call of
+//!   `AudioCommand_InvokeSlot34`.
 //! - `-fno-zero-initialized-in-bss`: Camelot's compiler kept zero-initialised
 //!   tables in .data, which the game keeps in ROM; it clears no .bss.
 //! - `-fno-tree-loop-distribute-patterns`: the game links no C library, so
@@ -30,10 +37,19 @@
 //!   classes that question style and no behaviour: sign-compare,
 //!   unused-parameter, missing-field-initializers and pointer-sign.
 //!
-//! The count of distinct warnings may only fall. tools/alchemy/modern.tsv
-//! holds the count allowed for the compiler it was measured with; a build
-//! of all six editions with that compiler fails above it, and `--update`
-//! lowers it. Another compiler's count is reported and not compared.
+//! Of the classes GCC 14 made errors for C99 and later, which pret's modern
+//! build, at GCC's default standard, gets as errors, a class whose count
+//! reached 0 in all six editions becomes an error and stays at 0 (STRICT
+//! below). Every other class, these while above 0 and the rest of -Wall
+//! and -Wextra, is reported and held only by the count below.
+//!
+//! The count of distinct warnings in Camelot's C may only fall.
+//! tools/alchemy/modern.tsv holds the count allowed for the compiler it was
+//! measured with; a build of all six editions with that compiler fails
+//! above it, and `--update` lowers it. Another compiler's count is reported
+//! and not compared. The library C's own warnings are reported apart and
+//! not counted: S3 keeps that source out of style passes, and what the
+//! modern compiler breaks there takes UBFIX.
 //!
 //! Linking reuses the edition's linker script with GCC's extra section names
 //! beside each object's own (`.rodata.str1.4` and the like), a catch-all ROM
@@ -56,9 +72,9 @@ matches nothing, and every compiler and linker warning in
 out/modern/warnings.txt with a summary by kind and file in
 out/modern/warnings-summary.txt. The compiler is --cc, else $MODERN_CC,
 else the arm-none-eabi-gcc on PATH. --keep-going writes an
-image despite link errors. A build of all six editions fails when it has
-more distinct warnings than tools/alchemy/modern.tsv allows for its
-compiler; --update lowers that count to the build's. --commands prints
+image despite link errors. A build of all six editions fails when
+Camelot's C has more distinct warnings than tools/alchemy/modern.tsv allows
+for its compiler; --update lowers that count to the build's. --commands prints
 each edition's commands as `alchemy build rom --commands` does.";
 
 /// The count of distinct warnings a build of the six editions may have.
@@ -74,6 +90,10 @@ pub(crate) struct Modern {
     pub signature: String,
     /// The compiler's own runtime library, linked after the objects.
     pub libraries: Vec<PathBuf>,
+    /// The compiler's major release, which decides the classes it knows.
+    pub major: u32,
+    /// `-Werror=` for each class of STRICT the compiler knows.
+    pub strict: Vec<String>,
 }
 
 /// The options every modern compile shares, before the instruction set.
@@ -84,7 +104,6 @@ const COMMON_FLAGS: &[&str] = &[
     "-O2",
     "-fno-toplevel-reorder",
     "-std=gnu89",
-    "-fpermissive",
     "-ffreestanding",
     "-nostdinc",
     "-fno-zero-initialized-in-bss",
@@ -97,14 +116,67 @@ const COMMON_FLAGS: &[&str] = &[
     "-Wno-missing-field-initializers",
     "-Wno-pointer-sign",
     "-fdiagnostics-plain-output",
-    "-fcall-used-r4",
 ];
 
-/// The modern options for a C file of `family`.
+/// The modern options for a C file of `family`. Camelot's C, Thumb and ARM,
+/// takes the game's calling convention; the library C keeps the standard one.
 pub(crate) fn family_flags(family: CompilerFamily) -> Vec<String> {
     let mut flags = vec![if family.is_arm() { "-marm" } else { "-mthumb" }.to_owned()];
     flags.extend(COMMON_FLAGS.iter().map(|flag| (*flag).to_owned()));
+    if matches!(family, CompilerFamily::Game | CompilerFamily::GameArm) {
+        flags.push("-fcall-used-r4".to_owned());
+    }
     flags
+}
+
+/// The warning classes the modern build refuses, each with the GCC release
+/// that introduced its option (0 for one every current GCC has): GCC
+/// refuses `-Werror=` of an option it does not know, so an older compiler
+/// leaves that class a warning. A class joins once its count is 0 in all
+/// six ☀️ editions, and as an error it stays 0 (Pascal, 2026-10-14).
+const STRICT: &[(&str, u32)] = &[
+    ("implicit-int", 0),
+    ("missing-parameter-type", 0),
+    ("declaration-missing-parameter-type", 14),
+];
+
+/// The other classes GCC 14 made errors for C99 and later, not yet 0, with
+/// the release that introduced each option. A build of the six editions
+/// names any of them that reaches 0, for STRICT to take. `-Wreturn-type`
+/// is none of them: a function whose value no caller reads is Camelot's
+/// C89 and stays a warning.
+const PENDING: &[(&str, u32)] = &[
+    ("implicit-function-declaration", 0),
+    ("return-mismatch", 14),
+    ("int-conversion", 0),
+    ("incompatible-pointer-types", 0),
+];
+
+/// `-Werror=` for each strict class GCC `major` knows.
+fn strict_flags(major: u32) -> Vec<String> {
+    STRICT
+        .iter()
+        .filter(|(_, since)| major >= *since)
+        .map(|(class, _)| format!("-Werror={class}"))
+        .collect()
+}
+
+/// The pending classes GCC `major` knows that no warning of a build
+/// reports: each can join STRICT.
+fn ready(diagnostics: &[Diagnostic], major: u32) -> Vec<&'static str> {
+    PENDING
+        .iter()
+        .filter(|(class, since)| {
+            major >= *since && !diagnostics.iter().any(|found| found.option == format!("-W{class}"))
+        })
+        .map(|(class, _)| *class)
+        .collect()
+}
+
+/// The major release in what `gcc -dumpversion` prints: `16.2.0`, or `16`
+/// from a compiler built to print only its major release.
+fn major_release(text: &str) -> Option<u32> {
+    text.trim().split('.').next()?.parse().ok()
 }
 
 impl Modern {
@@ -113,6 +185,10 @@ impl Modern {
         let version = crate::process::run(&[cc, "--version"], root)
             .map_err(|error| format!("modern compiler {cc}: {error}"))?;
         let version = version.lines().next().unwrap_or_default().to_owned();
+        let release = crate::process::run(&[cc, "-dumpversion"], root)?;
+        let major = major_release(&release)
+            .ok_or_else(|| format!("{cc} -dumpversion names no release: {release:?}"))?;
+        let strict = strict_flags(major);
         let libgcc =
             crate::process::run(&[cc, "-mthumb", "-mcpu=arm7tdmi", "-print-libgcc-file-name"], root)?;
         let libgcc = PathBuf::from(libgcc.trim());
@@ -120,28 +196,19 @@ impl Modern {
             return Err(format!("{cc} names no libgcc.a: {}", libgcc.display()));
         }
         let signature = format!(
-            "{version}\0{}\0{}",
+            "{version}\0{} {}\0{}",
             COMMON_FLAGS.join(" "),
+            strict.join(" "),
             libgcc.display()
         );
         Ok(Modern {
             cc: cc.to_owned(),
             signature,
             libraries: vec![libgcc],
+            major,
+            strict,
         })
     }
-}
-
-/// Whether the modern build compiles `source` with the modern compiler: all
-/// of Camelot's C, Thumb and ARM. Nintendo's library C (MusicPlayer2000 and
-/// the flash library) keeps the compiler and options of the matching build,
-/// as pret keeps m4a on old_agbcc: the sound driver relies on behaviour a
-/// modern compiler changes, and the game crashes in it otherwise.
-pub(crate) fn compiles(target: DecompTarget, source: &Path) -> bool {
-    matches!(
-        family_for_source(target.compiler, &source.to_string_lossy()),
-        CompilerFamily::Game | CompilerFamily::GameArm
-    )
 }
 
 impl Modern {
@@ -156,6 +223,7 @@ impl Modern {
         let family = family_for_source(target.compiler, &text);
         let mut step = vec![self.cc.clone()];
         step.extend(family_flags(family));
+        step.extend(self.strict.iter().cloned());
         step.extend(
             cflags_for_family(target.compiler, CompilerFamily::Game)
                 .into_iter()
@@ -318,7 +386,7 @@ pub fn run(args: &[String]) -> Result<(), String> {
     let report = collect_warnings(root, &targets)?;
     fs::write(root.join(OUTPUT).join("warnings.txt"), &report.log)
         .map_err(|error| error.to_string())?;
-    let summary = summarise(&report.diagnostics);
+    let summary = summarise(&report.diagnostics) + &library_summary(&report.library);
     fs::write(root.join(OUTPUT).join("warnings-summary.txt"), &summary)
         .map_err(|error| error.to_string())?;
     print!("{summary}");
@@ -341,6 +409,10 @@ pub fn run(args: &[String]) -> Result<(), String> {
         fs::write(&path, text).map_err(|error| format!("{ALLOWED}: {error}"))?;
     }
     println!("{verdict}");
+    // An error stops the library's compiles too, so a class waits for both.
+    for class in ready(&[report.diagnostics.as_slice(), report.library.as_slice()].concat(), modern.major) {
+        println!("-W{class} is at 0 in all six editions: move it from PENDING to STRICT in tools/alchemy/src/modern.rs");
+    }
     Ok(())
 }
 
@@ -429,7 +501,19 @@ pub(crate) fn header_check(bytes: &[u8]) -> Result<String, String> {
 
 struct Report {
     log: String,
+    /// The distinct warnings of Camelot's C: the count holds these.
     diagnostics: Vec<Diagnostic>,
+    /// The distinct warnings only Nintendo's library C gives, reported apart.
+    library: Vec<Diagnostic>,
+}
+
+/// Whether the object `name` (its source's path without the extension) is
+/// Nintendo's library C, MusicPlayer2000 or flash.
+fn library_object(target: DecompTarget, name: &str) -> bool {
+    matches!(
+        family_for_source(target.compiler, &format!("{name}.c")),
+        CompilerFamily::Agbcc | CompilerFamily::AgbccFlash
+    )
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -444,6 +528,7 @@ pub(crate) struct Diagnostic {
 /// distinct text, naming the editions that produced it.
 fn collect_warnings(root: &Path, targets: &[DecompTarget]) -> Result<Report, String> {
     let mut texts: BTreeMap<String, BTreeMap<String, Vec<String>>> = BTreeMap::new();
+    let mut libraries = BTreeSet::new();
     for target in targets {
         let output = root.join(OUTPUT).join(target.id.as_str());
         // What this edition links now: an object it built once and links no
@@ -484,6 +569,9 @@ fn collect_warnings(root: &Path, targets: &[DecompTarget]) -> Result<Report, Str
                 let _ = fs::remove_file(&path);
                 continue;
             }
+            if library_object(*target, &name) {
+                libraries.insert(name.clone());
+            }
             texts
                 .entry(name)
                 .or_default()
@@ -494,6 +582,7 @@ fn collect_warnings(root: &Path, targets: &[DecompTarget]) -> Result<Report, Str
     }
     let mut log = String::new();
     let mut seen = BTreeSet::new();
+    let mut library = BTreeSet::new();
     for (name, variants) in &texts {
         for (text, editions) in variants {
             log.push_str(&format!("== {name} ({})\n", editions.join(", ")));
@@ -501,11 +590,16 @@ fn collect_warnings(root: &Path, targets: &[DecompTarget]) -> Result<Report, Str
             if !text.ends_with('\n') {
                 log.push('\n');
             }
-            seen.extend(parse(text));
+            if libraries.contains(name) {
+                library.extend(parse(text));
+            } else {
+                seen.extend(parse(text));
+            }
         }
     }
     Ok(Report {
         log,
+        library: library.difference(&seen).cloned().collect(),
         diagnostics: seen.into_iter().collect(),
     })
 }
@@ -657,9 +751,24 @@ pub(crate) fn kind(option: &str) -> &'static str {
     }
 }
 
+/// Nintendo's library C, apart from the count: each of its warnings by line.
+fn library_summary(library: &[Diagnostic]) -> String {
+    let mut text = format!(
+        "\n{} distinct warnings in Nintendo's library C (MusicPlayer2000, flash), not counted\n",
+        library.len()
+    );
+    for diagnostic in library {
+        text.push_str(&format!(
+            "{:>7}  {}:{}: {} [{}]\n",
+            "", diagnostic.file, diagnostic.line, diagnostic.message, diagnostic.option
+        ));
+    }
+    text
+}
+
 pub(crate) fn summarise(diagnostics: &[Diagnostic]) -> String {
     let mut text = format!(
-        "{} distinct warnings across the modern builds\n\nBy kind\n",
+        "{} distinct warnings in Camelot's C across the modern builds\n\nBy kind\n",
         diagnostics.len()
     );
     let mut kinds: BTreeMap<&str, BTreeMap<&str, usize>> = BTreeMap::new();
@@ -696,18 +805,25 @@ mod tests {
     use super::*;
 
     #[test]
-    fn camelots_c_goes_modern_with_the_game_convention_and_library_c_does_not() {
-        let game = family_flags(CompilerFamily::Game);
+    fn camelots_c_keeps_the_game_convention_and_library_c_the_standard_one() {
+        let target = decomp_target(Some("tbs-en")).unwrap();
+        let flags = |source: &str| family_flags(family_for_source(target.compiler, source));
+        let r4 = "-fcall-used-r4".to_owned();
+        let game = flags("games/tbs/src/battle/battle.c");
         assert_eq!(game[0], "-mthumb");
         for flag in ["-fcall-used-r4", "-mabi=apcs-gnu", "-fno-toplevel-reorder", "-std=gnu89"] {
             assert!(game.contains(&flag.to_owned()), "{flag}");
         }
-        assert_eq!(family_flags(CompilerFamily::GameArm)[0], "-marm");
-        let target = decomp_target(Some("tbs-en")).unwrap();
-        assert!(compiles(target, Path::new("games/tbs/src/battle/battle.c")));
-        assert!(compiles(target, Path::new("games/tbs/src/window/moji.c")));
-        assert!(!compiles(target, Path::new("games/common/src/sound/engine.c")));
-        assert!(!compiles(target, Path::new("games/common/src/system/save/flash.c")));
+        let arm = flags("games/tbs/src/window/moji.c");
+        assert_eq!(arm[0], "-marm");
+        assert!(arm.contains(&r4));
+        // MusicPlayer2000 and the flash library: Thumb, C89, r4 saved.
+        for source in ["games/tbs/src/sound/engine.c", "games/common/src/sound/sound.c", "games/common/src/system/save/flash.c"] {
+            let library = flags(source);
+            assert_eq!(library[0], "-mthumb", "{source}");
+            assert!(library.contains(&"-std=gnu89".to_owned()), "{source}");
+            assert!(!library.contains(&r4), "{source} saves r4");
+        }
     }
 
     #[test]
@@ -841,6 +957,38 @@ games/b.c:7:1: warning: array subscript 4 is above array bounds [-Warray-bounds=
         assert_eq!(both, "compiler\twarnings\ngcc 15\t500\ngcc 16\t100\n");
         assert_eq!(hold("", "gcc 16", 7, false).unwrap().0, "");
         assert_eq!(hold("", "gcc 16", 7, true).unwrap().0, "compiler\twarnings\ngcc 16\t7\n");
+    }
+
+    #[test]
+    fn a_strict_class_is_an_error_where_the_compiler_has_it_and_a_pending_one_is_named_at_zero() {
+        assert_eq!(major_release("16.2.0\n"), Some(16));
+        assert_eq!(major_release("13\n"), Some(13));
+        assert_eq!(major_release("unknown\n"), None);
+        assert_eq!(
+            strict_flags(16),
+            ["-Werror=implicit-int", "-Werror=missing-parameter-type", "-Werror=declaration-missing-parameter-type"]
+        );
+        assert_eq!(strict_flags(13), ["-Werror=implicit-int", "-Werror=missing-parameter-type"]);
+        let classes: BTreeSet<&str> = STRICT.iter().chain(PENDING).map(|(class, _)| *class).collect();
+        assert_eq!(classes.len(), STRICT.len() + PENDING.len(), "a class is strict or pending, once");
+        assert!(!classes.contains("return-type"), "a value no caller reads stays a warning");
+        let found = parse("games/a.c:3:5: warning: implicit declaration of function 'g' [-Wimplicit-function-declaration]\n");
+        assert_eq!(ready(&found, 16), ["return-mismatch", "int-conversion", "incompatible-pointer-types"]);
+        assert_eq!(ready(&found, 13), ["int-conversion", "incompatible-pointer-types"]);
+    }
+
+    #[test]
+    fn the_library_objects_are_reported_apart() {
+        let target = decomp_target(Some("tbs-en")).unwrap();
+        for library in ["games/tbs/src/sound/engine", "games/common/src/sound/sound", "games/common/src/system/save/sst"] {
+            assert!(library_object(target, library), "{library}");
+        }
+        assert!(!library_object(target, "games/tbs/src/sound/sound"), "Camelot's own sound C");
+        assert!(!library_object(target, "games/tbs/src/battle/battle"));
+        let found = parse("games/common/src/system/save/atmel.c:164:1: warning: label 'retry_failed' defined but not used [-Wunused-label]\n");
+        let text = library_summary(&found);
+        assert!(text.starts_with("\n1 distinct warnings in Nintendo's library C"), "{text}");
+        assert!(text.contains("  games/common/src/system/save/atmel.c:164: label 'retry_failed' defined but not used [-Wunused-label]\n"));
     }
 
     #[test]

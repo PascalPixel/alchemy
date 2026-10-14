@@ -518,7 +518,7 @@ static void Scene_DoraSendsRobinToThePlaza(void)
 	Engine_ActorSetAnimation(ACTOR_DORA, 1);
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
 	Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 60);
-	message = (s32)MsgHaidiaKyleAbleStop;
+	message = MsgHaidiaKyleAbleStop;
 	Engine_EventSetMessage(message);
 	Event_ShowMessage(ACTOR_DORA, 0);
 	Actor_WalkToAndWait(ACTOR_KYLE, 0x126, 0x346);
@@ -554,11 +554,11 @@ static void Scene_DoraSendsRobinToThePlaza(void)
 	while (Engine_EventChooseYesNo(0, 0) == 1)
 	{
 		Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
-		Engine_EventSetMessage((s32)MsgHaidiaBigBoyWhy);
+		Engine_EventSetMessage(MsgHaidiaBigBoyWhy);
 		Event_OpenMessage(ACTOR_DORA, 0);
 	}
 	Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
-	Engine_EventSetMessage((s32)MsgHaidiaKnowWayGo);
+	Engine_EventSetMessage(MsgHaidiaKnowWayGo);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	Actor_SetSpeed(ACTOR_KYLE, 0x18000, 0xc000);
@@ -891,7 +891,7 @@ static void FieldScene_RunScene372SequenceA(void)
 	Engine_EventWait(30);
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Actor_ShowEmote(20, 0x100, 20);
-	base = (s32)MsgHaidiaHuh;
+	base = MsgHaidiaHuh;
 	Engine_EventSetMessage(base);
 	Event_ShowMessage(20, 0);
 	Engine_EventWait(20);
@@ -911,7 +911,7 @@ static void EV30_TOUCH(void)
 		if (GameFlag_IsSet(0x837) == 0)
 		{
 			Engine_EventBegin();
-			Engine_EventSetMessage((s32)MsgHaidiaUghHrnghhh);
+			Engine_EventSetMessage(MsgHaidiaUghHrnghhh);
 			Event_ShowMessageAndWait(22, 0, 20);
 			Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 40);
 			Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x17e, 0x26b);
@@ -932,7 +932,7 @@ static void EV31_TOUCH(void)
 		Engine_EventBegin();
 		Engine_ActorRunRepeatedMotion(22, 2);
 		Engine_EventWait(20);
-		Engine_EventSetMessage((s32)MsgHaidiaDontLeaveMeHere);
+		Engine_EventSetMessage(MsgHaidiaDontLeaveMeHere);
 		HaidiaArashi_RunCallOutSequence();
 		Engine_EventEnd();
 	}
@@ -945,7 +945,7 @@ static void EV22_TALK(void)
 		Engine_EventBegin();
 		Actor_FaceActor(22, ACTOR_PARTY_LEADER, 0);
 		Engine_EventWait(20);
-		Engine_EventSetMessage((s32)MsgHaidiaBoulderNeedGet);
+		Engine_EventSetMessage(MsgHaidiaBoulderNeedGet);
 		Event_ShowMessage(22, 0);
 		Actor_FaceDirection(22, FACING_NORTHEAST, 10);
 		Engine_EventEnd();
@@ -955,7 +955,7 @@ static void EV22_TALK(void)
 		if (GameFlag_IsSet(0x837) == 0)
 		{
 			Engine_EventBegin();
-			Engine_EventSetMessage((s32)MsgHaidiaWantDumpStuff);
+			Engine_EventSetMessage(MsgHaidiaWantDumpStuff);
 			HaidiaArashi_RunCallOutSequence();
 			Engine_EventEnd();
 		}
@@ -972,12 +972,12 @@ static void HaidiaArashi_RunCallOutSequence(void)
 	v5 = 0;
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaThinkForgetThings);
+		Engine_EventSetMessage(MsgHaidiaThinkForgetThings);
 		v5 = 1;
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaRockHitsLose);
+		Engine_EventSetMessage(MsgHaidiaRockHitsLose);
 	}
 	Engine_EventWait(20);
 	Engine_EventShowMessageAndWait(22, 0, 40);
@@ -991,11 +991,11 @@ static void HaidiaArashi_RunCallOutSequence(void)
 	if (v5 != 0)
 	{
 
-		Engine_EventSetMessage((s32)MsgHaidiaKnowRightOk);
+		Engine_EventSetMessage(MsgHaidiaKnowRightOk);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaRightDitchStuff);
+		Engine_EventSetMessage(MsgHaidiaRightDitchStuff);
 	}
 	Engine_EventShowMessage(22, 0);
 	Engine_ActorSetAnimation(22, 2);
@@ -1019,7 +1019,7 @@ static void EV32_TOUCH(void)
 	{
 		Engine_EventBegin();
 		Actor_SetAttachedEffect(22, 0x100);
-		base = (s32)MsgHaidiaHey;
+		base = MsgHaidiaHey;
 		Engine_EventSetMessage(base);
 		Event_ShowMessage(22, 0);
 		Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 20);
@@ -1075,7 +1075,7 @@ static void EV33_TOUCH(void)
 	Actor_WalkToAndWait(22, 0x119, 0x1fb);
 	Engine_ActorFaceEachOther(22, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(30);
-	Engine_EventSetMessage((s32)MsgHaidiaNorthLeadsToMtAleph);
+	Engine_EventSetMessage(MsgHaidiaNorthLeadsToMtAleph);
 	Event_ShowMessage(22, 0);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 22, 0);
 	Engine_EventWait(10);
@@ -1113,7 +1113,7 @@ static void SceneActor_RunActor22PlacementSequence(s32 x, s32 y)
 	Engine_EventWait(20);
 	Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
 	Engine_EventWait(40);
-	Engine_EventSetMessage((s32)MsgHaidiaCantGetAroundThisRock);
+	Engine_EventSetMessage(MsgHaidiaCantGetAroundThisRock);
 	Engine_EventShowMessage(22, 0);
 	Engine_ActorRunRepeatedMotion(22, 2);
 	Engine_EventShowMessage(22, 0);
@@ -1180,7 +1180,7 @@ static void EV34_TOUCH(void)
 		Engine_ActorSetSpritePriority(33, 2);
 		Engine_ActorSetSpritePriority(30, 3);
 		Engine_ActorSetSpritePriority(29, 3);
-		Engine_EventSetMessage((s32)MsgHaidiaTheBoulderIsFalling);
+		Engine_EventSetMessage(MsgHaidiaTheBoulderIsFalling);
 		Event_ShowMessageAndWait(28, 0, 20);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 		Actor_FaceDirection(22, FACING_NORTH, 20);
@@ -1403,7 +1403,7 @@ static void EV35_TOUCH(void)
 	Actor_FaceDirection(23, FACING_NORTH, 0);
 	Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
 	Engine_TaskWait(3);
-	Engine_EventSetMessage((s32)MsgHaidiaNoBrother);
+	Engine_EventSetMessage(MsgHaidiaNoBrother);
 	Engine_EventShowMessage(0x201a, 0);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 20);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 150, 0x446);
@@ -1665,7 +1665,7 @@ static void HaidiaArashi_RunRiverSearch(void)
 	Object_RefreshSelectorById(26);
 	BattleFx_PlayQueuedSound();
 	Engine_EventWait(40);
-	north = (s32)MsgHaidiaGoLookNorth;
+	north = MsgHaidiaGoLookNorth;
 	Engine_EventSetMessage(north);
 	Event_ShowMessageAndWait(9, 0, 20);
 	Engine_ActorSetAnimationAndWait(26, 3);
@@ -1701,7 +1701,7 @@ static void HaidiaArashi_RunRiverSearch(void)
 	Event_ShowMessage(0x8009, 0);
 	Actor_FaceDirection(22, FACING_WEST, 40);
 	Actor_ShowEmote(9, 0x100, 30);
-	suppose = (s32)MsgHaidiaDontSupposeTwo;
+	suppose = MsgHaidiaDontSupposeTwo;
 	Engine_EventSetMessage(suppose);
 	Event_OpenMessage(0x8009, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -1752,12 +1752,12 @@ static void EV10_TALK(void)
 	Engine_ActorFaceEachOther(10, ACTOR_PARTY_LEADER, 20);
 	if (Engine_GameFlagIsSet(0x30d) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaTwoDontEnough);
+		Engine_EventSetMessage(MsgHaidiaTwoDontEnough);
 		Engine_EventShowMessageAndWait(10, 0, 10);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaOh);
+		Engine_EventSetMessage(MsgHaidiaOh);
 		Engine_ActorStartRepeatedMotion(10, 1);
 		Engine_EventShowMessageAndWait(10, 0, 10);
 		Engine_ActorStartRepeatedMotion(10, 2);
@@ -1835,7 +1835,7 @@ static void EV36_TOUCH(void)
 			Actor_WalkToAndWait(8, 221, 0x569);
 			Actor_FaceDirection(8, 0xb000, 60);
 			Engine_ActorRunRepeatedMotion(26, 2);
-			Engine_EventSetMessage((s32)MsgHaidiaMomDadBack);
+			Engine_EventSetMessage(MsgHaidiaMomDadBack);
 			Engine_EventShowMessageAndWait(26, 0, 40);
 			Actor_SetPosition(9, 0x650000, 0x4ad0000);
 			Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
@@ -2437,7 +2437,7 @@ static void EV08_TALK(void)
 		}
 		Engine_ActorRunRepeatedMotion(8, 2);
 		Engine_EventWait(20);
-		Engine_EventSetMessage((s32)MsgHaidiaICantMoveGetHelp);
+		Engine_EventSetMessage(MsgHaidiaICantMoveGetHelp);
 		Event_ShowMessage(8, 0);
 		Engine_ActorEnableActionCallback(8, HaidiaArashi_ActorEightScript);
 		Engine_ActorSetAnimation(8, 6);
@@ -2457,7 +2457,7 @@ static void EV08_TALK(void)
 			Engine_ActorSetAnimation(8, 8);
 		}
 		Engine_EventWait(20);
-		Engine_EventSetMessage((s32)MsgHaidiaIllGo);
+		Engine_EventSetMessage(MsgHaidiaIllGo);
 		Event_ShowMessageAndWait(8, 0, 20);
 		Engine_ActorSetAnimation(8, 1);
 		Engine_ActorJump(8, 4, 0);
@@ -2497,7 +2497,7 @@ static void FieldScene_ConfigureActorTwentyTwoScene(void)
 	Actor_Get(ACTOR_ID)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
 	Actor_SetPosition(ACTOR_ID, 0xf90000, 0x4d80000);
 	Engine_TaskWait(1);
-	Engine_EventSetMessage((s32)MsgHaidiaRobin);
+	Engine_EventSetMessage(MsgHaidiaRobin);
 	Event_ShowMessage(0x1016, 0);
 	Actor_SetPosition(ACTOR_ID, 0xac0000, 0x4fe0000);
 	Engine_TaskWait(1);
@@ -2719,14 +2719,14 @@ static void EV24_SEARCH(void)
 {
 
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgHaidiaDoorWontOpen, 1);
+	Engine_MessageShowCentered(MsgHaidiaDoorWontOpen, 1);
 	Engine_EventEnd();
 }
 
 static void EV19_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgHaidiaSChestValuables, 1);
+	Engine_MessageShowCentered(MsgHaidiaSChestValuables, 1);
 	Engine_EventEnd();
 }
 

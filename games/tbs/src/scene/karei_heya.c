@@ -116,7 +116,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 static void EV12_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKareiPleaseFinishEatingIfTaking);
+	Engine_EventSetMessage(MsgKareiPleaseFinishEatingIfTaking);
 	Engine_EventShowMessage(0xC, 0);
 	Engine_GameFlagSet(0x910);
 	Engine_EventEnd();
@@ -125,7 +125,7 @@ static void EV12_TALK(void)
 static void EV16_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKareiDoKnowAboutContinentSouth);
+	Engine_EventSetMessage(MsgKareiDoKnowAboutContinentSouth);
 	Engine_EventAskYesNo(16, 0);
 	Engine_EventEnd();
 }
@@ -144,12 +144,12 @@ static void EV08_TALK(void)
 
 		if (Engine_GameFlagIsSet(0x911) != 0)
 		{
-			Engine_EventSetMessage((s32)MsgKareiOurInnFeelsEmptyNow);
+			Engine_EventSetMessage(MsgKareiOurInnFeelsEmptyNow);
 			Engine_EventShowMessage(8, 0);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgKareiGoingTolbiAlso);
+			Engine_EventSetMessage(MsgKareiGoingTolbiAlso);
 			Engine_EventAskYesNo(8, 0);
 			Engine_GameFlagSet(0x910);
 		}
@@ -170,7 +170,7 @@ static void EV08_TALK_2(void)
 	else
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage((s32)MsgKareiCanLiveInPeaceIn);
+		Engine_EventSetMessage(MsgKareiCanLiveInPeaceIn);
 		Engine_EventShowMessage(8, 0);
 		Engine_EventEnd();
 	}

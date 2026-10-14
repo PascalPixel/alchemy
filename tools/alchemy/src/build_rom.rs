@@ -1209,8 +1209,8 @@ fn plan(
         vec![step]
     } else if matches!(extension, Some("c")) {
         let preprocessed = object.with_extension("i");
-        // Nintendo's library C keeps its own compiler in the modern build too.
-        let modern = build.modern.filter(|_| crate::modern::compiles(target, source));
+        // The modern build compiles all C, the libraries' too, with its own.
+        let modern = build.modern;
         let steps = match modern {
             Some(modern) => {
                 hasher.update(modern.signature.as_bytes());
@@ -1563,6 +1563,22 @@ fn asset_input(root: &Path, asset: &Asset) -> Result<PathBuf, String> {
             asset.built
         )),
     }
+}
+
+/// Where the build looks for the post-pack patch (W3) of each picture or
+/// table a source names, with the sources it includes: beside the asset's
+/// input, in the game's folder or games/common's as the build resolves it.
+/// A patch is optional, so a path need not exist.
+pub(crate) fn patch_paths(root: &Path, target: DecompTarget, source: &Path) -> Result<Vec<PathBuf>, String> {
+    let mut paths = Vec::new();
+    for asset in source_assets(root, target, source)? {
+        if asset.sound {
+            continue;
+        }
+        let input = asset_input(root, &asset)?;
+        paths.push(input.with_file_name(ags::patch::patch_name(&input.to_string_lossy())));
+    }
+    Ok(paths)
 }
 
 fn encode(root: &Path, asset: &Asset) -> Result<(Vec<u8>, Vec<String>), String> {

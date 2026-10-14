@@ -1,10 +1,6 @@
-	.include "games/common/include/game/ed_asm.h"
 	.section .rodata
 	.include "games/common/src/graphics/battle_fx/tile_mask.s"
-	.global BattleFx_CyanSparkSheet
-BattleFx_CyanSparkSheet:
-	.incbin "graphics/battle_fx/cyan_spark_00.gbapal"
-	.incbin "graphics/battle_fx/cyan_spark.parts.lz"
+	.include "games/common/src/graphics/battle_fx/cyan_spark.s"
 	.include "games/common/src/graphics/battle_fx/violet_palette_a.s"
 	.include "games/common/src/graphics/battle_fx/red_palette_a.s"
 	.include "games/common/src/graphics/battle_fx/yellow_palette_a.s"
@@ -66,12 +62,12 @@ BattleFx_FlameBladeSheet:
 	.include "games/common/src/graphics/battle_fx/sword.s"
 	.global BattleFx_IceTileSheet
 BattleFx_IceTileSheet:
-	.incbin "graphics/battle_fx/ice_tile_00.gbapal"
-	.incbin "graphics/battle_fx/ice_tile.parts.lz"
+	.incbin "common/graphics/battle_fx/ice_tile_00.gbapal"
+	.incbin "common/graphics/battle_fx/ice_tile.parts.lz"
 	.byte 0x00, 0x01	@ PACKER: left in the buffer by BattleFx_CyanSparkSheet+0x106a
 	.global BattleFx_FiveModeImage
 BattleFx_FiveModeImage:
-	.incbin "graphics/battle_fx/five_mode.bitmap.lz"
+	.incbin "common/graphics/battle_fx/five_mode.bitmap.lz"
 	.byte 0x96	@ PACKER: left in the buffer by BattleFx_IceTileSheet+0xfc7
 	.global BattleFx_SpiderWebSheet
 BattleFx_SpiderWebSheet:
@@ -83,9 +79,7 @@ BattleFx_VioletLightningSheetA:
 	.incbin "graphics/battle_fx/bolt_a.gbapal"
 	.incbin "graphics/battle_fx/bolt_a.bitmap.lz"
 	.include "games/common/src/graphics/battle_fx/yellow_spark.s"
-	.global BattleFx_ProjectileVolleyImage
-BattleFx_ProjectileVolleyImage:
-	.incbin "graphics/battle_fx/projectile_volley.bitmap.lz"
+	.include "games/common/src/graphics/battle_fx/projectile_volley.s"
 	.global BattleFx_ShurikenSheet
 BattleFx_ShurikenSheet:
 	.incbin "graphics/battle_fx/shuriken.gbapal"
@@ -94,7 +88,7 @@ BattleFx_ShurikenSheet:
 	.include "games/common/src/graphics/battle_fx/flare.s"
 	.global BattleFx_FlareImage
 BattleFx_FlareImage:
-	.incbin "graphics/battle_fx/flare_cels.bitmap.lz"
+	.incbin "common/graphics/battle_fx/flare_cels.bitmap.lz"
 	.byte 0x05	@ PACKER: left in the buffer by BattleFx_FlareSheet+0x277
 	.include "games/common/src/graphics/battle_fx/violet_palette_b.s"
 	.include "games/common/src/graphics/battle_fx/fire_swirl.s"
@@ -112,7 +106,7 @@ BattleFx_FireBurstSheet:
 	.include "games/common/src/graphics/battle_fx/blue_crescent.s"
 	.global BattleFx_OverlayImageA
 BattleFx_OverlayImageA:
-	.incbin "graphics/battle_fx/overlay_a.parts.lz"
+	.incbin "common/graphics/battle_fx/overlay_a.parts.lz"
 	.byte 0x88	@ PACKER: left in the buffer by BattleFx_FireBurstSheet+0x43b
 	.global BattleFx_VioletMoteSheet
 BattleFx_VioletMoteSheet:
@@ -129,19 +123,16 @@ BattleFx_FireballSheet:
 	.byte 0x32	@ PACKER: left in the buffer by BattleFx_FireBurstSheet+0x5df
 	.global BattleFx_MemberBurstImage
 BattleFx_MemberBurstImage:
-	.incbin "graphics/battle_fx/member_burst.bitmap.lz"
+	.incbin "common/graphics/battle_fx/member_burst.bitmap.lz"
 	.byte 0x19, 0x14, 0x56	@ PACKER: left in the buffer by BattleFx_FireballSheet+0x49d
 	.include "games/common/src/graphics/battle_fx/slash.s"
 	.include "games/common/src/graphics/battle_fx/wave.s"
 	.global BattleFx_TargetBurstImage
 BattleFx_TargetBurstImage:
-	.incbin "graphics/battle_fx/target_burst.bitmap.lz"
+	.incbin "common/graphics/battle_fx/target_burst.bitmap.lz"
 	.byte 0x2f, 0x00	@ PACKER: left in the buffer by BattleFx_SlashSheet+0x83e
 	.include "games/common/src/graphics/battle_fx/pink_star.s"
-	.global BattleFx_WaterSpraySheet
-BattleFx_WaterSpraySheet:
-	.incbin "graphics/battle_fx/water_spray_00.gbapal"
-	.incbin "graphics/battle_fx/water_spray.parts.lz"
+	.include "games/common/src/graphics/battle_fx/water_spray.s"
 	.include "games/common/src/graphics/battle_fx/blue_flame.s"
 	.include "games/common/src/graphics/battle_fx/explosion.s"
 	.include "games/common/src/graphics/battle_fx/magenta_swirl.s"
@@ -152,14 +143,12 @@ BattleFx_ParticleSpritesA:
 	.byte 0x0c, 0x40, 0x08	@ PACKER: left in the buffer by BattleFx_MagentaTailSheet+0x299
 	.global BattleFx_ParticleSpritesB
 BattleFx_ParticleSpritesB:
-	.incbin "graphics/battle_fx/dot_cells_b.parts.lz"
+	.incbin "common/graphics/battle_fx/dot_cells_b.parts.lz"
 	.byte 0x94	@ PACKER: left in the buffer by BattleFx_ParticleSpritesA+0x1bb
-	.global BattleFx_ParticleSpritesC
-BattleFx_ParticleSpritesC:
-	.incbin "graphics/battle_fx/dot_cells_c.parts.lz"
+	.include "games/common/src/graphics/battle_fx/dot_cells_c.s"
 	.global BattleFx_ParticleSpritesD
 BattleFx_ParticleSpritesD:
-	.incbin "graphics/battle_fx/dot_cells_d.parts.lz"
+	.incbin "common/graphics/battle_fx/dot_cells_d.parts.lz"
 	.byte 0x0c	@ PACKER: left in the buffer by BattleFx_ParticleSpritesC+0x417
 	.include "games/common/src/graphics/battle_fx/green_palette.s"
 	.global BattleFx_SwordSlashSheet
@@ -176,16 +165,10 @@ BattleFx_SwordSlashSheet:
 	.include "games/common/src/graphics/battle_fx/comet_a.s"
 	.include "games/common/src/graphics/battle_fx/comet_b.s"
 	.include "games/common/src/graphics/battle_fx/comet_c.s"
-	.global BattleFx_WhirlwindSheet
-BattleFx_WhirlwindSheet:
-	.incbin "graphics/battle_fx/whirlwind_00.gbapal"
-	.incbin "graphics/battle_fx/whirlwind.parts.lz"
+	.include "games/common/src/graphics/battle_fx/whirlwind.s"
 	.include "games/common/src/graphics/battle_fx/green_pillar.s"
 	.include "games/common/src/graphics/battle_fx/vine.s"
-	.global BattleFx_FirePillarSheetA
-BattleFx_FirePillarSheetA:
-	.incbin "graphics/battle_fx/fire_pillar_a_00.gbapal"
-	.incbin "graphics/battle_fx/fire_pillar_a.parts.lz"
+	.include "games/common/src/graphics/battle_fx/fire_pillar_a.s"
 	.include "games/common/src/graphics/battle_fx/red_palette_b.s"
 	.include "games/common/src/graphics/battle_fx/orange_palette_b.s"
 	.include "games/common/src/graphics/battle_fx/violet_comet.s"
@@ -194,8 +177,8 @@ BattleFx_FirePillarSheetA:
 	.include "games/common/src/graphics/battle_fx/rock_wall.s"
 	.global BattleFx_StarDotSheet
 BattleFx_StarDotSheet:
-	.incbin "graphics/battle_fx/star_dot_00.gbapal"
-	.incbin "graphics/battle_fx/star_dot.parts.lz"
+	.incbin "common/graphics/battle_fx/star_dot_00.gbapal"
+	.incbin "common/graphics/battle_fx/star_dot.parts.lz"
 	.byte 0x01, 0xba	@ PACKER: left in the buffer by BattleFx_RockWallSheet+0x89e
 	.include "games/common/src/graphics/battle_fx/mars_djinn.s"
 	.include "games/common/src/graphics/battle_fx/mars_djinn_small.s"
@@ -208,10 +191,7 @@ BattleFx_StarDotSheet:
 	.include "games/common/src/graphics/battle_fx/venus_djinn_small.s"
 	.include "games/common/src/graphics/battle_fx/fire_blob.s"
 	.include "games/common/src/graphics/battle_fx/fire_streak.s"
-	.global BattleFx_LavaOrbSheet
-BattleFx_LavaOrbSheet:
-	.incbin "common/graphics/battle_fx/lava_orb_00.gbapal"
-	.incbin "common/graphics/battle_fx/lava_orb.parts.lz"
+	.include "games/common/src/graphics/battle_fx/lava_orb.s"
 	.include "games/common/src/graphics/battle_fx/yellow_ring.s"
 	.include "games/common/src/graphics/battle_fx/yellow_orb.s"
 	.include "games/common/src/graphics/battle_fx/bubble.s"
@@ -219,12 +199,12 @@ BattleFx_LavaOrbSheet:
 	.include "games/common/src/graphics/battle_fx/dagger.s"
 	.global BattleFx_PaletteRampImage
 BattleFx_PaletteRampImage:
-	.incbin "graphics/battle_fx/spark_cells.parts.lz"
+	.incbin "common/graphics/battle_fx/spark_cells.parts.lz"
 	.byte 0x01, 0x0d	@ PACKER: left in the buffer by BattleFx_DaggerSheet+0x196
 	.global BattleFx_SmokeSheet
 BattleFx_SmokeSheet:
-	.incbin "graphics/battle_fx/smoke.gbapal"
-	.incbin "graphics/battle_fx/smoke.bitmap.lz"
+	.incbin "common/graphics/battle_fx/smoke.gbapal"
+	.incbin "common/graphics/battle_fx/smoke.bitmap.lz"
 	.byte 0xc1	@ PACKER: left in the buffer by BattleFx_DaggerSheet+0x88b
 	.include "games/common/src/graphics/battle_fx/blue_palette.s"
 	.include "games/common/src/graphics/battle_fx/lime_palette.s"
@@ -236,8 +216,8 @@ BattleFx_SmokeSheet:
 	.include "games/common/src/graphics/battle_fx/green_vine.s"
 	.global BattleFx_PortalSheet
 BattleFx_PortalSheet:
-	.incbin "graphics/battle_fx/portal_00.gbapal"
-	.incbin "graphics/battle_fx/portal.parts.lz"
+	.incbin "common/graphics/battle_fx/portal_00.gbapal"
+	.incbin "common/graphics/battle_fx/portal.parts.lz"
 	.byte 0x3f, 0x10	@ PACKER: left in the buffer by BattleFx_WispSheet+0x622
 	.global BattleFx_SheepSheet
 BattleFx_SheepSheet:
@@ -249,51 +229,41 @@ BattleFx_SheepSheet:
 	.include "games/common/src/graphics/battle_fx/counter_reveal.s"
 	.global BattleFx_RedCrescentSheetA
 BattleFx_RedCrescentSheetA:
-	.incbin "graphics/battle_fx/red_crescent_a_00.gbapal"
-	.incbin "graphics/battle_fx/red_crescent_a.parts.lz"
+	.incbin "common/graphics/battle_fx/red_crescent_a_00.gbapal"
+	.incbin "common/graphics/battle_fx/red_crescent_a.parts.lz"
 	.byte 0x34	@ PACKER: left in the buffer by BattleFx_CounterRevealSheet+0x49b
-	.global BattleFx_BlueBeastSheet
-BattleFx_BlueBeastSheet:
-	.incbin "graphics/battle_fx/blue_beast_00.gbapal"
-	.incbin "graphics/battle_fx/blue_beast.parts.lz"
+	.include "games/common/src/graphics/battle_fx/blue_beast.s"
 	.include "games/common/src/graphics/battle_fx/red_crescent_b.s"
 	.include "games/common/src/graphics/battle_fx/spiral.s"
 	.include "games/common/src/graphics/battle_fx/violet_streak.s"
 	.include "games/common/src/graphics/battle_fx/crescent_moon.s"
 	.global BattleFx_ThornVineSheet
 BattleFx_ThornVineSheet:
-	.incbin "graphics/battle_fx/thorn_vine_00.gbapal"
-	.incbin "graphics/battle_fx/thorn_vine.parts.lz"
+	.incbin "common/graphics/battle_fx/thorn_vine_00.gbapal"
+	.incbin "common/graphics/battle_fx/thorn_vine.parts.lz"
 	.byte 0x1e, 0x99, 0x03	@ PACKER: left in the buffer by BattleFx_VioletStreakSheet+0x691
 	.global BattleFx_IceShardSheet
 BattleFx_IceShardSheet:
 	.incbin "common/graphics/battle_fx/ice_shard_00.gbapal"
 	.incbin "common/graphics/battle_fx/ice_shard.parts.lz"
-	.ifeq GAME_TLA
 	.byte 0x3e	@ PACKER: left in the buffer by BattleFx_VioletStreakSheet+0xa33
-	.endif
-	.global BattleFx_EmberStreakSheet
-BattleFx_EmberStreakSheet:
-	.incbin "graphics/battle_fx/ember_streak_00.gbapal"
-	.incbin "graphics/battle_fx/ember_streak.parts.lz"
+	.include "games/common/src/graphics/battle_fx/ember_streak.s"
 	.include "games/common/src/graphics/battle_fx/blue_arc_a.s"
 	.include "games/common/src/graphics/battle_fx/blue_arc_b.s"
 	.include "games/common/src/graphics/battle_fx/glow_orb.s"
 	.global BattleFx_IceChipSheet
 BattleFx_IceChipSheet:
-	.incbin "graphics/battle_fx/ice_chip_00.gbapal"
-	.incbin "graphics/battle_fx/ice_chip.parts.lz"
+	.incbin "common/graphics/battle_fx/ice_chip_00.gbapal"
+	.incbin "common/graphics/battle_fx/ice_chip.parts.lz"
 	.byte 0x04	@ PACKER: left in the buffer by BattleFx_GlowOrbSheet+0x63f
 	.global BattleFx_IceBlockSheet
 BattleFx_IceBlockSheet:
 	.incbin "common/graphics/battle_fx/ice_block_00.gbapal"
 	.incbin "common/graphics/battle_fx/ice_block.parts.lz"
-	.ifeq GAME_TLA
 	.byte 0x30, 0xae	@ PACKER: left in the buffer by BattleFx_BlueBeastSheet+0x1586
-	.endif
 	.global BattleFx_SparkleDots
 BattleFx_SparkleDots:
-	.incbin "graphics/battle_fx/sparkle_dots.parts.lz"
+	.incbin "common/graphics/battle_fx/sparkle_dots.parts.lz"
 	.byte 0x63, 0x34, 0x77	@ PACKER: left in the buffer by BattleFx_IceBlockSheet+0x61
 	.include "games/common/src/graphics/battle_fx/pink_burst.s"
 	.include "games/common/src/graphics/battle_fx/light_fan.s"
@@ -306,13 +276,10 @@ BattleFx_BlueBurstSheet:
 	.include "games/common/src/graphics/battle_fx/dust_puff.s"
 	.global BattleFx_GoldShellSheet
 BattleFx_GoldShellSheet:
-	.incbin "graphics/battle_fx/gold_shell_00.gbapal"
-	.incbin "graphics/battle_fx/gold_shell.parts.lz"
+	.incbin "common/graphics/battle_fx/gold_shell_00.gbapal"
+	.incbin "common/graphics/battle_fx/gold_shell.parts.lz"
 	.byte 0x15, 0xb2	@ PACKER: left in the buffer by BattleFx_IceBlockSheet+0x1016
-	.global BattleFx_BlastSheet
-BattleFx_BlastSheet:
-	.incbin "graphics/battle_fx/blast_00.gbapal"
-	.incbin "graphics/battle_fx/blast.parts.lz"
+	.include "games/common/src/graphics/battle_fx/blast.s"
 	.include "games/common/src/graphics/battle_fx/flame_b.s"
 	.global BattleFx_FirePillarSheetB
 BattleFx_FirePillarSheetB:
@@ -323,27 +290,21 @@ BattleFx_FirePillarSheetB:
 	.include "games/common/src/graphics/battle_fx/lightning_bolt.s"
 	.global BattleFx_BeamSequenceImage
 BattleFx_BeamSequenceImage:
-	.incbin "graphics/battle_fx/beam_sequence.parts.lz"
+	.incbin "common/graphics/battle_fx/beam_sequence.parts.lz"
 	.byte 0x5f	@ PACKER: left in the buffer by BattleFx_LightningBoltSheet+0x37b
 	.global BattleFx_TwelveModeImage
 BattleFx_TwelveModeImage:
-	.incbin "graphics/battle_fx/twelve_mode.bitmap.lz"
+	.incbin "common/graphics/battle_fx/twelve_mode.bitmap.lz"
 	.byte 0xa5	@ PACKER: left in the buffer by BattleFx_LightningBoltSheet+0x42f
-	.global BattleFx_WindStreakSheet
-BattleFx_WindStreakSheet:
-	.incbin "graphics/battle_fx/wind_streak_00.gbapal"
-	.incbin "graphics/battle_fx/wind_streak.parts.lz"
+	.include "games/common/src/graphics/battle_fx/wind_streak.s"
 	.include "games/common/src/graphics/battle_fx/yellow_palette_b.s"
-	.global BattleFx_BlueRingSheet
-BattleFx_BlueRingSheet:
-	.incbin "graphics/battle_fx/blue_ring_00.gbapal"
-	.incbin "graphics/battle_fx/blue_ring.parts.lz"
+	.include "games/common/src/graphics/battle_fx/blue_ring.s"
 	.include "games/common/src/graphics/battle_fx/red_palette_c.s"
 	.include "games/common/src/graphics/battle_fx/violet_palette_d.s"
 	.global BattleFx_BlueBeamSheet
 BattleFx_BlueBeamSheet:
-	.incbin "graphics/battle_fx/blue_beam_00.gbapal"
-	.incbin "graphics/battle_fx/blue_beam.parts.lz"
+	.incbin "common/graphics/battle_fx/blue_beam_00.gbapal"
+	.incbin "common/graphics/battle_fx/blue_beam.parts.lz"
 	.byte 0x01, 0x53, 0x33	@ PACKER: left in the buffer by BattleFx_WindStreakSheet+0x6b5
 	.global BattleFx_VortexSheet
 BattleFx_VortexSheet:
@@ -352,13 +313,13 @@ BattleFx_VortexSheet:
 	.byte 0xdd, 0x20	@ PACKER: left in the buffer by BattleFx_WindStreakSheet+0x912
 	.global BattleFx_TornadoSheet
 BattleFx_TornadoSheet:
-	.incbin "graphics/battle_fx/tornado_00.gbapal"
-	.incbin "graphics/battle_fx/tornado.parts.lz"
+	.incbin "common/graphics/battle_fx/tornado_00.gbapal"
+	.incbin "common/graphics/battle_fx/tornado.parts.lz"
 	.byte 0x7f, 0x02	@ PACKER: left in the buffer by BattleFx_FireBurstSheet+0x1b32
 	.global BattleFx_CrystalSheet
 BattleFx_CrystalSheet:
-	.incbin "graphics/battle_fx/crystal_00.gbapal"
-	.incbin "graphics/battle_fx/crystal.parts.lz"
+	.incbin "common/graphics/battle_fx/crystal_00.gbapal"
+	.incbin "common/graphics/battle_fx/crystal.parts.lz"
 	.byte 0x13, 0x42, 0x03	@ PACKER: left in the buffer by BattleFx_TornadoSheet+0x104d
 	.global BattleFx_WaterSparkleSheet
 BattleFx_WaterSparkleSheet:

@@ -169,8 +169,8 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 static void EV90_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
-	Engine_MessageShowCentered((s32)MsgKareiVeryCleanMaintained, 1);
+	Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
+	Engine_MessageShowCentered(MsgKareiVeryCleanMaintained, 1);
 	Engine_EventEnd();
 }
 
@@ -218,7 +218,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 static void EV19_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKareiCameKalayBecauseDidntLike);
+	Engine_EventSetMessage(MsgKareiCameKalayBecauseDidntLike);
 	Engine_EventAskYesNo(19, 0);
 	Engine_EventEnd();
 }
@@ -236,7 +236,7 @@ static void EV08_TALK(void)
 		Engine_EventBegin();
 		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 8, 0);
 		Engine_EventWait(10);
-		Engine_EventSetMessage((s32)MsgKareiDoWantGoCaveUp);
+		Engine_EventSetMessage(MsgKareiDoWantGoCaveUp);
 		Engine_EventOpenMessage(8, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
@@ -257,7 +257,7 @@ static void EV08_TALK(void)
 static void EV10_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKareiLayanaWasVeryHardOn);
+	Engine_EventSetMessage(MsgKareiLayanaWasVeryHardOn);
 	Engine_EventAskYesNo(10, 0);
 	Engine_EventEnd();
 }
@@ -276,7 +276,7 @@ static void EV22_TALK(void)
 	else
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage((s32)MsgKareiLordHammetSellsHisBest);
+		Engine_EventSetMessage(MsgKareiLordHammetSellsHisBest);
 		Engine_EventShowMessage(22, 0);
 		Engine_EventEnd();
 	}
@@ -296,7 +296,7 @@ static void EV23_TALK(void)
 	else
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage((s32)MsgKareiDidFindNeededInWeapon);
+		Engine_EventSetMessage(MsgKareiDidFindNeededInWeapon);
 		Engine_EventAskYesNo(23, 0);
 		Engine_EventEnd();
 	}
@@ -316,7 +316,7 @@ static void EV24_TALK(void)
 	else
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage((s32)MsgKareiLadyLayanaSharedInLord);
+		Engine_EventSetMessage(MsgKareiLadyLayanaSharedInLord);
 		Engine_EventShowMessage(24, 0);
 		Engine_EventEnd();
 	}
@@ -415,7 +415,7 @@ static void FieldScene_RunStagedGroupSequence(void)
 		Actor_SetPosition(21, PIXELS(364), PIXELS(272));
 		Event_PlayCue(17);
 		Ui_SetRenderResultFromObject(20);
-		UiText_ShowCenteredMessage((s32)MsgKareiOkListeningLets, 1, 0);
+		UiText_ShowCenteredMessage(MsgKareiOkListeningLets, 1, 0);
 		Event_PlayCue(9);
 		Engine_EventWait(10);
 		Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -461,7 +461,7 @@ static void FieldScene_RunStagedGroupSequence(void)
 		Engine_EventWait(40);
 		Engine_ActorRunRepeatedMotion(27, 2);
 		Actor_FaceDirection(27, FACING_SOUTH + FACING_STEP, 20);
-		Engine_EventSetMessage((s32)MsgKareiWhyWeStoppingAtPlace);
+		Engine_EventSetMessage(MsgKareiWhyWeStoppingAtPlace);
 		Event_ShowMessageAndWait(27, 0, 10);
 		Engine_ActorRunRepeatedMotion(28, 2);
 		Actor_FaceDirection(28, FACING_NORTHWEST + FACING_STEP, 10);
@@ -567,7 +567,7 @@ static void FieldScene_RunStagedGroupSequence(void)
 		Actor_SetAttachedEffect(20, EMOTE_IN_FRONT | 2);
 		Engine_EventWait(60);
 		Engine_ActorSetAnimationAndWait(20, ANIM_SHAKE_HEAD);
-		message = (s32)MsgKareiShortOnePerson;
+		message = MsgKareiShortOnePerson;
 		Engine_EventSetMessage(message);
 		Event_ShowMessageAndWait(20, 0, 40);
 		KareiMachi_SpeedUpActors();
@@ -633,7 +633,7 @@ static void FieldScene_RunStagedGroupSequence(void)
 		Actor_FaceDirection(31, FACING_SOUTH + FACING_STEP, 10);
 		Engine_ActorRunRepeatedMotion(31, 1);
 		Engine_ActorSetAnimationAndWait(31, ANIM_SHAKE_HEAD);
-		message = (s32)MsgKareiDecideEnteringColosso;
+		message = MsgKareiDecideEnteringColosso;
 		Engine_EventSetMessage(message);
 		Event_ShowMessageAndWait(31, 0, 10);
 		SceneEffect_SetSlotVariantAndDescriptor(31);
@@ -654,7 +654,7 @@ static void FieldScene_RunStagedGroupSequence(void)
 		Actor_ShowEmote(34, EMOTE_IN_FRONT | 2, 60);
 		Actor_ShowEmote(20, EMOTE_IN_FRONT | 3, 0);
 		Engine_ActorRunRepeatedMotion(20, 2);
-		Engine_EventSetMessage((s32)MsgKareiThatsWeCantWaitAny);
+		Engine_EventSetMessage(MsgKareiThatsWeCantWaitAny);
 		Event_ShowMessageAndWait(20, 0, 10);
 		Engine_ActorStop(27);
 		Engine_ActorStop(28);
@@ -1316,7 +1316,7 @@ static void FieldScene_RunTwoActorCutsceneSequence(void)
 	Actor_Get(9)->steering_flags |= ACTOR_FACES_MOTION;
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(8, ANIM_SHAKE_HEAD);
-	Engine_EventSetMessage((s32)MsgKareiLordHammetsPalaceLordAway);
+	Engine_EventSetMessage(MsgKareiLordHammetsPalaceLordAway);
 	Event_ShowMessageAndWait(8, 0, 10);
 	Actor_FaceDirection(9, 0x5000, 10);
 	Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
@@ -1534,7 +1534,7 @@ static void FieldScene_RunSecondaryGroupSequence(void)
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, motionActions);
 	Engine_ActorJump(11, 2, 20);
 	Engine_ActorSetAnimationAndWait(11, 3);
-	Engine_EventSetMessage((s32)MsgKareiWeveArrivedHammet);
+	Engine_EventSetMessage(MsgKareiWeveArrivedHammet);
 	Event_ShowMessageAndWait(11, 0, 10);
 	Engine_ActorSetAnimationAndWait(10, 3);
 	object = Actor_Get(ACTOR_PARTY_LEADER);

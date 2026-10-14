@@ -18,8 +18,8 @@ Shop_UpArrowTiles:
 	.global Shop_DownArrowTiles
 Shop_DownArrowTiles:
 	.incbin "graphics/ui/menuspr/down.4bpp16x16"
-	.incbin "graphics/ui/menuspr/sprite_a.4bpp16x16"
-	.incbin "graphics/ui/menuspr/sprite_b.4bpp16x16"
+	.incbin "common/menu/djinn/arrowup.4bpp16x16"
+	.incbin "common/menu/djinn/arrowdn.4bpp16x16"
 	.global Shop_GlyphBytes
 Shop_GlyphBytes:
 	.incbin "graphics/ui/menuspr/digits.4bpp"

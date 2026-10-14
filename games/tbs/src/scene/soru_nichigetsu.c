@@ -236,7 +236,7 @@ static void EV11_TOUCH(void)
 	if (Engine_GameFlagIsSet(0x809) == 0)
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage((s32)MsgSoruFound);
+		Engine_EventSetMessage(MsgSoruFound);
 		Engine_AudioPlayCue(17);
 		Actor_SetSpeed(0, 0x10000, 0x8000);
 		Actor_WalkToAndWait(0, 0x120, 232);
@@ -338,11 +338,11 @@ static void EV11_TOUCH(void)
 		Engine_EventOpenMessage(16, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
-			Engine_EventSetMessage((s32)MsgSoruThank);
+			Engine_EventSetMessage(MsgSoruThank);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgSoruGoBackVillage);
+			Engine_EventSetMessage(MsgSoruGoBackVillage);
 			Actor_ShowEmote(16, 0x107, 20);
 		}
 		Engine_ActorJump(16, 4, 20);
@@ -350,7 +350,7 @@ static void EV11_TOUCH(void)
 		Actor_FaceDirection(1, 0xe000, 0);
 		Actor_FaceDirection(5, 0xa000, 0);
 		SetSolShindenActorStep(16, 6);
-		Engine_EventSetMessage((s32)MsgSoruPutWayDont);
+		Engine_EventSetMessage(MsgSoruPutWayDont);
 		Engine_EventWait(30);
 		Engine_ActorSetAnimationAndWait(5, 4);
 		SetSolShindenActorStep(0x2005, 6);
@@ -403,7 +403,7 @@ static void Scene_EnterInnerSanctum(void)
 	struct FieldActor *record;
 	s32				   request;
 
-	Engine_EventSetMessage((s32)MsgSoruWhRoom);
+	Engine_EventSetMessage(MsgSoruWhRoom);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1e8, 176);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
@@ -434,15 +434,15 @@ static void Scene_EnterInnerSanctum(void)
 	Event_OpenMessage(0x4010, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgSoruLunaSolRooms);
+		Engine_EventSetMessage(MsgSoruLunaSolRooms);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgSoruRoomLunaOne);
+		Engine_EventSetMessage(MsgSoruRoomLunaOne);
 	}
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
 	SetSolShindenActorStep(0x4010, 10);
-	request = (s32)MsgSoruMeanLookFarther;
+	request = MsgSoruMeanLookFarther;
 	Engine_EventSetMessage(request);
 	Actor_FaceDirection(ACTOR_SUKURETA, 0, 40);
 	Actor_ShowEmote(ACTOR_SUKURETA, 0x105, 40);
@@ -490,7 +490,7 @@ static void EV09_TOUCH(void)
 	}
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
-	Engine_EventSetMessage((s32)MsgSoruWayLeadsOutSanctum);
+	Engine_EventSetMessage(MsgSoruWayLeadsOutSanctum);
 	if (GameFlag_IsSet(0x810) != 0 || GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0)
 	{
 		target_actor = Object_GetById(0);
@@ -748,7 +748,7 @@ static void Scene_SpringStatueTrap(void)
 
 	Engine_EventBegin();
 	FieldScene_PrepareStatueTransition();
-	Engine_EventSetMessage((s32)MsgSoruWhatsHappeningAtTheTrap);
+	Engine_EventSetMessage(MsgSoruWhatsHappeningAtTheTrap);
 	Actor_FaceDirection(ACTOR_SUKURETA, 0x4000, 20);
 	Actor_ShowEmote(ACTOR_SUKURETA, 256, 0);
 	Engine_ActorJump(ACTOR_SUKURETA, 6, 30);
@@ -823,7 +823,7 @@ static void FieldScene_RunClosingSequence(void)
 	SoruNichigetsu_Light2Timer = 0;
 	SoruNichigetsu_Light3Timer = 0;
 	SoruNichigetsu_Light4Timer = 0;
-	Engine_EventSetMessage((s32)MsgSoruWhatsHappening);
+	Engine_EventSetMessage(MsgSoruWhatsHappening);
 	Actor_FaceDirection(ACTOR_SUKURETA, 16384, 20);
 	Actor_ShowEmote(ACTOR_SUKURETA, 256, 0);
 	Engine_ActorJump(ACTOR_SUKURETA, 6, 30);
@@ -1005,7 +1005,7 @@ static void FieldScene_RunFlaggedSequence(void)
 	if (GameFlag_IsSet(2082) == 0)
 	{
 		base = 32784;
-		Engine_EventSetMessage((s32)MsgSoruYouFoundIt);
+		Engine_EventSetMessage(MsgSoruYouFoundIt);
 		SetSolShindenActorStep(base, 6);
 		Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 3);
 		SetSolShindenActorStep(base, 6);
@@ -1035,7 +1035,7 @@ static void EV08_TOUCH(void)
 			Actor_SetPosition(ACTOR_SUKURETA, 0x2410000, 0x930000);
 			Actor_FaceDirection(ACTOR_SUKURETA, 0x4000, 1);
 			Camera_MoveTo(0x23e0000, -1, 0xb80000, 1);
-			Engine_EventSetMessage((s32)MsgSoruThePictureOfLunaChanged);
+			Engine_EventSetMessage(MsgSoruThePictureOfLunaChanged);
 			Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x240, 232);
 			Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
 			Engine_CameraWaitForMove();
@@ -1089,7 +1089,7 @@ static void FieldScene_RunActorPositionTransition(void)
 	Actor_WalkToAndWait(16, 0x188, 168);
 	Actor_FaceDirection(16, 0x8000, 30);
 	Engine_ActorSetAnimation(16, 1);
-	Engine_EventSetMessage((s32)MsgSoruLookSymbolFloor);
+	Engine_EventSetMessage(MsgSoruLookSymbolFloor);
 	Engine_ActorJump(16, 4, 30);
 	SetSolShindenActorStep(16, 6);
 	Engine_ActorRunRepeatedMotion(0, 2);
@@ -1168,7 +1168,7 @@ static void EV20_SEARCH(void)
 		Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 		Engine_ActorSetAnimation(16, 1);
 		Engine_ActorSetAnimation(0, 0);
-		Engine_EventSetMessage((s32)MsgSoruHa);
+		Engine_EventSetMessage(MsgSoruHa);
 		SetSolShindenActorStep(32784, 6);
 		Engine_ActorSetAnimationAndWait(16, 3);
 		Engine_ActorSetAnimation(16, 1);
@@ -1504,7 +1504,7 @@ static void SoruNichigetsu_RunLightScene(void)
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(1, 2);
-	Engine_EventSetMessage((s32)MsgSoruFloatingEyeThing);
+	Engine_EventSetMessage(MsgSoruFloatingEyeThing);
 	Engine_EventOpenMessage(1, 0);
 	Engine_EventChooseYesNo(0, 0);
 	Engine_ActorSetAnimation(0, 1);
@@ -1558,11 +1558,11 @@ static void EV16_TALK(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(FLAG_ROBIN_SEARCHING_FOR_SUKURETA) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgSoruSukuretaLetMeKnowWhat);
+		Engine_EventSetMessage(MsgSoruSukuretaLetMeKnowWhat);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgSoruSukuretaJustWaitOverThere);
+		Engine_EventSetMessage(MsgSoruSukuretaJustWaitOverThere);
 	}
 	Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
 	Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 10);

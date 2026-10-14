@@ -291,7 +291,7 @@ static void Scene_RunExtendedPresentationSequence(void)
 	Engine_EventBegin();
 	Camera_MoveTo(-1, -1, -1, 0);
 	Map_CopyCellAttributes(18, 0, 3, 1, 18, 12);
-	Engine_EventSetMessage((s32)MsgFieldLooksLikeFinally);
+	Engine_EventSetMessage(MsgFieldLooksLikeFinally);
 	FieldMotion_LaunchFromFocusedObject(1, -10, 16, 49152);
 	FieldMotion_LaunchFromFocusedObject(3, 0, 24, 49152);
 	Motion_LaunchFromFocusedObject(2, 10, 16, 49152);

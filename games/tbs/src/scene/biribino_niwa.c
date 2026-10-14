@@ -74,8 +74,8 @@ static void EV13_PSYNERGY(void)
 static void EV90_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
-	Engine_MessageShowCentered((s32)MsgBiribinoUponCloserInspectionSeemsDried, 1);
+	Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
+	Engine_MessageShowCentered(MsgBiribinoUponCloserInspectionSeemsDried, 1);
 	Engine_EventEnd();
 }
 
@@ -91,7 +91,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 static void EV09_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgBiribinoHaveYouSeenBarricadeWe);
+	Engine_EventSetMessage(MsgBiribinoHaveYouSeenBarricadeWe);
 	Engine_EventAskYesNo(9, 0);
 	Engine_EventEnd();
 }
@@ -99,7 +99,7 @@ static void EV09_TALK(void)
 static void EV10_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgBiribinoTellingMeImResponsibleFor);
+	Engine_EventSetMessage(MsgBiribinoTellingMeImResponsibleFor);
 	Engine_EventAskYesNo(10, 0);
 	Engine_EventEnd();
 }
@@ -107,7 +107,7 @@ static void EV10_TALK(void)
 static void EV11_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgBiribinoDoThinkCanBecomeAs);
+	Engine_EventSetMessage(MsgBiribinoDoThinkCanBecomeAs);
 	Engine_EventAskYesNo(11, 0);
 	Engine_EventEnd();
 }
@@ -121,26 +121,26 @@ static void EV12_TALK(void)
 		{
 			if (GameFlag_IsSet(0x201) == 0)
 			{
-				Engine_EventSetMessage((s32)MsgBiribinoWhere);
+				Engine_EventSetMessage(MsgBiribinoWhere);
 				Engine_EventShowMessageAndWait(12, 0, 10);
 				Actor_ShowEmote(12, 0x107, 40);
 				Engine_EventShowMessageAndWait(12, 0, 10);
 				Engine_ActorRunRepeatedMotion(12, 2);
 				Engine_GameFlagSet(0x201);
 			}
-			Engine_EventSetMessage((s32)MsgBiribinoMasterQuiteCranky);
+			Engine_EventSetMessage(MsgBiribinoMasterQuiteCranky);
 			Engine_EventShowMessage(12, 0);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgBiribinoLordMccoyDifficult);
+			Engine_EventSetMessage(MsgBiribinoLordMccoyDifficult);
 			Engine_EventShowMessage(12, 0);
 			goto guard;
 		}
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgBiribinoLordOnlyMeet);
+		Engine_EventSetMessage(MsgBiribinoLordOnlyMeet);
 		Engine_EventOpenMessage(12, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
@@ -292,7 +292,7 @@ static void BiribinoNiwa_RunGardenScene(void)
 	Actor_FaceDirection(11, 0x3000, 10);
 	Engine_ActorStartRepeatedMotion(11, 2);
 	Actor_ShowEmote(11, 0x100, 60);
-	Engine_EventSetMessage((s32)MsgBiribinoOhItS);
+	Engine_EventSetMessage(MsgBiribinoOhItS);
 	Engine_EventShowMessageAndWait(11, 0, 10);
 	Actor_FaceDirection(12, 0x5000, 10);
 	Engine_ActorStartRepeatedMotion(12, 2);
@@ -310,7 +310,7 @@ static void BiribinoNiwa_RunGardenScene(void)
 	while (Engine_EventChooseYesNo(0, 0) != 0)
 	{
 		Engine_ActorShowEmote(12, 0x100, 60);
-		Engine_EventSetMessage((s32)MsgBiribinoNotTrueWitnesses);
+		Engine_EventSetMessage(MsgBiribinoNotTrueWitnesses);
 		Engine_EventShowMessageAndWait(12, 0, 10);
 		Engine_ActorStartRepeatedMotion(12, 2);
 		Engine_EventOpenMessage(12, 0);
@@ -322,7 +322,7 @@ static void BiribinoNiwa_RunGardenScene(void)
 	Engine_ActorSetAnimationAndWait(12, 3);
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(11, 1);
-	Engine_EventSetMessage((s32)MsgBiribinoUnderArrest);
+	Engine_EventSetMessage(MsgBiribinoUnderArrest);
 	Engine_EventShowMessageAndWait(11, 0, 10);
 	Actor_SetSpeed(11, 0x10000, 0x8000);
 	Actor_WalkToAndWait(11, 0x13a, 0x118);

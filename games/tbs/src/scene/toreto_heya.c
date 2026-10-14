@@ -291,7 +291,7 @@ static void EV40_TOUCH(void)
 	rec8 = Engine_GameFlagIsSet(3);
 	Engine_EventBegin();
 	Engine_AudioPlayCue(17);
-	Engine_EventSetMessage((s32)MsgToretoHmHrooom);
+	Engine_EventSetMessage(MsgToretoHmHrooom);
 	Engine_EventShowMessageAndWait(0x8009, 0, 20);
 	Engine_AudioPlayCue(29);
 	Actor_SetSpeed(0, 0x10000, 0x8000);
@@ -424,7 +424,7 @@ static void FieldScene_RunFourActorEncounter(void)
 	Engine_TaskWait(4);
 	Map_CopyCells(26, 35, 1, 4, v5, 40);
 	Engine_TaskWait(80);
-	Engine_EventSetMessage((s32)MsgToretoMmmmm);
+	Engine_EventSetMessage(MsgToretoMmmmm);
 	Event_ShowMessageAndWait(0x8009, 0, 20);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_ActorStartRepeatedMotion(GERALD, 2);
@@ -486,7 +486,7 @@ static void FieldScene_RunFourActorEncounter(void)
 	{
 		Actor_ShowEmote(GERALD, 0x103, 20);
 		Engine_ActorSetAnimation(GERALD, 4);
-		Engine_EventSetMessage((s32)MsgToretoDoingNowsNot);
+		Engine_EventSetMessage(MsgToretoDoingNowsNot);
 		Event_ShowMessage(0x8001, 0);
 		Actor_ShowEmote(IWAN, 0x103, 10);
 		Engine_ActorSetAnimation(IWAN, 3);
@@ -494,7 +494,7 @@ static void FieldScene_RunFourActorEncounter(void)
 	}
 	Engine_EventWait(20);
 	ToretoHeya_PlayGesture(4);
-	Engine_EventSetMessage((s32)MsgToretoTurnedPeopleKolima);
+	Engine_EventSetMessage(MsgToretoTurnedPeopleKolima);
 	Event_ShowMessageAndWait(0x8009, 0, 20);
 	Event_ShowMessageAndWait(0x8009, 0, 10);
 	ToretoHeya_PlayGesture(0);

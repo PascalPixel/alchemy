@@ -1209,8 +1209,8 @@ fn plan(
         vec![step]
     } else if matches!(extension, Some("c")) {
         let preprocessed = object.with_extension("i");
-        // Nintendo's library C keeps its own compiler in the modern build too.
-        let modern = build.modern.filter(|_| crate::modern::compiles(target, source));
+        // The modern build compiles all C, the libraries' too, with its own.
+        let modern = build.modern;
         let steps = match modern {
             Some(modern) => {
                 hasher.update(modern.signature.as_bytes());

@@ -34,7 +34,6 @@ SECTIONS
         "*/resource_64c_overlay.o"(.text.x02009ad0)
         "*/resource_64c_overlay.o"(.text.x02009be0)
         "*/resource_64c_overlay.o"(.text.x02009d90)
-        "*/resource_64c_overlay.o"(.text.x02009e58)
         "*/games/tla/src/field/overlay_64c/release.o"(.text)
         "*/games/tla/src/field/overlay_64c/import.o"(.text)
         "*/games/tla/src/field/overlay_64c/graphics.o"(.rodata)

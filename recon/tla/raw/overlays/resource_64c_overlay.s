@@ -3474,55 +3474,6 @@ Func_02001d90:
 	pop {r5, r6, r7, pc}
 .L_02009e54:
 	.4byte Data_02003fcc
-	.section .text.x02009e58,"ax",%progbits
-	.global Func_02001e58
-	.thumb_func
-Func_02001e58:
-	push {r5, lr}
-	ldr r1, .L_02009e9c
-	ldr r0, .L_02009ea0
-	bl Func_02001f54
-	ldr r5, .L_02009ea4
-	bl Resource_FindFreeEntry
-	movs r1, #128
-	strh r0, [r5]
-	lsls r0, r0, #16
-	lsls r1, r1, #1
-	movs r2, #0
-	asrs r0, r0, #16
-	bl VramBlock_LoadCached
-	ldr r2, .L_02009ea8
-	ldr r3, .L_02009e94
-	movs r1, #128
-	strh r3, [r2]
-	ldr r2, .L_02009eac
-	ldr r3, .L_02009e98
-	lsls r1, r1, #3
-	strh r3, [r2]
-	adds r1, #118
-	ldr r0, .L_02009eb0
-	bl Scheduler_AddOrUpdateCallback
-	b .L_02009eb4
-	.2byte 0x0000
-.L_02009e94:
-	.4byte 0xffffffff
-.L_02009e98:
-	.4byte 0x0000000a
-.L_02009e9c:
-	.4byte Data_020040d8
-.L_02009ea0:
-	.4byte gWorldMapPackedTilesC
-.L_02009ea4:
-	.4byte Data_02003fc6
-.L_02009ea8:
-	.4byte Data_02003fc4
-.L_02009eac:
-	.4byte Data_02003fc8
-.L_02009eb0:
-	.4byte Func_02001d90
-.L_02009eb4:
-	pop {r5, pc}
-	.2byte 0x0000
 	.section .bss,"aw",%nobits
 	.global Data_02003dbc
 Data_02003dbc:

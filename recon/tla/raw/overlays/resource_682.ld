@@ -21,7 +21,7 @@ SECTIONS
         "*/resource_682_overlay.o"(.text.x02008a80)
         "*/games/tla/src/field/overlay_682/s0b18.o"(.text)
         "*/games/tla/src/field/overlay_682/s0c04.o"(.text)
-        "*/resource_682_overlay.o"(.text.x02008c40)
+        "*/games/tla/src/field/overlay_682/s0c40.o"(.text)
         "*/games/tla/src/field/overlay_682/s0c90.o"(.text)
         "*/resource_682_overlay.o"(.text.x02008d4c)
         "*/games/tla/src/field/overlay_682/s0e04.o"(.text)

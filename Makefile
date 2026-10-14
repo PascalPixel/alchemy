@@ -254,7 +254,7 @@ modern-check:
 
 # The boot test: each ☀️ edition's matching ROM (make compare-tbs) and modern
 # ROM (make modern) booted in mGBA to the file menu and past it, the modern
-# ROM held to the matching one (alchemy boot --help). CI runs it under
-# xvfb-run; it is never part of make verify or make land.
+# ROM held to the matching one (alchemy boot --help). A local tool: CI does
+# not run it, and it is never part of make verify or make land.
 boot-tbs:
 	$(ALCHEMY) boot --emulator "$(BOOT_EMULATOR)" --gdb "$(BOOT_GDB)" --timeout "$(BOOT_TIMEOUT)"

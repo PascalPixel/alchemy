@@ -40,7 +40,7 @@ VBlanks later.
   --emulator  mGBA, whose GDB stub -g opens on port 2345: $BOOT_EMULATOR, else mgba
   --gdb       an ARM debugger: $BOOT_GDB, else arm-none-eabi-gdb
   --timeout   the seconds one run may take: $BOOT_TIMEOUT, else 300
-CI runs it, and make boot-tbs here; make verify and make land never do.";
+A local tool: make boot-tbs runs it; CI, make verify and make land never do.";
 
 const OUTPUT: &str = "out/boot";
 /// mGBA's GDB stub listens here when it starts with -g.

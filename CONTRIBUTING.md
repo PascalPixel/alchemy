@@ -323,7 +323,9 @@ or functions is exactly this cheating.
   joining `orr` takes a fresh output reload register beside two dying inputs
   and nothing is scheduled across it, as only asm statements do). It corrects
   the earlier handwritten classification of `Object_UpdateAll` and
-  `Transform_UpdateVertices`, which are compiled C around it. A layer that
+  `Transform_UpdateVertices`, which are compiled C around it. It also marks
+  the BIOS calls `swi 2` (Halt, as in `VBlankIntrWait`) and `swi 3` (Stop)
+  in `runtime.c`, which C2 already counts as handwritten. A layer that
   explains a habit of the whole game is source, not a device: the ☀️ scene
   script layer (inline helpers forwarding to the engine services in
   `field_event.h`, `field_service.h` and `scene/runpa_jo.h`) matches every scene
@@ -769,7 +771,7 @@ make test
 make verify            # every gate, the modern build included: it needs Homebrew's arm-none-eabi-gcc (MODERN_CC)
 make land              # on main, before committing a landing
 make modern            # the six ☀️ editions with a current GCC (MODERN_CC): no match, no errors
-make boot-tbs          # after make modern: each ☀️ edition, matching and modern, booted in mGBA to the file menu; CI runs it, make land never does
+make boot-tbs          # after make modern: each ☀️ edition, matching and modern, booted in mGBA to the file menu; a local tool that neither CI nor make land runs
 ```
 
 The `alchemy` binary is `tools/out/cargo-target/release/alchemy`; it acts on
@@ -779,7 +781,7 @@ the checkout it runs in, and `alchemy --help` lists every command.
 # Choose what to match
 make deps                              # what unblocks the most (W4)
 alchemy similar                        # nearest C twins in either game
-alchemy similar --editions             # each ☀️ listing's copies in all twelve builds
+alchemy similar --editions             # each not-yet-C listing's copies in all twelve builds (⚓️; ☀️ has none)
 # Match one function
 alchemy diff DRAFT.c [ADDR] [--show]   # a draft against its listing; differ 0 matches
 alchemy diff DRAFT.c --heat            # differing instructions per line, first divergence marked; permute --heat aims there

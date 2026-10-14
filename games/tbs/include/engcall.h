@@ -85,6 +85,8 @@ static inline s32 FieldOwner_AdjustFirstValue(s32 owner, s32 delta)
 	return Owner_AdjustFirstValue(owner, delta);
 }
 
+// 型 01 の圧縮データを展開する。シーンのほかタイトルとクリアのメニューもこれを取り込む。
+// 本体の field/camera.c の同じ展開は call.h のタグ付きの Value2 で呼ぶ。
 static inline s32 FieldResource_DecodeType01(const void *source, void *destination)
 {
 	return Resource_DecodeType01(source, destination);

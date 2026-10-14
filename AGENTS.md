@@ -314,7 +314,11 @@ or functions is exactly this cheating.
   (Pascal, 2026-10-13): `engcall.h`, which `field_service.h` includes, has
   one typed inline for each of the thirteen main-image routines it names
   that the scene, menu and debug overlays import, the scheduler's
-  `Scheduler_AddOrUpdateCallback` among them. Every overlay call of those
+  `Scheduler_AddOrUpdateCallback` among them. The thirteenth, which joined
+  last, is the type-01 decoder `Resource_DecodeType01`, which the Colosso,
+  Ramakan and world map scenes and the title and clear menus import: called
+  directly, `Title_LoadBackground` and `Clear_LoadBackground` each take two
+  more instructions. Every overlay call of those
   routines goes through it and none stays direct: 281 call sites, and 47
   more through the scene layer's `Task_AddCallback` and
   `FieldScheduler_AddOrUpdateCallback`, which forward through it. As direct
@@ -323,7 +327,8 @@ or functions is exactly this cheating.
   `scene/common/scroll_initialize_hblank_dma.c`, which `babi_fune.c` and the
   main image's `object/scenefx.c` both include, reaches it from both
   images; other main-image code calls these routines as ordinary
-  functions, outside the layer. So are statement macros written
+  functions, outside the layer, and `field/camera.c`'s identical decode
+  keeps `call.h`'s tagged `Value2`. So are statement macros written
   `do { ... } while (0)`, C's idiom for a macro used as one statement,
   where every use matches through that shape: `Io_Write16` (106 sites),
   `Battle_SetStart` (34), `UiRender_MarkRow` (10) and `MenuCell_GetCursor`

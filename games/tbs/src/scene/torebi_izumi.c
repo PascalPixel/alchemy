@@ -711,7 +711,8 @@ prompt:
 				Event_OpenMessage(-1, 0);
 				if (Event_ChooseYesNo(0, 0) != 0)
 				{
-					goto end;
+					Event_End();
+					return 0;
 				}
 			}
 		}
@@ -833,7 +834,9 @@ prompt:
 #endif
 		}
 	}
+#if EDITION_INTERNATIONAL
 end:
+#endif
 	Event_End();
 	return 0;
 }

@@ -1,4 +1,3 @@
-#include "unit/field/objdata.h"
 #include "unit/field/facing.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
@@ -61,7 +60,6 @@
 #include "vram_tab.h"
 #include "vram_block.h"
 #include "unit/field/update.h"
-#include "unit/field/fielddat.h"
 #include "unit/field/vertices.h"
 #include "unit/field/curvedat.h"
 #include "unit/field/griddata.h"

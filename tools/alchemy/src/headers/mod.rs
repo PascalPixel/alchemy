@@ -81,7 +81,7 @@ const USAGE: &str = "usage: alchemy headers apply [--dry-run] [--functions] [--l
          objects differ otherwise is left as it was, with the first part\n\
          that differs printed. --leave FILE names C files, one a line, to\n\
          leave as they are; --report writes one row per function.\n\
-       alchemy headers events [--dry-run] [--report FILE]\n\
+       alchemy headers events [--dry-run] [--report FILE] [FILE.c]...\n\
   events  an overlay's C file holds its scene's event tables, and a row\n\
          names the function it runs under a trigger kind and an id. A\n\
          static function of the file that every row reaches under one id\n\
@@ -100,7 +100,8 @@ const USAGE: &str = "usage: alchemy headers apply [--dry-run] [--functions] [--l
          the file's code and comments spell it, and each unit is compiled\n\
          before and after: its objects are the same under the new names,\n\
          or the unit is left as it was. --report writes one row per\n\
-         function the tables reach.";
+         function the tables reach. FILE.c limits the pass to those\n\
+         overlays' C files.";
 
 fn write(root: &Path, file: &str, text: &str) -> Result<(), String> {
     let path = root.join(file);
@@ -365,7 +366,8 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         Some("units") => units(root(), arguments.get(1).ok_or(USAGE)?, arguments.get(2).ok_or(USAGE)?),
         Some("events") => {
             let report = arguments.iter().position(|a| a == "--report").and_then(|at| arguments.get(at + 1));
-            events::run(root(), arguments.iter().any(|a| a == "--dry-run"), report.map(String::as_str))
+            let files: Vec<String> = arguments[1..].iter().filter(|a| !a.starts_with("--") && Some(*a) != report).cloned().collect();
+            events::run(root(), arguments.iter().any(|a| a == "--dry-run"), &files, report.map(String::as_str))
         }
         Some("narrow") => narrow::run(root(), arguments.get(1).is_some_and(|flag| flag == "--dry-run")),
         Some("static") => {

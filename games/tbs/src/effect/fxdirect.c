@@ -55,7 +55,6 @@
 #include "keystate.h"
 #include "btltype.h"
 #include "sound_ids.h"
-#include "call.h"
 #include "btlsys.h"
 #include "battle_session.h"
 #include "animspr.h"
@@ -75,7 +74,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 	s32						 point[3];
 	struct BattleEffectWork *work;
 	void					*canvas;
-	struct BlitterPair		 draw;
+	BlitterPair				 draw;
 	u8						*sheet;
 	struct BattleCamera		*camera;
 	s32						 frame;
@@ -93,8 +92,8 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 	work->fade_step = 0;
 	REG_BLDALPHA = 0x100c;
 	REG_BG2PA = 0x100; // 等倍
-	Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work->sheet, 1, 0);
-	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
+	BattleFx_LoadResource((s32)&ResourceId_IceTileSheet, work->sheet, 1, 0);
+	BattleFx_LoadResource((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
 	switch (work->effect->kind)
 	{
 	case 0:
@@ -130,7 +129,7 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 	work->transfer_value = 75; // 転送のたびに 3/4 へ減らして残像にする
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_KASAN);
-	draw.upper = gWorkSlot[HEAP_SLOT_BLITTER];
+	draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
 	work->effect->variant++;
 	if (work->effect->variant <= 0)
 		work->effect->variant = 1;
@@ -158,18 +157,18 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 			n = i % 4;
 			BattleEffect_LoadWork(
 				HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
-			draw.lower = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
-			draw.lower(canvas, work->sheet + n * 1088, 47, ground.y - 64, 17, 64);
+			draw[1] = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
+			draw[1](canvas, work->sheet + n * 1088, 47, ground.y - 64, 17, 64);
 			n = frame / 4 % 3;
 			glow = work->sheet + n * 1032 + 0x1100;
-			draw.lower(canvas, glow, 40, ground.y - 36, 24, 43);
+			draw[1](canvas, glow, 40, ground.y - 36, 24, 43);
 			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 			BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7,
 				GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
-			draw.lower = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
+			draw[1] = ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
 			n = i % 4;
-			draw.lower(canvas, work->sheet + n * 1088, 64, ground.y - 64, 17, 64);
-			draw.lower(canvas, glow, 64, ground.y - 36, 24, 43);
+			draw[1](canvas, work->sheet + n * 1088, 64, ground.y - 64, 17, 64);
+			draw[1](canvas, glow, 64, ground.y - 36, 24, 43);
 			Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 		}
 		GetBattleObjectSlotFar(work->effect->actor);
@@ -194,8 +193,8 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 				EffectPosition_ApplyBaseAndYOffset(point, &pos);
 				pos.x /= 2;
 				size = (i & 1) + work->effect->variant;
-				draw.upper(canvas, sheet + BattleFx6_FlareCells[size - 1], pos.x - size,
-					pos.y - size, size * 2, size * 2);
+				draw[0](canvas, sheet + BattleFx6_FlareCells[size - 1], pos.x - size, pos.y - size,
+					size * 2, size * 2);
 			}
 			fleck->variant++;
 		}
@@ -236,7 +235,7 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 	struct BattleEffectWork		*work;
 	void						*canvas;
 	s32							 frame;
-	struct BlitterPair			 draw;
+	BlitterPair					 draw;
 	struct BtlWork				*battle;
 	struct BattleBackgroundView *view;
 	void					   **slots;
@@ -309,16 +308,16 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 	IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
 	REG_BLDALPHA = 0x1010;
 	REG_BLDCNT = 0;
-	Resource_LoadAndDecompress((s32)&ResourceId_TileAnimationMask, work, 1, 1);
+	BattleFx_LoadResource((s32)&ResourceId_TileAnimationMask, work, 1, 1);
 	work->transfer_mode = 1; // 転送のたびにキャンバスを 0 で消す
 	work->transfer_value = 0;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_NURI);
 	cache = gWorkSlot;
-	draw.upper = cache[HEAP_SLOT_BLITTER];
+	draw[0] = cache[HEAP_SLOT_BLITTER];
 	BattleEffect_LoadWork(
 		HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
-	draw.lower = cache[HEAP_SLOT_BLITTER_ALTERNATE];
+	draw[1] = cache[HEAP_SLOT_BLITTER_ALTERNATE];
 
 	// 片：中心 (32, 60) から外へ、距離の 1/4 の速さで飛ぶ
 	start_y = BattlePieceStartY;
@@ -496,7 +495,7 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 			for (i = 0; i != 33; i++)
 			{
 				piece = &work->particles[i];
-				draw.upper(canvas, (u8 *)work + BattlePieceOffset[i], HI(piece->x), HI(piece->y),
+				draw[0](canvas, (u8 *)work + BattlePieceOffset[i], HI(piece->x), HI(piece->y),
 					BattlePieceWidth[i], BattlePieceHeight[i]);
 				if (frame > 3)
 					EffectStep_AdvanceWithGravity2D(piece, 64, 0x4000);
@@ -517,7 +516,7 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 		// 51 フレーム：閃光の絵と色を用意し、x 32〜63、y 80〜111 に 32 個を置く
 		if (frame == 51)
 		{
-			Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work, 1, 0);
+			BattleFx_LoadResource((s32)&ResourceId_FlashBurstSheet, work, 1, 0);
 			for (i = 1; i != 64; i++)
 			{
 				s32 v;
@@ -554,8 +553,8 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 					cell = piece->variant / 4;
 					if (cell > 5)
 						cell = 5;
-					draw.lower(canvas, (u8 *)work + (cell << 11), HI(piece->x) - 16,
-						HI(piece->y) - 32, 32, 64);
+					draw[1](canvas, (u8 *)work + (cell << 11), HI(piece->x) - 16, HI(piece->y) - 32,
+						32, 64);
 					EffectStep_AdvanceWithGravity2D(piece, 60, -0x1000);
 					piece->variant++;
 				}
@@ -599,7 +598,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
 	struct EffectPosition	 ground;
 	struct BattleEffectWork *work;
 	void					*canvas;
-	struct BlitterPair		 draw;
+	BlitterPair				 draw;
 	u8						*sheet;
 	void					*palette;
 	s32						 frame;
@@ -614,8 +613,8 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
 	work->fade_step = 0;
 	REG_BLDALPHA = 0x100c;
 	REG_BG2PA = 0x100;
-	Resource_LoadAndDecompress((s32)&ResourceId_CyanSparkSheet, work->sheet, 1, 0);
-	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
+	BattleFx_LoadResource((s32)&ResourceId_CyanSparkSheet, work->sheet, 1, 0);
+	BattleFx_LoadResource((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
 	switch (work->effect->kind)
 	{
 	case 0:
@@ -652,7 +651,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
 	work->transfer_value = 75;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 3);
-	draw.upper = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+	draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
 	AudioCommand_PlayFar(140);
 
 	for (frame = 0; frame != 56; frame++)
@@ -667,7 +666,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
 			ObjectGroup_UpdateMembers(work->effect->actors[0], 7, -1, 0, 20);
 		}
 		if (frame >= 28 && frame <= 48)
-			draw.upper(
+			draw[0](
 				canvas, work->sheet + (frame - 28) / 3 * 2304 + 0x1400, 40, ground.y - 24, 48, 48);
 		if (frame >= 0 && frame <= 14)
 		{
@@ -678,8 +677,8 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
 			{
 				BattleEffect_LoadWork(
 					HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CornerSparks_DrawFlags[i] | 3, 2);
-				draw.lower = *slot;
-				draw.lower(canvas, work->sheet + (picture << 10), CornerSparks_X[i] + 32,
+				draw[1] = *slot;
+				draw[1](canvas, work->sheet + (picture << 10), CornerSparks_X[i] + 32,
 					ground.y + CornerSparks_Y[i] - 32, 32, 32);
 				Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 			}
@@ -698,7 +697,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
 
 					if (size <= 0)
 						size = 1;
-					draw.upper(canvas, sheet + BattleFx6_FlareCells[size - 1], x - size, y - size,
+					draw[0](canvas, sheet + BattleFx6_FlareCells[size - 1], x - size, y - size,
 						size * 2, size * 2);
 					mote->y -= 2;
 					mote->variant--;

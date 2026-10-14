@@ -73,12 +73,23 @@ struct Point2D
 	s32 y;
 };
 
-struct BlitterPair
-{
-	DrawRectangle upper;
-	DrawRectangle lower;
-};
+// 演出の描画ルーチンの組：[0] は HEAP_SLOT_BLITTER、[1] は HEAP_SLOT_BLITTER_ALTERNATE に
+// BattleEffect_LoadWork が作る。演出の多くがこの組をフレームに置き、一つしか
+// 使わない演出も組ごと置く
+typedef DrawRectangle BlitterPair[2];
 
 #define gBlitters ((DrawRectangle *)gWorkSlot)
+
+//--------------------------------------------------------------------------
+// 演出の層：リソースの展開
+// 演出はリソースをこの inline を通して展開する（引数は inline の中で
+// 新しい値になってから呼び出しに渡る）。直接呼ぶ演出もある
+//--------------------------------------------------------------------------
+#include "unit/effect/burst.h" // Resource_LoadAndDecompress
+
+static __inline__ void BattleFx_LoadResource(s32 id, void *dst, s32 skip_pal, s32 copy_pal)
+{
+	Resource_LoadAndDecompress(id, dst, skip_pal, copy_pal);
+}
 
 #endif

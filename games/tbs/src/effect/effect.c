@@ -58,7 +58,6 @@
 #include "keystate.h"
 #include "btltype.h"
 #include "sound_ids.h"
-#include "call.h"
 #include "btlsys.h"
 #include "battle_session.h"
 #include "animspr.h"
@@ -129,7 +128,7 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
 	void					*canvas;
 	s32						 frame;
 	u8						*graphics;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	struct EffectStep		*shard;
 	struct EffectStep		*puff;
 	u16						*line;
@@ -144,8 +143,8 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0x2001);
 	REG_BG2PA = 0x100;
-	Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
-	Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, graphics, 0, 0);
+	BattleFx_LoadResource((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
+	BattleFx_LoadResource((s32)&ResourceId_SparkleDots, graphics, 0, 0);
 	BattlePres_ConfigureEffectDisplay();
 	REG_BLDCNT = 0x3f44;
 	REG_WININ = 0x3337;
@@ -342,8 +341,8 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0x2001);
 	REG_BG2PA = 0x100;
-	Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet, work->sheet + 0x604, 1, 1);
-	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0, 0);
+	BattleFx_LoadResource((s32)&ResourceId_BlueBeamSheet, work->sheet + 0x604, 1, 1);
+	BattleFx_LoadResource((s32)&ResourceId_ParticleSpritesD, work->sheet, 0, 0);
 	BattlePres_ConfigureEffectDisplay();
 	REG_BLDCNT = 0x3f44;
 	REG_WININ = 0x3337;
@@ -603,7 +602,7 @@ void BattleFx_RunFiveMode(struct BattleEffectArgument *effect, s32 mode)
 	}
 
 	// 筋の絵と、mode で選ぶ色
-	Resource_LoadAndDecompress((s32)&ResourceId_FiveModeImage, work->sheet, 0, 0);
+	BattleFx_LoadResource((s32)&ResourceId_FiveModeImage, work->sheet, 0, 0);
 	switch (mode)
 	{
 	case 0:
@@ -762,7 +761,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
 	struct EffectPosition	 position;
 	struct BattleEffectWork *work;
 	void					*canvas;
-	struct BlitterPair		 draw;
+	BlitterPair				 draw;
 	struct BattleCamera		*camera;
 	u8						*sheet;
 	struct MotionObject		*source;
@@ -781,10 +780,10 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
 	else
 		BattleFx_BeginCanvasLayer(1);
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
-	draw.upper = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+	draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 11, 2);
-	draw.lower = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
-	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
+	BattleFx_LoadResource((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 	if (mode == 0)
 		resource = (s32)&ResourceId_OrangePaletteA;
 	else
@@ -840,7 +839,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
 				if (position.depth > 634)
 					position.depth = 634;
 				size = 6 - (position.depth - 314) / 64;
-				draw.upper(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+				draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
 					position.x - size / 2, position.y - size, size, size * 2);
 				EffectStep_AdvanceWithGravity3D(mote, 62, 0x400);
 				if (mode == 1)
@@ -955,7 +954,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 	struct EffectPosition	 target_position;
 	struct EffectPosition	 alternate;
 	struct EffectPosition	 position;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	void				   **heap_cache;
 	void				   **cursor;
 	struct BattleEffectWork *work;
@@ -983,12 +982,12 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 	else
 		BattleFx_BeginCanvasLayer(1);
 	REG_BLDALPHA = 0x1010;
-	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-	Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
+	BattleFx_LoadResource((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+	BattleFx_LoadResource((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
 	if (TwelveMode_Records[mode * 7] == 0)
-		Resource_LoadAndDecompress((s32)&ResourceId_BeamSequenceImage, work->sheet + 0xc80, 0, 0);
+		BattleFx_LoadResource((s32)&ResourceId_BeamSequenceImage, work->sheet + 0xc80, 0, 0);
 	else
-		Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage, work->sheet + 0xc80, 0, 0);
+		BattleFx_LoadResource((s32)&ResourceId_TwelveModeImage, work->sheet + 0xc80, 0, 0);
 	switch (TwelveMode_Records[mode * 7 + 3])
 	{
 	case 0:
@@ -1012,7 +1011,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 		break;
 	}
 	Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(resource), 128);
-	Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet + 0x3200, 1, 0);
+	BattleFx_LoadResource((s32)&ResourceId_SmokeSheet, work->sheet + 0x3200, 1, 0);
 
 	for (k = 0; k != 1; k++)
 	{
@@ -1350,23 +1349,19 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 	void				   **cursor;
 	struct BattleEffectWork *work;
 	void					*canvas;
-	/* FAKEMATCH: frame local: an unused second blitter word fills the
-	   frame's 8-byte draw slot, as this file's two-blitter effects declare
-	   draw[2]. Measured (2026-10-13): with draw[1] the frame is 80 bytes
-	   for 84 (differ 14, stack offsets only). */
-	DrawRectangle		  draw[2];
-	struct BtlObj		 *first;
-	struct BtlObj		 *second;
-	struct MotionObject	 *user;
-	struct MotionObject	 *target;
-	s32					  x;
-	s32					  z;
-	s32					  user_height;
-	s32					  target_height;
-	s32					  point[3];
-	struct EffectPosition screen;
-	s32					  frame;
-	s32					  percent;
+	BlitterPair				 draw;
+	struct BtlObj			*first;
+	struct BtlObj			*second;
+	struct MotionObject		*user;
+	struct MotionObject		*target;
+	s32						 x;
+	s32						 z;
+	s32						 user_height;
+	s32						 target_height;
+	s32						 point[3];
+	struct EffectPosition	 screen;
+	s32						 frame;
+	s32						 percent;
 
 	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
@@ -1374,7 +1369,7 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 	canvas = *cursor;
 	work->effect = effect;
 	BattleFx_BeginCanvasLayer(0);
-	Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1, 1);
+	BattleFx_LoadResource((s32)&ResourceId_FlashBurstSheet, work->sheet, 1, 1);
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
 	work->transfer_mode = 2;
 	work->transfer_value = 75; // 転送のたびに 3/4 へ減らして残像にする
@@ -1497,7 +1492,7 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 void BattleFx_RunBladeRain(struct BattleEffectArgument *effect)
 {
 	struct EffectPosition	 pos;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	void				   **heap_cache;
 	void				   **cursor;
 	struct BattleEffectWork *work;
@@ -1523,7 +1518,7 @@ void BattleFx_RunBladeRain(struct BattleEffectArgument *effect)
 		GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_NURI);
 	draw[1] = (DrawRectangle)heap_cache[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
 	blit = draw;
-	Resource_LoadAndDecompress((s32)&ResourceId_SwordSlashSheet, work->sheet, 1, 1);
+	BattleFx_LoadResource((s32)&ResourceId_SwordSlashSheet, work->sheet, 1, 1);
 	work->transfer_mode = 1; // 転送のたびにキャンバスを 0 で消す
 	work->transfer_value = 0;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);

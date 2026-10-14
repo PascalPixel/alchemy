@@ -59,7 +59,6 @@
 #include "keystate.h"
 #include "btltype.h"
 #include "sound_ids.h"
-#include "call.h"
 #include "btlsys.h"
 #include "battle_session.h"
 #include "animspr.h"
@@ -109,7 +108,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
 	struct BattleCamera		*camera;
 	s32						 kind;
 	struct BtlUnit			*unit;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	DrawRectangle			*slots;
 	struct MotionObject		*target;
 	void					*colors = (void *)0x05000000;
@@ -163,11 +162,11 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
 	WaitFrames(1);
 	if (kind == 4)
 	{
-		Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, work, 1, 1);
+		BattleFx_LoadResource((s32)&ResourceId_WaveSheet, work, 1, 1);
 	}
 	else if (kind == 3)
 	{
-		Resource_LoadAndDecompress((s32)&ResourceId_BeamSequenceImage, work, 0, 0);
+		BattleFx_LoadResource((s32)&ResourceId_BeamSequenceImage, work, 0, 0);
 	}
 	else
 	{
@@ -176,10 +175,10 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
 		case 0:
 		case 1:
 		case 5:
-			Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work, 1, 1);
+			BattleFx_LoadResource((s32)&ResourceId_BlueArcSheetA, work, 1, 1);
 			break;
 		case 2:
-			Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work, 1, 1);
+			BattleFx_LoadResource((s32)&ResourceId_BlueArcSheetB, work, 1, 1);
 			break;
 		}
 	}
@@ -188,8 +187,8 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
 	else
 		Iwram_CopyWords(colors, Resource_GetTableEntry((s32)&ResourceId_CrescentSheet), 128);
 	WaitFrames(1);
-	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
-	Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, Ram_MapCellBuffer, 1, 0);
+	BattleFx_LoadResource((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
+	BattleFx_LoadResource((s32)&ResourceId_YellowOrbSheet, Ram_MapCellBuffer, 1, 0);
 	work->transfer_mode = 2;
 	work->transfer_value = 50;
 	Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -336,7 +335,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
 	s32						 velocity_z;
 	s32						 acceleration;
 	s32						 strength;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	DrawRectangle			*slots;
 	struct MotionObject		*object;
 	struct MotionObject		*target;
@@ -378,17 +377,17 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
 	BattlePres_SetupTransitionAtPairMidpointFar(
 		work->effect->actor, work->effect->unknown_000c, 130);
 	WaitFrames(1);
-	Resource_LoadAndDecompress((s32)&ResourceId_StarBurstSheet, work, 1, 0);
+	BattleFx_LoadResource((s32)&ResourceId_StarBurstSheet, work, 1, 0);
 	BattlePres_SetupTransitionAtPairMidpointFar(
 		work->effect->actor, work->effect->unknown_000c, 130);
 	WaitFrames(1);
-	Resource_LoadAndDecompress((s32)&ResourceId_CrescentSheet, Ram_MapCellBuffer, 1, 1);
+	BattleFx_LoadResource((s32)&ResourceId_CrescentSheet, Ram_MapCellBuffer, 1, 1);
 	if (work->effect->actor > 7)
 		Iwram_CopyWords(colors, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
 	BattlePres_SetupTransitionAtPairMidpointFar(
 		work->effect->actor, work->effect->unknown_000c, 130);
 	WaitFrames(1);
-	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
+	BattleFx_LoadResource((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
 	BattlePres_SetupTransitionAtPairMidpointFar(
 		work->effect->actor, work->effect->unknown_000c, 130);
 	WaitFrames(1);
@@ -599,12 +598,6 @@ void BattleFx_StepPaletteToResource(s32 resource_id)
 // バトル演出：ジンの技（演出 100〜135）
 //--------------------------------------------------------------------------
 
-static __inline__ void LoadResource(const void *id, void *dest, s32 skip, s32 copy)
-{
-	/* FAKEMATCH: needed to match: inline scope keeps each resource call's arguments local */
-	Resource_LoadAndDecompress((s32)id, dest, skip, copy);
-}
-
 static __inline__ void PackRows(void *src, void *dest, s32 width, s32 height)
 {
 	/* FAKEMATCH: needed to match: keep packing arguments within their own inline scope */
@@ -688,7 +681,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	s32						   strip_x;
 	struct FixedPointPosition  velocity;
 	struct EffectPosition	   spark_screen;
-	DrawRectangle			   blitters[2];
+	BlitterPair				   blitters;
 	struct EffectPosition	   projected;
 
 	slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
@@ -715,9 +708,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	//   gMapCellBuffer        : 技ごとの当たりの絵
 	//   gMapCellBuffer+0x3c56 : ジン（属性ごと、20x40）
 	//------------------------------------------------------------------
-	LoadResource(&ResourceId_ParticleSpritesA, sprites, 0, 0);
-	LoadResource(&ResourceId_FireStreakSheet, work, 1, 0);
-	LoadResource(&ResourceId_YellowOrbSheet, Ram_MapCellBuffer, 1, 0);
+	BattleFx_LoadResource((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+	BattleFx_LoadResource((s32)&ResourceId_FireStreakSheet, work, 1, 0);
+	BattleFx_LoadResource((s32)&ResourceId_YellowOrbSheet, Ram_MapCellBuffer, 1, 0);
 	/* FAKEMATCH: needed to match: local dimensions preserve the packing argument order 2026-10-11: literal 40 and 288 differ 4 (movs r2, #40 and the buffer load move ahead of lsls r3). */
 	{
 		s32 width = 40;
@@ -726,48 +719,48 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	}
 	if (kind == 5 || kind == 23)
 	{
-		LoadResource(&ResourceId_FlashBurstSheet, Ram_MapCellBuffer, 1, 0);
+		BattleFx_LoadResource((s32)&ResourceId_FlashBurstSheet, Ram_MapCellBuffer, 1, 0);
 	}
 	else if (kind == 12)
 	{
-		LoadResource(&ResourceId_SkullSheet, Ram_MapCellBuffer, 1, 0);
+		BattleFx_LoadResource((s32)&ResourceId_SkullSheet, Ram_MapCellBuffer, 1, 0);
 	}
 	else if (kind == 6 || kind == 27)
 	{
-		LoadResource(&ResourceId_TornadoSheet, Ram_MapCellBuffer, 1, 0);
-		LoadResource(&ResourceId_LightningBoltSheet, Ram_MapCellBuffer + 0xc56, 1, 0);
+		BattleFx_LoadResource((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer, 1, 0);
+		BattleFx_LoadResource((s32)&ResourceId_LightningBoltSheet, Ram_MapCellBuffer + 0xc56, 1, 0);
 	}
 	else if (kind == 31)
 	{
-		LoadResource(&ResourceId_RuneSheet, Ram_MapCellBuffer, 1, 1);
+		BattleFx_LoadResource((s32)&ResourceId_RuneSheet, Ram_MapCellBuffer, 1, 1);
 	}
 	else if (kind == 8)
 	{
-		LoadResource(&ResourceId_RockSpireSheet, Ram_MapCellBuffer, 1, 1);
+		BattleFx_LoadResource((s32)&ResourceId_RockSpireSheet, Ram_MapCellBuffer, 1, 1);
 	}
 	else if (kind == 14)
 	{
-		LoadResource(&ResourceId_BlueFlameSheet, Ram_MapCellBuffer, 1, 0);
+		BattleFx_LoadResource((s32)&ResourceId_BlueFlameSheet, Ram_MapCellBuffer, 1, 0);
 	}
 	else if (kind == 30)
 	{
-		LoadResource(&ResourceId_TornadoSheet, Ram_MapCellBuffer, 1, 0);
+		BattleFx_LoadResource((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer, 1, 0);
 	}
 	else if (kind == 16)
 	{
-		LoadResource(&ResourceId_IceChipSheet, Ram_MapCellBuffer, 1, 0);
+		BattleFx_LoadResource((s32)&ResourceId_IceChipSheet, Ram_MapCellBuffer, 1, 0);
 	}
 	else if (kind == 20)
 	{
-		LoadResource(&ResourceId_EmberStreakSheet, Ram_MapCellBuffer, 1, 0);
+		BattleFx_LoadResource((s32)&ResourceId_EmberStreakSheet, Ram_MapCellBuffer, 1, 0);
 	}
 	else if (kind == 33 || kind == 34)
 	{
-		LoadResource(&ResourceId_FlameSheetA, Ram_MapCellBuffer, 1, 0);
+		BattleFx_LoadResource((s32)&ResourceId_FlameSheetA, Ram_MapCellBuffer, 1, 0);
 	}
 	else if (kind != 11 && kind != 32)
 	{
-		LoadResource(&ResourceId_SmokeSheet, Ram_MapCellBuffer, 1, 0);
+		BattleFx_LoadResource((s32)&ResourceId_SmokeSheet, Ram_MapCellBuffer, 1, 0);
 	}
 	switch (kind) // ジンの属性
 	{
@@ -781,7 +774,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	case 12:
 	case 13:
 	case 33:
-		LoadResource(&ResourceId_VenusDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
+		BattleFx_LoadResource(
+			(s32)&ResourceId_VenusDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
 		break;
 	case 2: // 水
 	case 14:
@@ -790,7 +784,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	case 17:
 	case 18:
 	case 19:
-		LoadResource(&ResourceId_MercuryDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
+		BattleFx_LoadResource(
+			(s32)&ResourceId_MercuryDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
 		break;
 	case 3: // 火
 	case 5:
@@ -802,7 +797,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	case 25:
 	case 34:
 	case 35:
-		LoadResource(&ResourceId_MarsDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
+		BattleFx_LoadResource(
+			(s32)&ResourceId_MarsDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
 		break;
 	case 1: // 風
 	case 6:
@@ -813,10 +809,12 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	case 30:
 	case 31:
 	case 32:
-		LoadResource(&ResourceId_JupiterDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
+		BattleFx_LoadResource(
+			(s32)&ResourceId_JupiterDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
 		break;
 	case 100:
-		LoadResource(&ResourceId_MercuryDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
+		BattleFx_LoadResource(
+			(s32)&ResourceId_MercuryDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
 		break;
 	}
 	work->transfer_mode = 2; // 残像（12 だけ 3/4、ほかは 1/2）
@@ -1076,14 +1074,14 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	// 11・32 は行動側に重ねる絵と当たりの絵を差し替える
 	if (kind == 11)
 	{
-		LoadResource(&ResourceId_CounterRevealSheet, work, 1, 1);
-		LoadResource(&ResourceId_RedCrescentSheetA, Ram_MapCellBuffer, 1, 0);
+		BattleFx_LoadResource((s32)&ResourceId_CounterRevealSheet, work, 1, 1);
+		BattleFx_LoadResource((s32)&ResourceId_RedCrescentSheetA, Ram_MapCellBuffer, 1, 0);
 		REG_BLDALPHA = 0xe10;
 	}
 	if (kind == 32)
 	{
-		LoadResource(&ResourceId_BlueBeastSheet, work, 1, 1);
-		LoadResource(&ResourceId_RedCrescentSheetB, Ram_MapCellBuffer, 1, 0);
+		BattleFx_LoadResource((s32)&ResourceId_BlueBeastSheet, work, 1, 1);
+		BattleFx_LoadResource((s32)&ResourceId_RedCrescentSheetB, Ram_MapCellBuffer, 1, 0);
 		REG_BLDALPHA = 0xe10;
 	}
 	// 当たりの絵の粒：gMapCellBuffer + 0x4000 に 64 個

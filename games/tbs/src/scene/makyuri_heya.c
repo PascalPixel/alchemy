@@ -1271,7 +1271,7 @@ static void EV03_TALK(void)
 
 static void MakyuriHeya_FadePaletteToWhite(void)
 {
-	/* FAKEMATCH: volatile makes each read of palette RAM a load of its own: the native reads every color with three ldrh, one per component; without it one load is shifted for all three and the function is 104 bytes for 106 in tbs-en (2026-10-13). */
+	/* Palette RAM is hardware (its volatile is source, not a device): volatile makes each read of palette RAM a load of its own: the native reads every color with three ldrh, one per component; without it one load is shifted for all three and the function is 104 bytes for 106 in tbs-en (2026-10-13). */
 	volatile u16 *pal;
 	u32			  i;
 	u32			  done;
@@ -1500,7 +1500,7 @@ static void SceneEffect_RotatePaletteEntries97To103(void)
 
 static void MakyuriHeya_FadePaletteToBlack(void)
 {
-	/* FAKEMATCH: volatile makes each read of palette RAM a load of its own: the native reads every color with three ldrh, one per component, and again after the store; without it one load is shifted for all three and the function is 98 bytes for 100 in tbs-en (2026-10-13). */
+	/* Palette RAM is hardware (its volatile is source, not a device): volatile makes each read of palette RAM a load of its own: the native reads every color with three ldrh, one per component, and again after the store; without it one load is shifted for all three and the function is 98 bytes for 100 in tbs-en (2026-10-13). */
 	volatile u16 *pal;
 	u32			  i;
 	s32			  done;

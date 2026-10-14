@@ -1699,7 +1699,7 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
 	s32						 frame;
 	/* FAKEMATCH: frame local: only draw[0] is used; the unused second blitter word fills
 	   four bytes of the frame. Measured (2026-10-14): declared as one DrawRectangle, the
-	   frame is 60 bytes for 64 (differ 33, frame offsets only). */
+	   frame is 60 bytes for 64 (differ 66, frame offsets only). */
 	BlitterPair			  draw;
 	u8					 *sprites;
 	struct EffectPosition pos;
@@ -3975,7 +3975,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 	s32						 frame;
 	/* FAKEMATCH: frame local: only blit[0] is used; the unused second blitter word fills
 	   four bytes of the frame. Measured (2026-10-14): declared as one DrawRectangle, the
-	   frame is 332 bytes for 336 (differ 102, frame offsets only). */
+	   frame is 332 bytes for 336 (differ 202, frame offsets only). */
 	BlitterPair		   blit;
 	s32				   size;
 	s32				   count;

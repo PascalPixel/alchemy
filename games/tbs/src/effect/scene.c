@@ -3367,7 +3367,7 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
 	void					*canvas;
 	/* FAKEMATCH: frame local: only draw[0] is used; the unused second blitter word fills
 	   four bytes of the frame. Measured (2026-10-14): declared as one DrawRectangle, the
-	   frame is 52 bytes for 56 (differ 10, frame offsets only). */
+	   frame is 52 bytes for 56 (differ 20, frame offsets only). */
 	BlitterPair			  draw;
 	s32					  variant;
 	struct EffectPosition screen;

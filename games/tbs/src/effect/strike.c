@@ -1977,7 +1977,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
 	s32						 frame;
 	/* FAKEMATCH: frame local: only draw[0] is used; the unused second blitter word fills
 	   four bytes of the frame. Measured (2026-10-14): declared as one DrawRectangle, the
-	   frame is 112 bytes for 116 (differ 24, frame offsets only). */
+	   frame is 112 bytes for 116 (differ 48, frame offsets only). */
 	BlitterPair			 draw;
 	s32					 i;
 	u8					*graphics;
@@ -2149,7 +2149,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
 	s32						 frame;
 	/* FAKEMATCH: frame local: only draw[0] is used; the unused second blitter word fills
 	   four bytes of the frame. Measured (2026-10-14): declared as one DrawRectangle, the
-	   frame is 60 bytes for 64 (differ 20, frame offsets only). */
+	   frame is 60 bytes for 64 (differ 40, frame offsets only). */
 	BlitterPair			  draw;
 	s32					  i;
 	u8					 *graphics;

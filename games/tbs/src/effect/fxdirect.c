@@ -92,8 +92,8 @@ void BattleFx_RunIceFleckBurst(struct BattleEffectArgument *effect)
 	work->fade_step = 0;
 	REG_BLDALPHA = 0x100c;
 	REG_BG2PA = 0x100; // 等倍
-	BattleFx_LoadResource((s32)&ResourceId_IceTileSheet, work->sheet, 1, 0);
-	BattleFx_LoadResource((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work->sheet, 1, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
 	switch (work->effect->kind)
 	{
 	case 0:
@@ -308,7 +308,7 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 	IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
 	REG_BLDALPHA = 0x1010;
 	REG_BLDCNT = 0;
-	BattleFx_LoadResource((s32)&ResourceId_TileAnimationMask, work, 1, 1);
+	Resource_LoadAndDecompress((s32)&ResourceId_TileAnimationMask, work, 1, 1);
 	work->transfer_mode = 1; // 転送のたびにキャンバスを 0 で消す
 	work->transfer_value = 0;
 	Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -516,7 +516,7 @@ void BattleEffect_RunTileAndPaletteAnimation(struct BattleEffectArgument *effect
 		// 51 フレーム：閃光の絵と色を用意し、x 32〜63、y 80〜111 に 32 個を置く
 		if (frame == 51)
 		{
-			BattleFx_LoadResource((s32)&ResourceId_FlashBurstSheet, work, 1, 0);
+			Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work, 1, 0);
 			for (i = 1; i != 64; i++)
 			{
 				s32 v;
@@ -613,8 +613,8 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
 	work->fade_step = 0;
 	REG_BLDALPHA = 0x100c;
 	REG_BG2PA = 0x100;
-	BattleFx_LoadResource((s32)&ResourceId_CyanSparkSheet, work->sheet, 1, 0);
-	BattleFx_LoadResource((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_CyanSparkSheet, work->sheet, 1, 0);
+	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
 	switch (work->effect->kind)
 	{
 	case 0:

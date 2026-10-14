@@ -30,9 +30,9 @@ in scope (one line: `NAME is called from FILE.c with no prototype in\n\
 scope`, then what that call shows); and each such comment that is not\n\
 true of its file: the file does not define the function, the header\n\
 declares it too, another file names it or nothing calls it above its\n\
-definition (the first form), or the file it names does not name it (the\n\
-second) (alchemy headers undeclared measures which functions the bytes\n\
-need left out). Fails when a count\n\
+definition (the first form), or the file it names does not call it\n\
+with no prototype in scope (the second) (alchemy headers undeclared\n\
+measures which functions the bytes need left out). Fails when a count\n\
 rises above tools/alchemy/headers.tsv. --update writes the current\n\
 counts there; --list prints every finding.";
 
@@ -170,18 +170,31 @@ fn named_elsewhere(model: &Model, home: &str, name: &str) -> Option<String> {
     unit.cloned().or_else(|| model.far.values().find(|far| far.target == name && model.in_main(home)).map(|far| far.file.clone()))
 }
 
-/// Whether the unit `file` (a path or its last parts) names a function of
-/// `home` and means its definition, from outside the units that compile
-/// `home`.
-fn named_by(model: &Model, home: &str, name: &str, file: &str) -> bool {
+/// Whether the unit `file` (a path or its last parts), from outside the
+/// units that compile `home`, calls a function of `home` with no prototype
+/// in scope: no header it reaches declares it for ☀️'s build (⚓️'s arm of
+/// a shared header is not ☀️'s declaration), and some call comes before
+/// every prototype its own text gives.
+fn called_from(model: &Model, home: &str, name: &str, file: &str) -> bool {
     let definitions = model.definitions();
     let users = model.users(home);
     let suffix = format!("/{file}");
+    let prototype = |entry: &&super::scan::Entry| {
+        entry.name == name && entry.what == What::Prototype && !entry.conditions.iter().any(|c| c.contains("GAME_TLA") && !c.replace(' ', "").starts_with('!'))
+    };
     model.units.iter().any(|unit| {
-        (unit == file || unit.ends_with(&suffix))
-            && !users.contains(&unit.as_str())
-            && model.home(&definitions, unit, name).is_some_and(|(file, _)| file == home)
-            && model.parts(unit).any(|part| super::plan::identifiers(&model.text[part]).contains(name))
+        if !(unit == file || unit.ends_with(&suffix)) || users.contains(&unit.as_str()) || !model.home(&definitions, unit, name).is_some_and(|(file, _)| file == home) {
+            return false;
+        }
+        let mut headers = model.reach.get(unit).into_iter().flatten().filter(|file| !model.is_fragment(file));
+        if headers.any(|header| model.entries.get(header).is_some_and(|entries| entries.iter().any(|entry| prototype(&entry)))) {
+            return false;
+        }
+        let declared: Vec<(usize, usize)> = model.parts(unit).flat_map(|part| model.entries[part].iter().filter(prototype).filter_map(move |entry| place(model, unit, part, entry.start))).collect();
+        model.parts(unit).any(|part| {
+            let calls = super::undeclared::sites(&model.text[part], &|word| word == name);
+            calls.iter().any(|call| place(model, unit, part, call.at).is_some_and(|call| declared.iter().all(|prototype| *prototype > call)))
+        })
     })
 }
 
@@ -193,7 +206,8 @@ fn named_by(model: &Model, home: &str, name: &str, file: &str) -> bool {
 /// neither, and a comment that is not true of its file (the file does not
 /// define the function, its header declares it too; for the first form,
 /// another file names it or nothing calls it above its definition; for
-/// the second, the file it names does not name the function). `headers`
+/// the second, the file it names does not call the function with no
+/// prototype in scope). `headers`
 /// gives each unit header's text.
 pub(crate) fn undeclared(model: &Model, headers: &BTreeMap<String, String>) -> Vec<Finding> {
     let unit = format!("{INCLUDE}{UNIT}");
@@ -233,7 +247,7 @@ pub(crate) fn undeclared(model: &Model, headers: &BTreeMap<String, String>) -> V
             } else if declared.contains(*name) {
                 Some("its header declares it too".to_string())
             } else if let Some(file) = note.from {
-                (!named_by(model, home, name, file)).then(|| format!("{file} does not name it"))
+                (!called_from(model, home, name, file)).then(|| format!("{file} does not call it with no prototype in scope"))
             } else if let Some(other) = named_elsewhere(model, home, name) {
                 Some(format!("{other} names it too"))
             } else if !called_above(model, home, name) {
@@ -447,17 +461,31 @@ mod tests {
         let other = "games/tbs/src/main/b.c";
         let header = "games/tbs/include/unit/main/a.h";
         let from = |name: &str, file: &str| format!("/* {name} is called from {file} with no prototype in scope: in one file the definition would come first. */\n");
-        let source = "void Shared(s32 a)\n{\n}\nvoid Lone(void)\n{\n}\nvoid Wrong(void)\n{\n}\n";
-        let own = format!("{}{}{}", from("Shared", "b.c"), from("Lone", "b.c"), from("Wrong", "c.c"));
-        let files = [(unit, source), (other, "void Scene(void)\n{\n\tShared(1);\n\tWrong();\n}\n")];
+        let shared = "games/tbs/include/main.h";
+        let source = "void Shared(s32 a)\n{\n}\nvoid Lone(void)\n{\n}\nvoid Wrong(void)\n{\n}\nvoid Own(void)\n{\n}\nvoid Kept(void)\n{\n}\nvoid Theirs(void)\n{\n}\n";
+        let own = format!(
+            "{}{}{}{}{}{}",
+            from("Shared", "b.c"),
+            from("Lone", "b.c"),
+            from("Wrong", "c.c"),
+            from("Own", "b.c"),
+            from("Kept", "b.c"),
+            from("Theirs", "b.c")
+        );
+        let calls = "void Own(void);\nvoid Scene(void)\n{\n\tShared(1);\n\tWrong();\n\tLone;\n\tOwn();\n\tKept();\n\tTheirs();\n}\n";
+        let files = [(unit, source), (other, calls), (shared, "void Kept(void);\n#if GAME_TLA\nvoid Theirs(void);\n#endif\n")];
         let none: &[&str] = &[];
-        let model = Model::of(&files, &[(unit, none), (other, none)]);
+        let model = Model::of(&files, &[(unit, none), (other, &[shared])]);
         let headers: BTreeMap<String, String> =
             [(header.to_string(), own), ("games/tbs/include/unit/main/b.h".to_string(), "void Scene(void);\n".to_string())].into();
         let found: Vec<(usize, String)> = undeclared(&model, &headers).into_iter().map(|f| (f.line, f.name)).collect();
         // b.c calls Shared undeclared: that comment is true, where the
-        // first form's would count b.c naming it.
-        assert_eq!(found, [(2, "Lone: b.c does not name it".to_string()), (3, "Wrong: c.c does not name it".to_string())]);
+        // first form's would count b.c naming it. b.c only names Lone; it
+        // declares Own itself above the call, and a header it reads
+        // declares Kept for ☀️ (Theirs only under ⚓️'s arm, so that call
+        // is undeclared).
+        let not = |name: &str, file: &str| format!("{name}: {file} does not call it with no prototype in scope");
+        assert_eq!(found, [(2, not("Lone", "b.c")), (3, not("Wrong", "c.c")), (4, not("Own", "b.c")), (5, not("Kept", "b.c"))]);
     }
 
     #[test]

@@ -13,8 +13,6 @@
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/battle/battle.h"
-#include "unit/battle/unit.h"
-#include "unit/battle/turnend.h"
 #include "unit/game/chara.h"
 #include "unit/game/item.h"
 #include "unit/game/djinn.h"

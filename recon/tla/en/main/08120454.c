@@ -2,7 +2,7 @@
  * alchemy diff: listing 3450 instructions, draft 3450, common 3426,
  * differ 48 (2026-10-08; 56 before the HP drain below, 70 before the
  * order devices).
- * This draft is The Broken Seal's source (0x080bbb0c, games/tbs/src/battle/tgtexec.c) with this game's
+ * This draft is The Broken Seal's source (0x080bbb0c, games/tbs/src/battle/battle.c) with this game's
  * differences written in; they were worked out under GAME_TLA in that file
  * and moved here, where they stay until every edition of this game matches.
  * Then one source in games/common carries only the real differences under

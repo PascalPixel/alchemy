@@ -79,7 +79,7 @@ after `# cached: `, so the list is always the whole build. The same option is
 edition compiles with one option set, for example ☀️'s:
 
 ```
-tools/out/compilers/xgcc -Btools/out/compilers/ -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi -nostdinc -fcall-used-r4 -I... -DTBS_EDITION_EN=1 -Iout/tbs-en -S -o out/tbs-en/obj/games/tbs/src/battle/tgtexec.s games/tbs/src/battle/tgtexec.c
+tools/out/compilers/xgcc -Btools/out/compilers/ -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi -nostdinc -fcall-used-r4 -I... -DTBS_EDITION_EN=1 -Iout/tbs-en -S -o out/tbs-en/obj/games/tbs/src/battle/battle.s games/tbs/src/battle/battle.c
 ```
 
 ## The Lost Age ⚓️

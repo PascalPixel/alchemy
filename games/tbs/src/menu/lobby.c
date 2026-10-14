@@ -5,7 +5,6 @@
 #include "unit/object/evbasic.h"
 #include "unit/object/evactor.h"
 #include "unit/battle/battle.h"
-#include "unit/battle/turnend.h"
 #include "unit/field/field.h"
 #include "unit/game/chara.h"
 #include "unit/game/flag.h"

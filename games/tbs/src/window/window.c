@@ -5,7 +5,6 @@
 
 #include "unit/window/mark_codes.h"
 #include "unit/window/scales.h"
-#include "unit/window/sideobjt.h"
 #include "unit/window/spranim.h"
 #include "unit/window/textspd.h"
 #include "unit/window/window.h"
@@ -91,7 +90,6 @@
 #include "shop.h"
 #include "disptran.h"
 #include "frame.h"
-#include "unit/window/optdata.h"
 
 //--------------------------------------------------------------------------
 // あきリストの先頭をとり出す（なければ NULL）

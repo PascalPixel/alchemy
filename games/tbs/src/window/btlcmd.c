@@ -82,7 +82,6 @@
 #include "frame.h"
 #include "unit/object/psyfx.h"
 #include "unit/window/scales.h"
-#include "unit/window/sideobjt.h"
 
 struct RenderOutput *RenderOutput_Create(
 	s32 slot, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y)

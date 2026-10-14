@@ -77,8 +77,6 @@ main	rom_main_02	games/tbs/src/graphics/text/article	.rodata	en de es fr it
 main	rom_main_02	games/tbs/src/window/spranim	.rodata
 main	rom_main_02	games/tbs/src/window/cursor	.rodata
 main	rom_main_02	games/tbs/src/window/scales	.rodata
-main	rom_main_02	games/tbs/src/window/optdata	.rodata
-main	rom_main_02	games/tbs/src/window/sideobjt	.rodata
 main	rom_main_02	games/tbs/src/window/curframe	.rodata
 main	rom_main_02	games/tbs/src/window/windata	.rodata
 main	rom_main_02	games/tbs/text/messages	.rodata

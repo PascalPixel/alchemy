@@ -2,4 +2,4 @@
 	.balign 2
 	.global WorkspaceOptions_SliderPalette
 WorkspaceOptions_SliderPalette:
-	.incbin "window/slidpal.gbapal"
+	.incbin "common/menu/slidpal.gbapal"

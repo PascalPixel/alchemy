@@ -318,13 +318,13 @@ ObjectMotion_LinkedActionScript:
 @ 地面の粒, 光の粒, きらめき
 	.global FieldFx_GroundParticleTiles
 FieldFx_GroundParticleTiles:
-	.incbin "object/ground.4bpp16x16.plz"
+	.incbin "common/field/common/effect/ground.4bpp16x16.plz"
 	.global FieldFx_MoteTiles
 FieldFx_MoteTiles:
 	.incbin "object/mote.4bpp16x16.plz"
 	.global FieldFx_SparkleTiles
 FieldFx_SparkleTiles:
-	.incbin "object/sparkle.4bpp16x16.plz"
+	.incbin "common/field/common/effect/sparkle.4bpp16x16.plz"
 	.balign 4, 0
 	.global BattleFx_TargetColors
 BattleFx_TargetColors:

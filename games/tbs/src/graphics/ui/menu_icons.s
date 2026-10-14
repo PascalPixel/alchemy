@@ -1129,13 +1129,13 @@ UiIcon_Psynergy090:
 	.incbin "graphics/ui/menu_icons/psynergy_090.icon4"
 UiIcon_Psynergy091:
 	.ifdef TBS_EDITION_DE
-	.incbin "graphics/ui/menu_icons/psynergy_091_de.icon4"
+	.incbin "common/graphics/ui/menu_icons/psynergy_091_de.icon4"
 	.else
 	.ifdef TBS_EDITION_ES
-	.incbin "graphics/ui/menu_icons/psynergy_091_es.icon4"
+	.incbin "common/graphics/ui/menu_icons/psynergy_091_es.icon4"
 	.else
 	.ifdef TBS_EDITION_FR
-	.incbin "graphics/ui/menu_icons/psynergy_091_es.icon4"
+	.incbin "common/graphics/ui/menu_icons/psynergy_091_es.icon4"
 	.else
 	.incbin "graphics/ui/menu_icons/psynergy_091.icon4"
 	.endif
@@ -1146,10 +1146,10 @@ UiIcon_Psynergy092:
 	.incbin "graphics/ui/menu_icons/psynergy_092_de.icon4"
 	.else
 	.ifdef TBS_EDITION_ES
-	.incbin "graphics/ui/menu_icons/psynergy_092_es.icon4"
+	.incbin "common/graphics/ui/menu_icons/psynergy_092_es.icon4"
 	.else
 	.ifdef TBS_EDITION_FR
-	.incbin "graphics/ui/menu_icons/psynergy_092_es.icon4"
+	.incbin "common/graphics/ui/menu_icons/psynergy_092_es.icon4"
 	.else
 	.incbin "graphics/ui/menu_icons/psynergy_092.icon4"
 	.endif

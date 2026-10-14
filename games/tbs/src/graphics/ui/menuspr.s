@@ -14,10 +14,10 @@ Menu_ArrowTiles:
 	.incbin "graphics/ui/menuspr/down.4bpp16x16"
 	.global Menu_PairSpriteATiles
 Menu_PairSpriteATiles:
-	.incbin "graphics/ui/menuspr/sprite_a.4bpp16x16"
+	.incbin "common/menu/djinn/arrowup.4bpp16x16"
 	.global Menu_PairSpriteBTiles
 Menu_PairSpriteBTiles:
-	.incbin "graphics/ui/menuspr/sprite_b.4bpp16x16"
+	.incbin "common/menu/djinn/arrowdn.4bpp16x16"
 	.incbin "graphics/ui/menuspr/digits.4bpp"
 	.incbin "graphics/ui/menuspr/price.4bpp"
 	.global Menu_QuantityTiles

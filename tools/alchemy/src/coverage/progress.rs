@@ -174,13 +174,14 @@ fn run(argv: &[String]) -> Result<String, String> {
         }
     }
     let devices = crate::devices::count(root)?;
+    let linked = crate::dead::Linked::read(root)?;
     let mut lines = Vec::new();
     for ((mark, game, id), state) in [("☀️", "The Broken Seal", "tbs"), ("⚓️", "The Lost Age", "tla")]
         .iter()
         .zip(&games)
     {
         let mut line = done_line(mark, game, state);
-        line.push_str(&patch_part(&root.join("games").join(id))?);
+        line.push_str(&patch_part(root, id, &linked.files)?);
         line.push_str(&crate::devices::summary(&devices, id));
         lines.push(line);
         lines.extend(edition_lines(mark, state));
@@ -258,27 +259,36 @@ pub fn entry(arguments: &[String]) {
     }
 }
 
-/// Post-pack patches (W3) under one game's sources: the shipped literal bytes
+/// Post-pack patches (W3) a game's build applies: the shipped literal bytes
 /// Camelot wrote into streams after packing, reported apart from every total.
-fn patch_part(game: &std::path::Path) -> Result<String, String> {
-    fn walk(dir: &std::path::Path, found: &mut Vec<std::path::PathBuf>) -> Result<(), String> {
-        let entries =
-            std::fs::read_dir(dir).map_err(|error| format!("{}: {error}", dir.display()))?;
-        for entry in entries {
-            let path = entry.map_err(|error| error.to_string())?.path();
-            if path.is_dir() {
-                walk(&path, found)?;
-            } else if path.to_string_lossy().ends_with("_patch.tsv") {
-                found.push(path);
+/// A patch counts for a game when a source one of its editions links, or a
+/// source that one includes, names the asset the patch sits beside, so a
+/// games/common picture both games build counts in both and a copy no
+/// edition names counts in neither.
+fn patch_part(
+    root: &std::path::Path,
+    id: &str,
+    linked: &[(crate::targets::DecompTarget, std::collections::BTreeSet<String>)],
+) -> Result<String, String> {
+    let game = format!("games/{id}");
+    let mut sources = std::collections::BTreeMap::new();
+    for (target, reached) in linked.iter().filter(|(target, _)| target.game_dir() == game) {
+        for source in reached {
+            sources.entry(source.as_str()).or_insert(*target);
+        }
+    }
+    let mut files = std::collections::BTreeSet::new();
+    for (source, target) in sources {
+        for path in crate::build_rom::patch_paths(root, target, std::path::Path::new(source))? {
+            if root.join(&path).is_file() {
+                files.insert(path);
             }
         }
-        Ok(())
     }
-    let mut files = Vec::new();
-    walk(game, &mut files)?;
     let mut literals = 0;
     for file in &files {
-        let text = std::fs::read(file).map_err(|error| format!("{}: {error}", file.display()))?;
+        let path = root.join(file);
+        let text = std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
         literals += ags::patch::Patch::parse(&file.to_string_lossy(), &text)?.literals();
     }
     Ok(format!(
@@ -289,7 +299,52 @@ fn patch_part(game: &std::path::Path) -> Result<String, String> {
 
 #[cfg(test)]
 mod tests {
-    use super::GameDone;
+    use super::{patch_part, GameDone};
+    use crate::targets::{target_for, DecompTargetId};
+
+    #[test]
+    fn a_patch_counts_for_each_game_whose_link_names_its_asset() {
+        let root = tempfile::tempdir().unwrap();
+        let write = |path: &str, text: &str| {
+            let path = root.path().join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, text).unwrap();
+        };
+        let patch = "position\tpack\tship\tproof\n\
+            4\t0x02\t0x01\tliteral: 254 of 255 stand-ins reproduce the stream\n\
+            6\t0x02\t0x01\tcopy of 4\n\
+            9\t0x03\t0x01\tliteral: 250 of 255 stand-ins reproduce the stream\n";
+        // games/common's picture, which one game includes and the other links.
+        write("games/common/src/graphics/title/peak.s", "\t.incbin \"graphics/title/peak.parts.plz\"\n");
+        write("games/common/src/graphics/title/peak_patch.tsv", patch);
+        write("games/tbs/src/graphics/title/title.s", "\t.include \"games/common/src/graphics/title/peak.s\"\n");
+        // A game's own picture, and a copy beside an asset no edition names.
+        write("games/tla/src/map/m1/m1.s", "\t.incbin \"map/m1/grid.plane.lz\"\n");
+        write("games/tla/src/map/m1/grid_patch.tsv", patch);
+        write(
+            "games/tbs/src/graphics/title/peak_patch.tsv",
+            "position\tpack\tship\tproof\n4\t0x02\t0x01\tliteral\n",
+        );
+        let reached = |id, files: &[&str]| {
+            (target_for(id), files.iter().map(|file| (*file).to_owned()).collect())
+        };
+        let linked = [
+            reached(DecompTargetId::TbsEn, &["games/tbs/src/graphics/title/title.s"]),
+            reached(DecompTargetId::TbsJa, &["games/tbs/src/graphics/title/title.s"]),
+            reached(
+                DecompTargetId::TlaEn,
+                &["games/common/src/graphics/title/peak.s", "games/tla/src/map/m1/m1.s"],
+            ),
+        ];
+        assert_eq!(
+            patch_part(root.path(), "tbs", &linked).unwrap(),
+            "; post-pack patch literals 2 in 1 assets (data, not counted)"
+        );
+        assert_eq!(
+            patch_part(root.path(), "tla", &linked).unwrap(),
+            "; post-pack patch literals 4 in 2 assets (data, not counted)"
+        );
+    }
 
     #[test]
     fn a_game_is_complete_only_when_code_and_data_both_are() {

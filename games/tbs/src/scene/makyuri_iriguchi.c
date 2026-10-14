@@ -58,7 +58,7 @@ struct WorkPointers
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 #include "common/object_staged_actor.h"
-#include "common/makyuri_sparks.c"
+#include "common/makyuri_sparks.h"
 
 static s32 SceneAudio_PlayCue118AndReturnZero(void)
 {
@@ -83,7 +83,7 @@ static s32 SceneActor_FaceLeaderWhileGrounded(struct FieldActor *object)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/makyuri_palette_cycle.c"
+#include "common/makyuri_palette_cycle.h"
 
 static void EV21_TOUCH(void)
 {
@@ -134,7 +134,7 @@ static void EV01_SEARCH(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/makyuri_risedrop.c"
+#include "common/makyuri_risedrop.h"
 
 static void EV67_TOUCH(void)
 {
@@ -258,7 +258,7 @@ static void MakyuriIriguchi_OpenEntrance(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/makyuri_arrive.c"
+#include "common/makyuri_arrive.h"
 
 s32 MakyuriIriguchi_ApplyEntryState(void)
 {
@@ -513,7 +513,7 @@ static void MakyuriIriguchi_RunDoorScene(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/makyuri_lights.c"
+#include "common/makyuri_lights.h"
 
 static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 {
@@ -537,7 +537,7 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/makyuri_pillar.c"
+#include "common/makyuri_pillar.h"
 
 s32 gEffectScript0[] = {
 	SC_WAIT(1),

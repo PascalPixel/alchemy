@@ -120,8 +120,8 @@ static void MakyuriHeya_UpdateLeaderEffectTarget(void)
 #endif
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/makyuri_sparks.c"
-#include "common/makyuri_palette_cycle.c"
+#include "common/makyuri_sparks.h"
+#include "common/makyuri_palette_cycle.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -222,7 +222,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/makyuri_risedrop.c"
+#include "common/makyuri_risedrop.h"
 
 static void EV53_TOUCH(void)
 {
@@ -1846,7 +1846,7 @@ static void EV15_TOUCH(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/makyuri_arrive.c"
+#include "common/makyuri_arrive.h"
 
 static void SceneEffect_SpawnParticleRowsAndDrawTiles(void)
 {
@@ -2654,7 +2654,7 @@ static void SceneState_SetRecordTableValue(s32 key, s32 value)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/makyuri_lights.c"
+#include "common/makyuri_lights.h"
 
 static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 {
@@ -2683,7 +2683,7 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *src)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/makyuri_pillar.c"
+#include "common/makyuri_pillar.h"
 
 s32 gEffectScript0[] = {
 	SC_WAIT(1),

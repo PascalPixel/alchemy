@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::ops::Range;
 use std::path::{Component, Path, PathBuf};
 
@@ -309,23 +309,35 @@ pub(crate) fn resolve(name: &str, quoted: bool, directory: &Path, search: &[Path
 }
 
 pub(crate) fn reachable(file: &Path, search: &[PathBuf]) -> BTreeSet<PathBuf> {
-    let mut seen = BTreeSet::new();
+    include_graph(file, search, &|_| None).into_values().flatten().map(|(path, _)| path).collect()
+}
+
+/// What `file` includes and what each file it reaches includes, #if
+/// ignored: each file (canonical; `file` as given) with the files its
+/// includes resolve to, and whether each was found beside it. `stand_in`
+/// gives the text read in place of a file's (by its canonical path), as a
+/// trial compiles it.
+pub(crate) fn include_graph(file: &Path, search: &[PathBuf], stand_in: &dyn Fn(&Path) -> Option<String>) -> BTreeMap<PathBuf, Vec<(PathBuf, bool)>> {
+    let mut graph = BTreeMap::new();
     let mut pending = vec![file.to_path_buf()];
     while let Some(path) = pending.pop() {
-        let Ok(bytes) = std::fs::read(&path) else {
+        if graph.contains_key(&path) {
             continue;
-        };
-        let text = String::from_utf8_lossy(&bytes);
+        }
+        let text = stand_in(&path).or_else(|| std::fs::read(&path).ok().map(|bytes| String::from_utf8_lossy(&bytes).into_owned()));
         let directory = path.parent().unwrap_or(Path::new("."));
-        for (name, quoted) in includes(&text) {
-            if let Some(header) = resolve(&name, quoted, directory, search) {
-                if seen.insert(header.clone()) {
-                    pending.push(header);
-                }
+        let mut included = Vec::new();
+        for (name, quoted) in includes(text.as_deref().unwrap_or("")) {
+            let beside = if quoted { resolve(&name, true, directory, &[]) } else { None };
+            let found = beside.is_some();
+            if let Some(header) = beside.or_else(|| resolve(&name, false, directory, search)) {
+                pending.push(header.clone());
+                included.push((header, found));
             }
         }
+        graph.insert(path, included);
     }
-    seen
+    graph
 }
 
 pub(crate) fn spelling(file: &Path, header: &Path, search: &[PathBuf]) -> Option<String> {
@@ -355,41 +367,74 @@ fn relative_path(from: &Path, to: &Path) -> PathBuf {
 }
 
 pub(crate) fn insert_include(text: &str, name: &str) -> String {
-    insert_include_masked(text, name, &mask(text))
+    include_at(text, name, &mask(text), &|_, _| false)
 }
 
 /// `insert_include` by the file's own mask, which shows where its first
 /// statement starts: an assembler file's `@` comments are blank in its
 /// mask, so they stay above the new line.
 pub(crate) fn insert_include_masked(text: &str, name: &str, mask: &[u8]) -> String {
+    include_at(text, name, mask, &|_, _| false)
+}
+
+/// As `insert_include`, with the first block ending at the first include
+/// of code, which `code` tells by the included name and whether it is
+/// quoted: the shared scene source a scene includes in ROM order under its
+/// header includes is code, not a header. The new include goes after the
+/// last header include above it, or, when there is none, above it and the
+/// comment lines that head it.
+pub(crate) fn insert_include_before_code(text: &str, name: &str, code: &dyn Fn(&str, bool) -> bool) -> String {
+    include_at(text, name, &mask(text), code)
+}
+
+/// Both: where the file's first statement starts, from its mask, and which
+/// included names are code.
+fn include_at(text: &str, name: &str, mask: &[u8], code: &dyn Fn(&str, bool) -> bool) -> String {
     let line = format!("#include \"{name}\"\n");
     let (mut offset, mut depth) = (0, 0i32);
-    let (mut after, mut first, mut stop) = (None, None, text.len());
+    let (mut after, mut first, mut stop, mut code_at) = (None, None, text.len(), None);
+    // Where the outermost #if open here began, and where the comment lines
+    // just above this line began.
+    let (mut opened, mut comments) = (0, None);
     for piece in text.split_inclusive('\n') {
         let range = offset..offset + piece.len();
         offset = range.end;
         let trimmed = piece.trim_start();
+        let blank = mask[range.clone()].iter().all(u8::is_ascii_whitespace);
         if let Some(directive) = trimmed.strip_prefix('#') {
             let directive = directive.trim_start();
             first.get_or_insert(range.start);
+            if directive.starts_with("include") && includes(piece).first().is_some_and(|(name, quoted)| code(name, *quoted)) {
+                code_at = Some(if depth > 0 { opened } else { comments.unwrap_or(range.start) });
+                break;
+            }
             if directive.starts_with("if") {
+                if depth == 0 {
+                    opened = comments.unwrap_or(range.start);
+                }
                 depth += 1;
             } else if directive.starts_with("endif") {
                 depth -= 1;
             } else if directive.starts_with("include") && depth == 0 {
                 after = Some(range.end);
             }
-        } else if !mask[range.clone()].iter().all(u8::is_ascii_whitespace) {
+            comments = None;
+        } else if !blank {
             stop = range.start;
             break;
+        } else if trimmed.trim().is_empty() {
+            comments = None;
+        } else {
+            comments.get_or_insert(range.start);
         }
     }
-    match after {
-        Some(at) => {
+    match (after, code_at) {
+        (Some(at), _) => {
             let newline = if text[..at].ends_with('\n') { "" } else { "\n" };
             format!("{}{newline}{line}{}", &text[..at], &text[at..])
         }
-        None => {
+        (None, Some(at)) => format!("{}{line}{}", &text[..at], &text[at..]),
+        (None, None) => {
             let at = first.unwrap_or(stop);
             let gap = if first.is_none() && at < text.len() { "\n" } else { "" };
             format!("{}{line}{gap}{}", &text[..at], &text[at..])
@@ -432,6 +477,41 @@ mod tests {
         assert!(out.ends_with("#include \"late.inc\"\n"));
         let bare = insert_include("/* head */\nvoid F(void);\n", "io_reg.h");
         assert_eq!(bare, "/* head */\n#include \"io_reg.h\"\n\nvoid F(void);\n");
+    }
+
+    #[test]
+    fn includes_go_above_the_code_a_file_includes() {
+        let code = |name: &str, quoted: bool| quoted && name.starts_with("common/");
+        // An #if around the code ends the block where it opens.
+        let text = "#include \"a.h\"\n\n#if X\n#include \"common/x.h\"\n#endif\n#include \"b.h\"\n";
+        assert_eq!(insert_include_before_code(text, "event.h", &code), "#include \"a.h\"\n#include \"event.h\"\n\n#if X\n#include \"common/x.h\"\n#endif\n#include \"b.h\"\n");
+        // Only code: above it and the comment that heads it.
+        let text = "/* head */\n\n// shared\n#include \"common/x.h\"\n#include \"b.h\"\nvoid F(void);\n";
+        assert_eq!(insert_include_before_code(text, "event.h", &code), "/* head */\n\n#include \"event.h\"\n// shared\n#include \"common/x.h\"\n#include \"b.h\"\nvoid F(void);\n");
+        // Without the test, the same text takes it after the last include.
+        assert!(insert_include(text, "event.h").contains("#include \"b.h\"\n#include \"event.h\"\nvoid F"));
+    }
+
+    #[test]
+    fn the_include_graph_reads_stand_ins_and_tells_what_is_found_beside() {
+        let root = tempfile::tempdir().unwrap();
+        let base = root.path().canonicalize().unwrap();
+        let (include, common) = (base.join("include"), base.join("scene/common"));
+        std::fs::create_dir_all(&include).unwrap();
+        std::fs::create_dir_all(&common).unwrap();
+        std::fs::write(include.join("types.h"), "").unwrap();
+        std::fs::write(include.join("b.h"), "").unwrap();
+        std::fs::write(common.join("a.h"), "#include \"b.h\"\n#include \"types.h\"\n").unwrap();
+        std::fs::write(common.join("b.h"), "").unwrap();
+        let unit = base.join("scene/unit.c");
+        std::fs::write(&unit, "#include \"common/a.h\"\n").unwrap();
+        let search = std::slice::from_ref(&include);
+        let graph = include_graph(&unit, search, &|_| None);
+        assert_eq!(graph[&common.join("a.h")], [(common.join("b.h"), true), (include.join("types.h"), false)]);
+        assert_eq!(reachable(&unit, search), [common.join("a.h"), common.join("b.h"), include.join("types.h")].into());
+        // A stand-in's includes are the ones read.
+        let stand_in = |path: &Path| (path == common.join("b.h")).then(|| "#include <b.h>\n".to_string());
+        assert_eq!(include_graph(&unit, search, &stand_in)[&common.join("b.h")], [(include.join("b.h"), false)]);
     }
 
     #[test]

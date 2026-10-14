@@ -5,11 +5,13 @@
 //! overlay counterparts, drafts) are not. Each overlay counts once, in its
 //! unpacked image: its compressed stream in the ROM is outside the total.
 
-use super::calcrom::{is_listing, is_text, relative_object, sections_in_outputs};
+use super::calcrom::{is_listing, is_text, relative_object, sections, sections_in_outputs};
+use crate::targets::{target_for, TARGET_IDS};
 use object::elf::{PT_LOAD, SHF_ALLOC, SHT_NOBITS};
 use object::read::elf::{ElfFile32, ProgramHeader, SectionHeader};
 use object::LittleEndian;
 use std::collections::BTreeMap;
+use std::path::{Path, PathBuf};
 
 /// One image's data: its non-code bytes, how many are done, and the recon
 /// objects that place the rest.
@@ -87,35 +89,56 @@ pub(crate) fn from_recon(object: &str, output: &str, overlay: bool) -> bool {
 }
 
 /// Each overlay stream a map places, by the object whose `.overlays` input
-/// section holds its `Resource_Overlay<ID>` label: id (lowercase) to object.
-pub(crate) fn stream_owners(map: &str) -> BTreeMap<String, String> {
-    let mut owners = BTreeMap::new();
-    let mut owner: Option<&str> = None;
-    for line in map.lines() {
-        let fields = line.split_whitespace().collect::<Vec<_>>();
-        if let Some(rest) = line.strip_prefix(" .") {
-            owner = rest.strip_prefix("overlays ").and_then(|tail| {
-                let (_, rest) = tail.trim_start().split_once(char::is_whitespace)?;
-                let (_, object) = rest.trim_start().split_once(char::is_whitespace)?;
-                Some(object.trim())
-            });
+/// section holds it: id (lowercase) to object. `incbinned` gives the ids of
+/// the streams an object's source incbins (`overlays/resource_<id>.lz`), so
+/// a stream's label may take any name.
+pub(crate) fn stream_owners(
+    map: &str,
+    incbinned: &dyn Fn(&str) -> Result<Vec<String>, String>,
+) -> Result<BTreeMap<String, String>, String> {
+    let mut owners = BTreeMap::<String, String>::new();
+    for placed in sections(map) {
+        if placed.name != ".overlays" || placed.size <= 0 {
             continue;
         }
-        if !line.starts_with(' ') {
-            owner = None;
-            continue;
-        }
-        let (Some(object), [address, label]) = (owner, fields.as_slice()) else {
-            continue;
-        };
-        let Some(id) = label.strip_prefix("Resource_Overlay") else {
-            continue;
-        };
-        if address.starts_with("0x") && !id.is_empty() {
-            owners.insert(id.to_ascii_lowercase(), object.to_owned());
+        for id in incbinned(placed.object)? {
+            let id = id.to_ascii_lowercase();
+            match owners.get(&id) {
+                Some(other) if other != placed.object => {
+                    return Err(format!(
+                        "overlay stream {id}: both {other} and {} incbin it",
+                        placed.object
+                    ));
+                }
+                _ => {
+                    owners.insert(id, placed.object.to_owned());
+                }
+            }
         }
     }
-    owners
+    Ok(owners)
+}
+
+/// The ids of the streams an object's source incbins, as the build reads
+/// them for the edition whose output directory is `output`; none for an
+/// object the build did not make there.
+pub(crate) fn incbinned(root: &Path, output: &str, object: &str) -> Result<Vec<String>, String> {
+    let Some(stem) = relative_object(object, output, false)
+        .and_then(|(path, _)| path.strip_suffix(".o"))
+    else {
+        return Ok(Vec::new());
+    };
+    let target = TARGET_IDS
+        .into_iter()
+        .map(target_for)
+        .find(|target| target.output_dir == output)
+        .ok_or_else(|| format!("{output}: no edition builds into it"))?;
+    let source = crate::build_rom::source_extensions(stem)
+        .iter()
+        .map(|extension| PathBuf::from(format!("{stem}.{extension}")))
+        .find(|path| root.join(path).is_file())
+        .ok_or_else(|| format!("{stem}.o: no overlay stream source; rebuild"))?;
+    crate::build_rom::stream_ids(root, target, &source)
 }
 
 /// Tallies one image from its linker map and its loaded sections. `streams`
@@ -129,12 +152,31 @@ pub(crate) fn tally(
     streams: &BTreeMap<String, i64>,
     proven: &dyn Fn(&str) -> Result<bool, String>,
 ) -> Result<Data, String> {
-    let owners = stream_owners(map);
+    let root = crate::compiler::routing::root();
+    let sources = |object: &str| incbinned(root, output, object);
+    tally_streams(map, loaded, output, overlay, streams, proven, &sources)
+}
+
+/// tally, with the ids each object's source incbins from `incbinned`.
+fn tally_streams(
+    map: &str,
+    loaded: &[Loaded],
+    output: &str,
+    overlay: bool,
+    streams: &BTreeMap<String, i64>,
+    proven: &dyn Fn(&str) -> Result<bool, String>,
+    incbinned: &dyn Fn(&str) -> Result<Vec<String>, String>,
+) -> Result<Data, String> {
+    let owners = if streams.is_empty() {
+        BTreeMap::new()
+    } else {
+        stream_owners(map, incbinned)?
+    };
     let mut packed = BTreeMap::<&str, i64>::new();
     for (id, bytes) in streams {
-        let object = owners
-            .get(id)
-            .ok_or_else(|| format!("overlay stream {id} has no Resource_Overlay label"))?;
+        let object = owners.get(id).ok_or_else(|| {
+            format!("overlay stream {id}: no .overlays source the image places incbins it")
+        })?;
         *packed.entry(object.as_str()).or_default() += bytes;
     }
     let Some(start) = loaded.iter().map(|s| s.load).min() else {
@@ -200,7 +242,17 @@ mod tests {
     use super::*;
 
     fn tally(map: &str, loaded: &[Loaded], output: &str, overlay: bool, streams: &BTreeMap<String, i64>) -> Result<Data, String> {
-        super::tally(map, loaded, output, overlay, streams, &|object| Ok(object.contains("/obj/games/")))
+        super::tally_streams(map, loaded, output, overlay, streams, &|object| Ok(object.contains("/obj/games/")), &incbinned)
+    }
+
+    /// The streams each test object's source incbins.
+    fn incbinned(object: &str) -> Result<Vec<String>, String> {
+        Ok(match object.rsplit("/obj/").next() {
+            Some("games/x/overlays.o") => vec!["36f".into(), "370".into()],
+            Some("recon/tla/overlays.o") => vec!["649".into()],
+            Some("games/x/twice.o") => vec!["370".into()],
+            _ => Vec::new(),
+        })
     }
 
     #[test]
@@ -288,27 +340,48 @@ mod tests {
     }
 
     #[test]
+    fn an_objects_streams_are_the_ids_its_source_incbins_in_that_edition() {
+        let root = tempfile::tempdir().unwrap();
+        std::fs::create_dir_all(root.path().join("games/x")).unwrap();
+        let source = "\t.section .overlays,\"a\"\nFixture_StreamA:\n\t.incbin \"overlays/resource_36f.lz\"\n\t.ifdef TBS_EDITION_JA\nFixture_StreamB:\n\t.incbin \"overlays/resource_3ff.lz\"\n\t.endif\n\t.balign 4, 0\n";
+        std::fs::write(root.path().join("games/x/overlays.s"), source).unwrap();
+        let read = |output: &str, object: &str| super::incbinned(root.path(), output, object);
+        assert_eq!(read("out/tbs-en", "/b/out/tbs-en/obj/games/x/overlays.o").unwrap(), ["36f"]);
+        assert_eq!(read("out/tbs-ja", "/b/out/tbs-ja/obj/games/x/overlays.o").unwrap(), ["36f", "3ff"]);
+        // An object the build did not make has no streams; one without a
+        // source, or an output no edition builds into, is an error.
+        assert!(read("out/tbs-en", "/b/libgcc.a(_call_via_rX.o)").unwrap().is_empty());
+        assert!(read("out/tbs-en", "/b/out/tbs-en/obj/games/x/gone.o").is_err());
+        assert!(read("out/none", "/b/out/none/obj/games/x/overlays.o").is_err());
+    }
+
+    #[test]
     fn an_overlay_stream_leaves_the_rom_total_and_its_packer_bytes_stay() {
+        // A stream belongs to the object whose source incbins it, whatever
+        // its label is called: ☀️'s take their units' names, ⚓️'s their ids.
         let map = [
             "Linker script and memory map",
             ".rom_tail       0x0000000008000000      0x60",
             " .rodata        0x0000000008000000       0x10 /b/out/tbs-en/obj/games/x/head.o",
             " */games/x/overlays.o(.overlays)",
             " .overlays      0x0000000008000010       0x28 /b/out/tbs-en/obj/games/x/overlays.o",
-            "                0x0000000008000010                Resource_Overlay36F",
-            "                0x0000000008000020                Resource_Overlay370",
+            "                0x0000000008000010                Fixture_StreamA",
+            "                0x0000000008000020                Fixture_StreamB",
             " .overlays      0x0000000008000038       0x28 /b/out/tbs-en/obj/recon/tla/overlays.o",
             "                0x0000000008000038                Resource_Overlay649",
         ]
         .join("\n");
         assert_eq!(
-            stream_owners(&map).into_iter().collect::<Vec<_>>(),
+            stream_owners(&map, &incbinned).unwrap().into_iter().collect::<Vec<_>>(),
             [
                 ("36f".to_string(), "/b/out/tbs-en/obj/games/x/overlays.o".to_string()),
                 ("370".to_string(), "/b/out/tbs-en/obj/games/x/overlays.o".to_string()),
                 ("649".to_string(), "/b/out/tbs-en/obj/recon/tla/overlays.o".to_string()),
             ]
         );
+        // Two objects may not both incbin one stream.
+        let twice = format!("{map}\n .overlays      0x0000000008000060        0x4 /b/out/tbs-en/obj/games/x/twice.o");
+        assert!(stream_owners(&twice, &incbinned).unwrap_err().contains("370"));
         let image = [Loaded {
             name: ".rom_tail".into(),
             address: 0x0800_0000,

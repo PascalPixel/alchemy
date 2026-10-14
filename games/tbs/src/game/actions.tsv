@@ -1,4 +1,4 @@
-target_mode:u8	target_flags:u8	damage_class:u8	effect:u8	unknown_040:u8	unknown_041:u8	unknown_042:u8	unknown_043:u8	range:u8	pp_cost:u8	power:u16	type:u8	unknown_0d0:u8	unknown_0d1:u8	unknown_0d2:u8
+target_mode:u8	target_flags:u8	damage_class:u8	effect:u8	icon:u8	unknown_041:u8	unknown_042:u8	unknown_043:u8	range:u8	pp_cost:u8	power:u16	type:u8	pad_0d:u8	pad_0e:u8	pad_0f:u8
 1	5	4	0	0	0	0	0	1	0	0	0	0	0	0
 1	131	4	0	0	0	0	0	1	0	0	0	0	0	0
 4	137	4	46	0	0	0	0	1	0	0	0	0	0	0

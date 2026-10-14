@@ -1,4 +1,4 @@
-ability:u16	unknown_020:u8	unknown_021:u8	unknown_022:u8	unknown_023:u8	unknown_024:u8	unknown_025:u8	unknown_026:u8	unknown_027:u8	unknown_028:u8	unknown_029:u8
+ability:u16	unknown_020:u8	unknown_021:u8	hp:s8	ep:s8	atk:s8	def:s8	agi:s8	luck:s8	pad_0a:u8	pad_0b:u8
 300	0	0	8	4	3	0	0	0	0	0
 301	0	0	9	0	0	2	2	1	0	0
 302	0	0	10	3	0	0	3	0	0	0

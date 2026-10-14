@@ -160,7 +160,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 static void EV08_TALK_1(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKareiWantGoToTolbi);
+	Engine_EventSetMessage(MsgKareiWantGoToTolbi);
 	Engine_EventAskYesNo(8, 0);
 	Engine_EventEnd();
 }
@@ -170,7 +170,7 @@ static void EV11_TALK(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x8a6) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKareiGoingTakeShip);
+		Engine_EventSetMessage(MsgKareiGoingTakeShip);
 		Event_OpenMessage(11, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
@@ -185,7 +185,7 @@ static void EV11_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKareiPassMessageDaughter);
+		Engine_EventSetMessage(MsgKareiPassMessageDaughter);
 		Event_ShowMessage(11, 0);
 	}
 	Engine_EventEnd();
@@ -204,7 +204,7 @@ static void KareiTorebi_RemindBoardShip(void)
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 			Engine_EventBegin();
 #endif
-			Engine_EventSetMessage((s32)MsgKareiFinishedOutHereBoardShip);
+			Engine_EventSetMessage(MsgKareiFinishedOutHereBoardShip);
 			Event_OpenMessage(12, 0);
 			Actor_FaceDirection(12, 0x4000, 0);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -228,17 +228,17 @@ static void SceneDialogue_RunActor12Event(void)
 	{
 		if (GameFlag_IsSet(0x8a9) != 0)
 		{
-			Engine_EventSetMessage((s32)MsgKareiFinishedOutHereBoardShip);
+			Engine_EventSetMessage(MsgKareiFinishedOutHereBoardShip);
 			Event_OpenMessage(12, 0);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgKareiWantGoAshore);
+			Engine_EventSetMessage(MsgKareiWantGoAshore);
 			Event_OpenMessage(12, 0);
 			if (Engine_EventChooseYesNo(0, 0) == 0)
 			{
 				Engine_EventWait(10);
-				Engine_EventSetMessage((s32)MsgKareiWantGoAshore + 1);
+				Engine_EventSetMessage(MsgKareiWantGoAshore + 1);
 				Event_ShowMessage(12, 0);
 				Actor_WalkToAndWait(12, 88, 0x508);
 				Actor_FaceDirection(12, 0x4000, 0);
@@ -247,7 +247,7 @@ static void SceneDialogue_RunActor12Event(void)
 			}
 			else
 			{
-				Engine_EventSetMessage((s32)MsgKareiWantGoAshore + 2);
+				Engine_EventSetMessage(MsgKareiWantGoAshore + 2);
 				Event_ShowMessage(12, 0);
 			}
 		}
@@ -258,7 +258,7 @@ static void SceneDialogue_RunActor12Event(void)
 		{
 			return;
 		}
-		Engine_EventSetMessage((s32)MsgKareiTicketsPlease);
+		Engine_EventSetMessage(MsgKareiTicketsPlease);
 		Event_ShowMessage(12, 0);
 		if (GameFlag_IsSet(0x8a5) != 0)
 		{
@@ -291,17 +291,17 @@ static void EV13_TALK(void)
 
 	if (Engine_GameFlagIsSet(0x8A7) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgKareiBoardWaitSetSail);
+		Engine_EventSetMessage(MsgKareiBoardWaitSetSail);
 		Engine_EventOpenMessage(13, 0);
 	}
 	else if (Engine_GameFlagIsSet(0x8A5) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgKareiHaveTicketsGiveHim);
+		Engine_EventSetMessage(MsgKareiHaveTicketsGiveHim);
 		Engine_EventShowMessage(13, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKareiAfterHandingOverTicket);
+		Engine_EventSetMessage(MsgKareiAfterHandingOverTicket);
 		Engine_EventShowMessage(13, 0);
 	}
 
@@ -323,12 +323,12 @@ static void EV08_TALK_2(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x8a5) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgKareiHandInTicketPlank);
+		Engine_EventSetMessage(MsgKareiHandInTicketPlank);
 		Event_ShowMessage(8, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKareiLookingForTickets);
+		Engine_EventSetMessage(MsgKareiLookingForTickets);
 		Event_OpenMessage(8, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 1)
 		{
@@ -389,7 +389,7 @@ static void EV08_TALK_2(void)
 static void EV08_TALK_3(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKareiHearScaryTrip);
+	Engine_EventSetMessage(MsgKareiHearScaryTrip);
 	Engine_EventAskYesNo(8, 0);
 	Engine_EventEnd();
 }
@@ -397,7 +397,7 @@ static void EV08_TALK_3(void)
 static void EV10_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKareiTouristsLookUpset);
+	Engine_EventSetMessage(MsgKareiTouristsLookUpset);
 	Engine_EventAskYesNo(10, 0);
 	Engine_EventEnd();
 }
@@ -409,7 +409,7 @@ static void KareiTorebi_DeliverParentsMessage(void)
 	{
 		Actor_FaceActor(11, ACTOR_PARTY_LEADER, 0);
 		Engine_EventWait(20);
-		Engine_EventSetMessage((s32)MsgKareiThanksMessageParents);
+		Engine_EventSetMessage(MsgKareiThanksMessageParents);
 		Event_ShowMessage(11, 0);
 		Engine_EventEnd();
 	}
@@ -419,7 +419,7 @@ static void KareiTorebi_DeliverParentsMessage(void)
 		Actor_ShowEmote(11, 0x100, 50);
 		Actor_FaceActor(11, ACTOR_PARTY_LEADER, 0);
 		Engine_EventWait(20);
-		Engine_EventSetMessage((s32)MsgKareiSilkRoadBlocked);
+		Engine_EventSetMessage(MsgKareiSilkRoadBlocked);
 		Event_ShowMessage(11, 0);
 		if (GameFlag_IsSet(0x8a6) != 0)
 		{
@@ -629,7 +629,7 @@ static void FieldScene_RunScene3aeSequenceA(void)
 	Engine_ActorWaitForMove(GERALD);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgKareiIncredibleOcean);
+	Engine_EventSetMessage(MsgKareiIncredibleOcean);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
 	Actor_SetSpeed(GERALD, 0x19999, 0xcccc);
 	Actor_WalkToAndWait(GERALD, 232, 0x590);
@@ -709,7 +709,7 @@ static void EV50_TOUCH(void)
 	GameFlag_Set(0x8ab);
 	Engine_EventBegin();
 	Battle_ResetEffectCounter();
-	Engine_EventSetMessage((s32)MsgKareiReturnedTicketCost);
+	Engine_EventSetMessage(MsgKareiReturnedTicketCost);
 	actor = Object_GetById(11);
 	actor->priority_flags = 0;
 	((u8 *)actor->sprite)[9] |= 12;

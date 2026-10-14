@@ -87,7 +87,7 @@ void *HaidiaHeya_SelectEvents(void)
 static void EV15_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgHaidiaSukuretaCameToStudyMt);
+	Engine_EventSetMessage(MsgHaidiaSukuretaCameToStudyMt);
 	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 15, 6);
 	Engine_EventAskYesNo(15, 0);
 	Engine_EventEnd();
@@ -96,7 +96,7 @@ static void EV15_TALK(void)
 static void EV19_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgHaidiaLetsScareSukuretasVisitors);
+	Engine_EventSetMessage(MsgHaidiaLetsScareSukuretasVisitors);
 	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 19, 6);
 	Engine_EventAskYesNo(19, 0);
 	Engine_EventEnd();
@@ -109,13 +109,13 @@ static void Scene_GiveFarewellHerb(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(FLAG_GOT_FAREWELL_HERB) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaYouMustSaveJasmine);
+		Engine_EventSetMessage(MsgHaidiaYouMustSaveJasmine);
 		Event_ShowMessage(20, 0);
 		FieldObject_SetTargetAndCallback(20, 0x10000, gValeFaceTargetScript);
 	}
 	else
 	{
-		gift = (s32)MsgHaidiaThisIsMyFarewellGift;
+		gift = MsgHaidiaThisIsMyFarewellGift;
 		Engine_EventSetMessage(gift);
 		Event_ShowMessageAndWait(20, 0, 20);
 		Engine_MessageShowCentered((gift + 1), 1);
@@ -128,7 +128,7 @@ static void Scene_GiveFarewellHerb(void)
 static void EV16_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgHaidiaTheCulpritsHadStrangePowers);
+	Engine_EventSetMessage(MsgHaidiaTheCulpritsHadStrangePowers);
 	Engine_EventAskYesNo(16, 0);
 	Engine_EventEnd();
 }
@@ -136,7 +136,7 @@ static void EV16_TALK(void)
 static void EV10_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgHaidiaDidYouHearAboutDora);
+	Engine_EventSetMessage(MsgHaidiaDidYouHearAboutDora);
 	Engine_EventAskYesNo(10, 0);
 	Engine_EventEnd();
 }
@@ -144,7 +144,7 @@ static void EV10_TALK(void)
 static void EV11_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgHaidiaHopeDidntGet);
+	Engine_EventSetMessage(MsgHaidiaHopeDidntGet);
 	Engine_EventShowMessage(0x800b, 0);
 	Engine_EventEnd();
 }
@@ -277,18 +277,18 @@ static void EV21_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x87a) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaYouCameBack);
+		Engine_EventSetMessage(MsgHaidiaYouCameBack);
 		Engine_EventAskYesNo(21, 0);
 	}
 	else
 	{
 		if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 		{
-			Engine_EventSetMessage((s32)MsgHaidiaValeFeelsEmpty);
+			Engine_EventSetMessage(MsgHaidiaValeFeelsEmpty);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgHaidiaGoodWeaponsDrawOutStrength);
+			Engine_EventSetMessage(MsgHaidiaGoodWeaponsDrawOutStrength);
 		}
 		Engine_EventShowMessage(21, 0);
 	}
@@ -309,17 +309,17 @@ static void EV22_TALK(void)
 		Engine_EventBegin();
 		if (Engine_GameFlagIsSet(0x87a) != 0)
 		{
-			Engine_EventSetMessage((s32)MsgHaidiaTheRumorWasTrue);
+			Engine_EventSetMessage(MsgHaidiaTheRumorWasTrue);
 		}
 		else
 		{
 			if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 			{
-				Engine_EventSetMessage((s32)MsgHaidiaImNotSadJustGo);
+				Engine_EventSetMessage(MsgHaidiaImNotSadJustGo);
 			}
 			else
 			{
-				Engine_EventSetMessage((s32)MsgHaidiaGoodArmorDrawsOutStrength);
+				Engine_EventSetMessage(MsgHaidiaGoodArmorDrawsOutStrength);
 			}
 		}
 		Engine_EventShowMessage(22, 0);
@@ -341,7 +341,7 @@ static void EV20_TALK(void)
 		if (Engine_GameFlagIsSet(0x87a) != 0)
 		{
 			Engine_EventBegin();
-			Engine_EventSetMessage((s32)MsgHaidiaWhenDidYouComeBack);
+			Engine_EventSetMessage(MsgHaidiaWhenDidYouComeBack);
 			Engine_EventShowMessage(20, 0);
 			Engine_EventEnd();
 		}
@@ -354,7 +354,7 @@ static void EV20_TALK(void)
 			else
 			{
 				Engine_EventBegin();
-				Engine_EventSetMessage((s32)MsgHaidiaAWiseManFleesWhen);
+				Engine_EventSetMessage(MsgHaidiaAWiseManFleesWhen);
 				Engine_EventShowMessage(20, 0);
 				Engine_EventEnd();
 			}
@@ -437,7 +437,7 @@ static void FieldScene_RunLongPresentationSequence(void)
 	Engine_ActorSetAnimationAndWait(10, 4);
 	Engine_EventWait(40);
 	Actor_FaceDirection(10, 0xd000, 20);
-	Engine_EventSetMessage((s32)MsgHaidiaHey2);
+	Engine_EventSetMessage(MsgHaidiaHey2);
 	Event_ShowMessageAndWait(0x900a, 0, 20);
 	Engine_ActorStop(ACTOR_PARTY_LEADER);
 	Engine_ActorStop(GERALD);
@@ -549,7 +549,7 @@ static void FieldScene_RunLongPresentationSequence(void)
 	Event_ShowMessage(10, 0);
 	Engine_ActorSetAnimationAndWait(11, 4);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgHaidiaYoureLeavingAgainSoon);
+	Engine_EventSetMessage(MsgHaidiaYoureLeavingAgainSoon);
 	Event_ShowMessage(0x200b, 0);
 	Camera_MoveTo(0x3090000, 0, 0x1d40000, 1);
 	Engine_EventWait(20);

@@ -2716,7 +2716,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 					case 19:
 						no = decode(&st) - 1;
 						tmp = UiRender_LookupNamedValue(3, clear);
-						UiText_DecodeMessage(tmp + (s32)&MsgClassName, name, 24);
+						UiText_DecodeMessage(tmp + MsgClassName, name, 24);
 						pos = UiText_AppendArticleName(0, name, pos, entry, no, plural, &suffix);
 						break;
 					case 20:
@@ -2733,18 +2733,17 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 #else
 						if (no == 2 || (no == 3 && plural != 0) || no == 4)
 #endif
-							UiText_DecodeMessage(tmp + (s32)MsgItemPluralName, name, 24);
+							UiText_DecodeMessage(tmp + MsgItemPluralName, name, 24);
 						else
-							UiText_DecodeMessage(tmp + (s32)&MsgItemName, name, 24);
+							UiText_DecodeMessage(tmp + MsgItemName, name, 24);
 #else
-						UiText_DecodeMessage(
-							(tmp & RENDER_ENTRY_MASK) + (s32)&MsgItemName, name, 24);
+						UiText_DecodeMessage((tmp & RENDER_ENTRY_MASK) + MsgItemName, name, 24);
 #endif
 						pos = UiText_AppendArticleName(0, name, pos, entry, no, plural, &suffix);
 						break;
 					case 21:
 						tmp = UiRender_LookupNamedValue(4, clear);
-						UiText_DecodeMessage(tmp + (s32)&MsgAbilityName, name, 24);
+						UiText_DecodeMessage(tmp + MsgAbilityName, name, 24);
 						p = name;
 						next = pos;
 						while (*p != 0)
@@ -2758,7 +2757,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 					case 23:
 						UiText_DecodeMessage(
 							Scene_GetAreaNameIndexFar(UiRender_LookupNamedValue(6, clear), 1)
-								+ (s32)&MsgDebugEntryName,
+								+ MsgDebugEntryName,
 							name, 24);
 						p = name;
 						next = pos;
@@ -3186,23 +3185,23 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 						break;
 					case 19:
 						tmp = UiRender_LookupNamedValue(3, clear);
-						UiText_DecodeMessage(tmp + (s32)&MsgClassName, name, 24);
+						UiText_DecodeMessage(tmp + MsgClassName, name, 24);
 						pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
 						break;
 					case 20:
 						tmp = UiRender_LookupNamedValue(2, clear);
-						UiText_DecodeMessage((tmp & 511) + (s32)&MsgItemName, name, 24);
+						UiText_DecodeMessage((tmp & 511) + MsgItemName, name, 24);
 						pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
 						break;
 					case 21:
 						tmp = UiRender_LookupNamedValue(4, clear);
-						UiText_DecodeMessage(tmp + (s32)&MsgAbilityName, name, 24);
+						UiText_DecodeMessage(tmp + MsgAbilityName, name, 24);
 						pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
 						break;
 					case 23:
 						UiText_DecodeMessage(
 							Scene_GetAreaNameIndexFar(UiRender_LookupNamedValue(6, clear), 1)
-								+ (s32)&MsgDebugEntryName,
+								+ MsgDebugEntryName,
 							name, 24);
 						pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
 						break;
@@ -3224,7 +3223,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 						if (work->menu_state != 0
 							&& (actor->class_id == 122 || actor->class_id == 125))
 						{
-							message = (s32)&MsgMysteryPersonName;
+							message = MsgMysteryPersonName;
 							if (actor->class_id == 125)
 								message++;
 							UiText_DecodeMessage(message, name, 10);
@@ -5768,10 +5767,10 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count)
 		switch (mode)
 		{
 		case 4:
-			UiText_DrawCharacterAtOffset((s32)MsgAbilityNotKnown, screen->window, 0, 0);
+			UiText_DrawCharacterAtOffset(MsgAbilityNotKnown, screen->window, 0, 0);
 			break;
 		case 2:
-			UiText_DrawCharacterAtOffset((s32)MsgItemNotHeld, screen->window, 0, 0);
+			UiText_DrawCharacterAtOffset(MsgItemNotHeld, screen->window, 0, 0);
 			break;
 		}
 	}
@@ -6245,7 +6244,7 @@ void Menu_ReloadNodeResource(struct SelectionScreen *state, u32 index)
 	}
 	if (node->kind == 1 || node->kind == 6)
 	{
-		u32 first = node->message - (u32)MsgCommandName;
+		u32 first = node->message - MsgCommandName;
 
 		value = node->slot;
 		Ui_BuildPairedPatternsToSlot(first, 0, &value, &output, 1);
@@ -6265,7 +6264,7 @@ void Menu_LoadSelectionNodeResource(struct SelectionScreen *state, u32 index)
 	}
 	if (node->kind == 1 || node->kind == 6)
 	{
-		u32 id = node->message - (u32)MsgCommandName;
+		u32 id = node->message - MsgCommandName;
 
 		value = node->slot;
 		Ui_BuildPairedPatternsToSlot(id, 0, &value, &res, 1);
@@ -6472,19 +6471,19 @@ void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s3
 		if (reuse != 0)
 			src = node->slot;
 		Ui_BuildPairedPatternsToSlot(base, 0, &src, &tile, reuse);
-		node->message = base + (s32)MsgCommandName;
+		node->message = base + MsgCommandName;
 		break;
 	case 2:
 		if (reuse != 0)
 			src = node->slot;
 		UiIcon_BuildItemIconTiles(base, 1, &src, &tile, reuse);
-		node->message = base + (s32)MsgItemName;
+		node->message = base + MsgItemName;
 		break;
 	case 4:
 		if (reuse != 0)
 			src = node->slot;
 		Ability_LoadGlyph(base, 1, &src, &tile, reuse);
-		node->message = base + (s32)MsgAbilityName;
+		node->message = base + MsgAbilityName;
 		break;
 	}
 
@@ -6947,7 +6946,7 @@ void Debug_SelectAbilityPair(void)
 			cursor = RenderOutput_Create(slot, 0x40000000, win, 0, 0);
 		}
 		/* FAKEMATCH: needed to match: the title message reuses the slot variable. The message id passed directly: differ 23. */
-		slot = (s32)MsgPanelHpMaxLabel;
+		slot = MsgPanelHpMaxLabel;
 		UiText_DrawCharacterAtOffset(slot, title, 16, 0);
 		for (;;)
 		{
@@ -6962,19 +6961,15 @@ void Debug_SelectAbilityPair(void)
 				cursor->oam.y = y;
 				RenderOutput_RedrawSavedRect(win);
 				UiWindow_DrawDividerLine(win, 1, 2, 17, 2);
-				UiText_DrawCharacterAtOffset((s32)MsgPanelStatusLabel, win, 48, 0);
-				UiText_DrawCharacterAtOffset(
-					list[first].ability + (s32)MsgAbilityName, win, 56, 16);
-				UiText_DrawCharacterAtOffset(
-					list[second].ability + (s32)MsgAbilityName, win, 56, 32);
-				UiText_DrawCharacterAtOffset((s32)MsgPanelStatusLabel - 2, win, 16, 16);
-				UiText_DrawCharacterAtOffset((s32)MsgPanelStatusLabel - 1, win, 16, 32);
-				UiText_DrawCharacterAtOffset(
-					list[first].owner + (s32)MsgCharacterName, win, 104, 16);
-				UiText_DrawCharacterAtOffset(
-					list[second].owner + (s32)MsgCharacterName, win, 104, 32);
+				UiText_DrawCharacterAtOffset(MsgPanelStatusLabel, win, 48, 0);
+				UiText_DrawCharacterAtOffset(list[first].ability + MsgAbilityName, win, 56, 16);
+				UiText_DrawCharacterAtOffset(list[second].ability + MsgAbilityName, win, 56, 32);
+				UiText_DrawCharacterAtOffset(MsgPanelStatusLabel - 2, win, 16, 16);
+				UiText_DrawCharacterAtOffset(MsgPanelStatusLabel - 1, win, 16, 32);
+				UiText_DrawCharacterAtOffset(list[first].owner + MsgCharacterName, win, 104, 16);
+				UiText_DrawCharacterAtOffset(list[second].owner + MsgCharacterName, win, 104, 32);
 				RenderOutput_RedrawSavedRect(info);
-				UiText_DrawCharacterAtOffset((s32)MsgPsynergyNeedMorePp, info, 0, 16);
+				UiText_DrawCharacterAtOffset(MsgPsynergyNeedMorePp, info, 0, 16);
 				if (row != 0)
 				{
 					cost = BtlActGet(list[second].ability)->pp_cost;
@@ -6986,7 +6981,7 @@ void Debug_SelectAbilityPair(void)
 					ability = list[first].ability;
 				}
 				UiText_DrawNumberAtOffset(cost, 2, info, 64, 16);
-				UiText_DrawCharacterAtOffset(ability + (s32)MsgAbilityDescription, info, 0, 0);
+				UiText_DrawCharacterAtOffset(ability + MsgAbilityDescription, info, 0, 0);
 			}
 			WaitFrames(1);
 			if (gKeysRepeat & KEY_LEFT)
@@ -7464,20 +7459,20 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
 	UiWindow_DrawDividerLine(win, 0, 4, OPTION_WINDOW_WIDTH - 1, 4);
 	UiWindow_DrawDividerLine(win, 0, 7, OPTION_WINDOW_WIDTH - 1, 7);
 	UiWindow_DrawDividerLine(win, 0, 10, OPTION_WINDOW_WIDTH - 1, 10);
-	msg = (s32)MsgWindowColorLabel;
+	msg = MsgWindowColorLabel;
 	UiText_DrawCharacterAtOffset(msg, win, 8, 0);
 	msg++;
 	UiText_DrawCharacterAtOffset(msg, win, 8, 16);
 #if EDITION_INTERNATIONAL
-	msg = (s32)MsgMessageSpeedLabel;
+	msg = MsgMessageSpeedLabel;
 	UiText_DrawCharacterAtOffset(msg, win, 8, 32);
 	msg++;
 	UiText_DrawCharacterAtOffset(msg, win, 32, 40);
 #else
-	UiText_DrawCharacterAtOffset((s32)MsgMessageSpeedLabel, win, 8, 40);
+	UiText_DrawCharacterAtOffset(MsgMessageSpeedLabel, win, 8, 40);
 #endif
-	UiText_DrawCharacterAtOffset((s32)MsgSpeechLabel, win, 8, 64);
-	UiText_DrawCharacterAtOffset((s32)MsgAutoSleepLabel, win, 8, 88);
+	UiText_DrawCharacterAtOffset(MsgSpeechLabel, win, 8, 64);
+	UiText_DrawCharacterAtOffset(MsgAutoSleepLabel, win, 8, 88);
 
 	x = Resource_FindFreeEntry();
 	if (x < RESOURCE_SLOTS)
@@ -7636,13 +7631,13 @@ s32 Menu_RunWorkspaceOptions(void)
 			y = icon->y * 8 + 20;
 			Shop_SetCursorFar(&work->marker[1].cursor, x, y, 1);
 
-			x = work->option[2] + (s32)MsgMessageSpeedSetting;
+			x = work->option[2] + MsgMessageSpeedSetting;
 			UiWindow_ClearInteriorTiles(icon, OPTION_SETTING_X, 40, OPTION_SPEED_END, 48);
 			UiText_DrawCharacterAtOffset(x, icon, OPTION_SETTING_X, 40);
-			x = work->option[3] + (s32)MsgSpeechSetting;
+			x = work->option[3] + MsgSpeechSetting;
 			UiWindow_ClearInteriorTiles(icon, OPTION_SETTING_X, 64, OPTION_SETTING_END, 72);
 			UiText_DrawCharacterAtOffset(x, icon, OPTION_SETTING_X, 64);
-			x = work->option[4] + (s32)MsgAutoSleepSetting;
+			x = work->option[4] + MsgAutoSleepSetting;
 			UiWindow_ClearInteriorTiles(icon, OPTION_SETTING_X, 88, OPTION_SETTING_END, 96);
 			UiText_DrawCharacterAtOffset(x, icon, OPTION_SETTING_X, 88);
 			PaletteGlow_Update(*pA, *pB);
@@ -7653,7 +7648,7 @@ s32 Menu_RunWorkspaceOptions(void)
 				y += 8;
 			Shop_SetCursorFar(&work->cursor.cursor, x, y, 3);
 			RenderOutput_ClearList(win);
-			UiText_DrawResource(page + (s32)MsgOptionHelp, win, 0, 0);
+			UiText_DrawResource(page + MsgOptionHelp, win, 0, 0);
 		}
 		Ui_ApplyTableOffsetToPair(pair);
 		WaitFrames(1);
@@ -7799,17 +7794,17 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void)
 	y = 4;
 	if (settings_only == 0)
 	{
-		msg = (s32)MsgWorkspaceSaveQuest;
+		msg = MsgWorkspaceSaveQuest;
 		UiText_DrawResource(msg, win, WORKSPACE_TEXT_X, 4);
 		msg++;
 		UiText_DrawResource(msg, win, WORKSPACE_TEXT_X, 4 + WORKSPACE_ROW_HEIGHT);
 		y = 4 + 2 * WORKSPACE_ROW_HEIGHT;
 	}
-	UiText_DrawResource((s32)MsgWorkspaceChangeSettings, win, WORKSPACE_TEXT_X, y);
+	UiText_DrawResource(MsgWorkspaceChangeSettings, win, WORKSPACE_TEXT_X, y);
 	y += WORKSPACE_ROW_HEIGHT;
 	if (gDebugMode != 0)
 	{
-		msg = (s32)MsgWorkspaceRoughMenu;
+		msg = MsgWorkspaceRoughMenu;
 		UiText_DrawResource(msg, win, WORKSPACE_TEXT_X, y);
 		y += WORKSPACE_ROW_HEIGHT;
 		UiText_DrawResource(msg + 1, win, WORKSPACE_TEXT_X, y);

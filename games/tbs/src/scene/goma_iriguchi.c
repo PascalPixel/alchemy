@@ -262,7 +262,7 @@ static void FieldScene_RunScene387SequenceA(void)
 #endif
 	Engine_EventBegin();
 	Engine_EventWait(30);
-	Engine_EventSetMessage((s32)MsgGomaNoUsePsynergy);
+	Engine_EventSetMessage(MsgGomaNoUsePsynergy);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
 	Actor_SetSpeed(GERALD, 0xcccc, 0x6666);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 20);

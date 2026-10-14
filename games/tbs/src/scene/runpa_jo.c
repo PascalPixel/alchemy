@@ -331,13 +331,13 @@ static void EV99_ROUYA(void)
 {
 	if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) == -1)
 	{
-		Engine_MessageShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
+		Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
 	}
 }
 
 static void EV98_TOBIRA(void)
 {
-	Engine_MessageShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
+	Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
 }
 
 static void Actor8_Interact(void)
@@ -974,7 +974,7 @@ static void RunActor9ScriptedSequence(void)
 	OBJ_MODE(9, 0);
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
 	{
-		s32 t = (s32)MsgRunpaWho2;
+		s32 t = MsgRunpaWho2;
 
 		MES_SET(t);
 		MES_PUT(9, 0);
@@ -1003,7 +1003,7 @@ static void RunActorScriptedSequenceA(s32 actor_id)
 	OBJ_MODE(actor_id, 0);
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
 	{
-		s32 t = (s32)MsgRunpaWho2;
+		s32 t = MsgRunpaWho2;
 
 		MES_SET(t);
 		MES_PUT(actor_id, 0);
@@ -1048,7 +1048,7 @@ static void RunActorScriptedSequenceB(s32 handle)
 	s32 id;
 
 	Engine_ActorRunRepeatedMotion(handle, 1);
-	id = (s32)MsgRunpaIntruder;
+	id = MsgRunpaIntruder;
 	MES_SET(id);
 	MES_PUT(handle, 0);
 	OBJ_EMO(handle, 258, 60);
@@ -1062,15 +1062,15 @@ static void RunActorScriptedSequenceB(s32 handle)
 
 static void RunActorScriptedSequenceC(s32 actor_id)
 {
-	u8 *t = MsgRunpaGuardWhosThat;
+	s32 t = MsgRunpaGuardWhosThat;
 
-	MES_SET((s32)t);
+	MES_SET(t);
 	MES_PUT(actor_id, 0);
 	Engine_ActorRunRepeatedMotion(actor_id, 1);
-	MES_SET((s32)(t + 1));
+	MES_SET(t + 1);
 	MES_PUT(actor_id, 0);
 	Engine_ActorSetAnimationAndWait(actor_id, 4);
-	MES_SET((s32)(t + 2));
+	MES_SET(t + 2);
 	MES_PUT(actor_id, 0);
 }
 
@@ -1078,7 +1078,7 @@ static void RunpaJo_ActOutGuardShiftDialogue(s32 a0)
 {
 	s32 intruder;
 
-	intruder = (s32)MsgRunpaShiftAlready;
+	intruder = MsgRunpaShiftAlready;
 	MES_SET(intruder);
 	MES_PUT(a0, 0);
 	WAIT(120);
@@ -1095,18 +1095,18 @@ static void RunpaJo_ActOutGuardShiftDialogue(s32 a0)
 
 static void RunActorScriptedSequenceD(s32 actor_id)
 {
-	u8 *t = (s32)MsgRunpaScoundrel;
+	s32 t = MsgRunpaScoundrel;
 
-	MES_SET((s32)t);
+	MES_SET(t);
 	MES_PUT(actor_id, 0);
 	Engine_ActorSetAnimationAndWait(actor_id, 4);
-	MES_SET((s32)(t + 1));
+	MES_SET(t + 1);
 	MES_PUT(actor_id, 0);
 	Engine_ActorRunRepeatedMotion(actor_id, 1);
-	MES_SET((s32)(t + 2));
+	MES_SET(t + 2);
 	MES_PUT(actor_id, 0);
 	Engine_ActorSetAnimationAndWait(actor_id, 3);
-	MES_SET((s32)(t + 3));
+	MES_SET(t + 3);
 	MES_PUT(actor_id, 0);
 }
 
@@ -1152,7 +1152,7 @@ static void EV31_BANPEI(void)
 	OBJ_EMO(12, 0x100, 0);
 	WAIT(30);
 	OBJ_FACE(12, ACTOR_PARTY_LEADER, 0);
-	line = (s32)MsgRunpaWho3;
+	line = MsgRunpaWho3;
 	MES_SET(line);
 	MES_PUT(12, 0);
 	OBJ_EMO(13, 0x100, 0);
@@ -1240,7 +1240,7 @@ static void EV50_MAIN(void)
 	SE(113);
 	Engine_ActorShowEmote(12, 256, 60);
 	{
-		s32 t = (s32)MsgRunpaWho2;
+		s32 t = MsgRunpaWho2;
 
 		MES_SET(t);
 		MES_PUT(12, 0);
@@ -1268,7 +1268,7 @@ static void EV51_MAIN(void)
 	OBJ_EMO(13, 0x100, 60);
 	OBJ_FACE(21, ACTOR_PARTY_LEADER, 0);
 	OBJ_FACE(13, ACTOR_PARTY_LEADER, 0);
-	msg = (s32)MsgRunpaWho2;
+	msg = MsgRunpaWho2;
 	MES_SET(msg);
 	MES_PUT(13, 0);
 	OBJ_EMO(ACTOR_PARTY_LEADER, 0x102, 30);
@@ -1306,7 +1306,7 @@ static void EV52_IDO(void)
 	{
 		if (FLAG_CHK(0x947) == 0)
 		{
-			Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
+			Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
 			SE(188);
 			WAIT(1);
 			Map_CopyCells(6, 77, 1, 2, 17, 82);
@@ -1326,7 +1326,7 @@ static void EV51_SUB(void)
 	{
 		if (FLAG_CHK(0x948) == 0)
 		{
-			Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
+			Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
 			SE(188);
 			WAIT(1);
 			Map_CopyCells(6, 77, 1, 2, 3, 55);
@@ -1438,7 +1438,7 @@ static void RunpaJo_RevealMonster(void)
 	Engine_CameraMoveToActor(11, 1);
 	Engine_CameraWaitForMove();
 	WAIT(60);
-	MES_SET((s32)MsgRunpaPrepareBecomeMonster);
+	MES_SET(MsgRunpaPrepareBecomeMonster);
 	MES_PUT(13, 0);
 	OBJ_SPD(11, 0x10000, 0x8000);
 	OBJ_SPD(15, 0x10000, 0x8000);
@@ -1496,7 +1496,7 @@ static void EV20_DEMO(void)
 		OBJ_DIR(MEARI, 16384, 0);
 		OBJ_POS_SET(13, 456, 320);
 		Camera_SetSpeed(131072, 16384);
-		text_line = (s32)MsgRunpaBackMoreGuess;
+		text_line = MsgRunpaBackMoreGuess;
 		MES_SET(text_line);
 		MES_PUT(13, 0);
 		OBJ_WALK(13, 458, 272);
@@ -1533,7 +1533,7 @@ static void EV20_DEMO(void)
 		OBJ_MODE(ACTOR_PARTY_LEADER, 1);
 		SE(17);
 		WAIT(30);
-		text_line = (s32)MsgRunpaTimeEat;
+		text_line = MsgRunpaTimeEat;
 		MES_SET(text_line);
 		MES_PUT(12, 0);
 		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 12, 0);
@@ -1705,7 +1705,7 @@ static void EV20_DEMO(void)
 		Engine_ActorWaitForMove(13);
 		WAIT(60);
 		SE(155);
-		Engine_MessageShowCentered((s32)MsgRunpaDodonpaPulledLever, 1);
+		Engine_MessageShowCentered(MsgRunpaDodonpaPulledLever, 1);
 		Actor_SetDestinationOffset(13, 8, -8);
 		OBJ_FACE(13, 11, 0);
 		RunpaJo_ActivateLeverTrap();
@@ -1765,7 +1765,7 @@ static void FieldScene_RunMainScriptSequence(void)
 	Engine_EventOpenScreen();
 	WAIT(120);
 
-	script_a = (s32)MsgRunpaUhnnGetOff;
+	script_a = MsgRunpaUhnnGetOff;
 	MES_SET(script_a);
 	MES_PUT(13, 0);
 	OBJ_EMO(GERALD, 0x101, 60);
@@ -1949,7 +1949,7 @@ static void FieldScene_RunMainScriptSequence(void)
 	OBJ_DIR(MEARI, 0x4000, 0);
 	WAIT(30);
 	WAIT(60);
-	script_b = (s32)MsgRunpaAbleGet;
+	script_b = MsgRunpaAbleGet;
 	MES_SET(script_b);
 	MES_PUT(GERALD, 0);
 	OBJ_MODE(13, 6);
@@ -2110,7 +2110,7 @@ static void FieldScene_RunMainScriptSequence(void)
 	Engine_ActorStartRepeatedMotion(13, 1);
 	WAIT(60);
 	SE(8);
-	script_c = (s32)MsgRunpaDad;
+	script_c = MsgRunpaDad;
 	MES_SET(script_c);
 	MES_PUT(13, 0);
 	OBJ_WALK(14, 456, 280);
@@ -2407,31 +2407,31 @@ static void EV21_MES(void)
 	switch (gRunpaJoRandomPick)
 	{
 	case 0:
-		MES_SET((s32)MsgRunpaHammetGreatMerchant);
+		MES_SET(MsgRunpaHammetGreatMerchant);
 		MES_PUT(21, 0);
 		break;
 	case 1:
-		MES_SET((s32)MsgRunpaZZZ);
+		MES_SET(MsgRunpaZZZ);
 		MES_PUT(21, 0);
 		break;
 	case 2:
-		MES_SET((s32)MsgRunpaDodonpasOrdersAbsolute);
+		MES_SET(MsgRunpaDodonpasOrdersAbsolute);
 		MES_PUT(21, 0);
 		break;
 	case 3:
-		MES_SET((s32)MsgRunpaSighBadCouldnt);
+		MES_SET(MsgRunpaSighBadCouldnt);
 		MES_PUT(21, 0);
 		break;
 	case 4:
-		MES_SET((s32)MsgRunpaStrangeSwearSomeone);
+		MES_SET(MsgRunpaStrangeSwearSomeone);
 		MES_PUT(21, 0);
 		break;
 	case 6:
-		MES_SET((s32)MsgRunpaToldStandGuard);
+		MES_SET(MsgRunpaToldStandGuard);
 		MES_PUT(21, 0);
 		break;
 	case 7:
-		MES_SET((s32)MsgRunpaWhoDisruptingSleep);
+		MES_SET(MsgRunpaWhoDisruptingSleep);
 		MES_PUT(21, 0);
 		break;
 	case 5:
@@ -2441,7 +2441,7 @@ static void EV21_MES(void)
 		WAIT(50);
 		Engine_ActorFaceDirection(21, 0x5000, 0);
 		WAIT(50);
-		MES_SET((s32)MsgRunpaTakeCareAnybody);
+		MES_SET(MsgRunpaTakeCareAnybody);
 		MES_PUT(21, 0);
 		break;
 	}
@@ -2459,7 +2459,7 @@ static void EV21_MAIN(void)
 	WAIT(50);
 	OBJ_DIR(21, 0x5000, 0);
 	WAIT(50);
-	msg = (s32)MsgRunpaLeftGuardHearsSomeone;
+	msg = MsgRunpaLeftGuardHearsSomeone;
 	MES_SET(msg);
 	MES_PUT(21, 0);
 	OBJ_MODE(21, 4);
@@ -2478,7 +2478,7 @@ static void EV25_DONPA(void)
 	EV_BEGIN();
 	if (FLAG_CHK(0x941) != 0)
 	{
-		MES_SET((s32)MsgRunpaDonpaGrateful);
+		MES_SET(MsgRunpaDonpaGrateful);
 		MES_PUT(18, 0);
 		EV_END();
 	}
@@ -2486,7 +2486,7 @@ static void EV25_DONPA(void)
 	{
 		if (FLAG_CHK(0x313) != 0)
 		{
-			MES_SET((s32)MsgRunpaMaybeDodonpasEyes);
+			MES_SET(MsgRunpaMaybeDodonpasEyes);
 			MES_OPEN(25, 0);
 			EV_END();
 		}
@@ -2494,7 +2494,7 @@ static void EV25_DONPA(void)
 		{
 			OBJ_EMO(25, 0x102, 30);
 			OBJ_FACE(25, ACTOR_PARTY_LEADER, 0);
-			msg = (s32)MsgRunpaShhhPleaseDont;
+			msg = MsgRunpaShhhPleaseDont;
 			MES_SET(msg);
 			MES_PUT(25, 0);
 			OBJ_FACE(25, 24, 0);
@@ -2526,7 +2526,7 @@ static void EV25_DONPA(void)
 			}
 			WAIT(60);
 			OBJ_EMO(25, 0x105, 60);
-			msg2 = (s32)MsgRunpaDonpaKnowsCoddled;
+			msg2 = MsgRunpaDonpaKnowsCoddled;
 			MES_SET(msg2);
 			MES_OPEN(25, 0);
 			Engine_ActorRunRepeatedMotion(25, 1);
@@ -2545,12 +2545,12 @@ static void EV25_SEL(void)
 {
 	if (Engine_GameFlagIsSet(0x941))
 	{
-		MES_SET((s32)MsgRunpaDifficultDonpaRight);
+		MES_SET(MsgRunpaDifficultDonpaRight);
 		MES_PUT(25, 0);
 	}
 	else
 	{
-		MES_SET((s32)MsgRunpaSomeonePunishDodonpa);
+		MES_SET(MsgRunpaSomeonePunishDodonpa);
 		MES_PUT(25, 0);
 	}
 }
@@ -2559,12 +2559,12 @@ static void EV24_SEL(void)
 {
 	if (Engine_GameFlagIsSet(0x941))
 	{
-		MES_SET((s32)MsgRunpaFatherStayAngry);
+		MES_SET(MsgRunpaFatherStayAngry);
 		MES_PUT(24, 0);
 	}
 	else
 	{
-		MES_SET((s32)MsgRunpaFatherSorryDodonpa);
+		MES_SET(MsgRunpaFatherSorryDodonpa);
 		MES_PUT(24, 0);
 	}
 }
@@ -2577,7 +2577,7 @@ static void EV24_MAIN(void)
 	{
 		if (FLAG_CHK(2382) == 0 && FLAG_CHK(788) == 0)
 		{
-			sequence_id = (s32)MsgRunpaThankHelpDodonpa;
+			sequence_id = MsgRunpaThankHelpDodonpa;
 			MES_SET(sequence_id);
 			MES_PUT(PRIMARY_ID, 0);
 			Engine_ActorRunRepeatedMotion(PRIMARY_ID, 1);
@@ -2623,13 +2623,13 @@ static void EV24_MAIN(void)
 		}
 		else
 		{
-			MES_SET((s32)MsgRunpaWellWorriedDodonpa);
+			MES_SET(MsgRunpaWellWorriedDodonpa);
 			MES_PUT(PRIMARY_ID, 0);
 		}
 	}
 	else
 	{
-		MES_SET((s32)MsgRunpaZZZZ);
+		MES_SET(MsgRunpaZZZZ);
 		MES_PUT(PRIMARY_ID, 0);
 	}
 }
@@ -2643,27 +2643,27 @@ static void EV26_SET(void)
 static void EV14_SET(void)
 {
 	Engine_ActorRunRepeatedMotion(14, 2);
-	MES_SET((s32)MsgRunpaOwwwDontHurt);
+	MES_SET(MsgRunpaOwwwDontHurt);
 	MES_PUT(14, 0);
 }
 
 static void EV13_SET(void)
 {
 	Engine_ActorRunRepeatedMotion(13, 2);
-	MES_SET((s32)MsgRunpaRightRightGive);
+	MES_SET(MsgRunpaRightRightGive);
 	MES_PUT(13, 0);
 }
 
 static void EV12_SET(void)
 {
 	Engine_ActorRunRepeatedMotion(12, 2);
-	MES_SET((s32)MsgRunpaGuysTougherThought);
+	MES_SET(MsgRunpaGuysTougherThought);
 	MES_PUT(12, 0);
 }
 
 static void EV18_SET(void)
 {
-	MES_SET((s32)MsgRunpaKnowWhereDodonpa);
+	MES_SET(MsgRunpaKnowWhereDodonpa);
 	Engine_EventAskYesNo(18, 0);
 }
 
@@ -2674,7 +2674,7 @@ static void EV20_MAIN(void)
 
 	if (FLAG_CHK(0x226) != 0)
 	{
-		MES_SET((s32)MsgRunpaWontTellAnyone);
+		MES_SET(MsgRunpaWontTellAnyone);
 		MES_PUT(20, 0);
 	}
 	else
@@ -2687,7 +2687,7 @@ static void EV20_MAIN(void)
 			Engine_ActorStop(20);
 			Object_RefreshSelectorById(20);
 			WAIT(20);
-			msg = (s32)MsgRunpaWhWhWho;
+			msg = MsgRunpaWhWhWho;
 			MES_SET(msg);
 			MES_PUT(20, 0);
 			OBJ_EMO(20, 0x102, 30);
@@ -2697,7 +2697,7 @@ static void EV20_MAIN(void)
 			OBJ_MODE(20, 4);
 			WAIT(30);
 		}
-		msg2 = (s32)MsgRunpaDontLookNearly;
+		msg2 = MsgRunpaDontLookNearly;
 		MES_SET(msg2);
 		MES_PUT(20, 0);
 		OBJ_EMO(20, 0x101, 40);
@@ -2724,7 +2724,7 @@ static void EV20_END(void)
 
 	if (Engine_GameFlagIsSet(0x226))
 	{
-		MES_SET((s32)MsgRunpaMaybeMerchantReason);
+		MES_SET(MsgRunpaMaybeMerchantReason);
 		MES_PUT(20, 0);
 	}
 	else
@@ -2743,7 +2743,7 @@ static void NoOpActorCallback(void)
 
 static void EV17_TALK(void)
 {
-	s32 msg = (s32)MsgRunpaWrongTurnOver;
+	s32 msg = MsgRunpaWrongTurnOver;
 
 	MES_SET(msg);
 	MES_PUT(0x800d, 0);
@@ -2755,7 +2755,7 @@ static void EV17_TALK(void)
 
 static void EV17_LOAD(void)
 {
-	MES_SET((s32)MsgRunpaCantBelieveWhen);
+	MES_SET(MsgRunpaCantBelieveWhen);
 	MES_PUT(13, 0);
 }
 

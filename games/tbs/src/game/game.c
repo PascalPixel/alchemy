@@ -1682,7 +1682,7 @@ void Owner_InitRecords(void)
 	for (owner = 0; owner <= 7; owner++)
 	{
 		state = UnitGet(owner);
-		Ui_AdjustValueWithoutLimitFar(owner + (s32)MsgCharacterName, name_buf);
+		Ui_AdjustValueWithoutLimitFar(owner + MsgCharacterName, name_buf);
 		name = state->name;
 		name[0] = name_buf[0];
 		i = 0;
@@ -2022,7 +2022,7 @@ s32 BtlUnitSet(s32 unit_id, s32 enemy_id, s32 suffix)
 	unit->base_action_count = enemy->turns;
 	unit->base_hp_regen = enemy->hp_regen;
 	unit->base_ep_regen = enemy->ep_regen;
-	UiText_DecodeMessageFar(index + (s32)MsgEnemyName, name, 15);
+	UiText_DecodeMessageFar(index + MsgEnemyName, name, 15);
 	for (i = 0; i < 14 && name[i] != 0; i++)
 		unit->name[i] = name[i];
 	if (suffix <= ENEMY_SUFFIX_LAST)

@@ -699,7 +699,7 @@ static void EV20_SEARCH(void)
 	Camera_SetSpeed(0x10000, 0x2000);
 	Camera_MoveTo(0x1190000, -1, 0x1b00000, 1);
 	Engine_CameraWaitForMove();
-	Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
+	Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
 	queried = GameFlag_IsSet(QUERY_FLAG);
 	if (queried == 0)
 	{

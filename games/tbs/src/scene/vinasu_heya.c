@@ -653,7 +653,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 static void EV25_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
+	Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
 	Engine_EventEnd();
 }
 
@@ -664,7 +664,7 @@ static void FieldScene_RunActorEightTenStepLoop(void)
 
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(8, 3);
-	Engine_EventSetMessage((s32)MsgFieldVenusLighthouseWasAttackedBy);
+	Engine_EventSetMessage(MsgFieldVenusLighthouseWasAttackedBy);
 	n = 10;
 	w = 8;
 	Engine_EventShowMessageAndWait(8, 0, 20);
@@ -689,7 +689,7 @@ static void FieldScene_RunActorEightTenStepLoop(void)
 static void EV11_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgVinasuIveWaitedLongSeeIts);
+	Engine_EventSetMessage(MsgVinasuIveWaitedLongSeeIts);
 	Engine_EventShowMessageAndWait(11, 0, 20);
 	Engine_ActorRunRepeatedMotion(11, 2);
 	Engine_EventShowMessage(11, 0);
@@ -811,7 +811,7 @@ static void EV41_SEARCH(void)
 	work->field_cb6 = 1;
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	Engine_MessageShowCentered((s32)MsgVinasuStatueSpeaksRobinSoulYe, 1);
+	Engine_MessageShowCentered(MsgVinasuStatueSpeaksRobinSoulYe, 1);
 	ColorBuffer_ApplySource(0x10000, 0);
 	ColorBuffer_ApplyTarget(0x10005, 0);
 	Engine_ColorBufferInterpolate(120);
@@ -916,7 +916,7 @@ static void FieldScene_RunFlag986ActorOneScene(void)
 			Engine_EventWait(20);
 			Engine_ActorSetAnimationAndWait(GERALD, 4);
 			Engine_EventWait(20);
-			Engine_EventSetMessage((s32)MsgVinasuHmmmWeCantPushBlock);
+			Engine_EventSetMessage(MsgVinasuHmmmWeCantPushBlock);
 			Engine_EventShowMessageAndWait(GERALD, 0, 20);
 			Engine_ActorFaceDirection(GERALD, 0, 10);
 			Engine_ActorShowEmote(GERALD, h, 60);
@@ -1011,7 +1011,7 @@ static void EV10_TALK(void)
 	work->field_cba = 0;
 	work->field_cb6 = 1;
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgVinasuThoughtIdExploreAfterDoor);
+	Engine_EventSetMessage(MsgVinasuThoughtIdExploreAfterDoor);
 	Actor_FaceActor(10, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(10);
 	Event_ShowMessageAndWait(10, 0, 20);

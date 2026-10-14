@@ -67,7 +67,7 @@ static void EV08_TALK(void)
 	Engine_EventBegin();
 	Engine_ActorFaceActor(8, ACTOR_PARTY_LEADER, 2);
 	Engine_GameFlagSet(0x305);
-	Engine_EventSetMessage((s32)MsgKuupuappuWarriorsWhoCaptured);
+	Engine_EventSetMessage(MsgKuupuappuWarriorsWhoCaptured);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventEnd();
 }
@@ -75,7 +75,7 @@ static void EV08_TALK(void)
 static void EV11_TALK(void)
 {
 
-	Engine_EventSetMessage((s32)MsgKuupuappuRumorsThievesLunpa);
+	Engine_EventSetMessage(MsgKuupuappuRumorsThievesLunpa);
 	Engine_ActorFaceEachOther(11, ACTOR_PARTY_LEADER, 2);
 	ActorPresentation_RunActorModeOneThenZero(11);
 }
@@ -87,7 +87,7 @@ static void EV12_TALK(void)
 	Engine_ActorFaceActor(12, ACTOR_PARTY_LEADER, 2);
 	Engine_GameFlagSet(0x306);
 	Engine_GameFlagSet(0x868);
-	Engine_EventSetMessage((s32)MsgKuupuappuTalkingMayorStrong);
+	Engine_EventSetMessage(MsgKuupuappuTalkingMayorStrong);
 	Engine_EventShowMessage(12, 0);
 	Engine_EventEnd();
 }
@@ -95,7 +95,7 @@ static void EV12_TALK(void)
 static void EV13_TALK(void)
 {
 
-	Engine_EventSetMessage((s32)MsgKuupuappuVolcanoStaysCalm);
+	Engine_EventSetMessage(MsgKuupuappuVolcanoStaysCalm);
 	Engine_ActorFaceEachOther(13, ACTOR_PARTY_LEADER, 2);
 	ActorPresentation_RunActorModeOneThenZero(13);
 }
@@ -108,7 +108,7 @@ static void EV14_TALK(void)
 
 	actor->timer |= 2;
 	Engine_EventBegin();
-	text = (s32)MsgKuupuappuWarriorGuy;
+	text = MsgKuupuappuWarriorGuy;
 	Engine_EventSetMessage(text);
 	Engine_ActorSetAnimation(14, 0);
 	Engine_ActorFaceEachOther(14, ACTOR_PARTY_LEADER, 2);
@@ -137,7 +137,7 @@ static void EV15_TALK(void)
 	facing0 = actor->facing;
 	actor->timer |= 2;
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuWishVaultsElders);
+	Engine_EventSetMessage(MsgKuupuappuWishVaultsElders);
 	Engine_ActorSetAnimation(15, 0);
 	Engine_ActorFaceEachOther(15, ACTOR_PARTY_LEADER, 2);
 	Engine_EventShowMessageAndWait(15, 0, 10);
@@ -150,7 +150,7 @@ static void EV15_TALK(void)
 static void EV16_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuGuysCheckJail);
+	Engine_EventSetMessage(MsgKuupuappuGuysCheckJail);
 	Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
 	Engine_EventOpenMessage(16, 0);
 	if (Engine_EventChooseYesNo(0, 0) != 0)
@@ -169,14 +169,14 @@ static void EV1032_PSYNERGY(void)
 	Engine_EventWait(20);
 	Engine_ActorFaceActor(8, ACTOR_PARTY_LEADER, 20);
 	Engine_GameFlagSet(0x305);
-	Engine_EventSetMessage((s32)MsgKuupuappuWarriorsWhoCaptured);
+	Engine_EventSetMessage(MsgKuupuappuWarriorsWhoCaptured);
 	Engine_EventShowMessageAndWait(8, 0, 20);
 	Engine_EventEnd();
 }
 
 static void EV11_PSYNERGY(void)
 {
-	Engine_EventSetMessage((s32)MsgKuupuappuOnceDodonpaTook);
+	Engine_EventSetMessage(MsgKuupuappuOnceDodonpaTook);
 	((struct AcceptActor11 *)Object_GetById(11))->accepted = 1;
 	ActorPresentation_RunActorModeOneThenZero(11);
 	((struct AcceptActor11 *)Object_GetById(11))->accepted = 0;
@@ -190,14 +190,14 @@ static void EV1036_PSYNERGY(void)
 	Engine_ActorFaceActor(12, ACTOR_PARTY_LEADER, 20);
 	Engine_GameFlagSet(0x306);
 	Engine_GameFlagSet(0x868);
-	Engine_EventSetMessage((s32)MsgKuupuappuTalkingMayorStrong);
+	Engine_EventSetMessage(MsgKuupuappuTalkingMayorStrong);
 	Engine_EventShowMessageAndWait(12, 0, 20);
 	Engine_EventEnd();
 }
 
 static void EV13_PSYNERGY(void)
 {
-	Engine_EventSetMessage((s32)MsgKuupuappuGreatEverythingSolved);
+	Engine_EventSetMessage(MsgKuupuappuGreatEverythingSolved);
 	((struct AcceptActor13 *)Object_GetById(13))->accepted = 1;
 	ActorPresentation_RunActorModeOneThenZero(13);
 	((struct AcceptActor13 *)Object_GetById(13))->accepted = 0;
@@ -209,7 +209,7 @@ static void KuupuappuMuraSai_RunActor14Talk(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x307) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuWatchingGuysMakes);
+		Engine_EventSetMessage(MsgKuupuappuWatchingGuysMakes);
 		ActorPresentation_RunActorModeOneThenZero(14);
 	}
 	else
@@ -228,7 +228,7 @@ static void EV15_PSYNERGY(void)
 		actor->timer |= 2;
 	}
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuGrownUpsAlways);
+	Engine_EventSetMessage(MsgKuupuappuGrownUpsAlways);
 	ActorPresentation_RunActorModeOneThenZero(15);
 	Engine_EventEnd();
 	{
@@ -251,7 +251,7 @@ static void FieldScene_RunScene385SequenceA(void)
 		Engine_ActorSetAnimation(16, 1);
 		Engine_ActorRunRepeatedMotion(16, 1);
 		Engine_EventWait(20);
-		Engine_EventSetMessage((s32)MsgKuupuappuGuysCheckJail);
+		Engine_EventSetMessage(MsgKuupuappuGuysCheckJail);
 		Engine_ActorFaceEachOther(16, 0, 2);
 		Event_OpenMessage(16, 0);
 		if (Engine_EventChooseYesNo(0, 0) != 0)
@@ -266,7 +266,7 @@ static void FieldScene_RunScene385SequenceA(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuNotLikeEasy);
+		Engine_EventSetMessage(MsgKuupuappuNotLikeEasy);
 		Actor_Get(16)->paused = 1;
 		ActorPresentation_RunActorModeOneThenZero(16);
 		v5 = 0;
@@ -465,7 +465,7 @@ static void ActorPresentation_SetAlternatePairedSceneCells(void)
 static void EV18_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuRuffRrruff2);
+	Engine_EventSetMessage(MsgKuupuappuRuffRrruff2);
 	Engine_ActorSetAnimation(18, 0);
 	Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(2);
@@ -483,8 +483,8 @@ static void EV18_TALK(void)
 static void EV90_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
-	Engine_MessageShowCentered((s32)MsgKuupuappuCanHearWaterRumblingDown, 1);
+	Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
+	Engine_MessageShowCentered(MsgKuupuappuCanHearWaterRumblingDown, 1);
 	Engine_EventEnd();
 }
 

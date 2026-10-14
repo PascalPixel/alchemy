@@ -198,7 +198,7 @@ static void EV11_TOUCH(void)
 static void EV10_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgMakyuriHeyaStrangeForcesBlockWay, 1);
+	Engine_MessageShowCentered(MsgMakyuriHeyaStrangeForcesBlockWay, 1);
 	Engine_EventEnd();
 }
 
@@ -1195,7 +1195,7 @@ static void FieldScene_RunActorThreeBranchSequence(void)
 	Engine_EventBegin();
 	Actor_SetSpeed(3, FX16_0_8, FX16_0_4);
 	Actor_SetSpeed(0, FX16_0_8, FX16_0_4);
-	Engine_EventSetMessage((s32)MsgImiruSomebodyHere);
+	Engine_EventSetMessage(MsgImiruSomebodyHere);
 	Event_ShowMessageAndWait(3, 0, 20);
 	Actor_WalkToAndWait(3, 0x348, 0x288);
 	Actor_ShowEmote(3, 0x100, 60);
@@ -1312,7 +1312,7 @@ static void EV10_PSYNERGY(void)
 		Engine_EventWait(20);
 		Actor_FaceDirection(3, 0xd000, 0);
 		Engine_ActorFaceDirection(0, 0x5000, 10);
-		Engine_EventSetMessage((s32)MsgMakyuriDidThat);
+		Engine_EventSetMessage(MsgMakyuriDidThat);
 		Engine_EventOpenMessage(3, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
@@ -2344,7 +2344,7 @@ s32 Scene_Initialize(void)
 			Engine_EventWaitForScreen();
 			Engine_ActorSetAnimation(0, 1);
 			Engine_EventWait(30);
-			UiText_ShowCenteredMessage((s32)MsgMakyuriHonorsGoddessRainbows, 0, 0);
+			UiText_ShowCenteredMessage(MsgMakyuriHonorsGoddessRainbows, 0, 0);
 			Engine_ColorBufferApplyTarget(128 << 9, 0);
 			Engine_ColorBufferInterpolate(30);
 			break;
@@ -2451,7 +2451,7 @@ static void EV08_PSYNERGY_1(void)
 		return;
 	}
 	Engine_EventBegin();
-	base = (s32)MsgMakyuriSavedMeAgain;
+	base = MsgMakyuriSavedMeAgain;
 	Engine_EventSetMessage(base);
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(3, 1);
@@ -2497,11 +2497,11 @@ static void EV08_PSYNERGY_1(void)
 				/* FAKEMATCH: called through a cast to the unprototyped call the bytes show, which loads r1 before r0; called by its prototype, also through the script layer's Actor_SetAnimationAndWait, r0 loads first: differ 2 at each site. */
 				((s32 (*)())Engine_ActorSetAnimationAndWait)(3, 4);
 				Engine_EventWait(20);
-				event = (s32)MsgMakyuriDontHideTruth;
+				event = MsgMakyuriDontHideTruth;
 			}
 		}
 	}
-	Engine_EventSetMessage((s32)MsgMakyuriThoughtSo);
+	Engine_EventSetMessage(MsgMakyuriThoughtSo);
 	Actor_SetSpeed(3, 52428, 26214);
 	Engine_ActorWalkToAndWait(3, 728, 632);
 	Engine_EventWait(20);

@@ -197,7 +197,7 @@ static void FieldScene_SetupStagedActors(void)
 	Engine_EventWait(20);
 	Actor_SetPosition(ACTOR_SUKURETA, 0x2400000, 0xe80000);
 	Engine_EventWait(1);
-	Engine_EventSetMessage((s32)MsgSoruSukuretaYouFoundIt);
+	Engine_EventSetMessage(MsgSoruSukuretaYouFoundIt);
 	Event_SayThenWait(ACTOR_SUKURETA, 6);
 	Actor_SetPosition(ACTOR_SUKURETA, 0x2400000, 0x1180000);
 	Camera_SetSpeed(0xcccc, 0x1999);
@@ -344,7 +344,7 @@ static void FieldScene_RunStagedActorScene(void)
 	Engine_EventWait(20);
 	Engine_ActorSetPosition(8, 0x2400000, 0x1280000);
 	Engine_EventWait(1);
-	Engine_EventSetMessage((s32)MsgSoruWait);
+	Engine_EventSetMessage(MsgSoruWait);
 	Event_SayThenWait(8, 6);
 	Camera_SetSpeed(0xcccc, 0x1999);
 	Camera_MoveTo(0x23e0000, -1, 0xb40000, 1);
@@ -452,14 +452,14 @@ static void FieldScene_RunStagedActorScene(void)
 	Actor_FaceDirection(1, 0x4000, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgSoruHonestlyDoubtUnderstand);
+		Engine_EventSetMessage(MsgSoruHonestlyDoubtUnderstand);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgSoruHmphWellTold);
+		Engine_EventSetMessage(MsgSoruHmphWellTold);
 	}
 	Event_SayThenWait(8, 6);
-	Engine_EventSetMessage((s32)MsgSoruTryFindSolution);
+	Engine_EventSetMessage(MsgSoruTryFindSolution);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Event_SayThenWait(8, 6);
 	Engine_ActorShowEmote(1, 0x102, 0);
@@ -1033,7 +1033,7 @@ static void EV17_PSYNERGY(void)
 					Engine_GameFlagSet(0x80f);
 				}
 				Engine_EventWait(40);
-				Engine_MessageShowCentered((s32)MsgSoruSomethingClicked, 1);
+				Engine_MessageShowCentered(MsgSoruSomethingClicked, 1);
 				Map_CopyCellAttributes(0, 1, 2, 1, 17, 8);
 				Map_CopyCellAttributes(17, 9, 2, 1, 17, 7);
 			}

@@ -152,7 +152,7 @@ static void EV99_RAISED(void)
 			}
 		}
 	}
-	Engine_EventSetMessage((s32)MsgKorosseoMatchAboutBeginPleaseTake);
+	Engine_EventSetMessage(MsgKorosseoMatchAboutBeginPleaseTake);
 	Engine_EventShowMessage(best, 0);
 	q = &((struct EventWork *)state)->start_transition;
 	*q = 512;
@@ -198,10 +198,10 @@ void Korosseo_FinishSoloRound(s32 id)
 	slot = gGameState.selected_actor;
 	obj = Object_GetById(slot);
 	Engine_EventBegin();
-	msg = (s32)MsgKorosseoCheering;
+	msg = MsgKorosseoCheering;
 	Engine_EventSetMessage(msg);
 	Engine_EventOpenMessage(id, 0);
-	gEventWork->choice_message = (s32)MsgKorosseoCheeringChoices;
+	gEventWork->choice_message = MsgKorosseoCheeringChoices;
 	gEventWork->unknown_cc4 = 4;
 	res = Engine_EventChooseYesNo(slot, 0);
 	if (res == 0)
@@ -249,7 +249,7 @@ static void RunPartyCountInteraction(s32 actorId)
 
 	if (GetPartyMemberCount() <= 1)
 	{
-		Engine_EventSetMessage((s32)MsgKorosseoRobinDidGetGoodLook);
+		Engine_EventSetMessage(MsgKorosseoRobinDidGetGoodLook);
 		if (Engine_EventAskYesNo(actorId, 0) == 0)
 		{
 			InitializeActorZero();
@@ -265,7 +265,7 @@ static void RunPartyCountInteraction(s32 actorId)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKorosseoWaitShouldntDecideWhereBest);
+		Engine_EventSetMessage(MsgKorosseoWaitShouldntDecideWhereBest);
 		Engine_EventShowMessage(actorId, 0);
 	}
 
@@ -293,15 +293,15 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor)
 	scene = gGameState.scene;
 	if (scene == (s32)&SceneId_KorosseoKawa)
 	{
-		message = (s32)MsgKorosseoStageFirstFinalsMatch;
+		message = MsgKorosseoStageFirstFinalsMatch;
 	}
 	else if (scene == (s32)&SceneId_KorosseoKabe)
 	{
-		message = (s32)MsgKorosseoStageSecondFinalsMatch;
+		message = MsgKorosseoStageSecondFinalsMatch;
 	}
 	else
 	{
-		message = (s32)MsgKorosseoStageThirdFinalsMatch;
+		message = MsgKorosseoStageThirdFinalsMatch;
 	}
 	Engine_EventSetMessage(message);
 	Engine_EventShowMessage(speaker, 0);
@@ -323,7 +323,7 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor)
 		return choice;
 	}
 	Engine_GameFlagSet(competitor + 520);
-	Engine_EventSetMessage((s32)MsgKorosseoWouldYouLikeHearDescription);
+	Engine_EventSetMessage(MsgKorosseoWouldYouLikeHearDescription);
 	Engine_EventOpenMessage(speaker, 0);
 	return Engine_EventChooseYesNo(0, 0);
 }
@@ -337,15 +337,15 @@ void Korosseo_ShowFollowUpPrompt(s32 speaker, s32 competitor)
 	scene = gGameState.scene;
 	if (scene == (s32)&SceneId_KorosseoKawa)
 	{
-		message = (s32)MsgKorosseoStageFirstFinalsMatch;
+		message = MsgKorosseoStageFirstFinalsMatch;
 	}
 	else if (scene == (s32)&SceneId_KorosseoKabe)
 	{
-		message = (s32)MsgKorosseoStageSecondFinalsMatch;
+		message = MsgKorosseoStageSecondFinalsMatch;
 	}
 	else
 	{
-		message = (s32)MsgKorosseoStageThirdFinalsMatch;
+		message = MsgKorosseoStageThirdFinalsMatch;
 	}
 	Engine_EventSetMessage(message + 1);
 	Engine_EventShowMessage(speaker, 0);
@@ -380,13 +380,13 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 		}
 		if (count <= 1)
 		{
-			Engine_EventSetMessage((s32)MsgKorosseoDoYourBest);
+			Engine_EventSetMessage(MsgKorosseoDoYourBest);
 			Event_ShowMessage(owner, 0);
 			return;
 		}
 		if (GameFlag_IsSet(base + 512) != 0)
 		{
-			Engine_EventSetMessage((s32)MsgKorosseoUnfortunatelyWeHaveFullHouse);
+			Engine_EventSetMessage(MsgKorosseoUnfortunatelyWeHaveFullHouse);
 			Event_ShowMessage(owner, 0);
 			return;
 		}
@@ -397,7 +397,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgKorosseoWouldLikeFriendCheerFor);
+			Engine_EventSetMessage(MsgKorosseoWouldLikeFriendCheerFor);
 			Event_OpenMessage(owner, 0);
 			state = Engine_EventChooseYesNo(0, 0);
 		}
@@ -432,12 +432,12 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 			}
 		}
 	}
-	Engine_EventSetMessage((s32)MsgKorosseoIfKnowWhoWantCheer);
+	Engine_EventSetMessage(MsgKorosseoIfKnowWhoWantCheer);
 	Event_ShowMessage(owner, 0);
 	return;
 L_main:
 	UiWork_PushValueSlot(obj, 1);
-	Engine_EventSetMessage((s32)MsgKorosseoRobinWillCheerForWay);
+	Engine_EventSetMessage(MsgKorosseoRobinWillCheerForWay);
 	Event_ShowMessage(owner, 0);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 	Actor_SetSpeed(obj, 0x10000, 0x8000);

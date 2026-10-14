@@ -59,21 +59,21 @@ static void SceneActor_RunActorStep(s32 arg0)
 
 static void EV09_TALK(void)
 {
-	Engine_EventSetMessage((s32)MsgKuupuappuThoughtSawCatGetUp);
+	Engine_EventSetMessage(MsgKuupuappuThoughtSawCatGetUp);
 	Engine_ActorFaceEachOther(9, ACTOR_PARTY_LEADER, 2);
 	SceneActor_RunActorStep(9);
 }
 
 static void EV11_TALK(void)
 {
-	Engine_EventSetMessage((s32)MsgKuupuappuDodonpasHenchmenNeverAttackedUs);
+	Engine_EventSetMessage(MsgKuupuappuDodonpasHenchmenNeverAttackedUs);
 	Engine_ActorFaceEachOther(11, ACTOR_PARTY_LEADER, 2);
 	SceneActor_RunActorStep(11);
 }
 
 static void EV12_TALK(void)
 {
-	Engine_EventSetMessage((s32)MsgKuupuappuItsNearTimeForColosso);
+	Engine_EventSetMessage(MsgKuupuappuItsNearTimeForColosso);
 	Engine_ActorFaceEachOther(12, ACTOR_PARTY_LEADER, 2);
 	SceneActor_RunActorStep(12);
 }
@@ -81,7 +81,7 @@ static void EV12_TALK(void)
 static void FieldScene_RunActor16Sequence(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuRobinYouveComeBackVault);
+	Engine_EventSetMessage(MsgKuupuappuRobinYouveComeBackVault);
 	Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
 	Engine_ActorSetAnimation(16, 1);
 	Event_ShowMessageAndWait(16, 0, 20);
@@ -103,14 +103,14 @@ static void FieldScene_RunActor16Sequence(void)
 
 static void SceneDialogue_RunActor16Line(void)
 {
-	Engine_EventSetMessage((s32)MsgKuupuappuThoseGuysReallyWantedRevenge);
+	Engine_EventSetMessage(MsgKuupuappuThoseGuysReallyWantedRevenge);
 	Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
 	SceneActor_RunActorStep(16);
 }
 
 static void EV23_TALK(void)
 {
-	Engine_EventSetMessage((s32)MsgKuupuappuDidSomeCookingNowIve);
+	Engine_EventSetMessage(MsgKuupuappuDidSomeCookingNowIve);
 	Engine_ActorFaceEachOther(23, ACTOR_PARTY_LEADER, 2);
 	SceneActor_RunActorStep(23);
 }
@@ -121,12 +121,12 @@ static void EV18_TALK(void)
 	Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 0);
 	if (GameFlag_IsSet(0x85b) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuHaveLotLeftoverBonesFrom);
+		Engine_EventSetMessage(MsgKuupuappuHaveLotLeftoverBonesFrom);
 		Event_OpenMessage(18, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuWantMoreBones);
+		Engine_EventSetMessage(MsgKuupuappuWantMoreBones);
 		Event_OpenMessage(18, 0);
 	}
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -140,7 +140,7 @@ static void EV18_TALK(void)
 		{
 			Engine_ActorSetAnimationAndWait(18, 4);
 			Engine_EventWait(20);
-			Engine_EventSetMessage((s32)MsgKuupuappuWowHaveManyThingsArent);
+			Engine_EventSetMessage(MsgKuupuappuWowHaveManyThingsArent);
 			Event_ShowMessage(18, 0);
 		}
 		else
@@ -194,7 +194,7 @@ static void EV19_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuTheresRiverFireOnOther);
+		Engine_EventSetMessage(MsgKuupuappuTheresRiverFireOnOther);
 		Engine_EventShowMessage(19, 0);
 	}
 
@@ -214,7 +214,7 @@ static void EV20_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuTheySayVolcanoOnMt);
+		Engine_EventSetMessage(MsgKuupuappuTheySayVolcanoOnMt);
 		Engine_EventShowMessage(20, 0);
 	}
 
@@ -234,7 +234,7 @@ static void EV21_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuWeHaventBeenGettingMany);
+		Engine_EventSetMessage(MsgKuupuappuWeHaventBeenGettingMany);
 		Engine_EventShowMessage(21, 0);
 	}
 
@@ -254,7 +254,7 @@ static void EV22_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuMmmmNothingDoNothingDo);
+		Engine_EventSetMessage(MsgKuupuappuMmmmNothingDoNothingDo);
 		Engine_EventShowMessage(22, 0);
 	}
 
@@ -266,11 +266,11 @@ static void EV18_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x85B) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuGeeAlwaysGetHungryWhen);
+		Engine_EventSetMessage(MsgKuupuappuGeeAlwaysGetHungryWhen);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuHeReallyLikesBonesWonder);
+		Engine_EventSetMessage(MsgKuupuappuHeReallyLikesBonesWonder);
 	}
 	Engine_EventShowMessage(18, 0);
 	Engine_EventEnd();

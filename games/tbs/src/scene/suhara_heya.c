@@ -44,7 +44,7 @@ static void EV12_TALK(s32 no)
 	}
 	else if (Engine_GameFlagIsSet(0x96f))
 	{
-		s32 msg = (s32)MsgSuharaArentSurprisedFind;
+		s32 msg = MsgSuharaArentSurprisedFind;
 		Engine_EventSetMessage(msg);
 		Engine_EventOpenMessage(no, 0);
 		if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0)
@@ -60,7 +60,7 @@ static void EV12_TALK(s32 no)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgSuharaOursOnlyStore);
+		Engine_EventSetMessage(MsgSuharaOursOnlyStore);
 		Engine_EventShowMessage(no, 0);
 	}
 }
@@ -74,12 +74,12 @@ static void EV13_TALK(s32 no)
 	}
 	else if (Engine_GameFlagIsSet(0x96f))
 	{
-		Engine_EventSetMessage((s32)MsgSuharaBusyEverSince);
+		Engine_EventSetMessage(MsgSuharaBusyEverSince);
 		Engine_EventShowMessage(no, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgSuharaSighNothinMaybe);
+		Engine_EventSetMessage(MsgSuharaSighNothinMaybe);
 		Engine_EventShowMessage(no, 0);
 	}
 }
@@ -93,19 +93,19 @@ static void EV18_TALK(s32 no)
 	}
 	else if (Engine_GameFlagIsSet(0x96f))
 	{
-		Engine_EventSetMessage((s32)MsgSuharaWonderWhySandstorms);
+		Engine_EventSetMessage(MsgSuharaWonderWhySandstorms);
 		Engine_EventShowMessage(no, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgSuharaGetSickThinkingAboutLalivero);
+		Engine_EventSetMessage(MsgSuharaGetSickThinkingAboutLalivero);
 		Engine_EventShowMessage(no, 0);
 	}
 }
 
 static void EV17_TALK(s32 obj)
 {
-	s32 msg = (s32)MsgSuharaSupposeFolkBlown;
+	s32 msg = MsgSuharaSupposeFolkBlown;
 	Engine_EventSetMessage(msg);
 	Engine_EventOpenMessage(obj, 0);
 	if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0)
@@ -143,7 +143,7 @@ static void EV50_TOUCH(void)
 		FieldMotion_LaunchFromFocusedObject(19, 0, -16, 49152);
 		Actor_WaitForMove(19);
 		Camera_WaitForMove();
-		Event_SetMessage((s32)MsgSuharaIodem);
+		Event_SetMessage(MsgSuharaIodem);
 		Event_Wait(10);
 		Actor_RunRepeatedMotion(20, 2);
 		Event_Wait(20);

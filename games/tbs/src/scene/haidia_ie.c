@@ -103,11 +103,11 @@ void *SceneData_SelectTableByFlags834And87a(void)
 static void EV100_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgHaidiaCheckedThePsynergyStone, 1);
+	Engine_MessageShowCentered(MsgHaidiaCheckedThePsynergyStone, 1);
 	Engine_AudioPlayCue(126);
 	BattleParty_ApplyDrain(0x3e7, 0);
 	Engine_EventWait(10);
-	Engine_MessageShowCentered((s32)MsgHaidiaPartyPpRestored, 1);
+	Engine_MessageShowCentered(MsgHaidiaPartyPpRestored, 1);
 	UiWork_FinalizePendingCore();
 	Engine_GameFlagClear(322);
 	Engine_EventEnd();
@@ -137,7 +137,7 @@ void *SceneData_SelectTableByFlags87a_815_834(void)
 static void EV23_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgHaidiaMeditateOnMtAlephDaily);
+	Engine_EventSetMessage(MsgHaidiaMeditateOnMtAlephDaily);
 	Engine_ActorFaceEachOther(23, ACTOR_PARTY_LEADER, 2);
 	Engine_EventAskYesNo(23, 0);
 	Engine_EventEnd();
@@ -146,7 +146,7 @@ static void EV23_TALK(void)
 static void EV24_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgHaidiaADifficultTimeThreeYears);
+	Engine_EventSetMessage(MsgHaidiaADifficultTimeThreeYears);
 	Engine_ActorFaceEachOther(24, ACTOR_PARTY_LEADER, 2);
 	Engine_EventAskYesNo(24, 0);
 	Engine_EventEnd();
@@ -155,7 +155,7 @@ static void EV24_TALK(void)
 static void Villager_AskAboutTheTravelers(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgHaidiaDidTheTravelersMeetThe);
+	Engine_EventSetMessage(MsgHaidiaDidTheTravelersMeetThe);
 	Engine_ActorFaceEachOther(15, ACTOR_PARTY_LEADER, 2);
 	Engine_EventAskYesNo(15, 0);
 	Engine_EventEnd();
@@ -171,7 +171,7 @@ static void EV17_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 	{
-		message = (s32)MsgHaidiaArentWorriedCrossing;
+		message = MsgHaidiaArentWorriedCrossing;
 		Engine_EventSetMessage(message);
 		if (Engine_GameFlagIsSet(2) != 0)
 		{
@@ -195,7 +195,7 @@ static void EV17_TALK(void)
 	else
 	{
 		origin = ((struct MapScrollWork *)gMapWork[0])->origin;
-		Engine_EventSetMessage((s32)MsgHaidiaShownNewAbility);
+		Engine_EventSetMessage(MsgHaidiaShownNewAbility);
 		Engine_ActorFaceEachOther(17, ACTOR_PARTY_LEADER, 0);
 		Engine_EventAskYesNo(17, 0);
 		Engine_EventWait(20);
@@ -232,7 +232,7 @@ static void EV17_TALK(void)
 		SceneEffect_CleanupSceneObjects();
 		Engine_ActorSetChildValue(17, 0);
 		Engine_EventWait(40);
-		Engine_EventSetMessage((s32)MsgHaidiaBeholdPowerPsynergy);
+		Engine_EventSetMessage(MsgHaidiaBeholdPowerPsynergy);
 		Engine_EventShowMessage(17, 0);
 	}
 	Engine_EventEnd();
@@ -243,7 +243,7 @@ static void SceneDialogue_RunFlagGatedMessageStep(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x87a) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaAnythingInterestingOnYourTrip);
+		Engine_EventSetMessage(MsgHaidiaAnythingInterestingOnYourTrip);
 		Engine_EventOpenMessage(15, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 1)
 		{
@@ -259,12 +259,12 @@ static void SceneDialogue_RunFlagGatedMessageStep(void)
 	}
 	else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaYouSawTheWiseOne);
+		Engine_EventSetMessage(MsgHaidiaYouSawTheWiseOne);
 		Engine_EventAskYesNo(11, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaCanIUsePsynergy);
+		Engine_EventSetMessage(MsgHaidiaCanIUsePsynergy);
 		Engine_EventAskYesNo(11, 0);
 	}
 	Engine_EventEnd();
@@ -276,7 +276,7 @@ static void EV26_TALK(void)
 	Engine_ActorSetAnimation(26, 1);
 	Engine_ActorFaceActor(26, ACTOR_PARTY_LEADER, 20);
 	Engine_ActorFaceActor(26, 21, 40);
-	Engine_EventSetMessage((s32)MsgHaidiaTheStoneFellOnThe);
+	Engine_EventSetMessage(MsgHaidiaTheStoneFellOnThe);
 	Event_SayThenWait(26, 20);
 	Engine_CameraSetSpeed(0x19999, 0x3333);
 	Engine_CameraMoveTo(0x1510000, -1, 0x1100000, 1);
@@ -299,7 +299,7 @@ static void FieldScene_RunMiddleAuxiliarySequence(void)
 	Engine_EventBegin();
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 82, 0x2f8);
 	Engine_ActorFaceEachOther(15, ACTOR_PARTY_LEADER, 30);
-	Engine_EventSetMessage((s32)MsgHaidiaIHaveSomePsynergyLeft);
+	Engine_EventSetMessage(MsgHaidiaIHaveSomePsynergyLeft);
 	Event_SayThenWait(15, 20);
 	SceneActor_SetPairZeroAndValue(15, 0xa000, 20);
 	Actor_SetAttachedEffect(15, 0x102);
@@ -342,12 +342,12 @@ static void EV16_TALK(void)
 	Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 10);
 	if (Engine_GameFlagIsSet(0x840) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaSureHelp);
+		Engine_EventSetMessage(MsgHaidiaSureHelp);
 		Engine_EventShowMessage(16, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaWentOffWay);
+		Engine_EventSetMessage(MsgHaidiaWentOffWay);
 		Engine_EventShowMessage(16, 0);
 	}
 	Engine_EventEnd();
@@ -358,11 +358,11 @@ static void EV11_TALK(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x302) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaThisIsVale);
+		Engine_EventSetMessage(MsgHaidiaThisIsVale);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaYouCameBackHome);
+		Engine_EventSetMessage(MsgHaidiaYouCameBackHome);
 		GameFlag_Set(0x302);
 	}
 	Event_ShowMessage(11, 0);
@@ -382,7 +382,7 @@ static void Scene_PsynergyStoneIsGone(void)
 	p->f06 = 0xb000;
 	Engine_EventWait(20);
 	Engine_ActorStartRepeatedMotion(21, 2);
-	Engine_EventSetMessage((s32)MsgHaidiaThePsynergyStoneIsGone);
+	Engine_EventSetMessage(MsgHaidiaThePsynergyStoneIsGone);
 	Engine_EventShowMessageAndWait(21, 0, 40);
 	Engine_ActorFaceActor(21, ACTOR_PARTY_LEADER, 20);
 	Engine_ActorStartRepeatedMotion(21, 2);
@@ -628,7 +628,7 @@ static void EV20_TOUCH(void)
 		Camera_SetSpeed(0x19999, 0x3333);
 		Engine_CameraMoveTo(0xc50000, -1, 0x3000000, 1);
 		BattleFx_CommitObjectPositionAndWait();
-		Engine_EventSetMessage((s32)MsgHaidiaGoAidElders);
+		Engine_EventSetMessage(MsgHaidiaGoAidElders);
 		Engine_ActorRunRepeatedMotion(19, 2);
 		Event_ShowMessageAndWait(0x4013, 0, 10);
 		Actor_SetSpeed(0, 0x10000, 0x8000);
@@ -788,7 +788,7 @@ static void HaidiaIe_RunScriptScene(void)
 	Engine_TaskWait(1);
 	Actor_SetSpeed(0, 0x13333, 0x9999);
 	Engine_ActorWalkToAndWait(0, 93, 0x157);
-	Engine_EventSetMessage((s32)MsgHaidiaOnlyTwoSurvived);
+	Engine_EventSetMessage(MsgHaidiaOnlyTwoSurvived);
 	Engine_EventShowMessage(23, 0);
 	Engine_AudioPlayCue(61);
 	rec7[85] = 0;

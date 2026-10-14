@@ -249,7 +249,7 @@ static s32 EV01_RAISED(void)
 		return set;
 	}
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgLobbyWantParticipatePlease);
+	Engine_EventSetMessage(MsgLobbyWantParticipatePlease);
 	Engine_EventOpenMessage(8, 0);
 	Engine_TaskWait(5);
 	Engine_GameFlagSet(0x200);
@@ -265,7 +265,7 @@ static s32 EV02_RAISED(void)
 	Engine_GameFlagClear(0x203);
 	Engine_EventBegin();
 	work->raised_trigger = 0;
-	Engine_EventSetMessage((s32)MsgLobbyLinkDisconnected);
+	Engine_EventSetMessage(MsgLobbyLinkDisconnected);
 	Engine_EventOpenMessage(8, 0);
 	Engine_GameFlagClear(0x205);
 	Engine_EventEnd();
@@ -322,7 +322,7 @@ test1:
 		result++;
 	}
 	Engine_TaskWait(2);
-	FieldUi_AdjustValueWithoutLimit((s32)MsgEnemyLabel, (s32)buf);
+	FieldUi_AdjustValueWithoutLimit(MsgEnemyLabel, (s32)buf);
 	i = 0;
 	if (buf[i] != 0)
 	{
@@ -677,7 +677,7 @@ static s32 EV10_TOUCH(void)
 		Engine_GameFlagSet(0x203);
 		LinkLobby_WriteSlotValue(2);
 		if (!LinkLobby_PeerSlotMatches(2))
-			window = UiText_OpenMessageWindow((s32)MsgLobbyAwaitingOpponent, 5, 4, 1);
+			window = UiText_OpenMessageWindow(MsgLobbyAwaitingOpponent, 5, 4, 1);
 		while (!LinkLobby_PeerSlotMatches(2))
 		{
 			Engine_TaskWait(1);
@@ -721,7 +721,7 @@ static s32 EV10_TOUCH(void)
 		if (Engine_GameFlagIsSet(0x173))
 		{
 			Engine_ActorFaceActor(8, gGameState.selected_actor, 0);
-			Engine_EventSetMessage((s32)MsgLobbyGoodLuck);
+			Engine_EventSetMessage(MsgLobbyGoodLuck);
 			Engine_EventOpenMessage(8, 0);
 			Engine_TaskWait(45);
 			Actor_SetSpeed(0, 0x10000, 0x8000);
@@ -800,7 +800,7 @@ static s32 EV08_TALK(void)
 	s32 msg;
 	s32 line;
 
-	msg = (s32)MsgLobbyPleaseSpeakWhen;
+	msg = MsgLobbyPleaseSpeakWhen;
 	Engine_EventBegin();
 	Engine_ActorFaceActor(8, gGameState.selected_actor, 0);
 	if (LinkLobby_PeerSlotMatches(0) == 0)
@@ -844,7 +844,7 @@ static s32 EV08_TALK(void)
 		if (GameFlag_IsSet(0x173))
 		{
 			LinkLobby_WriteSlotValue(0);
-			Engine_EventSetMessage((s32)MsgLobbyOpponentArrived);
+			Engine_EventSetMessage(MsgLobbyOpponentArrived);
 			Engine_EventOpenMessage(8, 0);
 			Engine_GameFlagClear(0x202);
 			Engine_GameFlagClear(0x173);
@@ -921,7 +921,7 @@ static s32 EV09_TALK(s32 actor)
 	Engine_ActorFaceActor(actor, gGameState.selected_actor, 0);
 	if ((facing - 0xa001) <= 0x3ffe)
 	{
-		base = (s32)MsgLobbyLooksLikeFirst;
+		base = MsgLobbyLooksLikeFirst;
 		count = &gGameState.link_tallies[4];
 		if (*count != 0)
 		{
@@ -932,13 +932,13 @@ static s32 EV09_TALK(s32 actor)
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgLobbyTellTotalWins);
+			Engine_EventSetMessage(MsgLobbyTellTotalWins);
 			Engine_EventShowMessage(actor, 0);
 		}
 	}
 	else
 	{
-		base = (s32)MsgLobbyLooksLikeFirstTime;
+		base = MsgLobbyLooksLikeFirstTime;
 		count = &gGameState.link_tallies[7];
 		if (*count != 0)
 		{
@@ -949,7 +949,7 @@ static s32 EV09_TALK(s32 actor)
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgLobbyTellConsecutiveWins);
+			Engine_EventSetMessage(MsgLobbyTellConsecutiveWins);
 			Engine_EventShowMessage(actor, 0);
 		}
 	}
@@ -963,7 +963,7 @@ static s32 EV15_TALK(s32 id)
 
 	Engine_EventBegin();
 	Engine_ActorFaceActor(id, gGameState.selected_actor, 0);
-	Engine_EventSetMessage((s32)MsgLobbyChooseParameters);
+	Engine_EventSetMessage(MsgLobbyChooseParameters);
 	Engine_EventShowMessage(id, 0);
 	window = Engine_DebugCreateWindow(0, 0, 6, 4, 2);
 	choice = 0;
@@ -1006,17 +1006,17 @@ static s32 EV15_TALK(s32 id)
 	}
 	if (choice < 0)
 	{
-		Engine_EventSetMessage((s32)MsgLobbyTease);
+		Engine_EventSetMessage(MsgLobbyTease);
 		Engine_EventShowMessage(9, 0);
 	}
 	else if (ok != 0)
 	{
-		Engine_EventSetMessage((s32)MsgLobbyNoParameterAsk);
+		Engine_EventSetMessage(MsgLobbyNoParameterAsk);
 		Engine_EventShowMessage(9, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgLobbySettingsMadeRest);
+		Engine_EventSetMessage(MsgLobbySettingsMadeRest);
 		Engine_EventShowMessage(9, 0);
 	}
 	Engine_TaskWait(10);
@@ -1066,7 +1066,7 @@ static void State_NoOp(void)
 
 static s32 LinkLobby_TalkByProgress(s32 actor)
 {
-	s32 base = (s32)MsgLobbyCantWaitLets;
+	s32 base = MsgLobbyCantWaitLets;
 	s32 lead = LinkLobby_PartyContains(0);
 	s32 own = LinkLobby_PartyContains(actor);
 
@@ -1080,26 +1080,26 @@ static s32 LinkLobby_TalkByProgress(s32 actor)
 		if (Engine_GameFlagIsSet(0x305))
 		{
 			if (base)
-				base = (s32)MsgLobbyWonToldCountOn;
+				base = MsgLobbyWonToldCountOn;
 			else
-				base = (s32)MsgLobbyWonWithoutWell;
+				base = MsgLobbyWonWithoutWell;
 		}
 		else
 		{
 			if (base)
-				base = (s32)MsgLobbyNotFaultLost;
+				base = MsgLobbyNotFaultLost;
 			else
-				base = (s32)MsgLobbyKnewLostBecause;
+				base = MsgLobbyKnewLostBecause;
 		}
 	}
 	else if (lead != 0)
 	{
 		if (own == 0)
-			base = (s32)MsgLobbyGoingFightAlone;
+			base = MsgLobbyGoingFightAlone;
 	}
 	else
 	{
-		base = (s32)MsgLobbyTryingGetAway;
+		base = MsgLobbyTryingGetAway;
 	}
 	Engine_EventSetMessage(base + actor - 1);
 	Engine_EventShowMessage(actor, 0);
@@ -1124,14 +1124,14 @@ static s32 LinkLobby_TalkToAttendant(s32 actor)
 	switch (actor)
 	{
 	case 12:
-		message = (s32)MsgLobbyTravelingWarrior;
+		message = MsgLobbyTravelingWarrior;
 		break;
 	case 13:
-		message = (s32)MsgLobbyThreeAlliesFight;
+		message = MsgLobbyThreeAlliesFight;
 		break;
 	case 14:
 	default:
-		message = (s32)MsgLobbyBattleArenaOld;
+		message = MsgLobbyBattleArenaOld;
 		break;
 	}
 	Engine_ActorFaceActor(actor, gGameState.selected_actor, 0);
@@ -1151,14 +1151,14 @@ static s32 EV16_TALK(s32 actor)
 	if (!GameFlag_IsSet(0x204))
 	{
 		if (Party_CountActiveOwners() <= 3)
-			message = (s32)MsgLobbyThreeAlliesFightLinkedFinals;
+			message = MsgLobbyThreeAlliesFightLinkedFinals;
 		else
-			message = (s32)MsgLobbyThreeAlliesFightLinked;
+			message = MsgLobbyThreeAlliesFightLinked;
 		Engine_GameFlagSet(0x204);
 	}
 	else
 	{
-		message = (s32)MsgLobbyChangeOrderParty;
+		message = MsgLobbyChangeOrderParty;
 		Engine_GameFlagClear(0x204);
 	}
 	Engine_EventSetMessage(message);
@@ -1176,11 +1176,11 @@ static s32 EV22_TALK(s32 id)
 	if (gs->link_tallies[2] != 0)
 	{
 		UiText_DrawQuantity(gs->link_tallies[2], 5);
-		Engine_EventSetMessage((s32)MsgLobbyWonNumberConsecutive);
+		Engine_EventSetMessage(MsgLobbyWonNumberConsecutive);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgLobbyCantWaitSee);
+		Engine_EventSetMessage(MsgLobbyCantWaitSee);
 	}
 	Engine_EventOpenMessage(id, 0);
 	Engine_EventEnd();
@@ -1196,13 +1196,13 @@ static s32 LinkLobby_SaveBattleResults(void)
 	s32 window;
 
 	Engine_AudioPlayCue(85);
-	window = UiText_OpenMessageWindow((s32)MsgLobbySavingBattleResults, 5, 4, 1);
+	window = UiText_OpenMessageWindow(MsgLobbySavingBattleResults, 5, 4, 1);
 	while (UiWork_IsComplete() == 0)
 		Engine_TaskWait(1);
 	SaveState_ProcessSelectedSlot();
 	UiWork_Finalize(window, 1);
 	Engine_TaskWait(1);
-	window = UiText_OpenMessageWindow((s32)MsgLobbyBattleResultsSaved, 5, 4, 1);
+	window = UiText_OpenMessageWindow(MsgLobbyBattleResultsSaved, 5, 4, 1);
 	while (UiWork_IsComplete() == 0)
 		Engine_TaskWait(1);
 	UiWork_Finalize(window, 1);
@@ -1213,13 +1213,13 @@ static s32 LinkLobby_SaveMonsterBattleResults(void)
 	s32 window;
 
 	Engine_AudioPlayCue(85);
-	window = UiText_OpenMessageWindow((s32)MsgLobbySavingMonsterBattle, 5, 4, 1);
+	window = UiText_OpenMessageWindow(MsgLobbySavingMonsterBattle, 5, 4, 1);
 	while (UiWork_IsComplete() == 0)
 		Engine_TaskWait(1);
 	SaveState_ProcessSelectedSlot();
 	UiWork_Finalize(window, 1);
 	Engine_TaskWait(1);
-	window = UiText_OpenMessageWindow((s32)MsgLobbyMonsterBattleResults, 5, 4, 1);
+	window = UiText_OpenMessageWindow(MsgLobbyMonsterBattleResults, 5, 4, 1);
 	while (UiWork_IsComplete() == 0)
 		Engine_TaskWait(1);
 	UiWork_Finalize(window, 1);
@@ -1302,7 +1302,7 @@ s32 LinkLobby_RunRoundResult(void)
 			FieldGameFlag_SetByte(1000, v + 1);
 		}
 		Engine_ActorFaceActor(8, gGameState.selected_actor, 0);
-		Engine_EventSetMessage((s32)MsgLobbyNotBadNextMonster + msg);
+		Engine_EventSetMessage(MsgLobbyNotBadNextMonster + msg);
 		Engine_EventOpenMessage(8, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
@@ -1321,13 +1321,13 @@ s32 LinkLobby_RunRoundResult(void)
 			if (gGameState.link_tallies[2] < score)
 			{
 				gGameState.link_tallies[2] = score;
-				Engine_EventSetMessage((s32)MsgLobbyWonNumberBattleBroke);
+				Engine_EventSetMessage(MsgLobbyWonNumberBattleBroke);
 				Engine_EventOpenMessage(8, 0);
 				LinkLobby_SaveMonsterBattleResults();
 			}
 			else
 			{
-				Engine_EventSetMessage((s32)MsgLobbyWonNumberBattle);
+				Engine_EventSetMessage(MsgLobbyWonNumberBattle);
 				Engine_EventOpenMessage(8, 0);
 			}
 			LinkLobby_WriteSlotValue(0);
@@ -1350,13 +1350,13 @@ s32 LinkLobby_RunRoundResult(void)
 		if (gGameState.link_tallies[2] < score)
 		{
 			gGameState.link_tallies[2] = score;
-			Engine_EventSetMessage((s32)MsgLobbyWonNumberBattleBroke);
+			Engine_EventSetMessage(MsgLobbyWonNumberBattleBroke);
 			Engine_EventOpenMessage(8, 0);
 			LinkLobby_SaveMonsterBattleResults();
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgLobbyWonNumberBattleTold);
+			Engine_EventSetMessage(MsgLobbyWonNumberBattleTold);
 			Engine_EventOpenMessage(8, 0);
 		}
 		gGameState.link_tallies[3] = 0;
@@ -1433,7 +1433,7 @@ s32 LinkLobby_RunRoundResult(void)
 			Engine_EventOpenScreen();
 			Engine_EventWaitForScreen();
 			Engine_ActorFaceActor(8, gGameState.selected_actor, 0);
-			Engine_EventSetMessage((s32)MsgLobbyNoteCantUse);
+			Engine_EventSetMessage(MsgLobbyNoteCantUse);
 			Engine_EventShowMessage(8, 0);
 			Engine_EventEnd();
 		}

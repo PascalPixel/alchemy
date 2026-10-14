@@ -222,7 +222,7 @@ static void Scene_RunScene3c3SequenceA(void)
 	Actor_FaceDirection(11, 0xd000, 40);
 	Actor_FaceDirection(11, 0, 20);
 	Engine_ActorStartRepeatedMotion(11, 2);
-	Engine_EventSetMessage((s32)MsgSuharaMeaning);
+	Engine_EventSetMessage(MsgSuharaMeaning);
 	Event_ShowMessageAndWait(11, 0, 40);
 	Actor_ShowEmote(8, 0x100, 0);
 	Engine_ActorRunRepeatedMotion(8, 2);
@@ -315,12 +315,12 @@ static void EV09_TALK(void)
 
 	if (Engine_GameFlagIsSet(0x89f) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgSuharaPityColossoVictor);
+		Engine_EventSetMessage(MsgSuharaPityColossoVictor);
 		Engine_EventShowMessage(9, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgSuharaWantGoBabi);
+		Engine_EventSetMessage(MsgSuharaWantGoBabi);
 		{
 			s32 mode = 0;
 			s32 no = 9;
@@ -351,7 +351,7 @@ static void Scene_RunActorTenRepeatedMotion(void)
 
 	Engine_EventBegin();
 
-	Engine_EventSetMessage((s32)MsgFieldVenusLighthouseWasAttackedBy);
+	Engine_EventSetMessage(MsgFieldVenusLighthouseWasAttackedBy);
 	Event_ShowMessageAndWait(10, 0, 10);
 
 	beat = 0;

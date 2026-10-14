@@ -116,43 +116,42 @@ end:
 static void SceneState_ApplyBlockC9b(void)
 {
 	CommandTable_RunDirectionalInput(
-		(s32)MsgWeaponShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
+		MsgWeaponShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 static void SceneState_ApplyBlockCc6(void)
 {
 	CommandTable_RunDirectionalInput(
-		(s32)MsgArmorShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
+		MsgArmorShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 static void SceneState_ApplyBlockCf1(void)
 {
 	CommandTable_RunDirectionalInput(
-		(s32)MsgItemShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
+		MsgItemShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 static void SceneState_ApplyBlockD21(void)
 {
-	CommandTable_RunDirectionalInput(
-		(s32)MsgSanctumWelcome, MsgWarriorShopWelcome - MsgSanctumWelcome);
+	CommandTable_RunDirectionalInput(MsgSanctumWelcome, MsgWarriorShopWelcome - MsgSanctumWelcome);
 }
 
 static void SceneState_ApplyBlockD4c(void)
 {
 	CommandTable_RunDirectionalInput(
-		(s32)MsgWarriorShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
+		MsgWarriorShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 static void SceneState_ApplyBlockD77(void)
 {
 	CommandTable_RunDirectionalInput(
-		(s32)MsgWarriorArmorShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
+		MsgWarriorArmorShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
 static void SceneState_ApplyBlockDa2(void)
 {
 	CommandTable_RunDirectionalInput(
-		(s32)MsgWarriorItemShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
+		MsgWarriorItemShopWelcome, MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 #endif
 
@@ -613,8 +612,8 @@ static void DebugMenu_SelectItem(void)
 				UiText_DrawStringInWindow(gDebugItemCapacityLabel, window, 0, 32);
 				index = item & 0x1ff;
 				Engine_DebugGetItem(index);
-				UiText_DrawCharacterAtOffset(index + (s32)MsgItemName, window, 120, 0);
-				UiText_DrawResource(index + (s32)MsgItemPlainName, window, 0, 16);
+				UiText_DrawCharacterAtOffset(index + MsgItemName, window, 120, 0);
+				UiText_DrawResource(index + MsgItemPlainName, window, 0, 16);
 				Engine_DebugRedrawWindow(details);
 				Engine_DebugDrawItemDetails(details, item);
 			}

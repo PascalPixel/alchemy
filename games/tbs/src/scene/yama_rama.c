@@ -80,7 +80,7 @@ static void SceneDialogue_RunMessage1958Step(void)
 	struct EventWork *work;
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgYamaYoungWarriorsDoComeFrom);
+	Engine_EventSetMessage(MsgYamaYoungWarriorsDoComeFrom);
 	Engine_EventOpenMessage(10, 0);
 
 	if (Engine_EventChooseYesNo(0, 0) == 1)
@@ -101,7 +101,7 @@ static void SceneDialogue_RunMessage1958Step(void)
 static void EV11_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgYamaDoKnowMeditation);
+	Engine_EventSetMessage(MsgYamaDoKnowMeditation);
 	Engine_EventAskYesNo(11, 0);
 	Engine_EventEnd();
 }
@@ -109,7 +109,7 @@ static void EV11_TALK(void)
 static void EV13_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgYamaDidKnowMasterHamaGreatest);
+	Engine_EventSetMessage(MsgYamaDidKnowMasterHamaGreatest);
 	Engine_EventAskYesNo(13, 0);
 	Engine_EventEnd();
 }
@@ -148,7 +148,7 @@ static void FieldScene_RunScene3a2SequenceA(void)
 	Engine_EventWait(60);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgYamaAdeptsLetMeThankAgain);
+	Engine_EventSetMessage(MsgYamaAdeptsLetMeThankAgain);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
 	Engine_ActorSetAnimation(GERALD, 3);
@@ -319,7 +319,7 @@ static void EV05_SEARCH(void)
 
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	Engine_MessageShowCentered((s32)MsgYamaHeWhoHasPowerSee, 1);
+	Engine_MessageShowCentered(MsgYamaHeWhoHasPowerSee, 1);
 	Engine_EventEnd();
 }
 
@@ -350,7 +350,7 @@ static void EV15_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgYamaAmTravelingAroundWorldSpread);
+		Engine_EventSetMessage(MsgYamaAmTravelingAroundWorldSpread);
 		Engine_EventShowMessage(15, 0);
 	}
 	Engine_EventEnd();
@@ -368,7 +368,7 @@ static void EV10_TOUCH(void)
 	{
 		Engine_EventBegin();
 		Actor_SetPosition(10, 0x2180000, 0xd80000);
-		Engine_EventSetMessage((s32)MsgYamaYahhSilkRoadBouldersBlock);
+		Engine_EventSetMessage(MsgYamaYahhSilkRoadBouldersBlock);
 		Event_ShowMessageAndWait(10, 0, 20);
 		Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 		Engine_EventWait(20);
@@ -422,7 +422,7 @@ static void EV10_TOUCH(void)
 static void Scene_RunActorCue(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgYamaDoDoWarriorShouldReturn);
+	Engine_EventSetMessage(MsgYamaDoDoWarriorShouldReturn);
 	Actor_ShowEmote(10, 0x105, 60);
 	Event_OpenMessage(10, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 1)
@@ -447,7 +447,7 @@ static void Scene_RunActorExchange(void)
 	Engine_CameraWaitForMove();
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgYamaHsuOkay);
+	Engine_EventSetMessage(MsgYamaHsuOkay);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Engine_ActorRunRepeatedMotion(9, 1);
 	Engine_EventWait(20);
@@ -481,7 +481,7 @@ static void EV11_PSYNERGY(void)
 	Actor_SetAttachedEffect(8, 0x102);
 	Engine_ActorStartRepeatedMotion(8, 2);
 	Engine_EventWait(60);
-	Engine_EventSetMessage((s32)MsgYamaRobinDidLiftBoulder);
+	Engine_EventSetMessage(MsgYamaRobinDidLiftBoulder);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Actor_SetAttachedEffect(10, 0x102);
 	Engine_ActorJump(10, 4, 0);
@@ -593,7 +593,7 @@ static void EV07_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	Engine_MessageShowCentered((s32)MsgYamaNorthAltinMineWestLama, 1);
+	Engine_MessageShowCentered(MsgYamaNorthAltinMineWestLama, 1);
 	Engine_EventEnd();
 }
 

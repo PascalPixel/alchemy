@@ -113,7 +113,7 @@ static void EV11_TALK(void)
 	record = UnitGet(gGameState.selected_actor);
 	win = UiWindow_Create(0, 0, 30, 9, 2);
 
-	msg = (s32)MsgDebugRaiseEveryonesLevel;
+	msg = MsgDebugRaiseEveryonesLevel;
 	UiText_DrawResource(msg, win, 0, 0);
 	UiText_DrawResource(msg + 1, win, 0, 16);
 	msg += 2;
@@ -202,11 +202,11 @@ static void EV08_TALK(void)
 				UiText_DrawStringInWindow(gItemLevelItemHelp, window, 0, 32);
 				index = item & 0x1ff;
 				Engine_DebugGetItem(index);
-				UiText_DrawCharacterAtOffset(index + (s32)MsgItemName, window, 120, 0);
+				UiText_DrawCharacterAtOffset(index + MsgItemName, window, 120, 0);
 #if EDITION_INTERNATIONAL
-				UiText_DrawCharacterAtOffset(index + (s32)MsgItemPlainName, window, 0, 16);
+				UiText_DrawCharacterAtOffset(index + MsgItemPlainName, window, 0, 16);
 #else
-				UiText_DrawResource(index + (s32)MsgItemPlainName, window, 0, 16);
+				UiText_DrawResource(index + MsgItemPlainName, window, 0, 16);
 #endif
 				RenderOutput_RedrawSavedRect(details);
 				Engine_DebugDrawItemDetails(details, item);
@@ -333,8 +333,8 @@ static void ItemLevel_SelectAbility(void)
 			UiText_DrawNumberAtOffset(ability, 0, window, 80, 0);
 			UiText_DrawStringInWindow(gItemLevelPsyHelp, window, 0, 72);
 			index = ability & 0x3fff;
-			UiText_DrawCharacterAtOffset(index + (s32)MsgAbilityName, window, 120, 0);
-			index += (s32)MsgAbilityDescription;
+			UiText_DrawCharacterAtOffset(index + MsgAbilityName, window, 120, 0);
+			index += MsgAbilityDescription;
 			UiText_DrawCharacterAtOffset(index, window, 0, 24);
 			UiText_DrawResource(index, window, 0, 48);
 		}

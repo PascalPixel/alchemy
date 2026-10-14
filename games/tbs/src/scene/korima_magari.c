@@ -230,7 +230,7 @@ static void EV09_SEARCH(void)
 	Engine_CameraSetSpeed(0x10000, 0x2000);
 	Engine_CameraMoveTo(0x1080000, -1, 0x1c00000, 1);
 	Engine_CameraWaitForMove();
-	Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
+	Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
 	Engine_AudioPlayCue(232);
 	if (*gKorimaMagariLayout == 0)
 	{

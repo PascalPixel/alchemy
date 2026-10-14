@@ -227,7 +227,7 @@ s32 SceneEffect_PrepareState(void)
 static void EV09_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgShianYoungWarriorsVeryGallantCame);
+	Engine_EventSetMessage(MsgShianYoungWarriorsVeryGallantCame);
 	Engine_EventAskYesNo(9, 0);
 	Engine_EventEnd();
 }
@@ -256,7 +256,7 @@ static void EV18_TALK(void)
 		facing = record->facing;
 		Actor_FaceActor(18, ACTOR_PARTY_LEADER, 0);
 		Engine_EventWait(10);
-		Engine_EventSetMessage((s32)MsgShianNowMustGetWaterAgain);
+		Engine_EventSetMessage(MsgShianNowMustGetWaterAgain);
 		if (GameFlag_IsSet(FLAG_SHIAN_WATER_SPILLED) == 0)
 		{
 			gEventWork->message++;
@@ -338,7 +338,7 @@ static void EV18_TALK(void)
 	Actor_ShowEmote(18, 0x103, 0);
 	Engine_ActorStartRepeatedMotion(18, 2);
 	Engine_EventWait(70);
-	Engine_EventSetMessage((s32)MsgShianDoingMadeMeSpillMy);
+	Engine_EventSetMessage(MsgShianDoingMadeMeSpillMy);
 	Event_ShowMessageAndWait(18, 0, 20);
 	BattleFx_PlayQueuedSound();
 	if ((Object_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20) == 26
@@ -411,14 +411,14 @@ static void EV14_TALK(void)
 	{
 		Engine_ActorFaceActor(14, 0, 0);
 		Engine_EventWait(10);
-		Engine_EventSetMessage((s32)MsgShianKungFuStrong);
+		Engine_EventSetMessage(MsgShianKungFuStrong);
 		Engine_EventShowMessage(14, 0);
 		Engine_ActorFaceDirection(14, 0, 10);
 		Engine_EventEnd();
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgShianHooWhaaaHachaaa);
+		Engine_EventSetMessage(MsgShianHooWhaaaHachaaa);
 		Engine_EventShowMessage(14, 0);
 		Engine_ActorRunRepeatedMotion(0, 2);
 		Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
@@ -482,7 +482,7 @@ static void EV14_TALK(void)
 static void EV17_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgShianWarriorsFromSchoolStrongWarriors);
+	Engine_EventSetMessage(MsgShianWarriorsFromSchoolStrongWarriors);
 	Engine_EventAskYesNo(17, 0);
 	Engine_EventEnd();
 }
@@ -606,7 +606,7 @@ static void EV21_PSYNERGY(void)
 	Engine_ActorFaceActor(14, 19, 0);
 	Engine_ActorRunRepeatedMotion(14, 2);
 	Engine_EventWait(10);
-	Engine_EventSetMessage((s32)MsgShianWhaWhaHappened);
+	Engine_EventSetMessage(MsgShianWhaWhaHappened);
 	if (GameFlag_IsSet(0x203))
 	{
 		gEventWork->message++;

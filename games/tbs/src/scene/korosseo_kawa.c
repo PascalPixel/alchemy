@@ -709,7 +709,7 @@ static void FieldScene_RunCommandSequence(s32 a0)
 	Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
-	Engine_EventSetMessage((s32)MsgKorosseoSiteFirstFinalsBattle);
+	Engine_EventSetMessage(MsgKorosseoSiteFirstFinalsBattle);
 	Event_ShowMessage(a0, 0);
 	Actor_ShowEmote(MEARI, 0x101, 60);
 	Event_ShowMessage(MEARI, 0);
@@ -730,7 +730,7 @@ static void FieldScene_RunCommandSequence(s32 a0)
 	{
 		do
 		{
-			Engine_EventSetMessage((s32)MsgKorosseoWarriorsEnterFinalsWithoutAny);
+			Engine_EventSetMessage(MsgKorosseoWarriorsEnterFinalsWithoutAny);
 			Engine_ActorSetAnimation(IWAN, 3);
 			Engine_EventWait(2);
 			Engine_ActorSetAnimation(GERALD, 3);
@@ -767,10 +767,10 @@ static void FieldScene_RunCommandSequence(s32 a0)
 			Engine_ActorRunRepeatedMotion(a0, 2);
 		} while (Event_AskYesNo(a0, 0) != 0);
 		Engine_ActorRunRepeatedMotion(a0, 2);
-		Engine_EventSetMessage((s32)MsgKorosseoAskAttendantsForExplanationsStages);
+		Engine_EventSetMessage(MsgKorosseoAskAttendantsForExplanationsStages);
 		Event_ShowMessage(a0, 0);
 	}
-	Engine_EventSetMessage((s32)MsgKorosseoRobinYoureContestantInFinals);
+	Engine_EventSetMessage(MsgKorosseoRobinYoureContestantInFinals);
 	Engine_ActorRunRepeatedMotion(a0, 2);
 	Event_ShowMessage(a0, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
@@ -832,7 +832,7 @@ static void EV20_TALK(s32 scene)
 		path = SceneDialogue_RunFlagGatedPromptInteraction(scene, 1);
 		if (path == 0)
 		{
-			Engine_EventSetMessage((s32)MsgKorosseoCallRockChallenge);
+			Engine_EventSetMessage(MsgKorosseoCallRockChallenge);
 			Camera_SetSpeed(0x30000, 0x6000);
 			Camera_MoveTo(PIXELS(328), -1, PIXELS(168), 1);
 			Engine_CameraWaitForMove();
@@ -874,7 +874,7 @@ static void EV20_TALK(s32 scene)
 		}
 		else if (path == 1)
 		{
-			Engine_EventSetMessage((s32)MsgKorosseoObjectiveStageClear);
+			Engine_EventSetMessage(MsgKorosseoObjectiveStageClear);
 			Engine_EventShowMessage(scene, 0);
 		}
 		FieldScene_RunMiddleSequence(path, scene, 1);
@@ -898,7 +898,7 @@ static void EV21_TALK(s32 a0)
 		rec4 = SceneDialogue_RunFlagGatedPromptInteraction(a0, 2);
 		if (rec4 == 0)
 		{
-			Engine_EventSetMessage((s32)MsgKorosseoAreaCalledPipeworks);
+			Engine_EventSetMessage(MsgKorosseoAreaCalledPipeworks);
 			Engine_CameraSetSpeed(0x30000, 0x6000);
 			Camera_MoveTo(0x2500000, -1, 0x780000, 1);
 			Engine_CameraWaitForMove();
@@ -953,7 +953,7 @@ static void EV21_TALK(s32 a0)
 		}
 		else if (rec4 == 1)
 		{
-			Engine_EventSetMessage((s32)MsgKorosseoObjectiveMakeGood);
+			Engine_EventSetMessage(MsgKorosseoObjectiveMakeGood);
 			Engine_EventShowMessage(a0, 0);
 		}
 		FieldScene_RunMiddleSequence(rec4, a0, 2);
@@ -975,7 +975,7 @@ static void EV22_TALK(s32 scene)
 		path = SceneDialogue_RunFlagGatedPromptInteraction(scene, 3);
 		if (path == 0)
 		{
-			Engine_EventSetMessage((s32)MsgKorosseoTheyCallBrokenBridge);
+			Engine_EventSetMessage(MsgKorosseoTheyCallBrokenBridge);
 			SceneState_ResetCounterAndStartTask();
 			Camera_SetSpeed(0x30000, 0x6000);
 			Camera_MoveTo(PIXELS(840), -1, PIXELS(216), 1);
@@ -999,7 +999,7 @@ static void EV22_TALK(s32 scene)
 		}
 		else if (path == 1)
 		{
-			Engine_EventSetMessage((s32)MsgKorosseoOperatorBridgeWillAlsoCheer);
+			Engine_EventSetMessage(MsgKorosseoOperatorBridgeWillAlsoCheer);
 			Event_ShowMessage(scene, 0);
 		}
 		FieldScene_RunMiddleSequence(path, scene, 3);
@@ -1020,7 +1020,7 @@ static void EV23_TALK(s32 scene)
 	path = SceneDialogue_RunFlagGatedPromptInteraction(scene, 4);
 	if (path == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKorosseoPlaceNormallyCalledLumberWater);
+		Engine_EventSetMessage(MsgKorosseoPlaceNormallyCalledLumberWater);
 		Camera_SetSpeed(0x30000, 0x6000);
 		Camera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
 		Engine_CameraWaitForMove();
@@ -1057,7 +1057,7 @@ static void EV23_TALK(s32 scene)
 	}
 	else if (path == 1)
 	{
-		Engine_EventSetMessage((s32)MsgKorosseoLogsKeyClearingStage);
+		Engine_EventSetMessage(MsgKorosseoLogsKeyClearingStage);
 		Event_ShowMessage(scene, 0);
 	}
 	FieldScene_RunMiddleSequence(path, scene, 4);
@@ -1373,7 +1373,7 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
 
 	shared = (u8 *)&gGameState;
 	UiWork_PushValueSlot(((struct GameState *)shared)->selected_actor, 1);
-	Engine_MessageShowCentered((s32)MsgKorosseoRobinGotItem, 3);
+	Engine_MessageShowCentered(MsgKorosseoRobinGotItem, 3);
 	ObjectDispatch_WaitForValue16(rec);
 
 	return flag;

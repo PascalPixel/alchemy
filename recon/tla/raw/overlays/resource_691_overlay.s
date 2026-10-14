@@ -3710,46 +3710,6 @@ Func_020022ac:
 	.4byte 0xffffd000
 .L_0200a448:
 	.4byte 0x01090001
-	.section .text.x0200a4c8,"ax",%progbits
-	.global Func_020024c8
-	.thumb_func
-Func_020024c8:
-	push {r5, r6, lr}
-	ldr r3, .L_0200a514
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r6, r3, r2
-	ldr r0, [r6]
-	bl Object_GetById
-	adds r5, r0, #0
-	movs r0, #10
-	adds r0, #255
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_0200a510
-	movs r0, #1
-	bl WaitFrames
-	adds r3, r5, #0
-	adds r3, #34
-	ldrb r0, [r3]
-	ldr r1, [r5, #8]
-	ldr r2, [r5, #16]
-	bl Map_GetTerrainHeight
-	movs r3, #0
-	str r3, [r5, #40]
-	movs r3, #128
-	lsls r3, r3, #24
-	str r0, [r5, #20]
-	str r0, [r5, #12]
-	str r3, [r5, #60]
-	movs r1, #0
-	ldr r0, [r6]
-	bl Object_AttachWorkTargetToObject
-.L_0200a510:
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_0200a514:
-	.4byte gPartyState
 	.section .text.x0200a518,"ax",%progbits
 	.global Func_02002518
 	.thumb_func

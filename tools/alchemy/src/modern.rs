@@ -30,6 +30,12 @@
 //!   classes that question style and no behaviour: sign-compare,
 //!   unused-parameter, missing-field-initializers and pointer-sign.
 //!
+//! Of the classes GCC 14 made errors for C99 and later, which pret's modern
+//! build, at GCC's default standard, gets as errors, a class whose count
+//! reached 0 in all six editions becomes an error and stays at 0 (STRICT
+//! below). Every other class, these while above 0 and the rest of -Wall
+//! and -Wextra, is reported and held only by the count below.
+//!
 //! The count of distinct warnings may only fall. tools/alchemy/modern.tsv
 //! holds the count allowed for the compiler it was measured with; a build
 //! of all six editions with that compiler fails above it, and `--update`
@@ -74,6 +80,10 @@ pub(crate) struct Modern {
     pub signature: String,
     /// The compiler's own runtime library, linked after the objects.
     pub libraries: Vec<PathBuf>,
+    /// The compiler's major release, which decides the classes it knows.
+    pub major: u32,
+    /// `-Werror=` for each class of STRICT the compiler knows.
+    pub strict: Vec<String>,
 }
 
 /// The options every modern compile shares, before the instruction set.
@@ -106,12 +116,66 @@ pub(crate) fn family_flags(family: CompilerFamily) -> Vec<String> {
     flags
 }
 
+/// The warning classes the modern build refuses, each with the GCC release
+/// that introduced its option (0 for one every current GCC has): GCC
+/// refuses `-Werror=` of an option it does not know, so an older compiler
+/// leaves that class a warning. A class joins once its count is 0 in all
+/// six ☀️ editions, and as an error it stays 0 (Pascal, 2026-10-14).
+const STRICT: &[(&str, u32)] = &[
+    ("implicit-int", 0),
+    ("missing-parameter-type", 0),
+    ("declaration-missing-parameter-type", 14),
+];
+
+/// The other classes GCC 14 made errors for C99 and later, not yet 0, with
+/// the release that introduced each option. A build of the six editions
+/// names any of them that reaches 0, for STRICT to take. `-Wreturn-type`
+/// is none of them: a function whose value no caller reads is Camelot's
+/// C89 and stays a warning.
+const PENDING: &[(&str, u32)] = &[
+    ("implicit-function-declaration", 0),
+    ("return-mismatch", 14),
+    ("int-conversion", 0),
+    ("incompatible-pointer-types", 0),
+];
+
+/// `-Werror=` for each strict class GCC `major` knows.
+fn strict_flags(major: u32) -> Vec<String> {
+    STRICT
+        .iter()
+        .filter(|(_, since)| major >= *since)
+        .map(|(class, _)| format!("-Werror={class}"))
+        .collect()
+}
+
+/// The pending classes GCC `major` knows that no warning of a build
+/// reports: each can join STRICT.
+fn ready(diagnostics: &[Diagnostic], major: u32) -> Vec<&'static str> {
+    PENDING
+        .iter()
+        .filter(|(class, since)| {
+            major >= *since && !diagnostics.iter().any(|found| found.option == format!("-W{class}"))
+        })
+        .map(|(class, _)| *class)
+        .collect()
+}
+
+/// The major release in what `gcc -dumpversion` prints: `16.2.0`, or `16`
+/// from a compiler built to print only its major release.
+fn major_release(text: &str) -> Option<u32> {
+    text.trim().split('.').next()?.parse().ok()
+}
+
 impl Modern {
     pub(crate) fn new(cc: &str) -> Result<Modern, String> {
         let root = crate::compiler::routing::root();
         let version = crate::process::run(&[cc, "--version"], root)
             .map_err(|error| format!("modern compiler {cc}: {error}"))?;
         let version = version.lines().next().unwrap_or_default().to_owned();
+        let release = crate::process::run(&[cc, "-dumpversion"], root)?;
+        let major = major_release(&release)
+            .ok_or_else(|| format!("{cc} -dumpversion names no release: {release:?}"))?;
+        let strict = strict_flags(major);
         let libgcc =
             crate::process::run(&[cc, "-mthumb", "-mcpu=arm7tdmi", "-print-libgcc-file-name"], root)?;
         let libgcc = PathBuf::from(libgcc.trim());
@@ -119,14 +183,17 @@ impl Modern {
             return Err(format!("{cc} names no libgcc.a: {}", libgcc.display()));
         }
         let signature = format!(
-            "{version}\0{}\0{}",
+            "{version}\0{} {}\0{}",
             COMMON_FLAGS.join(" "),
+            strict.join(" "),
             libgcc.display()
         );
         Ok(Modern {
             cc: cc.to_owned(),
             signature,
             libraries: vec![libgcc],
+            major,
+            strict,
         })
     }
 }
@@ -155,6 +222,7 @@ impl Modern {
         let family = family_for_source(target.compiler, &text);
         let mut step = vec![self.cc.clone()];
         step.extend(family_flags(family));
+        step.extend(self.strict.iter().cloned());
         step.extend(
             cflags_for_family(target.compiler, CompilerFamily::Game)
                 .into_iter()
@@ -340,6 +408,9 @@ pub fn run(args: &[String]) -> Result<(), String> {
         fs::write(&path, text).map_err(|error| format!("{ALLOWED}: {error}"))?;
     }
     println!("{verdict}");
+    for class in ready(&report.diagnostics, modern.major) {
+        println!("-W{class} is at 0 in all six editions: move it from PENDING to STRICT in tools/alchemy/src/modern.rs");
+    }
     Ok(())
 }
 
@@ -840,6 +911,24 @@ games/b.c:7:1: warning: array subscript 4 is above array bounds [-Warray-bounds=
         assert_eq!(both, "compiler\twarnings\ngcc 15\t500\ngcc 16\t100\n");
         assert_eq!(hold("", "gcc 16", 7, false).unwrap().0, "");
         assert_eq!(hold("", "gcc 16", 7, true).unwrap().0, "compiler\twarnings\ngcc 16\t7\n");
+    }
+
+    #[test]
+    fn a_strict_class_is_an_error_where_the_compiler_has_it_and_a_pending_one_is_named_at_zero() {
+        assert_eq!(major_release("16.2.0\n"), Some(16));
+        assert_eq!(major_release("13\n"), Some(13));
+        assert_eq!(major_release("unknown\n"), None);
+        assert_eq!(
+            strict_flags(16),
+            ["-Werror=implicit-int", "-Werror=missing-parameter-type", "-Werror=declaration-missing-parameter-type"]
+        );
+        assert_eq!(strict_flags(13), ["-Werror=implicit-int", "-Werror=missing-parameter-type"]);
+        let classes: BTreeSet<&str> = STRICT.iter().chain(PENDING).map(|(class, _)| *class).collect();
+        assert_eq!(classes.len(), STRICT.len() + PENDING.len(), "a class is strict or pending, once");
+        assert!(!classes.contains("return-type"), "a value no caller reads stays a warning");
+        let found = parse("games/a.c:3:5: warning: implicit declaration of function 'g' [-Wimplicit-function-declaration]\n");
+        assert_eq!(ready(&found, 16), ["return-mismatch", "int-conversion", "incompatible-pointer-types"]);
+        assert_eq!(ready(&found, 13), ["int-conversion", "incompatible-pointer-types"]);
     }
 
     #[test]

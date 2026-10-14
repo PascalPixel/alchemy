@@ -273,7 +273,7 @@ static void ColossoLogRollingStage_ResetAndRunSceneTask(void)
 
 static void ColossoLogRollingStage_StartSceneTask(void)
 {
-	Engine_TaskAddCallback(ColossoLogRollingStage_SceneTask, 0xC80);
+	FieldScheduler_AddCallback(ColossoLogRollingStage_SceneTask, 0xC80);
 }
 
 static void ColossoLogRollingStage_WaitForSceneTask(void)
@@ -908,7 +908,7 @@ s32 StageSetup_BuildAndDispatch(void)
 
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	Engine_GameFlagSet(324);
-	Engine_TaskAddCallback(ColossoLogRollingStage_ShowActorPositionMessage, 3200);
+	FieldScheduler_AddCallback(ColossoLogRollingStage_ShowActorPositionMessage, 3200);
 	Map_CopyCellAttributes(74, 60, 8, 6, 120, 60);
 
 	Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
@@ -1016,7 +1016,7 @@ s32 StageSetup_BuildAndDispatch(void)
 			actor->motion_flags = 0;
 			actor->y.fixed = 32 << 16;
 		}
-		Engine_TaskAddCallback(ColossoLogRollingStage_SceneTask, 3200);
+		FieldScheduler_AddCallback(ColossoLogRollingStage_SceneTask, 3200);
 	}
 
 	if (Engine_GameFlagIsSet(864) != 0)
@@ -1098,7 +1098,7 @@ s32 StageSetup_BuildAndDispatch(void)
 		break;
 
 	case 2:
-		Engine_TaskAddCallback(SceneState_RaiseTriggerOnPsynergyTarget, 3200);
+		FieldScheduler_AddCallback(SceneState_RaiseTriggerOnPsynergyTarget, 3200);
 		Engine_ActorDestroy(39);
 		Engine_ActorDestroy(40);
 		if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0)
@@ -1895,7 +1895,7 @@ static void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
 	{
 		s32 budget = 0xc80;
 		s32 task = (s32)Korosseo_UpdateModeTask;
-		Engine_TaskAddCallback(task, budget);
+		FieldScheduler_AddCallback(task, budget);
 	}
 
 	handler = (s32)gColossoModeScriptDefault;

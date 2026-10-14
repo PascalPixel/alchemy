@@ -16,6 +16,7 @@
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "field_scene.h"
 #include "battle.h"
 #include "debug.h"
@@ -1408,12 +1409,11 @@ static void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1)
 static void EV03_TOUCH_1(void)
 {
 	struct FieldActor *record;
-	s32				   particle_task;
+	SchedulerCallback  particle_task;
 
 	Engine_EventBegin();
-	particle_task = (s32)FieldScene_SpawnRandomizedParticle;
-	/* FAKEMATCH: called through a cast to the void call the bytes show; called by its value-returning prototype, the priority's shift moves ahead of the callback's move (differ 2), and with the routine passed directly instead of through the s32 local, differ 5 (2026-10-13). */
-	((void (*)())Engine_TaskAddCallback)(particle_task, 0xc80);
+	particle_task = FieldScene_SpawnRandomizedParticle;
+	FieldScheduler_AddCallback(particle_task, 0xc80);
 	Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
 	gEventWork->transition_frames = 60;
 	Engine_EventCloseScreen();

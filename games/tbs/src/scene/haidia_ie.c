@@ -220,7 +220,7 @@ static void EV17_TALK(void)
 			OverlayObject_UpdateOnFrameBit1((s32)Object_GetById(17));
 			Engine_TaskWait(1);
 		}
-		Engine_TaskAddCallback((s32)FieldScene_RunStep17, 0xc80);
+		FieldScheduler_AddCallback((s32)FieldScene_RunStep17, 0xc80);
 		Engine_AudioPlayCue(107);
 		for (i = 0; i != 180; i++)
 		{
@@ -323,7 +323,7 @@ static void FieldScene_RunMiddleAuxiliarySequence(void)
 		Engine_TaskWait(1);
 	}
 	FieldScheduler_AddOrUpdateCallback((s32)FieldScene_RunStep15, 0xc80);
-	Engine_TaskAddCallback((s32)FieldScene_RunStep20, 0xc80);
+	FieldScheduler_AddCallback((s32)FieldScene_RunStep20, 0xc80);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
 	rec8 = Object_GetById(20);
 	v2 = rec8->motion_flags;

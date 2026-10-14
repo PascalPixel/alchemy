@@ -1167,7 +1167,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 	Engine_EventWait(10);
 
 	Event_PlayCue(107);
-	Engine_TaskAddCallback(FieldScene_RunRandomHalfBranch, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(FieldScene_RunRandomHalfBranch, TASK_PRIORITY_SCENE);
 	Engine_EventWait(10);
 	Actor_ShowEmote(ACTOR_WISE_ONE, EMOTE_IN_FRONT, 0);
 	Engine_EventWait(40);
@@ -1189,7 +1189,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 		FieldScene_RunStepByRuntimeBits((s32)wise_one);
 		Engine_TaskWait(1);
 	}
-	Engine_TaskAddCallback(FieldScene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(FieldScene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
 	ColorBuffer_ApplyTarget(0x10000, 1);
 	Engine_ColorBufferInterpolate(60);
 	Engine_EventWait(30);
@@ -1337,7 +1337,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 	Engine_ColorBufferInterpolate(20);
 	Engine_EventWait(20);
 	Event_PlayCue(107);
-	Engine_TaskAddCallback(FieldScene_RunLateRandomHalfBranch, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(FieldScene_RunLateRandomHalfBranch, TASK_PRIORITY_SCENE);
 	Engine_EventWait(20);
 	Camera_SetSpeed(0x10000, 0x2000);
 	Camera_MoveTo(PIXELS(184), -1, PIXELS(132), 1);
@@ -1361,7 +1361,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 		FieldScene_RunStepByRuntimeBits((s32)wise_one);
 		Engine_TaskWait(1);
 	}
-	Engine_TaskAddCallback(FieldScene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(FieldScene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
 	ColorBuffer_ApplyTarget(0x10000, 1);
 	Engine_ColorBufferInterpolate(60);
 	Engine_EventWait(30);
@@ -1389,7 +1389,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 	Engine_ColorBufferInterpolate(20);
 	Engine_EventWait(20);
 	Event_PlayCue(107);
-	Engine_TaskAddCallback(FieldScene_RunRandomHalfBranch, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(FieldScene_RunRandomHalfBranch, TASK_PRIORITY_SCENE);
 	Engine_EventWait(40);
 	Engine_ObjectMotionSetPositionAndCommit(ACTOR_WISE_ONE, 127, 110);
 	Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
@@ -1400,7 +1400,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 		FieldScene_RunStepByRuntimeBits((s32)wise_one);
 		Engine_TaskWait(1);
 	}
-	Engine_TaskAddCallback(FieldScene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(FieldScene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
 	ColorBuffer_ApplyTarget(0x10000, 1);
 	Engine_ColorBufferInterpolate(60);
 	Event_PlayCue(0x121);
@@ -1424,7 +1424,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 	Engine_ColorBufferInterpolate(20);
 	Engine_EventWait(20);
 	Event_PlayCue(107);
-	Engine_TaskAddCallback(FieldScene_RunLateRandomHalfBranch, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(FieldScene_RunLateRandomHalfBranch, TASK_PRIORITY_SCENE);
 	Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, 3);
 	Engine_TaskRemoveCallback(FieldScene_RunActor15TwoStep);
 	Engine_TaskWait(1);
@@ -1456,7 +1456,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 		FieldScene_RunStepByRuntimeBits((s32)wise_one);
 		Engine_TaskWait(1);
 	}
-	Engine_TaskAddCallback(FieldScene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(FieldScene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
 	Engine_EventWait(20);
 	ColorBuffer_ApplyTarget(0x7fff, 2);
 	Engine_ColorBufferInterpolate(60);
@@ -1629,7 +1629,7 @@ static void FieldScene_RunFourWayEffectSequence(u32 mode)
 		Actor_ShowEmote(GERALD, 256, 0);
 	}
 	Engine_TaskWait(20);
-	Engine_TaskAddCallback(SceneEffect_AdvanceTenEntryTimers, 3200);
+	FieldScheduler_AddCallback(SceneEffect_AdvanceTenEntryTimers, 3200);
 	Event_PlayCue(246);
 	gArcEffectTimers[0] = 1;
 	Engine_TaskWait(6);

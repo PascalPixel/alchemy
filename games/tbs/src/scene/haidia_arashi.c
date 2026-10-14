@@ -379,7 +379,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void)
 		Engine_ActorSetAnimation(8, 6);
 		Object_GetById(22)->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
 		Object_GetById(8)->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
-		Engine_TaskAddCallback(HaidiaArashi_CopyLeaderSpritePriority, 0xC80);
+		FieldScheduler_AddCallback(HaidiaArashi_CopyLeaderSpritePriority, 0xC80);
 		Engine_ActorSetPosition(24, 0, 0);
 		Engine_ActorSetPosition(25, 0, 0);
 		Engine_ActorSetPosition(23, 0, 0);
@@ -1211,7 +1211,7 @@ static void EV34_TOUCH(void)
 		*phase = 0;
 		FieldScheduler_AddOrUpdateCallback(steps, 0xc80);
 		callback = (s32)SceneState_SetValue19ThenCall;
-		Engine_TaskAddCallback(callback, 0xc80);
+		FieldScheduler_AddCallback(callback, 0xc80);
 		Engine_EventWait(40);
 		*phase = 1;
 		Engine_EventWait(30);
@@ -2071,7 +2071,7 @@ static void Scene_RunActorGroupDepartureSequence(void)
 	ColorBuffer_ApplyTarget(0x10000, 2);
 	Engine_ColorBufferInterpolate(30);
 	Task_Wait(30);
-	Engine_TaskAddCallback(HaidiaArashi_UpdatePulsingGlow, 0xc80);
+	FieldScheduler_AddCallback(HaidiaArashi_UpdatePulsingGlow, 0xc80);
 	Actor_EnableActionCallback(19, HaidiaArashi_ActorNineteenRiseScript);
 	Camera_SetSpeed(0x20000, 0x7ae);
 	Camera_MoveTo(0xaf0000, 0x600000, 0x43e0000, 1);
@@ -2139,7 +2139,7 @@ static void Scene_RunActorGroupDepartureSequence(void)
 	Engine_MapRedraw();
 	groupActor->scale_x = 0x20000;
 	groupActor->scale_y = 0x20000;
-	Engine_TaskAddCallback(ActorPresentation_SelectActorTwentySevenState, 0xc80);
+	FieldScheduler_AddCallback(ActorPresentation_SelectActorTwentySevenState, 0xc80);
 	Actor_Stop(10);
 	Actor_Stop(24);
 	Actor_Stop(25);
@@ -2242,7 +2242,7 @@ static void Scene_RunActorGroupDepartureSequence(void)
 	Actor_SetAnimation(8, 6);
 	Object_GetById(22)->priority_flags &= 254;
 	Object_GetById(8)->priority_flags &= 254;
-	Engine_TaskAddCallback(HaidiaArashi_CopyLeaderSpritePriority, 0xc80);
+	FieldScheduler_AddCallback(HaidiaArashi_CopyLeaderSpritePriority, 0xc80);
 	Actor_SetPosition(0, 0xb50000, 0x4f90000);
 	work = Actor_Get(0);
 	work->facing = 0xe000;

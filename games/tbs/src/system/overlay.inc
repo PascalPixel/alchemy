@@ -36,7 +36,6 @@
 	import __umodsi3, IwramUnsignedRemainder
 @ farcall/runtime.h
 	import Engine_TaskWait, WaitFramesFar
-	import Engine_TaskAddCallback, Scheduler_AddOrUpdateCallbackFar
 	import Scheduler_AddOrUpdateCallback, Scheduler_AddOrUpdateCallbackFar
 	import Engine_TaskRemoveCallback, Scheduler_RemoveCallbackFar
 	import Scheduler_RemoveCallback, Scheduler_RemoveCallbackFar
@@ -222,7 +221,6 @@
 	import GetPartyMemberCount, Party_CountActiveOwnersFar
 	import Party_CountActiveOwners, Party_CountActiveOwnersFar
 	import Party_AddActiveOwner, Party_AddActiveOwnerFar
-	import Engine_PartyListActiveOwners, Party_ListActiveOwnersFar
 	import Party_ListActiveOwners, Party_ListActiveOwnersFar
 	import Party_RemoveActiveOwner, Party_RemoveActiveOwnerFar
 	import Djinn_AddToOwner, Djinn_AddToOwnerFar

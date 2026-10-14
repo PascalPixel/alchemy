@@ -36,6 +36,7 @@
 #include "types.h"
 #include "call.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "scene_ids.h"
 #include "palette_scene.h"
 #include "io_reg.h"
@@ -234,7 +235,7 @@ static void RunEventScript01(void)
 	Engine_TaskWait(40);
 	Event_PlayCue(17);
 	gKorimaKiSparkSound = 1;
-	Engine_TaskAddCallback(PaletteScene_SpawnEffect, 0xc80);
+	FieldScheduler_AddCallback(PaletteScene_SpawnEffect, 0xc80);
 	Engine_TaskWait(30);
 	gKorimaKiSparkSound = 0;
 	Camera_MoveTo(0x1480000, -1, 0xeb0000, 1);
@@ -334,7 +335,7 @@ static void PaletteScene_RunActorTransitionSequence(void)
 	Engine_TaskWait(40);
 	transitionState = &gKorimaKiTransitionStep;
 	*transitionState = 0;
-	Engine_TaskAddCallback(PaletteScene_AdvanceTransition, 0xc80);
+	FieldScheduler_AddCallback(PaletteScene_AdvanceTransition, 0xc80);
 	Engine_EventWait(40);
 	Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 20);
 	Camera_SetSpeed(0x33333, 0x6666);
@@ -479,7 +480,7 @@ static void PaletteScene_RunActorTransitionSequence(void)
 	gKorimaKiSparkOrigin[1] = 0x300000;
 	effectCallback = (s32)KorimaKi_SpawnOrbitSparks;
 	gKorimaKiSparkOrigin[2] = 0xcd0000;
-	Engine_TaskAddCallback(effectCallback, 0xc80);
+	FieldScheduler_AddCallback(effectCallback, 0xc80);
 	Engine_EventWait(100);
 	Engine_TaskRemoveCallback(effectCallback);
 	ColorBuffer_ApplyTarget(0x7fff, 0);
@@ -583,7 +584,7 @@ static void PaletteScene_RunActorTransitionSequence(void)
 	gKorimaKiSparkOrigin[1] = 0x140000;
 	effectCallback = (s32)KorimaKi_SpawnOrbitSparks;
 	gKorimaKiSparkOrigin[2] = 0x1020000;
-	Engine_TaskAddCallback(effectCallback, 0xc80);
+	FieldScheduler_AddCallback(effectCallback, 0xc80);
 	Engine_EventWait(100);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
 	Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 0);

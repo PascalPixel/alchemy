@@ -348,7 +348,7 @@ s32 SaveMenu_Run(void)
 
 	started = 0;
 	Clear_LoadBackground();
-	Engine_TaskAddCallback((s32)Clear_CheckButtonCodes, 0xc80);
+	FieldScheduler_AddCallback((s32)Clear_CheckButtonCodes, 0xc80);
 	gEventWork->start_transition = started;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
@@ -392,7 +392,7 @@ menu_top:;
 		if (started == 0)
 		{
 			Engine_TaskWait(30);
-			Engine_TaskAddCallback((s32)Clear_UpdateBlend, 0xc80);
+			FieldScheduler_AddCallback((s32)Clear_UpdateBlend, 0xc80);
 			Engine_TaskWait(1);
 			started = 1;
 		}

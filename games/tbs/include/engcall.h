@@ -23,7 +23,8 @@ struct FieldActor;
 struct FieldPosition;
 struct MenuSprite;
 
-// 本体のスケジューラ: Engine_TaskAddCallback (Task_AddCallback) と同じ所へ行く別名
+// 本体のスケジューラにコールバックを登録する。シーン層の Task_AddCallback と
+// FieldScheduler_AddOrUpdateCallback もこれを通る (オーバーレイはこのルーチンを一つの名前で呼ぶ)。
 static inline s32 FieldScheduler_AddCallback(SchedulerCallback callback, s32 priority)
 {
 	return Scheduler_AddOrUpdateCallback(callback, priority);

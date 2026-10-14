@@ -758,7 +758,7 @@ static s32 EV10_TOUCH(void)
 				Runtime_ReleaseHeapBlock(54);
 				LinkLobby_WriteSlotValue(0);
 				LinkLobby_WriteSlotValue(4);
-				Engine_TaskAddCallback(LinkLobby_PollPeerReady, 0xc80);
+				FieldScheduler_AddCallback(LinkLobby_PollPeerReady, 0xc80);
 				Scheduler_SetCallbackMask(LinkLobby_PollPeerReady, 1);
 				Engine_GameFlagClear(0x201);
 				Engine_GameFlagClear(0x202);
@@ -1453,7 +1453,7 @@ s32 LinkLobby_RunRoundResult(void)
 		LinkLobby_WriteSlotValue(4);
 	}
 	callback = LinkLobby_PollPeerReady;
-	Engine_TaskAddCallback(callback, 0xc80);
+	FieldScheduler_AddCallback(callback, 0xc80);
 	Scheduler_SetCallbackMask(callback, 1);
 	if (gGameState.entrance != 8 || !Engine_GameFlagIsSet(0x173))
 	{

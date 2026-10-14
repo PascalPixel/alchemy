@@ -200,7 +200,7 @@ static void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
 		}
 		Engine_ActorWaitForMove((s32)p6);
 		Event_PlayCue(244);
-		Engine_TaskAddCallback((s32)SuharaSabaku_SyncSelectedActorProgress, 0xc80);
+		FieldScheduler_AddCallback((s32)SuharaSabaku_SyncSelectedActorProgress, 0xc80);
 		rec7->motion_flags = rec2;
 		Engine_ObjectSetPosition((s32)rec7, rec7->x.fixed, rec7->y.fixed + 0x200000, rec7->z.fixed);
 		Engine_ActorWaitForMove((s32)p6);
@@ -623,7 +623,7 @@ static s32 FieldScene_RunScene3c0SequenceA(void)
 		MapObject_SetPosition(100, -1, -1);
 		BattleFx_EmitRandomParticle();
 		Map_CopyCellAttributes(127, 127, 1, 1, 12, 71);
-		return Engine_TaskAddCallback(EncounterPalette_Pulse, 0xc80);
+		return FieldScheduler_AddCallback(EncounterPalette_Pulse, 0xc80);
 	}
 }
 
@@ -646,7 +646,7 @@ s32 SuharaSabaku_RunSceneScript(void)
 	if (FieldGameFlag_GetByte(0x210) != 0)
 	{
 		gGameState.movement_mode = 2;
-		Engine_TaskAddCallback(SuharaSabaku_SyncSelectedActorProgress, 0xc80);
+		FieldScheduler_AddCallback(SuharaSabaku_SyncSelectedActorProgress, 0xc80);
 	}
 	if (gGameState.scene == (s32)&SceneId_SuharaSabaku1
 		|| gGameState.scene == (s32)&SceneId_SuharaSabaku2)

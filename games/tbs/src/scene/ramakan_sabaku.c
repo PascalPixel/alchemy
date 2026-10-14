@@ -822,7 +822,7 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
 	{
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		RamakanSabaku_ClaimSandEffectVram();
-		Engine_TaskAddCallback((s32)RamakanSabaku_RaiseQuarterTriggers, 0xc80);
+		FieldScheduler_AddCallback((s32)RamakanSabaku_RaiseQuarterTriggers, 0xc80);
 		if (gGameState.scene == (s32)&SceneId_RamakanSabaku1)
 		{
 			Map_CopyCells(22, 7, 4, 2, 64, 126);
@@ -1058,7 +1058,7 @@ void RamakanSabaku_ClaimSandEffectVram(void)
 	zero.v = 0;
 	RamakanSabaku_SandCounter = zero.v;
 	RamakanSabaku_SandPhase = zero.v;
-	Engine_TaskAddCallback(RamakanSabaku_RunSandstorm, 0xc76);
+	FieldScheduler_AddCallback(RamakanSabaku_RunSandstorm, 0xc76);
 }
 
 static void RamakanSabaku_SetSandPhase(u16 value)

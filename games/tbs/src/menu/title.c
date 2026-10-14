@@ -264,7 +264,7 @@ static void Title_RevealScreen(s32 unused)
 	Engine_EventWait(30);
 	gTitleRevealFrame = 0;
 	Title_LoadSprites(0);
-	Engine_TaskAddCallback(Title_RevealSpriteRow, 0xc80);
+	FieldScheduler_AddCallback(Title_RevealSpriteRow, 0xc80);
 	IO_WRITE_QUEUE_PUSH(0x4000000, 0x1540, 0x20000);
 	IO_WRITE_QUEUE_PUSH(0x4000050, 0x2fce, 0x20000);
 	IO_WRITE_QUEUE_PUSH(0x4000054, 16, 0x20000);

@@ -33,6 +33,7 @@
 #include "mapcopy.h"
 #include "types.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "scene.h"
 #include "mem.h"
 #include "call.h"
@@ -308,7 +309,7 @@ static void EV09_SEARCH(void)
 	}
 
 	KorimaMagari_ShakeChance = 0;
-	Engine_TaskAddCallback(KorimaMagari_CaptureShakeScroll, 0xc80);
+	FieldScheduler_AddCallback(KorimaMagari_CaptureShakeScroll, 0xc80);
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, State_UpdateScrollRegistersWithPreset);
 	Engine_AudioPlayCue(231);

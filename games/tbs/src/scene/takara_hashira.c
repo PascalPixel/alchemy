@@ -676,7 +676,7 @@ static void FieldScene_RunScene3b3SequenceA(void)
 		Map_DrawCellPanel(42, 83, 16, 5, 2, 10, 31);
 	}
 	TakaraHashira_ShakeChance = 0;
-	Engine_TaskAddCallback(CopyAndOffsetCoordinatePreset, 0xc80);
+	FieldScheduler_AddCallback(CopyAndOffsetCoordinatePreset, 0xc80);
 	Engine_TaskWait(1);
 	Runtime_SetIrqHandler(1, 0, TakaraHashira_JitterBackgroundScroll);
 	Engine_AudioPlayCue(231);
@@ -1229,7 +1229,7 @@ static void EV13_PSYNERGY(void)
 		Engine_EventWait(20);
 		Map_CopyCellsTo(73, 10, 60, 10, 1, 2);
 		Engine_EventWait(20);
-		Engine_TaskAddCallback((s32)SceneEffect_SpawnRandomizedParticle, 0xc80);
+		FieldScheduler_AddCallback((s32)SceneEffect_SpawnRandomizedParticle, 0xc80);
 		Engine_EventWait(40);
 		if (GameFlag_IsSet(0x201) != 0)
 		{
@@ -1475,7 +1475,7 @@ s32 TakaraHashira_SetupArea(void)
 		}
 		TakaraHashira_UpdatePillarActors();
 		Engine_EventWait(1);
-		Engine_TaskAddCallback(SceneActor_CheckActors8To11NearSlotZero, TASK_PRIORITY_SCENE);
+		FieldScheduler_AddCallback(SceneActor_CheckActors8To11NearSlotZero, TASK_PRIORITY_SCENE);
 		if (Engine_GameFlagIsSet(0x109) != 0)
 		{
 			for (id = 8; id < 12; id++)

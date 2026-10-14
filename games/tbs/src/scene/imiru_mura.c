@@ -668,7 +668,7 @@ s32 ImiruMura_ApplyEntryState(void)
 		leader->timer = 0;
 		leader->work = 0;
 		Task_AddCallback(FieldScene_RunScene399SequenceA, 0xc80);
-		Engine_TaskAddCallback(SceneState_UpdateZoneFlagsFromActorZero, 0xc80);
+		FieldScheduler_AddCallback(SceneState_UpdateZoneFlagsFromActorZero, 0xc80);
 		Engine_ActorSetSpritePriority(11, 1);
 		if (Engine_GameFlagIsSet(0x203))
 		{

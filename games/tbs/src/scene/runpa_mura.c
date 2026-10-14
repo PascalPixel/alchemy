@@ -15,6 +15,7 @@
 #include "types.h"
 #include "field_effect.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "field_scene.h"
 #include "edition.h"
 #include "runpa_mura.h"
@@ -207,7 +208,7 @@ static void Reveal_ShowSecrets(void)
 			actor->scale_y = GLINT_SCALE_Y;
 		}
 	}
-	Engine_TaskAddCallback(IcePillar_UpdateDrawOrder, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(IcePillar_UpdateDrawOrder, TASK_PRIORITY_SCENE);
 	GameFlag_Clear(FLAG_LUNPA_SECRETS_HIDDEN);
 }
 
@@ -683,7 +684,7 @@ static void EV91_RAISED(void)
 	Engine_ActorWaitForMove(ACTOR_RIGHT_GUARD);
 	Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 	Engine_EventEnd();
-	Engine_TaskAddCallback(Guards_Watch, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(Guards_Watch, TASK_PRIORITY_SCENE);
 }
 
 static void Gateway_Reopen(void)
@@ -768,7 +769,7 @@ static void Party_ThrownOut(void)
 	Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 288);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
 	Actor_SetDestination(ACTOR_PARTY_LEADER, 160, 296);
-	Engine_TaskAddCallback(Leader_KickUpDust, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(Leader_KickUpDust, TASK_PRIORITY_SCENE);
 	Engine_EventWait(1);
 	Event_PlayCue(SOUND_SCUFFLE);
 	Engine_EventWait(20);
@@ -796,7 +797,7 @@ static void Party_ThrownOut(void)
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SPRAWLED);
 	Event_PlayCue(SOUND_LANDING_THUD);
 	Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
-	Engine_TaskAddCallback(Leader_KickUpDust, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(Leader_KickUpDust, TASK_PRIORITY_SCENE);
 	Engine_EventWait(2);
 	Actor_Get(ACTOR_PARTY_LEADER)->velocity_y = PIXELS(3);
 	Engine_EventWait(1);
@@ -890,13 +891,13 @@ s32 Scene_Initialize(void)
 		if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0
 			&& Engine_GameFlagIsSet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0)
 		{
-			Engine_TaskAddCallback(Party_WatchForFortress, TASK_PRIORITY_SCENE);
+			FieldScheduler_AddCallback(Party_WatchForFortress, TASK_PRIORITY_SCENE);
 		}
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
 		if (gGameState.cloaked != 0)
 			Cloak_Begin();
 #endif
-		Engine_TaskAddCallback(Guards_Watch, TASK_PRIORITY_SCENE);
+		FieldScheduler_AddCallback(Guards_Watch, TASK_PRIORITY_SCENE);
 		Engine_GameFlagClear(FLAG_FORTRESS_VISIT + 1);
 		Engine_GameFlagClear(FLAG_FORTRESS_VISIT + 2);
 		Engine_GameFlagClear(FLAG_FORTRESS_VISIT + 3);

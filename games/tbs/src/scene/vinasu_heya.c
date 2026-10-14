@@ -2427,14 +2427,14 @@ s32 Scene_RunEntrySetup(void)
 				Map_CopyCells(53, 12, 3, 13, 26, 12);
 				Map_CopyCellsTo(81, 41, 89, 14, 9, 2);
 				Engine_TaskWait(1);
-				Engine_TaskAddCallback(SceneState_CallWith432And32, 0xc80);
+				FieldScheduler_AddCallback(SceneState_CallWith432And32, 0xc80);
 			}
 			if (Engine_GameFlagIsSet(0x307))
 			{
 				Map_CopyCells(58, 12, 3, 13, 34, 12);
 				Map_CopyCellsTo(81, 41, 97, 14, 5, 2);
 				Engine_TaskWait(1);
-				Engine_TaskAddCallback(FieldScene_CallWith560And44, 0xc80);
+				FieldScheduler_AddCallback(FieldScene_CallWith560And44, 0xc80);
 			}
 			if (gGameState.entrance == 11)
 				FieldScene_RunOpeningAuxiliarySequence();
@@ -2618,7 +2618,7 @@ s32 Scene_RunEntrySetup(void)
 		case 15:
 		case 16:
 			Engine_TaskWait(1);
-			Engine_TaskAddCallback(SceneState_ApplyStepToSlots15To18, 0xc80);
+			FieldScheduler_AddCallback(SceneState_ApplyStepToSlots15To18, 0xc80);
 			actor = Object_GetById(14);
 			actor->motion_flags = 0;
 			actor->y.fixed = 0;
@@ -2930,7 +2930,7 @@ static void Scene_RunParticleWaveSequence(void)
 				goto again;
 			}
 			if (repeat == 3)
-				Engine_TaskAddCallback(SceneState_CallWith432And32, 3200);
+				FieldScheduler_AddCallback(SceneState_CallWith432And32, 3200);
 		}
 		Map_CopyCellsTo(53, row + 12, 26, row + 12, 3, 1);
 		offset += 0x100000;
@@ -2990,7 +2990,7 @@ static void Scene_RunEastParticleWaveSequence(void)
 			repeat++;
 			goto again;
 		}
-		Engine_TaskAddCallback(FieldScene_CallWith560And44, 3200);
+		FieldScheduler_AddCallback(FieldScene_CallWith560And44, 3200);
 		Map_CopyCellsTo(58, row + 12, 34, row + 12, 3, 1);
 		offset += 0x100000;
 		row++;

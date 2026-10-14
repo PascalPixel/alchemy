@@ -294,7 +294,7 @@ static void EV09_PSYNERGY(void)
 		Engine_ActorSetPosition(11, 0x19e0000, 0xf00000);
 		Engine_EventWait(10);
 		base = (s32)FieldScene_RunPrimarySequence;
-		Engine_TaskAddCallback(base, 0xc80);
+		FieldScheduler_AddCallback(base, 0xc80);
 		Engine_AudioPlayCue(141);
 		Engine_ActorSetDestinationOffset(9, 1, 0);
 		Engine_ActorWaitForMove(9);

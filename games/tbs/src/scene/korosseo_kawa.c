@@ -162,11 +162,8 @@ static void SceneState_ResetCounterAndStartTask(void)
 
 static void SceneState_SetMode66AndPassOpeningSequence(void)
 {
-	s32	 value = 66;
-	s32 *mode = (s32 *)&KorosseoKawa_Countdown;
-
-	*mode = value;
-	Engine_TaskAddCallback((s32)FieldScene_RunOpeningAuxiliarySequence, 0xC80);
+	KorosseoKawa_Countdown = 66;
+	FieldScheduler_AddCallback((s32)FieldScene_RunOpeningAuxiliarySequence, 0xC80);
 }
 
 static void KorosseoKawa_WaitForCountdown(void)
@@ -613,7 +610,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
 	actor->motion_flags = 0;
 	actor->priority_flags = 2;
 	Map_CopyCellAttributes(14, 13, 1, 1, x, 12);
-	Engine_TaskAddCallback(FieldScene_RunOpeningAuxiliarySequence, 0xc80);
+	FieldScheduler_AddCallback(FieldScene_RunOpeningAuxiliarySequence, 0xc80);
 	actor = Object_GetById(15);
 	actor->terrain_id = 1;
 	zero = 0;
@@ -684,7 +681,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
 		SceneState_InitControlWhenFlag109Clear((s32)&ResourceId_RivalPathA);
 		break;
 	case 2:
-		Engine_TaskAddCallback(SceneState_RaiseTriggerOnPsynergyTarget, 0xc80);
+		FieldScheduler_AddCallback(SceneState_RaiseTriggerOnPsynergyTarget, 0xc80);
 		Engine_ActorDestroy(24);
 		Engine_ActorDestroy(25);
 		if (!Engine_GameFlagIsSet(0x109))
@@ -1120,7 +1117,7 @@ static void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param)
 	Korosseo_ModeTaskMode = mode;
 	Korosseo_ModeTaskParam = (param << 4);
 
-	Engine_TaskAddCallback((s32)Korosseo_UpdateModeTask, 0xc80);
+	FieldScheduler_AddCallback((s32)Korosseo_UpdateModeTask, 0xc80);
 
 	handler = (s32)KorosseoKawa_RoundSpans;
 	if (mode == 2)

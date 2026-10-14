@@ -48,6 +48,7 @@
 #include "system.h"
 #include "mapcopy.h"
 #include "call.h"
+#include "engcall.h"
 #include "scene_ids.h"
 #include "field_effect.h"
 #include "io_reg.h"
@@ -218,7 +219,7 @@ static void EV16_PSYNERGY(void)
 		Engine_AudioPlayCue(220);
 		Engine_EventWait(60);
 		GameFlag_Set(0x875);
-		Engine_TaskAddCallback((s32)Makyuri_CyclePalette, 0xc80);
+		FieldScheduler_AddCallback((s32)Makyuri_CyclePalette, 0xc80);
 		Map_CopyCellsTo(37, 98, 10, 97, 5, 3);
 		Map_CopyCellAttributes(70, 32, 13, 7, 6, 32);
 		ColorBuffer_ApplyTarget(0x10000, 0);
@@ -294,7 +295,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
 	gGameState.retreat_scene = (s32)&SceneId_MakyuriHeya4;
 	BattleFx_StartFadeOverlay(0);
 	if (GameFlag_IsSet(0x875))
-		Engine_TaskAddCallback(Makyuri_CyclePalette, 0xc80);
+		FieldScheduler_AddCallback(Makyuri_CyclePalette, 0xc80);
 	else
 		Makyuri_ClearPalette();
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -325,7 +326,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
 	case 4:
 	case 5:
 	case 6:
-		Engine_TaskAddCallback(Makyuri_CyclePalette, 0xc80);
+		FieldScheduler_AddCallback(Makyuri_CyclePalette, 0xc80);
 		if (GameFlag_IsSet(0x875))
 		{
 			Map_CopyCellsTo(37, 98, 10, 97, 5, 3);

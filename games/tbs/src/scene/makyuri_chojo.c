@@ -113,7 +113,7 @@ s32 Scene_Initialize(void)
 	if (gGameState.scene == (s32)&SceneId_MakyuriChojo1)
 	{
 		Engine_GameFlagSet(0x144);
-		Engine_TaskAddCallback(MakyuriChojo_FlickerActorEight, 0xc80);
+		FieldScheduler_AddCallback(MakyuriChojo_FlickerActorEight, 0xc80);
 		Engine_ActorSetSpritePriority(0, 1);
 		Engine_ActorSetSpritePriority(1, 1);
 		Engine_ActorSetSpritePriority(2, 1);

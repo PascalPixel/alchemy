@@ -1055,14 +1055,14 @@ static void FuneKanpan_ApplyEntryState(void)
 		Task_AddCallback(SceneState_ConfigureEntries8Through19, 0xc80);
 		FuneKanpan_LayerScroll[1] = 0x200000;
 		FuneKanpan_LayerSpeed[1] = 0x13333;
-		Engine_TaskAddCallback(FuneKanpan_RockDeck, 0xc80);
+		FieldScheduler_AddCallback(FuneKanpan_RockDeck, 0xc80);
 	}
 	else if (Engine_GameFlagIsSet(0x928) != 0)
 	{
 		SceneState_ApplyFiveRectsAtColumn78();
 		FuneKanpan_LayerScroll[1] = flag;
 		FuneKanpan_LayerSpeed[1] = flag;
-		Engine_TaskAddCallback(FuneKanpan_RockDeck, 0xc80);
+		FieldScheduler_AddCallback(FuneKanpan_RockDeck, 0xc80);
 	}
 	if (Engine_GameFlagIsSet(0x927) == 0)
 	{

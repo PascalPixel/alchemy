@@ -555,7 +555,7 @@ s32 WorldMap_EnterScene(void)
 		Engine_TaskWait(1);
 		Engine_CameraSetSpeed(0x80000, 0x10000);
 		Engine_GameFlagClear(0x12f);
-		Engine_TaskAddCallback(MapActor_UpdateContact, 0xc80);
+		FieldScheduler_AddCallback(MapActor_UpdateContact, 0xc80);
 		if (Engine_GameFlagIsSet(0x90a) == 0)
 		{
 			FieldMap_SetWindowCellTile(128, 256, 176, 56);
@@ -631,7 +631,7 @@ s32 WorldMap_EnterScene(void)
 			if (FieldGameFlag_GetByte(0x2f8) != 0)
 			{
 				gGameState.movement_mode = 2;
-				Engine_TaskAddCallback(StoryScene_UpdateSelectedActorProgress, 0xc80);
+				FieldScheduler_AddCallback(StoryScene_UpdateSelectedActorProgress, 0xc80);
 			}
 			break;
 		case 75:
@@ -866,7 +866,7 @@ static void FieldScene_RunActorTransferSequence(void)
 	Engine_TaskWait(1);
 	record = Actor_Get(15);
 	Engine_ActorSetSpriteFlags(record, 0);
-	Engine_TaskAddCallback(WorldMap_UpdateTransferredActorLanding, 0xc80);
+	FieldScheduler_AddCallback(WorldMap_UpdateTransferredActorLanding, 0xc80);
 	do
 	{
 		Engine_TaskWait(1);
@@ -1989,7 +1989,7 @@ static void StoryScene_StartTransition(void)
 	{
 		s32	  transition_delay = 3200;
 		void *transition_callback = (void *)StoryScene_UpdateTransitionEffect;
-		Engine_TaskAddCallback(transition_callback, transition_delay);
+		FieldScheduler_AddCallback(transition_callback, transition_delay);
 	}
 	Engine_ColorBufferApplySource(0, 0);
 	Engine_ColorBufferApplyTarget(0x10004, 1);
@@ -2184,7 +2184,7 @@ static void WorldMap_RunOpeningRise(void)
 	Actor_SetSpeed(8, 0x6666, 0x3333);
 	actor->timer = 0;
 	Engine_ActorEnableActionCallback(8, (s32)gOpeningLeaderRise);
-	Engine_TaskAddCallback((s32)WorldMap_SpawnActorEightPuff, 0xc80);
+	FieldScheduler_AddCallback((s32)WorldMap_SpawnActorEightPuff, 0xc80);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	ColorBuffer_ApplyTarget(0x10003, 1);
 	gEventWork->transition_frames = 32;
@@ -2247,7 +2247,7 @@ static void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
 		}
 		Engine_ActorWaitForMove(id);
 		Event_PlayCue(244);
-		Engine_TaskAddCallback((s32)StoryScene_UpdateSelectedActorProgress, 0xc80);
+		FieldScheduler_AddCallback((s32)StoryScene_UpdateSelectedActorProgress, 0xc80);
 		actor->motion_flags = rec2;
 		Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed + 0x200000, actor->z.fixed);
 		Engine_ActorWaitForMove(id);
@@ -2374,7 +2374,7 @@ static void Scene_RunScene371SequenceA(s32 palette)
 	FieldResource_DecodeType01(gWorldMapPackedFrames, buffer + 0x1000);
 	IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(gWorldMapPalettes + palette * 32), 0x80000010);
 	IO_WRITE_QUEUE_PUSH(0x06001000, (u32)buffer, 0x84000400);
-	Engine_TaskAddCallback(SceneEffect_RestoreBlendRegisters, 0xc80);
+	FieldScheduler_AddCallback(SceneEffect_RestoreBlendRegisters, 0xc80);
 	Engine_EventBegin();
 	QueueFrame(buffer, 0x3a80);
 	Object_GetById(gGameState.selected_actor)->active = 0;
@@ -2423,7 +2423,7 @@ static void Scene_RunScene371SequenceA(s32 palette)
 	gWorldMapBlend = 0xc00;
 	QueueFrame(buffer, 0x3a80);
 	Map_LoadAreaGraphics();
-	Engine_TaskAddCallback(FieldScene_RunLateSequence, 0xc80);
+	FieldScheduler_AddCallback(FieldScene_RunLateSequence, 0xc80);
 	Engine_AudioPlayCue(141);
 	gWorldMapBlend = 0xd00;
 	Engine_EventWait(4);

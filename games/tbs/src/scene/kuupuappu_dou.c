@@ -816,7 +816,7 @@ static void SceneActor_InitSlots10To15AndStartTask(void)
 		selector++;
 	} while (remaining >= 0);
 
-	Engine_TaskAddCallback((s32)FieldScene_RunScene3a7SequenceD, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback((s32)FieldScene_RunScene3a7SequenceD, TASK_PRIORITY_SCENE);
 }
 
 static void SceneActor_SetupActors11To14AndInstallTask(void)
@@ -838,7 +838,7 @@ static void SceneActor_SetupActors11To14AndInstallTask(void)
 		no++;
 	} while (i <= 3);
 
-	Engine_TaskAddCallback((s32)FieldScene_RunOpeningAuxiliarySequence, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback((s32)FieldScene_RunOpeningAuxiliarySequence, TASK_PRIORITY_SCENE);
 }
 
 s32 KuupuappuDou_ApplyEntryState(void)
@@ -929,7 +929,8 @@ s32 KuupuappuDou_ApplyEntryState(void)
 				Engine_ActorSetAnimation(21, 5);
 				EV21_PSYNERGY();
 			}
-			Engine_TaskAddCallback((s32)SceneState_DispatchByActorZeroDepth, TASK_PRIORITY_SCENE);
+			FieldScheduler_AddCallback(
+				(s32)SceneState_DispatchByActorZeroDepth, TASK_PRIORITY_SCENE);
 			break;
 		case 10:
 		case 11:

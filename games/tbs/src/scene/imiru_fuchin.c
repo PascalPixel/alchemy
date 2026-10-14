@@ -1596,7 +1596,7 @@ static void EV20_SCRIPT(void)
 
 	Engine_TaskWait(30);
 
-	Engine_TaskAddCallback(ImiruFuchin_BlowCaveMouthDust, 0xc80);
+	FieldScheduler_AddCallback(ImiruFuchin_BlowCaveMouthDust, 0xc80);
 	Engine_TaskWait(40);
 	Engine_ColorBufferApplyTarget(0x201090, 1);
 	Engine_ColorBufferInterpolate(40);

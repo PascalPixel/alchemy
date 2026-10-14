@@ -446,7 +446,7 @@ s32 Scene_Initialize(void)
 		if (gGameState.scene == (s32)&SceneId_BiribinoMura3)
 		{
 			FieldScene_RunScene38bSequenceA();
-			Engine_TaskAddCallback(BiribinoMura_UpdateCornerSpawn, 0xc80);
+			FieldScheduler_AddCallback(BiribinoMura_UpdateCornerSpawn, 0xc80);
 		}
 		else
 		{

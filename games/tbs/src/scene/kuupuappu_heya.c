@@ -1279,7 +1279,7 @@ static void EV10_TOUCH(void)
 	Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
 	GameFlag_Set(2130);
 	GameFlag_Set(768);
-	Engine_TaskAddCallback(SceneActor_FaceActors24And25TowardActorZero, 3200);
+	FieldScheduler_AddCallback(SceneActor_FaceActors24And25TowardActorZero, 3200);
 	actor24->timer = 1;
 	actor25->timer = 3;
 	Engine_EventEnd();
@@ -1510,7 +1510,7 @@ static void FieldScene_SelectActorPair(void)
 
 		((struct FieldActor *)record)->timer = shown;
 	}
-	Engine_TaskAddCallback(SceneActor_FaceActors24And25TowardActorZero, 0xc80);
+	FieldScheduler_AddCallback(SceneActor_FaceActors24And25TowardActorZero, 0xc80);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	Engine_EventEnd();
 }
@@ -1769,7 +1769,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 			}
 			Object_GetById(24)->timer = 5;
 			Object_GetById(25)->timer = 4;
-			Engine_TaskAddCallback(SceneActor_FaceActors24And25TowardActorZero, 0xc80);
+			FieldScheduler_AddCallback(SceneActor_FaceActors24And25TowardActorZero, 0xc80);
 		}
 		break;
 	case 13:

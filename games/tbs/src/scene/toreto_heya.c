@@ -569,7 +569,7 @@ static void FieldScene_RunFourActorEncounter(void)
 	Engine_EventWait(20);
 	Object_GetById(0)->priority_flags |= 1;
 	GameFlag_Set(0x844);
-	Engine_TaskAddCallback((s32)ToretoPalette_ApplyTint, 0xc80);
+	FieldScheduler_AddCallback((s32)ToretoPalette_ApplyTint, 0xc80);
 	Engine_EventEnd();
 }
 
@@ -622,7 +622,7 @@ s32 ToretoHeya_EnterRoom(void)
 	Engine_ActorSetChildValue(9, 15);
 	ToretoHeya_PlayGesture(0);
 	if (gGameState.entrance != 19)
-		Engine_TaskAddCallback(ToretoPalette_ApplyTint, 0xc80);
+		FieldScheduler_AddCallback(ToretoPalette_ApplyTint, 0xc80);
 	if (Engine_GameFlagIsSet(0x844))
 	{
 		Engine_ActorSetPosition(9, 0, 0);

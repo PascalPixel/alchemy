@@ -714,7 +714,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Engine_ColorBufferInterpolate(1);
 	Engine_TaskWait(1);
 	KorimaMura_EffectActive = 1;
-	Engine_TaskAddCallback(SceneEffect_SpawnObject26EveryEightFrames, 0xc80);
+	FieldScheduler_AddCallback(SceneEffect_SpawnObject26EveryEightFrames, 0xc80);
 	Engine_TaskWait(20);
 	ColorBuffer_ApplyTarget(0x405210, 1);
 	ColorBuffer_ApplyTarget(0x10000, 2);
@@ -792,7 +792,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	falling = &gFallingEffectState;
 	gFallingEffectOffset = 0x800000;
 	*falling = 1;
-	Engine_TaskAddCallback(FieldScene_UpdateFallingEffect, 0xc80);
+	FieldScheduler_AddCallback(FieldScene_UpdateFallingEffect, 0xc80);
 	Engine_EventWait(180);
 	Event_PlayCue(21);
 	FieldScene_RunPairedStepA(1, 80);
@@ -841,7 +841,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	value = 0;
 	Engine_ActorSetSpritePriority(MEARI, 3);
 	KorimaMura_PendingPose = value;
-	Engine_TaskAddCallback(SceneActor_SetActors19To22HeightByFrameParity, 0xc80);
+	FieldScheduler_AddCallback(SceneActor_SetActors19To22HeightByFrameParity, 0xc80);
 	Event_PlayCue(220);
 	Object_GetById(19)->priority_flags &= 254;
 	Engine_ActorSetSpritePriority(19, 2);
@@ -1106,7 +1106,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	gFallingEffectOffset = 0x800000;
 	again = &gFallingEffectState;
 	*again = 1;
-	Engine_TaskAddCallback(FieldScene_UpdateFallingEffect, 0xc80);
+	FieldScheduler_AddCallback(FieldScene_UpdateFallingEffect, 0xc80);
 	Engine_EventWait(80);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_ActorStartRepeatedMotion(GERALD, 2);

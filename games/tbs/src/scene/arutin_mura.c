@@ -21,6 +21,7 @@
 #include "system.h"
 #include "types.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "field_scene.h"
 #include "arutin_mura.h"
 #include "text/msg_ids.h"
@@ -576,7 +577,7 @@ static void FieldScene_RunMiddleSequence(void)
 		BattleFx_SetQueuedSoundAndPlay(170);
 		Actor_SetChildValue(18, 2);
 		Engine_ActorSetAnimation(18, 3);
-		Engine_TaskAddCallback(SceneEffect_SpawnDriftingParticle, 0xc80);
+		FieldScheduler_AddCallback(SceneEffect_SpawnDriftingParticle, 0xc80);
 	}
 	if (gGameState.entrance == 3)
 	{

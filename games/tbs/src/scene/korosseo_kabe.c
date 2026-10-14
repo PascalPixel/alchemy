@@ -648,7 +648,7 @@ static void FieldScene_PlaceSpectatorRow(void)
 
 static void KorosseoKabe_StartSupplementalSceneTask(void)
 {
-	Engine_TaskAddCallback(FieldScene_RunSupplementalSequenceOne, 0xC85);
+	FieldScheduler_AddCallback(FieldScene_RunSupplementalSequenceOne, 0xC85);
 	Engine_GameFlagClear(0x104);
 }
 
@@ -894,7 +894,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 			actor->speed = 0x8000;
 			actor->acceleration = 0x3333;
 		}
-		Engine_TaskAddCallback(FieldScene_RunSupplementalSequenceOne, 0xc85);
+		FieldScheduler_AddCallback(FieldScene_RunSupplementalSequenceOne, 0xc85);
 		Scheduler_SetCallbackMask((u32)FieldScene_RunSupplementalSequenceOne, 1);
 	}
 	Engine_ActorSetAnimation(8, 9);
@@ -926,7 +926,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 		SceneState_InitControlRecordAndStartTask((s32)&ResourceId_RivalPathB);
 		break;
 	case 2:
-		Engine_TaskAddCallback(SceneState_RaiseTriggerOnPsynergyTarget, 0xc80);
+		FieldScheduler_AddCallback(SceneState_RaiseTriggerOnPsynergyTarget, 0xc80);
 		Engine_ActorDestroy(40);
 		Engine_ActorDestroy(41);
 		if (!Engine_GameFlagIsSet(0x109))
@@ -1339,7 +1339,7 @@ static void KorosseoKabe_InitializeModeTask(u32 mode, u32 param)
 
 	{
 		s32 budget = 0xc80;
-		Engine_TaskAddCallback(Korosseo_UpdateModeTask, budget);
+		FieldScheduler_AddCallback(Korosseo_UpdateModeTask, budget);
 	}
 
 	handler = (s32)KorosseoKabe_ModeRecordDefault;
@@ -1669,7 +1669,7 @@ void FieldScene_BuildDescriptorAndInstallTask(
 	*(u16 *)(descriptor + 216) = extent;
 	Engine_VramLoad((s16)extent, 512, handle);
 
-	Engine_TaskAddCallback(Korosseo_DrawGauge, 0xc76);
+	FieldScheduler_AddCallback(Korosseo_DrawGauge, 0xc76);
 
 	Runtime_BumpFree(handle);
 }
@@ -1688,7 +1688,7 @@ static void SceneState_InitControlRecordAndStartTask(s32 resource)
 		m->f8 = 0;
 		m->f6 = 0;
 	}
-	Engine_TaskAddCallback(Korosseo_UpdatePathRival, 0xc85);
+	FieldScheduler_AddCallback(Korosseo_UpdatePathRival, 0xc85);
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）

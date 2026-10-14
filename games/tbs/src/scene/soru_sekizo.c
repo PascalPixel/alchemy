@@ -875,7 +875,7 @@ static void Scene_RunGuardSequenceC(void)
 	{
 		s32 size = 0xc80;
 
-		Engine_TaskAddCallback((s32)SceneEffect_UpdateScrollingSpriteRows, size);
+		FieldScheduler_AddCallback((s32)SceneEffect_UpdateScrollingSpriteRows, size);
 	}
 }
 

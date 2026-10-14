@@ -1464,7 +1464,7 @@ static void SceneState_InitFourActorRecordsAndInstallTask(void)
 		s32 budget = 0xc83;
 		void (*task)(void) = FieldScene_RunSecondaryScript;
 
-		Engine_TaskAddCallback(task, budget);
+		FieldScheduler_AddCallback(task, budget);
 	}
 }
 

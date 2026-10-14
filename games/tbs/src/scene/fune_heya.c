@@ -2293,12 +2293,8 @@ s32 FuneHeya_ApplyEntryState(void)
 		{
 			if (Engine_GameFlagIsSet(0x302) != 0)
 			{
-				{
-					u16 zero = 0;
-
-					FuneHeya_CueTimer = zero;
-				}
-				Engine_TaskAddCallback(Scene_UpdateCueTimer, 0xc80);
+				FuneHeya_CueTimer = 0;
+				FieldScheduler_AddCallback(Scene_UpdateCueTimer, 0xc80);
 				Engine_ActorSetAnimation(9, 5);
 			}
 		}
@@ -3867,7 +3863,7 @@ static void FieldScene_RunExtendedFormationPresentation(void)
 	Object_SetActionCallbackAndRefreshById(3, action);
 	GameFlag_Set(0x302);
 	FuneHeya_CueTimer = 0;
-	Engine_TaskAddCallback((s32)Scene_UpdateCueTimer, 0xc80);
+	FieldScheduler_AddCallback((s32)Scene_UpdateCueTimer, 0xc80);
 	FieldScene_RunSceneStep(23, 0, 0);
 	Engine_ActorDestroy(27);
 	GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);

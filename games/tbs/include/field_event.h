@@ -114,7 +114,6 @@ void			   Engine_AudioPlayCue(s32 cue);
 void			   Engine_ShopOpen(s32 shop, s32 keeper);
 void			   Engine_InnOpen(s32 inn, s32 keeper);
 void			   Engine_SanctumOpen(s32 priest);
-s32				   Engine_TaskAddCallback(void (*callback)(void), s32 priority);
 s32				   Engine_TaskRemoveCallback(void (*callback)(void));
 s32				   Engine_RandomNext();
 s32				   Engine_MathSin(s32 angle);

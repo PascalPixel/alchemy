@@ -256,7 +256,8 @@ pub(crate) fn macro_users(raw: &str, tagged: &BTreeSet<String>) -> BTreeMap<Stri
     found
 }
 
-fn has_reason(tokens: &[Token]) -> bool {
+/// Whether these tokens hold a FAKEMATCH tag with its reason.
+pub(crate) fn has_reason(tokens: &[Token]) -> bool {
     tokens.iter().any(|token| match &token.tok {
         Tok::Comment(comment) => comment
             .split_once("FAKEMATCH:")
@@ -318,7 +319,9 @@ fn operand(mut tokens: &[&Tok], unary: bool) -> Option<String> {
     }
 }
 
-fn forwarded_call(body: &[&Tok]) -> Option<(String, Vec<String>)> {
+/// The callee and the names passed, through casts and parentheses, of a
+/// function body (comments left out) that is one call, returned or not.
+pub(crate) fn forwarded_call(body: &[&Tok]) -> Option<(String, Vec<String>)> {
     let statements = body
         .split(|tok| matches!(tok, Tok::Punct(";")))
         .filter(|statement| !statement.is_empty())
@@ -366,7 +369,9 @@ fn forwarded_call(body: &[&Tok]) -> Option<(String, Vec<String>)> {
     Some((callee, args))
 }
 
-fn parameter_names(tokens: &[&Tok]) -> Option<Vec<String>> {
+/// The names a parameter list declares, the one in `(*name)` for a
+/// function pointer; none for `(void)`.
+pub(crate) fn parameter_names(tokens: &[&Tok]) -> Option<Vec<String>> {
     if matches!(tokens, [] | [Tok::Ident(_)]) {
         return Some(Vec::new());
     }

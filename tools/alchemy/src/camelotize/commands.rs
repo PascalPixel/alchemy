@@ -3,13 +3,15 @@
 //!
 //! `layer`: a call of a routine that an inline of a layer header
 //! (`compiler::steering::SCRIPT_LAYER`) forwards its parameters to, in
-//! order, goes through that inline; so does a call of another inline of the
+//! order, goes through that inline (one with a FAKEMATCH tag or asm is a
+//! device, and takes no calls); so does a call of another inline of the
 //! same routine that the chosen one is preferred over. The chosen inline is
 //! the one an event.h command expands to, else the outermost (an inline of
 //! an inline), else the first defined. Only overlay units take the layer,
 //! and only scenes the scene script layer (field_event.h, field_service.h,
 //! scene/runpa_jo.h); other overlays take the engine call and IWRAM layers.
-//! A header the inline needs is included with the first includes: event.h
+//! A header the inline needs is included with the first includes, above
+//! the shared scene source a scene includes after them: event.h
 //! for a scene when it holds the inline, else the inline's own header. When
 //! the include alone changes a compile, only the inlines the file already
 //! reaches are used.
@@ -21,19 +23,22 @@
 //! `PIXELS(e)` or `e << 16`; every other shape stays a call. A command
 //! argument the command casts takes the source's operand without that cast,
 //! and an argument the command fixes must be that value. Only scenes take
-//! commands, and event.h is included with the first includes.
+//! commands, and event.h is included with the first includes, above the
+//! shared scene source.
 //!
 //! Both rewrite calls in function bodies, outside FAKEMATCH-tagged code and
 //! asm, and never inside a #define. A file's edits are proved by
 //! `trial::proved_groups`, one function's calls as a group, in every ☀️
 //! edition; a file other files include is proved in every C file that
-//! includes it.
+//! reaches it, directly or through other headers, and refused when one of
+//! them compiles without reading it (`trial::Judge`).
 
 use super::casts::{cast_at, ident, punct};
 use super::source;
 use super::trial::{self, Edit, Judge};
+use crate::compiler::c_syntax;
 use crate::compiler::routing::cflags_for_target_source;
-use crate::compiler::steering::SCRIPT_LAYER;
+use crate::compiler::steering::{self, SCRIPT_LAYER};
 use crate::permute::lex::{lex, Tok, Token};
 use crate::permute::parse::{matching, scan_definitions};
 use crate::targets::DecompTarget;
@@ -98,53 +103,25 @@ fn pieces(tokens: &[Token]) -> Vec<Range<usize>> {
     out
 }
 
-/// The name a parameter declaration declares: the one in `(*name)` for a
-/// function pointer, else its last name.
-fn parameter_name(tokens: &[Token]) -> Option<String> {
-    for k in 0..tokens.len() {
-        if punct(&tokens[k]) == Some("(") && tokens.get(k + 1).and_then(punct) == Some("*") {
-            return tokens.get(k + 2).and_then(ident).map(str::to_string);
-        }
-    }
-    let end = tokens.iter().position(|t| punct(t) == Some("[")).unwrap_or(tokens.len());
-    tokens[..end].iter().rev().find_map(ident).map(str::to_string)
-}
-
-/// The names a parameter list declares, or none when one is unnamed.
-fn parameter_names(tokens: &[Token]) -> Option<Vec<String>> {
-    if tokens.is_empty() || (tokens.len() == 1 && ident(&tokens[0]) == Some("void")) {
-        return Some(Vec::new());
-    }
-    pieces(tokens).into_iter().map(|piece| parameter_name(&tokens[piece])).collect()
-}
-
-/// The name an argument passes, through casts and parentheses.
-fn passed_name(mut tokens: &[Token]) -> Option<String> {
-    loop {
-        tokens = whole(tokens);
-        match tokens {
-            [token] => return ident(token).map(str::to_string),
-            [first, ..] if punct(first) == Some("(") => tokens = &tokens[cast_at(tokens, 0)? + 1..],
-            _ => return None,
-        }
-    }
-}
-
-/// The routine a function body forwards to, and the names it passes: a
-/// body that is one call, returned or not.
-fn forwarded(body: &[Token]) -> Option<(String, Vec<String>)> {
-    let start = usize::from(ident(body.first()?) == Some("return"));
-    let callee = ident(body.get(start)?)?.to_string();
-    if body.get(start + 1).and_then(punct) != Some("(") {
+/// The routine a function body forwards to by name, and the names it
+/// passes: a body that is one call of a named routine, returned or not.
+/// A body that holds a FAKEMATCH tag or asm is no forwarder: what it
+/// steers is a device, not a layer (S2).
+fn forwarded(body: &[c_syntax::Token]) -> Option<(String, Vec<String>)> {
+    if steering::has_reason(body) {
         return None;
     }
-    let close = matching(body, start + 1)?;
-    if close + 2 != body.len() || punct(&body[close + 1]) != Some(";") {
-        return None;
+    let code = uncommented(body);
+    let (callee, names) = steering::forwarded_call(&code)?;
+    let start = usize::from(matches!(code.first(), Some(c_syntax::Tok::Ident(word)) if word == "return"));
+    match (code.get(start), code.get(start + 1)) {
+        (Some(c_syntax::Tok::Ident(name)), Some(c_syntax::Tok::Punct("("))) if *name == callee => Some((callee, names)),
+        _ => None,
     }
-    let inside = &body[start + 2..close];
-    let names = pieces(inside).into_iter().map(|piece| passed_name(&inside[piece])).collect::<Option<Vec<_>>>()?;
-    Some((callee, names))
+}
+
+fn uncommented(tokens: &[c_syntax::Token]) -> Vec<&c_syntax::Tok> {
+    tokens.iter().map(|t| &t.tok).filter(|t| !matches!(t, c_syntax::Tok::Comment(_))).collect()
 }
 
 /// The object-like #defines of a text that name another name: `A B`.
@@ -161,32 +138,40 @@ fn renames(text: &str) -> Vec<(String, String)> {
 }
 
 /// The forwarding inlines a layer header defines: `static inline`
-/// functions whose body is one call passing their parameters in order. An
-/// inline defined in two branches of an #if is one inline.
+/// functions whose body is one call passing their parameters in order,
+/// with no FAKEMATCH tag. An inline defined in two branches of an #if is
+/// one inline, a forwarder only when every definition forwards alike.
 pub(crate) fn helpers(header: &str, text: &str) -> Vec<Helper> {
-    let Ok(tokens) = lex(text) else {
+    let Ok((tokens, branches)) = c_syntax::lex_branches(text) else {
         return Vec::new();
     };
-    let tokens = super::numbers::code(tokens);
     let renamed = renames(text);
     let mut out: Vec<Helper> = Vec::new();
-    for (name, boundary, name_index, close, open) in scan_definitions(&tokens) {
+    let mut refused = BTreeSet::new();
+    for (name, boundary, name_index, close, open) in c_syntax::scan_definitions_in(&tokens, &branches) {
         let head = &tokens[boundary..name_index];
-        let has = |words: &[&str]| head.iter().any(|t| ident(t).is_some_and(|w| words.contains(&w)));
-        if !has(&["static"]) || !has(&["inline", "__inline", "__inline__"]) || out.iter().any(|h| h.name == name) {
+        let has = |words: &[&str]| head.iter().any(|t| matches!(&t.tok, c_syntax::Tok::Ident(w) if words.contains(&w.as_str())));
+        if !has(&["static"]) || !has(&["inline", "__inline", "__inline__"]) || refused.contains(&name) {
             continue;
         }
-        let Some(end) = matching(&tokens, open) else {
-            continue;
-        };
-        let (Some((callee, passed)), Some(parameters)) = (forwarded(&tokens[open + 1..end]), parameter_names(&tokens[name_index + 2..close])) else {
-            continue;
-        };
-        if passed != parameters || parameters.contains(&callee) {
-            continue;
+        let parameters = uncommented(&tokens[name_index + 2..close]);
+        let found = c_syntax::matching_in(&tokens, open, &branches)
+            .and_then(|end| Some((forwarded(&tokens[open + 1..end])?, steering::parameter_names(&parameters)?)))
+            .filter(|((callee, passed), parameters)| passed == parameters && !parameters.contains(callee));
+        let earlier = out.iter().position(|h| h.name == name);
+        match (found, earlier) {
+            (Some(((callee, _), parameters)), Some(at)) if out[at].callee == callee && out[at].arity == parameters.len() => {}
+            (Some(((callee, _), parameters)), None) => {
+                let spelling = renamed.iter().find(|(_, to)| *to == name).map_or_else(|| name.clone(), |(from, _)| from.clone());
+                out.push(Helper { spelling, name, callee, arity: parameters.len(), header: header.to_string() });
+            }
+            (_, earlier) => {
+                if let Some(at) = earlier {
+                    out.remove(at);
+                }
+                refused.insert(name);
+            }
         }
-        let spelling = renamed.iter().find(|(_, to)| *to == name).map_or_else(|| name.clone(), |(from, _)| from.clone());
-        out.push(Helper { spelling, name, callee, arity: parameters.len(), header: header.to_string() });
     }
     out
 }
@@ -364,7 +349,9 @@ fn pixels(text: &str, tokens: &[Token]) -> Option<String> {
     match tokens {
         [n] | [_, n] if number(n).is_some() && (tokens.len() == 1 || punct(&tokens[0]) == Some("-")) => {
             let value = number(n)?;
-            if value % 0x10000 != 0 {
+            // A literal past s32's range is a negative coordinate written
+            // as its bits: no number of pixels says it.
+            if value % 0x10000 != 0 || value > i64::from(i32::MAX) {
                 return None;
             }
             let pixels = value / 0x10000;
@@ -552,11 +539,12 @@ fn command_edit(text: &str, tokens: &[Token], call: &Call, command: &Command) ->
 }
 
 /// The include lines a text needs, as one edit: each name inserted with the
-/// first includes, in order.
-fn include_edit(text: &str, names: &[String]) -> Option<Edit> {
+/// first includes, in order, above the first include of code (`code` tells
+/// it by its name and whether it is quoted).
+fn include_edit(text: &str, names: &[String], code: &dyn Fn(&str, bool) -> bool) -> Option<Edit> {
     let mut out = text.to_string();
     for name in names {
-        out = source::insert_include(&out, name);
+        out = source::insert_include_before_code(&out, name, code);
     }
     let added = out.len().checked_sub(text.len()).filter(|&n| n > 0)?;
     let mut at = text.bytes().zip(out.bytes()).take_while(|(a, b)| a == b).count();
@@ -624,6 +612,14 @@ impl Place {
 
     fn reaches(&self, root: &Path, header: &str) -> bool {
         root.join(header).canonicalize().is_ok_and(|h| self.reached.contains(&h))
+    }
+
+    /// Whether an include of `file` brings in code rather than a header:
+    /// a C file, or a header that defines functions (C text), such as the
+    /// shared scene source a scene includes under its header includes.
+    fn code(&self, file: &Path, name: &str, quoted: bool) -> bool {
+        let folder = file.parent().unwrap_or(Path::new("."));
+        source::resolve(name, quoted, folder, &self.search).is_some_and(|path| crate::c_items::c_text_file(&path))
     }
 }
 
@@ -733,7 +729,8 @@ pub(crate) fn rewrite(root: &Path, file: &Path, text: &str, which: &str, games: 
     for header in &includes {
         names.push(source::spelling(file, header, &place.search).ok_or_else(|| format!("cannot spell an include of {}", header.display()))?);
     }
-    let required: Vec<Edit> = if names.is_empty() { Vec::new() } else { vec![include_edit(text, &names).ok_or("cannot place the include")?] };
+    let code = |name: &str, quoted: bool| place.code(file, name, quoted);
+    let required: Vec<Edit> = if names.is_empty() { Vec::new() } else { vec![include_edit(text, &names, &code).ok_or("cannot place the include")?] };
     let mut judge = Judge::new(root, file, text, games, &place.units, threads())?;
     // What the includes bring in for the first time warns about its own
     // lines as it would anywhere; the file's own messages still count.
@@ -940,6 +937,7 @@ static inline s32 FieldScheduler_AddCallback(SchedulerCallback callback, s32 pri
             "Actor_SetPosition(8, 0x100000u, 0x100000)",
             "Actor_SetPosition(8, a < b << 16, 0)",
             "Actor_SetPosition(8, 0x100000)",
+            "Actor_SetPosition(8, 0xFFFF0000, 0)",
         ] {
             let text = format!("void F(void)\n{{\n\t{call};\n}}\n");
             assert_eq!(commanded(&text), text, "{call}");
@@ -952,18 +950,125 @@ static inline s32 FieldScheduler_AddCallback(SchedulerCallback callback, s32 pri
         assert_eq!(commanded(text), "void F(void)\n{\n\tCAM_MOVE(64, 16,\n\t\t1);\n\tOBJ_POS_SET(\n\t\t8, 16, 32);\n}\n");
     }
 
+    /// kuupuappu_mura_sai.c's head: its header includes, then the shared
+    /// scene source in ROM order under its comment, then code, and three
+    /// headers below its first functions.
+    const KUUPUAPPU_MURA_SAI: &str = "\
+#include \"game_state.h\"
+#include \"unit/scene/kuupuappu_mura_sai.h\"
+#include \"types.h\"
+#include \"field_event.h\"
+#include \"edition.h\"
+#include \"call.h\"
+
+// ここに共通ソースが入る（ROM の並びのとおり）
+#include \"common/effect_create.h\"
+#include \"common/effect_spawn.h\"
+#include \"common/object_distance.h\"
+#include \"common/kuupuappu_range.h\"
+#include \"common/kuupuappu_nearby.h\"
+
+const void *SceneData_GetScriptTable(void)
+{
+\treturn KuupuappuMuraSai_Scripts;
+}
+
+#include \"common/kuupuappu_mura_scene_cells.h\"
+#include \"ability_ids.h\"
+#include \"item_ids.h\"
+#include \"objcmd.h\"
+";
+
     #[test]
-    fn event_h_goes_with_the_first_includes() {
-        // kuupuappu_mura_sai.c includes three headers below its first
-        // functions.
-        let text = "#include \"types.h\"\n#include \"field_event.h\"\n\nstatic s32 gCount;\n\nvoid F(void)\n{\n}\n\n#include \"ability_ids.h\"\n#include \"item_ids.h\"\n#include \"objcmd.h\"\n";
-        let edit = include_edit(text, &["event.h".to_string()]).unwrap();
-        assert_eq!(
-            trial::apply(text, &[edit]),
-            "#include \"types.h\"\n#include \"field_event.h\"\n#include \"event.h\"\n\nstatic s32 gCount;\n\nvoid F(void)\n{\n}\n\n#include \"ability_ids.h\"\n#include \"item_ids.h\"\n#include \"objcmd.h\"\n"
-        );
-        let edit = include_edit("#include \"event.hh\"\nvoid F(void);\n", &["event.h".to_string(), "engcall.h".to_string()]).unwrap();
-        assert_eq!(trial::apply("#include \"event.hh\"\nvoid F(void);\n", &[edit]), "#include \"event.hh\"\n#include \"event.h\"\n#include \"engcall.h\"\nvoid F(void);\n");
+    fn includes_go_with_the_header_includes_above_the_shared_source() {
+        let code = |name: &str, _: bool| name.starts_with("common/");
+        for header in ["event.h", "field_service.h"] {
+            let edit = include_edit(KUUPUAPPU_MURA_SAI, &[header.to_string()], &code).unwrap();
+            let expected = KUUPUAPPU_MURA_SAI.replace("#include \"call.h\"\n", &format!("#include \"call.h\"\n#include \"{header}\"\n"));
+            assert_eq!(trial::apply(KUUPUAPPU_MURA_SAI, &[edit]), expected, "{header}");
+        }
+        let text = "#include \"event.hh\"\nvoid F(void);\n";
+        let edit = include_edit(text, &["event.h".to_string(), "engcall.h".to_string()], &code).unwrap();
+        assert_eq!(trial::apply(text, &[edit]), "#include \"event.hh\"\n#include \"event.h\"\n#include \"engcall.h\"\nvoid F(void);\n");
+    }
+
+    /// The tree tells code from headers: what the scene includes from
+    /// scene/common defines functions, what it includes from the include
+    /// folder does not.
+    #[test]
+    fn a_scene_includes_its_shared_source_as_code() {
+        let root = crate::compiler::routing::root();
+        let file = root.join("games/tbs/src/scene/kuupuappu_mura_sai.c");
+        let tbs = crate::targets::target_for(crate::targets::DecompTargetId::TbsJa);
+        let place = Place::of(root, &file, &[tbs]).unwrap();
+        assert!(place.code(&file, "common/effect_create.h", true));
+        assert!(!place.code(&file, "call.h", true));
+        assert!(!place.code(&file, "field_event.h", true));
+    }
+
+    /// A main-image file and a header the main image includes take no
+    /// layer; an overlay that is no scene takes no commands.
+    #[test]
+    fn the_layer_is_for_overlays_and_the_commands_for_scenes() {
+        let root = crate::compiler::routing::root();
+        let tbs = crate::targets::target_for(crate::targets::DecompTargetId::TbsJa);
+        let refused = |path: &str, which: &str| {
+            let file = root.join(path);
+            let text = std::fs::read_to_string(&file).unwrap();
+            rewrite(root, &file, &text, which, &[tbs]).err().unwrap_or_default()
+        };
+        assert!(refused("games/tbs/src/menu/menu.c", "layer").starts_with("not an overlay unit"));
+        assert!(refused("games/tbs/src/scene/common/scroll_initialize_hblank_dma.h", "layer").starts_with("not an overlay unit"));
+        assert!(refused("games/tbs/src/menu/title.c", "commands").starts_with("not a scene"));
+        assert!(refused("games/tbs/include/field_service.h", "layer").starts_with("a layer header"));
+        assert!(refused("games/tla/src/battle/actor.c", "layer").starts_with("the layer and the commands are"));
+    }
+
+    /// A tagged inline is a device, not the layer: no call is routed into
+    /// it, though it forwards its parameters like the others.
+    #[test]
+    fn a_tagged_inline_takes_no_calls() {
+        let header = "\
+static inline void Event_Wait(s32 frames)
+{
+\tEngine_EventWait(frames);
+}
+static inline void Event_WaitLong(s32 frames)
+{
+\t/* FAKEMATCH: the inline keeps frames in r4 */
+\tEvent_Wait(frames);
+}
+static inline void Actor_Tagged(s32 actor)
+{
+\t// FAKEMATCH: measured against the direct call
+\tEngine_ActorTagged(actor);
+}
+static inline void Actor_Barrier(s32 actor)
+{
+\tasm(\"\");
+\tEngine_ActorBarrier(actor);
+}
+#ifdef X
+static inline void Actor_Split(s32 actor)
+{
+\tEngine_ActorSplit(actor);
+}
+#else
+static inline void Actor_Split(s32 actor)
+{
+\t/* FAKEMATCH: measured */
+\tEngine_ActorSplit(actor);
+}
+#endif
+";
+        let found = helpers("games/tbs/include/field_service.h", header);
+        assert_eq!(found.iter().map(|h| h.name.as_str()).collect::<Vec<_>>(), ["Event_Wait"]);
+        let layer = Layer::new(found, BTreeSet::new());
+        let all = |_: &Helper| true;
+        assert_eq!(layer.route("Engine_EventWait", 1, &all).map(|h| h.name.as_str()), Some("Event_Wait"));
+        for name in ["Event_Wait", "Event_WaitLong", "Engine_ActorTagged", "Actor_Tagged", "Engine_ActorBarrier", "Engine_ActorSplit"] {
+            assert!(layer.route(name, 1, &all).is_none(), "{name}");
+        }
     }
 
     #[test]
@@ -1342,7 +1447,7 @@ void HaidiaBabi_Wake(void)
         let positions = "void Place(s32 x, s32 z)\n{\n\tActor_SetPosition(8, 0xC00000, 0x1080000);\n\tActor_SetPosition(9, PIXELS(248), -0x400000);\n\tActor_SetPosition(10, x << 16, (z + 8) << 16);\n\tActor_SetPosition(11, 0x18000, 0);\n}\n";
         let text = format!("#include \"layer.h\"\n\n{PINNED}\n{positions}");
         let fixture = Fixture::new(&[("layer.h", MEASURED_LAYER), ("event.h", MEASURED_EVENT)]);
-        let required = [include_edit(&text, &["event.h".to_string()]).unwrap()];
+        let required = [include_edit(&text, &["event.h".to_string()], &|_, _| false).unwrap()];
         let (out, _) = fixture.prove(&text, &required, command_edits(&text, &commands(MEASURED_EVENT)));
         assert_eq!(
             out,

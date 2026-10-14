@@ -35,11 +35,12 @@ nothing. REWRITE is one of:
   commands      ☀️ scene calls an event.h command expands to, as the command,
                 with fixed-point coordinates written in pixels where the
                 argument is a whole-pixel literal, PIXELS(e) or e << 16;
-                event.h goes with the first includes. layer and commands are
-                proved like casts, one function's calls together first, in
-                every C file that includes the file when it is a header, and
-                leave asm and FAKEMATCH-tagged code as numbers, casts and
-                idioms do
+                event.h goes with the first includes, above the shared scene
+                source. layer and commands are proved like casts, one
+                function's calls together first, in every C file that reaches
+                the file through any headers when it is a header, and leave
+                asm and FAKEMATCH-tagged code as numbers, casts and idioms do;
+                a FAKEMATCH-tagged inline takes no calls
   numbers       hex literals below 0x1000 in decimal, only where the code
                 shows a quantity: an argument of an event.h scene command, a
                 loop bound compared with its counter, or plain arithmetic

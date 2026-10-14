@@ -367,35 +367,62 @@ fn relative_path(from: &Path, to: &Path) -> PathBuf {
 }
 
 pub(crate) fn insert_include(text: &str, name: &str) -> String {
+    insert_include_before_code(text, name, &|_, _| false)
+}
+
+/// As `insert_include`, with the first block ending at the first include
+/// of code, which `code` tells by the included name and whether it is
+/// quoted: the shared scene source a scene includes in ROM order under its
+/// header includes is code, not a header. The new include goes after the
+/// last header include above it, or, when there is none, above it and the
+/// comment lines that head it.
+pub(crate) fn insert_include_before_code(text: &str, name: &str, code: &dyn Fn(&str, bool) -> bool) -> String {
     let line = format!("#include \"{name}\"\n");
     let mask = mask(text);
     let (mut offset, mut depth) = (0, 0i32);
-    let (mut after, mut first, mut stop) = (None, None, text.len());
+    let (mut after, mut first, mut stop, mut code_at) = (None, None, text.len(), None);
+    // Where the outermost #if open here began, and where the comment lines
+    // just above this line began.
+    let (mut opened, mut comments) = (0, None);
     for piece in text.split_inclusive('\n') {
         let range = offset..offset + piece.len();
         offset = range.end;
         let trimmed = piece.trim_start();
+        let blank = mask[range.clone()].iter().all(u8::is_ascii_whitespace);
         if let Some(directive) = trimmed.strip_prefix('#') {
             let directive = directive.trim_start();
             first.get_or_insert(range.start);
+            if directive.starts_with("include") && includes(piece).first().is_some_and(|(name, quoted)| code(name, *quoted)) {
+                code_at = Some(if depth > 0 { opened } else { comments.unwrap_or(range.start) });
+                break;
+            }
             if directive.starts_with("if") {
+                if depth == 0 {
+                    opened = comments.unwrap_or(range.start);
+                }
                 depth += 1;
             } else if directive.starts_with("endif") {
                 depth -= 1;
             } else if directive.starts_with("include") && depth == 0 {
                 after = Some(range.end);
             }
-        } else if !mask[range.clone()].iter().all(u8::is_ascii_whitespace) {
+            comments = None;
+        } else if !blank {
             stop = range.start;
             break;
+        } else if trimmed.trim().is_empty() {
+            comments = None;
+        } else {
+            comments.get_or_insert(range.start);
         }
     }
-    match after {
-        Some(at) => {
+    match (after, code_at) {
+        (Some(at), _) => {
             let newline = if text[..at].ends_with('\n') { "" } else { "\n" };
             format!("{}{newline}{line}{}", &text[..at], &text[at..])
         }
-        None => {
+        (None, Some(at)) => format!("{}{line}{}", &text[..at], &text[at..]),
+        (None, None) => {
             let at = first.unwrap_or(stop);
             let gap = if first.is_none() && at < text.len() { "\n" } else { "" };
             format!("{}{line}{gap}{}", &text[..at], &text[at..])
@@ -438,6 +465,19 @@ mod tests {
         assert!(out.ends_with("#include \"late.inc\"\n"));
         let bare = insert_include("/* head */\nvoid F(void);\n", "io_reg.h");
         assert_eq!(bare, "/* head */\n#include \"io_reg.h\"\n\nvoid F(void);\n");
+    }
+
+    #[test]
+    fn includes_go_above_the_code_a_file_includes() {
+        let code = |name: &str, quoted: bool| quoted && name.starts_with("common/");
+        // An #if around the code ends the block where it opens.
+        let text = "#include \"a.h\"\n\n#if X\n#include \"common/x.h\"\n#endif\n#include \"b.h\"\n";
+        assert_eq!(insert_include_before_code(text, "event.h", &code), "#include \"a.h\"\n#include \"event.h\"\n\n#if X\n#include \"common/x.h\"\n#endif\n#include \"b.h\"\n");
+        // Only code: above it and the comment that heads it.
+        let text = "/* head */\n\n// shared\n#include \"common/x.h\"\n#include \"b.h\"\nvoid F(void);\n";
+        assert_eq!(insert_include_before_code(text, "event.h", &code), "/* head */\n\n#include \"event.h\"\n// shared\n#include \"common/x.h\"\n#include \"b.h\"\nvoid F(void);\n");
+        // Without the test, the same text takes it after the last include.
+        assert!(insert_include(text, "event.h").contains("#include \"b.h\"\n#include \"event.h\"\nvoid F"));
     }
 
     #[test]

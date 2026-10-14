@@ -26,21 +26,21 @@ Field_Map179:
 	.balign 4, 0
 	.global Tileset_Set75Palette
 Tileset_Set75Palette:
-	.incbin "graphics/tileset/set_68/palette.gbapal.lz"
+	.incbin "common/graphics/tileset/set_68/palette.gbapal.lz"
 	.byte 0x00	@ PACKER: left in the buffer by Field_Map179+0xb
 	.global Tileset_Set75TilesA
 Tileset_Set75TilesA:
-	.incbin "graphics/tileset/set_68/tiles_a.4bpp.mtf"
+	.incbin "common/graphics/tileset/set_68/tiles_a.4bpp.mtf"
 	.byte 0xff, 0x00	@ PACKER: left in the buffer by Field_Map179+0x14e
 	.global Tileset_Set75TilesB
 Tileset_Set75TilesB:
-	.incbin "graphics/tileset/set_68/tiles_b.4bpp.mtf"
+	.incbin "common/graphics/tileset/set_68/tiles_b.4bpp.mtf"
 	.byte 0x07	@ PACKER: left in the buffer by Tileset_Set75TilesA+0x13f
 	.global Tileset_Set75TilesC
 Tileset_Set75TilesC:
-	.incbin "graphics/tileset/set_68/tiles_b.4bpp.mtf"
+	.incbin "common/graphics/tileset/set_68/tiles_b.4bpp.mtf"
 	.byte 0x07	@ PACKER: left in the buffer by Tileset_Set75TilesA+0x13f
 	.global Tileset_Set75TilesD
 Tileset_Set75TilesD:
-	.incbin "graphics/tileset/set_68/tiles_b.4bpp.mtf"
+	.incbin "common/graphics/tileset/set_68/tiles_b.4bpp.mtf"
 	.byte 0x07	@ PACKER: left in the buffer by Tileset_Set75TilesA+0x13f

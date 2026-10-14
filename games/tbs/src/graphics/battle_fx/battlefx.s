@@ -143,7 +143,7 @@ BattleFx_ParticleSpritesA:
 	.byte 0x0c, 0x40, 0x08	@ PACKER: left in the buffer by BattleFx_MagentaTailSheet+0x299
 	.global BattleFx_ParticleSpritesB
 BattleFx_ParticleSpritesB:
-	.incbin "graphics/battle_fx/dot_cells_b.parts.lz"
+	.incbin "common/graphics/battle_fx/dot_cells_b.parts.lz"
 	.byte 0x94	@ PACKER: left in the buffer by BattleFx_ParticleSpritesA+0x1bb
 	.include "games/common/src/graphics/battle_fx/dot_cells_c.s"
 	.global BattleFx_ParticleSpritesD

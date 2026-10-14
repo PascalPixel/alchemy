@@ -93,7 +93,7 @@ Title_IntroTilesB:
 	.incbin "graphics/title/tsuzuku_it.8bpp.lz"
 	.byte 0x8a	@ PACKER: left in the buffer by Field_WorldMapPicture+0x687
 	.else
-	.incbin "graphics/title/tsuzuku.parts.lz"
+	.incbin "common/graphics/title/tsuzuku.parts.lz"
 	.endif
 	.endif
 	.endif

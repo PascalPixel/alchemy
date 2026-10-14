@@ -32,10 +32,10 @@ BattleMotion_VariantDistancePercent:
 	.4byte 0, 20, 27
 	.global BattlePres_TileVariants
 BattlePres_TileVariants:
-	.incbin "battle/tilevar.4bpp"
+	.incbin "common/battle/presentation/tilevar.4bpp"
 	.global BattlePres_CurtainTiles
 BattlePres_CurtainTiles:
-	.incbin "battle/curtain.4bpp"
+	.incbin "common/battle/presentation/curtain.4bpp"
 @ BLDY の値
 	.global BattleFx_HighlightBlendRamp
 BattleFx_HighlightBlendRamp:

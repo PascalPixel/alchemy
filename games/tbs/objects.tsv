@@ -123,11 +123,6 @@ main	rom_main_05	games/tbs/src/menu/menudata
 main	rom_main_06	games/tbs/src/system/far_call/SHOP
 main	rom_main_06	games/tbs/src/shop/shopspr
 main	rom_main_06	games/tbs/src/shop/shop
-main	rom_main_06	games/tbs/src/shop/buysell
-main	rom_main_06	games/tbs/src/shop/wares
-main	rom_main_06	games/tbs/src/shop/seido
-main	rom_main_06	games/tbs/src/shop/yadoya
-main	rom_main_06	games/tbs/src/shop/pickitem
 main	rom_main_07	games/tbs/src/system/far_call/BATTLE
 main	rom_main_07	games/tbs/src/graphics/tile/decode	.text .rodata .text.bit_dispatch
 main	rom_main_07	games/tbs/src/graphics/tile/decode	.data .text.bit_commands

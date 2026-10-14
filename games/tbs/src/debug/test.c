@@ -8,8 +8,6 @@
 #include "unit/window/btlcmd.h"
 #include "unit/menu/menu.h"
 #include "unit/shop/shop.h"
-#include "unit/shop/seido.h"
-#include "unit/shop/pickitem.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

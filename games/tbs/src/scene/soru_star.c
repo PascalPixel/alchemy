@@ -10,7 +10,6 @@
 #include "unit/window/window.h"
 #include "unit/window/btlcmd.h"
 #include "unit/shop/shop.h"
-#include "unit/shop/pickitem.h"
 #include "unit/runtime/runtime.h"
 #include "fieldobj.h"
 #include "types.h"

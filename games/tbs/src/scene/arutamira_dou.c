@@ -6,7 +6,6 @@
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
 #include "unit/shop/shop.h"
-#include "unit/shop/seido.h"
 #include "unit/runtime/runtime.h"
 #include "iowrite.h"
 

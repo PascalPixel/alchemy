@@ -11,6 +11,7 @@
 #include "makyuri.h"
 #include "iwram_call.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "field_effect.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -384,7 +385,7 @@ void Makyuri_RunActorMove(void)
 		return;
 
 	Engine_EventBegin();
-	if (Value2(Object_CheckMovementCollision, (s32)actor, (s32)pos) != 0)
+	if (FieldObject_CheckMovementCollision(actor, (struct FieldPosition *)pos) != 0)
 		return;
 	obj = state->effect;
 	if (obj != NULL)

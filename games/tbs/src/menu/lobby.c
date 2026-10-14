@@ -31,13 +31,13 @@
 #include "edition.h"
 #include "types.h"
 #include "field_event.h"
+#include "field_service.h"
 #include "scene.h"
 #include "io_reg.h"
 #include "serial_runtime.h"
 #include "iwram_call.h"
 #include "character.h"
 #include "mem.h"
-#include "call.h"
 #include "tbs_edition.h"
 #include "text/msg_ids.h"
 #include "callback_scheduler.h"
@@ -332,7 +332,7 @@ test1:
 		result++;
 	}
 	Engine_TaskWait(2);
-	Call2(Ui_AdjustValueWithoutLimit, (s32)MsgEnemyLabel, (s32)buf);
+	FieldUi_AdjustValueWithoutLimit((s32)MsgEnemyLabel, (s32)buf);
 	i = 0;
 	if (buf[i] != 0)
 	{
@@ -644,7 +644,7 @@ static s32 LinkLobby_ExchangePartyRecords(void)
 		if (result < 0)
 			goto fail;
 	}
-	GameFlag_SetByte(0x3f0, first);
+	FieldGameFlag_SetByte(0x3f0, first);
 	result = first;
 check:
 	if (first < 0)
@@ -828,7 +828,7 @@ static s32 EV08_TALK(void)
 			answer = Engine_EventChooseYesNo(0, 0);
 			if (answer == 0)
 			{
-				GameFlag_SetByte(1000, 0);
+				FieldGameFlag_SetByte(1000, 0);
 				Engine_GameFlagSet(0x173);
 				Engine_GameFlagClear(0x172);
 				Engine_GameFlagClear(0x16c);
@@ -1294,22 +1294,22 @@ s32 LinkLobby_RunRoundResult(void)
 		LinkLobby_WriteSlotValue(5);
 		gGameState.link_tallies[0]++;
 		gGameState.link_tallies[3]++;
-		wins = (s8)GameFlag_GetByte(0x3f8);
+		wins = (s8)FieldGameFlag_GetByte(0x3f8);
 		msg = wins * 2 + 2;
 		if (msg > 14)
 		{
 			msg = 14;
 		}
-		v = Value1(GameFlag_GetByte, 1000);
+		v = FieldGameFlag_GetByte(1000);
 		if (v == 2)
 		{
-			GameFlag_SetByte(1000, 0);
+			FieldGameFlag_SetByte(1000, 0);
 			wins++;
 			msg++;
 		}
 		else
 		{
-			Call2(GameFlag_SetByte, 1000, v + 1);
+			FieldGameFlag_SetByte(1000, v + 1);
 		}
 		Engine_ActorFaceActor(8, gGameState.selected_actor, 0);
 		Engine_EventSetMessage((s32)MsgLobbyNotBadNextMonster + msg);
@@ -1320,12 +1320,12 @@ s32 LinkLobby_RunRoundResult(void)
 			{
 				wins = 90;
 			}
-			GameFlag_SetByte(0x3f8, wins);
+			FieldGameFlag_SetByte(0x3f8, wins);
 		}
 		else
 		{
 			Engine_GameFlagClear(0x173);
-			GameFlag_SetByte(0x3f8, -1);
+			FieldGameFlag_SetByte(0x3f8, -1);
 			UiText_DrawQuantity(gGameState.link_tallies[3], 5);
 			score = gGameState.link_tallies[3];
 			if (gGameState.link_tallies[2] < score)
@@ -1371,7 +1371,7 @@ s32 LinkLobby_RunRoundResult(void)
 		}
 		gGameState.link_tallies[3] = 0;
 		Engine_GameFlagClear(0x173);
-		GameFlag_SetByte(0x3f8, -1);
+		FieldGameFlag_SetByte(0x3f8, -1);
 		LinkLobby_WriteSlotValue(0);
 		Engine_EventEnd();
 	}
@@ -1436,7 +1436,7 @@ s32 LinkLobby_RunRoundResult(void)
 	{
 		SerialRuntime_Initialize();
 		Engine_GameFlagClear(0x172);
-		GameFlag_SetByte(0x3f8, -1);
+		FieldGameFlag_SetByte(0x3f8, -1);
 		if (gGameState.saved_options != 0)
 		{
 			Engine_EventBegin();

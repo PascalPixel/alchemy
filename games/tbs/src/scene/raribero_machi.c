@@ -31,18 +31,6 @@
 // 前方宣言
 static void FieldScene_RunScene3c6SequenceA(void);
 
-static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
-{
-	/* FAKEMATCH: forwarding inline: with this and SetOffset called directly, SceneActor_SetupActor18Event has 4 instructions different (argument load order) */
-	Engine_ActorSetSpeed(actor, x, y);
-}
-
-static __inline__ void SetOffset(s32 actor, s32 offset, s32 zero)
-{
-	/* FAKEMATCH: forwarding inline: with this and PlaceActor called directly, SceneActor_SetupActor18Event has 4 instructions different (argument load order) */
-	Engine_ActorWalkByAndWait(actor, offset, zero);
-}
-
 enum
 {
 	ENTRANCE_PRIMARY_SEQUENCE = 20,
@@ -141,8 +129,8 @@ static void SceneActor_SetupActor18Event(void)
 	Engine_GameFlagSet(2491);
 	Engine_EventSetMessage((s32)MsgRariberoWasToldLetInIf);
 	Engine_EventShowMessage(18, 0);
-	PlaceActor(18, 65536, 32768);
-	SetOffset(18, -16, 0);
+	Actor_SetSpeed(18, 0x10000, 0x8000);
+	Actor_WalkByAndWait(18, -16, 0);
 	Engine_ActorFaceDirection(18, 0, 0);
 	Engine_EventWait(10);
 }

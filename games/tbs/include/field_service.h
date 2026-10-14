@@ -14,6 +14,7 @@
 #include "unit/field/mapcell.h"
 #include "unit/runtime/math.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "farcall.h"
 
 static inline void Actor_EnableActionCallback(s32 actor, const s32 *table)
@@ -260,6 +261,12 @@ static inline void FieldObject_SetTargetAndCallback(s32 object, s32 target, cons
 static inline void FieldVector_AddPolarOffset(s32 radius, s32 heading, struct FieldPosition *probe)
 {
 	Vector_AddPolarOffset(radius, heading, probe);
+}
+
+static inline void DisplayScroll_StartHBlankDma(
+	s32 mode, s32 freq_x, s32 step_x, s32 amp_x, s32 freq_y, s32 step_y, s32 amp_y)
+{
+	Engine_DisplayScrollStartHBlankDma(mode, freq_x, step_x, amp_x, freq_y, step_y, amp_y);
 }
 
 #endif

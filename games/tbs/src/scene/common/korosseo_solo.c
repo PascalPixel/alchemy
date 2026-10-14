@@ -1,5 +1,6 @@
 #include "types.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -13,14 +14,13 @@
 #include "battle_unit.h"
 #include "fieldobj.h"
 #include "animspr.h"
-#include "call.h"
 #include "text/msg_ids.h"
 
 void SceneActor_PlacePartyAtSavedTiles(void)
 {
 	{
-		s32 x = GameFlag_GetByte(896);
-		s32 y = GameFlag_GetByte(904);
+		s32 x = FieldGameFlag_GetByte(896);
+		s32 y = FieldGameFlag_GetByte(904);
 
 		x <<= 20;
 		x += 0x80000;
@@ -29,8 +29,8 @@ void SceneActor_PlacePartyAtSavedTiles(void)
 		Engine_ActorSetPosition(GERALD, x, y);
 	}
 	{
-		s32 x = GameFlag_GetByte(912);
-		s32 y = GameFlag_GetByte(920);
+		s32 x = FieldGameFlag_GetByte(912);
+		s32 y = FieldGameFlag_GetByte(920);
 
 		x <<= 20;
 		x += 0x80000;
@@ -39,8 +39,8 @@ void SceneActor_PlacePartyAtSavedTiles(void)
 		Engine_ActorSetPosition(IWAN, x, y);
 	}
 	{
-		s32 x = GameFlag_GetByte(928);
-		s32 y = GameFlag_GetByte(936);
+		s32 x = FieldGameFlag_GetByte(928);
+		s32 y = FieldGameFlag_GetByte(936);
 
 		x <<= 20;
 		x += 0x80000;
@@ -161,11 +161,11 @@ static void EV99_RAISED(void)
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 	base = n << 4;
-	GameFlag_SetByte(base + 880, p->x.fixed >> 20);
+	FieldGameFlag_SetByte(base + 880, p->x.fixed >> 20);
 	{
 		s32 v = p->z.fixed >> 20;
 
-		GameFlag_SetByte(base + 888, v);
+		FieldGameFlag_SetByte(base + 888, v);
 	}
 	n++;
 	if (n > 3)
@@ -212,8 +212,8 @@ void Korosseo_FinishSoloRound(s32 id)
 		work->transition_frames = 15;
 		Engine_EventCloseScreen();
 		Engine_EventWaitForScreen();
-		Call2(GameFlag_SetByte, (slot << 4) + 0x370, obj->x.fixed >> 20);
-		Call2(GameFlag_SetByte, (slot << 4) + 0x378, obj->z.fixed >> 20);
+		FieldGameFlag_SetByte((slot << 4) + 0x370, obj->x.fixed >> 20);
+		FieldGameFlag_SetByte((slot << 4) + 0x378, obj->z.fixed >> 20);
 		slot++;
 		if (slot > 3)
 		{
@@ -274,12 +274,12 @@ static void RunPartyCountInteraction(s32 actorId)
 
 void Korosseo_ClearSavedActorPositions(void)
 {
-	GameFlag_SetByte(896, 0);
-	GameFlag_SetByte(904, 0);
-	GameFlag_SetByte(912, 0);
-	GameFlag_SetByte(920, 0);
-	GameFlag_SetByte(928, 0);
-	GameFlag_SetByte(936, 0);
+	FieldGameFlag_SetByte(896, 0);
+	FieldGameFlag_SetByte(904, 0);
+	FieldGameFlag_SetByte(912, 0);
+	FieldGameFlag_SetByte(920, 0);
+	FieldGameFlag_SetByte(928, 0);
+	FieldGameFlag_SetByte(936, 0);
 }
 
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor)
@@ -468,7 +468,7 @@ L_main:
 	GameFlag_Set(base + 512);
 	rec = Object_GetById(obj);
 	sx = rec->x.fixed >> 20;
-	GameFlag_SetByte((obj << 4) + 880, sx);
+	FieldGameFlag_SetByte((obj << 4) + 880, sx);
 	sy = rec->z.fixed >> 20;
-	GameFlag_SetByte((obj << 4) + 888, sy);
+	FieldGameFlag_SetByte((obj << 4) + 888, sy);
 }

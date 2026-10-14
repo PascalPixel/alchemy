@@ -17,6 +17,7 @@
 #include "unit/runtime/math.h"
 #include "types.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "field_scene.h"
 #include "overlay_object.h"
 #include "create_configured_overlay_object.h"
@@ -32,7 +33,6 @@
 #include "system.h"
 #include "iwram_call.h"
 #include "map_scroll.h"
-#include "call.h"
 #include "text/msg_ids.h"
 #include "fieldobj.h"
 
@@ -296,7 +296,7 @@ static void SceneActor_InitializeMotion(void)
 	position[1] = actor->y.fixed;
 	position[2] = (actor->z.fixed & 0xfff00000) + 0x80000;
 	Vector_AddPolarOffset(0x200000, angle, position);
-	if (Object_CheckMovementCollision(actor, position) == 0)
+	if (FieldObject_CheckMovementCollision(actor, position) == 0)
 	{
 		Engine_GameFlagClear(592);
 		EV11_TOUCH();
@@ -1513,7 +1513,10 @@ static void MakyuriChojo_RiseActorPair(void)
 	Engine_ActorSetSpriteFlags(Object_GetById(24), 1);
 }
 
-static void MakyuriChojo_CollectBandSlots(s32 *out, s32 y)
+// 旧形式の定義: MakyuriChojo_LowerCollectedActors は三つ目の引数も渡す
+static void MakyuriChojo_CollectBandSlots(out, y)
+s32 *out;
+s32 y;
 {
 	struct ActorTable *table;
 	u32				   slot;
@@ -1550,8 +1553,7 @@ static void MakyuriChojo_LowerCollectedActors(void)
 	n = 0;
 	for (i = 0; i <= 4; i++)
 		ids[i] = 66;
-	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-	((s32 (*)())MakyuriChojo_CollectBandSlots)(ids, lift->offset_y, lift);
+	MakyuriChojo_CollectBandSlots(ids, lift->offset_y, lift);
 	for (i = 0; i <= 4; i++)
 	{
 		if (ids[i] == 66)

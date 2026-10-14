@@ -57,7 +57,6 @@
 #include "item.h"
 #include "game_state.h"
 #include "uiwindow.h"
-#include "call.h"
 #include "text/msg_ids.h"
 #include "frame.h"
 #include "map_scroll.h"
@@ -117,7 +116,7 @@ static void Clear_LoadBackground(void)
 	res = Engine_ResourceGetTableEntry(id);
 	Dma_Set(res, (void *)0x05000000, 0x84000070, REG_DMA3);
 	res += 0x1c0;
-	Value2(Resource_DecodeType01, (s32)res, (s32)Ram_MapCellBuffer);
+	Resource_Decode(res, Ram_MapCellBuffer);
 	Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, REG_DMA3);
 	map = (u16 *)0x06003000;
 	tile = 0x1a0;

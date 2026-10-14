@@ -30,7 +30,6 @@
 #include "field_event.h"
 #include "field_scene.h"
 #include "staged_actor.h"
-#include "call.h"
 #include "b5_context.h"
 #include "edition.h"
 #include "tbs_edition.h"
@@ -233,10 +232,9 @@ static void FieldScene_RunPrimarySequence(void)
 		na -= ua;
 		na <<= 3;
 		na += ta;
-		v3a = Engine_RandomNext();
+		v3a = (u32)(Engine_RandomNext() << 1) >> 16;
 		na = -na;
-		Call7(GomaHashira_SpawnPillarEffect, a0, rec4->y.fixed, a2, 0, na, ((u32)(v3a << 1) >> 16),
-			flags);
+		GomaHashira_SpawnPillarEffect(a0, rec4->y.fixed, a2, 0, na, v3a, flags);
 		flags = gFrameCount & 15;
 		if (flags == 0)
 		{
@@ -255,10 +253,9 @@ static void FieldScene_RunPrimarySequence(void)
 			nb -= ub;
 			nb <<= 3;
 			nb += tb;
-			v3b = Engine_RandomNext();
+			v3b = (u32)(Engine_RandomNext() << 1) >> 16;
 			nb = -nb;
-			Call7(GomaHashira_SpawnPillarEffect, a0, rec4->y.fixed, a2, 0, nb,
-				((u32)(v3b << 1) >> 16), flags);
+			GomaHashira_SpawnPillarEffect(a0, rec4->y.fixed, a2, 0, nb, v3b, flags);
 		}
 	}
 }
@@ -332,10 +329,9 @@ static void EV09_PSYNERGY(void)
 		n -= u;
 		n <<= 3;
 		n += t;
-		v3 = Engine_RandomNext();
+		v3 = (u32)(Engine_RandomNext() << 1) >> 16;
 		n = -n;
-		Call7(GomaHashira_SpawnPillarEffect, a0, rec4->y.fixed, a2, zero, n, ((u32)(v3 << 1) >> 16),
-			zero);
+		GomaHashira_SpawnPillarEffect(a0, rec4->y.fixed, a2, zero, n, v3, zero);
 		Engine_EventWait(20);
 		Engine_AudioPlayCue(154);
 		Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
@@ -410,7 +406,7 @@ static void EV20_TOUCH(void)
 	pos = &target;
 	pos->y = Object_GetById(0)->y.fixed;
 	pos->z = Object_GetById(0)->z.fixed;
-	if (Object_CheckMovementCollision(obj, pos) == 0)
+	if (FieldObject_CheckMovementCollision(obj, pos) == 0)
 	{
 		Engine_EventBegin();
 		Object_SetMode(obj, 6);

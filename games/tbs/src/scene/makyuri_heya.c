@@ -50,10 +50,10 @@
 #include "system.h"
 #include "types.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "field_scene.h"
 #include "text/msg_ids.h"
 #include "edition.h"
-#include "call.h"
 #include "global_cells.h"
 #include "map_render_work.h"
 #include "io_reg.h"
@@ -1271,6 +1271,7 @@ static void EV03_TALK(void)
 
 static void MakyuriHeya_FadePaletteToWhite(void)
 {
+	/* FAKEMATCH: volatile makes each read of palette RAM a load of its own: the native reads every color with three ldrh, one per component; without it one load is shifted for all three and the function is 104 bytes for 106 in tbs-en (2026-10-13). */
 	volatile u16 *pal;
 	u32			  i;
 	u32			  done;
@@ -1499,6 +1500,7 @@ static void SceneEffect_RotatePaletteEntries97To103(void)
 
 static void MakyuriHeya_FadePaletteToBlack(void)
 {
+	/* FAKEMATCH: volatile makes each read of palette RAM a load of its own: the native reads every color with three ldrh, one per component, and again after the store; without it one load is shifted for all three and the function is 98 bytes for 100 in tbs-en (2026-10-13). */
 	volatile u16 *pal;
 	u32			  i;
 	s32			  done;
@@ -1849,14 +1851,14 @@ static void EV15_TOUCH(void)
 		Map_CopyCellsTo(92, 46, 92, 40, 3, 2);
 		Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
 		Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
-		Call3(BattleFx_RunRisingObjectSequence, ACTOR_PARTY_LEADER, 6, -1);
+		FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, -1);
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
 		Engine_EventWait(60);
 		Engine_EventRequestExit(8);
 	}
 	else
 	{
-		Call3(BattleFx_RunRisingObjectSequence, ACTOR_PARTY_LEADER, 6, -1);
+		FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, -1);
 	}
 	Engine_EventEnd();
 }

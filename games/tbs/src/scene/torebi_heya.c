@@ -10,7 +10,6 @@
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "torebi_heya.h"
-#include "call.h"
 #include "field_event.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -84,8 +83,7 @@ static void TorebiHeya_StartWindowTransition(void)
 
 	state->start_transition = 0x201;
 	state->transition_frames = 24;
-	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-	((void (*)(void))Engine_EventRequestExit)();
+	Engine_EventRequestExit();
 }
 
 static void FieldScene_RunPrimarySequence(void)

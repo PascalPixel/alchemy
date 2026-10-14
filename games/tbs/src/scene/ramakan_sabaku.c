@@ -34,7 +34,6 @@
 #include "system.h"
 #include "text/msg_ids.h"
 #include "scene_ids.h"
-#include "call.h"
 #include "iwram_call.h"
 #include "field_service.h"
 #include "field_effect.h"
@@ -174,7 +173,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 static s32 RamakanSabaku_ApplyEntryState(void)
 {
-	s32 record;
+	// 戻り値の型は s32 だが return 文は無い（pop {r1}; bx r1）
 	s32 v5;
 
 	Engine_GameFlagClear(0x201);
@@ -233,17 +232,13 @@ static s32 RamakanSabaku_ApplyEntryState(void)
 	v5 = 100;
 	do
 	{
-		/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-		record = ((s32 (*)())Engine_MapObjectSetPosition)(v5, 0, 0);
+		Engine_MapObjectSetPosition(v5, 0, 0);
 		v5 = (v5 + 1);
 	} while (v5 <= 107);
 	if (gGameState.scene != (s32)&SceneId_RamakanSabaku4)
 	{
-		record = Value7(Engine_DisplayScrollStartHBlankDma, 0, 0x40000, 0x10000, 0x2000, 0x10000,
-			0x8000, 0x4000);
-		return record;
+		DisplayScroll_StartHBlankDma(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000, 0x4000);
 	}
-	return record;
 }
 
 static s32 RamakanSabaku_ConfigureAreaLayout(void)
@@ -701,7 +696,7 @@ static void EV30_TOUCH(void)
 	pos[0] = actor->x.fixed;
 	pos[1] = actor->y.fixed;
 	pos[2] = actor->z.fixed + 0x18000;
-	hit = Object_CheckMovementCollision(actor, pos);
+	hit = FieldObject_CheckMovementCollision(actor, pos);
 	phase = gFrameCount & 4;
 	if (phase == 0)
 	{
@@ -727,7 +722,7 @@ static void EV30_TOUCH(void)
 	pos[0] = actor->x.fixed;
 	pos[1] = actor->y.fixed;
 	pos[2] = actor->z.fixed + 0x80000;
-	hit = Object_CheckMovementCollision(actor, pos);
+	hit = FieldObject_CheckMovementCollision(actor, pos);
 	if (hit > 0)
 	{
 		return;
@@ -735,7 +730,7 @@ static void EV30_TOUCH(void)
 	pos[0] = actor->x.fixed + 0x5b333;
 	pos[1] = actor->y.fixed;
 	pos[2] = actor->z.fixed + 0x5b333;
-	hit = Object_CheckMovementCollision(actor, pos);
+	hit = FieldObject_CheckMovementCollision(actor, pos);
 	if (hit > 0)
 	{
 		return;
@@ -743,7 +738,7 @@ static void EV30_TOUCH(void)
 	pos[0] = actor->x.fixed - 0x5b333;
 	pos[1] = actor->y.fixed;
 	pos[2] = actor->z.fixed + 0x5b333;
-	hit = Object_CheckMovementCollision(actor, pos);
+	hit = FieldObject_CheckMovementCollision(actor, pos);
 	if (hit > 0)
 	{
 		return;

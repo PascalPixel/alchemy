@@ -21,15 +21,7 @@
 #include "field_scene.h"
 #include "fieldobj.h"
 
-s32 Engine_GameFlagIsSet(s32);
-
-void Engine_ActorSetPosition(s32, s32, s32);
-
-u8 Engine_ActorSetSpriteFlags(s32, s32);
-
-u8 Engine_ActorSetAnimation(s32, s32);
-
-u8 Map_CopyCellAttributes(s32, s32, s32, s32, s32, s32);
+#include "field_event.h"
 
 u8 *SceneData_GetPrimaryTable(void)
 {
@@ -60,25 +52,17 @@ s32 Scene_PlaceActor8OnGate300(void)
 {
 	struct Resource388Runtime *work;
 
-	s32 arg5;
-	s32 arg6;
-	s32 pos_x = 0xD80000;
-	s32 pos_z = 0x880000;
-
 	work = (struct Resource388Runtime *)gEventWork;
 	work->setup_request_1c0 = 0x204;
 	work->setup_value_1c8 = 0x18;
 	if (Engine_GameFlagIsSet(0x300) != 0)
 	{
-		Engine_ActorSetPosition(8, pos_x, pos_z);
+		Actor_SetPosition(8, 0xD80000, 0x880000);
 		Engine_ActorSetAnimation(8, 2);
-		Engine_ActorSetSpriteFlags((s32)Object_GetById(8), 0);
+		Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
 		((struct Resource388SlotView *)Object_GetById(8))->unknown_23 = 2;
 		((struct Resource388SlotView *)Object_GetById(8))->unknown_59 = 0;
-		/* FAKEMATCH: the 5th and 6th arguments go through locals; as literals in the direct call they differ 6 on tbs-en, and through Map_CopyCellAttributes they differ too */
-		arg5 = 0xB;
-		arg6 = 6;
-		Engine_MapCopyCellAttributes(0xB, 0x24, 5, 5, arg5, arg6);
+		Map_CopyCellAttributes(0xB, 0x24, 5, 5, 0xB, 6);
 	}
 	return 0;
 }

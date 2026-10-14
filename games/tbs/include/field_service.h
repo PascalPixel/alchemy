@@ -2,8 +2,6 @@
 #define FIELD_SERVICE_H
 
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/sparkle.h"
 #include "unit/object/evactor.h"
 #include "unit/object/evcamera.h"
 #include "unit/object/djinnev.h"

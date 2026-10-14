@@ -1,6 +1,6 @@
 #include "unit/window/window.h"
 #include "unit/window/btlcmd.h"
-#include "unit/object/objtable.h"
+#include "unit/object/object.h"
 #include "unit/window/moji.h"
 #include "unit/runtime/runtime.h"
 #include "types.h"
@@ -80,10 +80,8 @@
 #include "shop.h"
 #include "disptran.h"
 #include "frame.h"
-#include "unit/object/object.h"
 #include "unit/object/evmes.h"
 #include "unit/window/scales.h"
-#include "unit/object/disptran.h"
 #include "unit/window/sideobjt.h"
 
 struct RenderOutput *RenderOutput_Create(

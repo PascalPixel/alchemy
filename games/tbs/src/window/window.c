@@ -11,7 +11,6 @@
 #include "unit/window/window.h"
 #include "unit/window/btlcmd.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
 #include "unit/object/evmes.h"
 #include "unit/window/moji.h"
 #include "unit/runtime/runtime.h"

@@ -1,8 +1,5 @@
 #include "vram_tab.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/marker.h"
-#include "unit/object/sparkle.h"
 #include "unit/object/evbasic.h"
 #include "unit/object/evactor.h"
 #include "unit/object/evcamera.h"

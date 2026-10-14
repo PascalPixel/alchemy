@@ -1,7 +1,5 @@
 #include "unit/scene/toreto_eda.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/disptran.h"
 #include "unit/object/evbasic.h"
 #include "unit/object/evactor.h"
 #include "unit/field/field.h"

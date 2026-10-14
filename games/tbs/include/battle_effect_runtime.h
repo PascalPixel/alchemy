@@ -2,8 +2,6 @@
 #define ALCHEMY_BATTLE_EFFECT_RUNTIME_H
 
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/palbuf.h"
 #include "object_lookup.h"
 #include "types.h"
 #include "layout_guard.h"

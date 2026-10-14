@@ -1,8 +1,6 @@
 #include "unit/effect/koukatbl.h"
 #include "unit/effect/effect.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/evtable.h"
 #include "unit/object/djinnev.h"
 #include "unit/object/psyfx.h"
 #include "unit/runtime/runtime.h"

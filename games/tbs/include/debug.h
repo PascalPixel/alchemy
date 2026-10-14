@@ -3,7 +3,7 @@
 
 /* DEBUG */
 
-#include "unit/object/objtable.h"
+#include "unit/object/object.h"
 #include "types.h"
 #include "edition.h"
 #include "farcall.h"

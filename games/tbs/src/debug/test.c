@@ -2,7 +2,6 @@
 #include "unit/import.h"
 #include "unit/debug/test.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
 #include "unit/object/evbasic.h"
 #include "unit/object/evmes.h"
 #include "unit/game/game.h"

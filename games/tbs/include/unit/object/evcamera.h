@@ -4,8 +4,6 @@
 #include "types.h"
 #include "effect_slot.h"
 #include "unit/object/object.h"
-#include "unit/object/marker.h"
-#include "unit/object/sparkle.h"
 #include "unit/object/evactor.h"
 
 struct FieldActor;

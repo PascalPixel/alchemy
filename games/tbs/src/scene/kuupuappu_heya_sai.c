@@ -3,7 +3,6 @@
 #include "unit/scene/kuupuappu_heya_sai.h"
 #include "unit/scene/common/kuupuappu_itemobj.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
 #include "unit/object/evbasic.h"
 #include "unit/object/evactor.h"
 #include "unit/game/game.h"

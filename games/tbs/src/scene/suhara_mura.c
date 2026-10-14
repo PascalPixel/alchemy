@@ -1,7 +1,6 @@
 #include "game_state.h"
 #include "unit/scene/suhara_mura.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
 #include "unit/object/evbasic.h"
 #include "battle.h"
 #include "debug.h"

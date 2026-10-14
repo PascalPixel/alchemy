@@ -3,8 +3,6 @@
 #include "unit/scene/korima_magari.h"
 #include "unit/scene/common/korima_palette.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/sparkle.h"
 #include "unit/object/evbasic.h"
 #include "unit/object/evactor.h"
 #include "unit/object/evcamera.h"

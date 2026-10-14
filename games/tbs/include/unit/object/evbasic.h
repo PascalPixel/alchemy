@@ -4,7 +4,6 @@
 #include "types.h"
 #include "effect_slot.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
 
 struct ScenePlacement;
 

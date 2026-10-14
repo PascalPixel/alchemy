@@ -1,6 +1,5 @@
 #include "vram_tab.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
 #include "unit/object/evactor.h"
 #include "unit/object/djinnev.h"
 #include "unit/object/psyfx.h"

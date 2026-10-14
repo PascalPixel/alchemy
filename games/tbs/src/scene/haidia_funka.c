@@ -1,7 +1,6 @@
 #include "game_state.h"
 #include "unit/scene/haidia_funka.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
 #include "unit/object/evbasic.h"
 #include "unit/object/evactor.h"
 #include "unit/object/scenefx.h"

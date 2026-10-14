@@ -105,13 +105,6 @@ main	rom_main_03	games/tbs/src/game/elemtbl
 main	rom_main_03	games/tbs/src/game/djinntbl
 main	rom_main_04	games/tbs/src/system/far_call/OBJECT
 main	rom_main_04	games/tbs/src/object/object
-main	rom_main_04	games/tbs/src/object/objtable
-main	rom_main_04	games/tbs/src/object/fldmain
-main	rom_main_04	games/tbs/src/object/evtable
-main	rom_main_04	games/tbs/src/object/marker
-main	rom_main_04	games/tbs/src/object/sparkle
-main	rom_main_04	games/tbs/src/object/disptran
-main	rom_main_04	games/tbs/src/object/palbuf
 main	rom_main_04	games/tbs/src/object/evbasic
 main	rom_main_04	games/tbs/src/object/evactor
 main	rom_main_04	games/tbs/src/object/evmes

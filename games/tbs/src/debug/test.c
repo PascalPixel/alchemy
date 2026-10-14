@@ -15,8 +15,6 @@
 #include "unit/window/btlcmd.h"
 #include "unit/window/debug.h"
 #include "unit/menu/menu.h"
-#include "unit/menu/status.h"
-#include "unit/menu/compare.h"
 #include "unit/shop/shop.h"
 #include "unit/shop/seido.h"
 #include "unit/shop/pickitem.h"

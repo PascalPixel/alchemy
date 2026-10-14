@@ -143,13 +143,6 @@ main	rom_main_04	games/tbs/src/field/scenes
 main	rom_main_04	games/tbs/src/object/scripts
 main	rom_main_05	games/tbs/src/system/far_call/MENU
 main	rom_main_05	games/tbs/src/menu/menu
-main	rom_main_05	games/tbs/src/menu/item
-main	rom_main_05	games/tbs/src/menu/psynergy
-main	rom_main_05	games/tbs/src/menu/status
-main	rom_main_05	games/tbs/src/menu/useitem
-main	rom_main_05	games/tbs/src/menu/djinn
-main	rom_main_05	games/tbs/src/menu/fourobj
-main	rom_main_05	games/tbs/src/menu/compare
 main	rom_main_05	games/tbs/src/graphics/ui/menuspr
 main	rom_main_05	games/tbs/src/menu/menustr
 main	rom_main_05	games/tbs/src/menu/menudata

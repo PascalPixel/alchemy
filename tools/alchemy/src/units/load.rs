@@ -664,10 +664,10 @@ mod tests {
     #[test]
     fn arm_c_without_mapping_symbols_uses_its_compiler_route() {
         let root = tempfile::tempdir().unwrap();
-        let source = root.path().join("games/common/src/window/metatile.c");
+        let source = root.path().join("games/tla/src/graphics/tile/metatile.c");
         fs::create_dir_all(source.parent().unwrap()).unwrap();
         fs::write(&source, "void Tile_BuildMetatiles(void) {}\n").unwrap();
-        let o = origin(root.path(), CompilerTarget::Tbs, "/build/obj/games/common/src/window/metatile.o");
+        let o = origin(root.path(), CompilerTarget::Tla, "/build/obj/games/tla/src/graphics/tile/metatile.o");
         assert_eq!(o.lang, Lang::C);
         assert!(mode_arm(Some(&Section::default()), 0, o.arm));
         assert!(!mode_arm(None, 0, false));

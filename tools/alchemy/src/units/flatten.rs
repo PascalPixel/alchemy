@@ -1231,11 +1231,11 @@ mod tests {
     #[test]
     fn shared_headers_reached_by_path_stay_includes() {
         let root = tempfile::tempdir().unwrap();
-        fs::create_dir_all(root.path().join("games/common/src/sound")).unwrap();
+        fs::create_dir_all(root.path().join("games/tla/src/sound")).unwrap();
         fs::create_dir_all(root.path().join("games/common/include/system")).unwrap();
         fs::write(root.path().join("games/common/include/system/io_reg.h"), "#define REG 1\n").unwrap();
-        let source = "games/common/src/sound/engine.c";
-        let text = "#include \"../../include/system/io_reg.h\"\nvoid f(void)\n{\n}\n";
+        let source = "games/tla/src/sound/engine.c";
+        let text = "#include \"../../../common/include/system/io_reg.h\"\nvoid f(void)\n{\n}\n";
         let group: BTreeSet<String> = [source.to_string()].into();
         let mut expanded = BTreeSet::new();
         assert_eq!(expand_local(root.path(), source, text, &group, &mut expanded, 0).unwrap(), text);
@@ -1247,7 +1247,7 @@ mod tests {
         // The copy verify compiles lives under out/ and routes as game code;
         // library sources must still reach their own compiler.
         let target = decomp_target(Some("tbs-en")).unwrap();
-        assert_eq!(family(Path::new("."), target, "games/common/src/sound/engine.c"), CompilerFamily::Agbcc);
+        assert_eq!(family(Path::new("."), target, "games/tbs/src/sound/engine.c"), CompilerFamily::Agbcc);
         assert_eq!(family_for_source(target.compiler, "out/tbs-en/obj/units/flatten-engine.c"), CompilerFamily::Game);
     }
 

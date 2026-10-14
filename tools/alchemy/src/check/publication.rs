@@ -4826,7 +4826,7 @@ mod tests {
         let root = crate::compiler::routing::root();
         let study = root.join("tools/alchemy/src/compiler");
         let mut documents = vec![
-            root.join("AGENTS.md"),
+            root.join("CONTRIBUTING.md"),
             root.join("tools/alchemy/src/check/publication.rs"),
             root.join("tools/alchemy/src/permute/mod.rs"),
             root.join("tools/alchemy/src/permute/c/fixtures/output-diffs.tsv"),

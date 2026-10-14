@@ -40,7 +40,7 @@ $(LIBGCC):
 .PHONY: precommit prepush verify land test test-integration lint-staged language-check
 .PHONY: publication-check source-check publication-staged-check hygiene-check coverage-report
 .PHONY: publication-tree-check layout-check dead-check aliases-check devices-check headers-check object-list-check packer-check modern-check
-.PHONY: progress figure deps similar worst clean modern boot-tbs
+.PHONY: progress deps similar worst clean modern boot-tbs
 
 help:
 	@printf '%s\n' \
@@ -53,10 +53,9 @@ help:
 	  'make boot-tbs        boot each ☀️ edition, matching and modern ROM, in mGBA to the file menu (BOOT_EMULATOR, BOOT_GDB); never part of make verify or make land' \
 	  'make test            the Rust tests' \
 	  'make verify          every check, the tests and all twelve editions compared' \
-	  'make land            on staging, before committing a landing: make verify, then the measurement the push uploads' \
+	  'make land            on main, before committing a landing: make verify, then the measurement the push uploads' \
 	  'make coverage-report measure both games for the push; CI draws the published figures' \
 	  'make progress        report DONE code and data in all six editions from verified builds' \
-	  'make figure          redraw PROGRESS.png and PROGRESS_CHART.png from the verified count' \
 	  'make deps            map calls and blockers of not-yet-C code into out/reports/deps-*.tsv' \
 	  'make similar         the nearest C twins of every not-yet-C function in either game, into out/reports/similar.tsv' \
 	  'make worst           rank mechanical cleanup signals' \
@@ -125,7 +124,7 @@ COMPARE_EDITIONS := $(addprefix compare-,$(EDITIONS))
 ifeq ($(origin ALCHEMY),file)
 compiler-runtime toolchain-check compare compare-tla compare-tbs compare-editions compare-other-editions \
 $(COMPARE_EDITIONS) build-rom precommit prepush verify land publication-check source-check \
-hygiene-check publication-staged-check lint-staged coverage-report progress figure \
+hygiene-check publication-staged-check lint-staged coverage-report progress \
 publication-tree-check layout-check dead-check aliases-check devices-check headers-check object-list-check \
 packer-check deps similar worst modern boot-tbs: | build-alchemy
 endif
@@ -228,9 +227,6 @@ coverage-report:
 
 progress:
 	$(CHECK) progress
-
-figure:
-	$(ALCHEMY) figure
 
 deps:
 	$(ALCHEMY) deps --build out/tbs-en --build out/tla-en \

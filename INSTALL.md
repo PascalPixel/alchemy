@@ -1,49 +1,59 @@
-# Building Alchemy
+# Instructions
 
-This page builds **The Broken Seal** ☀️ from source in all six editions and
-checks each one against the SHA-1 in [`rom.sha1`](rom.sha1). ☀️ needs no ROM:
-every byte comes from the source in this repository. **The Lost Age** ⚓️ still
-copies part of itself from your own cartridge dump; see
+These instructions build **The Broken Seal** ☀️ from source in all six
+editions and check each one against the SHA-1 in [`rom.sha1`](rom.sha1). ☀️
+needs no ROM: every byte comes from the source in this repository. **The Lost
+Age** ⚓️ still copies part of itself from your own cartridge dump; see
 [The Lost Age](#the-lost-age-) below.
 
-## What you need
+The build is tested on Apple Silicon macOS and on 64-bit ARM Linux (Debian
+12). [agscc's README](agscc/README.md#hosts) lists the other hosts its
+compilers were tested on. Other systems are untested.
 
-- macOS or Linux. The whole build is tested on Apple Silicon macOS and on
-  64-bit ARM Linux (Debian 12). [agscc's README](agscc/README.md#hosts) lists
-  the other hosts its compilers were tested on. Other systems are untested.
-- A C compiler (clang or GCC), `make`, `git`, `curl`, `patch`, `xz`, and
-  `sha1sum` or `shasum`.
-- Rust with Cargo. CI uses Rust 1.98.1.
-- A network connection for the first setup. It reaches GitHub (the compiler
-  submodules), crates.io (the locked Rust dependencies) and ftp.gnu.org (GNU
-  binutils 2.10 and 2.33.1 and GCC 2.95.2, each checked against a pinned
-  SHA-256 before use). After setup, building needs no network.
+## macOS
 
-## Get the source
+Install the Xcode command line tools (`xcode-select --install`), which bring
+clang, `make`, `git`, `curl` and `patch`, then `xz` (for example
+`brew install xz`) and Rust with Cargo from [rustup](https://rustup.rs). CI
+uses Rust 1.98.1.
+
+## Linux
+
+Install a C compiler (clang or GCC), `make`, `git`, `curl`, `patch`, `xz` and
+`sha1sum`, then Rust with Cargo from [rustup](https://rustup.rs). On
+Debian/Ubuntu-based distributions:
+
+```sh
+sudo apt install build-essential git curl patch xz-utils
+```
+
+## Installation
+
+The first setup needs a network connection. It reaches GitHub (the compiler
+submodules), crates.io (the locked Rust dependencies) and ftp.gnu.org (GNU
+binutils 2.10 and 2.33.1 and GCC 2.95.2, each checked against a pinned SHA-256
+before use). After setup, building needs no network.
 
 ```sh
 git clone --recursive https://github.com/PascalPixel/alchemy.git
 cd alchemy
+make bootstrap
 ```
 
 In a clone made without `--recursive`, run
 `git submodule update --init --recursive` first.
 
-## Build the compilers
+`make bootstrap` builds the `alchemy` tool, then the pinned assembler, linker
+and the three compilers from the `agscc` submodule's source, then the
+compilers' runtime library. Everything it makes goes in `tools/out/`. On an
+18-core Apple Silicon Mac it takes about two minutes.
 
-```sh
-make bootstrap
-```
-
-This builds the `alchemy` tool, then the pinned assembler, linker and the
-three compilers from the `agscc` submodule's source, then the compilers'
-runtime library. Everything it makes goes in `tools/out/`. On an 18-core Apple
-Silicon Mac it takes about two minutes.
-
-The compilers are one fixed set: GCC 2.96 of 31 July 2000 for the games'
-Thumb code, GCC 2.95.2 for their ARM code, and pret's agbcc for the sound and
-flash libraries. [AGENTS.md](AGENTS.md#compilers) gives each one's options and
-the reasons for them.
+The compilers are one fixed set: GCC 2.96 (the development snapshot of 31
+July 2000, which names itself `2.96 20000731 (experimental)`; the FSF never
+released a 2.96) for the games' Thumb code, GCC 2.95.2 for their ARM code,
+and pret's agbcc for the sound and flash libraries.
+[CONTRIBUTING.md](CONTRIBUTING.md#compilers) gives each
+one's options and the reasons for them.
 
 ## Build The Broken Seal ☀️
 
@@ -60,27 +70,21 @@ out/tbs-en/tbs-en.gba: OK
 ...
 ```
 
-The built ROMs are `out/<edition>/<edition>.gba`. To build one edition, run
-`make compare-tbs-en` and so on, with `ja`, `en`, `de`, `es`, `fr` or `it`;
-`make compare` is the Japanese edition. To check against your own cartridge,
-compare your dump's SHA-1 with the line for its edition in `rom.sha1`.
+The built ROMs are `out/<edition>/<edition>.gba`.
 
-## See the compile
+# Building guidance
 
-```sh
-make V=1 compare-tbs-en
-```
+## Parallel builds
 
-prints every command the build runs, one line each, as a shell would read
-it: each C file's compiler with its full options, each assembler, the linker,
-objcopy and the header fix-up. A step the build cache already holds prints
-after `# cached: `, so the list is always the whole build. The same option is
-`alchemy build rom --target tbs-en --commands`. Every game Thumb file of an
-edition compiles with one option set, for example ☀️'s:
+The build runs its compiles in parallel by itself, one per core; `make` needs
+no `-j`.
 
-```
-tools/out/compilers/xgcc -Btools/out/compilers/ -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi -nostdinc -fcall-used-r4 -I... -DTBS_EDITION_EN=1 -Iout/tbs-en -S -o out/tbs-en/obj/games/tbs/src/battle/battle.s games/tbs/src/battle/battle.c
-```
+## Compare ROM to the original
+
+To build one edition, run `make compare-tbs-en` and so on, with `ja`, `en`,
+`de`, `es`, `fr` or `it`; `make compare` is the Japanese edition. To check
+against your own cartridge, compare your dump's SHA-1 with the line for its
+edition in `rom.sha1`.
 
 ## The Lost Age ⚓️
 
@@ -100,7 +104,7 @@ make compare-editions  # all twelve editions of both games
 `roms/` and every `.gba` file are ignored by git. Never commit a ROM or any
 other copy of the original games.
 
-## A current GCC
+## A modern compiler
 
 ```sh
 make modern
@@ -114,6 +118,23 @@ compiler from your package manager (for example Homebrew's
 `arm-none-eabi-gcc`, or Debian's `gcc-arm-none-eabi`), or name another one with
 `make modern MODERN_CC=/path/to/arm-none-eabi-gcc`.
 
+## See the compile
+
+```sh
+make V=1 compare-tbs-en
+```
+
+prints every command the build runs, one line each, as a shell would read
+it: each C file's compiler with its full options, each assembler, the linker,
+objcopy and the header fix-up. A step the build cache already holds prints
+after `# cached: `, so the list is always the whole build. The same option is
+`alchemy build rom --target tbs-en --commands`. Every game Thumb file of an
+edition compiles with one option set, for example ☀️'s:
+
+```
+tools/out/compilers/xgcc -Btools/out/compilers/ -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi -nostdinc -fcall-used-r4 -I... -DTBS_EDITION_EN=1 -Iout/tbs-en -S -o out/tbs-en/obj/games/tbs/src/battle/battle.s games/tbs/src/battle/battle.c
+```
+
 ## Tests
 
 ```sh
@@ -122,3 +143,11 @@ make test
 
 runs the tools' tests. `make verify` runs every check and compares all twelve
 editions, so it needs the ⚓️ dumps as well.
+
+# Useful additional tools
+
+- `make boot-tbs`, after `make modern`, boots each ☀️ edition's matching and
+  modern ROM in [mGBA](https://mgba.io) with an ARM gdb and compares them to
+  the file menu.
+- `alchemy --help` lists every command of the project's one tool: the build,
+  the checks, the count, matching and reports.

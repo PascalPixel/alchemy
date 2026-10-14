@@ -29,7 +29,7 @@ selects ARM for scaffolds without instruction-set markers. Mixed-mode
 scaffolds are unsupported. This normalized comparison is analysis only;
 the full twelve-edition ROM comparison remains the matching authority.
 --arm compiles an ARM draft of either game as the build compiles game ARM C
-(GAME_ARM_SOURCES, AGENTS.md K1): stock GCC 2.95.2 at the common ARM
+(GAME_ARM_SOURCES, CONTRIBUTING.md K1): stock GCC 2.95.2 at the common ARM
 setting, assembled as ARM. Credit comes only from source the build links.
 Output stays in obj/drafts/arm.
 --rtl keeps the compiler's dump after every pass (GCC's -da) in

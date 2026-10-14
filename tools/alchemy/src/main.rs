@@ -113,10 +113,7 @@ Camelotize
 Work in parallel
   queues        split not-yet-C work into queues that cannot collide
   integrate     merge branches, reconcile linker scripts, build all twelve
-  merge-driver  git merge drivers for scaffolds and linker scripts
-
-Report for people (nothing else reads it)
-  figure        PROGRESS.png and PROGRESS_CHART.png from the verified count"#;
+  merge-driver  git merge drivers for scaffolds and linker scripts"#;
 
 fn main() -> ExitCode {
     compiler::routing::prefer_installed_binutils();
@@ -154,7 +151,6 @@ fn main() -> ExitCode {
         "sizes" => result(sizes::run(rest)),
         "worst" => result(worst_command::run(rest)),
         "fakematch" => result(fakematch::run(rest)),
-        "figure" => result(coverage::figures::run(rest)),
         "camelotize" => result(camelotize::run(rest)),
         "objects" => result(objects::run(rest)),
         "dead" => result(dead::run(rest)),

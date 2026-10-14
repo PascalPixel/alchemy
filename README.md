@@ -5,6 +5,9 @@ the world. I’m doing the same thing to the games themselves. **The Broken
 Seal** ☀️ and **The Lost Age** ⚓️ are being rebuilt from readable source, piece
 by piece.
 
+**The Broken Seal ☀️ is 100% rebuilt.** All six languages build byte for byte
+from the source in this repository, with no ROM. The Lost Age ⚓️ is next.
+
 ## Progress
 
 <img src="https://raw.githubusercontent.com/PascalPixel/alchemy/progress/PROGRESS_CHART.png" width="838" alt="How much of each game's code and data is rebuilt, day by day since 16 July 2026">
@@ -39,7 +42,16 @@ Alchemy is not a remake, a mod, an emulator or a download of the games, and it
 doesn’t include them. It will open to outside contributions once both games
 are complete.
 
-To build it yourself and check it against the original, follow
+It builds the following ROMs of The Broken Seal ☀️:
+
+- Japanese: `sha1: 35ef9e4c9f38183ebd6a3e3923a11ce9a4333718`
+- English: `sha1: 5c4695205413df7db52b9a184815a07783999971`
+- German: `sha1: c23ab91a39434623cf1a999f387d743ade1a22a6`
+- Spanish: `sha1: de0bdc889594b012cad213ca83707feb81ada28b`
+- French: `sha1: 42f3b262c16cfc5bde1fa2b25016fb74046de1b3`
+- Italian: `sha1: ca45e04b26b2f040ac63e679a459d21869f5f28d`
+
+To set up the repository and check it against your own cartridge, see
 [INSTALL.md](INSTALL.md).
 
 ## Acknowledgements

@@ -548,10 +548,6 @@ pub(crate) fn mark_drawn(history: &mut History, date: &str) {
     );
 }
 
-pub(crate) fn today() -> String {
-    this_hour()[..10].to_string()
-}
-
 pub(crate) fn this_hour() -> String {
     let now = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -793,7 +789,7 @@ mod tests {
         );
         assert_eq!(previous("2026-03-01").as_deref(), Some("2026-02-28"));
         assert_eq!(previous("2026-09-01").as_deref(), Some("2026-08-31"));
-        assert_eq!(today().len(), 10);
+        assert_eq!(this_hour().len(), 13);
     }
 
     #[test]

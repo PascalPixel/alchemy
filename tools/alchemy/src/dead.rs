@@ -638,7 +638,7 @@ fn only_error(text: &Text, arm: &Arm) -> bool {
 /// A chain that tests a build switch: the modern build (MODERN), pret's
 /// undefined-behaviour fixes (UBFIX) or its opt-in bug fixes (BUGFIX). The
 /// matching build selects none of their arms, and code behind them is not
-/// dead code (AGENTS.md, Goal).
+/// dead code (CONTRIBUTING.md, Goal).
 fn tests_switch(chain: &Chain) -> bool {
     chain.arms.iter().any(|arm| identifiers(&arm.condition).any(|word| SWITCHES.contains(&word)))
 }

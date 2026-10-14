@@ -4,7 +4,6 @@ pub(crate) mod calcrom;
 pub(crate) mod data;
 pub(crate) mod decomp;
 pub(crate) mod figure;
-pub(crate) mod figures;
 pub(crate) mod history;
 pub(crate) mod jsnum;
 pub(crate) mod letters;

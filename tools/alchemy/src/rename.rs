@@ -30,11 +30,11 @@ NEW is refused where those places spell it already (with --file: FILE,
 or a file other than a C unit) and where a commit of any branch added or
 took it away there (git log --all -S over games/, recon/ and aliases.tsv;
 with --file, over FILE and the files other than C units): W7 is about
-the games' names. The tools' source, AGENTS.md and README.md give no
+the games' names. The tools' source, CONTRIBUTING.md and README.md give no
 name to the games, so a NEW they spell is noted, not refused.
 Prints each file written with its count, the names that extend OLD and
 keep theirs (OLDCodeSize), the files outside games/ and recon/ that spell
-OLD and are left to a person (the tools' source, AGENTS.md), and each
+OLD and are left to a person (the tools' source, CONTRIBUTING.md), and each
 reviewed assembly source whose evidence.tsv row the new tokens no longer
 match. Then `alchemy keep`, with no PATH, judges the rename in all twelve
 editions: it keeps the files when every edition stays identical. A rename
@@ -49,7 +49,7 @@ const PLACES: [&str; 3] = ["games", "recon", "tools/alchemy/aliases.tsv"];
 
 /// What spells names the tool does not write: the tools' own source, and
 /// the rules and the fans' page, whose wording is Pascal's.
-const ELSEWHERE: [&str; 3] = ["tools/alchemy/src", "AGENTS.md", "README.md"];
+const ELSEWHERE: [&str; 3] = ["tools/alchemy/src", "CONTRIBUTING.md", "README.md"];
 
 /// The suffix of a far-call bank's entry for a routine.
 const FAR: &str = "Far";

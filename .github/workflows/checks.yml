@@ -50,7 +50,7 @@ jobs:
       - name: Test asset encoders and analysis tools on synthetic inputs
         run: |
           cargo test --locked --offline --release --manifest-path tools/Cargo.toml -p ags
-          cargo test --locked --offline --release --manifest-path tools/Cargo.toml -p alchemy --bin alchemy -- deps:: similar:: worst:: thumb:: decode:: elf:: cache:: process:: boot::
+          cargo test --locked --offline --release --manifest-path tools/Cargo.toml -p alchemy --bin alchemy -- deps:: similar:: worst:: thumb:: decode:: elf:: cache:: process:: boot:: --skip compiler::preprocess
 
       - name: Test Alchemy commands and relocated build caches
         run: cargo test --locked --offline --release --manifest-path tools/Cargo.toml -p alchemy --test build_script

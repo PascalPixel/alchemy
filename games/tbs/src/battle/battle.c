@@ -5446,6 +5446,7 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 
 	if (require_living_unit != 0)
 	{
+		/* FAKEMATCH: a loop that runs once, left by its closing break. Written plain, without the loop, the function differs 35 instructions in EN (85 -> 84): the first branch's zero offset takes r2 for r1 and the else branch sets up its pointers in another order. */
 		for (;;)
 		{
 			index = 0;

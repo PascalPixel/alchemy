@@ -792,6 +792,7 @@ alchemy units [--dry-run N]            # Camelot's translation units proposed fr
 alchemy camelotize REWRITE FILE...     # actors, events, registers, declarations, barriers
 alchemy camelotize numbers|casts|idioms FILE...  # decimal quantities, needless casts, C idioms
 alchemy camelotize constants --header H [--aliases TSV] FILE...   # ids at their known positions as H's names; prints what needs a hand
+alchemy rename OLD NEW [--file FILE.c] # one name anew wherever the tree spells it, far-call twin too; refuses a NEW games/ or recon/ spell, or any branch gave there (W7; with --file, in FILE or a file units share)
 alchemy keep [PATH...]                 # keep only edits that leave all twelve identical
 alchemy sweep FILE.c...                # drop FAKEMATCH pins, barriers and volatiles the bytes no longer need
 # Work in parallel

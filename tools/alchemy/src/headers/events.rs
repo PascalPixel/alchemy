@@ -468,10 +468,19 @@ fn kind(why: &str) -> &str {
     why.split(": ").next().unwrap_or(why)
 }
 
-pub(crate) fn run(root: &Path, dry: bool, report: Option<&str>) -> Result<(), String> {
+/// The overlay units the pass reads: those `only` names, or all of them.
+fn chosen<'a>(units: Vec<&'a String>, only: &[String]) -> Result<Vec<&'a String>, String> {
+    if let Some(unknown) = only.iter().find(|file| !units.contains(file)) {
+        return Err(format!("{unknown} is not the C file of an overlay"));
+    }
+    Ok(units.into_iter().filter(|unit| only.is_empty() || only.contains(*unit)).collect())
+}
+
+pub(crate) fn run(root: &Path, dry: bool, only: &[String], report: Option<&str>) -> Result<(), String> {
     let model = Model::read(root)?;
     let overlays = Overlays::read(root, &model)?;
-    let mut units: Vec<&String> = overlays.image.keys().filter(|unit| !model.arm.contains(*unit)).collect();
+    let units: Vec<&String> = overlays.image.keys().filter(|unit| !model.arm.contains(*unit)).collect();
+    let mut units = chosen(units, only)?;
     units.sort_by_key(|unit| std::cmp::Reverse(model.text[*unit].len()));
     // Each unit's rows, of all six editions.
     let state = || objects::editions().iter().map(|target| Expansion::new(root, *target)).collect::<Result<Vec<_>, _>>();
@@ -742,6 +751,17 @@ mod tests {
         // The symbols' rows are in the order of their new names.
         assert!(objects::differing(&old, &built("EV08_TALK", "EV09_TALK")).is_empty());
         assert_eq!(objects::differing(&old, &built("EV08_TALK", "EV10_TALK")).into_iter().collect::<Vec<_>>(), ["EV09_TALK", "EV10_TALK", "Table", "symbols"]);
+    }
+
+    #[test]
+    fn named_files_limit_the_pass_to_their_overlays() {
+        let all: Vec<String> = ["games/tbs/src/scene/a.c", "games/tbs/src/scene/b.c", "games/tbs/src/menu/c.c"].iter().map(|unit| unit.to_string()).collect();
+        let units = || all.iter().collect::<Vec<_>>();
+        assert_eq!(chosen(units(), &[]).unwrap().len(), 3);
+        let only = ["games/tbs/src/menu/c.c".to_string(), "games/tbs/src/scene/a.c".to_string()];
+        assert_eq!(chosen(units(), &only).unwrap(), [&all[0], &all[2]]);
+        let header = ["games/tbs/src/scene/a.h".to_string()];
+        assert_eq!(chosen(units(), &header).unwrap_err(), "games/tbs/src/scene/a.h is not the C file of an overlay");
     }
 
     #[test]

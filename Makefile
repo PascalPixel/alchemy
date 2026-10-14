@@ -26,8 +26,9 @@ help:
 	  'make compare-editions   all twelve editions; ⚓️ needs your own ROMs in roms/' \
 	  'make test               the tools'\'' tests'
 
-# Each edition builds in its own make, so its variables below are set once.
-$(EDITIONS):
+# Each edition builds in its own make, so its variables below are set once;
+# the tools are built first, once.
+$(EDITIONS): tools
 	@$(MAKE) -f Makefile EDITION=$@ rom
 
 $(addprefix compare-,$(EDITIONS)): compare-%: %
@@ -46,13 +47,13 @@ clean:
 
 TOOLS    := tools/out/cargo-target/release
 COMPILER := tools/out/compilers
-export PATH := $(CURDIR)/tools/out/binutils/bin:$(PATH)
 
 XGCC   := $(COMPILER)/xgcc -B$(COMPILER)/
 CPP    := $(COMPILER)/cpp0
 AGBCC  := $(COMPILER)/agbcc/old_agbcc
 ARMCC  := $(COMPILER)/gcc2952_arm
 CCAS   := $(COMPILER)/as
+CCASFLAGS := -marm7tdmi
 PREFIX := arm-none-eabi-
 AS      := $(PREFIX)as
 LD      := $(PREFIX)ld
@@ -135,7 +136,7 @@ FLASH_C := $(addprefix games/common/src/system/save/,flash.c sst.c atmel.c progr
 ARM_C   := games/tbs/src/window/moji.c games/tbs/src/field/update.c games/tbs/src/field/vertices.c \
            games/tla/src/graphics/tile/metatile.c
 
-ASFLAGS := -mcpu=arm7tdmi -mthumb-interwork -meabi=gnu -mfpu=fpa -mfloat-abi=soft
+ASFLAGS := -mcpu=arm7tdmi -mthumb-interwork
 EDITION_ASFLAGS := --defsym $(DEFINE)=1 -I$(BUILD) $(ASFLAGS)
 
 # The object list: ☀️'s objects.tsv gives each edition its linker fragments
@@ -225,19 +226,19 @@ $(BUILD)/baserom.gba: roms/$(EDITION).gba
 $(BUILD)/obj/%.o: %.c
 	@mkdir -p $(@D)
 	$(XGCC) $(CFLAGS) -S -o $(@:.o=.s) $<
-	$(CCAS) -marm7tdmi -mthumb -mthumb-interwork -o $@ $(@:.o=.s)
+	$(CCAS) $(CCASFLAGS) -mthumb -mthumb-interwork -o $@ $(@:.o=.s)
 
 $(addprefix $(BUILD)/obj/,$(SOUND_C:.c=.o) $(FLASH_C:.c=.o)): $(BUILD)/obj/%.o: %.c
 	@mkdir -p $(@D)
 	$(CPP) $(CPPFLAGS_AGBCC) $< $(@:.o=.i)
 	$(AGBCC) $(@:.o=.i) -dumpbase $(<F) -mthumb-interwork $(if $(filter $(FLASH_C),$<),-O,-O2) -o $(@:.o=.s)
-	$(CCAS) -marm7tdmi -mthumb -mthumb-interwork -o $@ $(@:.o=.s)
+	$(CCAS) $(CCASFLAGS) -mthumb -mthumb-interwork -o $@ $(@:.o=.s)
 
 $(addprefix $(BUILD)/obj/,$(ARM_C:.c=.o)): $(BUILD)/obj/%.o: %.c
 	@mkdir -p $(@D)
 	$(CPP) $(CPPFLAGS_ARMCC) $< $(@:.o=.i)
 	$(ARMCC) $(@:.o=.i) -dumpbase $(<F) -O2 -mthumb-interwork -fomit-frame-pointer -fcall-used-r4 -o $(@:.o=.s)
-	$(CCAS) -marm7tdmi -mthumb-interwork -o $@ $(@:.o=.s)
+	$(CCAS) $(CCASFLAGS) -mthumb-interwork -o $@ $(@:.o=.s)
 
 $(BUILD)/obj/%.o: %.s
 	@mkdir -p $(@D)
@@ -254,23 +255,91 @@ $(BUILD)/obj/%.o: %.mid $(MID2AGS)
 	$(AS) $(ASFLAGS) -o $@ $(@:.o=.s)
 endif
 
-# --- Toolchain and tests ---------------------------------------------------
+ifndef EDITION
+# --- Toolchain (K1) --------------------------------------------------------
+# `make bootstrap` builds the pinned compilers from source into
+# tools/out/compilers, as pret installs agbcc: agscc's three C generators,
+# GAS 2.10 from GNU's archive (it assembles their output), and the eight
+# libgcc members the games link, from agscc's own sources.
+
+TOOLCHAIN := tools/out/toolchain
+include agscc/config/host.mk
+SHA256 := $(shell command -v sha256sum >/dev/null 2>&1 && echo sha256sum || echo shasum -a 256)
+GAS_SHA256 := fd7d227c0dd15cf5448385e56b8ad8313cd491839834b57c0c086ac7b7819a15
+GAS_CFLAGS := -O2 -std=gnu89 -D_POSIX_C_SOURCE=200809L -DNSIG=32 -Wno-implicit-int \
+              -Wno-implicit-function-declaration -Wno-int-conversion -Wno-incompatible-pointer-types -fcommon
+
+.PHONY: bootstrap compilers tools test
+bootstrap: tools compilers $(CCAS) $(LIBGCC)
+
+compilers:
+	$(MAKE) -C agscc
+	$(MAKE) -C agscc generated-check
+	$(MAKE) -C agscc/arm probe
+	@mkdir -p $(COMPILER)/agbcc
+	cp agscc/build/gcc/xgcc agscc/build/gcc/cpp0 agscc/build/gcc/tradcpp0 agscc/build/gcc/cc1 $(COMPILER)/
+	cp agscc/arm/build/gcc/cc1 $(COMPILER)/gcc2952_arm
+	cp agscc/agbcc/gcc/old_agbcc $(COMPILER)/agbcc/old_agbcc
+
+$(TOOLCHAIN)/binutils-2.10.tar.gz:
+	@mkdir -p $(@D)
+	curl --fail --location --silent --show-error -o $@.download https://ftp.gnu.org/gnu/binutils/binutils-2.10.tar.gz
+	echo '$(GAS_SHA256)  $@.download' | $(SHA256) -c -
+	mv $@.download $@
+
+# The arm-elf assembler builds no lexer, but its configure stops unless
+# running lex leaves a lex.yy.c: `touch` is the stand-in its own Makefile uses.
+$(CCAS): $(TOOLCHAIN)/binutils-2.10.tar.gz
+	rm -rf $(TOOLCHAIN)/binutils-2.10 $(TOOLCHAIN)/gas
+	tar -xzf $< -C $(TOOLCHAIN)
+	mkdir -p $(TOOLCHAIN)/gas
+	cd $(TOOLCHAIN)/gas && LEX='touch lex.yy.c' CC='$(CC) $(HOST_MODEL)' CFLAGS='$(GAS_CFLAGS)' \
+	    ../binutils-2.10/configure --target=arm-elf --build=i686-unknown-linux-gnu \
+	    --host=i686-unknown-linux-gnu --disable-nls --disable-shared
+	env -u MAKEFLAGS -u MFLAGS make -C $(TOOLCHAIN)/gas MAKEINFO=true all-gas
+	@mkdir -p $(@D)
+	cp $(TOOLCHAIN)/gas/gas/as-new $@
+
+# libgcc: Thumb, no interworking (K1), each member from the source and the
+# -DL<member> switch GCC's own library rules (gcc/config/arm/t-arm-elf) give it.
+LIBGCC_WORK := $(TOOLCHAIN)/libgcc
+LIBGCC_MEMBERS := _call_via_rX _addsub_df _si_to_df _df_to_si _pack_df _unpack_df _thenan_df _lshrdi3
+LIBGCC_CFLAGS := -O2 -mthumb -mcpu=arm7tdmi -nostdinc -DCROSS_COMPILE -DIN_GCC -DIN_LIBGCC2 \
+                 -D__GCC_FLOAT_NOT_NEEDED -Dinhibit_libc -fno-inline -isystem $(CURDIR)/agscc/gcc/ginclude
+LIBGCC_INCLUDES := -I$(CURDIR)/agscc/gcc -I$(CURDIR)/agscc/gcc/config -I$(CURDIR)/agscc/include
+LIBGCC_CC := $(CURDIR)/$(COMPILER)/xgcc -B$(CURDIR)/$(COMPILER)/ $(LIBGCC_CFLAGS)
+
+$(LIBGCC): $(addprefix $(LIBGCC_WORK)/,$(addsuffix .o,$(LIBGCC_MEMBERS)))
+	@mkdir -p $(@D)
+	rm -f $@
+	cd $(LIBGCC_WORK) && $(PREFIX)ar crsD $(CURDIR)/$@ $(notdir $^)
+
+$(LIBGCC_WORK)/_call_via_rX.o: agscc/gcc/config/arm/lib1funcs.asm
+	@mkdir -p $(@D)
+	cp $< $(@D)/lib1funcs.asm
+	cd $(@D) && $(LIBGCC_CC) $(LIBGCC_INCLUDES) -DL_call_via_rX -xassembler-with-cpp lib1funcs.asm -c -o $(@F)
+
+$(LIBGCC_WORK)/dp-bit.c: agscc/gcc/config/fp-bit.c
+	@mkdir -p $(@D)
+	printf '#ifndef __ARMEB__\n#define FLOAT_BIT_ORDER_MISMATCH\n#define FLOAT_WORD_ORDER_MISMATCH\n#endif\n' > $@
+	cat $< >> $@
+
+$(LIBGCC_WORK)/_%_df.o $(LIBGCC_WORK)/_%_to_df.o $(LIBGCC_WORK)/_df_to_%.o: $(LIBGCC_WORK)/dp-bit.c
+	cd $(@D) && $(LIBGCC_CC) $(LIBGCC_INCLUDES) -DFINE_GRAINED_LIBRARIES -DL$(basename $(@F)) $(CURDIR)/$< -c -o $(@F)
+
+$(LIBGCC_WORK)/_lshrdi3.o: agscc/gcc/libgcc2.c
+	@mkdir -p $(@D)
+	cp agscc/config/arm/tconfig.h agscc/config/arm/tm.h $(@D)/
+	cd $(@D) && $(LIBGCC_CC) -I. $(LIBGCC_INCLUDES) -DL_lshrdi3 $(CURDIR)/$< -c -o $(@F)
+
+# --- Tools and tests -------------------------------------------------------
 
 CARGO ?= cargo
 export CARGO_TARGET_DIR := $(CURDIR)/tools/out/cargo-target
-.PHONY: bootstrap tools test
-
-bootstrap: tools
-	$(TOOLS)/alchemy bootstrap $(if $(BUNDLE),--from "$(BUNDLE)")
-	$(TOOLS)/alchemy build runtime --output $(LIBGCC) \
-	    _call_via_rX=gcc/config/arm/lib1funcs.asm _addsub_df=dp-bit.c _si_to_df=dp-bit.c \
-	    _df_to_si=dp-bit.c _pack_df=dp-bit.c _unpack_df=dp-bit.c _thenan_df=dp-bit.c _lshrdi3=gcc/libgcc2.c
 
 tools:
 	$(CARGO) build --release --workspace --manifest-path tools/Cargo.toml
 
-$(AGSGFX) $(WAV2AGS) $(MID2AGS) $(PO2AGS) $(OBJLIST) $(SCANINC) $(OVLPACK) $(GBAFIX):
-	$(CARGO) build --release -p ags --manifest-path tools/Cargo.toml
-
 test:
 	$(CARGO) test --offline --quiet --release --workspace --manifest-path tools/Cargo.toml
+endif

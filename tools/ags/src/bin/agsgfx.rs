@@ -140,7 +140,7 @@ fn run(args: &[String]) -> Result<(), String> {
         },
         _ => return Err(format!("no conversion from .{from} to .{to}\n{USAGE}")),
     };
-    fs::write(output, bytes).map_err(|error| format!("{output}: {error}"))
+    ags::write_whole(output, &bytes)
 }
 
 fn main() -> ExitCode {

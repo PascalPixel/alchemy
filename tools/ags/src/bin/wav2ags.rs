@@ -11,7 +11,7 @@ fn main() -> ExitCode {
         .map_err(|error| format!("{}: {error}", args[0]))
         .and_then(|input| ags::sound::build_sound_file(&args[0], &input))
         .and_then(|bytes| {
-            fs::write(&args[1], bytes).map_err(|error| format!("{}: {error}", args[1]))
+            ags::write_whole(&args[1], &bytes)
         });
     match result {
         Ok(()) => ExitCode::SUCCESS,

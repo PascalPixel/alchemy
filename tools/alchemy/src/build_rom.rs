@@ -1565,6 +1565,22 @@ fn asset_input(root: &Path, asset: &Asset) -> Result<PathBuf, String> {
     }
 }
 
+/// Where the build looks for the post-pack patch (W3) of each picture or
+/// table a source names, with the sources it includes: beside the asset's
+/// input, in the game's folder or games/common's as the build resolves it.
+/// A patch is optional, so a path need not exist.
+pub(crate) fn patch_paths(root: &Path, target: DecompTarget, source: &Path) -> Result<Vec<PathBuf>, String> {
+    let mut paths = Vec::new();
+    for asset in source_assets(root, target, source)? {
+        if asset.sound {
+            continue;
+        }
+        let input = asset_input(root, &asset)?;
+        paths.push(input.with_file_name(ags::patch::patch_name(&input.to_string_lossy())));
+    }
+    Ok(paths)
+}
+
 fn encode(root: &Path, asset: &Asset) -> Result<(Vec<u8>, Vec<String>), String> {
     let input = asset_input(root, asset)?;
     let bytes = fs::read(root.join(&input))

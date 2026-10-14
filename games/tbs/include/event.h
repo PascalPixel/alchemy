@@ -1,6 +1,7 @@
 /*----------------------------------------------------------
     イベント コマンド
 ----------------------------------------------------------*/
+// Scene commands: the all-caps macros the scene scripts are written in.
 #ifndef EVENT_H
 #define EVENT_H
 
@@ -17,6 +18,9 @@
 #define OBJ_FACE(no, to, t) Engine_ActorFaceActor((no), (to), (t))
 #define OBJ_MODE(no, m) Engine_ActorSetAnimation((no), (m))
 #define OBJ_EMO(no, e, t) Actor_ShowEmote((no), (e), (t))
+
+// 物体を番号で得る。型の update が受け取るのと同じ union FieldObject として
+#define OBJ_GET(no) ((union FieldObject *)Object_GetById(no))
 
 #define FLAG_CHK(f) GameFlag_IsSet(f)
 #define FLAG_SET(f) GameFlag_Set(f)

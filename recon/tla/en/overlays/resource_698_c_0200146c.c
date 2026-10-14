@@ -1,22 +1,28 @@
+/* Draft, differ 2 of 49 (one reordered pair): in 14 overlays of the 698 family. The listing loads the leader's x (ldr r6, [r0, #8]) between building the 64 mask and copying it; this draft copies the mask first. Tried: operands of | either way, compound |=, the mask as a variable (6), 0x40 with u16 fields (12), x as a local, an asm barrier between the two values (4), a minute of alchemy permute (45,329 candidates, none better). */
 #include "types.h"
-#define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
+#include "object_runtime.h"
+#include "party_state.h"
 
-#include "call.h"
-s32 Object_GetById();
-s32 Func_020013e4();
-s32 Func_02001b44();
-s32 Func_02001a44();
-s32 Battle_WaitMode0();
-extern u8 gPartyState[];
+struct Tile {
+    u8 unknown_00[6];
+    s16 x;
+    s16 z;
+};
 
-void Func_0200146c(s32 a0)
+struct ObjectRuntime *Object_GetById(s32 id);
+void Battle_WaitMode0(s32 frames);
+void Func_020013e4(void);
+void Func_02001b44(s32 sound);
+void Func_02001a44(s32 x, s32 z, s32 width, s32 height, s32 from_x, s32 from_z);
+
+void Func_0200146c(struct Tile *tile)
 {
-    s32 t0;
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.current_owner);
+    s32 from_x = (leader->x >> 20) | (s16)(tile->x & 64);
+    s32 from_z = (leader->z >> 20) | (s16)(tile->z & 64);
 
-    t0 = Value1(Object_GetById, FIELD_AT(gPartyState, s32, 532));
     Func_020013e4();
-    Call1(Func_02001b44, 0xa1);
-    Call6(Func_02001a44, FIELD_AT(a0, s16, 6), (FIELD_AT(a0, s16, 8) + 1), 1, 1, ((FIELD_AT(t0, s32, 8) >> 20) | (((0x40 & FIELD_AT(a0, u16, 6)) << 16) >> 16)), ((FIELD_AT(t0, s32, 16) >> 20) | (((0x40 & FIELD_AT(a0, u16, 8)) << 16) >> 16)));
-    Call1(Battle_WaitMode0, 0xc);
+    Func_02001b44(161);
+    Func_02001a44(tile->x, tile->z + 1, 1, 1, from_x, from_z);
+    Battle_WaitMode0(12);
 }
-

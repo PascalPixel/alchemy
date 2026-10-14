@@ -15,7 +15,6 @@
 Render_DecodeFrame:
 	cmp	r2, #0
 	bne	.Lmode
-.Lcopy:
 	mov	r4, #255
 	ands	r2, r0, #3
 	ldm	r0!, {r3}
@@ -72,17 +71,13 @@ AlchemyUncreditedEnd_render_decode_1:
 	bne	.Lcopy_unchecked
 	b	.Lcopy_checked
 	.4byte gDecodeFillByte
-.Lfill_byte:
 	ldr	r2, [pc, #-12]
 	ldrb	r2, [r2]
 	b	.Lfill_next
-.Lfill_0:
 	mov	r2, #0
 	b	.Lfill_next
-.Lfill_1:
 	mov	r2, #1
 	b	.Lfill_next
-.Lfill_15:
 	mov	r2, #15
 	b	.Lfill_next
 .Lfill_put:
@@ -98,27 +93,11 @@ AlchemyUncreditedEnd_render_decode_1:
 	add	r4, r2, r2
 	ldrsh	r4, [pc, r4]
 	add	pc, pc, r4
-@ 方式ごとの飛び先: add pc の pc (表 + 4) からの差
-.Lmode_table:
-	.2byte .Lcopy - .Lmode_table - 4		@ 0
-	.2byte .Lmap - .Lmode_table - 4		@ 1
-	.2byte .Lmap - .Lmode_table - 4		@ 2
-	.2byte .Lmap - .Lmode_table - 4		@ 3
-	.2byte .Lmap - .Lmode_table - 4		@ 4
-	.2byte .Lmap - .Lmode_table - 4		@ 5
-	.2byte .Lmap - .Lmode_table - 4		@ 6
-	.2byte .Lfill_15 - .Lmode_table - 4	@ 7
-	.2byte .Lfill_15 - .Lmode_table - 4	@ 8
-	.2byte .Lmap_shifted - .Lmode_table - 4	@ 9
-	.2byte .Lmap_shifted - .Lmode_table - 4	@ 10
-	.2byte .Lmap_shifted - .Lmode_table - 4	@ 11
-	.2byte .Lmap_shifted - .Lmode_table - 4	@ 12
-	.2byte .Lfill_byte - .Lmode_table - 4	@ 13
-	.2byte .Lfill_1 - .Lmode_table - 4	@ 14
-	.2byte .Lfill_0 - .Lmode_table - 4	@ 15
-.Lmap_shifted:
+	.2byte 0xfee0, 0x0020, 0x0020, 0x0020
+	.2byte 0x0020, 0x0020, 0x0020, 0xffcc
+	.2byte 0xffcc, 0x001c, 0x001c, 0x001c
+	.2byte 0x001c, 0xffb0, 0xffc4, 0xffbc
 	sub	r2, r2, #2
-.Lmap:
 	ldr	r4, [pc, #136]
 	cmp	r4, r2
 	beq	.Lmap_ready

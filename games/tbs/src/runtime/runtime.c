@@ -977,25 +977,24 @@ s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
 		{
 			return ret;
 		}
-		if (ResourceBlockOwners[pos] != VRAM_BLOCK_OWNER_FREE)
+		if (ResourceBlockOwners[pos] == VRAM_BLOCK_OWNER_FREE)
 		{
-			goto occupied;
-		}
-		ret = pos;
-		end = blocks + ret;
-		while (pos < end)
-		{
-			if (ResourceBlockOwners[pos] != VRAM_BLOCK_OWNER_FREE)
+			ret = pos;
+			end = blocks + ret;
+			while (pos < end)
 			{
-				goto occupied;
+				if (ResourceBlockOwners[pos] != VRAM_BLOCK_OWNER_FREE)
+				{
+					goto occupied;
+				}
+				pos++;
 			}
-			pos++;
+			for (i = 0; i < blocks; i++)
+			{
+				ResourceBlockOwners[ret + i] = id;
+			}
+			break;
 		}
-		for (i = 0; i < blocks; i++)
-		{
-			ResourceBlockOwners[ret + i] = id;
-		}
-		break;
 	occupied:
 		// 使っているブロックは、持ち主の大きさの分だけとばす
 		pos += gVramBlockCache[ResourceBlockOwners[pos]].size / VRAM_BLOCK_BYTES;

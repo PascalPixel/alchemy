@@ -7264,18 +7264,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 		}
 		efx.angle = 0;
 #if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_IT)
-		/* FAKEMATCH: register choice (spill slots) only: seventeen dead
-           stores, two insns each until flow deletes them. GCSE sizes its
-           expression table from the insn count (n / 2 | 1 buckets) and
-           PRE numbers its reaching registers in bucket order, which is the
-           order their spill slots are assigned; with these the count is
-           1451 and the table 725 buckets, so tbl, entries, ids and
-           cursor * 2 take sp+36, 32, 28 and 24 before &efx (20) and
-           selSlot (16) as in the native frame (1417 and 709 buckets
-           without them: every remaining row is a spill slot's offset).
-           2026-10-11: ES and IT match without any of these stores (and
-           without the two more they had), so only the other four editions
-           compile them. */
+		/* FAKEMATCH: seventeen dead stores restore the native frame's spill slots (tbl, entries, ids and cursor * 2 at sp+36 to sp+24, above &efx and selSlot); without them differ 102 in tbs-en, every row a spill offset. ES and IT match without them. */
 		efx.angle = 0;
 		efx.angle = 0;
 		efx.angle = 0;
@@ -8238,20 +8227,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 			UiWindow_MarkVisibleTileAttributes();
 			COUNTDOWN->entryActive[0] = 0;
 			COUNTDOWN->selected[i] = 0x80000000;
-			/* FAKEMATCH: register choice (spill slots) only: twelve dead
-               stores, one insn each until flow deletes them. GCSE sizes its
-               expression table from the insn count (n / 2 | 1 buckets) and
-               PRE numbers its reaching registers in bucket order, which is
-               the order their spill slots are assigned. &hdr (sfp - 4)
-               hashes to 13922 and i << 1, i << 2, i << 4 to 13966, 13967,
-               13969: with these stores the table has 775 buckets (747
-               against 16, 17, 19), so the givs take sp+32, 28 and 24
-               before &hdr (sp+20) as in the native frame; without them 769
-               (80 against 124, 125, 127) puts &hdr above the givs. 775
-               needs 11 or 12 stores in every edition (Japanese is two
-               insns longer). Without them differ 50 in every edition (en
-               96 with the nested helpers' 46); every row they remove is a
-               spill slot's offset. */
+			/* FAKEMATCH: twelve dead stores restore the native frame's spill slots (i << 1, i << 2 and i << 4 at sp+32 to sp+24, above &hdr at sp+20); without them differ 50 in every edition, every row a spill offset. */
 			hdr[0] = 0;
 			hdr[0] = 0;
 			hdr[0] = 0;

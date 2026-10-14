@@ -170,17 +170,63 @@ fn named_elsewhere(model: &Model, home: &str, name: &str) -> Option<String> {
     unit.cloned().or_else(|| model.far.values().find(|far| far.target == name && model.in_main(home)).map(|far| far.file.clone()))
 }
 
+/// Whether ☀️'s build compiles the text at `at`: no conditional arm
+/// around it is `#if 0` or ⚓️'s alone (`#if GAME_TLA`, `#ifdef GAME_TLA`,
+/// or what follows `#if !GAME_TLA` or `#if 1`).
+fn compiled_at(text: &str, at: usize) -> bool {
+    let theirs = |test: &str| matches!(test, "0" | "GAME_TLA" | "defined(GAME_TLA)");
+    let mine = |test: &str| matches!(test, "1" | "!GAME_TLA" | "!defined(GAME_TLA)");
+    // Each open conditional: whether its first arm is ☀️'s whole build, and
+    // whether the arm being read is left out.
+    let mut open: Vec<(bool, bool)> = Vec::new();
+    let mut offset = 0;
+    for line in text.split_inclusive('\n') {
+        if offset > at {
+            break;
+        }
+        offset += line.len();
+        let Some(rest) = line.trim_start().strip_prefix('#').map(str::trim_start) else {
+            continue;
+        };
+        let word = &rest[..rest.find(|c: char| !c.is_ascii_alphabetic()).unwrap_or(rest.len())];
+        let test = rest[word.len()..].split("//").next().and_then(|t| t.split("/*").next()).unwrap_or("").trim();
+        match word {
+            "if" => open.push((mine(test), theirs(test))),
+            "ifdef" => open.push((false, test == "GAME_TLA")),
+            "ifndef" => open.push((test == "GAME_TLA", false)),
+            "elif" => {
+                if let Some(arm) = open.last_mut() {
+                    arm.1 = arm.0 || theirs(test);
+                }
+            }
+            "else" => {
+                if let Some(arm) = open.last_mut() {
+                    arm.1 = arm.0;
+                }
+            }
+            "endif" => {
+                open.pop();
+            }
+            _ => {}
+        }
+    }
+    !open.iter().any(|arm| arm.1)
+}
+
 /// Whether the unit `file` (a path or its last parts), from outside the
 /// units that compile `home`, calls a function of `home` with no prototype
 /// in scope: no header it reaches declares it for ☀️'s build (⚓️'s arm of
-/// a shared header is not ☀️'s declaration), and some call comes before
-/// every prototype its own text gives.
+/// a shared header is not ☀️'s declaration), and some call ☀️ compiles
+/// comes before every prototype its own text gives and outside the block
+/// of any prototype inside a body.
 fn called_from(model: &Model, home: &str, name: &str, file: &str) -> bool {
     let definitions = model.definitions();
     let users = model.users(home);
     let suffix = format!("/{file}");
+    // Only a line under `#if GAME_TLA` itself is ⚓️'s alone; a wider test
+    // (`EDITION_INTERNATIONAL || GAME_TLA`) holds in ☀️ editions too.
     let prototype = |entry: &&super::scan::Entry| {
-        entry.name == name && entry.what == What::Prototype && !entry.conditions.iter().any(|c| c.contains("GAME_TLA") && !c.replace(' ', "").starts_with('!'))
+        entry.name == name && entry.what == What::Prototype && !entry.conditions.iter().any(|c| matches!(c.trim(), "GAME_TLA" | "defined(GAME_TLA)"))
     };
     model.units.iter().any(|unit| {
         if !(unit == file || unit.ends_with(&suffix)) || users.contains(&unit.as_str()) || !model.home(&definitions, unit, name).is_some_and(|(file, _)| file == home) {
@@ -190,10 +236,25 @@ fn called_from(model: &Model, home: &str, name: &str, file: &str) -> bool {
         if headers.any(|header| model.entries.get(header).is_some_and(|entries| entries.iter().any(|entry| prototype(&entry)))) {
             return false;
         }
-        let declared: Vec<(usize, usize)> = model.parts(unit).flat_map(|part| model.entries[part].iter().filter(prototype).filter_map(move |entry| place(model, unit, part, entry.start))).collect();
+        // A prototype whose place in the unit is unknown (C text another
+        // included file includes) is taken to stand before every call.
+        let declared: Vec<(usize, usize)> =
+            model.parts(unit).flat_map(|part| model.entries[part].iter().filter(prototype).map(move |entry| place(model, unit, part, entry.start).unwrap_or((0, 0)))).collect();
         model.parts(unit).any(|part| {
-            let calls = super::undeclared::sites(&model.text[part], &|word| word == name);
-            calls.iter().any(|call| place(model, unit, part, call.at).is_some_and(|call| declared.iter().all(|prototype| *prototype > call)))
+            let text = &model.text[part];
+            // A prototype inside a body holds from its statement to its block's end.
+            let inner: Vec<(usize, usize)> = bodies(text, &|word| word == name)
+                .into_iter()
+                .flat_map(|body| body.locals)
+                .filter(|local| local.kind == super::scan::Scope::Prototype && local.name == name)
+                .map(|local| (local.end, local.scope))
+                .collect();
+            let calls = super::undeclared::sites(text, &|word| word == name);
+            calls.iter().any(|call| {
+                compiled_at(text, call.at)
+                    && !inner.iter().any(|&(from, to)| from <= call.at && call.at < to)
+                    && place(model, unit, part, call.at).is_some_and(|call| declared.iter().all(|prototype| *prototype > call))
+            })
         })
     })
 }
@@ -462,17 +523,21 @@ mod tests {
         let header = "games/tbs/include/unit/main/a.h";
         let from = |name: &str, file: &str| format!("/* {name} is called from {file} with no prototype in scope: in one file the definition would come first. */\n");
         let shared = "games/tbs/include/main.h";
-        let source = "void Shared(s32 a)\n{\n}\nvoid Lone(void)\n{\n}\nvoid Wrong(void)\n{\n}\nvoid Own(void)\n{\n}\nvoid Kept(void)\n{\n}\nvoid Theirs(void)\n{\n}\n";
+        let source = "void Shared(s32 a)\n{\n}\nvoid Lone(void)\n{\n}\nvoid Wrong(void)\n{\n}\nvoid Own(void)\n{\n}\nvoid Kept(void)\n{\n}\nvoid Theirs(void)\n{\n}\nvoid Inner(void)\n{\n}\nvoid Wide(void)\n{\n}\nvoid Earlier(void)\n{\n}\nvoid Dead(void)\n{\n}\n";
         let own = format!(
-            "{}{}{}{}{}{}",
+            "{}{}{}{}{}{}{}{}{}{}",
             from("Shared", "b.c"),
             from("Lone", "b.c"),
             from("Wrong", "c.c"),
             from("Own", "b.c"),
             from("Kept", "b.c"),
-            from("Theirs", "b.c")
+            from("Theirs", "b.c"),
+            from("Inner", "b.c"),
+            from("Wide", "b.c"),
+            from("Earlier", "b.c"),
+            from("Dead", "b.c")
         );
-        let calls = "void Own(void);\nvoid Scene(void)\n{\n\tShared(1);\n\tWrong();\n\tLone;\n\tOwn();\n\tKept();\n\tTheirs();\n}\n";
+        let calls = "static void Before(void)\n{\n#if 0\n\tDead();\n#endif\n}\nvoid Dead(void);\nvoid Own(void);\n#if EDITION_INTERNATIONAL || GAME_TLA\nvoid Wide(void);\n#endif\nstatic void First(void)\n{\n\tvoid Earlier(void);\n}\nvoid Scene(void)\n{\n\tvoid Inner(void);\n\n\tShared(1);\n\tWrong();\n\tLone;\n\tOwn();\n\tKept();\n\tTheirs();\n\tInner();\n\tWide();\n\tEarlier();\n\tDead();\n}\n";
         let files = [(unit, source), (other, calls), (shared, "void Kept(void);\n#if GAME_TLA\nvoid Theirs(void);\n#endif\n")];
         let none: &[&str] = &[];
         let model = Model::of(&files, &[(unit, none), (other, &[shared])]);
@@ -483,9 +548,19 @@ mod tests {
         // first form's would count b.c naming it. b.c only names Lone; it
         // declares Own itself above the call, and a header it reads
         // declares Kept for ☀️ (Theirs only under ⚓️'s arm, so that call
-        // is undeclared).
+        // is undeclared). Scene declares Inner in its own body, Wide is
+        // declared in five ☀️ editions, and Dead's only call above its
+        // prototype is under #if 0; Earlier's prototype ends with First's
+        // body, so Scene's call of it is undeclared.
         let not = |name: &str, file: &str| format!("{name}: {file} does not call it with no prototype in scope");
-        assert_eq!(found, [(2, not("Lone", "b.c")), (3, not("Wrong", "c.c")), (4, not("Own", "b.c")), (5, not("Kept", "b.c"))]);
+        assert_eq!(found, [(2, not("Lone", "b.c")), (3, not("Wrong", "c.c")), (4, not("Own", "b.c")), (5, not("Kept", "b.c")), (7, not("Inner", "b.c")), (8, not("Wide", "b.c")), (10, not("Dead", "b.c"))]);
+    }
+
+    #[test]
+    fn only_what_the_tbs_build_compiles_is_a_call() {
+        let text = "#if 0\na\n#endif\n#if GAME_TLA\nb\n#else\nc\n#endif\n#ifndef GAME_TLA\nd\n#else\ne\n#endif\n#if !EDITION_INTERNATIONAL\nf\n#elif GAME_TLA\ng\n#endif\n";
+        let at = |word: &str| text.find(&format!("\n{word}\n")).unwrap() + 1;
+        assert_eq!(["a", "b", "c", "d", "e", "f", "g"].map(|word| compiled_at(text, at(word))), [false, false, true, true, false, true, false]);
     }
 
     #[test]

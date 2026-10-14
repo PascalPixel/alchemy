@@ -1,6 +1,7 @@
 use std::process::ExitCode;
 
 mod aliases;
+mod constants;
 pub(crate) mod hygiene;
 mod layout;
 mod no_asm;
@@ -8,7 +9,7 @@ mod packed;
 mod publication;
 
 const USAGE: &str =
-    "usage: alchemy check <publication|coverage|layout|no-asm|dead|aliases|devices|headers|hygiene|object-list|packer|progress> [args]";
+    "usage: alchemy check <publication|coverage|layout|no-asm|dead|aliases|constants|devices|headers|hygiene|object-list|packer|progress> [args]";
 
 pub fn entry(arguments: &[String]) -> ExitCode {
     let Some(command) = arguments.first().map(String::as_str) else {
@@ -26,6 +27,7 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         "no-asm" => no_asm::entry(rest),
         "dead" => crate::dead::check_entry(rest),
         "aliases" => aliases::entry(rest),
+        "constants" => constants::entry(rest),
         "devices" => crate::devices::entry(rest),
         "headers" => crate::headers::lint::entry(rest),
         "hygiene" => hygiene::entry(rest),

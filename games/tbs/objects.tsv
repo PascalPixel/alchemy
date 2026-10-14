@@ -31,7 +31,6 @@ main	rom_main_00	games/tbs/src/system/syspal	.rodata
 main	rom_main_00	games/tbs/src/runtime/numtext	.rodata
 main	rom_main_00	games/tbs/src/runtime/q16_dot_product
 main	rom_main_00	games/tbs/src/runtime/savedata	.rodata
-main	rom_main_00	games/tbs/src/runtime/testdata	.rodata
 main	rom_main_00	games/common/src/system/save/flashtab	.rodata
 main	rom_main_00	games/common/src/system/save/flash	.rodata
 main	rom_main_00	games/common/src/system/save/flashsst	.rodata

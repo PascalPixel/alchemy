@@ -762,6 +762,7 @@ make worst                             # maintained C ranked by how mechanical i
 alchemy units [--dry-run N]            # Camelot's translation units proposed from the linked images
 alchemy camelotize REWRITE FILE...     # actors, events, registers, declarations, barriers
 alchemy camelotize numbers|casts|idioms FILE...  # decimal quantities, needless casts, C idioms
+alchemy camelotize layer|commands FILE...        # ☀️ overlay calls through the layer's inlines; scene calls as event.h commands
 alchemy keep [PATH...]                 # keep only edits that leave all twelve identical
 alchemy sweep FILE.c...                # drop FAKEMATCH pins, barriers and volatiles the bytes no longer need
 # Work in parallel

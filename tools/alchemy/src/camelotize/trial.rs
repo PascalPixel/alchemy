@@ -4,11 +4,14 @@
 //! identical and the compiler says nothing new in every edition of the game
 //! that builds the file. Sets are tried together and bisected
 //! when one fails, so a file costs a handful of compiles, not one per edit.
+//! A file other files include (a scene/common header) is proved in every C
+//! file that includes it (`Judge`), and edits that match only beside each
+//! other are kept together (`proved_groups`).
 
 use crate::compiler::bundle::compiler_command;
 use crate::compiler::routing::{cflags_for_target_source, compiler_assembly_command, is_arm};
 use crate::targets::{target_for, DecompTarget, TARGET_IDS};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 /// Replace `start..end` with `text`.
@@ -116,10 +119,13 @@ pub(crate) fn object_contents(bytes: &[u8]) -> Result<String, String> {
 
 /// The compiler's messages without their line numbers, sorted, so an edit
 /// that moves lines (an else flattened) leaves them the same unless a
-/// message is new.
+/// message is new. The include chain GCC prints above a message from a
+/// header is left out: an include added above it (event.h) moves where the
+/// message comes from, it does not make it new.
 pub(crate) fn unnumbered(messages: &str) -> String {
     let number = regex::Regex::new(r":\d+:").expect("pattern");
-    let mut lines: Vec<String> = messages.lines().map(|line| number.replace(line, ":").into_owned()).collect();
+    let chain = |line: &&str| line.starts_with("In file included from ") || line.trim_start().starts_with("from ");
+    let mut lines: Vec<String> = messages.lines().filter(|line| !chain(line)).map(|line| number.replace(line, ":").into_owned()).collect();
     lines.sort();
     lines.join("\n")
 }
@@ -138,7 +144,7 @@ pub(crate) fn disjoint(mut edits: Vec<Edit>) -> Vec<Edit> {
 
 struct Build {
     target: DecompTarget,
-    imports: Option<tempfile::TempDir>,
+    imports: Option<std::sync::Arc<tempfile::TempDir>>,
     directory: tempfile::TempDir,
 }
 
@@ -251,7 +257,7 @@ pub(crate) fn proved(root: &Path, file: &Path, text: &str, games: &[DecompTarget
     for target in editions(games) {
         let imports = crate::build_text::fresh_c_imports(root, target)?;
         let directory = tempfile::Builder::new().prefix("alchemy-trial-").tempdir().map_err(|e| e.to_string())?;
-        let build = Build { target, imports, directory };
+        let build = Build { target, imports: imports.map(std::sync::Arc::new), directory };
         let baseline = build.compile(root, file, text)?;
         builds.push((build, baseline));
     }
@@ -268,6 +274,260 @@ pub(crate) fn proved(root: &Path, file: &Path, text: &str, games: &[DecompTarget
     Ok((apply(text, &kept), kept.len()))
 }
 
+/// The C files of these games, under `games/<game>/src` and
+/// `games/common/src`, that include `header`, directly or through other
+/// headers, as each edition's include path finds it.
+pub(crate) fn including(root: &Path, header: &Path, games: &[DecompTarget]) -> Vec<PathBuf> {
+    let Ok(header) = header.canonicalize() else {
+        return Vec::new();
+    };
+    let mut found = std::collections::BTreeSet::new();
+    for game in games {
+        let search: Vec<PathBuf> =
+            cflags_for_target_source(game.compiler, "unit.c").iter().filter_map(|flag| flag.strip_prefix("-I")).map(PathBuf::from).collect();
+        for folder in [root.join(game.source_dir), root.join("games/common/src")] {
+            for entry in walkdir::WalkDir::new(&folder).into_iter().filter_map(Result::ok) {
+                let path = entry.path();
+                if path.extension().is_some_and(|e| e == "c") && super::source::reachable(path, &search).contains(&header) {
+                    found.insert(path.to_path_buf());
+                }
+            }
+        }
+    }
+    found.into_iter().collect()
+}
+
+/// A compile's object contents and messages, or why it failed.
+type Outcome = Result<(String, String), String>;
+
+/// One compile a judge repeats: an edition, the C file it compiles (the
+/// file itself, or one that includes it), that file's text, and its object
+/// and messages with the file as the tree has it.
+struct Trial {
+    build: Build,
+    unit: PathBuf,
+    unit_text: String,
+    baseline: (String, String),
+}
+
+/// The compiles that judge a file's edits: the file itself in every edition
+/// of its games, or, for an included file, every C file that includes it in
+/// every edition, with the file read as the candidate text. A candidate
+/// passes when every object (each section's bytes, relocation and symbol)
+/// and the compiler's messages are unchanged in all of them.
+pub(crate) struct Judge {
+    /// The included file as a path under the root, when the compiled
+    /// units are the files that include it.
+    included: Option<String>,
+    file: PathBuf,
+    trials: Vec<Trial>,
+    threads: usize,
+    /// Headers, as paths under the root, whose own messages are not
+    /// compared: those an added include brings in for the first time.
+    quiet: Vec<String>,
+}
+
+impl Judge {
+    /// A judge of `file`, whose tree text is `text`: compiled itself when
+    /// `units` is empty, else each of `units` with the file in it. A unit
+    /// one edition cannot compile is an error.
+    pub(crate) fn new(root: &Path, file: &Path, text: &str, games: &[DecompTarget], units: &[PathBuf], threads: usize) -> Result<Judge, String> {
+        let included = if units.is_empty() {
+            None
+        } else {
+            let relative = file.strip_prefix(root).map_err(|_| format!("{} is outside {}", file.display(), root.display()))?;
+            Some(relative.to_string_lossy().into_owned())
+        };
+        let compiled: Vec<PathBuf> = if units.is_empty() { vec![file.to_path_buf()] } else { units.to_vec() };
+        let mut judge = Judge { included, file: file.to_path_buf(), trials: Vec::new(), threads: threads.max(1), quiet: Vec::new() };
+        for target in editions(games) {
+            let imports = crate::build_text::fresh_c_imports(root, target)?;
+            let imports = imports.map(std::sync::Arc::new);
+            for unit in &compiled {
+                let unit_text = if units.is_empty() {
+                    text.to_string()
+                } else {
+                    std::fs::read_to_string(unit).map_err(|e| format!("{}: {e}", unit.display()))?
+                };
+                let directory = tempfile::Builder::new().prefix("alchemy-trial-").tempdir().map_err(|e| e.to_string())?;
+                let build = Build { target, imports: imports.clone(), directory };
+                judge.trials.push(Trial { build, unit: unit.clone(), unit_text, baseline: Default::default() });
+            }
+        }
+        // The baselines, compiled side by side.
+        let outcomes: Vec<Outcome> = {
+            use std::sync::atomic::{AtomicUsize, Ordering};
+            let next = AtomicUsize::new(0);
+            let slots: Vec<std::sync::Mutex<Option<Outcome>>> = judge.trials.iter().map(|_| Default::default()).collect();
+            std::thread::scope(|scope| {
+                for _ in 0..judge.threads.min(judge.trials.len()) {
+                    scope.spawn(|| loop {
+                        let k = next.fetch_add(1, Ordering::Relaxed);
+                        let Some(trial) = judge.trials.get(k) else {
+                            break;
+                        };
+                        *slots[k].lock().expect("baseline") = Some(judge.outcome(root, trial, text));
+                    });
+                }
+            });
+            slots.into_iter().map(|slot| slot.into_inner().expect("baseline").expect("every baseline compiles")).collect()
+        };
+        for (trial, outcome) in judge.trials.iter_mut().zip(outcomes) {
+            trial.baseline = outcome.map_err(|e| format!("{} ({}): {e}", trial.unit.display(), trial.build.target.id))?;
+        }
+        Ok(judge)
+    }
+
+    fn outcome(&self, root: &Path, trial: &Trial, text: &str) -> Outcome {
+        match &self.included {
+            None => trial.build.compile(root, &self.file, text),
+            Some(relative) => {
+                let (bytes, messages) = trial.build.assemble_among(root, &trial.unit, &trial.unit_text, &[(relative.clone(), text.to_string())])?;
+                Ok((object_contents(&bytes)?, unnumbered(&messages)))
+            }
+        }
+    }
+
+    /// Leaves out of the comparison the messages these headers (paths under
+    /// the root) give about their own lines. A header an added include
+    /// brings in for the first time may warn about its own inlines; that
+    /// says nothing about the file's code, whose messages are still
+    /// compared.
+    pub(crate) fn quiet(&mut self, headers: Vec<String>) {
+        self.quiet = headers;
+    }
+
+    /// The messages, less those about the quiet headers' own lines.
+    fn heard(&self, messages: &str) -> String {
+        let quiet = |line: &str| line.split_once(':').is_some_and(|(place, _)| self.quiet.iter().any(|h| place.ends_with(h.as_str())));
+        messages.lines().filter(|line| !quiet(line)).collect::<Vec<_>>().join("\n")
+    }
+
+    /// Whether a compile's outcome is its baseline.
+    fn same(&self, outcome: &(String, String), baseline: &(String, String)) -> bool {
+        outcome.0 == baseline.0 && self.heard(&outcome.1) == self.heard(&baseline.1)
+    }
+
+    /// Whether this text in place of the file leaves every compile as it
+    /// was. The compiles run side by side and stop at the first difference.
+    pub(crate) fn passes(&self, root: &Path, text: &str) -> bool {
+        use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+        let next = AtomicUsize::new(0);
+        let failed = AtomicBool::new(false);
+        std::thread::scope(|scope| {
+            for _ in 0..self.threads.min(self.trials.len()) {
+                scope.spawn(|| loop {
+                    if failed.load(Ordering::Relaxed) {
+                        break;
+                    }
+                    let Some(trial) = self.trials.get(next.fetch_add(1, Ordering::Relaxed)) else {
+                        break;
+                    };
+                    if !self.outcome(root, trial, text).is_ok_and(|outcome| self.same(&outcome, &trial.baseline)) {
+                        failed.store(true, Ordering::Relaxed);
+                    }
+                });
+            }
+        });
+        !failed.load(Ordering::Relaxed)
+    }
+
+    /// The first compile this text changes, said for a person: the unit,
+    /// the edition and what changed.
+    pub(crate) fn difference(&self, root: &Path, text: &str) -> Option<String> {
+        self.trials.iter().find_map(|trial| {
+            let place = format!("{} ({})", trial.unit.strip_prefix(root).unwrap_or(&trial.unit).display(), trial.build.target.id);
+            match self.outcome(root, trial, text) {
+                Err(messages) => Some(format!("{place} does not compile: {}", messages.lines().find(|l| l.contains("error")).unwrap_or(""))),
+                Ok((object, _)) if object != trial.baseline.0 => Some(format!("{place}: the object changes")),
+                Ok((_, messages)) if self.heard(&messages) != self.heard(&trial.baseline.1) => {
+                    let before = self.heard(&trial.baseline.1);
+                    let after = self.heard(&messages);
+                    let new = after.lines().find(|l| !before.lines().any(|b| b == *l)).unwrap_or("");
+                    Some(format!("{place}: a new message: {new}"))
+                }
+                Ok(_) => None,
+            }
+        })
+    }
+}
+
+/// The fewest of `edits` that must stay out for the others to pass, as
+/// indices: Zeller's ddmin over the set left out, which starts as all of
+/// them (adding nothing passes) and shrinks while a smaller set left out
+/// still passes. Edits that match only beside each other stay in together.
+pub(crate) fn fewest_out<T: Clone>(edits: &[T], mut passes: impl FnMut(&[T]) -> Result<bool, String>) -> Result<Vec<usize>, String> {
+    let mut rest = |out: &[usize]| -> Result<bool, String> {
+        let rest: Vec<T> = edits.iter().enumerate().filter(|(i, _)| !out.contains(i)).map(|(_, e)| e.clone()).collect();
+        passes(&rest)
+    };
+    let mut out: Vec<usize> = (0..edits.len()).collect();
+    let mut n = 2;
+    while out.len() >= 2 {
+        let chunks: Vec<Vec<usize>> = out.chunks(out.len().div_ceil(n)).map(<[usize]>::to_vec).collect();
+        let mut reduced = false;
+        for chunk in &chunks {
+            if rest(chunk)? {
+                out = chunk.clone();
+                n = 2;
+                reduced = true;
+                break;
+            }
+        }
+        if !reduced && chunks.len() > 2 {
+            for chunk in &chunks {
+                let others: Vec<usize> = out.iter().copied().filter(|i| !chunk.contains(i)).collect();
+                if rest(&others)? {
+                    out = others;
+                    n = (chunks.len() - 1).max(2);
+                    reduced = true;
+                    break;
+                }
+            }
+        }
+        if !reduced {
+            if chunks.len() >= out.len() {
+                break;
+            }
+            n = (2 * chunks.len()).min(out.len());
+        }
+    }
+    Ok(out)
+}
+
+/// The edits that pass, applied, and how many there were; none when the
+/// required edits (an include the others need) alone fail. `passes` judges
+/// a candidate text of the whole file (`Judge::passes`). The required edits
+/// are made under every set tried, and kept only beside another edit.
+/// Each group holds edits that may stand or fall together (one function's
+/// calls): the groups are tried together and bisected, and a failing group
+/// is bisected by its edits; then the edits that failed alone are tried
+/// again together, less the fewest that must stay out, because some calls
+/// match only beside each other.
+pub(crate) fn proved_groups(text: &str, required: &[Edit], groups: Vec<Vec<Edit>>, passes: &dyn Fn(&str) -> bool) -> Result<Option<(String, usize)>, String> {
+    let candidate = |set: &[Edit]| -> String { apply(text, &[required, set].concat()) };
+    if !required.is_empty() && !passes(&candidate(&[])) {
+        return Ok(None);
+    }
+    let groups: Vec<Vec<Edit>> = groups.into_iter().filter(|group| !group.is_empty()).collect();
+    let (good, bad) = crate::keep::bisect(&groups, |set: &[Vec<Edit>]| Ok::<bool, String>(passes(&candidate(&set.concat()))))?;
+    let mut kept: Vec<Edit> = good.concat();
+    for group in bad {
+        let base = kept.clone();
+        let (alone, failed) = crate::keep::bisect(&group, |set: &[Edit]| Ok::<bool, String>(passes(&candidate(&[&base[..], set].concat()))))?;
+        kept.extend(alone);
+        if failed.len() >= 2 {
+            let base = kept.clone();
+            let out = fewest_out(&failed, |rest| Ok(passes(&candidate(&[&base[..], rest].concat()))))?;
+            kept.extend(failed.iter().enumerate().filter(|(i, _)| !out.contains(i)).map(|(_, e)| e.clone()));
+        }
+    }
+    if kept.is_empty() {
+        return Ok(Some((text.to_string(), 0)));
+    }
+    Ok(Some((candidate(&kept), kept.len())))
+}
+
 /// One edition's compiler for whole-file comparisons outside `proved`.
 pub(crate) struct Compiler {
     build: Build,
@@ -277,7 +537,7 @@ impl Compiler {
     pub(crate) fn new(root: &Path, target: DecompTarget) -> Result<Compiler, String> {
         let imports = crate::build_text::fresh_c_imports(root, target)?;
         let directory = tempfile::Builder::new().prefix("alchemy-trial-").tempdir().map_err(|e| e.to_string())?;
-        Ok(Compiler { build: Build { target, imports, directory } })
+        Ok(Compiler { build: Build { target, imports: imports.map(std::sync::Arc::new), directory } })
     }
 
     /// The object file of this text in place of the file, or the

@@ -1,5 +1,6 @@
 mod barriers;
 mod casts;
+mod commands;
 mod declarations;
 mod fields;
 mod idioms;
@@ -25,6 +26,20 @@ nothing. REWRITE is one of:
   declarations  a file's own declarations of functions a header declares,
                 replaced by an include of that header
   barriers      FAKEMATCH-tagged empty asm barriers, with their tag
+  layer         ☀️ overlay calls of a routine a layer header's inline forwards
+                to, through that inline (field_event.h, field_service.h and
+                scene/runpa_jo.h for scenes; engcall.h and iwram_call.h for
+                every overlay): the one an event.h command expands to, else
+                the outermost, else the first; an include it needs goes with
+                the first includes
+  commands      ☀️ scene calls an event.h command expands to, as the command,
+                with fixed-point coordinates written in pixels where the
+                argument is a whole-pixel literal, PIXELS(e) or e << 16;
+                event.h goes with the first includes. layer and commands are
+                proved like casts, one function's calls together first, in
+                every C file that includes the file when it is a header, and
+                leave asm and FAKEMATCH-tagged code as numbers, casts and
+                idioms do
   numbers       hex literals below 0x1000 in decimal, only where the code
                 shows a quantity: an argument of an event.h scene command, a
                 loop bound compared with its counter, or plain arithmetic
@@ -254,6 +269,13 @@ fn one(root: &Path, rewrite: &str, name: &str) -> Result<Option<(PathBuf, String
             declarations::rewrite(&text, &declarations::index(root, target)?)
         }
         "barriers" => barriers::rewrite(&text),
+        "layer" | "commands" => match commands::rewrite(root, &file, &text, rewrite, &games(&file)) {
+            Ok(done) => done,
+            Err(error) => {
+                eprintln!("{name}: skipped: {}", error.lines().next().unwrap_or(""));
+                return Ok(None);
+            }
+        },
         "numbers" | "casts" | "idioms" if library(root, &file) => {
             eprintln!("{name}: skipped: Nintendo library code");
             return Ok(None);

@@ -99,7 +99,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 static void EV08_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgShianHowDidGetHereBridge);
+	Engine_EventSetMessage(MsgShianHowDidGetHereBridge);
 	if (GameFlag_IsSet(0x890) != 0)
 	{
 		gEventWork->message += 4;
@@ -123,13 +123,13 @@ static void EV12_TALK_1(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x88F) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgShianNowHeTrulyBeyondWorlds);
+		Engine_EventSetMessage(MsgShianNowHeTrulyBeyondWorlds);
 		Engine_EventAskYesNo(12, 0);
 		Engine_EventEnd();
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgShianIsntNobleHimTrySave);
+		Engine_EventSetMessage(MsgShianIsntNobleHimTrySave);
 		Engine_EventOpenMessage(12, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 1)
 		{
@@ -156,7 +156,7 @@ static void EV09_TALK_1(void)
 
 	master = Object_GetById(9);
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgShianAlreadyHeardTest);
+	Engine_EventSetMessage(MsgShianAlreadyHeardTest);
 	Engine_EventShowMessageAndWait(9, 0, 20);
 	Actor_WalkToAndWait(0, 168, 0x188);
 	Engine_ActorFaceDirection(0, 0xc000, 20);
@@ -193,7 +193,7 @@ static void EV05_TOUCH(void)
 	Engine_GameFlagSet(2196);
 	Engine_ActorFaceActor(9, ACTOR_PARTY_LEADER, 0);
 	Engine_EventWait(10);
-	Engine_EventSetMessage((s32)MsgShianYoungMasterDidCompleteTest);
+	Engine_EventSetMessage(MsgShianYoungMasterDidCompleteTest);
 	Engine_ActorRunRepeatedMotion(9, 2);
 	Engine_EventWait(20);
 	Actor_FaceDirection(0, 32768, 20);
@@ -230,11 +230,11 @@ static void Scene_RunScene39eSequenceB(void)
 		record->velocity_y = 0x80000;
 		Engine_ActorSetAnimation(8, 1);
 		Engine_EventWait(30);
-		Engine_EventSetMessage((s32)MsgShianMustSurviveTestGrottoBefore);
+		Engine_EventSetMessage(MsgShianMustSurviveTestGrottoBefore);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgShianMmmmWhoWhoSpeaksMy);
+		Engine_EventSetMessage(MsgShianMmmmWhoWhoSpeaksMy);
 		FieldScene_SetFlag140AndFinishSequence(0, 8);
 		Engine_EventWait(30);
 		Event_ShowMessage(8, 0);
@@ -273,7 +273,7 @@ static void Scene_RunScene39eSequenceB(void)
 		Engine_ActorSetAnimationAndWait(8, 3);
 		Engine_EventWait(30);
 		Actor_ShowEmote(8, 0x100, 60);
-		Engine_EventSetMessage((s32)MsgShianFollowThemDoNot);
+		Engine_EventSetMessage(MsgShianFollowThemDoNot);
 		Event_OpenMessage(8, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 1)
 		{
@@ -315,13 +315,13 @@ static void Scene_RunScene39eSequenceB(void)
 	Event_OpenMessage(8, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 1)
 	{
-		Engine_EventSetMessage((s32)MsgShianThenCannotTellGiveUp);
+		Engine_EventSetMessage(MsgShianThenCannotTellGiveUp);
 		Event_ShowMessage(8, 0);
 		GameFlag_Set(0x300);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgShianDoNotWorryWillPermitted);
+		Engine_EventSetMessage(MsgShianDoNotWorryWillPermitted);
 		Engine_EventWait(30);
 		Engine_ActorSetAnimationAndWait(8, 3);
 		Engine_EventWait(20);
@@ -352,7 +352,7 @@ static void Scene_RunScene39eSequenceB(void)
 static void EV1032_PSYNERGY(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgShianEnjoyReadingMindsOthersDo);
+	Engine_EventSetMessage(MsgShianEnjoyReadingMindsOthersDo);
 	Engine_EventAskYesNo(8, 0);
 	Engine_EventEnd();
 }
@@ -360,7 +360,7 @@ static void EV1032_PSYNERGY(void)
 static void EV09_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgShianMasterFehsSchoolCameWatch);
+	Engine_EventSetMessage(MsgShianMasterFehsSchoolCameWatch);
 	Engine_EventAskYesNo(9, 0);
 	Engine_EventEnd();
 }
@@ -388,15 +388,15 @@ static void EV12_TALK(void)
 
 	if (Engine_GameFlagIsSet(0x895) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgShianHsuDidNotPracticeJumping);
+		Engine_EventSetMessage(MsgShianHsuDidNotPracticeJumping);
 	}
 	else if (Engine_GameFlagIsSet(0x89b) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgShianLamaTempleFarWestIn);
+		Engine_EventSetMessage(MsgShianLamaTempleFarWestIn);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgShianFlexibilityJumpingVeryImportantIn);
+		Engine_EventSetMessage(MsgShianFlexibilityJumpingVeryImportantIn);
 	}
 
 	Engine_EventShowMessage(12, 0);
@@ -412,7 +412,7 @@ static void EV12_TALK(void)
 static void EV15_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgShianMasterFehVeryBusyDo);
+	Engine_EventSetMessage(MsgShianMasterFehVeryBusyDo);
 	Engine_EventAskYesNo(15, 0);
 	Engine_EventEnd();
 }
@@ -569,7 +569,7 @@ static void ShianJiin_RunMasterScene(s32 mode)
 
 	Actor_SetSpeed(15, 0xcccc, 0x6666);
 	Engine_EventWait(60);
-	msg = (s32)MsgShianCannotPushHands;
+	msg = MsgShianCannotPushHands;
 	Engine_EventSetMessage(msg);
 	if (mode == 0)
 	{
@@ -577,7 +577,7 @@ static void ShianJiin_RunMasterScene(s32 mode)
 		Actor_ShowEmote(15, 0x101, 60);
 		Engine_EventShowMessageAndWait(15, 0, 20);
 		Engine_ActorRunRepeatedMotion(15, 2);
-		Engine_EventSetMessage((s32)MsgShianWarriorsCannotUse);
+		Engine_EventSetMessage(MsgShianWarriorsCannotUse);
 		Engine_EventShowMessageAndWait(15, 0, 20);
 		Engine_ActorSetAnimationAndWait(15, 4);
 		Engine_EventWait(20);
@@ -587,7 +587,7 @@ static void ShianJiin_RunMasterScene(s32 mode)
 	}
 	if (mode == 2)
 	{
-		Engine_EventSetMessage((s32)MsgShianGreatWarriorTrain);
+		Engine_EventSetMessage(MsgShianGreatWarriorTrain);
 		Engine_ActorRunRepeatedMotion(15, 2);
 		Engine_EventWait(20);
 	}
@@ -618,7 +618,7 @@ static void ShianJiin_RunGatheringScene(void)
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(15, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgShianLookTreeFell);
+	Engine_EventSetMessage(MsgShianLookTreeFell);
 	Engine_EventShowMessageAndWait(15, 0, 20);
 	Engine_EventShowMessageAndWait(16, 0, 20);
 	Actor_ShowEmote(18, 0x105, 60);
@@ -790,7 +790,7 @@ static void FieldScene_RunSecondEnsembleBeat(void)
 	Actor_ShowEmote(15, 128 << 1, 0);
 	Actor_ShowEmote(16, 128 << 1, 0);
 	Engine_EventWait(60);
-	Engine_EventSetMessage((s32)MsgShianDidDoWarrior);
+	Engine_EventSetMessage(MsgShianDidDoWarrior);
 	Event_ShowMessageAndWait(13, 0, 20);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, 13, 0);
 	Engine_ActorRunRepeatedMotion(15, 1);
@@ -1045,7 +1045,7 @@ static void EV18_TALK(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgShianWarriorWillShowMeYour);
+	Engine_EventSetMessage(MsgShianWarriorWillShowMeYour);
 	Engine_EventOpenMessage(18, 0);
 
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -1081,7 +1081,7 @@ static void FieldScene_RunEnsembleStoryBeat(void)
 	Camera_SetSpeed(0x8000, 0x1000);
 	Camera_MoveTo(0xe80000, -1, 0xc80000, 1);
 	Engine_CameraWaitForMove();
-	Engine_EventSetMessage((s32)MsgShianYaTreeFell);
+	Engine_EventSetMessage(MsgShianYaTreeFell);
 	Actor_SetSpeed(10, 0xcccc, 0x6666);
 	Actor_SetSpeed(12, 0xcccc, 0x6666);
 	Actor_WalkTo(10, 152, 200);
@@ -1272,7 +1272,7 @@ static void FieldScene_RunEnsembleStoryBeat(void)
 static void EV11_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgShianWaterMonstersFloodedAltinDid);
+	Engine_EventSetMessage(MsgShianWaterMonstersFloodedAltinDid);
 	Engine_EventAskYesNo(11, 0);
 	Engine_EventEnd();
 }
@@ -1282,7 +1282,7 @@ static void EV03_TOUCH(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(2202) == 0 && GameFlag_IsSet(2197) == 0)
 	{
-		Engine_MessageShowCentered((s32)MsgShianItIsLocked, 1);
+		Engine_MessageShowCentered(MsgShianItIsLocked, 1);
 		Engine_EventEnd();
 	}
 	else
@@ -1314,7 +1314,7 @@ static void EV13_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgShianImTravelingAroundWorldSpread);
+		Engine_EventSetMessage(MsgShianImTravelingAroundWorldSpread);
 		Engine_EventShowMessage(13, 0);
 	}
 
@@ -1325,7 +1325,7 @@ static void EV08_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(8, 2);
-	Engine_EventSetMessage((s32)MsgShianRobinAmCountingOnBring);
+	Engine_EventSetMessage(MsgShianRobinAmCountingOnBring);
 	Engine_EventShowMessage(8, 0);
 	Engine_EventEnd();
 }
@@ -1463,7 +1463,7 @@ static void ShianJiin_AskIfCurious(void)
 	record = Actor_Get(8);
 	record->velocity_y = 0x80000;
 	Engine_ActorSetAnimation(8, 1);
-	Engine_EventSetMessage((s32)MsgShianExcellentRobin);
+	Engine_EventSetMessage(MsgShianExcellentRobin);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -1502,7 +1502,7 @@ static void ShianJiin_AskIfCurious(void)
 	{
 		Engine_EventWait(10);
 		Actor_ShowEmote(8, 0x102, 60);
-		Engine_EventSetMessage((s32)MsgShianCanReadMindsKnowCurious);
+		Engine_EventSetMessage(MsgShianCanReadMindsKnowCurious);
 		Event_OpenMessage(8, 0);
 		do
 		{
@@ -1512,11 +1512,11 @@ static void ShianJiin_AskIfCurious(void)
 			}
 			Engine_EventWait(10);
 			Actor_ShowEmote(8, 0x102, 60);
-			Engine_EventSetMessage((s32)MsgShianDontTryHard);
+			Engine_EventSetMessage(MsgShianDontTryHard);
 			Event_OpenMessage(8, 0);
 		} while (1);
 	}
-	Engine_EventSetMessage((s32)MsgShianMonstersWaitInHidingWould);
+	Engine_EventSetMessage(MsgShianMonstersWaitInHidingWould);
 	Engine_EventWait(10);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Engine_EventWait(20);
@@ -1564,7 +1564,7 @@ static void FieldScene_RunRoofEnsembleSequence(void)
 	Actor_FaceDirection(9, 0, 20);
 	Engine_ActorRunRepeatedMotion(9, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgShianMasterHamaMeditatingPleaseExtremely);
+	Engine_EventSetMessage(MsgShianMasterHamaMeditatingPleaseExtremely);
 	Event_ShowMessageAndWait(9, 0, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);

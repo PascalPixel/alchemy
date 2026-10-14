@@ -953,7 +953,7 @@ static void Korosseo_RunGreetScene(s32 a0)
 	Engine_CameraFollowActor(0, 0);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
-	Engine_EventSetMessage((s32)MsgKorosseoSiteSecondFinals);
+	Engine_EventSetMessage(MsgKorosseoSiteSecondFinals);
 	Engine_ActorSetAnimationAndWait(a0, 3);
 	Engine_EventShowMessage(a0, 0);
 	Engine_ActorRunRepeatedMotion(a0, 2);
@@ -1010,7 +1010,7 @@ static void EV35_TALK(s32 speaker)
 		result = SceneDialogue_RunFlagGatedPromptInteraction(speaker, 1);
 		if (result == 0)
 		{
-			Engine_EventSetMessage((s32)MsgKorosseoStageDubbedMini);
+			Engine_EventSetMessage(MsgKorosseoStageDubbedMini);
 			Engine_CameraSetSpeed(0x30000, 0x6000);
 			Engine_CameraMoveTo(0x4c80000, -1, 0xb80000, 1);
 			Engine_CameraWaitForMove();
@@ -1036,7 +1036,7 @@ static void EV35_TALK(s32 speaker)
 		}
 		else if (result == 1)
 		{
-			Engine_EventSetMessage((s32)MsgKorosseoMainThingStage);
+			Engine_EventSetMessage(MsgKorosseoMainThingStage);
 			Engine_EventShowMessage(speaker, 0);
 		}
 		FieldScene_RunMiddleSequence(result, speaker, 1);
@@ -1058,7 +1058,7 @@ static void EV36_TALK(s32 a0)
 		rec = SceneDialogue_RunFlagGatedPromptInteraction(a0, 2);
 		if (rec == 0)
 		{
-			Engine_EventSetMessage((s32)MsgKorosseoShiftingFloorStage);
+			Engine_EventSetMessage(MsgKorosseoShiftingFloorStage);
 			FieldScene_PlaceSpectatorRow();
 			Camera_SetSpeed(0x30000, 0x6000);
 			Camera_MoveTo(0x3d80000, -1, 0xe80000, 1);
@@ -1084,7 +1084,7 @@ static void EV36_TALK(s32 a0)
 		{
 			if (rec == 1)
 			{
-				Engine_EventSetMessage((s32)MsgKorosseoOperatorLiftsWillCheerFor);
+				Engine_EventSetMessage(MsgKorosseoOperatorLiftsWillCheerFor);
 				Event_ShowMessage(a0, 0);
 			}
 		}
@@ -1107,7 +1107,7 @@ static void EV37_TALK(s32 a0)
 		rec2 = SceneDialogue_RunFlagGatedPromptInteraction(a0, 3);
 		if (rec2 == 0)
 		{
-			Engine_EventSetMessage((s32)MsgKorosseoLogRollingStage);
+			Engine_EventSetMessage(MsgKorosseoLogRollingStage);
 			Camera_SetSpeed(0x30000, 0x6000);
 			Camera_MoveTo(0x2f00000, -1, 0xc00000, 1);
 			Engine_CameraWaitForMove();
@@ -1141,7 +1141,7 @@ static void EV37_TALK(s32 a0)
 		}
 		else if (rec2 == 1)
 		{
-			Engine_EventSetMessage((s32)MsgKorosseoHereYourObjectiveRideLogs);
+			Engine_EventSetMessage(MsgKorosseoHereYourObjectiveRideLogs);
 			Event_ShowMessage(a0, 0);
 		}
 		FieldScene_RunMiddleSequence(rec2, a0, 3);
@@ -1164,7 +1164,7 @@ static void EV38_TALK(s32 speaker)
 	result = SceneDialogue_RunFlagGatedPromptInteraction(speaker, 4);
 	if (result == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKorosseoFansJustCallWall);
+		Engine_EventSetMessage(MsgKorosseoFansJustCallWall);
 		Engine_CameraSetSpeed(0x30000, 0x6000);
 		Camera_MoveTo(0x2180000, -1, 0xf00000, 1);
 		Engine_CameraWaitForMove();
@@ -1201,7 +1201,7 @@ static void EV38_TALK(s32 speaker)
 	}
 	else if (result == 1)
 	{
-		Engine_EventSetMessage((s32)MsgKorosseoScalingWallQuickly);
+		Engine_EventSetMessage(MsgKorosseoScalingWallQuickly);
 		Engine_EventShowMessage(speaker, 0);
 	}
 	FieldScene_RunMiddleSequence(result, speaker, 4);
@@ -1263,7 +1263,7 @@ static void EV39_TALK(s32 speaker)
 	result = SceneDialogue_RunFlagGatedPromptInteraction(speaker, 5);
 	if (result == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKorosseoPlaceCalledBoard);
+		Engine_EventSetMessage(MsgKorosseoPlaceCalledBoard);
 		Engine_CameraSetSpeed(0x20000, 0x4000);
 		Camera_MoveTo(0x1480000, -1, 0x1080000, 1);
 		Engine_CameraWaitForMove();
@@ -1291,7 +1291,7 @@ static void EV39_TALK(s32 speaker)
 	}
 	else if (result == 1)
 	{
-		Engine_EventSetMessage((s32)MsgKorosseoFocusRollingLogs);
+		Engine_EventSetMessage(MsgKorosseoFocusRollingLogs);
 		Engine_EventShowMessage(speaker, 0);
 	}
 	FieldScene_RunMiddleSequence(result, speaker, 5);
@@ -1595,7 +1595,7 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
 
 	shared = (u8 *)&gGameState;
 	UiWork_PushValueSlot(((struct GameState *)shared)->selected_actor, 1);
-	Engine_MessageShowCentered((s32)MsgKorosseoRobinGotItem, 3);
+	Engine_MessageShowCentered(MsgKorosseoRobinGotItem, 3);
 	ObjectDispatch_WaitForValue16(record);
 
 	return flag;

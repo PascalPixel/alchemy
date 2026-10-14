@@ -79,7 +79,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 static void EV13_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKareiLordHammetWillReleasedSoon);
+	Engine_EventSetMessage(MsgKareiLordHammetWillReleasedSoon);
 	Engine_EventAskYesNo(13, 0);
 	Engine_EventEnd();
 }
@@ -87,7 +87,7 @@ static void EV13_TALK(void)
 static void EV16_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKareiHasLegacyLordHammetsSilk);
+	Engine_EventSetMessage(MsgKareiHasLegacyLordHammetsSilk);
 	Engine_EventAskYesNo(16, 0);
 	Engine_EventEnd();
 }
@@ -97,7 +97,7 @@ static void EV08_TALK(void)
 
 	Engine_EventBegin();
 	Engine_ActorShowEmote(8, 0x100, 0x3C);
-	Engine_EventSetMessage((s32)MsgKareiRobinSneakedIntoLunpaThats);
+	Engine_EventSetMessage(MsgKareiRobinSneakedIntoLunpaThats);
 	Engine_EventShowMessageAndWait(8, 0, 0xA);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventShowMessageAndWait(8, 0, 0xA);
@@ -291,7 +291,7 @@ static void RunEventScript01(void)
 	Engine_ColorBufferInterpolate(40);
 	Engine_TaskWait(60);
 	Actor_ShowEmote(8, 0x105, 60);
-	Engine_EventSetMessage((s32)MsgKareiWhenHeardWereBackIvan);
+	Engine_EventSetMessage(MsgKareiWhenHeardWereBackIvan);
 	Event_ShowMessageAndWait(8, 0, 10);
 	Engine_ActorRunRepeatedMotion(10, 2);
 	Event_ShowMessageAndWait(10, 0, 10);
@@ -765,7 +765,7 @@ static void Scene_RunPartySequence(void)
 	SceneChannel_ConfigureUniformAndHandoff(10);
 	Actor_ShowEmote(9, v5, 20);
 	Actor_FaceDirection(9, 0x5000, 20);
-	Engine_EventSetMessage((s32)MsgKareiItsIvanHisCompanionsPerfect);
+	Engine_EventSetMessage(MsgKareiItsIvanHisCompanionsPerfect);
 	Event_ShowMessageAndWait(0x2009, 0, 10);
 	Actor_ShowEmote(8, v5, 20);
 	Actor_FaceDirection(8, 0x3000, 20);

@@ -285,12 +285,12 @@ static void EV17_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgRunpaInnkeeperOffersRoom);
+		Engine_EventSetMessage(MsgRunpaInnkeeperOffersRoom);
 		Engine_EventAskYesNo(ACTOR_INNKEEPER, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgRunpaInnkeeperOffersOwnHome);
+		Engine_EventSetMessage(MsgRunpaInnkeeperOffersOwnHome);
 		Engine_EventAskYesNo(ACTOR_INNKEEPER, 0);
 	}
 	Engine_EventEnd();
@@ -299,7 +299,7 @@ static void EV17_TALK(void)
 static void EV20_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgRunpaChefOffersStory);
+	Engine_EventSetMessage(MsgRunpaChefOffersStory);
 	Engine_EventAskYesNo(ACTOR_CHEF, 0);
 	Engine_GameFlagSet(FLAG_LUNPA_HEARD_OF_PRISONER);
 	Engine_EventEnd();
@@ -308,7 +308,7 @@ static void EV20_TALK(void)
 static void EV20_PSYNERGY(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgRunpaChefThinksOfPrisoner);
+	Engine_EventSetMessage(MsgRunpaChefThinksOfPrisoner);
 	Engine_EventShowMessage(ACTOR_CHEF, 0);
 	Engine_GameFlagSet(FLAG_LUNPA_HEARD_OF_PRISONER);
 	Engine_EventEnd();
@@ -317,7 +317,7 @@ static void EV20_PSYNERGY(void)
 static void EV18_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgRunpaInnClerkAsksAboutGuest);
+	Engine_EventSetMessage(MsgRunpaInnClerkAsksAboutGuest);
 	Engine_EventAskYesNo(ACTOR_INN_CLERK, 0);
 	Engine_EventEnd();
 }
@@ -334,14 +334,14 @@ static void EV21_TALK(void)
 	else if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0)
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage((s32)MsgRunpaTemplePriestReopened);
+		Engine_EventSetMessage(MsgRunpaTemplePriestReopened);
 		Engine_EventShowMessage(ACTOR_TEMPLE_PRIEST, 0);
 		Engine_EventEnd();
 	}
 	else
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage((s32)MsgRunpaTemplePriestSealed);
+		Engine_EventSetMessage(MsgRunpaTemplePriestSealed);
 		Engine_EventShowMessage(ACTOR_TEMPLE_PRIEST, 0);
 		Engine_EventEnd();
 	}
@@ -352,14 +352,14 @@ static void ItemMerchant_ReadMind(void)
 	if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0)
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage((s32)MsgRunpaIsntWeaponsVendors);
+		Engine_EventSetMessage(MsgRunpaIsntWeaponsVendors);
 		Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
 		Engine_EventEnd();
 	}
 	else
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage((s32)MsgRunpaItemMerchantSealedThoughts);
+		Engine_EventSetMessage(MsgRunpaItemMerchantSealedThoughts);
 		Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
 		Engine_EventEnd();
 	}
@@ -377,14 +377,14 @@ static void ItemMerchant_Talk(void)
 	else if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0)
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage((s32)MsgRunpaItemMerchantReopened);
+		Engine_EventSetMessage(MsgRunpaItemMerchantReopened);
 		Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
 		Engine_EventEnd();
 	}
 	else
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage((s32)MsgRunpaItemMerchantSealed);
+		Engine_EventSetMessage(MsgRunpaItemMerchantSealed);
 		Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
 		Engine_EventEnd();
 	}
@@ -394,12 +394,12 @@ static void WeaponMerchant_ReadMind(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgRunpaWeaponMerchantReopenedThoughts);
+		Engine_EventSetMessage(MsgRunpaWeaponMerchantReopenedThoughts);
 		Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgRunpaWeaponMerchantSealedThoughts);
+		Engine_EventSetMessage(MsgRunpaWeaponMerchantSealedThoughts);
 		Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
 	}
 }
@@ -420,14 +420,14 @@ static void WeaponMerchant_Talk(void)
 		else
 		{
 			Engine_EventBegin();
-			Engine_EventSetMessage((s32)MsgRunpaWeaponMerchantReopened);
+			Engine_EventSetMessage(MsgRunpaWeaponMerchantReopened);
 			Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
 			Engine_EventEnd();
 		}
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgRunpaWeaponMerchantSealed);
+		Engine_EventSetMessage(MsgRunpaWeaponMerchantSealed);
 		Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
 	}
 }
@@ -436,12 +436,12 @@ static void ArmorMerchant_ReadMind(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgRunpaArmorMerchantReopenedThoughts);
+		Engine_EventSetMessage(MsgRunpaArmorMerchantReopenedThoughts);
 		Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgRunpaArmorMerchantSealedThoughts);
+		Engine_EventSetMessage(MsgRunpaArmorMerchantSealedThoughts);
 		Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
 	}
 }
@@ -462,14 +462,14 @@ static void ArmorMerchant_Talk(void)
 		else
 		{
 			Engine_EventBegin();
-			Engine_EventSetMessage((s32)MsgRunpaArmorMerchantReopened);
+			Engine_EventSetMessage(MsgRunpaArmorMerchantReopened);
 			Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
 			Engine_EventEnd();
 		}
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgRunpaArmorMerchantSealed);
+		Engine_EventSetMessage(MsgRunpaArmorMerchantSealed);
 		Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
 	}
 }
@@ -503,7 +503,7 @@ static void EV22_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgRunpaTravelingPriest);
+		Engine_EventSetMessage(MsgRunpaTravelingPriest);
 		Engine_EventShowMessage(ACTOR_TRAVELING_PRIEST, 0);
 	}
 }

@@ -100,12 +100,12 @@ static void EV18_TALK(s32 keeper)
 	}
 	else if (Engine_GameFlagIsSet(0x9a7))
 	{
-		Engine_EventSetMessage((s32)MsgRariberoWentOceanLook);
+		Engine_EventSetMessage(MsgRariberoWentOceanLook);
 		Engine_EventShowMessage(keeper, 0);
 	}
 	else
 	{
-		s32 message = (s32)MsgRariberoTakenHostageFaran;
+		s32 message = MsgRariberoTakenHostageFaran;
 
 		Engine_EventSetMessage(message);
 		Engine_EventOpenMessage(keeper, 0);
@@ -131,12 +131,12 @@ static void EV19_TALK(s32 no)
 	}
 	else if (Engine_GameFlagIsSet(0x9a7))
 	{
-		Engine_EventSetMessage((s32)MsgRariberoWantedSendShips);
+		Engine_EventSetMessage(MsgRariberoWantedSendShips);
 		Engine_EventShowMessage(no, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgRariberoWarriorRightPlease);
+		Engine_EventSetMessage(MsgRariberoWarriorRightPlease);
 		Engine_EventShowMessage(no, 0);
 	}
 }
@@ -150,12 +150,12 @@ static void EV20_TALK(s32 no)
 	}
 	else if (Engine_GameFlagIsSet(0x9a7))
 	{
-		Engine_EventSetMessage((s32)MsgRariberoImpossibleGoOcean);
+		Engine_EventSetMessage(MsgRariberoImpossibleGoOcean);
 		Engine_EventShowMessage(no, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgRariberoGuessPeopleAngara);
+		Engine_EventSetMessage(MsgRariberoGuessPeopleAngara);
 		Engine_EventShowMessage(no, 0);
 	}
 }
@@ -169,12 +169,12 @@ static void EV21_TALK(s32 no)
 	}
 	else if (Engine_GameFlagIsSet(0x9a7))
 	{
-		Engine_EventSetMessage((s32)MsgRariberoBabiLighthouseStruck);
+		Engine_EventSetMessage(MsgRariberoBabiLighthouseStruck);
 		Engine_EventShowMessage(no, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgRariberoBabiIsntBuilding);
+		Engine_EventSetMessage(MsgRariberoBabiIsntBuilding);
 		Engine_EventShowMessage(no, 0);
 	}
 }
@@ -188,12 +188,12 @@ static void EV13_TALK(s32 no)
 	}
 	else if (Engine_GameFlagIsSet(0x9a7))
 	{
-		Engine_EventSetMessage((s32)MsgRariberoDidntKnowTime);
+		Engine_EventSetMessage(MsgRariberoDidntKnowTime);
 		Engine_EventShowMessage(no, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgRariberoWantStayLet);
+		Engine_EventSetMessage(MsgRariberoWantStayLet);
 		Engine_EventShowMessage(no, 0);
 	}
 }
@@ -206,7 +206,7 @@ static void RariberoScene_PlayPoseSequence(void)
 	GameFlag_Set(0x300);
 	Engine_EventBegin();
 	Engine_ResetSceneEffectCounter();
-	Engine_EventSetMessage((s32)MsgRariberoImSorry);
+	Engine_EventSetMessage(MsgRariberoImSorry);
 	Engine_EventWait(50);
 	Actor_ShowEmote(14, 0x102, 50);
 	Actor_FaceActor(14, ACTOR_PARTY_LEADER, 20);
@@ -243,7 +243,7 @@ static void EV51_TOUCH(void)
 	Engine_CameraMoveTo(0x780000, -1, 0x600000, 1);
 	Engine_CameraWaitForMove();
 	Engine_EventWait(0x1E);
-	Engine_EventSetMessage((s32)MsgRariberoPleaseWaitForMeOutside);
+	Engine_EventSetMessage(MsgRariberoPleaseWaitForMeOutside);
 	Engine_EventShowMessage(0xC, 0);
 	Engine_EventWait(0xA);
 	Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 0xC, 0);
@@ -257,7 +257,7 @@ static void EV12_TALK(void)
 {
 
 	Engine_GameFlagSet(0x9BC);
-	Engine_EventSetMessage((s32)MsgRariberoPleaseWaitForMeOutside);
+	Engine_EventSetMessage(MsgRariberoPleaseWaitForMeOutside);
 	Engine_EventShowMessage(0xC, 0);
 }
 
@@ -296,7 +296,7 @@ static void FieldScene_RunPrimaryScript(void)
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
 	Actor_FaceDirection(11, 0, 0);
 	Actor_FaceDirection(12, 32768, 0);
-	Engine_EventSetMessage((s32)MsgRariberoHowDidSearchForSheba);
+	Engine_EventSetMessage(MsgRariberoHowDidSearchForSheba);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Engine_EventWait(10);
@@ -390,7 +390,7 @@ static void FieldScene_RunPrimaryScript(void)
 		Actor_FaceActor(IWAN, ACTOR_PARTY_LEADER, 30);
 		Event_OpenMessage(8194, 0);
 	}
-	Engine_EventSetMessage((s32)MsgRariberoDoNotWorryAboutSheba);
+	Engine_EventSetMessage(MsgRariberoDoNotWorryAboutSheba);
 	Engine_EventWait(10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 0);
 	Actor_FaceActor(GERALD, ACTOR_PARTY_LEADER, 20);
@@ -633,7 +633,7 @@ static void FieldScene_RunPrimaryScript(void)
 
 static void FieldScene_RunSecondaryScript(void)
 {
-	Engine_EventSetMessage((s32)MsgRariberoTellOthers);
+	Engine_EventSetMessage(MsgRariberoTellOthers);
 	Engine_EventWait(20);
 
 	Engine_ActorRunRepeatedMotion(11, 2);

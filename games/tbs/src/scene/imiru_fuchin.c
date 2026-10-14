@@ -1608,21 +1608,21 @@ static void EV20_SCRIPT(void)
 static void EV01_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgFuchinDragonFlameShowsPath, 1);
+	Engine_MessageShowCentered(MsgFuchinDragonFlameShowsPath, 1);
 	Engine_EventEnd();
 }
 
 static void EV07_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgFuchinSecretKiRevealed, 1);
+	Engine_MessageShowCentered(MsgFuchinSecretKiRevealed, 1);
 	Engine_EventEnd();
 }
 
 static void EV19_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgFuchinLightRevealsShadows, 1);
+	Engine_MessageShowCentered(MsgFuchinLightRevealsShadows, 1);
 	Engine_EventEnd();
 }
 
@@ -1633,11 +1633,11 @@ static void EV20_SEARCH(void)
 
 	if (Engine_GameFlagIsSet(0x820) != 0)
 	{
-		Engine_MessageShowCentered((s32)MsgFuchinDragonRedEyes, 1);
+		Engine_MessageShowCentered(MsgFuchinDragonRedEyes, 1);
 	}
 	else
 	{
-		Engine_MessageShowCentered((s32)MsgFuchinEyelessDragon, 1);
+		Engine_MessageShowCentered(MsgFuchinEyelessDragon, 1);
 		if (PartyInventory_FindOwner(0xe6) != -1)
 		{
 			gEventWork->unknown_172 = 1;

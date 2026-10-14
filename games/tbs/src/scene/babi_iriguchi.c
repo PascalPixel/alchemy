@@ -305,7 +305,7 @@ static void EV20_SEARCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-	Engine_MessageShowCentered((s32)MsgBabiSeemsLocked, 1);
+	Engine_MessageShowCentered(MsgBabiSeemsLocked, 1);
 	Engine_EventEnd();
 }
 
@@ -317,7 +317,7 @@ static void EV10_TOUCH(void)
 	GameFlag_Set(0x98a);
 	Engine_EventBegin();
 	Battle_ResetEffectCounter();
-	Engine_EventSetMessage((s32)MsgBabiYoureSureTheyWentThrough);
+	Engine_EventSetMessage(MsgBabiYoureSureTheyWentThrough);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x128, 0x160);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -603,7 +603,7 @@ static void FieldScene_RunActorEventSequence(void)
 	GameFlag_Set(0x989);
 	Engine_EventBegin();
 	Battle_ResetEffectCounter();
-	Engine_EventSetMessage((s32)MsgBabiTheDoor);
+	Engine_EventSetMessage(MsgBabiTheDoor);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x128, 0x138);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
@@ -961,7 +961,7 @@ static void EV60_SEARCH(void)
 		if (Engine_GameFlagIsSet(0x985) == 0)
 		{
 
-			Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
+			Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
 			Engine_AudioPlayCue(155);
 			Map_CopyCellsLayered(35, 78, 1, 2, 17, 78);
 			Engine_EventWait(10);
@@ -972,7 +972,7 @@ static void EV60_SEARCH(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgBabiTruthDoorOpenThoseSeeing);
+		Engine_EventSetMessage(MsgBabiTruthDoorOpenThoseSeeing);
 		Engine_EventShowMessage(-1, 0);
 	}
 	Engine_EventEnd();

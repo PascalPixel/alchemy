@@ -133,12 +133,12 @@ static void KuupuappuMura_SayFarewellToIvan(void)
 	}
 	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IWAN, 0);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgKuupuappuLeavingImStillWorriedAbout);
+	Engine_EventSetMessage(MsgKuupuappuLeavingImStillWorriedAbout);
 	Event_ShowMessageAndWait(0x9002, 0, 20);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	if (KuupuappuMura_GetIwanVenusDjinnCount() != 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuWaitDontWantTakeYour);
+		Engine_EventSetMessage(MsgKuupuappuWaitDontWantTakeYour);
 		Event_ShowMessage(IWAN, 0);
 		OverlayObject_RunObject2WhenFlagged();
 		Engine_TaskWait(20);
@@ -153,8 +153,8 @@ static void KuupuappuMura_SayFarewellToIvan(void)
 static void EV90_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
-	Engine_MessageShowCentered((s32)MsgKuupuappuCanHearWaterRumblingDown, 1);
+	Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
+	Engine_MessageShowCentered(MsgKuupuappuCanHearWaterRumblingDown, 1);
 	Engine_EventEnd();
 }
 
@@ -168,7 +168,7 @@ void *KuupuappuMura_SelectEvents(void)
 static void EV09_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuWasntEruptionMtAlephIncredible);
+	Engine_EventSetMessage(MsgKuupuappuWasntEruptionMtAlephIncredible);
 	SceneActor_ApplyActorCueThenWait(9, 0, 2);
 	Event_OpenMessage(9, 0);
 	if (Engine_EventChooseYesNo(0, 0) != 0)
@@ -185,7 +185,7 @@ static void ActorPresentation_RunActorThirteenSceneSetup(void)
 	struct EventWork *workspace;
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuThoseTravelersLeftInBig);
+	Engine_EventSetMessage(MsgKuupuappuThoseTravelersLeftInBig);
 	Engine_ActorSetAnimation(13, 1);
 	SceneActor_ApplyActorCueThenWait(13, 0, 2);
 	Engine_EventOpenMessage(13, 0);
@@ -203,7 +203,7 @@ static void EV17_TALK(void)
 	struct EventWork *workspace;
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuAccusingUsStealingHammetsTreasured);
+	Engine_EventSetMessage(MsgKuupuappuAccusingUsStealingHammetsTreasured);
 	SceneActor_ApplyActorCueThenWait(17, 0, 2);
 	Engine_EventOpenMessage(17, 0);
 	if (Engine_EventChooseYesNo(0, 0) != 0)
@@ -220,7 +220,7 @@ static void ActorPresentation_RunActorEighteenSceneSetup(void)
 	struct EventWork *workspace;
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuOffOnAdventure);
+	Engine_EventSetMessage(MsgKuupuappuOffOnAdventure);
 	SceneActor_ApplyActorCueThenWait(18, 0, 2);
 	Engine_EventOpenMessage(18, 0);
 	if (Engine_EventChooseYesNo(0, 0) != 0)
@@ -235,7 +235,7 @@ static void ActorPresentation_RunActorEighteenSceneSetup(void)
 static void SceneDialogue_RunActor11Line(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuGuessFolksGot);
+	Engine_EventSetMessage(MsgKuupuappuGuessFolksGot);
 	SceneActor_RunActorStep(11);
 	Engine_EventEnd();
 }
@@ -243,7 +243,7 @@ static void SceneDialogue_RunActor11Line(void)
 static void SceneDialogue_RunActor16Line(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuNobodysStealingAnything);
+	Engine_EventSetMessage(MsgKuupuappuNobodysStealingAnything);
 	SceneActor_RunActorStep(16);
 	Engine_EventEnd();
 }
@@ -251,7 +251,7 @@ static void SceneDialogue_RunActor16Line(void)
 static void SceneDialogue_RunActor19Line(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuRuffRrruff);
+	Engine_EventSetMessage(MsgKuupuappuRuffRrruff);
 	Engine_ActorSetAnimation(19, 0);
 	SceneActor_ApplyActorCueThenWait(19, 0, 2);
 	Engine_EventShowMessage(19, 0);
@@ -265,7 +265,7 @@ static void ActorPresentation_RunActorFourteenDialogue(void)
 
 	actor->timer |= 2;
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuPoorGuyLeft);
+	Engine_EventSetMessage(MsgKuupuappuPoorGuyLeft);
 	Engine_ActorSetAnimation(14, 0);
 	SceneActor_ApplyActorCueThenWait(14, 0, 2);
 	SceneActor_ApplyActorZeroThenWait(14, 10);
@@ -282,7 +282,7 @@ static void ActorPresentation_RunActorFifteenDialogue(void)
 
 	actor->timer |= 2;
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuMasterHammetsCaravan);
+	Engine_EventSetMessage(MsgKuupuappuMasterHammetsCaravan);
 	Engine_ActorSetAnimation(15, 0);
 	SceneActor_ApplyActorCueThenWait(15, 0, 2);
 	SceneActor_ApplyActorZeroThenWait(15, 10);
@@ -295,7 +295,7 @@ static void ActorPresentation_RunActorFifteenDialogue(void)
 static void EV21_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuFixingRoofCant);
+	Engine_EventSetMessage(MsgKuupuappuFixingRoofCant);
 	SceneActor_ApplyActorCueThenWait(21, 0, 2);
 	Engine_ActorShowEmote(21, 0x103, 0);
 	Engine_EventWait(30);
@@ -319,7 +319,7 @@ static void EV08_TALK(void)
 {
 	struct EventWork *workspace;
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuYoureHittingRoadAgain);
+	Engine_EventSetMessage(MsgKuupuappuYoureHittingRoadAgain);
 	SceneActor_ApplyActorCueThenWait(8, 0, 2);
 	Engine_EventOpenMessage(8, 0);
 	if (Engine_EventChooseYesNo(0, 0) != 0)
@@ -334,7 +334,7 @@ static void EV08_TALK(void)
 static void SceneDialogue_RunActor11SecondLine(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuGreatCaughtThieves);
+	Engine_EventSetMessage(MsgKuupuappuGreatCaughtThieves);
 	SceneActor_RunActorStep(11);
 	Engine_EventEnd();
 }
@@ -343,7 +343,7 @@ static void EV12_TALK(void)
 {
 	struct EventWork *workspace;
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuTalkingAboutHammetsServantIvan);
+	Engine_EventSetMessage(MsgKuupuappuTalkingAboutHammetsServantIvan);
 	if (Engine_GameFlagIsSet(2) != 0)
 	{
 		workspace = gEventWork;
@@ -356,7 +356,7 @@ static void EV12_TALK(void)
 static void SceneDialogue_RunActor13Line(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuEruptionDevastatedRoads);
+	Engine_EventSetMessage(MsgKuupuappuEruptionDevastatedRoads);
 	SceneActor_RunActorStep(13);
 	Engine_EventEnd();
 }
@@ -371,7 +371,7 @@ static void ActorPresentation_RunActorFourteenDialogueAndAdvanceStory(void)
 
 	*flags = (tmp = *flags | 2);
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuDidntGoLunpa);
+	Engine_EventSetMessage(MsgKuupuappuDidntGoLunpa);
 	if (Engine_GameFlagIsSet(2) != 0)
 		++gEventWork->message;
 	Engine_ActorSetAnimation(14, 0);
@@ -390,7 +390,7 @@ static void ActorPresentation_RunActorFifteenFollowupDialogue(void)
 
 	actor->timer |= 2;
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuEveryoneGratefulCaptured);
+	Engine_EventSetMessage(MsgKuupuappuEveryoneGratefulCaptured);
 	Engine_ActorSetAnimation(15, 0);
 	SceneActor_ApplyActorCueThenWait(15, 0, 2);
 	SceneActor_ApplyActorZeroThenWait(15, 10);
@@ -404,7 +404,7 @@ static void ActorPresentation_RunActorSixteenSceneSetup(void)
 {
 	struct EventWork *workspace;
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuThoseMenCapturedTheyreIn);
+	Engine_EventSetMessage(MsgKuupuappuThoseMenCapturedTheyreIn);
 	Engine_ActorSetAnimation(16, 1);
 	SceneActor_ApplyActorCueThenWait(16, 0, 2);
 	Engine_EventOpenMessage(16, 0);
@@ -421,7 +421,7 @@ static void ActorPresentation_RunActorEighteenFollowupSceneSetup(void)
 {
 	struct EventWork *workspace;
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuOnesWhoCapturedThieves);
+	Engine_EventSetMessage(MsgKuupuappuOnesWhoCapturedThieves);
 	SceneActor_ApplyActorCueThenWait(18, 0, 2);
 	Engine_EventOpenMessage(18, 0);
 	if (Engine_EventChooseYesNo(0, 0) != 0)
@@ -436,7 +436,7 @@ static void ActorPresentation_RunActorEighteenFollowupSceneSetup(void)
 static void ActorPresentation_RunActorNineteenDialogueAndSetSceneState(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuRuffRrruff2);
+	Engine_EventSetMessage(MsgKuupuappuRuffRrruff2);
 	Engine_ActorSetAnimation(19, 0);
 	SceneActor_ApplyActorCueThenWait(19, 0, 2);
 	Engine_EventShowMessage(19, 0);
@@ -454,7 +454,7 @@ static void ActorPresentation_RunActorNineteenDialogueAndSetSceneState(void)
 static void EV20_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuThankForOtherDayLeaving);
+	Engine_EventSetMessage(MsgKuupuappuThankForOtherDayLeaving);
 	SceneActor_ApplyActorCueThenWait(20, 0, 2);
 	Engine_ActorSetAnimationAndWait(20, 3);
 	Engine_EventWait(20);
@@ -466,9 +466,9 @@ static void EV11_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
-		Engine_EventSetMessage((s32)MsgKuupuappuManShouldStealFromAnother);
+		Engine_EventSetMessage(MsgKuupuappuManShouldStealFromAnother);
 	else
-		Engine_EventSetMessage((s32)MsgKuupuappuHowPunishPrisoners);
+		Engine_EventSetMessage(MsgKuupuappuHowPunishPrisoners);
 	SceneActor_RunActorCommandWithFlag91(11);
 	Engine_EventEnd();
 }
@@ -478,11 +478,11 @@ static void EV13_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuGroupTravelersWasStrangeBunch);
+		Engine_EventSetMessage(MsgKuupuappuGroupTravelersWasStrangeBunch);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuWithRoadOutOnlyWay);
+		Engine_EventSetMessage(MsgKuupuappuWithRoadOutOnlyWay);
 	}
 	SceneActor_RunActorCommandWithFlag91(13);
 	Engine_EventEnd();
@@ -494,11 +494,11 @@ static void EV14_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuBetWasThoseThreeCreeps);
+		Engine_EventSetMessage(MsgKuupuappuBetWasThoseThreeCreeps);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuWhereDidIvanGoBy);
+		Engine_EventSetMessage(MsgKuupuappuWhereDidIvanGoBy);
 		if (Engine_GameFlagIsSet(2) != 0)
 			++gEventWork->message;
 	}
@@ -512,9 +512,9 @@ static void EV15_PSYNERGY(void)
 	Object_GetById(15)->timer |= 2;
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
-		Engine_EventSetMessage((s32)MsgKuupuappuSupposeDoesntMatterHowRich);
+		Engine_EventSetMessage(MsgKuupuappuSupposeDoesntMatterHowRich);
 	else
-		Engine_EventSetMessage((s32)MsgKuupuappuMustStrongerThanLookHave);
+		Engine_EventSetMessage(MsgKuupuappuMustStrongerThanLookHave);
 	SceneActor_RunActorCommandWithFlag91(15);
 	Engine_EventEnd();
 	Object_GetById(15)->timer &= 1;
@@ -524,9 +524,9 @@ static void EV16_PSYNERGY(void)
 {
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
-		Engine_EventSetMessage((s32)MsgKuupuappuEveryoneKnowsThoseThreeAt);
+		Engine_EventSetMessage(MsgKuupuappuEveryoneKnowsThoseThreeAt);
 	else
-		Engine_EventSetMessage((s32)MsgKuupuappuFeelMuchBetter);
+		Engine_EventSetMessage(MsgKuupuappuFeelMuchBetter);
 	SceneActor_RunActorCommandWithFlag91(16);
 	Engine_EventEnd();
 }
@@ -538,17 +538,17 @@ static void EV19_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuStealingInMidstVolcanicEruption);
+		Engine_EventSetMessage(MsgKuupuappuStealingInMidstVolcanicEruption);
 		Engine_ActorSetAnimation(19, 0);
 		Engine_EventWait(2);
 	}
 	else if (Engine_GameFlagIsSet(0x858) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuCarefulSearchWillRevealPassage);
+		Engine_EventSetMessage(MsgKuupuappuCarefulSearchWillRevealPassage);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuIfBringMeBoneIll);
+		Engine_EventSetMessage(MsgKuupuappuIfBringMeBoneIll);
 	}
 	Engine_EventShowMessage(19, 0);
 	Engine_EventEnd();
@@ -558,7 +558,7 @@ static void EV19_PSYNERGY(void)
 static void EV21_PSYNERGY(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuSneakWastingTime);
+	Engine_EventSetMessage(MsgKuupuappuSneakWastingTime);
 	SceneActor_RunActorCommandWithFlag91(21);
 	Engine_EventEnd();
 }
@@ -790,7 +790,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
 					Engine_EventWaitForScreen();
 					Engine_EventWait(30);
 					Engine_ActorRunRepeatedMotion(2, 2);
-					Engine_EventSetMessage((s32)MsgKuupuappuWelcomeBackTwo);
+					Engine_EventSetMessage(MsgKuupuappuWelcomeBackTwo);
 					Engine_EventShowMessageAndWait(2, 0, 20);
 					Engine_ActorSetAnimationAndWait(0, 3);
 					Actor_SetSpeed(2, 0xcccc, 0x6666);
@@ -827,7 +827,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
 					Engine_EventWaitForScreen();
 					Engine_EventWait(30);
 					Engine_ActorRunRepeatedMotion(2, 2);
-					Engine_EventSetMessage((s32)MsgKuupuappuWelcomeBackTwo);
+					Engine_EventSetMessage(MsgKuupuappuWelcomeBackTwo);
 					Engine_EventShowMessageAndWait(2, 0, 20);
 					Engine_ActorSetAnimationAndWait(0, 3);
 					Actor_SetSpeed(2, 0xcccc, 0x6666);

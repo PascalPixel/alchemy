@@ -137,12 +137,12 @@ static void EV10_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaTheGroundStillShakes);
+		Engine_EventSetMessage(MsgHaidiaTheGroundStillShakes);
 		Engine_EventShowMessage(10, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaYourGrandpaIsTheMayor);
+		Engine_EventSetMessage(MsgHaidiaYourGrandpaIsTheMayor);
 		Engine_ActorFaceEachOther(10, ACTOR_PARTY_LEADER, 4);
 		Engine_EventAskYesNo(10, 0);
 	}
@@ -155,19 +155,19 @@ static void EV14_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaSukuretaHasntComeBack);
+		Engine_EventSetMessage(MsgHaidiaSukuretaHasntComeBack);
 		Engine_EventShowMessage(14, 0);
 	}
 	else if (Engine_GameFlagIsSet(flag) == 0)
 	{
 		Engine_GameFlagSet(flag);
-		Engine_EventSetMessage((s32)MsgHaidiaDoYouNeedToGo);
+		Engine_EventSetMessage(MsgHaidiaDoYouNeedToGo);
 		Engine_ActorFaceEachOther(14, ACTOR_PARTY_LEADER, 4);
 		Engine_EventAskYesNo(14, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaDontGoBeyondSukuretasCottage);
+		Engine_EventSetMessage(MsgHaidiaDontGoBeyondSukuretasCottage);
 		Engine_ActorFaceEachOther(14, ACTOR_PARTY_LEADER, 4);
 		Engine_EventShowMessage(14, 0);
 	}
@@ -180,7 +180,7 @@ static void EV18_TALK(void)
 	if (GameFlag_IsSet(0x807) == 0)
 	{
 		GameFlag_Set(0x807);
-		Engine_EventSetMessage((s32)MsgHaidiaYouMakeMeSoMad);
+		Engine_EventSetMessage(MsgHaidiaYouMakeMeSoMad);
 		Actor_ShowEmote(18, 0x103, 0);
 		Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 18, 20);
 		Event_ShowMessageAndWait(18, 0, 6);
@@ -195,7 +195,7 @@ static void EV18_TALK(void)
 	else
 	{
 		Actor_ShowEmote(18, 0x103, 0);
-		Engine_EventSetMessage((s32)MsgHaidiaIllGetYouForMy);
+		Engine_EventSetMessage(MsgHaidiaIllGetYouForMy);
 		Event_ShowMessageAndWait(18, 0, 20);
 	}
 	Engine_EventEnd();
@@ -206,11 +206,11 @@ static void EV21_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x202) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaIToldGeraldItWas);
+		Engine_EventSetMessage(MsgHaidiaIToldGeraldItWas);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaItWontRainForSome);
+		Engine_EventSetMessage(MsgHaidiaItWontRainForSome);
 	}
 	Engine_EventShowMessage(21, 0);
 	Engine_EventEnd();
@@ -220,7 +220,7 @@ static void SceneDialogue_RunActor10LineAndFlag81f(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 10, 20);
-	Engine_EventSetMessage((s32)MsgHaidiaIsJasmineBackYet);
+	Engine_EventSetMessage(MsgHaidiaIsJasmineBackYet);
 	Engine_EventShowMessage(10, 0);
 	Engine_GameFlagSet(0x81f);
 	Engine_EventEnd();
@@ -232,7 +232,7 @@ static void EV17_TALK(void)
 	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
 	Engine_TaskWait(10);
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-	Engine_EventSetMessage((s32)MsgHaidiaIFeltAnotherOne);
+	Engine_EventSetMessage(MsgHaidiaIFeltAnotherOne);
 	Event_ShowMessageAndWait(17, 0, 20);
 	Actor_FaceActor(17, ACTOR_PARTY_LEADER, 20);
 	Event_ShowMessage(17, 0);
@@ -245,7 +245,7 @@ static void SceneDialogue_RunActorNineteenDialogue(void)
 	Engine_ActorRunRepeatedMotion(19, 2);
 	Engine_EventWait(20);
 	Engine_ActorFaceActor(19, ACTOR_PARTY_LEADER, 20);
-	Engine_EventSetMessage((s32)MsgHaidiaNoTravelersSinceTheEruption);
+	Engine_EventSetMessage(MsgHaidiaNoTravelersSinceTheEruption);
 	Engine_EventAskYesNo(19, 0);
 	Engine_GameFlagSet(0x307);
 	Engine_EventEnd();
@@ -329,7 +329,7 @@ static void EV08_TOUCH(void)
 	if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0 && Engine_GameFlagIsSet(0x87a) == 0)
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage((s32)MsgHaidiaYouCantBeRobin);
+		Engine_EventSetMessage(MsgHaidiaYouCantBeRobin);
 		Engine_EventOpenMessage(21, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
@@ -402,7 +402,7 @@ static void FieldScene_RunScene373SequenceC(void)
 	Actor_SetSpeed(JASMINE, 0x10000, 0x8000);
 	Actor_WalkToAndWait(JASMINE, 110, 0x11b);
 	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, JASMINE, 2);
-	Engine_EventSetMessage((s32)MsgHaidiaSukuretaIsWaitingForUs);
+	Engine_EventSetMessage(MsgHaidiaSukuretaIsWaitingForUs);
 	if (leader->x.fixed < jasmine->x.fixed)
 	{
 		Event_ShowMessageAndWait(0xa005, 0, 2);
@@ -440,7 +440,7 @@ static void EV20_TOUCH(void)
 		Actor_SetSpeed(0, 0x10000, 0x8000);
 		Engine_ActorSetAnimation(0, 1);
 		Engine_EventWait(2);
-		Engine_EventSetMessage((s32)MsgHaidiaRrruffRrrruff);
+		Engine_EventSetMessage(MsgHaidiaRrruffRrrruff);
 		Engine_EventShowMessageAndWait(15, 0, 2);
 		Engine_EventShowMessageAndWait(16, 0, 2);
 		rec = (s32 *)Object_GetById(0);
@@ -458,7 +458,7 @@ static void EV20_TOUCH(void)
 			Engine_MapRedraw();
 		} while (n != 40);
 		Engine_EventWait(60);
-		Engine_MessageShowCentered((s32)MsgHaidiaPuppiesPlayingOver, 1);
+		Engine_MessageShowCentered(MsgHaidiaPuppiesPlayingOver, 1);
 		n = 0;
 		Engine_EventWait(6);
 		do
@@ -483,7 +483,7 @@ static void EV21_TOUCH(void)
 	{
 		Engine_EventBegin();
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-		msg = (s32)MsgHaidiaRrruffRrrruff;
+		msg = MsgHaidiaRrruffRrrruff;
 		Engine_EventSetMessage(msg);
 		Event_ShowMessageAndWait(15, 0, 2);
 		Event_ShowMessageAndWait(16, 0, 2);
@@ -556,7 +556,7 @@ static void EV50_TOUCH(void)
 	Actor_FaceDirection(22, FACING_SOUTH, 20);
 	Engine_ActorStartRepeatedMotion(22, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgHaidiaNotSneakingUpMtAleph);
+	Engine_EventSetMessage(MsgHaidiaNotSneakingUpMtAleph);
 	Event_AskYesNo(22, 0);
 	record = Actor_Get(22);
 	record->update = (void (*)(union FieldObject *))SceneActor_RunStep18WhenTargetSet;
@@ -605,7 +605,7 @@ static void HaidiaMura_AskAboutSneakingToAleph(s32 a0, s32 a1)
 	record = Object_GetById(ACTOR_PARTY_LEADER);
 	record->scale_x = 0x10000;
 	record->scale_y = 0x10000;
-	Engine_EventSetMessage((s32)MsgHaidiaNotSneakingUpMtAleph);
+	Engine_EventSetMessage(MsgHaidiaNotSneakingUpMtAleph);
 	Event_AskYesNo(22, 0);
 	record = Actor_Get(22);
 	record->update = (void (*)(union FieldObject *))SceneActor_RunStep18WhenTargetSet;
@@ -780,7 +780,7 @@ static void HouseScene_RunRepairMorning(void)
 	leader->scale_x = 0x10000;
 	leader->scale_y = 0x10000;
 
-	Engine_EventSetMessage((s32)MsgHaidiaGoodJob);
+	Engine_EventSetMessage(MsgHaidiaGoodJob);
 	Engine_ActorJump(ACTOR_DORA, 2, 20);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_STEP, 20);
@@ -818,7 +818,7 @@ static void HouseScene_RunRepairMorning(void)
 	Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-	Engine_EventSetMessage((s32)MsgHaidiaWorkingYourselvesBone);
+	Engine_EventSetMessage(MsgHaidiaWorkingYourselvesBone);
 	Actor_WalkToAndWait(ACTOR_DORA, 386, 841);
 	Engine_EventWait(10);
 	Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 60);
@@ -836,7 +836,7 @@ static void HouseScene_RunRepairMorning(void)
 	Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 60);
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgHaidiaDevastatedWhenKyle);
+	Engine_EventSetMessage(MsgHaidiaDevastatedWhenKyle);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
 	Actor_WalkToAndWait(ACTOR_DORA, 386, 825);
 	Engine_EventWait(10);
@@ -981,7 +981,7 @@ static void HouseScene_RunRepairMorning(void)
 	Engine_EventWait(40);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
 
-	Engine_EventSetMessage((s32)MsgHaidiaAsStubbornAsYourFather);
+	Engine_EventSetMessage(MsgHaidiaAsStubbornAsYourFather);
 	Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 3, 0);
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 3);
 	Engine_EventWait(30);
@@ -1355,7 +1355,7 @@ static void FieldScene_RunSecondaryActorSequence(void)
 	Engine_EventBegin();
 	Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
 	Actor_FaceActor(8, ACTOR_PARTY_LEADER, 20);
-	msg = (s32)MsgHaidiaAh;
+	msg = MsgHaidiaAh;
 	Engine_EventSetMessage(msg);
 	Engine_ActorStartRepeatedMotion(8, 2);
 	Event_ShowMessageAndWait(8, 0, 20);
@@ -1439,7 +1439,7 @@ static void FieldScene_RunPrimaryActorSequence(void)
 	}
 	Actor_WalkToAndWait(GERALD, 0x15a, 0x2e9);
 	Actor_FaceDirection(GERALD, 0xd000, 20);
-	Engine_EventSetMessage((s32)MsgHaidiaHowHaveYouBeen);
+	Engine_EventSetMessage(MsgHaidiaHowHaveYouBeen);
 	Event_ShowMessage(GERALD, 0);
 	Engine_ActorRunRepeatedMotion(9, 2);
 	Actor_ShowEmote(9, 0x100, 0);
@@ -1485,7 +1485,7 @@ static void FieldScene_RunPrimaryActorSequence(void)
 	}
 	Event_ShowMessageAndWait(GERALD, 0, 20);
 	Actor_FaceDirection(GERALD, 0xd000, 10);
-	Engine_EventSetMessage((s32)MsgHaidiaEverProtectFamily);
+	Engine_EventSetMessage(MsgHaidiaEverProtectFamily);
 	Event_ShowMessage(GERALD, 0);
 	Engine_ActorSetAnimationAndWait(9, 3);
 	Event_ShowMessageAndWait(9, 0, 20);
@@ -1533,7 +1533,7 @@ static void FieldScene_RunCompanionActorSequence(void)
 	Actor_ShowEmote(ACTOR_D, 0x100, 40);
 	Engine_ActorRunRepeatedMotion(ACTOR_D, 2);
 	Actor_FaceDirection(ACTOR_D, 0xd000, 10);
-	Engine_EventSetMessage((s32)MsgHaidiaIUsedToPlayHere);
+	Engine_EventSetMessage(MsgHaidiaIUsedToPlayHere);
 	Event_ShowMessageAndWait(ACTOR_D, 0, 40);
 	Actor_FaceActor(ACTOR_D, ACTOR_PARTY_LEADER, 20);
 	Event_ShowMessage(ACTOR_D, 0);
@@ -1685,7 +1685,7 @@ static void FieldScene_RunLargeStagingSequence(void)
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 11);
 	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, (s32)gLeaderHammerAction);
 	Graphics_EnableObjLayerAndCallbacks();
-	msg = (s32)MsgHaidiaRepairCaption;
+	msg = MsgHaidiaRepairCaption;
 	UiText_ShowCenteredMessage(msg, 0, 0);
 	ObjectDispatch_StopCallbacksAndHideLayers();
 	Camera_MoveTo(0x1530000, 0xa00000, 0x4950000, 0);
@@ -2157,7 +2157,7 @@ static void Scene_RepairTheHouse(void)
 	scene->scale_x = 0x10000;
 	scene->scale_y = 0x10000;
 	Engine_ActorJump(ACTOR_DORA, 2, 20);
-	Engine_EventSetMessage((s32)MsgHaidiaGoodJob);
+	Engine_EventSetMessage(MsgHaidiaGoodJob);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x1000, 10);
 	HaidiaMura_MoveActorAlongLowerZPath(21, 5, 6, 0);
@@ -2193,7 +2193,7 @@ static void Scene_RepairTheHouse(void)
 		Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
 	}
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-	Engine_EventSetMessage((s32)MsgHaidiaWorkingYourselvesBone);
+	Engine_EventSetMessage(MsgHaidiaWorkingYourselvesBone);
 	Actor_WalkToAndWait(ACTOR_DORA, 386, 841);
 	Engine_EventWait(10);
 	Actor_FaceDirection(ACTOR_DORA, 0xd000, 60);
@@ -2208,7 +2208,7 @@ static void Scene_RepairTheHouse(void)
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
 	Actor_FaceDirection(ACTOR_DORA, 0xd000, 60);
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
-	Engine_EventSetMessage((s32)MsgHaidiaDevastatedWhenKyle);
+	Engine_EventSetMessage(MsgHaidiaDevastatedWhenKyle);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
 	Actor_WalkToAndWait(ACTOR_DORA, 386, 825);
 	Engine_EventWait(10);
@@ -2345,7 +2345,7 @@ static void Scene_RepairTheHouse(void)
 		gEventWork->message++;
 	}
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-	Engine_EventSetMessage((s32)MsgHaidiaAsStubbornAsYourFather);
+	Engine_EventSetMessage(MsgHaidiaAsStubbornAsYourFather);
 	Actor_ShowEmote(ACTOR_DORA, 259, 0);
 	Engine_ActorRunRepeatedMotion(ACTOR_DORA, 3);
 	Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
@@ -2839,7 +2839,7 @@ static void Effect_PlayStepSound(void)
 static void EV24_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgHaidiaDoorWontOpen, 1);
+	Engine_MessageShowCentered(MsgHaidiaDoorWontOpen, 1);
 	Engine_EventEnd();
 }
 

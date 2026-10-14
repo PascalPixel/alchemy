@@ -186,7 +186,7 @@ static void EV16_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKorimaToldHolyTrees);
+		Engine_EventSetMessage(MsgKorimaToldHolyTrees);
 		Engine_EventAskYesNo(16, 0);
 	}
 	Engine_EventEnd();
@@ -267,7 +267,7 @@ static void EV10_TOUCH(void)
 	Engine_EventWait(20);
 	Actor_ShowEmote(8, 0x100, 40);
 	Engine_ActorRunRepeatedMotion(8, 2);
-	Engine_EventSetMessage((s32)MsgKorimaGoingCrossBridge);
+	Engine_EventSetMessage(MsgKorimaGoingCrossBridge);
 	Engine_EventShowMessage(8, 0);
 	Engine_CameraSetSpeed(0x6666, 0xccc);
 	Camera_MoveTo(0xa80000, 0, 0xea0000, 1);
@@ -568,7 +568,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	}
 	Engine_EventWait(40);
 	Engine_ActorStartRepeatedMotion(GERALD, 1);
-	Engine_EventSetMessage((s32)MsgKorimaQuiet);
+	Engine_EventSetMessage(MsgKorimaQuiet);
 	FieldScene_RunPairedStepA(1, 20);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, GERALD, 0);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -679,7 +679,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
 	FieldScene_RunPairedStepB(0, 0x6000, 10);
 	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	Engine_EventSetMessage((s32)MsgKorimaWhatIsIt);
+	Engine_EventSetMessage(MsgKorimaWhatIsIt);
 	FieldScene_RunPairedStepA(1, 10);
 	FieldScene_RunPairedStepB(2, 0xc000, 20);
 	Engine_ActorSetAnimationAndWait(IWAN, 3);
@@ -900,14 +900,14 @@ static void FieldScene_RunExtendedActorSequence(void)
 	{
 		Engine_ActorRunRepeatedMotion(MEARI, 2);
 		Engine_EventWait(10);
-		Engine_EventSetMessage((s32)MsgKorimaKnowThoseFieldsWere);
+		Engine_EventSetMessage(MsgKorimaKnowThoseFieldsWere);
 		FieldScene_RunPairedStepA(3, 40);
 	}
 	Engine_ActorStartRepeatedMotion(GERALD, 1);
 	Actor_ShowEmote(GERALD, 0x101, 0);
 	Engine_EventWait(80);
 	Engine_ActorRunRepeatedMotion(IWAN, 2);
-	Engine_EventSetMessage((s32)MsgKorimaWasOurPsynergy);
+	Engine_EventSetMessage(MsgKorimaWasOurPsynergy);
 	FieldScene_RunPairedStepA(2, 40);
 	Engine_ActorRunRepeatedMotion(GERALD, 3);
 	Engine_EventWait(40);
@@ -1102,7 +1102,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Engine_ActorRunRepeatedMotion(IWAN, 2);
 	Engine_EventWait(60);
 	FieldScene_RunPairedStepB(2, 0xc000, 10);
-	Engine_EventSetMessage((s32)MsgKorimaWatchOutItsHappeningAgain);
+	Engine_EventSetMessage(MsgKorimaWatchOutItsHappeningAgain);
 	FieldScene_RunPairedStepA(2, 10);
 	FieldScene_RunPairedStepB(1, 0xc000, 10);
 	FieldScene_RunPairedStepB(0, 0xc000, 10);
@@ -1294,7 +1294,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 			Actor_ShowEmote(IWAN, 0x102, 0);
 			Actor_ShowEmote(MEARI, 0x102, 40);
 			FieldScene_RunPairedStepB(1, 0x4000, 20);
-			Engine_EventSetMessage((s32)MsgKorimaHesAsStumpedAsWe);
+			Engine_EventSetMessage(MsgKorimaHesAsStumpedAsWe);
 			FieldScene_RunPairedStepA(1, 20);
 			Engine_ActorSetAnimationAndWait(IWAN, 3);
 			FieldScene_RunPairedStepA(2, 20);
@@ -1308,7 +1308,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 		Engine_EventWait(20);
 		Engine_ActorSetAnimationAndWait(GERALD, 3);
 		Engine_EventWait(10);
-		Engine_EventSetMessage((s32)MsgKorimaYoureRobinThereIsntMuch);
+		Engine_EventSetMessage(MsgKorimaYoureRobinThereIsntMuch);
 		FieldScene_RunPairedStepA(1, 10);
 		Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
 		FieldScene_RunPairedStepB(0, 0x6000, 20);
@@ -1375,7 +1375,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 			Actor_ShowEmote(IWAN, 0x105, 0);
 			Engine_EventWait(40);
 			Engine_ActorSetAnimationAndWait(IWAN, 3);
-			Engine_EventSetMessage((s32)MsgKorimaThatsReliefRobinThoughtYoud);
+			Engine_EventSetMessage(MsgKorimaThatsReliefRobinThoughtYoud);
 			FieldScene_RunPairedStepA(2, 20);
 			if (KorimaMura_LayoutFlag != 0)
 			{

@@ -96,7 +96,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 static void FieldScene_RunBranchedSteps1FF1(s32 a)
 {
-	s32 k = (s32)MsgTorebiRunBabisSoldiers;
+	s32 k = MsgTorebiRunBabisSoldiers;
 
 	Engine_EventSetMessage(k);
 	Engine_EventOpenMessage(a, 0);
@@ -123,7 +123,7 @@ static void RunOpeningAuxiliarySequence(s32 a)
 	{
 		GameFlag_Set(512);
 		GameFlag_Clear(0x969);
-		Event_SetMessage((s32)MsgTorebiWeHaveJustEnoughExtra);
+		Event_SetMessage(MsgTorebiWeHaveJustEnoughExtra);
 		Event_ShowMessage(a, 0);
 		Event_Wait(10);
 		t = v << 16;
@@ -146,7 +146,7 @@ static void RunOpeningAuxiliarySequence(s32 a)
 		Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 96);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 		Event_Wait(20);
-		c = (s32)MsgTorebiUseFourBeds;
+		c = MsgTorebiUseFourBeds;
 		Event_SetMessage(c);
 		Event_OpenMessage(a, 0);
 		if (Event_ChooseYesNo(0, 0) == 0)
@@ -185,7 +185,7 @@ static void TorebiKyuden_OfferRest(s32 a0)
 		Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 96);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 		Event_Wait(20);
-		base6_2241 = (s32)MsgTorebiCameRestBefore;
+		base6_2241 = MsgTorebiCameRestBefore;
 		Event_SetMessage(base6_2241);
 		Event_OpenMessage(a0, 0);
 		if (Event_ChooseYesNo(0, 0) == 0)
@@ -207,7 +207,7 @@ static void TorebiKyuden_OfferRest(s32 a0)
 	}
 	else
 	{
-		Event_SetMessage((s32)MsgTorebiTiredFeelFreeRest);
+		Event_SetMessage(MsgTorebiTiredFeelFreeRest);
 		Event_OpenMessage(a0, 0);
 	}
 	Event_End();
@@ -215,7 +215,7 @@ static void TorebiKyuden_OfferRest(s32 a0)
 
 static void FieldScene_RunBranchedSteps2006(s32 a)
 {
-	s32 k = (s32)MsgTorebiPlanningEnterColosso;
+	s32 k = MsgTorebiPlanningEnterColosso;
 
 	Engine_EventSetMessage(k);
 	Engine_EventOpenMessage(a, 0);
@@ -243,7 +243,7 @@ static void RunMiddleAuxiliarySequence(s32 a)
 	Event_Begin();
 	q = (u8 *)TorebiKyuden_MiddleActionScript;
 	Actor_EnableActionCallback(a, q);
-	Event_SetMessage((s32)MsgTorebiCantFightBecauseLittleIndigestion);
+	Event_SetMessage(MsgTorebiCantFightBecauseLittleIndigestion);
 	Event_ShowMessage(a, 0);
 	Actor_Stop(a);
 	obj->scale_y = 0x10000;
@@ -275,7 +275,7 @@ static void RunMiddleAuxiliarySequence(s32 a)
 static void EV06_PSYNERGY(s32 unused0, s32 a1)
 {
 	Event_Begin();
-	Event_SetMessage((s32)MsgTorebiEvenIfEscapedBabiPalace);
+	Event_SetMessage(MsgTorebiEvenIfEscapedBabiPalace);
 	Event_ShowMessage(a1, 0);
 	if (GameFlag_IsSet(0x968) == 0)
 	{
@@ -296,7 +296,7 @@ static void EV06_PSYNERGY(s32 unused0, s32 a1)
 
 static void SceneDialogue_ShowMessage22a8Branch(s32 a)
 {
-	s32 k = (s32)MsgTorebiMeetBabi;
+	s32 k = MsgTorebiMeetBabi;
 
 	Engine_EventSetMessage(k);
 	Engine_EventOpenMessage(a, 0);
@@ -309,7 +309,7 @@ static void SceneDialogue_ShowMessage22a8Branch(s32 a)
 
 static void SceneDialogue_RunChoiceSequence22ab(s32 no)
 {
-	s32 msg = (s32)MsgTorebiEasternShoresKaragol;
+	s32 msg = MsgTorebiEasternShoresKaragol;
 
 	Engine_EventSetMessage(msg);
 	Engine_EventOpenMessage(no, 0);
@@ -326,7 +326,7 @@ static void EV16_TALK(void)
 
 	Engine_EventBegin();
 	Battle_ResetEffectCounter();
-	msg = (s32)MsgTorebiFoundCloakBall;
+	msg = MsgTorebiFoundCloakBall;
 	Engine_EventSetMessage(msg);
 	Engine_EventShowMessage(-1, 0);
 	Engine_EventWait(10);
@@ -362,7 +362,7 @@ static void FieldScene_RunScene3b8SequenceB(void)
 	struct FieldActor *record;
 
 	Event_Begin();
-	Event_SetMessage((s32)MsgTorebiGetUp);
+	Event_SetMessage(MsgTorebiGetUp);
 	Actor_Get(0)->active = 0;
 	Actor_Get(10)->active = 0;
 	Task_Wait(1);
@@ -518,7 +518,7 @@ static void EV70_SEARCH(void)
 	dir = (record->facing + 0x2000) & -0x4000;
 	Event_Begin();
 	Battle_ResetEffectCounter();
-	Event_SetMessage((s32)MsgTorebiLikeSleep);
+	Event_SetMessage(MsgTorebiLikeSleep);
 	Event_OpenMessage(-1, 0);
 	if (Event_ChooseYesNo(0, 0) != 0)
 	{
@@ -699,7 +699,7 @@ static void EV60_TOUCH(void)
 	GameFlag_Set(2411);
 	Event_Begin();
 	Battle_ResetEffectCounter();
-	Event_SetMessage((s32)MsgTorebiIodemIodem);
+	Event_SetMessage(MsgTorebiIodemIodem);
 	Actor_WalkToAndWait(0, 520, 424);
 	Actor_FaceDirection(0, 57344, 0);
 	Camera_MoveTo(36700160, -1, 24117248, 1);
@@ -957,7 +957,7 @@ static void FieldScene_RunBranchingActorSequence(void)
 	u8				  *work;
 
 	Event_Begin();
-	Event_SetMessage((s32)MsgTorebiCallsName);
+	Event_SetMessage(MsgTorebiCallsName);
 	Actor_SetAnimation(ACTOR_PARTY_LEADER, 31);
 	actor = Actor_Get(ACTOR_PARTY_LEADER);
 	Actor_SetSpriteFlags(actor, 0);
@@ -1236,7 +1236,7 @@ static void FieldScene_RunMainCutsceneSequence(void)
 
 	Event_PlayCue(30);
 	Event_Begin();
-	Event_SetMessage((s32)MsgTorebiWaitingCompanions);
+	Event_SetMessage(MsgTorebiWaitingCompanions);
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	Camera_MoveTo(0xd80000, -1, 0x2e00000, 1);
@@ -2233,7 +2233,7 @@ static void RunSupplementalSequenceOne(void)
 	Actor_WalkToAndWait(0, 200, 272);
 	Actor_FaceDirection(0, 49152, 0);
 	Event_Wait(20);
-	p = (s32)MsgTorebiArent;
+	p = MsgTorebiArent;
 	Event_SetMessage(p);
 	Event_OpenMessage(8, 0);
 	if (Event_ChooseYesNo(0, 0) == 0)
@@ -2276,19 +2276,19 @@ static void SceneDialogue_ThankForSavingBabi(void)
 	if (GameFlag_IsSet(0x96d) == 0)
 	{
 		GameFlag_Set(0x96d);
-		Event_SetMessage((s32)MsgTorebiRobinIdReallyLikeThank);
+		Event_SetMessage(MsgTorebiRobinIdReallyLikeThank);
 		Event_ShowMessage(9, 0);
 	}
 	else
 	{
-		Event_SetMessage((s32)MsgTorebiBabiWaitingForAtColosseum);
+		Event_SetMessage(MsgTorebiBabiWaitingForAtColosseum);
 		Event_ShowMessage(9, 0);
 	}
 }
 
 static void SceneDialogue_AskIfLeavingPalace(s32 a)
 {
-	s32 k = (s32)MsgTorebiWarriorsWhoStayed;
+	s32 k = MsgTorebiWarriorsWhoStayed;
 
 	Engine_EventSetMessage(k);
 	Engine_EventOpenMessage(a, 0);
@@ -2307,8 +2307,8 @@ static void SceneDialogue_AskIfLeavingPalace(s32 a)
 static void EV90_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
-	Engine_MessageShowCentered((s32)MsgTorebiItsFilledWithFreshClean, 1);
+	Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
+	Engine_MessageShowCentered(MsgTorebiItsFilledWithFreshClean, 1);
 	Engine_EventEnd();
 }
 

@@ -299,7 +299,7 @@ static void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
 			Object_GetById(0)->steering_flags |= ACTOR_FACES_MOTION;
 			Engine_ActorSetAnimation(13, 1);
 			Engine_ActorFaceDirection(0, 0x4000, 0);
-			Engine_EventSetMessage((s32)MsgSuharaSandstorm);
+			Engine_EventSetMessage(MsgSuharaSandstorm);
 			Actor_ShowEmote(13, 0x106, 60);
 			Engine_EventShowMessage(13, 0);
 			Actor_ShowEmote(13, 0x102, 60);
@@ -373,7 +373,7 @@ static void EV09_TOUCH(void)
 			{
 				GameFlag_Set(0x9b5);
 				Engine_EventBegin();
-				Engine_EventSetMessage((s32)MsgSuharaNowhereFound);
+				Engine_EventSetMessage(MsgSuharaNowhereFound);
 				record = Actor_Get(ACTOR_PARTY_LEADER);
 				if (record != 0)
 				{

@@ -65,11 +65,11 @@ static void EV14_TALK(void)
 	{
 		if (Engine_GameFlagIsSet(0x895) == 0)
 		{
-			Engine_EventSetMessage((s32)MsgShianXianHasMartialArtsBut);
+			Engine_EventSetMessage(MsgShianXianHasMartialArtsBut);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgShianHsusInjuryTaughtGoodLesson);
+			Engine_EventSetMessage(MsgShianHsusInjuryTaughtGoodLesson);
 		}
 		Engine_EventShowMessage(14, 0);
 	}
@@ -90,11 +90,11 @@ static void EV15_TALK(void)
 	{
 		if (Engine_GameFlagIsSet(0x895) == 0)
 		{
-			Engine_EventSetMessage((s32)MsgShianMartialArtistsCantUseHeavy);
+			Engine_EventSetMessage(MsgShianMartialArtistsCantUseHeavy);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgShianKungFuMakesQuickDoes);
+			Engine_EventSetMessage(MsgShianKungFuMakesQuickDoes);
 		}
 		Engine_EventShowMessage(15, 0);
 	}
@@ -114,12 +114,12 @@ static void EV16_TALK(void)
 	}
 	else if (Engine_GameFlagIsSet(0x895) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgShianXiansSpecialArmorNotSuited);
+		Engine_EventSetMessage(MsgShianXiansSpecialArmorNotSuited);
 		Engine_EventShowMessage(16, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgShianDoPlanCrossDesertWarrior);
+		Engine_EventSetMessage(MsgShianDoPlanCrossDesertWarrior);
 		Engine_EventAskYesNo(16, 0);
 	}
 	Engine_EventEnd();
@@ -140,11 +140,11 @@ static void EV17_TALK(void)
 	{
 		if (Engine_GameFlagIsSet(0x895) == 0)
 		{
-			Engine_EventSetMessage((s32)MsgShianWarriorsShouldLearnAboutTowns);
+			Engine_EventSetMessage(MsgShianWarriorsShouldLearnAboutTowns);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgShianWeHaveFewCustomersThese);
+			Engine_EventSetMessage(MsgShianWeHaveFewCustomersThese);
 		}
 		Engine_EventShowMessage(17, 0);
 	}
@@ -155,7 +155,7 @@ static void EV10_TALK(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgShianSomethingWrongOnSilkRoad);
+	Engine_EventSetMessage(MsgShianSomethingWrongOnSilkRoad);
 	Engine_EventAskYesNo(10, 0);
 	Engine_EventEnd();
 }
@@ -164,7 +164,7 @@ static void EV12_TALK(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgShianDidMonstersInAltinSpit);
+	Engine_EventSetMessage(MsgShianDidMonstersInAltinSpit);
 	Engine_EventAskYesNo(12, 0);
 	Engine_EventEnd();
 }
@@ -173,7 +173,7 @@ static void EV09_TALK(void)
 {
 
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgShianWarriorWelcome);
+	Engine_EventSetMessage(MsgShianWarriorWelcome);
 	Engine_EventShowMessageAndWait(9, 0, 20);
 	Engine_ActorFaceActor(9, 10, 0);
 	Engine_EventWait(60);

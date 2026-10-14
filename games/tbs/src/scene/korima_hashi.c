@@ -261,9 +261,9 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
 	SceneActor_SetPairZeroAndValue(0, 0x6000, 10);
 	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	Engine_EventSetMessage((s32)MsgKorimaMatterIvan);
+	Engine_EventSetMessage(MsgKorimaMatterIvan);
 	Event_SayThenWait(GERALD, 10);
-	Engine_EventSetMessage((s32)MsgKorimaSparklyStuffOnGround);
+	Engine_EventSetMessage(MsgKorimaSparklyStuffOnGround);
 	SceneActor_SetPairZeroAndValue(2, 0xc000, 20);
 	Engine_ActorSetAnimationAndWait(IWAN, 3);
 	Event_SayThenWait(IWAN, 20);
@@ -478,14 +478,14 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	{
 		Engine_ActorRunRepeatedMotion(MEARI, 2);
 		Engine_EventWait(10);
-		Engine_EventSetMessage((s32)MsgKorimaKnowThoseFieldsWere);
+		Engine_EventSetMessage(MsgKorimaKnowThoseFieldsWere);
 		Event_SayThenWait(MEARI, 40);
 	}
 	Engine_ActorStartRepeatedMotion(GERALD, 1);
 	Actor_ShowEmote(GERALD, 0x101, 0);
 	Engine_EventWait(80);
 	Engine_ActorRunRepeatedMotion(IWAN, 2);
-	Engine_EventSetMessage((s32)MsgKorimaWasOurPsynergy);
+	Engine_EventSetMessage(MsgKorimaWasOurPsynergy);
 	Event_SayThenWait(IWAN, 40);
 	Engine_ActorRunRepeatedMotion(GERALD, 3);
 	Engine_EventWait(40);
@@ -679,7 +679,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Engine_ActorRunRepeatedMotion(IWAN, 2);
 	Engine_EventWait(60);
 	SceneActor_SetPairZeroAndValue(2, 0xc000, 10);
-	Engine_EventSetMessage((s32)MsgKorimaWatchOutItsHappeningAgain);
+	Engine_EventSetMessage(MsgKorimaWatchOutItsHappeningAgain);
 	Event_SayThenWait(IWAN, 10);
 	SceneActor_SetPairZeroAndValue(1, 0xc000, 10);
 	SceneActor_SetPairZeroAndValue(0, 0xc000, 10);
@@ -871,7 +871,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 			Actor_ShowEmote(MEARI, 0x102, 0);
 			Engine_EventWait(40);
 			SceneActor_SetPairZeroAndValue(1, 0x4000, 20);
-			Engine_EventSetMessage((s32)MsgKorimaHesAsStumpedAsWe);
+			Engine_EventSetMessage(MsgKorimaHesAsStumpedAsWe);
 			Event_SayThenWait(GERALD, 20);
 			Engine_ActorSetAnimationAndWait(IWAN, 3);
 			Event_SayThenWait(IWAN, 20);
@@ -885,7 +885,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 		Engine_EventWait(20);
 		Engine_ActorSetAnimationAndWait(GERALD, 3);
 		Engine_EventWait(10);
-		Engine_EventSetMessage((s32)MsgKorimaYoureRobinThereIsntMuch);
+		Engine_EventSetMessage(MsgKorimaYoureRobinThereIsntMuch);
 		Event_SayThenWait(GERALD, 10);
 		Actor_FaceDirection(GERALD, FACING_SOUTH, 0);
 		SceneActor_SetPairZeroAndValue(0, 0x6000, 20);
@@ -952,7 +952,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 			Actor_ShowEmote(IWAN, 0x105, 0);
 			Engine_EventWait(40);
 			Engine_ActorSetAnimationAndWait(IWAN, 3);
-			Engine_EventSetMessage((s32)MsgKorimaThatsReliefRobinThoughtYoud);
+			Engine_EventSetMessage(MsgKorimaThatsReliefRobinThoughtYoud);
 			Event_SayThenWait(IWAN, 20);
 			if (*party_flag != 0)
 			{

@@ -85,17 +85,17 @@ static void EV13_TALK(void)
 	KorimaKi_PlayGesture(11, 1);
 	if (Engine_GameFlagIsSet(0x845) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgKorimaForestKolimaAlive);
+		Engine_EventSetMessage(MsgKorimaForestKolimaAlive);
 		Engine_EventShowMessage(9, 0);
 	}
 	else if (GameFlag_IsSet(0x84c) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgKorimaLeaveBeforeForest);
+		Engine_EventSetMessage(MsgKorimaLeaveBeforeForest);
 		Engine_EventShowMessage(9, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKorimaWho);
+		Engine_EventSetMessage(MsgKorimaWho);
 		Engine_EventShowMessageAndWait(9, 0, 20);
 		KorimaKi_PlayGesture(11, 0);
 		Engine_EventWait(60);
@@ -123,7 +123,7 @@ static void KorimaKi_TalkToToreto(void)
 	if (GameFlag_IsSet(0x845) != 0)
 	{
 		KorimaKi_PlayGesture(10, 1);
-		Engine_EventSetMessage((s32)MsgKorimaNowHaveSuchPowerAxe);
+		Engine_EventSetMessage(MsgKorimaNowHaveSuchPowerAxe);
 		Event_ShowMessage(8, 0);
 		KorimaKi_PlayGesture(10, 0);
 	}
@@ -132,7 +132,7 @@ static void KorimaKi_TalkToToreto(void)
 		if (GameFlag_IsSet(0x844) != 0)
 		{
 			KorimaKi_PlayGesture(10, 1);
-			Engine_EventSetMessage((s32)MsgKorimaSilence2);
+			Engine_EventSetMessage(MsgKorimaSilence2);
 			Event_ShowMessage(8, 0);
 			KorimaKi_PlayGesture(10, 0);
 			record = PartyInventory_FindOwner(184);
@@ -146,7 +146,7 @@ static void KorimaKi_TalkToToreto(void)
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgKorimaSilence);
+			Engine_EventSetMessage(MsgKorimaSilence);
 			Event_ShowMessage(8, 0);
 			ColorBuffer_ApplyTarget(0x406218, 1);
 			Engine_ColorBufferInterpolate(20);
@@ -167,11 +167,11 @@ static void EV13_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x845) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgKorimaMustHorribleBeyondRiverAm);
+		Engine_EventSetMessage(MsgKorimaMustHorribleBeyondRiverAm);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKorimaHealingWatersMercuryLighthouseMight);
+		Engine_EventSetMessage(MsgKorimaHealingWatersMercuryLighthouseMight);
 	}
 	Engine_EventShowMessage(9, 0);
 	Engine_EventEnd();
@@ -182,11 +182,11 @@ static void EV12_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x845) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgKorimaKnowCannotStopButPlease);
+		Engine_EventSetMessage(MsgKorimaKnowCannotStopButPlease);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKorimaPeopleKolimaForgiveMe);
+		Engine_EventSetMessage(MsgKorimaPeopleKolimaForgiveMe);
 	}
 	Engine_EventShowMessage(8, 0);
 	Engine_EventEnd();
@@ -251,7 +251,7 @@ static void RunEventScript01(void)
 		record->steering_flags = ACTOR_FACES_MOTION | record->steering_flags;
 	}
 	Engine_EventWait(80);
-	Engine_EventSetMessage((s32)MsgKorimaControlTretsHeartShallNot);
+	Engine_EventSetMessage(MsgKorimaControlTretsHeartShallNot);
 	Event_ShowMessageAndWait(0x200e, 0, 20);
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_EventWait(20);
@@ -287,7 +287,7 @@ static void PaletteScene_RunActorTransitionSequence(void)
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x148, 212);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
 	Event_PlayCue(17);
-	Engine_MessageShowCentered((s32)MsgKorimaWaterHermesSeepedIntoTret, 1);
+	Engine_MessageShowCentered(MsgKorimaWaterHermesSeepedIntoTret, 1);
 	Actor_SetSpeed(GERALD, 0x10000, 0x8000);
 	Actor_SetSpeed(IWAN, 0x10000, 0x8000);
 	object = Actor_Get(ACTOR_PARTY_LEADER);
@@ -366,7 +366,7 @@ static void PaletteScene_RunActorTransitionSequence(void)
 	KorimaKi_PlayGesture(10, 1);
 	Engine_EventWait(40);
 	Event_PlayCue(7);
-	Engine_EventSetMessage((s32)MsgKorimaFeelGreatPowerSpreadingThrough);
+	Engine_EventSetMessage(MsgKorimaFeelGreatPowerSpreadingThrough);
 	Event_ShowMessage(8, 0);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_ActorStartRepeatedMotion(GERALD, 2);
@@ -475,7 +475,7 @@ static void PaletteScene_RunActorTransitionSequence(void)
 	Engine_EventWait(40);
 	KorimaKi_PlayGesture(10, 1);
 	Engine_EventWait(10);
-	Engine_EventSetMessage((s32)MsgKorimaShouldDoPeopleKolimaCursed);
+	Engine_EventSetMessage(MsgKorimaShouldDoPeopleKolimaCursed);
 	Event_ShowMessage(0x8008, 0);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
 	Engine_ActorSetAnimation(GERALD, 3);
@@ -502,7 +502,7 @@ static void PaletteScene_RunActorTransitionSequence(void)
 	Event_ShowMessage(GERALD, 0);
 	KorimaKi_PlayGesture(10, 4);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgKorimaWasIndeedAngryPeopleHad);
+	Engine_EventSetMessage(MsgKorimaWasIndeedAngryPeopleHad);
 	Event_ShowMessage(0x8008, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	Actor_FaceDirection(GERALD, FACING_NORTH, 0);
@@ -653,7 +653,7 @@ static void PaletteScene_RunActorTransitionSequence(void)
 	KorimaKi_PlayGesture(10, 4);
 	KorimaKi_PlayGesture(10, 4);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgKorimaOweGreatDebtHaveSaved);
+	Engine_EventSetMessage(MsgKorimaOweGreatDebtHaveSaved);
 	Event_ShowMessage(0x8008, 0);
 	KorimaKi_PlayGesture(11, 4);
 	KorimaKi_PlayGesture(11, 4);

@@ -579,7 +579,7 @@ static void FieldScene_RunScene3a4SequenceB(void)
 static void EV83_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
+	Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
 	Engine_AudioPlayCue(125);
 	FieldScene_RunScene3a4SequenceB();
 	Engine_TaskWait(20);
@@ -610,7 +610,7 @@ static void EV50_SEARCH_5(void)
 	extern u8 ArutinYama_RiseTimer[];
 
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
+	Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
 	Engine_AudioPlayCue(125);
 	FieldScene_RunScene3a4SequenceA();
 	Engine_TaskWait(20);
@@ -623,7 +623,7 @@ static void EV50_SEARCH_6(void)
 	extern u8 ArutinYama_RiseTimer[];
 
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
+	Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
 	Event_PlayCue(125);
 	if (GameFlag_IsSet(0x326) != 0)
 	{
@@ -647,7 +647,7 @@ static void EV50_SEARCH_7(void)
 	extern u8 ArutinYama_RiseTimer[];
 
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
+	Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
 	Event_PlayCue(125);
 	if (GameFlag_IsSet(0x327) != 0)
 	{
@@ -929,7 +929,7 @@ static void EV12_SEARCH(void)
 	s32				   msg;
 
 	Engine_EventBegin();
-	msg = (s32)MsgArutinWatchFallingRocks;
+	msg = MsgArutinWatchFallingRocks;
 	Engine_MessageShowCentered(msg, 1);
 	if (GameFlag_IsSet(0x908) == 0 && GameFlag_IsSet(0xf14) == 0)
 	{
@@ -2078,7 +2078,7 @@ static void RunEventScript01(void)
 	Actor_FaceDirection(MEARI, 0xc000, 40);
 	Engine_ActorRunRepeatedMotion(GERALD, 1);
 	Actor_FaceDirection(GERALD, 0xe000, 10);
-	Engine_EventSetMessage((s32)MsgArutinWeDidRobinWeBeat);
+	Engine_EventSetMessage(MsgArutinWeDidRobinWeBeat);
 	Event_ShowMessageAndWait(GERALD, 0, 10);
 	Engine_ActorRunRepeatedMotion(IWAN, 1);
 	Actor_FaceDirection(IWAN, 0xa000, 10);
@@ -2100,7 +2100,7 @@ static void RunEventScript01(void)
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(MEARI, 2);
-	Engine_EventSetMessage((s32)MsgArutinGuardianStatuesWereCreatedLong);
+	Engine_EventSetMessage(MsgArutinGuardianStatuesWereCreatedLong);
 	Event_ShowMessage(MEARI, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
 	Actor_ShowEmote(GERALD, 0x102, 60);

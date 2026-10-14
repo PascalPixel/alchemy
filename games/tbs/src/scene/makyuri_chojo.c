@@ -412,7 +412,7 @@ static void EV05_TOUCH(void)
 	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 20);
 	Engine_CameraWaitForMove();
 	Engine_ActorSetAnimationAndWait(GERALD, 4);
-	Engine_EventSetMessage((s32)MsgMakyuriLighthouseAlreadyLit);
+	Engine_EventSetMessage(MsgMakyuriLighthouseAlreadyLit);
 	Event_ShowMessageAndWait(GERALD, 0, 20);
 	Actor_SetAttachedEffect(MEARI, 0x102);
 	Engine_EventWait(60);
@@ -824,7 +824,7 @@ static void RunScene59Sequence(void)
 	Engine_ActorRunRepeatedMotion(GERALD, 2);
 	Engine_EventWait(20);
 	Actor_FaceDirection(GERALD, FACING_EAST, 20);
-	Engine_EventSetMessage((s32)MsgMakyuriGot);
+	Engine_EventSetMessage(MsgMakyuriGot);
 	Event_ShowMessageAndWait(GERALD, 0, 20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);

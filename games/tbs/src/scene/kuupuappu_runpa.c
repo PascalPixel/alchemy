@@ -124,7 +124,7 @@ static void EV08_TALK(void)
 	Engine_ActorFaceActor(ACTOR_THIEF_LEADER, ACTOR_RIGHT_THIEF, 0);
 	Engine_EventWait(40);
 
-	Engine_EventSetMessage((s32)MsgKuupuappuThiefLeaderSilencesThieves);
+	Engine_EventSetMessage(MsgKuupuappuThiefLeaderSilencesThieves);
 	Engine_EventShowMessage(ACTOR_THIEF_LEADER, 0);
 
 	Engine_ActorStartRepeatedMotion(ACTOR_LEFT_THIEF, 2);
@@ -147,7 +147,7 @@ static void EV09_TALK(void)
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgKuupuappuLeftThiefRegretsEscape);
+	Engine_EventSetMessage(MsgKuupuappuLeftThiefRegretsEscape);
 	Engine_EventShowMessage(ACTOR_LEFT_THIEF, 0);
 	Engine_EventEnd();
 }
@@ -157,7 +157,7 @@ static void EV10_TALK(void)
 	Engine_EventBegin();
 	Engine_ActorSetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgKuupuappuRightThiefRegretsStaying);
+	Engine_EventSetMessage(MsgKuupuappuRightThiefRegretsStaying);
 	Engine_EventShowMessage(ACTOR_RIGHT_THIEF, 0);
 	Engine_EventEnd();
 }
@@ -165,7 +165,7 @@ static void EV10_TALK(void)
 static void EV08_PSYNERGY(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuThiefLeaderThoughts);
+	Engine_EventSetMessage(MsgKuupuappuThiefLeaderThoughts);
 	Engine_EventShowMessage(ACTOR_THIEF_LEADER, 0);
 	Engine_EventEnd();
 }
@@ -173,7 +173,7 @@ static void EV08_PSYNERGY(void)
 static void EV09_PSYNERGY(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuLeftThiefThoughts);
+	Engine_EventSetMessage(MsgKuupuappuLeftThiefThoughts);
 	Engine_EventShowMessage(ACTOR_LEFT_THIEF, 0);
 	Engine_EventEnd();
 }
@@ -181,7 +181,7 @@ static void EV09_PSYNERGY(void)
 static void EV10_PSYNERGY(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuRightThiefThoughts);
+	Engine_EventSetMessage(MsgKuupuappuRightThiefThoughts);
 	Engine_EventShowMessage(ACTOR_RIGHT_THIEF, 0);
 	Engine_EventEnd();
 }
@@ -281,8 +281,8 @@ const struct SceneEvent gJailThiefEvents[] = {
 const struct SceneEvent gJailPrisonerEvents[] = {
 	{ EVENT_EXIT, TRIGGER_VAULT_DOOR, CONDITION_ALWAYS, JAIL_EXIT_TO_VAULT_REVISIT },
 	{ EVENT_TALK, ACTOR_PRISONER, CONDITION_ALWAYS,
-      (s32)MsgKuupuappuPrisonerRegretsFight },
+      MsgKuupuappuPrisonerRegretsFight },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRISONER, CONDITION_ALWAYS,
-      (s32)MsgKuupuappuPrisonerThoughts },
+      MsgKuupuappuPrisonerThoughts },
 	{ SCENE_EVENTS_END },
 };

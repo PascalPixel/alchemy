@@ -107,8 +107,8 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 static void EV90_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
-	Engine_MessageShowCentered((s32)MsgBiribinoBottomNotVisibleLooksVery, 1);
+	Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
+	Engine_MessageShowCentered(MsgBiribinoBottomNotVisibleLooksVery, 1);
 	Engine_EventEnd();
 }
 
@@ -134,28 +134,28 @@ const struct SceneEvent *Scene_GetEvents(void)
 static void EV11_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgBiribinoAreaOffLimitsThoseWithout, 1);
+	Engine_MessageShowCentered(MsgBiribinoAreaOffLimitsThoseWithout, 1);
 	Engine_EventEnd();
 }
 
 static void EV10_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgBiribinoMccoysHiddenWarehouseDoNot, 1);
+	Engine_MessageShowCentered(MsgBiribinoMccoysHiddenWarehouseDoNot, 1);
 	Engine_EventEnd();
 }
 
 static void SceneDialogue_RunLine1470(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgBiribinoThereTreeLooksLikePerson, 1);
+	Engine_MessageShowCentered(MsgBiribinoThereTreeLooksLikePerson, 1);
 	Engine_EventEnd();
 }
 
 static void EV09_TALK_1(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgBiribinoItsTreeButAlmostLooks);
+	Engine_EventSetMessage(MsgBiribinoItsTreeButAlmostLooks);
 	if (GameFlag_IsSet(0x301) != 0)
 	{
 		gEventWork->message++;
@@ -168,7 +168,7 @@ static void EV09_TALK_1(void)
 static void EV12_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgBiribinoDidSeeTreeAtEntrance);
+	Engine_EventSetMessage(MsgBiribinoDidSeeTreeAtEntrance);
 	Engine_EventAskYesNo(12, 0);
 	Engine_EventEnd();
 }
@@ -176,7 +176,7 @@ static void EV12_TALK(void)
 static void EV14_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgBiribinoHaveTriedHeadingSoutheastFrom);
+	Engine_EventSetMessage(MsgBiribinoHaveTriedHeadingSoutheastFrom);
 	Engine_EventAskYesNo(14, 0);
 	Engine_EventEnd();
 }
@@ -184,7 +184,7 @@ static void EV14_TALK(void)
 static void EV21_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgBiribinoWasTurnedIntoTreeFor);
+	Engine_EventSetMessage(MsgBiribinoWasTurnedIntoTreeFor);
 	Engine_EventAskYesNo(21, 0);
 	Engine_EventEnd();
 }
@@ -192,7 +192,7 @@ static void EV21_TALK(void)
 static void EV16_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgBiribinoCurseWasBrokenThanksEfforts);
+	Engine_EventSetMessage(MsgBiribinoCurseWasBrokenThanksEfforts);
 	Engine_EventAskYesNo(16, 0);
 	Engine_EventEnd();
 }
@@ -200,7 +200,7 @@ static void EV16_TALK(void)
 static void EV18_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgBiribinoHaveEverBeenVillageImil);
+	Engine_EventSetMessage(MsgBiribinoHaveEverBeenVillageImil);
 	Engine_EventAskYesNo(18, 0);
 	Engine_EventEnd();
 }
@@ -313,7 +313,7 @@ static void EV11_PSYNERGY(void)
 		Engine_ActorSetSpritePriority(11, 2);
 		RunSceneTransitionEffect(0, 11);
 		Engine_TaskWait(10);
-		Engine_EventSetMessage((s32)MsgBiribinoThankSavedMeFromBeing);
+		Engine_EventSetMessage(MsgBiribinoThankSavedMeFromBeing);
 		Event_ShowMessage(11, 0);
 		Engine_PsynergyCancel();
 		Engine_TaskWait(10);
@@ -352,7 +352,7 @@ static void EV13_TOUCH(void)
 			{
 				Actor_FaceDirection(13, 0x5000, 20);
 				Actor_ShowEmote(13, 0x100, 20);
-				Engine_EventSetMessage((s32)MsgBiribinoYoureGuy);
+				Engine_EventSetMessage(MsgBiribinoYoureGuy);
 				Event_ShowMessageAndWait(13, 0, 10);
 				Actor_ShowEmote(12, 0x100, 0);
 			}
@@ -360,7 +360,7 @@ static void EV13_TOUCH(void)
 			{
 				Actor_FaceDirection(12, 0x3000, 20);
 				Actor_ShowEmote(12, 0x100, 20);
-				Engine_EventSetMessage((s32)MsgBiribinoYoureGuy);
+				Engine_EventSetMessage(MsgBiribinoYoureGuy);
 				Event_ShowMessageAndWait(12, 0, 10);
 				Actor_ShowEmote(13, 0x100, 0);
 			}
@@ -395,7 +395,7 @@ static void EV13_TOUCH(void)
 			Engine_EventWait(10);
 			Engine_ActorSetAnimationAndWait(14, 3);
 			Event_ShowMessageAndWait(14, 0, 10);
-			Engine_MessageShowCentered((s32)MsgBiribinoJillGaveRobinSpecialGift, 1);
+			Engine_MessageShowCentered(MsgBiribinoJillGaveRobinSpecialGift, 1);
 			gEventWork->message++;
 			Engine_ItemShowFound(ITEM_HARD_NUT, 3);
 			Engine_PartyGiveItem(ITEM_HARD_NUT, 0);

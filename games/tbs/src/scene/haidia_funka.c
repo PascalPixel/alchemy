@@ -96,7 +96,7 @@ static void RunEventScript01(void)
 	Work_SetValuesIfNonNegative(-1, -1, 0xe666);
 	Engine_MapRenderWaitForValues();
 	Engine_EventWait(60);
-	Engine_EventSetMessage((s32)MsgHaidiaMtAlephWasInactive);
+	Engine_EventSetMessage(MsgHaidiaMtAlephWasInactive);
 	Actor_ShowEmote(8, 0x102, 0);
 	Engine_EventWait(60);
 	Event_ShowMessage(8, 0);

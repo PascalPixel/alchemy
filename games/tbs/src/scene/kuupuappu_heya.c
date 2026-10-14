@@ -196,11 +196,11 @@ static void EV19_TALK(void)
 	{
 		if (Engine_GameFlagIsSet(0x855) == 0)
 		{
-			Engine_EventSetMessage((s32)MsgKuupuappuMasterHammetIsntOnlyOne);
+			Engine_EventSetMessage(MsgKuupuappuMasterHammetIsntOnlyOne);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgKuupuappuWeFoundOurStolenWeapons);
+			Engine_EventSetMessage(MsgKuupuappuWeFoundOurStolenWeapons);
 		}
 		Engine_EventShowMessage(19, 0);
 	}
@@ -220,11 +220,11 @@ static void EV20_TALK(void)
 	{
 		if (Engine_GameFlagIsSet(0x855) == 0)
 		{
-			Engine_EventSetMessage((s32)MsgKuupuappuThievesDidntHitOurHouse);
+			Engine_EventSetMessage(MsgKuupuappuThievesDidntHitOurHouse);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgKuupuappuIfYoureGonnaHeadInto);
+			Engine_EventSetMessage(MsgKuupuappuIfYoureGonnaHeadInto);
 		}
 		Engine_EventShowMessage(20, 0);
 	}
@@ -244,11 +244,11 @@ static void EV23_TALK(void)
 	{
 		if (Engine_GameFlagIsSet(0x855) == 0)
 		{
-			Engine_EventSetMessage((s32)MsgKuupuappuEveryoneThinksOurGuestsThieves);
+			Engine_EventSetMessage(MsgKuupuappuEveryoneThinksOurGuestsThieves);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgKuupuappuTheyHidThoseStolenGoods);
+			Engine_EventSetMessage(MsgKuupuappuTheyHidThoseStolenGoods);
 		}
 		Engine_EventShowMessage(23, 0);
 	}
@@ -263,23 +263,23 @@ static void EV250_RAISED(void)
 #if EDITION_INTERNATIONAL
 	Battle_InitializeRenderObject();
 #endif
-	Engine_EventSetMessage((s32)MsgKuupuappuWeDontHaveTimeFor);
+	Engine_EventSetMessage(MsgKuupuappuWeDontHaveTimeFor);
 	Engine_EventShowMessage(GERALD, 0);
 }
 
 static void SceneDialogue_ShowEmptyBarrel(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgKuupuappuRobinCheckedBarrel, 1);
-	Engine_MessageShowCentered((s32)MsgKuupuappuButDidntFindAnything, 1);
+	Engine_MessageShowCentered(MsgKuupuappuRobinCheckedBarrel, 1);
+	Engine_MessageShowCentered(MsgKuupuappuButDidntFindAnything, 1);
 	Engine_EventEnd();
 }
 
 static void SceneDialogue_ShowEmptyChest(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgKuupuappuRobinCheckedChest, 1);
-	Engine_MessageShowCentered((s32)MsgKuupuappuButChestWasEmpty, 1);
+	Engine_MessageShowCentered(MsgKuupuappuRobinCheckedChest, 1);
+	Engine_MessageShowCentered(MsgKuupuappuButChestWasEmpty, 1);
 	Engine_EventEnd();
 }
 
@@ -323,7 +323,7 @@ static void SceneDialogue_PromptAndCountSkip(s32 x)
 static void SceneDialogue_RunActorElevenDialogue(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuMisterFunSeeStrangeNew);
+	Engine_EventSetMessage(MsgKuupuappuMisterFunSeeStrangeNew);
 	Engine_ActorSetAnimation(11, 1);
 	SceneDialogue_PromptAndCountSkip(11);
 	Engine_EventEnd();
@@ -332,7 +332,7 @@ static void SceneDialogue_RunActorElevenDialogue(void)
 static void EV15_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuIvanHasGreatPowersWouldnt);
+	Engine_EventSetMessage(MsgKuupuappuIvanHasGreatPowersWouldnt);
 	SceneDialogue_PromptAndCountSkip(15);
 	Actor_FaceDirection(15, 0x8000, 0);
 	Engine_EventEnd();
@@ -349,12 +349,12 @@ static void EV21_TALK(void)
 	}
 	else if (Engine_GameFlagIsSet(0x855) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuDidJustArriveInTown);
+		Engine_EventSetMessage(MsgKuupuappuDidJustArriveInTown);
 		SceneDialogue_PromptAndCountSkip(21);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuWithBridgeOutWillQuite);
+		Engine_EventSetMessage(MsgKuupuappuWithBridgeOutWillQuite);
 		Engine_EventShowMessage(21, 0);
 	}
 	Engine_EventEnd();
@@ -365,11 +365,11 @@ static void EV09_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuIfOnlyTheseRocksWere);
+		Engine_EventSetMessage(MsgKuupuappuIfOnlyTheseRocksWere);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuThankGoodnessThoseThievesWere);
+		Engine_EventSetMessage(MsgKuupuappuThankGoodnessThoseThievesWere);
 	}
 	ActorPresentation_RunActorModeOneThenZeroWithStep(9);
 	Engine_EventEnd();
@@ -380,11 +380,11 @@ static void EV12_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuThievesHidStolenTreasureIn);
+		Engine_EventSetMessage(MsgKuupuappuThievesHidStolenTreasureIn);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuJustMeOrAmMissing);
+		Engine_EventSetMessage(MsgKuupuappuJustMeOrAmMissing);
 	}
 	ActorPresentation_RunActorModeOneThenZeroWithStep(12);
 	Engine_EventEnd();
@@ -399,7 +399,7 @@ static void FieldScene_RunFlag856DialogueBranch(void)
 	{
 		if (Engine_GameFlagIsSet(g) == 0)
 		{
-			Engine_EventSetMessage((s32)MsgKuupuappuYoureGoingHelpIvan);
+			Engine_EventSetMessage(MsgKuupuappuYoureGoingHelpIvan);
 			ActorPresentation_RunActorModeOneThenZeroWithStep(16);
 			Engine_EventWait(10);
 			SceneEffect_ApplyThreeValuesAndFinish(16, 3, 20);
@@ -407,12 +407,12 @@ static void FieldScene_RunFlag856DialogueBranch(void)
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgKuupuappuPleaseLookAfterIvan);
+			Engine_EventSetMessage(MsgKuupuappuPleaseLookAfterIvan);
 		}
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuCouldSomeonePleaseHelpIvan);
+		Engine_EventSetMessage(MsgKuupuappuCouldSomeonePleaseHelpIvan);
 	}
 	ActorPresentation_RunActorModeOneThenZeroWithStep(16);
 	Engine_EventEnd();
@@ -421,7 +421,7 @@ static void FieldScene_RunFlag856DialogueBranch(void)
 static void SceneDialogue_ShowLine128E(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuThoseThreeStrangersSureHave);
+	Engine_EventSetMessage(MsgKuupuappuThoseThreeStrangersSureHave);
 	ActorPresentation_RunActorModeOneThenZeroWithStep(18);
 	Engine_EventEnd();
 }
@@ -436,7 +436,7 @@ static void SceneActor_StepActor24AnimationByFacing(void)
 	p = Object_GetById(24);
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(24, 2);
-	Engine_EventSetMessage((s32)MsgKuupuappuOwStop);
+	Engine_EventSetMessage(MsgKuupuappuOwStop);
 	Engine_EventShowMessage(24, 0);
 	Engine_ActorSetSpeed(24, 0x40000, 0x20000);
 	if ((u32)((p->facing & 0xf000) - 0x5000) <= 0x6000)
@@ -502,7 +502,7 @@ static void KuupuappuHeya_RunActor25Response(void)
 	half = actor->timer >> 1;
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(25, 2);
-	Engine_EventSetMessage((s32)MsgKuupuappuNoLeaveAlone);
+	Engine_EventSetMessage(MsgKuupuappuNoLeaveAlone);
 	Engine_EventShowMessage(25, 0);
 	Engine_ActorSetSpeed(25, 0x38000, 0x1c000);
 	switch (actor->timer)
@@ -571,7 +571,7 @@ struct StopRecord
 static void EV10_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuDidThoseThievesComeFrom);
+	Engine_EventSetMessage(MsgKuupuappuDidThoseThievesComeFrom);
 	SceneDialogue_PromptAndCountSkip(10);
 	Engine_EventEnd();
 }
@@ -579,7 +579,7 @@ static void EV10_TALK(void)
 static void SceneDialogue_RunActor11Line(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuMyFatherWorriedAboutThose);
+	Engine_EventSetMessage(MsgKuupuappuMyFatherWorriedAboutThose);
 	ActorPresentation_RunActorModeOneThenZeroWithStep(11);
 	Engine_EventEnd();
 }
@@ -587,7 +587,7 @@ static void SceneDialogue_RunActor11Line(void)
 static void EV14_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKuupuappuHeardDefeatedThoseThieves);
+	Engine_EventSetMessage(MsgKuupuappuHeardDefeatedThoseThieves);
 	SceneDialogue_PromptAndCountSkip(14);
 	Engine_EventEnd();
 }
@@ -597,7 +597,7 @@ static void FieldScene_RunScene383SequenceC(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(0x857) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuYouWereSuchGreatHelp);
+		Engine_EventSetMessage(MsgKuupuappuYouWereSuchGreatHelp);
 		SceneActor_SetModeZeroAndValue(16, 20);
 		SceneEffect_ApplyThreeValuesAndFinish(16, 3, 20);
 		SceneActor_SetModeZeroAndValue(16, 30);
@@ -610,7 +610,7 @@ static void FieldScene_RunScene383SequenceC(void)
 		gEventWork->message++;
 		if (PartyInventory_HasSpace() == 0)
 		{
-			Engine_EventSetMessage(((s32)MsgKuupuappuYouWereSuchGreatHelp + 3));
+			Engine_EventSetMessage((MsgKuupuappuYouWereSuchGreatHelp + 3));
 			SceneActor_SetModeZeroAndValue(16, 20);
 			Engine_EventEnd();
 			return;
@@ -618,7 +618,7 @@ static void FieldScene_RunScene383SequenceC(void)
 		GameFlag_Set(0x857);
 		Engine_PartyGiveItem(ITEM_WATER_OF_LIFE, 0);
 	}
-	Engine_EventSetMessage((s32)MsgKuupuappuHeadingOutBeyondGomaRange);
+	Engine_EventSetMessage(MsgKuupuappuHeadingOutBeyondGomaRange);
 	Event_OpenMessage(16, 0);
 	Engine_EventWait(20);
 	if (Engine_EventChooseYesNo(0, 0) != 0)
@@ -635,12 +635,12 @@ static void KuupuappuHeya_OfferBone(void)
 	SceneActor_SetPairZeroAndValue(18, 0, 2);
 	if (GameFlag_IsSet(0x85b) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuHaveLotLeftoverBonesFrom);
+		Engine_EventSetMessage(MsgKuupuappuHaveLotLeftoverBonesFrom);
 		Event_OpenMessage(18, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuWantMoreBones);
+		Engine_EventSetMessage(MsgKuupuappuWantMoreBones);
 		Event_OpenMessage(18, 0);
 	}
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -654,7 +654,7 @@ static void KuupuappuHeya_OfferBone(void)
 		{
 			Engine_ActorSetAnimationAndWait(18, 4);
 			Engine_EventWait(20);
-			Engine_EventSetMessage((s32)MsgKuupuappuWowHaveManyThingsArent);
+			Engine_EventSetMessage(MsgKuupuappuWowHaveManyThingsArent);
 			Event_ShowMessage(18, 0);
 		}
 		else
@@ -681,11 +681,11 @@ static void EV09_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuOkMisterLetMeSee);
+		Engine_EventSetMessage(MsgKuupuappuOkMisterLetMeSee);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuIfRockWorthlessMaybeThats);
+		Engine_EventSetMessage(MsgKuupuappuIfRockWorthlessMaybeThats);
 	}
 	SceneActor_RunActorCommandWithFlag91(9);
 	Engine_EventEnd();
@@ -696,11 +696,11 @@ static void EV11_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuWonderOutsideWorldLike);
+		Engine_EventSetMessage(MsgKuupuappuWonderOutsideWorldLike);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuFatherLooksSadWorryingLike);
+		Engine_EventSetMessage(MsgKuupuappuFatherLooksSadWorryingLike);
 	}
 	SceneActor_RunActorCommandWithFlag91(11);
 	Engine_EventEnd();
@@ -711,11 +711,11 @@ static void EV12_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuCouldTheyThievesGoodDont);
+		Engine_EventSetMessage(MsgKuupuappuCouldTheyThievesGoodDont);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuGuessNothingInOurHouse);
+		Engine_EventSetMessage(MsgKuupuappuGuessNothingInOurHouse);
 	}
 	SceneActor_RunActorCommandWithFlag91(12);
 	Engine_EventEnd();
@@ -726,11 +726,11 @@ static void EV16_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuTicklesBeingTickledByBoy);
+		Engine_EventSetMessage(MsgKuupuappuTicklesBeingTickledByBoy);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuCaveInGomaRangeDangerous);
+		Engine_EventSetMessage(MsgKuupuappuCaveInGomaRangeDangerous);
 	}
 	SceneActor_RunActorCommandWithFlag91(16);
 	Engine_EventEnd();
@@ -741,15 +741,15 @@ static void EV18_PSYNERGY(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x855) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuMasterHisWifeBlindedBy);
+		Engine_EventSetMessage(MsgKuupuappuMasterHisWifeBlindedBy);
 	}
 	else if (Engine_GameFlagIsSet(0x85b) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuGeeAlwaysGetHungryWhen);
+		Engine_EventSetMessage(MsgKuupuappuGeeAlwaysGetHungryWhen);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuHeReallyLikesBonesWonder);
+		Engine_EventSetMessage(MsgKuupuappuHeReallyLikesBonesWonder);
 	}
 	SceneActor_RunActorCommandWithFlag91(18);
 	Engine_EventEnd();
@@ -776,7 +776,7 @@ static void EV02_TALK(void)
 		SceneEffect_ApplyPairWithValue141(2, 0);
 		Engine_EventWait(40);
 		SceneState_SetValue2ThenFinish();
-		Engine_EventSetMessage((s32)MsgKuupuappuDoPossessStrangePowers);
+		Engine_EventSetMessage(MsgKuupuappuDoPossessStrangePowers);
 		Event_PlayCue(60);
 		Engine_EventWait(30);
 		SceneEffect_ApplyThreeValuesAndFinish(2, 3, 30);
@@ -821,7 +821,7 @@ static void EV02_TALK(void)
 	else
 	{
 		Event_PlayCue(60);
-		Engine_EventSetMessage((s32)MsgKuupuappuWouldReallyWouldHelpMe);
+		Engine_EventSetMessage(MsgKuupuappuWouldReallyWouldHelpMe);
 		Event_OpenMessage(IWAN, 0);
 	}
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -861,7 +861,7 @@ static void Scene_JoinRodSearch(void)
 	Object_GetById(2)->paused = 0;
 	Engine_ActorJump(2, 4, 0);
 	Engine_EventWait(40);
-	mes = (s32)MsgKuupuappuThankHelpBelieve;
+	mes = MsgKuupuappuThankHelpBelieve;
 	Engine_EventSetMessage(mes);
 	Engine_EventWait(20);
 	SceneActor_SetModeZeroAndValue(2, 20);
@@ -1021,7 +1021,7 @@ static void EV08_TALK(void)
 	Actor_SetSpeed(IWAN, 52428, 26214);
 	Engine_ActorRunRepeatedMotion(0, 3);
 	Engine_EventWait(20);
-	base = (s32)MsgKuupuappuVaultCutFree;
+	base = MsgKuupuappuVaultCutFree;
 	Engine_MessageShowCentered(base, 1);
 	base++;
 	Engine_EventSetMessage(base);
@@ -1163,7 +1163,7 @@ static void EV08_TALK(void)
 		Engine_EventWait(40);
 		Engine_ActorFaceActor(1, 10, 0);
 		Engine_ActorFaceActor(2, 10, 0);
-		base = (s32)MsgKuupuappuVaultThievesCaught;
+		base = MsgKuupuappuVaultThievesCaught;
 		Engine_EventSetMessage(base);
 		Engine_ActorRunRepeatedMotion(10, 2);
 		Engine_EventWait(20);
@@ -1220,7 +1220,7 @@ static void EV27_TOUCH(void)
 	if (GameFlag_IsSet(0x854) == 0)
 	{
 		Engine_EventBegin();
-		Engine_EventSetMessage((s32)MsgKuupuappuUhnnUhnn);
+		Engine_EventSetMessage(MsgKuupuappuUhnnUhnn);
 		Event_ShowMessage(8, 0);
 		Engine_EventEnd();
 	}
@@ -1250,7 +1250,7 @@ static void EV10_TOUCH(void)
 	FieldScene_RunSplitTripleSteps(25, 0, 10);
 	Engine_ActorRunRepeatedMotion(24, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgKuupuappuWant);
+	Engine_EventSetMessage(MsgKuupuappuWant);
 	SceneActor_SetModeZeroAndValue(24, 20);
 	Actor_SetAttachedEffect(25, 258);
 	Engine_EventWait(60);
@@ -1311,7 +1311,7 @@ static void EV20_TOUCH(void)
 	Actor_FaceActor(GERALD, ACTOR_PARTY_LEADER, 0);
 	FieldScene_RunSplitTripleSteps(2, 0, 30);
 	Engine_ActorRunRepeatedMotion(IWAN, 1);
-	base = (s32)MsgKuupuappuTheyreActingSuspiciousSomethingsNot;
+	base = MsgKuupuappuTheyreActingSuspiciousSomethingsNot;
 	Engine_EventSetMessage(base);
 	Event_ShowMessage(IWAN, 0);
 	Actor_FaceActor(ACTOR_PARTY_LEADER, IWAN, 0);
@@ -1340,7 +1340,7 @@ static void EV20_TOUCH(void)
 	Engine_EventWait(60);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
 	SceneActor_SetModeZeroAndValue(2, 30);
-	Engine_EventSetMessage((s32)MsgKuupuappuRobinTakeLead);
+	Engine_EventSetMessage(MsgKuupuappuRobinTakeLead);
 	Event_ShowMessage(GERALD, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
 	Engine_EventWait(40);
@@ -1371,7 +1371,7 @@ static void FieldScene_ConfigurePairedActors(void)
 	Engine_EventWait(30);
 	Engine_ActorRunRepeatedMotion(24, 1);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgKuupuappuTheyreBack);
+	Engine_EventSetMessage(MsgKuupuappuTheyreBack);
 	SceneActor_SetModeZeroAndValue(24, 20);
 	Actor_FaceDirection(25, 0, 20);
 	Actor_SetAttachedEffect(25, 0x102);
@@ -1426,7 +1426,7 @@ static void FieldScene_SelectActorPair(void)
 	{
 	case 202:
 	case 203:
-		Engine_EventSetMessage((s32)MsgKuupuappuImSurrounded);
+		Engine_EventSetMessage(MsgKuupuappuImSurrounded);
 		Actor_SetAttachedEffect(25, 0x102);
 		Engine_ActorRunRepeatedMotion(25, 2);
 		SceneActor_SetModeZeroAndValue(25, 20);
@@ -1436,7 +1436,7 @@ static void FieldScene_SelectActorPair(void)
 			break;
 		}
 	case 201:
-		Engine_EventSetMessage((s32)MsgKuupuappuTheresNowhereRun);
+		Engine_EventSetMessage(MsgKuupuappuTheresNowhereRun);
 		Actor_SetAttachedEffect(24, 0x102);
 		Engine_ActorRunRepeatedMotion(24, 2);
 		actor = 24;
@@ -1448,7 +1448,7 @@ static void FieldScene_SelectActorPair(void)
 	Actor_FaceActor(GERALD, IWAN, 0);
 	Engine_ActorRunRepeatedMotion(GERALD, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgKuupuappuNowIvan);
+	Engine_EventSetMessage(MsgKuupuappuNowIvan);
 	SceneActor_SetModeZeroAndValue(1, 20);
 	Engine_ActorRunRepeatedMotion(IWAN, 2);
 	Engine_EventWait(20);
@@ -1546,7 +1546,7 @@ static void KuupuappuHeya_RunBranchingDialogueScene(void)
 	Engine_EventWait(40);
 	Engine_ActorRunRepeatedMotion(1, 1);
 	Engine_EventWait(10);
-	Engine_EventSetMessage((s32)MsgKuupuappuLearn);
+	Engine_EventSetMessage(MsgKuupuappuLearn);
 	SceneActor_SetModeZeroAndValue(1, 20);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
 	SceneActor_SetModeZeroAndValue(2, 20);
@@ -1605,7 +1605,7 @@ static void KuupuappuHeya_RunBranchingDialogueScene(void)
 	}
 	if (v5 == 0)
 	{
-		Engine_EventSetMessage((s32)MsgKuupuappuLeave);
+		Engine_EventSetMessage(MsgKuupuappuLeave);
 		SceneActor_SetModeZeroAndValue(1, 20);
 		SceneActor_SetPairZeroAndValue(1, 0, 20);
 		SceneActor_SetModeZeroAndValue(1, 20);
@@ -1797,7 +1797,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 		Engine_ActorSetAnimation(8, 7);
 		KuupuappuHeya_OpenWindowTransition();
 		Engine_AudioPlayCue(17);
-		Engine_EventSetMessage((s32)MsgKuupuappuUhnnUhnn);
+		Engine_EventSetMessage(MsgKuupuappuUhnnUhnn);
 		SceneActor_SetModeZeroAndValue(8, 10);
 		Engine_EventEnd();
 		break;
@@ -1875,7 +1875,7 @@ static void FieldScene_RunLateSequence(void)
 	KuupuappuHeya_OpenWindowTransition();
 	Engine_EventWait(60);
 	SceneEffect_ApplyThreeValuesAndFinish(10, 3, 20);
-	Engine_EventSetMessage((s32)MsgKuupuappuTheseKidsNothingWorryAbout);
+	Engine_EventSetMessage(MsgKuupuappuTheseKidsNothingWorryAbout);
 	SceneActor_SetModeZeroAndValue(10, 30);
 	SceneActor_SetModeZeroAndValue(8, 30);
 	Actor_WalkTo(11, 0x328, 0x1c8);
@@ -1916,7 +1916,7 @@ static void KuupuappuHeya_RunVaultEvent(void)
 	gEventWork->transition_frames = 32;
 	KuupuappuHeya_OpenWindowTransition();
 	Engine_EventWait(60);
-	Engine_EventSetMessage((s32)MsgKuupuappuWontGoAway);
+	Engine_EventSetMessage(MsgKuupuappuWontGoAway);
 	Engine_ActorRunRepeatedMotion(11, 1);
 	Engine_EventWait(20);
 	SceneActor_SetModeZeroAndValue(11, 30);
@@ -1993,7 +1993,7 @@ static void RunEventScript01(void)
 	Engine_EventWait(30);
 	Engine_ActorEnableActionCallback(12, actions);
 	Engine_EventWait(30);
-	Engine_EventSetMessage((s32)MsgKuupuappuTheyTheyGotUs);
+	Engine_EventSetMessage(MsgKuupuappuTheyTheyGotUs);
 	SceneActor_SetModeZeroAndValue(10, 20);
 	Actor_ShowEmote(8, 0x102, 0);
 	Engine_EventWait(60);
@@ -2089,7 +2089,7 @@ static void RunEventScript01(void)
 	Actor_ShowEmote(IWAN, 0x102, 0);
 	Engine_EventWait(60);
 	SceneEffect_ApplyThreeValuesAndFinish(2, 4, 20);
-	Engine_EventSetMessage((s32)MsgKuupuappuSeeThatsHappened);
+	Engine_EventSetMessage(MsgKuupuappuSeeThatsHappened);
 	SceneActor_SetModeZeroAndValue(2, 20);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
 	SceneEffect_ApplyThreeValuesAndFinish(1, 3, 40);
@@ -2215,7 +2215,7 @@ static void RunDialoguePromptScene(void)
 	Engine_EventWaitForScreen();
 	Engine_EventWait(40);
 	Engine_ActorRunRepeatedMotion(10, 2);
-	aftermath = (s32)MsgKuupuappuYouRobinRightWontForget;
+	aftermath = MsgKuupuappuYouRobinRightWontForget;
 	Engine_EventSetMessage(aftermath);
 	SceneActor_SetModeZeroAndValue(10, 20);
 	Engine_ActorRunRepeatedMotion(9, 1);
@@ -2528,7 +2528,7 @@ static void RunDialoguePromptScene(void)
 	Engine_ActorRunRepeatedMotion(IWAN, 2);
 	obj = (struct FieldActor *)BattleFx_PlayCueAndStartEmitterOnTarget(2, 17, 65);
 	Engine_EventWait(60);
-	rod = (s32)MsgKuupuappuIvanGotShamansRod;
+	rod = MsgKuupuappuIvanGotShamansRod;
 	Engine_MessageShowCentered(rod, 1);
 	Engine_ObjectDispatchRelease(obj);
 	Engine_ActorSetAnimation(17, 2);
@@ -2553,7 +2553,7 @@ static void RunDialoguePromptScene(void)
 
 		if (KuupuappuHeya_GetIwanVenusDjinnCount() != 0)
 		{
-			Engine_EventSetMessage((s32)MsgKuupuappuWaitDontWantTakeYour);
+			Engine_EventSetMessage(MsgKuupuappuWaitDontWantTakeYour);
 			Event_ShowMessage(IWAN, 0);
 			OverlayObject_RunObject2WhenFlagged();
 		}

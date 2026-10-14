@@ -187,7 +187,7 @@ static void EV02_SEARCH(void)
 	obj = Scene_PresentItem(220, 0x2c80000, 0x100000, 0x1d00000);
 	Engine_EventWait(40);
 	UiWork_PushValueSlot(obj, 1);
-	mes = (s32)MsgSoruVenusStarBagged;
+	mes = MsgSoruVenusStarBagged;
 	Engine_MessageShowCentered(mes, 1);
 	Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
 	Actor_FaceDirection(5, FACING_SOUTHEAST, 20);
@@ -287,7 +287,7 @@ static void EV03_SEARCH(void)
 	obj = Scene_PresentItem(221, 0x2c80000, 0x100000, 0x900000);
 	Engine_EventWait(40);
 	UiWork_PushValueSlot(obj, 1);
-	mes = (s32)MsgSoruPutMercuryStar;
+	mes = MsgSoruPutMercuryStar;
 	Engine_MessageShowCentered(mes, 1);
 	Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTHEAST, 0);
 	Actor_FaceDirection(JASMINE, FACING_NORTHEAST, 20);
@@ -399,7 +399,7 @@ static void Scene_BagJupiterStar(void)
 	obj = Scene_PresentItem(223, 0xe80000, 0x100000, 0x1d00000);
 	Engine_EventWait(40);
 	UiWork_PushValueSlot(obj, 1);
-	Engine_MessageShowCentered((s32)MsgSoruJupiterStarBagged, 1);
+	Engine_MessageShowCentered(MsgSoruJupiterStarBagged, 1);
 }
 
 static void FieldScene_StagePairedActors(void)
@@ -470,7 +470,7 @@ static void FieldScene_RunElementalStarDemand(void)
 
 	Engine_AudioPlayCue(61);
 	Engine_ActorSetAnimation(10, 4);
-	Engine_EventSetMessage((s32)MsgSoruLooksLikeTheyveSpottedUs);
+	Engine_EventSetMessage(MsgSoruLooksLikeTheyveSpottedUs);
 	Event_SayThenWait(10, 10);
 	Engine_ActorSetAnimation(11, 4);
 	Event_SayThenWait(11, 30);
@@ -611,7 +611,7 @@ static void FieldScene_RunElementalStarDemand(void)
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(10, 2);
 	Actor_FaceDirection(10, 0xb000, 10);
-	Engine_EventSetMessage((s32)MsgSoruWhyDenyDont);
+	Engine_EventSetMessage(MsgSoruWhyDenyDont);
 	Event_SayThenWait(10, 20);
 	Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
 	Actor_FaceDirection(9, 0x3000, 10);
@@ -684,7 +684,7 @@ static void Scene_OfferGuarantee(void)
 	Engine_EventWait(10);
 	Event_AskYesNo(GERALD, 0);
 	Engine_EventWait(10);
-	Engine_EventSetMessage((s32)MsgSoruMenardiDontYouWantThem);
+	Engine_EventSetMessage(MsgSoruMenardiDontYouWantThem);
 	Event_ShowMessage(ACTOR_MENARDI, 0);
 	Actor_FaceDirection(ACTOR_MENARDI, 0xd000, 10);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -836,7 +836,7 @@ static void Scene_UnmaskGarcia(void)
 	Event_OpenMessage(GERALD, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		mes_a = (s32)MsgSoruGuessTakeElemental;
+		mes_a = MsgSoruGuessTakeElemental;
 		Engine_EventSetMessage(mes_a);
 		Engine_ActorSetAnimationAndWait(GERALD, 3);
 		Engine_EventWait(10);
@@ -850,7 +850,7 @@ static void Scene_UnmaskGarcia(void)
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgSoruRightTake);
+			Engine_EventSetMessage(MsgSoruRightTake);
 			Event_SayThenWait(GERALD, 30);
 		}
 	}
@@ -858,7 +858,7 @@ static void Scene_UnmaskGarcia(void)
 	{
 		if (cnt <= 2)
 		{
-			mes_b = (s32)MsgSoruDontHandOver;
+			mes_b = MsgSoruDontHandOver;
 			Engine_EventSetMessage(mes_b);
 			Engine_ActorRunRepeatedMotion(GERALD, 3);
 			Engine_ActorSetAnimationAndWait(GERALD, 4);
@@ -880,7 +880,7 @@ static void Scene_UnmaskGarcia(void)
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgSoruWontLetGo);
+			Engine_EventSetMessage(MsgSoruWontLetGo);
 			Engine_ActorRunRepeatedMotion(GERALD, 3);
 			Engine_ActorSetAnimationAndWait(GERALD, 4);
 			Event_SayThenWait(1, 10);
@@ -941,7 +941,7 @@ static void Scene_AlexTakesStars(void)
 	Actor_FaceDirection(ACTOR_ALEX, 0x5000, 10);
 	Engine_ActorRunRepeatedMotion(ACTOR_ALEX, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgSoruPermitRelieveElemental);
+	Engine_EventSetMessage(MsgSoruPermitRelieveElemental);
 	Event_ShowMessage(ACTOR_ALEX, 0);
 	Actor_SetPosition(ACTOR_SATUROS, 0x1d50000, 0x15c0000);
 	Engine_EventWait(20);
@@ -956,7 +956,7 @@ static void Scene_AlexTakesStars(void)
 	Actor_WalkToAndWait(GERALD, 0x185, 0x1d4);
 	Actor_FaceDirection(GERALD, 0xd000, 60);
 	Event_SayThenWait(1, 20);
-	UiText_ShowCenteredMessage((s32)MsgSoruPermitRelieveElemental + 4, 1, 10);
+	UiText_ShowCenteredMessage(MsgSoruPermitRelieveElemental + 4, 1, 10);
 	Actor_SetSpeed(GERALD, 0x8000, 0x4000);
 	rec = Object_GetById(GERALD);
 	rec->steering_flags &= ~ACTOR_FACES_MOTION;
@@ -966,7 +966,7 @@ static void Scene_AlexTakesStars(void)
 	rec->steering_flags |= ACTOR_FACES_MOTION;
 	Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
 	Engine_EventWait(10);
-	Engine_EventSetMessage((s32)MsgSoruPermitRelieveElemental + 5);
+	Engine_EventSetMessage(MsgSoruPermitRelieveElemental + 5);
 	Event_SayThenWait(14, 20);
 	Actor_ShowEmote(GERALD, 0x101, 60);
 	Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
@@ -1020,7 +1020,7 @@ static void Scene_AlexTakesStars(void)
 	{
 		Engine_EventWait(10);
 		Engine_ActorSetAnimationAndWait(14, 4);
-		Engine_EventSetMessage((s32)MsgSoruDontWantAnything);
+		Engine_EventSetMessage(MsgSoruDontWantAnything);
 		Event_OpenMessage(ACTOR_ALEX, 0);
 		if (Engine_EventChooseYesNo(1, 0) == 0)
 		{
@@ -1029,7 +1029,7 @@ static void Scene_AlexTakesStars(void)
 				Engine_EventWait(20);
 				Engine_ActorSetAnimationAndWait(14, 4);
 				Engine_EventWait(10);
-				Engine_EventSetMessage((s32)MsgSoruDoubtHowFeel);
+				Engine_EventSetMessage(MsgSoruDoubtHowFeel);
 				Event_OpenMessage(ACTOR_ALEX, 0);
 			} while (Engine_EventChooseYesNo(1, 0) == 0);
 		}
@@ -1037,7 +1037,7 @@ static void Scene_AlexTakesStars(void)
 	Engine_EventWait(30);
 	Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgSoruThankCooperation);
+	Engine_EventSetMessage(MsgSoruThankCooperation);
 	Event_SayThenWait(14, 30);
 	Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
 	Engine_EventWait(10);
@@ -1218,7 +1218,7 @@ static void EV05_SEARCH(void)
 	star = Scene_PresentItem(222, 0xe80000, 0x100000, 0x900000);
 	Engine_EventWait(40);
 	UiWork_PushValueSlot(star, 1);
-	Engine_MessageShowCentered((s32)MsgSoruMarsStarBagged, 1);
+	Engine_MessageShowCentered(MsgSoruMarsStarBagged, 1);
 	Actor_SetPosition(JASMINE, 0x1330000, 0x1150000);
 	Actor_SetPosition(ACTOR_SUKURETA, 0x1330000, 0x1150000);
 	Actor_SetPosition(ACTOR_MENARDI, 0x1330000, 0x1150000);
@@ -1270,15 +1270,15 @@ static void EV09_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(FLAG_STARS_GIVEN_TO_ALEX))
 	{
-		Engine_EventSetMessage((s32)MsgSoruSukuretaIAmResponsible);
+		Engine_EventSetMessage(MsgSoruSukuretaIAmResponsible);
 		Engine_EventShowMessage(ACTOR_SUKURETA, 0);
 	}
 	else
 	{
 		if (Engine_GameFlagIsSet(FLAG_FIRST_STAR_BAGGED) == 0)
-			Engine_EventSetMessage((s32)MsgSoruSukuretaBringTheStarsHere);
+			Engine_EventSetMessage(MsgSoruSukuretaBringTheStarsHere);
 		else
-			Engine_EventSetMessage((s32)MsgSoruSukuretaFetchTheOthers);
+			Engine_EventSetMessage(MsgSoruSukuretaFetchTheOthers);
 		Engine_ActorFaceEachOther(ACTOR_SUKURETA, ACTOR_PARTY_LEADER, 0);
 		Engine_EventWait(10);
 		Engine_EventShowMessage(ACTOR_SUKURETA, 0);
@@ -1291,15 +1291,15 @@ static void EV05_SCRIPT(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(FLAG_STARS_GIVEN_TO_ALEX))
 	{
-		Engine_EventSetMessage((s32)MsgSoruJasmineMyBrotherIsAlive);
+		Engine_EventSetMessage(MsgSoruJasmineMyBrotherIsAlive);
 		Engine_EventShowMessage(JASMINE, 0);
 	}
 	else
 	{
 		if (Engine_GameFlagIsSet(FLAG_FIRST_STAR_BAGGED) == 0)
-			Engine_EventSetMessage((s32)MsgSoruJasmineBeCareful);
+			Engine_EventSetMessage(MsgSoruJasmineBeCareful);
 		else
-			Engine_EventSetMessage((s32)MsgSoruJasmineSukuretaIsGiddy);
+			Engine_EventSetMessage(MsgSoruJasmineSukuretaIsGiddy);
 		Engine_ActorFaceEachOther(JASMINE, ACTOR_PARTY_LEADER, 0);
 		Engine_EventWait(10);
 		Engine_EventShowMessage(JASMINE, 0);
@@ -1310,7 +1310,7 @@ static void EV05_SCRIPT(void)
 static void EV10_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgSoruSaturosBringTheFinalStar);
+	Engine_EventSetMessage(MsgSoruSaturosBringTheFinalStar);
 	Engine_EventShowMessage(ACTOR_SATUROS, 0);
 	Engine_EventEnd();
 }
@@ -1318,7 +1318,7 @@ static void EV10_TALK(void)
 static void EV11_SCRIPT(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgSoruMenardiBringTheFinalGem);
+	Engine_EventSetMessage(MsgSoruMenardiBringTheFinalGem);
 	Engine_EventShowMessage(ACTOR_MENARDI, 0);
 	Engine_EventEnd();
 }
@@ -1326,7 +1326,7 @@ static void EV11_SCRIPT(void)
 static void EV13_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgSoruGarciaSilence);
+	Engine_EventSetMessage(MsgSoruGarciaSilence);
 	Engine_EventShowMessage(ACTOR_GARCIA, 0);
 	Engine_EventEnd();
 }
@@ -1334,7 +1334,7 @@ static void EV13_TALK(void)
 static void EV14_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgSoruAlexOnlyOneLeft);
+	Engine_EventSetMessage(MsgSoruAlexOnlyOneLeft);
 	Engine_EventShowMessage(ACTOR_ALEX, 0);
 	Engine_EventEnd();
 }
@@ -1342,7 +1342,7 @@ static void EV14_TALK(void)
 static void EV01_TOUCH(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgSoruNoStarsOutThere);
+	Engine_EventSetMessage(MsgSoruNoStarsOutThere);
 	Event_SayThenWait(9, 10);
 	Engine_EventEnd();
 }
@@ -1517,7 +1517,7 @@ static void Scene_EnterStarRoom(void)
 	*sukureta_motion = zero;
 	rising->y.fixed = 0x280000;
 	Engine_EventWait(1);
-	Engine_EventSetMessage((s32)MsgSoruSukuretaWhereAreWe);
+	Engine_EventSetMessage(MsgSoruSukuretaWhereAreWe);
 	Event_ShowMessage(ACTOR_SUKURETA, 0);
 	Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
 	Engine_ActorJump(JASMINE, 4, 0);
@@ -1675,7 +1675,7 @@ static void Scene_EnterStarRoom(void)
 	}
 	Actor_FaceDirection(ACTOR_SUKURETA, FACING_NORTH, 30);
 	Event_SayThenWait(ACTOR_SUKURETA, 30);
-	Engine_EventSetMessage((s32)MsgSoruSukuretaTheElementsAreThe);
+	Engine_EventSetMessage(MsgSoruSukuretaTheElementsAreThe);
 	Actor_FaceDirection(JASMINE, FACING_SOUTHEAST, 0);
 	Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 30);
 	Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
@@ -1792,7 +1792,7 @@ static void Scene_EnterStarRoom(void)
 	Engine_EventWait(20);
 	Actor_FaceDirection(GERALD, FACING_WEST, 10);
 	Event_SayThenWait(GERALD, 10);
-	Engine_EventSetMessage((s32)MsgSoruSukuretaTheWisdomStone);
+	Engine_EventSetMessage(MsgSoruSukuretaTheWisdomStone);
 	Actor_FaceDirection(GERALD, FACING_SOUTHWEST, 20);
 	Engine_ActorJump(ACTOR_SUKURETA, 4, 40);
 	Event_SayThenWait(0x8009, 10);
@@ -1817,7 +1817,7 @@ static void Scene_EnterStarRoom(void)
 	Actor_FaceDirection(JASMINE, FACING_SOUTHEAST, 0);
 	Actor_FaceDirection(GERALD, 0x5000, 20);
 	Event_SayThenWait(0x8009, 40);
-	Engine_EventSetMessage((s32)MsgSoruTheStarsHaveEnormousPower);
+	Engine_EventSetMessage(MsgSoruTheStarsHaveEnormousPower);
 	Engine_ActorSetAnimation(JASMINE, 4);
 	Event_SayThenWait(5, 10);
 	Actor_FaceDirection(ACTOR_SUKURETA, 0xb000, 10);
@@ -1955,12 +1955,12 @@ static void Scene_EnterStarRoom(void)
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
 	while (Engine_EventChooseYesNo(0, 0) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgSoruJasmineWontYouPlease);
+		Engine_EventSetMessage(MsgSoruJasmineWontYouPlease);
 		Actor_ShowEmote(JASMINE, 0x107, 0);
 		Engine_ActorJump(JASMINE, 4, 60);
 		Event_OpenMessage(JASMINE, 0);
 	}
-	Engine_EventSetMessage((s32)MsgSoruJasmineThankYou);
+	Engine_EventSetMessage(MsgSoruJasmineThankYou);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(JASMINE, 3);
 	Engine_EventWait(20);
@@ -1983,7 +1983,7 @@ static void Scene_EnterStarRoom(void)
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(JASMINE, 2);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgSoruTheBagsAreFromSukuretas);
+	Engine_EventSetMessage(MsgSoruTheBagsAreFromSukuretas);
 	Event_SayThenWait(5, 30);
 	Actor_FaceDirection(ACTOR_SUKURETA, 0xb000, 30);
 	Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 3);
@@ -2150,7 +2150,7 @@ static void Scene_GiveMythrilBags(void)
 
 	Engine_AudioPlayCue(0x53);
 	Engine_ItemShowFound(ITEM_MYTHRIL_BAG, 3);
-	Engine_MessageShowCentered((s32)MsgSoruGotFourMythrilBags, 1);
+	Engine_MessageShowCentered(MsgSoruGotFourMythrilBags, 1);
 	do
 	{
 		cnt = 30 - Inventory_Count(0);
@@ -2158,7 +2158,7 @@ static void Scene_GiveMythrilBags(void)
 
 		if (cnt <= 3)
 		{
-			Engine_MessageShowCentered((s32)MsgSoruTooManyItems, 1);
+			Engine_MessageShowCentered(MsgSoruTooManyItems, 1);
 			if (Shop_PickUnitItem(&second, &first) != -1)
 				Inventory_Discard(second, first);
 		}

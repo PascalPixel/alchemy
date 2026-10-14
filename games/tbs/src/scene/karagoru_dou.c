@@ -138,7 +138,7 @@ static void EV10_TOUCH(void)
 		Actor_FaceDirection(11, 0xd000, 0);
 		Engine_EventWait(10);
 		Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
-		Engine_EventSetMessage((s32)MsgKaragoruWhyGoingBackRobinDo);
+		Engine_EventSetMessage(MsgKaragoruWhyGoingBackRobinDo);
 		Event_OpenMessage(11, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
@@ -180,7 +180,7 @@ static void EV11_SCRIPT(void)
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	Engine_EventWait(10);
 	Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 11, 0);
-	Engine_EventSetMessage((s32)MsgKaragoruIveBeenWaitingForRobin);
+	Engine_EventSetMessage(MsgKaragoruIveBeenWaitingForRobin);
 	Engine_EventShowMessage(11, 0);
 	Engine_ActorSetAnimation(11, 2);
 	{
@@ -200,7 +200,7 @@ static void EV08_TALK(void)
 {
 	s32 base;
 
-	base = (s32)MsgKaragoruDoYouWishCrossInto;
+	base = MsgKaragoruDoYouWishCrossInto;
 	Engine_EventSetMessage(base);
 	Engine_EventOpenMessage(8, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
@@ -224,9 +224,9 @@ static void EV08_TALK(void)
 static void EV09_PSYNERGY_1(void)
 {
 	if (Engine_GameFlagIsSet(2384) != 0 && Engine_GameFlagIsSet(2415) == 0)
-		Engine_EventSetMessage((s32)MsgKaragoruWeMissedColossoBecauseWe);
+		Engine_EventSetMessage(MsgKaragoruWeMissedColossoBecauseWe);
 	else
-		Engine_EventSetMessage((s32)MsgKaragoruWarriorsHaveBeenFightingWhile);
+		Engine_EventSetMessage(MsgKaragoruWarriorsHaveBeenFightingWhile);
 	Engine_EventShowMessage(9, 0);
 }
 

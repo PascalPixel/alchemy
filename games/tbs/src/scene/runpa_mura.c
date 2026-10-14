@@ -230,8 +230,8 @@ static void Reveal_HideSecrets(void)
 static void EV90_SEARCH(void)
 {
 	Engine_EventBegin();
-	Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
-	Engine_MessageShowCentered((s32)MsgRunpaWellFrogs, 1);
+	Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
+	Engine_MessageShowCentered(MsgRunpaWellFrogs, 1);
 	Engine_EventEnd();
 }
 
@@ -255,7 +255,7 @@ static void EV17_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | 2, 60);
-	Engine_EventSetMessage((s32)MsgRunpaWestGuardAsksAboutEntering);
+	Engine_EventSetMessage(MsgRunpaWestGuardAsksAboutEntering);
 	Engine_EventAskYesNo(ACTOR_WEST_GUARD, 0);
 	Engine_EventEnd();
 }
@@ -265,12 +265,12 @@ static void EV18_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgRunpaEastGuardDemandsAuthorization);
+		Engine_EventSetMessage(MsgRunpaEastGuardDemandsAuthorization);
 		Engine_EventShowMessage(ACTOR_EAST_GUARD, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgRunpaEastGuardAsksIfFrom);
+		Engine_EventSetMessage(MsgRunpaEastGuardAsksIfFrom);
 		Engine_EventOpenMessage(ACTOR_EAST_GUARD, 0);
 		if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0)
 		{
@@ -295,18 +295,18 @@ static void EV18_PSYNERGY(void)
 		thoughts = Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY);
 		if (thoughts == 0)
 		{
-			thoughts = (s32)MsgRunpaEastGuardFearsBlame;
+			thoughts = MsgRunpaEastGuardFearsBlame;
 		}
 		else
 		{
-			thoughts = (s32)MsgRunpaEastGuardTrustsCaveGate;
+			thoughts = MsgRunpaEastGuardTrustsCaveGate;
 		}
 		Engine_EventSetMessage(thoughts);
 		Engine_EventShowMessage(ACTOR_EAST_GUARD, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgRunpaEastGuardThinksMerchantHarmless);
+		Engine_EventSetMessage(MsgRunpaEastGuardThinksMerchantHarmless);
 		Engine_EventShowMessage(ACTOR_EAST_GUARD, 0);
 	}
 }
@@ -314,7 +314,7 @@ static void EV18_PSYNERGY(void)
 static void VillagerA_Talk(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgRunpaVillagerAAsksHowLong);
+	Engine_EventSetMessage(MsgRunpaVillagerAAsksHowLong);
 	Engine_EventAskYesNo(ACTOR_VILLAGER_A, 0);
 	Engine_EventEnd();
 }
@@ -322,7 +322,7 @@ static void VillagerA_Talk(void)
 static void EV11_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgRunpaVillagerCAsksAboutKidnapping);
+	Engine_EventSetMessage(MsgRunpaVillagerCAsksAboutKidnapping);
 	Engine_EventAskYesNo(ACTOR_VILLAGER_C, 0);
 	Engine_EventEnd();
 }
@@ -330,7 +330,7 @@ static void EV11_TALK(void)
 static void EV15_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgRunpaVillagerGAsksAboutDonpa);
+	Engine_EventSetMessage(MsgRunpaVillagerGAsksAboutDonpa);
 	Engine_EventAskYesNo(ACTOR_VILLAGER_G, 0);
 	Engine_EventEnd();
 }
@@ -339,7 +339,7 @@ static void EV10_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_B, 3);
-	Engine_EventSetMessage((s32)MsgRunpaVillagerBShivers);
+	Engine_EventSetMessage(MsgRunpaVillagerBShivers);
 	Engine_EventShowMessage(ACTOR_VILLAGER_B, 0);
 	Engine_EventEnd();
 }
@@ -347,7 +347,7 @@ static void EV10_TALK(void)
 static void EV12_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgRunpaVillagerDAsksAboutCommotion);
+	Engine_EventSetMessage(MsgRunpaVillagerDAsksAboutCommotion);
 	Engine_EventAskYesNo(ACTOR_VILLAGER_D, 0);
 	Engine_EventEnd();
 }
@@ -358,13 +358,13 @@ static void EV08_TALK(void)
 
 	if (gGameState.cloaked != 0)
 	{
-		Engine_EventSetMessage((s32)MsgRunpaLeftGuardHearsSomeone);
+		Engine_EventSetMessage(MsgRunpaLeftGuardHearsSomeone);
 	}
 	else if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0
 			 && Engine_GameFlagIsSet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0)
 	{
 		Engine_ActorShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 1, 60);
-		recognition = (s32)MsgRunpaLeftGuardRecognizesHammet;
+		recognition = MsgRunpaLeftGuardRecognizesHammet;
 		Engine_EventSetMessage(recognition + RECOGNITION_SEEN_THAT_MAN);
 		Engine_EventShowMessage(ACTOR_LEFT_GUARD, 0);
 		Engine_ActorStartRepeatedMotion(ACTOR_LEFT_GUARD, 1);
@@ -373,7 +373,7 @@ static void EV08_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgRunpaLeftGuardResentsDodonpa);
+		Engine_EventSetMessage(MsgRunpaLeftGuardResentsDodonpa);
 	}
 	Engine_EventShowMessage(ACTOR_LEFT_GUARD, 0);
 }
@@ -382,15 +382,15 @@ static void RightGuard_Talk(void)
 {
 	if (gGameState.cloaked != 0)
 	{
-		Engine_EventSetMessage((s32)MsgRunpaRightGuardFeelsCreepy);
+		Engine_EventSetMessage(MsgRunpaRightGuardFeelsCreepy);
 	}
 	else if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgRunpaRightGuardWondersHow);
+		Engine_EventSetMessage(MsgRunpaRightGuardWondersHow);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgRunpaRightGuardBoasts);
+		Engine_EventSetMessage(MsgRunpaRightGuardBoasts);
 	}
 	Engine_EventShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
@@ -409,20 +409,20 @@ static void LeftGuard_MindRead(void)
 			Engine_PsynergyCancel();
 			Actor_FaceActor(ACTOR_LEFT_GUARD, ACTOR_PARTY_LEADER, 0);
 			Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 1, 60);
-			Engine_EventSetMessage((s32)MsgRunpaLeftGuardRecognizesHammet);
+			Engine_EventSetMessage(MsgRunpaLeftGuardRecognizesHammet);
 			GameFlag_Set(FLAG_GATE_GUARD_SAW_HAMMET);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgRunpaLeftGuardGlimpsedMerchant);
+			Engine_EventSetMessage(MsgRunpaLeftGuardGlimpsedMerchant);
 		}
 		Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 		Engine_ActorStartRepeatedMotion(ACTOR_LEFT_GUARD, 1);
-		Engine_EventSetMessage((s32)MsgRunpaLeftGuardDismissesThought);
+		Engine_EventSetMessage(MsgRunpaLeftGuardDismissesThought);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgRunpaLeftGuardThoughts);
+		Engine_EventSetMessage(MsgRunpaLeftGuardThoughts);
 	}
 	Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 }
@@ -431,11 +431,11 @@ static void EV09_PSYNERGY(void)
 {
 	if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgRunpaRightGuardReopenedThoughts);
+		Engine_EventSetMessage(MsgRunpaRightGuardReopenedThoughts);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgRunpaYoudShadowSneak);
+		Engine_EventSetMessage(MsgRunpaYoudShadowSneak);
 	}
 	Engine_EventShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
@@ -455,7 +455,7 @@ static void EV20_TOUCH(void)
 {
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-	Engine_EventSetMessage((s32)MsgRunpaGeraldRefusesToReturn);
+	Engine_EventSetMessage(MsgRunpaGeraldRefusesToReturn);
 	Event_ShowMessage(GERALD, 0);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 100);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -602,7 +602,7 @@ static void EV10_TOUCH(void)
 		Engine_ActorStop(ACTOR_RIGHT_GUARD);
 		Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, 0);
 		Actor_FaceDirection(ACTOR_RIGHT_GUARD, FACING_SOUTH + FACING_STEP, 0);
-		Engine_EventSetMessage((s32)MsgRunpaGuardsWarnPartyAway);
+		Engine_EventSetMessage(MsgRunpaGuardsWarnPartyAway);
 		Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 		GameFlag_Set(FLAG_GATE_GUARDS_BLOCKING);
 		Map_CopyCellAttributes(6, 11, 1, 1, 7, 11);
@@ -642,7 +642,7 @@ static void EV91_RAISED(void)
 	Engine_ActorStartRepeatedMotion(ACTOR_RIGHT_GUARD, 1);
 	Engine_EventWait(20);
 	Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 2, 60);
-	warning = (s32)MsgRunpaGuardsCatchParty;
+	warning = MsgRunpaGuardsCatchParty;
 	Engine_EventSetMessage(warning + CATCH_LEFT_GUARD_CHALLENGES);
 	Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
@@ -803,7 +803,7 @@ static void Party_ThrownOut(void)
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	Engine_TaskRemoveCallback(Leader_KickUpDust);
 	Engine_EventWait(50);
-	Engine_EventSetMessage((s32)MsgRunpaGuardForbidsReturn);
+	Engine_EventSetMessage(MsgRunpaGuardForbidsReturn);
 	Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 	Actor_Get(ACTOR_LEFT_GUARD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
 	Actor_Get(ACTOR_RIGHT_GUARD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;

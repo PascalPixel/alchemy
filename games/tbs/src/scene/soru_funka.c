@@ -230,7 +230,7 @@ static void Scene_SaturosTakesHostages(void)
 	Engine_ActorJump(GERALD, 6, 20);
 	FieldScene_RunVariantStep(1, 20, 20);
 	FieldScene_RunVariantStep(0, 20, 40);
-	Engine_EventSetMessage((s32)MsgSoruJasmineWhatHappened);
+	Engine_EventSetMessage(MsgSoruJasmineWhatHappened);
 	Engine_EventShowMessageAndWait(11, 0, 20);
 	Engine_EventShowMessage(10, 0);
 	FieldScene_RunVariantStep(1, 20, 0);
@@ -285,14 +285,14 @@ static void Scene_SaturosTakesHostages(void)
 	Event_OpenMessage(0x1001, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
-		Engine_EventSetMessage((s32)MsgSoruIKnowItsARock);
+		Engine_EventSetMessage(MsgSoruIKnowItsARock);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgSoruSomeoneIsLiftingIt);
+		Engine_EventSetMessage(MsgSoruSomeoneIsLiftingIt);
 	}
 	Event_ShowMessageAndWait(0x1001, 0, 80);
-	Engine_EventSetMessage((s32)MsgSoruSukuretaCouldThatBeThe);
+	Engine_EventSetMessage(MsgSoruSukuretaCouldThatBeThe);
 	Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 20);
 	FieldScene_RunVariantStep(1, 20, 0);
 	*(s32 *)(((s32)p7 + 0x40c)) = 0;
@@ -914,17 +914,17 @@ static void Scene_RunExtendedEffectPresentation(void)
 	Engine_EventWait(60);
 
 	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	Engine_EventSetMessage((s32)MsgSoruWellTurnedBadly);
+	Engine_EventSetMessage(MsgSoruWellTurnedBadly);
 	Event_OpenMessage(GERALD, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_ActorSetAnimationAndWait(GERALD, ANIM_NOD);
-		Engine_EventSetMessage((s32)MsgSoruWellTurnedBadly + 1);
+		Engine_EventSetMessage(MsgSoruWellTurnedBadly + 1);
 	}
 	else
 	{
 		Engine_ActorRunRepeatedMotion(GERALD, 1);
-		Engine_EventSetMessage((s32)MsgSoruWellTurnedBadly + 2);
+		Engine_EventSetMessage(MsgSoruWellTurnedBadly + 2);
 	}
 	Event_ShowMessageAndWait(GERALD, 0, 60);
 	Actor_FaceDirection(GERALD, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -932,7 +932,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 	Engine_ActorJump(GERALD, 2, 0);
 	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 2, 0);
 	Engine_EventWait(40);
-	Engine_EventSetMessage((s32)MsgSoruFriendsGone);
+	Engine_EventSetMessage(MsgSoruFriendsGone);
 	Event_ShowMessageAndWait(GERALD, 0, 10);
 	Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
 	Engine_EventWait(10);
@@ -954,7 +954,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 		Actor_FaceDirection(GERALD, FACING_EAST + FACING_STEP, 0);
 		Engine_EventWait(10);
 		Engine_ActorSetAnimation(GERALD, ANIM_SHAKE_HEAD);
-		Engine_EventSetMessage((s32)MsgSoruThanksALot);
+		Engine_EventSetMessage(MsgSoruThanksALot);
 	}
 	else
 	{
@@ -966,7 +966,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 		Actor_FaceDirection(GERALD, FACING_EAST + FACING_STEP, 0);
 		Engine_EventWait(10);
 		Engine_ActorSetAnimation(GERALD, ANIM_SHAKE_HEAD);
-		Engine_EventSetMessage((s32)MsgSoruTheyllBeSafe);
+		Engine_EventSetMessage(MsgSoruTheyllBeSafe);
 	}
 	Event_ShowMessageAndWait(GERALD, 0, 40);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1002,7 +1002,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 	Engine_CameraWaitForMove();
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(GERALD, 2);
-	Engine_EventSetMessage((s32)MsgSoruThisIsTerrible);
+	Engine_EventSetMessage(MsgSoruThisIsTerrible);
 	Event_ShowMessageAndWait(GERALD, 0, 20);
 	Actor_FaceDirection(GERALD, FACING_SOUTHEAST + FACING_STEP, 0);
 	Engine_EventWait(40);
@@ -1062,7 +1062,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 		Actor_FaceDirection(GERALD, FACING_EAST + FACING_STEP, 0);
 		Engine_EventWait(10);
 		Engine_ActorSetAnimation(GERALD, ANIM_SHAKE_HEAD);
-		Engine_EventSetMessage((s32)MsgSoruQuitActingTough);
+		Engine_EventSetMessage(MsgSoruQuitActingTough);
 	}
 	Engine_EventWait(20);
 	Event_ShowMessage(GERALD, 0);
@@ -1094,7 +1094,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 	Engine_EventWait(4);
 	Engine_ActorWalkToAndWait(GERALD, 231, 175);
 	Actor_FaceDirection(GERALD, FACING_NORTHEAST, 0);
-	Engine_EventSetMessage((s32)MsgSoruOverHere);
+	Engine_EventSetMessage(MsgSoruOverHere);
 	Event_ShowMessage(GERALD, 0);
 	Engine_EventWait(40);
 	Actor_ShowEmote(GERALD, EMOTE_IN_FRONT | 1, 0);
@@ -1240,7 +1240,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 	}
 	else
 	{
-		Engine_MessageShowCentered((s32)MsgSoruCannotResist, 1);
+		Engine_MessageShowCentered(MsgSoruCannotResist, 1);
 		Engine_EventWait(40);
 	}
 
@@ -1281,7 +1281,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 	}
 	Actor_SetChildValue(ACTOR_WISE_ONE, 0);
 	FieldScene_RunVariantStep(0, 20, 0);
-	Engine_EventSetMessage((s32)MsgSoruReturnStarToBag);
+	Engine_EventSetMessage(MsgSoruReturnStarToBag);
 	Event_ShowMessageAndWait(ACTOR_WISE_ONE, 0, 20);
 	if (star != NULL)
 	{

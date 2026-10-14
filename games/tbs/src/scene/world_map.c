@@ -742,7 +742,7 @@ static void FieldScene_RunActorTransferSequence(void)
 	Actor_ShowEmote(GERALD, 0x101, 60);
 	Actor_SetPosition(8, 0x16d80000, 0x6380000);
 	Engine_TaskWait(1);
-	Engine_EventSetMessage((s32)MsgWorldMapWeCantStayAnotherMinute);
+	Engine_EventSetMessage(MsgWorldMapWeCantStayAnotherMinute);
 	Event_ShowMessageAndWait(8, 0, 10);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
 	Actor_FaceDirection(GERALD, 0x6000, 40);
@@ -1213,7 +1213,7 @@ static void WorldMap_ShowDjinnTutorial(void)
 	Event_WaitForZoomTransition();
 	Battle_SetObjectFlag5bWhenMode3();
 	Engine_ActorRunRepeatedMotion(8, 2);
-	Engine_EventSetMessage((s32)MsgWorldMapAfterBringingDjinniIntoYour);
+	Engine_EventSetMessage(MsgWorldMapAfterBringingDjinniIntoYour);
 	Event_ShowMessage(8, 0);
 	Engine_EventWait(30);
 	Event_PlayCue(111);
@@ -1222,7 +1222,7 @@ static void WorldMap_ShowDjinnTutorial(void)
 	GameFlag_Clear(0x171);
 	ItemMenu_Open();
 	Engine_ActorJump(8, 4, 30);
-	Engine_EventSetMessage((s32)MsgWorldMapNextIllShowHowCan);
+	Engine_EventSetMessage(MsgWorldMapNextIllShowHowCan);
 	Event_ShowMessage(8, 0);
 	GameFlag_Clear(0x16f);
 	GameFlag_Set(0x171);
@@ -1265,7 +1265,7 @@ static void EV90_TOUCH(void)
 		djinni->work = 1;
 		Actor_FaceActor(DJINNI, 0, 0);
 		Task_Wait(16);
-		Event_SetMessage((s32)MsgWorldMapOh);
+		Event_SetMessage(MsgWorldMapOh);
 		Event_ShowMessage(DJINNI, 0);
 		Battle_ClearObjectFlag5bWhenMode3();
 		BattleFx_ScheduleRatioTransition(0x13333, 6);
@@ -1357,11 +1357,11 @@ static void EV90_TOUCH(void)
 			Actor_Jump(DJINNI, 2, 20);
 			if (count == 6)
 			{
-				Event_SetMessage((s32)MsgWorldMapMeanieDontCare);
+				Event_SetMessage(MsgWorldMapMeanieDontCare);
 				Event_ShowMessage(DJINNI, 0);
 				goto listened;
 			}
-			Event_SetMessage(count + (s32)MsgWorldMapComePromiseWont);
+			Event_SetMessage(count + MsgWorldMapComePromiseWont);
 			Event_OpenMessage(DJINNI, 0);
 			count++;
 			goto plead;
@@ -1369,12 +1369,12 @@ static void EV90_TOUCH(void)
 		Actor_SetAnimation(0, 22);
 		Actor_Jump(DJINNI, 2, 20);
 		Actor_Jump(DJINNI, 4, 20);
-		Event_SetMessage((s32)MsgWorldMapSeeWontRegret);
+		Event_SetMessage(MsgWorldMapSeeWontRegret);
 		Event_ShowMessage(DJINNI, 0);
 	listened:
 		UiWork_PushValueSlot(300, 4);
 		Event_PlayCue(81);
-		count = (s32)MsgWorldMapAbilityVenusDjinni;
+		count = MsgWorldMapAbilityVenusDjinni;
 		Message_ShowCentered(count++, 3);
 		Event_SetMessage(count);
 		Actor_Jump(DJINNI, 2, 20);
@@ -1395,7 +1395,7 @@ static void EV90_TOUCH(void)
 	Actor_FaceActor(DJINNI, 0, 0);
 	Actor_FaceActor(0, DJINNI, 0);
 	Actor_SetAnimation(0, 22);
-	Event_SetMessage((s32)MsgWorldMapSeeDjinnUseful);
+	Event_SetMessage(MsgWorldMapSeeDjinnUseful);
 	Actor_Jump(DJINNI, 2, 20);
 	Actor_Jump(DJINNI, 2, 20);
 	Event_ShowMessage(DJINNI, 0);
@@ -1406,7 +1406,7 @@ static void EV90_TOUCH(void)
 	GameFlag_Set(0x16f);
 	GameFlag_Clear(0x171);
 	ItemMenu_Open();
-	Event_SetMessage((s32)MsgWorldMapGoSetStandby);
+	Event_SetMessage(MsgWorldMapGoSetStandby);
 	FieldObject_SetPosition(djinni, 0x15d00000, 0, 0x5300000);
 	Event_Wait(30);
 	Event_ShowMessage(DJINNI, 0);
@@ -1417,7 +1417,7 @@ static void EV90_TOUCH(void)
 	{
 		Actor_SetAnimation(0, 22);
 		Actor_RunRepeatedMotion(DJINNI, 2);
-		Event_SetMessage((s32)MsgWorldMapHmmmmExplainAgain);
+		Event_SetMessage(MsgWorldMapHmmmmExplainAgain);
 		Event_OpenMessage(DJINNI, 0);
 		if (Event_ChooseYesNo(0, 0) != 1)
 		{
@@ -1429,7 +1429,7 @@ static void EV90_TOUCH(void)
 		}
 	}
 	Actor_SetAnimation(0, 22);
-	Event_SetMessage((s32)MsgWorldMapYeahWantLearn);
+	Event_SetMessage(MsgWorldMapYeahWantLearn);
 	Actor_Jump(DJINNI, 2, 20);
 	Actor_Jump(DJINNI, 2, 20);
 	Actor_SetAnimationAndWait(0, 3);
@@ -1530,7 +1530,7 @@ static void WorldMap_RunBlackOrbScene(void)
 	Engine_ActorFaceDirection(gWorldMapTriggerActor, 0, 20);
 	Engine_ActorShowEmote(gWorldMapTriggerActor, 0x100, 60);
 	Engine_ActorStartRepeatedMotion(gWorldMapTriggerActor, 2);
-	Engine_EventSetMessage((s32)MsgWorldMapLook);
+	Engine_EventSetMessage(MsgWorldMapLook);
 	Engine_EventShowMessageAndWait(gWorldMapTriggerActor | 0x1000, 0, 10);
 	Engine_ActorFaceDirection(0, 0, 0);
 	Battle_ClearObjectFlag5bWhenMode3();
@@ -1575,7 +1575,7 @@ static void WorldMap_RunBlackOrbScene(void)
 	Engine_ItemShowFound(242, 3);
 	Engine_PartyGiveItem(242, 0);
 	Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
-	Engine_EventSetMessage((s32)MsgWorldMapNowUseOnShip);
+	Engine_EventSetMessage(MsgWorldMapNowUseOnShip);
 	Engine_EventShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
 	Engine_ActorFaceDirection(gWorldMapTriggerActor, 0x3000, 0);
 	Battle_ClearObjectFlag5bWhenMode3();
@@ -1639,7 +1639,7 @@ static void WorldMap_PromptBlackOrbUse(void)
 {
 	Engine_EventBegin();
 	Actor_FaceActor(55, ACTOR_PARTY_LEADER, 0);
-	Engine_EventSetMessage((s32)MsgWorldMapNowUseOnShip);
+	Engine_EventSetMessage(MsgWorldMapNowUseOnShip);
 	Engine_EventShowMessage(gWorldMapTriggerActor, 0);
 	Actor_FaceDirection(55, 0x3000, 0);
 	Engine_EventEnd();
@@ -1649,7 +1649,7 @@ static void WorldMap_StopLeaderLeavingShip(void)
 {
 	Engine_EventBegin();
 	Battle_SetObjectFlag5bWhenMode3();
-	Engine_EventSetMessage((s32)MsgWorldMapRobinWhereGoingSaidUse);
+	Engine_EventSetMessage(MsgWorldMapRobinWhereGoingSaidUse);
 	Engine_EventShowMessage(gWorldMapTriggerActor, 0);
 	Battle_ClearObjectFlag5bWhenMode3();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
@@ -1665,7 +1665,7 @@ static void EV96_SEARCH(void)
 #else
 	Battle_SetObjectFlag5bWhenMode3();
 #endif
-	Engine_MessageShowCentered((s32)MsgWorldMapWreckageShipScuttledOffCoast, 1);
+	Engine_MessageShowCentered(MsgWorldMapWreckageShipScuttledOffCoast, 1);
 	if (Engine_GameFlagIsSet(0x234) != 0)
 	{
 		((struct StoryDialogueWork *)gEventWork)->story_result = 1;
@@ -1758,7 +1758,7 @@ static void EV96_SCRIPT(void)
 	Object_GetById(gWorldMapTriggerActor)->facing = 0x3000;
 	Actor_ShowEmote(gWorldMapTriggerActor, EMOTE_IN_FRONT, 0);
 	Actor_RunRepeatedMotion(gWorldMapTriggerActor, 2);
-	message = (s32)MsgWorldMapMatter;
+	message = MsgWorldMapMatter;
 	Event_SetMessage(message);
 	Event_ShowMessageAndWait(gWorldMapTriggerActor, 0, 80);
 	if (orb != NULL)
@@ -1858,7 +1858,7 @@ static void FieldScene_RunActorPresentationSequence(void)
 	Engine_EventWait(40);
 	Engine_ActorRunRepeatedMotion(JASMINE, 1);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgWorldMapSukuretaHowLongWillIsland);
+	Engine_EventSetMessage(MsgWorldMapSukuretaHowLongWillIsland);
 	Event_ShowMessageAndWait(JASMINE, 0, 20);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	Engine_EventWait(20);

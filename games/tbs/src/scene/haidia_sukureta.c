@@ -68,12 +68,12 @@ static void EV12_TALK(void)
 	Engine_EventBegin();
 	if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0)
 	{
-		Engine_EventSetMessage((s32)MsgHaidiaIllClimbTheFenceSomeday);
+		Engine_EventSetMessage(MsgHaidiaIllClimbTheFenceSomeday);
 		Event_ShowMessage(12, 0);
 	}
 	else
 	{
-		base = (s32)MsgHaidiaHearAwfulGrowls;
+		base = MsgHaidiaHearAwfulGrowls;
 		Engine_EventSetMessage(base);
 		Actor_FaceActor(12, ACTOR_PARTY_LEADER, 10);
 		Engine_ActorRunRepeatedMotion(12, 2);
@@ -104,7 +104,7 @@ static void EV13_TALK(void)
 	{
 		Engine_EventBegin();
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-		Engine_EventSetMessage((s32)MsgHaidiaSukuretaOhRobin);
+		Engine_EventSetMessage(MsgHaidiaSukuretaOhRobin);
 		Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 1);
 		Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 0x108);
 		Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
@@ -168,17 +168,17 @@ static void EV13_TALK(void)
 		Event_OpenMessage(ACTOR_SUKURETA, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
-			Engine_EventSetMessage((s32)MsgHaidiaYouCannotEnterMtAleph);
+			Engine_EventSetMessage(MsgHaidiaYouCannotEnterMtAleph);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgHaidiaSukuretaIWaitedYearsFor);
+			Engine_EventSetMessage(MsgHaidiaSukuretaIWaitedYearsFor);
 		}
 		Engine_EventWait(20);
 		Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 3);
 		Engine_EventWait(10);
 		Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
-		Engine_EventSetMessage((s32)MsgHaidiaJasmineTheyMightBeThieves);
+		Engine_EventSetMessage(MsgHaidiaJasmineTheyMightBeThieves);
 		Engine_ActorRunRepeatedMotion(JASMINE, 2);
 		Actor_FaceDirection(JASMINE, FACING_WEST, 10);
 		Event_ShowMessageAndWait(JASMINE, 0, 6);
@@ -241,14 +241,14 @@ static void EV13_TALK(void)
 		Event_OpenMessage(ACTOR_SUKURETA, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
-			Engine_EventSetMessage((s32)MsgHaidiaSukuretaWeOnlyCheckThe);
+			Engine_EventSetMessage(MsgHaidiaSukuretaWeOnlyCheckThe);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgHaidiaSukuretaWeOnlyCheckMt);
+			Engine_EventSetMessage(MsgHaidiaSukuretaWeOnlyCheckMt);
 		}
 		Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 20);
-		sneak = (s32)MsgHaidiaFineIfTheyDontSee;
+		sneak = MsgHaidiaFineIfTheyDontSee;
 		Engine_EventSetMessage(sneak);
 		Actor_FaceDirection(GERALD, FACING_EAST, 10);
 		Engine_ActorRunRepeatedMotion(GERALD, 2);
@@ -262,7 +262,7 @@ static void EV13_TALK(void)
 			Engine_EventSetMessage((sneak + 2));
 		}
 		Event_ShowMessageAndWait(GERALD, 0, 6);
-		Engine_EventSetMessage((s32)MsgHaidiaJasmineOurSecret);
+		Engine_EventSetMessage(MsgHaidiaJasmineOurSecret);
 		Actor_FaceDirection(JASMINE, FACING_WEST, 10);
 		Engine_ActorRunRepeatedMotion(JASMINE, 1);
 		Event_OpenMessage(JASMINE, 0);
@@ -298,11 +298,11 @@ static void EV13_TALK(void)
 		Engine_EventWait(4);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
-			Engine_EventSetMessage((s32)MsgHaidiaGeraldYouCanHandleThe);
+			Engine_EventSetMessage(MsgHaidiaGeraldYouCanHandleThe);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgHaidiaGeraldIllTakeOverIf);
+			Engine_EventSetMessage(MsgHaidiaGeraldIllTakeOverIf);
 		}
 		Engine_EventWait(10);
 		Engine_ActorRunRepeatedMotion(GERALD, 2);
@@ -361,7 +361,7 @@ static void Scene_LeaveForMtAleph(void)
 	Actor_WalkToAndWait(ACTOR_SUKURETA, 230, 232);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 3);
-	Engine_EventSetMessage((s32)MsgHaidiaSukuretaOurBestBet);
+	Engine_EventSetMessage(MsgHaidiaSukuretaOurBestBet);
 	Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
 	Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
 	Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
@@ -442,7 +442,7 @@ static void EV07_TOUCH(void)
 	Event_PlayCue(17);
 	GameFlag_Set(FLAG_MET_SATUROS_AND_MENARDI);
 
-	evt = (s32)MsgHaidiaTheyKnowLittleOfThe;
+	evt = MsgHaidiaTheyKnowLittleOfThe;
 	Engine_EventSetMessage(evt);
 	Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
 
@@ -537,7 +537,7 @@ static void EV07_TOUCH(void)
 	Event_ShowMessageAndWait(0x100f, 0, 10);
 	Engine_ActorRunRepeatedMotion(GERALD, 2);
 
-	evt2 = (s32)MsgHaidiaYoureTheOnesSneakingAround;
+	evt2 = MsgHaidiaYoureTheOnesSneakingAround;
 	Engine_EventSetMessage(evt2);
 	Event_ShowMessageAndWait(GERALD, 0, 20);
 	Engine_ActorFaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 40);
@@ -572,7 +572,7 @@ static void EV07_TOUCH(void)
 	Actor_FaceActor(ACTOR_SATUROS, JASMINE, 30);
 	Actor_ShowEmote(ACTOR_SATUROS, 0x105, 80);
 	Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
-	Engine_EventSetMessage((s32)MsgHaidiaSaturosGo);
+	Engine_EventSetMessage(MsgHaidiaSaturosGo);
 	Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 6);
 	Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
 	Actor_ShowEmote(GERALD, 0x100, 0);
@@ -656,7 +656,7 @@ static void EV05_TOUCH(void)
 	{
 		Engine_EventBegin();
 		Actor_SetSpeed(0, 0x10000, 0x8000);
-		Engine_EventSetMessage((s32)MsgHaidiaWho);
+		Engine_EventSetMessage(MsgHaidiaWho);
 		Engine_EventShowMessage(13, 0);
 		record = Object_GetById(0);
 		{
@@ -832,7 +832,7 @@ static void HaidiaSukureta_RunActorSequence(void)
 		{
 			Engine_EventBegin();
 			Engine_ActorRunRepeatedMotion(11, 2);
-			Engine_EventSetMessage((s32)MsgHaidiaSaveYourselves);
+			Engine_EventSetMessage(MsgHaidiaSaveYourselves);
 			Engine_EventShowMessage(11, 0);
 			Engine_EventEnd();
 		}
@@ -841,7 +841,7 @@ static void HaidiaSukureta_RunActorSequence(void)
 			Engine_EventBegin();
 			Engine_ActorStop(11);
 			Engine_ActorRunRepeatedMotion(11, 1);
-			base = (s32)MsgHaidiaRockslideDestroyedFence;
+			base = MsgHaidiaRockslideDestroyedFence;
 			Engine_EventSetMessage(base);
 			Engine_EventShowMessageAndWait(11, 0, 20);
 			Actor_ShowEmote(0, 0x100, 30);
@@ -942,7 +942,7 @@ static void EV11_TOUCH(void)
 static void EV16_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgHaidiaMemoriesOfThisCottage);
+	Engine_EventSetMessage(MsgHaidiaMemoriesOfThisCottage);
 	Engine_EventAskYesNo(16, 0);
 	Engine_EventEnd();
 }

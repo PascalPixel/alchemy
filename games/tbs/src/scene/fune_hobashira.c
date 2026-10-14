@@ -340,7 +340,7 @@ static void FuneHobashira_AnnounceClearCourse(void)
 	Actor_WalkToAndWait(8, 164, 0x14e);
 	Engine_ActorJump(8, 4, 40);
 	Engine_ActorStartRepeatedMotion(8, 2);
-	Engine_EventSetMessage((s32)MsgFuneShipsCourseClear);
+	Engine_EventSetMessage(MsgFuneShipsCourseClear);
 	Event_ShowMessageAndWait(8, 0, 20);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
@@ -383,7 +383,7 @@ static void Scene_RunFourActorStagingSequence(void)
 	Engine_TaskWait(1);
 	Actor_ShowEmote(8, 0x100, 0);
 	Engine_ActorFaceDirection(8, 0xb000, 0);
-	Engine_EventSetMessage((s32)MsgFuneAvast);
+	Engine_EventSetMessage(MsgFuneAvast);
 	Engine_EventShowMessageAndWait(8, 0, 10);
 	Actor_SetPosition(10, x, 0xd20000);
 	Actor_SetPosition(11, x, 0xd20000);
@@ -512,7 +512,7 @@ static void FieldScene_RunActorNinePresentationCycles(void)
 	Engine_ActorJump(8, 6, 40);
 	Event_PlayCue(29);
 	GameFlag_Set(0x8f0);
-	Engine_EventSetMessage((s32)MsgFuneMonsters2);
+	Engine_EventSetMessage(MsgFuneMonsters2);
 	Event_ShowMessageAndWait(16, 0, 20);
 	Actor_ShowEmote(8, 0x100, 0);
 	Actor_WalkToAndWait(8, 164, 0x158);
@@ -714,7 +714,7 @@ static void FieldScene_RunSevenActorEnsemble(void)
 	Actor_WalkToAndWait(8, 164, 344);
 	Engine_ActorJump(8, 4, 10);
 	Engine_ActorJump(8, 6, 20);
-	Engine_EventSetMessage((s32)MsgFuneLandHo);
+	Engine_EventSetMessage(MsgFuneLandHo);
 	Event_ShowMessageAndWait(8, 0, 20);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	Engine_EventCloseScreen();

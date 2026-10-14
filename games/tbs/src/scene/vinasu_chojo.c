@@ -490,7 +490,7 @@ static void Scene_RunScriptedActorPresentation(void)
 	Engine_ActorWaitForMove(18);
 	Engine_ActorSetPosition(18, 0, 0);
 	Engine_AudioPlayCue(0x121);
-	Engine_EventSetMessage((s32)MsgVinasuLongLastTime);
+	Engine_EventSetMessage(MsgVinasuLongLastTime);
 	VinasuChojo_ShowMessage(0x4013);
 	Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
 	Engine_ActorFaceDirection(GERALD, FACING_WEST, 0);
@@ -717,7 +717,7 @@ static void EV05_TOUCH(void)
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 340, 184);
 	VinasuChojo_FaceActor(ACTOR_PARTY_LEADER, FACING_WEST);
 	Engine_ActorRunRepeatedMotion(21, 1);
-	Engine_EventSetMessage((s32)MsgVinasuRobin);
+	Engine_EventSetMessage(MsgVinasuRobin);
 	VinasuChojo_ShowMessage(0x9015);
 	Engine_EventGetViewCenter()->motion_flags = 0;
 	Camera_SetSpeed(0xcccc, 0x1999);
@@ -987,7 +987,7 @@ static void EV05_TOUCH(void)
 	Engine_EventWait(20);
 	Engine_ActorRunRepeatedMotion(21, 2);
 
-	message = (s32)MsgVinasuRobinHandedOverShamansRod;
+	message = MsgVinasuRobinHandedOverShamansRod;
 	Engine_MessageShowCentered(message, 1);
 	Actor_WalkToAndWait(21, 310, 192);
 	Engine_ActorFaceDirection(ACTOR_SECOND_OF_PAIR, FACING_WEST, 0);
@@ -1281,7 +1281,7 @@ static void Scene_RunPairedActorEffectSequence(void)
 
 	Actor_Jump(GERALD, 2, 20);
 	VinasuChojo_FaceActor(GERALD, FACING_SOUTHEAST);
-	Event_SetMessage((s32)MsgVinasuBeatEm);
+	Event_SetMessage(MsgVinasuBeatEm);
 	VinasuChojo_ShowMessage(0x1001);
 	VinasuChojo_FaceActor(MEARI, FACING_NORTHWEST);
 	VinasuChojo_ShowMessage(MEARI);
@@ -2136,7 +2136,7 @@ static void FieldScene_RunPairDefeat(void)
 	Engine_EventWait(40);
 	Engine_ActorRunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 2);
 	Engine_EventWait(10);
-	Engine_EventSetMessage((s32)MsgVinasuPairDefeated);
+	Engine_EventSetMessage(MsgVinasuPairDefeated);
 	VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
 	Engine_ActorRunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 3);
 	Engine_EventWait(20);
@@ -2580,7 +2580,7 @@ static void FieldScene_RestageParty(void)
 
 static void VinasuChojo_TryToPreventFall(void)
 {
-	Engine_EventSetMessage((s32)MsgVinasuNoooo);
+	Engine_EventSetMessage(MsgVinasuNoooo);
 	VinasuChojo_ShowMessage(21);
 	Event_PlayCue(62);
 	Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
@@ -2608,7 +2608,7 @@ static void Scene_RunExtendedActorTransition(void)
 	s32				   step_pending;
 
 	step_pending = 0;
-	Engine_EventSetMessage((s32)MsgVinasuWhyHappeningProtectVenusLighthouse);
+	Engine_EventSetMessage(MsgVinasuWhyHappeningProtectVenusLighthouse);
 	Actor_SetAttachedEffect(21, 0x102);
 	Engine_EventWait(20);
 	Event_ShowMessageAndWait(0x2015, 0, 20);
@@ -2905,7 +2905,7 @@ static void Scene_RunExtendedActorTransition(void)
 	Graphics_EnableObjLayerAndCallbacks();
 	((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->result[0] = 0;
 	((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->result[1] = 0;
-	UiText_ShowCenteredMessage((s32)MsgVinasuDespiteLongTiring, 0, 0);
+	UiText_ShowCenteredMessage(MsgVinasuDespiteLongTiring, 0, 0);
 	ObjectDispatch_StopCallbacksAndHideLayers();
 	Engine_EventWait(80);
 }

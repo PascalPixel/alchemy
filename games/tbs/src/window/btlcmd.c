@@ -921,7 +921,7 @@ s16 SaveState_WriteCurrentSlotPair(void)
 		found = SaveState_InitializeWorkspace();
 		if (found != 0)
 		{
-			UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
+			UiText_ShowPositionedMessageAndWait(MsgNoBackupMemory, 1);
 			result = -9;
 		}
 		else
@@ -937,7 +937,7 @@ s16 SaveState_WriteCurrentSlotPair(void)
 				found |= SaveState_WriteRecord(next + 3, base);
 				if (found != 0)
 				{
-					UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
+					UiText_ShowPositionedMessageAndWait(MsgSaveFailed, 1);
 					result = -3;
 				}
 			}
@@ -956,7 +956,7 @@ s32 SaveState_WriteSlotPair(s32 arg0)
 	found = SaveState_InitializeWorkspace();
 	if (found != 0)
 	{
-		UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
+		UiText_ShowPositionedMessageAndWait(MsgNoBackupMemory, 1);
 		result = -9;
 	}
 	else
@@ -968,7 +968,7 @@ s32 SaveState_WriteSlotPair(s32 arg0)
 		found |= SaveState_WriteRecord(arg0 + 3, base);
 		if (found != 0)
 		{
-			UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
+			UiText_ShowPositionedMessageAndWait(MsgSaveFailed, 1);
 			result = -3;
 		}
 	}
@@ -990,7 +990,7 @@ s32 SaveState_ProcessSelectedSlot(void)
 	found = SaveState_InitializeWorkspace();
 	if (found != 0)
 	{
-		UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
+		UiText_ShowPositionedMessageAndWait(MsgNoBackupMemory, 1);
 		result = -9;
 	}
 	else
@@ -998,7 +998,7 @@ s32 SaveState_ProcessSelectedSlot(void)
 		found = SaveState_ReadRecordPayload(gSaveSlot, buffer);
 		if (found != 0)
 		{
-			UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
+			UiText_ShowPositionedMessageAndWait(MsgSaveFailed, 1);
 			result = -2;
 		}
 		dst = (u8 *)buffer + (s32)gSaveStamp;
@@ -1007,7 +1007,7 @@ s32 SaveState_ProcessSelectedSlot(void)
 		found = SaveState_WriteRecord(gSaveSlot, buffer);
 		if (found != 0)
 		{
-			UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
+			UiText_ShowPositionedMessageAndWait(MsgSaveFailed, 1);
 			result = -3;
 		}
 	}
@@ -1020,7 +1020,7 @@ s32 SaveState_ConfirmAndProcessSelectedSlot(void)
 {
 	s32 result;
 
-	UiText_OpenMessageWindow((s32)MsgOverwriteConfirm, 8, 12, 2);
+	UiText_OpenMessageWindow(MsgOverwriteConfirm, 8, 12, 2);
 	while (UiWork_IsComplete() == 0)
 	{
 		WaitFrames(1);
@@ -1036,7 +1036,7 @@ s32 SaveState_ConfirmAndProcessSelectedSlot(void)
 		result = SaveState_ProcessSelectedSlot();
 		if (result >= 0)
 		{
-			UiText_ShowPositionedMessageAndWait((s32)MsgGameSaved, 1);
+			UiText_ShowPositionedMessageAndWait(MsgGameSaved, 1);
 		}
 	}
 	return result;
@@ -1052,7 +1052,7 @@ s32 SaveState_CopySlotPair(void)
 	found = SaveState_InitializeWorkspace();
 	if (found != 0)
 	{
-		UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
+		UiText_ShowPositionedMessageAndWait(MsgNoBackupMemory, 1);
 		result = -9;
 	}
 	else
@@ -1073,7 +1073,7 @@ s32 SaveState_CopySlotPair(void)
 			found |= SaveState_ReadRecordPayload(value + 3, upper);
 			if (found != 0)
 			{
-				UiText_ShowPositionedMessageAndWait((s32)MsgLoadFailed, 1);
+				UiText_ShowPositionedMessageAndWait(MsgLoadFailed, 1);
 				result = -2;
 			}
 			else
@@ -1081,7 +1081,7 @@ s32 SaveState_CopySlotPair(void)
 				value = SaveState_FindFreeSummarySlot();
 				if (value == 999)
 				{
-					UiText_ShowPositionedMessageAndWait((s32)MsgEraseFailed, 1);
+					UiText_ShowPositionedMessageAndWait(MsgEraseFailed, 1);
 					result = -5;
 				}
 				else
@@ -1090,12 +1090,12 @@ s32 SaveState_CopySlotPair(void)
 					found |= SaveState_WriteRecord(value + 3, upper);
 					if (found != 0)
 					{
-						UiText_ShowPositionedMessageAndWait((s32)MsgEraseFailed, 1);
+						UiText_ShowPositionedMessageAndWait(MsgEraseFailed, 1);
 						result = -3;
 					}
 					else
 					{
-						UiText_ShowPositionedMessageAndWait((s32)MsgFileCopied, 1);
+						UiText_ShowPositionedMessageAndWait(MsgFileCopied, 1);
 					}
 				}
 			}
@@ -1115,7 +1115,7 @@ s32 SaveState_DeleteSelectedSlot(void)
 	found = SaveState_InitializeWorkspace();
 	if (found != 0)
 	{
-		UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
+		UiText_ShowPositionedMessageAndWait(MsgNoBackupMemory, 1);
 		result = -9;
 	}
 	else
@@ -1128,7 +1128,7 @@ s32 SaveState_DeleteSelectedSlot(void)
 		}
 		else
 		{
-			UiText_OpenMessageWindow((s32)MsgEraseConfirm, 8, 1, 2);
+			UiText_OpenMessageWindow(MsgEraseConfirm, 8, 1, 2);
 			while (UiWork_IsComplete() == 0)
 			{
 				WaitFrames(1);
@@ -1144,12 +1144,12 @@ s32 SaveState_DeleteSelectedSlot(void)
 				found |= SaveState_DeleteRecord(value + 3);
 				if (found != 0)
 				{
-					UiText_ShowPositionedMessageAndWait((s32)MsgEraseFailed, 1);
+					UiText_ShowPositionedMessageAndWait(MsgEraseFailed, 1);
 					result = -4;
 				}
 				else
 				{
-					UiText_ShowPositionedMessageAndWait((s32)MsgFileErased, 1);
+					UiText_ShowPositionedMessageAndWait(MsgFileErased, 1);
 				}
 			}
 		}
@@ -1483,26 +1483,26 @@ void StatusMenu_DrawCharacterSummary(s32 win, struct SaveSummary *rec)
 		UiText_DrawStringInWindow((s32)StatusMenu_LevelLetterString, win, 72, 0);
 #endif
 		UiText_DrawNumberAtOffset(rec->level, 2, win, 80, y);
-		UiText_DrawCharacterAtOffset(rec->class_id + (s32)MsgClassName, win, 0, 16);
+		UiText_DrawCharacterAtOffset(rec->class_id + MsgClassName, win, 0, 16);
 #if !EDITION_INTERNATIONAL
 		y = 32;
 		UiText_DrawNumberInWindow(rec->coins, 6, win, 24, y);
-		UiText_DrawCharacterAtOffset((s32)MsgCoins, win, 72, 32);
-		UiText_DrawCharacterAtOffset((s32)MsgStatusLabel, win, 0, 48);
+		UiText_DrawCharacterAtOffset(MsgCoins, win, 72, 32);
+		UiText_DrawCharacterAtOffset(MsgStatusLabel, win, 0, 48);
 		UiText_DrawStringInWindow((s32)Text_FormatPlayTime(rec->play_time, (u8 *)buf), win, 48, 48);
 #else
-		UiText_DrawCharacterAtOffset((s32)MsgStatusLabel, win, 0, 32);
+		UiText_DrawCharacterAtOffset(MsgStatusLabel, win, 0, 32);
 		UiText_DrawStringInWindow((s32)Text_FormatPlayTime(rec->play_time, (u8 *)buf), win, 48, 40);
 		y = 48;
 		UiText_DrawNumberInWindow(rec->coins, 6, win, 0, y);
 #if defined(TBS_EDITION_FR) || defined(TLA_EDITION_FR)
 		// フランス語版は 1 枚以下なら単数形
 		if (rec->coins > 1)
-			UiText_DrawCharacterAtOffset((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
+			UiText_DrawCharacterAtOffset(MsgCoins, win, SUMMARY_COINS_X, 48);
 		else
-			UiText_DrawCharacterAtOffset((s32)MsgPiece, win, SUMMARY_COINS_X, 48);
+			UiText_DrawCharacterAtOffset(MsgPiece, win, SUMMARY_COINS_X, 48);
 #else
-		UiText_DrawCharacterAtOffset((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
+		UiText_DrawCharacterAtOffset(MsgCoins, win, SUMMARY_COINS_X, 48);
 #endif
 #endif
 	}
@@ -1609,24 +1609,24 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 	{
 		if (summary->level == 0)
 		{
-			UiText_DrawResource((s32)MsgSaveNoData, list, 10, y);
+			UiText_DrawResource(MsgSaveNoData, list, 10, y);
 		}
 		else if (summary->frames < stamp)
 		{
-			UiText_DrawResource((s32)MsgSaveContinue, list, 10, y);
+			UiText_DrawResource(MsgSaveContinue, list, 10, y);
 		}
 		else if (summary->play_time != *(u32 *)summary->unknown_38)
 		{
-			UiText_DrawResource((s32)MsgSaveCorrupted, list, 10, y);
+			UiText_DrawResource(MsgSaveCorrupted, list, 10, y);
 		}
 		else if (mode == 5 && (s8)summary->send_flag == 0)
 		{
-			UiText_DrawResource((s32)MsgSaveNotCleared, list, 10, y);
+			UiText_DrawResource(MsgSaveNotCleared, list, 10, y);
 		}
 		else
 		{
 			UiText_DrawString(summary->name, list, SAVE_SLOT_NAME_X, y);
-			UiText_DrawResource(summary->area + (s32)MsgDebugEntryName, list, 62, y);
+			UiText_DrawResource(summary->area + MsgDebugEntryName, list, 62, y);
 			render->dirty = 1;
 		}
 	}
@@ -1840,25 +1840,25 @@ s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
 	{
 		if (save->summary[i].level == 0)
 		{
-			UiText_DrawResource((s32)MsgSaveNoData, list, 10, i * 16);
+			UiText_DrawResource(MsgSaveNoData, list, 10, i * 16);
 		}
 		else if (save->summary[i].frames < stamp)
 		{
-			UiText_DrawResource((s32)MsgSaveContinue, list, 10, i * 16);
+			UiText_DrawResource(MsgSaveContinue, list, 10, i * 16);
 		}
 		else if (save->summary[i].play_time != *(u32 *)save->summary[i].unknown_38)
 		{
-			UiText_DrawResource((s32)MsgSaveCorrupted, list, 10, i * 16);
+			UiText_DrawResource(MsgSaveCorrupted, list, 10, i * 16);
 		}
 		else if (mode == 5 && (s8)save->summary[i].send_flag == 0)
 		{
-			UiText_DrawResource((s32)MsgSaveNotCleared, list, 10, i * 16);
+			UiText_DrawResource(MsgSaveNotCleared, list, 10, i * 16);
 		}
 		else
 		{
 			y = i * 16;
 			UiText_DrawString(summary->name, list, SAVE_SLOT_NAME_X, y);
-			UiText_DrawResource(save->summary[i].area + (s32)MsgDebugEntryName, list, 72, y);
+			UiText_DrawResource(save->summary[i].area + MsgDebugEntryName, list, 72, y);
 			render->dirty = 1;
 		}
 	}
@@ -1998,7 +1998,7 @@ s32 Save_WriteSelectedSlot(void)
 	flag = SaveState_InitializeWorkspace();
 	if (flag != 0)
 	{
-		UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
+		UiText_ShowPositionedMessageAndWait(MsgNoBackupMemory, 1);
 		result = -9;
 	}
 	else
@@ -2014,7 +2014,7 @@ s32 Save_WriteSelectedSlot(void)
 		{
 			if (work->summary[slot].level != 0)
 			{
-				UiText_ShowPositionedMessageAndWait((s32)MsgOverwriteConfirm, 13);
+				UiText_ShowPositionedMessageAndWait(MsgOverwriteConfirm, 13);
 				while (UiWork_IsComplete() == 0)
 				{
 					WaitFrames(1);
@@ -2028,7 +2028,7 @@ s32 Save_WriteSelectedSlot(void)
 			}
 			gSaveSlot = slot;
 			AudioCommand_PlayFar(85);
-			UiText_ShowPositionedMessageAndWait((s32)MsgSaving, 13);
+			UiText_ShowPositionedMessageAndWait(MsgSaving, 13);
 			while (UiWork_IsComplete() == 0)
 			{
 				WaitFrames(1);
@@ -2040,12 +2040,12 @@ s32 Save_WriteSelectedSlot(void)
 			UiWork_FinalizePendingCore();
 			if (flag != 0)
 			{
-				UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
+				UiText_ShowPositionedMessageAndWait(MsgSaveFailed, 1);
 				result = -3;
 			}
 			else
 			{
-				UiText_ShowPositionedMessageAndWait((s32)MsgGameSaved, 9);
+				UiText_ShowPositionedMessageAndWait(MsgGameSaved, 9);
 			}
 		}
 	}
@@ -2061,7 +2061,7 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
 
 	if (err != 0)
 	{
-		UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
+		UiText_ShowPositionedMessageAndWait(MsgNoBackupMemory, 1);
 		ret = -9;
 	}
 	else
@@ -2083,7 +2083,7 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
 			err |= SaveState_ReadRecordPayload(value + 3, base);
 			if (err != 0)
 			{
-				UiText_ShowPositionedMessageAndWait((s32)MsgLoadFailed, 1);
+				UiText_ShowPositionedMessageAndWait(MsgLoadFailed, 1);
 				ret = -2;
 			}
 			else
@@ -2940,9 +2940,9 @@ s32 PartyTalkMenu_Choose(s32 unused)
 
 	moved = 1;
 	window = UiWindow_Create(TALK_WINDOW_X, 13, TALK_WINDOW_WIDTH, 7, 2);
-	UiText_DrawCharacterAtOffset((s32)MsgTalkChoice, window, 8, 0);
-	UiText_DrawCharacterAtOffset((s32)MsgTalkChoice + 1, window, 8, 16);
-	UiText_DrawCharacterAtOffset((s32)MsgTalkChoice + 2, window, 8, 32);
+	UiText_DrawCharacterAtOffset(MsgTalkChoice, window, 8, 0);
+	UiText_DrawCharacterAtOffset(MsgTalkChoice + 1, window, 8, 16);
+	UiText_DrawCharacterAtOffset(MsgTalkChoice + 2, window, 8, 32);
 	slot = Resource_FindFreeEntry();
 	row = 0;
 	if (slot < 96)
@@ -3038,7 +3038,7 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
 		UiWork_PushValueSlot(pc, 1);
 		UiWork_PushValueSlot(element * 20 + djinn + 300, 4);
 
-		text = UiText_BuildRenderEntriesMode1(element + (s32)MsgVenusDjinnJoined);
+		text = UiText_BuildRenderEntriesMode1(element + MsgVenusDjinnJoined);
 
 		UiText_QueueRenderEntries(window, text, 36, 2, zero);
 
@@ -3094,7 +3094,7 @@ void Party_ShowJoinedMessage(s32 member)
 		work->result[0] = 0;
 		work->result[1] = 0;
 		UiWork_PushValueSlot(member, 1);
-		UiText_QueueRenderEntries(window, UiText_BuildRenderEntriesMode1((s32)MsgJoinedParty), 36, 2, 0);
+		UiText_QueueRenderEntries(window, UiText_BuildRenderEntriesMode1(MsgJoinedParty), 36, 2, 0);
 		AudioCommand_PlayFar(81);
 		do
 		{
@@ -3155,7 +3155,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
 		UiWork_PushValueSlot(first, 1);
 		UiWork_PushValueSlot(second, 1);
 
-		UiText_QueueRenderEntries(window, UiText_BuildRenderEntriesMode1((s32)MsgPairJoinedParty), 68, 2, zero);
+		UiText_QueueRenderEntries(window, UiText_BuildRenderEntriesMode1(MsgPairJoinedParty), 68, 2, zero);
 
 		AudioCommand_PlayFar(81);
 
@@ -4270,7 +4270,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 
 	if (page == 0)
 	{
-		s32 label = (s32)MsgPreviewStatLabel;
+		s32 label = MsgPreviewStatLabel;
 
 		UiText_DrawCharacterAtOffset(label, win, 0, 8);
 		UiText_DrawCharacterAtOffset(label + 1, win, 0, 16);
@@ -4321,9 +4321,9 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 		if (gained != 0 || lost != 0)
 			UiWork_SetParamNibble(2);
 #if !EDITION_INTERNATIONAL
-		UiText_DrawCharacterAtOffset((s32)MsgBattleAdditionalPsynergyHelp, win, 40, 64);
+		UiText_DrawCharacterAtOffset(MsgBattleAdditionalPsynergyHelp, win, 40, 64);
 #else
-		UiText_DrawCharacterAtOffset((s32)MsgBattleAdditionalPsynergyHelp, win, 24, 64);
+		UiText_DrawCharacterAtOffset(MsgBattleAdditionalPsynergyHelp, win, 24, 64);
 #endif
 		UiWork_SetParamNibble(15);
 	}
@@ -4356,7 +4356,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 			else
 				UiWork_SetParamNibble(15);
 
-			UiText_DrawCharacterAtOffset((list[i] & 0x3fff) + (s32)MsgAbilityName, win, 16, n * 16);
+			UiText_DrawCharacterAtOffset((list[i] & 0x3fff) + MsgAbilityName, win, 16, n * 16);
 			UiWindow_SetTilemapEntry(win, 0xf01f, 11, n * 2, 0);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 			UiWindow_SetTilemapEntry(win, 0xf005, 12, n * 2, 0);
@@ -4369,17 +4369,17 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 		if (gained != 0)
 		{
 			UiWork_SetParamNibble(4);
-			UiText_DrawCharacterAtOffset((s32)MsgPsynergyGained, win, 32, 80);
+			UiText_DrawCharacterAtOffset(MsgPsynergyGained, win, 32, 80);
 			marks = 1;
 		}
 		if (lost != 0)
 		{
 			UiWork_SetParamNibble(2);
-			UiText_DrawCharacterAtOffset((s32)MsgPsynergyLost, win, 32, marks * 8 + 80);
+			UiText_DrawCharacterAtOffset(MsgPsynergyLost, win, 32, marks * 8 + 80);
 			marks++;
 		}
 		if (marks == 0)
-			UiText_DrawCharacterAtOffset((s32)MsgPsynergyUnchanged, win, 32, 80);
+			UiText_DrawCharacterAtOffset(MsgPsynergyUnchanged, win, 32, 80);
 		UiWork_SetParamNibble(15);
 		UiWork_SetParamNibble(15);
 		UiWindow_DrawDividerLine(win, 0, 10, 19, 10);
@@ -4387,8 +4387,8 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 
 	if (page == 0)
 	{
-		UiText_DrawCharacterAtOffset((s32)MsgClassName + snap->class_index, win, 0, 0);
-		UiText_DrawCharacterAtOffset((s32)MsgClassName + unit->class_index, win, 80, 0);
+		UiText_DrawCharacterAtOffset(MsgClassName + snap->class_index, win, 0, 0);
+		UiText_DrawCharacterAtOffset(MsgClassName + unit->class_index, win, 80, 0);
 		if (snap->class_index != unit->class_index)
 			UiWindow_SetTilemapEntry(win, 0xf728, 9, 0, page);
 		else
@@ -4471,9 +4471,9 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 #endif
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-#define OWNER_STATUS_LABEL(row) ((s32)MsgOwnerStatusAttack + (row))
+#define OWNER_STATUS_LABEL(row) (MsgOwnerStatusAttack + (row))
 #else
-#define OWNER_STATUS_LABEL(row) ((s32)MsgOwnerStatusExp - 10 + (row))
+#define OWNER_STATUS_LABEL(row) (MsgOwnerStatusExp - 10 + (row))
 #endif
 
 struct StatusCursor
@@ -4855,7 +4855,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 				UiText_DrawNumberInWindow(object->level, 2, (struct RenderInput *)winMain, 72, 0);
 #endif
 				UiText_DrawCharacterAtOffset(
-					(s32)MsgOwnerStatusExp, (struct RenderInput *)winMain, 0, 8);
+					MsgOwnerStatusExp, (struct RenderInput *)winMain, 0, 8);
 				UiText_DrawNumberInWindow(
 					object->experience, 8, (struct RenderInput *)winMain, 40, 8);
 
@@ -4912,7 +4912,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 					object->luck, 3, (struct RenderInput *)winMain, OWNER_STATUS_VALUE_X, 40);
 
 				UiText_DrawCharacterAtOffset(
-					(s32)MsgClassName + object->class_index, (struct RenderInput *)winMain, 0, 48);
+					MsgClassName + object->class_index, (struct RenderInput *)winMain, 0, 48);
 				if (extended != 0)
 				{
 					UiText_DrawCharacterAtOffset(
@@ -5108,7 +5108,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 				if (sel[0] == 0)
 				{
 					UiText_DrawCharacterAtOffset(
-						object->hp != 0 ? (s32)MsgOwnerStatusNormal : (s32)MsgOwnerStatusDowned,
+						object->hp != 0 ? MsgOwnerStatusNormal : MsgOwnerStatusDowned,
 						(struct RenderInput *)winMain, 112, 0);
 				}
 			}
@@ -5177,18 +5177,18 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 				}
 				UiWork_PushValueSlot(code, 5);
 				UiText_CopyMessageString(
-					iconIdx + (s32)MsgOwnerStatusConditionHelp, text, OWNER_STATUS_TEXT_MAX);
+					iconIdx + MsgOwnerStatusConditionHelp, text, OWNER_STATUS_TEXT_MAX);
 			}
 			else if (cur.entry == 2 && object->level <= 98)
 			{
 				UiWork_PushValueSlot(
 					Owner_GetLevelThresholdFar(owner, object->level + 1) - object->experience, 5);
-				UiText_CopyMessageString((s32)MsgOwnerStatusNextLevel, text, OWNER_STATUS_TEXT_MAX);
+				UiText_CopyMessageString(MsgOwnerStatusNextLevel, text, OWNER_STATUS_TEXT_MAX);
 			}
 			else
 			{
 				UiText_CopyMessageString(
-					cur.entry + (s32)MsgOwnerStatusEntryHelp, text, OWNER_STATUS_TEXT_MAX);
+					cur.entry + MsgOwnerStatusEntryHelp, text, OWNER_STATUS_TEXT_MAX);
 			}
 
 			UiText_RenderWideStringAtOffset(text, (struct UiWindow *)winDesc, 0, 4);
@@ -5479,7 +5479,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 				}
 				if (is_used != 0)
 				{
-					TEXT_LOAD((s32)MsgBattleDjinnTwice, buf, TEXT_COUNT);
+					TEXT_LOAD(MsgBattleDjinnTwice, buf, TEXT_COUNT);
 					if (detail_win != 0)
 					{
 						UiWork_Finalize(detail_win, 1);
@@ -5493,7 +5493,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 					{
 						UiWork_PushValueSlot((s32)((cur & 0x3e0000) >> 17), 5);
 						TEXT_LOAD(
-							(s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) + (s32)MsgDjinnEffect,
+							(s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) + MsgDjinnEffect,
 							buf, TEXT_COUNT);
 						if (detail_win != 0)
 						{
@@ -5506,7 +5506,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 					{
 						detail_win = (struct UiWindow *)DjinnMenu_ShowChangePreview(
 							(struct RenderInput *)detail_win, owner, (s32)cur, sub_sel, &sub_cnt);
-						UiText_CopyMessageString((s32)MsgBattleSummonStandby, buf, TEXT_COUNT);
+						UiText_CopyMessageString(MsgBattleSummonStandby, buf, TEXT_COUNT);
 						mask = 1 << ((cur & 0xf00) >> 8);
 					}
 				}
@@ -5514,13 +5514,13 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 				{
 					detail_win = (struct UiWindow *)DjinnMenu_ShowChangePreview(
 						(struct RenderInput *)detail_win, owner, (s32)cur, sub_sel, &sub_cnt);
-					TEXT_LOAD((s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) + (s32)MsgDjinnEffect,
+					TEXT_LOAD((s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) + MsgDjinnEffect,
 						buf, TEXT_COUNT);
 				}
 			}
 			else
 			{
-				TEXT_LOAD((s32)MsgBattleNoDjinn, buf, TEXT_COUNT);
+				TEXT_LOAD(MsgBattleNoDjinn, buf, TEXT_COUNT);
 			}
 			ctx->menu_busy = 0;
 			if (sub_sel == 0)
@@ -5549,7 +5549,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 						UiWork_SetParamNibble(2);
 					}
 					UiText_DrawCharacterAtOffset(
-						(s32)(((code & 0xf00) >> 8) * 20 + (code & 0xff)) + (s32)MsgDjinnName,
+						(s32)(((code & 0xf00) >> 8) * 20 + (code & 0xff)) + MsgDjinnName,
 						(struct RenderInput *)list_win, 8, j * 16);
 					if (code & 0x3e0000)
 					{
@@ -5667,7 +5667,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 					Ui_FillVramBlockPattern();
 					UiWork_ClearValueNameTables();
 					UiWork_PushValueSlot((s32)((turns & 0x3e0000) >> 17), 5);
-					UiText_CopyMessageString((s32)MsgBattleDjinnRecovering, buf, TEXT_COUNT);
+					UiText_CopyMessageString(MsgBattleDjinnRecovering, buf, TEXT_COUNT);
 					UiText_RenderWideStringAtOffset(buf, msg_win, 0, 4);
 				}
 				AudioCommand_PlayFar(0x72);
@@ -6433,22 +6433,22 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 			{
 				if (Item_ClassifyUseAbility(owner, entries[page + row]) == 2)
 				{
-					TEXT_LOAD((s32)MsgBattleItemUnavailable, buffer, TEXT_COUNT);
+					TEXT_LOAD(MsgBattleItemUnavailable, buffer, TEXT_COUNT);
 				}
 				else
 				{
 #if EDITION_INTERNATIONAL
 					UiText_CopyMessageString(
-						(entries[page + row] & ITEM_ID_MASK) + (s32)MsgItemPlainName, buffer, 52);
+						(entries[page + row] & ITEM_ID_MASK) + MsgItemPlainName, buffer, 52);
 #else
 					UiText_DecodeMessage(
-						(entries[page + row] & ITEM_ID_MASK) + (s32)MsgItemPlainName, buffer, 32);
+						(entries[page + row] & ITEM_ID_MASK) + MsgItemPlainName, buffer, 32);
 #endif
 				}
 			}
 			else
 			{
-				TEXT_LOAD((s32)MsgBattleNoItems, buffer, TEXT_COUNT);
+				TEXT_LOAD(MsgBattleNoItems, buffer, TEXT_COUNT);
 			}
 			UiText_RenderWideStringAtOffset(buffer, message_window, 0, 4);
 			drawn_row = row;
@@ -6473,7 +6473,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 					{
 						UiWork_SetParamNibble(2);
 					}
-					UiText_DrawCharacterAtOffset((entry & ITEM_ID_MASK) + (s32)MsgItemName,
+					UiText_DrawCharacterAtOffset((entry & ITEM_ID_MASK) + MsgItemName,
 						(struct RenderInput *)window, 16, i * 16);
 					UiWork_SetParamNibble(15);
 					sprites[i].oam.f.tile = Resource_LoadKind26EntryToBuffer(entry, handles[i]);
@@ -6570,15 +6570,15 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 				AudioCommand_PlayFar(114);
 				if (reason == 2)
 				{
-					TEXT_LOAD((s32)MsgBattleItemUnavailable, buffer, TEXT_COUNT);
+					TEXT_LOAD(MsgBattleItemUnavailable, buffer, TEXT_COUNT);
 				}
 				else if ((entries[result] & INVENTORY_BROKEN) != 0)
 				{
-					TEXT_LOAD((s32)MsgBattleItemBroken, buffer, TEXT_COUNT);
+					TEXT_LOAD(MsgBattleItemBroken, buffer, TEXT_COUNT);
 				}
 				else
 				{
-					TEXT_LOAD((s32)MsgBattleItemNoEffect, buffer, TEXT_COUNT);
+					TEXT_LOAD(MsgBattleItemNoEffect, buffer, TEXT_COUNT);
 				}
 				Ui_FillVramBlockPattern();
 				UiText_RenderWideStringAtOffset(buffer, message_window, 0, 4);
@@ -6762,11 +6762,11 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 			{
 #if EDITION_INTERNATIONAL
 				UiText_CopyMessageString(
-					(actions[page + row] & ACTION_ID_MASK) + (s32)MsgAbilityDescription, buffer,
+					(actions[page + row] & ACTION_ID_MASK) + MsgAbilityDescription, buffer,
 					52);
 #else
 				UiText_DecodeMessage(
-					(actions[page + row] & ACTION_ID_MASK) + (s32)MsgAbilityDescription, buffer,
+					(actions[page + row] & ACTION_ID_MASK) + MsgAbilityDescription, buffer,
 					32);
 #endif
 			}
@@ -6814,7 +6814,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 
 					render->level = 5;
 					UiText_DrawCharacterAtOffset(
-						entry + (s32)MsgAbilityName, (struct RenderInput *)window, 16, i * 16);
+						entry + MsgAbilityName, (struct RenderInput *)window, 16, i * 16);
 					UiText_DrawNumberAtOffset(
 						action->pp_cost, 2, (struct RenderInput *)window, 104, i * 16);
 					UiWork_SetParamNibble(15);
@@ -7391,7 +7391,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 					}
 						UiWork_SetParamNibble(2);
 						UiText_DrawCharacterAtOffset(
-							(s32)MsgTargetSetDjinni, (struct RenderInput *)infoWin, 0, 0);
+							MsgTargetSetDjinni, (struct RenderInput *)infoWin, 0, 0);
 						UiWork_SetParamNibble(15);
 						break;
 					case 1:
@@ -7463,7 +7463,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 						if (unit->hp != 0)
 							goto no_condition;
 						UiText_DrawCharacterAtOffset(
-							(s32)MsgTargetDowned, (struct RenderInput *)infoWin, 0, 0);
+							MsgTargetDowned, (struct RenderInput *)infoWin, 0, 0);
 						break;
 					case 3:
 					{
@@ -7478,7 +7478,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 						if (unit->doku == 0)
 							goto no_condition;
 						UiText_DrawCharacterAtOffset(
-							(s32)MsgTargetCurePoison, (struct RenderInput *)infoWin, 0, 0);
+							MsgTargetCurePoison, (struct RenderInput *)infoWin, 0, 0);
 						break;
 					case 4:
 						count = 0;
@@ -7529,30 +7529,30 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 						if (unit->maboroshi != 0)
 						{
 							UiText_DrawCharacterAtOffset(
-								(s32)MsgTargetCureDelusion, (struct RenderInput *)infoWin, 0, 0);
+								MsgTargetCureDelusion, (struct RenderInput *)infoWin, 0, 0);
 							count = 1;
 						}
 						if (unit->shibire != 0)
 						{
-							UiText_DrawCharacterAtOffset((s32)MsgTargetCureStun,
+							UiText_DrawCharacterAtOffset(MsgTargetCureStun,
 								(struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
 						if (unit->nemuri != 0)
 						{
-							UiText_DrawCharacterAtOffset((s32)MsgTargetCureSleep,
+							UiText_DrawCharacterAtOffset(MsgTargetCureSleep,
 								(struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
 						if (unit->fuuji != 0)
 						{
-							UiText_DrawCharacterAtOffset((s32)MsgTargetCureSeal,
+							UiText_DrawCharacterAtOffset(MsgTargetCureSeal,
 								(struct RenderInput *)infoWin, 0, count * 8);
 							++count;
 						}
 						if (unit->shiryo != 0)
 						{
-							UiText_DrawCharacterAtOffset((s32)MsgTargetCureCurse,
+							UiText_DrawCharacterAtOffset(MsgTargetCureCurse,
 								(struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
@@ -7614,42 +7614,42 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 						if (unit->doku != 0)
 						{
 							UiText_DrawCharacterAtOffset(
-								(s32)MsgTargetCurePoison, (struct RenderInput *)infoWin, 0, 0);
+								MsgTargetCurePoison, (struct RenderInput *)infoWin, 0, 0);
 							count = 1;
 						}
 						if (unit->maboroshi != 0)
 						{
-							UiText_DrawCharacterAtOffset((s32)MsgTargetCureDelusion,
+							UiText_DrawCharacterAtOffset(MsgTargetCureDelusion,
 								(struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
 						if (unit->shibire != 0)
 						{
-							UiText_DrawCharacterAtOffset((s32)MsgTargetCureStun,
+							UiText_DrawCharacterAtOffset(MsgTargetCureStun,
 								(struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
 						if (unit->nemuri != 0)
 						{
-							UiText_DrawCharacterAtOffset((s32)MsgTargetCureSleep,
+							UiText_DrawCharacterAtOffset(MsgTargetCureSleep,
 								(struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
 						if (unit->fuuji != 0)
 						{
-							UiText_DrawCharacterAtOffset((s32)MsgTargetCureSeal,
+							UiText_DrawCharacterAtOffset(MsgTargetCureSeal,
 								(struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
 						if (unit->shiryo != 0)
 						{
-							UiText_DrawCharacterAtOffset((s32)MsgTargetCureCurse,
+							UiText_DrawCharacterAtOffset(MsgTargetCureCurse,
 								(struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
 						if (unit->akuryo != 0)
 						{
-							UiText_DrawCharacterAtOffset((s32)MsgTargetCureHaunt,
+							UiText_DrawCharacterAtOffset(MsgTargetCureHaunt,
 								(struct RenderInput *)infoWin, 0, 8 * count);
 							count++;
 						}
@@ -7658,7 +7658,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 					no_condition:
 						UiWork_SetParamNibble(2);
 						UiText_DrawCharacterAtOffset(
-							(s32)MsgTargetNoEffect, (struct RenderInput *)infoWin, 0, 0);
+							MsgTargetNoEffect, (struct RenderInput *)infoWin, 0, 0);
 						UiWork_SetParamNibble(15);
 						break;
 					}
@@ -7671,7 +7671,7 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 				namePos.y += Trig_Sin(gFrameCount << 12) / 32768;
 				if (who->class_id == 125 || who->class_id == 122)
 				{
-					width = (s32)MsgMysteryPersonName;
+					width = MsgMysteryPersonName;
 					if (who->class_id == 125)
 						width++;
 #if defined(TBS_EDITION_JA)
@@ -7976,7 +7976,7 @@ s32 UiText_ShowLocalizedMessageAndWait(void)
 	{
 		work = UiWindow_Create(0, 7, 30, 4, 42);
 		Ui_FillVramBlockPattern();
-		TEXT_LOAD((s32)MsgNoTimeToRun, buffer, TEXT_COUNT);
+		TEXT_LOAD(MsgNoTimeToRun, buffer, TEXT_COUNT);
 		UiText_RenderWideStringAtOffset(buffer, work, 0, 4);
 		do
 		{
@@ -8322,9 +8322,9 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 			case 0:
 				win = UiWindow_Create(11, 17, 11, 3, 6);
 #if defined(TBS_EDITION_FR)
-				UiText_DrawCharacterAtOffset((s32)MsgCommandName, (struct RenderInput *)win, 14, 0);
+				UiText_DrawCharacterAtOffset(MsgCommandName, (struct RenderInput *)win, 14, 0);
 #else
-				UiText_DrawCharacterAtOffset((s32)MsgCommandName, (struct RenderInput *)win, 16, 0);
+				UiText_DrawCharacterAtOffset(MsgCommandName, (struct RenderInput *)win, 16, 0);
 #endif
 				state->entries[0].oam.f.x = 64;
 				AudioCommand_PlayFar(112);
@@ -8413,7 +8413,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 					UiWork_SetParamNibble(9);
 				}
 				UiText_DrawCharacterAtOffset(
-					param + (s32)MsgAbilityName, (struct RenderInput *)win, 16, 0);
+					param + MsgAbilityName, (struct RenderInput *)win, 16, 0);
 				UiText_DrawNumberAtOffset(ability->pp_cost, 2, (struct RenderInput *)win, 104, 0);
 				ui->level = 15;
 				UiWork_SetParamNibble(15);
@@ -8504,7 +8504,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 					UiWork_SetParamNibble(2);
 				}
 				UiText_DrawCharacterAtOffset(
-					SummonDefinition_Get(mode)->name_message_id + (s32)MsgAbilityName, win, 16, 0);
+					SummonDefinition_Get(mode)->name_message_id + MsgAbilityName, win, 16, 0);
 				for (j = 0; j <= 3; j++)
 				{
 					if (djinn->djinn_required[j] != 0)
@@ -8582,7 +8582,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 					state->entries[0].oam.f.x = 64;
 					UiWindow_SetTilemapEntry(win, element + 20481, 0, 0, 0);
 					UiText_DrawCharacterAtOffset(
-						element * 20 + index + (s32)MsgDjinnName, win, 16, 0);
+						element * 20 + index + MsgDjinnName, win, 16, 0);
 					ent->rng = cost;
 					WaitFrames(1);
 					AudioCommand_PlayFar(112);
@@ -8590,7 +8590,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 						Battle_ClassifyEntryKind((const struct BtlAct *)ability));
 					if (state->hintCount != 0)
 					{
-						hint = UiText_ShowMessageAndWaitComplete((s32)MsgDjinnUnleashHint, 15, 8);
+						hint = UiText_ShowMessageAndWaitComplete(MsgDjinnUnleashHint, 15, 8);
 						while (UiWork_IsComplete() == 0)
 						{
 							WaitFrames(1);
@@ -8611,7 +8611,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 				state->entries[0].oam.f.x = 64;
 				UiWork_SetParamNibble(2);
 				UiWindow_SetTilemapEntry(win, element + 20481, 0, 0, 0);
-				UiText_DrawCharacterAtOffset(element * 20 + index + (s32)MsgDjinnName, win, 16, 0);
+				UiText_DrawCharacterAtOffset(element * 20 + index + MsgDjinnName, win, 16, 0);
 				UiWork_SetParamNibble(15);
 				ent->rng = 1;
 				WaitFrames(1);
@@ -8714,7 +8714,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 				slot->oam.f.y = win->y * 8 + 4;
 				slot->oam.f.tile = Resource_LoadKind26EntryToBuffer(actor->inventory[sel], handle);
 				state->entryActive[1] = 1;
-				UiText_DrawCharacterAtOffset((actor->inventory[sel] & 0x1ff) + (s32)MsgItemName,
+				UiText_DrawCharacterAtOffset((actor->inventory[sel] & 0x1ff) + MsgItemName,
 					(struct RenderInput *)win, 24, 0);
 				ent->rng = cost;
 				AudioCommand_PlayFar(112);
@@ -8791,7 +8791,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 		s32 DrawLocalizedResource(void)
 		{
 			u16 data[64];
-			TEXT_LOAD((s32)MsgWaitingForOpponent, data, TEXT_COUNT);
+			TEXT_LOAD(MsgWaitingForOpponent, data, TEXT_COUNT);
 			UiText_RenderWideStringAtOffset(data, (struct UiWindow *)state->displayHandle, 0, 4);
 		}
 
@@ -9047,7 +9047,7 @@ redraw:
 	if (work->resource_base != 0)
 		resource = work->resource_base + work->selection;
 	else
-		resource = work->resource_ids[work->selection] + (s32)MsgCommandName;
+		resource = work->resource_ids[work->selection] + MsgCommandName;
 	UiText_DrawCharacterAtOffset(resource, work->window, 0, 0);
 	for (;;)
 	{
@@ -9125,7 +9125,7 @@ s32 Menu_SelectResource(s32 start, s32 goal)
 		}
 		else
 		{
-			resource_id = state->resource_ids[state->selection] + (s32)MsgCommandName;
+			resource_id = state->resource_ids[state->selection] + MsgCommandName;
 		}
 		UiText_DrawCharacterAtOffset(resource_id, state->window, 0, 0);
 
@@ -9382,7 +9382,7 @@ void Menu_DrawModeLabel(void)
 		{
 		case 0:
 		{
-			s32 text = (s32)MsgPasswordLevel;
+			s32 text = MsgPasswordLevel;
 
 			UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 40);
 			UiText_DrawCharacterAtOffset(text + 1, state->lower_window, MODE_LABEL_X, 48);
@@ -9394,7 +9394,7 @@ void Menu_DrawModeLabel(void)
 		}
 		case 1:
 		{
-			s32 text = (s32)MsgPasswordLevel;
+			s32 text = MsgPasswordLevel;
 
 			UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 40);
 			UiText_DrawCharacterAtOffset(text + 1, state->lower_window, MODE_LABEL_X, 48);
@@ -9405,7 +9405,7 @@ void Menu_DrawModeLabel(void)
 		case 2:
 		default:
 		{
-			s32 text = (s32)MsgPasswordLevel;
+			s32 text = MsgPasswordLevel;
 
 			UiText_DrawCharacterAtOffset(text++, state->lower_window, MODE_LABEL_X, 40);
 			UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 48);
@@ -9432,15 +9432,15 @@ void Menu_DrawModeIndicator(void)
 		if (state->selection == 0)
 		{
 			RenderOutput_ClearList(state->lower_window);
-			UiText_DrawResource((s32)MsgPasswordTransferHelp, (s32)state->lower_window, 16, 4);
-			UiText_DrawResource((s32)MsgPasswordTransferHelp + 1, (s32)state->lower_window, 16, 16);
+			UiText_DrawResource(MsgPasswordTransferHelp, (s32)state->lower_window, 16, 4);
+			UiText_DrawResource(MsgPasswordTransferHelp + 1, (s32)state->lower_window, 16, 16);
 		}
 		else if (state->previous_mode == 0)
 		{
 			RenderOutput_ClearList(state->lower_window);
-			UiText_DrawResource((s32)MsgCableTransferHelp, (s32)state->lower_window, 0, 4);
-			UiText_DrawResource((s32)MsgCableTransferHelp + 1, (s32)state->lower_window, 0, 16);
-			UiText_DrawResource((s32)MsgCableTransferHelp + 2, (s32)state->lower_window, 0, 28);
+			UiText_DrawResource(MsgCableTransferHelp, (s32)state->lower_window, 0, 4);
+			UiText_DrawResource(MsgCableTransferHelp + 1, (s32)state->lower_window, 0, 16);
+			UiText_DrawResource(MsgCableTransferHelp + 2, (s32)state->lower_window, 0, 28);
 		}
 		state->previous_mode = state->selection;
 	}
@@ -9459,26 +9459,26 @@ void Menu_DrawModeIndicator(void)
 		if (*current == 0)
 		{
 #if defined(TBS_EDITION_DE)
-			UiText_DrawCharacterAtOffset((s32)MsgPasswordTransferHelp, state->lower_window, 32, 8);
+			UiText_DrawCharacterAtOffset(MsgPasswordTransferHelp, state->lower_window, 32, 8);
 			UiText_DrawCharacterAtOffset(
-				(s32)MsgPasswordTransferHelp + 1, state->lower_window, 32, 24);
+				MsgPasswordTransferHelp + 1, state->lower_window, 32, 24);
 #else
 			UiText_DrawResource(
-				(s32)MsgPasswordTransferHelp, state->lower_window, PASSWORD_HELP_X, 4);
+				MsgPasswordTransferHelp, state->lower_window, PASSWORD_HELP_X, 4);
 			UiText_DrawResource(
-				(s32)MsgPasswordTransferHelp + 1, state->lower_window, PASSWORD_HELP_X, 16);
+				MsgPasswordTransferHelp + 1, state->lower_window, PASSWORD_HELP_X, 16);
 #endif
 		}
 		else
 		{
 #if defined(TBS_EDITION_DE)
-			UiText_DrawCharacterAtOffset((s32)MsgCableTransferHelp, state->lower_window, 0, 0);
-			UiText_DrawCharacterAtOffset((s32)MsgCableTransferHelp + 1, state->lower_window, 0, 16);
-			UiText_DrawCharacterAtOffset((s32)MsgCableTransferHelp + 2, state->lower_window, 0, 32);
+			UiText_DrawCharacterAtOffset(MsgCableTransferHelp, state->lower_window, 0, 0);
+			UiText_DrawCharacterAtOffset(MsgCableTransferHelp + 1, state->lower_window, 0, 16);
+			UiText_DrawCharacterAtOffset(MsgCableTransferHelp + 2, state->lower_window, 0, 32);
 #else
-			UiText_DrawResource((s32)MsgCableTransferHelp, state->lower_window, 0, 4);
-			UiText_DrawResource((s32)MsgCableTransferHelp + 1, state->lower_window, 0, 16);
-			UiText_DrawResource((s32)MsgCableTransferHelp + 2, state->lower_window, 0, 28);
+			UiText_DrawResource(MsgCableTransferHelp, state->lower_window, 0, 4);
+			UiText_DrawResource(MsgCableTransferHelp + 1, state->lower_window, 0, 16);
+			UiText_DrawResource(MsgCableTransferHelp + 2, state->lower_window, 0, 28);
 #endif
 		}
 	}
@@ -9530,7 +9530,7 @@ s32 Menu_SelectResourceLayout(s32 mode)
 #else
 		window = UiWindow_Create(9, 0, 13, 4, 2);
 #endif
-		msg = (s32)MsgPasswordSelection;
+		msg = MsgPasswordSelection;
 		upper = &work->upper_window;
 		*upper = window;
 		UiText_DrawResource(msg, (s32)window, 0, 4);
@@ -9569,9 +9569,9 @@ s32 Menu_SelectResourceLayout(s32 mode)
 		upper = &work->upper_window;
 		*upper = window;
 #if EDITION_INTERNATIONAL
-		UiText_DrawResource((s32)MsgTransferMethod, (s32)window, 2, 4);
+		UiText_DrawResource(MsgTransferMethod, (s32)window, 2, 4);
 #else
-		UiText_DrawResource((s32)MsgTransferMethod, (s32)window, 0, 4);
+		UiText_DrawResource(MsgTransferMethod, (s32)window, 0, 4);
 #endif
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
 	|| defined(TBS_EDITION_IT)
@@ -9691,7 +9691,7 @@ s32 Menu_RunConfirmSelection(s32 low, s32 mes, s32 w, s32 sel)
 //--------------------------------------------------------------------------
 s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 sel)
 {
-	s32 mes = (s32)MsgCommandYes;
+	s32 mes = MsgCommandYes;
 
 	AffineEffect_InitializeWork();
 	Menu_AppendResourceEntry(5);
@@ -9745,12 +9745,12 @@ void Scheduler_ScheduleCallbackCAfterFrames(void)
 void Menu_DrawSelectionRow(struct UiWindow *work, s32 first, const s16 *second)
 {
 	s16 selected = first;
-	s32 label = Scene_GetAreaNameIndexFar(selected, *second) + (s32)MsgDebugEntryName;
+	s32 label = Scene_GetAreaNameIndexFar(selected, *second) + MsgDebugEntryName;
 	RenderOutput_PrepareForRedraw(work);
 	UiText_DrawNumber(selected, 3, (s32)work, 0, 14);
 	UiText_DrawNumber(*second, 3, (s32)work, MENU_LABEL_X, 14);
 	UiText_DrawString(Menu_ColonString, (s32)work, MENU_TEXT_X, 0);
-	UiText_DrawResource(selected + (s32)MsgDebugCategoryName, (s32)work, 0, 0);
+	UiText_DrawResource(selected + MsgDebugCategoryName, (s32)work, 0, 0);
 	UiText_DrawString(Menu_ColonString, (s32)work, MENU_TEXT_X, 14);
 	UiText_DrawResource(label, (s32)work, MENU_LABEL_X, 0);
 }
@@ -10081,7 +10081,7 @@ s32 Menu_RunWorkspaceResultLoop(void)
 	}
 	else if (result == 1)
 	{
-		UiText_ShowPositionedMessageAndWait((s32)MsgSleepMode, 1);
+		UiText_ShowPositionedMessageAndWait(MsgSleepMode, 1);
 		gSleepRequested = result;
 	}
 	else if (result == 2)
@@ -10192,11 +10192,11 @@ s32 DebugMenu_BrowseIcons(void)
 }
 
 #if !EDITION_INTERNATIONAL || defined(TBS_EDITION_EN)
-#define DEBUG_GLYPH_NAME ((s32)MsgDebugGlyphName)
+#define DEBUG_GLYPH_NAME MsgDebugGlyphName
 #elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
-#define DEBUG_GLYPH_NAME ((s32)MsgEnd)
+#define DEBUG_GLYPH_NAME MsgEnd
 #else
-#define DEBUG_GLYPH_NAME ((s32)MsgDebugSecondForm)
+#define DEBUG_GLYPH_NAME MsgDebugSecondForm
 #endif
 
 s32 DebugMenu_BrowseEntryGlyphs(void)

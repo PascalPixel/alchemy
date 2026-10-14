@@ -157,12 +157,12 @@ static void EV10_TALK(void)
 	Engine_EventBegin();
 	if (Engine_GameFlagIsSet(0x962))
 	{
-		Engine_EventSetMessage((s32)MsgKorashiamuColosseumAlreadyFullIfReally);
+		Engine_EventSetMessage(MsgKorashiamuColosseumAlreadyFullIfReally);
 		Engine_EventShowMessage(10, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKorashiamuHopingGetInSeeColosso);
+		Engine_EventSetMessage(MsgKorashiamuHopingGetInSeeColosso);
 		Engine_EventAskYesNo(10, 0);
 	}
 	Engine_EventEnd();
@@ -174,12 +174,12 @@ static void EV13_TALK_3(void)
 	if (Engine_GameFlagIsSet(0x962))
 	{
 		Engine_ActorShowEmote(13, 258, 40);
-		Engine_EventSetMessage((s32)MsgKorashiamuWantWatchFinalsFromGood);
+		Engine_EventSetMessage(MsgKorashiamuWantWatchFinalsFromGood);
 		Engine_EventShowMessage(13, 0);
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKorashiamuColossosLuckyGuessMakesBattles);
+		Engine_EventSetMessage(MsgKorashiamuColossosLuckyGuessMakesBattles);
 		Engine_EventShowMessage(13, 0);
 	}
 	Engine_EventEnd();
@@ -191,7 +191,7 @@ static void EV14_TALK_3(void)
 	if (Engine_GameFlagIsSet(0x962) != 0)
 	{
 		Engine_ActorRunRepeatedMotion(14, 2);
-		Engine_EventSetMessage((s32)MsgKorashiamuHoldOnSecond);
+		Engine_EventSetMessage(MsgKorashiamuHoldOnSecond);
 		FieldScene_CallPairWith10(14);
 		Engine_ActorFaceEachOther(14, ACTOR_PARTY_LEADER, 0);
 		Engine_EventWait(20);
@@ -200,7 +200,7 @@ static void EV14_TALK_3(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKorashiamuWantWinBigPutOn);
+		Engine_EventSetMessage(MsgKorashiamuWantWinBigPutOn);
 		Engine_EventShowMessage(14, 0);
 	}
 	Engine_EventEnd();
@@ -213,12 +213,12 @@ static void EV16_TALK_3(void)
 	{
 		if (GameFlag_IsSet(0x3c0) != 0)
 		{
-			Engine_EventSetMessage((s32)MsgKorashiamuLookImSorryButWe);
+			Engine_EventSetMessage(MsgKorashiamuLookImSorryButWe);
 			Event_ShowMessage(16, 0);
 		}
 		else
 		{
-			Engine_EventSetMessage((s32)MsgKorashiamuWantTryOutLuckyGuess);
+			Engine_EventSetMessage(MsgKorashiamuWantTryOutLuckyGuess);
 			Event_OpenMessage(16, 0);
 			if (Engine_EventChooseYesNo(0, 0) == 0)
 			{
@@ -241,7 +241,7 @@ static void EV16_TALK_3(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKorashiamuDoKnowLuckyGuess);
+		Engine_EventSetMessage(MsgKorashiamuDoKnowLuckyGuess);
 		Event_AskYesNo(16, 0);
 	}
 	Engine_EventEnd();
@@ -255,7 +255,7 @@ static void EV13_TALK(void)
 	Engine_EventBegin();
 	Engine_ActorStop(13);
 	Engine_ActorFaceEachOther(13, ACTOR_PARTY_LEADER, 20);
-	Engine_EventSetMessage((s32)MsgKorashiamuImRatedAsSecondBest);
+	Engine_EventSetMessage(MsgKorashiamuImRatedAsSecondBest);
 	FieldScene_CallPairWith10(13);
 	Engine_ActorRunRepeatedMotion(13, 1);
 	Engine_EventShowMessage(13, 0);
@@ -280,7 +280,7 @@ static void EV14_TALK(void)
 	Engine_EventBegin();
 	Actor_SetAttachedEffect(14, 0x102);
 	Engine_ActorRunRepeatedMotion(14, 2);
-	Engine_EventSetMessage((s32)MsgKorashiamuWaahDontFrightenMe);
+	Engine_EventSetMessage(MsgKorashiamuWaahDontFrightenMe);
 	FieldScene_CallPairWith10(14);
 	Actor_ShowEmote(14, 0x102, 40);
 	Event_ShowMessage(14, 0);
@@ -290,7 +290,7 @@ static void EV14_TALK(void)
 static void EV15_TALK(void)
 {
 	Engine_EventBegin();
-	Engine_EventSetMessage((s32)MsgKorashiamuWhoHaveComeQuestionMe);
+	Engine_EventSetMessage(MsgKorashiamuWhoHaveComeQuestionMe);
 	FieldScene_CallPairWith10(15);
 	Engine_ActorFaceEachOther(15, ACTOR_PARTY_LEADER, 20);
 	FieldScene_CallPairWith10(15);
@@ -305,7 +305,7 @@ static void EV16_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorRunRepeatedMotion(16, 2);
-	Engine_EventSetMessage((s32)MsgKorashiamuDekkaMustWinFinalsDekka);
+	Engine_EventSetMessage(MsgKorashiamuDekkaMustWinFinalsDekka);
 	Event_ShowMessageAndWait(16, 0, 20);
 	if (GameFlag_IsSet(0x3c1) != 0)
 	{
@@ -331,7 +331,7 @@ static void EV17_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceEachOther(17, ACTOR_PARTY_LEADER, 20);
-	Engine_EventSetMessage((s32)MsgKorashiamuAmNavampaGondowanSixthRanked);
+	Engine_EventSetMessage(MsgKorashiamuAmNavampaGondowanSixthRanked);
 	FieldScene_CallPairWith10(17);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	Engine_ActorSetAnimationAndWait(17, 3);
@@ -346,7 +346,7 @@ static void EV18_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 20);
-	Engine_EventSetMessage((s32)MsgKorashiamuImBufordSeventhSeed);
+	Engine_EventSetMessage(MsgKorashiamuImBufordSeventhSeed);
 	FieldScene_CallPairWith10(18);
 	Actor_FaceDirection(18, 0xd000, 20);
 	Actor_FaceDirection(18, 0xb000, 20);
@@ -363,7 +363,7 @@ static void EV08_TALK(void)
 {
 	Engine_EventBegin();
 	Engine_ActorFaceEachOther(8, ACTOR_PARTY_LEADER, 20);
-	Engine_EventSetMessage((s32)MsgKorashiamuYouReadyForFinals);
+	Engine_EventSetMessage(MsgKorashiamuYouReadyForFinals);
 	Engine_EventOpenMessage(8, 0);
 	if (Engine_EventChooseYesNo(0, 0) != 0)
 		gEventWork->message++;
@@ -386,7 +386,7 @@ static void EV10_TOUCH(void)
 	Engine_ActorFaceDirection(17, FACING_EAST, 60);
 	Actor_ShowEmote(17, 0x100, 40);
 	SceneState_ForwardMaskedHalfwordWith10(17, 0x3000);
-	Engine_EventSetMessage((s32)MsgKorashiamuHeyYouRe);
+	Engine_EventSetMessage(MsgKorashiamuHeyYouRe);
 	Engine_ActorStartRepeatedMotion(17, 2);
 	FieldScene_CallPairWith10(17);
 	Engine_ActorFaceDirection(18, 0x3000, 0);
@@ -608,14 +608,14 @@ static void EV12_TOUCH(void)
 		Engine_CameraWaitForMove();
 		Actor_FaceDirection(8, 0x3000, 20);
 		Engine_ActorRunRepeatedMotion(8, 1);
-		Engine_EventSetMessage((s32)MsgKorashiamuYouReadyForFinals);
+		Engine_EventSetMessage(MsgKorashiamuYouReadyForFinals);
 		Event_OpenMessage(0x8008, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 0)
 		{
 			Engine_EventWait(20);
 			SceneState_ForwardMaskedHalfwordWith10(12, 0xd000);
 			Engine_ActorRunRepeatedMotion(12, 1);
-			Engine_EventSetMessage((s32)MsgKorashiamuDayTiredWaiting);
+			Engine_EventSetMessage(MsgKorashiamuDayTiredWaiting);
 			FieldScene_CallPairWith10(0x400c);
 			SceneState_ForwardMaskedHalfwordWith10(17, 0);
 			SceneState_ForwardMaskedHalfwordWith10(0, 0x8000);
@@ -732,14 +732,14 @@ static void EV17_TALK_1(void)
 	if (flag_8a4 != 0)
 	{
 		Engine_ActorFaceEachOther(RECORD_17, ACTOR_PARTY_LEADER, 40);
-		Engine_EventSetMessage((s32)MsgKorashiamuHavePerfectTechniquesLikeThose);
+		Engine_EventSetMessage(MsgKorashiamuHavePerfectTechniquesLikeThose);
 		FieldScene_CallPairWith10(RECORD_17);
 		Actor_FaceDirection(RECORD_17, 0x3000, 20);
 	}
 	else
 	{
 		Engine_ActorStartRepeatedMotion(RECORD_17, 2);
-		Engine_EventSetMessage((s32)MsgKorashiamuSilence);
+		Engine_EventSetMessage(MsgKorashiamuSilence);
 		Event_ShowMessage(RECORD_17, 0);
 		*(((u8 *)Engine_EventGetViewCenter()) + 85) = flag_8a4;
 		Engine_TaskWait(1);
@@ -882,7 +882,7 @@ static void KorashiamuIriguchi_ShowQualifyingTrialMessage(void)
 
 	Engine_EventWait(20);
 	SceneState_ForwardMaskedHalfwordWith10(17, 160 << 7);
-	Engine_EventSetMessage((s32)MsgKorashiamuHaveMakeThroughCountlessMatches);
+	Engine_EventSetMessage(MsgKorashiamuHaveMakeThroughCountlessMatches);
 
 	if (Engine_GameFlagIsSet(0x8a4) != 0)
 	{
@@ -1166,7 +1166,7 @@ static void FieldScene_BuildActorPresentationSequence(void)
 	Actor_ShowEmote(IWAN, 0x100, 0);
 	Engine_ActorRunRepeatedMotion(IWAN, 1);
 	Engine_EventWait(20);
-	Engine_EventSetMessage((s32)MsgKorashiamuRobinOnlyOneEnteringFinals);
+	Engine_EventSetMessage(MsgKorashiamuRobinOnlyOneEnteringFinals);
 	FieldScene_CallPairWith10(2);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	FieldScene_CallPairWith10(8);
@@ -1393,7 +1393,7 @@ static void KorashiamuIriguchi_AnnounceFinals(void)
 	Actor_FaceDirection(16, FACING_WEST, 0);
 	Actor_FaceDirection(17, 0xb000, 0);
 	Actor_FaceDirection(18, 0xb000, 0);
-	Engine_EventSetMessage((s32)MsgKorashiamuPrepareYourselvesContestantsFinalsWill);
+	Engine_EventSetMessage(MsgKorashiamuPrepareYourselvesContestantsFinalsWill);
 	FieldScene_CallPairWith10(8);
 	Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
 	{
@@ -1452,7 +1452,7 @@ static void KorashiamuIriguchi_CelebrateAdvancement(void)
 	Engine_EventWait(40);
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Engine_ActorSetAnimation(8, 3);
-	Engine_EventSetMessage((s32)MsgKorashiamuSeeYouveMadeThroughYour);
+	Engine_EventSetMessage(MsgKorashiamuSeeYouveMadeThroughYour);
 	FieldScene_CallPairWith10(8);
 	Engine_ActorRunRepeatedMotion(9, 1);
 	FieldScene_CallPairWith10(9);
@@ -1550,7 +1550,7 @@ static void KorashiamuIriguchi_CelebrateBothWins(void)
 	Engine_EventWait(40);
 	Engine_ActorRunRepeatedMotion(8, 1);
 	Engine_ActorSetAnimation(8, 3);
-	Engine_EventSetMessage((s32)MsgKorashiamuWonBothMatches);
+	Engine_EventSetMessage(MsgKorashiamuWonBothMatches);
 	FieldScene_CallPairWith10(8);
 	Engine_ActorRunRepeatedMotion(9, 1);
 	FieldScene_CallPairWith10(9);

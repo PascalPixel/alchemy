@@ -90,7 +90,7 @@ static void EV16_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKorimaFuchinTempleOnOtherSide);
+		Engine_EventSetMessage(MsgKorimaFuchinTempleOnOtherSide);
 		Engine_EventShowMessage(16, 0);
 	}
 
@@ -110,7 +110,7 @@ static void EV17_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKorimaGrandBridgeAcrossRiverPride);
+		Engine_EventSetMessage(MsgKorimaGrandBridgeAcrossRiverPride);
 		Engine_EventShowMessage(17, 0);
 	}
 
@@ -130,7 +130,7 @@ static void EV18_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKorimaWhenWasTreeLearnedAppreciate);
+		Engine_EventSetMessage(MsgKorimaWhenWasTreeLearnedAppreciate);
 		Engine_EventShowMessage(18, 0);
 	}
 
@@ -150,7 +150,7 @@ static void EV19_TALK(void)
 	}
 	else
 	{
-		Engine_EventSetMessage((s32)MsgKorimaTheySayMccoyHaltedConstruction);
+		Engine_EventSetMessage(MsgKorimaTheySayMccoyHaltedConstruction);
 		Engine_EventShowMessage(19, 0);
 	}
 

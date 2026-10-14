@@ -570,13 +570,13 @@ void ReelGame_RunFrame(void)
 							work->window =
 								UiWindow_CreateFar(REEL_ALL_HELD_X, 0, REEL_ALL_HELD_WIDTH, 4, 6);
 							UiText_DrawCharacterAtOffsetFar(
-								(s32)MsgSlotsAllHeld, work->window, 0, 0);
+								MsgSlotsAllHeld, work->window, 0, 0);
 							work->phase = 1;
 						}
 						else if (work->phase == 1)
 						{
 							UiText_DrawCharacterAtOffsetFar(
-								(s32)MsgSlotsCannotPull, work->window, 0, 8);
+								MsgSlotsCannotPull, work->window, 0, 8);
 							work->phase = 2;
 						}
 					}
@@ -587,7 +587,7 @@ void ReelGame_RunFrame(void)
 							UiWork_FinalizeFar(work->window, 1);
 							work->window =
 								UiWindow_CreateFar(REEL_START_X, 0, REEL_START_WIDTH, 3, 6);
-							UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsStart, work->window, 0, 0);
+							UiText_DrawCharacterAtOffsetFar(MsgSlotsStart, work->window, 0, 0);
 						}
 						work->phase = 3;
 					}
@@ -598,7 +598,7 @@ void ReelGame_RunFrame(void)
 					{
 						UiWork_FinalizeFar(work->window, 1);
 						work->window = UiWindow_CreateFar(REEL_HOLD_X, 0, REEL_HOLD_WIDTH, 3, 6);
-						UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsHold, work->window, 0, 0);
+						UiText_DrawCharacterAtOffsetFar(MsgSlotsHold, work->window, 0, 0);
 					}
 					work->phase = 4;
 				}
@@ -609,7 +609,7 @@ void ReelGame_RunFrame(void)
 						UiWork_FinalizeFar(work->window, 1);
 						work->window =
 							UiWindow_CreateFar(REEL_RELEASE_X, 0, REEL_RELEASE_WIDTH, 3, 6);
-						UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsRelease, work->window, 0, 0);
+						UiText_DrawCharacterAtOffsetFar(MsgSlotsRelease, work->window, 0, 0);
 					}
 					work->phase = 5;
 				}
@@ -620,21 +620,21 @@ void ReelGame_RunFrame(void)
 					if (all != 0)
 					{
 						work->window = UiWindow_CreateFar(12, 0, 18, 3, 6);
-						UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsAllHeld, work->window, 0, 0);
+						UiText_DrawCharacterAtOffsetFar(MsgSlotsAllHeld, work->window, 0, 0);
 					}
 					else
 					{
 						work->window = UiWindow_CreateFar(18, 0, 12, 3, 6);
-						UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsStart, work->window, 0, 0);
+						UiText_DrawCharacterAtOffsetFar(MsgSlotsStart, work->window, 0, 0);
 					}
 				}
 				else
 				{
 					work->window = UiWindow_CreateFar(18, 0, 12, 3, 6);
 					if (work->reels[work->cursor].held == 0)
-						UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsHold, work->window, 0, 0);
+						UiText_DrawCharacterAtOffsetFar(MsgSlotsHold, work->window, 0, 0);
 					else
-						UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsRelease, work->window, 0, 0);
+						UiText_DrawCharacterAtOffsetFar(MsgSlotsRelease, work->window, 0, 0);
 				}
 #endif
 			}
@@ -674,7 +674,7 @@ void ReelGame_RunFrame(void)
 			if (work->phase == 0)
 			{
 				work->phase = 1;
-				UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsPullLever, work->window, 0, 8);
+				UiText_DrawCharacterAtOffsetFar(MsgSlotsPullLever, work->window, 0, 8);
 			}
 #endif
 			if (work->pressed & KEY_A)
@@ -698,7 +698,7 @@ void ReelGame_RunFrame(void)
 			if (work->timer == 4)
 			{
 				work->window = UiWindow_CreateFar(REEL_STOP_X, 17, REEL_STOP_WIDTH, 3, 6);
-				UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsStopReels, work->window, 0, 0);
+				UiText_DrawCharacterAtOffsetFar(MsgSlotsStopReels, work->window, 0, 0);
 			}
 			if (work->timer == 16)
 				AudioCommand_PlayFar(0x132);
@@ -801,7 +801,7 @@ void ReelGame_RunFrame(void)
 					{
 						work->window = UiWindow_CreateFar(3, 16, 24, 4, 6);
 						UiText_DrawCharacterAtOffsetFar(
-							(s32)MsgSlotsChooseHeld, work->window, 0, 0);
+							MsgSlotsChooseHeld, work->window, 0, 0);
 					}
 #else
 					UiWork_FinalizeFar(work->window, 1);
@@ -809,7 +809,7 @@ void ReelGame_RunFrame(void)
 						s32 message;
 
 						work->window = UiWindow_CreateFar(7, 16, 16, 4, 6);
-						message = (s32)MsgSlotsChooseHeld;
+						message = MsgSlotsChooseHeld;
 						UiText_DrawCharacterAtOffsetFar(message, work->window, 0, 0);
 						UiText_DrawCharacterAtOffsetFar(message + 1, work->window, 0, 8);
 					}
@@ -838,7 +838,7 @@ void ReelGame_RunFrame(void)
 						REG_BLDCNT = 0;
 						window = UiWindow_CreateFar(18, 0, 12, 4, 6);
 						work->sub_window = window;
-						message = (s32)MsgSlotsBet;
+						message = MsgSlotsBet;
 						UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
 						UiText_DrawCharacterAtOffsetFar(message - 1, work->sub_window, 0, 0);
 					}
@@ -1075,7 +1075,7 @@ void ReelGame_InitTitle(void)
 	REG_BLDCNT = 0;
 	window = UiWindow_CreateFar(18, 0, 12, 4, 6);
 	state->sub_window = window;
-	message = (s32)MsgSlotsBet;
+	message = MsgSlotsBet;
 	UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
 	UiText_DrawCharacterAtOffsetFar(message - 1, state->sub_window, 0, 0);
 }
@@ -1264,7 +1264,7 @@ void ReelGame_Run(void)
 			struct UiWindow *window = UiWindow_CreateFar(6, 16, 18, 3, 6);
 
 			state->window = window;
-			UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsControls, window, 0, 0);
+			UiText_DrawCharacterAtOffsetFar(MsgSlotsControls, window, 0, 0);
 		}
 		else
 		{
@@ -1273,7 +1273,7 @@ void ReelGame_Run(void)
 			s32 message;
 
 			state->window = window;
-			message = (s32)MsgSlotsChangeBet;
+			message = MsgSlotsChangeBet;
 			UiText_DrawCharacterAtOffsetFar(message, window, 0, 0);
 			UiText_DrawCharacterAtOffsetFar(message + 1, state->window, 0, 8);
 		}

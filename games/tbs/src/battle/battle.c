@@ -180,15 +180,15 @@ s32 DebugParty_LoadPreset(s32 preset)
 #endif
 
 #if defined(TBS_EDITION_EN)
-#define DEBUG_SECOND_FORM ((s32)MsgBecameCursed)
+#define DEBUG_SECOND_FORM MsgBecameCursed
 #elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
-#define DEBUG_SECOND_FORM ((s32)MsgEnd)
+#define DEBUG_SECOND_FORM MsgEnd
 #else
-#define DEBUG_SECOND_FORM ((s32)MsgDebugSecondForm)
+#define DEBUG_SECOND_FORM MsgDebugSecondForm
 #endif
 
 #define DEBUG_VIEW_LIMIT                                                                         \
-	((s32)MsgRariberoHowDidSearchForSheba - (s32)MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely \
+	(MsgRariberoHowDidSearchForSheba - MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely \
 		+ 5)
 
 void DebugBattle_ViewMessages(void)
@@ -201,7 +201,7 @@ void DebugBattle_ViewMessages(void)
 	s32				window;
 	s32				message;
 
-	Ui_AdjustValueWithoutLimitFar((s32)MsgDebugSampleName, text);
+	Ui_AdjustValueWithoutLimitFar(MsgDebugSampleName, text);
 	for (i = 0; i <= 13; i++)
 	{
 		unit->name[i] = text[i];
@@ -230,7 +230,7 @@ void DebugBattle_ViewMessages(void)
 			UiWork_PushValueSlotFar(2, 4);
 			if (second == 0)
 			{
-				message = (s32)MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely;
+				message = MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely;
 				window = UiText_OpenMessageWindowFar(index + message, 2, 10, 4);
 			}
 			else
@@ -442,9 +442,9 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
 		{
 			UiWork_PushValueSlotFar((u16)*enemy++, 1);
 			if (announced == enemy_count - 1)
-				UiText_ShowMessageAndWaitCoreFar((s32)MsgLastEnemyAppeared);
+				UiText_ShowMessageAndWaitCoreFar(MsgLastEnemyAppeared);
 			else
-				UiText_ShowMessageAndWaitCoreFar((s32)MsgEnemyAppeared);
+				UiText_ShowMessageAndWaitCoreFar(MsgEnemyAppeared);
 			announced++;
 			BattlePresentation_WaitForAdvance();
 		} while (announced != enemy_count);
@@ -455,14 +455,14 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
 	{
 		UiWork_ClearValueNameTablesFar();
 		UiWork_PushValueSlotFar(0, 1);
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgPartyStrikesFirst);
+		UiText_ShowMessageAndWaitCoreFar(MsgPartyStrikesFirst);
 		BattlePresentation_WaitForAdvance();
 	}
 	else if (battle->encounter_mode == BATTLE_ENCOUNTER_ENEMIES_FIRST)
 	{
 		UiWork_ClearValueNameTablesFar();
 		UiWork_PushValueSlotFar(0, 1);
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgPartySurprised);
+		UiText_ShowMessageAndWaitCoreFar(MsgPartySurprised);
 		BattlePresentation_WaitForAdvance();
 	}
 }
@@ -770,7 +770,7 @@ s32 UpdateNameEntries(void)
 			named_count += 1;
 		}
 		WaitFrames(2);
-		Ui_AdjustValueWithoutLimitFar((s32)MsgEnemyLabel, name_text);
+		Ui_AdjustValueWithoutLimitFar(MsgEnemyLabel, name_text);
 		i = 0;
 		if (name_text[i] != 0)
 		{
@@ -1331,12 +1331,12 @@ s32 Battle_RunEncounter(s32 enemy_group)
 		if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) == 0)
 			continue;
 
-		handle = UiText_OpenMessageWindowFar((s32)MsgTutorialUnleashed, 0, 4, 1);
+		handle = UiText_OpenMessageWindowFar(MsgTutorialUnleashed, 0, 4, 1);
 		while (UiWork_IsCompleteFar() == 0)
 			WaitFrames(1);
 		UiWork_FinalizeFar(handle, 1);
 		WaitFrames(1);
-		handle = UiText_OpenMessageWindowFar((s32)MsgTutorialStandby, 10, 4, 1);
+		handle = UiText_OpenMessageWindowFar(MsgTutorialStandby, 10, 4, 1);
 		BattlePresentation_WaitForPromptAt(92, 24);
 		UiWork_FinalizeFar(handle, 1);
 		WaitFrames(1);
@@ -1356,7 +1356,7 @@ resolved:
 				BtlUnitSetFar(128, battle->enemy_classes[battle->first_defeated], 26);
 				UiWork_ClearValueNameTablesFar();
 				UiWork_PushValueSlotFar(128, 1);
-				UiText_ShowMessageAndWaitCoreFar(battle->defeat_state + (s32)MsgDowned);
+				UiText_ShowMessageAndWaitCoreFar(battle->defeat_state + MsgDowned);
 				BattlePresentation_WaitForAdvance();
 			}
 		}
@@ -1382,9 +1382,9 @@ party_lost:
 	UiWork_ClearValueNameTablesFar();
 	UiWork_PushValueSlotFar(gGameState.active_owners[0], 1);
 	if (BattleParty_PrepareActiveOwners(0) == 1)
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgGoesDownInDefeat);
+		UiText_ShowMessageAndWaitCoreFar(MsgGoesDownInDefeat);
 	else
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgPartyDefeated);
+		UiText_ShowMessageAndWaitCoreFar(MsgPartyDefeated);
 	BattlePresentation_WaitForAdvance();
 	AudioCommand_PlayFar(17);
 	Blend_SetDarkenTarget16(30);
@@ -3243,7 +3243,7 @@ s32 BattlePres_RunAction(struct BattleActionRecord *action)
 	switch (action->command)
 	{
 	case 99:
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgPartyFlees);
+		UiText_ShowMessageAndWaitCoreFar(MsgPartyFlees);
 		if (BattleEscape_PlayRun(action) != 0)
 			return 1;
 		break;
@@ -3312,7 +3312,7 @@ s32 BattleEscape_PlayRun(struct BattleActionRecord *action)
 		WaitFrames(22);
 		return 1;
 	}
-	UiText_ShowMessageAndWaitCoreFar((s32)MsgCannotEscape);
+	UiText_ShowMessageAndWaitCoreFar(MsgCannotEscape);
 	return 0;
 }
 
@@ -3335,7 +3335,7 @@ s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action)
 	}
 	UiWork_ClearValueNameTablesFar();
 	UiWork_PushValueSlotFar(object_id, 1);
-	UiText_ShowMessageAndWaitCoreFar((s32)MsgActorDefends);
+	UiText_ShowMessageAndWaitCoreFar(MsgActorDefends);
 	return 0;
 }
 
@@ -3495,7 +3495,7 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input)
 	UnitGetFar(work.actors[0]);
 	Random16();
 	UiWork_PushValueSlotFar(work.actor, 1);
-	UiText_ShowMessageAndWaitCoreFar((s32)MsgActorAttacks);
+	UiText_ShowMessageAndWaitCoreFar(MsgActorAttacks);
 	BattleMotion_ApproachTarget(work.actor, work.actors[0], 13, 0);
 	ObjectDispatch_ApplyValueToChildrenFar(BtlObjGet(work.actor)->object, 16);
 	BtlObjGet(work.actors[0]);
@@ -3621,18 +3621,18 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
 	if (unit_id <= 7)
 	{
 		if (show_message != 0)
-			UiText_ShowMessageAndWaitCoreFar((s32)MsgBitterBlow);
+			UiText_ShowMessageAndWaitCoreFar(MsgBitterBlow);
 		UiWork_PushValueSlotFar(damage, 5);
 		UiWork_PushValueSlotFar(unit_id, 1);
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgDmgP);
+		UiText_ShowMessageAndWaitCoreFar(MsgDmgP);
 	}
 	else
 	{
 		if (show_message != 0)
-			UiText_ShowMessageAndWaitCoreFar((s32)MsgCritical);
+			UiText_ShowMessageAndWaitCoreFar(MsgCritical);
 		UiWork_PushValueSlotFar(damage, 5);
 		UiWork_PushValueSlotFar(unit_id, 1);
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgDmgE);
+		UiText_ShowMessageAndWaitCoreFar(MsgDmgE);
 		UiWork_PushValueSlotFar(unit_id, 1);
 	}
 
@@ -3642,13 +3642,13 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
 		if (character->hp <= 0)
 		{
 			UiWork_PushValueSlotFar(unit_id, 1);
-			UiText_ShowMessageAndWaitCoreFar((s32)MsgGoesDown);
+			UiText_ShowMessageAndWaitCoreFar(MsgGoesDown);
 		}
 	}
 	else if (character->hp <= 0)
 	{
 		UiWork_PushValueSlotFar(unit_id, 1);
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgDowned);
+		UiText_ShowMessageAndWaitCoreFar(MsgDowned);
 	}
 
 	slot = BtlObjGet(unit_id);
@@ -4585,7 +4585,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
 
 		if (!party_mode)
 		{
-			UiText_ShowMessageAndWaitCoreFar((s32)MsgNoEscape);
+			UiText_ShowMessageAndWaitCoreFar(MsgNoEscape);
 			BattlePresentation_WaitForAdvance();
 		}
 		else
@@ -4621,7 +4621,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BtlPlan *plan)
 	}
 	else
 	{
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgNoEscape);
+		UiText_ShowMessageAndWaitCoreFar(MsgNoEscape);
 		BattlePresentation_WaitForAdvance();
 	}
 
@@ -4700,11 +4700,11 @@ s32 BattlePresentation_RunUnitTransition(struct BtlPlan *plan, s32 mode)
 		if (plan->failure == 1)
 		{
 			BtlEvPush(0, plan->aid);
-			BtlEvPush(4, (s32)MsgPsynergyBlocked);
+			BtlEvPush(4, MsgPsynergyBlocked);
 		}
 		else
 		{
-			BtlEvPush(4, (s32)MsgCastLacksPp);
+			BtlEvPush(4, MsgCastLacksPp);
 		}
 		BattleEv_DispatchQueued();
 		BattlePres_RunWithZeroArguments();
@@ -4907,7 +4907,7 @@ s32 RunBattlePresentation(struct BtlPlan *plan, s32 mode)
 		WaitFrames(4);
 		WaitFrames(10);
 		BtlEvPush(0, plan->tgt_no[0]);
-		BtlEvPush(4, (s32)MsgNimblyDodgesBlow);
+		BtlEvPush(4, MsgNimblyDodgesBlow);
 		BattleEv_DispatchQueued();
 		ObjMotRst(work.actors[0]);
 	}
@@ -5147,7 +5147,7 @@ s32 BattlePres_RunItem(struct BtlPlan *plan, s32 unused, struct BattleActionReco
 		if ((BtlRndFar() & 7) == 0)
 		{
 			BtlEvPush(BEV_ITEM, unit->inventory[selection->parameter]);
-			BtlEvPush(BEV_MES, (s32)MsgUsedItemBroke);
+			BtlEvPush(BEV_MES, MsgUsedItemBroke);
 			Inventory_BreakFar(selection->unit_id, selection->parameter);
 			BattleEv_DispatchQueued();
 		}
@@ -5259,11 +5259,11 @@ s32 BattlePres_RunPsynergyCast(struct BtlPlan *plan, s32 mode)
 		if (plan->failure == 1)
 		{
 			BtlEvPush(0, plan->aid);
-			BtlEvPush(4, (s32)MsgPsynergyBlocked);
+			BtlEvPush(4, MsgPsynergyBlocked);
 		}
 		else
 		{
-			BtlEvPush(4, (s32)MsgCastLacksPp);
+			BtlEvPush(4, MsgCastLacksPp);
 		}
 		BattleEv_DispatchQueued();
 		BattlePres_RunWithZeroArguments();
@@ -6486,7 +6486,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 						{
 							s32 mes;
 
-							mes = (s32)MsgCritical;
+							mes = MsgCritical;
 							if (MIKATA_CHK(tid))
 								mes += 1;
 							BtlEvPush(BEV_MES_ADD, mes);
@@ -8257,7 +8257,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 			if (cnt <= 0)
 			{
 				UiWork_PushValueSlotFar(req->unit_id, 1);
-				UiText_ShowMessageAndWaitCoreFar((s32)MsgActorDefends);
+				UiText_ShowMessageAndWaitCoreFar(MsgActorDefends);
 				if (unit->guard_lv == 0)
 					unit->guard_lv = 1;
 				return -1;
@@ -8312,26 +8312,26 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 	{
 		unit->miugoki = 0;
 		UiWork_PushValueSlotFar(req->unit_id, 1);
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgUnableToMove);
+		UiText_ShowMessageAndWaitCoreFar(MsgUnableToMove);
 		return -1;
 	}
 	if (unit->nemuri)
 	{
 		UiWork_PushValueSlotFar(req->unit_id, 1);
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgIsAsleep);
+		UiText_ShowMessageAndWaitCoreFar(MsgIsAsleep);
 		return -1;
 	}
 	if (unit->shibire)
 	{
 		UiWork_PushValueSlotFar(req->unit_id, 1);
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgIsParalyzed);
+		UiText_ShowMessageAndWaitCoreFar(MsgIsParalyzed);
 		return -1;
 	}
 	// かなしばりは 1/4 で動けない
 	if ((unit->restraint & 1) && req->command != CMD_BOUGYO && (BtlRndFar() & 3) == 0)
 	{
 		UiWork_PushValueSlotFar(req->unit_id, 1);
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgIsBound);
+		UiText_ShowMessageAndWaitCoreFar(MsgIsBound);
 		return -1;
 	}
 	if (req->command == CMD_NONE)
@@ -8354,12 +8354,12 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 	case CMD_NIGERU:
 		if ((u16)req->unit_id <= MIKATA_MAX)
 		{
-			UiText_ShowMessageAndWaitCoreFar((s32)MsgPartyFlees);
+			UiText_ShowMessageAndWaitCoreFar(MsgPartyFlees);
 		}
 		else
 		{
 			UiWork_PushValueSlotFar(req->unit_id, 1);
-			UiText_ShowMessageAndWaitCoreFar((s32)MsgActorRuns);
+			UiText_ShowMessageAndWaitCoreFar(MsgActorRuns);
 		}
 		BattlePresentation_WaitForAdvance();
 		plan->outcome = 7;
@@ -8374,10 +8374,10 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		{
 			UiWork_PushValueSlotFar(req->unit_id, 1);
 			UiWork_PushValueSlotFar(Inventory_GetEquippedItemFar(unit, 1), 2);
-			UiText_ShowMessageAndWaitCoreFar((s32)MsgWeaponHowls);
+			UiText_ShowMessageAndWaitCoreFar(MsgWeaponHowls);
 			BattleEv_MarkDisplay();
 			UiWork_PushValueSlotFar(act_no, 4);
-			UiText_ShowMessageAndWaitCoreFar((s32)MsgWeaponHowls + 1);
+			UiText_ShowMessageAndWaitCoreFar(MsgWeaponHowls + 1);
 		}
 		break;
 
@@ -8392,7 +8392,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 			return -1;
 		UiWork_PushValueSlotFar(req->unit_id, 1);
 		UiWork_PushValueSlotFar(act_no, 4);
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgActorCasts);
+		UiText_ShowMessageAndWaitCoreFar(MsgActorCasts);
 		// EPが足りないか、ふうじなら失敗
 		if (unit->ep < act->pp_cost)
 		{
@@ -8424,7 +8424,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		if (req->parameter < 0)
 		{
 			UiWork_PushValueSlotFar(req->unit_id, 1);
-			UiText_ShowMessageAndWaitCoreFar((s32)MsgItemAlreadyUsed);
+			UiText_ShowMessageAndWaitCoreFar(MsgItemAlreadyUsed);
 			return -1;
 		}
 		item = Item_GetDirectFar(unit->inventory[req->parameter]);
@@ -8432,7 +8432,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		if (act_no == 0 || (unit->inventory[req->parameter] & 0x400))
 		{
 			UiWork_PushValueSlotFar(req->unit_id, 1);
-			UiText_ShowMessageAndWaitCoreFar((s32)MsgActorDefends);
+			UiText_ShowMessageAndWaitCoreFar(MsgActorDefends);
 			if (unit->guard_lv == 0)
 				unit->guard_lv = 1;
 			return -1;
@@ -8450,16 +8450,16 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 			case 6:
 			case 7:
 			case 8:
-				UiText_ShowMessageAndWaitCoreFar((s32)MsgActorRaisesItem); // かざした
+				UiText_ShowMessageAndWaitCoreFar(MsgActorRaisesItem); // かざした
 				break;
 			default:
-				UiText_ShowMessageAndWaitCoreFar((s32)MsgActorUsesBattleItem); // つかった
+				UiText_ShowMessageAndWaitCoreFar(MsgActorUsesBattleItem); // つかった
 				break;
 			}
 		}
 		else
 		{
-			UiText_ShowMessageAndWaitCoreFar((s32)MsgActorUsesBattleItem);
+			UiText_ShowMessageAndWaitCoreFar(MsgActorUsesBattleItem);
 		}
 	}
 	break;
@@ -8467,7 +8467,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 	case CMD_BOUGYO:
 	case CMD_BOUGYO2:
 		UiWork_PushValueSlotFar(req->unit_id, 1);
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgActorDefends);
+		UiText_ShowMessageAndWaitCoreFar(MsgActorDefends);
 		return -1;
 
 	case CMD_NONE:
@@ -8483,63 +8483,63 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		UiWork_PushValueSlotFar(req->unit_id, 1);
 		UiWork_PushValueSlotFar(act_no, 4);
 		if ((BtlActGet(act_no)->tgt_flg & 15) == 6)
-			mes = (s32)MsgActorUnleashesAbility;
+			mes = MsgActorUnleashesAbility;
 		else
-			mes = (s32)MsgActorUsesAbility;
+			mes = MsgActorUsesAbility;
 		// わざごとの言い方
 		switch (act_no)
 		{
 		case 435: // ちょうおんぱ
 		case 436:
-			mes = (s32)MsgEmitsUltrasonicWaves;
+			mes = MsgEmitsUltrasonicWaves;
 			break;
 		case 224: // ヒートミラージュ
-			mes = (s32)MsgActorCasts;
+			mes = MsgActorCasts;
 			break;
 		case 500: // おどし
-			mes = (s32)MsgGlowersFerociously;
+			mes = MsgGlowersFerociously;
 			break;
 		case 501: // てがふるえている
-			mes = (s32)MsgIsIntimidated;
+			mes = MsgIsIntimidated;
 			break;
 		case 499: // けんせい
-			mes = (s32)MsgBalefulGaze;
+			mes = MsgBalefulGaze;
 			break;
 		case 494: // ミミズをたべる
-			mes = (s32)MsgEatsWorms;
+			mes = MsgEatsWorms;
 			break;
 		case 437: // スクウィールロアー ～ じごくのとおぼえ
 		case 438:
 		case 439:
 		case 440:
 		case 441:
-			mes = (s32)MsgLetsOutAbility;
+			mes = MsgLetsOutAbility;
 			break;
 		case 442: // ウイングビート ～ ウイングストローク
 		case 443:
 		case 444:
-			mes = (s32)MsgActorUsesAbility;
+			mes = MsgActorUsesAbility;
 			break;
 		case 472: // くさったたいえき
-			mes = (s32)MsgEnemyUnleashesAbility;
+			mes = MsgEnemyUnleashesAbility;
 			break;
 		case 488: // せつないひとみ
-			mes = (s32)MsgGlowersMiserably;
+			mes = MsgGlowersMiserably;
 			break;
 		case 492: // ふらんしゅう
-			mes = (s32)MsgSmellOfDecay;
+			mes = MsgSmellOfDecay;
 			break;
 		case 495: // きょうぼうか
-			mes = (s32)MsgFuriousRage;
+			mes = MsgFuriousRage;
 			break;
 		case 503: // ぞうしょくうんどう
-			mes = (s32)MsgAttemptsToDivide;
+			mes = MsgAttemptsToDivide;
 			break;
 		case 504: // なかまをさがす
-			mes = (s32)MsgLooksForAllies;
+			mes = MsgLooksForAllies;
 			break;
 		case 508: // たすけをさがす
-			mes = (s32)MsgLooksForHelp;
+			mes = MsgLooksForHelp;
 			break;
 		}
 		UiText_ShowMessageAndWaitCoreFar(mes);
@@ -8570,7 +8570,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 					DJINN_ELEMENT(req->parameter) * 20 + DJINN_INDEX(req->parameter) + 300);
 				BtlEvPush(BEV_SE, 175);
 				BtlEvPush(BEV_REDRAW, 0);
-				BtlEvPush(BEV_MES, (s32)MsgDjinnSet);
+				BtlEvPush(BEV_MES, MsgDjinnSet);
 				BtlEvPush(BEV_OBJ_END, req->unit_id);
 				AudioCommand_PlayFar(212);
 				ObjectDispatch_ApplyArgumentToChildrenFar(BtlObjGet(req->unit_id)->object, 3);
@@ -8584,7 +8584,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 			UiWork_PushValueSlotFar(req->unit_id, 1);
 			UiWork_PushValueSlotFar(act_no, 4);
 			AudioCommand_PlayFar(114);
-			UiText_ShowMessageAndWaitCoreFar((s32)MsgDjinnInRecovery);
+			UiText_ShowMessageAndWaitCoreFar(MsgDjinnInRecovery);
 			WaitFrames(60);
 			return -1;
 		}
@@ -8599,7 +8599,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 			act = BtlActGet(act_no);
 			UiWork_PushValueSlotFar(req->unit_id, 1);
 			UiWork_PushValueSlotFar(act_no, 4);
-			UiText_ShowMessageAndWaitCoreFar((s32)MsgActorUnleashesDjinn);
+			UiText_ShowMessageAndWaitCoreFar(MsgActorUnleashesDjinn);
 			plan->elm = act->damage_class;
 		}
 		break;
@@ -8630,12 +8630,12 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 		{
 			UiWork_PushValueSlotFar(req->unit_id, 1);
 			UiWork_PushValueSlotFar(act_no, 4);
-			UiText_ShowMessageAndWaitCoreFar((s32)MsgSummonLacksDjinn);
+			UiText_ShowMessageAndWaitCoreFar(MsgSummonLacksDjinn);
 			return -1;
 		}
 		UiWork_PushValueSlotFar(req->unit_id, 1);
 		UiWork_PushValueSlotFar(act_no, 4);
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgActorSummons);
+		UiText_ShowMessageAndWaitCoreFar(MsgActorSummons);
 		// 使うスタンバイのジンに印 (-2) をつける
 		for (i = 0; i != list->count; i++)
 		{
@@ -8689,7 +8689,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BtlPlan *plan
 			}
 		}
 		UiWork_PushValueSlotFar(req->unit_id, 1);
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgActorAttacks);
+		UiText_ShowMessageAndWaitCoreFar(MsgActorAttacks);
 		// 外れ：まぼろしなら 153/256、ほかに 1/32
 		// 相手が動けなければ外れない
 		/* FAKEMATCH: the one-pass block places the body ahead of its five tests, reached by a
@@ -9205,11 +9205,11 @@ s32 Battle_ProcessRoundEnd(void)
 						UiWork_PushValueSlotFar(hp_amount, 5);
 						if (unit->hp == unit->max_hp)
 						{
-							UiText_ShowMessageAndWaitCoreFar((s32)MsgHpFull);
+							UiText_ShowMessageAndWaitCoreFar(MsgHpFull);
 						}
 						else
 						{
-							UiText_ShowMessageAndWaitCoreFar((s32)MsgHpRecover);
+							UiText_ShowMessageAndWaitCoreFar(MsgHpRecover);
 						}
 						AudioCommand_PlayFar(175);
 						BattlePresentation_WaitForAdvance();
@@ -9226,11 +9226,11 @@ s32 Battle_ProcessRoundEnd(void)
 						UiWork_PushValueSlotFar(pp_amount, 5);
 						if (unit->ep == unit->max_ep)
 						{
-							UiText_ShowMessageAndWaitCoreFar((s32)MsgEpFull);
+							UiText_ShowMessageAndWaitCoreFar(MsgEpFull);
 						}
 						else
 						{
-							UiText_ShowMessageAndWaitCoreFar((s32)MsgEpRecover);
+							UiText_ShowMessageAndWaitCoreFar(MsgEpRecover);
 						}
 						AudioCommand_PlayFar(175);
 						BattlePresentation_WaitForAdvance();
@@ -9240,49 +9240,49 @@ s32 Battle_ProcessRoundEnd(void)
 				{
 					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
-					UiText_ShowMessageAndWaitCoreFar((s32)MsgAgiNormal);
+					UiText_ShowMessageAndWaitCoreFar(MsgAgiNormal);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (BattleUnit_TickAttackModifier(id) != 0)
 				{
 					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
-					UiText_ShowMessageAndWaitCoreFar((s32)MsgAtkNormal);
+					UiText_ShowMessageAndWaitCoreFar(MsgAtkNormal);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (BattleUnit_TickDefenseModifier(id) != 0)
 				{
 					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
-					UiText_ShowMessageAndWaitCoreFar((s32)MsgDefNormal);
+					UiText_ShowMessageAndWaitCoreFar(MsgDefNormal);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (BattleUnit_TickResistanceModifier(id) != 0)
 				{
 					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
-					UiText_ShowMessageAndWaitCoreFar((s32)MsgResNormal);
+					UiText_ShowMessageAndWaitCoreFar(MsgResNormal);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (BattleUnit_TickDelusion(id) != 0)
 				{
 					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
-					UiText_ShowMessageAndWaitCoreFar((s32)MsgCureDelusion);
+					UiText_ShowMessageAndWaitCoreFar(MsgCureDelusion);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (BattleUnit_TickConfusion(id) != 0)
 				{
 					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
-					UiText_ShowMessageAndWaitCoreFar((s32)MsgConscious);
+					UiText_ShowMessageAndWaitCoreFar(MsgConscious);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (BattleUnit_TickCharm(id) != 0)
 				{
 					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
-					UiText_ShowMessageAndWaitCoreFar((s32)MsgConscious2);
+					UiText_ShowMessageAndWaitCoreFar(MsgConscious2);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (BattleUnit_TickStun(id) != 0)
@@ -9290,7 +9290,7 @@ s32 Battle_ProcessRoundEnd(void)
 					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
 					BattlePres_SetActorModeAndAction(id);
-					UiText_ShowMessageAndWaitCoreFar((s32)MsgCureStun);
+					UiText_ShowMessageAndWaitCoreFar(MsgCureStun);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (BattleUnit_TickSleep(id) != 0)
@@ -9298,28 +9298,28 @@ s32 Battle_ProcessRoundEnd(void)
 					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
 					BattlePres_SetActorModeAndAction(id);
-					UiText_ShowMessageAndWaitCoreFar((s32)MsgWakes);
+					UiText_ShowMessageAndWaitCoreFar(MsgWakes);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (Battle_AdvanceCounterAndCheckChance(id) != 0)
 				{
 					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
-					UiText_ShowMessageAndWaitCoreFar((s32)MsgCureSeal);
+					UiText_ShowMessageAndWaitCoreFar(MsgCureSeal);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (BattleUnit_TickRefrain(id) != 0)
 				{
 					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
-					UiText_ShowMessageAndWaitCoreFar((s32)MsgRefrainEnd);
+					UiText_ShowMessageAndWaitCoreFar(MsgRefrainEnd);
 					BattlePresentation_WaitForAdvance();
 				}
 				if (BattleUnit_TickReflect(id) != 0)
 				{
 					BattleUnit_BuildStatusFlags(id, BtlObjGet(id));
 					UiWork_PushValueSlotFar(id, 1);
-					UiText_ShowMessageAndWaitCoreFar((s32)MsgReflectEnd);
+					UiText_ShowMessageAndWaitCoreFar(MsgReflectEnd);
 					BattlePresentation_WaitForAdvance();
 				}
 			}
@@ -9463,11 +9463,11 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 				BtlEvPush(BEV_UNIT, id);
 				if (id >= 0 && id <= 7)
 				{
-					text = (s32)MsgGoesDown;
+					text = MsgGoesDown;
 				}
 				else
 				{
-					text = (s32)MsgStrengthExhausted;
+					text = MsgStrengthExhausted;
 				}
 				MES_PUSH(text);
 			}
@@ -9502,11 +9502,11 @@ s32 BattleUnit_ProcessTurnEnd(struct BtlPlan *plan)
 				BtlEvPush(BEV_UNIT, id);
 				if (id >= 0 && id <= 7)
 				{
-					text = (s32)MsgGoesDown;
+					text = MsgGoesDown;
 				}
 				else
 				{
-					text = (s32)MsgStrengthExhausted;
+					text = MsgStrengthExhausted;
 				}
 				MES_PUSH(text);
 			}
@@ -11701,7 +11701,7 @@ void Battle_AwardSpoils(void)
 	if (spoils->experience != 0)
 	{
 		UiWork_PushValueSlotFar(spoils->experience, 5);
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgExpGained);
+		UiText_ShowMessageAndWaitCoreFar(MsgExpGained);
 		BattlePresentation_WaitForAdvance();
 	}
 	list = units;
@@ -11720,7 +11720,7 @@ void Battle_AwardSpoils(void)
 			UiWork_PushValueSlotFar(unit->class_index, 3);
 			UiWork_PushValueSlotFar(list[i], 1);
 			UiWork_PushValueSlotFar(unit->level, 5);
-			UiText_ShowMessageAndWaitCoreFar((s32)MsgLevelUp);
+			UiText_ShowMessageAndWaitCoreFar(MsgLevelUp);
 			BattlePresentation_WaitForAdvance();
 			for (cnt = 0; cnt < 32; cnt++)
 			{
@@ -11739,7 +11739,7 @@ void Battle_AwardSpoils(void)
 						UiWork_PushValueSlotFar(unit_id, 1);
 						UiWork_PushValueSlotFar(learned & OWNER_ACTION_ID_MASK, 4);
 						AudioCommand_PlayFar(0x9a);
-						UiText_ShowMessageAndWaitCoreFar((s32)MsgAbilityMastered);
+						UiText_ShowMessageAndWaitCoreFar(MsgAbilityMastered);
 						BattlePresentation_WaitForAdvance();
 					}
 				}
@@ -11747,37 +11747,37 @@ void Battle_AwardSpoils(void)
 			if ((s16)gains.hp != 0)
 			{
 				UiWork_PushValueSlotFar((s16)gains.hp, 5);
-				UiText_ShowMessageAndWaitCoreFar((s32)MsgMaxHpRises);
+				UiText_ShowMessageAndWaitCoreFar(MsgMaxHpRises);
 				BattlePresentation_WaitForAdvance();
 			}
 			if ((s16)gains.ep != 0)
 			{
 				UiWork_PushValueSlotFar((s16)gains.ep, 5);
-				UiText_ShowMessageAndWaitCoreFar((s32)MsgMaxPpRises);
+				UiText_ShowMessageAndWaitCoreFar(MsgMaxPpRises);
 				BattlePresentation_WaitForAdvance();
 			}
 			if ((s16)gains.atk != 0)
 			{
 				UiWork_PushValueSlotFar((s16)gains.atk, 5);
-				UiText_ShowMessageAndWaitCoreFar((s32)MsgAttackRises);
+				UiText_ShowMessageAndWaitCoreFar(MsgAttackRises);
 				BattlePresentation_WaitForAdvance();
 			}
 			if ((s16)gains.def != 0)
 			{
 				UiWork_PushValueSlotFar((s16)gains.def, 5);
-				UiText_ShowMessageAndWaitCoreFar((s32)MsgDefenseRises);
+				UiText_ShowMessageAndWaitCoreFar(MsgDefenseRises);
 				BattlePresentation_WaitForAdvance();
 			}
 			if ((s16)gains.agi != 0)
 			{
 				UiWork_PushValueSlotFar((s16)gains.agi, 5);
-				UiText_ShowMessageAndWaitCoreFar((s32)MsgAgilityRises);
+				UiText_ShowMessageAndWaitCoreFar(MsgAgilityRises);
 				BattlePresentation_WaitForAdvance();
 			}
 			if ((s16)gains.luck != 0)
 			{
 				UiWork_PushValueSlotFar((s16)gains.luck, 5);
-				UiText_ShowMessageAndWaitCoreFar((s32)MsgLuckRises);
+				UiText_ShowMessageAndWaitCoreFar(MsgLuckRises);
 				BattlePresentation_WaitForAdvance();
 			}
 		}
@@ -11786,7 +11786,7 @@ void Battle_AwardSpoils(void)
 	if (spoils->coins != 0)
 	{
 		UiWork_PushValueSlotFar(spoils->coins, 5);
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgCoinsGained);
+		UiText_ShowMessageAndWaitCoreFar(MsgCoinsGained);
 		Party_AdjustCoinsFar(spoils->coins);
 		BattlePresentation_WaitForAdvance();
 	}
@@ -11810,7 +11810,7 @@ void Battle_AwardSpoils(void)
 		if (best_slot == -1)
 			break;
 		UiWork_PushValueSlotFar(spoils->items[best_slot], 2);
-		UiText_ShowMessageAndWaitCoreFar((s32)MsgItemGained);
+		UiText_ShowMessageAndWaitCoreFar(MsgItemGained);
 		BattlePresentation_WaitForAdvance();
 		if (PartyInventory_AddFar(spoils->items[best_slot]) == -1)
 		{

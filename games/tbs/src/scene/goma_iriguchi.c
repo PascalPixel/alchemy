@@ -571,7 +571,7 @@ static void GomaIriguchi_RunSpinningLeap(s32 id)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/item.c"
+#include "common/item_equip.h"
 
 static void GomaIriguchi_GiveShamansRod(void)
 {

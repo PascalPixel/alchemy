@@ -1217,7 +1217,7 @@ static void TakaraAshiba_UpdateItemIcons(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo_item_icon.c"
+#include "common/korosseo_item_icon.h"
 
 static void TakaraAshiba_InitializeScene1(void)
 {

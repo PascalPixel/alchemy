@@ -1080,9 +1080,9 @@ static __inline__ void AdvanceMessage(s32 amount)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo_solo.c"
-#include "common/item.c"
-#include "common/korosseo_task.c"
+#include "common/korosseo_solo.h"
+#include "common/item_equip.h"
+#include "common/korosseo_task.h"
 
 static void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param)
 {
@@ -1215,8 +1215,8 @@ static void FieldScene_RunLateSequence(s32 a0)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo_marker.c"
-#include "common/korosseo_item_icon.c"
+#include "common/korosseo_marker.h"
+#include "common/korosseo_item_icon.h"
 
 static void Text_WriteU32AsHex(u8 *buf, u32 value)
 {
@@ -1380,9 +1380,9 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo_path_rival.c"
-#include "common/korosseo_setup.c"
-#include "common/korosseo_scene_state.c"
+#include "common/korosseo_path_rival.h"
+#include "common/korosseo_setup.h"
+#include "common/korosseo_scene_state.h"
 #include "common/object_findslot.h"
 
 static void StagedActor_PushActorAhead(void)
@@ -1475,7 +1475,7 @@ static void StagedActor_PushActorAhead(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo_occupant.c"
+#include "common/korosseo_occupant.h"
 
 const u8 Korosseo_PortraitPaletteOffsets[] = {
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)

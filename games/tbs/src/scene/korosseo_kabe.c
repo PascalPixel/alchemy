@@ -1299,9 +1299,9 @@ static void EV39_TALK(s32 speaker)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo_solo.c"
-#include "common/item.c"
-#include "common/korosseo_task.c"
+#include "common/korosseo_solo.h"
+#include "common/item_equip.h"
+#include "common/korosseo_task.h"
 
 static void KorosseoKabe_InitializeModeTask(u32 mode, u32 param)
 {
@@ -1441,8 +1441,8 @@ static void FieldScene_RunLateSequence(s32 a0)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo_marker.c"
-#include "common/korosseo_item_icon.c"
+#include "common/korosseo_marker.h"
+#include "common/korosseo_item_icon.h"
 
 static void Text_WriteU32AsHex(u8 *buf, u32 value)
 {
@@ -1602,7 +1602,7 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo_path_rival.c"
+#include "common/korosseo_path_rival.h"
 
 void FieldScene_BuildDescriptorAndInstallTask(
 	s32 first, s32 second, s32 mode, s32 centre, s32 extra, s32 third, s32 fourth)
@@ -1665,7 +1665,7 @@ static void SceneState_InitControlRecordAndStartTask(s32 resource)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo_scene_state.c"
+#include "common/korosseo_scene_state.h"
 #include "common/object_findslot.h"
 
 static void StagedActor_PushActorAhead(void)
@@ -1758,7 +1758,7 @@ static void StagedActor_PushActorAhead(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo_occupant.c"
+#include "common/korosseo_occupant.h"
 
 const u8 KorosseoKabe_RollLogScript[] = {2, 2, 3, 3};
 

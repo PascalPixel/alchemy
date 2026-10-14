@@ -27,7 +27,7 @@ pub(crate) struct Tag {
 }
 
 fn kind(reason: &str, code: &str) -> &'static str {
-    let reason = reason.to_ascii_lowercase();
+    let reason = prose(reason).to_ascii_lowercase();
     let has = |needles: &[&str], text: &str| needles.iter().any(|n| text.contains(n));
     if code.contains("asm(\"r") || code.contains("asm (\"r") {
         "fixed register"
@@ -87,6 +87,34 @@ fn kind(reason: &str, code: &str) -> &'static str {
     } else {
         "other"
     }
+}
+
+/// A tag's reason without the names it quotes from the code: a word with an
+/// underscore or a capital after its first letter (BattleFx_RunCastingImpact,
+/// LoadResource, gFrameCount) is a name, and the words of a name never decide
+/// the device's kind. Helper names such as Call3 keep their place.
+fn prose(reason: &str) -> String {
+    let mut text = String::with_capacity(reason.len());
+    let mut word = String::new();
+    for c in reason.chars().chain(std::iter::once(' ')) {
+        if c.is_ascii_alphanumeric() || c == '_' {
+            word.push(c);
+            continue;
+        }
+        if !is_code_name(&word) {
+            text.push_str(&word);
+        }
+        word.clear();
+        text.push(c);
+    }
+    text.pop();
+    text
+}
+
+fn is_code_name(word: &str) -> bool {
+    word.contains('_')
+        || (word.chars().any(|c| c.is_ascii_lowercase())
+            && word.chars().skip(1).any(|c| c.is_ascii_uppercase()))
 }
 
 fn is_call_wrapper(name: &str) -> bool {
@@ -583,5 +611,30 @@ void Table_Clear(void)
         assert_eq!(tags[2].family, "one-pass block in common/src");
         assert_eq!(tags[0].family, tags[1].family);
         assert!(tags[4].count_suspect && !tags[0].count_suspect);
+    }
+    #[test]
+    fn a_name_in_a_tag_does_not_decide_its_kind() {
+        let text = "\
+static __inline__ void LoadResource(const void *id, void *dest)
+{
+    /* FAKEMATCH: inline scope keeps each call's arguments local; only BattleFx_RunCastingImpact loads through it. */
+    Resource_LoadAndDecompress((s32)id, dest);
+}
+
+void Effect_Run(void)
+{
+    /* FAKEMATCH: called through a cast to the void call the bytes show. */
+    ((void (*)())Effect_Start)(1);
+}
+";
+        let tags = scan_source("games/tbs/src/effect/test.c", text);
+        assert_eq!(
+            tags.iter().map(|t| t.kind).collect::<Vec<_>>(),
+            ["forced temporary", "call type"]
+        );
+        assert_eq!(
+            prose("only BattleFx_RunCastingImpact, LoadResource and gFrameCount; Call3 (r0, GCC)"),
+            "only ,  and ; Call3 (r0, GCC)"
+        );
     }
 }

@@ -600,7 +600,7 @@ void BattleFx_StepPaletteToResource(s32 resource_id)
 
 static __inline__ void LoadResource(const void *id, void *dest, s32 skip, s32 copy)
 {
-	/* FAKEMATCH: needed to match: inline scope keeps each resource call's arguments local; one effect of this file loads through it, and with its 24 loads made plain calls it differs throughout and is 2 instructions longer (tbs-en, 2026-10-14); as a layer for the whole effect family the same inline breaks two burst.c effects (L6 review) */
+	/* FAKEMATCH: needed to match: inline scope keeps each resource call's arguments local; only BattleFx_RunCastingImpact loads through it: with its 24 loads called directly it differs throughout and is 2 instructions longer (tbs-en, 2026-10-14), and the same inline as a layer for the whole effect family breaks BattleFx_RunProjectileVolley and BattlePres_RunBurstScene (L6 review) */
 	Resource_LoadAndDecompress((s32)id, dest, skip, copy);
 }
 

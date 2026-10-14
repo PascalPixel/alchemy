@@ -948,7 +948,8 @@ static void TakaraHashira_UpdatePillarActors(void)
 			if (GetMapCellCollision(2, actor->x, actor->z) == 50)
 			{
 				Engine_AudioPlayCue(189);
-				/* FAKEMATCH: the byte view keeps these flag updates out of the record's alias set; field stores reallocate the loop (score 2573). Measured 2026-10-13 (both u8 accesses are alias set 0; the view is no struct reference, MEM_IN_STRUCT_P): field stores differ 217; a priority bit-field differ 65; the record as struct FieldActor, view kept, differ 2, but it matches once FieldActor's x, y and z are s32 (then this PillarActor view can go). */
+				// Both u8 accesses are alias set 0, and the view is no struct reference (MEM_IN_STRUCT_P).
+				/* FAKEMATCH: the u8 view keeps these flag updates out of the record's alias set, as native; field stores reallocate the loop (score 2573, differ 217), a priority bit-field differs 65, the record as struct FieldActor with the view kept 2 (it matches once FieldActor's x, y and z are s32; then this PillarActor view can go). */
 				*(u8 *)&actor->priority_flags &= 254;
 				TakaraHashira_LowerActorToLedge(id, 1);
 				*(u8 *)&actor->priority_flags |= 1;

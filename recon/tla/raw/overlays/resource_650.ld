@@ -11,7 +11,7 @@ SECTIONS
         "*/games/tla/src/field/idejima/s0640.o"(.text)
         "*/resource_650_overlay.o"(.text.x020086a8)
         "*/games/tla/src/field/idejima/depart.o"(.text)
-        "*/resource_650_overlay.o"(.text.x02009558)
+        "*/games/tla/src/field/idejima/wave.o"(.text)
         "*/resource_650_overlay.o"(.text.x020095a0)
         "*/resource_650_overlay.o"(.text.x0200961c)
         "*/games/tla/src/field/idejima/drift.o"(.text)

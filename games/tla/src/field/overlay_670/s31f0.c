@@ -22,6 +22,7 @@ void Func_0200324c(void)
 {
     u32 i = 0;
 
+    /* FAKEMATCH: the loop is written with goto so that it carries no loop notes: the bytes build the zero on every pass, and a for or do loop hoists it (differ 17). */
 loop:
     {
         s32 id = i + 15;
@@ -41,6 +42,7 @@ void Func_02003288(void)
 {
     u32 i = 0;
 
+    /* FAKEMATCH: the loop is written with goto so that it carries no loop notes: the bytes build the zero on every pass, and a for or do loop hoists it (differ 8). */
 loop:
     {
         s32 id = i + 26;

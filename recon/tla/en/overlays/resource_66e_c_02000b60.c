@@ -1,30 +1,31 @@
-/* Draft, differ 33 of 30: the native builds the flag id (group * 20 + i + 48)
- * straight into r0 at the top of every pass and keeps i in r5; this form
- * strength-reduces the id into its own register. Nested tests keep the two
- * separate compares of 9 and 10 that the native has. */
+/* Draft, differ 10 of 30: as a labelled loop (a for loop strength-reduces the flag id, differ 33), only group * 4 is left: gcse hoists it out of the loop into r7. Tried u32/u16/u8/s16 group and a spelled-out multiply; alchemy permute matched only by taking the address of group. */
 #include "types.h"
-
 s32 GameFlag_Test(s32 flag);
-
 s32 Func_02000b60(s32 group)
 {
-    s32 i;
+    s32 i = 17;
 
-    for (i = 17; i > 6; i--) {
+loop:
+    {
         s32 flag = group * 20 + i + 48;
 
-        if (group == 0) {
+        if (group == 0)
+        {
             if (i == 7)
-                continue;
+                goto next;
         }
-        if (group == 1) {
+        if (group == 1)
+        {
             if (i == 9)
-                continue;
+                goto next;
             if (i == 10)
-                continue;
+                goto next;
         }
         if (GameFlag_Test(flag))
             return i + 1;
     }
+next:
+    if (--i > 6)
+        goto loop;
     return -1;
 }

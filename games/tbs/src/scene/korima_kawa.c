@@ -80,7 +80,7 @@ static void EV10_SCRIPT(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_jump.c"
+#include "common/korima_jump.h"
 
 u8 *KorimaKawa_GetEvents(void)
 {
@@ -113,7 +113,7 @@ s32 KorimaKawa_PrepareWindowTransition(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_palette.c"
+#include "common/korima_palette.h"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

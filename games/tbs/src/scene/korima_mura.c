@@ -1465,7 +1465,7 @@ static void FieldScene_RunPairedStepB(s32 arg0, s32 arg1, s32 arg2)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_grow.c"
+#include "common/korima_grow.h"
 
 static void SceneEffect_SpawnObject26EveryEightFrames(void)
 {
@@ -1512,7 +1512,7 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_blink.c"
+#include "common/korima_blink.h"
 
 static s32 KorimaMura_TriggerRegionScript(struct FieldActor *actor)
 {
@@ -1546,7 +1546,7 @@ static s32 KorimaMura_TriggerRegionScript(struct FieldActor *actor)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_hashi_falling_effect.c"
+#include "common/korima_hashi_falling_effect.h"
 s32 KorimaMura_PendingPose __attribute__((section(".bss")));
 s32 KorimaMura_LayoutFlag __attribute__((section(".bss")));
 s32 KorimaMura_EffectActive __attribute__((section(".bss")));

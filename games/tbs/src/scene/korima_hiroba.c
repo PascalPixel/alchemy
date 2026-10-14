@@ -103,7 +103,7 @@ s32 FieldScene_SetupEntryActors8To11(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_palette.c"
+#include "common/korima_palette.h"
 #include "common/object_orbit.h"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)

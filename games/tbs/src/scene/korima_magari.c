@@ -594,7 +594,7 @@ static void Scene_PushBlockAlongRun(struct TileRun2 *runs)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_palette.c"
+#include "common/korima_palette.h"
 
 u32 KorimaMagari_DefaultRecords[] = {
 	0xb00cd, 0x10009, 0, 0xc00cf, 12, 0, 0x1100cf, 12,

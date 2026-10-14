@@ -125,7 +125,7 @@ static void EV10_SCRIPT(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_jump.c"
+#include "common/korima_jump.h"
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
@@ -1051,7 +1051,7 @@ static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_grow.c"
+#include "common/korima_grow.h"
 
 static void SceneEffect_SpawnObject26EveryEightFrames(void)
 {
@@ -1093,7 +1093,7 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_blink.c"
+#include "common/korima_blink.h"
 
 static s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0)
 {
@@ -1123,7 +1123,7 @@ static s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_hashi_falling_effect.c"
+#include "common/korima_hashi_falling_effect.h"
 s32 KorimaHashi_TriggerPending __attribute__((section(".bss")));
 s32 KorimaHashi_PartyFlag __attribute__((section(".bss")));
 s32 KorimaHashi_SparkleSound __attribute__((section(".bss")));

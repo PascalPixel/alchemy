@@ -710,7 +710,7 @@ s32 KorimaKi_PrepareActors(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_grow.c"
+#include "common/korima_grow.h"
 
 static void PaletteScene_SpawnEffect(void)
 {
@@ -975,7 +975,7 @@ static void PaletteScene_SetRecordValue(s32 key, s32 value)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_palette.c"
+#include "common/korima_palette.h"
 
 s32 SceneAction_ActorOneEntry[] = {
 	SC_ARG(2),

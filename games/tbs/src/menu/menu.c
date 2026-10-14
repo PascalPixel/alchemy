@@ -5650,13 +5650,7 @@ s32 CharacterSelector_Run(void)
 	struct CharacterMenuState *work = gMenuWork;
 	s32						   result = 0;
 
-	/* FAKEMATCH: instruction order only: the one-pass block ends the
-	   schedule after the work load, so the zero is set before the slot
-	   offset, as native. Plain forms measured (2026-10-13): the store
-	   without the block, or with result declared first, moves the
-	   offset into the work load's delay (differ 4); storing a constant
-	   0 differs 14, two returns 26. Measured 2026-10-13: the call
-	   result kept in result and tested, or a ?: on it, differ 19. */
+	/* FAKEMATCH: the one-pass block ends the schedule after the work load, so the zero is stored before the slot offset, as native; the store without it, or with result declared first, differs 4 (the offset moves into the load's delay), a constant 0 store 14, two returns 26, the call result kept in result and tested, or a ?: on it, 19. */
 	do
 	{
 		work->selected_slots[0] = result;
@@ -7714,15 +7708,8 @@ s32 Menu_CreateEightEntryObjects(s32 resource)
 
 void ItemMenu_ApplyFlags(const u8 *flags)
 {
-	/* FAKEMATCH: the y-field pointer keeps the category flag index as a
-	   counter instead of a walking pointer: it is the loop's 18th real
-	   insn before combine, and loop.c reduces the flags[index] giv only
-	   while its 17 reaches the insn count. Plain forms measured
-	   (2026-10-13): entry->y = value in this loop, in a for loop over
-	   category_icons[index], with ++index in the test or with the two
-	   tests nested, differ 22; value as s16, u16 or s8, 23 to 28;
-	   value += 16 before the sentinel store, differ 2 (the add moves
-	   ahead of the call). */
+	// The y-field pointer is the loop's 18th real insn before combine; loop.c reduces the flags[index] giv only while its 17 reaches the insn count.
+	/* FAKEMATCH: the y-field pointer keeps the category flag index a counter, not a walking pointer, as native; entry->y = value in this loop, a for loop over category_icons[index], ++index in the test or the two tests nested differ 22, value as s16, u16 or s8 23 to 28, value += 16 before the sentinel store 2 (the add moves ahead of the call). */
 	struct InventoryMenuState *base;
 	struct RenderOutput		 **slot;
 	struct RenderOutput		  *entry;
@@ -9751,7 +9738,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
 		state->pair_index[mode] = entry % 32;
 		state->pair_element[mode] = DJINN_ELEMENT(entry);
 		state->pair_owner[mode] = DJINN_OWNER(entry);
-		/* FAKEMATCH: keep entry live through owner extraction and pass result through the boundary; an input alone exchanges the final index shift and table-base copy (2 instructions differ), while no boundary ties the owner mask to entry (8 differ). 2026-10-11: plain, entry dies at the owner and, so reload ties the result to entry instead of the mask (ands r2, r3 for ands r3, r2: differ 8); an input-only barrier leaves a sched2 tie (differ 2); storing the fields in other orders differs 13-1106. 2026-10-13: entry as s32 or u16 with no barrier differs 1186 and 1165 (24 and 29 more instructions). */
+		// Plain, entry dies at the owner's AND, so reload ties the result to entry instead of the mask.
+		/* FAKEMATCH: the barrier keeps entry live through owner extraction and passes result through it, so the owner mask keeps its native register (ands r3, r2); plain differs 8 (ands r2, r3), an input-only barrier 2 (a sched2 tie swaps the final index shift and table-base copy), the fields stored in other orders 13-1106, entry as s32 or u16 1186 and 1165. */
 		asm("" : "+r"(result) : "r"(entry));
 	}
 	state->selection[mode] = x + y * 10;
@@ -10210,10 +10198,12 @@ void FourObjectMotion_UpdateBottomRow(void)
 			s32 phase;
 			s32 limit;
 			/* Ordinary s32/s16 locals, a direct field test, an earlier limit
-             * initializer and an inline sign/limit helper all differ 81 in
-             * EN (119 native, 118 built), changing the outer high-register
-             * allocation as well as this read. */
-			/* FAKEMATCH: the row's second read lives in r2, as the native allocates it. 2026-10-11: plain locals take r3 (local-alloc's first free register, REG_ALLOC_ORDER 3,2,1,0), which costs limit its r3 preference and reshuffles the high registers (differ 81); reading py before request[3] = 0 puts it in r2 but emits the ldrsh before the zero store (differ 4 in all six editions). Measured 2026-10-13 with py plain: the loop index as u8, s8 or u16 differs 130 to 140, as s16 82. */
+			 * initializer and an inline sign/limit helper all differ 81 in
+			 * EN (119 native, 118 built), changing the outer high-register
+			 * allocation as well as this read. Plain locals take r3,
+			 * local-alloc's first free register (REG_ALLOC_ORDER 3, 2, 1, 0),
+			 * which costs limit its r3 preference. */
+			/* FAKEMATCH: pins the row's second read to r2, as native; plain locals take r3 and reshuffle the high registers (differ 81), reading py before request[3] = 0 puts it in r2 but emits the ldrsh before the zero store (4 in all six editions), and with py plain the loop index as u8, s8 or u16 differs 130 to 140, as s16 82. */
 			register s32 py asm("r2");
 
 			((struct FieldSprite *)obj)->priority = 0;
@@ -10598,7 +10588,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
 					Iwram_CopyWords(saved, render, size);
 					work = UiText_OpenMessageWindowFar(MsgDjinnTutorialSetChanges, 8, 0, 1);
-					/* FAKEMATCH: needed to match: a one-pass block keeps the window copy before the cursor store: as a plain store the window copy is scheduled after the store, differ 8 (all four plain: differ 26). Measured 2026-10-13: with all four cursor stores plain, a static __inline__ save-and-open helper (Iwram_CopyWords then UiText_OpenMessageWindowFar) at both cases makes the function differ 84; the save and open as a do { } while (0) statement macro leaves it at 8; a cursor-store statement macro (do { cursor->active = n; } while (0)) differs 12 at each of this function's two plain cursor stores, so it is no layer. */
+					/* FAKEMATCH: the one-pass block keeps the window copy before the cursor store, as native; plain, it is scheduled after the store (differ 8; all four plain 26). With all four plain: an inline save-and-open helper at both cases 84, the save and open as a statement macro 8, a cursor-store statement macro 12 at each of the two plain stores, so no layer. */
 					do
 					{
 						state->cursor->active = 1;
@@ -10616,7 +10606,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 					dirty = 1;
 					scene->tutorial_timer = 0;
 					scene->tutorial_step = 11;
-					/* FAKEMATCH: needed to match: a one-pass block keeps the step store before the cursor store: as a plain store the step store is scheduled after the cursor load, differ 4 (all four plain: differ 26). Measured 2026-10-13, with the save and open as a statement macro: a second statement macro from UiWork_FinalizeFar to the step store, cursor store plain, matches, but case 11 has an extra WaitFrames in that span, so no one macro serves both tutorial cases; the macro around dirty, timer and step differs 10, around the step store alone or from render->dirty to the step 4, around the restore alone (UiWork_FinalizeFar to render->dirty) 22. */
+					/* FAKEMATCH: one-pass block keeps the step store before the cursor store, as native; plain it follows the cursor load (differ 4; all four plain 26). Save/open as a macro: UiWork_FinalizeFar to step matches, but case 11 has an extra WaitFrames there, so none serves both; around dirty, timer and step 10, step alone or from render->dirty 4, restore (UiWork_FinalizeFar to render->dirty) 22. */
 					do
 					{
 						state->cursor->active = 13;
@@ -10630,7 +10620,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
 					Iwram_CopyWords(saved, render, size);
 					work = UiText_OpenMessageWindowFar(MsgDjinnTutorialClassPsynergy, 8, 0, 1);
-					/* FAKEMATCH: needed to match: a one-pass block keeps the window copy before the cursor store: as a plain store the window copy is scheduled after the store, differ 10 (all four plain: differ 26). Measured 2026-10-13: with all four cursor stores plain, a static __inline__ save-and-open helper (Iwram_CopyWords then UiText_OpenMessageWindowFar) at both cases makes the function differ 84; the save and open as a do { } while (0) statement macro leaves it at 8; a cursor-store statement macro (do { cursor->active = n; } while (0)) differs 12 at each of this function's two plain cursor stores, so it is no layer. */
+					/* FAKEMATCH: the one-pass block keeps the window copy before the cursor store, as native; plain, it is scheduled after the store (differ 10; all four plain 26). With all four plain: an inline save-and-open helper at both cases 84, the save and open as a statement macro 8, a cursor-store statement macro 12 at each of the two plain stores, so no layer. */
 					do
 					{
 						state->cursor->active = 1;
@@ -10649,7 +10639,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 					dirty = 1;
 					scene->tutorial_timer = 0;
 					scene->tutorial_step = 12;
-					/* FAKEMATCH: needed to match: a one-pass block keeps the step store before the cursor store: as a plain store the step store is scheduled after the cursor load, differ 4 (all four plain: differ 26). Measured 2026-10-13, with the save and open as a statement macro: a second statement macro from UiWork_FinalizeFar to the step store, cursor store plain, matches, but case 11 has an extra WaitFrames in that span, so no one macro serves both tutorial cases; the macro around dirty, timer and step differs 10, around the step store alone or from render->dirty to the step 4, around the restore alone (UiWork_FinalizeFar to render->dirty) 22. */
+					/* FAKEMATCH: one-pass block keeps the step store before the cursor store, as native; plain it follows the cursor load (differ 4; all four plain 26). Save/open as a macro: UiWork_FinalizeFar to step matches, but case 11 has an extra WaitFrames there, so none serves both; around dirty, timer and step 10, step alone or from render->dirty 4, restore (UiWork_FinalizeFar to render->dirty) 22. */
 					do
 					{
 						state->cursor->active = 13;

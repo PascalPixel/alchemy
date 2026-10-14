@@ -762,13 +762,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 				c = Iwram_SignedDivide(r + ((c >> 5) & 31) + ((c >> 10) & 31), 10);
 				r = c * 4 + 5;
 				b = c * 3 + 5;
-				/* FAKEMATCH: this reversible XOR initialization folds late,
-				 * preserving the blue-first add/copy and independent lower
-				 * comparison. Copying g = b before two XOR assignments exchanges
-				 * the add/copy registers (four aligned differences). 2026-10-13:
-				 * the plain clamps (r, g, b below 8, then above 28) with g = b, or
-				 * with g and b each c * 3 + 5, differ 202: g takes the computed
-				 * register and b the copy, and g's test is not threaded into b's. */
+				/* FAKEMATCH: the reversible XOR initialization of g folds late, keeping the native blue-first add/copy and separate lower test; g = b before the two XORs exchanges the add/copy registers (four aligned differences), plain clamps with g = b, or g and b each c * 3 + 5, 202 (g takes the computed register, b the copy, g's test not threaded into b's). */
 				g = b ^ r;
 				g ^= r;
 				if (r < 8)

@@ -136,14 +136,7 @@ struct DirectionSteps
 
 static void KuupuappuDou_PushBlockAhead(void)
 {
-	/* FAKEMATCH: the table is s16 pairs, read here as one word per heading
-	   (x in the high half, z in the low). The read must stay an array
-	   reference: through a plain s32 pointer cast the address is summed once
-	   into a register and the function no longer matches. Measured
-	   (2026-10-13): the table as const s32 words, written like
-	   BiribinoMura_FacingCellSteps and indexed directly, compiles to 143
-	   instructions for 146 (differ 79); read through a const s32 local
-	   pointer, differ 94. */
+	/* FAKEMATCH: DIRECTION_STEP reads the s16-pair table (x high, z low) as one word per heading through an array reference, as native; through a plain s32 pointer cast the address is summed once into a register and no longer matches, the table as const s32 words indexed directly differs 79 (143 instructions for 146), a const s32 local pointer 94. */
 	struct FieldActor	 *leader = Object_GetById(0);
 	s32					  direction = leader->facing >> 12;
 	struct FieldActor	 *block;

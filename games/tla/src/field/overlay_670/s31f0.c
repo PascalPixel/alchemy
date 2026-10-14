@@ -17,3 +17,39 @@ void Func_02003220(void)
         GameFlag_SetBit(0x200);
     }
 }
+
+void Func_0200324c(void)
+{
+    u32 i = 0;
+
+loop:
+    {
+        s32 id = i + 15;
+        struct Ov670Object *object = Object_GetById(id);
+
+        Func_020031f0(id);
+        object->motion_flags = 0;
+    }
+    if (++i <= 1)
+        goto loop;
+    Object_GetById(15)->y = 0x200000;
+    Object_GetById(16)->y = 0;
+    Func_02003220();
+}
+
+void Func_02003288(void)
+{
+    u32 i = 0;
+
+loop:
+    {
+        s32 id = i + 26;
+        struct Ov670Object *object = Object_GetById(id);
+
+        Func_020031f0(id);
+        object->motion_flags = 0;
+    }
+    if (++i <= 1)
+        goto loop;
+    Func_02003220();
+}

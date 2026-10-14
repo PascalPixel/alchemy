@@ -80,8 +80,8 @@ static void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object);
 s32 Math_RemainderUnsigned(s32, s32);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
-#include "common/effect_spawn.c"
+#include "common/effect_create.h"
+#include "common/effect_spawn.h"
 
 struct PairDetail
 {
@@ -1150,7 +1150,7 @@ static void SceneState_ForwardByRuntimeWordBits(s32 a)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_vertical.c"
+#include "common/effect_vertical.h"
 
 static void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
 {
@@ -1208,7 +1208,7 @@ static void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_psynergy.c"
+#include "common/effect_psynergy.h"
 
 static void FieldScene_RunStep6(void)
 {

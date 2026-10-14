@@ -32,8 +32,8 @@ static void GomaIriguchi_RunSpinningLeap(s32 id);
 static void GomaIriguchi_GiveShamansRod(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
-#include "common/effect_spawn.c"
+#include "common/effect_create.h"
+#include "common/effect_spawn.h"
 
 // struct FieldActor の別の見方: sprite の先の角度を符号付き 16 ビットで読む
 struct Actor

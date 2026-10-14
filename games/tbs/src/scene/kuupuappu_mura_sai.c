@@ -28,8 +28,8 @@
 #include "call.h"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
-#include "common/effect_spawn.c"
+#include "common/effect_create.h"
+#include "common/effect_spawn.h"
 #include "common/object_distance.c"
 #include "common/kuupuappu_range.c"
 #include "common/kuupuappu_nearby.c"

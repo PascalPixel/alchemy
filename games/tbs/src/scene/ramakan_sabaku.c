@@ -45,8 +45,8 @@ static void RamakanSabaku_SetSandPhase(u16 value);
 #define NULL ((void *)0)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
-#include "common/effect_spawn.c"
+#include "common/effect_create.h"
+#include "common/effect_spawn.h"
 
 static void EV13_TALK(void)
 {

@@ -2586,7 +2586,7 @@ static void Scene_RepairTheHouse(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_psynergy.c"
+#include "common/effect_psynergy.h"
 
 static void SceneState_SetValue1ThenCall(void)
 {
@@ -2912,7 +2912,7 @@ static void SceneEffect_UpdateObjectOnOddFramesOnly(s32 p)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_vertical.c"
+#include "common/effect_vertical.h"
 #include "common/world_map_linked_effects.c"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)

@@ -44,8 +44,8 @@ struct PeriodicEffectConfig
 void Effect_Spawn();
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
-#include "common/effect_spawn.c"
+#include "common/effect_create.h"
+#include "common/effect_spawn.h"
 
 #define FLAG_SHIAN_WATER_SPILLED 0x200
 

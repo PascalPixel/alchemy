@@ -117,7 +117,7 @@ static void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 t
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_spawn.c"
+#include "common/effect_spawn.h"
 #include "ability_ids.h"
 #include "objcmd.h"
 
@@ -386,7 +386,7 @@ static void EV31_TOUCH_3(void)
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_depth.c"
 #include "common/object_waitidle.c"
-#include "common/effect_advance.c"
+#include "common/effect_advance.h"
 
 static void FieldScene_RunSupplementalSequenceOne(void)
 {
@@ -440,7 +440,7 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_radial.c"
+#include "common/effect_radial.h"
 
 static s32 SceneEffect_SpawnRandomizedParticleEveryFourFrames(struct FieldActor *obj)
 {

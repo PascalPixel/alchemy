@@ -30,7 +30,7 @@ static void EV09_PSYNERGY_3(void);
 static void StagedActorPairScene_RunSpinningLeap(s32 id);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
+#include "common/effect_create.h"
 
 union SpinningActor
 {
@@ -39,7 +39,7 @@ union SpinningActor
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_spawn.c"
+#include "common/effect_spawn.h"
 #include "common/object_staged_actor.c"
 #include "ability_ids.h"
 #include "item_ids.h"

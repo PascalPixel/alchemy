@@ -2620,7 +2620,7 @@ static void HaidiaArashi_CycleObjectPalettes(s32 o)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_vertical.c"
+#include "common/effect_vertical.h"
 
 static void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
 {
@@ -2678,7 +2678,7 @@ static void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_psynergy.c"
+#include "common/effect_psynergy.h"
 
 static void FieldScene_RunFourPairedSteps(void)
 {

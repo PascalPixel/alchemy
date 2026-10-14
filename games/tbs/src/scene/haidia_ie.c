@@ -1374,7 +1374,7 @@ static void SceneEffect_UpdateByFrameBit(s32 no)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_vertical.c"
+#include "common/effect_vertical.h"
 
 static void HaidiaIe_SpawnEffectPair(union PairObject *parent)
 {
@@ -1432,7 +1432,7 @@ static void HaidiaIe_SpawnEffectPair(union PairObject *parent)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_psynergy.c"
+#include "common/effect_psynergy.h"
 
 static void FieldScene_RunStep15(void)
 {

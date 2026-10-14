@@ -42,7 +42,7 @@ static void MakyuriChojo_FlickerActorEight(void);
 #define NULL ((void *)0)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
+#include "common/effect_create.h"
 
 struct EffectParams
 {
@@ -63,7 +63,7 @@ struct ActorTable
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_spawn.c"
+#include "common/effect_spawn.h"
 #include "objcmd.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void)

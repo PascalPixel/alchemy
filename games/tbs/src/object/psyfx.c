@@ -8571,7 +8571,7 @@ struct OrbitEffect
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #define EFFECT_SPAWN_RESIDENT
-#include "../scene/common/effect_spawn.c"
+#include "../scene/common/effect_spawn.h"
 #undef EFFECT_SPAWN_RESIDENT
 
 //--------------------------------------------------------------------------

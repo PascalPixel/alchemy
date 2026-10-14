@@ -20,8 +20,8 @@
 #include "fieldobj.h"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
-#include "common/effect_spawn.c"
+#include "common/effect_create.h"
+#include "common/effect_spawn.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"

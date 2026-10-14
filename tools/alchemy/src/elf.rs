@@ -104,10 +104,4 @@ impl Elf {
         Ok(Elf { sections, symbols })
     }
 
-    pub(crate) fn section_at(&self, address: u32) -> Option<(&Section, usize)> {
-        self.sections.iter().find_map(|s| {
-            (address >= s.address && address - s.address < s.bytes.len() as u32)
-                .then(|| (s, (address - s.address) as usize))
-        })
-    }
 }

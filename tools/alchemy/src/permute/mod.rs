@@ -21,7 +21,7 @@ pub(crate) mod types;
 #[cfg(test)]
 mod compatibility_tests;
 
-use crate::compiler::routing::root;
+use crate::compile::root;
 use crate::targets::{decomp_target, DecompTarget};
 use ast::Function;
 #[cfg(test)]
@@ -1418,7 +1418,7 @@ mod tests {
 
     #[test]
     fn relocated_jobs_keep_the_drafts_quoted_header_search() {
-        crate::compiler::routing::prefer_installed_binutils();
+        
         let work = tempfile::tempdir().unwrap();
         let directory = work.path().join("drafts");
         std::fs::create_dir(&directory).unwrap();
@@ -1450,7 +1450,7 @@ mod tests {
 
     #[test]
     fn c_tree_compiles_through_both_game_routes() {
-        crate::compiler::routing::prefer_installed_binutils();
+        
         let source = "#include \"types.h\"\ntypedef struct { u32 word; s16 pair[2]; } Item;\nstatic inline u32 Twice(u32 x) { return x + x; }\nu32 F(Item *p) { u32 n = p->word; if (n) return Twice(n); return (u16)p->pair[1]; }\n";
         for arm in [false, true] {
             let work = tempfile::tempdir().unwrap();
@@ -1589,7 +1589,7 @@ mod tests {
 
     #[test]
     fn scoring_reads_real_compiler_objects() {
-        crate::compiler::routing::prefer_installed_binutils();
+        
         let work = tempfile::tempdir().unwrap();
         let text = "int F(int x) { return x + 2; }\n";
         let listing = listing_of(work.path(), text);
@@ -1605,7 +1605,7 @@ mod tests {
 
     #[test]
     fn whole_tree_type_search_and_minimizer_reach_a_byte_load_on_both_routes() {
-        crate::compiler::routing::prefer_installed_binutils();
+        
         let source = "extern int input; int F(void) { return input; }\n";
         for arm in [false, true] {
             let work = tempfile::tempdir().unwrap();
@@ -1644,7 +1644,7 @@ mod tests {
 
     #[test]
     fn whole_tree_manual_expansions_survive_preprocessing_and_keep_separate_orders() {
-        crate::compiler::routing::prefer_installed_binutils();
+        
         let source = "int F(int x) { PERM_PRETEND(typedef int T;) PERM_LINESWAP(x += 1;\nx *= 2;) PERM_RANDOMIZE(x += 3;) PERM_IGNORE(asm(\"\");) return x; }\n";
         let work = tempfile::tempdir().unwrap();
         let problem = test_problem(&work.path().join("draft/08000000.c"), source, vec![], Some("F"));
@@ -1671,7 +1671,7 @@ mod tests {
 
     #[test]
     fn heat_expansions_preprocess_edition_branches_and_keep_regions() {
-        crate::compiler::routing::prefer_installed_binutils();
+        
         let source = "#include \"edition.h\"\n#if EDITION_INTERNATIONAL\nextern int selected;\n#endif\nint F(int x) {\n#if EDITION_INTERNATIONAL\nx += selected;\n#else\nx += unavailable;\n#endif\nPERM_RANDOMIZE(x += PERM_GENERAL(3, 7);)\nPERM_IGNORE(x *= 2;)\nreturn x;\n}\n";
         let work = tempfile::tempdir().unwrap();
         let mut problem = test_problem(&work.path().join("draft/08000000.c"), source, vec![], Some("F"));
@@ -1701,7 +1701,7 @@ mod tests {
 
     #[test]
     fn whole_tree_outputs_keep_includes_and_comments_when_only_the_function_changes() {
-        crate::compiler::routing::prefer_installed_binutils();
+        
         let source = "#include \"types.h\"\n/* Keep this explanation. */\nint F(int a, int b) { return a + b; }\n";
         let work = tempfile::tempdir().unwrap();
         let mut problem = test_problem(&work.path().join("draft/08000000.c"), source, vec![], Some("F"));
@@ -1722,7 +1722,7 @@ mod tests {
 
     #[test]
     fn body_respell_preserves_instructions_when_scores_tie() {
-        crate::compiler::routing::prefer_installed_binutils();
+        
         let work = tempfile::tempdir().unwrap();
         let source = "int F(void) { return __LINE__; }\n";
         let listing = listing_of(work.path(), "int F(void) { return 0; }\n");
@@ -1746,7 +1746,7 @@ mod tests {
 
     #[test]
     fn minimizing_drops_rewrites_the_score_does_not_need() {
-        crate::compiler::routing::prefer_installed_binutils();
+        
         let work = tempfile::tempdir().unwrap();
         // The listing stores gY first; the draft stores gX first.
         let listing = listing_of(work.path(), "int gX;\nint gY;\nvoid Set(int a, int b)\n{\n    gY = b;\n    gX = a;\n}\n");
@@ -1806,7 +1806,7 @@ mod tests {
 
     #[test]
     fn failed_runs_leave_no_scratch() {
-        crate::compiler::routing::prefer_installed_binutils();
+        
         let work = tempfile::tempdir().unwrap();
         let listing = listing_of(work.path(), "int gX;\nint Sub(int a, int b)\n{\n    gX = a;\n    return a - b;\n}\n");
         let options = |draft: &Path, function: Option<&str>| Options {
@@ -1992,7 +1992,7 @@ mod tests {
 
     #[test]
     fn search_reaches_differ_zero_through_diffs_own_compile() {
-        crate::compiler::routing::prefer_installed_binutils();
+        
         let work = tempfile::tempdir().unwrap();
         let target = decomp_target(Some("tbs-en")).unwrap();
         // The listing: one spelling, compiled as alchemy diff compiles drafts.
@@ -2075,7 +2075,7 @@ mod tests {
 
     #[test]
     fn tied_score_candidates_are_archived_and_output_filters_apply() {
-        crate::compiler::routing::prefer_installed_binutils();
+        
         let work = tempfile::tempdir().unwrap();
         let listing = listing_of(work.path(), "int F(void) { return 3; }\n");
         let draft = work.path().join("08000000.c");

@@ -48,7 +48,7 @@ jobs:
 
       - name: Record the measurement and draw both figures
         run: >-
-          tools/out/cargo-target/release/alchemy check coverage
+          tools/out/cargo-target/release/alchemy progress
           --publish "measured/${GITHUB_SHA}.tsv" progress
 
       - name: Publish the progress branch

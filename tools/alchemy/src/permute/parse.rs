@@ -1054,7 +1054,8 @@ pub(crate) fn matching(tokens: &[Token], open: usize) -> Option<usize> {
     None
 }
 
-/// Parse a statement list: a PERM_RANDOMIZE region, or code a test builds.
+
+#[cfg(test)]
 pub fn parse_body(source: &str, typedefs: &[&str]) -> Result<Vec<Stmt>> {
     let mut names: BTreeSet<String> = typedefs.iter().map(|name| name.to_string()).collect();
     let mut parser = Parser::new(lex(source)?, &mut names);
@@ -1064,7 +1065,6 @@ pub fn parse_body(source: &str, typedefs: &[&str]) -> Result<Vec<Stmt>> {
     }
     Ok(body)
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: ☀️ from a clean clone, with no ROM
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      RUSTUP_TOOLCHAIN: 1.98.1
+    steps:
+      - name: Check out the source and the compilers' source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Confirm the checkout holds no ROM
+        run: |
+          test ! -e roms
+          if find . -name '*.gba' -print | grep .; then exit 1; fi
+
+      - name: Install binutils and a current GCC (make modern)
+        run: sudo apt-get update && sudo apt-get install -y binutils-arm-none-eabi gcc-arm-none-eabi
+
+      - name: Install Rust
+        run: rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal
+
+      - name: Read the compiler pin
+        id: pin
+        run: echo "agscc=$(git rev-parse HEAD:agscc)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore the compilers built from that pin
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: |
+            tools/out/compilers
+            tools/out/compiler-runtime
+          key: compilers-${{ runner.os }}-${{ runner.arch }}-${{ steps.pin.outputs.agscc }}-${{ hashFiles('Makefile') }}
+
+      - name: Build the compilers from source (make bootstrap)
+        run: make bootstrap
+
+      - name: Build the six ☀️ editions and check each against rom.sha1
+        run: make -j"$(nproc)" compare-tbs
+
+      - name: Compile ☀️'s C with a current GCC (make modern)
+        run: make -j"$(nproc)" modern
+
+      - name: Test the tools
+        run: make test

@@ -35,10 +35,6 @@ impl Placed {
         }
     }
 
-    pub fn symbol_at(&self, address: u32) -> Option<(&str, u32)> {
-        let start = self.symbols.iter().map(|(a, _)| *a).filter(|&a| a <= address).max()?;
-        Some((preferred(&self.symbols, start)?, address - start))
-    }
 }
 
 pub fn preferred(symbols: &[(u32, String)], address: u32) -> Option<&str> {
@@ -152,16 +148,6 @@ impl Map {
         Map { placed }
     }
 
-    pub fn in_image(&self, length: usize) -> impl Iterator<Item = &Placed> {
-        self.placed.iter().filter(move |p| {
-            p.size > 0 && p.loaded && p.load >= ROM && (p.load - ROM) as usize + p.size as usize <= length
-        })
-    }
-
-    pub fn at_load(&self, load: u32, length: usize) -> Option<&Placed> {
-        self.in_image(length).find(|p| load >= p.load && load - p.load < p.size)
-    }
-
     pub fn symbol(&self, name: &str) -> Option<(&Placed, u32)> {
         self.placed.iter().find_map(|p| {
             p.symbols.iter().find(|(_, n)| n == name).map(|(a, _)| (p, *a))
@@ -197,15 +183,14 @@ fn is_unloaded(name: &str) -> bool {
     name.starts_with(".bss") || name.starts_with(".sbss") || name == "COMMON"
 }
 
+
 fn is_identifier(name: &str) -> bool {
     let mut chars = name.chars();
     chars.next().is_some_and(|c| c.is_ascii_alphabetic() || c == '_' || c == '.')
         && chars.all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '.')
 }
-
 #[cfg(test)]
 pub(crate) mod tests {
-    use super::*;
 
     pub(crate) const MAP: &str = "\
 Discarded input sections
@@ -254,28 +239,4 @@ iwram           0x0000000003000100       0x40 load address 0x0000000008000038
 LOAD /x/out/tbs-de/obj/recon/tbs/de/rom.o
 ";
 
-    #[test]
-    fn reads_placements_loads_and_symbols() {
-        let map = Map::parse(MAP);
-        let names: Vec<&str> = map.placed.iter().map(|p| p.name.as_str()).collect();
-        assert_eq!(names, [".rom.00000000", ".text", "*fill*", ".rom.00000020", ".text", ".bss", ".sym_iwram", ".unidentified.08000030", ".text"]);
-        let io = &map.placed[1];
-        assert_eq!(io.object(), "games/tbs/src/system/io.o");
-        assert_eq!((io.address, io.size, io.load), (0x0800_0010, 0xe, 0x0800_0010));
-        assert_eq!(io.symbol_at(0x0800_0012), Some(("Input_Handle", 2)));
-        assert_eq!(io.symbol_at(0x0800_001a), Some(("Input_Poll", 2)));
-        assert_eq!(map.placed[3].symbols, [(0x0800_0020, "Func_08000020".to_string())]);
-        let runtime = &map.placed[4];
-        assert_eq!((runtime.address, runtime.load), (0x0300_0000, 0x0800_0030));
-        assert_eq!(map.placed[7].label(), "recon/tbs/unidentified.o(.unidentified.08000030)");
-        assert_eq!(map.placed[7].symbols.len(), 1);
-        assert_eq!(map.placed[2].label(), "*fill* at 0x0800001e");
-        assert_eq!(map.symbol("IwramIrqMain").map(|(p, a)| (p.load, a)), Some((0x0800_0030, 0x0300_0000)));
-        let held: Vec<&str> = map.in_image(0x58).map(|p| p.name.as_str()).collect();
-        assert_eq!(held, [".rom.00000000", ".text", "*fill*", ".rom.00000020", ".text", ".unidentified.08000030", ".text"]);
-        assert_eq!(map.symbol("gFrameTick").map(|(_, a)| a), Some(0x0300_0100));
-        assert_eq!(map.at_load(0x0800_0034, 0x58).map(Placed::label), Some("games/tbs/src/system/runtime.o".to_string()));
-        assert_eq!(map.at_load(0x0800_0038, 0x58).map(Placed::label), Some("recon/tbs/unidentified.o(.unidentified.08000030)".to_string()));
-        assert!(is_placeholder("Func_08000010") && !is_placeholder("Input_Handle"));
-    }
 }

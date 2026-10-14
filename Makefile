@@ -24,7 +24,10 @@ help:
 	  'make compare-tbs-en     build one edition and check it against rom.sha1' \
 	  'make compare-tbs        the six ☀️ editions, which need no ROM' \
 	  'make compare-editions   all twelve editions; ⚓️ needs your own ROMs in roms/' \
-	  'make test               the tools'\'' tests'
+	  'make modern             the six ☀️ editions'\'' C through a current GCC (MODERN_CC)' \
+	  'make test               the tools'\'' tests' \
+	  'make progress           DONE code and data in each edition built' \
+	  'make land               on main before committing: all twelve, the tests, the measurement'
 
 # Each edition builds in its own make, so its variables below are set once;
 # the tools are built first, once.
@@ -38,6 +41,14 @@ compare-tbs: $(addprefix compare-,$(TBS))
 compare-tla: $(addprefix compare-,$(TLA))
 compare-editions: compare-tbs compare-tla
 compare: compare-tbs-ja
+
+# make modern: the six ☀️ editions' C through a current GCC (MODERN_CC).
+ifndef EDITION
+.PHONY: modern
+modern: $(addprefix modern-,$(TBS))
+modern-%: tools
+	@$(MAKE) -f Makefile EDITION=$* modern
+endif
 
 clean:
 	rm -rf out
@@ -253,6 +264,29 @@ $(BUILD)/obj/%.o: %.mid $(MID2AGS)
 	@mkdir -p $(@D)
 	$(MID2AGS) $< $(@:.o=.s)
 	$(AS) $(ASFLAGS) -o $@ $(@:.o=.s)
+
+# --- make modern (Goal, point 5) -------------------------------------------
+# The same C through a current GCC, as pret's `make modern`: every file
+# must compile, with no match expected. Errors stop it; warnings are the
+# camelotize pass's to read.
+
+MODERN_CC ?= arm-none-eabi-gcc
+MODERN_CFLAGS := -mthumb-interwork -mcpu=arm7tdmi -mabi=apcs-gnu -O2 -fno-toplevel-reorder -std=gnu89 \
+                 -ffreestanding -nostdinc -fno-zero-initialized-in-bss -fno-tree-loop-distribute-patterns \
+                 -DMODERN=1 -Wall -Wextra -Wno-sign-compare -Wno-unused-parameter \
+                 -Wno-missing-field-initializers -Wno-pointer-sign -fdiagnostics-plain-output \
+                 -Werror=implicit-int -Werror=missing-parameter-type -Werror=declaration-missing-parameter-type \
+                 $(INCLUDES) -D$(DEFINE)=1 -I$(BUILD)
+MODERN_OBJS := $(patsubst %.c,$(BUILD)/modern/%.o,$(filter %.c,$(SRCS)))
+
+.PHONY: modern
+modern: $(MODERN_OBJS)
+
+$(BUILD)/modern/%.o: %.c | $(BUILD)/text/msg_ids.h
+	@mkdir -p $(@D)
+	$(MODERN_CC) $(if $(filter $(ARM_C),$<),-marm,-mthumb) $(MODERN_CFLAGS) \
+	    $(if $(filter $(SOUND_C) $(FLASH_C),$<),,-fcall-used-r4) -MMD -MP -c -o $@ $<
+-include $(MODERN_OBJS:.o=.d)
 endif
 
 ifndef EDITION
@@ -342,4 +376,12 @@ tools:
 
 test:
 	$(CARGO) test --offline --quiet --release --workspace --manifest-path tools/Cargo.toml
+
+# make land, on main before committing: all twelve editions, the tests,
+# then the measurement the push to main sends for CI (C3).
+.PHONY: progress land
+progress:
+	$(TOOLS)/alchemy progress
+land: compare-editions test
+	$(TOOLS)/alchemy progress
 endif

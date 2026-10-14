@@ -31,23 +31,6 @@ pub fn run<S: AsRef<str>>(command: &[S], cwd: impl AsRef<Path>) -> Result<String
     }
 }
 
-/// Runs a command as `run` does, but returns what it wrote to stderr on
-/// success: the modern build keeps a compiler's warnings.
-pub fn run_keeping_stderr<S: AsRef<str>>(
-    command: &[S],
-    cwd: impl AsRef<Path>,
-) -> Result<String, String> {
-    let program = command.first().ok_or("run: empty command")?.as_ref();
-    let args: Vec<&str> = command[1..].iter().map(AsRef::as_ref).collect();
-    let output = spawn(program, &args, cwd.as_ref()).map_err(|error| format!("{program}: {error}"))?;
-    let stderr = String::from_utf8_lossy(&output.stderr).into_owned();
-    if output.success {
-        Ok(stderr)
-    } else {
-        Err(format!("{program} failed: {}", stderr.trim()))
-    }
-}
-
 #[cfg(not(target_os = "macos"))]
 fn spawn(program: &str, args: &[&str], cwd: &Path) -> Result<Output, String> {
     #[cfg(target_os = "linux")]

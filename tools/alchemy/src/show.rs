@@ -1,32 +1,10 @@
-use crate::compiler::routing::root;
+use crate::compile::root;
 use crate::decode::{decode_one, half_at, word_at, Kind};
 use crate::elf::Elf;
 use crate::ld_map::{preferred, Map, Placed, ROM};
-use crate::process::run as command;
-use crate::targets::{decomp_target, DecompTarget};
+use crate::targets::DecompTarget;
 use std::collections::{BTreeMap, BTreeSet};
-use std::fmt::Write as _;
 use std::path::Path;
-
-const USAGE: &str = r#"usage: alchemy show EDITION FUNCTION [--arm] [--overlay resource_XXX] [--baseline DIRECTORY]
-After a build of EDITION (tbs-ja ... tla-it), prints FUNCTION (a symbol,
-or its run-time address in hex) as out/EDITION/EDITION.gba holds it beside
-the reference ROM roms/EDITION.gba at the same place, one
-instruction a line, and marks with * each line whose bytes differ. Literal
-pool words and jump tables print as .word, and calls, branches and pool
-words that hit a symbol carry its name. The function ends at the next
-symbol in its section, a static function the ELF names or its ELF size, or
-the section end. Code that runs from IWRAM is read where the ROM holds it.
-ARM code is disassembled with arm-none-eabi-objdump. Use --arm for an ARM
-scaffold whose incbin has no instruction-set mapping symbols; this affects
-only the displayed disassembly, never compilation or the count.
---overlay compares the linked overlay ELF with that resource decoded from
-the reference ROM, including the loader's Thumb-call restoration.
---baseline names a saved, byte-identical edition output directory. Its map
-and ELF preserve the reference function's bounds when a trial changes size
-or placement. The saved ROM must match the selected edition's reference.
-An aligned instruction summary uses diff's normalization and LCS distance;
-the displayed bytes remain the authority for the comparison."#;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct Line {
@@ -37,41 +15,9 @@ pub(crate) struct Line {
 }
 
 impl Line {
-    fn hex(&self) -> String {
-        match self.bytes.len() {
-            4 if self.wide => format!(
-                "{:08x}",
-                u32::from_le_bytes(self.bytes[..4].try_into().unwrap())
-            ),
-            _ => self
-                .bytes
-                .chunks(2)
-                .map(|c| {
-                    if c.len() == 2 {
-                        format!("{:04x}", u16::from_le_bytes([c[0], c[1]]))
-                    } else {
-                        format!("{:02x}", c[0])
-                    }
-                })
-                .collect::<Vec<_>>()
-                .join(" "),
-        }
-    }
 }
 
 pub(crate) type Names = BTreeMap<u32, String>;
-
-fn names(map: &Map) -> Names {
-    let mut names = Names::new();
-    for p in &map.placed {
-        for (address, _) in &p.symbols {
-            if let Some(name) = preferred(&p.symbols, *address) {
-                names.entry(*address).or_insert_with(|| name.to_string());
-            }
-        }
-    }
-    names
-}
 
 fn named(names: &Names, value: u32) -> String {
     names
@@ -173,108 +119,6 @@ pub(crate) fn thumb_lines(
     lines
 }
 
-fn arm_lines(
-    file: &Path,
-    image: &[u8],
-    base: u32,
-    start: u32,
-    end: u32,
-) -> Result<Vec<Line>, String> {
-    let file = file.to_string_lossy();
-    let output = command(
-        &[
-            "arm-none-eabi-objdump",
-            "-D",
-            "-b",
-            "binary",
-            "-marm",
-            &format!("--adjust-vma={base:#x}"),
-            &format!("--start-address={start:#x}"),
-            &format!("--stop-address={end:#x}"),
-            &file,
-        ],
-        root(),
-    )?;
-    Ok(parse_objdump(&output, image, base))
-}
-
-pub(crate) fn parse_objdump(output: &str, image: &[u8], base: u32) -> Vec<Line> {
-    output
-        .lines()
-        .filter_map(|line| {
-            let (address, rest) = line.trim_start().split_once(":\t")?;
-            let address = u32::from_str_radix(address, 16).ok()?;
-            let mut fields = rest.split('\t');
-            let raw = fields.next()?.trim();
-            let text: Vec<&str> = fields
-                .map(str::trim)
-                .filter(|f| !f.is_empty() && !f.starts_with(';') && !f.starts_with('@'))
-                .collect();
-            let offset = address.wrapping_sub(base) as usize;
-            let bytes = image.get(offset..offset + raw.len() / 2)?.to_vec();
-            Some(Line {
-                address,
-                bytes,
-                text: text.join(" "),
-                wide: true,
-            })
-        })
-        .collect()
-}
-
-pub(crate) fn pair<'a>(
-    built: &'a [Line],
-    reference: &'a [Line],
-) -> Vec<(Option<&'a Line>, Option<&'a Line>)> {
-    let (mut i, mut j, mut rows) = (0, 0, Vec::new());
-    while i < built.len() || j < reference.len() {
-        match (built.get(i), reference.get(j)) {
-            (Some(b), Some(r)) if b.address == r.address => {
-                rows.push((Some(b), Some(r)));
-                i += 1;
-                j += 1;
-            }
-            (Some(b), r) if r.is_none_or(|r| b.address < r.address) => {
-                rows.push((Some(b), None));
-                i += 1;
-            }
-            (_, r) => {
-                rows.push((None, r));
-                j += 1;
-            }
-        }
-    }
-    rows
-}
-
-pub(crate) fn render(built: &[Line], reference: &[Line]) -> (String, usize, usize) {
-    let rows = pair(built, reference);
-    let mut out = String::new();
-    let mut differ = 0;
-    let side = |l: Option<&Line>| l.map_or(String::new(), |l| format!("{:<9} {}", l.hex(), l.text));
-    for (b, r) in &rows {
-        let same = matches!((b, r), (Some(b), Some(r)) if b.bytes == r.bytes);
-        differ += usize::from(!same);
-        let address = b.or(*r).map_or(0, |l| l.address);
-        let _ = writeln!(
-            out,
-            "{} {address:08x}  {:<46}  {}",
-            if same { ' ' } else { '*' },
-            side(*b),
-            side(*r)
-        );
-    }
-    (
-        out.lines()
-            .map(str::trim_end)
-            .collect::<Vec<_>>()
-            .join("\n")
-            + "\n",
-        differ,
-        rows.len(),
-    )
-}
-
 pub(crate) fn function_end(
     section: &Placed,
     start: u32,
@@ -356,70 +200,6 @@ pub(crate) fn resolve<'m>(
         })
         .unwrap_or_else(|| format!("{start:#010x}"));
     Ok((section, start, name))
-}
-
-fn is_arm(elf: Option<&Elf>, section: &Placed, name: &str, start: u32) -> bool {
-    let Some(elf) = elf else { return false };
-    if let Some(symbol) = elf
-        .symbols
-        .iter()
-        .find(|s| s.name == name && s.kind == STT_FUNC)
-    {
-        return symbol.value & 1 == 0;
-    }
-    elf.symbols
-        .iter()
-        .filter(|s| {
-            (s.name.starts_with("$a") || s.name.starts_with("$t"))
-                && s.value >= section.address
-                && s.value <= start
-        })
-        .max_by_key(|s| s.value)
-        .is_some_and(|s| s.name.starts_with("$a"))
-}
-
-#[derive(Debug, PartialEq)]
-struct Options<'a> {
-    edition: &'a str,
-    wanted: &'a str,
-    arm: bool,
-    overlay: Option<String>,
-    baseline: Option<&'a str>,
-}
-
-fn parse(arguments: &[String]) -> Result<Options<'_>, String> {
-    let mut positional = Vec::new();
-    let (mut arm, mut overlay, mut baseline) = (false, None, None);
-    let mut args = arguments.iter();
-    while let Some(arg) = args.next() {
-        match arg.as_str() {
-            "--arm" => arm = true,
-            "--overlay" if overlay.is_none() => {
-                let name = args.next().ok_or(USAGE)?;
-                let digits = name.strip_prefix("resource_").ok_or(USAGE)?;
-                if digits.is_empty() || !digits.bytes().all(|byte| byte.is_ascii_hexdigit()) {
-                    return Err(USAGE.into());
-                }
-                let id = u32::from_str_radix(digits, 16).map_err(|_| USAGE)?;
-                overlay = Some(format!("resource_{id:03x}"));
-            }
-            "--baseline" if baseline.is_none() => {
-                baseline = Some(args.next().ok_or(USAGE)?.as_str())
-            }
-            option if option.starts_with('-') => return Err(USAGE.into()),
-            _ => positional.push(arg.as_str()),
-        }
-    }
-    if positional.len() != 2 || (arm && overlay.is_some()) {
-        return Err(USAGE.into());
-    }
-    Ok(Options {
-        edition: positional[0],
-        wanted: positional[1],
-        arm,
-        overlay,
-        baseline,
-    })
 }
 
 struct LinkedImage {
@@ -643,146 +423,6 @@ fn restore_thumb_calls(block: &mut [u8]) {
     }
 }
 
-fn aligned(built: &[Line], reference: &[Line]) -> (usize, usize, usize, usize) {
-    let tokens = |lines: &[Line]| {
-        let text = lines
-            .iter()
-            .map(|line| format!("{:x}:\t{}\n", line.address, line.text))
-            .collect::<String>();
-        crate::diff::normalize(&text)
-    };
-    let (ours, theirs) = (tokens(built), tokens(reference));
-    let (common, _) = crate::diff::compare(&theirs, &ours);
-    (
-        theirs.len(),
-        ours.len(),
-        common,
-        theirs.len() + ours.len() - 2 * common,
-    )
-}
-
-pub fn run(arguments: &[String]) -> Result<(), String> {
-    let options = parse(arguments)?;
-    let (edition, wanted) = (options.edition, options.wanted);
-    let target = decomp_target(Some(edition))?;
-    let out = root().join(target.output_dir);
-    let built = LinkedImage::read(&out, edition, options.overlay.as_deref())?;
-    let reference_path = root().join(target.rom);
-    let rom =
-        std::fs::read(&reference_path).map_err(|e| format!("{}: {e}", reference_path.display()))?;
-    let baseline_dir = options.baseline.map(Path::new);
-    let baseline = baseline_dir
-        .map(|directory| {
-            let saved_rom = std::fs::read(directory.join(format!("{edition}.gba")))
-                .map_err(|error| format!("baseline ROM: {error}"))?;
-            target
-                .verify_reference(&saved_rom)
-                .map_err(|error| format!("baseline: {error}"))?;
-            LinkedImage::read(directory, edition, options.overlay.as_deref())
-        })
-        .transpose()?;
-    let native = baseline.as_ref().unwrap_or(&built);
-    let (section, start, end, base, name) = built.span(wanted)?;
-    let (native_section, native_start, native_end, native_base, _) = native.span(wanted)?;
-    let directory = baseline_dir.unwrap_or(&out);
-    let main_map = if options.overlay.is_some() {
-        let path = directory.join(format!("{edition}.map"));
-        Map::parse(
-            &std::fs::read_to_string(&path)
-                .map_err(|error| format!("{}: {error}", path.display()))?,
-        )
-    } else {
-        Map::parse("")
-    };
-    let reference = match options.overlay.as_deref() {
-        Some(id) => reference_overlay(&rom, &main_map, id)?,
-        None => rom,
-    };
-    let range = image_range(built.bytes.len(), base, start, end)?;
-    let native_range = image_range(reference.len(), native_base, native_start, native_end)?;
-    let arm = options.arm || is_arm(built.elf.as_ref(), section, &name, start);
-    if arm && options.overlay.is_some() {
-        return Err("overlay display currently supports Thumb code".into());
-    }
-    if arm
-        && [start, end, native_start, native_end]
-            .iter()
-            .any(|address| address & 3 != 0)
-    {
-        return Err(format!("{name}: ARM disassembly needs word-aligned bounds"));
-    }
-    let mut names = names(&main_map);
-    names.extend(self::names(&built.map));
-    let (ours, theirs) = if arm {
-        (
-            arm_lines(
-                &out.join(format!("{edition}.gba")),
-                &built.bytes,
-                base,
-                start,
-                end,
-            )?,
-            arm_lines(
-                &reference_path,
-                &reference,
-                native_base,
-                native_start,
-                native_end,
-            )?,
-        )
-    } else {
-        (
-            thumb_lines(&built.bytes, base, start, end, &names),
-            thumb_lines(&reference, native_base, native_start, native_end, &names),
-        )
-    };
-    let loaded = if options.overlay.is_some() || section.load == section.address {
-        String::new()
-    } else {
-        format!(", loaded from {:#010x}", ROM + range.start as u32)
-    };
-    println!(
-        "{edition} {name}: {start:#010x}..{end:#010x}, {:#x} bytes of {}{loaded}, in {}",
-        end - start,
-        if arm { "ARM" } else { "Thumb" },
-        section.label()
-    );
-    if (start, end, base) != (native_start, native_end, native_base) {
-        println!(
-            "reference bounds: {native_start:#010x}..{native_end:#010x}, in {}",
-            native_section.label()
-        );
-    }
-    println!("  address   {:<46}  reference", "built");
-    let (listing, differ, rows) = render(&ours, &theirs);
-    print!("{listing}");
-    let (native_count, built_count, common, distance) = aligned(&ours, &theirs);
-    println!("aligned instructions: reference {native_count}, built {built_count}, common {common}, differ {distance}");
-    if built.bytes[range.clone()] == reference[native_range.clone()] {
-        println!("identical to the reference");
-    } else {
-        println!("{differ} of {rows} displayed lines differ");
-        if options.overlay.is_none() && range == native_range {
-            let first = range
-                .clone()
-                .find(|&k| built.bytes[k] != reference[k])
-                .unwrap();
-            if let Some(shift) =
-                crate::objects::apparent_shift(&reference, &built.bytes, first, range.end)
-            {
-                println!(
-                    "from {:#010x} on the reference holds the same bytes {} bytes {}: the code looks placed {} bytes {}",
-                    start + (first - range.start) as u32,
-                    shift.abs(),
-                    if shift > 0 { "later" } else { "earlier" },
-                    shift.abs(),
-                    if shift > 0 { "early" } else { "late" }
-                );
-            }
-        }
-    }
-    Ok(())
-}
 
 fn image_range(
     length: usize,
@@ -797,59 +437,9 @@ fn image_range(
         .ok_or("function runs past the end of an image")?;
     Ok(range.0 as usize..range.1 as usize)
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn explicit_arm_mode_is_for_display_only() {
-        let args = ["tbs-ja", "Glyph", "--arm"].map(String::from);
-        assert_eq!(
-            parse(&args).unwrap(),
-            Options {
-                edition: "tbs-ja",
-                wanted: "Glyph",
-                arm: true,
-                overlay: None,
-                baseline: None
-            }
-        );
-        assert!(!parse(&args[..2]).unwrap().arm);
-        let invalid = ["tbs-ja", "Glyph", "--typo"].map(String::from);
-        assert!(parse(&invalid).is_err());
-        assert!(parse(&["--help".into()]).is_err());
-    }
-
-    #[test]
-    fn overlay_and_baseline_options_are_explicit_and_validated() {
-        let args = [
-            "tbs-en",
-            "Scene",
-            "--overlay",
-            "resource_03A5",
-            "--baseline",
-            "out/saved",
-        ]
-        .map(String::from);
-        let options = parse(&args).unwrap();
-        assert_eq!(options.overlay.as_deref(), Some("resource_3a5"));
-        assert_eq!(options.baseline, Some("out/saved"));
-        for tail in [
-            vec!["--overlay"],
-            vec!["--overlay", "resource_../x"],
-            vec!["--baseline"],
-            vec!["--overlay", "resource_3a5", "--arm"],
-            vec!["--overlay", "resource_3a5", "--overlay", "resource_3a5"],
-        ] {
-            let args = [vec!["tbs-en", "Scene"], tail]
-                .concat()
-                .into_iter()
-                .map(String::from)
-                .collect::<Vec<_>>();
-            assert!(parse(&args).is_err(), "{args:?}");
-        }
-    }
 
     #[test]
     fn loader_restoration_inverts_stored_calls_including_backwards_and_wrap() {
@@ -1004,27 +594,6 @@ mod tests {
         assert!(reference_overlay(&rom, &map, "resource_004").is_err());
     }
 
-    #[test]
-    fn alignment_measures_insertions_without_counting_shifted_rows_or_data() {
-        let lines = |words: &[u16]| {
-            let image = halves(words);
-            thumb_lines(&image, ROM, ROM, ROM + image.len() as u32, &Names::new())
-        };
-        let reference = lines(&[0xb500, 0x2001, 0x2102, 0xbd00]);
-        let built = lines(&[0xb500, 0x2001, 0x4684, 0x2102, 0xbd00]);
-        assert_eq!(aligned(&built, &reference), (4, 5, 4, 1));
-        let changed = lines(&[0xb500, 0x2003, 0x2102, 0xbd00]);
-        assert_eq!(aligned(&changed, &reference), (4, 4, 3, 2));
-        let mut padded = reference.clone();
-        padded.push(Line {
-            address: ROM + 8,
-            bytes: vec![0; 4],
-            text: ".word 0x00000000".into(),
-            wide: true,
-        });
-        assert_eq!(aligned(&padded, &reference), (4, 4, 4, 0));
-    }
-
     fn halves(words: &[u16]) -> Vec<u8> {
         words.iter().flat_map(|h| h.to_le_bytes()).collect()
     }
@@ -1034,32 +603,6 @@ mod tests {
             .iter()
             .map(|l| format!("{:x} {}", l.address, l.text))
             .collect()
-    }
-
-    #[test]
-    fn reads_thumb_with_pools_calls_and_names() {
-        let mut image = halves(&[0xb510, 0x4802, 0xf000, 0xf804, 0xbd10, 0xf800]);
-        image.extend(0x0300_0164u32.to_le_bytes());
-        image.extend(halves(&[0x4770, 0x0000]));
-        let names: Names = [
-            (0x0800_0010, "Next".to_string()),
-            (0x0300_0164, "gWork".to_string()),
-        ]
-        .into();
-        let lines = thumb_lines(&image, ROM, ROM, ROM + 0x10, &names);
-        assert_eq!(
-            texts(&lines),
-            [
-                "8000000 push {r4, lr}",
-                "8000002 ldr r0, =0x3000164 <gWork>",
-                "8000004 bl 0x08000010 <Next>",
-                "8000008 pop {r4, pc}",
-                "800000a bl lr",
-                "800000c .word 0x03000164 <gWork>",
-            ]
-        );
-        assert_eq!(lines[2].hex(), "f000 f804");
-        assert_eq!(lines[5].hex(), "03000164");
     }
 
     #[test]
@@ -1116,41 +659,6 @@ mod tests {
     }
 
     #[test]
-    fn rows_pair_by_address_and_mark_differences() {
-        let built = thumb_lines(
-            &halves(&[0xb500, 0xf000, 0xf801, 0xbd00]),
-            ROM,
-            ROM,
-            ROM + 8,
-            &Names::new(),
-        );
-        let reference = thumb_lines(
-            &halves(&[0xb500, 0x2001, 0x2002, 0xbd00]),
-            ROM,
-            ROM,
-            ROM + 8,
-            &Names::new(),
-        );
-        let (text, differ, rows) = render(&built, &reference);
-        assert_eq!((differ, rows), (2, 4));
-        let lines: Vec<&str> = text.lines().collect();
-        assert!(
-            lines[0].starts_with("  08000000  b500      push {lr}"),
-            "{text}"
-        );
-        assert!(
-            lines[1].starts_with("* 08000002  f000 f801 bl 0x08000008")
-                && lines[1].ends_with("2001      movs r0, #1"),
-            "{text}"
-        );
-        assert!(
-            lines[2].starts_with("* 08000004  ") && lines[2].ends_with("2002      movs r0, #2"),
-            "{text}"
-        );
-        assert!(lines[3].starts_with("  08000006  bd00"), "{text}");
-    }
-
-    #[test]
     fn a_function_ends_at_the_next_symbol_in_its_own_section() {
         let section = Placed {
             name: ".text".into(),
@@ -1179,18 +687,4 @@ mod tests {
         );
     }
 
-    #[test]
-    fn reads_objdump_arm_lines() {
-        let image: Vec<u8> = [0xe0u8, 0x01, 0x2d, 0xe9, 0xff, 0x54, 0xa0, 0xe3].to_vec();
-        let output = "\n0800a37c <.data+0xa37c>:\n 800a37c:\te92d01e0 \tpush\t{r5, r6, r7, r8}\n 800a380:\te3a054ff \tmov\tr5, #-16777216\t; 0xff000000\n";
-        let lines = parse_objdump(output, &image, 0x0800_a37c);
-        assert_eq!(
-            texts(&lines),
-            [
-                "800a37c push {r5, r6, r7, r8}",
-                "800a380 mov r5, #-16777216"
-            ]
-        );
-        assert_eq!(lines[1].hex(), "e3a054ff");
-    }
 }

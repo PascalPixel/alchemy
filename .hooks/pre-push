@@ -1,2 +1,3 @@
 #!/bin/sh
-exec env ALCHEMY_PUSH_URL="$2" make --no-print-directory prepush
+# A push to main sends that commit's measurement (make land) for CI.
+exec tools/out/cargo-target/release/alchemy progress --pre-push "$2"

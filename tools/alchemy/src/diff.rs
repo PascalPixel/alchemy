@@ -1,5 +1,4 @@
-use crate::build_rom::c_steps;
-use crate::compiler::routing::{family_for_source, root, CompilerFamily};
+use crate::compile::{family_for_source, root, CompilerFamily};
 use crate::process::run as command;
 use crate::targets::{decomp_target, DecompTarget};
 use crate::elf::Elf;
@@ -150,7 +149,7 @@ fn arm_object(output: &Path, stem: &str) -> PathBuf {
 }
 
 pub(crate) fn draft_steps(target: DecompTarget, draft: &Path, object: &Path) -> Result<Vec<Vec<String>>, String> {
-    let steps = c_steps(target, draft, object)?;
+    let steps = c_steps(target, draft, object, None);
     Ok(with_draft_assembly(target, object, steps))
 }
 
@@ -159,7 +158,7 @@ pub(crate) fn arm_steps(target: DecompTarget, draft: &Path, object: &Path) -> Re
     if family_for_source(target.compiler, &draft.to_string_lossy()) != CompilerFamily::Game {
         return Err("--arm compiles game C only; library compiler routes are unchanged".into());
     }
-    let steps = crate::build_rom::c_steps_routed(target, draft, object, Some(CompilerFamily::GameArm))?;
+    let steps = c_steps(target, draft, object, Some(CompilerFamily::GameArm));
     Ok(with_draft_assembly(target, object, steps))
 }
 
@@ -179,7 +178,7 @@ fn rtl_flags(steps: &mut [Vec<String>], arm: bool) {
 fn with_draft_assembly(target: DecompTarget, object: &Path, mut steps: Vec<Vec<String>>) -> Vec<Vec<String>> {
     steps.pop();
     let mut assemble = vec!["arm-none-eabi-as".to_string(), "-mcpu=arm7tdmi".into()];
-    if target.compiler == crate::compiler::routing::CompilerTarget::Tbs {
+    if target.compiler == crate::compile::CompilerTarget::Tbs {
         assemble.push("-mthumb-interwork".into());
     }
     assemble.extend([
@@ -633,7 +632,7 @@ fn arm_reference(file: &Path, image: &[u8], base: u32, start: u32, end: u32) -> 
         return Err("ARM scaffold function has invalid reference bounds".into());
     }
     let bytes = &image[(start - base) as usize..(end - base) as usize];
-    let (_, pool, table) = crate::editions::arm_tokens(bytes, start);
+    let (_, pool, table) = arm_tokens(bytes, start);
     let output = command(&[
         "arm-none-eabi-objdump", "-D", "-b", "binary", "-marm",
         "--no-show-raw-insn", "--disassemble-zeroes",
@@ -1088,7 +1087,7 @@ mod tests {
 
     #[test]
     fn scaffold_reference_omits_pools_tables_and_adjacent_functions() {
-        crate::compiler::routing::prefer_installed_binutils();
+        
         let work = tempfile::tempdir().unwrap();
         let source = work.path().join("reference.s");
         let object = work.path().join("reference.o");
@@ -1121,7 +1120,7 @@ mod tests {
 
     #[test]
     fn thumb_reference_keeps_a_standalone_call_via_lr_and_its_successor() {
-        crate::compiler::routing::prefer_installed_binutils();
+        
         let work = tempfile::tempdir().unwrap();
         let binary = work.path().join("reference.bin");
         let image: Vec<u8> = [0x469eu16, 0xf800, 0xb003, 0xbd60]
@@ -1140,7 +1139,7 @@ mod tests {
 
     #[test]
     fn sliced_thumb_reference_handles_pools_and_call_suffixes_together() {
-        crate::compiler::routing::prefer_installed_binutils();
+        
         let body: Vec<u8> = [0x4802u16, 0xe005, 0x469e, 0xf800, 0xb003, 0xbd60,
             0x1234, 0xf000, 0x2007, 0x4770].into_iter().flat_map(u16::to_le_bytes).collect();
         let expected = thumb_reference(&body, ROM, ROM, ROM + 20).unwrap();
@@ -1162,7 +1161,7 @@ mod tests {
 
     #[test]
     fn arm_scaffold_reference_omits_pools_and_adjacent_functions() {
-        crate::compiler::routing::prefer_installed_binutils();
+        
         let work = tempfile::tempdir().unwrap();
         let source = work.path().join("reference.s");
         let object = work.path().join("reference.o");
@@ -1218,7 +1217,7 @@ mod tests {
         let steps = arm_steps(target, &source, &object).unwrap();
         assert_eq!(steps.len(), 3);
         assert!(steps[1][0].ends_with("gcc2952_arm"));
-        for flag in crate::compiler::routing::arm_cflags() {
+        for flag in crate::compile::arm_cflags() {
             assert!(steps[1].contains(&flag), "{flag}");
         }
         assert!(!steps[2].iter().any(|flag| flag == "-mthumb"));
@@ -1237,7 +1236,7 @@ mod tests {
             let target = decomp_target(Some(edition)).unwrap();
             let source = root().join("recon").join(&edition[..3]).join("en/main/08000000.c");
             let object = root().join(target.output_dir).join("obj/drafts/test.o");
-            let production = c_steps(target, &source, &object).unwrap();
+            let production = c_steps(target, &source, &object, None);
             let draft = draft_steps(target, &source, &object).unwrap();
             assert_eq!(draft[..draft.len() - 1], production[..production.len() - 1]);
             assert!(production[0].iter().any(|flag| flag == "-mthumb"));
@@ -1273,7 +1272,7 @@ mod tests {
 
     #[test]
     fn heat_maps_instructions_to_draft_lines_through_the_line_table() {
-        crate::compiler::routing::prefer_installed_binutils();
+        
         let work = tempfile::tempdir().unwrap();
         let source = work.path().join("probe.c");
         std::fs::write(&source, "int g;\nint probe(int a, int b)\n{\n    int c = a * 3;\n    if (b)\n        c += g;\n    return c + b;\n}\n").unwrap();
@@ -1358,7 +1357,7 @@ mod tests {
 
     #[test]
     fn text_symbols_do_not_offer_the_compiler_marker_as_a_function() {
-        crate::compiler::routing::prefer_installed_binutils();
+        
         let work = tempfile::tempdir().unwrap();
         let source = work.path().join("marker.s");
         let object = work.path().join("marker.o");
@@ -1378,4 +1377,69 @@ mod tests {
         assert!(script.contains(&"- bgt.n +8".to_string()));
         assert!(script.contains(&"+ bgt.n +12".to_string()));
     }
+}
+
+/// A draft's compile commands, as the Makefile compiles the file it would
+/// replace in this edition, or through `family`.
+fn c_steps(target: DecompTarget, draft: &Path, object: &Path, family: Option<CompilerFamily>) -> Vec<Vec<String>> {
+    crate::compile::steps(target.compiler, target.edition_define, &root().join(target.output_dir), draft, object, family)
+}
+
+fn arm_word(bytes: &[u8], i: usize) -> u32 {
+    u32::from_le_bytes([bytes[i * 4], bytes[i * 4 + 1], bytes[i * 4 + 2], bytes[i * 4 + 3]])
+}
+
+/// Jump-table words of ARM code at `base`: after `ldr pc, [pc, rN, lsl #2]` or
+/// `add pc, pc, rN, lsl #2` (any condition), the words from pc + 8 on whose
+/// value is an address inside the function. They move with the function, so
+/// they compare as relocations, not instructions.
+fn arm_tables(bytes: &[u8], base: u32) -> BTreeSet<usize> {
+    let count = bytes.len() / 4;
+    let inside = |w: u32| w >= base && w < base + bytes.len() as u32;
+    let mut table = BTreeSet::new();
+    for i in 0..count {
+        let w = arm_word(bytes, i);
+        if w & 0x0fff_fff0 != 0x079f_f100 && w & 0x0fff_fff0 != 0x008f_f100 {
+            continue;
+        }
+        let mut j = i + 2;
+        while j < count && inside(arm_word(bytes, j)) {
+            table.insert(j);
+            j += 1;
+        }
+    }
+    table
+}
+
+/// ARM code compares word by word: pool words a pc-relative load reads are
+/// dropped, jump-table words become `table`, and calls lose their targets;
+/// branches inside stay relative.
+fn arm_tokens(bytes: &[u8], base: u32) -> (Vec<String>, BTreeSet<usize>, BTreeSet<usize>) {
+    let count = bytes.len() / 4;
+    let mut pool = BTreeSet::new();
+    for i in 0..count {
+        let w = arm_word(bytes, i);
+        if w & 0x0f3f_0000 == 0x051f_0000 {
+            let offset = (w & 0xfff) as i64;
+            let target = i as i64 * 4 + 8 + if w & (1 << 23) != 0 { offset } else { -offset };
+            if target >= 0 && target % 4 == 0 && (target / 4) < count as i64 {
+                pool.insert((target / 4) as usize);
+            }
+        }
+    }
+    let table = arm_tables(bytes, base);
+    let tokens = (0..count)
+        .filter(|i| !pool.contains(i))
+        .map(|i| {
+            let w = arm_word(bytes, i);
+            if table.contains(&i) {
+                "table".to_string()
+            } else if w & 0x0f00_0000 == 0x0b00_0000 {
+                format!("bl{:x}", w >> 28)
+            } else {
+                format!("{w:08x}")
+            }
+        })
+        .collect();
+    (tokens, pool, table)
 }

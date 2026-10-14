@@ -5,7 +5,7 @@ use super::*;
 
 #[test]
 fn initial_exact_expansion_is_saved_without_losing_output_limits_or_forced_seeds() {
-    crate::compiler::routing::prefer_installed_binutils();
+    
     let work = tempfile::tempdir().unwrap();
     let draft = work.path().join("08000000.c");
     let source = "int target(void) { return PERM_GENERAL(3, 4); }\n";
@@ -50,7 +50,7 @@ fn initial_exact_expansion_is_saved_without_losing_output_limits_or_forced_seeds
 
 #[test]
 fn saved_best_preserves_line_sensitive_compiler_output() {
-    crate::compiler::routing::prefer_installed_binutils();
+    
     let work = tempfile::tempdir().unwrap();
     let draft = work.path().join("08000000.c");
     let source = "#define VALUE __LINE__\nint target(void)\n{\n    return VALUE;\n}\n";
@@ -84,7 +84,7 @@ fn saved_best_preserves_line_sensitive_compiler_output() {
 
 #[test]
 fn prefix_search_saves_improvement_above_baseline_weighted_score() {
-    crate::compiler::routing::prefer_installed_binutils();
+    
     let work = tempfile::tempdir().unwrap();
     let draft = work.path().join("draft/08000000.c");
     std::fs::create_dir_all(draft.parent().unwrap()).unwrap();
@@ -119,7 +119,7 @@ fn prefix_search_saves_improvement_above_baseline_weighted_score() {
 
 #[test]
 fn exact_stack_operand_candidate_survives_zero_weighted_baseline() {
-    crate::compiler::routing::prefer_installed_binutils();
+    
     let work = tempfile::tempdir().unwrap();
     let draft = work.path().join("draft/08000000.c");
     std::fs::create_dir_all(draft.parent().unwrap()).unwrap();
@@ -149,7 +149,7 @@ fn exact_stack_operand_candidate_survives_zero_weighted_baseline() {
 
 #[test]
 fn forced_randomizer_seed_search_reaches_candidate() {
-    crate::compiler::routing::prefer_installed_binutils();
+    
     let work = tempfile::tempdir().unwrap();
     let draft = work.path().join("draft/08000000.c");
     std::fs::create_dir_all(draft.parent().unwrap()).unwrap();
@@ -231,7 +231,7 @@ fn independent_shared_declarations_match_printing() {
 
 #[test]
 fn independent_search_scenarios_reach_targets_and_isolate_workers() {
-    crate::compiler::routing::prefer_installed_binutils();
+    
     // Each game/scorer pair owns private compiler jobs and output directories.
     // Run the four pairs together instead of serializing their subprocesses.
     std::thread::scope(|scope| {

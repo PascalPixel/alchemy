@@ -8,7 +8,6 @@ fdeflate = "0.3"
 png = "0.17"
 ags = { path = "../ags" }
 regex = "1"
-fs2 = "0.4"
 libc = "0.2"
 object = { version = "0.39.1", default-features = false, features = ["read_core", "elf", "std"] }
 walkdir = "2.5"
@@ -20,6 +19,3 @@ lang-c = "=0.15.1"
 [[bin]]
 name = "alchemy"
 path = "src/main.rs"
-
-[build-dependencies]
-sha2 = "0.10"

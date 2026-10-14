@@ -32,7 +32,7 @@ pub fn disassemble(object: &Path, symbol: Option<&str>) -> Result<Vec<Line>, Str
         args.push(format!("--disassemble={symbol}"));
     }
     args.push(object.to_string_lossy().into_owned());
-    parse_objdump(&crate::process::run(&args, crate::compiler::routing::root())?)
+    parse_objdump(&crate::process::run(&args, crate::compile::root())?)
 }
 
 /// Candidate scoring needs both diff's encoded branch view and all of the
@@ -483,7 +483,7 @@ mod tests {
 
     #[test]
     fn shared_disassembly_matches_legacy_thumb_arm_pools_and_zeros() {
-        crate::compiler::routing::prefer_installed_binutils();
+        
         let work = tempfile::tempdir().unwrap();
         for (arm, zeros) in [(false, false), (false, true), (true, false), (true, true)] {
             let source = work.path().join(format!("probe-{arm}-{zeros}.s"));
@@ -496,7 +496,7 @@ mod tests {
             };
             let padding = if zeros { ".space 16\n" } else { "" };
             std::fs::write(&source, format!(".syntax unified\n.text\n.global Target\n{mode}Target:\n{body}{padding}.align 2\n.Lpool:\n.word Data\n.word 0x12345678\n.size Target, .-Target\n")).unwrap();
-            crate::process::run(&["arm-none-eabi-as", "-mcpu=arm7tdmi", "-o", &object.to_string_lossy(), &source.to_string_lossy()], crate::compiler::routing::root()).unwrap();
+            crate::process::run(&["arm-none-eabi-as", "-mcpu=arm7tdmi", "-o", &object.to_string_lossy(), &source.to_string_lossy()], crate::compile::root()).unwrap();
             for symbol in [None, Some("Target")] {
                 let text = crate::diff::disassemble_text(&object, symbol).unwrap();
                 assert_eq!(super::without_raw_instructions(&text).is_none(), zeros, "arm={arm}, symbol={symbol:?}: {text}");

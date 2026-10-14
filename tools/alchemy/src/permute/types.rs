@@ -455,19 +455,6 @@ impl Env {
         })
     }
 
-    /// Whether an integer cast of `inner` makes a number of an address: a
-    /// string, an address taken, or a value whose declared type is a
-    /// pointer, an array or a function. Such a cast is never dropped:
-    /// without it the conversion is implicit, which C89 does not allow, and
-    /// GCC 2.96 does not always say so (a callee declared with empty
-    /// parentheses takes anything). An operand of unknown type counts as one.
-    pub fn number_of_address(&self, inner: &Expr) -> bool {
-        match inner {
-            Expr::Str(_) | Expr::Unary(UnOp::AddrOf, _) => true,
-            _ => self.type_of(inner).is_none_or(|ty| matches!(ty.strip(), CType::Ptr(_) | CType::Array(_) | CType::Func(..))),
-        }
-    }
-
     /// Declaration specifiers and stars that spell `ty`, if it can be spelled.
     pub fn spell(&self, ty: &CType) -> Option<String> {
         match ty {

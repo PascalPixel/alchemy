@@ -1,122 +1,28 @@
+//! alchemy: the matching aids and the progress count. The ROMs build from
+//! the Makefile alone; nothing here takes part in a build.
+
 use std::process::ExitCode;
 
-mod adopt;
-mod adopt_data;
-mod adopt_into;
-mod assembly {
-    pub mod addresses;
-}
-mod boot;
-mod bootstrap;
-mod build;
-mod build_rom;
-mod build_text;
-mod c_items;
-mod cache;
-mod camelotize;
-mod check;
-mod compiler;
-mod coverage;
-mod dead;
-mod devices;
+mod compile;
 mod decode;
-mod deps;
-mod deps_command;
 mod diff;
-mod duplicates;
-mod edition;
-mod editions;
-mod evidence;
 mod elf;
-mod fakematch;
-mod gate;
-mod gbafix;
-mod headers;
-mod integrate;
-mod keep;
-mod label;
 mod ld_map;
-mod merge;
-mod modern;
-mod object_list;
-mod objects;
-mod packer;
 mod permute;
 mod process;
-mod queues;
-mod reads;
-mod rename;
-mod settled;
+mod progress;
 mod show;
-mod sweep;
-mod similar;
-mod similar_command;
-mod sizes;
 mod targets;
 mod thumb;
-mod units;
-mod verify;
-mod worst;
-mod worst_command;
-mod worktree;
 
-const USAGE: &str = r#"usage: alchemy <command> [args]   (both games, all twelve editions)
-Run any command with --help for its options. The binary acts on the
-checkout it runs in.
+const USAGE: &str = r#"usage: alchemy <command> [args]
+Run any command with --help for its options.
 
-Set up and build
-  bootstrap     install or validate the pinned compiler toolchain
-  build         compilers, maintained source, assembly and ROMs
-  verify        every gate of make verify, make land and the commit hooks
-  check         one repository contract check
-  worktree      prepare a new git worktree before its first build
-  gbafix        fix a ROM's cartridge header as pret's gbafix: Nintendo logo and
-                complement check; the build runs it on every ROM it links
-
-Choose what to match
-  deps          what not-yet-C code calls and blocks: what unblocks the most
-  similar       each not-yet-C function's nearest C twins in either game
-
-Match one function
-  diff          a C draft against the listing it would replace
-  sizes         the structs a draft sees, and the locals that fill a frame gap
-  permute       search rewrites and PERM macro choices of a draft toward differ 0
-  show          a built function beside the reference ROM
-  adopt         the C into its module (--into) and out of all scaffolding
-  label         name English-only scaffold data in the other editions
-
-Adopt data
-  adopt-data    a data block's object into all six editions' link order and its
-                bytes out of every edition's scaffold, splitting sections
-
-Check the whole build
-  objects       what differs from the reference ROM, object or placement
-  dead          what no edition links, includes or selects: unlinked files,
-                never-selected #if arms, unused header declarations
-  progress      DONE in every edition from the verified linker maps
-  boot          boot each ☀️ edition, matching and modern, in mGBA to the file
-                menu (CI and make boot-tbs; never make verify or make land)
-
-Camelotize
-  worst         maintained C ranked by how mechanical it reads
-  fakematch     every FAKEMATCH tag by device and family, largest first
-  camelotize    mechanical rewrites: actors, events, registers,
-                declarations, barriers
-  rename        one name anew wherever the tree spells it: C, assembly, tables,
-                linker scripts, scaffolds and comments, with its far-call twin
-  keep          keep only the edits that leave all twelve editions identical
-  sweep         drop FAKEMATCH pins, barriers and volatiles the bytes no longer need
-  units         propose Camelot's translation units from the linked images
-  duplicates    the functions ☀️'s C writes out more than once, by the code
-                the build made of them, and the runs that stand together
-
-Work in parallel
-  queues        split not-yet-C work into queues that cannot collide
-  integrate     merge branches, reconcile linker scripts, build all twelve
-  merge-driver  git merge drivers for scaffolds and linker scripts"#;
+  diff      a C draft against the listing it would replace
+  permute   search rewrites and PERM macro choices of a draft toward differ 0
+  progress  DONE code and data in each edition, from the linker maps"#;
 
 fn main() -> ExitCode {
-    compiler::routing::prefer_installed_binutils();
     let arguments: Vec<String> = std::env::args().skip(1).collect();
     let Some(command) = arguments.first().map(String::as_str) else {
         eprintln!("{USAGE}");
@@ -124,42 +30,9 @@ fn main() -> ExitCode {
     };
     let rest = &arguments[1..];
     match command {
-        "boot" => result(boot::run(rest)),
-        "bootstrap" => result(bootstrap::run(rest)),
-        "build" => build::entry(rest),
-        "gbafix" => result(gbafix::run(rest)),
-        "verify" => verify::entry(rest),
-        "check" => check::entry(rest),
-        "progress" => {
-            let mut args = vec!["progress".to_string()];
-            args.extend(rest.iter().cloned());
-            check::entry(&args)
-        }
-        "deps" => deps_command::entry(rest),
-        "duplicates" => result(duplicates::run(rest)),
-        "adopt" => result(adopt::run(rest)),
-        "label" => result(label::run(rest)),
-        "adopt-data" => result(adopt_data::run(rest)),
-        "queues" => result(queues::run(rest)),
-        "integrate" => result(integrate::run(rest)),
-        "keep" => result(keep::run(rest)),
-        "rename" => result(rename::run(rest)),
         "diff" => result(diff::run(rest)),
         "permute" => result(permute::run(rest)),
-        "merge-driver" => result(merge::run(rest)),
-        "similar" => similar_command::entry(rest),
-        "sizes" => result(sizes::run(rest)),
-        "worst" => result(worst_command::run(rest)),
-        "fakematch" => result(fakematch::run(rest)),
-        "camelotize" => result(camelotize::run(rest)),
-        "objects" => result(objects::run(rest)),
-        "dead" => result(dead::run(rest)),
-        "headers" => result(headers::run(rest)),
-        "show" => result(show::run(rest)),
-        "sweep" => result(sweep::run(rest)),
-        "units" => result(units::run(rest)),
-        "unit" => result(units::unit(rest)),
-        "worktree" => result(worktree::run(rest)),
+        "progress" => result(progress::run(rest)),
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS

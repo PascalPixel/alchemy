@@ -6516,7 +6516,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			BtlEvPush(BEV_OBJ_BGN, tid);
 			BtlEvPush(BEV_UNIT, tid);
 			BtlEvPush(BEV_NUM, dmg);
-			MES_PUSH((s32)(MIKATA_CHK(tid) ? MsgDmgEmphP : MsgDmgEmphE) + aff);
+			MES_PUSH((MIKATA_CHK(tid) ? MsgDmgEmphP : MsgDmgEmphE) + aff);
 
 			if (hp <= 0)
 			{
@@ -6694,7 +6694,7 @@ s32 BtlTgtExec(struct BtlPlan *plan, s32 slot)
 			BtlEvPush(BEV_OBJ_BGN, tid);
 			BtlEvPush(BEV_NUM, dmg);
 			BtlEvPush(BEV_UNIT, tid);
-			MES_PUSH((s32)(MIKATA_CHK(tid) ? MsgDmgEmphP : MsgDmgEmphE) + aff);
+			MES_PUSH((MIKATA_CHK(tid) ? MsgDmgEmphP : MsgDmgEmphE) + aff);
 			cur -= dmg;
 
 			if (cur <= 0)

@@ -3784,7 +3784,7 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
 // 使う者とわざの名前を入れたメッセージを出して待つ
 #define ENA_MES(who, act, m)                                               \
 	(UiWork_PushValueSlotFar((who), 1), UiWork_PushValueSlotFar((act), 4), \
-		UiText_ShowPositionedMessageAndWaitFar((s32)(m), 1))
+		UiText_ShowPositionedMessageAndWaitFar((m), 1))
 
 //--------------------------------------------------------------------------
 // フィールドでエナジーを使う

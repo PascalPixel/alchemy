@@ -1,4 +1,4 @@
-owner:s8	level:u8	djinn0:s8	djinn1:s8	djinn2:s8	djinn3:s8	item0:u16	item1:u16	item2:u16	item3:u16	action0:u16	action1:u16	unknown_12:u16
+owner:s8	level:u8	djinn0:s8	djinn1:s8	djinn2:s8	djinn3:s8	item0:u16	item1:u16	item2:u16	item3:u16	action0:u16	action1:u16	pad_12:u16
 0	35	7	0	0	0	8	78	124	149	140	0	0
 1	35	0	0	7	0	37	79	121	149	140	0	0
 2	35	0	0	0	7	191	236	142	159	141	0	0

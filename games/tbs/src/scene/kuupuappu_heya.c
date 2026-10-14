@@ -610,7 +610,7 @@ static void FieldScene_RunScene383SequenceC(void)
 		gEventWork->message++;
 		if (PartyInventory_HasSpace() == 0)
 		{
-			Engine_EventSetMessage((MsgKuupuappuYouWereSuchGreatHelp + 3));
+			Engine_EventSetMessage(MsgKuupuappuYouWereSuchGreatHelp + 3);
 			SceneActor_SetModeZeroAndValue(16, 20);
 			Engine_EventEnd();
 			return;

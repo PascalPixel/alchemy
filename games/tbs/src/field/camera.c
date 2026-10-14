@@ -481,8 +481,8 @@ void LuckyDice_Run(void)
 				window = UiWindow_CreateFar(DICE_WIN_X - digits / 2, 16, digits + DICE_WIN_W, 3, 6);
 				sprites->winnings_window = window;
 				UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceWinnings, window, 0, 0);
-				UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceWinnings - 1,
-					sprites->winnings_window, digits * 8 + DICE_WIN_LABEL_X, 0);
+				UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceWinnings - 1, sprites->winnings_window,
+					digits * 8 + DICE_WIN_LABEL_X, 0);
 				UiText_DrawNumberInWindowFar(
 					winnings, digits, sprites->winnings_window, DICE_WIN_NUM_X, 0);
 			}
@@ -528,8 +528,7 @@ void LuckyDice_Run(void)
 				window = UiWindow_CreateFar(DICE_HELP_X, 16, DICE_HELP_W, 4, 6);
 				sprites->help_window = window;
 				UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceThrow, window, 0, 0);
-				UiText_DrawCharacterAtOffsetFar(
-					MsgLuckyDiceThrow + 1, sprites->help_window, 0, 8);
+				UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceThrow + 1, sprites->help_window, 0, 8);
 				reset = 1;
 			}
 			counter++;

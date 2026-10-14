@@ -187,9 +187,8 @@ s32 DebugParty_LoadPreset(s32 preset)
 #define DEBUG_SECOND_FORM MsgDebugSecondForm
 #endif
 
-#define DEBUG_VIEW_LIMIT                                                                         \
-	(MsgRariberoHowDidSearchForSheba - MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely \
-		+ 5)
+#define DEBUG_VIEW_LIMIT \
+	(MsgRariberoHowDidSearchForSheba - MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely + 5)
 
 void DebugBattle_ViewMessages(void)
 {

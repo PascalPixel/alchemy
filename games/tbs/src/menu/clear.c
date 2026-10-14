@@ -339,7 +339,7 @@ s32 SaveMenu_Run(void)
 		UiWork_FinalizePendingCore();
 		if (v7 == 0)
 		{
-			UiText_ShowPositionedMessageAndWait((MsgSaveAdventureQuestion + 1), 1);
+			UiText_ShowPositionedMessageAndWait(MsgSaveAdventureQuestion + 1, 1);
 			gGameState.unknown_20f = 1;
 			v7 = Save_WriteSelectedSlot();
 			if (v7 == -1)

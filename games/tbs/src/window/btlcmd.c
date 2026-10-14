@@ -3155,7 +3155,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
 		UiWork_PushValueSlot(first, 1);
 		UiWork_PushValueSlot(second, 1);
 
-		UiText_QueueRenderEntries(window, UiText_BuildRenderEntriesMode1(MsgPairJoinedParty), 68, 2, zero);
+		UiText_QueueRenderEntries(
+			window, UiText_BuildRenderEntriesMode1(MsgPairJoinedParty), 68, 2, zero);
 
 		AudioCommand_PlayFar(81);
 
@@ -5492,8 +5493,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 					if (cur & 0x3e0000)
 					{
 						UiWork_PushValueSlot((s32)((cur & 0x3e0000) >> 17), 5);
-						TEXT_LOAD(
-							(s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) + MsgDjinnEffect,
+						TEXT_LOAD((s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) + MsgDjinnEffect,
 							buf, TEXT_COUNT);
 						if (detail_win != 0)
 						{
@@ -5514,8 +5514,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 				{
 					detail_win = (struct UiWindow *)DjinnMenu_ShowChangePreview(
 						(struct RenderInput *)detail_win, owner, (s32)cur, sub_sel, &sub_cnt);
-					TEXT_LOAD((s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) + MsgDjinnEffect,
-						buf, TEXT_COUNT);
+					TEXT_LOAD((s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) + MsgDjinnEffect, buf,
+						TEXT_COUNT);
 				}
 			}
 			else
@@ -6054,8 +6054,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 
 				s = SummonDefinition_Get(ordered[page + row]);
 #if EDITION_INTERNATIONAL
-				UiText_CopyMessageString(
-					s->name_message_id + MsgAbilityDescription, text, 52);
+				UiText_CopyMessageString(s->name_message_id + MsgAbilityDescription, text, 52);
 #else
 				UiText_DecodeMessage(s->name_message_id + MsgAbilityDescription, text, 32);
 #endif
@@ -6762,12 +6761,10 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 			{
 #if EDITION_INTERNATIONAL
 				UiText_CopyMessageString(
-					(actions[page + row] & ACTION_ID_MASK) + MsgAbilityDescription, buffer,
-					52);
+					(actions[page + row] & ACTION_ID_MASK) + MsgAbilityDescription, buffer, 52);
 #else
 				UiText_DecodeMessage(
-					(actions[page + row] & ACTION_ID_MASK) + MsgAbilityDescription, buffer,
-					32);
+					(actions[page + row] & ACTION_ID_MASK) + MsgAbilityDescription, buffer, 32);
 #endif
 			}
 			else
@@ -7534,26 +7531,26 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 						}
 						if (unit->shibire != 0)
 						{
-							UiText_DrawCharacterAtOffset(MsgTargetCureStun,
-								(struct RenderInput *)infoWin, 0, count * 8);
+							UiText_DrawCharacterAtOffset(
+								MsgTargetCureStun, (struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
 						if (unit->nemuri != 0)
 						{
-							UiText_DrawCharacterAtOffset(MsgTargetCureSleep,
-								(struct RenderInput *)infoWin, 0, count * 8);
+							UiText_DrawCharacterAtOffset(
+								MsgTargetCureSleep, (struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
 						if (unit->fuuji != 0)
 						{
-							UiText_DrawCharacterAtOffset(MsgTargetCureSeal,
-								(struct RenderInput *)infoWin, 0, count * 8);
+							UiText_DrawCharacterAtOffset(
+								MsgTargetCureSeal, (struct RenderInput *)infoWin, 0, count * 8);
 							++count;
 						}
 						if (unit->shiryo != 0)
 						{
-							UiText_DrawCharacterAtOffset(MsgTargetCureCurse,
-								(struct RenderInput *)infoWin, 0, count * 8);
+							UiText_DrawCharacterAtOffset(
+								MsgTargetCureCurse, (struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
 						if (count == 0)
@@ -7619,38 +7616,38 @@ s32 BattleTarget_RunSelection(s32 sel, s32 mode, u32 spread, u32 kind)
 						}
 						if (unit->maboroshi != 0)
 						{
-							UiText_DrawCharacterAtOffset(MsgTargetCureDelusion,
-								(struct RenderInput *)infoWin, 0, count * 8);
+							UiText_DrawCharacterAtOffset(
+								MsgTargetCureDelusion, (struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
 						if (unit->shibire != 0)
 						{
-							UiText_DrawCharacterAtOffset(MsgTargetCureStun,
-								(struct RenderInput *)infoWin, 0, count * 8);
+							UiText_DrawCharacterAtOffset(
+								MsgTargetCureStun, (struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
 						if (unit->nemuri != 0)
 						{
-							UiText_DrawCharacterAtOffset(MsgTargetCureSleep,
-								(struct RenderInput *)infoWin, 0, count * 8);
+							UiText_DrawCharacterAtOffset(
+								MsgTargetCureSleep, (struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
 						if (unit->fuuji != 0)
 						{
-							UiText_DrawCharacterAtOffset(MsgTargetCureSeal,
-								(struct RenderInput *)infoWin, 0, count * 8);
+							UiText_DrawCharacterAtOffset(
+								MsgTargetCureSeal, (struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
 						if (unit->shiryo != 0)
 						{
-							UiText_DrawCharacterAtOffset(MsgTargetCureCurse,
-								(struct RenderInput *)infoWin, 0, count * 8);
+							UiText_DrawCharacterAtOffset(
+								MsgTargetCureCurse, (struct RenderInput *)infoWin, 0, count * 8);
 							count++;
 						}
 						if (unit->akuryo != 0)
 						{
-							UiText_DrawCharacterAtOffset(MsgTargetCureHaunt,
-								(struct RenderInput *)infoWin, 0, 8 * count);
+							UiText_DrawCharacterAtOffset(
+								MsgTargetCureHaunt, (struct RenderInput *)infoWin, 0, 8 * count);
 							count++;
 						}
 						if (count != 0)
@@ -8581,8 +8578,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 					win = UiWindow_Create(11, 17, 10, 3, 6);
 					state->entries[0].oam.f.x = 64;
 					UiWindow_SetTilemapEntry(win, element + 20481, 0, 0, 0);
-					UiText_DrawCharacterAtOffset(
-						element * 20 + index + MsgDjinnName, win, 16, 0);
+					UiText_DrawCharacterAtOffset(element * 20 + index + MsgDjinnName, win, 16, 0);
 					ent->rng = cost;
 					WaitFrames(1);
 					AudioCommand_PlayFar(112);
@@ -9460,11 +9456,9 @@ void Menu_DrawModeIndicator(void)
 		{
 #if defined(TBS_EDITION_DE)
 			UiText_DrawCharacterAtOffset(MsgPasswordTransferHelp, state->lower_window, 32, 8);
-			UiText_DrawCharacterAtOffset(
-				MsgPasswordTransferHelp + 1, state->lower_window, 32, 24);
+			UiText_DrawCharacterAtOffset(MsgPasswordTransferHelp + 1, state->lower_window, 32, 24);
 #else
-			UiText_DrawResource(
-				MsgPasswordTransferHelp, state->lower_window, PASSWORD_HELP_X, 4);
+			UiText_DrawResource(MsgPasswordTransferHelp, state->lower_window, PASSWORD_HELP_X, 4);
 			UiText_DrawResource(
 				MsgPasswordTransferHelp + 1, state->lower_window, PASSWORD_HELP_X, 16);
 #endif

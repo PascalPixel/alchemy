@@ -1490,8 +1490,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
 				{
 					ItemMenu_Use();
 					RenderOutput_ClearListFar(menu->info_window);
-					InventoryMenu_ShowModalMessage(
-						menu->message_offset + MsgItemUseResult, 0, -1);
+					InventoryMenu_ShowModalMessage(menu->message_offset + MsgItemUseResult, 0, -1);
 #if !EDITION_INTERNATIONAL
 					RenderOutput_RedrawSavedRectFar(menu->info_window);
 #endif
@@ -1558,8 +1557,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
 				if (result != -1)
 				{
 					RenderOutput_ClearListFar(menu->info_window);
-					InventoryMenu_ShowModalMessage(
-						menu->message_offset + MsgItemUseResult, 0, -1);
+					InventoryMenu_ShowModalMessage(menu->message_offset + MsgItemUseResult, 0, -1);
 #if !EDITION_INTERNATIONAL
 					RenderOutput_RedrawSavedRectFar(menu->info_window);
 #endif
@@ -1921,8 +1919,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
 						{
 							AudioCommand_PlayFar(0x67);
 							RenderOutput_ClearListFar(menu->info_window);
-							InventoryMenu_ShowModalMessage(
-								MsgEquippedIt + 7, MODAL_SHORT_X, 14);
+							InventoryMenu_ShowModalMessage(MsgEquippedIt + 7, MODAL_SHORT_X, 14);
 						}
 					}
 					else
@@ -2044,8 +2041,7 @@ s32 ItemMenu_Use(void)
 	{
 		AudioCommand_PlayFar(SOUND_MENU_ERROR);
 		RenderOutput_ClearListFar(menu->info_window);
-		InventoryMenu_ShowModalMessage(
-			menu->message_offset + MsgItemUseResult, result, result);
+		InventoryMenu_ShowModalMessage(menu->message_offset + MsgItemUseResult, result, result);
 #if !EDITION_INTERNATIONAL
 		RenderOutput_RedrawSavedRectFar(menu->info_window);
 #endif
@@ -2899,8 +2895,7 @@ s32 ItemMenu_ChooseCmd(void)
 		ItemMenu_DrawCmd(command_states, message_window);
 #if EDITION_INTERNATIONAL
 		RenderOutput_RedrawSavedRectFar((void *)menu->info_window);
-		UiText_DrawCharacterAtOffsetFar(
-			(menu->selected_items[0] & ITEM_ID_MASK) + MsgItemPlainName,
+		UiText_DrawCharacterAtOffsetFar((menu->selected_items[0] & ITEM_ID_MASK) + MsgItemPlainName,
 			(s32)menu->info_window, 0, 0);
 #else
 		RenderOutput_ClearListFar((void *)menu->info_window);
@@ -3703,8 +3698,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
 				changed = 0;
 				quantity = (range + quantity) % range;
 				RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
-				UiText_DrawCharacterAtOffsetFar(
-					MsgGiveHowMany, window, GIVE_ASK_X, GIVE_ASK_Y);
+				UiText_DrawCharacterAtOffsetFar(MsgGiveHowMany, window, GIVE_ASK_X, GIVE_ASK_Y);
 				Dma_Set(Menu_QuantityTiles, tiles, 0x84000040, REG_DMA3);
 				Shop_FillSelectorFar(30, 14, tiles);
 				Shop_FillSelectorFar(range + base, 0, tiles);
@@ -3779,8 +3773,8 @@ void ItemMenu_DrawItemHead(void)
 	UiIcon_PrepareObject(menu->selected_item_icon);
 	UiText_DrawStringAtOffsetFar(
 		UnitGetFar(menu->pane_owner[0])->name, (s32)menu->message_window, 16, 0);
-	UiText_DrawCharacterAtOffsetFar((menu->selected_items[0] & ITEM_ID_MASK) + MsgItemName,
-		(s32)menu->message_window, 16, 8);
+	UiText_DrawCharacterAtOffsetFar(
+		(menu->selected_items[0] & ITEM_ID_MASK) + MsgItemName, (s32)menu->message_window, 16, 8);
 }
 
 s32 ItemMenu_ConfirmDrop(s32 a0)
@@ -4502,8 +4496,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
 			{
 				AudioCommand_PlayFar(114);
 				RenderOutput_ClearListFar((void *)work->info_window);
-				InventoryMenu_ShowModalMessage(
-					work->use_result + MsgItemUseResult, result, result);
+				InventoryMenu_ShowModalMessage(work->use_result + MsgItemUseResult, result, result);
 			}
 			if (result != -1)
 			{
@@ -4753,8 +4746,7 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 owner_id)
 	PsynergyMenu_DrawPsynergyIcons(psynergies);
 	if (menu->psynergy_count == 0)
 	{
-		UiText_DrawCharacterAtOffsetFar(
-			MsgPsynergyMenuEmpty, (s32)menu->psynergy_window, 0, 0x18);
+		UiText_DrawCharacterAtOffsetFar(MsgPsynergyMenuEmpty, (s32)menu->psynergy_window, 0, 0x18);
 	}
 }
 
@@ -5939,13 +5931,11 @@ s32 CharacterSelector_RunRearrange(void)
 		{
 			redraw = 0;
 			RenderOutput_RedrawSavedRectFar((s32)work->selector_window);
-			UiText_DrawCharacterAtOffsetFar(
-				MsgRearrangeHelp, (s32)work->selector_window, 0, 0);
+			UiText_DrawCharacterAtOffsetFar(MsgRearrangeHelp, (s32)work->selector_window, 0, 0);
 			if (GameFlag_TestFar(48))
 				UiText_DrawCharacterAtOffsetFar(
 					MsgDjinnListHelp, (s32)work->selector_window, 0, 16);
-			UiText_DrawCharacterAtOffsetFar(
-				MsgRearrangeHelp - 3, (s32)work->selector_window, 0, 8);
+			UiText_DrawCharacterAtOffsetFar(MsgRearrangeHelp - 3, (s32)work->selector_window, 0, 8);
 			cursor = (cursor + count) % count;
 			UnitGetFar(work->owner_ids[cursor]);
 			page = (page + 3) % 3;
@@ -6281,8 +6271,8 @@ s32 CharacterMenu_SelectCommand(void)
 					RenderOutput_RedrawSavedRectFar((s32)menu->help_window);
 					if (has_ailments == 0)
 					{
-						UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp,
-							(s32)menu->status_window, SWITCH_HELP_X, -24);
+						UiText_DrawCharacterAtOffsetFar(
+							MsgSwitchCharacterHelp, (s32)menu->status_window, SWITCH_HELP_X, -24);
 						UiText_DrawCharacterAtOffsetFar(
 							MsgSwitchCharacterHelp + 1, (s32)menu->status_window, 0, -24);
 					}
@@ -7297,8 +7287,8 @@ s32 Shop_DrawItemPage(s32 window, s32 unused, struct MenuResult *state)
 			item = &menu->items[first];
 			do
 			{
-				UiText_DrawCharacterAtOffsetFar((*item & ITEM_ID_MASK) + MsgItemName, window,
-					SHOP_ITEM_NAME_X, (row << 4) + 8);
+				UiText_DrawCharacterAtOffsetFar(
+					(*item & ITEM_ID_MASK) + MsgItemName, window, SHOP_ITEM_NAME_X, (row << 4) + 8);
 				row = (u8)(row + 1);
 				item++;
 			} while (count > row);
@@ -7352,8 +7342,7 @@ s32 ItemMenu_SelectItem(void)
 
 	Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
 	UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, (s32)menu->status_window, 64, -24);
-	UiText_DrawCharacterAtOffsetFar(
-		MsgSwitchCharacterHelp + 3, (s32)menu->status_window, 0, -24);
+	UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 3, (s32)menu->status_window, 0, -24);
 	ItemMenu_PosCategory();
 	WaitFrames(1);
 	Menu_SpawnIconEntries(menu, (s32)menu->message_window);
@@ -8933,8 +8922,8 @@ s32 DjinnMenu_ShowHelp(void)
 	{
 		RenderOutput_PrepareForRedrawFar(win_a);
 		UiText_DrawResourceFar(selection + MsgDjinnInfoTopic, win_a, 0, 0);
-		channel = (struct UiChannelSlot *)UiText_OpenEntryMessageFar(
-			win_b, selection + MsgDjinnInfoText);
+		channel =
+			(struct UiChannelSlot *)UiText_OpenEntryMessageFar(win_b, selection + MsgDjinnInfoText);
 		Menu_DrawAtWindowOffset((void *)list, 0, previous, 6, 1, 15);
 		Menu_DrawAtWindowOffset((void *)list, 0, selection, 6, 1, 14);
 		previous = selection;
@@ -9169,11 +9158,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
 					4);
 				UiWindow_SetTilemapEntryFar(
 					state->help_window, DJINN_ELEMENT(state->pair_entries[0]) + 0x5001, 6, 0, 0);
-				UiText_DrawCharacterAtOffsetFar(
-					MsgDjinnOwnerLabel + 1, state->help_window, 56, 0);
+				UiText_DrawCharacterAtOffsetFar(MsgDjinnOwnerLabel + 1, state->help_window, 56, 0);
 #endif
-				UiText_DrawCharacterAtOffsetFar(
-					MsgDjinnOwnerLabel + 2, state->help_window, 0, 8);
+				UiText_DrawCharacterAtOffsetFar(MsgDjinnOwnerLabel + 2, state->help_window, 0, 8);
 			}
 			if (sel == -1)
 			{
@@ -9185,8 +9172,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
 				{
 					if (setAll == 0)
 					{
-						UiText_DrawCharacterAtOffsetFar(
-							MsgDjinnSetAll, state->help_window, 0, 0);
+						UiText_DrawCharacterAtOffsetFar(MsgDjinnSetAll, state->help_window, 0, 0);
 					}
 					else
 					{
@@ -10102,8 +10088,7 @@ s32 DjinnMenu_DrawStatPreview(
 				lines++;
 			}
 			if (lines == 0)
-				UiText_DrawCharacterAtOffsetFar(
-					MsgPsynergyUnchanged, window, x * 8, y * 8 + 88);
+				UiText_DrawCharacterAtOffsetFar(MsgPsynergyUnchanged, window, x * 8, y * 8 + 88);
 			UiWork_SetParamNibbleFar(15);
 			UiWindow_DrawDividerLineFar(window, 0, 11, 13, 11);
 		}
@@ -10537,8 +10522,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 	{
 		UiWork_SetParamNibbleFar(2);
 	}
-	UiText_DrawCharacterAtOffsetFar(((state->pair_entries[0] & 0xe0) >> 5) * 20
-										+ (state->pair_entries[0] & 31) + MsgDjinnName,
+	UiText_DrawCharacterAtOffsetFar(
+		((state->pair_entries[0] & 0xe0) >> 5) * 20 + (state->pair_entries[0] & 31) + MsgDjinnName,
 		(struct UiWindow *)state->help_window, 48, row * 8);
 	UiWindow_SetTilemapEntryFar((struct UiWindow *)state->help_window,
 		((state->pair_entries[0] & 0xe0) >> 5) + 0x5001, 5, row, zero = 0);
@@ -10975,8 +10960,7 @@ s32 DjinnMenu_ShowOwnerStatus(void)
 	UiWindow_UpdateOrCreate(right, 15, 5, 15, 15, 2);
 	RenderOutput_RedrawSavedRectFar((struct UiWindow *)menu->help_window);
 	RenderOutput_RedrawSavedRectFar((struct UiWindow *)menu->status_window);
-	UiText_DrawCharacterAtOffsetFar(
-		MsgCurrentStatus, (struct UiWindow *)menu->status_window, 0, 0);
+	UiText_DrawCharacterAtOffsetFar(MsgCurrentStatus, (struct UiWindow *)menu->status_window, 0, 0);
 	UiText_DrawCharacterAtOffsetFar(
 		MsgCurrentStatus + 2, (struct UiWindow *)menu->status_window, 0, 16);
 	side = 0;

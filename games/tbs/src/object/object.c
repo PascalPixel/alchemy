@@ -2046,8 +2046,7 @@ s32 Field_RunScene(s32 entrance)
 						{
 							ObjectDispatch_ApplyArgumentToChildrenFar(actor, 22);
 							UiWork_PushValueSlotFar(work->quantities[i], 1);
-							UiText_ShowPositionedMessageAndWaitFar(
-								MsgFieldStrengthExhausted, 1);
+							UiText_ShowPositionedMessageAndWaitFar(MsgFieldStrengthExhausted, 1);
 						}
 						if (work->survived == 0)
 						{
@@ -2065,8 +2064,7 @@ s32 Field_RunScene(s32 entrance)
 								ObjectDispatch_ApplyArgumentToChildrenFar(actor, 19);
 							}
 							AudioCommand_PlayFar(59);
-							UiText_ShowPositionedMessageAndWaitFar(
-								MsgFieldPartyAnnihilated, 1);
+							UiText_ShowPositionedMessageAndWaitFar(MsgFieldPartyAnnihilated, 1);
 							vitals = UnitGetFar(gGameState.selected_actor);
 							vitals->hp = 1;
 							Unit_UpdateGauges(vitals);
@@ -2253,8 +2251,7 @@ s32 Field_RunScene(s32 entrance)
 						}
 						else
 						{
-							UiText_ShowPositionedMessageAndWaitFar(
-								MsgFieldPauseUnavailable, 1);
+							UiText_ShowPositionedMessageAndWaitFar(MsgFieldPauseUnavailable, 1);
 						}
 					}
 					Battle_ClearObjectFlag5bWhenMode3();
@@ -3204,8 +3201,7 @@ s32 Field_RunTileAction(s32 tile)
 								else
 								{
 									UiWork_PushValueSlotFar(owner, 1);
-									UiText_ShowPositionedMessageAndWaitFar(
-										MsgGaveItemToMember, 3);
+									UiText_ShowPositionedMessageAndWaitFar(MsgGaveItemToMember, 3);
 								}
 								if (condition != -1)
 									GameFlag_SetBitFar(condition);

@@ -280,8 +280,7 @@ const struct SceneEvent gJailThiefEvents[] = {
 
 const struct SceneEvent gJailPrisonerEvents[] = {
 	{ EVENT_EXIT, TRIGGER_VAULT_DOOR, CONDITION_ALWAYS, JAIL_EXIT_TO_VAULT_REVISIT },
-	{ EVENT_TALK, ACTOR_PRISONER, CONDITION_ALWAYS,
-      MsgKuupuappuPrisonerRegretsFight },
+	{ EVENT_TALK, ACTOR_PRISONER, CONDITION_ALWAYS, MsgKuupuappuPrisonerRegretsFight },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRISONER, CONDITION_ALWAYS,
       MsgKuupuappuPrisonerThoughts },
 	{ SCENE_EVENTS_END },

@@ -2737,8 +2737,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 						else
 							UiText_DecodeMessage(tmp + MsgItemName, name, 24);
 #else
-						UiText_DecodeMessage(
-							(tmp & RENDER_ENTRY_MASK) + MsgItemName, name, 24);
+						UiText_DecodeMessage((tmp & RENDER_ENTRY_MASK) + MsgItemName, name, 24);
 #endif
 						pos = UiText_AppendArticleName(0, name, pos, entry, no, plural, &suffix);
 						break;
@@ -6963,16 +6962,12 @@ void Debug_SelectAbilityPair(void)
 				RenderOutput_RedrawSavedRect(win);
 				UiWindow_DrawDividerLine(win, 1, 2, 17, 2);
 				UiText_DrawCharacterAtOffset(MsgPanelStatusLabel, win, 48, 0);
-				UiText_DrawCharacterAtOffset(
-					list[first].ability + MsgAbilityName, win, 56, 16);
-				UiText_DrawCharacterAtOffset(
-					list[second].ability + MsgAbilityName, win, 56, 32);
+				UiText_DrawCharacterAtOffset(list[first].ability + MsgAbilityName, win, 56, 16);
+				UiText_DrawCharacterAtOffset(list[second].ability + MsgAbilityName, win, 56, 32);
 				UiText_DrawCharacterAtOffset(MsgPanelStatusLabel - 2, win, 16, 16);
 				UiText_DrawCharacterAtOffset(MsgPanelStatusLabel - 1, win, 16, 32);
-				UiText_DrawCharacterAtOffset(
-					list[first].owner + MsgCharacterName, win, 104, 16);
-				UiText_DrawCharacterAtOffset(
-					list[second].owner + MsgCharacterName, win, 104, 32);
+				UiText_DrawCharacterAtOffset(list[first].owner + MsgCharacterName, win, 104, 16);
+				UiText_DrawCharacterAtOffset(list[second].owner + MsgCharacterName, win, 104, 32);
 				RenderOutput_RedrawSavedRect(info);
 				UiText_DrawCharacterAtOffset(MsgPsynergyNeedMorePp, info, 0, 16);
 				if (row != 0)

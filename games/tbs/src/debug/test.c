@@ -133,8 +133,7 @@ static void SceneState_ApplyBlockCf1(void)
 
 static void SceneState_ApplyBlockD21(void)
 {
-	CommandTable_RunDirectionalInput(
-		MsgSanctumWelcome, MsgWarriorShopWelcome - MsgSanctumWelcome);
+	CommandTable_RunDirectionalInput(MsgSanctumWelcome, MsgWarriorShopWelcome - MsgSanctumWelcome);
 }
 
 static void SceneState_ApplyBlockD4c(void)

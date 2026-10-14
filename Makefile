@@ -12,7 +12,8 @@ TLA      := $(filter tla-%,$(EDITIONS))
 CPUS := $(shell sysctl -n hw.ncpu 2>/dev/null || nproc 2>/dev/null || echo 4)
 JOBS ?= $(CPUS)
 SHA1 := $(shell { command -v sha1sum || command -v shasum; } 2>/dev/null) -c
-MAKEFLAGS += --no-print-directory --no-builtin-rules
+MAKEFLAGS += --no-print-directory
+.SUFFIXES:
 
 .DEFAULT_GOAL := help
 .PHONY: help all compare $(EDITIONS) $(addprefix compare-,$(EDITIONS)) compare-tbs compare-tla compare-editions clean
@@ -305,8 +306,9 @@ GAS_CFLAGS := -O2 -std=gnu89 -D_POSIX_C_SOURCE=200809L -DNSIG=32 -Wno-implicit-i
 
 .PHONY: bootstrap compilers tools test
 bootstrap: tools compilers $(CCAS) $(LIBGCC)
+compilers: $(COMPILER)/xgcc
 
-compilers:
+$(COMPILER)/xgcc:
 	$(MAKE) -C agscc
 	$(MAKE) -C agscc generated-check
 	$(MAKE) -C agscc/arm probe
@@ -342,13 +344,14 @@ LIBGCC_CFLAGS := -O2 -mthumb -mcpu=arm7tdmi -nostdinc -DCROSS_COMPILE -DIN_GCC -
                  -D__GCC_FLOAT_NOT_NEEDED -Dinhibit_libc -fno-inline -isystem $(CURDIR)/agscc/gcc/ginclude
 LIBGCC_INCLUDES := -I$(CURDIR)/agscc/gcc -I$(CURDIR)/agscc/gcc/config -I$(CURDIR)/agscc/include
 LIBGCC_CC := $(CURDIR)/$(COMPILER)/xgcc -B$(CURDIR)/$(COMPILER)/ $(LIBGCC_CFLAGS)
+LIBGCC_TOOLS := | $(COMPILER)/xgcc $(CCAS)
 
 $(LIBGCC): $(addprefix $(LIBGCC_WORK)/,$(addsuffix .o,$(LIBGCC_MEMBERS)))
 	@mkdir -p $(@D)
 	rm -f $@
 	cd $(LIBGCC_WORK) && $(PREFIX)ar crsD $(CURDIR)/$@ $(notdir $^)
 
-$(LIBGCC_WORK)/_call_via_rX.o: agscc/gcc/config/arm/lib1funcs.asm
+$(LIBGCC_WORK)/_call_via_rX.o: agscc/gcc/config/arm/lib1funcs.asm $(LIBGCC_TOOLS)
 	@mkdir -p $(@D)
 	cp $< $(@D)/lib1funcs.asm
 	cd $(@D) && $(LIBGCC_CC) $(LIBGCC_INCLUDES) -DL_call_via_rX -xassembler-with-cpp lib1funcs.asm -c -o $(@F)
@@ -358,10 +361,11 @@ $(LIBGCC_WORK)/dp-bit.c: agscc/gcc/config/fp-bit.c
 	printf '#ifndef __ARMEB__\n#define FLOAT_BIT_ORDER_MISMATCH\n#define FLOAT_WORD_ORDER_MISMATCH\n#endif\n' > $@
 	cat $< >> $@
 
-$(LIBGCC_WORK)/_%_df.o $(LIBGCC_WORK)/_%_to_df.o $(LIBGCC_WORK)/_df_to_%.o: $(LIBGCC_WORK)/dp-bit.c
-	cd $(@D) && $(LIBGCC_CC) $(LIBGCC_INCLUDES) -DFINE_GRAINED_LIBRARIES -DL$(basename $(@F)) $(CURDIR)/$< -c -o $(@F)
+LIBGCC_DPBIT := _addsub_df _si_to_df _df_to_si _pack_df _unpack_df _thenan_df
+$(addprefix $(LIBGCC_WORK)/,$(addsuffix .o,$(LIBGCC_DPBIT))): $(LIBGCC_WORK)/%.o: $(LIBGCC_WORK)/dp-bit.c $(LIBGCC_TOOLS)
+	cd $(@D) && $(LIBGCC_CC) $(LIBGCC_INCLUDES) -DFINE_GRAINED_LIBRARIES -DL$* $(CURDIR)/$< -c -o $(@F)
 
-$(LIBGCC_WORK)/_lshrdi3.o: agscc/gcc/libgcc2.c
+$(LIBGCC_WORK)/_lshrdi3.o: agscc/gcc/libgcc2.c $(LIBGCC_TOOLS)
 	@mkdir -p $(@D)
 	cp agscc/config/arm/tconfig.h agscc/config/arm/tm.h $(@D)/
 	cd $(@D) && $(LIBGCC_CC) -I. $(LIBGCC_INCLUDES) -DL_lshrdi3 $(CURDIR)/$< -c -o $(@F)

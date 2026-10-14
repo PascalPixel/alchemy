@@ -155,14 +155,16 @@ fn says_flag(name: &str) -> bool {
 }
 
 /// Scene command parameters that hold quantities: actor numbers, pixel
-/// coordinates and frame counts. Emotes, messages, sounds, modes,
-/// directions and speeds are ids or units and keep their base.
-const QUANTITY_PARAMETERS: &[&str] = &["no", "to", "x", "z", "t"];
+/// coordinates and offsets, frame counts and counts (`n`). Emotes,
+/// messages, sounds, modes, directions and speeds are ids or units and keep
+/// their base.
+const QUANTITY_PARAMETERS: &[&str] = &["no", "to", "x", "z", "dx", "dz", "t", "n"];
 
 /// The quantity arguments of the scene commands, as `NAME/index`: the
 /// parameters of the all-caps function-like macros an event.h defines that
 /// hold actor numbers, coordinates and frames (every argument of `WAIT`).
-/// The flag commands, whose arguments are flag ids, have none.
+/// The flag and sound commands, whose arguments are flag and cue ids, have
+/// none.
 pub(crate) fn commands(event_h: &str) -> Vec<String> {
     let mut out = Vec::new();
     for line in event_h.lines() {
@@ -173,7 +175,7 @@ pub(crate) fn commands(event_h: &str) -> Vec<String> {
         let Some(parameters) = rest[name.len()..].strip_prefix('(').and_then(|r| r.split_once(')')).map(|(p, _)| p) else {
             continue;
         };
-        if name.is_empty() || says_flag(&name) {
+        if name.is_empty() || says_flag(&name) || says_sound(&name) {
             continue;
         }
         for (index, parameter) in parameters.split(',').map(str::trim).enumerate() {
@@ -404,6 +406,11 @@ fn says_offset_or_id(name: &str) -> bool {
     words(name).iter().any(|w| matches!(w.as_str(), "off" | "offs" | "offset" | "offsets" | "ofs" | "ofst" | "adr" | "addr" | "address" | "id" | "ids"))
 }
 
+/// A name for playing a sound, by its words (`Engine_AudioPlayCue`, `SE`).
+fn says_sound(name: &str) -> bool {
+    words(name).iter().any(|w| matches!(w.as_str(), "audio" | "sound" | "snd" | "song" | "bgm" | "se" | "sfx" | "cue" | "music" | "voice"))
+}
+
 /// Whether token `i` is in the arguments of a call that plays a sound
 /// (`Engine_AudioPlayCue(mode + 0x5a)`): a cue id, not a quantity.
 fn sound_argument(tokens: &[Token], groups: &[Option<usize>], i: usize) -> bool {
@@ -411,7 +418,7 @@ fn sound_argument(tokens: &[Token], groups: &[Option<usize>], i: usize) -> bool 
     while let Some(open) = group {
         let callee = open.checked_sub(1).and_then(|k| ident(&tokens[k]));
         if punct(&tokens[open]) == Some("(")
-            && callee.is_some_and(|n| words(n).iter().any(|w| matches!(w.as_str(), "audio" | "sound" | "snd" | "song" | "bgm" | "se" | "sfx" | "cue" | "music" | "voice")))
+            && callee.is_some_and(says_sound)
         {
             return true;
         }
@@ -824,6 +831,14 @@ mod tests {
         assert!(!found.iter().any(|c| matches!(c.as_str(), "OBJ_EMO/1" | "OBJ_SPD/1" | "OBJ_DIR/1" | "MES_SET/0")), "{found:?}");
         same("OBJ_EMO(14, 0x100, 0);\nSE(0x7B);\nOBJ_DIR(13, 0x20, 0);\n");
         assert_eq!(convert("OBJ_EMO(14, 0x100, 0x3c);\n").0, "OBJ_EMO(14, 0x100, 60);\n");
+    }
+
+    /// The vocabulary is whatever event.h holds: offsets and counts are
+    /// quantities, a sound command's cue is not.
+    #[test]
+    fn offsets_and_counts_are_quantities_and_cues_are_not() {
+        let found = commands("#define OBJ_WALK_REL(no, dx, dz) Actor_WalkBy((no), (dx), (dz))\n#define FRAME_WAIT(n) Task_Wait(n)\n#define OBJ_STRETCH(no, n) Actor_StartRepeatedMotion((no), (n))\n#define SE(n) Event_PlayCue(n)\n#define FLAG_CLR(f) GameFlag_Clear(f)\n");
+        assert_eq!(found, ["OBJ_WALK_REL/0", "OBJ_WALK_REL/1", "OBJ_WALK_REL/2", "FRAME_WAIT/0", "OBJ_STRETCH/0", "OBJ_STRETCH/1"]);
     }
 
     #[test]

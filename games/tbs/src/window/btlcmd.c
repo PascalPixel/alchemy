@@ -80,7 +80,7 @@
 #include "shop.h"
 #include "disptran.h"
 #include "frame.h"
-#include "unit/object/evmes.h"
+#include "unit/object/psyfx.h"
 #include "unit/window/scales.h"
 #include "unit/window/sideobjt.h"
 

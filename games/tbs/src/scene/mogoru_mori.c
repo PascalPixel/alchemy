@@ -6,11 +6,6 @@
 #include "unit/scene/common/object_orbit.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS

@@ -80,10 +80,7 @@
 #include "battle_formation.h"
 #include "b5_context.h"
 #include "frame.h"
-#include "unit/object/evactor.h"
-#include "unit/object/djinnev.h"
 #include "unit/object/psyfx.h"
-#include "unit/object/evmes.h"
 
 struct DebugPartyEntry
 {

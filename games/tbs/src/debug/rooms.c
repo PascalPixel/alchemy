@@ -1,7 +1,6 @@
 #include "unit/debug/rooms.h"
 #include "unit/object/object.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/djinnev.h"
+#include "unit/object/psyfx.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

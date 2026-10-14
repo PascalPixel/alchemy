@@ -2,7 +2,7 @@
 #include "unit/object/zonedata.h"
 #include "vram_tab.h"
 #include "unit/object/object.h"
-#include "unit/object/evactor.h"
+#include "unit/object/psyfx.h"
 #include "unit/runtime/runtime.h"
 #include "types.h"
 #include "scene.h"
@@ -88,13 +88,6 @@
 #include "menu_list.h"
 #include "field_effect.h"
 #include "fixed_point_position.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
-#include "unit/object/psyfx.h"
-#include "unit/object/worldmap.h"
-#include "unit/object/evmes.h"
 
 // ほかのモジュールの関数 (共通ヘッダーにまだ宣言が無いもの)
 // このファイルの関数 (定義より前で使うもの)

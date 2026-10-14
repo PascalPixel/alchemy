@@ -105,16 +105,7 @@ main	rom_main_03	games/tbs/src/game/elemtbl
 main	rom_main_03	games/tbs/src/game/djinntbl
 main	rom_main_04	games/tbs/src/system/far_call/OBJECT
 main	rom_main_04	games/tbs/src/object/object
-main	rom_main_04	games/tbs/src/object/evbasic
-main	rom_main_04	games/tbs/src/object/evactor
-main	rom_main_04	games/tbs/src/object/evmes
-main	rom_main_04	games/tbs/src/object/evcamera
-main	rom_main_04	games/tbs/src/object/scenefx
-main	rom_main_04	games/tbs/src/object/djinnev
-main	rom_main_04	games/tbs/src/object/psydisp
 main	rom_main_04	games/tbs/src/object/psyfx
-main	rom_main_04	games/tbs/src/object/fxslot
-main	rom_main_04	games/tbs/src/object/worldmap
 main	rom_main_04	games/tbs/src/object/arcspark
 main	rom_main_04	games/tbs/src/object/locrule
 main	rom_main_04	games/tbs/src/object/zonedata

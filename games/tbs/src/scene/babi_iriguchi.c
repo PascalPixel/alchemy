@@ -5,11 +5,6 @@
 #include "unit/scene/babi_iriguchi.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
 

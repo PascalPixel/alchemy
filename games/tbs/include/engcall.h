@@ -12,8 +12,7 @@
 // field_service.h がこれを取り込む; シーンの命令層を使わない部屋はこれだけを使う。
 
 #include "types.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
+#include "unit/object/psyfx.h"
 #include "unit/runtime/runtime.h"
 #include "unit/window/window.h"
 #include "unit/game/game.h"

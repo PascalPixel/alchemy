@@ -2,10 +2,6 @@
 #define FIELD_SERVICE_H
 
 #include "unit/object/object.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"

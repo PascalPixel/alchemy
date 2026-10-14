@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "unit/scene/suhara_mura.h"
 #include "unit/object/object.h"
-#include "unit/object/evbasic.h"
+#include "unit/object/psyfx.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

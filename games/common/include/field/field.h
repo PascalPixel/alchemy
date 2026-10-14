@@ -26,7 +26,8 @@ extern s32 Iwram_Data2;
 #if GAME_TLA
 extern u8 Map_TileDissolveOrder[];
 #endif
-extern const u32 ObjectDispatch_DefaultScript[];
+extern const s32 ObjectDispatch_DefaultScript[];
+extern const u8	 WorldMap_TerrainBehaviorTable[];
 extern u8		 Render_DecodeFrameCodeSize[];
 extern u8		 Runtime_ByteRemapTable[];
 #if GAME_TLA
@@ -390,7 +391,6 @@ extern u8		Transform_UpdateVerticesSize;
 #endif
 extern const u8	 WorldMap_FootprintActions[];
 extern const s16 WorldMap_KeyHeadings[16];
-extern u8		 WorldMap_TerrainBehaviorTable[];
 s32				 CalculateFacingAngle(s32, s32);
 #ifndef OWN_Camera_ApplyShake
 #endif
@@ -510,7 +510,6 @@ extern const s32				   LinkLobby_SlotValues[];
 extern const u8					   ObjectGroup_BlinkChildValues[4];
 extern const u8					   ObjectMotion_StepAngleScript[];
 extern u16						   Script_MainScript[];
-extern const u8					   WorldMap_TerrainBehaviorTable[];
 s32								   Animation_InitializeObjects(struct AnimationObject *);
 void							   Animation_SetStateFlags(struct FieldActor *object, s32 flags);
 void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *, s32);

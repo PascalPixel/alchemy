@@ -47,7 +47,7 @@
 	} while (0)
 
 // IRQ_LOCK で止めた IME を saved に戻す
-/* FAKEMATCH: the do { } while (0) wrapper steers: it keeps the restore apart from the code before it. Written plainly as REG_IME = saved, 7 of ☀️'s 8 sched.c lock functions differ 2 in tbs-en (Scheduler_DisableOverlayCallbacks matches either way), and ⚓️'s Func_0813f89c and Func_08143114 differ 2 in all six editions; BattlePresentation_SetPaletteLevel's plain restore matches, and through IRQ_UNLOCK it differs 2 in all six (measured 2026-10-13). Not every use matches through it, so it is a device at each use, not a layer (S2). */
+/* FAKEMATCH: the do { } while (0) wrapper steers: it keeps the restore apart from the code before it. Written plainly as REG_IME = saved, 7 of the 8 Scheduler_ functions in ☀️'s runtime.c that lock differ 2 in tbs-en (Scheduler_DisableOverlayCallbacks matches either way), and ⚓️'s Func_0813f89c and Func_08143114 differ 2 in all six editions; BattlePresentation_SetPaletteLevel's plain restore matches, and through IRQ_UNLOCK it differs 2 in all six (measured 2026-10-13). Not every use matches through it, so it is a device at each use, not a layer (S2). */
 #define IRQ_UNLOCK(saved) \
 	do                    \
 	{                     \

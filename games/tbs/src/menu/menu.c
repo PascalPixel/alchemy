@@ -10613,7 +10613,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
 					Iwram_CopyWords(saved, render, size);
 					work = UiText_OpenMessageWindowFar((s32)MsgDjinnTutorialSetChanges, 8, 0, 1);
-					/* FAKEMATCH: needed to match: a one-pass block keeps the window copy before the cursor store: as a plain store the window copy is scheduled after the store, differ 8 (all four plain: differ 26). Measured 2026-10-13: with all four cursor stores plain, a static __inline__ save-and-open helper (Iwram_CopyWords then UiText_OpenMessageWindowFar) at both cases makes the function differ 84; the save and open as a do { } while (0) statement macro leaves it at 8; a cursor-store statement macro (do { cursor->active = n; } while (0)) differs 12 at each of the two plain cursor stores of compare.c, so it is no layer. */
+					/* FAKEMATCH: needed to match: a one-pass block keeps the window copy before the cursor store: as a plain store the window copy is scheduled after the store, differ 8 (all four plain: differ 26). Measured 2026-10-13: with all four cursor stores plain, a static __inline__ save-and-open helper (Iwram_CopyWords then UiText_OpenMessageWindowFar) at both cases makes the function differ 84; the save and open as a do { } while (0) statement macro leaves it at 8; a cursor-store statement macro (do { cursor->active = n; } while (0)) differs 12 at each of this function's two plain cursor stores, so it is no layer. */
 					do
 					{
 						state->cursor->active = 1;
@@ -10645,7 +10645,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
 					Iwram_CopyWords(saved, render, size);
 					work = UiText_OpenMessageWindowFar((s32)MsgDjinnTutorialClassPsynergy, 8, 0, 1);
-					/* FAKEMATCH: needed to match: a one-pass block keeps the window copy before the cursor store: as a plain store the window copy is scheduled after the store, differ 10 (all four plain: differ 26). Measured 2026-10-13: with all four cursor stores plain, a static __inline__ save-and-open helper (Iwram_CopyWords then UiText_OpenMessageWindowFar) at both cases makes the function differ 84; the save and open as a do { } while (0) statement macro leaves it at 8; a cursor-store statement macro (do { cursor->active = n; } while (0)) differs 12 at each of the two plain cursor stores of compare.c, so it is no layer. */
+					/* FAKEMATCH: needed to match: a one-pass block keeps the window copy before the cursor store: as a plain store the window copy is scheduled after the store, differ 10 (all four plain: differ 26). Measured 2026-10-13: with all four cursor stores plain, a static __inline__ save-and-open helper (Iwram_CopyWords then UiText_OpenMessageWindowFar) at both cases makes the function differ 84; the save and open as a do { } while (0) statement macro leaves it at 8; a cursor-store statement macro (do { cursor->active = n; } while (0)) differs 12 at each of this function's two plain cursor stores, so it is no layer. */
 					do
 					{
 						state->cursor->active = 1;

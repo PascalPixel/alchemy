@@ -46,7 +46,7 @@ void Party_ResolveTablePair(void);
 s16 Event_GetSpecialValue(void);
 void BattleFx_SetSpecialFromTable(void);
 void BattleFx_SelectResultPointer(s32 arg0);
-/* BattleFx_SelectBattleCue is called before its definition with no prototype in scope. */
+/* BattleFx_SelectBattleCue is called from psyfx.c with no prototype in scope, as in object.c above its definition: in one file its definition would come before BattleFx_SetPhaseRequest and BattleFx_SetWeightedResult, and BattleFx_SetPhaseRequest changes (2 of 52 instructions in tbs-en). Split evidence for object|psyfx. */
 void BattleFx_ShrinkObjectAndDestroySlow(void *obj);
 void BattleFx_ShrinkObjectAndDestroyFast(void *obj);
 void RunBattleEffect07(void);
@@ -180,7 +180,7 @@ void DisplayTransition_InitializeState(s32 value);
 
 void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames);
 void BattlePalette_UpdateBlend(void);
-/* BattleFx_BuildBuffer is called before its definition with no prototype in scope. */
+/* BattleFx_BuildBuffer is called from psyfx.c with no prototype in scope: in one file its definition would come before BattleFx_StartTwelveFrameBlend and BattleFx_StartBufferBlend, and they change (6 of 67 and 6 of 74 instructions in tbs-en). Split evidence for object|psyfx. */
 void BattleEffect_InitializeBuffers(void);
 void Runtime_ScheduleCallbackAndReleaseBlock32B(void);
 void BattleFx_ApplyColorToTargetBuffer(s32 mode, s32 half);

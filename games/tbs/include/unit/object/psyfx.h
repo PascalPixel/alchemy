@@ -168,7 +168,7 @@ void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj);
 void EventActor_RunHopAndLeapSequence(s32 id);
 void BattleFx_RunPageEffectForSlot(s32 slot, s32 elm, void *djinn);
 void FieldObject_PlaceSceneActors(void);
-/* Djinn_ResolvePendingEvent is called before its definition with no prototype in scope. */
+/* Djinn_ResolvePendingEvent is called from object.c with no prototype in scope: Field_RunScene calls it, and object.c comes before this unit in ROM order, so in one file the call would still come first. No split evidence. */
 void BattleFx_UpdateAllSlots(void);
 void BattleFx_InitializeSlots(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);

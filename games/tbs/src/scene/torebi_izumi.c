@@ -601,7 +601,8 @@ prompt:
 	UiWork_FinalizePendingCore();
 	if (choice == cancel)
 	{
-		goto end;
+		Event_End();
+		return 0;
 	}
 	if (choice == 0)
 	{
@@ -682,7 +683,8 @@ prompt:
 		UiWork_FinalizePendingCore();
 		if (choice == cancel)
 		{
-			goto end;
+			Event_End();
+			return 0;
 		}
 		if (choice == 0)
 		{

@@ -8395,20 +8395,16 @@ void BattleFx_SteerLiftedTarget(s32 id)
 		pos.z = target->z.fixed;
 		Vector_AddPolarOffset(16 << 16, angle, &pos);
 		i = ScriptObject_CheckOverlapFar(target, &pos);
-		// ふさがっている : 16 フレームごとにブザー
-		// Each test has its own copy of the blocked path, and the compiler
-		// cross-jumps the two into one; as one || test the function takes
-		// 536 instructions for 531.
+		/* FAKEMATCH: entering the blocked path from both tests keeps it
+		 * ahead of the drop path, as the ROM lays them out. Measured: the two
+		 * tests as one || differ 407 (536 instructions for 531, the
+		 * allocation changing from the prologue on), under for (;;) or
+		 * while (1). */
 		if (i != 0)
-		{
-			ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 4);
-			ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 4);
-			if ((gFrameCount & 15) == 0)
-				AudioCommand_PlayFar(SOUND_MENU_ERROR);
-			continue;
-		}
+			goto blocked;
 		if (ObjProbeUp(target, p) > 0)
 		{
+		blocked: // ふさがっている : 16 フレームごとにブザー
 			ObjectDispatch_ApplyArgumentToChildrenFar(hands[0], 4);
 			ObjectDispatch_ApplyArgumentToChildrenFar(hands[1], 4);
 			if ((gFrameCount & 15) == 0)

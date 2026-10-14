@@ -1,5 +1,5 @@
 
-use crate::worst::{definition_name, strip_comment};
+use crate::worst::read;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write as _;
 use std::path::{Path, PathBuf};
@@ -199,10 +199,8 @@ fn family(kind: &'static str, file: &str, code: &str) -> String {
 
 pub(crate) fn scan_source(file: &str, text: &str) -> Vec<Tag> {
     let lines = text.lines().collect::<Vec<_>>();
+    let reading = read(text);
     let mut tags = Vec::new();
-    let (mut in_block, mut depth) = (false, 0i32);
-    let mut pending: Option<String> = None;
-    let mut current: Option<String> = None;
     for (index, raw) in lines.iter().enumerate() {
         if let Some(at) = raw.find("FAKEMATCH") {
             let mut reason = raw[at + "FAKEMATCH".len()..]
@@ -244,9 +242,8 @@ pub(crate) fn scan_source(file: &str, text: &str) -> Vec<Tag> {
             tags.push(Tag {
                 file: file.to_string(),
                 line: index + 1,
-                function: current
+                function: reading.before[index]
                     .clone()
-                    .or_else(|| pending.clone())
                     .unwrap_or_else(|| "(file scope)".into()),
                 family: family(kind, file, &code),
                 count_suspect: count_suspect(&reason),
@@ -254,70 +251,28 @@ pub(crate) fn scan_source(file: &str, text: &str) -> Vec<Tag> {
                 kind,
             });
         }
-        let line = strip_comment(raw, &mut in_block);
-        if depth == 0 && current.is_none() {
-            if let Some(name) = definition_name(raw) {
-                pending = Some(name);
-            }
-        }
-        let (opens, closes) = (
-            line.matches('{').count() as i32,
-            line.matches('}').count() as i32,
-        );
-        if depth == 0 && opens > 0 {
-            current = pending.take();
-        }
-        depth += opens - closes;
-        if depth <= 0 {
-            depth = 0;
-            current = None;
-            if line.trim_end().ends_with(';') {
-                pending = None;
-            }
-        }
     }
     tags
 }
 
 fn function_calls(text: &str) -> Vec<(String, BTreeSet<String>)> {
-    let mut found = Vec::new();
-    let (mut in_block, mut depth) = (false, 0i32);
-    let mut pending: Option<String> = None;
-    let mut current: Option<(String, BTreeSet<String>)> = None;
-    for raw in text.lines() {
-        let line = strip_comment(raw, &mut in_block);
-        if depth == 0 && current.is_none() {
-            if let Some(name) = definition_name(raw) {
-                pending = Some(name);
+    let reading = read(text);
+    reading
+        .bodies
+        .into_iter()
+        .map(|body| {
+            let mut calls = BTreeSet::new();
+            for line in &reading.code[body.open..=body.close] {
+                let mut rest = line.as_str();
+                while let Some(name) = called(rest) {
+                    let at = rest.find(&name.to_string()).unwrap_or(0) + name.len();
+                    calls.insert(name);
+                    rest = &rest[at..];
+                }
             }
-        }
-        let (opens, closes) = (
-            line.matches('{').count() as i32,
-            line.matches('}').count() as i32,
-        );
-        if depth == 0 && opens > 0 {
-            current = pending.take().map(|name| (name, BTreeSet::new()));
-        }
-        if let Some((_, calls)) = current.as_mut() {
-            let mut rest = line.as_str();
-            while let Some(name) = called(rest) {
-                let at = rest.find(&name.to_string()).unwrap_or(0) + name.len();
-                calls.insert(name);
-                rest = &rest[at..];
-            }
-        }
-        depth += opens - closes;
-        if depth <= 0 {
-            depth = 0;
-            if let Some(function) = current.take() {
-                found.push(function);
-            }
-            if line.trim_end().ends_with(';') {
-                pending = None;
-            }
-        }
-    }
-    found
+            (body.name, calls)
+        })
+        .collect()
 }
 
 fn sources(root: &Path) -> Result<Vec<PathBuf>, String> {
@@ -640,5 +595,47 @@ void Effect_Run(void)
             prose("only BattleFx_RunCastingImpact, LoadResource and gFrameCount; Call3 (r0, GCC)"),
             "only ,  and ; Call3 (r0, GCC)"
         );
+    }
+
+    #[test]
+    fn tags_and_calls_after_a_brace_opened_in_both_arms_keep_their_function() {
+        // window.c's article writer and menu.c's item loop: `if (...) {` in
+        // each arm, with other statements before it in one of them.
+        let text = "\
+u32 Article(s32 no)
+{
+#if defined(TBS_EDITION_ES)
+    if (count == 0)
+    {
+#else
+    chosen = no;
+    if (chosen == 0)
+    {
+#endif
+        /* FAKEMATCH: the volatile read keeps the RAM load first. */
+        name = *(volatile u16 *)&gName;
+    }
+    return 0;
+}
+
+void Option_Init(void)
+{
+    /* FAKEMATCH: removing this one-pass block changes scheduling. */
+    do {
+        Dma_Fill32(0, gWork, 64);
+    } while (0);
+}
+";
+        let tags = scan_source("games/tbs/src/window/test.c", text);
+        assert_eq!(
+            tags.iter().map(|t| t.function.as_str()).collect::<Vec<_>>(),
+            ["Article", "Option_Init"]
+        );
+        let calls = function_calls(text);
+        assert_eq!(
+            calls.iter().map(|(name, _)| name.as_str()).collect::<Vec<_>>(),
+            ["Article", "Option_Init"]
+        );
+        assert!(calls[1].1.contains("Dma_Fill32"));
     }
 }

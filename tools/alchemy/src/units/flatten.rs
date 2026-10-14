@@ -1,14 +1,15 @@
 //! `alchemy unit`: applying the recovered translation units to the tree.
 //!
-//!   unit candidates  every run of today's C files the analysis joins, with
-//!                    the evidence at its edges (TSV)
+//!   unit candidates  every run of today's C files no evidence divides,
+//!                    with the evidence at its edges (TSV)
 //!   unit flatten     one such run merged into one file in ROM order: the
 //!                    merged source, every linker script and object list
 //!                    and the routing tables updated, the superseded
 //!                    files removed
 //!
-//! A run is a chain of adjacent C objects of one image where every gap
-//! between two of them is judged or forced a join; it never crosses
+//! A run is a chain of adjacent C objects of one image with no forced
+//! boundary or strong edge between two of them: files merge by default,
+//! and only the bytes divide them (Pascal, 2026-10-14). It never crosses
 //! another language, compiler, a COMMON/game divide or data placed between.
 
 use super::cmerge::{self, Source};
@@ -27,12 +28,18 @@ const USAGE: &str = "usage: alchemy unit candidates [--build EDITION] [--out-dir
                             [--name NAME.c] [--static] [--dry-run]
        alchemy unit flatten --all --force [--build EDITION]
 candidates writes DIR/units-EDITION-merges.tsv (default out/reports): each run
-of today's C files the analysis joins, with the units it covers, the
-evidence at its two edges and its weakest join. An edge is forced (another
-language or compiler, data, a region, the image's end), strong (code shared
-with other images ends there) or weak (only the scored valley, names or
-folders say so); apply is yes when neither edge is weak and the weakest
-join is at least 0.7 (runs joined below that were rejected on review).
+of today's C files no evidence divides, with the units it covers, the
+evidence at its two edges, its weakest join (for reading; it decides
+nothing), whether it applies and why. Files merge by default and only the
+bytes divide them (Pascal, 2026-10-14): a run ends at a forced edge
+(another language or compiler, data, a region, the image's end) or a strong
+one (code shared with other images ends there), never at a weak one (only
+the scored valley, names or folders say so). apply is yes unless a measured
+refusal divides the run: a unit header's note that a function of an earlier
+file is called from a later one with no prototype in scope (one file would
+put the definition above that call; alchemy check headers holds the note
+true), or the run is a library's (Nintendo's flash and sound code keeps
+its own files, as in pret). The flatten dry run measures every yes.
 flatten merges the runs of one proposed unit (IMAGE:UNIT as in the units
 TSV; main is the main image), or the named sources, into one C file in ROM
 order, in the folder holding most of their functions and named after its
@@ -166,11 +173,15 @@ fn edge(gap: Option<&Gap>) -> Edge {
     }
 }
 
-/// The weakest internal join a run may have and still be applied: runs
-/// offered at 0.696, 0.670 and 0.516 were applied and rejected on review.
-const MIN_JOIN: f64 = 0.7;
+/// Whether the bytes divide two objects at a gap: a forced boundary, or a
+/// strong edge (code shared with other images ends there). A weak judged
+/// boundary does not: files merge by default (Pascal, 2026-10-14).
+fn divides(gap: &Gap) -> bool {
+    matches!(gap.verdict, Verdict::ForcedBoundary | Verdict::Conflict)
+        || (!gap.verdict.is_forced() && gap.signals.iter().any(|s| s.starts_with("shared-edge")))
+}
 
-/// A run of joined C objects in one image.
+/// A run of C objects in one image that no evidence divides.
 struct Chain {
     image: String,
     objects: Vec<String>,
@@ -180,11 +191,53 @@ struct Chain {
     left: Edge,
     right: Edge,
     weakest: f64,
+    library: bool,
 }
 
-/// Whether a run is offered to apply: neither edge weak, no join below MIN_JOIN.
-fn applies(chain: &Chain) -> bool {
-    !matches!(chain.left, Edge::Weak(_)) && !matches!(chain.right, Edge::Weak(_)) && chain.weakest >= MIN_JOIN
+/// A measured refusal inside a run: the unit header of the earlier source
+/// leaves out functions the later one calls with no prototype in scope, so
+/// one file would put their definitions above those calls and the bytes
+/// change (the note `alchemy check headers` holds true, written from the
+/// measurement). Each: the two sources and the functions.
+fn refusals(sources: &[String], header: &dyn Fn(&str) -> Option<String>) -> Vec<(String, String, Vec<String>)> {
+    let mut out = Vec::new();
+    for (i, source) in sources.iter().enumerate() {
+        let Some(text) = crate::headers::model::unit_header(source).and_then(|path| header(&path)) else {
+            continue;
+        };
+        let notes = crate::headers::undeclared::notes(&text);
+        for later in &sources[i + 1..] {
+            let names: Vec<String> = notes
+                .iter()
+                .filter(|note| note.from.is_some_and(|file| later == file || later.ends_with(&format!("/{file}"))))
+                .map(|note| note.name.to_string())
+                .collect();
+            if !names.is_empty() {
+                out.push((source.clone(), later.clone(), names));
+            }
+        }
+    }
+    out
+}
+
+/// Whether a run applies, and why: yes unless a measured refusal divides
+/// it or it is a library's code, which keeps its own files as in pret.
+fn verdict(chain: &Chain, sources: &[String], header: &dyn Fn(&str) -> Option<String>) -> (bool, String) {
+    if chain.library {
+        return (false, "library: Nintendo's library code keeps its own files, as in pret".into());
+    }
+    let refused = refusals(sources, header);
+    if refused.is_empty() {
+        return (true, "no measured refusal".into());
+    }
+    let said: Vec<String> = refused
+        .iter()
+        .map(|(left, right, names)| {
+            let file = |path: &str| Path::new(path).file_name().map_or(path.to_string(), |name| name.to_string_lossy().into_owned());
+            format!("{}|{}: {} called from {} with no prototype in scope", file(left), file(right), names.join(", "), file(right))
+        })
+        .collect();
+    (false, format!("refused, {}", said.join("; ")))
 }
 
 fn family(root: &Path, target: DecompTarget, source: &str) -> CompilerFamily {
@@ -236,7 +289,7 @@ fn chains(root: &Path, target: DecompTarget, image: &Image, gaps: &[Gap], units:
             let next = &runs[end + 1];
             let gap = &gaps[runs[end].1];
             let object = &image.functions[next.0].object;
-            if mergeable(next).as_ref() != Some(&kind) || gap.verdict.is_boundary() || objects.contains(object) {
+            if mergeable(next).as_ref() != Some(&kind) || divides(gap) || objects.contains(object) {
                 break;
             }
             weakest = weakest.min(1.0 - gap.probability);
@@ -246,9 +299,10 @@ fn chains(root: &Path, target: DecompTarget, image: &Image, gaps: &[Gap], units:
         if objects.len() >= 2 {
             let (first, last) = (runs[k].0, runs[end].1);
             let (u0, u1) = (unit_of(first), unit_of(last));
-            let left = edge(units[u0].first.checked_sub(1).map(|g| &gaps[g]));
-            let right = edge((units[u1].last + 1 < image.functions.len()).then(|| &gaps[units[u1].last]));
-            out.push(Chain { image: image.name.clone(), objects, first, last, units: (u0..=u1).collect(), left, right, weakest });
+            let left = edge(first.checked_sub(1).map(|g| &gaps[g]));
+            let right = edge((last + 1 < image.functions.len()).then(|| &gaps[last]));
+            let library = image.functions[first].lang == Lang::Library;
+            out.push(Chain { image: image.name.clone(), objects, first, last, units: (u0..=u1).collect(), left, right, weakest, library });
         }
         k = end + 1;
     }
@@ -258,16 +312,18 @@ fn chains(root: &Path, target: DecompTarget, image: &Image, gaps: &[Gap], units:
 fn candidates(options: &Options) -> Result<(), String> {
     let root = crate::compiler::routing::root().to_path_buf();
     let (target, judged) = judged(&root, &options.build)?;
-    let mut out = String::from("image\tunits\tobjects\tfunctions\tleft\tright\tweakest_join\tapply\tsources\n");
+    let mut out = String::from("image\tunits\tobjects\tfunctions\tleft\tright\tweakest_join\tapply\twhy\tsources\n");
     let mut seen: BTreeSet<Vec<String>> = BTreeSet::new();
     let linked = linked_in(&judged);
+    let header = |path: &str| fs::read_to_string(root.join(path)).ok();
     let (mut yes, mut no) = (0, 0);
     for j in &judged {
         for c in chains(&root, target, &j.loaded.image, &j.gaps, &j.units, &linked) {
             if !seen.insert(c.objects.clone()) {
                 continue;
             }
-            let apply = applies(&c);
+            let sources: Vec<String> = c.objects.iter().map(|o| format!("{}.c", stem(o))).collect();
+            let (apply, why) = verdict(&c, &sources, &header);
             if apply {
                 yes += 1;
             } else {
@@ -276,7 +332,7 @@ fn candidates(options: &Options) -> Result<(), String> {
             let units: Vec<String> = c.units.iter().map(|u| format!("U{:04}", u + 1)).collect();
             let _ = writeln!(
                 out,
-                "{}\t{}\t{}\t{}\t{}\t{}\t{:.3}\t{}\t{}",
+                "{}\t{}\t{}\t{}\t{}\t{}\t{:.3}\t{}\t{}\t{}",
                 c.image,
                 units.join(","),
                 c.objects.len(),
@@ -285,7 +341,8 @@ fn candidates(options: &Options) -> Result<(), String> {
                 c.right.label(),
                 c.weakest,
                 if apply { "yes" } else { "no" },
-                c.objects.iter().map(|o| format!("{}.c", stem(o))).collect::<Vec<_>>().join(",")
+                why,
+                sources.join(",")
             );
         }
     }
@@ -293,7 +350,7 @@ fn candidates(options: &Options) -> Result<(), String> {
     fs::create_dir_all(&out_dir).map_err(|e| format!("{}: {e}", out_dir.display()))?;
     let path = out_dir.join(format!("units-{}-merges.tsv", options.build));
     fs::write(&path, out).map_err(|e| format!("{}: {e}", path.display()))?;
-    println!("{yes} runs to apply, {no} with a weak edge or a join below {MIN_JOIN}: {}", path.strip_prefix(&root).unwrap_or(&path).display());
+    println!("{yes} runs to apply, {no} refused or a library's: {}", path.strip_prefix(&root).unwrap_or(&path).display());
     Ok(())
 }
 
@@ -1059,25 +1116,71 @@ mod tests {
     }
 
     #[test]
-    fn runs_apply_only_with_strong_edges_and_joins() {
-        let chain = |left: Edge, right: Edge, weakest: f64| Chain {
+    fn only_forced_boundaries_and_strong_edges_divide_a_run() {
+        let gap = |verdict: Verdict, signals: &[&str]| Gap {
+            index: 0,
+            forced_boundary: Vec::new(),
+            forced_join: Vec::new(),
+            source_join: Vec::new(),
+            signals: signals.iter().map(|s| s.to_string()).collect(),
+            probability: 0.84,
+            binary: 0.84,
+            verdict,
+            similarity: 0.0,
+            data_bytes: 0,
+            features: Vec::new(),
+        };
+        assert!(divides(&gap(Verdict::ForcedBoundary, &[])));
+        assert!(divides(&gap(Verdict::Conflict, &[])));
+        assert!(divides(&gap(Verdict::JudgedBoundary, &["shared-edge:2|1"])));
+        // A judged boundary the scored valley alone draws merges, as files
+        // do by default; a forced join never divides.
+        assert!(!divides(&gap(Verdict::JudgedBoundary, &["valley"])));
+        assert!(!divides(&gap(Verdict::JudgedJoin, &[])));
+        assert!(!divides(&gap(Verdict::ForcedJoin, &["shared-edge:2|1"])));
+    }
+
+    #[test]
+    fn a_run_applies_unless_a_measured_refusal_or_a_library_keeps_it_apart() {
+        let chain = |objects: &[&str], library: bool| Chain {
             image: "main".into(),
-            objects: vec!["a".into(), "b".into()],
+            objects: objects.iter().map(|o| o.to_string()).collect(),
             first: 0,
             last: 1,
             units: vec![0],
-            left,
-            right,
-            weakest,
+            left: Edge::Forced("data".into()),
+            right: Edge::End,
+            weakest: 0.08,
+            library,
         };
-        let forced = || Edge::Forced("data".into());
-        assert!(applies(&chain(Edge::End, forced(), 0.7)));
-        assert!(applies(&chain(Edge::Strong("p=0.90 shared-edge".into()), Edge::End, 0.95)));
-        // U0054 and U0067: no weak edge, but a weak join inside.
-        assert!(!applies(&chain(forced(), forced(), 0.696)));
-        assert!(!applies(&chain(forced(), Edge::End, 0.670)));
-        assert!(!applies(&chain(forced(), forced(), 0.516)));
-        assert!(!applies(&chain(Edge::Weak("p=0.40".into()), forced(), 0.99)));
+        let window = "games/tbs/src/window/window.c".to_string();
+        let btlcmd = "games/tbs/src/window/btlcmd.c".to_string();
+        let headers = |path: &str| match path {
+            "games/tbs/include/unit/window/window.h" => Some(
+                "void Run(void);\n/* Late is called from btlcmd.c with no prototype in scope: in one file the definition would come first. */\n/* Early is called before its definition with no prototype in scope. */\n"
+                    .to_string(),
+            ),
+            "games/tbs/include/unit/window/btlcmd.h" => {
+                Some("/* Back is called from window.c with no prototype in scope: the call comes first in one file too. */\n".to_string())
+            }
+            _ => None,
+        };
+        // window.h's note refuses window|btlcmd: btlcmd.c, after window.c,
+        // calls Late with no prototype in scope. btlcmd.h's note names the
+        // earlier file, whose call stays above the definition in one file.
+        let sources = [window.clone(), btlcmd.clone()];
+        assert_eq!(
+            verdict(&chain(&["a", "b"], false), &sources, &headers),
+            (false, "refused, window.c|btlcmd.c: Late called from btlcmd.c with no prototype in scope".to_string())
+        );
+        // In the other order each note names the file before its own.
+        let window_only = |path: &str| headers(path).filter(|_| path.ends_with("window.h"));
+        let backwards = [btlcmd, window];
+        assert_eq!(verdict(&chain(&["a", "b"], false), &backwards, &window_only), (true, "no measured refusal".to_string()));
+        // A weak join inside no longer keeps a run apart; a library's does.
+        let none = |_: &str| None;
+        assert!(verdict(&chain(&["a", "b"], false), &["a.c".into(), "b.c".into()], &none).0);
+        assert!(!verdict(&chain(&["a", "b"], true), &["a.c".into(), "b.c".into()], &none).0);
     }
 
     #[test]

@@ -15,7 +15,7 @@ SECTIONS
         "*/resource_6ab_overlay.o"(.text.x0200855c)
         "*/resource_6ab_overlay.o"(.text.x020085b0)
         "*/resource_6ab_overlay.o"(.text.x02008714)
-        "*/resource_6ab_overlay.o"(.text.x02008ab4)
+        "*/games/tla/src/field/overlay_6ab/s0ab4.o"(.text)
         "*/resource_6ab_overlay.o"(.text.x02008ae4)
         "*/games/tla/src/field/overlay_6ab/talk.o"(.text)
         "*/resource_6ab_overlay.o"(.text.x02008bd8)

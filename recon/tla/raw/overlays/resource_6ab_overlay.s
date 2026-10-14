@@ -963,33 +963,6 @@ Func_02000714:
 	.4byte Data_02004958
 .L_02008ab0:
 	.4byte MsgScene6ABNo01
-	.section .text.x02008ab4,"ax",%progbits
-	.global Func_02000ab4
-	.thumb_func
-Func_02000ab4:
-	push {r5, lr}
-	ldr r3, .L_02008ae0
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	adds r5, r0, #0
-	ldr r0, [r3]
-	bl Object_GetById
-	ldr r3, [r0, #80]
-	ldr r4, [r5, #80]
-	ldrb r3, [r3, #9]
-	ldrb r1, [r4, #9]
-	movs r2, #12
-	ands r2, r3
-	movs r3, #13
-	negs r3, r3
-	ands r3, r1
-	orrs r3, r2
-	strb r3, [r4, #9]
-	pop {r5, pc}
-	.2byte 0x0000
-.L_02008ae0:
-	.4byte gPartyState
 	.section .text.x02008ae4,"ax",%progbits
 	.global Func_02000ae4
 	.thumb_func

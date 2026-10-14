@@ -48,7 +48,6 @@
 #include "battle_unit.h"
 #include "fixed_point_position.h"
 #include "irq.h"
-#include "unit/effect/fxscales.h"
 #include "unit/effect/koukabit.h"
 #include "call.h"
 
@@ -16061,7 +16060,7 @@ void Camera_ApplyShake(s32 random_mask, u32 shake_range)
 	center_p->center_y = 0x78;
 }
 
-extern s16 Mode12_Points[][2];
+extern const s16 Mode12_Points[][2];
 extern u8  Mode12_Animations[];
 extern u8  Mode12_SmokeFlips[];
 
@@ -24828,3 +24827,71 @@ s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags
 	end = (const u32 *)ParticleStreams_CellOffsets;
 	return src == end;
 }
+
+// 拡大率 {x, y} (Q16)
+const struct Scale BattleFx_StarsUnitScale = {
+	0x10000,
+	0x10000,
+};
+
+const Scale BattleFx10_UnitScale = {
+	0x10000,
+	0x10000,
+};
+
+// 岩の壁の高さ
+const s32 RockWall_Heights[4] = {
+	-32,
+	-32,
+	-32,
+	-32,
+};
+
+const s16 Mode12_Points[6][2] = {
+	{8, 135},
+	{184, 135},
+	{128, 135},
+	{96, 32},
+	{96, 32},
+	{64, 135},
+};
+
+const struct Scale RisingWall_UnitScale = {
+	0x10000,
+	0x10000,
+};
+
+const s32 Formation_NormalScale[2] = {
+	0x10000,
+	0x10000,
+};
+
+const s32 Formation_SmallScale[2] = {
+	0x14000,
+	0x14000,
+};
+
+const struct Scale CirclingScene_UnitScale = {
+	0x10000,
+	0x10000,
+};
+
+const struct Scale ShockwaveScene_UnitScale = {
+	0x10000,
+	0x10000,
+};
+
+const struct FxPair ObjectRow_SweepPair = {
+	0x10000,
+	0x10000,
+};
+
+const struct FxPair ObjectRow_RisePair = {
+	0x10000,
+	0x10000,
+};
+
+const struct Scale BattleFx6_UnitScale = {
+	0x18000,
+	0x18000,
+};

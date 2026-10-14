@@ -312,4 +312,8 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant);
 void BattleFx_RunRisingBurst(struct BattleEffectArgument *effect);
 s32 BattleEffect_LoadWork(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode);
 
+extern const s32 RockWall_Heights[4];
+extern const s32 Formation_NormalScale[2];
+extern const s32 Formation_SmallScale[2];
+
 #endif

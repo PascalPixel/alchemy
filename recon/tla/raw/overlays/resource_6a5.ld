@@ -7,7 +7,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_6a5/s0050.o"(.text)
         "*/games/tla/src/field/overlay_6a5/scene_tables.o"(.text)
         "*/games/tla/src/field/common/object/park_record.o"(.text)
-        "*/resource_6a5_overlay.o"(.text.x02008090)
+        "*/games/tla/src/field/overlay_6a5/s0090.o"(.text)
         "*/resource_6a5_overlay.o"(.text.x020080ec)
         "*/games/tla/src/field/common/object/step_angle.o"(.text)
         "*/resource_6a5_overlay.o"(.text.x02008198)

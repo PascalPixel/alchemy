@@ -407,51 +407,6 @@ Func_020002f4:
 	.4byte 0xfed80000
 .L_02008558:
 	.4byte 0xffff0000
-	.section .text.x0200855c,"ax",%progbits
-	.global Func_0200055c
-	.thumb_func
-Func_0200055c:
-	push {lr}
-	movs r0, #163
-	lsls r0, r0, #4
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02008586
-	ldr r3, .L_020085a4
-	movs r2, #253
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #0
-	ldrsh r0, [r3, r2]
-	ldr r3, .L_020085a8
-	ldr r2, .L_020085ac
-	movs r1, #160
-	subs r3, r3, r2
-	adds r0, r0, r3
-	lsls r1, r1, #19
-	bl Func_02004294
-.L_02008586:
-	ldr r3, .L_020085a4
-	movs r2, #241
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #20
-	bne .L_020085a0
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #75
-	bl GameFlag_SetBit
-.L_020085a0:
-	movs r0, #0
-	pop {pc}
-.L_020085a4:
-	.4byte gPartyState
-.L_020085a8:
-	.4byte 0x00000121
-.L_020085ac:
-	.4byte 0x0000010e
 	.section .text.x020085b0,"ax",%progbits
 	.global Func_020005b0
 	.thumb_func

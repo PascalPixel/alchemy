@@ -1039,45 +1039,6 @@ Func_0200087c:
 	.4byte 0xfff00000
 .L_02008acc:
 	.4byte Func_02000848
-	.section .text.x02008b20,"ax",%progbits
-	.balign 4
-	.global Func_02000b20
-	.thumb_func
-Func_02000b20:
-	push {r5, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r2, #214
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	adds r2, #88
-	str r2, [r3]
-	ldr r3, .L_02008b58
-	subs r2, #36
-	adds r5, r3, r2
-	movs r3, #0
-	ldrsh r2, [r5, r3]
-	ldr r3, .L_02008b5c
-	cmp r2, r3
-	bne .L_02008b46
-	bl Func_02000ba8
-.L_02008b46:
-	movs r3, #0
-	ldrsh r2, [r5, r3]
-	ldr r3, .L_02008b60
-	cmp r2, r3
-	bne .L_02008b54
-	bl Func_02000f98
-.L_02008b54:
-	movs r0, #0
-	pop {r5, pc}
-.L_02008b58:
-	.4byte gPartyState
-.L_02008b5c:
-	.4byte 0x00000113
-.L_02008b60:
-	.4byte 0x00000116
 	.section .text.x02008ba8,"ax",%progbits
 	.balign 4
 	.global Func_02000ba8

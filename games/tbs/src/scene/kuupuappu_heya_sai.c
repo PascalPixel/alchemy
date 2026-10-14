@@ -24,7 +24,7 @@
 #include "item_ids.h"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu_spotflag.c"
+#include "common/kuupuappu_spotflag.h"
 
 u8 *SceneData_GetScriptTable(void)
 {
@@ -179,7 +179,7 @@ static void EV1040_PSYNERGY(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu_bone.c"
+#include "common/kuupuappu_bone.h"
 
 static void EV19_TALK(void)
 {
@@ -308,7 +308,7 @@ s32 FieldScene_InitSceneStateByStep(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu_itemobj.c"
+#include "common/kuupuappu_itemobj.h"
 
 struct SceneEntrance Placement_Scripts[] = {
 	{ 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },

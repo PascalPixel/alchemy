@@ -31,8 +31,8 @@
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 #include "common/object_distance.h"
-#include "common/kuupuappu_range.c"
-#include "common/kuupuappu_nearby.c"
+#include "common/kuupuappu_range.h"
+#include "common/kuupuappu_nearby.h"
 
 const void *SceneData_GetScriptTable(void)
 {
@@ -393,7 +393,7 @@ static void EV10_TOUCH(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu_mura_scene_cells.c"
+#include "common/kuupuappu_mura_scene_cells.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
@@ -418,7 +418,7 @@ static void EV12_TOUCH(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu_toggle.c"
+#include "common/kuupuappu_toggle.h"
 
 static void EV21_TALK(void)
 {

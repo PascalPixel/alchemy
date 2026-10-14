@@ -263,10 +263,4 @@ static inline void FieldVector_AddPolarOffset(s32 radius, s32 heading, struct Fi
 	Vector_AddPolarOffset(radius, heading, probe);
 }
 
-static inline void DisplayScroll_StartHBlankDma(
-	s32 mode, s32 freq_x, s32 step_x, s32 amp_x, s32 freq_y, s32 step_y, s32 amp_y)
-{
-	Engine_DisplayScrollStartHBlankDma(mode, freq_x, step_x, amp_x, freq_y, step_y, amp_y);
-}
-
 #endif

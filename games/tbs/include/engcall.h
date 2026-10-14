@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_ENGCALL_H
 #define ALCHEMY_ENGCALL_H
 
+// Engine call layer: one typed inline for each main-image routine the overlays import.
 // 本体の関数を呼ぶ層: オーバーレイは本体のルーチンをこのインライン関数を
 // 通して呼ぶ (呼び出しはオーバーレイの import スタブへ行く)。
 // 引数はインラインの仮引数を通るので、呼び出しごとに定数を作り直す。
@@ -76,6 +77,12 @@ static inline s32 FieldParty_ListActiveOwners(s16 *owners)
 static inline s32 FieldOwner_AdjustFirstValue(s32 owner, s32 delta)
 {
 	return Owner_AdjustFirstValue(owner, delta);
+}
+
+static inline void DisplayScroll_StartHBlankDma(
+	s32 mode, s32 freq_x, s32 step_x, s32 amp_x, s32 freq_y, s32 step_y, s32 amp_y)
+{
+	Engine_DisplayScrollStartHBlankDma(mode, freq_x, step_x, amp_x, freq_y, step_y, amp_y);
 }
 
 #endif

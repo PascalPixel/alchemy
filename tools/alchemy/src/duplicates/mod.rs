@@ -196,7 +196,7 @@ impl Sources {
             let line = || source[..item.start].matches('\n').count() + 1;
             match &item.kind {
                 Kind::Comment => {}
-                Kind::Include(name) if name.ends_with(".c") => {
+                Kind::Include(name) if crate::c_items::c_text_file(&root.join(normalize(&Path::new(file).parent().unwrap_or(Path::new("")).join(name)))) => {
                     let directory = Path::new(file).parent().unwrap_or(Path::new(""));
                     pieces.push(Piece::Include(normalize(&directory.join(name))));
                 }

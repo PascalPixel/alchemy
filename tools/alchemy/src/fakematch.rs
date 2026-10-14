@@ -400,6 +400,9 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let root = crate::compiler::routing::root();
     let mut tags = Vec::new();
     let mut callers = Vec::new();
+    // C text: C files and the headers that define code. A function of a
+    // header that is not C text is an inline helper its callers compile.
+    let mut c_text = BTreeSet::new();
     for path in sources(root)? {
         let text =
             std::fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
@@ -409,7 +412,8 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             .to_string_lossy()
             .into_owned();
         tags.extend(scan_source(&name, &text));
-        if name.ends_with(".c") {
+        if crate::c_items::c_text(&name, &text) {
+            c_text.insert(name.clone());
             for (function, calls) in function_calls(&text) {
                 callers.push((name.clone(), function, calls));
             }
@@ -484,7 +488,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     }
     let helpers = tags
         .iter()
-        .filter(|t| t.file.ends_with(".h") && t.function != "(file scope)")
+        .filter(|t| t.file.ends_with(".h") && !c_text.contains(&t.file) && t.function != "(file scope)")
         .map(|t| (t.function.clone(), t.file.clone()))
         .collect::<BTreeMap<_, _>>();
     let mut spread = BTreeMap::<&str, (usize, [u64; 2])>::new();

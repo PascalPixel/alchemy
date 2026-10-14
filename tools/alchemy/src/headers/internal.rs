@@ -161,15 +161,16 @@ pub(crate) fn tags(text: &str) -> BTreeSet<String> {
 
 /// Where a file's block of forward declarations stands: the line after
 /// its leading header includes, or before its first line of code when it
-/// includes none.
-pub(crate) fn block_place(text: &str) -> usize {
+/// includes none. `c_text` tells an include of C text, which is code, by
+/// the name the include line spells.
+pub(crate) fn block_place(text: &str, c_text: &dyn Fn(&str) -> bool) -> usize {
     let line_end = |at: usize| text[at..].find('\n').map_or(text.len(), |n| at + n + 1);
-    let code = |text: &str| flat(text).iter().any(|piece| matches!(&piece.item.kind, Kind::Declaration | Kind::Function { .. }) || matches!(&piece.item.kind, Kind::Include(name) if !name.ends_with(".h")));
+    let code = |text: &str| flat(text).iter().any(|piece| matches!(&piece.item.kind, Kind::Declaration | Kind::Function { .. }) || matches!(&piece.item.kind, Kind::Include(name) if c_text(name)));
     let (mut after, mut first) = (None, text.len());
     for item in items(text) {
         match &item.kind {
             Kind::Comment | Kind::Directive => continue,
-            Kind::Include(name) if name.ends_with(".h") => after = Some(line_end(item.end)),
+            Kind::Include(name) if !c_text(name) => after = Some(line_end(item.end)),
             Kind::Conditional if !code(item.text) => {
                 if !include_names(item.text).is_empty() {
                     after = Some(line_end(item.end));
@@ -228,8 +229,8 @@ pub(crate) fn block(tags: &BTreeSet<String>, lines: &[(String, String)]) -> Stri
 }
 
 /// A text with a block at its place, a blank line on each side.
-pub(crate) fn with_block(text: &str, block: &str) -> String {
-    let at = block_place(text);
+pub(crate) fn with_block(text: &str, block: &str, c_text: &dyn Fn(&str) -> bool) -> String {
+    let at = block_place(text, c_text);
     let before = if text[..at].trim().is_empty() || text[..at].ends_with("\n\n") { "" } else { "\n" };
     let after = if text[at..].starts_with('\n') || at == text.len() { "" } else { "\n" };
     format!("{}{before}{block}{after}{}", &text[..at], &text[at..])
@@ -462,7 +463,10 @@ impl<'a> Scene<'a> {
         if lines.is_empty() && tags.is_empty() {
             return made;
         }
-        with_block(&made, &block(&tags, &lines))
+        let model = self.model;
+        let exists = |path: &str| model.text.contains_key(path);
+        let c_text = |name: &str| !name.ends_with(".h") || model.resolve(&exists, file, file, name).is_some_and(|found| model.is_fragment(&found));
+        with_block(&made, &block(&tags, &lines), &c_text)
     }
 }
 
@@ -529,7 +533,7 @@ fn reads<'a>(model: &Model, text_of: &dyn Fn(&str) -> Option<&'a str>, file: &st
         let Some(found) = model.resolve(&exists, file, &from, &name) else {
             continue;
         };
-        if found.ends_with(".c") || !seen.insert(found.clone()) {
+        if model.is_fragment(&found) || !seen.insert(found.clone()) {
             continue;
         }
         let Some(text) = text_of(&found) else {
@@ -593,7 +597,7 @@ pub(crate) fn plan(scene: &Scene, leave: &BTreeSet<String>) -> Rewrite {
         // file.
         let mut declared: Option<BTreeSet<String>> = None;
         for unit in model.users(file) {
-            let here: BTreeSet<String> = model.reach[unit].iter().filter(|reached| !reached.ends_with(".c")).filter_map(|reached| text_of(reached)).flat_map(tags).collect();
+            let here: BTreeSet<String> = model.reach[unit].iter().filter(|reached| !model.is_fragment(reached)).filter_map(|reached| text_of(reached)).flat_map(tags).collect();
             declared = Some(match declared {
                 Some(all) => all.intersection(&here).cloned().collect(),
                 None => here,
@@ -793,18 +797,23 @@ mod tests {
     #[test]
     fn a_block_stands_after_the_leading_includes() {
         let text = "/* 村 */\n#include \"a.h\"\n\n#define NULL 0\n#include \"b.h\" // 型\n#if X\n#include \"c.h\"\n#endif\n\n// 共通\n#include \"f.c\"\n\nvoid Run(void)\n{\n}\n#include \"late.h\"\n";
-        let at = block_place(text);
+        let named_c = |name: &str| !name.ends_with(".h");
+        let at = block_place(text, &named_c);
         assert!(text[at..].starts_with("\n// 共通\n"));
+        // An include of a header that defines code is code as well.
+        let shared = text.replace("\"f.c\"", "\"common/f.h\"");
+        assert_eq!(block_place(&shared, &|name| name == "common/f.h"), at);
+        assert!(block_place(&shared, &named_c) > at);
         let lines = [(String::new(), "void A(void);".to_string()), ("X".to_string(), "s32 B(s32 a);".to_string()), ("!(X)".to_string(), "s32 B(void);".to_string())];
         let tags: BTreeSet<String> = ["struct P;".to_string()].into();
         let block = block(&tags, &lines);
         assert_eq!(block, format!("{FORWARD}\nstruct P;\nstatic void A(void);\n#if X\nstatic s32 B(s32 a);\n#endif\n#if !(X)\nstatic s32 B(void);\n#endif\n"));
-        let made = with_block(text, &block);
+        let made = with_block(text, &block, &named_c);
         assert_eq!(made, text.replacen("#endif\n\n", &format!("#endif\n\n{block}\n"), 1));
         assert_eq!(without_block(&made), text);
         // With no include the block stands before the first line of code.
-        assert_eq!(with_block("// 部品\nvoid Run(void)\n{\n}\n", &block), format!("// 部品\n\n{block}\nvoid Run(void)\n{{\n}}\n"));
-        assert_eq!(with_block("#include \"a.h\"\nvoid Run(void);\n", "X\n"), "#include \"a.h\"\n\nX\n\nvoid Run(void);\n");
+        assert_eq!(with_block("// 部品\nvoid Run(void)\n{\n}\n", &block, &named_c), format!("// 部品\n\n{block}\nvoid Run(void)\n{{\n}}\n"));
+        assert_eq!(with_block("#include \"a.h\"\nvoid Run(void);\n", "X\n", &named_c), "#include \"a.h\"\n\nX\n\nvoid Run(void);\n");
     }
 
     #[test]

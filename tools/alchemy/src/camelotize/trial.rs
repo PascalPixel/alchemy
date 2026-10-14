@@ -195,9 +195,10 @@ impl Build {
         std::fs::write(&source, text).map_err(|e| e.to_string())?;
         arguments.push(format!("-I{}", file.parent().unwrap_or(root).display()));
         arguments.extend(flags);
-        // What a replaced C file includes beside itself is still found
-        // beside it, after everything the search path offers.
-        for (path, _) in others.iter().filter(|(path, _)| path.ends_with(".c")) {
+        // What a replaced C file, or header of C text, includes beside
+        // itself is still found beside it, after everything the search
+        // path offers.
+        for (path, _) in others.iter().filter(|(path, text)| crate::c_items::c_text(path, text)) {
             let beside = format!("-I{}", root.join(path).parent().unwrap_or(root).display());
             if !arguments.contains(&beside) {
                 arguments.push(beside);

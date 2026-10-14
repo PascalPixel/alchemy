@@ -283,7 +283,7 @@ pub fn rank_tree(root: &Path) -> Result<Vec<Ranked>, String> {
                 stack.push(path);
             } else if path
                 .extension()
-                .is_some_and(|e| e.eq_ignore_ascii_case("c"))
+                .is_some_and(|e| e.eq_ignore_ascii_case("c") || e.eq_ignore_ascii_case("h"))
             {
                 let text = std::fs::read_to_string(&path)
                     .map_err(|e| format!("{}: {e}", path.display()))?;
@@ -292,7 +292,10 @@ pub fn rank_tree(root: &Path) -> Result<Vec<Ranked>, String> {
                     .unwrap_or(&path)
                     .to_string_lossy()
                     .into_owned();
-                ranked.extend(rank_source(&name, &text));
+                // C files and the headers that are C text.
+                if crate::c_items::c_text(&name, &text) {
+                    ranked.extend(rank_source(&name, &text));
+                }
             }
         }
     }

@@ -301,7 +301,7 @@ ifndef EDITION
 # libgcc members the games link, from agscc's own sources.
 
 TOOLCHAIN := tools/out/toolchain
-include agscc/config/host.mk
+-include agscc/config/host.mk
 SHA256 := $(shell command -v sha256sum >/dev/null 2>&1 && echo sha256sum || echo shasum -a 256)
 GAS_SHA256 := fd7d227c0dd15cf5448385e56b8ad8313cd491839834b57c0c086ac7b7819a15
 GAS_CFLAGS := -O2 -std=gnu89 -D_POSIX_C_SOURCE=200809L -DNSIG=32 -Wno-implicit-int \

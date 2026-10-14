@@ -23,7 +23,6 @@ SECTIONS
         "*/games/tla/src/field/overlay_679/s0d90.o"(.text)
         "*/games/tla/src/field/overlay_679/events_e.o"(.text)
         "*/resource_679_overlay.o"(.text.x02008ef8)
-        "*/resource_679_overlay.o"(.text.x02008f58)
         "*/games/tla/src/field/overlay_679/events_f.o"(.text)
         "*/resource_679_overlay.o"(.text.x02008fb8)
         "*/games/tla/src/field/overlay_679/prepare.o"(.text)

@@ -975,42 +975,6 @@ Func_02000ef8:
 	.4byte 0x00003f42
 .L_02008f54:
 	.4byte Data_02002a9e
-	.section .text.x02008f58,"ax",%progbits
-	.global Func_02000f58
-	.thumb_func
-Func_02000f58:
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r2, [r3, #32]
-	movs r1, #188
-	lsls r1, r1, #1
-	adds r2, r2, r1
-	movs r3, #6
-	ldrsh r1, [r2, r3]
-	ldr r0, .L_02008f88
-	movs r3, #181
-	lsls r3, r3, #3
-	subs r3, r3, r1
-	str r3, [r0]
-	ldr r3, .L_02008f8c
-	movs r1, #2
-	ldrsh r2, [r2, r1]
-	ldr r1, .L_02008f90
-	strh r2, [r3]
-	ldr r3, .L_02008f94
-	ldr r3, [r3]
-	lsrs r3, r3, #2
-	subs r2, r2, r3
-	strh r2, [r1]
-	bx lr
-.L_02008f88:
-	.4byte Data_02002a98
-.L_02008f8c:
-	.4byte Data_02002a9c
-.L_02008f90:
-	.4byte Data_02002a9e
-.L_02008f94:
-	.4byte gFrameCount
 	.section .text.x02008fb8,"ax",%progbits
 	.global Func_02000fb8
 	.thumb_func

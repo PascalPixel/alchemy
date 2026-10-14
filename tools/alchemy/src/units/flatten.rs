@@ -39,7 +39,8 @@ refusal divides the run: a unit header's note that a function of an earlier
 file is called from a later one with no prototype in scope (one file would
 put the definition above that call; alchemy check headers holds the note
 true), or the run is a library's (Nintendo's flash and sound code keeps
-its own files, as in pret). The flatten dry run measures every yes.
+its files for now, pending Pascal: the bytes join some of them, as sst.c
+and program_flash_sector.c). The flatten dry run measures every yes.
 flatten merges the runs of one proposed unit (IMAGE:UNIT as in the units
 TSV; main is the main image), or the named sources, into one C file in ROM
 order, in the folder holding most of their functions and named after its
@@ -221,10 +222,11 @@ fn refusals(sources: &[String], header: &dyn Fn(&str) -> Option<String>) -> Vec<
 }
 
 /// Whether a run applies, and why: yes unless a measured refusal divides
-/// it or it is a library's code, which keeps its own files as in pret.
+/// it or it is a library's code, which keeps its files for now, pending
+/// Pascal's word on library code: the bytes join some of them.
 fn verdict(chain: &Chain, sources: &[String], header: &dyn Fn(&str) -> Option<String>) -> (bool, String) {
     if chain.library {
-        return (false, "library: Nintendo's library code keeps its own files, as in pret".into());
+        return (false, "library: Nintendo's library code keeps its files for now, pending Pascal".into());
     }
     let refused = refusals(sources, header);
     if refused.is_empty() {

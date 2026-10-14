@@ -72,7 +72,7 @@ SECTIONS
         "*/resource_64b_overlay.o"(.text.x0200c634)
         "*/resource_64b_overlay.o"(.text.x0200c744)
         "*/resource_64b_overlay.o"(.text.x0200c8f4)
-        "*/resource_64b_overlay.o"(.text.x0200c9bc)
+        "*/games/tla/src/field/world_map/s49bc.o"(.text)
         "*/games/tla/src/field/world_map/release.o"(.text)
         "*/games/tla/src/field/world_map/import.o"(.text)
         "*/games/tla/src/field/world_map/data.o"(.data)

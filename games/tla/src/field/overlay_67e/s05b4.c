@@ -1,5 +1,7 @@
 #include "ov67e.h"
 
+extern u32 gFrameCount;
+
 static inline s32 GameFlag_Test_(s32 flag)
 {
     /* FAKEMATCH: forwarding through the inline, as overlay 679's GameFlag_Test_ does, keeps the actor in r5 and the message in r6 (differ 16, the two swapped, as a direct call). */
@@ -73,4 +75,44 @@ void Func_020005b4(s32 actor)
     }
     Func_02000d70(actor, 0);
     Func_02000d08();
+}
+
+// Every fourth frame, colours 1 to 14 of palettes 3, 4 and 5 rotate up by one.
+void Func_0200060c(void)
+{
+    volatile u16 *palette;
+    s16 saved;
+    s32 index;
+
+    if ((gFrameCount & 3) == 0) {
+        saved = *(volatile u16 *)0x0500007c;
+        index = 14;
+    first:
+        palette = (u16 *)0x05000060;
+        palette[index] = (palette - 1)[index];
+        index--;
+        if (index != 1)
+            goto first;
+        *(volatile u16 *)0x05000062 = saved;
+
+        saved = *(volatile u16 *)0x0500009c;
+        index = 14;
+    second:
+        palette = (u16 *)0x05000080;
+        palette[index] = (palette - 1)[index];
+        index--;
+        if (index != 1)
+            goto second;
+        *(volatile u16 *)0x05000082 = saved;
+
+        saved = *(volatile u16 *)0x050000bc;
+        index = 14;
+    third:
+        palette = (u16 *)0x050000a0;
+        palette[index] = (palette - 1)[index];
+        index--;
+        if (index != 1)
+            goto third;
+        *(volatile u16 *)0x050000a2 = saved;
+    }
 }

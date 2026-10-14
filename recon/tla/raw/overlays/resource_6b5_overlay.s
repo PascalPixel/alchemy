@@ -661,46 +661,6 @@ Func_0200039c:
 .L_02008534:
 	.4byte 0x00000c58
 	.endif
-	.section .text.x02008538,"ax",%progbits
-	.global Func_02000538
-	.thumb_func
-Func_02000538:
-	push {r5, lr}
-	adds r5, r0, #0
-	bl Party_CountActiveOwners
-	cmp r0, #3
-	ble .L_02008546
-	movs r0, #3
-.L_02008546:
-	movs r2, #0
-	cmp r2, r0
-	bge .L_02008564
-	ldr r1, .L_02008574
-.L_0200854e:
-	movs r4, #134
-	lsls r4, r4, #2
-	adds r3, r2, r4
-	ldrb r3, [r1, r3]
-	cmp r5, #0
-	beq .L_0200855e
-	strh r3, [r5]
-	adds r5, #2
-.L_0200855e:
-	adds r2, #1
-	cmp r2, r0
-	blt .L_0200854e
-.L_02008564:
-	cmp r5, #0
-	beq .L_0200856c
-	ldr r3, .L_02008570
-	strh r3, [r5]
-.L_0200856c:
-	pop {r5, pc}
-	.2byte 0x0000
-.L_02008570:
-	.4byte 0x000000ff
-.L_02008574:
-	.4byte gPartyState
 	.section .text.x02008578,"ax",%progbits
 	.global Func_02000578
 	.thumb_func
@@ -1900,44 +1860,6 @@ Func_02000fbc:
 	.4byte Data_02003860
 .L_0200912c:
 	.4byte MsgComeBackWhen
-	.section .text.x02009414,"ax",%progbits
-	.global Func_02001414
-	.thumb_func
-Func_02001414:
-	push {r5, r6, lr}
-	movs r3, #186
-	lsls r3, r3, #2
-	adds r5, r0, #0
-	adds r3, #255
-	sub sp, #8
-	cmp r5, r3
-	ble .L_02009426
-	adds r5, r3, #0
-.L_02009426:
-	movs r6, #0
-.L_02009428:
-	adds r0, r5, #0
-	movs r1, #10
-	bl __modsi3
-	movs r3, #1
-	movs r2, #16
-	adds r1, r0, #0
-	subs r2, r2, r6
-	str r3, [sp, #0]
-	str r3, [sp, #4]
-	movs r0, #27
-	movs r3, #8
-	bl Func_02001984
-	adds r0, r5, #0
-	movs r1, #10
-	bl __divsi3
-	adds r6, #1
-	adds r5, r0, #0
-	cmp r6, #2
-	ble .L_02009428
-	bl Func_0200197c
-	add sp, #8
-	pop {r5, r6, pc}
 	.section .text.x0200945c,"ax",%progbits
 	.global Func_0200145c
 	.thumb_func

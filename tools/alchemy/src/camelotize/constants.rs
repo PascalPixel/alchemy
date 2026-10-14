@@ -17,6 +17,12 @@
 //! not) and an assembler file the preprocessor does not read. `alchemy
 //! check constants` counts the literal ids left at the same positions.
 //!
+//! A preprocessed assembler file (`.S`) reads only what the assembler
+//! can: it takes a name only from a `#define` outside the header's C-only
+//! blocks (`#ifndef __ASSEMBLER__`), and nothing from a header that holds
+//! C outside them (an enum), which it cannot include; an alias only where
+//! the file itself #defines it. The rest is listed for a hand.
+//!
 //! Preprocessor lines are not read, so a literal inside a macro body is no
 //! site. A name replaces a literal of the same value, which the
 //! preprocessor puts back, so the bytes cannot change; `alchemy keep`
@@ -32,11 +38,13 @@ Names the integer literals at the id positions of H's kind with H's\n\
 #define (or enum) names: flags.h and flag_ids.h name flags, songs.h,\n\
 sounds.h and sound_ids.h sounds; --kind gives another header's kind. The\n\
 TSV's rows are a file stem, a value and an alias that names that value in\n\
-that file before H does. Prints each site to name by hand (computed, an\n\
-expression of literals, no name, two names, packed beside other bits, no\n\
-id of the kind, or in a .s file the preprocessor does not read), then each\n\
-changed file's count, and adds H's #include to a file that names an id\n\
-from it.";
+that file before H does. A .S file takes only names the assembler reads:\n\
+H's #defines outside #ifndef __ASSEMBLER__, none from an H that holds C\n\
+outside it (an enum), and aliases the file #defines. Prints each site to\n\
+name by hand (computed, an expression of literals, no name, two names,\n\
+packed beside other bits, no id of the kind, a name the assembler cannot\n\
+read, or in a .s file the preprocessor does not read), then each changed\n\
+file's count, and adds H's #include to a file that names an id from it.";
 
 /// What an id names.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -128,6 +136,9 @@ const ALWAYS: &[i64] = &[-1, 0xffff_ffff];
 /// A placement condition of 0 is a view placeholder that
 /// FieldScene_PrepareActors rewrites to 0x164 or 0x165 (Scene_AssignViewFlags).
 const ALWAYS_OR_VIEW: &[i64] = &[-1, 0xffff_ffff, 0];
+/// An exit's flag word of 0 is no condition: MapGroupTable_SelectEntry
+/// takes the exit when the word is 0 or its flag is clear.
+const ALWAYS_OR_NONE: &[i64] = &[-1, 0xffff_ffff, 0];
 /// The unused rows and the -1 that end WorldMap_PlaceMarkers.
 const EMPTY_ROW: &[i64] = &[0, -1];
 /// BattleEventRuntime_BeginPhase queues its cue only when it is not 0.
@@ -190,12 +201,13 @@ pub(crate) const POSITIONS: &[Position] = &[
         form: Form::Condition(FLAG_SET),
         not_ids: ALWAYS,
     },
-    // field_scene.h: an exit taken only while its flag is set.
+    // field_scene.h: an exit MapGroupTable_SelectEntry takes while its flag
+    // is clear (`flag == 0 || GameFlag_TestFar(flag) == 0`).
     Position {
         kind: Kind::Flag,
         place: Place::Call { name: "SCENE_EXIT_IF", argument: 3, when: None },
         form: Form::Plain,
-        not_ids: ALWAYS,
+        not_ids: ALWAYS_OR_NONE,
     },
     Position {
         kind: Kind::Flag,
@@ -215,8 +227,8 @@ pub(crate) const POSITIONS: &[Position] = &[
         form: Form::Plain,
         not_ids: ALWAYS,
     },
-    // Scene_InteractionRuleTable's and Location's rows: scene or group,
-    // entrance, flag (-1 always), then the song or the place.
+    // Scene_InteractionRuleTable's rows: scene or group, entrance, flag (-1
+    // always), song; Location's: scene, entrance, flag, shift, zone.
     Position { kind: Kind::Flag, place: Place::Macro { name: "scene_cue", argument: 2 }, form: Form::Plain, not_ids: ALWAYS },
     Position { kind: Kind::Flag, place: Place::Macro { name: "group_cue", argument: 2 }, form: Form::Plain, not_ids: ALWAYS },
     Position { kind: Kind::Flag, place: Place::Macro { name: "location", argument: 2 }, form: Form::Plain, not_ids: ALWAYS },
@@ -779,11 +791,82 @@ fn assembler_sites(mask: &[u8], positions: &[&'static Position]) -> Vec<Found> {
 #[derive(Default, Debug)]
 pub(crate) struct Names {
     by_value: BTreeMap<i64, Vec<String>>,
+    /// The names a preprocessed assembler file reads: object-like
+    /// #defines outside the header's C-only blocks, whose bodies need no
+    /// enum constant and carry no C integer suffix.
+    assembler: BTreeSet<String>,
+    /// Whether the header holds C outside its C-only blocks (an enum, a
+    /// declaration), which an assembler file cannot include.
+    c: bool,
 }
 
-/// A name that bounds a family of ids rather than naming one.
+/// A name that counts a family's ids, which never names one of them.
+fn count(name: &str) -> bool {
+    name.ends_with("_COUNT") || name.starts_with("NUM_")
+}
+
+/// A name that bounds a family of ids: it names its value only where
+/// nothing else does.
 fn bound(name: &str) -> bool {
-    ["_START", "_END", "_COUNT", "_BASE", "_FIRST", "_LAST"].iter().any(|suffix| name.ends_with(suffix)) || name.starts_with("NUM_")
+    ["_START", "_END", "_BASE", "_FIRST", "_LAST"].iter().any(|suffix| name.ends_with(suffix))
+}
+
+/// Whether each line of a header lies in a block only C reads: `#ifndef
+/// __ASSEMBLER__`, `#if !defined(__ASSEMBLER__)`, or the `#else` of
+/// `#ifdef __ASSEMBLER__`.
+fn c_only_lines(text: &str) -> Vec<bool> {
+    // Each open conditional: for a test of __ASSEMBLER__, whether its first
+    // branch is C only and whether the current branch is.
+    let mut blocks: Vec<Option<(bool, bool)>> = Vec::new();
+    let mut lines = Vec::new();
+    for line in text.lines() {
+        if let Some(directive) = line.trim_start().strip_prefix('#') {
+            let directive = directive.split("//").next().unwrap_or("").split("/*").next().unwrap_or("");
+            let directive: String = directive.chars().filter(|c| !c.is_whitespace() && !matches!(c, '(' | ')')).collect();
+            if directive.starts_with("if") {
+                blocks.push(match directive.as_str() {
+                    "ifndef__ASSEMBLER__" | "if!defined__ASSEMBLER__" => Some((true, true)),
+                    "ifdef__ASSEMBLER__" | "ifdefined__ASSEMBLER__" => Some((false, false)),
+                    _ => None,
+                });
+            } else if directive.starts_with("el") {
+                if let Some(Some((first, now))) = blocks.last_mut() {
+                    *now = !*first;
+                }
+            } else if directive.starts_with("endif") {
+                blocks.pop();
+            }
+        }
+        lines.push(blocks.iter().any(|block| matches!(block, Some((_, true)))));
+    }
+    lines
+}
+
+/// Whether a #define body reads the same to the assembler: no C integer
+/// suffix (`0x10u`).
+fn assembler_body(body: &str) -> bool {
+    tokens(body).is_some_and(|tokens| {
+        tokens.iter().all(|token| !(token.as_bytes()[0].is_ascii_digit() && token.ends_with(['u', 'U', 'l', 'L'])))
+    })
+}
+
+/// Evaluates the pending #defines whose bodies are known, until none is
+/// left that can be.
+fn resolve(pending: &mut Vec<(String, String)>, known: &mut HashMap<String, i64>, order: &mut Vec<(String, i64)>) {
+    loop {
+        let before = pending.len();
+        pending.retain(|(name, body)| match evaluate(body, known) {
+            Some(value) => {
+                known.insert(name.clone(), value);
+                order.push((name.clone(), value));
+                false
+            }
+            None => true,
+        });
+        if pending.len() == before {
+            return;
+        }
+    }
 }
 
 /// What a value is called.
@@ -796,27 +879,35 @@ pub(crate) enum Called<'a> {
 
 impl Names {
     pub(crate) fn parse(text: &str) -> Names {
+        let c_only = c_only_lines(text);
+        let defined = defines(text);
         let mut known: HashMap<String, i64> = HashMap::new();
         let mut order: Vec<(String, i64)> = Vec::new();
-        let mut pending = defines(text);
-        // Defines in order, the enums, then defines that use an enum constant.
-        let define = |pending: &mut Vec<(String, String)>, known: &mut HashMap<String, i64>, order: &mut Vec<(String, i64)>| {
-            pending.retain(|(name, body)| match evaluate(body, known) {
-                Some(value) => {
-                    known.insert(name.clone(), value);
-                    order.push((name.clone(), value));
-                    false
-                }
-                None => true,
-            });
-        };
-        define(&mut pending, &mut known, &mut order);
+        let mut pending: Vec<(String, String)> = defined.iter().map(|(name, body, _)| (name.clone(), body.clone())).collect();
+        // The defines, the enums, then defines that use an enum constant.
+        resolve(&mut pending, &mut known, &mut order);
         for (name, value) in enums(text, &known) {
             known.insert(name.clone(), value);
             order.push((name, value));
         }
-        define(&mut pending, &mut known, &mut order);
-        let mut names = Names::default();
+        resolve(&mut pending, &mut known, &mut order);
+        // What the assembler sees: no enum, nothing in a C-only block.
+        let (mut seen, mut read) = (HashMap::new(), Vec::new());
+        let mut visible: Vec<(String, String)> = defined
+            .iter()
+            .filter(|(_, body, line)| !c_only.get(*line).copied().unwrap_or(false) && assembler_body(body))
+            .map(|(name, body, _)| (name.clone(), body.clone()))
+            .collect();
+        resolve(&mut visible, &mut seen, &mut read);
+        let masked = mask(text);
+        let mut names = Names {
+            assembler: read.into_iter().filter(|(name, value)| known.get(name) == Some(value)).map(|(name, _)| name).collect(),
+            c: masked
+                .split(|&b| b == b'\n')
+                .zip(c_only.iter().copied().chain(std::iter::repeat(false)))
+                .any(|(line, only)| !only && !line.iter().all(u8::is_ascii_whitespace)),
+            ..Names::default()
+        };
         for (name, value) in order {
             let entry = names.by_value.entry(value).or_default();
             if !entry.contains(&name) {
@@ -830,6 +921,17 @@ impl Names {
         self.by_value.is_empty()
     }
 
+    /// Whether a preprocessed assembler file can include the header: it
+    /// holds no C outside its C-only blocks.
+    pub(crate) fn assembler_readable(&self) -> bool {
+        !self.c
+    }
+
+    /// Whether a preprocessed assembler file reads the name.
+    pub(crate) fn assembler_reads(&self, name: &str) -> bool {
+        self.assembler.contains(name)
+    }
+
     /// Adds another header's names.
     pub(crate) fn extend(&mut self, other: Names) {
         for (value, names) in other.by_value {
@@ -840,17 +942,19 @@ impl Names {
                 }
             }
         }
+        self.assembler.extend(other.assembler);
+        self.c |= other.c;
     }
 
-    /// The one name of a value: a family's bound gives way to a name of its
-    /// own, and two names of one value name neither.
+    /// The one name of a value: a count never names it, a family's bound
+    /// gives way to a name of its own, and two names of one value name
+    /// neither.
     pub(crate) fn called(&self, value: i64) -> Called<'_> {
-        let Some(names) = self.by_value.get(&value) else {
-            return Called::Nothing;
-        };
-        let own: Vec<&str> = names.iter().map(String::as_str).filter(|name| !bound(name)).collect();
-        let all: Vec<&str> = names.iter().map(String::as_str).collect();
+        let all: Vec<&str> =
+            self.by_value.get(&value).into_iter().flatten().map(String::as_str).filter(|name| !count(name)).collect();
+        let own: Vec<&str> = all.iter().copied().filter(|name| !bound(name)).collect();
         match (own.as_slice(), all.as_slice()) {
+            (_, []) => Called::Nothing,
             ([one], _) | ([], [one]) => Called::One(one),
             ([], several) | (several, _) => Called::Several(several.to_vec()),
         }
@@ -858,16 +962,22 @@ impl Names {
 }
 
 /// Each object-like `#define NAME body`, continuation lines joined and
-/// comments dropped.
-fn defines(text: &str) -> Vec<(String, String)> {
+/// comments dropped, with the index of the line it starts on.
+fn defines(text: &str) -> Vec<(String, String, usize)> {
     let mut found = Vec::new();
     let mut lines = text.lines();
+    let mut index = 0;
     while let Some(line) = lines.next() {
+        let start = index;
+        index += 1;
         let mut joined = line.to_string();
         while joined.trim_end().ends_with('\\') {
             joined = joined.trim_end().trim_end_matches('\\').to_string();
             match lines.next() {
-                Some(next) => joined.push_str(next),
+                Some(next) => {
+                    index += 1;
+                    joined.push_str(next);
+                }
                 None => break,
             }
         }
@@ -890,7 +1000,7 @@ fn defines(text: &str) -> Vec<(String, String)> {
         if let Some(start) = body.find("//") {
             body.truncate(start);
         }
-        found.push((rest[..name_end].to_string(), body.trim().to_string()));
+        found.push((rest[..name_end].to_string(), body.trim().to_string(), start));
     }
     found
 }
@@ -1076,10 +1186,13 @@ fn shown(kind: Kind, value: i64) -> String {
 }
 
 /// Names a file's literal ids of one kind: an alias for the file's stem
-/// first, then the header's names.
+/// first, then the header's names. An assembler file takes only the names
+/// the assembler reads.
 pub(crate) fn rename(path: &Path, text: &str, kind: Kind, names: &Names, aliases: &Aliases) -> Renamed {
     let stem = path.file_stem().and_then(|s| s.to_str()).unwrap_or("");
     let preprocessed = path.extension().and_then(|e| e.to_str()) != Some("s");
+    let assembly = assembler(path);
+    let defined: BTreeSet<String> = defines(text).into_iter().map(|(name, ..)| name).collect();
     let name_of = |value: i64| -> Option<String> {
         aliases.get(stem, value).map(str::to_string).or_else(|| match names.called(value) {
             Called::One(name) => Some(name.to_string()),
@@ -1125,11 +1238,21 @@ pub(crate) fn rename(path: &Path, text: &str, kind: Kind, names: &Names, aliases
             continue;
         }
         if let Some(alias) = aliases.get(stem, value) {
+            if assembly && !defined.contains(alias) {
+                note(format!("alias {alias}: the assembler reads it only from a #define in this file"));
+                continue;
+            }
             aliases_used.insert(alias);
             edits.push((literal, alias.to_string()));
             continue;
         }
         match names.called(value) {
+            Called::One(_) if assembly && !names.assembler_readable() => {
+                note("the header holds C outside #ifndef __ASSEMBLER__ (an enum): the assembler cannot include it".into());
+            }
+            Called::One(name) if assembly && !names.assembler_reads(name) => {
+                note(format!("{name} is an enum constant or C only: the assembler cannot read it"));
+            }
             Called::One(name) => {
                 header_used = true;
                 edits.push((literal, name.to_string()));
@@ -1138,8 +1261,7 @@ pub(crate) fn rename(path: &Path, text: &str, kind: Kind, names: &Names, aliases
             Called::Nothing => note("no name".into()),
         }
     }
-    let defined: BTreeSet<String> = defines(text).into_iter().map(|(name, _)| name).collect();
-    let masked = if assembler(path) { assembler_mask(text) } else { mask(text) };
+    let masked = if assembly { assembler_mask(text) } else { mask(text) };
     for alias in aliases_used {
         if !defined.contains(alias) && super::source::words(&masked, alias, 0..masked.len()).is_empty() {
             hand.push(Hand {
@@ -1253,7 +1375,13 @@ pub(crate) fn run(root: &Path, arguments: &[String], dry: bool) -> Result<(), St
             if !includes_header(&file, &text, &header, &search) {
                 let spelled = super::source::spelling(&file, &header, &search)
                     .ok_or_else(|| format!("{name}: cannot spell an include of {}", header.display()))?;
-                out = super::source::insert_include(&out, &spelled);
+                // rename names nothing from a header an assembler file
+                // cannot include, so header_used never asks for one.
+                out = if assembler(&file) {
+                    super::source::insert_include_masked(&out, &spelled, &assembler_mask(&out))
+                } else {
+                    super::source::insert_include(&out, &spelled)
+                };
             }
         }
         if !dry {
@@ -1304,11 +1432,25 @@ mod tests {
         assert_eq!(names.called(0x400), Called::One("FLAG_SHOP_STOCKED_VALE"));
         assert_eq!(names.called(0x16e), Called::Several(vec!["FLAG_DJINN_TUTORIAL", "FLAG_DJINNI_MET"]));
         assert_eq!(names.called(0x123), Called::Nothing);
+        // A count names no id, even alone.
+        assert_eq!(names.called(0x20), Called::Nothing);
+        assert_eq!(names.called(0x30), Called::Nothing);
+        assert!(names.assembler_readable() && names.assembler_reads("FLAG_VISITED_VALE"));
         let songs = Names::parse(SONGS);
         assert_eq!(songs.called(74), Called::One("MUS_SANCTUM"));
         assert_eq!(songs.called(-1), Called::One("SONG_NONE"));
-        // Enum constants count too, with their implicit values.
+        // Enum constants count too, with their implicit values, but only C
+        // reads them.
         assert_eq!(songs.called(113), Called::One("SE_MENU_CANCEL"));
+        assert!(songs.assembler_readable() && songs.assembler_reads("MUS_SANCTUM") && !songs.assembler_reads("SE_MENU_CANCEL"));
+        // A header with C outside #ifndef __ASSEMBLER__ is C's alone; a
+        // define that needs an enum constant or a C suffix is too.
+        let c = Names::parse("enum { SE_A = 3 };\n#define SE_B (SE_A + 1)\n#define SE_C 5u\n#define SE_D 6\n");
+        assert!(!c.assembler_readable());
+        assert_eq!((c.called(4), c.called(5)), (Called::One("SE_B"), Called::One("SE_C")));
+        assert!(!c.assembler_reads("SE_B") && !c.assembler_reads("SE_C") && c.assembler_reads("SE_D"));
+        let guarded = Names::parse("#ifdef __ASSEMBLER__\n#define SE_A 3\n#else\n#define SE_B 4\nextern int x;\n#endif\n");
+        assert!(guarded.assembler_readable() && guarded.assembler_reads("SE_A") && !guarded.assembler_reads("SE_B"));
     }
 
     #[test]
@@ -1369,16 +1511,61 @@ mod tests {
         let flags = rename(path, RULES, Kind::Flag, &Names::parse(FLAGS), &aliases());
         let sounds = rename(path, &flags.text, Kind::Sound, &Names::parse(SONGS), &Aliases::default());
         assert_eq!(sounds.text, RULES_EXPECTED);
-        assert_eq!((flags.count, sounds.count), (4, 4));
+        assert_eq!((flags.count, sounds.count), (4, 3));
         assert_eq!(
             hands(&flags).iter().map(|(_, written, why)| (*written, *why)).collect::<Vec<_>>(),
             [("0x10182", "packed: 0x10000 | FLAG_VISITED_VALE"), ("0x20185", "packed: 0x20000 | 0x185")]
         );
-        assert_eq!(hands(&sounds).iter().map(|(_, written, why)| (*written, *why)).collect::<Vec<_>>(), [("42", "no name")]);
+        // SE_MENU_CANCEL is an enum constant: the assembler cannot read it.
+        assert_eq!(
+            hands(&sounds).iter().map(|(_, written, why)| (*written, *why)).collect::<Vec<_>>(),
+            [("42", "no name"), ("113", "SE_MENU_CANCEL is an enum constant or C only: the assembler cannot read it")]
+        );
         // A file the preprocessor does not read keeps its numbers.
         let plain = rename(Path::new("rules.s"), RULES, Kind::Flag, &Names::parse(FLAGS), &aliases());
         assert_eq!((plain.count, plain.text.as_str()), (0, RULES));
         assert_eq!(plain.hand.iter().filter(|h| h.why.contains("NAME.S")).count(), 4);
+        // An alias names a value in an assembler file only where the file
+        // #defines it.
+        let alias = Aliases::parse("RULES\t0x909\tALTIN_GATE\n", "t").unwrap();
+        let undefined = rename(path, RULES, Kind::Flag, &Names::default(), &alias);
+        assert_eq!(undefined.text, RULES);
+        assert!(undefined.hand.iter().any(|h| h.written == "0x909" && h.why.contains("ALTIN_GATE")));
+        let text = RULES.replace("#define TOWN_GROUP 2\n", "#define TOWN_GROUP 2\n#define ALTIN_GATE 0x909\n");
+        let defined = rename(path, &text, Kind::Flag, &Names::default(), &alias);
+        assert_eq!((defined.count, defined.header_used), (1, false));
+        assert!(defined.text.contains("group_cue 3, -1, ALTIN_GATE, 74"));
+    }
+
+    #[test]
+    fn an_assembler_file_takes_no_enum_and_its_include_follows_its_comments_and_includes() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = |name: &str| directory.path().join(name).to_string_lossy().into_owned();
+        let root = crate::compiler::routing::root();
+        let read = |name: &str| std::fs::read_to_string(path(name)).unwrap();
+        // A header with an enum outside #ifndef __ASSEMBLER__ names nothing
+        // in the file and is not included: each site is left for a hand.
+        let unguarded = SONGS.replace("#ifndef __ASSEMBLER__\n", "").replacen("};\n#endif\n", "};\n", 1);
+        std::fs::write(path("songs.h"), &unguarded).unwrap();
+        std::fs::write(path("RULES.S"), RULES).unwrap();
+        run(root, &["--header".into(), path("songs.h"), path("RULES.S")], false).unwrap();
+        assert_eq!(read("RULES.S"), RULES);
+        let left = rename(Path::new("RULES.S"), RULES, Kind::Sound, &Names::parse(&unguarded), &Aliases::default());
+        assert_eq!(left.count, 0);
+        assert_eq!(left.hand.iter().filter(|h| h.why.contains("cannot include")).count(), 4);
+        // A header the assembler reads lands after the file's own include.
+        std::fs::write(path("songs.h"), SONGS).unwrap();
+        run(root, &["--header".into(), path("songs.h"), path("RULES.S")], false).unwrap();
+        let songs = rename(Path::new("RULES.S"), RULES, Kind::Sound, &Names::parse(SONGS), &Aliases::default()).text;
+        assert_eq!(read("RULES.S"), songs.replacen("#include \"flags.h\"\n", "#include \"flags.h\"\n#include \"songs.h\"\n", 1));
+        // With no include, it lands below the leading @ comments.
+        std::fs::write(path("flags.h"), FLAGS).unwrap();
+        let bare = RULES.replacen("#include \"flags.h\"\n", "", 1);
+        std::fs::write(path("RULES.S"), &bare).unwrap();
+        run(root, &["--header".into(), path("flags.h"), path("RULES.S")], false).unwrap();
+        let named = rename(Path::new("RULES.S"), &bare, Kind::Flag, &Names::parse(FLAGS), &Aliases::default()).text;
+        assert_eq!(read("RULES.S"), named.replacen("#define TOWN_GROUP", "#include \"flags.h\"\n#define TOWN_GROUP", 1));
+        assert!(read("RULES.S").starts_with("@ alchemy camelotize constants: assembler id positions, as scnrule.s,\n@ locrule.s"));
     }
 
     #[test]
@@ -1446,7 +1633,9 @@ mod tests {
     fn a_literal_outside_an_id_position_is_never_a_site() {
         let text = "void F(void)\n{\n\tActor_SetPosition(8, 0x909, 0);\n\tx = 0x909;\n\tWAIT(74);\n\t// GameFlag_Set(0x909);\n\
             \tMes(\"GameFlag_Set(0x909)\");\n\tGameFlag_IsSetLater(0x909);\n\tBtlEvPush(BEV_NUM, 74);\n\tif (s->pending_cue == 74) {}\n\tBattleEventRuntime_BeginPhaseFar(0);\n}\n\
-            s32 GameFlag_IsSet(s32 flag);\n#define CHECK() GameFlag_IsSet(0x909)\nextern const u16 gBattleCueTable[35];\n";
+            s32 GameFlag_IsSet(s32 flag);\n#define CHECK() GameFlag_IsSet(0x909)\nextern const u16 gBattleCueTable[35];\n\
+            u32 gSceneExits[] = {SCENE_EXIT_IF(1, 4, 2, 0), SCENE_EXIT_IF(1, 4, 2, 0xffffffff)};\n";
+        // An exit's flag word of 0 is no condition, not flag 0.
         assert!(sites(Path::new("x.c"), text, &Kind::ALL).is_empty());
     }
 }

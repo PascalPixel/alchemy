@@ -1,6 +1,10 @@
 //! Flag and sound ids still written as numbers at the positions `alchemy
-//! camelotize constants` names, counted per game, with a ratchet: a count
-//! may stay or fall against tools/alchemy/constants.tsv, never rise.
+//! camelotize constants` names, counted per game. A game with a names
+//! header (HEADERS: ☀️) has a ratchet against tools/alchemy/constants.tsv:
+//! a rise fails, to be named from the header, or recorded with --update
+//! where the number has no proven name, which stays a number (S3). A game
+//! with none (⚓️) is only reported: its adoptions bring literal ids that
+//! nothing names yet.
 //!
 //! A game's count covers its own C, headers and assembler and the COMMON
 //! source both games build; Nintendo's library files are not counted. A
@@ -18,16 +22,26 @@ pub(crate) const BASELINE: &str = "tools/alchemy/constants.tsv";
 
 const USAGE: &str = "usage: alchemy check constants [--update | --list [PATH...]]\n\
 Counts, for each game, the flag and sound ids written as integer literals\n\
-at the positions `alchemy camelotize constants` names, and fails when a\n\
-count rises above tools/alchemy/constants.tsv. --update writes the current\n\
-counts there; lower them whenever ids are named. --list prints each literal\n\
-id left in the PATHs (files or folders; all of games/ by default), with the\n\
-name its game's header gives it, then each file's count.";
+at the positions `alchemy camelotize constants` names. For a game with a\n\
+names header (☀️) it fails when a count rises above\n\
+tools/alchemy/constants.tsv; a game with none (⚓️) is only reported. A\n\
+number with no proven name stays a number (S3): name a new literal from\n\
+the header where it has a name, and otherwise record it with --update.\n\
+--update writes the current counts of the games with a header there;\n\
+lower them whenever ids are named. --list prints each literal id left in\n\
+the PATHs (files or folders; all of games/ by default), with the name its\n\
+game's header gives it, then each file's count.";
 
 /// The headers whose names a game's ids take, by kind, once they exist
-/// (they replace flag_ids.h and sound_ids.h).
+/// (they replace flag_ids.h and sound_ids.h). Only a game listed here has
+/// a ratchet.
 const HEADERS: [(&str, Kind, &str); 2] =
     [("tbs", Kind::Flag, "games/tbs/include/flags.h"), ("tbs", Kind::Sound, "games/tbs/include/songs.h")];
+
+/// Whether a rise in a game's counts fails the check: it has a names header.
+fn ratcheted(game: &str) -> bool {
+    HEADERS.iter().any(|(listed, _, _)| *listed == game)
+}
 
 const GAMES: [(&str, &str, CompilerTarget); 2] =
     [("tbs", "games/tbs/", CompilerTarget::Tbs), ("tla", "games/tla/", CompilerTarget::Tla)];
@@ -58,7 +72,8 @@ fn run(arguments: &[String]) -> Result<(), String> {
         None => check(root),
         Some("--update") if arguments.len() == 1 => {
             let counts = count(&scan(root)?);
-            fs::write(root.join(BASELINE), render(&counts)).map_err(|e| format!("{BASELINE}: {e}"))?;
+            let kept: Counts = counts.iter().filter(|((game, _), _)| ratcheted(game)).map(|(k, v)| (k.clone(), *v)).collect();
+            fs::write(root.join(BASELINE), render(&kept)).map_err(|e| format!("{BASELINE}: {e}"))?;
             print!("{}", render(&counts));
             Ok(())
         }
@@ -77,15 +92,27 @@ fn check(root: &Path) -> Result<(), String> {
     let baseline = parse(&fs::read_to_string(root.join(BASELINE)).map_err(|e| format!("{BASELINE}: {e}"))?)?;
     let failures = ratchet(&baseline, &counts);
     if !failures.is_empty() {
-        return Err(format!("{}\nname the id (alchemy camelotize constants), or explain it to Pascal", failures.join("\n")));
+        return Err(format!(
+            "{}\nname each new literal id its header names (alchemy camelotize constants); a number with no proven \
+             name stays a number (S3): record it with alchemy check constants --update",
+            failures.join("\n")
+        ));
     }
     let lower: Vec<String> = counts
         .iter()
-        .filter(|(key, value)| baseline.get(*key).is_some_and(|before| **value < *before))
+        .filter(|(key, value)| ratcheted(&key.0) && baseline.get(*key).is_some_and(|before| **value < *before))
         .map(|((game, kind), value)| format!("{game} {kind} fell to {value}"))
         .collect();
     if !lower.is_empty() {
         eprintln!("{}; run alchemy check constants --update to lock it in", lower.join(", "));
+    }
+    let reported: Vec<String> = counts
+        .iter()
+        .filter(|((game, _), _)| !ratcheted(game))
+        .map(|((game, kind), value)| format!("{game} {kind} {value}"))
+        .collect();
+    if !reported.is_empty() {
+        eprintln!("{} ids written as numbers, reported only: no names header", reported.join(", "));
     }
     let names = headers(root);
     let named = left.iter().filter(|left| name(&names, left).is_some()).count();
@@ -221,9 +248,11 @@ fn parse(text: &str) -> Result<Counts, String> {
     Ok(counts)
 }
 
+/// The counts above their baseline, of the games with a names header.
 fn ratchet(baseline: &Counts, counts: &Counts) -> Vec<String> {
     counts
         .iter()
+        .filter(|((game, _), _)| ratcheted(game))
         .filter_map(|(key, value)| {
             let allowed = baseline.get(key).copied().unwrap_or(0);
             (*value > allowed).then(|| format!("{} {} ids written as numbers: {value}, baseline {allowed}", key.0, key.1))
@@ -274,7 +303,22 @@ mod tests {
         assert_eq!(ratchet(&at(10, 5), &at(11, 5)), ["tbs flag ids written as numbers: 11, baseline 10"]);
         // A count the baseline has no row for may only be zero.
         assert_eq!(ratchet(&Counts::new(), &at(0, 1)), ["tbs sound ids written as numbers: 1, baseline 0"]);
+        // A game with no names header is never refused.
+        let tla: Counts = [(("tla".to_string(), "flag".to_string()), 500)].into();
+        assert!(ratchet(&Counts::new(), &tla).is_empty());
         assert!(parse("game\tkind\tcount\ntbs\tflag\n").is_err());
+    }
+
+    #[test]
+    fn a_new_literal_fails_only_the_game_with_a_names_header() {
+        let baseline = "game\tkind\tcount\ntbs\tflag\t0\ntbs\tsound\t0\n";
+        let tla = ("games/tla/src/b.c", "void G(void)\n{\n\tGameFlag_Test(0x123);\n}\n");
+        let root = tree(&[(BASELINE, baseline), tla]);
+        check(root.path()).unwrap();
+        let root = tree(&[(BASELINE, baseline), tla, ("games/tbs/src/a.c", "void F(void)\n{\n\tGameFlag_Test(0x123);\n}\n")]);
+        let error = check(root.path()).unwrap_err();
+        assert!(error.starts_with("tbs flag ids written as numbers: 1, baseline 0\n"), "{error}");
+        assert!(!error.contains("tla"), "{error}");
     }
 
     #[test]

@@ -1,5 +1,5 @@
-// alchemy camelotize constants: song and sound names, as #defines and as
-// enum constants.
+// alchemy camelotize constants: song and sound names, as #defines the
+// assembler reads too and as enum constants only C reads.
 #ifndef SONGS_H
 #define SONGS_H
 
@@ -7,6 +7,7 @@
 #define MUS_VALE 2
 #define MUS_SANCTUM 74
 
+#ifndef __ASSEMBLER__
 enum
 {
 	SE_SANCTUM_REVIVE = 82,
@@ -16,5 +17,6 @@ enum
 	SE_MENU_CONFIRM,
 	SE_MENU_CANCEL
 };
+#endif
 
 #endif

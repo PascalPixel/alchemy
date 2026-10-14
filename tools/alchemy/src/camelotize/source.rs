@@ -355,8 +355,14 @@ fn relative_path(from: &Path, to: &Path) -> PathBuf {
 }
 
 pub(crate) fn insert_include(text: &str, name: &str) -> String {
+    insert_include_masked(text, name, &mask(text))
+}
+
+/// `insert_include` by the file's own mask, which shows where its first
+/// statement starts: an assembler file's `@` comments are blank in its
+/// mask, so they stay above the new line.
+pub(crate) fn insert_include_masked(text: &str, name: &str, mask: &[u8]) -> String {
     let line = format!("#include \"{name}\"\n");
-    let mask = mask(text);
     let (mut offset, mut depth) = (0, 0i32);
     let (mut after, mut first, mut stop) = (None, None, text.len());
     for piece in text.split_inclusive('\n') {

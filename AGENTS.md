@@ -756,7 +756,7 @@ alchemy objects EDITION...             # what differs from the ROM, object or pl
 alchemy dead [--apply PATH]            # what no edition links, includes or selects
 make progress                          # DONE code and data, one line per edition (alchemy progress)
 alchemy check devices [--update]       # register pins, asm barriers, inline asm, volatile, goto: may only fall
-alchemy check constants [--update | --list [PATH...]]   # flag and sound ids still written as numbers at their positions: may only fall
+alchemy check constants [--update | --list [PATH...]]   # flag and sound ids still written as numbers: only ☀️'s, against its names header, may only fall
 alchemy fakematch [--show N]           # every FAKEMATCH tag by device and family, weighed by the bytes it steers
 # Camelotize
 make worst                             # maintained C ranked by how mechanical it reads

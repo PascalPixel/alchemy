@@ -20,7 +20,7 @@ Scene_InteractionRuleTable:
 	group_cue TOWN_GROUP, -1, FLAG_AUTO_BATTLE, MUS_SANCTUM
 	group_cue 2, -1, -1, 42
 	scene_cue ShindenHeya, -1, FLAG_SOL_SANCTUM_OPEN, MUS_VALE
-	scene_cue HaidiaBabi, 19, -1, SE_MENU_CANCEL @ group_cue 2, -1, 0x909, 74
+	scene_cue HaidiaBabi, 19, -1, 113 @ group_cue 2, -1, 0x909, 74
 	group_cue 3, -1, FLAG_ALTIN_FREED, MUS_SANCTUM
 	.2byte -1, 0, 0, 0
 	.global Location

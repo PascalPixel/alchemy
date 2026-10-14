@@ -11,7 +11,7 @@
 #include "unit/object/djinnev.h"
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
-#include "unit/field/fldobj.h"
+#include "unit/field/field.h"
 #include "unit/window/window.h"
 #include "unit/window/output.h"
 #include "unit/window/save.h"

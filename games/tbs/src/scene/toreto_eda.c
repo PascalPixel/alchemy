@@ -4,7 +4,7 @@
 #include "unit/object/disptran.h"
 #include "unit/object/evbasic.h"
 #include "unit/object/evactor.h"
-#include "unit/field/mapcell.h"
+#include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "keystate.h"

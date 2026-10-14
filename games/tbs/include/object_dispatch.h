@@ -2,7 +2,6 @@
 #define ALCHEMY_OBJECT_DISPATCH_H
 
 #include "unit/field/field.h"
-#include "unit/field/fldobj.h"
 #include "types.h"
 
 struct DispatchObject

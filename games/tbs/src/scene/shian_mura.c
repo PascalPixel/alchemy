@@ -12,7 +12,6 @@
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
-#include "unit/field/mapcell.h"
 #include "unit/runtime/runtime.h"
 
 #define NULL ((void *)0)

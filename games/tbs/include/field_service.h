@@ -10,8 +10,6 @@
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
-#include "unit/field/mapview.h"
-#include "unit/field/mapcell.h"
 #include "unit/runtime/runtime.h"
 #include "field_event.h"
 #include "engcall.h"

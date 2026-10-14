@@ -49,16 +49,6 @@ main	rom_main_01	games/tbs/src/graphics/tile/convert_map
 main	rom_main_01	games/tbs/src/field/update
 main	rom_main_01	games/tbs/src/system/updfar
 main	rom_main_01	games/tbs/src/field/field
-main	rom_main_01	games/tbs/src/field/fldobj
-main	rom_main_01	games/tbs/src/field/script
-main	rom_main_01	games/tbs/src/field/operands
-main	rom_main_01	games/tbs/src/field/player
-main	rom_main_01	games/tbs/src/field/maplayer
-main	rom_main_01	games/tbs/src/field/mapview
-main	rom_main_01	games/tbs/src/field/palqueue
-main	rom_main_01	games/tbs/src/field/curve
-main	rom_main_01	games/tbs/src/field/mapcell
-main	rom_main_01	games/tbs/src/field/iconmon
 main	rom_main_01	games/tbs/src/system/resource/animdata
 main	rom_main_01	games/tbs/src/field/facing
 main	rom_main_01	games/tbs/src/field/objdata

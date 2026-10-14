@@ -10,7 +10,7 @@
 #include "unit/object/djinnev.h"
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
-#include "unit/field/mapcell.h"
+#include "unit/field/field.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "configured_effect_spawn.h"

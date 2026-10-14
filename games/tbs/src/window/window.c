@@ -9,11 +9,7 @@
 #include "unit/window/spranim.h"
 #include "unit/window/textspd.h"
 #include "unit/window/window.h"
-#include "unit/window/output.h"
-#include "unit/window/ptystat.h"
-#include "unit/window/save.h"
 #include "unit/window/btlcmd.h"
-#include "unit/window/debug.h"
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evmes.h"
@@ -96,7 +92,6 @@
 #include "shop.h"
 #include "disptran.h"
 #include "frame.h"
-#include "unit/window/cmdicon.h"
 #include "unit/window/optdata.h"
 
 //--------------------------------------------------------------------------

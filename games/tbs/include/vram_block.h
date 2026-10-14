@@ -2,8 +2,7 @@
 #define GUARD_VRAM_BLOCK_H
 
 #include "unit/window/window.h"
-#include "unit/window/output.h"
-#include "unit/window/save.h"
+#include "unit/window/btlcmd.h"
 #include "types.h"
 #include "resource.h"
 #include "vram_tab.h"

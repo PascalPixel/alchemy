@@ -3275,14 +3275,6 @@ void FieldFx_StartGroundParticles(void)
 	Scheduler_AddOrUpdateCallback(FieldFx_UpdateGroundParticles, 0xc80);
 }
 
-struct SparkleFrame
-{
-	s16 dy;
-	u16 tile;
-};
-
-extern const struct SparkleFrame FieldFx_SparkleFrames[];
-
 union DustWord
 {
 	u32	  value;

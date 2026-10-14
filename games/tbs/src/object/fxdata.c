@@ -10,8 +10,14 @@
 //--------------------------------------------------------------------------
 
 // 読む側は battle.h, field.h, graphics.h, scroll.h と object_efx.h、
-// 色の曲線は object.c が宣言する。いくつかは const なしで読まれるが、
-// どれも ROM の .rodata にある。
+// 色の曲線は object.c が宣言する。次の表は読む側が const なしで宣言する:
+// battle.h の BattleFx_TargetRangeByMode, Animation_ChildPaletteCycle,
+// BattleFx_DefinitionTable, FieldFx_GroundParticleFrames, BattleFx_PulseScales,
+// BattleFx_CyclePatternWords, BattleFx_RandomChildValues、graphics.h の
+// DisplayTransition_NoiseWidths, DisplayTransition_EdgeOffsets、field.h の
+// ObjectGroup_BlinkChildValues、object.c の BattlePalette_ChannelCurve 3 つ。
+// それでも定義はすべて const: rom_main_04 では .data が scripts.o の後に
+// 置かれ、この表が動くから。だからこのファイルはそれらのヘッダを読まない。
 
 // 調べた床の文章番号の差 (MsgTileChecked, MsgTileResult に足す)
 const u8 Field_TileMessageOffsets[6] =
@@ -299,6 +305,7 @@ const struct BattleEffectEntry BattleFx_DefinitionTable[131] =
 };
 
 // 方式 (1 から 3) の回数だけ揺れる: (3 - 方式) * 32 語目から始めて終わりまで
+// field.h は const u8[] と宣言し、psyfx.c はバイトで (3 - 方式) << 7 を足して s32 * で読む
 const s32 ObjectMotion_VariantScripts[97] =
 {
 	// 方式 3
@@ -405,7 +412,7 @@ const s16 FieldFx_GroundParticleFrames[80] =
 };
 
 // {dy, タイル}
-const s16 FieldFx_SparkleFrames[32][2] =
+const struct SparkleFrame FieldFx_SparkleFrames[32] =
 {
 	{-2, 12},
 	{-4, 12},

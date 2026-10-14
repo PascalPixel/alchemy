@@ -7,6 +7,15 @@
 
 struct ScenePlacement;
 
+// 光の粒の 1 コマ: 高さの差とタイル (fxdata.c)
+struct SparkleFrame
+{
+	s16 dy;
+	u16 tile;
+};
+
+extern const struct SparkleFrame FieldFx_SparkleFrames[32];
+
 void Battle_UpdateModeFromShoulderButtons(void);
 void Battle_WaitMode0(s32 frames);
 void Battle_InitializeRenderObject(void);

@@ -14,9 +14,9 @@ const u8 *const UiText_NumberWords[16] =
 	UiText_NumberWord7, UiText_NumberWord6, // Münze, Münzen
 	UiText_NumberWord5, UiText_NumberWord4, // Runde, Runden
 	UiText_NumberWord3, UiText_NumberWord2, // Ticket, Tickets
-	UiText_NumberWord1, UiText_NumberWord0, // Kampf, Käpfe
-	UiText_ArticleEmpty, UiText_ArticleEmpty,
-	UiText_ArticleEmpty, UiText_ArticleEmpty,
-	UiText_ArticleEmpty, 0,
+	UiText_NumberWord1, UiText_NumberWord0, // Kampf, Käpfe (ROM の綴りのまま: m がない)
+	(const u8 *)UiText_ArticleEmpty, (const u8 *)UiText_ArticleEmpty,
+	(const u8 *)UiText_ArticleEmpty, (const u8 *)UiText_ArticleEmpty,
+	(const u8 *)UiText_ArticleEmpty, 0,
 };
 #endif

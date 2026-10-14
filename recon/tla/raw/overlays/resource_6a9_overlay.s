@@ -705,55 +705,6 @@ Func_020006a8:
 	.4byte Data_02001220
 .L_020087e8:
 	.4byte gPartyState
-	.section .text.x020087ec,"ax",%progbits
-	.balign 4
-	.global Func_020007ec
-	.thumb_func
-Func_020007ec:
-	push {r5, r6, lr}
-	adds r5, r0, #0
-	ldr r4, [r5, #68]
-	ldr r3, [r5, #8]
-	ldr r2, [r5, #72]
-	adds r3, r3, r4
-	str r3, [r5, #8]
-	ldr r3, [r5, #12]
-	ldr r6, [r5, #76]
-	adds r3, r3, r2
-	str r3, [r5, #12]
-	ldr r3, [r5, #16]
-	sub sp, #4
-	adds r3, r3, r6
-	str r3, [r5, #16]
-	adds r0, r4, #0
-	movs r1, #12
-	str r4, [sp, #0]
-	bl __divsi3
-	ldr r4, [sp, #0]
-	movs r1, #10
-	subs r4, r4, r0
-	str r4, [r5, #68]
-	adds r0, r6, #0
-	bl __divsi3
-	ldr r3, [r5, #24]
-	ldr r2, [r5, #48]
-	subs r6, r6, r0
-	adds r3, r3, r2
-	str r3, [r5, #24]
-	ldr r2, [r5, #52]
-	ldr r3, [r5, #28]
-	str r6, [r5, #76]
-	adds r3, r3, r2
-	str r3, [r5, #28]
-	ldr r1, [r5, #80]
-	adds r5, #100
-	ldrh r3, [r1, #18]
-	ldrh r2, [r5]
-	add sp, #4
-	adds r3, r3, r2
-	strh r3, [r1, #18]
-	pop {r5, r6, pc}
-	.2byte 0x0000
 	.section .text.x0200887c,"ax",%progbits
 	.balign 4
 	.global Func_0200087c

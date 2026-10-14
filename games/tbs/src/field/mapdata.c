@@ -30,8 +30,9 @@ const TerrainHeightFn Map_TerrainHeightFunctions[16] =
 	Curve_GetFirstSampleC,
 };
 
-// ワールドマップの地形の振る舞い: 当たりの値に、ブロックの語の
-// 最上位ビットが立っていれば 0x10、地形の種類が 21 なら 0x20 を足して引く
+// ワールドマップの地形の振る舞い: 当たりの値に、ブロックの語の最上位ビットが
+// 立っていれば 0x10 を、地形の種類が 21 なら (最上位ビットによらず) 0x20 を
+// 足して引く
 const u8 WorldMap_TerrainBehaviorTable[48] =
 {
 	0, 0, 0, 0, 0, 1, 7, 1, 1, 2, 1, 1, 1, 1, 0, 0,

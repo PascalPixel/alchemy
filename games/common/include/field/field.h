@@ -302,18 +302,6 @@ extern s16 ArutinYama_PaletteStep;
 #endif
 extern const u8 BattleFx_BurstParticleScriptA[];
 extern const u8 BattleFx_BurstParticleScriptB[];
-extern char		ResourceId_WorldMapPaletteA;
-extern char		ResourceId_WorldMapTilesA;
-extern char		ResourceId_WorldMapTilesB;
-extern char		ResourceId_WorldMapTilesC;
-extern char		ResourceId_WorldMapTilesD;
-extern char		ResourceId_WorldMapTilesE;
-extern char		ResourceId_WorldMapPaletteB;
-extern char		ResourceId_WorldMapTilesF;
-extern char		ResourceId_WorldMapTilesG;
-extern char		ResourceId_WorldMapTilesH;
-extern char		ResourceId_WorldMapTilesI;
-extern char		ResourceId_WorldMapTilesJ;
 extern u32		WorldMap_GraphicsResources[][6];
 extern const u8 ObjectMotion_WaitScript[];
 extern const u8 FieldFx_SparkleTiles[];

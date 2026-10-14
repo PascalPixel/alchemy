@@ -1,4 +1,5 @@
 #include "field.h"
+#include "resource_ids.h"
 #include "types.h"
 
 //--------------------------------------------------------------------------

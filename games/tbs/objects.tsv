@@ -72,7 +72,6 @@ main	rom_main_02	games/tbs/src/graphics/ui/menu_icons	.rodata
 main	rom_main_02	games/tbs/src/window/fixblk	.rodata
 main	rom_main_02	games/tbs/src/graphics/render/labels	.rodata
 main	rom_main_02	games/common/src/graphics/font/text	.rodata
-main	rom_main_02	games/tbs/src/graphics/text/article	.rodata	en de es fr it
 main	rom_main_02	games/tbs/src/window/spranim	.rodata
 main	rom_main_02	games/tbs/src/window/cursor	.rodata
 main	rom_main_02	games/tbs/src/window/scales	.rodata

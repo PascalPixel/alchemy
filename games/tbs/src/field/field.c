@@ -3436,7 +3436,7 @@ retry:
 		Vector_AddPolarOffset(radius, heading - 0x2000, &probe);
 		if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probe) != 0)
 			goto retry;
-		/* FAKEMATCH: one-pass block: it ends cse2's block, so the division works on the loaded pos.x and the copy outlives it into found. As plain statements cse2 swaps them (differ 16), also with dx/dz split or casts. The retry gotos stay: as for(;;) with continue, loop.c hoists &pos and &probe, which the native recomputes each try (differ 128). */
+		/* FAKEMATCH: one-pass block: it ends cse2's block, so the division works on the loaded pos.x and the copy outlives it into the move target call. As plain statements cse2 swaps them (differ 16), also with dx/dz split or casts. The retry gotos stay: as for(;;) with continue, loop.c hoists &pos and &probe, which the native recomputes each try (differ 128). */
 		do
 		{
 			dx = pos.x / 0x10000 - object->home_x;
@@ -3444,12 +3444,13 @@ retry:
 		} while (0);
 		if (dx * dx + dz * dz > limit)
 			goto retry;
-		goto found;
 	}
-	object->script_value += 0x8000;
-	object->turned_back = 1;
-	return 0;
-found:
+	else
+	{
+		object->script_value += 0x8000;
+		object->turned_back = 1;
+		return 0;
+	}
 	Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
 	object->script_cursor += 4;
 	return 1;

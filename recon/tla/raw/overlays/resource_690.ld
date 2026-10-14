@@ -26,7 +26,6 @@ SECTIONS
         "*/resource_690_overlay.o"(.text.x02008d14)
         "*/games/tla/src/field/overlay_690/s0e04.o"(.text)
         "*/resource_690_overlay.o"(.text.x02008e30)
-        "*/resource_690_overlay.o"(.text.x02008e90)
         "*/games/tla/src/field/overlay_690/s0ed0.o"(.text)
         "*/games/tla/src/field/overlay_690/s0f2c.o"(.text)
         "*/resource_690_overlay.o"(.text.x02008fd0)

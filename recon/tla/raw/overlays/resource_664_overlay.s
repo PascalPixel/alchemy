@@ -6530,38 +6530,6 @@ Func_02003654:
 	mov r8, r3
 	mov r10, r5
 	pop {r5, r6, r7, pc}
-	.section .text.x0200bac4,"ax",%progbits
-	.global Func_02003ac4
-	.thumb_func
-Func_02003ac4:
-	push {lr}
-	bl Func_02005e14
-	movs r0, #0
-	bl Func_02005f2c
-	movs r0, #216
-	movs r2, #136
-	movs r3, #143
-	ldr r1, .L_0200bb00
-	lsls r2, r2, #18
-	lsls r3, r3, #1
-	lsls r0, r0, #16
-	bl OverlayObject_PrepareObject
-	ldr r3, .L_0200bb04
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	ldr r0, [r3]
-	movs r1, #6
-	movs r2, #0
-	bl Func_02005e84
-	movs r0, #3
-	bl Func_02005efc
-	bl Func_02005e1c
-	pop {pc}
-.L_0200bb00:
-	.4byte 0xffe00000
-.L_0200bb04:
-	.4byte gPartyState
 	.section .text.x0200bb08,"ax",%progbits
 	.global Func_02003b08
 	.thumb_func

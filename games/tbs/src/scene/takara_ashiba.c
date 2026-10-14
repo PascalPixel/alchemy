@@ -14,7 +14,7 @@
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
-#include "unit/game/item.h"
+#include "unit/game/game.h"
 #include "unit/runtime/runtime.h"
 #include "unit/scene/common/korosseo_item_icon.h"
 #include "battle.h"

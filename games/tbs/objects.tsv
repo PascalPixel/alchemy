@@ -101,14 +101,7 @@ main	rom_main_02	games/tbs/src/graphics/text/numwords	.rodata	en de
 main	rom_main_02	games/tbs/src/window/slidpal	.rodata
 main	rom_main_02	games/tbs/src/window/keyboard	.rodata
 main	rom_main_03	games/tbs/src/system/far_call/GAME
-main	rom_main_03	games/tbs/src/game/chara
-main	rom_main_03	games/tbs/src/game/item
-main	rom_main_03	games/tbs/src/game/flag
-main	rom_main_03	games/tbs/src/game/party
-main	rom_main_03	games/tbs/src/game/class
-main	rom_main_03	games/tbs/src/game/btlcalc
-main	rom_main_03	games/tbs/src/game/djinn
-main	rom_main_03	games/tbs/src/game/invsave
+main	rom_main_03	games/tbs/src/game/game
 main	rom_main_03	games/tbs/src/game/exptbl
 main	rom_main_03	games/tbs/src/game/artslot
 main	rom_main_03	games/tbs/src/game/starteq

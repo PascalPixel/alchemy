@@ -5,7 +5,7 @@
 #include "unit/object/objtable.h"
 #include "unit/object/evbasic.h"
 #include "unit/object/evactor.h"
-#include "unit/game/chara.h"
+#include "unit/game/game.h"
 #include "unit/graphics/palette/palette.h"
 #include "unit/window/window.h"
 #include "unit/window/output.h"

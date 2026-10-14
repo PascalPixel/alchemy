@@ -17,9 +17,7 @@
 #include "unit/runtime/runtime.h"
 #include "unit/window/window.h"
 #include "unit/window/select.h"
-#include "unit/game/flag.h"
-#include "unit/game/party.h"
-#include "unit/game/chara.h"
+#include "unit/game/game.h"
 #include "unit/import.h"
 
 struct FieldActor;

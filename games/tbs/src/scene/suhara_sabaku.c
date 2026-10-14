@@ -11,7 +11,7 @@
 #include "unit/object/djinnev.h"
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
-#include "unit/game/flag.h"
+#include "unit/game/game.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"

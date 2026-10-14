@@ -15,7 +15,7 @@
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
-#include "unit/game/chara.h"
+#include "unit/game/game.h"
 #include "unit/window/window.h"
 #include "unit/window/output.h"
 #include "unit/window/save.h"

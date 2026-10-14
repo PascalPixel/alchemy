@@ -11,7 +11,7 @@
 #include "unit/object/djinnev.h"
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
-#include "unit/game/chara.h"
+#include "unit/game/game.h"
 #include "unit/shop/shop.h"
 #include "unit/shop/seido.h"
 #include "unit/shop/yadoya.h"

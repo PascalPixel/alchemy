@@ -24,7 +24,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_696/s1880.o"(.text)
         "*/games/tla/src/field/overlay_696/s1cc8.o"(.text)
         "*/games/tla/src/field/common/drift_spawn.o"(.text)
-        "*/resource_696_overlay.o"(.text.x02009fec)
+        "*/games/tla/src/field/overlay_696/s1fec.o"(.text)
         "*/games/tla/src/field/overlay_696/s2068.o"(.text)
         "*/games/tla/src/field/overlay_696/s279c.o"(.text)
         "*/resource_696_overlay.o"(.text.x0200a90c)

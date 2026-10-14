@@ -14613,7 +14613,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 							if (tgt->x < 0)
 							{
 								hit = x < 0;
-								/* FAKEMATCH: cancelling updates under if (tgt) end CSE before the hit test and emit nothing, keeping the native sign result and duplicated side check (the per-side test and its goto are native); unguarded 77, one test after an if/else 65, a ?: of both sign tests 65 (77 tested whole), hit preset 0 then nested ifs 53, tests on shot->x 65, these guards and one test after the if/else 55. */
+								/* FAKEMATCH: cancelling updates under if (tgt) end CSE before the hit test and emit nothing, keeping the native sign result and duplicated side check (per-side test, goto native); unguarded 77 (3 English insns lost), one test after an if/else 65, ?: of both sign tests 65 (77 tested whole), hit preset 0 then nested ifs 53, tests on shot->x 65, these guards plus one test after the if/else 55. */
 								if (tgt)
 								{
 									hit ^= x;
@@ -16341,7 +16341,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 			{
 				s32 k = 32;
 				// loop.c matches this 32 with the smoke calls' 32 and hoists it out of the frame loop, where it loses its register and later reloads rotate: after an earlier move its threshold is 12, and savings 2 x life 19 x 12 = 456 reaches the loop's 448 insns.
-				/* FAKEMATCH: the barrier keeps k's 32 in this loop's preheader, as native, and its two codeless preheader insns lengthen i's life (1292), so n (28 refs/106) ranks before i (195 refs) and takes r9; without it i takes r9 and a slot appears at [sp, #60] (differ 699); a 96 local before the ramp loops also defeats the hoist (432 < 448). */
+				/* FAKEMATCH: the barrier keeps k's 32 in this loop's preheader, as native, and its two codeless preheader insns lengthen i's life (1292), so n (28 refs/106) ranks before i (195 refs) and takes r9; a 96 local before the ramp loops also defeats the hoist (432 < 448) but lacks those insns, so i takes r9 and a slot appears at [sp, #60] (differ 699). */
 				asm("" : "+r"(k));
 				blit[0](dst, ramp + w, w + 48, i + 16, k - w * 2, 1);
 			}

@@ -10606,7 +10606,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 					dirty = 1;
 					scene->tutorial_timer = 0;
 					scene->tutorial_step = 11;
-					/* FAKEMATCH: the one-pass block keeps the step store before the cursor store, as native; plain it follows the cursor load (differ 4; all four plain 26). With the save and open as a statement macro: one from UiWork_FinalizeFar to the step store matches, but case 11 has an extra WaitFrames there; around dirty, timer and step 10, the step alone or from render->dirty 4, the restore alone 22. */
+					/* FAKEMATCH: one-pass block keeps the step store before the cursor store, as native; plain it follows the cursor load (differ 4; all four plain 26). Save/open as a macro: UiWork_FinalizeFar to step matches, but case 11 has an extra WaitFrames there, so none serves both; around dirty, timer and step 10, step alone or from render->dirty 4, restore (UiWork_FinalizeFar to render->dirty) 22. */
 					do
 					{
 						state->cursor->active = 13;
@@ -10639,7 +10639,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 					dirty = 1;
 					scene->tutorial_timer = 0;
 					scene->tutorial_step = 12;
-					/* FAKEMATCH: the one-pass block keeps the step store before the cursor store, as native; plain it follows the cursor load (differ 4; all four plain 26). With the save and open as a statement macro: one from UiWork_FinalizeFar to the step store matches, but case 11 has an extra WaitFrames there; around dirty, timer and step 10, the step alone or from render->dirty 4, the restore alone 22. */
+					/* FAKEMATCH: one-pass block keeps the step store before the cursor store, as native; plain it follows the cursor load (differ 4; all four plain 26). Save/open as a macro: UiWork_FinalizeFar to step matches, but case 11 has an extra WaitFrames there, so none serves both; around dirty, timer and step 10, step alone or from render->dirty 4, restore (UiWork_FinalizeFar to render->dirty) 22. */
 					do
 					{
 						state->cursor->active = 13;

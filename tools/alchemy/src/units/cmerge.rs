@@ -921,8 +921,10 @@ pub fn merge(sources: &[Source], headers: &Known, options: &Options) -> Result<M
             out.push_str(&rename_all(&text));
             emitted.insert(key);
         }
+        // Comments after a file's last item keep its spacing, as those
+        // before an item do: a blank line only where the file had one.
         for c in &f.trailing {
-            out.push_str("\n\n");
+            out.push_str(if blank_line_before(f.text, c.start) { "\n\n" } else { "\n" });
             out.push_str(c.text);
         }
         if !views.is_empty() {
@@ -1051,6 +1053,19 @@ mod tests {
         assert_eq!(merged.text.matches("void g(void);").count(), 1);
         assert!(merged.text.contains("// 最初\nvoid f(void)"));
         assert!(merged.text.find("void f(void)").unwrap() < merged.text.find("void g(void)\n{").unwrap());
+    }
+
+    #[test]
+    fn comments_trailing_a_file_keep_their_spacing() {
+        // heap.c ended with the next section's banner and a three-line
+        // note: one block, then a blank line, as the file had them.
+        let a = source("a.c", "void f(void)\n{\n}\n\n//----\n// 描画\n//----\n\n// note one\n// note two\n");
+        let b = source("b.c", "void g(void)\n{\n}\n");
+        let merged = merge(&[a, b], &Known::default(), &Options::default()).unwrap();
+        assert!(merged.text.contains("void f(void)\n{\n}\n\n//----\n// 描画\n//----\n\n// note one\n// note two\n"), "{}", merged.text);
+        let tight = source("c.c", "void h(void)\n{\n}\n// right after\n");
+        let merged = merge(&[tight], &Known::default(), &Options::default()).unwrap();
+        assert!(merged.text.contains("void h(void)\n{\n}\n// right after\n"), "{}", merged.text);
     }
 
     #[test]

@@ -24,7 +24,7 @@ const USAGE: &str = "usage: alchemy dead [--check] [--apply PATH...] [--skip PAT
   --apply PATH  remove the dead arms, headers and declarations under PATH\n\
                 (a file or folder prefix; repeatable)\n\
   --skip PATH   leave files under PATH untouched by --apply (repeatable)\n\
-Arms of a chain that tests MODERN count as live. Declarations used only by\n\
+Arms of a chain that tests MODERN, UBFIX or BUGFIX count as live. Declarations used only by\n\
 recon drafts are reported apart and kept.";
 
 pub fn run(args: &[String]) -> Result<(), String> {
@@ -635,12 +635,15 @@ fn only_error(text: &Text, arm: &Arm) -> bool {
     error
 }
 
-fn tests_modern(chain: &Chain) -> bool {
-    chain
-        .arms
-        .iter()
-        .any(|arm| identifiers(&arm.condition).any(|word| word == "MODERN"))
+/// A chain that tests a build switch: the modern build (MODERN), pret's
+/// undefined-behaviour fixes (UBFIX) or its opt-in bug fixes (BUGFIX). The
+/// matching build selects none of their arms, and code behind them is not
+/// dead code (AGENTS.md, Goal).
+fn tests_switch(chain: &Chain) -> bool {
+    chain.arms.iter().any(|arm| identifiers(&arm.condition).any(|word| SWITCHES.contains(&word)))
 }
+
+const SWITCHES: [&str; 3] = ["MODERN", "UBFIX", "BUGFIX"];
 
 fn identifiers(text: &str) -> impl Iterator<Item = &str> {
     text.split(|c: char| !c.is_ascii_alphanumeric() && c != '_')
@@ -749,7 +752,7 @@ impl Report {
             }
             let text = &marked.texts[file];
             for (index, chain) in found.iter().enumerate() {
-                if tests_modern(chain) || inside_modern(found, chain) {
+                if tests_switch(chain) || inside_switch(found, chain) {
                     continue;
                 }
                 // A chain inside a dead arm is reported through that arm.
@@ -871,10 +874,10 @@ impl Report {
     }
 }
 
-fn inside_modern(chains: &[Chain], chain: &Chain) -> bool {
+fn inside_switch(chains: &[Chain], chain: &Chain) -> bool {
     let mut parent = chain.parent;
     while let Some((index, _)) = parent {
-        if tests_modern(&chains[index]) {
+        if tests_switch(&chains[index]) {
             return true;
         }
         parent = chains[index].parent;
@@ -1350,9 +1353,21 @@ mod tests {
     }
 
     #[test]
-    fn modern_chains_stay() {
-        let text = Text::new("#ifdef MODERN\nint a;\n#else\nint b;\n#endif\n".into());
-        assert!(tests_modern(&chains(&text)[0]));
+    fn switch_chains_stay() {
+        for source in [
+            "#ifdef MODERN\nint a;\n#else\nint b;\n#endif\n",
+            "#ifdef UBFIX\nint a = 0;\n#else\nint a;\n#endif\n",
+            "#ifndef BUGFIX\nint a;\n#endif\n",
+            "#if MODERN || defined(BUGFIX)\n#define UBFIX\n#endif\n",
+        ] {
+            let text = Text::new(source.into());
+            assert!(tests_switch(&chains(&text)[0]), "{source}");
+        }
+        let text = Text::new("#ifdef UBFIXED\nint a;\n#endif\n".into());
+        assert!(!tests_switch(&chains(&text)[0]));
+        let text = Text::new("#ifdef UBFIX\n#if A\nint a;\n#endif\n#endif\n".into());
+        let found = chains(&text);
+        assert!(inside_switch(&found, &found[1]));
     }
 
     #[test]

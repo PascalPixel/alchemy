@@ -6,7 +6,6 @@
 #include "unit/object/evactor.h"
 #include "unit/field/mapcell.h"
 #include "unit/runtime/runtime.h"
-#include "unit/runtime/serial.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

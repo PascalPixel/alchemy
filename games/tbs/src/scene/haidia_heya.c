@@ -12,7 +12,7 @@
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/mapview.h"
-#include "unit/runtime/math.h"
+#include "unit/runtime/runtime.h"
 #include "haidia_heya.h"
 #include "call.h"
 #include "fxblend.h"

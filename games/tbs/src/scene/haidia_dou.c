@@ -14,7 +14,7 @@
 #include "unit/object/djinnev.h"
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
-#include "unit/runtime/math.h"
+#include "unit/runtime/runtime.h"
 
 #include "fieldobj.h"
 #include "mapcopy.h"

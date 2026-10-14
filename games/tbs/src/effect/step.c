@@ -13,7 +13,7 @@
 #include "unit/object/evtable.h"
 #include "unit/object/djinnev.h"
 #include "unit/object/psyfx.h"
-#include "unit/runtime/matrix.h"
+#include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

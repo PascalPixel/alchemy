@@ -13,8 +13,6 @@
 #include "unit/object/djinnev.h"
 #include "unit/object/psyfx.h"
 #include "unit/runtime/runtime.h"
-#include "unit/runtime/math.h"
-#include "unit/runtime/heap.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

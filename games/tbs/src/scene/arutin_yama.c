@@ -15,7 +15,6 @@
 #include "unit/field/field.h"
 #include "unit/field/mapcell.h"
 #include "unit/runtime/runtime.h"
-#include "unit/runtime/math.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

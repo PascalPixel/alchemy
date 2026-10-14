@@ -13,8 +13,7 @@
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/game/item.h"
-#include "unit/runtime/objvram.h"
-#include "unit/runtime/math.h"
+#include "unit/runtime/runtime.h"
 
 #define NULL ((void *)0)
 #include "fieldobj.h"

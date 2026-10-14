@@ -4,8 +4,6 @@
 #include "unit/window/save.h"
 #include "unit/object/objtable.h"
 #include "unit/runtime/runtime.h"
-#include "unit/runtime/objvram.h"
-#include "unit/runtime/heap.h"
 #include "types.h"
 #include "edition.h"
 #include "window.h"

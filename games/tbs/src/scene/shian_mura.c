@@ -13,7 +13,7 @@
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
 #include "unit/field/mapcell.h"
-#include "unit/runtime/math.h"
+#include "unit/runtime/runtime.h"
 
 #define NULL ((void *)0)
 #include "fieldobj.h"

@@ -9,7 +9,7 @@
 #include "unit/object/object.h"
 #include "unit/object/objtable.h"
 #include "unit/object/evactor.h"
-#include "unit/runtime/heap.h"
+#include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

@@ -15,7 +15,6 @@
 #include "unit/object/djinnev.h"
 #include "unit/object/psyfx.h"
 #include "unit/runtime/runtime.h"
-#include "unit/runtime/sched.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

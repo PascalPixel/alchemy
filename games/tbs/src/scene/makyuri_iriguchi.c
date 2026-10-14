@@ -26,8 +26,7 @@
 #include "unit/window/window.h"
 #include "unit/window/output.h"
 #include "unit/window/save.h"
-#include "unit/runtime/math.h"
-#include "unit/runtime/heap.h"
+#include "unit/runtime/runtime.h"
 #include "iowrite.h"
 
 #define NULL ((void *)0)

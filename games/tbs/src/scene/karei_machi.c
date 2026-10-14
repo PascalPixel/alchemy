@@ -18,7 +18,7 @@
 #include "unit/window/window.h"
 #include "unit/window/output.h"
 #include "unit/window/save.h"
-#include "unit/runtime/sched.h"
+#include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

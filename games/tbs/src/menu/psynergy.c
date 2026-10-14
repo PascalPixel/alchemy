@@ -5,7 +5,6 @@
 #include "unit/menu/useitem.h"
 #include "unit/menu/compare.h"
 #include "unit/runtime/runtime.h"
-#include "unit/runtime/heap.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

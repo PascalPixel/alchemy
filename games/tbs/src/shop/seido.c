@@ -2,8 +2,6 @@
 #include "unit/shop/buysell.h"
 #include "unit/shop/seido.h"
 #include "unit/runtime/runtime.h"
-#include "unit/runtime/sched.h"
-#include "unit/runtime/math.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

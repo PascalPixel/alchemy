@@ -16,7 +16,7 @@
 #include "unit/field/fldobj.h"
 #include "unit/field/mapview.h"
 #include "unit/field/mapcell.h"
-#include "unit/runtime/math.h"
+#include "unit/runtime/runtime.h"
 #include "iowrite.h"
 #include "object_effect.h"
 

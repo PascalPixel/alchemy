@@ -21,9 +21,7 @@
 #include "unit/window/window.h"
 #include "unit/window/output.h"
 #include "unit/window/save.h"
-#include "unit/runtime/objvram.h"
-#include "unit/runtime/sched.h"
-#include "unit/runtime/math.h"
+#include "unit/runtime/runtime.h"
 
 #define NULL ((void *)0)
 #include "fieldobj.h"

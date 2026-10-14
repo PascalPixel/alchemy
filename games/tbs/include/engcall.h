@@ -15,7 +15,6 @@
 #include "unit/object/evactor.h"
 #include "unit/object/evcamera.h"
 #include "unit/runtime/runtime.h"
-#include "unit/runtime/sched.h"
 #include "unit/window/window.h"
 #include "unit/window/select.h"
 #include "unit/game/flag.h"

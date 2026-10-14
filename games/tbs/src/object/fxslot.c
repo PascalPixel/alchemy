@@ -5,7 +5,7 @@
 #include "unit/object/djinnev.h"
 #include "unit/object/psyfx.h"
 #include "unit/object/fxslot.h"
-#include "unit/runtime/math.h"
+#include "unit/runtime/runtime.h"
 #include "types.h"
 #include "scene.h"
 #include "btltype.h"

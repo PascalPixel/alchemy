@@ -19,17 +19,6 @@ main	rom_main_00	games/tbs/src/runtime/trig
 main	rom_main_00	games/tbs/src/system/resource/decode_01	.text .rodata .text.decode_2_loop
 main	rom_main_00	games/tbs/src/system/heapfree	.text .text.* .rodata .data .padding
 main	rom_main_00	games/tbs/src/runtime/runtime	.text
-main	rom_main_00	games/tbs/src/runtime/ioqueue	.text
-main	rom_main_00	games/tbs/src/runtime/fade	.text
-main	rom_main_00	games/tbs/src/runtime/oamlist	.text
-main	rom_main_00	games/tbs/src/runtime/objvram	.text
-main	rom_main_00	games/tbs/src/runtime/sched	.text
-main	rom_main_00	games/tbs/src/runtime/math	.text
-main	rom_main_00	games/tbs/src/runtime/basepal	.text
-main	rom_main_00	games/tbs/src/runtime/heap	.text
-main	rom_main_00	games/tbs/src/runtime/matrix	.text
-main	rom_main_00	games/tbs/src/runtime/ramcode	.text
-main	rom_main_00	games/tbs/src/runtime/serial	.text
 main	rom_main_00	games/tbs/src/system/cpu_set	.text .padding .text.sound_vsync_on
 main	rom_main_00	games/common/src/system/save/flash	.text
 main	rom_main_00	games/common/src/system/save/sst	.text

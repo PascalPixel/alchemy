@@ -11,7 +11,7 @@
 #include "unit/window/window.h"
 #include "unit/window/output.h"
 #include "unit/window/save.h"
-#include "unit/runtime/math.h"
+#include "unit/runtime/runtime.h"
 #include "torebi_machi.h"
 #include "iwram_call.h"
 #include "call.h"

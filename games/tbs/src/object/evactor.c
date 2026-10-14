@@ -10,7 +10,6 @@
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/runtime/runtime.h"
-#include "unit/runtime/math.h"
 #include "types.h"
 #include "scene.h"
 #include "btltype.h"

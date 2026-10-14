@@ -21,7 +21,6 @@
 #include "unit/field/player.h"
 #include "unit/field/mapcell.h"
 #include "unit/runtime/runtime.h"
-#include "unit/runtime/math.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"

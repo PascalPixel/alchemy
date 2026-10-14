@@ -1,8 +1,6 @@
 #include "unit/shop/shop.h"
 #include "unit/shop/buysell.h"
 #include "unit/runtime/runtime.h"
-#include "unit/runtime/objvram.h"
-#include "unit/runtime/heap.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

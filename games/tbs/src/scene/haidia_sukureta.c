@@ -11,7 +11,7 @@
 #include "unit/object/djinnev.h"
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
-#include "unit/runtime/math.h"
+#include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

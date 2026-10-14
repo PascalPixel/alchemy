@@ -11,7 +11,6 @@
 #include "unit/effect/swirl.h"
 #include "unit/object/objtable.h"
 #include "unit/runtime/runtime.h"
-#include "unit/runtime/heap.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

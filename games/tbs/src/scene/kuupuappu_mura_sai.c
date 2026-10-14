@@ -13,7 +13,7 @@
 #include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/game/item.h"
-#include "unit/runtime/math.h"
+#include "unit/runtime/runtime.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"

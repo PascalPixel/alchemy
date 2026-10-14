@@ -7,8 +7,6 @@
 #include "unit/field/mapcell.h"
 #include "unit/field/update.h"
 #include "unit/runtime/runtime.h"
-#include "unit/runtime/math.h"
-#include "unit/runtime/heap.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

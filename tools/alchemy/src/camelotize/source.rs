@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::ops::Range;
 use std::path::{Component, Path, PathBuf};
 
@@ -309,23 +309,35 @@ pub(crate) fn resolve(name: &str, quoted: bool, directory: &Path, search: &[Path
 }
 
 pub(crate) fn reachable(file: &Path, search: &[PathBuf]) -> BTreeSet<PathBuf> {
-    let mut seen = BTreeSet::new();
+    include_graph(file, search, &|_| None).into_values().flatten().map(|(path, _)| path).collect()
+}
+
+/// What `file` includes and what each file it reaches includes, #if
+/// ignored: each file (canonical; `file` as given) with the files its
+/// includes resolve to, and whether each was found beside it. `stand_in`
+/// gives the text read in place of a file's (by its canonical path), as a
+/// trial compiles it.
+pub(crate) fn include_graph(file: &Path, search: &[PathBuf], stand_in: &dyn Fn(&Path) -> Option<String>) -> BTreeMap<PathBuf, Vec<(PathBuf, bool)>> {
+    let mut graph = BTreeMap::new();
     let mut pending = vec![file.to_path_buf()];
     while let Some(path) = pending.pop() {
-        let Ok(bytes) = std::fs::read(&path) else {
+        if graph.contains_key(&path) {
             continue;
-        };
-        let text = String::from_utf8_lossy(&bytes);
+        }
+        let text = stand_in(&path).or_else(|| std::fs::read(&path).ok().map(|bytes| String::from_utf8_lossy(&bytes).into_owned()));
         let directory = path.parent().unwrap_or(Path::new("."));
-        for (name, quoted) in includes(&text) {
-            if let Some(header) = resolve(&name, quoted, directory, search) {
-                if seen.insert(header.clone()) {
-                    pending.push(header);
-                }
+        let mut included = Vec::new();
+        for (name, quoted) in includes(text.as_deref().unwrap_or("")) {
+            let beside = if quoted { resolve(&name, true, directory, &[]) } else { None };
+            let found = beside.is_some();
+            if let Some(header) = beside.or_else(|| resolve(&name, false, directory, search)) {
+                pending.push(header.clone());
+                included.push((header, found));
             }
         }
+        graph.insert(path, included);
     }
-    seen
+    graph
 }
 
 pub(crate) fn spelling(file: &Path, header: &Path, search: &[PathBuf]) -> Option<String> {
@@ -426,6 +438,28 @@ mod tests {
         assert!(out.ends_with("#include \"late.inc\"\n"));
         let bare = insert_include("/* head */\nvoid F(void);\n", "io_reg.h");
         assert_eq!(bare, "/* head */\n#include \"io_reg.h\"\n\nvoid F(void);\n");
+    }
+
+    #[test]
+    fn the_include_graph_reads_stand_ins_and_tells_what_is_found_beside() {
+        let root = tempfile::tempdir().unwrap();
+        let base = root.path().canonicalize().unwrap();
+        let (include, common) = (base.join("include"), base.join("scene/common"));
+        std::fs::create_dir_all(&include).unwrap();
+        std::fs::create_dir_all(&common).unwrap();
+        std::fs::write(include.join("types.h"), "").unwrap();
+        std::fs::write(include.join("b.h"), "").unwrap();
+        std::fs::write(common.join("a.h"), "#include \"b.h\"\n#include \"types.h\"\n").unwrap();
+        std::fs::write(common.join("b.h"), "").unwrap();
+        let unit = base.join("scene/unit.c");
+        std::fs::write(&unit, "#include \"common/a.h\"\n").unwrap();
+        let search = std::slice::from_ref(&include);
+        let graph = include_graph(&unit, search, &|_| None);
+        assert_eq!(graph[&common.join("a.h")], [(common.join("b.h"), true), (include.join("types.h"), false)]);
+        assert_eq!(reachable(&unit, search), [common.join("a.h"), common.join("b.h"), include.join("types.h")].into());
+        // A stand-in's includes are the ones read.
+        let stand_in = |path: &Path| (path == common.join("b.h")).then(|| "#include <b.h>\n".to_string());
+        assert_eq!(include_graph(&unit, search, &stand_in)[&common.join("b.h")], [(include.join("b.h"), false)]);
     }
 
     #[test]

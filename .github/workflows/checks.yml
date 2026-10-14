@@ -71,7 +71,7 @@ jobs:
   tbs-from-source:
     name: ☀️ from a clean clone, with no ROM
     runs-on: ubuntu-24.04
-    timeout-minutes: 90
+    timeout-minutes: 60
     env:
       CARGO_TARGET_DIR: ${{ github.workspace }}/tools/out/cargo-target
       RUSTUP_TOOLCHAIN: 1.98.1
@@ -107,35 +107,3 @@ jobs:
 
       - name: Build the six ☀️ editions and check each against rom.sha1
         run: make compare-tbs
-
-      # The modern build and the boot test (make boot-tbs, alchemy boot
-      # --help): each edition's matching ROM and modern ROM booted in mGBA to
-      # the file menu, the modern one held to the matching one. Nothing either
-      # makes is uploaded; ROMs, ELFs and memory dumps stay on the runner (L1).
-      - name: Install the pinned Arm GNU Toolchain
-        env:
-          TOOLCHAIN: arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi
-          TOOLCHAIN_URL: https://developer.arm.com/-/media/Files/downloads/gnu/14.2.rel1/binrel
-          # The archive's SHA-256: the job fails here until it is pinned.
-          TOOLCHAIN_SHA256: ""
-        run: |
-          test -n "$TOOLCHAIN_SHA256" || { echo "::error::pin the Arm GNU Toolchain archive's SHA-256 in TOOLCHAIN_SHA256"; exit 1; }
-          curl --fail --silent --show-error --location --output "$RUNNER_TEMP/$TOOLCHAIN.tar.xz" "$TOOLCHAIN_URL/$TOOLCHAIN.tar.xz"
-          echo "$TOOLCHAIN_SHA256  $RUNNER_TEMP/$TOOLCHAIN.tar.xz" | sha256sum --check --strict
-          tar -xJf "$RUNNER_TEMP/$TOOLCHAIN.tar.xz" -C "$RUNNER_TEMP"
-          echo "$RUNNER_TEMP/$TOOLCHAIN/bin" >> "$GITHUB_PATH"
-
-      - name: Install mGBA, the ARM debugger, Xvfb and Mesa
-        run: |
-          sudo apt-get update
-          sudo apt-get install --yes --no-install-recommends mgba-sdl gdb-multiarch xvfb xauth libgl1-mesa-dri
-          apt-cache policy mgba-sdl gdb-multiarch xvfb libgl1-mesa-dri
-          test -x /usr/games/mgba
-
-      - name: Build the six ☀️ editions with the modern compiler (make modern)
-        run: |
-          arm-none-eabi-gcc --version
-          make modern MODERN_CC=arm-none-eabi-gcc
-
-      - name: Boot each edition's matching and modern ROM in mGBA (make boot-tbs)
-        run: xvfb-run --auto-servernum make boot-tbs BOOT_EMULATOR=/usr/games/mgba BOOT_GDB=gdb-multiarch

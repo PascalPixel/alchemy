@@ -1975,21 +1975,24 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
 	struct BattleEffectWork *work;
 	void					*canvas;
 	s32						 frame;
-	BlitterPair				 draw;
-	s32						 i;
-	u8						*graphics;
-	struct BattleCamera		*camera;
-	struct MotionObject		*caster;
-	struct MotionObject		*source;
-	struct MotionObject		*target;
-	struct EffectStep		*point;
-	struct EffectStep		*step;
-	s32						 start;
-	s32						 peak;
-	s32						 size;
-	s32						 j;
-	s32						 k;
-	struct EffectStep		*trails;
+	/* FAKEMATCH: frame local: only draw[0] is used; the unused second blitter word fills
+	   four bytes of the frame. Measured (2026-10-14): declared as one DrawRectangle, the
+	   frame is 112 bytes for 116 (differ 24, frame offsets only). */
+	BlitterPair			 draw;
+	s32					 i;
+	u8					*graphics;
+	struct BattleCamera *camera;
+	struct MotionObject *caster;
+	struct MotionObject *source;
+	struct MotionObject *target;
+	struct EffectStep	*point;
+	struct EffectStep	*step;
+	s32					 start;
+	s32					 peak;
+	s32					 size;
+	s32					 j;
+	s32					 k;
+	struct EffectStep	*trails;
 
 	work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
 	canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
@@ -2144,19 +2147,22 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
 	struct BattleEffectWork *work;
 	void					*canvas;
 	s32						 frame;
-	BlitterPair				 draw;
-	s32						 i;
-	u8						*graphics;
-	struct BattleCamera		*camera;
-	struct MotionObject		*source;
-	struct MotionObject		*target;
-	struct EffectStep		*point;
-	struct EffectStep		*step;
-	struct EffectPosition	 pos;
-	s32						 size;
-	s32						 j;
-	s32						 k;
-	struct EffectStep		*trails;
+	/* FAKEMATCH: frame local: only draw[0] is used; the unused second blitter word fills
+	   four bytes of the frame. Measured (2026-10-14): declared as one DrawRectangle, the
+	   frame is 60 bytes for 64 (differ 20, frame offsets only). */
+	BlitterPair			  draw;
+	s32					  i;
+	u8					 *graphics;
+	struct BattleCamera	 *camera;
+	struct MotionObject	 *source;
+	struct MotionObject	 *target;
+	struct EffectStep	 *point;
+	struct EffectStep	 *step;
+	struct EffectPosition pos;
+	s32					  size;
+	s32					  j;
+	s32					  k;
+	struct EffectStep	 *trails;
 
 	work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
 	canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);

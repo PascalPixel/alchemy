@@ -1697,10 +1697,13 @@ void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
 	void					*canvas;
 	s32						 i;
 	s32						 frame;
-	BlitterPair				 draw;
-	u8						*sprites;
-	struct EffectPosition	 pos;
-	s32						 j;
+	/* FAKEMATCH: frame local: only draw[0] is used; the unused second blitter word fills
+	   four bytes of the frame. Measured (2026-10-14): declared as one DrawRectangle, the
+	   frame is 60 bytes for 64 (differ 33, frame offsets only). */
+	BlitterPair			  draw;
+	u8					 *sprites;
+	struct EffectPosition pos;
+	s32					  j;
 
 	heap = gBattleFxWork;
 	cursor = heap;
@@ -3970,15 +3973,18 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 	void					*dst;
 	u8						*aux;
 	s32						 frame;
-	BlitterPair				 blit;
-	s32						 size;
-	s32						 count;
-	s32						 i;
-	s32						 j;
-	s32						 n;
-	struct EffectStep		*p;
-	DrawRectangle			*cache;
-	s32						 rings = 0x2710;
+	/* FAKEMATCH: frame local: only blit[0] is used; the unused second blitter word fills
+	   four bytes of the frame. Measured (2026-10-14): declared as one DrawRectangle, the
+	   frame is 332 bytes for 336 (differ 102, frame offsets only). */
+	BlitterPair		   blit;
+	s32				   size;
+	s32				   count;
+	s32				   i;
+	s32				   j;
+	s32				   n;
+	struct EffectStep *p;
+	DrawRectangle	  *cache;
+	s32				   rings = 0x2710;
 
 	slots = &gWorkSlot[HEAP_SLOT_BATTLE_BACKGROUND];
 	ctrl = slots[0];

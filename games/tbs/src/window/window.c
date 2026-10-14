@@ -3,7 +3,6 @@
 // 表示：スプライト出力（RenderOutput）のあきリスト
 //--------------------------------------------------------------------------
 
-#include "unit/window/mark_codes.h"
 #include "unit/window/scales.h"
 #include "unit/window/spranim.h"
 #include "unit/window/textspd.h"

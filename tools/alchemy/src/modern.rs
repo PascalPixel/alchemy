@@ -15,10 +15,10 @@
 //! the scaffold build exactly as in the matching build. The rest of the
 //! option set:
 //! - `-std=gnu89`: the source is C89 (S3); GCC 15 and later default to C23,
-//!   where `bool` is a keyword and `f()` means `f(void)`.
-//! - `-fpermissive`: GCC 14 made implicit declarations, int/pointer
-//!   conversions and incompatible pointer types errors; here they stay
-//!   warnings, reported rather than stopping the build.
+//!   where `bool` is a keyword and `f()` means `f(void)`. Under gnu89 the
+//!   classes GCC 14 made errors for C99 and later (implicit declarations,
+//!   int/pointer conversions, incompatible pointer types, mismatched
+//!   returns) stay warnings, so the build takes no `-fpermissive`.
 //! - `-fcall-used-r4`: the game's calling convention (K1), which its
 //!   assembly relies on, not a matching device.
 //! - `-fno-zero-initialized-in-bss`: Camelot's compiler kept zero-initialised
@@ -84,7 +84,6 @@ const COMMON_FLAGS: &[&str] = &[
     "-O2",
     "-fno-toplevel-reorder",
     "-std=gnu89",
-    "-fpermissive",
     "-ffreestanding",
     "-nostdinc",
     "-fno-zero-initialized-in-bss",

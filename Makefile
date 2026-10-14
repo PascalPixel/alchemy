@@ -14,6 +14,9 @@ JOBS ?= $(CPUS)
 SHA1 := $(shell { command -v sha1sum || command -v shasum; } 2>/dev/null) -c
 MAKEFLAGS += --no-print-directory
 .SUFFIXES:
+# Keep every file the build makes, overlay ELFs and objects included: the
+# matching aids read them (as pret keeps its intermediates).
+.SECONDARY:
 
 .DEFAULT_GOAL := help
 .PHONY: help all compare $(EDITIONS) $(addprefix compare-,$(EDITIONS)) compare-tbs compare-tla compare-editions clean
@@ -269,7 +272,7 @@ $(BUILD)/obj/%.o: %.mid $(MID2AGS)
 # --- make modern (Goal, point 5) -------------------------------------------
 # The same C through a current GCC, as pret's `make modern`: every file
 # must compile, with no match expected. Errors stop it; warnings are the
-# camelotize pass's to read.
+# humanizing pass's to read.
 
 MODERN_CC ?= arm-none-eabi-gcc
 MODERN_CFLAGS := -mthumb-interwork -mcpu=arm7tdmi -mabi=apcs-gnu -O2 -fno-toplevel-reorder -std=gnu89 \

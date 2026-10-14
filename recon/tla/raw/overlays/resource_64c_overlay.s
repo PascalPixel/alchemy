@@ -2254,54 +2254,6 @@ Func_02001168:
 	.4byte IwramMulQ16
 .L_020091f0:
 	.4byte Data_02002e80
-	.section .text.x0200930c,"ax",%progbits
-	.balign 4
-	.global Func_0200130c
-	.thumb_func
-Func_0200130c:
-	push {lr}
-	movs r0, #128
-	movs r1, #252
-	lsls r0, r0, #19
-	lsls r1, r1, #6
-	adds r0, #80
-	adds r1, #65
-	bl QueueIoWriteDelay2
-	ldr r3, .L_02009344
-	movs r2, #2
-	ldr r3, [r3]
-	ands r3, r2
-	ldr r2, .L_02009348
-	cmp r3, #0
-	beq .L_0200934c
-	ldrh r3, [r2]
-	ldr r1, .L_02009340
-	movs r0, #128
-	lsls r0, r0, #19
-	orrs r1, r3
-	adds r0, #82
-	bl QueueIoWriteDelay2
-	b .L_0200935c
-	.2byte 0x0000
-.L_02009340:
-	.4byte 0x0000000c
-.L_02009344:
-	.4byte gFrameCount
-.L_02009348:
-	.4byte Data_02003fc0
-.L_0200934c:
-	ldrh r3, [r2]
-	ldr r1, .L_02009360
-	movs r0, #128
-	lsls r0, r0, #19
-	orrs r1, r3
-	adds r0, #82
-	bl QueueIoWriteDelay2
-.L_0200935c:
-	pop {pc}
-	.2byte 0x0000
-.L_02009360:
-	.4byte 0x00000010
 	.section .text.x02009400,"ax",%progbits
 	.global Func_02001400
 	.thumb_func

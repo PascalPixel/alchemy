@@ -41,7 +41,6 @@
 #include "io_reg.h"
 #include "vram_block.h"
 #include "ram_buffer.h"
-#include "call.h"
 #include "field_scene.h"
 #include "map_scroll.h"
 
@@ -178,13 +177,13 @@ static void Title_LoadSprites(s32 unused)
 		gTitleVramBlock = Resource_FindFreeEntry();
 	Dma_Set(res, (void *)0x05000200, 0x84000070, REG_DMA3);
 	res += 0x1c0;
-	Resource_DecodeType01(res, buffer);
+	FieldResource_DecodeType01(res, buffer);
 	Vram_Load(gTitleVramBlock, 0x1e00, buffer + 0x7800);
 #else
 	buffer = Runtime_BumpAllocateAlternatePool(0x520);
 	if (gTitleVramBlock == -1)
 		gTitleVramBlock = Resource_FindFreeEntry();
-	Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), buffer);
+	FieldResource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), buffer);
 	Dma_Set(buffer, (void *)0x050003e0, 0x84000008, REG_DMA3);
 	Vram_Load(gTitleVramBlock, 0x500, buffer + 32);
 #endif
@@ -265,7 +264,7 @@ static void Title_RevealScreen(s32 unused)
 	Engine_EventWait(30);
 	gTitleRevealFrame = 0;
 	Title_LoadSprites(0);
-	Engine_TaskAddCallback(Title_RevealSpriteRow, 0xc80);
+	FieldScheduler_AddCallback(Title_RevealSpriteRow, 0xc80);
 	IO_WRITE_QUEUE_PUSH(0x4000000, 0x1540, 0x20000);
 	IO_WRITE_QUEUE_PUSH(0x4000050, 0x2fce, 0x20000);
 	IO_WRITE_QUEUE_PUSH(0x4000054, 16, 0x20000);
@@ -302,7 +301,7 @@ static void Title_LoadBackground(void)
 	res = Resource_GetTableEntry(id);
 	Dma_Set(res, (void *)0x05000000, 0x84000070, REG_DMA3);
 	res += 0x1c0;
-	Value2(Resource_DecodeType01, (s32)res, (s32)Ram_MapCellBuffer);
+	FieldResource_DecodeType01(res, Ram_MapCellBuffer);
 	Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, REG_DMA3);
 	map = (u16 *)0x06003000;
 	tile = 0x1a0;

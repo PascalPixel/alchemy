@@ -1065,7 +1065,7 @@ static void EV54_SCRIPT(void)
 
 	if (slot->f06 == 0x4000)
 	{
-		BattleFx_RunRisingObjectSequence(0, 6, 0);
+		FieldBattleFx_RunRisingObjectSequence(0, 6, 0);
 	}
 	else
 	{
@@ -1292,7 +1292,7 @@ static void TakaraAshiba_InitializeScene2(void)
 	Object_GetById(12)->scale_x = 0xb333;
 	FieldScheduler_AddOrUpdateCallback((s32)SceneState_TriggerColumnNineteen, 0xc80);
 	FieldScheduler_AddOrUpdateCallback((s32)SceneState_TriggerColumnTen, 0xc80);
-	Engine_TaskAddCallback((s32)TakaraAshiba_RaiseTriggerOnStand, 0xc80);
+	FieldScheduler_AddCallback((s32)TakaraAshiba_RaiseTriggerOnStand, 0xc80);
 	Io_Write16(0x3f42, &REG_BLDCNT);
 	Io_Write16(0x607, &REG_BLDALPHA);
 }
@@ -1303,7 +1303,7 @@ static void TakaraAshiba_InitializeScene3(void)
 
 	Object_GetById(14)->motion_flags = 0;
 	FieldScheduler_AddOrUpdateCallback((s32)ActorPresentation_PlaceActorFourteenOnActorNine, 0xc80);
-	Engine_TaskAddCallback((s32)SceneActor_PublishMarkerBySlotZeroHeight, 0xc80);
+	FieldScheduler_AddCallback((s32)SceneActor_PublishMarkerBySlotZeroHeight, 0xc80);
 	MapObject_SetPosition(107, 0, 0);
 	if (GameFlag_IsSet(0xed9) != 0)
 	{

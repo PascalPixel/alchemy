@@ -1,4 +1,5 @@
 #include "mem.h"
+#include "engcall.h"
 #include "dma.h"
 #include "system.h"
 #include "callback_scheduler.h"
@@ -27,6 +28,6 @@ void DisplayScroll_InitializeHBlankDma(
 	work->amp_y = amp_y;
 	work->step_x = step_x;
 	work->step_y = step_y;
-	Scheduler_AddOrUpdateCallback(DisplayScroll_BuildAndSwapHBlankPage, 3200);
-	Scheduler_AddOrUpdateCallback(DisplayScroll_ArmHBlankDma, 1152);
+	FieldScheduler_AddCallback(DisplayScroll_BuildAndSwapHBlankPage, 3200);
+	FieldScheduler_AddCallback(DisplayScroll_ArmHBlankDma, 1152);
 }

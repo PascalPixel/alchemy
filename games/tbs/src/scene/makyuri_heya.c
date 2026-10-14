@@ -50,10 +50,10 @@
 #include "system.h"
 #include "types.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "field_scene.h"
 #include "text/msg_ids.h"
 #include "edition.h"
-#include "call.h"
 #include "global_cells.h"
 #include "map_render_work.h"
 #include "io_reg.h"
@@ -361,7 +361,7 @@ static void MakyuriHeya_WalkLeaderIn(void)
 
 	work = gEventWork;
 	Engine_EventBegin();
-	Engine_TaskAddCallback((s32)SceneEffect_SpawnParticleEveryFourthFrame, 0xc80);
+	FieldScheduler_AddCallback((s32)SceneEffect_SpawnParticleEveryFourthFrame, 0xc80);
 	Actor_SetSpeed(0, 0x28000, 0x14000);
 	Engine_ActorSetAnimation(0, 1);
 	Object_GetById(0)->steering_flags &= ~ACTOR_FACES_MOTION;
@@ -620,7 +620,7 @@ static void FieldScene_RunSupplementalSequenceOne(s32 a0)
 	Engine_EventWait(a0);
 	FieldScene_RunOpeningAuxiliarySequence(0, next, (next + 1));
 	Engine_AudioPlayCue(211);
-	Engine_TaskAddCallback((s32)MakyuriHeya_SprayAtFountain, 0xc80);
+	FieldScheduler_AddCallback((s32)MakyuriHeya_SprayAtFountain, 0xc80);
 	Engine_MapRenderWaitForValues();
 }
 
@@ -997,7 +997,7 @@ static s32 MakyuriHeya_StartActorNineParticles(void)
 {
 	s32 n = 0xc80;
 
-	Engine_TaskAddCallback((s32)SceneActor_UseActorNinePositionWithYOffset, n);
+	FieldScheduler_AddCallback((s32)SceneActor_UseActorNinePositionWithYOffset, n);
 	return 0;
 }
 
@@ -1271,6 +1271,7 @@ static void EV03_TALK(void)
 
 static void MakyuriHeya_FadePaletteToWhite(void)
 {
+	/* Palette RAM is hardware (its volatile is source, not a device): volatile makes each read of palette RAM a load of its own: the native reads every color with three ldrh, one per component; without it one load is shifted for all three and the function is 104 bytes for 106 in tbs-en (2026-10-13). */
 	volatile u16 *pal;
 	u32			  i;
 	u32			  done;
@@ -1499,6 +1500,7 @@ static void SceneEffect_RotatePaletteEntries97To103(void)
 
 static void MakyuriHeya_FadePaletteToBlack(void)
 {
+	/* Palette RAM is hardware (its volatile is source, not a device): volatile makes each read of palette RAM a load of its own: the native reads every color with three ldrh, one per component, and again after the store; without it one load is shifted for all three and the function is 98 bytes for 100 in tbs-en (2026-10-13). */
 	volatile u16 *pal;
 	u32			  i;
 	s32			  done;
@@ -1849,14 +1851,14 @@ static void EV15_TOUCH(void)
 		Map_CopyCellsTo(92, 46, 92, 40, 3, 2);
 		Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
 		Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
-		Call3(BattleFx_RunRisingObjectSequence, ACTOR_PARTY_LEADER, 6, -1);
+		FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, -1);
 		gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
 		Engine_EventWait(60);
 		Engine_EventRequestExit(8);
 	}
 	else
 	{
-		Call3(BattleFx_RunRisingObjectSequence, ACTOR_PARTY_LEADER, 6, -1);
+		FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, -1);
 	}
 	Engine_EventEnd();
 }
@@ -2044,7 +2046,7 @@ s32 Scene_Initialize(void)
 	Makyuri_SpawnLightObjects(21, (s32)gSceneState);
 	BattleFx_StartFadeOverlay(0);
 	if (Engine_GameFlagIsSet(0x875))
-		Engine_TaskAddCallback(Makyuri_CyclePalette, 0xc80);
+		FieldScheduler_AddCallback(Makyuri_CyclePalette, 0xc80);
 	else
 		Makyuri_ClearPalette();
 	if (gGameState.scene == (s32)&SceneId_MakyuriHeya1)
@@ -2153,7 +2155,7 @@ s32 Scene_Initialize(void)
 				Map_CopyCellAttributes(9, 5, 1, 1, 9, 10);
 			}
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-			Engine_TaskAddCallback(MakyuriHeya_UpdateLeaderEffectTarget, 0xc80);
+			FieldScheduler_AddCallback(MakyuriHeya_UpdateLeaderEffectTarget, 0xc80);
 #endif
 			break;
 		case 7:
@@ -2267,7 +2269,7 @@ s32 Scene_Initialize(void)
 			{
 				MakyuriHeya_OpenStoneDoor(2);
 				if (Object_GetById(9)->z.fixed >> 20 == 44)
-					Engine_TaskAddCallback(SceneActor_UseActorNinePositionWithYOffset, 0xc80);
+					FieldScheduler_AddCallback(SceneActor_UseActorNinePositionWithYOffset, 0xc80);
 			}
 			else if (Engine_GameFlagIsSet(0x31a))
 			{
@@ -2307,7 +2309,7 @@ s32 Scene_Initialize(void)
 			{
 				MakyuriHeya_OpenStoneDoor(2);
 				if (Object_GetById(9)->z.fixed >> 20 == 44)
-					Engine_TaskAddCallback(SceneActor_UseActorNinePositionWithYOffset, 0xc80);
+					FieldScheduler_AddCallback(SceneActor_UseActorNinePositionWithYOffset, 0xc80);
 			}
 			else if (Engine_GameFlagIsSet(0x31a))
 			{
@@ -2349,7 +2351,7 @@ s32 Scene_Initialize(void)
 		switch (gGameState.entrance)
 		{
 		case 10:
-			Engine_TaskAddCallback(SceneEffect_RotatePaletteEntries97To103, 0xc80);
+			FieldScheduler_AddCallback(SceneEffect_RotatePaletteEntries97To103, 0xc80);
 			if (Engine_GameFlagIsSet(0x109))
 				break;
 			Makyuri_ArriveWithSparks();
@@ -2419,7 +2421,7 @@ s32 Scene_Initialize(void)
 				Engine_ActorSetSpritePriority(10, 1);
 				Map_CopyCellAttributes(116, 37, 3, 3, 52, 37);
 				Map_CopyCellsTo(126, 35, 116, 35, 1, 2);
-				Engine_TaskAddCallback(SceneEffect_RotatePaletteEntries40To47, 0xc80);
+				FieldScheduler_AddCallback(SceneEffect_RotatePaletteEntries40To47, 0xc80);
 				break;
 			}
 			if (!Engine_GameFlagIsSet(0x871))
@@ -2436,7 +2438,7 @@ s32 Scene_Initialize(void)
 				}
 				SetEffectRecordMode(Object_GetById(3), 1);
 				Map_CopyCellsTo(126, 35, 116, 35, 1, 2);
-				Engine_TaskAddCallback(SceneEffect_RotatePaletteEntries40To47, 0xc80);
+				FieldScheduler_AddCallback(SceneEffect_RotatePaletteEntries40To47, 0xc80);
 			}
 			else
 			{

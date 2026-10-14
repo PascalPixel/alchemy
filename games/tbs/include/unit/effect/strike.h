@@ -17,7 +17,7 @@ void BattleFx_RunMemberBurstMode0(struct BattleEffectArgument *effect);
 void BattleFx_RunMemberBurstMode1(struct BattleEffectArgument *effect);
 void BattleFx_RunMemberBurstMode2(struct BattleEffectArgument *effect);
 void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode);
-void BattleFx_FetchRectangleBlitters(s32 flip, BattleEffectDrawRectangle *out);
+void BattleFx_FetchRectangleBlitters(s32 flip, BlitterPair out);
 void BattleFx_RunFortyEightFrameMode1(struct BattleEffectArgument *effect);
 void BattleFx_RunFortyEightFrameMode0(struct BattleEffectArgument *effect);
 void BattleFx_RunFortyEightFrameMode2(struct BattleEffectArgument *effect);

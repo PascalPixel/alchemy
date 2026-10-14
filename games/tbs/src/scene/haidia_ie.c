@@ -35,7 +35,6 @@
 #include "global_cells.h"
 #include "haidia_ie.h"
 #include "map_scroll.h"
-#include "call.h"
 #include "text/msg_ids.h"
 #include "field_event.h"
 #include "field_service.h"
@@ -60,6 +59,19 @@ static void FieldScene_RunStep15(void);
 static void FieldScene_RunStep17(void);
 static void FieldScene_RunStep20(void);
 static void SceneState_SetValues352_365_2116_2117_40(void);
+
+// 向きを変えて待つ: SceneActor_SetPairZeroAndValue をインライン関数を通して呼ぶ
+static inline void HaidiaIe_TurnAndWait(s32 actor, s32 facing, s32 frames)
+{
+	/* FAKEMATCH: forwarding inline for Scene_RunExtendedActorSequence's three calls (call.h's Call3 did the same); called directly the function grows by 4 bytes and builds its stack arguments in other registers (2026-10-13). */
+	SceneActor_SetPairZeroAndValue(actor, facing, frames);
+}
+
+static inline s32 HaidiaIe_TurnAndWaitValue(s32 actor, s32 facing, s32 frames)
+{
+	/* FAKEMATCH: forwarding inline called as returning a value, its result discarded (call.h's Value3 did the same); through HaidiaIe_TurnAndWait the argument allocation changes, called directly differ 30 (r5 and r6 swap), and through a plain s32 cast EV20_TOUCH differs 15 halfwords (2026-10-13). */
+	return ((s32 (*)())SceneActor_SetPairZeroAndValue)(actor, facing, frames);
+}
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/object_facing.c"
@@ -208,7 +220,7 @@ static void EV17_TALK(void)
 			OverlayObject_UpdateOnFrameBit1((s32)Object_GetById(17));
 			Engine_TaskWait(1);
 		}
-		Engine_TaskAddCallback((s32)FieldScene_RunStep17, 0xc80);
+		FieldScheduler_AddCallback((s32)FieldScene_RunStep17, 0xc80);
 		Engine_AudioPlayCue(107);
 		for (i = 0; i != 180; i++)
 		{
@@ -311,7 +323,7 @@ static void FieldScene_RunMiddleAuxiliarySequence(void)
 		Engine_TaskWait(1);
 	}
 	FieldScheduler_AddOrUpdateCallback((s32)FieldScene_RunStep15, 0xc80);
-	Engine_TaskAddCallback((s32)FieldScene_RunStep20, 0xc80);
+	FieldScheduler_AddCallback((s32)FieldScene_RunStep20, 0xc80);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
 	rec8 = Object_GetById(20);
 	v2 = rec8->motion_flags;
@@ -716,8 +728,7 @@ static void EV20_TOUCH(void)
 		Camera_MoveTo(0xcd0000, -1, 0x30a0000, 1);
 		Engine_ActorEnableActionCallback(22, (s32)HaidiaIe_Actor22Actions);
 		Object_RefreshSelectorById(22);
-		/* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. Direct call: differ 30 (r5 and r6 swap). */
-		Value3(SceneActor_SetPairZeroAndValue, 22, 0x2000, 60);
+		HaidiaIe_TurnAndWaitValue(22, 0x2000, 60);
 		Engine_ActorRunRepeatedMotion(19, 2);
 		Event_SayThenWait(19, 10);
 		Engine_ActorSetAnimationAndWait(22, 3);
@@ -925,7 +936,6 @@ static void FieldScene_RunGroupChoreography(void)
 
 static void HaidiaIe_RunActorPairEffectScene(void)
 {
-
 	struct FieldActor *record;
 	s32				   v5;
 
@@ -949,12 +959,7 @@ static void HaidiaIe_RunActorPairEffectScene(void)
 	Engine_ActorSetSpriteFlags(record, 0);
 	Engine_ActorSetAnimation(25, 7);
 	record = Object_GetById(25);
-	{
-		u8 *motion = (u8 *)record->sprite;
-		u16 shown = 0x1555;
-
-		*(u16 *)(motion + 30) = shown;
-	}
+	record->sprite->rotation = 0x1555;
 	record = Object_GetById(25);
 	Engine_ActorSetSpriteFlags(record, 0);
 	{
@@ -1060,7 +1065,7 @@ static void Scene_RunExtendedActorSequence(void)
 	Event_SayThenWait(12, 20);
 	Actor_SetSpeed(11, 0x10000, 0x8000);
 	Actor_WalkToAndWait(11, 168, 0x26a);
-	Call3(SceneActor_SetPairZeroAndValue, 11, 0xf000, 10);
+	HaidiaIe_TurnAndWait(11, 0xf000, 10);
 	Engine_ActorSetAnimation(11, 4);
 	Event_SayThenWait(11, 20);
 	SceneActor_SetPairZeroAndValue(12, 0x7000, 10);
@@ -1185,7 +1190,7 @@ static void Scene_RunExtendedActorSequence(void)
 	Actor_WalkToAndWait(16, 0x108, 0x320);
 	Actor_FaceDirection(16, 0x6000, 0);
 	Actor_ShowEmote(1, 0x102, 40);
-	Call3(SceneActor_SetPairZeroAndValue, 1, 0xf000, 10);
+	HaidiaIe_TurnAndWait(1, 0xf000, 10);
 	Event_SayThenWait(1, 10);
 	Engine_ActorSetAnimationAndWait(17, 4);
 	Event_SayThenWait(17, 10);
@@ -1221,7 +1226,7 @@ static void Scene_RunExtendedActorSequence(void)
 	Actor_ShowEmote(0, 0x101, 60);
 	Engine_ActorRunRepeatedMotion(16, 1);
 	Event_SayThenWait(16, 10);
-	Call3(SceneActor_SetPairZeroAndValue, 1, 0xf000, 10);
+	HaidiaIe_TurnAndWait(1, 0xf000, 10);
 	Actor_ShowEmote(1, 0x101, 20);
 	Engine_ActorSetAnimationAndWait(16, 4);
 	Event_SayThenWait(16, 10);

@@ -26,6 +26,7 @@
 #include "types.h"
 #include "tbs_edition.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "field_scene.h"
 #include "korima_mura.h"
 #include "staged_actor.h"
@@ -292,7 +293,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Engine_ColorBufferInterpolate(1);
 	Engine_TaskWait(1);
 	KorimaHashi_SparkleSound = 1;
-	Engine_TaskAddCallback(SceneEffect_SpawnObject26EveryEightFrames, 0xc80);
+	FieldScheduler_AddCallback(SceneEffect_SpawnObject26EveryEightFrames, 0xc80);
 	Engine_TaskWait(20);
 	ColorBuffer_ApplyTarget(0x405210, 1);
 	ColorBuffer_ApplyTarget(0x10000, 2);
@@ -367,7 +368,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	gFallingEffectWidth = 0;
 	gFallingEffectOffset = 0x800000;
 	gFallingEffectState = 1;
-	Engine_TaskAddCallback(FieldScene_UpdateFallingEffect, 0xc80);
+	FieldScheduler_AddCallback(FieldScene_UpdateFallingEffect, 0xc80);
 	Engine_EventWait(180);
 	Event_PlayCue(21);
 	Event_SayThenWait(GERALD, 80);
@@ -414,7 +415,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Engine_ActorSetSpritePriority(IWAN, 3);
 	Engine_ActorSetSpritePriority(MEARI, 3);
 	KorimaHashi_TriggerPending = 0;
-	Engine_TaskAddCallback(KorimaHashi_AlternateBridgePostHeights, 0xc80);
+	FieldScheduler_AddCallback(KorimaHashi_AlternateBridgePostHeights, 0xc80);
 	Event_PlayCue(220);
 	Object_GetById(13)->priority_flags &= 254;
 	Engine_ActorSetSpritePriority(13, 2);
@@ -678,7 +679,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	gFallingEffectWidth = 0;
 	gFallingEffectOffset = 0x800000;
 	gFallingEffectState = 1;
-	Engine_TaskAddCallback(FieldScene_UpdateFallingEffect, 0xc80);
+	FieldScheduler_AddCallback(FieldScene_UpdateFallingEffect, 0xc80);
 	Engine_EventWait(80);
 	Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	Engine_ActorStartRepeatedMotion(GERALD, 2);

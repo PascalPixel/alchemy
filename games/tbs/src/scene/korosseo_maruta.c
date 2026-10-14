@@ -62,7 +62,6 @@
 #include "sound.h"
 #include "system.h"
 #include "mem.h"
-#include "call.h"
 #include "field_service.h"
 #include "flag_ids.h"
 #include "text/msg_ids.h"
@@ -274,7 +273,7 @@ static void ColossoLogRollingStage_ResetAndRunSceneTask(void)
 
 static void ColossoLogRollingStage_StartSceneTask(void)
 {
-	Engine_TaskAddCallback(ColossoLogRollingStage_SceneTask, 0xC80);
+	FieldScheduler_AddCallback(ColossoLogRollingStage_SceneTask, 0xC80);
 }
 
 static void ColossoLogRollingStage_WaitForSceneTask(void)
@@ -474,7 +473,7 @@ static void EV13_PSYNERGY(void)
 
 	actor = Object_GetById(13);
 	x = actor->x >> 20;
-	GameFlag_SetByte(880, x);
+	FieldGameFlag_SetByte(880, x);
 	Map_CopyCellAttributes(18, 10, 3, 1, 18, 11);
 	Map_CopyCellAttributes(17, 11, 1, 1, x, 11);
 }
@@ -791,7 +790,7 @@ static void EV05_RAISED(void)
 	Engine_ObjectSetPosition(actor, actor->x, actor->y, z + 0xC0000);
 	Object_CommitPosition(actor);
 	Engine_ActorSetAttachedEffect(*slot, 258);
-	BattleFx_RunRisingObjectSequence(*slot, 6, 0);
+	FieldBattleFx_RunRisingObjectSequence(*slot, 6, 0);
 }
 
 static void ColossoLogRollingStage_NoopSceneEventHook(void)
@@ -909,7 +908,7 @@ s32 StageSetup_BuildAndDispatch(void)
 
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	Engine_GameFlagSet(324);
-	Engine_TaskAddCallback(ColossoLogRollingStage_ShowActorPositionMessage, 3200);
+	FieldScheduler_AddCallback(ColossoLogRollingStage_ShowActorPositionMessage, 3200);
 	Map_CopyCellAttributes(74, 60, 8, 6, 120, 60);
 
 	Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
@@ -964,7 +963,7 @@ s32 StageSetup_BuildAndDispatch(void)
 		actor->y.fixed = 32 << 16;
 	}
 
-	column = GameFlag_GetByte(880);
+	column = FieldGameFlag_GetByte(880);
 	if (column == 0)
 	{
 		column = 19;
@@ -1017,7 +1016,7 @@ s32 StageSetup_BuildAndDispatch(void)
 			actor->motion_flags = 0;
 			actor->y.fixed = 32 << 16;
 		}
-		Engine_TaskAddCallback(ColossoLogRollingStage_SceneTask, 3200);
+		FieldScheduler_AddCallback(ColossoLogRollingStage_SceneTask, 3200);
 	}
 
 	if (Engine_GameFlagIsSet(864) != 0)
@@ -1099,7 +1098,7 @@ s32 StageSetup_BuildAndDispatch(void)
 		break;
 
 	case 2:
-		Engine_TaskAddCallback(SceneState_RaiseTriggerOnPsynergyTarget, 3200);
+		FieldScheduler_AddCallback(SceneState_RaiseTriggerOnPsynergyTarget, 3200);
 		Engine_ActorDestroy(39);
 		Engine_ActorDestroy(40);
 		if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0)
@@ -1633,10 +1632,11 @@ static void EV35_TALK(s32 scene)
 			Engine_EventWait(60);
 			Engine_EventShowMessage(scene, 0);
 			Korosseo_FadeInCompetitor(0, 504, 200);
-			/* FAKEMATCH: the void result is discarded; Call3 changes argument allocation.
+			/* FAKEMATCH: called through a cast to the s32 call type the bytes show, its result
+			 * discarded (as call.h's Value3 did, 2026-10-13); Call3 changes argument allocation.
 			 * 2026-10-13: the scene layer's Actor_FaceDirection loads r0 before r1
 			 * and r2, where native loads it last (differ 2). */
-			Value3(Engine_ActorFaceDirection, 0, 0, 0);
+			((s32 (*)())Engine_ActorFaceDirection)(0, 0, 0);
 			ColossoLogRollingStage_WaitForSceneTask();
 			Actor_SetSpeed(0, 0x18000, 0xc000);
 			SceneActor_StartMode5MoveToTile(0, 680, 200);
@@ -1895,7 +1895,7 @@ static void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
 	{
 		s32 budget = 0xc80;
 		s32 task = (s32)Korosseo_UpdateModeTask;
-		Engine_TaskAddCallback(task, budget);
+		FieldScheduler_AddCallback(task, budget);
 	}
 
 	handler = (s32)gColossoModeScriptDefault;
@@ -1997,10 +1997,11 @@ static void FieldScene_RunScene3bcSequenceA(s32 a0)
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(86);
 		Korosseo_LoadPortrait(8);
-		/* FAKEMATCH: the void result is discarded; Call2 changes argument allocation.
+		/* FAKEMATCH: called through a cast to the s32 call type the bytes show, its result
+		 * discarded (as call.h's Value2 did, 2026-10-13); Call2 changes argument allocation.
 		 * 2026-10-13: called directly, as elsewhere in this file, each of these two
 		 * sites loads r0 before r1, where native loads r1 first (differ 4). */
-		Value2(ColossoLogRollingStage_InitializeModeTask, 3, 1);
+		((s32 (*)())ColossoLogRollingStage_InitializeModeTask)(3, 1);
 		Engine_EventWait(-a0 * 60 + 60);
 		kind = 0;
 	}
@@ -2009,8 +2010,8 @@ static void FieldScene_RunScene3bcSequenceA(s32 a0)
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(a0 + 90);
 		Korosseo_LoadPortrait(4);
-		/* FAKEMATCH: the void result is discarded, as in the first arm. */
-		Value2(ColossoLogRollingStage_InitializeModeTask, 3, 0);
+		/* FAKEMATCH: called through the s32 cast, its result discarded, as in the first arm. */
+		((s32 (*)())ColossoLogRollingStage_InitializeModeTask)(3, 0);
 		Engine_EventWait(a0 * 60 + 60);
 		kind = 8;
 	}
@@ -2248,7 +2249,7 @@ static void ColossoLogRollingStage_PushStagedActor(void)
 	step <<= 16;
 	position.z = target->z + step;
 
-	if (Object_CheckMovementCollision(target, &position) > 0)
+	if (FieldObject_CheckMovementCollision(target, &position) > 0)
 	{
 		return;
 	}

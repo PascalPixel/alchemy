@@ -58,7 +58,6 @@
 #include "keystate.h"
 #include "btltype.h"
 #include "sound_ids.h"
-#include "call.h"
 #include "btlsys.h"
 #include "battle_session.h"
 #include "animspr.h"
@@ -90,7 +89,7 @@ struct Chip
 void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
 {
 	struct EffectPosition	 pos;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	void				   **heap;
 	void				   **cursor;
 	struct BattleEffectWork *work;
@@ -284,7 +283,7 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
 	struct BattleEffectWork *work;
 	void					*canvas;
 	s32						 frame;
-	struct BlitterPair		 draw;
+	BlitterPair				 draw;
 	struct BattleCamera		*camera;
 	u8						*palette;
 	s32						 i;
@@ -303,9 +302,9 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
 	palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
 	Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
-	draw.upper = heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+	draw[0] = heap[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
-	draw.lower = heap[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+	draw[1] = heap[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
 	Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma, 0x480);
 	work->transfer_mode = 3;
 	work->transfer_value = 0x04040404;
@@ -373,7 +372,7 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
 						{
 							EffectPosition_ApplyBaseAndYOffset((s32 *)skull, &pos);
 							pos.x >>= 1;
-							draw.upper(
+							draw[0](
 								canvas, work->sheet + i % 3 * 576, pos.x - 12, pos.y - 12, 24, 24);
 							skull->x -= skull->x / dist;
 							skull->y -= skull->y / dist;
@@ -407,7 +406,7 @@ void BattleFx_RunMemberOrbit(void *effect)
 	struct BattleEffectWork *work;
 	void					*canvas;
 	void					*palette;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	s32						 point[3];
 	struct EffectPosition	 screen;
 	s32						 member;
@@ -548,7 +547,7 @@ void BattleFx_RunMemberBurstMode2(struct BattleEffectArgument *effect)
 void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
 {
 	struct EffectPosition	 pos;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	void				   **heap;
 	void				   **cursor;
 	struct BattleEffectWork *work;
@@ -686,7 +685,7 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
 // flip : 0 以外なら左右反転して描く
 // out  : [0] 比較合成 (大きい色番号を残す)、[1] 加算合成 (63 で飽和)
 //--------------------------------------------------------------------------
-void BattleFx_FetchRectangleBlitters(s32 flip, DrawRectangle *out)
+void BattleFx_FetchRectangleBlitters(s32 flip, BlitterPair out)
 {
 	if (flip == 0)
 	{
@@ -740,7 +739,7 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
 	u8						*palette;
 	s32						 x;
 	struct EffectPosition	 pos;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	void				   **slots;
 	s32						 frame;
 	s32						 cell;
@@ -887,7 +886,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
 	s32						 point[3];
 	s32						 djinn_x;
 	s32						 djinn_y;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	void				   **cursor;
 	struct BattleEffectWork *work;
 	void					*canvas;
@@ -1127,7 +1126,7 @@ extern u16 SevenMode_ShardOffsets[];
 void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
 {
 	struct EffectPosition	 position;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	void				   **heap_cache;
 	void				   **cursor;
 	struct BattleEffectWork *work;
@@ -1379,7 +1378,7 @@ void BattleFx_RunCounterReveal(struct BattleEffectArgument *object)
 	void					*canvas;
 	u8						*sheet;
 	void					*cells;
-	DrawRectangle			 rectangle[2];
+	BlitterPair				 rectangle;
 	struct MotionObject		*member_object;
 	/* FAKEMATCH: needed to match: the second position is never used: it gives the frame its native 76 bytes 2026-10-11: a single position shrinks only the frame (differ 4). */
 	struct EffectPosition pos[2];
@@ -1697,7 +1696,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
 	struct Vector3			 scale;
 	s32						 origin_x;
 	s32						 origin_y;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	void				   **heap_cache;
 	void				   **cursor;
 	struct BattleEffectWork *work;
@@ -1850,7 +1849,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
 	struct BattleEffectWork *work;
 	void					*canvas;
 	s32						 frame;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	s32						 member;
 	struct BattleCamera		*camera;
 	s32						 shift;
@@ -1976,21 +1975,24 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
 	struct BattleEffectWork *work;
 	void					*canvas;
 	s32						 frame;
-	DrawRectangle			 draw[2];
-	s32						 i;
-	u8						*graphics;
-	struct BattleCamera		*camera;
-	struct MotionObject		*caster;
-	struct MotionObject		*source;
-	struct MotionObject		*target;
-	struct EffectStep		*point;
-	struct EffectStep		*step;
-	s32						 start;
-	s32						 peak;
-	s32						 size;
-	s32						 j;
-	s32						 k;
-	struct EffectStep		*trails;
+	/* FAKEMATCH: frame local: only draw[0] is used; the unused second blitter word fills
+	   four bytes of the frame. Measured (2026-10-14): declared as one DrawRectangle, the
+	   frame is 112 bytes for 116 (differ 48, frame offsets only). */
+	BlitterPair			 draw;
+	s32					 i;
+	u8					*graphics;
+	struct BattleCamera *camera;
+	struct MotionObject *caster;
+	struct MotionObject *source;
+	struct MotionObject *target;
+	struct EffectStep	*point;
+	struct EffectStep	*step;
+	s32					 start;
+	s32					 peak;
+	s32					 size;
+	s32					 j;
+	s32					 k;
+	struct EffectStep	*trails;
 
 	work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
 	canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
@@ -2145,19 +2147,22 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
 	struct BattleEffectWork *work;
 	void					*canvas;
 	s32						 frame;
-	DrawRectangle			 draw[2];
-	s32						 i;
-	u8						*graphics;
-	struct BattleCamera		*camera;
-	struct MotionObject		*source;
-	struct MotionObject		*target;
-	struct EffectStep		*point;
-	struct EffectStep		*step;
-	struct EffectPosition	 pos;
-	s32						 size;
-	s32						 j;
-	s32						 k;
-	struct EffectStep		*trails;
+	/* FAKEMATCH: frame local: only draw[0] is used; the unused second blitter word fills
+	   four bytes of the frame. Measured (2026-10-14): declared as one DrawRectangle, the
+	   frame is 60 bytes for 64 (differ 40, frame offsets only). */
+	BlitterPair			  draw;
+	s32					  i;
+	u8					 *graphics;
+	struct BattleCamera	 *camera;
+	struct MotionObject	 *source;
+	struct MotionObject	 *target;
+	struct EffectStep	 *point;
+	struct EffectStep	 *step;
+	struct EffectPosition pos;
+	s32					  size;
+	s32					  j;
+	s32					  k;
+	struct EffectStep	 *trails;
 
 	work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
 	canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
@@ -2294,7 +2299,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 	void					*draw_destination;
 	void					*view;
 	struct BattleEffectWork *runtime;
-	struct BlitterPair		 draw;
+	BlitterPair				 draw;
 	s32						 frame;
 	u8						*graphics;
 	struct Point2D			 wave;
@@ -2333,9 +2338,9 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 
 	BattleFx_BeginCanvasLayer(0);
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
-	draw.upper = (DrawRectangle)cells[6];
+	draw[0] = (DrawRectangle)cells[6];
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
-	draw.lower = (DrawRectangle)cells[7];
+	draw[1] = (DrawRectangle)cells[7];
 
 	tbl = Resource_GetTableEntry((s32)&ResourceId_WhirlwindSheet);
 	Iwram_CopyWords((void *)0x05000000, tbl, 0x80);
@@ -2461,9 +2466,8 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 			size = frame * 2 - 32;
 			if (size > 48)
 				size = 48;
-			draw.upper(draw_destination,
-				&runtime->sheet[frame / 4 % 3 * 3072 + (width - size) * 48], 32, 112 - size, width,
-				size);
+			draw[0](draw_destination, &runtime->sheet[frame / 4 % 3 * 3072 + (width - size) * 48],
+				32, 112 - size, width, size);
 		}
 
 		if ((u32)(frame - 48) <= 111)
@@ -2471,15 +2475,15 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 			size = frame * 2 - 96;
 			if (size > 64)
 				size = 64;
-			draw.upper(draw_destination, &runtime->sheet[frame / 4 % 3 * 3072 + (64 - size) * 48],
-				32, 64 - size, width, size);
+			draw[0](draw_destination, &runtime->sheet[frame / 4 % 3 * 3072 + (64 - size) * 48], 32,
+				64 - size, width, size);
 		}
 
 		if ((u32)(frame - 160) <= 239)
 		{
 			src = (u8 *)runtime + frame / 4 % 3 * 3072;
-			draw.upper(draw_destination, src, 8, 0, width, 64);
-			draw.upper(draw_destination, src, 8, 64, width, 64);
+			draw[0](draw_destination, src, 8, 0, width, 64);
+			draw[0](draw_destination, src, 8, 64, width, 64);
 		}
 
 		if (frame <= 159)
@@ -2497,7 +2501,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 					screen.x >>= 1;
 					if (point[index].y <= 0x3fffff)
 					{
-						draw.upper(draw_destination, (u8 *)runtime + 0x2400, screen.x - 12,
+						draw[0](draw_destination, (u8 *)runtime + 0x2400, screen.x - 12,
 							screen.y - 12, 16, 16);
 					}
 					if (point[index].z > 24)
@@ -2639,7 +2643,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 							if (screen.depth > 350)
 								screen.depth = 350;
 							span = 6 - (screen.depth - 170) / 36;
-							draw.lower(draw_destination,
+							draw[1](draw_destination,
 								graphics + ParticleStreams_CellOffsets[span - 1],
 								screen.x - span / 2, screen.y - span, span, span * 2);
 							point->x -= point->x / dist;
@@ -2656,8 +2660,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 					if (alive > 0)
 					{
 						span = alive / 10 + 1;
-						draw.lower(draw_destination,
-							graphics + ParticleStreams_CellOffsets[span - 1],
+						draw[1](draw_destination, graphics + ParticleStreams_CellOffsets[span - 1],
 							(wave.x >> 17) - span / 2 + 32, (wave.y >> 16) - span - 4, span,
 							span * 2);
 					}
@@ -2705,7 +2708,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 								if (screen.depth > 350)
 									screen.depth = 350;
 								span = 3 - (screen.depth - 170) / 90;
-								draw.upper(draw_destination,
+								draw[0](draw_destination,
 									graphics + ParticleStreams_CellOffsets[span - 1],
 									screen.x - span / 2, screen.y - span, span, span * 2);
 								spark[index].x += spark[index].velocity_x;
@@ -2750,9 +2753,8 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 						size = (frame - threshold) / 2;
 						if (size > 2)
 							size = 2;
-						draw.lower(draw_destination,
-							(u8 *)runtime + WhirlwindComets_CellOffsets[size], mark->x,
-							mark->y - WhirlwindComets_CellBiasY[size],
+						draw[1](draw_destination, (u8 *)runtime + WhirlwindComets_CellOffsets[size],
+							mark->x, mark->y - WhirlwindComets_CellBiasY[size],
 							WhirlwindComets_CellWidths[size], WhirlwindComets_CellHeights[size]);
 						mark->x -= 8;
 						mark->y += 2;
@@ -2784,7 +2786,7 @@ void BattleFx_RunWhirlwindComets(struct BattleEffectArgument *argument)
 								if (screen.depth > 350)
 									screen.depth = 350;
 								span = 3 - (screen.depth - 170) / 90;
-								draw.upper(draw_destination,
+								draw[0](draw_destination,
 									graphics + ParticleStreams_CellOffsets[span - 1],
 									screen.x - span / 2, screen.y - span, span, span * 2);
 								slot++;
@@ -2878,7 +2880,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 	void					*canvas;
 	struct BattleCamera		*camera;
 	struct BattleEffectWork *work;
-	struct BlitterPair		 draw;
+	BlitterPair				 draw;
 	s32						 frame;
 	u8						*sheet;
 	struct Point2D			 focus;
@@ -2897,10 +2899,10 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 	REG_BLDALPHA = 0x1010;
 	REG_BG2CNT = 0x784;
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
-	draw.upper = cursor[6];
+	draw[0] = cursor[6];
 	BattleEffect_LoadWork(
 		HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_KASAN);
-	draw.lower = cursor[7];
+	draw[1] = cursor[7];
 
 	// 閃光は FlashBurst、筋は EmberStreak (sheet + 0x3000) の絵
 	palette = Resource_GetTableEntry((s32)&ResourceId_FlashBurstSheet);
@@ -3121,8 +3123,8 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 
 				if (flash->variant >= 0)
 				{
-					draw.upper(canvas, work->sheet + ((flash->variant >> 2) << 11),
-						HI(flash->x) - 16, HI(flash->y) - 32, 32, 64);
+					draw[0](canvas, work->sheet + ((flash->variant >> 2) << 11), HI(flash->x) - 16,
+						HI(flash->y) - 32, 32, 64);
 					flash->x += flash->velocity_x * dir;
 					flash->y += flash->velocity_y;
 					flash->variant++;
@@ -3140,7 +3142,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 
 			if (spark->variant >= 0)
 			{
-				draw.lower(canvas, PaletteParticles_SparkPixels, HI(spark->x), HI(spark->y) - size,
+				draw[1](canvas, PaletteParticles_SparkPixels, HI(spark->x), HI(spark->y) - size,
 					size, size * 2);
 				spark->x += spark->velocity_x * dir;
 				spark->y += spark->velocity_y;
@@ -3165,7 +3167,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 					u8	size = PaletteParticles_DropSizes[i & 3];
 					s32 height = size * 2;
 
-					draw.upper(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+					draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
 						HI(grain->x) - size / 2, HI(grain->y) - size, size, height);
 					grain->x += grain->velocity_x * dir;
 					grain->y += grain->velocity_y;
@@ -3242,8 +3244,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 					{
 						s32 cel = streak->variant / 2;
 
-						draw.upper(canvas,
-							work->sheet + PaletteParticles_StreakOffsets[cel] + 0x3000,
+						draw[0](canvas, work->sheet + PaletteParticles_StreakOffsets[cel] + 0x3000,
 							streak->x - PaletteParticles_StreakWidths[cel] / 2,
 							streak->y + PaletteParticles_StreakDrops[cel],
 							PaletteParticles_StreakWidths[cel],
@@ -3261,7 +3262,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 					streak->y += 6;
 					if (frame <= 47 && streak->y > 55)
 						AudioCommand_PlayFar(136);
-					draw.upper(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+					draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
 						streak->x - size / 2, streak->y + 30, size, size * 2);
 				}
 				else
@@ -3296,7 +3297,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
 //--------------------------------------------------------------------------
 void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
 {
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	void				   **cursor;
 	void					*canvas;
 	struct BattleEffectWork *work;
@@ -3535,7 +3536,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
 	struct EffectPosition	 pos;
 	struct BattleEffectWork *work;
 	void					*canvas;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	u8						*palette;
 	struct MotionObject		*source;
 	struct MotionObject		*object;
@@ -3671,7 +3672,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
 
 void BattleFx_RunTornado(struct BattleEffectArgument *effect)
 {
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	void				   **heap_cache;
 	void				   **cursor;
 	struct BattleEffectWork *work;
@@ -3803,7 +3804,7 @@ void BattleFx_RunTornado(struct BattleEffectArgument *effect)
 //--------------------------------------------------------------------------
 void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
 {
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	void				   **cursor;
 	struct BattleEffectWork *work;
 	void					*canvas;
@@ -4005,7 +4006,7 @@ void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 
 //--------------------------------------------------------------------------
 void BattleFx_RunLightningPillars(struct BattleEffectArgument *effect)
 {
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	void				   **heap;
 	void				   **cursor;
 	struct BattleEffectWork *work;
@@ -4195,7 +4196,7 @@ void BattleFx_RunTwoModeBMode1(s32 effect)
 void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
 {
 	struct EffectPosition	 pos;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	void				   **heap_cache;
 	void				   **cursor;
 	struct BattleEffectWork *work;
@@ -4422,7 +4423,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
 	s32						 pillar;
 	u8						*sheet;
 	struct EffectPosition	 screen;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	struct MotionObject		*object;
 	struct BattleCamera		*camera;
 	s32						 i;
@@ -4680,7 +4681,7 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
 	struct EffectPosition	 screen;
 	s32						 point[3];
 	struct EffectPosition	 base;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	void					*palette;
 	s32						*row;
 	s32						 i;
@@ -5021,14 +5022,14 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
 	struct BattleEffectWork *work;
 	void					*canvas;
 	/* FAKEMATCH: needed to match: the family's blitter pair: this effect loads only one. A single blitter, as draw[1] or a plain pointer: differ 202. */
-	DrawRectangle		  draw[2];
-	struct EffectStep	 *marker;
-	s32					  i;
-	s32					  frame;
-	s32					  start;
-	s32					  cel;
-	s32					  y;
-	struct EffectPosition pos;
+	BlitterPair				 draw;
+	struct EffectStep		*marker;
+	s32						 i;
+	s32						 frame;
+	s32						 start;
+	s32						 cel;
+	s32						 y;
+	struct EffectPosition	 pos;
 
 	slot = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
 	canvas = slot[0];
@@ -5118,7 +5119,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
 	struct EffectPosition	 screen;
 	s32						 point[3];
 	struct EffectPosition	 view;
-	DrawRectangle			 callbacks[2];
+	BlitterPair				 callbacks;
 
 	heap_cache = gBattleFxWork;
 	cursor = heap_cache;

@@ -22,6 +22,7 @@
 #include "types.h"
 #include "text/msg_ids.h"
 #include "field_event.h"
+#include "field_service.h"
 #include "field_scene.h"
 #include "field_effect.h"
 #include "staged_actor.h"
@@ -37,7 +38,6 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "call.h"
 #include "ability_ids.h"
 #include "objcmd.h"
 
@@ -70,18 +70,18 @@ static s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 
 static s32 SceneActor_MoveActorZeroToTarget(const MoveTarget *target)
 {
-	struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
-	u8				   saved = actor->motion_flags;
-	s32				   probe[3];
+	struct FieldActor	*actor = Object_GetById(ACTOR_PARTY_LEADER);
+	u8					 saved = actor->motion_flags;
+	struct FieldPosition probe;
 
-	probe[0] = (actor->x.fixed & 0xfff00000) + 0x00080000;
-	probe[1] = actor->y.fixed;
-	probe[2] = (actor->z.fixed & 0xfff00000) + 0x00080000;
+	probe.x = (actor->x.fixed & 0xfff00000) + 0x00080000;
+	probe.y = actor->y.fixed;
+	probe.z = (actor->z.fixed & 0xfff00000) + 0x00080000;
 
-	Call3(Vector_AddPolarOffset, 0x00100000, (actor->facing + 0x2000) & 0xc000, (s32)probe);
+	FieldVector_AddPolarOffset(0x00100000, (actor->facing + 0x2000) & 0xc000, &probe);
 
-	if (Object_CheckMovementCollision(actor, probe) != 1
-		&& Object_CheckMovementCollision(actor, target) == 0)
+	if (FieldObject_CheckMovementCollision(actor, &probe) != 1
+		&& FieldObject_CheckMovementCollision(actor, target) == 0)
 	{
 		Engine_EventBegin();
 		Object_SetMode(actor, 6);
@@ -372,7 +372,7 @@ static void EV26_SCRIPT(void)
 
 static void FieldScene_RunStepWith6(void)
 {
-	BattleFx_RunRisingObjectSequence(0, 6, 0);
+	FieldBattleFx_RunRisingObjectSequence(0, 6, 0);
 }
 
 static void SceneActor_PassPointTwoRightOfActorZero(void)
@@ -1224,7 +1224,7 @@ s32 FieldScene_InitializeActorGroups(void)
 			Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
 			Object_GetById(8)->update = ACTOR_UPDATE_IDLE;
 			Object_GetById(9)->update = ACTOR_UPDATE_IDLE;
-			Engine_TaskAddCallback(BabiChika_UpdateTrackedActor, 0xc80);
+			FieldScheduler_AddCallback(BabiChika_UpdateTrackedActor, 0xc80);
 			break;
 		case 5:
 		case 6:
@@ -1243,7 +1243,7 @@ s32 FieldScene_InitializeActorGroups(void)
 			Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
 			Object_GetById(10)->update = ACTOR_UPDATE_IDLE;
 			Object_GetById(11)->update = ACTOR_UPDATE_IDLE;
-			Engine_TaskAddCallback(BabiChika_UpdateTrackedActor, 0xc80);
+			FieldScheduler_AddCallback(BabiChika_UpdateTrackedActor, 0xc80);
 			break;
 		case 10:
 		case 11:
@@ -1304,7 +1304,7 @@ s32 FieldScene_InitializeActorGroups(void)
 			Object_GetById(12)->update = ACTOR_UPDATE_IDLE;
 			Object_GetById(13)->update = ACTOR_UPDATE_IDLE;
 			Object_GetById(14)->update = ACTOR_UPDATE_IDLE;
-			Engine_TaskAddCallback(BabiChika_UpdateTrackedActor, 0xc80);
+			FieldScheduler_AddCallback(BabiChika_UpdateTrackedActor, 0xc80);
 			break;
 		}
 	}
@@ -1409,7 +1409,7 @@ s32 FieldScene_InitializeActorGroups(void)
 		case 12:
 			Map_CopyCellAttributes(8, 49, 1, 1, 8, 113);
 			FieldScene_RunLateSequenceHead();
-			Engine_TaskAddCallback(BabiChika_UpdateTrackedActor, 0xc80);
+			FieldScheduler_AddCallback(BabiChika_UpdateTrackedActor, 0xc80);
 			break;
 		case 13:
 		case 14:

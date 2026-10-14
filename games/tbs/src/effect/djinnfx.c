@@ -59,7 +59,6 @@
 #include "keystate.h"
 #include "btltype.h"
 #include "sound_ids.h"
-#include "call.h"
 #include "btlsys.h"
 #include "battle_session.h"
 #include "animspr.h"
@@ -109,7 +108,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
 	struct BattleCamera		*camera;
 	s32						 kind;
 	struct BtlUnit			*unit;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	DrawRectangle			*slots;
 	struct MotionObject		*target;
 	void					*colors = (void *)0x05000000;
@@ -336,7 +335,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
 	s32						 velocity_z;
 	s32						 acceleration;
 	s32						 strength;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	DrawRectangle			*slots;
 	struct MotionObject		*object;
 	struct MotionObject		*target;
@@ -601,7 +600,7 @@ void BattleFx_StepPaletteToResource(s32 resource_id)
 
 static __inline__ void LoadResource(const void *id, void *dest, s32 skip, s32 copy)
 {
-	/* FAKEMATCH: needed to match: inline scope keeps each resource call's arguments local */
+	/* FAKEMATCH: needed to match: inline scope keeps each resource call's arguments local; only BattleFx_RunCastingImpact loads through it: with its 24 loads called directly it differs throughout and is 2 instructions longer (tbs-en, 2026-10-14), and the same inline as a layer for the whole effect family breaks BattleFx_RunProjectileVolley and BattlePres_RunBurstScene (L6 review) */
 	Resource_LoadAndDecompress((s32)id, dest, skip, copy);
 }
 
@@ -688,7 +687,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 	s32						   strip_x;
 	struct FixedPointPosition  velocity;
 	struct EffectPosition	   spark_screen;
-	DrawRectangle			   blitters[2];
+	BlitterPair				   blitters;
 	struct EffectPosition	   projected;
 
 	slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;

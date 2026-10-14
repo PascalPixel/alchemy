@@ -55,7 +55,7 @@ static __inline__ void Party_RestoreAll(void)
 	s32				   cnt;
 	s32				   i;
 
-	cnt = Engine_PartyListActiveOwners(owners);
+	cnt = FieldParty_ListActiveOwners(owners);
 	for (i = 0; i < cnt; i++)
 	{
 		state = UnitGet(owners[i]);

@@ -247,7 +247,7 @@ s32 FuneHobashira_ApplyEntryState(void)
 	{
 		FuneHobashira_SwayX = (u16)Engine_RandomNext();
 		FuneHobashira_SwayY = (u16)Engine_RandomNext();
-		Engine_TaskAddCallback(FuneHobashira_UpdateSway, 0xc80);
+		FieldScheduler_AddCallback(FuneHobashira_UpdateSway, 0xc80);
 	}
 	if (Engine_GameFlagIsSet(0x925) != 0 && Engine_GameFlagIsSet(0x93e) == 0)
 	{

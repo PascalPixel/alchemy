@@ -25,7 +25,6 @@
 #include "field_event.h"
 #include "field_scene.h"
 #include "text/msg_ids.h"
-#include "call.h"
 #include "fieldobj.h"
 #include "ability_ids.h"
 #include "objcmd.h"
@@ -44,6 +43,13 @@ static void KorashiamuIriguchi_EscortToWestExit(void);
 static void KorashiamuIriguchi_WalkToWestExit(void);
 static void KorashiamuIriguchi_CelebrateBothWins(void);
 static void ActorPresentation_SetActorsTwelveToEighteen(void);
+
+// 向きを変える (10 フレーム): SceneState_ForwardMaskedHalfwordWith10 をインライン関数を通して呼ぶ
+static inline void KorashiamuIriguchi_Turn(s32 actor, s32 facing)
+{
+	/* FAKEMATCH: forwarding inline for EV10_TOUCH's one call (call.h's Call2 did the same); called directly EV10_TOUCH's later message skip swaps r2 and r3 (7 halfwords differ in tbs-en, 2026-10-13). */
+	SceneState_ForwardMaskedHalfwordWith10(actor, facing);
+}
 
 #define RECORD_17 17
 
@@ -528,7 +534,7 @@ static void EV10_TOUCH(void)
 		Engine_ActorSetAnimation(19, 3);
 		Engine_ActorSetAnimationAndWait(20, 3);
 		Actor_ShowEmote(3, 0x100, 60);
-		Call2(SceneState_ForwardMaskedHalfwordWith10, 3, 0xa000);
+		KorashiamuIriguchi_Turn(3, 0xa000);
 		FieldScene_CallPairWith10(3);
 		Engine_ActorSetAnimation(1, 4);
 		Engine_EventWait(20);

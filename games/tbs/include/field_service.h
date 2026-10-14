@@ -14,6 +14,7 @@
 #include "unit/field/mapcell.h"
 #include "unit/runtime/math.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "farcall.h"
 
 static inline void Actor_EnableActionCallback(s32 actor, const s32 *table)
@@ -187,9 +188,10 @@ static inline void Psynergy_Cancel(void)
 	Engine_PsynergyCancel();
 }
 
+// engcall.h の本体スケジューラ呼び出しを通る
 static inline s32 Task_AddCallback(void (*callback)(void), s32 priority)
 {
-	return Engine_TaskAddCallback(callback, priority);
+	return FieldScheduler_AddCallback(callback, priority);
 }
 
 static inline void Task_Wait(s32 frames)
@@ -227,9 +229,10 @@ static inline void FieldObject_MotionSetPositionAndCommit(s32 actor, s32 x, s32 
 	Engine_ObjectMotionSetPositionAndCommit(actor, x, z);
 }
 
+// engcall.h の本体スケジューラ呼び出しを通る
 static inline s32 FieldScheduler_AddOrUpdateCallback(s32 a0, s32 a1)
 {
-	return Engine_TaskAddCallback(a0, a1);
+	return FieldScheduler_AddCallback(a0, a1);
 }
 
 static inline void FieldObject_SetMoveTarget(s32 a0, s32 a1, s32 a2, s32 a3)

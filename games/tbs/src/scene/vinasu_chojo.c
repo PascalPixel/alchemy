@@ -30,6 +30,7 @@
 #include "types.h"
 #include "vinasu.h"
 #include "field_effect.h"
+#include "event.h"
 #include "field_event.h"
 #include "field_scene.h"
 #include "sound_ids.h"
@@ -235,7 +236,7 @@ static void InitializeActorZeroMotion(void)
 	position[1] = actor->y.fixed;
 	position[2] = (actor->z.fixed & 0xfff00000) + 0x80000;
 	Vector_AddPolarOffset(0x200000, angle, position);
-	if (Object_CheckMovementCollision(actor, position) == 0)
+	if (FieldObject_CheckMovementCollision(actor, position) == 0)
 	{
 		Engine_GameFlagClear(592);
 		EV11_TOUCH();
@@ -844,7 +845,7 @@ static void EV05_TOUCH(void)
 		frame = (frame + 1);
 		Engine_TaskWait(1);
 	} while ((u32)frame <= 39);
-	Engine_TaskAddCallback(FieldScene_RunStep6, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(FieldScene_RunStep6, TASK_PRIORITY_SCENE);
 	Engine_EventWait(80);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
 	Actor_FaceDirection(GERALD, FACING_SOUTHEAST, 0);
@@ -2080,7 +2081,7 @@ static void VinasuChojo_RunLeapEntrance(void)
 	Object_GetById(PARTICLE_SOURCE_ACTOR)->motion_flags = 4;
 	Actor_SetChildValue(PARTICLE_SOURCE_ACTOR, 4);
 	Actor_Get(PARTICLE_SOURCE_ACTOR)->y.fixed = PIXELS(40);
-	Engine_TaskAddCallback(SceneEffect_SpawnParticlesBesideActor, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(SceneEffect_SpawnParticlesBesideActor, TASK_PRIORITY_SCENE);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 	gEventWork->transition_frames = 24;
 	Engine_EventOpenScreen();
@@ -2135,7 +2136,7 @@ static void FieldScene_RunPairDefeat(void)
 	actor->y.fixed = PIXELS(34);
 	actor->z.fixed = PIXELS(96);
 
-	Engine_TaskAddCallback(SceneEffect_SpawnParticlesAboveActor, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(SceneEffect_SpawnParticlesAboveActor, TASK_PRIORITY_SCENE);
 	Engine_EventGetViewCenter()->motion_flags = 0;
 	Camera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(180), 0);
 	Engine_TaskWait(1);
@@ -2495,7 +2496,7 @@ static void VinasuChojo_RunActorTransition(void)
 	Engine_ActorSetSpritePriority(PARTICLE_SOURCE_ACTOR, 2);
 	VinasuChojo_TransitionStep = 0;
 	VinasuChojo_TransitionTimer = 240;
-	Engine_TaskAddCallback(VinasuChojo_RunTransitionStep, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(VinasuChojo_RunTransitionStep, TASK_PRIORITY_SCENE);
 	do
 	{
 		Engine_TaskWait(1);
@@ -2580,7 +2581,7 @@ static void FieldScene_RestageParty(void)
 	Actor_Get(6)->rise_counter = 0;
 	Actor_Get(PARTICLE_SOURCE_ACTOR)->motion_flags |= 4;
 	Actor_SetChildValue(PARTICLE_SOURCE_ACTOR, 4);
-	Engine_TaskAddCallback(SceneEffect_SpawnParticlesBesideActor, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(SceneEffect_SpawnParticlesBesideActor, TASK_PRIORITY_SCENE);
 	gEventWork->transition_frames = 1;
 	Engine_EventOpenScreen();
 	ColorBuffer_ApplySource(0x7fff, 0);
@@ -3080,7 +3081,7 @@ static void SceneEffect_AdvanceGatedRiseCounter(struct FieldActor *actor)
 
 static void SceneEffect_SpawnParticlesBesideActor(void)
 {
-	struct FieldActor	 *center;
+	union FieldObject	 *center;
 	struct FieldActor	 *effect;
 	struct FieldSprite	 *sprite;
 	struct MapScrollWork *map;
@@ -3088,7 +3089,7 @@ static void SceneEffect_SpawnParticlesBesideActor(void)
 	s32					  phase;
 	s32					  angle;
 
-	center = Actor_Get(23);
+	center = OBJ_GET(23);
 	map = gMapWork[0];
 	drift = (u32)(Random_Next() * 48) >> 16 << 16;
 	if ((s16)(map->view_y >> 16) <= 129)
@@ -3115,8 +3116,8 @@ static void SceneEffect_SpawnParticlesBesideActor(void)
 	phase = gFrameCount & 15;
 	if (phase != 0)
 		return;
-	effect = Object_Create(
-		284, center->x.fixed + 0x80000, center->y.fixed + drift + 0x80000, center->z.fixed);
+	effect = Object_Create(284, center->actor.x.fixed + 0x80000,
+		center->actor.y.fixed + drift + 0x80000, center->actor.z.fixed);
 	drift /= 0x60000;
 	drift <<= 16;
 	if (effect == 0)
@@ -3128,12 +3129,11 @@ static void SceneEffect_SpawnParticlesBesideActor(void)
 	angle = Random_Next() & 0xffff000;
 	effect->timer = angle;
 	effect->work = phase;
-	effect->linked_object = center;
+	effect->linked_object = &center->actor;
 	effect->update = VinasuChojo_UpdateOrbitingEffect;
 	effect->speed = Engine_MathSin((drift & 0xfffff) >> 4) * 24 >> 16;
-	/* FAKEMATCH: the flag byte is stored through a byte pointer, which may alias the priority read after it; as a plain field store the read's address is set up one instruction earlier. Field store: differ 2; it matches when center->sprite is read through union FieldObject. */
-	(&sprite->flags)[0] = 0;
-	sprite->priority = center->sprite->priority;
+	sprite->flags = 0;
+	sprite->priority = center->actor.sprite->priority;
 }
 
 static void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object)

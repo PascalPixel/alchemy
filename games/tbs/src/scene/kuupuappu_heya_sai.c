@@ -18,6 +18,7 @@
 #include "system.h"
 #include "types.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "field_scene.h"
 #include "inventory.h"
 #include "text/msg_ids.h"
@@ -302,7 +303,7 @@ s32 FieldScene_InitSceneStateByStep(void)
 	else if (scene == 7 || scene == 11)
 	{
 		OverlayObject_ConfigureObject22WithResource17(0xe7, 0x02380000, 0x00100000, 0x02a00000);
-		Engine_TaskAddCallback(SceneState_SetFlagByActorPosition, 0xc80);
+		FieldScheduler_AddCallback(SceneState_SetFlagByActorPosition, 0xc80);
 	}
 
 	return 0;

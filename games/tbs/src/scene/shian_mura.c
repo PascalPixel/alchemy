@@ -398,7 +398,7 @@ static void EV20_PSYNERGY(void)
 	x = record->x.fixed;
 	record = Object_GetById(20);
 	Map_CopyCellAttributes(3, 17, 1, 1, (x >> 20), (record->z.fixed >> 20));
-	Engine_TaskAddCallback((s32)Actor_UpdatePresentationFlag, 0xc80);
+	FieldScheduler_AddCallback((s32)Actor_UpdatePresentationFlag, 0xc80);
 	GameFlag_Set(0x201);
 	Engine_ActorSetSpritePriority(20, 2);
 	Engine_EventEnd();
@@ -455,7 +455,7 @@ static void EV14_TALK(void)
 		Engine_ActorWaitForMove(14);
 		Engine_AudioPlayCue(134);
 		Engine_ActorEnableActionCallback(19, (s32)ShianMura_Actor19Motion);
-		Engine_TaskAddCallback((s32)SceneEffect_AdvanceRotatingSprite, 0xc80);
+		FieldScheduler_AddCallback((s32)SceneEffect_AdvanceRotatingSprite, 0xc80);
 		params.sprite = 0x11b;
 		params.callback = (s32)ShianMura_EffectScript;
 		params.facing = 0x4000;
@@ -512,7 +512,7 @@ static void ShianMura_HopLeaderAhead(void)
 		p[2].fixed = (leader->z.fixed & -0x100000) + 0x80000;
 		FieldVector_AddPolarOffset(
 			0x200000, (leader->facing + 0x2000) & 0xc000, (struct FieldPosition *)p);
-		if (Object_CheckMovementCollision(leader, p) == 0)
+		if (FieldObject_CheckMovementCollision(leader, p) == 0)
 		{
 			Engine_EventBegin();
 			Object_SetMode(leader, 6);
@@ -601,7 +601,7 @@ static void EV21_PSYNERGY(void)
 	Engine_EventBegin();
 	Engine_ActorEnableActionCallback(19, ShianMura_Actor19Motion);
 	cb = (s32)SceneEffect_AdvanceRotatingSprite;
-	Engine_TaskAddCallback((void (*)(void))cb, 0xc80);
+	FieldScheduler_AddCallback((void (*)(void))cb, 0xc80);
 	Object_RefreshSelectorById(19);
 	Engine_AudioPlayCue(124);
 	Effect_Spawn(0xa80000, 0x80000, 0x1380000, 0, 0, 0, 0x20001, 0);
@@ -715,7 +715,7 @@ s32 ShianMura_SetupScene(void)
 
 			Engine_MapCopyCellAttributes(3, 17, 1, 1, px >> 20, Object_GetById(20)->z.fixed >> 20);
 		}
-		Engine_TaskAddCallback(Actor_UpdatePresentationFlag, 0xc80);
+		FieldScheduler_AddCallback(Actor_UpdatePresentationFlag, 0xc80);
 	}
 	Engine_ActorSetChildValue(18, 2);
 	Object_GetById(18)->update = ShianMura_WatchGateTrigger;

@@ -47,6 +47,7 @@
 #include "dma.h"
 #include "ram_buffer.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "resource_ids.h"
 #include "io_write_queue.h"
 #include "io_reg.h"
@@ -57,7 +58,6 @@
 #include "item.h"
 #include "game_state.h"
 #include "uiwindow.h"
-#include "call.h"
 #include "text/msg_ids.h"
 #include "frame.h"
 #include "map_scroll.h"
@@ -117,7 +117,7 @@ static void Clear_LoadBackground(void)
 	res = Engine_ResourceGetTableEntry(id);
 	Dma_Set(res, (void *)0x05000000, 0x84000070, REG_DMA3);
 	res += 0x1c0;
-	Value2(Resource_DecodeType01, (s32)res, (s32)Ram_MapCellBuffer);
+	FieldResource_DecodeType01(res, Ram_MapCellBuffer);
 	Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, REG_DMA3);
 	map = (u16 *)0x06003000;
 	tile = 0x1a0;
@@ -348,7 +348,7 @@ s32 SaveMenu_Run(void)
 
 	started = 0;
 	Clear_LoadBackground();
-	Engine_TaskAddCallback((s32)Clear_CheckButtonCodes, 0xc80);
+	FieldScheduler_AddCallback((s32)Clear_CheckButtonCodes, 0xc80);
 	gEventWork->start_transition = started;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
@@ -392,7 +392,7 @@ menu_top:;
 		if (started == 0)
 		{
 			Engine_TaskWait(30);
-			Engine_TaskAddCallback((s32)Clear_UpdateBlend, 0xc80);
+			FieldScheduler_AddCallback((s32)Clear_UpdateBlend, 0xc80);
 			Engine_TaskWait(1);
 			started = 1;
 		}
@@ -903,7 +903,7 @@ static void SaveMenu_FillTileGrid(struct RenderInput *window, s32 value)
 
 	shadow = ((struct UiRenderWork *)gWindowWork[0])->tilemap;
 	saved = (s32)Runtime_BumpAllocateAlternatePool(0x300);
-	Resource_DecodeType01(value, saved);
+	FieldResource_DecodeType01(value, saved);
 	offset = (window->y * 32 + window->x) * 2;
 	vram = (u16 *)(0x06002000 + offset);
 	shadow = (u16 *)((u8 *)shadow + offset);

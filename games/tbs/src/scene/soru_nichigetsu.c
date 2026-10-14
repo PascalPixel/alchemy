@@ -856,7 +856,7 @@ static void FieldScene_RunClosingSequence(void)
 	Task_AddCallback(UpdateStatueLight1, 3200);
 	Task_AddCallback(UpdateStatueLight2, 3200);
 	Task_AddCallback(UpdateStatueLight3, 3200);
-	Engine_TaskAddCallback((s32)UpdateStatueLight4, 3200);
+	FieldScheduler_AddCallback((s32)UpdateStatueLight4, 3200);
 	for (i = 0; i != 6; i++)
 	{
 		Event_PlayCue(246);

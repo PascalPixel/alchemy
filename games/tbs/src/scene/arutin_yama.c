@@ -887,7 +887,7 @@ static void FieldScene_RunSharedSetPiece(s32 a0)
 	Map_CopyCellAttributes(25, 35, 10, 5, 43, 35);
 	Actor_SetPosition(8, 0, 0);
 	Actor_SetPosition(9, 0, 0);
-	Engine_TaskAddCallback(FieldScene_RunScene3a4SequenceG, 0xc80);
+	FieldScheduler_AddCallback(FieldScene_RunScene3a4SequenceG, 0xc80);
 	Engine_EventWait(80);
 	Engine_TaskRemoveCallback(FieldScene_RunScene3a4SequenceG);
 	Engine_EventWait(60);
@@ -1672,7 +1672,7 @@ static void ArutinYama_RestoreAreaSeven(void)
 			record->priority_flags = ACTOR_PRIORITY_UNDERFOOT | record->priority_flags;
 		}
 	}
-	Engine_TaskAddCallback(SceneActor_SetActor12ModeByActorZeroHeight, 0xc80);
+	FieldScheduler_AddCallback(SceneActor_SetActor12ModeByActorZeroHeight, 0xc80);
 	if (GameFlag_IsSet(0x327) != 0)
 	{
 		Map_CopyCellAttributes(30, 82, 1, 1, 29, 81);
@@ -1861,7 +1861,7 @@ static void ArutinYama_StartLeafGust(s32 x, s32 y, s32 z, s32 facing)
 	ArutinYama_LeafMode = facing;
 
 	BattleFx_SetQueuedSoundAndPlay(170);
-	Engine_TaskAddCallback(ArutinYama_SpawnLeaf, 0xc80);
+	FieldScheduler_AddCallback(ArutinYama_SpawnLeaf, 0xc80);
 }
 
 static void FieldScene_RunScene3a4SequenceG(void)
@@ -2015,7 +2015,7 @@ static void EV10_TOUCH_10(void)
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 116);
 	Event_PlayCue(148);
-	Engine_TaskAddCallback(SceneAudio_PlayCue183EverySixtyTicks, 3200);
+	FieldScheduler_AddCallback(SceneAudio_PlayCue183EverySixtyTicks, 3200);
 	Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 	Actor_SetSpeed(8, 0x1999, 0xccc);
 	Actor_SetSpeed(9, 0x1999, 0xccc);
@@ -2492,7 +2492,7 @@ static void ArutinYama_StartPaletteAnim(void)
 {
 	ArutinYama_PaletteStep = 0;
 	ArutinYama_PaletteHold = 0;
-	Engine_TaskAddCallback((s32)&ArutinYama_StepPaletteAnim, 0xc80);
+	FieldScheduler_AddCallback((s32)&ArutinYama_StepPaletteAnim, 0xc80);
 }
 
 s8 ArutinYama_PaletteScript[] = {

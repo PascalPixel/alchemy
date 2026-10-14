@@ -43,7 +43,6 @@
 #include "btlpty.h"
 #include "text/msg_ids.h"
 #include "field_service.h"
-#include "call.h"
 #include "event_runtime.h"
 #include "ability_ids.h"
 #include "objcmd.h"
@@ -113,7 +112,7 @@ static s32 KuupuappuHeya_TryJumpTo(struct FixedPointPosition *pos)
 	obj = Object_GetById(0);
 	flags = &obj->motion_flags;
 	saved = *flags;
-	if (Object_CheckMovementCollision(obj, pos) == 0)
+	if (FieldObject_CheckMovementCollision(obj, pos) == 0)
 	{
 		Engine_EventBegin();
 		Object_SetMode(obj, 6);
@@ -1280,7 +1279,7 @@ static void EV10_TOUCH(void)
 	Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
 	GameFlag_Set(2130);
 	GameFlag_Set(768);
-	Engine_TaskAddCallback(SceneActor_FaceActors24And25TowardActorZero, 3200);
+	FieldScheduler_AddCallback(SceneActor_FaceActors24And25TowardActorZero, 3200);
 	actor24->timer = 1;
 	actor25->timer = 3;
 	Engine_EventEnd();
@@ -1511,7 +1510,7 @@ static void FieldScene_SelectActorPair(void)
 
 		((struct FieldActor *)record)->timer = shown;
 	}
-	Engine_TaskAddCallback(SceneActor_FaceActors24And25TowardActorZero, 0xc80);
+	FieldScheduler_AddCallback(SceneActor_FaceActors24And25TowardActorZero, 0xc80);
 	gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	Engine_EventEnd();
 }
@@ -1528,7 +1527,7 @@ static void KuupuappuHeya_RunBranchingDialogueScene(void)
 
 		record->priority_flags = ACTOR_PRIORITY_AUTOMATIC | record->priority_flags;
 	}
-	Map_SetViewBounds(0x200000, 0x2400000, 0x1900000, 0x3a80000);
+	FieldMap_SetViewBounds(0x200000, 0x2400000, 0x1900000, 0x3a80000);
 	Actor_SetSpeed(0, 0xcccc, 0x6666);
 	Actor_SetSpeed(1, 0xcccc, 0x6666);
 	Actor_SetSpeed(2, 0xcccc, 0x6666);
@@ -1770,7 +1769,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
 			}
 			Object_GetById(24)->timer = 5;
 			Object_GetById(25)->timer = 4;
-			Engine_TaskAddCallback(SceneActor_FaceActors24And25TowardActorZero, 0xc80);
+			FieldScheduler_AddCallback(SceneActor_FaceActors24And25TowardActorZero, 0xc80);
 		}
 		break;
 	case 13:
@@ -2638,8 +2637,7 @@ static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 
 static void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c)
 {
-	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-	((void (*)(s32, s32, s32))Engine_ActorSetAnimation)(a, b, c);
+	Engine_ActorSetAnimation(a, b, c);
 	ObjectMotion_WaitForAnimationChange(a);
 	Engine_EventWait(c);
 }
@@ -2941,7 +2939,7 @@ static void KuupuappuHeya_StartActorStops(void)
 	Engine_ActorWaitForMove(0);
 	Engine_ActorSetAnimation(1, 12);
 	FieldScene_ConfigurePairedActors();
-	Call4(Map_SetViewBounds, 0x300000, 0x2400000, 0x1200000, 0x2e00000);
+	FieldMap_SetViewBounds(0x300000, 0x2400000, 0x1200000, 0x2e00000);
 	Actor_SetSpeed(1, 0x10000, 0x8000);
 	Actor_SetSpeed(2, 0xc000, 0x6000);
 	Actor_SetSpeed(24, 0x10000, 0x13333);

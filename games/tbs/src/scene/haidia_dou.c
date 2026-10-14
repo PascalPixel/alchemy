@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "engcall.h"
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/scene/haidia_dou.h"
@@ -250,7 +251,7 @@ static s32 FieldScene_RunPrimarySequence(s32 a0)
 	to[1].fixed = leader->y.fixed;
 	to[2].fixed = leader->z.fixed + 0x200000;
 #endif
-	if (Object_CheckMovementCollision(leader, to) == 0)
+	if (FieldObject_CheckMovementCollision(leader, to) == 0)
 	{
 		Engine_EventBegin();
 		Object_SetMode(leader, 6);

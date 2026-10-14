@@ -27,6 +27,7 @@
 #include "game_state.h"
 #include "ability_ids.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "field_scene.h"
 
 // 前方宣言
@@ -277,7 +278,7 @@ static void Effect_SetBg3HofsSplit(void)
 static void ToretoEda_StartBg3Split(void)
 {
 	Runtime_SetIrqHandler(1, 0, Effect_UpdateBg3HofsByVcount);
-	Engine_TaskAddCallback((s32)Effect_SetBg3HofsSplit, 0xc80);
+	FieldScheduler_AddCallback((s32)Effect_SetBg3HofsSplit, 0xc80);
 }
 
 struct SceneEntrance ToretoEda_SceneTable0[] = {

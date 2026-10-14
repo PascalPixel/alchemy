@@ -397,13 +397,16 @@ fn parameter_names(tokens: &[&Tok]) -> Option<Vec<String>> {
 }
 
 /// Headers whose forwarding inlines are a layer of the whole game (S2), not
-/// devices: the scene script layer, and the IWRAM call layer, the one inline
-/// per resident IWRAM routine that every caller of that routine goes through.
+/// devices: the scene script layer; the IWRAM call layer, the one inline per
+/// resident IWRAM routine that every caller of that routine goes through; and
+/// the ☀️ engine call layer, the one inline per main-image routine it names,
+/// which every overlay call of that routine goes through (Pascal, 2026-10-13).
 pub(crate) const SCRIPT_LAYER: &[&str] = &[
     "games/tbs/include/field_event.h",
     "games/tbs/include/field_service.h",
     "games/tbs/src/scene/runpa_jo.h",
     "games/tbs/include/iwram_call.h",
+    "games/tbs/include/engcall.h",
 ];
 
 pub(crate) fn forwarding_findings(text: &str, source: &str) -> Result<Vec<Forwarder>, String> {
@@ -542,6 +545,16 @@ mod tests {
                 .collect::<Vec<_>>(),
             ["CopyWords"]
         );
+    }
+    #[test]
+    fn engine_call_layer_is_admitted_only_in_its_own_header() {
+        let layer = "static inline s32 FieldGameFlag_GetByte(s32 flag) { return GameFlag_GetByte(flag); }";
+        assert!(forwarding_findings(layer, "games/tbs/include/engcall.h")
+            .unwrap()
+            .is_empty());
+        for elsewhere in ["games/tbs/src/scene/world_map.c", "games/tla/include/engcall.h"] {
+            assert_eq!(forwarding_findings(layer, elsewhere).unwrap().len(), 1);
+        }
     }
     #[test]
     fn production_copy_adapter_parameter_permutations_are_forwarders() {

@@ -39,7 +39,6 @@
 #include "fixed_point_position.h"
 #include "tbs_edition.h"
 #include "scene_ids.h"
-#include "call.h"
 #include "fieldobj.h"
 #include "iowrite.h"
 #include "map_scroll.h"
@@ -597,7 +596,7 @@ static void EV10_SCRIPT(void)
 	}
 	BabiFune_ShimmerActive = 1;
 	BabiFune_ShimmerPhase = 0;
-	Value2(Scheduler_AddOrUpdateCallback, (s32)BabiFune_UpdateWaves, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(BabiFune_UpdateWaves, TASK_PRIORITY_SCENE);
 	BabiFune_DriftActive = 1;
 	Event_Wait(20);
 	Event_PlayCue(163);
@@ -608,8 +607,7 @@ static void EV10_SCRIPT(void)
 	Event_Wait(60);
 	Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
 	BabiFune_CountTicks = 0;
-	Value2(Scheduler_AddOrUpdateCallback, (s32)SceneState_CountDownEveryFortyTicks,
-		TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(SceneState_CountDownEveryFortyTicks, TASK_PRIORITY_SCENE);
 	sunk = 0;
 	do
 	{
@@ -643,7 +641,7 @@ static void EV10_SCRIPT(void)
 		REG_BLDY = dark;
 		Event_Wait(8);
 	}
-	Value2(Scheduler_AddOrUpdateCallback, (s32)BabiFune_CyclePalette, TASK_PRIORITY_SCENE);
+	FieldScheduler_AddCallback(BabiFune_CyclePalette, TASK_PRIORITY_SCENE);
 	Event_PlayCue(80);
 	AudioCommand_WaitForStateByteClear();
 	Event_Wait(20);
@@ -846,17 +844,15 @@ static void BabiFune_StepFade(void)
 
 static void BabiFune_ScheduleFade(void)
 {
-	u8			*buf;
-	volatile u32 fill;
+	u8 *buf;
 
 	buf = Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 0x100);
 	BabiFune_FadeSlot = Resource_FindFreeEntry();
-	fill = 0x11111111;
-	Dma_Set((const void *)&fill, buf, DMA_ENABLE32 | DMA_32BIT | DMA_SRC_FIXED32 | 0x40, REG_DMA3);
+	Dma_Fill32(0x11111111, buf, 0x100);
 	Engine_VramLoad(BabiFune_FadeSlot, 0x100, (s32)buf);
 
 	BabiFune_FadeStep = 0x30;
-	Scheduler_AddOrUpdateCallback((s32)BabiFune_StepFade, 0xc80);
+	FieldScheduler_AddCallback(BabiFune_StepFade, 0xc80);
 }
 
 struct SceneEvent BabiFune_PaletteFrames[] = {

@@ -27,8 +27,7 @@ extern u8 gSceneState[];
 
 extern u8 *gKorosseoWork;
 
-// volatile: gFrameCount carries its tag where frame.h declares it
-extern volatile u32 gFrameCount;
+#include "frame.h"
 
 #include "fieldobj.h"
 
@@ -61,6 +60,9 @@ struct MapCellAnim
 	u16		   y;
 };
 
+// 本体のルーチンを呼ぶ import。EventRequestExit, ActorSetPosition, ActorSetAnimation と
+// RandomNext は、呼ぶ場所によって引数の数が違う (バイトがそう示す) ので、引数を
+// 書かない古い形で宣言する
 void Engine_EventBegin(void);
 void Engine_EventEnd(void);
 void Engine_EventWait(s32 frames);
@@ -71,13 +73,13 @@ s32	 Engine_EventOpenMessage(s32 speaker, s32 flags);
 s32	 Engine_EventAskYesNo(s32 speaker, s32 flags);
 s32	 Engine_EventChooseYesNo(s32 actor, s32 flags);
 void Engine_MessageShowCentered(s32 message, s32 flags);
-void Engine_EventRequestExit(s32 exit);
+void Engine_EventRequestExit();
 void Engine_EventOpenScreen(void);
 void Engine_EventCloseScreen(void);
 void Engine_EventWaitForScreen(void);
 void Engine_BlendSetDarkenTarget16(s32 target);
 u8	*Engine_ResourceGetTableEntry(s32 resource);
-void Engine_ActorSetPosition(s32 actor, s32 fixed_x, s32 fixed_z);
+void Engine_ActorSetPosition();
 void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
 void Engine_ActorSetDestination(s32 actor, s32 x, s32 z);
 void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
@@ -87,7 +89,7 @@ void Engine_ActorWaitForMove(s32 actor);
 void Engine_ActorFaceDirection(s32 actor, s32 facing, s32 frames);
 void Engine_ActorFaceActor(s32 actor, s32 target, s32 frames);
 void Engine_ActorFaceEachOther(s32 actor, s32 other, s32 frames);
-void Engine_ActorSetAnimation(s32 actor, s32 animation);
+void Engine_ActorSetAnimation();
 void Engine_ActorSetAnimationAndWait(s32 actor, s32 animation);
 void Engine_ActorStartRepeatedMotion(s32 actor, s32 repeats);
 void Engine_ActorRunRepeatedMotion(s32 actor, s32 repeats);
@@ -106,15 +108,14 @@ void Engine_MapCopyCellAttributes(
 void			   Engine_MapRedraw(void);
 void			   Engine_WorkSetValuesIfNonNegative(s32 first, s32 second, s32 third);
 s32				   Engine_GameFlagIsSet(s32 flag);
-s32				   Engine_GameFlagSet(s32 flag);
+void			   Engine_GameFlagSet(s32 flag);
 void			   Engine_GameFlagClear(s32 flag);
 void			   Engine_AudioPlayCue(s32 cue);
 void			   Engine_ShopOpen(s32 shop, s32 keeper);
 void			   Engine_InnOpen(s32 inn, s32 keeper);
 void			   Engine_SanctumOpen(s32 priest);
-s32				   Engine_TaskAddCallback(void (*callback)(void), s32 priority);
 s32				   Engine_TaskRemoveCallback(void (*callback)(void));
-s32				   Engine_RandomNext(void);
+s32				   Engine_RandomNext();
 s32				   Engine_MathSin(s32 angle);
 s32				   Engine_MathCos(s32 angle);
 s32				   __divsi3(s32 dividend, s32 divisor);
@@ -300,12 +301,14 @@ enum
 	FLAG_ARRIVAL_EVENT_PENDING = 0x12f
 };
 
-#ifdef MODERN
-// field.h and game_flags.h declare the engine's GameFlag_IsSet, _Set and
-// _Clear; modern GCC refuses these static ones under the same names, so the
-// scene layer's take their own
-#define GameFlag_IsSet FieldEvent_GameFlagIsSet
+// game_flags.h declares the main image's s32 GameFlag_Set; the scene layer's
+// is void and has its own name
 #define GameFlag_Set FieldEvent_GameFlagSet
+#ifdef MODERN
+// field.h and game_flags.h declare the engine's GameFlag_IsSet and _Clear;
+// modern GCC refuses these static ones under the same names, so the scene
+// layer's take their own
+#define GameFlag_IsSet FieldEvent_GameFlagIsSet
 #define GameFlag_Clear FieldEvent_GameFlagClear
 #endif
 static inline s32 GameFlag_IsSet(s32 flag)
@@ -313,9 +316,9 @@ static inline s32 GameFlag_IsSet(s32 flag)
 	return Engine_GameFlagIsSet(flag);
 }
 
-static inline s32 GameFlag_Set(s32 flag)
+static inline void FieldEvent_GameFlagSet(s32 flag)
 {
-	return Engine_GameFlagSet(flag);
+	Engine_GameFlagSet(flag);
 }
 
 static inline void GameFlag_Clear(s32 flag)

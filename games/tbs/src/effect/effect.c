@@ -58,7 +58,6 @@
 #include "keystate.h"
 #include "btltype.h"
 #include "sound_ids.h"
-#include "call.h"
 #include "btlsys.h"
 #include "battle_session.h"
 #include "animspr.h"
@@ -129,7 +128,7 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
 	void					*canvas;
 	s32						 frame;
 	u8						*graphics;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	struct EffectStep		*shard;
 	struct EffectStep		*puff;
 	u16						*line;
@@ -762,7 +761,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
 	struct EffectPosition	 position;
 	struct BattleEffectWork *work;
 	void					*canvas;
-	struct BlitterPair		 draw;
+	BlitterPair				 draw;
 	struct BattleCamera		*camera;
 	u8						*sheet;
 	struct MotionObject		*source;
@@ -781,9 +780,9 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
 	else
 		BattleFx_BeginCanvasLayer(1);
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
-	draw.upper = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+	draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
 	BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 11, 2);
-	draw.lower = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
+	draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
 	Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 	if (mode == 0)
 		resource = (s32)&ResourceId_OrangePaletteA;
@@ -840,7 +839,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
 				if (position.depth > 634)
 					position.depth = 634;
 				size = 6 - (position.depth - 314) / 64;
-				draw.upper(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+				draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
 					position.x - size / 2, position.y - size, size, size * 2);
 				EffectStep_AdvanceWithGravity3D(mote, 62, 0x400);
 				if (mode == 1)
@@ -955,7 +954,7 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 	struct EffectPosition	 target_position;
 	struct EffectPosition	 alternate;
 	struct EffectPosition	 position;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	void				   **heap_cache;
 	void				   **cursor;
 	struct BattleEffectWork *work;
@@ -1352,21 +1351,21 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 	void					*canvas;
 	/* FAKEMATCH: frame local: an unused second blitter word fills the
 	   frame's 8-byte draw slot, as this file's two-blitter effects declare
-	   draw[2]. Measured (2026-10-13): with draw[1] the frame is 80 bytes
+	   the pair. Measured (2026-10-13): with draw[1] the frame is 80 bytes
 	   for 84 (differ 14, stack offsets only). */
-	DrawRectangle		  draw[2];
-	struct BtlObj		 *first;
-	struct BtlObj		 *second;
-	struct MotionObject	 *user;
-	struct MotionObject	 *target;
-	s32					  x;
-	s32					  z;
-	s32					  user_height;
-	s32					  target_height;
-	s32					  point[3];
-	struct EffectPosition screen;
-	s32					  frame;
-	s32					  percent;
+	BlitterPair				 draw;
+	struct BtlObj			*first;
+	struct BtlObj			*second;
+	struct MotionObject		*user;
+	struct MotionObject		*target;
+	s32						 x;
+	s32						 z;
+	s32						 user_height;
+	s32						 target_height;
+	s32						 point[3];
+	struct EffectPosition	 screen;
+	s32						 frame;
+	s32						 percent;
 
 	heap_cache = gBattleFxWork;
 	cursor = heap_cache;
@@ -1497,7 +1496,7 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
 void BattleFx_RunBladeRain(struct BattleEffectArgument *effect)
 {
 	struct EffectPosition	 pos;
-	DrawRectangle			 draw[2];
+	BlitterPair				 draw;
 	void				   **heap_cache;
 	void				   **cursor;
 	struct BattleEffectWork *work;

@@ -35,7 +35,7 @@
 #include "system.h"
 #include "edition.h"
 #include "menu_test.h"
-#include "call.h"
+#include "engcall.h"
 #include "types.h"
 #include "io_reg.h"
 #include "inventory.h"
@@ -531,10 +531,10 @@ static void EV10_TALK(void)
 	u8 *record;
 
 	UiText_ShowPositionedMessageAndWait(MsgDebugBodyTornApart, 1);
-	Value2(Owner_AdjustFirstValue, 0, -100);
-	Value2(Owner_AdjustFirstValue, 1, -100);
-	Owner_AdjustFirstValue(2, -33);
-	Owner_AdjustFirstValue(3, -100);
+	FieldOwner_AdjustFirstValue(0, -100);
+	FieldOwner_AdjustFirstValue(1, -100);
+	FieldOwner_AdjustFirstValue(2, -33);
+	FieldOwner_AdjustFirstValue(3, -100);
 	UnitEpAdd(0, -50);
 	UnitEpAdd(1, -40);
 	UnitEpAdd(2, -35);
@@ -613,7 +613,7 @@ static void DebugMenu_SelectItem(void)
 	Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
 	Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001, REG_DMA3);
 	Engine_TaskWait(1);
-	for (;;)
+	while (1)
 	{
 		if (redraw)
 		{
@@ -643,14 +643,14 @@ static void DebugMenu_SelectItem(void)
 			if (PartyInventory_Add(item) == -1)
 			{
 				Engine_AudioPlayCue(113);
-				goto done;
+				break;
 			}
 			Engine_AudioPlayCue(175);
 		}
 		if (gKeyState & KEY_B)
 		{
 			Engine_AudioPlayCue(113);
-			goto done;
+			break;
 		}
 		if (gKeysRepeat & KEY_UP)
 		{
@@ -690,7 +690,6 @@ static void DebugMenu_SelectItem(void)
 		}
 		Engine_TaskWait(1);
 	}
-done:
 	Engine_DebugRedrawWindow(window);
 	Engine_TaskWait(1);
 	Engine_DebugFinalizeWindow(window, 1);

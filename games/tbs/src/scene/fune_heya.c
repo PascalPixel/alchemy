@@ -29,7 +29,6 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "call.h"
 #include "field_service.h"
 #include "text/msg_ids.h"
 #include "callback_scheduler.h"
@@ -130,8 +129,7 @@ static s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor)
 
 static s32 StagedActor_SetAngleByKind(struct FieldActor *o)
 {
-	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-	u32 v = (u32)(((s32 (*)(u8 *o))Engine_RandomNext)(o) << 6) >> 16;
+	u32 v = (u32)(Engine_RandomNext(o) << 6) >> 16;
 
 	if (v == 6)
 	{
@@ -1138,7 +1136,7 @@ static s32 SceneActor_CheckBucketOffsetPoint(s32 bucket)
 		point[1] = obj->y.fixed;
 		point[2] = z << 16;
 
-		if (Object_CheckMovementCollision(obj, point) != 0)
+		if (FieldObject_CheckMovementCollision(obj, point) != 0)
 		{
 			return 0;
 		}
@@ -2295,12 +2293,8 @@ s32 FuneHeya_ApplyEntryState(void)
 		{
 			if (Engine_GameFlagIsSet(0x302) != 0)
 			{
-				{
-					u16 zero = 0;
-
-					FuneHeya_CueTimer = zero;
-				}
-				Engine_TaskAddCallback(Scene_UpdateCueTimer, 0xc80);
+				FuneHeya_CueTimer = 0;
+				FieldScheduler_AddCallback(Scene_UpdateCueTimer, 0xc80);
 				Engine_ActorSetAnimation(9, 5);
 			}
 		}
@@ -3141,8 +3135,7 @@ static void FieldScene_CallPairWith10(s32 a, u16 b)
 
 static void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d)
 {
-	/* FAKEMATCH: the cast states the call the bytes show, which its prototype does not describe; without it the call does not compile */
-	((void (*)())Engine_ActorSetPosition)(a, b << 16, c << 16, d);
+	Engine_ActorSetPosition(a, b << 16, c << 16, d);
 	Object_GetById(a)->facing = d;
 }
 
@@ -3870,7 +3863,7 @@ static void FieldScene_RunExtendedFormationPresentation(void)
 	Object_SetActionCallbackAndRefreshById(3, action);
 	GameFlag_Set(0x302);
 	FuneHeya_CueTimer = 0;
-	Engine_TaskAddCallback((s32)Scene_UpdateCueTimer, 0xc80);
+	FieldScheduler_AddCallback((s32)Scene_UpdateCueTimer, 0xc80);
 	FieldScene_RunSceneStep(23, 0, 0);
 	Engine_ActorDestroy(27);
 	GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);

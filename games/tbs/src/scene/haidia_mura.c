@@ -1259,7 +1259,7 @@ s32 HaidiaMura_ApplyEntryState(void)
 		HaidiaMura_OpenVillagerLane();
 		actor->terrain_id = 3;
 		actor->motion_flags = 0;
-		Engine_TaskAddCallback(SceneActor_SetFlagByteBySlotZeroPosition, 0xc80);
+		FieldScheduler_AddCallback(SceneActor_SetFlagByteBySlotZeroPosition, 0xc80);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
 		if (Engine_GameFlagIsSet(0x87a))
 		{
@@ -1313,7 +1313,7 @@ s32 HaidiaMura_ApplyEntryState(void)
 				}
 				if (gGameState.entrance != 16 && !Engine_GameFlagIsSet(0x87a))
 				{
-					Engine_TaskAddCallback(FieldScene_RunScene373SequenceB, 0xc80);
+					FieldScheduler_AddCallback(FieldScene_RunScene373SequenceB, 0xc80);
 				}
 			}
 			if (!GameFlag_IsSet(0x308) && gGameState.entrance == 17)
@@ -2044,7 +2044,7 @@ static void Scene_RepairTheHouse(void)
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 40);
 	SceneState_SetValue140Mode0();
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 17);
-	Engine_TaskAddCallback((void (*)(void))Effect_PlayStepSound, 3200);
+	FieldScheduler_AddCallback((void (*)(void))Effect_PlayStepSound, 3200);
 	for (i = 0; i < 40; i++)
 	{
 		OverlayObject_UpdateOnFrameBit1(scene);
@@ -2144,7 +2144,7 @@ static void Scene_RepairTheHouse(void)
 	callback_e = (s32)SceneState_SetValue0ThenCall;
 	Task_AddCallback((void (*)(void))callback_e, 3200);
 	callback_f = (s32)SceneState_SetValue25ThenCall;
-	Engine_TaskAddCallback(callback_f, 3200);
+	FieldScheduler_AddCallback(callback_f, 3200);
 	Actor_SetSpeed(25, 0x3333, 0x1999);
 	Actor_MoveToAndWait(25, 390, 832);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);

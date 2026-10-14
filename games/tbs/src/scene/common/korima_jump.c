@@ -1,4 +1,5 @@
 #include "types.h"
+#include "engcall.h"
 #include "fieldobj.h"
 #include "staged_actor_effect.h"
 #include "game_state.h"
@@ -8,7 +9,7 @@ static s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
 	struct StagedActorEffect *actor = (void *)Object_GetById(0);
 	u8						 *flags = &actor->motion_flags;
 	u8						  saved = *flags;
-	s32						  ret = Object_CheckMovementCollision(actor, request);
+	s32						  ret = FieldObject_CheckMovementCollision(actor, request);
 
 	if (ret == 0)
 	{

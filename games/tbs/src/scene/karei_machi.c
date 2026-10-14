@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "engcall.h"
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/karei_machi.h"
@@ -986,7 +987,7 @@ static void KareiMachi_SetupEntryActors(void)
 		nut->orbit_center_x = nut->x;
 		nut->orbit_center_y = nut->y;
 		nut->orbit_center_z = nut->z;
-		Engine_TaskAddCallback(SceneEffect_UpdateLobeOrbitEffect26, 0xc80);
+		FieldScheduler_AddCallback(SceneEffect_UpdateLobeOrbitEffect26, 0xc80);
 	}
 }
 
@@ -1123,7 +1124,7 @@ static void FieldScene_RunMiddleSequence(void)
 	Engine_ActorSetSpriteFlags((s32)record, 0);
 	record = Actor_Get(9);
 	Engine_ActorSetSpriteFlags((s32)record, 0);
-	Engine_TaskAddCallback((s32)FieldScene_RunSupplementalSequenceOne, 0xc80);
+	FieldScheduler_AddCallback((s32)FieldScene_RunSupplementalSequenceOne, 0xc80);
 	if (GameFlag_IsSet(0x915) != 0)
 	{
 		Actor_SetPosition(10, 0x1aa0000, 0x2da0000);
@@ -1245,14 +1246,10 @@ static void SceneEffect_SetSlotVariantAndDescriptor(s32 a)
 static void KareiMachi_SpeedUpActors(void)
 {
 
-	{
-		s32 zero = 0;
-
-		KareiMachi_DanceStep = zero;
-	}
+	KareiMachi_DanceStep = 0;
 	Actor_SetSpeed(20, 0x19999, 0xcccc);
 	Actor_SetSpeed(21, 0x19999, 0xcccc);
-	Engine_TaskAddCallback(KareiMachi_AlternateDance, 0xc80);
+	FieldScheduler_AddCallback(KareiMachi_AlternateDance, 0xc80);
 }
 
 static void KareiMachi_AlternateDance(void)
@@ -1805,7 +1802,7 @@ static void FieldScene_RunLateSequence(void)
 		dst[0] = block->x.fixed + (w2 & -0x10000);
 		dst[1] = block->y.fixed;
 		dst[2] = block->z.fixed + (w2 << 16);
-		if (Object_CheckMovementCollision(block, dst) <= 0)
+		if (FieldObject_CheckMovementCollision(block, dst) <= 0)
 		{
 			Object_SetMode(leader, 8);
 			k = 0x3333;

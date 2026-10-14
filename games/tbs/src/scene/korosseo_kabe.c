@@ -62,7 +62,6 @@
 #include "field_scene.h"
 #include "io_reg.h"
 #include "callback_scheduler.h"
-#include "call.h"
 #include "resource_ids.h"
 #include "field_service.h"
 #include "text/msg_ids.h"
@@ -223,17 +222,17 @@ static void SceneState_StoreSlotTileXToWork832To848(void)
 
 	record = (s32 *)Object_GetById(12);
 	value = record[2] >> 20;
-	GameFlag_SetByte(832, value);
+	FieldGameFlag_SetByte(832, value);
 	Map_CopyCellAttributes(71, 16, 1, 1, value, 16);
 
 	record = (s32 *)Object_GetById(13);
 	value = record[2] >> 20;
-	GameFlag_SetByte(840, value);
+	FieldGameFlag_SetByte(840, value);
 	Map_CopyCellAttributes(71, 16, 1, 1, value, 16);
 
 	record = (s32 *)Object_GetById(14);
 	value = record[2] >> 20;
-	GameFlag_SetByte(848, value);
+	FieldGameFlag_SetByte(848, value);
 	Map_CopyCellAttributes(71, 16, 1, 1, value, 16);
 }
 
@@ -328,7 +327,7 @@ static void EV19_PSYNERGY(void)
 
 static void KorosseoKabe_RunSelectedActorRisingEffect(void)
 {
-	BattleFx_RunRisingObjectSequence(gGameState.selected_actor, 6, 0);
+	FieldBattleFx_RunRisingObjectSequence(gGameState.selected_actor, 6, 0);
 }
 
 static void KorosseoKabe_CheckLeaderAhead(void)
@@ -649,7 +648,7 @@ static void FieldScene_PlaceSpectatorRow(void)
 
 static void KorosseoKabe_StartSupplementalSceneTask(void)
 {
-	Engine_TaskAddCallback(FieldScene_RunSupplementalSequenceOne, 0xC85);
+	FieldScheduler_AddCallback(FieldScene_RunSupplementalSequenceOne, 0xC85);
 	Engine_GameFlagClear(0x104);
 }
 
@@ -840,7 +839,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 	actor->priority_flags = 2;
 	Map_CopyCellAttributes(52, 28, 1, 3, col, 13);
 
-	x = GameFlag_GetByte(0x340);
+	x = FieldGameFlag_GetByte(0x340);
 	if (x == 0)
 	{
 		x = 73;
@@ -850,7 +849,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 	actor->motion_flags = zero;
 	actor->priority_flags = 2;
 	Map_CopyCellAttributes(71, 16, 1, 1, x, 16);
-	x = GameFlag_GetByte(0x348);
+	x = FieldGameFlag_GetByte(0x348);
 	if (x == 0)
 	{
 		x = 76;
@@ -860,7 +859,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 	actor->motion_flags = zero;
 	actor->priority_flags = 2;
 	Map_CopyCellAttributes(71, 16, 1, 1, x, 16);
-	x = GameFlag_GetByte(0x350);
+	x = FieldGameFlag_GetByte(0x350);
 	if (x == 0)
 	{
 		x = 79;
@@ -895,7 +894,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 			actor->speed = 0x8000;
 			actor->acceleration = 0x3333;
 		}
-		Engine_TaskAddCallback(FieldScene_RunSupplementalSequenceOne, 0xc85);
+		FieldScheduler_AddCallback(FieldScene_RunSupplementalSequenceOne, 0xc85);
 		Scheduler_SetCallbackMask((u32)FieldScene_RunSupplementalSequenceOne, 1);
 	}
 	Engine_ActorSetAnimation(8, 9);
@@ -927,7 +926,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
 		SceneState_InitControlRecordAndStartTask((s32)&ResourceId_RivalPathB);
 		break;
 	case 2:
-		Engine_TaskAddCallback(SceneState_RaiseTriggerOnPsynergyTarget, 0xc80);
+		FieldScheduler_AddCallback(SceneState_RaiseTriggerOnPsynergyTarget, 0xc80);
 		Engine_ActorDestroy(40);
 		Engine_ActorDestroy(41);
 		if (!Engine_GameFlagIsSet(0x109))
@@ -1091,8 +1090,8 @@ static void EV36_TALK(s32 a0)
 			Camera_SetSpeed(0x30000, 0x6000);
 			Camera_MoveTo(0x3d80000, -1, 0xe80000, 1);
 			Engine_CameraWaitForMove();
-			/* FAKEMATCH: called through Value2, its result discarded; called directly or through Call2 it differs 2 on tbs-en. */
-			Value2(Engine_EventShowMessage, a0, 0);
+			/* FAKEMATCH: called through a cast to the s32 call type the bytes show, its result discarded (as call.h's Value2 did, 2026-10-13); called directly or through Call2 it differs 2 on tbs-en. */
+			((s32 (*)())Engine_EventShowMessage)(a0, 0);
 			KorosseoKabe_StartSupplementalSceneTask();
 			Event_ShowMessage(a0, 0);
 			Korosseo_FadeInCompetitor(0, 0x438, 0x108);
@@ -1152,8 +1151,8 @@ static void EV37_TALK(s32 a0)
 			Event_ShowMessage(a0, 0);
 			OverlayObject_PlaceWithScale14000(0, 0x348, 232);
 			Engine_EventWait(10);
-			/* FAKEMATCH: called through Value3, its result discarded; called directly or through Call3 it differs 2 on tbs-en. */
-			Value3(SceneActor_MovePairByTileOffset, 33, -64, 0);
+			/* FAKEMATCH: called through a cast to the s32 call type the bytes show, its result discarded (as call.h's Value3 did, 2026-10-13); called directly or through Call3 it differs 2 on tbs-en. */
+			((s32 (*)())SceneActor_MovePairByTileOffset)(33, -64, 0);
 			Camera_MoveTo(0x2f00000, -1, 0xd80000, 1);
 			Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 			Engine_EventWait(10);
@@ -1220,7 +1219,7 @@ static void EV38_TALK(s32 speaker)
 		Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
 		OverlayObject_PlaceWithScale14000(ACTOR_PARTY_LEADER, 488, 248);
 		Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 20);
-		BattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, 0);
+		FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, 0);
 		Engine_CameraMoveTo(0x2180000, -1, 0xa00000, 1);
 		Engine_EventShowMessage(speaker, 0);
 		Korosseo_RestoreCompetitor(ACTOR_PARTY_LEADER);
@@ -1340,7 +1339,7 @@ static void KorosseoKabe_InitializeModeTask(u32 mode, u32 param)
 
 	{
 		s32 budget = 0xc80;
-		Engine_TaskAddCallback(Korosseo_UpdateModeTask, budget);
+		FieldScheduler_AddCallback(Korosseo_UpdateModeTask, budget);
 	}
 
 	handler = (s32)KorosseoKabe_ModeRecordDefault;
@@ -1441,8 +1440,8 @@ static void FieldScene_RunLateSequence(s32 a0)
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(86);
 		Korosseo_LoadPortrait(8);
-		/* FAKEMATCH: called through Value2, its result discarded; called directly or through Call2 each of the two calls differs 2 on tbs-en, both 4. */
-		Value2(KorosseoKabe_InitializeModeTask, 3, 1);
+		/* FAKEMATCH: called through a cast to the s32 call type the bytes show, its result discarded (as call.h's Value2 did, 2026-10-13); called directly or through Call2 each of the two calls differs 2 on tbs-en, both 4. */
+		((s32 (*)())KorosseoKabe_InitializeModeTask)(3, 1);
 		Engine_EventWait(-a0 * 60 + 60);
 		kind = 0;
 	}
@@ -1451,8 +1450,8 @@ static void FieldScene_RunLateSequence(s32 a0)
 		Engine_EventWait(30);
 		Engine_AudioPlayCue(a0 + 90);
 		Korosseo_LoadPortrait(4);
-		/* FAKEMATCH: called through Value2 like the call above; called directly or through Call2 it differs 2 on tbs-en. */
-		Value2(KorosseoKabe_InitializeModeTask, 3, 0);
+		/* FAKEMATCH: called through the s32 cast like the call above; called directly or through Call2 it differs 2 on tbs-en. */
+		((s32 (*)())KorosseoKabe_InitializeModeTask)(3, 0);
 		Engine_EventWait(a0 * 60 + 60);
 		kind = 8;
 	}
@@ -1664,13 +1663,13 @@ void FieldScene_BuildDescriptorAndInstallTask(
 	*(u16 *)(descriptor + 218) = 0;
 	*(u16 *)(descriptor + 220) = 0;
 
-	Resource_DecodeType01(Korosseo_GaugeGraphics, handle);
+	FieldResource_DecodeType01(Korosseo_GaugeGraphics, handle);
 
 	extent = Resource_FindFreeEntry();
 	*(u16 *)(descriptor + 216) = extent;
 	Engine_VramLoad((s16)extent, 512, handle);
 
-	Engine_TaskAddCallback(Korosseo_DrawGauge, 0xc76);
+	FieldScheduler_AddCallback(Korosseo_DrawGauge, 0xc76);
 
 	Runtime_BumpFree(handle);
 }
@@ -1680,7 +1679,7 @@ static void SceneState_InitControlRecordAndStartTask(s32 resource)
 	u8					*state = *(u8 **)((u8 *)gWorkSlot + WORK_SLOT_STAGE * 4);
 	struct StageControl *m = (struct StageControl *)gSceneState;
 
-	Resource_DecodeType01(Resource_GetTableEntry(resource), state + 240);
+	FieldResource_DecodeType01(Resource_GetTableEntry(resource), state + 240);
 	if (Engine_GameFlagIsSet(0x109) == 0)
 	{
 		m->status = 1;
@@ -1689,7 +1688,7 @@ static void SceneState_InitControlRecordAndStartTask(s32 resource)
 		m->f8 = 0;
 		m->f6 = 0;
 	}
-	Engine_TaskAddCallback(Korosseo_UpdatePathRival, 0xc85);
+	FieldScheduler_AddCallback(Korosseo_UpdatePathRival, 0xc85);
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
@@ -1757,7 +1756,7 @@ static void StagedActor_PushActorAhead(void)
 	step <<= 16;
 	pos.z = target->z + step;
 
-	if (Object_CheckMovementCollision(target, &pos) > 0)
+	if (FieldObject_CheckMovementCollision(target, &pos) > 0)
 	{
 		return;
 	}

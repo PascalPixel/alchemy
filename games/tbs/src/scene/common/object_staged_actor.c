@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "engcall.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -89,7 +90,7 @@ static void StagedActor_AdvancePair(void)
 	dst[1] = next->y;
 	step <<= 16;
 	dst[2] = next->z.value + step;
-	if (Object_CheckMovementCollision(next, dst) > 0)
+	if (FieldObject_CheckMovementCollision(next, dst) > 0)
 		return;
 
 	if (next->transition_busy != 0)
@@ -189,7 +190,7 @@ static s32 StagedActor_StopBlockedMotion(struct StagedActor *actor)
 	probe.y = actor->y;
 	step <<= 16;
 	probe.z = actor->z.value + step;
-	if (Object_CheckMovementCollision(actor, (s32 *)&probe) > 0)
+	if (FieldObject_CheckMovementCollision(actor, (s32 *)&probe) > 0)
 	{
 		actor->velocity_x = 0;
 		actor->velocity_z = 0;
@@ -315,7 +316,7 @@ static s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe)
 				position[0] + (StagedActor_FootprintBounds[probe->footprint_index * 4] << 16);
 			for (column = 0; column < width; column++)
 			{
-				if (Object_CheckMovementCollision(actor, &probe->position_x) == 2)
+				if (FieldObject_CheckMovementCollision(actor, &probe->position_x) == 2)
 				{
 					goto found;
 				}

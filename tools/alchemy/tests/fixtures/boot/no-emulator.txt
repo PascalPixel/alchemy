@@ -1,0 +1,4 @@
+gdb-stderr boot.gdb:5: Error in sourced command file:
+gdb-stderr 127.0.0.1:2345: Operation timed out.
+emulator-exit 0
+gdb-exit 1

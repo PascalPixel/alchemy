@@ -1,0 +1,11 @@
+0x00000000 in ?? ()
+milestone System_Initialize frame 0
+milestone Game_ResetForNewGame frame 10
+milestone Title_ShowSplashScreen frame 10
+milestone Title_ShowAnimatedSplash frame 132
+
+Program received signal SIGILL, Illegal instruction.
+0x00000004 in ?? ()
+stopped at 0x4, not at SaveState_ScanRecordFlags
+gdb-stderr Can't detach process.
+gdb-exit 1

@@ -14,6 +14,11 @@ SHA1 := $(shell { command -v sha1sum || command -v shasum; } 2>/dev/null) -c
 
 LIBGCC := tools/out/compiler-runtime/libgcc.a
 MODERN_CC ?= arm-none-eabi-gcc
+# make boot-tbs: mGBA, its GDB stub on port 2345, an ARM debugger, and the
+# seconds one run may take (alchemy boot --help).
+BOOT_EMULATOR ?= mgba
+BOOT_GDB ?= arm-none-eabi-gdb
+BOOT_TIMEOUT ?= 300
 
 .PHONY: compiler-runtime worktree
 compiler-runtime: toolchain-check compiler-source-check
@@ -35,7 +40,7 @@ $(LIBGCC):
 .PHONY: precommit prepush verify land test test-integration lint-staged language-check
 .PHONY: publication-check source-check publication-staged-check hygiene-check coverage-report
 .PHONY: publication-tree-check layout-check dead-check aliases-check devices-check headers-check object-list-check packer-check modern-check
-.PHONY: progress figure deps similar worst clean modern
+.PHONY: progress figure deps similar worst clean modern boot-tbs
 
 help:
 	@printf '%s\n' \
@@ -45,6 +50,7 @@ help:
 	  'make compare-all     compare linked source and both private ROM compositions' \
 	  'make compare-editions  compare all twelve editions, with Japanese as the base' \
 	  'make modern          build the six ☀️ editions with a modern GCC (MODERN_CC) into out/modern: no match, every warning in out/modern/warnings.txt' \
+	  'make boot-tbs        boot each ☀️ edition, matching and modern ROM, in mGBA to the file menu (BOOT_EMULATOR, BOOT_GDB); never part of make verify or make land' \
 	  'make test            the Rust tests' \
 	  'make verify          every check, the tests and all twelve editions compared' \
 	  'make land            on staging, before committing a landing: make verify, then the measurement the push uploads' \
@@ -121,7 +127,7 @@ compiler-runtime toolchain-check compare compare-tla compare-tbs compare-edition
 $(COMPARE_EDITIONS) build-rom precommit prepush verify land publication-check source-check \
 hygiene-check publication-staged-check lint-staged coverage-report progress figure \
 publication-tree-check layout-check dead-check aliases-check devices-check headers-check object-list-check \
-packer-check deps similar worst modern: | build-alchemy
+packer-check deps similar worst modern boot-tbs: | build-alchemy
 endif
 
 CPUS := $(shell sysctl -n hw.ncpu 2>/dev/null || nproc 2>/dev/null || echo 4)
@@ -249,3 +255,10 @@ modern:
 # point 5). Errors fail it; warnings are reported for the camelotize pass.
 modern-check:
 	@$(ALCHEMY) build modern --cc "$(MODERN_CC)" $(addprefix --target ,$(MODERN_TARGETS)) > /dev/null
+
+# The boot test: each ☀️ edition's matching ROM (make compare-tbs) and modern
+# ROM (make modern) booted in mGBA to the file menu and past it, the modern
+# ROM held to the matching one (alchemy boot --help). CI runs it under
+# xvfb-run; it is never part of make verify or make land.
+boot-tbs:
+	$(ALCHEMY) boot --emulator "$(BOOT_EMULATOR)" --gdb "$(BOOT_GDB)" --timeout "$(BOOT_TIMEOUT)"

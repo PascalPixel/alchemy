@@ -1011,7 +1011,7 @@ msgctxt "message"
 msgid "00250"
 msgstr "Robe"
 
-msgctxt "message"
+msgctxt "MsgRobe"
 msgid "00251"
 msgstr "Robe"
 

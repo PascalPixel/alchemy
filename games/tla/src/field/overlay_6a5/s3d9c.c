@@ -2,6 +2,7 @@
 #define FIELD_AT(base, type, off) (((struct { u8 pad[off]; type v; } *)(base))->v)
 
 #include "call.h"
+#include "text/msg_ids.h"
 s32 Func_020059b4();
 s32 Object_GetById();
 s32 GameFlag_Test();
@@ -17,7 +18,6 @@ s32 Func_02002ae4();
 s32 Func_02001bc4();
 extern u8 gPartyState[];
 extern u8 Func_020005b8[];
-extern u8 MsgRobe[];
 
 s32 Func_02003d9c(void)
 {
@@ -64,6 +64,9 @@ s32 Func_02003d9c(void)
     Call2(Scheduler_AddOrUpdateCallback, (s32)Func_020005b8, 0x480);
     if (FIELD_AT(gPartyState, s16, 482) == 9) {
         Func_02000cd0();
+        /* FAKEMATCH: a one-pass block orders the message store after the call (found by alchemy permute). */
+        do {
+        } while (0);
         FIELD_AT(gPartyState, u16, 608) = (s32)MsgRobe;
         FIELD_AT(gPartyState, u16, 610) = 1;
     } else {

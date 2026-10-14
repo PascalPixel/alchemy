@@ -26,7 +26,7 @@ SECTIONS
         "*/resource_6a5_overlay.o"(.text.x0200ba28)
         "*/resource_6a5_overlay.o"(.text.x0200ba6c)
         "*/resource_6a5_overlay.o"(.text.x0200bc58)
-        "*/resource_6a5_overlay.o"(.text.x0200bd9c)
+        "*/games/tla/src/field/overlay_6a5/s3d9c.o"(.text)
         "*/games/tla/src/field/overlay_6a5/prepare.o"(.text)
         "*/games/tla/src/field/common/scene_set_arrival_flags.o"(.text)
         "*/resource_6a5_overlay.o"(.text.x0200bf52)

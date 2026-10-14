@@ -359,7 +359,7 @@ static void EV11_SCRIPT(void)
 	v.y = p->y.fixed;
 	v.z = p->z.fixed;
 
-	if (Object_CheckMovementCollision(p, &v) > 0)
+	if (FieldObject_CheckMovementCollision(p, &v) > 0)
 	{
 		obj[0x35] = 1;
 	}
@@ -402,7 +402,7 @@ static void ArutamiraDou_HopSelectedActor(void)
 
 		Vector_AddPolarOffset(0x200000, angle, p);
 	}
-	if (Object_CheckMovementCollision(actor, p) == 0)
+	if (FieldObject_CheckMovementCollision(actor, p) == 0)
 	{
 		Engine_EventBegin();
 		Object_SetMode(actor, 6);

@@ -628,7 +628,7 @@ s32 WorldMap_EnterScene(void)
 		case 76:
 		case 77:
 			Engine_GameFlagSet(0x11c);
-			if (GameFlag_GetByte(0x2f8) != 0)
+			if (FieldGameFlag_GetByte(0x2f8) != 0)
 			{
 				gGameState.movement_mode = 2;
 				Engine_TaskAddCallback(StoryScene_UpdateSelectedActorProgress, 0xc80);
@@ -2210,7 +2210,7 @@ static void StoryScene_UpdateSelectedActorProgress(void)
 	scene = gEventWork;
 	actor->facing = (gFrameCount << 12);
 
-	progress = GameFlag_GetByte(0x2f8);
+	progress = FieldGameFlag_GetByte(0x2f8);
 	if (progress != 0)
 	{
 		if (progress == 1)
@@ -2222,7 +2222,7 @@ static void StoryScene_UpdateSelectedActorProgress(void)
 			progress -= 1;
 		}
 	}
-	GameFlag_SetByte(0x2f8, progress);
+	FieldGameFlag_SetByte(0x2f8, progress);
 }
 
 static void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
@@ -2255,7 +2255,7 @@ static void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
 		actor->motion_flags = 4;
 		gGameState.movement_mode = 2;
 		GameFlag_Set(0x2f0);
-		GameFlag_SetByte(0x2f8, 180);
+		FieldGameFlag_SetByte(0x2f8, 180);
 		Engine_EventEnd();
 		((struct EventRuntime *)gEventWork)->value_17c = rec2;
 	}
@@ -2281,7 +2281,7 @@ static void EV54_PSYNERGY(void)
 	}
 	Engine_GameFlagClear(0x2f0);
 	Engine_GameFlagSet(0x2f1);
-	GameFlag_SetByte(0x2f8, 0);
+	FieldGameFlag_SetByte(0x2f8, 0);
 	BattleFx_SetWeightedResult(98, 5);
 	Battle_SetStart(3);
 	BattleFx_SetWeightedResult(98, 7);

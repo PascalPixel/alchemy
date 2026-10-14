@@ -455,7 +455,7 @@ static s32 FieldScene_RunScene3b3SequenceD(void)
 	step <<= 16;
 	p[2] = leader->z.fixed + step;
 #endif
-	if (Object_CheckMovementCollision(leader, p) != 1
+	if (FieldObject_CheckMovementCollision(leader, p) != 1
 		&& StagedActor_FindAtTile(p, (struct StagedActor *)leader) == 0)
 	{
 #if EDITION_INTERNATIONAL
@@ -471,7 +471,7 @@ static s32 FieldScene_RunScene3b3SequenceD(void)
 		p[2] = leader->z.fixed + step;
 #endif
 		if (StagedActor_FindAtTile(p, (struct StagedActor *)leader) == 0
-			&& Object_CheckMovementCollision(leader, p) == 0)
+			&& FieldObject_CheckMovementCollision(leader, p) == 0)
 		{
 			Engine_EventBegin();
 			Object_SetMode(leader, 6);
@@ -948,7 +948,7 @@ static void TakaraHashira_UpdatePillarActors(void)
 		}
 		Dma_Set(&actor->x, TakaraHashira_ProbePosition, 0x84000003, DMA3);
 		Dma_Wait(DMA3);
-		if (Object_CheckMovementCollision(actor, TakaraHashira_ProbePosition) == -1)
+		if (FieldObject_CheckMovementCollision(actor, TakaraHashira_ProbePosition) == -1)
 		{
 			actor->motion_flags = 3;
 		}

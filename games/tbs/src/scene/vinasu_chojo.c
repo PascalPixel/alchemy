@@ -235,7 +235,7 @@ static void InitializeActorZeroMotion(void)
 	position[1] = actor->y.fixed;
 	position[2] = (actor->z.fixed & 0xfff00000) + 0x80000;
 	Vector_AddPolarOffset(0x200000, angle, position);
-	if (Object_CheckMovementCollision(actor, position) == 0)
+	if (FieldObject_CheckMovementCollision(actor, position) == 0)
 	{
 		Engine_GameFlagClear(592);
 		EV11_TOUCH();

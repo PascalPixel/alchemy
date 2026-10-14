@@ -180,7 +180,7 @@ static void RunStagedActorTransition(void)
 	target_position[1] = actor->y;
 	packed_step <<= 16;
 	target_position[2] = actor->z.value + packed_step;
-	if (Object_CheckMovementCollision(actor, target_position) > 0)
+	if (FieldObject_CheckMovementCollision(actor, target_position) > 0)
 		return;
 
 	transition_busy = actor->transition_busy;
@@ -541,7 +541,7 @@ static s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void)
 	step <<= 16;
 	vec.z = obj->z.fixed + step;
 #endif
-	if (Object_CheckMovementCollision(obj, &vec) != 1
+	if (FieldObject_CheckMovementCollision(obj, &vec) != 1
 		&& SceneData_FindSlotAtPosition(&vec, obj) == 0)
 	{
 #if EDITION_INTERNATIONAL
@@ -557,7 +557,7 @@ static s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void)
 		vec.z = obj->z.fixed + step;
 #endif
 		if (SceneData_FindSlotAtPosition(&vec, obj) == 0
-			&& Object_CheckMovementCollision(obj, &vec) == 0)
+			&& FieldObject_CheckMovementCollision(obj, &vec) == 0)
 		{
 			Engine_EventBegin();
 			Object_SetMode(obj, 6);
@@ -2085,7 +2085,7 @@ static void EV18_TOUCH(void)
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x208, 0x2c8);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
 	(void)OverlayObject_SpawnWithMode14(0x2080000, 0, 0x3100000, 223);
-	BattleFx_RunRisingObjectSequence(0, 6, 0);
+	FieldBattleFx_RunRisingObjectSequence(0, 6, 0);
 	Engine_EventWait(60);
 	Engine_EventRequestExit(20);
 	Engine_EventEnd();
@@ -2725,7 +2725,7 @@ static void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
 	pos[0] = actor->x.fixed + ((dir->x * 3) << 15);
 	pos[1] = actor->y.fixed;
 	pos[2] = actor->z.fixed + ((dir->z * 3) << 15);
-	hit = Object_CheckMovementCollision(actor, pos);
+	hit = FieldObject_CheckMovementCollision(actor, pos);
 	phase = gFrameCount & 4;
 	if (phase == 0)
 	{
@@ -2752,7 +2752,7 @@ static void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
 	pos[0] = actor->x.fixed + (dir->x << 19);
 	pos[1] = actor->y.fixed;
 	pos[2] = actor->z.fixed + (dir->z << 19);
-	hit = Object_CheckMovementCollision(actor, pos);
+	hit = FieldObject_CheckMovementCollision(actor, pos);
 	if (hit > 0)
 	{
 		return;
@@ -2760,7 +2760,7 @@ static void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
 	pos[0] = actor->x.fixed + dir->x * 0x5b333 - dir->z * 0x5b333;
 	pos[1] = actor->y.fixed;
 	pos[2] = actor->z.fixed + dir->z * 0x5b333 - dir->x * 0x5b333;
-	hit = Object_CheckMovementCollision(actor, pos);
+	hit = FieldObject_CheckMovementCollision(actor, pos);
 	if (hit > 0)
 	{
 		actor->x.fixed += (dir->z * 3) << 15;
@@ -2770,7 +2770,7 @@ static void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
 	pos[0] = (dir->x + dir->z) * 0x5b333 + actor->x.fixed;
 	pos[1] = actor->y.fixed;
 	pos[2] = (dir->x + dir->z) * 0x5b333 + actor->z.fixed;
-	hit = Object_CheckMovementCollision(actor, pos);
+	hit = FieldObject_CheckMovementCollision(actor, pos);
 	if (hit > 0)
 	{
 		actor->x.fixed -= (dir->z * 3) << 15;

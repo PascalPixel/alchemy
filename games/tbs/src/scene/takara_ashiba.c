@@ -1065,7 +1065,7 @@ static void EV54_SCRIPT(void)
 
 	if (slot->f06 == 0x4000)
 	{
-		BattleFx_RunRisingObjectSequence(0, 6, 0);
+		FieldBattleFx_RunRisingObjectSequence(0, 6, 0);
 	}
 	else
 	{

@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "engcall.h"
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/biribino_dou.h"
@@ -458,7 +459,7 @@ static void StagedActor_PushActorAhead(void)
 	pos[1] = target->y.fixed;
 	pos[2] = target->z.fixed + (StagedActor_DirectionSteps[heading] << 16);
 
-	if (Object_CheckMovementCollision(target, pos) > 0)
+	if (FieldObject_CheckMovementCollision(target, pos) > 0)
 		return;
 
 	Object_SetMode(player, 8);

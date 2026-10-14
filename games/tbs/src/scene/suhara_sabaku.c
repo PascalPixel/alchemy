@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "engcall.h"
 #include "unit/scene/suhara_sabaku.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
@@ -157,7 +158,7 @@ static void SuharaSabaku_SyncSelectedActorProgress(void)
 	scene = *(struct StateMarkerWork **)((u8 *)&gEventWork);
 	actor->presentation = (gFrameCount << 12);
 
-	progress = GameFlag_GetByte(0x210);
+	progress = FieldGameFlag_GetByte(0x210);
 	if (progress != 0)
 	{
 		if (progress == 1)
@@ -169,7 +170,7 @@ static void SuharaSabaku_SyncSelectedActorProgress(void)
 			progress -= 1;
 		}
 	}
-	GameFlag_SetByte(0x210, progress);
+	FieldGameFlag_SetByte(0x210, progress);
 }
 
 static void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
@@ -207,8 +208,8 @@ static void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
 		rec7->motion_flags = 4;
 		*(base + 498) = 2;
 		GameFlag_Set(0x20f);
-		GameFlag_SetByte(0x218, p10);
-		GameFlag_SetByte(0x210, 180);
+		FieldGameFlag_SetByte(0x218, p10);
+		FieldGameFlag_SetByte(0x210, 180);
 		Engine_EventEnd();
 		*(u16 *)(*(u8 **)((u8 *)&gEventWork) + 0x17c) = rec2;
 	}
@@ -518,7 +519,7 @@ static void SuharaSabaku_MeetActor(s32 a0, s32 actor)
 			Engine_GameFlagSet((actor + 0x309));
 		}
 	}
-	GameFlag_SetByte(0x210, 0);
+	FieldGameFlag_SetByte(0x210, 0);
 	BattleFx_SetWeightedResult(98, 5);
 	Battle_SetStart(3);
 	state = &gGameState;
@@ -548,7 +549,7 @@ static void EV99_RAISED(void)
 	struct FieldActor *partner;
 	s32				   i;
 
-	other = GameFlag_GetByte(0x218);
+	other = FieldGameFlag_GetByte(0x218);
 	leader = Object_GetById(gGameState.selected_actor);
 	partner = Object_GetById(other);
 	Engine_EventBegin();
@@ -570,7 +571,7 @@ static void EV99_RAISED(void)
 	Engine_EventWaitForScreen();
 	Engine_EventEnd();
 	Engine_GameFlagSet(0x122);
-	if (gGameState.scene == (s32)&SceneId_SuharaSabaku2 && GameFlag_GetByte(0x218) == 11)
+	if (gGameState.scene == (s32)&SceneId_SuharaSabaku2 && FieldGameFlag_GetByte(0x218) == 11)
 	{
 		Event_SetDestination((s32)&SceneId_WorldMap, 77);
 	}
@@ -642,7 +643,7 @@ s32 SuharaSabaku_RunSceneScript(void)
 	map = (*(struct FieldGlobals *)gMapWork).map;
 	(*(struct FieldGlobals *)gMapWork).event->start_transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-	if (GameFlag_GetByte(0x210) != 0)
+	if (FieldGameFlag_GetByte(0x210) != 0)
 	{
 		gGameState.movement_mode = 2;
 		Engine_TaskAddCallback(SuharaSabaku_SyncSelectedActorProgress, 0xc80);

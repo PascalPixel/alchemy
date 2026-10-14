@@ -274,7 +274,7 @@ static void EV11_TOUCH(void)
 static void ResetSceneParametersAndFinishSetup(void)
 {
 	Camera_MoveTo(-1, -1, -1, 0);
-	BattleFx_RunRisingObjectSequence(0, 6, 0);
+	FieldBattleFx_RunRisingObjectSequence(0, 6, 0);
 	Engine_EventCloseScreen();
 	Engine_EventWaitForScreen();
 }

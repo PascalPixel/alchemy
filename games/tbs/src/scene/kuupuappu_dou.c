@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "engcall.h"
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/kuupuappu_dou.h"
@@ -184,7 +185,7 @@ static void KuupuappuDou_PushBlockAhead(void)
 	pos[0].fixed = block->x.fixed + (DIRECTION_STEP(direction) & 0xffff0000);
 	pos[1].fixed = block->y.fixed;
 	pos[2].fixed = block->z.fixed + (DIRECTION_STEP(direction) << 16);
-	if (Object_CheckMovementCollision(block, pos) > 0)
+	if (FieldObject_CheckMovementCollision(block, pos) > 0)
 	{
 		return;
 	}

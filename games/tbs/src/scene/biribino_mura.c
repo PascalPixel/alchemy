@@ -703,7 +703,7 @@ static void BiribinoMura_PushFacedBlock(void)
 		pos[0].fixed = block->x.fixed + (BiribinoMura_FacingCellSteps[dir] & -0x10000);
 		pos[1].fixed = block->y.fixed;
 		pos[2].fixed = block->z.fixed + (BiribinoMura_FacingCellSteps[dir] << 16);
-		if (Object_CheckMovementCollision(block, pos) <= 0)
+		if (FieldObject_CheckMovementCollision(block, pos) <= 0)
 		{
 			Object_SetMode(leader, 8);
 			Engine_TaskWait(15);

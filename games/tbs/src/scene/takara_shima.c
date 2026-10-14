@@ -799,10 +799,10 @@ static s32 TryPushBlockingSceneActor(struct FieldActor *actor, struct Vec *reque
 
 		Vector_AddPolarOffset(0x200000, direction, &destination);
 	}
-	if (Object_CheckMovementCollision(actor, &destination) == 0)
+	if (FieldObject_CheckMovementCollision(actor, &destination) == 0)
 	{
 #else
-	if (Object_CheckMovementCollision(actor, requested) == 0)
+	if (FieldObject_CheckMovementCollision(actor, requested) == 0)
 	{
 #endif
 		s32 t;

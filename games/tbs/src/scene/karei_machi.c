@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "engcall.h"
 #include "scene_ids.h"
 #include "unit/import.h"
 #include "unit/scene/karei_machi.h"
@@ -1805,7 +1806,7 @@ static void FieldScene_RunLateSequence(void)
 		dst[0] = block->x.fixed + (w2 & -0x10000);
 		dst[1] = block->y.fixed;
 		dst[2] = block->z.fixed + (w2 << 16);
-		if (Object_CheckMovementCollision(block, dst) <= 0)
+		if (FieldObject_CheckMovementCollision(block, dst) <= 0)
 		{
 			Object_SetMode(leader, 8);
 			k = 0x3333;

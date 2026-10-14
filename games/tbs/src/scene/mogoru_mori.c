@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include "engcall.h"
 #include "global_cells.h"
 #include "unit/import.h"
 #include "unit/scene/mogoru_mori.h"
@@ -70,7 +71,7 @@ static s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
 	u8				  *f = &p->motion_flags;
 	s32				   saved = *f;
 
-	s32 r = Object_CheckMovementCollision(p, arg);
+	s32 r = FieldObject_CheckMovementCollision(p, arg);
 
 	if (r == 0)
 	{

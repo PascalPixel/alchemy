@@ -22,9 +22,8 @@ game's executable bytes; **DONE data = the non-code bytes each image places
 from source**, over all its other placed bytes (C2); each is counted in all
 six of a game's editions together. 100% means both: every language of a game
 builds all of its code and all of its data from source. `make progress`
-prints both figures on every line, one line per edition, shows code in its
-parts (C, assembly and 8-byte stubs) and shows the bytes of FAKEMATCH-steered
-code as their own number. ☀️ has the priority; the target is ☀️ 100% and ⚓️ 100%,
+prints both figures for each game and each edition, with code in its parts
+(C, assembly and 8-byte stubs). ☀️ has the priority; the target is ☀️ 100% and ⚓️ 100%,
 sharing as much code between the games as possible.
 
 **100% is announced by pret's standard** (Pascal, 2026-10-11), the bar the
@@ -43,21 +42,23 @@ decompilation scene holds a claim to, and nothing stricter (W3). A game is
 5. The source compiles as C with a current GCC (`make modern`): no match
    expected, no errors.
 6. Every compiler-steering device is tagged (S2) and counted
-   (`alchemy check devices`, `alchemy fakematch`), and the announcement
+   (a count of each kind), and the announcement
    states the counts. pokeemerald announced 100% with its fakematches and
    removed them over the years after; pokeruby is 100% with empty asm
    barriers in six files today. A register pin or an empty asm barrier is
    a tagged device like a volatile or a one-pass block, not a bar to 100%.
 
 ☀️ reached 100% by this standard on 2026-10-14. What the announcement's
-counts were, as measured in a clean clone with no ROM:
+counts were, measured in a clean clone with no ROM by the tools of that day
+(C2 then credited assembly by proof; `make progress` now counts by folder and
+finds ☀️ at 8,247,796 code and 45,187,016 data bytes, 100% of each):
 
 - DONE code 8,236,546 of 8,236,546 bytes and DONE data 45,190,274 of
   45,190,274 bytes over the six editions; code is 94.79% C, 1.56% proven
   assembly (32,064 bytes of it the compiler library) and 3.64% far-call
   stubs.
 - FAKEMATCH: 401 tags, steering 1,578,532 bytes of C, 19.16 points of the
-  code figure. `alchemy check devices`: 11 register pins, 19 empty asm
+  code figure. Devices: 11 register pins, 19 empty asm
   barriers, 0 inline asm outside the proven `CAMELOT_ASM` helpers, 163
   volatile (hardware volatiles included until the counter tells them
   apart), 274 goto, 50 one-pass blocks, 262 tagged-macro uses, 3 once-only
@@ -70,15 +71,13 @@ counts were, as measured in a clean clone with no ROM:
 - The six editions' SHA-1 are in `rom.sha1` and README.
 
 Matching is not the finish. The project is finished when the source also
-forms a readable, coherent reconstruction suited to the games' hardware and
-approved toolchains: The Broken Seal in 2001 and The Lost Age in 2002 (S3).
-Names, comments and formatting are Alchemy's reconstruction choices. Work
-need not reach that form at once, but every change moves toward it (W8).
-Removing the tagged devices (S2) is camelotizing work that continues after
-100% is announced, and the last pass before both games are declared
-finished camelotizes what remains.
+reads as modern C a person can follow, as pret's games do (S3). Work need
+not reach that form at once, but every change moves toward it (W8).
+Removing the tagged devices (S2) is humanizing work that continues after
+100% is announced.
 
-A game is finished when all six hold (Pascal, 2026-10-08):
+A game is finished when all six hold (Pascal, 2026-10-08; humanizing,
+2026-10-14):
 
 1. 100% DONE code and 100% DONE data in all six editions.
 2. Every asset ported: nothing reaches the ROM as copied bytes; all data is
@@ -86,47 +85,28 @@ A game is finished when all six hold (Pascal, 2026-10-08):
 3. `recon/<game>` removed: no scaffold, draft or edition scaffolding left.
 4. FAKEMATCH at 0%: no tagged device left (S2).
 5. A limited set of stock compilers builds all of it (K1–K3).
-6. The codebase camelotized (S3), which includes its structure:
-   - Files are Camelot's own translation units, recovered from the bytes as
-     pret recovers Game Freak's (object alignment, each object's trailing
-     data and strings, link order), so the file count follows the original,
-     not one file per adopted function.
-   - Every name rests on evidence: in-game text, the table or id that
-     reaches it, or the code that loads it. No codename folders, guessed
-     character names or invented asset names; an unknown keeps a neutral
-     placeholder.
-   - The global layers Camelot's code shows are source: one character
-     module that relates each character's portrait, field sprite, battle
-     sprite, name and dialogue through its id; likewise scenes, areas and
-     other units the code treats as one, with reusable modules, inline
-     helpers and macros where the code repeats.
-   - Assets are named the same way, never with invented names: each
-     character's field sprite, battle sprite and portrait files and their
-     resource directory rows take the character's name through that
-     module (for example ROBIN, ROBIN_KO), other sprites and pictures take
-     names from in-game text or the code that loads them, and anything
-     unproven keeps its number.
+6. The codebase humanized (S3): English names and comments, pret's naming
+   and formatting, files grouped as the original's objects were (object
+   alignment, trailing data and strings, link order) rather than one file
+   per function, repeated code folded into `games/common` helpers and
+   macros, and every name resting on evidence (in-game text, the table or
+   id that reaches it, or the code that uses it), an unknown keeping a
+   neutral placeholder.
 
-   Order (Pascal, 2026-10-08): first 100% by pret's standard (above), then
-   this structure as the first order of camelotizing.
-
-   Camelotizing runs in stages, each byte-identical in all twelve editions
-   (`alchemy keep`) (Pascal, 2026-10-08):
-   1. Mechanical: formatting, dead files and code (`alchemy dead`),
-      includes and prototypes, the modern build's type warnings, stale
-      FAKEMATCH devices (`alchemy sweep`) and undefined behaviour, which
-      keeps Camelot's form and gets its defined form behind pret's `UBFIX`
-      switch, on in the modern build. Each gameplay bug in the original
-      keeps its code and takes pret's `// BUG:` comment, with its fix
-      behind the opt-in `BUGFIX` switch, and each unused original function
-      is marked `UNUSED`, as pret marks them (Pascal, 2026-10-14). Code
-      behind either switch is not dead code.
-   2. Structure: Camelot's translation units, repeated code folded into
-      `games/common` helpers, macros and inline layers, and the global
-      layers above.
-   3. Meaning: names and comments from evidence, assets named through
-      their modules; linters flag what remains, and an unknown keeps its
-      placeholder.
+   Humanizing runs in passes, each byte-identical in all twelve editions
+   (`make compare-editions`):
+   1. Mechanical: formatting, dead files and code, includes and
+      prototypes, the modern build's type warnings, stale FAKEMATCH devices
+      and undefined behaviour, which keeps the original's form and gets its
+      defined form behind pret's `UBFIX` switch, on in the modern build.
+      Each gameplay bug in the original keeps its code and takes pret's
+      `// BUG:` comment, with its fix behind the opt-in `BUGFIX` switch,
+      and each unused original function is marked `UNUSED`, as pret marks
+      them (Pascal, 2026-10-14). Code behind either switch is not dead code.
+   2. Structure: files grouped as the original's objects, repeated code
+      folded into `games/common` helpers and macros.
+   3. Meaning: English names and comments from evidence; an unknown keeps
+      its placeholder.
 
 ## Where things are
 
@@ -141,42 +121,45 @@ A game is finished when all six hold (Pascal, 2026-10-08):
   way in `menu` and `debug`. Unit headers follow the same paths under
   `include/unit`. `games/common/src` has the same bank folders: a shared
   file sits under the bank that links it.
-- `games/tbs/objects.tsv` is ☀️'s object list: the object order of the main
-  image and of each overlay, with the editions that link each row. A row is
-  one linker statement, or stands for several: a `unit` row for an
-  overlay's entry table, C object and import table, and a `@TABLE` row for
-  the modules a table names, in the table's order (the resource directory,
-  the song table). `games/tbs/main.ld` is the one main script of all
-  six editions and names no object: it has the memory, the output sections,
-  an `INCLUDE` for each place of the list and the far-call banks' fixed
-  addresses for each edition, chosen by `--defsym TBS_EDITION_<LANG>=1`. The
-  build writes each place's objects for the edition it links into
-  `out/<edition>/ld`.
-- ⚓️'s `games/tla/main.ld` is the Japanese object order; its other edition
-  scripts are still `recon/tla/<lang>/main.ld`.
+- `games/tbs/objects.tsv` is ☀️'s object list: every object of the main
+  image and of each overlay in link order, one row each, with the sections it
+  places and the editions that link it. `games/tbs/main.ld` is the one main
+  script of all six editions and names no object: it has the memory, the
+  output sections, an `INCLUDE` for each place of the list and the far-call
+  banks' fixed addresses for each edition, chosen by
+  `--defsym TBS_EDITION_<LANG>=1`. The Makefile's `objlist` writes each
+  place's objects for the edition it links into `out/<edition>/ld`.
+- ⚓️'s `games/tla/main.ld` is the Japanese object order; each other
+  edition's whole script is `recon/tla/<lang>/main.ld`.
 - `recon/tla/raw` holds ⚓️'s English disassembly that is not C yet, one
   listing per function or run. ☀️ is 100% code and data and has no `recon/`
   folder: nothing in its build or tools reads one.
 - ☀️'s overlays link by the one `games/tbs/src/system/overlay/overlay.ld`
   and their rows of the object list; `games/tbs/overlays.tsv` gives each
   overlay's `.bss` section its header. The overlay's own data and bss not
-  yet in its modules are in `ovl_<id>.s` beside the script. ⚓️'s overlay
-  listings are `recon/tla/raw/overlays`.
+  yet in its modules are in `ovl_<id>.s` beside the script. Each overlay's
+  import table sets `import.NAME` for each stub it imports, by edition where
+  they differ, and includes `games/tbs/src/system/overlay.inc`, whose rows
+  give the stubs their order. ⚓️'s overlay listings are
+  `recon/tla/raw/overlays`.
 - `games/<game>/src/system/rom_head.s` is the cartridge header, linked
   first in every edition, as pret's `rom_header.s`: the logo is
-  `.space 156` and the complement 0. Right after objcopy the build runs
-  the header fix-up (`alchemy gbafix`, pret's gbafix) on every ROM it
-  links, which writes the logo and the complement (L1).
+  `.space 156` and the complement 0. Right after objcopy the Makefile runs
+  the header fix-up (`gbafix`, pret's) on every ROM it links, which writes
+  the logo and the complement (L1).
 - `games/tbs/include/event.h` is the scene command vocabulary
   (S3); `field_event.h` and `field_service.h` hold the script layer the
   commands expand to.
 - `recon/tla/<lang>` holds that ⚓️ edition's scaffold (`main.ld`, `main/`,
   `overlays/`, `units/`) beside `recon/tla/unidentified.s` (data not yet
   identified, placed from the ROM) and the symbol files.
-- `tools/` holds alchemy (one `alchemy` command for both games: build,
-  checks, the count, matching, camelotizing and reports; see Commands) and
-  ags (asset encoders and decoders). `out/` and `tools/out/` are build
-  output and are ignored.
+- The `Makefile` builds everything, every rule readable there. `tools/ags`
+  holds the small tools it runs where make cannot do the job: the asset
+  encoders (`agsgfx`, `wav2ags`, `mid2ags`, `po2ags`), `objlist`,
+  `scaninc`, `ovlpack` and `gbafix`. `tools/alchemy` holds the matching aids
+  (`alchemy diff`, `alchemy permute`) and the progress count; nothing in it
+  takes part in a build. Assets build beside their sources and are ignored;
+  `out/` and `tools/out/` are build output and are ignored.
 - `.github/workflows/progress.yml` publishes progress after each push to main:
   the `progress` branch holds `history.tsv` and README's two figures, written
   only by CI; the repository keeps no copy of either.
@@ -188,7 +171,7 @@ A game is finished when all six hold (Pascal, 2026-10-08):
 - **L1** Never commit, upload or publish a ROM, private inputs or any other
   copy of the original game files. The cartridge header's Nintendo logo lives
   only in the build's header fix-up tool, which writes it into each built ROM
-  as pret's gbafix does (Pascal, 2026-10-08). _Check: publication._
+  as pret's gbafix does (Pascal, 2026-10-08).
 - **L2** Evidence comes only from our own ROMs, this repository and public
   documentation. Never use another project's Golden Sun work, and never open
   one to compare.
@@ -200,51 +183,29 @@ A game is finished when all six hold (Pascal, 2026-10-08):
 - **C1** A function counts only when its complete extent, literal pool
   included, compiles exactly and every edition stays byte-identical. A
   function counts in an edition only when that edition's build links its C.
-  _Check: compare, compare-tla, compare-other-editions._
-- **C2** DONE code is pret's calcrom over the linker maps of byte-identical builds:
-  the code the linker places from `games/`, counted once for each of the
-  game's six editions whose build links it, out of six; sizes are the English
-  build's, so code that exists only in another edition is outside the total,
-  and code an edition's own source leaves out, with no symbol in any of its
-  images, is outside that edition's total.
-  Uncredited disassembly is `not-yet-c` in `recon/<game>/raw`; only proven
-  library, handwritten and veneer assembly counts as assembly. Assembly
-  counts as handwritten only with an instruction, frame or pattern Camelot's
-  compilers cannot emit (rrx; a branch, adc or sbc on a shift's carry; r11 as
-  an ordinary register; a callee-saved register save without lr; CPSR/SPSR;
-  swi; computed pc into code; stores into code; unpaired multiply halves; a
-  pc-relative block load of data; a mode switch inside a function; movs with
-  no shift, where their copy-and-test is subs #0; ldm or stm writing back
-  off sp, other than a block copy's list from r0 or a doubleword pair; a
-  conditional branch on a data-processing instruction's flags with no
-  compare, where agscc's branch patterns always emit cmp or cmn; one literal
-  pool shared by two functions, where GCC flushes its pool at each function's
-  end) or a
-  linkage no procedure-call standard produces; anything else is not-yet-C
-  until it matches as C. Whole aligned 8-byte far-call stubs count as veneers.
-  Padding a source marks as carrying no credit does not count as code. It
-  is outside the code total, as the linker's fill is, and is data; a span
-  may hold only padding, data and nop.
-  DONE data (Pascal, 2026-10-08) is every other byte each image places, the
-  ROM and each overlay, from its first placed byte to its last: data, assets,
-  headers and fill. Each overlay counts once, in its unpacked image as
-  linked; its compressed stream in the ROM is outside the total. A byte is
-  done when an object built from `games/` places it (data, assets, tagged
-  packer bytes) or the build writes it as fill or alignment; a byte placed
-  from `recon/` (incbin scaffolds, not-yet-C listings and their overlay
-  counterparts, drafts) is not. Uncredited padding counts as data, compiler
-  library and linker bytes count as done, and each edition's data total is
-  its own images', not the English build's; a game's figure sums its six.
-  Cartridge padding after the last placed byte is outside the total. A game is
-  100% only when DONE code and DONE data are both 100% in all six editions
-  (Pascal, 2026-10-08).
-  _Check: coverage-report, publication._
+  _Check: make compare-editions._
+- **C2** DONE is pret's calcrom over the linker maps of byte-identical builds
+  (`make progress`), by folder (Pascal, 2026-10-14): a byte the images place
+  from `games/` is done, one from `recon/` is not yet. Each image counts from
+  its first placed byte to its last: the ROM, and each overlay once, in its
+  unpacked image as linked; an overlay's compressed stream in the ROM is
+  outside the totals, as is cartridge padding after the last placed byte.
+  DONE code is the bytes of `.text` sections: C where the object's source
+  is C, assembly otherwise, with the far-call banks' and overlay tables'
+  8-byte stubs and the compiler library (done) reported apart. DONE data is
+  every other placed byte: done from `games/`, the compiler library or the
+  linker's fill, not yet from `recon/` (incbin scaffolds, not-yet-C listings,
+  drafts). Each edition counts its own maps and a game's figure sums its
+  six; an unfinished edition's code total is at least the English build's,
+  whose listings hold the code the other editions still place as scaffold
+  bytes. A game is 100% only when DONE code and DONE data are both 100% in
+  all six editions (Pascal, 2026-10-08).
 - **C3** Every push to main carries its measurement: `make land` compares all
-  twelve editions and measures both games, and the pre-push hook uploads that
-  count by commit. CI records it on the `progress` branch, draws README's two
-  figures there and sends decomp.dev its report. Model credit comes from
-  main's commit trailers; days through 2026-10-04 keep their approved counts.
-  _Check: land, pre-push._
+  twelve editions, runs the tests and measures both games, and the pre-push
+  hook uploads that count by commit. CI records it on the `progress` branch,
+  draws README's two figures there and sends decomp.dev its report. Model
+  credit comes from main's commit trailers; days through 2026-10-04 keep
+  their approved counts.
 
 ### The oracle stays out of the build
 
@@ -260,7 +221,6 @@ or functions is exactly this cheating.
   derived from the ROM or the expected output (bytes, addresses, sizes,
   tokens, tables, hashes) may steer the build or the count, `out/` included;
   reports under `out/` are for people only.
-  _Check: publication._
 - **O2** Every name is defined where its bytes are, as a C definition or a
   label, and layout is the build's object list order
   (`games/<game>/objects.tsv`) where a game has one, and the linker scripts'
@@ -270,10 +230,9 @@ or functions is exactly this cheating.
   buffers its code addressed as constants, and the hardware cartridge restart
   entry, each listed once in a game header and checked against where the
   linker placed it. One name per place; never a
-  name that spells its own value. _Check: publication, fixed-address check, aliases._
+  name that spells its own value.
 - **O3** Scene and resource ids come only from their tables and are used whole.
   Overlay code never branches straight into the main image.
-  _Check: the build's id gate._
 - **O4** A mismatch is fixed in source, or the code stays disassembly or a
   draft. Before announcing a milestone, run an independent audit for leaks.
 - **O5** Old git history, deleted files, backups and unreachable git objects
@@ -284,18 +243,31 @@ or functions is exactly this cheating.
 
 - **S1** `games/` holds only real source: C from an approved compiler, or
   proven assembly written as instructions, never copied bytes. Drafts and
-  scaffolding live under `recon/` and shrink toward zero. _Check: publication._
+  scaffolding live under `recon/` and shrink toward zero. Assembly is proven
+  as the compiler library, as whole aligned 8-byte far-call stubs, or as
+  handwritten, which it is only with an instruction, frame or pattern
+  Camelot's compilers cannot emit (rrx; a branch, adc or sbc on a shift's
+  carry; r11 as an ordinary register; a callee-saved register save without
+  lr; CPSR/SPSR; swi; computed pc into code; stores into code; unpaired
+  multiply halves; a pc-relative block load of data; a mode switch inside a
+  function; movs with no shift, where their copy-and-test is subs #0; ldm or
+  stm writing back off sp, other than a block copy's list from r0 or a
+  doubleword pair; a conditional branch on a data-processing instruction's
+  flags with no compare, where agscc's branch patterns always emit cmp or
+  cmn; one literal pool shared by two functions, where GCC flushes its pool
+  at each function's end) or a linkage no procedure-call standard produces;
+  anything else stays a not-yet-C listing in `recon/` until it matches as C.
 - **S2** Tagged `/* FAKEMATCH: reason */` code counts, at 100% as it did in
-  pret's games (Goal); removing it is camelotizing (S3, W8), and a finished
+  pret's games (Goal); removing it is humanizing (S3, W8), and a finished
   game has none. Compiler-steering C (wrappers, volatile, forced
   temporaries, dead code, one-pass blocks), empty asm barriers and
   fixed-register variables are allowed when each carries a `FAKEMATCH` tag
   with its measured reason inside the function. All of them are devices of
-  one standing: `alchemy check devices` counts pins, barriers, inline asm and
-  volatiles, and a count may only fall; trading one device for another is
+  one standing: the counts of pins, barriers, inline asm and volatiles
+  may only fall; trading one device for another is
   not progress unless the new form is the source's, and a device that stays
-  records in its tag the plain forms measured against it (S4). The same
-  check counts `goto` statements, and that count may only fall too. A `goto`
+  records in its tag the plain forms measured against it (S4). The count of
+  `goto` statements may only fall too. A `goto`
   is ordinary C and no FAKEMATCH device: it carries no tag and is outside
   the FAKEMATCH figures. But one that only forces a layout is not how the
   function was written, and it goes when its loop or branch is found
@@ -360,122 +332,73 @@ or functions is exactly this cheating.
   asm, a register pin) still counts at each use, tagged or not, and a macro
   whose tag records that its stores match plainly elsewhere stays a device
   (Pascal, 2026-10-13). Never patch
-  compiler output. _Check: no-asm (in lint-staged)._
-- **S3** Camelotize: reconstruct readable source consistent with the games'
-  hardware, approved compilers and demonstrated program structure. Separate
-  what the bytes establish, what the compiler requires and Alchemy's house
-  style. The following conventions guide the reconstruction
-  (Pascal, 2026-10-07):
+  compiler output.
+- **S3** Humanize: make the source readable modern C, as pret writes its
+  games, in English, which is less confusing (Pascal, 2026-10-14). The bytes
+  stay identical; nothing has to look like the original's own source.
 
   ```c
   #include "event.h"
 
-  #define BOUZU       8           // 坊主
+  #define MONK    8
 
-  // 井戸の前へ移動
-  static void EV03_IDO(void)
+  // The monk walks to the well.
+  static void Event_WalkToWell(void)
   {
       ...
-      OBJ_POS_SET(BOUZU, 192, 264);
+      SetObjectPosition(MONK, 192, 264);
       ...
   }
   ```
 
   - Layout: `games/<game>/src`, `include`, `sound`, `text`, the same folders
     in both games (`games/tbs`, `games/tla`) and `games/common`; lowercase
-    file and folder names, `.c` and `.h` (Pascal, 2026-10-08: no evidence
-    for the uppercase style), short and descriptive, with no eight-letter
-    limit (Pascal, 2026-10-13). A scene's file takes its place's full name
-    (Pascal, 2026-10-12). The one exception follows the GNU convention:
-    an assembly file the C preprocessor reads (`#include`, `#define`, `#if`)
-    is all capitals, name and extension (`NAME.S`); plain assembly such as
-    `rom_head.s` is lowercase. The build chooses preprocessing by the
-    extension, as GCC's driver does (Pascal, 2026-10-08). Directives stay
-    lowercase (`#include`): the preprocessor reads no other. Rename a file
-    and its include and linker references (its rows of the object list,
-    where its game has one) together. _Check: hygiene,
-    publication._
-    Shared code and declarations live once in `games/common`; a function is
-    adopted into the module that holds its linker neighbours, not into a new
-    file of its own.
-    For shared files blocked by ⚓️'s layout: "give ⚓️ its own copy, merge
-    ☀️'s, and use pret's library file names" (Pascal's handoff,
-    2026-10-09).
-  - Language: C89 with only extensions supported by the approved compiler;
-    GNU C `//` comments are allowed. Identifiers are ASCII. Use prototypes,
-    `typedef`, `enum` and ordinary C idioms where appropriate. Choose types,
-    signedness, declarations, linkage and scopes from the program and matching
-    evidence.
-  - Naming: ordinary English technical vocabulary and abbreviations may mix
-    with romaji. Use the Japanese game names for characters and places
-    (`ROBIN`, `GERALD`, `SUKURETA`, `SATYUROSU`, `DORII`, `RUNPA_JO`) and
-    established game terminology where useful. Keep spelling consistent
-    within a concept and names concise and meaningful. Unknown meaning
-    stays unknown.
-  - Comments: prefer concise Japanese explanations of verified game behavior,
-    units, fields and constraints. English technical terms and useful English
-    explanations are allowed. Use trailing comments for fields and cases, and
-    short blocks or section labels when they help explain a larger operation.
-    Keep comments useful and UTF-8. FAKEMATCH explanations (S2) stay English.
-    Each module's header also carries one short English line saying what
-    the module is, for readers who do not read Japanese (Pascal,
-    2026-10-13).
-  - Formatting: the showcase uses tabs at four columns, opening braces on
-    their own lines, a space before control parentheses, and blank lines
-    between logical steps. Group related declarations and constants; align
-    short trailing comments where it aids scanning. Use section separators
-    for larger operations. Preserve directive order, macro semantics and
-    deliberate data-table layout. The repository's `.clang-format` records
-    these choices. Format only the source being reviewed, and keep approved
-    library source out of style passes.
-  - Numbers stay numbers until evidence establishes their meaning. Then use
-    an appropriate technical or game-domain name; do not invent meanings to
-    remove literals. Decimal suits quantities and hexadecimal suits masks,
-    packed fields and hardware values. `#define` and `enum` are both allowed
-    where their types and generated bytes fit. Message names remain linker
-    symbols (W8); a named constant never invents an address or table ID (O2/O3).
-    A message is written by its bare name, with no cast
-    (`MES_SET(MsgName)`); `MSGNO(name)` is its number as a constant, for
-    table fields and wherever the bytes need one (Pascal, 2026-10-14).
-    Flag and song ids take their names from `flags.h` and `songs.h`, plain
-    `#define` lists like pret's, which C and assembly can both include:
-    `FLAG_` for flags, `MUS_` for music and `SE_` for sound effects. Only
-    proven names go in: a flag whose meaning is unproven keeps its number,
-    and a sound takes only its proven kind (`SE_138`, `MUS_027`). A
+    file and folder names, `.c` and `.h`, short and descriptive. An
+    assembly file the C preprocessor reads is `NAME.S`; plain assembly is
+    `name.s`. Rename a file and its include and linker references (its rows
+    of the object list, where its game has one) together. Shared code and
+    declarations live once in `games/common`; a function goes into the
+    module that holds its linker neighbours, not into a new file of its own.
+  - Language: C89 with the GNU extensions the compilers accept, `//`
+    comments included. Use prototypes, `typedef`, `enum`, structs and
+    ordinary C idioms. Choose types, signedness, declarations and scopes
+    from the program and the matching evidence.
+  - Naming, as pret's: functions in PascalCase (`StartBattle`), globals
+    `gName`, file statics `sName`, constants and macros in UPPER_SNAKE_CASE,
+    locals and struct fields in camelCase. Characters, places, items and
+    other game terms take their English names from the English release
+    (`ISAAC`, `SATUROS`, `VAULT`, `scene/lunpa_fortress.c`). A name says what
+    the thing does; unknown meaning stays a neutral placeholder
+    (`sub_08012345`, `unk_14`), never a guess.
+  - Comments: English, short, saying what the code does and why where it
+    is not obvious. FAKEMATCH tags (S2) say what they steer.
+  - Formatting, as pret's: four spaces, no tabs; opening braces on their own
+    lines; a space before control parentheses. `.clang-format` records it.
+    Preserve directive order, macro semantics and deliberate data-table
+    layout.
+  - Numbers stay numbers until evidence establishes their meaning, then take
+    a name; do not invent meanings to remove literals. Decimal suits
+    quantities, hexadecimal masks, packed fields and hardware values. A named
+    constant never invents an address or table ID (O2/O3). Message names are
+    linker symbols (W8): a message is written by its bare name, with no cast
+    (`ShowMessage(MsgName)`), and `MSGNO(name)` is its number as a constant
+    (Pascal, 2026-10-14). Flag and song ids take their names from `flags.h`
+    and `songs.h`, plain `#define` lists like pret's: `FLAG_` for flags,
+    `MUS_` for music and `SE_` for sound effects; only proven names go in,
+    and an unproven sound takes only its kind (`SE_138`, `MUS_027`). A
     temporary flag is `FLAG_SCENE_TEMP_xx`, with a trailing comment saying
     what each scene uses it for (Pascal, 2026-10-14).
   - Values are written in the author's units, whatever the bytes store:
     scene coordinates are pixels, and the command shifts them into fixed
     point.
-  - Scenes are written in `event.h` commands (`OBJ_POS_SET`, `MES_PUT`,
-    `WAIT`, `FLAG_CHK` ...), all-caps macros that expand to exactly the call
-    the bytes need: the scene script layer's inline helper (S2), or the
-    engine service itself where the native calls it directly.
-  - An event function is named `EV<id>_<SUBJECT>`: its decimal id from the
-    scene's event table, then one romaji noun for what it is about
-    (`EV08_KAGI` 鍵, `EV52_IDO` 井戸, `EV99_ROUYA` 牢屋), or a clear English
-    verb where the code does not show the subject (`EV12_SET`,
-    `EV20_MAIN`, `EV94_MAIN`). It is `static` once the table that reaches it
-    lives in the same object. These event names are our indexing convention.
-    Two handlers of one id each take the word their table row carries
-    (`EV22_NORTH` from its facing), with an ordinal (`_2`) only where the
-    row has none; a handler reached under several ids takes the lowest. A
-    scene's entry-table functions and its own helpers take the place's name
-    (`KareiMachi_GetExits`, `RunpaJo_...`), not engine-looking prefixes
-    (Pascal, 2026-10-14).
-    Engine functions use compact CamelCase (`BtlTgtSet`), with meaningful
-    technical vocabulary and game terms, and engine names coined from now
-    on take that form (Pascal, 2026-10-14); existing `Subsystem_VerbObject`
-    names may remain until their module is reviewed. Locals and struct fields
-    express their role rather than a register number or unexplained offset.
-  - The bytes prove layers, units and calls; the ROM keeps no names (only
-    credits text and ⚓️'s build stamp `020610172024`). Names, numbering and
-    comments are reconstruction: never present them as recovered.
-  - Mechanical cleanup scores prioritize review. Review meaning, naming,
-    comments, organization and byte identity, preserving necessary casts,
-    hardware `volatile`, `goto`, work arrays and S2 devices with their reasons.
-  - The showcase is `BtlTgtExec` in
-    `games/tbs/src/battle/battle.c`.
+  - Scenes are written in `event.h` commands, macros that expand to exactly
+    the call the bytes need: the scene script layer's inline helper (S2), or
+    the engine service itself where the native calls it directly.
+  - The ROM keeps no names (only credits text and ⚓️'s build stamp
+    `020610172024`). Names and comments are ours: never present them as
+    recovered.
+  - Keep necessary casts, hardware `volatile`, `goto`, work arrays and S2
+    devices with their reasons.
 - **S4** Never throw work away: commit each adoption and attempt, and keep a
   near miss as a draft with the remaining difference in its header. One draft
   per listing, overwritten as it improves: a trial is a commit or a line in
@@ -492,24 +415,23 @@ or functions is exactly this cheating.
   built palette, whole-area blobs or stored compression tokens. Sources may
   include the files the build makes from these inputs. PO catalogs hold
   editable messages and control commands; the build encodes them into each
-  game's native text format. Generated resources live in ignored build output.
-  _Check: publication._
+  game's native text format. The Makefile builds each asset beside its source,
+  ignored by git, as pret's do.
 - **A2** A picture is drawn the way the game shows it: tile sheets at their real
   width or sprite shape, pictures with a tilemap as the map shows them,
-  animations one frame wide. _Check: layout._
+  animations one frame wide.
 - **A3** A PNG may carry an all-grey palette only when the build writes that
   palette into the ROM from it or from the first part of its part list.
-  _Check: publication._
 - **A4** Encoder options live beside their assets; recipes may carry a sprite
   shape (one of the 12 hardware sizes) in the file name.
-- **A5** No JSON anywhere: tables are TSV. _Check: publication._
+- **A5** No JSON anywhere: tables are TSV.
 - **A6** Each edition combines its message catalog, character mapping, font
   images, glyph metrics and layout with its measured code differences. Common
   code and interfaces stay shared. Select differing resources in their owning
   module or build rule and keep code branches beside the behavior they change.
   Group editions where the measured behavior agrees. Text layout uses the
   actual font's pixel widths and control commands.
-  _Check: compare-editions for byte identity._
+  _Check: make compare-editions._
 
 ### Compilers
 
@@ -556,7 +478,7 @@ byte-identical. A mismatch in game code is never a reason (K2, K3).
   table, compile-time checks of the host model, and real constants copied one
   operand slot at a time); none changes instruction selection, allocation or
   scheduling. The same route serves the
-  build, `alchemy diff --arm` and the ARM permuter. It replaces agbcc_arm;
+  Makefile, `alchemy diff --arm` and the ARM permuter. It replaces agbcc_arm;
   there is one ARM C generator and no alternate ARM library route.
 
   Nintendo's sound and flash library source uses pret's `old_agbcc` at its
@@ -571,8 +493,8 @@ byte-identical. A mismatch in game code is never a reason (K2, K3).
   pret's `m4a.c` (Pascal, 2026-10-14).
 
   Matching establishes practical compatibility, not exact historical identity.
-  No other routing or function-specific compiler flag is allowed.
-  _Check: routing tests._
+  No other routing or function-specific compiler flag is allowed: the
+  Makefile's three file lists (SOUND_C, FLASH_C, ARM_C) are the only routes.
 
 - **K2** TLA uses the same agscc Thumb executable with two existing
   reconstruction options and one stock scheduling option enabled for every
@@ -603,7 +525,6 @@ byte-identical. A mismatch in game code is never a reason (K2, K3).
   This decision admits no additional scheduler or allocator patch. Further
   changes require K3's whole-game evidence and Pascal's approval; a remaining
   instruction-order mismatch alone is not grounds to change compilers.
-  _Check: compiler-source-check, bundle validation._
 - **K3** A compiler, option or change is admitted only when one option set
   explains the great majority of a game's C and assembly, counted across the
   whole game rather than listed by function; no public compiler of the time
@@ -611,23 +532,24 @@ byte-identical. A mismatch in game code is never a reason (K2, K3).
   engineer, in GCC's own style, with its evidence and reason recorded here and
   in agscc's README. Pascal approves each. Every compiler is built from pinned
   source, on any system, and the twelve editions judge what it produces.
-  _Check: compiler-source-check, bundle validation, routing tests._
 
 ### Work
 
-- **W1** Tooling is Rust: no TypeScript, JavaScript, Python or shell beyond
-  a command line. New tooling solves a demonstrated recurring blocker and
-  carries a test; tooling nothing needs is removed. Pret builds its games with
-  about 15,000 lines of tools. _Check: language-check._
+- **W1** The build is a plain Makefile where every rule can be read, as
+  pret's (Pascal, 2026-10-14). A tool is a small single-purpose program, in
+  Rust (no TypeScript, JavaScript, Python or shell beyond a command line),
+  for a step make cannot do; it solves a demonstrated recurring blocker and
+  carries a test, and tooling nothing needs is removed. The goal is
+  decompilation: pret builds its games with about 15,000 lines of tools.
 - **W2** Work on your own branch; `main` is the only long-lived branch, and
   a worktree is removed when its branch lands. Land on main with `make land`,
-  which builds and compares all twelve editions and runs the tests.
-  _Check: land._
-- **W3** Alchemy owns compilation, linking, verification, reading and analysis,
-  behind one `alchemy` command for both games; the ags crate owns asset
-  encoding and decoding (agsgfx, mid2ags, wav2ags, po2ags). Look at how pret
-  does something before inventing. Alchemy is never stricter than pret: where
-  pret's practice settles a question, follow it (Pascal, 2026-10-08).
+  which builds and compares all twelve editions, runs the tests and counts
+  progress.
+- **W3** The Makefile owns compiling and linking; `tools/ags` owns asset
+  encoding and decoding and the build's other small tools; `tools/alchemy`
+  owns the matching aids and the count. Look at how pret does something
+  before inventing. Alchemy is never stricter than pret: where pret's
+  practice settles a question, follow it (Pascal, 2026-10-08).
   Settled this way (2026-10-08): Camelot's far-call banks start at fixed
   addresses per edition, written in the linker scripts as pokeemerald pins
   its graphics blobs (`__gfx_load_address`), with the gap as linker fill;
@@ -651,26 +573,25 @@ byte-identical. A mismatch in game code is never a reason (K2, K3).
   What 100% means is settled the same way, in Goal (Pascal, 2026-10-11):
   the earlier wording here, which refused the announcement while any
   register pin or empty asm barrier remained, was stricter than pret.
-- **W4** Choose what to match from `make deps`: first the functions other
+- **W4** Choose what to match: first the functions other
   unfinished functions call, with the structures they share, then the ones
   with nothing left to name, largest first.
 - **W5** The whole ROM judges. Before every commit, `make compare-editions`
   must print OK for all twelve editions; a per-object or per-function diff
   misses a scaffold section placed two bytes early or a lost alignment pad.
-  `alchemy objects` names both; `alchemy keep` checks all twelve.
 - **W6** A change to what counts, a rule, a compiler option or routing lands
   as its own commit, with DONE before and after in its message, never mixed
   with new C. Most of DONE's large jumps and drops have been changes of this
   kind, not matching.
-- **W7** Parallel work divides by owner: `alchemy queues` gives each worker
-  whole modules or overlays, and each camelotize worker one area. Before
+- **W7** Parallel work divides by owner: each worker takes whole modules or
+  overlays, and each humanizing worker one area. Before
   naming a field or function, check no other branch named it
   (`git log --all -S`). When branches merge, an adoption wins over edits to
   its draft, and code that used an old name takes the new one. A worker
   commits only verified work; anything unverified at a stop is discarded.
-- **W8** Camelotizing moves code toward S3's target and never away from
-  it. A mechanical rewrite is `alchemy camelotize` followed by `alchemy
-  keep`; a rewrite by hand meets the same test. Message names stay
+- **W8** Humanizing moves code toward S3's target and never away from
+  it. Every rewrite, mechanical or by hand, leaves all twelve editions
+  byte-identical (`make compare-editions`). Message names stay
   linker symbols: as an enum, small ids become immediate moves instead of
   literal-pool loads and the bytes change.
 
@@ -680,7 +601,7 @@ Not rules; what earlier work measured.
 
 - Gaps between locals and spill slots come from register allocation, not
   from locals; an unused local exactly the size of a native frame gap is the
-  only frame device S2 allows (`alchemy sizes` lists the candidates).
+  only frame device S2 allows.
 - An empty asm barrier between two tests blocks jump threading; `const`
   declarations change scheduling; a store through a struct field and one
   through a cast pointer build a halfword constant differently.
@@ -692,7 +613,7 @@ Not rules; what earlier work measured.
 - Editions differ: Japanese is often an older layout of the same function
   and gets its own `#if` branch, or stays on its scaffold (S4). The
   German, Spanish, French and Italian far-call tables sometimes name a stub
-  differently; `alchemy label` names a scaffold-only stub.
+  differently.
 - Nested functions adopt with their parent.
 - Scenes reach the engine through one inline layer: as direct calls the
   services change 642 of 5,621 ☀️ English functions, through the layer all
@@ -752,63 +673,31 @@ Not rules; what earlier work measured.
 
 ## Commands
 
-Setup needs macOS or Linux with a C compiler, make, git, curl, patch and xz,
-and Rust with Cargo; nothing needs Rosetta. The whole build is proven on
-Apple Silicon macOS and on 64-bit ARM Linux; agscc's README lists the other
-hosts its compilers were tested on. Put your own ROMs under `roms/` as `tbs-en.gba`,
-`tla-ja.gba` and so on; each is checked before use and none is ever
-committed (L1).
+Setup needs macOS or Linux with a C compiler, make, git, curl, patch, xz and
+the ARM binutils, and Rust with Cargo; nothing needs Rosetta (INSTALL.md).
+Put your own ROMs under `roms/` as `tla-ja.gba` and so on; each is checked
+against `rom.sha1` before use and none is ever committed (L1).
 
 ```sh
 git submodule update --init --recursive && git config core.hooksPath .hooks
-make bootstrap         # pinned compilers; BUNDLE=/path imports an approved bundle
-make worktree          # in a new worktree, before its first build
-make compare           # the Japanese base of ☀️; compare-tla for ⚓️
-make compare-tbs-en    # one edition: tbs or tla, then ja, en, de, es, fr or it
+make bootstrap         # the tools, the pinned compilers, GAS 2.10 and libgcc
+make -j8 compare-tbs   # the six ☀️ editions, which read no ROM
+make compare-tla-en    # one edition: tbs or tla, then ja, en, de, es, fr or it
 make compare-editions  # all twelve editions (W5)
-make build-rom TARGET=tbs-en  # build a changed game without comparing
-make test
-make verify            # every gate, the modern build included: it needs Homebrew's arm-none-eabi-gcc (MODERN_CC)
-make land              # on main, before committing a landing
-make modern            # the six ☀️ editions with a current GCC (MODERN_CC): no match, no errors
-make boot-tbs          # after make modern: each ☀️ edition, matching and modern, booted in mGBA to the file menu; a local tool that neither CI nor make land runs
+make tbs-en            # build one edition without comparing
+make modern            # the six ☀️ editions' C with a current GCC (MODERN_CC): no errors
+make test              # the tools' tests
+make progress          # DONE code and data, per game and edition (C2)
+make land              # on main, before committing a landing (W2, C3)
 ```
 
 The `alchemy` binary is `tools/out/cargo-target/release/alchemy`; it acts on
-the checkout it runs in, and `alchemy --help` lists every command.
+the checkout it runs in, and `alchemy --help` lists its commands.
 
 ```sh
-# Choose what to match
-make deps                              # what unblocks the most (W4)
-alchemy similar                        # nearest C twins in either game
-alchemy similar --editions             # each not-yet-C listing's copies in all twelve builds (⚓️; ☀️ has none)
-# Match one function
 alchemy diff DRAFT.c [ADDR] [--show]   # a draft against its listing; differ 0 matches
 alchemy diff DRAFT.c --heat            # differing instructions per line, first divergence marked; permute --heat aims there
+alchemy diff DRAFT.c --rtl             # the compiler's per-pass dumps for the draft
 alchemy permute DRAFT.c [ADDR] [--minutes N]   # rewrites and PERM_* choices toward differ 0, in out/permute
-alchemy sizes DRAFT.c [SIZE]           # struct sizes; the locals that fill a frame gap
-alchemy show EDITION FUNCTION          # a built function beside the ROM
-alchemy adopt ADDR LABEL NAME [--into MODULE.c]   # into its module, out of all scaffolding
-alchemy label NAME ENGLISH_ADDR LEN    # name English-only scaffold data in other editions
-alchemy adopt-data OBJECT PIECE...     # a data block's object into all six editions' link order, out of all scaffolds
-# Check the whole build
-alchemy objects EDITION...             # what differs from the ROM, object or placement
-alchemy dead [--apply PATH]            # what no edition links, includes or selects
-make progress                          # DONE code and data, one line per edition (alchemy progress)
-alchemy check devices [--update]       # register pins, asm barriers, inline asm, volatile, goto: may only fall
-alchemy check constants [--update | --list [PATH...]]   # flag and sound ids still written as numbers: only ☀️'s, against its names header, may only fall
-alchemy fakematch [--show N]           # every FAKEMATCH tag by device and family, weighed by the bytes it steers
-# Camelotize
-make worst                             # maintained C ranked by how mechanical it reads
-alchemy units [--dry-run N]            # Camelot's translation units proposed from the linked images
-alchemy camelotize REWRITE FILE...     # actors, events, registers, declarations, barriers
-alchemy camelotize numbers|casts|idioms FILE...  # decimal quantities, needless casts, C idioms
-alchemy camelotize layer|commands FILE...        # ☀️ overlay calls through the layer's inlines; scene calls as event.h commands
-alchemy camelotize constants --header H [--aliases TSV] FILE...   # ids at their known positions as H's names; prints what needs a hand
-alchemy rename OLD NEW [--file FILE.c] # one name anew wherever the tree spells it, far-call twin too; refuses a NEW games/ or recon/ spell, or any branch gave there (W7; with --file, in FILE or a file units share)
-alchemy keep [PATH...]                 # keep only edits that leave all twelve identical
-alchemy sweep FILE.c...                # drop FAKEMATCH pins, barriers and volatiles the bytes no longer need
-# Work in parallel
-alchemy queues --workers N --out-dir DIR   # work that cannot collide (W7)
-alchemy integrate BRANCH...            # merge, reconcile link order with the scaffolds, build all twelve
+alchemy progress                       # what make progress prints, and the measurement make land sends
 ```

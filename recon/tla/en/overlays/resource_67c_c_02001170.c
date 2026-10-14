@@ -1,4 +1,4 @@
-/* Draft, differ 2: the listing loads r1 (37) before r0 (15) for the third Func_02000b24 call. */
+/* Draft, differ 4 of 41: the listing sets r0 before r1 for the first two Func_02000b24 calls and r1 before r0 for the third; the draft sets r1 first in all three (an inline wrapper changes nothing). */
 #include "../../../../games/tla/src/field/overlay_67c/local.h"
 
 void Func_02001170(void)

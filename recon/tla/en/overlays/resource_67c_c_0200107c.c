@@ -1,4 +1,4 @@
-/* Draft, differ 20: the listing keeps 0 in r5 and 34 in r6, the draft the other way round, and loads object->x after movs r1. */
+/* Draft, differ 10 of 37: through Func_02003d1c_ the registers agree; the listing sets r1 (33) before it loads object->x and r2 (1) right after, the draft loads x first. Tried id == 10 || id == 11, Object_GetById_, Func_02003d14_. */
 #include "../../../../games/tla/src/field/overlay_67c/local.h"
 
 void Func_0200107c(s32 unused, s32 id)

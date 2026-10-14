@@ -1,58 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x0200805c,"ax",%progbits
-	.global Func_0200005c
-	.thumb_func
-Func_0200005c:
-	push {lr}
-	movs r0, #128
-	movs r1, #252
-	lsls r0, r0, #19
-	lsls r1, r1, #6
-	adds r0, #80
-	adds r1, #65
-	bl QueueIoWriteDelay2
-	ldr r3, .L_0200809c
-	movs r2, #2
-	ldr r3, [r3]
-	ands r3, r2
-	ldr r2, .L_020080a0
-	cmp r3, #0
-	beq .L_020080a8
-	ldr r3, .L_020080a4
-	ldrh r3, [r3]
-	cmp r3, #0
-	bne .L_020080a8
-	ldrh r3, [r2]
-	ldr r1, .L_02008098
-	movs r0, #128
-	lsls r0, r0, #19
-	orrs r1, r3
-	adds r0, #82
-	bl QueueIoWriteDelay2
-	b .L_020080b8
-	.2byte 0x0000
-.L_02008098:
-	.4byte 0x0000000f
-.L_0200809c:
-	.4byte gFrameCount
-.L_020080a0:
-	.4byte Data_02003dbc
-.L_020080a4:
-	.4byte Data_02003dbe
-.L_020080a8:
-	ldrh r3, [r2]
-	ldr r1, .L_020080bc
-	movs r0, #128
-	lsls r0, r0, #19
-	orrs r1, r3
-	adds r0, #82
-	bl QueueIoWriteDelay2
-.L_020080b8:
-	pop {pc}
-	.2byte 0x0000
-.L_020080bc:
-	.4byte 0x00000010
 	.section .text.x020080c0,"ax",%progbits
 	.global Func_020000c0
 	.thumb_func

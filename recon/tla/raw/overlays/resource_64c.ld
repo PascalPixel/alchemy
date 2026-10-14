@@ -4,7 +4,7 @@ SECTIONS
     {
         "*/games/tla/src/field/overlay_64c/entry.o"(.text)
         "*/games/tla/src/field/overlay_64c/scene_tables.o"(.text)
-        "*/resource_64c_overlay.o"(.text.x0200805c)
+        "*/games/tla/src/field/overlay_64c/s005c.o"(.text)
         "*/resource_64c_overlay.o"(.text.x020080c0)
         "*/resource_64c_overlay.o"(.text.x02008138)
         "*/resource_64c_overlay.o"(.text.x0200820c)

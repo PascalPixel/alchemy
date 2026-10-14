@@ -123,7 +123,7 @@ static void SceneEffect_RotateRecord(RotatingEffectWork *work)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_waitdown.c"
+#include "common/object_waitdown.h"
 
 union SceneActor
 {

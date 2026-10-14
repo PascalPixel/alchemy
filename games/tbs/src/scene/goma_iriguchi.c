@@ -508,7 +508,7 @@ static void OverlayObject_TurnStateByEighth(struct FieldActor *obj)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_waitdown.c"
+#include "common/object_waitdown.h"
 
 static void GomaIriguchi_RunSpinningLeap(s32 id)
 {

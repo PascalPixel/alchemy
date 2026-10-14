@@ -39,7 +39,7 @@ enum
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_staged_actor.c"
+#include "common/object_staged_actor.h"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect_create.h"
@@ -1376,7 +1376,7 @@ s32 FieldScene_RunSceneEntryHook(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_orbit.c"
+#include "common/object_orbit.h"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

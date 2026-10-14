@@ -26,7 +26,7 @@
 #include "facing_object.h"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_facing.c"
+#include "common/object_facing.h"
 
 u8 *SceneData_GetScriptTable(void)
 {

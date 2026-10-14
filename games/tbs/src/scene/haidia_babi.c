@@ -54,7 +54,7 @@ static void HaidiaBabi_SpawnEffectPair(union FieldObject *object);
 static void FieldScene_RunSixStepSequence17e4(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_facing.c"
+#include "common/object_facing.h"
 
 enum
 {

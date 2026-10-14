@@ -477,7 +477,7 @@ static void EV14_PSYNERGY(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_findcell.c"
+#include "common/object_findcell.h"
 
 static void SoruIriguchi_PushFacedBlock(void)
 {

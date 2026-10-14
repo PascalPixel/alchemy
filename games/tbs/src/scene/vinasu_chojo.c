@@ -184,7 +184,7 @@ static void VinasuChojo_StepSpriteRotation(struct FieldActor *actor)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_heading.c"
+#include "common/object_heading.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -207,8 +207,8 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_distance.c"
-#include "common/object_nearest.c"
+#include "common/object_distance.h"
+#include "common/object_nearest.h"
 
 static void InitializeActorZeroMotion(void)
 {

@@ -38,7 +38,7 @@ typedef struct
 } Pair;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_staged_actor.c"
+#include "common/object_staged_actor.h"
 
 u8 *SceneData_GetScriptTable(void)
 {
@@ -104,7 +104,7 @@ s32 FieldScene_SetupEntryActors8To11(void)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/korima_palette.c"
-#include "common/object_orbit.c"
+#include "common/object_orbit.h"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

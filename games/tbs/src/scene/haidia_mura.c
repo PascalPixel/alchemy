@@ -74,7 +74,7 @@ enum
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_staged_actor.c"
+#include "common/object_staged_actor.h"
 
 s32 MapStagedScene_SelectPrimaryData(void)
 {
@@ -2884,7 +2884,7 @@ static void SceneActor_SetFlagByteBySlotZeroPosition(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_orbit.c"
+#include "common/object_orbit.h"
 
 static void OverlayObject_UpdateOnFrameBit1(s32 p)
 {

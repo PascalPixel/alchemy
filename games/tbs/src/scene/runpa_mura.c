@@ -906,7 +906,7 @@ s32 Scene_Initialize(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_orbit.c"
+#include "common/object_orbit.h"
 
 #define LUNPA_ENTRANCE(entrance, x, z, facing) \
 	{(entrance), CONDITION_ALWAYS, (x), 0, (z), (facing), 0, -1, -1, -1, -1, 0}

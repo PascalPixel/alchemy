@@ -1666,7 +1666,7 @@ static void SceneState_InitControlRecordAndStartTask(s32 resource)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/korosseo_scene_state.c"
-#include "common/object_findslot.c"
+#include "common/object_findslot.h"
 
 static void StagedActor_PushActorAhead(void)
 {

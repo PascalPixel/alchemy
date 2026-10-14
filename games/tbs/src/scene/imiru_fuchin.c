@@ -163,7 +163,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_pairmove.c"
+#include "common/object_pairmove.h"
 
 static void EV11_TOUCH_2(void)
 {

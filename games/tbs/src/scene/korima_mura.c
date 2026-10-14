@@ -125,7 +125,7 @@ static s32 SceneEffect_UpdateFallingObject(struct Obj *p)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_facing.c"
+#include "common/object_facing.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

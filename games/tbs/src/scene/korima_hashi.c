@@ -46,7 +46,7 @@ extern s32 KorimaHashi_PartyFlag;
 extern s32 KorimaHashi_SparkleSound;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_staged_actor.c"
+#include "common/object_staged_actor.h"
 
 static s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object)
 {

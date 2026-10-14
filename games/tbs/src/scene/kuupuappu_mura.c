@@ -860,7 +860,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_distance.c"
+#include "common/object_distance.h"
 #include "common/kuupuappu_range.c"
 
 static void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay)

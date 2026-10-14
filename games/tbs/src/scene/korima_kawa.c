@@ -31,7 +31,7 @@
 #endif
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_staged_actor.c"
+#include "common/object_staged_actor.h"
 
 u8 *MapStagedScene_SelectPrimaryData(void)
 {

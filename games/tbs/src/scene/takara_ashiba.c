@@ -68,7 +68,7 @@ static __inline__ void LiftBlock(s32 column, u8 lowered)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_staged_actor.c"
+#include "common/object_staged_actor.h"
 
 static void EV15_SCRIPT(void)
 {

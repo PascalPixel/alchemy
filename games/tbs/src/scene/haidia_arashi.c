@@ -91,7 +91,7 @@ static s32 HaidiaArashi_RerollHeadingOnCountdown(struct FieldActor *object)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_pulse.c"
+#include "common/object_pulse.h"
 
 u8 *HaidiaArashi_GetEntrances(void)
 {

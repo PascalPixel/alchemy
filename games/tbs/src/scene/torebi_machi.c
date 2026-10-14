@@ -26,7 +26,7 @@ static void EV31_TALK(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_distance.c"
+#include "common/object_distance.h"
 
 static s32 SceneActor_UpdatePlayerProximity(
 	struct SceneActor *actor, struct SceneActor *target, s32 range, s32 force)

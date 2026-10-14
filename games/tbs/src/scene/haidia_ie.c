@@ -62,7 +62,7 @@ static inline s32 HaidiaIe_TurnAndWaitValue(s32 actor, s32 facing, s32 frames)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_facing.c"
+#include "common/object_facing.h"
 
 u8 *HaidiaIe_GetEntrances(void)
 {

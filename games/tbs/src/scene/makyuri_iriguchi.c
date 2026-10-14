@@ -57,7 +57,7 @@ struct WorkPointers
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
-#include "common/object_staged_actor.c"
+#include "common/object_staged_actor.h"
 #include "common/makyuri_sparks.c"
 
 static s32 SceneAudio_PlayCue118AndReturnZero(void)

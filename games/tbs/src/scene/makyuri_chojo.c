@@ -272,8 +272,8 @@ static void FieldScene_RunFourActorPresentation(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_distance.c"
-#include "common/object_nearest.c"
+#include "common/object_distance.h"
+#include "common/object_nearest.h"
 
 static void SceneActor_InitializeMotion(void)
 {

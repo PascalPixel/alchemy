@@ -54,7 +54,7 @@ static void EV13_TALK(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_waitdown.c"
+#include "common/object_waitdown.h"
 
 static s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor)
 {

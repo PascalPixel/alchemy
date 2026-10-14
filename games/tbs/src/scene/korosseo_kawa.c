@@ -1383,7 +1383,7 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
 #include "common/korosseo_path_rival.c"
 #include "common/korosseo_setup.c"
 #include "common/korosseo_scene_state.c"
-#include "common/object_findslot.c"
+#include "common/object_findslot.h"
 
 static void StagedActor_PushActorAhead(void)
 {

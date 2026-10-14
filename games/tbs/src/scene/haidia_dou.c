@@ -39,7 +39,7 @@ static void HaidiaDou_ApplyEntryState(void);
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
-#include "common/object_staged_actor.c"
+#include "common/object_staged_actor.h"
 
 static void EV08_SCRIPT(void)
 {
@@ -552,7 +552,7 @@ static void DialogueLayout_ConfigureRowsByFlag301(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_pairmove.c"
+#include "common/object_pairmove.h"
 
 static void EV20_TOUCH(void)
 {

@@ -87,7 +87,7 @@ static __inline__ void SkipMessage(s32 amount)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_facing.c"
+#include "common/object_facing.h"
 
 s32 *SceneData_GetScriptTable(void)
 {

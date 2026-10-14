@@ -81,7 +81,7 @@ static void EV14_TALK(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_facing.c"
+#include "common/object_facing.h"
 
 static s32 SceneActor_CopyActor8PositionWithFixedY(struct FieldActor *dst)
 {

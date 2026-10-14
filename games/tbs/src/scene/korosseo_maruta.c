@@ -2159,7 +2159,7 @@ static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 seco
 #include "common/korosseo_path_rival.c"
 #include "common/korosseo_setup.c"
 #include "common/korosseo_scene_state.c"
-#include "common/object_findslot.c"
+#include "common/object_findslot.h"
 
 static void ColossoLogRollingStage_PushStagedActor(void)
 {

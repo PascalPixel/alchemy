@@ -122,8 +122,8 @@ static void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 t
 #include "objcmd.h"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_distance.c"
-#include "common/object_findslot.c"
+#include "common/object_distance.h"
+#include "common/object_findslot.h"
 
 static void RunStagedActorTransition(void)
 {
@@ -384,8 +384,8 @@ static void EV31_TOUCH_3(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_depth.c"
-#include "common/object_waitidle.c"
+#include "common/object_depth.h"
+#include "common/object_waitidle.h"
 #include "common/effect_advance.h"
 
 static void FieldScene_RunSupplementalSequenceOne(void)

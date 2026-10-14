@@ -47,7 +47,7 @@ struct Vec
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_staged_actor.c"
+#include "common/object_staged_actor.h"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect_create.h"
@@ -167,7 +167,7 @@ static void BabiChika_UpdateTrackedActor(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_depth.c"
+#include "common/object_depth.h"
 
 static s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object)
 {

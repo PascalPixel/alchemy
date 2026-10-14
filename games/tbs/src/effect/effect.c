@@ -2502,7 +2502,8 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
 	s32						 size;
 	s32						 step;
 
-	/* FAKEMATCH: the frame counter is pinned to r9, as the reference keeps it. 2026-10-11: as a plain local its priority (20 refs/232 insns) ties size and outranks step (13/240), so it takes sl and step r9 (differ 30, one register swap); the reference needs step ranked above the counter, which no plain shape gives (for/while/u32, declaration order, a bound variable, early init, argument use, 19k permuter candidates). */
+	// Plain, the counter's priority (20 refs over 232 insns) ties size and outranks step (13 over 240).
+	/* FAKEMATCH: pins the frame counter to r9, as native; plain it takes sl and step r9 (differ 30), and no plain shape ranks step above it (for/while/u32, declaration order, a bound variable, early init, argument use, 19k permuter candidates). */
 	register s32 frame __asm__("r9");
 	s32			 i;
 
@@ -12718,8 +12719,10 @@ void BattleFx_RunOrbitingSparks(void)
 				 * A generic output barrier before filling differs 155 (272
 				 * built); after filling it differs 118 (267 built). Keeping
 				 * rec live after the call differs 179 (270 built). None keeps
-				 * the native loop layout. */
-				/* FAKEMATCH: record is filled through r0 so loop.c cannot hoist its address into fp 2026-10-11: loop.c's second pass moves the invariant &record when 15 x savings x life 8 reaches the loop's insn count (about 100 after giv reduction); plain forms differ 118 (hoisted into fp, frame 92), loads before stores differ 12, and two one-pass blocks around the fill and the apply differ 2 (add r5, sp, #64 after the last store). */
+				 * the native loop layout. loop.c's second pass hoists the
+				 * invariant &record when 15 x savings x life 8 reaches the
+				 * loop's insn count (about 100 after giv reduction). */
+				/* FAKEMATCH: pins rec to r0 so the record is filled through r0 and loop.c cannot hoist its address into fp, as native; plain differs 118 (hoisted into fp, frame 92), loads before stores 12, one-pass blocks around the fill and the apply 2 (add r5, sp, #64 after the last store). */
 				register s32 *rec asm("r0");
 
 				Render_ResetTransformState();
@@ -14610,15 +14613,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect, s32 mode)
 							if (tgt->x < 0)
 							{
 								hit = x < 0;
-								/* FAKEMATCH: conditional cancelling updates end CSE
-								 * before the hit test, preserving the native sign
-								 * result and duplicated side check. Both updates
-								 * disappear; removing both guards loses three
-								 * English instructions and changes 77 rows. 2026-10-11: one test after an if/else that sets hit differs 65.
-								 * 2026-10-13: the ?: of both sign tests 65 (or 77 tested whole),
-								 * hit preset 0 and set by nested ifs 53, tests on shot->x 65; these
-								 * guards with one test after the if/else 55. The per-side test and
-								 * its goto are the native layout. */
+								/* FAKEMATCH: cancelling updates under if (tgt) end CSE before the hit test and emit nothing, keeping the native sign result and duplicated side check (the per-side test and its goto are native); unguarded 77, one test after an if/else 65, a ?: of both sign tests 65 (77 tested whole), hit preset 0 then nested ifs 53, tests on shot->x 65, these guards and one test after the if/else 55. */
 								if (tgt)
 								{
 									hit ^= x;
@@ -16345,7 +16340,8 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 			for (i = 0; i != h; i++)
 			{
 				s32 k = 32;
-				/* FAKEMATCH: loop.c matches this 32 with the smoke calls' 32 (life 19, savings 2: 12 * 2 * 19 = 456 >= 450 insns) and hoists it out of the frame loop, so it loses its register and later reloads rotate; the native builds it in this loop's preheader. 2026-10-11: loop.c's threshold is 12 after an earlier move (savings 2 x life 19 x 12 = 456 >= 448 insns); a 96 local declared before the ramp loops lowers that to 432 and defeats the hoist, but the asm pair's two codeless preheader insns also raise i's live length to 1292, which orders n (28 refs/106) before i (195 refs) and gives n r9; without them i takes r9 and a slot at [sp, #60] appears (differ 699). */
+				// loop.c matches this 32 with the smoke calls' 32 and hoists it out of the frame loop, where it loses its register and later reloads rotate: after an earlier move its threshold is 12, and savings 2 x life 19 x 12 = 456 reaches the loop's 448 insns.
+				/* FAKEMATCH: the barrier keeps k's 32 in this loop's preheader, as native, and its two codeless preheader insns lengthen i's life (1292), so n (28 refs/106) ranks before i (195 refs) and takes r9; without it i takes r9 and a slot appears at [sp, #60] (differ 699); a 96 local before the ramp loops also defeats the hoist (432 < 448). */
 				asm("" : "+r"(k));
 				blit[0](dst, ramp + w, w + 48, i + 16, k - w * 2, 1);
 			}

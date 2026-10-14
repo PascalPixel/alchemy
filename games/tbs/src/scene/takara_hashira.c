@@ -72,7 +72,7 @@ struct MapLayer_2
 #include "common/object_staged_actor.h"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/map.c"
+#include "common/map_panel.h"
 
 static void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
 {

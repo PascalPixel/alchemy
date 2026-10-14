@@ -93,7 +93,7 @@ struct TileRun2
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/map.c"
+#include "common/map_panel.h"
 
 static void State_ApplyRectByLayoutSelector(void)
 {

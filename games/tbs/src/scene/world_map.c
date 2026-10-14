@@ -2460,7 +2460,7 @@ static void SceneState_RunSlotStepOnOddFrames(s32 arg0)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect_vertical.h"
-#include "common/world_map_linked_effects.c"
+#include "common/world_map_linked_effects.h"
 
 s32 gTransferArrive10[] = {
 	SC_POS(PIXELS(5848), 0, PIXELS(1576)),

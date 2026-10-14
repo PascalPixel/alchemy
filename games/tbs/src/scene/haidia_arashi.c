@@ -134,7 +134,7 @@ static void EV14_TOUCH(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/haidia.c"
+#include "common/haidia.h"
 
 static void HaidiaArashi_OpenBackdropExit11(void)
 {

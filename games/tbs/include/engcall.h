@@ -4,7 +4,7 @@
 // Engine call layer: one typed inline for each of the thirteen main-image routines below that
 // the scene, menu and debug overlays import; every overlay call of them goes through it.
 // Main-image code calls them as ordinary functions; only the shared
-// scene/common/scroll_initialize_hblank_dma.c, which object/psyfx.c includes as babi_fune.c
+// scene/common/scroll_initialize_hblank_dma.h, which object/psyfx.c includes as babi_fune.c
 // does, reaches the layer there.
 // 本体の関数を呼ぶ層: オーバーレイは本体のルーチンをこのインライン関数を
 // 通して呼ぶ (オーバーレイでは呼び出しは import スタブへ行く)。

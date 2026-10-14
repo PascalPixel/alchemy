@@ -763,7 +763,7 @@ void DisplayScroll_BuildAndSwapHBlankPage(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/scroll_initialize_hblank_dma.c"
+#include "common/scroll_initialize_hblank_dma.h"
 
 static void SceneEffect_LoadTablesAndStopDma0(void)
 {

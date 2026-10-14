@@ -1854,7 +1854,7 @@ static void FieldScene_RunActor15TwoStep(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/soru_star_ring_setup.c"
+#include "common/soru_star_ring_setup.h"
 
 s32 Funka_ArcOriginsHead[] = {
 	SC_SET(SW_VELOCITY_Y, 0x60000),

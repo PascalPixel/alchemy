@@ -395,7 +395,7 @@ static void Scene_PsynergyStoneIsGone(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/haidia.c"
+#include "common/haidia.h"
 
 static void EV01_TOUCH(void)
 {

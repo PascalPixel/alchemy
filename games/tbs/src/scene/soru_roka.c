@@ -46,7 +46,7 @@ u8 *SceneData_GetEffectTable(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/soru_initzoom.c"
+#include "common/soru_initzoom.h"
 
 struct SceneEntrance SoruRoka_SceneTable0[] = {
 	{ 0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },

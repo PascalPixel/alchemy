@@ -2208,7 +2208,7 @@ static void SoruStar_RiseActorFourteenSparks(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/soru_star_ring_setup.c"
+#include "common/soru_star_ring_setup.h"
 
 s32 gEffectScript0[] = {
 	SC_WAIT(1),

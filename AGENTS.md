@@ -324,7 +324,7 @@ or functions is exactly this cheating.
   `FieldScheduler_AddOrUpdateCallback`, which forward through it. As direct
   calls, 22 functions of the English build differ, 19 distinct (shared
   included code compiles two of them into several scenes).
-  `scene/common/scroll_initialize_hblank_dma.c`, which `babi_fune.c` and the
+  `scene/common/scroll_initialize_hblank_dma.h`, which `babi_fune.c` and the
   main image's `object/psyfx.c` both include, reaches it from both
   images; other main-image code calls these routines as ordinary
   functions, outside the layer, and `field/camera.c`'s identical decode

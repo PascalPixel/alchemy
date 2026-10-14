@@ -3097,7 +3097,7 @@ void DisplayScroll_BuildAndSwapHBlankPage(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "../scene/common/scroll_initialize_hblank_dma.c"
+#include "../scene/common/scroll_initialize_hblank_dma.h"
 
 void DisplayScroll_DisarmHBlankDma(void)
 {

@@ -2913,7 +2913,7 @@ static void SceneEffect_UpdateObjectOnOddFramesOnly(s32 p)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
 #include "common/effect_vertical.h"
-#include "common/world_map_linked_effects.c"
+#include "common/world_map_linked_effects.h"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

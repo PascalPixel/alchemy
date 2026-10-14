@@ -25,10 +25,14 @@ file defines, so the same name in two of them is two functions). Counts\n\
 each function a C file defines for other code that no header declares,\n\
 unless its file's header holds, in the prototype's place, the comment\n\
 that the function is called before its definition with no prototype in\n\
-scope; and each such comment that is not true of its file: the file does\n\
-not define the function, the header declares it too, another file names\n\
-it, or nothing calls it above its definition (alchemy headers undeclared\n\
-measures which functions the bytes need left out). Fails when a count\n\
+scope, or that it is called from another named C file with no prototype\n\
+in scope (one line: `NAME is called from FILE.c with no prototype in\n\
+scope`, then what that call shows); and each such comment that is not\n\
+true of its file: the file does not define the function, the header\n\
+declares it too, another file names it or nothing calls it above its\n\
+definition (the first form), or the file it names does not name it (the\n\
+second) (alchemy headers undeclared measures which functions the bytes\n\
+need left out). Fails when a count\n\
 rises above tools/alchemy/headers.tsv. --update writes the current\n\
 counts there; --list prints every finding.";
 
@@ -166,14 +170,31 @@ fn named_elsewhere(model: &Model, home: &str, name: &str) -> Option<String> {
     unit.cloned().or_else(|| model.far.values().find(|far| far.target == name && model.in_main(home)).map(|far| far.file.clone()))
 }
 
+/// Whether the unit `file` (a path or its last parts) names a function of
+/// `home` and means its definition, from outside the units that compile
+/// `home`.
+fn named_by(model: &Model, home: &str, name: &str, file: &str) -> bool {
+    let definitions = model.definitions();
+    let users = model.users(home);
+    let suffix = format!("/{file}");
+    model.units.iter().any(|unit| {
+        (unit == file || unit.ends_with(&suffix))
+            && !users.contains(&unit.as_str())
+            && model.home(&definitions, unit, name).is_some_and(|(file, _)| file == home)
+            && model.parts(unit).any(|part| super::plan::identifiers(&model.text[part]).contains(name))
+    })
+}
+
 /// What the unit headers leave undeclared without cause. A function a C
 /// file defines for other code has its prototype in the file's header,
 /// or a comment there in its place: the function is called before its
-/// definition with no prototype in scope. Counted: such a function with
+/// definition with no prototype in scope, or it is called from another
+/// named C file with no prototype in scope. Counted: such a function with
 /// neither, and a comment that is not true of its file (the file does not
-/// define the function, its header declares it too, another file names
-/// it, or nothing calls it above its definition). `headers` gives each
-/// unit header's text.
+/// define the function, its header declares it too; for the first form,
+/// another file names it or nothing calls it above its definition; for
+/// the second, the file it names does not name the function). `headers`
+/// gives each unit header's text.
 pub(crate) fn undeclared(model: &Model, headers: &BTreeMap<String, String>) -> Vec<Finding> {
     let unit = format!("{INCLUDE}{UNIT}");
     // What the other headers declare: a function one of them declares is
@@ -205,11 +226,14 @@ pub(crate) fn undeclared(model: &Model, headers: &BTreeMap<String, String>) -> V
                 found.push(Finding { kind: "undeclared", file: home.clone(), line: line(source, entry.start), name: format!("{}: its header has no prototype of it and no comment in its place", entry.name) });
             }
         }
-        for (name, start, _) in &out {
+        for note in super::undeclared::notes(text) {
+            let (name, start) = (&note.name, &note.start);
             let why = if !defined.iter().any(|entry| entry.name == *name) {
                 Some("its file does not define it for other code".to_string())
             } else if declared.contains(*name) {
                 Some("its header declares it too".to_string())
+            } else if let Some(file) = note.from {
+                (!named_by(model, home, name, file)).then(|| format!("{file} does not name it"))
             } else if let Some(other) = named_elsewhere(model, home, name) {
                 Some(format!("{other} names it too"))
             } else if !called_above(model, home, name) {
@@ -415,6 +439,25 @@ mod tests {
             ]
         );
         assert!(all.iter().all(|f| f.kind == "undeclared"));
+    }
+
+    #[test]
+    fn a_function_another_file_calls_undeclared_is_left_out_by_that_file() {
+        let unit = "games/tbs/src/main/a.c";
+        let other = "games/tbs/src/main/b.c";
+        let header = "games/tbs/include/unit/main/a.h";
+        let from = |name: &str, file: &str| format!("/* {name} is called from {file} with no prototype in scope: in one file the definition would come first. */\n");
+        let source = "void Shared(s32 a)\n{\n}\nvoid Lone(void)\n{\n}\nvoid Wrong(void)\n{\n}\n";
+        let own = format!("{}{}{}", from("Shared", "b.c"), from("Lone", "b.c"), from("Wrong", "c.c"));
+        let files = [(unit, source), (other, "void Scene(void)\n{\n\tShared(1);\n\tWrong();\n}\n")];
+        let none: &[&str] = &[];
+        let model = Model::of(&files, &[(unit, none), (other, none)]);
+        let headers: BTreeMap<String, String> =
+            [(header.to_string(), own), ("games/tbs/include/unit/main/b.h".to_string(), "void Scene(void);\n".to_string())].into();
+        let found: Vec<(usize, String)> = undeclared(&model, &headers).into_iter().map(|f| (f.line, f.name)).collect();
+        // b.c calls Shared undeclared: that comment is true, where the
+        // first form's would count b.c naming it.
+        assert_eq!(found, [(2, "Lone: b.c does not name it".to_string()), (3, "Wrong: c.c does not name it".to_string())]);
     }
 
     #[test]

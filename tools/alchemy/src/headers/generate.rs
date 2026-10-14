@@ -194,9 +194,11 @@ type Wording<'a> = (String, &'a [String], &'a str);
 pub(crate) fn header(path: &str, text: &str, existing: Option<&str>, entries: &[Entry], types: &Types, problems: &mut Vec<String>) -> Option<(String, BTreeSet<String>)> {
     let held: Vec<&str> = existing.map(held).unwrap_or_default();
     // A function the header leaves out, under the comment that says it is
-    // called with no prototype in scope, stays out: the comment is kept
-    // where the prototype would stand.
-    let out: BTreeSet<&str> = existing.map(super::undeclared::left_out).unwrap_or_default().into_iter().map(|(name, _, _)| name).collect();
+    // called with no prototype in scope, stays out: the comment is kept,
+    // as written, where the prototype would stand.
+    let out: BTreeMap<&str, &str> = existing
+        .map(|existing| super::undeclared::left_out(existing).into_iter().map(|(name, start, end)| (name, &existing[start..end])).collect())
+        .unwrap_or_default();
     // Each name once, at its first definition, with every wording it has.
     let mut order: Vec<&str> = Vec::new();
     let mut wordings: BTreeMap<&str, Vec<Wording>> = BTreeMap::new();
@@ -238,8 +240,8 @@ pub(crate) fn header(path: &str, text: &str, existing: Option<&str>, entries: &[
     own_types.tags.extend(held_types.tags);
     'names: for name in order {
         let list = &wordings[name];
-        if out.contains(name) && list.iter().all(|(declaration, _, _)| !declaration.starts_with("extern ")) {
-            lines.push((String::new(), super::undeclared::comment(name)));
+        if let Some(said) = out.get(name).filter(|_| list.iter().all(|(declaration, _, _)| !declaration.starts_with("extern "))) {
+            lines.push((String::new(), said.to_string()));
             continue;
         }
         let mut own = (Vec::new(), Vec::new(), Vec::new());
@@ -395,6 +397,12 @@ mod tests {
         let (text, names) = header("games/tbs/include/unit/a.h", source, None, &entries(source), &types(), &mut problems).unwrap();
         assert_eq!(names.iter().map(String::as_str).collect::<Vec<_>>(), ["Late", "Run", "gCount"]);
         assert_eq!(text, format!("{head}void Late(s32 a);\nextern u8 gCount;\n\n#endif\n"));
+        // A comment that names the other file calling it stays as written.
+        let from = "/* Late is called from b.c with no prototype in scope: in one file the definition would come first and Scene changes. */\n";
+        let existing = format!("{head}{from}extern u8 gCount;\n\n#endif\n");
+        let (text, names) = header("games/tbs/include/unit/a.h", source, Some(&existing), &entries(source), &types(), &mut problems).unwrap();
+        assert_eq!(names.iter().map(String::as_str).collect::<Vec<_>>(), ["Run", "gCount"]);
+        assert_eq!(text, existing);
     }
 
     #[test]

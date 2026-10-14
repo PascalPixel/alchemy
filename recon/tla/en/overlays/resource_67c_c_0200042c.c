@@ -11,7 +11,6 @@
 //   Func_02001fcc: differ 4: the listing loads r1 before r0 (0) for the first Func_02003bb8 call of each case
 //   Func_0200349c: differ 42: the listing keeps height in r4 and reuses r0 for the entry, no r5/r6 saved
 //   Func_02003994: differ 4: the listing loads the sprite and its attribute byte one instruction later, around movs r3, #3 and ands
-//   Func_02003a70: differ 5: the listing keeps the work pointer in r3 and copies it to r5 after loading the hook
 //   Func_02003ba4: differ 2: the listing loads the pool base before lsls of the index; the permuter matches all three only with base and row temporaries inside a one-pass block (not adopted)
 //   Func_02003bb8: differ 2: the listing loads the pool base before lsls of the index
 //   Func_02003c00: differ 2: the listing loads the pool base before lsls of the index
@@ -199,27 +198,6 @@ void Func_02003994(struct ObjectRuntime *object, s32 priority)
     object->action = 0;
     object->speed_limit = 0;
     object->acceleration = 0;
-}
-
-void Func_02003a70(void)
-{
-    struct VentWork *work = VENT_WORK;
-    struct VentEntry *entry;
-    s32 i = 15;
-
-    work->hook();
-    entry = work->entries;
-    for (; i >= 0; i--) {
-        if (entry->active != 0) {
-            if (entry->timer <= 0) {
-                Func_020039f0(&entry->x, entry->value);
-                entry->timer = 9;
-            } else {
-                entry->timer--;
-            }
-        }
-        entry++;
-    }
 }
 
 s32 Func_02003ba4(s32 index)

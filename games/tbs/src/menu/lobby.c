@@ -857,7 +857,6 @@ static s32 EV08_TALK(void)
 			Engine_EventSetMessage(line);
 		open_message:
 			Engine_EventOpenMessage(8, 0);
-			goto done;
 		}
 		else if (!Engine_GameFlagIsSet(0x201) && !GameFlag_IsSet(0x300))
 		{
@@ -907,7 +906,6 @@ static s32 EV08_TALK(void)
 			}
 		}
 	}
-done:
 	Engine_EventEnd();
 }
 

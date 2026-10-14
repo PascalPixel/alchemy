@@ -1,7 +1,7 @@
 /* Draft of Func_02000374 of overlay 692 (32 instructions, 32 differ): the native reloads the
  * three position words on every pass and walks the object slots with a pointer; the draft
  * moves the first position word out of the loop. */
-#include "local.h"
+#include "../../../../games/tla/src/field/overlay_692/local.h"
 #include "eventwrk.h"
 
 struct ObjectRuntime *Func_02000374(s32 *position)

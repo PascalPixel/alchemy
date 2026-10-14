@@ -1,7 +1,7 @@
 /* Near miss of Func_020034f0 of overlay 692 (34 instructions, 4 differ): in the two calls of
  * the first branch the native loads the first argument's zero last (r1, r2, r3, r0) and second
  * (r1, r0, r2, r3); direct calls and Call4 forwarding load it first both times. */
-#include "local.h"
+#include "../../../../games/tla/src/field/overlay_692/local.h"
 
 extern char SceneId_Ov692Room3;
 

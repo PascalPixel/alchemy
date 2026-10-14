@@ -23,7 +23,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_6ab/s0db8.o"(.text)
         "*/games/tla/src/field/overlay_6ab/note.o"(.text)
         "*/resource_6ab_overlay.o"(.text.x02008e80)
-        "*/resource_6ab_overlay.o"(.text.x020093e4)
+        "*/games/tla/src/field/overlay_6ab/s13e4.o"(.text)
         "*/resource_6ab_overlay.o"(.text.x02009424)
         "*/games/tla/src/field/overlay_6ab/paths.o"(.text)
         "*/games/tla/src/field/overlay_6ab/s1528.o"(.text)

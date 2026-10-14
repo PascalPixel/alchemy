@@ -2254,43 +2254,8 @@ Func_02000e80:
 .L_020093e0:
 	.4byte 0x00000069
 	.endif
-	.section .text.x020093e4,"ax",%progbits
-	.global Func_020013e4
-	.thumb_func
-Func_020013e4:
-	push {lr}
-	ldr r3, [r0, #12]
-	movs r2, #128
-	lsls r2, r2, #8
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	movs r2, #160
-	ldr r3, [r0, #24]
-	lsls r2, r2, #3
-	adds r2, #30
-	adds r3, r3, r2
-	str r3, [r0, #24]
-	ldr r3, [r0, #28]
-	adds r3, r3, r2
-	str r3, [r0, #28]
-	ldr r3, [r0, #104]
-	subs r3, #1
-	str r3, [r0, #104]
-	cmp r3, #1
-	bne .L_02009418
-	movs r1, #0
-	movs r2, #0
-	movs r3, #0
-	bl Object_SetPositionAndResetMotion
-	b .L_02009420
-.L_02009418:
-	cmp r3, #0
-	bne .L_02009420
-	bl Func_020041ec
-.L_02009420:
-	pop {pc}
-	.2byte 0x0000
 	.section .text.x02009424,"ax",%progbits
+	.balign 4
 	.global Func_02001424
 	.thumb_func
 Func_02001424:

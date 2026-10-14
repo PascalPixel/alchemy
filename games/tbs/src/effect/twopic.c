@@ -78,6 +78,7 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
 	void					*canvas;
 	struct MotionObject		*object;
 	struct EffectPosition	 position;
+	/* FAKEMATCH: needed to match: only draw[0] is used: the second word fills four bytes of the frame */
 	BlitterPair				 draw;
 	s32						 frames;
 	s32						 frame;

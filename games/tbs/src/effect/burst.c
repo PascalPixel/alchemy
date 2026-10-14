@@ -549,6 +549,7 @@ void BattleFx_RunOrbitingSparks(void)
 	struct EffectPosition	 center;
 	struct EffectPosition	 pos;
 	s32						 frame;
+	/* FAKEMATCH: needed to match: only draw[0] is used: the second word fills four bytes of the frame */
 	BlitterPair				 draw;
 	s32						 member;
 	struct BattleCamera		*camera;

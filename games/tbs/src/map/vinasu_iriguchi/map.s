@@ -14,30 +14,30 @@ Field_VinasuIriguchi:
 	map_block Field_VinasuIriguchi
 	map_block Field_VinasuIriguchi, .LField_VinasuIriguchi_MARKERS
 .LField_VinasuIriguchi_METATILES:
-	.incbin "map/vinasu_iriguchi/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/vinasu_iriguchi/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_VinasuIriguchi_SHAPES:
-	.incbin "map/vinasu_iriguchi/shapes.table.lz"
+	.incbin "games/tbs/src/map/vinasu_iriguchi/shapes.table.lz"
 	.balign 4, 0
 .LField_VinasuIriguchi_GRID:
 	.ifdef TBS_EDITION_FR
-	.incbin "map/vinasu_iriguchi/grid_fr.parts.lz"
+	.incbin "games/tbs/src/map/vinasu_iriguchi/grid_fr.parts.lz"
 	.else
 	.ifdef TBS_EDITION_ES
-	.incbin "map/vinasu_iriguchi/grid_es.parts.lz"
+	.incbin "games/tbs/src/map/vinasu_iriguchi/grid_es.parts.lz"
 	.else
 	.ifdef TBS_EDITION_IT
-	.incbin "map/vinasu_iriguchi/grid_es.parts.lz"
+	.incbin "games/tbs/src/map/vinasu_iriguchi/grid_es.parts.lz"
 	.else
-	.incbin "map/vinasu_iriguchi/grid.parts.lz"
+	.incbin "games/tbs/src/map/vinasu_iriguchi/grid.parts.lz"
 	.endif
 	.endif
 	.endif
 	.balign 4, 0
 .LField_VinasuIriguchi_MARKERS:
-	.incbin "map/map_000/markers.table"
+	.incbin "games/tbs/src/map/map_000/markers.table"
 	.balign 4, 0
 	.global Tileset_Palette49
 Tileset_Palette49:
-	.incbin "common/graphics/tileset/palettes/pal_49.gbapal.lz"
+	.incbin "games/common/src/graphics/tileset/palettes/pal_49.gbapal.lz"
 	.byte 0x1e, 0x33	@ PACKER: left in the buffer by Field_VinasuIriguchi+0x106

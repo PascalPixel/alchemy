@@ -14,35 +14,35 @@ Field_Map010:
 	map_block Field_Map010, .LField_Map010_BLEND
 	map_block Field_Map010, .LField_Map010_MARKERS
 .LField_Map010_METATILES:
-	.incbin "map/map_010/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_010/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map010_SHAPES:
-	.incbin "map/map_010/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_010/shapes.table.lz"
 	.balign 4, 0
 .LField_Map010_GRID:
-	.incbin "map/map_010/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_010/grid.parts.lz"
 	.balign 4, 0
 .LField_Map010_ANIMATION:
-	.incbin "map/map_010/animation.script.lz"
+	.incbin "games/tbs/src/map/map_010/animation.script.lz"
 	.balign 4, 0
 .LField_Map010_BLEND:
-	.incbin "map/map_010/blend.script.lz"
+	.incbin "games/tbs/src/map/map_010/blend.script.lz"
 	.balign 4, 0
 .LField_Map010_MARKERS:
-	.incbin "map/map_000/markers.table"
+	.incbin "games/tbs/src/map/map_000/markers.table"
 	.balign 4, 0
 	.global Tileset_Set09Palette
 Tileset_Set09Palette:
 	.ifdef TBS_EDITION_ES
-	.incbin "graphics/tileset/set_09/palette_es.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/set_09/palette_es.gbapal.lz"
 	.else
 	.ifdef TBS_EDITION_FR
-	.incbin "graphics/tileset/set_09/palette_es.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/set_09/palette_es.gbapal.lz"
 	.else
 	.ifdef TBS_EDITION_IT
-	.incbin "graphics/tileset/set_09/palette_es.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/set_09/palette_es.gbapal.lz"
 	.else
-	.incbin "graphics/tileset/set_09/palette.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/set_09/palette.gbapal.lz"
 	.endif
 	.endif
 	.endif
@@ -50,15 +50,15 @@ Tileset_Set09Palette:
 	.global Tileset_Set09TilesA
 Tileset_Set09TilesA:
 	.ifdef TBS_EDITION_ES
-	.incbin "graphics/tileset/set_09/tiles_a_es.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_09/tiles_a_es.4bpp.mtf"
 	.else
 	.ifdef TBS_EDITION_FR
-	.incbin "graphics/tileset/set_09/tiles_a_es.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_09/tiles_a_es.4bpp.mtf"
 	.else
 	.ifdef TBS_EDITION_IT
-	.incbin "graphics/tileset/set_09/tiles_a_es.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_09/tiles_a_es.4bpp.mtf"
 	.else
-	.incbin "graphics/tileset/set_09/tiles_a.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_09/tiles_a.4bpp.mtf"
 	.endif
 	.endif
 	.endif
@@ -77,7 +77,7 @@ Tileset_Set09TilesA:
 	.endif
 	.global Tileset_Set09TilesB
 Tileset_Set09TilesB:
-	.incbin "graphics/tileset/set_09/tiles_b.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_09/tiles_b.4bpp.mtf"
 	.ifdef TBS_EDITION_JA
 	.byte 0xee	@ PACKER: left in the buffer by Tileset_Set09TilesA+0xd7b
 	.else
@@ -93,5 +93,5 @@ Tileset_Set09TilesB:
 	.endif
 	.global Tileset_Set09TilesC
 Tileset_Set09TilesC:
-	.incbin "graphics/tileset/set_09/tiles_c.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_09/tiles_c.4bpp.mtf"
 	.byte 0x1c, 0x40	@ PACKER: left in the buffer by Tileset_Set09TilesB+0xade

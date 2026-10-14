@@ -81,12 +81,12 @@ BattleCommand_SelectionWeights:
 @ 技ごとの結果の状態
 	.global Battle_ActionStatus
 Battle_ActionStatus:
-	.incbin "battle/actstat.table"
+	.incbin "games/tbs/src/battle/actstat.table"
 	.balign 4, 0
 @ 技ごとの演出 (効果番号と段階, フラグ)
 	.global Battle_ActionFlags
 Battle_ActionFlags:
-	.incbin "battle/actflags.table"
+	.incbin "games/tbs/src/battle/actflags.table"
 	.global BattleParty_RoundEndGroupOrder
 BattleParty_RoundEndGroupOrder:
 	.4byte 1, 2

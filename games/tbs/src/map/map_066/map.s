@@ -13,20 +13,20 @@ Field_Map066:
 	map_block Field_Map066, .LField_Map066_BLEND
 	map_block Field_Map066, .LField_Map066_MARKERS
 .LField_Map066_METATILES:
-	.incbin "map/map_066/metatiles.delta2.lz"
+	.incbin "games/tbs/src/map/map_066/metatiles.delta2.lz"
 	.balign 4, 0
 .LField_Map066_SHAPES:
-	.incbin "map/map_066/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_066/shapes.table.lz"
 	.balign 4, 0
 .LField_Map066_GRID:
-	.incbin "map/map_066/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_066/grid.parts.lz"
 	.balign 4, 0
 .LField_Map066_ANIMATION:
-	.incbin "map/map_033/animation.script.lz"
+	.incbin "games/tbs/src/map/map_033/animation.script.lz"
 	.balign 4, 0
 .LField_Map066_BLEND:
-	.incbin "map/map_063/blend.script.lz"
+	.incbin "games/tbs/src/map/map_063/blend.script.lz"
 	.balign 4, 0
 .LField_Map066_MARKERS:
-	.incbin "map/map_066/markers.table"
+	.incbin "games/tbs/src/map/map_066/markers.table"
 	.balign 4, 0

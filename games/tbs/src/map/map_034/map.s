@@ -14,19 +14,19 @@ Field_Map034:
 	map_block Field_Map034
 	map_block Field_Map034, .LField_Map034_MARKERS
 .LField_Map034_METATILES:
-	.incbin "map/map_034/metatiles_es.delta0.lz"
+	.incbin "games/tbs/src/map/map_034/metatiles_es.delta0.lz"
 	.balign 4, 0
 .LField_Map034_SHAPES:
-	.incbin "map/map_034/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_034/shapes.table.lz"
 	.balign 4, 0
 .LField_Map034_GRID:
-	.incbin "map/map_034/grid_es.parts.lz"
+	.incbin "games/tbs/src/map/map_034/grid_es.parts.lz"
 	.balign 4, 0
 .LField_Map034_ANIMATION:
-	.incbin "map/map_034/animation.script.lz"
+	.incbin "games/tbs/src/map/map_034/animation.script.lz"
 	.balign 4, 0
 .LField_Map034_MARKERS:
-	.incbin "map/map_000/markers.table"
+	.incbin "games/tbs/src/map/map_000/markers.table"
 	.else
 	.ifdef TBS_EDITION_FR
 	map_header 0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0
@@ -40,19 +40,19 @@ Field_Map034:
 	map_block Field_Map034
 	map_block Field_Map034, .LField_Map034_MARKERS
 .LField_Map034_METATILES:
-	.incbin "map/map_034/metatiles_es.delta0.lz"
+	.incbin "games/tbs/src/map/map_034/metatiles_es.delta0.lz"
 	.balign 4, 0
 .LField_Map034_SHAPES:
-	.incbin "map/map_034/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_034/shapes.table.lz"
 	.balign 4, 0
 .LField_Map034_GRID:
-	.incbin "map/map_034/grid_es.parts.lz"
+	.incbin "games/tbs/src/map/map_034/grid_es.parts.lz"
 	.balign 4, 0
 .LField_Map034_ANIMATION:
-	.incbin "map/map_034/animation.script.lz"
+	.incbin "games/tbs/src/map/map_034/animation.script.lz"
 	.balign 4, 0
 .LField_Map034_MARKERS:
-	.incbin "map/map_000/markers.table"
+	.incbin "games/tbs/src/map/map_000/markers.table"
 	.else
 	.ifdef TBS_EDITION_IT
 	map_header 0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0
@@ -66,19 +66,19 @@ Field_Map034:
 	map_block Field_Map034
 	map_block Field_Map034, .LField_Map034_MARKERS
 .LField_Map034_METATILES:
-	.incbin "map/map_034/metatiles_es.delta0.lz"
+	.incbin "games/tbs/src/map/map_034/metatiles_es.delta0.lz"
 	.balign 4, 0
 .LField_Map034_SHAPES:
-	.incbin "map/map_034/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_034/shapes.table.lz"
 	.balign 4, 0
 .LField_Map034_GRID:
-	.incbin "map/map_034/grid_es.parts.lz"
+	.incbin "games/tbs/src/map/map_034/grid_es.parts.lz"
 	.balign 4, 0
 .LField_Map034_ANIMATION:
-	.incbin "map/map_034/animation.script.lz"
+	.incbin "games/tbs/src/map/map_034/animation.script.lz"
 	.balign 4, 0
 .LField_Map034_MARKERS:
-	.incbin "map/map_000/markers.table"
+	.incbin "games/tbs/src/map/map_000/markers.table"
 	.else
 	map_header 0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
@@ -91,36 +91,36 @@ Field_Map034:
 	map_block Field_Map034
 	map_block Field_Map034, .LField_Map034_MARKERS
 .LField_Map034_METATILES:
-	.incbin "map/map_034/metatiles.delta0.lz"
+	.incbin "games/tbs/src/map/map_034/metatiles.delta0.lz"
 	.balign 4, 0
 .LField_Map034_SHAPES:
-	.incbin "map/map_034/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_034/shapes.table.lz"
 	.balign 4, 0
 .LField_Map034_GRID:
-	.incbin "map/map_034/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_034/grid.parts.lz"
 	.balign 4, 0
 .LField_Map034_ANIMATION:
-	.incbin "map/map_034/animation.script.lz"
+	.incbin "games/tbs/src/map/map_034/animation.script.lz"
 	.balign 4, 0
 .LField_Map034_MARKERS:
-	.incbin "map/map_000/markers.table"
+	.incbin "games/tbs/src/map/map_000/markers.table"
 	.endif
 	.endif
 	.endif
 	.balign 4, 0
 	.global Tileset_Set26Palette
 Tileset_Set26Palette:
-	.incbin "graphics/tileset/set_26/palette.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/set_26/palette.gbapal.lz"
 	.byte 0x08	@ PACKER: left in the buffer by Field_Map034+0x183
 	.global Tileset_Set26TilesA
 Tileset_Set26TilesA:
-	.incbin "graphics/tileset/set_26/tiles_a.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_26/tiles_a.4bpp.mtf"
 	.byte 0x9e	@ PACKER: left in the buffer by Tileset_Set23TilesA+0x2b3b
 	.global Tileset_Set26TilesB
 Tileset_Set26TilesB:
-	.incbin "graphics/tileset/set_26/tiles_b.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_26/tiles_b.4bpp.mtf"
 	.byte 0xf1, 0xb3, 0x21	@ PACKER: left in the buffer by Tileset_Set26TilesA+0x2779
 	.global Tileset_Set26TilesC
 Tileset_Set26TilesC:
-	.incbin "graphics/tileset/set_26/tiles_c.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_26/tiles_c.4bpp.mtf"
 	.byte 0xc9, 0xe1	@ PACKER: left in the buffer by Tileset_Set26TilesB+0xfea

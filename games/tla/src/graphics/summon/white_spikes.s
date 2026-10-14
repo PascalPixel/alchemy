@@ -6,5 +6,5 @@
 	.section .rodata
 	.global Summon_WhiteSpikesTiles
 Summon_WhiteSpikesTiles:
-	.incbin "graphics/summon/white_spikes.gbapal"
-	.incbin "graphics/summon/white_spikes.parts.lz"
+	.incbin "games/tla/src/graphics/summon/white_spikes.gbapal"
+	.incbin "games/tla/src/graphics/summon/white_spikes.parts.lz"

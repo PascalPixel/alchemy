@@ -5,7 +5,7 @@ Data_080eff22:
 @ Func_080cda58 が番号で探す 8 バイトの行、番号 -1 で終わり
 	.global Data_080eff28
 Data_080eff28:
-	.incbin "battle/effect/descent.table"
+	.incbin "games/tla/src/battle/effect/descent.table"
 @ ObjectDispatch_InitializeFar に渡す動作 (語の列)
 	.global Data_080effd8
 Data_080effd8:

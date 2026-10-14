@@ -3,7 +3,7 @@
 @ デバッグ用の仲間 (owner -1 で区切り)
 	.global Debug_PartyPresets
 Debug_PartyPresets:
-	.incbin "battle/presets.table"
+	.incbin "games/tbs/src/battle/presets.table"
 	.global BattlePres_ActorObjectScript
 BattlePres_ActorObjectScript:
 	.4byte 16
@@ -32,10 +32,10 @@ BattleMotion_VariantDistancePercent:
 	.4byte 0, 20, 27
 	.global BattlePres_TileVariants
 BattlePres_TileVariants:
-	.incbin "common/battle/presentation/tilevar.4bpp"
+	.incbin "games/common/src/battle/presentation/tilevar.4bpp"
 	.global BattlePres_CurtainTiles
 BattlePres_CurtainTiles:
-	.incbin "common/battle/presentation/curtain.4bpp"
+	.incbin "games/common/src/battle/presentation/curtain.4bpp"
 @ BLDY の値
 	.global BattleFx_HighlightBlendRamp
 BattleFx_HighlightBlendRamp:
@@ -45,7 +45,7 @@ BattleFx_HighlightBlendRamp:
 @ 敵の編成 380 個
 	.global BattleFormation_Records
 BattleFormation_Records:
-	.incbin "battle/formatn.table"
+	.incbin "games/tbs/src/battle/formatn.table"
 	.global BattleFormation_LevelMatchedEnemies
 BattleFormation_LevelMatchedEnemies:
 	.2byte 0x75, 0x7a, 0x7d, 0x85, 0x87, 0x89, 0x9e, 0x9f, 0xa0, 0xa1
@@ -53,4 +53,4 @@ BattleFormation_LevelMatchedEnemies:
 @ 戦闘の絵 172 個
 	.global Summon_EntryTable
 Summon_EntryTable:
-	.incbin "battle/sprites.table"
+	.incbin "games/tbs/src/battle/sprites.table"

@@ -7,11 +7,11 @@ Character_ElementGroupTable:
 @ レベルごとの経験値
 	.global Character_LevelExpTable
 Character_LevelExpTable:
-	.incbin "game/lvexp_0.table"
-	.incbin "game/lvexp_1.table"
-	.incbin "game/lvexp_2.table"
-	.incbin "game/lvexp_3.table"
-	.incbin "game/lvexp_4.table"
-	.incbin "game/lvexp_5.table"
-	.incbin "game/lvexp_6.table"
-	.incbin "game/lvexp_7.table"
+	.incbin "games/tbs/src/game/lvexp_0.table"
+	.incbin "games/tbs/src/game/lvexp_1.table"
+	.incbin "games/tbs/src/game/lvexp_2.table"
+	.incbin "games/tbs/src/game/lvexp_3.table"
+	.incbin "games/tbs/src/game/lvexp_4.table"
+	.incbin "games/tbs/src/game/lvexp_5.table"
+	.incbin "games/tbs/src/game/lvexp_6.table"
+	.incbin "games/tbs/src/game/lvexp_7.table"

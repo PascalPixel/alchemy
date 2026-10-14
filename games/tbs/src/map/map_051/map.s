@@ -14,22 +14,22 @@ Field_Map051:
 	map_block Field_Map051, .LField_Map051_BLEND
 	map_block Field_Map051, .LField_Map051_MARKERS
 .LField_Map051_METATILES:
-	.incbin "map/map_051/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_051/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map051_SHAPES:
-	.incbin "map/map_051/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_051/shapes.table.lz"
 	.balign 4, 0
 .LField_Map051_GRID:
-	.incbin "map/map_051/grid_de.parts.lz"
+	.incbin "games/tbs/src/map/map_051/grid_de.parts.lz"
 	.balign 4, 0
 .LField_Map051_ANIMATION:
-	.incbin "map/map_037/animation.script.lz"
+	.incbin "games/tbs/src/map/map_037/animation.script.lz"
 	.balign 4, 0
 .LField_Map051_BLEND:
-	.incbin "map/map_020/blend.script.lz"
+	.incbin "games/tbs/src/map/map_020/blend.script.lz"
 	.balign 4, 0
 .LField_Map051_MARKERS:
-	.incbin "map/map_051/markers_de.table"
+	.incbin "games/tbs/src/map/map_051/markers_de.table"
 	.else
 	.ifdef TBS_EDITION_ES
 	map_header 0, 0, 64, 64, 3, 2, 1, 0, 2, 2, 0, 0
@@ -43,22 +43,22 @@ Field_Map051:
 	map_block Field_Map051, .LField_Map051_BLEND
 	map_block Field_Map051, .LField_Map051_MARKERS
 .LField_Map051_METATILES:
-	.incbin "map/map_051/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_051/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map051_SHAPES:
-	.incbin "map/map_051/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_051/shapes.table.lz"
 	.balign 4, 0
 .LField_Map051_GRID:
-	.incbin "map/map_051/grid_es.parts.lz"
+	.incbin "games/tbs/src/map/map_051/grid_es.parts.lz"
 	.balign 4, 0
 .LField_Map051_ANIMATION:
-	.incbin "map/map_037/animation.script.lz"
+	.incbin "games/tbs/src/map/map_037/animation.script.lz"
 	.balign 4, 0
 .LField_Map051_BLEND:
-	.incbin "map/map_020/blend.script.lz"
+	.incbin "games/tbs/src/map/map_020/blend.script.lz"
 	.balign 4, 0
 .LField_Map051_MARKERS:
-	.incbin "map/map_051/markers_de.table"
+	.incbin "games/tbs/src/map/map_051/markers_de.table"
 	.else
 	.ifdef TBS_EDITION_FR
 	map_header 0, 0, 64, 64, 3, 2, 1, 0, 2, 2, 0, 0
@@ -72,22 +72,22 @@ Field_Map051:
 	map_block Field_Map051, .LField_Map051_BLEND
 	map_block Field_Map051, .LField_Map051_MARKERS
 .LField_Map051_METATILES:
-	.incbin "map/map_051/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_051/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map051_SHAPES:
-	.incbin "map/map_051/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_051/shapes.table.lz"
 	.balign 4, 0
 .LField_Map051_GRID:
-	.incbin "map/map_051/grid_es.parts.lz"
+	.incbin "games/tbs/src/map/map_051/grid_es.parts.lz"
 	.balign 4, 0
 .LField_Map051_ANIMATION:
-	.incbin "map/map_037/animation.script.lz"
+	.incbin "games/tbs/src/map/map_037/animation.script.lz"
 	.balign 4, 0
 .LField_Map051_BLEND:
-	.incbin "map/map_020/blend.script.lz"
+	.incbin "games/tbs/src/map/map_020/blend.script.lz"
 	.balign 4, 0
 .LField_Map051_MARKERS:
-	.incbin "map/map_051/markers_de.table"
+	.incbin "games/tbs/src/map/map_051/markers_de.table"
 	.else
 	.ifdef TBS_EDITION_IT
 	map_header 0, 0, 64, 64, 3, 2, 1, 0, 2, 2, 0, 0
@@ -101,22 +101,22 @@ Field_Map051:
 	map_block Field_Map051, .LField_Map051_BLEND
 	map_block Field_Map051, .LField_Map051_MARKERS
 .LField_Map051_METATILES:
-	.incbin "map/map_051/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_051/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map051_SHAPES:
-	.incbin "map/map_051/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_051/shapes.table.lz"
 	.balign 4, 0
 .LField_Map051_GRID:
-	.incbin "map/map_051/grid_es.parts.lz"
+	.incbin "games/tbs/src/map/map_051/grid_es.parts.lz"
 	.balign 4, 0
 .LField_Map051_ANIMATION:
-	.incbin "map/map_037/animation.script.lz"
+	.incbin "games/tbs/src/map/map_037/animation.script.lz"
 	.balign 4, 0
 .LField_Map051_BLEND:
-	.incbin "map/map_020/blend.script.lz"
+	.incbin "games/tbs/src/map/map_020/blend.script.lz"
 	.balign 4, 0
 .LField_Map051_MARKERS:
-	.incbin "map/map_051/markers_de.table"
+	.incbin "games/tbs/src/map/map_051/markers_de.table"
 	.else
 	map_header 0, 0, 64, 64, 3, 2, 1, 0, 2, 2, 0, 0
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
@@ -129,41 +129,41 @@ Field_Map051:
 	map_block Field_Map051, .LField_Map051_BLEND
 	map_block Field_Map051, .LField_Map051_MARKERS
 .LField_Map051_METATILES:
-	.incbin "map/map_051/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_051/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map051_SHAPES:
-	.incbin "map/map_051/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_051/shapes.table.lz"
 	.balign 4, 0
 .LField_Map051_GRID:
-	.incbin "map/map_051/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_051/grid.parts.lz"
 	.balign 4, 0
 .LField_Map051_ANIMATION:
-	.incbin "map/map_037/animation.script.lz"
+	.incbin "games/tbs/src/map/map_037/animation.script.lz"
 	.balign 4, 0
 .LField_Map051_BLEND:
-	.incbin "map/map_020/blend.script.lz"
+	.incbin "games/tbs/src/map/map_020/blend.script.lz"
 	.balign 4, 0
 .LField_Map051_MARKERS:
-	.incbin "map/map_051/markers.table"
+	.incbin "games/tbs/src/map/map_051/markers.table"
 	.endif
 	.endif
 	.endif
 	.endif
 	.global Tileset_Set41Palette
 Tileset_Set41Palette:
-	.incbin "graphics/tileset/set_41/palette.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/set_41/palette.gbapal.lz"
 	.byte 0xc2, 0x82, 0x04	@ PACKER: left in the buffer by Field_Map051+0x145
 	.global Tileset_Set41TilesA
 Tileset_Set41TilesA:
-	.incbin "graphics/tileset/set_41/tiles_a.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_41/tiles_a.4bpp.mtf"
 	.global Tileset_Set41TilesB
 Tileset_Set41TilesB:
-	.incbin "graphics/tileset/set_41/tiles_b.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_41/tiles_b.4bpp.mtf"
 	.byte 0x69	@ PACKER: left in the buffer by Tileset_Set41TilesA+0x14b7
 	.global Tileset_Set41TilesC
 Tileset_Set41TilesC:
-	.incbin "graphics/tileset/set_41/tiles_c.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_41/tiles_c.4bpp.mtf"
 	.byte 0xde	@ PACKER: left in the buffer by Tileset_Set40TilesA+0x2633
 	.global Tileset_Set41TilesD
 Tileset_Set41TilesD:
-	.incbin "graphics/tileset/set_41/tiles_d.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_41/tiles_d.4bpp.mtf"

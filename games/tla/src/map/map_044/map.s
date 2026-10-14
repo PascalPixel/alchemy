@@ -14,19 +14,19 @@ Field_Map044:
 	map_block Field_Map044
 	map_block Field_Map044, .LField_Map044_SCENE
 .LField_Map044_METATILES:
-	.incbin "map/map_044/metatiles.delta2.lz"
+	.incbin "games/tla/src/map/map_044/metatiles.delta2.lz"
 	.balign 4, 0
 .LField_Map044_SHAPES:
-	.incbin "map/map_044/shapes.table.lz"
+	.incbin "games/tla/src/map/map_044/shapes.table.lz"
 	.balign 4, 0
 .LField_Map044_GRID:
-	.incbin "map/map_044/grid.parts.lz"
+	.incbin "games/tla/src/map/map_044/grid.parts.lz"
 	.balign 4, 0
 .LField_Map044_SHAPE_GRID:
-	.incbin "map/map_044/shape_grid.plane.lz"
+	.incbin "games/tla/src/map/map_044/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map044_ANIMATION:
-	.incbin "map/map_012/animation.script.lz"
+	.incbin "games/tla/src/map/map_012/animation.script.lz"
 	.balign 4, 0
 .LField_Map044_SCENE:
-	.incbin "map/map_044/scene.parts.lz"
+	.incbin "games/tla/src/map/map_044/scene.parts.lz"

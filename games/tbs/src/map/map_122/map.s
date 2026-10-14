@@ -13,18 +13,18 @@ Field_Map122:
 	map_block Field_Map122
 	map_block Field_Map122, .LField_Map122_MARKERS
 .LField_Map122_METATILES:
-	.incbin "map/map_122/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_122/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map122_SHAPES:
-	.incbin "map/map_122/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_122/shapes.table.lz"
 	.balign 4, 0
 .LField_Map122_GRID:
-	.incbin "map/map_122/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_122/grid.parts.lz"
 	.balign 4, 0
 .LField_Map122_MARKERS:
-	.incbin "map/map_000/markers.table"
+	.incbin "games/tbs/src/map/map_000/markers.table"
 	.balign 4, 0
 	.global Tileset_Palette27
 Tileset_Palette27:
-	.incbin "graphics/tileset/palettes/pal_27.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/palettes/pal_27.gbapal.lz"
 	.byte 0x86, 0xf1	@ PACKER: left in the buffer by Field_Map122+0x18e

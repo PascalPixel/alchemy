@@ -14,22 +14,22 @@ Field_Map020:
 	map_block Field_Map020, .LField_Map020_BLEND
 	map_block Field_Map020, .LField_Map020_SCENE
 .LField_Map020_METATILES:
-	.incbin "map/map_020/metatiles.delta1.lz"
+	.incbin "games/tla/src/map/map_020/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map020_SHAPES:
-	.incbin "map/map_020/shapes.table.lz"
+	.incbin "games/tla/src/map/map_020/shapes.table.lz"
 	.balign 4, 0
 .LField_Map020_GRID:
-	.incbin "map/map_020/grid.parts.lz"
+	.incbin "games/tla/src/map/map_020/grid.parts.lz"
 	.balign 4, 0
 .LField_Map020_SHAPE_GRID:
-	.incbin "map/map_020/shape_grid.plane.lz"
+	.incbin "games/tla/src/map/map_020/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map020_ANIMATION:
-	.incbin "map/map_012/animation.script.lz"
+	.incbin "games/tla/src/map/map_012/animation.script.lz"
 	.balign 4, 0
 .LField_Map020_BLEND:
-	.incbin "map/map_020/blend.script.lz"
+	.incbin "games/tla/src/map/map_020/blend.script.lz"
 	.balign 4, 0
 .LField_Map020_SCENE:
-	.incbin "map/map_020/scene.parts.lz"
+	.incbin "games/tla/src/map/map_020/scene.parts.lz"

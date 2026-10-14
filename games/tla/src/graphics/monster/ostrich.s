@@ -1,4 +1,4 @@
 	.section .rodata
 	.global Monster_OstrichSprites
 Monster_OstrichSprites:
-	.incbin "graphics/monster/ostrich.frames.lz"
+	.incbin "games/tla/src/graphics/monster/ostrich.frames.lz"

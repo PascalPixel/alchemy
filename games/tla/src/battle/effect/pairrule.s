@@ -2,7 +2,7 @@
 @ 16 バイトの行、鍵 -1 で終わり
 	.global Party_PairResolveRules
 Party_PairResolveRules:
-	.incbin "battle/effect/pairrule.table"
+	.incbin "games/tla/src/battle/effect/pairrule.table"
 @ Func_080ca4a8 が 1 語ずつ読む、0 で終わり (bit 31 は印)
 	.global Data_080ef984
 Data_080ef984:

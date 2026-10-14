@@ -1,5 +1,5 @@
 	.section .rodata
 	.global BattleFx_BlastSheet
 BattleFx_BlastSheet:
-	.incbin "graphics/battle_fx/blast_00.gbapal"
-	.incbin "graphics/battle_fx/blast.parts.lz"
+	.incbin "games/common/src/graphics/battle_fx/blast_00.gbapal"
+	.incbin "games/common/src/graphics/battle_fx/blast.parts.lz"

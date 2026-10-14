@@ -13,23 +13,23 @@ Field_Map100:
 	map_block Field_Map100, .LField_Map100_BLEND
 	map_block Field_Map100, .LField_Map100_MARKERS
 .LField_Map100_METATILES:
-	.incbin "map/map_100/metatiles.delta2.lz"
+	.incbin "games/tbs/src/map/map_100/metatiles.delta2.lz"
 	.balign 4, 0
 .LField_Map100_SHAPES:
-	.incbin "map/map_100/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_100/shapes.table.lz"
 	.balign 4, 0
 .LField_Map100_GRID:
-	.incbin "map/map_100/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_100/grid.parts.lz"
 	.balign 4, 0
 .LField_Map100_ANIMATION:
-	.incbin "map/map_033/animation.script.lz"
+	.incbin "games/tbs/src/map/map_033/animation.script.lz"
 	.balign 4, 0
 .LField_Map100_BLEND:
-	.incbin "map/map_063/blend.script.lz"
+	.incbin "games/tbs/src/map/map_063/blend.script.lz"
 	.balign 4, 0
 .LField_Map100_MARKERS:
-	.incbin "map/map_000/markers.table"
+	.incbin "games/tbs/src/map/map_000/markers.table"
 	.balign 4, 0
 	.global Tileset_Palette10
 Tileset_Palette10:
-	.incbin "graphics/tileset/palettes/pal_10.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/palettes/pal_10.gbapal.lz"

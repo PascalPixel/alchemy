@@ -7,5 +7,5 @@
 	.section .rodata
 	.global Summon_ForestCanopyTiles
 Summon_ForestCanopyTiles:
-	.incbin "graphics/summon/forest_canopy.gbapal"
-	.incbin "graphics/summon/forest_canopy.parts.lz"
+	.incbin "games/tla/src/graphics/summon/forest_canopy.gbapal"
+	.incbin "games/tla/src/graphics/summon/forest_canopy.parts.lz"

@@ -2,7 +2,7 @@
 @ Func_080d1e60 が番号で探す 243 行と、その後の 1 行
 	.global Data_080f0308
 Data_080f0308:
-	.incbin "field/common/object/varmot.table"
+	.incbin "games/tla/src/field/common/object/varmot.table"
 @ ObjectMotion_SetVariantCallback の動作 3 本 (各 128 バイト) と終わりの 1 語
 	.global Object_VariantMotionScripts
 Object_VariantMotionScripts:

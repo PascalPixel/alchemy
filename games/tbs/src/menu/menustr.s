@@ -213,7 +213,7 @@ Menu_PatternRowMasks:
 	.4byte 0x05055050, 0x05050505
 	.global Menu_BackdropFrameTile
 Menu_BackdropFrameTile:
-	.incbin "menu/backdrop.4bpp"
+	.incbin "games/tbs/src/menu/backdrop.4bpp"
 	.ifdef TBS_EDITION_ES
 	.global DjinnMenu_TextLevel
 DjinnMenu_TextLevel:

@@ -14,22 +14,22 @@ Field_Map138:
 	map_block Field_Map138, .LField_Map138_BLEND
 	map_block Field_Map138, .LField_Map138_SCENE
 .LField_Map138_METATILES:
-	.incbin "map/map_138/metatiles.delta1.lz"
+	.incbin "games/tla/src/map/map_138/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map138_SHAPES:
-	.incbin "map/map_138/shapes.table.lz"
+	.incbin "games/tla/src/map/map_138/shapes.table.lz"
 	.balign 4, 0
 .LField_Map138_GRID:
-	.incbin "map/map_138/grid.parts.lz"
+	.incbin "games/tla/src/map/map_138/grid.parts.lz"
 	.balign 4, 0
 .LField_Map138_SHAPE_GRID:
-	.incbin "map/map_138/shape_grid.plane.lz"
+	.incbin "games/tla/src/map/map_138/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map138_ANIMATION:
-	.incbin "map/map_012/animation.script.lz"
+	.incbin "games/tla/src/map/map_012/animation.script.lz"
 	.balign 4, 0
 .LField_Map138_BLEND:
-	.incbin "map/map_001/blend.script.lz"
+	.incbin "games/tla/src/map/map_001/blend.script.lz"
 	.balign 4, 0
 .LField_Map138_SCENE:
-	.incbin "map/map_138/scene.parts.lz"
+	.incbin "games/tla/src/map/map_138/scene.parts.lz"

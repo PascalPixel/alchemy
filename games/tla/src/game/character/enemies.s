@@ -3,4 +3,4 @@
 @ 敵 380 体
 	.global Enemy_DefinitionTable
 Enemy_DefinitionTable:
-	.incbin "game/character/enemies.table"
+	.incbin "games/tla/src/game/character/enemies.table"

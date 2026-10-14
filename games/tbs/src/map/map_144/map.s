@@ -13,23 +13,23 @@ Field_Map144:
 	map_block Field_Map144, .LField_Map144_BLEND
 	map_block Field_Map144, .LField_Map144_MARKERS
 .LField_Map144_METATILES:
-	.incbin "map/map_144/metatiles.delta2.lz"
+	.incbin "games/tbs/src/map/map_144/metatiles.delta2.lz"
 	.balign 4, 0
 .LField_Map144_SHAPES:
-	.incbin "map/map_144/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_144/shapes.table.lz"
 	.balign 4, 0
 .LField_Map144_GRID:
-	.incbin "map/map_144/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_144/grid.parts.lz"
 	.balign 4, 0
 .LField_Map144_ANIMATION:
-	.incbin "map/map_144/animation.script.lz"
+	.incbin "games/tbs/src/map/map_144/animation.script.lz"
 	.balign 4, 0
 .LField_Map144_BLEND:
-	.incbin "map/map_033/blend.script.lz"
+	.incbin "games/tbs/src/map/map_033/blend.script.lz"
 	.balign 4, 0
 .LField_Map144_MARKERS:
-	.incbin "map/map_144/markers.table"
+	.incbin "games/tbs/src/map/map_144/markers.table"
 	.balign 4, 0
 	.global Tileset_Palette38
 Tileset_Palette38:
-	.incbin "graphics/tileset/palettes/pal_38.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/palettes/pal_38.gbapal.lz"

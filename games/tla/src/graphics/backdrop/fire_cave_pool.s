@@ -1,5 +1,5 @@
 	.section .rodata
 	.global Battle_FireCavePoolBackdrop
 Battle_FireCavePoolBackdrop:
-	.incbin "graphics/backdrop/fire_cave_pool.gbapal"
-	.incbin "graphics/backdrop/fire_cave_pool.bitmap.d7"
+	.incbin "games/tla/src/graphics/backdrop/fire_cave_pool.gbapal"
+	.incbin "games/tla/src/graphics/backdrop/fire_cave_pool.bitmap.d7"

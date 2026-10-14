@@ -8,4 +8,4 @@ Summon_OrderList:
 @ 召喚 29 種
 	.global Summon_DefinitionTable
 Summon_DefinitionTable:
-	.incbin "game/character/summons.table"
+	.incbin "games/tla/src/game/character/summons.table"

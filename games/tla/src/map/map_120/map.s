@@ -14,22 +14,22 @@ Field_Map120:
 	map_block Field_Map120, .LField_Map120_BLEND
 	map_block Field_Map120, .LField_Map120_SCENE
 .LField_Map120_METATILES:
-	.incbin "map/map_120/metatiles.delta2.lz"
+	.incbin "games/tla/src/map/map_120/metatiles.delta2.lz"
 	.balign 4, 0
 .LField_Map120_SHAPES:
-	.incbin "map/map_120/shapes.table.lz"
+	.incbin "games/tla/src/map/map_120/shapes.table.lz"
 	.balign 4, 0
 .LField_Map120_GRID:
-	.incbin "map/map_120/grid.parts.lz"
+	.incbin "games/tla/src/map/map_120/grid.parts.lz"
 	.balign 4, 0
 .LField_Map120_SHAPE_GRID:
-	.incbin "map/map_120/shape_grid.plane.lz"
+	.incbin "games/tla/src/map/map_120/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map120_ANIMATION:
-	.incbin "map/map_021/animation.script.lz"
+	.incbin "games/tla/src/map/map_021/animation.script.lz"
 	.balign 4, 0
 .LField_Map120_BLEND:
-	.incbin "map/map_021/blend.script.lz"
+	.incbin "games/tla/src/map/map_021/blend.script.lz"
 	.balign 4, 0
 .LField_Map120_SCENE:
-	.incbin "map/map_120/scene.parts.lz"
+	.incbin "games/tla/src/map/map_120/scene.parts.lz"

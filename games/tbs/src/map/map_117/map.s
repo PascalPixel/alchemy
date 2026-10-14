@@ -13,20 +13,20 @@ Field_Map117:
 	map_block Field_Map117
 	map_block Field_Map117, .LField_Map117_MARKERS
 .LField_Map117_METATILES:
-	.incbin "map/map_117/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_117/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map117_SHAPES:
-	.incbin "map/map_117/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_117/shapes.table.lz"
 	.balign 4, 0
 .LField_Map117_GRID:
-	.incbin "map/map_117/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_117/grid.parts.lz"
 	.balign 4, 0
 .LField_Map117_ANIMATION:
-	.incbin "map/map_103/animation.script.lz"
+	.incbin "games/tbs/src/map/map_103/animation.script.lz"
 	.balign 4, 0
 .LField_Map117_MARKERS:
-	.incbin "map/map_117/markers.table"
+	.incbin "games/tbs/src/map/map_117/markers.table"
 	.balign 4, 0
 	.global Tileset_Palette23
 Tileset_Palette23:
-	.incbin "graphics/tileset/palettes/pal_23.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/palettes/pal_23.gbapal.lz"

@@ -15,16 +15,16 @@ Field_Map148:
 	map_block Field_Map148
 	map_block Field_Map148, .LField_Map148_MARKERS
 .LField_Map148_METATILES:
-	.incbin "map/map_148/metatiles.delta0.lz"
+	.incbin "games/tbs/src/map/map_148/metatiles.delta0.lz"
 	.balign 4, 0
 .LField_Map148_SHAPES:
-	.incbin "map/map_148/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_148/shapes.table.lz"
 	.balign 4, 0
 .LField_Map148_GRID:
-	.incbin "map/map_148/grid_ja.parts.lz"
+	.incbin "games/tbs/src/map/map_148/grid_ja.parts.lz"
 	.balign 4, 0
 .LField_Map148_MARKERS:
-	.incbin "map/map_148/markers_ja.table"
+	.incbin "games/tbs/src/map/map_148/markers_ja.table"
 	.else
 	.ifdef TBS_EDITION_DE
 	map_header 0, 0, 64, 192, 3, 2, 1, 0, 2, 2, 0, 0
@@ -38,16 +38,16 @@ Field_Map148:
 	map_block Field_Map148
 	map_block Field_Map148, .LField_Map148_MARKERS
 .LField_Map148_METATILES:
-	.incbin "map/map_148/metatiles.delta0.lz"
+	.incbin "games/tbs/src/map/map_148/metatiles.delta0.lz"
 	.balign 4, 0
 .LField_Map148_SHAPES:
-	.incbin "map/map_148/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_148/shapes.table.lz"
 	.balign 4, 0
 .LField_Map148_GRID:
-	.incbin "map/map_148/grid_ja.parts.lz"
+	.incbin "games/tbs/src/map/map_148/grid_ja.parts.lz"
 	.balign 4, 0
 .LField_Map148_MARKERS:
-	.incbin "map/map_148/markers_ja.table"
+	.incbin "games/tbs/src/map/map_148/markers_ja.table"
 	.else
 	map_header 0, 0, 64, 192, 3, 2, 1, 0, 2, 2, 0, 0
 	map_layer 0, 0, 16, 16, 0, 0, 0x7f, 0xff
@@ -60,15 +60,15 @@ Field_Map148:
 	map_block Field_Map148
 	map_block Field_Map148, .LField_Map148_MARKERS
 .LField_Map148_METATILES:
-	.incbin "map/map_148/metatiles.delta0.lz"
+	.incbin "games/tbs/src/map/map_148/metatiles.delta0.lz"
 	.balign 4, 0
 .LField_Map148_SHAPES:
-	.incbin "map/map_148/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_148/shapes.table.lz"
 	.balign 4, 0
 .LField_Map148_GRID:
-	.incbin "map/map_148/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_148/grid.parts.lz"
 	.balign 4, 0
 .LField_Map148_MARKERS:
-	.incbin "map/map_148/markers.table"
+	.incbin "games/tbs/src/map/map_148/markers.table"
 	.endif
 	.endif

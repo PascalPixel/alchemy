@@ -2,4 +2,4 @@
 @ The Broken Seal's Ui_WindowPalette, byte for byte
 	.global Ui_WindowPalette
 Ui_WindowPalette:
-	.incbin "common/system/memory/window.gbapal"
+	.incbin "games/common/src/system/memory/window.gbapal"

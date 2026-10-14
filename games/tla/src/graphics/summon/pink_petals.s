@@ -10,5 +10,5 @@
 	.section .rodata
 	.global Summon_PinkPetalsTiles
 Summon_PinkPetalsTiles:
-	.incbin "graphics/summon/pink_petals.gbapal"
-	.incbin "graphics/summon/pink_petals.parts.lz"
+	.incbin "games/tla/src/graphics/summon/pink_petals.gbapal"
+	.incbin "games/tla/src/graphics/summon/pink_petals.parts.lz"

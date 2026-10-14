@@ -14,16 +14,16 @@ Field_Map299:
 	map_block Field_Map299
 	map_block Field_Map299, .LField_Map299_SCENE
 .LField_Map299_METATILES:
-	.incbin "common/map/map_001/metatiles.delta0.lz"
+	.incbin "games/common/src/map/map_001/metatiles.delta0.lz"
 	.balign 4, 0
 .LField_Map299_SHAPES:
-	.incbin "map/map_008/shapes.table.lz"
+	.incbin "games/tla/src/map/map_008/shapes.table.lz"
 	.balign 4, 0
 .LField_Map299_GRID:
-	.incbin "map/map_299/grid.parts.lz"
+	.incbin "games/tla/src/map/map_299/grid.parts.lz"
 	.balign 4, 0
 .LField_Map299_SHAPE_GRID:
-	.incbin "map/map_008/shape_grid.plane.lz"
+	.incbin "games/tla/src/map/map_008/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map299_SCENE:
-	.incbin "map/map_000/scene.parts.lz"
+	.incbin "games/tla/src/map/map_000/scene.parts.lz"

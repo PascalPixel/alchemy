@@ -2,34 +2,34 @@
 	.section .rodata
 	.global Korosseo_RivalPathA
 Korosseo_RivalPathA:
-	.incbin "map/korosseo/rival_path_a.table.lz"
+	.incbin "games/tbs/src/map/korosseo/rival_path_a.table.lz"
 	.byte 0xe0, 0xc8, 0xb4	@ PACKER: left in the buffer by WorldMap_TilesE+0x1899
 	.global Korosseo_RivalPathB
 Korosseo_RivalPathB:
-	.incbin "map/korosseo/rival_path_b.table.lz"
+	.incbin "games/tbs/src/map/korosseo/rival_path_b.table.lz"
 	.byte 0x33, 0x59	@ PACKER: left in the buffer by Korosseo_RivalPathA+0x15c6
 	.global Korosseo_RivalPathC
 Korosseo_RivalPathC:
-	.incbin "map/korosseo/rival_path_c.table.lz"
+	.incbin "games/tbs/src/map/korosseo/rival_path_c.table.lz"
 	.byte 0x8d, 0x8f	@ PACKER: left in the buffer by WorldMap_TilesE+0x1a8e
 	.global Korosseo_Lettering
 Korosseo_Lettering:
 	.ifeq EDITION_INTERNATIONAL
-	.incbin "graphics/korosseo/lettering_ja.parts.lz"
+	.incbin "games/tbs/src/graphics/korosseo/lettering_ja.parts.lz"
 	.else
 	.ifdef TBS_EDITION_DE
-	.incbin "graphics/korosseo/lettering_de.parts.lz"
+	.incbin "games/tbs/src/graphics/korosseo/lettering_de.parts.lz"
 	.else
 	.ifdef TBS_EDITION_ES
-	.incbin "graphics/korosseo/lettering_es.parts.lz"
+	.incbin "games/tbs/src/graphics/korosseo/lettering_es.parts.lz"
 	.else
 	.ifdef TBS_EDITION_FR
-	.incbin "graphics/korosseo/lettering_fr.parts.lz"
+	.incbin "games/tbs/src/graphics/korosseo/lettering_fr.parts.lz"
 	.else
 	.ifdef TBS_EDITION_IT
-	.incbin "graphics/korosseo/lettering_it.parts.lz"
+	.incbin "games/tbs/src/graphics/korosseo/lettering_it.parts.lz"
 	.else
-	.incbin "graphics/korosseo/lettering.parts.lz"
+	.incbin "games/tbs/src/graphics/korosseo/lettering.parts.lz"
 	.endif
 	.endif
 	.endif

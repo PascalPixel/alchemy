@@ -14,22 +14,22 @@ Field_Map168:
 	map_block Field_Map168, .LField_Map168_BLEND
 	map_block Field_Map168, .LField_Map168_SCENE
 .LField_Map168_METATILES:
-	.incbin "map/map_168/metatiles.delta2.lz"
+	.incbin "games/tla/src/map/map_168/metatiles.delta2.lz"
 	.balign 4, 0
 .LField_Map168_SHAPES:
-	.incbin "map/map_168/shapes.table.lz"
+	.incbin "games/tla/src/map/map_168/shapes.table.lz"
 	.balign 4, 0
 .LField_Map168_GRID:
-	.incbin "map/map_168/grid.parts.lz"
+	.incbin "games/tla/src/map/map_168/grid.parts.lz"
 	.balign 4, 0
 .LField_Map168_SHAPE_GRID:
-	.incbin "map/map_168/shape_grid.plane.lz"
+	.incbin "games/tla/src/map/map_168/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map168_ANIMATION:
-	.incbin "map/map_168/animation.script.lz"
+	.incbin "games/tla/src/map/map_168/animation.script.lz"
 	.balign 4, 0
 .LField_Map168_BLEND:
-	.incbin "map/map_168/blend.script.lz"
+	.incbin "games/tla/src/map/map_168/blend.script.lz"
 	.balign 4, 0
 .LField_Map168_SCENE:
-	.incbin "map/map_168/scene.parts.lz"
+	.incbin "games/tla/src/map/map_168/scene.parts.lz"

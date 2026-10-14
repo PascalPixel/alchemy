@@ -1,5 +1,5 @@
 	.section .rodata
 	.global Battle_GrasslandBackdrop
 Battle_GrasslandBackdrop:
-	.incbin "graphics/backdrop/grassland.gbapal"
-	.incbin "graphics/backdrop/grassland.bitmap.d7"
+	.incbin "games/common/src/graphics/backdrop/grassland.gbapal"
+	.incbin "games/common/src/graphics/backdrop/grassland.bitmap.d7"

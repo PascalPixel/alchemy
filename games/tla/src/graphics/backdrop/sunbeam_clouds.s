@@ -1,5 +1,5 @@
 	.section .rodata
 	.global Battle_SunbeamCloudsBackdrop
 Battle_SunbeamCloudsBackdrop:
-	.incbin "graphics/backdrop/sunbeam_clouds.gbapal"
-	.incbin "graphics/backdrop/sunbeam_clouds.bitmap.d7"
+	.incbin "games/tla/src/graphics/backdrop/sunbeam_clouds.gbapal"
+	.incbin "games/tla/src/graphics/backdrop/sunbeam_clouds.bitmap.d7"

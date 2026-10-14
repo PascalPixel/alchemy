@@ -7,4 +7,4 @@ Data_0812a16c:
 @ The Broken Seal's Debug_PartyPresets, with six item columns for its four
 	.global Data_0812a174
 Data_0812a174:
-	.incbin "debug/presets.table"
+	.incbin "games/tla/src/debug/presets.table"

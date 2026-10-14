@@ -1,4 +1,4 @@
 	.section .rodata
 	.global Tileset_Set76Palette
 Tileset_Set76Palette:
-	.incbin "graphics/tileset/set_76/palette.gbapal.lz"
+	.incbin "games/tla/src/graphics/tileset/set_76/palette.gbapal.lz"

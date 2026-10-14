@@ -1,5 +1,5 @@
 	.section .rodata
 	.global Battle_RedMesaBackdrop
 Battle_RedMesaBackdrop:
-	.incbin "graphics/backdrop/red_mesa.gbapal"
-	.incbin "graphics/backdrop/red_mesa.bitmap.d7"
+	.incbin "games/tla/src/graphics/backdrop/red_mesa.gbapal"
+	.incbin "games/tla/src/graphics/backdrop/red_mesa.bitmap.d7"

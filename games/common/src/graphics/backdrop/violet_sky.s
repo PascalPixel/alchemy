@@ -1,5 +1,5 @@
 	.section .rodata
 	.global Battle_VioletSkyBackdrop
 Battle_VioletSkyBackdrop:
-	.incbin "graphics/backdrop/violet_sky.gbapal"
-	.incbin "graphics/backdrop/violet_sky.bitmap.d7"
+	.incbin "games/common/src/graphics/backdrop/violet_sky.gbapal"
+	.incbin "games/common/src/graphics/backdrop/violet_sky.bitmap.d7"

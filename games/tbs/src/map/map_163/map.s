@@ -15,22 +15,22 @@ Field_Map163:
 	map_block Field_Map163, .LField_Map163_BLEND
 	map_block Field_Map163, .LField_Map163_MARKERS
 .LField_Map163_METATILES:
-	.incbin "map/map_163/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_163/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map163_SHAPES:
-	.incbin "common/map/map_163/shapes.table.lz"
+	.incbin "games/common/src/map/map_163/shapes.table.lz"
 	.balign 4, 0
 .LField_Map163_GRID:
-	.incbin "map/map_163/grid_ja.parts.lz"
+	.incbin "games/tbs/src/map/map_163/grid_ja.parts.lz"
 	.balign 4, 0
 .LField_Map163_ANIMATION:
-	.incbin "common/map/map_163/animation.script.lz"
+	.incbin "games/common/src/map/map_163/animation.script.lz"
 	.balign 4, 0
 .LField_Map163_BLEND:
-	.incbin "common/map/map_054/blend.script.lz"
+	.incbin "games/common/src/map/map_054/blend.script.lz"
 	.balign 4, 0
 .LField_Map163_MARKERS:
-	.incbin "map/map_163/markers_ja.table"
+	.incbin "games/tbs/src/map/map_163/markers_ja.table"
 	.else
 	map_header 0, 0, 128, 128, 3, 1, 1, 0, 2, 2, 0, 0
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
@@ -43,24 +43,24 @@ Field_Map163:
 	map_block Field_Map163, .LField_Map163_BLEND
 	map_block Field_Map163, .LField_Map163_MARKERS
 .LField_Map163_METATILES:
-	.incbin "map/map_163/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_163/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map163_SHAPES:
-	.incbin "common/map/map_163/shapes.table.lz"
+	.incbin "games/common/src/map/map_163/shapes.table.lz"
 	.balign 4, 0
 .LField_Map163_GRID:
-	.incbin "map/map_163/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_163/grid.parts.lz"
 	.balign 4, 0
 .LField_Map163_ANIMATION:
-	.incbin "common/map/map_163/animation.script.lz"
+	.incbin "games/common/src/map/map_163/animation.script.lz"
 	.balign 4, 0
 .LField_Map163_BLEND:
-	.incbin "common/map/map_054/blend.script.lz"
+	.incbin "games/common/src/map/map_054/blend.script.lz"
 	.balign 4, 0
 .LField_Map163_MARKERS:
-	.incbin "map/map_163/markers.table"
+	.incbin "games/tbs/src/map/map_163/markers.table"
 	.endif
 	.balign 4, 0
 	.global Tileset_Palette50
 Tileset_Palette50:
-	.incbin "common/graphics/tileset/palettes/pal_50.gbapal.lz"
+	.incbin "games/common/src/graphics/tileset/palettes/pal_50.gbapal.lz"

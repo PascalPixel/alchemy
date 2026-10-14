@@ -1,5 +1,5 @@
 	.section .rodata
 	.global BattleFx_SwordSheet
 BattleFx_SwordSheet:
-	.incbin "graphics/battle_fx/sword.gbapal"
-	.incbin "graphics/battle_fx/sword.bitmap.lz"
+	.incbin "games/common/src/graphics/battle_fx/sword.gbapal"
+	.incbin "games/common/src/graphics/battle_fx/sword.bitmap.lz"

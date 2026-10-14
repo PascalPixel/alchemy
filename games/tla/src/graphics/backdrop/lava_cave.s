@@ -1,5 +1,5 @@
 	.section .rodata
 	.global Battle_LavaCaveBackdrop
 Battle_LavaCaveBackdrop:
-	.incbin "graphics/backdrop/lava_cave.gbapal"
-	.incbin "graphics/backdrop/lava_cave.bitmap.d7"
+	.incbin "games/tla/src/graphics/backdrop/lava_cave.gbapal"
+	.incbin "games/tla/src/graphics/backdrop/lava_cave.bitmap.d7"

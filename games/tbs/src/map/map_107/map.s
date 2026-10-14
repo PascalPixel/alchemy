@@ -13,20 +13,20 @@ Field_Map107:
 	map_block Field_Map107
 	map_block Field_Map107, .LField_Map107_MARKERS
 .LField_Map107_METATILES:
-	.incbin "map/map_107/metatiles.delta0.lz"
+	.incbin "games/tbs/src/map/map_107/metatiles.delta0.lz"
 	.balign 4, 0
 .LField_Map107_SHAPES:
-	.incbin "map/map_107/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_107/shapes.table.lz"
 	.balign 4, 0
 .LField_Map107_GRID:
-	.incbin "map/map_107/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_107/grid.parts.lz"
 	.balign 4, 0
 .LField_Map107_ANIMATION:
-	.incbin "map/map_107/animation.script.lz"
+	.incbin "games/tbs/src/map/map_107/animation.script.lz"
 	.balign 4, 0
 .LField_Map107_MARKERS:
-	.incbin "map/map_107/markers.table"
+	.incbin "games/tbs/src/map/map_107/markers.table"
 	.global Tileset_Palette13
 Tileset_Palette13:
-	.incbin "graphics/tileset/palettes/pal_13.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/palettes/pal_13.gbapal.lz"
 	.byte 0x94, 0x4b, 0xc1	@ PACKER: left in the buffer by Field_Map107+0x191

@@ -3,4 +3,4 @@
 @ 色見本と文字のタイル
 	.global Debug_PaletteSwatchTiles
 Debug_PaletteSwatchTiles:
-	.incbin "common/debug/swatch.4bpp.hlz"
+	.incbin "games/common/src/debug/swatch.4bpp.hlz"

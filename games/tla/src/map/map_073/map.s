@@ -14,19 +14,19 @@ Field_Map073:
 	map_block Field_Map073
 	map_block Field_Map073, .LField_Map073_SCENE
 .LField_Map073_METATILES:
-	.incbin "map/map_073/metatiles.delta2.lz"
+	.incbin "games/tla/src/map/map_073/metatiles.delta2.lz"
 	.balign 4, 0
 .LField_Map073_SHAPES:
-	.incbin "map/map_073/shapes.table.lz"
+	.incbin "games/tla/src/map/map_073/shapes.table.lz"
 	.balign 4, 0
 .LField_Map073_GRID:
-	.incbin "map/map_073/grid.parts.lz"
+	.incbin "games/tla/src/map/map_073/grid.parts.lz"
 	.balign 4, 0
 .LField_Map073_SHAPE_GRID:
-	.incbin "map/map_073/shape_grid.plane.lz"
+	.incbin "games/tla/src/map/map_073/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map073_ANIMATION:
-	.incbin "map/map_012/animation.script.lz"
+	.incbin "games/tla/src/map/map_012/animation.script.lz"
 	.balign 4, 0
 .LField_Map073_SCENE:
-	.incbin "map/map_073/scene.parts.lz"
+	.incbin "games/tla/src/map/map_073/scene.parts.lz"

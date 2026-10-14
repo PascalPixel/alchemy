@@ -1,3 +1,34 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
+	.set import.__modsi3, 1
+	.set import.Math_RemainderUnsigned, 1
+	.set import.Engine_TaskWait, 1
+	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Engine_RandomNext, 1
+	.set import.Vector_AddPolarOffset, 1
+	.set import.QueueIoWriteDelay2, 1
+	.set import.Object_SetMode, 1
+	.set import.Engine_ObjectSetScript, 1
+	.set import.Engine_ObjectCreate, 1
+	.set import.Engine_MapRedraw, 1
+	.set import.Engine_ObjectSetPosition, 1
+	.set import.Engine_ObjectCommitPosition, 1
+	.set import.Engine_MapCopyCells, 1
+	.set import.Engine_MapCopyCellAttributes, 1
+	.set import.Object_CheckMovementCollision, 1
+	.set import.Engine_ActorSetSpriteFlags, 1
+	.set import.Engine_WorkSetValuesIfNonNegative, 1
+	.set import.Engine_MapRenderWaitForValues, 1
+	.set import.Engine_MessageShowCentered, 1
+	.set import.Engine_GameFlagIsSet, 1
+	.set import.Engine_GameFlagSet, 1
+	.set import.Engine_GameFlagClear, 1
+	.set import.Engine_EventWait, 1
+	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventEnd, 1
+	.set import.Object_GetById, 1
+	.set import.Engine_ActorSetPosition, 1
+	.set import.Engine_ActorSetAnimation, 1
+	.set import.Engine_ActorSetSpritePriority, 1
+	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

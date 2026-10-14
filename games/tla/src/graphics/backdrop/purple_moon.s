@@ -1,5 +1,5 @@
 	.section .rodata
 	.global Battle_PurpleMoonBackdrop
 Battle_PurpleMoonBackdrop:
-	.incbin "graphics/backdrop/purple_moon.gbapal"
-	.incbin "graphics/backdrop/purple_moon.bitmap.d7"
+	.incbin "games/tla/src/graphics/backdrop/purple_moon.gbapal"
+	.incbin "games/tla/src/graphics/backdrop/purple_moon.bitmap.d7"

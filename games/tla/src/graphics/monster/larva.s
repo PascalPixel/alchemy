@@ -1,4 +1,4 @@
 	.section .rodata
 	.global Monster_LarvaSprites
 Monster_LarvaSprites:
-	.incbin "graphics/monster/larva.frames.lz"
+	.incbin "games/tla/src/graphics/monster/larva.frames.lz"

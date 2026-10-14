@@ -1,4 +1,4 @@
 	.section .rodata
 	.global Field_DefaultMapCells
 Field_DefaultMapCells:
-	.incbin "map/default/cells.table.lz"
+	.incbin "games/tla/src/map/default/cells.table.lz"

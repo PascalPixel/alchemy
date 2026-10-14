@@ -1,5 +1,5 @@
 	.section .rodata
 	.global Battle_MossCaveBackdrop
 Battle_MossCaveBackdrop:
-	.incbin "graphics/backdrop/moss_cave.gbapal"
-	.incbin "graphics/backdrop/moss_cave.bitmap.d7"
+	.incbin "games/tla/src/graphics/backdrop/moss_cave.gbapal"
+	.incbin "games/tla/src/graphics/backdrop/moss_cave.bitmap.d7"

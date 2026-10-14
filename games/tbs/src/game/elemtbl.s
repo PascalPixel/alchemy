@@ -26,7 +26,7 @@ Element_PowerResistByLevel:
 @ 敵の属性の組 44 種
 	.global Enemy_ElementPresetTable
 Enemy_ElementPresetTable:
-	.incbin "game/elempre.table"
+	.incbin "games/tbs/src/game/elempre.table"
 	.global Element_PowerResistCurve
 Element_PowerResistCurve:
 	.2byte 200, 256

@@ -2,4 +2,4 @@
 	.section .rodata
 	.global Field_Tiles64D
 Field_Tiles64D:
-	.incbin "graphics/field/tiles64d.8bpp.lz"
+	.incbin "games/tla/src/graphics/field/tiles64d.8bpp.lz"

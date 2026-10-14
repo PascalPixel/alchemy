@@ -2,4 +2,4 @@
 	.section .rodata
 	.global DisplayScroll_Font
 DisplayScroll_Font:
-	.incbin "common/graphics/display/staffrol.1bpp"
+	.incbin "games/common/src/graphics/display/staffrol.1bpp"

@@ -8,5 +8,5 @@
 	.section .rodata
 	.global Summon_PurpleArmourTiles
 Summon_PurpleArmourTiles:
-	.incbin "graphics/summon/purple_armour.gbapal"
-	.incbin "graphics/summon/purple_armour.parts.lz"
+	.incbin "games/tla/src/graphics/summon/purple_armour.gbapal"
+	.incbin "games/tla/src/graphics/summon/purple_armour.parts.lz"

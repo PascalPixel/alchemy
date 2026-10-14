@@ -1,4 +1,4 @@
 	.section .rodata
 	.global Tileset_Set113Palette
 Tileset_Set113Palette:
-	.incbin "graphics/tileset/set_113/palette.gbapal.lz"
+	.incbin "games/tla/src/graphics/tileset/set_113/palette.gbapal.lz"

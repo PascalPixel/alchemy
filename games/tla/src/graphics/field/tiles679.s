@@ -3,4 +3,4 @@
 	.section .rodata
 	.global Field_Tiles679
 Field_Tiles679:
-	.incbin "graphics/field/tiles679.4bpp16x16.plz"
+	.incbin "games/tla/src/graphics/field/tiles679.4bpp16x16.plz"

@@ -14,22 +14,22 @@ Field_Map107:
 	map_block Field_Map107, .LField_Map107_BLEND
 	map_block Field_Map107, .LField_Map107_SCENE
 .LField_Map107_METATILES:
-	.incbin "map/map_107/metatiles.delta2.lz"
+	.incbin "games/tla/src/map/map_107/metatiles.delta2.lz"
 	.balign 4, 0
 .LField_Map107_SHAPES:
-	.incbin "map/map_107/shapes.table.lz"
+	.incbin "games/tla/src/map/map_107/shapes.table.lz"
 	.balign 4, 0
 .LField_Map107_GRID:
-	.incbin "map/map_107/grid.parts.lz"
+	.incbin "games/tla/src/map/map_107/grid.parts.lz"
 	.balign 4, 0
 .LField_Map107_SHAPE_GRID:
-	.incbin "map/map_107/shape_grid.plane.lz"
+	.incbin "games/tla/src/map/map_107/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map107_ANIMATION:
-	.incbin "map/map_012/animation.script.lz"
+	.incbin "games/tla/src/map/map_012/animation.script.lz"
 	.balign 4, 0
 .LField_Map107_BLEND:
-	.incbin "map/map_001/blend.script.lz"
+	.incbin "games/tla/src/map/map_001/blend.script.lz"
 	.balign 4, 0
 .LField_Map107_SCENE:
-	.incbin "map/map_107/scene.parts.lz"
+	.incbin "games/tla/src/map/map_107/scene.parts.lz"

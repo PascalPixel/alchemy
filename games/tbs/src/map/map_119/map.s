@@ -13,24 +13,24 @@ Field_Map119:
 	map_block Field_Map119, .LField_Map119_BLEND
 	map_block Field_Map119, .LField_Map119_MARKERS
 .LField_Map119_METATILES:
-	.incbin "map/map_119/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_119/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map119_SHAPES:
-	.incbin "map/map_119/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_119/shapes.table.lz"
 	.balign 4, 0
 .LField_Map119_GRID:
-	.incbin "map/map_119/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_119/grid.parts.lz"
 	.balign 4, 0
 .LField_Map119_ANIMATION:
-	.incbin "map/map_119/animation.script.lz"
+	.incbin "games/tbs/src/map/map_119/animation.script.lz"
 	.balign 4, 0
 .LField_Map119_BLEND:
-	.incbin "map/map_020/blend.script.lz"
+	.incbin "games/tbs/src/map/map_020/blend.script.lz"
 	.balign 4, 0
 .LField_Map119_MARKERS:
-	.incbin "map/map_119/markers.table"
+	.incbin "games/tbs/src/map/map_119/markers.table"
 	.balign 4, 0
 	.global Tileset_Palette25
 Tileset_Palette25:
-	.incbin "graphics/tileset/palettes/pal_25.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/palettes/pal_25.gbapal.lz"
 	.byte 0x5b, 0x24, 0xd1	@ PACKER: left in the buffer by Field_Map119+0x18d

@@ -14,29 +14,29 @@ Field_Map011:
 	map_block Field_Map011, .LField_Map011_BLEND
 	map_block Field_Map011, .LField_Map011_MARKERS
 .LField_Map011_METATILES:
-	.incbin "map/map_011/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_011/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map011_SHAPES:
-	.incbin "common/map/map_001/shapes.table.lz"
+	.incbin "games/common/src/map/map_001/shapes.table.lz"
 	.balign 4, 0
 .LField_Map011_GRID:
-	.incbin "map/map_011/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_011/grid.parts.lz"
 	.balign 4, 0
 .LField_Map011_ANIMATION:
-	.incbin "map/map_011/animation.script.lz"
+	.incbin "games/tbs/src/map/map_011/animation.script.lz"
 	.balign 4, 0
 .LField_Map011_BLEND:
-	.incbin "map/map_011/blend.script.lz"
+	.incbin "games/tbs/src/map/map_011/blend.script.lz"
 	.balign 4, 0
 .LField_Map011_MARKERS:
-	.incbin "map/map_011/markers.table"
+	.incbin "games/tbs/src/map/map_011/markers.table"
 	.balign 4, 0
 	.global Tileset_Set10Palette
 Tileset_Set10Palette:
-	.incbin "graphics/tileset/set_10/palette.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/set_10/palette.gbapal.lz"
 	.global Tileset_Set10TilesA
 Tileset_Set10TilesA:
-	.incbin "graphics/tileset/set_10/tiles_a.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_10/tiles_a.4bpp.mtf"
 	.ifdef TBS_EDITION_JA
 	.byte 0xf0, 0x4b	@ PACKER: left in the buffer by Tileset_Set09TilesA+0x1f7e
 	.else
@@ -52,13 +52,13 @@ Tileset_Set10TilesA:
 	.endif
 	.global Tileset_Set10TilesB
 Tileset_Set10TilesB:
-	.incbin "graphics/tileset/set_10/tiles_b.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_10/tiles_b.4bpp.mtf"
 	.byte 0x7d, 0x04, 0xc1	@ PACKER: left in the buffer by Tileset_Set10TilesA+0x945
 	.global Tileset_Set10TilesC
 Tileset_Set10TilesC:
-	.incbin "graphics/tileset/set_10/tiles_c.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_10/tiles_c.4bpp.mtf"
 	.byte 0x12, 0xa2	@ PACKER: left in the buffer by Tileset_Set10TilesA+0xc4a
 	.global Tileset_Set10TilesD
 Tileset_Set10TilesD:
-	.incbin "graphics/tileset/set_10/tiles_d.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_10/tiles_d.4bpp.mtf"
 	.byte 0xe3, 0xb0, 0xd3	@ PACKER: left in the buffer by Tileset_Set10TilesC+0x225

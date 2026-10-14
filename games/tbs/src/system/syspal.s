@@ -1,7 +1,7 @@
 	.section .rodata
 	.global Ui_WindowPalette
 Ui_WindowPalette:
-	.incbin "common/system/memory/window.gbapal"
+	.incbin "games/common/src/system/memory/window.gbapal"
 	.global System_BasicColorPalette
 System_BasicColorPalette:
-	.incbin "common/system/memory/basic.gbapal"
+	.incbin "games/common/src/system/memory/basic.gbapal"

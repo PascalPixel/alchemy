@@ -13,39 +13,39 @@ Field_Map073:
 	map_block Field_Map073, .LField_Map073_BLEND
 	map_block Field_Map073, .LField_Map073_MARKERS
 .LField_Map073_METATILES:
-	.incbin "map/map_073/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_073/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map073_SHAPES:
-	.incbin "map/map_073/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_073/shapes.table.lz"
 	.balign 4, 0
 .LField_Map073_GRID:
-	.incbin "map/map_073/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_073/grid.parts.lz"
 	.balign 4, 0
 .LField_Map073_ANIMATION:
-	.incbin "map/map_073/animation.script.lz"
+	.incbin "games/tbs/src/map/map_073/animation.script.lz"
 	.balign 4, 0
 .LField_Map073_BLEND:
-	.incbin "map/map_073/blend.script.lz"
+	.incbin "games/tbs/src/map/map_073/blend.script.lz"
 	.balign 4, 0
 .LField_Map073_MARKERS:
-	.incbin "map/map_073/markers.table"
+	.incbin "games/tbs/src/map/map_073/markers.table"
 	.balign 4, 0
 	.global Tileset_Set47Palette
 Tileset_Set47Palette:
-	.incbin "graphics/tileset/set_47/palette.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/set_47/palette.gbapal.lz"
 	.byte 0x98, 0xc9	@ PACKER: left in the buffer by Field_Map073+0x192
 	.global Tileset_Set47TilesA
 Tileset_Set47TilesA:
-	.incbin "graphics/tileset/set_47/tiles_a.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_47/tiles_a.4bpp.mtf"
 	.byte 0x01, 0x6d	@ PACKER: left in the buffer by Field_Map073+0x150e
 	.global Tileset_Set47TilesB
 Tileset_Set47TilesB:
-	.incbin "graphics/tileset/set_47/tiles_b.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_47/tiles_b.4bpp.mtf"
 	.byte 0xec	@ PACKER: left in the buffer by Field_Map073+0x1de3
 	.global Tileset_Set47TilesC
 Tileset_Set47TilesC:
-	.incbin "graphics/tileset/set_47/tiles_c.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_47/tiles_c.4bpp.mtf"
 	.byte 0x2e, 0x1f	@ PACKER: left in the buffer by Tileset_Set47TilesB+0x1092
 	.global Tileset_Set47TilesD
 Tileset_Set47TilesD:
-	.incbin "graphics/tileset/set_47/tiles_d.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_47/tiles_d.4bpp.mtf"

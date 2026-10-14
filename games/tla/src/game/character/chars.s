@@ -3,4 +3,4 @@
 @ 仲間 8 人
 	.global Owner_GrowthRecords
 Owner_GrowthRecords:
-	.incbin "game/character/chars.table"
+	.incbin "games/tla/src/game/character/chars.table"

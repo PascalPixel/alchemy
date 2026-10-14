@@ -1,5 +1,5 @@
 	.section .rodata
 	.global Battle_DesertBackdrop
 Battle_DesertBackdrop:
-	.incbin "graphics/backdrop/desert.gbapal"
-	.incbin "graphics/backdrop/desert.bitmap.d7"
+	.incbin "games/common/src/graphics/backdrop/desert.gbapal"
+	.incbin "games/common/src/graphics/backdrop/desert.bitmap.d7"

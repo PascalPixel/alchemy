@@ -1,5 +1,5 @@
 	.section .rodata
 	.global Battle_VinasuHeyaBackdrop
 Battle_VinasuHeyaBackdrop:
-	.incbin "graphics/backdrop/vinasu_heya.gbapal"
-	.incbin "graphics/backdrop/vinasu_heya.bitmap.d7"
+	.incbin "games/common/src/graphics/backdrop/vinasu_heya.gbapal"
+	.incbin "games/common/src/graphics/backdrop/vinasu_heya.bitmap.d7"

@@ -1,4 +1,4 @@
 	.section .rodata
 	.global Monster_SirenSprites
 Monster_SirenSprites:
-	.incbin "graphics/monster/siren.frames.lz"
+	.incbin "games/common/src/graphics/monster/siren.frames.lz"

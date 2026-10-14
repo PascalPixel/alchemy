@@ -1,4 +1,4 @@
 	.section .rodata
 	.global Monster_CrabSprites
 Monster_CrabSprites:
-	.incbin "graphics/monster/crab.frames.lz"
+	.incbin "games/common/src/graphics/monster/crab.frames.lz"

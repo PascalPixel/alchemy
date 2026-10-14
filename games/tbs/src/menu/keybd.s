@@ -4,5 +4,5 @@
 	.balign 4
 	.global Clear_KeyboardTilemap
 Clear_KeyboardTilemap:
-	.incbin "window/keybd_ja.table.lz"
+	.incbin "games/tbs/src/window/keybd_ja.table.lz"
 	.balign 4, 0

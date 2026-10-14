@@ -1,5 +1,5 @@
 	.section .rodata
 	.global Battle_ForestBackdrop
 Battle_ForestBackdrop:
-	.incbin "graphics/backdrop/forest.gbapal"
-	.incbin "graphics/backdrop/forest.bitmap.d7"
+	.incbin "games/common/src/graphics/backdrop/forest.gbapal"
+	.incbin "games/common/src/graphics/backdrop/forest.bitmap.d7"

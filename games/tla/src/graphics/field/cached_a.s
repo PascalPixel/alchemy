@@ -2,4 +2,4 @@
 	.section .rodata
 	.global Field_CachedTilesA
 Field_CachedTilesA:
-	.incbin "graphics/field/cached_a.8bpp.lz"
+	.incbin "games/tla/src/graphics/field/cached_a.8bpp.lz"

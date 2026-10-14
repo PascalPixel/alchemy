@@ -8,5 +8,5 @@
 	.section .rodata
 	.global Summon_WhiteArrowsTiles
 Summon_WhiteArrowsTiles:
-	.incbin "graphics/summon/white_arrows.gbapal"
-	.incbin "graphics/summon/white_arrows.parts.lz"
+	.incbin "games/tla/src/graphics/summon/white_arrows.gbapal"
+	.incbin "games/tla/src/graphics/summon/white_arrows.parts.lz"

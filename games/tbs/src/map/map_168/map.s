@@ -13,21 +13,21 @@ Field_Map168:
 	map_block Field_Map168
 	map_block Field_Map168, .LField_Map168_MARKERS
 .LField_Map168_METATILES:
-	.incbin "map/map_168/metatiles.delta0.lz"
+	.incbin "games/tbs/src/map/map_168/metatiles.delta0.lz"
 	.balign 4, 0
 .LField_Map168_SHAPES:
-	.incbin "map/map_168/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_168/shapes.table.lz"
 	.balign 4, 0
 .LField_Map168_GRID:
-	.incbin "map/map_168/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_168/grid.parts.lz"
 	.balign 4, 0
 .LField_Map168_ANIMATION:
-	.incbin "map/map_054/animation.script.lz"
+	.incbin "games/tbs/src/map/map_054/animation.script.lz"
 	.balign 4, 0
 .LField_Map168_MARKERS:
-	.incbin "map/map_000/markers.table"
+	.incbin "games/tbs/src/map/map_000/markers.table"
 	.balign 4, 0
 	.global Tileset_Palette52
 Tileset_Palette52:
-	.incbin "graphics/tileset/palettes/pal_52.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/palettes/pal_52.gbapal.lz"
 	.byte 0x06	@ PACKER: left in the buffer by Field_Map168+0x103

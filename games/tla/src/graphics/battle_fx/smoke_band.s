@@ -1,5 +1,5 @@
 	.section .rodata
 	.global BattleFx_SmokeBandSheet
 BattleFx_SmokeBandSheet:
-	.incbin "graphics/battle_fx/smoke_band.gbapal"
-	.incbin "graphics/battle_fx/smoke_band.bitmap.lz"
+	.incbin "games/tla/src/graphics/battle_fx/smoke_band.gbapal"
+	.incbin "games/tla/src/graphics/battle_fx/smoke_band.bitmap.lz"

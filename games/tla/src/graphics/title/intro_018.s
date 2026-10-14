@@ -4,27 +4,27 @@
 	.global Resource_Data018
 Resource_Data018:
 	.ifeq EDITION_INTERNATIONAL
-	.incbin "graphics/title/intro_018/palette_ja.gbapal"
-	.incbin "graphics/title/intro_018/picture_ja.parts.plz"
+	.incbin "games/tla/src/graphics/title/intro_018/palette_ja.gbapal"
+	.incbin "games/tla/src/graphics/title/intro_018/picture_ja.parts.plz"
 	.else
 	.ifdef TLA_EDITION_DE
-	.incbin "graphics/title/intro_018/palette_de.gbapal"
-	.incbin "graphics/title/intro_018/picture_de.parts.plz"
+	.incbin "games/tla/src/graphics/title/intro_018/palette_de.gbapal"
+	.incbin "games/tla/src/graphics/title/intro_018/picture_de.parts.plz"
 	.else
 	.ifdef TLA_EDITION_ES
-	.incbin "graphics/title/intro_018/palette_es.gbapal"
-	.incbin "graphics/title/intro_018/picture_es.parts.plz"
+	.incbin "games/tla/src/graphics/title/intro_018/palette_es.gbapal"
+	.incbin "games/tla/src/graphics/title/intro_018/picture_es.parts.plz"
 	.else
 	.ifdef TLA_EDITION_FR
-	.incbin "graphics/title/intro_018/palette_fr.gbapal"
-	.incbin "graphics/title/intro_018/picture_fr.parts.plz"
+	.incbin "games/tla/src/graphics/title/intro_018/palette_fr.gbapal"
+	.incbin "games/tla/src/graphics/title/intro_018/picture_fr.parts.plz"
 	.else
 	.ifdef TLA_EDITION_IT
-	.incbin "graphics/title/intro_018/palette_it.gbapal"
-	.incbin "graphics/title/intro_018/picture_it.parts.plz"
+	.incbin "games/tla/src/graphics/title/intro_018/palette_it.gbapal"
+	.incbin "games/tla/src/graphics/title/intro_018/picture_it.parts.plz"
 	.else
-	.incbin "graphics/title/intro_018/palette.gbapal"
-	.incbin "graphics/title/intro_018/picture.parts.plz"
+	.incbin "games/tla/src/graphics/title/intro_018/palette.gbapal"
+	.incbin "games/tla/src/graphics/title/intro_018/picture.parts.plz"
 	.endif
 	.endif
 	.endif

@@ -14,22 +14,22 @@ Field_Map006:
 	map_block Field_Map006, .LField_Map006_BLEND
 	map_block Field_Map006, .LField_Map006_SCENE
 .LField_Map006_METATILES:
-	.incbin "map/map_006/metatiles.delta1.lz"
+	.incbin "games/tla/src/map/map_006/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map006_SHAPES:
-	.incbin "common/map/map_154/shapes.table.lz"
+	.incbin "games/common/src/map/map_154/shapes.table.lz"
 	.balign 4, 0
 .LField_Map006_GRID:
-	.incbin "map/map_006/grid.parts.lz"
+	.incbin "games/tla/src/map/map_006/grid.parts.lz"
 	.balign 4, 0
 .LField_Map006_SHAPE_GRID:
-	.incbin "map/map_006/shape_grid.plane.lz"
+	.incbin "games/tla/src/map/map_006/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map006_ANIMATION:
-	.incbin "common/map/map_154/animation.script.lz"
+	.incbin "games/common/src/map/map_154/animation.script.lz"
 	.balign 4, 0
 .LField_Map006_BLEND:
-	.incbin "common/map/map_154/blend.script.lz"
+	.incbin "games/common/src/map/map_154/blend.script.lz"
 	.balign 4, 0
 .LField_Map006_SCENE:
-	.incbin "map/map_006/scene.parts.lz"
+	.incbin "games/tla/src/map/map_006/scene.parts.lz"

@@ -13,23 +13,23 @@ Field_Map050:
 	map_block Field_Map050
 	map_block Field_Map050, .LField_Map050_MARKERS
 .LField_Map050_METATILES:
-	.incbin "map/map_050/metatiles.delta2.lz"
+	.incbin "games/tbs/src/map/map_050/metatiles.delta2.lz"
 	.balign 4, 0
 .LField_Map050_SHAPES:
-	.incbin "map/map_050/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_050/shapes.table.lz"
 	.balign 4, 0
 .LField_Map050_GRID:
-	.incbin "map/map_050/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_050/grid.parts.lz"
 	.balign 4, 0
 .LField_Map050_ANIMATION:
-	.incbin "map/map_033/animation.script.lz"
+	.incbin "games/tbs/src/map/map_033/animation.script.lz"
 	.balign 4, 0
 .LField_Map050_MARKERS:
-	.incbin "map/map_050/markers.table"
+	.incbin "games/tbs/src/map/map_050/markers.table"
 	.global Tileset_Set40Palette
 Tileset_Set40Palette:
-	.incbin "graphics/tileset/set_40/palette.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/set_40/palette.gbapal.lz"
 	.global Tileset_Set40TilesA
 Tileset_Set40TilesA:
-	.incbin "graphics/tileset/set_40/tiles_a.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_40/tiles_a.4bpp.mtf"
 	.byte 0x45, 0x58	@ PACKER: left in the buffer by Tileset_Set36TilesB+0x2966

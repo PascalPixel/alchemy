@@ -2,7 +2,7 @@
 	.section .rodata
 	.global Monster_WingedDragonSprites
 Monster_WingedDragonSprites:
-	.incbin "graphics/monster/winged_dragon.frames.lz"
+	.incbin "games/common/src/graphics/monster/winged_dragon.frames.lz"
 	.ifeq GAME_TLA
 	.ifdef TBS_EDITION_JA
 	.byte 0xee	@ PACKER: left in the buffer by Ui_Icons+0x4f53

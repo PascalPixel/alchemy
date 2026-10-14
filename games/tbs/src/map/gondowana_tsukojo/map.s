@@ -13,23 +13,23 @@ Field_GondowanaTsukojo:
 	map_block Field_GondowanaTsukojo, .LField_GondowanaTsukojo_BLEND
 	map_block Field_GondowanaTsukojo, .LField_GondowanaTsukojo_MARKERS
 .LField_GondowanaTsukojo_METATILES:
-	.incbin "map/gondowana_tsukojo/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/gondowana_tsukojo/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_GondowanaTsukojo_SHAPES:
-	.incbin "map/gondowana_tsukojo/shapes.table.lz"
+	.incbin "games/tbs/src/map/gondowana_tsukojo/shapes.table.lz"
 	.balign 4, 0
 .LField_GondowanaTsukojo_GRID:
-	.incbin "map/gondowana_tsukojo/grid.parts.lz"
+	.incbin "games/tbs/src/map/gondowana_tsukojo/grid.parts.lz"
 	.balign 4, 0
 .LField_GondowanaTsukojo_ANIMATION:
-	.incbin "map/gondowana_tsukojo/animation.script.lz"
+	.incbin "games/tbs/src/map/gondowana_tsukojo/animation.script.lz"
 	.balign 4, 0
 .LField_GondowanaTsukojo_BLEND:
-	.incbin "map/map_020/blend.script.lz"
+	.incbin "games/tbs/src/map/map_020/blend.script.lz"
 	.balign 4, 0
 .LField_GondowanaTsukojo_MARKERS:
-	.incbin "map/map_000/markers.table"
+	.incbin "games/tbs/src/map/map_000/markers.table"
 	.balign 4, 0
 	.global Tileset_Palette33
 Tileset_Palette33:
-	.incbin "graphics/tileset/palettes/pal_33.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/palettes/pal_33.gbapal.lz"

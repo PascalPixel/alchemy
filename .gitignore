@@ -5,3 +5,33 @@ tools/out/
 /roms
 
 /.claude/
+
+# Assets the Makefile builds beside their sources (A1)
+/games/**/*.lz
+/games/**/*.plz
+/games/**/*.mtf
+/games/**/*.d7
+/games/**/*.hlz
+/games/**/*.bin
+/games/**/*.1bpp
+/games/**/*.4bpp*
+/games/**/*.8bpp*
+/games/**/*.bitmap
+/games/**/*.font
+/games/**/*.frames
+/games/**/*.gbapal
+/games/**/*.glyphs
+/games/**/*.icon4
+/games/**/*.icons
+/games/**/*.icons4
+/games/**/*.strips
+/games/**/*.blocks
+/games/**/*.delta0
+/games/**/*.delta1
+/games/**/*.delta2
+/games/**/*.parts
+/games/**/*.plane
+/games/**/*.script
+/games/**/*.sprites
+/games/**/*.spriteblocks
+/games/**/*.table

@@ -1,5 +1,19 @@
-.rom_start :
+OUTPUT_ARCH(arm)
+ENTRY(Entry)
+INCLUDE "games/tla/constants.ld"
+
+MEMORY
 {
+    EWRAM (rwx) : ORIGIN = 0x2000000, LENGTH = 256K
+    IWRAM (rwx) : ORIGIN = 0x3000000, LENGTH = 32K
+    ROM    (rx) : ORIGIN = 0x8000000, LENGTH = 32M
+}
+
+SECTIONS
+{
+    ewram (NOLOAD) : { "*/recon/tla/sym_ewram.o"(.sym_ewram) } > EWRAM
+    .rom_start :
+    {
     "*/games/tla/src/system/rom_head.o"(.text .rodata .data .padding)
     "*/games/tla/src/system/far_call/boot.o"(.text .rodata .data .padding)
     "*/games/tla/src/system/entry.o"(.text .rodata .data .padding)
@@ -12,9 +26,10 @@
     "*/games/tla/src/sound/driver/resampler_records_4.o"(.text .rodata .data .padding)
     "*/games/tla/src/sound/driver/vsync_dma_refresh.o"(.text .rodata .data .padding)
     "*/recon/tla/de/rom.o"(.rom.00000630)
-}
-.iwram_runtime :
-{
+} > ROM
+    iwram_slots 0x3000000 (NOLOAD) : { "*/recon/tla/sym_iwram.o"(.sym_iwram_slots) } > IWRAM
+    .iwram_runtime 0x3000100 :
+    {
     "*/games/tla/src/system/runtime.o"(.text .rodata .data .padding)
     "*/games/tla/src/system/runtime_irq_table.o"(.text .rodata .data .padding)
     "*/games/tla/src/system/runtime_mul_q16.o"(.text .rodata .data .padding)
@@ -33,9 +48,10 @@
     "*/games/tla/src/system/runtime_mix_render_state.o"(.text .rodata .data .padding)
     "*/games/tla/src/system/runtime_mix_render.o"(.text .rodata .data .padding)
     "*/games/tla/src/system/runtime_mix_modes.o"(.text .rodata .data .padding)
-}
-.rom_main :
-{
+} > IWRAM AT>ROM
+    iwram (NOLOAD) : { "*/recon/tla/sym_iwram.o"(.sym_iwram) } > IWRAM
+    .rom_main :
+    {
     "*/games/tla/src/system/resource/decode_byte_lz.o"(.text .rodata .data .padding)
     "*/games/tla/src/graphics/render/build_oam_list.o"(.text .rodata .data .padding)
     "*/recon/tla/de/rom.o"(.rom.000019f4)
@@ -1805,13 +1821,14 @@
     "*/recon/tla/de/rom.o"(.rom.001c11ec)
     "*/games/tla/src/sound/driver/umul_high.o"(.text .rodata .data .padding)
     "*/games/tla/src/sound/driver/mixer_entry.o"(.text .rodata .data .padding)
-}
-.iwram_mixer :
-{
+} > ROM
+    .iwram_mixer 0x3006000 :
+    {
     "*/games/tla/src/sound/driver/mixer.o"(.text .rodata .data .padding)
-}
-.rom_tail :
-{
+} > IWRAM AT>ROM
+    iwram_high (NOLOAD) : { "*/recon/tla/sym_iwram_high.o"(.sym_iwram_high) } > IWRAM
+    .rom_tail :
+    {
     "*/games/tla/src/sound/driver/clear_buffer.o"(.text .rodata .data .padding)
     "*/recon/tla/de/rom.o"(.rom.001c16ca)
     "*/games/tla/src/sound/driver/clear_chain.o"(.text)
@@ -4859,4 +4876,9 @@
     "*/games/tla/src/graphics/tileset/blank/r648.o"(.rodata)
     "*/recon/tla/de/rom.o"(.rom.00ec394f)
     "*/games/tla/src/system/overlay/overlays.o"(.overlays)
+} > ROM
+    IwramRuntime_Rom = LOADADDR(.iwram_runtime);
+    Sound_Mixer = LOADADDR(.iwram_mixer) + 1;
+    Mixer_CallViaR3Rom = LOADADDR(.iwram_mixer) + (Mixer_CallViaR3 - ADDR(.iwram_mixer));
+    /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

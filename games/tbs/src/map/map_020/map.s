@@ -13,36 +13,36 @@ Field_Map020:
 	map_block Field_Map020, .LField_Map020_BLEND
 	map_block Field_Map020, .LField_Map020_MARKERS
 .LField_Map020_METATILES:
-	.incbin "map/map_020/metatiles.delta0.lz"
+	.incbin "games/tbs/src/map/map_020/metatiles.delta0.lz"
 	.balign 4, 0
 .LField_Map020_SHAPES:
-	.incbin "map/map_020/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_020/shapes.table.lz"
 	.balign 4, 0
 .LField_Map020_GRID:
-	.incbin "map/map_020/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_020/grid.parts.lz"
 	.balign 4, 0
 .LField_Map020_ANIMATION:
-	.incbin "map/map_020/animation.script.lz"
+	.incbin "games/tbs/src/map/map_020/animation.script.lz"
 	.balign 4, 0
 .LField_Map020_BLEND:
-	.incbin "map/map_020/blend.script.lz"
+	.incbin "games/tbs/src/map/map_020/blend.script.lz"
 	.balign 4, 0
 .LField_Map020_MARKERS:
-	.incbin "map/map_000/markers.table"
+	.incbin "games/tbs/src/map/map_000/markers.table"
 	.balign 4, 0
 	.global Tileset_Set17Palette
 Tileset_Set17Palette:
-	.incbin "graphics/tileset/set_17/palette.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/set_17/palette.gbapal.lz"
 	.global Tileset_Set17TilesA
 Tileset_Set17TilesA:
-	.incbin "graphics/tileset/set_17/tiles_a.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_17/tiles_a.4bpp.mtf"
 	.byte 0xe1, 0xe8, 0xf4	@ PACKER: left in the buffer by Field_Map006+0x2d51
 	.global Tileset_Set17TilesB
 Tileset_Set17TilesB:
-	.incbin "graphics/tileset/set_17/tiles_b.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_17/tiles_b.4bpp.mtf"
 	.global Tileset_Set17TilesC
 Tileset_Set17TilesC:
-	.incbin "graphics/tileset/set_17/tiles_c.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_17/tiles_c.4bpp.mtf"
 	.global Tileset_Set17TilesD
 Tileset_Set17TilesD:
-	.incbin "graphics/tileset/set_17/tiles_d.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_17/tiles_d.4bpp.mtf"

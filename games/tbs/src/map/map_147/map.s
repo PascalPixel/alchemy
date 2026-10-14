@@ -13,20 +13,20 @@ Field_Map147:
 	map_block Field_Map147
 	map_block Field_Map147, .LField_Map147_MARKERS
 .LField_Map147_METATILES:
-	.incbin "map/map_147/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_147/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map147_SHAPES:
-	.incbin "map/map_147/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_147/shapes.table.lz"
 	.balign 4, 0
 .LField_Map147_GRID:
-	.incbin "map/map_147/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_147/grid.parts.lz"
 	.balign 4, 0
 .LField_Map147_ANIMATION:
-	.incbin "map/map_147/animation.script.lz"
+	.incbin "games/tbs/src/map/map_147/animation.script.lz"
 	.balign 4, 0
 .LField_Map147_MARKERS:
-	.incbin "map/map_147/markers.table"
+	.incbin "games/tbs/src/map/map_147/markers.table"
 	.balign 4, 0
 	.global Tileset_Palette39
 Tileset_Palette39:
-	.incbin "graphics/tileset/palettes/pal_39.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/palettes/pal_39.gbapal.lz"

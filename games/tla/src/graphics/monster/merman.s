@@ -1,4 +1,4 @@
 	.section .rodata
 	.global Monster_MermanSprites
 Monster_MermanSprites:
-	.incbin "graphics/monster/merman.frames.lz"
+	.incbin "games/tla/src/graphics/monster/merman.frames.lz"

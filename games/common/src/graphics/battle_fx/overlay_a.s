@@ -1,4 +1,4 @@
 	.section .rodata
 	.global BattleFx_OverlayImageA
 BattleFx_OverlayImageA:
-	.incbin "graphics/battle_fx/overlay_a.parts.lz"
+	.incbin "games/common/src/graphics/battle_fx/overlay_a.parts.lz"

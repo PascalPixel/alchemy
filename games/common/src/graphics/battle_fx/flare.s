@@ -2,8 +2,8 @@
 	.section .rodata
 	.global BattleFx_FlareSheet
 BattleFx_FlareSheet:
-	.incbin "graphics/battle_fx/flare_00.gbapal"
-	.incbin "graphics/battle_fx/flare.parts.lz"
+	.incbin "games/common/src/graphics/battle_fx/flare_00.gbapal"
+	.incbin "games/common/src/graphics/battle_fx/flare.parts.lz"
 	.ifeq GAME_TLA
 	.ifdef TBS_EDITION_ES
 	.byte 0x10, 0xb6	@ PACKER: left in the buffer by LuckyDice_Sprites+0x1d86

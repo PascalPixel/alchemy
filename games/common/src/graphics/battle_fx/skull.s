@@ -2,8 +2,8 @@
 	.section .rodata
 	.global BattleFx_SkullSheet
 BattleFx_SkullSheet:
-	.incbin "graphics/battle_fx/skull.gbapal"
-	.incbin "graphics/battle_fx/skull.bitmap.lz"
+	.incbin "games/common/src/graphics/battle_fx/skull.gbapal"
+	.incbin "games/common/src/graphics/battle_fx/skull.bitmap.lz"
 	.ifeq GAME_TLA
 	.byte 0x98, 0x43, 0x4a	@ PACKER: left in the buffer by BattleFx_SheepSheet+0x421
 	.endif

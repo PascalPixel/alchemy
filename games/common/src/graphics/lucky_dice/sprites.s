@@ -30,27 +30,27 @@ LuckyDice_Sprites:
 	.set LUCKY_DICE_IT, 1
 	.endif
 	.ifdef LUCKY_DICE_JA
-	.incbin "graphics/lucky_dice/sprites_1_ja.gbapal"
-	.incbin "graphics/lucky_dice/sprites_ja.parts.lz"
+	.incbin "games/common/src/graphics/lucky_dice/sprites_1_ja.gbapal"
+	.incbin "games/common/src/graphics/lucky_dice/sprites_ja.parts.lz"
 	.else
 	.ifdef LUCKY_DICE_DE
-	.incbin "graphics/lucky_dice/sprites_1_de.gbapal"
-	.incbin "graphics/lucky_dice/sprites_de.parts.lz"
+	.incbin "games/common/src/graphics/lucky_dice/sprites_1_de.gbapal"
+	.incbin "games/common/src/graphics/lucky_dice/sprites_de.parts.lz"
 	.else
 	.ifdef LUCKY_DICE_ES
-	.incbin "graphics/lucky_dice/sprites_1_es.gbapal"
-	.incbin "graphics/lucky_dice/sprites_es.parts.lz"
+	.incbin "games/common/src/graphics/lucky_dice/sprites_1_es.gbapal"
+	.incbin "games/common/src/graphics/lucky_dice/sprites_es.parts.lz"
 	.else
 	.ifdef LUCKY_DICE_FR
-	.incbin "graphics/lucky_dice/sprites_1_fr.gbapal"
-	.incbin "graphics/lucky_dice/sprites_fr.parts.lz"
+	.incbin "games/common/src/graphics/lucky_dice/sprites_1_fr.gbapal"
+	.incbin "games/common/src/graphics/lucky_dice/sprites_fr.parts.lz"
 	.else
 	.ifdef LUCKY_DICE_IT
-	.incbin "graphics/lucky_dice/sprites_1_it.gbapal"
-	.incbin "graphics/lucky_dice/sprites_it.parts.lz"
+	.incbin "games/common/src/graphics/lucky_dice/sprites_1_it.gbapal"
+	.incbin "games/common/src/graphics/lucky_dice/sprites_it.parts.lz"
 	.else
-	.incbin "graphics/lucky_dice/sprites_1.gbapal"
-	.incbin "graphics/lucky_dice/sprites.parts.lz"
+	.incbin "games/common/src/graphics/lucky_dice/sprites_1.gbapal"
+	.incbin "games/common/src/graphics/lucky_dice/sprites.parts.lz"
 	.endif
 	.endif
 	.endif

@@ -1,5 +1,5 @@
 	.section .rodata
 	.global Battle_KorosseoBackdrop
 Battle_KorosseoBackdrop:
-	.incbin "graphics/backdrop/korosseo.gbapal"
-	.incbin "graphics/backdrop/korosseo.bitmap.d7"
+	.incbin "games/common/src/graphics/backdrop/korosseo.gbapal"
+	.incbin "games/common/src/graphics/backdrop/korosseo.bitmap.d7"

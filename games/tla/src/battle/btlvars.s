@@ -3,7 +3,7 @@
 @ 敵の編成 660 個
 	.global BattleFormation_Records
 BattleFormation_Records:
-	.incbin "battle/formatn.table"
+	.incbin "games/tla/src/battle/formatn.table"
 	.global Data_08130c5c
 Data_08130c5c:
 	.2byte 0x009, 0x00a, 0x00b, 0x00c, 0x00d, 0x00e, 0x00f, 0x010
@@ -20,4 +20,4 @@ Data_08130c5c:
 @ 戦闘の絵 387 個
 	.global Summon_EntryTable
 Summon_EntryTable:
-	.incbin "battle/summon/sprites.table"
+	.incbin "games/tla/src/battle/summon/sprites.table"

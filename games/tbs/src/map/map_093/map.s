@@ -13,40 +13,40 @@ Field_Map093:
 	map_block Field_Map093, .LField_Map093_BLEND
 	map_block Field_Map093, .LField_Map093_MARKERS
 .LField_Map093_METATILES:
-	.incbin "map/map_093/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_093/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map093_SHAPES:
-	.incbin "map/map_093/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_093/shapes.table.lz"
 	.balign 4, 0
 .LField_Map093_GRID:
-	.incbin "map/map_093/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_093/grid.parts.lz"
 	.balign 4, 0
 .LField_Map093_ANIMATION:
-	.incbin "map/map_093/animation.script.lz"
+	.incbin "games/tbs/src/map/map_093/animation.script.lz"
 	.balign 4, 0
 .LField_Map093_BLEND:
-	.incbin "map/map_020/blend.script.lz"
+	.incbin "games/tbs/src/map/map_020/blend.script.lz"
 	.balign 4, 0
 .LField_Map093_MARKERS:
-	.incbin "map/map_093/markers.table"
+	.incbin "games/tbs/src/map/map_093/markers.table"
 	.balign 4, 0
 	.global Tileset_Set51Palette
 Tileset_Set51Palette:
-	.incbin "graphics/tileset/set_51/palette.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/set_51/palette.gbapal.lz"
 	.byte 0x94	@ PACKER: left in the buffer by Field_Map093+0x17b
 	.balign 4, 0
 	.global Tileset_Set51TilesA
 Tileset_Set51TilesA:
-	.incbin "graphics/tileset/set_51/tiles_a.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_51/tiles_a.4bpp.mtf"
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
 	.global Tileset_Set51TilesB
 Tileset_Set51TilesB:
-	.incbin "graphics/tileset/set_51/tiles_b.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_51/tiles_b.4bpp.mtf"
 	.byte 0xd1, 0xbc	@ PACKER: left in the buffer by Field_Map092+0x2776
 	.global Tileset_Set51TilesC
 Tileset_Set51TilesC:
-	.incbin "graphics/tileset/set_51/tiles_c.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_51/tiles_c.4bpp.mtf"
 	.byte 0x24, 0xda, 0xbb	@ PACKER: left in the buffer by Tileset_Set51TilesB+0x1865
 	.global Tileset_Set51TilesD
 Tileset_Set51TilesD:
-	.incbin "graphics/tileset/set_51/tiles_d.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_51/tiles_d.4bpp.mtf"

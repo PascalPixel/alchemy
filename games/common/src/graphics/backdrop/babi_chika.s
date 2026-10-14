@@ -1,5 +1,5 @@
 	.section .rodata
 	.global Battle_BabiChikaBackdrop
 Battle_BabiChikaBackdrop:
-	.incbin "graphics/backdrop/babi_chika.gbapal"
-	.incbin "graphics/backdrop/babi_chika.bitmap.d7"
+	.incbin "games/common/src/graphics/backdrop/babi_chika.gbapal"
+	.incbin "games/common/src/graphics/backdrop/babi_chika.bitmap.d7"

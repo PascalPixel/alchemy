@@ -3,4 +3,4 @@
 @ The Broken Seal: Map_LayeredScenes
 	.global Data_0802f380
 Data_0802f380:
-	.incbin "field/common/map/layered.table"
+	.incbin "games/tla/src/field/common/map/layered.table"

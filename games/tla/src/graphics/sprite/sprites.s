@@ -3,7 +3,7 @@
 	.global Resource_Data012
 Resource_Data012:
 	.ifeq EDITION_INTERNATIONAL
-	.include "graphics/sprite/spriteja.sprites"
+	.include "games/tla/src/graphics/sprite/spriteja.sprites"
 	.else
-	.include "graphics/sprite/sprites.sprites"
+	.include "games/tla/src/graphics/sprite/sprites.sprites"
 	.endif

@@ -13,24 +13,24 @@ Field_Map043:
 	map_block Field_Map043, .LField_Map043_BLEND
 	map_block Field_Map043, .LField_Map043_MARKERS
 .LField_Map043_METATILES:
-	.incbin "map/map_043/metatiles.delta0.lz"
+	.incbin "games/tbs/src/map/map_043/metatiles.delta0.lz"
 	.balign 4, 0
 .LField_Map043_SHAPES:
-	.incbin "map/map_043/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_043/shapes.table.lz"
 	.balign 4, 0
 .LField_Map043_GRID:
-	.incbin "map/map_043/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_043/grid.parts.lz"
 	.balign 4, 0
 .LField_Map043_ANIMATION:
-	.incbin "map/map_043/animation.script.lz"
+	.incbin "games/tbs/src/map/map_043/animation.script.lz"
 	.balign 4, 0
 .LField_Map043_BLEND:
-	.incbin "map/map_039/blend.script.lz"
+	.incbin "games/tbs/src/map/map_039/blend.script.lz"
 	.balign 4, 0
 .LField_Map043_MARKERS:
-	.incbin "map/map_000/markers.table"
+	.incbin "games/tbs/src/map/map_000/markers.table"
 	.balign 4, 0
 	.global Tileset_Palette02
 Tileset_Palette02:
-	.incbin "graphics/tileset/palettes/pal_02.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/palettes/pal_02.gbapal.lz"
 	.byte 0xe3, 0x65	@ PACKER: left in the buffer by Field_Map043+0x166

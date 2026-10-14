@@ -13,25 +13,25 @@ Field_Map150:
 	map_block Field_Map150
 	map_block Field_Map150, .LField_Map150_MARKERS
 .LField_Map150_METATILES:
-	.incbin "map/map_150/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_150/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map150_SHAPES:
-	.incbin "map/map_150/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_150/shapes.table.lz"
 	.balign 4, 0
 .LField_Map150_GRID:
-	.incbin "map/map_150/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_150/grid.parts.lz"
 	.balign 4, 0
 .LField_Map150_ANIMATION:
-	.incbin "map/map_150/animation.script.lz"
+	.incbin "games/tbs/src/map/map_150/animation.script.lz"
 	.balign 4, 0
 .LField_Map150_MARKERS:
-	.incbin "map/map_150/markers.table"
+	.incbin "games/tbs/src/map/map_150/markers.table"
 	.global Tileset_Set64Palette
 Tileset_Set64Palette:
-	.incbin "graphics/tileset/set_64/palette.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/set_64/palette.gbapal.lz"
 	.global Tileset_Set64TilesA
 Tileset_Set64TilesA:
-	.incbin "graphics/tileset/set_64/tiles_a.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_64/tiles_a.4bpp.mtf"
 	.ifdef TBS_EDITION_JA
 	.byte 0xd8	@ PACKER: left in the buffer by Field_Map148+0x2617
 	.else
@@ -43,12 +43,12 @@ Tileset_Set64TilesA:
 	.endif
 	.global Tileset_Set64TilesB
 Tileset_Set64TilesB:
-	.incbin "graphics/tileset/set_64/tiles_b.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_64/tiles_b.4bpp.mtf"
 	.global Tileset_Set64TilesC
 Tileset_Set64TilesC:
-	.incbin "graphics/tileset/set_64/tiles_c.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_64/tiles_c.4bpp.mtf"
 	.byte 0x00, 0x14	@ PACKER: left in the buffer by Tileset_Set64TilesB+0x106a
 	.global Tileset_Set64TilesD
 Tileset_Set64TilesD:
-	.incbin "graphics/tileset/set_64/tiles_d.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_64/tiles_d.4bpp.mtf"
 	.byte 0x81, 0x79	@ PACKER: left in the buffer by Tileset_Set64TilesB+0x1a26

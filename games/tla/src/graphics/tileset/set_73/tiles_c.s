@@ -1,4 +1,4 @@
 	.section .rodata
 	.global Tileset_Set73TilesC
 Tileset_Set73TilesC:
-	.incbin "graphics/tileset/set_73/tiles_c.4bpp.mtf"
+	.incbin "games/tla/src/graphics/tileset/set_73/tiles_c.4bpp.mtf"

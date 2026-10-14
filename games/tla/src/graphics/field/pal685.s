@@ -2,4 +2,4 @@
 	.section .rodata
 	.global Field_Palette685
 Field_Palette685:
-	.incbin "graphics/field/pal685.gbapal"
+	.incbin "games/tla/src/graphics/field/pal685.gbapal"

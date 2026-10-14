@@ -14,22 +14,22 @@ Field_Map215:
 	map_block Field_Map215, .LField_Map215_BLEND
 	map_block Field_Map215, .LField_Map215_SCENE
 .LField_Map215_METATILES:
-	.incbin "map/map_215/metatiles.delta2.lz"
+	.incbin "games/tla/src/map/map_215/metatiles.delta2.lz"
 	.balign 4, 0
 .LField_Map215_SHAPES:
-	.incbin "map/map_215/shapes.table.lz"
+	.incbin "games/tla/src/map/map_215/shapes.table.lz"
 	.balign 4, 0
 .LField_Map215_GRID:
-	.incbin "map/map_215/grid.parts.lz"
+	.incbin "games/tla/src/map/map_215/grid.parts.lz"
 	.balign 4, 0
 .LField_Map215_SHAPE_GRID:
-	.incbin "map/map_215/shape_grid.plane.lz"
+	.incbin "games/tla/src/map/map_215/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map215_ANIMATION:
-	.incbin "map/map_211/animation.script.lz"
+	.incbin "games/tla/src/map/map_211/animation.script.lz"
 	.balign 4, 0
 .LField_Map215_BLEND:
-	.incbin "map/map_001/blend.script.lz"
+	.incbin "games/tla/src/map/map_001/blend.script.lz"
 	.balign 4, 0
 .LField_Map215_SCENE:
-	.incbin "map/map_215/scene.parts.lz"
+	.incbin "games/tla/src/map/map_215/scene.parts.lz"

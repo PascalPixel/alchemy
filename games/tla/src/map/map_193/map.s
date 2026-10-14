@@ -14,22 +14,22 @@ Field_Map193:
 	map_block Field_Map193, .LField_Map193_BLEND
 	map_block Field_Map193, .LField_Map193_SCENE
 .LField_Map193_METATILES:
-	.incbin "map/map_193/metatiles.delta1.lz"
+	.incbin "games/tla/src/map/map_193/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map193_SHAPES:
-	.incbin "common/map/map_170/shapes.table.lz"
+	.incbin "games/common/src/map/map_170/shapes.table.lz"
 	.balign 4, 0
 .LField_Map193_GRID:
-	.incbin "map/map_193/grid.parts.lz"
+	.incbin "games/tla/src/map/map_193/grid.parts.lz"
 	.balign 4, 0
 .LField_Map193_SHAPE_GRID:
-	.incbin "map/map_193/shape_grid.plane.lz"
+	.incbin "games/tla/src/map/map_193/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map193_ANIMATION:
-	.incbin "common/map/map_170/animation.script.lz"
+	.incbin "games/common/src/map/map_170/animation.script.lz"
 	.balign 4, 0
 .LField_Map193_BLEND:
-	.incbin "map/map_001/blend.script.lz"
+	.incbin "games/tla/src/map/map_001/blend.script.lz"
 	.balign 4, 0
 .LField_Map193_SCENE:
-	.incbin "map/map_193/scene.parts.lz"
+	.incbin "games/tla/src/map/map_193/scene.parts.lz"

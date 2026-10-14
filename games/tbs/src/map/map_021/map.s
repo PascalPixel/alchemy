@@ -14,45 +14,45 @@ Field_Map021:
 	map_block Field_Map021, .LField_Map021_BLEND
 	map_block Field_Map021, .LField_Map021_MARKERS
 .LField_Map021_METATILES:
-	.incbin "map/map_021/metatiles.delta2.lz"
+	.incbin "games/tbs/src/map/map_021/metatiles.delta2.lz"
 	.balign 4, 0
 .LField_Map021_SHAPES:
-	.incbin "map/map_021/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_021/shapes.table.lz"
 	.balign 4, 0
 .LField_Map021_GRID:
-	.incbin "map/map_021/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_021/grid.parts.lz"
 	.balign 4, 0
 .LField_Map021_ANIMATION:
-	.incbin "map/map_021/animation.script.lz"
+	.incbin "games/tbs/src/map/map_021/animation.script.lz"
 	.balign 4, 0
 .LField_Map021_BLEND:
-	.incbin "map/map_021/blend.script.lz"
+	.incbin "games/tbs/src/map/map_021/blend.script.lz"
 	.balign 4, 0
 .LField_Map021_MARKERS:
-	.incbin "map/map_000/markers.table"
+	.incbin "games/tbs/src/map/map_000/markers.table"
 	.balign 4, 0
 	.global Tileset_Set18Palette
 Tileset_Set18Palette:
-	.incbin "graphics/tileset/set_18/palette.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/set_18/palette.gbapal.lz"
 	.byte 0x71	@ PACKER: left in the buffer by Field_Map021+0xcb
 	.global Tileset_Set18TilesA
 Tileset_Set18TilesA:
-	.incbin "graphics/tileset/set_18/tiles_a.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_18/tiles_a.4bpp.mtf"
 	.global Tileset_Set18TilesB
 Tileset_Set18TilesB:
-	.incbin "graphics/tileset/set_18/tiles_b.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_18/tiles_b.4bpp.mtf"
 	.global Tileset_Set18TilesC
 Tileset_Set18TilesC:
 	.ifdef TBS_EDITION_ES
-	.incbin "graphics/tileset/set_18/tiles_c_es.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_18/tiles_c_es.4bpp.mtf"
 	.else
 	.ifdef TBS_EDITION_FR
-	.incbin "graphics/tileset/set_18/tiles_c_es.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_18/tiles_c_es.4bpp.mtf"
 	.else
 	.ifdef TBS_EDITION_IT
-	.incbin "graphics/tileset/set_18/tiles_c_es.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_18/tiles_c_es.4bpp.mtf"
 	.else
-	.incbin "graphics/tileset/set_18/tiles_c.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_18/tiles_c.4bpp.mtf"
 	.endif
 	.endif
 	.endif
@@ -71,5 +71,5 @@ Tileset_Set18TilesC:
 	.endif
 	.global Tileset_Set18TilesD
 Tileset_Set18TilesD:
-	.incbin "graphics/tileset/set_18/tiles_d.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_18/tiles_d.4bpp.mtf"
 	.byte 0x04	@ PACKER: left in the buffer by Tileset_Set18TilesC+0x13f

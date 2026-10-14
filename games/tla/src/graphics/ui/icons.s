@@ -1,4 +1,4 @@
 	.section .rodata
 	.global Ui_Icons
 Ui_Icons:
-	.incbin "graphics/ui/icons/icons.icons4"
+	.incbin "games/tla/src/graphics/ui/icons/icons.icons4"

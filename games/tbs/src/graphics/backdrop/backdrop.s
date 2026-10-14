@@ -19,8 +19,8 @@
 	.include "games/common/src/graphics/backdrop/toreto_heya.s"
 	.global Battle_GomaDouBackdrop
 Battle_GomaDouBackdrop:
-	.incbin "graphics/backdrop/goma_dou.gbapal"
-	.incbin "graphics/backdrop/goma_dou.bitmap.d7"
+	.incbin "games/tbs/src/graphics/backdrop/goma_dou.gbapal"
+	.incbin "games/tbs/src/graphics/backdrop/goma_dou.bitmap.d7"
 	.include "games/common/src/graphics/backdrop/interior.s"
 	.include "games/common/src/graphics/backdrop/arutin_yama.s"
 	.include "games/common/src/graphics/backdrop/fune_kanpan.s"

@@ -2,8 +2,8 @@
 	.section .rodata
 	.global BattleFx_TileAnimationMask
 BattleFx_TileAnimationMask:
-	.incbin "graphics/battle_fx/tile_mask_00.gbapal"
-	.incbin "graphics/battle_fx/tile_mask.parts.lz"
+	.incbin "games/common/src/graphics/battle_fx/tile_mask_00.gbapal"
+	.incbin "games/common/src/graphics/battle_fx/tile_mask.parts.lz"
 	.ifeq GAME_TLA
 	.ifdef TBS_EDITION_EN
 	.byte 0x32, 0xb9, 0x81	@ PACKER: left in the buffer by LuckyDice_Sprites+0x845

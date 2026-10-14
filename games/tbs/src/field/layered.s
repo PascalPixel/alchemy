@@ -2,7 +2,7 @@
 @ 場面ごとの重ねマップ (ResourceId_Map001 からの番号)
 	.global Map_LayeredScenes
 Map_LayeredScenes:
-	.incbin "field/layered.table"
+	.incbin "games/tbs/src/field/layered.table"
 
 	.global Map_LayeredScenesTail
 Map_LayeredScenesTail:

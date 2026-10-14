@@ -1,260 +1,276 @@
-.DEFAULT_GOAL := help
-TOOLS := tools
-CARGO ?= cargo
-export CARGO_TARGET_DIR := $(CURDIR)/tools/out/cargo-target
-export PATH := $(CURDIR)/tools/out/binutils/bin:$(PATH)
-ALCHEMY_BIN := $(CARGO_TARGET_DIR)/release/alchemy
-ALCHEMY ?= $(ALCHEMY_BIN)
-BUILD := $(ALCHEMY) build
-# make V=1 prints every command the build runs (alchemy build rom --commands).
-COMMANDS := $(if $(V),--commands)
-CHECK := $(ALCHEMY) check
-TARGET ?= tbs-ja
-SHA1 := $(shell { command -v sha1sum || command -v shasum; } 2>/dev/null) -c
+# Golden Sun: The Broken Seal ☀️ (tbs) and The Lost Age ⚓️ (tla), in six
+# languages each: ja en de es fr it. `make tbs-en` builds one edition into
+# out/tbs-en/tbs-en.gba; `make compare-tbs-en` also checks it against
+# rom.sha1. Every rule the ROM is built by is in this file.
 
-LIBGCC := tools/out/compiler-runtime/libgcc.a
-MODERN_CC ?= arm-none-eabi-gcc
-# make boot-tbs: mGBA, its GDB stub on port 2345, an ARM debugger, and the
-# seconds one run may take (alchemy boot --help).
-BOOT_EMULATOR ?= mgba
-BOOT_GDB ?= arm-none-eabi-gdb
-BOOT_TIMEOUT ?= 300
-
-.PHONY: compiler-runtime worktree
-compiler-runtime: toolchain-check compiler-source-check
-	$(BUILD) runtime --output $(LIBGCC) \
-	    _call_via_rX=gcc/config/arm/lib1funcs.asm \
-	    _addsub_df=dp-bit.c \
-	    _si_to_df=dp-bit.c \
-	    _df_to_si=dp-bit.c \
-	    _pack_df=dp-bit.c \
-	    _unpack_df=dp-bit.c \
-	    _thenan_df=dp-bit.c \
-	    _lshrdi3=gcc/libgcc2.c
-
-$(LIBGCC):
-	$(MAKE) compiler-runtime
-
-.PHONY: help bootstrap merge-drivers fetch-dependencies compilers compiler-sources compiler-source-check toolchain-check build-tools build-alchemy
-.PHONY: compare compare-tla compare-all build-rom
-.PHONY: precommit prepush verify land test test-integration lint-staged language-check
-.PHONY: publication-check source-check publication-staged-check hygiene-check coverage-report
-.PHONY: publication-tree-check layout-check dead-check aliases-check devices-check headers-check object-list-check packer-check modern-check
-.PHONY: progress deps similar worst clean modern boot-tbs
-
-help:
-	@printf '%s\n' \
-	  'make bootstrap       fetch locked dependencies and build the approved toolchain' \
-	  'make fetch-dependencies  download only the locked Rust dependencies' \
-	  'make compare-tbs     build the six ☀️ editions and check each against rom.sha1; needs no ROM' \
-	  'make compare-all     compare linked source and both private ROM compositions' \
-	  'make compare-editions  compare all twelve editions, with Japanese as the base' \
-	  'make modern          build the six ☀️ editions with a modern GCC (MODERN_CC) into out/modern: no match, every warning in out/modern/warnings.txt' \
-	  'make boot-tbs        boot each ☀️ edition, matching and modern ROM, in mGBA to the file menu (BOOT_EMULATOR, BOOT_GDB); never part of make verify or make land' \
-	  'make test            the Rust tests' \
-	  'make verify          every check, the tests and all twelve editions compared' \
-	  'make land            on main, before committing a landing: make verify, then the measurement the push uploads' \
-	  'make coverage-report measure both games for the push; CI draws the published figures' \
-	  'make progress        report DONE code and data in all six editions from verified builds' \
-	  'make deps            map calls and blockers of not-yet-C code into out/reports/deps-*.tsv' \
-	  'make similar         the nearest C twins of every not-yet-C function in either game, into out/reports/similar.tsv' \
-	  'make worst           rank mechanical cleanup signals' \
-	  'alchemy diff DRAFT.c compare a C draft with the listing it would replace (tools/out/cargo-target/release/alchemy)' \
-	  'alchemy adopt ADDR LABEL [NAME]  take an adopted function out of the scaffolding of all six editions' \
-	  'alchemy adopt-data OBJECT LABEL...  link a data object in all six editions and take its bytes out of their scaffolds' \
-	  'alchemy queues --workers N --out-dir DIR  split not-yet-C work into queues by module run or overlay'
-
-fetch-dependencies:
-	$(CARGO) fetch --locked --manifest-path $(TOOLS)/Cargo.toml
-
-bootstrap: fetch-dependencies
-	$(MAKE) build-alchemy
-	$(ALCHEMY) bootstrap $(if $(BUNDLE),--from "$(BUNDLE)")
-	$(MAKE) $(LIBGCC)
-	$(MAKE) merge-drivers
-
-merge-drivers:
-	git config merge.alchemy-scaffold.name "edition scaffold by ROM bytes"
-	git config merge.alchemy-scaffold.driver "tools/out/cargo-target/release/alchemy merge-driver scaffold %O %A %B"
-	git config merge.alchemy-lines.name "linker script by lines"
-	git config merge.alchemy-lines.driver "tools/out/cargo-target/release/alchemy merge-driver lines %O %A %B"
-
-MAIN_CHECKOUT = $(shell git rev-parse --path-format=absolute --git-common-dir)/..
-worktree:
-	"$(MAIN_CHECKOUT)/tools/out/cargo-target/release/alchemy" worktree "$(MAIN_CHECKOUT)"
-
-toolchain-check:
-	$(ALCHEMY) bootstrap --check
-
-compilers: compiler-sources
-
-compiler-sources: compiler-source-check
-	$(MAKE) -C agscc -j$(JOBS) JOBS=$(JOBS)
-
-compiler-source-check:
-	@set -e; repo=agscc; approved=1027438bfe99b14f28d0c5b18a34813a22ad9551; \
-	  test "$$(git rev-parse :$$repo)" = "$$approved" || { printf '%s gitlink is not approved\n' "$$repo"; exit 1; }; \
-	  test "$$(env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C "$$repo" rev-parse HEAD)" = "$$approved" || { printf '%s checkout is not approved\n' "$$repo"; exit 1; }; \
-	  state=$$(env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C "$$repo" status --porcelain --untracked-files=all -- . ':(exclude,glob)**/.DS_Store'); \
-	  test -z "$$state" || { printf '%s compiler source is dirty\n' "$$repo"; exit 1; }
-	@env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE $(MAKE) -C agscc source-check
-	@printf 'compiler sources match the approved agscc toolchain\n'
-
-build-tools:
-	$(CARGO) build --offline --release --workspace --manifest-path $(TOOLS)/Cargo.toml
-
-build-alchemy:
-	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
-
-compare:
-	$(BUILD) rom --target tbs-ja $(COMMANDS)
-	@grep -F ' out/tbs-ja/' rom.sha1 | $(SHA1) -
-
-compare-tla:
-	$(BUILD) rom --target tla-ja $(COMMANDS)
-	@grep -F ' out/tla-ja/' rom.sha1 | $(SHA1) -
-
-compare-all:
-	@$(MAKE) --no-print-directory -j2 compare compare-tla
-
-EDITIONS := tbs-en tbs-de tbs-es tbs-fr tbs-it tla-en tla-de tla-es tla-fr tla-it
-COMPARE_EDITIONS := $(addprefix compare-,$(EDITIONS))
-# Build once per invocation. Verification passes its pinned executable through
-# ALCHEMY, so its child checks need no Cargo build and cannot replace that binary.
-ifeq ($(origin ALCHEMY),file)
-compiler-runtime toolchain-check compare compare-tla compare-tbs compare-editions compare-other-editions \
-$(COMPARE_EDITIONS) build-rom precommit prepush verify land publication-check source-check \
-hygiene-check publication-staged-check lint-staged coverage-report progress \
-publication-tree-check layout-check dead-check aliases-check devices-check headers-check object-list-check \
-packer-check deps similar worst modern boot-tbs: | build-alchemy
-endif
+GAMES    := tbs tla
+LANGS    := ja en de es fr it
+EDITIONS := $(foreach game,$(GAMES),$(addprefix $(game)-,$(LANGS)))
+TBS      := $(filter tbs-%,$(EDITIONS))
+TLA      := $(filter tla-%,$(EDITIONS))
 
 CPUS := $(shell sysctl -n hw.ncpu 2>/dev/null || nproc 2>/dev/null || echo 4)
 JOBS ?= $(CPUS)
-.PHONY: compare-tbs compare-editions compare-other-editions compare-tbs-ja compare-tla-ja $(COMPARE_EDITIONS)
-# The six ☀️ editions, which read no ROM (INSTALL.md).
-compare-tbs:
-	@$(MAKE) --no-print-directory -j$(JOBS) ALCHEMY="$(ALCHEMY)" compare $(filter compare-tbs-%,$(COMPARE_EDITIONS))
-compare-editions:
-	@$(MAKE) --no-print-directory -j$(JOBS) ALCHEMY="$(ALCHEMY)" compare compare-tla $(COMPARE_EDITIONS)
-compare-other-editions:
-	@$(MAKE) --no-print-directory -j$(JOBS) ALCHEMY="$(ALCHEMY)" $(COMPARE_EDITIONS)
-compare-tbs-ja: compare
-compare-tla-ja: compare-tla
-$(COMPARE_EDITIONS): compare-%:
-	$(BUILD) rom --target $* $(COMMANDS)
-	@grep -F ' out/$*/' rom.sha1 | $(SHA1) -
+SHA1 := $(shell { command -v sha1sum || command -v shasum; } 2>/dev/null) -c
+MAKEFLAGS += --no-print-directory --no-builtin-rules
 
-build-rom:
-	$(BUILD) rom --target $(TARGET) $(COMMANDS)
+.DEFAULT_GOAL := help
+.PHONY: help all compare $(EDITIONS) $(addprefix compare-,$(EDITIONS)) compare-tbs compare-tla compare-editions clean
 
-precommit:
-	@$(ALCHEMY) verify --pre-commit
+help:
+	@printf '%s\n' \
+	  'make bootstrap          build the pinned compilers and tools into tools/out' \
+	  'make tbs-en             build one edition: tbs or tla, then ja en de es fr it' \
+	  'make compare-tbs-en     build one edition and check it against rom.sha1' \
+	  'make compare-tbs        the six ☀️ editions, which need no ROM' \
+	  'make compare-editions   all twelve editions; ⚓️ needs your own ROMs in roms/' \
+	  'make test               the tools'\'' tests'
 
-prepush:
-	$(ALCHEMY) verify --pre-push
+# Each edition builds in its own make, so its variables below are set once.
+$(EDITIONS):
+	@$(MAKE) -f Makefile EDITION=$@ rom
 
-verify:
-	@$(ALCHEMY) verify
+$(addprefix compare-,$(EDITIONS)): compare-%: %
+	@grep -F ' out/$*/$*.gba' rom.sha1 | $(SHA1) -
 
-land:
-	@$(ALCHEMY) verify --land
-
-# Comparison has finished before verification invokes this group. Its checks
-# only read the source and linked images, so every check can run together.
-# The packer check is the long one: it reads all twelve editions' images and
-# packs their streams again, about 25 seconds.
-publication-check:
-	@$(MAKE) --no-print-directory -k -j8 ALCHEMY="$(ALCHEMY)" \
-	    publication-tree-check layout-check dead-check aliases-check devices-check headers-check hygiene-check \
-	    object-list-check packer-check
-
-# The checks that read only the source, for a runner with no ROM and no
-# build: aliases and packer read the twelve linked images and stay in
-# publication-check.
-source-check:
-	@$(MAKE) --no-print-directory -k -j8 ALCHEMY="$(ALCHEMY)" \
-	    publication-tree-check layout-check dead-check devices-check headers-check hygiene-check \
-	    object-list-check
-
-publication-tree-check:
-	$(CHECK) publication --tree
-
-layout-check:
-	$(CHECK) layout
-
-dead-check:
-	$(CHECK) dead
-
-aliases-check:
-	$(CHECK) aliases
-
-devices-check:
-	$(CHECK) devices
-
-headers-check:
-	$(CHECK) headers
-
-object-list-check:
-	$(CHECK) object-list
-
-packer-check:
-	$(CHECK) packer
-
-hygiene-check:
-	$(CHECK) hygiene
-
-publication-staged-check:
-	$(CHECK) publication --staged
-	$(CHECK) layout
-
-lint-staged:
-	$(CHECK) no-asm --target tbs-ja --target tla-ja --target tbs-en --target tla-en
-
-language-check:
-	@set -eu; scripts=$$(git ls-files --cached --others --exclude-standard | grep -E '\.(ts|tsx|js|mjs|cjs|py|sh)$$' || true); \
-	test -z "$$scripts" || { printf 'Tooling is Rust (W1):\n%s\n' "$$scripts"; exit 1; }
-
-test:
-	$(CARGO) test --offline --quiet --release --workspace --manifest-path $(TOOLS)/Cargo.toml
-	$(CARGO) clippy --offline --quiet --release --workspace --all-targets --manifest-path $(TOOLS)/Cargo.toml -- -D warnings
-
-test-integration: toolchain-check
-	$(CARGO) test --offline --quiet --release --workspace --manifest-path $(TOOLS)/Cargo.toml -- --ignored
-
-coverage-report:
-	$(CHECK) coverage --report
-
-progress:
-	$(CHECK) progress
-
-deps:
-	$(ALCHEMY) deps --build out/tbs-en --build out/tla-en \
-	    --out-dir out/reports $(DEPS_FLAGS)
-
-similar:
-	$(ALCHEMY) similar --build out/tbs-en --build out/tla-en \
-	    --out out/reports/similar.tsv $(SIMILAR_FLAGS)
-
-worst:
-	$(ALCHEMY) worst --out out/reports/worst.tsv
+compare-tbs: $(addprefix compare-,$(TBS))
+compare-tla: $(addprefix compare-,$(TLA))
+compare-editions: compare-tbs compare-tla
+compare: compare-tbs-ja
 
 clean:
-	@rm -rf out
+	rm -rf out
+	find games recon -type f \( $(foreach suffix,$(ASSET_SUFFIXES),-name '*.$(suffix)' -o) -false \) -delete
 
-# pret's `make modern`: the same source through a modern GCC, in out/modern
-# only and never in rom.sha1 (alchemy build modern --help).
-modern:
-	$(ALCHEMY) build modern --cc "$(MODERN_CC)" $(addprefix --target ,$(MODERN_TARGETS))
+# --- Tools ---------------------------------------------------------------
 
-# A landing gate: the six ☀️ editions compile with a current GCC (Goal, 100%
-# point 5). Errors fail it; warnings are reported for the camelotize pass.
-modern-check:
-	@$(ALCHEMY) build modern --cc "$(MODERN_CC)" $(addprefix --target ,$(MODERN_TARGETS)) > /dev/null
+TOOLS    := tools/out/cargo-target/release
+COMPILER := tools/out/compilers
+export PATH := $(CURDIR)/tools/out/binutils/bin:$(PATH)
 
-# The boot test: each ☀️ edition's matching ROM (make compare-tbs) and modern
-# ROM (make modern) booted in mGBA to the file menu and past it, the modern
-# ROM held to the matching one (alchemy boot --help). A local tool: CI does
-# not run it, and it is never part of make verify or make land.
-boot-tbs:
-	$(ALCHEMY) boot --emulator "$(BOOT_EMULATOR)" --gdb "$(BOOT_GDB)" --timeout "$(BOOT_TIMEOUT)"
+XGCC   := $(COMPILER)/xgcc -B$(COMPILER)/
+CPP    := $(COMPILER)/cpp0
+AGBCC  := $(COMPILER)/agbcc/old_agbcc
+ARMCC  := $(COMPILER)/gcc2952_arm
+CCAS   := $(COMPILER)/as
+PREFIX := arm-none-eabi-
+AS      := $(PREFIX)as
+LD      := $(PREFIX)ld
+OBJCOPY := $(PREFIX)objcopy
+NM      := $(PREFIX)nm
+LIBGCC  := tools/out/compiler-runtime/libgcc.a
+
+AGSGFX  := $(TOOLS)/agsgfx
+WAV2AGS := $(TOOLS)/wav2ags
+MID2AGS := $(TOOLS)/mid2ags
+PO2AGS  := $(TOOLS)/po2ags
+OBJLIST := $(TOOLS)/objlist
+SCANINC := $(TOOLS)/scaninc
+OVLPACK := $(TOOLS)/ovlpack
+GBAFIX  := $(TOOLS)/gbafix
+
+# --- Assets (A1) ---------------------------------------------------------
+# A picture or table is built beside its source, in every edition the same:
+# games/.../NAME.FORM[.CODEC] from NAME.png, or from NAME.tsv for a table
+# form. agsgfx reads the form and codec from the file name it writes.
+
+PICTURE_FORMS := 1bpp 4bpp 4bpp16x16 4bpp16x32 4bpp32x8 4bpp32x16 4bpp32x32 4bpp64x64 \
+                 8bpp 8bpp8x16 8bpp16x16 8bpp64x64 bitmap font frames gbapal glyphs icon4 icons strips
+TABLE_FORMS   := blocks delta0 delta1 delta2 icons4 parts plane script spriteblocks sprites table
+CODECS        := lz plz mtf d7 hlz
+FORMS         := $(PICTURE_FORMS) $(TABLE_FORMS)
+ASSET_SUFFIXES := $(FORMS) $(foreach form,$(FORMS),$(addprefix $(form).,$(CODECS))) bin
+
+$(foreach form,$(PICTURE_FORMS),$(eval %.$(form): %.png $$(AGSGFX) ; $$(AGSGFX) $$< $$@))
+$(foreach form,$(PICTURE_FORMS),$(foreach codec,$(CODECS),$(eval %.$(form).$(codec): %.png $$(AGSGFX) ; $$(AGSGFX) $$< $$@)))
+$(foreach form,$(TABLE_FORMS),$(eval %.$(form): %.tsv $$(AGSGFX) ; $$(AGSGFX) $$< $$@))
+$(foreach form,$(TABLE_FORMS),$(foreach codec,$(CODECS),$(eval %.$(form).$(codec): %.tsv $$(AGSGFX) ; $$(AGSGFX) $$< $$@)))
+
+# Sound samples: NAME.pcm8.bin from NAME.pcm8.wav, NAME.bin from NAME.pcm4.
+%.pcm8.bin: %.pcm8.wav $(WAV2AGS) ; $(WAV2AGS) $< $@
+%.bin: %.pcm4 $(WAV2AGS) ; $(WAV2AGS) $< $@
+
+# --- One edition ---------------------------------------------------------
+
+ifdef EDITION
+GAME  := $(word 1,$(subst -, ,$(EDITION)))
+LANG  := $(word 2,$(subst -, ,$(EDITION)))
+BUILD := out/$(EDITION)
+ROM   := $(BUILD)/$(EDITION).gba
+ELF   := $(BUILD)/$(EDITION).elf
+
+UPPER_tbs := TBS
+UPPER_tla := TLA
+UPPER_ja := JA
+UPPER_en := EN
+UPPER_de := DE
+UPPER_es := ES
+UPPER_fr := FR
+UPPER_it := IT
+DEFINE := $(UPPER_$(GAME))_EDITION_$(UPPER_$(LANG))
+
+# The cartridge's last address: objcopy fills the image to it with zeros.
+ROM_END_tbs := 0x08800000
+ROM_END_tla := 0x09000000
+
+INCLUDES := -Igames/$(GAME)/include \
+            $(addprefix -Igames/common/include/,battle field game graphics lib menu sound system)
+
+# Game C (K1, K2): agscc's GCC of July 2000, one option set per game.
+CFLAGS_tbs := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi -nostdinc -fcall-used-r4
+CFLAGS_tla := -O2 -mthumb -mcpu=arm7tdmi -nostdinc -fcall-used-r4 \
+              -mtune=arm9tdmi -mthumb-split-constants -mthumb-call-via-lr
+CFLAGS := $(CFLAGS_$(GAME)) $(INCLUDES) -D$(DEFINE)=1 -I$(BUILD)
+
+# The sound and flash libraries: pret's old_agbcc. ARM C: GCC 2.95.2.
+CPPFLAGS_ARM := -lang-c -nostdinc '-Acpu(arm)' '-Amachine(arm)' -D__CHAR_UNSIGNED__ -D__OPTIMIZE__ \
+                -D__ARM_ARCH_4T__ -D__APCS_32__ -D__ARMEL__ -Darm_elf -D__ELF__
+CPPFLAGS_AGBCC := $(CPPFLAGS_ARM) -Igames/$(GAME)/include -D__GNUC__=2 -D__GNUC_MINOR__=9 \
+                  -D__GNUC_PATCHLEVEL__=0 -D__THUMBEL__ -Dthumb -D__thumb__ -D$(DEFINE)=1 -I$(BUILD)
+CPPFLAGS_ARMCC := $(CPPFLAGS_ARM) -Igames/$(GAME)/include $(filter-out -Igames/$(GAME)/include,$(INCLUDES)) \
+                  -D__GNUC__=2 -D__GNUC_MINOR__=95 -D__GNUC_PATCHLEVEL__=2 -Darm -D__arm__ -D$(DEFINE)=1 -I$(BUILD)
+SOUND_C := games/common/src/sound/sound.c games/common/src/sound/tables.c games/tbs/src/sound/engine.c \
+           $(wildcard games/tla/src/sound/engine.c games/tla/src/sound/tail.c games/tla/src/sound/music_track_*.c)
+FLASH_C := $(addprefix games/common/src/system/save/,flash.c sst.c atmel.c program_flash_sector.c)
+ARM_C   := games/tbs/src/window/moji.c games/tbs/src/field/update.c games/tbs/src/field/vertices.c \
+           games/tla/src/graphics/tile/metatile.c
+
+ASFLAGS := -mcpu=arm7tdmi -mthumb-interwork -meabi=gnu -mfpu=fpa -mfloat-abi=soft
+EDITION_ASFLAGS := --defsym $(DEFINE)=1 -I$(BUILD) $(ASFLAGS)
+
+# The object list: ☀️'s objects.tsv gives each edition its linker fragments
+# under $(BUILD)/ld; ⚓️'s scripts name their objects themselves.
+ifeq ($(GAME),tbs)
+LD_SCRIPT := games/tbs/main.ld
+LDFLAGS := --defsym $(DEFINE)=1 -L $(BUILD)/ld -T $(LD_SCRIPT)
+OVERLAY_SCRIPT = -L $(BUILD)/ld/$* -T games/tbs/src/system/overlay/overlay.ld
+OVERLAY_SOURCE = $(wildcard games/tbs/src/system/overlay/ovl_$*.s)
+$(BUILD)/objects.mk: games/tbs/objects.tsv games/tbs/overlays.tsv $(OBJLIST)
+	$(OBJLIST) games/tbs/objects.tsv games/tbs/overlays.tsv $(LANG) $(BUILD)
+else
+LD_SCRIPT := $(if $(filter ja,$(LANG)),games/tla/main.ld,recon/tla/$(LANG)/main.ld)
+LDFLAGS := -T $(LD_SCRIPT)
+OVERLAY_SCRIPT = -T recon/tla/raw/overlays/resource_$*.ld
+OVERLAY_SOURCE = recon/tla/raw/overlays/resource_$*_overlay.s
+OVERLAY_ROM := $(BUILD)/baserom.gba
+$(BUILD)/objects.mk: $(LD_SCRIPT) $(wildcard recon/tla/raw/overlays/*.ld) $(OBJLIST)
+	$(OBJLIST) --scripts $(LD_SCRIPT) recon/tla/raw/overlays $(BUILD)
+endif
+include $(BUILD)/objects.mk
+
+# The source an object is built from: NAME.c, NAME.s, NAME.S or NAME.mid.
+source = $(firstword $(wildcard $(1).c $(1).s $(1).S $(1).mid))
+OVERLAY_OBJS := $(foreach id,$(OVERLAYS),$(OVERLAY_OBJS_$(id)))
+OBJS := $(sort $(MAIN_OBJS) $(OVERLAY_OBJS))
+SRCS := $(foreach object,$(OBJS:$(BUILD)/obj/%.o=%),$(call source,$(object)))
+
+# The overlays' packed streams go into the main image through one source,
+# so it is assembled once the overlays are linked against the main image.
+STREAM := $(BUILD)/obj/games/$(GAME)/src/system/overlay/overlays.o
+LINKED := $(filter-out $(STREAM),$(MAIN_OBJS))
+
+$(BUILD)/deps.mk: $(BUILD)/objects.mk $(SCANINC)
+	$(SCANINC) $@ $(BUILD) $(BUILD)/obj $(INCLUDES) -I$(BUILD) -G text/ -G overlays/ -G baserom.gba -- $(SRCS)
+# Read once the object list is: the scan needs its sources.
+ifneq ($(wildcard $(BUILD)/objects.mk),)
+include $(BUILD)/deps.mk
+endif
+
+.PHONY: rom
+rom: $(ROM)
+
+$(ROM): $(ELF) $(GBAFIX)
+	$(OBJCOPY) -O binary --pad-to $(ROM_END_$(GAME)) $< $@
+	$(GBAFIX) $@ --silent
+
+$(ELF): $(LINKED) $(STREAM) $(LIBGCC) $(LD_SCRIPT)
+	$(LD) -Map $(BUILD)/$(EDITION).map --no-warn-mismatch $(LDFLAGS) -o $@ $(LINKED) $(STREAM) $(LIBGCC)
+
+# The main image without its overlays: the addresses they link against.
+$(BUILD)/symbols.elf: $(LINKED) $(LIBGCC) $(LD_SCRIPT)
+	$(LD) --unresolved-symbols=ignore-all --no-warn-mismatch $(LDFLAGS) -o $@ $(LINKED) $(LIBGCC)
+
+# An overlay links at 0x2008000 against the main image's symbols, less the
+# names it defines itself; its image is packed as Camelot's packer did.
+.SECONDEXPANSION:
+$(BUILD)/overlays/resource_%.elf: $(BUILD)/overlays/resource_%_overlay.o $$(OVERLAY_OBJS_$$*) $(BUILD)/symbols.elf $(LIBGCC)
+	$(NM) -g --defined-only $< $(OVERLAY_OBJS_$*) $(LIBGCC) | awk 'NF == 3 { print $$3 }' > $(@:.elf=.own)
+	$(OBJCOPY) --extract-symbol --strip-symbols=$(@:.elf=.own) $(BUILD)/symbols.elf $(@:.elf=.symbols.elf)
+	$(LD) --no-warn-mismatch -n $(OVERLAY_SCRIPT) -Map $(@:.elf=.map) -R $(@:.elf=.symbols.elf) -o $@ $< $(OVERLAY_OBJS_$*) $(LIBGCC)
+
+$(BUILD)/overlays/resource_%.lz: $(BUILD)/overlays/resource_%.elf $(OVLPACK)
+	$(OBJCOPY) -O binary $< $(@:.lz=.bin)
+	$(OVLPACK) $(@:.lz=.bin) $@
+
+$(BUILD)/overlays/resource_%_overlay.o: $$(OVERLAY_SOURCE) $(OVERLAY_ROM)
+	@mkdir -p $(@D)
+	$(AS) $(EDITION_ASFLAGS) -o $@ $(or $(filter %.s,$^),/dev/null)
+
+# The edition's messages (A6).
+$(BUILD)/text/messages.inc: games/$(GAME)/text/$(LANG).po $(PO2AGS)
+	@mkdir -p $(@D)
+	$(PO2AGS) $< $@
+$(BUILD)/text/msg_ids.h: games/$(GAME)/text/$(LANG).po $(PO2AGS)
+	@mkdir -p $(@D)
+	$(PO2AGS) $< $@ --header $(if $(filter tbs,$(GAME)),--as-value)
+
+# ⚓️'s scaffolds read the edition's own ROM (O1), checked against rom.sha1.
+$(BUILD)/baserom.gba: roms/$(EDITION).gba
+	@mkdir -p $(@D)
+	grep -F ' out/$(EDITION)/$(EDITION).gba' rom.sha1 | sed 's| out/.*| $<|' | $(SHA1) - > /dev/null
+	ln -sf $(CURDIR)/$< $@
+
+# --- Objects -------------------------------------------------------------
+
+$(BUILD)/obj/%.o: %.c
+	@mkdir -p $(@D)
+	$(XGCC) $(CFLAGS) -S -o $(@:.o=.s) $<
+	$(CCAS) -marm7tdmi -mthumb -mthumb-interwork -o $@ $(@:.o=.s)
+
+$(addprefix $(BUILD)/obj/,$(SOUND_C:.c=.o) $(FLASH_C:.c=.o)): $(BUILD)/obj/%.o: %.c
+	@mkdir -p $(@D)
+	$(CPP) $(CPPFLAGS_AGBCC) $< $(@:.o=.i)
+	$(AGBCC) $(@:.o=.i) -dumpbase $(<F) -mthumb-interwork $(if $(filter $(FLASH_C),$<),-O,-O2) -o $(@:.o=.s)
+	$(CCAS) -marm7tdmi -mthumb -mthumb-interwork -o $@ $(@:.o=.s)
+
+$(addprefix $(BUILD)/obj/,$(ARM_C:.c=.o)): $(BUILD)/obj/%.o: %.c
+	@mkdir -p $(@D)
+	$(CPP) $(CPPFLAGS_ARMCC) $< $(@:.o=.i)
+	$(ARMCC) $(@:.o=.i) -dumpbase $(<F) -O2 -mthumb-interwork -fomit-frame-pointer -fcall-used-r4 -o $(@:.o=.s)
+	$(CCAS) -marm7tdmi -mthumb-interwork -o $@ $(@:.o=.s)
+
+$(BUILD)/obj/%.o: %.s
+	@mkdir -p $(@D)
+	$(AS) $(EDITION_ASFLAGS) -o $@ $<
+
+$(BUILD)/obj/%.o: %.S
+	@mkdir -p $(@D)
+	$(CPP) -lang-asm -nostdinc -D$(DEFINE)=1 -I$(BUILD) $< $(@:.o=.i)
+	$(AS) $(EDITION_ASFLAGS) -o $@ $(@:.o=.i)
+
+$(BUILD)/obj/%.o: %.mid $(MID2AGS)
+	@mkdir -p $(@D)
+	$(MID2AGS) $< $(@:.o=.s)
+	$(AS) $(ASFLAGS) -o $@ $(@:.o=.s)
+endif
+
+# --- Toolchain and tests ---------------------------------------------------
+
+CARGO ?= cargo
+export CARGO_TARGET_DIR := $(CURDIR)/tools/out/cargo-target
+.PHONY: bootstrap tools test
+
+bootstrap: tools
+	$(TOOLS)/alchemy bootstrap $(if $(BUNDLE),--from "$(BUNDLE)")
+	$(TOOLS)/alchemy build runtime --output $(LIBGCC) \
+	    _call_via_rX=gcc/config/arm/lib1funcs.asm _addsub_df=dp-bit.c _si_to_df=dp-bit.c \
+	    _df_to_si=dp-bit.c _pack_df=dp-bit.c _unpack_df=dp-bit.c _thenan_df=dp-bit.c _lshrdi3=gcc/libgcc2.c
+
+tools:
+	$(CARGO) build --release --workspace --manifest-path tools/Cargo.toml
+
+$(AGSGFX) $(WAV2AGS) $(MID2AGS) $(PO2AGS) $(OBJLIST) $(SCANINC) $(OVLPACK) $(GBAFIX):
+	$(CARGO) build --release -p ags --manifest-path tools/Cargo.toml
+
+test:
+	$(CARGO) test --offline --quiet --release --workspace --manifest-path tools/Cargo.toml

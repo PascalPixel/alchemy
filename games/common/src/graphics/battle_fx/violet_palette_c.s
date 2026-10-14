@@ -1,5 +1,5 @@
 	.section .rodata
 	.global BattleFx_VioletPaletteC
 BattleFx_VioletPaletteC:
-	.incbin "graphics/battle_fx/violet_palette_c.gbapal"
-	.incbin "graphics/battle_fx/violet_palette_c.bitmap.lz"
+	.incbin "games/common/src/graphics/battle_fx/violet_palette_c.gbapal"
+	.incbin "games/common/src/graphics/battle_fx/violet_palette_c.bitmap.lz"

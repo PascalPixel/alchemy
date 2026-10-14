@@ -13,38 +13,38 @@ Field_Map061:
 	map_block Field_Map061, .LField_Map061_BLEND
 	map_block Field_Map061, .LField_Map061_MARKERS
 .LField_Map061_METATILES:
-	.incbin "map/map_061/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_061/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map061_SHAPES:
-	.incbin "map/map_061/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_061/shapes.table.lz"
 	.balign 4, 0
 .LField_Map061_GRID:
-	.incbin "map/map_061/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_061/grid.parts.lz"
 	.balign 4, 0
 .LField_Map061_ANIMATION:
-	.incbin "map/map_061/animation.script.lz"
+	.incbin "games/tbs/src/map/map_061/animation.script.lz"
 	.balign 4, 0
 .LField_Map061_BLEND:
-	.incbin "map/map_061/blend.script.lz"
+	.incbin "games/tbs/src/map/map_061/blend.script.lz"
 	.balign 4, 0
 .LField_Map061_MARKERS:
-	.incbin "map/map_061/markers.table"
+	.incbin "games/tbs/src/map/map_061/markers.table"
 	.global Tileset_Set45Palette
 Tileset_Set45Palette:
-	.incbin "graphics/tileset/set_45/palette.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/set_45/palette.gbapal.lz"
 	.byte 0xa8, 0x80, 0x60	@ PACKER: left in the buffer by Field_Map061+0x1d9
 	.global Tileset_Set45TilesA
 Tileset_Set45TilesA:
-	.incbin "graphics/tileset/set_45/tiles_a.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_45/tiles_a.4bpp.mtf"
 	.byte 0x13, 0x00	@ PACKER: left in the buffer by Field_Map060+0x24ee
 	.global Tileset_Set45TilesB
 Tileset_Set45TilesB:
-	.incbin "graphics/tileset/set_45/tiles_b.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_45/tiles_b.4bpp.mtf"
 	.global Tileset_Set45TilesC
 Tileset_Set45TilesC:
-	.incbin "graphics/tileset/set_45/tiles_c.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_45/tiles_c.4bpp.mtf"
 	.byte 0x18	@ PACKER: left in the buffer by Tileset_Set45TilesB+0x1573
 	.global Tileset_Set45TilesD
 Tileset_Set45TilesD:
-	.incbin "graphics/tileset/set_45/tiles_d.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_45/tiles_d.4bpp.mtf"
 	.byte 0xfb, 0x14, 0x4d	@ PACKER: left in the buffer by Tileset_Set45TilesC+0xb99

@@ -3,4 +3,4 @@
 @ クラス 244 種
 	.global Class_DefinitionTable
 Class_DefinitionTable:
-	.incbin "game/character/classes.table"
+	.incbin "games/tla/src/game/character/classes.table"

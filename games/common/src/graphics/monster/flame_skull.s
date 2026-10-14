@@ -2,7 +2,7 @@
 	.section .rodata
 	.global Monster_FlameSkullSprites
 Monster_FlameSkullSprites:
-	.incbin "graphics/monster/flame_skull.frames.lz"
+	.incbin "games/common/src/graphics/monster/flame_skull.frames.lz"
 	.ifeq GAME_TLA
 	.byte 0xc1, 0xb3	@ PACKER: left in the buffer by Monster_SkeletonSprites+0xbea
 	.endif

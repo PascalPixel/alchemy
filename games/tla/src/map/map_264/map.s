@@ -14,19 +14,19 @@ Field_Map264:
 	map_block Field_Map264
 	map_block Field_Map264, .LField_Map264_SCENE
 .LField_Map264_METATILES:
-	.incbin "map/map_264/metatiles.delta2.lz"
+	.incbin "games/tla/src/map/map_264/metatiles.delta2.lz"
 	.balign 4, 0
 .LField_Map264_SHAPES:
-	.incbin "map/map_264/shapes.table.lz"
+	.incbin "games/tla/src/map/map_264/shapes.table.lz"
 	.balign 4, 0
 .LField_Map264_GRID:
-	.incbin "map/map_264/grid.parts.lz"
+	.incbin "games/tla/src/map/map_264/grid.parts.lz"
 	.balign 4, 0
 .LField_Map264_SHAPE_GRID:
-	.incbin "map/map_264/shape_grid.plane.lz"
+	.incbin "games/tla/src/map/map_264/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map264_ANIMATION:
-	.incbin "map/map_264/animation.script.lz"
+	.incbin "games/tla/src/map/map_264/animation.script.lz"
 	.balign 4, 0
 .LField_Map264_SCENE:
-	.incbin "map/map_264/scene.parts.lz"
+	.incbin "games/tla/src/map/map_264/scene.parts.lz"

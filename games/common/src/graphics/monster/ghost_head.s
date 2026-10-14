@@ -1,4 +1,4 @@
 	.section .rodata
 	.global Monster_GhostHeadSprites
 Monster_GhostHeadSprites:
-	.incbin "graphics/monster/ghost_head.frames.lz"
+	.incbin "games/common/src/graphics/monster/ghost_head.frames.lz"

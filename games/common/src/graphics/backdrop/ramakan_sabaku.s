@@ -1,5 +1,5 @@
 	.section .rodata
 	.global Battle_RamakanSabakuBackdrop
 Battle_RamakanSabakuBackdrop:
-	.incbin "graphics/backdrop/ramakan_sabaku.gbapal"
-	.incbin "graphics/backdrop/ramakan_sabaku.bitmap.d7"
+	.incbin "games/common/src/graphics/backdrop/ramakan_sabaku.gbapal"
+	.incbin "games/common/src/graphics/backdrop/ramakan_sabaku.bitmap.d7"

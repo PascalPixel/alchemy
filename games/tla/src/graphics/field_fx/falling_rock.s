@@ -1,4 +1,4 @@
 	.section .rodata
 	.global FieldFx_FallingRock
 FieldFx_FallingRock:
-	.incbin "graphics/field_fx/falling_rock.8bpp.lz"
+	.incbin "games/tla/src/graphics/field_fx/falling_rock.8bpp.lz"

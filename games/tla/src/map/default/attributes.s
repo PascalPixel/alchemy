@@ -1,4 +1,4 @@
 	.section .rodata
 	.global Field_DefaultMetatileAttributes
 Field_DefaultMetatileAttributes:
-	.incbin "map/default/attributes.table.lz"
+	.incbin "games/tla/src/map/default/attributes.table.lz"

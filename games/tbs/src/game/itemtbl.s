@@ -3,4 +3,4 @@
 @ 道具 324 個
 	.global Item_DefinitionTable
 Item_DefinitionTable:
-	.incbin "game/items.table"
+	.incbin "games/tbs/src/game/items.table"

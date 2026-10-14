@@ -8,5 +8,5 @@
 	.section .rodata
 	.global Summon_WhiteWispsTiles
 Summon_WhiteWispsTiles:
-	.incbin "graphics/summon/white_wisps.gbapal"
-	.incbin "graphics/summon/white_wisps.parts.lz"
+	.incbin "games/tla/src/graphics/summon/white_wisps.gbapal"
+	.incbin "games/tla/src/graphics/summon/white_wisps.parts.lz"

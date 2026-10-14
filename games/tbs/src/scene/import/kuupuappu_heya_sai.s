@@ -1,3 +1,35 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
+	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Engine_HeapAllocate, 1
+	.set import.Engine_HeapRelease, 1
+	.set import.Engine_VramLoad, 1
+	.set import.Engine_ObjectCreate, 1
+	.set import.Engine_MapCopyCellsTo, 1
+	.set import.Engine_ItemLoadIcon, 1
+	.set import.Engine_GameFlagIsSet, 1
+	.set import.Engine_GameFlagSet, 1
+	.set import.Engine_GameFlagClear, 1
+	.set import.PartyInventory_HasSpace, 1
+	.set import.Engine_EventWait, 1
+	.set import.Engine_EventBegin, 1
+	.set import.Engine_EventEnd, 1
+	.set import.FieldScene_PrepareActors, 1
+	.set import.Engine_PartyGiveItem, 1
+	.set import.Engine_EventChooseYesNo, 1
+	.set import.Object_GetById, 1
+	.set import.Engine_ActorEnableActionCallback, 1
+	.set import.Engine_ActorSetAnimation, 1
+	.set import.Engine_ActorSetAnimationAndWait, 1
+	.set import.Engine_ActorRunRepeatedMotion, 1
+	.set import.Engine_ActorFaceEachOther, 1
+	.set import.Engine_EventSetMessage, 1
+	.set import.Engine_EventOpenMessage, 1
+	.set import.Engine_EventShowMessage, 1
+	.set import.Engine_EventShowMessageAndWait, 1
+	.set import.Engine_ActorFaceDirection, 1
+	.set import.Engine_ActorShowEmote, 1
+	.set import.Engine_ItemShowFound, 1
+	.set import.Engine_ShopOpen, 1
+	.set import.Engine_InnOpen, 1
 	.include "games/tbs/src/system/overlay.inc"

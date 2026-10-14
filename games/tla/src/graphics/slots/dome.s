@@ -1,5 +1,5 @@
 	.section .rodata
 	.global Slots_DomePicture
 Slots_DomePicture:
-	.incbin "graphics/slots/dome.gbapal"
-	.incbin "graphics/slots/dome.8bpp.lz"
+	.incbin "games/tla/src/graphics/slots/dome.gbapal"
+	.incbin "games/tla/src/graphics/slots/dome.8bpp.lz"

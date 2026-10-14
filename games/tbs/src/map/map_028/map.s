@@ -13,40 +13,40 @@ Field_Map028:
 	map_block Field_Map028, .LField_Map028_BLEND
 	map_block Field_Map028, .LField_Map028_MARKERS
 .LField_Map028_METATILES:
-	.incbin "map/map_028/metatiles.delta0.lz"
+	.incbin "games/tbs/src/map/map_028/metatiles.delta0.lz"
 	.balign 4, 0
 .LField_Map028_SHAPES:
-	.incbin "map/map_028/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_028/shapes.table.lz"
 	.balign 4, 0
 .LField_Map028_GRID:
-	.incbin "map/map_028/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_028/grid.parts.lz"
 	.balign 4, 0
 .LField_Map028_ANIMATION:
-	.incbin "map/map_028/animation.script.lz"
+	.incbin "games/tbs/src/map/map_028/animation.script.lz"
 	.balign 4, 0
 .LField_Map028_BLEND:
-	.incbin "map/map_020/blend.script.lz"
+	.incbin "games/tbs/src/map/map_020/blend.script.lz"
 	.balign 4, 0
 .LField_Map028_MARKERS:
-	.incbin "map/map_000/markers.table"
+	.incbin "games/tbs/src/map/map_000/markers.table"
 	.balign 4, 0
 	.global Tileset_Set21Palette
 Tileset_Set21Palette:
-	.incbin "graphics/tileset/set_21/palette.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/set_21/palette.gbapal.lz"
 	.byte 0x98, 0x49	@ PACKER: left in the buffer by Field_Map028+0x19a
 	.global Tileset_Set21TilesA
 Tileset_Set21TilesA:
-	.incbin "graphics/tileset/set_21/tiles_a.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_21/tiles_a.4bpp.mtf"
 	.byte 0xdc, 0x06, 0xaa	@ PACKER: left in the buffer by Field_Map027+0x2bad
 	.global Tileset_Set21TilesB
 Tileset_Set21TilesB:
-	.incbin "graphics/tileset/set_21/tiles_b.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_21/tiles_b.4bpp.mtf"
 	.byte 0xf1, 0xe8, 0x05	@ PACKER: left in the buffer by Tileset_Set21TilesA+0x20d1
 	.global Tileset_Set21TilesC
 Tileset_Set21TilesC:
-	.incbin "graphics/tileset/set_21/tiles_c.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_21/tiles_c.4bpp.mtf"
 	.byte 0x83, 0x38	@ PACKER: left in the buffer by Tileset_Set21TilesB+0x2056
 	.global Tileset_Set21TilesD
 Tileset_Set21TilesD:
-	.incbin "graphics/tileset/set_21/tiles_d.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_21/tiles_d.4bpp.mtf"
 	.byte 0x7c, 0x2f	@ PACKER: left in the buffer by Tileset_Set21TilesC+0x1cea

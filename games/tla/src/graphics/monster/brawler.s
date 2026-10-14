@@ -1,4 +1,4 @@
 	.section .rodata
 	.global Monster_BrawlerSprites
 Monster_BrawlerSprites:
-	.incbin "graphics/monster/brawler.frames.lz"
+	.incbin "games/tla/src/graphics/monster/brawler.frames.lz"

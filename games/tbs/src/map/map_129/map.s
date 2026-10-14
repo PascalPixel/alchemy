@@ -13,39 +13,39 @@ Field_Map129:
 	map_block Field_Map129, .LField_Map129_BLEND
 	map_block Field_Map129, .LField_Map129_MARKERS
 .LField_Map129_METATILES:
-	.incbin "map/map_129/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_129/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map129_SHAPES:
-	.incbin "map/map_129/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_129/shapes.table.lz"
 	.balign 4, 0
 .LField_Map129_GRID:
-	.incbin "map/map_129/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_129/grid.parts.lz"
 	.balign 4, 0
 .LField_Map129_ANIMATION:
-	.incbin "map/map_129/animation.script.lz"
+	.incbin "games/tbs/src/map/map_129/animation.script.lz"
 	.balign 4, 0
 .LField_Map129_BLEND:
-	.incbin "map/map_020/blend.script.lz"
+	.incbin "games/tbs/src/map/map_020/blend.script.lz"
 	.balign 4, 0
 .LField_Map129_MARKERS:
-	.incbin "map/map_129/markers.table"
+	.incbin "games/tbs/src/map/map_129/markers.table"
 	.global Tileset_Set62Palette
 Tileset_Set62Palette:
-	.incbin "graphics/tileset/set_62/palette.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/set_62/palette.gbapal.lz"
 	.byte 0x22, 0xb6	@ PACKER: left in the buffer by Field_Map129+0x13a
 	.global Tileset_Set62TilesA
 Tileset_Set62TilesA:
-	.incbin "graphics/tileset/set_62/tiles_a.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_62/tiles_a.4bpp.mtf"
 	.byte 0x81, 0xdf	@ PACKER: left in the buffer by Tileset_Set61TilesA+0x2732
 	.global Tileset_Set62TilesB
 Tileset_Set62TilesB:
-	.incbin "graphics/tileset/set_62/tiles_b.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_62/tiles_b.4bpp.mtf"
 	.byte 0xba	@ PACKER: left in the buffer by Tileset_Set62TilesA+0x1c43
 	.global Tileset_Set62TilesC
 Tileset_Set62TilesC:
-	.incbin "graphics/tileset/set_62/tiles_c.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_62/tiles_c.4bpp.mtf"
 	.byte 0x3c, 0xe0, 0x13	@ PACKER: left in the buffer by Tileset_Set62TilesB+0x1445
 	.global Tileset_Set62TilesD
 Tileset_Set62TilesD:
-	.incbin "graphics/tileset/set_62/tiles_d.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_62/tiles_d.4bpp.mtf"
 	.byte 0xa3	@ PACKER: left in the buffer by Tileset_Set62TilesB+0x1b7b

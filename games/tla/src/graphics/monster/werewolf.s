@@ -1,4 +1,4 @@
 	.section .rodata
 	.global Monster_WerewolfSprites
 Monster_WerewolfSprites:
-	.incbin "graphics/monster/werewolf.frames.lz"
+	.incbin "games/tla/src/graphics/monster/werewolf.frames.lz"

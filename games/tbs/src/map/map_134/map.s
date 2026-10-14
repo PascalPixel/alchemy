@@ -14,22 +14,22 @@ Field_Map134:
 	map_block Field_Map134, .LField_Map134_BLEND
 	map_block Field_Map134, .LField_Map134_MARKERS
 .LField_Map134_METATILES:
-	.incbin "map/map_134/metatiles_de.delta1.lz"
+	.incbin "games/tbs/src/map/map_134/metatiles_de.delta1.lz"
 	.balign 4, 0
 .LField_Map134_SHAPES:
-	.incbin "common/map/map_130/shapes.table.lz"
+	.incbin "games/common/src/map/map_130/shapes.table.lz"
 	.balign 4, 0
 .LField_Map134_GRID:
-	.incbin "map/map_134/grid_de.parts.lz"
+	.incbin "games/tbs/src/map/map_134/grid_de.parts.lz"
 	.balign 4, 0
 .LField_Map134_ANIMATION:
-	.incbin "map/map_134/animation.script.lz"
+	.incbin "games/tbs/src/map/map_134/animation.script.lz"
 	.balign 4, 0
 .LField_Map134_BLEND:
-	.incbin "map/map_020/blend.script.lz"
+	.incbin "games/tbs/src/map/map_020/blend.script.lz"
 	.balign 4, 0
 .LField_Map134_MARKERS:
-	.incbin "map/map_134/markers_de.table"
+	.incbin "games/tbs/src/map/map_134/markers_de.table"
 	.else
 	.ifdef TBS_EDITION_ES
 	map_header 0, 0, 96, 96, 3, 2, 1, 0, 2, 2, 0, 0
@@ -43,22 +43,22 @@ Field_Map134:
 	map_block Field_Map134, .LField_Map134_BLEND
 	map_block Field_Map134, .LField_Map134_MARKERS
 .LField_Map134_METATILES:
-	.incbin "map/map_134/metatiles_de.delta1.lz"
+	.incbin "games/tbs/src/map/map_134/metatiles_de.delta1.lz"
 	.balign 4, 0
 .LField_Map134_SHAPES:
-	.incbin "common/map/map_130/shapes.table.lz"
+	.incbin "games/common/src/map/map_130/shapes.table.lz"
 	.balign 4, 0
 .LField_Map134_GRID:
-	.incbin "map/map_134/grid_de.parts.lz"
+	.incbin "games/tbs/src/map/map_134/grid_de.parts.lz"
 	.balign 4, 0
 .LField_Map134_ANIMATION:
-	.incbin "map/map_134/animation.script.lz"
+	.incbin "games/tbs/src/map/map_134/animation.script.lz"
 	.balign 4, 0
 .LField_Map134_BLEND:
-	.incbin "map/map_020/blend.script.lz"
+	.incbin "games/tbs/src/map/map_020/blend.script.lz"
 	.balign 4, 0
 .LField_Map134_MARKERS:
-	.incbin "map/map_134/markers_de.table"
+	.incbin "games/tbs/src/map/map_134/markers_de.table"
 	.else
 	.ifdef TBS_EDITION_FR
 	map_header 0, 0, 96, 96, 3, 2, 1, 0, 2, 2, 0, 0
@@ -72,22 +72,22 @@ Field_Map134:
 	map_block Field_Map134, .LField_Map134_BLEND
 	map_block Field_Map134, .LField_Map134_MARKERS
 .LField_Map134_METATILES:
-	.incbin "map/map_134/metatiles_de.delta1.lz"
+	.incbin "games/tbs/src/map/map_134/metatiles_de.delta1.lz"
 	.balign 4, 0
 .LField_Map134_SHAPES:
-	.incbin "common/map/map_130/shapes.table.lz"
+	.incbin "games/common/src/map/map_130/shapes.table.lz"
 	.balign 4, 0
 .LField_Map134_GRID:
-	.incbin "map/map_134/grid_de.parts.lz"
+	.incbin "games/tbs/src/map/map_134/grid_de.parts.lz"
 	.balign 4, 0
 .LField_Map134_ANIMATION:
-	.incbin "map/map_134/animation.script.lz"
+	.incbin "games/tbs/src/map/map_134/animation.script.lz"
 	.balign 4, 0
 .LField_Map134_BLEND:
-	.incbin "map/map_020/blend.script.lz"
+	.incbin "games/tbs/src/map/map_020/blend.script.lz"
 	.balign 4, 0
 .LField_Map134_MARKERS:
-	.incbin "map/map_134/markers_de.table"
+	.incbin "games/tbs/src/map/map_134/markers_de.table"
 	.else
 	.ifdef TBS_EDITION_IT
 	map_header 0, 0, 96, 96, 3, 2, 1, 0, 2, 2, 0, 0
@@ -101,22 +101,22 @@ Field_Map134:
 	map_block Field_Map134, .LField_Map134_BLEND
 	map_block Field_Map134, .LField_Map134_MARKERS
 .LField_Map134_METATILES:
-	.incbin "map/map_134/metatiles_de.delta1.lz"
+	.incbin "games/tbs/src/map/map_134/metatiles_de.delta1.lz"
 	.balign 4, 0
 .LField_Map134_SHAPES:
-	.incbin "common/map/map_130/shapes.table.lz"
+	.incbin "games/common/src/map/map_130/shapes.table.lz"
 	.balign 4, 0
 .LField_Map134_GRID:
-	.incbin "map/map_134/grid_de.parts.lz"
+	.incbin "games/tbs/src/map/map_134/grid_de.parts.lz"
 	.balign 4, 0
 .LField_Map134_ANIMATION:
-	.incbin "map/map_134/animation.script.lz"
+	.incbin "games/tbs/src/map/map_134/animation.script.lz"
 	.balign 4, 0
 .LField_Map134_BLEND:
-	.incbin "map/map_020/blend.script.lz"
+	.incbin "games/tbs/src/map/map_020/blend.script.lz"
 	.balign 4, 0
 .LField_Map134_MARKERS:
-	.incbin "map/map_134/markers_de.table"
+	.incbin "games/tbs/src/map/map_134/markers_de.table"
 	.else
 	map_header 0, 0, 96, 96, 3, 2, 1, 0, 2, 2, 0, 0
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
@@ -129,22 +129,22 @@ Field_Map134:
 	map_block Field_Map134, .LField_Map134_BLEND
 	map_block Field_Map134, .LField_Map134_MARKERS
 .LField_Map134_METATILES:
-	.incbin "map/map_134/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_134/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map134_SHAPES:
-	.incbin "common/map/map_130/shapes.table.lz"
+	.incbin "games/common/src/map/map_130/shapes.table.lz"
 	.balign 4, 0
 .LField_Map134_GRID:
-	.incbin "map/map_134/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_134/grid.parts.lz"
 	.balign 4, 0
 .LField_Map134_ANIMATION:
-	.incbin "map/map_134/animation.script.lz"
+	.incbin "games/tbs/src/map/map_134/animation.script.lz"
 	.balign 4, 0
 .LField_Map134_BLEND:
-	.incbin "map/map_020/blend.script.lz"
+	.incbin "games/tbs/src/map/map_020/blend.script.lz"
 	.balign 4, 0
 .LField_Map134_MARKERS:
-	.incbin "map/map_134/markers.table"
+	.incbin "games/tbs/src/map/map_134/markers.table"
 	.endif
 	.endif
 	.endif

@@ -1,4 +1,4 @@
 	.section .rodata
 	.global Monster_VultureSprites
 Monster_VultureSprites:
-	.incbin "graphics/monster/vulture.frames.lz"
+	.incbin "games/tla/src/graphics/monster/vulture.frames.lz"

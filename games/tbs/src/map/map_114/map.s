@@ -13,23 +13,23 @@ Field_Map114:
 	map_block Field_Map114, .LField_Map114_BLEND
 	map_block Field_Map114, .LField_Map114_MARKERS
 .LField_Map114_METATILES:
-	.incbin "map/map_114/metatiles.delta2.lz"
+	.incbin "games/tbs/src/map/map_114/metatiles.delta2.lz"
 	.balign 4, 0
 .LField_Map114_SHAPES:
-	.incbin "map/map_114/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_114/shapes.table.lz"
 	.balign 4, 0
 .LField_Map114_GRID:
-	.incbin "map/map_114/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_114/grid.parts.lz"
 	.balign 4, 0
 .LField_Map114_ANIMATION:
-	.incbin "map/map_033/animation.script.lz"
+	.incbin "games/tbs/src/map/map_033/animation.script.lz"
 	.balign 4, 0
 .LField_Map114_BLEND:
-	.incbin "map/map_114/blend.script.lz"
+	.incbin "games/tbs/src/map/map_114/blend.script.lz"
 	.balign 4, 0
 .LField_Map114_MARKERS:
-	.incbin "map/map_114/markers.table"
+	.incbin "games/tbs/src/map/map_114/markers.table"
 	.balign 4, 0
 	.global Tileset_Palette20
 Tileset_Palette20:
-	.incbin "graphics/tileset/palettes/pal_20.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/palettes/pal_20.gbapal.lz"

@@ -16,25 +16,25 @@ Field_Map103:
 	map_block Field_Map103, .LField_Map103_BLEND
 	map_block Field_Map103, .LField_Map103_SCENE
 .LField_Map103_METATILES:
-	.incbin "map/map_103/metatiles.delta1.lz"
+	.incbin "games/tla/src/map/map_103/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map103_SHAPES:
-	.incbin "map/map_103/shapes.table.lz"
+	.incbin "games/tla/src/map/map_103/shapes.table.lz"
 	.balign 4, 0
 .LField_Map103_GRID:
-	.incbin "map/map_103/grid_ja.parts.lz"
+	.incbin "games/tla/src/map/map_103/grid_ja.parts.lz"
 	.balign 4, 0
 .LField_Map103_SHAPE_GRID:
-	.incbin "map/map_103/shape_grid.plane.lz"
+	.incbin "games/tla/src/map/map_103/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map103_ANIMATION:
-	.incbin "map/map_012/animation.script.lz"
+	.incbin "games/tla/src/map/map_012/animation.script.lz"
 	.balign 4, 0
 .LField_Map103_BLEND:
-	.incbin "map/map_001/blend.script.lz"
+	.incbin "games/tla/src/map/map_001/blend.script.lz"
 	.balign 4, 0
 .LField_Map103_SCENE:
-	.incbin "map/map_103/scene_ja.parts.lz"
+	.incbin "games/tla/src/map/map_103/scene_ja.parts.lz"
 	.else
 	map_header 0, 0, 64, 66, 3, 2, 1, 0, 2, 2, 0, 0
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
@@ -48,23 +48,23 @@ Field_Map103:
 	map_block Field_Map103, .LField_Map103_BLEND
 	map_block Field_Map103, .LField_Map103_SCENE
 .LField_Map103_METATILES:
-	.incbin "map/map_103/metatiles.delta1.lz"
+	.incbin "games/tla/src/map/map_103/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map103_SHAPES:
-	.incbin "map/map_103/shapes.table.lz"
+	.incbin "games/tla/src/map/map_103/shapes.table.lz"
 	.balign 4, 0
 .LField_Map103_GRID:
-	.incbin "map/map_103/grid.parts.lz"
+	.incbin "games/tla/src/map/map_103/grid.parts.lz"
 	.balign 4, 0
 .LField_Map103_SHAPE_GRID:
-	.incbin "map/map_103/shape_grid.plane.lz"
+	.incbin "games/tla/src/map/map_103/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map103_ANIMATION:
-	.incbin "map/map_012/animation.script.lz"
+	.incbin "games/tla/src/map/map_012/animation.script.lz"
 	.balign 4, 0
 .LField_Map103_BLEND:
-	.incbin "map/map_001/blend.script.lz"
+	.incbin "games/tla/src/map/map_001/blend.script.lz"
 	.balign 4, 0
 .LField_Map103_SCENE:
-	.incbin "map/map_103/scene.parts.lz"
+	.incbin "games/tla/src/map/map_103/scene.parts.lz"
 	.endif

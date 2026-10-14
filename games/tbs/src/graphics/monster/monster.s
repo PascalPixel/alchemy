@@ -10,7 +10,7 @@
 	.include "games/common/src/graphics/monster/chimera.s"
 	.global Monster_LivingArmorSprites
 Monster_LivingArmorSprites:
-	.incbin "graphics/monster/living_armor.frames.lz"
+	.incbin "games/tbs/src/graphics/monster/living_armor.frames.lz"
 	.byte 0x0e, 0x40	@ PACKER: left in the buffer by Monster_ChimeraSprites+0x3e7e
 	.include "games/common/src/graphics/monster/manticore.s"
 	.include "games/common/src/graphics/monster/orc_lord.s"
@@ -29,7 +29,7 @@ Monster_LivingArmorSprites:
 	.include "games/common/src/graphics/monster/red_worm.s"
 	.global Monster_FairySprites
 Monster_FairySprites:
-	.incbin "graphics/monster/fairy.frames.lz"
+	.incbin "games/tbs/src/graphics/monster/fairy.frames.lz"
 	.include "games/common/src/graphics/monster/bat.s"
 	.include "games/common/src/graphics/monster/small_lizard.s"
 	.include "games/common/src/graphics/monster/walking_plant.s"

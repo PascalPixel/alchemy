@@ -8,5 +8,5 @@
 	.section .rodata
 	.global Summon_MissileTiles
 Summon_MissileTiles:
-	.incbin "graphics/summon/missile.gbapal"
-	.incbin "graphics/summon/missile.parts.lz"
+	.incbin "games/tla/src/graphics/summon/missile.gbapal"
+	.incbin "games/tla/src/graphics/summon/missile.parts.lz"

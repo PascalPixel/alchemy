@@ -377,745 +377,745 @@ UiIcon_ItemIconPointers:
 UiIcon_ItemIconPointersEnd:
 	.4byte -1
 UiIcon_Item000:
-	.incbin "graphics/ui/menu_icons/item_000.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_000.icon4"
 UiIcon_Item001:
-	.incbin "graphics/ui/menu_icons/item_001.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_001.icon4"
 UiIcon_Item002:
-	.incbin "graphics/ui/menu_icons/item_002.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_002.icon4"
 UiIcon_Item003:
-	.incbin "graphics/ui/menu_icons/item_003.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_003.icon4"
 UiIcon_Item004:
-	.incbin "graphics/ui/menu_icons/item_004.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_004.icon4"
 UiIcon_Item005:
-	.incbin "graphics/ui/menu_icons/item_005.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_005.icon4"
 UiIcon_Item006:
-	.incbin "graphics/ui/menu_icons/item_006.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_006.icon4"
 UiIcon_Item007:
-	.incbin "graphics/ui/menu_icons/item_007.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_007.icon4"
 UiIcon_Item008:
-	.incbin "graphics/ui/menu_icons/item_008.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_008.icon4"
 UiIcon_Item009:
-	.incbin "graphics/ui/menu_icons/item_009.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_009.icon4"
 UiIcon_Item010:
-	.incbin "graphics/ui/menu_icons/item_010.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_010.icon4"
 UiIcon_Item011:
-	.incbin "graphics/ui/menu_icons/item_011.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_011.icon4"
 UiIcon_Item012:
-	.incbin "graphics/ui/menu_icons/item_012.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_012.icon4"
 UiIcon_Item013:
-	.incbin "graphics/ui/menu_icons/item_013.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_013.icon4"
 UiIcon_Item014:
-	.incbin "graphics/ui/menu_icons/item_014.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_014.icon4"
 UiIcon_Item015:
-	.incbin "graphics/ui/menu_icons/item_015.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_015.icon4"
 UiIcon_Item016:
-	.incbin "graphics/ui/menu_icons/item_016.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_016.icon4"
 UiIcon_Item017:
-	.incbin "graphics/ui/menu_icons/item_017.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_017.icon4"
 UiIcon_Item018:
-	.incbin "graphics/ui/menu_icons/item_018.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_018.icon4"
 UiIcon_Item019:
-	.incbin "graphics/ui/menu_icons/item_019.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_019.icon4"
 UiIcon_Item020:
-	.incbin "graphics/ui/menu_icons/item_020.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_020.icon4"
 UiIcon_Item021:
-	.incbin "graphics/ui/menu_icons/item_021.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_021.icon4"
 UiIcon_Item022:
-	.incbin "graphics/ui/menu_icons/item_022.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_022.icon4"
 UiIcon_Item023:
-	.incbin "graphics/ui/menu_icons/item_023.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_023.icon4"
 UiIcon_Item024:
-	.incbin "graphics/ui/menu_icons/item_024.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_024.icon4"
 UiIcon_Item025:
-	.incbin "graphics/ui/menu_icons/item_025.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_025.icon4"
 UiIcon_Item026:
-	.incbin "graphics/ui/menu_icons/item_026.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_026.icon4"
 UiIcon_Item027:
-	.incbin "graphics/ui/menu_icons/item_027.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_027.icon4"
 UiIcon_Item028:
-	.incbin "graphics/ui/menu_icons/item_028.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_028.icon4"
 UiIcon_Item029:
-	.incbin "graphics/ui/menu_icons/item_029.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_029.icon4"
 UiIcon_Item030:
-	.incbin "graphics/ui/menu_icons/item_030.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_030.icon4"
 UiIcon_Item031:
-	.incbin "graphics/ui/menu_icons/item_031.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_031.icon4"
 UiIcon_Item032:
-	.incbin "graphics/ui/menu_icons/item_032.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_032.icon4"
 UiIcon_Item033:
-	.incbin "graphics/ui/menu_icons/item_033.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_033.icon4"
 UiIcon_Item034:
-	.incbin "graphics/ui/menu_icons/item_034.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_034.icon4"
 UiIcon_Item035:
-	.incbin "graphics/ui/menu_icons/item_035.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_035.icon4"
 UiIcon_Item036:
-	.incbin "graphics/ui/menu_icons/item_036.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_036.icon4"
 UiIcon_Item037:
-	.incbin "graphics/ui/menu_icons/item_037.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_037.icon4"
 UiIcon_Item038:
-	.incbin "graphics/ui/menu_icons/item_038.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_038.icon4"
 UiIcon_Item039:
-	.incbin "graphics/ui/menu_icons/item_039.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_039.icon4"
 UiIcon_Item040:
-	.incbin "graphics/ui/menu_icons/item_040.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_040.icon4"
 UiIcon_Item041:
-	.incbin "graphics/ui/menu_icons/item_041.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_041.icon4"
 UiIcon_Item042:
-	.incbin "graphics/ui/menu_icons/item_042.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_042.icon4"
 UiIcon_Item043:
-	.incbin "graphics/ui/menu_icons/item_043.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_043.icon4"
 UiIcon_Item044:
-	.incbin "graphics/ui/menu_icons/item_044.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_044.icon4"
 UiIcon_Item045:
-	.incbin "graphics/ui/menu_icons/item_045.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_045.icon4"
 UiIcon_Item046:
-	.incbin "graphics/ui/menu_icons/item_046.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_046.icon4"
 UiIcon_Item047:
-	.incbin "graphics/ui/menu_icons/item_047.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_047.icon4"
 UiIcon_Item048:
-	.incbin "graphics/ui/menu_icons/item_048.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_048.icon4"
 UiIcon_Item049:
-	.incbin "graphics/ui/menu_icons/item_049.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_049.icon4"
 UiIcon_Item050:
-	.incbin "graphics/ui/menu_icons/item_050.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_050.icon4"
 UiIcon_Item051:
-	.incbin "graphics/ui/menu_icons/item_051.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_051.icon4"
 UiIcon_Item052:
-	.incbin "graphics/ui/menu_icons/item_052.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_052.icon4"
 UiIcon_Item053:
-	.incbin "graphics/ui/menu_icons/item_053.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_053.icon4"
 UiIcon_Item054:
-	.incbin "graphics/ui/menu_icons/item_054.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_054.icon4"
 UiIcon_Item055:
-	.incbin "graphics/ui/menu_icons/item_055.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_055.icon4"
 UiIcon_Item056:
-	.incbin "graphics/ui/menu_icons/item_056.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_056.icon4"
 UiIcon_Item057:
-	.incbin "graphics/ui/menu_icons/item_057.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_057.icon4"
 UiIcon_Item058:
-	.incbin "graphics/ui/menu_icons/item_058.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_058.icon4"
 UiIcon_Item059:
-	.incbin "graphics/ui/menu_icons/item_059.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_059.icon4"
 UiIcon_Item060:
-	.incbin "graphics/ui/menu_icons/item_060.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_060.icon4"
 UiIcon_Item061:
-	.incbin "graphics/ui/menu_icons/item_061.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_061.icon4"
 UiIcon_Item062:
-	.incbin "graphics/ui/menu_icons/item_062.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_062.icon4"
 UiIcon_Item063:
-	.incbin "graphics/ui/menu_icons/item_063.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_063.icon4"
 UiIcon_Item064:
-	.incbin "graphics/ui/menu_icons/item_064.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_064.icon4"
 UiIcon_Item065:
-	.incbin "graphics/ui/menu_icons/item_065.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_065.icon4"
 UiIcon_Item066:
-	.incbin "graphics/ui/menu_icons/item_066.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_066.icon4"
 UiIcon_Item067:
-	.incbin "graphics/ui/menu_icons/item_067.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_067.icon4"
 UiIcon_Item068:
-	.incbin "graphics/ui/menu_icons/item_068.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_068.icon4"
 UiIcon_Item069:
-	.incbin "graphics/ui/menu_icons/item_069.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_069.icon4"
 UiIcon_Item070:
-	.incbin "graphics/ui/menu_icons/item_070.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_070.icon4"
 UiIcon_Item071:
-	.incbin "graphics/ui/menu_icons/item_071.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_071.icon4"
 UiIcon_Item072:
-	.incbin "graphics/ui/menu_icons/item_072.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_072.icon4"
 UiIcon_Item073:
-	.incbin "graphics/ui/menu_icons/item_073.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_073.icon4"
 UiIcon_Item074:
-	.incbin "graphics/ui/menu_icons/item_074.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_074.icon4"
 UiIcon_Item075:
-	.incbin "graphics/ui/menu_icons/item_075.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_075.icon4"
 UiIcon_Item076:
-	.incbin "graphics/ui/menu_icons/item_076.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_076.icon4"
 UiIcon_Item077:
-	.incbin "graphics/ui/menu_icons/item_077.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_077.icon4"
 UiIcon_Item078:
-	.incbin "graphics/ui/menu_icons/item_078.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_078.icon4"
 UiIcon_Item079:
-	.incbin "graphics/ui/menu_icons/item_079.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_079.icon4"
 UiIcon_Item080:
-	.incbin "graphics/ui/menu_icons/item_080.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_080.icon4"
 UiIcon_Item081:
-	.incbin "graphics/ui/menu_icons/item_081.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_081.icon4"
 UiIcon_Item082:
-	.incbin "graphics/ui/menu_icons/item_082.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_082.icon4"
 UiIcon_Item083:
-	.incbin "graphics/ui/menu_icons/item_083.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_083.icon4"
 UiIcon_Item084:
-	.incbin "graphics/ui/menu_icons/item_084.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_084.icon4"
 UiIcon_Item085:
-	.incbin "graphics/ui/menu_icons/item_085.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_085.icon4"
 UiIcon_Item086:
-	.incbin "graphics/ui/menu_icons/item_086.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_086.icon4"
 UiIcon_Item087:
-	.incbin "graphics/ui/menu_icons/item_087.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_087.icon4"
 UiIcon_Item088:
-	.incbin "graphics/ui/menu_icons/item_088.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_088.icon4"
 UiIcon_Item089:
-	.incbin "graphics/ui/menu_icons/item_089.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_089.icon4"
 UiIcon_Item090:
-	.incbin "graphics/ui/menu_icons/item_090.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_090.icon4"
 UiIcon_Item091:
-	.incbin "graphics/ui/menu_icons/item_091.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_091.icon4"
 UiIcon_Item092:
-	.incbin "graphics/ui/menu_icons/item_092.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_092.icon4"
 UiIcon_Item093:
-	.incbin "graphics/ui/menu_icons/item_093.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_093.icon4"
 UiIcon_Item094:
-	.incbin "graphics/ui/menu_icons/item_094.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_094.icon4"
 UiIcon_Item095:
-	.incbin "graphics/ui/menu_icons/item_095.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_095.icon4"
 UiIcon_Item096:
-	.incbin "graphics/ui/menu_icons/item_096.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_096.icon4"
 UiIcon_Item097:
-	.incbin "graphics/ui/menu_icons/item_097.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_097.icon4"
 UiIcon_Item098:
-	.incbin "graphics/ui/menu_icons/item_098.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_098.icon4"
 UiIcon_Item099:
-	.incbin "graphics/ui/menu_icons/item_099.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_099.icon4"
 UiIcon_Item100:
-	.incbin "graphics/ui/menu_icons/item_100.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_100.icon4"
 UiIcon_Item101:
-	.incbin "graphics/ui/menu_icons/item_101.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_101.icon4"
 UiIcon_Item102:
-	.incbin "graphics/ui/menu_icons/item_102.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_102.icon4"
 UiIcon_Item103:
-	.incbin "graphics/ui/menu_icons/item_103.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_103.icon4"
 UiIcon_Item104:
-	.incbin "graphics/ui/menu_icons/item_104.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_104.icon4"
 UiIcon_Item105:
-	.incbin "graphics/ui/menu_icons/item_105.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_105.icon4"
 UiIcon_Item106:
-	.incbin "graphics/ui/menu_icons/item_106.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_106.icon4"
 UiIcon_Item107:
-	.incbin "graphics/ui/menu_icons/item_107.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_107.icon4"
 UiIcon_Item108:
-	.incbin "graphics/ui/menu_icons/item_108.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_108.icon4"
 UiIcon_Item109:
-	.incbin "graphics/ui/menu_icons/item_109.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_109.icon4"
 UiIcon_Item110:
-	.incbin "graphics/ui/menu_icons/item_110.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_110.icon4"
 UiIcon_Item111:
-	.incbin "graphics/ui/menu_icons/item_111.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_111.icon4"
 UiIcon_Item112:
-	.incbin "graphics/ui/menu_icons/item_112.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_112.icon4"
 UiIcon_Item113:
-	.incbin "graphics/ui/menu_icons/item_113.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_113.icon4"
 UiIcon_Item114:
-	.incbin "graphics/ui/menu_icons/item_114.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_114.icon4"
 UiIcon_Item115:
-	.incbin "graphics/ui/menu_icons/item_115.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_115.icon4"
 UiIcon_Item116:
-	.incbin "graphics/ui/menu_icons/item_116.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_116.icon4"
 UiIcon_Item117:
-	.incbin "graphics/ui/menu_icons/item_117.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_117.icon4"
 UiIcon_Item118:
-	.incbin "graphics/ui/menu_icons/item_118.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_118.icon4"
 UiIcon_Item119:
-	.incbin "graphics/ui/menu_icons/item_119.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_119.icon4"
 UiIcon_Item120:
-	.incbin "graphics/ui/menu_icons/item_120.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_120.icon4"
 UiIcon_Item121:
-	.incbin "graphics/ui/menu_icons/item_121.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_121.icon4"
 UiIcon_Item122:
-	.incbin "graphics/ui/menu_icons/item_122.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_122.icon4"
 UiIcon_Item123:
-	.incbin "graphics/ui/menu_icons/item_123.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_123.icon4"
 UiIcon_Item124:
-	.incbin "graphics/ui/menu_icons/item_124.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_124.icon4"
 UiIcon_Item125:
-	.incbin "graphics/ui/menu_icons/item_125.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_125.icon4"
 UiIcon_Item126:
-	.incbin "graphics/ui/menu_icons/item_126.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_126.icon4"
 UiIcon_Item127:
-	.incbin "graphics/ui/menu_icons/item_127.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_127.icon4"
 UiIcon_Item128:
-	.incbin "graphics/ui/menu_icons/item_128.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_128.icon4"
 UiIcon_Item129:
-	.incbin "graphics/ui/menu_icons/item_129.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_129.icon4"
 UiIcon_Item130:
-	.incbin "graphics/ui/menu_icons/item_130.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_130.icon4"
 UiIcon_Item131:
-	.incbin "graphics/ui/menu_icons/item_131.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_131.icon4"
 UiIcon_Item132:
-	.incbin "graphics/ui/menu_icons/item_132.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_132.icon4"
 UiIcon_Item133:
-	.incbin "graphics/ui/menu_icons/item_133.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_133.icon4"
 UiIcon_Item134:
-	.incbin "graphics/ui/menu_icons/item_134.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_134.icon4"
 UiIcon_Item135:
-	.incbin "graphics/ui/menu_icons/item_135.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_135.icon4"
 UiIcon_Item136:
-	.incbin "graphics/ui/menu_icons/item_136.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_136.icon4"
 UiIcon_Item137:
-	.incbin "graphics/ui/menu_icons/item_137.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_137.icon4"
 UiIcon_Item138:
-	.incbin "graphics/ui/menu_icons/item_138.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_138.icon4"
 UiIcon_Item139:
-	.incbin "graphics/ui/menu_icons/item_139.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_139.icon4"
 UiIcon_Item140:
-	.incbin "graphics/ui/menu_icons/item_140.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_140.icon4"
 UiIcon_Item141:
-	.incbin "graphics/ui/menu_icons/item_141.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_141.icon4"
 UiIcon_Item142:
-	.incbin "graphics/ui/menu_icons/item_142.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_142.icon4"
 UiIcon_Item143:
-	.incbin "graphics/ui/menu_icons/item_143.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_143.icon4"
 UiIcon_Item144:
-	.incbin "graphics/ui/menu_icons/item_144.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_144.icon4"
 UiIcon_Item145:
-	.incbin "graphics/ui/menu_icons/item_145.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_145.icon4"
 UiIcon_Item146:
-	.incbin "graphics/ui/menu_icons/item_146.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_146.icon4"
 UiIcon_Item147:
-	.incbin "graphics/ui/menu_icons/item_147.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_147.icon4"
 UiIcon_Item148:
-	.incbin "graphics/ui/menu_icons/item_148.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_148.icon4"
 UiIcon_Item149:
-	.incbin "graphics/ui/menu_icons/item_149.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_149.icon4"
 UiIcon_Item150:
-	.incbin "graphics/ui/menu_icons/item_150.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_150.icon4"
 UiIcon_Item151:
-	.incbin "graphics/ui/menu_icons/item_151.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_151.icon4"
 UiIcon_Item152:
-	.incbin "graphics/ui/menu_icons/item_152.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_152.icon4"
 UiIcon_Item153:
-	.incbin "graphics/ui/menu_icons/item_153.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_153.icon4"
 UiIcon_Item154:
-	.incbin "graphics/ui/menu_icons/item_154.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_154.icon4"
 UiIcon_Item155:
-	.incbin "graphics/ui/menu_icons/item_155.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_155.icon4"
 UiIcon_Item156:
-	.incbin "graphics/ui/menu_icons/item_156.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_156.icon4"
 UiIcon_Item157:
-	.incbin "graphics/ui/menu_icons/item_157.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_157.icon4"
 UiIcon_Item158:
-	.incbin "graphics/ui/menu_icons/item_158.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_158.icon4"
 UiIcon_Item159:
-	.incbin "graphics/ui/menu_icons/item_159.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_159.icon4"
 UiIcon_Item160:
-	.incbin "graphics/ui/menu_icons/item_160.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_160.icon4"
 UiIcon_Item161:
-	.incbin "graphics/ui/menu_icons/item_161.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_161.icon4"
 UiIcon_Item162:
-	.incbin "graphics/ui/menu_icons/item_162.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_162.icon4"
 UiIcon_Item163:
-	.incbin "graphics/ui/menu_icons/item_163.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_163.icon4"
 UiIcon_Item164:
-	.incbin "graphics/ui/menu_icons/item_164.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_164.icon4"
 UiIcon_Item165:
-	.incbin "graphics/ui/menu_icons/item_165.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_165.icon4"
 UiIcon_Item166:
-	.incbin "graphics/ui/menu_icons/item_166.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_166.icon4"
 UiIcon_Item167:
-	.incbin "graphics/ui/menu_icons/item_167.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_167.icon4"
 UiIcon_Item168:
-	.incbin "graphics/ui/menu_icons/item_168.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_168.icon4"
 UiIcon_Item169:
-	.incbin "graphics/ui/menu_icons/item_169.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_169.icon4"
 UiIcon_Item170:
-	.incbin "graphics/ui/menu_icons/item_170.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_170.icon4"
 UiIcon_Item171:
-	.incbin "graphics/ui/menu_icons/item_171.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_171.icon4"
 UiIcon_Item172:
-	.incbin "graphics/ui/menu_icons/item_172.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_172.icon4"
 UiIcon_Item173:
-	.incbin "graphics/ui/menu_icons/item_173.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_173.icon4"
 UiIcon_Item174:
-	.incbin "graphics/ui/menu_icons/item_174.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_174.icon4"
 UiIcon_Item175:
-	.incbin "graphics/ui/menu_icons/item_175.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_175.icon4"
 UiIcon_Item176:
-	.incbin "graphics/ui/menu_icons/item_176.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_176.icon4"
 UiIcon_Item177:
-	.incbin "graphics/ui/menu_icons/item_177.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_177.icon4"
 UiIcon_Item178:
-	.incbin "graphics/ui/menu_icons/item_178.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_178.icon4"
 UiIcon_Item179:
-	.incbin "graphics/ui/menu_icons/item_179.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_179.icon4"
 UiIcon_Item180:
-	.incbin "graphics/ui/menu_icons/item_180.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_180.icon4"
 UiIcon_Item181:
-	.incbin "graphics/ui/menu_icons/item_181.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_181.icon4"
 UiIcon_Item182:
-	.incbin "graphics/ui/menu_icons/item_182.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_182.icon4"
 UiIcon_Item183:
-	.incbin "graphics/ui/menu_icons/item_183.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_183.icon4"
 UiIcon_Item184:
-	.incbin "graphics/ui/menu_icons/item_184.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_184.icon4"
 UiIcon_Item185:
-	.incbin "graphics/ui/menu_icons/item_185.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_185.icon4"
 UiIcon_Item186:
-	.incbin "graphics/ui/menu_icons/item_186.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_186.icon4"
 UiIcon_Item187:
-	.incbin "graphics/ui/menu_icons/item_187.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_187.icon4"
 UiIcon_Item188:
-	.incbin "graphics/ui/menu_icons/item_188.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_188.icon4"
 UiIcon_Item189:
-	.incbin "graphics/ui/menu_icons/item_189.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_189.icon4"
 UiIcon_Item190:
-	.incbin "graphics/ui/menu_icons/item_190.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_190.icon4"
 UiIcon_Item191:
-	.incbin "graphics/ui/menu_icons/item_191.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_191.icon4"
 UiIcon_Item192:
-	.incbin "graphics/ui/menu_icons/item_192.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_192.icon4"
 UiIcon_Item193:
-	.incbin "graphics/ui/menu_icons/item_193.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_193.icon4"
 UiIcon_Item194:
-	.incbin "graphics/ui/menu_icons/item_194.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_194.icon4"
 UiIcon_Item195:
-	.incbin "graphics/ui/menu_icons/item_195.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_195.icon4"
 UiIcon_Item196:
-	.incbin "graphics/ui/menu_icons/item_196.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_196.icon4"
 UiIcon_Item197:
-	.incbin "graphics/ui/menu_icons/item_197.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_197.icon4"
 UiIcon_Item198:
-	.incbin "graphics/ui/menu_icons/item_198.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_198.icon4"
 UiIcon_Item199:
-	.incbin "graphics/ui/menu_icons/item_199.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_199.icon4"
 UiIcon_Item200:
-	.incbin "graphics/ui/menu_icons/item_200.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_200.icon4"
 UiIcon_Item201:
-	.incbin "graphics/ui/menu_icons/item_201.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_201.icon4"
 UiIcon_Item202:
-	.incbin "graphics/ui/menu_icons/item_202.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_202.icon4"
 UiIcon_Item203:
-	.incbin "graphics/ui/menu_icons/item_203.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_203.icon4"
 UiIcon_Item204:
-	.incbin "graphics/ui/menu_icons/item_204.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_204.icon4"
 UiIcon_Item205:
-	.incbin "graphics/ui/menu_icons/item_205.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_205.icon4"
 UiIcon_Item206:
-	.incbin "graphics/ui/menu_icons/item_206.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_206.icon4"
 UiIcon_Item207:
-	.incbin "graphics/ui/menu_icons/item_207.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_207.icon4"
 UiIcon_Item208:
-	.incbin "graphics/ui/menu_icons/item_208.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_208.icon4"
 UiIcon_Item209:
-	.incbin "graphics/ui/menu_icons/item_209.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_209.icon4"
 UiIcon_Item210:
-	.incbin "graphics/ui/menu_icons/item_210.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_210.icon4"
 UiIcon_Item211:
-	.incbin "graphics/ui/menu_icons/item_211.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_211.icon4"
 UiIcon_Item212:
-	.incbin "graphics/ui/menu_icons/item_212.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_212.icon4"
 UiIcon_Item213:
-	.incbin "graphics/ui/menu_icons/item_213.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_213.icon4"
 UiIcon_Item214:
-	.incbin "graphics/ui/menu_icons/item_214.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_214.icon4"
 UiIcon_Item215:
-	.incbin "graphics/ui/menu_icons/item_215.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_215.icon4"
 UiIcon_Item216:
-	.incbin "graphics/ui/menu_icons/item_216.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_216.icon4"
 UiIcon_Item217:
-	.incbin "graphics/ui/menu_icons/item_217.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_217.icon4"
 UiIcon_Item218:
-	.incbin "graphics/ui/menu_icons/item_218.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_218.icon4"
 UiIcon_Item219:
-	.incbin "graphics/ui/menu_icons/item_219.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_219.icon4"
 UiIcon_Item220:
-	.incbin "graphics/ui/menu_icons/item_220.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_220.icon4"
 UiIcon_Item221:
-	.incbin "graphics/ui/menu_icons/item_221.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_221.icon4"
 UiIcon_Item222:
-	.incbin "graphics/ui/menu_icons/item_222.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_222.icon4"
 UiIcon_Item223:
-	.incbin "graphics/ui/menu_icons/item_223.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_223.icon4"
 UiIcon_Item224:
-	.incbin "graphics/ui/menu_icons/item_224.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_224.icon4"
 UiIcon_Item225:
-	.incbin "graphics/ui/menu_icons/item_225.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_225.icon4"
 UiIcon_Item226:
-	.incbin "graphics/ui/menu_icons/item_226.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_226.icon4"
 UiIcon_Item227:
-	.incbin "graphics/ui/menu_icons/item_227.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_227.icon4"
 UiIcon_Item228:
-	.incbin "graphics/ui/menu_icons/item_228.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_228.icon4"
 UiIcon_Item229:
-	.incbin "graphics/ui/menu_icons/item_229.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_229.icon4"
 UiIcon_Item230:
-	.incbin "graphics/ui/menu_icons/item_230.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_230.icon4"
 UiIcon_Item231:
-	.incbin "graphics/ui/menu_icons/item_231.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_231.icon4"
 UiIcon_Item232:
-	.incbin "graphics/ui/menu_icons/item_232.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_232.icon4"
 UiIcon_Item233:
-	.incbin "graphics/ui/menu_icons/item_233.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_233.icon4"
 UiIcon_Item234:
-	.incbin "graphics/ui/menu_icons/item_234.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_234.icon4"
 UiIcon_Item235:
-	.incbin "graphics/ui/menu_icons/item_235.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_235.icon4"
 UiIcon_Item236:
-	.incbin "graphics/ui/menu_icons/item_236.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_236.icon4"
 UiIcon_Item237:
-	.incbin "graphics/ui/menu_icons/item_237.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_237.icon4"
 UiIcon_Item238:
-	.incbin "graphics/ui/menu_icons/item_238.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_238.icon4"
 UiIcon_Item239:
-	.incbin "graphics/ui/menu_icons/item_239.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_239.icon4"
 UiIcon_Item240:
-	.incbin "graphics/ui/menu_icons/item_240.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_240.icon4"
 UiIcon_Item241:
-	.incbin "graphics/ui/menu_icons/item_241.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_241.icon4"
 UiIcon_Item242:
-	.incbin "graphics/ui/menu_icons/item_242.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_242.icon4"
 UiIcon_Item243:
-	.incbin "graphics/ui/menu_icons/item_243.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_243.icon4"
 UiIcon_Item244:
-	.incbin "graphics/ui/menu_icons/item_244.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_244.icon4"
 UiIcon_Item245:
-	.incbin "graphics/ui/menu_icons/item_245.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_245.icon4"
 UiIcon_Item246:
-	.incbin "graphics/ui/menu_icons/item_246.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_246.icon4"
 UiIcon_Item247:
-	.incbin "graphics/ui/menu_icons/item_247.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_247.icon4"
 UiIcon_Item248:
-	.incbin "graphics/ui/menu_icons/item_248.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_248.icon4"
 UiIcon_Item249:
-	.incbin "graphics/ui/menu_icons/item_249.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_249.icon4"
 UiIcon_Item250:
-	.incbin "graphics/ui/menu_icons/item_250.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_250.icon4"
 UiIcon_Item251:
-	.incbin "graphics/ui/menu_icons/item_251.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_251.icon4"
 UiIcon_Item252:
-	.incbin "graphics/ui/menu_icons/item_252.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_252.icon4"
 UiIcon_Item253:
-	.incbin "graphics/ui/menu_icons/item_253.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_253.icon4"
 UiIcon_Item254:
-	.incbin "graphics/ui/menu_icons/item_254.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_254.icon4"
 UiIcon_Item255:
-	.incbin "graphics/ui/menu_icons/item_255.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_255.icon4"
 UiIcon_Item256:
-	.incbin "graphics/ui/menu_icons/item_256.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_256.icon4"
 UiIcon_Item257:
-	.incbin "graphics/ui/menu_icons/item_257.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_257.icon4"
 UiIcon_Item258:
-	.incbin "graphics/ui/menu_icons/item_258.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_258.icon4"
 UiIcon_Item259:
-	.incbin "graphics/ui/menu_icons/item_259.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_259.icon4"
 UiIcon_Item260:
-	.incbin "graphics/ui/menu_icons/item_260.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_260.icon4"
 UiIcon_Item261:
-	.incbin "graphics/ui/menu_icons/item_261.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_261.icon4"
 UiIcon_Item262:
-	.incbin "graphics/ui/menu_icons/item_262.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_262.icon4"
 UiIcon_Item263:
-	.incbin "graphics/ui/menu_icons/item_263.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_263.icon4"
 UiIcon_Item264:
-	.incbin "graphics/ui/menu_icons/item_264.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_264.icon4"
 UiIcon_Item265:
-	.incbin "graphics/ui/menu_icons/item_265.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_265.icon4"
 UiIcon_Item266:
-	.incbin "graphics/ui/menu_icons/item_266.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_266.icon4"
 UiIcon_Item267:
-	.incbin "graphics/ui/menu_icons/item_267.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_267.icon4"
 UiIcon_Item268:
-	.incbin "graphics/ui/menu_icons/item_268.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_268.icon4"
 UiIcon_Item269:
-	.incbin "graphics/ui/menu_icons/item_269.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_269.icon4"
 UiIcon_Item270:
-	.incbin "graphics/ui/menu_icons/item_270.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_270.icon4"
 UiIcon_Item271:
-	.incbin "graphics/ui/menu_icons/item_271.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_271.icon4"
 UiIcon_Item272:
-	.incbin "graphics/ui/menu_icons/item_272.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_272.icon4"
 UiIcon_Item273:
-	.incbin "graphics/ui/menu_icons/item_273.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_273.icon4"
 UiIcon_Item274:
-	.incbin "graphics/ui/menu_icons/item_274.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_274.icon4"
 UiIcon_Item275:
-	.incbin "graphics/ui/menu_icons/item_275.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_275.icon4"
 UiIcon_Item276:
-	.incbin "graphics/ui/menu_icons/item_276.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_276.icon4"
 UiIcon_Item277:
-	.incbin "graphics/ui/menu_icons/item_277.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_277.icon4"
 UiIcon_Item278:
-	.incbin "graphics/ui/menu_icons/item_278.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_278.icon4"
 UiIcon_Item279:
-	.incbin "graphics/ui/menu_icons/item_279.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_279.icon4"
 UiIcon_Item280:
-	.incbin "graphics/ui/menu_icons/item_280.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_280.icon4"
 UiIcon_Item281:
-	.incbin "graphics/ui/menu_icons/item_281.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_281.icon4"
 UiIcon_Item282:
-	.incbin "graphics/ui/menu_icons/item_282.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_282.icon4"
 UiIcon_Item283:
-	.incbin "graphics/ui/menu_icons/item_283.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_283.icon4"
 UiIcon_Item284:
-	.incbin "graphics/ui/menu_icons/item_284.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_284.icon4"
 UiIcon_Item285:
-	.incbin "graphics/ui/menu_icons/item_285.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_285.icon4"
 UiIcon_Item286:
-	.incbin "graphics/ui/menu_icons/item_286.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_286.icon4"
 UiIcon_Item287:
-	.incbin "graphics/ui/menu_icons/item_287.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_287.icon4"
 UiIcon_Item288:
-	.incbin "graphics/ui/menu_icons/item_288.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_288.icon4"
 UiIcon_Item289:
-	.incbin "graphics/ui/menu_icons/item_289.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_289.icon4"
 UiIcon_Item290:
-	.incbin "graphics/ui/menu_icons/item_290.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_290.icon4"
 UiIcon_Item291:
-	.incbin "graphics/ui/menu_icons/item_291.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_291.icon4"
 UiIcon_Item292:
-	.incbin "graphics/ui/menu_icons/item_292.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_292.icon4"
 UiIcon_Item293:
-	.incbin "graphics/ui/menu_icons/item_293.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_293.icon4"
 UiIcon_Item294:
-	.incbin "graphics/ui/menu_icons/item_294.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_294.icon4"
 UiIcon_Item295:
-	.incbin "graphics/ui/menu_icons/item_295.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_295.icon4"
 UiIcon_Item296:
-	.incbin "graphics/ui/menu_icons/item_296.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_296.icon4"
 UiIcon_Item297:
-	.incbin "graphics/ui/menu_icons/item_297.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_297.icon4"
 UiIcon_Item298:
-	.incbin "graphics/ui/menu_icons/item_298.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_298.icon4"
 UiIcon_Item299:
-	.incbin "graphics/ui/menu_icons/item_299.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_299.icon4"
 UiIcon_Item300:
-	.incbin "graphics/ui/menu_icons/item_300.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_300.icon4"
 UiIcon_Item301:
-	.incbin "graphics/ui/menu_icons/item_301.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_301.icon4"
 UiIcon_Item302:
-	.incbin "graphics/ui/menu_icons/item_302.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_302.icon4"
 UiIcon_Item303:
-	.incbin "graphics/ui/menu_icons/item_303.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_303.icon4"
 UiIcon_Item304:
-	.incbin "graphics/ui/menu_icons/item_304.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_304.icon4"
 UiIcon_Item305:
-	.incbin "graphics/ui/menu_icons/item_305.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_305.icon4"
 UiIcon_Item306:
-	.incbin "graphics/ui/menu_icons/item_306.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_306.icon4"
 UiIcon_Item307:
-	.incbin "graphics/ui/menu_icons/item_307.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_307.icon4"
 UiIcon_Item308:
-	.incbin "graphics/ui/menu_icons/item_308.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_308.icon4"
 UiIcon_Item309:
-	.incbin "graphics/ui/menu_icons/item_309.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_309.icon4"
 UiIcon_Item310:
-	.incbin "graphics/ui/menu_icons/item_310.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_310.icon4"
 UiIcon_Item311:
-	.incbin "graphics/ui/menu_icons/item_311.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_311.icon4"
 UiIcon_Item312:
-	.incbin "graphics/ui/menu_icons/item_312.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_312.icon4"
 UiIcon_Item313:
-	.incbin "graphics/ui/menu_icons/item_313.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_313.icon4"
 UiIcon_Item314:
-	.incbin "graphics/ui/menu_icons/item_314.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_314.icon4"
 UiIcon_Item315:
-	.incbin "graphics/ui/menu_icons/item_315.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_315.icon4"
 UiIcon_Item316:
-	.incbin "graphics/ui/menu_icons/item_316.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_316.icon4"
 UiIcon_Item317:
-	.incbin "graphics/ui/menu_icons/item_317.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_317.icon4"
 UiIcon_Item318:
-	.incbin "graphics/ui/menu_icons/item_318.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_318.icon4"
 UiIcon_Item319:
-	.incbin "graphics/ui/menu_icons/item_319.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_319.icon4"
 UiIcon_Item320:
-	.incbin "graphics/ui/menu_icons/item_320.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_320.icon4"
 UiIcon_Item321:
-	.incbin "graphics/ui/menu_icons/item_321.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_321.icon4"
 UiIcon_Item322:
-	.incbin "graphics/ui/menu_icons/item_322.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_322.icon4"
 UiIcon_Item323:
-	.incbin "graphics/ui/menu_icons/item_323.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_323.icon4"
 UiIcon_Item324:
-	.incbin "graphics/ui/menu_icons/item_324.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_324.icon4"
 UiIcon_Item325:
-	.incbin "graphics/ui/menu_icons/item_325.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_325.icon4"
 UiIcon_Item326:
-	.incbin "graphics/ui/menu_icons/item_326.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_326.icon4"
 UiIcon_Item327:
-	.incbin "graphics/ui/menu_icons/item_327.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_327.icon4"
 UiIcon_Item328:
-	.incbin "graphics/ui/menu_icons/item_328.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_328.icon4"
 UiIcon_Item329:
-	.incbin "graphics/ui/menu_icons/item_329.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_329.icon4"
 UiIcon_Item330:
-	.incbin "graphics/ui/menu_icons/item_330.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_330.icon4"
 UiIcon_Item331:
-	.incbin "graphics/ui/menu_icons/item_331.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_331.icon4"
 UiIcon_Item332:
-	.incbin "graphics/ui/menu_icons/item_332.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_332.icon4"
 UiIcon_Item333:
-	.incbin "graphics/ui/menu_icons/item_333.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_333.icon4"
 UiIcon_Item334:
-	.incbin "graphics/ui/menu_icons/item_334.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_334.icon4"
 UiIcon_Item335:
-	.incbin "graphics/ui/menu_icons/item_335.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_335.icon4"
 UiIcon_Item336:
-	.incbin "graphics/ui/menu_icons/item_336.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_336.icon4"
 UiIcon_Item337:
-	.incbin "graphics/ui/menu_icons/item_337.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_337.icon4"
 UiIcon_Item338:
-	.incbin "graphics/ui/menu_icons/item_338.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_338.icon4"
 UiIcon_Item339:
-	.incbin "graphics/ui/menu_icons/item_339.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_339.icon4"
 UiIcon_Item340:
-	.incbin "graphics/ui/menu_icons/item_340.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_340.icon4"
 UiIcon_Item341:
-	.incbin "graphics/ui/menu_icons/item_341.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_341.icon4"
 UiIcon_Item342:
-	.incbin "graphics/ui/menu_icons/item_342.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_342.icon4"
 UiIcon_Item343:
-	.incbin "graphics/ui/menu_icons/item_343.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_343.icon4"
 UiIcon_Item344:
-	.incbin "graphics/ui/menu_icons/item_344.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_344.icon4"
 UiIcon_Item345:
-	.incbin "graphics/ui/menu_icons/item_345.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_345.icon4"
 UiIcon_Item346:
-	.incbin "graphics/ui/menu_icons/item_346.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_346.icon4"
 UiIcon_Item347:
-	.incbin "graphics/ui/menu_icons/item_347.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_347.icon4"
 UiIcon_Item348:
-	.incbin "graphics/ui/menu_icons/item_348.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_348.icon4"
 UiIcon_Item349:
-	.incbin "graphics/ui/menu_icons/item_349.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_349.icon4"
 UiIcon_Item350:
-	.incbin "graphics/ui/menu_icons/item_350.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_350.icon4"
 UiIcon_Item351:
-	.incbin "graphics/ui/menu_icons/item_351.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_351.icon4"
 UiIcon_Item352:
-	.incbin "graphics/ui/menu_icons/item_352.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_352.icon4"
 UiIcon_Item353:
-	.incbin "graphics/ui/menu_icons/item_353.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_353.icon4"
 UiIcon_Item354:
-	.incbin "graphics/ui/menu_icons/item_354.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_354.icon4"
 UiIcon_Item355:
-	.incbin "graphics/ui/menu_icons/item_355.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_355.icon4"
 UiIcon_Item356:
-	.incbin "graphics/ui/menu_icons/item_356.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_356.icon4"
 UiIcon_Item357:
-	.incbin "graphics/ui/menu_icons/item_357.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_357.icon4"
 UiIcon_Item358:
-	.incbin "graphics/ui/menu_icons/item_358.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_358.icon4"
 UiIcon_Item359:
-	.incbin "graphics/ui/menu_icons/item_359.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_359.icon4"
 UiIcon_Item360:
-	.incbin "graphics/ui/menu_icons/item_360.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_360.icon4"
 UiIcon_Item361:
-	.incbin "graphics/ui/menu_icons/item_361.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_361.icon4"
 UiIcon_Item362:
-	.incbin "graphics/ui/menu_icons/item_362.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_362.icon4"
 UiIcon_Item363:
-	.incbin "graphics/ui/menu_icons/item_363.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_363.icon4"
 UiIcon_Item364:
-	.incbin "graphics/ui/menu_icons/item_364.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_364.icon4"
 UiIcon_Item365:
-	.incbin "graphics/ui/menu_icons/item_365.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_365.icon4"
 UiIcon_Item366:
-	.incbin "graphics/ui/menu_icons/item_366.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_366.icon4"
 UiIcon_Item367:
-	.incbin "graphics/ui/menu_icons/item_367.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_367.icon4"
 UiIcon_Item368:
-	.incbin "graphics/ui/menu_icons/item_368.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_368.icon4"
 UiIcon_Item369:
-	.incbin "graphics/ui/menu_icons/item_369.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_369.icon4"
 	.balign 4, 0
 	.balign 4
 	.global UiIcon_PsynergyIconPointers
@@ -1384,557 +1384,557 @@ UiIcon_PsynergyIconPointers:
 UiIcon_PsynergyIconPointersEnd:
 	.4byte -1
 UiIcon_Psynergy000:
-	.incbin "graphics/ui/menu_icons/psynergy_000.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_000.icon4"
 UiIcon_Psynergy001:
-	.incbin "graphics/ui/menu_icons/psynergy_001.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_001.icon4"
 UiIcon_Psynergy002:
-	.incbin "graphics/ui/menu_icons/psynergy_002.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_002.icon4"
 UiIcon_Psynergy003:
-	.incbin "graphics/ui/menu_icons/psynergy_003.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_003.icon4"
 UiIcon_Psynergy004:
-	.incbin "graphics/ui/menu_icons/psynergy_004.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_004.icon4"
 UiIcon_Psynergy005:
-	.incbin "graphics/ui/menu_icons/psynergy_005.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_005.icon4"
 UiIcon_Psynergy006:
-	.incbin "graphics/ui/menu_icons/psynergy_006.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_006.icon4"
 UiIcon_Psynergy007:
-	.incbin "graphics/ui/menu_icons/psynergy_007.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_007.icon4"
 UiIcon_Psynergy008:
-	.incbin "graphics/ui/menu_icons/psynergy_008.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_008.icon4"
 UiIcon_Psynergy009:
-	.incbin "graphics/ui/menu_icons/psynergy_009.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_009.icon4"
 UiIcon_Psynergy010:
-	.incbin "graphics/ui/menu_icons/psynergy_010.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_010.icon4"
 UiIcon_Psynergy011:
-	.incbin "graphics/ui/menu_icons/psynergy_011.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_011.icon4"
 UiIcon_Psynergy012:
-	.incbin "graphics/ui/menu_icons/psynergy_012.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_012.icon4"
 UiIcon_Psynergy013:
-	.incbin "graphics/ui/menu_icons/psynergy_013.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_013.icon4"
 UiIcon_Psynergy014:
-	.incbin "graphics/ui/menu_icons/psynergy_014.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_014.icon4"
 UiIcon_Psynergy015:
-	.incbin "graphics/ui/menu_icons/psynergy_015.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_015.icon4"
 UiIcon_Psynergy016:
-	.incbin "graphics/ui/menu_icons/psynergy_016.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_016.icon4"
 UiIcon_Psynergy017:
-	.incbin "graphics/ui/menu_icons/psynergy_017.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_017.icon4"
 UiIcon_Psynergy018:
-	.incbin "graphics/ui/menu_icons/psynergy_018.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_018.icon4"
 UiIcon_Psynergy019:
-	.incbin "graphics/ui/menu_icons/psynergy_019.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_019.icon4"
 UiIcon_Psynergy020:
-	.incbin "graphics/ui/menu_icons/psynergy_020.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_020.icon4"
 UiIcon_Psynergy021:
-	.incbin "graphics/ui/menu_icons/psynergy_021.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_021.icon4"
 UiIcon_Psynergy022:
-	.incbin "graphics/ui/menu_icons/psynergy_022.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_022.icon4"
 UiIcon_Psynergy023:
-	.incbin "graphics/ui/menu_icons/psynergy_023.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_023.icon4"
 UiIcon_Psynergy024:
-	.incbin "graphics/ui/menu_icons/psynergy_024.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_024.icon4"
 UiIcon_Psynergy025:
-	.incbin "graphics/ui/menu_icons/psynergy_025.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_025.icon4"
 UiIcon_Psynergy026:
-	.incbin "graphics/ui/menu_icons/psynergy_026.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_026.icon4"
 UiIcon_Psynergy027:
-	.incbin "graphics/ui/menu_icons/psynergy_027.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_027.icon4"
 UiIcon_Psynergy028:
-	.incbin "graphics/ui/menu_icons/psynergy_028.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_028.icon4"
 UiIcon_Psynergy029:
-	.incbin "graphics/ui/menu_icons/psynergy_029.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_029.icon4"
 UiIcon_Psynergy030:
-	.incbin "graphics/ui/menu_icons/psynergy_030.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_030.icon4"
 UiIcon_Psynergy031:
-	.incbin "graphics/ui/menu_icons/psynergy_031.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_031.icon4"
 UiIcon_Psynergy032:
-	.incbin "graphics/ui/menu_icons/psynergy_032.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_032.icon4"
 UiIcon_Psynergy033:
-	.incbin "graphics/ui/menu_icons/psynergy_033.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_033.icon4"
 UiIcon_Psynergy034:
-	.incbin "graphics/ui/menu_icons/psynergy_034.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_034.icon4"
 UiIcon_Psynergy035:
-	.incbin "graphics/ui/menu_icons/psynergy_035.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_035.icon4"
 UiIcon_Psynergy036:
-	.incbin "graphics/ui/menu_icons/psynergy_036.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_036.icon4"
 UiIcon_Psynergy037:
-	.incbin "graphics/ui/menu_icons/psynergy_037.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_037.icon4"
 UiIcon_Psynergy038:
-	.incbin "graphics/ui/menu_icons/psynergy_038.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_038.icon4"
 UiIcon_Psynergy039:
-	.incbin "graphics/ui/menu_icons/psynergy_039.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_039.icon4"
 UiIcon_Psynergy040:
-	.incbin "graphics/ui/menu_icons/psynergy_040.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_040.icon4"
 UiIcon_Psynergy041:
-	.incbin "graphics/ui/menu_icons/psynergy_041.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_041.icon4"
 UiIcon_Psynergy042:
-	.incbin "graphics/ui/menu_icons/psynergy_042.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_042.icon4"
 UiIcon_Psynergy043:
-	.incbin "graphics/ui/menu_icons/psynergy_043.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_043.icon4"
 UiIcon_Psynergy044:
-	.incbin "graphics/ui/menu_icons/psynergy_044.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_044.icon4"
 UiIcon_Psynergy045:
-	.incbin "graphics/ui/menu_icons/psynergy_045.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_045.icon4"
 UiIcon_Psynergy046:
-	.incbin "graphics/ui/menu_icons/psynergy_046.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_046.icon4"
 UiIcon_Psynergy047:
-	.incbin "graphics/ui/menu_icons/psynergy_047.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_047.icon4"
 UiIcon_Psynergy048:
-	.incbin "graphics/ui/menu_icons/psynergy_048.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_048.icon4"
 UiIcon_Psynergy049:
-	.incbin "graphics/ui/menu_icons/psynergy_049.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_049.icon4"
 UiIcon_Psynergy050:
-	.incbin "graphics/ui/menu_icons/psynergy_050.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_050.icon4"
 UiIcon_Psynergy051:
-	.incbin "graphics/ui/menu_icons/psynergy_051.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_051.icon4"
 UiIcon_Psynergy052:
-	.incbin "graphics/ui/menu_icons/psynergy_052.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_052.icon4"
 UiIcon_Psynergy053:
-	.incbin "graphics/ui/menu_icons/psynergy_053.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_053.icon4"
 UiIcon_Psynergy054:
-	.incbin "graphics/ui/menu_icons/psynergy_054.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_054.icon4"
 UiIcon_Psynergy055:
-	.incbin "graphics/ui/menu_icons/psynergy_055.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_055.icon4"
 UiIcon_Psynergy056:
-	.incbin "graphics/ui/menu_icons/psynergy_056.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_056.icon4"
 UiIcon_Psynergy057:
-	.incbin "graphics/ui/menu_icons/psynergy_057.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_057.icon4"
 UiIcon_Psynergy058:
-	.incbin "graphics/ui/menu_icons/psynergy_058.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_058.icon4"
 UiIcon_Psynergy059:
-	.incbin "graphics/ui/menu_icons/psynergy_059.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_059.icon4"
 UiIcon_Psynergy060:
-	.incbin "graphics/ui/menu_icons/psynergy_060.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_060.icon4"
 UiIcon_Psynergy061:
-	.incbin "graphics/ui/menu_icons/psynergy_061.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_061.icon4"
 UiIcon_Psynergy062:
-	.incbin "graphics/ui/menu_icons/psynergy_062.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_062.icon4"
 UiIcon_Psynergy063:
-	.incbin "graphics/ui/menu_icons/psynergy_063.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_063.icon4"
 UiIcon_Psynergy064:
-	.incbin "graphics/ui/menu_icons/psynergy_064.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_064.icon4"
 UiIcon_Psynergy065:
-	.incbin "graphics/ui/menu_icons/psynergy_065.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_065.icon4"
 UiIcon_Psynergy066:
-	.incbin "graphics/ui/menu_icons/psynergy_066.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_066.icon4"
 UiIcon_Psynergy067:
-	.incbin "graphics/ui/menu_icons/psynergy_067.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_067.icon4"
 UiIcon_Psynergy068:
-	.incbin "graphics/ui/menu_icons/psynergy_068.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_068.icon4"
 UiIcon_Psynergy069:
-	.incbin "graphics/ui/menu_icons/psynergy_069.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_069.icon4"
 UiIcon_Psynergy070:
-	.incbin "graphics/ui/menu_icons/psynergy_070.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_070.icon4"
 UiIcon_Psynergy071:
-	.incbin "graphics/ui/menu_icons/psynergy_071.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_071.icon4"
 UiIcon_Psynergy072:
-	.incbin "graphics/ui/menu_icons/psynergy_072.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_072.icon4"
 UiIcon_Psynergy073:
-	.incbin "graphics/ui/menu_icons/psynergy_073.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_073.icon4"
 UiIcon_Psynergy074:
-	.incbin "graphics/ui/menu_icons/psynergy_074.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_074.icon4"
 UiIcon_Psynergy075:
-	.incbin "graphics/ui/menu_icons/psynergy_075.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_075.icon4"
 UiIcon_Psynergy076:
-	.incbin "graphics/ui/menu_icons/psynergy_076.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_076.icon4"
 UiIcon_Psynergy077:
-	.incbin "graphics/ui/menu_icons/psynergy_077.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_077.icon4"
 UiIcon_Psynergy078:
-	.incbin "graphics/ui/menu_icons/psynergy_078.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_078.icon4"
 UiIcon_Psynergy079:
-	.incbin "graphics/ui/menu_icons/psynergy_079.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_079.icon4"
 UiIcon_Psynergy080:
-	.incbin "graphics/ui/menu_icons/psynergy_080.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_080.icon4"
 UiIcon_Psynergy081:
-	.incbin "graphics/ui/menu_icons/psynergy_081.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_081.icon4"
 UiIcon_Psynergy082:
-	.incbin "graphics/ui/menu_icons/psynergy_082.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_082.icon4"
 UiIcon_Psynergy083:
-	.incbin "graphics/ui/menu_icons/psynergy_083.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_083.icon4"
 UiIcon_Psynergy084:
-	.incbin "graphics/ui/menu_icons/psynergy_084.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_084.icon4"
 UiIcon_Psynergy085:
-	.incbin "graphics/ui/menu_icons/psynergy_085.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_085.icon4"
 UiIcon_Psynergy086:
-	.incbin "graphics/ui/menu_icons/psynergy_086.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_086.icon4"
 UiIcon_Psynergy087:
-	.incbin "graphics/ui/menu_icons/psynergy_087.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_087.icon4"
 UiIcon_Psynergy088:
-	.incbin "graphics/ui/menu_icons/psynergy_088.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_088.icon4"
 UiIcon_Psynergy089:
-	.incbin "graphics/ui/menu_icons/psynergy_089.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_089.icon4"
 UiIcon_Psynergy090:
-	.incbin "graphics/ui/menu_icons/psynergy_090.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_090.icon4"
 UiIcon_Psynergy091:
 	.ifdef TLA_EDITION_DE
-	.incbin "common/graphics/ui/menu_icons/psynergy_091_de.icon4"
+	.incbin "games/common/src/graphics/ui/menu_icons/psynergy_091_de.icon4"
 	.else
 	.ifdef TLA_EDITION_ES
-	.incbin "common/graphics/ui/menu_icons/psynergy_091_es.icon4"
+	.incbin "games/common/src/graphics/ui/menu_icons/psynergy_091_es.icon4"
 	.else
 	.ifdef TLA_EDITION_FR
-	.incbin "common/graphics/ui/menu_icons/psynergy_091_es.icon4"
+	.incbin "games/common/src/graphics/ui/menu_icons/psynergy_091_es.icon4"
 	.else
 	.ifdef TLA_EDITION_IT
-	.incbin "graphics/ui/menu_icons/psynergy_091_it.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_091_it.icon4"
 	.else
-	.incbin "graphics/ui/menu_icons/psynergy_091.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_091.icon4"
 	.endif
 	.endif
 	.endif
 	.endif
 UiIcon_Psynergy092:
 	.ifdef TLA_EDITION_JA
-	.incbin "graphics/ui/menu_icons/psynergy_092_ja.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_092_ja.icon4"
 	.else
 	.ifdef TLA_EDITION_ES
-	.incbin "common/graphics/ui/menu_icons/psynergy_092_es.icon4"
+	.incbin "games/common/src/graphics/ui/menu_icons/psynergy_092_es.icon4"
 	.else
 	.ifdef TLA_EDITION_FR
-	.incbin "common/graphics/ui/menu_icons/psynergy_092_es.icon4"
+	.incbin "games/common/src/graphics/ui/menu_icons/psynergy_092_es.icon4"
 	.else
 	.ifdef TLA_EDITION_IT
-	.incbin "common/graphics/ui/menu_icons/psynergy_092_es.icon4"
+	.incbin "games/common/src/graphics/ui/menu_icons/psynergy_092_es.icon4"
 	.else
-	.incbin "graphics/ui/menu_icons/psynergy_092.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_092.icon4"
 	.endif
 	.endif
 	.endif
 	.endif
 UiIcon_Psynergy093:
-	.incbin "graphics/ui/menu_icons/psynergy_093.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_093.icon4"
 UiIcon_Psynergy094:
-	.incbin "graphics/ui/menu_icons/psynergy_094.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_094.icon4"
 UiIcon_Psynergy095:
-	.incbin "graphics/ui/menu_icons/psynergy_095.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_095.icon4"
 UiIcon_Psynergy096:
-	.incbin "graphics/ui/menu_icons/psynergy_096.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_096.icon4"
 UiIcon_Psynergy097:
-	.incbin "graphics/ui/menu_icons/psynergy_097.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_097.icon4"
 UiIcon_Psynergy098:
-	.incbin "graphics/ui/menu_icons/psynergy_098.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_098.icon4"
 UiIcon_Psynergy099:
-	.incbin "graphics/ui/menu_icons/psynergy_099.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_099.icon4"
 UiIcon_Psynergy100:
-	.incbin "graphics/ui/menu_icons/psynergy_100.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_100.icon4"
 UiIcon_Psynergy101:
-	.incbin "graphics/ui/menu_icons/psynergy_101.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_101.icon4"
 UiIcon_Psynergy102:
-	.incbin "graphics/ui/menu_icons/psynergy_102.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_102.icon4"
 UiIcon_Psynergy103:
-	.incbin "graphics/ui/menu_icons/psynergy_103.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_103.icon4"
 UiIcon_Psynergy104:
-	.incbin "graphics/ui/menu_icons/psynergy_104.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_104.icon4"
 UiIcon_Psynergy105:
-	.incbin "graphics/ui/menu_icons/psynergy_105.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_105.icon4"
 UiIcon_Psynergy106:
-	.incbin "graphics/ui/menu_icons/psynergy_106.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_106.icon4"
 UiIcon_Psynergy107:
-	.incbin "graphics/ui/menu_icons/psynergy_107.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_107.icon4"
 UiIcon_Psynergy108:
-	.incbin "graphics/ui/menu_icons/psynergy_108.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_108.icon4"
 UiIcon_Psynergy109:
-	.incbin "graphics/ui/menu_icons/psynergy_109.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_109.icon4"
 UiIcon_Psynergy110:
-	.incbin "graphics/ui/menu_icons/psynergy_110.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_110.icon4"
 UiIcon_Psynergy111:
-	.incbin "graphics/ui/menu_icons/psynergy_111.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_111.icon4"
 UiIcon_Psynergy112:
-	.incbin "graphics/ui/menu_icons/psynergy_112.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_112.icon4"
 UiIcon_Psynergy113:
-	.incbin "graphics/ui/menu_icons/psynergy_113.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_113.icon4"
 UiIcon_Psynergy114:
-	.incbin "graphics/ui/menu_icons/psynergy_114.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_114.icon4"
 UiIcon_Psynergy115:
-	.incbin "graphics/ui/menu_icons/psynergy_115.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_115.icon4"
 UiIcon_Psynergy116:
-	.incbin "graphics/ui/menu_icons/psynergy_116.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_116.icon4"
 UiIcon_Psynergy117:
-	.incbin "graphics/ui/menu_icons/psynergy_117.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_117.icon4"
 UiIcon_Psynergy118:
-	.incbin "graphics/ui/menu_icons/psynergy_118.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_118.icon4"
 UiIcon_Psynergy119:
-	.incbin "graphics/ui/menu_icons/psynergy_119.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_119.icon4"
 UiIcon_Psynergy120:
-	.incbin "graphics/ui/menu_icons/psynergy_120.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_120.icon4"
 UiIcon_Psynergy121:
-	.incbin "graphics/ui/menu_icons/psynergy_121.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_121.icon4"
 UiIcon_Psynergy122:
-	.incbin "graphics/ui/menu_icons/psynergy_122.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_122.icon4"
 UiIcon_Psynergy123:
-	.incbin "graphics/ui/menu_icons/psynergy_123.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_123.icon4"
 UiIcon_Psynergy124:
-	.incbin "graphics/ui/menu_icons/psynergy_124.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_124.icon4"
 UiIcon_Psynergy125:
-	.incbin "graphics/ui/menu_icons/psynergy_125.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_125.icon4"
 UiIcon_Psynergy126:
-	.incbin "graphics/ui/menu_icons/psynergy_126.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_126.icon4"
 UiIcon_Psynergy127:
-	.incbin "graphics/ui/menu_icons/psynergy_127.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_127.icon4"
 UiIcon_Psynergy128:
-	.incbin "graphics/ui/menu_icons/psynergy_128.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_128.icon4"
 UiIcon_Psynergy129:
-	.incbin "graphics/ui/menu_icons/psynergy_129.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_129.icon4"
 UiIcon_Psynergy130:
-	.incbin "graphics/ui/menu_icons/psynergy_130.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_130.icon4"
 UiIcon_Psynergy131:
-	.incbin "graphics/ui/menu_icons/psynergy_131.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_131.icon4"
 UiIcon_Psynergy132:
-	.incbin "graphics/ui/menu_icons/psynergy_132.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_132.icon4"
 UiIcon_Psynergy133:
-	.incbin "graphics/ui/menu_icons/psynergy_133.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_133.icon4"
 UiIcon_Psynergy134:
-	.incbin "graphics/ui/menu_icons/psynergy_134.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_134.icon4"
 UiIcon_Psynergy135:
-	.incbin "graphics/ui/menu_icons/psynergy_135.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_135.icon4"
 UiIcon_Psynergy136:
-	.incbin "graphics/ui/menu_icons/psynergy_136.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_136.icon4"
 UiIcon_Psynergy137:
-	.incbin "graphics/ui/menu_icons/psynergy_137.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_137.icon4"
 UiIcon_Psynergy138:
-	.incbin "graphics/ui/menu_icons/psynergy_138.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_138.icon4"
 UiIcon_Psynergy139:
-	.incbin "graphics/ui/menu_icons/psynergy_139.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_139.icon4"
 UiIcon_Psynergy140:
-	.incbin "graphics/ui/menu_icons/psynergy_140.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_140.icon4"
 UiIcon_Psynergy141:
-	.incbin "graphics/ui/menu_icons/psynergy_141.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_141.icon4"
 UiIcon_Psynergy142:
-	.incbin "graphics/ui/menu_icons/psynergy_142.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_142.icon4"
 UiIcon_Psynergy143:
-	.incbin "graphics/ui/menu_icons/psynergy_143.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_143.icon4"
 UiIcon_Psynergy144:
-	.incbin "graphics/ui/menu_icons/psynergy_144.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_144.icon4"
 UiIcon_Psynergy145:
-	.incbin "graphics/ui/menu_icons/psynergy_145.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_145.icon4"
 UiIcon_Psynergy146:
-	.incbin "graphics/ui/menu_icons/psynergy_146.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_146.icon4"
 UiIcon_Psynergy147:
-	.incbin "graphics/ui/menu_icons/psynergy_147.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_147.icon4"
 UiIcon_Psynergy148:
-	.incbin "graphics/ui/menu_icons/psynergy_148.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_148.icon4"
 UiIcon_Psynergy149:
-	.incbin "graphics/ui/menu_icons/psynergy_149.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_149.icon4"
 UiIcon_Psynergy150:
-	.incbin "graphics/ui/menu_icons/psynergy_150.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_150.icon4"
 UiIcon_Psynergy151:
-	.incbin "graphics/ui/menu_icons/psynergy_151.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_151.icon4"
 UiIcon_Psynergy152:
-	.incbin "graphics/ui/menu_icons/psynergy_152.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_152.icon4"
 UiIcon_Psynergy153:
-	.incbin "graphics/ui/menu_icons/psynergy_153.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_153.icon4"
 UiIcon_Psynergy154:
-	.incbin "graphics/ui/menu_icons/psynergy_154.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_154.icon4"
 UiIcon_Psynergy155:
-	.incbin "graphics/ui/menu_icons/psynergy_155.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_155.icon4"
 UiIcon_Psynergy156:
-	.incbin "graphics/ui/menu_icons/psynergy_156.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_156.icon4"
 UiIcon_Psynergy157:
-	.incbin "graphics/ui/menu_icons/psynergy_157.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_157.icon4"
 UiIcon_Psynergy158:
-	.incbin "graphics/ui/menu_icons/psynergy_158.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_158.icon4"
 UiIcon_Psynergy159:
-	.incbin "graphics/ui/menu_icons/psynergy_159.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_159.icon4"
 UiIcon_Psynergy160:
-	.incbin "graphics/ui/menu_icons/psynergy_160.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_160.icon4"
 UiIcon_Psynergy161:
-	.incbin "graphics/ui/menu_icons/psynergy_161.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_161.icon4"
 UiIcon_Psynergy162:
-	.incbin "graphics/ui/menu_icons/psynergy_162.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_162.icon4"
 UiIcon_Psynergy163:
-	.incbin "graphics/ui/menu_icons/psynergy_163.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_163.icon4"
 UiIcon_Psynergy164:
-	.incbin "graphics/ui/menu_icons/psynergy_164.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_164.icon4"
 UiIcon_Psynergy165:
-	.incbin "graphics/ui/menu_icons/psynergy_165.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_165.icon4"
 UiIcon_Psynergy166:
-	.incbin "graphics/ui/menu_icons/psynergy_166.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_166.icon4"
 UiIcon_Psynergy167:
-	.incbin "graphics/ui/menu_icons/psynergy_167.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_167.icon4"
 UiIcon_Psynergy168:
-	.incbin "graphics/ui/menu_icons/psynergy_168.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_168.icon4"
 UiIcon_Psynergy169:
-	.incbin "graphics/ui/menu_icons/psynergy_169.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_169.icon4"
 UiIcon_Psynergy170:
-	.incbin "graphics/ui/menu_icons/psynergy_170.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_170.icon4"
 UiIcon_Psynergy171:
-	.incbin "graphics/ui/menu_icons/psynergy_171.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_171.icon4"
 UiIcon_Psynergy172:
-	.incbin "graphics/ui/menu_icons/psynergy_172.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_172.icon4"
 UiIcon_Psynergy173:
-	.incbin "graphics/ui/menu_icons/psynergy_173.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_173.icon4"
 UiIcon_Psynergy174:
-	.incbin "graphics/ui/menu_icons/psynergy_174.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_174.icon4"
 UiIcon_Psynergy175:
-	.incbin "graphics/ui/menu_icons/psynergy_175.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_175.icon4"
 UiIcon_Psynergy176:
-	.incbin "graphics/ui/menu_icons/psynergy_176.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_176.icon4"
 UiIcon_Psynergy177:
-	.incbin "graphics/ui/menu_icons/psynergy_177.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_177.icon4"
 UiIcon_Psynergy178:
-	.incbin "graphics/ui/menu_icons/psynergy_178.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_178.icon4"
 UiIcon_Psynergy179:
-	.incbin "graphics/ui/menu_icons/psynergy_179.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_179.icon4"
 UiIcon_Psynergy180:
-	.incbin "graphics/ui/menu_icons/psynergy_180.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_180.icon4"
 UiIcon_Psynergy181:
-	.incbin "graphics/ui/menu_icons/psynergy_181.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_181.icon4"
 UiIcon_Psynergy182:
-	.incbin "graphics/ui/menu_icons/psynergy_182.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_182.icon4"
 UiIcon_Psynergy183:
-	.incbin "graphics/ui/menu_icons/psynergy_183.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_183.icon4"
 UiIcon_Psynergy184:
-	.incbin "graphics/ui/menu_icons/psynergy_184.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_184.icon4"
 UiIcon_Psynergy185:
-	.incbin "graphics/ui/menu_icons/psynergy_185.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_185.icon4"
 UiIcon_Psynergy186:
-	.incbin "graphics/ui/menu_icons/psynergy_186.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_186.icon4"
 UiIcon_Psynergy187:
-	.incbin "graphics/ui/menu_icons/psynergy_187.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_187.icon4"
 UiIcon_Psynergy188:
-	.incbin "graphics/ui/menu_icons/psynergy_188.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_188.icon4"
 UiIcon_Psynergy189:
-	.incbin "graphics/ui/menu_icons/psynergy_189.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_189.icon4"
 UiIcon_Psynergy190:
-	.incbin "graphics/ui/menu_icons/psynergy_190.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_190.icon4"
 UiIcon_Psynergy191:
-	.incbin "graphics/ui/menu_icons/psynergy_191.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_191.icon4"
 UiIcon_Psynergy192:
-	.incbin "graphics/ui/menu_icons/psynergy_192.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_192.icon4"
 UiIcon_Psynergy193:
-	.incbin "graphics/ui/menu_icons/psynergy_193.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_193.icon4"
 UiIcon_Psynergy194:
-	.incbin "graphics/ui/menu_icons/psynergy_194.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_194.icon4"
 UiIcon_Psynergy195:
-	.incbin "graphics/ui/menu_icons/psynergy_195.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_195.icon4"
 UiIcon_Psynergy196:
-	.incbin "graphics/ui/menu_icons/psynergy_196.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_196.icon4"
 UiIcon_Psynergy197:
-	.incbin "graphics/ui/menu_icons/psynergy_197.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_197.icon4"
 UiIcon_Psynergy198:
-	.incbin "graphics/ui/menu_icons/psynergy_198.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_198.icon4"
 UiIcon_Psynergy199:
-	.incbin "graphics/ui/menu_icons/psynergy_199.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_199.icon4"
 UiIcon_Psynergy200:
-	.incbin "graphics/ui/menu_icons/psynergy_200.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_200.icon4"
 UiIcon_Psynergy201:
-	.incbin "graphics/ui/menu_icons/psynergy_201.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_201.icon4"
 UiIcon_Psynergy202:
-	.incbin "graphics/ui/menu_icons/psynergy_202.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_202.icon4"
 UiIcon_Psynergy203:
-	.incbin "graphics/ui/menu_icons/psynergy_203.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_203.icon4"
 UiIcon_Psynergy204:
-	.incbin "graphics/ui/menu_icons/psynergy_204.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_204.icon4"
 UiIcon_Psynergy205:
-	.incbin "graphics/ui/menu_icons/psynergy_205.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_205.icon4"
 UiIcon_Psynergy206:
-	.incbin "graphics/ui/menu_icons/psynergy_206.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_206.icon4"
 UiIcon_Psynergy207:
-	.incbin "graphics/ui/menu_icons/psynergy_207.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_207.icon4"
 UiIcon_Psynergy208:
-	.incbin "graphics/ui/menu_icons/psynergy_208.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_208.icon4"
 UiIcon_Psynergy209:
-	.incbin "graphics/ui/menu_icons/psynergy_209.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_209.icon4"
 UiIcon_Psynergy210:
-	.incbin "graphics/ui/menu_icons/psynergy_210.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_210.icon4"
 UiIcon_Psynergy211:
-	.incbin "graphics/ui/menu_icons/psynergy_211.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_211.icon4"
 UiIcon_Psynergy212:
-	.incbin "graphics/ui/menu_icons/psynergy_212.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_212.icon4"
 UiIcon_Psynergy213:
-	.incbin "graphics/ui/menu_icons/psynergy_213.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_213.icon4"
 UiIcon_Psynergy214:
-	.incbin "graphics/ui/menu_icons/psynergy_214.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_214.icon4"
 UiIcon_Psynergy215:
-	.incbin "graphics/ui/menu_icons/psynergy_215.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_215.icon4"
 UiIcon_Psynergy216:
-	.incbin "graphics/ui/menu_icons/psynergy_216.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_216.icon4"
 UiIcon_Psynergy217:
-	.incbin "graphics/ui/menu_icons/psynergy_217.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_217.icon4"
 UiIcon_Psynergy218:
-	.incbin "graphics/ui/menu_icons/psynergy_218.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_218.icon4"
 UiIcon_Psynergy219:
-	.incbin "graphics/ui/menu_icons/psynergy_219.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_219.icon4"
 UiIcon_Psynergy220:
-	.incbin "graphics/ui/menu_icons/psynergy_220.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_220.icon4"
 UiIcon_Psynergy221:
-	.incbin "graphics/ui/menu_icons/psynergy_221.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_221.icon4"
 UiIcon_Psynergy222:
-	.incbin "graphics/ui/menu_icons/psynergy_222.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_222.icon4"
 UiIcon_Psynergy223:
-	.incbin "graphics/ui/menu_icons/psynergy_223.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_223.icon4"
 UiIcon_Psynergy224:
-	.incbin "graphics/ui/menu_icons/psynergy_224.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_224.icon4"
 UiIcon_Psynergy225:
-	.incbin "graphics/ui/menu_icons/psynergy_225.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_225.icon4"
 UiIcon_Psynergy226:
-	.incbin "graphics/ui/menu_icons/psynergy_226.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_226.icon4"
 UiIcon_Psynergy227:
-	.incbin "graphics/ui/menu_icons/psynergy_227.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_227.icon4"
 UiIcon_Psynergy228:
-	.incbin "graphics/ui/menu_icons/psynergy_228.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_228.icon4"
 UiIcon_Psynergy229:
-	.incbin "graphics/ui/menu_icons/psynergy_229.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_229.icon4"
 UiIcon_Psynergy230:
-	.incbin "graphics/ui/menu_icons/psynergy_230.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_230.icon4"
 UiIcon_Psynergy231:
-	.incbin "graphics/ui/menu_icons/psynergy_231.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_231.icon4"
 UiIcon_Psynergy232:
-	.incbin "graphics/ui/menu_icons/psynergy_232.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_232.icon4"
 UiIcon_Psynergy233:
-	.incbin "graphics/ui/menu_icons/psynergy_233.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_233.icon4"
 UiIcon_Psynergy234:
-	.incbin "graphics/ui/menu_icons/psynergy_234.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_234.icon4"
 UiIcon_Psynergy235:
-	.incbin "graphics/ui/menu_icons/psynergy_235.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_235.icon4"
 UiIcon_Psynergy236:
-	.incbin "graphics/ui/menu_icons/psynergy_236.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_236.icon4"
 UiIcon_Psynergy237:
-	.incbin "graphics/ui/menu_icons/psynergy_237.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_237.icon4"
 UiIcon_Psynergy238:
-	.incbin "graphics/ui/menu_icons/psynergy_238.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_238.icon4"
 UiIcon_Psynergy239:
-	.incbin "graphics/ui/menu_icons/psynergy_239.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_239.icon4"
 UiIcon_Psynergy240:
-	.incbin "graphics/ui/menu_icons/psynergy_240.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_240.icon4"
 UiIcon_Psynergy241:
-	.incbin "graphics/ui/menu_icons/psynergy_241.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_241.icon4"
 UiIcon_Psynergy242:
-	.incbin "graphics/ui/menu_icons/psynergy_242.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_242.icon4"
 UiIcon_Psynergy243:
-	.incbin "graphics/ui/menu_icons/psynergy_243.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_243.icon4"
 UiIcon_Psynergy244:
-	.incbin "graphics/ui/menu_icons/psynergy_244.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_244.icon4"
 UiIcon_Psynergy245:
-	.incbin "graphics/ui/menu_icons/psynergy_245.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_245.icon4"
 UiIcon_Psynergy246:
-	.incbin "graphics/ui/menu_icons/psynergy_246.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_246.icon4"
 UiIcon_Psynergy247:
-	.incbin "graphics/ui/menu_icons/psynergy_247.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_247.icon4"
 UiIcon_Psynergy248:
-	.incbin "graphics/ui/menu_icons/psynergy_248.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_248.icon4"
 UiIcon_Psynergy249:
-	.incbin "graphics/ui/menu_icons/psynergy_249.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_249.icon4"
 UiIcon_Psynergy250:
-	.incbin "graphics/ui/menu_icons/psynergy_250.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_250.icon4"
 UiIcon_Psynergy251:
-	.incbin "graphics/ui/menu_icons/psynergy_251.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_251.icon4"
 UiIcon_Psynergy252:
-	.incbin "graphics/ui/menu_icons/psynergy_252.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_252.icon4"
 UiIcon_Psynergy253:
-	.incbin "graphics/ui/menu_icons/psynergy_253.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_253.icon4"
 UiIcon_Psynergy254:
-	.incbin "graphics/ui/menu_icons/psynergy_254.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_254.icon4"
 UiIcon_Psynergy255:
-	.incbin "graphics/ui/menu_icons/psynergy_255.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_255.icon4"
 UiIcon_Psynergy256:
-	.incbin "graphics/ui/menu_icons/psynergy_256.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_256.icon4"
 UiIcon_Psynergy257:
-	.incbin "graphics/ui/menu_icons/psynergy_257.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_257.icon4"
 UiIcon_Psynergy258:
-	.incbin "graphics/ui/menu_icons/psynergy_258.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_258.icon4"
 UiIcon_Psynergy259:
-	.incbin "graphics/ui/menu_icons/psynergy_259.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_259.icon4"
 	.balign 4, 0
 	.balign 4
 	.global UiIcon_MiscIconPointers
@@ -1973,67 +1973,67 @@ UiIcon_MiscIconPointers:
 	.4byte UiIcon_Misc031
 	.4byte -1
 UiIcon_Misc000:
-	.incbin "graphics/ui/menu_icons/misc_000.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_000.icon4"
 UiIcon_Misc001:
-	.incbin "graphics/ui/menu_icons/misc_001.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_001.icon4"
 UiIcon_Misc002:
-	.incbin "graphics/ui/menu_icons/misc_002.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_002.icon4"
 UiIcon_Misc003:
-	.incbin "graphics/ui/menu_icons/misc_003.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_003.icon4"
 UiIcon_Misc004:
-	.incbin "graphics/ui/menu_icons/misc_004.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_004.icon4"
 UiIcon_Misc005:
-	.incbin "graphics/ui/menu_icons/misc_005.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_005.icon4"
 UiIcon_Misc006:
-	.incbin "graphics/ui/menu_icons/misc_006.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_006.icon4"
 UiIcon_Misc007:
-	.incbin "graphics/ui/menu_icons/misc_007.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_007.icon4"
 UiIcon_Misc008:
-	.incbin "graphics/ui/menu_icons/misc_008.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_008.icon4"
 UiIcon_Misc009:
-	.incbin "graphics/ui/menu_icons/misc_009.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_009.icon4"
 UiIcon_Misc010:
-	.incbin "graphics/ui/menu_icons/misc_010.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_010.icon4"
 UiIcon_Misc011:
-	.incbin "graphics/ui/menu_icons/misc_011.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_011.icon4"
 UiIcon_Misc012:
-	.incbin "graphics/ui/menu_icons/misc_012.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_012.icon4"
 UiIcon_Misc013:
-	.incbin "graphics/ui/menu_icons/misc_013.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_013.icon4"
 UiIcon_Misc014:
-	.incbin "graphics/ui/menu_icons/misc_014.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_014.icon4"
 UiIcon_Misc015:
-	.incbin "graphics/ui/menu_icons/misc_015.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_015.icon4"
 UiIcon_Misc016:
-	.incbin "graphics/ui/menu_icons/misc_016.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_016.icon4"
 UiIcon_Misc017:
-	.incbin "graphics/ui/menu_icons/misc_017.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_017.icon4"
 UiIcon_Misc018:
-	.incbin "graphics/ui/menu_icons/misc_018.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_018.icon4"
 UiIcon_Misc019:
-	.incbin "graphics/ui/menu_icons/misc_019.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_019.icon4"
 UiIcon_Misc020:
-	.incbin "graphics/ui/menu_icons/misc_020.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_020.icon4"
 UiIcon_Misc021:
-	.incbin "graphics/ui/menu_icons/misc_021.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_021.icon4"
 UiIcon_Misc022:
-	.incbin "graphics/ui/menu_icons/misc_022.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_022.icon4"
 UiIcon_Misc023:
-	.incbin "graphics/ui/menu_icons/misc_023.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_023.icon4"
 UiIcon_Misc024:
-	.incbin "graphics/ui/menu_icons/misc_024.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_024.icon4"
 UiIcon_Misc025:
-	.incbin "graphics/ui/menu_icons/misc_025.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_025.icon4"
 UiIcon_Misc026:
-	.incbin "graphics/ui/menu_icons/misc_026.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_026.icon4"
 UiIcon_Misc027:
-	.incbin "graphics/ui/menu_icons/misc_027.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_027.icon4"
 UiIcon_Misc028:
-	.incbin "graphics/ui/menu_icons/misc_028.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_028.icon4"
 UiIcon_Misc029:
-	.incbin "graphics/ui/menu_icons/misc_029.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_029.icon4"
 UiIcon_Misc030:
-	.incbin "graphics/ui/menu_icons/misc_030.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_030.icon4"
 UiIcon_Misc031:
-	.incbin "graphics/ui/menu_icons/misc_031.icon4"
+	.incbin "games/tla/src/graphics/ui/menu_icons/misc_031.icon4"
 	.balign 4, 0

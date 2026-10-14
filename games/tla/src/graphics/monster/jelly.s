@@ -1,4 +1,4 @@
 	.section .rodata
 	.global Monster_JellySprites
 Monster_JellySprites:
-	.incbin "graphics/monster/jelly.frames.lz"
+	.incbin "games/tla/src/graphics/monster/jelly.frames.lz"

@@ -13,39 +13,39 @@ Field_Map170:
 	map_block Field_Map170, .LField_Map170_BLEND
 	map_block Field_Map170, .LField_Map170_MARKERS
 .LField_Map170_METATILES:
-	.incbin "map/map_170/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_170/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map170_SHAPES:
-	.incbin "common/map/map_170/shapes.table.lz"
+	.incbin "games/common/src/map/map_170/shapes.table.lz"
 	.balign 4, 0
 .LField_Map170_GRID:
-	.incbin "map/map_170/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_170/grid.parts.lz"
 	.balign 4, 0
 .LField_Map170_ANIMATION:
-	.incbin "common/map/map_170/animation.script.lz"
+	.incbin "games/common/src/map/map_170/animation.script.lz"
 	.balign 4, 0
 .LField_Map170_BLEND:
-	.incbin "map/map_020/blend.script.lz"
+	.incbin "games/tbs/src/map/map_020/blend.script.lz"
 	.balign 4, 0
 .LField_Map170_MARKERS:
-	.incbin "map/map_000/markers.table"
+	.incbin "games/tbs/src/map/map_000/markers.table"
 	.balign 4, 0
 	.global Tileset_Set67Palette
 Tileset_Set67Palette:
-	.incbin "graphics/tileset/set_67/palette.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/set_67/palette.gbapal.lz"
 	.global Tileset_Set67TilesA
 Tileset_Set67TilesA:
-	.incbin "graphics/tileset/set_67/tiles_a.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_67/tiles_a.4bpp.mtf"
 	.byte 0x4e, 0x14	@ PACKER: left in the buffer by Tileset_Set66TilesC+0x1856
 	.global Tileset_Set67TilesB
 Tileset_Set67TilesB:
-	.incbin "graphics/tileset/set_67/tiles_b.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_67/tiles_b.4bpp.mtf"
 	.byte 0x58, 0xfe, 0x8a	@ PACKER: left in the buffer by Tileset_Set67TilesA+0xc6d
 	.global Tileset_Set67TilesC
 Tileset_Set67TilesC:
-	.incbin "graphics/tileset/set_67/tiles_c.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_67/tiles_c.4bpp.mtf"
 	.byte 0x0f, 0x7c, 0xfe	@ PACKER: left in the buffer by Tileset_Set67TilesB+0x2a5
 	.global Tileset_Set67TilesD
 Tileset_Set67TilesD:
-	.incbin "graphics/tileset/set_67/tiles_d.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_67/tiles_d.4bpp.mtf"
 	.byte 0xc4, 0x02	@ PACKER: left in the buffer by Tileset_Set67TilesA+0xe82

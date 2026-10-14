@@ -1,4 +1,4 @@
 	.section .rodata
 	.global Monster_YoungSwordsmanSprites
 Monster_YoungSwordsmanSprites:
-	.incbin "graphics/monster/young_swordsman.frames.lz"
+	.incbin "games/tla/src/graphics/monster/young_swordsman.frames.lz"

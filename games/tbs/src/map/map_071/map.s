@@ -13,14 +13,14 @@ Field_Map071:
 	map_block Field_Map071
 	map_block Field_Map071, .LField_Map071_MARKERS
 .LField_Map071_METATILES:
-	.incbin "map/map_071/metatiles.delta0.lz"
+	.incbin "games/tbs/src/map/map_071/metatiles.delta0.lz"
 	.balign 4, 0
 .LField_Map071_SHAPES:
-	.incbin "map/map_042/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_042/shapes.table.lz"
 	.balign 4, 0
 .LField_Map071_GRID:
-	.incbin "map/map_071/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_071/grid.parts.lz"
 	.balign 4, 0
 .LField_Map071_MARKERS:
-	.incbin "map/map_071/markers.table"
+	.incbin "games/tbs/src/map/map_071/markers.table"
 	.balign 4, 0

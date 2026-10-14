@@ -13,39 +13,39 @@ Field_Map052:
 	map_block Field_Map052, .LField_Map052_BLEND
 	map_block Field_Map052, .LField_Map052_MARKERS
 .LField_Map052_METATILES:
-	.incbin "map/map_052/metatiles.delta1.lz"
+	.incbin "games/tbs/src/map/map_052/metatiles.delta1.lz"
 	.balign 4, 0
 .LField_Map052_SHAPES:
-	.incbin "map/map_052/shapes.table.lz"
+	.incbin "games/tbs/src/map/map_052/shapes.table.lz"
 	.balign 4, 0
 .LField_Map052_GRID:
-	.incbin "map/map_052/grid.parts.lz"
+	.incbin "games/tbs/src/map/map_052/grid.parts.lz"
 	.balign 4, 0
 .LField_Map052_ANIMATION:
-	.incbin "common/map/map_052/animation.script.lz"
+	.incbin "games/common/src/map/map_052/animation.script.lz"
 	.balign 4, 0
 .LField_Map052_BLEND:
-	.incbin "common/map/map_018/blend.script.lz"
+	.incbin "games/common/src/map/map_018/blend.script.lz"
 	.balign 4, 0
 .LField_Map052_MARKERS:
-	.incbin "map/map_052/markers.table"
+	.incbin "games/tbs/src/map/map_052/markers.table"
 	.balign 4, 0
 	.global Tileset_Set42Palette
 Tileset_Set42Palette:
-	.incbin "graphics/tileset/set_42/palette.gbapal.lz"
+	.incbin "games/tbs/src/graphics/tileset/set_42/palette.gbapal.lz"
 	.byte 0x1f	@ PACKER: left in the buffer by Field_Map052+0x1c7
 	.global Tileset_Set42TilesA
 Tileset_Set42TilesA:
-	.incbin "graphics/tileset/set_42/tiles_a.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_42/tiles_a.4bpp.mtf"
 	.byte 0x47, 0x90, 0x0e	@ PACKER: left in the buffer by Tileset_Set40TilesA+0x2901
 	.global Tileset_Set42TilesB
 Tileset_Set42TilesB:
-	.incbin "graphics/tileset/set_42/tiles_b.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_42/tiles_b.4bpp.mtf"
 	.global Tileset_Set42TilesC
 Tileset_Set42TilesC:
-	.incbin "graphics/tileset/set_42/tiles_c.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_42/tiles_c.4bpp.mtf"
 	.byte 0xc3, 0x73, 0x89	@ PACKER: left in the buffer by Tileset_Set42TilesB+0x1c59
 	.global Tileset_Set42TilesD
 Tileset_Set42TilesD:
-	.incbin "graphics/tileset/set_42/tiles_d.4bpp.mtf"
+	.incbin "games/tbs/src/graphics/tileset/set_42/tiles_d.4bpp.mtf"
 	.byte 0xc4, 0x83	@ PACKER: left in the buffer by Tileset_Set42TilesC+0x156e

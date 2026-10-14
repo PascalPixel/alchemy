@@ -1,5 +1,5 @@
 	.section .rodata
 	.global BattleFx_ShurikenSheet
 BattleFx_ShurikenSheet:
-	.incbin "graphics/battle_fx/shuriken.gbapal"
-	.incbin "graphics/battle_fx/shuriken.bitmap.lz"
+	.incbin "games/tla/src/graphics/battle_fx/shuriken.gbapal"
+	.incbin "games/tla/src/graphics/battle_fx/shuriken.bitmap.lz"

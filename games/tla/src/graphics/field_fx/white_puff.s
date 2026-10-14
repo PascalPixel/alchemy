@@ -1,4 +1,4 @@
 	.section .rodata
 	.global FieldFx_WhitePuff
 FieldFx_WhitePuff:
-	.incbin "graphics/field_fx/white_puff.8bpp.lz"
+	.incbin "games/tla/src/graphics/field_fx/white_puff.8bpp.lz"

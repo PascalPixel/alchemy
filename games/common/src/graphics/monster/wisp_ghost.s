@@ -2,7 +2,7 @@
 	.section .rodata
 	.global Monster_WispGhostSprites
 Monster_WispGhostSprites:
-	.incbin "graphics/monster/wisp_ghost.frames.lz"
+	.incbin "games/common/src/graphics/monster/wisp_ghost.frames.lz"
 	.ifeq GAME_TLA
 	.byte 0x3e, 0xca	@ PACKER: left in the buffer by Monster_OgreSprites+0xe46
 	.endif

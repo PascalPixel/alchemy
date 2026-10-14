@@ -157,7 +157,7 @@ Menu_BarPatternRows:
 	.4byte 0x05055050, 0x05050505
 	.global gRomShiftedTilePair
 gRomShiftedTilePair:
-	.incbin "common/graphics/window/shiftpr.4bpp"
+	.incbin "games/common/src/graphics/window/shiftpr.4bpp"
 	.global Graphics_ExpandNibbleTable
 Graphics_ExpandNibbleTable:
 	.2byte 0, 10, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
@@ -178,7 +178,7 @@ Link_TimeLabelString:
 	.endif
 	.global DjinnMenu_BlinkTile
 DjinnMenu_BlinkTile:
-	.incbin "common/menu/djinn/blink.4bpp"
+	.incbin "games/common/src/menu/djinn/blink.4bpp"
 @ 項目, 列, 行, 強調列, 強調行, 強調幅
 	.global OwnerStatus_StatCursors
 OwnerStatus_StatCursors:

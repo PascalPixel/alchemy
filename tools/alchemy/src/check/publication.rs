@@ -3330,7 +3330,7 @@ mod tests {
     #[test]
     fn a_games_overlay_source_may_incbin_only_its_built_overlay_streams() {
         let source = "games/tbs/src/system/overlay/overlays.s";
-        let overlay = b"Resource_Overlay36F:\n\t.incbin \"overlays/resource_36f.lz\"\n";
+        let overlay = b"Fixture_StreamA:\n\t.incbin \"overlays/resource_36f.lz\"\n";
         assert!(!super::incbin(source, overlay));
         assert!(!super::incbin("games/tla/src/system/overlay/overlays.s", overlay));
         for path in [

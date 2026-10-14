@@ -2716,7 +2716,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 					case 19:
 						no = decode(&st) - 1;
 						tmp = UiRender_LookupNamedValue(3, clear);
-						UiText_DecodeMessage(tmp + (s32)&MsgClassName, name, 24);
+						UiText_DecodeMessage(tmp + MsgClassName, name, 24);
 						pos = UiText_AppendArticleName(0, name, pos, entry, no, plural, &suffix);
 						break;
 					case 20:
@@ -2735,16 +2735,16 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 #endif
 							UiText_DecodeMessage(tmp + (s32)MsgItemPluralName, name, 24);
 						else
-							UiText_DecodeMessage(tmp + (s32)&MsgItemName, name, 24);
+							UiText_DecodeMessage(tmp + MsgItemName, name, 24);
 #else
 						UiText_DecodeMessage(
-							(tmp & RENDER_ENTRY_MASK) + (s32)&MsgItemName, name, 24);
+							(tmp & RENDER_ENTRY_MASK) + MsgItemName, name, 24);
 #endif
 						pos = UiText_AppendArticleName(0, name, pos, entry, no, plural, &suffix);
 						break;
 					case 21:
 						tmp = UiRender_LookupNamedValue(4, clear);
-						UiText_DecodeMessage(tmp + (s32)&MsgAbilityName, name, 24);
+						UiText_DecodeMessage(tmp + MsgAbilityName, name, 24);
 						p = name;
 						next = pos;
 						while (*p != 0)
@@ -2758,7 +2758,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 					case 23:
 						UiText_DecodeMessage(
 							Scene_GetAreaNameIndexFar(UiRender_LookupNamedValue(6, clear), 1)
-								+ (s32)&MsgDebugEntryName,
+								+ MsgDebugEntryName,
 							name, 24);
 						p = name;
 						next = pos;
@@ -3186,23 +3186,23 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 						break;
 					case 19:
 						tmp = UiRender_LookupNamedValue(3, clear);
-						UiText_DecodeMessage(tmp + (s32)&MsgClassName, name, 24);
+						UiText_DecodeMessage(tmp + MsgClassName, name, 24);
 						pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
 						break;
 					case 20:
 						tmp = UiRender_LookupNamedValue(2, clear);
-						UiText_DecodeMessage((tmp & 511) + (s32)&MsgItemName, name, 24);
+						UiText_DecodeMessage((tmp & 511) + MsgItemName, name, 24);
 						pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
 						break;
 					case 21:
 						tmp = UiRender_LookupNamedValue(4, clear);
-						UiText_DecodeMessage(tmp + (s32)&MsgAbilityName, name, 24);
+						UiText_DecodeMessage(tmp + MsgAbilityName, name, 24);
 						pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
 						break;
 					case 23:
 						UiText_DecodeMessage(
 							Scene_GetAreaNameIndexFar(UiRender_LookupNamedValue(6, clear), 1)
-								+ (s32)&MsgDebugEntryName,
+								+ MsgDebugEntryName,
 							name, 24);
 						pos = UiText_AppendArticleName(mode, name, pos, entry, 0, 0, 0);
 						break;
@@ -3224,7 +3224,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 						if (work->menu_state != 0
 							&& (actor->class_id == 122 || actor->class_id == 125))
 						{
-							message = (s32)&MsgMysteryPersonName;
+							message = MsgMysteryPersonName;
 							if (actor->class_id == 125)
 								message++;
 							UiText_DecodeMessage(message, name, 10);

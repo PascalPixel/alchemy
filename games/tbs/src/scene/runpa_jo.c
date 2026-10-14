@@ -1062,15 +1062,15 @@ static void RunActorScriptedSequenceB(s32 handle)
 
 static void RunActorScriptedSequenceC(s32 actor_id)
 {
-	u8 *t = MsgRunpaGuardWhosThat;
+	s32 t = MsgRunpaGuardWhosThat;
 
-	MES_SET((s32)t);
+	MES_SET(t);
 	MES_PUT(actor_id, 0);
 	Engine_ActorRunRepeatedMotion(actor_id, 1);
-	MES_SET((s32)(t + 1));
+	MES_SET(t + 1);
 	MES_PUT(actor_id, 0);
 	Engine_ActorSetAnimationAndWait(actor_id, 4);
-	MES_SET((s32)(t + 2));
+	MES_SET(t + 2);
 	MES_PUT(actor_id, 0);
 }
 

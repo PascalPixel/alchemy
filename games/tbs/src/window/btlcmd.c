@@ -3847,7 +3847,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
 		if (work->previous != work->selection)
 		{
 			RenderOutput_PrepareForRedraw(work->window);
-			UiText_DrawCharacterAtOffset(work->entries[work->selection].kind + (s32)&MsgCommandName,
+			UiText_DrawCharacterAtOffset(work->entries[work->selection].kind + MsgCommandName,
 				(struct RenderInput *)work->window, 0, 0);
 			work->previous = work->selection;
 			UiText_DrawCharacter(work, work->selection, work->kinds[work->selection]);
@@ -3898,10 +3898,10 @@ s32 Ui_RunSelectionScreen(s32 mode)
 							struct UiWindow *message;
 							if (kind == 15)
 								message = UiText_ShowMessageAndWaitComplete(
-									(s32)&MsgDjinnTutorialUnleashCommand, 15, 8);
+									MsgDjinnTutorialUnleashCommand, 15, 8);
 							else if (kind == 16)
 								message = UiText_ShowMessageAndWaitComplete(
-									(s32)&MsgDjinnTutorialSummon, 15, 8);
+									MsgDjinnTutorialSummon, 15, 8);
 							BattlePresentation_WaitForPromptAtFar(102, 155);
 							UiWork_Finalize(message, 1);
 							runtime->auto_enabled++;
@@ -6055,9 +6055,9 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 				s = SummonDefinition_Get(ordered[page + row]);
 #if EDITION_INTERNATIONAL
 				UiText_CopyMessageString(
-					s->name_message_id + (s32)&MsgAbilityDescription, text, 52);
+					s->name_message_id + MsgAbilityDescription, text, 52);
 #else
-				UiText_DecodeMessage(s->name_message_id + (s32)&MsgAbilityDescription, text, 32);
+				UiText_DecodeMessage(s->name_message_id + MsgAbilityDescription, text, 32);
 #endif
 				UiText_RenderWideStringAtOffset(text, (struct UiWindow *)description, 0, 4);
 				drawn_row = row;
@@ -6105,7 +6105,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 						if (!affordable)
 							UiWork_SetParamNibble(2); // 呼べない召喚は色 2
 						UiText_DrawCharacterAtOffset(
-							SummonDefinition_Get(id)->name_message_id + (s32)&MsgAbilityName,
+							SummonDefinition_Get(id)->name_message_id + MsgAbilityName,
 							(struct RenderInput *)window, 16, index * 16);
 						for (element = 0; element <= 3; element++)
 						{

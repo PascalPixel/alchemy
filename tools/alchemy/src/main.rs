@@ -6,6 +6,7 @@ mod adopt_into;
 mod assembly {
     pub mod addresses;
 }
+mod boot;
 mod bootstrap;
 mod build;
 mod build_rom;
@@ -93,6 +94,8 @@ Check the whole build
   dead          what no edition links, includes or selects: unlinked files,
                 never-selected #if arms, unused header declarations
   progress      DONE in every edition from the verified linker maps
+  boot          boot each ☀️ edition, matching and modern, in mGBA to the file
+                menu (CI and make boot-tbs; never make verify or make land)
 
 Camelotize
   worst         maintained C ranked by how mechanical it reads
@@ -124,6 +127,7 @@ fn main() -> ExitCode {
     };
     let rest = &arguments[1..];
     match command {
+        "boot" => result(boot::run(rest)),
         "bootstrap" => result(bootstrap::run(rest)),
         "build" => build::entry(rest),
         "gbafix" => result(gbafix::run(rest)),

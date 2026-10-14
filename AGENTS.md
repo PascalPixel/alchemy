@@ -760,6 +760,7 @@ make test
 make verify            # every gate, the modern build included: it needs Homebrew's arm-none-eabi-gcc (MODERN_CC)
 make land              # on staging, before committing a landing
 make modern            # the six ☀️ editions with a current GCC (MODERN_CC): no match, no errors
+make boot-tbs          # after make modern: each ☀️ edition, matching and modern, booted in mGBA to the file menu; CI runs it, make land never does
 ```
 
 The `alchemy` binary is `tools/out/cargo-target/release/alchemy`; it acts on

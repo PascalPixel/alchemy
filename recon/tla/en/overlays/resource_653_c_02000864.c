@@ -21,7 +21,6 @@ void Func_02000864(struct ObjectRuntime *object)
     object->unknown_4c = vz - vz / 16;
     object->scale_x += object->speed_limit;
     object->scale_y += object->acceleration;
-    asm("");
     ((struct FieldSprite *)object->animation)->rotation += object->action;
     if (leader->y == 0) {
         if (Func_02000824(object, leader)) {

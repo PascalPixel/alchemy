@@ -17,7 +17,6 @@
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
 #include "unit/window/window.h"
-#include "unit/window/config.h"
 #include "unit/window/output.h"
 #include "unit/window/save.h"
 #include "unit/runtime/runtime.h"

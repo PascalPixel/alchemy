@@ -1,6 +1,4 @@
 #include "unit/window/window.h"
-#include "unit/window/config.h"
-#include "unit/window/wintile.h"
 #include "unit/window/output.h"
 #include "unit/window/ptystat.h"
 #include "unit/window/save.h"

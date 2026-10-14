@@ -8,7 +8,6 @@
 #include "unit/field/field.h"
 #include "unit/game/game.h"
 #include "unit/window/window.h"
-#include "unit/window/wintile.h"
 #include "unit/window/output.h"
 #include "unit/window/save.h"
 #include "unit/runtime/runtime.h"

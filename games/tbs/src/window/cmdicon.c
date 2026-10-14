@@ -1,7 +1,5 @@
 #include "unit/window/scales.h"
 #include "unit/window/window.h"
-#include "unit/window/select.h"
-#include "unit/window/wintile.h"
 #include "unit/window/output.h"
 #include "unit/window/save.h"
 #include "unit/window/btlcmd.h"

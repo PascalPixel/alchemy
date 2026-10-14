@@ -2,7 +2,6 @@
 #define ALCHEMY_WORKSPACE_OPTIONS_H
 
 #include "unit/window/window.h"
-#include "unit/window/config.h"
 #include "unit/window/output.h"
 #include "unit/window/save.h"
 #include "types.h"

@@ -1,4 +1,3 @@
-/* Draft, differ 4 of 21: the native sign-extends the s16 argument after the first call (lsls r5 right after bl); with an s16 parameter this form starts the extension before the call, and with an s32 parameter narrowed later the two extensions fold into one (19 instructions). */
 #include "types.h"
 #include "party_state.h"
 
@@ -10,8 +9,14 @@ s32 Func_02003bc4(void);
 
 void Func_02000c08(s16 value)
 {
+    struct PartyState *party;
+
     Func_02003bac(151, 1);
-    Func_02003bb4(gPartyState.current_owner, value);
+    party = &gPartyState;
+    /* FAKEMATCH: a one-pass block holds the argument's sign extension until after the first call (one reordered row; alchemy permute). */
+    do {
+        Func_02003bb4(party->current_owner, value);
+    } while (0);
     Field_DispatchTypeHandler(1);
     Func_02003bbc();
     Func_02003bc4();

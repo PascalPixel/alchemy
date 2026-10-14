@@ -1167,33 +1167,6 @@ Func_02000a48:
 	.4byte Data_02003de4
 .L_02008c04:
 	.4byte Data_02003de8
-	.section .text.x02008c08,"ax",%progbits
-	.global Func_02000c08
-	.thumb_func
-Func_02000c08:
-	push {r5, lr}
-	adds r5, r0, #0
-	movs r1, #1
-	movs r0, #151
-	bl Func_02003bac
-	lsls r5, r5, #16
-	ldr r3, .L_02008c3c
-	asrs r5, r5, #16
-	movs r2, #133
-	lsls r2, r2, #2
-	lsls r5, r5, #16
-	adds r3, r3, r2
-	lsrs r5, r5, #16
-	ldr r0, [r3]
-	adds r1, r5, #0
-	bl Func_02003bb4
-	movs r0, #1
-	bl Field_DispatchTypeHandler
-	bl Func_02003bbc
-	bl Func_02003bc4
-	pop {r5, pc}
-.L_02008c3c:
-	.4byte gPartyState
 	.section .text.x02008c40,"ax",%progbits
 	.global Func_02000c40
 	.thumb_func

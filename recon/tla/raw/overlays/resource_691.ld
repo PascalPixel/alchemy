@@ -26,7 +26,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_691/exits.o"(.text)
         "*/resource_691_overlay.o"(.text.x02008940)
         "*/resource_691_overlay.o"(.text.x02008a48)
-        "*/resource_691_overlay.o"(.text.x02008c08)
+        "*/games/tla/src/field/overlay_691/s0c08.o"(.text)
         "*/resource_691_overlay.o"(.text.x02008c40)
         "*/resource_691_overlay.o"(.text.x02008d40)
         "*/resource_691_overlay.o"(.text.x02008dc0)

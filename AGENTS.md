@@ -310,7 +310,12 @@ or functions is exactly this cheating.
   IWRAM call layer (one inline per resident routine in `iwram_call.h`,
   calling its checked fixed entry): 360 call sites match through it, and
   five sites in two functions keep a tagged direct call (2026-10-11,
-  decided under Pascal's delegation). So are statement macros written
+  decided under Pascal's delegation). So is the ☀️ engine call layer
+  (`engcall.h`, which `field_service.h` includes: one typed inline for
+  each of the thirteen main-image routines it names, which the scenes and
+  menus import): every overlay call of those routines goes through it,
+  133 call sites, and as direct calls 18 functions of the English build
+  differ (Pascal, 2026-10-13). So are statement macros written
   `do { ... } while (0)`, C's idiom for a macro used as one statement,
   where every use matches through that shape: `Io_Write16` (106 sites),
   `Battle_SetStart` (34), `UiRender_MarkRow` (10) and `MenuCell_GetCursor`

@@ -177,16 +177,6 @@ main	rom_main_07	games/tbs/src/battle/advarrow
 main	rom_main_07	games/tbs/src/battle/btlvars
 main	rom_main_08	games/tbs/src/system/far_call/EFFECT
 main	rom_main_08	games/tbs/src/effect/effect	.text
-main	rom_main_08	games/tbs/src/effect/fxdirect	.text
-main	rom_main_08	games/tbs/src/effect/twopic	.text
-main	rom_main_08	games/tbs/src/effect/canvas	.text
-main	rom_main_08	games/tbs/src/effect/strike	.text
-main	rom_main_08	games/tbs/src/effect/dispatch	.text
-main	rom_main_08	games/tbs/src/effect/scene	.text
-main	rom_main_08	games/tbs/src/effect/burst	.text
-main	rom_main_08	games/tbs/src/effect/step	.text
-main	rom_main_08	games/tbs/src/effect/djinnfx	.text
-main	rom_main_08	games/tbs/src/effect/swirl	.text
 main	rom_main_08	games/tbs/src/effect/fxscales	.rodata
 main	rom_main_08	games/tbs/src/effect/sentou_kouka_gousei
 main	rom_main_08	games/tbs/src/effect/koukatbl	.rodata

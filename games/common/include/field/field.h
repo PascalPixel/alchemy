@@ -26,7 +26,7 @@ extern s32 Iwram_Data2;
 #if GAME_TLA
 extern u8 Map_TileDissolveOrder[];
 #endif
-extern const u32 ObjectDispatch_DefaultScript[];
+extern const s32 ObjectDispatch_DefaultScript[];
 extern u8		 Render_DecodeFrameCodeSize[];
 extern u8		 Runtime_ByteRemapTable[];
 #if GAME_TLA

@@ -1050,7 +1050,7 @@ void RamakanSabaku_ClaimSandEffectVram(void)
 	u16		   *slotp;
 	struct Half zero;
 
-	Resource_DecodeType01(RamakanSabaku_SandEffectTiles, RamakanSabaku_SandTileBuffer);
+	FieldResource_DecodeType01(RamakanSabaku_SandEffectTiles, RamakanSabaku_SandTileBuffer);
 	slotp = &RamakanSabaku_SandVramSlot;
 	slot = Resource_FindFreeEntry();
 	*slotp = slot;

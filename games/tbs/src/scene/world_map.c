@@ -2370,8 +2370,8 @@ static void Scene_RunScene371SequenceA(s32 palette)
 	Engine_TaskWait(1);
 	Engine_GameFlagClear(0x109);
 	Map_ResumeAnimation();
-	Resource_DecodeType01(gWorldMapPackedTiles, buffer);
-	Resource_DecodeType01(gWorldMapPackedFrames, buffer + 0x1000);
+	FieldResource_DecodeType01(gWorldMapPackedTiles, buffer);
+	FieldResource_DecodeType01(gWorldMapPackedFrames, buffer + 0x1000);
 	IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(gWorldMapPalettes + palette * 32), 0x80000010);
 	IO_WRITE_QUEUE_PUSH(0x06001000, (u32)buffer, 0x84000400);
 	Engine_TaskAddCallback(SceneEffect_RestoreBlendRegisters, 0xc80);

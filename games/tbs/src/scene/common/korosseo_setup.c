@@ -35,7 +35,7 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(
 	*(u16 *)(desc + 218) = 0;
 	*(u16 *)(desc + 220) = 0;
 
-	Resource_DecodeType01(Korosseo_GaugeGraphics, handle);
+	FieldResource_DecodeType01(Korosseo_GaugeGraphics, handle);
 
 	pal = Resource_FindFreeEntry();
 	*(u16 *)(desc + 216) = pal;
@@ -51,7 +51,7 @@ void SceneState_InitControlWhenFlag109Clear(s32 resource)
 	u8					*work = gKorosseoWork;
 	struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
 
-	Resource_DecodeType01(Resource_GetTableEntry(resource), work + 240);
+	FieldResource_DecodeType01(Resource_GetTableEntry(resource), work + 240);
 	if (Engine_GameFlagIsSet(0x109) == 0)
 	{
 		recorder->mode = 1;

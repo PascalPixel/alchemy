@@ -47,6 +47,7 @@
 #include "dma.h"
 #include "ram_buffer.h"
 #include "field_event.h"
+#include "engcall.h"
 #include "resource_ids.h"
 #include "io_write_queue.h"
 #include "io_reg.h"
@@ -116,7 +117,7 @@ static void Clear_LoadBackground(void)
 	res = Engine_ResourceGetTableEntry(id);
 	Dma_Set(res, (void *)0x05000000, 0x84000070, REG_DMA3);
 	res += 0x1c0;
-	Resource_Decode(res, Ram_MapCellBuffer);
+	FieldResource_DecodeType01(res, Ram_MapCellBuffer);
 	Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, REG_DMA3);
 	map = (u16 *)0x06003000;
 	tile = 0x1a0;
@@ -902,7 +903,7 @@ static void SaveMenu_FillTileGrid(struct RenderInput *window, s32 value)
 
 	shadow = ((struct UiRenderWork *)gWindowWork[0])->tilemap;
 	saved = (s32)Runtime_BumpAllocateAlternatePool(0x300);
-	Resource_DecodeType01(value, saved);
+	FieldResource_DecodeType01(value, saved);
 	offset = (window->y * 32 + window->x) * 2;
 	vram = (u16 *)(0x06002000 + offset);
 	shadow = (u16 *)((u8 *)shadow + offset);

@@ -1663,7 +1663,7 @@ void FieldScene_BuildDescriptorAndInstallTask(
 	*(u16 *)(descriptor + 218) = 0;
 	*(u16 *)(descriptor + 220) = 0;
 
-	Resource_DecodeType01(Korosseo_GaugeGraphics, handle);
+	FieldResource_DecodeType01(Korosseo_GaugeGraphics, handle);
 
 	extent = Resource_FindFreeEntry();
 	*(u16 *)(descriptor + 216) = extent;
@@ -1679,7 +1679,7 @@ static void SceneState_InitControlRecordAndStartTask(s32 resource)
 	u8					*state = *(u8 **)((u8 *)gWorkSlot + WORK_SLOT_STAGE * 4);
 	struct StageControl *m = (struct StageControl *)gSceneState;
 
-	Resource_DecodeType01(Resource_GetTableEntry(resource), state + 240);
+	FieldResource_DecodeType01(Resource_GetTableEntry(resource), state + 240);
 	if (Engine_GameFlagIsSet(0x109) == 0)
 	{
 		m->status = 1;

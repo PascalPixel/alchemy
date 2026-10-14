@@ -10,6 +10,7 @@
 #include "types.h"
 #include "unit/object/evactor.h"
 #include "unit/object/evcamera.h"
+#include "unit/runtime/runtime.h"
 #include "unit/runtime/sched.h"
 #include "unit/window/window.h"
 #include "unit/window/select.h"
@@ -77,6 +78,11 @@ static inline s32 FieldParty_ListActiveOwners(s16 *owners)
 static inline s32 FieldOwner_AdjustFirstValue(s32 owner, s32 delta)
 {
 	return Owner_AdjustFirstValue(owner, delta);
+}
+
+static inline s32 FieldResource_DecodeType01(const void *source, void *destination)
+{
+	return Resource_DecodeType01(source, destination);
 }
 
 static inline void DisplayScroll_StartHBlankDma(

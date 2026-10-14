@@ -177,13 +177,13 @@ static void Title_LoadSprites(s32 unused)
 		gTitleVramBlock = Resource_FindFreeEntry();
 	Dma_Set(res, (void *)0x05000200, 0x84000070, REG_DMA3);
 	res += 0x1c0;
-	Resource_DecodeType01(res, buffer);
+	FieldResource_DecodeType01(res, buffer);
 	Vram_Load(gTitleVramBlock, 0x1e00, buffer + 0x7800);
 #else
 	buffer = Runtime_BumpAllocateAlternatePool(0x520);
 	if (gTitleVramBlock == -1)
 		gTitleVramBlock = Resource_FindFreeEntry();
-	Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), buffer);
+	FieldResource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), buffer);
 	Dma_Set(buffer, (void *)0x050003e0, 0x84000008, REG_DMA3);
 	Vram_Load(gTitleVramBlock, 0x500, buffer + 32);
 #endif
@@ -301,7 +301,7 @@ static void Title_LoadBackground(void)
 	res = Resource_GetTableEntry(id);
 	Dma_Set(res, (void *)0x05000000, 0x84000070, REG_DMA3);
 	res += 0x1c0;
-	Resource_Decode(res, Ram_MapCellBuffer);
+	FieldResource_DecodeType01(res, Ram_MapCellBuffer);
 	Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, REG_DMA3);
 	map = (u16 *)0x06003000;
 	tile = 0x1a0;

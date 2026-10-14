@@ -1,9 +1,13 @@
 #ifndef ALCHEMY_ENGCALL_H
 #define ALCHEMY_ENGCALL_H
 
-// Engine call layer: one typed inline for each main-image routine the overlays import.
+// Engine call layer: one typed inline for each of the thirteen main-image routines below that
+// the scene, menu and debug overlays import; every overlay call of them goes through it.
+// Main-image code calls them as ordinary functions; only the shared
+// scene/common/scroll_initialize_hblank_dma.c, which object/scenefx.c includes as babi_fune.c
+// does, reaches the layer there.
 // 本体の関数を呼ぶ層: オーバーレイは本体のルーチンをこのインライン関数を
-// 通して呼ぶ (呼び出しはオーバーレイの import スタブへ行く)。
+// 通して呼ぶ (オーバーレイでは呼び出しは import スタブへ行く)。
 // 引数はインラインの仮引数を通るので、呼び出しごとに定数を作り直す。
 // field_service.h がこれを取り込む; シーンの命令層を使わない部屋はこれだけを使う。
 

@@ -2,15 +2,8 @@
 #include "unit/scene/goma_suiro.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
-#include "unit/field/mapcell.h"
+#include "unit/field/field.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "configured_effect_spawn.h"
@@ -35,8 +28,8 @@
 static void SceneEffect_RunActorBurst(s32 no);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
-#include "common/effect_spawn.c"
+#include "common/effect_create.h"
+#include "common/effect_spawn.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -130,7 +123,7 @@ static void SceneEffect_RotateRecord(RotatingEffectWork *work)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_waitdown.c"
+#include "common/object_waitdown.h"
 
 union SceneActor
 {

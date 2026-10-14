@@ -2,7 +2,6 @@
 #define ALCHEMY_MAP_H
 
 #include "unit/field/field.h"
-#include "unit/field/mapcell.h"
 #include "types.h"
 #include "layout_guard.h"
 

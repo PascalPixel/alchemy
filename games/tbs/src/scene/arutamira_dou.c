@@ -3,26 +3,10 @@
 #include "unit/import.h"
 #include "unit/scene/arutamira_dou.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/evtable.h"
-#include "unit/object/marker.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/disptran.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
-#include "unit/object/fxslot.h"
 #include "unit/field/field.h"
-#include "unit/field/fldobj.h"
-#include "unit/field/script.h"
-#include "unit/field/player.h"
-#include "unit/field/mapcell.h"
 #include "unit/shop/shop.h"
-#include "unit/shop/seido.h"
-#include "unit/runtime/math.h"
+#include "unit/runtime/runtime.h"
 #include "iowrite.h"
 
 #include "battle.h"
@@ -87,7 +71,7 @@ struct RockPuzzle
 u16 gArutamiraActorWheelWork[6] __attribute__((nocommon, aligned(4)));
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_staged_actor.c"
+#include "common/object_staged_actor.h"
 
 static void EV13_TALK(void)
 {

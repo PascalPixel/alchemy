@@ -662,7 +662,7 @@ fn split(arguments: &[String]) -> Result<(), String> {
     crate::compiler::routing::prefer_installed_binutils();
     let root = crate::compiler::routing::root();
     let exists = |path: &str| root.join(path).exists();
-    let header = unit_header(&file).filter(|_| root.join(&file).is_file()).ok_or_else(|| format!("{file}: not a C file under {SOURCE}"))?;
+    let header = unit_header(&file).filter(|_| file.ends_with(".c") && root.join(&file).is_file()).ok_or_else(|| format!("{file}: not a C file under {SOURCE}"))?;
     let own = spelling(&header).ok_or("the unit header has no spelling")?;
     let folder = file.rsplit_once('/').map_or("", |(folder, _)| folder);
     let new = match name {

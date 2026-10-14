@@ -2,9 +2,7 @@
 
 #include "unit/scene/goma_ike.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
+#include "unit/object/psyfx.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

@@ -324,8 +324,8 @@ or functions is exactly this cheating.
   `FieldScheduler_AddOrUpdateCallback`, which forward through it. As direct
   calls, 22 functions of the English build differ, 19 distinct (shared
   included code compiles two of them into several scenes).
-  `scene/common/scroll_initialize_hblank_dma.c`, which `babi_fune.c` and the
-  main image's `object/scenefx.c` both include, reaches it from both
+  `scene/common/scroll_initialize_hblank_dma.h`, which `babi_fune.c` and the
+  main image's `object/psyfx.c` both include, reaches it from both
   images; other main-image code calls these routines as ordinary
   functions, outside the layer, and `field/camera.c`'s identical decode
   keeps `call.h`'s tagged `Value2`. So are statement macros written
@@ -434,7 +434,7 @@ or functions is exactly this cheating.
     comments, organization and byte identity, preserving necessary casts,
     hardware `volatile`, `goto`, work arrays and S2 devices with their reasons.
   - The showcase is `BtlTgtExec` in
-    `games/tbs/src/battle/tgtexec.c`.
+    `games/tbs/src/battle/battle.c`.
 - **S4** Never throw work away: commit each adoption and attempt, and keep a
   near miss as a draft with the remaining difference in its header. One draft
   per listing, overwritten as it improves: a trial is a commit or a line in

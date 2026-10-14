@@ -4,7 +4,7 @@
 // Engine call layer: one typed inline for each of the thirteen main-image routines below that
 // the scene, menu and debug overlays import; every overlay call of them goes through it.
 // Main-image code calls them as ordinary functions; only the shared
-// scene/common/scroll_initialize_hblank_dma.c, which object/scenefx.c includes as babi_fune.c
+// scene/common/scroll_initialize_hblank_dma.h, which object/psyfx.c includes as babi_fune.c
 // does, reaches the layer there.
 // 本体の関数を呼ぶ層: オーバーレイは本体のルーチンをこのインライン関数を
 // 通して呼ぶ (オーバーレイでは呼び出しは import スタブへ行く)。
@@ -12,15 +12,10 @@
 // field_service.h がこれを取り込む; シーンの命令層を使わない部屋はこれだけを使う。
 
 #include "types.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
+#include "unit/object/psyfx.h"
 #include "unit/runtime/runtime.h"
-#include "unit/runtime/sched.h"
 #include "unit/window/window.h"
-#include "unit/window/select.h"
-#include "unit/game/flag.h"
-#include "unit/game/party.h"
-#include "unit/game/chara.h"
+#include "unit/game/game.h"
 #include "unit/import.h"
 
 struct FieldActor;

@@ -178,13 +178,30 @@ struct Layout {
 }
 
 impl Layout {
-    fn new(pieces: &[&Piece], align: u32) -> Layout {
+    /// A piece the linker placed right after the one before, with only fill
+    /// between them (fewer than `align` bytes that no other piece of the
+    /// image holds), keeps today's distance: the halfword tables of two
+    /// objects' .rodata sit two bytes apart, and one object's items follow
+    /// each other the same way. Any other piece starts at the next multiple
+    /// of `align`.
+    fn new(pieces: &[&Piece], align: u32, image: &[Piece]) -> Layout {
         let mut spans = Vec::new();
         let mut offset = 0;
+        let mut previous: Option<&Piece> = None;
         for p in pieces {
-            offset = (offset + align - 1) & !(align - 1);
+            let fill = previous.and_then(|q| {
+                let end = q.address + q.size;
+                let gap = p.address.checked_sub(end)?;
+                let held = image.iter().any(|o| o.size > 0 && o.region == p.region && o.address >= end && o.address < p.address);
+                (q.region == p.region && gap < align && !held).then_some(gap)
+            });
+            offset = match fill {
+                Some(gap) => offset + gap,
+                None => (offset + align - 1) & !(align - 1),
+            };
             spans.push((offset, p.address, p.size));
             offset += p.size;
+            previous = Some(p);
         }
         Layout { spans }
     }
@@ -272,7 +289,7 @@ pub fn compare_source(root: &Path, target: DecompTarget, loaded: &Loaded, main: 
             .iter()
             .flat_map(|o| loaded.pieces.iter().filter(move |p| p.object == *o && p.section == name && p.size > 0))
             .collect();
-        layouts.insert(name.to_string(), Layout::new(&pieces, 4));
+        layouts.insert(name.to_string(), Layout::new(&pieces, 4, &loaded.pieces));
     }
     let symbol_address = |index: object::SymbolIndex| -> Option<u32> {
         let symbol = file.symbol_by_index(index).ok()?;
@@ -528,10 +545,28 @@ mod tests {
     fn a_layout_maps_merged_offsets_to_today_s_addresses() {
         let piece = |address, size| Piece { object: String::new(), path: String::new(), section: ".rodata".into(), address, size, region: 0 };
         let (a, b) = (piece(0x100, 6), piece(0x200, 4));
-        let layout = Layout::new(&[&a, &b], 4);
+        let layout = Layout::new(&[&a, &b], 4, &[]);
         assert_eq!(layout.size(), 12);
         assert_eq!(layout.address(5), Some(0x105));
         assert_eq!(layout.address(8), Some(0x200));
         assert_eq!(layout.address(11), Some(0x203));
+    }
+
+    #[test]
+    fn a_piece_placed_right_after_the_one_before_keeps_today_s_distance() {
+        let piece = |object: &str, address, size| Piece { object: object.into(), path: String::new(), section: ".rodata".into(), address, size, region: 0 };
+        // Halfword tables of three objects, placed 0, 1 and 4 bytes apart:
+        // the first two touch, the third follows one byte of fill.
+        let (a, b, c) = (piece("a", 0x100, 6), piece("b", 0x106, 3), piece("c", 0x10a, 2));
+        let layout = Layout::new(&[&a, &b, &c], 4, &[a.clone(), b.clone(), c.clone()]);
+        assert_eq!(layout.size(), 12);
+        assert_eq!(layout.address(6), Some(0x106));
+        assert_eq!(layout.address(10), Some(0x10a));
+        // A byte another object holds is no fill: the next piece starts at a
+        // multiple of four, as before.
+        let other = piece("x", 0x109, 1);
+        let layout = Layout::new(&[&a, &b, &c], 4, &[a.clone(), b.clone(), other, c.clone()]);
+        assert_eq!(layout.size(), 14);
+        assert_eq!(layout.address(12), Some(0x10a));
     }
 }

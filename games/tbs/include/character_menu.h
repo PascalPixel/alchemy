@@ -2,15 +2,8 @@
 #define ALCHEMY_CHARACTER_MENU_H
 
 #include "unit/window/window.h"
-#include "unit/window/output.h"
-#include "unit/window/save.h"
 #include "unit/window/btlcmd.h"
-#include "unit/window/debug.h"
 #include "unit/menu/menu.h"
-#include "unit/menu/item.h"
-#include "unit/menu/psynergy.h"
-#include "unit/menu/status.h"
-#include "unit/menu/djinn.h"
 #include "types.h"
 #include "global_cells.h"
 #include "layout_guard.h"

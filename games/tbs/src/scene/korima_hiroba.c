@@ -5,14 +5,6 @@
 #include "unit/scene/common/object_orbit.h"
 #include "unit/scene/common/korima_palette.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/marker.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "battle.h"
 #include "debug.h"
@@ -46,7 +38,7 @@ typedef struct
 } Pair;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_staged_actor.c"
+#include "common/object_staged_actor.h"
 
 u8 *SceneData_GetScriptTable(void)
 {
@@ -111,8 +103,8 @@ s32 FieldScene_SetupEntryActors8To11(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_palette.c"
-#include "common/object_orbit.c"
+#include "common/korima_palette.h"
+#include "common/object_orbit.h"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

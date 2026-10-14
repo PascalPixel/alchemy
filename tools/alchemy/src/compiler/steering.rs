@@ -1,4 +1,4 @@
-use super::c_syntax::{lex, matching, scan_definitions, Tok, Token};
+use super::c_syntax::{lex, lex_branches, matching, matching_in, scan_definitions, scan_definitions_in, Tok, Token};
 use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Clone, Debug, Default)]
@@ -238,11 +238,13 @@ pub(crate) fn analyze(text: &str, source: &str) -> Result<Analysis, String> {
 /// a macro a FAKEMATCH tag explains, with the macros it uses: the tag sits
 /// above the macro's #define, so it is in no function the preprocessed
 /// text holds, and the functions that expand it are the steered ones.
+/// Read as the C preprocessor reads one edition, so a brace opened in both
+/// arms of an #if/#else does not hide the functions after it.
 pub(crate) fn macro_users(raw: &str, tagged: &BTreeSet<String>) -> BTreeMap<String, BTreeSet<String>> {
     let mut found: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
-    let Ok(tokens) = lex(raw) else { return found };
-    for (name, _, _, _, open) in scan_definitions(&tokens) {
-        let Some(close) = matching(&tokens, open) else { continue };
+    let Ok((tokens, branches)) = lex_branches(raw) else { return found };
+    for (name, _, _, _, open) in scan_definitions_in(&tokens, &branches) {
+        let Some(close) = matching_in(&tokens, open, &branches) else { continue };
         for token in &tokens[open + 1..close] {
             if let Tok::Ident(word) = &token.tok {
                 if tagged.contains(word) {
@@ -466,6 +468,35 @@ mod tests {
         let tagged = BTreeSet::from(["SET".to_string()]);
         let users = macro_users(raw, &tagged);
         assert_eq!(users.keys().collect::<Vec<_>>(), vec!["Uses"]);
+    }
+
+    #[test]
+    fn a_brace_opened_in_both_arms_hides_no_later_macro_user() {
+        // window.c: UiText_AppendArticleName opens `if (...) {` in both arms;
+        // the option menu after it still expands the tagged Dma_Fill32.
+        let raw = "\
+#define SET(v) do { g = (v); } while (0)
+u32 Article(s32 no)
+{
+#if defined(TBS_EDITION_ES)
+\tif (count == 0)
+\t{
+#else
+\tif (no == 0)
+\t{
+#endif
+\t\tSET(1);
+\t}
+\treturn 0;
+}
+void Option(void)
+{
+\tSET(2);
+}
+";
+        let tagged = BTreeSet::from(["SET".to_string()]);
+        let users = macro_users(raw, &tagged);
+        assert_eq!(users.keys().collect::<Vec<_>>(), vec!["Article", "Option"]);
     }
 
     #[test]

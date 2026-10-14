@@ -2,17 +2,9 @@
 #include "scene_ids.h"
 #include "unit/scene/biribino_kyuden.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/evtable.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
-#include "unit/field/mapview.h"
-#include "unit/runtime/math.h"
+#include "unit/field/field.h"
+#include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -54,7 +46,7 @@ struct KyudenSceneRecord
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_facing.c"
+#include "common/object_facing.h"
 
 u8 *SceneData_GetScriptTable(void)
 {

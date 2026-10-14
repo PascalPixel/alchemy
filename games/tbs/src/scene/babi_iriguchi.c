@@ -5,21 +5,8 @@
 #include "unit/scene/babi_iriguchi.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/evtable.h"
-#include "unit/object/marker.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
-#include "unit/field/fldobj.h"
-#include "unit/field/script.h"
-#include "unit/field/player.h"
-#include "unit/field/mapcell.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "mapcopy.h"
@@ -57,11 +44,11 @@ static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_staged_actor.c"
+#include "common/object_staged_actor.h"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
-#include "common/effect_spawn.c"
+#include "common/effect_create.h"
+#include "common/effect_spawn.h"
 
 static void EV08_TALK(void)
 {
@@ -69,8 +56,8 @@ static void EV08_TALK(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_waitidle.c"
-#include "common/effect_advance.c"
+#include "common/object_waitidle.h"
+#include "common/effect_advance.h"
 
 static void FieldScene_RunSupplementalSequenceOne(void)
 {

@@ -117,9 +117,11 @@ pub(crate) fn include_names(text: &str) -> Vec<String> {
 }
 
 /// The header a unit header's path names: `games/tbs/src/a/b.c` gives
-/// `games/tbs/include/unit/a/b.h`.
+/// `games/tbs/include/unit/a/b.h`, and so does `games/tbs/src/a/b.h`, the
+/// C text several units include (`crate::c_items::c_text`).
 pub(crate) fn unit_header(file: &str) -> Option<String> {
-    let stem = file.strip_prefix(SOURCE)?.strip_suffix(".c")?;
+    let stem = file.strip_prefix(SOURCE)?;
+    let stem = stem.strip_suffix(".c").or_else(|| stem.strip_suffix(".h"))?;
     Some(format!("{INCLUDE}{UNIT}{stem}.h"))
 }
 
@@ -205,7 +207,7 @@ impl Model {
                 }
             }
             for file in &seen[1..] {
-                if file.ends_with(".c") {
+                if crate::c_items::c_text(file, &model.text[file]) {
                     fragments.insert(file.clone());
                 } else {
                     headers.insert(file.clone());
@@ -233,9 +235,15 @@ impl Model {
         Ok(model)
     }
 
-    /// A unit's own C text: itself and the C files it includes.
+    /// A unit's own C text: itself and the C text it includes.
     pub(crate) fn parts<'a>(&'a self, unit: &'a str) -> impl Iterator<Item = &'a str> {
-        std::iter::once(unit).chain(self.reach[unit].iter().map(String::as_str).filter(|f| f.ends_with(".c")))
+        std::iter::once(unit).chain(self.reach[unit].iter().map(String::as_str).filter(|f| self.is_fragment(f)))
+    }
+
+    /// Whether a file a unit reaches is C text it includes, a C file or a
+    /// header that defines code, rather than a header of declarations.
+    pub(crate) fn is_fragment(&self, file: &str) -> bool {
+        file.ends_with(".c") || self.fragments.iter().any(|fragment| fragment == file)
     }
 
     /// The units that compile a file: itself, or every unit that reaches it.
@@ -300,8 +308,9 @@ impl Model {
             model.reach.insert(unit.to_string(), reach.iter().map(|file| file.to_string()).collect());
         }
         let reached: BTreeSet<&str> = units.iter().flat_map(|(_, reach)| reach.iter().copied()).collect();
-        model.fragments = reached.iter().filter(|file| file.ends_with(".c")).map(|file| file.to_string()).collect();
-        model.headers = reached.iter().filter(|file| file.ends_with(".h")).map(|file| file.to_string()).collect();
+        let c_text = |file: &&str| crate::c_items::c_text(file, model.text.get(*file).map_or("", String::as_str));
+        model.fragments = reached.iter().filter(|file| c_text(file)).map(|file| file.to_string()).collect();
+        model.headers = reached.iter().filter(|file| file.ends_with(".h") && !c_text(file)).map(|file| file.to_string()).collect();
         model
     }
 }
@@ -330,10 +339,25 @@ mod tests {
     fn paths_and_spellings() {
         assert_eq!(normalize("games/tbs/src/field/a/../common/x.c"), "games/tbs/src/field/common/x.c");
         assert_eq!(unit_header("games/tbs/src/field/a/mura.c").as_deref(), Some("games/tbs/include/unit/field/a/mura.h"));
+        assert_eq!(unit_header("games/tbs/src/scene/common/part.h").as_deref(), Some("games/tbs/include/unit/scene/common/part.h"));
         assert_eq!(unit_header("games/common/src/a.c"), None);
         assert_eq!(spelling("games/tbs/include/unit/field/a/mura.h").as_deref(), Some("unit/field/a/mura.h"));
         assert_eq!(spelling("games/common/include/battle/battle.h").as_deref(), Some("battle.h"));
         assert_eq!(spelling("games/tbs/src/field/a/cave.h"), None);
+    }
+
+    #[test]
+    fn a_header_that_defines_code_is_c_text_the_unit_includes() {
+        let files = [
+            ("games/tbs/src/scene/mura.c", "#include \"h.h\"\n#include \"common/part.h\"\n"),
+            ("games/tbs/src/scene/common/part.h", "static void Part(void)\n{\n}\n"),
+            ("games/tbs/include/h.h", "void Decl(void);\nstatic __inline__ void Help(void)\n{\n\tDecl();\n}\n"),
+        ];
+        let model = Model::of(&files, &[("games/tbs/src/scene/mura.c", &["games/tbs/include/h.h", "games/tbs/src/scene/common/part.h"])]);
+        assert_eq!(model.fragments, ["games/tbs/src/scene/common/part.h"]);
+        assert_eq!(model.headers, ["games/tbs/include/h.h"]);
+        assert_eq!(model.parts("games/tbs/src/scene/mura.c").collect::<Vec<_>>(), ["games/tbs/src/scene/mura.c", "games/tbs/src/scene/common/part.h"]);
+        assert!(model.is_fragment("games/tbs/src/scene/common/part.h") && !model.is_fragment("games/tbs/include/h.h"));
     }
 
     fn model() -> Model {

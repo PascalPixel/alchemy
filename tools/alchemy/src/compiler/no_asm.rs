@@ -293,7 +293,7 @@ pub fn find_named_source_tool_leaks(file: &str, text: &str) -> Vec<Finding> {
     static TOOL_NAMES: OnceLock<Regex> = OnceLock::new();
     let path = file.replace('\\', "/").to_ascii_lowercase();
     let is_game_source = path.starts_with("games/")
-        && path.ends_with(".c")
+        && crate::c_items::c_text(&path, text)
         && path.contains("/src/")
         && !path.contains("/unidentified/");
     if !is_game_source {

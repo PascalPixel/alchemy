@@ -4,21 +4,9 @@
 #include "unit/scene/korima_mura.h"
 #include "unit/scene/common/korima_hashi_falling_effect.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/marker.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
-#include "unit/field/fldobj.h"
-#include "unit/field/script.h"
-#include "unit/field/player.h"
-#include "unit/field/mapcell.h"
-#include "unit/runtime/math.h"
+#include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -137,7 +125,7 @@ static s32 SceneEffect_UpdateFallingObject(struct Obj *p)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_facing.c"
+#include "common/object_facing.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -1477,7 +1465,7 @@ static void FieldScene_RunPairedStepB(s32 arg0, s32 arg1, s32 arg2)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_grow.c"
+#include "common/korima_grow.h"
 
 static void SceneEffect_SpawnObject26EveryEightFrames(void)
 {
@@ -1524,7 +1512,7 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_blink.c"
+#include "common/korima_blink.h"
 
 static s32 KorimaMura_TriggerRegionScript(struct FieldActor *actor)
 {
@@ -1558,7 +1546,7 @@ static s32 KorimaMura_TriggerRegionScript(struct FieldActor *actor)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_hashi_falling_effect.c"
+#include "common/korima_hashi_falling_effect.h"
 s32 KorimaMura_PendingPose __attribute__((section(".bss")));
 s32 KorimaMura_LayoutFlag __attribute__((section(".bss")));
 s32 KorimaMura_EffectActive __attribute__((section(".bss")));

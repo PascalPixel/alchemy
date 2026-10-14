@@ -3,21 +3,9 @@
 #include "unit/scene/ramakan_sabaku.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/scenefx.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
-#include "unit/field/mapcell.h"
 #include "unit/runtime/runtime.h"
-#include "unit/runtime/oamlist.h"
-#include "unit/runtime/objvram.h"
-#include "unit/runtime/heap.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"
@@ -57,8 +45,8 @@ static void RamakanSabaku_SetSandPhase(u16 value);
 #define NULL ((void *)0)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
-#include "common/effect_spawn.c"
+#include "common/effect_create.h"
+#include "common/effect_spawn.h"
 
 static void EV13_TALK(void)
 {
@@ -66,7 +54,7 @@ static void EV13_TALK(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_waitdown.c"
+#include "common/object_waitdown.h"
 
 static s32 RamakanSabaku_EmitSandEffect(struct FieldActor *actor)
 {

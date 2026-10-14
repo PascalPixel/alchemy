@@ -3,16 +3,9 @@
 #include "unit/import.h"
 #include "unit/scene/biribino_mura.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
-#include "unit/runtime/math.h"
+#include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -52,7 +45,7 @@ struct SpawnCounter
 struct SpawnCounter gCornerSpawnCounter;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_facing.c"
+#include "common/object_facing.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -683,7 +676,7 @@ static void BiribinoMura_RestoreRaisedEntrance(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_findcell.c"
+#include "common/object_findcell.h"
 
 static void BiribinoMura_PushFacedBlock(void)
 {

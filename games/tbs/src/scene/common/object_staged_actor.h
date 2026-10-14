@@ -25,7 +25,7 @@ extern s32 StagedActor_DirectionSteps[];
 extern s32 StagedActor_FootprintBounds[];
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "object_distance.c"
+#include "object_distance.h"
 
 static struct StagedActor *StagedActor_FindAtTile(s32 *position, struct StagedActor *origin)
 {

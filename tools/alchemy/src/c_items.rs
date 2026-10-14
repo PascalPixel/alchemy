@@ -705,6 +705,40 @@ pub(crate) fn names(item: &Item) -> Vec<Name> {
     }
 }
 
+/// Whether a file is C text: a C file, or a header that defines a function
+/// other than an inline one. Such a header puts its code into each file
+/// that includes it, at the line that includes it, as a C file included
+/// there would: its functions are that unit's own, not helpers it lends.
+pub(crate) fn c_text(path: &str, text: &str) -> bool {
+    path.ends_with(".c") || (path.ends_with(".h") && flat(text).iter().any(|piece| outlined(&piece.item)))
+}
+
+/// `c_text` of a file on disk, read once per run; a file that cannot be
+/// read is no C text.
+pub(crate) fn c_text_file(path: &std::path::Path) -> bool {
+    static SEEN: std::sync::OnceLock<std::sync::Mutex<std::collections::HashMap<std::path::PathBuf, bool>>> = std::sync::OnceLock::new();
+    let name = path.to_string_lossy();
+    if !name.ends_with(".h") {
+        return name.ends_with(".c");
+    }
+    let seen = SEEN.get_or_init(Default::default);
+    if let Some(known) = seen.lock().expect("c_text cache").get(path) {
+        return *known;
+    }
+    let found = std::fs::read_to_string(path).is_ok_and(|text| c_text(&name, &text));
+    seen.lock().expect("c_text cache").insert(path.to_path_buf(), found);
+    found
+}
+
+/// Whether an item defines a function that is not inline.
+fn outlined(item: &Item) -> bool {
+    let Kind::Function { body } = item.kind else {
+        return false;
+    };
+    let head = String::from_utf8_lossy(&crate::camelotize::source::mask(&item.text[..body])).into_owned();
+    !head.split(|c: char| !(c.is_ascii_alphanumeric() || c == '_')).any(|word| matches!(word, "inline" | "__inline" | "__inline__"))
+}
+
 pub(crate) fn line_marker(item: &Item) -> Option<String> {
     if item.kind != Kind::Directive {
         return None;
@@ -773,6 +807,17 @@ mod tests {
         assert_eq!(found[6].1, "void g(void)\n{\n#if Y\n    f();\n#endif\n}");
         assert_eq!(found[6].0, Kind::Function { body: 13 });
         assert_eq!(found.len(), 7);
+    }
+
+    #[test]
+    fn c_text_is_a_c_file_or_a_header_that_defines_code() {
+        assert!(c_text("a/part.c", ""));
+        assert!(c_text("a/part.h", "#include \"types.h\"\n\nstatic void Part(s32 a)\n{\n}\n"));
+        assert!(c_text("a/part.h", "#if X\nvoid Part(void)\n{\n}\n#endif\n"));
+        // Inline helpers, declarations and data are what headers lend.
+        assert!(!c_text("a/layer.h", "static __inline__ void Help(s32 a)\n{\n\tRun(a);\n}\nstatic inline s32 Two(void) { return 2; }\n"));
+        assert!(!c_text("a/decl.h", "struct S\n{\n\ts32 x;\n};\nvoid Part(void);\nextern u8 gX[];\n#define M(x) { (x); }\n/* void Part(void) { } */\n"));
+        assert!(!c_text("a/part.s", "void Part(void)\n{\n}\n"));
     }
 
     fn named(source: &str) -> Vec<(Space, String, bool)> {

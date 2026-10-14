@@ -5,20 +5,10 @@
 #include "unit/scene/karei_machi.h"
 #include "unit/scene/common/object_orbit.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/palbuf.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evmes.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/window/window.h"
-#include "unit/window/output.h"
-#include "unit/window/save.h"
-#include "unit/runtime/sched.h"
+#include "unit/window/btlcmd.h"
+#include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -110,7 +100,7 @@ static s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_heading.c"
+#include "common/object_heading.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -1773,7 +1763,7 @@ static void FieldScene_RunSecondaryGroupSequence(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_findcell.c"
+#include "common/object_findcell.h"
 
 static void FieldScene_RunLateSequence(void)
 {
@@ -2101,7 +2091,7 @@ static void EV11_PSYNERGY(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_orbit.c"
+#include "common/object_orbit.h"
 
 // 向きごとの 1 マス先: 上位 16 ビットが x、下位 16 ビットが z
 #define FACING_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

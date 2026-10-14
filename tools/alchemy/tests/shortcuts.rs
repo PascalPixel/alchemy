@@ -26,8 +26,8 @@ const OUTPUT: &str = "out/tbs-en";
 const IMAGE: &str = "out/tbs-en/tbs-en.gba";
 const READS: &str = "out/tbs-en/reads.tsv";
 /// The showcase (S3) and the object the build makes of it.
-const SOURCE: &str = "games/tbs/src/battle/tgtexec.c";
-const OBJECT: &str = "out/tbs-en/obj/games/tbs/src/battle/tgtexec.o";
+const SOURCE: &str = "games/tbs/src/battle/battle.c";
+const OBJECT: &str = "out/tbs-en/obj/games/tbs/src/battle/battle.o";
 const TOOLCHAIN: [&str; 3] = ["tools/out/binutils", "tools/out/compiler-runtime", "tools/out/compilers"];
 
 /// One build at a time: each runs its steps on every core.

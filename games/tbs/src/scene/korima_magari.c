@@ -3,24 +3,9 @@
 #include "unit/scene/korima_magari.h"
 #include "unit/scene/common/korima_palette.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
-#include "unit/field/fldobj.h"
-#include "unit/field/mapcell.h"
+#include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
-#include "unit/runtime/fade.h"
-#include "unit/runtime/oamlist.h"
-#include "unit/runtime/objvram.h"
-#include "unit/runtime/sched.h"
-#include "unit/runtime/math.h"
-#include "unit/runtime/basepal.h"
-#include "unit/runtime/heap.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -108,7 +93,7 @@ struct TileRun2
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/map.c"
+#include "common/map_panel.h"
 
 static void State_ApplyRectByLayoutSelector(void)
 {
@@ -609,7 +594,7 @@ static void Scene_PushBlockAlongRun(struct TileRun2 *runs)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_palette.c"
+#include "common/korima_palette.h"
 
 u32 KorimaMagari_DefaultRecords[] = {
 	0xb00cd, 0x10009, 0, 0xc00cf, 12, 0, 0x1100cf, 12,

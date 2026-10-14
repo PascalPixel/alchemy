@@ -1,16 +1,8 @@
 #include "unit/scene/goma_iriguchi.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
-#include "unit/game/chara.h"
-#include "unit/game/item.h"
+#include "unit/game/game.h"
 #include "battle.h"
 #include "field.h"
 #include "menu.h"
@@ -40,8 +32,8 @@ static void GomaIriguchi_RunSpinningLeap(s32 id);
 static void GomaIriguchi_GiveShamansRod(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
-#include "common/effect_spawn.c"
+#include "common/effect_create.h"
+#include "common/effect_spawn.h"
 
 // struct FieldActor の別の見方: sprite の先の角度を符号付き 16 ビットで読む
 struct Actor
@@ -516,7 +508,7 @@ static void OverlayObject_TurnStateByEighth(struct FieldActor *obj)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_waitdown.c"
+#include "common/object_waitdown.h"
 
 static void GomaIriguchi_RunSpinningLeap(s32 id)
 {
@@ -579,7 +571,7 @@ static void GomaIriguchi_RunSpinningLeap(s32 id)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/item.c"
+#include "common/item_equip.h"
 
 static void GomaIriguchi_GiveShamansRod(void)
 {

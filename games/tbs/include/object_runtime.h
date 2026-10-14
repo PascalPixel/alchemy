@@ -2,10 +2,6 @@
 #define ALCHEMY_OBJECT_RUNTIME_H
 
 #include "unit/field/field.h"
-#include "unit/field/fldobj.h"
-#include "unit/field/script.h"
-#include "unit/field/player.h"
-#include "unit/field/mapcell.h"
 #include "object_lookup.h"
 #include "types.h"
 

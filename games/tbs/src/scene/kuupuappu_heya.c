@@ -4,24 +4,10 @@
 #include "unit/scene/kuupuappu_heya.h"
 #include "unit/scene/common/kuupuappu_itemobj.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/evtable.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/battle/battle.h"
-#include "unit/battle/unit.h"
-#include "unit/battle/turnend.h"
-#include "unit/game/chara.h"
-#include "unit/game/item.h"
-#include "unit/game/djinn.h"
-#include "unit/runtime/sched.h"
-#include "unit/runtime/math.h"
-#include "unit/runtime/heap.h"
+#include "unit/game/game.h"
+#include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -270,7 +256,7 @@ static void EV23_TALK(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu_bone.c"
+#include "common/kuupuappu_bone.h"
 
 static void EV250_RAISED(void)
 {
@@ -321,7 +307,7 @@ static void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu_talk.c"
+#include "common/kuupuappu_talk.h"
 
 static void SceneDialogue_PromptAndCountSkip(s32 x)
 {
@@ -1694,7 +1680,7 @@ static void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu_spotflag.c"
+#include "common/kuupuappu_spotflag.h"
 
 s32 KuupuappuHeya_ApplyEntryState(void)
 {
@@ -1962,7 +1948,7 @@ static s32 KuupuappuHeya_GetIwanVenusDjinnCount(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu_djinn.c"
+#include "common/kuupuappu_djinn.h"
 
 static void RunEventScript01(void)
 {
@@ -2659,7 +2645,7 @@ static void SceneState_SetValue2ThenFinish(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu_itemobj.c"
+#include "common/kuupuappu_itemobj.h"
 
 static u8 *SceneData_FindEntryAtPosition(s32 *o)
 {

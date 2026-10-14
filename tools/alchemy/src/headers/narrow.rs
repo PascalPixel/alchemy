@@ -124,12 +124,15 @@ fn names_of(file: &str, texts: &BTreeMap<String, String>, by_name: &BTreeMap<Str
         return;
     }
     let includes = crate::headers::model::include_names(text);
-    let mut own: BTreeSet<String> = if file.ends_with(".h") {
+    // C text a file includes, a header that defines code among it, passes
+    // on all it names; a header of declarations only its bodies.
+    let header = !c_items::c_text(file, text);
+    let mut own: BTreeSet<String> = if header {
         body_words(text)
     } else {
         identifiers(text).into_iter().map(str::to_owned).collect()
     };
-    if file.ends_with(".h") {
+    if header {
         for unit in includes.iter().filter(|include| include.starts_with(UNIT)) {
             for name in given(unit).into_iter().flatten() {
                 own.remove(&name);
@@ -168,8 +171,10 @@ pub(crate) fn run(root: &Path, dry_run: bool) -> Result<(), String> {
     let mut known: BTreeMap<String, Option<BTreeSet<String>>> = BTreeMap::new();
     for file in files.iter().filter(|file| file.starts_with(INCLUDE) && file[INCLUDE.len()..].starts_with(UNIT)) {
         let name = &file[INCLUDE.len()..];
-        let source = format!("games/tbs/src/{}.c", name.trim_start_matches(UNIT).trim_end_matches(".h"));
-        known.insert(name.to_owned(), root.join(source).is_file().then(|| gives(&texts[file])));
+        // Its file is a C file, or a header that is C text.
+        let stem = format!("games/tbs/src/{}", name.trim_start_matches(UNIT).trim_end_matches(".h"));
+        let shared = texts.get(&format!("{stem}.h")).is_some_and(|text| c_items::c_text(&format!("{stem}.h"), text));
+        known.insert(name.to_owned(), (root.join(format!("{stem}.c")).is_file() || shared).then(|| gives(&texts[file])));
     }
     // A ☀️ header whose macro or inline bodies call into a unit reads that
     // unit's header itself, so its readers need not.
@@ -198,7 +203,8 @@ pub(crate) fn run(root: &Path, dry_run: bool) -> Result<(), String> {
         let text = &texts[file];
         let own = file
             .strip_prefix("games/tbs/src/")
-            .and_then(|stem| stem.strip_suffix(".c"))
+            .filter(|_| c_items::c_text(file, text))
+            .and_then(|stem| stem.strip_suffix(".c").or_else(|| stem.strip_suffix(".h")))
             .map(|stem| format!("{UNIT}{stem}.h"))
             .or_else(|| file.strip_prefix(INCLUDE).map(str::to_owned));
         // The file's own text names what it names; what it includes adds

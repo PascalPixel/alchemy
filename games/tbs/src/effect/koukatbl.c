@@ -1,13 +1,5 @@
 #include "unit/effect/koukatbl.h"
 #include "unit/effect/effect.h"
-#include "unit/effect/fxdirect.h"
-#include "unit/effect/twopic.h"
-#include "unit/effect/strike.h"
-#include "unit/effect/dispatch.h"
-#include "unit/effect/scene.h"
-#include "unit/effect/burst.h"
-#include "unit/effect/djinnfx.h"
-#include "unit/effect/swirl.h"
 #include "types.h"
 
 //--------------------------------------------------------------------------

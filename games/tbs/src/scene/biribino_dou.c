@@ -4,13 +4,6 @@
 #include "unit/import.h"
 #include "unit/scene/biribino_dou.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "battle.h"
 #include "debug.h"
@@ -426,7 +419,7 @@ static void FieldScene_RunScene398SequenceC(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_findcell.c"
+#include "common/object_findcell.h"
 
 static void StagedActor_PushActorAhead(void)
 {

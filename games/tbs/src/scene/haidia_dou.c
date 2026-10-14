@@ -5,16 +5,8 @@
 #include "unit/scene/haidia_dou.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/marker.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
-#include "unit/runtime/math.h"
+#include "unit/runtime/runtime.h"
 
 #include "fieldobj.h"
 #include "mapcopy.h"
@@ -45,9 +37,9 @@ static void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y);
 static void HaidiaDou_ApplyEntryState(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
-#include "common/effect_spawn.c"
-#include "common/object_staged_actor.c"
+#include "common/effect_create.h"
+#include "common/effect_spawn.h"
+#include "common/object_staged_actor.h"
 
 static void EV08_SCRIPT(void)
 {
@@ -560,7 +552,7 @@ static void DialogueLayout_ConfigureRowsByFlag301(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_pairmove.c"
+#include "common/object_pairmove.h"
 
 static void EV20_TOUCH(void)
 {

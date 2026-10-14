@@ -4,20 +4,9 @@
 #include "unit/import.h"
 #include "unit/scene/imiru_fuchin.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/evtable.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/disptran.h"
-#include "unit/object/palbuf.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
-#include "unit/field/mapcell.h"
-#include "unit/game/item.h"
+#include "unit/game/game.h"
 #include "battle.h"
 #include "field_service.h"
 #include "debug.h"
@@ -174,7 +163,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_pairmove.c"
+#include "common/object_pairmove.h"
 
 static void EV11_TOUCH_2(void)
 {

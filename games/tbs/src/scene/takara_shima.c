@@ -5,21 +5,9 @@
 #include "unit/scene/common/object_orbit.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/marker.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
-#include "unit/field/fldobj.h"
-#include "unit/field/script.h"
-#include "unit/field/player.h"
-#include "unit/field/mapcell.h"
-#include "unit/runtime/math.h"
+#include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "field.h"
 #include "menu.h"
@@ -57,11 +45,11 @@ struct Vec
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_staged_actor.c"
+#include "common/object_staged_actor.h"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
-#include "common/effect_spawn.c"
+#include "common/effect_create.h"
+#include "common/effect_spawn.h"
 
 union GameStateRows
 {
@@ -129,7 +117,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_advance.c"
+#include "common/effect_advance.h"
 
 static void SpawnRadialEffectBurst(s32 object_id)
 {
@@ -2335,7 +2323,7 @@ static void AdvanceActor16AlongEscapeRoute(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_orbit.c"
+#include "common/object_orbit.h"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

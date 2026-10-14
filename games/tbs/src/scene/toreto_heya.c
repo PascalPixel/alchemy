@@ -4,17 +4,9 @@
 #include "unit/scene/toreto_heya.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
-#include "unit/game/item.h"
-#include "unit/runtime/objvram.h"
-#include "unit/runtime/math.h"
+#include "unit/game/game.h"
+#include "unit/runtime/runtime.h"
 
 #define NULL ((void *)0)
 #include "fieldobj.h"
@@ -55,7 +47,7 @@ static u8	ToretoHeya_SparkCounter[4];
 static s16 *ToretoHeya_PaletteBuffer;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
+#include "common/effect_create.h"
 
 struct Vec
 {
@@ -102,7 +94,7 @@ struct EffectParams
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_spawn.c"
+#include "common/effect_spawn.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
@@ -941,7 +933,7 @@ static void EV00_PSYNERGY(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_advance.c"
+#include "common/effect_advance.h"
 
 static void ToretoHeya_RunLandingDustScene(void)
 {

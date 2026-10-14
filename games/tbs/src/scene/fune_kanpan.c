@@ -1,20 +1,10 @@
 #include "game_state.h"
 #include "unit/scene/fune_kanpan.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/evtable.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evmes.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
-#include "unit/field/fldobj.h"
+#include "unit/field/field.h"
 #include "unit/window/window.h"
-#include "unit/window/output.h"
-#include "unit/window/save.h"
+#include "unit/window/btlcmd.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -78,7 +68,7 @@ static void FuneKanpan_PlaceLeaderOnDeck(void);
 s32 Math_RemainderUnsigned(s32, s16);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_pulse.c"
+#include "common/object_pulse.h"
 
 static s32 SceneState_ApplyArgMode1AndReturnZero(s32 a)
 {

@@ -143,7 +143,8 @@ pub(crate) fn count(root: &Path) -> Result<Counts, String> {
     // only that file.
     let mut header_definitions: BTreeMap<&str, Vec<Definition>> = BTreeMap::new();
     for (path, text) in &sources {
-        if !path.ends_with(".h") {
+        // A header that is C text keeps its macros to itself, as a C file does.
+        if !path.ends_with(".h") || crate::c_items::c_text(path, text) {
             continue;
         }
         let found = definitions(text);
@@ -175,7 +176,7 @@ pub(crate) fn count(root: &Path) -> Result<Counts, String> {
                 continue;
             }
             let headers = header_macros.get(game).cloned().unwrap_or_default();
-            let local = if path.ends_with(".c") { in_force(&definitions(text), &headers) } else { Vec::new() };
+            let local = if crate::c_items::c_text(path, text) { in_force(&definitions(text), &headers) } else { Vec::new() };
             let found = devices_in(&without_proven(&code_only(text)), &emitting, &headers, &local);
             for (kind, value) in KINDS.iter().zip(found) {
                 *counts.get_mut(&(game.to_string(), kind.to_string())).unwrap() += value;
@@ -296,7 +297,10 @@ pub(crate) fn tagged_macro_names(root: &Path, path: &str, text: &str) -> BTreeSe
             let relative = file.strip_prefix(root).unwrap_or(file).to_string_lossy().into_owned();
             let folder = relative.split('/').take(2).collect::<Vec<_>>().join("/");
             if let Ok(bytes) = fs::read(file) {
-                by_folder.entry(folder).or_default().extend(definitions(&String::from_utf8_lossy(&bytes)));
+                let text = String::from_utf8_lossy(&bytes);
+                if !crate::c_items::c_text(&relative, &text) {
+                    by_folder.entry(folder).or_default().extend(definitions(&text));
+                }
             }
         }
         Headers { by_folder, by_scope: BTreeMap::new() }

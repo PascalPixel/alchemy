@@ -3,20 +3,9 @@
 #include "unit/scene/vinasu_heya.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/evtable.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/palbuf.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
-#include "unit/field/fldobj.h"
-#include "unit/field/mapview.h"
-#include "unit/field/mapcell.h"
-#include "unit/runtime/math.h"
+#include "unit/field/field.h"
+#include "unit/runtime/runtime.h"
 #include "iowrite.h"
 #include "object_effect.h"
 
@@ -128,13 +117,13 @@ static void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 t
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_spawn.c"
+#include "common/effect_spawn.h"
 #include "ability_ids.h"
 #include "objcmd.h"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_distance.c"
-#include "common/object_findslot.c"
+#include "common/object_distance.h"
+#include "common/object_findslot.h"
 
 static void RunStagedActorTransition(void)
 {
@@ -395,9 +384,9 @@ static void EV31_TOUCH_3(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_depth.c"
-#include "common/object_waitidle.c"
-#include "common/effect_advance.c"
+#include "common/object_depth.h"
+#include "common/object_waitidle.h"
+#include "common/effect_advance.h"
 
 static void FieldScene_RunSupplementalSequenceOne(void)
 {
@@ -451,7 +440,7 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_radial.c"
+#include "common/effect_radial.h"
 
 static s32 SceneEffect_SpawnRandomizedParticleEveryFourFrames(struct FieldActor *obj)
 {

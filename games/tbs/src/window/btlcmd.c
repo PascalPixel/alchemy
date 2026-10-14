@@ -1,25 +1,8 @@
-#include "unit/window/scales.h"
 #include "unit/window/window.h"
-#include "unit/window/icon.h"
-#include "unit/window/select.h"
-#include "unit/window/config.h"
-#include "unit/window/wintile.h"
-#include "unit/window/output.h"
-#include "unit/window/ptystat.h"
-#include "unit/window/save.h"
 #include "unit/window/btlcmd.h"
-#include "unit/window/debug.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/evmes.h"
 #include "unit/window/moji.h"
 #include "unit/runtime/runtime.h"
-#include "unit/runtime/oamlist.h"
-#include "unit/runtime/objvram.h"
-#include "unit/runtime/sched.h"
-#include "unit/runtime/math.h"
-#include "unit/runtime/basepal.h"
-#include "unit/runtime/heap.h"
 #include "types.h"
 #include "edition.h"
 #include "window.h"
@@ -97,7 +80,3199 @@
 #include "shop.h"
 #include "disptran.h"
 #include "frame.h"
+#include "unit/object/psyfx.h"
+#include "unit/window/scales.h"
 
+struct RenderOutput *RenderOutput_Create(
+	s32 slot, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y)
+{
+	s32					 x;
+	struct RenderOutput *output;
+	s32					 y;
+
+	output = RenderOutput_AcquireFree();
+	if (output == NULL)
+	{
+		Resource_ResetEntry(slot);
+		return 0;
+	}
+	x = offset_x + (input->x * 8) + 8;
+	y = offset_y + (input->y * 8) + 8;
+	x &= 0x1ff;
+	y &= 0xff;
+	*(u32 *)&output->oam = (x << 16) | y | flags;
+	((u32 *)&output->oam)[1] = ((struct VramBlockCacheEntry *)Ram_VramBlockCache)[slot].offset >> 5;
+	output->sentinel = 0xff;
+	output->next = 0;
+	output->x = x;
+	output->y = y;
+	output->index = slot;
+	output->kind = 1;
+	output->active = 1;
+	RenderOutput_AppendToList(input, output);
+	return output;
+}
+
+struct RenderOutput *RenderOutput_CreateFromResource(
+	s32 mode, s32 resource, struct RenderInput *input, s32 x, s32 y)
+{
+	s32 no;
+
+	no = Resource_LoadByMode(mode, resource);
+	if (no < 0)
+	{
+		return NULL;
+	}
+	return RenderOutput_Create(no, 0x40000000, input, x, y);
+}
+
+struct RenderOutput *RenderOutput_CreateLoaded(
+	s32 code, s32 layers, struct RenderInput *input, s32 x, s32 y)
+{
+	s32					 no;
+	struct RenderOutput *result;
+
+	no = Resource_FindFreeEntry();
+	result = NULL;
+	if (no != 0x60)
+	{
+		UiIcon_CopyResourceToSlot(code, layers, no);
+		result = RenderOutput_Create(no, 0x40000000, input, x, y);
+	}
+	return result;
+}
+
+struct RenderOutput *RenderOutput_CreateWithTransform(
+	s32 icon, struct RenderInput *input, s32 x, s32 y)
+{
+	s32					 count;
+	s32					 unused;
+	struct RenderOutput *result;
+
+	count = Resource_FindFreeEntry();
+	if (count == 0x60)
+	{
+		return NULL;
+	}
+	Ui_BuildPairedPatternsToSlot(icon, 1, &count, &unused, 1);
+	result = RenderOutput_Create(count, 0x40000000, input, x, y);
+	result->sentinel = 251;
+	return result;
+}
+
+struct RenderOutput *RenderOutput_CreateFromTable(
+	s32 table_entry, struct RenderInput *input, s32 x, s32 y)
+{
+	s32					 slot;
+	struct RenderOutput *output;
+
+	slot = Resource_FindFreeEntry();
+	output = NULL;
+	if (slot != 0x60)
+	{
+		RenderResource_LoadTableEntry(table_entry, 0, slot);
+		output = RenderOutput_Create(slot, 0x40000000, input, x, y);
+	}
+	return output;
+}
+
+struct RenderOutput *CreateSideObject(
+	s32 object_kind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5)
+{
+	struct UiRenderWork *state = UI_WORK;
+	struct RenderOutput *object = 0;
+	s32					 first;
+	s32					 second;
+	s32					 id;
+	s32					 slot;
+
+	if (GameFlag_TestFar(32) != 0)
+	{
+		if (object_kind == 0)
+			object_kind = 18;
+		if (object_kind == 1)
+			object_kind = 19;
+	}
+
+	id = Localization_LookupEntryId(object_kind);
+	if (id == -1)
+		return object;
+
+	if ((u32)side > 1)
+	{
+		side = 1;
+		if (state->resource_ids[1] != 999)
+		{
+			side = 0;
+			if (state->resource_ids[0] != 999)
+				return object;
+		}
+	}
+
+	slot = 14 + side;
+	UiGlyph_LoadEntryWithPalette(id, position, &first, &second, slot, 0);
+	object = RenderOutput_Create(first, 0x80000000, (struct RenderInput *)arg3, arg4, arg5);
+	if (object != 0)
+	{
+		object->oam.palette = slot;
+		object->kind = 2;
+	}
+
+	state->resource_ids[side] = id;
+	state->output_ids[side] = first;
+	return object;
+}
+
+void Ui_LoadCharacterEntryForSlot(u32 slot, s32 character, s32 value)
+{
+	s32					 result;
+	s32					 current;
+	u32					 character_id;
+	struct UiRenderWork *state;
+
+	state = UI_WORK;
+
+	if (GameFlag_TestFar(0x20) != 0)
+	{
+		if (character == 0)
+			character = 0x12;
+		if (character == 1)
+			character = 0x13;
+	}
+
+	character_id = Localization_LookupEntryId(character);
+	if (character_id != -1U)
+	{
+		if (slot > 1U)
+		{
+			if (state->resource_ids[1] == character_id)
+			{
+				slot = 1;
+			}
+			else if (state->resource_ids[0] == character_id)
+			{
+				slot = 0;
+			}
+			else
+			{
+				return;
+			}
+		}
+		current = state->output_ids[slot];
+		UiGlyph_LoadEntryWithPalette(character_id, value, &current, &result, slot + 0xe, 1);
+	}
+}
+
+//--------------------------------------------------------------------------
+// runtime_set_byte5_and_reset_halfword_c.c
+// 表示：スプライト出力のアニメを切りかえる
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+// active を mode にして、アニメの段（anim_step）を 0 に戻す
+// out : スプライト出力（NULL なら何もしない）
+//--------------------------------------------------------------------------
+void RenderOutput_SetAnimation(struct RenderOutput *out, s32 mode)
+{
+	if (out != NULL)
+	{
+		out->active = mode;
+		out->anim_step = 0;
+	}
+}
+
+void RenderOutput_SetInvertedSentinel(void *arg0, s32 arg1)
+{
+	if (arg0 != 0)
+		((struct RenderOutput *)arg0)->sentinel = ~arg1;
+}
+
+typedef void (*RamRoutine)(void *dst, void *scene);
+
+void UiWindow_FillFromScene(void *dst)
+{
+	void *scene = gWindowWork[0];
+
+	if (scene == 0)
+	{
+		Dma_Fill16(0xe0e0, dst, 0x140);
+	}
+	else
+	{
+		RamRoutine code;
+
+		RamCode_Load(code, Tile_BuildMetatiles, Tile_BuildMetatilesCodeSize);
+		code(dst, scene);
+		MemFree(code);
+	}
+}
+
+void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 height, s32 value)
+{
+	u32	 row = 0;
+	s16 *dst = (s16 *)0x06002000;
+
+	if (row < height)
+	{
+		do
+		{
+			u32 column = 0;
+			if (column < width)
+			{
+				do
+				{
+					column++;
+					*dst = value;
+					dst++;
+				} while (column < width);
+			}
+			row++;
+			dst += 32 - width;
+		} while (row < height);
+	}
+}
+
+#define TILE_ROW_FROM_BOTTOM(tile, up) ((u32 *)((tile) * 32 - (up) * 4 + 0x0600001c))
+
+void UiWindow_BuildLayoutBounds(s32 flags)
+{
+	void					**slot = (void **)&gPartyStatusWork;
+	struct PartyStatusWindow *state = *slot;
+	struct UiRenderWork		 *work = slot[-1];
+	s32						  height = 4;
+	s32						  n;
+	s32						  right;
+	s32						  left;
+
+	if (work->menu_state != 0)
+	{
+		n = BattleParty_PrepareActiveOwnersFar(0);
+		height = 3;
+	}
+	else
+	{
+		n = Party_CountActiveOwnersFar();
+	}
+	if (flags & 1)
+		height++;
+	else
+		flags &= -3;
+
+	n *= 6;
+	right = n + 1;
+	if (flags & 2)
+		right += 5;
+
+	left = 30;
+	left -= right;
+	state->x = left;
+	state->y = 0;
+	state->width = right;
+	state->height = height;
+	state->flags = flags;
+}
+
+void UiWindow_CreateWithLayoutBounds(s32 flags)
+{
+	s32						  zero;
+	struct PartyStatusWindow *window;
+	s8						 *busy;
+
+	window = Runtime_AllocateBlock(16, sizeof(*window));
+	busy = (s8 *)&UI_WORK->menu_busy;
+	zero = 0;
+	*busy = 1;
+	UiWindow_BuildLayoutBounds(flags);
+	window->window = UiWindow_Create(window->x, window->y, window->width, window->height, 6);
+	PtyStDraw(flags);
+	*busy = zero;
+}
+
+void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags)
+{
+	struct UiRenderWork *canvas = UI_WORK;
+	s32					 first = 1;
+	s32					 bias = 0;
+	u32					 max = window->width - 1;
+	s32					 i;
+	u32					 rows = window->height;
+	u32					 col;
+	u32					 row;
+	u16					*dest;
+
+	if ((flags & 1) == 0)
+		flags &= ~2;
+	if (flags & 2)
+	{
+		bias = 5;
+		first = 0;
+	}
+	i = first;
+	while (UiWindow_PartyColumnOffsets[i] >= 0)
+	{
+		col = UiWindow_PartyColumnOffsets[i] + bias;
+		if (col < max)
+		{
+			for (row = 0; row != rows; row++)
+			{
+				dest = (u16 *)(((window->y + row) * 32 + (window->x + col)) * 2
+							   + (u32)canvas->tilemap);
+				if (row == 0)
+					*dest = 0xf018;
+				else if (row == rows - 1)
+					*dest = 0xf019;
+				else
+					*dest = 0xf00f;
+			}
+		}
+		i++;
+	}
+	if (canvas->menu_state)
+	{
+		dest = canvas->tilemap + (window->y + window->height - 1) * 32 + window->x;
+		col = 1;
+		*dest++ = 0xf080;
+		while (col < max)
+		{
+			col++;
+			*dest++ = 0xf081;
+		}
+		*dest = 0xf082;
+	}
+	canvas->dirty = 1;
+}
+
+s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y, s32 value)
+{
+	// 戻り値の型は s32 だが return 文は無い（pop {r1}; bx r1）
+	s32					 i;
+	struct UiRenderWork *canvas = UI_WORK;
+	s32					 filled = value;
+	s32					 row;
+	s32					 col;
+	u32					 id;
+	u32					 light;
+	u32					 dark;
+	u32					 pixels;
+	u32					 result;
+
+	if (canvas->menu_state == 0)
+	{
+		Dma_Set((const void *)Runtime_GetLowTableAddress(), (void *)&BG_PLTT_COLOR(14, 0),
+			0x80000010, REG_DMA3);
+		BG_PLTT_COLOR(14, 14) = BG_PLTT_COLOR(15, 4);
+	}
+	x += window->x;
+	y += window->y;
+	for (i = 0; i < 5; i++, x++)
+	{
+		id = canvas->tilemap[y * 32 + x];
+		light = 0x22222222;
+		dark = 0xcccccccc;
+		id &= 0x3ff;
+		if (value > 7)
+		{
+			light = 0x88888888;
+			dark = 0xdddddddd;
+		}
+		else if (value >= 0)
+		{
+			light <<= value * 4;
+			light |= 0x88888888U >> (32 - value * 4);
+			dark <<= value * 4;
+			dark |= 0xddddddddU >> (32 - value * 4);
+		}
+		for (row = 0; row <= (filled != 0 ? 2 : 0); row++)
+		{
+			pixels = *TILE_ROW_FROM_BOTTOM(id, row);
+			result = 0;
+			for (col = 0; col <= 7; col++)
+			{
+				u32 color = pixels & 15;
+
+				if (color == 14)
+					result |= light & (15U << (col * 4));
+				else if (color == 1)
+					result |= dark & (15U << (col * 4));
+				else
+					result |= color << (col * 4);
+				pixels >>= 4;
+			}
+			*TILE_ROW_FROM_BOTTOM(id, row) = result;
+		}
+		value -= 8;
+	}
+}
+
+void PtyStDraw(s32 flags)
+{
+	void					**slot = (void **)gPartyStatusWork;
+	struct PartyStatusWindow *layout = slot[0];
+	struct BtlWork			 *party = slot[-7];
+	struct RenderInput		 *window = (struct RenderInput *)layout->window;
+	struct UiRenderWork		 *work = slot[-1];
+	s32						  x = 0;
+	u32						  count;
+	s32						  y = 0;
+	u32						  i;
+	u16						  owners[5];
+	u8						  djinn[4];
+
+	if (work->menu_state != 0)
+	{
+		count = BattleParty_PrepareActiveOwnersFar(0);
+		y = -1;
+		for (i = 0; i < count; i++)
+		{
+			owners[i] = party->party_units[i];
+			if (owners[i] == 255)
+				break;
+		}
+	}
+	else
+	{
+		count = Party_CountActiveOwnersFar();
+		for (i = 0; i < count; i++)
+			owners[i] = gGameState.active_owners[i];
+		owners[i] = 255;
+	}
+	count = i;
+	if (flags == -1)
+		flags = layout->flags;
+	if (!(flags & 1))
+		flags &= ~2;
+	if (work->menu_state == 0 || BattlePlacement_CountValidEntriesFar(0, 0) == 0)
+		flags &= ~2;
+	if (flags == 9)
+	{
+		UiWindow_EraseBorderRect(layout->x, layout->y, layout->width, layout->height);
+		return;
+	}
+	work->menu_busy = 1;
+	if (layout->flags == flags)
+	{
+		RenderOutput_RedrawSavedRect((struct UiWindow *)window);
+		UiWindow_DrawColumnBorders(window, flags);
+	}
+	else
+	{
+		UiWindow_EraseBorderRect(layout->x, layout->y, layout->width, layout->height);
+		UiWindow_BuildLayoutBounds(flags);
+		window->width = layout->width;
+		window->height = layout->height;
+		window->x = layout->x;
+		UiWindow_DrawFrame(layout->x, layout->y, layout->width, layout->height);
+		UiWindow_DrawColumnBorders(window, flags);
+	}
+	if (flags & 2)
+		x = 5;
+	for (i = 0; i != count; i++)
+	{
+		struct BtlUnit *unit = UnitGetFar(owners[i]);
+		s32				hp = unit->hp;
+		s32				maximum = unit->max_hp;
+		s32				value;
+		s32				current;
+
+		if (hp == 0)
+			UiWork_SetParamNibble(2);
+		else if (hp <= maximum / 4)
+			UiWork_SetParamNibble(4);
+		else
+			UiWork_SetParamNibble(15);
+		work->level = 14;
+		if (work->menu_state != 0)
+			work->level = 5;
+		UiText_DrawPrefixedNumberAtOffset(hp, window, (x + i * 6) * 8, y * 8 + 8, 0);
+		work->level = 15;
+		UiText_DrawStringAtOffset(unit->name, window, (x + i * 6) * 8, y * 8);
+		UiWork_SetParamNibble(15);
+		if (unit->max_hp != 0)
+		{
+			current = unit->hp;
+			value = ((current * 40) / unit->max_hp);
+			if (value == 0 && current != 0)
+				value = 1;
+			UiWindow_DrawStatusBarTiles(window, x + i * 6 + 1, y + 2, value);
+		}
+		if (flags & 1)
+		{
+			work->level = 14;
+			if (work->menu_state != 0)
+				work->level = 5;
+			UiText_DrawPrefixedNumberAtOffset(unit->ep, window, (x + i * 6) * 8, y * 8 + 16, 1);
+			if (unit->max_ep != 0)
+			{
+				current = unit->ep;
+				value = ((current * 40) / unit->max_ep);
+				if (value == 0 && current != 0)
+					value = 1;
+				UiWindow_DrawStatusBarTiles(window, x + i * 6 + 1, y + 3, value);
+			}
+		}
+	}
+	work->level = 15;
+	if (work->menu_state != 0 && (flags & 2))
+	{
+		s32 row = y;
+
+		if (flags & 1)
+			row++;
+		BattlePlacement_CountValidEntriesFar(0, djinn);
+		UiWindow_SetTilemapEntry((struct UiWindow *)window, 0x5001, 0, row, 0);
+		UiWindow_SetTilemapEntry((struct UiWindow *)window, 0x5002, 2, row, 0);
+		UiWindow_SetTilemapEntry((struct UiWindow *)window, 0x5003, 0, row + 1, 0);
+		UiWindow_SetTilemapEntry((struct UiWindow *)window, 0x5004, 2, row + 1, 0);
+		UiWindow_PutGlyph(window, djinn[0] + '0', 1, row);
+		UiWindow_PutGlyph(window, djinn[1] + '0', 3, row);
+		UiWindow_PutGlyph(window, djinn[2] + '0', 1, row + 1);
+		UiWindow_PutGlyph(window, djinn[3] + '0', 3, row + 1);
+	}
+	work->menu_busy = 0;
+}
+
+void UiWork_FinalizeAndReleaseBlock16(void)
+{
+	UiWork_Finalize((struct UiWindow *)**(s32 **)(u32)&gWindowWork[1], 1);
+	Runtime_ReleaseHeapBlock(0x10);
+}
+
+void UiWindow_SetTileAttributeBitRect(
+	const struct RenderInput *window, s32 x, s32 y, s32 width, s32 height, u32 field)
+{
+	struct UiRenderWork *work = UI_WORK;
+
+	x += window->x + 1;
+	y += window->y + 1;
+	field &= 1;
+	field <<= 12;
+	if (x < 0)
+	{
+		width += x;
+		x = 0;
+	}
+	if (x + width > 29)
+	{
+		width = 30 - x;
+	}
+	if (y < 0)
+	{
+		height += y;
+		y = 0;
+	}
+	if (y + height > 29)
+	{
+		height = 20 - y;
+	}
+	if (width > 0 && height > 0)
+	{
+		y <<= 6;
+		x = y + (x << 1);
+		do
+		{
+			u16 *cell = (u16 *)(x + (u32)work->tilemap);
+			s32	 remaining = width;
+			while (remaining != 0)
+			{
+				u32 value = *cell;
+				value &= 0xFFFFEFFF;
+				value |= field;
+				remaining--;
+				*cell = value;
+				cell++;
+			}
+			height--;
+			x += 64;
+		} while (height != 0);
+		work->dirty = 1;
+	}
+}
+
+extern const u8 *RenderResource_PairSourceTable[];
+
+void *Text_FormatPlayTime(s32 value, u8 *out)
+{
+	u8	buf[64];
+	u32 time;
+	u32 minutes;
+	s32 seconds;
+	u8 *s;
+	u8 *p;
+
+	time = (u32)value / 0xe10;
+	if (time > 0xea5f)
+		time = 0xea5f;
+
+	minutes = time / 60;
+	seconds = time % 60;
+
+	s = UiText_FormatNumber(buf, minutes, 3);
+	*out = *s;
+	s++;
+	p = out + 1;
+	*p = *s;
+	p++;
+	*p = s[1];
+	seconds += 100;
+	p++;
+	*p = ':';
+
+	s = UiText_FormatNumber(buf, seconds, 2);
+	p++;
+	*p = s[0];
+	p++;
+	*p = s[1];
+	p[1] = 0;
+
+	return out;
+}
+
+u32 SaveState_FindFreeSummarySlot(void)
+{
+	u32					i;
+	struct SaveSummary *p;
+
+	p = gSaveWorkspace->summary;
+	for (i = 0; i < 3; i++, p++)
+	{
+		if (p->level == 0)
+			return i;
+	}
+	return 0x3E7;
+}
+
+s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
+{
+	s32					i;
+	s32					cnt;
+	struct SaveSummary *summary;
+
+	if (SaveState_InitializeWorkspace() != 0)
+	{
+		cnt = -9;
+	}
+	else
+	{
+		cnt = SaveState_LoadSummaryRecords();
+		if (flag != 0)
+		{
+			summary = gSaveWorkspace->summary;
+			for (i = 0; i < 3; i++)
+			{
+				if ((s8)summary[i].send_flag != 0)
+					cnt--;
+			}
+		}
+	}
+	SaveState_ReleaseWorkspace();
+	return cnt;
+}
+
+s32 SaveState_ScanRecordFlags(void)
+{
+	/* FAKEMATCH: the signed cursor from the party tail keeps the native
+	 * literal base 0x1070 and the flag offsets 1 and 2. Measured: the
+	 * fields read as summary[i].send_flag and .flag_count, or through a
+	 * walking summary pointer, base the cursor on send_flag (0x1071)
+	 * with offsets 0 and 1 (differ 4). */
+	s32 err;
+	s32 cnt;
+	s32 ret;
+
+	err = SaveState_InitializeWorkspace();
+	cnt = 0;
+	ret = -9;
+	if (err == 0)
+	{
+		s32 i;
+		s8 *flags;
+
+		ret = SaveState_LoadSummaryRecords();
+		flags = (s8 *)&gSaveWorkspace->summary[0].party[4];
+		gTitleSendOptionEnabled = 0;
+		(*(s16 *)&gTitleExtraOptionEnabled) = 0;
+		for (i = 0; i < 3; i++)
+		{
+			if (flags[i * sizeof(struct SaveSummary)
+					  + ((u32) & ((struct SaveSummary *)0)->send_flag - (u32)
+						  & ((struct SaveSummary *)0)->party[4])]
+				!= 0)
+			{
+				gTitleSendOptionEnabled = 1;
+				cnt++;
+			}
+			if (flags[i * sizeof(struct SaveSummary)
+					  + ((u32) & ((struct SaveSummary *)0)->flag_count - (u32)
+						  & ((struct SaveSummary *)0)->party[4])]
+				!= 0)
+			{
+				(*(s16 *)&gTitleExtraOptionEnabled) = 1;
+			}
+		}
+
+		if ((gKeysHeld & (KEY_R | KEY_LEFT)) != (KEY_R | KEY_LEFT))
+		{
+			gTitleSendOptionEnabled = 0;
+		}
+	}
+	SaveState_ReleaseWorkspace();
+	if (ret != 0 && cnt == ret)
+	{
+		return ret + 100;
+	}
+	return ret;
+}
+
+u32 SaveState_BuildSummaryHeader(void)
+{
+	u16					owners[14];
+	struct SaveSummary *summary;
+	struct BtlUnit	   *owner;
+	u8				   *source;
+	u8				   *destination;
+	u32				   *word;
+	s32					i;
+	u32					sum = 0;
+
+	summary = (struct SaveSummary *)(gSaveBuffer - 16);
+	gGameState.build_stamp = Runtime_GetBuildStampTimeFar(0);
+	gGameState.play_time = gLoadedStateWord;
+	{
+		u32 *copy = (u32 *)gSceneState;
+		copy[64] = gLoadedStateWord;
+	}
+	gGameState.saved_options = gOptionMirror;
+	owner = UnitGetFar(gGameState.selected_actor);
+	destination = summary->name;
+	source = owner->name;
+	for (i = 11; i >= 0; i--)
+		*destination++ = *source++;
+	summary->level = owner->level;
+	summary->play_time = gGameState.play_time;
+	summary->area = Scene_GetAreaNameIndexFar(gGameState.scene, gGameState.entrance);
+	summary->class_id = owner->class_index;
+	summary->coins = gGameState.coins;
+	summary->djinn[0] = Party_SumDjinnCountsFar(0);
+	summary->djinn[1] = Party_SumDjinnCountsFar(1);
+	summary->djinn[2] = Party_SumDjinnCountsFar(2);
+	summary->djinn[3] = Party_SumDjinnCountsFar(3);
+	Party_ListActiveOwnersFar(owners);
+	for (i = 0; i <= 3 && owners[i] != 255; i++)
+		summary->party[i] = owners[i];
+	summary->party[i] = -1;
+	summary->palette_glow = gGameState.palette_glow[0];
+	summary->palette_glow_sub = gGameState.palette_glow[1];
+	summary->send_flag = gGameState.unknown_20f;
+	summary->flag_count = 0;
+	for (i = 48; i <= 127; i++)
+	{
+		if (GameFlag_TestFar(i))
+			summary->flag_count++;
+	}
+	summary->has_flag_20 = GameFlag_TestFar(32) != 0;
+	{
+		s32	 n;
+		u32 *frame = &gGameState.build_stamp;
+		u32	 frames;
+
+		n = 242;
+		/* FAKEMATCH: the one-pass null arm and duplicate frame read end
+         * CSE with the bound constant ahead of the frame load. Folding
+         * the arm reverses two rows; the conditional and duplicate read
+         * disappear, preserving all 174 instructions in every edition. */
+		if (!frame)
+		{
+			do
+			{
+				n = 242;
+			} while (0);
+		}
+		else
+		{
+			n = 242;
+			frames = *frame;
+		}
+		frames = *frame;
+		word = (u32 *)GameFlagBytes;
+		i = 0;
+		n <<= 2;
+		summary->frames = frames;
+		goto test;
+		do
+		{
+			sum += *word++;
+			i++;
+		test:;
+		} while (i < n);
+	}
+	summary->checksum = sum;
+	return sum;
+}
+
+s16 SaveState_WriteCurrentSlotPair(void)
+{
+	s16 value;
+	s16 result;
+	s32 found;
+
+	result = 0;
+	value = gSaveSlot;
+	if (value != -1)
+	{
+		found = SaveState_InitializeWorkspace();
+		if (found != 0)
+		{
+			UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
+			result = -9;
+		}
+		else
+		{
+			SaveState_BuildSummaryHeader();
+			{
+				void *base = &gSaveBuffer;
+				s32	  next;
+
+				found = SaveState_WriteRecord(gSaveSlot, base);
+				next = gSaveSlot;
+				base = (char *)base + 0x1000;
+				found |= SaveState_WriteRecord(next + 3, base);
+				if (found != 0)
+				{
+					UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
+					result = -3;
+				}
+			}
+		}
+		SaveState_ReleaseWorkspace();
+		value = result;
+	}
+	return value;
+}
+
+s32 SaveState_WriteSlotPair(s32 arg0)
+{
+	s32 found;
+	s16 result = 0;
+
+	found = SaveState_InitializeWorkspace();
+	if (found != 0)
+	{
+		UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
+		result = -9;
+	}
+	else
+	{
+		void *base = &gSaveBuffer;
+
+		found = SaveState_WriteRecord(arg0, base);
+		base = (char *)base + 0x1000;
+		found |= SaveState_WriteRecord(arg0 + 3, base);
+		if (found != 0)
+		{
+			UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
+			result = -3;
+		}
+	}
+	SaveState_ReleaseWorkspace();
+	return result;
+}
+
+s32 SaveState_ProcessSelectedSlot(void)
+{
+	void *buffer;
+	s32	  result;
+	s32	  found;
+	u8	 *dst;
+
+	buffer = Runtime_BumpAllocateAlternatePool(0x1000);
+	result = 0;
+	if (gSaveSlot == -1)
+		return -1;
+	found = SaveState_InitializeWorkspace();
+	if (found != 0)
+	{
+		UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
+		result = -9;
+	}
+	else
+	{
+		found = SaveState_ReadRecordPayload(gSaveSlot, buffer);
+		if (found != 0)
+		{
+			UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
+			result = -2;
+		}
+		dst = (u8 *)buffer + (s32)gSaveStamp;
+		dst -= (s32)gSaveBuffer;
+		Iwram_CopyWords(dst, gSaveStamp, 16);
+		found = SaveState_WriteRecord(gSaveSlot, buffer);
+		if (found != 0)
+		{
+			UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
+			result = -3;
+		}
+	}
+	SaveState_ReleaseWorkspace();
+	MemFree(buffer);
+	return result;
+}
+
+s32 SaveState_ConfirmAndProcessSelectedSlot(void)
+{
+	s32 result;
+
+	UiText_OpenMessageWindow((s32)MsgOverwriteConfirm, 8, 12, 2);
+	while (UiWork_IsComplete() == 0)
+	{
+		WaitFrames(1);
+	}
+	if (Menu_RunConfirmSelection(1, 0, 0, 1))
+	{
+		UiWork_FinalizePendingCore();
+	}
+	else
+	{
+		UiWork_FinalizePendingCore();
+		AudioCommand_PlayFar(85);
+		result = SaveState_ProcessSelectedSlot();
+		if (result >= 0)
+		{
+			UiText_ShowPositionedMessageAndWait((s32)MsgGameSaved, 1);
+		}
+	}
+	return result;
+}
+
+s32 SaveState_CopySlotPair(void)
+{
+	u32 found;
+	s32 value;
+	s32 result;
+
+	result = 0;
+	found = SaveState_InitializeWorkspace();
+	if (found != 0)
+	{
+		UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
+		result = -9;
+	}
+	else
+	{
+		SaveState_LoadSummaryRecords();
+		value = SaveMenu_SelectSlot(0, 2);
+		if (value == -1)
+		{
+			result = value;
+		}
+		else
+		{
+			void *lower = &gSaveBuffer;
+			void *upper;
+
+			found = SaveState_ReadRecordPayload(value, lower);
+			upper = (u8 *)lower + 0x1000;
+			found |= SaveState_ReadRecordPayload(value + 3, upper);
+			if (found != 0)
+			{
+				UiText_ShowPositionedMessageAndWait((s32)MsgLoadFailed, 1);
+				result = -2;
+			}
+			else
+			{
+				value = SaveState_FindFreeSummarySlot();
+				if (value == 999)
+				{
+					UiText_ShowPositionedMessageAndWait((s32)MsgEraseFailed, 1);
+					result = -5;
+				}
+				else
+				{
+					found = SaveState_WriteRecord(value, lower);
+					found |= SaveState_WriteRecord(value + 3, upper);
+					if (found != 0)
+					{
+						UiText_ShowPositionedMessageAndWait((s32)MsgEraseFailed, 1);
+						result = -3;
+					}
+					else
+					{
+						UiText_ShowPositionedMessageAndWait((s32)MsgFileCopied, 1);
+					}
+				}
+			}
+		}
+	}
+
+	SaveState_ReleaseWorkspace();
+	return result;
+}
+
+s32 SaveState_DeleteSelectedSlot(void)
+{
+	s32 found;
+	s32 value;
+	s32 result = 0;
+
+	found = SaveState_InitializeWorkspace();
+	if (found != 0)
+	{
+		UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
+		result = -9;
+	}
+	else
+	{
+		SaveState_LoadSummaryRecords();
+		value = SaveMenu_SelectSlot(0, 3);
+		if (value == -1)
+		{
+			result = value;
+		}
+		else
+		{
+			UiText_OpenMessageWindow((s32)MsgEraseConfirm, 8, 1, 2);
+			while (UiWork_IsComplete() == 0)
+			{
+				WaitFrames(1);
+			}
+			if (Menu_RunConfirmSelection(1, 0, 3, 1) != 0)
+			{
+				UiWork_FinalizePendingCore();
+			}
+			else
+			{
+				UiWork_FinalizePendingCore();
+				found = SaveState_DeleteRecord(value);
+				found |= SaveState_DeleteRecord(value + 3);
+				if (found != 0)
+				{
+					UiText_ShowPositionedMessageAndWait((s32)MsgEraseFailed, 1);
+					result = -4;
+				}
+				else
+				{
+					UiText_ShowPositionedMessageAndWait((s32)MsgFileErased, 1);
+				}
+			}
+		}
+	}
+	SaveState_ReleaseWorkspace();
+	return result;
+}
+
+//--------------------------------------------------------------------------
+// glow_update_sine.c
+// パレット：BG パレット 14 の色 8〜11 を sin で明滅させる
+//--------------------------------------------------------------------------
+
+#if EDITION_INTERNATIONAL || defined(TLA_EDITION_JA)
+
+//--------------------------------------------------------------------------
+// スケジューラから呼ばれ、4 色を位相をずらした sin で明滅させる
+// s = sin / 16384 として RGB555 で 赤 22 + 2s・緑 16 + s・青 20 + s
+//--------------------------------------------------------------------------
+void PaletteGlow_UpdateSine(void)
+{
+	s32			 *tick;
+	volatile u16 *pal;
+	s32			  col;
+	s32			  s;
+	s32			  i;
+
+	tick = (s32 *)&gFrameTick;
+	pal = (volatile u16 *)0x050001D0; // BG パレット 14 の色 8
+	i = 0;
+	do
+	{
+		s = Trig_Sin((*tick + i * 8) * 0x300); // 1 色ごとに 8 フレームずらす
+		col = s / 16384;
+		{
+			u32 r = col << 1;
+			u32 g = col;
+
+			r += 22;
+			g += 16;
+			col += 20;
+			/* FAKEMATCH: the one-pass block keeps the blue shift after the three
+			 * adds, in source order. Measured: without it the scheduler moves the
+			 * red add below the shifts (differ 6); the colour as one expression
+			 * differs 25, and r, g, b locals in place of col differ 6, as a do
+			 * or a for loop. */
+			do
+			{
+				col <<= 10;
+			} while (0);
+			g <<= 5;
+			col |= g;
+			col |= r;
+		}
+		/* FAKEMATCH: the one-pass block keeps the store ahead of the loop
+		 * index's increment. Measured: without it, differ 2. */
+		do
+		{
+			*pal++ = col;
+		} while (0);
+	} while (++i <= 3);
+}
+
+#endif
+
+#if EDITION_INTERNATIONAL
+
+void Scheduler_ScheduleCallbackAAfterFrames(void)
+{
+	Scheduler_AddOrUpdateCallback(PaletteGlow_UpdateSine, 0xC80);
+}
+
+void Scheduler_ScheduleCallbackA(void)
+{
+	Scheduler_RemoveCallback(PaletteGlow_UpdateSine);
+}
+
+void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width, s32 height)
+{
+	u16 *map = (u16 *)gWindowWork[0];
+	s32	 sum;
+
+	sum = x + window->x;
+	x = sum + 1;
+	sum = y + ((struct UiWindow *)window)->y;
+	y = sum + 1;
+
+	if (x < 0)
+	{
+		width += x;
+		x = 0;
+	}
+	if (x + width > 29)
+		width = 30 - x;
+
+	if (y < 0)
+	{
+		height += y;
+		y = 0;
+	}
+	if (y + height > 29)
+		height = 20 - y;
+
+	if (width > 0 && height > 0)
+	{
+		s32 y_ofs = y << 6;
+		s32 x_ofs = x << 1;
+		s32 offset = y_ofs + x_ofs;
+		do
+		{
+			s32	 remaining = width;
+			u16 *cell = (u16 *)(offset + (s32)map);
+			if (remaining != 0)
+			{
+				do
+				{
+					remaining--;
+					*cell++ = 0xE006;
+				} while (remaining != 0);
+			}
+			height--;
+			offset += 64;
+		} while (height != 0);
+		((struct UiRenderWork *)map)->dirty = 1;
+	}
+}
+
+#endif
+
+void ObjectPlacement_CreateGroup(
+	struct RenderInput *origin, s32 x, s32 y, struct SaveSummary *descriptor)
+{
+	struct ShopRuntime *state = gMenuWork;
+	s32					i;
+	s32					duration;
+
+	for (i = 0; i < 4 && descriptor->party[i] != -1; i++)
+	{
+		struct AnimationObject *object = ResourceObject_CreateFar(
+			Party_RemapCharacterIdIfEnabledFar(descriptor->party[i], (s8)descriptor->has_flag_20));
+
+		if (object != 0)
+		{
+			AnimationObjects_SelectAnimationFar(object, 1);
+			((struct FieldSprite *)object)->flags = 0;
+			((struct FieldSprite *)object)->priority = 0;
+		}
+
+		state->party_member_icons[i] = object;
+		state->party_member_x[i] = (x + origin->x + i * 3) * 8 + 0x10;
+		state->party_member_y[i] = (y + origin->y) * 8 + 0x10;
+		state->party_member_scale[i] = 0x10000;
+	}
+
+	duration = 200;
+	duration <<= 4;
+	Scheduler_AddOrUpdateCallback(Menu_UpdateFirstObjectRowPositions, duration);
+}
+
+void Menu_ClearFirstObjectRowAndScheduleUpdate(void)
+{
+	struct ShopRuntime *state = gMenuWork;
+	s32					i;
+
+	Scheduler_RemoveCallback(Menu_UpdateFirstObjectRowPositions);
+	for (i = 0; i < 4; i++)
+	{
+		if (state->party_member_icons[i] != 0)
+		{
+			ResourceObject_ReleaseFar(state->party_member_icons[i]);
+			state->party_member_icons[i] = 0;
+		}
+	}
+}
+
+void Menu_UpdateFirstObjectRowPositions(void)
+{
+	struct ShopRuntime *state = gMenuWork;
+	s32					source[2];
+	s32					request[4];
+	s32					index = 0;
+	s32					handle;
+
+	while (1)
+	{
+		handle = (s32)state->party_member_icons[index];
+		if (handle != 0)
+		{
+			source[0] = state->party_member_scale[index];
+			source[1] = state->party_member_scale[index];
+			request[0] = state->party_member_x[index] << 16;
+			request[1] = 0x01F40000;
+			request[2] = (state->party_member_y[index] << 16) + 0x01F40000;
+			request[3] = 0;
+			Object_ApplyProjectedPlacementFar(handle, request, source, 0x4000);
+		}
+		index += 1;
+		if (index > 3)
+		{
+			break;
+		}
+	}
+}
+
+void Menu_SpawnFourObjectsAtOrigin(struct RenderInput *origin, s32 x, s32 y)
+{
+	struct FourObjectMotionState *state = gMenuWork;
+	s32							  i;
+
+	if (origin != 0)
+	{
+		for (i = 0; i < 4; i++)
+		{
+			struct AnimationObject *object =
+				(struct AnimationObject *)ResourceObject_CreateFar(Menu_PartySpriteResourceIds[i]);
+
+			if (object != 0)
+			{
+				AnimationObjects_SelectAnimationFar(object, 2);
+				((struct FieldSprite *)object)->flags = 0;
+				((struct FieldSprite *)object)->priority = 0;
+			}
+
+			state->objects[i] = object;
+			state->positions_x[i] = (origin->x + x + i * 3) * 8 + 0x10;
+			state->positions_y[i] = (origin->y + y) * 8 + 0x10;
+		}
+
+		Scheduler_AddOrUpdateCallback(Menu_UpdateSecondObjectRowPositions, 200 << 4);
+	}
+}
+
+void Menu_ClearSecondObjectRowAndScheduleUpdate(void)
+{
+	struct FourObjectMotionState *state = gMenuWork;
+	s32							  i;
+
+	Scheduler_RemoveCallback(Menu_UpdateSecondObjectRowPositions);
+	for (i = 0; i < 4; i++)
+	{
+		if (state->objects[i] != 0)
+		{
+			ResourceObject_ReleaseFar(state->objects[i]);
+			state->objects[i] = 0;
+		}
+	}
+}
+
+void Menu_UpdateSecondObjectRowPositions(void)
+{
+	struct FourObjectMotionState *root = gMenuWork;
+	s32							  scale[2];
+	s32							  position[4];
+	s32							  index;
+
+	index = 0;
+	do
+	{
+		void *object = root->objects[index];
+
+		if (object != 0)
+		{
+			s32 unit = 0x10000;
+			s32 bias = 0x1f40000;
+
+			scale[0] = unit;
+			scale[1] = unit;
+			position[0] = root->positions_x[index] << 16;
+			position[1] = bias;
+			position[2] = (root->positions_y[index] << 16) + bias;
+			position[3] = 0;
+			Object_ApplyProjectedPlacementFar((s32)object, position, scale, 0x4000);
+		}
+		index++;
+	} while (index <= 3);
+}
+
+//--------------------------------------------------------------------------
+// draw_four_numbers_in_row.c
+// セーブ：記録のジンの数を属性ごとに横に並べて書く
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+// 4 つの数を 2 けたで、24 ドットおきに y 16 に書く
+// win : 書き込み先（0 なら何もしない）
+//--------------------------------------------------------------------------
+void UiText_DrawFourNumbersInRow(struct RenderInput *win, struct SaveSummary *row)
+{
+	s32 i;
+
+	if (win != 0)
+	{
+		for (i = 0; i < 4; i++)
+			UiText_DrawNumberAtOffset((s8)row->djinn[i], 2, win, i * 24, 16);
+	}
+}
+
+//--------------------------------------------------------------------------
+// draw_character_summary.c
+// セーブ：記録の名前・レベル・クラス・コイン・プレイ時間を書く
+//--------------------------------------------------------------------------
+// 版ごとの「Lv」と「コイン」の x（ドット）
+#if defined(TBS_EDITION_ES) || defined(TLA_EDITION_ES)
+#define SUMMARY_LEVEL_X 64
+#define SUMMARY_COINS_X 56
+#elif defined(TBS_EDITION_FR) || defined(TLA_EDITION_FR)
+#define SUMMARY_LEVEL_X 59
+#define SUMMARY_COINS_X 56
+#else
+#define SUMMARY_COINS_X 48
+#endif
+
+//--------------------------------------------------------------------------
+// win : 書き込み先（0 なら何もしない）
+// rec : セーブの記録
+//--------------------------------------------------------------------------
+void StatusMenu_DrawCharacterSummary(s32 win, struct SaveSummary *rec)
+{
+	u32 buf[4]; // プレイ時間の文字列
+	s32 y;
+
+	if (win != 0)
+	{
+		RenderOutput_PrepareForRedraw((struct UiWindow *)win);
+		UiWindow_DrawDividerLine(win, 0, 4, 13, 4);
+		UiText_DrawStringAtOffset(rec->name, win, 0, 0);
+		y = 0;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TLA_EDITION_ES) \
+	|| defined(TLA_EDITION_FR)
+		UiText_DrawStringAtOffset(StatusMenu_LevelLetterString, win, SUMMARY_LEVEL_X, 0);
+#else
+		UiText_DrawStringInWindow((s32)StatusMenu_LevelLetterString, win, 72, 0);
+#endif
+		UiText_DrawNumberAtOffset(rec->level, 2, win, 80, y);
+		UiText_DrawCharacterAtOffset(rec->class_id + (s32)MsgClassName, win, 0, 16);
+#if !EDITION_INTERNATIONAL
+		y = 32;
+		UiText_DrawNumberInWindow(rec->coins, 6, win, 24, y);
+		UiText_DrawCharacterAtOffset((s32)MsgCoins, win, 72, 32);
+		UiText_DrawCharacterAtOffset((s32)MsgStatusLabel, win, 0, 48);
+		UiText_DrawStringInWindow((s32)Text_FormatPlayTime(rec->play_time, (u8 *)buf), win, 48, 48);
+#else
+		UiText_DrawCharacterAtOffset((s32)MsgStatusLabel, win, 0, 32);
+		UiText_DrawStringInWindow((s32)Text_FormatPlayTime(rec->play_time, (u8 *)buf), win, 48, 40);
+		y = 48;
+		UiText_DrawNumberInWindow(rec->coins, 6, win, 0, y);
+#if defined(TBS_EDITION_FR) || defined(TLA_EDITION_FR)
+		// フランス語版は 1 枚以下なら単数形
+		if (rec->coins > 1)
+			UiText_DrawCharacterAtOffset((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
+		else
+			UiText_DrawCharacterAtOffset((s32)MsgPiece, win, SUMMARY_COINS_X, 48);
+#else
+		UiText_DrawCharacterAtOffset((s32)MsgCoins, win, SUMMARY_COINS_X, 48);
+#endif
+#endif
+	}
+}
+
+#if EDITION_INTERNATIONAL
+
+s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
+{
+	struct UiWindow		 *list;
+	struct SaveWorkspace *save;
+	struct UiWindow		 *status;
+	struct UiWindow		 *djinn;
+	struct UiWindow		 *counts;
+	struct SaveSummary	 *summary;
+	struct RenderOutput	 *cursor;
+	s32					  redraw;
+	struct UiRenderWork	 *render;
+	u32					  stamp;
+	void				 *work;
+	s32					  result;
+	s32					  i;
+	s32					  y;
+
+	work = Runtime_AllocateHeapBlock(55, 0xa70);
+	save = *(gWorkSlot + HEAP_SLOT_SAVE);
+	status = NULL;
+	djinn = NULL;
+	counts = NULL;
+	redraw = 1;
+	render = *(gWorkSlot + HEAP_SLOT_WINDOW);
+	stamp = Runtime_GetBuildStampTimeFar();
+	if (slot < 0)
+		slot = 0;
+	if (mode == 1)
+	{
+		for (i = 0;
+			i < 3 && (save->summary[slot].level == 0 || (s8)save->summary[slot].send_flag != 0);
+			i++)
+		{
+			slot++;
+			if (slot == 3)
+				slot = 0;
+		}
+		if (i == 3)
+		{
+			result = -2;
+			goto done;
+		}
+	}
+	else if (mode == 4)
+	{
+		for (i = 0;
+			i < 3 && (save->summary[slot].level == 0 || (s8)save->summary[slot].flag_count == 0);
+			i++)
+		{
+			slot++;
+			if (slot == 3)
+				slot = 0;
+		}
+		if (i == 3)
+		{
+			result = -2;
+			goto done;
+		}
+	}
+	else if (mode == 5)
+	{
+		for (i = 0;
+			i < 3 && (save->summary[slot].level == 0 || (s8)save->summary[slot].send_flag == 0);
+			i++)
+		{
+			slot++;
+			if (slot == 3)
+				slot = 0;
+		}
+		if (i == 3)
+		{
+			result = -2;
+			goto done;
+		}
+	}
+	else if (mode != 0)
+	{
+		for (i = 0; i < 3 && (save->summary[slot].level == 0); i++)
+		{
+			slot++;
+			if (slot == 3)
+				slot = 0;
+		}
+		if (i == 3)
+		{
+			result = -2;
+			goto done;
+		}
+	}
+
+	Dma_Fill32(0, work, 0xa70);
+	Scheduler_ScheduleCallbackAAfterFrames();
+	list = UiWindow_Create(1, 2, 28, 7, 2);
+	summary = save->summary;
+	y = 0;
+	for (i = 0; i < 3; i++, y += 16, summary++)
+	{
+		if (summary->level == 0)
+		{
+			UiText_DrawResource((s32)MsgSaveNoData, list, 10, y);
+		}
+		else if (summary->frames < stamp)
+		{
+			UiText_DrawResource((s32)MsgSaveContinue, list, 10, y);
+		}
+		else if (summary->play_time != *(u32 *)summary->unknown_38)
+		{
+			UiText_DrawResource((s32)MsgSaveCorrupted, list, 10, y);
+		}
+		else if (mode == 5 && (s8)summary->send_flag == 0)
+		{
+			UiText_DrawResource((s32)MsgSaveNotCleared, list, 10, y);
+		}
+		else
+		{
+			UiText_DrawString(summary->name, list, SAVE_SLOT_NAME_X, y);
+			UiText_DrawResource(summary->area + (s32)MsgDebugEntryName, list, 62, y);
+			render->dirty = 1;
+		}
+	}
+	UiWindow_DrawDividerLine(list, 0, 2, 27, 2);
+	UiWindow_DrawDividerLine(list, 0, 4, 27, 4);
+	cursor = RenderResource_CreatePair(mode, list, 72, -24);
+
+	while (1)
+	{
+		if (redraw != 0)
+		{
+			redraw = 0;
+			if (save->summary[slot].level != 0)
+			{
+				PaletteGlow_Update(
+					save->summary[slot].palette_glow, save->summary[slot].palette_glow_sub);
+				if (status == NULL)
+					status = UiWindow_Create(1, 10, 14, 9, 2);
+				StatusMenu_DrawCharacterSummary(status, &save->summary[slot]);
+				WaitFrames(1);
+				if (djinn == NULL)
+					djinn = UiWindow_Create(16, 10, 13, 3, 2);
+				Menu_ClearFirstObjectRowAndScheduleUpdate();
+				ObjectPlacement_CreateGroup(djinn, 0, 0, &save->summary[slot]);
+				WaitFrames(1);
+				if ((s8)save->summary[slot].djinn[0] + (s8)save->summary[slot].djinn[1]
+						+ (s8)save->summary[slot].djinn[2] + (s8)save->summary[slot].djinn[3]
+					!= 0)
+				{
+					if (counts == NULL)
+						counts = UiWindow_Create(16, 14, 13, 5, 2);
+					UiText_DrawFourNumbersInRow(counts, &save->summary[slot]);
+					Menu_ClearSecondObjectRowAndScheduleUpdate();
+					Menu_SpawnFourObjectsAtOrigin(counts, 0, 0);
+				}
+				else
+				{
+					Menu_ClearSecondObjectRowAndScheduleUpdate();
+					UiWork_Finalize(counts, 2);
+					counts = NULL;
+				}
+			}
+			else
+			{
+				PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
+				Menu_ClearSecondObjectRowAndScheduleUpdate();
+				Menu_ClearFirstObjectRowAndScheduleUpdate();
+				UiWork_Finalize(counts, 2);
+				UiWork_Finalize(djinn, 2);
+				UiWork_Finalize(status, 2);
+				counts = NULL;
+				djinn = NULL;
+				status = NULL;
+			}
+			RenderOutput_RedrawSavedRect(list);
+			UiWindow_DrawDividerLine(list, 0, 2, 27, 2);
+			UiWindow_DrawDividerLine(list, 0, 4, 27, 4);
+			UiWindow_FillTilemapRect(list, 0, slot * 2, 26, 1);
+		}
+		Ui_ApplyTableOffsetToPair(cursor);
+		WaitFrames(1);
+		if (gKeysRepeat & 0x40)
+		{
+			AudioCommand_PlayFar(111);
+			redraw = 1;
+			do
+			{
+				slot = (slot + 2) % 3;
+				if (mode == 0)
+					break;
+			} while ((save->summary[slot].level == 0
+					  || (mode == 1 && (s8)save->summary[slot].send_flag != 0)
+					  || (mode == 4 && (s8)save->summary[slot].flag_count == 0)
+					  || (mode == 5 && (s8)save->summary[slot].send_flag == 0)));
+		}
+		else if (gKeysRepeat & 0x80)
+		{
+			AudioCommand_PlayFar(111);
+			redraw = 1;
+			do
+			{
+				slot = (slot + 4) % 3;
+				if (mode == 0)
+					break;
+			} while ((save->summary[slot].level == 0
+					  || (mode == 1 && (s8)save->summary[slot].send_flag != 0)
+					  || (mode == 4 && (s8)save->summary[slot].flag_count == 0)
+					  || (mode == 5 && (s8)save->summary[slot].send_flag == 0)));
+		}
+		else if (gKeyState & 2)
+		{
+			AudioCommand_PlayFar(113);
+			result = -1;
+			break;
+		}
+		else if (gKeyState & 1)
+		{
+			AudioCommand_PlayFar(112);
+			result = slot;
+			break;
+		}
+	}
+	Menu_ClearSecondObjectRowAndScheduleUpdate();
+	Menu_ClearFirstObjectRowAndScheduleUpdate();
+	UiWork_Finalize(counts, 2);
+	UiWork_Finalize(djinn, 2);
+	UiWork_Finalize(status, 2);
+	UiWork_Finalize(list, 2);
+	Scheduler_ScheduleCallbackA();
+	Runtime_ReleaseHeapBlock(55);
+	PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
+	WaitFrames(1);
+done:
+	return result;
+}
+#elif defined(TBS_EDITION_JA)
+
+s32 SaveMenu_SelectSlot(s32 slot, s32 mode)
+{
+	struct UiWindow		 *list;
+	struct UiWindow		 *status;
+	struct SaveWorkspace *save;
+	struct UiWindow		 *djinn;
+	struct UiWindow		 *counts;
+	struct SaveSummary	 *summary;
+	struct RenderOutput	 *cursor;
+	s32					  kind;
+	s32					  redraw;
+	struct UiRenderWork	 *render;
+	u32					  stamp;
+	void				 *work;
+	struct ShopCursor	  marker;
+	s32					  result;
+	s32					  i;
+	s32					  x;
+	s32					  y;
+	s32					  tile;
+	struct RenderOutput	 *anchor;
+
+	work = Runtime_AllocateHeapBlock(55, 0xa70);
+	save = *(gWorkSlot + HEAP_SLOT_SAVE);
+	status = NULL;
+	djinn = NULL;
+	counts = NULL;
+	redraw = 1;
+	render = *(gWorkSlot + HEAP_SLOT_WINDOW);
+	stamp = Runtime_GetBuildStampTimeFar();
+	if (slot < 0)
+		slot = 0;
+	if (mode != 0)
+	{
+		for (i = 0; i < 3 && (save->summary[slot].level == 0); i++)
+		{
+			slot++;
+			if (slot == 3)
+				slot = 0;
+		}
+		if (i == 3)
+		{
+			result = -2;
+			goto done;
+		}
+	}
+	if (mode == 1)
+	{
+		for (i = 0; i < 3 && ((s8)save->summary[slot].send_flag != 0); i++)
+		{
+			slot++;
+			if (slot == 3)
+				slot = 0;
+		}
+		if (i == 3)
+		{
+			result = -2;
+			goto done;
+		}
+	}
+	if (mode == 4)
+	{
+		for (i = 0; i < 3 && ((s8)save->summary[slot].flag_count == 0); i++)
+		{
+			slot++;
+			if (slot == 3)
+				slot = 0;
+		}
+		if (i == 3)
+		{
+			result = -2;
+			goto done;
+		}
+	}
+	if (mode == 5)
+	{
+		for (i = 0; i < 3 && ((s8)save->summary[slot].send_flag == 0); i++)
+		{
+			slot++;
+			if (slot == 3)
+				slot = 0;
+		}
+		if (i == 3)
+		{
+			result = -2;
+			goto done;
+		}
+	}
+
+	Dma_Fill32(0, work, 0xa70);
+	list = UiWindow_Create(1, 2, 28, 7, 2);
+
+	for (i = 0, summary = save->summary; i < 3; i++, summary++)
+	{
+		if (save->summary[i].level == 0)
+		{
+			UiText_DrawResource((s32)MsgSaveNoData, list, 10, i * 16);
+		}
+		else if (save->summary[i].frames < stamp)
+		{
+			UiText_DrawResource((s32)MsgSaveContinue, list, 10, i * 16);
+		}
+		else if (save->summary[i].play_time != *(u32 *)save->summary[i].unknown_38)
+		{
+			UiText_DrawResource((s32)MsgSaveCorrupted, list, 10, i * 16);
+		}
+		else if (mode == 5 && (s8)save->summary[i].send_flag == 0)
+		{
+			UiText_DrawResource((s32)MsgSaveNotCleared, list, 10, i * 16);
+		}
+		else
+		{
+			y = i * 16;
+			UiText_DrawString(summary->name, list, SAVE_SLOT_NAME_X, y);
+			UiText_DrawResource(save->summary[i].area + (s32)MsgDebugEntryName, list, 72, y);
+			render->dirty = 1;
+		}
+	}
+	UiWindow_DrawDividerLine(list, 0, 2, 27, 2);
+	UiWindow_DrawDividerLine(list, 0, 4, 27, 4);
+	tile = Resource_FindFreeEntry();
+	if (tile < 96)
+	{
+		VramBlock_LoadCached(tile, 128, Resource_FixedBlockBTiles);
+		x = -12;
+		y = slot * 16 + 4;
+		anchor = RenderOutput_Create(tile, 0x40000000, (struct RenderInput *)list, x, y);
+		anchor->active = 1;
+		marker.anchor = anchor;
+	}
+	kind = 1;
+	cursor = RenderResource_CreatePair(mode, list, 72, -24);
+
+	while (1)
+	{
+		if (redraw != 0)
+		{
+			redraw = 0;
+			if (save->summary[slot].level != 0)
+			{
+				PaletteGlow_Update(
+					save->summary[slot].palette_glow, save->summary[slot].palette_glow_sub);
+				if (status == NULL)
+					status = UiWindow_Create(1, 10, 14, 9, 2);
+				StatusMenu_DrawCharacterSummary(status, &save->summary[slot]);
+				WaitFrames(1);
+				if (djinn == NULL)
+					djinn = UiWindow_Create(16, 10, 13, 3, 2);
+				Menu_ClearFirstObjectRowAndScheduleUpdate();
+				ObjectPlacement_CreateGroup(djinn, 0, 0, &save->summary[slot]);
+				WaitFrames(1);
+				if ((s8)save->summary[slot].djinn[0] + (s8)save->summary[slot].djinn[1]
+						+ (s8)save->summary[slot].djinn[2] + (s8)save->summary[slot].djinn[3]
+					!= 0)
+				{
+					if (counts == NULL)
+						counts = UiWindow_Create(16, 14, 13, 5, 2);
+					UiText_DrawFourNumbersInRow(counts, &save->summary[slot]);
+					Menu_ClearSecondObjectRowAndScheduleUpdate();
+					Menu_SpawnFourObjectsAtOrigin(counts, 0, 0);
+				}
+				else
+				{
+					Menu_ClearSecondObjectRowAndScheduleUpdate();
+					UiWork_Finalize(counts, 2);
+					counts = NULL;
+				}
+			}
+			else
+			{
+				PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
+				Menu_ClearSecondObjectRowAndScheduleUpdate();
+				Menu_ClearFirstObjectRowAndScheduleUpdate();
+				UiWork_Finalize(counts, 2);
+				UiWork_Finalize(djinn, 2);
+				UiWork_Finalize(status, 2);
+				counts = NULL;
+				djinn = NULL;
+				status = NULL;
+			}
+			x = list->x * 8 - 4;
+			y = (list->y << 3) + slot * 16 + 12;
+			Shop_SetCursorFar(&marker, x, y, kind);
+			kind = 3;
+		}
+		ShopCursor_AdvanceFar(&marker);
+		Ui_ApplyTableOffsetToPair(cursor);
+		WaitFrames(1);
+		if (gKeysRepeat & 0x40)
+		{
+			AudioCommand_PlayFar(111);
+			redraw = 1;
+			do
+			{
+				slot = (slot + 2) % 3;
+				if (mode == 0)
+					break;
+			} while ((save->summary[slot].level == 0
+					  || (mode == 1 && (s8)save->summary[slot].send_flag != 0)
+					  || (mode == 4 && (s8)save->summary[slot].flag_count == 0)
+					  || (mode == 5 && (s8)save->summary[slot].send_flag == 0)));
+		}
+		else if (gKeysRepeat & 0x80)
+		{
+			AudioCommand_PlayFar(111);
+			redraw = 1;
+			do
+			{
+				slot = (slot + 4) % 3;
+				if (mode == 0)
+					break;
+			} while ((save->summary[slot].level == 0
+					  || (mode == 1 && (s8)save->summary[slot].send_flag != 0)
+					  || (mode == 4 && (s8)save->summary[slot].flag_count == 0)
+					  || (mode == 5 && (s8)save->summary[slot].send_flag == 0)));
+		}
+		else if (gKeyState & 2)
+		{
+			AudioCommand_PlayFar(113);
+			result = -1;
+			break;
+		}
+		else if (gKeyState & 1)
+		{
+			AudioCommand_PlayFar(112);
+			result = slot;
+			break;
+		}
+	}
+	Menu_ClearSecondObjectRowAndScheduleUpdate();
+	Menu_ClearFirstObjectRowAndScheduleUpdate();
+	UiWork_Finalize(counts, 2);
+	UiWork_Finalize(djinn, 2);
+	UiWork_Finalize(status, 2);
+	UiWork_Finalize(list, 2);
+	Runtime_ReleaseHeapBlock(55);
+	PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
+	WaitFrames(1);
+done:
+	return result;
+}
+#endif
+
+s32 Save_WriteSelectedSlot(void)
+{
+	s32					  result;
+	s32					  slot;
+	s32					  flag;
+	struct SaveWorkspace *work;
+
+	result = 0;
+	flag = SaveState_InitializeWorkspace();
+	if (flag != 0)
+	{
+		UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
+		result = -9;
+	}
+	else
+	{
+		SaveState_LoadSummaryRecords();
+		work = gSaveWorkspace;
+		slot = SaveMenu_SelectSlot(gSaveSlot, 0);
+		if (slot == -1)
+		{
+			result = slot;
+		}
+		else
+		{
+			if (work->summary[slot].level != 0)
+			{
+				UiText_ShowPositionedMessageAndWait((s32)MsgOverwriteConfirm, 13);
+				while (UiWork_IsComplete() == 0)
+				{
+					WaitFrames(1);
+				}
+				if (Menu_RunConfirmSelection(1, 0, 0, 1) != 0)
+				{
+					UiWork_FinalizePendingCore();
+					goto skip;
+				}
+				UiWork_FinalizePendingCore();
+			}
+			gSaveSlot = slot;
+			AudioCommand_PlayFar(85);
+			UiText_ShowPositionedMessageAndWait((s32)MsgSaving, 13);
+			while (UiWork_IsComplete() == 0)
+			{
+				WaitFrames(1);
+			}
+			SaveState_BuildSummaryHeader();
+			SaveState_CaptureObjectTableFar();
+			flag = SaveState_WriteRecord(slot, gSaveBuffer);
+			flag |= SaveState_WriteRecord(slot + 3, gSaveBuffer + 0x1000);
+			UiWork_FinalizePendingCore();
+			if (flag != 0)
+			{
+				UiText_ShowPositionedMessageAndWait((s32)MsgSaveFailed, 1);
+				result = -3;
+			}
+			else
+			{
+				UiText_ShowPositionedMessageAndWait((s32)MsgGameSaved, 9);
+			}
+		}
+	}
+skip:
+	SaveState_ReleaseWorkspace();
+	return result;
+}
+
+s32 SaveState_LoadRecordIntoWork(s32 arg)
+{
+	s32		   ret = 0;
+	s32		   err = SaveState_InitializeWorkspace();
+
+	if (err != 0)
+	{
+		UiText_ShowPositionedMessageAndWait((s32)MsgNoBackupMemory, 1);
+		ret = -9;
+	}
+	else
+	{
+		s32 value;
+
+		SaveState_LoadSummaryRecords();
+		value = SaveMenu_SelectSlot(gSaveSlot, arg);
+		if (value == -1)
+		{
+			ret = value;
+		}
+		else
+		{
+			void *base = &gSaveBuffer;
+
+			err = SaveState_ReadRecordPayload(value, base);
+			base = (char *)base + 0x1000;
+			err |= SaveState_ReadRecordPayload(value + 3, base);
+			if (err != 0)
+			{
+				UiText_ShowPositionedMessageAndWait((s32)MsgLoadFailed, 1);
+				ret = -2;
+			}
+			else
+			{
+				gLoadedStateWord = gGameState.play_time;
+				gOptionMirror = gGameState.saved_options;
+				gPostLoadCounter = 0;
+				gSaveSlot = value;
+			}
+		}
+	}
+	SaveState_ReleaseWorkspace();
+	return ret;
+}
+
+s32 Resource_LoadFixedBlockBIntoFreeSlot(void)
+{
+	s32 slot;
+
+	slot = Resource_FindFreeEntry();
+	VramBlock_LoadCached(slot, 0x80, Resource_FixedBlockBTiles);
+	return slot;
+}
+
+#if EDITION_INTERNATIONAL
+s32 Resource_ReturnTrue(void)
+{
+	return 1;
+}
+#else
+
+s32 NameEntry_AcceptsMark(s32 mark, s32 letter)
+{
+	const u8 *range;
+
+	if (mark < 0xde || mark > 223)
+		return 1;
+	if (mark == 0xde)
+		range = NameEntry_DakutenRanges;
+	else
+		range = NameEntry_HandakutenRanges;
+	for (; *range != 0; range += 2)
+	{
+		if (letter >= range[0] && letter <= range[1])
+			return 1;
+	}
+	return 0;
+}
+
+s32 NameEntry_CountLetters(const u8 *name)
+{
+	s32 count;
+
+	count = 0;
+	for (; *name != 0; name++)
+	{
+		if ((u8)(*name - 0xde) > 1)
+			count++;
+	}
+	return count;
+}
+#endif
+
+void UiWindow_CopyTilemapRegion(const struct RenderInput *window, const void *source)
+{
+	struct UiRenderWork *work = UI_WORK;
+	s16					*mirror = (s16 *)work->tilemap;
+	s16					*buffer = Runtime_BumpAllocateAlternatePool(0x300);
+	s16					*input = buffer;
+	u32					 cell;
+	s16					*vram;
+	s32					 row;
+
+	Resource_DecodeType01(source, buffer);
+	cell = window->y * 32 + window->x;
+	vram = (s16 *)0x06002000 + cell;
+	mirror += cell;
+
+	for (row = 0; row < window->height; row++)
+	{
+		s32 column;
+
+		for (column = 0; column < window->width; column++)
+		{
+			s16 value = *input++;
+
+			*vram++ = value;
+			*mirror++ = value;
+		}
+		vram += 32 - window->width;
+		mirror += 32 - window->width;
+	}
+	MemFree(buffer);
+}
+
+void UiWindow_SetTileAttributeRect(
+	const struct RenderInput *window, s32 x, s32 y, s32 width, s32 height, u32 field)
+{
+	u8 *base = gWindowWork[0];
+
+	x += window->x + 1;
+	y += window->y + 1;
+	field <<= 12;
+	if (x < 0)
+	{
+		width += x;
+		x = 0;
+	}
+	if (x + width > 29)
+	{
+		width = 30 - x;
+	}
+	if (y < 0)
+	{
+		height += y;
+		y = 0;
+	}
+	if (y + height > 29)
+	{
+		height = 20 - y;
+	}
+	if (width > 0 && height > 0)
+	{
+		y <<= 6;
+		x = y + (x << 1);
+		do
+		{
+			u16 *cell = (u16 *)(x + (u32)base);
+			s32	 remaining = width;
+			while (remaining != 0)
+			{
+				u32 value = *cell;
+				value &= 0xFFFFEFFF;
+				value |= field;
+				remaining--;
+				*cell = value;
+				cell++;
+			}
+			height--;
+			x += 64;
+		} while (height != 0);
+		((struct UiRenderWork *)base)->dirty = 1;
+	}
+}
+
+void Resource_CopyFixedBlockB(s32 arg0)
+{
+	VramBlock_LoadCached(arg0, 0x80, Resource_FixedBlockBTiles);
+}
+
+void Resource_CopyFixedBlockA(s32 arg0)
+{
+	VramBlock_LoadCached(arg0, 0x80, Resource_FixedBlockATiles);
+}
+
+#if EDITION_INTERNATIONAL
+s32 UiText_SetRenderString(const u8 *str)
+{
+	struct UiRenderWork *work;
+	u16					*dst;
+	s32					 count;
+	u32					 width;
+	u32					 height;
+
+	work = UI_WORK;
+	count = 0;
+	if (*str != 0)
+	{
+		dst = work->entries;
+		do
+		{
+			*dst = *str;
+			str++;
+			dst++;
+			count++;
+		} while (*str != 0);
+	}
+	work->entries[count] = 0;
+	UiText_MeasureEntryDimensions(0, &width, &height, 0);
+	return width;
+}
+
+void UiText_DrawPaddedLabel(s32 output, u8 *input)
+{
+	u8	text[20];
+	s32 length = 0;
+
+	if (*input != 0)
+	{
+		do
+		{
+			text[length] = *input;
+			input++;
+			length++;
+		} while (*input != 0);
+	}
+
+	text[length++] = 8;
+	text[length++] = 2;
+
+	while (length <= 6)
+	{
+		text[length++] = 95;
+	}
+
+	text[length++] = 8;
+	text[length++] = 15;
+	text[length] = 0;
+	UiText_DrawString(text, output, 0, -2);
+}
+
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+#define NAME_LABEL_WIDTH 9
+#else
+#define NAME_LABEL_WIDTH 8
+#endif
+
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
+#define NAME_KEY_LABELS 1
+#else
+#define NAME_KEY_LABELS 0
+#endif
+#if defined(TBS_EDITION_DE)
+#define NAME_END_KEY_WIDTH 4
+#else
+#define NAME_END_KEY_WIDTH 3
+#endif
+
+s32 NameEntry_EditOwnerName(s32 entry)
+{
+	struct RenderInput	*label;
+	s32					 result = 0;
+	s32					 original_length = 0;
+	s32					 length = 0;
+	u8					 text[16];
+	u8					*input = text + 1;
+	u8					*saved = (u8 *)UnitGetFar(entry);
+	u8					*work = gWindowWork[0];
+	s32					 text_dirty = 1;
+	s32					 cursor_dirty = 1;
+	struct RenderInput	*window;
+	union MenuCursor	 cursor;
+	union MenuCursor	 caret;
+	s32					 column, row, slot;
+	struct RenderOutput *output;
+	u8					*end;
+	u16					*pal;
+
+	Ui_LoadWindowGraphics();
+	window = (struct RenderInput *)UiWindow_Create(3, 6, 24, 9, 2);
+	label = (struct RenderInput *)UiWindow_Create(8, 3, NAME_LABEL_WIDTH, 3, 2);
+	UiWindow_CreateWithSideObject(Localization_LookupEntryId(entry), 0, 3, 1);
+	UiWindow_CopyTilemapRegion(window, NameEntry_KeyboardTilemap);
+#if NAME_KEY_LABELS
+	UiText_DrawStringInWindow(NameEntry_DeleteKeyLabel, window, 144, 32);
+	UiText_DrawStringInWindow(NameEntry_EndKeyLabel, window, 144, 40);
+#endif
+	UiWindow_DrawDividerLine(window, 18, 0, 18, 7);
+	((struct UiRenderWork *)work)->dirty = text_dirty;
+	text[0] = result;
+	{
+		s32 i;
+
+		for (i = 0; i < 14; i++)
+		{
+			u32 c = saved[i];
+
+			input[i] = c;
+			if (c != 0)
+			{
+				original_length++;
+				length++;
+			}
+		}
+	}
+	input[14] = 0;
+	UiText_DrawPaddedLabel((s32)label, saved);
+	slot = Resource_FindFreeEntry();
+	column = 18;
+	row = 5;
+	if (slot <= 95)
+	{
+		VramBlock_LoadCached(slot, 128, Resource_FixedBlockBTiles);
+		output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+		cursor.output = output;
+		ShopCursor_SetPositionImmediateFar(&cursor.cursor, window->x * 8 + 140, window->y * 8 + 52);
+	}
+	slot = Resource_FindFreeEntry();
+	if (slot <= 95)
+	{
+		VramBlock_LoadCached(slot, 128, Resource_FixedBlockATiles);
+		output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+		caret.output = output;
+		output->sentinel = 255;
+		((struct FieldSprite *)output->unknown_10)->priority = 0;
+		ShopCursor_SetPositionImmediateFar(&caret.cursor, UiText_SetRenderString(input) + 70, 22);
+	}
+	pal = (u16 *)0x050001c0;
+	Dma_Set((void *)0x050001e0, pal, 0x84000008, REG_DMA3);
+	pal[4] = 0x6318;
+	end = (u8 *)(original_length + (s32)input);
+	while (1)
+	{
+		s32 width = 1;
+
+		if (column == 18)
+		{
+			if (row == 4)
+				width = 3;
+			if (row == 5)
+				width = NAME_END_KEY_WIDTH;
+		}
+		UiWindow_SetTileAttributeRect(window, column, row, width, 1, 14);
+		WaitFrames(1);
+		UiWindow_SetTileAttributeRect(window, column, row, width, 1, 15);
+		if (cursor_dirty)
+		{
+			cursor_dirty = 0;
+			Shop_SetCursorFar(&cursor.cursor, (window->x + column) * 8 - 7, (window->y + row) * 8 + 15, 3);
+		}
+		if (text_dirty)
+		{
+			text_dirty = 0;
+			Shop_SetCursorFar(&caret.cursor, UiText_SetRenderString(input) + 70, 22, 3);
+		}
+		ShopCursor_AdvanceFar(&cursor.cursor);
+		ShopCursor_MoveTowardTargetFar(&caret.cursor);
+		{
+			u32 frame = (gFrameTick >> 1) & 7;
+
+			output = caret.output;
+			((struct FieldSprite *)output->unknown_10)->x = output->x + NameEntry_CaretWave[frame];
+			((struct FieldSprite *)output->unknown_10)->y =
+				output->y + NameEntry_CaretWave[(frame + 5) & 7];
+		}
+		if (gKeysRepeat & KEY_UP)
+		{
+			AudioCommand_PlayFar(111);
+			cursor_dirty = 1;
+			row--;
+			if (column != 18)
+			{
+				if (row == -1)
+					row = 5;
+			}
+			else
+			{
+				row = (row != 3);
+				row = 5 - row;
+			}
+		}
+		if (gKeysRepeat & KEY_DOWN)
+		{
+			AudioCommand_PlayFar(111);
+			cursor_dirty = 1;
+			row++;
+			if (column != 18)
+			{
+				if (row == 6)
+					row = 0;
+			}
+			else
+			{
+				row = (row != 6);
+				row += 4;
+			}
+		}
+		if (gKeysRepeat & KEY_LEFT)
+		{
+			AudioCommand_PlayFar(111);
+			cursor_dirty = 1;
+			column--;
+			if (column == -1)
+			{
+				column = 18;
+				if (row < 4 || row > 5)
+					column = 16;
+			}
+			else if (column == 5 || column == 11 || column == 17)
+			{
+				column--;
+			}
+		}
+		if (gKeysRepeat & KEY_RIGHT)
+		{
+			AudioCommand_PlayFar(111);
+			cursor_dirty = 1;
+			column++;
+			if (column == 19)
+				column = 0;
+			else if (column == 5 || column == 11 || column == 17)
+				column++;
+			if (column == 18 && (row < 4 || row > 5))
+				column = 0;
+		}
+		if (gKeyState & KEY_START)
+		{
+			AudioCommand_PlayFar(111);
+			cursor_dirty = 1;
+			column = 18;
+			row = 5;
+		}
+		if (gKeysRepeat & KEY_B)
+		{
+			AudioCommand_PlayFar(113);
+		remove_character:
+			if (length != 0)
+			{
+				length--;
+				*--end = 0;
+				RenderOutput_PrepareForRedraw(label);
+				UiText_DrawPaddedLabel((s32)label, input);
+				text_dirty = 1;
+				continue;
+			}
+			result = -1;
+			break;
+		}
+		if (!(gKeysRepeat & KEY_A))
+			continue;
+		AudioCommand_PlayFar(112);
+		if (column == 18)
+		{
+			if (row == 5)
+			{
+				if (length == 0)
+				{
+					caret.output->active = 13;
+					RenderOutput_PrepareForRedraw(label);
+					UiText_DrawPaddedLabel((s32)label, saved);
+					WaitFrames(10);
+				}
+				else
+				{
+					u8 *dst = saved;
+					u8 *src = input;
+					s32 i = 0;
+					u8 *dst_save = dst;
+					u8 *src_save = src;
+
+					/* FAKEMATCH: the split restores end the pointer setup's
+                     * CSE blocks. They disappear, preserving destination/
+                     * source/index in r2/r1/r0; removing the barrier alone
+                     * changes them to r1/r0/r2 (14 instructions differ). A for loop
+                     * copying saved[i] = input[i], or walking the pointers,
+                     * differs 14; the while form with i declared first, 12. */
+					if (saved)
+						src = NULL;
+					if (saved)
+						src = src_save;
+					if (saved)
+						dst = NULL;
+					if (saved)
+						dst = dst_save;
+					while (i < 15)
+					{
+						*dst++ = *src++;
+						i++;
+					}
+				}
+				break;
+			}
+			if (row == 4)
+				goto remove_character;
+			continue;
+		}
+		{
+			u32 tx = window->x + column + 1;
+			u32 cell;
+			u32 character;
+
+			cell = ((window->y + row + 1) << 5) + tx;
+			character = work[cell * 2];
+			if (length == 5)
+				continue;
+			*end++ = character;
+			*end = 0;
+			length++;
+			if (length == 5)
+			{
+				column = 18;
+				row = 5;
+				cursor_dirty = 1;
+			}
+			RenderOutput_PrepareForRedraw(label);
+			UiText_DrawPaddedLabel((s32)label, input);
+			text_dirty = 1;
+		}
+	}
+	UiWork_Finalize((struct UiWindow *)window, 2);
+	UiWork_Finalize((struct UiWindow *)label, 2);
+	UiWork_FinalizeEntityMatchingLocalizedId(entry);
+	WaitFrames(1);
+	return result;
+}
+#else
+
+s32 NameEntry_EditOwnerName(s32 entry)
+{
+	struct RenderInput	*label;
+	s32					 result = 0;
+	s32					 keyboard = 0;
+	s32					 bytes = 0;
+	s32					 length = 0;
+	u8					 text[16];
+	u8					*input = text + 1;
+	u8					*saved = (u8 *)UnitGetFar(entry);
+	u8					*work = gWindowWork[0];
+	s32					 text_dirty = 1;
+	s32					 cursor_dirty = 1;
+	struct RenderInput	*window;
+	union MenuCursor	 cursor;
+	union MenuCursor	 caret;
+	s32					 column, row, slot, x;
+	struct RenderOutput *output;
+	u32					 character;
+	u16					*pal;
+
+	Ui_LoadWindowGraphics();
+	window = (struct RenderInput *)UiWindow_Create(3, 6, 24, 13, 2);
+	label = (struct RenderInput *)UiWindow_Create(8, 3, 8, 3, 2);
+	UiWindow_CreateWithSideObject(Localization_LookupEntryId(entry), 0, 3, 1);
+	UiWindow_CopyTilemapRegion(window, NameEntry_KeyboardTilemap);
+	UiWindow_DrawDividerLine(window, 18, 0, 18, 12);
+	((struct UiRenderWork *)work)->dirty = text_dirty;
+	text[0] = result;
+	{
+		s32 i;
+
+		for (i = 0; i < 14; i++)
+		{
+			character = saved[i];
+
+			input[i] = character;
+			if (character != 0)
+			{
+				bytes++;
+				length++;
+				if ((u8)(character - 0xde) <= 1)
+					length--;
+			}
+		}
+	}
+	input[14] = 0;
+	UiText_DrawString(saved, (s32)label, 0, 0);
+	column = 18;
+	slot = Resource_FindFreeEntry();
+	row = 10;
+	if (slot <= 95)
+	{
+		VramBlock_LoadCached(slot, 128, Resource_FixedBlockBTiles);
+		output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+		cursor.output = output;
+		ShopCursor_SetPositionImmediateFar(&cursor.cursor, window->x * 8 + 140, window->y * 8 + 92);
+	}
+	slot = Resource_FindFreeEntry();
+	if (slot <= 95)
+	{
+		VramBlock_LoadCached(slot, 128, Resource_FixedBlockATiles);
+		output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+		caret.output = output;
+		output->sentinel = 255;
+		((struct FieldSprite *)output->unknown_10)->priority = 0;
+		x = 72 + NameEntry_CountLetters(input) * 10;
+		ShopCursor_SetPositionImmediateFar(&caret.cursor, x, 22);
+	}
+	pal = (u16 *)0x050001c0;
+	Dma_Set((void *)0x050001e0, pal, 0x84000008, REG_DMA3);
+	pal[4] = 0x6318;
+	while (1)
+	{
+		s32 width = 1;
+
+		if (column == 18)
+		{
+			if (row == 0)
+				width = 4;
+			if (row == 8)
+				width = 3;
+			if (row == 10)
+				width = 3;
+		}
+		UiWindow_SetTileAttributeRect(window, column, row, width, 1, 14);
+		WaitFrames(1);
+		UiWindow_SetTileAttributeRect(window, column, row, width, 1, 15);
+		if (cursor_dirty)
+		{
+			cursor_dirty = 0;
+			Shop_SetCursorFar(&cursor.cursor, (window->x + column) * 8 - 7, (window->y + row) * 8 + 15, 3);
+		}
+		if (text_dirty)
+		{
+			text_dirty = 0;
+			x = 72 + NameEntry_CountLetters(input) * 10;
+			Shop_SetCursorFar(&caret.cursor, x, 22, 3);
+		}
+		ShopCursor_AdvanceFar(&cursor.cursor);
+		ShopCursor_MoveTowardTargetFar(&caret.cursor);
+		{
+			u32 frame = (gFrameTick >> 1) & 7;
+
+			output = caret.output;
+			((struct FieldSprite *)output->unknown_10)->x = output->x + NameEntry_CaretWave[frame];
+			((struct FieldSprite *)output->unknown_10)->y =
+				output->y + NameEntry_CaretWave[(frame + 5) & 7];
+		}
+		if (gKeysRepeat & KEY_UP)
+		{
+			AudioCommand_PlayFar(111);
+			cursor_dirty = 1;
+			row--;
+			if (column != 18)
+			{
+				if (row == -1)
+					row = 10;
+				else if (row == 5)
+					row = 4;
+			}
+			else
+			{
+				if (row == -1)
+				{
+					row = 10;
+				}
+				else
+				{
+					row = (row != 7);
+					row *= 8;
+				}
+			}
+		}
+		if (gKeysRepeat & KEY_DOWN)
+		{
+			AudioCommand_PlayFar(111);
+			cursor_dirty = 1;
+			row++;
+			if (column != 18)
+			{
+				if (row == 11)
+					row = 0;
+				if (row == 5)
+					row = 6;
+			}
+			else
+			{
+				if (row == 1)
+					row = 8;
+				else if (row == 9)
+					row = 10;
+				else
+					row = 0;
+			}
+		}
+		if (gKeysRepeat & KEY_LEFT)
+		{
+			AudioCommand_PlayFar(111);
+			cursor_dirty = 1;
+			column--;
+			if (column == -1)
+			{
+				if (row == 0 || row == 8 || row == 10)
+					column = 18;
+				else
+					column = 16;
+			}
+			else if (column == 5 || column == 11 || column == 17)
+			{
+				column--;
+			}
+		}
+		if (gKeysRepeat & KEY_RIGHT)
+		{
+			AudioCommand_PlayFar(111);
+			cursor_dirty = 1;
+			column++;
+			if (column == 19)
+				column = 0;
+			else if (column == 5 || column == 11 || column == 17)
+				column++;
+			if (column == 18)
+			{
+				if (row == 0 || row == 8 || row == 10)
+					column = 18;
+				else
+					column = 0;
+			}
+		}
+		if (gKeyState & KEY_START)
+		{
+			AudioCommand_PlayFar(111);
+			cursor_dirty = 1;
+			column = 18;
+			row = 10;
+		}
+		if (gKeyState & KEY_SELECT)
+		{
+			AudioCommand_PlayFar(111);
+		change_keyboard:
+			keyboard ^= 1;
+			if (keyboard)
+				UiWindow_CopyTilemapRegion(window, NameEntry_AlternateKeyboardTilemap);
+			else
+				UiWindow_CopyTilemapRegion(window, NameEntry_KeyboardTilemap);
+			UiWindow_DrawDividerLine(window, 18, 0, 18, 12);
+			((struct UiRenderWork *)work)->dirty = 1;
+			continue;
+		}
+		if (gKeysRepeat & KEY_B)
+		{
+			AudioCommand_PlayFar(113);
+		remove_character:
+			if (length != 0)
+			{
+				length--;
+				bytes--;
+				character = input[bytes];
+				input[bytes] = 0;
+				if ((u8)(character - 0xde) <= 1)
+				{
+					bytes--;
+					input[bytes] = 0;
+				}
+			}
+			else
+			{
+				result = -1;
+				break;
+			}
+			RenderOutput_PrepareForRedraw(label);
+			UiText_DrawString(input, (s32)label, 0, 0);
+			text_dirty = 1;
+			continue;
+		}
+		if (!(gKeysRepeat & KEY_A))
+			continue;
+		AudioCommand_PlayFar(112);
+		if (column == 18)
+		{
+			if (row == 10)
+			{
+				if (length == 0)
+				{
+					caret.output->active = 13;
+					RenderOutput_PrepareForRedraw(label);
+					UiText_DrawString(saved, (s32)label, 0, 0);
+					WaitFrames(10);
+				}
+				else
+				{
+					u8 *dst;
+					u8 *src;
+					s32 i;
+					u8 *dst_save;
+					u8 *src_save;
+
+					dst = saved;
+					src = input;
+					i = 0;
+					/* FAKEMATCH: the split restores end the pointer setup's
+                     * CSE blocks. They disappear, preserving destination/
+                     * source/index in r1/r2/r0; removing the barrier alone
+                     * changes them to r2/r0/r1 (14 instructions differ). A for loop
+                     * copying saved[i] = input[i] differs 18, one walking the
+                     * pointers 14; the while form with i declared first, 12. */
+					dst_save = dst;
+					src_save = src;
+					if (window->height)
+						dst = NULL;
+					if (window->height)
+						dst = dst_save;
+					if (window->height)
+						src = NULL;
+					if (window->height)
+						src = src_save;
+					while (i < 15)
+					{
+						*dst++ = *src++;
+						i++;
+					}
+				}
+				break;
+			}
+			if (row == 8)
+				goto remove_character;
+			if (row == 0)
+				goto change_keyboard;
+			continue;
+		}
+		{
+			u32 tx = window->x + column + 1;
+			u32 cell;
+			u8 *dst;
+
+			cell = ((window->y + row + 1) << 5) + tx;
+			character = work[cell * 2];
+			if (character == 0xfe)
+				character = 0xde;
+			if (character == 0xff)
+				character = 0xdf;
+			if (length == 5 && (u8)(character - 0xde) > 1)
+				continue;
+			dst = input + bytes;
+			if (!NameEntry_AcceptsMark(character, input[bytes - 1]))
+			{
+				AudioCommand_PlayFar(113);
+				continue;
+			}
+			*dst = character;
+			bytes++;
+			input[bytes] = 0;
+			length++;
+			if ((u8)(character - 0xde) <= 1)
+				length--;
+			if (length == 5)
+			{
+				column = 18;
+				row = 10;
+				cursor_dirty = 1;
+			}
+			RenderOutput_PrepareForRedraw(label);
+			UiText_DrawString(input, (s32)label, 0, 0);
+			text_dirty = 1;
+		}
+	}
+	UiWork_Finalize((struct UiWindow *)window, 2);
+	UiWork_Finalize((struct UiWindow *)label, 2);
+	UiWork_FinalizeEntityMatchingLocalizedId(entry);
+	WaitFrames(1);
+	return result;
+}
+#endif
+
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR) \
+	|| defined(TBS_EDITION_IT)
+#define TALK_WINDOW_X 7
+#define TALK_WINDOW_WIDTH 18
+#elif defined(TBS_EDITION_ES)
+#define TALK_WINDOW_X 9
+#define TALK_WINDOW_WIDTH 12
+#else
+#define TALK_WINDOW_X 8
+#define TALK_WINDOW_WIDTH 16
+#endif
+
+s32 PartyTalkMenu_Choose(s32 unused)
+{
+	/* FAKEMATCH: the shared cursor union preserves pointer-store ordering; an equal-size struct changes stack-address construction in all six editions. */
+	struct RenderInput *window;
+	union MenuCursor	cursor;
+	s32					slot;
+	s32					row;
+	s32					moved;
+	u16				   *palette;
+
+	moved = 1;
+	window = UiWindow_Create(TALK_WINDOW_X, 13, TALK_WINDOW_WIDTH, 7, 2);
+	UiText_DrawCharacterAtOffset((s32)MsgTalkChoice, window, 8, 0);
+	UiText_DrawCharacterAtOffset((s32)MsgTalkChoice + 1, window, 8, 16);
+	UiText_DrawCharacterAtOffset((s32)MsgTalkChoice + 2, window, 8, 32);
+	slot = Resource_FindFreeEntry();
+	row = 0;
+	if (slot < 96)
+	{
+		VramBlock_LoadCached(slot, 128, Resource_FixedBlockBTiles);
+		cursor.output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
+		ShopCursor_SetPositionImmediateFar(&cursor.cursor, window->x * 8 - 3, window->y * 8 + 9);
+	}
+	palette = (u16 *)0x050001c0;
+	Dma_Set((const void *)0x050001e0, palette, 0x84000008, REG_DMA3);
+	palette[4] = 0x6318;
+	while (1)
+	{
+		UiWindow_SetTileAttributeRect(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1, 14);
+		WaitFrames(1);
+		UiWindow_SetTileAttributeRect(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1, 15);
+		if (moved)
+		{
+			moved = 0;
+			Shop_SetCursorFar(&cursor.cursor, window->x * 8 - 3, (window->y + row * 2) * 8 + 9, 3);
+		}
+		ShopCursor_AdvanceFar(&cursor.cursor);
+		if (gKeysRepeat & KEY_UP)
+		{
+			AudioCommand_PlayFar(111);
+			row--;
+			moved = 1;
+			if (row == -1)
+				row = 2;
+		}
+		if (gKeysRepeat & KEY_DOWN)
+		{
+			AudioCommand_PlayFar(111);
+			row++;
+			moved = 1;
+			if (row == 3)
+				row = 0;
+		}
+		if (gKeysRepeat & KEY_B)
+		{
+			AudioCommand_PlayFar(113);
+			row = -1;
+			break;
+		}
+		if (gKeysRepeat & KEY_A)
+		{
+			AudioCommand_PlayFar(112);
+			break;
+		}
+	}
+	UiWork_Finalize(window, 2);
+	WaitFrames(1);
+	Resource_ResetEntry(slot);
+	return row;
+}
+
+void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
+{
+	struct UiRenderWork *work = (struct UiRenderWork *)*gWindowWork;
+	s32					 name;
+	struct UiWindow		*window;
+	s32					 sprite[3];
+	s32					*entry;
+	s32					 palette, handle;
+	s32					 id;
+	s32					 text;
+	u32					 zero;
+	s32					*p;
+
+	window = NULL;
+	zero = 0;
+	name = Djinn_ElementSprites[element & 3];
+	entry = sprite;
+	window = UiWindow_Create(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, 0);
+
+	if (window != NULL)
+	{
+		UiWindow_DrawDividerLine(window, 4, 0, 4, 4);
+
+		work->dirty = 1;
+
+		id = Localization_LookupEntryId(name);
+		UiGlyph_LoadEntryWithPalette(id, zero, &handle, &palette, 14, zero);
+
+		p = entry;
+		*p++ = zero;
+		*p++ = 0x8000000c | ((DJINN_JOIN_X * 8 + 4) << 16);
+		*p = palette | 0xe000;
+
+		work->result[0] = zero;
+		work->result[1] = zero;
+
+		UiWork_PushValueSlot(pc, 1);
+		UiWork_PushValueSlot(element * 20 + djinn + 300, 4);
+
+		text = UiText_BuildRenderEntriesMode1(element + (s32)MsgVenusDjinnJoined);
+
+		UiText_QueueRenderEntries(window, text, 36, 2, zero);
+
+		AudioCommand_PlayFar(81);
+
+		do
+		{
+			Runtime_PushSlotEntry(entry, 250);
+			WaitFrames(1);
+		} while (AudioCommand_GetStateByteFar() != 0
+				 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
+
+		UiWork_Finalize(window, 2);
+		WaitFrames(1);
+		Resource_ResetEntry(handle);
+	}
+}
+
+s32 Party_LookupCharacterValueByFlag32(u32 index)
+{
+	if (index > 8)
+	{
+		return 0;
+	}
+	if (GameFlag_TestFar(32) == 0)
+	{
+		return Character_SpriteTable[index];
+	}
+	return Character_ChildSpriteTable[index];
+}
+
+void Party_ShowJoinedMessage(s32 member)
+{
+	struct UiRenderWork *work = (struct UiRenderWork *)*gWindowWork;
+	struct UiWindow		*window = NULL;
+	s32					 sprite[3];
+	s32					*entry = sprite;
+	s32					 palette, handle;
+	s32					*p;
+
+	window = UiWindow_Create(2, 1, 26, 5, 0);
+	if (window != NULL)
+	{
+		UiWindow_DrawDividerLine(window, 4, 0, 4, 4);
+		work->dirty = 1;
+		UiGlyph_LoadEntryWithPalette(
+			Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(member)), 0, &handle,
+			&palette, 14, 0);
+		p = entry;
+		*p++ = 0;
+		*p++ = 0x8000000c | ((2 * 8 + 4) << 16);
+		*p = palette | 0xe000;
+		work->result[0] = 0;
+		work->result[1] = 0;
+		UiWork_PushValueSlot(member, 1);
+		UiText_QueueRenderEntries(window, UiText_BuildRenderEntriesMode1((s32)MsgJoinedParty), 36, 2, 0);
+		AudioCommand_PlayFar(81);
+		do
+		{
+			Runtime_PushSlotEntry(entry, 250);
+			WaitFrames(1);
+		} while (AudioCommand_GetStateByteFar() != 0
+				 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
+		UiWork_Finalize(window, 2);
+		WaitFrames(1);
+		Resource_ResetEntry(handle);
+	}
+}
+
+void Party_ShowPairJoinedMessage(s32 first, s32 second)
+{
+	u8				*work = gWindowWork[0];
+	struct UiWindow *window;
+	s32				 sprite2[3];
+	s32				 sprite1[3];
+	s32				*entry1;
+	s32				*entry2;
+	s32				 handle1, palette, handle2;
+	u32				 zero;
+	s32				*p;
+
+	// the window starts as NULL, though it is assigned before it is read; the same zero is the style argument below
+	window = NULL;
+	entry1 = sprite1;
+	window = UiWindow_Create(1, 1, 28, 5, 0);
+	zero = 0;
+
+	if (window != NULL)
+	{
+		UiWindow_DrawDividerLine(window, 8, 0, 4, 4);
+
+		((struct UiRenderWork *)work)->dirty = 1;
+
+		UiGlyph_LoadEntryWithPalette(
+			Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(first)), 0, &handle1,
+			&palette, 14, zero);
+		p = entry1;
+		*p++ = zero;
+		*p++ = 0x800c000c;
+		*p = palette | 0xe000;
+
+		entry2 = sprite2;
+		UiGlyph_LoadEntryWithPalette(
+			Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(second)), 0, &handle2,
+			&palette, 15, zero);
+		p = entry2;
+		*p++ = zero;
+		*p++ = 0x802c000c;
+		*p = palette | 0xf000;
+
+		((struct UiRenderWork *)work)->result[0] = zero;
+		((struct UiRenderWork *)work)->result[1] = zero;
+
+		UiWork_PushValueSlot(first, 1);
+		UiWork_PushValueSlot(second, 1);
+
+		UiText_QueueRenderEntries(window, UiText_BuildRenderEntriesMode1((s32)MsgPairJoinedParty), 68, 2, zero);
+
+		AudioCommand_PlayFar(81);
+
+		do
+		{
+			Runtime_PushSlotEntry(entry1, 250);
+			Runtime_PushSlotEntry(entry2, 250);
+			WaitFrames(1);
+		} while (AudioCommand_GetStateByteFar() != 0
+				 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
+
+		UiWork_Finalize(window, 2);
+		WaitFrames(1);
+		Resource_ResetEntry(handle1);
+		Resource_ResetEntry(handle2);
+	}
+}
+
+void RenderResource_LoadPair(s32 group_index, s32 resource_index)
+{
+	void	 *staging_buffer = Runtime_AllocateBlock(14, 0x400);
+	const u8 *resource = RenderResource_PairSourceTable[group_index];
+
+	if (resource_index <= 0x5F)
+	{
+		Resource_DecodeByteLz(resource, staging_buffer);
+		VramBlock_LoadCached(resource_index, 0x200, staging_buffer);
+		Runtime_ReleaseHeapBlock(14);
+	}
+}
+
+struct RenderOutput *RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y)
+{
+	s32					 index;
+	struct RenderOutput *first;
+	struct RenderOutput *second;
+
+	index = Resource_FindFreeEntry();
+	if (index > 95)
+		return NULL;
+
+	RenderResource_LoadPair(group, index);
+	first = RenderOutput_Create(index, 0x80004000, input, x, y);
+	first->sentinel = 0xFD;
+	second = RenderOutput_Create(index, 0x80004000, input, x + 32, y);
+	second->sentinel = 0xFD;
+	second->oam.index += 8;
+	return first;
+}
+
+void Ui_ApplyTableOffsetToPair(struct RenderOutput *obj)
+{
+	s32 value;
+
+	value = (u8)obj->y + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
+	obj->oam.y = value;
+	obj = obj->next;
+	/* FAKEMATCH: the volatile read loads gFrameTick again for the second sprite, as the bytes do; read plainly, CSE reuses the first index and the function differs 33, 15 instructions for 22. */
+	value = (u8)obj->y + Ui_PairBobOffsets[(*(volatile u32 *)&gFrameTick >> 2) & 7];
+	obj->oam.y = value;
+}
+
+void RenderResource_LoadFrame(s32 index, s32 value, s32 flag)
+{
+	s32	  size = 1024;
+	void *buffer = Runtime_AllocateBlock(14, size);
+	u16	 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+
+	if (value <= 95)
+	{
+		Resource_DecodeByteLz((void *)((u32)base + base[index]), buffer);
+		if (flag != 0)
+			Runtime_RemapBytesByTableFar(buffer, 768);
+		VramBlock_LoadCached(value, size, buffer);
+		Runtime_ReleaseHeapBlock(14);
+	}
+}
+
+struct RenderOutput *RenderResource_CreateFrame(
+	s32 arg0, s32 arg1, struct RenderInput *arg2, s32 arg3, s32 arg4)
+{
+	s32					 index;
+	struct RenderOutput *entity;
+
+	index = Resource_FindFreeEntry();
+	entity = NULL;
+	if (index != 0x60)
+	{
+		RenderResource_LoadFrame(arg0, index, arg1);
+		entity = RenderOutput_Create(index, 0x80000000, arg2, arg3, arg4);
+		entity->oam.palette_256 = 1;
+		entity->sentinel = 0xfb;
+	}
+	return entity;
+}
+
+void Ui_ApplyTableScaleToObject(struct RenderOutput *obj)
+{
+	s32					   v = Ui_ObjectPulseScales[(gFrameTick >> 1) & 7];
+	struct AffineTransform efx;
+
+	if (v < 0)
+		v += 255;
+	v >>= 8;
+
+	if (obj != 0)
+	{
+		efx.scale_x = v;
+		efx.scale_y = v;
+		efx.angle = 0;
+		obj->oam.matrix = AffineMatrix_BuildForEffect(&efx);
+		obj->oam.affine_mode = 3;
+		obj->oam.x = obj->x + 0xfff0;
+		obj->oam.y = (u8)obj->y + 0xf0;
+		obj->sentinel = 0xfc;
+	}
+}
 
 static __inline__ u32 XorWord(u32 word, u32 mask)
 {
@@ -355,7 +3530,6 @@ void Ui_RunCopiedRoutine(GlyphTransfer *work)
 // create_countdown_label_window.c
 // 通信：残り時間の見出しのウィンドウを開く
 //--------------------------------------------------------------------------
-
 //--------------------------------------------------------------------------
 // 左上に 6x4 のウィンドウを開いて見出しを書き、そのハンドルを返す
 //--------------------------------------------------------------------------
@@ -5672,4 +8846,1452 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in, s32 cou
 	Camera_ConfigureSceneFar(0);
 	Runtime_ReleaseHeapBlock(57);
 	return count;
+}
+
+struct WindowLine
+{
+	u16 left;
+	u16 span;
+};
+
+struct WindowBuffer
+{
+	u8				  unknown_000[4];
+	struct WindowLine lines[160];
+};
+
+void UiWork_CloseAndRelease(void);
+
+void AffineEffect_UpdateFrame(void)
+{
+	struct ResourceMenuWork	 *work;
+	struct ResourceMenuEntry *sprite;
+	struct AffineTransform	  effect;
+	s32						  scale;
+	s32						  matrix;
+	s32						  edge;
+
+	s32							   y;
+	u32							   end;
+	u32							   i;
+	u16							  *line;
+	struct DisplayTransitionState *buffers;
+
+	work = gMenuSelectWork;
+	sprite = work->entries;
+	scale = Ui_BounceScales[(gFrameCount * 2) & 31];
+	scale = (scale - 256) / 4 + 304;
+	effect.scale_x = scale;
+	effect.scale_y = scale;
+	effect.angle = 0;
+	matrix = AffineMatrix_BuildForEffect(&effect);
+	for (i = 0; i < work->count; i++, sprite++)
+	{
+		u32 *attr;
+		s32	 slot;
+		s32	 px;
+
+		px = sprite->x;
+		if (px == 0)
+			continue;
+		if (i == work->selection)
+		{
+			s32 left = px + scale * 7 / 512 - 20;
+
+			if (sprite->y != 0)
+				y = sprite->y + scale * 3 / 256 - 20;
+			else
+				y = (scale * 15 / 256 - 30) & 255;
+			attr = &sprite->link;
+			*attr++ = 0;
+			*attr++ = (matrix << 25) | y | (left << 16) | 0x80002300;
+			*attr = gVramBlockCache[sprite->slot].offset >> 5;
+			slot = 246;
+		}
+		else
+		{
+			u32 base;
+			u32 value;
+
+			attr = &sprite->link;
+			/* FAKEMATCH: needed to match: reading the y halfword through attr
+             * keeps the attribute-pointer copy before its load; sprite->y
+             * moves the copy two instructions later. */
+			y = ((s16 *)attr)[7];
+			*attr++ = 0;
+			value = y | (px << 16) | 0x80002000;
+			base = gVramBlockCache[sprite->slot].offset;
+			*attr++ = value;
+			*attr = base >> 5;
+			slot = 245;
+		}
+		Runtime_PushSlotEntry(sprite, slot);
+	}
+	if (work->row == 0)
+	{
+		struct WindowBuffer *window;
+
+		s32 span;
+
+		buffers = (struct DisplayTransitionState *)gDisplayTransition;
+		if (buffers == 0 || work->count == 0)
+			return;
+		window = (struct WindowBuffer *)buffers->pages[buffers->page];
+		edge = work->entries[work->selection].x;
+		span = (scale * 12 - 2817) / 256;
+		edge = ((edge - span) << 8) + (edge + span) + 23;
+		end = work->entries[work->selection].y + 24;
+		end += (scale * 32 - 7937) / 512 + 1;
+		line = &window->lines[24].span;
+		i = 24;
+		if (i < end)
+		{
+			do
+			{
+				*line = (*line & 0xff) | edge;
+				i++;
+				line += 2;
+			} while (i < end);
+		}
+		edge = work->entries[0].x;
+		if (work->selection == 0)
+			edge -= (scale * 12 - 2817) / 256;
+		edge <<= 8;
+		line = &window->lines[0].span;
+		for (i = 0; i <= 23; i++)
+		{
+			*line = (*line & 0xff) | edge;
+			line += 2;
+		}
+	}
+	else
+	{
+		struct WindowBuffer *window;
+		s32					 start;
+
+		s32 span;
+
+		buffers = (struct DisplayTransitionState *)gDisplayTransition;
+		if (buffers == 0 || work->count == 0)
+			return;
+		window = (struct WindowBuffer *)buffers->pages[buffers->page];
+		edge = work->entries[work->selection].x;
+		span = (scale * 12 - 2817) / 256;
+		edge = ((edge - span) << 8) + (edge + span) + 23;
+		start = work->entries[work->selection].y;
+		start -= (scale * 32 - 7937) / 512 + 1;
+		line = &window->lines[start].span;
+		i = start;
+		if (i <= 135)
+		{
+			do
+			{
+				*line = (*line & 0xff) | edge;
+				i++;
+				line += 2;
+			} while (i <= 135);
+		}
+		edge = work->entries[0].x;
+		if (work->selection == 0)
+			edge -= (scale * 12 - 2817) / 256;
+		edge <<= 8;
+		line = &window->lines[136].span;
+		for (i = 136; i <= 159; i++)
+		{
+			*line = (*line & 0xff) | edge;
+			line += 2;
+		}
+	}
+}
+
+void *AffineEffect_InitializeWork(void)
+{
+	void *work;
+	work = Runtime_AllocateBlock(58, 152);
+	Dma_Fill32(0, work, 152);
+	Scheduler_AddOrUpdateCallback(AffineEffect_UpdateFrame, 0xc76);
+	return work;
+}
+
+void Menu_EndResourceSelection(void)
+{
+	struct UiWindow			*child;
+	s32						 i;
+	struct ResourceMenuWork *work;
+
+	work = gMenuSelectWork;
+	Scheduler_RemoveCallback(AffineEffect_UpdateFrame);
+	child = work->window;
+	if (child != 0)
+	{
+		UiWork_Finalize(child, 2);
+	}
+	i = 0;
+	while (i < work->count)
+	{
+		Resource_ResetEntry(work->entries[i].slot);
+		i += 1;
+	}
+	Runtime_ReleaseHeapBlock(0x3A);
+	WaitFrames(1U);
+}
+
+s32 Menu_RunResourceSelectionLoop(s32 initial)
+{
+	struct ResourceMenuWork *work = gMenuSelectWork;
+	s32						 resource;
+
+	work->selection = initial;
+redraw:
+	RenderOutput_PrepareForRedraw(work->window);
+	if (work->resource_base != 0)
+		resource = work->resource_base + work->selection;
+	else
+		resource = work->resource_ids[work->selection] + (s32)MsgCommandName;
+	UiText_DrawCharacterAtOffset(resource, work->window, 0, 0);
+	for (;;)
+	{
+		WaitFrames(1);
+		if (gKeyState & KEY_A)
+		{
+			AudioCommand_PlayFar(112);
+			return work->selection;
+		}
+		if (gKeyState & KEY_B)
+		{
+			AudioCommand_PlayFar(113);
+			return -1;
+		}
+		if (gKeyState & KEY_START)
+		{
+			AudioCommand_PlayFar(113);
+			return -1;
+		}
+		if ((gKeysRepeat & KEY_LEFT) || (gKeysRepeat & KEY_UP))
+		{
+			AudioCommand_PlayFar(111);
+			work->selection--;
+			if (work->selection < 0)
+				work->selection = work->count - 1;
+		}
+		else if ((gKeysRepeat & KEY_RIGHT) || (gKeysRepeat & KEY_DOWN))
+		{
+			AudioCommand_PlayFar(111);
+			work->selection++;
+			if (work->selection >= work->count)
+				work->selection = 0;
+		}
+		else
+			continue;
+		goto redraw;
+	}
+}
+
+static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs)
+{
+	if (diff >= 0)
+		return diff;
+	return rhs - lhs;
+}
+
+s32 Menu_SelectResource(s32 start, s32 goal)
+{
+	s16						 resource_base;
+	s16						 cur;
+	s32						 diff;
+	s32						 resource_id;
+	s32						 dist;
+	s32						 pos;
+	s32						 step;
+	s32						 delay;
+	const u8				*tbl;
+	struct ResourceMenuWork *state;
+
+	state = gMenuSelectWork;
+	step = 1;
+	delay = 12;
+	state->selection = start;
+	if (goal < start)
+		step = -1;
+	pos = start;
+
+	for (;;)
+	{
+		RenderOutput_PrepareForRedraw(state->window);
+		resource_base = state->resource_base;
+		if (resource_base != 0)
+		{
+			resource_id = resource_base + state->selection;
+		}
+		else
+		{
+			resource_id = state->resource_ids[state->selection] + (s32)MsgCommandName;
+		}
+		UiText_DrawCharacterAtOffset(resource_id, state->window, 0, 0);
+
+		cur = state->selection;
+		tbl = Menu_SelectionStepDelays;
+		diff = cur - goal;
+		dist = AbsoluteDifference(diff, cur, goal);
+		WaitFrames(tbl[dist] + delay);
+
+		if (pos == goal)
+			break;
+
+		state->selection += step;
+		AudioCommand_PlayFar(SOUND_MENU_CURSOR_MOVE);
+		delay = 0;
+		pos += step;
+	}
+
+	WaitFrames(48);
+	AudioCommand_PlayFar(SOUND_MENU_CONFIRM);
+	return goal;
+}
+
+void Menu_LoadResourceSlot(s32 slot, s32 index)
+{
+	s32	  size = 1024;
+	void *buffer = MemAlloc(size);
+	u16	 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+
+	Resource_DecodeByteLz((void *)((u32)base + base[index]), buffer);
+	VramBlock_LoadCached(slot, size, buffer);
+	MemFree(buffer);
+}
+
+void Menu_AppendResourceEntry(s32 no)
+{
+	struct ResourceMenuWork	 *work;
+	struct ResourceMenuEntry *entry;
+	s16						  index;
+	s32						  slot;
+	s32						  flags;
+
+	work = gMenuSelectWork;
+	index = work->count;
+	if (index <= 5)
+	{
+		work->count++;
+		entry = &work->entries[index];
+		slot = Resource_FindFreeEntry();
+		Menu_LoadResourceSlot(slot, no);
+		entry->x = index * 24 + 32;
+		flags = 136;
+		entry->y = flags;
+		entry->slot = slot;
+		work->resource_ids[index] = no;
+	}
+}
+
+void Menu_CenterResourceEntries(s32 row, s32 width, s32 resource_base)
+{
+	struct ResourceMenuWork *menu = gMenuSelectWork;
+	s32						 x;
+	s32						 i;
+	s32						 count;
+
+	menu->width = width + 2;
+	menu->resource_base = resource_base;
+	menu->row = row;
+	count = menu->count;
+	x = 15 - (count * 3 + menu->width * 2 / 3) / 2;
+	for (i = 0; i < menu->count; i++)
+	{
+		struct ResourceMenuEntry *entry = &menu->entries[i];
+
+		entry->x = x * 8;
+		entry->y = row * 8;
+		x += 3;
+	}
+	menu->window = UiWindow_Create(x, row, menu->width, 3, 2);
+}
+
+void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
+{
+	struct ResourceMenuWork	 *work;
+	s32						  i;
+	struct ResourceMenuEntry *entry;
+
+	work = gMenuSelectWork;
+	work->width = width + 2;
+	work->resource_base = resource_base;
+	work->row = y;
+	for (i = 0; i < work->count; i++)
+	{
+		entry = &work->entries[i];
+		entry->y = y << 3;
+		entry->x = x << 3;
+		x += 3;
+	}
+	work->window = UiWindow_Create(x, y, work->width, 3, 2);
+}
+
+static __inline__ s32 TblGet(s8 *tbl, s32 index)
+{
+	return tbl[index];
+}
+
+s32 Menu_SelectTopEntry(s32 sel)
+{
+	s32 group = 0;
+	s32 ofs;
+	s32 triple;
+	s32 ret;
+	s8 *tbl;
+
+	if (Party_SumDjinnCountsFar(-1) == 0)
+	{
+		group = 1;
+	}
+
+	triple = group * 3;
+	tbl = Menu_TopEntryPositionByCommand;
+	ofs = triple << 1;
+	sel = TblGet(tbl, sel + ofs) - 1;
+	if (sel < 0)
+	{
+		sel = 0;
+	}
+
+	AffineEffect_InitializeWork();
+	Menu_AppendResourceEntry(1);
+	if (group == 0)
+	{
+		Menu_AppendResourceEntry(15);
+	}
+	Menu_AppendResourceEntry(2);
+	Menu_AppendResourceEntry(7);
+	Menu_CenterResourceEntries(17, SELECT_MENU_WIDTH, 0);
+	ret = Menu_RunResourceSelectionLoop(sel);
+	Menu_EndResourceSelection();
+
+	if (ret >= 0)
+	{
+		ret = Menu_TopEntryCommandByPosition[ret + ofs + 1];
+	}
+
+	return ret;
+}
+
+#if EDITION_INTERNATIONAL
+#define ANIMATE_ENTRIES_ROW 7
+#else
+#define ANIMATE_ENTRIES_ROW 5
+#endif
+
+s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
+{
+	UiWindow_OpenMode1AndWaitFrame();
+	AffineEffect_InitializeWork();
+	Menu_AppendResourceEntry(1);
+	Menu_AppendResourceEntry(0xF);
+	Menu_AppendResourceEntry(2);
+	Menu_AppendResourceEntry(7);
+	Menu_CenterResourceEntries(0x11, ANIMATE_ENTRIES_ROW, 0);
+	arg1 = Menu_SelectResource(arg0, arg1 - 1);
+	Menu_EndResourceSelection();
+	UiWork_CloseAndRelease();
+	return arg1;
+}
+
+s32 Menu_SelectSaveSlotAction(void)
+{
+	s32 type;
+	s32 ret;
+	s32 initial;
+	u32 group;
+
+	group = 0;
+	initial = 0;
+	type = SaveState_ScanRecordFlags();
+	if (type < 0)
+	{
+		return -1;
+	}
+	if (type == 0)
+	{
+		return 0;
+	}
+	if (type == 3)
+	{
+		group = 1;
+	}
+	else if (type == 0x67)
+	{
+		group = 2;
+	}
+	else if (type > 0x64)
+	{
+		group = 3;
+	}
+	else
+	{
+		initial = 1;
+	}
+	AffineEffect_InitializeWork();
+	if ((group == 0) || (group == 3))
+	{
+		Menu_AppendResourceEntry(0x15);
+	}
+	if (group <= 1U)
+	{
+		Menu_AppendResourceEntry(0x16);
+	}
+	if ((group == 0) || (group == 3))
+	{
+		Menu_AppendResourceEntry(0x17);
+	}
+	Menu_AppendResourceEntry(0x18);
+	if ((*(s16 *)gTitleExtraOptionEnabled) != 0)
+	{
+		Menu_AppendResourceEntry(0x1D);
+	}
+	if (gTitleSendOptionEnabled != 0)
+	{
+		Menu_AppendResourceEntry(0x1E);
+	}
+	Menu_CenterResourceEntries(0x11, TYPE_MENU_WIDTH, 0);
+	ret = Menu_RunResourceSelectionLoop(initial);
+	Menu_EndResourceSelection();
+	if (ret >= 0)
+	{
+		ret = Menu_SaveSlotActionByPosition[ret + (group * 6)];
+	}
+	return ret;
+}
+
+#if EDITION_INTERNATIONAL
+#define MODE_LABEL_X 18
+#define MODE_LABEL_RIGHT 144
+#else
+#define MODE_LABEL_X 8
+#define MODE_LABEL_RIGHT 80
+#endif
+
+void Menu_DrawModeLabel(void)
+{
+	struct ResourceMenuWork *state = gMenuSelectWork;
+
+	if (state->previous_mode != state->selection)
+	{
+		state->previous_mode = state->selection;
+		UiWindow_ClearInteriorTiles(state->lower_window, 8, 40, MODE_LABEL_RIGHT, 80);
+
+		switch (state->selection)
+		{
+		case 0:
+		{
+			s32 text = (s32)MsgPasswordLevel;
+
+			UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 40);
+			UiText_DrawCharacterAtOffset(text + 1, state->lower_window, MODE_LABEL_X, 48);
+			UiText_DrawCharacterAtOffset(text + 2, state->lower_window, MODE_LABEL_X, 56);
+			UiText_DrawCharacterAtOffset(text + 3, state->lower_window, MODE_LABEL_X, 64);
+			text += 4;
+			UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 72);
+			break;
+		}
+		case 1:
+		{
+			s32 text = (s32)MsgPasswordLevel;
+
+			UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 40);
+			UiText_DrawCharacterAtOffset(text + 1, state->lower_window, MODE_LABEL_X, 48);
+			text += 2;
+			UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 56);
+			break;
+		}
+		case 2:
+		default:
+		{
+			s32 text = (s32)MsgPasswordLevel;
+
+			UiText_DrawCharacterAtOffset(text++, state->lower_window, MODE_LABEL_X, 40);
+			UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 48);
+			break;
+		}
+		}
+	}
+}
+
+#if EDITION_INTERNATIONAL
+#define PASSWORD_HELP_X 16
+#else
+#define PASSWORD_HELP_X 0
+#endif
+
+#if defined(TBS_EDITION_FR)
+
+void Menu_DrawModeIndicator(void)
+{
+	struct ResourceMenuWork *state = gMenuSelectWork;
+
+	if (state->previous_mode != state->selection)
+	{
+		if (state->selection == 0)
+		{
+			RenderOutput_ClearList(state->lower_window);
+			UiText_DrawResource((s32)MsgPasswordTransferHelp, (s32)state->lower_window, 16, 4);
+			UiText_DrawResource((s32)MsgPasswordTransferHelp + 1, (s32)state->lower_window, 16, 16);
+		}
+		else if (state->previous_mode == 0)
+		{
+			RenderOutput_ClearList(state->lower_window);
+			UiText_DrawResource((s32)MsgCableTransferHelp, (s32)state->lower_window, 0, 4);
+			UiText_DrawResource((s32)MsgCableTransferHelp + 1, (s32)state->lower_window, 0, 16);
+			UiText_DrawResource((s32)MsgCableTransferHelp + 2, (s32)state->lower_window, 0, 28);
+		}
+		state->previous_mode = state->selection;
+	}
+}
+#else
+void Menu_DrawModeIndicator(void)
+{
+	struct ResourceMenuWork *state = gMenuSelectWork;
+	s16						*shown = &state->previous_mode;
+	s16						*current = &state->selection;
+
+	if (*shown != *current)
+	{
+		*shown = *current;
+		RenderOutput_PrepareForRedraw(state->lower_window);
+		if (*current == 0)
+		{
+#if defined(TBS_EDITION_DE)
+			UiText_DrawCharacterAtOffset((s32)MsgPasswordTransferHelp, state->lower_window, 32, 8);
+			UiText_DrawCharacterAtOffset(
+				(s32)MsgPasswordTransferHelp + 1, state->lower_window, 32, 24);
+#else
+			UiText_DrawResource(
+				(s32)MsgPasswordTransferHelp, state->lower_window, PASSWORD_HELP_X, 4);
+			UiText_DrawResource(
+				(s32)MsgPasswordTransferHelp + 1, state->lower_window, PASSWORD_HELP_X, 16);
+#endif
+		}
+		else
+		{
+#if defined(TBS_EDITION_DE)
+			UiText_DrawCharacterAtOffset((s32)MsgCableTransferHelp, state->lower_window, 0, 0);
+			UiText_DrawCharacterAtOffset((s32)MsgCableTransferHelp + 1, state->lower_window, 0, 16);
+			UiText_DrawCharacterAtOffset((s32)MsgCableTransferHelp + 2, state->lower_window, 0, 32);
+#else
+			UiText_DrawResource((s32)MsgCableTransferHelp, state->lower_window, 0, 4);
+			UiText_DrawResource((s32)MsgCableTransferHelp + 1, state->lower_window, 0, 16);
+			UiText_DrawResource((s32)MsgCableTransferHelp + 2, state->lower_window, 0, 28);
+#endif
+		}
+	}
+}
+#endif
+
+s32 Menu_SelectResourceLayout(s32 mode)
+{
+	struct ResourceMenuWork *work;
+	struct UiWindow			*window;
+	s32						 msg;
+	struct UiWindow		   **upper;
+	s32						 result;
+
+	AffineEffect_InitializeWork();
+	work = gMenuSelectWork;
+	if (mode == 0)
+	{
+		Menu_AppendResourceEntry(44);
+		Menu_AppendResourceEntry(45);
+	}
+	else
+	{
+		Menu_AppendResourceEntry(46);
+		Menu_AppendResourceEntry(47);
+		Menu_AppendResourceEntry(48);
+#if defined(TBS_EDITION_ES)
+		Menu_CenterResourceEntries(17, 5, 0);
+#endif
+	}
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_IT)
+	Menu_CenterResourceEntries(17, 7, 0);
+#elif defined(TBS_EDITION_ES)
+#elif defined(TBS_EDITION_FR)
+	Menu_CenterResourceEntries(17, 9, 0);
+#else
+	Menu_CenterResourceEntries(17, 5, 0);
+#endif
+	if (mode != 0)
+	{
+		Scheduler_AddOrUpdateCallback(Menu_DrawModeLabel, 0xc76);
+		work->previous_mode = 0xffff;
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_IT)
+		window = UiWindow_Create(7, 0, 17, 4, 2);
+#elif defined(TBS_EDITION_ES)
+		window = UiWindow_Create(5, 0, 21, 4, 2);
+#elif defined(TBS_EDITION_FR)
+		window = UiWindow_Create(5, 0, 22, 4, 2);
+#else
+		window = UiWindow_Create(9, 0, 13, 4, 2);
+#endif
+		msg = (s32)MsgPasswordSelection;
+		upper = &work->upper_window;
+		*upper = window;
+		UiText_DrawResource(msg, (s32)window, 0, 4);
+#if EDITION_INTERNATIONAL
+#if defined(TBS_EDITION_DE)
+		window = UiWindow_Create(1, 4, 28, 12, 2);
+#else
+		window = UiWindow_Create(3, 4, 25, 12, 2);
+#endif
+		work->lower_window = window;
+		UiText_DrawResource(msg + 1, (s32)window, 8, 0);
+		UiText_DrawResource(msg + 2, (s32)work->lower_window, 8, 11);
+		msg += 3;
+		UiText_DrawResource(msg, (s32)work->lower_window, 8, 22);
+#else
+		window = UiWindow_Create(5, 4, 21, 12, 2);
+		work->lower_window = window;
+		UiText_DrawResource(msg + 1, (s32)window, 0, 4);
+		msg += 2;
+		UiText_DrawResource(msg, (s32)work->lower_window, 0, 16);
+#endif
+	}
+	else
+	{
+		Scheduler_AddOrUpdateCallback(Menu_DrawModeIndicator, 0xc76);
+		work->previous_mode = 0xffff;
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
+		window = UiWindow_Create(6, 0, 18, 4, 2);
+#elif defined(TBS_EDITION_ES)
+		window = UiWindow_Create(4, 0, 21, 4, 2);
+#elif defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+		window = UiWindow_Create(5, 0, 20, 4, 2);
+#else
+		window = UiWindow_Create(9, 0, 13, 4, 2);
+#endif
+		upper = &work->upper_window;
+		*upper = window;
+#if EDITION_INTERNATIONAL
+		UiText_DrawResource((s32)MsgTransferMethod, (s32)window, 2, 4);
+#else
+		UiText_DrawResource((s32)MsgTransferMethod, (s32)window, 0, 4);
+#endif
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) \
+	|| defined(TBS_EDITION_IT)
+		work->lower_window = UiWindow_Create(1, 5, 28, 7, 2);
+#elif defined(TBS_EDITION_DE)
+		work->lower_window = UiWindow_Create(0, 5, 30, 7, 2);
+#else
+		work->lower_window = UiWindow_Create(5, 5, 21, 7, 2);
+#endif
+	}
+	result = Menu_RunResourceSelectionLoop(0);
+	if (mode != 0)
+		Scheduler_RemoveCallback(Menu_DrawModeLabel);
+	else
+		Scheduler_RemoveCallback(Menu_DrawModeIndicator);
+	RenderOutput_PrepareForRedraw(*upper);
+	RenderOutput_PrepareForRedraw(work->lower_window);
+	UiWork_Finalize(*upper, 2);
+	UiWork_Finalize(work->lower_window, 2);
+	WaitFrames(1);
+	Menu_EndResourceSelection();
+	return result;
+}
+
+//--------------------------------------------------------------------------
+// confirm_selection.c
+// メニュー：コマンドのアイコンを並べてえらばせる（はい・いいえ など）
+//--------------------------------------------------------------------------
+// アイコンは ResourceId_CommandIcons の番号。
+// えらんでいるコマンドの名前をウィンドウに出す
+//--------------------------------------------------------------------------
+// アイコン 0x11〜0x14 を画面の中央に並べてえらぶ（行 17）
+// sel : はじめにえらんでいる位置。戻り値はえらんだ位置
+//--------------------------------------------------------------------------
+s32 Menu_SelectEntry11To14(s32 sel)
+{
+	s32 ret;
+
+	AffineEffect_InitializeWork();
+	Menu_AppendResourceEntry(0x11);
+	Menu_AppendResourceEntry(0x12);
+	Menu_AppendResourceEntry(0x13);
+	Menu_AppendResourceEntry(0x14);
+#if defined(TBS_EDITION_DE) || defined(TLA_EDITION_DE)
+	Menu_CenterResourceEntries(17, 8, 0); // 名前のウィンドウの幅
+#elif EDITION_INTERNATIONAL
+	Menu_CenterResourceEntries(17, 7, 0);
+#else
+	Menu_CenterResourceEntries(17, 6, 0);
+#endif
+	ret = Menu_RunResourceSelectionLoop(sel);
+	Menu_EndResourceSelection();
+	return ret;
+}
+
+//--------------------------------------------------------------------------
+// アイコン 0x19〜0x1c を画面の中央に並べてえらぶ（行 17）
+//--------------------------------------------------------------------------
+s32 Menu_SelectEntry19To1c(s32 sel)
+{
+	s32 ret;
+
+	AffineEffect_InitializeWork();
+	Menu_AppendResourceEntry(0x19);
+	Menu_AppendResourceEntry(0x1A);
+	Menu_AppendResourceEntry(0x1B);
+	Menu_AppendResourceEntry(0x1C);
+#if EDITION_INTERNATIONAL
+	Menu_CenterResourceEntries(17, 10, 0);
+#else
+	Menu_CenterResourceEntries(17, 8, 0);
+#endif
+	ret = Menu_RunResourceSelectionLoop(sel);
+	Menu_EndResourceSelection();
+	return ret;
+}
+
+//--------------------------------------------------------------------------
+// はい・いいえ（アイコン 5・6）をえらぶ。キャンセルは 1（いいえ）
+// low  : 0 なら行 0、0 でなければ行 17 に出す
+// mes  : 名前のメッセージの先頭（0 ならコマンド名）
+// w    : 名前のウィンドウの幅（0 なら 3）
+// sel  : はじめにえらんでいる位置
+//--------------------------------------------------------------------------
+s32 Menu_RunConfirmSelection(s32 low, s32 mes, s32 w, s32 sel)
+{
+	s32 row;
+
+	row = 0;
+
+	AffineEffect_InitializeWork();
+
+	if (w == 0)
+	{
+		w = 3;
+	}
+	if (low != 0)
+	{
+		row = 17;
+	}
+
+	Menu_AppendResourceEntry(5);
+	Menu_AppendResourceEntry(6);
+	Menu_CenterResourceEntries(row, w, mes);
+
+	sel = Menu_RunResourceSelectionLoop(sel);
+	Menu_EndResourceSelection();
+	if (sel == -1)
+	{
+		sel = 1;
+	}
+	return sel;
+}
+
+//--------------------------------------------------------------------------
+// はい・いいえを (x, y) に出してえらぶ。キャンセルは 1（いいえ）
+//--------------------------------------------------------------------------
+s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 sel)
+{
+	s32 mes = (s32)MsgCommandYes;
+
+	AffineEffect_InitializeWork();
+	Menu_AppendResourceEntry(5);
+	Menu_AppendResourceEntry(6);
+	Menu_LayoutResourceEntries(x, y, 3, mes);
+	sel = Menu_RunResourceSelectionLoop(sel);
+	Menu_EndResourceSelection();
+	if (sel == -1)
+	{
+		sel = 1;
+	}
+	return sel;
+}
+
+//--------------------------------------------------------------------------
+// select_entry_20_to_21.c
+// メニュー：コマンドのアイコン 0x20・0x21 の 2 つからえらばせる
+//--------------------------------------------------------------------------
+// 版ごとの名前のウィンドウの幅
+#if !EDITION_INTERNATIONAL
+#define PAIR_WIDTH 7
+#elif defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT) || defined(TLA_EDITION_FR) \
+	|| defined(TLA_EDITION_IT)
+#define PAIR_WIDTH 10
+#else
+#define PAIR_WIDTH 9
+#endif
+
+//--------------------------------------------------------------------------
+// アイコン 0x20・0x21 を画面の中央に並べてえらぶ（行 17）
+// sel : はじめにえらんでいる位置。戻り値はえらんだ位置
+//--------------------------------------------------------------------------
+s32 Menu_SelectEntry20To21(s32 sel)
+{
+	s32 ret;
+
+	AffineEffect_InitializeWork();
+	Menu_AppendResourceEntry(0x20);
+	Menu_AppendResourceEntry(0x21);
+	Menu_CenterResourceEntries(17, PAIR_WIDTH, 0);
+	ret = Menu_RunResourceSelectionLoop(sel);
+	Menu_EndResourceSelection();
+	return ret;
+}
+
+void Scheduler_ScheduleCallbackCAfterFrames(void)
+{
+	Scheduler_AddOrUpdateCallback((SchedulerCallback)Menu_RunSelection, 0xC80);
+}
+
+void Menu_DrawSelectionRow(struct UiWindow *work, s32 first, const s16 *second)
+{
+	s16 selected = first;
+	s32 label = Scene_GetAreaNameIndexFar(selected, *second) + (s32)MsgDebugEntryName;
+	RenderOutput_PrepareForRedraw(work);
+	UiText_DrawNumber(selected, 3, (s32)work, 0, 14);
+	UiText_DrawNumber(*second, 3, (s32)work, MENU_LABEL_X, 14);
+	UiText_DrawString(Menu_ColonString, (s32)work, MENU_TEXT_X, 0);
+	UiText_DrawResource(selected + (s32)MsgDebugCategoryName, (s32)work, 0, 0);
+	UiText_DrawString(Menu_ColonString, (s32)work, MENU_TEXT_X, 14);
+	UiText_DrawResource(label, (s32)work, MENU_LABEL_X, 0);
+}
+
+s16 Menu_RunSelection(void)
+{
+	s32				  resource;
+	s16				  mode;
+	s16				  secondary;
+	struct MenuSprite object;
+	s16				  primary;
+	struct UiWindow	 *work;
+	s16				  result;
+
+	work = 0;
+	mode = 0;
+	primary = gGameState.default_scene;
+	secondary = gGameState.default_entrance;
+	work = UiWindow_Create(0, 7, 30, 5, 2);
+	Menu_DrawSelectionRow(work, primary, &secondary);
+	UiTextResource_Initialize(&object, &resource);
+
+	while (gKeysHeld != 0)
+		WaitFrames(1);
+
+	for (;;)
+	{
+		result = Menu_HandleSelectionRowInput(work, primary, &secondary, &mode);
+		if (result == -1)
+		{
+			UiTextResource_Release(resource);
+			UiWork_Finalize(work, 2);
+			Event_SetDestinationFar(primary, secondary);
+			return result;
+		}
+		if (result == -2)
+		{
+			UiTextResource_Release(resource);
+			UiWork_Finalize(work, 2);
+			return result;
+		}
+
+		UiTextResource_SetPosition(&object, MENU_TEXT_X, mode * 14 + MENU_TEXT_Y);
+		primary = result;
+		WaitFrames(1);
+	}
+}
+
+s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode)
+{
+	if (gKeysRepeat & KEY_A)
+		return -1;
+	if (gKeysRepeat & KEY_B)
+		return -2;
+	if (gKeysRepeat & KEY_DOWN)
+	{
+		*mode ^= 1;
+	}
+	else if (gKeysRepeat & KEY_UP)
+	{
+		*mode ^= 1;
+	}
+	else if (gKeysRepeat & KEY_RIGHT)
+	{
+		if (*mode == 0)
+		{
+			value++;
+		}
+		else
+		{
+			(*sub)++;
+			if (*sub > 99)
+				*sub = 0;
+		}
+		if (value > 200)
+			value = 0;
+		Menu_DrawSelectionRow((struct UiWindow *)arg, value, sub);
+	}
+	else if (gKeysRepeat & KEY_LEFT)
+	{
+		if (*mode == 0)
+		{
+			value--;
+		}
+		else
+		{
+			(*sub)--;
+			if (*sub < 0)
+				*sub = 99;
+		}
+		if (value < 0)
+			value = 200;
+		Menu_DrawSelectionRow((struct UiWindow *)arg, value, sub);
+	}
+	else if (gKeysRepeat & KEY_R)
+	{
+		if (*mode == 0)
+		{
+			*sub = 0;
+			value += 10;
+		}
+		else
+		{
+			*sub += 10;
+			if (*sub > 99)
+				*sub -= 99;
+		}
+		if (value > 200)
+			value = 0;
+		Menu_DrawSelectionRow((struct UiWindow *)arg, value, sub);
+	}
+	else if (gKeysRepeat & KEY_L)
+	{
+		if (*mode == 0)
+		{
+			*sub = 0;
+			value -= 10;
+		}
+		else
+		{
+			*sub -= 10;
+			if (*sub < 0)
+				*sub += 99;
+		}
+		if (value < 0)
+			value = 200;
+		Menu_DrawSelectionRow((struct UiWindow *)arg, value, sub);
+	}
+	return value;
+}
+
+//--------------------------------------------------------------------------
+// run_selection_with_cursor_object.c
+// メニュー：フラグの一覧画面（カーソルで選んで A で切りかえる）
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+// 1 ページ 16x16 のフラグを表示し、閉じるまで入力を受ける
+// ページ 8 から始める。戻り値はいつも 0
+//--------------------------------------------------------------------------
+s32 Menu_RunSelectionWithCursorObject(void)
+{
+	struct MenuSprite obj;	  // カーソルのオブジェクト
+	s32				  cur[2]; // カーソルの列・行
+	s32				  res;
+	s32				  page;
+	s32				  win;
+	s32				  ret;
+
+	page = 8;
+	win = 0;
+	cur[0] = win;
+	cur[1] = win;
+	win = UiWindow_Create(1, 0, 28, 20, 2);
+	Menu_DrawFlagBitTable(win, page);
+	UiTextResource_Initialize(&obj, &res);
+	for (;;)
+	{
+		WaitFrames(1);
+		ret = Menu_HandleFlagGridInput(win, &page, cur);
+		if (ret == -1)
+			break; // 閉じる
+		if (ret == 1)
+			Menu_DrawFlagBitTable(win, page); // フラグかページが変わった
+		UiTextResource_SetPosition(&obj, cur[0] * 8 + 58, cur[1] * 8 + 20);
+	}
+	UiTextResource_Release(res);
+	UiWork_Finalize(win, 2);
+	return 0;
+}
+
+//--------------------------------------------------------------------------
+// format_hex.c
+// 文字：数を 16 進の文字列にする
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+// value の下から count けた（5 けたまで）を、上のけたから大文字の
+// 16 進で out に書く（終わりの 0 は書かない）
+//--------------------------------------------------------------------------
+void Text_FormatHex(u32 value, u32 count, u8 *out)
+{
+	u8	buf[8];
+	u32 i;
+
+	if (count > 5)
+		count = 5;
+
+	for (i = 0; i != count; i++)
+	{
+		u32 d = value & 15;
+		if (d <= 9)
+			buf[i] = d + '0';
+		else
+			buf[i] = d + 'A' - 10;
+		value >>= 4;
+	}
+
+	for (i = count - 1; (s32)i >= 0; i--)
+		*out++ = buf[i];
+}
+
+void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
+{
+	s32	 row;
+	s32	 y;
+	s32	 flag;
+	char label[5];
+	char bits[17];
+
+	RenderOutput_PrepareForRedraw((struct UiWindow *)window);
+	UiText_DrawStringInWindow((u8 *)Menu_HexDigitsString, window, 48, 0);
+
+	flag = start_flag << 8;
+	for (row = 0; row != 16; row++)
+	{
+		s32 i;
+
+		y = row * 8 + 16;
+
+		for (i = 0; i != 5; i++)
+		{
+			label[i] = 0;
+		}
+		Text_FormatHex(flag, 3, (s32)label);
+		UiText_DrawStringInWindow((u8 *)label, window, 0, y);
+		UiText_DrawStringInWindow((u8 *)Menu_ColonString, window, 32, y);
+
+		for (i = 0; i < 16; i++)
+		{
+			s32 val = GameFlag_TestFar(flag);
+			bits[i] = (val != 0) + 48;
+			flag++;
+		}
+		bits[i] = 0;
+		UiText_DrawStringInWindow((u8 *)bits, window, 48, y);
+	}
+}
+
+s32 Menu_HandleFlagGridInput(s32 window, s32 *page, s32 *cursor)
+{
+	s32 *row = &cursor[1];
+
+	if (gKeysRepeat & KEY_A)
+	{
+		s32 flag = ((*page << 4) + *row << 4) + cursor[0];
+
+		if (GameFlag_TestFar(flag))
+			GameFlag_ClearBitFar(flag);
+		else
+			GameFlag_SetBitFar(flag);
+		return 1;
+	}
+	if ((gKeyState & KEY_B) || (gKeysRepeat & KEY_SELECT))
+		return -1;
+	if (gKeysRepeat & KEY_UP)
+	{
+		if (--*row < 0)
+			*row = 15;
+	}
+	else if (gKeysRepeat & KEY_DOWN)
+	{
+		if (++*row > 15)
+			*row = 0;
+	}
+	else if (gKeysRepeat & KEY_LEFT)
+	{
+		if (--cursor[0] < 0)
+			cursor[0] = 15;
+	}
+	else if (gKeysRepeat & KEY_RIGHT)
+	{
+		if (++cursor[0] > 15)
+			cursor[0] = 0;
+	}
+	else if ((gKeysRepeat & KEY_L) && (gKeysRepeat & KEY_START))
+	{
+		*page -= 10;
+		if (*page < 0)
+			*page = 15;
+		return 1;
+	}
+	else if ((gKeysRepeat & KEY_R) && (gKeysRepeat & KEY_START))
+	{
+		*page += 10;
+		if (*page > 15)
+			*page = 0;
+		return 1;
+	}
+	else if (gKeysRepeat & KEY_L)
+	{
+		if (--*page < 0)
+			*page = 15;
+		return 1;
+	}
+	else if (gKeysRepeat & KEY_R)
+	{
+		if (++*page > 15)
+			*page = 0;
+		return 1;
+	}
+	return 0;
+}
+
+void Menu_ReservedNoOp(void)
+{
+}
+
+void Djinn_SetFoundFlagAndAdd(s32 owner, s32 element, s32 index)
+{
+	GameFlag_SetBitFar((element * 0x14) + index + 0x30);
+	Djinn_AddToOwnerFar(owner, element, index);
+}
+
+s32 Menu_RunWorkspaceResultLoop(void)
+{
+	s32 result;
+
+	result = Menu_RunWorkspaceSelectionLoop();
+	if (result == -1)
+	{
+		return -1;
+	}
+	if (result == 0)
+	{
+		if (Save_WriteSelectedSlot() == -1)
+		{
+			return Menu_RunWorkspaceResultLoop();
+		}
+	}
+	else if (result == 1)
+	{
+		UiText_ShowPositionedMessageAndWait((s32)MsgSleepMode, 1);
+		gSleepRequested = result;
+	}
+	else if (result == 2)
+	{
+		if (Menu_RunWorkspaceOptions() == -1)
+		{
+			return Menu_RunWorkspaceResultLoop();
+		}
+	}
+	return 0;
+}
+
+s32 DebugMenu_BrowseIcons(void)
+{
+	s32					redraw;
+	s32					tile;
+	s32					page;
+	s32					mode;
+	struct RenderInput *window;
+	s32					slot;
+	s32					base;
+	s32					i;
+	s32					row;
+	s32					x;
+	s32					y;
+
+	window = NULL;
+	page = 0;
+	mode = 0;
+	redraw = 1;
+	gMenuCtrlWork->suspended = redraw;
+	WaitFrames(1);
+
+	while (1)
+	{
+		if (gKeysRepeat & KEY_LEFT)
+		{
+			page--;
+			redraw = 1;
+		}
+		if (gKeysRepeat & KEY_RIGHT)
+		{
+			redraw = 1;
+			page++;
+		}
+		if (gKeysRepeat & KEY_L)
+		{
+			mode--;
+			redraw = 1;
+		}
+		if (gKeysRepeat & KEY_R)
+		{
+			redraw = 1;
+			mode++;
+		}
+		if (gKeysRepeat & KEY_A)
+			break;
+		if (gKeysRepeat & KEY_B)
+			break;
+		if (redraw != 0)
+		{
+			redraw = 0;
+			page = (page + 8) % 8;
+			mode = (mode + 3) % 3;
+			UiWork_Finalize(window, 2);
+			window = UiWindow_Create(10, 0, 18, 12, 2);
+			if (mode == 0)
+				UiText_DrawStringInWindow(Workspace_ItemTitle, window, 0, 0);
+			else if (mode == 1)
+				UiText_DrawStringInWindow(Workspace_EnergyTitle, window, 0, 0);
+			else
+				UiText_DrawStringInWindow(Workspace_StatusTitle, window, 0, 0);
+			UiText_DrawStringInWindow(Workspace_PageLabel, window, 0, 8);
+			UiText_DrawNumberInWindow(page, 0, window, 40, 8);
+			base = page << 5;
+			UiText_DrawNumberInWindow(base, 3, window, 64, 8);
+			UiText_DrawStringInWindow(Workspace_RangeDash, window, 88, 8);
+			UiText_DrawNumberInWindow(base + 31, 3, window, 96, 8);
+			for (i = 0; i <= 31; i++)
+			{
+				slot = -1;
+				row = i / 8;
+				x = (i - row * 8) * 16;
+				y = row * 16 + 16;
+				if (mode == 0)
+				{
+					UiIcon_BuildItemIconTiles(base + i, 1, &slot, &tile, mode);
+					RenderOutput_Create(slot, 0x40000000, window, x, y);
+				}
+				else if (mode == 1)
+				{
+					UiIcon_BuildAbilityIconTiles(base + i, 1, &slot, &tile, 0);
+					RenderOutput_Create(slot, 0x40000000, window, x, y);
+				}
+				else
+				{
+					slot = Resource_FindFreeEntry();
+					Ui_BuildPatternToSlot(i, 0, slot);
+					RenderOutput_Create(slot, 0x40000000, window, x, y);
+				}
+			}
+		}
+		WaitFrames(1);
+	}
+	UiWork_Finalize(window, 2);
+	gMenuCtrlWork->suspended = 0;
+	return 0;
+}
+
+#if !EDITION_INTERNATIONAL || defined(TBS_EDITION_EN)
+#define DEBUG_GLYPH_NAME ((s32)MsgDebugGlyphName)
+#elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
+#define DEBUG_GLYPH_NAME ((s32)MsgEnd)
+#else
+#define DEBUG_GLYPH_NAME ((s32)MsgDebugSecondForm)
+#endif
+
+s32 DebugMenu_BrowseEntryGlyphs(void)
+{
+	struct UiRenderWork *work;
+	struct RenderInput	*portrait;
+	s32					 redraw;
+	struct RenderInput	*window;
+	s32					 count;
+	s32					 total;
+	s32					 index;
+	s32					 i;
+	s32					 glyph;
+	s32					 tile;
+	s32					 slot;
+	s32					 cancel;
+	u32					 slot_offset;
+
+	work = UI_WORK;
+	redraw = 1;
+	portrait = UiWindow_CreateWithSideObject(0, 0, 10, 5);
+	window = UiWindow_Create(10, 10, 14, 3, 2);
+	index = 0;
+	for (i = 0; Portrait_CharacterMap[i * 2] != -1; i++)
+	{
+	}
+	count = i;
+	for (i = 0; Portrait_SpriteMap[i * 2] != -1; i++)
+	{
+	}
+	total = count + i;
+
+	/* FAKEMATCH: the count-derived mask is needed to match the native mask
+     * in r9 and work in fp; a direct constant swaps them (four instructions).
+     * 2026-10-13: cancel = KEY_B differs 12 of 179, KEY_B tested directly
+     * 20, cancel = KEY_B set first in the function 48. */
+	cancel = ((u32)(u16)count >> 16) | KEY_B;
+	/* FAKEMATCH: defining the offset before the loop keeps its load in r1; defining it inside redraw uses r3 (4 instructions differ in all six editions). */
+	slot_offset = RENDER_SLOT_VALUE_OFS + 2;
+	while (1)
+	{
+		if (gKeysRepeat & KEY_LEFT)
+		{
+			redraw = 1;
+			index--;
+		}
+		if (gKeysRepeat & KEY_RIGHT)
+		{
+			redraw = 1;
+			index++;
+		}
+		if (gKeysRepeat & KEY_L)
+		{
+			redraw = 1;
+			index -= 10;
+		}
+		if (gKeysRepeat & KEY_R)
+		{
+			redraw = 1;
+			index += 10;
+		}
+		if (gKeysRepeat & KEY_A)
+			break;
+		if (gKeysRepeat & cancel)
+			break;
+		if (redraw)
+		{
+			redraw = 0;
+			index = (index + total) % total;
+			RenderOutput_PrepareForRedraw(window);
+			if (index < count)
+				glyph = Portrait_CharacterMap[index * 2 + 1];
+			else
+				glyph = Portrait_SpriteMap[(index - count) * 2 + 1] + 128;
+			{
+				/* FAKEMATCH: the word temporary is needed to match palette's
+                 * r2 through the slot store; direct assignment chooses r3.
+                 * 2026-10-13: slot assigned directly with 15 passed as a
+                 * literal differs 4 of 179 (the 15 takes r3 after the slot
+                 * store); so do the loaded temporary alone, the load
+                 * written as an index and the assignment inside the
+                 * argument list; pal alone, without loaded, differs 69. */
+				s32 pal;
+				s32 loaded = *(u16 *)((u8 *)work + slot_offset);
+				pal = 15;
+				slot = loaded;
+				UiGlyph_LoadEntryWithPalette(glyph, 0, &slot, &tile, pal, 1);
+			}
+			UiText_DrawNumberInWindow(index, 2, window, 0, 0);
+			UiText_DrawCharacterAtOffset(index + DEBUG_GLYPH_NAME, window, 24, 0);
+		}
+		WaitFrames(1);
+	}
+	UiWork_Finalize(window, 2);
+	UiWork_Finalize(portrait, 2);
+	WaitFrames(1);
+	return 0;
 }

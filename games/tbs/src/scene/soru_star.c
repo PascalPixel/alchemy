@@ -4,30 +4,13 @@
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/scene/common/soru_star_ring_setup.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/marker.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evmes.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
-#include "unit/field/fldobj.h"
-#include "unit/field/script.h"
-#include "unit/field/player.h"
-#include "unit/field/mapcell.h"
-#include "unit/game/chara.h"
-#include "unit/game/item.h"
+#include "unit/game/game.h"
 #include "unit/window/window.h"
-#include "unit/window/output.h"
-#include "unit/window/save.h"
+#include "unit/window/btlcmd.h"
 #include "unit/shop/shop.h"
-#include "unit/shop/pickitem.h"
-#include "unit/runtime/math.h"
-#include "unit/runtime/heap.h"
+#include "unit/runtime/runtime.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"
@@ -95,8 +78,8 @@ struct ObjectRuntime;
 extern struct SceneEvent Placement_Effects[];
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
-#include "common/effect_spawn.c"
+#include "common/effect_create.h"
+#include "common/effect_spawn.h"
 
 static __inline__ void SkipMessage(s32 amount)
 {
@@ -104,7 +87,7 @@ static __inline__ void SkipMessage(s32 amount)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_facing.c"
+#include "common/object_facing.h"
 
 s32 *SceneData_GetScriptTable(void)
 {
@@ -2225,7 +2208,7 @@ static void SoruStar_RiseActorFourteenSparks(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/soru_star_ring_setup.c"
+#include "common/soru_star_ring_setup.h"
 
 s32 gEffectScript0[] = {
 	SC_WAIT(1),

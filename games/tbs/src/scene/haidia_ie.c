@@ -4,24 +4,12 @@
 #include "unit/scene/haidia_ie.h"
 #include "unit/scene/common/effect_psynergy.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/fldmain.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/scenefx.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
-#include "unit/game/chara.h"
+#include "unit/game/game.h"
 #include "unit/window/window.h"
-#include "unit/window/output.h"
-#include "unit/window/save.h"
-#include "unit/runtime/objvram.h"
-#include "unit/runtime/sched.h"
-#include "unit/runtime/math.h"
+#include "unit/window/btlcmd.h"
+#include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -74,7 +62,7 @@ static inline s32 HaidiaIe_TurnAndWaitValue(s32 actor, s32 facing, s32 frames)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_facing.c"
+#include "common/object_facing.h"
 
 u8 *HaidiaIe_GetEntrances(void)
 {
@@ -407,7 +395,7 @@ static void Scene_PsynergyStoneIsGone(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/haidia.c"
+#include "common/haidia.h"
 
 static void EV01_TOUCH(void)
 {
@@ -1386,7 +1374,7 @@ static void SceneEffect_UpdateByFrameBit(s32 no)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_vertical.c"
+#include "common/effect_vertical.h"
 
 static void HaidiaIe_SpawnEffectPair(union PairObject *parent)
 {
@@ -1444,7 +1432,7 @@ static void HaidiaIe_SpawnEffectPair(union PairObject *parent)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_psynergy.c"
+#include "common/effect_psynergy.h"
 
 static void FieldScene_RunStep15(void)
 {

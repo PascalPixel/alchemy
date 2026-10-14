@@ -5,23 +5,9 @@
 #include "unit/scene/takara_hashira.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/marker.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/palbuf.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
-#include "unit/field/fldobj.h"
-#include "unit/field/script.h"
-#include "unit/field/player.h"
-#include "unit/field/mapcell.h"
 #include "unit/runtime/runtime.h"
-#include "unit/runtime/math.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"
@@ -81,12 +67,12 @@ struct MapLayer_2
 };
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
-#include "common/effect_spawn.c"
-#include "common/object_staged_actor.c"
+#include "common/effect_create.h"
+#include "common/effect_spawn.h"
+#include "common/object_staged_actor.h"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/map.c"
+#include "common/map_panel.h"
 
 static void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
 {

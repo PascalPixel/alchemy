@@ -6,20 +6,8 @@
 #include "unit/import.h"
 #include "unit/scene/runpa_jo.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/marker.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
-#include "unit/field/fldobj.h"
-#include "unit/field/script.h"
-#include "unit/field/player.h"
-#include "unit/field/mapcell.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -63,7 +51,7 @@ static void FieldScene_ActivateAlternateActorGroup(void);
 static void ActivateFiveActorGroupFromFlags(void);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_staged_actor.c"
+#include "common/object_staged_actor.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {

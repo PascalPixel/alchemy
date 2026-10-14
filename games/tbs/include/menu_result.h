@@ -2,9 +2,6 @@
 #define ALCHEMY_MENU_RESULT_H
 
 #include "unit/menu/menu.h"
-#include "unit/menu/item.h"
-#include "unit/menu/psynergy.h"
-#include "unit/menu/status.h"
 #include "types.h"
 
 struct MenuResult

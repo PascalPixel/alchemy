@@ -3,18 +3,9 @@
 #include "unit/scene/common/effect_psynergy.h"
 #include "unit/scene/common/soru_star_ring_setup.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/scenefx.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
-#include "unit/runtime/objvram.h"
-#include "unit/runtime/heap.h"
+#include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -1802,7 +1793,7 @@ static void SceneState_ForwardByRuntimeWordBits(s32 a)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_vertical.c"
+#include "common/effect_vertical.h"
 
 static void SoruFunka_SpawnEffectPair(union PairObject *parent)
 {
@@ -1855,7 +1846,7 @@ static void SoruFunka_SpawnEffectPair(union PairObject *parent)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_psynergy.c"
+#include "common/effect_psynergy.h"
 
 static void FieldScene_RunActor15TwoStep(void)
 {
@@ -1863,7 +1854,7 @@ static void FieldScene_RunActor15TwoStep(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/soru_star_ring_setup.c"
+#include "common/soru_star_ring_setup.h"
 
 s32 Funka_ArcOriginsHead[] = {
 	SC_SET(SW_VELOCITY_Y, 0x60000),

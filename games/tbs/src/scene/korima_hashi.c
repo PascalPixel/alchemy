@@ -4,14 +4,6 @@
 #include "unit/scene/korima_hashi.h"
 #include "unit/scene/common/korima_hashi_falling_effect.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/marker.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "battle.h"
 #include "debug.h"
@@ -54,7 +46,7 @@ extern s32 KorimaHashi_PartyFlag;
 extern s32 KorimaHashi_SparkleSound;
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_staged_actor.c"
+#include "common/object_staged_actor.h"
 
 static s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object)
 {
@@ -133,7 +125,7 @@ static void EV10_SCRIPT(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_jump.c"
+#include "common/korima_jump.h"
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
@@ -1059,7 +1051,7 @@ static void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_grow.c"
+#include "common/korima_grow.h"
 
 static void SceneEffect_SpawnObject26EveryEightFrames(void)
 {
@@ -1101,7 +1093,7 @@ static void SceneEffect_SpawnObject26EveryEightFrames(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_blink.c"
+#include "common/korima_blink.h"
 
 static s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0)
 {
@@ -1131,7 +1123,7 @@ static s32 SceneActor_CheckRegionTrigger(struct FieldActor *arg0)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_hashi_falling_effect.c"
+#include "common/korima_hashi_falling_effect.h"
 s32 KorimaHashi_TriggerPending __attribute__((section(".bss")));
 s32 KorimaHashi_PartyFlag __attribute__((section(".bss")));
 s32 KorimaHashi_SparkleSound __attribute__((section(".bss")));

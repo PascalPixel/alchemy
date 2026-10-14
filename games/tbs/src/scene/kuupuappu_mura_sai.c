@@ -4,16 +4,9 @@
 #include "unit/scene/common/kuupuappu_range.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
-#include "unit/game/item.h"
-#include "unit/runtime/math.h"
+#include "unit/game/game.h"
+#include "unit/runtime/runtime.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"
@@ -35,11 +28,11 @@
 #include "call.h"
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
-#include "common/effect_spawn.c"
-#include "common/object_distance.c"
-#include "common/kuupuappu_range.c"
-#include "common/kuupuappu_nearby.c"
+#include "common/effect_create.h"
+#include "common/effect_spawn.h"
+#include "common/object_distance.h"
+#include "common/kuupuappu_range.h"
+#include "common/kuupuappu_nearby.h"
 
 const void *SceneData_GetScriptTable(void)
 {
@@ -400,7 +393,7 @@ static void EV10_TOUCH(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu_mura_scene_cells.c"
+#include "common/kuupuappu_mura_scene_cells.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
@@ -425,7 +418,7 @@ static void EV12_TOUCH(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/kuupuappu_toggle.c"
+#include "common/kuupuappu_toggle.h"
 
 static void EV21_TALK(void)
 {

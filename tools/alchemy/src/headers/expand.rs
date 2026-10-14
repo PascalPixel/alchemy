@@ -108,7 +108,7 @@ pub(crate) fn read(root: &str, text: &str, unit: &str, wanted: &dyn Fn(&str) -> 
                     }
                     let shape = shape(&d.signature, &d.name);
                     let defines = !d.function && (!d.external || d.initialized);
-                    if defines && !d.local && from.ends_with(".c") {
+                    if defines && !d.local && crate::c_items::c_text_file(&std::path::Path::new(root).join(&from)) {
                         out.defined.insert(d.name.clone(), shape.clone());
                     } else if !defines && super::model::spelling(&from).is_some() {
                         out.declared.entry(d.name.clone()).or_default().insert((from.clone(), shape.clone()));

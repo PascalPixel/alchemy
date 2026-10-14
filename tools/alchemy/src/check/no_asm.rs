@@ -74,10 +74,13 @@ fn groups(
             }
         }
         for path in inventories[target.source_dir].iter().chain(&inventories["games/common/src"]) {
+            // C files, and the headers that are C text: each is scanned
+            // on its own as well as in the units that include it.
             if !path
                 .extension()
                 .and_then(|ext| ext.to_str())
                 .is_some_and(|ext| ext.eq_ignore_ascii_case("c"))
+                && !crate::c_items::c_text_file(path)
             {
                 continue;
             }

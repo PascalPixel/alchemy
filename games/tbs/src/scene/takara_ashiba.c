@@ -4,24 +4,10 @@
 #include "unit/import.h"
 #include "unit/scene/takara_ashiba.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/marker.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
-#include "unit/field/fldobj.h"
-#include "unit/field/script.h"
-#include "unit/field/player.h"
-#include "unit/field/mapcell.h"
-#include "unit/game/item.h"
-#include "unit/runtime/sched.h"
-#include "unit/runtime/math.h"
-#include "unit/runtime/heap.h"
+#include "unit/game/game.h"
+#include "unit/runtime/runtime.h"
 #include "unit/scene/common/korosseo_item_icon.h"
 #include "battle.h"
 #include "debug.h"
@@ -82,7 +68,7 @@ static __inline__ void LiftBlock(s32 column, u8 lowered)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_staged_actor.c"
+#include "common/object_staged_actor.h"
 
 static void EV15_SCRIPT(void)
 {
@@ -1231,7 +1217,7 @@ static void TakaraAshiba_UpdateItemIcons(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korosseo_item_icon.c"
+#include "common/korosseo_item_icon.h"
 
 static void TakaraAshiba_InitializeScene1(void)
 {

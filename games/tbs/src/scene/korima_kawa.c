@@ -4,14 +4,6 @@
 #include "unit/scene/korima_kawa.h"
 #include "unit/scene/common/korima_palette.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/marker.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "battle.h"
 #include "debug.h"
@@ -39,7 +31,7 @@
 #endif
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_staged_actor.c"
+#include "common/object_staged_actor.h"
 
 u8 *MapStagedScene_SelectPrimaryData(void)
 {
@@ -88,7 +80,7 @@ static void EV10_SCRIPT(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_jump.c"
+#include "common/korima_jump.h"
 
 u8 *KorimaKawa_GetEvents(void)
 {
@@ -121,7 +113,7 @@ s32 KorimaKawa_PrepareWindowTransition(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/korima_palette.c"
+#include "common/korima_palette.h"
 
 // 向きごとの一歩: 上位16ビットがX、下位16ビットがZ (ピクセル)
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

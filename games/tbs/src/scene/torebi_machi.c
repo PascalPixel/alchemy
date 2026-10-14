@@ -1,17 +1,9 @@
 #include "unit/scene/torebi_machi.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/window/window.h"
-#include "unit/window/output.h"
-#include "unit/window/save.h"
-#include "unit/runtime/math.h"
+#include "unit/window/btlcmd.h"
+#include "unit/runtime/runtime.h"
 #include "torebi_machi.h"
 #include "iwram_call.h"
 #include "call.h"
@@ -34,7 +26,7 @@ static void EV31_TALK(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_distance.c"
+#include "common/object_distance.h"
 
 static s32 SceneActor_UpdatePlayerProximity(
 	struct SceneActor *actor, struct SceneActor *target, s32 range, s32 force)

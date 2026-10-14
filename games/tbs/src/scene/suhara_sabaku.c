@@ -3,15 +3,8 @@
 #include "unit/scene/suhara_sabaku.h"
 #include "unit/scene/common/effect_spawn.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
-#include "unit/game/flag.h"
+#include "unit/game/game.h"
 #include "fieldobj.h"
 #include "types.h"
 #include "field_event.h"
@@ -68,8 +61,8 @@ static u16 gSuharaSabakuShownLevel;
 #define EncounterPalette (*(volatile u16 *)0x0500019e)
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
-#include "common/effect_spawn.c"
+#include "common/effect_create.h"
+#include "common/effect_spawn.h"
 
 // 戦闘開始の種類 (battle/party/party.c と同じ)
 

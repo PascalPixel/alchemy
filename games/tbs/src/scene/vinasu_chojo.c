@@ -6,24 +6,12 @@
 #include "unit/scene/common/object_nearest.h"
 #include "unit/scene/common/effect_psynergy.h"
 #include "unit/object/object.h"
-#include "unit/object/objtable.h"
-#include "unit/object/sparkle.h"
-#include "unit/object/evbasic.h"
-#include "unit/object/evactor.h"
-#include "unit/object/evcamera.h"
-#include "unit/object/djinnev.h"
-#include "unit/object/psydisp.h"
 #include "unit/object/psyfx.h"
 #include "unit/field/field.h"
-#include "unit/field/fldobj.h"
-#include "unit/game/chara.h"
-#include "unit/game/item.h"
+#include "unit/game/game.h"
 #include "unit/window/window.h"
-#include "unit/window/output.h"
-#include "unit/window/save.h"
-#include "unit/runtime/objvram.h"
-#include "unit/runtime/sched.h"
-#include "unit/runtime/math.h"
+#include "unit/window/btlcmd.h"
+#include "unit/runtime/runtime.h"
 
 #define NULL ((void *)0)
 #include "fieldobj.h"
@@ -92,8 +80,8 @@ static void VinasuChojo_UpdateOrbitingEffect(union FieldObject *object);
 s32 Math_RemainderUnsigned(s32, s32);
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_create.c"
-#include "common/effect_spawn.c"
+#include "common/effect_create.h"
+#include "common/effect_spawn.h"
 
 struct PairDetail
 {
@@ -196,7 +184,7 @@ static void VinasuChojo_StepSpriteRotation(struct FieldActor *actor)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_heading.c"
+#include "common/object_heading.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -219,8 +207,8 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/object_distance.c"
-#include "common/object_nearest.c"
+#include "common/object_distance.h"
+#include "common/object_nearest.h"
 
 static void InitializeActorZeroMotion(void)
 {
@@ -1162,7 +1150,7 @@ static void SceneState_ForwardByRuntimeWordBits(s32 a)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_vertical.c"
+#include "common/effect_vertical.h"
 
 static void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
 {
@@ -1220,7 +1208,7 @@ static void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
 }
 
 // ここに共通ソースが入る（ROM の並びのとおり）
-#include "common/effect_psynergy.c"
+#include "common/effect_psynergy.h"
 
 static void FieldScene_RunStep6(void)
 {

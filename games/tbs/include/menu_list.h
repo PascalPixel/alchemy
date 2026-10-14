@@ -2,11 +2,7 @@
 #define ALCHEMY_MENU_LIST_H
 
 #include "unit/window/window.h"
-#include "unit/window/select.h"
-#include "unit/window/output.h"
-#include "unit/window/save.h"
 #include "unit/window/btlcmd.h"
-#include "unit/window/debug.h"
 #include "types.h"
 #include "resource.h"
 #include "callback_scheduler.h"

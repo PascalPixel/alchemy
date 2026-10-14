@@ -34,21 +34,57 @@ pub(crate) fn comment(name: &str) -> String {
     format!("/* {name}{SAYS}")
 }
 
-/// The functions a header's comments leave out: each name and its
-/// comment's byte range.
-pub(crate) fn left_out(header: &str) -> Vec<(&str, usize, usize)> {
+/// The other form of the comment, for a function another unit calls with
+/// no prototype in scope, on one line: `/* NAME is called from FILE.c with
+/// no prototype in scope`, then what that call shows, then ` */`. Two files
+/// whose merge would put the definition above such a call keep it apart.
+const FROM: &str = " is called from ";
+const UNDECLARED: &str = " with no prototype in scope";
+
+/// One comment that leaves a function out of its header: the function,
+/// the other C file whose calls it records (none for a call above the
+/// definition in the function's own file), and the comment's byte range.
+pub(crate) struct Note<'a> {
+    pub name: &'a str,
+    pub from: Option<&'a str>,
+    pub start: usize,
+    pub end: usize,
+}
+
+fn identifier(name: &str) -> bool {
+    !name.is_empty() && name.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'_')
+}
+
+/// The comments of a header that leave functions out, in either form.
+pub(crate) fn notes(header: &str) -> Vec<Note<'_>> {
     let mut found = Vec::new();
     let mut at = 0;
     for line in header.split_inclusive('\n') {
         let trimmed = line.trim();
-        let name = trimmed.strip_prefix("/* ").and_then(|rest| rest.strip_suffix(SAYS));
-        if let Some(name) = name.filter(|name| !name.is_empty() && name.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'_')) {
-            let start = at + line.find("/*").unwrap_or(0);
-            found.push((name, start, start + trimmed.len()));
-        }
+        let start = at + line.find("/*").unwrap_or(0);
+        let end = start + trimmed.len();
         at += line.len();
+        let Some(rest) = trimmed.strip_prefix("/* ") else {
+            continue;
+        };
+        if let Some(name) = rest.strip_suffix(SAYS).filter(|name| identifier(name)) {
+            found.push(Note { name, from: None, start, end });
+        } else if let Some((name, after)) = rest.split_once(FROM).filter(|(name, _)| identifier(name)) {
+            let file = after.split_once(UNDECLARED).map(|(file, _)| file);
+            if let Some(file) = file.filter(|file| file.ends_with(".c") && !file.contains(char::is_whitespace)) {
+                if trimmed.ends_with(" */") && !rest.contains("*/ ") {
+                    found.push(Note { name, from: Some(file), start, end });
+                }
+            }
+        }
     }
     found
+}
+
+/// The functions a header's comments leave out: each name and its
+/// comment's byte range.
+pub(crate) fn left_out(header: &str) -> Vec<(&str, usize, usize)> {
+    notes(header).into_iter().map(|note| (note.name, note.start, note.end)).collect()
 }
 
 /// The header with the function's prototype replaced by the comment; none
@@ -626,6 +662,20 @@ mod tests {
         assert_eq!(declare(header, "Late", "void Late(void);"), None);
         // Any other comment leaves nothing out.
         assert!(left_out("/* Late is called before its definition. */\n// Late is called before its definition with no prototype in scope. */\n/* a b is called before its definition with no prototype in scope. */\n").is_empty());
+    }
+
+    #[test]
+    fn a_comment_may_name_the_other_file_whose_calls_leave_it_out() {
+        let across = "/* Late is called from b.c with no prototype in scope: in one file the definition would come first and Run changes. */";
+        let header = format!("void Run(void);\n{across}\n/* Early is called before its definition with no prototype in scope. */\n");
+        let found: Vec<(&str, Option<&str>, &str)> = notes(&header).into_iter().map(|note| (note.name, note.from, &header[note.start..note.end])).collect();
+        assert_eq!(
+            found,
+            [("Late", Some("b.c"), across), ("Early", None, "/* Early is called before its definition with no prototype in scope. */")]
+        );
+        assert_eq!(left_out(&header).into_iter().map(|(name, _, _)| name).collect::<Vec<_>>(), ["Late", "Early"]);
+        // The file is one C file's name, and the comment one line.
+        assert!(notes("/* Late is called from b.h with no prototype in scope. */\n/* Late is called from two files with no prototype in scope. */\n/* Late is called from b.c with a prototype. */\n/* Late is called from b.c with no prototype in scope.\n */\n").is_empty());
     }
 
     #[test]

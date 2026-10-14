@@ -1,10 +1,7 @@
 #ifndef ALCHEMY_CHARACTER_H
 #define ALCHEMY_CHARACTER_H
 
-#include "unit/game/chara.h"
-#include "unit/game/item.h"
-#include "unit/game/class.h"
-#include "unit/game/btlcalc.h"
+#include "unit/game/game.h"
 #include "types.h"
 #include "ownerval.h"
 #include "layout_guard.h"

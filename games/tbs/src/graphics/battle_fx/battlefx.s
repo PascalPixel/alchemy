@@ -1,4 +1,3 @@
-	.include "games/common/include/game/ed_asm.h"
 	.section .rodata
 	.include "games/common/src/graphics/battle_fx/tile_mask.s"
 	.include "games/common/src/graphics/battle_fx/cyan_spark.s"
@@ -247,9 +246,7 @@ BattleFx_ThornVineSheet:
 BattleFx_IceShardSheet:
 	.incbin "common/graphics/battle_fx/ice_shard_00.gbapal"
 	.incbin "common/graphics/battle_fx/ice_shard.parts.lz"
-	.ifeq GAME_TLA
 	.byte 0x3e	@ PACKER: left in the buffer by BattleFx_VioletStreakSheet+0xa33
-	.endif
 	.include "games/common/src/graphics/battle_fx/ember_streak.s"
 	.include "games/common/src/graphics/battle_fx/blue_arc_a.s"
 	.include "games/common/src/graphics/battle_fx/blue_arc_b.s"
@@ -263,9 +260,7 @@ BattleFx_IceChipSheet:
 BattleFx_IceBlockSheet:
 	.incbin "common/graphics/battle_fx/ice_block_00.gbapal"
 	.incbin "common/graphics/battle_fx/ice_block.parts.lz"
-	.ifeq GAME_TLA
 	.byte 0x30, 0xae	@ PACKER: left in the buffer by BattleFx_BlueBeastSheet+0x1586
-	.endif
 	.global BattleFx_SparkleDots
 BattleFx_SparkleDots:
 	.incbin "common/graphics/battle_fx/sparkle_dots.parts.lz"

@@ -38,6 +38,8 @@ void Func_02003be0(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 
 void Func_020015b8(struct ObjectRuntime *object);
 void Func_0200172c(void);
 void Func_02001804(void);
+void Func_020021b4(void);
+void Func_02002604(void);
 
 struct CellRecord {
     u16 present;
@@ -79,8 +81,8 @@ static __inline__ void Wait(s32 frames)
     WaitFrames(frames);
 }
 
-void Func_02003c70(s32 id, s32 x, s32 z, s32 angle);
-void Func_02003cc8(s32 id, s32 a, s32 b);
+void Func_02003c70(u32 id, s32 x, s32 z, s16 angle);
+struct ObjectRuntime *Func_02003cc8(s32 id, s32 a, s32 b);
 void Func_02003cf0(void);
 struct ObjectRuntime *Func_02003cf8(void);
 void Func_02003d50(s32 a, s32 b);
@@ -179,6 +181,33 @@ static __inline__ struct ObjectRuntime *Actor_Get(s32 id)
     return Object_GetById(id);
 }
 
+void Func_020021e8(void)
+{
+    Func_02003c28();
+    Func_02003d78(0);
+    Func_02003cf8()->motion_flags = 0;
+    Camera_SetBounds(658 << 16, -1, 164 << 16, 1);
+    Func_02003cf0();
+    Actor_FaceToward(24, gPartyState.current_owner, 0);
+    Actor_SetTurn(24, 0x100, 40);
+    Actor_SetSpeed(24, 0x19999, 0xcccc);
+    Actor_MoveTo(24, 664, 136);
+    Map_CopyCells(68, 33, 105, 6, 1, 1);
+    Cue(161);
+    Func_020021b4();
+    Flag_Set(0x247);
+    Actor_MoveTo(24, 664, 104);
+    Map_CopyCells(69, 33, 105, 4, 1, 1);
+    Cue(229);
+    Func_020021b4();
+    Pause(10);
+    Actor_Launch(24, 6, 16);
+    Actor_PlaceFacing(24, 222 << 18, 168 << 16, 0x4000);
+    Pause(20);
+    Flag_Set(0x86c);
+    Func_02003c30();
+}
+
 void Func_020022e0(void)
 {
     Func_02003c28();
@@ -196,5 +225,56 @@ void Func_020022e0(void)
     Actor_PlaceOnTerrain(24, 0, 0);
     Pause(20);
     Flag_Set(0x86d);
+    Func_02003c30();
+}
+
+void Func_02002390(void)
+{
+    Func_02003c28();
+    Func_02003d78(0);
+    Camera_SetBounds(144 << 16, -1, 214 << 15, 1);
+    Func_02003cf0();
+    Actor_FaceToward(25, gPartyState.current_owner, 0);
+    Actor_SetTurn(25, 0x100, 40);
+    Actor_SetSpeed(25, 0x19999, 0xcccc);
+    Actor_MoveTo(25, 168, 104);
+    Pause(10);
+    Cue(153);
+    Actor_Get(25)->velocity_y = 0x80000;
+    ObjectDispatch_SetSingleChildFlags(Actor_Get(25), 0);
+    Actor_MoveTo(25, 200, 104);
+    ObjectDispatch_SetSingleChildFlags(Actor_Get(25), 1);
+    Actor_MoveTo(25, 294, 104);
+    Actor_PlaceFacing(25, 212 << 17, 208 << 15, 0x4000);
+    Flag_Set(0x86e);
+    Func_02003c30();
+}
+
+void Func_02002458(void)
+{
+    Func_02003c28();
+    Func_02003d78(0);
+    Object_LinkObjectAndSetCallback(gPartyState.current_owner, 25);
+    Func_02003cf8()->motion_flags = 0;
+    Camera_SetBounds(212 << 17, -1, 208 << 15, 1);
+    Func_02003cf0();
+    Actor_FaceToward(25, gPartyState.current_owner, 0);
+    Actor_SetTurn(25, 0x100, 20);
+    Camera_SetBounds(212 << 17, -1, 152 << 16, 1);
+    Actor_SetSpeed(25, 0x19999, 0xcccc);
+    Actor_MoveTo(25, 424, 152);
+    ObjectMotion_ArmCallback(25, 0, 20);
+    Func_02002604();
+    Actor_MoveTo(25, 440, 152);
+    Actor_MoveTo(25, 456, 168);
+    Actor_MoveTo(25, 456, 184);
+    Flag_Set(0x241);
+    Map_CopyCells(69, 51, 92, 11, 1, 1);
+    Cue(161);
+    Func_020021b4();
+    Actor_MoveTo(25, 456, 216);
+    Actor_MoveTo(25, 584, 216);
+    Actor_PlaceFacing(25, 154 << 18, 140 << 17, 0x4000);
+    Flag_Set(0x86f);
     Func_02003c30();
 }

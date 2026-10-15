@@ -1,4 +1,4 @@
-// near miss: differ 8 (listing 65 instructions, draft 65); scheduling after Func_02005bbc: the native stores the flag before it builds the owner's offset; and the priority constant leads the callback load
+// near miss: differ 6 (listing 65 instructions, draft 65); scheduling after Func_02005bbc: the native loads the owner's address (ldr r5) between the zero's offset and its store; the task add now goes through OV670_TASK_ADD (was differ 8). Tried: an empty asm after the store (differ 4, but it swaps the camera call's negs), a one-pass block (6), a u8 zero (8)
 #include "../../../../games/tla/src/field/overlay_670/ov670.h"
 
 extern const u8 Data_0200613c[];
@@ -36,7 +36,7 @@ void Func_02004524(void)
     Func_02005bbc()->motion_flags = 0;
     Object_SetPartAttribute(Object_GetById(gPartyState.current_owner), 15);
     ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.current_owner), 0);
-    Scheduler_AddOrUpdateCallback(Func_02002ccc, 0x480);
+    OV670_TASK_ADD(Func_02002ccc, 0x480);
     Func_02003640(1, 1);
     if (Data_02007950 != 0) {
         Data_02007950->y += 0x200000;

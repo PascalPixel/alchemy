@@ -36,6 +36,36 @@ void Object_SetModeById();
 void Party_RemoveActiveOwner();
 void UiText_OpenMessageAtObject();
 
+s32 Func_02000284(void)
+{
+    struct ObjectRuntime *object;
+
+#if defined(TLA_EDITION_JA)
+    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x201;
+#else
+    *(s32 *)((u8 *)Ram_HeapSlots->event_work + 0x1ac) = 0x209;
+#endif
+    ObjectMotion_SetActionVariant(11, 1);
+    ObjectMotion_SetActionVariant(14, 2);
+    ObjectMotion_SetActionVariant(10, 2);
+    object = Object_GetById(15);
+    object->motion_flags = 0;
+    object->terrain_height = 0;
+    object->y = 0;
+    object = Object_GetById(17);
+    object->motion_flags = 0;
+    object->terrain_height = 0;
+    object->y = 0;
+    if (GameFlag_Test(0x966)) {
+        ObjectMotion_SetPositionAndReset(10, 100, 112);
+        Object_GetById(10)->angle = 0x3000;
+        WaitFrames(1);
+    }
+    if (GameFlag_Test(0x969))
+        Func_02002874(18, 0, 0);
+    return 0;
+}
+
 s32 Scene_PrepareMap(void)
 {
     return 0;

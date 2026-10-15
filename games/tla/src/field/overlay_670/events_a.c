@@ -386,3 +386,86 @@ void Func_020007c8(void)
     GameFlag_SetBit(0x8f3);
     Func_02005aa4();
 }
+
+void Func_02000978(void)
+{
+    Ov670_ObjArm(gPartyState.current_owner, 0x8000, 20);
+    Func_02005b4c((s32)MsgItLooksLikeHas);
+    UiText_OpenMessageAtObject(6, 0);
+    if (Inventory_PromptAndSetObjectMode(gPartyState.current_owner, 0) == 0) {
+        Ov670_ObjArm(5, 0x4000, 10);
+        Object_SetModeById(5, 3);
+        Func_02005b64(5, 0);
+        ((struct Ov670EventWork *)Ram_HeapSlots->event_work)->field_1c4++;
+    } else {
+        Ov670_ObjArm(5, 0x4000, 10);
+        Object_SetModeById(5, 4);
+        ((struct Ov670EventWork *)Ram_HeapSlots->event_work)->field_1c4++;
+        Func_02005b64(5, 0);
+    }
+    Ov670_ObjEmote(7, 0x101, 20);
+    Func_02005b64(7, 0);
+    Ov670_ObjArm(gPartyState.current_owner, 0x2000, 0);
+    Ov670_ObjArm(26, 0xb000, 0);
+    Ov670_ObjArm(5, 0x6000, 0);
+    Ov670_ObjArm(6, 0xe000, 40);
+    Ov670_ObjArm(gPartyState.current_owner, 0xe000, 0);
+    Ov670_ObjArm(26, 0xd000, 0);
+    Ov670_ObjArm(5, 0, 0);
+    Ov670_ObjArm(6, 0xe000, 20);
+    Func_02005b64(7, 0);
+    Ov670_ObjEmote(26, 0x100, 0);
+    Func_02005b64(26, 0);
+    Func_02005b64(7, 0);
+    Func_02005b64(6, 0);
+    Ov670_ObjArm(5, 0x4000, 40);
+    Ov670_ObjArm(5, 0, 0);
+    Func_02005b64(5, 0);
+    Func_02005b64(7, 0);
+    Ov670_ObjEmote(6, 0x103, 0);
+    ObjectMotion_Launch(6, 2, 10);
+    ObjectMotion_Launch(6, 4, 10);
+    Func_02005b64(6, 0);
+    Ov670_ObjEmote(5, 0x103, 10);
+    Func_02005b64(5, 0);
+    Ov670_ObjEmote(7, 0x103, 10);
+    Func_02005b64(7, 0);
+}
+
+void Func_02000b2c(void)
+{
+    Func_02005b4c((s32)MsgHeSeemsTo);
+    Func_02005b64(6, 0);
+    Ov670_ObjArm(5, 0x4000, 10);
+    Object_SetModeById(5, 4);
+    Func_02005b64(5, 0);
+    Ov670_ObjEmote(7, 0x101, 20);
+    Func_02005b64(7, 0);
+    Ov670_ObjArm(gPartyState.current_owner, 0x2000, 0);
+    Ov670_ObjArm(26, 0xb000, 0);
+    Ov670_ObjArm(5, 0x6000, 0);
+    Ov670_ObjArm(6, 0xe000, 40);
+    Ov670_ObjArm(gPartyState.current_owner, 0xe000, 0);
+    Ov670_ObjArm(26, 0xd000, 0);
+    Ov670_ObjArm(5, 0, 0);
+    Ov670_ObjArm(6, 0xe000, 0);
+    Func_02005b9c(7, 0x102);
+    Battle_WaitMode0(20);
+    Func_02005b64(7, 0);
+    Func_02005b5c(26, 0, 20);
+    Func_02005b64(7, 0);
+    Ov670_ObjEmote(6, 0x109, 0);
+    Func_02005b64(6, 0);
+    Ov670_ObjArm(5, 0x6000, 40);
+    Ov670_ObjArm(5, 0, 0);
+    Func_02005b64(5, 0);
+    Func_02005b64(7, 0);
+    Ov670_ObjEmote(6, 0x103, 0);
+    ObjectMotion_Launch(6, 2, 10);
+    ObjectMotion_Launch(6, 4, 10);
+    Func_02005b64(6, 0);
+    Ov670_ObjEmote(5, 0x103, 10);
+    Func_02005b64(5, 0);
+    Ov670_ObjEmote(7, 0x103, 10);
+    Func_02005b64(7, 0);
+}

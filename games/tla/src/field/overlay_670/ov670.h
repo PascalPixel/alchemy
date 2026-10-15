@@ -21,10 +21,13 @@ struct Ov670Object {
     u8 priority_flags;
     s32 velocity_x;
     s32 velocity_y;
-    u8 unknown_2c[0x18];
+    u8 unknown_2c[0x0c];
+    s32 target_x;
+    s32 target_y;
+    s32 target_z;
     s32 field_44;
     s32 field_48;
-    u8 unknown_4c[4];
+    s32 field_4c;
     struct FieldSprite *sprite;
     u8 unknown_54;
     u8 motion_flags;
@@ -164,7 +167,7 @@ void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *callback);
 void Object_SetActionCallbackAndRefreshById(s32 actor, const void *callback);
 s32 UiText_OpenMessageAtObject(s32 speaker, s32 flags);
 s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 flags);
-void Func_02005b94(s32 actor, s32 emote, s32 frames);
+struct Ov670Object *Func_02005b94(s32 actor, s32 emote, s32 frames);
 void Func_02005b9c(s32 actor, s32 emote);
 void ObjectMotion_Launch(s32 actor, s32 speed, s32 frames);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
@@ -178,6 +181,12 @@ static inline void Ov670_CamMove(s32 x, s32 y, s32 z, s32 mode)
     Motion_CamBounds(x, y, z, mode);
 }
 
+static inline void Ov670_CamSpeed(s32 speed, s32 acceleration)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02005ba4(speed, acceleration);
+}
+
 static inline void Ov670_ObjSpeed(s32 actor, s32 speed, s32 acceleration)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
@@ -188,6 +197,22 @@ static inline void Ov670_ObjWalk(s32 actor, s32 x, s32 z)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
     ObjectMotion_SetPositionAndReset(actor, x, z);
+}
+
+void Func_02005b14(s32 actor, s32 x, s32 z, s32 angle);
+
+static inline void Ov670_ObjPlaceFacing(s32 actor, s32 x, s32 z, s32 angle)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02005b14(actor, x, z, angle);
+}
+
+void ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
+
+static inline void Ov670_ObjPlace(s32 actor, s32 x, s32 z)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    ObjectMotion_ResetAndSetPositionInMode2(actor, x, z);
 }
 
 static inline void Ov670_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f)
@@ -208,6 +233,14 @@ static inline void Ov670_SePlay(s32 cue)
     Func_02005c9c(cue);
 }
 
+void Func_02005bd4(s32 a, s32 b);
+
+static inline void Ov670_FadeTo(s32 a, s32 b)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02005bd4(a, b);
+}
+
 static inline void Ov670_WaitFrames(s32 frames)
 {
     /* FAKEMATCH: scene calls reach the engine through one inline layer. */
@@ -220,6 +253,12 @@ static inline void Ov670_WaitFrames(s32 frames)
         s32 priority_ = (priority); \
         Scheduler_AddOrUpdateCallback((callback), priority_); \
     }
+
+static inline void Ov670_ObjEmote(s32 actor, s32 emote, s32 frames)
+{
+    /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+    Func_02005b94(actor, emote, frames);
+}
 
 static inline void Ov670_ObjEmoteWait(s32 actor, s32 emote)
 {

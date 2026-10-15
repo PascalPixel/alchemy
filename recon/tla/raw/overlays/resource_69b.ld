@@ -19,7 +19,7 @@ SECTIONS
         "*/games/tla/src/field/overlay_69b/s06dc.o"(.text)
         "*/games/tla/src/field/overlay_69b/s0704.o"(.text)
         "*/games/tla/src/field/overlay_69b/scene_events.o"(.text)
-        "*/resource_69b_overlay.o"(.text.x02008720)
+        "*/games/tla/src/field/overlay_69b/s0720.o"(.text)
         "*/resource_69b_overlay.o"(.text.x020087d0)
         "*/resource_69b_overlay.o"(.text.x02008854)
         "*/games/tla/src/field/overlay_69b/s099c.o"(.text)

@@ -27,10 +27,4 @@ Element_PowerResistByLevel:
 	.global Enemy_ElementPresetTable
 Enemy_ElementPresetTable:
 	.incbin "games/tbs/src/game/elempre.table"
-	.global Element_PowerResistCurve
-Element_PowerResistCurve:
-	.2byte 200, 256
-	.2byte 100, 128
-	.2byte 0, 0
-	.2byte -100, -128
-	.2byte -200, -256
+	.include "games/common/src/game/elemcurve.s"

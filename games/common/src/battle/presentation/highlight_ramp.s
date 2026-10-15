@@ -1,0 +1,6 @@
+@ BLDY values, the same in both games; each game's btlvars.s includes them
+@ in place.
+	.global BattleFx_HighlightBlendRamp
+BattleFx_HighlightBlendRamp:
+	.byte 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+	.byte 4, 6, 7, 8, 8, 8, 8, 8, 4, 2, 1, 0, 0, 0, 0, 0

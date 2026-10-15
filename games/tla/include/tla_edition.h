@@ -36,4 +36,11 @@
 #define SUMMON_CHANNEL_MARKER '1'
 #endif
 
+// The letters of the reel game's title, as in The Broken Seal.
+#if defined(TLA_EDITION_ES)
+#define REEL_TITLE_LETTERS 9
+#else
+#define REEL_TITLE_LETTERS 8
+#endif
+
 #endif

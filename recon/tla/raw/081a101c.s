@@ -309,9 +309,9 @@ DisplayScroll_DrawLine:
 .L_081a1258:
 	.4byte IwramCopyWords
 .L_081a125c:
-	.4byte Data_081a2059
+	.4byte DisplayScroll_GlyphWidths
 .L_081a1260:
-	.4byte Data_081a2400
+	.4byte DisplayScroll_Font
 .L_081a1264:
 	.4byte 0x06010000
 .L_081a1268:

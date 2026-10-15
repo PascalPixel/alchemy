@@ -36,11 +36,7 @@ BattlePres_TileVariants:
 	.global BattlePres_CurtainTiles
 BattlePres_CurtainTiles:
 	.incbin "games/common/src/battle/presentation/curtain.4bpp"
-@ BLDY の値
-	.global BattleFx_HighlightBlendRamp
-BattleFx_HighlightBlendRamp:
-	.byte 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
-	.byte 4, 6, 7, 8, 8, 8, 8, 8, 4, 2, 1, 0, 0, 0, 0, 0
+	.include "games/common/src/battle/presentation/highlight_ramp.s"
 	.4byte 1, 27
 @ 敵の編成 380 個
 	.global BattleFormation_Records

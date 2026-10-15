@@ -171,31 +171,7 @@ struct LuckyDiceSprites
 };
 
 #include "keystate.h"
-// どこからも参照されない符号の表
-const s32 LuckyDice_UnusedSigns[] = {-1, 1, -1, 1, -1, -1, 1, 1};
-
-// 結果の文字のスプライト数（種類ごと）
-const u8 LuckyDice_LabelCounts[] = {5, 4, 3, 3};
-
-// 結果の文字の先頭タイル（種類ごと）
-const u8 LuckyDice_LabelTiles[] = {
-	28,
-	48,
-	64,
-	76,
-#if EDITION_INTERNATIONAL
-	28,
-	248,
-	64,
-	248, // 読まれない
-#endif
-};
-
-// 回転の段階ごとのさいころの面のタイル
-const u8 LuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10, 3, 9, 13, 4, 7, 6, 5, 17, 11};
-
-// 面を決める高さの境目（z > 値 << 16）
-const s16 LuckyDice_FaceHeights[] = {147, 80, 15, -42, -95, -32767};
+#include "../../../common/src/graphics/lucky_dice/tables.h"
 
 #endif
 

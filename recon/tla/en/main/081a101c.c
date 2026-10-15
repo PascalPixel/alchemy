@@ -5,10 +5,8 @@
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 
-extern const u8 Data_081a2059[];
-extern const u8 Data_081a2400[];
-#define DisplayScroll_GlyphWidths Data_081a2059
-#define DisplayScroll_Font Data_081a2400
+extern const u8 DisplayScroll_GlyphWidths[];
+extern const u8 DisplayScroll_Font[];
 static __inline__ void DisplayScroll_CopyWords(void *destination, void *source, s32 size)
 {
     Iwram_CopyWords(destination, source, size);

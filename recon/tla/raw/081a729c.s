@@ -200,7 +200,7 @@ Func_081a729c:
 .L_081a7434:
 	.4byte gBgScroll
 .L_081a7438:
-	.4byte Data_081a8288
+	.4byte Title_PromptTiles
 .L_081a743c:
 	.4byte 0x40004000
 .L_081a7440:

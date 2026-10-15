@@ -138,7 +138,7 @@ main	rom_main_09	games/tbs/src/graphics/tile/slides	.rodata
 main	rom_main_09	games/tbs/src/graphics/tile/slides	.data
 main	rom_main_09	games/tbs/src/graphics/display/staffrol	.rodata
 main	rom_main_10	games/tbs/src/system/far_call/PALETTE
-main	rom_main_10	games/tbs/src/graphics/title/prompt
+main	rom_main_10	games/common/src/graphics/title/prompt
 main	rom_main_10	games/tbs/src/graphics/palette/palette
 main	rom_main_11	games/tbs/src/system/far_call/BLANK_RUN
 main	rom_main_11	games/tbs/src/field/camera

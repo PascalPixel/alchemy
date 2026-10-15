@@ -346,7 +346,7 @@ struct ScenePlacement *StoryScene_SelectPlacementTable(void)
 	return gWorldMapPlacements;
 }
 
-static void StoryScene_SetBranchValueFromX(s32 trigger, s32 exit_before, s32 exit_after)
+static void StoryScene_SetBranchValueFromX(s32 trigger, s32 exitBefore, s32 exitAfter)
 {
 	struct EventWork  *work;
 	struct FieldActor *subject;
@@ -357,16 +357,16 @@ static void StoryScene_SetBranchValueFromX(s32 trigger, s32 exit_before, s32 exi
 	work = gEventWork;
 	if (other->x.fixed < subject->x.fixed)
 	{
-		work->requestedExit = exit_before;
+		work->requestedExit = exitBefore;
 	}
 	else
 	{
-		work->requestedExit = exit_after;
+		work->requestedExit = exitAfter;
 	}
 	Engine_AudioPlayCue(0x7B);
 }
 
-static void StoryScene_SetBranchValueFromZ(s32 trigger, s32 exit_before, s32 exit_after)
+static void StoryScene_SetBranchValueFromZ(s32 trigger, s32 exitBefore, s32 exitAfter)
 {
 	struct EventWork  *work;
 	struct FieldActor *subject;
@@ -377,11 +377,11 @@ static void StoryScene_SetBranchValueFromZ(s32 trigger, s32 exit_before, s32 exi
 	work = gEventWork;
 	if (other->z.fixed < subject->z.fixed)
 	{
-		work->requestedExit = exit_before;
+		work->requestedExit = exitBefore;
 	}
 	else
 	{
-		work->requestedExit = exit_after;
+		work->requestedExit = exitAfter;
 	}
 	Engine_AudioPlayCue(0x7B);
 }
@@ -426,11 +426,11 @@ static void MapActor_UpdateContact(void)
 	s32				   right;
 	s32				   top;
 	s32				   bottom;
-	s32				   leader_reach;
+	s32				   leaderReach;
 	u32				   i;
 
 	leader = Object_GetById(gGameState.selectedActor);
-	leader_reach = leader->sprite->scale * leader->radius;
+	leaderReach = leader->sprite->scale * leader->radius;
 	work = gEventWork;
 	actor = work->viewCenter;
 	left = actor->x.fixed - PIXELS(160);
@@ -469,7 +469,7 @@ static void MapActor_UpdateContact(void)
 		{
 			dx = leader->x.fixed - actor->x.fixed;
 		}
-		reach = leader_reach + actor->radius * scale;
+		reach = leaderReach + actor->radius * scale;
 		if (dx
 					+ (actor->z.fixed - leader->z.fixed < 0 ? leader->z.fixed - actor->z.fixed
 															: actor->z.fixed - leader->z.fixed)
@@ -1968,9 +1968,9 @@ static void StoryScene_StartTransition(void)
 	Engine_TaskWait(1);
 	Engine_CameraSetSpeed(0x40000, 0x8000);
 	{
-		s32	  transition_delay = 3200;
-		void *transition_callback = (void *)StoryScene_UpdateTransitionEffect;
-		FieldScheduler_AddCallback(transition_callback, transition_delay);
+		s32	  transitionDelay = 3200;
+		void *transitionCallback = (void *)StoryScene_UpdateTransitionEffect;
+		FieldScheduler_AddCallback(transitionCallback, transitionDelay);
 	}
 	Engine_ColorBufferApplySource(0, 0);
 	Engine_ColorBufferApplyTarget(0x10004, 1);

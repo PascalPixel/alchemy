@@ -133,14 +133,14 @@ struct BattleUnit *UnitGet(u32 owner)
 
 const u8 *Owner_GetRecord(s32 selector)
 {
-	u32 record_index;
+	u32 recordIndex;
 
-	record_index = selector - 8;
-	if (record_index > 0xF9U)
+	recordIndex = selector - 8;
+	if (recordIndex > 0xF9U)
 	{
-		record_index = 0;
+		recordIndex = 0;
 	}
-	return (const u8 *)&gEnemy_Definitions[record_index];
+	return (const u8 *)&gEnemy_Definitions[recordIndex];
 }
 
 void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count, s32 direction)
@@ -980,18 +980,18 @@ s32 PartyInventory_HasSpace(void)
 	s16	 owners[10];
 	s32	 ownerCount;
 	s32	 ownerIndex;
-	s16 *owner_cursor;
+	s16 *ownerCursor;
 
 	if (Inventory_Count(gGameState.selectedActor) != 15)
 		return 1;
 	ownerCount = Party_ListActiveOwners(owners);
-	owner_cursor = owners;
+	ownerCursor = owners;
 	ownerIndex = 0;
 	if (ownerIndex < ownerCount)
 	{
 		do
 		{
-			if (Inventory_Count(*owner_cursor++) != 15)
+			if (Inventory_Count(*ownerCursor++) != 15)
 				return 1;
 			ownerIndex++;
 		} while (ownerIndex < ownerCount);
@@ -1004,7 +1004,7 @@ s32 PartyInventory_CountFreeSlots(void)
 	s16	 owners[10];
 	s32	 ownerCount = Party_ListActiveOwners(owners);
 	s32	 cnt = 0;
-	s16 *owner_cursor = owners;
+	s16 *ownerCursor = owners;
 
 	if (cnt < ownerCount)
 	{
@@ -1012,7 +1012,7 @@ s32 PartyInventory_CountFreeSlots(void)
 
 		do
 		{
-			cnt = cnt - Inventory_Count(*owner_cursor++) + 15;
+			cnt = cnt - Inventory_Count(*ownerCursor++) + 15;
 			n--;
 		} while (n != 0);
 	}
@@ -1068,24 +1068,24 @@ s32 Inventory_AddItem(s32 owner_id, s32 item_id)
 	return -1;
 }
 
-s32 PartyInventory_Add(s32 item_id)
+s32 PartyInventory_Add(s32 itemId)
 {
 	s16	 owners[10];
 	s32	 ownerCount;
 	s32	 ownerIndex;
-	s16 *owner_cursor;
+	s16 *ownerCursor;
 
 	ownerCount = Party_ListActiveOwners(owners);
-	owner_cursor = owners;
+	ownerCursor = owners;
 	ownerIndex = 0;
 	if (ownerIndex < ownerCount)
 	{
 		do
 		{
-			s16 owner_id = *owner_cursor++;
+			s16 ownerId = *ownerCursor++;
 
-			if (Inventory_AddItem(owner_id, item_id) >= 0)
-				return owner_id;
+			if (Inventory_AddItem(ownerId, itemId) >= 0)
+				return ownerId;
 			ownerIndex++;
 		} while (ownerIndex < ownerCount);
 	}
@@ -1109,25 +1109,25 @@ s32 Inventory_Find(s32 owner, s32 item_id)
 	return -1;
 }
 
-s32 PartyInventory_FindOwner(s32 item_id)
+s32 PartyInventory_FindOwner(s32 itemId)
 {
 	s16	 owners[10];
 	s32	 ownerCount;
 	s32	 ownerIndex;
-	s16 *owner_cursor;
+	s16 *ownerCursor;
 	s16	 owner;
 
-	if (Inventory_Find(gGameState.selectedActor, item_id) != -1)
+	if (Inventory_Find(gGameState.selectedActor, itemId) != -1)
 		return gGameState.selectedActor;
 	ownerCount = Party_ListActiveOwners(owners);
-	owner_cursor = owners;
+	ownerCursor = owners;
 	ownerIndex = 0;
 	if (ownerIndex < ownerCount)
 	{
 		do
 		{
-			owner = *owner_cursor++;
-			if (Inventory_Find(owner, item_id) != -1)
+			owner = *ownerCursor++;
+			if (Inventory_Find(owner, itemId) != -1)
 				return owner;
 			ownerIndex++;
 		} while (ownerIndex < ownerCount);
@@ -1346,9 +1346,9 @@ s32 Inventory_Repair(s32 owner, s32 slot)
 	return 0;
 }
 
-u8 Item_GetTargetMode(s32 item_id)
+u8 Item_GetTargetMode(s32 itemId)
 {
-	return BattleAction_GetDirect(Item_GetDirect(item_id)->actionId)->targetMode;
+	return BattleAction_GetDirect(Item_GetDirect(itemId)->actionId)->targetMode;
 }
 
 s32 ItemCounter_Adjust(s32 index, s32 delta)
@@ -1381,13 +1381,13 @@ s32 ItemCounter_Adjust(s32 index, s32 delta)
 	return index;
 }
 
-s32 Item_AdjustCounter(s32 item_id, s32 delta)
+s32 Item_AdjustCounter(s32 itemId, s32 delta)
 {
-	s32 item_id_mask = ITEM_ID_MASK;
+	s32 itemIdMask = ITEM_ID_MASK;
 	u8	counter;
 	s32 result = 0;
 
-	counter = gItem_ArtifactSlotTable[item_id & item_id_mask];
+	counter = gItem_ArtifactSlotTable[itemId & itemIdMask];
 	if (counter != 0)
 	{
 		result = ItemCounter_Adjust(counter - 1, delta);
@@ -1420,7 +1420,7 @@ s32 Inventory_CountItem(s32 owner, s32 item_id)
 	return count;
 }
 
-s32 PartyInventory_CountItem(s32 item_id)
+s32 PartyInventory_CountItem(s32 itemId)
 {
 	u16 owners[16];
 	s32 itemCount = 0;
@@ -1428,12 +1428,12 @@ s32 PartyInventory_CountItem(s32 item_id)
 
 	if (itemCount < ownerCount)
 	{
-		u16 *owner_cursor = owners;
+		u16 *ownerCursor = owners;
 		s32	 n = ownerCount;
 
 		do
 		{
-			itemCount += Inventory_CountItem(*owner_cursor++, item_id);
+			itemCount += Inventory_CountItem(*ownerCursor++, itemId);
 			n--;
 		} while (n != 0);
 	}
@@ -1442,14 +1442,14 @@ s32 PartyInventory_CountItem(s32 item_id)
 
 struct BattleAct *BattleAction_GetDirect(s32 actionId)
 {
-	u32 entry_index;
+	u32 entryIndex;
 
-	entry_index = actionId & 0x3fff;
-	if (entry_index >= 0x208U)
+	entryIndex = actionId & 0x3fff;
+	if (entryIndex >= 0x208U)
 	{
-		entry_index = 0;
+		entryIndex = 0;
 	}
-	return &gBattleAction_DefinitionTable[entry_index];
+	return &gBattleAction_DefinitionTable[entryIndex];
 }
 
 s32 Equipment_HasValue(s32 owner, s32 value)
@@ -1604,9 +1604,9 @@ struct LevelUpWork
 	u8							unk0c[0x20];
 };
 
-s32 OwnerAction_Add(s32 state_index, s32 value)
+s32 OwnerAction_Add(s32 stateIndex, s32 value)
 {
-	struct BattleUnit *state = UnitGet(state_index);
+	struct BattleUnit *state = UnitGet(stateIndex);
 	s32				key = value & OWNER_ACTION_ID_MASK;
 	s32				found = -1;
 	s32				index;
@@ -1644,7 +1644,7 @@ s32 OwnerAction_Add(s32 state_index, s32 value)
 		}
 	}
 
-	Owner_RefreshClassActions(state_index);
+	Owner_RefreshClassActions(stateIndex);
 	for (index = 0; index <= 31; index++)
 	{
 		if (state->actionSlots[index].encodedAction == key)
@@ -1672,7 +1672,7 @@ void Owner_InitRecords(void)
 {
 	struct BattleUnit			   *state;
 	struct CharacterDefinition *tmpl;
-	u16							name_buf[16];
+	u16							nameBuf[16];
 	s32							owner;
 	s32						   *remote = gCharacter_StartingEquipOwnerIds;
 	s32							i;
@@ -1682,19 +1682,19 @@ void Owner_InitRecords(void)
 	for (owner = 0; owner <= 7; owner++)
 	{
 		state = UnitGet(owner);
-		Ui_AdjustValueWithoutLimitFar(owner + MsgCharacterName, name_buf);
+		Ui_AdjustValueWithoutLimitFar(owner + MsgCharacterName, nameBuf);
 		name = state->name;
-		name[0] = name_buf[0];
+		name[0] = nameBuf[0];
 		i = 0;
-		if (name_buf[0] != 0)
+		if (nameBuf[0] != 0)
 		{
 			do
 			{
 				i++;
 				if (i > 13)
 					break;
-				name[i] = name_buf[i];
-			} while (name_buf[i] != 0);
+				name[i] = nameBuf[i];
+			} while (nameBuf[i] != 0);
 		}
 		state->name[14] = 0;
 	}
@@ -1861,59 +1861,59 @@ void Party_AdvanceOwnerCountToTarget(s32 unit, s32 lv)
 s32 GameFlag_Test(s32 flag)
 {
 	s32 flagMask;
-	u8 *flag_bytes;
-	s32 flag_value;
+	u8 *flagBytes;
+	s32 flagValue;
 
 	flagMask = 1 << (7 & flag);
 	flag = ((u32)flag << 0x14) >> 0x17;
-	flag_bytes = gGameFlagBytes;
-	flag_value = flag_bytes[flag] & flagMask;
-	return (u32)((0 - flag_value) | flag_value) >> 0x1F;
+	flagBytes = gGameFlagBytes;
+	flagValue = flagBytes[flag] & flagMask;
+	return (u32)((0 - flagValue) | flagValue) >> 0x1F;
 }
 
 s32 GameFlag_SetBit(s32 flag)
 {
 	s32 flagMask;
-	u8 *flag_bytes;
+	u8 *flagBytes;
 
 	flagMask = 1 << (7 & flag);
-	flag_bytes = gGameFlagBytes;
+	flagBytes = gGameFlagBytes;
 	flag = ((u32)flag << 0x14) >> 0x17;
-	flag_bytes[flag] |= flagMask;
+	flagBytes[flag] |= flagMask;
 	return flag;
 }
 
 void GameFlag_ClearBit(s32 flag)
 {
 	s32 flagMask;
-	u8 *flag_bytes;
+	u8 *flagBytes;
 
 	flagMask = ~(1 << (7 & flag));
-	flag_bytes = gGameFlagBytes;
+	flagBytes = gGameFlagBytes;
 	flag = ((u32)flag << 0x14) >> 0x17;
-	flag_bytes[flag] &= flagMask;
+	flagBytes[flag] &= flagMask;
 }
 
 u32 GameFlag_Toggle(s32 flag)
 {
 	s32 flagMask;
-	u8 *flag_bytes;
-	s32 flag_value;
+	u8 *flagBytes;
+	s32 flagValue;
 
 	flagMask = 1 << (7 & flag);
-	flag_bytes = gGameFlagBytes;
+	flagBytes = gGameFlagBytes;
 	flag = ((u32)flag << 0x14) >> 0x17;
-	flag_bytes[flag] ^= flagMask;
-	flag_value = flag_bytes[flag] & flagMask;
-	return (u32)((0 - flag_value) | flag_value) >> 31;
+	flagBytes[flag] ^= flagMask;
+	flagValue = flagBytes[flag] & flagMask;
+	return (u32)((0 - flagValue) | flagValue) >> 31;
 }
 
 s32 GameFlag_GetByte(s32 flag)
 {
-	u32 byte_index;
+	u32 byteIndex;
 
-	byte_index = flag << 20;
-	flag = byte_index >> 23;
+	byteIndex = flag << 20;
+	flag = byteIndex >> 23;
 	return gGameFlagBytes[flag];
 }
 
@@ -1926,28 +1926,28 @@ void GameFlag_SetByte(s32 flag, s32 value)
 
 u8 GameFlag_IncrementByte(s32 flag)
 {
-	u8 *flag_bytes;
+	u8 *flagBytes;
 
-	flag_bytes = gGameFlagBytes;
+	flagBytes = gGameFlagBytes;
 	flag = ((u32)flag << 0x14) >> 0x17;
-	if (flag_bytes[flag] <= 0xFE)
+	if (flagBytes[flag] <= 0xFE)
 	{
-		flag_bytes[flag]++;
+		flagBytes[flag]++;
 	}
-	return flag_bytes[flag];
+	return flagBytes[flag];
 }
 
 u8 GameFlag_DecrementByte(s32 flag)
 {
-	u8 *flag_bytes;
+	u8 *flagBytes;
 
-	flag_bytes = gGameFlagBytes;
+	flagBytes = gGameFlagBytes;
 	flag = ((u32)flag << 0x14) >> 0x17;
-	if (flag_bytes[flag] != 0)
+	if (flagBytes[flag] != 0)
 	{
-		flag_bytes[flag] += 0xFF;
+		flagBytes[flag] += 0xFF;
 	}
-	return flag_bytes[flag];
+	return flagBytes[flag];
 }
 
 s32 GameFlag_GetNibble(u32 flag)
@@ -1967,13 +1967,13 @@ s32 GameFlag_GetNibble(u32 flag)
 
 void GameFlag_SetNibble(s32 flag, s32 value)
 {
-	s32 field_mask = 0xF;
+	s32 fieldMask = 0xF;
 	s32 shift = 4 & flag;
-	s32 mask = field_mask << shift;
+	s32 mask = fieldMask << shift;
 	u8 *bytes = gGameFlagBytes;
 
 	flag = ((u32)flag << 0x14) >> 0x17;
-	bytes[flag] = (bytes[flag] & ~mask) | ((value & field_mask) << shift);
+	bytes[flag] = (bytes[flag] & ~mask) | ((value & fieldMask) << shift);
 }
 
 #if EDITION_INTERNATIONAL
@@ -2220,11 +2220,11 @@ s32 Trade_ListFlaggedEntries(u8 *output)
 	return count;
 }
 
-const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id)
+const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId)
 {
-	if (summon_id > 15)
+	if (summonId > 15)
 		return NULL;
-	return &gSummon_DefinitionTable[summon_id];
+	return &gSummon_DefinitionTable[summonId];
 }
 
 s32 Owner_LookupFourColumnTable(s32 row, s32 column)
@@ -2416,13 +2416,13 @@ struct ClassDefinition *Owner_GetRecordStride84(s32 arg0)
 	return &gClass_DefinitionTable[arg0];
 }
 
-void Owner_RefreshDerivedData(s32 owner_id)
+void Owner_RefreshDerivedData(s32 ownerId)
 {
-	struct BattleUnit *owner = UnitGet(owner_id);
+	struct BattleUnit *owner = UnitGet(ownerId);
 
 	owner->classIndex = Owner_DetermineClass(owner->classId, (u8 *)owner->djinnAvailable);
-	Owner_RefreshClassActions(owner_id);
-	Owner_CalculateBaseElements(owner_id, (s16(*)[2])owner->baseElement);
+	Owner_RefreshClassActions(ownerId);
+	Owner_CalculateBaseElements(ownerId, (s16(*)[2])owner->baseElement);
 }
 
 s32 Curve_LookupScaledValue(s32 input, s32 halve)
@@ -2681,7 +2681,7 @@ s32 BattleFx_GetBaseSuccessRate(s32 effect_id)
 	return 0 - battle_result;
 }
 
-s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effect_id)
+s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId)
 {
 	const u8 *entries;
 	s32		  i;
@@ -2691,7 +2691,7 @@ s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effect_id)
 		entries = Owner_GetRecord(target->classId) + 0x48;
 		for (i = 0; i < 3; i++)
 		{
-			if (*entries == effect_id)
+			if (*entries == effectId)
 				return 1;
 			entries++;
 		}
@@ -2701,7 +2701,7 @@ s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effect_id)
 		entries = Owner_GetRecordStride84(target->classIndex)->unk50;
 		for (i = 0; i < 3; i++)
 		{
-			if (*entries++ == effect_id)
+			if (*entries++ == effectId)
 				return 1;
 		}
 	}
@@ -2718,7 +2718,7 @@ s32 BattleEffectRevCheck(s32 effect_id)
 }
 
 s32 BattleFx_RollSuccess(
-	s32 caster, s32 target, s32 resistance_category, s32 effect_id, s32 success_scale)
+	s32 caster, s32 target, s32 resistanceCategory, s32 effectId, s32 successScale)
 {
 	/* FAKEMATCH: three status reads (psySeal after the effect 4 test, confusion in it, haunt for effect 0x40) go through the byte view state[offset], so each builds its address from a fresh offset constant as the native does; read as unit fields, CSE reuses a neighbouring address. All eleven reads as fields differ 120 (184 instructions for 204); every other read is a field at no cost. */
 	u8			   *state = (u8 *)UnitGet(target);
@@ -2733,12 +2733,12 @@ s32 BattleFx_RollSuccess(
 	u8			   *stun;
 	u8			   *sleep;
 
-	if (BattleEffectRevCheck(effect_id) != 0 && unit->hp != 0)
+	if (BattleEffectRevCheck(effectId) != 0 && unit->hp != 0)
 	{
 		return 0;
 	}
 
-	if (effect_id == 3 && unit->poison == 0)
+	if (effectId == 3 && unit->poison == 0)
 	{
 		return 0;
 	}
@@ -2752,7 +2752,7 @@ action4_tail:
 	}
 	goto action4_done;
 action4_check:
-	if (effect_id == 4)
+	if (effectId == 4)
 	{
 		if (unit->delusion == 0 && state[(u32) & ((struct BattleUnit *)0)->confusion] == 0
 			&& unit->charm == 0)
@@ -2768,26 +2768,26 @@ action4_done:
 	charm = &unit->charm;
 	stun = &unit->stun;
 	sleep = &unit->sleep;
-	if (effect_id == 0x40 && *poison == 0 && *delusion == 0 && *confusion == 0 && *charm == 0
+	if (effectId == 0x40 && *poison == 0 && *delusion == 0 && *confusion == 0 && *charm == 0
 		&& *stun == 0 && *sleep == 0 && unit->psySeal == 0 && unit->grimReaper == 0
 		&& state[(u32) & ((struct BattleUnit *)0)->haunt] == 0)
 	{
 		return 0;
 	}
 
-	if (effect_id == 0x1C && unit->grimReaper == 1)
+	if (effectId == 0x1C && unit->grimReaper == 1)
 	{
 		return 0;
 	}
 
-	score = BattleFx_GetBaseSuccessRate(effect_id);
+	score = BattleFx_GetBaseSuccessRate(effectId);
 	if (score > 0)
 	{
-		s32 difference = Owner_GetResistanceValue(caster, resistance_category)
-						 - Owner_GetResistanceValue(target, resistance_category)
+		s32 difference = Owner_GetResistanceValue(caster, resistanceCategory)
+						 - Owner_GetResistanceValue(target, resistanceCategory)
 						 - (unit->luck >> 1);
 		score += difference * 3;
-		if (BattleTarget_IsWeakToEffect(unit, effect_id) != 0)
+		if (BattleTarget_IsWeakToEffect(unit, effectId) != 0)
 		{
 			score += 25;
 		}
@@ -2797,14 +2797,14 @@ action4_done:
 		score = -score;
 	}
 
-	if (effect_id == 0x43)
+	if (effectId == 0x43)
 	{
 		attempts = 3;
 	}
 
 	for (attempt = 0; attempt < attempts; attempt++)
 	{
-		if (score * success_scale / 100 >= (s32)BattleRandomPercent())
+		if (score * successScale / 100 >= (s32)BattleRandomPercent())
 		{
 			return 1;
 		}
@@ -2827,8 +2827,8 @@ const u16 *Djinn_GetDefinition(u32 group, u32 index)
 s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)
 {
 	void *entry = state + index * 20 + 48;
-	s32	  best_no = 0;
-	s32	  best_val = 999;
+	s32	  bestNo = 0;
+	s32	  bestVal = 999;
 	s32	  count;
 	s32	  i;
 	s32	  j;
@@ -2847,21 +2847,21 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)
 
 			for (j = 0; j < 4; j++)
 				value += unit->djinnOwnedCounts[j];
-			if (best_val > value)
+			if (bestVal > value)
 			{
-				best_val = value;
-				best_no = gGameState.activeOwners[i];
+				bestVal = value;
+				bestNo = gGameState.activeOwners[i];
 			}
 		}
 	}
 
-	if (best_val == 999)
+	if (bestVal == 999)
 		return -2;
 
-	Djinn_AddToOwner(best_no, index, (s32)state);
-	Trade_AddOffer(best_no, index, (u32)state);
+	Djinn_AddToOwner(bestNo, index, (s32)state);
+	Trade_AddOffer(bestNo, index, (u32)state);
 	GameFlag_SetBit((u32)entry);
-	return best_no;
+	return bestNo;
 }
 
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit)

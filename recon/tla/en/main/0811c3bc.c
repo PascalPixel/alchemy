@@ -27,20 +27,20 @@ s32 BattlePresentation_BuildSortedUnitEntries(
     struct BattleSortedUnitEntry *entries)
 {
     struct BattleSortedUnitEntry swap;
-    u16 unit_ids[14];
-    s32 first_count;
+    u16 unitIds[14];
+    s32 firstCount;
     s32 count = 0;
-    s32 second_count;
-    s32 priority_range;
+    s32 secondCount;
+    s32 priorityRange;
     s32 index;
     struct BattleSortedUnitEntry *entry;
     struct BattleUnit *unit;
 
-    first_count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unit_ids);
+    firstCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unitIds);
     for (index = 0; index != 4; index++)
         UnitGet(index);
-    for (index = 0; index < first_count; index++) {
-        s32 unitId = unit_ids[index];
+    for (index = 0; index < firstCount; index++) {
+        s32 unitId = unitIds[index];
 
         unit = UnitGet(unitId);
         entry = &entries[index];
@@ -51,11 +51,11 @@ s32 BattlePresentation_BuildSortedUnitEntries(
         entry->priority = 0x80;
         count++;
     }
-    second_count = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, unit_ids);
-    entry = &entries[first_count];
-    priority_range = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, NULL);
-    for (index = 0; index < second_count; index++) {
-        s32 unitId = unit_ids[index];
+    secondCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, unitIds);
+    entry = &entries[firstCount];
+    priorityRange = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, NULL);
+    for (index = 0; index < secondCount; index++) {
+        s32 unitId = unitIds[index];
 
         unit = UnitGet(unitId);
         entry->unitId = unitId;
@@ -64,7 +64,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(
             entry->value += (u32)(Random16() * unit->agi) >> 16;
         entry->width = 0;
         entry->mode = 0;
-        entry->priority = (u32)(Random16() * priority_range) >> 16;
+        entry->priority = (u32)(Random16() * priorityRange) >> 16;
         count++;
         entry++;
     }

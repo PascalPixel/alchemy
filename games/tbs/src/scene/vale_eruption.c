@@ -57,7 +57,7 @@ s32 ConditionalSceneSetup_InitForScene15(void)
 static void RunEventScript01(void)
 {
 	struct EventWork *work;
-	s32				  action_script;
+	s32				  actionScript;
 
 	Engine_EventBegin();
 	Engine_ActorSetAnimation(14, 0);
@@ -343,10 +343,10 @@ static void RunEventScript01(void)
 	Engine_ActorRunRepeatedMotion(GARET, 1);
 	Engine_EventWait(40);
 	Actor_WalkTo(10, 255, 0x186);
-	action_script = (s32)gValeEruption_ActionScript;
-	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, action_script);
+	actionScript = (s32)gValeEruption_ActionScript;
+	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, actionScript);
 	Engine_EventWait(40);
-	Engine_ActorEnableActionCallback(GARET, action_script);
+	Engine_ActorEnableActionCallback(GARET, actionScript);
 	Object_RefreshSelectorById(1);
 	Actor_ShowEmote(11, 0x102, 0);
 	Actor_ShowEmote(12, 0x102, 0);

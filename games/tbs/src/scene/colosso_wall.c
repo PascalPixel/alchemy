@@ -394,13 +394,13 @@ static void ColossoWall_RollLogToCell(s32 id, s32 column, s32 row)
 	struct FieldActor *leader = Object_GetById(pusher);
 	struct FieldActor *log = Object_GetById(id);
 	s32				   heading = (leader->facing + 0x1000) & 0xe000;
-	s32				   along_x = (log->x.fixed >> 20) != column / 2;
+	s32				   alongX = (log->x.fixed >> 20) != column / 2;
 	s32				   dx;
 	s32				   dz;
 
 	column <<= 19;
 	row <<= 19;
-	if (along_x)
+	if (alongX)
 	{
 		dx = (column - log->x.fixed) / 2;
 		dz = 0;
@@ -1213,13 +1213,13 @@ static void ColossoWall_PushBlockToCell(s32 id, s32 column, s32 row)
 	s32				   pusher = gGameState.selectedActor;
 	struct FieldActor *leader = Object_GetById(pusher);
 	struct FieldActor *block = Object_GetById(id);
-	s32				   along_x = (block->x.fixed >> 20) != column / 2;
+	s32				   alongX = (block->x.fixed >> 20) != column / 2;
 	s32				   dx;
 	s32				   dz;
 
 	column <<= 16;
 	row <<= 16;
-	if (along_x)
+	if (alongX)
 	{
 		dx = (column - block->x.fixed) / 2;
 		dz = 0;
@@ -1608,8 +1608,8 @@ void FieldScene_BuildDescriptorAndInstallTask(
 	s32 first, s32 second, s32 mode, s32 centre, s32 extra, s32 third, s32 fourth)
 {
 	u8				  *descriptor;
-	struct FieldActor *first_record;
-	struct FieldActor *second_record;
+	struct FieldActor *firstRecord;
+	struct FieldActor *secondRecord;
 	s32				   handle;
 	s32				   extent;
 
@@ -1624,13 +1624,13 @@ void FieldScene_BuildDescriptorAndInstallTask(
 	*(s32 *)(descriptor + 232) = centre;
 	*(s32 *)(descriptor + 236) = extra;
 
-	first_record = Object_GetById(first);
-	second_record = Object_GetById(second);
+	firstRecord = Object_GetById(first);
+	secondRecord = Object_GetById(second);
 
 	if (Engine_GameFlagIsSet(0x109) == 0)
 	{
-		second_record->x.fixed = (centre << 1) - first_record->x.fixed;
-		second_record->z.fixed = first_record->z.fixed;
+		secondRecord->x.fixed = (centre << 1) - firstRecord->x.fixed;
+		secondRecord->z.fixed = firstRecord->z.fixed;
 	}
 
 	*(u16 *)(descriptor + 218) = 0;

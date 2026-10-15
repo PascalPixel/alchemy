@@ -88,21 +88,21 @@ s32 SaveState_ChecksumWorkspace(void)
 u32 SaveState_FindLatestSlot(s32 recordId)
 {
     struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
-    u32 latest_sequence;
-    u32 latest_slot;
+    u32 latestSequence;
+    u32 latestSlot;
     u32 i;
 
-    latest_sequence = 0;
-    latest_slot = 15;
+    latestSequence = 0;
+    latestSlot = 15;
     for (i = 0; i <= 14; i += 3) {
         if (work->occupied[i] != 0 && recordId == work->recordId[i]) {
-            if (latest_sequence < work->sequence[i]) {
-                latest_sequence = work->sequence[i];
-                latest_slot = i;
+            if (latestSequence < work->sequence[i]) {
+                latestSequence = work->sequence[i];
+                latestSlot = i;
             }
         }
     }
-    return latest_slot;
+    return latestSlot;
 }
 
 s32 SaveState_InvalidateSlot(s32 index)

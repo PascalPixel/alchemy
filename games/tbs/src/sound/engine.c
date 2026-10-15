@@ -475,7 +475,7 @@ void Cgb_UpdateChannels(void)
     volatile u8 *reg3;
     volatile u8 *reg4;
     s32 envelope;
-    u32 byte_mask = 0xff;
+    u32 byteMask = 0xff;
 
     if (work->cgbTick)
         work->cgbTick--;
@@ -559,7 +559,7 @@ void Cgb_UpdateChannels(void)
                     break;
                 }
                 note->counter = note->attack;
-                if ((s8)(note->counter & byte_mask)) {
+                if ((s8)(note->counter & byteMask)) {
                     note->level = 0;
                     goto count_down;
                 }
@@ -568,7 +568,7 @@ void Cgb_UpdateChannels(void)
             goto off;
         } else if (note->state & CGB_NOTE_ECHO) {
             note->echoLength--;
-            if ((s8)(note->echoLength & byte_mask) > 0)
+            if ((s8)(note->echoLength & byteMask) > 0)
                 goto write;
         off:
             CgbChannel_Mute(channel);
@@ -577,7 +577,7 @@ void Cgb_UpdateChannels(void)
         } else if ((note->state & CGB_NOTE_STOP) && (note->state & CGB_NOTE_PHASE)) {
             note->state &= ~CGB_NOTE_PHASE;
             note->counter = note->release;
-            if ((s8)(note->counter & byte_mask)) {
+            if ((s8)(note->counter & byteMask)) {
                 note->modified |= CGB_NOTE_VOLUME_DIRTY;
                 if (channel != 3)
                     envelope = note->release;
@@ -592,7 +592,7 @@ void Cgb_UpdateChannels(void)
                 CgbNote_UpdatePanEnvelope(note);
                 if ((note->state & CGB_NOTE_PHASE) == CGB_PHASE_RELEASE) {
                     note->level--;
-                    if ((s8)(note->level & byte_mask) <= 0) {
+                    if ((s8)(note->level & byteMask) <= 0) {
                     echo:
                         note->level = ((note->peak * note->echoLevel) + 0xff) >> 8;
                         if (note->level) {
@@ -611,7 +611,7 @@ void Cgb_UpdateChannels(void)
                     note->counter = 7;
                 } else if ((note->state & CGB_NOTE_PHASE) == CGB_PHASE_DECAY) {
                     note->level--;
-                    if ((s8)(note->level & byte_mask) <= (s8)note->sustainLevel) {
+                    if ((s8)(note->level & byteMask) <= (s8)note->sustainLevel) {
                     sustain_or_release:
                         if (note->sustain == 0) {
                             note->state &= ~CGB_NOTE_PHASE;
@@ -626,11 +626,11 @@ void Cgb_UpdateChannels(void)
                     note->counter = note->decay;
                 } else {
                     note->level++;
-                    if ((u8)(note->level & byte_mask) >= note->peak) {
+                    if ((u8)(note->level & byteMask) >= note->peak) {
                     decay:
                         note->state--;
                         note->counter = note->decay;
-                        if ((s8)(note->counter & byte_mask) == 0)
+                        if ((s8)(note->counter & byteMask) == 0)
                             goto sustain_or_release;
                         note->modified |= CGB_NOTE_VOLUME_DIRTY;
                         note->level = note->peak;
@@ -664,7 +664,7 @@ void Cgb_UpdateChannels(void)
             else
                 *reg3 = (*reg3 & 8) | note->frequency;
             note->trigger = (note->trigger & 0xc0) + *((u8 *)&note->frequency + 1);
-            *reg4 = (s8)(note->trigger & byte_mask);
+            *reg4 = (s8)(note->trigger & byteMask);
         }
 
         if (note->modified & CGB_NOTE_VOLUME_DIRTY) {
@@ -789,10 +789,10 @@ void MusicTrack_ClearModulation(struct SoundTrack *track)
         track->flags |= SOUND_TRACK_UPDATE_VOLUME;
 }
 
-void MusicPlayer_SetModulationDepth(struct SoundPlayer *player, s32 mask_arg, s32 value_arg)
+void MusicPlayer_SetModulationDepth(struct SoundPlayer *player, s32 maskArg, s32 valueArg)
 {
-    u16 mask = mask_arg;
-    u8 value = value_arg;
+    u16 mask = maskArg;
+    u8 value = valueArg;
     s32 count;
     struct SoundTrack *track;
     u32 bit;

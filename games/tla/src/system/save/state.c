@@ -25,17 +25,17 @@ s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count)
 u32 SaveState_FindLatestSequence(s32 recordId)
 {
     struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
-    u32 latest_sequence;
+    u32 latestSequence;
     u32 i;
 
-    latest_sequence = 0;
+    latestSequence = 0;
     for (i = 0; i <= 14; i += 3) {
         if (work->occupied[i] != 0 && recordId == work->recordId[i]) {
-            if (latest_sequence < work->sequence[i])
-                latest_sequence = work->sequence[i];
+            if (latestSequence < work->sequence[i])
+                latestSequence = work->sequence[i];
         }
     }
-    return latest_sequence;
+    return latestSequence;
 }
 
 // Reads the summary of the latest save in each of the three files, clearing

@@ -242,8 +242,8 @@ static void EV10_TALK(void)
 static void FieldScene_RunSupplementalSequenceOne(void)
 {
 
-	struct FieldActor *actor9_record;
-	struct FieldActor *actor8_record;
+	struct FieldActor *actor9Record;
+	struct FieldActor *actor8Record;
 
 	if (GameFlag_IsSet(2177) != 0)
 	{
@@ -270,8 +270,8 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 		else
 		{
 			Engine_EventBegin();
-			actor9_record = Object_GetById(9);
-			actor9_record->timer = 10;
+			actor9Record = Object_GetById(9);
+			actor9Record->timer = 10;
 			Engine_ActorEnableActionCallback(9, gImil_ActorScriptA);
 			Engine_EventSetMessage(MsgMercuryOoohHelpMe);
 			Engine_EventShowMessage(9, 0);
@@ -292,8 +292,8 @@ static void FieldScene_RunSupplementalSequenceOne(void)
 			Actor_FaceDirection(8, 12288, 20);
 			Engine_ActorStartRepeatedMotion(8, 2);
 			Engine_EventShowMessage(8, 0);
-			actor8_record = Object_GetById(8);
-			actor8_record->collisionFlags ^= 0x2;
+			actor8Record = Object_GetById(8);
+			actor8Record->collisionFlags ^= 0x2;
 			GameFlag_Set(0x82c);
 			Engine_EventEnd();
 		}

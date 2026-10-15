@@ -8,7 +8,7 @@ void UiText_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y);
 void Text_FormatHex(s32 value, s32 width, s32 buf);
 s32 GameFlag_Test(s32 flag);
 
-void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
+void Menu_DrawFlagBitTable(s32 window, s32 startFlag)
 {
     s32 row;
     s32 y;
@@ -19,7 +19,7 @@ void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
     RenderOutput_PrepareForRedraw();
     UiText_DrawStringInWindow((s32)gMenu_HexDigitsString, window, 48, 0);
 
-    flag = start_flag << 8;
+    flag = startFlag << 8;
     for (row = 0; row != 16; row++) {
         s32 i;
 

@@ -40,7 +40,7 @@ struct RenderOutput *RenderOutput_CreateWithTransform(
 // Loads the character entry for the key into the given side, or into a free
 // one (resource id 999) when the side is 2 or more, and creates its output
 // with that side's palette (14 + side).
-struct RenderOutput *CreateSideObject(s32 object_kind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5)
+struct RenderOutput *CreateSideObject(s32 objectKind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5)
 {
     struct UiRenderWork *state = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     struct RenderOutput *object = 0;
@@ -49,7 +49,7 @@ struct RenderOutput *CreateSideObject(s32 object_kind, s32 position, s32 side, s
     s32 id;
     s32 slot;
 
-    id = Localization_LookupEntryId(object_kind);
+    id = Localization_LookupEntryId(objectKind);
     if (id == -1)
         return object;
 

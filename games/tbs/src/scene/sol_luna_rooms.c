@@ -740,11 +740,11 @@ static void FieldScene_PrepareStatueTransition(void)
 
 static void Scene_SpringStatueTrap(void)
 {
-	s32 outer_pair;
-	s32 second_pair;
-	s32 middle_pair;
-	s32 fourth_pair;
-	s32 inner_pair;
+	s32 outerPair;
+	s32 secondPair;
+	s32 middlePair;
+	s32 fourthPair;
+	s32 innerPair;
 
 	Engine_EventBegin();
 	FieldScene_PrepareStatueTransition();
@@ -756,7 +756,7 @@ static void Scene_SpringStatueTrap(void)
 	Engine_CameraWaitForMove();
 	Engine_EventWait(30);
 	SetSolSanctumActorStep(32784, 20);
-	for (outer_pair = 0; outer_pair != 4; outer_pair++)
+	for (outerPair = 0; outerPair != 4; outerPair++)
 	{
 		Event_PlayCue(246);
 		SetStatueLightGroup1();
@@ -765,7 +765,7 @@ static void Scene_SpringStatueTrap(void)
 		SetStatueLightGroup3();
 		Engine_EventWait(12);
 	}
-	for (second_pair = 0; second_pair != 6; second_pair++)
+	for (secondPair = 0; secondPair != 6; secondPair++)
 	{
 		Event_PlayCue(246);
 		SetStatueLightGroup1();
@@ -774,7 +774,7 @@ static void Scene_SpringStatueTrap(void)
 		SetStatueLightGroup3();
 		Engine_EventWait(8);
 	}
-	for (middle_pair = 0; middle_pair != 8; middle_pair++)
+	for (middlePair = 0; middlePair != 8; middlePair++)
 	{
 		Event_PlayCue(246);
 		SetStatueLightGroup1();
@@ -783,7 +783,7 @@ static void Scene_SpringStatueTrap(void)
 		SetStatueLightGroup3();
 		Engine_EventWait(6);
 	}
-	for (fourth_pair = 0; fourth_pair != 10; fourth_pair++)
+	for (fourthPair = 0; fourthPair != 10; fourthPair++)
 	{
 		Event_PlayCue(246);
 		SetStatueLightGroup1();
@@ -792,7 +792,7 @@ static void Scene_SpringStatueTrap(void)
 		SetStatueLightGroup3();
 		Engine_EventWait(4);
 	}
-	for (inner_pair = 0; inner_pair != 12; inner_pair++)
+	for (innerPair = 0; innerPair != 12; innerPair++)
 	{
 		Event_PlayCue(246);
 		SetStatueLightGroup1();

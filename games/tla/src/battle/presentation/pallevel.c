@@ -16,16 +16,16 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
 
     /* FAKEMATCH: the one-pass block and the loop on a zero local keep the IME save through slot's register, as in ☀️. ⚓️ also takes the slot's address as the block's first statement: taken at its declaration, the frame is opened before the palette offset is finished (one reordered pair, differ 2), and after the register's address the address is loaded first (differ 2). */
     do {
-        u16 *ime_reg;
+        u16 *imeReg;
         s32 once;
 
         slot = &ime;
-        ime_reg = (u16 *)0x04000208;
+        imeReg = (u16 *)0x04000208;
         once = 0;
 
         do {
-            *slot = *ime_reg;
-            *ime_reg = (u32)ime_reg;
+            *slot = *imeReg;
+            *imeReg = (u32)imeReg;
         } while (once);
     } while (0);
 

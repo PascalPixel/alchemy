@@ -96,7 +96,7 @@ extern struct DebugPartyEntry gDebug_PartyPresets[];
 
 s32 DebugParty_LoadPreset(s32 preset)
 {
-	s32				next_djinn[4];
+	s32				nextDjinn[4];
 	struct BattleUnit *state;
 	s32				owner;
 	s32				done;
@@ -114,7 +114,7 @@ s32 DebugParty_LoadPreset(s32 preset)
 
 	set = 0;
 	for (i = 0; i < 4; i++)
-		next_djinn[i] = 0;
+		nextDjinn[i] = 0;
 
 	for (row = 0;; row++)
 	{
@@ -156,9 +156,9 @@ s32 DebugParty_LoadPreset(s32 preset)
 		{
 			for (j = 0; j < gDebug_PartyPresets[row].djinnCounts[i]; j++)
 			{
-				Djinn_AddToOwnerFar(owner, i, next_djinn[i]);
-				Djinn_ActivateFar(owner, i, next_djinn[i]);
-				next_djinn[i]++;
+				Djinn_AddToOwnerFar(owner, i, nextDjinn[i]);
+				Djinn_ActivateFar(owner, i, nextDjinn[i]);
+				nextDjinn[i]++;
 			}
 		}
 		for (i = 0; i < 16; i++)
@@ -422,7 +422,7 @@ void BattlePresentation_UpdateCamera(void)
 	}
 }
 
-void BattleIntro_AnnounceEncounter(s32 enemy_count)
+void BattleIntro_AnnounceEncounter(s32 enemyCount)
 {
 	s16				enemies[8];
 	struct BattleWork *battle;
@@ -434,19 +434,19 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
 	BattleEnemyList(enemies);
 
 	announced = 0;
-	if (enemy_count != 0)
+	if (enemyCount != 0)
 	{
 		enemy = enemies;
 		do
 		{
 			UiWork_PushValueSlotFar((u16)*enemy++, 1);
-			if (announced == enemy_count - 1)
+			if (announced == enemyCount - 1)
 				UiText_ShowMessageAndWaitCoreFar(MsgLastEnemyAppeared);
 			else
 				UiText_ShowMessageAndWaitCoreFar(MsgEnemyAppeared);
 			announced++;
 			BattlePresentation_WaitForAdvance();
-		} while (announced != enemy_count);
+		} while (announced != enemyCount);
 	}
 
 	UiWork_FinalizeSharedSlotFar();
@@ -637,12 +637,12 @@ s32 BattleParty_ReconcileDjinnRecovery(void)
 		i = 0;
 		if (i < list->count)
 		{
-			s32 permanent_timer = -1;
+			s32 permanentTimer = -1;
 
 			entry = list->entries;
 			do
 			{
-				if (entry->turns == permanent_timer && BattleObjGet(entry->unitId) == 0)
+				if (entry->turns == permanentTimer && BattleObjGet(entry->unitId) == 0)
 				{
 					u8 id = entry->unitId;
 					u8 element = entry->element;
@@ -661,12 +661,12 @@ s32 BattleParty_ReconcileDjinnRecovery(void)
 struct BattleSummonState *BattleSummon_UpdateAvailability(void)
 {
 	u8	totals[4];
-	u16 party_members[10];
-	s32 party_size;
+	u16 partyMembers[10];
+	s32 partySize;
 	s32 element;
 	u32 availableMask;
 
-	party_size = BattleParty_PrepareActiveOwners(party_members);
+	partySize = BattleParty_PrepareActiveOwners(partyMembers);
 	availableMask = 0;
 
 	element = 0;
@@ -674,11 +674,11 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void)
 	{
 		totals[element] = 0;
 		{
-			s32 party_slot;
+			s32 partySlot;
 
-			for (party_slot = 0; party_slot < party_size; party_slot++)
+			for (partySlot = 0; partySlot < partySize; partySlot++)
 			{
-				struct BattleUnit *member = UnitGetFar(party_members[party_slot]);
+				struct BattleUnit *member = UnitGetFar(partyMembers[partySlot]);
 
 				totals[element] += member->djinnOwnedCounts[element];
 			}
@@ -690,28 +690,28 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void)
 	do
 	{
 		const struct SummonDefinition *summon = SummonDefinition_Get(element);
-		s32							   elements_met;
+		s32							   elementsMet;
 
 		if (summon != 0)
 		{
 			const u8 *required = summon->djinnRequired;
 
-			elements_met = 0;
+			elementsMet = 0;
 			if (totals[0] >= required[0])
 			{
 				u8 *total = totals;
 
 				do
 				{
-					elements_met++;
-					if (elements_met > 3)
+					elementsMet++;
+					if (elementsMet > 3)
 						break;
 					total++;
 					required++;
 				} while (*total >= *required);
 			}
 
-			if (elements_met == 4)
+			if (elementsMet == 4)
 				availableMask |= 1u << element;
 		}
 		element++;
@@ -1081,16 +1081,16 @@ s32 BattlePres_SyncTurn(void)
 
 s32 BattleParty_AssignMemberSlots(void)
 {
-	u16				active_members[8];
-	struct BattleWork *battle_state = gBattleWork;
-	s32				party_size = BattleParty_PrepareActiveOwners(active_members);
-	s32				member_slot;
+	u16				activeMembers[8];
+	struct BattleWork *battleState = gBattleWork;
+	s32				partySize = BattleParty_PrepareActiveOwners(activeMembers);
+	s32				memberSlot;
 	s32				unitId;
 
-	for (member_slot = 0; member_slot < party_size; member_slot++)
+	for (memberSlot = 0; memberSlot < partySize; memberSlot++)
 	{
-		unitId = active_members[member_slot];
-		battle_state->ownerSlots[unitId] = member_slot - 128;
+		unitId = activeMembers[memberSlot];
+		battleState->ownerSlots[unitId] = memberSlot - 128;
 	}
 }
 
@@ -1111,7 +1111,7 @@ s32 Battle_RunEncounter(s32 enemyGroup)
 	struct BattleCamera					*camera;
 	s32									*target;
 	struct BattleWork						*battle;
-	u8									*owner_states;
+	u8									*ownerStates;
 	struct BattlePresentationTransition *transition;
 	struct BattleDisplayWork			*display;
 	s32									 object;
@@ -1129,13 +1129,13 @@ s32 Battle_RunEncounter(s32 enemyGroup)
 
 	camera = Runtime_AllocateBlock(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
 	battle = Runtime_AllocateBlock(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
-	owner_states = Runtime_AllocateBlock(54, 0x7c8);
+	ownerStates = Runtime_AllocateBlock(54, 0x7c8);
 	transition = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_BACKGROUND, 32);
 	Runtime_AllocateBlock(11, 0x280);
 	target = camera->pos;
 	/* FAKEMATCH: needed to match: result starts at 0 and is never read before each exit sets it; CSE takes the setup zeros from its register, r7 as listed (without it 262). 2026-10-13: initialised at its declaration 130; set after Scheduler_ResetTaskTable 262; the zero in handle 20 (setup matches, handle and result swap r5/r7); in wait 120, pos 113, actor 121, i 323, count 363. */
 	result = 0;
-	Iwram_ClearWords(owner_states, 0x7c8);
+	Iwram_ClearWords(ownerStates, 0x7c8);
 	Scheduler_ResetTaskTable();
 	transition->frames = 0;
 	transition->targetYaw = 0x2000;
@@ -1435,18 +1435,18 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
 	return count;
 }
 
-s32 BattleEnemyList(s16 *unit_ids)
+s32 BattleEnemyList(s16 *unitIds)
 {
 	s16 *output;
-	s32	 battle_result;
+	s32	 battleResult;
 	s32	 id;
 	s32	 entryLimit;
 	s32	 entryCount;
 
-	output = unit_ids;
+	output = unitIds;
 	entryCount = 0;
 	entryLimit = 6;
-	battle_result = 0;
+	battleResult = 0;
 	if (output != NULL)
 	{
 		if (GameFlag_TestFar(0x16C) != 0)
@@ -1465,41 +1465,41 @@ s32 BattleEnemyList(s16 *unit_ids)
 			}
 		}
 		*output = BATTLE_UNIT_LIST_END;
-		battle_result = entryCount;
+		battleResult = entryCount;
 	}
-	return battle_result;
+	return battleResult;
 }
 
-s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
+s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds)
 {
-	u16				active_members[8];
+	u16				activeMembers[8];
 	u16			   *base;
 	s32				remaining;
-	s32				enemy_limit;
+	s32				enemyLimit;
 	u16			   *output;
-	s32				living_count;
-	s32				enemy_capacity;
+	s32				livingCount;
+	s32				enemyCapacity;
 	u16			   *member;
 	s32				unitId;
 	s16				hp;
-	s32				active_count;
+	s32				activeCount;
 	struct BattleUnit *unit;
 
-	output = unit_ids;
-	living_count = 0;
-	enemy_capacity = 6;
+	output = unitIds;
+	livingCount = 0;
+	enemyCapacity = 6;
 	if (GameFlag_TestFar(0x16C) != 0)
 	{
-		enemy_capacity = 3;
+		enemyCapacity = 3;
 	}
-	if (side_mask & BATTLE_SIDE_PARTY)
+	if (sideMask & BATTLE_SIDE_PARTY)
 	{
-		base = active_members;
-		active_count = BattleParty_PrepareActiveOwners(base);
-		if (living_count < active_count)
+		base = activeMembers;
+		activeCount = BattleParty_PrepareActiveOwners(base);
+		if (livingCount < activeCount)
 		{
 			member = base;
-			remaining = active_count;
+			remaining = activeCount;
 			do
 			{
 				unitId = *member;
@@ -1512,17 +1512,17 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
 						*output = unitId;
 						output += 1;
 					}
-					living_count += 1;
+					livingCount += 1;
 				}
 				remaining -= 1;
 			} while (remaining != 0);
 		}
 	}
-	if (side_mask & BATTLE_SIDE_ENEMIES)
+	if (sideMask & BATTLE_SIDE_ENEMIES)
 	{
 		remaining = 0x80;
-		enemy_limit = enemy_capacity + 0x80;
-		if (remaining < enemy_limit)
+		enemyLimit = enemyCapacity + 0x80;
+		if (remaining < enemyLimit)
 		{
 			do
 			{
@@ -1534,17 +1534,17 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
 						*output = remaining;
 						output += 1;
 					}
-					living_count += 1;
+					livingCount += 1;
 				}
 				remaining += 1;
-			} while (remaining < enemy_limit);
+			} while (remaining < enemyLimit);
 		}
 	}
 	if (output != NULL)
 	{
 		*output = BATTLE_UNIT_LIST_END;
 	}
-	return living_count;
+	return livingCount;
 }
 
 s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
@@ -1645,18 +1645,18 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
 	s32				pass;
 	struct BattleWork *table = gBattleWork;
 	struct BattleUnit *actor = UnitGetFar(unit);
-	s32				single_slot = Summon_IsEntryFlagged(actor->classId);
+	s32				singleSlot = Summon_IsEntryFlagged(actor->classId);
 	/* FAKEMATCH: initializing the two halves preserves the word copy into pass, mov r4, r10; one s32 zero folds that copy into movs r4, #0 (one instruction differs). 2026-10-13: result as an s32 set to 0, with pass = result or pass = 0, differs 2 of 114; pass = result = 0 differs 6, result = pass = 0 19. */
 	union
 	{
 		s32 value;
 		u16 halves[2];
 	} result;
-	s32 sprite_value;
+	s32 spriteValue;
 
 	result.halves[0] = 0;
 	result.halves[1] = 0;
-	sprite_value = Summon_GetEntryValue(actor->classId);
+	spriteValue = Summon_GetEntryValue(actor->classId);
 	pass = result.value;
 	do
 	{
@@ -1669,7 +1669,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
 		{
 			if (table->spriteSlots[slot] != 0)
 				continue;
-			if (single_slot)
+			if (singleSlot)
 				break;
 			if (slot <= 4 && table->spriteSlots[slot + 1] == 0)
 				break;
@@ -1680,27 +1680,27 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
 
 		{
 			s32 flag = Summon_GetEntryFlag1Field(actor->classId);
-			s32 buffer_addr = (slot << 14) + (s32)Ram_ActorSpriteSlots;
+			s32 bufferAddr = (slot << 14) + (s32)Ram_ActorSpriteSlots;
 
-			if (ResourceSlot_LoadFar(slot, (u32 *)buffer_addr, sprite_value + pass, flag) == 0)
+			if (ResourceSlot_LoadFar(slot, (u32 *)bufferAddr, spriteValue + pass, flag) == 0)
 				return 0;
 		}
 
-		/* FAKEMATCH: cancelling updates retain sprite_value's allocation
+		/* FAKEMATCH: cancelling updates retain spriteValue's allocation
 		 * priority; a self-assignment instead differs in 18 rows.
 		 * 2026-10-13: without them 18 of 114 differ; the exit test written
-		 * !(== || ==) or as a switch on sprite_value 18; the load's
-		 * value as pass + sprite_value 16. */
-		sprite_value ^= 1;
-		sprite_value ^= 1;
+		 * !(== || ==) or as a switch on spriteValue 18; the load's
+		 * value as pass + spriteValue 16. */
+		spriteValue ^= 1;
+		spriteValue ^= 1;
 		if (pass == 0)
-			result.value = (slot << 12) | sprite_value;
+			result.value = (slot << 12) | spriteValue;
 
 		table->spriteSlots[slot] = unit;
-		if (!single_slot)
+		if (!singleSlot)
 			table->spriteSlots[slot + 1] = unit;
 
-		if (sprite_value != 476 && sprite_value != 483)
+		if (spriteValue != 476 && spriteValue != 483)
 			break;
 	} while (++pass <= 1);
 
@@ -1792,35 +1792,35 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 id)
 
 void BattleObjMake(struct BattleObj *actor, s32 unit, s32 x, s32 y)
 {
-	s32					 fixed_x;
-	s32					 fixed_y;
-	s32					 actor_flag;
+	s32					 fixedX;
+	s32					 fixedY;
+	s32					 actorFlag;
 	s32					 sprite;
-	s32					 existing_sprite;
-	struct BattleUnit		*unit_record;
+	s32					 existingSprite;
+	struct BattleUnit		*unitRecord;
 	struct MotionObject *object;
 	s32					 position;
 	s32					 anim;
 	u8					 classId;
 
-	fixed_x = x << 16;
-	fixed_y = y << 16;
-	object = Object_CreateFar(0xf000, fixed_x, 0, fixed_y);
-	unit_record = UnitGetFar(unit);
-	actor_flag = 0;
-	existing_sprite = SummonSlot_RegisterActorSprites(unit);
+	fixedX = x << 16;
+	fixedY = y << 16;
+	object = Object_CreateFar(0xf000, fixedX, 0, fixedY);
+	unitRecord = UnitGetFar(unit);
+	actorFlag = 0;
+	existingSprite = SummonSlot_RegisterActorSprites(unit);
 
-	if (unit_record->classIndex == 0)
+	if (unitRecord->classIndex == 0)
 	{
-		sprite = Summon_GetEntryValue(unit_record->classId);
-		if (existing_sprite == 0)
-			actor_flag = Summon_GetEntryFlag1Field(unit_record->classId);
+		sprite = Summon_GetEntryValue(unitRecord->classId);
+		if (existingSprite == 0)
+			actorFlag = Summon_GetEntryFlag1Field(unitRecord->classId);
 		else
-			sprite = existing_sprite;
+			sprite = existingSprite;
 	}
 	else
 	{
-		switch (unit_record->classId)
+		switch (unitRecord->classId)
 		{
 		case GARET:
 			sprite = BATTLE_CHARACTER(GARET);
@@ -1840,11 +1840,11 @@ void BattleObjMake(struct BattleObj *actor, s32 unit, s32 x, s32 y)
 			break;
 		}
 		if (unit < 0 || unit > 7)
-			actor_flag = 1;
+			actorFlag = 1;
 	}
 
 	actor->scale = 0x10000;
-	switch (unit_record->classId)
+	switch (unitRecord->classId)
 	{
 	case 78:
 		actor->scale = 0x19999;
@@ -1985,9 +1985,9 @@ void BattleObjMake(struct BattleObj *actor, s32 unit, s32 x, s32 y)
 	}
 
 	actor->object = object;
-	actor->anchorX = fixed_x;
-	actor->anchorZ = fixed_y;
-	actor->palette = actor_flag;
+	actor->anchorX = fixedX;
+	actor->anchorZ = fixedY;
+	actor->palette = actorFlag;
 	actor->resource = sprite;
 	anim = BattleUnit_LookupWeaponValueByClass(unit);
 	actor->animation = 0;
@@ -1996,12 +1996,12 @@ void BattleObjMake(struct BattleObj *actor, s32 unit, s32 x, s32 y)
 	actor->active = 0;
 	actor->fading = 0;
 	actor->effect = 0x1fe;
-	classId = unit_record->classId;
+	classId = unitRecord->classId;
 	actor->overlay = anim;
 
-	if (classId <= GARET && Inventory_GetEquippedItemFar(unit_record, 1) == 15)
+	if (classId <= GARET && Inventory_GetEquippedItemFar(unitRecord, 1) == 15)
 	{
-		if (unit_record->classId == ISAAC)
+		if (unitRecord->classId == ISAAC)
 		{
 			sprite = 480;
 			actor->resource = sprite;
@@ -2018,7 +2018,7 @@ void BattleObjMake(struct BattleObj *actor, s32 unit, s32 x, s32 y)
 	object->angle = position;
 	object->unk59 = 3;
 	object->motionFlags = 2;
-	if (unit_record->classIndex == 0)
+	if (unitRecord->classIndex == 0)
 	{
 		object->scaleX = 0x14ccc;
 		object->scaleY = 0x14ccc;
@@ -2038,38 +2038,38 @@ void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y)
 	*y = gBattlePlacement_StepPairs[index + 1];
 }
 
-void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_positions)
+void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions, s32 *zPositions)
 {
-	s32 total_spacing = count <= 4 ? 30 : 27;
-	s32 z = ((count - 1) * total_spacing) / 2;
+	s32 totalSpacing = count <= 4 ? 30 : 27;
+	s32 z = ((count - 1) * totalSpacing) / 2;
 	s32 index;
 
 	for (index = 0; index != count; index++)
 	{
 		s32 spacing = 0;
 
-		x_positions[index] = -80;
+		xPositions[index] = -80;
 		if (index != 0)
 		{
 			struct BattleUnit *actor;
 
 			spacing = 25;
-			if ((u16)(actor_ids[index] - 254) > 1)
+			if ((u16)(actorIds[index] - 254) > 1)
 			{
-				actor = UnitGetFar(actor_ids[index]);
+				actor = UnitGetFar(actorIds[index]);
 				spacing = Summon_IsEntryFlagged(actor->classId) ? 27 : 38;
 				if (actor->classId == 148 || actor->classId == 121)
 				{
-					x_positions[index] = -50;
+					xPositions[index] = -50;
 				}
 			}
 		}
 		z -= spacing / 2;
-		z_positions[index] = z;
+		zPositions[index] = z;
 		spacing = 25;
-		if ((u16)(actor_ids[index] - 254) > 1)
+		if ((u16)(actorIds[index] - 254) > 1)
 		{
-			struct BattleUnit *actor = UnitGetFar(actor_ids[index]);
+			struct BattleUnit *actor = UnitGetFar(actorIds[index]);
 
 			spacing = Summon_IsEntryFlagged(actor->classId) ? 27 : 38;
 		}
@@ -2096,16 +2096,16 @@ s32 EnemySlotGet(void)
 s32 EnemyUpdate(void)
 {
 	struct BattleWork *work = gBattleWork;
-	u16				unit_ids[14];
+	u16				unitIds[14];
 	s32				x[6];
 	s32				z[6];
 	s32				count;
 	s32				i;
 
 	for (i = 0; i < 6 && work->enemyIds[i] != 0xff; i++)
-		unit_ids[i] = work->enemyIds[i];
+		unitIds[i] = work->enemyIds[i];
 	count = i;
-	Summon_LayoutPositions(unit_ids, count, x, z);
+	Summon_LayoutPositions(unitIds, count, x, z);
 	for (i = 0; i < count; i++)
 	{
 		s32 id = work->enemyIds[i];
@@ -2686,28 +2686,28 @@ void ResetMotionRecordGroup(void *owner)
 
 void ResetBattleObjectRecordGroups(struct MotionObject *object)
 {
-	s32	   storage_kind;
+	s32	   storageKind;
 	s32	   remaining;
-	void **record_groups;
-	void  *record_group;
+	void **recordGroups;
+	void  *recordGroup;
 
 	if (object != NULL)
 	{
-		storage_kind = object->recordStorageKind & 0xF;
-		switch (storage_kind)
+		storageKind = object->recordStorageKind & 0xF;
+		switch (storageKind)
 		{
 		case 1:
 			ResetMotionRecordGroup(object->records);
 			return;
 		case 2:
-			record_groups = object->records;
+			recordGroups = object->records;
 			remaining = 3;
 			do
 			{
-				record_group = *record_groups++;
-				if (record_group != NULL)
+				recordGroup = *recordGroups++;
+				if (recordGroup != NULL)
 				{
-					ResetMotionRecordGroup(record_group);
+					ResetMotionRecordGroup(recordGroup);
 				}
 				remaining -= 1;
 			} while (remaining >= 0);
@@ -2792,19 +2792,19 @@ s32 BattleMotion_ProjectPosition(s32 id, s32 *projected)
 	return 0;
 }
 
-void *GetMotionRecord(struct MotionObject *object, s32 record_index)
+void *GetMotionRecord(struct MotionObject *object, s32 recordIndex)
 {
-	s32 storage_kind = object->recordStorageKind & 0xF;
-	if (storage_kind == 1)
+	s32 storageKind = object->recordStorageKind & 0xF;
+	if (storageKind == 1)
 	{
-		if (record_index == 0)
+		if (recordIndex == 0)
 		{
 			return object->records;
 		}
 	}
-	else if (storage_kind == 2)
+	else if (storageKind == 2)
 	{
-		return ((void **)object->records)[record_index];
+		return ((void **)object->records)[recordIndex];
 	}
 	return NULL;
 }
@@ -2834,14 +2834,14 @@ void Camera_InitDefaultTransform(void)
 	Iwram_TransformVector((s32 *)&transfer, (s32 *)state);
 }
 
-void ObjMotRst(s32 slot_id)
+void ObjMotRst(s32 slotId)
 {
 	s32					 z;
 	s32					 zero;
 	struct BattleObj		*slot;
 	struct MotionObject *object;
 
-	slot = BattleObjGet(slot_id);
+	slot = BattleObjGet(slotId);
 	object = slot->object;
 	zero = 0;
 	object->acceleration = 0x20000;
@@ -2878,23 +2878,23 @@ void BattleMotion_SetupEscapeObject(s32 objectId)
 }
 
 void BattleMotion_InterpolatePosition(
-	struct BattleObj *start_slot, struct BattleObj *end_slot, s32 progress)
+	struct BattleObj *startSlot, struct BattleObj *endSlot, s32 progress)
 {
-	s32					 z_step;
+	s32					 zStep;
 	s32					 startX;
 	s32					 x;
-	s32					 start_z;
-	s32					 end_z;
+	s32					 startZ;
+	s32					 endZ;
 	struct MotionObject *start;
 	struct MotionObject *end;
 
-	start = start_slot->object;
-	end = end_slot->object;
+	start = startSlot->object;
+	end = endSlot->object;
 	startX = start->x;
 	x = startX + progress * (end->x - startX) / 100;
-	end_z = end->z;
-	start_z = start->z;
-	z_step = progress * (end_z - start_z) / 100;
+	endZ = end->z;
+	startZ = start->z;
+	zStep = progress * (endZ - startZ) / 100;
 	REG_BLDCNT = 0;
 	start->acceleration = 0x20000;
 	start->speedLimit = 0x80000;
@@ -2902,7 +2902,7 @@ void BattleMotion_InterpolatePosition(
 	start->verticalMotionStrength = 0xab85;
 	start->verticalMotionPhase = 0;
 	start->autoFaceMotion = 1;
-	Object_SetMoveTargetFar(start, x, 0, start_z + z_step);
+	Object_SetMoveTargetFar(start, x, 0, startZ + zStep);
 	ObjectDispatch_ApplyArgumentToChildrenFar(start, 2);
 }
 
@@ -2920,7 +2920,7 @@ void BattleMotion_SetObjectPosition(struct BattleObj *slot)
 
 void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId)
 {
-	u32					 scaled_x;
+	u32					 scaledX;
 	struct BattleObj		*slot;
 	struct MotionObject *object;
 
@@ -2933,8 +2933,8 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId)
 	object->verticalMotionPhase = 0;
 	object->autoFaceMotion = 0;
 	ObjectDispatch_InitFromTable6Far(object);
-	scaled_x = slot->anchorX * 3;
-	Object_SetMoveTargetFar(object, (s32)(scaled_x + (scaled_x >> 0x1F)) >> 1, 0, slot->anchorZ);
+	scaledX = slot->anchorX * 3;
+	Object_SetMoveTargetFar(object, (s32)(scaledX + (scaledX >> 0x1F)) >> 1, 0, slot->anchorZ);
 }
 
 void BattleMotion_InitializeObject(s32 id)
@@ -2980,7 +2980,7 @@ void BattleMotion_ApplyVariantMotion(s32 id, s32 variant)
 }
 
 void BattleMotion_ApproachTarget(
-	s32 actorId, s32 targetId, s32 travel_divisor, s32 initial_velocity_y)
+	s32 actorId, s32 targetId, s32 travelDivisor, s32 initialVelocityY)
 {
 	struct BattleObj		*actorSlot = BattleObjGet(actorId);
 	struct BattleObj		*targetSlot = BattleObjGet(targetId);
@@ -2991,23 +2991,23 @@ void BattleMotion_ApproachTarget(
 	s32					 startX = object->x;
 	s32					 stepX = scale * dx / 100;
 	s32					 dz = target->z - object->z;
-	s32					 start_z = object->z;
-	s32					 step_z = scale * dz / 100;
+	s32					 startZ = object->z;
+	s32					 stepZ = scale * dz / 100;
 	s32					 x = startX + stepX;
-	s32					 z = start_z + step_z;
+	s32					 z = startZ + stepZ;
 	s32					 cellX = stepX >> 8;
-	s32					 cellZ = step_z >> 8;
+	s32					 cellZ = stepZ >> 8;
 	s32					 dist;
 
 	dist = Iwram_Sqrt(cellX * cellX + cellZ * cellZ);
-	dist = (dist << 8) / travel_divisor;
+	dist = (dist << 8) / travelDivisor;
 	object->acceleration = dist;
 	object->speedLimit = dist;
 	object->snapToTarget = 1;
 
 	if (object->motionFlags & 4)
-		object->velocityY = initial_velocity_y;
-	object->velocityY = initial_velocity_y;
+		object->velocityY = initialVelocityY;
+	object->velocityY = initialVelocityY;
 	object->verticalMotionStrength = 0xab85;
 	object->autoFaceMotion = 1;
 	ObjectDispatch_InitFromTable6Far(object);
@@ -3028,9 +3028,9 @@ void BattleMotion_ReservedNoOp83B0()
 {
 }
 
-void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 second_id)
+void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId)
 {
-	struct BattleObj			 *second_slot;
+	struct BattleObj			 *secondSlot;
 	struct MotionObject		 *first;
 	struct MotionObject		 *second;
 	s32						  x1;
@@ -3040,8 +3040,8 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 second_id)
 	struct FixedPointPosition pos;
 
 	first = BattleObjGet(firstId)->object;
-	second_slot = BattleObjGet(second_id);
-	second = second_slot->object;
+	secondSlot = BattleObjGet(secondId);
+	second = secondSlot->object;
 
 	x1 = first->targetX;
 	if (x1 == 0x80000000)
@@ -3151,21 +3151,21 @@ s32 Battle_GetObjectTableValue(s32 id)
 s32 BattlePresentation_BuildSortedUnitEntries(struct BattleActionRecord *entries)
 {
 	struct BattleActionRecord  swap;
-	u16						   unit_ids[14];
-	s32						   first_count;
+	u16						   unitIds[14];
+	s32						   firstCount;
 	s32						   count = 0;
-	s32						   second_count;
-	s32						   priority_range;
+	s32						   secondCount;
+	s32						   priorityRange;
 	s32						   index;
 	struct BattleActionRecord *entry;
 	struct BattleUnit			  *unit;
 
-	first_count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unit_ids);
+	firstCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unitIds);
 	for (index = 0; index != 4; index++)
 		UnitGetFar(index);
-	for (index = 0; index < first_count; index++)
+	for (index = 0; index < firstCount; index++)
 	{
-		s32 unitId = unit_ids[index];
+		s32 unitId = unitIds[index];
 
 		unit = UnitGetFar(unitId);
 		entry = &entries[index];
@@ -3176,12 +3176,12 @@ s32 BattlePresentation_BuildSortedUnitEntries(struct BattleActionRecord *entries
 		entry->target = 0x80;
 		count++;
 	}
-	second_count = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, unit_ids);
-	entry = &entries[first_count];
-	priority_range = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, NULL);
-	for (index = 0; index < second_count; index++)
+	secondCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, unitIds);
+	entry = &entries[firstCount];
+	priorityRange = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, NULL);
+	for (index = 0; index < secondCount; index++)
 	{
-		s32 unitId = unit_ids[index];
+		s32 unitId = unitIds[index];
 
 		unit = UnitGetFar(unitId);
 		entry->unitId = unitId;
@@ -3190,7 +3190,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(struct BattleActionRecord *entries
 			entry->priority += (Random16() * unit->agi) >> 16;
 		entry->command = 0;
 		entry->parameter = 0;
-		entry->target = (Random16() * priority_range) >> 16;
+		entry->target = (Random16() * priorityRange) >> 16;
 		count++;
 		entry++;
 	}
@@ -3221,7 +3221,7 @@ s32 BattlePres_RunAction(struct BattleActionRecord *action)
 {
 	struct BattlePresentationTransition *transition;
 	s32									 actorId;
-	s32									 battle_mode;
+	s32									 battleMode;
 	struct BattleUnit						*actor;
 
 	actorId = action->unitId;
@@ -3232,10 +3232,10 @@ s32 BattlePres_RunAction(struct BattleActionRecord *action)
 	action->target = BattleTarget_ReplaceDefeated(action);
 	transition = gTransitionWork;
 	if (action->unitId > 4)
-		battle_mode = -0x2000;
+		battleMode = -0x2000;
 	else
-		battle_mode = 0x2000;
-	transition->targetYaw = battle_mode;
+		battleMode = 0x2000;
+	transition->targetYaw = battleMode;
 	transition->frames = 60;
 	UiWork_ClearValueNameTablesFar();
 
@@ -3340,17 +3340,17 @@ s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action)
 
 s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action)
 {
-	u16							  visible_units[14];
+	u16							  visibleUnits[14];
 	struct BattlePresentationWork context;
 	s32							  actorId;
 	s32							  targetId;
-	u32							  side_start;
-	u32							  side_count;
-	u32							  living_count;
-	struct MotionObject			 *actor_record;
+	u32							  sideStart;
+	u32							  sideCount;
+	u32							  livingCount;
+	struct MotionObject			 *actorRecord;
 	u32							  index;
 
-	living_count = 0;
+	livingCount = 0;
 	actorId = action->unitId;
 	if (BattleObject_IsValidId(actorId) < 0)
 	{
@@ -3369,32 +3369,32 @@ s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action
 	}
 	WaitFrames(10);
 	Random16();
-	actor_record = BattleObjGet(actorId)->object;
+	actorRecord = BattleObjGet(actorId)->object;
 
 	if (targetId >= 0 && targetId <= 7)
 	{
-		side_count = BattleParty_ListLivingUnits(2, visible_units);
-		side_start = 0x80;
+		sideCount = BattleParty_ListLivingUnits(2, visibleUnits);
+		sideStart = 0x80;
 	}
 	else
 	{
-		side_count = BattleParty_ListLivingUnits(1, visible_units);
-		side_start = 0;
+		sideCount = BattleParty_ListLivingUnits(1, visibleUnits);
+		sideStart = 0;
 	}
 
-	for (index = 0; index != side_count; index++)
+	for (index = 0; index != sideCount; index++)
 	{
-		if (index + side_start == actorId)
+		if (index + sideStart == actorId)
 		{
-			ObjectDispatch_ApplyArgumentToChildrenFar(actor_record, 3);
+			ObjectDispatch_ApplyArgumentToChildrenFar(actorRecord, 3);
 		}
 	}
 
 	WaitFrames(30);
 	REG_BLDCNT = 0x3f40;
-	for (index = 0; index != side_count; index++)
+	for (index = 0; index != sideCount; index++)
 	{
-		BattlePres_SetActorRecordMode(index + side_start, 1);
+		BattlePres_SetActorRecordMode(index + sideStart, 1);
 	}
 	for (index = 0; index != 16; index++)
 	{
@@ -3405,37 +3405,37 @@ s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action
 
 	if (targetId > 0x7f)
 	{
-		u32 count = BattleParty_ListLivingUnits(2, visible_units);
-		for (index = 0; living_count != count; index++)
+		u32 count = BattleParty_ListLivingUnits(2, visibleUnits);
+		for (index = 0; livingCount != count; index++)
 		{
 			u32 unit = index + 0x80;
 			if (UnitGetFar(unit)->hp > 0)
 			{
-				visible_units[living_count++] = unit;
+				visibleUnits[livingCount++] = unit;
 			}
 		}
 	}
 	else
 	{
-		u32 count = BattleParty_ListLivingUnits(1, visible_units);
-		for (index = 0; living_count != count; index++)
+		u32 count = BattleParty_ListLivingUnits(1, visibleUnits);
+		for (index = 0; livingCount != count; index++)
 		{
 			if (UnitGetFar(index)->hp > 0)
 			{
-				visible_units[living_count++] = index;
+				visibleUnits[livingCount++] = index;
 			}
 		}
 	}
-	visible_units[living_count] = 0xff;
-	BattleActor_SpawnObjectsForList(visible_units, 0);
+	visibleUnits[livingCount] = 0xff;
+	BattleActor_SpawnObjectsForList(visibleUnits, 0);
 
 	context.kind = action->parameter;
 	context.actor = actorId;
-	for (index = 0; index != living_count; index++)
+	for (index = 0; index != livingCount; index++)
 	{
-		context.actors[index] = visible_units[index];
+		context.actors[index] = visibleUnits[index];
 	}
-	context.count = living_count;
+	context.count = livingCount;
 	if (targetId >= 0 && targetId <= 7)
 	{
 		context.side = 1;
@@ -3449,18 +3449,18 @@ s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action
 	WaitFrames(10);
 	BattleObjPut();
 	REG_BLDCNT = 0x3f40;
-	for (index = 0; index != side_count; index++)
+	for (index = 0; index != sideCount; index++)
 	{
-		BattlePres_SetActorRecordMode(index + side_start, 1);
+		BattlePres_SetActorRecordMode(index + sideStart, 1);
 	}
 	for (index = 0; index != 16; index++)
 	{
 		REG_BLDALPHA = index | 0x1000;
 		WaitFrames(1);
 	}
-	for (index = 0; index != side_count; index++)
+	for (index = 0; index != sideCount; index++)
 	{
-		BattlePres_SetActorRecordMode(index + side_start, 0);
+		BattlePres_SetActorRecordMode(index + sideStart, 0);
 	}
 	BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
 	WaitFrames(3);
@@ -3592,15 +3592,15 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action)
 	return 0;
 }
 
-void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 show_message, u8 *context)
+void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage, u8 *context)
 {
-	u8				local_context[4];
+	u8				localContext[4];
 	struct BattleUnit *character;
 	struct BattleObj  *slot;
 
 	if (context == 0)
 	{
-		context = local_context;
+		context = localContext;
 		context[0] = 0;
 		context[1] = 0;
 		context[2] = 0;
@@ -3619,7 +3619,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 show_message
 
 	if (unitId <= 7)
 	{
-		if (show_message != 0)
+		if (showMessage != 0)
 			UiText_ShowMessageAndWaitCoreFar(MsgBitterBlow);
 		UiWork_PushValueSlotFar(damage, 5);
 		UiWork_PushValueSlotFar(unitId, 1);
@@ -3627,7 +3627,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 show_message
 	}
 	else
 	{
-		if (show_message != 0)
+		if (showMessage != 0)
 			UiText_ShowMessageAndWaitCoreFar(MsgCritical);
 		UiWork_PushValueSlotFar(damage, 5);
 		UiWork_PushValueSlotFar(unitId, 1);
@@ -3656,15 +3656,15 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 show_message
 
 void BattleMotion_SetMode5AndActivateSlot(s32 unitId)
 {
-	struct AnimationEntry  *actor_data;
+	struct AnimationEntry  *actorData;
 	struct AnimationObject *object;
 	if (UnitGetFar(unitId)->hp <= 0)
 	{
 		object = BattleObjGet(unitId)->object->records;
 		AnimationObjects_SelectAnimationFar(object, 5);
-		actor_data = object->entries[0];
-		actor_data->param = 6;
-		actor_data->frame = 0xFF;
+		actorData = object->entries[0];
+		actorData->param = 6;
+		actorData->frame = 0xFF;
 		WaitFrames(4);
 		Map_RenderAnimatedTileFramesForObjectFar(object);
 		ActivateBattleObjectSlot(unitId);
@@ -3673,9 +3673,9 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId)
 
 s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
 {
-	u16 living_units[14];
+	u16 livingUnits[14];
 	s32 targetId;
-	s32 living_count;
+	s32 livingCount;
 
 	targetId = action->target;
 	if (UnitGetFar(targetId)->hp != 0)
@@ -3685,19 +3685,19 @@ s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
 
 	if (targetId > 0x7F)
 	{
-		living_count = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, living_units);
+		livingCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, livingUnits);
 	}
 	else
 	{
-		living_count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, living_units);
+		livingCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, livingUnits);
 	}
 
-	if (living_count == 0)
+	if (livingCount == 0)
 	{
 		return 0x100;
 	}
 
-	return (s16)living_units[(Random16() * living_count) >> 0x10];
+	return (s16)livingUnits[(Random16() * livingCount) >> 0x10];
 }
 
 void Palette_UpdatePulseBrightness(void)
@@ -3803,37 +3803,37 @@ s32 BattleEscape_CheckSuccess(void)
 {
 	s32				escaped;
 	u8			   *failedAttempts;
-	s16				living_units[14];
-	s32				living_count;
-	s32				level_total;
-	s32				unit_index;
+	s16				livingUnits[14];
+	s32				livingCount;
+	s32				levelTotal;
+	s32				unitIndex;
 	s32				chance;
-	struct BattleWork *escape_state;
+	struct BattleWork *escapeState;
 
 	escaped = 0;
-	escape_state = gBattleWork;
-	if (escape_state->encounterMode == 1)
+	escapeState = gBattleWork;
+	if (escapeState->encounterMode == 1)
 	{
 		escaped = 1;
 	}
 	else
 	{
-		failedAttempts = &escape_state->escapeFailures;
-		chance = 0x1388 + (escape_state->escapeFailures * 0x7D0);
-		living_count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, living_units);
-		level_total = 0;
-		for (unit_index = escaped; unit_index < living_count; unit_index++)
+		failedAttempts = &escapeState->escapeFailures;
+		chance = 0x1388 + (escapeState->escapeFailures * 0x7D0);
+		livingCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, livingUnits);
+		levelTotal = 0;
+		for (unitIndex = escaped; unitIndex < livingCount; unitIndex++)
 		{
-			level_total += UnitGetFar(living_units[unit_index])->level;
+			levelTotal += UnitGetFar(livingUnits[unitIndex])->level;
 		}
-		chance += level_total * 0x1F4 / living_count;
-		living_count = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, living_units);
-		level_total = 0;
-		for (unit_index = 0; unit_index < living_count; unit_index++)
+		chance += levelTotal * 0x1F4 / livingCount;
+		livingCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, livingUnits);
+		levelTotal = 0;
+		for (unitIndex = 0; unitIndex < livingCount; unitIndex++)
 		{
-			level_total += UnitGetFar(living_units[unit_index])->level;
+			levelTotal += UnitGetFar(livingUnits[unitIndex])->level;
 		}
-		chance -= level_total * 0x1F4 / living_count;
+		chance -= levelTotal * 0x1F4 / livingCount;
 		if ((chance > 0) && (((0x2710 * Random16()) >> 0x10) < chance))
 		{
 			escaped = 1;
@@ -3849,24 +3849,24 @@ s32 BattleEscape_CheckSuccess(void)
 
 s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries)
 {
-	u16 *excluded_units = Runtime_BumpAllocateAlternatePool(17);
-	u16 *unit_ids = Runtime_BumpAllocateAlternatePool(9);
-	s32	 unit_count = BattleParty_ListLivingUnits(1, unit_ids);
-	s32	 excluded_count = 0;
+	u16 *excludedUnits = Runtime_BumpAllocateAlternatePool(17);
+	u16 *unitIds = Runtime_BumpAllocateAlternatePool(9);
+	s32	 unitCount = BattleParty_ListLivingUnits(1, unitIds);
+	s32	 excludedCount = 0;
 	s32	 entryCount = 0;
-	s32	 unit_index;
+	s32	 unitIndex;
 
-	for (unit_index = 0; unit_index < unit_count; unit_index++)
+	for (unitIndex = 0; unitIndex < unitCount; unitIndex++)
 	{
-		struct BattleUnit *unit = UnitGetFar(unit_ids[unit_index]);
-		s32				copy_index;
+		struct BattleUnit *unit = UnitGetFar(unitIds[unitIndex]);
+		s32				copyIndex;
 
-		for (copy_index = 0; copy_index < unit->actionEntryCount; copy_index++)
+		for (copyIndex = 0; copyIndex < unit->actionEntryCount; copyIndex++)
 		{
 			if (unit->sleep != 0 || (*(u32 *)&unit->delusion & 0xffffff00))
 			{
 				struct BattleActionRecord *entry = &entries[entryCount];
-				entry->unitId = unit_ids[unit_index];
+				entry->unitId = unitIds[unitIndex];
 				entry->priority = unit->agi;
 				entry->command = 8;
 				entry->parameter = 0;
@@ -3875,7 +3875,7 @@ s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries)
 			}
 			else
 			{
-				excluded_units[excluded_count++] = unit_ids[unit_index];
+				excludedUnits[excludedCount++] = unitIds[unitIndex];
 			}
 		}
 	}
@@ -3884,27 +3884,27 @@ s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries)
 		s32 appended;
 
 		entries += entryCount;
-		appended = Battle_CollectPartyCommandsFar(entries, excluded_units, excluded_count);
+		appended = Battle_CollectPartyCommandsFar(entries, excludedUnits, excludedCount);
 		if (appended < 0)
 		{
-			unit_count = -1;
+			unitCount = -1;
 		}
 		else
 		{
-			unit_count = entryCount + appended;
+			unitCount = entryCount + appended;
 		}
-		MemFree(unit_ids);
-		MemFree(excluded_units);
-		return unit_count;
+		MemFree(unitIds);
+		MemFree(excludedUnits);
+		return unitCount;
 	}
 }
 
 s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries)
 {
-	u16				unit_ids[14];
+	u16				unitIds[14];
 	s32				entryCount = 0;
 	struct BattleWork *battle = gBattleWork;
-	s32				unit_count;
+	s32				unitCount;
 	s32				i;
 
 	if (battle->encounterMode == 1)
@@ -3912,19 +3912,19 @@ s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries)
 		return 0;
 	}
 
-	unit_count = BattleParty_ListLivingUnits(2, unit_ids);
-	if (unit_count == 0)
+	unitCount = BattleParty_ListLivingUnits(2, unitIds);
+	if (unitCount == 0)
 	{
 		return 0;
 	}
 
 	for (i = 31; i >= 0; i--)
 	{
-		u32 first = (unit_count * Random16()) >> 16;
-		u32 second = (unit_count * Random16()) >> 16;
-		s32 swap = unit_ids[first];
-		unit_ids[first] = unit_ids[second];
-		unit_ids[second] = swap;
+		u32 first = (unitCount * Random16()) >> 16;
+		u32 second = (unitCount * Random16()) >> 16;
+		s32 swap = unitIds[first];
+		unitIds[first] = unitIds[second];
+		unitIds[second] = swap;
 	}
 
 	if (battle->encounterMode == 2)
@@ -3935,19 +3935,19 @@ s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries)
 		{
 			limit = 2;
 		}
-		if (limit < unit_count)
+		if (limit < unitCount)
 		{
-			unit_count = limit;
+			unitCount = limit;
 		}
 	}
 
-	for (i = 0; i < unit_count; i++)
+	for (i = 0; i < unitCount; i++)
 	{
-		s32				unitId = unit_ids[i];
+		s32				unitId = unitIds[i];
 		struct BattleUnit *unit = UnitGetFar(unitId);
-		s32				copy_index;
+		s32				copyIndex;
 
-		for (copy_index = 0; copy_index < unit->actionEntryCount; copy_index++)
+		for (copyIndex = 0; copyIndex < unit->actionEntryCount; copyIndex++)
 		{
 			struct BattleActionRecord *entry = &entries[entryCount];
 			s32						   value;
@@ -3955,7 +3955,7 @@ s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries)
 			entry->unitId = unitId;
 			value = unit->agi;
 			entry->priority = value;
-			if (copy_index != 0)
+			if (copyIndex != 0)
 			{
 				entry->priority = (s16)value / 2;
 			}
@@ -4037,7 +4037,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
 {
 	struct BattleWork				   *battle = gBattleWork;
 	s32								result = 0;
-	s32								allocation_size = (u32)(count * 16 + 19) / 20 * 20;
+	s32								allocationSize = (u32)(count * 16 + 19) / 20 * 20;
 	struct BattleLinkedActionState *state =
 		(struct BattleLinkedActionState *)Runtime_BumpAllocateAlternatePool(40);
 	s32 index;
@@ -4067,9 +4067,9 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
 				disconnected = 0;
 			}
 		}
-		if (allocation_size)
+		if (allocationSize)
 		{
-			status = SerialRuntime_BeginTransferA(actions, allocation_size);
+			status = SerialRuntime_BeginTransferA(actions, allocationSize);
 			if (status == -1)
 				return status;
 			while (SerialRuntime_GetActiveTransfers())
@@ -4559,13 +4559,13 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan)
 {
 	struct BattlePresentationTransition *presentation = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
 	struct BattleWork						*scene = WORK_SLOT(HEAP_SLOT_BATTLE);
-	/* FAKEMATCH: the halfword initialization preserves the word copy into party_mode instead of folding it into an immediate zero (one instruction differs). 2026-10-13: completed as an s32 set to 0, with party_mode = completed or party_mode = 0, differs 2 of 105 (movs r2, #0 for adds r2, r7, #0). */
+	/* FAKEMATCH: the halfword initialization preserves the word copy into partyMode instead of folding it into an immediate zero (one instruction differs). 2026-10-13: completed as an s32 set to 0, with partyMode = completed or partyMode = 0, differs 2 of 105 (movs r2, #0 for adds r2, r7, #0). */
 	union
 	{
 		s32 value;
 		u16 halves[2];
 	} completed;
-	s32 party_mode;
+	s32 partyMode;
 
 	completed.halves[0] = 0;
 	completed.halves[1] = 0;
@@ -4575,30 +4575,30 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan)
 
 	if (plan->aid <= 7)
 	{
-		party_mode = completed.value;
+		partyMode = completed.value;
 
 		if (scene->encounterMode != 2)
 		{
-			party_mode = 1;
+			partyMode = 1;
 		}
 
-		if (!party_mode)
+		if (!partyMode)
 		{
 			UiText_ShowMessageAndWaitCoreFar(MsgNoEscape);
 			BattlePresentation_WaitForAdvance();
 		}
 		else
 		{
-			s16 unit_ids[14];
-			s32 index = BattleParty_ListLivingUnits(1, (u16 *)unit_ids) - 1;
+			s16 unitIds[14];
+			s32 index = BattleParty_ListLivingUnits(1, (u16 *)unitIds) - 1;
 
 			while (index != -1)
 			{
-				struct BattleUnit *unit = UnitGetFar(unit_ids[index]);
+				struct BattleUnit *unit = UnitGetFar(unitIds[index]);
 
 				if (unit->stun == 0 && unit->sleep == 0)
 				{
-					BattleMotion_SetupEscapeObject(unit_ids[index]);
+					BattleMotion_SetupEscapeObject(unitIds[index]);
 					WaitFrames(8);
 				}
 				index--;
@@ -4825,7 +4825,7 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
 	struct BattlePresentationTransition *transition;
 	s32									 angle;
 	s32									 adjusted;
-	s32									 facing_angle;
+	s32									 facingAngle;
 	s32									 x;
 	s32									 z;
 	s32									 divisor;
@@ -4835,7 +4835,7 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
 
 	transition = gTransitionWork;
 	{
-		struct BattlePlan *saved_plan = plan;
+		struct BattlePlan *savedPlan = plan;
 
 		/* FAKEMATCH: the temporary null assignment and restoration end the
 		 * native first CSE block, so the first plan read reloads its stack
@@ -4844,7 +4844,7 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
 		if (transition)
 			plan = NULL;
 		if (transition)
-			plan = saved_plan;
+			plan = savedPlan;
 	}
 	object = BattleObjGet(plan->aid)->object;
 	z = object->z;
@@ -4854,16 +4854,16 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
 	if (plan->aid > 7)
 		adjusted = angle + 0x6000;
 	adjusted &= 0x7fff;
-	facing_angle = (adjusted - 0x2000) / 2 + 0x2000;
+	facingAngle = (adjusted - 0x2000) / 2 + 0x2000;
 
-	if (transition->targetYaw == facing_angle)
+	if (transition->targetYaw == facingAngle)
 	{
-		transition->targetYaw = facing_angle;
+		transition->targetYaw = facingAngle;
 		WaitFrames(5);
 	}
 	else
 	{
-		transition->targetYaw = facing_angle;
+		transition->targetYaw = facingAngle;
 		WaitFrames(10);
 	}
 
@@ -4972,72 +4972,72 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
 s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags)
 {
 	struct BattlePresentationWork		 work;
-	struct BattlePlan						*saved_input;
+	struct BattlePlan						*savedInput;
 	struct MotionObject					*object;
 	struct AnimationObject				*animation;
 	struct BattlePresentationTransition *transition;
 	s32									 angle;
 	s32									 adjusted;
-	s32									 facing_angle;
+	s32									 facingAngle;
 	s32									 x;
 	s32									 z;
 	s32									 divisor;
 	s32									 scripted;
 
 	transition = gTransitionWork;
-	saved_input = input;
-	object = BattleObjGet(saved_input->aid)->object;
+	savedInput = input;
+	object = BattleObjGet(savedInput->aid)->object;
 	z = object->z;
 	x = object->x;
 	angle = (u16)ArcTan2(x, z);
 	adjusted = angle - 0x2000;
-	if (saved_input->aid > 7)
+	if (savedInput->aid > 7)
 		adjusted = angle + 0x6000;
 	adjusted &= 0x7fff;
-	facing_angle = (adjusted - 0x2000) / 2 + 0x2000;
+	facingAngle = (adjusted - 0x2000) / 2 + 0x2000;
 
-	if (transition->targetYaw == facing_angle)
+	if (transition->targetYaw == facingAngle)
 	{
-		transition->targetYaw = facing_angle;
+		transition->targetYaw = facingAngle;
 		WaitFrames(5);
 	}
 	else
 	{
-		transition->targetYaw = facing_angle;
+		transition->targetYaw = facingAngle;
 		WaitFrames(20);
 	}
 
 	BattlePres_SetActorModes(0, 0);
-	BattlePres_BuildTargetList(saved_input, &work);
+	BattlePres_BuildTargetList(savedInput, &work);
 	UnitGetFar(work.actor);
-	UnitGetFar(saved_input->targetIds[0]);
+	UnitGetFar(savedInput->targetIds[0]);
 
 	scripted = flags & 2;
-	animation = GetMotionRecord(BattleObjGet(saved_input->aid)->object, 0);
+	animation = GetMotionRecord(BattleObjGet(savedInput->aid)->object, 0);
 	divisor = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->animId, 2, 1);
-	BattleMotion_ApproachTarget(work.actor, saved_input->targetIds[0], divisor, 0);
+	BattleMotion_ApproachTarget(work.actor, savedInput->targetIds[0], divisor, 0);
 	ObjectDispatch_ApplyValueToChildrenFar(
 		(struct DispatchObject *)BattleObjGet(work.actor)->object, 16);
-	BattleObjGet(saved_input->targetIds[0]);
+	BattleObjGet(savedInput->targetIds[0]);
 
-	if (saved_input->targetIds[0] <= 7)
+	if (savedInput->targetIds[0] <= 7)
 		work.side = 1;
 	else
 		work.side = 0;
 	if (scripted != 0)
 	{
 		WaitFrames(10);
-		BattleMotion_ResetObjectAtScaledAnchor(saved_input->targetIds[0]);
+		BattleMotion_ResetObjectAtScaledAnchor(savedInput->targetIds[0]);
 		WaitFrames(2);
 		WaitFrames(4);
 		WaitFrames(10);
-		ObjMotRst(saved_input->targetIds[0]);
+		ObjMotRst(savedInput->targetIds[0]);
 	}
 	else
 	{
 		BattleFx_DispatchByIdRangeFar((struct BattleEffectArgument *)&work);
 		BattleEv_DispatchQueued();
-		ObjMotRst(saved_input->targetIds[0]);
+		ObjMotRst(savedInput->targetIds[0]);
 	}
 	ObjMotRst(work.actor);
 	return 0;
@@ -5427,7 +5427,7 @@ struct SlotArray
 	s16 items[64];
 };
 
-s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
+s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit)
 {
 
 	u16				  positions[6];
@@ -5444,7 +5444,7 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 	count = 0;
 	order = (struct SlotArray *)gBattleWork;
 
-	if (require_living_unit != 0)
+	if (requireLivingUnit != 0)
 	{
 		/* FAKEMATCH: a loop that runs once, left by its closing break. Written plain, without the loop, the function differs 35 instructions in EN (85 -> 84): the first branch's zero offset takes r2 for r1 and the else branch sets up its pointers in another order. */
 		for (;;)
@@ -5684,21 +5684,21 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 
 s32 BattleTarget_SelectForAction(s32 actorId, struct BattleAct *action)
 {
-	u16				order_positions[6];
-	s32				unit_ids[6];
-	s32				target_positions[6];
-	struct BattleWork *turn_order;
+	u16				orderPositions[6];
+	s32				unitIds[6];
+	s32				targetPositions[6];
+	struct BattleWork *turnOrder;
 	struct BattleUnit *unit;
-	struct BattleUnit *next_unit;
-	struct BattleUnit *this_unit;
-	s32				candidate_count;
+	struct BattleUnit *nextUnit;
+	struct BattleUnit *thisUnit;
+	s32				candidateCount;
 	s32				targetIndex;
 	s32				targetCount;
-	s32				inner_index;
+	s32				innerIndex;
 	s32				selected;
 	s32				unitId;
 	s32				value;
-	s32				next_value;
+	s32				nextValue;
 	s32				temp;
 	s32				opposing;
 	s32				damageClass;
@@ -5706,9 +5706,9 @@ s32 BattleTarget_SelectForAction(s32 actorId, struct BattleAct *action)
 	u32				roll;
 	s16			   *slot;
 
-	turn_order = gBattleWork;
+	turnOrder = gBattleWork;
 	targetCount = 0;
-	candidate_count = 0;
+	candidateCount = 0;
 
 	if (action->targetMode != 0)
 	{
@@ -5727,18 +5727,18 @@ s32 BattleTarget_SelectForAction(s32 actorId, struct BattleAct *action)
 		}
 
 		targetIndex = 0;
-		while (turn_order->partyUnits[targetIndex] != 255)
+		while (turnOrder->partyUnits[targetIndex] != 255)
 		{
-			slot = &turn_order->partyUnits[targetIndex];
+			slot = &turnOrder->partyUnits[targetIndex];
 			unitId = *slot;
 			if (unitId != 254)
 			{
 				if (action->targetMode != 4 || unitId == actorId)
 				{
-					unit_ids[candidate_count] = unitId;
-					order_positions[candidate_count] = 0x100;
-					order_positions[candidate_count] |= targetIndex;
-					candidate_count++;
+					unitIds[candidateCount] = unitId;
+					orderPositions[candidateCount] = 0x100;
+					orderPositions[candidateCount] |= targetIndex;
+					candidateCount++;
 				}
 			}
 			targetIndex++;
@@ -5747,17 +5747,17 @@ s32 BattleTarget_SelectForAction(s32 actorId, struct BattleAct *action)
 
 	scan_mirrored_order:
 		targetIndex = 0;
-		while (turn_order->enemyIds[targetIndex] != 255)
+		while (turnOrder->enemyIds[targetIndex] != 255)
 		{
-			unitId = turn_order->enemyIds[targetIndex];
+			unitId = turnOrder->enemyIds[targetIndex];
 			if (unitId != 254)
 			{
 				if (action->targetMode != 4 || unitId == actorId)
 				{
-					unit_ids[candidate_count] = unitId;
-					order_positions[candidate_count] = 0x180;
-					order_positions[candidate_count] |= targetIndex;
-					candidate_count++;
+					unitIds[candidateCount] = unitId;
+					orderPositions[candidateCount] = 0x180;
+					orderPositions[candidateCount] |= targetIndex;
+					candidateCount++;
 				}
 			}
 			targetIndex++;
@@ -5766,17 +5766,17 @@ s32 BattleTarget_SelectForAction(s32 actorId, struct BattleAct *action)
 
 scan_complete:
 
-	if (candidate_count == 0)
+	if (candidateCount == 0)
 		return -2;
 
-	for (targetIndex = 0; targetIndex < candidate_count; targetIndex++)
+	for (targetIndex = 0; targetIndex < candidateCount; targetIndex++)
 	{
-		unit = UnitGetFar(unit_ids[targetIndex]);
+		unit = UnitGetFar(unitIds[targetIndex]);
 		CHECK_EFFECT_TARGET(unit, action, applies, damageClass);
 		if (applies != 0)
 		{
-			unit_ids[targetCount] = unit_ids[targetIndex];
-			target_positions[targetCount] = order_positions[targetIndex];
+			unitIds[targetCount] = unitIds[targetIndex];
+			targetPositions[targetCount] = orderPositions[targetIndex];
 			targetCount++;
 		}
 	}
@@ -5793,30 +5793,30 @@ scan_complete:
 		selected = -1;
 		for (targetIndex = 0; targetIndex < targetCount; targetIndex++)
 		{
-			for (inner_index = targetIndex; inner_index < targetCount - 1; inner_index++)
+			for (innerIndex = targetIndex; innerIndex < targetCount - 1; innerIndex++)
 			{
-				this_unit = UnitGetFar(unit_ids[inner_index]);
-				next_unit = UnitGetFar(unit_ids[inner_index + 1]);
+				thisUnit = UnitGetFar(unitIds[innerIndex]);
+				nextUnit = UnitGetFar(unitIds[innerIndex + 1]);
 				if (((struct EnemyDefinition *)Owner_GetRecordFar(UnitGetFar(actorId)->classId))
 						->targetStrategy
 					== 0)
 				{
-					value = this_unit->hp;
-					next_value = next_unit->hp;
+					value = thisUnit->hp;
+					nextValue = nextUnit->hp;
 				}
 				else
 				{
-					value = this_unit->maxHp;
-					next_value = next_unit->maxHp;
+					value = thisUnit->maxHp;
+					nextValue = nextUnit->maxHp;
 				}
-				if (value < next_value)
+				if (value < nextValue)
 				{
-					temp = unit_ids[inner_index];
-					unit_ids[inner_index] = unit_ids[inner_index + 1];
-					unit_ids[inner_index + 1] = temp;
-					temp = target_positions[inner_index];
-					target_positions[inner_index] = target_positions[inner_index + 1];
-					target_positions[inner_index + 1] = temp;
+					temp = unitIds[innerIndex];
+					unitIds[innerIndex] = unitIds[innerIndex + 1];
+					unitIds[innerIndex + 1] = temp;
+					temp = targetPositions[innerIndex];
+					targetPositions[innerIndex] = targetPositions[innerIndex + 1];
+					targetPositions[innerIndex + 1] = temp;
 				}
 			}
 		}
@@ -5855,9 +5855,9 @@ scan_complete:
 		}
 
 		if (selected >= 0)
-			return target_positions[selected];
+			return targetPositions[selected];
 	}
-	return target_positions[(Random16() * targetCount) >> 16];
+	return targetPositions[(Random16() * targetCount) >> 16];
 }
 
 //--------------------------------------------------------------------------
@@ -7366,20 +7366,20 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *req, s32 retry)
 	u32							 selection;
 	struct BattleAutomaticState *memo;
 	struct EnemyDefinition		*enemy;
-	s32							 item_ok;
+	s32							 itemOk;
 	s32							 tries;
-	s32							 keep_going;
+	s32							 keepGoing;
 	s8							*strategy;
-	u8							*item_mask;
+	u8							*itemMask;
 	s16							 cmd;
 	s32							 target;
 	s32							 target2;
 	s32							 side;
 	s32							 side2;
 	struct ItemDefinition		*item;
-	s32							 use_item;
+	s32							 useItem;
 	s8							 mode;
-	struct BattleAct				*item_act;
+	struct BattleAct				*itemAct;
 	struct BattleAct				*act;
 	struct BattleUnit				*unit;
 	s32							 abilityId;
@@ -7415,7 +7415,7 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *req, s32 retry)
 	}
 
 	unit = UnitGetFar(req->unitId);
-	keep_going = item_ok = 1;
+	keepGoing = itemOk = 1;
 	tries = 0;
 	selection = -1U;
 	if (unit->classIndex != 0) // 仲間は選ばない
@@ -7426,7 +7426,7 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *req, s32 retry)
 	enemy = Owner_GetRecordFar(unit->classId);
 	memo = (struct BattleAutomaticState *)&unit->rewards;
 	strategy = &enemy->actionStrategy;
-	item_mask = &enemy->itemActions;
+	itemMask = &enemy->itemActions;
 
 	// 行動表の番号を選ぶ
 select_again:
@@ -7464,15 +7464,15 @@ select_again:
 	}
 
 	// アイテムを使う番号なら、持っている道具を確かめる
-	use_item = (*item_mask >> selection) & 1;
-	use_item &= item_ok;
+	useItem = (*itemMask >> selection) & 1;
+	useItem &= itemOk;
 	abilityId = enemy->actions[selection];
 	req->command = CMD_ABILITY;
-	if (use_item != 0 && retry != 0)
+	if (useItem != 0 && retry != 0)
 	{
 		if (!(0x1ff & unit->inventory[0]))
 		{
-			use_item = 0;
+			useItem = 0;
 			if (enemy->targetStrategy == 0)
 			{
 				req->command = CMD_ITEM;
@@ -7480,15 +7480,15 @@ select_again:
 				return;
 			}
 		}
-		if (use_item != 0)
+		if (useItem != 0)
 		{
 			item = Item_GetDirectFar(unit->inventory[0]);
 			if (item->useType == 1)
 			{
-				item_act = BattleActGet(item->actionId);
+				itemAct = BattleActGet(item->actionId);
 				abilityId = item->actionId;
 				req->command = CMD_ITEM;
-				targetFlag = item_act->targetFlag;
+				targetFlag = itemAct->targetFlag;
 				req->parameter = 0;
 				switch (targetFlag)
 				{
@@ -7496,20 +7496,20 @@ select_again:
 				case 2:
 					break;
 				default:
-					use_item = 0;
+					useItem = 0;
 					break;
 				}
 			}
 			else
 			{
-				use_item = 0;
+				useItem = 0;
 			}
 		}
-		if (use_item == 0)
-			item_ok = 0;
+		if (useItem == 0)
+			itemOk = 0;
 	}
 
-	if (keep_going != 0)
+	if (keepGoing != 0)
 	{
 		// ぼうぎょ・にげるのわざは、自分を対象にする
 		act = BattleActGet(abilityId);
@@ -7584,7 +7584,7 @@ select_again:
 			if (target != -1)
 			{
 				req->target = target;
-				keep_going = 0;
+				keepGoing = 0;
 			}
 			break;
 		case 1:
@@ -7599,7 +7599,7 @@ select_again:
 			if (target2 != -1)
 			{
 				req->target = target2;
-				keep_going = 0;
+				keepGoing = 0;
 			}
 			break;
 		case 3:
@@ -7608,21 +7608,21 @@ select_again:
 		default:
 			target2 = Battle_FindTaggedSlotByValue(req->unitId);
 			req->target = target2;
-			keep_going = 0;
+			keepGoing = 0;
 			break;
 		}
 	}
 	if (retry == 0)
-		keep_going = 0;
+		keepGoing = 0;
 next_candidate:
 	// 18 回選べなければ、ぼうぎょ
-	if (keep_going != 0 && tries > 16)
+	if (keepGoing != 0 && tries > 16)
 	{
 		req->command = CMD_DEFEND;
-		keep_going = 0;
+		keepGoing = 0;
 	}
 	tries++;
-	if (keep_going != 0)
+	if (keepGoing != 0)
 		goto select_again;
 done:
 	return;
@@ -8098,20 +8098,20 @@ u32 BattleParty_IsUnitListed(u32 id)
 
 s32 BattlePlacement_CountValidEntries(u32 unitId, u8 *counts)
 {
-	u16						  unit_ids[8];
+	u16						  unitIds[8];
 	struct DjinnRecoveryList *list;
 	s32						  total;
 	s32						  count;
 	s32						  i;
 	s32						  j;
-	s32						  side_mask;
+	s32						  sideMask;
 	s32						  side;
 
 	count = 0;
-	side_mask = BATTLE_SIDE_PARTY;
+	sideMask = BATTLE_SIDE_PARTY;
 	if (unitId > 7)
-		side_mask = BATTLE_SIDE_ENEMIES;
-	total = BattleParty_ListActorIds(side_mask, unit_ids);
+		sideMask = BATTLE_SIDE_ENEMIES;
+	total = BattleParty_ListActorIds(sideMask, unitIds);
 	side = 0;
 	if (unitId > 7)
 		side = 1;
@@ -8127,7 +8127,7 @@ s32 BattlePlacement_CountValidEntries(u32 unitId, u8 *counts)
 			if (list->entries[i].turns == -1)
 			{
 				for (j = 0; j < total; j++)
-					if (unit_ids[j] == list->entries[i].unitId)
+					if (unitIds[j] == list->entries[i].unitId)
 						break;
 				if (j != total)
 				{
@@ -8173,10 +8173,10 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BattlePlan *p
 	{
 		struct BattleAct *act = BattleActGet(no);
 		s32			   mode = act->targetMode;
-		s32			   dead_ok = 0;
+		s32			   deadOk = 0;
 		s32			   cnt;
 		s32			   partyCount;
-		s32			   enemy_count;
+		s32			   enemyCount;
 		s32			   center;
 		s32			   range;
 		s32			   pos;
@@ -8187,7 +8187,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BattlePlan *p
 		case 5: // ふっき
 		case 56:
 		case 57:
-			dead_ok = 1;
+			deadOk = 1;
 			break;
 		}
 		switch (mode)
@@ -8212,7 +8212,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BattlePlan *p
 			partyCount = pos;
 			for (pos = 0; work->enemyIds[pos] != BATTLE_UNIT_LIST_END; pos++)
 				;
-			enemy_count = pos;
+			enemyCount = pos;
 			center = req->target & 15;
 			range = req->range;
 			{
@@ -8225,12 +8225,12 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BattlePlan *p
 						continue;
 					if (req->target & 128) // 敵の側
 					{
-						if (pos >= enemy_count)
+						if (pos >= enemyCount)
 							continue;
 						id = work->enemyIds[pos];
 						if (id == BATTLE_UNIT_REMOVED)
 							continue;
-						if (!dead_ok && UnitGetFar(id)->hp == 0)
+						if (!deadOk && UnitGetFar(id)->hp == 0)
 							continue;
 						plan->targetAdj[cnt] = 1;
 						plan->targetDist[cnt] = pos - center;
@@ -8244,7 +8244,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *req, struct BattlePlan *p
 						id = work->partyUnits[pos];
 						if (id == BATTLE_UNIT_REMOVED)
 							continue;
-						if (!dead_ok && UnitGetFar(id)->hp == 0)
+						if (!deadOk && UnitGetFar(id)->hp == 0)
 							continue;
 						plan->targetAdj[cnt] = 1;
 						plan->targetDist[cnt] = pos - center;
@@ -9020,47 +9020,47 @@ s32 BattleUnit_TickAgilityModifier(s32 id)
 s32 BattlePlacement_UpdateTimedEntries(void)
 {
 	struct DjinnRecoveryList  *list;
-	struct DjinnRecoveryEntry *timed_entry;
-	struct DjinnRecoveryEntry *expired_entry;
+	struct DjinnRecoveryEntry *timedEntry;
+	struct DjinnRecoveryEntry *expiredEntry;
 	s32						   index;
 	s32						   removed;
-	s32						   initial_count;
+	s32						   initialCount;
 
 	list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar(0))->list;
-	initial_count = list->count;
+	initialCount = list->count;
 	index = 0;
 	removed = 0;
-	if (index < initial_count)
+	if (index < initialCount)
 	{
-		timed_entry = list->entries;
+		timedEntry = list->entries;
 		do
 		{
-			if (timed_entry->turns > 0 && UnitGetFar(timed_entry->unitId)->hp != 0)
+			if (timedEntry->turns > 0 && UnitGetFar(timedEntry->unitId)->hp != 0)
 			{
-				timed_entry->turns--;
+				timedEntry->turns--;
 			}
 			index++;
-			timed_entry++;
+			timedEntry++;
 		} while (index < list->count);
 	}
 	index = 0;
 	if (index < list->count)
 	{
-		expired_entry = list->entries;
+		expiredEntry = list->entries;
 		do
 		{
-			if (expired_entry->turns == 0)
+			if (expiredEntry->turns == 0)
 			{
-				u8 id = expired_entry->unitId;
+				u8 id = expiredEntry->unitId;
 
-				Djinn_ActivateFar(id, expired_entry->element, expired_entry->index);
-				Trade_RemoveOfferFar(id, expired_entry->element, expired_entry->index);
+				Djinn_ActivateFar(id, expiredEntry->element, expiredEntry->index);
+				Trade_RemoveOfferFar(id, expiredEntry->element, expiredEntry->index);
 				UnitCalcFar(id);
 				removed = 1;
 			}
 			else
 			{
-				expired_entry++;
+				expiredEntry++;
 				index++;
 			}
 		} while (index < list->count);
@@ -9098,8 +9098,8 @@ s32 Battle_ProcessRoundEnd(void)
 	s32						   count;
 	s32						   i;
 	struct DjinnRecoveryList  *list;
-	struct DjinnRecoveryEntry *timed_entry;
-	struct DjinnRecoveryEntry *expired_entry;
+	struct DjinnRecoveryEntry *timedEntry;
+	struct DjinnRecoveryEntry *expiredEntry;
 
 	work = gBattleWork;
 	sides = (work->twoSided != 0) + 1;
@@ -9109,27 +9109,27 @@ s32 Battle_ProcessRoundEnd(void)
 		i = 0;
 		if (i < list->count)
 		{
-			timed_entry = list->entries;
+			timedEntry = list->entries;
 			do
 			{
-				if (timed_entry->turns > 0 && BattleObjGet(timed_entry->unitId) != 0
-					&& UnitGetFar(timed_entry->unitId)->hp != 0)
+				if (timedEntry->turns > 0 && BattleObjGet(timedEntry->unitId) != 0
+					&& UnitGetFar(timedEntry->unitId)->hp != 0)
 				{
-					timed_entry->turns--;
+					timedEntry->turns--;
 				}
 				i++;
-				timed_entry++;
+				timedEntry++;
 			} while (i < list->count);
 		}
 		i = 0;
 		if (i < list->count)
 		{
-			expired_entry = list->entries;
+			expiredEntry = list->entries;
 			do
 			{
-				if (expired_entry->turns == 0)
+				if (expiredEntry->turns == 0)
 				{
-					u8	id = expired_entry->unitId;
+					u8	id = expiredEntry->unitId;
 					s32 element;
 
 					if (BattleObjGet(id) != 0)
@@ -9138,7 +9138,7 @@ s32 Battle_ProcessRoundEnd(void)
 						BattleEventRuntime_SchedulePhase(30);
 						BattleEvPush(BATTLE_EVENT_UNIT, id);
 						BattleEvPush(
-							BATTLE_EVENT_ACT, expired_entry->element * 20 + expired_entry->index + 300);
+							BATTLE_EVENT_ACT, expiredEntry->element * 20 + expiredEntry->index + 300);
 						BattleEvPush(BATTLE_EVENT_SE, 175);
 						BattleEvPush(BATTLE_EVENT_REDRAW, 0);
 						MESSAGE_PUSH(MsgDjinnSet);
@@ -9147,9 +9147,9 @@ s32 Battle_ProcessRoundEnd(void)
 						ObjectDispatch_ApplyArgumentToChildrenFar(BattleObjGet(id)->object, 3);
 						ObjectDispatch_ApplyValueToChildrenFar(
 							(struct DispatchObject *)BattleObjGet(id)->object, 32);
-						element = expired_entry->element;
-						Djinn_ActivateFar(id, element, expired_entry->index);
-						Trade_RemoveOfferFar(id, expired_entry->element, expired_entry->index);
+						element = expiredEntry->element;
+						Djinn_ActivateFar(id, element, expiredEntry->index);
+						Trade_RemoveOfferFar(id, expiredEntry->element, expiredEntry->index);
 						UnitCalcFar(id);
 						BattleFx_PlayUnitElementEffect(id, element, 3, 0);
 						BattleEventRuntime_WaitForReady();
@@ -9157,7 +9157,7 @@ s32 Battle_ProcessRoundEnd(void)
 				}
 				else
 				{
-					expired_entry++;
+					expiredEntry++;
 					i++;
 				}
 			} while (i < list->count);
@@ -9165,7 +9165,7 @@ s32 Battle_ProcessRoundEnd(void)
 	}
 	BattlePresentation_ConfigurePaletteFade(2, gBattleWork->background, 0);
 	{
-		s32					   *group_list;
+		s32					   *groupList;
 		struct BattleGroupOrder order = gBattleParty_RoundEndGroupOrder;
 		u16						ids[14];
 		s32						group;
@@ -9176,14 +9176,14 @@ s32 Battle_ProcessRoundEnd(void)
 			order.group[0] = 2;
 			order.group[1] = 1;
 		}
-		group_list = order.group;
+		groupList = order.group;
 		for (group = 0; group <= 1; group++)
 		{
-			count = BattleParty_ListActorIds(group_list[group], ids);
+			count = BattleParty_ListActorIds(groupList[group], ids);
 			for (j = 0; j < count; j++)
 			{
-				s32				hp_amount;
-				s32				pp_amount;
+				s32				hpAmount;
+				s32				ppAmount;
 				s32				id = ids[j];
 				struct BattleUnit *unit = UnitGetFar(id);
 
@@ -9195,14 +9195,14 @@ s32 Battle_ProcessRoundEnd(void)
 				{
 					if (unit->hpRegen != 0 && unit->hp != unit->maxHp)
 					{
-						hp_amount = unit->hpRegen;
-						if (unit->hp + hp_amount > unit->maxHp)
+						hpAmount = unit->hpRegen;
+						if (unit->hp + hpAmount > unit->maxHp)
 						{
-							hp_amount = unit->maxHp - unit->hp;
+							hpAmount = unit->maxHp - unit->hp;
 						}
-						Owner_AdjustFirstValueFar(id, hp_amount);
+						Owner_AdjustFirstValueFar(id, hpAmount);
 						UiWork_PushValueSlotFar(id, 1);
-						UiWork_PushValueSlotFar(hp_amount, 5);
+						UiWork_PushValueSlotFar(hpAmount, 5);
 						if (unit->hp == unit->maxHp)
 						{
 							UiText_ShowMessageAndWaitCoreFar(MsgHpFull);
@@ -9216,14 +9216,14 @@ s32 Battle_ProcessRoundEnd(void)
 					}
 					if (unit->ppRegen != 0 && unit->pp != unit->maxPp)
 					{
-						pp_amount = unit->ppRegen;
-						if (unit->pp + pp_amount > unit->maxPp)
+						ppAmount = unit->ppRegen;
+						if (unit->pp + ppAmount > unit->maxPp)
 						{
-							pp_amount = unit->maxPp - unit->pp;
+							ppAmount = unit->maxPp - unit->pp;
 						}
-						UnitPpAddFar(id, pp_amount);
+						UnitPpAddFar(id, ppAmount);
 						UiWork_PushValueSlotFar(id, 1);
-						UiWork_PushValueSlotFar(pp_amount, 5);
+						UiWork_PushValueSlotFar(ppAmount, 5);
 						if (unit->pp == unit->maxPp)
 						{
 							UiText_ShowMessageAndWaitCoreFar(MsgPpFull);
@@ -9331,14 +9331,14 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
 {
 	s32						  id;
 	struct BattleUnit			 *unit;
-	s32						  both_sides;
+	s32						  bothSides;
 	s32						  counts[4];
 	struct DjinnRecoveryList *list;
 	s32						  best;
 	s32						  order;
 
 	id = plan->aid;
-	both_sides = 0;
+	bothSides = 0;
 	unit = UnitGetFar(id);
 	list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar((id < 0 || id > 7)))->list;
 	for (best = 0; best < list->count; best++)
@@ -9351,7 +9351,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
 	if (BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, 0) != 0
 		&& BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, 0) != 0)
 	{
-		both_sides = 1;
+		bothSides = 1;
 	}
 	{
 		s32						  i;
@@ -9401,7 +9401,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
 			}
 		}
 	}
-	if (both_sides != 0)
+	if (bothSides != 0)
 	{
 		struct BattleUnit *before;
 		s32				most;
@@ -9446,7 +9446,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
 		}
 		MemFree(before);
 	}
-	if (both_sides != 0)
+	if (bothSides != 0)
 	{
 		s8 *poison;
 		BattleEventRuntime_Reset();
@@ -9757,7 +9757,7 @@ struct DisplayRegisters
 	u16 greenSwap;
 };
 
-void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
+void BattlePres_RunEntryTransition(s32 enemyCount, s32 kind)
 {
 	volatile u32				  fill;
 	struct BattlePresentationWork list;
@@ -9839,7 +9839,7 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 			WaitFrames(20);
 			QueueIoWriteDelay10(0x04000008, 2);
 			QueueIoWriteDelay6(0x04000008, 0);
-			BattleIntro_AnnounceEncounter(enemy_count);
+			BattleIntro_AnnounceEncounter(enemyCount);
 			Scheduler_RemoveCallback(BattlePres_AdvanceTransitionTimer);
 			Scheduler_RemoveCallback(BattlePres_DrawTransitionRows);
 			gBgScroll[0].y = start;
@@ -9895,7 +9895,7 @@ void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 		}
 		for (i = 0; i != n; i++)
 			BattlePres_SetActorRecordMode(ids[i], 0);
-		BattleIntro_AnnounceEncounter(enemy_count);
+		BattleIntro_AnnounceEncounter(enemyCount);
 		gBgScroll[0].y = 0;
 		WaitFrames(1);
 		Runtime_SetIrqHandler(2, 0, 0);
@@ -10143,9 +10143,9 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
 	struct BattleCamera *scene = gCameraWork;
 	s32					*pos = scene->pos;
 	s32					 scale = (mode << 16) / 100;
-	s32					 render_bounds[3];
-	s32					 measured_bounds[3];
-	s32					 source_bounds[3];
+	s32					 renderBounds[3];
+	s32					 measuredBounds[3];
+	s32					 sourceBounds[3];
 	s32					 alpha;
 	s32					 half;
 	s32					 width;
@@ -10154,10 +10154,10 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
 	pos[0] = x;
 	pos[1] = depth;
 	pos[2] = y;
-	source_bounds[0] = 0;
+	sourceBounds[0] = 0;
 	alpha = 0xc000;
-	source_bounds[1] = 0;
-	source_bounds[2] = 0;
+	sourceBounds[1] = 0;
+	sourceBounds[2] = 0;
 
 	result = Iwram_RatioMulQ14(span, alpha);
 	Camera_StoreSceneParameters(span, result, span * 2);
@@ -10165,18 +10165,18 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
 	SceneTransform_ApplyPosition(pos);
 	SceneTransform_ApplyYaw((s16)scene->yaw);
 	SceneTransform_ApplyPitch((s16)scene->pitch);
-	render_bounds[0] = 0;
-	render_bounds[1] = 0;
-	render_bounds[2] = scene->distance;
-	Iwram_TransformVector(render_bounds, (s32 *)scene);
+	renderBounds[0] = 0;
+	renderBounds[1] = 0;
+	renderBounds[2] = scene->distance;
+	Iwram_TransformVector(renderBounds, (s32 *)scene);
 	gProjection.centerX = 120;
 	gProjection.centerY = 120;
 	Render_ResetTransformState();
 	Graphics_PrepareTransferInIwramWork(scene->eye, pos);
-	Render_ProjectPoint(source_bounds, measured_bounds);
+	Render_ProjectPoint(sourceBounds, measuredBounds);
 
-	BattleCamera_SetRange(0x780000, 0x780000, (120 - measured_bounds[0]) << 8,
-		(120 - measured_bounds[1]) << 8, scale);
+	BattleCamera_SetRange(0x780000, 0x780000, (120 - measuredBounds[0]) << 8,
+		(120 - measuredBounds[1]) << 8, scale);
 	half = scale * 0xff;
 	width = half * 2;
 	result = Iwram_RatioMulQ14(width, alpha);
@@ -10188,9 +10188,9 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom)
 	struct BattleCamera *scene = gCameraWork;
 	s32					*pos = scene->pos;
 	s32					 scale = (zoom << 16) / 100;
-	s32					 render_bounds[3];
-	s32					 measured_bounds[3];
-	s32					 source_bounds[3];
+	s32					 renderBounds[3];
+	s32					 measuredBounds[3];
+	s32					 sourceBounds[3];
 	s32					 span = 0x01fe0000;
 	s32					 alpha;
 	s32					 half;
@@ -10200,10 +10200,10 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom)
 	pos[0] = x;
 	pos[1] = depth;
 	pos[2] = y;
-	source_bounds[0] = 0;
+	sourceBounds[0] = 0;
 	alpha = 0xc000;
-	source_bounds[1] = 0;
-	source_bounds[2] = 0;
+	sourceBounds[1] = 0;
+	sourceBounds[2] = 0;
 
 	result = Iwram_RatioMulQ14(span, alpha);
 	Camera_StoreSceneParameters(span, result, span * 2);
@@ -10211,18 +10211,18 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom)
 	SceneTransform_ApplyPosition(pos);
 	SceneTransform_ApplyYaw((s16)scene->yaw);
 	SceneTransform_ApplyPitch((s16)scene->pitch);
-	render_bounds[0] = 0;
-	render_bounds[1] = 0;
-	render_bounds[2] = span;
-	Iwram_TransformVector(render_bounds, (s32 *)scene);
+	renderBounds[0] = 0;
+	renderBounds[1] = 0;
+	renderBounds[2] = span;
+	Iwram_TransformVector(renderBounds, (s32 *)scene);
 	gProjection.centerX = 120;
 	gProjection.centerY = 120;
 	Render_ResetTransformState();
 	Graphics_PrepareTransferInIwramWork(scene->eye, pos);
-	Render_ProjectPoint(source_bounds, measured_bounds);
+	Render_ProjectPoint(sourceBounds, measuredBounds);
 
-	BattleCamera_SetRange(0x780000, 0x780000, (120 - measured_bounds[0]) << 8,
-		(120 - measured_bounds[1]) << 8, scale);
+	BattleCamera_SetRange(0x780000, 0x780000, (120 - measuredBounds[0]) << 8,
+		(120 - measuredBounds[1]) << 8, scale);
 	half = scale * 0xff;
 	width = half * 2;
 	result = Iwram_RatioMulQ14(width, alpha);
@@ -10438,7 +10438,7 @@ void Graphics_AdvancePaletteCycle(void)
 
 void BattlePres_SetActorModes(u16 *actors, s32 mode)
 {
-	s16				active_actors[14];
+	s16				activeActors[14];
 	struct BattleWork *battle = gBattleWork;
 	u32				count;
 	u32				i;
@@ -10458,9 +10458,9 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
 		REG_BLDY = 0;
 		Io_Write16(16, &REG_BLDALPHA);
 
-		count = BattleParty_ListActorIds(3, active_actors);
+		count = BattleParty_ListActorIds(3, activeActors);
 		for (i = 0; i < count; i++)
-			BattlePres_SetActorRecordMode(active_actors[i], mode & 1);
+			BattlePres_SetActorRecordMode(activeActors[i], mode & 1);
 
 		if (actors != 0)
 		{
@@ -10511,8 +10511,8 @@ s32 BattleFx_UpdateStarField(void)
 	s32				  j;
 	s32				  frame;
 	u32				  size;
-	s32				  ring_x;
-	s32				  ring_y;
+	s32				  ringX;
+	s32				  ringY;
 	s32				  phase;
 	void			 *dest;
 	s32				  i;
@@ -10602,13 +10602,13 @@ s32 BattleFx_UpdateStarField(void)
 	{
 		ring->x += ring->velX;
 		ring->y += ring->velY;
-		ring_x = ring->x >> 10;
-		ring_y = ring->y >> 10;
+		ringX = ring->x >> 10;
+		ringY = ring->y >> 10;
 		phase = 3 - ring->age / 8;
 		if (phase >= 0)
 		{
 			ring->age++;
-			draw(dest, (u8 *)work + gBattleFx_RingFrameOffsets[phase], ring_x + 48, ring_y + 48, 32,
+			draw(dest, (u8 *)work + gBattleFx_RingFrameOffsets[phase], ringX + 48, ringY + 48, 32,
 				32);
 		}
 	}
@@ -10946,34 +10946,34 @@ struct BattleBaseStats
 	struct BattleElementStats element[4];
 };
 
-s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
+s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin)
 {
-	s32						   match_count = 0;
+	s32						   matchCount = 0;
 	struct FormationCandidate *pool = Runtime_BumpAllocateAlternatePool(128);
 	u16						   party[8];
-	s32						   level_total = 0;
-	s32						   unit_count = BattleParty_PrepareActiveOwners(party);
+	s32						   levelTotal = 0;
+	s32						   unitCount = BattleParty_PrepareActiveOwners(party);
 	s32						   i;
 	s32						   j;
 	s32						   chance;
 	s32						   result;
 
-	if (unit_count > 0)
+	if (unitCount > 0)
 	{
 		u16 *p = party;
 
-		i = unit_count;
+		i = unitCount;
 		do
 		{
 			u8 level = UnitGetFar(*p)->level;
 
 			i--;
 			p++;
-			level_total += level;
+			levelTotal += level;
 		} while (i != 0);
 	}
 
-	chance = level_total / unit_count;
+	chance = levelTotal / unitCount;
 	chance += (s8)GameFlag_GetByteFar(1016);
 	if (chance <= 0)
 		chance = 1;
@@ -10995,40 +10995,40 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 
 		if (score >= 0 && score <= chance + 3)
 		{
-			s32 min_index = -1;
-			s32 min_value;
+			s32 minIndex = -1;
+			s32 minValue;
 
-			for (j = 0, min_value = 999; j <= 31; j++)
+			for (j = 0, minValue = 999; j <= 31; j++)
 			{
-				if (pool[j].score < min_value)
+				if (pool[j].score < minValue)
 				{
-					min_value = pool[j].score;
-					min_index = j;
+					minValue = pool[j].score;
+					minIndex = j;
 				}
 			}
 
-			if (min_index >= 0)
+			if (minIndex >= 0)
 			{
-				pool[min_index].score = score;
-				pool[min_index].recordId = i;
-				match_count++;
+				pool[minIndex].score = score;
+				pool[minIndex].recordId = i;
+				matchCount++;
 			}
 		}
 	}
 
-	if (match_count > 32)
-		match_count = 32;
+	if (matchCount > 32)
+		matchCount = 32;
 
-	if (match_count != 0)
+	if (matchCount != 0)
 	{
-		struct FormationCandidate *chosen = &pool[(match_count * Random16()) >> 16];
+		struct FormationCandidate *chosen = &pool[(matchCount * Random16()) >> 16];
 
 		result = chosen->recordId;
-		*out_margin = chance - chosen->score;
+		*outMargin = chance - chosen->score;
 	}
 	else
 	{
-		*out_margin = match_count;
+		*outMargin = matchCount;
 		result = 1;
 	}
 
@@ -11169,7 +11169,7 @@ s32 EnemyCountRelease(s32 actorId)
 	struct BattleUnit *actor;
 	s32				count = state->summonCount;
 	s32				index;
-	s32				name_length;
+	s32				nameLength;
 	s32				bit;
 	s32				classId;
 
@@ -11186,32 +11186,32 @@ s32 EnemyCountRelease(s32 actorId)
 	if (index == count || state->summonMasks[index] == 0)
 		return;
 
-	for (name_length = 0; name_length <= 13; name_length++)
+	for (nameLength = 0; nameLength <= 13; nameLength++)
 	{
-		if (actor->name[name_length] == 0)
+		if (actor->name[nameLength] == 0)
 			break;
 	}
 
 	bit = 32;
-	if (name_length > 0)
-		bit = actor->name[name_length - 1] - LIST_MARKER_CHAR;
+	if (nameLength > 0)
+		bit = actor->name[nameLength - 1] - LIST_MARKER_CHAR;
 	state->summonMasks[index] &= ~(1 << bit);
 }
 
 s32 EnemyCountClear(s32 classId)
 {
 	struct BattleUnit *summon;
-	s32				object_index;
+	s32				objectIndex;
 	s32				slot;
-	s32				next_slot;
+	s32				nextSlot;
 	u8				occupied;
 	u8				marker;
 
-	object_index = 0;
+	objectIndex = 0;
 	marker = LIST_MARKER_CHAR;
-	for (; object_index <= 5; object_index++)
+	for (; objectIndex <= 5; objectIndex++)
 	{
-		summon = UnitGetFar(object_index + 0x80);
+		summon = UnitGetFar(objectIndex + 0x80);
 		occupied = summon->side;
 		if (occupied != 1)
 			continue;
@@ -11231,9 +11231,9 @@ s32 EnemyCountClear(s32 classId)
 		occupied = summon->name[slot];
 		if (occupied != 0)
 			goto scan_slots;
-		next_slot = slot + 1;
+		nextSlot = slot + 1;
 		summon->name[slot] = marker;
-		summon->name[next_slot] = occupied;
+		summon->name[nextSlot] = occupied;
 		return;
 	}
 }
@@ -11242,10 +11242,10 @@ s32 BattleGroupRandom(s32 recordId)
 {
 	s32							  choices[5];
 	struct BattleFormationRecord *record;
-	s32							 *choices_base;
-	s32							 *choice_cursor;
-	u8							 *maximum_count;
-	u8							 *member_id;
+	s32							 *choicesBase;
+	s32							 *choiceCursor;
+	u8							 *maximumCount;
+	u8							 *memberId;
 	u32							  count;
 	s32							  remaining;
 
@@ -11253,20 +11253,20 @@ s32 BattleGroupRandom(s32 recordId)
 	if (recordId < 0 || recordId >= 380)
 		recordId = 1;
 
-	choices_base = choices;
+	choicesBase = choices;
 	record = &gBattleFormation_Records[recordId];
-	member_id = record->memberIds;
-	maximum_count = record->maximumCounts;
-	choice_cursor = choices_base;
+	memberId = record->memberIds;
+	maximumCount = record->maximumCounts;
+	choiceCursor = choicesBase;
 	remaining = 4;
 	do
 	{
-		if (*maximum_count++ != 0)
+		if (*maximumCount++ != 0)
 		{
-			*choice_cursor++ = *member_id + 8;
+			*choiceCursor++ = *memberId + 8;
 			count++;
 		}
-		member_id++;
+		memberId++;
 		remaining--;
 	} while (remaining >= 0);
 
@@ -11280,7 +11280,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId)
 	struct BattleFormationRecord *record;
 	s32							  count;
 	s32							  margin;
-	u16							  list_buffer[14];
+	u16							  listBuffer[14];
 	s32							  extra[5];
 	s32							  counts[5];
 	s32							  order[5];
@@ -11299,7 +11299,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId)
 	work = gBattleWork;
 	margin = 0;
 	work->summonCount = 0;
-	list = list_buffer;
+	list = listBuffer;
 	if (GameFlag_TestFar(0x173))
 		recordId = BattleFormation_SelectLevelMatchedCandidate(&margin);
 	if (recordId < 0 || recordId >= 380)
@@ -11594,7 +11594,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 earned)
 	s32						chance;
 	s32						slot;
 	s32						lowest;
-	s32						lowest_slot;
+	s32						lowestSlot;
 	s32						value;
 
 	unit = UnitGetFar(unitId);
@@ -11660,7 +11660,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 earned)
 		chance = 0;
 	if ((0x20000 >> chance) > (BattleRandomFar() & 0xffff))
 	{
-		lowest_slot = -1;
+		lowestSlot = -1;
 		lowest = 0x40000000;
 		for (i = 0; i <= 3; i++)
 		{
@@ -11668,11 +11668,11 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 earned)
 			if (value < lowest)
 			{
 				lowest = value;
-				lowest_slot = i;
+				lowestSlot = i;
 			}
 		}
 		if ((s32)Item_EncodeBankedId(rec->item) > lowest)
-			spoils->items[lowest_slot] = rec->item;
+			spoils->items[lowestSlot] = rec->item;
 	}
 	return 0;
 }
@@ -11690,7 +11690,7 @@ void Battle_AwardSpoils(void)
 	u32					 learned;
 	s32					 j;
 	s32					 best;
-	s32					 best_slot;
+	s32					 bestSlot;
 	s32					 slot;
 	u16					*found;
 	s32					 value;
@@ -11793,7 +11793,7 @@ void Battle_AwardSpoils(void)
 	found = &gOverflowItem;
 	for (;;)
 	{
-		best_slot = -1;
+		bestSlot = -1;
 		best = -1;
 		for (slot = 0; slot <= 3; slot++)
 		{
@@ -11803,21 +11803,21 @@ void Battle_AwardSpoils(void)
 				if (value >= best)
 				{
 					best = value;
-					best_slot = slot;
+					bestSlot = slot;
 				}
 			}
 		}
-		if (best_slot == -1)
+		if (bestSlot == -1)
 			break;
-		UiWork_PushValueSlotFar(spoils->items[best_slot], 2);
+		UiWork_PushValueSlotFar(spoils->items[bestSlot], 2);
 		UiText_ShowMessageAndWaitCoreFar(MsgItemGained);
 		BattlePresentation_WaitForAdvance();
-		if (PartyInventory_AddFar(spoils->items[best_slot]) == -1)
+		if (PartyInventory_AddFar(spoils->items[bestSlot]) == -1)
 		{
-			*found = spoils->items[best_slot];
+			*found = spoils->items[bestSlot];
 			break;
 		}
-		spoils->items[best_slot] = 0;
+		spoils->items[bestSlot] = 0;
 	}
 }
 

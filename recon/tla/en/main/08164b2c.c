@@ -14,7 +14,7 @@
 #include "types.h"
 #include "battle_work.h"
 
-void Func_08164b2c(s32 red_delta, s32 green_delta, s32 blue_delta)
+void Func_08164b2c(s32 redDelta, s32 greenDelta, s32 blueDelta)
 {
     u16 *color = (u16 *)0x050000c0;
     u16 *source = Ram_HeapSlots->battleWork->palette;
@@ -25,9 +25,9 @@ void Func_08164b2c(s32 red_delta, s32 green_delta, s32 blue_delta)
         s32 green = (*source >> 5) & 0x1f;
         s32 red = *source & 0x1f;
 
-        red += red_delta;
-        green += green_delta;
-        blue += blue_delta;
+        red += redDelta;
+        green += greenDelta;
+        blue += blueDelta;
         if (red > 31)
             red = 31;
         if (green > 31)

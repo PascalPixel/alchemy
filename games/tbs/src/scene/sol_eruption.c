@@ -178,12 +178,12 @@ static void Scene_SaturosTakesHostages(void)
 	void Event_PlayCue();
 
 	u8 *record;
-	s32 particle_work_ptr;
-	s32 event_work_ptr;
+	s32 particleWorkPtr;
+	s32 eventWorkPtr;
 	u8 *p7;
 
-	particle_work_ptr = (s32)gParticleWork;
-	p7 = *(u8 **)particle_work_ptr;
+	particleWorkPtr = (s32)gParticleWork;
+	p7 = *(u8 **)particleWorkPtr;
 	Engine_EventBegin();
 	*(s32 *)(((s32)p7 + 0x40c)) = 0;
 	Event_PlayCue(141);
@@ -199,10 +199,10 @@ static void Scene_SaturosTakesHostages(void)
 	Actor_SetPosition(ACTOR_FELIX, 0x1d70000, 0x1320000);
 	Actor_SetPosition(ACTOR_ALEX, 0x1df0000, 0x16a0000);
 	Engine_ActorSetSpritePriority(15, 1);
-	event_work_ptr = particle_work_ptr - 8;
+	eventWorkPtr = particleWorkPtr - 8;
 	Camera_MoveTo(0xe80000, -1, 0x9c0000, 0);
 	Engine_MapRedraw();
-	*(s32 *)((*(s32 *)event_work_ptr + 0x1c8)) = 8;
+	*(s32 *)((*(s32 *)eventWorkPtr + 0x1c8)) = 8;
 	Engine_EventOpenScreen();
 	Engine_EventWaitForScreen();
 	ColorBuffer_ApplyTarget(0x7fff, 0);
@@ -818,13 +818,13 @@ static void SceneState_UpdateRandomTimerLevel(void)
 static void Scene_RunExtendedEffectPresentation(void)
 {
 	struct QuakeWork   *quake;
-	struct FieldActor  *wise_one;
+	struct FieldActor  *wiseOne;
 	struct FieldActor  *center;
 	struct FieldActor  *leader;
 	struct FieldActor  *actor;
 	struct FieldActor  *garet;
-	struct FieldSprite *leader_sprite;
-	struct FieldSprite *garet_sprite;
+	struct FieldSprite *leaderSprite;
+	struct FieldSprite *garetSprite;
 	struct FieldActor  *star;
 	struct FieldSprite *sprite;
 	u8				   *buf;
@@ -833,7 +833,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 	s32					wait;
 
 	quake = (struct QuakeWork *)gParticleWork[0];
-	wise_one = Actor_Get(ACTOR_WISE_ONE);
+	wiseOne = Actor_Get(ACTOR_WISE_ONE);
 	Engine_TaskRemoveCallback(SceneState_UpdateRandomTimerLevel);
 	gEmberMask = 3;
 	Engine_EventWait(80);
@@ -875,12 +875,12 @@ static void Scene_RunExtendedEffectPresentation(void)
 
 	leader = Actor_Get(ACTOR_PARTY_LEADER);
 	garet = Actor_Get(GARET);
-	leader_sprite = leader->sprite;
-	garet_sprite = garet->sprite;
+	leaderSprite = leader->sprite;
+	garetSprite = garet->sprite;
 	for (cnt = 0; cnt < 20; cnt++)
 	{
-		leader_sprite->rotation += 0x100;
-		garet_sprite->rotation -= 0x100;
+		leaderSprite->rotation += 0x100;
+		garetSprite->rotation -= 0x100;
 		leader->x.fixed += 0x6000;
 		garet->x.fixed -= 0x6000;
 		Engine_TaskWait(1);
@@ -1177,7 +1177,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 	Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, 2);
 	for (cnt = 0; cnt < 40; cnt++)
 	{
-		FieldScene_RunStepByRuntimeBits((s32)wise_one);
+		FieldScene_RunStepByRuntimeBits((s32)wiseOne);
 		Engine_TaskWait(1);
 	}
 	FieldScheduler_AddCallback(FieldScene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
@@ -1266,15 +1266,15 @@ static void Scene_RunExtendedEffectPresentation(void)
 	FieldScene_RunVariantStep(1, 20, 0);
 	for (cnt = 0; cnt < 24; cnt++)
 	{
-		FieldScene_RunStepByRuntimeBits((s32)wise_one);
+		FieldScene_RunStepByRuntimeBits((s32)wiseOne);
 		Engine_TaskWait(1);
-		FieldScene_RunStepByRuntimeBits((s32)wise_one);
+		FieldScene_RunStepByRuntimeBits((s32)wiseOne);
 		Engine_TaskWait(1);
 		star->scaleX = 0x6666;
 		star->scaleY = 0x6666;
-		FieldScene_RunStepByRuntimeBits((s32)wise_one);
+		FieldScene_RunStepByRuntimeBits((s32)wiseOne);
 		Engine_TaskWait(1);
-		FieldScene_RunStepByRuntimeBits((s32)wise_one);
+		FieldScene_RunStepByRuntimeBits((s32)wiseOne);
 		Engine_TaskWait(1);
 		star->scaleX = 0x10000;
 		star->scaleY = 0x10000;
@@ -1349,7 +1349,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 	Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, 2);
 	for (cnt = 0; cnt < 40; cnt++)
 	{
-		FieldScene_RunStepByRuntimeBits((s32)wise_one);
+		FieldScene_RunStepByRuntimeBits((s32)wiseOne);
 		Engine_TaskWait(1);
 	}
 	FieldScheduler_AddCallback(FieldScene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
@@ -1388,7 +1388,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 	Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, 2);
 	for (cnt = 0; cnt < 40; cnt++)
 	{
-		FieldScene_RunStepByRuntimeBits((s32)wise_one);
+		FieldScene_RunStepByRuntimeBits((s32)wiseOne);
 		Engine_TaskWait(1);
 	}
 	FieldScheduler_AddCallback(FieldScene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
@@ -1444,7 +1444,7 @@ static void Scene_RunExtendedEffectPresentation(void)
 	Engine_EventWait(20);
 	for (cnt = 0; cnt < 40; cnt++)
 	{
-		FieldScene_RunStepByRuntimeBits((s32)wise_one);
+		FieldScene_RunStepByRuntimeBits((s32)wiseOne);
 		Engine_TaskWait(1);
 	}
 	FieldScheduler_AddCallback(FieldScene_RunActor15TwoStep, TASK_PRIORITY_SCENE);

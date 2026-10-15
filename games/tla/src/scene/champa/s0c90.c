@@ -12,10 +12,10 @@ void Battle_WaitMode0(s32 frames);
 
 void Func_02000c40(s32 x, s32 y, s32 z, s32 angle, s32 frames);
 
-void Func_02000c90(s32 firstId, s32 second_id)
+void Func_02000c90(s32 firstId, s32 secondId)
 {
     struct FieldActor *first = Object_GetById(firstId);
-    struct FieldActor *second = Object_GetById(second_id);
+    struct FieldActor *second = Object_GetById(secondId);
     s32 rise = 0x1c0000;
     s32 y;
 

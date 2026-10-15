@@ -43,9 +43,9 @@ void Palette_LightenBankHighlight(s32 bank)
 void Menu_DrawPageIndicator(
     s32 window,
     s32 itemCount,
-    s32 page_size,
-    s32 selected_page,
-    s32 right_edge
+    s32 pageSize,
+    s32 selectedPage,
+    s32 rightEdge
 )
 {
     s32 pageCount;
@@ -53,10 +53,10 @@ void Menu_DrawPageIndicator(
     s32 x;
     s32 tile;
 
-    x = right_edge;
+    x = rightEdge;
     tile = PAGE_LABEL_FIRST;
-    pageCount = itemCount / page_size;
-    if (itemCount % page_size != 0)
+    pageCount = itemCount / pageSize;
+    if (itemCount % pageSize != 0)
         pageCount++;
 
     x -= pageCount;
@@ -64,7 +64,7 @@ void Menu_DrawPageIndicator(
         UiWindow_SetTilemapEntryFar(window, PAGE_CAP_LEFT, x - 1, -1, 0);
 
         for (page = 0; page < pageCount; page++) {
-            if (page == selected_page)
+            if (page == selectedPage)
                 UiWindow_SetTilemapEntryFar(window, tile, x, -1, 2);
             else
                 UiWindow_SetTilemapEntryFar(window, tile, x, -1, 3);

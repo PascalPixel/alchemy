@@ -24,8 +24,8 @@ void Shop_RepairItem(s32 unitId, s32 slot)
 {
     struct ShopRuntime *shop = gMenuWork;
     struct BattleUnit *unit = UnitGetFar(unitId);
-    s32 item_id = unit->inventory[slot] & 0x1ff;
-    struct ItemDefinition *item = Item_Get(item_id);
+    s32 itemId = unit->inventory[slot] & 0x1ff;
+    struct ItemDefinition *item = Item_Get(itemId);
     s32 equipped = Inventory_FindEquippedFar(unitId, item->type);
     u32 price = Shop_RepairPrice(unit->inventory[slot]);
     s32 message;
@@ -34,17 +34,17 @@ void Shop_RepairItem(s32 unitId, s32 slot)
 
     kind = item->useType;
     if (kind != 2) {
-        UiWork_PushValueSlotFar(item_id, 2);
+        UiWork_PushValueSlotFar(itemId, 2);
         UiMessage_ShowAndRestoreState((s32)MsgCannotRepairKind);
         return;
     }
     if (!(unit->inventory[slot] & 0x400)) {
-        UiWork_PushValueSlotFar(item_id, 2);
+        UiWork_PushValueSlotFar(itemId, 2);
         UiMessage_ShowAndRestoreState((s32)MsgNotDamaged);
         return;
     }
     if ((unit->inventory[slot] & 0x200) && (kind & item->flags)) {
-        UiWork_PushValueSlotFar(item_id, 2);
+        UiWork_PushValueSlotFar(itemId, 2);
         UiMessage_ShowAndRestoreState((s32)MsgCursedWontComeOff);
         return;
     }
@@ -52,7 +52,7 @@ void Shop_RepairItem(s32 unitId, s32 slot)
         UiMessage_ShowAndRestoreState((s32)MsgNotEnoughMoney);
         return;
     }
-    UiWork_PushValueSlotFar(item_id, 2);
+    UiWork_PushValueSlotFar(itemId, 2);
     UiWork_PushValueSlotFar(price, 5);
     message = (s32)MsgShopRepairConfirm;
     UiMessage_ShowAndRestoreState(message);
@@ -63,7 +63,7 @@ void Shop_RepairItem(s32 unitId, s32 slot)
     saved = unit->inventory[slot];
     unit->inventory[slot] = 0;
     Shop_DrawUnitGrid(shop->itemWindow, unitId);
-    UiWork_PushValueSlotFar(item_id, 2);
+    UiWork_PushValueSlotFar(itemId, 2);
     UiMessage_ShowAndRestoreState(message + 2);
     UiWork_FinalizePendingCoreFar();
     WaitFrames(10);
@@ -80,7 +80,7 @@ void Shop_RepairItem(s32 unitId, s32 slot)
     Party_AdjustCoinsFar(-price);
     Shop_DrawMoney();
     Shop_DrawUnitGrid(shop->itemWindow, unitId);
-    UiWork_PushValueSlotFar(item_id, 2);
+    UiWork_PushValueSlotFar(itemId, 2);
     UiMessage_ShowAndRestoreState(message + 3);
     if (Shop_ConfirmEquip(unitId, slot))
         Shop_SellOld(unitId, equipped);

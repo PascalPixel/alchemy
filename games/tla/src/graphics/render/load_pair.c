@@ -16,14 +16,14 @@
 
 
 
-void RenderResource_LoadPair(s32 group_index, s32 resource_index)
+void RenderResource_LoadPair(s32 groupIndex, s32 resourceIndex)
 {
-    void *staging_buffer = Runtime_AllocateBlock(56, 0x400);
-    s32 resource_address = gRenderResource_PairSourceTable[group_index];
+    void *stagingBuffer = Runtime_AllocateBlock(56, 0x400);
+    s32 resourceAddress = gRenderResource_PairSourceTable[groupIndex];
 
-    if (resource_index <= 0x5F) {
-        Resource_DecodeByteLzInRam((void *)resource_address, staging_buffer);
-        VramBlock_LoadCached(resource_index, 0x200, staging_buffer);
+    if (resourceIndex <= 0x5F) {
+        Resource_DecodeByteLzInRam((void *)resourceAddress, stagingBuffer);
+        VramBlock_LoadCached(resourceIndex, 0x200, stagingBuffer);
         Runtime_ReleaseHeapBlock(56);
     }
 }

@@ -29,7 +29,7 @@ void Owner_RefreshDerivedDataFar(s32 owner);
 
 s32 DebugParty_LoadPreset(s32 preset)
 {
-    s32 next_djinn[4];
+    s32 nextDjinn[4];
     void *state;
     s32 owner;
     s32 done;
@@ -51,7 +51,7 @@ s32 DebugParty_LoadPreset(s32 preset)
 
     set = 0;
     for (i = 0; i < 4; i++)
-        next_djinn[i] = 0;
+        nextDjinn[i] = 0;
 
     for (row = 0;; row++) {
         owner = gData_0812a174[row].owner;
@@ -90,9 +90,9 @@ s32 DebugParty_LoadPreset(s32 preset)
         }
         for (i = 0; i < 4; i++) {
             for (j = 0; j < gData_0812a174[row].djinnCounts[i]; j++) {
-                Djinn_AddToOwnerFar(owner, i, (next_djinn[i] + 7) % 18);
-                Djinn_ActivateFar(owner, i, (next_djinn[i] + 7) % 18);
-                next_djinn[i]++;
+                Djinn_AddToOwnerFar(owner, i, (nextDjinn[i] + 7) % 18);
+                Djinn_ActivateFar(owner, i, (nextDjinn[i] + 7) % 18);
+                nextDjinn[i]++;
             }
         }
         for (i = 0; i < 16; i++)

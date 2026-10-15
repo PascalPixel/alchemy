@@ -47,19 +47,19 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
     return object;
 }
 
-void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excluded_object,
-                                  s32 group_mode, s32 action)
+void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excludedObject,
+                                  s32 groupMode, s32 action)
 {
-    s16 *active_object_id;
+    s16 *activeObjectId;
     struct ObjectRuntime *object;
     s32 objectId;
 
     objectId = 0;
-    active_object_id = (s16 *)gPlayerObjectId;
+    activeObjectId = (s16 *)gPlayerObjectId;
     do {
         object = ObjectTable_Get(objectId);
-        if (objectId != *active_object_id && object != NULL && object != excluded_object) {
-            object->movementState = group_mode;
+        if (objectId != *activeObjectId && object != NULL && object != excludedObject) {
+            object->movementState = groupMode;
             ObjectDispatch_ApplyValueToChildrenFar(object, action);
         }
         objectId++;

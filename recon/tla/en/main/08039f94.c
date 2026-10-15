@@ -29,7 +29,7 @@ struct UiWindow {
 void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
 
 // 開閉の途中の枠を描く
-void UiWindow_UpdateInterpolatedGeometry(void *arg, s32 save_position)
+void UiWindow_UpdateInterpolatedGeometry(void *arg, s32 savePosition)
 {
     struct UiWindow *window = arg;
     s32 scratch[3];
@@ -63,7 +63,7 @@ void UiWindow_UpdateInterpolatedGeometry(void *arg, s32 save_position)
     height = scratch[2] >> 15;
 
     UiWindow_DrawFrame(x, y, width, height);
-    if (save_position != 0) {
+    if (savePosition != 0) {
         window->previousX = x;
         window->previousY = y;
         window->previousWidth = width;

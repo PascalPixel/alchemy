@@ -19,7 +19,7 @@ extern void UiGlyph_DecodeWithHeapRoutines(FontTransfer *work, s32 slot);
 extern s32 gUiIcon_FramePointerTable[];
 extern s32 gUiIcon_PsynergyIconPointers[];
 
-void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src,
+void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *src,
                    s32 *dst, s32 reuse)
 {
     FontTransfer *work;
@@ -31,7 +31,7 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src,
     if (glyph >= Ui_CountSecondTableEntries())
         glyph = 0;
 
-    if (with_base != 0) {
+    if (withBase != 0) {
         work->f604 = gUiIcon_FramePointerTable[2];
         work->f600 = 2;
         work->f602 = 2;

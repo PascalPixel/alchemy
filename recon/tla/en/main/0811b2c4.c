@@ -12,7 +12,7 @@ struct BattleObj *BattleObjGet(s32 id);
 void EnemyUpdate(void)
 {
     struct BattleWork *work = Ram_HeapSlots->battleWork;
-    u16 unit_ids[14];
+    u16 unitIds[14];
     s32 x[6];
     s32 z[6];
     s32 last = -1;
@@ -27,13 +27,13 @@ void EnemyUpdate(void)
         } else {
             last = count;
         }
-        unit_ids[count] = work->enemyIds[i];
+        unitIds[count] = work->enemyIds[i];
         count++;
     }
     total = last + 1;
-    Func_0811b180(unit_ids, total, x, z);
+    Func_0811b180(unitIds, total, x, z);
     for (i = 0; i < total; i++) {
-        s32 id = unit_ids[i];
+        s32 id = unitIds[i];
 
         if (id != 0xfe) {
             struct BattleObj *object = BattleObjGet(id);

@@ -127,49 +127,49 @@ static void *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 t
 
 static void RunStagedActorTransition(void)
 {
-	s32					target_position[3];
+	s32					targetPosition[3];
 	struct StagedActor *leader;
 	struct StagedActor *actor;
-	struct StagedActor *blocking_actor;
-	s32					direction_index;
-	u32					packed_step;
-	s32					move_rate;
+	struct StagedActor *blockingActor;
+	s32					directionIndex;
+	u32					packedStep;
+	s32					moveRate;
 	s32					transitionBusy;
 
 	leader = Object_GetById(ACTOR_PARTY_LEADER);
-	direction_index = leader->directionAndKind >> 12;
-	packed_step = gStagedActor_DirectionSteps[direction_index];
-	target_position[0] = leader->x.value + (packed_step & 0xffff0000);
-	target_position[1] = leader->y;
-	packed_step <<= 16;
-	target_position[2] = leader->z.value + packed_step;
-	actor = SceneData_FindSlotAtPosition(target_position, leader);
+	directionIndex = leader->directionAndKind >> 12;
+	packedStep = gStagedActor_DirectionSteps[directionIndex];
+	targetPosition[0] = leader->x.value + (packedStep & 0xffff0000);
+	targetPosition[1] = leader->y;
+	packedStep <<= 16;
+	targetPosition[2] = leader->z.value + packedStep;
+	actor = SceneData_FindSlotAtPosition(targetPosition, leader);
 	if (actor == 0)
 		return;
 
-	packed_step = gStagedActor_DirectionSteps[direction_index];
-	target_position[0] = actor->x.value + (packed_step & 0xffff0000);
-	target_position[1] = actor->y;
-	packed_step <<= 16;
-	target_position[2] = actor->z.value + packed_step;
-	blocking_actor = SceneData_FindSlotAtPosition(target_position, actor);
-	if (blocking_actor != 0 && (blocking_actor->collisionFlags & 1) != 0)
+	packedStep = gStagedActor_DirectionSteps[directionIndex];
+	targetPosition[0] = actor->x.value + (packedStep & 0xffff0000);
+	targetPosition[1] = actor->y;
+	packedStep <<= 16;
+	targetPosition[2] = actor->z.value + packedStep;
+	blockingActor = SceneData_FindSlotAtPosition(targetPosition, actor);
+	if (blockingActor != 0 && (blockingActor->collisionFlags & 1) != 0)
 		return;
 
-	target_position[0] = actor->x.value;
-	target_position[1] = actor->y + 0x100000;
-	target_position[2] = actor->z.value;
-	blocking_actor = SceneData_FindSlotAtPosition(target_position, actor);
-	if (blocking_actor != 0 && (blocking_actor->collisionFlags & 1) != 0)
+	targetPosition[0] = actor->x.value;
+	targetPosition[1] = actor->y + 0x100000;
+	targetPosition[2] = actor->z.value;
+	blockingActor = SceneData_FindSlotAtPosition(targetPosition, actor);
+	if (blockingActor != 0 && (blockingActor->collisionFlags & 1) != 0)
 		return;
 
 	actor->transitionMode = 2;
-	packed_step = gStagedActor_DirectionSteps[direction_index];
-	target_position[0] = actor->x.value + (packed_step & 0xffff0000);
-	target_position[1] = actor->y;
-	packed_step <<= 16;
-	target_position[2] = actor->z.value + packed_step;
-	if (FieldObject_CheckMovementCollision(actor, target_position) > 0)
+	packedStep = gStagedActor_DirectionSteps[directionIndex];
+	targetPosition[0] = actor->x.value + (packedStep & 0xffff0000);
+	targetPosition[1] = actor->y;
+	packedStep <<= 16;
+	targetPosition[2] = actor->z.value + packedStep;
+	if (FieldObject_CheckMovementCollision(actor, targetPosition) > 0)
 		return;
 
 	transitionBusy = actor->transitionBusy;
@@ -177,19 +177,19 @@ static void RunStagedActorTransition(void)
 		return;
 
 	Object_SetMode(leader, 8);
-	move_rate = 0x3333;
+	moveRate = 0x3333;
 	Engine_TaskWait(15);
 	Engine_AudioPlayCue(185);
-	actor->moveRateX = move_rate;
-	actor->moveRateZ = move_rate;
-	Engine_ObjectSetPosition(actor, target_position[0], target_position[1], target_position[2]);
-	leader->moveRateX = move_rate;
-	leader->moveRateZ = move_rate;
-	Engine_ObjectSetPosition(leader, target_position[0], target_position[1], target_position[2]);
+	actor->moveRateX = moveRate;
+	actor->moveRateZ = moveRate;
+	Engine_ObjectSetPosition(actor, targetPosition[0], targetPosition[1], targetPosition[2]);
+	leader->moveRateX = moveRate;
+	leader->moveRateZ = moveRate;
+	Engine_ObjectSetPosition(leader, targetPosition[0], targetPosition[1], targetPosition[2]);
 	Engine_ObjectCommitPosition(actor);
 	BattleFx_PlayQueuedSound();
-	actor->x.value = target_position[0];
-	actor->z.value = target_position[2];
+	actor->x.value = targetPosition[0];
+	actor->z.value = targetPosition[2];
 	actor->velocityX = transitionBusy;
 	actor->velocityZ = transitionBusy;
 	leader->targetX = ACTOR_NO_TARGET;
@@ -1260,7 +1260,7 @@ static void EV35_TOUCH_4(void)
 	s32					 z;
 	s32					 countdown;
 	u32					 i;
-	s32					 dust_x;
+	s32					 dustX;
 
 	layer = &((struct MapWork *)gMapWork[0])->layer;
 	leader = Object_GetById(0);
@@ -1280,22 +1280,22 @@ static void EV35_TOUCH_4(void)
 			Engine_AudioPlayCue(239);
 			Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 			Engine_EventWait(20);
-			dust_x = 0x1200000;
+			dustX = 0x1200000;
 			x = 29;
 			countdown = 40;
 			for (i = 0; i <= 479; i++, countdown--)
 			{
 				layer->x += 0x3333;
-				dust_x += -0x3333;
+				dustX += -0x3333;
 				options.priority = 2;
 				options.startScaleX = ((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
 				options.startScaleY = ((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
 				options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-				Effect_Spawn(dust_x, 0, 0x2100000, 0, -(((gFrameCount & 1) * 3) << 16), 0, 0x8a0000,
+				Effect_Spawn(dustX, 0, 0x2100000, 0, -(((gFrameCount & 1) * 3) << 16), 0, 0x8a0000,
 					&options);
 				if (i == 240)
 				{
-					dust_x += -0x300000;
+					dustX += -0x300000;
 				}
 				if (countdown == 0)
 				{
@@ -1778,7 +1778,7 @@ static void EV40_TOUCH(void)
 	s32					 z;
 	s32					 countdown;
 	u32					 i;
-	s32					 dust_x;
+	s32					 dustX;
 
 	layer = &((struct MapWork *)gMapWork[0])->layer;
 	leader = Object_GetById(0);
@@ -1798,22 +1798,22 @@ static void EV40_TOUCH(void)
 			Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 			Engine_AudioPlayCue(239);
 			Engine_EventWait(20);
-			dust_x = 0x2680000;
+			dustX = 0x2680000;
 			x = 0;
 			countdown = 60;
 			for (i = 0; i <= 319; i++, countdown--)
 			{
 				layer->x += 0x3333;
-				if (dust_x >= 0x2400000 && i > 40)
+				if (dustX >= 0x2400000 && i > 40)
 				{
-					dust_x += -0x3333;
+					dustX += -0x3333;
 					options.priority = 2;
 					options.startScaleX =
 						((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
 					options.startScaleY =
 						((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
 					options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-					Effect_Spawn(dust_x, 0, 0x1200000, 0, -(((gFrameCount & 1) * 3) << 16), 0,
+					Effect_Spawn(dustX, 0, 0x1200000, 0, -(((gFrameCount & 1) * 3) << 16), 0,
 						0x8a0000, &options);
 					if (countdown == 0)
 					{
@@ -1846,7 +1846,7 @@ static void EV41_TOUCH(void)
 	s32					 z;
 	s32					 countdown;
 	u32					 i;
-	s32					 dust_x;
+	s32					 dustX;
 
 	layer = &((struct MapWork *)gMapWork[0])->layer;
 	leader = Object_GetById(0);
@@ -1865,14 +1865,14 @@ static void EV41_TOUCH(void)
 			Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
 			Engine_AudioPlayCue(239);
 			Engine_EventWait(20);
-			dust_x = 0x2c00000;
+			dustX = 0x2c00000;
 			x = 61;
 			countdown = 60;
 			for (i = 0; i <= 319; i++, countdown--)
 			{
 				layer->x += -0x3333;
-				dust_x += 0x3333;
-				if (dust_x >= 0x2c80000 && dust_x < 0x2f00000)
+				dustX += 0x3333;
+				if (dustX >= 0x2c80000 && dustX < 0x2f00000)
 				{
 					options.priority = 2;
 					options.startScaleX =
@@ -1880,7 +1880,7 @@ static void EV41_TOUCH(void)
 					options.startScaleY =
 						((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
 					options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-					Effect_Spawn(dust_x, 0, 0x1200000, 0, -(((gFrameCount & 1) * 3) << 16), 0,
+					Effect_Spawn(dustX, 0, 0x1200000, 0, -(((gFrameCount & 1) * 3) << 16), 0,
 						0x8a0000, &options);
 					if (countdown == 0)
 					{

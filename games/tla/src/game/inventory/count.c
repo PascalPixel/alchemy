@@ -12,18 +12,18 @@
 
 s32 Equipment_HasValue(s32 owner, s32 value);
 
-s32 PartyInventory_CountItem(s32 item_id)
+s32 PartyInventory_CountItem(s32 itemId)
 {
     u16 owners[16];
     s32 itemCount = 0;
     s32 ownerCount = Party_ListActiveOwners(owners);
 
     if (itemCount < ownerCount) {
-        u16 *owner_cursor = owners;
+        u16 *ownerCursor = owners;
         s32 n = ownerCount;
 
         do {
-            itemCount += Inventory_CountItem(*owner_cursor++, item_id);
+            itemCount += Inventory_CountItem(*ownerCursor++, itemId);
             n--;
         } while (n != 0);
     }
@@ -32,13 +32,13 @@ s32 PartyInventory_CountItem(s32 item_id)
 
 struct ActionDefinition *BattleAction_GetDirect(s32 actionId)
 {
-    u32 entry_index = actionId & 0x3fff;
+    u32 entryIndex = actionId & 0x3fff;
     struct ActionDefinition *table;
 
-    if (entry_index > 0x2de)
-        entry_index = 0;
+    if (entryIndex > 0x2de)
+        entryIndex = 0;
     table = gBattleAction_DefinitionTable;
-    return &table[entry_index];
+    return &table[entryIndex];
 }
 
 s32 Party_FindOwnerWithAction(s32 action)

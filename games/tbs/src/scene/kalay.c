@@ -71,7 +71,7 @@ static void EV12_TALK(void)
 static s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect)
 {
 	u32 action;
-	u32 next_timer;
+	u32 nextTimer;
 
 	if (effect->actionTimer == 0)
 	{
@@ -89,8 +89,8 @@ static s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect)
 			effect->unk06 += (u32)(Engine_RandomNext() << 0xF) >> 0x10;
 			break;
 		}
-		next_timer = (u32)(Engine_RandomNext() * 0x50) >> 0x10;
-		effect->actionTimer = next_timer;
+		nextTimer = (u32)(Engine_RandomNext() * 0x50) >> 0x10;
+		effect->actionTimer = nextTimer;
 	}
 	if (effect->actionTimer != 0)
 	{
@@ -384,18 +384,18 @@ static void EV02_TOUCH(void)
 static void FieldScene_RunStagedGroupSequence(void)
 {
 	s32				   message;
-	struct FieldActor *head_wait;
-	struct FieldActor *last_wait;
+	struct FieldActor *headWait;
+	struct FieldActor *lastWait;
 	struct FieldActor *closing;
 	struct FieldActor *late;
-	struct FieldActor *head_end;
-	struct FieldActor *last_end;
+	struct FieldActor *headEnd;
+	struct FieldActor *lastEnd;
 	struct FieldActor *leader;
 	struct FieldActor *last;
 	struct FieldActor *head;
-	struct FieldActor *head_back;
-	struct FieldActor *head_again;
-	struct FieldActor *head_home;
+	struct FieldActor *headBack;
+	struct FieldActor *headAgain;
+	struct FieldActor *headHome;
 	struct EventWork  *work;
 
 	work = gEventWork;
@@ -490,20 +490,20 @@ static void FieldScene_RunStagedGroupSequence(void)
 		head->steeringFlags &= ~ACTOR_FACES_MOTION;
 		Actor_WalkToAndWait(20, 172, 264);
 		Engine_EventWait(1);
-		head_back = Actor_Get(20);
-		head_back->steeringFlags |= ACTOR_FACES_MOTION;
+		headBack = Actor_Get(20);
+		headBack->steeringFlags |= ACTOR_FACES_MOTION;
 		Actor_FaceDirection(27, FACING_WEST, 0);
 		Actor_FaceDirection(28, FACING_WEST, 0);
 		Actor_FaceDirection(32, FACING_WEST, 0);
 		Actor_FaceDirection(31, FACING_WEST, 20);
 		Engine_ActorSetAnimationAndWait(20, ANIM_NOD);
 		Engine_EventWait(20);
-		head_again = Actor_Get(20);
-		head_again->steeringFlags &= ~ACTOR_FACES_MOTION;
+		headAgain = Actor_Get(20);
+		headAgain->steeringFlags &= ~ACTOR_FACES_MOTION;
 		Actor_WalkToAndWait(20, 172, 272);
 		Engine_EventWait(1);
-		head_home = Actor_Get(20);
-		head_home->steeringFlags |= ACTOR_FACES_MOTION;
+		headHome = Actor_Get(20);
+		headHome->steeringFlags |= ACTOR_FACES_MOTION;
 		Actor_WalkToAndWait(20, 180, 272);
 		Actor_FaceDirection(20, FACING_EAST, 0);
 		Event_ShowMessageAndWait(20, 0, 10);
@@ -605,10 +605,10 @@ static void FieldScene_RunStagedGroupSequence(void)
 		Engine_ActorStop(20);
 		Engine_ActorStop(21);
 		Engine_TaskWait(1);
-		head_wait = Actor_Get(20);
-		head_wait->timer = 0;
-		last_wait = Actor_Get(21);
-		last_wait->timer = 0;
+		headWait = Actor_Get(20);
+		headWait->timer = 0;
+		lastWait = Actor_Get(21);
+		lastWait->timer = 0;
 		Actor_SetSpeed(20, 0xcccc, 0x6666);
 		Actor_SetSpeed(21, 0xcccc, 0x6666);
 		Engine_ActorEnableActionCallback(20, gKalay_DanceScriptC);
@@ -808,11 +808,11 @@ static void FieldScene_RunStagedGroupSequence(void)
 		late = Actor_Get(14);
 		late->facing = FACING_NORTH + FACING_STEP;
 		Actor_SetPosition(20, PIXELS(455), PIXELS(434));
-		head_end = Actor_Get(20);
-		head_end->facing = FACING_NORTH + FACING_STEP;
+		headEnd = Actor_Get(20);
+		headEnd->facing = FACING_NORTH + FACING_STEP;
 		Actor_SetPosition(21, PIXELS(464), PIXELS(416));
-		last_end = Actor_Get(21);
-		last_end->facing = FACING_SOUTH + FACING_STEP;
+		lastEnd = Actor_Get(21);
+		lastEnd->facing = FACING_SOUTH + FACING_STEP;
 		Engine_ActorDestroy(27);
 		Engine_ActorDestroy(28);
 		Engine_ActorDestroy(29);

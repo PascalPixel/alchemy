@@ -74,7 +74,7 @@ s32 Localization_LookupEntryId(u32 value)
 struct UiWindow *Func_0803d3c0(s32 arg0, s32 arg1, s32 x, s32 y)
 {
     struct UiWindow *win;
-    s32 minus_four;
+    s32 minusFour;
     s32 offset;
     struct UiRenderWork *work;
 
@@ -82,8 +82,8 @@ struct UiWindow *Func_0803d3c0(s32 arg0, s32 arg1, s32 x, s32 y)
     if (Localization_LookupEntryId(arg0) == -1) {
         return 0;
     }
-    minus_four = -4;
-    offset = minus_four;
+    minusFour = -4;
+    offset = minusFour;
     if (work->mode != 0) {
         win = UiWindow_Create(x, y, 6, 5, 2);
         offset = 0;
@@ -91,7 +91,7 @@ struct UiWindow *Func_0803d3c0(s32 arg0, s32 arg1, s32 x, s32 y)
         win = UiWindow_Create(x, y, 5, 5, 2);
     }
     if (win != 0) {
-        CreateSideObject(arg0, arg1, -1, win, offset, minus_four);
+        CreateSideObject(arg0, arg1, -1, win, offset, minusFour);
     }
     return win;
 }

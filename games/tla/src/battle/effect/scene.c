@@ -55,14 +55,14 @@ void Func_080dc3f0(void)
 {
     struct BattleFxScene *scene;
     struct EffectSlot *slot;
-    s32 remaining_slots;
+    s32 remainingSlots;
 
     scene = Ram_HeapSlots->effectWork;
-    remaining_slots = 0x17;
+    remainingSlots = 0x17;
     slot = scene->slots;
     do {
-        remaining_slots -= 1;
+        remainingSlots -= 1;
         EffectSlot_Update(slot);
         slot++;
-    } while (remaining_slots >= 0);
+    } while (remainingSlots >= 0);
 }

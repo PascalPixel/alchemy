@@ -8,30 +8,30 @@ extern u32 gSound_PcmFrequencySteps[];
 
 s32 Pcm_KeyToFrequency(void *wave, u8 key, u8 pitch)
 {
-    u32 key_index;
-    u32 pitch_scale;
-    u32 lower_frequency;
-    u32 upper_frequency;
+    u32 keyIndex;
+    u32 pitchScale;
+    u32 lowerFrequency;
+    u32 upperFrequency;
 
-    key_index = key;
-    pitch_scale = pitch << 24;
-    if (key_index > 178) {
-        key_index = 178;
-        pitch_scale = 255 << 24;
+    keyIndex = key;
+    pitchScale = pitch << 24;
+    if (keyIndex > 178) {
+        keyIndex = 178;
+        pitchScale = 255 << 24;
     }
 
-    lower_frequency = gSound_PcmPitchCodes[key_index];
-    lower_frequency =
-        gSound_PcmFrequencySteps[lower_frequency & 15] >> (lower_frequency >> 4);
-    upper_frequency = gSound_PcmPitchCodes[key_index + 1];
-    upper_frequency =
-        gSound_PcmFrequencySteps[upper_frequency & 15] >> (upper_frequency >> 4);
+    lowerFrequency = gSound_PcmPitchCodes[keyIndex];
+    lowerFrequency =
+        gSound_PcmFrequencySteps[lowerFrequency & 15] >> (lowerFrequency >> 4);
+    upperFrequency = gSound_PcmPitchCodes[keyIndex + 1];
+    upperFrequency =
+        gSound_PcmFrequencySteps[upperFrequency & 15] >> (upperFrequency >> 4);
 
     return Audio_UmulHigh32(*(s32 *)((u8 *)wave + 4),
-        lower_frequency
+        lowerFrequency
             + Audio_UmulHigh32(
-                upper_frequency - lower_frequency,
-                pitch_scale));
+                upperFrequency - lowerFrequency,
+                pitchScale));
 }
 
 void Audio_NoopStub(void)

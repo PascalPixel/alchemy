@@ -26,15 +26,15 @@ void Func_02001c68(s32 x, s32 z, s32 value)
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
     void *work = Ram_HeapSlots->eventWork;
     s32 stepX = GameFlag_GetByte(gData_02002864[1]);
-    s32 step_z = GameFlag_GetByte(gData_02002864[1] + 8);
+    s32 stepZ = GameFlag_GetByte(gData_02002864[1] + 8);
 
-    if (stepX != 0 || step_z != 0) {
+    if (stepX != 0 || stepZ != 0) {
         struct ObjectRuntime *follower;
 
         GameFlag_SetByte(gData_02002864[1], 0);
         GameFlag_SetByte(gData_02002864[1] + 8, 0);
         object->x = ((stepX + x) << 20) + 0x80000;
-        object->z = ((step_z + z) << 20) + 0x80000;
+        object->z = ((stepZ + z) << 20) + 0x80000;
         follower = (struct ObjectRuntime *)WORD_AT(work, 460);
         follower->x = object->x;
         follower->z = object->z;

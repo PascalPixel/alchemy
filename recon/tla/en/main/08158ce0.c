@@ -17,24 +17,24 @@
 extern u32 gCameraSceneParameters[];
 u32 Random16(void);
 
-void Func_08158ce0(s32 random_mask, u32 shake_range)
+void Func_08158ce0(s32 randomMask, u32 shakeRange)
 {
     struct BattleEffectWork *work;
-    s32 *remaining_frames;
+    s32 *remainingFrames;
 
     work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-    remaining_frames = &work->shakeFrames;
-    if (*remaining_frames > 0) {
-        s32 random_x = (random_mask - 1) & Random16();
-        s32 half_range = (s32)shake_range / 2;
-        s32 offsetY = ((shake_range - 1) & Random16()) - half_range;
-        s32 offsetX = random_x - half_range;
+    remainingFrames = &work->shakeFrames;
+    if (*remainingFrames > 0) {
+        s32 randomX = (randomMask - 1) & Random16();
+        s32 halfRange = (s32)shakeRange / 2;
+        s32 offsetY = ((shakeRange - 1) & Random16()) - halfRange;
+        s32 offsetX = randomX - halfRange;
 
         gBgScroll[1].x = offsetX;
         gBgScroll[1].y = offsetY + 32;
         gCameraSceneParameters[3] = 120 - offsetX;
         gCameraSceneParameters[4] = 120 - offsetY;
-        (*remaining_frames)--;
+        (*remainingFrames)--;
         return;
     }
     gBgScroll[1].x = work->savedBg1X;

@@ -3,17 +3,17 @@
 
 void SerialRuntime_Initialize(void)
 {
-    u32 interrupt_enable;
+    u32 interruptEnable;
     /* FAKEMATCH: keep the fill word's address before its store. */
     volatile u32 zero;
     s32 index;
-    volatile u16 *ime_reg;
+    volatile u16 *imeReg;
     struct SerialRuntime *state;
 
-    interrupt_enable = REG_IME;
+    interruptEnable = REG_IME;
     /* FAKEMATCH: retain the reference's IME pointer lifetime. */
-    do { ime_reg = &REG_IME; } while (0);
-    *ime_reg = (u32)ime_reg;
+    do { imeReg = &REG_IME; } while (0);
+    *imeReg = (u32)imeReg;
     Runtime_SetIrqHandler(7, 0, SerialRuntime_HandleTransferInterrupt);
     Runtime_SetIrqHandler(6, 0, SerialRuntime_HandleTransferInterrupt);
     REG_IME = 0;
@@ -50,5 +50,5 @@ void SerialRuntime_Initialize(void)
     gSerialReceiveDest = 0;
     gSerialReceivedSize = 0;
     BattleLink_ResetTransferState();
-    REG_IME = interrupt_enable;
+    REG_IME = interruptEnable;
 }

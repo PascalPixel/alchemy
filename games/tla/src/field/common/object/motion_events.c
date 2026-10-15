@@ -8,26 +8,26 @@ void Motion_SetModeAndWaitAnimation(u32 objectId, s32 action)
     ObjectMotion_WaitForAnimationChange(objectId);
 }
 
-void ObjectMotion_Launch(u32 objectId, s32 speed, s32 event_id)
+void ObjectMotion_Launch(u32 objectId, s32 speed, s32 eventId)
 {
     struct ObjectRuntime *object;
-    u8 *object_flags;
-    s32 updated_flags;
-    s32 vertical_velocity;
+    u8 *objectFlags;
+    s32 updatedFlags;
+    s32 verticalVelocity;
 
     object = ObjectTable_Get(objectId);
     if (object != NULL) {
-        object_flags = &object->motionFlags;
-        updated_flags = *object_flags | 2;
-        vertical_velocity = speed << 16;
-        *object_flags = updated_flags;
-        object->velocityY = vertical_velocity;
+        objectFlags = &object->motionFlags;
+        updatedFlags = *objectFlags | 2;
+        verticalVelocity = speed << 16;
+        *objectFlags = updatedFlags;
+        object->velocityY = verticalVelocity;
         if (speed > 5) {
             Audio_PlayCue(0x99);
         } else {
             Audio_PlayCue(0x98);
         }
-        EventRuntime_Wait(event_id);
+        EventRuntime_Wait(eventId);
     }
 }
 
@@ -54,16 +54,16 @@ void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant)
 
 void Object_DriftAndDamp(struct ObjectRuntime *object)
 {
-    s32 drift_x;
-    s32 drift_z;
+    s32 driftX;
+    s32 driftZ;
     s32 pos;
 
-    drift_x = object->speedLimit;
+    driftX = object->speedLimit;
     pos = object->x;
-    drift_z = object->acceleration;
-    object->x = pos + drift_x;
-    object->z += drift_z;
+    driftZ = object->acceleration;
+    object->x = pos + driftX;
+    object->z += driftZ;
     object->y += 0x400;
-    object->speedLimit = drift_x - drift_x / 18;
-    object->acceleration = drift_z - drift_z / 16;
+    object->speedLimit = driftX - driftX / 18;
+    object->acceleration = driftZ - driftZ / 16;
 }

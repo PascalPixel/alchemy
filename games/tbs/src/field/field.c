@@ -435,13 +435,13 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 	return changed;
 }
 
-void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screen_x, s32 height,
-	s32 screen_y, s32 ground_height, s32 *scale)
+void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX, s32 height,
+	s32 screenY, s32 groundHeight, s32 *scale)
 {
-	u32							half_width = sprite->width >> 1;
-	u32							half_height = sprite->height >> 1;
-	s32							margin_x = 8;
-	s32							margin_y = 4;
+	u32							halfWidth = sprite->width >> 1;
+	u32							halfHeight = sprite->height >> 1;
+	s32							marginX = 8;
+	s32							marginY = 4;
 	s32							affine = 1;
 	s32							scaleX = *scale++;
 	s32							scaleY = *scale;
@@ -452,19 +452,19 @@ void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screen_x, s3
 	if (scaleX > 0x10000 || scaleY > 0x10000)
 	{
 		affine = 3;
-		margin_x = 16;
-		margin_y = 8;
-		half_width <<= 1;
-		half_height <<= 1;
+		marginX = 16;
+		marginY = 8;
+		halfWidth <<= 1;
+		halfHeight <<= 1;
 	}
-	x = (screen_x >> 16) - half_width;
-	y = ((screen_y - height) >> 16) - half_height
+	x = (screenX >> 16) - halfWidth;
+	y = ((screenY - height) >> 16) - halfHeight
 		- ((((sprite->height >> 1) - sprite->offsetY) * scaleY + 0xffff) >> 16);
 	sprite->part[0].affine = affine;
 	sprite->part[0].x = x;
 	sprite->part[0].y = y;
-	x = (screen_x >> 16) - margin_x;
-	y = ((screen_y - ground_height) >> 16) - margin_y;
+	x = (screenX >> 16) - marginX;
+	y = ((screenY - groundHeight) >> 16) - marginY;
 	shadow = &sprite->part[1];
 	shadow->affine = affine;
 	shadow->x = x;
@@ -474,10 +474,10 @@ void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screen_x, s3
 void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s32 *scale, s32 mode)
 {
 	s32 matrix;
-	u32 half_width = sprite->width >> 1;
-	u32 half_height = sprite->height >> 1;
+	u32 halfWidth = sprite->width >> 1;
+	u32 halfHeight = sprite->height >> 1;
 	s32 size = 8;
-	s32 size_half = 4;
+	s32 sizeHalf = 4;
 	s32 affine;
 	s32 scaleX = *scale++;
 	s32 px = *pos++;
@@ -515,10 +515,10 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s3
 	if (scaleX > 0x10000 || scaleY > 0x10000)
 	{
 		affine = 3;
-		half_width <<= 1;
-		half_height <<= 1;
+		halfWidth <<= 1;
+		halfHeight <<= 1;
 		size = 16;
-		size_half = 8;
+		sizeHalf = 8;
 	}
 	if (py <= -0x640000)
 	{
@@ -530,7 +530,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s3
 		slot = (pz >> 17) + 10;
 		depth = 2;
 	}
-	y = ((pz - pw) >> 16) - size_half;
+	y = ((pz - pw) >> 16) - sizeHalf;
 	if (sprite->flags & 1)
 	{
 		if (y < 160)
@@ -543,8 +543,8 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s3
 			Runtime_PushSlotEntry(part, depth);
 		}
 	}
-	x = (px >> 16) - half_width + ((sprite->offsetX * scaleX + 0xffff) >> 16);
-	y = ((pz - py) >> 16) - half_height
+	x = (px >> 16) - halfWidth + ((sprite->offsetX * scaleX + 0xffff) >> 16);
+	y = ((pz - py) >> 16) - halfHeight
 		- ((scaleY * ((sprite->height >> 1) - sprite->offsetY) + 0xffff) >> 16);
 	if (x < 240 && y < 160)
 	{
@@ -561,10 +561,10 @@ void Render_PlaceProjectedSprite(
 	struct AnimationObject *sprite, s32 *point, s32 *scale, s32 mode, s32 depth)
 {
 	s32					   flip;
-	u32					   half_height;
+	u32					   halfHeight;
 	u32					   size;
 	s32					   affine;
-	s32					   half_width;
+	s32					   halfWidth;
 	s32					   ground[3];
 	s32					   screen[3];
 	struct AffineTransform effect;
@@ -587,8 +587,8 @@ void Render_PlaceProjectedSprite(
 				z = sprite->scale;
 			else
 				z = Iwram_MulQ16(z, sprite->scale);
-			half_width = sprite->width >> 1;
-			half_height = sprite->height >> 1;
+			halfWidth = sprite->width >> 1;
+			halfHeight = sprite->height >> 1;
 			size = 8;
 			flip = Sprite_ComposeAnimationFrame(sprite, mode);
 			base = (z + 0x400) & -0x800;
@@ -603,8 +603,8 @@ void Render_PlaceProjectedSprite(
 			if (scaleX > 0x10000 || scaleY > 0x10000)
 			{
 				affine = 3;
-				half_width <<= 1;
-				half_height <<= 1;
+				halfWidth <<= 1;
+				halfHeight <<= 1;
 				size = 16;
 			}
 			else if (scaleX == 0x10000 && sprite->rotation == 0 && scaleY == scaleX)
@@ -632,8 +632,8 @@ void Render_PlaceProjectedSprite(
 			{
 				z = 0;
 			}
-			sprite->part[0].x = screen[0] - half_width + offsetX;
-			sprite->part->y = screen[1] - half_height + offsetY;
+			sprite->part[0].x = screen[0] - halfWidth + offsetX;
+			sprite->part->y = screen[1] - halfHeight + offsetY;
 			sprite->part[0].affine = affine;
 			sprite->part[0].affineIndex = z;
 			if (depth == 0)
@@ -725,7 +725,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 	u32						   size;
 	u32						   count;
 	u32						   index;
-	u16						   entry_number;
+	u16						   entryNumber;
 	s32						   resource;
 
 	if (slot >= RESOURCE_SLOT_COUNT)
@@ -742,11 +742,11 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 		s16 *numbers = &entry->number;
 
 		resource = entry->resource;
-		entry_number = *numbers;
+		entryNumber = *numbers;
 		entry++;
-		if (entry_number == 0)
+		if (entryNumber == 0)
 			return 0;
-		if (entry_number == number)
+		if (entryNumber == number)
 			break;
 	}
 	size = Resource_DecodeType01(Resource_GetTableEntry(resource), buffer);
@@ -978,10 +978,10 @@ void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no)
 
 s32 AnimationObjects_SelectAnimation(struct AnimationObject *state, s32 flags)
 {
-	s32 high_bit;
+	s32 highBit;
 	s32 index;
 
-	high_bit = flags & 0x80;
+	highBit = flags & 0x80;
 	flags &= 0x7f;
 
 	/* FAKEMATCH: the index/test loop keeps an 8-byte frame; a for loop spills an
@@ -996,18 +996,18 @@ s32 AnimationObjects_SelectAnimation(struct AnimationObject *state, s32 flags)
 		{
 			struct AnimationEntry	 *entry = state->entries[index];
 			struct AnimationMetadata *metadata;
-			s32						  selected_animation;
+			s32						  selectedAnimation;
 
 			if (entry != 0 && entry->scripts != 0)
 			{
 				metadata = Resource_GetMetadataRecordFar(entry->animId);
 				if (flags < metadata->animationCount)
 				{
-					selected_animation = (s32)entry->scripts[flags];
+					selectedAnimation = (s32)entry->scripts[flags];
 					entry->kind = metadata->drawKind;
-					entry->script = (u8 *)selected_animation;
+					entry->script = (u8 *)selectedAnimation;
 					entry->step = 0x10;
-					if (high_bit == 0)
+					if (highBit == 0)
 					{
 						entry->pos = 0;
 						entry->timer = 0;
@@ -1342,9 +1342,9 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos)
 	s32	 cnt;
 	u32	 n;
 	u8	*table;
-	u32	 high_mask;
-	u32	 index_mask;
-	u8	 offset_mask;
+	u32	 highMask;
+	u32	 indexMask;
+	u8	 offsetMask;
 
 	struct AnimationObject *spr = (struct AnimationObject *)obj;
 
@@ -1355,9 +1355,9 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos)
 	if (n < cnt)
 	{
 		table = gMap_TileDissolveOrder;
-		high_mask = 0xff00;
-		index_mask = 0x3f;
-		offset_mask = 0x3e;
+		highMask = 0xff00;
+		indexMask = 0x3f;
+		offsetMask = 0x3e;
 
 		for (; n < cnt; n++, dst += 32, pos++)
 		{
@@ -1368,14 +1368,14 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos)
 				u32	 odd;
 
 				// VRAM はバイトで書けないので、2 ドット分を読んで片方を消す
-				dot = table[(pos + n * 16) & index_mask];
-				cell = (u16 *)((u8 *)dst + (dot & offset_mask));
+				dot = table[(pos + n * 16) & indexMask];
+				cell = (u16 *)((u8 *)dst + (dot & offsetMask));
 				odd = 1;
 				odd &= dot;
 				if (odd != 0)
 					*cell = *(u8 *)cell;
 				else
-					*cell &= high_mask;
+					*cell &= highMask;
 			}
 		}
 	}
@@ -2034,8 +2034,8 @@ void ObjectSystem_UpdateCamera(void)
 	struct CameraPoint		 spare[3];
 	s32						 cnt;
 	struct CameraState		*map;
-	s32						 cam_x;
-	s32						 cam_z;
+	s32						 camX;
+	s32						 camZ;
 	struct ObjectSystemWork *sync;
 	struct CameraObject		*obj;
 	struct CameraSprite		*spr;
@@ -2048,12 +2048,12 @@ void ObjectSystem_UpdateCamera(void)
 	u32						 bits;
 	s32						 scale[2];
 	s32						 pos[4];
-	u32						 bits_val;
+	u32						 bitsVal;
 
 	map = *(struct CameraState **)(((u8 *)&gObjectSlots) + 12);
 	cam = &map->x;
-	cam_x = cam[0] & 0xffff0000;
-	cam_z = cam[1] & 0xffff0000;
+	camX = cam[0] & 0xffff0000;
+	camZ = cam[1] & 0xffff0000;
 	sync = *(struct ObjectSystemWork **)(((u8 *)&gObjectSlots) + 4);
 	// 絵を置く処理（Render_DecodeFrame）を作業領域へ写す
 	RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
@@ -2078,8 +2078,8 @@ void ObjectSystem_UpdateCamera(void)
 				frozen->activated = kind;
 				continue;
 			}
-			dx = obj->x - cam_x;
-			dz = obj->z - cam_z;
+			dx = obj->x - camX;
+			dz = obj->z - camZ;
 			top = dz - obj->y;
 			spr = obj->sprite;
 			if (dx > -0x200000 && dx < 0x1100000 && top > -0x200000 && top < 0xe00000)
@@ -2095,9 +2095,9 @@ void ObjectSystem_UpdateCamera(void)
 						spr->secondPriority = bits;
 					}
 				}
-				bits_val = tile->layer;
-				if (bits_val != 0)
-					obj->layer = bits_val - 1;
+				bitsVal = tile->layer;
+				if (bitsVal != 0)
+					obj->layer = bitsVal - 1;
 				scale[0] = Iwram_MulQ16(obj->scaleX, spr->scale);
 				scale[1] = Iwram_MulQ16(obj->scaleY, spr->scale);
 				pos[0] = dx;
@@ -2987,26 +2987,26 @@ s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key)
 s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter)
 {
 	const s32 *arguments;
-	s32		   repeat_limit;
-	s32		   jump_key;
+	s32		   repeatLimit;
+	s32		   jumpKey;
 	u8		  *repeatCount;
-	s32		   next_count;
+	s32		   nextCount;
 
 	arguments = &interpreter->script[interpreter->cursor + 1];
-	repeat_limit = *arguments++;
-	jump_key = *arguments;
-	if (repeat_limit == 0xFFFF)
+	repeatLimit = *arguments++;
+	jumpKey = *arguments;
+	if (repeatLimit == 0xFFFF)
 	{
-		interpreter->cursor = Script_FindLabel(interpreter, jump_key);
+		interpreter->cursor = Script_FindLabel(interpreter, jumpKey);
 	}
 	else
 	{
 		repeatCount = &interpreter->repeatCount;
-		next_count = *repeatCount + 1;
-		*repeatCount = next_count;
-		if ((u8)next_count < (s16)repeat_limit)
+		nextCount = *repeatCount + 1;
+		*repeatCount = nextCount;
+		if ((u8)nextCount < (s16)repeatLimit)
 		{
-			interpreter->cursor = Script_FindLabel(interpreter, jump_key);
+			interpreter->cursor = Script_FindLabel(interpreter, jumpKey);
 		}
 		else
 		{
@@ -3862,9 +3862,9 @@ struct WorldMapSprite
 s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 {
 	struct FieldPosition  position;
-	struct FieldPosition  test_position;
+	struct FieldPosition  testPosition;
 	struct FieldPosition  contact;
-	s16					  angle_offsets[22];
+	s16					  angleOffsets[22];
 	s32					  collision;
 	s32					  pushed;
 	s16					  heading;
@@ -3872,7 +3872,7 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 	s32					  mode;
 	u16					  direction;
 	s32					  rotation;
-	s32					  angle_index;
+	s32					  angleIndex;
 	s32					  count;
 	struct ObjectRuntime *other;
 
@@ -3963,29 +3963,29 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 		{
 			if (Map_CheckObjectStep(object, &position) == 0)
 			{
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &test_position);
-				if (Map_CheckObjectStep(object, &test_position) == 0)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &testPosition);
+				if (Map_CheckObjectStep(object, &testPosition) == 0)
 				{
-					test_position.x = object->x;
-					test_position.y = object->y;
-					test_position.z = object->z;
-					Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &test_position);
-					if (Map_CheckObjectStep(object, &test_position) == 0)
+					testPosition.x = object->x;
+					testPosition.y = object->y;
+					testPosition.z = object->z;
+					Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &testPosition);
+					if (Map_CheckObjectStep(object, &testPosition) == 0)
 					{
-						test_position.x = object->x;
-						test_position.y = object->y;
-						test_position.z = object->z;
-						Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &test_position);
-						if (Map_CheckObjectStep(object, &test_position) == 0)
+						testPosition.x = object->x;
+						testPosition.y = object->y;
+						testPosition.z = object->z;
+						Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &testPosition);
+						if (Map_CheckObjectStep(object, &testPosition) == 0)
 						{
-							test_position.x = object->x;
-							test_position.y = object->y;
-							test_position.z = object->z;
-							Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &test_position);
-							if (Map_CheckObjectStep(object, &test_position) == 0)
+							testPosition.x = object->x;
+							testPosition.y = object->y;
+							testPosition.z = object->z;
+							Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &testPosition);
+							if (Map_CheckObjectStep(object, &testPosition) == 0)
 							{
 								heading = angle;
 								goto push_objects;
@@ -3996,44 +3996,44 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 			}
 			direction = angle;
 			count = 0;
-			angle_offsets[count++] = direction + 0x1000;
-			angle_offsets[count++] = direction - 0x1000;
-			angle_offsets[count++] = direction + 0x2000;
-			angle_offsets[count++] = direction - 0x2000;
-			angle_offsets[count++] = direction + 0x3000;
-			angle_offsets[count++] = direction - 0x3000;
-			for (angle_index = 0; angle_index < count; angle_index++)
+			angleOffsets[count++] = direction + 0x1000;
+			angleOffsets[count++] = direction - 0x1000;
+			angleOffsets[count++] = direction + 0x2000;
+			angleOffsets[count++] = direction - 0x2000;
+			angleOffsets[count++] = direction + 0x3000;
+			angleOffsets[count++] = direction - 0x3000;
+			for (angleIndex = 0; angleIndex < count; angleIndex++)
 			{
-				heading = angle_offsets[angle_index];
+				heading = angleOffsets[angleIndex];
 				position.x = object->x;
 				position.y = object->y;
 				position.z = object->z;
 				Vector_AddPolarOffset(0x80000, (u16)heading, &position);
 				if (Map_CheckObjectStep(object, &position) != 0)
 					continue;
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &test_position);
-				if (Map_CheckObjectStep(object, &test_position) != 0)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &testPosition);
+				if (Map_CheckObjectStep(object, &testPosition) != 0)
 					continue;
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &test_position);
-				if (Map_CheckObjectStep(object, &test_position) != 0)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &testPosition);
+				if (Map_CheckObjectStep(object, &testPosition) != 0)
 					continue;
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &test_position);
-				if (Map_CheckObjectStep(object, &test_position) != 0)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &testPosition);
+				if (Map_CheckObjectStep(object, &testPosition) != 0)
 					continue;
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &test_position);
-				if (Map_CheckObjectStep(object, &test_position) == 0)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &testPosition);
+				if (Map_CheckObjectStep(object, &testPosition) == 0)
 					goto push_objects;
 			}
 			position.x = object->x;
@@ -4047,7 +4047,7 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 			contact.z = object->z;
 			Vector_AddPolarOffset(0x40000, (u16)heading, &contact);
 			other = gObjectSlots;
-			for (angle_index = 63; angle_index >= 0; angle_index -= 1, other++)
+			for (angleIndex = 63; angleIndex >= 0; angleIndex -= 1, other++)
 			{
 				s32 radius;
 
@@ -4064,32 +4064,32 @@ s32 FieldObject_UpdatePlayerControl(struct ObjectRuntime *object)
 				if ((other->unk59 & 2) != 0 && other->movementState == 0)
 				{
 					direction = ArcTan2(other->z - object->z, other->x - object->x);
-					test_position.x = other->x;
-					test_position.y = other->y;
-					test_position.z = other->z;
+					testPosition.x = other->x;
+					testPosition.y = other->y;
+					testPosition.z = other->z;
 					heading = direction;
-					Vector_AddPolarOffset(0x4000, direction, &test_position);
+					Vector_AddPolarOffset(0x4000, direction, &testPosition);
 					if (!ScriptObject_CheckOverlap(
-							(struct ScriptObjectEntry *)other, (s32 *)&test_position))
+							(struct ScriptObjectEntry *)other, (s32 *)&testPosition))
 					{
-						test_position.x = other->x;
-						test_position.y = other->y;
-						test_position.z = other->z;
-						Vector_AddPolarOffset(0xa0000, direction, &test_position);
-						if (Map_CheckObjectStep(other, &test_position) == 0)
+						testPosition.x = other->x;
+						testPosition.y = other->y;
+						testPosition.z = other->z;
+						Vector_AddPolarOffset(0xa0000, direction, &testPosition);
+						if (Map_CheckObjectStep(other, &testPosition) == 0)
 						{
-							test_position.x = other->x;
-							test_position.y = other->y;
-							test_position.z = other->z;
-							Vector_AddPolarOffset(0xa0000, direction + 0x1000, &test_position);
-							if (Map_CheckObjectStep(other, &test_position) == 0
-								&& Map_CheckObjectStep(other, &test_position) == 0)
+							testPosition.x = other->x;
+							testPosition.y = other->y;
+							testPosition.z = other->z;
+							Vector_AddPolarOffset(0xa0000, direction + 0x1000, &testPosition);
+							if (Map_CheckObjectStep(other, &testPosition) == 0
+								&& Map_CheckObjectStep(other, &testPosition) == 0)
 							{
-								test_position.x = other->x;
-								test_position.y = other->y;
-								test_position.z = other->z;
-								Vector_AddPolarOffset(0xa0000, direction - 0x1000, &test_position);
-								if (Map_CheckObjectStep(other, &test_position) == 0)
+								testPosition.x = other->x;
+								testPosition.y = other->y;
+								testPosition.z = other->z;
+								Vector_AddPolarOffset(0xa0000, direction - 0x1000, &testPosition);
+								if (Map_CheckObjectStep(other, &testPosition) == 0)
 								{
 									Vector_AddPolarOffset(
 										0x4000, direction, (struct FieldPosition *)&other->x);
@@ -4226,21 +4226,21 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
 {
 	struct FieldPosition position;
 #if EDITION_INTERNATIONAL
-	struct FieldPosition test_position;
-	s16					 angle_offsets[28];
+	struct FieldPosition testPosition;
+	s16					 angleOffsets[28];
 #else
-	struct FieldPosition left_position;
-	struct FieldPosition right_position;
-	s16					 angle_offsets[22];
+	struct FieldPosition leftPosition;
+	struct FieldPosition rightPosition;
+	s16					 angleOffsets[22];
 #endif
 	s32						collision;
 	s32						angle;
 	u16						direction;
-	s32						angle_index;
+	s32						angleIndex;
 	s32						mode;
 	s32						count;
 	s32						difference;
-	s32						collision_kind;
+	s32						collisionKind;
 	s32						square;
 	s32						rate;
 	struct PerspectiveWork *work;
@@ -4286,37 +4286,37 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
 #if EDITION_INTERNATIONAL
 			if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position) == 0)
 			{
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000, &test_position);
-				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000, &testPosition);
+				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&testPosition)
 					== 0)
 				{
-					test_position.x = object->x;
-					test_position.y = object->y;
-					test_position.z = object->z;
-					Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000, &test_position);
+					testPosition.x = object->x;
+					testPosition.y = object->y;
+					testPosition.z = object->z;
+					Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000, &testPosition);
 					if (CheckWorldMapCollisionRange(
-							(s32)object, (struct WorldPosition *)&test_position)
+							(s32)object, (struct WorldPosition *)&testPosition)
 						== 0)
 					{
-						test_position.x = object->x;
-						test_position.y = object->y;
-						test_position.z = object->z;
+						testPosition.x = object->x;
+						testPosition.y = object->y;
+						testPosition.z = object->z;
 						Vector_AddPolarOffset(
-							WORLD_PROBE_RADIUS, direction + 0x2000, &test_position);
+							WORLD_PROBE_RADIUS, direction + 0x2000, &testPosition);
 						if (CheckWorldMapCollisionRange(
-								(s32)object, (struct WorldPosition *)&test_position)
+								(s32)object, (struct WorldPosition *)&testPosition)
 							== 0)
 						{
-							test_position.x = object->x;
-							test_position.y = object->y;
-							test_position.z = object->z;
+							testPosition.x = object->x;
+							testPosition.y = object->y;
+							testPosition.z = object->z;
 							Vector_AddPolarOffset(
-								WORLD_PROBE_RADIUS, direction - 0x2000, &test_position);
+								WORLD_PROBE_RADIUS, direction - 0x2000, &testPosition);
 							if (CheckWorldMapCollisionRange(
-									(s32)object, (struct WorldPosition *)&test_position)
+									(s32)object, (struct WorldPosition *)&testPosition)
 								== 0)
 								goto update_object;
 						}
@@ -4324,17 +4324,17 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
 				}
 			}
 			count = 0;
-			angle_offsets[count++] = direction + 0x1000;
-			angle_offsets[count++] = direction - 0x1000;
-			angle_offsets[count++] = direction + 0x2000;
-			angle_offsets[count++] = direction - 0x2000;
-			angle_offsets[count++] = direction + 0x3000;
-			angle_offsets[count++] = direction - 0x3000;
-			angle_offsets[count++] = direction + 0x4000;
-			angle_offsets[count++] = direction - 0x4000;
-			for (angle_index = 0; angle_index < count; angle_index++)
+			angleOffsets[count++] = direction + 0x1000;
+			angleOffsets[count++] = direction - 0x1000;
+			angleOffsets[count++] = direction + 0x2000;
+			angleOffsets[count++] = direction - 0x2000;
+			angleOffsets[count++] = direction + 0x3000;
+			angleOffsets[count++] = direction - 0x3000;
+			angleOffsets[count++] = direction + 0x4000;
+			angleOffsets[count++] = direction - 0x4000;
+			for (angleIndex = 0; angleIndex < count; angleIndex++)
 			{
-				direction = angle_offsets[angle_index];
+				direction = angleOffsets[angleIndex];
 				position.x = object->x;
 				position.y = object->y;
 				position.z = object->z;
@@ -4342,32 +4342,32 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
 				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position)
 					!= 0)
 					continue;
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000, &test_position);
-				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1000, &testPosition);
+				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&testPosition)
 					!= 0)
 					continue;
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000, &test_position);
-				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1000, &testPosition);
+				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&testPosition)
 					!= 0)
 					continue;
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x2000, &test_position);
-				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x2000, &testPosition);
+				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&testPosition)
 					!= 0)
 					continue;
-				test_position.x = object->x;
-				test_position.y = object->y;
-				test_position.z = object->z;
-				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x2000, &test_position);
-				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position)
+				testPosition.x = object->x;
+				testPosition.y = object->y;
+				testPosition.z = object->z;
+				Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x2000, &testPosition);
+				if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&testPosition)
 					!= 0)
 					continue;
 				angle = (s16)direction;
@@ -4376,47 +4376,47 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
 			collision |= 1;
 
 #else
-			left_position.x = object->x;
-			left_position.y = object->y;
-			left_position.z = object->z;
-			Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1555, &left_position);
-			right_position.x = object->x;
-			right_position.y = object->y;
-			right_position.z = object->z;
-			Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1555, &right_position);
+			leftPosition.x = object->x;
+			leftPosition.y = object->y;
+			leftPosition.z = object->z;
+			Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1555, &leftPosition);
+			rightPosition.x = object->x;
+			rightPosition.y = object->y;
+			rightPosition.z = object->z;
+			Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1555, &rightPosition);
 			if ((CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position)
 					| CheckWorldMapCollisionRange(
-						(s32)object, (struct WorldPosition *)&left_position)
+						(s32)object, (struct WorldPosition *)&leftPosition)
 					| CheckWorldMapCollisionRange(
-						(s32)object, (struct WorldPosition *)&right_position))
+						(s32)object, (struct WorldPosition *)&rightPosition))
 				!= 0)
 			{
-				angle_offsets[count++] = direction + 0x1000;
-				angle_offsets[count++] = direction - 0x1000;
-				angle_offsets[count++] = direction + 0x2000;
-				angle_offsets[count++] = direction - 0x2000;
-				angle_offsets[count++] = direction + 0x3000;
-				angle_offsets[count++] = direction - 0x3000;
-				for (angle_index = 0; angle_index < count; angle_index++)
+				angleOffsets[count++] = direction + 0x1000;
+				angleOffsets[count++] = direction - 0x1000;
+				angleOffsets[count++] = direction + 0x2000;
+				angleOffsets[count++] = direction - 0x2000;
+				angleOffsets[count++] = direction + 0x3000;
+				angleOffsets[count++] = direction - 0x3000;
+				for (angleIndex = 0; angleIndex < count; angleIndex++)
 				{
-					direction = angle_offsets[angle_index];
+					direction = angleOffsets[angleIndex];
 					position.x = object->x;
 					position.y = object->y;
 					position.z = object->z;
 					Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction, &position);
-					left_position.x = object->x;
-					left_position.y = object->y;
-					left_position.z = object->z;
-					Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1555, &left_position);
-					right_position.x = object->x;
-					right_position.y = object->y;
-					right_position.z = object->z;
-					Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1555, &right_position);
+					leftPosition.x = object->x;
+					leftPosition.y = object->y;
+					leftPosition.z = object->z;
+					Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction + 0x1555, &leftPosition);
+					rightPosition.x = object->x;
+					rightPosition.y = object->y;
+					rightPosition.z = object->z;
+					Vector_AddPolarOffset(WORLD_PROBE_RADIUS, direction - 0x1555, &rightPosition);
 					if ((CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position)
 							| CheckWorldMapCollisionRange(
-								(s32)object, (struct WorldPosition *)&left_position)
+								(s32)object, (struct WorldPosition *)&leftPosition)
 							| CheckWorldMapCollisionRange(
-								(s32)object, (struct WorldPosition *)&right_position))
+								(s32)object, (struct WorldPosition *)&rightPosition))
 						!= 0)
 						continue;
 					angle = (s16)direction;
@@ -4487,8 +4487,8 @@ update_object:
 	if (object->animationKind == 1)
 	{
 		sprite = object->animation;
-		collision_kind = GetWorldMapCollision((struct WorldPosition *)&object->x);
-		if (collision_kind == 9)
+		collisionKind = GetWorldMapCollision((struct WorldPosition *)&object->x);
+		if (collisionKind == 9)
 		{
 			((struct WorldMapSprite *)sprite)->shadow[6] = 1;
 			sprite->flags = 0;
@@ -4498,7 +4498,7 @@ update_object:
 			((struct WorldMapSprite *)sprite)->shadow[6] = 9;
 			sprite->flags = 1;
 		}
-		if (collision_kind == 6 && object->action == 0 && collision == 0)
+		if (collisionKind == 6 && object->action == 0 && collision == 0)
 		{
 			effect = FieldObject_Create(24, object->x, object->y, object->z);
 			if (effect != 0)
@@ -4543,7 +4543,7 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object)
 	u16					 angle;
 	s32					 motion;
 	s32					 blocked;
-	s32					 delta_z;
+	s32					 deltaZ;
 	s32					 height;
 
 	object->speedLimit = 0x8000;
@@ -4569,10 +4569,10 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object)
 		pos.z = 0;
 		Vector_AddPolarOffset(0x80000, angle, &pos);
 		pos.x += object->x;
-		delta_z = pos.z;
-		if (delta_z < 0)
+		deltaZ = pos.z;
+		if (deltaZ < 0)
 			object->angle = 0xc000;
-		if (delta_z > 0)
+		if (deltaZ > 0)
 			object->angle = 0x4000;
 		pos.y = object->y - pos.z;
 		pos.z = object->z;
@@ -5190,11 +5190,11 @@ struct TilePos
 	s32 x, y;
 };
 
-void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dst_x, u32 dst_y, u32 width, u32 height)
+void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY, u32 width, u32 height)
 {
 	/* FAKEMATCH: needed to match: temporary sharing preserves register allocation and scheduling without changing the frame or instructions. Measured 2026-10-11, before the volatile casts on the two word copies were dropped as unneeded: i = 0 after the offset differs 59, at the top of the body 32; a fresh bytes = cell * 8 is hoisted by loop.c, 158; the scale before the first destination, 4; address expressions without scr and blk, 113-153. A plain body differs 214. */
 	u32					  *src = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
-	u32					  *dst = (u32 *)Ram_MapCellBuffer + (dst_y * 128 + dst_x);
+	u32					  *dst = (u32 *)Ram_MapCellBuffer + (dstY * 128 + dstX);
 	struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
 	struct TilePos		   tile[3];
 	s32					   i;
@@ -5209,9 +5209,9 @@ void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dst_x, u32 dst_y, u32 w
 		pos++;
 		layer++;
 	}
-	for (y = dst_y; y < dst_y + height; y++)
+	for (y = dstY; y < dstY + height; y++)
 	{
-		for (x = dst_x; x < dst_x + width; x++)
+		for (x = dstX; x < dstX + width; x++)
 		{
 			u32 val = *src++;
 			u32 cell = val & 0xfff;
@@ -5347,11 +5347,11 @@ void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x, u32 destinati
 // width, height : 大きさ（セル）
 // dst_x, dst_y  : 写す先の左上（セル）
 //--------------------------------------------------------------------------
-void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x, s32 dst_y)
+void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX, s32 dstY)
 {
-	s32					   y = dst_y;
+	s32					   y = dstY;
 	u32					  *src = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
-	u32					  *dst = &((u32 *)Ram_MapCellBuffer)[y * 128 + dst_x];
+	u32					  *dst = &((u32 *)Ram_MapCellBuffer)[y * 128 + dstX];
 	struct MapLayerScroll *layer = ((struct MapScrollWork *)*gMapWork)->layers;
 	struct TilePos		   view[3];
 	s32					   i;
@@ -5372,11 +5372,11 @@ void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 ds
 		layer++;
 		i--;
 	}
-	if (y < dst_y + height)
+	if (y < dstY + height)
 	{
 		do
 		{
-			for (x = dst_x; x < dst_x + width; x++)
+			for (x = dstX; x < dstX + width; x++)
 			{
 				u32	 val = *src++;
 				u32	 cell;
@@ -5463,7 +5463,7 @@ void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 ds
 			src += (128 - width);
 			dst = 128 - width + dst;
 			y++;
-		} while (y < dst_y + height);
+		} while (y < dstY + height);
 	}
 }
 
@@ -5473,25 +5473,25 @@ void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 ds
 // width, height : 大きさ（セル）
 // dst_x, dst_y  : 写す先の左上（セル）
 //--------------------------------------------------------------------------
-void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x, s32 dst_y)
+void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX, s32 dstY)
 {
 	u32 *dst = MAP_CELLS;
 	u32 *src = dst;
 	u16	 row;
 	u16	 col;
 
-	dst += (dst_y << 7) + dst_x;
+	dst += (dstY << 7) + dstX;
 	src += (srcY << 7) + srcX;
 
 	for (row = 0; row < height; row++)
 	{
-		u32 *dst_cell = dst + (row << 7);
-		u32 *src_cell = src + (row << 7);
+		u32 *dstCell = dst + (row << 7);
+		u32 *srcCell = src + (row << 7);
 
 		for (col = 0; col < width; col++)
 		{
-			*dst_cell = (*dst_cell & MAP_CELL_TILE_MASK) | (*src_cell++ & MAP_CELL_ATTRIBUTE_MASK);
-			dst_cell++;
+			*dstCell = (*dstCell & MAP_CELL_TILE_MASK) | (*srcCell++ & MAP_CELL_ATTRIBUTE_MASK);
+			dstCell++;
 		}
 	}
 }
@@ -5503,12 +5503,12 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 ds
 // width, height : 大きさ（セル）
 // dst_x, dst_y  : 写す先の左上（セル）
 //--------------------------------------------------------------------------
-void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x, s32 dst_y)
+void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX, s32 dstY)
 {
 	/* FAKEMATCH: needed to match: word/index temporaries preserve register allocation; the plain body allocates differently and uses a 40-byte frame. Measured 2026-10-11, before the volatile casts on the two word copies were dropped as unneeded: i = 0 after pos = view differs 38; the scale into n, 52; the scale before the first destination, 54. A plain body differs 204. */
 	s32					   y;
 	u32					  *src = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
-	u32					  *dst = &((u32 *)Ram_MapCellBuffer)[dst_y * 128 + dst_x];
+	u32					  *dst = &((u32 *)Ram_MapCellBuffer)[dstY * 128 + dstX];
 	struct MapLayerScroll *layer = ((struct MapScrollWork *)*gMapWork)->layers;
 	struct TilePos		   view[3];
 	s32					   i;
@@ -5529,12 +5529,12 @@ void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x,
 		layer++;
 		i--;
 	}
-	y = dst_y;
-	if (y < dst_y + height)
+	y = dstY;
+	if (y < dstY + height)
 	{
 		do
 		{
-			for (x = dst_x; x < dst_x + width; x++)
+			for (x = dstX; x < dstX + width; x++)
 			{
 				u32 val = *src++;
 				u32 cell;
@@ -5595,7 +5595,7 @@ void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x,
 			src = src + (128 - width);
 			dst = 128 - width + dst;
 			y++;
-		} while (y < dst_y + height);
+		} while (y < dstY + height);
 	}
 }
 
@@ -6906,9 +6906,9 @@ void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode)
 
 s32 Map_GetCellHighFlags(s32 x, s32 y)
 {
-	s32				tile_x = x / 16;
-	s32				tile_y = y / 16;
-	struct MapCell *cell = (struct MapCell *)gMapCellBuffer + (tile_x + tile_y * 128);
+	s32				tileX = x / 16;
+	s32				tileY = y / 16;
+	struct MapCell *cell = (struct MapCell *)gMapCellBuffer + (tileX + tileY * 128);
 
 	return ((u8 *)&cell->metatileAndFlags)[1] >> 6;
 }
@@ -6949,8 +6949,8 @@ s32 CheckMapPositionCellOccupied(struct WorldPosition *position)
 {
 	s32				 x;
 	s32				 y;
-	s32				 tile_x;
-	s32				 tile_y;
+	s32				 tileX;
+	s32				 tileY;
 	struct MapState *work;
 	struct MapCell	*cell;
 
@@ -6960,9 +6960,9 @@ s32 CheckMapPositionCellOccupied(struct WorldPosition *position)
 	if (work == NULL)
 		return 0;
 	cell = work->layers[2].cells;
-	tile_x = x / 16;
-	tile_y = y / 16;
-	cell += tile_x + tile_y * 128;
+	tileX = x / 16;
+	tileY = y / 16;
+	cell += tileX + tileY * 128;
 	return (cell->collisionCode != 0xff) - 1;
 }
 
@@ -7016,30 +7016,30 @@ s32 CheckWorldMapCollisionRange(s32 unused, struct WorldPosition *position)
 	return -1;
 }
 
-s32 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind)
+s32 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrainKind)
 {
 	s32	 selector = GetWorldMapCollision(position);
 	s32	 x = position->x;
 	s32	 y;
 	s32	 flag = 0;
-	u32	 tile_x;
+	u32	 tileX;
 	u32	 index;
 	u32 *tile;
 
 	if (x < 0)
 		x += 0x1fffff;
-	tile_x = (x >> 21) & 31;
+	tileX = (x >> 21) & 31;
 	y = position->y;
 	if (y < 0)
 		y += 0x1fffff;
 
-	index = tile_x + (((y >> 21) & 31) << 5);
+	index = tileX + (((y >> 21) & 31) << 5);
 	tile = gMapBlocks + index;
 	if (((u8 *)tile)[3] & 0x80)
 		flag = 0x10;
 
-	*terrain_kind = (*tile << 1) >> 25;
-	if (*terrain_kind == 21)
+	*terrainKind = (*tile << 1) >> 25;
+	if (*terrainKind == 21)
 		flag = 0x20;
 
 	return gWorldMap_TerrainBehaviorTable[flag + selector];

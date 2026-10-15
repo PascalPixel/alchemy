@@ -41,8 +41,8 @@ void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32 value);
 void UiWork_FinalizePendingCoreFar(void);
 void WaitFrames(s32 frames);
 
-void Func_080d41fc(s32 first, s32 x1, s32 y1, s32 face_x1, s32 face_y1, s32 second, s32 x2,
-                   s32 y2, s32 face_x2, s32 face_y2, s32 delay)
+void Func_080d41fc(s32 first, s32 x1, s32 y1, s32 faceX1, s32 faceY1, s32 second, s32 x2,
+                   s32 y2, s32 faceX2, s32 faceY2, s32 delay)
 {
     struct TalkWork *work = Ram_HeapSlots->eventWork;
     s32 one = ObjectTable_ReadActiveValue(first);
@@ -51,13 +51,13 @@ void Func_080d41fc(s32 first, s32 x1, s32 y1, s32 face_x1, s32 face_y1, s32 seco
     s32 window2;
 
     window1 = UiText_OpenMessageWindowFar((s16)work->message++, x1, y1, Func_080d1eac(one) << 16);
-    Func_080380f8(one, 0, face_x1, face_y1);
+    Func_080380f8(one, 0, faceX1, faceY1);
     if (delay != 0) {
         while (!UiWork_IsCompleteFar())
             WaitFrames(delay);
     }
     window2 = UiText_OpenMessageWindowFar((s16)work->message++, x2, y2, Func_080d1eac(two) << 16);
-    Func_080380f8(two, 0, face_x2, face_y2);
+    Func_080380f8(two, 0, faceX2, faceY2);
     while (!UiWork_IsCompleteFar())
         WaitFrames(1);
     WaitFrames(1);

@@ -41,7 +41,7 @@ s32 Func_0804e3f4(void)
     s32 tile;
     s32 slot;
     s32 cancel;
-    u32 slot_offset;
+    u32 slotOffset;
 
     work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
     redraw = 1;
@@ -55,7 +55,7 @@ s32 Func_0804e3f4(void)
     }
     total = count + i;
     cancel = ((u32)(u16)count >> 16) | 2;
-    slot_offset = 0x1382;
+    slotOffset = 0x1382;
     while (1) {
         if (gInput.repeat & 0x20) {
             redraw = 1;
@@ -87,7 +87,7 @@ s32 Func_0804e3f4(void)
                 glyph = gData_0805eb7c[(index - count) * 2 + 1] + 128;
             {
                 s32 pal;
-                s32 loaded = *(u16 *)((u8 *)work + slot_offset);
+                s32 loaded = *(u16 *)((u8 *)work + slotOffset);
                 pal = 15;
                 slot = loaded;
                 UiGlyph_LoadEntryWithPalette(glyph, 0, &slot, &tile, pal, 1);

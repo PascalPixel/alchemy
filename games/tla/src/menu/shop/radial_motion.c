@@ -32,12 +32,12 @@ void Vector_AddPolarOffset(s32, s32, struct Position *);
 void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect)
 {
     struct Position position;
-    s8 *state_pointer;
+    s8 *statePointer;
     s32 state;
     s32 result;
 
-    state_pointer = &effect->state;
-    state = *state_pointer;
+    statePointer = &effect->state;
+    state = *statePointer;
     if (state == 0) {
         position.x = effect->sourceX;
         position.z = effect->sourceZ;
@@ -51,11 +51,11 @@ void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect)
         effect->velocity = 0x20000;
         effect->acceleration = 0x6666;
         effect->flag = state;
-        *state_pointer = (u8)*state_pointer + 1;
+        *statePointer = (u8)*statePointer + 1;
     } else if (state == 1) {
         result = BattleFx_HasReachedTargetFar(effect);
         if (result == 0)
-            *state_pointer = result;
+            *statePointer = result;
     } else if (state == 2) {
         if (BattleFx_HasReachedTargetFar(effect) == 0)
             BattleFx_ClearOwnedSlotFar(effect);

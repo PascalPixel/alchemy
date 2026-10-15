@@ -50,7 +50,7 @@ s32 Func_080cd91c(s32 id)
     struct ObjectRuntime *src;
     struct ObjectRuntime *obj;
     s32 best;
-    s32 best_dist;
+    s32 bestDist;
     s32 i;
     s32 dx;
     s32 dy;
@@ -63,7 +63,7 @@ s32 Func_080cd91c(s32 id)
     s32 angle;
 
     best = -1;
-    best_dist = 32;
+    bestDist = 32;
     src = ObjectTable_Get(id);
     if (src != 0) {
         for (i = 0; i <= 80; i++) {
@@ -94,7 +94,7 @@ s32 Func_080cd91c(s32 id)
                 dist <<= 1;
             if ((obj->collisionFlags & 4) != 0)
                 dist = dist * 10 / 13;
-            if (dist >= best_dist)
+            if (dist >= bestDist)
                 continue;
 
             angle = (u16)ArcTan2(obj->z - src->z, obj->x - src->x);
@@ -108,7 +108,7 @@ s32 Func_080cd91c(s32 id)
             }
 
             best = i;
-            best_dist = dist;
+            bestDist = dist;
         }
     }
     return best;

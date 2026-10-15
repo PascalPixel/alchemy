@@ -38,7 +38,7 @@ void ObjectTable_Snapshot(void)
     struct ObjectRuntime *copy = gSnapshotObjects;
     u8 *indices = (u8 *)gSnapshotObjects - 32;
     u8 *frames = (u8 *)&gSnapshotObjects[32];
-    u8 *next_frames = frames + 32;
+    u8 *nextFrames = frames + 32;
     u8 *priorities = frames + 64;
     u32 count = 0;
     struct ObjectRuntime *object;
@@ -66,7 +66,7 @@ void ObjectTable_Snapshot(void)
             priority = 0;
         }
         *frames++ = frame;
-        *next_frames++ = next;
+        *nextFrames++ = next;
         *priorities++ = priority;
         count++;
         copy++;

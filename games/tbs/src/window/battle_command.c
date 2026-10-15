@@ -177,7 +177,7 @@ struct RenderOutput *RenderOutput_CreateFromTable(
 }
 
 struct RenderOutput *CreateSideObject(
-	s32 object_kind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5)
+	s32 objectKind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5)
 {
 	struct UiRenderWork *state = UI_WORK;
 	struct RenderOutput *object = 0;
@@ -188,13 +188,13 @@ struct RenderOutput *CreateSideObject(
 
 	if (GameFlag_TestFar(32) != 0)
 	{
-		if (object_kind == 0)
-			object_kind = 18;
-		if (object_kind == 1)
-			object_kind = 19;
+		if (objectKind == 0)
+			objectKind = 18;
+		if (objectKind == 1)
+			objectKind = 19;
 	}
 
-	id = Localization_LookupEntryId(object_kind);
+	id = Localization_LookupEntryId(objectKind);
 	if (id == -1)
 		return object;
 
@@ -227,7 +227,7 @@ void Ui_LoadCharacterEntryForSlot(u32 slot, s32 character, s32 value)
 {
 	s32					 result;
 	s32					 current;
-	u32					 character_id;
+	u32					 characterId;
 	struct UiRenderWork *state;
 
 	state = UI_WORK;
@@ -240,16 +240,16 @@ void Ui_LoadCharacterEntryForSlot(u32 slot, s32 character, s32 value)
 			character = 0x13;
 	}
 
-	character_id = Localization_LookupEntryId(character);
-	if (character_id != -1U)
+	characterId = Localization_LookupEntryId(character);
+	if (characterId != -1U)
 	{
 		if (slot > 1U)
 		{
-			if (state->resourceIds[1] == character_id)
+			if (state->resourceIds[1] == characterId)
 			{
 				slot = 1;
 			}
-			else if (state->resourceIds[0] == character_id)
+			else if (state->resourceIds[0] == characterId)
 			{
 				slot = 0;
 			}
@@ -259,7 +259,7 @@ void Ui_LoadCharacterEntryForSlot(u32 slot, s32 character, s32 value)
 			}
 		}
 		current = state->outputIds[slot];
-		UiGlyph_LoadEntryWithPalette(character_id, value, &current, &result, slot + 0xe, 1);
+		UiGlyph_LoadEntryWithPalette(characterId, value, &current, &result, slot + 0xe, 1);
 	}
 }
 
@@ -1256,8 +1256,8 @@ void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width, 
 	if (width > 0 && height > 0)
 	{
 		s32 yOffset = y << 6;
-		s32 x_offset = x << 1;
-		s32 offset = yOffset + x_offset;
+		s32 xOffset = x << 1;
+		s32 offset = yOffset + xOffset;
 		do
 		{
 			s32	 remaining = width;
@@ -2316,14 +2316,14 @@ s32 NameEntry_EditOwnerName(s32 entry)
 {
 	struct RenderInput	*label;
 	s32					 result = 0;
-	s32					 original_length = 0;
+	s32					 originalLength = 0;
 	s32					 length = 0;
 	u8					 text[16];
 	u8					*input = text + 1;
 	u8					*saved = (u8 *)UnitGetFar(entry);
 	u8					*work = gWindowWork[0];
-	s32					 text_dirty = 1;
-	s32					 cursor_dirty = 1;
+	s32					 textDirty = 1;
+	s32					 cursorDirty = 1;
 	struct RenderInput	*window;
 	union MenuCursor	 cursor;
 	union MenuCursor	 caret;
@@ -2342,7 +2342,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 	UiText_DrawStringInWindow(gNameEntry_EndKeyLabel, window, 144, 40);
 #endif
 	UiWindow_DrawDividerLine(window, 18, 0, 18, 7);
-	((struct UiRenderWork *)work)->dirty = text_dirty;
+	((struct UiRenderWork *)work)->dirty = textDirty;
 	text[0] = result;
 	{
 		s32 i;
@@ -2354,7 +2354,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 			input[i] = c;
 			if (c != 0)
 			{
-				original_length++;
+				originalLength++;
 				length++;
 			}
 		}
@@ -2384,7 +2384,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 	pal = (u16 *)0x050001c0;
 	Dma_Set((void *)0x050001e0, pal, 0x84000008, REG_DMA3);
 	pal[4] = 0x6318;
-	end = (u8 *)(original_length + (s32)input);
+	end = (u8 *)(originalLength + (s32)input);
 	while (1)
 	{
 		s32 width = 1;
@@ -2399,14 +2399,14 @@ s32 NameEntry_EditOwnerName(s32 entry)
 		UiWindow_SetTileAttributeRect(window, column, row, width, 1, 14);
 		WaitFrames(1);
 		UiWindow_SetTileAttributeRect(window, column, row, width, 1, 15);
-		if (cursor_dirty)
+		if (cursorDirty)
 		{
-			cursor_dirty = 0;
+			cursorDirty = 0;
 			Shop_SetCursorFar(&cursor.cursor, (window->x + column) * 8 - 7, (window->y + row) * 8 + 15, 3);
 		}
-		if (text_dirty)
+		if (textDirty)
 		{
-			text_dirty = 0;
+			textDirty = 0;
 			Shop_SetCursorFar(&caret.cursor, UiText_SetRenderString(input) + 70, 22, 3);
 		}
 		ShopCursor_AdvanceFar(&cursor.cursor);
@@ -2422,7 +2422,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 		if (gKeysRepeat & KEY_UP)
 		{
 			AudioCommand_PlayFar(111);
-			cursor_dirty = 1;
+			cursorDirty = 1;
 			row--;
 			if (column != 18)
 			{
@@ -2438,7 +2438,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 		if (gKeysRepeat & KEY_DOWN)
 		{
 			AudioCommand_PlayFar(111);
-			cursor_dirty = 1;
+			cursorDirty = 1;
 			row++;
 			if (column != 18)
 			{
@@ -2454,7 +2454,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 		if (gKeysRepeat & KEY_LEFT)
 		{
 			AudioCommand_PlayFar(111);
-			cursor_dirty = 1;
+			cursorDirty = 1;
 			column--;
 			if (column == -1)
 			{
@@ -2470,7 +2470,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 		if (gKeysRepeat & KEY_RIGHT)
 		{
 			AudioCommand_PlayFar(111);
-			cursor_dirty = 1;
+			cursorDirty = 1;
 			column++;
 			if (column == 19)
 				column = 0;
@@ -2482,7 +2482,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 		if (gKeyState & KEY_START)
 		{
 			AudioCommand_PlayFar(111);
-			cursor_dirty = 1;
+			cursorDirty = 1;
 			column = 18;
 			row = 5;
 		}
@@ -2496,7 +2496,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 				*--end = 0;
 				RenderOutput_PrepareForRedraw(label);
 				UiText_DrawPaddedLabel((s32)label, input);
-				text_dirty = 1;
+				textDirty = 1;
 				continue;
 			}
 			result = -1;
@@ -2521,8 +2521,8 @@ s32 NameEntry_EditOwnerName(s32 entry)
 					u8 *dst = saved;
 					u8 *src = input;
 					s32 i = 0;
-					u8 *dst_save = dst;
-					u8 *src_save = src;
+					u8 *dstSave = dst;
+					u8 *srcSave = src;
 
 					/* FAKEMATCH: the split restores end the pointer setup's
                      * CSE blocks. They disappear, preserving destination/
@@ -2533,11 +2533,11 @@ s32 NameEntry_EditOwnerName(s32 entry)
 					if (saved)
 						src = NULL;
 					if (saved)
-						src = src_save;
+						src = srcSave;
 					if (saved)
 						dst = NULL;
 					if (saved)
-						dst = dst_save;
+						dst = dstSave;
 					while (i < 15)
 					{
 						*dst++ = *src++;
@@ -2566,11 +2566,11 @@ s32 NameEntry_EditOwnerName(s32 entry)
 			{
 				column = 18;
 				row = 5;
-				cursor_dirty = 1;
+				cursorDirty = 1;
 			}
 			RenderOutput_PrepareForRedraw(label);
 			UiText_DrawPaddedLabel((s32)label, input);
-			text_dirty = 1;
+			textDirty = 1;
 		}
 	}
 	UiWork_Finalize((struct UiWindow *)window, 2);
@@ -2592,8 +2592,8 @@ s32 NameEntry_EditOwnerName(s32 entry)
 	u8					*input = text + 1;
 	u8					*saved = (u8 *)UnitGetFar(entry);
 	u8					*work = gWindowWork[0];
-	s32					 text_dirty = 1;
-	s32					 cursor_dirty = 1;
+	s32					 textDirty = 1;
+	s32					 cursorDirty = 1;
 	struct RenderInput	*window;
 	union MenuCursor	 cursor;
 	union MenuCursor	 caret;
@@ -2608,7 +2608,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 	UiWindow_CreateWithSideObject(Localization_LookupEntryId(entry), 0, 3, 1);
 	UiWindow_CopyTilemapRegion(window, gNameEntry_KeyboardTilemap);
 	UiWindow_DrawDividerLine(window, 18, 0, 18, 12);
-	((struct UiRenderWork *)work)->dirty = text_dirty;
+	((struct UiRenderWork *)work)->dirty = textDirty;
 	text[0] = result;
 	{
 		s32 i;
@@ -2669,14 +2669,14 @@ s32 NameEntry_EditOwnerName(s32 entry)
 		UiWindow_SetTileAttributeRect(window, column, row, width, 1, 14);
 		WaitFrames(1);
 		UiWindow_SetTileAttributeRect(window, column, row, width, 1, 15);
-		if (cursor_dirty)
+		if (cursorDirty)
 		{
-			cursor_dirty = 0;
+			cursorDirty = 0;
 			Shop_SetCursorFar(&cursor.cursor, (window->x + column) * 8 - 7, (window->y + row) * 8 + 15, 3);
 		}
-		if (text_dirty)
+		if (textDirty)
 		{
-			text_dirty = 0;
+			textDirty = 0;
 			x = 72 + NameEntry_CountLetters(input) * 10;
 			Shop_SetCursorFar(&caret.cursor, x, 22, 3);
 		}
@@ -2693,7 +2693,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 		if (gKeysRepeat & KEY_UP)
 		{
 			AudioCommand_PlayFar(111);
-			cursor_dirty = 1;
+			cursorDirty = 1;
 			row--;
 			if (column != 18)
 			{
@@ -2718,7 +2718,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 		if (gKeysRepeat & KEY_DOWN)
 		{
 			AudioCommand_PlayFar(111);
-			cursor_dirty = 1;
+			cursorDirty = 1;
 			row++;
 			if (column != 18)
 			{
@@ -2740,7 +2740,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 		if (gKeysRepeat & KEY_LEFT)
 		{
 			AudioCommand_PlayFar(111);
-			cursor_dirty = 1;
+			cursorDirty = 1;
 			column--;
 			if (column == -1)
 			{
@@ -2757,7 +2757,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 		if (gKeysRepeat & KEY_RIGHT)
 		{
 			AudioCommand_PlayFar(111);
-			cursor_dirty = 1;
+			cursorDirty = 1;
 			column++;
 			if (column == 19)
 				column = 0;
@@ -2774,7 +2774,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 		if (gKeyState & KEY_START)
 		{
 			AudioCommand_PlayFar(111);
-			cursor_dirty = 1;
+			cursorDirty = 1;
 			column = 18;
 			row = 10;
 		}
@@ -2814,7 +2814,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
 			}
 			RenderOutput_PrepareForRedraw(label);
 			UiText_DrawString(input, (s32)label, 0, 0);
-			text_dirty = 1;
+			textDirty = 1;
 			continue;
 		}
 		if (!(gKeysRepeat & KEY_A))
@@ -2836,8 +2836,8 @@ s32 NameEntry_EditOwnerName(s32 entry)
 					u8 *dst;
 					u8 *src;
 					s32 i;
-					u8 *dst_save;
-					u8 *src_save;
+					u8 *dstSave;
+					u8 *srcSave;
 
 					dst = saved;
 					src = input;
@@ -2848,16 +2848,16 @@ s32 NameEntry_EditOwnerName(s32 entry)
                      * changes them to r2/r0/r1 (14 instructions differ). A for loop
                      * copying saved[i] = input[i] differs 18, one walking the
                      * pointers 14; the while form with i declared first, 12. */
-					dst_save = dst;
-					src_save = src;
+					dstSave = dst;
+					srcSave = src;
 					if (window->height)
 						dst = NULL;
 					if (window->height)
-						dst = dst_save;
+						dst = dstSave;
 					if (window->height)
 						src = NULL;
 					if (window->height)
-						src = src_save;
+						src = srcSave;
 					while (i < 15)
 					{
 						*dst++ = *src++;
@@ -2901,11 +2901,11 @@ s32 NameEntry_EditOwnerName(s32 entry)
 			{
 				column = 18;
 				row = 10;
-				cursor_dirty = 1;
+				cursorDirty = 1;
 			}
 			RenderOutput_PrepareForRedraw(label);
 			UiText_DrawString(input, (s32)label, 0, 0);
-			text_dirty = 1;
+			textDirty = 1;
 		}
 	}
 	UiWork_Finalize((struct UiWindow *)window, 2);
@@ -3175,15 +3175,15 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
 	}
 }
 
-void RenderResource_LoadPair(s32 group_index, s32 resource_index)
+void RenderResource_LoadPair(s32 groupIndex, s32 resourceIndex)
 {
-	void	 *staging_buffer = Runtime_AllocateBlock(14, 0x400);
-	const u8 *resource = gRenderResource_PairSourceTable[group_index];
+	void	 *stagingBuffer = Runtime_AllocateBlock(14, 0x400);
+	const u8 *resource = gRenderResource_PairSourceTable[groupIndex];
 
-	if (resource_index <= 0x5F)
+	if (resourceIndex <= 0x5F)
 	{
-		Resource_DecodeByteLz(resource, staging_buffer);
-		VramBlock_LoadCached(resource_index, 0x200, staging_buffer);
+		Resource_DecodeByteLz(resource, stagingBuffer);
+		VramBlock_LoadCached(resourceIndex, 0x200, stagingBuffer);
 		Runtime_ReleaseHeapBlock(14);
 	}
 }
@@ -3395,17 +3395,17 @@ void Link_DrawShiftedTilePair(s32 offset)
 void Graphics_ExpandVramTilesByColorTable(u16 *dst)
 {
 	s32 bank = 0;
-	s32 pal_offset = 0;
-	s32 dst_bank = 0;
+	s32 palOffset = 0;
+	s32 dstBank = 0;
 
 	do
 	{
 		s32 row = 0;
-		s32 dst_offset = (dst_bank + bank) << 6;
+		s32 dstOffset = (dstBank + bank) << 6;
 
 		do
 		{
-			u16 *out = (u16 *)((u8 *)dst + dst_offset);
+			u16 *out = (u16 *)((u8 *)dst + dstOffset);
 			u16 *src = (u16 *)((u8 *)0x06000600 + (row << 5));
 			s32	 col = 0;
 
@@ -3417,7 +3417,7 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst)
 
 				do
 				{
-					u32 color = gGraphics_ExpandNibbleTable[(packed & 15) + pal_offset] << (nibble * 4);
+					u32 color = gGraphics_ExpandNibbleTable[(packed & 15) + palOffset] << (nibble * 4);
 					nibble++;
 					packed >>= 4;
 					dec |= color;
@@ -3428,11 +3428,11 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst)
 			} while (col <= 15);
 
 			row++;
-			dst_offset += 32;
+			dstOffset += 32;
 		} while (row <= 9);
 
-		pal_offset += 16;
-		dst_bank += 4;
+		palOffset += 16;
+		dstBank += 4;
 		bank++;
 	} while (bank <= 1);
 }
@@ -3684,7 +3684,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
 	struct UiRenderWork	 *render;
 	struct SelectionWork *work;
 	struct MenuCell		 *runtime;
-	s32					  rebuild, trade_count, scale, result;
+	s32					  rebuild, tradeCount, scale, result;
 	s32					  cnt;
 	s32					  keys, repeat;
 	s32					  slot;
@@ -3693,7 +3693,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
 	render = UI_WORK;
 	slot = Resource_LoadIntoFreeSlot(0x400);
 	rebuild = 1;
-	trade_count = 0;
+	tradeCount = 0;
 	work = Runtime_BumpAllocateAlternatePool(sizeof(*work));
 	for (i = 255; i >= 0; i--)
 		work->palette.slot[i] = 255;
@@ -3722,9 +3722,9 @@ s32 Ui_RunSelectionScreen(s32 mode)
 		{
 			BattlePlacement_CountValidEntriesFar(0, party);
 			for (i = 0; i <= 3; i++)
-				trade_count += party[i];
+				tradeCount += party[i];
 			work->kinds[num++] = 15;
-			if (trade_count != 0)
+			if (tradeCount != 0)
 				work->kinds[num++] = 16;
 		}
 		work->kinds[num++] = 2;
@@ -3892,7 +3892,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
 				else if (runtime->autoMode == 0)
 				{
 					s32 kind = work->kinds[work->selection];
-					if (kind == 16 || (trade_count == 0 && kind == 15))
+					if (kind == 16 || (tradeCount == 0 && kind == 15))
 					{
 						if (runtime->autoEnabled == 1)
 						{
@@ -5328,24 +5328,24 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 	struct CursorSprite		  slot;
 	u16						  buf[64];
 	struct UiRenderWork		 *ctx;
-	struct UiWindow			 *detail_win;
-	s32						  prev_row;
+	struct UiWindow			 *detailWin;
+	s32						  prevRow;
 	s32						  res;
 	u32						 *table;
 	s32						  cnt;
-	s32						  prev_page;
-	struct UiWindow			 *msg_win;
+	s32						  prevPage;
+	struct UiWindow			 *msgWin;
 	s32						  mask;
-	s32						  saved_row;
-	s32						  sub_selection;
+	s32						  savedRow;
+	s32						  subSelection;
 	s32						  redraw;
-	s32						  is_used;
-	s32						  sub_cnt;
+	s32						  isUsed;
+	s32						  subCnt;
 	struct MenuCell			 *menu;
 	struct BattleUnit			 *unit;
 	struct DjinnRecoveryList *list;
-	struct UiWindow			 *list_win;
-	struct UiWindow			 *icon_win;
+	struct UiWindow			 *listWin;
+	struct UiWindow			 *iconWin;
 	struct PartyStatusWindow *cursor;
 	u32						 *pos;
 	u32						  cur;
@@ -5355,7 +5355,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 	u32						  code;
 	s32						  pages;
 	s32						  pal;
-	struct MenuPoint		  cursor_pos;
+	struct MenuPoint		  cursorPos;
 	s32						  trig;
 	s32						  rep;
 	s32						  opts;
@@ -5363,25 +5363,25 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 	s32						  y;
 	s32						  i;
 	s32						  j;
-	struct CursorSprite		 *cur_spr;
+	struct CursorSprite		 *curSpr;
 
 	ctx = UI_WORK;
-	detail_win = 0;
-	prev_row = -1;
+	detailWin = 0;
+	prevRow = -1;
 	res = Resource_LoadIntoFreeSlot(0x80);
 	table = Runtime_BumpAllocateAlternatePool(0xa8 * 2);
 	cnt = 0;
-	prev_page = -1;
+	prevPage = -1;
 	code = 0;
 	mask = 0;
-	sub_selection = 0;
-	sub_cnt = 0;
+	subSelection = 0;
+	subCnt = 0;
 	redraw = 0;
-	is_used = 0;
-	msg_win = UiWindow_Create(0, 4, 30, 4, 42);
+	isUsed = 0;
+	msgWin = UiWindow_Create(0, 4, 30, 4, 42);
 	UiWork_SetAltFlagAndClearTable(1);
-	list_win = UiWindow_Create(21, 9, 9, 11, 6);
-	MenuCell_GetCursor(page, row, saved_row);
+	listWin = UiWindow_Create(21, 9, 9, 11, 6);
+	MenuCell_GetCursor(page, row, savedRow);
 	unit = UnitGetFar(owner);
 
 	for (x = 0; x <= 3; x++)
@@ -5424,21 +5424,21 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 	table[cnt] = 0x80000000;
 	ctx->dirty = 1;
 
-	/* FAKEMATCH: forced store: this dead store of cur_spr before the loop keeps the native allocation; without it the function differs 394 (1193 instructions for 1201) in tbs-en and tbs-ja (measured 2026-10-14). */
-	cur_spr = &slot;
+	/* FAKEMATCH: forced store: this dead store of curSpr before the loop keeps the native allocation; without it the function differs 394 (1193 instructions for 1201) in tbs-en and tbs-ja (measured 2026-10-14). */
+	curSpr = &slot;
 	for (;;)
 	{
-		if (page != prev_page || row != prev_row || redraw != 0)
+		if (page != prevPage || row != prevRow || redraw != 0)
 		{
 			cur = table[page + row];
 			mask = 0;
 			ctx->menuBusy = 1;
 			Ui_SetRectHighlight(
-				list_win->x + 1, list_win->y + prev_row * 2 + 1, list_win->width - 2, 1, 15);
-			if (sub_selection != 0)
+				listWin->x + 1, listWin->y + prevRow * 2 + 1, listWin->width - 2, 1, 15);
+			if (subSelection != 0)
 			{
-				UiWork_Finalize(msg_win, 1);
-				msg_win = UiWindow_Create(0, 4, 30, 4, 42);
+				UiWork_Finalize(msgWin, 1);
+				msgWin = UiWindow_Create(0, 4, 30, 4, 42);
 				Ui_FillVramBlockPattern();
 			}
 			redraw = 0;
@@ -5447,7 +5447,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 				s32 k;
 				u32 selected;
 				UiWork_ClearValueNameTables();
-				is_used = 0;
+				isUsed = 0;
 				/* FAKEMATCH: this one-pass loop retains the native redraw
                  * reload after the selected-entry load. A plain assignment
                  * folds k to zero (1201 -> 1200 instructions, 27 rows differ);
@@ -5461,31 +5461,31 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 				}
 				if (selected == cur)
 				{
-					is_used = 1;
+					isUsed = 1;
 				}
 				else
 				{
 					for (;;)
 					{
-						/* FAKEMATCH: needed to match: is_used is zero on every search-loop continuation. Its step dependency prevents loop.c from strength-reducing k into a pointer; CSE later removes the flag term. Plain k differs 35 instructions in EN; this form restores the native reload and indexing (differ 0). */
-						k += 1 - is_used;
+						/* FAKEMATCH: needed to match: isUsed is zero on every search-loop continuation. Its step dependency prevents loop.c from strength-reducing k into a pointer; CSE later removes the flag term. Plain k differs 35 instructions in EN; this form restores the native reload and indexing (differ 0). */
+						k += 1 - isUsed;
 						if (k > 7)
 							break;
 						if ((u32)COUNTDOWN->selected[k] == cur)
 						{
-							is_used = 1;
+							isUsed = 1;
 							break;
 						}
 					}
 				}
-				if (is_used != 0)
+				if (isUsed != 0)
 				{
 					TEXT_LOAD(MsgBattleDjinnTwice, buf, TEXT_COUNT);
-					if (detail_win != 0)
+					if (detailWin != 0)
 					{
-						UiWork_Finalize(detail_win, 1);
-						detail_win = 0;
-						sub_selection = 0;
+						UiWork_Finalize(detailWin, 1);
+						detailWin = 0;
+						subSelection = 0;
 					}
 				}
 				else if (cur & 0x10000)
@@ -5495,25 +5495,25 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 						UiWork_PushValueSlot((s32)((cur & 0x3e0000) >> 17), 5);
 						TEXT_LOAD((s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) + MsgDjinnEffect,
 							buf, TEXT_COUNT);
-						if (detail_win != 0)
+						if (detailWin != 0)
 						{
-							UiWork_Finalize(detail_win, 1);
-							detail_win = 0;
-							sub_selection = 0;
+							UiWork_Finalize(detailWin, 1);
+							detailWin = 0;
+							subSelection = 0;
 						}
 					}
 					else
 					{
-						detail_win = (struct UiWindow *)DjinnMenu_ShowChangePreview(
-							(struct RenderInput *)detail_win, owner, (s32)cur, sub_selection, &sub_cnt);
+						detailWin = (struct UiWindow *)DjinnMenu_ShowChangePreview(
+							(struct RenderInput *)detailWin, owner, (s32)cur, subSelection, &subCnt);
 						UiText_CopyMessageString(MsgBattleSummonStandby, buf, TEXT_COUNT);
 						mask = 1 << ((cur & 0xf00) >> 8);
 					}
 				}
 				else
 				{
-					detail_win = (struct UiWindow *)DjinnMenu_ShowChangePreview(
-						(struct RenderInput *)detail_win, owner, (s32)cur, sub_selection, &sub_cnt);
+					detailWin = (struct UiWindow *)DjinnMenu_ShowChangePreview(
+						(struct RenderInput *)detailWin, owner, (s32)cur, subSelection, &subCnt);
 					TEXT_LOAD((s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) + MsgDjinnEffect, buf,
 						TEXT_COUNT);
 				}
@@ -5523,22 +5523,22 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 				TEXT_LOAD(MsgBattleNoDjinn, buf, TEXT_COUNT);
 			}
 			ctx->menuBusy = 0;
-			if (sub_selection == 0)
+			if (subSelection == 0)
 			{
 				ctx->menuBusy = 1;
-				UiWork_Finalize(msg_win, 1);
-				msg_win = UiWindow_Create(0, 4, 30, 4, 42);
-				ctx->menuBusy = (u8)sub_selection;
+				UiWork_Finalize(msgWin, 1);
+				msgWin = UiWindow_Create(0, 4, 30, 4, 42);
+				ctx->menuBusy = (u8)subSelection;
 			}
-			UiText_RenderWideStringAtOffset(buf, msg_win, 0, 4);
-			prev_row = row;
-			if (page != prev_page)
+			UiText_RenderWideStringAtOffset(buf, msgWin, 0, 4);
+			prevRow = row;
+			if (page != prevPage)
 			{
-				RenderOutput_RedrawSavedRect(list_win);
+				RenderOutput_RedrawSavedRect(listWin);
 				j = 0;
 				while ((code = table[page + j]) != 0x80000000)
 				{
-					UiWindow_SetTilemapEntry((struct RenderInput *)list_win,
+					UiWindow_SetTilemapEntry((struct RenderInput *)listWin,
 						(s32)((code & 0xf00) >> 8) + 0x5001, 0, j * 2, 0);
 					if (code & 0x3e0000)
 					{
@@ -5550,11 +5550,11 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 					}
 					UiText_DrawCharacterAtOffset(
 						(s32)(((code & 0xf00) >> 8) * 20 + (code & 0xff)) + MsgDjinnName,
-						(struct RenderInput *)list_win, 8, j * 16);
+						(struct RenderInput *)listWin, 8, j * 16);
 					if (code & 0x3e0000)
 					{
 						UiText_DrawNumberAtOffset((s32)((code & 0x3e0000) >> 17), TURNS_DIGITS,
-							(struct RenderInput *)list_win, TURNS_X, j * 16);
+							(struct RenderInput *)listWin, TURNS_X, j * 16);
 					}
 					UiWork_SetParamNibble(15);
 					j++;
@@ -5563,7 +5563,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 						break;
 					}
 				}
-				prev_page = page;
+				prevPage = page;
 			}
 			if (cnt > 5)
 			{
@@ -5574,12 +5574,12 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 					{
 						tile = j + 0xf30b;
 					}
-					UiWindow_SetTilemapEntry((struct RenderInput *)list_win, tile,
-						list_win->width - pages + j - 2, -1, 0);
+					UiWindow_SetTilemapEntry((struct RenderInput *)listWin, tile,
+						listWin->width - pages + j - 2, -1, 0);
 				}
 			}
 			Ui_SetRectHighlight(
-				list_win->x + 1, list_win->y + row * 2 + 1, list_win->width - 2, 1, 14);
+				listWin->x + 1, listWin->y + row * 2 + 1, listWin->width - 2, 1, 14);
 			ctx->dirty = 1;
 			ctx->menuBusy = 0;
 		}
@@ -5596,24 +5596,24 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 						tile = j + 0xf30b;
 					}
 				}
-				UiWindow_SetTilemapEntry((struct RenderInput *)list_win, tile,
-					list_win->width - ((cnt + 4) / 5) + j - 2, -1, 0);
+				UiWindow_SetTilemapEntry((struct RenderInput *)listWin, tile,
+					listWin->width - ((cnt + 4) / 5) + j - 2, -1, 0);
 			}
 			if ((gKeysHeld & 0x100) == 0)
 			{
-				UiWindow_SetTilemapEntry((struct RenderInput *)list_win, 0xf334,
-					list_win->width - (cnt + 4) / 5 - 3, -1, 0);
+				UiWindow_SetTilemapEntry((struct RenderInput *)listWin, 0xf334,
+					listWin->width - (cnt + 4) / 5 - 3, -1, 0);
 				UiWindow_SetTilemapEntry(
-					(struct RenderInput *)list_win, 0xf335, list_win->width - 2, -1, 0);
+					(struct RenderInput *)listWin, 0xf335, listWin->width - 2, -1, 0);
 			}
 			else
 			{
-				UiWindow_SetTilemapEntry((struct RenderInput *)list_win, 0xf011,
-					list_win->width - (cnt + 4) / 5 - 3, -1, 0);
+				UiWindow_SetTilemapEntry((struct RenderInput *)listWin, 0xf011,
+					listWin->width - (cnt + 4) / 5 - 3, -1, 0);
 				UiWindow_SetTilemapEntry(
-					(struct RenderInput *)list_win, 0xf012, list_win->width - 2, -1, 0);
+					(struct RenderInput *)listWin, 0xf012, listWin->width - 2, -1, 0);
 			}
-			UiRender_MarkRow(ctx, list_win->y - 1);
+			UiRender_MarkRow(ctx, listWin->y - 1);
 		}
 
 		trig = gKeyState;
@@ -5653,22 +5653,22 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 				turns = selection & 0x3e0000;
 				if (turns == 0)
 				{
-					if (is_used == 0)
+					if (isUsed == 0)
 					{
 						menu->page = page;
 						menu->row = row;
-						menu->preferredRow = saved_row;
+						menu->preferredRow = savedRow;
 						code = selection;
 						break;
 					}
 				}
-				else if (is_used == 0)
+				else if (isUsed == 0)
 				{
 					Ui_FillVramBlockPattern();
 					UiWork_ClearValueNameTables();
 					UiWork_PushValueSlot((s32)((turns & 0x3e0000) >> 17), 5);
 					UiText_CopyMessageString(MsgBattleDjinnRecovering, buf, TEXT_COUNT);
-					UiText_RenderWideStringAtOffset(buf, msg_win, 0, 4);
+					UiText_RenderWideStringAtOffset(buf, msgWin, 0, 4);
 				}
 				AudioCommand_PlayFar(0x72);
 			}
@@ -5689,7 +5689,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 				{
 					row = 0;
 				}
-				saved_row = row;
+				savedRow = row;
 			}
 			else if (rep & 0x40)
 			{
@@ -5706,75 +5706,75 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 						row = 4;
 					}
 				}
-				saved_row = row;
+				savedRow = row;
 			}
 			else if (opts & 0x100)
 			{
-				if (detail_win != 0)
+				if (detailWin != 0)
 				{
-					for (i = 0; i < sub_cnt; i++)
+					for (i = 0; i < subCnt; i++)
 					{
 						s32 tile = i + 0xf301;
-						if ((gFrameCount & 15) <= 11 && i == sub_selection - 1)
+						if ((gFrameCount & 15) <= 11 && i == subSelection - 1)
 						{
-							tile = sub_selection - 1 + 0xf30b;
+							tile = subSelection - 1 + 0xf30b;
 						}
-						UiWindow_SetTilemapEntry((struct RenderInput *)detail_win, tile,
-							detail_win->width - sub_cnt + i - 2, -1, 0);
+						UiWindow_SetTilemapEntry((struct RenderInput *)detailWin, tile,
+							detailWin->width - subCnt + i - 2, -1, 0);
 					}
-					UiWindow_SetTilemapEntry((struct RenderInput *)detail_win, 0xf334,
-						detail_win->width - sub_cnt - 3, -1, 0);
+					UiWindow_SetTilemapEntry((struct RenderInput *)detailWin, 0xf334,
+						detailWin->width - subCnt - 3, -1, 0);
 					UiWindow_SetTilemapEntry(
-						(struct RenderInput *)detail_win, 0xf335, detail_win->width - 2, -1, 0);
-					UiRender_MarkRow(ctx, detail_win->y);
+						(struct RenderInput *)detailWin, 0xf335, detailWin->width - 2, -1, 0);
+					UiRender_MarkRow(ctx, detailWin->y);
 				}
-				if (sub_selection == 0 && sub_cnt != 0)
+				if (subSelection == 0 && subCnt != 0)
 				{
-					if (detail_win != 0)
+					if (detailWin != 0)
 					{
-						RenderOutput_ClearList(detail_win);
+						RenderOutput_ClearList(detailWin);
 					}
-					sub_selection = 1;
+					subSelection = 1;
 					redraw = 1;
 				}
 				else
 				{
-					if (sub_selection > sub_cnt)
+					if (subSelection > subCnt)
 					{
-						sub_selection = sub_cnt;
+						subSelection = subCnt;
 					}
-					if (sub_selection != 0)
+					if (subSelection != 0)
 					{
 						if (rep & 16)
 						{
 							AudioCommand_PlayFar(0x6f);
-							sub_selection++;
-							if (sub_selection > sub_cnt)
+							subSelection++;
+							if (subSelection > subCnt)
 							{
-								sub_selection = 1;
+								subSelection = 1;
 							}
 							redraw = 1;
 						}
 						else if (rep & 32)
 						{
 							AudioCommand_PlayFar(0x6f);
-							sub_selection--;
-							if (sub_selection <= 0)
+							subSelection--;
+							if (subSelection <= 0)
 							{
-								sub_selection = sub_cnt;
+								subSelection = subCnt;
 							}
 							redraw = 1;
 						}
 					}
 				}
 			}
-			else if (sub_selection != 0)
+			else if (subSelection != 0)
 			{
-				if (detail_win != 0)
+				if (detailWin != 0)
 				{
-					RenderOutput_ClearList(detail_win);
+					RenderOutput_ClearList(detailWin);
 				}
-				sub_selection = 0;
+				subSelection = 0;
 				redraw = 1;
 			}
 			else if (rep & 16)
@@ -5786,19 +5786,19 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 					if (page != 0)
 					{
 						page = 0;
-						row = saved_row;
+						row = savedRow;
 					}
 				}
 				else
 				{
 					page += 5;
-					row = saved_row;
+					row = savedRow;
 					if (page == ((cnt - 1) / 5) * 5)
 					{
 						row = cnt - page - 1;
-						if (row > saved_row)
+						if (row > savedRow)
 						{
-							row = saved_row;
+							row = savedRow;
 						}
 					}
 				}
@@ -5810,18 +5810,18 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 				if (page != 0)
 				{
 					page -= 5;
-					row = saved_row;
+					row = savedRow;
 				}
 				else
 				{
 					page = ((cnt - 1) / 5) * 5;
-					row = saved_row;
+					row = savedRow;
 					if (page != 0)
 					{
 						row = cnt - page - 1;
-						if (row > saved_row)
+						if (row > savedRow)
 						{
-							row = saved_row;
+							row = savedRow;
 						}
 					}
 				}
@@ -5836,27 +5836,27 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
              * delay slot before lsls (2 differing instruction rows). */
 			do
 			{
-				cx = list_win->x * 8;
+				cx = listWin->x * 8;
 			} while (0);
 			/* FAKEMATCH: instruction order: row read in a low register here is reloaded before the subtract, and row * 2 inherits that reload, so mov r2, r10 precedes subs r3, #2 as native (2 rows without; equal priority, and the reload otherwise has the later luid) */
 			asm("" : : "l"(row));
-			cursor_pos.x = cx - 2;
+			cursorPos.x = cx - 2;
 		}
-		cursor_pos.y = (row * 2 + list_win->y) * 8 + 20;
-		/* FAKEMATCH: forced re-point: cur_spr already holds &slot; storing it again here keeps the native reload; without it the function differs 36 in tbs-en and tbs-ja (measured 2026-10-14). */
-		cur_spr = &slot;
-		((u32 *)cur_spr)[1] = MENU_SPRITE_SIZE_16;
-		((u32 *)cur_spr)[2] = 0;
-		cur_spr->tile = Resource_GetBuffer(res, (s32)gResource_FixedBlockBTiles);
-		cur_spr->x = cursor_pos.x + ((gFrameCount & 4) >> 1) - 6;
-		cur_spr->y = cursor_pos.y - ((gFrameCount & 4) >> 2) - 8;
+		cursorPos.y = (row * 2 + listWin->y) * 8 + 20;
+		/* FAKEMATCH: forced re-point: curSpr already holds &slot; storing it again here keeps the native reload; without it the function differs 36 in tbs-en and tbs-ja (measured 2026-10-14). */
+		curSpr = &slot;
+		((u32 *)curSpr)[1] = MENU_SPRITE_SIZE_16;
+		((u32 *)curSpr)[2] = 0;
+		curSpr->tile = Resource_GetBuffer(res, (s32)gResource_FixedBlockBTiles);
+		curSpr->x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
+		curSpr->y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
 		if (cnt != 0)
 		{
-			Runtime_PushSlotEntry(cur_spr, 242);
+			Runtime_PushSlotEntry(curSpr, 242);
 		}
 		cursor = CURSOR_OWNER;
 		blink = gFrameCount & 4;
-		icon_win = cursor->window;
+		iconWin = cursor->window;
 		if (cursor->flags & 2)
 		{
 			for (i = 0; i <= 3; i++)
@@ -5866,8 +5866,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 				{
 					pal = 15;
 				}
-				Ui_SetRectHighlight(icon_win->x + gDjinnMenu_ElementXOffsets[i] + 1,
-					icon_win->y + gDjinnMenu_ElementYOffsets[i] + 1, 2, 2, pal);
+				Ui_SetRectHighlight(iconWin->x + gDjinnMenu_ElementXOffsets[i] + 1,
+					iconWin->y + gDjinnMenu_ElementYOffsets[i] + 1, 2, 2, pal);
 			}
 		}
 		if (gFrameCount & 4)
@@ -5888,9 +5888,9 @@ s32 Battle_SelectAbility(s32 owner, s32 unused)
 		Ui_SetRectHighlight(CURSOR_OWNER->window->x + 1, CURSOR_OWNER->window->y + 1, 4, 4, 15);
 	}
 	Resource_ResetEntry(res);
-	UiWork_Finalize(msg_win, 1);
-	UiWork_Finalize(detail_win, 1);
-	UiWork_Finalize(list_win, 1);
+	UiWork_Finalize(msgWin, 1);
+	UiWork_Finalize(detailWin, 1);
+	UiWork_Finalize(listWin, 1);
 	UiWindow_MarkVisibleTileAttributes();
 	UiWork_SetAltFlagAndClearTable(0);
 	MemFree(table);
@@ -5943,11 +5943,11 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 	s32							   count;
 	struct UiWindow				  *window;
 	struct UiRenderWork			  *render;
-	s32							   drawn_row, drawn_page, row, page;
-	s32							   cursor_handle;
+	s32							   drawnRow, drawnPage, row, page;
+	s32							   cursorHandle;
 	struct UiWindow				  *description, *counts;
 	s32							   mask, preferred;
-	struct MenuPoint			   cursor_position;
+	struct MenuPoint			   cursorPosition;
 	const struct SummonDefinition *summon;
 	struct MenuCell				  *nav;
 	struct MenuSprite			  *sprite;
@@ -5958,9 +5958,9 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 	s32							   index;
 
 	render = UI_WORK;
-	drawn_row = -1;
-	drawn_page = -1;
-	cursor_handle = (s16)Resource_LoadIntoFreeSlot(128); // 16x16 スプライト 1 枚分
+	drawnRow = -1;
+	drawnPage = -1;
+	cursorHandle = (s16)Resource_LoadIntoFreeSlot(128); // 16x16 スプライト 1 枚分
 	description = UiWindow_Create(0, 4, 30, 4, 42);
 	counts = UiWindow_Create(20, 8, 10, 3, 6);
 	mask = 0;
@@ -6040,11 +6040,11 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 		//------------------------------------------------------------------
 		// ページか行が変わったら描きなおす
 		//------------------------------------------------------------------
-		if (page != drawn_page || row != drawn_row)
+		if (page != drawnPage || row != drawnRow)
 		{
 			render->menuBusy = 1;
 			Ui_SetRectHighlight(
-				window->x + 1, window->y + drawn_row * 2 + 1, window->width - 2, 1, 15);
+				window->x + 1, window->y + drawnRow * 2 + 1, window->width - 2, 1, 15);
 			Ui_FillVramBlockPattern();
 
 			// 説明文と、必要なジンの属性
@@ -6059,7 +6059,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 				UiText_DecodeMessage(s->nameMessageId + MsgAbilityDescription, text, 32);
 #endif
 				UiText_RenderWideStringAtOffset(text, (struct UiWindow *)description, 0, 4);
-				drawn_row = row;
+				drawnRow = row;
 				mask = 0;
 				for (element = 0; element <= 3; element++)
 				{
@@ -6069,7 +6069,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 			}
 
 			// スタンバイ数と、ページの召喚 4 つ
-			if (page != drawn_page)
+			if (page != drawnPage)
 			{
 				RenderOutput_RedrawSavedRect(window);
 				{
@@ -6125,7 +6125,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 					while (index <= 3)
 						visible[index++] = 0;
 				}
-				drawn_page = page;
+				drawnPage = page;
 			}
 
 			// ページ番号
@@ -6155,13 +6155,13 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 		}
 
 		// カーソルは 4 フレームごとに揺れる
-		cursor_position.x = window->x * 8 - 2;
-		cursor_position.y = (row * 2 + window->y) * 8 + 20;
+		cursorPosition.x = window->x * 8 - 2;
+		cursorPosition.y = (row * 2 + window->y) * 8 + 20;
 		((u32 *)cur)[1] = MENU_SPRITE_SIZE_16;
 		((u32 *)cur)[2] = 0;
-		cur->tile = Resource_GetBuffer((u16)cursor_handle, (s32)gResource_FixedBlockBTiles);
-		cur->x = cursor_position.x + ((gFrameCount & 4) >> 1) - 4;
-		cur->y = cursor_position.y - ((gFrameCount & 4) >> 2) - 8;
+		cur->tile = Resource_GetBuffer((u16)cursorHandle, (s32)gResource_FixedBlockBTiles);
+		cur->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
+		cur->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
 		/* FAKEMATCH: register choice and order: the cursor is pushed through
 		   sprite, re-pointed at it here as a struct MenuSprite *, which keeps
 		   the frame loop's registers as the native allocates them. Measured
@@ -6311,7 +6311,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 	WaitFrames(1);
 	for (index = 0; index < 4; index++)
 		Resource_ResetEntry(handles[index]);
-	Resource_ResetEntry((u16)cursor_handle);
+	Resource_ResetEntry((u16)cursorHandle);
 	UiWork_Finalize(counts, 1);
 	UiWork_Finalize(description, 1);
 	UiWork_Finalize(window, 1);
@@ -6365,11 +6365,11 @@ void Vram_CopyTile(u32 source_tile, u32 destination_tile)
 s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 {
 	struct UiRenderWork *render;
-	s32					 drawn_page;
-	s32					 drawn_row;
-	s32					 cursor_handle;
+	s32					 drawnPage;
+	s32					 drawnRow;
+	s32					 cursorHandle;
 	struct UiWindow		*messageWindow;
-	s32					 icon_count;
+	s32					 iconCount;
 	s32					 preferredRow;
 	struct MenuPoint	 pos;
 	struct MenuCell		*cell;
@@ -6390,11 +6390,11 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 	struct MenuSprite	 sprites[BATTLE_LIST_ROWS];
 
 	render = UI_WORK;
-	drawn_page = -1;
-	drawn_row = -1;
-	cursor_handle = Resource_LoadIntoFreeSlot(128);
+	drawnPage = -1;
+	drawnRow = -1;
+	cursorHandle = Resource_LoadIntoFreeSlot(128);
 	messageWindow = UiWindow_Create(0, 5, 30, 4, 42);
-	icon_count = 0;
+	iconCount = 0;
 	MenuCell_GetCursor(page, row, preferredRow);
 	window = UiWindow_Create(15, 9, 15, BATTLE_LIST_ROWS * 2 + 1, 6);
 
@@ -6422,11 +6422,11 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 	cur = &cursor;
 	for (;;)
 	{
-		if (page != drawn_page || row != drawn_row)
+		if (page != drawnPage || row != drawnRow)
 		{
 			render->menuBusy = 1;
 			Ui_SetRectHighlight(
-				window->x + 1, window->y + drawn_row * 2 + 1, window->width - 2, 1, 15);
+				window->x + 1, window->y + drawnRow * 2 + 1, window->width - 2, 1, 15);
 			Ui_FillVramBlockPattern();
 			if (count != 0)
 			{
@@ -6450,9 +6450,9 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 				TEXT_LOAD(MsgBattleNoItems, buffer, TEXT_COUNT);
 			}
 			UiText_RenderWideStringAtOffset(buffer, messageWindow, 0, 4);
-			drawn_row = row;
+			drawnRow = row;
 
-			if (page != drawn_page)
+			if (page != drawnPage)
 			{
 				RenderOutput_RedrawSavedRect(window);
 				for (i = 0; i < BATTLE_LIST_ROWS; i++)
@@ -6477,8 +6477,8 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 					UiWork_SetParamNibble(15);
 					sprites[i].oam.f.tile = Resource_LoadKind26EntryToBuffer(entry, handles[i]);
 				}
-				icon_count = i;
-				drawn_page = page;
+				iconCount = i;
+				drawnPage = page;
 			}
 
 			if (count > BATTLE_LIST_ROWS)
@@ -6522,7 +6522,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 			UiRender_MarkRow(render, window->y - 1);
 		}
 
-		for (i = 0; i < icon_count; i++)
+		for (i = 0; i < iconCount; i++)
 		{
 			spr = &sprites[i];
 			Runtime_PushSlotEntry(spr, 240);
@@ -6540,7 +6540,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 		cur = &cursor;
 		((u32 *)cur)[1] = MENU_SPRITE_SIZE_16;
 		((u32 *)cur)[2] = 0;
-		cur->tile = Resource_GetBuffer(cursor_handle, (s32)gResource_FixedBlockBTiles);
+		cur->tile = Resource_GetBuffer(cursorHandle, (s32)gResource_FixedBlockBTiles);
 		cur->x = pos.x + ((gFrameCount & 4) >> 1) - 4;
 		cur->y = pos.y - ((gFrameCount & 4) >> 2) - 8;
 		if (count != 0)
@@ -6680,7 +6680,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 	UiWork_Finalize(messageWindow, 1);
 	UiWork_Finalize(window, 1);
 	WaitFrames(1);
-	Resource_ResetEntry(cursor_handle);
+	Resource_ResetEntry(cursorHandle);
 	for (i = 0; i < BATTLE_LIST_ROWS; i++)
 	{
 		Resource_ResetEntry(handles[i]);
@@ -6692,13 +6692,13 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
 s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count)
 {
 	struct UiRenderWork *render;
-	s32					 drawn_page;
+	s32					 drawnPage;
 	s32					 page;
-	s32					 drawn_row;
-	s32					 cursor_handle;
+	s32					 drawnRow;
+	s32					 cursorHandle;
 	struct BattleUnit		*unit;
 	struct UiWindow		*messageWindow;
-	s32					 icon_count;
+	s32					 iconCount;
 	s32					 preferredRow;
 	struct MenuPoint	 pos;
 	struct MenuCell		*nav;
@@ -6718,12 +6718,12 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count)
 	s32					 glyph;
 
 	render = UI_WORK;
-	drawn_row = -1;
-	drawn_page = -1;
-	cursor_handle = Resource_LoadIntoFreeSlot(128);
+	drawnRow = -1;
+	drawnPage = -1;
+	cursorHandle = Resource_LoadIntoFreeSlot(128);
 	unit = UnitGetFar(unitId);
 	messageWindow = UiWindow_Create(0, 5, 30, 4, 42);
-	icon_count = BATTLE_LIST_ROWS;
+	iconCount = BATTLE_LIST_ROWS;
 	MenuCell_GetCursor(page, row, preferredRow);
 	window = UiWindow_Create(9, 9, 21, BATTLE_LIST_ROWS * 2 + 1, 6);
 
@@ -6751,11 +6751,11 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count)
 	spr = &cursor;
 	for (;;)
 	{
-		if (page != drawn_page || row != drawn_row)
+		if (page != drawnPage || row != drawnRow)
 		{
 			render->menuBusy = 1;
 			Ui_SetRectHighlight(
-				window->x + 1, window->y + drawn_row * 2 + 1, window->width - 2, 1, 15);
+				window->x + 1, window->y + drawnRow * 2 + 1, window->width - 2, 1, 15);
 			Ui_FillVramBlockPattern();
 			if (count != 0)
 			{
@@ -6772,9 +6772,9 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count)
 				TEXT_LOAD(MSGNO(MsgBattleNoPsynergy), buffer, TEXT_COUNT);
 			}
 			UiText_RenderWideStringAtOffset(buffer, messageWindow, 0, 4);
-			drawn_row = row;
+			drawnRow = row;
 
-			if (page != drawn_page)
+			if (page != drawnPage)
 			{
 				RenderOutput_RedrawSavedRect(window);
 				for (i = 0; i < BATTLE_LIST_ROWS; i++)
@@ -6834,8 +6834,8 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count)
 					}
 					UiWindow_DrawThreeTileColumn((s32)window, 16, i * 2, range, 0);
 				}
-				icon_count = i;
-				drawn_page = page;
+				iconCount = i;
+				drawnPage = page;
 			}
 
 			if (count > BATTLE_LIST_ROWS)
@@ -6879,7 +6879,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count)
 			UiRender_MarkRow(render, window->y - 1);
 		}
 
-		for (i = 0; i < icon_count; i++)
+		for (i = 0; i < iconCount; i++)
 		{
 			Runtime_PushSlotEntry(&sprites[i], 240);
 		}
@@ -6888,7 +6888,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count)
 		pos.y = (row * 2 + window->y) * 8 + 20;
 		((u32 *)spr)[1] = 0x40000000;
 		((u32 *)spr)[2] = 0;
-		spr->oam.f.tile = Resource_GetBuffer(cursor_handle, (s32)gResource_FixedBlockBTiles);
+		spr->oam.f.tile = Resource_GetBuffer(cursorHandle, (s32)gResource_FixedBlockBTiles);
 		spr->oam.f.x = pos.x + ((gFrameCount & 4) >> 1) - 4;
 		spr->oam.f.y = pos.y - ((gFrameCount & 4) >> 2) - 8;
 		if (count != 0)
@@ -7017,7 +7017,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count)
 	{
 		Resource_ResetEntry(handles[i]);
 	}
-	Resource_ResetEntry(cursor_handle);
+	Resource_ResetEntry(cursorHandle);
 	WaitFrames(1);
 	return result;
 }
@@ -9921,7 +9921,7 @@ void Text_FormatHex(u32 value, u32 count, u8 *out)
 		*out++ = buf[i];
 }
 
-void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
+void Menu_DrawFlagBitTable(s32 window, s32 startFlag)
 {
 	s32	 row;
 	s32	 y;
@@ -9932,7 +9932,7 @@ void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
 	RenderOutput_PrepareForRedraw((struct UiWindow *)window);
 	UiText_DrawStringInWindow((u8 *)gMenu_HexDigitsString, window, 48, 0);
 
-	flag = start_flag << 8;
+	flag = startFlag << 8;
 	for (row = 0; row != 16; row++)
 	{
 		s32 i;
@@ -10183,7 +10183,7 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
 	s32					 tile;
 	s32					 slot;
 	s32					 cancel;
-	u32					 slot_offset;
+	u32					 slotOffset;
 
 	work = UI_WORK;
 	redraw = 1;
@@ -10205,7 +10205,7 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
      * 20, cancel = KEY_B set first in the function 48. */
 	cancel = ((u32)(u16)count >> 16) | KEY_B;
 	/* FAKEMATCH: defining the offset before the loop keeps its load in r1; defining it inside redraw uses r3 (4 instructions differ in all six editions). */
-	slot_offset = RENDER_SLOT_VALUE_OFFSET + 2;
+	slotOffset = RENDER_SLOT_VALUE_OFFSET + 2;
 	while (1)
 	{
 		if (gKeysRepeat & KEY_LEFT)
@@ -10250,7 +10250,7 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
                  * written as an index and the assignment inside the
                  * argument list; pal alone, without loaded, differs 69. */
 				s32 pal;
-				s32 loaded = *(u16 *)((u8 *)work + slot_offset);
+				s32 loaded = *(u16 *)((u8 *)work + slotOffset);
 				pal = 15;
 				slot = loaded;
 				UiGlyph_LoadEntryWithPalette(glyph, 0, &slot, &tile, pal, 1);

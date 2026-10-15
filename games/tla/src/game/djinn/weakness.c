@@ -97,7 +97,7 @@ s32 Battle_IsEffect91Class(s32 classId)
     return 0;
 }
 
-s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effect_id)
+s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId)
 {
     const u8 *entries;
     s32 i;
@@ -105,14 +105,14 @@ s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effect_id)
     if (target->classIndex == 0) {
         entries = Owner_GetRecord(target->enemyId) + 0x3e;
         for (i = 0; i < 3; i++) {
-            if (*entries == effect_id)
+            if (*entries == effectId)
                 return 1;
             entries++;
         }
     } else {
         entries = Owner_GetRecordStride84(target->classIndex)->weakEffects;
         for (i = 0; i < 3; i++) {
-            if (*entries++ == effect_id)
+            if (*entries++ == effectId)
                 return 1;
         }
     }

@@ -34,11 +34,11 @@ void Func_020007dc(s32 id, s32 a, s32 b, s32 x, s32 z, s32 unused, s32 flag)
 }
 
 // As Func_020007dc, with the cell above the object.
-void Func_02000848(s32 id, s32 a, s32 b_arg, s32 x, s32 z, s32 unused, s32 flag)
+void Func_02000848(s32 id, s32 a, s32 bArg, s32 x, s32 z, s32 unused, s32 flag)
 {
     struct ObjectRuntime *object;
     /* FAKEMATCH: b pinned to r8, where ⚓️ keeps it; without the pin the copy below takes a's register (differ 5). */
-    register s32 b asm("r8") = b_arg;
+    register s32 b asm("r8") = bArg;
 
     if (Object_GetById(id) != 0) {
         ObjectMotion_SetActionVariant(id, 3);

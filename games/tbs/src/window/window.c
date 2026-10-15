@@ -767,7 +767,7 @@ void UiWork_ShiftPanelRowsLeft(s32 step)
 void UiWork_ProcessRenderChannels(void)
 {
 	struct UiChannelSlot *channel = UI_WORK->channels;
-	s32					  channel_no = 0;
+	s32					  channelNo = 0;
 
 	do
 	{
@@ -817,9 +817,9 @@ void UiWork_ProcessRenderChannels(void)
 				}
 			}
 		}
-		channel_no++;
+		channelNo++;
 		channel++;
-	} while (channel_no != 3);
+	} while (channelNo != 3);
 }
 
 enum
@@ -856,8 +856,8 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 	s32					 y;
 	u32					 w;
 	u32					 h;
-	s32					 old_w;
-	s32					 old_h;
+	s32					 oldW;
+	s32					 oldH;
 	s32					 entry;
 	s32					 pc;
 	s32					 gx;
@@ -942,8 +942,8 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 				window = ch->work;
 				x = window->x;
 				y = window->y;
-				old_w = window->width;
-				old_h = window->height;
+				oldW = window->width;
+				oldH = window->height;
 				entry = ch->entry;
 				work->pageArrowShown = 0;
 				RenderOutput_PrepareForRedraw(window);
@@ -962,14 +962,14 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *ch)
 						UiWindow_FitOnScreen(entry, &x, &y, &w, &h, ch->spacing, 0);
 						if (window->flags & 0x80)
 						{
-							if (old_h != h)
-								y -= h - old_h;
+							if (oldH != h)
+								y -= h - oldH;
 							if (y < 0)
 								y = 0;
 						}
 						if (!(window->flags & 0x100))
 						{
-							x += (s32)(old_w - w) / 4;
+							x += (s32)(oldW - w) / 4;
 							UiWindow_FitOnScreen(entry, &x, &y, &w, &h, ch->spacing, 2);
 						}
 						window->x = x;
@@ -1232,7 +1232,7 @@ loop:
 		goto loop;
 }
 
-void UiWindow_UpdateInterpolatedGeometry(void *arg, s32 save_position)
+void UiWindow_UpdateInterpolatedGeometry(void *arg, s32 savePosition)
 {
 	struct UiWindow					   *window = arg;
 	struct UiWindowInterpolationScratch scratch;
@@ -1266,7 +1266,7 @@ void UiWindow_UpdateInterpolatedGeometry(void *arg, s32 save_position)
 	height = scratch.result >> 15;
 
 	UiWindow_DrawFrame(x, y, width, height);
-	if (save_position != 0)
+	if (savePosition != 0)
 	{
 		window->previousX = x;
 		window->previousY = y;
@@ -1690,9 +1690,9 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
 	s32					 length;
 	s32					 colour;
 	s32					 transparent;
-	s32					 first_index;
-	s32					 second_index;
-	u16					 second_width;
+	s32					 firstIndex;
+	s32					 secondIndex;
+	u16					 secondWidth;
 	u8					*digits;
 	s32					 group;
 	s32					 row;
@@ -1701,7 +1701,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
 	u32					 value;
 
 	work = UI_WORK;
-	second_index = (code << 8) >> 16;
+	secondIndex = (code << 8) >> 16;
 	code &= 255;
 	Iwram_ClearWords(buf, 384);
 	if (work->mode != 0)
@@ -1714,8 +1714,8 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
 		transparent = 1;
 		colour = work->colour;
 	}
-	first_index = code - 32;
-	input = first_index * sizeof(struct FontGlyph) + (const u8 *)gUiText_Glyphs;
+	firstIndex = code - 32;
+	input = firstIndex * sizeof(struct FontGlyph) + (const u8 *)gUiText_Glyphs;
 	length = ((const struct FontGlyph *)input)->width;
 	input = (const u8 *)((const struct FontGlyph *)input)->rows;
 	if (work->outline == 1)
@@ -1731,10 +1731,10 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
 		Iwram_ExpandBitRuns(input, buf + 49, transparent);
 		Iwram_ExpandBitRuns(input, buf + 32, colour);
 	}
-	if ((u16)second_index != 0)
+	if ((u16)secondIndex != 0)
 	{
-		input = (const u8 *)&gUiText_Glyphs[-32] + ((u16)second_index << 5);
-		second_width = *(const u16 *)input;
+		input = (const u8 *)&gUiText_Glyphs[-32] + ((u16)secondIndex << 5);
+		secondWidth = *(const u16 *)input;
 		input += 2;
 		if (work->outline == 1)
 		{
@@ -1743,7 +1743,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
 			Iwram_ExpandBitRuns(input, dst + 50, transparent);
 			Iwram_ExpandBitRuns(input, dst + 32, colour);
 			Iwram_ExpandBitRuns(input, dst + 33, colour);
-			second_width += 1;
+			secondWidth += 1;
 		}
 		else
 		{
@@ -1754,7 +1754,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
 			p = dst + 32;
 			Iwram_ExpandBitRuns(input, p, colour);
 		}
-		length += second_width;
+		length += secondWidth;
 	}
 
 	digits = buf + 7;
@@ -1796,7 +1796,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
 	s32					 length;
 	s32					 colour;
 	s32					 transparent;
-	u32					 mark_code;
+	u32					 markCode;
 	u8					*digits;
 	s32					 group;
 	s32					 row;
@@ -1810,11 +1810,11 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
 	} while (0);
 	work = UI_WORK;
 	mark = 0;
-	mark_code = gUiText_MarkGlyphCodes[code >> 14];
-	if (mark_code != 0)
+	markCode = gUiText_MarkGlyphCodes[code >> 14];
+	if (markCode != 0)
 		mark =
 			(const u8 *)((const struct FontGlyph *)((const u8 *)gUiText_Glyphs
-													+ (mark_code - 32) * sizeof(struct FontGlyph)))
+													+ (markCode - 32) * sizeof(struct FontGlyph)))
 				->rows;
 	code &= 0x3fff;
 	if (code <= 0xff)
@@ -2267,7 +2267,7 @@ u32 UiText_AppendArticleName(
 {
 	struct ArticleTable table;
 #if defined(TBS_EDITION_ES)
-	struct ArticleTable indefinite_table;
+	struct ArticleTable indefiniteTable;
 	u16					count;
 	s16					indefinite;
 #endif
@@ -2307,7 +2307,7 @@ u32 UiText_AppendArticleName(
 		kind = 0;
 		table = gUiText_ArticleTable;
 #if defined(TBS_EDITION_ES)
-		indefinite_table = gUiText_IndefiniteArticles;
+		indefiniteTable = gUiText_IndefiniteArticles;
 #endif
 		if (name[0] == 29)
 		{
@@ -2318,7 +2318,7 @@ u32 UiText_AppendArticleName(
 		if (indefinite == 0)
 			p = table.text[kind & ARTICLE_KIND_MASK];
 		else
-			p = indefinite_table.text[kind & ARTICLE_KIND_MASK];
+			p = indefiniteTable.text[kind & ARTICLE_KIND_MASK];
 #else
 		p = table.text[kind & ARTICLE_KIND_MASK];
 #endif
@@ -3377,13 +3377,13 @@ void UiText_MeasureResourceEntries(s32 no, s32 *x, s32 *y)
 DEFINE_GET_RESOURCE_DIMENSIONS(UiText_GetResourceDimensions, 0)
 DEFINE_GET_RESOURCE_DIMENSIONS(UiText_GetResourceDimensionsAlt, 1)
 
-void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16 *spacing)
+void UiText_MeasureEntryDimensions(s32 pos, u32 *outWidth, u32 *outHeight, u16 *spacing)
 {
 	struct UiRenderWork *work;
 	u32					 lines;
 	u32					 width;
 	u32					 height;
-	u32					 line_width;
+	u32					 lineWidth;
 	u32					 count;
 	u32					 c;
 	u32					 glyph;
@@ -3403,7 +3403,7 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16
 	width = 0;
 	height = 15;
 	lines = 0;
-	line_width = 0;
+	lineWidth = 0;
 	count = 0;
 	for (;;)
 	{
@@ -3414,7 +3414,7 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16
 #if EDITION_INTERNATIONAL
 			if (c == 32)
 			{
-				line_width += 5;
+				lineWidth += 5;
 				count++;
 			}
 			else
@@ -3423,14 +3423,14 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16
 				style = work->outline;
 				if (style == 1 || style == 5)
 					glyph++;
-				line_width += glyph;
+				lineWidth += glyph;
 			}
 #else
 			if (c != 0xde && c != 0xdf)
 			{
 				if (c == 32)
 				{
-					line_width += 7;
+					lineWidth += 7;
 				}
 				else
 				{
@@ -3448,7 +3448,7 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16
 					style = work->outline;
 					if (style == 1 || style == 5)
 						glyph++;
-					line_width += glyph;
+					lineWidth += glyph;
 				}
 			}
 			count++;
@@ -3466,16 +3466,16 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16
 #if EDITION_INTERNATIONAL
 			count++;
 #else
-			line_width += trailing;
+			lineWidth += trailing;
 #endif
 			counts[lines] = count;
-			widths[lines] = line_width;
-			if (width < line_width)
-				width = line_width;
+			widths[lines] = lineWidth;
+			if (width < lineWidth)
+				width = lineWidth;
 			if (lines < 3)
 				lines++;
 			count = 0;
-			line_width = 0;
+			lineWidth = 0;
 			height += 15;
 			break;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -3502,18 +3502,18 @@ done:
 #if EDITION_INTERNATIONAL
 	count++;
 #else
-	line_width += trailing;
+	lineWidth += trailing;
 #endif
 	counts[lines] = count;
-	widths[lines] = line_width;
-	if (width < line_width)
-		width = line_width;
+	widths[lines] = lineWidth;
+	if (width < lineWidth)
+		width = lineWidth;
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
 	if (work->mode)
 		width = width + 2;
 #endif
-	*out_width = width;
-	*out_height = height;
+	*outWidth = width;
+	*outHeight = height;
 	width = (width + 19) >> 3;
 	width = (width << 3) - 16;
 	if (spacing != NULL)
@@ -3548,13 +3548,13 @@ done:
 	}
 }
 
-void UiText_MeasureStringVariant(s32 start, u32 *out_width, u32 *out_height, u16 *spacing)
+void UiText_MeasureStringVariant(s32 start, u32 *outWidth, u32 *outHeight, u16 *spacing)
 {
 	u32					 heights[16];
 	u16					 counts[4];
 	u16					 widths[4];
 	struct UiRenderWork *work;
-	u32					 max_width;
+	u32					 maxWidth;
 	u32					 line;
 	u32					 width;
 	u32					 count;
@@ -3584,7 +3584,7 @@ void UiText_MeasureStringVariant(s32 start, u32 *out_width, u32 *out_height, u16
 	heights[10] = 15;
 	heights[11] = 15;
 	heights[12] = 15;
-	max_width = 0;
+	maxWidth = 0;
 	heights[13] = 15;
 	heights[14] = 15;
 	heights[15] = 15;
@@ -3652,8 +3652,8 @@ void UiText_MeasureStringVariant(s32 start, u32 *out_width, u32 *out_height, u16
 			counts[line] = count;
 #endif
 			widths[line] = width;
-			if (variant == 0 && max_width < width)
-				max_width = width;
+			if (variant == 0 && maxWidth < width)
+				maxWidth = width;
 			if (line < 3)
 				line++;
 			count = 0;
@@ -3668,8 +3668,8 @@ void UiText_MeasureStringVariant(s32 start, u32 *out_width, u32 *out_height, u16
 			counts[line] = count;
 #endif
 			widths[line] = width;
-			if (variant == 0 && max_width < width)
-				max_width = width;
+			if (variant == 0 && maxWidth < width)
+				maxWidth = width;
 			variant++;
 			goto done;
 		case 1:
@@ -3680,8 +3680,8 @@ void UiText_MeasureStringVariant(s32 start, u32 *out_width, u32 *out_height, u16
 			counts[line] = count;
 #endif
 			widths[line] = width;
-			if (variant == 0 && max_width < width)
-				max_width = width;
+			if (variant == 0 && maxWidth < width)
+				maxWidth = width;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 			work->outline = 0;
 #endif
@@ -3705,17 +3705,17 @@ void UiText_MeasureStringVariant(s32 start, u32 *out_width, u32 *out_height, u16
 done:
 #if !defined(TBS_EDITION_DE) && !defined(TBS_EDITION_FR)
 	if (work->mode != 0)
-		max_width += 2;
+		maxWidth += 2;
 #endif
 	for (i = 0; i < variant; i++)
 	{
 		if (i == 0)
-			*out_height = heights[0];
-		else if (*out_height < heights[i])
-			*out_height = heights[i];
+			*outHeight = heights[0];
+		else if (*outHeight < heights[i])
+			*outHeight = heights[i];
 	}
-	*out_width = max_width;
-	max_width = (((max_width + 19) >> 3) << 3) - 16;
+	*outWidth = maxWidth;
+	maxWidth = (((maxWidth + 19) >> 3) << 3) - 16;
 	if (spacing != NULL)
 	{
 		for (j = 0; j <= line; j++)
@@ -3726,7 +3726,7 @@ done:
 			}
 			else
 			{
-				gap = max_width - widths[j];
+				gap = maxWidth - widths[j];
 				gap -= 4;
 				if (gap < 0)
 					gap = 0;
@@ -3751,9 +3751,9 @@ typedef s32 (*GlyphRoutine)(struct UiWindow *, s32, s32, s32, u8 *);
 s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 mode)
 {
 	struct UiRenderWork *work = UI_WORK;
-	u32					 spacing_x = work->unknownBeforeCount;
+	u32					 spacingX = work->unknownBeforeCount;
 	s32					 width;
-	u32					 spacing_y = work->lineSpacing;
+	u32					 spacingY = work->lineSpacing;
 
 	if (mode != 1 && (window->flags & 8) != 0)
 	{
@@ -3878,11 +3878,11 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 m
 			Dma_Set(tiles, (void *)(0x06010000 + (work->glyphTiles + index) * 32), 0x84000020,
 				REG_DMA3);
 #if !EDITION_INTERNATIONAL
-			((u16 *)&output->oam)[0] = y + (spacing_y >> 1) + window->y * 8;
+			((u16 *)&output->oam)[0] = y + (spacingY >> 1) + window->y * 8;
 #else
-			((u16 *)&output->oam)[0] = y + (spacing_y >> 1) + window->y * 8 - 2;
+			((u16 *)&output->oam)[0] = y + (spacingY >> 1) + window->y * 8 - 2;
 #endif
-			((u16 *)&output->oam)[1] = (x + (spacing_x >> 1) + window->x * 8 + 2) | 0x4000;
+			((u16 *)&output->oam)[1] = (x + (spacingX >> 1) + window->x * 8 + 2) | 0x4000;
 			((u16 *)&output->oam)[2] = work->glyphTiles + index;
 			sprite = SPRITE_CELL(output);
 		}
@@ -4748,8 +4748,8 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
 	const u8 *tree;
 	const u8 *leaves;
 	const u8 *text;
-	s32		  text_bits;
-	s32		  tree_bits;
+	s32		  textBits;
+	s32		  treeBits;
 	s32		  rank;
 	s32		  depth;
 	s32		  bit;
@@ -4758,8 +4758,8 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
 
 	code = reader->previousCode;
 	text = (const u8 *)reader->words;
-	text_bits = reader->bits;
-	tree_bits = 1;
+	textBits = reader->bits;
+	treeBits = 1;
 	hi = code >> 8;
 	code &= 0xff;
 	base = Text_MessageContexts[hi][0];
@@ -4769,36 +4769,36 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
 	rank = 0;
 	for (;;)
 	{
-		bit = tree_bits & 1;
-		tree_bits >>= 1;
-		if (bit != 0 && tree_bits == 0)
+		bit = treeBits & 1;
+		treeBits >>= 1;
+		if (bit != 0 && treeBits == 0)
 		{
-			tree_bits = *tree++;
-			bit = tree_bits & 1;
-			tree_bits = (tree_bits >> 1) | 0x80;
+			treeBits = *tree++;
+			bit = treeBits & 1;
+			treeBits = (treeBits >> 1) | 0x80;
 		}
 		if (bit != 0)
 			break;
-		bit = text_bits & 1;
-		text_bits >>= 1;
-		if (bit != 0 && text_bits == 0)
+		bit = textBits & 1;
+		textBits >>= 1;
+		if (bit != 0 && textBits == 0)
 		{
-			text_bits = *text++;
-			bit = text_bits & 1;
-			text_bits = (text_bits >> 1) | 0x80;
+			textBits = *text++;
+			bit = textBits & 1;
+			textBits = (textBits >> 1) | 0x80;
 		}
 		if (bit == 0)
 			continue;
 		depth = 0;
 		do
 		{
-			bit = tree_bits & 1;
-			tree_bits >>= 1;
-			if (bit != 0 && tree_bits == 0)
+			bit = treeBits & 1;
+			treeBits >>= 1;
+			if (bit != 0 && treeBits == 0)
 			{
-				tree_bits = *tree++;
-				bit = tree_bits & 1;
-				tree_bits = (tree_bits >> 1) | 0x80;
+				treeBits = *tree++;
+				bit = treeBits & 1;
+				treeBits = (treeBits >> 1) | 0x80;
 			}
 			if (bit == 0)
 				depth++;
@@ -4823,7 +4823,7 @@ s32 UiText_DecodeSymbol(struct TextReader *reader)
 		half &= 0xf;
 		code = leaves[-(index >> 1) - 1] | (half << 8);
 	}
-	reader->bits = text_bits;
+	reader->bits = textBits;
 	reader->previousCode = code;
 	reader->words = (const u32 *)text;
 	return code;
@@ -4986,12 +4986,12 @@ void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 fla
 	Runtime_ReleaseHeapBlock(0x11);
 }
 
-void Ability_RequestGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse)
+void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile, s32 reuse)
 {
-	UiIcon_BuildItemIconTiles(BattleActGet(action)->unk04[0], with_base, slot, tile, reuse);
+	UiIcon_BuildItemIconTiles(BattleActGet(action)->unk04[0], withBase, slot, tile, reuse);
 }
 
-void UiIcon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst, s32 reuse)
+void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *src, s32 *dst, s32 reuse)
 {
 	GlyphTransfer *work;
 	s32			   slot;
@@ -5002,7 +5002,7 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst, s32
 	if (glyph >= Ui_CountIconTableEntries())
 		glyph = 0;
 
-	if (with_base != 0)
+	if (withBase != 0)
 	{
 		work->encoded = gUiIcon_FramePointerTable[2];
 		work->width = 2;
@@ -5175,14 +5175,14 @@ void Ui_PrepareTransferForItem(s32 code)
 	UiGlyph_DecodeWithHeapRoutines(state, 0);
 }
 
-void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse)
+void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile, s32 reuse)
 {
-	UiIcon_BuildAbilityIconTiles(BattleActGet(action)->unk04[0], with_base, slot, tile, reuse);
+	UiIcon_BuildAbilityIconTiles(BattleActGet(action)->unk04[0], withBase, slot, tile, reuse);
 }
 
 #define ROUTINE_BLOCK 49
 
-void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst, s32 reuse)
+void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *src, s32 *dst, s32 reuse)
 {
 	GlyphTransfer *work;
 	s32			   slot;
@@ -5193,7 +5193,7 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst, 
 	if (glyph >= Ui_CountSecondTableEntries())
 		glyph = 0;
 
-	if (with_base != 0)
+	if (withBase != 0)
 	{
 		work->encoded = gUiIcon_FramePointerTable[2];
 		work->width = 2;
@@ -5458,7 +5458,7 @@ void Resource_ScheduleOwnerReset(void)
 void MenuSelection_DrawFrame(void)
 {
 	struct SelectionScreen *state = gResQueueWork;
-	struct SelectionSprite *cursor_entry = &state->records[14].sprite;
+	struct SelectionSprite *cursorEntry = &state->records[14].sprite;
 	struct SelectionNode   *cursor = &state->records[14];
 	struct SelectionNode   *transfer = &state->records[15];
 	struct SelectionNode   *node;
@@ -5636,7 +5636,7 @@ void MenuSelection_DrawFrame(void)
 		{
 			void *src = (void *)(cnt + (((gFrameTick >> 2) & 15) << 8));
 
-			cursor_entry->tile = VramBlock_LoadCached(cursor->slot, 0x100, src);
+			cursorEntry->tile = VramBlock_LoadCached(cursor->slot, 0x100, src);
 		}
 		if (cursor->targetX != cursor->x)
 		{
@@ -5661,20 +5661,20 @@ void MenuSelection_DrawFrame(void)
 				cursor->y = cursor->targetY;
 			}
 		}
-		cursor_entry->y = cursor->y + gMenu_CursorBobOffsets[(gFrameTick >> 2) & 15] - 32;
-		cursor_entry->x = cursor->x - 4;
+		cursorEntry->y = cursor->y + gMenu_CursorBobOffsets[(gFrameTick >> 2) & 15] - 32;
+		cursorEntry->x = cursor->x - 4;
 		if (GameFlag_TestFar(0x103) != 0)
 		{
 			if (state->records[14].kind == 1)
 			{
-				cursor_entry->mode = 1;
+				cursorEntry->mode = 1;
 			}
 			else
 			{
-				cursor_entry->mode = 0;
+				cursorEntry->mode = 0;
 			}
 		}
-		Runtime_PushSlotEntry((s32 *)cursor_entry, 248);
+		Runtime_PushSlotEntry((s32 *)cursorEntry, 248);
 	}
 	state->status += 1;
 }
@@ -7038,19 +7038,19 @@ void Debug_SelectAbilityPair(void)
 
 s32 Object_CollectResources(struct AbilityListEntry *output)
 {
-	u16 object_ids[14];
-	s32 output_count = 0;
-	s32 object_count = Party_ListActiveOwnersFar(object_ids);
+	u16 objectIds[14];
+	s32 outputCount = 0;
+	s32 objectCount = Party_ListActiveOwnersFar(objectIds);
 	s32 i;
 
-	for (i = 0; i < object_count; i++)
+	for (i = 0; i < objectCount; i++)
 	{
 		struct BattleUnit *object;
 		u32				id;
 		s32				index;
 		u32				resourceId;
 
-		id = object_ids[i];
+		id = objectIds[i];
 		object = UnitGetFar(id);
 		for (index = 0;
 			index < (s32)(sizeof(object->actionSlots) / sizeof(object->actionSlots[0])); index++)
@@ -7059,29 +7059,29 @@ s32 Object_CollectResources(struct AbilityListEntry *output)
 			if (resourceId == 0)
 				break;
 			BattleActGet(resourceId);
-			output[output_count].owner = id;
-			output[output_count].ability = resourceId;
-			output_count++;
+			output[outputCount].owner = id;
+			output[outputCount].ability = resourceId;
+			outputCount++;
 		}
 	}
 
-	return output_count;
+	return outputCount;
 }
 
 void Menu_FindShortcutEntries(
-	u32 *first_index, u32 *second_index, const struct AbilityListEntry *entries)
+	u32 *firstIndex, u32 *secondIndex, const struct AbilityListEntry *entries)
 {
 	s32 i;
 
-	*first_index = 0;
-	*second_index = 0;
+	*firstIndex = 0;
+	*secondIndex = 0;
 
 	for (i = 0; i <= 447; i++)
 	{
 		if (entries[i].ability == (gGameState.firstShortcut & 0x3ff)
 			&& entries[i].owner == (gGameState.firstShortcut >> 10))
 		{
-			*first_index = i;
+			*firstIndex = i;
 			break;
 		}
 	}
@@ -7091,7 +7091,7 @@ void Menu_FindShortcutEntries(
 		if (entries[i].ability == (gGameState.secondShortcut & 0x3ff)
 			&& entries[i].owner == (gGameState.secondShortcut >> 10))
 		{
-			*second_index = i;
+			*secondIndex = i;
 			break;
 		}
 	}
@@ -7760,7 +7760,7 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void)
 	struct WorkspaceWork *work;
 	s32					  rows;
 	s32					  first;
-	s32					  settings_only;
+	s32					  settingsOnly;
 	s32					  top;
 	s32					  height;
 	struct RenderInput	 *win;
@@ -7772,9 +7772,9 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void)
 
 	rows = WORKSPACE_ROWS;
 	work = gSelectionWork;
-	settings_only = GameFlag_TestFar(FLAG_WORKSPACE_SETTINGS_ONLY);
+	settingsOnly = GameFlag_TestFar(FLAG_WORKSPACE_SETTINGS_ONLY);
 	first = 0;
-	if (settings_only != 0)
+	if (settingsOnly != 0)
 	{
 		rows = 1;
 		first = 2;
@@ -7792,7 +7792,7 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void)
 	for (i = 1; i < rows; i++)
 		UiWindow_DrawDividerLine(win, 0, i * 3, 19, i * 3);
 	y = 4;
-	if (settings_only == 0)
+	if (settingsOnly == 0)
 	{
 		msg = MsgWorkspaceSaveQuest;
 		UiText_DrawResource(msg, win, WORKSPACE_TEXT_X, 4);
@@ -7840,7 +7840,7 @@ s32 Menu_RunWorkspaceSelectionLoop(void)
 	s32					  i;
 	s32					  j;
 	s32					  rows;
-	s32					  settings_only;
+	s32					  settingsOnly;
 	s32					  dim;
 	s32					  y;
 	s32					  result;
@@ -7854,7 +7854,7 @@ s32 Menu_RunWorkspaceSelectionLoop(void)
 
 	redraw = 1;
 	rows = 3;
-	settings_only = GameFlag_TestFar(0x17E);
+	settingsOnly = GameFlag_TestFar(0x17E);
 	first = 0;
 	Menu_InitializeSelectedWorkspace();
 	work = gSelectionWork;
@@ -7871,7 +7871,7 @@ s32 Menu_RunWorkspaceSelectionLoop(void)
 #endif
 	WaitFrames(1);
 	page = work->page;
-	if (settings_only != 0)
+	if (settingsOnly != 0)
 	{
 		rows = 1;
 		first = 2;
@@ -8526,8 +8526,8 @@ void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 void UiText_DrawCharacterAtOffset(
 	s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY)
 {
-	s32					 byte_offset;
-	s32					 vram_address;
+	s32					 byteOffset;
+	s32					 vramAddress;
 	u16					*text;
 	s32					 zero;
 	u32					 cell;
@@ -8546,11 +8546,11 @@ void UiText_DrawCharacterAtOffset(
 	cell = ((position->y + (offsetY >> 3) + 1) << 5) + (position->x + (offsetX >> 3)) + 1;
 	if (cell < 0x280U)
 	{
-		byte_offset = cell * 2;
-		vram_address = byte_offset + 0x06002000;
+		byteOffset = cell * 2;
+		vramAddress = byteOffset + 0x06002000;
 		text = canvas->entries;
 		UiText_RenderStringTiles(
-			text, (u16 *)((u8 *)canvas->tilemap + byte_offset), (u16 *)vram_address, 7 & offsetX);
+			text, (u16 *)((u8 *)canvas->tilemap + byteOffset), (u16 *)vramAddress, 7 & offsetX);
 	}
 }
 

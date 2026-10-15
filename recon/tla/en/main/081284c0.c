@@ -35,7 +35,7 @@ void Battle_AwardSpoils(void)
     u32 learned;
     s32 j;
     s32 best;
-    s32 best_slot;
+    s32 bestSlot;
     s32 slot;
     u16 *found;
     s32 value;
@@ -123,26 +123,26 @@ void Battle_AwardSpoils(void)
     }
     found = &gOverflowItem;
     for (;;) {
-        best_slot = -1;
+        bestSlot = -1;
         best = -1;
         for (slot = 0; slot <= 3; slot++) {
             if (spoils->items[slot] != 0) {
                 value = Item_EncodeBankedId(spoils->items[slot]);
                 if (value >= best) {
                     best = value;
-                    best_slot = slot;
+                    bestSlot = slot;
                 }
             }
         }
-        if (best_slot == -1)
+        if (bestSlot == -1)
             break;
-        UiWork_PushValueSlotFar(spoils->items[best_slot], 2);
+        UiWork_PushValueSlotFar(spoils->items[bestSlot], 2);
         UiText_ShowMessageAndWaitCoreFar((s32)MsgItemGained);
         BattlePresentation_WaitForAdvance();
-        if (PartyInventory_AddFar(spoils->items[best_slot]) == -1) {
-            *found = spoils->items[best_slot];
+        if (PartyInventory_AddFar(spoils->items[bestSlot]) == -1) {
+            *found = spoils->items[bestSlot];
             break;
         }
-        spoils->items[best_slot] = 0;
+        spoils->items[bestSlot] = 0;
     }
 }

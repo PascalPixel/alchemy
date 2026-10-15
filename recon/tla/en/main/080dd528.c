@@ -23,11 +23,11 @@ extern void Object_Destroy(void *object);
 void *BattleFx_StartItemBreak(void *source)
 {
     s32 angle;
-    s32 fragment_height;
-    s32 fragment_scale;
-    s32 fragment_count;
+    s32 fragmentHeight;
+    s32 fragmentScale;
+    s32 fragmentCount;
     u32 vel;
-    u32 rotation_jitter;
+    u32 rotationJitter;
     s32 zero;
     void *parent;
     void *child;
@@ -48,29 +48,29 @@ void *BattleFx_StartItemBreak(void *source)
     Object_SetMode(parent, 3);
     Motion_SetTargetPositionFromMagnitudeAngle(parent, 0x100000, angle);
 
-    fragment_count = 7;
+    fragmentCount = 7;
     do {
         child = Object_Spawn(0x2a1, *(s32 *)((s8 *)source + 8),
                               ((struct MotionObject *)source)->y + 0x100000,
                               *(s32 *)((s8 *)source + 16));
         if (child != 0) {
             ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)&gBattleFx_FragmentScript);
-            fragment_scale = Random16() + 0x10000;
+            fragmentScale = Random16() + 0x10000;
             *(s32 *)((s8 *)child + 0x34) = 0x10000;
-            *(s32 *)((s8 *)child + 0x30) = fragment_scale;
+            *(s32 *)((s8 *)child + 0x30) = fragmentScale;
             *(s8 *)((s8 *)child + 0x55) = 2;
             *(s32 *)((s8 *)child + 0x48) = 0x51e;
             vel = Random16();
             *(s32 *)((s8 *)child + 0x28) = vel - Random16();
-            fragment_height = Random16() * 0x18 + 0x80000;
-            rotation_jitter = Random16();
+            fragmentHeight = Random16() * 0x18 + 0x80000;
+            rotationJitter = Random16();
             Motion_SetTargetPositionFromMagnitudeAngle(
-                child, fragment_height,
-                          ((rotation_jitter - Random16()) >> 3) +
+                child, fragmentHeight,
+                          ((rotationJitter - Random16()) >> 3) +
                           ((struct MotionObject *)source)->angle);
         }
-        fragment_count--;
-    } while (fragment_count >= 0);
+        fragmentCount--;
+    } while (fragmentCount >= 0);
     Audio_PlayCue(SOUND_ITEM_BREAK);
     return parent;
 }

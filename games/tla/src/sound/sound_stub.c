@@ -21,7 +21,7 @@ void Func_081c0c18(void)
 // The Broken Seal's.
 void Audio_InitializeRuntimeDefaults(void)
 {
-    s16 *player_volume;
+    s16 *playerVolume;
     s32 remaining;
 
     Audio_Initialize();
@@ -36,13 +36,13 @@ void Audio_InitializeRuntimeDefaults(void)
     gData_02005814 = 0;
     gAudio_CommandMask = 0;
     gData_02005804 = 0;
-    player_volume = gData_02005820;
+    playerVolume = gData_02005820;
     remaining = 7;
     do
     {
         remaining--;
-        *player_volume = 0;
-        player_volume += 1;
+        *playerVolume = 0;
+        playerVolume += 1;
     } while (remaining >= 0);
     AudioEngine_SetFixedPcmRate(0x90000);
 }

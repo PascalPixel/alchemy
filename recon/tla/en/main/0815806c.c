@@ -57,7 +57,7 @@ void Func_0815806c(struct BattleEffectArgument *effect)
     s32 member;
     s32 frame;
     s32 i;
-    s32 curtain_y;
+    s32 curtainY;
 
     canvas = Ram_HeapSlots->battleFxWork[1];
     work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -99,7 +99,7 @@ void Func_0815806c(struct BattleEffectArgument *effect)
 
     Audio_PlayCue(0x88);
     frame = 0;
-    curtain_y = -172;
+    curtainY = -172;
     do {
         if (frame == 56)
             Func_081180e8(0x85);
@@ -110,7 +110,7 @@ void Func_0815806c(struct BattleEffectArgument *effect)
                 (void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
         if (frame >= 20 && frame <= 31) {
             if (frame > 23)
-                draw[1](canvas, work->sheet, 146 - frame * 4, curtain_y, 20, 40);
+                draw[1](canvas, work->sheet, 146 - frame * 4, curtainY, 20, 40);
             else
                 callbacks[0](canvas, work->sheet, 50, 20, 20, 40);
         }
@@ -168,7 +168,7 @@ void Func_0815806c(struct BattleEffectArgument *effect)
         Func_081434f8();
         work->transferPending = 1;
         WaitFrames(1);
-        curtain_y += 8;
+        curtainY += 8;
         frame++;
     } while (frame != 112);
     Scheduler_RemoveCallback(Func_08143000);

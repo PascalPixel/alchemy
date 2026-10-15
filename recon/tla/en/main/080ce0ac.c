@@ -72,7 +72,7 @@ void Inventory_RemoveFar(s32 actor, s32 slot);
 s32 Func_080ce0ac(s32 arg, s32 slot)
 {
     s32 result;
-    register s32 item_id asm("r11");
+    register s32 itemId asm("r11");
     s32 actor;
     struct ItemUnit *obj;
     struct ItemTrigger *event;
@@ -84,9 +84,9 @@ s32 Func_080ce0ac(s32 arg, s32 slot)
     struct ItemFieldWork *runtime;
 
     result = -1;
-    item_id = 0x3ff;
-    asm("" : "+r"(item_id));
-    item_id &= arg;
+    itemId = 0x3ff;
+    asm("" : "+r"(itemId));
+    itemId &= arg;
     actor = (arg >> 10) & 0xf;
     {
         best = 0;
@@ -98,7 +98,7 @@ s32 Func_080ce0ac(s32 arg, s32 slot)
                 obj = UnitGet(gPartyState.activeOwners[i]);
                 matches = 0;
                 for (j = 0; j < 15; j++) {
-                    if ((obj->inventory[j] & 0x1ff) == item_id)
+                    if ((obj->inventory[j] & 0x1ff) == itemId)
                         matches++;
                 }
 
@@ -110,7 +110,7 @@ s32 Func_080ce0ac(s32 arg, s32 slot)
         } else {
             obj = UnitGet(actor);
             for (j = 0; j < 15; j++) {
-                if ((obj->inventory[j] & 0x1ff) == item_id)
+                if ((obj->inventory[j] & 0x1ff) == itemId)
                     best++;
             }
         }
@@ -121,13 +121,13 @@ s32 Func_080ce0ac(s32 arg, s32 slot)
         }
     }
 
-    event = Event_FindFacingTrigger(item_id);
+    event = Event_FindFacingTrigger(itemId);
     if (event != 0 && event->value != 0) {
         GameFlag_ClearBit(0x143);
         GameFlag_ClearBit(0x142);
         if (!(event->trigger & 0x400)) {
             UiText_DrawQuantity(actor, 1);
-            UiText_DrawQuantity(item_id, 2);
+            UiText_DrawQuantity(itemId, 2);
             UiText_ShowPositionedMessageAndWaitFar((s32)&MsgActorUsesItem, 1);
         }
         if ((s32)event->value < 0x10000) {
@@ -138,7 +138,7 @@ s32 Func_080ce0ac(s32 arg, s32 slot)
             EventRuntime_ShowMessageAndWait(objref, 0);
             EventRuntime_End();
         } else {
-            ((ItemTriggerCallback)event->value)(item_id, actor, slot);
+            ((ItemTriggerCallback)event->value)(itemId, actor, slot);
         }
         result = 0;
     } else {
@@ -146,7 +146,7 @@ s32 Func_080ce0ac(s32 arg, s32 slot)
 
         GameFlag_ClearBit(0x143);
         GameFlag_SetBit(0x142);
-        actionId = Item_Get(item_id)->actionId;
+        actionId = Item_Get(itemId)->actionId;
         runtime = Ram_HeapSlots->eventWork;
 
         if (actionId != 0) {
@@ -154,7 +154,7 @@ s32 Func_080ce0ac(s32 arg, s32 slot)
             GameFlag_ClearBit(0x142);
 
             if (actionId == 149 && !GameFlag_Test(0x144)) {
-                UiText_DrawQuantity(item_id, 2);
+                UiText_DrawQuantity(itemId, 2);
                 UiText_ShowPositionedMessageAndWaitFar((s32)&MsgUseItemQuestion, 13);
                 i = Func_080d295c(1);
                 UiWork_FinalizePendingCoreFar();
@@ -167,7 +167,7 @@ s32 Func_080ce0ac(s32 arg, s32 slot)
             }
 
             UiText_DrawQuantity(actor, 1);
-            UiText_DrawQuantity(item_id, 2);
+            UiText_DrawQuantity(itemId, 2);
             UiText_ShowPositionedMessageAndWaitFar((s32)&MsgActorUsesItem, 1);
             BattleFx_LoadActionEffectResources(actionId, 0);
             runtime->resolvingAction = 1;
@@ -175,7 +175,7 @@ s32 Func_080ce0ac(s32 arg, s32 slot)
             runtime->resolvingAction = 0;
             BattleEffect_CleanupSceneObjects();
 
-            if (Item_Get(item_id)->useType & 1)
+            if (Item_Get(itemId)->useType & 1)
                 GameFlag_SetBit(0x143);
         }
     }

@@ -299,8 +299,8 @@ s32							   __divsi3(s32, s32);
 s32 SaveMenu_Run(void)
 {
 	s32 pageCount;
-	s32 encoded_size;
-	s32 page_window;
+	s32 encodedSize;
+	s32 pageWindow;
 	s32 rec5;
 	s32 rec7;
 	s32 record;
@@ -308,16 +308,16 @@ s32 SaveMenu_Run(void)
 	s32 v5;
 	s32 v7;
 	s32 v6;
-	s32 link_message;
+	s32 linkMessage;
 	s32 v1;
 	s32 v4;
 	s32 n;
-	s32 page_message;
+	s32 pageMessage;
 	s32 page;
 	s32 started;
 	s32 helpWindow;
-	s32 heading_window;
-	u8	save_data[200];
+	s32 headingWindow;
+	u8	saveData[200];
 #if EDITION_INTERNATIONAL
 	u8 password[320];
 #else
@@ -540,11 +540,11 @@ menu_top:;
 #else
 			v6 = UiWindow_Create(6, 5, 18, 8, 2);
 #endif
-			link_message = MsgClearSaveLabel;
+			linkMessage = MsgClearSaveLabel;
 
-			UiText_DrawResource(link_message, v6, 0, 4);
-			UiText_DrawResource((link_message + 1), v6, 0, 16);
-			UiText_DrawResource((link_message + 3), v6, 0, 36);
+			UiText_DrawResource(linkMessage, v6, 0, 4);
+			UiText_DrawResource((linkMessage + 1), v6, 0, 16);
+			UiText_DrawResource((linkMessage + 3), v6, 0, 36);
 			SerialRuntime_Initialize();
 			Engine_TaskWait(10);
 			{
@@ -682,38 +682,38 @@ menu_top:;
 				goto link_select;
 			}
 			{
-				u8 *data = save_data;
+				u8 *data = saveData;
 				s16 sum;
 
-				encoded_size = Clear_PackPasswordData(0, v6, data);
-				sum = SceneData_GetBufferCrc16(encoded_size, data);
-				save_data[encoded_size] = (u16)sum >> 8;
-				save_data[encoded_size + 1] = sum;
-				encoded_size += 2;
-				encoded_size = Clear_EncodePassword(data, encoded_size, password);
+				encodedSize = Clear_PackPasswordData(0, v6, data);
+				sum = SceneData_GetBufferCrc16(encodedSize, data);
+				saveData[encodedSize] = (u16)sum >> 8;
+				saveData[encodedSize + 1] = sum;
+				encodedSize += 2;
+				encodedSize = Clear_EncodePassword(data, encodedSize, password);
 			}
 			v6 = 2;
 			Ui_LoadWindowGraphics();
-			page_window = UiWindow_Create(5, 4, 20, 12, v6);
+			pageWindow = UiWindow_Create(5, 4, 20, 12, v6);
 			page = 0;
-			pageCount = ((encoded_size / 50) + 1);
+			pageCount = ((encodedSize / 50) + 1);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 			record = UiWindow_Create(8, 0, 13, 4, v6);
 #else
 			record = UiWindow_Create(10, 0, 10, 4, v6);
 #endif
-			page_message = MsgClearPasswordLabel;
-			heading_window = record;
-			UiText_DrawResource(page_message, heading_window, 6, 4);
+			pageMessage = MsgClearPasswordLabel;
+			headingWindow = record;
+			UiText_DrawResource(pageMessage, headingWindow, 6, 4);
 			v7 = 1;
 			if (pageCount == 1)
 			{
 				record = UiWindow_Create(5, 16, 20, 3, v6);
 				helpWindow = record;
 #if EDITION_INTERNATIONAL
-				UiText_DrawCharacterAtOffset(page_message - 2, helpWindow, 80, 0);
+				UiText_DrawCharacterAtOffset(pageMessage - 2, helpWindow, 80, 0);
 #else
-				UiText_DrawCharacterAtOffset(page_message - 2, helpWindow, 0, 0);
+				UiText_DrawCharacterAtOffset(pageMessage - 2, helpWindow, 0, 0);
 #endif
 			}
 			else
@@ -727,20 +727,20 @@ menu_top:;
 				record = UiWindow_Create(1, 16, 28, 3, v6);
 #endif
 				helpWindow = record;
-				UiText_DrawCharacterAtOffset(page_message - 1, helpWindow, 0, 0);
+				UiText_DrawCharacterAtOffset(pageMessage - 1, helpWindow, 0, 0);
 			}
 			Graphics_ExpandVramTilesByColorTable(0x6006000);
-			RenderOutput_PrepareForRedraw(page_window);
+			RenderOutput_PrepareForRedraw(pageWindow);
 			for (;;)
 			{
 				Link_DrawShiftedTilePair(0x6002500);
 				if ((gKeyState & KEY_B) != 0)
 				{
 					Engine_AudioPlayCue(113);
-					RenderOutput_PrepareForRedraw(page_window);
-					UiWork_Finalize(page_window, 2);
+					RenderOutput_PrepareForRedraw(pageWindow);
+					UiWork_Finalize(pageWindow, 2);
 					UiWork_Finalize(helpWindow, 2);
-					UiWork_Finalize(heading_window, 2);
+					UiWork_Finalize(headingWindow, 2);
 					goto page_select;
 				}
 				if ((gKeyState & KEY_A) != 0)
@@ -750,10 +750,10 @@ menu_top:;
 					if (page == pageCount)
 					{
 						Engine_AudioPlayCue(112);
-						RenderOutput_PrepareForRedraw(page_window);
-						UiWork_Finalize(page_window, 2);
+						RenderOutput_PrepareForRedraw(pageWindow);
+						UiWork_Finalize(pageWindow, 2);
 						UiWork_Finalize(helpWindow, 2);
-						UiWork_Finalize(heading_window, 2);
+						UiWork_Finalize(headingWindow, 2);
 						Engine_TaskWait(1);
 						goto menu_top;
 					}
@@ -784,16 +784,16 @@ menu_top:;
 			keys_done:;
 				if (v7 != 1)
 				{
-					v5 = page_message;
+					v5 = pageMessage;
 				}
 				else
 				{
-					RenderOutput_PrepareForRedraw(page_window);
+					RenderOutput_PrepareForRedraw(pageWindow);
 					v7 = 0;
 					v5 = 2;
 					do
 					{
-						UiWindow_DrawDividerLine(page_window, 0, v5, 18, v5);
+						UiWindow_DrawDividerLine(pageWindow, 0, v5, 18, v5);
 						v5 = (v5 + 2);
 						v7 = (v7 + 1);
 					} while (v7 != 4);
@@ -811,21 +811,21 @@ menu_top:;
 									value = v7 + 0xf30b;
 								}
 								UiWindow_SetTilemapEntry(
-									page_window, value, v7 + 18 - pageCount, -1, v6);
+									pageWindow, value, v7 + 18 - pageCount, -1, v6);
 								v7 = (v7 + 1);
 							} while (v7 != pageCount);
 						}
 						v5 = 0;
 						UiWindow_SetTilemapEntry(
-							page_window, 0xf128, (17 - (s32)pageCount), -1, 0);
-						UiWindow_SetTilemapEntry(page_window, 0xf129, 18, -1, 0);
+							pageWindow, 0xf128, (17 - (s32)pageCount), -1, 0);
+						UiWindow_SetTilemapEntry(pageWindow, 0xf129, 18, -1, 0);
 						UiRender_MarkRow((struct UiRenderWork *)gWindowWork[0],
-							((struct UiWindow *)page_window)->y);
+							((struct UiWindow *)pageWindow)->y);
 					}
 					v6 = page * 50 + 50;
-					if (v6 > encoded_size)
+					if (v6 > encodedSize)
 					{
-						v6 = encoded_size;
+						v6 = encodedSize;
 					}
 					for (v7 = page * 50, n = 0; v7 != v6; v7++, n++)
 					{
@@ -841,7 +841,7 @@ menu_top:;
 
 							rec7 = (n % 10);
 							row = (n / 10);
-							UiText_DrawString(glyph, page_window, rec7 * 12 + 18, (row << 4) + 2);
+							UiText_DrawString(glyph, pageWindow, rec7 * 12 + 18, (row << 4) + 2);
 						}
 						else
 						{
@@ -850,7 +850,7 @@ menu_top:;
 							rec7 = (n % 10);
 							/* FAKEMATCH: an explicit libgcc call; written n / 10 it differs 216 on tbs-en (220 on tbs-ja), 10 instructions more */
 							row = __divsi3(n, 10);
-							UiText_DrawString(glyph, page_window, rec7 * 12 + 8, (row << 4) + 2);
+							UiText_DrawString(glyph, pageWindow, rec7 * 12 + 8, (row << 4) + 2);
 						}
 					}
 					v7 = 0;
@@ -964,10 +964,10 @@ struct PasswordOwner
 static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 {
 	s32 length;
-	u32 rank_bits;
-	u32 value_bits;
-	u8	item_bits;
-	u8	flag_bits;
+	u32 rankBits;
+	u32 valueBits;
+	u8	itemBits;
+	u8	flagBits;
 	u32 rows[8];
 	s32 i;
 	s32 p;
@@ -994,10 +994,10 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 		out[i] = 0;
 	}
 
-	rank_bits = 0;
-	value_bits = 0;
-	item_bits = 0;
-	flag_bits = 0;
+	rankBits = 0;
+	valueBits = 0;
+	itemBits = 0;
+	flagBits = 0;
 	for (i = 0; i != 8; i++)
 	{
 		rows[i] = 0;
@@ -1007,7 +1007,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 	{
 		if (Engine_GameFlagIsSet(((const u16 *)gClear_PasswordFlags)[i]))
 		{
-			flag_bits |= 1 << i;
+			flagBits |= 1 << i;
 		}
 	}
 
@@ -1059,10 +1059,10 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 		{
 			owner->rank = 1;
 		}
-		rank_bits |= owner->rank << (i * 7);
+		rankBits |= owner->rank << (i * 7);
 		for (j = 0; j != 4; j++)
 		{
-			value_bits += owner->values[j] << (j * 7);
+			valueBits += owner->values[j] << (j * 7);
 		}
 		for (j = 0; j != 15; j++)
 		{
@@ -1072,7 +1072,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 			{
 				if (item == ((const u16 *)gClear_PasswordKeyItems)[k])
 				{
-					item_bits |= 1 << k;
+					itemBits |= 1 << k;
 				}
 			}
 		}
@@ -1174,17 +1174,17 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out)
 		}
 	}
 
-	out[0] = rank_bits;
-	out[1] = rank_bits >> 8;
-	out[2] = rank_bits >> 16;
-	out[3] = (rank_bits >> 20 & 0xf0) | (value_bits & 0x0f);
-	out[4] = value_bits >> 4;
-	out[5] = value_bits >> 12;
-	out[6] = value_bits >> 20;
-	out[7] = flag_bits;
+	out[0] = rankBits;
+	out[1] = rankBits >> 8;
+	out[2] = rankBits >> 16;
+	out[3] = (rankBits >> 20 & 0xf0) | (valueBits & 0x0f);
+	out[4] = valueBits >> 4;
+	out[5] = valueBits >> 12;
+	out[6] = valueBits >> 20;
+	out[7] = flagBits;
 	if (mode != 0)
 	{
-		out[8] = item_bits;
+		out[8] = itemBits;
 	}
 	return length;
 }

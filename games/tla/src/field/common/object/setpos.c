@@ -1,11 +1,11 @@
 #include "object_runtime.h"
 
-void Object_LinkObjectAndSetCallback(u32 objectId, u32 linked_object_id)
+void Object_LinkObjectAndSetCallback(u32 objectId, u32 linkedObjectId)
 {
     struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
     if (object != NULL) {
-        object->linkedObject = Object_GetById(linked_object_id);
+        object->linkedObject = Object_GetById(linkedObjectId);
         Object_SetActionCallback(object, (s32)gObject_LinkedMotionScript);
     }
 }

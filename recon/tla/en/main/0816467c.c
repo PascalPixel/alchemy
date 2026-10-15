@@ -43,9 +43,9 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
     struct BattleFxWork *work;
     void *canvas;
     DrawRectangle additive;
-    DrawRectangle max_blend;
+    DrawRectangle maxBlend;
     u8 *sheet;
-    s32 org_x;
+    s32 orgX;
     struct EffectStep *p;
     s32 frame;
     s32 i;
@@ -54,7 +54,7 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
     work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
     canvas = Ram_HeapSlots->battleFxWork[1];
     sheet = Ram_HeapSlots->unk64[0];
-    org_x = x;
+    orgX = x;
     x += 40 << 16;
     x /= 2;
     {
@@ -68,7 +68,7 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
     REG_BG2X = 0;
     REG_BLDCNT = 0x3f46;
     Func_081963ec(104, 19);
-    max_blend = (DrawRectangle)Ram_HeapSlots->unk64[1];
+    maxBlend = (DrawRectangle)Ram_HeapSlots->unk64[1];
     Func_081963ec(188, 3);
     additive = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
@@ -121,7 +121,7 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
 
             if (cell < 0)
                 cell = 0;
-            max_blend(canvas, work->sheet + gData_081989f2[cell],
+            maxBlend(canvas, work->sheet + gData_081989f2[cell],
                 (x >> 16) - ((width = gData_081989e2[cell]) >> 1),
                 (y >> 16) - ((height = gData_081989ea[cell]) >> 1), width, height);
         }
@@ -168,12 +168,12 @@ void Func_0816467c(s32 formation, s32 x, s32 y)
                 cell = (frame - 36) / 7;
                 px = HI(shard->x);
                 py = HI(shard->y);
-                max_blend(canvas, work->sheet + cell * 0x120 + SHARD_E, px - 6, py - 12, 12, 24);
+                maxBlend(canvas, work->sheet + cell * 0x120 + SHARD_E, px - 6, py - 12, 12, 24);
             }
         }
 
         if (frame <= 35)
-            Func_0816442c(formation, org_x, y);
+            Func_0816442c(formation, orgX, y);
         work->transferPending = 1;
         WaitFrames(1);
     }

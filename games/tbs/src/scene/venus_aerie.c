@@ -1232,9 +1232,9 @@ static inline void VenusAerie_AimBurst(s32 velocity[3], s32 angle)
 
 static void Scene_RunPairedActorEffectSequence(void)
 {
-	struct EffectOptions second_burst;
+	struct EffectOptions secondBurst;
 	s32					 velocity[3];
-	struct EffectOptions first_burst;
+	struct EffectOptions firstBurst;
 	struct FieldActor	*actor;
 	struct FieldActor	*second;
 	struct FieldActor	*first;
@@ -1724,31 +1724,31 @@ static void Scene_RunPairedActorEffectSequence(void)
 	VenusAerie_FlashScreen();
 
 	second = Actor_Get(ACTOR_SECOND_OF_PAIR);
-	second_burst.palette = 7;
-	second_burst.update = Effect_MoveWithDrag;
-	second_burst.startScaleX = 0x10000;
-	second_burst.startScaleY = 0x10000;
+	secondBurst.palette = 7;
+	secondBurst.update = Effect_MoveWithDrag;
+	secondBurst.startScaleX = 0x10000;
+	secondBurst.startScaleY = 0x10000;
 	for (i = 0; i <= 16; i++)
 	{
 		VenusAerie_AimBurst(velocity, i << 12);
 		Effect_Spawn(second->x.fixed, second->y.fixed, second->z.fixed, velocity[0], velocity[1],
 			velocity[2], EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
-			&second_burst);
+			&secondBurst);
 	}
 	Event_PlayCue(212);
 	Task_Wait(6);
 	VenusAerie_FlashScreen();
 	first = Actor_Get(ACTOR_FIRST_OF_PAIR);
-	first_burst.palette = 7;
-	first_burst.update = Effect_MoveWithDrag;
-	first_burst.startScaleX = 0x10000;
-	first_burst.startScaleY = 0x10000;
+	firstBurst.palette = 7;
+	firstBurst.update = Effect_MoveWithDrag;
+	firstBurst.startScaleX = 0x10000;
+	firstBurst.startScaleY = 0x10000;
 	for (i = 0; i <= 16; i++)
 	{
 		VenusAerie_AimBurst(velocity, i << 12);
 		Effect_Spawn(first->x.fixed, first->y.fixed, first->z.fixed, velocity[0], velocity[1],
 			velocity[2], EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
-			&first_burst);
+			&firstBurst);
 	}
 	Event_PlayCue(212);
 	Actor_Jump(IVAN, 6, 20);
@@ -2605,9 +2605,9 @@ static void VenusAerie_TryToPreventFall(void)
 static void Scene_RunExtendedActorTransition(void)
 {
 	struct FieldActor *actor;
-	s32				   step_pending;
+	s32				   stepPending;
 
-	step_pending = 0;
+	stepPending = 0;
 	Engine_EventSetMessage(MsgVenusWhyHappeningProtectVenusLighthouse);
 	Actor_SetAttachedEffect(21, 0x102);
 	Engine_EventWait(20);
@@ -2731,7 +2731,7 @@ static void Scene_RunExtendedActorTransition(void)
 		VenusAerie_ShowMessage(IVAN);
 		Engine_ActorSetAnimation(MIA, 4);
 		VenusAerie_ShowMessage(MIA);
-		step_pending = 1;
+		stepPending = 1;
 	}
 	else
 	{
@@ -2743,7 +2743,7 @@ static void Scene_RunExtendedActorTransition(void)
 		Engine_ActorSetAnimation(MIA, 4);
 		VenusAerie_ShowMessage(MIA);
 	}
-	if (step_pending != 0)
+	if (stepPending != 0)
 	{
 		gEventWork->message += 3;
 	}

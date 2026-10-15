@@ -2,25 +2,25 @@
 #include "objdisp.h"
 #include "party_state.h"
 
-void ObjectMotion_CenterOnColumn(u32 objectId, s32 action, s32 z_offset)
+void ObjectMotion_CenterOnColumn(u32 objectId, s32 action, s32 zOffset)
 {
     struct ObjectRuntime *object;
-    s16 current_angle;
-    s32 snapped_angle;
-    s16 angle_remainder;
+    s16 currentAngle;
+    s32 snappedAngle;
+    s16 angleRemainder;
     s32 x;
     s32 eight;
 
     object = ObjectTable_Get(objectId);
     if (object != NULL) {
-        current_angle = *(s16 *)((u8 *)object + 0x0a);
-        snapped_angle = current_angle;
-        if (current_angle < 0) {
-            snapped_angle += 15;
+        currentAngle = *(s16 *)((u8 *)object + 0x0a);
+        snappedAngle = currentAngle;
+        if (currentAngle < 0) {
+            snappedAngle += 15;
         }
-        snapped_angle >>= 4;
-        snapped_angle *= 16;
-        angle_remainder = current_angle - snapped_angle;
+        snappedAngle >>= 4;
+        snappedAngle *= 16;
+        angleRemainder = currentAngle - snappedAngle;
         object->movementState = 0;
         Object_ResetMotion(object);
         Object_SetMode(object, 2);
@@ -29,28 +29,28 @@ void ObjectMotion_CenterOnColumn(u32 objectId, s32 action, s32 z_offset)
         /* FAKEMATCH: under the ARM9TDMI load schedule the column offset's 8 is built before the x load; the barrier loads x first with neither value changed. */
         __asm__("" : "+r"(eight) : "r"(x));
         Object_SetPosition(object,
-            x + ((eight - angle_remainder) << 16),
+            x + ((eight - angleRemainder) << 16),
             object->y, object->z);
         Object_CommitPosition(object);
         ObjectMotion_SetActionVariant(objectId, action);
         Object_SetPosition(object, object->x, object->y,
-            object->z + (z_offset << 16));
+            object->z + (zOffset << 16));
     }
 }
 
-void ObjectMotion_OffsetPositionAndResetMotion(u32 objectId, s32 x_offset, s32 z_offset)
+void ObjectMotion_OffsetPositionAndResetMotion(u32 objectId, s32 xOffset, s32 zOffset)
 {
     struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
     if (object != NULL) {
         object->movementState = 0;
         Object_ResetMotion(object);
-        Object_SetPosition(object, object->x + (x_offset << 16),
-            object->y, object->z + (z_offset << 16));
+        Object_SetPosition(object, object->x + (xOffset << 16),
+            object->y, object->z + (zOffset << 16));
     }
 }
 
-void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 x_offset, s32 z_offset)
+void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 xOffset, s32 zOffset)
 {
     struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -58,16 +58,16 @@ void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 x_offset, s32 z_offse
         object->movementState = 0;
         ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)gObject_OffsetMotionScript);
         Object_SetMode(object, 2);
-        Object_SetPosition(object, object->x + (x_offset << 16),
-            object->y, object->z + (z_offset << 16));
+        Object_SetPosition(object, object->x + (xOffset << 16),
+            object->y, object->z + (zOffset << 16));
     }
 }
 
-void ObjectMotion_CommitPositionAndActivate(u32 objectId, s32 x_offset, s32 z_offset)
+void ObjectMotion_CommitPositionAndActivate(u32 objectId, s32 xOffset, s32 zOffset)
 {
     struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
-    ObjectMotion_OffsetPositionAndReset(objectId, x_offset, z_offset);
+    ObjectMotion_OffsetPositionAndReset(objectId, xOffset, zOffset);
     if (object != NULL) {
         Object_CommitPosition(object);
         Object_SetMode(object, 1);
@@ -79,7 +79,7 @@ void ObjectMotion_MoveToObject(u32 objectId, s32 targetId);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 extern const s32 gData_080f32e0[];
 
-void Func_080d3070(u32 objectId, s32 x_offset, s32 z_offset, s32 action)
+void Func_080d3070(u32 objectId, s32 xOffset, s32 zOffset, s32 action)
 {
     struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -89,7 +89,7 @@ void Func_080d3070(u32 objectId, s32 x_offset, s32 z_offset, s32 action)
         Object_SetPositionAndResetMotionFar(object, object->x, object->y, object->z - 0x10000);
         object->movementState = 0;
         Object_SetMode(object, 2);
-        ObjectMotion_OffsetPositionAndResetMotion(objectId, x_offset, z_offset);
+        ObjectMotion_OffsetPositionAndResetMotion(objectId, xOffset, zOffset);
         ObjectDispatch_InitializeFar((struct DispatchObject *)object, gData_080f32e0);
         object->action = action;
     }

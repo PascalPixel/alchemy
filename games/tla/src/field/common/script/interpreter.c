@@ -40,22 +40,22 @@ s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 key)
 s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter)
 {
     const s32 *arguments;
-    s32 repeat_limit;
-    s32 jump_key;
+    s32 repeatLimit;
+    s32 jumpKey;
     u8 *repeatCount;
-    s32 next_count;
+    s32 nextCount;
 
     arguments = &interpreter->script[interpreter->cursor + 1];
-    repeat_limit = *arguments++;
-    jump_key = *arguments;
-    if (repeat_limit == 0xFFFF) {
-        interpreter->cursor = Script_FindLabel(interpreter, jump_key);
+    repeatLimit = *arguments++;
+    jumpKey = *arguments;
+    if (repeatLimit == 0xFFFF) {
+        interpreter->cursor = Script_FindLabel(interpreter, jumpKey);
     } else {
         repeatCount = &interpreter->repeatCount;
-        next_count = *repeatCount + 1;
-        *repeatCount = next_count;
-        if ((s32)(u8)next_count < (s32)(s16)repeat_limit) {
-            interpreter->cursor = Script_FindLabel(interpreter, jump_key);
+        nextCount = *repeatCount + 1;
+        *repeatCount = nextCount;
+        if ((s32)(u8)nextCount < (s32)(s16)repeatLimit) {
+            interpreter->cursor = Script_FindLabel(interpreter, jumpKey);
         } else {
             *repeatCount = 0;
             interpreter->cursor = interpreter->cursor + 3;

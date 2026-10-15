@@ -30,7 +30,7 @@ struct BattleUnit *UnitGet(s32 id);
 
 s32 Func_0811de78(struct BattlePlan *plan)
 {
-    /* FAKEMATCH: as in The Broken Seal, the halfword initialization preserves the word copy into party_mode instead of folding it into an immediate zero. */
+    /* FAKEMATCH: as in The Broken Seal, the halfword initialization preserves the word copy into partyMode instead of folding it into an immediate zero. */
     union {
         s32 value;
         u16 halves[2];
@@ -38,7 +38,7 @@ s32 Func_0811de78(struct BattlePlan *plan)
     struct EscapeTransition *presentation = (struct EscapeTransition *)Ram_HeapSlots->transitionWork;
     u32 aid = plan->aid;
     struct BattleWork *scene = Ram_HeapSlots->battleWork;
-    s32 party_mode;
+    s32 partyMode;
 
     completed.halves[0] = 0;
     completed.halves[1] = 0;
@@ -47,22 +47,22 @@ s32 Func_0811de78(struct BattlePlan *plan)
     BattlePres_SetActorModes(0, 0);
 
     if (aid <= 7) {
-        party_mode = completed.value;
+        partyMode = completed.value;
         if (scene->encounterMode != 2)
-            party_mode = 1;
+            partyMode = 1;
 
-        if (!party_mode) {
+        if (!partyMode) {
             UiText_ShowMessageAndWaitCoreFar((s32)MsgNoEscape);
             BattlePresentation_WaitForAdvance();
         } else {
-            s16 unit_ids[14];
-            s32 index = BattleParty_ListLivingUnits(1, (u16 *)unit_ids) - 1;
+            s16 unitIds[14];
+            s32 index = BattleParty_ListLivingUnits(1, (u16 *)unitIds) - 1;
 
             while (index != -1) {
-                struct BattleUnit *unit = UnitGet(unit_ids[index]);
+                struct BattleUnit *unit = UnitGet(unitIds[index]);
 
                 if (unit->stun == 0 && unit->sleep == 0) {
-                    BattleMotion_SetupEscapeObject(unit_ids[index]);
+                    BattleMotion_SetupEscapeObject(unitIds[index]);
                     WaitFrames(8);
                 }
                 index--;

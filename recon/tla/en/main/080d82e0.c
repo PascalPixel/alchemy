@@ -149,9 +149,9 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
 {
     struct CaptureObject *leader;
     struct CaptureObject *djinni;
-    void *effect_slots;
+    void *effectSlots;
     u8 *slot;
-    s8 *slot_state;
+    s8 *slotState;
     s32 remaining;
     s32 scale;
     s32 position[3];
@@ -162,7 +162,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
         return;
 
     BattleFx_InitializeSlots();
-    effect_slots = gEffectWork;
+    effectSlots = gEffectWork;
     Shop_RestoreSceneTilesFar(0x201204);
     WaitFrames(30);
     djinni->visible = 0;
@@ -190,7 +190,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
     position[2] = djinni->z;
     Camera_WorldToScreen(position);
 
-    slot = (u8 *)effect_slots + 88;
+    slot = (u8 *)effectSlots + 88;
     remaining = 23;
     do {
         EffectSlot_Initialize(slot, 284, position[0], position[2]);
@@ -206,17 +206,17 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
 
     WaitFrames(140);
     {
-        s32 next_state;
+        s32 nextState;
 
-        next_state = 2;
-        slot_state = effect_slots;
-        slot_state += 152;
+        nextState = 2;
+        slotState = effectSlots;
+        slotState += 152;
         remaining = 23;
         do {
-            if (slot_state[5] != 0)
-                slot_state[0] = next_state;
+            if (slotState[5] != 0)
+                slotState[0] = nextState;
             remaining--;
-            slot_state += 72;
+            slotState += 72;
         } while (remaining >= 0);
     }
 

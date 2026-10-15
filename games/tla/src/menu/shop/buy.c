@@ -13,21 +13,21 @@ void Func_08109188(void);
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot);
 s32 Shop_SellOld(s32 unitId, s32 slot);
 
-void Shop_BuyDone(s32 unitId, s32 item_id, s32 quantity)
+void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity)
 {
-    s32 replaced_slot;
+    s32 replacedSlot;
     s32 remaining;
-    s32 added_slot;
+    s32 addedSlot;
     struct ItemDefinition *item;
 
     remaining = quantity;
-    item = Item_Get(item_id);
-    added_slot = 0;
-    replaced_slot = Inventory_FindEquippedFar(unitId, item->type);
+    item = Item_Get(itemId);
+    addedSlot = 0;
+    replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
     Audio_PlayCue(101);
-    if (added_slot < remaining) {
+    if (addedSlot < remaining) {
         do {
-            added_slot = Inventory_AddItemFar(unitId, item_id);
+            addedSlot = Inventory_AddItemFar(unitId, itemId);
             Party_AdjustCoinsFar(0 - (u16)item->price);
             remaining -= 1;
             Party_AdjustSixDigitCounterBFar((u16)item->price);
@@ -35,8 +35,8 @@ void Shop_BuyDone(s32 unitId, s32 item_id, s32 quantity)
         } while (remaining != 0);
     }
     Func_0810857c((s32)MsgHereYouGo);
-    if (Shop_ConfirmEquip(unitId, added_slot) != 0)
-        Shop_SellOld(unitId, replaced_slot);
+    if (Shop_ConfirmEquip(unitId, addedSlot) != 0)
+        Shop_SellOld(unitId, replacedSlot);
 }
 
 struct ShopUnit {
@@ -68,28 +68,28 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot)
     struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
     struct ShopUnit *unit = UnitGet(unitId);
     u32 raw = unit->inventory[slot];
-    s32 item_id;
+    s32 itemId;
     struct ItemDefinition *info;
     s32 replaced;
     void *window;
 
     /* FAKEMATCH: the barrier keeps the slot halfword load ahead of the 0x1ff mask; without it the mask is started first (one reordered pair, differ 2). */
     asm volatile("");
-    item_id = 0x1ff;
-    item_id &= raw;
-    info = Item_Get(item_id);
+    itemId = 0x1ff;
+    itemId &= raw;
+    info = Item_Get(itemId);
 
     if (unit->inventory[slot] & 0x200)
         return 0;
 
-    if (Item_CanOwnerEquip(unitId, item_id) == 0)
+    if (Item_CanOwnerEquip(unitId, itemId) == 0)
         return 0;
 
     replaced = Inventory_FindEquippedFar(unitId, info->type);
     if (replaced != -1) {
-        struct ItemDefinition *old_info = Item_Get(unit->inventory[replaced]);
+        struct ItemDefinition *oldInfo = Item_Get(unit->inventory[replaced]);
 
-        if (old_info->flags & 2)
+        if (oldInfo->flags & 2)
             return 0;
     }
 
@@ -128,22 +128,22 @@ void Func_0810a108(s32 unitId, s32 slot, s32 count);
 s32 Shop_SellOld(s32 unitId, s32 slot)
 {
     u8 *unit;
-    s32 item_offset;
-    s32 item_id;
+    s32 itemOffset;
+    s32 itemId;
     u32 raw;
 
     unit = UnitGet(unitId);
     if (slot == -1)
         return 0;
-    item_offset = slot * 2 + 216;
-    raw = *(u16 *)(unit + item_offset);
+    itemOffset = slot * 2 + 216;
+    raw = *(u16 *)(unit + itemOffset);
     /* FAKEMATCH: the barrier keeps the slot halfword load ahead of the 0x1ff mask; without it the mask is started first (one reordered pair, differ 2). */
     asm volatile("");
-    item_id = 0x1ff;
-    item_id &= raw;
-    if (Item_Get(item_id)->type == 6)
+    itemId = 0x1ff;
+    itemId &= raw;
+    if (Item_Get(itemId)->type == 6)
         return 0;
-    if (Item_Get(item_id)->flags & 8)
+    if (Item_Get(itemId)->flags & 8)
         return 0;
     Func_0810a108(unitId, slot, -1);
     return 1;

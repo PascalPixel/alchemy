@@ -66,13 +66,13 @@ void Event_ClearInvalidPackedValuesFar(void);
 s32 ItemMenu_Run(void)
 {
     struct ItemMenuWork *menu;
-    u32 old_mode;
+    u32 oldMode;
     s32 state;
     struct ItemMenuSavedGraphics *saved;
     s32 zero;
 
     menu = Runtime_AllocateHeapBlock(55, 0xa70);
-    old_mode = gGameState.mode;
+    oldMode = gGameState.mode;
     gGameState.mode = 2;
     state = gMenuCtrlWork->busy = 1;
     UiWindow_DrawFrameFar(0, 0, 30, 20);
@@ -128,6 +128,6 @@ s32 ItemMenu_Run(void)
     MemFree(menu->saved);
     Runtime_ReleaseHeapBlock(55);
     Event_ClearInvalidPackedValuesFar();
-    gGameState.mode = old_mode;
+    gGameState.mode = oldMode;
     return 1;
 }

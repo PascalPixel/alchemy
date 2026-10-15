@@ -172,7 +172,7 @@ void AudioTest_RunParameterController(void)
 
 void Audio_InitializeRuntimeDefaults(void)
 {
-    s16 *player_volume;
+    s16 *playerVolume;
     s32 remaining;
 
     Audio_Initialize();
@@ -186,13 +186,13 @@ void Audio_InitializeRuntimeDefaults(void)
     gMusicPitchStep = 4;
     gMusicFadeRequested = 0;
     gAudio_CommandMask = 0;
-    player_volume = gMusicPlayerVolumes;
+    playerVolume = gMusicPlayerVolumes;
     gEwram_Data1 = 0;
     remaining = 7;
     do {
         remaining--;
-        *player_volume = 0;
-        player_volume += 1;
+        *playerVolume = 0;
+        playerVolume += 1;
     } while (remaining >= 0);
 }
 

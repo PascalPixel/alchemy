@@ -85,23 +85,23 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
 
     if (flags & 0x100) {
         s32 mask = 13;
-        u8 visual_flags = visual->flags;
+        u8 visualFlags = visual->flags;
 
         mask = -mask;
-        mask &= visual_flags;
+        mask &= visualFlags;
         mask |= 4;
         visual->flags = mask;
     } else {
-        s32 copied_flags = 12;
-        u8 source_flags = object->visual->flags;
-        u8 destination_flags;
-        s32 clear_mask = 13;
+        s32 copiedFlags = 12;
+        u8 sourceFlags = object->visual->flags;
+        u8 destinationFlags;
+        s32 clearMask = 13;
 
-        copied_flags &= source_flags;
-        destination_flags = visual->flags;
-        clear_mask = -clear_mask;
-        clear_mask &= destination_flags;
-        clear_mask |= copied_flags;
-        visual->flags = clear_mask;
+        copiedFlags &= sourceFlags;
+        destinationFlags = visual->flags;
+        clearMask = -clearMask;
+        clearMask &= destinationFlags;
+        clearMask |= copiedFlags;
+        visual->flags = clearMask;
     }
 }

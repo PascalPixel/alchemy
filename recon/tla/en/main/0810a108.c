@@ -18,8 +18,8 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count)
 {
     struct ShopRuntime *shop = gMenuWork;
     struct BattleUnit *unit = UnitGetFar(unitId);
-    s32 item_id = unit->inventory[slot] & 0x1ff;
-    struct ItemDefinition *item = Item_Get(item_id);
+    s32 itemId = unit->inventory[slot] & 0x1ff;
+    struct ItemDefinition *item = Item_Get(itemId);
     u8 rare = item->flags & 4;
     s32 all = 0;
     s32 total;
@@ -32,12 +32,12 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count)
     }
     total = Shop_SalePrice(unit->inventory[slot]) * count;
     if (total == 0) {
-        UiWork_PushValueSlotFar(item_id, 2);
+        UiWork_PushValueSlotFar(itemId, 2);
         UiMessage_ShowAndRestoreState((s32)MsgWeDoNotBuy);
         return;
     }
     if ((unit->inventory[slot] & 0x200) && (item->flags & 2)) {
-        UiWork_PushValueSlotFar(item_id, 2);
+        UiWork_PushValueSlotFar(itemId, 2);
         UiMessage_ShowAndRestoreState((s32)MsgCannotSellEquipped);
         return;
     }
@@ -51,7 +51,7 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count)
         message = (s32)MsgRareSellOffer;
     else
         message = (s32)MsgSellOffer;
-    UiWork_PushValueSlotFar(item_id, 2);
+    UiWork_PushValueSlotFar(itemId, 2);
     UiWork_PushValueSlotFar(total, 5);
     UiMessage_ShowAndRestoreState(message);
     if (UiMessage_ShowChoice(0) != 0) {

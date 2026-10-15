@@ -70,12 +70,12 @@ void Func_080e9ee4(struct Chase *chase, s32 speed)
     chase->x += Iwram_MulQ16(Trig_Cos(angle), speed);
     chase->z += Iwram_MulQ16(Trig_Sin(angle), speed);
     {
-        s32 next_dx = chase->targetX - chase->x;
-        s32 next_dz = chase->targetZ - chase->z;
+        s32 nextDx = chase->targetX - chase->x;
+        s32 nextDz = chase->targetZ - chase->z;
 
-        if ((next_dx ^ dx) & 0x80000000)
+        if ((nextDx ^ dx) & 0x80000000)
             chase->x = chase->targetX;
-        if ((dz ^ next_dz) & 0x80000000)
+        if ((dz ^ nextDz) & 0x80000000)
             chase->z = chase->targetZ;
     }
 }

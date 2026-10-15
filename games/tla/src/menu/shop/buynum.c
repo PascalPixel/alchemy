@@ -34,7 +34,7 @@ extern u8 MsgHowManyToBuy[];
 #define QUANTITY_CURSOR_Y 128
 #endif
 
-s32 Shop_SelectBuyNum(s32 unitId, s32 item_id)
+s32 Shop_SelectBuyNum(s32 unitId, s32 itemId)
 {
     struct ShopWork *shop;
     struct ShopUnit *unit;
@@ -47,11 +47,11 @@ s32 Shop_SelectBuyNum(s32 unitId, s32 item_id)
 
     shop = Ram_HeapSlots->menuRuntime;
     unit = UnitGet(unitId);
-    item = Item_Get(item_id);
+    item = Item_Get(itemId);
     result = 1;
     if (item->flags & 0x10) {
         Func_081084f4((s32)MsgHowManyToBuy);
-        slot = Inventory_FindFar(unitId, item_id);
+        slot = Inventory_FindFar(unitId, itemId);
         if (slot != -1)
             quantity = (unit->inventory[slot] >> 11) + 1;
         else
@@ -62,9 +62,9 @@ s32 Shop_SelectBuyNum(s32 unitId, s32 item_id)
             chance = __udivsi3(gPartyState.coins, (u16)item->price);
 
         if (shop->partyAction == 2) {
-            maximum = Item_AdjustCounterFar(item_id, 0);
+            maximum = Item_AdjustCounterFar(itemId, 0);
             if (chance > maximum)
-                maximum = Item_AdjustCounterFar(item_id, 0);
+                maximum = Item_AdjustCounterFar(itemId, 0);
             else
                 maximum = chance;
             chance = maximum;

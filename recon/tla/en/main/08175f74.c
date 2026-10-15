@@ -284,7 +284,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
     struct Unit88 *unit88;
     s32 j;
     s32 frame;
-    u32 saved_width;
+    u32 savedWidth;
     u8 *glyphs;
     struct Scene68 *scene;
     DrawRectangleFn *blit;
@@ -296,7 +296,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
     s32 blue;
     struct Unit30 *unit30;
     s32 shake;
-    s16 saved_unit30;
+    s16 savedUnit30;
     s32 i;
     s32 fade;
     u16 *palette;
@@ -312,7 +312,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
     canvas = SYSTEM_WORK->canvas;
     work = SYSTEM_WORK->summon;
     unit88 = SYSTEM_WORK->unit88;
-    saved_width = DISPLAY_1120->unk4;
+    savedWidth = DISPLAY_1120->unk4;
     glyphs = SYSTEM_WORK->glyphs;
     scene = SYSTEM_WORK->scene;
     BattleFx_BeginCanvasLayer(0);
@@ -1257,7 +1257,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
     DISPLAY_11E0->width = 120;
     unit30 = SYSTEM_WORK->unit30;
     shake = 0;
-    saved_unit30 = unit30->unk36;
+    savedUnit30 = unit30->unk36;
     unit30->unk36 = shake;
     work->transferMode = 1;
     work->transferValue = 0;
@@ -1483,9 +1483,9 @@ void Func_08175f74(struct BattleEffectArgument *arg)
         }
         if (frame > 120) {
             if (frame == 121) {
-                DISPLAY_1120->unk4 = saved_width;
+                DISPLAY_1120->unk4 = savedWidth;
                 unit88->unk10 = 0;
-                unit30->unk36 = saved_unit30;
+                unit30->unk36 = savedUnit30;
             }
             if (frame < 148) {
                 s32 wave = work->wave;

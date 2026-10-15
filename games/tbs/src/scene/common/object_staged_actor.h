@@ -258,7 +258,7 @@ static s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe)
 	s32					width, height;
 	u8				   *mode;
 	s32					column, row;
-	s32					near_edge, far_edge;
+	s32					nearEdge, farEdge;
 	s32					offset;
 
 	probe->callback = 0;
@@ -275,28 +275,28 @@ static s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe)
 
 		steps = 0;
 		offset = footprint * 4;
-		near_edge = gStagedActor_FootprintBounds[offset + 1];
-		if (near_edge < 0)
+		nearEdge = gStagedActor_FootprintBounds[offset + 1];
+		if (nearEdge < 0)
 		{
-			near_edge = -near_edge;
+			nearEdge = -nearEdge;
 		}
-		far_edge = gStagedActor_FootprintBounds[offset + 3];
-		if (far_edge < 0)
+		farEdge = gStagedActor_FootprintBounds[offset + 3];
+		if (farEdge < 0)
 		{
-			far_edge = -far_edge;
+			farEdge = -farEdge;
 		}
-		height = (near_edge + far_edge) >> 4;
-		near_edge = gStagedActor_FootprintBounds[offset];
-		if (near_edge < 0)
+		height = (nearEdge + farEdge) >> 4;
+		nearEdge = gStagedActor_FootprintBounds[offset];
+		if (nearEdge < 0)
 		{
-			near_edge = -near_edge;
+			nearEdge = -nearEdge;
 		}
-		far_edge = gStagedActor_FootprintBounds[offset + 2];
-		if (far_edge < 0)
+		farEdge = gStagedActor_FootprintBounds[offset + 2];
+		if (farEdge < 0)
 		{
-			far_edge = -far_edge;
+			farEdge = -farEdge;
 		}
-		width = (near_edge + far_edge) >> 4;
+		width = (nearEdge + farEdge) >> 4;
 	}
 	position[0] = actor->x.value + (gStagedActor_DirectionSteps[direction] & 0xffff0000);
 	{
@@ -352,66 +352,66 @@ static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 	 * the map work read into a local before the zero is stored. */
 	struct MapScrollWork		   *workspace;
 	struct StagedActor			   *actor;
-	struct StagedActorProbePosition original_position;
-	struct StagedActorProbePosition tile_position;
-	u8							   *footprint_table;
+	struct StagedActorProbePosition originalPosition;
+	struct StagedActorProbePosition tilePosition;
+	u8							   *footprintTable;
 	s32								direction;
-	s32								horizontal_extent;
-	s32								vertical_extent;
+	s32								horizontalExtent;
+	s32								verticalExtent;
 
 	workspace = (struct MapScrollWork *)*(u32 *)gMapWork;
 	direction = ((struct StagedActor *)Object_GetById(0))->directionAndKind >> 12;
 	actor = (struct StagedActor *)Object_GetById(probe.actorSlot);
-	footprint_table = (u8 *)gStagedActor_FootprintBounds;
+	footprintTable = (u8 *)gStagedActor_FootprintBounds;
 	{
-		s32 extent_a = gStagedActor_FootprintBounds[probe.footprintIndex * 4 + 1];
-		s32 extent_b;
+		s32 extentA = gStagedActor_FootprintBounds[probe.footprintIndex * 4 + 1];
+		s32 extentB;
 
-		if (extent_a < 0)
-			extent_a = -extent_a;
-		extent_b = gStagedActor_FootprintBounds[probe.footprintIndex * 4 + 3];
-		if (extent_b < 0)
-			extent_b = -extent_b;
-		vertical_extent = (extent_a + extent_b) >> 4;
-		extent_a = gStagedActor_FootprintBounds[probe.footprintIndex * 4 + 0];
-		if (extent_a < 0)
-			extent_a = -extent_a;
-		extent_b = gStagedActor_FootprintBounds[probe.footprintIndex * 4 + 2];
-		if (extent_b < 0)
-			extent_b = -extent_b;
-		horizontal_extent = (extent_a + extent_b) >> 4;
+		if (extentA < 0)
+			extentA = -extentA;
+		extentB = gStagedActor_FootprintBounds[probe.footprintIndex * 4 + 3];
+		if (extentB < 0)
+			extentB = -extentB;
+		verticalExtent = (extentA + extentB) >> 4;
+		extentA = gStagedActor_FootprintBounds[probe.footprintIndex * 4 + 0];
+		if (extentA < 0)
+			extentA = -extentA;
+		extentB = gStagedActor_FootprintBounds[probe.footprintIndex * 4 + 2];
+		if (extentB < 0)
+			extentB = -extentB;
+		horizontalExtent = (extentA + extentB) >> 4;
 	}
 
 	actor->moveRateX = 0x8000;
 	actor->moveRateZ = 0x1999;
-	original_position.x = actor->x.value;
-	original_position.z = actor->z.value;
+	originalPosition.x = actor->x.value;
+	originalPosition.z = actor->z.value;
 	{
-		s32 table_offset = probe.footprintIndex << 4;
-		tile_position.x = (actor->x.value + (*(s32 *)(footprint_table + table_offset) << 16));
-		table_offset += 4;
-		tile_position.z = (actor->z.value + (*(s32 *)(footprint_table + table_offset) << 16));
-		tile_position.x >>= 20;
-		tile_position.z >>= 20;
+		s32 tableOffset = probe.footprintIndex << 4;
+		tilePosition.x = (actor->x.value + (*(s32 *)(footprintTable + tableOffset) << 16));
+		tableOffset += 4;
+		tilePosition.z = (actor->z.value + (*(s32 *)(footprintTable + tableOffset) << 16));
+		tilePosition.x >>= 20;
+		tilePosition.z >>= 20;
 	}
 
 	StagedActor_FillGridAttributeRectangle(
-		0, tile_position.x, tile_position.z, horizontal_extent, vertical_extent, 0);
+		0, tilePosition.x, tilePosition.z, horizontalExtent, verticalExtent, 0);
 	Engine_ActorSetSpeed(0, 0x8000, 0x1999);
 	Engine_ActorSetAnimation(0, 8);
 	Engine_EventWait(15);
 
 	{
-		s32 horizontal_delta = probe.positionX - original_position.x;
-		if (horizontal_delta < 0)
-			horizontal_delta += 0x1ffff;
-		horizontal_delta >>= 17;
+		s32 horizontalDelta = probe.positionX - originalPosition.x;
+		if (horizontalDelta < 0)
+			horizontalDelta += 0x1ffff;
+		horizontalDelta >>= 17;
 		{
-			s32 vertical_delta = probe.positionZ - original_position.z;
-			if (vertical_delta < 0)
-				vertical_delta += 0x1ffff;
-			vertical_delta >>= 17;
-			Engine_ActorSetDestinationOffset(0, horizontal_delta, vertical_delta);
+			s32 verticalDelta = probe.positionZ - originalPosition.z;
+			if (verticalDelta < 0)
+				verticalDelta += 0x1ffff;
+			verticalDelta >>= 17;
+			Engine_ActorSetDestinationOffset(0, horizontalDelta, verticalDelta);
 		}
 	}
 
@@ -431,9 +431,9 @@ static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 	Actor_SetSpeed(0, 0x4ccc, 0x1999);
 
 	{
-		s32 packed_orientation = gStagedActor_DirectionSteps[direction];
+		s32 packedOrientation = gStagedActor_DirectionSteps[direction];
 		Engine_ActorSetDestinationOffset(
-			0, ((s16)(packed_orientation >> 16)) / 2, ((s16)packed_orientation) / 2);
+			0, ((s16)(packedOrientation >> 16)) / 2, ((s16)packedOrientation) / 2);
 	}
 	if (probe.callback != 0)
 		probe.callback();
@@ -453,43 +453,43 @@ static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 
 	{
 		u8 *table = (u8 *)gStagedActor_FootprintBounds;
-		s32 horizontal_origin;
-		s32 vertical_origin;
+		s32 horizontalOrigin;
+		s32 verticalOrigin;
 
 		{
-			s32 table_offset = probe.footprintIndex << 4;
-			probe.positionX = (probe.positionX + (*(s32 *)(table + table_offset) << 16));
-			table_offset += 4;
-			probe.positionZ = (probe.positionZ + (*(s32 *)(table + table_offset) << 16));
+			s32 tableOffset = probe.footprintIndex << 4;
+			probe.positionX = (probe.positionX + (*(s32 *)(table + tableOffset) << 16));
+			tableOffset += 4;
+			probe.positionZ = (probe.positionZ + (*(s32 *)(table + tableOffset) << 16));
 			probe.positionX >>= 20;
 			probe.positionZ >>= 20;
 		}
-		horizontal_origin = workspace->layers[1].offsetX >> 20;
-		vertical_origin = workspace->layers[1].offsetY >> 20;
+		horizontalOrigin = workspace->layers[1].offsetX >> 20;
+		verticalOrigin = workspace->layers[1].offsetY >> 20;
 
-		Map_CopyCellAttributes(probe.positionX, probe.positionZ, horizontal_extent,
-			vertical_extent, horizontal_origin + probe.positionX,
-			vertical_origin + probe.positionZ);
+		Map_CopyCellAttributes(probe.positionX, probe.positionZ, horizontalExtent,
+			verticalExtent, horizontalOrigin + probe.positionX,
+			verticalOrigin + probe.positionZ);
 		StagedActor_FillGridAttributeRectangle(
-			0, probe.positionX, probe.positionZ, horizontal_extent, vertical_extent, 255);
+			0, probe.positionX, probe.positionZ, horizontalExtent, verticalExtent, 255);
 		StagedActor_FillGridAttributeRectangle(
-			2, probe.positionX, probe.positionZ, horizontal_extent, vertical_extent, 255);
+			2, probe.positionX, probe.positionZ, horizontalExtent, verticalExtent, 255);
 
 		{
-			s32 table_offset = probe.footprintIndex << 4;
-			original_position.x = (original_position.x + (*(s32 *)(table + table_offset) << 16));
-			table_offset += 4;
-			original_position.z = (original_position.z + (*(s32 *)(table + table_offset) << 16));
-			original_position.x >>= 20;
-			original_position.z >>= 20;
+			s32 tableOffset = probe.footprintIndex << 4;
+			originalPosition.x = (originalPosition.x + (*(s32 *)(table + tableOffset) << 16));
+			tableOffset += 4;
+			originalPosition.z = (originalPosition.z + (*(s32 *)(table + tableOffset) << 16));
+			originalPosition.x >>= 20;
+			originalPosition.z >>= 20;
 		}
-		horizontal_origin += original_position.x;
-		vertical_origin += original_position.z;
+		horizontalOrigin += originalPosition.x;
+		verticalOrigin += originalPosition.z;
 
-		Engine_MapCopyCellAttributes(horizontal_origin, vertical_origin, horizontal_extent,
-			vertical_extent, original_position.x, original_position.z);
+		Engine_MapCopyCellAttributes(horizontalOrigin, verticalOrigin, horizontalExtent,
+			verticalExtent, originalPosition.x, originalPosition.z);
 		StagedActor_FillGridAttributeRectangle(
-			2, original_position.x, original_position.z, horizontal_extent, vertical_extent, 0);
+			2, originalPosition.x, originalPosition.z, horizontalExtent, verticalExtent, 0);
 	}
 	BattleFx_PlayQueuedSound();
 }
@@ -507,7 +507,7 @@ static s32 FieldScene_RedrawActorFootprint(s32 id)
 	s32						x1;
 	s32						z0;
 	s32						z1;
-	s32						dst_z;
+	s32						dstZ;
 
 	for (idx = 0; idx <= 5; idx++)
 	{
@@ -544,9 +544,9 @@ static s32 FieldScene_RedrawActorFootprint(s32 id)
 	probe.positionX >>= 20;
 	probe.positionZ >>= 20;
 	idx = work->layers[1].offsetX >> 20;
-	dst_z = work->layers[1].offsetY >> 20;
+	dstZ = work->layers[1].offsetY >> 20;
 	Engine_MapCopyCellAttributes(probe.positionX, probe.positionZ, width, height,
-		idx + probe.positionX, dst_z + probe.positionZ);
+		idx + probe.positionX, dstZ + probe.positionZ);
 	StagedActor_FillGridAttributeRectangle(
 		0, probe.positionX, probe.positionZ, width, height, 255);
 	StagedActor_FillGridAttributeRectangle(

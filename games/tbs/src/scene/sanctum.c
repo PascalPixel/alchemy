@@ -1760,7 +1760,7 @@ static void FieldScene_RunPairedActorChoreography(void)
 	Engine_EventWait(60);
 }
 
-static void Sanctum_RaiseItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z)
+static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY, s32 fixedZ)
 {
 	struct FieldActor  *obj;
 	struct FieldSprite *spr;
@@ -1768,7 +1768,7 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_
 	u32					i;
 	u8					zero;
 
-	obj = Engine_ObjectCreate(22, fixed_x, fixed_y, fixed_z);
+	obj = Engine_ObjectCreate(22, fixedX, fixedY, fixedZ);
 	zero = 0;
 	if (obj != 0)
 	{

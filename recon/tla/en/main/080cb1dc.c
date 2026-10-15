@@ -21,7 +21,7 @@ extern struct EventRuntime *gEventWork;
 
 void UpdateMapRegionAtPosition(s32 positionX, s32 positionY, s32 positionZ)
 {
-    s32 selected_value;
+    s32 selectedValue;
     struct EventRuntime *runtime;
     s32 z;
     s32 y;
@@ -48,7 +48,7 @@ loop:
         maxY = region->maxY;
         maxZ = region->maxZ;
         condition = region->condition;
-        selected_value = region->value;
+        selectedValue = region->value;
         if (GameFlag_IsConditionActive(condition)!= 0 &&
             y >= REGION_FIXED(minY)&&
             y < REGION_FIXED(maxY)&&
@@ -56,7 +56,7 @@ loop:
             x < REGION_FIXED(maxX)&&
             z >= REGION_FIXED(minZ)&&
             z < REGION_FIXED(maxZ)) {
-            runtime->value170 = (u16)selected_value;
+            runtime->value170 = (u16)selectedValue;
             Audio_PlayCue(123);
             Battle_InitializeRenderObject();
             return;

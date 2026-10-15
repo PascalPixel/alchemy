@@ -80,9 +80,9 @@ void BattleMotion_NoOp(void *position, s32 speed)
 
 void BattleMotion_NoOp(void *, s32);
 
-void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 second_id)
+void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId)
 {
-    struct BattleObj *second_slot;
+    struct BattleObj *secondSlot;
     struct MotionObject *first;
     struct MotionObject *second;
     s32 x1;
@@ -96,13 +96,13 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 second_id)
     } pos;
 
     first = BattleObjGet(firstId)->object;
-    second_slot = BattleObjGet(second_id);
+    secondSlot = BattleObjGet(secondId);
 
 
     x1 = first->targetX;
     /* FAKEMATCH: ⚓️ loads the first target before it builds the unset marker */
     __asm__ volatile("" : "+l"(x1));
-    second = second_slot->object;
+    second = secondSlot->object;
     if (x1 == (s32)0x80000000) {
         x1 = first->x;
     }

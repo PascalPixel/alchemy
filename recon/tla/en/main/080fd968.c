@@ -16,8 +16,8 @@ extern u8 MsgPsynergyPp[];
 
 s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult *state)
 {
-    u32 first_entry;
-    u32 visible_count;
+    u32 firstEntry;
+    u32 visibleCount;
     u8 row;
     s32 cursor;
     struct BattleUnit *owner;
@@ -35,19 +35,19 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
         UiText_DrawCharacterAtOffsetFar((s32)MsgChangeCharacterHelp, window, 0, 88);
     }
 
-    first_entry = state->page * 5;
-    visible_count = (u8)(state->entryCount - first_entry);
-    if (visible_count > 5) {
-        visible_count = 5;
+    firstEntry = state->page * 5;
+    visibleCount = (u8)(state->entryCount - firstEntry);
+    if (visibleCount > 5) {
+        visibleCount = 5;
     }
 
-    Menu_SetPageIcons(5, first_entry, window, 0x70, 0x22);
+    Menu_SetPageIcons(5, firstEntry, window, 0x70, 0x22);
     Menu_DrawPageIndicator(window, state->entryCount, 5, state->page, 15);
     UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window, 0x60, 0);
 
     row = 0;
-    if (visible_count > row) {
-        cursor = first_entry * 2 + 0x1c8;
+    if (visibleCount > row) {
+        cursor = firstEntry * 2 + 0x1c8;
         do {
             owner = UnitGetFar(menu->ownerIds[0]);
             ability = BattleActGet(0x3fff & *(const u16 *)(cursor + (s32)menu));
@@ -68,7 +68,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
 
             row++;
             cursor += 2;
-        } while (visible_count > row);
+        } while (visibleCount > row);
     }
 
     return 1;

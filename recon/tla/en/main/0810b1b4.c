@@ -38,23 +38,23 @@ void Shop_RunPartyMemberIconBurst(s32 member)
 {
     struct ShopRuntime *shop;
     struct ShopBurstRuntime *burst;
-    s8 saved_kind;
+    s8 savedKind;
     struct Position position;
     struct Effect_080b2f4c *effect;
-    s32 callback_flags;
+    s32 callbackFlags;
     s32 i;
 
     shop = gMenuWork;
     burst = (struct ShopBurstRuntime *)shop;
-    saved_kind = shop->cursor.anchor->kind;
+    savedKind = shop->cursor.anchor->kind;
     *(u8 *)((u8 *)shop + 0x3ab) = 0xff;
     shop->cursor.anchor->kind = 13;
     Audio_PlayCue(gData_080b4ab2[shop->partyAction]);
     Shop_RestoreSceneTiles(0x00202108);
     Func_08009280((s32)shop->partyMemberIcons[member], 0);
     WaitFrames(20);
-    callback_flags = 0xc80;
-    Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callback_flags);
+    callbackFlags = 0xc80;
+    Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callbackFlags);
 
     /* FAKEMATCH: the x store goes through a union with a halfword view so it
        may alias the memberZ load, which keeps the reference schedule. */
@@ -82,11 +82,11 @@ void Shop_RunPartyMemberIconBurst(s32 member)
 
     AudioCommand_WaitForStateByteClear();
     {
-        u8 active_mode = 2;
+        u8 activeMode = 2;
         u8 *entry = (u8 *)shop + 0x3f0;
         for (i = 23; i >= 0; i--) {
             if (*(s8 *)(entry + 5) != 0) {
-                *(u8 *)(entry + 0) = active_mode;
+                *(u8 *)(entry + 0) = activeMode;
             }
             entry += 0x48;
         }
@@ -95,25 +95,25 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     WaitFrames(20);
     Audio_PlayCue(126);
     {
-        s32 icon_offset = 0xff;
+        s32 iconOffset = 0xff;
 
-        *(u8 *)((u8 *)shop + 0x3ab) = icon_offset;
-        icon_offset += 21;
-        icon_offset += member * 4;
-        Func_08009248(*(s32 *)((u8 *)shop + icon_offset), 0);
+        *(u8 *)((u8 *)shop + 0x3ab) = iconOffset;
+        iconOffset += 21;
+        iconOffset += member * 4;
+        Func_08009248(*(s32 *)((u8 *)shop + iconOffset), 0);
     }
     WaitFrames(20);
 
     {
-        u8 *flag_entry = (u8 *)shop + 0x3f5;
+        u8 *flagEntry = (u8 *)shop + 0x3f5;
         struct Effect_080b2f4c *entry2 =
             (struct Effect_080b2f4c *)((u8 *)shop + 0x3b0);
         for (i = 23; i >= 0; i--) {
-            s32 flag = *flag_entry;
+            s32 flag = *flagEntry;
 
             flag <<= 24;
 
-            flag_entry += 0x48;
+            flagEntry += 0x48;
             if (flag != 0) {
                 Func_0808a530(entry2);
             }
@@ -125,5 +125,5 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     Func_08009280((s32)shop->partyMemberIcons[member], 16);
     Shop_InitEffect();
     WaitFrames(30);
-    shop->cursor.anchor->kind = saved_kind;
+    shop->cursor.anchor->kind = savedKind;
 }

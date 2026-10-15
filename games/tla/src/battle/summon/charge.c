@@ -28,7 +28,7 @@ s32 EnemyCountRelease(s32 actorId)
     struct BattleActorDefinition *actor;
     s32 count = state->count;
     s32 index;
-    s32 name_length;
+    s32 nameLength;
     s32 bit;
     s32 classId;
 
@@ -44,30 +44,30 @@ s32 EnemyCountRelease(s32 actorId)
     if (index == count || state->usedMasks[index] == 0)
         return;
 
-    for (name_length = 0; name_length <= 13; name_length++) {
-        if (actor->name[name_length] == 0)
+    for (nameLength = 0; nameLength <= 13; nameLength++) {
+        if (actor->name[nameLength] == 0)
             break;
     }
 
     bit = 32;
-    if (name_length > 0)
-        bit = actor->name[name_length - 1] - LIST_MARKER_CHAR;
+    if (nameLength > 0)
+        bit = actor->name[nameLength - 1] - LIST_MARKER_CHAR;
     state->usedMasks[index] &= ~(1 << bit);
 }
 
 s32 EnemyCountClear(s32 enemyId)
 {
     struct BattleUnit *summon;
-    s32 object_index;
+    s32 objectIndex;
     s32 slot;
-    s32 next_slot;
+    s32 nextSlot;
     u8 occupied;
     u8 marker;
 
-    object_index = 0;
+    objectIndex = 0;
     marker = LIST_MARKER_CHAR;
 scan_objects:
-    summon = UnitGet(object_index + 0x80);
+    summon = UnitGet(objectIndex + 0x80);
     occupied = summon->side;
     if (occupied != 1) goto next_object;
     if (summon->enemyId != enemyId) goto next_object;
@@ -81,11 +81,11 @@ scan_slots:
     if (slot > 13) return;
     occupied = summon->name[slot];
     if (occupied != 0) goto scan_slots;
-    next_slot = slot + 1;
+    nextSlot = slot + 1;
     summon->name[slot] = marker;
-    summon->name[next_slot] = occupied;
+    summon->name[nextSlot] = occupied;
     return;
 next_object:
-    object_index++;
-    if (object_index <= 5) goto scan_objects;
+    objectIndex++;
+    if (objectIndex <= 5) goto scan_objects;
 }

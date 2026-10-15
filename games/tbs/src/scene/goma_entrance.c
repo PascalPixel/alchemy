@@ -135,17 +135,17 @@ static void EV09_PSYNERGY(void)
 static void EV10_PSYNERGY(void)
 {
 	struct FieldActor *actor;
-	s32				   tile_x;
+	s32				   tileX;
 
 	actor = Object_GetById(10);
-	tile_x = actor->x.fixed / 0x100000;
-	if (tile_x == 23)
+	tileX = actor->x.fixed / 0x100000;
+	if (tileX == 23)
 	{
 		Engine_EventWait(10);
 		Object_GetById(10)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		Object_GetById(10)->motionFlags = 0;
 		Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
-		Map_CopyCellAttributes(54, 17, 1, 1, tile_x, 17);
+		Map_CopyCellAttributes(54, 17, 1, 1, tileX, 17);
 		Engine_GameFlagSet(0x863);
 	}
 }

@@ -424,10 +424,10 @@ static inline void Actor_WalkToAndWait(s32 actor, s32 x, s32 z)
 }
 
 static inline void Event_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 extra,
-	s32 other_speaker, s32 otherX, s32 other_y, s32 other_arg, s32 other_extra, s32 flags)
+	s32 otherSpeaker, s32 otherX, s32 otherY, s32 otherArg, s32 otherExtra, s32 flags)
 {
 	Engine_EventShowTwoMessagesAndWait(
-		speaker, x, y, arg, extra, other_speaker, otherX, other_y, other_arg, other_extra, flags);
+		speaker, x, y, arg, extra, otherSpeaker, otherX, otherY, otherArg, otherExtra, flags);
 }
 
 #endif

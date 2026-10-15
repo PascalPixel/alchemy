@@ -465,7 +465,7 @@ struct EncounterZone
 // 今のマップと部屋に合う規則から、出現テーブル番号の並びを作る
 // use_rules : 0 なら規則を見ずに、すべて 0 (出現なし) にする
 //--------------------------------------------------------------------------
-void BattleFx_SelectLocationRule(s32 use_rules)
+void BattleFx_SelectLocationRule(s32 useRules)
 {
 	struct EventWork				*work;
 	s32								 map;
@@ -483,7 +483,7 @@ void BattleFx_SelectLocationRule(s32 use_rules)
 	rule = gBattle_LocationRules;
 	zone = 0;
 	shift = 0;
-	if (use_rules != 0)
+	if (useRules != 0)
 	{
 		while (rule->map != -1)
 		{
@@ -1214,12 +1214,12 @@ void BattleEffect_ClearOutOfBoundsObjects(void)
 
 		if (obj != NULL)
 		{
-			s32 obj_x = obj->x.fixed;
-			s32 obj_z = obj->z.fixed;
+			s32 objX = obj->x.fixed;
+			s32 objZ = obj->z.fixed;
 
-			if (obj_x != 0 || obj_z != 0)
+			if (objX != 0 || objZ != 0)
 			{
-				if (obj_x < left || obj_x > right || obj_z < top || obj_z > bottom)
+				if (objX < left || objX > right || objZ < top || objZ > bottom)
 				{
 					u8 *spr;
 					u8 *removed = &obj->active;
@@ -1300,7 +1300,7 @@ void ObjectTable_Snapshot(void)
 {
 	struct ObjectRuntime *copy = gObjectSnapshots;
 	u8					 *frames = (u8 *)&gObjectSnapshots[32];
-	u8					 *next_frames = frames + 32;
+	u8					 *nextFrames = frames + 32;
 	u8					 *priorities = frames + 64;
 	u8					 *indices = (u8 *)gObjectSnapshots - 32;
 	u32					  count = 0;
@@ -1333,7 +1333,7 @@ void ObjectTable_Snapshot(void)
 			priority = 0;
 		}
 		*frames++ = frame;
-		*next_frames++ = next;
+		*nextFrames++ = next;
 		*priorities++ = priority;
 		count++;
 		copy++;
@@ -1349,7 +1349,7 @@ void ObjectTable_Restore(void)
 	struct ObjectRuntime  *copy = gObjectSnapshots;
 	u8					  *indices = (u8 *)gObjectSnapshots - 32;
 	u8					  *frames = (u8 *)&gObjectSnapshots[32];
-	u8					  *next_frames = frames + 32;
+	u8					  *nextFrames = frames + 32;
 	u8					  *priorities = frames + 64;
 	s32					   count;
 	struct ObjectRuntime  *object;
@@ -1376,7 +1376,7 @@ void ObjectTable_Restore(void)
 			frame = *frames;
 			if (frame != 0)
 				ObjectDispatch_ApplyArgumentToChildrenFar(object, frame);
-			ObjectDispatch_SetSingleChildFlagsFar(object, *next_frames);
+			ObjectDispatch_SetSingleChildFlagsFar(object, *nextFrames);
 			priority = *priorities;
 			sprite->priority = priority;
 			sprite->secondPriority = priority;
@@ -1394,7 +1394,7 @@ void ObjectTable_Restore(void)
 		}
 		copy++;
 		frames++;
-		next_frames++;
+		nextFrames++;
 		priorities++;
 		count++;
 		if (count > 31)
@@ -1483,20 +1483,20 @@ s32 GetFocusedObjectCollision(void)
 
 	if (runtime->mode19e == 3)
 	{
-		u32 tile_x;
-		u32 tile_y;
+		u32 tileX;
+		u32 tileY;
 
 		x = position.x;
 		if (x < 0)
 			x += 0x1fffff;
-		tile_x = (x >> 21) & 31;
+		tileX = (x >> 21) & 31;
 
 		y = position.z;
 		if (y < 0)
 			y += 0x1fffff;
-		tile_y = (y >> 21) & 31;
+		tileY = (y >> 21) & 31;
 
-		tile = (u8 *)gMapBlocks + ((tile_x + (tile_y << 5)) << 2);
+		tile = (u8 *)gMapBlocks + ((tileX + (tileY << 5)) << 2);
 	}
 	else
 	{
@@ -1506,13 +1506,13 @@ s32 GetFocusedObjectCollision(void)
 		if (x < 0)
 			x += 0xfffff;
 		{
-			u32 tile_x = x >> 20;
+			u32 tileX = x >> 20;
 
 			y = position.z;
 			if (y < 0)
 				y += 0xfffff;
 
-			tile = (u8 *)((u32)tile + ((tile_x + ((y >> 20) << 7)) << 2));
+			tile = (u8 *)((u32)tile + ((tileX + ((y >> 20) << 7)) << 2));
 		}
 	}
 
@@ -1521,7 +1521,7 @@ s32 GetFocusedObjectCollision(void)
 
 void UpdateMapRegionAtPosition(s32 positionX, s32 positionY, s32 positionZ)
 {
-	s32						  selected_value;
+	s32						  selectedValue;
 	struct EventRuntime		 *runtime;
 	s32						  z;
 	s32						  y;
@@ -1549,12 +1549,12 @@ void UpdateMapRegionAtPosition(s32 positionX, s32 positionY, s32 positionZ)
 		maxY = region->maxY;
 		maxZ = region->maxZ;
 		condition = region->condition;
-		selected_value = region->value;
+		selectedValue = region->value;
 		if (GameFlag_IsConditionActive(condition) != 0 && y >= REGION_FIXED(minY)
 			&& y < REGION_FIXED(maxY) && x >= REGION_FIXED(minX) && x < REGION_FIXED(maxX)
 			&& z >= REGION_FIXED(minZ) && z < REGION_FIXED(maxZ))
 		{
-			runtime->value170 = selected_value;
+			runtime->value170 = selectedValue;
 			AudioCommand_PlayFar(123);
 			Battle_InitializeRenderObject();
 			return;
@@ -2791,7 +2791,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
 	struct ObjectRuntime	  *obj = (struct ObjectRuntime *)Object_GetById(id);
 	struct EffectDescriptor	  *ev;
 	s32						   paused = 0;
-	u32						   saved_value;
+	u32						   savedValue;
 	u32						   mode;
 	s32						   talk = 0;
 
@@ -2834,7 +2834,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
 
 			*busy = 1;
 			ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)obj, 0);
-			saved_value = obj->angle;
+			savedValue = obj->angle;
 			mode = (u8)place->mode << 24;
 			if (mode <= (1 << 24) || mode == (3 << 24))
 			{
@@ -2876,7 +2876,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
 				}
 				else if (place->mode == 1)
 				{
-					obj->action = saved_value;
+					obj->action = savedValue;
 					ObjectDispatch_InitializeFar(
 						(struct DispatchObject *)obj, (const s32 *)gObjectMotion_StepAngleScript);
 				}
@@ -3270,7 +3270,7 @@ s32 BattleEffect_SelectNearbyObject(s32 id)
 	struct ObjectRuntime *src;
 	struct ObjectRuntime *obj;
 	s32					  best;
-	s32					  best_dist;
+	s32					  bestDist;
 	s32					  i;
 	s32					  dx;
 	s32					  dy;
@@ -3283,7 +3283,7 @@ s32 BattleEffect_SelectNearbyObject(s32 id)
 	s32					  angle;
 
 	best = -1;
-	best_dist = 32;
+	bestDist = 32;
 	src = ObjectTable_Get(id);
 	if (src != 0)
 	{
@@ -3318,7 +3318,7 @@ s32 BattleEffect_SelectNearbyObject(s32 id)
 			dist = Iwram_Sqrt(sq);
 			if ((obj->unk59 & 4) != 0)
 				dist = dist * 10 / 13;
-			if (dist >= best_dist)
+			if (dist >= bestDist)
 				continue;
 
 			angle = (u16)ArcTan2(obj->z - src->z, obj->x - src->x);
@@ -3333,7 +3333,7 @@ s32 BattleEffect_SelectNearbyObject(s32 id)
 			}
 
 			best = i;
-			best_dist = dist;
+			bestDist = dist;
 		}
 	}
 	return best;
@@ -3349,10 +3349,10 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 mode)
 	struct ObjectRuntime *src;
 	struct ObjectRuntime *obj;
 	s32					  best;
-	s32					  best_dist;
+	s32					  bestDist;
 	s32					  dir;
 	s32					  i;
-	s32					  dy_max;
+	s32					  dyMax;
 	s32					  dx;
 	s32					  dz;
 	s32					  cz;
@@ -3361,7 +3361,7 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 mode)
 	s32					  width;
 
 	best = -1;
-	best_dist = BattleFx_MapKeyThroughTable(mode);
+	bestDist = BattleFx_MapKeyThroughTable(mode);
 	src = (struct ObjectRuntime *)ObjectTable_Get(id);
 	if (src == 0)
 		return best;
@@ -3377,22 +3377,22 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 mode)
 			continue;
 
 		// 高さの差 : ふつうは 8、mode 13 は 48、5 は 64、2 は 16 ドットまで
-		dy_max = 8 << 16;
+		dyMax = 8 << 16;
 		if (mode == 13)
-			dy_max = 48 << 16;
+			dyMax = 48 << 16;
 		if (mode == 5)
-			dy_max = 64 << 16;
+			dyMax = 64 << 16;
 		if (mode == 2)
-			dy_max = 16 << 16;
+			dyMax = 16 << 16;
 
 		{
 			s32 dy = obj->y - src->y;
 			if (dy >= 0)
 			{
-				if (dy > dy_max)
+				if (dy > dyMax)
 					continue;
 			}
-			else if (src->y - obj->y > dy_max)
+			else if (src->y - obj->y > dyMax)
 			{
 				continue;
 			}
@@ -3412,7 +3412,7 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 mode)
 		dist = Iwram_Sqrt(dx * dx + cz * cz);
 		if ((obj->unk59 & 0x10) != 0)
 			dist = dist * 2 / 3;
-		if (dist >= best_dist)
+		if (dist >= bestDist)
 			continue;
 
 		// 向きの幅 : 19 ドットまでは ±0x1800、それより遠ければ ±0x1000、mode 2 は ±0x2000
@@ -3433,7 +3433,7 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 id, s32 mode)
 		}
 
 		best = i;
-		best_dist = dist;
+		bestDist = dist;
 	}
 
 	return best;
@@ -3519,12 +3519,12 @@ s32 Event_FindFacingTrigger(s32 source)
 
 	while (trigger->control != -1)
 	{
-		s32 high_value = trigger->trigger & 0xf000;
-		s16 has_facing = trigger->trigger & 0x0800;
-		s32 low_value = trigger->trigger & 0xff;
+		s32 highValue = trigger->trigger & 0xf000;
+		s16 hasFacing = trigger->trigger & 0x0800;
+		s32 lowValue = trigger->trigger & 0xff;
 
 		if ((trigger->control & 0x0f) == 4 && GameFlag_IsConditionActive(trigger->condition) != 0
-			&& (has_facing == 0 || (u16)(high_value - facing + 0x17ff) <= 0x2ffe))
+			&& (hasFacing == 0 || (u16)(highValue - facing + 0x17ff) <= 0x2ffe))
 		{
 			u32 flags = trigger->control;
 			s32 owner = ((const u8 *)&trigger->control)[1];
@@ -3533,10 +3533,10 @@ s32 Event_FindFacingTrigger(s32 source)
 			{
 				if ((flags & 0x10) != 0)
 				{
-					if (low_value == selected)
+					if (lowValue == selected)
 						return (s32)trigger;
 				}
-				else if (low_value == collision)
+				else if (lowValue == collision)
 				{
 					return (s32)trigger;
 				}
@@ -3550,7 +3550,7 @@ s32 Event_FindFacingTrigger(s32 source)
 s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 {
 	s32						 result;
-	s32						 item_id;
+	s32						 itemId;
 	s32						 actor;
 	struct BattleUnit			*obj;
 	const struct SceneEvent *event;
@@ -3562,7 +3562,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 	struct FieldWork		*runtime;
 
 	result = -1;
-	item_id = arg & 0x3ff;
+	itemId = arg & 0x3ff;
 	actor = (arg >> 10) & 0xf;
 	{
 		best = 0;
@@ -3577,7 +3577,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 				matches = 0;
 				for (j = 0; j < 15; j++)
 				{
-					if ((obj->inventory[j] & 0x1ff) == item_id)
+					if ((obj->inventory[j] & 0x1ff) == itemId)
 						matches++;
 				}
 
@@ -3593,7 +3593,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 			obj = UnitGetFar(actor);
 			for (j = 0; j < 15; j++)
 			{
-				if ((obj->inventory[j] & 0x1ff) == item_id)
+				if ((obj->inventory[j] & 0x1ff) == itemId)
 					best++;
 			}
 		}
@@ -3605,7 +3605,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 		}
 	}
 
-	event = (const struct SceneEvent *)Event_FindFacingTrigger(item_id);
+	event = (const struct SceneEvent *)Event_FindFacingTrigger(itemId);
 	if (event != 0 && event->value != 0)
 	{
 		GameFlag_ClearBitFar(0x143);
@@ -3613,7 +3613,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 		if (!(event->trigger & 0x400))
 		{
 			UiWork_PushValueSlotFar(actor, 1);
-			UiWork_PushValueSlotFar(item_id, 2);
+			UiWork_PushValueSlotFar(itemId, 2);
 			UiText_ShowPositionedMessageAndWaitFar(MsgActorUsesItem, 1);
 		}
 		if ((s32)event->value < 0x10000)
@@ -3626,7 +3626,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 		}
 		else
 		{
-			((BattleItemCallback)event->value)(item_id, actor, slot);
+			((BattleItemCallback)event->value)(itemId, actor, slot);
 		}
 		result = 0;
 	}
@@ -3636,7 +3636,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 
 		GameFlag_ClearBitFar(0x143);
 		GameFlag_SetBitFar(0x142);
-		actionId = Item_GetDirectFar(item_id)->actionId;
+		actionId = Item_GetDirectFar(itemId)->actionId;
 		runtime = (struct FieldWork *)gEventWork;
 
 		if (actionId != 0)
@@ -3646,7 +3646,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 
 			if (actionId == 149 && !GameFlag_TestFar(0x144))
 			{
-				UiWork_PushValueSlotFar(item_id, 2);
+				UiWork_PushValueSlotFar(itemId, 2);
 				UiText_ShowPositionedMessageAndWaitFar(MsgUseItemQuestion, 13);
 				/* FAKEMATCH: needed to match: the owner index doubles as the declined flag, which ranks it above best in global allocation (r6, best r7). A declined local of its own: differ 109. */
 				i = Object_CallSpawnRoutineAtOrigin(1);
@@ -3660,7 +3660,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 			}
 
 			UiWork_PushValueSlotFar(actor, 1);
-			UiWork_PushValueSlotFar(item_id, 2);
+			UiWork_PushValueSlotFar(itemId, 2);
 			UiText_ShowPositionedMessageAndWaitFar(MsgActorUsesItem, 1);
 			/* FAKEMATCH: called through a cast to the s32 call the bytes show: called as void by its prototype, the 0 is loaded before the action id (differ 2), also with actionId declared at function scope; with actionId read after runtime: differ 8. */
 			((s32 (*)(s32, s32))BattleFx_LoadActionEffectResources)(actionId, 0);
@@ -3669,7 +3669,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 			runtime->resolvingAction = 0;
 			BattleEffect_CleanupSceneObjects();
 
-			if (Item_GetDirectFar(item_id)->useType & 1)
+			if (Item_GetDirectFar(itemId)->useType & 1)
 				GameFlag_SetBitFar(0x143);
 		}
 	}
@@ -3681,39 +3681,39 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 	return result;
 }
 
-void *BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
+void *BattleFx_FindMatchingEvent(s32 requestedFlags, s32 group, void *result)
 {
 	struct FieldStepWork	*runtime = (struct FieldStepWork *)gEventWork;
 	const struct SceneEvent *event = runtime->events;
 	s32 reference = ((struct MotionObject *)ObjectTable_Get(gGameState.selectedActor))->angle;
 	s32 selected = BattleEffect_SelectNearbyTargetObject(gGameState.selectedActor, group);
 	s32 alternate;
-	s32 ignore_flags = 0;
+	s32 ignoreFlags = 0;
 
 	*(s32 *)result = selected;
 	alternate = GetFocusedObjectCollision();
-	if (requested_flags == 0x70000005)
-		ignore_flags = 1;
+	if (requestedFlags == 0x70000005)
+		ignoreFlags = 1;
 
 	while (event->control != -1)
 	{
-		s32 high_value = event->trigger & 0xf000;
-		s16 has_reference = event->trigger & 0x0800;
-		s32 low_value = event->trigger & 0xff;
+		s32 highValue = event->trigger & 0xf000;
+		s16 hasReference = event->trigger & 0x0800;
+		s32 lowValue = event->trigger & 0xff;
 
 		if ((event->control & 0x0f) == 5 && GameFlag_IsConditionActive(event->condition) != 0
-			&& (has_reference == 0 || (u16)(high_value - reference + 0x17ff) <= 0x2ffe)
+			&& (hasReference == 0 || (u16)(highValue - reference + 0x17ff) <= 0x2ffe)
 			&& BattleActGet(((const u8 *)&event->control)[1])->type0c == group
-			&& (ignore_flags || (event->control & 0x7000000f) == requested_flags))
+			&& (ignoreFlags || (event->control & 0x7000000f) == requestedFlags))
 		{
 			if ((event->control & 0x80) != 0)
 				return (void *)event;
 			if ((event->control & 0x10) != 0)
 			{
-				if (low_value == selected)
+				if (lowValue == selected)
 					return (void *)event;
 			}
-			else if (low_value == alternate)
+			else if (lowValue == alternate)
 			{
 				return (void *)event;
 			}
@@ -4123,14 +4123,14 @@ void EffectRuntime_SetMode5AndPlayCue(s32 id)
 void EffectRuntime_SetMode7AndLaunch(s32 id)
 {
 	s32						  slot;
-	struct EffectRuntimeSlot *slot_data;
+	struct EffectRuntimeSlot *slotData;
 	struct ObjectRuntime	 *object;
 
 	slot = EffectRuntime_FindSlotByObject(id);
 	if (slot != -1)
 	{
-		slot_data = &((struct EffectRuntime *)gEventWork)->slots[slot];
-		object = slot_data->object;
+		slotData = &((struct EffectRuntime *)gEventWork)->slots[slot];
+		object = slotData->object;
 		WaitFrames(0x12);
 		if (object != NULL)
 			ObjectDispatch_ApplyArgumentToChildrenFar(object, 7);
@@ -4178,14 +4178,14 @@ struct ObjectRuntime *EffectRuntime_GetCurrentObject(s32 id)
 void EffectRuntime_ClearCurrentFlags(s32 id)
 {
 	s32						  slot;
-	struct EffectRuntimeSlot *slot_data;
+	struct EffectRuntimeSlot *slotData;
 	struct ObjectRuntime	 *object;
 
 	slot = EffectRuntime_FindSlotByObject(id);
 	if (slot != -1)
 	{
-		slot_data = &((struct EffectRuntime *)gEventWork)->slots[slot];
-		object = slot_data->object;
+		slotData = &((struct EffectRuntime *)gEventWork)->slots[slot];
+		object = slotData->object;
 		if (object != NULL)
 			object->animationKind = 0;
 	}
@@ -4195,27 +4195,27 @@ void EffectRuntime_SetCurrentPosition(s32 id, s32 x, s32 y)
 {
 	s32						  slot;
 	s32						  height;
-	s32						  object_x;
-	s32						  object_y;
-	struct EffectRuntimeSlot *slot_data;
+	s32						  objectX;
+	s32						  objectY;
+	struct EffectRuntimeSlot *slotData;
 	struct ObjectRuntime	 *object;
 
-	object_y = y;
-	object_x = x;
+	objectY = y;
+	objectX = x;
 	slot = EffectRuntime_FindSlotByObject(id);
 	if (slot != -1)
 	{
-		slot_data = &((struct EffectRuntime *)gEventWork)->slots[slot];
-		object = slot_data->object;
+		slotData = &((struct EffectRuntime *)gEventWork)->slots[slot];
+		object = slotData->object;
 		if (object != NULL)
 		{
-			if (object_x == -1)
-				object_x = (slot_data->tileX << 20) + 0x80000;
-			if (object_y == -1)
-				object_y = (slot_data->tileY << 20) + 0x80000;
-			object->x = object_x;
-			object->z = object_y;
-			height = Map_GetTerrainHeightFar(0, object_x, object_y);
+			if (objectX == -1)
+				objectX = (slotData->tileX << 20) + 0x80000;
+			if (objectY == -1)
+				objectY = (slotData->tileY << 20) + 0x80000;
+			object->x = objectX;
+			object->z = objectY;
+			height = Map_GetTerrainHeightFar(0, objectX, objectY);
 			object->terrainHeight = height;
 			object->y = height;
 		}
@@ -4308,7 +4308,7 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter)
 {
 	struct EffectVector	  pos;
 	struct ObjectRuntime *obj;
-	u32					  random_angle;
+	u32					  randomAngle;
 
 	if (emitter->velocityY >= -255 && emitter->velocityY <= 255)
 		emitter->flags = 0;
@@ -4319,8 +4319,8 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter)
 	pos.x = emitter->x;
 	pos.y = emitter->y;
 	pos.z = emitter->z;
-	random_angle = Random16();
-	Vector_AddPolarOffset(random_angle << 4, Random16(), &pos);
+	randomAngle = Random16();
+	Vector_AddPolarOffset(randomAngle << 4, Random16(), &pos);
 	obj = Object_Spawn(285, pos.x, pos.y, pos.z);
 	if (obj != 0)
 	{
@@ -4343,19 +4343,19 @@ struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item)
 	s32 work = (s32)gEventWork;
 	u32 off = (actor * 4) + 0x14; // EventWork の actors[actor]
 
-	s32					src_z = (s32) * (struct FieldActor **)(work + off);
+	s32					srcZ = (s32) * (struct FieldActor **)(work + off);
 	struct EffectVector pos;
 	s32					x;
 
-	if (src_z == 0)
+	if (srcZ == 0)
 		return 0;
 
-	pos.x = ((struct FieldActor *)src_z)->x.fixed;
-	pos.y = ((struct FieldActor *)src_z)->y.fixed;
-	pos.z = ((struct FieldActor *)src_z)->z.fixed;
-	Vector_AddPolarOffset(16 << 16, ((struct FieldActor *)src_z)->facing, &pos);
+	pos.x = ((struct FieldActor *)srcZ)->x.fixed;
+	pos.y = ((struct FieldActor *)srcZ)->y.fixed;
+	pos.z = ((struct FieldActor *)srcZ)->z.fixed;
+	Vector_AddPolarOffset(16 << 16, ((struct FieldActor *)srcZ)->facing, &pos);
 	x = (pos.x & 0xfff00000) + (8 << 16);
-	src_z = (pos.z & 0xfff00000) + (8 << 16);
+	srcZ = (pos.z & 0xfff00000) + (8 << 16);
 
 	if (((struct FieldWork *)work)->effectActive != 0)
 	{
@@ -4382,7 +4382,7 @@ struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item)
 	}
 
 	WaitFrames(3);
-	obj = (struct EffectObj *)Object_CreateFar(22, x, 16 << 16, src_z);
+	obj = (struct EffectObj *)Object_CreateFar(22, x, 16 << 16, srcZ);
 	if (obj == 0)
 		return 0;
 
@@ -5384,7 +5384,7 @@ void DisplayTransition_Update(void)
 	struct DisplayTransitionFrame  *state = *Ram_DisplayWork;
 	struct DisplayTransitionWindow *display = *(struct DisplayTransitionWindow **)Ram_MapWork;
 	s8							   *duration = &state->duration;
-	u32								display_value;
+	u32								displayValue;
 
 	if (*duration != 0)
 	{
@@ -5408,16 +5408,16 @@ void DisplayTransition_Update(void)
 		}
 	}
 
-	display_value = state->value;
-	if (display_value > 79)
+	displayValue = state->value;
+	if (displayValue > 79)
 	{
 		display->firstLine = 200;
 		display->secondLine = 250;
 	}
 	else
 	{
-		display->firstLine = display_value;
-		display->secondLine = 159 - display_value;
+		display->firstLine = displayValue;
+		display->secondLine = 159 - displayValue;
 	}
 }
 
@@ -6099,8 +6099,8 @@ void Object_EffectSpawnCallback(void)
 {
 	struct FadeWork			   *work = WORK_SLOT(36);
 	s16						   *camera = ((struct FadeView *)WORK_SLOT(8))->camera;
-	s32							camera_x = camera[1];
-	s32							camera_z = camera[3];
+	s32							cameraX = camera[1];
+	s32							cameraZ = camera[3];
 	struct AnimationSpritePart *mark = work->marks;
 	struct FadeActor		   *actor = work->actor;
 	s32							x;
@@ -6133,9 +6133,9 @@ void Object_EffectSpawnCallback(void)
 		mark->priority = 0;
 		mark->tile = tile;
 		mark->objectMode = 1;
-		mark->x = ((u32)(x >> 16) & 0xfff0) - camera_x;
+		mark->x = ((u32)(x >> 16) & 0xfff0) - cameraX;
 		row = (z >> 16) & 0xf0;
-		mark->y = row - camera_z - height + 16;
+		mark->y = row - cameraZ - height + 16;
 		Runtime_PushSlotEntry(mark, 0);
 	}
 	x += 0x100000;
@@ -6151,9 +6151,9 @@ void Object_EffectSpawnCallback(void)
 		mark->priority = 0;
 		mark->tile = tile;
 		mark->objectMode = 1;
-		mark->x = ((u32)(x >> 16) & 0xfff0) - camera_x;
+		mark->x = ((u32)(x >> 16) & 0xfff0) - cameraX;
 		row = (z >> 16) & 0xf0;
-		mark->y = row - camera_z - height + 16;
+		mark->y = row - cameraZ - height + 16;
 		Runtime_PushSlotEntry(mark, 0);
 	}
 }

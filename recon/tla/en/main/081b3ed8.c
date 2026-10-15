@@ -16,19 +16,19 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
         {
             u32                        slot = base + current;
             struct AudioTrackSlotWork *state;
-            u32                        read_offset;
-            u32                        next_offset;
+            u32                        readOffset;
+            u32                        nextOffset;
             u8                         value;
 
             AudioTrack_RemoveSlotNode(removal & mask);
             state = gFlash_Handler3;
-            read_offset = state->inputCursor;
+            readOffset = state->inputCursor;
             do {
-                value = input[read_offset];
+                value = input[readOffset];
             } while (0);
-            next_offset = read_offset + 1;
-            state->inputCursor = next_offset;
-            if (next_offset == state->inputLimit)
+            nextOffset = readOffset + 1;
+            state->inputCursor = nextOffset;
+            if (nextOffset == state->inputLimit)
             {
                 state->bucketBySlot[slot & mask] = -1;
                 break;

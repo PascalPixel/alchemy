@@ -34,14 +34,14 @@ s32 Func_02000878(s32 item, s32 mode);
 
 void Func_02000730(void)
 {
-    s32 saved_48;
-    s32 saved_28;
+    s32 saved48;
+    s32 saved28;
     s32 savedY;
     s32 item;
 
-    saved_48 = Object_GetById(9)->unk48;
+    saved48 = Object_GetById(9)->unk48;
     item = 458;
-    saved_28 = Object_GetById(9)->unk28;
+    saved28 = Object_GetById(9)->unk28;
     savedY = Object_GetById(9)->y;
     Engine_EventBegin();
     Engine_EventResolvePendingActions(0);
@@ -64,9 +64,9 @@ void Func_02000730(void)
         } else {
             Func_02000d4c(9, 0, 0);
             Battle_WaitMode0(1);
-            Object_GetById(9)->unk28 = saved_28;
+            Object_GetById(9)->unk28 = saved28;
             Object_GetById(9)->y = savedY;
-            Object_GetById(9)->unk48 = saved_48;
+            Object_GetById(9)->unk48 = saved48;
             Object_GetById(9)->unk6c = 0;
             Func_02000c9c(Object_GetById(9));
             Engine_ActorSetSpritePriority(9, 1);

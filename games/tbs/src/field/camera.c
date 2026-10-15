@@ -223,16 +223,16 @@ void LuckyDice_Run(void)
 	/* FAKEMATCH: unused local; the native frame keeps 32 unused bytes at sp+168..200, between proj and the affine halfwords (without it 42) */
 	s32 unused[8];
 	/* FAKEMATCH: volatile restores the form the bytes prove, four halfwords stored to sp+166..160 and each reloaded with ldrh (without it 902) */
-	volatile u16			 affine_a;
-	volatile u16			 affine_b;
-	volatile u16			 affine_c;
-	volatile u16			 affine_d;
+	volatile u16			 affineA;
+	volatile u16			 affineB;
+	volatile u16			 affineC;
+	volatile u16			 affineD;
 	s32						 spin[2];
 	s32						 flash[2];
 	s32						 faces[2];
 	s32						 order[2];
 	s32						 matches[2];
-	u16						*obj_palette;
+	u16						*objPalette;
 	struct BattleEffectWork *work;
 	/* FAKEMATCH: the OAM shadow it builds is struct OamShadow, volatile words (tag in oambuf.h): without the qualifier differ 1702. */
 	struct LuckyDiceSprites *sprites;
@@ -272,7 +272,7 @@ void LuckyDice_Run(void)
 	s16						 value;
 
 	Runtime_AllocateHeapBlock(41, 0x60e);
-	obj_palette = Runtime_AllocateHeapBlock(40, 0x200);
+	objPalette = Runtime_AllocateHeapBlock(40, 0x200);
 	work = Runtime_AllocateBlock(39, 0x782c);
 	sprites = Runtime_AllocateBlock(45, 0x618);
 	render = Runtime_AllocateBlock(12, 76);
@@ -298,12 +298,12 @@ void LuckyDice_Run(void)
 	Value2(Resource_DecodeType01, base, (s32)Ram_MapCellBuffer);
 	Dma_Set(Ram_MapCellBuffer, (void *)0x06004000, 0x84002580, REG_DMA3);
 	base = (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
-	Dma_Set((void *)base, obj_palette, 0x84000080, REG_DMA3);
+	Dma_Set((void *)base, objPalette, 0x84000080, REG_DMA3);
 	Dma_Set((void *)base, (void *)0x05000200, 0x84000080, REG_DMA3);
 	base += 0x200;
 	Value2(Resource_DecodeType01, base, (s32)Ram_MapCellBuffer);
 	Dma_Set(Ram_MapCellBuffer, (void *)0x06010000, 0x84001f00, REG_DMA3);
-	Graphics_ScaleRgb555Buffer(obj_palette, (u16 *)0x05000200, 0, 256);
+	Graphics_ScaleRgb555Buffer(objPalette, (u16 *)0x05000200, 0, 256);
 	Graphics_ScaleRgb555Buffer(palette, (u16 *)0x05000000, 0, 256);
 
 	REG_BG1CNT = 0x0686;
@@ -369,7 +369,7 @@ void LuckyDice_Run(void)
 		reset = 0;
 		if (frame <= 16)
 		{
-			Graphics_ScaleRgb555Buffer(obj_palette, (u16 *)0x05000200, frame << 12, 256);
+			Graphics_ScaleRgb555Buffer(objPalette, (u16 *)0x05000200, frame << 12, 256);
 			Graphics_ScaleRgb555Buffer(palette, (u16 *)0x05000000, frame << 12, 256);
 		}
 		Render_ResetTransformState();
@@ -889,14 +889,14 @@ void LuckyDice_Run(void)
 		for (i = 0; i != 4; i++)
 		{
 			value = depth[i] / 2 + 128;
-			affine_a = value;
-			affine_b = 0;
-			affine_c = 0;
-			affine_d = value;
-			sprites->obj[i * 4 + 0].attr2 |= affine_a << 16;
-			sprites->obj[i * 4 + 1].attr2 |= affine_b << 16;
-			sprites->obj[i * 4 + 2].attr2 |= affine_c << 16;
-			sprites->obj[i * 4 + 3].attr2 |= affine_d << 16;
+			affineA = value;
+			affineB = 0;
+			affineC = 0;
+			affineD = value;
+			sprites->obj[i * 4 + 0].attr2 |= affineA << 16;
+			sprites->obj[i * 4 + 1].attr2 |= affineB << 16;
+			sprites->obj[i * 4 + 2].attr2 |= affineC << 16;
+			sprites->obj[i * 4 + 3].attr2 |= affineD << 16;
 		}
 
 		Dma_Set(sprites->obj, (void *)0x07000000, 0x84000100, REG_DMA3);
@@ -907,7 +907,7 @@ void LuckyDice_Run(void)
 	for (i = 0; i != 17; i++)
 	{
 		scale = 0x10000 - (i << 12);
-		Graphics_ScaleRgb555Buffer(obj_palette, (u16 *)0x05000200, scale, 256);
+		Graphics_ScaleRgb555Buffer(objPalette, (u16 *)0x05000200, scale, 256);
 		Graphics_ScaleRgb555Buffer(palette, (u16 *)0x05000000, scale, 256);
 		WaitFrames(1);
 	}

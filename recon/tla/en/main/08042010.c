@@ -10,8 +10,8 @@ void UiText_DrawCharacterAtOffset(
     u32 offsetX,
     u32 offsetY)
 {
-    s32 byte_offset;
-    s32 vram_address;
+    s32 byteOffset;
+    s32 vramAddress;
     u16 *text;
     s32 zero;
     u32 cell;
@@ -30,13 +30,13 @@ void UiText_DrawCharacterAtOffset(
     cell = (((s16)position->y + (offsetY >> 3) + 1) << 5)
         + ((s16)position->x + (offsetX >> 3)) + 1;
     if (cell < 0x280U) {
-        byte_offset = cell * 2;
-        vram_address = byte_offset + 0x06002000;
+        byteOffset = cell * 2;
+        vramAddress = byteOffset + 0x06002000;
         text = canvas->entries;
         UiText_RenderStringTiles(
             text,
-            (s32)((u8 *)canvas->tilemap + byte_offset),
-            vram_address,
+            (s32)((u8 *)canvas->tilemap + byteOffset),
+            vramAddress,
             7 & offsetX);
     }
 }

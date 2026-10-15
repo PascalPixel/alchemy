@@ -1401,11 +1401,11 @@ static void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1)
 static void EV03_TOUCH_1(void)
 {
 	struct FieldActor *record;
-	SchedulerCallback  particle_task;
+	SchedulerCallback  particleTask;
 
 	Engine_EventBegin();
-	particle_task = FieldScene_SpawnRandomizedParticle;
-	FieldScheduler_AddCallback(particle_task, 0xc80);
+	particleTask = FieldScene_SpawnRandomizedParticle;
+	FieldScheduler_AddCallback(particleTask, 0xc80);
 	Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
 	gEventWork->transitionFrames = 60;
 	Engine_EventCloseScreen();
@@ -1416,7 +1416,7 @@ static void EV03_TOUCH_1(void)
 	Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
 	record = Object_GetById(ACTOR_PARTY_LEADER);
 	Engine_ActorSetSpriteFlags(record, 0);
-	Scheduler_RemoveCallback(particle_task);
+	Scheduler_RemoveCallback(particleTask);
 	Engine_EventWaitForScreen();
 	Engine_EventRequestExit(3);
 	Engine_EventEnd();
@@ -1553,7 +1553,7 @@ static void FuchinTemple_AskIfCurious(void)
 
 static void FieldScene_RunRoofEnsembleSequence(void)
 {
-	struct FieldActor *source_record;
+	struct FieldActor *sourceRecord;
 
 	Engine_EventBegin();
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
@@ -1577,20 +1577,20 @@ static void FieldScene_RunRoofEnsembleSequence(void)
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
 	Engine_EventWait(20);
 	Actor_FaceDirection(9, 0xd000, 0);
-	source_record = Actor_Get(ACTOR_PARTY_LEADER);
-	if (source_record != 0)
+	sourceRecord = Actor_Get(ACTOR_PARTY_LEADER);
+	if (sourceRecord != 0)
 	{
-		Actor_SetPosition(GARET, source_record->x.fixed, source_record->z.fixed);
+		Actor_SetPosition(GARET, sourceRecord->x.fixed, sourceRecord->z.fixed);
 	}
-	source_record = Actor_Get(ACTOR_PARTY_LEADER);
-	if (source_record != 0)
+	sourceRecord = Actor_Get(ACTOR_PARTY_LEADER);
+	if (sourceRecord != 0)
 	{
-		Actor_SetPosition(IVAN, source_record->x.fixed, source_record->z.fixed);
+		Actor_SetPosition(IVAN, sourceRecord->x.fixed, sourceRecord->z.fixed);
 	}
-	source_record = Actor_Get(ACTOR_PARTY_LEADER);
-	if (source_record != 0)
+	sourceRecord = Actor_Get(ACTOR_PARTY_LEADER);
+	if (sourceRecord != 0)
 	{
-		Actor_SetPosition(MIA, source_record->x.fixed, source_record->z.fixed);
+		Actor_SetPosition(MIA, sourceRecord->x.fixed, sourceRecord->z.fixed);
 	}
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
 	Actor_SetSpeed(GARET, 0x8000, 0x4000);

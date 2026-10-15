@@ -58,14 +58,14 @@ void Menu_SpawnIconEntries(struct IconMenuState *state, s32 arg1)
 
 void ItemMenu_HideAllIcons(void)
 {
-    s32 hidden_state = 13;
+    s32 hiddenState = 13;
     struct RenderOutput **icons = (struct RenderOutput **)((struct IconMenuState *)Ram_HeapSlots->menuRuntime)->entries;
     s32 slot;
 
     for (slot = 31; slot >= 0; slot--) {
         struct RenderOutput *icon = *icons++;
         if (icon != 0) {
-            icon->active = hidden_state;
+            icon->active = hiddenState;
         }
     }
 }

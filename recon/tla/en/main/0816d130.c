@@ -90,7 +90,7 @@ void Func_0816d130(struct BattleEffectArgument *effect)
 
     for (frame = 0; frame != 80; frame++) {
         struct MotionObject *user = GetBattleObjectSlotFar(effect->actor)->object;
-        s32 user_half = Battle_GetObjectTableValueFar(effect->actor) / 2;
+        s32 userHalf = Battle_GetObjectTableValueFar(effect->actor) / 2;
 
         if (frame == 64)
             Func_081180e8(134);
@@ -128,7 +128,7 @@ void Func_0816d130(struct BattleEffectArgument *effect)
             BattleFxKernels_IntegrateVector3(orb, 62, 0);
             if (frame > 0) {
                 s32 dx = user->x - orb->x;
-                s32 dy = user->y + user_half - orb->y;
+                s32 dy = user->y + userHalf - orb->y;
                 s32 dz = user->z - orb->z;
                 s32 ox;
 

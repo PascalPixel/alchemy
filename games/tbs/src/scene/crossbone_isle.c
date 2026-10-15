@@ -124,16 +124,16 @@ static void SpawnRadialEffectBurst(s32 objectId)
 	struct FieldActor	*object;
 	struct Vec			 vec;
 	struct EffectOptions params;
-	u32					 angle_step;
+	u32					 angleStep;
 	s32					 angle;
 	s32					 x;
 	s32					 z;
 
 	object = Object_GetById(objectId);
 	params.update = Effect_AdvanceMotion;
-	for (angle_step = 0; angle_step <= 16; angle_step += 2)
+	for (angleStep = 0; angleStep <= 16; angleStep += 2)
 	{
-		angle = angle_step << 12;
+		angle = angleStep << 12;
 		vec.x = Engine_MathCos(angle);
 		vec.y = 0;
 		z = Engine_MathSin(angle);
@@ -607,7 +607,7 @@ static void RunSceneVectorTransition(void)
 	Engine_EventEnd();
 }
 
-static void PositionSceneActorPair(s32 actorId, s32 x_offset, s32 z_offset)
+static void PositionSceneActorPair(s32 actorId, s32 xOffset, s32 zOffset)
 {
 	struct FieldActor *p;
 	struct FieldActor *q;
@@ -618,8 +618,8 @@ static void PositionSceneActorPair(s32 actorId, s32 x_offset, s32 z_offset)
 	q = Object_GetById(actorId);
 	Engine_EventBegin();
 	{
-		x = ((p->x.fixed + (x_offset << 16)) & 0xFFF00000) + 0x80000;
-		y = ((p->z.fixed + (z_offset << 16)) & 0xFFF00000) + 0x80000;
+		x = ((p->x.fixed + (xOffset << 16)) & 0xFFF00000) + 0x80000;
+		y = ((p->z.fixed + (zOffset << 16)) & 0xFFF00000) + 0x80000;
 
 		p->speed = 0x10000;
 		p->acceleration = 0x8000;
@@ -627,14 +627,14 @@ static void PositionSceneActorPair(s32 actorId, s32 x_offset, s32 z_offset)
 	}
 	Object_SetMode(p, 27);
 	{
-		x = ((q->x.fixed + (x_offset << 16)) & 0xFFF00000) + 0x80000;
-		y = ((q->z.fixed + (z_offset << 16)) & 0xFFF00000) + 0x80000;
+		x = ((q->x.fixed + (xOffset << 16)) & 0xFFF00000) + 0x80000;
+		y = ((q->z.fixed + (zOffset << 16)) & 0xFFF00000) + 0x80000;
 
 		q->speed = 0x10000;
 		q->acceleration = 0x8000;
 		Engine_ObjectSetPosition(q, x, q->y.fixed, y);
 	}
-	if (x_offset < 0 || z_offset < 0)
+	if (xOffset < 0 || zOffset < 0)
 	{
 		Object_SetMode(q, 4);
 	}
@@ -775,7 +775,7 @@ static void ActivateSceneActor16(void)
 static s32 TryPushBlockingSceneActor(struct FieldActor *actor, struct Vec *requested)
 {
 	u8 *state = &actor->motionFlags;
-	s32 saved_state = *state;
+	s32 savedState = *state;
 #if EDITION_INTERNATIONAL
 	struct Vec destination;
 
@@ -818,7 +818,7 @@ static s32 TryPushBlockingSceneActor(struct FieldActor *actor, struct Vec *reque
 		}
 		Object_SetMode(actor, 6);
 		Engine_ActorSetSpriteFlags(actor, 1);
-		*state = (u8)saved_state;
+		*state = (u8)savedState;
 		Engine_EventEnd();
 		return 1;
 	}
@@ -873,16 +873,16 @@ static void UpdateEscapeRouteForActorPositions(void)
 {
 	s32 actorX = Object_GetById(8)->x.fixed >> 20;
 	s32 actorZ = Object_GetById(8)->z.fixed >> 20;
-	s32 actor_12_x = Object_GetById(12)->x.fixed >> 20;
-	s32 actor_15_x = Object_GetById(15)->x.fixed >> 20;
+	s32 actor12X = Object_GetById(12)->x.fixed >> 20;
+	s32 actor15X = Object_GetById(15)->x.fixed >> 20;
 
 	if (actorZ == 19)
 	{
-		if (actor_12_x == 24)
+		if (actor12X == 24)
 		{
 			PositionSceneActorPair(8, 0, -80);
 		}
-		else if (actor_15_x == 24)
+		else if (actor15X == 24)
 		{
 			PositionSceneActorPair(8, 0, -112);
 			PositionSceneActorPair(8, 0, -32);
@@ -895,11 +895,11 @@ static void UpdateEscapeRouteForActorPositions(void)
 	}
 	else if (actorZ == 14)
 	{
-		if (actor_12_x == 24)
+		if (actor12X == 24)
 		{
 			return;
 		}
-		if (actor_15_x == 24)
+		if (actor15X == 24)
 		{
 			PositionSceneActorPair(8, 0, -64);
 		}
@@ -910,7 +910,7 @@ static void UpdateEscapeRouteForActorPositions(void)
 	}
 	else if (actorZ == 10)
 	{
-		if (actor_15_x == 24)
+		if (actor15X == 24)
 		{
 			return;
 		}
@@ -923,10 +923,10 @@ static void UpdateEscapeRouteForActorPositions(void)
 	}
 	Engine_TaskWait(2);
 	{
-		s32 route_end_z = Object_GetById(8)->z.fixed >> 20;
-		s32 route_x = actorX - 1;
+		s32 routeEndZ = Object_GetById(8)->z.fixed >> 20;
+		s32 routeX = actorX - 1;
 
-		Map_CopyCellAttributes(route_x, actorZ, 3, 1, route_x, route_end_z);
+		Map_CopyCellAttributes(routeX, actorZ, 3, 1, routeX, routeEndZ);
 	}
 	Map_CopyCellAttributes(0, 0, 3, 1, actorX - 1, actorZ);
 }

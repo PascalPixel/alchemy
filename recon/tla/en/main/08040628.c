@@ -38,7 +38,7 @@ struct RenderInput *Func_08040628(void)
     struct WorkspaceScreen *work;
     s32 rows;
     s32 first;
-    s32 settings_only;
+    s32 settingsOnly;
     s32 top;
     s32 height;
     struct RenderInput *win;
@@ -48,9 +48,9 @@ struct RenderInput *Func_08040628(void)
 
     rows = 3;
     work = Ram_HeapSlots->unkd0[0];
-    settings_only = GameFlag_Test(0x17e);
+    settingsOnly = GameFlag_Test(0x17e);
     first = 0;
-    if (settings_only != 0) {
+    if (settingsOnly != 0) {
         rows = 1;
         first = 2;
     }
@@ -66,7 +66,7 @@ struct RenderInput *Func_08040628(void)
     for (i = 1; i < rows; i++)
         UiWindow_DrawDividerLine(win, 0, i * 3, 19, i * 3);
     y = 4;
-    if (settings_only == 0) {
+    if (settingsOnly == 0) {
         msg = (s32)MsgTestA;
         UiText_DrawResource(msg, win, 48, 4);
         msg++;

@@ -44,29 +44,29 @@ s32 Inventory_AddItem(s32 owner_id, s32 item_id)
     return -1;
 }
 
-s32 PartyInventory_Add(s32 item_id)
+s32 PartyInventory_Add(s32 itemId)
 {
     s16 owners[10];
     s32 ownerCount;
     s32 ownerIndex;
-    s16 *owner_cursor;
+    s16 *ownerCursor;
 
     ownerCount = Party_ListActiveOwners(owners);
-    owner_cursor = owners;
+    ownerCursor = owners;
     ownerIndex = 0;
     if (ownerIndex < ownerCount) {
         do {
-            s16 owner_id = *owner_cursor++;
+            s16 ownerId = *ownerCursor++;
 
-            if (Inventory_AddItem(owner_id, item_id) >= 0)
-                return owner_id;
+            if (Inventory_AddItem(ownerId, itemId) >= 0)
+                return ownerId;
             ownerIndex++;
         } while (ownerIndex < ownerCount);
     }
     return -1;
 }
 
-s32 PartyInventory_FindRoom(s32 item_id)
+s32 PartyInventory_FindRoom(s32 itemId)
 {
     s16 owners[10];
     s32 ownerCount;
@@ -74,12 +74,12 @@ s32 PartyInventory_FindRoom(s32 item_id)
 
     ownerCount = Party_ListActiveOwners(owners);
     for (ownerIndex = 0; ownerIndex < ownerCount; ownerIndex++) {
-        s16 owner_id = owners[ownerIndex];
-        s32 slot = Inventory_AddItem(owner_id, item_id);
+        s16 ownerId = owners[ownerIndex];
+        s32 slot = Inventory_AddItem(ownerId, itemId);
 
         if (slot >= 0) {
-            Inventory_Remove(owner_id, slot);
-            return owner_id;
+            Inventory_Remove(ownerId, slot);
+            return ownerId;
         }
     }
     return -1;

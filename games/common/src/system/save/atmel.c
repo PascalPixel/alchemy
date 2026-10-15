@@ -110,14 +110,14 @@ u16 ProgramAtmelFlashSector(u32 slot, const u8 *source)
 {
     const u8 *input;
     volatile u8 *destination;
-    u32 saved_ime;
+    u32 savedIme;
     s32 remaining;
 
     input = source;
     slot = (u16)slot;
     destination = (volatile u8 *)(
         0x0e000000 + (slot << gFlash_ChipAtmelLayout.type.sector.shift));
-    saved_ime = REG_IME;
+    savedIme = REG_IME;
     REG_IME = 0;
     *(volatile u8 *)0x0e005555 = 0xaa;
     *(volatile u8 *)0x0e002aaa = 0x55;
@@ -133,7 +133,7 @@ u16 ProgramAtmelFlashSector(u32 slot, const u8 *source)
 
     destination--;
     input--;
-    REG_IME = saved_ime;
+    REG_IME = savedIme;
     return gFlash_Handler3(1, destination, *input);
 }
 

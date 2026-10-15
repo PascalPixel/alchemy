@@ -564,7 +564,7 @@ static void EV23_SCRIPT(void)
 	s32				   x;
 	s32				   z;
 	s32				   steps;
-	s32				   next_x;
+	s32				   nextX;
 	s32				   column;
 	s32				   acceleration;
 	s32				   mode;
@@ -593,11 +593,11 @@ static void EV23_SCRIPT(void)
 		step = -8;
 		for (;;)
 		{
-			next_x = x - 0x100000;
-			if (ColossoLogRollingStage_CheckPathClearance(next_x, z) == 0)
+			nextX = x - 0x100000;
+			if (ColossoLogRollingStage_CheckPathClearance(nextX, z) == 0)
 			{
 				steps++;
-				x = next_x;
+				x = nextX;
 			}
 			else
 			{
@@ -615,11 +615,11 @@ static void EV23_SCRIPT(void)
 		step = 8;
 		for (;;)
 		{
-			next_x = x + 0x100000;
-			if (ColossoLogRollingStage_CheckPathClearance(next_x, z) == 0)
+			nextX = x + 0x100000;
+			if (ColossoLogRollingStage_CheckPathClearance(nextX, z) == 0)
 			{
 				steps++;
-				x = next_x;
+				x = nextX;
 			}
 			else
 			{
@@ -697,13 +697,13 @@ static s32 ColossoLogRollingStage_SetSceneEventValues(void)
 static void EV30_SCRIPT(void)
 {
 	StageMotionEffect *effect;
-	s32				   move_rate;
+	s32				   moveRate;
 
 	effect = Object_GetById(30);
 	effect->state = 0;
-	move_rate = 0x19999;
-	effect->moveRateZ = move_rate;
-	effect->moveRateX = move_rate;
+	moveRate = 0x19999;
+	effect->moveRateZ = moveRate;
+	effect->moveRateX = moveRate;
 	Object_SetMode(effect, 2);
 	Engine_ObjectSetScript(effect, gColossoSceneEventEffect);
 	Engine_GameFlagSet(0x363);
@@ -1178,8 +1178,8 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 {
 
 	struct FieldActor *record;
-	s32				   data_table_addr;
-	s32				   callback_target;
+	s32				   dataTableAddr;
+	s32				   callbackTarget;
 
 	Engine_ActorDestroy(39);
 	Engine_ActorDestroy(40);
@@ -1237,8 +1237,8 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 	Engine_EventWaitForScreen();
 	Engine_EventSetMessage(MsgColossoIsaac);
 	Engine_EventWait(60);
-	data_table_addr = (s32)gColossoMultiPhaseData;
-	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, data_table_addr);
+	dataTableAddr = (s32)gColossoMultiPhaseData;
+	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, dataTableAddr);
 	record = Object_GetById(0);
 	record->scaleX = 0x10000;
 	record = Object_GetById(0);
@@ -1300,30 +1300,30 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 	Object_LinkObjectAndSetCallback(3, 0);
 	Engine_EventWait(20);
 	Event_ShowMessage(MIA, 0);
-	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, data_table_addr);
+	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, dataTableAddr);
 	Engine_EventWait(60);
-	callback_target = (s32)ColossoLogRollingStage_SpawnPeriodicParticle;
+	callbackTarget = (s32)ColossoLogRollingStage_SpawnPeriodicParticle;
 	gColossoParticleCount = 9;
-	Task_AddCallback((void (*)(void))callback_target, 0xc80);
+	Task_AddCallback((void (*)(void))callbackTarget, 0xc80);
 	Engine_EventWait(5);
-	Engine_TaskRemoveCallback(callback_target);
+	Engine_TaskRemoveCallback(callbackTarget);
 	Engine_EventWait(55);
 	Actor_ShowEmote(GARET, 0x101, 60);
-	Task_AddCallback((void (*)(void))callback_target, 0xc80);
+	Task_AddCallback((void (*)(void))callbackTarget, 0xc80);
 	Engine_EventWait(20);
-	Engine_TaskRemoveCallback(callback_target);
+	Engine_TaskRemoveCallback(callbackTarget);
 	Engine_EventWait(40);
 	Actor_ShowEmote(IVAN, 0x101, 60);
 	gColossoParticleCount = 9;
-	Task_AddCallback((void (*)(void))callback_target, 0xc80);
+	Task_AddCallback((void (*)(void))callbackTarget, 0xc80);
 	Engine_EventWait(35);
-	Engine_TaskRemoveCallback(callback_target);
+	Engine_TaskRemoveCallback(callbackTarget);
 	Engine_EventWait(25);
 	Actor_ShowEmote(MIA, 0x102, 60);
 	gColossoParticleCount = 9;
-	Task_AddCallback((void (*)(void))callback_target, 0xc80);
+	Task_AddCallback((void (*)(void))callbackTarget, 0xc80);
 	Engine_EventWait(35);
-	Engine_TaskRemoveCallback(callback_target);
+	Engine_TaskRemoveCallback(callbackTarget);
 	Engine_EventWait(25);
 	Actor_ShowEmote(2, 0x102, 60);
 	Object_LinkObjectAndSetCallback(3, 2);
@@ -1332,9 +1332,9 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 	Object_LinkObjectAndSetCallback(3, 0);
 	Object_LinkObjectAndSetCallback(2, 0);
 	gColossoParticleCount = 9;
-	Task_AddCallback((void (*)(void))callback_target, 0xc80);
+	Task_AddCallback((void (*)(void))callbackTarget, 0xc80);
 	Engine_EventWait(35);
-	Engine_TaskRemoveCallback(callback_target);
+	Engine_TaskRemoveCallback(callbackTarget);
 	Engine_EventWait(25);
 	Actor_ShowEmote(MIA, 0x108, 60);
 	Engine_ActorStartRepeatedMotion(GARET, 3);
@@ -1343,7 +1343,7 @@ static void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 	Object_LinkObjectAndSetCallback(3, 2);
 	Object_LinkObjectAndSetCallback(1, 2);
 	gColossoParticleCount = 9;
-	Task_AddCallback((void (*)(void))callback_target, 0xc80);
+	Task_AddCallback((void (*)(void))callbackTarget, 0xc80);
 	Engine_ActorSetAnimation(GARET, 3);
 	Engine_ActorSetAnimation(IVAN, 3);
 	Engine_ActorSetAnimation(MIA, 3);
@@ -2094,7 +2094,7 @@ static s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(LinkedStageEffect *sour
 	return 0;
 }
 
-static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_handle)
+static s32 ColossoLogRollingStage_PositionActiveActor(s32 firstHandle, s32 secondHandle)
 {
 	u8				  *work = gColossoWork;
 	struct FieldActor *actor;
@@ -2140,14 +2140,14 @@ static s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 seco
 		/* FAKEMATCH: the void function is called as returning s32, which loads r1
 		 * before r0 as native. 2026-10-13: called by its prototype at both
 		 * sites, each loads r0 first (differ 4). */
-		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, first_handle);
-		UiWork_PushValueSlot(first_handle, 2);
+		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, firstHandle);
+		UiWork_PushValueSlot(firstHandle, 2);
 	}
 	else
 	{
 		/* FAKEMATCH: called as returning s32, as in the first arm. */
-		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, second_handle);
-		UiWork_PushValueSlot(second_handle, 2);
+		((s32 (*)())SceneActor_ApplyValueAndMatchingSlots)(0, secondHandle);
+		UiWork_PushValueSlot(secondHandle, 2);
 	}
 	UiWork_PushValueSlot(gGameState.selectedActor, 1);
 	Engine_MessageShowCentered(MsgColossoIsaacGotItem, 3);
@@ -2170,12 +2170,12 @@ static void ColossoLogRollingStage_PushStagedActor(void)
 	u32				   step;
 	u32				   direction;
 	Position3		   position;
-	u32				   data_index = 250;
+	u32				   dataIndex = 250;
 	s32				   zero;
-	s32				   subject_handle;
+	s32				   subjectHandle;
 
-	subject_handle = *(s32 *)((u8 *)&gGameState + (data_index << 1));
-	subject = Object_GetById(subject_handle);
+	subjectHandle = *(s32 *)((u8 *)&gGameState + (dataIndex << 1));
+	subject = Object_GetById(subjectHandle);
 
 	direction = subject->facing >> 12;
 

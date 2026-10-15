@@ -155,12 +155,12 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
 {
     struct ObjectRuntime *source;
     struct EffectVector position;
-    s8 *state_pointer;
+    s8 *statePointer;
     s32 state;
 
     source = Object_GetById(gPartyState.currentOwner);
-    state_pointer = &effect->state;
-    state = *state_pointer;
+    statePointer = &effect->state;
+    state = *statePointer;
 
     if (state == 0) {
         position.x = source->x;
@@ -191,7 +191,7 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
         effect->scaleY = 0x10000;
         effect->flag42 = state;
         effect->stopAtTarget = 1;
-        (*state_pointer)++;
+        (*statePointer)++;
     } else if ((u8)(effect->state - 1) <= 1) {
         if (BattleFx_HasReachedTarget(effect) == 0) {
             position.x = effect->x;
@@ -207,10 +207,10 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
             effect->scaleY = 0x8000;
             Audio_PlayCue(143);
 
-            if (*state_pointer == 1)
-                (*state_pointer)--;
+            if (*statePointer == 1)
+                (*statePointer)--;
             else
-                (*state_pointer)++;
+                (*statePointer)++;
             effect->callbackDelay = 6;
         }
     } else if (state == 3) {

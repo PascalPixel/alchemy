@@ -13,11 +13,11 @@ s32 SceneActor_FindNearestSlotOfKindF2(void)
 	struct EventWork   *work = gEventWork;
 	struct FieldActor **slot;
 	struct FieldActor  *origin;
-	s32					nearest_actor = 0;
-	s32					min_dist;
+	s32					nearestActor = 0;
+	s32					minDist;
 	u32					actorId;
 
-	min_dist = 640;
+	minDist = 640;
 	origin = Object_GetById(ACTOR_PARTY_LEADER);
 	actorId = ACTOR_FIRST_PLACED;
 	slot = work->placedActors;
@@ -29,14 +29,14 @@ s32 SceneActor_FindNearestSlotOfKindF2(void)
 			if (*((struct SpriteNumber *)actor->sprite)->number == 0xf2)
 			{
 				s32 dist = FixedPoint_Distance(&origin->x.fixed, &actor->x.fixed);
-				if (dist < min_dist)
+				if (dist < minDist)
 				{
-					min_dist = dist;
-					nearest_actor = actorId;
+					minDist = dist;
+					nearestActor = actorId;
 				}
 			}
 		}
 		actorId++;
 	} while (actorId <= 65);
-	return nearest_actor;
+	return nearestActor;
 }

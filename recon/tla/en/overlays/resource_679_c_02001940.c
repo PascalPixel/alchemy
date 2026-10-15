@@ -54,8 +54,8 @@ void Func_02001940(void)
     struct MapWork *view = Ram_HeapSlots->mapWork;
     struct GroundParticleWork *work = Ram_HeapSlots->unk70[1];
     s32 *camera = &view->viewX;
-    s32 camera_x = camera[0];
-    s32 camera_z = camera[1];
+    s32 cameraX = camera[0];
+    s32 cameraZ = camera[1];
     struct GroundParticle *particle = work->particles;
     u32 i;
 
@@ -71,8 +71,8 @@ loop:
         if (GameFlag_Test(0x166))
             particle->timer++;
         frame = &gData_02001f18[5 * particle->timer];
-        x = (particle->posX - camera_x) / 0x10000 + *frame++;
-        y = (particle->posZ - particle->posY - camera_z) / 0x10000 + *frame++;
+        x = (particle->posX - cameraX) / 0x10000 + *frame++;
+        y = (particle->posZ - particle->posY - cameraZ) / 0x10000 + *frame++;
         if ((x >= -16 && x <= 239) && y >= -32 && y <= 159) {
             particle->priority = 1;
             particle->x = x;

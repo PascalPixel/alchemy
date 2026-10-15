@@ -1,40 +1,40 @@
 #include "owner_state.h"
 #include "fixed_math.h"
 
-void UnitRatio(s32 owner_id)
+void UnitRatio(s32 ownerId)
 {
     s32 first;
     s32 second;
-    s32 first_value;
-    s32 second_value;
+    s32 firstValue;
+    s32 secondValue;
     struct BattleUnit *owner;
 
-    owner = UnitGet(owner_id);
+    owner = UnitGet(ownerId);
     first = (owner->hp << 14) / owner->maxHp;
-    first_value = 0x4000;
+    firstValue = 0x4000;
     if (first <= 0x4000) {
-        first_value = 0;
+        firstValue = 0;
         if (first >= 0) {
-            first_value = first;
+            firstValue = first;
         }
     }
-    owner->hpGauge = first_value;
+    owner->hpGauge = firstValue;
     if (owner->hpGauge == 0 && owner->hp != 0) {
-        first_value = 1;
-        owner->hpGauge = first_value;
+        firstValue = 1;
+        owner->hpGauge = firstValue;
     }
     second = (owner->pp << 14) / owner->maxPp;
-    second_value = 0x4000;
+    secondValue = 0x4000;
     if (second <= 0x4000) {
-        second_value = 0;
+        secondValue = 0;
         if (second >= 0) {
-            second_value = second;
+            secondValue = second;
         }
     }
-    owner->ppGauge = second_value;
+    owner->ppGauge = secondValue;
     if (owner->ppGauge == 0 && owner->pp != 0) {
-        second_value = 1;
-        owner->ppGauge = second_value;
+        secondValue = 1;
+        owner->ppGauge = secondValue;
     }
 }
 

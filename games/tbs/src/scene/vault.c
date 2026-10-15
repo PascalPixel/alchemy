@@ -984,15 +984,15 @@ static void Vault_SpawnDriftingEffect(s32 flags)
 	{
 		void (*update)(union FieldObject *) =
 			(void (*)(union FieldObject *))SceneEffect_UpdateMotionWithDamping;
-		u8 *sprite_flags;
+		u8 *spriteFlags;
 
 		/* FAKEMATCH: preserve the sprite-flags address scheduling boundary. As plain stores, sprite->flags = 0 after the update pointer or through the pointer local: differ 2; the flags stored first: differ 4. */
 		do
 		{
-			sprite_flags = &sprite->flags;
+			spriteFlags = &sprite->flags;
 		} while (0);
 		leaf->actor.update = update;
-		*sprite_flags = 0;
+		*spriteFlags = 0;
 	}
 	sprite->priority = leader->actor.sprite->priority;
 }

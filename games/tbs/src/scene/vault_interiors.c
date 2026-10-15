@@ -1955,10 +1955,10 @@ static void RunEventScript01(void)
 	struct FieldActor *record;
 	struct EventWork  *work;
 	s32				   actions;
-	u8				  *actor12_record;
+	u8				  *actor12Record;
 
 	record = Object_GetById(12);
-	actor12_record = (u8 *)record->sprite;
+	actor12Record = (u8 *)record->sprite;
 	Engine_EventBegin();
 	Actor_SetPosition(10, 0x3180000, 0x1a00000);
 	Actor_SetPosition(11, 0x3200000, 0x1900000);
@@ -1973,7 +1973,7 @@ static void RunEventScript01(void)
 	Engine_ActorSetAnimation(11, 9);
 	Engine_ActorSetAnimation(12, 9);
 	Object_GetById(12)->priorityFlags &= 254;
-	actor12_record[9] |= 12;
+	actor12Record[9] |= 12;
 	actions = (s32)gVaultInteriors_ActionTable;
 	Engine_ActorEnableActionCallback(10, actions);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3180000, 0x1b80000);

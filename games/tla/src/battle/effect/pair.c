@@ -24,15 +24,15 @@ struct PairScene {
 
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, void *position);
 
-void BattleFx_SetupObjectPair(s32 user_id, s32 targetId)
+void BattleFx_SetupObjectPair(s32 userId, s32 targetId)
 {
     struct ObjectRuntime *user;
     struct ObjectRuntime *target;
     struct PairScene *scene;
 
     scene = Ram_HeapSlots->effectWork;
-    scene->firstObjectId = user_id;
-    user = ObjectTable_Get((s16)user_id);
+    scene->firstObjectId = userId;
+    user = ObjectTable_Get((s16)userId);
     scene->secondObjectId = targetId;
     scene->mainObject = user;
     target = ObjectTable_Get((s16)targetId);

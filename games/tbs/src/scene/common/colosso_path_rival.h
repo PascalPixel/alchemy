@@ -35,7 +35,7 @@ static void Colosso_UpdatePathRival(void)
 	struct PathRecorder *rec = (struct PathRecorder *)gSceneState;
 	struct FieldActor	*obj;
 	s32					 x, z, d;
-	u16					*item_actor;
+	u16					*itemActor;
 
 	obj = Object_GetById(rec->actor);
 	if (obj == NULL)
@@ -62,14 +62,14 @@ static void Colosso_UpdatePathRival(void)
 			if (Engine_GameFlagIsSet(0x211))
 			{
 				fz = work->finishZ + 0x100000;
-				item_actor = &work->finishItemActorB;
+				itemActor = &work->finishItemActorB;
 			}
 			else
 			{
 				fz = work->finishZ - 0x100000;
-				item_actor = &work->finishItemActorA;
+				itemActor = &work->finishItemActorA;
 			}
-			obj->timer = *item_actor;
+			obj->timer = *itemActor;
 			obj->acceleration = 0x4000;
 			obj->speed = 0x10000;
 			Engine_ObjectSetPosition(obj, x, 0, fz);

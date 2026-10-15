@@ -12,16 +12,16 @@ s32 UiWindow_UpdateOrCreate(s32 *, s32, s32, s32, s32, s32);
 void Palette_CopyObjectBankToBackground14(void);
 void ItemMenu_DrawItemDetails(s32, s32);
 
-s32 ItemMenu_OpenDetail(s32 item_index)
+s32 ItemMenu_OpenDetail(s32 itemIndex)
 {
     struct InventoryMenuDetailsState *menu = Ram_HeapSlots->menuRuntime;
 
     UiWindow_UpdateOrCreate(&menu->detailsWindow, 0, 0, 13, 10, 2);
     Palette_CopyObjectBankToBackground14();
 
-    if (menu->itemIds[item_index] != 0)
+    if (menu->itemIds[itemIndex] != 0)
         ItemMenu_DrawItemDetails(
-            menu->detailsWindow, menu->itemIds[item_index]);
+            menu->detailsWindow, menu->itemIds[itemIndex]);
 
     return 1;
 }

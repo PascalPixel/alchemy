@@ -16,22 +16,22 @@ struct BattleUnit *UnitGet(s32 unitId);
 void Func_08118f6c(void)
 {
     u8 totals[4];
-    u16 party_members[10];
-    s32 party_size;
+    u16 partyMembers[10];
+    s32 partySize;
     s32 element;
     u32 availableMask;
 
-    party_size = BattleParty_PrepareActiveOwners(party_members);
+    partySize = BattleParty_PrepareActiveOwners(partyMembers);
     availableMask = Trade_GetOfferStateFar(0)->availableMask & 0xffff0000;
 
     element = 0;
     do {
         totals[element] = 0;
         {
-            s32 party_slot;
+            s32 partySlot;
 
-            for (party_slot = 0; party_slot < party_size; party_slot++) {
-                struct BattleUnit *member = UnitGet(party_members[party_slot]);
+            for (partySlot = 0; partySlot < partySize; partySlot++) {
+                struct BattleUnit *member = UnitGet(partyMembers[partySlot]);
 
                 totals[element] += member->djinnOwnedCounts[element];
             }
@@ -42,25 +42,25 @@ void Func_08118f6c(void)
     element = 0;
     do {
         const struct SummonDefinition *summon = SummonDefinition_Get(element);
-        s32 elements_met;
+        s32 elementsMet;
 
         if (summon != 0) {
             const u8 *required = summon->djinnRequired;
 
-            elements_met = 0;
+            elementsMet = 0;
             if (totals[0] >= required[0]) {
                 u8 *total = totals;
 
                 do {
-                    elements_met++;
-                    if (elements_met > 3)
+                    elementsMet++;
+                    if (elementsMet > 3)
                         break;
                     total++;
                     required++;
                 } while (*total >= *required);
             }
 
-            if (elements_met == 4)
+            if (elementsMet == 4)
                 availableMask |= 1u << element;
         }
         element++;

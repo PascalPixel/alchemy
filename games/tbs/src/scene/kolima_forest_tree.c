@@ -718,11 +718,11 @@ static void PaletteScene_SpawnEffect(void)
 	struct PaletteEffect *effect;
 	struct EffectSprite	 *sprite;
 	s32					  phase;
-	s32					  effect_flags;
-	s32					  sprite_flags;
-	s32					  spawn_x = 0x01460000;
-	s32					  spawn_y = 0x00200000;
-	s32					  spawn_z = 0x00c00000;
+	s32					  effectFlags;
+	s32					  spriteFlags;
+	s32					  spawnX = 0x01460000;
+	s32					  spawnY = 0x00200000;
+	s32					  spawnZ = 0x00c00000;
 	s32					  targetX = 0x01460000;
 	s32					  targetZ = 0x00f00000;
 
@@ -731,18 +731,18 @@ static void PaletteScene_SpawnEffect(void)
 		return;
 	if (gKolimaForestTreeSparkSound != 0)
 		Engine_AudioPlayCue(200);
-	effect = (struct PaletteEffect *)Engine_ObjectCreate(26, spawn_x, spawn_y, spawn_z);
+	effect = (struct PaletteEffect *)Engine_ObjectCreate(26, spawnX, spawnY, spawnZ);
 	if (effect == 0)
 		return;
 	sprite = effect->sprite;
 	sprite->state = phase;
-	effect_flags = 0xfe;
-	effect_flags &= effect->flags;
-	effect->flags = effect_flags;
-	sprite_flags = ~12;
-	sprite_flags &= sprite->flags;
-	sprite_flags |= 4;
-	sprite->flags = sprite_flags;
+	effectFlags = 0xfe;
+	effectFlags &= effect->flags;
+	effect->flags = effectFlags;
+	spriteFlags = ~12;
+	spriteFlags &= sprite->flags;
+	spriteFlags |= 4;
+	sprite->flags = spriteFlags;
 	effect->progress = 0x1999;
 	effect->rateX = 0x40000;
 	effect->rateY = 0x40000;

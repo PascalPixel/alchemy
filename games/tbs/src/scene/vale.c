@@ -654,8 +654,8 @@ static void HouseScene_RunRepairMorning(void)
 {
 	struct FieldActor *leader;
 	struct FieldActor *actor;
-	u8				   leader_motion_flags;
-	u8				  *leader_motion;
+	u8				   leaderMotionFlags;
+	u8				  *leaderMotion;
 	s32				   i;
 
 	Engine_EventBegin();
@@ -670,9 +670,9 @@ static void HouseScene_RunRepairMorning(void)
 	Map_CopyCellsTo(1, 102, 83, 41, 1, 1);
 	Map_CopyCellsTo(0, 103, 82, 42, 1, 1);
 	leader = Actor_Get(ACTOR_PARTY_LEADER);
-	leader_motion = &leader->motionFlags;
-	leader_motion_flags = *leader_motion;
-	*leader_motion = 0;
+	leaderMotion = &leader->motionFlags;
+	leaderMotionFlags = *leaderMotion;
+	*leaderMotion = 0;
 	Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(407), PIXELS(690));
 	Actor_SetPosition(ACTOR_DORA, PIXELS(392), PIXELS(896));
 	Actor_SetPosition(GARET, PIXELS(298), PIXELS(736));
@@ -1195,7 +1195,7 @@ static void HouseScene_RunRepairMorning(void)
 	Engine_EventWait(100);
 	GameFlag_Set(0x202);
 	GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
-	*leader_motion = leader_motion_flags;
+	*leaderMotion = leaderMotionFlags;
 	Engine_EventEnd();
 }
 
@@ -1948,17 +1948,17 @@ static void Scene_RepairTheHouse(void)
 	struct FieldActor *scene;
 	struct FieldActor *rec;
 	u32				   i;
-	s32				   turn_back;
-	s32				   turn_side;
+	s32				   turnBack;
+	s32				   turnSide;
 	struct FieldActor *turned;
 	s32				   none;
 	s32				   flag;
-	s32				   callback_a;
-	s32				   callback_b;
-	s32				   callback_c;
-	s32				   callback_d;
-	s32				   callback_e;
-	s32				   callback_f;
+	s32				   callbackA;
+	s32				   callbackB;
+	s32				   callbackC;
+	s32				   callbackD;
+	s32				   callbackE;
+	s32				   callbackF;
 
 	scene = Actor_Get(ACTOR_PARTY_LEADER);
 	Engine_EventBegin();
@@ -1972,15 +1972,15 @@ static void Scene_RepairTheHouse(void)
 	turned = Actor_Get(ACTOR_DORA);
 
 	turned->facing = 0;
-	turn_back = 0xc000;
-	turned->facing = turn_back;
+	turnBack = 0xc000;
+	turned->facing = turnBack;
 	Actor_SetPosition(GARET, 0x12a0000, 0x2e00000);
 	turned = Actor_Get(GARET);
-	turn_side = 0x4000;
-	turned->facing = turn_side;
+	turnSide = 0x4000;
+	turned->facing = turnSide;
 	Actor_SetPosition(JENNA, 0x12a0000, 0x2f80000);
 	turned = Actor_Get(JENNA);
-	turned->facing = turn_side;
+	turned->facing = turnSide;
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 11);
 	Engine_ActorEnableActionCallback(0, (u32)gLeaderHammerAction);
 	rec = Actor_Get(23);
@@ -2008,8 +2008,8 @@ static void Scene_RepairTheHouse(void)
 	Engine_TaskWait(1);
 	gEventWork->transitionFrames = 32;
 	Engine_EventOpenScreen();
-	Actor_SetSpeed(JENNA, 0x8000, turn_side);
-	Actor_SetSpeed(GARET, 0x8000, turn_side);
+	Actor_SetSpeed(JENNA, 0x8000, turnSide);
+	Actor_SetSpeed(GARET, 0x8000, turnSide);
 	Engine_ActorEnableActionCallback(5, (u32)gJennaAction);
 	Engine_ActorEnableActionCallback(1, (u32)gGaretAction);
 	Engine_EventWait(40);
@@ -2022,7 +2022,7 @@ static void Scene_RepairTheHouse(void)
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x2666);
 	Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 400, 840);
 	Engine_EventWait(10);
-	Actor_FaceDirection(ACTOR_PARTY_LEADER, turn_back, 30);
+	Actor_FaceDirection(ACTOR_PARTY_LEADER, turnBack, 30);
 	Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
 	Engine_EventWait(20);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 40);
@@ -2036,10 +2036,10 @@ static void Scene_RepairTheHouse(void)
 	}
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
 
-	callback_a = (s32)SceneState_SetValue0ThenCall;
-	Task_AddCallback((void (*)(void))callback_a, 3200);
-	callback_b = (s32)FieldScene_RunStep17;
-	Task_AddCallback((void (*)(void))callback_b, 3200);
+	callbackA = (s32)SceneState_SetValue0ThenCall;
+	Task_AddCallback((void (*)(void))callbackA, 3200);
+	callbackB = (s32)FieldScene_RunStep17;
+	Task_AddCallback((void (*)(void))callbackB, 3200);
 	Actor_SetSpeed(23, 0x3333, 0x1999);
 	Actor_MoveToAndWait(23, 390, 832);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -2052,8 +2052,8 @@ static void Scene_RepairTheHouse(void)
 	}
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	Scheduler_RemoveCallback((s32)Effect_PlayStepSound);
-	Scheduler_RemoveCallback(callback_a);
-	Scheduler_RemoveCallback(callback_b);
+	Scheduler_RemoveCallback(callbackA);
+	Scheduler_RemoveCallback(callbackB);
 	Engine_TaskWait(1);
 	Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
 	Actor_SetChildValue(23, 0);
@@ -2080,10 +2080,10 @@ static void Scene_RepairTheHouse(void)
 		Engine_TaskWait(1);
 	}
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
-	callback_c = (s32)SceneState_SetValue0ThenCall;
-	Task_AddCallback((void (*)(void))callback_c, 3200);
-	callback_d = (s32)SceneState_SetValue24ThenCall;
-	Task_AddCallback((void (*)(void))callback_d, 3200);
+	callbackC = (s32)SceneState_SetValue0ThenCall;
+	Task_AddCallback((void (*)(void))callbackC, 3200);
+	callbackD = (s32)SceneState_SetValue24ThenCall;
+	Task_AddCallback((void (*)(void))callbackD, 3200);
 	Actor_SetSpeed(24, 0x3333, 0x1999);
 	Actor_MoveToAndWait(24, 390, 832);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -2096,8 +2096,8 @@ static void Scene_RepairTheHouse(void)
 	}
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	Scheduler_RemoveCallback((s32)Effect_PlayStepSound);
-	Scheduler_RemoveCallback(callback_c);
-	Scheduler_RemoveCallback(callback_d);
+	Scheduler_RemoveCallback(callbackC);
+	Scheduler_RemoveCallback(callbackD);
 	Engine_TaskWait(1);
 	Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
 	Actor_SetChildValue(24, 0);
@@ -2125,10 +2125,10 @@ static void Scene_RepairTheHouse(void)
 		Engine_TaskWait(1);
 	}
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
-	callback_e = (s32)SceneState_SetValue0ThenCall;
-	Task_AddCallback((void (*)(void))callback_e, 3200);
-	callback_f = (s32)SceneState_SetValue25ThenCall;
-	FieldScheduler_AddCallback(callback_f, 3200);
+	callbackE = (s32)SceneState_SetValue0ThenCall;
+	Task_AddCallback((void (*)(void))callbackE, 3200);
+	callbackF = (s32)SceneState_SetValue25ThenCall;
+	FieldScheduler_AddCallback(callbackF, 3200);
 	Actor_SetSpeed(25, 0x3333, 0x1999);
 	Actor_MoveToAndWait(25, 390, 832);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -2141,8 +2141,8 @@ static void Scene_RepairTheHouse(void)
 	}
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 	Scheduler_RemoveCallback((s32)Effect_PlayStepSound);
-	Scheduler_RemoveCallback(callback_e);
-	Scheduler_RemoveCallback(callback_f);
+	Scheduler_RemoveCallback(callbackE);
+	Scheduler_RemoveCallback(callbackF);
 	Engine_TaskWait(1);
 	Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
 	Actor_SetChildValue(25, 0);

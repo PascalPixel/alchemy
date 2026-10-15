@@ -41,8 +41,8 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
     struct ItemBreakFragmentSource *target;
     struct ItemBreakFragmentPosition position;
     struct ItemBreakFragmentObject *object;
-    s32 steering_delta;
-    s32 drift_magnitude;
+    s32 steeringDelta;
+    s32 driftMagnitude;
 
     target = source->target;
     if (target != 0) {
@@ -50,12 +50,12 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
         s32 dz = target->z - source->z;
 
         if (dx != 0 || dz != 0) {
-            steering_delta = (s16)(ArcTan2(dz, dx) - source->angle);
-            if (steering_delta > 0x1000)
-                steering_delta = 0x1000;
-            if (steering_delta < -0x1000)
-                steering_delta = -0x1000;
-            source->angle += steering_delta;
+            steeringDelta = (s16)(ArcTan2(dz, dx) - source->angle);
+            if (steeringDelta > 0x1000)
+                steeringDelta = 0x1000;
+            if (steeringDelta < -0x1000)
+                steeringDelta = -0x1000;
+            source->angle += steeringDelta;
         }
         source->flag5a = 0;
     }
@@ -63,9 +63,9 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
     position.x = source->x;
     position.y = source->y - (Random16() << 4) - 0x80000;
     position.z = source->z;
-    drift_magnitude = Random16() * 3;
-    drift_magnitude <<= 4;
-    Vector_AddPolarOffset(drift_magnitude, Random16(), &position);
+    driftMagnitude = Random16() * 3;
+    driftMagnitude <<= 4;
+    Vector_AddPolarOffset(driftMagnitude, Random16(), &position);
 
     object = Object_Spawn(0x11D, position.x, position.y, position.z);
     if (object != 0) {

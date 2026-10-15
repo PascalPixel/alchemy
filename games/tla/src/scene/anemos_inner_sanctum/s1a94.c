@@ -14,11 +14,11 @@ void Func_020033a0(void);
 void Func_02003488(s32 a);
 void Func_020034b8(s32 cue);
 
-static __inline__ void Func_02003328_(s32 srcX, s32 srcY, s32 dst_x, s32 dst_y, s32 width, s32 height)
+static __inline__ void Func_02003328_(s32 srcX, s32 srcY, s32 dstX, s32 dstY, s32 width, s32 height)
 {
     /* FAKEMATCH: forwarding through the inline sets the width before the height, as the native
      * allocates them (1 in r5, 2 in r6); called directly the two constants swap registers (differ 4). */
-    Func_02003328(srcX, srcY, dst_x, dst_y, width, height);
+    Func_02003328(srcX, srcY, dstX, dstY, width, height);
 }
 
 // By the entrance taken, sets that entrance's flag, moves its actor to the middle of its cell and

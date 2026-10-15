@@ -179,53 +179,53 @@ void *Resource_GetTableEntry(s32 index)
 	return Resource_DirectoryTable[index];
 }
 
-void PackedTable_AdjustMarkedOffsets(u16 *entries, s32 byte_length)
+void PackedTable_AdjustMarkedOffsets(u16 *entries, s32 byteLength)
 {
 	s32 entryCount;
-	s32 entry_index;
+	s32 entryIndex;
 
-	entryCount = byte_length >> 1;
-	entry_index = 1;
+	entryCount = byteLength >> 1;
+	entryIndex = 1;
 	entries++;
-	if (entry_index < entryCount)
+	if (entryIndex < entryCount)
 	{
-		u32 next_marker_mask;
-		u32 current_marker_mask;
-		u32 payload_mask = 0x7ff;
-		next_marker_mask = 0xf800;
-		current_marker_mask = 0xf000;
+		u32 nextMarkerMask;
+		u32 currentMarkerMask;
+		u32 payloadMask = 0x7ff;
+		nextMarkerMask = 0xf800;
+		currentMarkerMask = 0xf000;
 		entries -= 2;
 		do
 		{
-			u16 current_entry;
-			u16 next_entry;
-			u32 next_marker_bits;
-			u32 current_marker_bits;
+			u16 currentEntry;
+			u16 nextEntry;
+			u32 nextMarkerBits;
+			u32 currentMarkerBits;
 
-			next_entry = entries[2];
-			next_marker_bits = next_entry & next_marker_mask;
+			nextEntry = entries[2];
+			nextMarkerBits = nextEntry & nextMarkerMask;
 			entries++;
-			if (next_marker_bits == next_marker_mask)
+			if (nextMarkerBits == nextMarkerMask)
 			{
-				current_entry = entries[0];
-				current_marker_bits = current_entry & next_marker_bits;
-				if (current_marker_bits == current_marker_mask)
+				currentEntry = entries[0];
+				currentMarkerBits = currentEntry & nextMarkerBits;
+				if (currentMarkerBits == currentMarkerMask)
 				{
-					u32 packed_offset;
-					u32 adjusted_current;
-					u32 adjusted_next;
+					u32 packedOffset;
+					u32 adjustedCurrent;
+					u32 adjustedNext;
 
-					packed_offset =
-						(((current_entry & payload_mask) << 12) | ((next_entry & payload_mask) * 2))
-						- (entry_index * 2);
-					adjusted_current = ((packed_offset >> 12) & payload_mask) | current_marker_bits;
-					adjusted_next = ((packed_offset >> 1) & payload_mask) | next_marker_bits;
-					entries[0] = adjusted_current;
-					entries[1] = adjusted_next;
+					packedOffset =
+						(((currentEntry & payloadMask) << 12) | ((nextEntry & payloadMask) * 2))
+						- (entryIndex * 2);
+					adjustedCurrent = ((packedOffset >> 12) & payloadMask) | currentMarkerBits;
+					adjustedNext = ((packedOffset >> 1) & payloadMask) | nextMarkerBits;
+					entries[0] = adjustedCurrent;
+					entries[1] = adjustedNext;
 				}
 			}
-			entry_index++;
-		} while (entry_index < entryCount);
+			entryIndex++;
+		} while (entryIndex < entryCount);
 	}
 }
 
@@ -500,18 +500,18 @@ void WaitFrames(s32 frames)
 			/* FAKEMATCH: clearing the old address and restoring a separate
              * pointer in complementary conditions ends the restore CSE block.
              * The conditions vanish, retaining the size-address reload in r3
-             * and its load into r2. Reusing size instead of next_size changes
+             * and its load into r2. Reusing size instead of nextSize changes
              * that pair to r2/r2 (4 aligned differences, same 0x434 extent);
              * deleting the empty barrier alone gives 24 differences. */
 			size = NULL;
 			{
-				u32 *next_size = NULL;
+				u32 *nextSize = NULL;
 
 				if (sp)
-					next_size = &gSavedStackSize;
+					nextSize = &gSavedStackSize;
 				if (!sp)
-					next_size = &gSavedStackSize;
-				Dma_Set(gSavedStack, base, (*next_size >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
+					nextSize = &gSavedStackSize;
+				Dma_Set(gSavedStack, base, (*nextSize >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
 			}
 			while (DMA3->control & DMA_ENABLE32)
 				;
@@ -872,31 +872,31 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source)
 {
 	union AffineMatrix *matrix;
 	s16				   *coefficient;
-	s32					x_scale;
-	s32					y_scale;
+	s32					xScale;
+	s32					yScale;
 	s32					angle;
 	u8					index;
 
 	index = gObjAffineCount;
-	x_scale = (s16)source->scaleX;
-	y_scale = (s16)source->scaleY;
+	xScale = (s16)source->scaleX;
+	yScale = (s16)source->scaleY;
 	angle = source->angle;
 	if (index > 31)
 		return 0;
 
 	matrix = &gObjAffineMatrices[index];
 	coefficient = matrix->coefficients;
-	if ((x_scale == y_scale || -x_scale == y_scale) && angle == 0)
+	if ((xScale == yScale || -xScale == yScale) && angle == 0)
 	{
 		s32 reciprocal;
-		s32 x_reciprocal;
+		s32 xReciprocal;
 
-		reciprocal = Iwram_SignedDivide(0x10000, y_scale);
-		x_reciprocal = reciprocal;
-		if (-x_scale == y_scale)
-			x_reciprocal = -reciprocal;
+		reciprocal = Iwram_SignedDivide(0x10000, yScale);
+		xReciprocal = reciprocal;
+		if (-xScale == yScale)
+			xReciprocal = -reciprocal;
 
-		matrix->rows[0] = (u16)x_reciprocal;
+		matrix->rows[0] = (u16)xReciprocal;
 		matrix->rows[1] = reciprocal << 16;
 	}
 	else
@@ -906,13 +906,13 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source)
 
 		sine = Trig_Sin(angle);
 		cosine = Trig_Cos(angle);
-		*coefficient = cosine / x_scale;
+		*coefficient = cosine / xScale;
 		coefficient++;
-		*coefficient = sine / x_scale;
+		*coefficient = sine / xScale;
 		coefficient++;
-		*coefficient = (-sine) / y_scale;
+		*coefficient = (-sine) / yScale;
 		coefficient++;
-		*coefficient = cosine / y_scale;
+		*coefficient = cosine / yScale;
 	}
 
 	gObjAffineCount = index + 1;
@@ -1865,63 +1865,63 @@ s32 Runtime_GetRemainingEwram(void)
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size)
 {
 	union HeapState *work;
-	s32				 aligned_size;
+	s32				 alignedSize;
 	u32				 address;
-	u32				 next_address;
+	u32				 nextAddress;
 	u32				 next;
-	u32				 cached_address;
+	u32				 cachedAddress;
 
 	work = (union HeapState *)gWorkSlot;
-	cached_address = (u32)work->slots[kind];
-	if (cached_address == 0)
+	cachedAddress = (u32)work->slots[kind];
+	if (cachedAddress == 0)
 	{
-		cached_address = (u32)work->heap.nextIwram;
-		aligned_size = (((u32)size + 3) >> 2) * 4;
-		next = cached_address + aligned_size;
+		cachedAddress = (u32)work->heap.nextIwram;
+		alignedSize = (((u32)size + 3) >> 2) * 4;
+		next = cachedAddress + alignedSize;
 		if (next >= (u32)Ram_IwramHeapEnd)
 		{
 			address = (u32)work->heap.nextEwram;
-			next_address = address + aligned_size;
-			if (next_address >= 0x02040000U)
+			nextAddress = address + alignedSize;
+			if (nextAddress >= 0x02040000U)
 			{
 				return NULL;
 			}
-			work->heap.nextEwram = (void *)next_address;
+			work->heap.nextEwram = (void *)nextAddress;
 			work->slots[kind] = (void *)address;
 			return (void *)address;
 		}
 		work->heap.nextIwram = (void *)next;
-		work->slots[kind] = (void *)cached_address;
-		return (void *)cached_address;
+		work->slots[kind] = (void *)cachedAddress;
+		return (void *)cachedAddress;
 	}
-	return (void *)cached_address;
+	return (void *)cachedAddress;
 }
 
 void *Runtime_AllocateBlock(s32 kind, s32 size)
 {
 	union HeapState *work;
-	u32				 aligned_size;
+	u32				 alignedSize;
 	u32				 next;
 	u32				 address;
-	u32				 next_address;
-	u32				 cached_address;
+	u32				 nextAddress;
+	u32				 cachedAddress;
 
 	work = (union HeapState *)gWorkSlot;
-	cached_address = (u32)work->slots[kind];
-	if (cached_address == 0)
+	cachedAddress = (u32)work->slots[kind];
+	if (cachedAddress == 0)
 	{
 		address = (u32)work->heap.nextEwram;
-		aligned_size = (((u32)size + 3) >> 2) * 4;
-		next = address + aligned_size;
+		alignedSize = (((u32)size + 3) >> 2) * 4;
+		next = address + alignedSize;
 		if (next >= 0x02040000U)
 		{
 			address = (u32)work->heap.nextIwram;
-			next_address = address + aligned_size;
-			if (next_address >= (u32)Ram_IwramHeapEnd)
+			nextAddress = address + alignedSize;
+			if (nextAddress >= (u32)Ram_IwramHeapEnd)
 			{
 				return NULL;
 			}
-			work->heap.nextIwram = (void *)next_address;
+			work->heap.nextIwram = (void *)nextAddress;
 			work->slots[kind] = (void *)address;
 			return (void *)address;
 		}
@@ -1929,63 +1929,63 @@ void *Runtime_AllocateBlock(s32 kind, s32 size)
 		work->slots[kind] = (void *)address;
 		return (void *)address;
 	}
-	return (void *)cached_address;
+	return (void *)cachedAddress;
 }
 
 void *MemAlloc(s32 size)
 {
 	union HeapState *work = (union HeapState *)gWorkSlot;
-	u32				 next_address;
+	u32				 nextAddress;
 	u32				 next;
-	u32				 allocation_address;
-	u32				 aligned_words = ((u32)size + 3) >> 2;
+	u32				 allocationAddress;
+	u32				 alignedWords = ((u32)size + 3) >> 2;
 
-	allocation_address = (u32)work->heap.nextIwram;
-	size = aligned_words << 2;
-	next = allocation_address + size;
+	allocationAddress = (u32)work->heap.nextIwram;
+	size = alignedWords << 2;
+	next = allocationAddress + size;
 	if (next >= (u32)Ram_IwramHeapEnd)
 	{
-		allocation_address = (u32)work->heap.nextEwram;
-		next_address = allocation_address + size;
-		if (next_address >= 0x02040000U)
+		allocationAddress = (u32)work->heap.nextEwram;
+		nextAddress = allocationAddress + size;
+		if (nextAddress >= 0x02040000U)
 		{
 			return NULL;
 		}
-		work->heap.nextEwram = (void *)next_address;
+		work->heap.nextEwram = (void *)nextAddress;
 	}
 	else
 	{
 		work->heap.nextIwram = (void *)next;
 	}
-	return (void *)allocation_address;
+	return (void *)allocationAddress;
 }
 
 void *Runtime_BumpAllocateAlternatePool(s32 size)
 {
 	union HeapState *work = (union HeapState *)gWorkSlot;
-	u32				 alternate_next_address;
-	u32				 primary_next_address;
-	u32				 allocation_address;
-	u32				 aligned_words = ((u32)size + 3) >> 2;
+	u32				 alternateNextAddress;
+	u32				 primaryNextAddress;
+	u32				 allocationAddress;
+	u32				 alignedWords = ((u32)size + 3) >> 2;
 
-	allocation_address = (u32)work->heap.nextEwram;
-	size = aligned_words << 2;
-	primary_next_address = allocation_address + size;
-	if (primary_next_address >= 0x02040000U)
+	allocationAddress = (u32)work->heap.nextEwram;
+	size = alignedWords << 2;
+	primaryNextAddress = allocationAddress + size;
+	if (primaryNextAddress >= 0x02040000U)
 	{
-		allocation_address = (u32)work->heap.nextIwram;
-		alternate_next_address = allocation_address + size;
-		if (alternate_next_address >= (u32)Ram_IwramHeapEnd)
+		allocationAddress = (u32)work->heap.nextIwram;
+		alternateNextAddress = allocationAddress + size;
+		if (alternateNextAddress >= (u32)Ram_IwramHeapEnd)
 		{
 			return NULL;
 		}
-		work->heap.nextIwram = (void *)alternate_next_address;
+		work->heap.nextIwram = (void *)alternateNextAddress;
 	}
 	else
 	{
-		work->heap.nextEwram = (void *)primary_next_address;
+		work->heap.nextEwram = (void *)primaryNextAddress;
 	}
-	return (void *)allocation_address;
+	return (void *)allocationAddress;
 }
 
 void RuntimeMemory_ReservedNoOp(void)
@@ -2689,15 +2689,15 @@ u32 SaveState_ReadRecordPayload(s32 recordId, void *destination)
 u32 SaveState_DeleteRecord(s32 recordId)
 {
 	s32 index;
-	s32 deletion_result;
+	s32 deletionResult;
 
 	index = SaveState_FindLatestSlot(recordId);
 	if (index > 0xFU)
 	{
 		return 1U;
 	}
-	deletion_result = SaveState_InvalidateSlot(index);
-	return (u32)((0 - deletion_result) | deletion_result) >> 0x1F;
+	deletionResult = SaveState_InvalidateSlot(index);
+	return (u32)((0 - deletionResult) | deletionResult) >> 0x1F;
 }
 
 s32 SaveState_ChecksumWorkspace(void)
@@ -2729,25 +2729,25 @@ s32 SaveState_ChecksumWorkspace(void)
 u32 SaveState_FindLatestSlot(s32 recordId)
 {
 	struct SaveWorkspace *work;
-	u32					  latest_sequence;
-	u32					  latest_slot;
+	u32					  latestSequence;
+	u32					  latestSlot;
 	u32					  i;
 
 	work = gSaveWorkspace;
-	latest_slot = 0x10;
-	latest_sequence = 0;
+	latestSlot = 0x10;
+	latestSequence = 0;
 	for (i = 0; i <= 15; i++)
 	{
 		if (work->occupied[i] != 0 && recordId == work->recordId[i])
 		{
-			if (latest_sequence < work->sequence[i])
+			if (latestSequence < work->sequence[i])
 			{
-				latest_sequence = work->sequence[i];
-				latest_slot = i;
+				latestSequence = work->sequence[i];
+				latestSlot = i;
 			}
 		}
 	}
-	return latest_slot;
+	return latestSlot;
 }
 
 s32 SaveState_InvalidateSlot(s32 index)
@@ -2791,20 +2791,20 @@ s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count)
 u32 SaveState_GetLatestSequence(s32 recordId)
 {
 	struct SaveWorkspace *work;
-	u32					  latest_sequence;
+	u32					  latestSequence;
 	u32					  i;
 
 	work = gSaveWorkspace;
-	latest_sequence = 0;
+	latestSequence = 0;
 	for (i = 0; i <= 15; i++)
 	{
 		if (work->occupied[i] != 0 && recordId == work->recordId[i])
 		{
-			if (latest_sequence < work->sequence[i])
-				latest_sequence = work->sequence[i];
+			if (latestSequence < work->sequence[i])
+				latestSequence = work->sequence[i];
 		}
 	}
-	return latest_sequence;
+	return latestSequence;
 }
 
 s32 SaveState_LoadSummaryRecords(void)
@@ -2849,13 +2849,13 @@ u32 SaveState_ReleaseWorkspace(void)
 
 void SerialRuntime_Initialize(void)
 {
-	u32					  interrupt_enable;
+	u32					  interruptEnable;
 	volatile u16		 *ime;
 	s32					  index;
 	struct SerialRuntime *state;
 
 	/* FAKEMATCH: IRQ_LOCK written out with the IME address set inside the save statement; through IRQ_LOCK, whose pointer is initialized first, the IME load is scheduled after sub sp, #4 where the native loads it before (differ 2 in tbs-en, 123 instructions either way). */
-	IME_SAVE((ime = &REG_IME), interrupt_enable);
+	IME_SAVE((ime = &REG_IME), interruptEnable);
 	IME_DISABLE(ime);
 	Runtime_SetIrqHandler(7, 0, SerialRuntime_HandleTransferInterrupt);
 	Runtime_SetIrqHandler(6, 0, SerialRuntime_HandleTransferInterrupt);
@@ -2896,7 +2896,7 @@ void SerialRuntime_Initialize(void)
 	gSerialReceiveDest = 0;
 	gSerialReceivedSize = 0;
 	BattleLink_ResetTransferState();
-	IRQ_UNLOCK(interrupt_enable);
+	IRQ_UNLOCK(interruptEnable);
 }
 
 void SerialRuntime_EnableTransferTimer(void)
@@ -2939,9 +2939,9 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive)
 
 		if (mask30 == 0 && (mode = control & 0x88) == 8)
 		{
-			u8 serial_error = control & 4;
+			u8 serialError = control & 4;
 
-			if (serial_error == 0 && gSerialRuntime.sendIndex == -1)
+			if (serialError == 0 && gSerialRuntime.sendIndex == -1)
 			{
 				u32 ie;
 
@@ -2992,9 +2992,9 @@ s32 SerialRuntime_PollStatus(void)
 
 		if (mode == 8)
 		{
-			u8 serial_error = control & 4;
+			u8 serialError = control & 4;
 
-			if (serial_error == 0 && gSerialRuntime.sendIndex == -1)
+			if (serialError == 0 && gSerialRuntime.sendIndex == -1)
 			{
 				u32 ie;
 
@@ -3154,35 +3154,35 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload)
 
 void SerialRuntime_HandleTransferInterrupt(void)
 {
-	struct SerialRuntime *send_state;
-	struct SerialRuntime *receive_state;
-	struct SerialRuntime *tail_state;
+	struct SerialRuntime *sendState;
+	struct SerialRuntime *receiveState;
+	struct SerialRuntime *tailState;
 	u16					  recv[4];
-	volatile u32		 *sio_control;
+	volatile u32		 *sioControl;
 	s32					  channel;
 
 	*(u64 *)recv = *(volatile u64 *)REG_SIODATA32;
-	sio_control = &REG_SIOCNT;
-	send_state = &gSerialRuntime;
-	send_state->isParent = (*sio_control << 25) >> 31;
+	sioControl = &REG_SIOCNT;
+	sendState = &gSerialRuntime;
+	sendState->isParent = (*sioControl << 25) >> 31;
 
-	if (send_state->sendIndex == -1)
+	if (sendState->sendIndex == -1)
 	{
-		u32	 idle_word = 0xfefe;
+		u32	 idleWord = 0xfefe;
 		u16 *swap;
 
-		((volatile u16 *)sio_control)[1] = idle_word;
-		swap = send_state->sendBuffer[1];
-		send_state->sendBuffer[1] = send_state->sendBuffer[0];
-		send_state->sendBuffer[0] = swap;
+		((volatile u16 *)sioControl)[1] = idleWord;
+		swap = sendState->sendBuffer[1];
+		sendState->sendBuffer[1] = sendState->sendBuffer[0];
+		sendState->sendBuffer[0] = swap;
 	}
-	else if (send_state->sendIndex >= 0)
+	else if (sendState->sendIndex >= 0)
 	{
-		((volatile u16 *)sio_control)[1] = send_state->sendBuffer[1][send_state->sendIndex];
+		((volatile u16 *)sioControl)[1] = sendState->sendBuffer[1][sendState->sendIndex];
 	}
-	receive_state = &gSerialRuntime;
-	if (receive_state->sendIndex <= 14)
-		receive_state->sendIndex++;
+	receiveState = &gSerialRuntime;
+	if (receiveState->sendIndex <= 14)
+		receiveState->sendIndex++;
 
 	channel = 0;
 receive_loop:
@@ -3190,36 +3190,36 @@ receive_loop:
 		s32	 receiveIndex;
 		u16 *incoming;
 
-		if (recv[channel] == 0xfefe && receive_state->receiveIndex[channel] > 13)
+		if (recv[channel] == 0xfefe && receiveState->receiveIndex[channel] > 13)
 		{
-			receive_state->receiveIndex[channel] = -1;
+			receiveState->receiveIndex[channel] = -1;
 		}
 		else
 		{
-			receiveIndex = receive_state->receiveIndex[channel];
-			incoming = receive_state->incomingBuffer[channel];
+			receiveIndex = receiveState->receiveIndex[channel];
+			incoming = receiveState->incomingBuffer[channel];
 			incoming[receiveIndex] = recv[channel];
 			if (receiveIndex == 13)
 			{
-				u16 *swap = receive_state->readyBuffer[channel];
+				u16 *swap = receiveState->readyBuffer[channel];
 
-				receive_state->readyBuffer[channel] = incoming;
-				receive_state->incomingBuffer[channel] = swap;
-				receive_state->channelFlags[channel] |= 1;
+				receiveState->readyBuffer[channel] = incoming;
+				receiveState->incomingBuffer[channel] = swap;
+				receiveState->channelFlags[channel] |= 1;
 			}
 		}
 	}
-	tail_state = &gSerialRuntime;
-	if (tail_state->isParent != 0)
-		tail_state->channelFlags[channel] |= 2;
-	if (tail_state->receiveIndex[channel] <= 14)
-		tail_state->receiveIndex[channel]++;
+	tailState = &gSerialRuntime;
+	if (tailState->isParent != 0)
+		tailState->channelFlags[channel] |= 2;
+	if (tailState->receiveIndex[channel] <= 14)
+		tailState->receiveIndex[channel]++;
 	channel++;
-	receive_state = tail_state;
+	receiveState = tailState;
 	if (channel <= 1)
 		goto receive_loop;
 
-	if (tail_state->mode == 8)
+	if (tailState->mode == 8)
 	{
 		REG_TM3CNT_H = 0;
 		REG_SIOCNT16 |= 0x80;
@@ -3249,17 +3249,17 @@ u32 SerialRuntime_WaitForStatusMask(s32 mask)
 s32 SerialRuntime_BeginTransferA(void *source, s32 transferValue)
 {
 	struct SerialTransferState *state = &gSerialTransfer;
-	u32							saved_interrupt_master;
+	u32							savedInterruptMaster;
 
 	if (gSerialSendSource != 0)
 		return -1;
-	IRQ_LOCK(saved_interrupt_master);
+	IRQ_LOCK(savedInterruptMaster);
 	state->status = 0x80;
 	gSerialSendSource = (s32)source;
 	gSerialSendSize = transferValue;
 	gSerialBlockSequence = 0;
 	state->active = 1;
-	IRQ_UNLOCK(saved_interrupt_master);
+	IRQ_UNLOCK(savedInterruptMaster);
 	return 0;
 }
 

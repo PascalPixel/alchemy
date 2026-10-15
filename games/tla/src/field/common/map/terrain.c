@@ -17,31 +17,31 @@
 
 extern u32 gMapBlocks[];
 
-u8 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind)
+u8 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrainKind)
 {
     s32 selector = GetWorldMapCollision(position);
     s32 x = position->x;
     s32 y;
     s32 flag = 0;
-    u32 tile_x;
+    u32 tileX;
     u32 index;
     u32 *tile;
     u32 kind;
 
     if (x < 0)
         x += 0x1fffff;
-    tile_x = (x >> 21) & 31;
+    tileX = (x >> 21) & 31;
     y = position->y;
     if (y < 0)
         y += 0x1fffff;
 
-    index = tile_x + (((y >> 21) & 31) << 5);
+    index = tileX + (((y >> 21) & 31) << 5);
     tile = gMapBlocks + index;
     if (((u8 *)tile)[3] & 0x80)
         flag = 0x10;
 
     kind = (*tile << 2) >> 26;
-    *terrain_kind = kind;
+    *terrainKind = kind;
     if (kind > 40)
         flag = 0x20;
     if (kind == 36)

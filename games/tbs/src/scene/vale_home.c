@@ -619,7 +619,7 @@ s32 ValeHome_RestoreEntryState(void)
 static void EV20_TOUCH(void)
 {
 	struct FieldActor *leader;
-	s32				   skip_reply = 0;
+	s32				   skipReply = 0;
 	s32				   unk;
 
 	if (Engine_GameFlagIsSet(0x834) != 0 && Engine_GameFlagIsSet(0x840) == 0)
@@ -685,7 +685,7 @@ static void EV20_TOUCH(void)
 		Engine_EventOpenMessage(0x4013, 0);
 		if (Engine_EventChooseYesNo(0, 0) == 1)
 		{
-			skip_reply = 1;
+			skipReply = 1;
 			Engine_ActorSetAnimation(19, 4);
 		}
 		else
@@ -694,7 +694,7 @@ static void EV20_TOUCH(void)
 			gEventWork->message++;
 		}
 		Event_ShowMessage(0x4013, 0);
-		if (skip_reply != 0)
+		if (skipReply != 0)
 		{
 			gEventWork->message++;
 		}
@@ -829,9 +829,9 @@ static void ValeHome_RunScriptScene(void)
 static void FieldScene_RunGroupChoreography(void)
 {
 	struct FieldActor *record;
-	s32				   walk_speed;
-	s32				   turn_speed;
-	s32				   approach_speed;
+	s32				   walkSpeed;
+	s32				   turnSpeed;
+	s32				   approachSpeed;
 
 	Engine_ActorSetChildValue(25, 15);
 	record = Object_GetById(25);
@@ -843,8 +843,8 @@ static void FieldScene_RunGroupChoreography(void)
 	Actor_ShowEmote(24, 0x100, 40);
 	Engine_ActorSetPosition(25, 0, 0);
 	Actor_FaceDirection(23, 0x5000, 0);
-	walk_speed = 0x5000;
-	SceneActor_SetPairZeroAndValue(24, walk_speed, 40);
+	walkSpeed = 0x5000;
+	SceneActor_SetPairZeroAndValue(24, walkSpeed, 40);
 	Engine_CameraSetSpeed(0x18000, 0x3000);
 	Engine_CameraMoveTo(0x590000, 0xb00000, 0x1390000, 1);
 	BattleFx_CommitObjectPositionAndWait();
@@ -860,10 +860,10 @@ static void FieldScene_RunGroupChoreography(void)
 	Engine_ActorWalkTo(24, 124, 0x149);
 	Engine_ActorWaitForMove(23);
 	Engine_ActorSetAnimation(23, 1);
-	Engine_ActorFaceDirection(23, walk_speed, 0);
+	Engine_ActorFaceDirection(23, walkSpeed, 0);
 	Engine_ActorWaitForMove(24);
 	Engine_ActorSetAnimation(24, 1);
-	Engine_ActorFaceDirection(24, walk_speed, 0);
+	Engine_ActorFaceDirection(24, walkSpeed, 0);
 	Engine_ActorSetChildValue(25, 0);
 	record = Object_GetById(25);
 	Engine_ActorSetSpriteFlags(record, 1);
@@ -874,29 +874,29 @@ static void FieldScene_RunGroupChoreography(void)
 	Engine_ActorSetAnimationAndWait(23, 3);
 	Engine_EventOpenMessage(23, 0);
 	Actor_ShowEmote(25, 0x101, 0);
-	approach_speed = 0xd000;
-	SceneActor_SetPairZeroAndValue(0, approach_speed, 10);
+	approachSpeed = 0xd000;
+	SceneActor_SetPairZeroAndValue(0, approachSpeed, 10);
 	Engine_EventChooseYesNo(0, 0);
 	Engine_EventWait(40);
 	Engine_ActorFaceDirection(23, 0, 0);
-	turn_speed = 0x8000;
-	SceneActor_SetPairZeroAndValue(24, turn_speed, 20);
+	turnSpeed = 0x8000;
+	SceneActor_SetPairZeroAndValue(24, turnSpeed, 20);
 	Engine_ActorRunRepeatedMotion(25, 2);
 	Event_SayThenWait(0x1019, 10);
 	FieldObject_SetTargetAndCallback(0, 0x10019, gValeHome_FaceTargetActions);
 	Actor_WalkToAndWait(25, 93, 0x169);
-	SceneActor_SetPairZeroAndValue(25, approach_speed, 40);
+	SceneActor_SetPairZeroAndValue(25, approachSpeed, 40);
 	Event_SayThenWait(25, 20);
 	Engine_ActorStop(0);
 	Engine_ActorFaceDirection(23, 0, 0);
-	SceneActor_SetPairZeroAndValue(24, turn_speed, 15);
+	SceneActor_SetPairZeroAndValue(24, turnSpeed, 15);
 	Engine_ActorSetAnimation(23, 3);
 	Engine_ActorSetAnimationAndWait(24, 3);
-	Engine_ActorFaceDirection(23, walk_speed, 0);
-	SceneActor_SetPairZeroAndValue(24, walk_speed, 30);
+	Engine_ActorFaceDirection(23, walkSpeed, 0);
+	SceneActor_SetPairZeroAndValue(24, walkSpeed, 30);
 	Engine_ActorSetAnimationAndWait(24, 4);
 	Engine_EventShowMessage(0x2018, 0);
-	SceneActor_SetPairZeroAndValue(0, approach_speed, 30);
+	SceneActor_SetPairZeroAndValue(0, approachSpeed, 30);
 	SceneActor_SetPairZeroAndValue(0, 0x4000, 40);
 	Engine_ActorRunRepeatedMotion(23, 2);
 	Engine_ActorSetAnimationAndWait(23, 3);
@@ -1003,10 +1003,10 @@ static void Scene_RunExtendedActorSequence(void)
 	struct FieldActor *record;
 	struct EventWork  *work;
 	s32				   v5;
-	const u8		  *face_actions;
-	const u8		  *actor31_actions;
+	const u8		  *faceActions;
+	const u8		  *actor31Actions;
 	s32				   v6;
-	const u8		  *pair_actions;
+	const u8		  *pairActions;
 
 	Owner_RefreshActiveRatios(1);
 	Engine_EventBegin();
@@ -1066,9 +1066,9 @@ static void Scene_RunExtendedActorSequence(void)
 	Engine_ActorSetAnimation(30, 3);
 	Engine_ActorEnableActionCallback(30, (s32)gValeHome_Actor30Actions);
 	Engine_EventWait(40);
-	face_actions = (const u8 *)gValeHome_FaceTargetActions;
-	FieldObject_SetTargetAndCallback(11, 0x1001e, face_actions);
-	FieldObject_SetTargetAndCallback(12, 0x1001e, face_actions);
+	faceActions = (const u8 *)gValeHome_FaceTargetActions;
+	FieldObject_SetTargetAndCallback(11, 0x1001e, faceActions);
+	FieldObject_SetTargetAndCallback(12, 0x1001e, faceActions);
 	Object_RefreshSelectorById(30);
 	Engine_ActorStop(11);
 	Engine_ActorStop(12);
@@ -1126,12 +1126,12 @@ static void Scene_RunExtendedActorSequence(void)
 	Engine_ActorSetSpritePriority(31, 2);
 	Actor_SetSpeed(31, 0x39999, 0x1cccc);
 	Engine_ActorSetAnimation(31, 2);
-	actor31_actions = gValeHome_Actor31Actions;
-	Engine_ActorEnableActionCallback(31, actor31_actions);
+	actor31Actions = gValeHome_Actor31Actions;
+	Engine_ActorEnableActionCallback(31, actor31Actions);
 	Engine_EventWait(20);
 	Engine_ActorSetAnimation(30, 3);
 	Actor_SetSpeed(30, 0x4cccc, 0x26666);
-	Object_SetActionCallbackAndRefreshById(30, actor31_actions);
+	Object_SetActionCallbackAndRefreshById(30, actor31Actions);
 	Engine_EventWait(60);
 	Engine_ActorRunRepeatedMotion(12, 2);
 	SceneActor_SetPairZeroAndValue(12, 0x7000, 10);
@@ -1303,14 +1303,14 @@ static void Scene_RunExtendedActorSequence(void)
 	SceneActor_SetPairZeroAndValue(0, 0x4000, 10);
 	SceneActor_SetPairZeroAndValue(1, 0x5000, 20);
 	Actor_SetSpeed(0, 0xcccc, 0x6666);
-	pair_actions = gValeHome_Actor0And1Actions;
-	Engine_ActorEnableActionCallback(0, pair_actions);
+	pairActions = gValeHome_Actor0And1Actions;
+	Engine_ActorEnableActionCallback(0, pairActions);
 	Engine_EventWait(20);
 	Camera_SetSpeed(0x6666, 0xccc);
 	Engine_CameraMoveTo(0xd80000, 0x100000, 0x3890000, 1);
 	Engine_EventWait(20);
 	Actor_SetSpeed(1, 0xcccc, 0x6666);
-	Engine_ActorEnableActionCallback(1, pair_actions);
+	Engine_ActorEnableActionCallback(1, pairActions);
 	Engine_EventWait(60);
 	work = gEventWork;
 	work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

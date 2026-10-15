@@ -62,9 +62,9 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos)
 	s32	 cnt;
 	u32	 n;
 	u8	*table;
-	u32	 high_mask;
-	u32	 index_mask;
-	u8	 offset_mask;
+	u32	 highMask;
+	u32	 indexMask;
+	u8	 offsetMask;
 
 	struct AnimationObject *spr = (struct AnimationObject *)obj;
 
@@ -75,9 +75,9 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos)
 	if (n < cnt)
 	{
 		table = gMap_TileDissolveOrder;
-		high_mask = 0xff00;
-		index_mask = 0x3f;
-		offset_mask = 0x3e;
+		highMask = 0xff00;
+		indexMask = 0x3f;
+		offsetMask = 0x3e;
 
 		for (; n < cnt; n++, dst += 32, pos++)
 		{
@@ -88,14 +88,14 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos)
 				u32	 odd;
 
 				// VRAM はバイトで書けないので、2 ドット分を読んで片方を消す
-				dot = table[(pos + n * 16) & index_mask];
-				cell = (u16 *)((u8 *)dst + (dot & offset_mask));
+				dot = table[(pos + n * 16) & indexMask];
+				cell = (u16 *)((u8 *)dst + (dot & offsetMask));
 				odd = 1;
 				odd &= dot;
 				if (odd != 0)
 					*cell = *(u8 *)cell;
 				else
-					*cell &= high_mask;
+					*cell &= highMask;
 			}
 		}
 	}
@@ -802,8 +802,8 @@ void ObjectSystem_UpdateCamera(void)
 	struct CameraPoint	 spare[3];
 	s32					 cnt;
 	struct CameraState	*map;
-	s32					 cam_x;
-	s32					 cam_z;
+	s32					 camX;
+	s32					 camZ;
 	struct CameraSync	*sync;
 	struct CameraObject *obj;
 	struct CameraSprite *spr;
@@ -818,12 +818,12 @@ void ObjectSystem_UpdateCamera(void)
 	s32					 pos[4];
 	s32					 y;
 	s32					 height;
-	u32					 bits_val;
+	u32					 bitsVal;
 
 	map = *(struct CameraState **)(((u8 *)&gObjectSlots) + 12);
 	cam = &map->x;
-	cam_x = cam[0] & 0xffff0000;
-	cam_z = cam[1] & 0xffff0000;
+	camX = cam[0] & 0xffff0000;
+	camZ = cam[1] & 0xffff0000;
 	sync = *(struct CameraSync **)(((u8 *)&gObjectSlots) + 4);
 	// 絵を置く処理（Render_DecodeFrame）を作業領域へ写す
 	RamCode_LoadSlot(52, Render_DecodeFrame, Render_DecodeFrameCodeSize);
@@ -848,8 +848,8 @@ void ObjectSystem_UpdateCamera(void)
 				frozen->activated = kind;
 				continue;
 			}
-			dx = obj->x - cam_x;
-			dz = obj->z - cam_z;
+			dx = obj->x - camX;
+			dz = obj->z - camZ;
 			top = dz - obj->y;
 			spr = obj->sprite;
 			if (dx > -0x200000 && dx < 0x1100000 && top > -0x200000 && top < 0xe00000)
@@ -865,9 +865,9 @@ void ObjectSystem_UpdateCamera(void)
 						spr->secondPriority = bits;
 					}
 				}
-				bits_val = tile->layer;
-				if (bits_val != 0)
-					obj->layer = bits_val - 1;
+				bitsVal = tile->layer;
+				if (bitsVal != 0)
+					obj->layer = bitsVal - 1;
 				scale[0] = Iwram_MulQ16(obj->scaleX, spr->scale);
 				scale[1] = Iwram_MulQ16(obj->scaleY, spr->scale);
 				pos[0] = dx;

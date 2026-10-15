@@ -53,7 +53,7 @@ typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 
 #define IWRAM_COPY_WORDS ((WordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))
 
-s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
+s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut)
 {
     s32 done;
     s32 selection;
@@ -62,8 +62,8 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
     struct OwnerInventoryState *target;
     struct ItemCommandWork *menu;
     struct ItemDefinition *item;
-    void *source_copy;
-    void *target_copy;
+    void *sourceCopy;
+    void *targetCopy;
     u32 state;
     s32 command;
     s32 result;
@@ -72,8 +72,8 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
     s32 aborted;
     s32 work;
     s32 n;
-    u8 moved_source;
-    u8 moved_target;
+    u8 movedSource;
+    u8 movedTarget;
     s8 stack;
 
     done = 0;
@@ -131,9 +131,9 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             if (command == 0) {
                 if (BattleFx_HasTriggerFar(menu->selectedItem & 0x1ff) != 0) {
                     done = 1;
-                    *owner_out = menu->itemOwner;
-                    *target_out = command;
-                    *item_out = menu->selectedItem & 0x1ff;
+                    *ownerOut = menu->itemOwner;
+                    *targetOut = command;
+                    *itemOut = menu->selectedItem & 0x1ff;
                     ret = 1;
                     break;
                 }
@@ -155,9 +155,9 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 }
                 if (result == -1 || result == 0) {
                     done = 1;
-                    *owner_out = menu->itemOwner;
-                    *target_out = menu->targetOwner;
-                    *item_out = menu->selectedItem & 0x1ff;
+                    *ownerOut = menu->itemOwner;
+                    *targetOut = menu->targetOwner;
+                    *itemOut = menu->selectedItem & 0x1ff;
                     ret = 1;
                 }
             }
@@ -395,12 +395,12 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             }
             source = UnitGetFar(menu->itemOwner);
             target = UnitGetFar(menu->targetOwner);
-            source_copy = MemAlloc(0x14c);
-            target_copy = MemAlloc(0x14c);
-            CopyWords(IWRAM_COPY_WORDS, source_copy, source, 0x14c);
-            CopyWords(IWRAM_COPY_WORDS, target_copy, target, 0x14c);
-            moved_source = 0;
-            while (moved_source <= 29) {
+            sourceCopy = MemAlloc(0x14c);
+            targetCopy = MemAlloc(0x14c);
+            CopyWords(IWRAM_COPY_WORDS, sourceCopy, source, 0x14c);
+            CopyWords(IWRAM_COPY_WORDS, targetCopy, target, 0x14c);
+            movedSource = 0;
+            while (movedSource <= 29) {
                 result = Inventory_RemoveFar(menu->itemOwner, menu->selectedSlot);
                 if (result == 2) {
                     break;
@@ -409,11 +409,11 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                     aborted = 1;
                     break;
                 }
-                moved_source++;
+                movedSource++;
             }
-            moved_source++;
-            moved_target = 0;
-            while (moved_target <= 29) {
+            movedSource++;
+            movedTarget = 0;
+            while (movedTarget <= 29) {
                 if ((menu->targetItem & 0x200) != 0) {
                     item = Item_Get(menu->targetItem & 0x1ff);
                     if ((item->flags & 2) != 0) {
@@ -429,10 +429,10 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                     aborted = 1;
                     break;
                 }
-                moved_target++;
+                movedTarget++;
             }
-            moved_target++;
-            while (moved_source != 0) {
+            movedTarget++;
+            while (movedSource != 0) {
                 result = Inventory_AddItemFar(
                     menu->targetOwner, menu->selectedItem & 0x5ff);
                 if (result == -1) {
@@ -440,9 +440,9 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                     break;
                 }
                 menu->targetSlot = result;
-                moved_source--;
+                movedSource--;
             }
-            while (moved_target != 0) {
+            while (movedTarget != 0) {
                 result = Inventory_AddItemFar(
                     menu->itemOwner, menu->targetItem & 0x5ff);
                 if (result == -1) {
@@ -450,12 +450,12 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                     break;
                 }
                 menu->selectedSlot = result;
-                moved_target--;
+                movedTarget--;
             }
             WaitFrames(1);
             if (aborted == 1) {
-                CopyWords(IWRAM_COPY_WORDS, source, source_copy, 0x14c);
-                CopyWords(IWRAM_COPY_WORDS, target, target_copy, 0x14c);
+                CopyWords(IWRAM_COPY_WORDS, source, sourceCopy, 0x14c);
+                CopyWords(IWRAM_COPY_WORDS, target, targetCopy, 0x14c);
                 RenderOutput_ClearListFar(menu->infoWindow);
                 InventoryMenu_ShowModalMessage((s32)&MsgCannotTrade, 15, 14);
             } else {
@@ -493,8 +493,8 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                     }
                 }
             }
-            MemFree(target_copy);
-            MemFree(source_copy);
+            MemFree(targetCopy);
+            MemFree(sourceCopy);
             Event_ClearInvalidPackedValuesFar();
             state = 0;
             break;

@@ -8,10 +8,10 @@
 void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s32 *scale, s32 mode)
 {
     s32 matrix;
-    u32 half_width = sprite->width >> 1;
-    u32 half_height = sprite->height >> 1;
+    u32 halfWidth = sprite->width >> 1;
+    u32 halfHeight = sprite->height >> 1;
     s32 size = 8;
-    s32 size_half = 4;
+    s32 sizeHalf = 4;
     s32 affine;
     s32 scaleX = *scale++;
     s32 px = *pos++;
@@ -47,10 +47,10 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s3
     }
     if (scaleX > 0x10000 || scaleY > 0x10000) {
         affine = 3;
-        half_width <<= 1;
-        half_height <<= 1;
+        halfWidth <<= 1;
+        halfHeight <<= 1;
         size = 16;
-        size_half = 8;
+        sizeHalf = 8;
     }
     if (py <= -0x640000) {
         slot = 1;
@@ -59,7 +59,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s3
         slot = (pz >> 17) + 10;
         depth = 2;
     }
-    y = ((pz - pw) >> 16) - size_half;
+    y = ((pz - pw) >> 16) - sizeHalf;
     if (sprite->flags & 1) {
         if (y < 160) {
             part = &sprite->part[1];
@@ -70,8 +70,8 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s3
             Runtime_PushSlotEntry(part, depth);
         }
     }
-    x = (px >> 16) - half_width + ((sprite->offsetX * scaleX + 0xffff) >> 16);
-    y = ((pz - py) >> 16) - half_height
+    x = (px >> 16) - halfWidth + ((sprite->offsetX * scaleX + 0xffff) >> 16);
+    y = ((pz - py) >> 16) - halfHeight
         - ((scaleY * ((sprite->height >> 1) - sprite->offsetY) + 0xffff) >> 16);
     if (x < 240 && y < 160) {
         part = &sprite->part[0];

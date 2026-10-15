@@ -139,7 +139,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect);
 
 void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
 {
-    s8 *object_pointer;
+    s8 *objectPointer;
     struct {
         s32 x;
         s32 y;
@@ -147,19 +147,19 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     } position;
     s32 value;
     s32 remaining;
-    struct PhasedRadialSequenceObject *source_object;
-    void *effect_slots;
-    struct PhasedRadialSequenceObject *target_object;
+    struct PhasedRadialSequenceObject *sourceObject;
+    void *effectSlots;
+    struct PhasedRadialSequenceObject *targetObject;
     void *slot;
-    s8 *slot_state;
+    s8 *slotState;
 
-    source_object = (struct PhasedRadialSequenceObject *)Object_GetById(arg);
-    target_object = (struct PhasedRadialSequenceObject *)Object_GetById(gPartyState.currentOwner);
-    if (source_object == NULL)
+    sourceObject = (struct PhasedRadialSequenceObject *)Object_GetById(arg);
+    targetObject = (struct PhasedRadialSequenceObject *)Object_GetById(gPartyState.currentOwner);
+    if (sourceObject == NULL)
         return;
 
     BattleFx_InitializeSlots();
-    effect_slots = gEffectWork;
+    effectSlots = gEffectWork;
     Shop_RestoreSceneTilesFar(0x201090);
     WaitFrames(30);
     ObjectMotion_ArmCallback(arg, 0x4000, 0);
@@ -172,25 +172,25 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     Motion_SetVarCbAndRefresh(arg, 1);
     WaitFrames(20);
     Audio_PlayCue(140);
-    source_object->callback = (void *)BattleFx_SpinUpAngle;
-    source_object->timer = 0;
+    sourceObject->callback = (void *)BattleFx_SpinUpAngle;
+    sourceObject->timer = 0;
     WaitFrames(80);
-    source_object->callback = (void *)BattleFx_ShrinkObjectAndDestroySlow;
-    Object_SetMode((struct ObjectRuntime *)source_object, 3);
+    sourceObject->callback = (void *)BattleFx_ShrinkObjectAndDestroySlow;
+    Object_SetMode((struct ObjectRuntime *)sourceObject, 3);
 
-    position.x = source_object->x;
-    position.y = source_object->y;
-    position.z = source_object->z;
+    position.x = sourceObject->x;
+    position.y = sourceObject->y;
+    position.z = sourceObject->z;
     Camera_WorldToScreen(&position);
 
-    slot = (u8 *)effect_slots + 88;
+    slot = (u8 *)effectSlots + 88;
     remaining = 23;
     do {
         EffectSlot_Initialize(slot, 284, position.x, position.z);
         EffectSlot_SetCallback(slot, (void *)BattleEffect_UpdatePhasedRadialParticle);
         EffectSlot_SetObjectMode(slot, 7);
-        object_pointer = slot;
-        value = *(s32 *)object_pointer;
+        objectPointer = slot;
+        value = *(s32 *)objectPointer;
         ObjectGroup_SetChildValueUnlessFifteenFar(value, 10);
         value = Random16() / 3 + 0x10000;
         ((struct EffectSlot *)slot)->scaleY = value;
@@ -205,45 +205,45 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     WaitFrames(20);
     Object_SetMode(Object_GetById(gPartyState.currentOwner), 28);
     {
-        s32 next_state;
+        s32 nextState;
 
         WaitFrames(20);
-        next_state = 2;
-        slot_state = effect_slots;
-        slot_state += 152;
+        nextState = 2;
+        slotState = effectSlots;
+        slotState += 152;
         remaining = 23;
         do {
-            if (slot_state[5] != 0)
-                slot_state[0] = next_state;
+            if (slotState[5] != 0)
+                slotState[0] = nextState;
             remaining--;
-            slot_state += 72;
+            slotState += 72;
         } while (remaining >= 0);
     }
 
     WaitFrames(60);
-    target_object->callback = (void *)BattleFx_SetObjectAlternatingWords;
+    targetObject->callback = (void *)BattleFx_SetObjectAlternatingWords;
     WaitFrames(100);
 
     {
-        s32 next_state;
+        s32 nextState;
 
-        slot_state = effect_slots;
-        next_state = 5;
-        slot_state += 152;
+        slotState = effectSlots;
+        nextState = 5;
+        slotState += 152;
         remaining = 23;
         do {
-            if (slot_state[5] != 0)
-                slot_state[0] = next_state;
+            if (slotState[5] != 0)
+                slotState[0] = nextState;
             remaining--;
-            slot_state += 72;
+            slotState += 72;
         } while (remaining >= 0);
     }
 
     WaitFrames(10);
     slot = NULL;
-    target_object->callback = slot;
-    target_object->scaleX = 0x10000;
-    target_object->scaleY = 0x10000;
+    targetObject->callback = slot;
+    targetObject->scaleX = 0x10000;
+    targetObject->scaleY = 0x10000;
     WaitFrames(30);
     Shop_InitEffectFar();
     BattleFx_ClearActiveSlotsAndScheduleUpdates();

@@ -107,7 +107,7 @@ void Func_02000190(s32 unused, s32 id)
 {
     struct ObjectRuntime *leader;
     struct ObjectRuntime *object;
-    s32 leader_x;
+    s32 leaderX;
     s32 x;
     s32 z;
 
@@ -115,12 +115,12 @@ void Func_02000190(s32 unused, s32 id)
     object = Object_GetById(id);
     object->motionFlags = 0;
     if (id == 10) {
-        leader_x = leader->x >> 20;
+        leaderX = leader->x >> 20;
         x = object->x >> 20;
         z = object->z >> 20;
-        if (x == 34 && z == 32 && leader_x == 33)
+        if (x == 34 && z == 32 && leaderX == 33)
             Value4(Func_02004c7c, 0x2100000, 0x2000000, 2, 255);
-        if (x == 33 && z == 32 && leader_x == 32)
+        if (x == 33 && z == 32 && leaderX == 32)
             Value4(Func_02004c7c, 0x2000000, 0x2000000, 2, 255);
     }
 }

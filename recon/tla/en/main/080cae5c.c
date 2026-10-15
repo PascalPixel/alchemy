@@ -16,7 +16,7 @@ void ObjectTable_Restore(void)
     struct ObjectRuntime *copy = gSnapshotObjects;
     u8 *indices = (u8 *)gSnapshotObjects - 32;
     u8 *frames = (u8 *)&gSnapshotObjects[32];
-    u8 *next_frames = frames + 32;
+    u8 *nextFrames = frames + 32;
     u8 *priorities = frames + 64;
     s32 count;
     struct ObjectRuntime *object;
@@ -38,7 +38,7 @@ void ObjectTable_Restore(void)
             Dma_Set(copy, object, 0x84000000 | (sizeof(struct ObjectRuntime) / 4), (volatile u32 *)0x040000d4);
             object->animation = sprite;
             Object_SetMode(object, *frames);
-            ObjectDispatch_SetSingleChildFlagsFar(object, *next_frames);
+            ObjectDispatch_SetSingleChildFlagsFar(object, *nextFrames);
             priority = *priorities;
             sprite->priority = priority;
             sprite->partPriority = priority;
@@ -56,7 +56,7 @@ void ObjectTable_Restore(void)
         }
         copy++;
         frames++;
-        next_frames++;
+        nextFrames++;
         count++;
         priorities++;
         if (count > 31)

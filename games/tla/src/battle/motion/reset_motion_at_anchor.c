@@ -35,14 +35,14 @@ struct BattleObj *BattleObjGet(s32 objectId)
     return &slots[work->placement[index]];
 }
 
-void ObjMotRst(s32 slot_id)
+void ObjMotRst(s32 slotId)
 {
     s32 z;
     s32 zero;
     struct BattleObj *slot;
     struct MotionObject *object;
 
-    slot = BattleObjGet(slot_id);
+    slot = BattleObjGet(slotId);
     object = slot->object;
     zero = 0;
     object->acceleration = 0x20000;

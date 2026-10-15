@@ -79,7 +79,7 @@ s32 Inn_CheckIn(s32 mode, s32 objectId)
     struct InnObject *object;
     s32 win;
     s32 amount;
-    s32 message_base;
+    s32 messageBase;
 
     Shop_InitializeCursorWork();
     state = gMenuWork;
@@ -93,22 +93,22 @@ s32 Inn_CheckIn(s32 mode, s32 objectId)
 
     amount = Inn_RoomPrice(mode);
     UiWork_PushValueSlotFar(amount, 5);
-    message_base = (s32)&MsgInnWelcome;
-    UiMessage_ShowAndWait(message_base);
+    messageBase = (s32)&MsgInnWelcome;
+    UiMessage_ShowAndWait(messageBase);
     state->window = UiWindow_CreateFar(0, 16, MESSAGE_WINDOW_ROWS, 4, 2);
     Shop_DrawMoney();
 
     if (UiMessage_ShowChoice(0) != 0) {
-        UiMessage_ShowAndWait(message_base
+        UiMessage_ShowAndWait(messageBase
             + (INN_MESSAGE_GOODBYE - INN_MESSAGE_WELCOME));
         UiWork_FinalizeFar(state->window, 2);
     } else if ((u32)amount > gGameState.limit) {
-        UiMessage_ShowAndWait(message_base
+        UiMessage_ShowAndWait(messageBase
             + (INN_MESSAGE_NOT_ENOUGH_COINS - INN_MESSAGE_WELCOME));
         UiWork_FinalizeFar(state->window, 2);
     } else {
         UiWork_FinalizeFar(state->window, 2);
-        UiMessage_ShowAndWait(message_base
+        UiMessage_ShowAndWait(messageBase
             + (INN_MESSAGE_STAY_COMPLETE - INN_MESSAGE_WELCOME));
         UiWork_FinalizeFar(win, 2);
         Inn_PlaySleep(amount);
@@ -116,7 +116,7 @@ s32 Inn_CheckIn(s32 mode, s32 objectId)
         object = Object_GetByIdFar(objectId);
         state->resourceId = *object->component->resourceId;
         win = UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
-        UiMessage_ShowAndWait(message_base
+        UiMessage_ShowAndWait(messageBase
             + (INN_MESSAGE_REST_COMPLETE - INN_MESSAGE_WELCOME));
     }
 

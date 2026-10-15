@@ -11,8 +11,8 @@ s32 Func_080d5bec(s32 objectId, s32 *position)
 {
     struct ObjectRuntime *object = ObjectTable_Get(objectId);
     s32 *camera;
-    s32 camera_x;
-    s32 camera_z;
+    s32 cameraX;
+    s32 cameraZ;
     s32 x;
     s32 z;
 
@@ -20,10 +20,10 @@ s32 Func_080d5bec(s32 objectId, s32 *position)
         return -1;
     /* FAKEMATCH: the view position read as two adjacent words through one pointer, as in The Broken Seal, so both loads share one base; read as map->viewX and map->viewZ it differs 26 (64 instructions for 62). */
     camera = &Ram_HeapSlots->mapWork->viewX;
-    camera_x = camera[0] & 0xffff0000;
-    camera_z = camera[1] & 0xffff0000;
-    x = object->x - camera_x;
-    z = object->z - camera_z - object->y;
+    cameraX = camera[0] & 0xffff0000;
+    cameraZ = camera[1] & 0xffff0000;
+    x = object->x - cameraX;
+    z = object->z - cameraZ - object->y;
     *position++ = x / 0x10000;
     *position = z / 0x10000;
     if ((object->animationKind & 15) == 1)

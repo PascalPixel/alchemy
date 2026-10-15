@@ -36,7 +36,7 @@ void Owner_InitRecords(void)
 {
     struct OwnerInventoryState *state;
     struct OwnerStart *start;
-    u16 name_buf[16];
+    u16 nameBuf[16];
     s32 owner;
     s32 *remote = gData_080b2340;
     s32 i;
@@ -45,17 +45,17 @@ void Owner_InitRecords(void)
 
     for (owner = 0; owner <= 7; owner++) {
         state = UnitGet(owner);
-        Ui_AdjustValueWithoutLimitFar(owner + (s32)MsgCharacterName, name_buf);
+        Ui_AdjustValueWithoutLimitFar(owner + (s32)MsgCharacterName, nameBuf);
         name = ((struct OwnerName *)state)->name;
-        name[0] = name_buf[0];
+        name[0] = nameBuf[0];
         i = 0;
-        if (name_buf[0] != 0) {
+        if (nameBuf[0] != 0) {
             do {
                 i++;
                 if (i > 13)
                     break;
-                name[i] = name_buf[i];
-            } while (name_buf[i] != 0);
+                name[i] = nameBuf[i];
+            } while (nameBuf[i] != 0);
         }
         ((struct OwnerName *)state)->nameFlags = 0;
     }

@@ -40,10 +40,10 @@ u32 Party_GetAverageLevel(void)
 
 const u8 *Owner_GetRecord(s32 selector)
 {
-    u32 record_index;
+    u32 recordIndex;
 
-    record_index = selector - 8;
-    if (record_index > 999U)
-        record_index = 0;
-    return &gEnemy_DefinitionTable[record_index * 76];
+    recordIndex = selector - 8;
+    if (recordIndex > 999U)
+        recordIndex = 0;
+    return &gEnemy_DefinitionTable[recordIndex * 76];
 }

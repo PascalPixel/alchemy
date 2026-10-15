@@ -32,51 +32,51 @@ void *Resource_GetTableEntry(s32 index)
     return Resource_DirectoryTable[index];
 }
 
-void PackedTable_AdjustMarkedOffsets(u16 *entries, s32 byte_length)
+void PackedTable_AdjustMarkedOffsets(u16 *entries, s32 byteLength)
 {
     s32 entryCount;
-    s32 entry_index;
+    s32 entryIndex;
 
-    entryCount = byte_length >> 1;
-    entry_index = 1;
+    entryCount = byteLength >> 1;
+    entryIndex = 1;
     entries++;
-    if (entry_index < entryCount) {
-        u32 next_marker_mask;
-        u32 current_marker_mask;
-        u32 payload_mask;
-        next_marker_mask = 0xf800;
-        payload_mask = 0x7ff;
-        current_marker_mask = 0xf000;
+    if (entryIndex < entryCount) {
+        u32 nextMarkerMask;
+        u32 currentMarkerMask;
+        u32 payloadMask;
+        nextMarkerMask = 0xf800;
+        payloadMask = 0x7ff;
+        currentMarkerMask = 0xf000;
         entries -= 2;
         do {
-            u16 current_entry;
-            u16 next_entry;
-            u32 next_marker_bits;
-            u32 current_marker_bits;
+            u16 currentEntry;
+            u16 nextEntry;
+            u32 nextMarkerBits;
+            u32 currentMarkerBits;
 
-            next_entry = entries[2];
-            next_marker_bits = next_entry & next_marker_mask;
+            nextEntry = entries[2];
+            nextMarkerBits = nextEntry & nextMarkerMask;
             entries++;
-            if (next_marker_bits == next_marker_mask) {
-                current_entry = entries[0];
-                current_marker_bits = current_entry & next_marker_bits;
-                if (current_marker_bits == current_marker_mask) {
-                    u32 packed_offset;
-                    u32 adjusted_current;
-                    u32 adjusted_next;
+            if (nextMarkerBits == nextMarkerMask) {
+                currentEntry = entries[0];
+                currentMarkerBits = currentEntry & nextMarkerBits;
+                if (currentMarkerBits == currentMarkerMask) {
+                    u32 packedOffset;
+                    u32 adjustedCurrent;
+                    u32 adjustedNext;
 
-                    packed_offset = (((current_entry & payload_mask) << 12)
-                        | ((next_entry & payload_mask) * 2)) - (entry_index * 2);
-                    adjusted_current = ((packed_offset >> 12) & payload_mask)
-                        | current_marker_bits;
-                    adjusted_next = ((packed_offset >> 1) & payload_mask)
-                        | next_marker_bits;
-                    entries[0] = adjusted_current;
-                    entries[1] = adjusted_next;
+                    packedOffset = (((currentEntry & payloadMask) << 12)
+                        | ((nextEntry & payloadMask) * 2)) - (entryIndex * 2);
+                    adjustedCurrent = ((packedOffset >> 12) & payloadMask)
+                        | currentMarkerBits;
+                    adjustedNext = ((packedOffset >> 1) & payloadMask)
+                        | nextMarkerBits;
+                    entries[0] = adjustedCurrent;
+                    entries[1] = adjustedNext;
                 }
             }
-            entry_index++;
-        } while (entry_index < entryCount);
+            entryIndex++;
+        } while (entryIndex < entryCount);
     }
 }
 

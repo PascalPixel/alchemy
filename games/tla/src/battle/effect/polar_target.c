@@ -80,7 +80,7 @@ void ObjectGroup_ApplyRandomChildValues(struct ObjectRuntime *owner)
 {
     s32 state;
     struct CompositeAnimation *target;
-    s32 initial_count;
+    s32 initialCount;
     s32 count;
     struct AnimationEntry **entry;
     struct AnimationEntry *current;
@@ -91,11 +91,11 @@ void ObjectGroup_ApplyRandomChildValues(struct ObjectRuntime *owner)
     if (state == 1) {
         target = owner->animation;
         if (target != 0 && (target->displayFlags & state) == 0) {
-            initial_count = target->count;
-            if (initial_count != 0) {
+            initialCount = target->count;
+            if (initialCount != 0) {
                 entry = target->entries;
                 frame = gFrameCount;
-                count = initial_count;
+                count = initialCount;
                 do {
                     current = *entry++;
                     value = frame % 6;

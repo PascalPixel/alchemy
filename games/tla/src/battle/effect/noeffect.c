@@ -14,21 +14,21 @@ void Animation_ApplyChildArgumentFar(void *, s32);
 void Func_08152404(s32 entryCount, s32 kind, u32 variant)
 {
     struct BattleEffectWork *work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-    s32 entry_index = 0;
+    s32 entryIndex = 0;
 
     if (entryCount == 0)
         return;
     do {
         struct FieldSprite *object = (struct FieldSprite *)ResourceObject_CreateFar(kind);
 
-        work->objects[entry_index] = object;
+        work->objects[entryIndex] = object;
         if (object != NULL) {
             object->nextFrame = 0;
-            Animation_ApplyChildArgumentFar(object, entry_index);
-            ((struct FieldSprite *)work->objects[entry_index])->priority = variant;
+            Animation_ApplyChildArgumentFar(object, entryIndex);
+            ((struct FieldSprite *)work->objects[entryIndex])->priority = variant;
         }
-        entry_index++;
-    } while (entry_index != entryCount);
+        entryIndex++;
+    } while (entryIndex != entryCount);
 }
 
 void BattleFx_RunNoEffect(void)

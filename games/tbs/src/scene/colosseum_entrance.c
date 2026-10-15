@@ -725,11 +725,11 @@ static void EV13_TOUCH(void)
 
 static void EV17_TALK_1(void)
 {
-	s32 flag_8a4;
+	s32 flag8a4;
 
 	Engine_EventBegin();
-	flag_8a4 = GameFlag_IsSet(0x8a4);
-	if (flag_8a4 != 0)
+	flag8a4 = GameFlag_IsSet(0x8a4);
+	if (flag8a4 != 0)
 	{
 		Engine_ActorFaceEachOther(RECORD_17, ACTOR_PARTY_LEADER, 40);
 		Engine_EventSetMessage(MsgColosseumHavePerfectTechniquesLikeThose);
@@ -741,7 +741,7 @@ static void EV17_TALK_1(void)
 		Engine_ActorStartRepeatedMotion(RECORD_17, 2);
 		Engine_EventSetMessage(MsgColosseumSilence);
 		Event_ShowMessage(RECORD_17, 0);
-		*(((u8 *)Engine_EventGetViewCenter()) + 85) = flag_8a4;
+		*(((u8 *)Engine_EventGetViewCenter()) + 85) = flag8a4;
 		Engine_TaskWait(1);
 		Camera_SetSpeed(0x66666, 0xcccc);
 		Camera_MoveTo(0x21c0000, -1, 0xd00000, 1);

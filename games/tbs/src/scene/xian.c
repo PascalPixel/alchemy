@@ -130,7 +130,7 @@ static void SceneEffect_SpawnPeriodicEffect(void)
 #include "common/object_distance.h"
 
 static s32 SceneActor_UpdateTracking(
-	struct MapActor *actor, struct MapActor *target, s32 distance_limit, s32 force_tracking)
+	struct MapActor *actor, struct MapActor *target, s32 distanceLimit, s32 forceTracking)
 {
 	s32 result = 0;
 
@@ -140,7 +140,7 @@ static s32 SceneActor_UpdateTracking(
 		return 1;
 	}
 
-	if (FixedPoint_Distance(&target->x, &actor->x) < distance_limit || force_tracking != 0)
+	if (FixedPoint_Distance(&target->x, &actor->x) < distanceLimit || forceTracking != 0)
 	{
 		u16 angle = ArcTan2(target->z - actor->z, target->x - actor->x);
 		s32 prev = (angle - 0x1000) & 0xf000;
@@ -148,7 +148,7 @@ static s32 SceneActor_UpdateTracking(
 		s32 facing = angle & 0xf000;
 		s32 heading = actor->heading & 0xf000;
 
-		if (facing == heading || next == heading || prev == heading || force_tracking != 0)
+		if (facing == heading || next == heading || prev == heading || forceTracking != 0)
 		{
 			actor->trackingState = 1;
 			Object_SetMode(actor, 1);

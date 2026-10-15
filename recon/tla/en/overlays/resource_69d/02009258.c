@@ -25,7 +25,7 @@ void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 veloci
     struct FieldEffect *effect;
     struct FieldSprite *sprite;
     const s32 *script;
-    u32 table_offset;
+    u32 tableOffset;
 
     if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
         effect = (struct FieldEffect *)Func_02001dc0(options->type, x, y, z);
@@ -36,8 +36,8 @@ void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 veloci
 
     sprite = effect->sprite;
     Func_02001da8((struct FieldActor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-    table_offset = (flags & EFFECT_SCRIPT_MASK) << 2;
-    Effect_SetScript((struct FieldActor *)effect, gData_0200270c[table_offset >> 2]);
+    tableOffset = (flags & EFFECT_SCRIPT_MASK) << 2;
+    Effect_SetScript((struct FieldActor *)effect, gData_0200270c[tableOffset >> 2]);
     effect->motionFlags = 0;
     ObjectDispatch_SetSingleChildFlags((struct FieldActor *)effect, 0);
     effect->update = BattleFx_UpdateObjectMotionScaleAndLinkedAngle;
@@ -65,7 +65,7 @@ void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 veloci
         s32 target;
         s32 steps;
 
-        script = gData_0200270c[table_offset >> 2];
+        script = gData_0200270c[tableOffset >> 2];
         target = options->targetScaleX;
         steps = script[3];
         if ((flags & EFFECT_USE_START_SCALE) != 0) {

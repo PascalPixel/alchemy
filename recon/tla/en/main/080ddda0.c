@@ -46,7 +46,7 @@ void BattleEffect_RunTargetedItemBreak(void)
     s32 position[3];
     s32 x, y, z;
     s32 index;
-    s32 start_y;
+    s32 startY;
 
     scene = Ram_HeapSlots->effectWork;
     child = scene->child;
@@ -81,15 +81,15 @@ void BattleEffect_RunTargetedItemBreak(void)
     Audio_PlayCue(130);
     ((struct EffectChild *)child)->flag = 4;
 
-    start_y = ((struct EffectChild *)child)->y;
+    startY = ((struct EffectChild *)child)->y;
     if (anchors[0] != 0 && anchors[1] != 0 &&
-        start_y <= start_y + 0x200000) {
+        startY <= startY + 0x200000) {
         do {
             *(s32 *)((u8 *)anchors[0] + 0xc) += 0x4000;
             *(s32 *)((u8 *)anchors[1] + 0xc) += 0x4000;
             ((struct EffectChild *)child)->y += 0x4000;
             WaitFrames(1);
-        } while (((struct EffectChild *)child)->y <= start_y + 0x200000);
+        } while (((struct EffectChild *)child)->y <= startY + 0x200000);
     }
 
     UpdateRisingParticleBurst(anchors[0]);

@@ -30,14 +30,14 @@ void Func_08157530(s32 id, s32 targetId, s32 frames, s32 rate)
     struct BattleObj *targetSlot = GetBattleObjectSlotFar(targetId);
     struct ObjectRuntime *obj = (struct ObjectRuntime *)slot->object;
     struct ObjectRuntime *target = (struct ObjectRuntime *)targetSlot->object;
-    s32 diff_x = target->x - obj->x;
+    s32 diffX = target->x - obj->x;
     s32 startX = obj->x;
-    s32 dx = rate * diff_x / 100;
-    s32 diff_z = target->z - obj->z;
-    s32 start_z = obj->z;
-    s32 dz = rate * diff_z / 100;
+    s32 dx = rate * diffX / 100;
+    s32 diffZ = target->z - obj->z;
+    s32 startZ = obj->z;
+    s32 dz = rate * diffZ / 100;
     s32 x = startX + dx;
-    s32 z = start_z + dz;
+    s32 z = startZ + dz;
     s32 sx = dx >> 8; // the distance in 1/256 pixels
     s32 sz = dz >> 8;
     s32 dist;

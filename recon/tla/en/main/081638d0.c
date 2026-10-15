@@ -41,8 +41,8 @@ void Func_081638d0(struct BattleEffectArgument *effect)
 {
     struct BattleFxWork *work;
     void *canvas;
-    s32 screen_x[3];
-    s32 screen_y[3];
+    s32 screenX[3];
+    s32 screenY[3];
     DrawRectangle draw[2];
     s32 x;
     s32 y;
@@ -66,7 +66,7 @@ void Func_081638d0(struct BattleEffectArgument *effect)
     work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
     canvas = Ram_HeapSlots->battleFxWork[1];
     BattleFx_BeginCanvasLayer(0x2000);
-    Func_0815585c(effect, (effect->side << 4) | 70, screen_x, screen_y);
+    Func_0815585c(effect, (effect->side << 4) | 70, screenX, screenY);
     {
         register u16 value __asm__("r3");
 

@@ -15,11 +15,11 @@ void Vector_AddPolarOffset(s32, s32, struct Output_08097f80 *);
 void BattleFx_UpdateOrbitAndReturn(struct EffectSlot *effect)
 {
     struct Output_08097f80 position;
-    s8 *state_pointer = &effect->state;
+    s8 *statePointer = &effect->state;
     s32 state;
 
 next_state:
-    state = *state_pointer;
+    state = *statePointer;
     if (state == 0) {
         u32 angle;
 
@@ -32,13 +32,13 @@ next_state:
         effect->acceleration = 0x40000;
         effect->maxSpeed = 0x40000;
         effect->flag42 = state;
-        (*state_pointer)++;
+        (*statePointer)++;
         return;
     }
 
     if (state == 1) {
         if (BattleFx_HasReachedTarget(effect) == 0) {
-            (*state_pointer)++;
+            (*statePointer)++;
             goto next_state;
         }
         return;
@@ -53,7 +53,7 @@ next_state:
             effect->maxTurnStep = value;
         }
         effect->flag42 = 1;
-        (*state_pointer)++;
+        (*statePointer)++;
         return;
     }
 

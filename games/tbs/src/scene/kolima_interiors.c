@@ -167,7 +167,7 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
 
 	struct EventWork *work = gEventWork;
 	s32				  id;
-	s16				 *selection_p;
+	s16				 *selectionP;
 	u32				  selection;
 
 	work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -186,8 +186,8 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
 
 	{
 		s32 off = 450;
-		selection_p = (s16 *)((u8 *)&gGameState + off);
-		selection = *(u16 *)selection_p;
+		selectionP = (s16 *)((u8 *)&gGameState + off);
+		selection = *(u16 *)selectionP;
 	}
 
 	if ((s16)selection == 7)

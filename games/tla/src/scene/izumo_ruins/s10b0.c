@@ -13,7 +13,7 @@ u8 *Func_020010b0(void)
 
 // Starts the effect for this scene's room, then, for a first argument of 1,
 // runs Func_02000f30 on the effect work's object.
-void Func_020010f0(s32 a_arg, s32 b)
+void Func_020010f0(s32 aArg, s32 b)
 {
     struct IzumoRuinsEffectWork *work = Ram_HeapSlots->effectWork;
     struct PartyState *party = &gPartyState;
@@ -24,7 +24,7 @@ void Func_020010f0(s32 a_arg, s32 b)
     scene = party->scene;
     {
         /* FAKEMATCH: the first argument pinned to r5 after the scene read stays after it, as in ⚓️; as the parameter it is copied above the barrier (differ 2). */
-        register s32 a asm("r5") = a_arg;
+        register s32 a asm("r5") = aArg;
 
         if (scene == (s32)&SceneId_Ov67FRoom1)
             Func_020000a4(gData_02001674, a, b);

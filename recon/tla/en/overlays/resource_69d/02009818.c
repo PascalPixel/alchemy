@@ -21,10 +21,10 @@ void Func_02001df0(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 des
 void Func_02001818(struct LightSpot *spot)
 {
     struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
-    s16 flag_x = spot->x & 64;
-    s32 x = (object->x >> 20) | flag_x;
-    s16 flag_z = spot->z & 64;
-    s32 z = (object->z >> 20) | flag_z;
+    s16 flagX = spot->x & 64;
+    s32 x = (object->x >> 20) | flagX;
+    s16 flagZ = spot->z & 64;
+    s32 z = (object->z >> 20) | flagZ;
 
     Func_02001790();
     Func_02001f08(161);

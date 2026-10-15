@@ -12,38 +12,38 @@
 
 void SerialRuntime_HandleTransferInterrupt(void)
 {
-    struct SerialRuntime *send_state;
-    struct SerialRuntime *receive_state;
-    struct SerialRuntime *tail_state;
+    struct SerialRuntime *sendState;
+    struct SerialRuntime *receiveState;
+    struct SerialRuntime *tailState;
     u16 recv[4];
-    volatile u32 *sio_control;
+    volatile u32 *sioControl;
     s32 channel;
 
-    sio_control = &REG_SIOCNT;
+    sioControl = &REG_SIOCNT;
     *(u64 *)recv = *(volatile u64 *)REG_SIODATA32;
-    send_state = &gSerialRuntime;
+    sendState = &gSerialRuntime;
     {
         s32 index;
-        u8 isParent = (*sio_control << 25) >> 31;
+        u8 isParent = (*sioControl << 25) >> 31;
 
-        index = send_state->sendIndex;
+        index = sendState->sendIndex;
         asm volatile("");
-        send_state->isParent = isParent;
+        sendState->isParent = isParent;
         if (index == -1) {
-            u32 idle_word = 0xfefe;
+            u32 idleWord = 0xfefe;
             u16 *swap;
 
-            ((volatile u16 *)sio_control)[1] = idle_word;
-            swap = send_state->sendBuffer[1];
-            send_state->sendBuffer[1] = send_state->sendBuffer[0];
-            send_state->sendBuffer[0] = swap;
+            ((volatile u16 *)sioControl)[1] = idleWord;
+            swap = sendState->sendBuffer[1];
+            sendState->sendBuffer[1] = sendState->sendBuffer[0];
+            sendState->sendBuffer[0] = swap;
         } else if (index >= 0) {
-            ((volatile u16 *)sio_control)[1] = send_state->sendBuffer[1][index];
+            ((volatile u16 *)sioControl)[1] = sendState->sendBuffer[1][index];
         }
     }
-    receive_state = &gSerialRuntime;
-    if (receive_state->sendIndex <= 14)
-        receive_state->sendIndex++;
+    receiveState = &gSerialRuntime;
+    if (receiveState->sendIndex <= 14)
+        receiveState->sendIndex++;
 
     channel = 0;
 receive_loop:
@@ -51,32 +51,32 @@ receive_loop:
         s32 receiveIndex;
         u16 *incoming;
 
-        if (recv[channel] == 0xfefe && receive_state->receiveIndex[channel] > 13) {
-            receive_state->receiveIndex[channel] = -1;
+        if (recv[channel] == 0xfefe && receiveState->receiveIndex[channel] > 13) {
+            receiveState->receiveIndex[channel] = -1;
         } else {
-            receiveIndex = receive_state->receiveIndex[channel];
-            incoming = receive_state->incomingBuffer[channel];
+            receiveIndex = receiveState->receiveIndex[channel];
+            incoming = receiveState->incomingBuffer[channel];
             incoming[receiveIndex] = recv[channel];
             if (receiveIndex == 13) {
-                u16 *swap = receive_state->readyBuffer[channel];
+                u16 *swap = receiveState->readyBuffer[channel];
 
-                receive_state->readyBuffer[channel] = incoming;
-                receive_state->incomingBuffer[channel] = swap;
-                receive_state->channelFlags[channel] |= 1;
+                receiveState->readyBuffer[channel] = incoming;
+                receiveState->incomingBuffer[channel] = swap;
+                receiveState->channelFlags[channel] |= 1;
             }
         }
     }
-    tail_state = &gSerialRuntime;
-    if (tail_state->isParent != 0)
-        tail_state->channelFlags[channel] |= 2;
-    if (tail_state->receiveIndex[channel] <= 14)
-        tail_state->receiveIndex[channel]++;
+    tailState = &gSerialRuntime;
+    if (tailState->isParent != 0)
+        tailState->channelFlags[channel] |= 2;
+    if (tailState->receiveIndex[channel] <= 14)
+        tailState->receiveIndex[channel]++;
     channel++;
-    receive_state = tail_state;
+    receiveState = tailState;
     if (channel <= 1)
         goto receive_loop;
 
-    if (tail_state->mode == 8) {
+    if (tailState->mode == 8) {
         REG_TM3CNT_H = 0;
         asm volatile("");
         REG_SIOCNT16 |= 0x80;

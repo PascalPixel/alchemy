@@ -12,11 +12,11 @@ extern u8 gGameFlagBytes[];
 
 void GameFlag_SetNibble(s32 flag, s32 value)
 {
-    s32 field_mask = 0xF;
+    s32 fieldMask = 0xF;
     s32 shift = 4 & flag;
-    s32 mask = field_mask << shift;
+    s32 mask = fieldMask << shift;
     u8 *bytes = gGameFlagBytes;
 
     flag = ((u32)flag << 0x14) >> 0x17;
-    bytes[flag] = (bytes[flag] & ~mask) | ((value & field_mask) << shift);
+    bytes[flag] = (bytes[flag] & ~mask) | ((value & fieldMask) << shift);
 }

@@ -37,16 +37,16 @@ s32 PartyInventory_HasSpace(void)
     s16 owners[10];
     s32 ownerCount;
     s32 ownerIndex;
-    s16 *owner_cursor;
+    s16 *ownerCursor;
 
     if (Inventory_Count(gPartyState.currentOwner) != 15)
         return 1;
     ownerCount = Party_ListActiveOwners(owners);
-    owner_cursor = owners;
+    ownerCursor = owners;
     ownerIndex = 0;
     if (ownerIndex < ownerCount) {
         do {
-            if (Inventory_Count(*owner_cursor++) != 15)
+            if (Inventory_Count(*ownerCursor++) != 15)
                 return 1;
             ownerIndex++;
         } while (ownerIndex < ownerCount);
@@ -59,13 +59,13 @@ s32 PartyInventory_CountFreeSlots(void)
     s16 owners[10];
     s32 ownerCount = Party_ListActiveOwners(owners);
     s32 cnt = 0;
-    s16 *owner_cursor = owners;
+    s16 *ownerCursor = owners;
 
     if (cnt < ownerCount) {
         s32 n = ownerCount;
 
         do {
-            cnt = cnt - Inventory_Count(*owner_cursor++) + 15;
+            cnt = cnt - Inventory_Count(*ownerCursor++) + 15;
             n--;
         } while (n != 0);
     }

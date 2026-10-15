@@ -10,9 +10,9 @@
 #include "owner_state.h"
 
 
-s32 OwnerAction_Add(s32 state_index, s32 value)
+s32 OwnerAction_Add(s32 stateIndex, s32 value)
 {
-    struct OwnerActionState *state = (struct OwnerActionState *)UnitGet(state_index);
+    struct OwnerActionState *state = (struct OwnerActionState *)UnitGet(stateIndex);
     s32 key = value & OWNER_ACTION_ID_MASK;
     s32 found = -1;
     s32 index;
@@ -44,7 +44,7 @@ s32 OwnerAction_Add(s32 state_index, s32 value)
         }
     }
 
-    Owner_RefreshClassActions(state_index);
+    Owner_RefreshClassActions(stateIndex);
     for (index = 0; index <= 31; index++) {
         if (state->actionSlots[index].encodedAction == key) {
             break;

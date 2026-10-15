@@ -24,7 +24,7 @@ void Map_ApplySetFlagEdits(void)
 {
     u8 *cursor = gData_0202e002;
     u32 entry;
-    s32 srcX, srcY, dst_x, dst_y, width, height;
+    s32 srcX, srcY, dstX, dstY, width, height;
 
     cursor = gData_0202e000 + (u16)Map_ReadEditU16(&cursor);
 next:
@@ -34,14 +34,14 @@ next:
     if (GameFlag_Test(entry & 0xfff) != 0) {
         srcX = *cursor++;
         srcY = *cursor++;
-        dst_x = *cursor++;
-        dst_y = *cursor++;
+        dstX = *cursor++;
+        dstY = *cursor++;
         width = *cursor++;
         height = *cursor++;
         if (entry & 0x1000)
-            Map_CopyCellAttributeRect(srcX, srcY, width, height, dst_x, dst_y);
+            Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
         else
-            Map_CopyMetatileIndicesRect(srcX, srcY, dst_x, dst_y, width, height);
+            Map_CopyMetatileIndicesRect(srcX, srcY, dstX, dstY, width, height);
     } else {
         cursor += 6;
     }
@@ -82,7 +82,7 @@ void Map_ApplyFlagEdits(s32 flag, s32 attributes)
 {
     u8 *cursor = gData_0202e002;
     u32 entry;
-    s32 srcX, srcY, dst_x, dst_y, width, height;
+    s32 srcX, srcY, dstX, dstY, width, height;
 
     cursor = gData_0202e000 + (u16)Map_ReadEditU16(&cursor);
 next:
@@ -92,14 +92,14 @@ next:
     if ((entry & 0xfff) == flag) {
         srcX = *cursor++;
         srcY = *cursor++;
-        dst_x = *cursor++;
-        dst_y = *cursor++;
+        dstX = *cursor++;
+        dstY = *cursor++;
         width = *cursor++;
         height = *cursor++;
         if (attributes != 0)
-            Map_CopyCellAttributeRect(srcX, srcY, width, height, dst_x, dst_y);
+            Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
         else
-            Map_CopyMetatileIndicesRect(srcX, srcY, dst_x, dst_y, width, height);
+            Map_CopyMetatileIndicesRect(srcX, srcY, dstX, dstY, width, height);
     } else {
         cursor += 6;
     }

@@ -19,15 +19,15 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies)
     s32 remaining;
     struct PsynergyEntryIcon **icons;
     u16 *p;
-    s32 psynergy_id;
+    s32 psynergyId;
 
     icons = ((struct PsynergyEntryMenu *)Ram_HeapSlots->menuRuntime)->entryIcons;
     p = psynergies;
     remaining = 31;
     do {
-        psynergy_id = *p++;
-        if (psynergy_id != 0) {
-            Func_08038288(4, psynergy_id, (*icons)->slot, 0);
+        psynergyId = *p++;
+        if (psynergyId != 0) {
+            Func_08038288(4, psynergyId, (*icons)->slot, 0);
         }
         icons++;
         remaining--;

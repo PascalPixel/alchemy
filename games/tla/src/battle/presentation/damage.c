@@ -21,14 +21,14 @@
 #include "text/msg_ids.h"
 
 
-void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 show_message, u8 *context)
+void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage, u8 *context)
 {
-    u8 local_context[4];
+    u8 localContext[4];
     struct BattleUnit *character;
     struct BattleObj *slot;
 
     if (context == 0) {
-        context = local_context;
+        context = localContext;
         context[0] = 0;
         context[1] = 0;
         context[2] = 0;
@@ -46,13 +46,13 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 show_message
     UiWork_ClearValueNameTablesFar();
 
     if (unitId <= 7) {
-        if (show_message != 0)
+        if (showMessage != 0)
             UiText_ShowMessageAndWaitCoreFar((s32)MsgBitterBlow);
         UiText_DrawQuantity(damage, 5);
         UiText_DrawQuantity(unitId, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)MsgDmgP);
     } else {
-        if (show_message != 0)
+        if (showMessage != 0)
             UiText_ShowMessageAndWaitCoreFar((s32)MsgCritical);
         UiText_DrawQuantity(damage, 5);
         UiText_DrawQuantity(unitId, 1);
@@ -101,9 +101,9 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId)
 
 s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
 {
-    s16 living_units[14];
+    s16 livingUnits[14];
     s32 targetId;
-    s32 living_count;
+    s32 livingCount;
 
     targetId = action->target;
     if (((struct BattleUnit *)UnitGet(targetId))->hp != 0) {
@@ -111,18 +111,18 @@ s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
     }
 
     if (targetId > 0x7F) {
-        living_count = BattleParty_ListLivingUnits(
+        livingCount = BattleParty_ListLivingUnits(
             BATTLE_SIDE_ENEMIES,
-            living_units);
+            livingUnits);
     } else {
-        living_count = BattleParty_ListLivingUnits(
+        livingCount = BattleParty_ListLivingUnits(
             BATTLE_SIDE_PARTY,
-            living_units);
+            livingUnits);
     }
 
-    if (living_count == 0) {
+    if (livingCount == 0) {
         return 0x100;
     }
 
-    return living_units[(u32)(Random16() * living_count) >> 0x10];
+    return livingUnits[(u32)(Random16() * livingCount) >> 0x10];
 }

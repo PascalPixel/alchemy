@@ -16,33 +16,33 @@
 
 void WaitFrames(s32);
 
-void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use_setter)
+void Motion_CamBounds(s32 requestedX, s32 requestedY, s32 requestedZ, s32 useSetter)
 {
-    s32 should_use_setter;
-    struct EventWork *runtime_block;
-    s32 minimum_x;
-    s32 minimum_z;
-    s32 maximum_x;
-    s32 object_z_offset;
-    s32 maximum_z;
+    s32 shouldUseSetter;
+    struct EventWork *runtimeBlock;
+    s32 minimumX;
+    s32 minimumZ;
+    s32 maximumX;
+    s32 objectZOffset;
+    s32 maximumZ;
     s32 positionX;
     s32 positionZ;
     s32 positionY;
     struct MapWork *map;
     struct ObjectRuntime *object;
 
-    positionX = requested_x;
-    positionY = requested_y;
-    should_use_setter = use_setter;
-    positionZ = requested_z;
-    runtime_block = Runtime_AllocateBlock(108, 0xd50);
-    object = runtime_block->viewCenter;
+    positionX = requestedX;
+    positionY = requestedY;
+    shouldUseSetter = useSetter;
+    positionZ = requestedZ;
+    runtimeBlock = Runtime_AllocateBlock(108, 0xd50);
+    object = runtimeBlock->viewCenter;
     map = Ram_HeapSlots->mapWork;
-    minimum_x = map->minX + 0x780000;
-    object_z_offset = object->y;
-    minimum_z = map->minZ + object_z_offset + 0x600000;
-    maximum_x = map->maxX + 0xFF880000;
-    maximum_z = map->maxZ + object_z_offset + 0xFFC00000;
+    minimumX = map->minX + 0x780000;
+    objectZOffset = object->y;
+    minimumZ = map->minZ + objectZOffset + 0x600000;
+    maximumX = map->maxX + 0xFF880000;
+    maximumZ = map->maxZ + objectZOffset + 0xFFC00000;
     map->origin = &object->x;
     Object_ResetMotion(object);
     if (positionX == -1) {
@@ -54,24 +54,24 @@ void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use
     if (positionZ == -1) {
         positionZ = object->z;
     }
-    if (positionX < minimum_x) {
-        positionX = minimum_x;
+    if (positionX < minimumX) {
+        positionX = minimumX;
     }
-    if (positionZ < minimum_z) {
-        positionZ = minimum_z;
+    if (positionZ < minimumZ) {
+        positionZ = minimumZ;
     }
-    if (positionX > maximum_x) {
-        positionX = maximum_x;
+    if (positionX > maximumX) {
+        positionX = maximumX;
     }
-    if (positionZ > maximum_z) {
-        positionZ = maximum_z;
+    if (positionZ > maximumZ) {
+        positionZ = maximumZ;
     }
-    if (should_use_setter == 0) {
+    if (shouldUseSetter == 0) {
         object->x = positionX;
         object->y = positionY;
         object->z = positionZ;
         WaitFrames(1);
-        if (runtime_block->controlMode != 3) {
+        if (runtimeBlock->controlMode != 3) {
             Map_ApplyWorkOriginAndSpanFar();
         }
     } else {

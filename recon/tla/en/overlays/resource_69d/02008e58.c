@@ -29,8 +29,8 @@ void Func_02000e58(void)
 {
     struct MapWork *map = Ram_HeapSlots->mapWork;
     s32 *camera = (s32 *)((u8 *)map + 228);
-    s32 camera_x = camera[0] & 0xffff0000;
-    s32 camera_z = camera[1] & 0xffff0000;
+    s32 cameraX = camera[0] & 0xffff0000;
+    s32 cameraZ = camera[1] & 0xffff0000;
     s32 tile = gResourceTableEntries[gData_0200275c].offset >> 5;
     struct LightOam *oam = gData_020027a0;
     s32 originY = map->origin[1];
@@ -43,9 +43,9 @@ void Func_02000e58(void)
 
         if (actor == 0 || actor->x == 0)
             continue;
-        x = actor->x - camera_x;
+        x = actor->x - cameraX;
         y = actor->y - originY + 0x80000;
-        z = actor->z - camera_z - originY;
+        z = actor->z - cameraZ - originY;
         sy = z - y;
         depth = ((y + z) >> 16) + 58;
         sx = x >> 16;

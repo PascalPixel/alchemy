@@ -593,9 +593,9 @@ static void EV20_SEARCH(void)
 	}
 }
 
-static s32 SceneActor_LiftLowActorOnSubjectTile(s32 subject_actor)
+static s32 SceneActor_LiftLowActorOnSubjectTile(s32 subjectActor)
 {
-	struct FieldActor *subject = Object_GetById(subject_actor);
+	struct FieldActor *subject = Object_GetById(subjectActor);
 	s32				   index = 0;
 
 	do
@@ -606,12 +606,12 @@ static s32 SceneActor_LiftLowActorOnSubjectTile(s32 subject_actor)
 		{
 			s32 actorZ = TILE(actor->z.fixed);
 			s32 actorX = TILE(actor->x.fixed);
-			s32 subject_z = TILE(subject->z.fixed);
-			s32 subject_x = TILE(subject->x.fixed);
-			s32 z_delta = subject_z - actorZ;
-			s32 x_delta = subject_x - actorX;
+			s32 subjectZ = TILE(subject->z.fixed);
+			s32 subjectX = TILE(subject->x.fixed);
+			s32 zDelta = subjectZ - actorZ;
+			s32 xDelta = subjectX - actorX;
 
-			if (x_delta == 0 && z_delta == 0)
+			if (xDelta == 0 && zDelta == 0)
 			{
 				actor->y.fixed = 0x00ff0000;
 				actor->gravity = 0;

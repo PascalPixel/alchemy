@@ -29,46 +29,46 @@ s32 ResourceTable_GetLongestFreeBlockRun(void)
 s32 Func_08014220(void)
 {
     u8 *marker = gResourceBlockOwners;
-    s32 free_count;
+    s32 freeCount;
     s32 remaining;
 
     asm volatile(""); /* FAKEMATCH: ⚓️ loads the table address before it starts the count of 512; without the barrier the count's first half is scheduled ahead of the load (differ 2) */
-    free_count = 0;
+    freeCount = 0;
     remaining = 0x200;
     do {
         if (*marker++ == 0xff) {
-            free_count++;
+            freeCount++;
         }
         remaining--;
     } while (remaining != 0);
-    return free_count;
+    return freeCount;
 }
 
 s32 Resource_ClearSlotReferences(s32 resourceId)
 {
-    s32 cleared_count = 0;
+    s32 clearedCount = 0;
     s32 remaining;
     u8 *marker;
-    u8 empty_marker;
+    u8 emptyMarker;
 
     if ((u32)resourceId >= VRAM_CACHE_ENTRY_COUNT)
         return -1;
     marker = gResourceBlockOwners;
     /* FAKEMATCH: the plain order sets up the count before the marker. */
     __asm__("" : "+r"(marker));
-    empty_marker = VRAM_BLOCK_OWNER_FREE;
+    emptyMarker = VRAM_BLOCK_OWNER_FREE;
     /* FAKEMATCH: the plain order sets up the count before the marker. */
     __asm__("" : "+r"(marker));
     remaining = VRAM_BLOCK_COUNT;
     do {
         if (*marker == resourceId) {
-            *marker = empty_marker;
-            cleared_count++;
+            *marker = emptyMarker;
+            clearedCount++;
         }
         marker++;
         remaining--;
     } while (remaining != 0);
-    if (cleared_count != 0)
+    if (clearedCount != 0)
         return -1;
     return 0;
 }

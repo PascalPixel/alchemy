@@ -37,11 +37,11 @@ void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 style);
 struct RenderOutput *RenderOutput_CreateFar(s32 code, s32 layers, struct RenderInput *input, s32 x, s32 y);
 
-void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 item_id)
+void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 itemId)
 {
     struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
     struct ShopUnit *unit = UnitGet(unitId);
-    struct ItemDefinition *item = Item_Get(item_id);
+    struct ItemDefinition *item = Item_Get(itemId);
     s32 replaced = -1;
     s32 slot;
     s32 saved;
@@ -52,7 +52,7 @@ void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 item_id)
     if (window == 0)
         return;
     RenderOutput_PrepareForRedrawFar(window);
-    if (!Item_CanOwnerEquip(unitId, item_id)) {
+    if (!Item_CanOwnerEquip(unitId, itemId)) {
         UiText_DrawResourceFar((s32)MsgShopCannotEquip, window, 8, 24);
         return;
     }
@@ -75,7 +75,7 @@ void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 item_id)
         replaced = unit->inventory[slot] & 0x1ff;
     }
     saved = unit->inventory[slot];
-    unit->inventory[slot] = item_id | 0x200;
+    unit->inventory[slot] = itemId | 0x200;
     UnitCalcFar(unitId);
     with[0] = unit->atk;
     with[1] = unit->def;

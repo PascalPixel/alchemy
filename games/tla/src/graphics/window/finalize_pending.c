@@ -73,12 +73,12 @@ struct UiWindowState {
 
 void UiWork_FinalizePendingCore(void)
 {
-    s32 slot_index;
+    s32 slotIndex;
     struct UiChannelSlot *slot;
     struct UiWindowState *work;
 
     slot = ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)->channels;
-    slot_index = 0;
+    slotIndex = 0;
     do {
         work = (struct UiWindowState *)slot->work;
         if (work != NULL && work->pendingValue == 0
@@ -86,8 +86,8 @@ void UiWork_FinalizePendingCore(void)
             && work->state != 0) {
             UiWork_Finalize((struct UiWindow *)work, work->flags & 2);
         }
-        slot_index++;
+        slotIndex++;
         slot++;
-    } while (slot_index != 3);
+    } while (slotIndex != 3);
     WaitFrames(10);
 }

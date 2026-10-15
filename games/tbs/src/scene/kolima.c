@@ -492,12 +492,12 @@ static void FieldScene_RunExtendedActorSequence(void)
 	s32				  *layout;
 	s32				   mask;
 	s32				   value;
-	const u8		  *actions_a;
-	const u8		  *actions_b;
+	const u8		  *actionsA;
+	const u8		  *actionsB;
 	s32				  *falling;
 	s32				  *work;
-	const u8		  *actions_c;
-	const u8		  *actions_d;
+	const u8		  *actionsC;
+	const u8		  *actionsD;
 	s32				  *again;
 
 	Engine_EventBegin();
@@ -708,11 +708,11 @@ static void FieldScene_RunExtendedActorSequence(void)
 	ColorBuffer_ApplyTarget(0x10000, 2);
 	Engine_ColorBufferInterpolate(120);
 	Engine_TaskWait(60);
-	actions_a = gKolima_ActionTable4;
-	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, actions_a);
-	Engine_ActorEnableActionCallback(GARET, actions_a);
-	Engine_ActorEnableActionCallback(IVAN, actions_a);
-	Engine_ActorEnableActionCallback(MIA, actions_a);
+	actionsA = gKolima_ActionTable4;
+	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, actionsA);
+	Engine_ActorEnableActionCallback(GARET, actionsA);
+	Engine_ActorEnableActionCallback(IVAN, actionsA);
+	Engine_ActorEnableActionCallback(MIA, actionsA);
 	Engine_EventWait(100);
 	FieldScene_RunPairedStepA(1, 20);
 	FieldScene_RunPairedStepA(2, 40);
@@ -747,8 +747,8 @@ static void FieldScene_RunExtendedActorSequence(void)
 	actor->velocityY = (value << 10);
 	Engine_EventWait(10);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, (value << 10), (value << 10));
-	actions_b = gKolima_ActionTable5;
-	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, actions_b);
+	actionsB = gKolima_ActionTable5;
+	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, actionsB);
 	actor = Object_GetById(0);
 	Engine_ActorSetSpriteFlags(actor, 0);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
@@ -757,7 +757,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	actor->velocityY = (value << 10);
 	Engine_EventWait(10);
 	Actor_SetSpeed(GARET, (value << 10), (value << 10));
-	Engine_ActorEnableActionCallback(GARET, actions_b);
+	Engine_ActorEnableActionCallback(GARET, actionsB);
 	actor = Object_GetById(1);
 	Engine_ActorSetSpriteFlags(actor, 0);
 	Engine_ActorSetAnimation(GARET, 19);
@@ -765,7 +765,7 @@ static void FieldScene_RunExtendedActorSequence(void)
 	actor = Object_GetById(2);
 	actor->velocityY = (value << 10);
 	Engine_EventWait(10);
-	Engine_ActorEnableActionCallback(IVAN, actions_b);
+	Engine_ActorEnableActionCallback(IVAN, actionsB);
 	actor = Object_GetById(2);
 	Engine_ActorSetSpriteFlags(actor, 0);
 	Engine_ActorSetAnimation(IVAN, 19);
@@ -834,23 +834,23 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Object_GetById(19)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(19, 2);
 	Actor_SetPosition(19, 0x780000, 0xf80000);
-	actions_c = gKolima_ActionTable6;
-	Engine_ActorEnableActionCallback(19, actions_c);
+	actionsC = gKolima_ActionTable6;
+	Engine_ActorEnableActionCallback(19, actionsC);
 	Object_GetById(20)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(20, 2);
 	Actor_SetPosition(20, 0x640000, 0x1120000);
-	Engine_ActorEnableActionCallback(20, actions_c);
+	Engine_ActorEnableActionCallback(20, actionsC);
 	if (gKolima_LayoutFlag != 0)
 	{
 		Object_GetById(21)->priorityFlags &= 254;
 		Engine_ActorSetSpritePriority(21, 2);
 		Actor_SetPosition(21, 0x4a0000, 0xfe0000);
-		Engine_ActorEnableActionCallback(21, actions_c);
+		Engine_ActorEnableActionCallback(21, actionsC);
 	}
 	Object_GetById(22)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(22, 2);
 	Actor_SetPosition(22, 0x5e0000, 0xe10000);
-	Engine_ActorEnableActionCallback(22, actions_c);
+	Engine_ActorEnableActionCallback(22, actionsC);
 	if (*work != 0)
 	{
 		do
@@ -873,14 +873,14 @@ static void FieldScene_RunExtendedActorSequence(void)
 	}
 	Engine_ActorStop(22);
 	Engine_TaskWait(1);
-	actions_d = gKolima_ActionTable7;
-	Engine_ActorEnableActionCallback(19, actions_d);
-	Engine_ActorEnableActionCallback(20, actions_d);
+	actionsD = gKolima_ActionTable7;
+	Engine_ActorEnableActionCallback(19, actionsD);
+	Engine_ActorEnableActionCallback(20, actionsD);
 	if (gKolima_LayoutFlag != 0)
 	{
-		Engine_ActorEnableActionCallback(21, actions_d);
+		Engine_ActorEnableActionCallback(21, actionsD);
 	}
-	Object_SetActionCallbackAndRefreshById(22, actions_d);
+	Object_SetActionCallbackAndRefreshById(22, actionsD);
 	Engine_EventWait(80);
 	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(40);
@@ -1121,17 +1121,17 @@ static void FieldScene_RunExtendedActorSequence(void)
 	*again = 2;
 	Event_PlayCue(220);
 	Actor_SetPosition(19, 0x780000, 0xf80000);
-	actions_c = gKolima_ActionTable6;
-	Engine_ActorEnableActionCallback(19, actions_c);
+	actionsC = gKolima_ActionTable6;
+	Engine_ActorEnableActionCallback(19, actionsC);
 	Actor_SetPosition(20, 0x640000, 0x1120000);
-	Engine_ActorEnableActionCallback(20, actions_c);
+	Engine_ActorEnableActionCallback(20, actionsC);
 	if (gKolima_LayoutFlag != 0)
 	{
 		Actor_SetPosition(21, 0x4a0000, 0xfe0000);
-		Engine_ActorEnableActionCallback(21, actions_c);
+		Engine_ActorEnableActionCallback(21, actionsC);
 	}
 	Actor_SetPosition(22, 0x5e0000, 0xe10000);
-	Engine_ActorEnableActionCallback(22, actions_c);
+	Engine_ActorEnableActionCallback(22, actionsC);
 	Engine_EventWait(120);
 	*again = 3;
 	do
@@ -1244,14 +1244,14 @@ static void FieldScene_RunExtendedActorSequence(void)
 	Engine_ActorStop(21);
 	Engine_ActorStop(22);
 	Engine_TaskWait(1);
-	actions_d = gKolima_ActionTable7;
-	Engine_ActorEnableActionCallback(19, actions_d);
-	Engine_ActorEnableActionCallback(20, actions_d);
+	actionsD = gKolima_ActionTable7;
+	Engine_ActorEnableActionCallback(19, actionsD);
+	Engine_ActorEnableActionCallback(20, actionsD);
 	if (*work != 0)
 	{
-		Engine_ActorEnableActionCallback(21, actions_d);
+		Engine_ActorEnableActionCallback(21, actionsD);
 	}
-	Object_SetActionCallbackAndRefreshById(22, actions_d);
+	Object_SetActionCallbackAndRefreshById(22, actionsD);
 	Engine_EventWait(20);
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
 	Engine_ActorSetSpritePriority(GARET, 2);

@@ -371,7 +371,7 @@ static void FieldScene_RunFourActorEncounter(void)
 	struct FieldActor *record;
 	s32				   v6;
 	s32				   v5;
-	s32				   spark_task;
+	s32				   sparkTask;
 	s32				   actions;
 
 	rec = GameFlag_IsSet(3);
@@ -515,12 +515,12 @@ static void FieldScene_RunFourActorEncounter(void)
 		s32 *bank = (s32 *)sSparkOrigin;
 		bank[0] = 0xa80000;
 		bank[1] = 0x200000;
-		spark_task = (s32)TretInteriors_SpawnSwirlSparks;
+		sparkTask = (s32)TretInteriors_SpawnSwirlSparks;
 		bank[2] = 0x340000;
 	}
-	Task_AddCallback((void (*)(void))spark_task, 0xc80);
+	Task_AddCallback((void (*)(void))sparkTask, 0xc80);
 	Engine_EventWait(220);
-	Engine_TaskRemoveCallback(spark_task);
+	Engine_TaskRemoveCallback(sparkTask);
 	ColorBuffer_ApplyTarget(0x10000, 1);
 	Engine_ColorBufferInterpolate(20);
 	Engine_TaskWait(40);

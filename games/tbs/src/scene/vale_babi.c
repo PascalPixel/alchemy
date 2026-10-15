@@ -366,7 +366,7 @@ static void FieldScene_RunComplexActorSequence(void)
 	s32					  base;
 	struct FieldSprite	 *sprite;
 	struct MapScrollWork *work;
-	struct FieldActor	 *scene_actor;
+	struct FieldActor	 *sceneActor;
 	struct EventWork	**control;
 
 	control = (struct EventWork **)Ram_EventWork;
@@ -378,7 +378,7 @@ static void FieldScene_RunComplexActorSequence(void)
 		struct EventWork *event = *control;
 
 		work = *(struct MapScrollWork **)Ram_MapWork;
-		scene_actor = event->viewCenter;
+		sceneActor = event->viewCenter;
 	}
 	sprite = Object_GetById(17)->sprite;
 	Engine_EventBegin();
@@ -410,9 +410,9 @@ static void FieldScene_RunComplexActorSequence(void)
 	work->minY = 0x02580000;
 	work->maxX = 0x02700000;
 	work->maxY = 0x03300000;
-	scene_actor->x.fixed = 0x02340000;
-	scene_actor->y.fixed = 0;
-	scene_actor->z.fixed = 0x02b30000;
+	sceneActor->x.fixed = 0x02340000;
+	sceneActor->y.fixed = 0;
+	sceneActor->z.fixed = 0x02b30000;
 	Engine_MapRedraw();
 	Engine_TaskWait(1);
 	(*control)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);

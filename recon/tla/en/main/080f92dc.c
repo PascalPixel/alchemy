@@ -18,7 +18,7 @@ struct MenuPageWork {
 
 void UiIcon_PrepareObject(struct MenuPageIcon *icon);
 
-void Menu_SetPageIcons(s32 page_size, s32 first, s32 window, s32 x, s32 y)
+void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y)
 {
     struct MenuPageWork *menu = Ram_HeapSlots->menuRuntime;
     struct MenuPageIcon *icon;
@@ -29,7 +29,7 @@ void Menu_SetPageIcons(s32 page_size, s32 first, s32 window, s32 x, s32 y)
         if (icon != NULL)
             icon->state = 13;
     }
-    for (i = first; i < page_size + first && (icon = menu->icons[i]) != NULL
+    for (i = first; i < pageSize + first && (icon = menu->icons[i]) != NULL
          && i <= menu->entryCount - 1; i++) {
         icon->x = x;
         icon->y = y + (i - first) * 16;

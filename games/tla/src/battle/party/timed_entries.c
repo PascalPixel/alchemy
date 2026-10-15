@@ -100,40 +100,40 @@ s32 BattleUnit_TickAgilityModifier(s32 id)
 s32 BattlePlacement_UpdateTimedEntries(void)
 {
     struct PlacementList *list;
-    struct DjinnRecoveryEntry *timed_entry;
-    struct DjinnRecoveryEntry *expired_entry;
+    struct DjinnRecoveryEntry *timedEntry;
+    struct DjinnRecoveryEntry *expiredEntry;
     s32 index;
     s32 removed;
-    s32 initial_count;
+    s32 initialCount;
 
     list = &Trade_GetOfferStateFar(0)->list;
-    initial_count = list->count;
+    initialCount = list->count;
     index = 0;
     removed = 0;
-    if (index < initial_count) {
-        timed_entry = list->entries;
+    if (index < initialCount) {
+        timedEntry = list->entries;
         do {
-            if (timed_entry->turns > 0 &&
-                ((struct BattleUnit *)UnitGet(timed_entry->unitId))->hp != 0) {
-                timed_entry->turns--;
+            if (timedEntry->turns > 0 &&
+                ((struct BattleUnit *)UnitGet(timedEntry->unitId))->hp != 0) {
+                timedEntry->turns--;
             }
             index++;
-            timed_entry++;
+            timedEntry++;
         } while (index < list->count);
     }
     index = 0;
     if (index < list->count) {
-        expired_entry = list->entries;
+        expiredEntry = list->entries;
         do {
-            if (expired_entry->turns == 0) {
-                u8 id = expired_entry->unitId;
+            if (expiredEntry->turns == 0) {
+                u8 id = expiredEntry->unitId;
 
-                Djinn_ActivateFar(id, expired_entry->element, expired_entry->index);
-                Trade_RemoveOfferFar(id, expired_entry->element, expired_entry->index);
+                Djinn_ActivateFar(id, expiredEntry->element, expiredEntry->index);
+                Trade_RemoveOfferFar(id, expiredEntry->element, expiredEntry->index);
                 UnitCalcFar(id);
                 removed = 1;
             } else {
-                expired_entry++;
+                expiredEntry++;
                 index++;
             }
         } while (index < list->count);

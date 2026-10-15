@@ -39,8 +39,8 @@ void Func_08153c30(struct BattleEffectArgument *effect)
     void *canvas;
     void *palette;
     s32 frame;
-    DrawRectangle rectangle_b;
-    DrawRectangle rectangle_a;
+    DrawRectangle rectangleB;
+    DrawRectangle rectangleA;
     struct EffectStep *step;
     s32 i;
     struct EffectPosition screen;
@@ -54,9 +54,9 @@ void Func_08153c30(struct BattleEffectArgument *effect)
     palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
     Iwram_CopyWords((void *)0x05000000, palette, 128);
     Func_081963ec(104, 3);
-    rectangle_a = (DrawRectangle)Ram_HeapSlots->unk64[1];
+    rectangleA = (DrawRectangle)Ram_HeapSlots->unk64[1];
     Func_081963ec(188, 19);
-    rectangle_b = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+    rectangleB = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
     for (i = 0; i != 64; i++) {
         s32 angle;
@@ -89,14 +89,14 @@ void Func_08153c30(struct BattleEffectArgument *effect)
 
         camera = Ram_HeapSlots->cameraWork;
         for (member = 0; member != effect->count; member++) {
-            struct MotionObject *member_object;
+            struct MotionObject *memberObject;
 
-            member_object = GetBattleObjectSlotFar(effect->actors[member])->object;
+            memberObject = GetBattleObjectSlotFar(effect->actors[member])->object;
             Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(camera, camera + 3);
-            record[0] = member_object->x;
+            record[0] = memberObject->x;
             record[1] = 160 << 13;
-            record[2] = member_object->z;
+            record[2] = memberObject->z;
             SceneTransform_ApplyPosition(record);
             if (frame >= member * 8 && frame < member * 8 + 40) {
                 struct EffectStep *p;
@@ -112,11 +112,11 @@ void Func_08153c30(struct BattleEffectArgument *effect)
                     screen.x >>= 1;
                     if (i == 5) {
                         BattleFxKernels_IntegrateVector3(p, 62, 0x800);
-                        rectangle_a(canvas, work->sheet + cel * 0x480 + 0x1b00,
+                        rectangleA(canvas, work->sheet + cel * 0x480 + 0x1b00,
                             screen.x - 12, screen.y - 36, 24, 48);
                     } else {
                         BattleFxKernels_IntegrateVector3(p, 60, 0x200);
-                        rectangle_b(canvas, work->sheet + cel * 0x480,
+                        rectangleB(canvas, work->sheet + cel * 0x480,
                             screen.x - 12, screen.y - 36, 24, 48);
                     }
                     p->variant += 1;

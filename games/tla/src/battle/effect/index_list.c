@@ -14,19 +14,19 @@ s32 BattleFx_BuildCenteredIndexList(BattleEffectIndexWindow *window, s16 *output
     s32 length = window->indexRadius * 2 + 1;
     s32 entryCount = 0;
     s32 center = 0;
-    s32 entry_index;
+    s32 entryIndex;
 
-    for (entry_index = 0; entry_index != length; entry_index++) {
-        if (window->currentValue == window->values[entry_index]) {
-            center = entry_index;
+    for (entryIndex = 0; entryIndex != length; entryIndex++) {
+        if (window->currentValue == window->values[entryIndex]) {
+            center = entryIndex;
             break;
         }
     }
-    for (entry_index = 0; entry_index != length; entry_index++) {
-        s32 battle_value = center + entry_index - window->indexRadius;
+    for (entryIndex = 0; entryIndex != length; entryIndex++) {
+        s32 battleValue = center + entryIndex - window->indexRadius;
 
-        if (battle_value >= 0 && battle_value < window->entryLimit) {
-            output[entryCount++] = battle_value;
+        if (battleValue >= 0 && battleValue < window->entryLimit) {
+            output[entryCount++] = battleValue;
         }
     }
     return entryCount;

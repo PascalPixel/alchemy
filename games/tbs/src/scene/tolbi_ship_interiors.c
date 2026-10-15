@@ -91,14 +91,14 @@ static s32 ResetStagedActorState(struct StagedActor *actor)
 static s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor)
 {
 	s16 verticalMotionDirection;
-	s32 descending_y;
-	s32 ascending_y;
+	s32 descendingY;
+	s32 ascendingY;
 
 	if (actor->verticalMotionDirection != 0)
 	{
-		descending_y = (actor->y - ((u32)(Engine_RandomNext() << 0xF) >> 0x10)) + 0xFFFF8000;
-		actor->y = descending_y;
-		if (descending_y < 0)
+		descendingY = (actor->y - ((u32)(Engine_RandomNext() << 0xF) >> 0x10)) + 0xFFFF8000;
+		actor->y = descendingY;
+		if (descendingY < 0)
 		{
 			verticalMotionDirection = 0;
 			actor->verticalMotionDirection = verticalMotionDirection;
@@ -106,9 +106,9 @@ static s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor)
 	}
 	else
 	{
-		ascending_y = actor->y + ((u32)(Engine_RandomNext() << 0xF) >> 0x10) + 0x8000;
-		actor->y = ascending_y;
-		if (ascending_y > 0x80000)
+		ascendingY = actor->y + ((u32)(Engine_RandomNext() << 0xF) >> 0x10) + 0x8000;
+		actor->y = ascendingY;
+		if (ascendingY > 0x80000)
 		{
 			verticalMotionDirection = 1;
 			actor->verticalMotionDirection = verticalMotionDirection;
@@ -1008,7 +1008,7 @@ static struct FieldActor *FindActorNearPosition(s32 x, s32 y)
 	struct FieldActor  *current;
 	u32					i;
 	s32					actorX;
-	s32					actor_y;
+	s32					actorY;
 	s32					left;
 	s32					top;
 	s32					right;
@@ -1025,8 +1025,8 @@ static struct FieldActor *FindActorNearPosition(s32 x, s32 y)
 	{
 		current = *actor++;
 		actorX = current->x.part.pixel;
-		actor_y = current->z.part.pixel;
-		if (left < actorX && right > actorX && top < actor_y && bottom > actor_y)
+		actorY = current->z.part.pixel;
+		if (left < actorX && right > actorX && top < actorY && bottom > actorY)
 			return current;
 		i++;
 	}
@@ -1515,8 +1515,8 @@ static void EV10_TOUCH(void)
 
 static void EV11_TOUCH(void)
 {
-	s32 request_a;
-	s32 request_b;
+	s32 requestA;
+	s32 requestB;
 	s32 action;
 
 	if (GameFlag_IsSet(0x911) == 0)
@@ -1532,51 +1532,51 @@ static void EV11_TOUCH(void)
 		Engine_EventSetMessage(MsgTolbiShipIfWeArentGoingSet);
 		FieldScene_RunStepThen10(0x200d);
 		FieldScene_CallPairWith10(12, 0xd000);
-		request_a = 0x800c;
+		requestA = 0x800c;
 		Actor_ShowEmote(12, 0x102, 20);
 		Engine_ActorStartRepeatedMotion(12, 2);
-		FieldScene_RunStepThen10(request_a);
+		FieldScene_RunStepThen10(requestA);
 		Engine_ActorRunRepeatedMotion(14, 1);
 		Event_ShowMessageAndWait(0xa00e, 0, 20);
 		FieldScene_CallPairWith10(12, 0);
-		request_b = 0xa00e;
+		requestB = 0xa00e;
 		Actor_ShowEmote(12, 0x101, 40);
 		Actor_ShowEmote(14, 0x103, 40);
 		Engine_ActorStartRepeatedMotion(14, 3);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		Actor_SetAttachedEffect(12, 0x102);
 		Engine_EventWait(40);
 		Engine_ActorStartRepeatedMotion(12, 3);
-		FieldScene_RunStepThen10(request_a);
+		FieldScene_RunStepThen10(requestA);
 		Engine_ActorRunRepeatedMotion(14, 1);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		FieldScene_CallPairWith10(14, 0xb000);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		FieldScene_CallPairWith10(12, 0xd000);
 		Actor_ShowEmote(12, 0x100, 30);
 		Engine_ActorStartRepeatedMotion(12, 1);
-		FieldScene_RunStepThen10(request_a);
+		FieldScene_RunStepThen10(requestA);
 		Engine_ActorSetAnimationAndWait(13, 4);
 		FieldScene_RunStepThen10(0x200d);
 		Engine_ActorStartRepeatedMotion(13, 2);
 		FieldScene_RunStepThen10(0x200d);
 		Engine_ActorSetAnimation(12, 4);
-		FieldScene_RunStepThen10(request_a);
+		FieldScene_RunStepThen10(requestA);
 		Engine_ActorSetAnimationAndWait(14, 4);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		FieldScene_CallPairWith10(14, 0x8000);
 		Engine_ActorStartRepeatedMotion(14, 2);
-		Event_ShowMessageAndWait(request_b, 0, 20);
+		Event_ShowMessageAndWait(requestB, 0, 20);
 		Actor_FaceDirection(12, FACING_EAST, 0);
 		Actor_ShowEmote(12, 0x102, 80);
-		Event_ShowMessageAndWait(request_a, 0, 20);
+		Event_ShowMessageAndWait(requestA, 0, 20);
 		Actor_ShowEmote(14, 0x103, 0);
 		Actor_ShowEmote(13, 0x103, 60);
 		Engine_ActorStartRepeatedMotion(14, 2);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		FieldScene_CallPairWith10(14, 0xb000);
 		Engine_ActorRunRepeatedMotion(14, 1);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		FieldScene_CallPairWith10(13, 0x3000);
 		Actor_ShowEmote(13, 0x101, 0);
 		Actor_ShowEmote(12, 0x101, 60);
@@ -1584,25 +1584,25 @@ static void EV11_TOUCH(void)
 		FieldScene_RunStepThen10(13);
 		Actor_ShowEmote(14, 0x103, 40);
 		Engine_ActorRunRepeatedMotion(14, 1);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		Actor_FaceDirection(12, 0xd000, 0);
 		Actor_FaceDirection(13, 0x5000, 40);
 		Actor_FaceDirection(12, FACING_EAST, 0);
 		FieldScene_CallPairWith10(13, 0x3000);
 		Engine_ActorRunRepeatedMotion(12, 2);
-		Event_ShowMessageAndWait(request_a, 0, 20);
+		Event_ShowMessageAndWait(requestA, 0, 20);
 		Actor_FaceDirection(14, FACING_SOUTH, 40);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		Engine_ActorStartRepeatedMotion(12, 2);
 		Engine_ActorRunRepeatedMotion(13, 2);
 		Engine_EventWait(60);
 		Engine_ActorRunRepeatedMotion(13, 1);
 		FieldScene_RunStepThen10(13);
 		Engine_ActorSetAnimationAndWait(14, 3);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		Actor_ShowEmote(12, 0x102, 40);
 		Engine_ActorRunRepeatedMotion(12, 2);
-		FieldScene_RunStepThen10(request_a);
+		FieldScene_RunStepThen10(requestA);
 		Engine_ActorSetAnimationAndWait(13, 3);
 		FieldScene_RunStepThen10(13);
 		Actor_FaceDirection(14, 0xb000, 40);
@@ -1883,20 +1883,20 @@ static void FieldScene_RunExtendedActorChoreography(void)
 static void EV08_SCRIPT(void)
 {
 	struct FieldActor *record;
-	s32				   request_a;
-	s32				   request_b;
+	s32				   requestA;
+	s32				   requestB;
 	s32				   value;
-	s32				   request_c;
+	s32				   requestC;
 	s32				   action;
 
 	Engine_EventBegin();
 	Battle_ResetEffectCounter();
 	Actor_FaceActor(8, ACTOR_PARTY_LEADER, 0);
 	Actor_ShowEmote(8, 0x100, 40);
-	request_a = 0x1008;
+	requestA = 0x1008;
 	Engine_ActorStartRepeatedMotion(8, 3);
 	Engine_EventSetMessage(MsgTolbiShipItsMyLuckyAnchor);
-	FieldScene_RunStepThen10(request_a);
+	FieldScene_RunStepThen10(requestA);
 	Engine_ActorStartRepeatedMotion(9, 1);
 	Engine_ActorStartRepeatedMotion(12, 1);
 	Engine_ActorStartRepeatedMotion(11, 1);
@@ -1908,13 +1908,13 @@ static void EV08_SCRIPT(void)
 	Actor_FaceDirection(13, 0xd000, 0);
 	Actor_FaceDirection(10, 0xb000, 20);
 	Engine_ActorRunRepeatedMotion(8, 1);
-	Event_OpenMessage(request_a, 0);
+	Event_OpenMessage(requestA, 0);
 	if (Engine_EventChooseYesNo(0, 0) == 0)
 	{
 		Engine_ActorRunRepeatedMotion(9, 2);
 		FieldScene_RunStepThen10(0x9009);
 		Actor_ShowEmote(8, 0x108, 40);
-		FieldScene_RunStepThen10(request_a);
+		FieldScene_RunStepThen10(requestA);
 		gEventWork->message += 2;
 	}
 	else
@@ -1946,10 +1946,10 @@ static void EV08_SCRIPT(void)
 	Actor_FaceDirection(11, 0xb000, 20);
 	Actor_ShowEmote(11, 0x101, 40);
 	FieldScene_RunStepThen10(11);
-	request_b = 0x900c;
+	requestB = 0x900c;
 	FieldScene_CallPairWith10(12, 0xd000);
 	Engine_ActorSetAnimation(12, 4);
-	FieldScene_RunStepThen10(request_b);
+	FieldScene_RunStepThen10(requestB);
 	FieldScene_CallPairWith10(13, 0xb000);
 	Engine_ActorRunRepeatedMotion(13, 1);
 	FieldScene_RunStepThen10(13);
@@ -1958,17 +1958,17 @@ static void EV08_SCRIPT(void)
 	Engine_ActorRunRepeatedMotion(9, 1);
 	FieldScene_RunStepThen10(9);
 	Engine_ActorSetAnimationAndWait(12, 3);
-	FieldScene_RunStepThen10(request_b);
+	FieldScene_RunStepThen10(requestB);
 	Engine_ActorRunRepeatedMotion(8, 2);
 	FieldScene_RunStepThen10(8);
 	FieldScene_CallPairWith10(12, 0xd000);
 	Engine_ActorSetAnimationAndWait(12, 3);
-	FieldScene_RunStepThen10(request_b);
+	FieldScene_RunStepThen10(requestB);
 	Engine_ActorRunRepeatedMotion(11, 2);
 	FieldScene_CallPairWith10(11, 0xb000);
 	FieldScene_RunStepThen10(11);
 	FieldScene_CallPairWith10(12, 0);
-	FieldScene_RunStepThen10(request_b);
+	FieldScene_RunStepThen10(requestB);
 	Actor_FaceDirection(8, 0x3000, 0);
 	Actor_FaceDirection(9, FACING_EAST, 0);
 	Actor_FaceDirection(11, 0xd000, 0);
@@ -2001,7 +2001,7 @@ static void EV08_SCRIPT(void)
 	Actor_WalkToAndWait(MIA, 0x1e6, 0x290);
 	Actor_FaceDirection(MIA, FACING_WEST, 20);
 	Actor_ShowEmote(12, 0x108, 40);
-	FieldScene_RunStepThen10(request_b);
+	FieldScene_RunStepThen10(requestB);
 	Engine_ActorRunRepeatedMotion(9, 1);
 	FieldScene_RunStepThen10(0x1009);
 	Engine_ActorSetAnimationAndWait(8, 3);
@@ -2014,7 +2014,7 @@ static void EV08_SCRIPT(void)
 		Engine_ActorStartRepeatedMotion(8, 2);
 		FieldScene_RunStepThen10(8);
 		Engine_ActorSetAnimationAndWait(12, 3);
-		FieldScene_RunStepThen10(request_b);
+		FieldScene_RunStepThen10(requestB);
 		Engine_ActorStartRepeatedMotion(9, 1);
 		Event_ShowMessageAndWait(0x9009, 0, 40);
 		gEventWork->message += 1;
@@ -2036,14 +2036,14 @@ static void EV08_SCRIPT(void)
 	Event_ShowMessageAndWait(13, 0, 20);
 	Engine_ActorSetAnimationAndWait(8, 3);
 	Actor_SetSpeed(8, 0xcccc, 0x6666);
-	request_c = 0x4008;
+	requestC = 0x4008;
 	Actor_WalkToAndWait(8, 0x1d8, 0x278);
-	FieldScene_RunStepThen10(request_c);
+	FieldScene_RunStepThen10(requestC);
 	Actor_ShowEmote(13, 0x103, 40);
 	Engine_ActorStartRepeatedMotion(13, 2);
 	FieldScene_RunStepThen10(13);
 	Engine_ActorSetAnimation(8, 4);
-	Event_ShowMessageAndWait(request_c, 0, 40);
+	Event_ShowMessageAndWait(requestC, 0, 40);
 	Engine_ActorRunRepeatedMotion(11, 1);
 	FieldScene_CallPairWith10(11, (value << 8));
 	FieldScene_RunStepThen10(0x100b);
@@ -2058,7 +2058,7 @@ static void EV08_SCRIPT(void)
 	Engine_ActorSetAnimationAndWait(9, 4);
 	FieldScene_RunStepThen10(9);
 	Engine_ActorSetAnimationAndWait(8, 3);
-	FieldScene_RunStepThen10(request_c);
+	FieldScene_RunStepThen10(requestC);
 	Actor_ShowEmote(13, 0x102, 40);
 	Event_ShowMessageAndWait(13, 0, 40);
 	FieldScene_CallPairWith10(9, 0x3000);
@@ -2842,7 +2842,7 @@ static void TolbiShipInteriors_AnnounceTurn(void)
 
 static void TolbiShipInteriors_SetupFirstRowingPair(void)
 {
-	s32 entry_script;
+	s32 entryScript;
 
 	Engine_EventBegin();
 	FieldScene_RunSceneStep(24, 1, 0);
@@ -2851,10 +2851,10 @@ static void TolbiShipInteriors_SetupFirstRowingPair(void)
 	FieldScene_RunSceneStep(19, 11, 12);
 	Engine_ActorSetAnimation(10, 6);
 	Engine_ActorEnableActionCallback(12, gTolbiShipInteriors_ActionScriptE);
-	entry_script = (s32)gTolbiShipInteriors_EntryActionScript;
-	Engine_ActorEnableActionCallback(36, entry_script);
-	Engine_ActorEnableActionCallback(37, entry_script);
-	Engine_ActorEnableActionCallback(38, entry_script);
+	entryScript = (s32)gTolbiShipInteriors_EntryActionScript;
+	Engine_ActorEnableActionCallback(36, entryScript);
+	Engine_ActorEnableActionCallback(37, entryScript);
+	Engine_ActorEnableActionCallback(38, entryScript);
 	Engine_ActorSetChildValue(36, 3);
 	Engine_ActorSetChildValue(37, 3);
 	Engine_ActorSetChildValue(38, 3);
@@ -3496,8 +3496,8 @@ static void SceneActor_RunFirstMatchingSlot(s32 a0, s32 a1)
 static void TolbiShipInteriors_SetupReplacementRower(void)
 {
 	s32 rec8;
-	s32 rower_script;
-	s32 entry_script;
+	s32 rowerScript;
+	s32 entryScript;
 
 	rec8 = TolbiShipInteriors_FindFirstSetFlag(0, 0);
 	Engine_EventBegin();
@@ -3506,13 +3506,13 @@ static void TolbiShipInteriors_SetupReplacementRower(void)
 	SceneActor_SetFlagBit3ForActors28To35();
 	FieldScene_RunSceneStep(19, rec8, 12);
 	Engine_ActorSetAnimation(10, 6);
-	rower_script = (s32)gTolbiShipInteriors_ActionScriptE;
-	Engine_ActorEnableActionCallback(rec8, rower_script);
+	rowerScript = (s32)gTolbiShipInteriors_ActionScriptE;
+	Engine_ActorEnableActionCallback(rec8, rowerScript);
 	Engine_ActorDestroy(11);
-	Engine_ActorEnableActionCallback(12, rower_script);
-	entry_script = (s32)gTolbiShipInteriors_EntryActionScript;
-	Engine_ActorEnableActionCallback(36, entry_script);
-	Engine_ActorEnableActionCallback(37, entry_script);
+	Engine_ActorEnableActionCallback(12, rowerScript);
+	entryScript = (s32)gTolbiShipInteriors_EntryActionScript;
+	Engine_ActorEnableActionCallback(36, entryScript);
+	Engine_ActorEnableActionCallback(37, entryScript);
 	FieldScene_RunPositionTransferPresentation();
 	Engine_EventEnd();
 }
@@ -3695,8 +3695,8 @@ static void TolbiShipInteriors_SetupReplacementPair(void)
 {
 	s32 rec2;
 	s32 rec8;
-	s32 rower_script;
-	s32 entry_script;
+	s32 rowerScript;
+	s32 entryScript;
 
 	rec8 = TolbiShipInteriors_FindFirstSetFlag(0, 0);
 	rec2 = TolbiShipInteriors_FindFirstSetFlag(1, 0);
@@ -3706,14 +3706,14 @@ static void TolbiShipInteriors_SetupReplacementPair(void)
 	SceneActor_SetFlagBit3ForActors28To35();
 	FieldScene_RunSceneStep(19, rec8, rec2);
 	Engine_ActorSetAnimation(10, 6);
-	rower_script = (s32)gTolbiShipInteriors_ActionScriptE;
-	Engine_ActorEnableActionCallback(rec8, rower_script);
+	rowerScript = (s32)gTolbiShipInteriors_ActionScriptE;
+	Engine_ActorEnableActionCallback(rec8, rowerScript);
 	Engine_ActorDestroy(11);
-	Engine_ActorEnableActionCallback(rec2, rower_script);
+	Engine_ActorEnableActionCallback(rec2, rowerScript);
 	Engine_ActorDestroy(12);
-	entry_script = (s32)gTolbiShipInteriors_EntryActionScript;
-	Engine_ActorEnableActionCallback(36, entry_script);
-	Engine_ActorEnableActionCallback(37, entry_script);
+	entryScript = (s32)gTolbiShipInteriors_EntryActionScript;
+	Engine_ActorEnableActionCallback(36, entryScript);
+	Engine_ActorEnableActionCallback(37, entryScript);
 	Engine_ActorSetChildValue(36, 3);
 	Engine_ActorSetChildValue(37, 3);
 	FieldScene_RunPositionTransferPresentation();
@@ -3739,15 +3739,15 @@ static void FieldScene_RunActors24And25SetupWithValue92a(void)
 
 static void FieldScene_RunExtendedFormationPresentation(void)
 {
-	s32				   slot_b;
-	s32				   slot_c;
-	s32				   slot_a;
+	s32				   slotB;
+	s32				   slotC;
+	s32				   slotA;
 	struct FieldActor *record;
 	s32				   action;
 
-	slot_a = TolbiShipInteriors_FindFirstSetFlag(0, 0);
-	slot_b = TolbiShipInteriors_FindFirstSetFlag(1, 0);
-	slot_c = TolbiShipInteriors_FindFirstSetFlag(2, 0);
+	slotA = TolbiShipInteriors_FindFirstSetFlag(0, 0);
+	slotB = TolbiShipInteriors_FindFirstSetFlag(1, 0);
+	slotC = TolbiShipInteriors_FindFirstSetFlag(2, 0);
 	Engine_EventBegin();
 	FieldScene_RunSceneStep(10, 0, 0);
 	FieldScene_RunSceneStep(17, 0, 0);
@@ -3807,22 +3807,22 @@ static void FieldScene_RunExtendedFormationPresentation(void)
 	FieldScene_CallPairWith10(27, 0x3000);
 	Engine_ActorStartRepeatedMotion(27, 2);
 	FieldScene_RunStepThen10(27);
-	Engine_ActorStartRepeatedMotion(slot_a, 1);
-	Engine_ActorStartRepeatedMotion(slot_b, 1);
-	Engine_ActorStartRepeatedMotion(slot_c, 1);
+	Engine_ActorStartRepeatedMotion(slotA, 1);
+	Engine_ActorStartRepeatedMotion(slotB, 1);
+	Engine_ActorStartRepeatedMotion(slotC, 1);
 	Engine_ActorRunRepeatedMotion(13, 1);
-	Actor_SetAttachedEffect(slot_a, 0x102);
-	Actor_SetAttachedEffect(slot_b, 0x102);
-	Actor_SetAttachedEffect(slot_c, 0x102);
+	Actor_SetAttachedEffect(slotA, 0x102);
+	Actor_SetAttachedEffect(slotB, 0x102);
+	Actor_SetAttachedEffect(slotC, 0x102);
 	Actor_SetAttachedEffect(13, 0x102);
 	Engine_EventWait(40);
-	FieldScene_RunSceneStep(12, slot_a, 0);
-	FieldScene_RunSceneStep(12, slot_b, 1);
-	FieldScene_RunSceneStep(12, slot_c, 0);
+	FieldScene_RunSceneStep(12, slotA, 0);
+	FieldScene_RunSceneStep(12, slotB, 1);
+	FieldScene_RunSceneStep(12, slotC, 0);
 	FieldScene_RunSceneStep(11, 1, 0);
-	Actor_FaceDirection(slot_a, 0xd000, 0);
-	Actor_FaceDirection(slot_b, 0xb000, 0);
-	Actor_FaceDirection(slot_c, 0xd000, 0);
+	Actor_FaceDirection(slotA, 0xd000, 0);
+	Actor_FaceDirection(slotB, 0xb000, 0);
+	Actor_FaceDirection(slotC, 0xd000, 0);
 	Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
 	Actor_FaceDirection(GARET, FACING_WEST, 0);
 	Actor_FaceDirection(IVAN, FACING_EAST, 0);
@@ -3908,9 +3908,9 @@ static void Scene_RunFourActorProgressPresentation(void)
 	s32				   rec7;
 	struct FieldActor *record;
 	s32				   v6 = 0;
-	s32				   progress_b;
-	s32				   progress_c;
-	s32				   progress_a;
+	s32				   progressB;
+	s32				   progressC;
+	s32				   progressA;
 
 	rec7 = TolbiShipInteriors_FindFirstSetFlag(0, 0);
 	rec2 = TolbiShipInteriors_FindFirstSetFlag(1, 0);
@@ -3999,8 +3999,8 @@ static void Scene_RunFourActorProgressPresentation(void)
 	FieldScene_CallPairWith10(rec7, 0);
 	FieldScene_RunStepThen10(rec7);
 	Actor_SetSpeed(rec7, 0x10000, 0x8000);
-	progress_b = (s32)&gTolbiShipInteriors_ProgressTableB;
-	Object_SetActionCallbackAndRefreshById(rec7, progress_b);
+	progressB = (s32)&gTolbiShipInteriors_ProgressTableB;
+	Object_SetActionCallbackAndRefreshById(rec7, progressB);
 	Actor_FaceDirection(rec2, 0x5000, 0);
 	Engine_ActorFaceDirection(rec4, FACING_EAST, 0);
 	Actor_FaceDirection(rec, FACING_WEST, 40);
@@ -4010,20 +4010,20 @@ static void Scene_RunFourActorProgressPresentation(void)
 	Actor_SetSpeed(rec2, 0x10000, 0x8000);
 	Actor_SetSpeed(rec4, 0x10000, 0x8000);
 	Actor_SetSpeed(rec, 0x10000, 0x8000);
-	Engine_ActorEnableActionCallback(rec4, progress_b);
+	Engine_ActorEnableActionCallback(rec4, progressB);
 	Engine_EventWait(40);
-	progress_c = (s32)&gTolbiShipInteriors_ProgressTableC;
-	Object_SetActionCallbackAndRefreshById(rec2, progress_c);
-	Engine_ActorEnableActionCallback(rec2, progress_b);
-	Object_SetActionCallbackAndRefreshById(rec, progress_c);
-	Object_SetActionCallbackAndRefreshById(rec, progress_b);
+	progressC = (s32)&gTolbiShipInteriors_ProgressTableC;
+	Object_SetActionCallbackAndRefreshById(rec2, progressC);
+	Engine_ActorEnableActionCallback(rec2, progressB);
+	Object_SetActionCallbackAndRefreshById(rec, progressC);
+	Object_SetActionCallbackAndRefreshById(rec, progressB);
 	Actor_SetSpeed(1, 0x10000, 0x8000);
 	Actor_SetSpeed(2, 0x10000, 0x8000);
 	Actor_SetSpeed(3, 0x10000, 0x8000);
-	progress_a = (s32)&gTolbiShipInteriors_ProgressTableA;
-	Engine_ActorEnableActionCallback(1, progress_a);
-	Engine_ActorEnableActionCallback(2, progress_a);
-	Object_SetActionCallbackAndRefreshById(3, progress_a);
+	progressA = (s32)&gTolbiShipInteriors_ProgressTableA;
+	Engine_ActorEnableActionCallback(1, progressA);
+	Engine_ActorEnableActionCallback(2, progressA);
+	Object_SetActionCallbackAndRefreshById(3, progressA);
 	FieldScene_RunSceneStep(23, 0, 0);
 	Engine_GameFlagClear(0x927);
 	Engine_GameFlagSet(0x8a0);

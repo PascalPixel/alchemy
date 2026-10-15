@@ -456,7 +456,7 @@ static void Bilibin_RestoreVillageActors(void)
 {
 
 	struct FieldActor *record;
-	s16				   sub_state;
+	s16				   subState;
 
 	if (GameFlag_IsSet(0x845) != 0)
 	{
@@ -474,15 +474,15 @@ static void Bilibin_RestoreVillageActors(void)
 	record->scaleY = 0x18000;
 	{
 		s32 off = 450;
-		sub_state = *(s16 *)((u8 *)&gGameState + off);
+		subState = *(s16 *)((u8 *)&gGameState + off);
 	}
-	if (sub_state == 10)
+	if (subState == 10)
 	{
 		Actor_SetPosition(8, 0, 0);
 	}
 	else
 	{
-		if (sub_state == 9)
+		if (subState == 9)
 		{
 			GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
 		}
@@ -491,9 +491,9 @@ static void Bilibin_RestoreVillageActors(void)
 	{
 		{
 			s32 off = 450;
-			sub_state = *(s16 *)((u8 *)&gGameState + off);
+			subState = *(s16 *)((u8 *)&gGameState + off);
 		}
-		if (sub_state == 11)
+		if (subState == 11)
 		{
 			Actor_SetPosition(20, 0xf80000, 0xd80000);
 		}

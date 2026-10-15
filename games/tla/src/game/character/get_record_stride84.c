@@ -17,14 +17,14 @@ struct ClassDefinition *Owner_GetRecordStride84(s32 classId)
     return &gClass_DefinitionTable[classId];
 }
 
-void Owner_RefreshDerivedData(s32 owner_id)
+void Owner_RefreshDerivedData(s32 ownerId)
 {
-    struct BattleUnit *owner = UnitGet(owner_id);
+    struct BattleUnit *owner = UnitGet(ownerId);
 
     owner->classIndex = Owner_DetermineClass(owner->enemyId,
         owner->djinnAvailable, Inventory_GetEquippedItem(owner, 10));
-    Owner_UpdateClassActions(owner_id);
-    Owner_CalculateBaseElements(owner_id, owner->baseElement);
+    Owner_UpdateClassActions(ownerId);
+    Owner_CalculateBaseElements(ownerId, owner->baseElement);
 }
 
 void Owner_RefreshClassActions(s32 owner_id)

@@ -73,24 +73,24 @@ struct BattleEffectLinkedObject *BattleFx_SpawnLinked(
 
             if ((flags & 0x100) != 0) {
                 s32 mask = 13;
-                u8 visual_flags = object->visual->flags;
+                u8 visualFlags = object->visual->flags;
 
                 mask = -mask;
-                mask &= visual_flags;
+                mask &= visualFlags;
                 mask |= 4;
                 object->visual->flags = mask;
             } else {
-                s32 copied_flags = 12;
-                u8 source_flags = resource->visual->flags;
+                s32 copiedFlags = 12;
+                u8 sourceFlags = resource->visual->flags;
                 u8 flags;
-                s32 clear_mask = 13;
+                s32 clearMask = 13;
 
-                copied_flags &= source_flags;
+                copiedFlags &= sourceFlags;
                 flags = object->visual->flags;
-                clear_mask = -clear_mask;
-                clear_mask &= flags;
-                clear_mask |= copied_flags;
-                object->visual->flags = clear_mask;
+                clearMask = -clearMask;
+                clearMask &= flags;
+                clearMask |= copiedFlags;
+                object->visual->flags = clearMask;
             }
         }
         EventRuntime_Wait(state);

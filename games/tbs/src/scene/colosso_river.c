@@ -358,17 +358,17 @@ static void EV21_TOUCH(void)
 
 static void EV12_TOUCH(void)
 {
-	s32				   leader_id;
+	s32				   leaderId;
 	struct FieldActor *leader;
 	struct FieldActor *actor;
 	s32				   none;
 
-	leader_id = gGameState.selectedActor;
-	leader = Object_GetById(leader_id);
+	leaderId = gGameState.selectedActor;
+	leader = Object_GetById(leaderId);
 	actor = Object_GetById(12);
 	GameFlag_Set(0x302);
 	Engine_EventBegin();
-	Engine_ActorSetAnimation(leader_id, 8);
+	Engine_ActorSetAnimation(leaderId, 8);
 	Engine_EventWait(6);
 	actor->speed = 0x8000;
 	actor->acceleration = 0x3333;
@@ -376,13 +376,13 @@ static void EV12_TOUCH(void)
 	Object_SetMode(actor, 2);
 	Engine_ObjectSetPosition(actor, actor->x.fixed - 0x300000, 0, actor->z.fixed);
 	Engine_EventWait(6);
-	Engine_ActorSetAnimation(leader_id, 2);
+	Engine_ActorSetAnimation(leaderId, 2);
 	ObjectDispatch_InitFromTable4WithArgument(
 		*(struct DispatchObject **)(Runtime_AllocateBlock(27, 0xccc) + 480), (s32)actor);
-	Actor_SetSpeed(leader_id, 0x4ccc, 0x3333);
+	Actor_SetSpeed(leaderId, 0x4ccc, 0x3333);
 	Engine_ObjectSetPosition(leader, leader->x.fixed - 0x180000, 0, leader->z.fixed);
-	Engine_ActorWaitForMove(leader_id);
-	Engine_ActorSetAnimation(leader_id, 1);
+	Engine_ActorWaitForMove(leaderId);
+	Engine_ActorSetAnimation(leaderId, 1);
 	Object_CommitPosition(actor);
 	Object_SetMode(actor, 1);
 	Event_PlayCue(288);
@@ -1307,7 +1307,7 @@ static s32 SceneActor_PlaceLinkedActorAbove(struct FieldActor *a)
 	return 0;
 }
 
-static s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
+static s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
 {
 
 	u8				  *work = gColossoWork;
@@ -1361,14 +1361,14 @@ static s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
 	if (flag == 0)
 	{
 		/* FAKEMATCH: the void function is called as returning s32, the call the bytes show; called by its prototype the argument moves come in another order (differ 2 in tbs-en). */
-		((s32 (*)(s32, s32))SceneActor_ApplyValueAndMatchingSlots)(0, handle_a);
-		UiWork_PushValueSlot(handle_a, 2);
+		((s32 (*)(s32, s32))SceneActor_ApplyValueAndMatchingSlots)(0, handleA);
+		UiWork_PushValueSlot(handleA, 2);
 	}
 	else
 	{
 		/* FAKEMATCH: the same call as returning s32; by its prototype: differ 2 in tbs-en. */
-		((s32 (*)(s32, s32))SceneActor_ApplyValueAndMatchingSlots)(0, handle_b);
-		UiWork_PushValueSlot(handle_b, 2);
+		((s32 (*)(s32, s32))SceneActor_ApplyValueAndMatchingSlots)(0, handleB);
+		UiWork_PushValueSlot(handleB, 2);
 	}
 
 	shared = (u8 *)&gGameState;

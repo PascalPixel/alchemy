@@ -7,7 +7,7 @@ struct EventWork {
     struct ObjectRuntime *objects[64];
 };
 
-struct ObjectRuntime *Func_080eaf28(s32 *position, s32 check_y)
+struct ObjectRuntime *Func_080eaf28(s32 *position, s32 checkY)
 {
     u32 i;
 
@@ -15,7 +15,7 @@ struct ObjectRuntime *Func_080eaf28(s32 *position, s32 check_y)
         struct EventWork *event = Ram_HeapSlots->eventWork;
         struct ObjectRuntime *object = event->objects[i];
 
-        if (check_y) {
+        if (checkY) {
             if (position[0] >> 20 == object->x >> 20 && position[1] / 0x10000 == object->y / 0x10000
                 && position[2] >> 20 == object->z >> 20)
                 return object;

@@ -14,9 +14,9 @@
 // width, height : 大きさ（セル）
 // dst_x, dst_y  : 写す先の左上（セル）
 //--------------------------------------------------------------------------
-void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x, s32 dst_y)
+void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX, s32 dstY)
 {
-	Map_CopyMetatileIndicesRect(srcX, srcY, dst_x, dst_y, width, height);
-	Map_CopyCellAttributeRect(srcX, srcY, width, height, dst_x, dst_y);
+	Map_CopyMetatileIndicesRect(srcX, srcY, dstX, dstY, width, height);
+	Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
 }
 #endif

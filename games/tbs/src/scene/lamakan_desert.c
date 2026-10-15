@@ -744,7 +744,7 @@ static void EV40_TOUCH(void)
 	struct FieldActor *record;
 	s32				   rect[3];
 	s32				   shown;
-	u16				  *shown_addr;
+	u16				  *shownAddr;
 	u8				  *p5;
 
 	p5 = (u8 *)gEventWork;
@@ -756,9 +756,9 @@ static void EV40_TOUCH(void)
 		{
 			GameFlag_Set(0x200);
 			LamakanDesert_SetSandPhase(1);
-			shown_addr = (u16 *)(p5 + 0xcba);
+			shownAddr = (u16 *)(p5 + 0xcba);
 			shown = 0x258;
-			*shown_addr = shown;
+			*shownAddr = shown;
 			record = Object_GetById(ACTOR_PARTY_LEADER);
 			record->velocityX = rec8;
 			record = Object_GetById(ACTOR_PARTY_LEADER);
@@ -793,7 +793,7 @@ static void EV40_TOUCH(void)
 			Actor_WalkToAndWait(8, 168, 104);
 			Actor_SetSpeed(8, 0x8000, 0x4000);
 			Actor_WalkToAndWait(8, 168, 92);
-			*shown_addr = shown;
+			*shownAddr = shown;
 			LamakanDesert_SetSandPhase(0);
 		}
 	}

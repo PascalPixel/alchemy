@@ -850,7 +850,7 @@ static void EV10_TOUCH_1(void)
 	SceneActor_StepSubjectAlongHeading();
 }
 
-static void SceneActor_PlaceAtTileAndMark(s32 id, s32 tile_x, s32 tile_z)
+static void SceneActor_PlaceAtTileAndMark(s32 id, s32 tileX, s32 tileZ)
 {
 	struct FieldActor *actor = Object_GetById(id);
 
@@ -859,8 +859,8 @@ static void SceneActor_PlaceAtTileAndMark(s32 id, s32 tile_x, s32 tile_z)
 		Engine_ActorSetSpritePriority(id, 3);
 		actor->terrainId = 2;
 		actor->priorityFlags |= 2;
-		actor->x.fixed = (tile_x << 20) + 0x80000;
-		actor->z.fixed = (tile_z << 20) + 0x80000;
+		actor->x.fixed = (tileX << 20) + 0x80000;
+		actor->z.fixed = (tileZ << 20) + 0x80000;
 	}
 }
 

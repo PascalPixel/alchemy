@@ -126,7 +126,7 @@ static void EV14_TALK_1(void)
 {
 
 	struct FieldActor *rec18;
-	u8				  *ready_flag;
+	u8				  *readyFlag;
 	struct FieldActor *record;
 
 	Engine_EventBegin();
@@ -140,12 +140,12 @@ static void EV14_TALK_1(void)
 		Engine_ActorSetAnimation(14, 4);
 		Engine_EventSetMessage(MsgAltinWeCantDrinkWaterMonsters);
 		Event_ShowMessageAndWait(14, 0, 10);
-		ready_flag = GameFlag_IsSet(0x8ff);
-		if (ready_flag == 0)
+		readyFlag = GameFlag_IsSet(0x8ff);
+		if (readyFlag == 0)
 		{
 			rec18 = Object_GetById(18);
 
-			Battle_GetWorkObject1e0()->motionFlags = ready_flag;
+			Battle_GetWorkObject1e0()->motionFlags = readyFlag;
 			Camera_SetSpeed(0x10000, 0x2000);
 			Camera_MoveTo(rec18->x.fixed, rec18->y.fixed, rec18->z.fixed, 1);
 			Actor_FaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);

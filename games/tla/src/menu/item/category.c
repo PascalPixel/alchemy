@@ -21,7 +21,7 @@ struct CategoryMenuState {
     u16 items[15];
 };
 
-void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)
+void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode)
 {
     struct CategoryMenuState *menu = Ram_HeapSlots->menuRuntime;
     u8 *items;

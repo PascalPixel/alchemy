@@ -78,8 +78,8 @@ void Func_08168a40(struct BattleEffectArgument *effect)
 {
     struct FxPlacement place;
     struct EffectPosition unit;
-    u8 jitter_row[16];
-    u8 hit_row[14];
+    u8 jitterRow[16];
+    u8 hitRow[14];
     struct FxPlacement place2;
     void *canvas;
     struct BattleFxWork *work;
@@ -292,13 +292,13 @@ void Func_08168a40(struct BattleEffectArgument *effect)
         u8 *jitter;
 
         rowX = 224;
-        hit = hit_row;
+        hit = hitRow;
         i = 0;
         do {
             hit[i] = 0;
             i++;
         } while (i != 14);
-        jitter = jitter_row;
+        jitter = jitterRow;
         i = 0;
         do {
             jitter[i] = Random16() & 31;

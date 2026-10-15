@@ -6,7 +6,7 @@
 #define FLAG_SECOND 0x4000
 
 s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
-                          u16 *out, s32 *first_count, s32 *second_count)
+                          u16 *out, s32 *firstCount, s32 *secondCount)
 {
     s32 i;
     s32 j;
@@ -40,7 +40,7 @@ s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
             total++;
         }
     }
-    *first_count = first;
-    *second_count = second;
+    *firstCount = first;
+    *secondCount = second;
     return total;
 }

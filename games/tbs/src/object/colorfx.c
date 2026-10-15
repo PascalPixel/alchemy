@@ -1451,17 +1451,17 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
 		{
 			u32						   slot = base + current;
 			struct AudioTrackSlotWork *state;
-			u32						   read_offset;
-			u32						   next_offset;
+			u32						   readOffset;
+			u32						   nextOffset;
 			u8						   value;
 
 			AudioTrack_RemoveSlotNode(removal & mask);
 			state = gFlash_Handler3;
-			read_offset = state->inputCursor;
-			value = input[read_offset];
-			next_offset = read_offset + 1;
-			state->inputCursor = next_offset;
-			if (next_offset == state->inputLimit)
+			readOffset = state->inputCursor;
+			value = input[readOffset];
+			nextOffset = readOffset + 1;
+			state->inputCursor = nextOffset;
+			if (nextOffset == state->inputLimit)
 			{
 				state->bucketBySlot[slot & mask] = -1;
 				break;
@@ -1586,8 +1586,8 @@ s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size)
 {
 	s32 defer;
 	s32 len;
-	s32 save_offset;
-	s32 save_len;
+	s32 saveOffset;
+	s32 saveLen;
 	s32 reach[2];
 	s16 code;
 
@@ -1611,8 +1611,8 @@ s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size)
 			len = gFlash_Handler3->matchLen;
 			if (gFlash_Handler3->matchLen > 1)
 			{
-				save_offset = gFlash_Handler3->matchOffset;
-				save_len = len;
+				saveOffset = gFlash_Handler3->matchOffset;
+				saveLen = len;
 				AudioTrack_FindWindowMatch((gFlash_Handler3->pos + 1) & WINDOW_MASK);
 				if (gFlash_Handler3->matchLen > 2)
 				{
@@ -1621,12 +1621,12 @@ s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size)
 					reach[1] = gFlash_Handler3->matchLen + len;
 					if (reach[0] >= reach[1])
 					{
-						save_len = 1;
+						saveLen = 1;
 						defer = 1;
 					}
 				}
-				gFlash_Handler3->matchOffset = save_offset;
-				gFlash_Handler3->matchLen = save_len;
+				gFlash_Handler3->matchOffset = saveOffset;
+				gFlash_Handler3->matchLen = saveLen;
 			}
 		}
 

@@ -47,34 +47,34 @@ u8 Inventory_RemoveFar(s32, s32);
 u32 ItemMenu_Collect(struct ItemOwner *, u16 *, s32);
 s32 BattleEffect_ApplyToTargets(s32, s32, s32, s32);
 
-s32 Item_Use(s32 slot, s32 owner_id, s32 targetId)
+s32 Item_Use(s32 slot, s32 ownerId, s32 targetId)
 {
     struct ItemUseWork *work;
     s32 result;
-    s32 item_id;
+    s32 itemId;
     struct ItemOwner *owner;
     struct ItemData *item;
 
-    owner = UnitGetFar(owner_id);
+    owner = UnitGetFar(ownerId);
     work = gMenuWork;
-    item_id = 0x1ff & owner->items[slot];
-    item = Item_Get(item_id);
+    itemId = 0x1ff & owner->items[slot];
+    item = Item_Get(itemId);
     result = BattleEffect_ApplyToTargets(
         0x3fff & item->useAbility,
-        owner_id,
+        ownerId,
         targetId,
         1);
     if (result != -1) {
         item = Item_Get(owner->items[slot]);
         if (item->kind == 1) {
-            Inventory_RemoveFar(owner_id, slot);
+            Inventory_RemoveFar(ownerId, slot);
             work->entryCount =
                 ItemMenu_Collect(owner, work->entries, 0);
         }
         if (item->kind == 4) {
-            if (item_id == 0xb8)
-                item_id = 0xb9;
-            owner->items[slot] = item_id;
+            if (itemId == 0xb8)
+                itemId = 0xb9;
+            owner->items[slot] = itemId;
         }
         result = 0;
     }

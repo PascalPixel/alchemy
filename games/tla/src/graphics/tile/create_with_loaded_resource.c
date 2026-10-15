@@ -25,20 +25,20 @@ extern char ResourceId_ItemMenuTilesB;
 
 void Resource_LoadPairedBlocksIfAvailable(void)
 {
-    s32 first_slot;
-    s32 second_slot;
-    struct ItemMenuBlocks *active_state;
+    s32 firstSlot;
+    s32 secondSlot;
+    struct ItemMenuBlocks *activeState;
 
-    active_state = Ram_HeapSlots->menuRuntime;
-    first_slot = Resource_FindFreeEntry();
-    active_state->resourceSlots[0] = (s16)first_slot;
-    if (first_slot != -1) {
-        VramBlock_LoadResourceFar(first_slot, 0x80, (s32)&ResourceId_ItemMenuTilesA);
+    activeState = Ram_HeapSlots->menuRuntime;
+    firstSlot = Resource_FindFreeEntry();
+    activeState->resourceSlots[0] = (s16)firstSlot;
+    if (firstSlot != -1) {
+        VramBlock_LoadResourceFar(firstSlot, 0x80, (s32)&ResourceId_ItemMenuTilesA);
     }
-    second_slot = Resource_FindFreeEntry();
-    active_state->resourceSlots[1] = (s16)second_slot;
-    if (second_slot != -1) {
-        VramBlock_LoadResourceFar(second_slot, 0x80, (s32)&ResourceId_ItemMenuTilesB);
+    secondSlot = Resource_FindFreeEntry();
+    activeState->resourceSlots[1] = (s16)secondSlot;
+    if (secondSlot != -1) {
+        VramBlock_LoadResourceFar(secondSlot, 0x80, (s32)&ResourceId_ItemMenuTilesB);
     }
 }
 
@@ -54,14 +54,14 @@ void Menu_ResetTwoResourceEntries(void)
 
 s32 UiIcon_LoadResourceIntoSlot(s32 resourceId, s32 slot)
 {
-    s32 resource_info;
+    s32 resourceInfo;
     s32 selectedSlot;
     s32 buffer;
     u8 *allocation;
 
     allocation = Runtime_AllocateBlock(0x44, 0x608);
     selectedSlot = slot;
-    Ability_LoadGlyphFar(resourceId, 0, &selectedSlot, &resource_info, 1);
+    Ability_LoadGlyphFar(resourceId, 0, &selectedSlot, &resourceInfo, 1);
     buffer = Resource_GetBuffer(slot, (s32)(allocation + 0x400));
     Runtime_ReleaseHeapBlock(0x44);
     return buffer;

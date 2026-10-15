@@ -33,7 +33,7 @@ void BattleMotion_SetObjectPosition(struct BattleObj *slot)
 
 void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId)
 {
-    u32 scaled_x;
+    u32 scaledX;
     struct BattleObj *slot;
     struct MotionObject *object;
 
@@ -46,8 +46,8 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId)
     object->verticalMotionPhase = 0;
     object->autoFaceMotion = 0;
     Object_ResetMotion(object);
-    scaled_x = slot->anchorX * 3;
-    Object_SetPosition(object, (s32)(scaled_x + (scaled_x >> 0x1F)) >> 1, 0, slot->anchorZ);
+    scaledX = slot->anchorX * 3;
+    Object_SetPosition(object, (s32)(scaledX + (scaledX >> 0x1F)) >> 1, 0, slot->anchorZ);
 }
 
 void Func_0811c01c(s32 objectId)

@@ -20,24 +20,24 @@
 
 void ResetBattleObjectRecordGroups(struct MotionObject *object)
 {
-    s32 storage_kind;
+    s32 storageKind;
     s32 remaining;
-    void **record_groups;
-    void *record_group;
+    void **recordGroups;
+    void *recordGroup;
 
     if (object != NULL) {
-        storage_kind = object->recordStorageKind & 0xF;
-        switch (storage_kind) {
+        storageKind = object->recordStorageKind & 0xF;
+        switch (storageKind) {
         case 1:
             ResetMotionRecordGroup(object->records);
             return;
         case 2:
-            record_groups = object->records;
+            recordGroups = object->records;
             remaining = 3;
             do {
-                record_group = *record_groups++;
-                if (record_group != NULL) {
-                    ResetMotionRecordGroup(record_group);
+                recordGroup = *recordGroups++;
+                if (recordGroup != NULL) {
+                    ResetMotionRecordGroup(recordGroup);
                 }
                 remaining -= 1;
             } while (remaining >= 0);

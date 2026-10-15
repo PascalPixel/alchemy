@@ -41,7 +41,7 @@ struct ObjectRuntime *Func_080d4568(void)
     return ((struct EventWork *)Runtime_AllocateBlock(108, 0xd50))->viewCenter;
 }
 
-void Func_080d4580(struct ObjectRuntime *target, s32 keep_current_position)
+void Func_080d4580(struct ObjectRuntime *target, s32 keepCurrentPosition)
 {
     struct ObjectRuntime *object;
 
@@ -49,7 +49,7 @@ void Func_080d4580(struct ObjectRuntime *target, s32 keep_current_position)
     if (target != NULL) {
         ObjectDispatch_InitFromTable4WithArgumentFar(object, NULL);
         object->linkedObject = target;
-        if (keep_current_position == 0) {
+        if (keepCurrentPosition == 0) {
             object->x = target->x;
             object->y = target->y;
             object->z = target->z;

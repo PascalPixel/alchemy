@@ -34,7 +34,7 @@ void Event_StartScreenTransitionFar(void);
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
 #endif
 
-void Inn_PlaySleep(s32 room_price)
+void Inn_PlaySleep(s32 roomPrice)
 {
     s16 objects[8];
     s32 count;
@@ -43,7 +43,7 @@ void Inn_PlaySleep(s32 room_price)
     struct FieldEffectState *state;
 
     count = Party_ListActiveOwnersFar(objects);
-    Party_AdjustCoinsFar(-room_price);
+    Party_AdjustCoinsFar(-roomPrice);
 
     for (index = 0; index < count; index++) {
         object = UnitGet(objects[index]);

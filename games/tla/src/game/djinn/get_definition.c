@@ -50,11 +50,11 @@ s32 Trade_ListFlaggedEntries(u8 *output)
     return count;
 }
 
-const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id)
+const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId)
 {
-    if (summon_id > 28)
+    if (summonId > 28)
         return NULL;
-    return &gSummon_DefinitionTable[summon_id];
+    return &gSummon_DefinitionTable[summonId];
 }
 
 

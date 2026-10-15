@@ -61,10 +61,10 @@ void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z)
     }
 }
 
-void ObjectMotion_MoveToObject(u32 objectId, u32 other_id)
+void ObjectMotion_MoveToObject(u32 objectId, u32 otherId)
 {
     struct ObjectRuntime *object = ObjectTable_Get(objectId);
-    struct ObjectRuntime *other = ObjectTable_Get(other_id);
+    struct ObjectRuntime *other = ObjectTable_Get(otherId);
 
     if (object != NULL && other != NULL) {
         Object_SetPositionAndResetMotionFar(object, other->x, other->y, other->z);

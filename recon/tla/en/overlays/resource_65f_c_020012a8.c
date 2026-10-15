@@ -32,7 +32,7 @@ void Func_020012a8(s32 objectId)
     struct ObjectRuntime *object;
     struct Vec vec;
     struct EffectOptions params;
-    u32 angle_step;
+    u32 angleStep;
     s32 angle;
     s32 x;
     s32 z;
@@ -40,9 +40,9 @@ void Func_020012a8(s32 objectId)
     object = Object_GetById(objectId);
     params.update = Effect_AdvanceMotion;
     /* FAKEMATCH: the loop is written with goto so that it carries no loop notes: the bytes form the vector's address after the cosine call on every pass, and a for loop hoists it. */
-    angle_step = 0;
+    angleStep = 0;
 burst:
-        angle = angle_step << 12;
+        angle = angleStep << 12;
         vec.x = Math_Cosine(angle);
         vec.y = 0;
         z = Math_Sine(angle);
@@ -51,7 +51,7 @@ burst:
         x += x / 3;
         vec.x = x;
         Func_020000b8(object->x, object->y, object->z, x, vec.y, z, 0x01000001, &params);
-    angle_step += 2;
-    if (angle_step <= 16)
+    angleStep += 2;
+    if (angleStep <= 16)
         goto burst;
 }

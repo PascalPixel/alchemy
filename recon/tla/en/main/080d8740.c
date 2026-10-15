@@ -67,11 +67,11 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
     struct CaptureObject *copy;
     struct CaptureObject *previous;
     struct CaptureResource *resource;
-    void *effect_slots;
+    void *effectSlots;
     struct CaptureObject **cursor;
     struct CaptureObject **list;
     u8 *slot;
-    s8 *slot_state;
+    s8 *slotState;
     s32 kind;
     s32 remaining;
     s32 resourceId;
@@ -87,7 +87,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
         return;
 
     BattleFx_InitializeSlots();
-    effect_slots = *(void **)gEffectWork;
+    effectSlots = *(void **)gEffectWork;
     Shop_RestoreSceneTilesFar(0x204084);
     WaitFrames(30);
     djinni->visible = 0;
@@ -152,7 +152,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
     position.z = djinni->z;
     Camera_WorldToScreen(&position.x);
 
-    slot = (u8 *)effect_slots + 88;
+    slot = (u8 *)effectSlots + 88;
     remaining = 23;
     do {
         EffectSlot_Initialize(slot, 240, position.x, position.z);
@@ -166,17 +166,17 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
 
     WaitFrames(120);
     {
-        s32 next_state;
+        s32 nextState;
 
-        next_state = 2;
-        slot_state = effect_slots;
-        slot_state += 152;
+        nextState = 2;
+        slotState = effectSlots;
+        slotState += 152;
         remaining = 23;
         do {
-            if (slot_state[5] != 0)
-                slot_state[0] = next_state;
+            if (slotState[5] != 0)
+                slotState[0] = nextState;
             remaining--;
-            slot_state += 72;
+            slotState += 72;
         } while (remaining >= 0);
     }
 

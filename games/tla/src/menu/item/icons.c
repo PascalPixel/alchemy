@@ -52,18 +52,18 @@ void ItemMenu_DrawIcons(u16 *items, s32 style)
     s32 remaining;
     u16 *entries;
     struct ItemEntryIcon **icons;
-    s32 item_id;
+    s32 itemId;
 
     icons = ((struct ItemEntryMenu *)Ram_HeapSlots->menuRuntime)->entryIcons;
     entries = items;
     remaining = 14;
     do {
-        item_id = *entries++;
-        if (item_id != 0) {
+        itemId = *entries++;
+        if (itemId != 0) {
             if (style == 0) {
-                Func_08038288(2, item_id, (*icons)->slot, 0);
+                Func_08038288(2, itemId, (*icons)->slot, 0);
             } else {
-                Func_08038288(7, item_id, (*icons)->slot, 0);
+                Func_08038288(7, itemId, (*icons)->slot, 0);
             }
         }
         icons++;
@@ -78,19 +78,19 @@ s32 ItemMenu_Count(s32 owner_id);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 s32 UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 
-void ItemMenu_RefreshOwner(s32 owner_id, s32 mode)
+void ItemMenu_RefreshOwner(s32 ownerId, s32 mode)
 {
     struct ItemEntryMenu *menu;
     struct OwnerInventoryState *owner;
     u16 *items;
 
     menu = Ram_HeapSlots->menuRuntime;
-    owner = UnitGet(owner_id);
+    owner = UnitGet(ownerId);
     items = menu->items;
     menu->itemCount = ItemMenu_Collect(owner, items, 0);
     RenderOutput_RedrawSavedRectFar(menu->itemWindow);
     ItemMenu_RefreshEntry(mode);
     ItemMenu_DrawIcons(items, 0);
-    if (ItemMenu_Count(owner_id) == 0)
+    if (ItemMenu_Count(ownerId) == 0)
         UiText_DrawCharacterAtOffsetFar((s32)MsgItemMenuEmpty, menu->itemWindow, 8, 24);
 }

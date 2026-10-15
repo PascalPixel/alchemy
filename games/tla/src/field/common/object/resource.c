@@ -12,20 +12,20 @@ void Resource_ResetEntry(s32 block);
 s32 ResourceTable_CountFreeBlocks(void)
 {
     u8 *marker = gResourceBlockOwners;
-    s32 free_count;
+    s32 freeCount;
     s32 remaining;
 
     /* FAKEMATCH: ⚓️ loads the owner table before counting */
     asm volatile("");
-    free_count = 0;
+    freeCount = 0;
     remaining = 0x200;
     do {
         if (*marker++ == 0xff) {
-            free_count++;
+            freeCount++;
         }
         remaining--;
     } while (remaining != 0);
-    return free_count;
+    return freeCount;
 }
 
 void *Object_ReplaceResourceEntry(void *src, void *alt)

@@ -21,7 +21,7 @@ s32 BattlePres_RunAction(s16 *action)
 {
     struct BattlePresentationTransition *transition;
     s32 actorId;
-    s32 battle_mode;
+    s32 battleMode;
     u8 *actor;
 
     actorId = action[0];
@@ -32,10 +32,10 @@ s32 BattlePres_RunAction(s16 *action)
     action[5] = BattleTarget_ReplaceDefeated((const struct BattleActionRecord *)action);
     transition = Ram_HeapSlots->transitionWork;
     if (action[0] > 4)
-        battle_mode = -0x2000;
+        battleMode = -0x2000;
     else
-        battle_mode = 0x2000;
-    transition->targetYaw = battle_mode;
+        battleMode = 0x2000;
+    transition->targetYaw = battleMode;
     transition->frames = 60;
     UiWork_ClearValueNameTablesFar();
 

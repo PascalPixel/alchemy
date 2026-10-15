@@ -198,19 +198,19 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
     s32 *ctl;
     s32 *bank;
     s32 camera;
-    s32 prev_camera;
-    s32 wave_x;
-    s32 wave_scroll;
-    s32 ship_y;
-    s32 wave_phase;
+    s32 prevCamera;
+    s32 waveX;
+    s32 waveScroll;
+    s32 shipY;
+    s32 wavePhase;
     u16 savedY;
-    s32 bg_x;
+    s32 bgX;
     struct SummonWork *work;
     u16 *pal;
-    s32 sway_x;
-    s32 sway_y;
-    s32 bob_x;
-    s32 bob_y;
+    s32 swayX;
+    s32 swayY;
+    s32 bobX;
+    s32 bobY;
     s32 i;
     s32 j;
     s32 k;
@@ -240,11 +240,11 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
     work->transferMode = 0;
     Scheduler_AddOrUpdateCallback(Func_08143000, 0xc80);
     camera = 0;
-    wave_scroll = 0;
-    ship_y = -0x1d0000;
-    wave_phase = 0;
+    waveScroll = 0;
+    shipY = -0x1d0000;
+    wavePhase = 0;
     savedY = *(u16 *)0x03001124;
-    bg_x = -80;
+    bgX = -80;
 
     for (frame = 0; frame != 52; frame++) {
         if (frame == 27) {
@@ -340,24 +340,24 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             scale = gUlysses_ScaleA;
             pos.w = 0;
             pos.y = 0xff0000;
-            wave_scroll += 0x8000;
-            wave_x = wave_scroll + camera;
-            if (wave_x >= 0x200000) {
-                wave_phase = (wave_phase + 7) % 8;
-                wave_x -= 0x200000;
-                wave_scroll -= 0x200000;
+            waveScroll += 0x8000;
+            waveX = waveScroll + camera;
+            if (waveX >= 0x200000) {
+                wavePhase = (wavePhase + 7) % 8;
+                waveX -= 0x200000;
+                waveScroll -= 0x200000;
             }
             z = 0x670000;
             for (row = 0; row != 2; row++) {
                 for (k = 0; k != 9; k++) {
-                    pos.x = (k << 21) + wave_x;
+                    pos.x = (k << 21) + waveX;
                     pos.z = z;
                     if (k == 8) {
                         obj = work->sprites[row * 9 + 8];
-                        v = (wave_phase + 71) % 8;
+                        v = (wavePhase + 71) % 8;
                     } else {
                         obj = work->sprites[row * 9 + k];
-                        v = (wave_phase + 64 + k) % 8;
+                        v = (wavePhase + 64 + k) % 8;
                     }
                     obj->tile = work->particles[row * 9 + v].timer;
                     if (pos.x > 0xffffff)
@@ -367,8 +367,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 z += 0x200000;
             }
         }
-        bg_x += 4;
-        *(s32 *)0x04000028 = bg_x << 8;
+        bgX += 4;
+        *(s32 *)0x04000028 = bgX << 8;
         work->transferPending = 1;
         Func_08013560(1);
     }
@@ -406,7 +406,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
         if (frame == 0) {
             *(vu16 *)0x04000020 = 0x100;
             *pal = 0x190b;
-            ship_y = -0x1d0000;
+            shipY = -0x1d0000;
             camera = 0;
             work->sprites[39]->rotation = 0xc000;
             work->sprites[38]->rotation = 0;
@@ -448,7 +448,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 p->timer = 0;
             }
         }
-        prev_camera = camera;
+        prevCamera = camera;
         if (frame >= 542 && frame < 558) {
             color = *pal;
             r = color & 0x1f;
@@ -522,38 +522,38 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             }
         }
         if (frame <= 473)
-            wave_scroll += 0x8000;
-        wave_x = wave_scroll + camera;
-        if (wave_x >= 0x200000) {
-            wave_phase = (wave_phase + 7) % 8;
-            wave_scroll -= 0x200000;
-            wave_x -= 0x200000;
+            waveScroll += 0x8000;
+        waveX = waveScroll + camera;
+        if (waveX >= 0x200000) {
+            wavePhase = (wavePhase + 7) % 8;
+            waveScroll -= 0x200000;
+            waveX -= 0x200000;
         }
-        if (ship_y < 0)
-            ship_y += 0x2000;
+        if (shipY < 0)
+            shipY += 0x2000;
         scale2 = gUlysses_ScaleB;
-        bob_x = 0;
-        bob_y = 0;
+        bobX = 0;
+        bobY = 0;
         if (frame > 537) {
-            sway_x = Func_08002090(0x21a00) << 2;
-            sway_y = Func_08002096(0x21a00) << 2;
+            swayX = Func_08002090(0x21a00) << 2;
+            swayY = Func_08002096(0x21a00) << 2;
             if (frame >= 542 && frame < 558) {
                 v = (frame << 11) - 0x10f000;
-                bob_x = Func_08002096(v) * 3;
-                bob_y = Func_08002096(v) * 2;
+                bobX = Func_08002096(v) * 3;
+                bobY = Func_08002096(v) * 2;
             }
             if (frame >= 560 && frame < 576) {
                 v = (frame << 11) - 0x118000;
-                bob_x = Func_08002096(v) * 2;
-                bob_y = Func_08002096(v) * 3;
+                bobX = Func_08002096(v) * 2;
+                bobY = Func_08002096(v) * 3;
             }
         } else {
-            sway_x = Func_08002090(frame << 8) << 2;
-            sway_y = Func_08002096(frame << 8) << 2;
+            swayX = Func_08002090(frame << 8) << 2;
+            swayY = Func_08002096(frame << 8) << 2;
         }
-        if (sway_y > 0)
-            sway_y = -sway_y;
-        sway_y -= ship_y * 2;
+        if (swayY > 0)
+            swayY = -swayY;
+        swayY -= shipY * 2;
         pos2.w = 0;
         pos2.y = 0xff0000;
         for (i = 0; i != 5; i++) {
@@ -592,8 +592,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             if (work->particles[20].timer == (i & 7) * 6 + 10) {
                 Func_081c0010(138);
                 p->timer = 1;
-                p->x += sway_x;
-                p->y += sway_y - (gUlysses_Shake[work->shake] << 16);
+                p->x += swayX;
+                p->y += swayY - (gUlysses_Shake[work->shake] << 16);
                 p->vy = (Random16() & 0xffff) - 0x8000;
                 p->ay = (Random16() & 0x3fff) - 0x2000;
             }
@@ -613,10 +613,10 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
         }
         if (frame >= 578 && frame < 594)
             work->unk7798 = ~((frame - 578) / 8);
-        v = camera - sway_x + bob_x + 0x780000;
+        v = camera - swayX + bobX + 0x780000;
         for (i = 0; i != 2; i++) {
             pos2.x = v;
-            pos2.z = (((i << 5) - gUlysses_Shake[work->shake]) << 16) + sway_y + bob_y + 0x640000;
+            pos2.z = (((i << 5) - gUlysses_Shake[work->shake]) << 16) + swayY + bobY + 0x640000;
             Render_ApplyProjectedPlacementFar(work->sprites[32 + i], &pos2, &scale2, 0);
         }
         if (frame <= 316) {
@@ -630,27 +630,27 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 p->vy = p->vy * 63 / 64;
                 work->sprites[38]->rotation += 0x200;
             }
-            pos2.x = p->x - sway_x + camera + 0x780000;
-            pos2.z = ((99 - gUlysses_Shake[work->shake]) << 16) + sway_y + p->y;
+            pos2.x = p->x - swayX + camera + 0x780000;
+            pos2.z = ((99 - gUlysses_Shake[work->shake]) << 16) + swayY + p->y;
             Render_ApplyProjectedPlacementFar(work->sprites[38], &pos2, &scale2, 0);
         }
-        v = camera + bob_x;
+        v = camera + bobX;
         pos2.x = v + 0x8e0000;
-        pos2.z = ((72 - gUlysses_Shake[work->shake]) << 16) + sway_y + bob_y;
+        pos2.z = ((72 - gUlysses_Shake[work->shake]) << 16) + swayY + bobY;
         Render_ApplyProjectedPlacementFar(work->sprites[18], &pos2, &scale2, 0);
         pos2.x = v + 0xae0000;
-        pos2.z = ((72 - gUlysses_Shake[work->shake]) << 16) + sway_y + bob_y;
+        pos2.z = ((72 - gUlysses_Shake[work->shake]) << 16) + swayY + bobY;
         Render_ApplyProjectedPlacementFar(work->sprites[19], &pos2, &scale2, 0);
         v += 0x800000;
         pos2.x = v;
-        pos2.z = ((104 - gUlysses_Shake[work->shake]) << 16) + sway_y + bob_y;
+        pos2.z = ((104 - gUlysses_Shake[work->shake]) << 16) + swayY + bobY;
         Render_ApplyProjectedPlacementFar(work->sprites[20], &pos2, &scale2, 0);
         if (frame > 602)
             Func_0815f0a0(0x148);
         p = &work->particles[22];
         if (frame == 570) {
             p->x = 0x980000;
-            p->y = ((92 - gUlysses_Shake[work->shake]) << 16) + sway_y;
+            p->y = ((92 - gUlysses_Shake[work->shake]) << 16) + swayY;
             p->timer = 1;
             p->vx = -0x40000;
             p->vy = -0x5000;
@@ -684,7 +684,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 q->x = 0x580000;
                 q->y = 0x800000;
             }
-            prev_camera = camera;
+            prevCamera = camera;
             if (p->timer > 229)
                 camera += (0x980000 - (p->x + ((p->timer - 230) << 17)) - camera) / 4;
             else if (p->timer > 0)
@@ -740,8 +740,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
         scale2.x = 0x103ff;
         scale2.y = 0x103ff;
         if (p->timer == 0) {
-            pos2.x = camera + bob_x + 0x980000;
-            pos2.z = ((92 - gUlysses_Shake[work->shake]) << 16) + sway_y + bob_y;
+            pos2.x = camera + bobX + 0x980000;
+            pos2.z = ((92 - gUlysses_Shake[work->shake]) << 16) + swayY + bobY;
         } else {
             pos2.x = p->x + camera;
             pos2.z = p->y;
@@ -809,26 +809,26 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
         work->sprites[22]->priority = 2;
         work->sprites[23]->priority = 2;
         work->sprites[24]->priority = 2;
-        v = prev_camera + bob_x;
+        v = prevCamera + bobX;
         pos2.x = v + 0xa00000;
-        pos2.z = ((104 - gUlysses_Shake[work->shake]) << 16) + sway_y + bob_y;
+        pos2.z = ((104 - gUlysses_Shake[work->shake]) << 16) + swayY + bobY;
         Render_ApplyProjectedPlacementFar(work->sprites[21], &pos2, &scale2, 0);
         pos2.x = v + 0x800000;
-        pos2.z = ((136 - gUlysses_Shake[work->shake]) << 16) + sway_y + bob_y;
+        pos2.z = ((136 - gUlysses_Shake[work->shake]) << 16) + swayY + bobY;
         Render_ApplyProjectedPlacementFar(work->sprites[22], &pos2, &scale2, 0);
         pos2.x = v + 0xa00000;
-        pos2.z = ((136 - gUlysses_Shake[work->shake]) << 16) + sway_y + bob_y;
+        pos2.z = ((136 - gUlysses_Shake[work->shake]) << 16) + swayY + bobY;
         Render_ApplyProjectedPlacementFar(work->sprites[23], &pos2, &scale2, 0);
         pos2.x = v + 0xc00000;
-        pos2.z = ((136 - gUlysses_Shake[work->shake]) << 16) + sway_y + bob_y;
+        pos2.z = ((136 - gUlysses_Shake[work->shake]) << 16) + swayY + bobY;
         Render_ApplyProjectedPlacementFar(work->sprites[24], &pos2, &scale2, 0);
         work->sprites[25]->priority = 2;
         pos2.x = v + 0x800000;
-        pos2.z = ((104 - gUlysses_Shake[work->shake]) << 16) + sway_y + bob_y;
+        pos2.z = ((104 - gUlysses_Shake[work->shake]) << 16) + swayY + bobY;
         Render_ApplyProjectedPlacementFar(work->sprites[25], &pos2, &scale2, 0);
         for (i = 0; i != 5; i++) {
-            pos2.x = (gUlysses_ShipParts[i][0] << 16) + sway_x + prev_camera + bob_x + 0xb00000;
-            pos2.z = ((gUlysses_ShipParts[i][1] - gUlysses_Shake[work->shake]) << 16) + sway_y + bob_y + 0x540000;
+            pos2.x = (gUlysses_ShipParts[i][0] << 16) + swayX + prevCamera + bobX + 0xb00000;
+            pos2.z = ((gUlysses_ShipParts[i][1] - gUlysses_Shake[work->shake]) << 16) + swayY + bobY + 0x540000;
             work->sprites[26 + i]->priority = 2;
             Render_ApplyProjectedPlacementFar(work->sprites[26 + i], &pos2, &scale2, 0);
         }
@@ -852,7 +852,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             }
             for (i = 0; i != 4; i++) {
                 pos2.x = ((i & 1) << 21) + p->x + camera + 0x800000;
-                pos2.z = ((((i / 2) << 5) - gUlysses_Shake[work->shake]) << 16) + sway_y + p->y + 0x680000;
+                pos2.z = ((((i / 2) << 5) - gUlysses_Shake[work->shake]) << 16) + swayY + p->y + 0x680000;
                 work->sprites[34 + i]->priority = 1;
                 Render_ApplyProjectedPlacementFar(work->sprites[34 + i], &pos2, &scale2, 0);
             }
@@ -868,21 +868,21 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 p->vy = p->vy * 63 / 64;
                 work->sprites[31]->rotation += 0x100;
             }
-            pos2.x = sway_x + p->x + camera + 0xb80000;
-            pos2.z = ((92 - gUlysses_Shake[work->shake]) << 16) + sway_y + p->y;
+            pos2.x = swayX + p->x + camera + 0xb80000;
+            pos2.z = ((92 - gUlysses_Shake[work->shake]) << 16) + swayY + p->y;
             work->sprites[31]->priority = 1;
             Render_ApplyProjectedPlacementFar(work->sprites[31], &pos2, &scale2, 0);
         }
         for (row = 0; row != 2; row++) {
             for (k = 0; k != 9; k++) {
-                pos2.x = (k << 21) + wave_x;
-                pos2.z = (((row << 5) - gUlysses_Shake[work->shake]) << 16) + ship_y + 0x840000;
+                pos2.x = (k << 21) + waveX;
+                pos2.z = (((row << 5) - gUlysses_Shake[work->shake]) << 16) + shipY + 0x840000;
                 if (k == 8) {
                     obj = work->sprites[row * 9 + 8];
-                    v = (wave_phase + 71) % 8;
+                    v = (wavePhase + 71) % 8;
                 } else {
                     obj = work->sprites[row * 9 + k];
-                    v = (wave_phase + 64 + k) % 8;
+                    v = (wavePhase + 64 + k) % 8;
                 }
                 obj->tile = work->particles[row * 9 + v].timer;
                 if (pos2.x > 0xffffff)
@@ -895,7 +895,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
                 if (frame >= j * 2 + 490 && frame < j * 2 + 502) {
                     ((BlitFunc)blit[0])(dest, work->frames + (frame - (j * 2 + 490)) / 2 * 288,
                         gUlysses_Foam[i][j][0] - 6,
-                        gUlysses_Foam[i][j][1] + (sway_y >> 16) - gUlysses_Shake[work->shake] - 12, 12, 24);
+                        gUlysses_Foam[i][j][1] + (swayY >> 16) - gUlysses_Shake[work->shake] - 12, 12, 24);
                 }
             }
         }

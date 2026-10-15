@@ -174,10 +174,10 @@ struct AnimationGroup {
 
 s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags)
 {
-    s32 high_bit;
+    s32 highBit;
     s32 index;
 
-    high_bit = flags & 0x80;
+    highBit = flags & 0x80;
     flags &= 0x7f;
 
     if (state->lastNo != flags) {
@@ -187,7 +187,7 @@ entry_loop:
         {
             struct AnimationEntry *entry = state->entries[index];
             struct AnimationMetadata *metadata;
-            s32 selected_animation;
+            s32 selectedAnimation;
 
             if (entry == 0)
                 goto next_entry;
@@ -198,11 +198,11 @@ entry_loop:
             if (flags >= metadata->animationCount)
                 goto next_entry;
 
-            selected_animation = (s32)entry->scripts[flags];
+            selectedAnimation = (s32)entry->scripts[flags];
             entry->kind = metadata->drawKind;
-            entry->script = (u8 *)selected_animation;
+            entry->script = (u8 *)selectedAnimation;
             entry->step = 0x10;
-            if (high_bit == 0) {
+            if (highBit == 0) {
                 entry->pos = 0;
                 entry->timer = 0;
             }

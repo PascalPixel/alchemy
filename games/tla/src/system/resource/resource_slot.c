@@ -34,7 +34,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
     u32 size;
     u32 count;
     u32 index;
-    u16 entry_number;
+    u16 entryNumber;
     s32 resource;
 
     if (slot >= RESOURCE_SLOT_COUNT)
@@ -50,11 +50,11 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
         s16 *numbers = &entry->number;
 
         resource = entry->resource;
-        entry_number = *numbers;
+        entryNumber = *numbers;
         entry++;
-        if (entry_number == 0)
+        if (entryNumber == 0)
             return 0;
-        if (entry_number == number)
+        if (entryNumber == number)
             break;
     }
     size = Resource_DecodeType01(Resource_GetTableEntry(resource), buffer);

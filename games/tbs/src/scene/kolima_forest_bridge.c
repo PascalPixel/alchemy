@@ -166,12 +166,12 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 {
 	struct FieldActor *record;
 	s32				  *party;
-	const u8		  *entry_action;
-	const u8		  *motion_action;
-	s32				  *party_flag;
-	const u8		  *reset_action;
-	const u8		  *formation_action;
-	const u8		  *finish_action;
+	const u8		  *entryAction;
+	const u8		  *motionAction;
+	s32				  *partyFlag;
+	const u8		  *resetAction;
+	const u8		  *formationAction;
+	const u8		  *finishAction;
 
 	Engine_EventBegin();
 	Camera_MoveTo(-1, -1, -1, 0);
@@ -197,12 +197,12 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Engine_ActorSetSpriteFlags(record, 0);
 	record = Object_GetById(21);
 	Engine_ActorSetSpriteFlags(record, 0);
-	entry_action = gKolimaForestBridge_EntryAction;
-	Engine_ActorEnableActionCallback(17, entry_action);
-	Engine_ActorEnableActionCallback(18, entry_action);
-	Engine_ActorEnableActionCallback(19, entry_action);
-	Engine_ActorEnableActionCallback(20, entry_action);
-	Engine_ActorEnableActionCallback(21, entry_action);
+	entryAction = gKolimaForestBridge_EntryAction;
+	Engine_ActorEnableActionCallback(17, entryAction);
+	Engine_ActorEnableActionCallback(18, entryAction);
+	Engine_ActorEnableActionCallback(19, entryAction);
+	Engine_ActorEnableActionCallback(20, entryAction);
+	Engine_ActorEnableActionCallback(21, entryAction);
 	Actor_SetPosition(ACTOR_PARTY_LEADER, 0x740000, 0x25a0000);
 	Engine_TaskWait(1);
 	Engine_MapRedraw();
@@ -291,11 +291,11 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	ColorBuffer_ApplyTarget(0x10000, 2);
 	Engine_ColorBufferInterpolate(120);
 	Engine_TaskWait(60);
-	motion_action = gKolimaForestBridge_PartyAction;
-	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, motion_action);
-	Engine_ActorEnableActionCallback(GARET, motion_action);
-	Engine_ActorEnableActionCallback(IVAN, motion_action);
-	Engine_ActorEnableActionCallback(MIA, motion_action);
+	motionAction = gKolimaForestBridge_PartyAction;
+	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, motionAction);
+	Engine_ActorEnableActionCallback(GARET, motionAction);
+	Engine_ActorEnableActionCallback(IVAN, motionAction);
+	Engine_ActorEnableActionCallback(MIA, motionAction);
 	Engine_EventWait(100);
 	Event_SayThenWait(GARET, 20);
 	Event_SayThenWait(IVAN, 40);
@@ -328,8 +328,8 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	record->velocityY = 0x20000;
 	Engine_EventWait(10);
 	Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x20000);
-	reset_action = gKolimaForestBridge_ResetAction;
-	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, reset_action);
+	resetAction = gKolimaForestBridge_ResetAction;
+	Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, resetAction);
 	record = Object_GetById(0);
 	Engine_ActorSetSpriteFlags(record, 0);
 	Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
@@ -338,7 +338,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	record->velocityY = 0x20000;
 	Engine_EventWait(10);
 	Actor_SetSpeed(GARET, 0x20000, 0x20000);
-	Engine_ActorEnableActionCallback(GARET, reset_action);
+	Engine_ActorEnableActionCallback(GARET, resetAction);
 	record = Object_GetById(1);
 	Engine_ActorSetSpriteFlags(record, 0);
 	Engine_ActorSetAnimation(GARET, 19);
@@ -346,7 +346,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	record = Object_GetById(2);
 	record->velocityY = 0x20000;
 	Engine_EventWait(10);
-	Engine_ActorEnableActionCallback(IVAN, reset_action);
+	Engine_ActorEnableActionCallback(IVAN, resetAction);
 	record = Object_GetById(2);
 	Engine_ActorSetSpriteFlags(record, 0);
 	Engine_ActorSetAnimation(IVAN, 19);
@@ -412,23 +412,23 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Object_GetById(13)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(13, 2);
 	Actor_SetPosition(13, 0xfd0000, 0x25b0000);
-	formation_action = gKolimaForestBridge_FormationAction;
-	Engine_ActorEnableActionCallback(13, formation_action);
+	formationAction = gKolimaForestBridge_FormationAction;
+	Engine_ActorEnableActionCallback(13, formationAction);
 	Object_GetById(14)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(14, 2);
 	Actor_SetPosition(14, 0xe90000, 0x2750000);
-	Engine_ActorEnableActionCallback(14, formation_action);
+	Engine_ActorEnableActionCallback(14, formationAction);
 	if (gKolimaForestBridge_PartyFlag != 0)
 	{
 		Object_GetById(15)->priorityFlags &= 254;
 		Engine_ActorSetSpritePriority(15, 2);
 		Actor_SetPosition(15, 0xcf0000, 0x2610000);
-		Engine_ActorEnableActionCallback(15, formation_action);
+		Engine_ActorEnableActionCallback(15, formationAction);
 	}
 	Object_GetById(16)->priorityFlags &= 254;
 	Engine_ActorSetSpritePriority(16, 2);
 	Actor_SetPosition(16, 0xe30000, 0x2440000);
-	Engine_ActorEnableActionCallback(16, formation_action);
+	Engine_ActorEnableActionCallback(16, formationAction);
 	if (gFallingEffectState != 0)
 	{
 		do
@@ -451,14 +451,14 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	}
 	Engine_ActorStop(16);
 	Engine_TaskWait(1);
-	finish_action = gKolimaForestBridge_FinishAction;
-	Engine_ActorEnableActionCallback(13, finish_action);
-	Engine_ActorEnableActionCallback(14, finish_action);
+	finishAction = gKolimaForestBridge_FinishAction;
+	Engine_ActorEnableActionCallback(13, finishAction);
+	Engine_ActorEnableActionCallback(14, finishAction);
 	if (gKolimaForestBridge_PartyFlag != 0)
 	{
-		Engine_ActorEnableActionCallback(15, finish_action);
+		Engine_ActorEnableActionCallback(15, finishAction);
 	}
-	Object_SetActionCallbackAndRefreshById(16, finish_action);
+	Object_SetActionCallbackAndRefreshById(16, finishAction);
 	Engine_EventWait(80);
 	Engine_ActorRunRepeatedMotion(GARET, 2);
 	Engine_EventWait(40);
@@ -698,17 +698,17 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	gFallingEffectState = 2;
 	Event_PlayCue(220);
 	Actor_SetPosition(13, 0xfd0000, 0x25b0000);
-	formation_action = gKolimaForestBridge_FormationAction;
-	Engine_ActorEnableActionCallback(13, formation_action);
+	formationAction = gKolimaForestBridge_FormationAction;
+	Engine_ActorEnableActionCallback(13, formationAction);
 	Actor_SetPosition(14, 0xe90000, 0x2750000);
-	Engine_ActorEnableActionCallback(14, formation_action);
+	Engine_ActorEnableActionCallback(14, formationAction);
 	if (gKolimaForestBridge_PartyFlag != 0)
 	{
 		Actor_SetPosition(15, 0xcf0000, 0x2610000);
-		Engine_ActorEnableActionCallback(15, formation_action);
+		Engine_ActorEnableActionCallback(15, formationAction);
 	}
 	Actor_SetPosition(16, 0xe30000, 0x2440000);
-	Engine_ActorEnableActionCallback(16, formation_action);
+	Engine_ActorEnableActionCallback(16, formationAction);
 	Engine_EventWait(120);
 	gFallingEffectState = 3;
 	do
@@ -817,18 +817,18 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 	Engine_TaskWait(80);
 	Engine_ActorStop(13);
 	Engine_ActorStop(14);
-	party_flag = &gKolimaForestBridge_PartyFlag;
+	partyFlag = &gKolimaForestBridge_PartyFlag;
 	Engine_ActorStop(15);
 	Engine_ActorStop(16);
 	Engine_TaskWait(1);
-	finish_action = gKolimaForestBridge_FinishAction;
-	Engine_ActorEnableActionCallback(13, finish_action);
-	Engine_ActorEnableActionCallback(14, finish_action);
-	if (*party_flag != 0)
+	finishAction = gKolimaForestBridge_FinishAction;
+	Engine_ActorEnableActionCallback(13, finishAction);
+	Engine_ActorEnableActionCallback(14, finishAction);
+	if (*partyFlag != 0)
 	{
-		Engine_ActorEnableActionCallback(15, finish_action);
+		Engine_ActorEnableActionCallback(15, finishAction);
 	}
-	Object_SetActionCallbackAndRefreshById(16, finish_action);
+	Object_SetActionCallbackAndRefreshById(16, finishAction);
 	Engine_EventWait(20);
 	Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
 	Engine_ActorSetSpritePriority(GARET, 2);
@@ -901,7 +901,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 			Engine_EventWait(40);
 			SceneActor_SetPairZeroAndValue(2, 0xe000, 10);
 			Event_SayThenWait(IVAN, 10);
-			if (*party_flag != 0)
+			if (*partyFlag != 0)
 			{
 				SceneActor_SetPairZeroAndValue(3, 0, 10);
 				Engine_ActorStartRepeatedMotion(MIA, 3);
@@ -954,7 +954,7 @@ static void FieldScene_RunBranchingFormationPresentation(void)
 			Engine_ActorSetAnimationAndWait(IVAN, 3);
 			Engine_EventSetMessage(MsgKolimaThatsReliefIsaacThoughtYoud);
 			Event_SayThenWait(IVAN, 20);
-			if (*party_flag != 0)
+			if (*partyFlag != 0)
 			{
 				SceneActor_SetPairZeroAndValue(3, 0, 10);
 				Engine_ActorStartRepeatedMotion(MIA, 1);

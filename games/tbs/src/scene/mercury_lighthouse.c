@@ -1555,7 +1555,7 @@ static void MercuryLighthouse_SinkActorWithSparks(s32 actor)
 static void EV12_PSYNERGY(void)
 {
 	struct ConfiguredEffectOptions *effect;
-	s32								row_offset;
+	s32								rowOffset;
 	u32								value;
 	s32								zero;
 	s32								phase;
@@ -1644,14 +1644,14 @@ static void EV12_PSYNERGY(void)
 
 		Map_CopyCellsTo(59, (12 - phase), 48, (12 - phase), 3, 1);
 		particle = 0;
-		row_offset = (phase << 4);
+		rowOffset = (phase << 4);
 		do
 		{
 			value = Engine_RandomNext();
 			x = ((((((value << 1) + value) << 4) >> 16) << 16) + 0x3000000);
 			velocityX = (0x1999 * ((u32)(Engine_RandomNext() << 3) >> 16)) - 0x6664;
 			speed = 0x1999 * ((u32)(Engine_RandomNext() << 3) >> 16);
-			Effect_Spawn(x, 0, ((-((u32)particle >> 1) - row_offset) << 16) + 0xc00000, velocityX,
+			Effect_Spawn(x, 0, ((-((u32)particle >> 1) - rowOffset) << 16) + 0xc00000, velocityX,
 				0, speed, 0xd0001, effect);
 			particle = (particle + 1);
 			Engine_EventWait(2);

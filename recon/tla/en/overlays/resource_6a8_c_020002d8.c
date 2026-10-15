@@ -28,17 +28,17 @@ void Func_020043c4(struct FacingActor *actor, s32 mode);
 s32 Func_020002d8(struct FacingActor *actor, struct FacingActor *target, s32 range, s32 force)
 {
     s32 result = 0;
-    s32 *target_pos;
-    s32 *actor_pos;
+    s32 *targetPos;
+    s32 *actorPos;
 
     if (actor->unk63 != 0) {
         actor->paused = 1;
         return 1;
     }
-    target_pos = &target->x;
-    actor_pos = &actor->x;
-    if (SceneActor_CalculateFixedPointDistance(target_pos, actor_pos) < range || force != 0) {
-        u32 angle = (u16)ArcTan2(target->z - actor->z, *target_pos - *actor_pos);
+    targetPos = &target->x;
+    actorPos = &actor->x;
+    if (SceneActor_CalculateFixedPointDistance(targetPos, actorPos) < range || force != 0) {
+        u32 angle = (u16)ArcTan2(target->z - actor->z, *targetPos - *actorPos);
         u32 left = (angle - 0x1000) & 0xf000;
         u32 right = (angle + 0x1000) & 0xf000;
         u32 forward = angle & 0xf000;

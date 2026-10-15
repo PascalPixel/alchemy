@@ -7,16 +7,16 @@
 
 extern const s16 gData_0810c3f4[][33];
 
-s32 Func_0810a6b8(s32 row_no, s16 *output)
+s32 Func_0810a6b8(s32 rowNo, s16 *output)
 {
     const s16 *src;
     s16 *dst;
     s32 count;
 
     count = 0;
-    if (gData_0810c3f4[row_no][0] != 0) {
+    if (gData_0810c3f4[rowNo][0] != 0) {
         dst = output;
-        src = gData_0810c3f4[row_no];
+        src = gData_0810c3f4[rowNo];
         do {
             *dst = *(const volatile s16 *)src;
             count++;

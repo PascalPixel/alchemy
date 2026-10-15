@@ -31,7 +31,7 @@ void Func_0803e488(struct SelectionScreen *state, s32 index);
 void MenuSelection_DrawFrame(void)
 {
     struct SelectionScreen *state = Ram_HeapSlots->menuWork;
-    struct SelectionSprite *cursor_entry = &state->records[14].sprite;
+    struct SelectionSprite *cursorEntry = &state->records[14].sprite;
     struct SelectionNode *cursor = &state->records[14];
     struct SelectionNode *transfer = &state->records[15];
     struct SelectionNode *node;
@@ -170,7 +170,7 @@ void MenuSelection_DrawFrame(void)
         {
             void *src = (void *)(cnt + (((gFrameTick >> 2) & 15) << 8));
 
-            cursor_entry->tile = VramBlock_LoadCached(cursor->slot, 0x100, src);
+            cursorEntry->tile = VramBlock_LoadCached(cursor->slot, 0x100, src);
         }
         if (cursor->targetX != cursor->x) {
             tmp = (cursor->targetX - cursor->x) >> 1;
@@ -187,16 +187,16 @@ void MenuSelection_DrawFrame(void)
                 cursor->y = cursor->targetY;
             }
         }
-        cursor_entry->y = cursor->y + gMenu_CursorBobOffsets[(gFrameTick >> 2) & 15] - 32;
-        cursor_entry->x = cursor->x - 4;
+        cursorEntry->y = cursor->y + gMenu_CursorBobOffsets[(gFrameTick >> 2) & 15] - 32;
+        cursorEntry->x = cursor->x - 4;
         if (GameFlag_Test(0x103) != 0) {
             if (state->records[14].kind == 1) {
-                cursor_entry->mode = 1;
+                cursorEntry->mode = 1;
             } else {
-                cursor_entry->mode = 0;
+                cursorEntry->mode = 0;
             }
         }
-        Runtime_PushSlotEntry((s32 *)cursor_entry, 248);
+        Runtime_PushSlotEntry((s32 *)cursorEntry, 248);
     }
     state->status += 1;
 }

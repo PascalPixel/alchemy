@@ -14483,32 +14483,37 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
   Resource_DecodeType01(data, dst);
 }
 
+// Venus djinni columns: the small Venus djinni sways while ten columns of
+// flame in its colours rise from the ground one after another, each
+// bursting into motes and hitting every target.
+//
+// effect: the targets.
 void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect) {
-  void **heapCache;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
   BlitterPair draw;
   u8 *sheet;
-  struct EffectStep *step;
+  struct EffectStep *column;
   struct EffectStep *mote;
   s32 i;
   s32 j;
   s32 angle;
 
-  heapCache = gBattleFxWork;
-  cursor = heapCache;
+  slots = gBattleFxWork;
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sheet = heapCache[2];
+  sheet = slots[2];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 11, 2);
   BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
-  draw[0] = heapCache[7];
-  draw[1] = heapCache[8];
+  draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
+  draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet,
                              1, 1);
@@ -14518,10 +14523,11 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect) {
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+  // The flame columns start at the bottom, at random x.
   for (i = 0; i != 32; i++) {
-    step = &work->particles[i];
-    step->x = Random16() & 63;
-    step->y = 104;
+    column = &work->particles[i];
+    column->x = Random16() & 63;
+    column->y = 104;
   }
   for (i = 0; i != 512; i++)
     PARTICLES[i].variant = -1;
@@ -14529,18 +14535,21 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect) {
   frame = 0;
   angle = 0x8000;
   do {
+    // The djinni sways from side to side as it rises and falls.
     if (frame <= 79) {
       s32 x = (Trig_Sin(angle) * 24) >> 16;
       s32 y = (Trig_Cos(angle) * (64 - frame * 2)) >> 16;
 
-      draw[1](canvas, work, x + 22, y + 29, 20, 38);
+      draw[1](canvas, work->sheet, x + 22, y + 29, 20, 38);
     }
     if (frame == 56)
       BattleEventRuntime_BeginPhaseFar(133);
+    // Ten flame columns rise 12 pixels a frame, one every 4 frames from
+    // frame 16; each throws 16 motes and hits every target as it appears.
     for (i = 0; i != 10; i++) {
-      step = &work->particles[i];
+      column = &work->particles[i];
       if (frame >= i * 4 + 16) {
-        draw[0](canvas, work->sheet + 0x9e0, step->x - 17, step->y - 32, 34,
+        draw[0](canvas, work->sheet + 0x9e0, column->x - 17, column->y - 32, 34,
                 65);
         if (frame == i * 4 + 16) {
           for (j = 0; j != 16; j++) {
@@ -14550,8 +14559,8 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect) {
             mote = &PARTICLES[i * 32 + j];
             direction = (Random16() & 0x7fff) + 0x4000;
             speed = (Random16() & 0x1ff) + 256;
-            mote->x = step->x << 16;
-            mote->y = (step->y + 16) << 16;
+            mote->x = column->x << 16;
+            mote->y = (column->y + 16) << 16;
             mote->velocityX = (Trig_Sin(direction) * speed) >> 7;
             mote->velocityY = (Trig_Cos(direction) * speed) >> 6;
             mote->variant = (Random16() & 15) + 32;
@@ -14564,9 +14573,10 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect) {
             BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 6);
           }
         }
-        step->y -= 12;
+        column->y -= 12;
       }
     }
+    // Motes shrink as they age and slow as they fall.
     for (i = 0; i != 512; i++) {
       mote = &PARTICLES[i];
       if (mote->variant != -1) {
@@ -14591,29 +14601,34 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Mars djinni flames: a glowing orb flares, the small Mars djinni dives
+// to the ground, and nine flames erupt in a row while embers rise,
+// hitting every target.
+//
+// effect: the targets.
 void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect) {
-  void **heapCache;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sheet;
-  BlitterPair callbacks;
+  BlitterPair blitters;
   DrawRectangle *draw;
   struct EffectStep *step;
   struct EffectStep *mote;
-  s32 member;
+  s32 index;
   s32 frame;
   s32 i;
-  s32 curtainY;
+  s32 diveY;
 
-  heapCache = gBattleFxWork;
-  cursor = heapCache;
+  slots = gBattleFxWork;
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  sheet = heapCache[2];
+  sheet = slots[2];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  draw = callbacks;
+  draw = blitters;
   BattleFx_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work->sheet,
@@ -14625,20 +14640,22 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-  member = 0;
+  // Nine flames along a flattened arc, 2 frames apart, each with 16
+  // embers that rise wobbling from the ground beneath it.
+  index = 0;
   step = work->particles;
   do {
-    s32 angle = member << 11;
+    s32 angle = index << 11;
 
     step->x = (Trig_Sin(angle) * 24) >> 16;
     step->y = ((Trig_Cos(angle) * 4) >> 16) + 52;
-    if (member & 1)
+    if (index & 1)
       step->x = 32 - step->x;
     else
       step->x += 32;
-    step->variant = -(member * 2);
+    step->variant = -(index * 2);
     for (i = 0; i != 16; i++) {
-      mote = &PARTICLES[member * 16 + i];
+      mote = &PARTICLES[index * 16 + i];
       mote->x = (((Random16() & 15) + step->x) - 8) << 16;
       mote->y = ((Random16() & 7) + 96) << 16;
       mote->velocityX = ((Random16() & 127) - 64) << 11;
@@ -14647,61 +14664,64 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect) {
       mote->velocityZ = Random16() & 0xffff;
     }
     step++;
-    member++;
-  } while (member != 9);
+    index++;
+  } while (index != 9);
 
-  AudioCommand_PlayFar(0x88);
+  AudioCommand_PlayFar(136);
   frame = 0;
-  curtainY = -172;
+  diveY = -172;
   do {
     if (frame == 56)
-      BattleEventRuntime_BeginPhaseFar(0x85);
+      BattleEventRuntime_BeginPhaseFar(133);
+    // A glowing orb flares, then the djinni dives down to the left.
     if (frame <= 23)
-      callbacks[0](canvas, work->sheet + 0x320 + (frame / 4) * 0x640, 40, 20,
-                   40, 40);
+      blitters[0](canvas, work->sheet + 0x320 + (frame / 4) * 0x640, 40, 20, 40,
+                  40);
     if (frame == 20)
       Iwram_CopyWords(
           (void *)BG_PLTT,
           Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
     if (frame >= 20 && frame <= 31) {
       if (frame > 23)
-        draw[1](canvas, work->sheet, 146 - frame * 4, curtainY, 20, 40);
+        draw[1](canvas, work->sheet, 146 - frame * 4, diveY, 20, 40);
       else
-        callbacks[0](canvas, work->sheet, 50, 20, 20, 40);
+        blitters[0](canvas, work->sheet, 50, 20, 20, 40);
     }
+    // At frame 32 it strikes: the screen shakes and the flames erupt.
     if (frame == 32) {
-      AudioCommand_PlayFar(0x91);
+      AudioCommand_PlayFar(145);
       work->shakeFrames = 8;
       Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet,
                                  1, 1);
     }
     if (frame > 31) {
-      member = 0;
+      index = 0;
       step = work->particles;
       do {
         if (step->variant >= 0 && step->variant <= 47) {
           s32 cell = step->variant / 8;
           u32 width;
 
-          callbacks[0](canvas, work->sheet + gPuffArc_CellSourceOffsets[cell],
-                       step->x - ((width = gPuffArc_CellWidths[cell]) >> 1),
-                       step->y + gPuffArc_CellBiasY[cell], width,
-                       gPuffArc_CellHeights[cell]);
+          blitters[0](canvas, work->sheet + gPuffArc_CellSourceOffsets[cell],
+                      step->x - ((width = gPuffArc_CellWidths[cell]) >> 1),
+                      step->y + gPuffArc_CellBiasY[cell], width,
+                      gPuffArc_CellHeights[cell]);
         }
-        member++;
+        index++;
         step->variant++;
         step++;
-      } while (member != 9);
+      } while (index != 9);
     }
+    // The embers rise, swaying, from frame 40.
     step = PARTICLES;
-    member = 0;
+    index = 0;
     do {
-      if (frame >= (member / 16) * 2 + 40) {
+      if (frame >= (index / 16) * 2 + 40) {
         s32 size;
         s32 x;
         s32 angle;
 
-        size = (member & 1) + 3;
+        size = (index & 1) + 3;
         x = HI(step->x) + ((Trig_Sin(step->z) * 4) >> 16);
         draw[1](canvas, sheet + gParticleStreams_CellOffsets[size - 1],
                 x - ((u32)size >> 1), HI(step->y) - size, size, size * 2);
@@ -14711,22 +14731,21 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect) {
         if (step->z > 0xffff)
           step->z = angle + 0x800 - 0xffff;
       }
-      member++;
+      index++;
       step++;
-    } while (member != 144);
+    } while (index != 144);
 
     if (frame == 38) {
-      for (member = 0; member != work->effect->count; member++) {
-        ObjectGroup_UpdateMembers(work->effect->actors[member], 7, 5, member,
-                                  16);
-        BattleMotion_ApplyVariantMotionFar(work->effect->actors[member], 6);
+      for (index = 0; index != work->effect->count; index++) {
+        ObjectGroup_UpdateMembers(work->effect->actors[index], 7, 5, index, 16);
+        BattleMotion_ApplyVariantMotionFar(work->effect->actors[index], 6);
       }
     }
     Camera_ApplyShake(8, 8);
     ObjectGroup_TickMemberTimers();
     work->transferPending = 1;
     WaitFrames(1);
-    curtainY += 8;
+    diveY += 8;
     frame++;
   } while (frame != 112);
   Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
@@ -14734,47 +14753,57 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect) {
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   BattleFx_EndCanvasLayer();
 }
-#define PARTICLE_COUNT 64
+#define PARTICLE_COUNT 64 // ice chips
 
+// Where the water burst's pictures sit in the sheet, after the waves.
+#define REVEAL_CHIP_CELLS 0x400
+#define REVEAL_DJINNI_CELLS 0x65c0
+
+// Water burst: after a Mercury djinni enters, ice chips burst out of the
+// first target and waves rise along the bottom of the screen; the canvas
+// fades out at the end.
+//
+// effect: the user and the targets; prelude 1 keeps the djinni circling.
 void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect) {
-  void **heapCache;
+  void **slots;
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
-  s32 spawn[3];
+  s32 origin[3];
   s32 screenY;
   s32 screenX;
-  BlitterPair routine;
-  struct EffectStep *p;
+  BlitterPair draw;
+  struct EffectStep *chip;
   s32 i;
   s32 frame;
   s32 rise;
 
-  heapCache = gBattleFxWork;
-  cursor = heapCache;
+  slots = gBattleFxWork;
+  cursor = slots;
   work = *cursor++;
   canvas = *cursor;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   BattleFx_PrepareCanvasEffect(effect, 1, work->effect->side, 2, &screenX,
                                &screenY);
-  BattleFx_FetchRectangleBlitters(work->effect->side, routine);
+  BattleFx_FetchRectangleBlitters(work->effect->side, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
   work->transferMode = 2;
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-  EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], spawn);
+  EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], origin);
 
+  // The chips burst up from the first target.
   for (i = 0; i != PARTICLE_COUNT; i++) {
     s32 angle;
     s32 speed;
 
     angle = (Random16() & 0x7fff) + 0x4000;
     speed = (Random16() & 0x1ff) + 0x80;
-    gMapCellBuffer[i].x = ((spawn[0] / 2 + (Random16() & 0xf)) - 8) << 16;
-    gMapCellBuffer[i].y = (spawn[1] + 8) << 16;
+    gMapCellBuffer[i].x = ((origin[0] / 2 + (Random16() & 0xf)) - 8) << 16;
+    gMapCellBuffer[i].y = (origin[1] + 8) << 16;
     gMapCellBuffer[i].velocityX = (Trig_Sin(angle) * speed) >> 9;
     gMapCellBuffer[i].velocityY = (Trig_Cos(angle) * speed) >> 6;
     gMapCellBuffer[i].z = Random16() & 0x7f;
@@ -14783,15 +14812,17 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect) {
   }
 
   for (frame = 0; frame != 64; frame++) {
+    // Fade out over the last 16 frames.
     if (frame > 47)
       REG_BLDALPHA = (64 - frame) | 0x1000;
     if (frame == 1) {
       Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet,
-                                 work->sheet + 0x400, 1, 1);
+                                 work->sheet + REVEAL_CHIP_CELLS, 1, 1);
       Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
-                                 work->sheet + 0x65c0, 1, 0);
+                                 work->sheet + REVEAL_DJINNI_CELLS, 1, 0);
     }
 
+    // Prelude: the small djinni circles.
     if (work->effect->prelude == 1) {
       s32 orbit;
       s32 x;
@@ -14802,45 +14833,49 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect) {
       y = ((Trig_Cos(orbit) << 1) >> 16) + screenY - 22;
       if (frame > 69)
         y = (y - frame * 2) + 138;
-      routine[1](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+      draw[1](canvas, work->sheet + REVEAL_DJINNI_CELLS, x, y, 20, 40);
       if (frame <= 3)
-        routine[1](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+        draw[1](canvas, work->sheet + REVEAL_DJINNI_CELLS, x, y, 20, 40);
     }
 
-    for (i = 0, p = gMapCellBuffer; i != PARTICLE_COUNT; i++, p++) {
+    for (i = 0, chip = gMapCellBuffer; i != PARTICLE_COUNT; i++, chip++) {
       if (frame >= i / 4 + 4) {
         s32 cell;
-        s32 w;
-        s32 h;
+        s32 width;
+        s32 height;
 
-        cell = (p->z / 128) & 3;
-        routine[i & 1](
+        cell = (chip->z / 128) & 3;
+        draw[i & 1](
             canvas,
-            work->sheet + 0x400 + gParticleReveal_CellSourceOffsets[cell],
-            HI(p->x) - (w = gParticleReveal_CellWidths[cell]) / 2,
-            HI(p->y) - (h = gParticleReveal_CellHeights[cell]) / 2, w, h);
-        EffectStep_AdvanceWithGravity3D(p, 63, 0x1000);
+            work->sheet + REVEAL_CHIP_CELLS +
+                gParticleReveal_CellSourceOffsets[cell],
+            HI(chip->x) - (width = gParticleReveal_CellWidths[cell]) / 2,
+            HI(chip->y) - (height = gParticleReveal_CellHeights[cell]) / 2,
+            width, height);
+        EffectStep_AdvanceWithGravity3D(chip, 63, 0x1000);
       }
     }
 
     if (frame == 8) {
       work->shakeFrames = frame;
-      BattleEventRuntime_BeginPhaseFar(0x86);
+      BattleEventRuntime_BeginPhaseFar(134);
       ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 16);
       BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 3);
     }
 
+    // Waves rise along the bottom, 4 pixels a frame up to 32, drifting
+    // away from the user.
     rise = frame * 4;
     if (rise > 32)
       rise = 32;
     if (work->effect->side == 0) {
       for (i = 0; i != 5; i++)
-        routine[0](canvas, work, (i << 5) - (frame / 4 & 31), 120 - rise, 32,
-                   32);
+        draw[0](canvas, work->sheet, (i << 5) - (frame / 4 & 31), 120 - rise,
+                32, 32);
     } else {
       for (i = 0; i != 5; i++)
-        routine[0](canvas, work, ((i << 5) + (frame / 4 & 31)) - 32, 120 - rise,
-                   32, 32);
+        draw[0](canvas, work->sheet, ((i << 5) + (frame / 4 & 31)) - 32,
+                120 - rise, 32, 32);
     }
 
     Camera_ApplyShake(4, 8);
@@ -14855,6 +14890,14 @@ void BattleFx_RunParticleReveal(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// The small Venus djinni in the rock toss's sheet.
+#define ROCK_TOSS_DJINNI_CELLS 0x65c0
+
+// Venus djinni rock toss: after a Venus djinni enters, six rocks rise from
+// the user shedding chips, swirl, and home in on the first target, each
+// hitting it as it lands.
+//
+// effect: the user and the targets; prelude 1 keeps the djinni circling.
 void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -14863,7 +14906,7 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   struct BattleCamera *camera;
   struct MotionObject *target;
-  struct MotionObject *actor;
+  struct MotionObject *user;
   struct EffectPosition position;
   s32 screenX;
   s32 screenY;
@@ -14885,19 +14928,20 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect) {
       (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
   Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
-                             work->sheet + 0x65c0, 1, 1);
+                             work->sheet + ROCK_TOSS_DJINNI_CELLS, 1, 1);
   work->transferMode = 2;
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(
       BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-  actor = GetBattleObjectSlotFar(work->effect->actor)->object;
+  user = GetBattleObjectSlotFar(work->effect->actor)->object;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+  // The rocks leave the user 66 pixels up, fanning out.
   for (i = 0; i != 8; i++) {
     struct EffectStep *rock = &work->particles[i];
 
-    rock->x = actor->x;
+    rock->x = user->x;
     rock->y = 0x420000;
-    rock->z = actor->z;
+    rock->z = user->z;
     rock->velocityX = (i * 0x500000) >> 5;
     rock->velocityY = (s32)(((Random16() & 127) - 64) << 16) >> 6;
     rock->velocityZ = (s32)(((Random16() & 255) - 127) << 16) >> 5;
@@ -14921,11 +14965,13 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect) {
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
       if (frame <= 3)
         ((DrawRectangle)((union HeapState *)gWorkSlot)
-             ->slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work->sheet + 0x65c0,
-                                                   x, y, 20, 40);
+             ->slots[HEAP_SLOT_BLITTER_ALTERNATE])(
+            canvas, work->sheet + ROCK_TOSS_DJINNI_CELLS, x, y, 20, 40);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-      draw[0](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+      draw[0](canvas, work->sheet + ROCK_TOSS_DJINNI_CELLS, x, y, 20, 40);
     }
+    // Every 2 frames each chip takes a random picture (velocityX) and
+    // flip (velocityY).
     if ((frame & 1) == 0) {
       for (i = 0; i != 32; i++) {
         struct EffectStep *chip = &work->particles[32 + i];
@@ -14948,7 +14994,7 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect) {
           position.x >>= 1;
           x = position.x - 12;
           y = position.y - 24;
-          draw[0](canvas, work, x, y, 24, 48);
+          draw[0](canvas, work->sheet, x, y, 24, 48);
           if ((frame & 3) <= 1)
             draw[0](canvas, work->sheet + gRockToss_ChipCells[1],
                     x + gRockToss_ChipX[1], y + gRockToss_ChipY[1],
@@ -14985,6 +15031,8 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect) {
           rock->y += rock->velocityY;
           rock->z += rock->velocityZ;
         }
+        // After 16 frames the rock homes in on the target, damped until
+        // frame 85, and hits it below 20 pixels.
         if (frame > i * 2 + 16) {
           rock->velocityX += (target->x - rock->x) >> 8;
           rock->velocityY += (0x140000 - rock->y) >> 8;
@@ -15014,6 +15062,13 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
+// Shakes the battle view while gBattleFxWork's shakeFrames lasts, moving
+// BG1 and the projection centre by a random offset; once the shake runs
+// out, BG1 returns to its saved position and the centre to (120, 120).
+//
+// randomMask: the horizontal range, a power of two.
+// shakeRange: the vertical range, a power of two; both offsets are
+//             centred on half of it.
 void Camera_ApplyShake(s32 randomMask, u32 shakeRange) {
   s32 displayY;
   s32 offsetX;
@@ -15025,8 +15080,8 @@ void Camera_ApplyShake(s32 randomMask, u32 shakeRange) {
   s32 randomX;
   struct BgScroll *displayPosition;
   struct Projection *displayCenter;
-  struct BgScroll *dispP;
-  struct Projection *centerP;
+  struct BgScroll *restoredScroll;
+  struct Projection *restoredCenter;
 
   work = gBattleFxWork[0];
   remainingFrames = &work->shakeFrames;
@@ -15046,13 +15101,13 @@ void Camera_ApplyShake(s32 randomMask, u32 shakeRange) {
     return;
   }
   restoredPosition = work->savedBg1X;
-  dispP = gBgScroll;
-  dispP[1].x = restoredPosition;
+  restoredScroll = gBgScroll;
+  restoredScroll[1].x = restoredPosition;
   restoredPosition = work->savedBg1Y;
-  dispP[1].y = restoredPosition;
-  centerP = &gProjection;
-  centerP->centerX = 0x78;
-  centerP->centerY = 0x78;
+  restoredScroll[1].y = restoredPosition;
+  restoredCenter = &gProjection;
+  restoredCenter->centerX = 0x78;
+  restoredCenter->centerY = 0x78;
 }
 
 extern const s16 gMode12_Points[][2];

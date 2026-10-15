@@ -6261,60 +6261,6 @@ Func_02003654:
 	mov r8, r3
 	mov r10, r5
 	pop {r5, r6, r7, pc}
-	.section .text.x0200bb08,"ax",%progbits
-	.global Func_02003b08
-	.thumb_func
-Func_02003b08:
-	push {r5, lr}
-	ldr r3, .L_0200bb78
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r5, r3, r2
-	ldr r0, [r5]
-	bl Object_GetById
-	movs r2, #18
-	ldrsh r3, [r0, r2]
-	movs r2, #199
-	lsls r2, r2, #1
-	adds r2, #255
-	cmp r3, r2
-	bgt .L_0200bb76
-	bl Func_02005e14
-	movs r0, #0
-	bl Func_02005f2c
-	movs r0, #186
-	bl Func_02005f94
-	ldr r0, [r5]
-	bl Object_GetById
-	adds r0, #90
-	ldrb r2, [r0]
-	movs r3, #254
-	ands r3, r2
-	strb r3, [r0]
-	movs r1, #128
-	movs r2, #128
-	ldr r0, [r5]
-	lsls r1, r1, #11
-	lsls r2, r2, #10
-	bl ObjectMotion_SetSpeedParameters
-	movs r1, #188
-	movs r2, #167
-	lsls r2, r2, #2
-	ldr r0, [r5]
-	lsls r1, r1, #1
-	bl ObjectMotion_SetPositionAndCommit
-	ldr r0, [r5]
-	bl Object_GetById
-	adds r0, #90
-	ldrb r2, [r0]
-	movs r3, #1
-	orrs r3, r2
-	strb r3, [r0]
-	bl Func_02005e1c
-.L_0200bb76:
-	pop {r5, pc}
-.L_0200bb78:
-	.4byte gPartyState
 	.section .text.x0200bb7c,"ax",%progbits
 	.global Func_02003b7c
 	.thumb_func

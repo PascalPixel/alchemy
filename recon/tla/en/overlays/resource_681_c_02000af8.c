@@ -2,7 +2,8 @@
  * right after the direction call, before movs r1, #192; this draft loads it two
  * instructions later. Tried: the state assigned before or after the call (6),
  * a u16 direction (9), the mode as a local (8), asm barriers and a one-pass
- * block after the state (6 to 16), a minute of alchemy permute. */
+ * block after the state (6 to 16), a minute of alchemy permute; the state
+ * through an asm operand alone or with the direction (16), pinned to r8 (2). */
 #include "../../../../games/tla/include/types.h"
 #include "../../../../games/tla/include/object_runtime.h"
 

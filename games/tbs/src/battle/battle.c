@@ -5599,66 +5599,47 @@ s32 BattleEffectDeadCheck(s32 effect) {
 #define POISON_NORMAL 1
 #define POISON_DEADLY 2
 
+// The rate BattlePowerCalc and BattleRecoveryCalc scale by: 256 is 1.
+#define FULL_RATE 256
+
 // A message operand that shows nothing: the event only waits for the player.
 #define MESSAGE_NONE -1
 
 // Unit ids 0 to 7 are the party's; the enemies' start at 8.
-#define ALLY_CHECK(id) ((id) >= 0 && (id) < 8)
+#define IS_PARTY_UNIT(unitId) ((unitId) >= 0 && (unitId) < 8)
+
+// The helpers below are macros because the bytes need them so: written as
+// inline functions they compile to different code.
 
 // Holds a stat stage within STAT_STAGE_MIN to STAT_STAGE_MAX.
-#define STEP_LIM(v)                                                            \
+#define CLAMP_STAT_STAGE(stage)                                                \
   {                                                                            \
-    if ((v) < STAT_STAGE_MIN)                                                  \
-      (v) = STAT_STAGE_MIN;                                                    \
-    if ((v) > STAT_STAGE_MAX)                                                  \
-      (v) = STAT_STAGE_MAX;                                                    \
+    if ((stage) < STAT_STAGE_MIN)                                              \
+      (stage) = STAT_STAGE_MIN;                                                \
+    if ((stage) > STAT_STAGE_MAX)                                              \
+      (stage) = STAT_STAGE_MAX;                                                \
   }
 
-// The actor's elemental power less the target's resistance to it, for an
-// ability that has an element.
-#define ELEMENT_BONUS()                                                        \
+// Pushes one message for a unit of the party and another for an enemy.
+#define PUSH_SIDE_MESSAGE(unitId, partyMessage, enemyMessage)                  \
   {                                                                            \
-    if (element != ELEMENT_NONE)                                               \
-      elementBonus = elementPower - target->element[element].res;              \
-  }
-
-// Shows one message for a party member and another for an enemy.
-#define MESSAGE_SIDE(m, e)                                                     \
-  {                                                                            \
-    if (ALLY_CHECK(targetId))                                                  \
-      MESSAGE_PUSH(m);                                                         \
+    if (IS_PARTY_UNIT(unitId))                                                 \
+      PUSH_MESSAGE(partyMessage);                                              \
     else                                                                       \
-      MESSAGE_PUSH(e);                                                         \
+      PUSH_MESSAGE(enemyMessage);                                              \
   }
 
-// A guarding target takes half the damage, or a tenth behind Total Defense.
-#define GUARD_CUT()                                                            \
+// A guarding unit takes half the damage, or a tenth behind Total Defense.
+#define REDUCE_BY_GUARD(damage, unit)                                          \
   {                                                                            \
-    guard = target->guardLv;                                                   \
+    s32 guard = (unit)->guardLv;                                               \
+                                                                               \
     if (guard != 0) {                                                          \
       if (guard == GUARD_DEFEND)                                               \
-        amount /= 2;                                                           \
+        (damage) /= 2;                                                         \
       else                                                                     \
-        amount /= 10;                                                          \
+        (damage) /= 10;                                                        \
     }                                                                          \
-  }
-
-// Changes the target's Resistance stage by d, shows the change v with
-// message m, and keeps it for STAT_CHANGE_TURNS.
-#define RES_STEP(d, v, m)                                                      \
-  {                                                                            \
-    target->resLv += (d);                                                      \
-    STEP_LIM(target->resLv);                                                   \
-    BattleEvPush(BATTLE_EVENT_NUM, (v));                                       \
-    MESSAGE_PUSH(m);                                                           \
-    target->resCnt = STAT_CHANGE_TURNS;                                        \
-  }
-
-// Shows message m and gives the target the status f for STATUS_TURNS.
-#define STAT_SET(f, m)                                                         \
-  {                                                                            \
-    MESSAGE_PUSH(m);                                                           \
-    (f) = STATUS_TURNS;                                                        \
   }
 
 //--------------------------------------------------------------------------
@@ -5677,7 +5658,7 @@ s32 BattleEffectDeadCheck(s32 effect) {
 // it returns nothing and its callers ignore the result.
 //--------------------------------------------------------------------------
 s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
-  s32 distance; // steps from the aimed position (0 to 5)
+  s32 distance; // steps from the aimed position, 0 to 5
   struct BattleAct *ability;
   struct BattleUnit *actor;
   s32 actorId;
@@ -5687,29 +5668,19 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   s32 halveDefense; // the attack counts half the target's Defense
   s32 multiplier;   // 0 on a miss, 2 or 3 for a double or triple blow
   s32 damageDealt;  // HP or PP the target lost (negative if healed)
-  s32 leaveOneHp;   // the damage leaves the target 1 HP at most
-  s32 hit;          // the ability's effect landed
-  s32 critical;
-  s32 skipDamage; // the effect replaces the damage
-  s32 kind;       // how the ability's power applies (enum AbilityKind)
-  s32 affinity;   // -1 a resisted element, 1 a weakness
-  struct BattleUnit *savedTarget; // the target as it was, to show changes
-  s32 elementPower;               // the actor's power in the ability's element
-  s32 hp;
-  s32 maxHpPercent; // a summon's added damage, in % of max HP
-  s16 *command;     // the command the action came from
+  s32 leaveOneHp;   // the blow leaves the target 1 HP at most
+  s32 hit;          // the ability's effect lands
+  s32 critical;     // enum BattleCritical
+  s32 skipDamage;   // no damage step: instant death replaces it
+  s32 kind;         // how the power applies: enum AbilityKind
+  s32 affinity;     // -1 a resisted element, 1 a weakness, else 0
+  // The target as it was, to measure each stat's change.
+  struct BattleUnit *savedTarget;
+  s32 elementPower; // the actor's power in the ability's element
   s32 targetId;
   s32 element;
   struct BattleUnit *target;
-  u32 actionIndex;
-  s32 resistance;
   s32 amount; // the damage, or the HP or PP restored
-  s32 defense;
-  s32 pass;
-  s32 guard;
-  s16 enemyIds[8];
-  s32 enemyIndex;
-  s32 restored;
   s32 unitSize;
 
   // Keep a copy of the target as it was, to show how much each stat changes.
@@ -5750,29 +5721,32 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   // than this one, 1 when it resists none worse. It picks the damage
   // message ("damage.", "damage!" or "damage!!!").
   if (element != ELEMENT_NONE) {
+    s32 resistance;
     s32 i;
 
     resistance = target->baseElement[element].res;
-    for (i = 0; i < NUM_ELEMENTS && resistance >= target->baseElement[i].res;
-         i++)
-      ;
+    for (i = 0; i < NUM_ELEMENTS; i++) {
+      if (resistance < target->baseElement[i].res)
+        break;
+    }
     if (i == NUM_ELEMENTS)
       affinity = -1;
 
-    for (i = 0; i < NUM_ELEMENTS && resistance <= target->baseElement[i].res;
-         i++)
-      ;
+    for (i = 0; i < NUM_ELEMENTS; i++) {
+      if (resistance > target->baseElement[i].res)
+        break;
+    }
     if (i == NUM_ELEMENTS)
       affinity = 1;
   }
 
-  // The actor's power in the ability's element; items always use 100.
+  // The actor's power in the ability's element; items always use 100. (Here
+  // and below the element is read from the plan again, as the bytes need.)
   if (plan->element >= ELEMENT_VENUS && plan->element <= ELEMENT_JUPITER &&
       plan->cmd != CMD_ITEM)
     elementPower = actor->element[plan->element].power;
   else
     elementPower = 100;
-  command = &plan->cmd;
 
   // A Djinni striking the target's weakness may earn the Djinn bonus: an
   // enemy it fells then gives more coins and experience and a better chance
@@ -5785,7 +5759,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
 
     chance = elementPower - target->element[plan->element].res;
     chance += 30;
-    chance *= 65536 / 100;
+    chance *= 65536 / 100; // percent to a fraction of the 16-bit random range
     if (chance > (BattleRandomFar() & 0xffff))
       BattleEvPush(BATTLE_EVENT_SCR, 5);
   }
@@ -5794,14 +5768,14 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   // one made now, less likely the farther the target is.
   kind = ability->targetFlag & ABILITY_KIND_MASK;
   {
-    s32 presetHit;
+    s32 plannedHit;
 
-    presetHit = plan->targetHit[slot];
-    if (presetHit == HIT_NOT_ROLLED)
+    plannedHit = plan->targetHit[slot];
+    if (plannedHit == HIT_NOT_ROLLED)
       hit = BattleHitCheck(actorId, targetId, element, ability->effect,
                            gHitTable[distance]);
     else
-      hit = presetHit;
+      hit = plannedHit;
   }
 
   // Calling for help: an enemy calls another of its kind, or a random member
@@ -5853,32 +5827,35 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       }
       BattleObjPut();
       {
+        s16 enemyIds[8];
         s32 enemyCount;
+        s32 i;
 
         enemyCount = BattleEnemyList(enemyIds);
-        for (enemyIndex = 0; enemyIndex < enemyCount; enemyIndex++)
-          ObjMotRst((u16)enemyIds[enemyIndex]);
+        for (i = 0; i < enemyCount; i++)
+          ObjMotRst((u16)enemyIds[i]);
       }
       BattleEvPush(BATTLE_EVENT_UNIT, newUnitId);
       if (abilityId != ABILITY_SPEED_SURGE)
-        MESSAGE_PUSH(MsgAppears);
+        PUSH_MESSAGE(MsgAppears);
       else
-        MESSAGE_PUSH(MsgSplitOff);
+        PUSH_MESSAGE(MsgSplitOff);
     } else if (abilityId == ABILITY_SPEED_SURGE) {
-      MESSAGE_PUSH(MsgSplitFail);
+      PUSH_MESSAGE(MsgSplitFail);
     } else {
-      MESSAGE_PUSH(MsgNoOneCame);
+      PUSH_MESSAGE(MsgNoOneCame);
     }
   }
 
   // Effects that change how the damage step works.
   if (hit != 0) {
     if (ability->effect == ABILITY_EFFECT_GROUND) {
+      u32 i;
+
       // Ground holds only a target with an action in this turn's queue.
       hit = 0;
-      for (actionIndex = 0; actionIndex < BATTLE_ACTION_CAPACITY;
-           actionIndex++) {
-        if (work->actions[actionIndex].unitId == targetId) {
+      for (i = 0; i < BATTLE_ACTION_CAPACITY; i++) {
+        if (work->actions[i].unitId == targetId) {
           hit = 1;
           break;
         }
@@ -5916,19 +5893,22 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     // An attack: the actor's Attack against the target's Defense.
     case ABILITY_KIND_ATTACK:
     case ABILITY_KIND_ATTACK_MULTIPLIED: {
+      s32 hp;
+      s32 defense;
       s32 baseDefense;
+      s32 pass;
 
       hp = target->hp;
       baseDefense = target->def;
       defense = baseDefense;
       if (halveDefense != 0)
-        defense = (u32)baseDefense >> 1;
+        defense = (u32)baseDefense / 2;
       // This loop runs once, with pass 1, so its pass-0 code never runs:
       // the element bonus always applies and the critical hit message is
       // never shown.
-      pass = 1;
-      do {
-        ELEMENT_BONUS();
+      for (pass = 1; pass <= 1; pass++) {
+        if (element != ELEMENT_NONE)
+          elementBonus = elementPower - target->element[element].res;
         if (pass == 0)
           elementBonus = 0;
         power = ability->power;
@@ -5954,14 +5934,14 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
               // "A critical hit!", or "A bitter blow!" (the next message)
               // when it lands on the party.
               message = MsgCritical;
-              if (ALLY_CHECK(targetId))
+              if (IS_PARTY_UNIT(targetId))
                 message += 1;
               BattleEvPush(BATTLE_EVENT_MESSAGE_ADD, message);
             }
           }
         }
         amount += BattleRandomFar() & 3;
-        GUARD_CUT();
+        REDUCE_BY_GUARD(amount, target);
         if (amount <= 0)
           amount = 1;
         if (leaveOneHp != 0) {
@@ -5973,24 +5953,23 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         }
         // In the Djinn tutorial a Djinni's blow always leaves 1 HP.
         if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) != 0 &&
-            *command == CMD_DJINN && hp <= amount) {
+            plan->cmd == CMD_DJINN && hp <= amount) {
           amount = hp - 1;
         }
-        pass++;
-      } while (pass <= 1);
+      }
       hp -= amount;
       BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, targetId);
       BattleEvPush(BATTLE_EVENT_UNIT, targetId);
       BattleEvPush(BATTLE_EVENT_NUM, amount);
       // The affinity picks "damage.", "damage!" or "damage!!!".
-      MESSAGE_PUSH((ALLY_CHECK(targetId) ? MsgDmgEmphP : MsgDmgEmphE) +
+      PUSH_MESSAGE((IS_PARTY_UNIT(targetId) ? MsgDmgEmphP : MsgDmgEmphE) +
                    affinity);
 
       if (hp <= 0) {
         BattleEvPush(BATTLE_EVENT_OBJ_RESET, targetId);
         BattleEvPush(BATTLE_EVENT_UNIT, targetId);
         hp = 0;
-        MESSAGE_SIDE(MsgGoesDown, MsgFelled);
+        PUSH_SIDE_MESSAGE(targetId, MsgGoesDown, MsgFelled);
       } else
         BattleEvPush(BATTLE_EVENT_OBJ_END, targetId);
       damageDealt = target->hp - hp;
@@ -6003,12 +5982,13 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       if (ability->power == 0)
         break;
       pp = target->pp;
-      ELEMENT_BONUS();
+      if (element != ELEMENT_NONE)
+        elementBonus = elementPower - target->element[element].res;
       power = ability->power;
-      amount = BattlePowerCalc(power, elementBonus, 256);
+      amount = BattlePowerCalc(power, elementBonus, FULL_RATE);
       amount = amount * gPpLossTable[distance] / 100;
       amount *= multiplier;
-      GUARD_CUT();
+      REDUCE_BY_GUARD(amount, target);
       // Psy Drain takes no more PP than the target has.
       if (ability->effect == ABILITY_EFFECT_DRAIN_PP && amount > pp)
         amount = pp;
@@ -6016,7 +5996,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, targetId);
       BattleEvPush(BATTLE_EVENT_NUM, amount);
       BattleEvPush(BATTLE_EVENT_UNIT, targetId);
-      MESSAGE_PUSH(ALLY_CHECK(targetId) ? MsgPpLossP : MsgPpLossE);
+      PUSH_MESSAGE(IS_PARTY_UNIT(targetId) ? MsgPpLossP : MsgPpLossE);
       pp -= amount;
       if (pp <= 0)
         pp = 0;
@@ -6035,7 +6015,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       // An ability with no element (an item) heals as if at power 100.
       power = ability->power;
       amount = BattleRecoveryCalc(
-          power, element == ELEMENT_NONE ? 100 : elementPower, 256);
+          power, element == ELEMENT_NONE ? 100 : elementPower, FULL_RATE);
       amount = amount * gHpRecoveryTable[distance] / 100;
       amount *= multiplier;
       amount += BattleRandomFar() & 3;
@@ -6046,10 +6026,10 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       }
       BattleEvPush(BATTLE_EVENT_UNIT, targetId);
       if (newHp == target->maxHp)
-        MESSAGE_PUSH(MsgHpFull);
+        PUSH_MESSAGE(MsgHpFull);
       else {
         BattleEvPush(BATTLE_EVENT_NUM, amount);
-        MESSAGE_PUSH(MsgHpRecover);
+        PUSH_MESSAGE(MsgHpRecover);
       }
       damageDealt = target->hp - newHp;
       target->hp = newHp;
@@ -6063,16 +6043,17 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       if (ability->power == 0)
         break;
       pp = target->pp;
-      ELEMENT_BONUS();
+      if (element != ELEMENT_NONE)
+        elementBonus = elementPower - target->element[element].res;
       power = ability->power;
-      amount = BattlePowerCalc(power, elementBonus, 256);
+      amount = BattlePowerCalc(power, elementBonus, FULL_RATE);
       amount = amount * gPpDmgTable[distance] / 100;
       amount *= multiplier;
-      GUARD_CUT();
+      REDUCE_BY_GUARD(amount, target);
       BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, targetId);
       BattleEvPush(BATTLE_EVENT_NUM, amount);
       BattleEvPush(BATTLE_EVENT_UNIT, targetId);
-      MESSAGE_PUSH(ALLY_CHECK(targetId) ? MsgDmgP : MsgDmgE);
+      PUSH_MESSAGE(IS_PARTY_UNIT(targetId) ? MsgDmgP : MsgDmgE);
       pp -= amount;
       if (pp <= 0)
         pp = 0;
@@ -6087,58 +6068,57 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     case ABILITY_KIND_DAMAGE:
     case ABILITY_KIND_UNLEASHED_DAMAGE:
     case ABILITY_KIND_SUMMON: {
-      s32 round;
+      s32 pass;
 
       if (ability->power == 0)
         break;
       newHp = target->hp;
       // Runs once, like the attack's loop.
-      round = 1;
-      do {
-        ELEMENT_BONUS();
-        if (round == 0)
+      for (pass = 1; pass <= 1; pass++) {
+        if (element != ELEMENT_NONE)
+          elementBonus = elementPower - target->element[element].res;
+        if (pass == 0)
           elementBonus = 0;
         power = ability->power;
         // A summon adds 3% of the target's max HP for each Djinni it costs.
-        if (*command == CMD_SUMMON) {
-          s32 summon;
+        if (plan->cmd == CMD_SUMMON) {
+          s32 maxHpPercent;
 
-          summon = abilityId - ABILITY_VENUS;
-          if (summon >= 0 && summon <= ABILITY_THOR - ABILITY_VENUS) {
-            switch (summon) {
-            case 0:
-            case 6:
-            case 12:
-            case 18:
-              maxHpPercent = 3;
-              break;
-            case 1:
-            case 7:
-            case 13:
-            case 19:
-              maxHpPercent = 6;
-              break;
-            case 2:
-            case 8:
-            case 14:
-            case 20:
-              maxHpPercent = 9;
-              break;
-            case 3:
-            case 9:
-            case 15:
-            case 21:
-              maxHpPercent = 12;
-              break;
-            }
+          switch (abilityId) {
+          case ABILITY_VENUS:
+          case ABILITY_MERCURY:
+          case ABILITY_MARS:
+          case ABILITY_JUPITER:
+            maxHpPercent = 3;
+            break;
+          case ABILITY_RAMSES:
+          case ABILITY_NEREID:
+          case ABILITY_KIRIN:
+          case ABILITY_ATALANTA:
+            maxHpPercent = 6;
+            break;
+          case ABILITY_CYBELE:
+          case ABILITY_NEPTUNE:
+          case ABILITY_TIAMAT:
+          case ABILITY_PROCNE:
+            maxHpPercent = 9;
+            break;
+          case ABILITY_JUDGMENT:
+          case ABILITY_BOREAS:
+          case ABILITY_METEOR:
+          case ABILITY_THOR:
+            maxHpPercent = 12;
+            break;
           }
           power += target->maxHp * maxHpPercent / 100;
         }
-        amount = BattlePowerCalc(power, elementBonus, 256);
+        amount = BattlePowerCalc(power, elementBonus, FULL_RATE);
         amount *= multiplier;
+        // The fall-off by distance. (The kind is masked again, as the bytes
+        // need.)
         switch (kind & ABILITY_KIND_MASK) {
         case ABILITY_KIND_DAMAGE:
-          amount = gHpDmgTable5[distance] * amount / 100;
+          amount = amount * gHpDmgTable5[distance] / 100;
           break;
         case ABILITY_KIND_SUMMON:
           amount = amount * gHpDmgTable8[distance] / 100;
@@ -6148,18 +6128,17 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
           break;
         }
         amount += BattleRandomFar() & 3;
-        GUARD_CUT();
+        REDUCE_BY_GUARD(amount, target);
         // In the Djinn tutorial a summon always fells its target.
         if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) != 0 &&
-            *command == CMD_SUMMON && newHp > amount) {
+            plan->cmd == CMD_SUMMON && newHp > amount) {
           amount = newHp;
         }
-        round++;
-      } while (round <= 1);
+      }
       BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, targetId);
       BattleEvPush(BATTLE_EVENT_NUM, amount);
       BattleEvPush(BATTLE_EVENT_UNIT, targetId);
-      MESSAGE_PUSH((ALLY_CHECK(targetId) ? MsgDmgEmphP : MsgDmgEmphE) +
+      PUSH_MESSAGE((IS_PARTY_UNIT(targetId) ? MsgDmgEmphP : MsgDmgEmphE) +
                    affinity);
       newHp -= amount;
 
@@ -6167,7 +6146,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         BattleEvPush(BATTLE_EVENT_OBJ_RESET, targetId);
         BattleEvPush(BATTLE_EVENT_UNIT, targetId);
         newHp = 0;
-        MESSAGE_PUSH(ALLY_CHECK(targetId) ? MsgGoesDown : MsgFelled);
+        PUSH_MESSAGE(IS_PARTY_UNIT(targetId) ? MsgGoesDown : MsgFelled);
       } else
         BattleEvPush(BATTLE_EVENT_OBJ_END, targetId);
       damageDealt = target->hp - newHp;
@@ -6182,7 +6161,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       pp = target->pp;
       power = ability->power;
       amount = BattleRecoveryCalc(
-          power, element == ELEMENT_NONE ? 100 : elementPower, 256);
+          power, element == ELEMENT_NONE ? 100 : elementPower, FULL_RATE);
       amount = amount * gPpRecoveryTable[distance] / 100;
       amount *= multiplier;
       pp += amount;
@@ -6192,10 +6171,10 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       }
       BattleEvPush(BATTLE_EVENT_UNIT, targetId);
       if (pp == target->maxPp)
-        MESSAGE_PUSH(MsgPpFull);
+        PUSH_MESSAGE(MsgPpFull);
       else {
         BattleEvPush(BATTLE_EVENT_NUM, amount);
-        MESSAGE_PUSH(MsgPpRecover);
+        PUSH_MESSAGE(MsgPpRecover);
       }
       target->pp = pp;
       UnitRatioFar(targetId);
@@ -6214,23 +6193,24 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         if (ability->power == 0)
           break;
         newHp = target->hp;
-        ELEMENT_BONUS();
+        if (element != ELEMENT_NONE)
+          elementBonus = elementPower - target->element[element].res;
         power = ability->power;
-        amount = BattlePowerCalc(power, elementBonus, 256);
+        amount = BattlePowerCalc(power, elementBonus, FULL_RATE);
         amount *= multiplier;
         amount = amount * gHpDmgTable[distance] / 100;
-        GUARD_CUT();
+        REDUCE_BY_GUARD(amount, target);
         BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, targetId);
         BattleEvPush(BATTLE_EVENT_NUM, amount);
         BattleEvPush(BATTLE_EVENT_UNIT, targetId);
-        MESSAGE_PUSH(ALLY_CHECK(targetId) ? MsgDmgP : MsgDmgE);
+        PUSH_MESSAGE(IS_PARTY_UNIT(targetId) ? MsgDmgP : MsgDmgE);
         newHp -= amount;
 
         if (newHp <= 0) {
           BattleEvPush(BATTLE_EVENT_OBJ_RESET, targetId);
           BattleEvPush(BATTLE_EVENT_UNIT, targetId);
           newHp = 0;
-          MESSAGE_SIDE(MsgGoesDown, MsgFelled);
+          PUSH_SIDE_MESSAGE(targetId, MsgGoesDown, MsgFelled);
         } else
           BattleEvPush(BATTLE_EVENT_OBJ_END, targetId);
         damageDealt = target->hp - newHp;
@@ -6240,7 +6220,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       }
       BattleEvPush(BATTLE_EVENT_OBJ_END, targetId);
       BattleEvPush(BATTLE_EVENT_UNIT, targetId);
-      MESSAGE_PUSH(MsgNoEffect);
+      PUSH_MESSAGE(MsgNoEffect);
       break;
     }
   }
@@ -6255,37 +6235,37 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
        BattleEffectDeadCheck(ability->effect) != 0) &&
       hit != 0) {
     switch (ability->effect) {
-
+    // Tonic cures every ailment; sleep goes without a message.
     case ABILITY_EFFECT_CURE_ALL:
       if (target->delusion != 0) {
         target->delusion = 0;
-        MESSAGE_PUSH(MsgCureDelusion);
+        PUSH_MESSAGE(MsgCureDelusion);
         BattleEvPush(BATTLE_EVENT_UNIT, targetId);
       }
       if (target->stun != 0) {
         target->stun = 0;
         BattleEvPush(BATTLE_EVENT_CLEAR, 0);
         BattleEvPush(BATTLE_EVENT_UNIT, targetId);
-        MESSAGE_PUSH(MsgCureStun);
+        PUSH_MESSAGE(MsgCureStun);
       }
       target->sleep = 0;
       if (target->psySeal != 0) {
         target->psySeal = 0;
-        MESSAGE_PUSH(MsgCureSeal);
+        PUSH_MESSAGE(MsgCureSeal);
         BattleEvPush(BATTLE_EVENT_UNIT, targetId);
       }
       if (target->grimReaper != 0) {
         target->grimReaper = 0;
-        MESSAGE_PUSH(MsgCureCurse);
+        PUSH_MESSAGE(MsgCureCurse);
         BattleEvPush(BATTLE_EVENT_UNIT, targetId);
       }
       if (target->haunt != 0) {
         target->haunt = 0;
-        MESSAGE_PUSH(MsgCureSpirit);
+        PUSH_MESSAGE(MsgCureSpirit);
         BattleEvPush(BATTLE_EVENT_UNIT, targetId);
       }
       if (target->poison != 0) {
-        MESSAGE_PUSH(MsgCurePoison);
+        PUSH_MESSAGE(MsgCurePoison);
         target->poison = 0;
       }
       BattleEvPush(BATTLE_EVENT_CLEAR, 0);
@@ -6298,27 +6278,27 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         target->delusion = 0;
         BattleEvPush(BATTLE_EVENT_CLEAR, 0);
         BattleEvPush(BATTLE_EVENT_UNIT, targetId);
-        MESSAGE_PUSH(MsgCureDelusion);
+        PUSH_MESSAGE(MsgCureDelusion);
       }
       if (target->stun != 0) {
         target->stun = 0;
         BattleEvPush(BATTLE_EVENT_CLEAR, 0);
         BattleEvPush(BATTLE_EVENT_UNIT, targetId);
-        MESSAGE_PUSH(MsgCureStun);
+        PUSH_MESSAGE(MsgCureStun);
       }
       target->sleep = 0;
       if (target->psySeal != 0) {
         target->psySeal = 0;
         BattleEvPush(BATTLE_EVENT_CLEAR, 0);
         BattleEvPush(BATTLE_EVENT_UNIT, targetId);
-        MESSAGE_PUSH(MsgCureSeal);
+        PUSH_MESSAGE(MsgCureSeal);
       }
       if (target->grimReaper == 0)
         break;
       target->grimReaper = 0;
       BattleEvPush(BATTLE_EVENT_CLEAR, 0);
       BattleEvPush(BATTLE_EVENT_UNIT, targetId);
-      MESSAGE_PUSH(MsgCureCurse);
+      PUSH_MESSAGE(MsgCureCurse);
       break;
 
     case ABILITY_EFFECT_HEAL_HP_60:
@@ -6328,6 +6308,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       s32 maxHp;
       s32 newHp;
       u16 *stat;
+      s32 restored;
 
       /* FAKEMATCH: walking a pointer down from hp to maxHp reads each stat
        * twice, unsigned and signed, as the ROM does; plain member reads,
@@ -6350,10 +6331,10 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       if (restored == 0 && kind != ABILITY_KIND_HEAL_HP)
         break;
       if (newHp == (s16)maxHpBits)
-        MESSAGE_PUSH(MsgHpFull);
+        PUSH_MESSAGE(MsgHpFull);
       else {
         BattleEvPush(BATTLE_EVENT_NUM, restored);
-        MESSAGE_PUSH(MsgHpRecover);
+        PUSH_MESSAGE(MsgHpRecover);
       }
       target->hp = newHp;
       UnitRatioFar(targetId);
@@ -6364,6 +6345,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       s32 oldPp;
       s32 maxPp;
       s32 newPp;
+      s32 restored;
 
       newPp = target->pp;
       maxPp = target->maxPp;
@@ -6375,10 +6357,10 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       if (restored == 0 && kind != ABILITY_KIND_HEAL_PP)
         break;
       if (newPp == maxPp)
-        MESSAGE_PUSH(MsgPpFull);
+        PUSH_MESSAGE(MsgPpFull);
       else {
         BattleEvPush(BATTLE_EVENT_NUM, restored);
-        MESSAGE_PUSH(MsgPpRecover);
+        PUSH_MESSAGE(MsgPpRecover);
       }
       target->pp = newPp;
       UnitRatioFar(targetId);
@@ -6392,7 +6374,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       target->agiCnt = AGILITY_CHANGE_TURNS;
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, target->agi - savedTarget->agi);
-      MESSAGE_PUSH(MsgAgiUp);
+      PUSH_MESSAGE(MsgAgiUp);
       break;
 
     case ABILITY_EFFECT_AGILITY_DOWN:
@@ -6400,78 +6382,78 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       target->agiCnt = AGILITY_CHANGE_TURNS;
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, savedTarget->agi - target->agi);
-      MESSAGE_PUSH(MsgAgiDown);
+      PUSH_MESSAGE(MsgAgiDown);
       break;
 
     case ABILITY_EFFECT_ATTACK_DOWN:
       target->atkLv -= 1;
-      STEP_LIM(target->atkLv);
+      CLAMP_STAT_STAGE(target->atkLv);
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, savedTarget->atk - target->atk);
-      MESSAGE_PUSH(MsgAtkDown);
+      PUSH_MESSAGE(MsgAtkDown);
       target->atkCnt = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_ATTACK_DOWN_2:
       target->atkLv -= 2;
-      STEP_LIM(target->atkLv);
+      CLAMP_STAT_STAGE(target->atkLv);
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, savedTarget->atk - target->atk);
-      MESSAGE_PUSH(MsgAtkDown);
+      PUSH_MESSAGE(MsgAtkDown);
       target->atkCnt = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_ATTACK_UP:
       target->atkLv += 1;
-      STEP_LIM(target->atkLv);
+      CLAMP_STAT_STAGE(target->atkLv);
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, target->atk - savedTarget->atk);
-      MESSAGE_PUSH(MsgAtkUp);
+      PUSH_MESSAGE(MsgAtkUp);
       target->atkCnt = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_ATTACK_UP_2:
       target->atkLv += 2;
-      STEP_LIM(target->atkLv);
+      CLAMP_STAT_STAGE(target->atkLv);
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, target->atk - savedTarget->atk);
-      MESSAGE_PUSH(MsgAtkUp);
+      PUSH_MESSAGE(MsgAtkUp);
       target->atkCnt = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_DEFENSE_DOWN:
       target->defLv -= 1;
-      STEP_LIM(target->defLv);
+      CLAMP_STAT_STAGE(target->defLv);
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, savedTarget->def - target->def);
-      MESSAGE_PUSH(MsgDefDown);
+      PUSH_MESSAGE(MsgDefDown);
       target->defCnt = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_DEFENSE_DOWN_2:
       target->defLv -= 2;
-      STEP_LIM(target->defLv);
+      CLAMP_STAT_STAGE(target->defLv);
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, savedTarget->def - target->def);
-      MESSAGE_PUSH(MsgDefDown);
+      PUSH_MESSAGE(MsgDefDown);
       target->defCnt = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_DEFENSE_UP:
       target->defLv += 1;
-      STEP_LIM(target->defLv);
+      CLAMP_STAT_STAGE(target->defLv);
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, target->def - savedTarget->def);
-      MESSAGE_PUSH(MsgDefUp);
+      PUSH_MESSAGE(MsgDefUp);
       target->defCnt = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_DEFENSE_UP_2:
       target->defLv += 2;
-      STEP_LIM(target->defLv);
+      CLAMP_STAT_STAGE(target->defLv);
       UnitCalcFar(targetId);
       BattleEvPush(BATTLE_EVENT_NUM, target->def - savedTarget->def);
-      MESSAGE_PUSH(MsgDefUp);
+      PUSH_MESSAGE(MsgDefUp);
       target->defCnt = STAT_CHANGE_TURNS;
       break;
 
@@ -6480,7 +6462,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_REVIVE:
       if (target->hp != 0)
         break;
-      MESSAGE_PUSH(MsgRevived);
+      PUSH_MESSAGE(MsgRevived);
       target->hp = target->maxHp;
       UnitRatioFar(targetId);
       break;
@@ -6488,7 +6470,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_REVIVE_HALF:
       if (target->hp != 0)
         break;
-      MESSAGE_PUSH(MsgRevived);
+      PUSH_MESSAGE(MsgRevived);
       target->hp = target->maxHp / 2;
       UnitRatioFar(targetId);
       break;
@@ -6496,36 +6478,53 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_REVIVE_80:
       if (target->hp != 0)
         break;
-      MESSAGE_PUSH(MsgRevived);
+      PUSH_MESSAGE(MsgRevived);
       target->hp = target->maxHp * 8 / 10;
       UnitRatioFar(targetId);
       break;
 
     case ABILITY_EFFECT_CURE_POISON:
       if (target->poison != 0)
-        MESSAGE_PUSH(MsgCurePoison);
+        PUSH_MESSAGE(MsgCurePoison);
       target->poison = 0;
       break;
 
-    // Resistance changes show the change in resistance points.
+    // A Resistance change needs no recalculation to show: it is the change
+    // in stages times RESISTANCE_PER_STAGE.
     case ABILITY_EFFECT_RESISTANCE_DOWN:
-      RES_STEP(-1, (savedTarget->resLv - target->resLv) * RESISTANCE_PER_STAGE,
-               MsgResDown);
+      target->resLv -= 1;
+      CLAMP_STAT_STAGE(target->resLv);
+      BattleEvPush(BATTLE_EVENT_NUM,
+                   (savedTarget->resLv - target->resLv) * RESISTANCE_PER_STAGE);
+      PUSH_MESSAGE(MsgResDown);
+      target->resCnt = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_RESISTANCE_DOWN_2:
-      RES_STEP(-2, (savedTarget->resLv - target->resLv) * RESISTANCE_PER_STAGE,
-               MsgResDown);
+      target->resLv -= 2;
+      CLAMP_STAT_STAGE(target->resLv);
+      BattleEvPush(BATTLE_EVENT_NUM,
+                   (savedTarget->resLv - target->resLv) * RESISTANCE_PER_STAGE);
+      PUSH_MESSAGE(MsgResDown);
+      target->resCnt = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_RESISTANCE_UP:
-      RES_STEP(1, (target->resLv - savedTarget->resLv) * RESISTANCE_PER_STAGE,
-               MsgResUp);
+      target->resLv += 1;
+      CLAMP_STAT_STAGE(target->resLv);
+      BattleEvPush(BATTLE_EVENT_NUM,
+                   (target->resLv - savedTarget->resLv) * RESISTANCE_PER_STAGE);
+      PUSH_MESSAGE(MsgResUp);
+      target->resCnt = STAT_CHANGE_TURNS;
       break;
 
     case ABILITY_EFFECT_RESISTANCE_UP_2:
-      RES_STEP(2, (target->resLv - savedTarget->resLv) * RESISTANCE_PER_STAGE,
-               MsgResUp);
+      target->resLv += 2;
+      CLAMP_STAT_STAGE(target->resLv);
+      BattleEvPush(BATTLE_EVENT_NUM,
+                   (target->resLv - savedTarget->resLv) * RESISTANCE_PER_STAGE);
+      PUSH_MESSAGE(MsgResUp);
+      target->resCnt = STAT_CHANGE_TURNS;
       break;
 
     // Poison does nothing to a poisoned target, deadly poison nothing to one
@@ -6533,44 +6532,49 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_POISON:
       if (target->poison != 0)
         break;
-      MESSAGE_PUSH(MsgPoisoned);
+      PUSH_MESSAGE(MsgPoisoned);
       target->poison = POISON_NORMAL;
       break;
 
     case ABILITY_EFFECT_DEADLY_POISON:
       if (target->poison > POISON_NORMAL)
         break;
-      MESSAGE_PUSH(MsgVenom);
+      PUSH_MESSAGE(MsgVenom);
       target->poison = POISON_DEADLY;
       break;
 
     case ABILITY_EFFECT_DELUSION:
-      STAT_SET(target->delusion, MsgDelusion);
+      PUSH_MESSAGE(MsgDelusion);
+      target->delusion = STATUS_TURNS;
       break;
 
     case ABILITY_EFFECT_CONFUSION:
-      STAT_SET(target->confusion, MsgConfused);
+      PUSH_MESSAGE(MsgConfused);
+      target->confusion = STATUS_TURNS;
       break;
 
     case ABILITY_EFFECT_CHARM: // "X's heart has been stolen!"
-      STAT_SET(target->charm, MsgCharmed);
+      PUSH_MESSAGE(MsgCharmed);
+      target->charm = STATUS_TURNS;
       break;
 
     case ABILITY_EFFECT_STUN:
-      STAT_SET(target->stun, MsgStunned);
+      PUSH_MESSAGE(MsgStunned);
+      target->stun = STATUS_TURNS;
       break;
 
     case ABILITY_EFFECT_SLEEP:
-      STAT_SET(target->sleep, MsgAsleep);
+      PUSH_MESSAGE(MsgAsleep);
+      target->sleep = STATUS_TURNS;
       break;
 
     case ABILITY_EFFECT_SEAL:
-      MESSAGE_SIDE(MsgPsyBlock, MsgPsySeal);
+      PUSH_SIDE_MESSAGE(targetId, MsgPsyBlock, MsgPsySeal);
       target->psySeal |= PSY_SEAL_BIND;
       break;
 
     case ABILITY_EFFECT_SEAL_2_TURNS:
-      MESSAGE_SIDE(MsgPsyBlock, MsgPsySeal);
+      PUSH_SIDE_MESSAGE(targetId, MsgPsyBlock, MsgPsySeal);
       target->psySeal |= PSY_SEAL_LUFF;
       break;
 
@@ -6579,21 +6583,23 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_INSTANT_DEATH:
       BattleEvPush(BATTLE_EVENT_OBJ_RESET, targetId);
       if (target->side == BATTLE_UNIT_PARTY)
-        MESSAGE_PUSH(MsgKoDown);
+        PUSH_MESSAGE(MsgKoDown);
       else if (abilityId == ABILITY_DROWN)
-        MESSAGE_PUSH(MsgSuffocate);
+        PUSH_MESSAGE(MsgSuffocate);
       else
-        MESSAGE_PUSH(MsgSpiritDrain);
+        PUSH_MESSAGE(MsgSpiritDrain);
       target->hp = 0;
       UnitRatioFar(targetId);
       break;
 
     case ABILITY_EFFECT_REGENERATE:
-      STAT_SET(target->refrain, MsgRefrain);
+      PUSH_MESSAGE(MsgRefrain);
+      target->refrain = STATUS_TURNS;
       break;
 
     case ABILITY_EFFECT_REFLECT:
-      STAT_SET(target->reflect, MsgReflect);
+      PUSH_MESSAGE(MsgReflect);
+      target->reflect = STATUS_TURNS;
       break;
 
     // The drains give the damage dealt back to the actor: Drain all of it
@@ -6614,10 +6620,10 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       BattleEvPush(BATTLE_EVENT_CLEAR, 0);
       BattleEvPush(BATTLE_EVENT_UNIT, actorId);
       if (newHp == actor->maxHp)
-        MESSAGE_PUSH(MsgHpFull);
+        PUSH_MESSAGE(MsgHpFull);
       else {
         BattleEvPush(BATTLE_EVENT_NUM, amount);
-        MESSAGE_PUSH(MsgHpRecover);
+        PUSH_MESSAGE(MsgHpRecover);
       }
       actor->hp = newHp;
       UnitRatioFar(actorId);
@@ -6639,10 +6645,10 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       BattleEvPush(BATTLE_EVENT_CLEAR, 0);
       BattleEvPush(BATTLE_EVENT_UNIT, actorId);
       if (newPp == actor->maxPp)
-        MESSAGE_PUSH(MsgPpFull);
+        PUSH_MESSAGE(MsgPpFull);
       else {
         BattleEvPush(BATTLE_EVENT_NUM, drained);
-        MESSAGE_PUSH(MsgPpRecover);
+        PUSH_MESSAGE(MsgPpRecover);
       }
       actor->pp = newPp;
       UnitRatioFar(actorId);
@@ -6660,7 +6666,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       if (amount == 0)
         break;
       BattleEvPush(BATTLE_EVENT_NUM, amount);
-      MESSAGE_SIDE(MsgLeechTake, MsgLeechGain);
+      PUSH_SIDE_MESSAGE(targetId, MsgLeechTake, MsgLeechGain);
       UnitPpAddFar(actorId, amount);
       break;
 
@@ -6684,11 +6690,11 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       target->elementLevels[ELEMENT_MERCURY] = 0;
       target->elementLevels[ELEMENT_MARS] = 0;
       target->elementLevels[ELEMENT_JUPITER] = 0;
-      MESSAGE_PUSH(MsgBuffsReset);
+      PUSH_MESSAGE(MsgBuffsReset);
       break;
 
     case ABILITY_EFFECT_HAUNT:
-      MESSAGE_PUSH(MsgEvilSpirit);
+      PUSH_MESSAGE(MsgEvilSpirit);
       target->haunt = 1;
       break;
 
@@ -6696,7 +6702,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     // brings it a turn closer.
     case ABILITY_EFFECT_CURSE:
       if (target->grimReaper == 0) {
-        MESSAGE_PUSH(MsgDeathCurse);
+        PUSH_MESSAGE(MsgDeathCurse);
         target->grimReaper = CURSE_TURNS;
         break;
       }
@@ -6704,40 +6710,40 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         break;
       target->grimReaper -= 1;
       BattleEvPush(BATTLE_EVENT_NUM, target->grimReaper);
-      MESSAGE_PUSH(MsgDeathCount);
+      PUSH_MESSAGE(MsgDeathCount);
       break;
 
     // Kite: the target acts twice in the next turn (the count drops at each
     // turn's end).
     case ABILITY_EFFECT_ACT_TWICE:
-      MESSAGE_PUSH(MsgReadies);
+      PUSH_MESSAGE(MsgReadies);
       target->ready = 2;
       break;
 
     // The target rises to the challenge and won't flee; on the party, no one
     // may run ("No time to run!").
     case ABILITY_EFFECT_CHALLENGE:
-      MESSAGE_PUSH(MsgChallenge);
+      PUSH_MESSAGE(MsgChallenge);
       target->challenge = 1;
-      if (ALLY_CHECK(targetId))
+      if (IS_PARTY_UNIT(targetId))
         work->challengeFlag |= 2;
       break;
 
     // Ground: the target loses its next action.
     case ABILITY_EFFECT_GROUND:
-      MESSAGE_PUSH(MsgImmobile);
+      PUSH_MESSAGE(MsgImmobile);
       target->immobile = 1;
       break;
 
     case ABILITY_EFFECT_DEFEND:
-      MESSAGE_PUSH(MsgAura);
+      PUSH_MESSAGE(MsgAura);
       if (target->guardLv > 0)
         break;
       target->guardLv = GUARD_DEFEND;
       break;
 
     case ABILITY_EFFECT_TOTAL_DEFENSE:
-      MESSAGE_PUSH(MsgAura2);
+      PUSH_MESSAGE(MsgAura2);
       if (target->guardLv > GUARD_DEFEND)
         break;
       target->guardLv = GUARD_TOTAL_DEFENSE;
@@ -6746,7 +6752,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     // Contain, Threaten and Tremble do nothing; the player only reads their
     // message.
     case ABILITY_EFFECT_THREATEN:
-      BattleEvPush(BATTLE_EVENT_MESSAGE, MESSAGE_NONE);
+      PUSH_MESSAGE(MESSAGE_NONE);
       break;
 
     default:
@@ -6761,14 +6767,11 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
 
   // Damage wakes a sleeping target one time in four, unless it fell asleep
   // this turn (its count still at STATUS_TURNS).
-  if (target->hp != 0) {
-    if (target->sleep != 0)
-      if (target->sleep < STATUS_TURNS && damageDealt > 0 &&
-          (3 & BattleRandomFar()) == 0) {
-        target->sleep = 0;
-        BattleEvPush(BATTLE_EVENT_UNIT, targetId);
-        MESSAGE_PUSH(MsgWakes);
-      }
+  if (target->hp != 0 && target->sleep != 0 && target->sleep < STATUS_TURNS &&
+      damageDealt > 0 && (BattleRandomFar() & 3) == 0) {
+    target->sleep = 0;
+    BattleEvPush(BATTLE_EVENT_UNIT, targetId);
+    PUSH_MESSAGE(MsgWakes);
   }
   MemFree(savedTarget);
   UnitCalcFar(targetId);
@@ -8419,7 +8422,7 @@ s32 Battle_ProcessRoundEnd(void) {
                                                expiredEntry->index + 300);
             BattleEvPush(BATTLE_EVENT_SE, 175);
             BattleEvPush(BATTLE_EVENT_REDRAW, 0);
-            MESSAGE_PUSH(MsgDjinnSet);
+            PUSH_MESSAGE(MsgDjinnSet);
             BattleEvPush(BATTLE_EVENT_OBJ_END, id);
             AudioCommand_PlayFar(212);
             ObjectDispatch_ApplyArgumentToChildrenFar(BattleObjGet(id)->object,
@@ -8672,7 +8675,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         BattleEvPush(BATTLE_EVENT_UNIT, id);
         BattleEvPush(BATTLE_EVENT_NUM, gain);
         BattleEvPush(BATTLE_EVENT_SE, 175);
-        MESSAGE_PUSH(MsgEarthPowerUp + i);
+        PUSH_MESSAGE(MsgEarthPowerUp + i);
         BattleEvPush(BATTLE_EVENT_OBJ_END, id);
         AudioCommand_PlayFar(212);
         ObjectDispatch_ApplyArgumentToChildrenFar(BattleObjGet(id)->object, 3);
@@ -8691,7 +8694,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
       BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, id);
       BattleEvPush(BATTLE_EVENT_UNIT, id);
       BattleEvPush(BATTLE_EVENT_NUM, plan->hauntDmg);
-      MESSAGE_PUSH(MsgCurseDamage);
+      PUSH_MESSAGE(MsgCurseDamage);
       if (Owner_AdjustFirstValueFar(id, -plan->hauntDmg) == 0) {
         s32 text;
         BattleEvPush(BATTLE_EVENT_OBJ_RESET, id);
@@ -8701,7 +8704,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         } else {
           text = MsgStrengthExhausted;
         }
-        MESSAGE_PUSH(text);
+        PUSH_MESSAGE(text);
       } else {
         BattleEvPush(BATTLE_EVENT_OBJ_END, id);
       }
@@ -8715,7 +8718,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
       BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, id);
       BattleEvPush(BATTLE_EVENT_UNIT, id);
       BattleEvPush(BATTLE_EVENT_NUM, damage);
-      MESSAGE_PUSH(MsgPoisonDamage);
+      PUSH_MESSAGE(MsgPoisonDamage);
       if (*poison != 0) {
         state->events.pendingCue = SOUND_HEAVY_IMPACT;
       } else {
@@ -8730,7 +8733,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         } else {
           text = MsgStrengthExhausted;
         }
-        MESSAGE_PUSH(text);
+        PUSH_MESSAGE(text);
       } else {
         BattleEvPush(BATTLE_EVENT_OBJ_END, id);
       }
@@ -8741,14 +8744,14 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
       if (--unit->grimReaper == 0 &&
           Owner_AdjustFirstValueFar(id, 0xc0000000) == 0) {
         BattleEvPush(BATTLE_EVENT_UNIT, id);
-        MESSAGE_PUSH(MsgReaperCalls);
+        PUSH_MESSAGE(MsgReaperCalls);
         BattleEvPush(BATTLE_EVENT_OBJ_BEGIN, id);
         BattleEvPush(BATTLE_EVENT_OBJ_RESET, id);
         BattleEvPush(BATTLE_EVENT_UNIT, id);
         if (id >= 0 && id <= 7) {
-          MESSAGE_PUSH(MsgReaperCalls - 3);
+          PUSH_MESSAGE(MsgReaperCalls - 3);
         } else {
-          MESSAGE_PUSH(MsgReaperCalls + 3);
+          PUSH_MESSAGE(MsgReaperCalls + 3);
         }
       }
     }

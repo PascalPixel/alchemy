@@ -65,8 +65,8 @@ s32 Math_RemainderUnsigned(s32, s32);
 
 union PairObject;
 
-s32 gValeStorm_ShakeDone;
-s32 gValeStorm_ShakeShift;
+static s32 sShakeDone;
+static s32 sShakeShift;
 
 static s32 ValeStorm_RerollHeadingOnCountdown(struct FieldActor *object) {
   s32 loaded = object->timer;
@@ -1048,9 +1048,9 @@ static void EV34_TOUCH(void) {
       SceneActor_SetModeByFrameBit1(Actor_Get(29));
       Engine_TaskWait(1);
     }
-    phase = &gValeStorm_ShakeShift;
+    phase = &sShakeShift;
     steps = (s32)FieldScene_RunFourPairedSteps;
-    gValeStorm_ShakeDone = 0;
+    sShakeDone = 0;
     *phase = 0;
     FieldScheduler_AddOrUpdateCallback(steps, 0xc80);
     callback = (s32)SceneState_SetValue19ThenCall;
@@ -1104,7 +1104,7 @@ static void EV34_TOUCH(void) {
     Actor_SetAttachedEffect(30, 0x102);
     Engine_ActorRunRepeatedMotion(30, 2);
     Event_ShowMessage(30, 0);
-    gValeStorm_ShakeDone = 1;
+    sShakeDone = 1;
     Engine_ActorSetAnimation(29, 1);
     Engine_TaskWait(1);
     Actor_SetChildValue(29, 0);
@@ -1181,7 +1181,7 @@ static void Storm_SetActorFrameMode(struct FieldActor *actor, s32 mode) {
 }
 
 static void ActorPresentation_SetFourActorsModeByBit(void) {
-  if (((gFrameCount >> gValeStorm_ShakeShift) & 3) != 0) {
+  if (((gFrameCount >> sShakeShift) & 3) != 0) {
     Storm_SetActorFrameMode(Object_GetById(32), 1);
     Storm_SetActorFrameMode(Object_GetById(33), 1);
     Storm_SetActorFrameMode(Object_GetById(30), 1);
@@ -2356,7 +2356,7 @@ static void SceneActor_SetModeByFrameBit1(s32 o) {
   {
     u32 *frame = &gFrameCount;
 
-    v = (gValeStorm_ShakeShift << 3) + 16;
+    v = (sShakeShift << 3) + 16;
     if (Math_RemainderUnsigned(*frame, v) == 0) {
       ValeStorm_SpawnEffectPair((union PairObject *)o);
     }
@@ -2371,7 +2371,7 @@ static void OverlayObject_UpdateRandomSlotByFrame(s32 obj) {
     t = (gFrameCount >> 1);
     Engine_ObjectSetPartPalettes(obj, Math_RemainderUnsigned(t, 6));
   }
-  n = (gValeStorm_ShakeShift << 3) + 16;
+  n = (sShakeShift << 3) + 16;
   if (Math_RemainderUnsigned(gFrameCount, n) == 0) {
     ValeStorm_SpawnEffectPair((union PairObject *)obj);
   }
@@ -2448,7 +2448,7 @@ static void FieldScene_RunFourPairedSteps(void) {
   OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(32));
   OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(33));
   OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(30));
-  if (gValeStorm_ShakeDone == 0) {
+  if (sShakeDone == 0) {
     OverlayObject_UpdateRandomSlotByFrame((s32)Object_GetById(29));
   }
 }

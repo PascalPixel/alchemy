@@ -10,8 +10,6 @@ u8 *TolbiShipDeck_GetExits(void);
 u8 *TolbiShipDeck_GetPlacements(void);
 u8 *TolbiShipDeck_GetEvents(void);
 s32 TolbiShipDeck_ResetDeck(void);
-extern s32 gTolbiShipDeck_SlotDepth[8];
-extern u32 gTolbiShipDeck_SlotMode[8];
 extern const s32 gTolbiShipDeck_PresentationActionsA[];
 extern const s32 gTolbiShipDeck_PresentationActionsB[];
 extern const s32 gTolbiShipDeck_RandomActorActions[];

@@ -286,6 +286,11 @@ static s32 sDeckSpare;
 
 static s32 sLayerSpeed[2];
 
+// The ROM places these after the file's other statics, the modes first, on
+// the 16-byte boundary the assembler gives a 32-byte common symbol.
+static u32 sSlotMode[8] __attribute__((aligned(16)));
+static s32 sSlotDepth[8];
+
 static s32 SceneActor_OscillateHeightBetweenLimits(struct FieldActor *actor) {
   s16 *flag = (s16 *)&actor->work;
   s32 val;
@@ -1956,8 +1961,6 @@ static void TolbiShipDeck_RockDeck(void) {
   }
 }
 
-s32 gTolbiShipDeck_SlotDepth[8];
-
 static void SceneEffect_InitSlotsEightToNineteen(void) {
   Object_GetById(8)->collisionFlags = 0;
   Object_GetById(9)->collisionFlags = 0;
@@ -1971,10 +1974,10 @@ static void SceneEffect_InitSlotsEightToNineteen(void) {
   OverlayObject_ActivateSlotWithMode3(13);
   OverlayObject_ActivateSlotWithMode3(14);
   OverlayObject_ActivateSlotWithMode3(15);
-  gTolbiShipDeck_SlotDepth[0] = Object_GetById(12)->z.fixed;
-  gTolbiShipDeck_SlotDepth[1] = Object_GetById(13)->z.fixed;
-  gTolbiShipDeck_SlotDepth[2] = Object_GetById(14)->z.fixed;
-  gTolbiShipDeck_SlotDepth[3] = Object_GetById(15)->z.fixed;
+  sSlotDepth[0] = Object_GetById(12)->z.fixed;
+  sSlotDepth[1] = Object_GetById(13)->z.fixed;
+  sSlotDepth[2] = Object_GetById(14)->z.fixed;
+  sSlotDepth[3] = Object_GetById(15)->z.fixed;
   OverlayObject_ActivateSlotWithMode3(16);
   OverlayObject_ActivateSlotWithMode3(17);
   OverlayObject_ActivateSlotWithMode3(18);
@@ -1983,10 +1986,10 @@ static void SceneEffect_InitSlotsEightToNineteen(void) {
   Object_GetById(17)->scaleX = 0xffff0000;
   Object_GetById(18)->scaleX = 0xffff0000;
   Object_GetById(19)->scaleX = 0xffff0000;
-  gTolbiShipDeck_SlotDepth[4] = Object_GetById(16)->z.fixed;
-  gTolbiShipDeck_SlotDepth[5] = Object_GetById(17)->z.fixed;
-  gTolbiShipDeck_SlotDepth[6] = Object_GetById(18)->z.fixed;
-  gTolbiShipDeck_SlotDepth[7] = Object_GetById(19)->z.fixed;
+  sSlotDepth[4] = Object_GetById(16)->z.fixed;
+  sSlotDepth[5] = Object_GetById(17)->z.fixed;
+  sSlotDepth[6] = Object_GetById(18)->z.fixed;
+  sSlotDepth[7] = Object_GetById(19)->z.fixed;
   TolbiShipDeck_ChooseSlotModes();
 }
 
@@ -2005,8 +2008,6 @@ static void OverlayObject_ActivateSlotWithMode3(s32 a) {
   }
 }
 
-u32 gTolbiShipDeck_SlotMode[8];
-
 struct SlotSprite {
   s32 unk00[7];
   s16 unk1c;
@@ -2014,7 +2015,7 @@ struct SlotSprite {
 };
 
 static void TolbiShipDeck_ChooseSlotModes(void) {
-  u32 *mode = gTolbiShipDeck_SlotMode;
+  u32 *mode = sSlotMode;
   u32 i;
 
   for (i = 0; i <= 3; i++) {
@@ -2025,25 +2026,25 @@ static void TolbiShipDeck_ChooseSlotModes(void) {
     mode++;
   }
   if (SceneState_FindFirstSetFlagOfGroup(0) != 0)
-    gTolbiShipDeck_SlotMode[0] = SceneData_SelectTableEntryByFlagGroup(0);
+    sSlotMode[0] = SceneData_SelectTableEntryByFlagGroup(0);
   else
-    gTolbiShipDeck_SlotMode[0] = 3;
+    sSlotMode[0] = 3;
   if (SceneState_FindFirstSetFlagOfGroup(2) != 0)
-    gTolbiShipDeck_SlotMode[1] = SceneData_SelectTableEntryByFlagGroup(2);
+    sSlotMode[1] = SceneData_SelectTableEntryByFlagGroup(2);
   else
-    gTolbiShipDeck_SlotMode[1] = 3;
-  gTolbiShipDeck_SlotMode[2] = 3;
-  gTolbiShipDeck_SlotMode[3] = 3;
+    sSlotMode[1] = 3;
+  sSlotMode[2] = 3;
+  sSlotMode[3] = 3;
   if (SceneState_FindFirstSetFlagOfGroup(1) != 0)
-    gTolbiShipDeck_SlotMode[4] = SceneData_SelectTableEntryByFlagGroup(1);
+    sSlotMode[4] = SceneData_SelectTableEntryByFlagGroup(1);
   else
-    gTolbiShipDeck_SlotMode[4] = 3;
+    sSlotMode[4] = 3;
   if (SceneState_FindFirstSetFlagOfGroup(3) != 0)
-    gTolbiShipDeck_SlotMode[5] = SceneData_SelectTableEntryByFlagGroup(3);
+    sSlotMode[5] = SceneData_SelectTableEntryByFlagGroup(3);
   else
-    gTolbiShipDeck_SlotMode[5] = 3;
-  gTolbiShipDeck_SlotMode[6] = 3;
-  gTolbiShipDeck_SlotMode[7] = 3;
+    sSlotMode[5] = 3;
+  sSlotMode[6] = 3;
+  sSlotMode[7] = 3;
 }
 
 static s32 SceneData_SelectTableEntryByFlagGroup(u32 selection) {
@@ -2115,7 +2116,7 @@ static void SceneEffect_SelectSlotValueAndPosition(s32 id, s32 slot,
   s32 sine;
 
   if ((flags & 2) == 0) {
-    switch (gTolbiShipDeck_SlotMode[slot]) {
+    switch (sSlotMode[slot]) {
     case 1:
       sSlotValue[slot] = sSlotPhase[0];
       ObjectVisual_CopyAttributes(id, 8);
@@ -2137,11 +2138,11 @@ static void SceneEffect_SelectSlotValueAndPosition(s32 id, s32 slot,
   if (flags & 1) {
     sine = Engine_MathSin(sSlotValue[slot]);
     sprite->tilt = Engine_MathSin(sSlotValue[slot] + 0x8000) >> 5;
-    actor->z.fixed = gTolbiShipDeck_SlotDepth[slot] - (sine << 2) - (sine << 1);
+    actor->z.fixed = sSlotDepth[slot] - (sine << 2) - (sine << 1);
   } else {
     sine = Engine_MathSin(sSlotValue[slot] + 0x8000);
     sprite->tilt = Engine_MathSin(sSlotValue[slot]) >> 5;
-    actor->z.fixed = gTolbiShipDeck_SlotDepth[slot] + (sine << 2) + (sine << 1);
+    actor->z.fixed = sSlotDepth[slot] + (sine << 2) + (sine << 1);
   }
 }
 
@@ -2159,14 +2160,14 @@ static void SceneState_InitActorSlots8To19(void) {
   OverlayObject_ActivateSlotWithMode3(13);
   OverlayObject_ActivateSlotWithMode3(14);
   OverlayObject_ActivateSlotWithMode3(15);
-  gTolbiShipDeck_SlotMode[0] = 0;
-  gTolbiShipDeck_SlotMode[1] = 0;
-  gTolbiShipDeck_SlotMode[2] = 0;
-  gTolbiShipDeck_SlotMode[3] = 0;
-  gTolbiShipDeck_SlotDepth[0] = Object_GetById(8)->z.fixed;
-  gTolbiShipDeck_SlotDepth[1] = Object_GetById(13)->z.fixed;
-  gTolbiShipDeck_SlotDepth[2] = Object_GetById(14)->z.fixed;
-  gTolbiShipDeck_SlotDepth[3] = Object_GetById(15)->z.fixed;
+  sSlotMode[0] = 0;
+  sSlotMode[1] = 0;
+  sSlotMode[2] = 0;
+  sSlotMode[3] = 0;
+  sSlotDepth[0] = Object_GetById(8)->z.fixed;
+  sSlotDepth[1] = Object_GetById(13)->z.fixed;
+  sSlotDepth[2] = Object_GetById(14)->z.fixed;
+  sSlotDepth[3] = Object_GetById(15)->z.fixed;
   OverlayObject_ActivateSlotWithMode3(16);
   OverlayObject_ActivateSlotWithMode3(17);
   OverlayObject_ActivateSlotWithMode3(18);
@@ -2175,14 +2176,14 @@ static void SceneState_InitActorSlots8To19(void) {
   Object_GetById(17)->scaleX = 0xffff0000;
   Object_GetById(18)->scaleX = 0xffff0000;
   Object_GetById(19)->scaleX = 0xffff0000;
-  gTolbiShipDeck_SlotMode[4] = 0;
-  gTolbiShipDeck_SlotMode[5] = 0;
-  gTolbiShipDeck_SlotMode[6] = 0;
-  gTolbiShipDeck_SlotMode[7] = 0;
-  gTolbiShipDeck_SlotDepth[4] = Object_GetById(16)->z.fixed;
-  gTolbiShipDeck_SlotDepth[5] = Object_GetById(17)->z.fixed;
-  gTolbiShipDeck_SlotDepth[6] = Object_GetById(18)->z.fixed;
-  gTolbiShipDeck_SlotDepth[7] = Object_GetById(19)->z.fixed;
+  sSlotMode[4] = 0;
+  sSlotMode[5] = 0;
+  sSlotMode[6] = 0;
+  sSlotMode[7] = 0;
+  sSlotDepth[4] = Object_GetById(16)->z.fixed;
+  sSlotDepth[5] = Object_GetById(17)->z.fixed;
+  sSlotDepth[6] = Object_GetById(18)->z.fixed;
+  sSlotDepth[7] = Object_GetById(19)->z.fixed;
   actor = Object_GetById(0);
   if (actor != NULL)
     Engine_ActorSetPosition(8, actor->x.fixed, actor->z.fixed);
